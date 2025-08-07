@@ -91,6 +91,49 @@ declare global {
               x:                  number;
               y:                  number;
               z:                  number;
+    AddScriptTrigger( scriptId: number ): void;
+    ApplySection( section: string ): void;
+    Delete(): void;
+    DistanceTo( target: BaseObject ): number;
+    FinishedItems(): void;
+    FirstItem(): void;
+    GetJSTimer( timerId: number, scriptId: number ): number;
+    GetNumTags(): void;
+    GetSerial( part: 0 | 1 | 2 | 3 | 4 ): number;
+    GetTag( tag: string ): string | boolean | number;
+    GetTagMap(): void;
+    GetTempEffect( effectID: number ): number;
+    GetTempTag( tag: string ): string | boolean | number;
+    GetTempTagMap(): void;
+    HasScriptTrigger( scriptId: number ): boolean;
+    InRange( other: BaseObject ): boolean;
+    KillJSTimer( timerId: number, scriptId: number ): number;
+    KillTimers( triggerId?: number ): void;
+    NextItem(): void;
+    PauseJSTimer( timerId: number, scriptId: number ): number;
+    PauseTempEffect( effectID: number ): number;
+    Refresh(): void;
+    RemoveScriptTrigger( scriptId: number ): void;
+    Resist( resistType: WeatherType ): number | boolean;
+    Resist( resistType: WeatherType, newValue: number ): number | boolean;
+    ResourceCount( realId: number, itemColour?: number, moreVal?: number, sectionId?: string ): void;
+    ResumeJSTimer( timerId: number, scriptId: number ): number;
+    ResumeTempEffect( effectID: number ): number;
+    ReverseTempEffect( effectID: number ): number;
+    SetJSTimer( timerId: number, millis: number, scriptId: number ): number;
+    SetLocation( targetOrGoPlace: BaseObject | number ): void;
+    SetLocation( x: number, y: number, z?: number, world?: number, instance?: number ): void;
+    SetRandomColor( colorList: string ): boolean;
+    SetRandomName( nameList: string ): boolean;
+    SetTag( tag: string, value?: string | number | boolean | null ): void;
+    SetTempTag( tag: string, value?: string | number | boolean | null ): void;
+    StartTimer( expireTime: number, triggerNum: number, more2?: number | boolean ): void;
+    StaticEffect( effectId: number, speed: number, loop: number ): void;
+    Teleport( targetOrGoPlace: BaseObject | number ): void;
+    Teleport( x: number, y: number, z?: number, world?: number, instance?: number ): void;
+    TextMessage( message: string, individual?: boolean | undefined | null, hue?: number, target?: SpeechTarget, targetSerial?: number, font?: FontType, speechType?: SpeechType ): void;
+    UpdateStats( statType: number ): void;
+    UseResource( amount: number, realId: number, color?: number, moreVal?: number, sectionId?: string ): void;
   }
   type BaseOrNull = BaseObject | null | undefined;
   interface BaseSkills extends CertainSetOf {
@@ -314,6 +357,8 @@ declare global {
               wandertype:            number;
               willhunger:            boolean;
               willthirst:            boolean;
+    SetLocation(): void;
+    Teleport(): void;
   }
   type UOXChar_class = Character;
   type CharOrItem = Character | Item;
@@ -321,29 +366,29 @@ declare global {
   type CharOrSocket = Character | Socket;
   enum ClientFeature {
     CF_BIT_CHAT = 0,        // 0x01
-    CF_BIT_UOR,             // 0x02
-    CF_BIT_TD,              // 0x04
-    CF_BIT_LBR,             // 0x08 - Enables LBR features: mp3s instead of midi, show new LBR monsters
-    CF_BIT_AOS,             // 0x10 - Enable AoS monsters/map, AoS skills, Necro/Pala/Fight book stuff - works for 4.0+
-    CF_BIT_SIXCHARS,        // 0x20 - Enable sixth character slot
-    CF_BIT_SE,              // 0x40
-    CF_BIT_ML,              // 0x80 - Elven race, new spells, skills + housing tiles
-    CF_BIT_EIGHTAGE,        // 0x100 - Splash screen for 8th age
-    CF_BIT_NINTHAGE,        // 0x200 - Splash screen for 9th age
-    CF_BIT_TENTHAGE,        // 0x400 - Splash screen for 10th age - crystal/shadow house tiles
-    CF_BIT_UNKNOWN1,        // 0x800 - Increased housing/bank storage (6.0.3.0 or earlier)
-    CF_BIT_SEVENCHARS,      // 0x1000 - Enable seventh character slot
-    // CF_BIT_KRFACES,      // 0x2000 - KR release (6.0.0.0)
-    // CF_BIT_TRIAL,        // 0x4000 - Trial account
+    CF_BIT_UOR = 1,         // 0x02
+    CF_BIT_TD = 2,          // 0x04
+    CF_BIT_LBR = 3,         // 0x08 - Enables LBR features: mp3s instead of midi, show new LBR monsters
+    CF_BIT_AOS = 4,         // 0x10 - Enable AoS monsters/map, AoS skills, Necro/Pala/Fight book stuff - works for 4.0+
+    CF_BIT_SIXCHARS = 5,    // 0x20 - Enable sixth character slot
+    CF_BIT_SE = 6,          // 0x40
+    CF_BIT_ML = 7,          // 0x80 - Elven race, new spells, skills + housing tiles
+    CF_BIT_EIGHTAGE = 8,    // 0x100 - Splash screen for 8th age
+    CF_BIT_NINTHAGE = 9,    // 0x200 - Splash screen for 9th age
+    CF_BIT_TENTHAGE = 10,   // 0x400 - Splash screen for 10th age - crystal/shadow house tiles
+    CF_BIT_UNKNOWN1 = 11,   // 0x800 - Increased housing/bank storage (6.0.3.0 or earlier)
+    CF_BIT_SEVENCHARS = 12, // 0x1000 - Enable seventh character slot
+    // CF_BIT_KRFACES = 13, // 0x2000 - KR release (6.0.0.0)
+    // CF_BIT_TRIAL = 14,   // 0x4000 - Trial account
     CF_BIT_EXPANSION = 15,  // 0x8000 - Live account
-    CF_BIT_SA,              // 0x10000 - Enable SA features: gargoyle race, spells, skills, housing tiles - clients 6.0.14.2+
-    CF_BIT_HS,              // 0x20000 - Enable HS features: boats, new movementtype? ++
-    CF_BIT_GOTHHOUSE,       // 0x40000
-    CF_BIT_RUSTHOUSE,       // 0x80000
-    CF_BIT_JUNGLEHOUSE,     // 0x100000 - Enable Jungle housing tiles
-    CF_BIT_SHADOWHOUSE,     // 0x200000 - Enable Shadowguard housing tiles
-    CF_BIT_TOLHOUSE,        // 0x400000 - Enable Time of Legends features
-    CF_BIT_ENDLESSHOUSE,    // 0x800000 - Enable Endless Journey account
+    CF_BIT_SA = 16,         // 0x10000 - Enable SA features: gargoyle race, spells, skills, housing tiles - clients 6.0.14.2+
+    CF_BIT_HS = 17,         // 0x20000 - Enable HS features: boats, new movementtype? ++
+    CF_BIT_GOTHHOUSE = 18,  // 0x40000
+    CF_BIT_RUSTHOUSE = 19,  // 0x80000
+    CF_BIT_JUNGLEHOUSE = 20, // 0x100000 - Enable Jungle housing tiles
+    CF_BIT_SHADOWHOUSE = 21, // 0x200000 - Enable Shadowguard housing tiles
+    CF_BIT_TOLHOUSE = 22,   // 0x400000 - Enable Time of Legends features
+    CF_BIT_ENDLESSHOUSE = 23, // 0x800000 - Enable Endless Journey account
     CF_BIT_COUNT,          
   }
   enum CommandLevels {
@@ -396,6 +441,23 @@ declare global {
     readonly  spell:       number;
   }
   type UOXCreateEntry = CreateEntry;
+  enum FontType {
+    FNT_NULL = -1,          
+    FNT_BOLD = 0,           
+    FNT_TEXT_WITH_SHADOW = 1,
+    FNT_BOLD_PLUS_SHADOW = 2,
+    FNT_NORMAL = 3,         
+    FNT_GOTHIC = 4,         
+    FNT_ITALIC = 5,         
+    FNT_SMALL_DARK = 6,     
+    FNT_COLOURFUL = 7,      
+    FNT_RUNIC = 8,           // Only use CAPS!
+    FNT_SMALL_LIGHT = 9,    
+    FNT_TEN = 10,            // Unicode only
+    FNT_ELEVEN = 11,         // Unicode only
+    FNT_TWELVE = 12,         // Unicode only
+    FNT_UNKNOWN = 13,       
+  }
   interface Guild {
               abbreviation: string;
               charter:      string;
@@ -629,20 +691,20 @@ declare global {
   type uox_class = SCRIPT;
   enum ServerFeature {
     SF_BIT_UNKNOWN1 = 0,    // 0x01
-    SF_BIT_IGR,             // 0x02
-    SF_BIT_ONECHAR,         // 0x04 - One char only, Siege-server style
-    SF_BIT_CONTEXTMENUS,    // 0x08
-    SF_BIT_LIMITCHAR,       // 0x10 - Limit amount of chars, combine with OneChar
-    SF_BIT_AOS,             // 0x20 - Enable Tooltips, fight system book - but not monsters/map/skills/necro/pala classes
-    SF_BIT_SIXCHARS,        // 0x40 - Use 6 character slots instead of 5 (4.0.3a)
-    SF_BIT_SE,              // 0x80 - Samurai and Ninja classes, bushido, ninjitsu (4.0.5a)
-    SF_BIT_ML,              // 0x100 - Elven race, spellweaving (4.0.11d)
-    SF_BIT_UNKNOWN2,        // 0x200 - added with UO:KR launch (6.0.0.0)
-    SF_BIT_SEND3DTYPE,      // 0x400 - Send UO3D client type? KR and SA clients will send 0xE1)
-    SF_BIT_UNKNOWN4,        // 0x800 - added sometime between UO:KR and UO:SA
-    SF_BIT_SEVENCHARS,      // 0x1000 - Use 7 character slots instead of 5?6?, only 2D client?
-    SF_BIT_UNKNOWN5,        // 0x2000 - added with UO:SA launch, imbuing, mysticism, throwing? (7.0.0.0)
-    SF_BIT_NEWMOVE,         // 0x4000 - new movement system (packets 0xF0, 0xF1, 0xF2))
+    SF_BIT_IGR = 1,         // 0x02
+    SF_BIT_ONECHAR = 2,     // 0x04 - One char only, Siege-server style
+    SF_BIT_CONTEXTMENUS = 3, // 0x08
+    SF_BIT_LIMITCHAR = 4,   // 0x10 - Limit amount of chars, combine with OneChar
+    SF_BIT_AOS = 5,         // 0x20 - Enable Tooltips, fight system book - but not monsters/map/skills/necro/pala classes
+    SF_BIT_SIXCHARS = 6,    // 0x40 - Use 6 character slots instead of 5 (4.0.3a)
+    SF_BIT_SE = 7,          // 0x80 - Samurai and Ninja classes, bushido, ninjitsu (4.0.5a)
+    SF_BIT_ML = 8,          // 0x100 - Elven race, spellweaving (4.0.11d)
+    SF_BIT_UNKNOWN2 = 9,    // 0x200 - added with UO:KR launch (6.0.0.0)
+    SF_BIT_SEND3DTYPE = 10, // 0x400 - Send UO3D client type? KR and SA clients will send 0xE1)
+    SF_BIT_UNKNOWN4 = 11,   // 0x800 - added sometime between UO:KR and UO:SA
+    SF_BIT_SEVENCHARS = 12, // 0x1000 - Use 7 character slots instead of 5?6?, only 2D client?
+    SF_BIT_UNKNOWN5 = 13,   // 0x2000 - added with UO:SA launch, imbuing, mysticism, throwing? (7.0.0.0)
+    SF_BIT_NEWMOVE = 14,    // 0x4000 - new movement system (packets 0xF0, 0xF1, 0xF2))
     SF_BIT_FACTIONAREAS = 15, // 0x8000 - Unlock new Felucca faction-areas (map0x.mul?)
     SF_BIT_COUNT,           // 
   }
@@ -753,6 +815,39 @@ declare global {
   interface SpawnRegion {
   }
   type UOXSpawnRegion = SpawnRegion;
+  enum SpeechTarget {
+    SPTRG_NULL = -1,      
+    SPTRG_INDIVIDUAL = 0,  // aimed at individualperson
+    SPTRG_PCS = 1,         // all PCs in range
+    SPTRG_PCNPC = 2,       // all NPCs and PCs in range
+    SPTRG_BROADCASTPC = 3, // ALL PCs everywhere + NPCs in range
+    SPTRG_BROADCASTALL = 4,
+    SPTRG_ONLYRECEIVER = 5, // only the receiver
+  }
+  enum SpeechType {
+    UNKNOWN = -1,    
+    TALK = 0,         // normal system message
+    PROMPT = 1,       // Display as system prompt
+    EMOTE = 2,        // : text
+    SAY = 3,          // character speaking
+    OBJ = 4,          // at object
+    NOTHING = 5,      // does not display
+    SYSTEM = 6,       // text labelling an item
+    NOSCROLL = 7,     // status msg, does not scroll
+    WHISPER = 8,      // only those close can here
+    YELL = 9,         // can be heard 2 screens away
+    ASCIITALK = 192,  // ASCII version of TALK, all ASCII stuff is | 0xC0'd
+    ASCIIPROMPT = 193,
+    ASCIIEMOTE = 194,
+    ASCIISAY = 195,  
+    ASCIIOBJ = 196,  
+    ASCIINOTHING = 197,
+    ASCIISYSTEM = 198,
+    ASCIINOSCROLL = 199,
+    ASCIIWHISPER = 200,
+    ASCIIYELL = 201, 
+    BROADCAST = 255, 
+  }
   interface Spell {
     readonly  action:          number;
     readonly  aggressiveSpell: boolean;

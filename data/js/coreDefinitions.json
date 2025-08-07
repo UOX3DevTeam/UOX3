@@ -1890,7 +1890,112 @@
           "type": "number"
         }
       ],
-      "methods": []
+      "methods": [
+        { "name": "AddScriptTrigger",    "cppName": "CBase_AddScriptTrigger",     "params": { "num": 1, "list": [ { "name": "scriptId", "type": "number",     "required": true } ] }, "returns": "void" },
+        { "name": "ApplySection",        "cppName": "CBase_ApplySection",         "params": { "num": 1, "list": [ { "name": "section",  "type": "string",     "required": true } ] }, "returns": "void" },
+        { "name": "DistanceTo",          "cppName": "CBase_DistanceTo",           "params": { "num": 1, "list": [ { "name": "target",   "type": "BaseObject", "required": true } ] }, "returns": "number" },
+        { "name": "GetJSTimer",          "cppName": "CBase_GetJSTimer",           "params": { "num": 2, "list": [ { "name": "timerId",  "type": "number",     "required": true }, { "name": "scriptId",  "type": "number",     "required": true } ] }, "returns": "number" },
+        { "name": "GetSerial",           "cppName": "CBase_GetSerial",            "params": { "num": 1, "list": [ { "name": "part",     "type": "0 | 1 | 2 | 3 | 4", "required": true } ] }, "returns": "number" },
+        { "name": "GetTag",              "cppName": "CBase_GetTag",               "params": { "num": 1, "list": [ { "name": "tag",      "type": "string",     "required": true } ] }, "returns": "string | boolean | number" },
+        { "name": "GetTempEffect",       "cppName": "CBase_GetTempEffect",        "params": { "num": 1, "list": [ { "name": "effectID", "type": "number",     "required": true } ] }, "returns": "number" },
+        { "name": "GetTempTag",          "cppName": "CBase_GetTempTag",           "params": { "num": 1, "list": [ { "name": "tag",      "type": "string",     "required": true } ] }, "returns": "string | boolean | number" },
+        { "name": "HasScriptTrigger",    "cppName": "CBase_HasScriptTrigger",     "params": { "num": 1, "list": [ { "name": "scriptId", "type": "number",     "required": true } ] }, "returns": "boolean" },
+        { "name": "InRange",             "cppName": "CBase_InRange",              "params": { "num": 2, "list": [ { "name": "other",    "type": "BaseObject", "required": true } ] }, "returns": "boolean" },
+        { "name": "KillJSTimer",         "cppName": "CBase_KillJSTimer",          "params": { "num": 2, "list": [ { "name": "timerId",  "type": "number",     "required": true }, { "name": "scriptId",  "type": "number",     "required": true } ] }, "returns": "number" },
+        { "name": "KillTimers",          "cppName": "CBase_KillTimers",           "params": { "num": 1, "list": [ { "name": "triggerId","type": "number",     "required": false} ] }, "returns": "void" },
+        { "name": "PauseJSTimer",        "cppName": "CBase_PauseJSTimer",         "params": { "num": 2, "list": [ { "name": "timerId",  "type": "number",     "required": true }, { "name": "scriptId",  "type": "number",     "required": true } ] }, "returns": "number" },
+        { "name": "PauseTempEffect",     "cppName": "CBase_PauseTempEffect",      "params": { "num": 1, "list": [ { "name": "effectID", "type": "number",     "required": true } ] }, "returns": "number" },
+        { "name": "RemoveScriptTrigger", "cppName": "CBase_RemoveScriptTrigger",  "params": { "num": 1, "list": [ { "name": "scriptId", "type": "number", "required": true } ] }, "returns": "void" },
+        { "name": "Resist",              "cppName": "CBase_Resist",               "params": { 
+          "sets": [
+            { "num": 1, "list": [ { "name": "resistType", "type": "WeatherType", "required": true } ] },
+            { "num": 2, "list": [ { "name": "resistType", "type": "WeatherType", "required": true }, { "name": "newValue", "type": "number", "required": true } ] }
+          ] },
+          "returns": "number | boolean" },
+        { "name": "ResourceCount",       "cppName": "CBase_ResourceCount",        "params": { "num": 1, "max": 4, "list": [ 
+          { "name": "realId",     "type": "number", "required":  true },
+          { "name": "itemColour", "type": "number", "required": false },
+          { "name": "moreVal",    "type": "number", "required": false },
+          { "name": "sectionId",  "type": "string", "required": false }
+        ] }, "returns": "void" },
+        { "name": "ResumeJSTimer",       "cppName": "CBase_ResumeJSTimer",        "params": { "num": 2, "list": [ { "name": "timerId",  "type": "number",     "required": true }, { "name": "scriptId",  "type": "number",     "required": true } ] }, "returns": "number" },
+        { "name": "ResumeTempEffect",    "cppName": "CBase_ResumeTempEffect",     "params": { "num": 1, "list": [ { "name": "effectID", "type": "number",     "required": true } ] }, "returns": "number" },
+        { "name": "ReverseTempEffect",   "cppName": "CBase_ReverseTempEffect",    "params": { "num": 1, "list": [ { "name": "effectID", "type": "number",     "required": true } ] }, "returns": "number" },
+        { "name": "SetJSTimer",          "cppName": "CBase_SetJSTimer",           "params": { "num": 3, "list": [ 
+          { "name": "timerId",  "type": "number",     "required": true }, 
+          { "name": "millis",   "type": "number",     "required": true },
+          { "name": "scriptId", "type": "number",     "required": true }
+        ] }, "returns": "number" },
+        { "name": "SetLocation",         "cppName": "CBase_Teleport",             "params": { 
+          "sets": [
+            { "num": 1,           "list": [ { "name": "targetOrGoPlace", "type": "BaseObject | number", "required": true } ] },
+            { "num": 2, "max": 5, "list": [
+              { "name": "x",        "type": "number", "required": true  },
+              { "name": "y",        "type": "number", "required": true  },
+              { "name": "z",        "type": "number", "required": false },
+              { "name": "world",    "type": "number", "required": false },
+              { "name": "instance", "type": "number", "required": false }
+              ]
+            }
+          ] }, "returns": "void" },
+        { "name": "SetRandomColor",      "cppName": "CBase_SetRandomColor",       "params": { "num": 1, "list": [ { "name": "colorList", "type": "string", "required": true } ] }, "returns": "boolean" },
+        { "name": "SetRandomName",       "cppName": "CBase_SetRandomName",        "params": { "num": 1, "list": [ { "name": "nameList",  "type": "string", "required": true } ] }, "returns": "boolean" },
+        { "name": "SetTag",              "cppName": "CBase_SetTag",               "params": { "num": 1, "max": 2, "list": [ 
+          { "name": "tag",   "type": "string",                           "required": true },
+          { "name": "value", "type": "string | number | boolean | null", "required": false } ]
+        }, "returns": "void" },
+        { "name": "SetTempTag",          "cppName": "CBase_SetTempTag",           "params": { "num": 1, "max": 2, "list": [ 
+          { "name": "tag",   "type": "string",                           "required": true },
+          { "name": "value", "type": "string | number | boolean | null", "required": false } ]
+        }, "returns": "void" },
+        { "name": "StartTimer",          "cppName": "CBase_StartTimer",           "params": { "num": 2, "max": 3, "list": [ 
+          { "name": "expireTime", "type": "number",           "required": true  },
+          { "name": "triggerNum", "type": "number",           "required": true  },
+          { "name": "more2",      "type": "number | boolean", "required": false }
+          ] }, "returns": "void" },
+        { "name": "StaticEffect",        "cppName": "CBase_StaticEffect",         "params": { "num": 3, "list": [ 
+          { "name": "effectId", "type": "number", "required": true },
+          { "name": "speed",    "type": "number", "required": true },
+          { "name": "loop",     "type": "number", "required": true }
+          ] }, "returns": "void" },
+        { "name": "Teleport",            "cppName": "CBase_Teleport",             "params": { 
+          "sets": [
+            { "num": 1,           "list": [ { "name": "targetOrGoPlace", "type": "BaseObject | number", "required": true } ] },
+            { "num": 2, "max": 5, "list": [
+              { "name": "x",        "type": "number", "required": true  },
+              { "name": "y",        "type": "number", "required": true  },
+              { "name": "z",        "type": "number", "required": false },
+              { "name": "world",    "type": "number", "required": false },
+              { "name": "instance", "type": "number", "required": false }
+              ]
+            }
+          ] }, "returns": "void" },
+        { "name": "TextMessage",         "cppName": "CBase_TextMessage",          "params": { "num": 1, "max": 7, "list": [
+          { "name": "message",      "type": "string", "required": true },
+          { "name": "individual",   "type": "boolean | undefined | null", "required": false },
+          { "name": "hue",          "type": "number", "required": false },
+          { "name": "target",       "type": "SpeechTarget", "required": false },
+          { "name": "targetSerial", "type": "number", "required": false },
+          { "name": "font",         "type": "FontType", "required": false },
+          { "name": "speechType",   "type": "SpeechType", "required": false }
+          ] }, "returns": "void" },
+        { "name": "UpdateStats",         "cppName": "CBase_UpdateStats",          "params": { "num": 1, "list": [ { "name": "statType", "type": "number", "required": true } ] }, "returns": "void" },
+        { "name": "UseResource",         "cppName": "CBase_UseResource",          "params": { "num": 2, "max": 5, "list": [ 
+          { "name": "amount",    "type": "number", "required": true },
+          { "name": "realId",    "type": "number", "required": true },
+          { "name": "color",     "type": "number", "required": false },
+          { "name": "moreVal",   "type": "number", "required": false },
+          { "name": "sectionId", "type": "string", "required": false }
+          ] }, "returns": "void" },
+        { "name": "Delete",              "cppName": "CBase_Delete",               "params": { "num": 0, "list": [] }, "returns": "void" },
+        { "name": "FinishedItems",       "cppName": "CBase_FinishedItems",        "params": { "num": 0, "list": [] }, "returns": "void" },
+        { "name": "FirstItem",           "cppName": "CBase_FirstItem",            "params": { "num": 0, "list": [] }, "returns": "void" },
+        { "name": "GetNumTags",          "cppName": "CBase_GetNumTags",           "params": { "num": 0, "list": [] }, "returns": "void" },
+        { "name": "GetTagMap",           "cppName": "CBase_GetTagMap",            "params": { "num": 0, "list": [] }, "returns": "void" },
+        { "name": "GetTempTagMap",       "cppName": "CBase_GetTempTagMap",        "params": { "num": 0, "list": [] }, "returns": "void" },
+        { "name": "NextItem",            "cppName": "CBase_NextItem",             "params": { "num": 0, "list": [] }, "returns": "void" },
+        { "name": "Refresh",             "cppName": "CBase_Refresh",              "params": { "num": 0, "list": [] }, "returns": "void" }
+      ]
     },
     {
       "name": "Spell",
@@ -4032,7 +4137,17 @@
           "type": "boolean"
         }
       ],
-      "methods": []
+      "methods": [
+        { "name": "SetLocation",         "cppName": "CBase_Teleport",             "params": { 
+          "sets": [
+            { "num": 0, "list": [] }
+          ] }, "returns": "void" },
+        { "name": "Teleport",            "cppName": "CBase_Teleport",             "params": { 
+          "sets": [
+            { "num": 0, "list": [] }
+          ] }, "returns": "void" }
+
+      ]
     },
     {
       "name": "Item",
@@ -6186,30 +6301,30 @@
     {
       "name": "ClientFeature",
       "values": [
-        { "label": "CF_BIT_CHAT",      "value": 0,  "comment": "0x01" },
-        { "label": "CF_BIT_UOR",                    "comment": "0x02" },
-        { "label": "CF_BIT_TD",                     "comment": "0x04" },
-        { "label": "CF_BIT_LBR",                    "comment": "0x08 - Enables LBR features: mp3s instead of midi, show new LBR monsters" },
-        { "label": "CF_BIT_AOS",                    "comment": "0x10 - Enable AoS monsters/map, AoS skills, Necro/Pala/Fight book stuff - works for 4.0+" },
-        { "label": "CF_BIT_SIXCHARS",               "comment": "0x20 - Enable sixth character slot" },
-        { "label": "CF_BIT_SE",                     "comment": "0x40" },
-        { "label": "CF_BIT_ML",                     "comment": "0x80 - Elven race, new spells, skills + housing tiles" },
-        { "label": "CF_BIT_EIGHTAGE",               "comment": "0x100 - Splash screen for 8th age" },
-        { "label": "CF_BIT_NINTHAGE",               "comment": "0x200 - Splash screen for 9th age" },
-        { "label": "CF_BIT_TENTHAGE",               "comment": "0x400 - Splash screen for 10th age - crystal/shadow house tiles" },
-        { "label": "CF_BIT_UNKNOWN1",               "comment": "0x800 - Increased housing/bank storage (6.0.3.0 or earlier)" },
-        { "label": "CF_BIT_SEVENCHARS",             "comment": "0x1000 - Enable seventh character slot" },
-        { "label": "CF_BIT_KRFACES",                "comment": "0x2000 - KR release (6.0.0.0)", "disabled": true },
-        { "label": "CF_BIT_TRIAL",                  "comment": "0x4000 - Trial account", "disabled": true },
-        { "label": "CF_BIT_EXPANSION", "value": 15, "comment": "0x8000 - Live account" },
-        { "label": "CF_BIT_SA",                     "comment": "0x10000 - Enable SA features: gargoyle race, spells, skills, housing tiles - clients 6.0.14.2+" },
-        { "label": "CF_BIT_HS",                     "comment": "0x20000 - Enable HS features: boats, new movementtype? ++" },
-        { "label": "CF_BIT_GOTHHOUSE",              "comment": "0x40000" },
-        { "label": "CF_BIT_RUSTHOUSE",              "comment": "0x80000" },
-        { "label": "CF_BIT_JUNGLEHOUSE",            "comment": "0x100000 - Enable Jungle housing tiles" },
-        { "label": "CF_BIT_SHADOWHOUSE",            "comment": "0x200000 - Enable Shadowguard housing tiles" },
-        { "label": "CF_BIT_TOLHOUSE",               "comment": "0x400000 - Enable Time of Legends features" },
-        { "label": "CF_BIT_ENDLESSHOUSE",           "comment": "0x800000 - Enable Endless Journey account" },
+        { "label": "CF_BIT_CHAT",         "value": 0,  "comment": "0x01" },
+        { "label": "CF_BIT_UOR",          "value": 1,  "comment": "0x02" },
+        { "label": "CF_BIT_TD",           "value": 2,  "comment": "0x04" },
+        { "label": "CF_BIT_LBR",          "value": 3,  "comment": "0x08 - Enables LBR features: mp3s instead of midi, show new LBR monsters" },
+        { "label": "CF_BIT_AOS",          "value": 4,  "comment": "0x10 - Enable AoS monsters/map, AoS skills, Necro/Pala/Fight book stuff - works for 4.0+" },
+        { "label": "CF_BIT_SIXCHARS",     "value": 5,  "comment": "0x20 - Enable sixth character slot" },
+        { "label": "CF_BIT_SE",           "value": 6,  "comment": "0x40" },
+        { "label": "CF_BIT_ML",           "value": 7,  "comment": "0x80 - Elven race, new spells, skills + housing tiles" },
+        { "label": "CF_BIT_EIGHTAGE",     "value": 8,  "comment": "0x100 - Splash screen for 8th age" },
+        { "label": "CF_BIT_NINTHAGE",     "value": 9,  "comment": "0x200 - Splash screen for 9th age" },
+        { "label": "CF_BIT_TENTHAGE",     "value": 10, "comment": "0x400 - Splash screen for 10th age - crystal/shadow house tiles" },
+        { "label": "CF_BIT_UNKNOWN1",     "value": 11, "comment": "0x800 - Increased housing/bank storage (6.0.3.0 or earlier)" },
+        { "label": "CF_BIT_SEVENCHARS",   "value": 12, "comment": "0x1000 - Enable seventh character slot" },
+        { "label": "CF_BIT_KRFACES",      "value": 13, "comment": "0x2000 - KR release (6.0.0.0)", "disabled": true },
+        { "label": "CF_BIT_TRIAL",        "value": 14, "comment": "0x4000 - Trial account", "disabled": true },
+        { "label": "CF_BIT_EXPANSION",    "value": 15, "comment": "0x8000 - Live account" },
+        { "label": "CF_BIT_SA",           "value": 16, "comment": "0x10000 - Enable SA features: gargoyle race, spells, skills, housing tiles - clients 6.0.14.2+" },
+        { "label": "CF_BIT_HS",           "value": 17, "comment": "0x20000 - Enable HS features: boats, new movementtype? ++" },
+        { "label": "CF_BIT_GOTHHOUSE",    "value": 18, "comment": "0x40000" },
+        { "label": "CF_BIT_RUSTHOUSE",    "value": 19, "comment": "0x80000" },
+        { "label": "CF_BIT_JUNGLEHOUSE",  "value": 20, "comment": "0x100000 - Enable Jungle housing tiles" },
+        { "label": "CF_BIT_SHADOWHOUSE",  "value": 21, "comment": "0x200000 - Enable Shadowguard housing tiles" },
+        { "label": "CF_BIT_TOLHOUSE",     "value": 22, "comment": "0x400000 - Enable Time of Legends features" },
+        { "label": "CF_BIT_ENDLESSHOUSE", "value": 23, "comment": "0x800000 - Enable Endless Journey account" },
         { "label": "CF_BIT_COUNT" }
       ]
     },
@@ -6217,20 +6332,20 @@
       "name": "ServerFeature",
       "values": [
         { "label": "SF_BIT_UNKNOWN1",     "value": 0,  "comment": "0x01" },
-        { "label": "SF_BIT_IGR",                       "comment": "0x02" },
-        { "label": "SF_BIT_ONECHAR",                   "comment": "0x04 - One char only, Siege-server style" },
-        { "label": "SF_BIT_CONTEXTMENUS",              "comment": "0x08" },
-        { "label": "SF_BIT_LIMITCHAR",                 "comment": "0x10 - Limit amount of chars, combine with OneChar" },
-        { "label": "SF_BIT_AOS",                       "comment": "0x20 - Enable Tooltips, fight system book - but not monsters/map/skills/necro/pala classes" },
-        { "label": "SF_BIT_SIXCHARS",                  "comment": "0x40 - Use 6 character slots instead of 5 (4.0.3a)" },
-        { "label": "SF_BIT_SE",                        "comment": "0x80 - Samurai and Ninja classes, bushido, ninjitsu (4.0.5a)" },
-        { "label": "SF_BIT_ML",                        "comment": "0x100 - Elven race, spellweaving (4.0.11d)" },
-        { "label": "SF_BIT_UNKNOWN2",                  "comment": "0x200 - added with UO:KR launch (6.0.0.0)" },
-        { "label": "SF_BIT_SEND3DTYPE",                "comment": "0x400 - Send UO3D client type? KR and SA clients will send 0xE1)" },
-        { "label": "SF_BIT_UNKNOWN4",                  "comment": "0x800 - added sometime between UO:KR and UO:SA" },
-        { "label": "SF_BIT_SEVENCHARS",                "comment": "0x1000 - Use 7 character slots instead of 5?6?, only 2D client?" },
-        { "label": "SF_BIT_UNKNOWN5",                  "comment": "0x2000 - added with UO:SA launch, imbuing, mysticism, throwing? (7.0.0.0)" },
-        { "label": "SF_BIT_NEWMOVE",                   "comment": "0x4000 - new movement system (packets 0xF0, 0xF1, 0xF2))" },
+        { "label": "SF_BIT_IGR",          "value": 1,  "comment": "0x02" },
+        { "label": "SF_BIT_ONECHAR",      "value": 2,  "comment": "0x04 - One char only, Siege-server style" },
+        { "label": "SF_BIT_CONTEXTMENUS", "value": 3,  "comment": "0x08" },
+        { "label": "SF_BIT_LIMITCHAR",    "value": 4,  "comment": "0x10 - Limit amount of chars, combine with OneChar" },
+        { "label": "SF_BIT_AOS",          "value": 5,  "comment": "0x20 - Enable Tooltips, fight system book - but not monsters/map/skills/necro/pala classes" },
+        { "label": "SF_BIT_SIXCHARS",     "value": 6,  "comment": "0x40 - Use 6 character slots instead of 5 (4.0.3a)" },
+        { "label": "SF_BIT_SE",           "value": 7,  "comment": "0x80 - Samurai and Ninja classes, bushido, ninjitsu (4.0.5a)" },
+        { "label": "SF_BIT_ML",           "value": 8,  "comment": "0x100 - Elven race, spellweaving (4.0.11d)" },
+        { "label": "SF_BIT_UNKNOWN2",     "value": 9,  "comment": "0x200 - added with UO:KR launch (6.0.0.0)" },
+        { "label": "SF_BIT_SEND3DTYPE",   "value": 10, "comment": "0x400 - Send UO3D client type? KR and SA clients will send 0xE1)" },
+        { "label": "SF_BIT_UNKNOWN4",     "value": 11, "comment": "0x800 - added sometime between UO:KR and UO:SA" },
+        { "label": "SF_BIT_SEVENCHARS",   "value": 12, "comment": "0x1000 - Use 7 character slots instead of 5?6?, only 2D client?" },
+        { "label": "SF_BIT_UNKNOWN5",     "value": 13, "comment": "0x2000 - added with UO:SA launch, imbuing, mysticism, throwing? (7.0.0.0)" },
+        { "label": "SF_BIT_NEWMOVE",      "value": 14, "comment": "0x4000 - new movement system (packets 0xF0, 0xF1, 0xF2))" },
         { "label": "SF_BIT_FACTIONAREAS", "value": 15, "comment": "0x8000 - Unlock new Felucca faction-areas (map0x.mul?)" },
         { "label": "SF_BIT_COUNT",                     "comment": "" }
       ]
@@ -6494,6 +6609,65 @@
           },
           "returns": "void"
         }
+      ]
+    },
+    {
+      "name": "SpeechTarget",
+      "values": [
+        { "label": "SPTRG_NULL",         "value": -1 },
+        { "label": "SPTRG_INDIVIDUAL",   "value": 0, "comment": "aimed at individualperson" },
+        { "label": "SPTRG_PCS",          "value": 1, "comment": "all PCs in range" },
+        { "label": "SPTRG_PCNPC",        "value": 2, "comment": "all NPCs and PCs in range" },
+        { "label": "SPTRG_BROADCASTPC",  "value": 3, "comment": "ALL PCs everywhere + NPCs in range" },
+        { "label": "SPTRG_BROADCASTALL", "value": 4 },
+        { "label": "SPTRG_ONLYRECEIVER", "value": 5, "comment": "only the receiver" }
+      ]
+    },
+    {
+      "name": "FontType",
+      "values": [
+        { "label": "FNT_NULL",             "value": -1 },
+        { "label": "FNT_BOLD",             "value":  0 },
+        { "label": "FNT_TEXT_WITH_SHADOW", "value": 1 },
+        { "label": "FNT_BOLD_PLUS_SHADOW", "value": 2 },
+        { "label": "FNT_NORMAL",           "value": 3 },
+        { "label": "FNT_GOTHIC",           "value": 4 },
+        { "label": "FNT_ITALIC",           "value": 5 },
+        { "label": "FNT_SMALL_DARK",       "value": 6 },
+        { "label": "FNT_COLOURFUL",        "value": 7 },
+        { "label": "FNT_RUNIC",            "value": 8, "comment": "Only use CAPS!" },
+        { "label": "FNT_SMALL_LIGHT",      "value": 9 },
+        { "label": "FNT_TEN",              "value": 10, "comment": "Unicode only" },
+        { "label": "FNT_ELEVEN",           "value": 11, "comment": "Unicode only" },
+        { "label": "FNT_TWELVE",           "value": 12, "comment": "Unicode only" },
+        { "label": "FNT_UNKNOWN",          "value": 13 }
+      ]
+    },
+    {
+      "name": "SpeechType",
+      "values": [
+        { "label": "UNKNOWN",       "value": -1 },
+        { "label": "TALK",          "value": 0, "comment": "normal system message" },
+        { "label": "PROMPT",        "value": 1, "comment": "Display as system prompt" },
+        { "label": "EMOTE",         "value": 2, "comment": ": text" },
+        { "label": "SAY",           "value": 3, "comment": "character speaking" },
+        { "label": "OBJ",           "value": 4, "comment": "at object" },
+        { "label": "NOTHING",       "value": 5, "comment": "does not display" },
+        { "label": "SYSTEM",        "value": 6, "comment": "text labelling an item" },
+        { "label": "NOSCROLL",      "value": 7, "comment": "status msg, does not scroll" },
+        { "label": "WHISPER",       "value": 8, "comment": "only those close can here" },
+        { "label": "YELL",          "value": 9, "comment": "can be heard 2 screens away" },
+        { "label": "ASCIITALK",     "value": 192, "comment": "ASCII version of TALK, all ASCII stuff is | 0xC0'd" },
+        { "label": "ASCIIPROMPT",   "value": 193 },
+        { "label": "ASCIIEMOTE",    "value": 194 },
+        { "label": "ASCIISAY",      "value": 195 },
+        { "label": "ASCIIOBJ",      "value": 196 },
+        { "label": "ASCIINOTHING",  "value": 197 },
+        { "label": "ASCIISYSTEM",   "value": 198 },
+        { "label": "ASCIINOSCROLL", "value": 199 },
+        { "label": "ASCIIWHISPER",  "value": 200 },
+        { "label": "ASCIIYELL",     "value": 201 },
+        { "label": "BROADCAST",     "value": 255 }
       ]
     },
     {
