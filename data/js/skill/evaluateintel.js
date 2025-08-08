@@ -31,7 +31,7 @@ function onCallback0( pSock, ourObj )
 		{
 			pSock.SysMessage( GetDictionaryEntry( 393, pSock.language )); // That is too far away.
 		}
-		else if( !pUser.CheckSkill( 16, 0, 1000 ))
+		else if( !pUser.CheckSkill( 16, 0, pUser.skillCaps.evaluatingintel ))
 		{
 			pSock.SysMessage( GetDictionaryEntry( 1504, pSock.language )); // You are not certain...
 		}

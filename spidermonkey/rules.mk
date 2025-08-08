@@ -43,15 +43,15 @@
 #
 
 ifdef USE_MSVC
-LIB_OBJS  = $(addprefix $(OBJDIR)/, $(LIB_CFILES:.c=.obj))
-PROG_OBJS = $(addprefix $(OBJDIR)/, $(PROG_CFILES:.c=.obj))
+LIB_OBJS  = $(addprefix $(OBJDIR)/, $(LIB_CPPFILES:.cpp=.obj))
+PROG_OBJS = $(addprefix $(OBJDIR)/, $(PROG_CPPFILES:.cpp=.obj))
 else
-LIB_OBJS  = $(addprefix $(OBJDIR)/, $(LIB_CFILES:.c=.o))
+LIB_OBJS  = $(addprefix $(OBJDIR)/, $(LIB_CPPFILES:.cpp=.o))
 LIB_OBJS  += $(addprefix $(OBJDIR)/, $(LIB_ASFILES:.s=.o))
-PROG_OBJS = $(addprefix $(OBJDIR)/, $(PROG_CFILES:.c=.o))
+PROG_OBJS = $(addprefix $(OBJDIR)/, $(PROG_CPPFILES:.cpp=.o))
 endif
 
-CFILES = $(LIB_CFILES) $(PROG_CFILES)
+CPPFILES = $(LIB_CPPFILES) $(PROG_CPPFILES)
 OBJS   = $(LIB_OBJS) $(PROG_OBJS)
 
 ifdef USE_MSVC
@@ -68,36 +68,51 @@ ifneq "$(strip $(TARGETS))" ""
 endif
 	+$(LOOP_OVER_DIRS)
 
-$(OBJDIR)/%: %.c
+$(OBJDIR)/%: %.cpp
 	@$(MAKE_OBJDIR)
-	$(CC) -o $@ $(CFLAGS) $*.c $(LDFLAGS)
+	$(CXX) -o $@ $(CFLAGS) $(OPTIMIZER) $< $(LDFLAGS)
 
 # This rule must come before the rule with no dep on header
-$(OBJDIR)/%.o: %.c %.h
+$(OBJDIR)/%.o: %.cpp %.h
 	@$(MAKE_OBJDIR)
-	$(CC) -o $@ -c $(CFLAGS) $*.c
+	$(CXX) -o $@ -c $(CFLAGS) $(OPTIMIZER) $<
 
-
-$(OBJDIR)/%.o: %.c
+$(OBJDIR)/jsinterp.o: jsinterp.cpp jsinterp.h
 	@$(MAKE_OBJDIR)
-	$(CC) -o $@ -c $(CFLAGS) $*.c
+	$(CXX) -o $@ -c $(CFLAGS) $(INTERP_OPTIMIZER) jsinterp.cpp
+
+$(OBJDIR)/jsbuiltins.o: jsbuiltins.cpp jsinterp.h
+	@$(MAKE_OBJDIR)
+	$(CXX) -o $@ -c $(CFLAGS) $(BUILTINS_OPTIMIZER) jsbuiltins.cpp
+
+$(OBJDIR)/%.o: %.cpp
+	@$(MAKE_OBJDIR)
+	$(CXX) -o $@ -c $(CFLAGS) $(OPTIMIZER) $<
 
 $(OBJDIR)/%.o: %.s
 	@$(MAKE_OBJDIR)
-	$(AS) -o $@ $(ASFLAGS) $*.s
+	$(AS) -o $@ $(ASFLAGS) $<
 
 # This rule must come before rule with no dep on header
-$(OBJDIR)/%.obj: %.c %.h
+$(OBJDIR)/%.obj: %.cpp %.h
 	@$(MAKE_OBJDIR)
-	$(CC) -Fo$(OBJDIR)/ -c $(CFLAGS) $(JSDLL_CFLAGS) $*.c
+	$(CXX) -Fo$(OBJDIR)/ -c $(CFLAGS) $(JSDLL_CFLAGS) $(OPTIMIZER) $<
 
-$(OBJDIR)/%.obj: %.c
+$(OBJDIR)/jsinterp.obj: jsinterp.cpp jsinterp.h
 	@$(MAKE_OBJDIR)
-	$(CC) -Fo$(OBJDIR)/ -c $(CFLAGS) $(JSDLL_CFLAGS) $*.c
+	$(CXX) -Fo$(OBJDIR)/ -c $(CFLAGS) $(JSDLL_CFLAGS) $(INTERP_OPTIMIZER) jsinterp.cpp
 
-$(OBJDIR)/js.obj: js.c
+$(OBJDIR)/jsbuiltins.obj: jsbuiltins.cpp jsinterp.h
 	@$(MAKE_OBJDIR)
-	$(CC) -Fo$(OBJDIR)/ -c $(CFLAGS) $<
+	$(CXX) -Fo$(OBJDIR)/ -c $(CFLAGS) $(JSDLL_CFLAGS) $(BUILTINS_OPTIMIZER) jsbuiltins.cpp
+
+$(OBJDIR)/%.obj: %.cpp
+	@$(MAKE_OBJDIR)
+	$(CXX) -Fo$(OBJDIR)/ -c $(CFLAGS) $(JSDLL_CFLAGS) $(OPTIMIZER) $<
+
+$(OBJDIR)/js.obj: js.cpp
+	@$(MAKE_OBJDIR)
+	$(CXX) -Fo$(OBJDIR)/ -c $(CFLAGS) $(OPTIMIZER) $<
 
 ifeq ($(OS_ARCH),OS2)
 $(LIBRARY): $(LIB_OBJS)
@@ -177,15 +192,13 @@ endif
 	+$(LOOP_OVER_DIRS)
 
 clean:
+	+$(LOOP_OVER_PREDIRS)
 	rm -rf $(OBJS) $(GARBAGE)
-	@cd fdlibm; $(MAKE) -f Makefile.ref clean
 
 clobber:
-	rm -rf $(OBJS) $(TARGETS) $(DEPENDENCIES)
-	@cd fdlibm; $(MAKE) -f Makefile.ref clobber
-
-depend:
-	gcc -MM $(CFLAGS) $(LIB_CFILES)
+	+$(LOOP_OVER_PREDIRS)
+	rm -rf $(OBJS) $(TARGETS) $(DEPENDENCIES) $(GARBAGE)
+	if test -d $(OBJDIR); then rmdir $(OBJDIR); fi
 
 tar:
 	tar cvf $(TARNAME) $(TARFILES)

@@ -3,6 +3,10 @@ function SkillRegistration()
 	RegisterSkill( 22, true );	// Provocation
 }
 
+// Override to 0/1 as desired, by default only enabled for AoS and beyond
+const isProvokeDifficultyBased = ( GetServerSetting( "CoreShardEra" ) >= EraStringToNum ( "aos" ));
+const useLoSCheckForProvocation = true;
+
 function onSkill( pUser, objType, skillUsed )
 {
 	var pSock = pUser.socket;
@@ -59,8 +63,17 @@ function onCallback0( pSock, ourObj )
 			}
 
 			var pUser = pSock.currentChar;
+
+			// Can player see the target?
+			if( useLoSCheckForProvocation && !pUser.CanSee( ourObj ))
+			{
+				pSock.SysMessage( GetDictionaryEntry( 1646, pSock.language )); // You cannot see that
+				return;
+			}
+
 			if( ValidateObject( pUser ))
 			{
+				// TODO: At some point, base range of all bard abilities was 8, with increase of 1 tile per 15 points of skill in the ability
 				if( !pUser.InRange( ourObj, 10 ))
 				{
 					pSock.SysMessage( GetDictionaryEntry( 393, pSock.language )); // That is too far away.
@@ -75,6 +88,7 @@ function onCallback0( pSock, ourObj )
 				}
 				else
 				{
+					pSock.SysMessage( "lastInstrument: " + pUser.GetTempTag( "lastInstrument" ));
 					pSock.SysMessage( GetDictionaryEntry( 1438, pSock.language )); // You do not have an instrument to play on!
 				}
 			}
@@ -110,9 +124,10 @@ function onCallback1( pSock, toAttack )
 				return;
 			}
 
-			// Are the two NPCs involved too far away from one another?
+			// TODO: At some point, base range of all bard abilities was 8, with increase of 1 tile per 15 points of skill in the ability
 			if( !pAttacker.InRange( toAttack, 10 ))
 			{
+				// The two NPCs involved are too far away from one another
 				pSock.SysMessage( GetDictionaryEntry( 393, pSock.language )); // That is too far away.
 				return;
 			}
@@ -131,13 +146,61 @@ function onCallback1( pSock, toAttack )
 			}
 			else
 			{
+				// If provoker is a Young player, and target is a player, or a player's pet - disallow
+				if( GetServerSetting( "YoungPlayerSystem" ))
+				{
+					if( pUser.account.isYoung && ( !toAttack.npc || ( ValidateObject( toAttack.owner ) && !toAttack.owner.npc )))
+					{
+						pSock.SysMessage( GetDictionaryEntry( 18736, pSock.language )); // Because of your young status in Britannia you cannot provoke the beast onto another player yet.
+						return;
+					}
+					if(( !toAttack.npc && toAttack.account.isYoung ) || ( toAttack.npc && ValidateObject( toAttack.owner ) && !toAttack.owner.npc && toAttack.owner.account.isYoung ))
+					{
+						// Disallow provoking creatures onto Young players, or their pets
+						pSock.SysMessage( GetDictionaryEntry( 18737, pSock.language )); // You cannot provoke the beast onto this player.
+						return;
+					}
+				}
+
+				// Check for Facet Ruleset
+				if( DoesEventExist( 2507, "FacetRuleBardProvoke" ))
+				{
+					if( !TriggerEvent( 2507, "FacetRuleBardProvoke", pUser, toAttack ))
+					{
+						return;
+					}
+				}
+
+				// Ensure target can see secondary target
+				if( useLoSCheckForProvocation && !pAttacker.CanSee( toAttack ))
+				{
+					// No line of sight
+					pAttacker.TextMessage( GetDictionaryEntry( 1669, pSock.language ), false, 0x3b2, 0, pUser.serial ); // Cannot see target!
+					return;
+				}
+
 				var myInstrument = GetInstrument( pUser );
 				if( ValidateObject( myInstrument ))
 				{
-					if( pUser.CheckSkill( 29, 0, 1000 ))	// Musicianship
+					if( pUser.CheckSkill( 29, 0, pUser.skillCaps.musicianship ))	// Musicianship
 					{
 						PlayInstrument( pSock, myInstrument, true );
-						if( pUser.CheckSkill( 22, pAttacker.skillToProv, 1200 ))	// Provocation
+
+						var minDifficulty = pAttacker.skillToProv;
+						var maxDifficulty = pUser.skillCaps.provocation;
+						if( isProvokeDifficultyBased )
+						{
+							// (See setting at top of file)
+							// In Publish 16 (considered AoS in UOX3) and later, difficulty to provoke is based on average of attacker & target
+							// Additionally, there's a window of -25.0 to +25.0 where player has chance of success/can still gain skill
+							minDifficulty = (( pAttacker.skillToProv + toAttack.skillToProv ) / 2 ) - 250;
+							maxDifficulty = minDifficulty + 250;
+						}
+
+						// TODO: At some point, musicianship skill started giving 1% success bonus per point of musicianship over 100.0
+						// for attempts at Discordance, Targeted Peacemaking (?) and Provocation
+
+						if( pUser.CheckSkill( 22, minDifficulty, maxDifficulty ))	// Provocation
 						{
 							willAttack = toAttack;
 							if( toAttack.innocent )
@@ -161,6 +224,7 @@ function onCallback1( pSock, toAttack )
 				}
 				else
 				{
+					pSock.SysMessage( "lastInstrument: " + pUser.GetTempTag( "lastInstrument" ));
 					pSock.SysMessage( GetDictionaryEntry( 1438, pSock.language )); // You do not have an instrument to play on!
 				}
 			}
@@ -179,28 +243,27 @@ function onCallback1( pSock, toAttack )
 
 function GetInstrument( pUser )
 {
-	if( ValidateObject( pUser.pack ))
+	// Fetch last instrument player played (set in musicianship.js)
+	var lastInstrument = CalcItemFromSer( parseInt( pUser.GetTempTag( "lastInstrument" )));
+	if( ValidateObject( lastInstrument ))
 	{
-		for( var toCheck = pUser.pack.FirstItem(); !pUser.pack.FinishedItems(); toCheck = pUser.pack.NextItem())
+		if( ValidateObject( lastInstrument.container ))
 		{
-			if( ValidateObject( toCheck ))
+			// Instrument is in a container. This should only work if item is inside player pack somewhere
+			var rootCont = FindRootContainer( lastInstrument, 0 );
+			if( ValidateObject( rootCont ) && rootCont == pUser.pack )
 			{
-				switch( toCheck.id )
-				{
-					case 0x0E9C:
-					case 0x0E9D:
-					case 0x0E9E:
-					case 0x0EB1:
-					case 0x0EB2:
-					case 0x0EB3:
-					case 0x0EB4:
-						return toCheck;
-					default:
-						break;
-				}
+				// Found instrument in player's pack somewhere!
+				return lastInstrument;
 			}
 		}
+		else if( pUser.InRange( lastInstrument, 3 ))
+		{
+			// Player is within range of the instrument!
+			return lastInstrument;
+		}
 	}
+
 	return null;
 }
 
@@ -269,7 +332,10 @@ function PlayInstrument( pSock, myInstrument, wellPlayed )
 
 function BeginAttack( charOne, charTwo, attackFirst )
 {
-	charOne.attackFirst = attackFirst;
+	if( attackFirst && !charTwo.CheckAggressorFlag( charOne ))
+	{
+		charOne.AddAggressorFlag( charTwo );
+	}
 	charOne.attacker = charTwo;
 	charOne.target = charTwo;
 

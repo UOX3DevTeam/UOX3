@@ -334,6 +334,64 @@ CItem *FindItemOfType( CChar *toFind, ItemTypes type )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	SearchSubPackForItemOfSectionId()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Search character's subpacks for items of specific sectionId
+//o------------------------------------------------------------------------------------------------o
+auto SearchSubPackForItemOfSectionId( CItem *toSearch, std::string sectionId )->CItem *
+{
+	auto tsCont = toSearch->GetContainsList();
+	for( const auto &toCheck : tsCont->collection() )
+	{
+		if( ValidateObject( toCheck ))
+		{
+			if( oldstrutil::lower( toCheck->GetSectionId() ) == oldstrutil::lower( sectionId )) // it's in our hand
+			{
+				return toCheck; // we've found the first occurance on the person!
+			}
+			else if( toCheck->GetType() == IT_CONTAINER || toCheck->GetType() == IT_LOCKEDCONTAINER )
+			{
+				// search any subpacks, specifically pack and locked containers
+				auto packSearchResult = SearchSubPackForItemOfSectionId( toCheck, sectionId );
+				if( ValidateObject( packSearchResult ))
+				{
+					return packSearchResult;
+				}
+			}
+		}
+	}
+	return nullptr;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	FindItemOfSectionId()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Look for items of a certain sectionId in character's pack
+//o------------------------------------------------------------------------------------------------o
+CItem *FindItemOfSectionId( CChar *toFind, std::string sectionId )
+{
+	for( CItem *toCheck = toFind->FirstItem(); !toFind->FinishedItems(); toCheck = toFind->NextItem() )
+	{
+		if( ValidateObject( toCheck ))
+		{
+			if( oldstrutil::lower( toCheck->GetSectionId() ) == oldstrutil::lower( sectionId )) // it's in our hand
+			{
+				return toCheck;	// we've found the first occurance on the person!
+			}
+			else if( toCheck->GetLayer() == IL_PACKITEM || ( !toFind->IsNpc() && toFind->IsDead() && toCheck->GetLayer() == IL_BUYCONTAINER )) // could use packItem, but we're already in the same type of loop, so we'll check it ourselves
+			{
+				CItem *packSearchResult = SearchSubPackForItemOfSectionId( toCheck, sectionId );
+				if( ValidateObject( packSearchResult ))
+				{
+					return packSearchResult;
+				}
+			}
+		}
+	}
+	return nullptr;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	InMulti()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if object is in a multi
@@ -356,7 +414,7 @@ bool InMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 		length = 0;
 
 		auto map1 = Map->SeekMap( m->GetX(), m->GetY(), m->WorldNumber() );
-		if( map1.CheckFlag( TF_WET )) // is it water?
+		if( map1.terrainInfo != nullptr && map1.CheckFlag( TF_WET )) // is it water?
 		{
 			// NOTE: We have an intrinsic issue here: It is of type CMultiObj, not CBoat
 			// So either: 1) Let the user fix it in the worldfile once its saved

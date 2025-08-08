@@ -39,6 +39,11 @@ inline JSPropertySpec CSpellProperties[] =
 	{ "ash",				CSP_ASH,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "shade",				CSP_SHADE,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "garlic",				CSP_GARLIC,				JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "batwing",			CSP_BATWING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "daemonBlood",		CSP_DAEMONBLOOD,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "graveDust",			CSP_GRAVEDUST,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "noxCrystal",			CSP_NOXCRYSTAL,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "pigIron",			CSP_PIGIRON,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "requireTarget",		CSP_REQUIRETARGET,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "requireItem",		CSP_REQUIREITEM,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "requireLocation",    CSP_REQUIRELOCATION,    JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -50,8 +55,9 @@ inline JSPropertySpec CSpellProperties[] =
 	{ "resistable",			CSP_RESISTABLE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "soundEffect",		CSP_SOUNDEFFECT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "enabled",			CSP_ENABLED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "tithing",			CSP_TITHING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "baseDmg",			CSP_BASEDMG,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,				static_cast<SI08>(0),				static_cast<UI08>(0), nullptr, nullptr }
+	{ nullptr,				static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
 };
 
 inline JSPropertySpec CGlobalSkillProperties[] =
@@ -63,7 +69,7 @@ inline JSPropertySpec CGlobalSkillProperties[] =
 	{ "intelligence",		CGSKILL_INTELLIGENCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "skillDelay",			CGSKILL_SKILLDELAY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "scriptID",			CGSKILL_SCRIPTID,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,				static_cast<SI08>(0),				static_cast<UI08>(0), nullptr, nullptr }
+	{ nullptr,				static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
 };
 
 inline JSPropertySpec CCreateEntryProperties[] =
@@ -81,7 +87,7 @@ inline JSPropertySpec CCreateEntryProperties[] =
 	{ "skills",				CMAKE_SKILLS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "avgMinSkill",		CMAKE_AVGMINSKILL,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "avgMaxSkill",		CMAKE_AVGMAXSKILL,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,				static_cast<SI08>(0),				static_cast<UI08>(0), nullptr, nullptr }
+	{ nullptr,				static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
 };
 
 inline JSPropertySpec CTimerProperties[] =
@@ -121,26 +127,24 @@ inline JSPropertySpec CTimerProperties[] =
 	{ "SOCK_MUTETIME",			TIMER_SOCK_MUTETIME,		JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "SOCK_TRACKINGDISPLAY",	TIMER_SOCK_TRACKINGDISPLAY,	JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "SOCK_TRAFFICWARDEN",		TIMER_SOCK_TRAFFICWARDEN,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ nullptr,					static_cast<SI08>(0),					static_cast<UI08>(0), nullptr, nullptr }
+	{ nullptr,					static_cast<SI08>(0),		static_cast<UI08>(0), nullptr, nullptr }
 };
 
 inline JSPropertySpec CRaceProperties[] =
 {
 	{ "id",					CRP_ID,					JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "name",				CRP_NAME,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "weakToWeather",		CRP_WEAKTOWEATHER,		JSPROP_ENUMPERMIDX, nullptr, nullptr },
 	{ "requiresBeard",		CRP_REQUIRESBEARD,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "requiresNoBeard",	CRP_REQUIRESNOBEARD,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isPlayerRace",		CRP_ISPLAYERRACE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "genderRestrict",		CRP_GENDERRESTRICT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "armourClass",		CRP_ARMOURCLASS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "languageSkillMin",	CRP_LANGUAGESKILLMIN,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "skillAdjustment",	CRP_SKILLADJUSTMENT,	JSPROP_ENUMPERMIDX, nullptr, nullptr },
 	{ "poisonResistance",	CRP_POISONRESISTANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "magicResistance",	CRP_MAGICRESISTANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "visibleDistance",	CRP_VISIBLEDISTANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "nightVision",		CRP_NIGHTVISION,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,				static_cast<SI08>(0),				static_cast<UI08>(0), nullptr, nullptr }
+	{ nullptr,				static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
 };
 
 
@@ -161,12 +165,13 @@ inline JSPropertySpec CRegionProperties[] =
 	{ "isSafeZone",			CREGP_ISSAFEZONE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "health",				CREGP_HEALTH,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isDungeon",			CREGP_ISDUNGEON,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "isDisabled",			CREGP_ISDISABLED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "worldNumber",		CREGP_WORLDNUMBER,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "instanceID",			CREGP_INSTANCEID,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "chanceBigOre",		CREGP_CHANCEBIGORE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "numOrePrefs",		CREGP_NUMOREPREFERENCES,	JSPROP_ENUMPERMRO, nullptr, nullptr  },
 	{ "population",			CREGP_POPULATION,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "members",			CREGP_MEMBERS,				JSPROP_ENUMPERMIDX, nullptr, nullptr },
+	{ "members",			CREGP_MEMBERS,				JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "id",					CREGP_ID,					JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "scriptTrigger",		CREGP_SCRIPTTRIGGER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "scriptTriggers",		CREGP_SCRIPTTRIGGERS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -177,7 +182,7 @@ inline JSPropertySpec CRegionProperties[] =
 	{ "music",				CREGP_MUSIC,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "weather",			CREGP_WEATHER,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "owner",				CREGP_OWNER,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,				static_cast<SI08>(0),					static_cast<UI08>(0), nullptr, nullptr }
+	{ nullptr,				static_cast<SI08>(0),		static_cast<UI08>(0), nullptr, nullptr }
 };
 
 inline JSPropertySpec CSpawnRegionProperties[] =
@@ -194,6 +199,7 @@ inline JSPropertySpec CSpawnRegionProperties[] =
 	{ "npcCount",			CSPAWNREGP_NPCCOUNT,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "onlyOutside",		CSPAWNREGP_ONLYOUTSIDE,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isSpawner",			CSPAWNREGP_ISSPAWNER,				JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "forceSpawn",			CSPAWNREGP_FORCESPAWN,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "defZ",				CSPAWNREGP_DEFZ,					JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "prefZ",				CSPAWNREGP_PREFZ,					JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "x1",					CSPAWNREGP_X1,						JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -205,29 +211,29 @@ inline JSPropertySpec CSpawnRegionProperties[] =
 	{ "minTime",			CSPAWNREGP_MINTIME,					JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "maxTime",			CSPAWNREGP_MAXTIME,					JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "call",				CSPAWNREGP_CALL,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,				static_cast<SI08>(0),							static_cast<UI08>(0), nullptr, nullptr }
+	{ nullptr,				static_cast<SI08>(0),				static_cast<UI08>(0), nullptr, nullptr }
 };
 
 inline JSPropertySpec CGuildProperties[] =
 {
 	{ "name",			CGP_NAME,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "id",				CGP_ID,				JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "type",			CGP_TYPE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "master",			CGP_MASTER,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "stone",			CGP_STONE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "numMembers",		CGP_NUMMEMBERS,		JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "numRecruits",	CGP_NUMRECRUITS,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "members",		CGP_MEMBERS,		JSPROP_ENUMPERMIDX, nullptr, nullptr },
-	{ "recruits",		CGP_RECRUITS,		JSPROP_ENUMPERMIDX, nullptr, nullptr },
 	{ "charter",		CGP_CHARTER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "abbreviation",	CGP_ABBREVIATION,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "webPage",		CGP_WEBPAGE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,			static_cast<SI08>(0),			static_cast<UI08>(0), nullptr, nullptr }
+	{ nullptr,			static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
 };
 
 inline JSPropertySpec CCharacterProps[] =
 {
 	{ "sectionID",		CCP_SECTIONID,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "name",			CCP_NAME,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "origName",		CCP_ORIGNAME,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "title",			CCP_TITLE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "x",				CCP_X,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "y",				CCP_Y,				JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -258,6 +264,9 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "actualDexterity",	CCP_ACTUALDEXTERITY,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "actualIntelligence",	CCP_ACTUALINTELLIGENCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "actualStrength",		CCP_ACTUALSTRENGTH,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "healthRegenBonus",	CCP_HEALTHREGENBONUS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "staminaRegenBonus",	CCP_STAMINAREGENBONUS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "manaRegenBonus",		CCP_MANAREGENBONUS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "skills",			CCP_SKILLS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "mana",			CCP_MANA,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "stamina",		CCP_STAMINA,		JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -266,6 +275,7 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "karma",			CCP_KARMA,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "attack",			CCP_ATTACK,			JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "canAttack",		CCP_CANATTACK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "karmaLock",		CCP_KARMALOCK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "fleeAt",			CCP_FLEEAT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "reAttackAt",		CCP_REATTACKAT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "brkPeaceChance",	CCP_BRKPEACE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -277,12 +287,14 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "frozen",			CCP_FROZEN,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "commandlevel",	CCP_COMMANDLEVEL,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "race",			CCP_RACE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "hasStolen",		CCP_HASSTOLEN,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "criminal",		CCP_CRIMINAL,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "murderer",		CCP_MURDERER,		JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "innocent",		CCP_INNOCENT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "murdercount",	CCP_MURDERCOUNT,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "neutral",		CCP_NEUTRAL,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "npcFlag",		CCP_NPCFLAG,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "npcGuild",		CCP_NPCGUILD,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "gender",			CCP_GENDER,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "dead",			CCP_DEAD,			JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "npc",			CCP_NPC,			JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -293,6 +305,7 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "region",			CCP_REGION,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "town",			CCP_TOWN,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "guild",			CCP_GUILD,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "guildNumber",	CCP_GUILDNUMBER,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "baseskills",		CCP_BASESKILLS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "skillsused",		CCP_SKILLUSE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "socket",			CCP_SOCKET,			JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -310,6 +323,8 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "fx2",			CCP_FX2,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "fy2",			CCP_FY2,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "fz",				CCP_FZ,				JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "pathTargX",		CCP_PATHTARGX,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "pathTargY",		CCP_PATHTARGY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isonhorse",		CCP_ISONHORSE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isFlying",		CCP_ISFLYING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isGuarded",		CCP_ISGUARDED,		JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -318,6 +333,7 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "tempint",		CCP_TINTELLIGENCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "tempstr",		CCP_TSTRENGTH,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "poison",			CCP_POISON,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "poisonedBy",		CCP_POISONEDBY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "lightlevel",		CCP_LIGHTLEVEL,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "vulnerable",		CCP_VULNERABLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "willhunger",		CCP_HUNGERSTATUS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -331,22 +347,35 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "priv",			CCP_PRIV,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "townPriv",		CCP_TOWNPRIV,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "guildTitle",		CCP_GUILDTITLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "hairStyle",		CCP_HAIRSTYLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "hairColour",		CCP_HAIRCOLOUR,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "hairColor",		CCP_HAIRCOLOUR,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "beardStyle",		CCP_BEARDSTYLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "beardColour",	CCP_BEARDCOLOUR,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "beardColor",		CCP_BEARDCOLOUR,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "fontType",		CCP_FONTTYPE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "sayColour",		CCP_SAYCOLOUR,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "emoteColour",	CCP_EMOTECOLOUR,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "attacker",		CCP_ATTACKER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "raceGate",		CCP_RACEGATE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "skillLock",		CCP_SKILLLOCK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "skillCaps",		CCP_SKILLCAP,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "deaths",			CCP_DEATHS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "ownerCount",		CCP_OWNERCOUNT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "nextAct",		CCP_NEXTACT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "petCount",		CCP_PETCOUNT,		JSPROP_ENUMPERMRO, nullptr, nullptr },
+	{ "followerCount",	CCP_FOLLOWERCOUNT,	JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "ownedItemsCount",CCP_OWNEDITEMSCOUNT,JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "cell",			CCP_CELL,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "allmove",		CCP_ALLMOVE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "houseicons",		CCP_HOUSEICONS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "spattack",		CCP_SPATTACK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "spdelay",		CCP_SPDELAY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "swingSpeedIncrease",	CCP_SWINGSPEEDINCREASE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "luck",			CCP_LUCK,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "damageIncrease",	CCP_DAMAGEINCREASE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "hitChance",		CCP_HITCHANCE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "defenseChance",	CCP_DEFENSECHANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "aitype",			CCP_AITYPE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "split",			CCP_SPLIT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "splitchance",	CCP_SPLITCHANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -357,6 +386,7 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "isJailed",		CCP_ISJAILED,		JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "magicReflect",	CCP_MAGICREFLECT,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "permanentMagicReflect",	CCP_PERMMAGICREFLECT,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "hideFameKarmaTitle",	CCP_HIDEFAMEKARMATITLE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "tamed",			CCP_TAMED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "tamedHungerRate",CCP_TAMEDHUNGERRATE,JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "tamedThirstRate",CCP_TAMEDTHIRSTRATE,JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -373,6 +403,7 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "poisonStrength",	CCP_POISONSTRENGTH,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isPolymorphed",	CCP_ISPOLYMORPHED,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isIncognito",	CCP_ISINCOGNITO,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "isDisguised",	CCP_ISDISGUISED,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "canRun",			CCP_CANRUN,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isMeditating",	CCP_ISMEDITATING,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isGM",			CCP_ISGM,			JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -388,22 +419,27 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "orgID",			CCP_ORGID,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "orgSkin",		CCP_ORGSKIN,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isAnimal",		CCP_ISANIMAL,		JSPROP_ENUMPERMRO, nullptr, nullptr },
+	{ "isPackAnimal",	CCP_ISPACKANIMAL,	JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "isHuman",		CCP_ISHUMAN,		JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "isShop",			CCP_ISSHOP,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "attackFirst",	CCP_ATTACKFIRST,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "maxLoyalty",		CCP_MAXLOYALTY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "loyalty",		CCP_LOYALTY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "loyaltyRate",	CCP_LOYALTYRATE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "shouldSave",		CCP_SHOULDSAVE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "origin",			CCP_ORIGIN,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "partyLootable",	CCP_PARTYLOOTABLE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "party",			CCP_PARTY,			JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "multi",			CCP_MULTI,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "accountNum",		CCP_ACCOUNTNUM,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "account",		CCP_ACCOUNT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "createdOn",		CCP_CREATEDON,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "playTime",		CCP_PLAYTIME,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "housesOwned",	CCP_HOUSESOWNED,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "housesCoOwned",	CCP_HOUSESCOOWNED,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,			static_cast<SI08>(0),			static_cast<UI08>(0), nullptr, nullptr }
+	{ "tithing",		CCP_TITHING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "lastOn",			CCP_LASTON,			JSPROP_ENUMPERMRO, nullptr, nullptr },
+	{ "lastOnSecs",		CCP_LASTONSECS,		JSPROP_ENUMPERMRO, nullptr, nullptr },
+	{ nullptr,			static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
 };
 
 inline JSPropertySpec CItemProps[] =
@@ -434,6 +470,9 @@ inline JSPropertySpec CItemProps[] =
 	{ "container",		CIP_CONTAINER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "type",			CIP_TYPE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "more",			CIP_MORE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "more0",			CIP_MORE0,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "more1",			CIP_MORE1,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "more2",			CIP_MORE2,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "morex",			CIP_MOREX,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "morey",			CIP_MOREY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "morez",			CIP_MOREZ,			JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -462,6 +501,7 @@ inline JSPropertySpec CItemProps[] =
 	{ "damagePoison",	CIP_DAMAGEPOISON,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "damageRain",		CIP_DAMAGERAIN,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "damageSnow",		CIP_DAMAGESNOW,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "lowerStateReq",	CIP_LOWERSTATREQ,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "name2",			CIP_NAME2,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isChar",			CIP_ISCHAR,			JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "isItem",			CIP_ISITEM,			JSPROP_ENUMPERMRO, nullptr, nullptr },
@@ -473,12 +513,15 @@ inline JSPropertySpec CItemProps[] =
 	{ "rank",			CIP_RANK,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "creator",		CIP_CREATOR,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "poison",			CIP_POISON,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "poisonedBy",		CIP_POISONEDBY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "poisonCharges",	CIP_POISONCHARGES,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "dir",			CIP_DIR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "wipable",		CIP_WIPABLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "buyvalue",		CIP_BUYVALUE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "sellvalue",		CIP_SELLVALUE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "vendorPrice",	CIP_VENDORPRICE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "restock",		CIP_RESTOCK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "good",			CIP_GOOD,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "divinelock",		CIP_DIVINELOCK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "baseWeight",		CIP_BASEWEIGHT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "weight",			CIP_WEIGHT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -487,9 +530,13 @@ inline JSPropertySpec CItemProps[] =
 	{ "strength",		CIP_STRENGTH,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "dexterity",		CIP_DEXTERITY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "intelligence",	CIP_INTELLIGENCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "healthRegenBonus",	CIP_HEALTHREGENBONUS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "staminaRegenBonus",	CIP_STAMINAREGENBONUS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "manaRegenBonus",		CIP_MANAREGENBONUS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "corpse",			CIP_CORPSE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "desc",			CIP_DESC,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "event",			CIP_EVENT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "tempLastTraded",	CIP_TEMPLASTTRADED,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "tempTimer",		CIP_TEMPTIMER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "shouldSave",		CIP_SHOULDSAVE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 
@@ -518,12 +565,32 @@ inline JSPropertySpec CItemProps[] =
 	{ "ammoFXHue",		CIP_AMMOFXHUE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "ammoFXRender",	CIP_AMMOFXRENDER,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "speed",			CIP_SPEED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "swingSpeedIncrease",		CIP_SWINGSPEEDINCREASE ,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "damageIncrease",	CIP_DAMAGEINCREASE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "healthLeech",	CIP_HEALTHLEECH,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "staminaLeech",	CIP_STAMINALEECH,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "manaLeech",		CIP_MANALEECH,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+
+	{ "hitChance",		CIP_HITCHANCE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "defenseChance",	CIP_DEFENSECHANCE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+
+	{ "luck",		CIP_LUCK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+
+	{ "healthBonus",	CIP_HEALTHBONUS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "staminaBonus",	CIP_STAMINABONUS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "manaBonus",		CIP_MANABONUS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "artifactRarity",	CIP_ARTIFACTRARITY,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+
+	{ "durabilityHpBonus",	CIP_DURABILITYHPBONUS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+
 	{ "multi",			CIP_MULTI,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "maxRange",		CIP_MAXRANGE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "baseRange",		CIP_BASERANGE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "region",			CIP_REGION,			JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "spawnSerial",	CIP_SPAWNSERIAL,	JSPROP_ENUMPERMRO, nullptr, nullptr },
+	{ "origin",			CIP_ORIGIN,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isItemHeld",		CIP_ISITEMHELD,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "stealable",		CIP_STEALABLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 
 	// The Following vars are specific to CSpawnItem objects
 	{ "spawnsection",	CIP_SPAWNSECTION,	JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -554,7 +621,9 @@ inline JSPropertySpec CItemProps[] =
 	{ "tradeTimestamp",	CIP_TRADETIMESTAMP,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "banX",			CIP_BANX,			JSPROP_ENUMANDPERM, nullptr, nullptr},
 	{ "banY",			CIP_BANY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,			static_cast<SI08>(0),			static_cast<UI08>(0), nullptr, nullptr }
+	{ "tithing",		CIP_TITHING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "moveType",		CIP_MOVETYPE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ nullptr,			static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
 };
 
 inline JSPropertySpec CSocketProps[] =
@@ -565,14 +634,12 @@ inline JSPropertySpec CSocketProps[] =
 	{ "wasIdleWarned",		CSOCKP_WASIDLEWARNED,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "tempInt",			CSOCKP_TEMPINT,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "tempInt2",			CSOCKP_TEMPINT2,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "buffer",				CSOCKP_BUFFER,				JSPROP_ENUMPERMIDX, nullptr, nullptr },
-	{ "xText",				CSOCKP_XTEXT,				JSPROP_ENUMPERMIDX, nullptr, nullptr },
+	{ "xText",				CSOCKP_XTEXT,				JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "xText2",				CSOCKP_XTEXT2,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "clickZ",				CSOCKP_CLICKZ,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "addID",				CSOCKP_ADDID,				JSPROP_ENUMPERMIDX, nullptr, nullptr },
 	{ "newClient",			CSOCKP_NEWCLIENT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "firstPacket",		CSOCKP_FIRSTPACKET,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "cryptClient",		CSOCKP_CRYPTCLIENT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "clientIP",			CSOCKP_CLIENTIP,			JSPROP_ENUMPERMIDX, nullptr, nullptr },
 	{ "walkSequence",		CSOCKP_WALKSEQUENCE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "currentSpellType",	CSOCKP_CURRENTSPELLTYPE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "logging",			CSOCKP_LOGGING,				JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -595,7 +662,7 @@ inline JSPropertySpec CSocketProps[] =
 	{ "target",				CSOCKP_TARGET,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "tempObj",			CSOCKP_TEMPOBJ,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "tempObj2",			CSOCKP_TEMPOBJ2,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,				static_cast<SI08>(0),					static_cast<UI08>(0), nullptr, nullptr }
+	{ nullptr,				static_cast<SI08>(0),		static_cast<UI08>(0), nullptr, nullptr }
 };
 
 inline JSPropertySpec CSkillsProps[] =
@@ -655,8 +722,8 @@ inline JSPropertySpec CSkillsProps[] =
 	{ "bushido",			BUSHIDO,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "ninjitsu",			NINJITSU,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "spellweaving",		SPELLWEAVING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "imbuing",			IMBUING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "mysticism",			MYSTICISM,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "imbuing",			IMBUING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "throwing",			THROWING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "allskills",			ALLSKILLS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ nullptr,				static_cast<SI08>(0),			static_cast<UI08>(0), nullptr, nullptr }
@@ -664,9 +731,9 @@ inline JSPropertySpec CSkillsProps[] =
 
 inline JSPropertySpec CGumpDataProperties[] =
 {
-	{	"buttons",	CGumpData_Button,	JSPROP_ENUMANDPERM, nullptr, nullptr	},
-	{	"IDs",		CGumpData_ID ,		JSPROP_ENUMANDPERM, nullptr, nullptr	},
-	{	nullptr,	static_cast<SI08>(0),			static_cast<UI08>(0), nullptr, nullptr	}
+	{	"buttons",	CGumpData_Button,		JSPROP_ENUMANDPERM, nullptr, nullptr	},
+	{	"IDs",		CGumpData_ID ,			JSPROP_ENUMANDPERM, nullptr, nullptr	},
+	{	nullptr,	static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr	}
 };
 
 inline JSPropertySpec CAccountProperties[] =
@@ -678,61 +745,62 @@ inline JSPropertySpec CAccountProperties[] =
 	{ "path",		CACCOUNT_PATH,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "comment",	CACCOUNT_COMMENT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "timeban",	CACCOUNT_TIMEBAN,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "firstLogin",	CACCOUNT_FIRSTLOGIN, JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "character1",	CACCOUNT_CHARACTER1, JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "character2",	CACCOUNT_CHARACTER2, JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "character3",	CACCOUNT_CHARACTER3, JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "character4",	CACCOUNT_CHARACTER4, JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "character5",	CACCOUNT_CHARACTER5, JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "character6",	CACCOUNT_CHARACTER6, JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "character7",	CACCOUNT_CHARACTER7, JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "firstLogin",	CACCOUNT_FIRSTLOGIN, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "totalPlayTime",	CACCOUNT_TOTALPLAYTIME,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "character1",	CACCOUNT_CHARACTER1, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "character2",	CACCOUNT_CHARACTER2, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "character3",	CACCOUNT_CHARACTER3, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "character4",	CACCOUNT_CHARACTER4, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "character5",	CACCOUNT_CHARACTER5, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "character6",	CACCOUNT_CHARACTER6, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "character7",	CACCOUNT_CHARACTER7, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "currentChar",	CACCOUNT_CURRENTCHAR,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "lastIP",			CACCOUNT_LASTIP, JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "lastIP",			CACCOUNT_LASTIP, 		JSPROP_ENUMANDPERM, nullptr, nullptr },
 
 	// Flags
-	{ "isBanned",		CACCOUNT_BANNED,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isSuspended",	CACCOUNT_SUSPENDED,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isPublic",		CACCOUNT_PUBLIC,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isOnline",		CACCOUNT_ONLINE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isSlot1Blocked",	CACCOUNT_CHARSLOT1BLOCKED, JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isSlot2Blocked",	CACCOUNT_CHARSLOT2BLOCKED, JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isSlot3Blocked",	CACCOUNT_CHARSLOT3BLOCKED, JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isSlot4Blocked",	CACCOUNT_CHARSLOT4BLOCKED, JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isSlot5Blocked",	CACCOUNT_CHARSLOT5BLOCKED, JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isSlot6Blocked",	CACCOUNT_CHARSLOT6BLOCKED, JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isSlot7Blocked",	CACCOUNT_CHARSLOT7BLOCKED, JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "unused9",		CACCOUNT_UNUSED9,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "unused10",		CACCOUNT_UNUSED10,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isSeer",			CACCOUNT_SEER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isCounselor",	CACCOUNT_COUNSELOR,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isGM",			CACCOUNT_GM,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{	nullptr,		static_cast<SI08>(0),			static_cast<UI08>(0), nullptr, nullptr	}
+	{ "isBanned",		CACCOUNT_BANNED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "isSuspended",	CACCOUNT_SUSPENDED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "isPublic",		CACCOUNT_PUBLIC,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "isOnline",		CACCOUNT_ONLINE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "isSlot1Blocked",	CACCOUNT_CHARSLOT1BLOCKED, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "isSlot2Blocked",	CACCOUNT_CHARSLOT2BLOCKED, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "isSlot3Blocked",	CACCOUNT_CHARSLOT3BLOCKED, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "isSlot4Blocked",	CACCOUNT_CHARSLOT4BLOCKED, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "isSlot5Blocked",	CACCOUNT_CHARSLOT5BLOCKED, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "isSlot6Blocked",	CACCOUNT_CHARSLOT6BLOCKED, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "isSlot7Blocked",	CACCOUNT_CHARSLOT7BLOCKED, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "isYoung",		CACCOUNT_YOUNG,				JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "unused10",		CACCOUNT_UNUSED10,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "isSeer",			CACCOUNT_SEER,				JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "isCounselor",	CACCOUNT_COUNSELOR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "isGM",			CACCOUNT_GM,				JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{	nullptr,		static_cast<SI08>(0),		static_cast<UI08>(0), nullptr, nullptr	}
 };
 
 inline JSPropertySpec CConsoleProperties[] =
 {
-	{ "mode",		CCONSOLE_MODE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "logEcho",	CCONSOLE_LOGECHO,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{	nullptr,	static_cast<SI08>(0),			static_cast<UI08>(0), nullptr, nullptr	}
+	{ "mode",		CCONSOLE_MODE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "logEcho",	CCONSOLE_LOGECHO,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{	nullptr,	static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr	}
 };
 
 inline JSPropertySpec CScriptSectionProperties[] =
 {
-	{ "numTags",	CSS_NUMTAGS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "atEnd",		CSS_ATEND,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "atEndTags",	CSS_ATENDTAGS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{	nullptr,	static_cast<SI08>(0),			static_cast<UI08>(0), nullptr, nullptr	}
+	{ "numTags",	CSS_NUMTAGS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "atEnd",		CSS_ATEND,				JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "atEndTags",	CSS_ATENDTAGS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{	nullptr,	static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr	}
 };
 
 inline JSPropertySpec CResourceProperties[] =
 {
-	{ "logAmount",	CRESP_LOGAMT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "logTime",	CRESP_LOGTIME,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "oreAmount",	CRESP_OREAMT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "oreTime",	CRESP_ORETIME,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "fishAmount",	CRESP_FISHAMT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "fishTime",	CRESP_FISHTIME,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{	nullptr,	static_cast<SI08>(0),			static_cast<UI08>(0), nullptr, nullptr	}
+	{ "logAmount",	CRESP_LOGAMT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "logTime",	CRESP_LOGTIME,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "oreAmount",	CRESP_OREAMT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "oreTime",	CRESP_ORETIME,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "fishAmount",	CRESP_FISHAMT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "fishTime",	CRESP_FISHTIME,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{	nullptr,	static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr	}
 };
 
 inline JSPropertySpec CPartyProperties[] =
@@ -740,7 +808,13 @@ inline JSPropertySpec CPartyProperties[] =
 	{ "leader",			CPARTYP_LEADER,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "memberCount",	CPARTYP_MEMBERCOUNT,	JSPROP_ENUMPERMRO, nullptr, nullptr	},
 	{ "isNPC",			CPARTYP_ISNPC,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{	nullptr,		static_cast<SI08>(0),				static_cast<UI08>(0), nullptr, nullptr	}
+	{	nullptr,		static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr	}
+};
+
+inline JSPropertySpec CScriptProperties[] =
+{
+	{ "script_id",		CSCRIPT_SCRIPTID,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{	nullptr,		static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr	}
 };
 
 #endif

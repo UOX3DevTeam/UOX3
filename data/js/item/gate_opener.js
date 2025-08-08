@@ -57,8 +57,6 @@ function SearchForGate( iUsed, trgItem )
 	var trgItemMore = trgItem.more;
 	if( trgItem.type == 3 && iUsedMore == trgItemMore )
 	{
-		iUsed.TextMessage( trgItem.type );
-		iUsed.TextMessage( trgItem.more );
 		if( parseInt( trgItem.GetMoreVar( "morex", 1 )) == 0 )
 		{
 			trgItem.SetTempTag( "isBusy", true );
@@ -100,3 +98,5 @@ function onTimer( timerObj, timerID )
 	}
 	timerObj.SetTempTag( "isBusy", false );
 }
+
+function _restorecontext_() {}

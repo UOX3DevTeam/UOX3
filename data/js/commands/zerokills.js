@@ -1,6 +1,6 @@
 function CommandRegistration()
 {
-	RegisterCommand( "zerokills", 2, true );
+	RegisterCommand( "zerokills", 8, true );
 }
 
 function command_ZEROKILLS( socket, cmdString )
@@ -19,3 +19,5 @@ function onIterate( toCheck )
 	}
 	return false;
 }
+
+function _restorecontext_() {}

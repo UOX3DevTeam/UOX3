@@ -20,7 +20,7 @@ CPartyEntry::CPartyEntry( CChar *m, bool isLeader, bool isLootable ) : member( m
 	settings.set( BIT_LOOTABLE, isLootable );
 }
 
-void UpdateStats( CBaseObject *mObj, UI08 x );
+void UpdateStats( CBaseObject *mObj, UI08 x, bool skipStatWindowUpdate = false );
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	Party::AddMember()
 //o------------------------------------------------------------------------------------------------o
@@ -79,7 +79,7 @@ bool Party::AddMember( CChar *i )
 							CPUpdateStat toSendStam2(( *partyMember ), 2, true );
 							newSock->Send( &toSendStam2 );
 
-							s->SysMessage( 9076, i->GetNameRequest( partyMember ).c_str() ); // %s joined the party.
+							s->SysMessage( 9076, i->GetNameRequest( partyMember, NRS_SPEECH ).c_str() ); // %s joined the party.
 						}
 					}
 				}

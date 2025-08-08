@@ -1,0 +1,18 @@
+// spawn_ilshenar_treasure_wisp.dfn
+// [17025-17049]
+
+[REGIONSPAWN 17025]
+{
+NAME=Wisp Treasure 5_1
+ITEMLIST=dungeon_treasure_4
+ISSPAWNER=1
+MAXITEMS=15
+X1=773
+Y1=1477
+X2=779
+Y2=1483
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}

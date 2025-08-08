@@ -71,7 +71,7 @@ function onCallback0( pSock, ourObj )
 
 		if( canCombine )
 		{
-			if( !pUser.CheckSkill( 37, 0, 1000 ))
+			if( !pUser.CheckSkill( 37, 0, pUser.skillCaps.tinkering ))
 			{
 				pSock.SysMessage( GetDictionaryEntry( 959, pSock.language )); // You failed to combine the parts.
 			}

@@ -126,6 +126,10 @@ enum cSD_TID
 	tSERVER_ESCORTDONE,			// Amount of time until an escort NPC will dissapear when his quest is finished.
 	tSERVER_MURDERDECAY,		// Amount of time before a permanent murder count will decay.
 	tSERVER_CRIMINAL,			// Amount of time a character remains criminal after committing a criminal act.
+	tSERVER_STEALINGFLAG,		// Amount of time a character's stealing flag remains active
+	tSERVER_AGGRESSORFLAG,		// Amount of time a character remains aggressor after committing an aggressive act
+	tSERVER_PERMAGREYFLAG,		// Amount of time a permagrey flag remains active after player has stolen from someone
+	tSERVER_COMBATIGNORE,		// Amount of time an NPC will ignore an unreachable target in combat
 	tSERVER_POTION,				// Delay between using potions
 	tSERVER_PETOFFLINECHECK,	// Delay between checks for the PetOfflineTimeout
 	tSERVER_NPCFLAGUPDATETIMER, // Delay in seconds between each time NPC flags are updated
@@ -208,8 +212,9 @@ private:
 
 	// Once over 62, bitsets are costly.  std::vector<bool> has a special exception in the c++ specificaiton, to minimize wasted space for bools
 	// These should be updated
-	std::bitset<91>	boolVals;				// Many values stored this way, rather than using bools.
-	std::bitset<64>	spawnRegionsFacets;		// Used to determine which facets to enable spawn regions for, set in UOX>INI
+	std::bitset<111>	boolVals;			// Many values stored this way, rather than using bools.
+	std::bitset<64>		spawnRegionsFacets;	// Used to determine which facets to enable spawn regions for, set in UOX>INI
+	std::bitset<64>		moongateFacets;		// Used to determine which facets to enable moongates for, set in UOX>INI
 
 	// ServerSystems
 	std::string sServerName;				// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
@@ -222,6 +227,10 @@ private:
 	UI16		serverLanguage;				//	Default language used on server
 	UI16		port;						//	Port number that the server listens on, for connections
 	UI16		jsEngineSize;				// gcMaxBytes limit in MB per JS runtime
+	UI16		apsPerfThreshold;			// Performance threshold (simulation cycles) below which APS system kicks in - 0 disables system
+	UI16		apsInterval;				// Interval at which APS checks and optionally makes adjustments based on shard performance
+	UI16		apsDelayStep;				// Step value in milliseconds that APS uses to gradually adjust delay for NPC AI/movement checks
+	UI16		apsDelayMaxCap;				// Max impact in milliseconds APS can have on NPC AI/movement checks
 	UI16		sysMsgColour;				// Default text colour for system messages displayed in bottom left corner of screen
 	SI16		backupRatio;				//	Number of saves before a backup occurs
 	UI32		serverSavesTimer;				//	Number of seconds between world saves
@@ -262,6 +271,9 @@ private:
 	UI16		statCap;						//	A cap on the total of a PC's stats
 	SI16		maxStealthMovement;				//	Max number of steps allowed with stealth skill at 100.0
 	SI16		maxStaminaMovement;				//	Max number of steps allowed while running before stamina is reduced
+	UI08		healthRegenMode;				//	Hp regen mode - see HpRegenMode enum for details
+	UI08		staminaRegenMode;				//	Stamina regen mode - see StaminaRegenMode enum for details
+	UI08		manaRegenMode;					//	Mana regen mode - see ManaRegenMode enum for details
 
 	// ServerTimers
 	// array
@@ -270,10 +282,12 @@ private:
 	// array
 	std::string serverDirectories[CSDDP_COUNT];
 	
-	std::string actualINI;					// 	The actual uox.ini file loaded, used for saveing
+	std::string actualINI;						// 	The actual uox.ini file loaded, used for saveing
+
+	std::string secretShardKey;					// Secret shard key used to only allow connection from specific custom clients with matching key
 
 	// Expansion
-	// 0 = T2A, 1 = UOR, 2 = TD, 3 = LBR, 4 = Pub15/Pre-AoS, 5 = AoS, 6 = SE, 7 = ML, 8 = SA, 9 = HS, 10 = ToL
+	// 0 = core, 1 = UO, 2 = T2A, 3 = UOR, 4 = TD, 5 = LBR (Pub15), 6 = AoS, 7 = SE, 8 = ML, 9 = SA, 10 = HS, 11 = ToL
 	UI08		coreShardEra;					// Determines core era ruleset for shard (determines which items/npcs are loaded, and which rules are applied in combat)
 	UI08		expansionArmorCalculation;		// Determines which era ruleset to use for calculating armor and defense
 	UI08		expansionStrengthDamageBonus;	// Determines which era ruleset to use for calculating strength damage bonus
@@ -287,11 +301,28 @@ private:
 	UI08		expansionWrestlingParry;		// Determines which era ruleset to use for wrestling parry calculations
 	UI08		expansionCombatHitChance;		// Determines which era ruleset to use for calculating melee hit chance
 
+	// Default race bonuses
+	SI16		humanHealthRegenBonus;			//	The default health regen bonus for human race
+	SI16		humanStaminaRegenBonus;			//	The default stamina regen bonus for human race
+	SI16		humanManaRegenBonus;			//	The default mana regen bonus for human race
+	SI16		humanMaxWeightBonus;			//	The default max weight bonus for human race
+	SI16		elfHealthRegenBonus;			//	The default health regen bonus for elf race
+	SI16		elfStaminaRegenBonus;			//	The default stamina regen bonus for elf race
+	SI16		elfManaRegenBonus;				//	The default mana regen bonus for elf race
+	SI16		elfMaxWeightBonus;				//	The default max weight bonus for elf race
+	SI16		gargoyleHealthRegenBonus;		//	The default health regen bonus for gargoyle race
+	SI16		gargoyleStaminaRegenBonus;		//	The default stamina regen bonus for gargoyle race
+	SI16		gargoyleManaRegenBonus;			//	The default mana regen bonus for gargoyle race
+	SI16		gargoyleMaxWeightBonus;			//	The default max weight bonus for gargoyle race
+
 	// Settings
 	SI16		ambientSounds;					//	Ambient sounds - values from 1->10 - higher values indicate sounds occur less often
 	SI16		htmlStatusEnabled;				//	If > 0 then it's enabled - only used at PC char creation - use elsewhere? (was # of seconds between updates)
 	SI16		sellMaxItems;					//	Maximum number of items that can be sold to a vendor
 	SI16		fishingstaminaloss;				//	The amount of stamina lost with each use of fishing skill
+	SI16		healthRegenCap;					//	The Cap for health regen property
+	SI16		staminaRegenCap;				//	The Cap for stamina regen property
+	SI16		manaRegenCap;					//	The Cap for mana regen property
 	UI08		maxControlSlots;				//	The default max amount of pet/follower control slots for each player
 	UI08		maxSafeTeleports;				//	The default max amount of free teleports to safety players get via the help menu per day
 	UI08		maxPetOwners;					//	The default max amount of different owners a pet may have in its lifetime
@@ -307,16 +338,18 @@ private:
 	UI16		petLoyaltyLossOnFailure;		//	The default amount of pet loyalty lost on a failed attempt to use a pet command
 
 	// SpeedUp
-	R32			npcWalkingSpeed;				//	Speed at which walking NPCs move
-	R32			npcRunningSpeed;				//	Speed at which running NPCs move
-	R32			npcFleeingSpeed;				//	Speed at which fleeing NPCs move
-	R32			npcMountedWalkingSpeed;			//	Speed at which (mounted) walking NPCs move
-	R32			npcMountedRunningSpeed;			//	Speed at which (mounted) running NPCs move
-	R32			npcMountedFleeingSpeed;			//	Speed at which (mounted) fleeing NPCs move
-	R32			archeryShootDelay;				//  Attack delay for archers; after coming to a full stop, they need to wait this amount of time before they can fire an arrow. Defaults to 1.0 seconds
-	R32			globalAttackSpeed;				//  Global attack speed that can be tweaked to quickly increase or decrease overall combat speed. Defaults to 1.0
-	R32			npcSpellcastSpeed;				//  For adjusting the overall speed of (or delay between) NPC spell casts. Defaults to 1.0
+	R64			npcWalkingSpeed;				//	Speed at which walking NPCs move
+	R64			npcRunningSpeed;				//	Speed at which running NPCs move
+	R64			npcFleeingSpeed;				//	Speed at which fleeing NPCs move
+	R64			npcMountedWalkingSpeed;			//	Speed at which (mounted) walking NPCs move
+	R64			npcMountedRunningSpeed;			//	Speed at which (mounted) running NPCs move
+	R64			npcMountedFleeingSpeed;			//	Speed at which (mounted) fleeing NPCs move
+	R64			archeryShootDelay;				//  Attack delay for archers; after coming to a full stop, they need to wait this amount of time before they can fire an arrow. Defaults to 1.0 seconds
+	R64			globalAttackSpeed;				//  Global attack speed that can be tweaked to quickly increase or decrease overall combat speed. Defaults to 1.0
+	R64			npcSpellcastSpeed;				//  For adjusting the overall speed of (or delay between) NPC spell casts. Defaults to 1.0
 	R32			globalRestockMultiplier;		//	Global multiplier applied to restock properties of items when loaded from DFNs
+	R32			bodGoldRewardMultiplier;		//	Multiplier that adjusts the amount of Gold rewarded by completing Bulk Order Deeds
+	R32			bodFameRewardMultiplier;		//	Multiplier that adjusts the amount of Fame rewarded by completing Bulk Order Deeds
 	R64			checkItems;						//	How often (in seconds) items are checked for decay and other things
 	R64			checkBoats;						//	How often (in seconds) boats are checked for motion and so forth
 	R64			checkNpcAi;						//	How often (in seconds) NPCs can execute an AI routine
@@ -379,16 +412,27 @@ private:
 	UI08		combatParryDamageMax;			//  Maximum amount of hitpoints a shield/weapon can lose when successfully parrying in combat
 	UI08		combatBloodEffectChance;		//  Chance of blood splatter effects spawning during combat
 	UI08		alchemyDamageBonusModifier;		//  Modifier used to calculate bonus damage for explosion potions based on alchemy skill
+	UI08		combatWeaponDamageBonusType;	//  Weapon damage bonus type (0 - apply to hidamage, 1 - split between lo and hi, 2 - apply equally to lo and hi
 	SI08		combatArcheryHitBonus;			//  Bonus to hit chance for Archery skill in combat, applied after regular hit chance calculation
-	SI16		combatMaxRange;					//	RANGE?  Range at which combat can actually occur
-	SI16		combatMaxSpellRange;			//	RANGE?  Range at which spells can be cast
+	SI16		combatMaxRange;					//	Maximum range at which combat can be engaged?
+	SI16		combatMaxSpellRange;			//	Maximum range at which spells can be cast in combat
+	SI16		combatMaxNpcAggroRange;			//	Maximum range at which NPCs can aggro targets on their own
 	SI16		combatNpcDamageRate;			//	NPC Damage divisor - PCs sustain less than NPCs.  If a PC, damage is 1/value
 	SI16		combatNpcBaseFleeAt;			//	% of HP where an NPC will flee, if it's not defined for them
 	SI16		combatNpcBaseReattackAt;		//	% of HP where an NPC will resume attacking
 	SI16		combatAttackStamina;			//	Amount of stamina lost when hitting an opponent
+	SI16		swingSpeedIncreaseCap;			//	The Cap for swing speed property
+	SI16		physicalResistCap;				//	The Cap for physical resist property
+	SI16		fireResistCap;					//	The Cap for fire resist property
+	SI16		coldResistCap;					//	The Cap for cold resist property
+	SI16		poisonResistCap;				//	The Cap for poison resist property
+	SI16		energyResistCap;				//	The Cap for energy resist property
+	SI16		defenseChanceIncreaseCap;		//	The Cap for energy resist property
+	SI16		damageIncreaseCap;				//	The Cap for energy resist property
 
 	// Start & Location Settings
 	std::vector<__STARTLOCATIONDATA__>	startlocations;
+	std::vector<__STARTLOCATIONDATA__>	youngStartlocations;
 	UI16		startPrivs;						//	Starting privileges of characters
 	SI16		startGold;						//	Amount of gold created when a PC is made
 
@@ -445,6 +489,11 @@ public:
 	UI32		GetSpawnRegionsFacetStatus() const;
 	auto		SetSpawnRegionsFacetStatus( UI32 value ) -> void;
 
+	auto		GetMoongateFacetStatus( UI32 value ) const -> bool;
+	auto		SetMoongateFacetStatus( UI32 value, bool status ) -> void;
+	UI32		GetMoongateFacetStatus() const;
+	auto		SetMoongateFacetStatus( UI32 value ) -> void;
+
 	auto		SetClassicUOMapTracker( bool value ) -> void;
 	auto		GetClassicUOMapTracker() const -> bool;
 
@@ -474,7 +523,7 @@ public:
 	auto		SaveIni( const std::string &filename ) -> bool;
 
 	auto		EraEnumToString( ExpansionRuleset eraNum, bool coreEnum = false ) -> std::string;
-	auto		EraStringToEnum( const std::string &eraString ) -> ExpansionRuleset;
+	auto		EraStringToEnum( const std::string &eraString, bool useDefault = true, bool inheritCore = true ) -> ExpansionRuleset;
 
 	auto ResetDefaults() -> void;
 	auto Startup() -> void;
@@ -482,9 +531,11 @@ public:
 
 	CServerData();
 	auto		ServerName( const std::string &setname ) -> void;
+	auto		SecretShardKey( const std::string &newName ) -> void;
 	auto		ServerDomain( const std::string &setdomain ) -> void;
 	auto		ServerIP( const std::string &setip ) -> void;
 	auto		ServerName() const -> const std::string &;
+	auto		SecretShardKey() const -> const std::string &;
 	auto		ServerDomain() const -> const std::string &;
 	auto		ServerIP() const -> const std::string &;
 	auto		ExternalIP() const -> const std::string &;
@@ -525,6 +576,8 @@ public:
 	SI16		MaxStealthMovement() const;
 	auto		MaxStaminaMovement( SI16 value ) -> void;
 	SI16		MaxStaminaMovement() const;
+	auto		PetBondingEnabled( bool setting ) -> void;
+	auto		PetBondingEnabled() const -> bool;
 	auto		SystemTimer( cSD_TID timerId, UI16 value ) -> void;
 	auto		SystemTimer( cSD_TID timerId ) const -> UI16;
 	TIMERVAL	BuildSystemTimeValue( cSD_TID timerId ) const;
@@ -584,8 +637,10 @@ public:
 	std::string Directory( CSDDirectoryPaths dp );
 
 
-	auto		CorpseLootDecay( bool value ) -> void;
-	auto		CorpseLootDecay() const -> bool;
+	auto		PlayerCorpseLootDecay( bool value ) -> void;
+	auto		PlayerCorpseLootDecay() const -> bool;
+	auto		NpcCorpseLootDecay( bool value ) -> void;
+	auto		NpcCorpseLootDecay() const -> bool;
 
 	auto		GuardStatus( bool value ) -> void;
 	auto		GuardsStatus() const -> bool;
@@ -602,6 +657,12 @@ public:
 	auto		InternalAccountStatus( bool value ) -> void;
 	auto		InternalAccountStatus() const -> bool;
 
+	auto		YoungPlayerSystem( bool value ) -> void;
+	auto		YoungPlayerSystem() const -> bool;
+
+	auto		KarmaLocking( bool value ) -> void;
+	auto		KarmaLocking() const -> bool;
+
 	auto		ShowOfflinePCs( bool value ) -> void;
 	auto		ShowOfflinePCs() const -> bool;
 
@@ -610,6 +671,9 @@ public:
 
 	auto		SnoopIsCrime( bool value ) -> void;
 	auto		SnoopIsCrime() const -> bool;
+
+	auto		SnoopAwareness( bool value ) -> void;
+	auto		SnoopAwareness() const -> bool;
 
 	auto		PlayerPersecutionStatus( bool value ) -> void;
 	auto		PlayerPersecutionStatus() const -> bool;
@@ -638,6 +702,9 @@ public:
 	auto		CheckPetControlDifficulty( bool value ) -> void;
 	auto		CheckPetControlDifficulty() const -> bool;
 
+	auto		PoisonCorrosionSystem( bool value ) -> void;
+	auto		PoisonCorrosionSystem() const -> bool;
+
 	auto		NPCTrainingStatus( bool setting ) -> void;
 	auto		NPCTrainingStatus() const -> bool;
 
@@ -653,14 +720,20 @@ public:
 	auto		CheckSpawnRegionSpeed( R64 value ) -> void;
 	R64			CheckSpawnRegionSpeed() const;
 
-	auto		GlobalAttackSpeed( R32 value ) -> void;
-	R32			GlobalAttackSpeed() const;
+	auto		GlobalAttackSpeed( R64 value ) -> void;
+	R64			GlobalAttackSpeed() const;
 
-	auto		NPCSpellCastSpeed( R32 value ) -> void;
-	R32			NPCSpellCastSpeed() const;
+	auto		NPCSpellCastSpeed( R64 value ) -> void;
+	R64			NPCSpellCastSpeed() const;
 
 	auto		GlobalRestockMultiplier( R32 value ) -> void;
 	R32			GlobalRestockMultiplier() const;
+
+	auto		BODGoldRewardMultiplier( R32 value ) -> void;
+	R32			BODGoldRewardMultiplier() const;
+
+	auto		BODFameRewardMultiplier( R32 value ) -> void;
+	R32			BODFameRewardMultiplier() const;
 
 	auto		MsgBoardPostingLevel( UI08 value ) -> void;
 	UI08		MsgBoardPostingLevel() const;
@@ -676,6 +749,9 @@ public:
 
 	auto		AlchemyDamageBonusModifier( UI08 value ) -> void;
 	UI08		AlchemyDamageBonusModifier() const;
+
+	auto		WeaponDamageBonusType( UI08 value ) -> void;
+	UI08		WeaponDamageBonusType() const;
 
 	auto		ItemsInterruptCasting( bool value ) -> void;
 	auto		ItemsInterruptCasting() const -> bool;
@@ -694,6 +770,24 @@ public:
 
 	auto		FishingStaminaLoss( SI16 value ) -> void;
 	SI16		FishingStaminaLoss() const;
+
+	auto		HealthRegenCap( SI16 value ) -> void;
+	SI16		HealthRegenCap() const;
+
+	auto		StaminaRegenCap( SI16 value ) -> void;
+	SI16		StaminaRegenCap() const;
+
+	auto		ManaRegenCap( SI16 value ) -> void;
+	SI16		ManaRegenCap() const;
+
+	auto		HealthRegenMode( UI08 value ) -> void;
+	UI08		HealthRegenMode() const;
+
+	auto		StaminaRegenMode( UI08 value ) -> void;
+	UI08		StaminaRegenMode() const;
+
+	auto		ManaRegenMode( UI08 value ) -> void;
+	UI08		ManaRegenMode() const;
 
 	auto		CombatAttackStamina( SI16 value ) -> void;
 	SI16		CombatAttackStamina() const;
@@ -752,6 +846,12 @@ public:
 	auto		ShowReputationTitleInTooltip( bool value ) -> void;
 	auto		ShowReputationTitleInTooltip() const -> bool;
 
+	auto		EnableNPCGuildDiscounts( bool value ) -> void;
+	auto		EnableNPCGuildDiscounts() const -> bool;
+
+	auto		EnableNPCGuildPremiums( bool value ) -> void;
+	auto		EnableNPCGuildPremiums() const -> bool;
+
 	auto		CastSpellsWhileMoving( bool value ) -> void;
 	auto		CastSpellsWhileMoving() const -> bool;
 
@@ -794,6 +894,27 @@ public:
 	auto		CoOwnHousesOnSameAccount( bool value ) -> void;
 	auto		CoOwnHousesOnSameAccount() const -> bool;
 
+	auto		SafeCoOwnerLogout( bool value ) -> void;
+	auto		SafeCoOwnerLogout() const -> bool;
+
+	auto		SafeFriendLogout( bool value ) -> void;
+	auto		SafeFriendLogout() const -> bool;
+
+	auto		SafeGuestLogout( bool value ) -> void;
+	auto		SafeGuestLogout() const -> bool;
+
+	auto		KeylessOwnerAccess( bool value ) -> void;
+	auto		KeylessOwnerAccess() const -> bool;
+
+	auto		KeylessCoOwnerAccess( bool value ) -> void;
+	auto		KeylessCoOwnerAccess() const -> bool;
+
+	auto		KeylessFriendAccess( bool value ) -> void;
+	auto		KeylessFriendAccess() const -> bool;
+
+	auto		KeylessGuestAccess( bool value ) -> void;
+	auto		KeylessGuestAccess() const -> bool;
+
 	auto		MaxHousesOwnable( UI16 value ) -> void;
 	auto		MaxHousesOwnable() const -> UI16;
 
@@ -809,8 +930,8 @@ public:
 	auto		CombatAnimalsAttackChance( UI16 value ) -> void;
 	auto		CombatAnimalsAttackChance() const -> UI16;
 
-	auto		CombatArcheryShootDelay( R32 value ) -> void;
-	R32			CombatArcheryShootDelay() const;
+	auto		CombatArcheryShootDelay( R64 value ) -> void;
+	R64			CombatArcheryShootDelay() const;
 
 	auto		CombatArcheryHitBonus( SI08 value ) -> void;
 	SI08		CombatArcheryHitBonus() const;
@@ -860,6 +981,9 @@ public:
 	auto		TravelSpellsWhileAggressor( bool value ) -> void;
 	auto		TravelSpellsWhileAggressor() const -> bool;
 
+	auto		AutoUnequippedCasting( bool value ) -> void;
+	auto		AutoUnequippedCasting() const -> bool;
+
 	auto		ToolUseLimit( bool value ) -> void;
 	auto		ToolUseLimit() const -> bool;
 
@@ -874,6 +998,39 @@ public:
 
 	auto		CraftColouredWeapons( bool value ) -> void;
 	auto		CraftColouredWeapons() const -> bool;
+
+	auto		OfferBODsFromItemSales( bool value ) -> void;
+	auto		OfferBODsFromItemSales() const -> bool;
+
+	auto		OfferBODsFromContextMenu( bool value ) -> void;
+	auto		OfferBODsFromContextMenu() const -> bool;
+
+	auto		BODsFromCraftedItemsOnly( bool value ) -> void;
+	auto		BODsFromCraftedItemsOnly() const -> bool;
+
+	auto		SwingSpeedIncreaseCap( SI16 value ) -> void;
+	SI16		SwingSpeedIncreaseCap() const;
+
+	auto		PhysicalResistCap( SI16 value ) -> void;
+	SI16		PhysicalResistCap() const;
+
+	auto		FireResistCap( SI16 value ) -> void;
+	SI16		FireResistCap() const;
+
+	auto		ColdResistCap( SI16 value ) -> void;
+	SI16		ColdResistCap() const;
+
+	auto		PoisonResistCap( SI16 value ) -> void;
+	SI16		PoisonResistCap() const;
+
+	auto		EnergyResistCap( SI16 value ) -> void;
+	SI16		EnergyResistCap() const;
+
+	auto		DefenseChanceIncreaseCap( SI16 value ) -> void;
+	SI16		DefenseChanceIncreaseCap() const;
+
+	auto		DamageIncreaseCap( SI16 value ) -> void;
+	SI16		DamageIncreaseCap() const;
 
 	auto		MaxControlSlots( UI08 value ) -> void;
 	UI08		MaxControlSlots() const;
@@ -902,8 +1059,14 @@ public:
 	auto		HungerSystemEnabled( bool value ) -> void;
 	auto		HungerSystemEnabled() const -> bool;
 
+	auto		HungerAffectHealthRegen( bool value ) -> void;
+	auto		HungerAffectHealthRegen() const -> bool;
+
 	auto		ThirstSystemEnabled( bool value ) -> void;
 	auto		ThirstSystemEnabled() const -> bool;
+
+	auto		ThirstAffectStaminaRegen( bool value ) -> void;
+	auto		ThirstAffectStaminaRegen() const -> bool;
 
 	auto		HungerDamage( SI16 value ) -> void;
 	SI16		HungerDamage() const;
@@ -931,6 +1094,9 @@ public:
 
 	auto		CombatMaxSpellRange( SI16 value ) -> void;
 	SI16		CombatMaxSpellRange() const;
+
+	auto		CombatMaxNpcAggroRange( SI16 value ) -> void;
+	SI16		CombatMaxNpcAggroRange() const;
 
 	auto		CombatAnimalsGuarded( bool value ) -> void;
 	auto		CombatAnimalsGuarded() const -> bool;
@@ -974,29 +1140,65 @@ public:
 	void		ExpansionCombatHitChance( UI08 value );
 	UI08		ExpansionCombatHitChance() const;
 
+	auto		HumanHealthRegenBonus( SI16 value ) -> void;
+	SI16		HumanHealthRegenBonus() const;
+
+	auto		HumanStaminaRegenBonus( SI16 value ) -> void;
+	SI16		HumanStaminaRegenBonus() const;
+
+	auto		HumanManaRegenBonus( SI16 value ) -> void;
+	SI16		HumanManaRegenBonus() const;
+
+	auto		HumanMaxWeightBonus( SI16 value ) -> void;
+	SI16		HumanMaxWeightBonus() const;
+
+	auto		ElfHealthRegenBonus( SI16 value ) -> void;
+	SI16		ElfHealthRegenBonus() const;
+
+	auto		ElfStaminaRegenBonus( SI16 value ) -> void;
+	SI16		ElfStaminaRegenBonus() const;
+
+	auto		ElfManaRegenBonus( SI16 value ) -> void;
+	SI16		ElfManaRegenBonus() const;
+
+	auto		ElfMaxWeightBonus( SI16 value ) -> void;
+	SI16		ElfMaxWeightBonus() const;
+
+	auto		GargoyleHealthRegenBonus( SI16 value ) -> void;
+	SI16		GargoyleHealthRegenBonus() const;
+
+	auto		GargoyleStaminaRegenBonus( SI16 value ) -> void;
+	SI16		GargoyleStaminaRegenBonus() const;
+
+	auto		GargoyleManaRegenBonus( SI16 value ) -> void;
+	SI16		GargoyleManaRegenBonus() const;
+
+	auto		GargoyleMaxWeightBonus( SI16 value ) -> void;
+	SI16		GargoyleMaxWeightBonus() const;
+
 	auto		CombatNPCBaseReattackAt( SI16 value ) -> void;
 	SI16		CombatNPCBaseReattackAt() const;
 
 	auto		ShootOnAnimalBack( bool setting ) -> void;
 	auto		ShootOnAnimalBack() const -> bool;
 
-	auto		NPCWalkingSpeed( R32 value ) -> void;
-	R32			NPCWalkingSpeed() const;
+	auto		NPCWalkingSpeed( R64 value ) -> void;
+	R64			NPCWalkingSpeed() const;
 
-	auto		NPCRunningSpeed( R32 value ) -> void;
-	R32			NPCRunningSpeed() const;
+	auto		NPCRunningSpeed( R64 value ) -> void;
+	R64			NPCRunningSpeed() const;
 
-	auto		NPCFleeingSpeed( R32 value ) -> void;
-	R32			NPCFleeingSpeed() const;
+	auto		NPCFleeingSpeed( R64 value ) -> void;
+	R64			NPCFleeingSpeed() const;
 
-	auto		NPCMountedWalkingSpeed( R32 value ) -> void;
-	R32			NPCMountedWalkingSpeed() const;
+	auto		NPCMountedWalkingSpeed( R64 value ) -> void;
+	R64			NPCMountedWalkingSpeed() const;
 
-	auto		NPCMountedRunningSpeed( R32 value ) -> void;
-	R32			NPCMountedRunningSpeed() const;
+	auto		NPCMountedRunningSpeed( R64 value ) -> void;
+	R64			NPCMountedRunningSpeed() const;
 
-	auto		NPCMountedFleeingSpeed( R32 value ) -> void;
-	R32			NPCMountedFleeingSpeed() const;
+	auto		NPCMountedFleeingSpeed( R64 value ) -> void;
+	R64			NPCMountedFleeingSpeed() const;
 
 	auto		TitleColour( UI16 value ) -> void;
 	auto		TitleColour() const -> UI16;
@@ -1083,6 +1285,9 @@ public:
 	auto		ArmorAffectManaRegen( bool newVal ) -> void;
 	auto		ArmorAffectManaRegen() const -> bool;
 
+	auto		HealingAffectHealthRegen( bool newVal ) -> void;
+	auto		HealingAffectHealthRegen() const -> bool;
+
 	auto		AdvancedPathfinding( bool value ) -> void;
 	auto		AdvancedPathfinding() const -> bool;
 
@@ -1096,8 +1301,11 @@ public:
 
 	auto		ServerLocation( std::string toSet ) -> void;
 	auto 		ServerLocation( size_t locNum ) ->__STARTLOCATIONDATA__ *;
-
 	auto		NumServerLocations() const -> size_t;
+
+	auto		YoungServerLocation( std::string toSet ) -> void;
+	auto 		YoungServerLocation( size_t locNum ) ->__STARTLOCATIONDATA__ *;
+	auto		NumYoungServerLocations() const -> size_t;
 
 	auto		ServerSecondsPerUOMinute() const -> UI16;
 	auto		ServerSecondsPerUOMinute( UI16 newVal ) -> void;
@@ -1117,6 +1325,15 @@ public:
 	auto		GetJSEngineSize() const -> UI16;
 	auto		SetJSEngineSize( UI16 newVal ) -> void;
 
+	auto		APSPerfThreshold() const -> UI16;
+	auto		APSPerfThreshold( UI16 newVal ) -> void;
+	auto		APSInterval() const -> UI16;
+	auto		APSInterval( UI16 newVal ) -> void;
+	auto		APSDelayStep() const -> UI16;
+	auto		APSDelayStep( UI16 newVal ) -> void;
+	auto		APSDelayMaxCap() const -> UI16;
+	auto		APSDelayMaxCap( UI16 newVal ) -> void;
+
 	SI16		ServerTimeDay() const;
 	UI08		ServerTimeHours() const;
 	UI08		ServerTimeMinutes() const;
@@ -1131,7 +1348,7 @@ public:
 
 	auto		SaveTime() -> void;
 	auto		LoadTime() -> void;
-	auto		LoadTimeTags( std::ifstream &input ) -> void;
+	auto		LoadTimeTags( std::istream &input ) -> void;
 
 	// These functions return true if it's a new day
 	auto		IncSecond() -> bool;

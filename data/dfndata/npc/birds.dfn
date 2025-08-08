@@ -26,6 +26,7 @@ FOOD=bird
 CARVE=2
 RUNS
 RACE=4
+NPCAI=12
 CONTROLSLOTS=1
 }
 
@@ -42,6 +43,12 @@ WRESTLING=10
 DAMAGE=1
 DEF=1
 RACE=4
+}
+
+[tropicalbird]
+{
+GET=bird
+NAME=5159//a tropical bird
 }
 
 [crow]
@@ -73,6 +80,7 @@ TAMEDHUNGER=600 30
 FOOD=hay
 CARVE=8
 RACE=4
+NPCAI=12
 CONTROLSLOTS=1
 }
 
@@ -98,6 +106,7 @@ TOPEACE=92 5
 CARVE=2
 RUNS
 RACE=4
+ORIGIN=se
 }
 
 [eagle]
@@ -203,4 +212,5 @@ WRESTLING=100
 DAMAGE=1
 DEF=3
 RACE=4
+NPCAI=12
 }

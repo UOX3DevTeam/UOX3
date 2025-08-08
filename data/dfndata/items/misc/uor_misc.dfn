@@ -8,6 +8,7 @@ decay=1
 script=5027
 newbie
 value=5000 2500
+origin=uor
 }
 
 [taxidermykit]
@@ -19,4 +20,5 @@ weight=100
 decay=1
 script=5039
 value=90000 45000
+origin=uor
 }

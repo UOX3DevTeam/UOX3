@@ -71,7 +71,7 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"BACKUPDIRECTORY"s, 44},
 	{"MSGBOARDDIRECTORY"s, 45},
 	{"SHAREDDIRECTORY"s, 46},
-	{"LOOTDECAYSWITHCORPSE"s, 47},
+	{"LOOTDECAYSWITHPLAYERCORPSE"s, 47},
 	{"GUARDSACTIVE"s, 49},
 	{"DEATHANIMATION"s, 27},
 	{"AMBIENTSOUNDS"s, 50},
@@ -151,11 +151,11 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"SKILLLEVEL"s, 124},
 	{"SNOOPISCRIME"s, 125},
 	{"BOOKSDIRECTORY"s, 126},
-	//{"SERVERLIST"s, 127},
+	{"SKILLCAPSINGLE"s, 127},
 	{"PORT"s, 128},
 	{"ACCESSDIRECTORY"s, 129},
 	{"LOGSDIRECTORY"s, 130},
-	{"ACCOUNTISOLATION"s, 131},
+	// 131 free
 	{"HTMLDIRECTORY"s, 132},
 	{"SHOOTONANIMALBACK"s, 133},
 	{"NPCTRAININGENABLED"s, 134},
@@ -341,7 +341,68 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"SHOWGUILDINFOINTOOLTIP"s, 318},
 	{"MAXPLAYERPACKWEIGHT"s, 319},
 	{"MAXPLAYERBANKWEIGHT"s, 320},
-
+	{"SAFECOOWNERLOGOUT"s, 321},
+	{"SAFEFRIENDLOGOUT"s, 322},
+	{"SAFEGUESTLOGOUT"s, 323},
+	{"KEYLESSOWNERACCESS"s, 324},
+	{"KEYLESSCOOWNERACCESS"s, 325},
+	{"KEYLESSFRIENDACCESS"s, 326},
+	{"KEYLESSGUESTACCESS"s, 327},
+	{"WEAPONDAMAGEBONUSTYPE"s, 328},
+	{"OFFERBODSFROMITEMSALES"s, 329},
+	{"OFFERBODSFROMCONTEXTMENU"s, 330},
+	{"BODSFROMCRAFTEDITEMSONLY"s, 331},
+	{"BODGOLDREWARDMULTIPLIER"s, 332},
+	{"BODFAMEREWARDMULTIPLIER"s, 333},
+	{"ENABLENPCGUILDDISCOUNTS"s, 334},
+	{"ENABLENPCGUILDPREMIUMS"s, 335},
+	{"AGGRESSORFLAGTIMER"s, 336},
+	{"PERMAGREYFLAGTIMER"s, 337},
+	{"STEALINGFLAGTIMER"s, 338},
+	{"SNOOPAWARENESS"s, 339},
+	{"APSPERFTHRESHOLD"s, 340},
+	{"APSINTERVAL"s, 341},
+	{"APSDELAYSTEP"s, 342},
+	{"APSDELAYMAXCAP"s, 343},
+	{"YOUNGPLAYERSYSTEM"s, 344},
+	{"YOUNGLOCATION"s, 345},
+	{"SECRETSHARDKEY"s, 346},
+	{"MOONGATEFACETS"s, 347},
+	{"AUTOUNEQUIPPEDCASTING"s, 348},
+	{"LOOTDECAYSWITHNPCCORPSE"s, 349},
+	{"HEALTHREGENCAP"s, 350},
+	{"STAMINAREGENCAP"s, 351},
+	{"MANAREGENCAP"s, 352},
+	{"SWINGSPEEDINCREASECAP"s, 353},
+	{"KARMALOCKING"s, 354},
+	{"PHYSICALRESISTCAP"s, 355},
+	{"FIRERESISTCAP"s, 356},
+	{"COLDRESISTCAP"s, 357},
+	{"POISONRESISTCAP"s, 358},
+	{"ENERGYRESISTCAP"s, 359},
+	{"DEFENSECHANCEINCREASECAP"s, 360},
+	{"DAMAGEINCREASECAP"s, 361},
+	{"HEALINGAFFECTHEALTHREGEN"s, 362},
+	{"HPREGENMODE"s, 363},
+	{"STAMINAREGENMODE"s, 364},
+	{"MANAREGENMODE"s, 365},
+	{"HUNGERAFFECTHEALTHREGEN"s, 366},
+	{"THIRSTAFFECTSTAMINAREGEN"s, 367},
+	{"HUMANHEALTHREGENBONUS"s, 368},
+	{"HUMANSTAMINAREGENBONUS"s, 369},
+	{"HUMANMANAREGENBONUS"s, 370},
+	{"ELFHEALTHREGENBONUS"s, 371},
+	{"ELFSTAMINAREGENBONUS"s, 372},
+	{"ELFMANAREGENBONUS"s, 373},
+	{"GARGOYLEHEALTHREGENBONUS"s, 374},
+	{"GARGOYLESTAMINAREGENBONUS"s, 375},
+	{"GARGOYLEMANAREGENBONUS"s, 376},
+	{"HUMANMAXWEIGHTBONUS"s, 377},
+	{"ELFMAXWEIGHTBONUS"s, 378},
+	{"GARGOYLEMAXWEIGHTBONUS"s, 379},
+	{"MAXNPCAGGRORANGE"s, 380},
+	{"POISONCORROSIONSYSTEM"s, 381},
+	{"PETBONDINGENABLED"s, 382}
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -353,7 +414,7 @@ constexpr auto BIT_ANNOUNCEJOINPART		= UI32( 1 );
 constexpr auto BIT_SERVERBACKUP			= UI32( 2 );
 constexpr auto BIT_SHOOTONANIMALBACK	= UI32( 3 );
 constexpr auto BIT_NPCTRAINING			= UI32( 4 );
-constexpr auto BIT_LOOTDECAYSONCORPSE	= UI32( 5 );
+constexpr auto BIT_LOOTDECAYSONPLAYERCORPSE	= UI32( 5 );
 constexpr auto BIT_GUARDSENABLED		= UI32( 6 );
 constexpr auto BIT_PLAYDEATHANIMATION	= UI32( 7 );
 constexpr auto BIT_AMBIENTFOOTSTEPS		= UI32( 8 );
@@ -384,7 +445,7 @@ constexpr auto BIT_ITEMDECAYINHOUSES	= UI32( 32 );
 constexpr auto BIT_PAPERDOLLGUILDBUTTON = UI32( 33 );
 constexpr auto BIT_ATTSPEEDFROMSTAMINA	= UI32( 34 );
 constexpr auto BIT_SHOWDAMAGENUMBERS	= UI32( 35 );
-// 37 free!
+constexpr auto BIT_PETBONDINGENABLED		= UI32( 37 );
 constexpr auto BIT_EXTENDEDSTARTINGSTATS	= UI32( 38 );
 constexpr auto BIT_EXTENDEDSTARTINGSKILLS	= UI32( 39 );
 constexpr auto BIT_ASSISTANTNEGOTIATION		= UI32( 40 );
@@ -409,7 +470,7 @@ constexpr auto BIT_TRAVELSPELLSWHILEOVERWEIGHT	= UI32( 58 );
 constexpr auto BIT_MARKRUNESINMULTIS			= UI32( 59 );
 constexpr auto BIT_TRAVELSPELLSBETWEENWORLDS	= UI32( 60 );
 constexpr auto BIT_TRAVELSPELLSWHILEAGGRESSOR	= UI32( 61 );
-[[maybe_unused]] constexpr auto BIT_CONSOLELOG					= UI32( 62 );
+[[maybe_unused]] constexpr auto BIT_CONSOLELOG	= UI32( 62 );
 constexpr auto BIT_NETWORKLOG					= UI32( 63 );
 constexpr auto BIT_SPEECHLOG					= UI32( 64 );
 constexpr auto BIT_CONTEXTMENUS					= UI32( 65 );
@@ -437,6 +498,28 @@ constexpr auto BIT_SHOWRACEINPAPERDOLL				= UI32( 86 );
 constexpr auto BIT_CASTSPELLSWHILEMOVING			= UI32( 87 );
 constexpr auto BIT_SHOWREPTITLEINTOOLTIP			= UI32( 88 );
 constexpr auto BIT_SHOWGUILDINFOINTOOLTIP			= UI32( 89 );
+constexpr auto BIT_SAFECOOWNERLOGOUT				= UI32( 90 );
+constexpr auto BIT_SAFEFRIENDLOGOUT					= UI32( 91 );
+constexpr auto BIT_SAFEGUESTLOGOUT					= UI32( 92 );
+constexpr auto BIT_KEYLESSOWNERACCESS				= UI32( 93 );
+constexpr auto BIT_KEYLESSCOOWNERACCESS				= UI32( 94 );
+constexpr auto BIT_KEYLESSFRIENDACCESS				= UI32( 95 );
+constexpr auto BIT_KEYLESSGUESTACCESS				= UI32( 96 );
+constexpr auto BIT_OFFERBODSFROMITEMSALES			= UI32( 97 );
+constexpr auto BIT_OFFERBODSFROMCONTEXTMENU			= UI32( 98 );
+constexpr auto BIT_BODSFROMCRAFTEDITEMSONLY			= UI32( 99 );
+constexpr auto BIT_ENABLENPCGUILDDISCOUNTS			= UI32( 100 );
+constexpr auto BIT_ENABLENPCGUILDPREMIUMS			= UI32( 101 );
+constexpr auto BIT_SNOOPAWARENESS					= UI32( 102 );
+constexpr auto BIT_YOUNGPLAYERSYSTEM				= UI32( 103 );
+constexpr auto BIT_AUTOUNEQUIPPEDCASTING			= UI32( 104 );
+constexpr auto BIT_LOOTDECAYSONNPCCORPSE			= UI32( 105 );
+constexpr auto BIT_KARMALOCKING						= UI32( 106 );
+constexpr auto BIT_HEALINGAFFECTHEALTHREGEN			= UI32( 107 );
+constexpr auto BIT_HUNGERAFFECTHEALTHREGEN			= UI32( 108 );
+constexpr auto BIT_THIRSTAFFECTSTAMINAREGEN			= UI32( 109 );
+constexpr auto BIT_POISONCORROSIONSYSTEM			= UI32( 110 );
+
 
 // New uox3.ini format lookup
 // January 13, 2001	- 	Modified: January 30, 2001 Converted to uppercase
@@ -537,13 +620,14 @@ auto CServerData::ResetDefaults() -> void
 	ExternalIP( "127.0.0.1" );
 	serverList[0].SetPort( 2593 );
 	ServerName( "My UOX3 Shard" );
+	SecretShardKey( "None" );
 
 	// Set default gcMaxBytes limit in MB per JS runtime
 	// If set too low, UOX3 might crash when reloading (full) JS engine
 	// JS API references describe it as "Maximum nominal heap before last ditch GC"
 	SetJSEngineSize( 256 );
 
-	// Send server-originating messages i`n Unicode format, if possible
+	// Send server-originating messages in Unicode format, if possible
 	UseUnicodeMessages( true );
 
 	ServerLanguage( DL_DEFAULT );
@@ -558,9 +642,15 @@ auto CServerData::ResetDefaults() -> void
 	ServerNetRcvTimeout( 3 );
 	ServerNetSndTimeout( 3 );
 	ServerNetRetryCount( 3 );
-	MaxClientBytesIn( 25000 );
-	MaxClientBytesOut( 100000 );
+	MaxClientBytesIn( 50000 );
+	MaxClientBytesOut( 200000 );
 	NetTrafficTimeban( 30 );
+
+	// Adaptive Performance System
+	APSPerfThreshold( 50 ); // Default to 50 simulation cycles as performance threshold
+	APSInterval( 100 ); // Default to APS checking performance at 250 ms intervals
+	APSDelayStep( 50 ); // Default to 25 ms as the value at which APS gradually increments the delay to NPC AI/movement checking
+	APSDelayMaxCap( 2000 ); // Default to 1500 ms as max cap on delay APS can introduce to NPC AI/movement checking
 
 	ServerSecondsPerUOMinute( 5 );
 	ServerTimeDay( 0 );
@@ -569,9 +659,12 @@ auto CServerData::ResetDefaults() -> void
 	ServerTimeSeconds( 0 );
 	ServerTimeAMPM( 0 );
 
-	InternalAccountStatus( false );
+	InternalAccountStatus( true );
+	YoungPlayerSystem( true );
+	KarmaLocking( true );
 	CombatMaxRange( 10 );
 	CombatMaxSpellRange( 10 );
+	CombatMaxNpcAggroRange( 10 );
 
 	// load defaults values
 	SystemTimer( tSERVER_SHOPSPAWN, 300 );
@@ -582,17 +675,34 @@ auto CServerData::ResetDefaults() -> void
 	ServerSkillCap( 1000 );
 	ServerStatCap( 225 );
 	StatsAffectSkillChecks( false );
-	CorpseLootDecay( true );
+	PlayerCorpseLootDecay( true );
+	NpcCorpseLootDecay( true );
 	ServerSavesTimer( 600 );
+
+	// Enable login-support only for latest available client by default
+	ClientSupport4000( false );
+	ClientSupport5000( false );
+	ClientSupport6000( false );
+	ClientSupport6050( false );
+	ClientSupport7000( false );
+	ClientSupport7090( false );
+	ClientSupport70160( false );
+	ClientSupport70240( false );
+	ClientSupport70300( false );
+	ClientSupport70331( false );
+	ClientSupport704565( false );
+	ClientSupport70610( true );
 
 	SystemTimer( tSERVER_INVISIBILITY, 60 );
 	SystemTimer( tSERVER_HUNGERRATE, 6000 );
 	HungerDamage( 2 );
 	HungerSystemEnabled( true );
+	HungerAffectHealthRegen( true );
 
 	SystemTimer( tSERVER_THIRSTRATE, 6000 );
 	ThirstDrain( 2 );
 	ThirstSystemEnabled( false );
+	ThirstAffectStaminaRegen( false );
 
 	ServerSkillDelay( 5 );
 	SystemTimer( tSERVER_OBJECTUSAGE, 1 );
@@ -600,6 +710,9 @@ auto CServerData::ResetDefaults() -> void
 	SystemTimer( tSERVER_STAMINAREGEN, 3 );
 	SystemTimer( tSERVER_MANAREGEN, 5 );
 	ArmorAffectManaRegen( true );
+	HealingAffectHealthRegen( true );
+	SnoopIsCrime( false );
+	SnoopAwareness( false );
 	SystemTimer( tSERVER_GATE, 30 );
 	MineCheck( 1 );
 	DeathAnimationStatus( true );
@@ -644,15 +757,31 @@ auto CServerData::ResetDefaults() -> void
 	CombatParryDamageMin( 0 );
 	CombatParryDamageMax( 1 );
 	CombatBloodEffectChance( 75 );
+	PoisonCorrosionSystem( true );
 	GlobalAttackSpeed( 1.0 );
 	NPCSpellCastSpeed( 1.0 );
-	FishingStaminaLoss( 2.0 );
+	FishingStaminaLoss( 2 );
+	HealthRegenMode( HREG_LBR );
+	StaminaRegenMode( SREG_LBR );
+	ManaRegenMode( MREG_LBR );
+	HealthRegenCap( 18 );
+	StaminaRegenCap( 24 );
+	ManaRegenCap( 18 );
 	CombatArmorClassDamageBonus( false );
 	AlchemyDamageBonusEnabled( false );
 	AlchemyDamageBonusModifier( 5 );
 	PetCombatTraining( true );
 	HirelingCombatTraining( true );
 	NpcCombatTraining( false );
+	SwingSpeedIncreaseCap( 60 );
+	PhysicalResistCap( 70 );
+	FireResistCap( 70 );
+	ColdResistCap( 70 );
+	PoisonResistCap( 70 );
+	EnergyResistCap( 70 );
+	DefenseChanceIncreaseCap( 45 );
+	DamageIncreaseCap( 100 );
+	WeaponDamageBonusType( 2 );
 
 	CheckPetControlDifficulty( true );
 	SetPetLoyaltyGainOnSuccess( 1 );
@@ -692,7 +821,7 @@ auto CServerData::ResetDefaults() -> void
 	Directory( CSDDP_LOGS, tDir );
 
 	// Expansion settings
-	ExpansionCoreShardEra( ER_PUB15 ); // Default to pub15
+	ExpansionCoreShardEra( ER_LBR ); // Default to LBR expansion
 	ExpansionArmorCalculation( ER_CORE );
 	ExpansionStrengthDamageBonus( ER_CORE );
 	ExpansionTacticsDamageBonus( ER_CORE );
@@ -704,6 +833,20 @@ auto CServerData::ResetDefaults() -> void
 	ExpansionWeaponParry( ER_CORE );
 	ExpansionWrestlingParry( ER_CORE );
 	ExpansionCombatHitChance( ER_CORE );
+
+	// Default Race Bonuses
+	HumanHealthRegenBonus( 0 ); // 2 from ML and onwards
+	HumanStaminaRegenBonus( 0 );
+	HumanManaRegenBonus( 0 );
+	HumanMaxWeightBonus( 0 );
+	ElfHealthRegenBonus( 0 );
+	ElfStaminaRegenBonus( 0 );
+	ElfManaRegenBonus( 0 );
+	ElfMaxWeightBonus( 0 );
+	GargoyleHealthRegenBonus( 0 );
+	GargoyleStaminaRegenBonus( 0 );
+	GargoyleManaRegenBonus( 2 ); // 2 from SA and onwards
+	GargoyleMaxWeightBonus( 0 );
 
 	BuyThreshold( 2000 );
 	GuardStatus( true );
@@ -719,7 +862,6 @@ auto CServerData::ResetDefaults() -> void
 	BackupRatio( 5 );
 	MaxStealthMovement( 10 );
 	MaxStaminaMovement( 15 );
-	SnoopIsCrime( false );
 	SystemTimer( tSERVER_NPCFLAGUPDATETIMER, 10 );
 	PetOfflineTimeout( 5 );
 	PetHungerOffline( true );
@@ -737,9 +879,11 @@ auto CServerData::ResetDefaults() -> void
 	TravelSpellsBetweenWorlds( false );
 	TravelSpellsWhileAggressor( false );
 	CastSpellsWhileMoving( false );
+	AutoUnequippedCasting( false );
 	MaxControlSlots( 0 ); // Default to 0, which is equal to off
 	MaxFollowers( 5 );
 	MaxPetOwners( 10 );
+	PetBondingEnabled( false );
 	ToolUseLimit( true );
 	ToolUseBreak( true );
 	ItemRepairDurabilityLoss( true );
@@ -747,12 +891,14 @@ auto CServerData::ResetDefaults() -> void
 	CraftColouredWeapons( false );
 	MaxSafeTeleportsPerDay( 1 );
 	TeleportToNearestSafeLocation( false );
-	AllowAwakeNPCs( false );
+	AllowAwakeNPCs( true );
 	GlobalRestockMultiplier( 1.0 );
 	ShowItemResistStats( false );
 	ShowWeaponDamageTypes( true );
 	ShowReputationTitleInTooltip( true );
 	ShowGuildInfoInTooltip( true );
+	EnableNPCGuildDiscounts( true );
+	EnableNPCGuildPremiums( true );
 
 	CheckBoatSpeed( 0.65 );
 	CheckNpcAISpeed( 1 );
@@ -802,6 +948,11 @@ auto CServerData::ResetDefaults() -> void
 	SystemTimer( tSERVER_CRIMINAL, 120 );
 	RepMaxKills( 4 );
 	SystemTimer( tSERVER_MURDERDECAY, 28800 );
+	SystemTimer( tSERVER_AGGRESSORFLAG, 120 );
+	SystemTimer( tSERVER_PERMAGREYFLAG, 0 ); // No duration by default
+	SystemTimer( tSERVER_STEALINGFLAG, 120 );
+	SystemTimer( tSERVER_COMBATIGNORE, 20 ); // Not in ini
+
 	//RepSys ---^
 	TrackingBaseRange( 10 );
 	TrackingMaxTargets( 20 );
@@ -828,6 +979,20 @@ auto CServerData::ResetDefaults() -> void
 	CoOwnHousesOnSameAccount( true );
 	MaxHousesOwnable( 1 );
 	MaxHousesCoOwnable( 10 );
+	SafeCoOwnerLogout( true );
+	SafeFriendLogout( true );
+	SafeGuestLogout( true );
+	KeylessOwnerAccess( true );
+	KeylessCoOwnerAccess( true );
+	KeylessFriendAccess( true );
+	KeylessGuestAccess( false );
+
+	// Bulk Order Deeds
+	OfferBODsFromItemSales( true );
+	OfferBODsFromContextMenu( false );
+	BODsFromCraftedItemsOnly( false );
+	BODGoldRewardMultiplier( 1.0 );
+	BODFameRewardMultiplier( 1.0 );
 
 	// Towns
 	TownNumSecsPollOpen( 3600 );	// one hour
@@ -854,22 +1019,17 @@ auto CServerData::ResetDefaults() -> void
 	// Disable spawn regions for all facets by default
 	SetSpawnRegionsFacetStatus( 0 );
 
+	// Enable Felucca by default
+	SetMoongateFacetStatus( 0, true );
+
+	// Enable Trammel by default
+	SetMoongateFacetStatus( 1, true );
+
+	// Enable Ilshenar by default
+	SetMoongateFacetStatus( 2, true );
+
 	// Set no assistant features as disabled by default
 	SetDisabledAssistantFeature( AF_ALL, false );
-
-	// Enable login-support for any supported client version by default.
-	ClientSupport4000( false );
-	ClientSupport5000( false );
-	ClientSupport6000( false );
-	ClientSupport6050( false );
-	ClientSupport7000( false );
-	ClientSupport7090( false );
-	ClientSupport70160( false );
-	ClientSupport70240( false );
-	ClientSupport70300( false );
-	ClientSupport70331( true );
-	ClientSupport704565( true );
-	ClientSupport70610( true );
 
 	ExtendedStartingStats( true );
 	ExtendedStartingSkills( true );
@@ -882,6 +1042,7 @@ auto CServerData::ResetDefaults() -> void
 	SystemTimer( tSERVER_BLOODDECAYCORPSE, 210 ); // Default to half the decay timer of a npc corpse
 	SystemTimer( tSERVER_BLOODDECAY, 3 ); // Keep it short and sweet
 	startlocations.clear();
+	youngStartlocations.clear();
 	resettingDefaults = false;
 }
 //==================================================================================================
@@ -915,6 +1076,24 @@ auto CServerData::ServerName( const std::string &setname ) -> void
 	if( setname.empty() )
 	{
 		serverList[0].SetName( "My UOX3 Shard" );
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::SecretShardKey()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets secret shard key used to only allows connections from specific
+//|					custom clients that provide a matching secret key
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::SecretShardKey() const -> const std::string&
+{
+	return secretShardKey;
+}
+auto CServerData::SecretShardKey( const std::string &newName ) -> void
+{
+	if( !newName.empty() )
+	{
+		secretShardKey = newName;
 	}
 }
 
@@ -1274,9 +1453,23 @@ auto CServerData::MaxStaminaMovement( SI16 value ) -> void
 	maxStaminaMovement = value;
 }
 
-auto CServerData::BuildSystemTimeValue( cSD_TID timerId ) const ->TIMERVAL
+auto CServerData::BuildSystemTimeValue( cSD_TID timerId ) const -> TIMERVAL
 {
-	return BuildTimeValue( static_cast<R32>( SystemTimer( timerId )));
+	return BuildTimeValue( static_cast<R64>( SystemTimer( timerId )));
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::PetBondingEnabled()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets status of server accouncements for players connecting/disconnecting
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::PetBondingEnabled() const -> bool
+{
+	return boolVals.test( BIT_PETBONDINGENABLED );
+}
+auto CServerData::PetBondingEnabled( bool newVal ) -> void
+{
+	boolVals.set( BIT_PETBONDINGENABLED, newVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1394,11 +1587,11 @@ auto CServerData::Directory( CSDDirectoryPaths dp, std::string value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Set core era ruleset for shard
 //|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = T2A - The Second Age
-//|						2 = UOR - Rennaissance
-//|						3 = TD - Third Dawn
-//|						4 = LBR - Lord Blackthorn's Revenge
-//|						5 = PUB15 - Pub15 (Pre-AoS)
+//|						1 = UO - Original UO release
+//|						2 = T2A - The Second Age
+//|						3 = UOR - Rennaissance
+//|						4 = TD - Third Dawn
+//|						5 = LBR - Lord Blackthorn's Revenge
 //|						6 = AoS - Age of Shadows
 //|						7 = SE - Samurai Empire
 //|						8 = ML - Mondain's Legacy
@@ -1424,11 +1617,11 @@ auto CServerData::ExpansionCoreShardEra( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Set era ruleset for armor/defense calculation
 //|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = T2A - The Second Age
-//|						2 = UOR - Rennaissance
-//|						3 = TD - Third Dawn
-//|						4 = LBR - Lord Blackthorn's Revenge
-//|						5 = PUB15 - Pub15 (Pre-AoS)
+//|						1 = UO - Original UO release
+//|						2 = T2A - The Second Age
+//|						3 = UOR - Rennaissance
+//|						4 = TD - Third Dawn
+//|						5 = LBR - Lord Blackthorn's Revenge
 //|						6 = AoS - Age of Shadows
 //|						7 = SE - Samurai Empire
 //|						8 = ML - Mondain's Legacy
@@ -1463,11 +1656,11 @@ auto CServerData::ExpansionArmorCalculation( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Set era ruleset for strength damage bonus
 //|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = T2A - The Second Age
-//|						2 = UOR - Rennaissance
-//|						3 = TD - Third Dawn
-//|						4 = LBR - Lord Blackthorn's Revenge
-//|						5 = PUB15 - Pub15 (Pre-AoS)
+//|						1 = UO - Original UO release
+//|						2 = T2A - The Second Age
+//|						3 = UOR - Rennaissance
+//|						4 = TD - Third Dawn
+//|						5 = LBR - Lord Blackthorn's Revenge
 //|						6 = AoS - Age of Shadows
 //|						7 = SE - Samurai Empire
 //|						8 = ML - Mondain's Legacy
@@ -1477,7 +1670,7 @@ auto CServerData::ExpansionArmorCalculation( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionStrengthDamageBonus() const -> UI08
 {
-	if(  static_cast<ExpansionRuleset>( expansionStrengthDamageBonus ) == ER_CORE )
+	if( static_cast<ExpansionRuleset>( expansionStrengthDamageBonus ) == ER_CORE )
 	{
 		// Inherit CoreShardEra setting
 		return ExpansionCoreShardEra();
@@ -1498,11 +1691,11 @@ auto CServerData::ExpansionStrengthDamageBonus( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Set era ruleset for tactics damage bonus
 //|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = T2A - The Second Age
-//|						2 = UOR - Rennaissance
-//|						3 = TD - Third Dawn
-//|						4 = LBR - Lord Blackthorn's Revenge
-//|						5 = PUB15 - Pub15 (Pre-AoS)
+//|						1 = UO - Original UO release
+//|						2 = T2A - The Second Age
+//|						3 = UOR - Rennaissance
+//|						4 = TD - Third Dawn
+//|						5 = LBR - Lord Blackthorn's Revenge
 //|						6 = AoS - Age of Shadows
 //|						7 = SE - Samurai Empire
 //|						8 = ML - Mondain's Legacy
@@ -1533,11 +1726,11 @@ auto CServerData::ExpansionTacticsDamageBonus( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Set era ruleset for anatomy damage bonus
 //|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = T2A - The Second Age
-//|						2 = UOR - Rennaissance
-//|						3 = TD - Third Dawn
-//|						4 = LBR - Lord Blackthorn's Revenge
-//|						5 = PUB15 - Pub15 (Pre-AoS)
+//|						1 = UO - Original UO release
+//|						2 = T2A - The Second Age
+//|						3 = UOR - Rennaissance
+//|						4 = TD - Third Dawn
+//|						5 = LBR - Lord Blackthorn's Revenge
 //|						6 = AoS - Age of Shadows
 //|						7 = SE - Samurai Empire
 //|						8 = ML - Mondain's Legacy
@@ -1547,7 +1740,7 @@ auto CServerData::ExpansionTacticsDamageBonus( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionAnatomyDamageBonus() const -> UI08
 {
-	if(  static_cast<ExpansionRuleset>( expansionAnatomyDamageBonus ) == ER_CORE )
+	if( static_cast<ExpansionRuleset>( expansionAnatomyDamageBonus ) == ER_CORE )
 	{
 		// Inherit CoreShardEra setting
 		return ExpansionCoreShardEra();
@@ -1568,11 +1761,11 @@ auto CServerData::ExpansionAnatomyDamageBonus( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Set era ruleset for lumberjack damage bonus
 //|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = T2A - The Second Age
-//|						2 = UOR - Rennaissance
-//|						3 = TD - Third Dawn
-//|						4 = LBR - Lord Blackthorn's Revenge
-//|						5 = PUB15 - Pub15 (Pre-AoS)
+//|						1 = UO - Original UO release
+//|						2 = T2A - The Second Age
+//|						3 = UOR - Rennaissance
+//|						4 = TD - Third Dawn
+//|						5 = LBR - Lord Blackthorn's Revenge
 //|						6 = AoS - Age of Shadows
 //|						7 = SE - Samurai Empire
 //|						8 = ML - Mondain's Legacy
@@ -1582,7 +1775,7 @@ auto CServerData::ExpansionAnatomyDamageBonus( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionLumberjackDamageBonus() const -> UI08
 {
-	if(  static_cast<ExpansionRuleset>( expansionLumberjackDamageBonus ) == ER_CORE )
+	if( static_cast<ExpansionRuleset>( expansionLumberjackDamageBonus ) == ER_CORE )
 	{
 		// Inherit CoreShardEra setting
 		return ExpansionCoreShardEra();
@@ -1603,11 +1796,11 @@ auto CServerData::ExpansionLumberjackDamageBonus( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Set era ruleset for racial damage bonus
 //|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = T2A - The Second Age
-//|						2 = UOR - Rennaissance
-//|						3 = TD - Third Dawn
-//|						4 = LBR - Lord Blackthorn's Revenge
-//|						5 = PUB15 - Pub15 (Pre-AoS)
+//|						1 = UO - Original UO release
+//|						2 = T2A - The Second Age
+//|						3 = UOR - Rennaissance
+//|						4 = TD - Third Dawn
+//|						5 = LBR - Lord Blackthorn's Revenge
 //|						6 = AoS - Age of Shadows
 //|						7 = SE - Samurai Empire
 //|						8 = ML - Mondain's Legacy
@@ -1617,7 +1810,7 @@ auto CServerData::ExpansionLumberjackDamageBonus( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionRacialDamageBonus() const -> UI08
 {
-	if(  static_cast<ExpansionRuleset>( expansionRacialDamageBonus ) == ER_CORE )
+	if( static_cast<ExpansionRuleset>( expansionRacialDamageBonus ) == ER_CORE )
 	{
 		// Inherit CoreShardEra setting
 		return ExpansionCoreShardEra();
@@ -1638,11 +1831,11 @@ auto CServerData::ExpansionRacialDamageBonus( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Set era ruleset for cap applied to damage bonus
 //|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = T2A - The Second Age
-//|						2 = UOR - Rennaissance
-//|						3 = TD - Third Dawn
-//|						4 = LBR - Lord Blackthorn's Revenge
-//|						5 = PUB15 - Pub15 (Pre-AoS)
+//|						1 = UO - Original UO release
+//|						2 = T2A - The Second Age
+//|						3 = UOR - Rennaissance
+//|						4 = TD - Third Dawn
+//|						5 = LBR - Lord Blackthorn's Revenge
 //|						6 = AoS - Age of Shadows
 //|						7 = SE - Samurai Empire
 //|						8 = ML - Mondain's Legacy
@@ -1652,7 +1845,7 @@ auto CServerData::ExpansionRacialDamageBonus( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionDamageBonusCap() const -> UI08
 {
-	if(  static_cast<ExpansionRuleset>( expansionDamageBonusCap ) == ER_CORE )
+	if( static_cast<ExpansionRuleset>( expansionDamageBonusCap ) == ER_CORE )
 	{
 		// Inherit CoreShardEra setting
 		return ExpansionCoreShardEra();
@@ -1673,11 +1866,11 @@ auto CServerData::ExpansionDamageBonusCap( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Set era ruleset for shield parry
 //|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = T2A - The Second Age
-//|						2 = UOR - Rennaissance
-//|						3 = TD - Third Dawn
-//|						4 = LBR - Lord Blackthorn's Revenge
-//|						5 = PUB15 - Pub15 (Pre-AoS)
+//|						1 = UO - Original UO release
+//|						2 = T2A - The Second Age
+//|						3 = UOR - Rennaissance
+//|						4 = TD - Third Dawn
+//|						5 = LBR - Lord Blackthorn's Revenge
 //|						6 = AoS - Age of Shadows
 //|						7 = SE - Samurai Empire
 //|						8 = ML - Mondain's Legacy
@@ -1687,7 +1880,7 @@ auto CServerData::ExpansionDamageBonusCap( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionShieldParry() const -> UI08
 {
-	if(  static_cast<ExpansionRuleset>( expansionShieldParry ) == ER_CORE )
+	if( static_cast<ExpansionRuleset>( expansionShieldParry ) == ER_CORE )
 	{
 		// Inherit CoreShardEra setting
 		return ExpansionCoreShardEra();
@@ -1708,11 +1901,11 @@ auto CServerData::ExpansionShieldParry( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Set era ruleset for weapon parry
 //|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = T2A - The Second Age
-//|						2 = UOR - Rennaissance
-//|						3 = TD - Third Dawn
-//|						4 = LBR - Lord Blackthorn's Revenge
-//|						5 = PUB15 - Pub15 (Pre-AoS)
+//|						1 = UO - Original UO release
+//|						2 = T2A - The Second Age
+//|						3 = UOR - Rennaissance
+//|						4 = TD - Third Dawn
+//|						5 = LBR - Lord Blackthorn's Revenge
 //|						6 = AoS - Age of Shadows
 //|						7 = SE - Samurai Empire
 //|						8 = ML - Mondain's Legacy
@@ -1722,7 +1915,7 @@ auto CServerData::ExpansionShieldParry( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionWeaponParry() const -> UI08
 {
-	if(  static_cast<ExpansionRuleset>( expansionWeaponParry ) == ER_CORE )
+	if( static_cast<ExpansionRuleset>( expansionWeaponParry ) == ER_CORE )
 	{
 		// Inherit CoreShardEra setting
 		return ExpansionCoreShardEra();
@@ -1743,11 +1936,11 @@ auto CServerData::ExpansionWeaponParry( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Set era ruleset for wrestling parry
 //|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = T2A - The Second Age
-//|						2 = UOR - Rennaissance
-//|						3 = TD - Third Dawn
-//|						4 = LBR - Lord Blackthorn's Revenge
-//|						5 = PUB15 - Pub15 (Pre-AoS)
+//|						1 = UO - Original UO release
+//|						2 = T2A - The Second Age
+//|						3 = UOR - Rennaissance
+//|						4 = TD - Third Dawn
+//|						5 = LBR - Lord Blackthorn's Revenge
 //|						6 = AoS - Age of Shadows
 //|						7 = SE - Samurai Empire
 //|						8 = ML - Mondain's Legacy
@@ -1757,7 +1950,7 @@ auto CServerData::ExpansionWeaponParry( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionWrestlingParry() const -> UI08
 {
-	if(  static_cast<ExpansionRuleset>( expansionWrestlingParry ) == ER_CORE )
+	if( static_cast<ExpansionRuleset>( expansionWrestlingParry ) == ER_CORE )
 	{
 		// Inherit CoreShardEra setting
 		return ExpansionCoreShardEra();
@@ -1778,11 +1971,11 @@ auto CServerData::ExpansionWrestlingParry( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Set era ruleset for combat hit chance calculations
 //|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = T2A - The Second Age
-//|						2 = UOR - Rennaissance
-//|						3 = TD - Third Dawn
-//|						4 = LBR - Lord Blackthorn's Revenge
-//|						5 = PUB15 - Pub15 (Pre-AoS)
+//|						1 = UO - Original UO release
+//|						2 = T2A - The Second Age
+//|						3 = UOR - Rennaissance
+//|						4 = TD - Third Dawn
+//|						5 = LBR - Lord Blackthorn's Revenge
 //|						6 = AoS - Age of Shadows
 //|						7 = SE - Samurai Empire
 //|						8 = ML - Mondain's Legacy
@@ -1792,7 +1985,7 @@ auto CServerData::ExpansionWrestlingParry( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionCombatHitChance() const -> UI08
 {
-	if(  static_cast<ExpansionRuleset>( expansionCombatHitChance ) == ER_CORE )
+	if( static_cast<ExpansionRuleset>( expansionCombatHitChance ) == ER_CORE )
 	{
 		// Inherit CoreShardEra setting
 		return ExpansionCoreShardEra();
@@ -1806,6 +1999,186 @@ auto CServerData::ExpansionCombatHitChance( UI08 setting ) -> void
 		setting = ER_COUNT - 1;
 	}
 	expansionCombatHitChance = setting;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::HumanHealthRegenBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default health regen bonus for human race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::HumanHealthRegenBonus() const -> SI16
+{
+	return humanHealthRegenBonus;
+}
+auto CServerData::HumanHealthRegenBonus( SI16 value ) -> void
+{
+	humanHealthRegenBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::HumanStaminaRegenBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default stamina regen bonus for human race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::HumanStaminaRegenBonus() const -> SI16
+{
+	return humanStaminaRegenBonus;
+}
+auto CServerData::HumanStaminaRegenBonus( SI16 value ) -> void
+{
+	humanStaminaRegenBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::HumanManaRegenBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default mana regen bonus for human race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::HumanManaRegenBonus() const -> SI16
+{
+	return humanManaRegenBonus;
+}
+auto CServerData::HumanManaRegenBonus( SI16 value ) -> void
+{
+	humanManaRegenBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::HumanMaxWeightBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default max weight bonus for human race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::HumanMaxWeightBonus() const -> SI16
+{
+	return humanMaxWeightBonus;
+}
+auto CServerData::HumanMaxWeightBonus( SI16 value ) -> void
+{
+	humanMaxWeightBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ElfHealthRegenBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default health regen bonus for elf race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ElfHealthRegenBonus() const -> SI16
+{
+	return elfHealthRegenBonus;
+}
+auto CServerData::ElfHealthRegenBonus( SI16 value ) -> void
+{
+	elfHealthRegenBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ElfStaminaRegenBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default stamina regen bonus for elf race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ElfStaminaRegenBonus() const -> SI16
+{
+	return elfStaminaRegenBonus;
+}
+auto CServerData::ElfStaminaRegenBonus( SI16 value ) -> void
+{
+	elfStaminaRegenBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ElfManaRegenBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default mana regen bonus for elf race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ElfManaRegenBonus() const -> SI16
+{
+	return elfManaRegenBonus;
+}
+auto CServerData::ElfManaRegenBonus( SI16 value ) -> void
+{
+	elfManaRegenBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ElfMaxWeightBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default max weight bonus for elf race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ElfMaxWeightBonus() const -> SI16
+{
+	return elfMaxWeightBonus;
+}
+auto CServerData::ElfMaxWeightBonus( SI16 value ) -> void
+{
+	elfMaxWeightBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::GargoyleHealthRegenBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default health regen bonus for gargoyle race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::GargoyleHealthRegenBonus() const -> SI16
+{
+	return gargoyleHealthRegenBonus;
+}
+auto CServerData::GargoyleHealthRegenBonus( SI16 value ) -> void
+{
+	gargoyleHealthRegenBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::GargoyleStaminaRegenBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default stamina regen bonus for gargoyle race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::GargoyleStaminaRegenBonus() const -> SI16
+{
+	return gargoyleStaminaRegenBonus;
+}
+auto CServerData::GargoyleStaminaRegenBonus( SI16 value ) -> void
+{
+	gargoyleStaminaRegenBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::GargoyleManaRegenBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default mana regen bonus for gargoyle race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::GargoyleManaRegenBonus() const -> SI16
+{
+	return gargoyleManaRegenBonus;
+}
+auto CServerData::GargoyleManaRegenBonus( SI16 value ) -> void
+{
+	gargoyleManaRegenBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::GargoyleMaxWeightBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default max weight bonus for gargoyle race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::GargoyleMaxWeightBonus() const -> SI16
+{
+	return gargoyleMaxWeightBonus;
+}
+auto CServerData::GargoyleMaxWeightBonus( SI16 value ) -> void
+{
+	gargoyleMaxWeightBonus = value;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1865,17 +2238,31 @@ auto CServerData::DumpPaths() -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::CorpseLootDecay()
+//|	Function	-	CServerData::PlayerCorpseLootDecay()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether loot decays along with corpses or is left on ground
+//|	Purpose		-	Gets/Sets whether loot decays along with player corpses or is left on ground
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::CorpseLootDecay() const -> bool
+auto CServerData::PlayerCorpseLootDecay() const -> bool
 {
-	return boolVals.test( BIT_LOOTDECAYSONCORPSE );
+	return boolVals.test( BIT_LOOTDECAYSONPLAYERCORPSE );
 }
-auto CServerData::CorpseLootDecay( bool newVal ) -> void
+auto CServerData::PlayerCorpseLootDecay( bool newVal ) -> void
 {
-	boolVals.set( BIT_LOOTDECAYSONCORPSE, newVal );
+	boolVals.set( BIT_LOOTDECAYSONPLAYERCORPSE, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::NpcCorpseLootDecay()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether loot decays along with  npc corpses or is left on ground
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::NpcCorpseLootDecay() const -> bool
+{
+	return boolVals.test( BIT_LOOTDECAYSONNPCCORPSE );
+}
+auto CServerData::NpcCorpseLootDecay( bool newVal ) -> void
+{
+	boolVals.set( BIT_LOOTDECAYSONNPCCORPSE, newVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1956,6 +2343,34 @@ auto CServerData::InternalAccountStatus( bool newVal ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::YoungPlayerSystem()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether the Young Player system is enabled
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::YoungPlayerSystem() const -> bool
+{
+	return boolVals.test( BIT_YOUNGPLAYERSYSTEM );
+}
+auto CServerData::YoungPlayerSystem( bool newVal ) -> void
+{
+	boolVals.set( BIT_YOUNGPLAYERSYSTEM, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::KarmaLocking()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether the KarmaLocking system is enabled
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::KarmaLocking() const -> bool
+{
+	return boolVals.test( BIT_KARMALOCKING );
+}
+auto CServerData::KarmaLocking( bool newVal ) -> void
+{
+	boolVals.set( BIT_KARMALOCKING, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ShowOfflinePCs() 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether GMs can see offline players
@@ -1995,6 +2410,20 @@ auto CServerData::SnoopIsCrime() const -> bool
 auto CServerData::SnoopIsCrime( bool newVal ) -> void
 {
 	boolVals.set( BIT_SNOOPISCRIME, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::SnoopAwareness()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether targets of snooping become more aware of it over time
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::SnoopAwareness() const -> bool
+{
+	return boolVals.test( BIT_SNOOPAWARENESS );
+}
+auto CServerData::SnoopAwareness( bool newVal ) -> void
+{
+	boolVals.set( BIT_SNOOPAWARENESS, newVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2084,6 +2513,36 @@ auto CServerData::GlobalRestockMultiplier() const -> float
 auto CServerData::GlobalRestockMultiplier( R32 value ) -> void
 {
 	globalRestockMultiplier = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::BODGoldRewardMultiplier()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets a multiplier that adjusts amount of Gold rewarded to players for
+//|					handing in completed Bulk Order Deeds
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::BODGoldRewardMultiplier() const -> float
+{
+	return bodGoldRewardMultiplier;
+}
+auto CServerData::BODGoldRewardMultiplier( R32 value ) -> void
+{
+	bodGoldRewardMultiplier = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::BODFameRewardMultiplier()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets a multiplier that adjusts amount of Fame rewarded to players for
+//|					handing in completed Bulk Order Deeds
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::BODFameRewardMultiplier() const -> float
+{
+	return bodFameRewardMultiplier;
+}
+auto CServerData::BODFameRewardMultiplier( R32 value ) -> void
+{
+	bodFameRewardMultiplier = value;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2185,6 +2644,20 @@ auto CServerData::CheckPetControlDifficulty() const -> bool
 auto CServerData::CheckPetControlDifficulty( bool newVal ) -> void
 {
 	boolVals.set( BIT_CHECKPETCONTROLDIFFICULTY, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::PoisonCorrosionSystem() 
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether poison will corrode weapons and damage their durability
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::PoisonCorrosionSystem( void ) const -> bool
+{
+	return boolVals.test( BIT_POISONCORROSIONSYSTEM );
+}
+auto CServerData::PoisonCorrosionSystem( bool newVal ) -> void
+{
+	boolVals.set( BIT_POISONCORROSIONSYSTEM, newVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2393,11 +2866,11 @@ auto CServerData::CombatAttackSpeedFromStamina( bool newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global attack speed in combat
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::GlobalAttackSpeed() const -> float
+auto CServerData::GlobalAttackSpeed() const -> double
 {
 	return globalAttackSpeed;
 }
-auto CServerData::GlobalAttackSpeed( R32 value ) -> void
+auto CServerData::GlobalAttackSpeed( R64 value ) -> void
 {
 	if( value < 0.0 )
 	{
@@ -2414,11 +2887,11 @@ auto CServerData::GlobalAttackSpeed( R32 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global NPC spell casting speed
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::NPCSpellCastSpeed() const -> float
+auto CServerData::NPCSpellCastSpeed() const -> double
 {
 	return npcSpellcastSpeed;
 }
-auto CServerData::NPCSpellCastSpeed( R32 value ) -> void
+auto CServerData::NPCSpellCastSpeed( R64 value ) -> void
 {
 	if( value < 0.0 )
 	{
@@ -2442,6 +2915,112 @@ auto CServerData::FishingStaminaLoss() const -> SI16
 auto CServerData::FishingStaminaLoss( SI16 value ) -> void
 {
 	fishingstaminaloss = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::HealthRegenMode()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Set calculation mode for passive hitpoint regeneration for players and npcs
+//|	Notes		-		0 = Disabled, no passive regen
+//|						1 = Enabled
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::HealthRegenMode() const -> UI08
+{
+	return healthRegenMode;
+}
+auto CServerData::HealthRegenMode( UI08 mode ) -> void
+{
+	if( mode >= HREG_COUNT )
+	{
+		mode = HREG_COUNT - 1;
+	}
+	healthRegenMode = mode;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::StaminaRegenMode()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Set calculation mode for passive stamina regeneration for players and npcs
+//|	Notes		-		0 = Disabled, no passive regen
+//|						1 = LBR - Calculations meant for Lord Blackthorn's Revenge or earlier
+//|						2 = AoS - Calculations meant for Age of Shadows or later
+//|						3 = SA - Calculations meant for Stygian Abyss or later
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::StaminaRegenMode() const -> UI08
+{
+	return staminaRegenMode;
+}
+auto CServerData::StaminaRegenMode( UI08 mode ) -> void
+{
+	if( mode >= SREG_COUNT )
+	{
+		mode = SREG_COUNT - 1;
+	}
+	staminaRegenMode = mode;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ManaRegenMode()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Set calculation mode for passive stamina regeneration for players and npcs
+//|	Notes		-		0 = Disabled, no passive regen
+//|						1 = LBR - Calculations meant for Lord Blackthorn's Revenge or earlier
+//|						2 = AoS - Calculations meant for Age of Shadows or later
+//|						3 = SA - Calculations meant for Stygian Abyss or later
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ManaRegenMode() const -> UI08
+{
+	return manaRegenMode;
+}
+auto CServerData::ManaRegenMode( UI08 mode ) -> void
+{
+	if( mode >= MREG_COUNT )
+	{
+		mode = MREG_COUNT - 1;
+	}
+	manaRegenMode = mode;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::HealthRegenCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets cap for health regen points
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::HealthRegenCap() const -> SI16
+{
+	return healthRegenCap;
+}
+auto CServerData::HealthRegenCap( SI16 value ) -> void
+{
+	healthRegenCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::StaminaRegenCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets cap for stamina regen points
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::StaminaRegenCap() const -> SI16
+{
+	return staminaRegenCap;
+}
+auto CServerData::StaminaRegenCap( SI16 value ) -> void
+{
+	staminaRegenCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ManaRegenCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets cap for mana regen points
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ManaRegenCap() const -> SI16
+{
+	return manaRegenCap;
+}
+auto CServerData::ManaRegenCap( SI16 value ) -> void
+{
+	manaRegenCap = value;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2487,6 +3066,24 @@ auto CServerData::AlchemyDamageBonusModifier() const -> UI08
 auto CServerData::AlchemyDamageBonusModifier( UI08 value ) -> void
 {
 	alchemyDamageBonusModifier = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::WeaponDamageBonusType()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Weapon Damage Bonus Type, which determines how bonuses to weapon
+//|					damage is applied to weapons:
+//|						0 - Apply flat weapon damage bonus to .hidamage
+//|						1 - Split weapon damage bonus between .lodamage and .hidamage
+//|						2 - Apply flat weapon damage bonus to BOTH .lodamage and .hidamage (Default)
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::WeaponDamageBonusType() const -> UI08
+{
+	return combatWeaponDamageBonusType;
+}
+auto CServerData::WeaponDamageBonusType( UI08 value ) -> void
+{
+	combatWeaponDamageBonusType = value;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2571,7 +3168,18 @@ auto CServerData::ForceNewAnimationPacket() const -> bool
 }
 auto CServerData::ForceNewAnimationPacket( bool newVal ) -> void
 {
-	boolVals.set( BIT_FORCENEWANIMATIONPACKET, newVal );
+	if( ClientSupport4000()
+		|| ClientSupport5000()
+		|| ClientSupport6000()
+		|| ClientSupport6050() )
+	{
+		boolVals.set( BIT_FORCENEWANIMATIONPACKET, false );
+		Console.Warning( "FORCENEWANIMATIONPACKET setting not compatible with support for client versions below 7.0.0.0. Setting disabled!" );
+	}
+	else
+	{
+		boolVals.set( BIT_FORCENEWANIMATIONPACKET, newVal );
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2758,6 +3366,36 @@ auto CServerData::ShowReputationTitleInTooltip( bool newVal ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::EnableNPCGuildDiscounts()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether a discounted price is given when buying items from shopkeepers
+//|					that belong to the same NPC Guild as the player
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::EnableNPCGuildDiscounts() const -> bool
+{
+	return boolVals.test( BIT_ENABLENPCGUILDDISCOUNTS );
+}
+auto CServerData::EnableNPCGuildDiscounts( bool newVal ) -> void
+{
+	boolVals.set( BIT_ENABLENPCGUILDDISCOUNTS, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::EnableNPCGuildPremiums()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether a premium price is offered when selling items to shopkeepers
+//|					that belong to the same NPC Guild as the player
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::EnableNPCGuildPremiums() const -> bool
+{
+	return boolVals.test( BIT_ENABLENPCGUILDPREMIUMS );
+}
+auto CServerData::EnableNPCGuildPremiums( bool newVal ) -> void
+{
+	boolVals.set( BIT_ENABLENPCGUILDPREMIUMS, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::CastSpellsWhileMoving()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether character races show up in tooltips
@@ -2808,9 +3446,9 @@ auto CServerData::HirelingCombatTraining() const -> bool
 {
 	return boolVals.test( BIT_HIRELINGCOMBATTRAINING );
 }
-auto CServerData::HirelingCombatTraining( [[maybe_unused]] bool newVal ) -> void
+auto CServerData::HirelingCombatTraining( bool newVal ) -> void
 {
-	boolVals.set( BIT_HIRELINGCOMBATTRAINING );
+	boolVals.set( BIT_HIRELINGCOMBATTRAINING, newVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2959,6 +3597,107 @@ auto CServerData::CoOwnHousesOnSameAccount( bool newVal ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData:SafeCoOwnerLogout()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether co-owners of a house can safely log out in the house without
+//|					being booted out of the house
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::SafeCoOwnerLogout() const -> bool
+{
+	return boolVals.test( BIT_SAFECOOWNERLOGOUT );
+}
+auto CServerData::SafeCoOwnerLogout( bool newVal ) -> void
+{
+	boolVals.set( BIT_SAFECOOWNERLOGOUT, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::SafeFriendLogout()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether friends of a house can safely log out in the house without
+//|					being booted out of the house
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::SafeFriendLogout() const -> bool
+{
+	return boolVals.test( BIT_SAFEFRIENDLOGOUT );
+}
+auto CServerData::SafeFriendLogout( bool newVal ) -> void
+{
+	boolVals.set( BIT_SAFEFRIENDLOGOUT, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::SafeGuestLogout()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether guests of a house can safely log out in the house without
+//|					being booted out of the house
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::SafeGuestLogout() const -> bool
+{
+	return boolVals.test( BIT_SAFEGUESTLOGOUT );
+}
+auto CServerData::SafeGuestLogout( bool newVal ) -> void
+{
+	boolVals.set( BIT_SAFEGUESTLOGOUT, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::KeylessOwnerAccess()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether owner of a house can access locked doors without a key
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::KeylessOwnerAccess() const -> bool
+{
+	return boolVals.test( BIT_KEYLESSOWNERACCESS );
+}
+auto CServerData::KeylessOwnerAccess( bool newVal ) -> void
+{
+	boolVals.set( BIT_KEYLESSOWNERACCESS, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::KeylessCoOwnerAccess()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether co-owners of a house can access locked doors without a key
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::KeylessCoOwnerAccess() const -> bool
+{
+	return boolVals.test( BIT_KEYLESSCOOWNERACCESS );
+}
+auto CServerData::KeylessCoOwnerAccess( bool newVal ) -> void
+{
+	boolVals.set( BIT_KEYLESSCOOWNERACCESS, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::KeylessFriendAccess()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether friends of a house can access locked doors without a key
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::KeylessFriendAccess() const -> bool
+{
+	return boolVals.test( BIT_KEYLESSFRIENDACCESS );
+}
+auto CServerData::KeylessFriendAccess( bool newVal ) -> void
+{
+	boolVals.set( BIT_KEYLESSFRIENDACCESS, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::KeylessGuestAccess()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether guests of a house can access locked doors without a key
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::KeylessGuestAccess() const -> bool
+{
+	return boolVals.test( BIT_KEYLESSGUESTACCESS );
+}
+auto CServerData::KeylessGuestAccess( bool newVal ) -> void
+{
+	boolVals.set( BIT_KEYLESSGUESTACCESS, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::PaperdollGuildButton()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether guild menu can be accessed from paperdoll button or not
@@ -2984,6 +3723,52 @@ auto CServerData::CombatMonstersVsAnimals() const -> bool
 auto CServerData::CombatMonstersVsAnimals( bool newVal ) -> void
 {
 	boolVals.set( BIT_MONSTERSVSANIMALS, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::OfferBODsFromItemSales()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether Bulk Order Deeds should be offered to players upon selling
+//|					items to a vendor that supports that feature (like a blacksmith)
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::OfferBODsFromItemSales() const -> bool
+{
+	return boolVals.test( BIT_OFFERBODSFROMITEMSALES );
+}
+auto CServerData::OfferBODsFromItemSales( bool newVal ) -> void
+{
+	boolVals.set( BIT_OFFERBODSFROMITEMSALES, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::OfferBODsFromContextMenu()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether Bulk Order Deeds should be offered to players via
+//|					context menu option on vendors that supports that feature (like a blacksmith)
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::OfferBODsFromContextMenu() const -> bool
+{
+	return boolVals.test( BIT_OFFERBODSFROMCONTEXTMENU );
+}
+auto CServerData::OfferBODsFromContextMenu( bool newVal ) -> void
+{
+	boolVals.set( BIT_OFFERBODSFROMCONTEXTMENU, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::BODsFromCraftedItemsOnly()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether Bulk Order Deed offers will be triggered by selling any
+//|					items to a vendor that supports the feature, or just from selling crafted items.
+//|					Depends on OFFERBODSFROMITEMSALES feature being enabled.
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::BODsFromCraftedItemsOnly() const -> bool
+{
+	return boolVals.test( BIT_BODSFROMCRAFTEDITEMSONLY );
+}
+auto CServerData::BODsFromCraftedItemsOnly( bool newVal ) -> void
+{
+	boolVals.set( BIT_BODSFROMCRAFTEDITEMSONLY, newVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3057,11 +3842,11 @@ auto CServerData::CombatArcheryHitBonus( SI08 value ) -> void
 //|	Purpose		-	Gets/Sets the delay (in seconds, with decimals) after archers stop moving until
 //|					they can fire a shot in combat
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatArcheryShootDelay() const -> float
+auto CServerData::CombatArcheryShootDelay() const -> double
 {
 	return archeryShootDelay;
 }
-auto CServerData::CombatArcheryShootDelay( R32 value ) -> void
+auto CServerData::CombatArcheryShootDelay( R64 value ) -> void
 {
 	if( value < 0.0 )
 	{
@@ -3244,6 +4029,20 @@ auto CServerData::HungerSystemEnabled( bool newVal ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function    -   CServerData::HungerAffectHealthRegen()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets whether hunger system affects passive health regen
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::HungerAffectHealthRegen() const -> bool
+{
+	return boolVals.test( BIT_HUNGERAFFECTHEALTHREGEN );
+}
+auto CServerData::HungerAffectHealthRegen( bool newVal ) -> void
+{
+	boolVals.set( BIT_HUNGERAFFECTHEALTHREGEN, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //| Function    -   CServerData::ThirstSystemEnabled()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets whether hunger system is enabled or disabled
@@ -3255,6 +4054,20 @@ auto CServerData::ThirstSystemEnabled() const -> bool
 auto CServerData::ThirstSystemEnabled( bool newVal ) -> void
 {
 	boolVals.set( BIT_THIRSTSYSTEMENABLED, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -   CServerData::ThirstAffectStaminaRegen()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets whether hunger system affects passive health regen
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ThirstAffectStaminaRegen() const -> bool
+{
+	return boolVals.test( BIT_THIRSTAFFECTSTAMINAREGEN );
+}
+auto CServerData::ThirstAffectStaminaRegen( bool newVal ) -> void
+{
+	boolVals.set( BIT_THIRSTAFFECTSTAMINAREGEN, newVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3403,6 +4216,20 @@ auto CServerData::ArmorAffectManaRegen( bool newVal ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function    -   CServerData::HealingAffectHealthRegen()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets whether passive healing regen gets bonus from Healing skill
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::HealingAffectHealthRegen() const -> bool
+{
+	return boolVals.test( BIT_HEALINGAFFECTHEALTHREGEN );
+}
+auto CServerData::HealingAffectHealthRegen( bool newVal ) -> void
+{
+	boolVals.set( BIT_HEALINGAFFECTHEALTHREGEN, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::AdvancedPathfinding()
 //|	Date		-	7/16/2005
 //o------------------------------------------------------------------------------------------------o
@@ -3501,6 +4328,20 @@ auto CServerData::TravelSpellsWhileAggressor() const -> bool
 auto CServerData::TravelSpellsWhileAggressor( bool newVal ) -> void
 {
 	boolVals.set( BIT_TRAVELSPELLSWHILEAGGRESSOR, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -   CServerData::AutoUnequippedCasting()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets whether spells will auto unequipe the hands that is not a spellbook or spellchanneling type.
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::AutoUnequippedCasting() const -> bool
+{
+	return boolVals.test( BIT_AUTOUNEQUIPPEDCASTING );
+}
+auto CServerData::AutoUnequippedCasting( bool newVal ) -> void
+{
+	boolVals.set( BIT_AUTOUNEQUIPPEDCASTING, newVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3730,6 +4571,20 @@ auto CServerData::CombatMaxSpellRange( SI16 value ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::CombatMaxNpcAggroRange()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the maximum range at which NPCs can aggro targets on their own
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::CombatMaxNpcAggroRange() const -> SI16
+{
+	return combatMaxNpcAggroRange;
+}
+auto CServerData::CombatMaxNpcAggroRange( SI16 value ) -> void
+{
+	combatMaxNpcAggroRange = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::CombatAnimalsGuarded()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether animals are under the protection of town guards or not
@@ -3776,11 +4631,11 @@ auto CServerData::CombatNPCBaseReattackAt( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global, default walking speed for NPCs
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::NPCWalkingSpeed() const -> float
+auto CServerData::NPCWalkingSpeed() const -> double
 {
 	return npcWalkingSpeed;
 }
-auto CServerData::NPCWalkingSpeed( R32 value ) -> void
+auto CServerData::NPCWalkingSpeed( R64 value ) -> void
 {
 	npcWalkingSpeed = value;
 }
@@ -3790,11 +4645,11 @@ auto CServerData::NPCWalkingSpeed( R32 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global, default running speed for NPCs
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::NPCRunningSpeed() const -> float
+auto CServerData::NPCRunningSpeed() const -> double
 {
 	return npcRunningSpeed;
 }
-auto CServerData::NPCRunningSpeed( R32 value ) -> void
+auto CServerData::NPCRunningSpeed( R64 value ) -> void
 {
 	npcRunningSpeed = value;
 }
@@ -3804,11 +4659,11 @@ auto CServerData::NPCRunningSpeed( R32 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global, default speed at which NPCs flee in combat
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::NPCFleeingSpeed() const -> float
+auto CServerData::NPCFleeingSpeed() const -> double
 {
 	return npcFleeingSpeed;
 }
-auto CServerData::NPCFleeingSpeed( R32 value ) -> void
+auto CServerData::NPCFleeingSpeed( R64 value ) -> void
 {
 	npcFleeingSpeed = value;
 }
@@ -3818,11 +4673,11 @@ auto CServerData::NPCFleeingSpeed( R32 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global, default walking speed for mounted NPCs
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::NPCMountedWalkingSpeed() const -> float
+auto CServerData::NPCMountedWalkingSpeed() const -> double
 {
 	return npcMountedWalkingSpeed;
 }
-auto CServerData::NPCMountedWalkingSpeed( R32 value ) -> void
+auto CServerData::NPCMountedWalkingSpeed( R64 value ) -> void
 {
 	npcMountedWalkingSpeed = value;
 }
@@ -3832,11 +4687,11 @@ auto CServerData::NPCMountedWalkingSpeed( R32 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global, default running speed for mounted NPCs
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::NPCMountedRunningSpeed() const -> float
+auto CServerData::NPCMountedRunningSpeed() const -> double
 {
 	return npcMountedRunningSpeed;
 }
-auto CServerData::NPCMountedRunningSpeed( R32 value ) -> void
+auto CServerData::NPCMountedRunningSpeed( R64 value ) -> void
 {
 	npcMountedRunningSpeed = value;
 }
@@ -3846,11 +4701,11 @@ auto CServerData::NPCMountedRunningSpeed( R32 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global, default speed at which mounted NPCs flee in combat
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::NPCMountedFleeingSpeed() const -> float
+auto CServerData::NPCMountedFleeingSpeed() const -> double
 {
 	return npcMountedFleeingSpeed;
 }
-auto CServerData::NPCMountedFleeingSpeed( R32 value ) -> void
+auto CServerData::NPCMountedFleeingSpeed( R64 value ) -> void
 {
 	npcMountedFleeingSpeed = value;
 }
@@ -4227,6 +5082,29 @@ auto CServerData::SetSpawnRegionsFacetStatus( UI32 nVal ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::GetMoongateFacetStatus()
+//|					CServerData::SetMoongateFacetStatus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets active status of moongates per facet
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::GetMoongateFacetStatus( UI32 value ) const -> bool
+{
+	return moongateFacets.test( value );
+}
+auto CServerData::SetMoongateFacetStatus( UI32 nVal, bool status ) -> void
+{
+	moongateFacets.set( nVal, status );
+}
+auto CServerData::GetMoongateFacetStatus() const -> UI32
+{
+	return static_cast<UI32>( moongateFacets.to_ulong() );
+}
+auto CServerData::SetMoongateFacetStatus( UI32 nVal ) -> void
+{
+	moongateFacets = nVal;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::GetAssistantNegotiation() 
 //|					CServerData::SetAssistantNegotiation()
 //o------------------------------------------------------------------------------------------------o
@@ -4348,11 +5226,11 @@ auto CServerData::SaveIni() -> bool
 // Map of era enums to era strings, used for conversion between the two types
 static const std::unordered_map<ExpansionRuleset, std::string> eraNames
 {
+	{ ER_UO,	"uo"s },
 	{ ER_T2A,	"t2a"s },
 	{ ER_UOR,	"uor"s },
 	{ ER_TD,	"td"s },
 	{ ER_LBR,	"lbr"s },
-	{ ER_PUB15, "pub15"s },
 	{ ER_AOS,	"aos"s },
 	{ ER_SE,	"se"s },
 	{ ER_ML,	"ml"s },
@@ -4368,7 +5246,7 @@ static const std::unordered_map<ExpansionRuleset, std::string> eraNames
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::EraEnumToString( ExpansionRuleset eraEnum, bool coreEnum ) -> std::string
 {
-	std::string eraName = "pub15"; // default
+	std::string eraName = "lbr"; // default
 	if( !coreEnum && eraEnum == static_cast<ExpansionRuleset>( ExpansionCoreShardEra() ))
 	{
 		// Enum matches the core shard era setting; return it as "core"
@@ -4394,12 +5272,16 @@ auto CServerData::EraEnumToString( ExpansionRuleset eraEnum, bool coreEnum ) -> 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Pass an era string in, get an era enum back
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::EraStringToEnum( const std::string &eraString ) -> ExpansionRuleset
+auto CServerData::EraStringToEnum( const std::string &eraString, bool useDefault, bool inheritCore ) -> ExpansionRuleset
 {
-	auto searchEra = oldstrutil::lower( eraString );
-	auto rValue = ER_PUB15; // Default era if specified era is not found
+	auto rValue = ER_CORE;
+	if( useDefault )
+	{
+		rValue = ER_LBR; // Default era if specified era is not found
+	}
 
-	if( searchEra == "core" )
+	auto searchEra = oldstrutil::lower( eraString );
+	if( inheritCore && searchEra == "core" )
 	{
 		// Inherit setting from CORESHARDERA setting
 		return static_cast<ExpansionRuleset>( ExpansionCoreShardEra() );
@@ -4462,6 +5344,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "SERVERNAME=" << ServerName() << '\n';
 		ofsOutput << "EXTERNALIP=" << ExternalIP() << '\n';
 		ofsOutput << "PORT=" << ServerPort() << '\n';
+		ofsOutput << "SECRETSHARDKEY=" << SecretShardKey() << '\n';
 		ofsOutput << "SERVERLANGUAGE=" << ServerLanguage() << '\n';
 		ofsOutput << "NETRCVTIMEOUT=" << ServerNetRcvTimeout() << '\n';
 		ofsOutput << "NETSNDTIMEOUT=" << ServerNetSndTimeout() << '\n';
@@ -4475,7 +5358,6 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "BACKUPSENABLED=" << ( ServerBackupStatus() ? 1 : 0 ) << '\n';
 		ofsOutput << "BACKUPSAVERATIO=" << BackupRatio() << '\n';
 		ofsOutput << "SAVESTIMER=" << ServerSavesTimerStatus() << '\n';
-		ofsOutput << "ACCOUNTISOLATION=" << "1" << '\n';
 		ofsOutput << "UOGENABLED=" << ( ServerUOGEnabled() ? 1 : 0 ) << '\n';
 		ofsOutput << "FREESHARDSERVERPOLL=" << ( FreeshardServerPoll() ? 1 : 0 ) << '\n';
 		ofsOutput << "RANDOMSTARTINGLOCATION=" << ( ServerRandomStartingLocation() ? 1 : 0 ) << '\n';
@@ -4489,6 +5371,10 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "MAXCLIENTBYTESIN=" << static_cast<UI32>( MaxClientBytesIn() ) << '\n';
 		ofsOutput << "MAXCLIENTBYTESOUT=" << static_cast<UI32>( MaxClientBytesOut() ) << '\n';
 		ofsOutput << "NETTRAFFICTIMEBAN=" << static_cast<UI32>( NetTrafficTimeban() ) << '\n';
+		ofsOutput << "APSPERFTHRESHOLD=" << static_cast<UI16>( APSPerfThreshold() ) << '\n';
+		ofsOutput << "APSINTERVAL=" << static_cast<UI16>( APSInterval() ) << '\n';
+		ofsOutput << "APSDELAYSTEP=" << static_cast<UI16>( APSDelayStep() ) << '\n';
+		ofsOutput << "APSDELAYMAXCAP=" << static_cast<UI16>( APSDelayMaxCap() ) << '\n';
 		ofsOutput << "}" << '\n' << '\n';
 
 		ofsOutput << "[clientsupport]" << '\n' << "{" << '\n';
@@ -4526,6 +5412,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << '\n' << "[skill & stats]" << '\n' << "{" << '\n';
 		ofsOutput << "SKILLLEVEL=" << static_cast<UI16>( SkillLevel() ) << '\n';
 		ofsOutput << "SKILLCAP=" << ServerSkillTotalCapStatus() << '\n';
+		ofsOutput << "SKILLCAPSINGLE=" << ServerSkillCapStatus() << '\n';
 		ofsOutput << "SKILLDELAY=" << static_cast<UI16>( ServerSkillDelayStatus() ) << '\n';
 		ofsOutput << "STATCAP=" << ServerStatCapStatus() << '\n';
 		ofsOutput << "STATSAFFECTSKILLCHECKS=" << ( StatsAffectSkillChecks() ? 1 : 0 ) << '\n';
@@ -4534,7 +5421,15 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "MAXSTEALTHMOVEMENTS=" << MaxStealthMovement() << '\n';
 		ofsOutput << "MAXSTAMINAMOVEMENTS=" << MaxStaminaMovement() << '\n';
 		ofsOutput << "SNOOPISCRIME=" << ( SnoopIsCrime() ? 1 : 0 ) << '\n';
+		ofsOutput << "SNOOPAWARENESS=" << ( SnoopAwareness() ? 1 : 0 ) << '\n';
 		ofsOutput << "ARMORAFFECTMANAREGEN=" << ( ArmorAffectManaRegen() ? 1 : 0) << '\n';
+		ofsOutput << "HEALTHREGENMODE=" << static_cast<UI16>( HealthRegenMode() ) << '\n';
+		ofsOutput << "STAMINAREGENMODE=" << static_cast<UI16>( StaminaRegenMode() ) << '\n';
+		ofsOutput << "MANAREGENMODE=" << static_cast<UI16>( ManaRegenMode() ) << '\n';
+		ofsOutput << "HEALINGAFFECTHEALTHREGEN=" << ( HealingAffectHealthRegen() ? 1 : 0) << '\n';
+		ofsOutput << "HEALTHREGENCAP=" << HealthRegenCap() << '\n';
+		ofsOutput << "STAMINAREGENCAP=" << StaminaRegenCap() << '\n';
+		ofsOutput << "MANAREGENCAP=" << ManaRegenCap() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[timers]" << '\n' << "{" << '\n';
@@ -4561,7 +5456,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "BLOODDECAYCORPSETIMER=" << SystemTimer( tSERVER_BLOODDECAYCORPSE ) << '\n';
 		ofsOutput << "}" << '\n';
 
-		ofsOutput << '\n' << "// Supported era values: core, t2a, uor, td, lbr, pub15, aos, se, ml, sa, hs, tol" << '\n';
+		ofsOutput << '\n' << "// Supported era values: core, uo, t2a, uor, td, lbr, aos, se, ml, sa, hs, tol" << '\n';
 		ofsOutput << '\n' << "// Note: A value of 'core' inherits whatever is set in CORESHARDERA" << '\n';
 		ofsOutput << "[expansion settings]" << '\n' << "{" << '\n';
 		ofsOutput << "CORESHARDERA=" << EraEnumToString( static_cast<ExpansionRuleset>( ExpansionCoreShardEra() ), true ) << '\n';
@@ -4576,11 +5471,27 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "WEAPONPARRY=" << EraEnumToString( static_cast<ExpansionRuleset>( expansionWeaponParry )) << '\n';
 		ofsOutput << "WRESTLINGPARRY=" << EraEnumToString( static_cast<ExpansionRuleset>( expansionWrestlingParry )) << '\n';
 		ofsOutput << "COMBATHITCHANCE=" << EraEnumToString( static_cast<ExpansionRuleset>( expansionCombatHitChance )) << '\n';
+		ofsOutput << "}" << '\n';
 
+		ofsOutput << '\n' << "// Note: Can be overridden/expanded to other races via races.dfn" << '\n';
+		ofsOutput << "[default race bonuses]" << '\n' << "{" << '\n';
+		ofsOutput << "HUMANHEALTHREGENBONUS=" << HumanHealthRegenBonus() << '\n';
+		ofsOutput << "HUMANSTAMINAREGENBONUS=" << HumanStaminaRegenBonus() << '\n';
+		ofsOutput << "HUMANMANAREGENBONUS=" << HumanManaRegenBonus() << '\n';
+		ofsOutput << "HUMANMAXWEIGHTBONUS=" << HumanMaxWeightBonus() << '\n';
+		ofsOutput << "ELFHEALTHREGENBONUS=" << ElfHealthRegenBonus() << '\n';
+		ofsOutput << "ELFSTAMINAREGENBONUS=" << ElfStaminaRegenBonus() << '\n';
+		ofsOutput << "ELFMANAREGENBONUS=" << ElfManaRegenBonus() << '\n';
+		ofsOutput << "ELFMAXWEIGHTBONUS=" << ElfMaxWeightBonus() << '\n';
+		ofsOutput << "GARGOYLEHEALTHREGENBONUS=" << GargoyleHealthRegenBonus() << '\n';
+		ofsOutput << "GARGOYLESTAMINAREGENBONUS=" << GargoyleStaminaRegenBonus() << '\n';
+		ofsOutput << "GARGOYLEMANAREGENBONUS=" << GargoyleManaRegenBonus() << '\n';
+		ofsOutput << "GARGOYLEMAXWEIGHTBONUS=" << GargoyleMaxWeightBonus() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[settings]" << '\n' << "{" << '\n';
-		ofsOutput << "LOOTDECAYSWITHCORPSE=" << ( CorpseLootDecay() ? 1 : 0 ) << '\n';
+		ofsOutput << "LOOTDECAYSWITHPLAYERCORPSE=" << ( PlayerCorpseLootDecay() ? 1 : 0 ) << '\n';
+		ofsOutput << "LOOTDECAYSWITHNPCCORPSE=" << ( NpcCorpseLootDecay() ? 1 : 0 ) << '\n';
 		ofsOutput << "GUARDSACTIVE=" << ( GuardsStatus() ? 1 : 0 ) << '\n';
 		ofsOutput << "DEATHANIMATION=" << ( DeathAnimationStatus() ? 1 : 0 ) << '\n';
 		ofsOutput << "AMBIENTSOUNDS=" << WorldAmbientSounds() << '\n';
@@ -4606,6 +5517,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "CLIENTFEATURES=" << GetClientFeatures() << '\n';
 		ofsOutput << "SERVERFEATURES=" << GetServerFeatures() << '\n';
 		ofsOutput << "SPAWNREGIONSFACETS=" << GetSpawnRegionsFacetStatus() << '\n';
+		ofsOutput << "MOONGATEFACETS=" << GetMoongateFacetStatus() << '\n';
 		ofsOutput << "OVERLOADPACKETS=" << ( ServerOverloadPackets() ? 1 : 0 ) << '\n';
 		ofsOutput << "ADVANCEDPATHFINDING=" << ( AdvancedPathfinding() ? 1 : 0 ) << '\n';
 		ofsOutput << "LOOTINGISCRIME=" << ( LootingIsCrime() ? 1 : 0 ) << '\n';
@@ -4636,6 +5548,10 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "MAXSAFETELEPORTSPERDAY=" << static_cast<UI16>( MaxSafeTeleportsPerDay() ) << '\n';
 		ofsOutput << "TELEPORTTONEARESTSAFELOCATION=" << ( TeleportToNearestSafeLocation() ? 1 : 0 ) << '\n';
 		ofsOutput << "ALLOWAWAKENPCS=" << ( AllowAwakeNPCs() ? 1 : 0 ) << '\n';
+		ofsOutput << "ENABLENPCGUILDDISCOUNTS=" << ( EnableNPCGuildDiscounts() ? 1 : 0 ) << '\n';
+		ofsOutput << "ENABLENPCGUILDPREMIUMS=" << ( EnableNPCGuildPremiums() ? 1 : 0 ) << '\n';
+		ofsOutput << "YOUNGPLAYERSYSTEM=" << ( YoungPlayerSystem() ? 1 : 0 ) << '\n';
+		ofsOutput << "KARMALOCKING=" << ( KarmaLocking() ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[pets and followers]" << '\n' << "{" << '\n';
@@ -4646,6 +5562,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "PETLOYALTYGAINONSUCCESS=" << static_cast<UI16>( GetPetLoyaltyGainOnSuccess() ) << '\n';
 		ofsOutput << "PETLOYALTYLOSSONFAILURE=" << static_cast<UI16>( GetPetLoyaltyLossOnFailure() ) << '\n';
 		ofsOutput << "PETLOYALTYRATE=" << SystemTimer( tSERVER_LOYALTYRATE ) << '\n';
+		ofsOutput << "PETBONDINGENABLED=" << ( PetBondingEnabled() ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[speedup]" << '\n' << "{" << '\n';
@@ -4693,6 +5610,9 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "MURDERDECAYTIMER=" << SystemTimer( tSERVER_MURDERDECAY ) << '\n';
 		ofsOutput << "MAXKILLS=" << RepMaxKills() << '\n';
 		ofsOutput << "CRIMINALTIMER=" << SystemTimer( tSERVER_CRIMINAL ) << '\n';
+		ofsOutput << "AGGRESSORFLAGTIMER=" << SystemTimer( tSERVER_AGGRESSORFLAG ) << '\n';
+		ofsOutput << "PERMAGREYFLAGTIMER=" << SystemTimer( tSERVER_PERMAGREYFLAG ) << '\n';
+		ofsOutput << "STEALINGFLAGTIMER=" << SystemTimer( tSERVER_STEALINGFLAG ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[resources]" << '\n' << "{" << '\n';
@@ -4710,6 +5630,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "HUNGERENABLED=" << ( HungerSystemEnabled() ? 1 : 0 ) << '\n';
 		ofsOutput << "HUNGERRATE=" << SystemTimer( tSERVER_HUNGERRATE ) << '\n';
 		ofsOutput << "HUNGERDMGVAL=" << HungerDamage() << '\n';
+		ofsOutput << "HUNGERAFFECTHEALTHREGEN=" << ( HungerAffectHealthRegen() ? 1 : 0) << '\n';
 		ofsOutput << "PETHUNGEROFFLINE=" << ( PetHungerOffline() ? 1 : 0 ) << '\n';
 		ofsOutput << "PETOFFLINETIMEOUT=" << PetOfflineTimeout() << '\n';
 		ofsOutput << "}" << '\n';
@@ -4718,12 +5639,14 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "THIRSTENABLED=" << ( ThirstSystemEnabled() ? 1 : 0 ) << '\n';
 		ofsOutput << "THIRSTRATE=" << SystemTimer( tSERVER_THIRSTRATE ) << '\n';
 		ofsOutput << "THIRSTDRAINVAL=" << ThirstDrain() << '\n';
+		ofsOutput << "THIRSTAFFECTSTAMINAREGEN=" << ( ThirstAffectStaminaRegen() ? 1 : 0) << '\n';
 		ofsOutput << "PETTHIRSTOFFLINE=" << ( PetThirstOffline() ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[combat]" << '\n' << "{" << '\n';
 		ofsOutput << "MAXRANGE=" << CombatMaxRange() << '\n';
 		ofsOutput << "SPELLMAXRANGE=" << CombatMaxSpellRange() << '\n';
+		ofsOutput << "MAXNPCAGGRORANGE=" << CombatMaxNpcAggroRange() << '\n';
 		ofsOutput << "DISPLAYHITMSG=" << ( CombatDisplayHitMessage() ? 1 : 0 ) << '\n';
 		ofsOutput << "DISPLAYDAMAGENUMBERS=" << ( CombatDisplayDamageNumbers() ? 1 : 0 ) << '\n';
 		ofsOutput << "MONSTERSVSANIMALS=" << ( CombatMonstersVsAnimals() ? 1 : 0 ) << '\n';
@@ -4756,7 +5679,16 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "NPCCOMBATTRAINING=" << ( NpcCombatTraining() ? 1 : 0 ) << '\n';
 		ofsOutput << "SHOWITEMRESISTSTATS=" << ( ShowItemResistStats() ? 1 : 0 ) << '\n';
 		ofsOutput << "SHOWWEAPONDAMAGETYPES=" << ( ShowWeaponDamageTypes() ? 1 : 0 ) << '\n';
-
+		ofsOutput << "WEAPONDAMAGEBONUSTYPE=" << static_cast<UI16>( WeaponDamageBonusType() ) << '\n';
+		ofsOutput << "WEAPONSWINGSPEEDINCREASECAP=" << SwingSpeedIncreaseCap() << '\n';
+		//ofsOutput << "PHYSICALRESISTCAP=" << PhysicalResistCap() << '\n';
+		//ofsOutput << "FIRERESISTCAP=" << FireResistCap() << '\n';
+		//ofsOutput << "COLDRESISTCAP=" << ColdResistCap() << '\n';
+		//ofsOutput << "POISONRESISTCAP=" << PoisonResistCap() << '\n';
+		//ofsOutput << "ENERGYRESISTCAP=" << EnergyResistCap() << '\n';
+		//ofsOutput << "DEFENSECHANCEINCREASECAP=" << DefenseChanceIncreaseCap() << '\n';
+		ofsOutput << "DAMAGEINCREASECAP=" << DamageIncreaseCap() << '\n';
+		ofsOutput << "POISONCORROSIONSYSTEM=" << ( PoisonCorrosionSystem() ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[magic]" << '\n' << "{" << '\n';
@@ -4767,12 +5699,20 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "TRAVELSPELLSWHILEAGGRESSOR=" << ( TravelSpellsWhileAggressor() ? 1 : 0 ) << '\n';
 		ofsOutput << "HIDESTATSFORUNKNOWNMAGICITEMS=" << HideStatsForUnknownMagicItems() << '\n';
 		ofsOutput << "CASTSPELLSWHILEMOVING=" << ( CastSpellsWhileMoving() ? 1 : 0 ) << '\n';
+		ofsOutput << "AUTOUNEQUIPPEDCASTING=" << ( AutoUnequippedCasting() ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[start locations]" << '\n' << "{" << '\n';
 		for( size_t lCtr = 0; lCtr < startlocations.size(); ++lCtr )
 		{
 			ofsOutput << "LOCATION=" << startlocations[lCtr].newTown << "," << startlocations[lCtr].newDescription << "," << startlocations[lCtr].x << "," << startlocations[lCtr].y << "," << startlocations[lCtr].z << "," << startlocations[lCtr].worldNum << "," << startlocations[lCtr].instanceId << "," << startlocations[lCtr].clilocDesc << '\n';
+		}
+		ofsOutput << "}" << '\n';
+
+		ofsOutput << '\n' << "[young start locations]" << '\n' << "{" << '\n';
+		for( size_t lCtr = 0; lCtr < youngStartlocations.size(); ++lCtr )
+		{
+			ofsOutput << "YOUNGLOCATION=" << youngStartlocations[lCtr].newTown << "," << youngStartlocations[lCtr].newDescription << "," << youngStartlocations[lCtr].x << "," << youngStartlocations[lCtr].y << "," << youngStartlocations[lCtr].z << "," << youngStartlocations[lCtr].worldNum << "," << youngStartlocations[lCtr].instanceId << "," << youngStartlocations[lCtr].clilocDesc << '\n';
 		}
 		ofsOutput << "}" << '\n';
 
@@ -4799,6 +5739,21 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "PROTECTPRIVATEHOUSES=" << ( ProtectPrivateHouses() ? 1 : 0 ) << '\n';
 		ofsOutput << "MAXHOUSESOWNABLE=" << MaxHousesOwnable() << '\n';
 		ofsOutput << "MAXHOUSESCOOWNABLE=" << MaxHousesCoOwnable() << '\n';
+		ofsOutput << "SAFECOOWNERLOGOUT=" << ( SafeCoOwnerLogout() ? 1 : 0 ) << '\n';
+		ofsOutput << "SAFEFRIENDLOGOUT=" << ( SafeFriendLogout() ? 1 : 0 ) << '\n';
+		ofsOutput << "SAFEGUESTLOGOUT=" << ( SafeGuestLogout() ? 1 : 0 ) << '\n';
+		ofsOutput << "KEYLESSOWNERACCESS=" << ( KeylessOwnerAccess() ? 1 : 0 ) << '\n';
+		ofsOutput << "KEYLESSCOOWNERACCESS=" << ( KeylessCoOwnerAccess() ? 1 : 0 ) << '\n';
+		ofsOutput << "KEYLESSFRIENDACCESS=" << ( KeylessFriendAccess() ? 1 : 0 ) << '\n';
+		ofsOutput << "KEYLESSGUESTACCESS=" << ( KeylessGuestAccess() ? 1 : 0 ) << '\n';
+		ofsOutput << "}" << '\n';
+
+		ofsOutput << '\n' << "[bulk order deeds]" << '\n' << "{" << '\n';
+		ofsOutput << "OFFERBODSFROMITEMSALES=" << ( OfferBODsFromItemSales() ? 1 : 0 ) << '\n';
+		ofsOutput << "OFFERBODSFROMCONTEXTMENU=" << ( OfferBODsFromContextMenu() ? 1 : 0 ) << '\n';
+		ofsOutput << "BODSFROMCRAFTEDITEMSONLY=" << ( BODsFromCraftedItemsOnly() ? 1 : 0 ) << '\n';
+		ofsOutput << "BODGOLDREWARDMULTIPLIER=" << BODGoldRewardMultiplier() << '\n';
+		ofsOutput << "BODFAMEREWARDMULTIPLIER=" << BODFameRewardMultiplier() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[towns]" << '\n' << "{" << '\n';
@@ -4932,6 +5887,117 @@ auto CServerData::TrackingRedisplayTime( UI16 value ) -> void
 	trackingMsgRedisplayTimer = value;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::SwingSpeedIncreaseCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets cap for swing speed increase
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::SwingSpeedIncreaseCap() const -> SI16
+{
+	return swingSpeedIncreaseCap;
+}
+auto CServerData::SwingSpeedIncreaseCap( SI16 value ) -> void
+{
+	swingSpeedIncreaseCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::PhysicalResistCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets cap for physical resist
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::PhysicalResistCap() const -> SI16
+{
+	return physicalResistCap;
+}
+auto CServerData::PhysicalResistCap( SI16 value ) -> void
+{
+	physicalResistCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::FireResistCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets cap for fire resist
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::FireResistCap() const -> SI16
+{
+	return fireResistCap;
+}
+auto CServerData::FireResistCap( SI16 value ) -> void
+{
+	fireResistCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ColdResistCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets cap for cold resist
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ColdResistCap() const -> SI16
+{
+	return coldResistCap;
+}
+auto CServerData::ColdResistCap( SI16 value ) -> void
+{
+	coldResistCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::PoisonResistCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets cap for poison resist
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::PoisonResistCap() const -> SI16
+{
+	return poisonResistCap;
+}
+auto CServerData::PoisonResistCap( SI16 value ) -> void
+{
+	poisonResistCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::EnergyResistCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets cap for energy resist
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::EnergyResistCap() const -> SI16
+{
+	return energyResistCap;
+}
+auto CServerData::EnergyResistCap( SI16 value ) -> void
+{
+	energyResistCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::DefenseChanceIncreaseCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets cap for defense chance increase
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::DefenseChanceIncreaseCap() const -> SI16
+{
+	return defenseChanceIncreaseCap;
+}
+auto CServerData::DefenseChanceIncreaseCap( SI16 value ) -> void
+{
+	defenseChanceIncreaseCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::DamageIncreaseCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets cap for damage increase
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::DamageIncreaseCap() const -> SI16
+{
+	return damageIncreaseCap;
+}
+auto CServerData::DamageIncreaseCap( SI16 value ) -> void
+{
+	damageIncreaseCap = value;
+}
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ParseIni()
@@ -4966,6 +6032,7 @@ auto CServerData::ParseIni( const std::string& filename ) -> bool
 	if( input.is_open() )
 	{
 		startlocations.clear();
+		youngStartlocations.clear();
 		char input_buffer[4096];
 		while( input.good() && !input.eof() )
 		{
@@ -5209,8 +6276,8 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			Directory( CSDDP_SHARED, value );
 			break;
 		}
-		case 47:	 // LOOTDECAYSWITHCORPSE
-			CorpseLootDecay( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+		case 47:	 // LOOTDECAYSWITHPLAYERCORPSE
+			PlayerCorpseLootDecay( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
 			break;
 		case 49:	 // GUARDSACTIVE
 			GuardStatus( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
@@ -5449,7 +6516,8 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 126:	 // BOOKSDIRECTORY
 			Directory( CSDDP_BOOKS, value );
 			break;
-		case 127:	 // SERVERLIST
+		case 127:	 // SKILLCAPSINGLE
+			ServerSkillCap( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
 			break;
 		case 128:	 // PORT
 			ServerPort( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
@@ -5460,7 +6528,7 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 130:	 // LOGSDIRECTORY
 			Directory( CSDDP_LOGS, value );
 			break;
-		case 131:	 // ACCOUNTISOLATION
+		case 131:	 // NOT USED
 			break;
 		case 132:	 // HTMLDIRECTORY
 			Directory( CSDDP_HTML, value );
@@ -5509,7 +6577,7 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			ServerOverloadPackets(( static_cast<SI16>( std::stoi( value, nullptr, 0 )) == 1 ));
 			break;
 		case 147:	 // NPCMOVEMENTSPEED
-			NPCWalkingSpeed( std::stof( value ));
+			NPCWalkingSpeed( std::stod( value ));
 			break;
 		case 148:	 // PETHUNGEROFFLINE
 			PetHungerOffline(( static_cast<SI16>( std::stoi( value, nullptr, 0 )) == 1 ));
@@ -5530,10 +6598,10 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			LootingIsCrime(( static_cast<SI16>( std::stoi( value, nullptr, 0 )) == 1 ));
 			break;
 		case 155:	 // NPCRUNNINGSPEED
-			NPCRunningSpeed( std::stof( value ));
+			NPCRunningSpeed( std::stod( value ));
 			break;
 		case 156:	 // NPCFLEEINGSPEED
-			NPCFleeingSpeed( std::stof( value ));
+			NPCFleeingSpeed( std::stod( value ));
 			break;
 		case 157:	 // BASICTOOLTIPSONLY
 			BasicTooltipsOnly(( static_cast<SI16>( std::stoi( value, nullptr, 0 )) == 1 ));
@@ -5623,10 +6691,10 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			CombatArmorDamageMax( static_cast<UI08>( std::stoul( value, nullptr, 0 )));
 			break;
 		case 190:	// GLOBALATTACKSPEED
-			GlobalAttackSpeed( std::stof( value ));
+			GlobalAttackSpeed( std::stod( value ));
 			break;
 		case 191:	// NPCSPELLCASTSPEED
-			NPCSpellCastSpeed( std::stof( value ));
+			NPCSpellCastSpeed( std::stod( value ));
 			break;
 		case 192:	// FISHINGSTAMINALOSS
 			FishingStaminaLoss( std::stof( value ));
@@ -5859,13 +6927,13 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			ServerSpeechLog(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
 			break;
 		case 269:	 // NPCMOUNTEDWALKINGSPEED
-			NPCMountedWalkingSpeed( std::stof( value ));
+			NPCMountedWalkingSpeed( std::stod( value ));
 			break;
 		case 270:	 // NPCMOUNTEDRUNNINGSPEED
-			NPCMountedRunningSpeed( std::stof( value ));
+			NPCMountedRunningSpeed( std::stod( value ));
 			break;
 		case 271:	 // NPCMOUNTEDFLEEINGSPEED
-			NPCMountedFleeingSpeed( std::stof( value ));
+			NPCMountedFleeingSpeed( std::stod( value ));
 			break;
 		case 272:	// CONTEXTMENUS
 			ServerContextMenus(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
@@ -5922,7 +6990,7 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			SetDisabledAssistantFeature( AF_SPEECHJOURNALCHECKS, static_cast<SI16>( std::stoi( value, nullptr, 0 )) == 1 );
 			break;
 		case 290:	// ARCHERYSHOOTDELAY
-			CombatArcheryShootDelay( std::stof( value ));
+			CombatArcheryShootDelay( std::stod( value ));
 			break;
 		case 291:	 // MAXCLIENTBYTESIN
 			MaxClientBytesIn( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
@@ -6013,6 +7081,171 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 320:	// MAXPLAYERBANKWEIGHT
 			MaxPlayerBankWeight( static_cast<SI32>( std::stoi( value, nullptr, 0 )));
+			break;
+		case 321:	// SAFECOOWNERLOGOUT
+			SafeCoOwnerLogout(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 322:	// SAFEFRIENDLOGOUT
+			SafeFriendLogout(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 323:	// SAFEGUESTLOGOUT
+			SafeGuestLogout(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 324:	// KEYLESSOWNERACCESS
+			KeylessOwnerAccess(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 325:	// KEYLESSCOOWNERACCESS
+			KeylessCoOwnerAccess(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 326:	// KEYLESSFRIENDACCESS
+			KeylessFriendAccess(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 327:	// KEYLESSGUESTACCESS
+			KeylessGuestAccess( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
+			break;
+		case 328:	// WEAPONDAMAGEBONUSTYPE
+			WeaponDamageBonusType( static_cast<UI08>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 329:	// OFFERBODSFROMITEMSALES
+			OfferBODsFromItemSales(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 330:	// OFFERBODSFROMCONTEXTMENU
+			OfferBODsFromContextMenu(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 331:	// BODSFROMCRAFTEDITEMSONLY
+			BODsFromCraftedItemsOnly(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 332:	 // BODGOLDREWARDMULTIPLIER
+			BODGoldRewardMultiplier( std::stof( value ));
+			break;
+		case 333:	 // BODFAMEREWARDMULTIPLIER
+			BODFameRewardMultiplier( std::stof( value ));
+			break;
+		case 334:	// ENABLENPCGUILDDISCOUNTS
+			EnableNPCGuildDiscounts(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 335:	// ENABLENPCGUILDPREMIUMS
+			EnableNPCGuildPremiums(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 336:	 // AGGRESSORFLAGTIMER
+			SystemTimer( tSERVER_AGGRESSORFLAG, static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 337:	 // PERMAGREYFLAGTIMER
+			SystemTimer( tSERVER_PERMAGREYFLAG, static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 338:	 // STEALINGFLAGTIMER
+			SystemTimer( tSERVER_STEALINGFLAG, static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 339:	 // SNOOPAWARENESS
+			SnoopAwareness( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+			break;
+		case 340:	 // APSPERFTHRESHOLD
+			APSPerfThreshold( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 341:	 // APSINTERVAL
+			APSInterval( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 342:	 // APSDELAYSTEP
+			APSDelayStep( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 343:	 // APSDELAYMAXCAP
+			APSDelayMaxCap( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 344:	 // YOUNGPLAYERSYSTEM
+			YoungPlayerSystem( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+			break;
+		case 345:	 // YOUNGLOCATION
+			YoungServerLocation( value );
+			break;
+		case 346:	 // SECRETSHARDKEY
+			SecretShardKey( value );
+			break;
+		case 347:	 // MOONGATEFACETS
+			SetMoongateFacetStatus( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 348:    // AUTOUNEQUIPPEDCASTING
+			AutoUnequippedCasting(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 349:	 // LOOTDECAYSWITHNPCCORPSE
+			NpcCorpseLootDecay( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+			break;
+		case 350:	// HEALTHREGENCAP
+			HealthRegenCap( std::stoi( value, nullptr, 0 ));
+			break;
+		case 351:	// STAMINAREGENCAP
+			StaminaRegenCap( std::stoi( value, nullptr, 0 ));
+			break;
+		case 352:	// MANAREGENCAP
+			ManaRegenCap( std::stoi( value, nullptr, 0 ));
+			break;
+		case 353:	// SWINGSPEEDINCREASE
+			SwingSpeedIncreaseCap( std::stoi( value, nullptr, 0 ));
+			break;
+		case 354:	 // KARMALOCKING
+			KarmaLocking( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+			break;   
+		case 362:	// HEALINGAFFECTHEALTHREGEN
+			HealingAffectHealthRegen(( static_cast<UI08>( std::stoul( value, nullptr, 0 )) > 0 ? true : false ));
+			break;
+		case 363:	// HEALTHREGENMODE
+			HealthRegenMode( static_cast<UI08>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 364:	// STAMINAREGENMODE
+			StaminaRegenMode( static_cast<UI08>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 365:	// MANAREGENMODE
+			ManaRegenMode( static_cast<UI08>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 366:	// HUNGERAFFECTHEALTHREGEN
+			HungerAffectHealthRegen(( static_cast<UI08>( std::stoul( value, nullptr, 0 )) > 0 ? true : false ));
+			break;
+		case 367:	// THIRSTAFFECTSTAMINAREGEN
+			ThirstAffectStaminaRegen(( static_cast<UI08>( std::stoul( value, nullptr, 0 )) > 0 ? true : false ));
+			break;
+		case 368:	// HUMANHEALTHREGENBONUS
+			HumanHealthRegenBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 369:	// HUMANSTAMINAREGENBONUS
+			HumanStaminaRegenBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 370:	// HUMANMANAREGENBONUS
+			HumanManaRegenBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 371:	// ELFHEALTHREGENBONUS
+			ElfHealthRegenBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 372:	// ELFSTAMINAREGENBONUS
+			ElfStaminaRegenBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 373:	// ELFMANAREGENBONUS
+			ElfManaRegenBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 374:	// GARGOYLEHEALTHREGENBONUS
+			GargoyleHealthRegenBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 375:	// GARGOYLESTAMINAREGENBONUS
+			GargoyleStaminaRegenBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 376:	// GARGOYLEMANAREGENBONUS
+			GargoyleManaRegenBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 377:	// HUMANMAXWEIGHTBONUS
+			HumanMaxWeightBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 378:	// ELFMAXWEIGHTBONUS
+			ElfMaxWeightBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 379:	// GARGOYLEMAXWEIGHTBONUS
+			GargoyleMaxWeightBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 380:	 // MAXNPCAGGRORANGE
+			CombatMaxNpcAggroRange( static_cast<SI16>( std::stoi( value, nullptr, 0 )));
+			break;
+		case 381:	// POISONCORROSIONSYSTEM
+			PoisonCorrosionSystem(( static_cast<SI16>( std::stoi( value, nullptr, 0 )) == 1 ));
+			break;
+		case 382:	// PETBONDINGENABLED
+			PetBondingEnabled(( static_cast<SI16>( std::stoi( value, nullptr, 0 )) == 1 ));
 			break;
 		default:
 			rValue = false;
@@ -6149,6 +7382,20 @@ auto CServerData::PostLoadDefaults() -> void
 		ServerLocation( "Skara Brae,Docks,639,2236,0,0,0,1075079" );
 		ServerLocation( "Vesper,Ironwood Inn,2771,977,0,0,0,1075080" );
 	}
+	
+	// Also load young player start locations, which default to same as normal players
+	if( YoungPlayerSystem() && youngStartlocations.empty() )
+	{
+		YoungServerLocation( "Yew,Center,545,982,0,0,0,1075072" );
+		YoungServerLocation( "Minoc,Tavern,2477,411,15,0,0,1075073" );
+		YoungServerLocation( "Britain,Sweet Dreams Inn,1495,1629,10,0,0,1075074" );
+		YoungServerLocation( "Moonglow,Docks,4406,1045,0,0,0,1075075" );
+		YoungServerLocation( "Trinsic,West Gate,1832,2779,0,0,0,1075076" );
+		YoungServerLocation( "Magincia,Docks,3675,2259,26,0,0,1075077" );
+		YoungServerLocation( "Jhelom,Docks,1492,3696,0,0,0,1075078" );
+		YoungServerLocation( "Skara Brae,Docks,639,2236,0,0,0,1075079" );
+		YoungServerLocation( "Vesper,Ironwood Inn,2771,977,0,0,0,1075080" );
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6204,6 +7451,61 @@ auto CServerData::ServerLocation( std::string toSet ) -> void
 auto CServerData::NumServerLocations() const -> size_t
 {
 	return startlocations.size();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::YoungServerLocation()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets server start location(s) for Young players
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::YoungServerLocation( size_t locNum ) -> __STARTLOCATIONDATA__*
+{
+	__STARTLOCATIONDATA__ *rValue = nullptr;
+	if( locNum < youngStartlocations.size() )
+	{
+		rValue = &youngStartlocations[locNum];
+	}
+	return rValue;
+}
+
+auto CServerData::YoungServerLocation( std::string toSet ) -> void
+{
+	auto temp = toSet;
+	temp = oldstrutil::trim( oldstrutil::removeTrailing( temp, "//" ));
+	auto csecs = oldstrutil::sections( temp, "," );
+
+	__STARTLOCATIONDATA__ toAdd;
+	if( csecs.size() >= 7 )
+	{
+		toAdd.oldTown 			= oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" ));
+		toAdd.oldDescription 	= oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" ));
+		toAdd.newTown 			= toAdd.oldTown;
+		toAdd.newDescription 	= toAdd.oldDescription;
+
+		toAdd.x 		= static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 ));
+		toAdd.y 		= static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[3], "//" )), nullptr, 0 ));
+		toAdd.z 		= static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[4], "//" )), nullptr, 0 ));
+		toAdd.worldNum 	= static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[5], "//" )), nullptr, 0 ));
+		if( csecs.size() == 7 )
+		{
+			toAdd.clilocDesc	= static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[6], "//" )), nullptr, 0 ));
+		}
+		else
+		{
+			toAdd.instanceId	= static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[6], "//" )), nullptr, 0 ));
+			toAdd.clilocDesc	= static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[7], "//" )), nullptr, 0 ));
+		}
+		youngStartlocations.push_back( toAdd );
+	}
+	else
+	{
+		Console.Error( "Malformed young start location entry in ini file" );
+	}
+}
+
+auto CServerData::NumYoungServerLocations() const -> size_t
+{
+	return youngStartlocations.size();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6303,6 +7605,66 @@ auto CServerData::SetJSEngineSize( UI16 newVal ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::APSPerfThreshold()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the performance threshold (simulation cycles) below which the
+//|					APS - Adaptive Performance System - kicks in. A value of 0 disables the system
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::APSPerfThreshold() const -> UI16
+{
+	return apsPerfThreshold;
+}
+auto CServerData::APSPerfThreshold( UI16 newVal ) -> void
+{
+	apsPerfThreshold = newVal;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::APSInterval()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the interval at which APS will check shard performance and make
+//|					adjustments if necessary
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::APSInterval() const -> UI16
+{
+	return apsInterval;
+}
+auto CServerData::APSInterval( UI16 newVal ) -> void
+{
+	apsInterval = newVal;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::APSDelayStep()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the step value - in milliseconds - that is used by APS to
+//|					gradually increase/decrease the delay effect for checking NPC AI/movement stuff
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::APSDelayStep() const -> UI16
+{
+	return apsDelayStep;
+}
+auto CServerData::APSDelayStep( UI16 newVal ) -> void
+{
+	apsDelayStep = newVal;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::APSDelayMaxCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the max cap - in milliseconds - for how much NPC AI/movement stuff can
+//|					be delayed by APS in an effort to restore shard performance to above threshold levels
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::APSDelayMaxCap() const -> UI16
+{
+	return apsDelayMaxCap;
+}
+auto CServerData::APSDelayMaxCap( UI16 newVal ) -> void
+{
+	apsDelayMaxCap = newVal;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::SaveTime()
 //|	Date		-	January 28th, 2007
 //o------------------------------------------------------------------------------------------------o
@@ -6330,7 +7692,7 @@ auto CServerData::SaveTime() -> void
 	timeDestination.close();
 }
 
-auto ReadWorldTagData( std::ifstream &inStream, std::string &tag, std::string &data ) -> void;
+auto ReadWorldTagData( std::istream &inStream, std::string &tag, std::string &data ) -> void;
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::LoadTime()
 //o------------------------------------------------------------------------------------------------o
@@ -6367,7 +7729,7 @@ auto CServerData::LoadTime() -> void
 }
 
 //==============================================================================================
-auto CServerData::LoadTimeTags( std::ifstream &input ) -> void
+auto CServerData::LoadTimeTags( std::istream &input ) -> void
 {
 	std::string UTag, tag, data;
 	while( tag != "o---o" )

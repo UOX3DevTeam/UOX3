@@ -31,7 +31,7 @@ function GetMapCoordinates( xCoord, yCoord, worldNum )
 				resultArray[3] = "-1";
 				resultArray[4] = "-1";
 				resultArray[5] = true;
-				return xLongitude;
+				return resultArray;
 			}
 			break;
 		case 2: // Ilshenar
@@ -51,54 +51,43 @@ function GetMapCoordinates( xCoord, yCoord, worldNum )
 				resultArray[3] = "-1";
 				resultArray[4] = "-1";
 				resultArray[5] = true;
-				return xLongitude;
+				return resultArray;
 			}
 			break;
 		default:
 			break;
 	}
 
-	// Longitude
-	var absLong = (( xCoord - xCenter ) * 360 ) / xWidth;
-	if( absLong > 180 )
-	{
-		absLong = -180 + ( absLong % 180 );
-	}
+	// Calculate the distance from the center in tiles
+	let yDistance = yCoord - yCenter;
+	let xDistance = xCoord - xCenter;
 
-	var xEast = ( absLong >= 0 );
+	// Adjust for the wrap-around
+	yDistance = (( yDistance + yHeight / 2 + yHeight ) % yHeight ) - yHeight / 2;
+	xDistance = (( xDistance + xWidth / 2 + xWidth ) % xWidth ) - xWidth / 2;
 
-	if( absLong < 0 )
-	{
-		absLong = -absLong;
-	}
+	// Convert the distance to a value between -0.5 and 0.5
+	let latitudeValue = yDistance / yHeight;
+	let longitudeValue = xDistance / xWidth;
 
-	var xLongDeg = Math.round( absLong );
-	var xLongMin = Math.round(( absLong % 1 ) * 60 );
+	// Convert the value into degrees
+	let latitude = latitudeValue * 360;
+	let longitude = longitudeValue * 360;
 
-	// Latitude
-	var absLat = (( yCoord - yCenter ) * 360 ) / yHeight;
-	if( absLat > 180 )
-	{
-		absLat = -180 + ( absLat % 180 );
-	}
+	// Determine the cardinal directions
+	let latitudeCardinal = ( latitude < 0 ) ? true : false; // true = N, false = S
+	let longitudeCardinal = ( longitude < 0 ) ? true : false; // true = W, false = E
 
-	var ySouth = ( absLat >= 0 );
+	// Make the degrees positive and less than or equal to 180
+	latitude = Math.abs( latitude );
+	longitude = Math.abs( longitude );
 
-	if( absLat < 0 )
-	{
-		absLat = -absLat;
-	}
+    // Normalize the degrees and find the minutes
+	let latitudeMinutes = Math.round(( latitude % 1 ) * 60 );
+	let longitudeMinutes = Math.round(( longitude % 1 ) * 60 );
 
-	var yLatDeg = Math.round( absLat );
-	var yLatMin = Math.round(( absLat % 1 ) * 60 );
+	let latitudeDegrees = Math.floor( latitude );
+	let longitudeDegrees = Math.floor( longitude );
 
-	// Build return array
-	resultArray[0] = xLongDeg;
-	resultArray[1] = xLongMin;
-	resultArray[2] = xEast;
-	resultArray[3] = yLatDeg;
-	resultArray[4] = yLatMin;
-	resultArray[5] = ySouth;
-
-	return resultArray;
+	return [longitudeDegrees, longitudeMinutes, longitudeCardinal, latitudeDegrees, latitudeMinutes, latitudeCardinal];
 }

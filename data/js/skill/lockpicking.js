@@ -43,7 +43,7 @@ function onCallback0( pSock, ourObj )
 				if( ourObj.more == 0 )
 				{
 					var minSkill = 0;
-					var maxSkill = 1000;
+					var maxSkill = pUser.skillCaps.lockpicking;
 					var isTrapped = ( ourObj.morez >> 24 );
 					if( isTrapped == 1 )
 					{
@@ -72,6 +72,8 @@ function onCallback0( pSock, ourObj )
 						{
 							ourObj.type = 63;
 						}
+						ourObj.SetTempTag( "lockPickedBy", ( pUser.serial ).toString() );
+						ourObj.SetTempTag( "lockPickedSkill", pUser.skills.lockpicking );
 						ourObj.Refresh();
 						pSock.SoundEffect( 0x01FF, false );
 						pSock.SysMessage( GetDictionaryEntry( 935, pSock.language )); // You manage to pick the lock.

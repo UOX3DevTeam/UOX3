@@ -60,3 +60,5 @@ function FlourMill( tileID )
 	return ( tileID == 0x188b || ( tileID >= 0x1920 && tileID <= 0x1923 ) || ( tileID >= 0x1925 && tileID <= 0x1927 ) ||
 		( tileID >= 0x192c && tileID <= 0x192f ) || ( tileID >= 0x1931 && tileID <= 0x1933 ));
 }
+
+function _restorecontext_() {}

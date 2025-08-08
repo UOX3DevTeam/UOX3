@@ -16,6 +16,10 @@ function onSpeech( strSaid, pTalking, pTalkingTo )
 		if( pSock == null )
 			return false;
 
+		// Set timer for when NPC can move again
+		pTalkingTo.SetTimer( Timer.MOVETIME, 5000 );
+		pTalkingTo.TurnToward( pTalking );
+
 		if( pTalking.criminal || pTalking.murderer )
 		{
 			pTalkingTo.TextMessage( GetDictionaryEntry( 7000, pSock.language ), true, 0x03b2 ); // Thou art a criminal and cannot access thy bank box.
@@ -25,9 +29,8 @@ function onSpeech( strSaid, pTalking, pTalkingTo )
 		var bankBox = pTalking.FindItemLayer( 29 );
 		if( !ValidateObject( bankBox ))
 		{
-			pSock.SysMessage( "Error: No valid bankbox found! Please contact a GM for assistance." );
-			Console.Error( "No valid bankbox found for character " + pTalking.name + " with serial " + ( pTalking.serial ).toString() + "!" );
-			return false;
+			// No bank box found for player talking - let's create one for them!
+			CreateNewBankBox( pTalking );
 		}
 
 		var trigWordHandled = false;
@@ -228,16 +231,12 @@ function CreateCheck( pSock, pTalking, pTalkingTo, bankBox, strSaid )
 			}
 			else
 			{
-				var newCheck = CreateDFNItem( pSock, pTalking, "0x14F0", 1, "ITEM", false ); //Add check
+				var newCheck = CreateDFNItem( pSock, pTalking, "bankcheck", 1, "ITEM", false ); //Add check
 				if( newCheck )
 				{
 					bankBox.UseResource( checkSize, 0x0EED, 0 );
 					newCheck.SetTag( "CheckSize", checkSize );
-					newCheck.name = "A bank check";
-					newCheck.colour = 0x34;
 					newCheck.AddScriptTrigger( bankCheckTrigger );
-					newCheck.isNewbie = true;
-					newCheck.weight = 100;
 					newCheck.container = bankBox;
 
 					var checkMsg = GetDictionaryEntry( 7009, pSock.language ); // Into your bank box I have placed a check in the amount of %i
@@ -396,3 +395,5 @@ function DivideDepositedGold( pTalking, bankBox, depositAmt )
 		}
 	}
 }
+
+function _restorecontext_() {}

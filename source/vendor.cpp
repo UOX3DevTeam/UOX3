@@ -6,6 +6,7 @@
 #include "townregion.h"
 #include "CJSMapping.h"
 #include "cScript.h"
+#include "Dictionary.h"
 
 #include "cServerDefinitions.h"
 
@@ -133,6 +134,7 @@ bool CPIBuyItem::Handle( void )
 
 	// vector for storing all objects that actually end up in user backpack
 	std::vector<CItem *> boughtItems;
+	std::vector<UI16> boughtItemAmounts;
 
 	CChar *npc		= CalcCharObjFromSer( tSock->GetDWord( 3 ));
 	UI16 itemTotal	= static_cast<UI16>(( tSock->GetWord( 1 ) - 8) / 7 );
@@ -140,6 +142,7 @@ bool CPIBuyItem::Handle( void )
 		return true;
 
 	boughtItems.reserve( itemTotal );
+	boughtItemAmounts.reserve( itemTotal );
 	bItems.resize( itemTotal );
 	amount.resize( itemTotal );
 	layer.resize( itemTotal );
@@ -153,23 +156,21 @@ bool CPIBuyItem::Handle( void )
 		totalGoldCost	+= ( amount[i] * ( bItems[i]->GetBuyValue() ));
 	}
 
-	bool didUseBank = true;
-	bool tryUsingBank = ( totalGoldCost >= static_cast<UI32>( cwmWorldState->ServerData()->BuyThreshold() ));
-	if( tryUsingBank )
+	bool takeGoldFromBank = false;
+
+	// First look for the required gold in player's backpack
+	totalPlayerGold = GetItemAmount( mChar, 0x0EED );
+	if( totalPlayerGold < totalGoldCost )
 	{
-		// Count gold in bank if amount is higher than threshold
-		totalPlayerGold = GetBankCount( mChar, 0x0EED );
+		// Not enough gold in backpack, check bank if amount is over threshold
+		if( totalGoldCost >= static_cast<UI32>( cwmWorldState->ServerData()->BuyThreshold() ))
+		{
+			totalPlayerGold = GetBankCount( mChar, 0x0EED );
+			takeGoldFromBank = true;
+		}
 	}
 
-	if( !tryUsingBank || totalPlayerGold < totalGoldCost )
-	{
-		// Count gold in backpack if amount is NOT higher than threshold,
-		// or if bank doesn't have enough gold
-		totalPlayerGold = GetItemAmount( mChar, 0x0EED );
-		didUseBank = false;
-	}
-
-	if( mChar->IsGM() || (( tryUsingBank && totalPlayerGold >= totalGoldCost ) || ( !tryUsingBank && totalPlayerGold >= totalGoldCost )))
+	if( mChar->IsGM() || ( totalPlayerGold >= totalGoldCost ))
 	{
 		for( i = 0; i < itemTotal; ++i )
 		{
@@ -180,13 +181,12 @@ bool CPIBuyItem::Handle( void )
 
 			// Check if onBuyFromVendor JS event is present for each item being purchased
 			// If return false or 0 has been returned from the script, halt the purchase
-			std::vector<UI16> scriptTriggers = bItems[i]->GetScriptTriggers();
-			for( auto scriptTrig : scriptTriggers )
+			for( auto scriptTrig : bItems[i]->GetScriptTriggers() )
 			{
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
 				if( toExecute != nullptr )
 				{
-					if( toExecute->OnBuyFromVendor( tSock, npc, bItems[i] ) == 0 )
+					if( toExecute->OnBuyFromVendor( tSock, npc, bItems[i], amount[i] ) == 0 )
 					{
 						bItems.clear();
 						bItems.shrink_to_fit();
@@ -197,13 +197,12 @@ bool CPIBuyItem::Handle( void )
 
 			// Also run the event on the vendor itself. If purchase didn't get blocked on the item side, maybe
 			// vendor has a script with something to say about it instead
-			std::vector<UI16> npcScriptTriggers = npc->GetScriptTriggers();
-			for( auto scriptTrig : scriptTriggers )
+			for( auto scriptTrig : npc->GetScriptTriggers() )
 			{
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
 				if( toExecute != nullptr )
 				{
-					if( toExecute->OnBuyFromVendor( tSock, npc, bItems[i] ) == 0 )
+					if( toExecute->OnBuyFromVendor( tSock, npc, bItems[i], amount[i] ) == 0 )
 					{
 						bItems.clear();
 						bItems.shrink_to_fit();
@@ -240,10 +239,11 @@ bool CPIBuyItem::Handle( void )
 			clear = true;
 			if( !mChar->IsGM() )
 			{
-				if( didUseBank )
+				if( takeGoldFromBank )
 				{
 					// Remove total amount of gold spent, from player's bankbox
 					DeleteBankItem( mChar, totalGoldCost, 0x0EED );
+					tSock->SysMessage( oldstrutil::format( Dictionary->GetEntry( 2124, tSock->Language() ), totalGoldCost )); // %i gold has been withdrawn from your bank box.
 				}
 				else
 				{
@@ -268,6 +268,7 @@ bool CPIBuyItem::Handle( void )
 							iMade->SetCont( p );
 							iMade->PlaceInPack();
 							boughtItems.push_back( iMade );
+							boughtItemAmounts.push_back( amount[i] );
 						}
 					}
 					else
@@ -292,6 +293,7 @@ bool CPIBuyItem::Handle( void )
 								iMade->SetCont( p );
 								iMade->PlaceInPack();
 								boughtItems.push_back( iMade );
+								boughtItemAmounts.push_back( 1 );
 							}
 						}
 					}
@@ -312,6 +314,7 @@ bool CPIBuyItem::Handle( void )
 									iMade->SetCont( p );
 									iMade->PlaceInPack();
 									boughtItems.push_back( iMade );
+									boughtItemAmounts.push_back( amount[i] );
 								}
 							}
 							else
@@ -331,6 +334,7 @@ bool CPIBuyItem::Handle( void )
 										iMade->SetCont( p );
 										iMade->PlaceInPack();
 										boughtItems.push_back( iMade );
+										boughtItemAmounts.push_back( 1 );
 									}
 								}
 							}
@@ -340,6 +344,7 @@ bool CPIBuyItem::Handle( void )
 						case 0x1B: // Bought Container
 							if( biTemp->IsPileable() )
 							{
+								boughtItemAmounts.push_back( biTemp->GetAmount() );
 								biTemp->SetCont( p );
 								boughtItems.push_back( biTemp );
 							}
@@ -353,11 +358,13 @@ bool CPIBuyItem::Handle( void )
 										iMade->SetCont( p );
 										iMade->PlaceInPack();
 										boughtItems.push_back( iMade );
+										boughtItemAmounts.push_back( 1 );
 									}
 								}
 								biTemp->SetCont( p );
 								biTemp->SetAmount( 1 );
 								boughtItems.push_back( biTemp );
+								boughtItemAmounts.push_back( 1 );
 							}
 							break;
 						default:
@@ -370,28 +377,26 @@ bool CPIBuyItem::Handle( void )
 			{
 				if( boughtItems[i] )
 				{
-					std::vector<UI16> scriptTriggers = boughtItems[i]->GetScriptTriggers();
-					for( auto scriptTrig : scriptTriggers )
+					for( auto scriptTrig : boughtItems[i]->GetScriptTriggers() )
 					{
 						cScript *toExecute = JSMapping->GetScript( scriptTrig );
 						if( toExecute != nullptr )
 						{
 							// If script returns 1, prevent other scripts with event from running
-							if( toExecute->OnBoughtFromVendor( tSock, npc, boughtItems[i] ) == 1 )
+							if( toExecute->OnBoughtFromVendor( tSock, npc, boughtItems[i], boughtItemAmounts[i] ) == 1 )
 							{
 								break;
 							}
 						}
 					}
 
-					std::vector<UI16> npcScriptTriggers = npc->GetScriptTriggers();
-					for( auto scriptTrig : scriptTriggers )
+					for( auto scriptTrig : npc->GetScriptTriggers() )
 					{
 						cScript *toExecute = JSMapping->GetScript( scriptTrig );
 						if( toExecute != nullptr )
 						{
 							// If script returns 1, prevent other scripts with event from running
-							if( toExecute->OnBoughtFromVendor( tSock, npc, boughtItems[i] ) == 1 )
+							if( toExecute->OnBoughtFromVendor( tSock, npc, boughtItems[i], boughtItemAmounts[i] ) == 1 )
 							{
 								break;
 							}
@@ -415,6 +420,7 @@ bool CPIBuyItem::Handle( void )
 	return true;
 }
 
+UI16 HandleAutoStack( CItem *mItem, CItem *mCont, CSocket *mSock, CChar *mChar );
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CPISellItem::Handle()
 //o------------------------------------------------------------------------------------------------o
@@ -474,7 +480,7 @@ bool CPISellItem::Handle( void )
 					cScript *toExecute = JSMapping->GetScript( scriptTrig );
 					if( toExecute != nullptr )
 					{
-						if( toExecute->OnSellToVendor( tSock, n, j ) == 0 )
+						if( toExecute->OnSellToVendor( tSock, n, j, maxsell ) == 0 )
 						{
 							// Halt sale! 
 							saleHalted = true;
@@ -493,7 +499,7 @@ bool CPISellItem::Handle( void )
 						cScript *toExecute = JSMapping->GetScript( scriptTrig );
 						if( toExecute != nullptr )
 						{
-							if( toExecute->OnSellToVendor( tSock, n, j ) == 0 )
+							if( toExecute->OnSellToVendor( tSock, n, j, maxsell ) == 0 )
 							{
 								// Halt sale! 
 								saleHalted = true;
@@ -530,7 +536,7 @@ bool CPISellItem::Handle( void )
 				{
 					if( ValidateObject( k ))
 					{
-						if( k->GetId() == j->GetId() && j->GetType() == k->GetType() )
+						if(( k->GetId() == j->GetId() || oldstrutil::lower( k->GetSectionId() ) == oldstrutil::lower( j->GetSectionId() )) && j->GetType() == k->GetType() )
 						{
 							if( j->GetId() != 0x14f0 || ( j->GetTempVar( CITV_MOREX ) == k->GetTempVar( CITV_MOREX )))
 							{
@@ -589,7 +595,7 @@ bool CPISellItem::Handle( void )
 						if( toExecute != nullptr )
 						{
 							// If script returns true/1, prevent other scripts with event from running
-							if( toExecute->OnSoldToVendor( tSock, n, l ) == 1 )
+							if( toExecute->OnSoldToVendor( tSock, n, l, amt ) == 1 )
 							{
 								break;
 							}
@@ -604,7 +610,7 @@ bool CPISellItem::Handle( void )
 						if( toExecute != nullptr )
 						{
 							// If script returns true/1, prevent other scripts with event from running
-							if( toExecute->OnSoldToVendor( tSock, n, l ) == 1 )
+							if( toExecute->OnSoldToVendor( tSock, n, l, amt ) == 1 )
 							{
 								break;
 							}
@@ -615,14 +621,56 @@ bool CPISellItem::Handle( void )
 		}
 
 		Effects->GoldSound( tSock, totgold );
+
+		bool shouldUseBank = false;
+		CItem *bankBox = nullptr;
+		if( totgold >= static_cast<UI32>( cwmWorldState->ServerData()->BuyThreshold() ))
+		{
+			bankBox = mChar->GetItemAtLayer( IL_BANKBOX );
+			if( ValidateObject( bankBox ))
+			{
+				shouldUseBank = true;
+			}
+		}
+
 		while( totgold > MAX_STACK )
 		{
-			Items->CreateScriptItem( tSock, mChar, "0x0EED", MAX_STACK, OT_ITEM, true );
+			auto newGoldPile = Items->CreateScriptItem( nullptr, mChar, "0x0EED", MAX_STACK, OT_ITEM, false );
+			if( shouldUseBank )
+			{
+				newGoldPile->SetCont( bankBox );
+				HandleAutoStack( newGoldPile, bankBox, nullptr, nullptr );
+				tSock->SysMessage( oldstrutil::format( Dictionary->GetEntry( 2703, tSock->Language() ) + " %u", newGoldPile->GetAmount() )); // Gold was deposited in your account:
+			}
+			else
+			{
+				newGoldPile->SetCont( mChar->GetPackItem() );
+				HandleAutoStack( newGoldPile, mChar->GetPackItem(), nullptr, nullptr );
+			}
+			if( ValidateObject( newGoldPile ))
+			{
+				newGoldPile->PlaceInPack();
+			}
 			totgold -= MAX_STACK;
 		}
 		if( totgold > 0 )
 		{
-			Items->CreateScriptItem( tSock, mChar, "0x0EED", totgold, OT_ITEM, true );
+			auto newGoldPile = Items->CreateScriptItem( nullptr, mChar, "0x0EED", totgold, OT_ITEM, false );
+			if( shouldUseBank )
+			{
+				newGoldPile->SetCont( bankBox );
+				HandleAutoStack( newGoldPile, bankBox, nullptr, nullptr );
+				tSock->SysMessage( oldstrutil::format( Dictionary->GetEntry( 2703, tSock->Language() ) + " %u", newGoldPile->GetAmount() )); // Gold was deposited in your account:
+			}
+			else
+			{
+				newGoldPile->SetCont( mChar->GetPackItem() );
+				HandleAutoStack( newGoldPile, mChar->GetPackItem(), nullptr, nullptr );
+			}
+			if( ValidateObject( newGoldPile ))
+			{
+				newGoldPile->PlaceInPack();
+			}
 		}
 	}
 

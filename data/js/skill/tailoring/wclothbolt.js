@@ -78,7 +78,7 @@ function onCallback0( pSocket, myTarget )
 		return;
 	}
 
-	if( pUser.CheckSkill( 34, 0, 1000 ))
+	if( pUser.CheckSkill( 34, 0, pUser.skillCaps.tailoring ))
 	{
 		pSocket.SysMessage( GetDictionaryEntry( 822, pSocket.language )); // You have successfully spun your material.
         pUser.UseResource( 5, iUsed.id ); 	// remove five balls of yarn/spool of thread

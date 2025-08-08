@@ -164,18 +164,18 @@ function CarveCorpse( socket, mChar, ourObj )
 		{
 			mChar.visible = 0;
 		}
-		mChar.DoAction( 0x20 );
-		if( (ourObj.morey>>24) == 0 )
-		{
-			var part1 = 1;
-			var part2 = ourObj.morey >> 16;
-			var part3 = ourObj.morey >> 8;
-			var part4 = ourObj.morey % 256;
 
-			ourObj.morey = ( part1 << 24 ) + ( part2 << 16 ) + ( part3 << 8 ) + part4;
-			if( part2 != 0 || ourObj.carveSection != -1 )
+		var moreYPart1 = ourObj.GetMoreVar( "morey", 1 );
+		var moreYPart2 = ourObj.GetMoreVar( "morey", 2 );
+		var moreYPart3 = ourObj.GetMoreVar( "morey", 3 );
+		var moreYPart4 = ourObj.GetMoreVar( "morey", 4 );
+
+		if( moreYPart1 == 0 ) // Corpse has not been carved before
+		{
+			if(( moreYPart2 != 0 || ourObj.carveSection != -1 ) && ourObj.Carve( socket ))
 			{
-				ourObj.Carve( socket );
+				mChar.DoAction( 0x20 );
+				ourObj.SetMoreVar( "morey", 1, 1 ); // Mark corpse as carved
 			}
 		}
 		else
@@ -188,3 +188,5 @@ function CarveCorpse( socket, mChar, ourObj )
 		socket.SysMessage( GetDictionaryEntry( 393, socket.language )); // That is too far away.
 	}
 }
+
+function _restorecontext_() {}

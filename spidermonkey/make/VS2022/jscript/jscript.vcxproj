@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{2af3a5ea-0cec-4d24-80f7-05e0b8b300c5}</ProjectGuid>
+    <RootNamespace>jscript</RootNamespace>
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <CharacterSet>Unicode</CharacterSet>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <CharacterSet>Unicode</CharacterSet>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <CharacterSet>Unicode</CharacterSet>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <CharacterSet>Unicode</CharacterSet>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4244;4267;4047;4146;4334;4311</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_AMD64_;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_WIN32;_WIN64;_WINDOWS;AVMPLUS_64BIT;AVMPLUS_AMD64;AVMPLUS_WIN32;ENABLE_ASSEMBLER=1;ENABLE_JIT=1;ENABLE_METHODJIT=1;ENABLE_MONOIC=1;ENABLE_POLYIC_TYPED_ARRAY=1;ENABLE_POLYIC=1;ENABLE_TRACEJIT=1;EXPORT_JS_API;FEATURE_NANOJIT;HAVE_SNPRINTF;JS_STDDEF_H_HAS_INTPTR_T;JS_TRACER;NANOJIT_ARCH=X64;NO_X11;WIN32;WIN32_LEAN_AND_MEAN;XP_WIN;XP_WIN32;DEBUG</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SDLCheck>false</SDLCheck>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)/../../../assembler;$(ProjectDir)/../../../nanojit;$(ProjectDir)/../../../tracejit;$(ProjectDir)/../../../yarr;$(ProjectDir)/../../../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>winmm.lib</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <DisableSpecificWarnings>4244;4267;4047;4146;4334;4311</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);NDEBUG;_AMD64_;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_WIN32;_WIN64;_WINDOWS;AVMPLUS_64BIT;AVMPLUS_AMD64;AVMPLUS_WIN32;ENABLE_ASSEMBLER=1;ENABLE_JIT=1;ENABLE_METHODJIT=1;ENABLE_MONOIC=1;ENABLE_POLYIC_TYPED_ARRAY=1;ENABLE_POLYIC=1;ENABLE_TRACEJIT=1;EXPORT_JS_API;FEATURE_NANOJIT;HAVE_SNPRINTF;JS_STDDEF_H_HAS_INTPTR_T;JS_TRACER;NANOJIT_ARCH=X64;NO_X11;WIN32;WIN32_LEAN_AND_MEAN;XP_WIN;XP_WIN32</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SDLCheck>false</SDLCheck>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)/../../../assembler;$(ProjectDir)/../../../nanojit;$(ProjectDir)/../../../tracejit;$(ProjectDir)/../../../yarr;$(ProjectDir)/../../../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>false</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <AdditionalDependencies>winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>winmm.lib</AdditionalDependencies>
+    </Lib>
+    <PostBuildEvent>
+      <Command>xcopy /Y /D "$(TargetDir)jscript.pdb" "$(SolutionDir)$(PlatformName)\$(ConfigurationName)\"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\assembler\jit\ExecutableAllocator.cpp" />
+    <ClCompile Include="..\..\..\assembler\jit\ExecutableAllocatorOS2.cpp" />
+    <ClCompile Include="..\..\..\assembler\jit\ExecutableAllocatorPosix.cpp" />
+    <ClCompile Include="..\..\..\assembler\jit\ExecutableAllocatorWin.cpp" />
+    <ClCompile Include="..\..\..\assembler\wtf\Assertions.cpp" />
+    <ClCompile Include="..\..\..\jsapi.cpp" />
+    <ClCompile Include="..\..\..\jsarena.cpp" />
+    <ClCompile Include="..\..\..\jsarray.cpp" />
+    <ClCompile Include="..\..\..\jsatom.cpp" />
+    <ClCompile Include="..\..\..\jsbool.cpp" />
+    <ClCompile Include="..\..\..\jsbuiltins.cpp" />
+    <ClCompile Include="..\..\..\jsclone.cpp" />
+    <ClCompile Include="..\..\..\jscntxt.cpp" />
+    <ClCompile Include="..\..\..\jscompartment.cpp" />
+    <ClCompile Include="..\..\..\jsdate.cpp" />
+    <ClCompile Include="..\..\..\jsdbgapi.cpp" />
+    <ClCompile Include="..\..\..\jsdhash.cpp" />
+    <ClCompile Include="..\..\..\jsdtoa.cpp" />
+    <ClCompile Include="..\..\..\jsemit.cpp" />
+    <ClCompile Include="..\..\..\jsexn.cpp" />
+    <ClCompile Include="..\..\..\jsfriendapi.cpp" />
+    <ClCompile Include="..\..\..\jsfun.cpp" />
+    <ClCompile Include="..\..\..\jsgc.cpp" />
+    <ClCompile Include="..\..\..\jsgcchunk.cpp" />
+    <ClCompile Include="..\..\..\jsgcstats.cpp" />
+    <ClCompile Include="..\..\..\jshash.cpp" />
+    <ClCompile Include="..\..\..\jsinterp.cpp" />
+    <ClCompile Include="..\..\..\jsinvoke.cpp" />
+    <ClCompile Include="..\..\..\jsiter.cpp" />
+    <ClCompile Include="..\..\..\jslock.cpp" />
+    <ClCompile Include="..\..\..\jslog2.cpp" />
+    <ClCompile Include="..\..\..\jsmath.cpp" />
+    <ClCompile Include="..\..\..\jsnativestack.cpp" />
+    <ClCompile Include="..\..\..\jsnum.cpp" />
+    <ClCompile Include="..\..\..\jsobj.cpp" />
+    <ClCompile Include="..\..\..\json.cpp" />
+    <ClCompile Include="..\..\..\jsopcode.cpp" />
+    <ClCompile Include="..\..\..\jsparse.cpp" />
+    <ClCompile Include="..\..\..\jsprf.cpp" />
+    <ClCompile Include="..\..\..\jsprobes.cpp" />
+    <ClCompile Include="..\..\..\jspropertycache.cpp" />
+    <ClCompile Include="..\..\..\jspropertytree.cpp" />
+    <ClCompile Include="..\..\..\jsproxy.cpp" />
+    <ClCompile Include="..\..\..\jsreflect.cpp" />
+    <ClCompile Include="..\..\..\jsregexp.cpp" />
+    <ClCompile Include="..\..\..\jsscan.cpp" />
+    <ClCompile Include="..\..\..\jsscope.cpp" />
+    <ClCompile Include="..\..\..\jsscript.cpp" />
+    <ClCompile Include="..\..\..\jsstr.cpp" />
+    <ClCompile Include="..\..\..\jstracer.cpp" />
+    <ClCompile Include="..\..\..\jstypedarray.cpp" />
+    <ClCompile Include="..\..\..\jsutil.cpp" />
+    <ClCompile Include="..\..\..\jswrapper.cpp" />
+    <ClCompile Include="..\..\..\jsxdrapi.cpp" />
+    <ClCompile Include="..\..\..\jsxml.cpp" />
+    <ClCompile Include="..\..\..\methodjit\Logging.cpp" />
+    <ClCompile Include="..\..\..\nanojit\Allocator.cpp" />
+    <ClCompile Include="..\..\..\nanojit\Assembler.cpp" />
+    <ClCompile Include="..\..\..\nanojit\avmplus.cpp" />
+    <ClCompile Include="..\..\..\nanojit\CodeAlloc.cpp" />
+    <ClCompile Include="..\..\..\nanojit\Containers.cpp" />
+    <ClCompile Include="..\..\..\nanojit\Fragmento.cpp" />
+    <ClCompile Include="..\..\..\nanojit\LIR.cpp" />
+    <ClCompile Include="..\..\..\nanojit\NativeX64.cpp" />
+    <ClCompile Include="..\..\..\nanojit\njconfig.cpp" />
+    <ClCompile Include="..\..\..\nanojit\RegAlloc.cpp" />
+    <ClCompile Include="..\..\..\nanojit\VMPI.cpp" />
+    <ClCompile Include="..\..\..\prmjtime.cpp" />
+    <ClCompile Include="..\..\..\sharkctl.cpp" />
+    <ClCompile Include="..\..\..\tracejit\Writer.cpp" />
+    <ClCompile Include="..\..\..\v8-dtoa\checks.cc" />
+    <ClCompile Include="..\..\..\v8-dtoa\conversions.cc" />
+    <ClCompile Include="..\..\..\v8-dtoa\diy-fp.cc" />
+    <ClCompile Include="..\..\..\v8-dtoa\fast-dtoa.cc" />
+    <ClCompile Include="..\..\..\v8-dtoa\platform.cc" />
+    <ClCompile Include="..\..\..\v8-dtoa\utils.cc" />
+    <ClCompile Include="..\..\..\v8-dtoa\v8-dtoa.cc" />
+    <ClCompile Include="..\..\..\yarr\pcre\pcre_compile.cpp" />
+    <ClCompile Include="..\..\..\yarr\pcre\pcre_exec.cpp" />
+    <ClCompile Include="..\..\..\yarr\pcre\pcre_tables.cpp" />
+    <ClCompile Include="..\..\..\yarr\pcre\pcre_ucp_searchfuncs.cpp" />
+    <ClCompile Include="..\..\..\yarr\pcre\pcre_xclass.cpp" />
+    <ClCompile Include="..\..\..\yarr\yarr\RegexCompiler.cpp" />
+    <ClCompile Include="..\..\..\yarr\yarr\RegexJIT.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\jsapi.h" />
+    <ClInclude Include="..\..\..\jsarena.h" />
+    <ClInclude Include="..\..\..\jsarray.h" />
+    <ClInclude Include="..\..\..\jsatom.h" />
+    <ClInclude Include="..\..\..\jsatominlines.h" />
+    <ClInclude Include="..\..\..\jsbit.h" />
+    <ClInclude Include="..\..\..\jsbool.h" />
+    <ClInclude Include="..\..\..\jsbuiltins.h" />
+    <ClInclude Include="..\..\..\jsclist.h" />
+    <ClInclude Include="..\..\..\jscntxt.h" />
+    <ClInclude Include="..\..\..\jscntxtinlines.h" />
+    <ClInclude Include="..\..\..\jscompat.h" />
+    <ClInclude Include="..\..\..\jsdate.h" />
+    <ClInclude Include="..\..\..\jsdbgapi.h" />
+    <ClInclude Include="..\..\..\jsdhash.h" />
+    <ClInclude Include="..\..\..\jsdtoa.h" />
+    <ClInclude Include="..\..\..\jsdtracef.h" />
+    <ClInclude Include="..\..\..\jsemit.h" />
+    <ClInclude Include="..\..\..\jsexn.h" />
+    <ClInclude Include="..\..\..\jsfun.h" />
+    <ClInclude Include="..\..\..\jsgc.h" />
+    <ClInclude Include="..\..\..\jsgcchunk.h" />
+    <ClInclude Include="..\..\..\jshash.h" />
+    <ClInclude Include="..\..\..\jshashtable.h" />
+    <ClInclude Include="..\..\..\jsinterp.h" />
+    <ClInclude Include="..\..\..\jsinttypes.h" />
+    <ClInclude Include="..\..\..\jsiter.h" />
+    <ClInclude Include="..\..\..\jslibmath.h" />
+    <ClInclude Include="..\..\..\jslock.h" />
+    <ClInclude Include="..\..\..\jslong.h" />
+    <ClInclude Include="..\..\..\jsmath.h" />
+    <ClInclude Include="..\..\..\jsnativestack.h" />
+    <ClInclude Include="..\..\..\jsnum.h" />
+    <ClInclude Include="..\..\..\jsobj.h" />
+    <ClInclude Include="..\..\..\jsobjinlines.h" />
+    <ClInclude Include="..\..\..\json.h" />
+    <ClInclude Include="..\..\..\jsopcode.h" />
+    <ClInclude Include="..\..\..\jsparse.h" />
+    <ClInclude Include="..\..\..\jsprf.h" />
+    <ClInclude Include="..\..\..\jspropertycache.h" />
+    <ClInclude Include="..\..\..\jspropertycacheinlines.h" />
+    <ClInclude Include="..\..\..\jspropertytree.h" />
+    <ClInclude Include="..\..\..\jsproxy.h" />
+    <ClInclude Include="..\..\..\jsprvtd.h" />
+    <ClInclude Include="..\..\..\jspubtd.h" />
+    <ClInclude Include="..\..\..\jsregexp.h" />
+    <ClInclude Include="..\..\..\jsscan.h" />
+    <ClInclude Include="..\..\..\jsscope.h" />
+    <ClInclude Include="..\..\..\jsscopeinlines.h" />
+    <ClInclude Include="..\..\..\jsscript.h" />
+    <ClInclude Include="..\..\..\jsscriptinlines.h" />
+    <ClInclude Include="..\..\..\jsstaticcheck.h" />
+    <ClInclude Include="..\..\..\jsstr.h" />
+    <ClInclude Include="..\..\..\jsstrinlines.h" />
+    <ClInclude Include="..\..\..\jstask.h" />
+    <ClInclude Include="..\..\..\jstl.h" />
+    <ClInclude Include="..\..\..\jstracer.h" />
+    <ClInclude Include="..\..\..\jstypedarray.h" />
+    <ClInclude Include="..\..\..\jstypes.h" />
+    <ClInclude Include="..\..\..\jsutil.h" />
+    <ClInclude Include="..\..\..\jsversion.h" />
+    <ClInclude Include="..\..\..\jswrapper.h" />
+    <ClInclude Include="..\..\..\jsxdrapi.h" />
+    <ClInclude Include="..\..\..\jsxml.h" />
+    <ClInclude Include="..\..\..\prmjtime.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\builtins.tbl" />
+    <None Include="..\..\..\jitstats.tbl" />
+    <None Include="..\..\..\jskeyword.tbl" />
+    <None Include="..\..\..\jsopcode.tbl" />
+    <None Include="..\..\..\jsproto.tbl" />
+    <None Include="..\..\..\jsreops.tbl" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets" />
+</Project>

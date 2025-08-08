@@ -41,10 +41,13 @@ movable=2
 
 [0x0fb0]
 {
-get=base_item
-name=anvil
+get=0x0faf
 id=0x0fb0
-weight=2000
-movable=2
+}
+
+// Anvil - alias
+[anvil]
+{
+get=0x0faf 0x0fb0
 }
 

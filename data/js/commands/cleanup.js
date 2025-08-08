@@ -3,7 +3,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "cleanup", 2, true );
+	RegisterCommand( "cleanup", 8, true );
 }
 
 function command_CLEANUP( socket, cmdString )
@@ -36,3 +36,5 @@ function onIterate( toCheck )
 	}
 	return false;
 }
+
+function _restorecontext_() {}

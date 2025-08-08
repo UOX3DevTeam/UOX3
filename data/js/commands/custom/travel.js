@@ -2,7 +2,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "travel", 2, true );
+	RegisterCommand( "travel", 8, true );
 }
 
 function command_TRAVEL( socket, cmdString )

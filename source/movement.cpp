@@ -112,7 +112,11 @@ auto HandleTeleporters( CChar *s ) -> void
 	if( !ValidateObject( s ))
 		return;
 
-	UI08 charWorld = s->WorldNumber();
+	auto coreShardEra = cwmWorldState->ServerData()->ExpansionCoreShardEra();
+	SI08 charWorld = static_cast<SI08>( s->WorldNumber() );
+	UI16 charX = s->GetX();
+	UI16 charY = s->GetY();
+	auto charLocation = s->GetLocation();
 	CTeleLocationEntry *getTeleLoc = nullptr;
 	bool isOnTeleporter;
 	for( size_t i = 0; i < cwmWorldState->teleLocs.size(); ++i )
@@ -121,60 +125,67 @@ auto HandleTeleporters( CChar *s ) -> void
 		getTeleLoc		= &cwmWorldState->teleLocs[i];
 		if( getTeleLoc )
 		{
-			if(( getTeleLoc->SourceWorld() == 0xFF && charWorld <= 1 ) || getTeleLoc->SourceWorld() == charWorld )
+			if(( getTeleLoc->SourceWorld() == -1 && charWorld <= 1 ) || getTeleLoc->SourceWorld() == charWorld )
 			{
-				// Check if character is on the teleporter location
-				if( getTeleLoc->SourceLocation().z != ILLEGAL_Z )
+				// Also perform era-specific checks on the teleport locations, if those have been defined
+				auto minEra = getTeleLoc->MinEra();
+				auto maxEra = getTeleLoc->MaxEra();
+				if(( minEra == -1 || coreShardEra >= minEra ) && ( maxEra == -1 || coreShardEra <= maxEra ))
 				{
-					isOnTeleporter = ( getTeleLoc->SourceLocation() == s->GetLocation() );
-				}
-				else
-				{
-					isOnTeleporter = ( getTeleLoc->SourceLocation().x == s->GetX() && getTeleLoc->SourceLocation().y == s->GetY() );
-				}
-
-				if( isOnTeleporter )
-				{
-					// If they are, whisk them away to the target destination
-					UI08 targetWorld = 0;
-					if( getTeleLoc->SourceWorld() == 0xFF )
+					// Check if character is on the teleporter location
+					if( getTeleLoc->SourceLocation().z != ILLEGAL_Z )
 					{
-						targetWorld = s->WorldNumber();
+						isOnTeleporter = ( getTeleLoc->SourceLocation() == charLocation );
 					}
 					else
 					{
-						targetWorld = getTeleLoc->TargetWorld();
+						isOnTeleporter = ( getTeleLoc->SourceLocation().x == charX && getTeleLoc->SourceLocation().y == charY );
 					}
-					
-					s->SetLocation( static_cast<SI16>( getTeleLoc->TargetLocation().x ), static_cast<SI16>( getTeleLoc->TargetLocation().y ), static_cast<UI08>( getTeleLoc->TargetLocation().z ), targetWorld, s->GetInstanceId() );
-					if( !s->IsNpc() )
+
+					if( isOnTeleporter )
 					{
-						if( targetWorld != charWorld )
+						// If they are, whisk them away to the target destination
+						SI08 targetWorld = 0;
+						if( getTeleLoc->SourceWorld() == -1 )
 						{
-							SendMapChange( getTeleLoc->TargetWorld(), s->GetSocket() );
+							targetWorld = charWorld;
 						}
-						
-						// Teleport player's pets
-						auto myPets = s->GetPetList();
-						for( const auto &myPet : myPets->collection() )
+						else
 						{
-							if( ValidateObject( myPet ))
+							targetWorld = getTeleLoc->TargetWorld();
+						}
+
+						s->SetLocation( static_cast<SI16>( getTeleLoc->TargetLocation().x ), static_cast<SI16>( getTeleLoc->TargetLocation().y ), static_cast<UI08>( getTeleLoc->TargetLocation().z ), static_cast<UI08>( targetWorld ), s->GetInstanceId() );
+						if( !s->IsNpc() )
+						{
+							if( targetWorld != -1 && targetWorld != charWorld )
 							{
-								if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == s )
+								SendMapChange( getTeleLoc->TargetWorld(), s->GetSocket() );
+							}
+
+							// Teleport player's followers as well
+							auto myFollowers = s->GetFollowerList();
+							for( const auto &myFollower : myFollowers->collection() )
+							{
+								if( ValidateObject( myFollower ))
 								{
-									if( ObjInOldRange( s, myPet, DIST_SAMESCREEN ))
+									if( !myFollower->GetMounted() && myFollower->GetOwnerObj() == s )
 									{
-										myPet->SetLocation( s );
+										// Teleport followers along with player if they're following the player and within range 
+										if( myFollower->GetNpcWander() == WT_FOLLOW && ObjInOldRange( s, myFollower, DIST_SAMESCREEN ))
+										{
+											myFollower->SetLocation( s );
+										}
 									}
 								}
 							}
 						}
+						break;
 					}
-					break;
-				}
-				else if( s->GetX() < getTeleLoc->SourceLocation().x )
-				{
-					break;
+					else if( charX < getTeleLoc->SourceLocation().x )
+					{
+						break;
+					}
 				}
 			}
 		}
@@ -218,7 +229,7 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 {
 	if( !IsValidDirection( dir ))
 	{
-		std::string charName = GetNpcDictName( c );
+		std::string charName = GetNpcDictName( c, nullptr, NRS_SYSTEM );
 		Console.Error( oldstrutil::format( "%s (CMovement::Walking) caught bad direction = %s %d 0x%x\n", DBGFILE, charName.c_str(), dir, dir ));
 		// If I don't do this, the NPC will keep trying to walk on the same step, which is
 		// where he's already at. Can cause an infinite loop. (Trust me, was one of the things
@@ -261,7 +272,7 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 		if( !CalcMove( c, oldx, oldy, myz, dir ))
 		{
 #if DEBUG_WALKING
-			std::string charName = GetNpcDictName( c );
+			std::string charName = GetNpcDictName( c, nullptr, NRS_SYSTEM );
 			Console.Print( oldstrutil::format( "DEBUG: %s (CMovement::Walking) Character Walk Failed for %s\n", DBGFILE, charName ));
 			Console.Print( oldstrutil::format( "DEBUG: %s (CMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, oldx, oldy, c->GetZ() ));
 			Console.Print( oldstrutil::format( "DEBUG: %s (CMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz ));
@@ -288,11 +299,10 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 					UI16 fx2Actual = 0;
 					UI16 fy2Actual = 0;
 					SI08 npcWanderType = c->GetNpcWander();
-					if( npcWanderType == WT_FLEE )
+					if( npcWanderType == WT_FLEE || npcWanderType == WT_SCARED )
 					{
-						// If NPC fails to flee, make him re-attack instead!
-						c->SetFleeAt( 0 );
-						c->SetReattackAt( 1 );
+						// If NPC fails to flee, reset to original wandermode instead, and put a cooldown on the fleeing
+						c->SetTimer( tNPC_FLEECOOLDOWN, BuildTimeValue( 30.0 ));
 						c->SetNpcWander( c->GetOldNpcWander() );
 						if( c->GetMounted() )
 						{
@@ -334,7 +344,7 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 			return;
 		}
 #if DEBUG_WALKING
-		std::string charName = GetNpcDictName( c );
+		std::string charName = GetNpcDictName( c, nullptr, NRS_SYSTEM );
 		Console.Print( oldstrutil::format( "DEBUG: %s (CMovement::Walking) Character Walk Passed for %s\n", DBGFILE, charName ));
 		Console.Print( oldstrutil::format( "DEBUG: %s (CMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, oldx, oldy, c->GetZ() ));
 		Console.Print( oldstrutil::format( "DEBUG: %s (CMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz ));
@@ -352,13 +362,14 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 				if( cwmWorldState->ServerData()->AdvancedPathfinding() )
 				{
 					bool newPath = false;
-					newPath = AdvancedPathfinding( c, c->GetPathTargX(), c->GetPathTargY(), ( c->GetRunning() > 0 ));
+					bool allowPartial = true; // Allow partial pathfinding, if it gets us closer
+					newPath = AdvancedPathfinding( c, c->GetPathTargX(), c->GetPathTargY(), ( c->GetRunning() > 0 ), allowPartial );
 					if( !newPath )
 					{
 						c->SetPathResult( 0 ); // partial success
 					}
 #if DEBUG_WALKING
-					std::string charName = GetNpcDictName( c );
+					std::string charName = GetNpcDictName( c, nullptr, NRS_SYSTEM );
 					Console.Print( oldstrutil::format( "DEBUG: Walking() - NPC (%s) failed to pathfind (%d times). Calculating new path!\n", charName.c_str(), c->GetPathFail() ));
 #endif
 				}
@@ -367,7 +378,7 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 			else if( c->GetPathFail() < 10 && !c->IsEvading() )
 			{
 #if DEBUG_WALKING
-				std::string charName = GetNpcDictName( c );
+				std::string charName = GetNpcDictName( c, nullptr, NRS_SYSTEM );
 				Console.Print( oldstrutil::format( "DEBUG: %s (CMovement::Walking) Character Walk Passed for %s\n", DBGFILE, charName ));
 				Console.Print( oldstrutil::format( "DEBUG: %s (CMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, oldx, oldy, c->GetZ() ));
 				Console.Print( oldstrutil::format( "DEBUG: %s (CMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz ));
@@ -382,18 +393,19 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 				c->SetOldTargLocY( 0 );
 
 				// Temporary change NPC's wandermode to none, and try pathfinding again in 5 seconds
-				if( c->GetNpcWander() != WT_NONE )
+				auto npcWander = c->GetNpcWander();
+				if( npcWander != WT_NONE  && npcWander != WT_SCARED && npcWander != WT_FLEE && npcWander != WT_PATHFIND && npcWander != WT_FROZEN )
 				{
 					c->SetOldNpcWander( c->GetNpcWander() );
 				}
 				c->SetNpcWander( WT_NONE );
-				c->SetTimer( tNPC_MOVETIME, BuildTimeValue( 5 ));
+				c->SetTimer( tNPC_MOVETIME, BuildTimeValue( 5.0 ));
 				return;
 			}
 			else
 			{
 #if DEBUG_WALKING
-				std::string charName = GetNpcDictName( c );
+				std::string charName = GetNpcDictName( c, nullptr, NRS_SYSTEM );
 				Console.Print( oldstrutil::format( "DEBUG: Walking() - NPC (%s) failed to pathfind %d times! Pausing pathfinding for some time.\n", charName.c_str(), c->GetPathFail() ));
 #endif
 				c->FlushPath();
@@ -407,7 +419,7 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 				{
 					c->SetOldNpcWander( npcWanderType );
 					c->SetNpcWander( WT_NONE );
-					c->SetTimer( tNPC_MOVETIME, BuildTimeValue( 30 ));
+					c->SetTimer( tNPC_MOVETIME, BuildTimeValue( 30.0 ));
 				}
 				return;
 			}
@@ -420,6 +432,10 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 
 		MoveCharForDirection( c, myx, myy, myz );
 		c->SetPathFail( 0 );
+		if( c->GetNpcWander() == WT_FLEE || c->GetNpcWander() == WT_SCARED )
+		{
+			c->SetFleeDistance( static_cast<UI08>( c->GetFleeDistance() + 1 ));
+		}
 
 		// i actually moved this for now after the z =  illegal_z, in the end of CrazyXYBlockStuff()
 		// can't see how that would hurt anything
@@ -498,7 +514,7 @@ bool CMovement::IsFrozen( CChar *c, CSocket *mSock, SI16 sequence )
 			DenyMovement( mSock, c, sequence );
 		}
 #if DEBUG_WALKING
-		std::string charName = GetNpcDictName( c );
+		std::string charName = GetNpcDictName( c, nullptr, NRS_SYSTEM );
 		Console.Print( oldstrutil::format( "DEBUG: %s (CMovement::IsFrozen) casting char %s\n", DBGFILE, charName ));
 #endif
 		return true;
@@ -511,7 +527,7 @@ bool CMovement::IsFrozen( CChar *c, CSocket *mSock, SI16 sequence )
 			DenyMovement( mSock, c, sequence );
 		}
 #if DEBUG_WALKING
-		std::string charName = GetNpcDictName( c );
+		std::string charName = GetNpcDictName( c, nullptr, NRS_SYSTEM );
 		Console.Print( oldstrutil::format( "DEBUG: %s (CMovement::IsFrozen) frozen char %s\n", DBGFILE, charName ));
 #endif
 		return true;
@@ -549,7 +565,7 @@ bool CMovement::IsOverloaded( CChar *c, CSocket *mSock, SI16 sequence )
 				mSock->SysMessage( 1783 ); // You are too fatigued to move, because you are carrying too much weight!
 				DenyMovement( mSock, c, sequence );
 #if DEBUG_WALKING
-				std::string charName = GetNpcDictName( c );
+				std::string charName = GetNpcDictName( c, nullptr, NRS_SYSTEM );
 				Console.Print( oldstrutil::format( "DEBUG: %s (CMovement::Walking) overloaded char %s\n", DBGFILE, charName ));
 #endif
 				return true;
@@ -788,7 +804,7 @@ void CMovement::GetBlockingStatics( SI16 x, SI16 y, std::vector<Tile_st> &xybloc
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get a list of dynamic items that block character movement
 //o------------------------------------------------------------------------------------------------o
-auto CMovement::GetBlockingDynamics( SI16 x, SI16 y, std::vector<Tile_st> &xyblock, UI16 &xycount, UI08 worldNumber, UI16 instanceId ) -> void
+auto CMovement::GetBlockingDynamics( SI16 x, SI16 y, std::vector<Tile_st> &xyblock, UI16 &xycount, UI08 worldNumber, UI16 instanceId, bool ignoreDoors ) -> void
 {
 	if( xycount >= XYMAX ) // don't overflow
 		return;
@@ -813,8 +829,11 @@ auto CMovement::GetBlockingDynamics( SI16 x, SI16 y, std::vector<Tile_st> &xyblo
 							tile.tileId = tItem->GetId();
 							tile.altitude = tItem->GetZ();
 							tile.artInfo = &Map->SeekTile( tItem->GetId() );
-							xyblock.push_back( tile );
-							++xycount;
+							if( !ignoreDoors || !tile.CheckFlag( TF_DOOR ))
+							{
+								xyblock.push_back( tile );
+								++xycount;
+							}
 							if( xycount >= XYMAX ) // don't overflow
 							{
 								return;
@@ -830,8 +849,7 @@ auto CMovement::GetBlockingDynamics( SI16 x, SI16 y, std::vector<Tile_st> &xyblo
 						{
 							Console.Error( "Walking() - Bad length in multi file. Avoiding stall" );
 							auto map1 = Map->SeekMap( tItem->GetX(), tItem->GetY(), tItem->WorldNumber() );
-
-							if( map1.CheckFlag( TF_WET )) // is it water?
+							if( map1.terrainInfo != nullptr && map1.CheckFlag( TF_WET )) // is it water?
 							{
 								tItem->SetId( 0x4001 );
 							}
@@ -849,6 +867,7 @@ auto CMovement::GetBlockingDynamics( SI16 x, SI16 y, std::vector<Tile_st> &xyblo
 								{
 									auto tile = Tile_st( TileType_t::dyn );
 									tile.artInfo = &Map->SeekTile( multi.tileId );
+									tile.tileId = multi.tileId;
 									tile.altitude = multi.altitude + tItem->GetZ();
 									xyblock.push_back( tile );
 									++xycount;
@@ -1060,14 +1079,17 @@ auto CMovement::OutputShoveMessage( CChar *c, CSocket *mSock ) -> void
 						}
 					}
 					
-					if( ourChar->GetVisible() == VT_TEMPHIDDEN || ourChar->GetVisible() == VT_INVISIBLE )
+					if( didShove )
 					{
-						mSock->SysMessage( 1384 ); // Being perfectly rested, you shove something invisible out of the way.
-					}
-					else
-					{
-						std::string charName = GetNpcDictName( ourChar );
-						mSock->SysMessage( 1383, charName.c_str() ); // Being perfectly rested, you shove %s out of the way.
+						if( ourChar->GetVisible() == VT_TEMPHIDDEN || ourChar->GetVisible() == VT_INVISIBLE )
+						{
+							mSock->SysMessage( 1384 ); // Being perfectly rested, you shove something invisible out of the way.
+						}
+						else
+						{
+							std::string charName = GetNpcDictName( ourChar, nullptr, NRS_SYSTEM );
+							mSock->SysMessage( 1383, charName.c_str() ); // Being perfectly rested, you shove %s out of the way.
+						}
 					}
 				}
 			}
@@ -1085,7 +1107,7 @@ auto CMovement::OutputShoveMessage( CChar *c, CSocket *mSock ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Trigger InRange JS event
 //o------------------------------------------------------------------------------------------------o
-void DoJSInRange( CBaseObject *mObj, CBaseObject *objInRange )
+void CMovement::DoJSInRange( CBaseObject *mObj, CBaseObject *objInRange )
 {
 	std::vector<UI16> scriptTriggers = mObj->GetScriptTriggers();
 	for( auto scriptTrig : scriptTriggers )
@@ -1103,7 +1125,7 @@ void DoJSInRange( CBaseObject *mObj, CBaseObject *objInRange )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Trigger OutOfRange JS event
 //o------------------------------------------------------------------------------------------------o
-void DoJSOutOfRange( CBaseObject *mObj, CBaseObject *objOutOfRange )
+void CMovement::DoJSOutOfRange( CBaseObject *mObj, CBaseObject *objOutOfRange )
 {
 	std::vector<UI16> scriptTriggers = mObj->GetScriptTriggers();
 	for( auto scriptTrig : scriptTriggers )
@@ -1144,8 +1166,8 @@ bool UpdateItemsOnPlane( CSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI
 			{
 				tItem->SendToSocket( mSock );
 			}
-			DoJSInRange( mChar, tItem );
-			DoJSInRange( tItem, mChar );
+			Movement->DoJSInRange( mChar, tItem );
+			Movement->DoJSInRange( tItem, mChar );
 			return true;
 		}
 		else if( dOld == ( visibleRange + 1 ) && dNew > ( visibleRange + 1 )) // Just went out of range
@@ -1154,9 +1176,17 @@ bool UpdateItemsOnPlane( CSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI
 			if( mSock != nullptr )
 			{
 				tItem->RemoveFromSight( mSock );
+
+				// If tItem is a container, attempt to remove player from container's list of players who may have opened the container
+				auto iType = tItem->GetType();
+				if( iType == IT_CONTAINER || iType == IT_SPAWNCONT || iType == IT_UNLOCKABLESPAWNCONT || iType == IT_TRASHCONT )
+				{
+					tItem->GetContOpenedByList()->Remove( mSock );
+					mSock->GetContsOpenedList()->Remove( tItem );
+				}
 			}
-			DoJSOutOfRange( mChar, tItem );
-			DoJSOutOfRange( tItem, mChar );
+			Movement->DoJSOutOfRange( mChar, tItem );
+			Movement->DoJSOutOfRange( tItem, mChar );
 			return true;
 		}
 	}
@@ -1176,8 +1206,8 @@ bool UpdateCharsOnPlane( CSocket *mSock, CChar *mChar, CChar *tChar, UI16 dNew, 
 		{
 			tChar->SendToSocket( mSock );
 		}
-		DoJSInRange( mChar, tChar );
-		DoJSInRange( tChar, mChar );
+		Movement->DoJSInRange( mChar, tChar );
+		Movement->DoJSInRange( tChar, mChar );
 		return true;
 	}
 	if( dOld == ( visibleRange + 1 ) && dNew > ( visibleRange + 1 )) // Just went out of range
@@ -1186,8 +1216,8 @@ bool UpdateCharsOnPlane( CSocket *mSock, CChar *mChar, CChar *tChar, UI16 dNew, 
 		{
 			tChar->RemoveFromSight( mSock );
 		}
-		DoJSOutOfRange( mChar, tChar );
-		DoJSOutOfRange( tChar, mChar );
+		Movement->DoJSOutOfRange( mChar, tChar );
+		Movement->DoJSOutOfRange( tChar, mChar );
 		return true;
 	}
 	return false;
@@ -1358,7 +1388,7 @@ void CMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 				if( ValidateObject( tempChar ) && tempChar->GetInstanceId() == instanceId )
 				{
 					// Character Send Stuff
-					if( tempChar->IsNpc() || IsOnline(( *tempChar )) || ( isGM && cwmWorldState->ServerData()->ShowOfflinePCs() ))
+					if( tempChar->IsNpc() || IsOnline(( *tempChar )) || (( isGM || mChar->GetAccount().wAccountIndex == 0 ) && cwmWorldState->ServerData()->ShowOfflinePCs() ))
 					{
 						dxNew = static_cast<UI16>( abs( tempChar->GetX() - newx ));
 						dyNew = static_cast<UI16>( abs( tempChar->GetY() - newy ));
@@ -1398,7 +1428,7 @@ void CMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 
 			// Determine if character is moving within the moveDetectRange limit
 			inMoveDetectRange = ( std::abs( tItem->GetX() - newx ) <= moveDetectRange && std::abs( tItem->GetY() - newy ) <= moveDetectRange 
-				&& std::abs( mChar->GetZ() - tItem->GetZ() ) <= 5 );
+				&& std::abs( mChar->GetZ() - tItem->GetZ() ) <= 10 );
 
 			if( EffRange || inMoveDetectRange )
 			{
@@ -1556,11 +1586,6 @@ void CMovement::CombatWalk( CChar *i )
 
 	CPExtMove toSend = ( *i );
 
-	if( !i->IsAtWar() )
-	{
-		i->SetTarg( nullptr );
-	}
-
 	for( auto &sock : FindNearbyPlayers( i ))
 	{
 		CChar *mChar = sock->CurrcharObj();
@@ -1608,22 +1633,30 @@ void CMovement::NpcWalk( CChar *i, UI08 j, SI08 getWander )
 	{
 		case WT_FREE:	// Wander freely
 		case WT_FLEE:	// Wander freely after fleeing
+		case WT_SCARED:	// Wander freely after running scared
 			Walking( nullptr, i, jMod, 256 );
 			break;
 		case WT_BOX:	// Wander inside a box
-			if( CheckBoundingBox( newx, newy, fx1, fy1, fz1, fx2, fy2, worldNumber, instanceId ))
+		{
+			// If still within bounding box, keep walking - and also keep walking if a valid target is still
+			// nearby, or if there's a delay on pathfinding
+			auto iTarg = i->GetTarg();
+			if( CheckBoundingBox( newx, newy, fx1, fy1, fz1, fx2, fy2, worldNumber, instanceId ) ||
+				( ValidateObject( iTarg ) && ObjInRange( i, iTarg, DIST_SAMESCREEN )) ||
+				( i->GetTimer( tNPC_PATHFINDDELAY ) > cwmWorldState->GetUICurrentTime() ))
 			{
 				Walking( nullptr, i, jMod, 256 );
 			}
-			// The NPC is outside it's area, send it back
 			else if( !CheckBoundingBox( i->GetX(), i->GetY(), fx1, fy1, fz1, fx2, fy2, worldNumber, instanceId ))
 			{
+				// The NPC is outside it's area, send it back
 				i->SetOldNpcWander( WT_BOX );
 				i->SetNpcWander( WT_PATHFIND );
 
 				if( cwmWorldState->ServerData()->AdvancedPathfinding() )
 				{
-					pathFound = AdvancedPathfinding( i, fx1, fy1, true );
+					bool allowPartial = false; // Don't allow partial pathfinding here - we need the NPC back in the box!
+					pathFound = AdvancedPathfinding( i, fx1, fy1, true, allowPartial );
 				}
 				else
 				{
@@ -1640,8 +1673,15 @@ void CMovement::NpcWalk( CChar *i, UI08 j, SI08 getWander )
 				}
 			}
 			break;
+		}
 		case WT_CIRCLE:	// Wander inside a circle
-			if( CheckBoundingCircle( newx, newy, fx1, fy1, fz1, fx2, worldNumber, instanceId ))
+		{			
+			// If still within bounding box, keep walking - and also keep walking if a valid target is still
+			// nearby, or if there's a delay on pathfinding
+			auto iTarg = i->GetTarg();
+			if( CheckBoundingCircle( newx, newy, fx1, fy1, fz1, fx2, worldNumber, instanceId ) ||
+				( ValidateObject( iTarg ) && ObjInRange( i, iTarg, DIST_SAMESCREEN )) ||
+				( i->GetTimer( tNPC_PATHFINDDELAY ) > cwmWorldState->GetUICurrentTime() ))
 			{
 				Walking( nullptr, i, jMod, 256 );
 			}
@@ -1652,7 +1692,8 @@ void CMovement::NpcWalk( CChar *i, UI08 j, SI08 getWander )
 				i->SetNpcWander( WT_PATHFIND );
 				if( cwmWorldState->ServerData()->AdvancedPathfinding() )
 				{
-					pathFound = AdvancedPathfinding( i, fx1, fy1, true );
+					bool allowPartial = false; // Don't allow partial pathfinding here, we need the NPC back in the circle!
+					pathFound = AdvancedPathfinding( i, fx1, fy1, true, false );
 				}
 				else
 				{
@@ -1669,6 +1710,7 @@ void CMovement::NpcWalk( CChar *i, UI08 j, SI08 getWander )
 				}
 			}
 			break;
+		}
 		default:
 			Console.Error( oldstrutil::format( "Bad NPC Wander type passed to NpcWalk: %i", getWander ));
 			break;
@@ -1739,7 +1781,7 @@ void CMovement::BoundingBoxTeleport( CChar *nChar, UI16 fx2Actual, UI16 fy2Actua
 				if( boundingBoxTeleport == true )
 				{
 #if defined( UOX_DEBUG_MODE )
-					std::string charName = GetNpcDictName( nChar );
+					std::string charName = GetNpcDictName( nChar, nullptr, NRS_SYSTEM );
 					Console.Warning( oldstrutil::format( "NPC: %s with serial 0x%X was unable to path back to bounding box, teleporting NPC back.\n", charName.c_str(), nChar->GetSerial() ));
 #endif
 					nChar->SetLocation( m, n, fz1, nChar->WorldNumber(), nChar->GetInstanceId() );
@@ -1751,7 +1793,7 @@ void CMovement::BoundingBoxTeleport( CChar *nChar, UI16 fx2Actual, UI16 fy2Actua
 		}
 		// If a valid teleport-location hasn't been found at this point, despawn NPC
 #if defined( UOX_DEBUG_MODE )
-		std::string charName = GetNpcDictName( nChar );
+		std::string charName = GetNpcDictName( nChar, nullptr, NRS_SYSTEM );
 		Console.Warning( oldstrutil::format( "NPC: %s with serial 0x%X was unable to path back to bounding box, no valid teleport location found. Deleting NPC!\n", charName.c_str(), nChar->GetSerial() ));
 #endif
 		nChar->Delete();
@@ -1980,16 +2022,52 @@ bool CMovement::HandleNPCWander( CChar& mChar )
 					oldTargX = mChar.GetOldTargLocX();
 					oldTargY = mChar.GetOldTargLocY();
 
-					if( !mChar.StillGotDirs() || (( oldTargX != kChar->GetX() || oldTargY != kChar->GetY() ) && RandomNum( 0, 10 ) >= 6 ))
+					// Calculate direction from NPC towards player
+					const UI08 dirToTarget = Movement->Direction( mChar.GetX(), mChar.GetY(), kChar->GetX(), kChar->GetY() );
+
+					// Get NPC's current direction
+					const UI08 npcDir = mChar.GetDir();
+
+					// Determine if NPC is already heading generally toward player (direct or adjacent directions)
+					const bool isHeadingTowardsPlayer = ( npcDir == dirToTarget ||
+						npcDir == ( dirToTarget + 1 ) % 8 ||
+						npcDir == ( dirToTarget + 7 ) % 8 );
+
+					// See (approximately) how far the target has moved from oldTargX/oldTargY
+					const R64 targMoveDist = GetApproxDist( Point3_st( static_cast<UI16>( oldTargX ), static_cast<UI16>( oldTargY ), 0 ), 
+													Point3_st( static_cast<UI16>( kChar->GetX() ), static_cast<UI16>( kChar->GetY() ), 0 ));
+
+					const R64 targMoveWeight = 2.5; // For each tile the target has moved from oldTargX/oldTargY, increase weight by this
+					const R64 wrongHeadingPenalty = 20.0; // If NPC is heading in wrong direction, add a penalty weight
+					const R64 timeSincePathCalcWeight = 1.0; // Every second since we path, add points to weight
+					const R64 pathRecalcThreshold = 30.0; // Weight threshold for triggering a path recalculation
+					R64 pathRecalcUrgency = 0.0; // Keep track of total weight for comparison with threshold
+
+					// Determine urgency to recalculate path to target location
+					pathRecalcUrgency += static_cast<R64>( targMoveDist * targMoveWeight );
+					pathRecalcUrgency += static_cast<R64>( isHeadingTowardsPlayer ? 0 : wrongHeadingPenalty );
+					R64 timeSinceLastPath = ( cwmWorldState->GetUICurrentTime() - mChar.GetLastPathCalc() ) / 1000.0;
+					pathRecalcUrgency += static_cast<R64>( timeSinceLastPath * timeSincePathCalcWeight );
+					pathRecalcUrgency *= static_cast<R64>( RandomNum( 8, 12 ) / 10.0 ); // Random jitter to add variation around edge cases
+
+					// Only recalculate path if out of steps to follow, or if urgency to recalculate has suprassed the threshold
+					if( !mChar.StillGotDirs() || pathRecalcUrgency > pathRecalcThreshold )
 					{
 						if( cwmWorldState->ServerData()->AdvancedPathfinding() )
 						{
-							if( !AdvancedPathfinding( &mChar, kChar->GetX(), kChar->GetY(), canRun ))
+							mChar.FlushPath();
+
+							bool allowPartial = false; // Don't allow partial pathfinding; if follower cannot keep up, teleport them!
+							if( !AdvancedPathfinding( &mChar, kChar->GetX(), kChar->GetY(), canRun, allowPartial ))
 							{
 								// If NPC is unable to follow owner, teleport to owner
 								if( mChar.GetOwnerObj() == kChar )
 								{
 									mChar.SetLocation( kChar );
+									mChar.FlushPath();
+									mChar.SetOldTargLocX( 0 );
+									mChar.SetOldTargLocY( 0 );
+									mChar.SetPathFail( 0 );
 								}
 								else
 								{
@@ -2012,9 +2090,20 @@ bool CMovement::HandleNPCWander( CChar& mChar )
 						}
 					}
 
-					j = mChar.PopDirection();
-					Walking( nullptr, &mChar, j, 256 );
-					shouldRun = (( j&0x80 ) != 0 );
+					UI08 newDir = mChar.PopDirection();
+					UI08 baseNewDir = ( newDir & 0x7F );
+					UI08 baseOldDir = ( mChar.GetDir() & 0x7F );
+
+					// Check if direction is changing
+					if( baseOldDir != UNKNOWNDIR && baseOldDir != baseNewDir )
+					{
+						// Insert an extra push at the front of the queue,
+						// so this move will be triggered twice - requirement for NPC to turn
+						mChar.PushDirection( newDir, true );
+					}
+
+					shouldRun = (( newDir&0x80 ) != 0);
+					Walking( nullptr, &mChar, newDir, 256 );
 				}
 				// Has the Escortee reached the destination ??
 				if( !kChar->IsDead() && mChar.GetQuestDestRegion() == mChar.GetRegionNum() )
@@ -2044,111 +2133,171 @@ bool CMovement::HandleNPCWander( CChar& mChar )
 			break;
 		case WT_FROZEN: // No movement whatsoever!
 			break;
+		case WT_SCARED: // Run away scared!
 		case WT_FLEE: // FLEE!!!!!!
-			kChar = mChar.GetTarg();
-			if( !ValidateObject( kChar ))
-				break;
-
-			if(( mChar.WorldNumber() == kChar->WorldNumber() && mChar.GetInstanceId() == kChar->GetInstanceId() )
-				||  GetDist( &mChar, kChar ) < P_PF_MFD )
-			{	// calculate a x,y to flee towards
-				const UI16 mydist	= P_PF_MFD - GetDist( &mChar, kChar ) + 1;
-				j					= Direction( &mChar, kChar->GetX(), kChar->GetY() );
-				SI16 myx			= GetXfromDir( j, mChar.GetX() );
-				SI16 myy			= GetYfromDir( j, mChar.GetY() );
-
-				SI16 xFactor = 0;
-				SI16 yFactor = 0;
-				// Sept 22, 2002
-				if( myx != mChar.GetX() )
-				{
-					if( myx < mChar.GetX() )
-					{
-						xFactor = 1;
-					}
-					else
-					{
-						xFactor = -1;
-					}
-				}
-
-				if( myy != mChar.GetY() )
-				{
-					if( myy < mChar.GetY() )
-					{
-						yFactor = 1;
-					}
-					else
-					{
-						yFactor = -1;
-					}
-				}
-
-				myx += static_cast<SI16>( xFactor * mydist );
-				myy += static_cast<SI16>( yFactor * mydist );
-
-				canRun = ( mChar.GetStamina() > 0 );
-
-				// now, got myx, myy... lets go.
-
-				// Don't re-calculate pathfinding on every step. Use what we have, with a random chance to recalculate
-				if( !mChar.StillGotDirs() || RandomNum( 0, 10 ) >= 6 )
-				{
-					if( cwmWorldState->ServerData()->AdvancedPathfinding() )
-					{
-						if( !AdvancedPathfinding( &mChar, myx, myy, true ))
-						{
-							// If NPC fails to flee, make him re-attack instead!
-							mChar.SetFleeAt( 0 );
-							mChar.SetReattackAt( 1 );
-							mChar.SetNpcWander( mChar.GetOldNpcWander() );
-							if( mChar.GetMounted() )
-							{
-								mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetMountedRunningSpeed() ));
-							}
-							else
-							{
-								mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetRunningSpeed() ));
-							}
-							mChar.SetOldNpcWander( WT_NONE ); // so it won't save this at the wsc file
-						}
-					}
-					else
-					{
-						PathFind( &mChar, myx, myy, true );
-					}
-				}
-
-				j = mChar.PopDirection();
-				shouldRun = (( j&0x80 ) != 0);
-				Walking( nullptr, &mChar, j, 256 );
+		{
+			// Has NPC been running further than the maximum fleeing distance?
+			auto resetWanderMode = false;
+			if( mChar.GetFleeDistance() > P_PF_MAXFD )
+			{
+				// Don't let them run for ever! Take them out of flee/scared mode, and set a cooldown on re-entering
+				mChar.SetTimer( tNPC_FLEECOOLDOWN, BuildTimeValue( 30.0 ));
+				resetWanderMode = true;
+				mChar.TextMessage( nullptr, 2792, EMOTE, false );
 			}
 			else
 			{
-				// wander freely... don't just stop because I'm out of range.
-				j = RandomNum( 1, 5 );
-				if( j == 1 )
+				auto targInRange = false;
+				auto wanderAimlessly = true;
+				kChar = mChar.GetTarg();
+				if( ValidateObject( kChar ) && (( mChar.WorldNumber() == kChar->WorldNumber() && mChar.GetInstanceId() == kChar->GetInstanceId() )))
 				{
-					break;
+					// Target exists, and is in same world/instance
+					// Let's get a (fast) approximate distance
+					auto distToTarg = static_cast<UI16>( GetApproxDist( &mChar, kChar ));
+					if( distToTarg < P_PF_MFD )
+					{
+						// Target is within minimum flee distance - flee!
+						// calculate a x,y to flee towards
+						targInRange = true;
+						const UI16 mydist	= P_PF_MFD - distToTarg + 1;
+						j					= Direction( &mChar, kChar->GetX(), kChar->GetY() );
+						SI16 myx			= GetXfromDir( j, mChar.GetX() );
+						SI16 myy			= GetYfromDir( j, mChar.GetY() );
+
+						SI16 xFactor = 0;
+						SI16 yFactor = 0;
+						// Sept 22, 2002
+						if( myx != mChar.GetX() )
+						{
+							if( myx < mChar.GetX() )
+							{
+								xFactor = 1;
+							}
+							else
+							{
+								xFactor = -1;
+							}
+						}
+
+						if( myy != mChar.GetY() )
+						{
+							if( myy < mChar.GetY() )
+							{
+								yFactor = 1;
+							}
+							else
+							{
+								yFactor = -1;
+							}
+						}
+
+						myx += static_cast<SI16>( xFactor * mydist );
+						myy += static_cast<SI16>( yFactor * mydist );
+
+						canRun = ( mChar.GetStamina() > 0 );
+
+						// now, got myx, myy... lets go.
+
+						// Don't re-calculate pathfinding on every step. Use what we have, with a random chance to recalculate
+						if( !mChar.StillGotDirs() || RandomNum( 0, 10 ) >= 6 )
+						{
+							if( cwmWorldState->ServerData()->AdvancedPathfinding() )
+							{
+								bool allowPartial = true; // Allow partial pathfinding, anything that helps NPC flee further!
+								if( AdvancedPathfinding( &mChar, myx, myy, canRun, allowPartial ))
+								{
+									// As long as pathfinding succeeds, avoid random wandering
+									wanderAimlessly = false;
+								}
+							}
+							else
+							{
+								wanderAimlessly = false;
+								PathFind( &mChar, myx, myy, true );
+							}
+						}
+
+						// Continue follow direction set by pathfinding
+						j = mChar.PopDirection();
+						shouldRun = (( j&0x80 ) != 0);
+						Walking( nullptr, &mChar, j, 256 );
+					}
+
+					if( !mChar.StillGotDirs() && wanderAimlessly && distToTarg < ( P_PF_MFD * 2 ))
+					{
+						// Target is still within min flee distance x2, keep wandering in same area
+						// Keep the same wandermode for now
+						targInRange = true;
+						j = RandomNum( 1, 5 );
+						if( j == 1 )
+						{
+							break;
+						}
+						else if( j == 2 )
+						{
+							j = RandomNum( 0, 8 );
+						}
+						else	// Move in the same direction the majority of the time
+						{
+							j = mChar.GetDir();
+						}
+						shouldRun = (( j&0x80 ) != 0);
+						NpcWalk( &mChar, j, npcWanderType );
+					}
 				}
-				else if( j == 2 )
+			
+				if( !targInRange )
 				{
-					j = RandomNum( 0, 8 );
+					// Target no longer exists, is no longer in the same world/instance (might as well not exist), or
+					// is far enough away that it's potentially safe to return to old wander mode and location
+					// Reset target if out of combat range for scared animals
+					if( mChar.GetNpcWander() == WT_SCARED && ValidateObject( mChar.GetTarg() ) && ObjInRange( &mChar, mChar.GetTarg(), DIST_COMBATRESETRANGE ))
+					{
+						mChar.SetTarg( nullptr );
+					}
+
+					resetWanderMode = true;
 				}
-				else	// Move in the same direction the majority of the time
+			}
+
+			if( resetWanderMode )
+			{
+				auto oldNpcWander = mChar.GetOldNpcWander();
+				if( oldNpcWander != WT_FLEE && oldNpcWander != WT_SCARED && oldNpcWander != WT_PATHFIND && oldNpcWander != WT_FROZEN )
 				{
-					j = mChar.GetDir();
+					mChar.SetNpcWander( mChar.GetOldNpcWander() );
+					mChar.SetOldNpcWander( WT_NONE );
+
+					if( mChar.GetMounted() )
+					{
+						mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetMountedWalkingSpeed() ));
+					}
+					else
+					{
+						mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetWalkingSpeed() ));
+					}
 				}
-				shouldRun = (( j&0x80 ) != 0);
-				NpcWalk( &mChar, j, npcWanderType );
 			}
 			break;
+		}
 		case WT_PATHFIND:		// Pathfinding!!!!
 			if( mChar.StillGotDirs() )
 			{
-				j = mChar.PopDirection();
-				shouldRun = (( j&0x80 ) != 0);
-				Walking( nullptr, &mChar, j, 256 );
+				UI08 newDir = mChar.PopDirection();
+				UI08 baseNewDir = ( newDir & 0x7F );
+				UI08 baseOldDir = ( mChar.GetDir() & 0x7F );
+
+				// Check if direction is changing
+				if( baseOldDir != UNKNOWNDIR && baseOldDir != baseNewDir )
+				{
+					// Insert an extra push at the front of the queue,
+					// so this move will be triggered twice - requirement for NPC to turn
+					mChar.PushDirection( newDir, true );
+				}
+
+				shouldRun = (( newDir&0x80 ) != 0);
+				Walking( nullptr, &mChar, newDir, 256 );
 			}
 			else
 			{
@@ -2191,16 +2340,17 @@ void CMovement::NpcMovement( CChar& mChar )
 
 	bool canRun	= (( mChar.GetStamina() > 0 ) && mChar.CanRun() );
 
-	if( mChar.GetTimer( tNPC_MOVETIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+	if( mChar.GetTimer( tNPC_MOVETIME ) <= cwmWorldState->GetUICurrentTime() )
 	{
 #if DEBUG_NPCWALK
-		std::string charName = GetNpcDictName( mChar );
+		std::string charName = GetNpcDictName( mChar, nullptr, NRS_SYSTEM );
 		Console.Print( oldstrutil::format( "DEBUG: ENTER (%s): %d AI %d WAR %d J\n", charName, mChar.GetNpcWander(), mChar.IsAtWar(), j ));
 #endif
 		bool shouldRun = false;
-		if( mChar.IsAtWar() && mChar.GetNpcWander() != WT_FLEE )
+		if( mChar.IsAtWar() && mChar.GetNpcWander() != WT_FLEE && ( mChar.GetNpcWander() != WT_SCARED || ( ValidateObject( mChar.GetTarg() ) && GetDist( &mChar, mChar.GetTarg() ) <= 1 )))
 		{
-			CChar *l = mChar.GetAttacker();
+			//CChar *l = mChar.GetAttacker();
+			CChar *l = mChar.GetTarg();
 			if( ValidateObject( l ) && ( IsOnline(( *l )) || l->IsNpc() ))
 			{
 				const UI08 charDir	= Direction( &mChar, l->GetX(), l->GetY() );
@@ -2208,13 +2358,14 @@ void CMovement::NpcMovement( CChar& mChar )
 
 				// NPC is using a ranged weapon, and is within range to shoot at the target
 				CItem *equippedWeapon = Combat->GetWeapon( &mChar );
+				bool combatLos = mChar.GetCombatLos();
 				if( charDir < 8 
 					&& ( charDist <= 1 
 						|| (( Combat->GetCombatSkill( equippedWeapon ) == ARCHERY || Combat->GetCombatSkill( equippedWeapon ) == THROWING ) && charDist <= equippedWeapon->GetMaxRange() )
 						|| (( mChar.GetNpcAiType() == AI_CASTER || mChar.GetNpcAiType() == AI_EVIL_CASTER ) && ( charDist <= cwmWorldState->ServerData()->CombatMaxSpellRange() && mChar.GetMana() >= 10 ))))
 				{
-					bool los = LineOfSight( nullptr, &mChar, l->GetX(), l->GetY(), ( l->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false );
-					if( los )
+					bool los = ( charDist > 1 ? ( !combatLos ? LineOfSight( nullptr, &mChar, l->GetX(), l->GetY(), l->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) : true ) : true );
+					if( los && std::abs( mChar.GetZ() - l->GetZ() ) < 20)
 					{
 						// Turn towards target
 						if( charDir != mChar.GetDir() )
@@ -2228,13 +2379,13 @@ void CMovement::NpcMovement( CChar& mChar )
 						mChar.SetOldTargLocY( 0 );
 						return;
 					}
-					else if(( !los && charDist <= 1 ) || ( !los && mChar.GetZ() - l->GetZ() >= 20 ))
+					else if(( !los && charDist <= 1 ) || ( !los && std::abs( mChar.GetZ() - l->GetZ() ) >= 20 ))
 					{
 						// We're right next to target, but still have no LoS - or height difference is too large
 						mChar.FlushPath();
 						mChar.SetOldTargLocX( 0 );
 						mChar.SetOldTargLocY( 0 );
-						mChar.SetTimer( tNPC_EVADETIME, BuildTimeValue( 10 ));
+						mChar.SetTimer( tNPC_EVADETIME, BuildTimeValue( 10.0 ));
 						mChar.TextMessage( nullptr, Dictionary->GetEntry( 9049 ), SYSTEM, false ); // [Evading]
 						mChar.SetHP( mChar.GetMaxHP() );
 						mChar.SetEvadeState( true );
@@ -2287,12 +2438,13 @@ void CMovement::NpcMovement( CChar& mChar )
 						mChar.SetPathFail( 0 );
 
 						// Temporary change NPC's wandermode to none, and try pathfinding again in 5 seconds
-						if( mChar.GetNpcWander() != WT_NONE )
+						auto npcWander = mChar.GetNpcWander();
+						if( npcWander != WT_NONE  && npcWander != WT_SCARED && npcWander != WT_FLEE && npcWander != WT_PATHFIND && npcWander != WT_FROZEN )
 						{
 							mChar.SetOldNpcWander( mChar.GetNpcWander() );
 						}
 						mChar.SetNpcWander( WT_NONE );
-						mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( 5 ));
+						mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( 5.0 ));
 						return;
 					}
 					else if( mChar.GetSpAttack() > 0 && mChar.GetMana() > 0 )
@@ -2306,9 +2458,42 @@ void CMovement::NpcMovement( CChar& mChar )
 						targY = l->GetY();
 					}
 
-					if( !mChar.StillGotDirs() || (( oldTargX != targX || oldTargY != targY ) && RandomNum( 0, 10 ) >= 6 ))
+					// Calculate direction from NPC towards player
+					const UI08 dirToTarget = Movement->Direction( mChar.GetX(), mChar.GetY(), targX, targY );
+
+					// Get NPC's current direction
+					const UI08 npcDir = mChar.GetDir();
+
+					// Determine if NPC is already heading generally toward player (direct or adjacent directions)
+					const bool isHeadingTowardsPlayer = (npcDir == dirToTarget ||
+						npcDir == (dirToTarget + 1) % 8 ||
+						npcDir == (dirToTarget + 7) % 8);
+
+					// See (approximately) how far the target has moved from oldTargX/oldTargY
+					const R64 targMoveDist = GetApproxDist( Point3_st( static_cast<UI16>( oldTargX ), static_cast<UI16>( oldTargY ), 0 ), 
+													Point3_st( static_cast<UI16>( targX ), static_cast<UI16>( targY ), 0 ));
+
+					const R64 targMoveWeight = 2.5; // For each tile the target has moved from oldTargX/oldTargY, increase weight by this
+					const R64 wrongHeadingPenalty = 20.0; // If NPC is heading in wrong direction, add a penalty weight
+					const R64 timeSincePathCalcWeight = 1.0; // Every second since we path, add points to weight
+					const R64 pathRecalcThreshold = 30.0; // Weight threshold for triggering a path recalculation
+					R64 pathRecalcUrgency = 0.0; // Keep track of total weight for comparison with threshold
+
+					// Determine urgency to recalculate path to target location
+					pathRecalcUrgency += static_cast<R64>( targMoveDist * targMoveWeight );
+					pathRecalcUrgency += static_cast<R64>( isHeadingTowardsPlayer ? 0 : wrongHeadingPenalty );
+					R64 timeSinceLastPath = ( cwmWorldState->GetUICurrentTime() - mChar.GetLastPathCalc() ) / 1000.0;
+					pathRecalcUrgency += static_cast<R64>( timeSinceLastPath * timeSincePathCalcWeight );
+					pathRecalcUrgency *= static_cast<R64>( RandomNum( 8, 12 ) / 10.0 ); // Random jitter to add variation around edge cases
+
+					// Only recalculate path if out of steps to follow, or if urgency to recalculate has suprassed the threshold
+					if( !mChar.StillGotDirs() || pathRecalcUrgency > pathRecalcThreshold )
 					{
-						if( !AdvancedPathfinding( &mChar, l->GetX(), l->GetY(), canRun ))
+						mChar.FlushPath(); // Flush out old path
+
+						bool waterWalk = cwmWorldState->creatures[mChar.GetId()].IsWater();
+						bool allowPartial = waterWalk ? true : false; // Allow partial here, since we try a "pseudo partial" further down anyway!
+						if( !AdvancedPathfinding( &mChar, l->GetX(), l->GetY(), canRun, allowPartial ))
 						{
 							mChar.SetPathFail( mChar.GetPathFail() + 1 );
 
@@ -2320,7 +2505,7 @@ void CMovement::NpcMovement( CChar& mChar )
 								SI16 rndTargX = l->GetX() + rndNum1;
 								SI16 rndTargY = l->GetY() + rndNum2;
 
-								if( AdvancedPathfinding( &mChar, rndTargX, rndTargY, canRun ))
+								if( AdvancedPathfinding( &mChar, rndTargX, rndTargY, canRun, allowPartial ))
 								{
 									mChar.SetPathFail( 0 );
 									mChar.SetOldTargLocX( rndTargX );
@@ -2355,13 +2540,15 @@ void CMovement::NpcMovement( CChar& mChar )
 									return;
 								}
 
+								// Failed pathfinding 20 times - let's give up
 								mChar.FlushPath();
 								mChar.SetOldTargLocX( 0 );
 								mChar.SetOldTargLocY( 0 );
-								mChar.SetTimer( tNPC_EVADETIME, BuildTimeValue( 10 ));
+								mChar.SetTimer( tNPC_EVADETIME, BuildTimeValue( 10.0 ));
 								mChar.TextMessage( nullptr, Dictionary->GetEntry( 9049 ), SYSTEM, false ); // [Evading]
 								mChar.SetHP( mChar.GetMaxHP() );
 								mChar.SetEvadeState( true );
+								IgnoreAndEvadeTarget( &mChar );
 								Combat->InvalidateAttacker( &mChar );
 								//Console.Warning( oldstrutil::format( "EvadeTimer started for NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() ));
 
@@ -2393,9 +2580,21 @@ void CMovement::NpcMovement( CChar& mChar )
 				{
 					PathFind( &mChar, l->GetX(), l->GetY(), canRun ); // Non-advanced pathfinding
 				}
-				const UI08 j	= mChar.PopDirection();
-				shouldRun		= (( j&0x80 ) != 0);
-				Walking( nullptr, &mChar, j, 256 );
+
+				UI08 newDir = mChar.PopDirection();
+				UI08 baseNewDir = ( newDir & 0x7F );
+				UI08 baseOldDir = ( mChar.GetDir() & 0x7F );
+
+				// Check if direction is changing
+				if( baseOldDir != UNKNOWNDIR && baseOldDir != baseNewDir )
+				{
+					// Insert an extra push at the front of the queue,
+					// so this move will be triggered twice - requirement for NPC to turn
+					mChar.PushDirection( newDir, true );
+				}
+
+				shouldRun = (( newDir&0x80 ) != 0);
+				Walking( nullptr, &mChar, newDir, 256 );
 			}
 			else
 			{
@@ -2421,7 +2620,7 @@ void CMovement::NpcMovement( CChar& mChar )
 					mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetRunningSpeed() / 1.5 )); // Increase follow speed so NPC pets/escorts can keep up with players
 				}
 			}
-			else if( npcWanderType != WT_FLEE )
+			else if( npcWanderType != WT_FLEE && npcWanderType != WT_SCARED )
 			{
 				if( mChar.GetMounted() )
 				{
@@ -2463,12 +2662,15 @@ void CMovement::NpcMovement( CChar& mChar )
 	else
 	{
 		// Play some idle/fidgeting animation instead - if character is not busy doing something else
-		if( !mChar.IsAtWar() && mChar.GetNpcWander() != WT_FLEE )
+		auto npcWander = mChar.GetNpcWander();
+		if( !mChar.IsAtWar() && !ValidateObject( mChar.GetTarg() ) && npcWander != WT_FLEE && npcWander != WT_SCARED && npcWander != WT_FROZEN && npcWander != WT_PATHFIND &&
+			(( npcWander != WT_FOLLOW && ( cwmWorldState->GetUICurrentTime() - mChar.LastMoveTime() ) > static_cast<TIMERVAL>( 3000 )) ||
+			( npcWander == WT_FOLLOW && ( cwmWorldState->GetUICurrentTime() - mChar.LastMoveTime() ) > static_cast<TIMERVAL>( 6000 ))))
 		{
-			if( mChar.GetTimer( tNPC_IDLEANIMTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+			if( mChar.GetTimer( tNPC_IDLEANIMTIME ) <= cwmWorldState->GetUICurrentTime() )
 			{
-				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( 3 ));
-				mChar.SetTimer( tNPC_IDLEANIMTIME, BuildTimeValue( RandomNum( 5, 20 )));
+				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( 3.0 ));
+				mChar.SetTimer( tNPC_IDLEANIMTIME, BuildTimeValue( static_cast<R64>( RandomNum( 5, 20 ))));
 
 				if( mChar.GetBodyType() == BT_GARGOYLE || cwmWorldState->ServerData()->ForceNewAnimationPacket() )
 				{
@@ -2574,10 +2776,10 @@ void CMovement::NpcMovement( CChar& mChar )
 //o------------------------------------------------------------------------------------------------o
 void CMovement::GetAverageZ( UI08 nm, SI16 x, SI16 y, SI08& z, SI08& avg, SI08& top )
 {
-	SI08 zTop = Map->MapElevation( x, y, nm );
-	SI08 zLeft = Map->MapElevation( x, y + 1, nm );
-	SI08 zRight = Map->MapElevation( x + 1, y, nm );
-	SI08 zBottom = Map->MapElevation( x + 1, y + 1, nm );
+	SI08 zTop = Map->MapElevation( x, y, nm, true );
+    SI08 zLeft = Map->MapElevation( x, y + 1, nm, true );
+    SI08 zRight = Map->MapElevation( x + 1, y, nm, true );
+    SI08 zBottom = Map->MapElevation( x + 1, y + 1, nm, true );
 
 	z = zTop;
 	if( zLeft < z )
@@ -2752,15 +2954,15 @@ UI08 CMovement::Direction( SI16 sx, SI16 sy, SI16 dx, SI16 dy )
 	{
 		dir = NORTH;
 	}
-	else if( xdif > 0 && ydif < 0 )
+	else if( xdif > 0 && ydif < 0 && abs( xdif ) <= abs( ydif ))
 	{
 		dir = NORTHEAST;
 	}
-	else if( xdif > 0 && ydif == 0 )
+	else if( xdif > 0 &&abs( xdif ) > abs( ydif ))
 	{
 		dir = EAST;
 	}
-	else if( xdif > 0 && ydif > 0 )
+	else if( xdif > 0 && ydif > 0 && abs( xdif ) <= abs( ydif ))
 	{
 		dir = SOUTHEAST;
 	}
@@ -2768,15 +2970,15 @@ UI08 CMovement::Direction( SI16 sx, SI16 sy, SI16 dx, SI16 dy )
 	{
 		dir = SOUTH;
 	}
-	else if( xdif < 0 && ydif > 0 )
+	else if( xdif < 0 && ydif > 0 && abs( xdif ) <= abs( ydif ))
 	{
 		dir = SOUTHWEST;
 	}
-	else if( xdif < 0 && ydif == 0 )
+	else if( xdif < 0 && abs( xdif ) > abs( ydif ))
 	{
 		dir = WEST;
 	}
-	else if( xdif < 0 && ydif < 0 )
+	else if( xdif < 0 && ydif < 0 && abs( xdif ) <= abs( ydif ))
 	{
 		dir = NORTHWEST;
 	}
@@ -2814,7 +3016,7 @@ UI08 CMovement::Direction( SI16 sx, SI16 sy, SI16 dx, SI16 dy )
 //|						new z - value        if not blocked
 //|						illegal_z == -128, if walk is blocked
 //o------------------------------------------------------------------------------------------------o
-SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 oldz, [[maybe_unused]] bool justask, bool waterWalk )
+SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 oldz, [[maybe_unused]] bool justask, bool waterWalk, bool ignoreDoors )
 {
 	if( !ValidateObject( c ))
 		return ILLEGAL_Z;
@@ -2829,20 +3031,34 @@ SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 o
 
 	std::vector<Tile_st> xyblock;
 	GetBlockingStatics( x, y, xyblock, xycount, worldNumber );
-	GetBlockingDynamics( x, y, xyblock, xycount, worldNumber, instanceId );
+	GetBlockingDynamics( x, y, xyblock, xycount, worldNumber, instanceId, ignoreDoors );
 
 	auto map	= Map->SeekMap( x, y, c->WorldNumber() );
+	if( map.terrainInfo == nullptr )
+		return ILLEGAL_Z;
 
 	// Does landtile in target location block movement?
 	landBlock = map.CheckFlag( TF_BLOCKING );
 
 	// If it does, but it's WET and character can swim, it doesn't block!
-	if( landBlock && waterWalk )
+	if( waterWalk )
 	{
-		// Don't count the underwater coastal landtiles as blocking
-		if( map.CheckFlag( TF_WET ) || ( map.terrainInfo->TextureId() >= 76 && map.terrainInfo->TextureId() <= 111 ))
+		auto mapIsWet = map.CheckFlag( TF_WET );
+		if( landBlock )
 		{
-			landBlock = false;
+			if( mapIsWet || ( map.terrainInfo->TextureId() >= 76 && map.terrainInfo->TextureId() <= 111 ) )
+			{
+				// Swimming creature attempting to move on water! Allow it.
+				landBlock = false;
+			}
+		}
+		else
+		{
+			if( !mapIsWet )
+			{
+				// Swimming creature attempting to move on dry land! Not allowed!
+				landBlock = true;
+			}
 		}
 	}
 
@@ -2874,6 +3090,11 @@ SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 o
 	{
 		if(( !tile.CheckFlag( TF_BLOCKING ) && tile.CheckFlag( TF_SURFACE ) && !waterWalk ) || ( waterWalk && tile.CheckFlag( TF_WET )))
 		{
+			if(( tile.tileId == 0x08a5 || tile.tileId == 0x08a6 ) && oldz < checkTop )
+			{
+				c->IsClimbing( true  );
+			}
+
 			SI08 itemz = tile.altitude; // Object's current Z position
 			SI08 itemTop = itemz;
 			SI08 potentialNewZ = tile.top(); // Character's potential new Z position on top of object
@@ -2881,9 +3102,17 @@ SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 o
 
 			if( moveIsOk )
 			{
-				SI08 cmp = std::abs( potentialNewZ - c->GetZ() ) - std::abs( newz - c->GetZ() );
-				if( cmp > 0 || ( cmp == 0 && potentialNewZ > newz ))
-					continue;
+				if( c->IsClimbing() )
+				{
+					checkTop = oldz + charHeight;
+					testTop = checkTop;
+				}
+				else
+				{
+					SI08 cmp = std::abs( potentialNewZ - c->GetZ() ) - std::abs( newz - c->GetZ() );
+					if( cmp > 0 || ( cmp == 0 && potentialNewZ > newz ))
+						continue;
+				}
 			}
 
 			if( potentialNewZ + charHeight > testTop )
@@ -2897,7 +3126,7 @@ SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 o
 			}
 
 			// Check if the character can step up onto the item at target location
-			if( stepTop >= itemTop )
+			if( stepTop >= itemTop || c->IsClimbing() )
 			{
 				SI08 landCheck = itemz;
 
@@ -2921,6 +3150,14 @@ SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 o
 					moveIsOk = true;
 				}
 			}
+		}
+	}
+
+	if( moveIsOk )
+	{
+		if( oldz >= newz )
+		{
+			c->IsClimbing( false );
 		}
 	}
 
@@ -2970,6 +3207,11 @@ SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 o
 //o------------------------------------------------------------------------------------------------o
 bool CMovement::CalcMove( CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir)
 {
+	if( x < 0 || x > 7168 || y < 0 || y > 4096 )
+	{
+		Console.Warning( oldstrutil::format( "NPC/Player (%s) from Spawn Region %i trying to walk in invalid area of map at %i %i %i %i!", c->GetName().c_str(), c->GetSpawn(), x, y, z, c->WorldNumber() ));
+		return false;
+	}
 	// NPCs that walk on land
 	if( !cwmWorldState->creatures[c->GetId()].IsWater() )
 	{
@@ -3058,7 +3300,7 @@ bool operator > ( const NodeFCost_st& x, const NodeFCost_st& y )
 //o------------------------------------------------------------------------------------------------o
 bool CMovement::PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI16 curY, SI08 curZ,
 							UI32 parentSer, std::map<UI32, PfNode_st>& openList, 
-							std::map<UI32, UI32>& closedList, std::deque<NodeFCost_st>& fCostList )
+							std::map<UI32, UI32>& closedList, std::deque<NodeFCost_st>& fCostList, bool ignoreDoors )
 {
 	std::map<UI32, bool> blockList;
 	blockList.clear();
@@ -3080,11 +3322,11 @@ bool CMovement::PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI
 
 			if( amphibianWalk || !waterWalk )
 			{
-				newZ = CalcWalk( mChar, checkX, checkY, curX, curY, curZ, false );
+				newZ = CalcWalk( mChar, checkX, checkY, curX, curY, curZ, false, false, ignoreDoors );
 			}
 			if( waterWalk || ( amphibianWalk && newZ == ILLEGAL_Z ))
 			{
-				newZ = CalcWalk( mChar, checkX, checkY, curX, curY, curZ, false, true );
+				newZ = CalcWalk( mChar, checkX, checkY, curX, curY, curZ, false, true, ignoreDoors );
 			}
 			if( ILLEGAL_Z == newZ )
 			{
@@ -3161,7 +3403,18 @@ bool CMovement::PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI
 			}
 			else if( closedList.find( locSer ) == closedList.end() )
 			{
-				UI16 hCost = 10 * ( abs( checkX - targX) + abs( checkY - targY ));
+				// (Old) Manhattan Distance Heuristic
+				// UI16 hCost = 10 * ( abs( checkX - targX) + abs( checkY - targY ));
+
+				// (New) Octile Distance Heuristic
+				uint16_t dx = std::abs( checkX - targX );
+				uint16_t dy = std::abs( checkY - targY );
+
+				// Let D=10 (orth cost), D2=14 (diag cost)
+				uint16_t D  = 10;
+				uint16_t D2 = 14;
+
+				UI16 hCost = D*( dx + dy ) + ( D2 - 2 * D ) * std::min( dx, dy );
 				UI16 fCost = gCost + hCost;
 
 				openList[locSer] = PfNode_st( hCost, gCost, parentSer, newZ );
@@ -3179,13 +3432,13 @@ bool CMovement::PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI
 //|	Purpose		-	Handle the advanced variant of NPC pathfinding
 //|					Enabled/Disabled throuugh UOX.INI setting - ADVANCEDPATHFINDING=0/1
 //o------------------------------------------------------------------------------------------------o
-bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool willRun, UI16 maxSteps )
+bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool willRun, bool allowPartial, UI16 maxSteps, bool ignoreDoors )
 {
 	UI16 startX			= mChar->GetX();
 	UI16 startY			= mChar->GetY();
 	UI16 curX			= mChar->GetX();
 	UI16 curY			= mChar->GetY();
-	SI08 curZ			= mChar->GetZ();;
+	SI08 curZ			= mChar->GetZ();
 	UI08 oldDir			= mChar->GetDir();
 	UI16 loopCtr		= 0;
 	EVENT_TIMER( mytimer, EVENT_TIMER_OFF );
@@ -3206,7 +3459,7 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 			}
 			else
 			{
-				maxSteps = 50;
+				maxSteps = 75;
 			}
 		}
 		else
@@ -3222,7 +3475,7 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 					maxSteps = 2; // Out of combat wandering
 				}
 			}
-			else if( npcWanderType == WT_FLEE )
+			else if( npcWanderType == WT_FLEE || npcWanderType == WT_SCARED )
 			{
 				maxSteps = 37;
 			}
@@ -3249,6 +3502,7 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 	openList[parentSer]		= PfNode_st();
 	openList[parentSer].z	= curZ;
 	fCostList.push_back( NodeFCost_st( 0, parentSer ));
+
 	while(( curX != targX || curY != targY ) && loopCtr < maxSteps )
 	{
 		parentSer = fCostList[0].xySer;
@@ -3260,8 +3514,9 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 		openList.erase( openList.find( parentSer ));
 		fCostList.pop_front();
 
-		if( PFGrabNodes( mChar, targX, targY, curX, curY, curZ, parentSer, openList, closedList, fCostList ))
+		if( PFGrabNodes( mChar, targX, targY, curX, curY, curZ, parentSer, openList, closedList, fCostList, ignoreDoors ))
 		{
+			std::vector<UI08> dirsToPush;
 			while( parentSer != 0 )
 			{
 				UI08 newDir = Direction( curX, curY, targX, targY );
@@ -3271,11 +3526,7 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 					newDir |= 0x80;
 				}
 
-				if( oldDir != UNKNOWNDIR && oldDir != newDir )
-				{
-					mChar->PushDirection( newDir, true );	// NPC's need to "walk" twice when turning
-				}
-				mChar->PushDirection( newDir, true );
+				dirsToPush.push_back( newDir );
 
 				oldDir		= newDir;
 				targX		= curX;
@@ -3283,6 +3534,20 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 				parentSer 	= closedList[parentSer];
 				curX		= static_cast<UI16>( parentSer >> 16 );
 				curY		= static_cast<UI16>( parentSer % 65536 );
+			}
+
+			UI08 origDir = mChar->GetDir();
+
+			// Iterate over list of directions in reverse
+			for( int i = static_cast<int>( dirsToPush.size() ) - 1; i >= 0; i-- )
+			{
+				UI08 newDir = dirsToPush[i];
+
+				// Push direction
+				mChar->PushDirection( newDir, false );
+
+				// Update
+				origDir = newDir;
 			}
 			break;
 		}
@@ -3292,31 +3557,156 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 		}
 		++loopCtr;
 	}
-	if( loopCtr == maxSteps )
+	if( loopCtr == maxSteps || ( loopCtr > 0 && closedList.size() > 0 && mChar->GetX() != targX && mChar->GetY() != targY ))
 	{
+		// Failed to find full path to target location, max step limit reached
 #if defined( UOX_DEBUG_MODE )
-		std::string charName = GetNpcDictName( mChar );
-		Console.Warning( oldstrutil::format( "AdvancedPathfinding: NPC (%s at %i %i %i %i) unable to find a path, max steps limit (%i) reached, aborting.\n",
-			charName.c_str(), mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber(), maxSteps ));
+		std::string charName = GetNpcDictName( mChar, nullptr, NRS_SYSTEM );
+		Console.Warning( oldstrutil::format( "AdvancedPathfinding: NPC (%s at %i %i %i %i) unable to find a complete path, max steps limit (%i) reached.\n",
+			charName.c_str(), mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber(), maxSteps ) );
 #endif
-		mChar->SetPathResult( -1 ); // Pathfinding failed
-		EVENT_TIMER_NOW( mytimer, Time when loopCtr == maxSteps, 1 );
-		return false;
+
+		// Try to find partial path that takes NPC within 1 tile of target location
+		if( allowPartial )
+		{
+			UI32 startKey = startY + ( startX << 16 );
+			UI32 bestCandidate = 0;
+			UI16 bestCandidateDist = 0xFFFF;
+
+			// Iterate through ist of fully evaluated tiles to find reachable tile near target
+			for( auto it = closedList.begin(); it != closedList.end(); ++it )
+			{
+				UI32 candidateKey = it->first;
+
+				// Skip the starting node, doesn't contribute to movement
+				if( candidateKey == startKey )
+					continue;
+
+				UI16 candX = static_cast<UI16>( candidateKey >> 16 );
+				UI16 candY = static_cast<UI16>( candidateKey % 65536 );
+
+				UI16 dx = std::abs( static_cast<SI16>( candX ) - static_cast<SI16>( targX ));
+				UI16 dy = std::abs( static_cast<SI16>( candY ) - static_cast<SI16>( targY ));
+
+				// Manhattan + Step Cost Weight
+				UI16 stepCost = closedList.size() % 5; // Slight weight to favor lower steps
+				UI16 d = ( dx + dy ) + stepCost;
+
+				if( d < bestCandidateDist )
+				{
+					bestCandidateDist = d;
+					bestCandidate = candidateKey;
+				}
+			}
+
+			if( bestCandidate != 0 )
+			{
+				std::vector<UI32> pathChain;
+				UI32 curCandidate = bestCandidate;
+
+				while( curCandidate != 0 && closedList.find(curCandidate) != closedList.end() )
+				{
+					pathChain.push_back( curCandidate );
+
+					// Ensure we are not looping infinitely
+					if( closedList[curCandidate] == curCandidate )
+						break;
+
+					curCandidate = closedList[curCandidate];
+				}
+
+				std::reverse( pathChain.begin(), pathChain.end() );
+
+				if( pathChain.size() < 2 )
+				{
+#if defined( UOX_DEBUG_MODE )
+					Console.Warning( "AdvancedPathfinding: Partial pathfinding failed - best candidate path too short.\n" );
+#endif
+					return false;
+				}
+
+				// Move NPC along path
+				UI08 oldDir = UNKNOWNDIR;
+				for( size_t i = 0; i < pathChain.size() - 1; i++ )
+				{
+					UI32 fromKey = pathChain[i];
+					UI32 toKey = pathChain[i+1];
+
+					UI16 fromX = static_cast<UI16>( fromKey >> 16 );
+					UI16 fromY = static_cast<UI16>( fromKey % 65536 );
+					UI16 toX = static_cast<UI16>( toKey >> 16 );
+					UI16 toY = static_cast<UI16>( toKey % 65536 );
+					//Console.Warning( oldstrutil::format( "AdvancedPathfinding: Going to %u, %u.\n", toX, toY ));
+
+					UI08 newDir = Direction( fromX, fromY, toX, toY );
+
+					if( willRun )
+					{
+						newDir |= 0x80;
+					}
+
+					mChar->PushDirection( newDir );
+					oldDir = newDir;
+
+					// **NEW: Stop if we're adjacent to the blocked target**
+					if( std::abs(( int )toX - ( int )targX ) <= 1 && std::abs(( int )toY - ( int )targY ) <= 1 )
+					{
+						break;
+					}
+				}
+
+				// Finalize movement
+				mChar->SetPathResult( 0 ); // Partial pathfinding success
+				mChar->SetTimer( tNPC_MOVETIME, 0 );
+#if defined( UOX_DEBUG_MODE )
+				Console.Warning( "AdvancedPathfinding: Partial pathfinding success - adjacent candidate near target location found.\n" );
+#endif
+				return true;
+			}
+			else
+			{
+				// 6) **No valid adjacent tile found; fail pathfinding**
+#if defined( UOX_DEBUG_MODE )
+				Console.Warning( "AdvancedPathfinding: Partial pathfinding failure - No valid adjacent candidate near target location, aborting.\n" );
+#endif
+				mChar->SetPathResult( -1 );
+				return false;
+			}
+			EVENT_TIMER_NOW( mytimer, "Time when loopCtr == maxSteps", 1 );
+		}
+		else
+		{
+			if( !cwmWorldState->creatures[mChar->GetId()].IsWater() || mChar->GetPathFail() == 20 )
+			{
+				IgnoreAndEvadeTarget( mChar );
+			}
+			mChar->SetPathResult( -1 ); // Pathfinding failed
+			EVENT_TIMER_NOW( mytimer, Time when loopCtr == maxSteps, 1 );
+			return false;
+		}
 	}
 	else if( loopCtr == 0 && GetDist( mChar->GetLocation(), Point3_st( targX, targY, curZ )) > 1 )
 	{
 #if defined( UOX_DEBUG_MODE )
 		Console.Warning( "AdvancedPathfinding: Unable to pathfind beyond 0 steps, aborting.\n" );
 #endif
+		if( !cwmWorldState->creatures[mChar->GetId()].IsWater() || mChar->GetPathFail() == 20 )
+		{
+			IgnoreAndEvadeTarget( mChar );
+		}
 		mChar->SetPathResult( -1 ); // Pathfinding failed
-		EVENT_TIMER_NOW( mytimer, Time when loopCtr == 0 and distance > 1, 1 );
+		EVENT_TIMER_NOW( mytimer, "Time when loopCtr == 0 and distance > 1", 1 );
 		return false;
 	}
 	else if( mChar->GetX() == startX && mChar->GetY() == startY && GetDist( mChar->GetLocation(), Point3_st( targX, targY, curZ )) > 1 )
 	{
 		// NPC never moved, and target location is not nearby
+		if( !cwmWorldState->creatures[mChar->GetId()].IsWater() || mChar->GetPathFail() == 20 )
+		{
+			IgnoreAndEvadeTarget( mChar );
+		}
 		mChar->SetPathResult( -1 ); // Pathfinding failed
-		EVENT_TIMER_NOW( mytimer, Time when NPC never moved, 1 );
+		EVENT_TIMER_NOW( mytimer, "Time when NPC never moved", 1 );
 
 		return false;
 	}
@@ -3332,8 +3722,158 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 		else
 		{
 			mChar->SetPathResult( 1 ); // Pathfinding success
+			mChar->SetTimer( tNPC_MOVETIME, 0 );
 		}
 	}
-	EVENT_TIMER_NOW( mytimer, Time when total pathfinding used, 1 );
+	EVENT_TIMER_NOW( mytimer, "Time when total pathfinding used", 1 );
 	return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CMovement::IgnoreAndEvadeTarget()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Temporarily adds unreachable targets to NPC's ignore list, and potentially
+//|					takes evasive manoeuvres if target is somehow damaging the NPC 
+//o------------------------------------------------------------------------------------------------o
+auto CMovement::IgnoreAndEvadeTarget( CChar *mChar ) -> void
+{
+	auto mTarget = mChar->GetTarg();
+	auto mNpcWander = mChar->GetNpcWander();
+	if( mChar->IsAtWar() && ValidateObject( mTarget ) && mNpcWander != WT_FLEE && mNpcWander != WT_SCARED && mNpcWander != WT_PATHFIND )
+	{
+		// Unable to reach target, add target to ignore list and clear target
+		if( !mChar->CheckCombatIgnore( mTarget->GetSerial() ))
+		{
+			mChar->AddToCombatIgnore( mTarget->GetSerial(), mTarget->IsNpc() );
+			mChar->TextMessage( nullptr, 2781, TALK, 0, GetNpcDictName( mTarget, nullptr, NRS_SPEECH ).c_str() ); // * ignores %s *
+		}
+
+		// If target attacked mChar within last 10 seconds, also enter evade state
+		if( !mChar->IsEvading() && mChar->CheckDamageTrack( mTarget->GetSerial(), 10 ))
+		{
+			mChar->TextMessage( nullptr, Dictionary->GetEntry( 9049 ), SYSTEM, false ); // [Evading]
+			mChar->SetTimer( tNPC_EVADETIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_COMBATIGNORE ));
+			mChar->SetEvadeState( true );
+			mChar->SetHP( mChar->GetMaxHP() );
+
+			// Calculate where to move to in order to avoid character that is causing the evade state to trigger
+			SI16 mCharX = mChar->GetX();
+			SI16 mCharY = mChar->GetY();
+			SI16 mTargX = mTarget->GetX();
+			SI16 mTargY = mTarget->GetY();
+
+			SI16 distanceX = mTargX - mCharX; // Adjusted for the inverted x-axis
+			SI16 distanceY = mTargY - mCharY; // Adjusted for the inverted y-axis
+
+			SI16 moveDist = RandomNum( 2, 5 );
+
+			double magnitude = sqrt( distanceX * distanceX + distanceY * distanceY );
+			[[maybe_unused]] int moveDir = Direction( mCharX, mCharY, mTargX, mTargY );
+
+			SI16 evadeTargX = mCharX;
+			SI16 evadeTargY = mCharY;
+
+			if( std::abs( distanceX ) >= std::abs( distanceY ))
+			{
+				// Move primarily along the X-axis
+				if( distanceX >= 0 )
+				{
+					evadeTargX = mCharX - static_cast<SI16>( std::round( moveDist * ( abs( distanceX ) / magnitude )));
+				}
+				else
+				{
+					evadeTargX = mCharX + static_cast<SI16>( std::round( moveDist * ( abs( distanceX ) / magnitude )));
+				}
+				evadeTargY += RandomNum( -1, 1 ); // Add a small variation along the Y-axis
+			}
+			else
+			{
+				// Move primarily along the Y-axis
+				if( distanceY >= 0 )
+				{
+					evadeTargY = mCharY - static_cast<SI16>( std::round( moveDist * ( distanceY / magnitude )));
+				}
+				else
+				{
+					evadeTargY = mCharY + static_cast<SI16>( std::round( moveDist * ( distanceY / magnitude )));
+				}
+				evadeTargX += RandomNum( -1, 1 ); // Add a small variation along the X-axis
+			}
+
+			// Round the coordinates to the nearest whole integers
+			evadeTargX = round( evadeTargX );
+			evadeTargY = round( evadeTargY );
+
+			if( mNpcWander != WT_NONE  && mNpcWander != WT_SCARED && mNpcWander != WT_FLEE && mNpcWander != WT_PATHFIND && mNpcWander != WT_FROZEN )
+			{
+				mChar->SetOldNpcWander( mChar->GetNpcWander() );
+			}
+			mChar->SetNpcWander( WT_PATHFIND );
+			bool allowPartial = true; // Sure, let's allow partial here
+			[[maybe_unused]] bool retVal = AdvancedPathfinding( mChar, evadeTargX, evadeTargY, true, allowPartial, 20 );
+		}
+
+		if( mChar->GetAttacker() == mTarget )
+		{
+			mChar->SetAttacker( nullptr );
+
+			if( mTarget->GetTarg() == mChar )
+			{
+				mTarget->SetTarg( nullptr );
+				mTarget->SetWar( false );
+			}
+		}
+		mChar->SetTarg( nullptr );
+		mChar->SetWar( false );
+
+		// Check if OnCombatEnd event exists.
+		std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+		for( auto scriptTrig : scriptTriggers )
+		{
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != nullptr )
+			{
+				//Check if ourTarg validates as another character. If not, don't use
+				if( !ValidateObject( mTarget ))
+				{
+					mTarget = nullptr;
+				}
+
+				// -1 == event doesn't exist, or returned -1
+				// 0 == script returned false, 0, or nothing - don't execute hard code
+				// 1 == script returned true or 1
+				if( toExecute->OnCombatEnd( mChar, mTarget ) == 0 )	// if it exists and we don't want hard code, return
+				{
+					return;
+				}
+			}
+		}
+
+		// Do the same for the opposite party in combat
+		if( ValidateObject( mTarget ))
+		{
+			scriptTriggers.clear();
+			scriptTriggers = mTarget->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					//Check if mTarget validates as another character. If not, don't use
+					if( !ValidateObject( mTarget ))
+					{
+						mTarget = nullptr;
+					}
+
+					// -1 == event doesn't exist, or returned -1
+					// 0 == script returned false, 0, or nothing - don't execute hard code
+					// 1 == script returned true or 1
+					if( toExecute->OnCombatEnd( mTarget, mChar ) == 0 )	// if it exists and we don't want hard code, return
+					{
+						return;
+					}
+				}
+			}
+		}
+	}
 }

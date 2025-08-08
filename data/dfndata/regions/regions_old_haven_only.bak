@@ -1,0 +1,29 @@
+// This file defines the town region for Old Haven, which only exists on the Trammel
+// facet in client versions 5.0.0b to 7.0.8.2 with mapdiffs enabled.
+//
+// If anyone wants to use it, copy it to the main regions.dfn file 
+// and overwrite the New Haven region (57), while also removing the 
+// New Haven specific shop-regions (178 to 200).
+
+[REGION 57]
+{
+NAME=the town of Haven
+MUSICLIST=7
+GUARDED=1
+GUARDLIST=guard
+GUARDOWNER=The Town
+MAGICDAMAGE=1
+MARK=1
+GATE=1
+RECALL=1
+ESCORTS=1
+X1=3590
+Y1=2460
+X2=3710
+Y2=2635
+X1=3700
+Y1=2560
+X2=3760
+Y2=2730
+WORLD=1
+}

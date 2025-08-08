@@ -7,6 +7,9 @@
 #include "cEffects.h"
 #include "Dictionary.h"
 #include "StringUtility.hpp"
+#include "CJSMapping.h"
+#include "cScript.h"
+#include "CJSEngine.h"
 
 
 #define XP 0
@@ -91,7 +94,7 @@ CBoatObj * GetBoat( CSocket *s )
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	LeaveBoat()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Teleport player and their pets off the boat and to a nearby valid location
+//|	Purpose		-	Teleport player and their followers off the boat and to a nearby valid location
 //o------------------------------------------------------------------------------------------------o
 auto LeaveBoat( CSocket *s, CItem *p ) -> bool
 {
@@ -116,14 +119,15 @@ auto LeaveBoat( CSocket *s, CItem *p ) -> bool
 				// Freeze player temporarily after teleporting
 				Effects->TempEffect( nullptr, mChar, 1, 1, 1, 5 ); // 1 second, divided by 5 for 0.2s duration freeze
 
-				auto myPets = mChar->GetPetList();
-				for( const auto &pet : myPets->collection() )
+				auto myFollowers = mChar->GetFollowerList();
+				for( const auto &follower : myFollowers->collection() )
 				{
-					if( ValidateObject( pet ))
+					if( ValidateObject( follower ))
 					{
-						if( !pet->GetMounted() && pet->IsNpc() && ObjInRange( mChar, pet, DIST_SAMESCREEN ))
+						// Only teleport followers with player if they're set to follow player, and within range
+						if( !follower->GetMounted() && follower->GetNpcWander() == WT_FOLLOW && ObjInRange( mChar, follower, DIST_SAMESCREEN ))
 						{
-							pet->SetLocation( x, y, z, worldNumber, instanceId );
+							follower->SetLocation( x, y, z, worldNumber, instanceId );
 						}
 					}
 				}
@@ -156,14 +160,15 @@ void PlankStuff( CSocket *s, CItem *p )
 		CMultiObj *boat2 = p->GetMultiObj();
 		if( ValidateObject( boat2 ))
 		{
-			auto myPets = mChar->GetPetList();
-			for( const auto &pet : myPets->collection() )
+			auto myFollowers = mChar->GetFollowerList();
+			for( const auto &follower : myFollowers->collection() )
 			{
-				if( ValidateObject( pet ))
+				if( ValidateObject( follower ))
 				{
-					if( !pet->GetMounted() && pet->IsNpc() && ObjInRange( mChar, pet, DIST_SAMESCREEN ))
+					// Only teleport followers with player if they're set to follow and within range
+					if( !follower->GetMounted() && follower->GetNpcWander() == WT_FOLLOW && ObjInRange( mChar, follower, DIST_SAMESCREEN ))
 					{
-						pet->SetLocation( mChar );
+						follower->SetLocation( mChar );
 					}
 				}
 			}
@@ -395,7 +400,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 			if( sz == ILLEGAL_Z ) //map tile
 			{
 				auto map = Map->SeekMap( x, y, worldNumber );
-				if( map.altitude >= cz && !map.CheckFlag( TF_WET ) && map.name() != "water" )//only tiles on/above the water
+				if( map.terrainInfo == nullptr || ( map.altitude >= cz && !map.CheckFlag( TF_WET ) && map.name() != "water" ))//only tiles on/above the water
 					return true;
 			}
 			else
@@ -632,25 +637,25 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 		if(( x + tx ) <= 50 && tx < 0 )
 		{
 			// Sailing west
-			tx = 5050;
+			tx = 4970;
 			teleportBoat = true;
 		}
-		else if(( x + tx ) >= 5050 && tx > 0 )
+		else if(( x + tx ) >= 5030 && tx > 0 )
 		{
 			// Sailing east
-			tx = -5050;
+			tx = -4970;
 			teleportBoat = true;
 		}
-		else if(( y + ty ) <= 100 && ty < 0 )
+		else if(( y + ty ) <= 15 && ty < 0 )
 		{
 			// Sailing north
-			ty = 3896;
+			ty = 4020;
 			teleportBoat = true;
 		}
-		else if(( y + ty ) >= 3996 && ty > 0 )
+		else if(( y + ty ) >= 4060 && ty > 0 )
 		{
 			// Sailing south
-			ty = -3896;
+			ty = -4040;
 			teleportBoat = true;
 		}
 	}
@@ -895,6 +900,20 @@ void TurnBoat( CBoatObj *b, bool rightTurn, bool disableChecks )
 	for( auto &tSock :nearbyChars )
 	{
 		tSock->Send( &prSend );
+	}
+
+	auto scriptTriggers = b->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		auto toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute )
+		{
+			if( toExecute->OnBoatTurn( b, olddir, b->GetDir(), tiller ) == 1 )
+			{
+				// A script with the event returned true; prevent other scripts from running
+				break;
+			}
+		}
 	}
 }
 

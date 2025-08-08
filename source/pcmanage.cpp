@@ -511,95 +511,125 @@ auto AddNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColo
 		auto tag = sec->tag;
 		auto data = sec->data;
 		data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
-		if( !data.empty() )
+		if( data.empty() )
+			continue;
+			
+		std::string nItemSection;
+		UI16 itemHue = 0;
+		UI16 nAmount = 1;
+		SI08 nNewbie = -1;
+		auto UTag = oldstrutil::upper( tag );
+		if( UTag == "PACKITEM" )
 		{
-			auto UTag = oldstrutil::upper( tag );
-			if( UTag == "PACKITEM" )
+			auto csecs = oldstrutil::sections( data, "," );
+			if( csecs.size() >= 1 )
 			{
-				auto csecs = oldstrutil::sections( data, "," );
-				if( csecs.size() > 1 )
+				// Fetch item section
+				nItemSection = oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" ) );
+
+				if( csecs.size() >= 2 )
 				{
-					UI16 nAmount = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
-					n = Items->CreateScriptItem( socket, c, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nAmount, OT_ITEM, true );
-				}
-				else
-				{
-					n = Items->CreateScriptItem( socket, c, data.c_str(), 1, OT_ITEM, true );
+					// Fetch amount override
+					nAmount = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
+
+					if( csecs.size() == 3 )
+					{
+						// Fetch newbie flag override
+						nNewbie = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 ));
+					}
 				}
 			}
-			else if( UTag == "EQUIPITEM" )
+			else
 			{
-				UI16 itemHue = 0;
-				std::string itemSection;
-				auto csecs = oldstrutil::sections( data, "," );
-				if( csecs.size() > 1 )
+				// No data found!
+				Console.Error( "No valid data found for PACKITEM tag in newbie.dfn!" );
+				continue;
+			}
+		}
+		else if( UTag == "EQUIPITEM" )
+		{
+			auto csecs = oldstrutil::sections( data, "," );
+			if( csecs.size() >= 1 )
+			{
+				// Fetch item section
+				nItemSection = oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" ));
+
+				if( csecs.size() >= 2 )
 				{
-					itemSection = oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" ));
+					// Fetch item hue
 					itemHue = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
+
+					if( csecs.size() >= 3 )
+					{
+						// Fetch newbie flag override
+						nNewbie = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" ) ), nullptr, 0 ) );
+					}
+				}
+			}
+			else
+			{
+				// No data found!
+				Console.Error( "No valid data found for EQUIPITEM tag in newbie.dfn!" );
+				continue;
+			}
+		}
+		n = Items->CreateScriptItem( socket, c, nItemSection.c_str(), nAmount, OT_ITEM, true, itemHue );
+		if( n != nullptr && n->GetLayer() != IL_NONE )
+		{
+			bool conflictItem = true;
+			CItem *j = c->GetItemAtLayer( n->GetLayer() );
+			if( !ValidateObject( j ))
+			{
+				if( n->GetLayer() == IL_RIGHTHAND )
+				{
+					j = c->GetItemAtLayer( IL_LEFTHAND );
+				}
+				else if( n->GetLayer() == IL_LEFTHAND )
+				{
+					j = c->GetItemAtLayer( IL_RIGHTHAND );
+				}
+
+				// GetDir-check is to allow for torches and lanterns,
+				// which use left-hand layer but are not 2-handers or shields
+				if( ValidateObject( j ) && !n->IsShieldType() && ( n->GetDir() == 0 ))
+				{
+					if( j->IsShieldType() || j->GetDir() != 0 )
+					{
+						conflictItem = false;
+					}
 				}
 				else
 				{
-					itemSection = data;
-				}
-
-				n = Items->CreateScriptItem( socket, c, itemSection.c_str(), 1, OT_ITEM, true, itemHue );
-				if( n != nullptr && n->GetLayer() != IL_NONE )
-				{
-					bool conflictItem = true;
-					CItem *j = c->GetItemAtLayer( n->GetLayer() );
-					if( !ValidateObject( j ))
-					{
-						if( n->GetLayer() == IL_RIGHTHAND )
-						{
-							j = c->GetItemAtLayer( IL_LEFTHAND );
-						}
-						else if( n->GetLayer() == IL_LEFTHAND )
-						{
-							j = c->GetItemAtLayer( IL_RIGHTHAND );
-						}
-
-						// GetDir-check is to allow for torches and lanterns,
-						// which use left-hand layer but are not 2-handers or shields
-						if( ValidateObject( j ) && !n->IsShieldType() && ( n->GetDir() == 0 ))
-						{
-							if( j->IsShieldType() || j->GetDir() != 0 )
-							{
-								conflictItem = false;
-							}
-						}
-						else
-						{
-							conflictItem = false;
-						}
-					}
-					if( conflictItem )
-					{
-						n->SetCont( c->GetPackItem() );
-					}
-					else
-					{
-						n->SetCont( c );
-					}
-
-					//Apply the choosen colour
-					if(( n->GetLayer() == IL_PANTS || n->GetLayer() == IL_OUTERLEGGINGS ) && pantsColour != 0 )
-					{
-						n->SetColour( pantsColour );
-						n->SetDye( true );
-					}
-
-					if(( n->GetLayer() == IL_INNERSHIRT || n->GetLayer() == IL_ROBE ) && shirtColour != 0 )
-					{
-						n->SetColour( shirtColour );
-						n->SetDye( true );
-					}
+					conflictItem = false;
 				}
 			}
-			if( n != nullptr && !n->IsPileable() )
+			if( conflictItem )
 			{
-				// Set item as newbiefied/blessed by default - as long as it's not pileable!
-				n->SetNewbie( true );
+				n->SetCont( c->GetPackItem() );
 			}
+			else
+			{
+				n->SetCont( c );
+			}
+
+			//Apply the choosen colour
+			if(( n->GetLayer() == IL_PANTS || n->GetLayer() == IL_OUTERLEGGINGS ) && pantsColour != 0 )
+			{
+				n->SetColour( pantsColour );
+				n->SetDye( true );
+			}
+
+			if(( n->GetLayer() == IL_INNERSHIRT || n->GetLayer() == IL_ROBE ) && shirtColour != 0 )
+			{
+				n->SetColour( shirtColour );
+				n->SetDye( true );
+			}
+		}
+
+		if( n != nullptr && !n->IsPileable() && nNewbie != -1 )
+		{
+			// Use newbie override flag to determine newbie status of item
+			n->SetNewbie( nNewbie );
 		}
 	}
 }
@@ -731,7 +761,7 @@ void CPICreateCharacter::NewbieItems( CChar *mChar )
 	}
 	else if( mChar->GetId() == 0x029A )
 	{
-		AddNewbieItem( tSock, mChar, "DEFAULT GARG FEMALE", pantsColour, shirtColour );
+		AddNewbieItem( tSock, mChar, "DEFAULT GARG MALE", pantsColour, shirtColour );
 	}
 	else if( mChar->GetId() == 0x029B )
 	{
@@ -749,6 +779,7 @@ void CPICreateCharacter::NewbieItems( CChar *mChar )
 	}
 }
 
+void MakeStatusTarget( CSocket *sock, CChar *optionalTargChar = nullptr, const std::string cmdLvlString = "" );
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	bool CPICreateCharacter::Handle( void )
 //o------------------------------------------------------------------------------------------------o
@@ -759,6 +790,11 @@ bool CPICreateCharacter::Handle( void )
 	// This function needs to be decomposed
 	// Way too large from a maintenance perspective
 	// --> I split certain things out into a few new functions to make this a bit more manageable
+	if( ValidateObject( tSock->CurrcharObj() ))
+	{
+		Network->Disconnect( tSock );
+		return false;
+	}
 
 	if( tSock != nullptr )
 	{
@@ -787,23 +823,28 @@ bool CPICreateCharacter::Handle( void )
 
 			mChar->SetPriv( cwmWorldState->ServerData()->ServerStartPrivs() );
 
-			CAccountBlock_st& actbTemp2 = mChar->GetAccount();
-			if( actbTemp2.wAccountIndex != AB_INVALID_ID && actbTemp2.wFlags.test( AB_FLAGS_GM ))
-			{
-				mChar->SetPriv( 0xFF );
-				mChar->SetCommandLevel( CL_GM );
-			}
-
 			if( tSock->ClientType() == CV_SA3D || tSock->ClientType() == CV_HS3D )
 			{
 				locationNumber = clientFlags;
 			}
 
 			// Fetch player's chosen start location
-			auto toGo = cwmWorldState->ServerData()->ServerLocation( locationNumber );
-
-			CServerData *sd = cwmWorldState->ServerData();
-			size_t serverCount = sd->NumServerLocations();
+			size_t serverCount = 0;
+			__STARTLOCATIONDATA__ *toGo = nullptr;
+			auto useYoungLocations = false;
+			if( cwmWorldState->ServerData()->YoungPlayerSystem() && tSock->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) )
+			{
+				// Young player! Let's use young player start locations
+				toGo = cwmWorldState->ServerData()->YoungServerLocation( locationNumber );
+				serverCount = cwmWorldState->ServerData()->NumYoungServerLocations();
+				useYoungLocations = true;
+			}
+			else
+			{
+				// Use normal player start locations
+				toGo = cwmWorldState->ServerData()->ServerLocation( locationNumber );
+				serverCount = cwmWorldState->ServerData()->NumServerLocations();
+			}
 
 			// Use random start location if enabled in uox.ini
 			if( cwmWorldState->ServerData()->ServerRandomStartingLocation() )
@@ -811,7 +852,15 @@ bool CPICreateCharacter::Handle( void )
 				if( serverCount > 0 )
 				{
 					size_t rndStartingLocation = RandomNum( static_cast<size_t>( 0 ), serverCount - 1 );
-					toGo = cwmWorldState->ServerData()->ServerLocation( rndStartingLocation );
+
+					if( useYoungLocations )
+					{
+						toGo = cwmWorldState->ServerData()->YoungServerLocation( rndStartingLocation );
+					}
+					else
+					{
+						toGo = cwmWorldState->ServerData()->ServerLocation( rndStartingLocation );
+					}
 				}
 			}
 
@@ -821,7 +870,14 @@ bool CPICreateCharacter::Handle( void )
 				if( serverCount == 0 )
 				{
 					// No start locations found, use a default hardcoded one
-					Console.Error( "No starting locations found in ini file; sending new character to Sweet Dreams Inn (1495, 1629, 10)." );
+					if( useYoungLocations )
+					{
+						Console.Error( "No young starting locations found in ini file; sending new character to Sweet Dreams Inn (1495, 1629, 10)." );
+					}
+					else
+					{
+						Console.Error( "No starting locations found in ini file; sending new character to Sweet Dreams Inn (1495, 1629, 10)." );
+					}
 					SI16 startX;
 					SI16 startY;
 					SI08 startZ;
@@ -837,7 +893,14 @@ bool CPICreateCharacter::Handle( void )
 				else
 				{
 					// Use first start location, which we know exists
-					toGo = cwmWorldState->ServerData()->ServerLocation( 0 );
+					if( useYoungLocations )
+					{
+						toGo = cwmWorldState->ServerData()->YoungServerLocation( 0 );
+					}
+					else
+					{
+						toGo = cwmWorldState->ServerData()->ServerLocation( 0 );
+					}
 					mChar->SetLocation( toGo->x, toGo->y, static_cast<SI08>( toGo->z ), static_cast<UI08>( toGo->worldNum ), static_cast<UI16>( toGo->instanceId ));
 				}
 			}
@@ -850,6 +913,29 @@ bool CPICreateCharacter::Handle( void )
 			SetNewCharSkillsStats( mChar );
 
 			NewbieItems( mChar );
+
+			CAccountBlock_st& actbTemp2 = mChar->GetAccount();
+			if( actbTemp2.wAccountIndex != AB_INVALID_ID )
+			{
+				if( actbTemp2.wFlags.test( AB_FLAGS_GM ))
+				{
+					mChar->SetPriv( 0xFF );
+					mChar->SetCommandLevel( CL_GM );
+				}
+				else if( actbTemp2.wFlags.test( AB_FLAGS_SEER ))
+				{
+
+					MakeStatusTarget( tSock, mChar, "SEER" );
+					mChar->SetPriv( 0x4F );
+					mChar->SetCommandLevel( CL_SEER );
+				}
+				else if( actbTemp2.wFlags.test( AB_FLAGS_COUNSELOR ))
+				{
+					MakeStatusTarget( tSock, mChar, "CNS" );
+					mChar->SetPriv( 0x38);
+					mChar->SetCommandLevel( CL_CNS );
+				}
+			}
 
 			// Added for my client - Krrios
 			if( pattern3 == 0xFF ) // Signal that this is not the standard client
@@ -1333,9 +1419,6 @@ void StartChar( CSocket *mSock, bool onCreate )
 			pllToSend.Level( 0 );
 			mSock->Send( &pllToSend );
 
-			CPWarMode wMode( 0 );
-			mSock->Send( &wMode );
-
 			CItem *nItem = mChar->GetItemAtLayer( IL_PACKITEM );
 			mChar->SetPackItem( nItem );
 
@@ -1374,7 +1457,7 @@ void StartChar( CSocket *mSock, bool onCreate )
 				cScript *onCreateScp = JSMapping->GetScript( static_cast<UI16>( 0 ));	// 0 == global script
 				if( onCreateScp != nullptr )
 				{
-					onCreateScp->OnCreate( mChar, true );
+					onCreateScp->OnCreate( mChar, false, true );
 				}
 			}
 
@@ -1439,7 +1522,7 @@ void StartChar( CSocket *mSock, bool onCreate )
 				{
 					// Start timer to kick player if assistant tool hasn't responded in 30 seconds
 					mSock->SysMessage( 9013 ); // This server requires use of an assistant tool that supports feature negotiation. Enable the tool's option for negotiating features with server, or get kicked in 30 seconds.
-					mSock->NegotiateTimeout( cwmWorldState->GetUICurrentTime() + ( 30 * 1000 ));
+					mSock->NegotiateTimeout( static_cast<TIMERVAL>( cwmWorldState->GetUICurrentTime() + ( 30.0 * 1000.0 )));
 				}
 			}
 
@@ -1448,7 +1531,7 @@ void StartChar( CSocket *mSock, bool onCreate )
 			if( mChar->WorldNumber() > 0 )
 			{
 				// Without this, world will not be properly updated in regular UO clients until they take the first step
-				mChar->Update();
+				mChar->Update( nullptr, false, true, true );
 			}
 
 			// Re-add player to party, if they are in one!
@@ -1473,7 +1556,7 @@ void StartChar( CSocket *mSock, bool onCreate )
 //o------------------------------------------------------------------------------------------------o
 CItem *CreateCorpseItem( CChar& mChar, CChar *killer, UI08 fallDirection )
 {
-	std::string corpseName = GetNpcDictName( &mChar );
+	std::string corpseName = GetNpcDictName( &mChar, nullptr, NRS_SYSTEM );
 
 	CItem *iCorpse = nullptr;
 	bool shouldSave = mChar.ShouldSave();
@@ -1482,7 +1565,7 @@ CItem *CreateCorpseItem( CChar& mChar, CChar *killer, UI08 fallDirection )
 	if( !ValidateObject( iCorpse ))
 		return nullptr;
 
-	iCorpse->SetName( oldstrutil::format( 512, Dictionary->GetEntry( 1612 ), corpseName.c_str() )); // corpse of %s
+	iCorpse->SetName( oldstrutil::format( 512, Dictionary->GetEntry( 1612 ), corpseName.c_str() )); // Corpse of %s
 	iCorpse->SetCarve( mChar.GetCarve() );
 	iCorpse->SetMovable( 2 );//non-movable
 	if( fallDirection )
@@ -1515,6 +1598,7 @@ CItem *CreateCorpseItem( CChar& mChar, CChar *killer, UI08 fallDirection )
 	if( !mChar.IsNpc() )
 	{
 		iCorpse->SetOwner( &mChar );
+		mChar.AddCorpse( iCorpse ); // Add to list that tracks player's corpses
 		iCorpse->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->SystemTimer( tSERVER_CORPSEDECAY )));
 	}
 	else
@@ -1531,6 +1615,9 @@ CItem *CreateCorpseItem( CChar& mChar, CChar *killer, UI08 fallDirection )
 	{
 		iCorpse->SetTempVar( CITV_MOREX, killer->GetSerial() );
 	}
+
+	// Add default corpse carving script to all corpses
+	iCorpse->AddScriptTrigger( 5046 ); // js/item/corpse.js
 
 	return iCorpse;
 }
@@ -1575,43 +1662,50 @@ auto MoveItemsToCorpse( CChar &mChar, CItem *iCorpse ) -> void
 				break;
 			case IL_PACKITEM:
 			{
-				std::vector<CItem *> moveItems;
-				auto jCont = j->GetContainsList();
-				for( const auto &k : jCont->collection() )
+				// Only move player's items from backpack to corpse if young system is disabled OR player is not on a young account
+				if( mChar.IsNpc() || ( !cwmWorldState->ServerData()->YoungPlayerSystem() || !mChar.GetAccount().wFlags.test( AB_FLAGS_YOUNG )))
 				{
-					if( ValidateObject( k ))
+					std::vector<CItem *> moveItems;
+					auto jCont = j->GetContainsList();
+					for( const auto &k : jCont->collection() )
 					{
-						// If the character dying is a pack animal, drop everything they're carrying - including newbie items and spellbooks
-						if(( mChar.GetId() == 0x0123 || mChar.GetId() == 0x0124 || mChar.GetId() == 0x0317 ) || ( !k->IsNewbie() && k->GetType() != IT_SPELLBOOK ))
+						if( ValidateObject( k ))
 						{
-							// Store a reference to the item we want to move...
-							moveItems.push_back( k );
+							// If the character dying is a pack animal, drop everything they're carrying - including newbie items and spellbooks
+							if(( cwmWorldState->creatures[mChar.GetId()].IsPackAnimal() ) || ( !k->IsNewbie() && k->GetType() != IT_SPELLBOOK ))
+							{
+								// Store a reference to the item we want to move...
+								moveItems.push_back( k );
+							}
 						}
 					}
-				}
 
-				// Loop through the items we want to move - and move them!
-				std::for_each( moveItems.begin(), moveItems.end(), [iCorpse]( CItem *item )
-				{
-					item->SetCont( iCorpse );
-					item->SetX( static_cast<SI16>( 20 + ( RandomNum( 0, 49 ))));
-					item->SetY( static_cast<SI16>( 85 + ( RandomNum( 0, 75 ))));
-					item->SetZ( 9 );
-				});
+					// Loop through the items we want to move - and move them!
+					std::for_each( moveItems.begin(), moveItems.end(), [iCorpse]( CItem *item )
+					{
+						item->SetCont( iCorpse );
+						item->SetX( static_cast<SI16>( 20 + ( RandomNum( 0, 49 ))));
+						item->SetY( static_cast<SI16>( 85 + ( RandomNum( 0, 75 ))));
+						item->SetZ( 9 );
+					});
 
-				if( !mChar.IsShop() )
-				{
-					j->SetLayer( IL_BUYCONTAINER );
+					if( !mChar.IsShop() )
+					{
+						// Move player's backpack to the BUYCONTAINER layer for safekeeping
+						j->SetLayer( IL_BUYCONTAINER );
+					}
 				}
 				break;
 			}
 			default:
-				if( packIsValid && j->IsNewbie() )
+				// Move equipped items from character to pack if newbie, or if player is on a Young account
+				if( packIsValid && ( j->IsNewbie() || ( cwmWorldState->ServerData()->YoungPlayerSystem() && mChar.GetAccount().wFlags.test( AB_FLAGS_YOUNG ))))
 				{
 					j->SetCont( packItem );
 				}
 				else
 				{
+					// Otherwise, move them to corpse
 					j->SetCont( iCorpse );
 					j->SetX( static_cast<SI16>( 20 + ( RandomNum( 0, 49 ))));
 					j->SetY( static_cast<SI16>( 85 + ( RandomNum( 0, 74 ))));
@@ -1659,15 +1753,23 @@ void HandleDeath( CChar *mChar, CChar *attacker )
 	CItem *iCorpse = CreateCorpseItem(( *mChar ), attacker, fallDirection );
 	if( iCorpse != nullptr )
 	{
+		// Move items on player to corpse (special exceptions for Young players)
 		MoveItemsToCorpse(( *mChar ), iCorpse );
+
 		if( cwmWorldState->ServerData()->DeathAnimationStatus() )
 		{
 			Effects->DeathAction( mChar, iCorpse, fallDirection );
 		}
 
-		// Prevent pets from following ghost of dead player
-		auto mPetList = mChar->GetPetList();
-		for( const auto &tempChar : mPetList->collection() )
+		// Store information on the corpse about the origins of the poison that was on character when they died
+		if( mChar->GetPoisoned() > 0 )
+		{
+			iCorpse->SetPoisonedBy( mChar->GetPoisonedBy() );
+		}
+
+		// Prevent followers from following ghost of dead player
+		auto mFollowerList = mChar->GetFollowerList();
+		for( const auto &tempChar : mFollowerList->collection() )
 		{
 			if( ValidateObject( tempChar ))
 			{
@@ -1722,7 +1824,18 @@ void HandleDeath( CChar *mChar, CChar *attacker )
 	mChar->SetFrozen( false );
 	mChar->SetHP( 0 );
 	mChar->SetPoisoned( 0 );
+	mChar->SetPoisonedBy( INVALIDSERIAL );
 	mChar->SetPoisonStrength( 0 );
+
+	// Remove any permagrey flags on the character, but replace with a temporary criminal flag instead
+	if( mChar->IsPermaGrey( true ))
+	{
+		mChar->ClearPermaGreyFlags();
+		MakeCriminal( mChar );
+	}
+
+	// Also clear all aggressorflags
+	mChar->ClearAggressorFlags();
 
 	if( !mChar->IsNpc() )
 	{
@@ -1766,6 +1879,7 @@ void HandleDeath( CChar *mChar, CChar *attacker )
 		}
 	}
 
+	auto onDeathEventHandled = false;
 	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
 	for( auto scriptTrig : scriptTriggers )
 	{
@@ -1775,8 +1889,19 @@ void HandleDeath( CChar *mChar, CChar *attacker )
 			// If script returns true/1, prevent other scripts with event from running
 			if( toExecute->OnDeath( mChar, iCorpse ) == 1 )
 			{
+				onDeathEventHandled = true;
 				break;
 			}
+		}
+	}
+
+	if( !onDeathEventHandled )
+	{
+		// No script attached to character handled onDeath. Let's check global script!
+		cScript *toExecute = JSMapping->GetScript( static_cast<UI16>( 0 ));
+		if( toExecute != nullptr )
+		{
+			toExecute->OnDeath( mChar, iCorpse );
 		}
 	}
 
@@ -1787,6 +1912,12 @@ void HandleDeath( CChar *mChar, CChar *attacker )
 	else
 	{
 		mChar->Dirty( UT_LOCATION );
+	}
+
+	// Reset skill usage status for all skills
+	for( UI08 i = 0; i < ALLSKILLS; ++i )
+	{
+		mChar->SkillUsed( false, i );
 	}
 
 	// Play death music

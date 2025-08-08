@@ -3,22 +3,28 @@
 // Updated by Xuri
 
 var maxControlSlots = GetServerSetting( "MaxControlSlots" );
+
+// maxFollowers only comes into play if maxControlSlots is set to 0 in UOX.INI
 var maxFollowers = GetServerSetting( "MaxFollowers" );
+const petBondingEnabled = GetServerSetting( "PetBondingEnabled" );
 
 // Runs before purchase is validated by server
-function onBuyFromVendor( pSock, vendor, iBought )
+function onBuyFromVendor( pSock, vendor, iBought, numItemsBought )
 {
 	var pUser = pSock.currentChar;
-	if( maxControlSlots > 0 && ( pUser.controlSlotsUsed + iBought.morez > maxControlSlots ))
+	if( maxControlSlots > 0 )
 	{
-		pSock.SysMessage( GetDictionaryEntry( 2390, pSock.language )); // That would exceed your maximum pet control slots.
-		if( ValidateObject( vendor ))
+		if( pUser.controlSlotsUsed + ( numItemsBought * iBought.morez ) > maxControlSlots )
 		{
-			vendor.TextMessage( GetDictionaryEntry( 2399, pSock.language )); // Sorry, I cannot sell thee this item!
+			pSock.SysMessage( GetDictionaryEntry( 2390, pSock.language )); // That would exceed your maximum pet control slots.
+			if( ValidateObject( vendor ))
+			{
+				vendor.TextMessage( GetDictionaryEntry( 2399, pSock.language )); // Sorry, I cannot sell thee this item!
+			}
+			return false;
 		}
-		return false;
 	}
-	if( pUser.petCount >= maxFollowers )
+	else if( maxFollowers > 0 && ( pUser.followerCount + numItemsBought > maxFollowers ))
 	{
 		pSock.SysMessage( GetDictionaryEntry( 2400, pSock.language )); // You have too many followers already!
 		if( ValidateObject( vendor ))
@@ -32,7 +38,7 @@ function onBuyFromVendor( pSock, vendor, iBought )
 }
 
 // Runs after purchase has been completed
-function onBoughtFromVendor( pSock, Vendor, iBought )
+function onBoughtFromVendor( pSock, Vendor, iBought, numItemsBought )
 {
 	if( pSock && iBought )
 	{
@@ -42,20 +48,40 @@ function onBoughtFromVendor( pSock, Vendor, iBought )
 
 function onUseChecked( pUser, iUsed )
 {
-	// randomize the ostard given
-	var look = RollDice( 1, 3, 0 );
-	if( look == 1 )
+	var toSpawn = "desertostard";
+	switch( iUsed.morex )
 	{
-		var nSpawned = SpawnNPC( "forestostard", pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );
+		case 1: // Random ostard
+		{
+			let rndLook = RollDice( 1, 3, 0 );
+			if( rndLook == 1 )
+			{
+				toSpawn = "desertostard";
+			}
+			else if( rndLook == 2 )
+			{
+				toSpawn = "forestostard";
+			}
+			else
+			{
+				toSpawn = "frenziedostard";
+			}
+			break;
+		}
+		case 2: // Desert ostard
+			toSpawn = "desertostard";
+			break;
+		case 3: // Forest ostard
+			toSpawn = "forestostard";
+			break;
+		case 4: // Frenzied ostard
+			toSpawn = "frenziedostard";
+			break;
+		default:
+			break;
 	}
-	if( look == 2 )
-	{
-		var nSpawned = SpawnNPC( "desertostard", pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );
-	}
-	if( look == 3 )
-	{
-		var nSpawned = SpawnNPC( "frenziedostard", pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );
-	}
+
+	var nSpawned = SpawnNPC( toSpawn, pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );
 	if( nSpawned )
 	{
 		// set owner to the envoker
@@ -67,8 +93,17 @@ function onUseChecked( pUser, iUsed )
 			pUser.controlSlotsUsed = pUser.controlSlotsUsed + nSpawned.controlSlots;
 		}
 
+		// Set nSpawned as an active follower of pUser
+		pUser.AddFollower( nSpawned );
+
 		// make pet follow owner by default
 		nSpawned.Follow( pUser );
+		
+		if( petBondingEnabled > 0 )
+		{
+			nSpawned.AddScriptTrigger( 3107 );//Add bonding script trigger
+			TriggerEvent( 3107, "StartBonding", pUser, nSpawned  );
+		}
 
 		// make a sound
 		pUser.SoundEffect( 0x0215, true );
@@ -80,6 +115,6 @@ function onUseChecked( pUser, iUsed )
 	{
 		pUser.SysMessage( "Creature failed to spawn, reason unknown." );
 	}
+
 	return false;
 }
-

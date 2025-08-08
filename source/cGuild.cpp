@@ -9,6 +9,7 @@
 #include "CJSEngine.h"
 #include "StringUtility.hpp"
 #include "osunique.hpp"
+#include <algorithm>
 #ifndef va_start
 #include <cstdarg>
 #endif
@@ -609,6 +610,22 @@ bool CGuild::IsAlly( GUILDID otherGuild ) const
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	 CGuild::IsAtPeace()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Determine if this guild is in a state of peace, i.e. NOT at war with anyone
+//o------------------------------------------------------------------------------------------------o
+bool CGuild::IsAtPeace() const
+{
+	for( auto &relation : relationList )
+	{
+		if( relation.second == GR_WAR )
+			return false;
+	}
+
+	return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGuild::SetGuildRelation()
 //|					CGuild::GuildRelationList()
 //o------------------------------------------------------------------------------------------------o
@@ -629,7 +646,7 @@ GUILDREL *CGuild::GuildRelationList( void )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Save guild data to worldfiles
 //o------------------------------------------------------------------------------------------------o
-void CGuild::Save( std::ofstream &toSave, GUILDID gNum )
+void CGuild::Save( std::ostream &toSave, GUILDID gNum )
 {
 	toSave << "[GUILD " << gNum << ']' << '\n' << "{" << '\n';
 	toSave << "NAME=" << name << '\n';
@@ -962,6 +979,30 @@ CGuild *CGuildCollection::operator[]( GUILDID num )
 	return Guild( num );
 }
 
+GUILDID CGuildCollection::FindGuildId( const CGuild* targetGuild )
+{
+    if( targetGuild == nullptr )
+    {
+        return -1;
+    }
+
+    // Use std::find_if to search the map
+    auto it = std::find_if( gList.begin(), gList.end(),
+                           [targetGuild]( const auto& pair ) {
+                               return pair.second == targetGuild;
+                           });
+
+    // Check if find_if found an element
+    if( it != gList.end() )
+    {
+        return it->first; // Return the key (GUILDID)
+    }
+    else
+    {
+        return -1;
+    }
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGuildCollection::Save()
 //o------------------------------------------------------------------------------------------------o
@@ -1083,7 +1124,7 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 		CChar *fChar = CalcCharObjFromSer( mChar->GetGuildFealty() );
 		if( ValidateObject( fChar ))
 		{
-			guildFealty = fChar->GetNameRequest( mChar );
+			guildFealty = fChar->GetNameRequest( mChar, NRS_GUILD );
 		}
 	}
 	else
@@ -1142,7 +1183,14 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			if( mChar->GetSerial() == gMaster || mChar->IsGM() )	// Guildmaster Access?
 			{
 				++numButtons;
-				toSend.addText( oldstrutil::format( Dictionary->GetEntry( 113, sLang ), gMstr->GetGuildTitle().c_str() ));
+				if( ValidateObject( gMstr))
+				{
+					toSend.addText( oldstrutil::format( Dictionary->GetEntry( 113, sLang ), gMstr->GetGuildTitle().c_str() ));
+				}
+				else
+				{
+					toSend.addText( oldstrutil::format( Dictionary->GetEntry( 17622, sLang ), gMstr->GetGuildTitle().c_str() )); // This guild has no Guild Master.
+				}
 			}
 			break;
 		case BasePage + 2:	numButtons = 16;		// Guildmaster menu
@@ -1179,7 +1227,7 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			tCtr = 0;
 			for( tChar = gList[trgGuild]->FirstRecruit(); !gList[trgGuild]->FinishedRecruits(); tChar = gList[trgGuild]->NextRecruit() )
 			{
-				toSend.addText( CalcCharObjFromSer( tChar )->GetNameRequest( mChar ));
+				toSend.addText( CalcCharObjFromSer( tChar )->GetNameRequest( mChar, NRS_GUILD ));
 				++tCtr;
 			}
 			toSend.addText( Dictionary->GetEntry( 130, sLang ));
@@ -1190,7 +1238,7 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			tCtr = 0;
 			for( tChar = gList[trgGuild]->FirstMember(); !gList[trgGuild]->FinishedMember(); tChar = gList[trgGuild]->NextMember() )
 			{
-				toSend.addText( CalcCharObjFromSer( tChar )->GetNameRequest( mChar ));
+				toSend.addText( CalcCharObjFromSer( tChar )->GetNameRequest( mChar, NRS_GUILD ));
 				++tCtr;
 			}
 			toSend.addText( Dictionary->GetEntry( 130, sLang ));
@@ -1201,7 +1249,7 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			tCtr = 0;
 			for( tChar = gList[trgGuild]->FirstMember(); !gList[trgGuild]->FinishedMember(); tChar = gList[trgGuild]->NextMember() )
 			{
-				toSend.addText( CalcCharObjFromSer( tChar )->GetNameRequest( mChar ));
+				toSend.addText( CalcCharObjFromSer( tChar )->GetNameRequest( mChar, NRS_GUILD ));
 				++tCtr;
 			}
 			toSend.addText( Dictionary->GetEntry( 130, sLang ));
@@ -1211,7 +1259,7 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			tCtr = 0;
 			for( tChar = gList[trgGuild]->FirstRecruit(); !gList[trgGuild]->FinishedRecruits(); tChar = gList[trgGuild]->NextRecruit() )
 			{
-				toSend.addText( CalcCharObjFromSer( tChar )->GetNameRequest( mChar ));
+				toSend.addText( CalcCharObjFromSer( tChar )->GetNameRequest( mChar, NRS_GUILD ));
 				++tCtr;
 			}
 			toSend.addText( Dictionary->GetEntry( 130, sLang ));
@@ -1221,7 +1269,7 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			tCtr = 0;
 			for( tChar = gList[trgGuild]->FirstRecruit(); !gList[trgGuild]->FinishedRecruits(); tChar = gList[trgGuild]->NextRecruit() )
 			{
-				toSend.addText( CalcCharObjFromSer( tChar )->GetNameRequest( mChar ));
+				toSend.addText( CalcCharObjFromSer( tChar )->GetNameRequest( mChar, NRS_GUILD ));
 				++tCtr;
 			}
 			toSend.addText( Dictionary->GetEntry( 130, sLang ));
@@ -1285,7 +1333,7 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			kChar = CalcCharObjFromSer( plId );
 			if( ValidateObject( kChar ))
 			{
-				auto temp = kChar->GetNameRequest( mChar );
+				auto temp = kChar->GetNameRequest( mChar, NRS_GUILD );
 				if( kChar->IsInnocent() )
 				{
 					temp += std::string(" Innocent" );

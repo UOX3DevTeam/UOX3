@@ -53,6 +53,8 @@ ITEMMENU=5015
 ITEMMENU=5017
 <=Undead
 ITEMMENU=5018
+<=Holiday Creatures
+ITEMMENU=5018
 <=Previous Menu
 ITEMMENU=5000
 }

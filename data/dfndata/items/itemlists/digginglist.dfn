@@ -59,6 +59,11 @@
 0x0f30
 }
 
+[digginggems]
+{
+itemlist=digginggems
+}
+
 [ITEMLIST diggingweapons]
 {
 0x13b5
@@ -81,6 +86,11 @@
 0x143b
 0x1439
 0x1407
+}
+
+[diggingweapons]
+{
+itemlist=diggingweapons
 }
 
 [ITEMLIST diggingarmor]
@@ -112,6 +122,11 @@
 0x140A
 0x140C
 0x140E
+}
+
+[diggingarmor]
+{
+itemlist=diggingarmor
 }
 
 EOF

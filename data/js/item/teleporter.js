@@ -9,14 +9,15 @@ function onUseChecked( pUser, iUsed )
 			if( ValidateObject( otherGate ))
 			{
 				// Teleport player's pets
-				var petList = pUser.GetPetList();
-				for( var i = 0; i < petList.length; i++ )
+				var followerList = pUser.GetFollowerList();
+				for( var i = 0; i < followerList.length; i++ )
 				{
-					var tempPet = petList[i];
-					if( ValidateObject( tempPet ) && tempPet.InRange( pUser, 24 ))
+					var tempFollower = followerList[i];
+					// Only teleport pets if set to follow and within range
+					if( ValidateObject( tempFollower ) && tempFollower.wandertype == 1 && tempFollower.InRange( pChar, 24 ))
 					{
-						tempPet.Teleport( otherGate );
-						tempPet.Follow( pUser );
+						tempFollower.Teleport( otherGate );
+						tempFollower.Follow( pUser );
 					}
 				}
 

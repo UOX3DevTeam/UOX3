@@ -1,6 +1,6 @@
 // KNIVES AND DAGGERS
 
-// CLASSIC
+// ORIGINAL UO
 // Cleaver - Base item
 [base_cleaver]
 {
@@ -17,9 +17,11 @@ restock=10
 // Cleaver - E/W
 [0x0ec2]
 {
-getpub15=0x0ec2_pub15
+gett2a=0x0ec2_t2a
+getlbr=0x0ec2_lbr
 getaos=0x0ec2_aos
 gettol=0x0ec2_tol
+sectionid=0x0ec2
 }
 
 // Cleaver - N/S
@@ -51,9 +53,11 @@ restock=10
 // Skinning Knife - N/S
 [0x0ec4]
 {
-getpub15=0x0ec4_pub15
+gett2a=0x0ec4_t2a
+getlbr=0x0ec4_lbr
 getaos=0x0ec4_aos
 gettol=0x0ec4_tol
+sectionid=0x0ec4
 }
 
 // Skinning Knife - E/W
@@ -85,9 +89,11 @@ restock=10
 // Dagger - N/S
 [0x0f51]
 {
-getpub15=0x0f51_pub15
+gett2a=0x0f51_t2a
+getlbr=0x0f51_lbr
 getaos=0x0f51_aos
 gettol=0x0f51_tol
+sectionid=0x0f51
 }
 
 // Dagger - E/W
@@ -119,9 +125,11 @@ restock=10
 // Butcher Knife - N/S
 [0x13f6]
 {
-getpub15=0x13f6_pub15
+gett2a=0x13f6_t2a
+getlbr=0x13f6_lbr
 getaos=0x13f6_aos
 gettol=0x13f6_tol
+sectionid=0x13f6
 }
 
 // Butcher Knife - E/W
@@ -150,15 +158,18 @@ decay=1
 good=25
 layer=1
 movable=1
+origin=ml
 restock=10
 }
 
 // Leafblade - N/S
 [0x2d22]
 {
-getpub15=0x2d22_pub15
+gett2a=0x2d22_t2a
+getlbr=0x2d22_lbr
 getaos=0x2d22_aos
 gettol=0x2d22_tol
+sectionid=0x2d22
 }
 
 // Leafblade - E/W
@@ -184,15 +195,18 @@ decay=1
 good=25
 layer=1
 movable=1
+origin=ml
 restock=10
 }
 
 // Assassin Spike - N/S
 [0x2d21]
 {
-getpub15=0x2d21_pub15
+gett2a=0x2d21_t2a
+getlbr=0x2d21_lbr
 getaos=0x2d21_aos
 gettol=0x2d21_tol
+sectionid=0x2d21
 }
 
 // Assassin Spike - E/W
@@ -221,15 +235,18 @@ decay=1
 good=22
 layer=1
 movable=1
+origin=sa
 restock=10
 }
 
 // Gargish Dagger - N/S
 [0x0902]
 {
-getpub15=0x0902_pub15
+gett2a=0x0902_t2a
+getlbr=0x0902_lbr
 getaos=0x0902_aos
 gettol=0x0902_tol
+sectionid=0x0902
 }
 
 // Gargish Dagger - E/W

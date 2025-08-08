@@ -1,0 +1,95 @@
+// 18050 to 18099
+// lavaserpent > lavalizard > hellhound > succubus > fireele, efreet > phoenix > daemon
+[REGIONSPAWN 18050]
+{
+NAME=Montor 1_1
+NPCLIST=montor_npclist_1
+MAXNPCS=12
+X1=1604
+Y1=299
+X2=1637
+Y2=341
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// lavaserpent > lavalizard > hellhound > succubus > fireele, efreet > phoenix > daemon
+[REGIONSPAWN 18051]
+{
+NAME=Montor 1_2
+NPCLIST=montor_npclist_1
+MAXNPCS=12
+X1=1638
+Y1=299
+X2=1680
+Y2=342
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// lavaserpent > lavalizard > hellhound > succubus > fireele, efreet > phoenix > daemon
+[REGIONSPAWN 18052]
+{
+NAME=Montor 1_3
+NPCLIST=montor_npclist_1
+MAXNPCS=8
+X1=1626
+Y1=280
+X2=1680
+Y2=298
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// earthele > drake
+[REGIONSPAWN 18053]
+{
+NAME=Montor 1_4
+NPCLIST=montor_npclist_2
+MAXNPCS=5
+X1=1651
+Y1=227
+X2=1680
+Y2=265
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// stoneharpy > stonegargoyle
+[REGIONSPAWN 18054]
+{
+NAME=Montor 1_5
+NPCLIST=montor_npclist_3
+MAXNPCS=4
+X1=1705
+Y1=218
+X2=1725
+Y2=238
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+[REGIONSPAWN 18055]
+{
+NAME=Montor 1_6
+NPC=balron
+MAXNPCS=1
+X1=1699
+Y1=176
+X2=1716
+Y2=200
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}

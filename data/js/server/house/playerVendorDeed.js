@@ -111,3 +111,5 @@ function CheckForNearbyDoors( pUser, itemToCheck, pSocket )
 	}
 	return false;
 }
+
+function _restorecontext_() {}

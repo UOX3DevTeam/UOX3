@@ -5,16 +5,43 @@
 // ;
 // ;    Format:
 // ;          From      To   Optional
-// ;        X,Y,Z(or ALL), X,Y,Z  [,World,World]
+// ;        X,Y,Z(or ALL), X,Y,Z  [,World,World[,minEra,maxEra]]
 // ;
 // ; Note:  Entries without world-coordinates will work in _all_ worlds!!!1one
 // ;        Entries marked with  have been verified as working
 // ;        Entries marked with ???? need to be verified by someone who knows the location
 // ;        Entries with _mg_ in the description are moongate locations. Comment out if you plan to use actual moongates
+// ;		minEra/maxEra values correspond to coreShardEra values ranging from 1 (uo) to 11 (tol). A value of -1 means teleporter works for all eras
 
 [TELEPORT ENTRIES]
 {
 // Felucca/Trammel o-----------------------------------------------------o
+// Blackthorn Dungeon (Felucca)
+ENTRY=1517,     1417,   All,    6438,   2678,   20,		0,0 // [Castle_Blackthorn_to_Blackthorn_Dungeon]
+ENTRY=1517,     1418,   All,    6438,   2679,   20,		0,0 // [Castle_Blackthorn_to_Blackthorn_Dungeon]
+ENTRY=1517,     1419,   All,    6438,   2680,   20,		0,0 // [Castle_Blackthorn_to_Blackthorn_Dungeon]
+ENTRY=1517,     1420,   All,    6438,   2681,   20,		0,0 // [Castle_Blackthorn_to_Blackthorn_Dungeon]
+ENTRY=6439,     2677,   All,    1518,   1417,   16,		0,0 // [Blackthorn_Dungeon_to_Castle_Blackthorn]
+ENTRY=6439,     2678,   All,    1518,   1418,   16,		0,0 // [Blackthorn_Dungeon_to_Castle_Blackthorn]
+ENTRY=6439,     2679,   All,    1518,   1418,   16,		0,0 // [Blackthorn_Dungeon_to_Castle_Blackthorn]
+ENTRY=6439,     2680,   All,    1518,   1419,   16,		0,0 // [Blackthorn_Dungeon_to_Castle_Blackthorn]
+ENTRY=6439,     2681,   All,    1518,   1419,   16,		0,0 // [Blackthorn_Dungeon_to_Castle_Blackthorn]
+ENTRY=6439,     2682,   All,    1518,   1420,   16,		0,0 // [Blackthorn_Dungeon_to_Castle_Blackthorn]
+
+// Blackthorn Dungeon (Trammel)
+ENTRY=1478,     1471,   All,    6438,   2677,   20,		1,1 // [Castle_Blackthorn_to_Blackthorn_Dungeon]
+ENTRY=1478,     1472,   All,    6438,   2678,   20,		1,1 // [Castle_Blackthorn_to_Blackthorn_Dungeon]
+ENTRY=1478,     1473,   All,    6438,   2679,   20,		1,1 // [Castle_Blackthorn_to_Blackthorn_Dungeon]
+ENTRY=1478,     1474,   All,    6438,   2680,   20,		1,1 // [Castle_Blackthorn_to_Blackthorn_Dungeon]
+ENTRY=1478,     1475,   All,    6438,   2681,   20,		1,1 // [Castle_Blackthorn_to_Blackthorn_Dungeon]
+ENTRY=1478,     1476,   All,    6438,   2682,   20,		1,1 // [Castle_Blackthorn_to_Blackthorn_Dungeon]
+ENTRY=6439,     2677,   All,    1479,   1471,   0,		1,1 // [Blackthorn_Dungeon_to_Castle_Blackthorn]
+ENTRY=6439,     2678,   All,    1479,   1472,   0,		1,1 // [Blackthorn_Dungeon_to_Castle_Blackthorn]
+ENTRY=6439,     2679,   All,    1479,   1473,   0,		1,1 // [Blackthorn_Dungeon_to_Castle_Blackthorn]
+ENTRY=6439,     2680,   All,    1479,   1474,   0,		1,1 // [Blackthorn_Dungeon_to_Castle_Blackthorn]
+ENTRY=6439,     2681,   All,    1479,   1475,   0,		1,1 // [Blackthorn_Dungeon_to_Castle_Blackthorn]
+ENTRY=6439,     2682,   All,    1479,   1476,   0,		1,1 // [Blackthorn_Dungeon_to_Castle_Blackthorn]
+
 // Felucca/Trammel - Blighted Grove
 ENTRY=587,      1638,   All,    6481,   868,    10          //  [Blighted_Grove_ent]
 ENTRY=588,      1638,   All,    6481,   868,    10          //  [Blighted_Grove_ent]
@@ -204,8 +231,8 @@ ENTRY=5757,     2908,   All,     5789,   1416,   39         //  [Desert_to_Fire_
 ENTRY=5757,     2909,   All,     5789,   1417,   38         //  [Desert_to_Fire_Dungeon]
 
 // Felucca/Trammel - Heartwood
-ENTRY=535,      992,    All,    6984,   338,    0           //  [World_to_Heartwood]
-ENTRY=6984,     338,    All,    535,    992,    0           //  [Heartwood_to_World]
+ENTRY=535,      992,    All,    6984,   338,    0,    -1,-1,    8, -1  //  [World_to_Heartwood]
+ENTRY=6984,     338,    All,    535,    992,    0,    -1,-1,    8, -1  //  [Heartwood_to_World]
 
 // Felucca/Trammel - Hedge Maze
 ENTRY=1145,     2228,   All,    1142,   2228,   20          //  [Hedge_secret_basement_in]
@@ -316,17 +343,23 @@ ENTRY=6011,     3787,   All,    5570,   1300,   0           //  [Khaldun_Entranc
 ENTRY=6012,     3787,   All,    5571,   1300,   0           //  [Khaldun_Entrance_1]
 ENTRY=6013,     3787,   All,    5572,   1300,   0           //  [Khaldun_Entrance_1]
 ENTRY=6014,     3787,   All,    5573,   1300,   0           //  [Khaldun_Entrance_1]
-ENTRY=5571,     1299,   All,    6012,   3786,   26          //  [Khaldun_Exit_1]
-ENTRY=5572,     1299,   All,    6013,   3786,   26          //  [Khaldun_Exit_1]
+ENTRY=5571,     1299,   All,    6012,   3781,   18          //  [Khaldun_Exit_1]
+ENTRY=5572,     1299,   All,    6013,   3781,   18          //  [Khaldun_Exit_1]
 ENTRY=5878,     3818,   All,    5398,   1290,   0           //  [Khaldun_Entrance_2]
 ENTRY=5400,     1289,   All,    5880,   3818,   2           //  [Khaldun_Exit_2]
-ENTRY=5477,     1347,   All,    5451,   1374,   0           //  [Khaldun_Pit_Teleporter]
-ENTRY=5477,     1348,   All,    5451,   1374,   0           //  [Khaldun_Pit_Teleporter]
-ENTRY=5478,     1348,   All,    5451,   1374,   0           //  [Khaldun_Pit_Teleporter]
-ENTRY=5478,     1347,   All,    5451,   1374,   0           //  [Khaldun_Pit_Teleporter]
-ENTRY=5479,     1348,   All,    5451,   1374,   0           //  [Khaldun_Pit_Teleporter]
-ENTRY=5479,     1346,   All,    5451,   1374,   0           //  [Khaldun_Pit_Teleporter]
-ENTRY=5479,     1347,   All,    5451,   1374,   0           //  [Khaldun_Pit_Teleporter]
+ENTRY=5477,     1347,   All,    5451,   1373,   0           //  [Khaldun_Pit_Teleporter]
+ENTRY=5477,     1348,   All,    5451,   1373,   0           //  [Khaldun_Pit_Teleporter]
+ENTRY=5478,     1348,   All,    5451,   1373,   0           //  [Khaldun_Pit_Teleporter]
+ENTRY=5478,     1347,   All,    5451,   1373,   0           //  [Khaldun_Pit_Teleporter]
+ENTRY=5479,     1348,   All,    5451,   1373,   0           //  [Khaldun_Pit_Teleporter]
+ENTRY=5479,     1346,   All,    5451,   1373,   0           //  [Khaldun_Pit_Teleporter]
+ENTRY=5479,     1347,   All,    5451,   1373,   0           //  [Khaldun_Pit_Teleporter]
+ENTRY=5527,     1340,   All,    5412,   1396,   0           //  [Khaldun_SealedRoom_Teleporter_1]
+ENTRY=5543,     1355,   All,    5572,   1307,   0           //  [Khaldun_SealedRoom_Teleporter_2]
+ENTRY=5557,     1316,   All,    5395,   1297,   0           //  [Khaldun_SealedRoom_Teleporter_3]
+ENTRY=5566,     1336,   All,    5620,   1341,   0           //  [Khaldun_SealedRoom_Teleporter_4]
+ENTRY=5450,     1359,   All,    5435,   1341,   0           //  [Khaldun_Pit_To_Laboratory_1]
+ENTRY=5454,     1359,   All,    5436,   1341,   0           //  [Khaldun_Pit_To_Laboratory_2]
 
 // Felucca/Trammel - Lost Lands
 ENTRY=5697,     3660,   All,    5658,   424,    0           //  [T2A_gy_to_Cave]

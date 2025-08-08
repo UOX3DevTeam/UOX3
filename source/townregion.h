@@ -102,7 +102,7 @@ public:
 	bool				ViewBudget( CSocket *sock );
 	bool				PeriodicCheck( void );
 	bool				Load( Script *ss );		// entry is the region #, fp is the file to load from
-	bool				Save( std::ofstream &outStream );		// entry is the region #, fp is the file to save in
+	bool				Save( std::ostream &outStream );		// entry is the region #, fp is the file to save in
 	bool				InitFromScript( CScriptSection *toScan );
 	bool				AddAsTownMember( CChar& toAdd );	// toAdd is the character to add
 	bool				RemoveTownMember( CChar& toAdd );	// toAdd is the character to remove
@@ -115,6 +115,7 @@ public:
 	bool				CanCastAggressive( void ) const;
 	bool				IsSafeZone( void ) const;
 	bool				IsDungeon( void ) const;
+	bool				IsDisabled( void ) const;
 	bool				IsSubRegion( void ) const;
 	bool				IsMemberOfTown( CChar *player ) const;
 	bool				IsAlliedTown( UI16 townToCheck ) const;
@@ -129,6 +130,7 @@ public:
 	void				CanCastAggressive( bool value );
 	void				IsSafeZone( bool value );
 	void				IsDungeon( bool value );
+	void				IsDisabled( bool value );
 	void				IsSubRegion( bool value );
 	void				SetName( std::string toSet );
 	void				SetRace( RACEID newRace );

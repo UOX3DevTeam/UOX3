@@ -7,7 +7,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "fixcont", 3, true );
+	RegisterCommand( "fixcont", 10, true );
 }
 
 function command_FIXCONT( socket, cmdString )
@@ -362,3 +362,5 @@ function onIterate( toCheck )
 	}
 	return false;
 }
+
+function _restorecontext_() {}

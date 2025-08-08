@@ -1,0 +1,828 @@
+// House Addon - Alchemist Table (East)
+[HOUSE 300]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=2
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=alchemisttabledeedeast
+HOUSE_ITEM=1000
+HOUSE_ITEM=1001
+}
+
+// House Addon - Alchemist Table (South)
+[HOUSE 301]
+{
+ID=0x14F0
+SPACEX=2
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=alchemisttablesouthdeed
+HOUSE_ITEM=1002
+HOUSE_ITEM=1003
+}
+
+// House Addon - Elven Bed (East)
+[HOUSE 302]
+{
+ID=0x14F0
+SPACEX=2
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=elvenbedeastdeed
+HOUSE_ITEM=1004
+HOUSE_ITEM=1005
+}
+
+// House Addon - Elven Bed (South)
+[HOUSE 303]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=2
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=elvenbedsouthdeed
+HOUSE_ITEM=1006
+HOUSE_ITEM=1007
+}
+
+// House Addon - Elven Loveseat (East)
+[HOUSE 304]
+{
+ID=0x14F0
+SPACEX=2
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=elvenloveseateastdeed
+HOUSE_ITEM=1008
+HOUSE_ITEM=1009
+}
+
+// House Addon - Elven Loveseat (South)
+[HOUSE 305]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=2
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=elvenloveseatsouthdeed
+HOUSE_ITEM=1010
+HOUSE_ITEM=1011
+}
+
+// House Addon - Elven Wash Basin (East)
+[HOUSE 306]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=2
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=elvenwashbasineastdeed
+HOUSE_ITEM=1012
+HOUSE_ITEM=1013
+}
+
+// House Addon - Elven Wash Basin (South)
+[HOUSE 307]
+{
+ID=0x14F0
+SPACEX=2
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=elvenwashbasinsouthdeed
+HOUSE_ITEM=1014
+HOUSE_ITEM=1015
+}
+
+// House Addon - Fancy Couch (East)
+[HOUSE 308]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=3
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=fancycoucheastdeed
+HOUSE_ITEM=1016
+HOUSE_ITEM=1017
+HOUSE_ITEM=1018
+}
+
+// House Addon - Fancy Couch (North)
+[HOUSE 309]
+{
+ID=0x14F0
+SPACEX=3
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=fancycouchnorthdeed
+HOUSE_ITEM=1019
+HOUSE_ITEM=1020
+HOUSE_ITEM=1021
+}
+
+// House Addon - Fancy Couch (South)
+[HOUSE 310]
+{
+ID=0x14F0
+SPACEX=3
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=fancycouchsouthdeed
+HOUSE_ITEM=1022
+HOUSE_ITEM=1023
+HOUSE_ITEM=1024
+}
+
+// House Addon - Fancy Couch (West)
+[HOUSE 311]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=3
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=fancycouchwestdeed
+HOUSE_ITEM=1025
+HOUSE_ITEM=1026
+HOUSE_ITEM=1027
+}
+
+// House Addon - Hardwood Table (East)
+[HOUSE 312]
+{
+ID=0x14F0
+SPACEX=3
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=hardwoodtableeastdeed
+HOUSE_ITEM=1028
+HOUSE_ITEM=1029
+HOUSE_ITEM=1030
+}
+
+// House Addon - Hardwood Table (South)
+[HOUSE 313]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=3
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=hardwoodtablesouthdeed
+HOUSE_ITEM=1031
+HOUSE_ITEM=1032
+HOUSE_ITEM=1033
+}
+
+// House Addon - Fancy Loveseat (East)
+[HOUSE 314]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=2
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=fancyloveseateastdeed
+HOUSE_ITEM=1034
+HOUSE_ITEM=1035
+}
+
+// House Addon - Fancy Loveseat (North)
+[HOUSE 315]
+{
+ID=0x14F0
+SPACEX=2
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=fancyloveseatnorthdeed
+HOUSE_ITEM=1036
+HOUSE_ITEM=1037
+}
+
+// House Addon - Fancy Loveseat (South)
+[HOUSE 316]
+{
+ID=0x14F0
+SPACEX=2
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=fancyloveseatsouthdeed
+HOUSE_ITEM=1038
+HOUSE_ITEM=1039
+}
+
+// House Addon - Fancy Loveseat (West)
+[HOUSE 317]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=2
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=fancyloveseatwestdeed
+HOUSE_ITEM=1040
+HOUSE_ITEM=1041
+}
+
+// House Addon - Ornate Table (East)
+[HOUSE 318]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=3
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=ornatetableeastdeed
+HOUSE_ITEM=1042
+HOUSE_ITEM=1043
+HOUSE_ITEM=1044
+}
+
+// House Addon - Ornate Table (South)
+[HOUSE 319]
+{
+ID=0x14F0
+SPACEX=3
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=ornatetablesouthdeed
+HOUSE_ITEM=1045
+HOUSE_ITEM=1046
+HOUSE_ITEM=1047
+}
+
+// House Addon - Plush Loveseat (East)
+[HOUSE 320]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=2
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=plushloveseateastdeed
+HOUSE_ITEM=1048
+HOUSE_ITEM=1049
+}
+
+// House Addon - Plush Loveseat (South)
+[HOUSE 321]
+{
+ID=0x14F0
+SPACEX=2
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=plushloveseatsouthdeed
+HOUSE_ITEM=1050
+HOUSE_ITEM=1051
+}
+
+// House Addon - Tall Elven Bed (East)
+[HOUSE 322]
+{
+ID=0x14F0
+SPACEX=3
+SPACEY=2
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=tallelvenbedeastdeed
+HOUSE_ITEM=1052
+HOUSE_ITEM=1053
+HOUSE_ITEM=1054
+HOUSE_ITEM=1055
+}
+
+// House Addon - Tall Elven Bed (South)
+[HOUSE 323]
+{
+ID=0x14F0
+SPACEX=2
+SPACEY=3
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=tallelvenbedsouthdeed
+HOUSE_ITEM=1056
+HOUSE_ITEM=1057
+HOUSE_ITEM=1058
+HOUSE_ITEM=1059
+}
+
+[HOUSE ITEM 1000]
+{ alchemist table part 1 (east)
+ITEM=0x3077
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1001]
+{ alchemist table part 2 (east)
+ITEM=0x3078
+X=0
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 1002]
+{ alchemist table part 1 (south)
+ITEM=0x3079
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1003]
+{ alchemist table part 2 (south)
+ITEM=0x307A
+X=-1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1004]
+{ elven bed part 1 (east)
+ITEM=0x304D
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1005]
+{ elven bed part 2 (east)
+ITEM=0x304C
+X=1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1006]
+{ elven bed part 1 (south)
+ITEM=0x3050
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1007]
+{
+elven bed part 2 (south)
+ITEM=0x3051
+X=0
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 1008]
+{ elven loveseat part 1 (east)
+ITEM=0x3089
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1009]
+{ elven loveseat part 2 (east)
+ITEM=0x3088
+X=1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1010]
+{ elven loveseat part 1 (south)
+ITEM=0x308A
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1011]
+{ elven loveseat part 2 (south)
+ITEM=0x308B
+X=0
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 1012]
+{ elven wash basin part 1 (east)
+ITEM=0x30DF
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1013]
+{ elven wash basin part 2 (east)
+ITEM=0x30E0
+X=0
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 1014]
+{ elven wash basin part 1 (south)
+ITEM=0x30E1
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1015]
+{ elven wash basin part 2 (south)
+ITEM=0x30E2
+X=1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1016]
+{ fancy couch part 1 (east)
+ITEM=0x4C8C
+X=0
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 1017]
+{ fancy couch part 2 (east)
+ITEM=0x4C8A
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1018]
+{ fancy couch part 3 (east)
+ITEM=0x4C8B
+X=0
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 1019]
+{ fancy couch part 1 (north)
+ITEM=0x9C62
+X=-1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1020]
+{ fancy couch part 2 (north)
+ITEM=0x9C61
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1021]
+{ fancy couch part 3 (north)
+ITEM=0x9C60
+X=1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1022]
+{ fancy couch part 1 (south)
+ITEM=0x4C8D
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1023]
+{ fancy couch part 2 (south)
+ITEM=0x4C8E
+X=-1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1024]
+{ fancy couch part 3 (south)
+ITEM=0x4C8F
+X=1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1025]
+{ fancy couch part 1 (west)
+ITEM=0x9C5F
+X=0
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 1026]
+{ fancy couch part 2 (west)
+ITEM=0x9C5E
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1027]
+{ fancy couch part 3 (west)
+ITEM=0x9C5D
+X=0
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 1028]
+{ hardwood table part 1 (east)
+ITEM=0x3094
+X=-1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1029]
+{ hardwood table part 2 (east)
+ITEM=0x3093
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1030]
+{ hardwood table part 3 (east)
+ITEM=0x3092
+X=1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1031]
+{ hardwood table part 1 (south)
+ITEM=0x3095
+X=0
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 1032]
+{ hardwood table part 2 (south)
+ITEM=0x3096
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1033]
+{ hardwood table part 3 (south)
+ITEM=0x3097
+X=0
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 1034]
+{ fancy loveseat part 1 (east)
+ITEM=0x4C88
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1035]
+{ fancy loveseat part 2 (east)
+ITEM=0x4C89
+X=0
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 1036]
+{ fancy loveseat part 1 (north)
+ITEM=0x9C5A
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1037]
+{ fancy loveseat part 2 (north)
+ITEM=0x9C59
+X=1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1038]
+{ fancy loveseat part 1 (south)
+ITEM=0x4C87
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1039]
+{ fancy loveseat part 2 (south)
+ITEM=0x4C86
+X=1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1040]
+{ fancy loveseat part 1 (west)
+ITEM=0x9C58
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1041]
+{ fancy loveseat part 2 (west)
+ITEM=0x9C57
+X=0
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 1042]
+{ ornate table part 1 (east)
+ITEM=0x308F
+X=0
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 1043]
+{ ornate table part 2 (east)
+ITEM=0x3090
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1044]
+{ ornate table part 3 (east)
+ITEM=0x3091
+X=0
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 1045]
+{ ornate table part 1 (south)
+ITEM=0x308E
+X=-1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1046]
+{ ornate table part 2 (south)
+ITEM=0x308D
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1047]
+{ ornate table part 3 (south)
+ITEM=0x308C
+X=1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1048]
+{ plush loveseat part 1 (east)
+ITEM=0x4C84
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1049]
+{ plush loveseat part 2 (east)
+ITEM=0x4C85
+X=0
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 1050]
+{ plush loveseat part 1 (south)
+ITEM=0x4C83
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1051]
+{ plush loveseat part 2 (south)
+ITEM=0x4C82
+X=1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1052]
+{ tall elven bed part 1 (east)
+ITEM=0x3054
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1053]
+{ tall elven bed part 2 (east)
+ITEM=0x3053
+X=1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1054]
+{ tall elven bed part 3 (east)
+ITEM=0x3055
+X=2
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 1055]
+{ tall elven bed part 4 (east)
+ITEM=0x3052
+X=2
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1056]
+{ tall elven bed part 1 (south)
+ITEM=0x3058
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1057]
+{ tall elven bed part 2 (south)
+ITEM=0x3057
+X=-1
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 1058]
+{ tall elven bed part 3 (south)
+ITEM=0x3059
+X=0
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 1059]
+{ tall elven bed part 4 (south)
+ITEM=0x3056
+X=0
+Y=1
+Z=0
+}

@@ -13,14 +13,17 @@ movable=1
 decay=1
 good=23
 ammofx=0x090a
+origin=sa
 }
 
 // Soul Glaives - E/W
 [0x090a]
 {
-getpub15=0x090a_pub15
+gett2a=0x090a_t2a
+getlbr=0x090a_lbr
 getaos=0x090a_aos
 gettol=0x090a_tol
+sectionid=0x090a
 }
 
 // Soul Glaives - N/S
@@ -48,14 +51,17 @@ movable=1
 decay=1
 good=23
 ammofx=0x08ff
+origin=sa
 }
 
 // Boomerang - E/W
 [0x08ff]
 {
-getpub15=0x08ff_pub15
+gett2a=0x08ff_t2a
+getlbr=0x08ff_lbr
 getaos=0x08ff_aos
 gettol=0x08ff_tol
+sectionid=0x08ff
 }
 
 // Boomerang - N/S
@@ -85,14 +91,17 @@ good=23
 ammofx=0x0901
 baserange=6
 maxrange=9
+origin=sa
 }
 
 // Cyclone - N/S
 [0x0901]
 {
-getpub15=0x0901_pub15
+gett2a=0x0901_t2a
+getlbr=0x0901_lbr
 getaos=0x0901_aos
 gettol=0x0901_tol
+sectionid=0x0901
 }
 
 // Cyclone - E/W

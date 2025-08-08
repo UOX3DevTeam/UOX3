@@ -2,7 +2,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "makeshop", 2, true );
+	RegisterCommand( "makeshop", 8, true );
 }
 
 function command_MAKESHOP( socket, cmdString )

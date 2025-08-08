@@ -1,0 +1,94 @@
+// 18000 to 18049
+// jukalord > jukawarrior, jukamage > chaosdragoon > chaosdragoonelite > golem, golemcontroller
+[REGIONSPAWN 18000]
+{
+NAME=Mistas 1_1
+NPCLIST=mistas_npclist_1
+MAXNPCS=7
+X1=754
+Y1=1003
+X2=820
+Y2=1074
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=2
+}
+
+// jukalord > jukawarrior, jukamage > chaosdragoon > chaosdragoonelite > golem, golemcontroller
+[REGIONSPAWN 18001]
+{
+NAME=Mistas 1_2
+NPCLIST=mistas_npclist_1
+MAXNPCS=7
+X1=754
+Y1=1075
+X2=820
+Y2=1123
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=2
+}
+
+// jukalord > jukawarrior, jukamage > chaosdragoon > chaosdragoonelite > golem, golemcontroller
+[REGIONSPAWN 18002]
+{
+NAME=Mistas 1_3
+NPCLIST=mistas_npclist_1
+MAXNPCS=7
+X1=821
+Y1=1003
+X2=880
+Y2=1074
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=2
+}
+
+// jukalord > jukawarrior, jukamage > chaosdragoon > chaosdragoonelite > golem, golemcontroller
+[REGIONSPAWN 18003]
+{
+NAME=Mistas 1_4
+NPCLIST=mistas_npclist_1
+MAXNPCS=7
+X1=821
+Y1=1075
+X2=880
+Y2=1123
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=2
+}
+
+[REGIONSPAWN 18004]
+{
+NAME=Mistas 1_5
+NPC=innkeeper
+MAXNPCS=1
+X1=774
+Y1=1144
+X2=774
+Y2=1144
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+[REGIONSPAWN 18005]
+{
+NAME=Mistas 1_6
+NPC=animaltrainer
+MAXNPCS=1
+X1=763
+Y1=1157
+X2=781
+Y2=1163
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}

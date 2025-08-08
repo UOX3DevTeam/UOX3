@@ -7,6 +7,8 @@ id=0x45a4
 layer=0x14
 decay=1
 weight=200
+origin=sa
+sectionid=0x45a4
 }
 
 [gargishclothwingarmor]
@@ -23,6 +25,8 @@ id=0x4002
 layer=0x14
 decay=1
 weight=300
+origin=sa
+sectionid=0x4002
 }
 
 // Gargish Fancy Robe
@@ -46,6 +50,8 @@ id=0x4000
 layer=0x14
 decay=1
 weight=300
+origin=sa
+sectionid=0x4000
 }
 
 // Gargish Robe

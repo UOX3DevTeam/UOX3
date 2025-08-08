@@ -17,43 +17,53 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "rename", 2, true ); //Lets GMs rename items/characters.
+	RegisterCommand( "rename", 8, true ); //Lets GMs rename items/characters.
 	RegisterCommand( "refresh", 0, true ); //Lets players refresh their screen to resend items/chars that have vanished from view.
-	RegisterCommand( "freeze", 2, true ); //Will "freeze" any targeted char, and will make any targeted item immovable (i.e. locked down by GM)
-	RegisterCommand( "unfreeze", 2, true ); //Will "unfreeze" any targeted char, and will make any targeted item movable if previously immovable
+	RegisterCommand( "freeze", 8, true ); //Will "freeze" any targeted char, and will make any targeted item immovable (i.e. locked down by GM)
+	RegisterCommand( "unfreeze", 8, true ); //Will "unfreeze" any targeted char, and will make any targeted item movable if previously immovable
 	RegisterCommand( "browse", 0, true ); //WIll let users open a webpage in their default browser from within the UO client. BROWSE <url>
-	RegisterCommand( "invul", 2, true ); //Will make the targeted character invulnerable or not, depending on the argument provided (true/false, 1/0)
-	RegisterCommand( "immortal", 2, true ); //Will make the targeted character invulnerable
-	RegisterCommand( "noinvul", 2, true ); //Will make the targeted character vulnerable
-	RegisterCommand( "mortal", 2, true ); //Will make the targeted character vulnerable
-	RegisterCommand( "addpack", 2, true ); //Will add a backpack to the targeted character, if it has none. Will add specified item-id(addpack <item-id> or hex id (addpack hex <hexid>) to backpack.
-	RegisterCommand( "settag", 2, true ); //used to specify a value for a specified tag on a targeted object
-	RegisterCommand( "gettag", 2, true ); //Used to retrieve the value of a specified tag from a targeted object
-	RegisterCommand( "settemptag", 2, true ); //used to specify a value for a specified tag on a targeted object
-	RegisterCommand( "gettemptag", 2, true ); //Used to retrieve the value of a specified tag from a targeted object
-	RegisterCommand( "nodecay", 2, true ); //Will turn off decay for the targeted item.
-	RegisterCommand( "decay", 2, true ); //Will turn on decay for the targeted item.
-	RegisterCommand( "xsay", 2, true ); //Targeted charcter or item will say specified text out loud
-	RegisterCommand( "linkdoors", 2, true ); //Link two doors together so that if one is opened, both will open.
-	RegisterCommand( "unlinkdoors", 2, true ); //Unlinks two doors (use command on both!)
-	RegisterCommand( "setammoeffect", 2, true ); //Set ammoeffect on a bow
-	RegisterCommand( "setammotype", 2, true ); //Set ammotype on a bow
-	RegisterCommand( "getammoeffect", 2, true );
-	RegisterCommand( "getammotype", 2, true );
-	RegisterCommand( "undress", 2, true ); //Character will completely undress all equipped items
-	RegisterCommand( "regioninfo", 2, true ); // Get information on current region player is in
-	RegisterCommand( "xregioninfo", 2, true ); // Get information on current region a target character is in
-	RegisterCommand( "cont", 2, true ); //Targeted item will be made a container, set to nondecay and movable 2
-	RegisterCommand( "endfight", 2, true ); //Targeted character (and character being fought) will stop fighting
-	RegisterCommand( "getmulti", 2, true ); //Get multiObject for targeted item
-	RegisterCommand( "finditem", 2, true ); //Find item at layer
-	RegisterCommand( "movespeed", 2, true ); //Set movement speed of target player
-	RegisterCommand( "welcome", 2, true ); // Display UOX3 welcome gump for admin
-	RegisterCommand( "getjstimer", 2, true ); // Get time remaining for specified timer ID on targeted object
-	RegisterCommand( "setjstimer", 2, true ); // Set time remaining for specified timer ID on targeted object
-	RegisterCommand( "killjstimer", 2, true ); // Kill timer with specified timer ID on targeted object
-	RegisterCommand( "addhouse", 2, true ); // Add a multi by its house ID in houses.dfn
-	RegisterCommand( "addmulti", 2, true ); // Add a multi by its raw multi ID
+	RegisterCommand( "invul", 8, true ); //Will make the targeted character invulnerable or not, depending on the argument provided (true/false, 1/0)
+	RegisterCommand( "immortal", 8, true ); //Will make the targeted character invulnerable
+	RegisterCommand( "noinvul", 8, true ); //Will make the targeted character vulnerable
+	RegisterCommand( "mortal", 8, true ); //Will make the targeted character vulnerable
+	RegisterCommand( "addpack", 8, true ); //Will add a backpack to the targeted character, if it has none. Will add specified item-id(addpack <item-id> or hex id (addpack hex <hexid>) to backpack.
+	RegisterCommand( "settag", 8, true ); //used to specify a value for a specified tag on a targeted object
+	RegisterCommand( "gettag", 8, true ); //Used to retrieve the value of a specified tag from a targeted object
+	RegisterCommand( "settemptag", 8, true ); //used to specify a value for a specified tag on a targeted object
+	RegisterCommand( "gettemptag", 8, true ); //Used to retrieve the value of a specified tag from a targeted object
+	RegisterCommand( "nodecay", 8, true ); //Will turn off decay for the targeted item.
+	RegisterCommand( "decay", 8, true ); //Will turn on decay for the targeted item.
+	RegisterCommand( "xsay", 8, true ); //Targeted charcter or item will say specified text out loud
+	RegisterCommand( "linkdoors", 8, true ); //Link two doors together so that if one is opened, both will open.
+	RegisterCommand( "unlinkdoors", 8, true ); //Unlinks two doors (use command on both!)
+	RegisterCommand( "setammoeffect", 8, true ); //Set ammoeffect on a bow
+	RegisterCommand( "setammotype", 8, true ); //Set ammotype on a bow
+	RegisterCommand( "getammoeffect", 8, true );
+	RegisterCommand( "getammotype", 8, true );
+	RegisterCommand( "undress", 8, true ); //Character will completely undress all equipped items
+	RegisterCommand( "regioninfo", 8, true ); // Get information on current region player is in
+	RegisterCommand( "xregioninfo", 8, true ); // Get information on current region a target character is in
+	RegisterCommand( "cont", 8, true ); //Targeted item will be made a container, set to nondecay and movable 2
+	RegisterCommand( "endfight", 8, true ); //Targeted character (and character being fought) will stop fighting
+	RegisterCommand( "getmulti", 8, true ); //Get multiObject for targeted item
+	RegisterCommand( "finditem", 8, true ); //Find item at layer
+	RegisterCommand( "movespeed", 8, true ); //Set movement speed of target player
+	RegisterCommand( "welcome", 8, true ); // Display UOX3 welcome gump for admin
+	RegisterCommand( "getjstimer", 8, true ); // Get time remaining for specified timer ID on targeted object
+	RegisterCommand( "setjstimer", 8, true ); // Set time remaining for specified timer ID on targeted object
+	RegisterCommand( "killjstimer", 8, true ); // Kill timer with specified timer ID on targeted object
+	RegisterCommand( "addhouse", 8, true ); // Add a multi by its house ID in houses.dfn
+	RegisterCommand( "addmulti", 8, true ); // Add a multi by its raw multi ID
+	RegisterCommand( "useitem", 8, true ); // Use a target item as if it was double-clicked
+	RegisterCommand( "gettagmap", 8, true ); // Spit out a list of all custom tags on object
+	RegisterCommand( "gettemptagmap", 8, true ); // Spit out a list of all custom tags on object
+	RegisterCommand( "listpets", 8, true ); // Spit out a list of all pets owned by target
+	RegisterCommand( "listfollowers", 8, true ); // Spit out a list of all followers of target
+	RegisterCommand( "resetskillcaps", 10, true ); // Fix corrupted player skill caps
+	RegisterCommand( "resetskillusage", 10, true ); // Fix stuck skill usage for all players
+	RegisterCommand( "rain", 10, true ); // Make it rain in the current region
+	RegisterCommand( "snow", 10, true ); // Make it snow in the current region
+	RegisterCommand( "clearweather", 10, true ); // Clear up weather effect
 }
 
 function command_RENAME( pSock, execString )
@@ -166,7 +176,20 @@ function command_ADDPACK( pSock, execString )
 function command_SETTAG( pSock, execString )
 {
 	var pUser = pSock.currentChar;
-	var Word = execString.split( "," );
+	var Word = [];
+	if( execString != null )
+	{
+		var firstCommaIndex = execString.indexOf( ',' );
+		if( firstCommaIndex != -1 )
+		{
+			// Fetch everything _before_ the first comma
+			Word[0] = execString.substring( 0, firstCommaIndex );
+
+			// Fetch everything _after_ the first comma
+			Word[1] = execString.substring( firstCommaIndex + 1 );
+		}
+	}
+
 	if(( execString == "" || execString == null ) || ( Word[0] == null || Word[0] == "" || Word[0] == " " || Word[1] == "" || Word[1] == null ))
 	{
 		pUser.SysMessage( GetDictionaryEntry( 8862, pSock.language )); // You need to specify a tag and a value for the tag, seperated by a comma.
@@ -196,7 +219,20 @@ function command_GETTAG( pSock, execString )
 function command_SETTEMPTAG( pSock, execString )
 {
 	var pUser = pSock.currentChar;
-	var Word = execString.split( "," );
+	var Word = [];
+	if( execString != null )
+	{
+		var firstCommaIndex = execString.indexOf( ',' );
+		if( firstCommaIndex != -1 )
+		{
+			// Fetch everything _before_ the first comma
+			Word[0] = execString.substring( 0, firstCommaIndex );
+
+			// Fetch everything _after_ the first comma
+			Word[1] = execString.substring( firstCommaIndex + 1 );
+		}
+	}
+
 	if(( execString == "" || execString == null ) || ( Word[0] == null || Word[0] == "" || Word[0] == " " || Word[1] == "" || Word[1] == null ))
 	{
 		pUser.SysMessage( GetDictionaryEntry( 8862, pSock.language )); // You need to specify a tag and a value for the tag, seperated by a comma.
@@ -879,7 +915,7 @@ function command_MOVESPEED( pSock, execString )
 			break;
 		}
 		default:
-			pSock.SysMessage( GetDictionaryEntry( 2927, pSock.language )); // Only values between 0x0 to 0x4 are supported!
+			pSock.SysMessage( GetDictionaryEntry( 8927, pSock.language )); // Only values between 0x0 to 0x4 are supported!
 			break; // Unsupported
 	}
 }
@@ -967,7 +1003,7 @@ function onCallback27( pSock, myTarget )
 	var word1 = pUser.GetTempTag( "Word1" );
 	if( !pSock.GetWord( 1 ))
 	{
-		if( Word1 == "null" )
+		if( word1 == "null" )
 		{
 			myTarget.SetTempTag( word0, null );
 		}
@@ -1046,7 +1082,7 @@ function onCallback29( pSock, myTarget )
 			pSock.SysMessage( tempMsg.replace( /%s/gi, newExpiryTime ));
 
 			tempMsg = GetDictionaryEntry( 2765, pSock.language ); // // Remaining time: %d seconds
-			pSock.SysMessage( tempMsg.replace( /%d/gi, (( expiryTime - currentTime ) / 1000 ).toString() ));
+			pSock.SysMessage( tempMsg.replace( /%d/gi, Math.round(( expiryTime - currentTime ) / 1000 ).toString() ));
 		}
 		else
 		{
@@ -1184,9 +1220,10 @@ function onCallback32( socket, ourObj )
 		var x = socket.GetWord( 11 );
 		var y = socket.GetWord( 13 );
 		var z = socket.GetSByte( 16 );
+		var StrangeByte = socket.GetWord(1);
 
 		// If connected with a client lower than v7.0.9, manually add height of targeted tile
-		if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+		if(( StrangeByte == 0 && ourObj.isItem ) || ( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 ))
 		{
 			z += GetTileHeight( socket.GetWord( 17 ));
 		}
@@ -1234,9 +1271,10 @@ function onCallback33( socket, ourObj )
 		var x = socket.GetWord( 11 );
 		var y = socket.GetWord( 13 );
 		var z = socket.GetSByte( 16 );
+		var StrangeByte = socket.GetWord(1);
 
 		// If connected with a client lower than v7.0.9, manually add height of targeted tile
-		if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+		if(( StrangeByte == 0 && ourObj.isItem ) || ( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 ))
 		{
 			z += GetTileHeight( socket.GetWord( 17 ));
 		}
@@ -1251,3 +1289,208 @@ function onCallback33( socket, ourObj )
 		}
 	}
 }
+
+function command_USEITEM( pSock, execString )
+{
+	pSock.CustomTarget( 34, GetDictionaryEntry( 97, pSock.language )); // Use which item?
+}
+
+function onCallback34( socket, ourObj )
+{
+	var cancelCheck = parseInt( socket.GetByte( 11 ));
+	if( cancelCheck == 255 )
+		return;
+
+	var mChar = socket.currentChar;
+	if( mChar )
+	{
+		if( ValidateObject( ourObj ) && ourObj.isItem )
+		{
+			UseItem( mChar, ourObj );
+		}
+	}
+}
+
+function command_GETTAGMAP( pSock, execString )
+{
+	pSock.CustomTarget( 35, GetDictionaryEntry( 92, pSock.language )); // Get persistent tag map for which object?
+}
+
+function onCallback35( pSock, ourObj )
+{
+	var cancelCheck = parseInt( pSock.GetByte( 11 ));
+	if( cancelCheck == 255 )
+		return;
+
+	if( ValidateObject( ourObj ))
+	{
+		var tagMap = ourObj.GetTagMap();
+		pSock.SysMessage( GetDictionaryEntry( 93, pSock.language ), tagMap.length ); // Number of persistent tags: %i
+		for( var i = 0; i < tagMap.length; i++ )
+		{
+			var tagName = tagMap[i][0];
+			var tagType;
+			switch( tagMap[i][1] )
+			{
+				case 0:
+					tagType = "Int";
+					break;
+				case 1:
+					tagType = "String";
+					break;
+				case 2:
+					tagType = "Bool";
+					break;
+			}
+			var tagValue = tagMap[i][2].toString();
+			pSock.SysMessage( GetDictionaryEntry( 96, pSock.language), tagName, tagType, tagValue ); // Tag: %s | Type: %i | Value: %u
+		}
+	}
+}
+
+function command_GETTEMPTAGMAP( pSock, execString )
+{
+	pSock.CustomTarget( 36, GetDictionaryEntry( 94, pSock.language )); // Get temporary tag map for which object?
+}
+
+function onCallback36( pSock, ourObj )
+{
+	var cancelCheck = parseInt( pSock.GetByte( 11 ));
+	if( cancelCheck == 255 )
+		return;
+
+	if( ValidateObject( ourObj ))
+	{
+		var tagMap = ourObj.GetTempTagMap();
+		pSock.SysMessage( GetDictionaryEntry( 95, pSock.language ), tagMap.length ); // Number of temporary tags: %i
+		for( var i = 0; i < tagMap.length; i++ )
+		{
+			var tagName = tagMap[i][0];
+			var tagType;
+			switch( tagMap[i][1] )
+			{
+				case 0:
+					tagType = "Int";
+					break;
+				case 1:
+					tagType = "String";
+					break;
+				case 2:
+					tagType = "Bool";
+					break;
+			}
+			var tagValue = tagMap[i][2].toString();
+			pSock.SysMessage( GetDictionaryEntry( 96, pSock.language), tagName, tagType, tagValue ); // Tag: %s | Type: %i | Value: %u
+		}
+	}
+}
+
+function command_LISTPETS( pSock, execString )
+{
+	pSock.CustomTarget( 37, GetDictionaryEntry( 2775, pSock.language )); // Get list of pets for which character?
+}
+
+function onCallback37( pSock, ourObj )
+{
+	var cancelCheck = parseInt( pSock.GetByte( 11 ));
+	if( cancelCheck == 255 )
+		return;
+
+	if( ValidateObject( ourObj ))
+	{
+		var petList = ourObj.GetPetList();
+		pSock.SysMessage( GetDictionaryEntry( 2773, pSock.language ), petList.length ); // Number of pets: %i
+		for( var i = 0; i < petList.length; i++ )
+		{
+			if( ValidateObject( petList[i] ))
+			{
+				pSock.SysMessage( GetDictionaryEntry( 2778, pSock.language ), petList[i].name, petList[i].id, petList[i].serial, petList[i].x, petList[i].y, petList[i].z, petList[i].worldnumber, petList[i].instanceID ); // Name: %s | ID: %i | Serial: %i | x: %i | y: %i | z: %i | world: %i | instanceID: %i
+			}
+		}
+	}
+}
+
+function command_LISTFOLLOWERS( pSock, execString )
+{
+	pSock.CustomTarget( 38, GetDictionaryEntry( 2776, pSock.language )); // Get list of followers for which character?
+}
+
+function onCallback38( pSock, ourObj )
+{
+	var cancelCheck = parseInt( pSock.GetByte( 11 ));
+	if( cancelCheck == 255 )
+		return;
+
+	if( ValidateObject( ourObj ))
+	{
+		var followerList = ourObj.GetFollowerList();
+		pSock.SysMessage( GetDictionaryEntry( 2774, pSock.language ), followerList.length ); // Number of followers: %i
+		for( var i = 0; i < followerList.length; i++ )
+		{
+			if( ValidateObject( followerList[i] ))
+			{
+				pSock.SysMessage( GetDictionaryEntry( 2778, pSock.language ), followerList[i].name, followerList[i].id, followerList[i].serial, followerList[i].x, followerList[i].y, followerList[i].z, followerList[i].worldnumber, followerList[i].instanceID ); // Name: %s | ID: %i | Serial: %i | x: %i | y: %i | z: %i | world: %i | instanceID: %i
+			}
+		}
+	}
+}
+
+// Reset corrupted skill caps for player characters. Only use in emergency.
+function command_RESETSKILLCAPS( pSock, execString )
+{
+	var resetCount = IterateOver( "CHARACTER" );
+	pSock.SysMessage( "Reset skillcaps for " + resetCount + " players back to default." );
+}
+
+function onIterate( toCheck )
+{
+	if( toCheck.isChar && !toCheck.npc )
+	{
+		toCheck.skillCaps.allskills = 0;
+		return true;
+	}
+	return false;
+}
+
+// Reset stuck skill usage for player characters. Only use in emergency.
+function command_RESETSKILLUSAGE( pSock, execString )
+{
+	var resetCount = IterateOver( "CHARACTER" );
+	pSock.SysMessage( "Reset skill usage for " + resetCount + " players back to false." );
+}
+
+function onIterate( toCheck )
+{
+	if( toCheck.isChar && !toCheck.npc )
+	{
+		toCheck.skillsused.allskills = false;
+		return true;
+	}
+	return false;
+}
+
+// Override weather for current region and make it RAIN
+function command_RAIN( pSock, execString )
+{
+	var mRegion = pSock.currentChar.region;
+	mRegion.weather = 9;
+	pSock.SysMessage( "Weather override (RAIN) enabled for current region (" + mRegion.name + ")" );
+}
+
+// Override weather for current region and make it SNOW
+function command_SNOW( pSock, execString )
+{
+	var mRegion = pSock.currentChar.region;
+	mRegion.weather = 10;
+	pSock.SysMessage( "Weather override (SNOW) enabled for current region (" + mRegion.name + ")" );
+}
+
+// Clear up any override weather-effects in current region
+function command_CLEARWEATHER( pSock, execString )
+{
+	var mRegion = pSock.currentChar.region;
+	mRegion.weather = 0;
+	pSock.SysMessage( "Weather override disabled for current region (" + mRegion.name + ")" );
+}
+
+function _restorecontext_() {}

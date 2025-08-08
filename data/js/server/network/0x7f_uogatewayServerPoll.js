@@ -51,5 +51,5 @@ function SendUOGServerPollInfo( pSocket )
 	pSocket.Send( toSend );
 	toSend.Free();
 	Console.Print( "Done!\n" );
-	Console.Log( "Response sent to UOGateway Server Poll Packet: U" + shardInfo );
+	Console.Log( "Response sent to UOGateway Server Poll Packet: " + shardInfo );
 }

@@ -1,5 +1,11 @@
 // Decorate command - by Xuri (xuri@uox3.org)
-// v1.5
+// v1.7
+//		1.7 - 10/06/2025
+//			Added support for saving/loading custom tags (templateSystemVer 3)
+//
+//		1.6 - 13/07/2023
+//			Adjusted how silent and multiple flags from admin_welcome.js script are detected and used
+//
 //		1.5 - 18/01/2022
 //			Added decayable = false as a condition for decorations to be saved/copied
 //
@@ -74,6 +80,10 @@
 // 'decorate loadevent <eventName>
 //		Load all items from file named event_<eventName>, and assign eventName to their .event property
 //
+// COPYING DECORATIONS FROM ONE FACET TO ANOTHER
+// ' decorate copy [sourceFacet] [targetFacet]
+//		Copy all items from one facet to another
+//
 // CLEANING UP DECORATIONS
 // 'decorate clean
 // 		Clean up duplicate decorations that might have been loaded/added by accident. Counts as duplicate if
@@ -105,13 +115,13 @@ const signIDs = [ 0x0b97,0x0b96,0x0b97,0x0b98,0x0b99,0x0b9a,0x0b9b,0x0b9c,0x0b9d
 // List of moongate IDs
 const moongateIDs = [ 0x0dda,0x0ddb,0x0ddc,0x0ddd,0x0dde,0x0f6c,0x0f6d,0x0f6e,0x0f6f,0x0f70,0x1ae5,0x1ae6,0x1ae7,0x1ae8,0x1ae9,0x1aea,0x1aeb,0x1aec,0x1aed,0x1af3,0x1af4,0x1af5,0x1af6,0x1af7,0x1af8,0x1af9,0x1afa,0x1afb,0x1fcb,0x1fcc,0x1fcd,0x1fce,0x1fcf,0x1fd0,0x1fd1,0x1fd2,0x1fd3,0x1fd4,0x1fd5,0x1fd6,0x1fd7,0x1fd8,0x1fde,0x1fdf,0x1fe0,0x1fe1,0x1fe2,0x1fe3,0x1fe4,0x1fe5,0x1fe6,0x1fe7,0x1fe8,0x1fe9,0x1fea,0x1feb,0x4b8f,0x4b90,0x4b91,0x4b92,0x4b93,0x4b94,0x4b95,0x4b96,0x4b97,0x4b98,0x4b99,0x4b9a,0x4b9b,0x4b9c,0x4bcb,0x4bcc,0x4bcd,0x4bce,0x4bcf,0x4bd0,0x4bd1,0x4bd2,0x4bd3,0x4bd4,0x4bd5,0x4bd6,0x4bd7,0x4bd8 ]
 
-// ScriptID of this script, used to identify and close some gumps
-const scriptID = 1059;
-const templateSystemVer = 2;
+// Script ID of this script, used to identify and close some gumps
+const decorate_scriptID = 1059;
+const templateSystemVer = 3;
 
 function CommandRegistration()
 {
-	RegisterCommand( "decorate", 5, true ); // Admin only command
+	RegisterCommand( "decorate", 10, true ); // Admin only command
 }
 
 function command_DECORATE( socket, cmdString )
@@ -144,7 +154,14 @@ function command_DECORATE( socket, cmdString )
 	if( cmdString )
 	{
 		// Handle subcommand
-		var splitString = cmdString.split( " " );
+		var _splitString = cmdString.split( "|" );
+		var splitString = _splitString[0].split( " " );
+		var flags = [];
+		if( _splitString[1] )
+		{
+			flags = _splitString[1].split( " " );
+		}
+
 		switch( splitString[0].toUpperCase() )
 		{
 			case "SAVE":
@@ -153,7 +170,7 @@ function command_DECORATE( socket, cmdString )
 				break;
 			case "LOAD":
 				// Load decorations from world template files
-				HandleDecorateLoad( socket, splitString );
+				HandleDecorateLoad( socket, splitString, flags );
 				break;
 			case "SAVEEVENT":
 				// Save event decorations to event world template file
@@ -170,7 +187,7 @@ function command_DECORATE( socket, cmdString )
 				{
 					// Keep event info for later
 					eventName = splitString[1].toLowerCase();
-					HandleDecorateLoad( socket, splitString );
+					HandleDecorateLoad( socket, splitString, flags );
 				}
 				break;
 			case "UNLOADEVENT":
@@ -391,7 +408,7 @@ function HandleDecorateCopy( socket, splitString )
 				socket.SysMessage( GetDictionaryEntry( 8017, socket.language )); // No decorations were copied.
 			}
 
-			socket.CloseGump( scriptID + 0xffff, 0 );
+			socket.CloseGump( decorate_scriptID + 0xffff, 0 );
 		}
 	}
 	else
@@ -450,7 +467,7 @@ function HandleDecorateClean( socket )
 
 	}
 
-	socket.CloseGump( scriptID + 0xffff, 0 );
+	socket.CloseGump( decorate_scriptID + 0xffff, 0 );
 
 	if( totalCleaned > 0 )
 	{
@@ -513,7 +530,7 @@ function HandleDecorateUnloadEvent( socket )
 
 	}
 
-	socket.CloseGump( scriptID + 0xffff, 0 );
+	socket.CloseGump( decorate_scriptID + 0xffff, 0 );
 
 	if( totalCleaned > 0 )
 	{
@@ -657,7 +674,7 @@ function HandleDecorateSave( socket, splitString )
 					}
 				}
 			}
-			socket.CloseGump( scriptID + 0xffff, 0 );
+			socket.CloseGump( decorate_scriptID + 0xffff, 0 );
 			return;
 		}
 		case 2: // User trying to save custom file, or specified either objectType or facetName (but not both)
@@ -705,7 +722,7 @@ function HandleDecorateSave( socket, splitString )
 				{
 					socket.SysMessage( GetDictionaryEntry( 9092, socket.language )); // No decorations found. None saved!
 				}
-				socket.CloseGump( scriptID + 0xffff, 0 );
+				socket.CloseGump( decorate_scriptID + 0xffff, 0 );
 			}
 			else
 			{
@@ -765,11 +782,11 @@ function HandleDecorateSave( socket, splitString )
 									break;
 								default:
 									socket.SysMessage( GetDictionaryEntry( 8032, socket.language )); // Invalid objectType selected, saving aborted!
-									socket.CloseGump( scriptID + 0xffff, 0 );
+									socket.CloseGump( decorate_scriptID + 0xffff, 0 );
 									return;
 							}
 						}
-						socket.CloseGump( scriptID + 0xffff, 0 );
+						socket.CloseGump( decorate_scriptID + 0xffff, 0 );
 
 						var tempMsg3 = GetDictionaryEntry( 8035, socket.language ); // %i decorations successfully saved to templates for facet '%s'. Check <SCRIPTDATADIRECTORY/worldtemplates/ for saved template files!
 						tempMsg3 = tempMsg3.replace( /%i/gi, iterateCount.toString() );
@@ -824,7 +841,7 @@ function HandleDecorateSave( socket, splitString )
 								break;
 							default:
 								socket.SysMessage( GetDictionaryEntry( 8031, socket.language )); // Invalid facet selected, saving aborted!
-								socket.CloseGump( scriptID + 0xffff, 0 );
+								socket.CloseGump( decorate_scriptID + 0xffff, 0 );
 								return;
 						}
 
@@ -865,11 +882,11 @@ function HandleDecorateSave( socket, splitString )
 								break;
 							default:
 								socket.SysMessage( GetDictionaryEntry( 8032, socket.language )); // Invalid objectType selected, saving aborted!
-								socket.CloseGump( scriptID + 0xffff, 0 );
+								socket.CloseGump( decorate_scriptID + 0xffff, 0 );
 								return;
 						}
 					}
-					socket.CloseGump( scriptID + 0xffff, 0 );
+					socket.CloseGump( decorate_scriptID + 0xffff, 0 );
 				}
 			}
 			break;
@@ -906,7 +923,7 @@ function HandleDecorateSave( socket, splitString )
 					socket.SysMessage( tempMsg5.replace( /%t/gi, facetName ));
 				}
 
-				socket.CloseGump( scriptID + 0xffff, 0 );
+				socket.CloseGump( decorate_scriptID + 0xffff, 0 );
 			}
 			break;
 		}
@@ -950,7 +967,7 @@ function HandleDecorateSave( socket, splitString )
 					}
 				}
 
-				socket.CloseGump( scriptID + 0xffff, 0 );
+				socket.CloseGump( decorate_scriptID + 0xffff, 0 );
 			}
 			break;
 		}
@@ -1007,6 +1024,37 @@ function SaveDecorationToArray( toCheck, arrayRef )
 	for( var i = 0; i < size; i++ )
 	{
 		newEntry += ( "|" + scriptTriggers[i] );
+	}
+
+	var tagMap = toCheck.GetTagMap();
+	if( tagMap.length > 0 )
+	{
+		// Append custom tag key/value pairs to string, after a @ symbol
+		newEntry += "@";
+	}
+	for( var j = 0; j < tagMap.length; j++ )
+	{
+		if( j > 0 )
+		{
+			// Separate each tagkey/type/val trio by |
+			newEntry += "|";
+		}
+		var tagName = tagMap[j][0];
+		var tagType;
+		switch( tagMap[j][1] )
+		{
+			case 0:
+				tagType = "Int";
+				break;
+			case 1:
+				tagType = "String";
+				break;
+			case 2:
+				tagType = "Bool";
+				break;
+		}
+		var tagValue = tagMap[j][2].toString();
+		newEntry += tagName + "$" + tagType + "$" + tagValue;
 	}
 
 	// Push string with object properties to array, so we can output that to file later
@@ -1109,7 +1157,7 @@ function SaveDecorationsToFile( socket, arrayRef, singleSave )
 	return false;
 }
 
-function HandleDecorateLoad( socket, splitString )
+function HandleDecorateLoad( socket, splitString, flags )
 {
 	var multipleCmd = false;
 	var facetCount = facetList.length;
@@ -1224,7 +1272,7 @@ function HandleDecorateLoad( socket, splitString )
 							{
 								socket.SysMessage( GetDictionaryEntry( 8053, socket.language )); // Invalid objectType selected, loading aborted!
 							}
-							socket.CloseGump( scriptID + 0xffff, 0 );
+							socket.CloseGump( decorate_scriptID + 0xffff, 0 );
 							return;
 					}
 
@@ -1259,6 +1307,29 @@ function HandleDecorateLoad( socket, splitString )
 			//if( objectType != "" && objectType != "doors" && objectType != "signs" && objectType != "lights" && objectType != "moongates" && objectType != "teleporters" && objectType != "misc" )
 			if( objectType != "" && objectTypeList.indexOf( objectType.toLowerCase() ) == -1 )
 			{
+				if( flags.length == 1 )
+				{
+					if( flags[0].toUpperCase() == "SILENT" )
+					{
+						silentMode = true;
+					}
+					else if( flags[0].toUpperCase() == "MULTIPLE" )
+					{
+						multipleCmd = true;
+					}
+				}
+				else if( flags.length == 2 )
+				{
+					if( flags[0].toUpperCase() == "SILENT" || flags[1].toUpperCase() == "SILENT" )
+					{
+						silentMode = true;
+					}
+					if( flags[0].toUpperCase() == "MULTIPLE" || flags[1].toUpperCase() == "MULTIPLE" )
+					{
+						multipleCmd = true;
+					}
+				}
+
 				DisplayProgressGump( socket, GetDictionaryEntry( 8045, socket.language ), 0 ); // Loading Decorations
 				loadCustom = true;
 				if( !LoadDecorationsFromFile( socket ))
@@ -1268,7 +1339,7 @@ function HandleDecorateLoad( socket, splitString )
 						var tempMsg = GetDictionaryEntry( 8054, socket.language ); // Unable to load decorations from custom file. Does the file (%s.jsdata) exist?
 						socket.SysMessage( tempMsg.replace( /%s/gi, objectType ));
 					}
-					socket.CloseGump( scriptID + 0xffff, 0 );
+					socket.CloseGump( decorate_scriptID + 0xffff, 0 );
 					return;
 				}
 			}
@@ -1345,7 +1416,7 @@ function HandleDecorateLoad( socket, splitString )
 							{
 								socket.SysMessage( GetDictionaryEntry( 8052, socket.language )); // Invalid facet selected, loading aborted!
 							}
-							socket.CloseGump( scriptID + 0xffff, 0 );
+							socket.CloseGump( decorate_scriptID + 0xffff, 0 );
 							return;
 					}
 				}
@@ -1395,7 +1466,7 @@ function HandleDecorateLoad( socket, splitString )
 							{
 								socket.SysMessage( GetDictionaryEntry( 8053, socket.language )); // Invalid objectType selected, loading aborted!
 							}
-							socket.CloseGump( scriptID + 0xffff, 0 );
+							socket.CloseGump( decorate_scriptID + 0xffff, 0 );
 							return;
 					}
 				}
@@ -1403,12 +1474,12 @@ function HandleDecorateLoad( socket, splitString )
 			break;
 		}
 		case 3: // Load specific objectType from specific facet
-		case 4: // optional SILENT mode
-		case 5: // optional MULTIPLE flag
+		//case 4: // optional SILENT mode
+		//case 5: // optional MULTIPLE flag
 		{
 			var silentMode = false;
 			// Load a specific objectType for a specific facet, with optional silent parameter
-			if( numArguments >= 4 && splitString[3].toUpperCase() == "SILENT" )
+			/*if( numArguments >= 4 && splitString[3].toUpperCase() == "SILENT" )
 			{
 				silentMode = true;
 			}
@@ -1416,6 +1487,29 @@ function HandleDecorateLoad( socket, splitString )
 			if( numArguments == 5 && splitString[4].toUpperCase() == "MULTIPLE" )
 			{
 				multipleCmd = true;
+			}*/
+
+			if( flags.length == 1 )
+			{
+				if( flags[0].toUpperCase() == "SILENT" )
+				{
+					silentMode = true;
+				}
+				else if( flags[0].toUpperCase() == "MULTIPLE" )
+				{
+					multipleCmd = true;
+				}
+			}
+			else if( flags.length == 2 )
+			{
+				if( flags[0].toUpperCase() == "SILENT" || flags[1].toUpperCase() == "SILENT" )
+				{
+					silentMode = true;
+				}
+				if( flags[0].toUpperCase() == "MULTIPLE" || flags[1].toUpperCase() == "MULTIPLE" )
+				{
+					multipleCmd = true;
+				}
 			}
 
 			// Fetch info on what objectType to load
@@ -1435,7 +1529,7 @@ function HandleDecorateLoad( socket, splitString )
 					tempMsg = tempMsg.replace( /%s/gi, facetName );
 					socket.SysMessage( tempMsg.replace( /%t/gi, objectType ));
 				}
-				socket.CloseGump( scriptID + 0xffff, 0 );
+				socket.CloseGump( decorate_scriptID + 0xffff, 0 );
 				return;
 			}
 			break;
@@ -1447,7 +1541,7 @@ function HandleDecorateLoad( socket, splitString )
 	if( decorateArray.length == 0 )
 	{
 		socket.SysMessage( GetDictionaryEntry( 8062, socket.language )); // No decorations were loaded from world template files, unable to decorate world.
-		socket.CloseGump( scriptID + 0xffff, 0 );
+		socket.CloseGump( decorate_scriptID + 0xffff, 0 );
 		return;
 	}
 	else if( !multipleCmd )
@@ -1598,7 +1692,14 @@ function DecorateWorld( socket )
 	{
 		// Reset scriptTriggers array for each line
 		scriptTriggers.length = 0;
-		var splitString = decorateArray[i].split( "|" );
+
+		// First split based on @ to get regular properties (left side) and custom tags (right side)
+		// We do this because we don't know how many custom tags an item can have
+		var splitString1 = decorateArray[i].split( "@" );
+
+		// Next, we split the left side (regular properties) based on |
+		//var splitString = decorateArray[i].split( "|" );
+		var splitString = splitString1[0].split( "|" );
 		var splitStringLength = splitString.length;
 		if( splitStringLength == 1 )
 		{
@@ -1675,6 +1776,32 @@ function DecorateWorld( socket )
 			}
 		}
 
+		// Handle unknown amount of custom tag key/type/value combos after @ symbol on each line,
+		// each portion of the custom tag separated by a $
+		let customTags = [];
+		if( templateVer >= 2 && splitString1[1] )
+		{
+			var splitStringCustom = splitString1[1].split( "|" );
+			var splitStringCustomLength = splitStringCustom.length;
+
+			for( var k = 0; k < splitStringCustom.length; k++ )
+			{
+				let tagStringArray = splitStringCustom[k].split( "$" );
+				if( tagStringArray.length == 3 )
+				{
+					let tagKey = tagStringArray[0];
+					let tagType = tagStringArray[1]
+					let tagVal = tagStringArray[2];
+
+					// Add to array
+					if( tagKey != "" )
+					{
+						customTags.push( [tagKey, tagType, tagVal] );
+					}
+				}
+			}
+		}
+
 		if( i == twentyPercent )
 		{
 			progress = 20;
@@ -1702,7 +1829,7 @@ function DecorateWorld( socket )
 
 		if( progress == 20 || progress == 40 || progress == 60 || progress == 80 )
 		{
-			socket.CloseGump( scriptID + 0xffff, 0 );
+			socket.CloseGump( decorate_scriptID + 0xffff, 0 );
 			DisplayProgressGump( socket, GetDictionaryEntry( 8065, socket.language ), progress ); // Decorating World
 			/*var decorateWait = new Gump;
 			decorateWait.NoClose();
@@ -1823,9 +1950,31 @@ function DecorateWorld( socket )
 
 			if( scriptTriggers.length > 0 )
 			{
-				for( var k = 0; k < scriptTriggers.length; k++ )
+				for( var l = 0; l < scriptTriggers.length; l++ )
 				{
-					newItem.AddScriptTrigger( scriptTriggers[k] );
+					newItem.AddScriptTrigger( scriptTriggers[l] );
+				}
+			}
+
+			if( customTags.length > 0 )
+			{
+				for( var m = 0; m < customTags.length; m++ )
+				{
+					let tagKey = customTags[m][0];
+					let tagType = customTags[m][1];
+					let tagVal = customTags[m][2];
+					switch( tagType )
+					{
+						case "Int":
+							tagVal = parseInt( tagVal );
+							break;
+						case "Bool":
+							tagVal = ( customTags[m][2] === 'true' );
+							break;
+						default: // String
+							break;
+					}
+					newItem.SetTag( tagKey, tagVal );
 				}
 			}
 
@@ -1841,13 +1990,17 @@ function DecorateWorld( socket )
 	var tempMsg = GetDictionaryEntry( 8066, socket.language ); // %i decorations added!
 	tempMsg = tempMsg.replace( /%i/gi, newItemCount.toString() );
 	socket.SysMessage( tempMsg.replace( /%s/gi, objectType ));
-	socket.CloseGump( scriptID + 0xffff, 0 );
+	socket.CloseGump( decorate_scriptID + 0xffff, 0 );
 }
 
 function onIterate( toCheck )
 {
 	if( ValidateObject( toCheck ) && toCheck.isItem && toCheck.container == null && !toCheck.isMulti && !ValidateObject( toCheck.multi ) && toCheck.shouldSave && !toCheck.decayable )
 	{
+		// Don't save items that have been spawned by spawners; save the spawners themselves only
+		//if( toCheck.spawnSerial != -1 )
+		//	return false;
+
 		if(( saveCustom || saveEvent ) && saveAll )
 		{
 			// Only save items that match event type if we're saving event decorations
@@ -2065,3 +2218,5 @@ function CheckForDuplicate( srcItem, trgItem, pSock )
 	}
 	return false;
 }
+
+function _restorecontext_() {}

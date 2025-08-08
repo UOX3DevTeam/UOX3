@@ -14,6 +14,7 @@ hp=26 30
 str=40
 value=156 78
 weight=200
+origin=td
 }
 
 // Daemon Bone Armor
@@ -32,6 +33,7 @@ hp=26 30
 str=40
 value=234 117
 weight=600
+origin=td
 }
 
 // Daemon Bone Gauntlets
@@ -50,6 +52,7 @@ hp=26 30
 str=40
 value=133 66
 weight=200
+origin=td
 }
 
 // Daemon Bone Helm
@@ -67,6 +70,7 @@ hp=26 30
 str=40
 value=157 71
 weight=300
+origin=td
 }
 
 // Daemon Bone Legs
@@ -85,4 +89,5 @@ hp=26 30
 str=40
 value=179 89
 weight=300
+origin=td
 }

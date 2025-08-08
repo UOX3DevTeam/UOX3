@@ -1,5 +1,6 @@
 #include "uox3.h"
 #include "regions.h"
+#include "cEffects.h"
 
 #include <cmath>
 #include <algorithm>
@@ -274,6 +275,9 @@ bool MapTileBlocks( [[maybe_unused]] CSocket *mSock, bool nostatic, Line3D_st Lo
 	// Map tile at next coordinate along the LoS path
 	auto trgMap = Map->SeekMap( x2, y2, worldNum );
 
+	if( srcMap.terrainInfo == nullptr || trgMap.terrainInfo == nullptr )
+		return true;
+
 	// Get tileIDs for previous tile in LoS path, and next one
 	const UI16 mID1	= srcMap.tileId;
 	const UI16 mID2	= trgMap.tileId;
@@ -326,7 +330,7 @@ bool CheckFlags( UI08 typeToCheck, Tile_st &toCheck, SI08 startZ, SI08 destZ, bo
 				return false;
 			break;
 		case WALLS_CHIMNEYS: // Walls, Chimneys, ovens, not fences
-			if( toCheck.CheckFlag( TF_WALL ) || ( toCheck.CheckFlag( TF_NOSHOOT ) && !toCheck.CheckFlag( TF_SURFACE) ) || toCheck.CheckFlag( TF_WINDOW ))
+			if(( toCheck.CheckFlag( TF_WALL ) || toCheck.CheckFlag( TF_WINDOW )) && ( toCheck.CheckFlag( TF_BLOCKING ) || toCheck.CheckFlag( TF_NOSHOOT )) && !toCheck.CheckFlag( TF_SURFACE ))
 				return true;
 			break;
 		case DOORS: // Doors, not gates
@@ -409,7 +413,7 @@ UI16 DynamicCanBlock( CItem *toCheck, Vector3D_st *collisions, SI32 collisioncou
 			Console << "LoS - Bad length in multi file. Avoiding stall" << myendl;
 			auto map1 = Map->SeekMap( curX, curY, toCheck->WorldNumber() );
 
-			if( map1.CheckFlag( TF_WET )) // is it water?
+			if( map1.terrainInfo != nullptr && map1.CheckFlag( TF_WET )) // is it water?
 			{
 				toCheck->SetId( 0x4001 );
 			}
@@ -505,14 +509,10 @@ auto LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 	if( checkDistance && distance > 18 )
 		return blocked;
 
-	// DISABLED; Allows placing items within walls when standing next to them...
 	//If target is next to us and within our field of view
-	//if( distance <= 1 && destZ <= (startZ + 3) && destZ >= (startZ - 15 ))
-		//return not_blocked;
 	if( distance == 0 && destZ <= ( startZ + 3 ) && destZTop >= ( useSurfaceZ ? ( startZ  ) : ( startZ - 15 )))
 		return not_blocked;
 
-	//Vector3D_st *collisions = new Vector3D_st[ MAX_COLLISIONS ];
 	std::vector<Vector3D_st> vec;
 	vec.resize( MAX_COLLISIONS );
 	auto collisions = vec.data();
@@ -534,14 +534,25 @@ auto LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 	}
 
 	SI32 collisioncount = 0;
-	SI32 dz = 0; // dz is needed later for collisions of the ray with floor tiles
-	if( sgn_x == 0 || distY > distX )
+	R32 z_slope_vs_y = 0.0f;
+	if( distY != 0 )
 	{
-		dz = static_cast<SI32>( floor( abs( lineofsight.dzInDirectionY() )));
+		z_slope_vs_y = static_cast<R32>( distZ ) / static_cast<R32>( distY );
+	}
+	R32 z_slope_vs_x = 0.0f;
+	if( distX != 0 )
+	{
+		z_slope_vs_x = static_cast<R32>( distZ ) / static_cast<R32>( distX );
+	}
+
+	SI32 dz = 0;
+	if( distX > distY )
+	{
+		dz = static_cast<SI32>( floor( abs( z_slope_vs_x )));
 	}
 	else
 	{
-		dz = static_cast<SI32>( floor( abs( lineofsight.dzInDirectionX() )));
+		dz = static_cast<SI32>( floor( abs( z_slope_vs_y )));
 	}
 
 	if( sgn_x == 0 && sgn_y == 0 && sgn_z != 0 ) // should fix shooting through floor issues
@@ -556,7 +567,7 @@ auto LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 	{
 		for( i = 1; i <= distY; ++i )
 		{
-			collisions[collisioncount] = Vector3D_st( startX, startY + ( sgn_y * i ), static_cast<SI08>( startZ + ( dz * static_cast<R32>( i ) * sgn_z )));
+			collisions[collisioncount] = Vector3D_st( startX, startY + ( sgn_y * i ), static_cast<SI08>( startZ + ( z_slope_vs_y * i )));
 			++collisioncount;
 		}
 	}
@@ -564,7 +575,7 @@ auto LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 	{
 		for( i = 1; i <= distX; ++i )
 		{
-			collisions[collisioncount] = Vector3D_st( startX + ( sgn_x * i ), startY, static_cast<SI08>( startZ + ( dz * static_cast<R32>( i ) * sgn_z )));
+			collisions[collisioncount] = Vector3D_st( startX + ( sgn_x * i ), startY, static_cast<SI08>( startZ + ( z_slope_vs_x * i )));
 			++collisioncount;
 		}
 	}
@@ -572,7 +583,7 @@ auto LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 	{
 		for( i = 1; i <= distX; ++i )
 		{
-			collisions[collisioncount] = Vector3D_st( startX + ( sgn_x * i ), startY + ( sgn_y * i ), static_cast<SI08>( startZ + ( dz * static_cast<R32>( i ) * sgn_z )));
+			collisions[collisioncount] = Vector3D_st( startX + ( sgn_x * i ), startY + ( sgn_y * i ), static_cast<SI08>( startZ + ( z_slope_vs_x * i )));
 			++collisioncount;
 		}
 	}
@@ -581,34 +592,24 @@ auto LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 		R32 steps = 0;
 		if( distX > distY )
 		{
-			steps = (R32)distX / (R32)distY;
-			if( steps == 0 )
+			for( i = 1; i <= distX; ++i )
 			{
-				steps = 1;
-			}
-			for( i = 1; i < distX; ++i )
-			{
-				collisions[collisioncount] = Vector3D_st( startX + ( sgn_x * i ), startY + ( sgn_y * static_cast<R32>( RoundNumber( i / steps ))), static_cast<SI08>( startZ + ( dz * static_cast<R32>( i ) * sgn_z )));
+				collisions[collisioncount] = Vector3D_st( startX + ( sgn_x * i ), startY + ( sgn_y * static_cast<R32>( round( static_cast<R32>( i ) * static_cast<R32>( distY ) / static_cast<R32>( distX )))), static_cast<SI08>( round( startZ + ( z_slope_vs_x * i ))));
 				++collisioncount;
 			}
 		}
 		else if( distY > distX )
 		{
-			steps = static_cast<R32>( distY ) / static_cast<R32>( distX );
-			if( steps == 0 )
+			for( i = 1; i <= distY; ++i )
 			{
-				steps = 1;
-			}
-			for( i = 1; i < distY; ++i )
-			{
-				collisions[collisioncount] = Vector3D_st( startX + ( sgn_x * static_cast<R32>( RoundNumber( i / steps ))), startY + (sgn_y * i ), static_cast<SI08>( startZ + (dz * static_cast<R32>( i ) * sgn_z )));
+				collisions[collisioncount] = Vector3D_st( startX + ( sgn_x * static_cast<R32>( round( static_cast<R32>( i ) * static_cast<R32>( distX ) / static_cast<R32>( distY )))), startY + ( sgn_y * i ), static_cast<SI08>( round( startZ + ( z_slope_vs_y * i ))));
 				++collisioncount;
 			}
 		}
 	}
 
 	////////////////////////////////////////////////////////
-	////////////////  This determines what to check for
+	////////////////  This determines which tile-flags to check for
 	UI08 checkthis[ITEM_TYPE_CHOICES];
 	size_t checkthistotal = 0;
 	UI08 itemtype = 1;
@@ -665,44 +666,61 @@ auto LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 		}
 	}
 
+	auto startMapTile = Map->SeekMap( startX, startY, worldNumber );
+	if( startMapTile.terrainInfo == nullptr )
+		return blocked;
+
+	const bool isStartingUnderground = ( startZ < startMapTile.altitude );
+	const SI08 terrainLeeway = 3;
 	for( i = 0; i < collisioncount; ++i )
 	{
 		Vector3D_st& checkLoc = collisions[i];
+
+		// Map/Terrain check
+		auto mapTile = Map->SeekMap( checkLoc.x, checkLoc.y, worldNumber );
+		if( mapTile.terrainInfo == nullptr )
+			return blocked;
+
+		const UI16 mapTileId = mapTile.tileId;
+
+		// debug
+		SI08 mapAltitude = mapTile.altitude;
+#if defined( UOX_DEBUG_MODE )
+		if( mChar != nullptr && mChar->IsGM() )
+		{
+			Console.Print( oldstrutil::format( "LoS Debug at (%u, %u): RayZ=%i, MapZ: %i\n", checkLoc.x, checkLoc.y, static_cast< int >( checkLoc.z ), static_cast< int >( mapAltitude )));
+		}
+#endif
+		if( mapTileId != 2 && mapTileId != 475 ) // NoDraw / Cave Entrance
+		{
+			// If ray's current height is lower than ground, LoS has gone underground; blocked!
+			if( !isStartingUnderground && checkLoc.z <= ( mapAltitude - terrainLeeway ))
+			{
+#if defined( UOX_DEBUG_MODE )
+				if( mChar != nullptr && mChar->IsGM() )
+				{
+					Console.Print( "Blocked by terrain\n" );
+				}
+				Effects->PlayMovingAnimation( mChar, checkLoc.x, checkLoc.y, checkLoc.z, 0x36f4, 3, 0, 1, 0x89d );
+#endif
+				return blocked;
+			}
+		}
+
 		auto artwork = Map->ArtAt( checkLoc.x, checkLoc.y, worldNumber );
-
-		// Texture mapping
-		if( checkLoc.x == destX && checkLoc.y == destY )
+		for( auto &tile : artwork )
 		{
-			// Don't overshoot. We don't care about height of tile BEHIND our target
-			if( MapTileBlocks( mSock, artwork.empty(), lineofsight, checkLoc.x, checkLoc.y, checkLoc.z, checkLoc.x, checkLoc.y, worldNumber, destZTop ))
-			{
-				//delete[] collisions;
-				return blocked;
-			}
-		}
-		else
-		{
-			// Check next tile along the LoS path
-			if( MapTileBlocks( mSock, artwork.empty(), lineofsight, checkLoc.x, checkLoc.y, checkLoc.z, checkLoc.x + sgn_x, checkLoc.y + sgn_y, worldNumber, destZTop ))
-			{
-				//delete[] collisions;
-				return blocked;
-			}
-		}
-
-		// Statics
-		for( auto &tile :artwork )
-		{
-			if(( checkLoc.z >= tile.altitude && checkLoc.z <= ( tile.altitude + tile.height() )) ||
-			   ( tile.height() <= 2 && std::abs( checkLoc.z - tile.altitude ) <= dz ))
+			// Does ray's Z intersect with static item's Z range?
+			if( checkLoc.z >= tile.altitude && checkLoc.z <= ( tile.altitude + tile.height() ))
 			{
 				losItemList.push_back( tile );
 			}
-
-			++itemCount;
-			if( itemCount >= LOSXYMAX )	// don't overflow
+			if( losItemList.size() >= LOSXYMAX )
 				break;
 		}
+
+		if( losItemList.size() >= LOSXYMAX )
+			break;
 	}
 
 	size_t j;
@@ -711,15 +729,15 @@ auto LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 	{
 		for( j = 0; j < checkthistotal; ++j )
 		{
-			//if( !mChar->IsGM() && CheckFlags( checkthis[j], tb, startZ, destZ, useSurfaceZ ))
 			if( CheckFlags( checkthis[j], tile, startZ, destZ, useSurfaceZ ))
 			{
-				//delete[] collisions;
 				return blocked;
 			}
 		}
 	}
-	//delete[] collisions;
+#if defined( UOX_DEBUG_MODE )
+	Effects->PlayMovingAnimation( mChar, destX, destY, destZ, 0x36f4, 3, 0, 0, 0x1D3 );
+#endif
 	return not_blocked;
 }
 

@@ -7,18 +7,65 @@
 #include "osunique.hpp"
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	BackupFile()
-//|	Date		-	11th April, 2002
+//|	Function	-	BackupEntireDirectory()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Makes a backup copy of a file in the shared directory.
-//|                  puts the copy in the backup directory
+//|	Purpose		-	Makes a backup copy of an entire directory, storing it in the backup directory
 //o------------------------------------------------------------------------------------------------o
-static void BackupFile( const std::string &filename, std::string backupDir )
+static void BackupEntireDirectory( const std::string &sourceDirPath, const std::string &backupDirPath )
 {
-	auto to = std::filesystem::path( backupDir );
-	to /= std::filesystem::path( filename );
-	auto from = std::filesystem::path( cwmWorldState->ServerData()->Directory( CSDDP_SHARED ));
-	std::filesystem::copy_file( from, to );
+	std::error_code ec;
+
+	auto sourcePath = std::filesystem::path( sourceDirPath );
+	auto backupPath = std::filesystem::path( backupDirPath );
+
+	if( std::filesystem::exists( sourcePath, ec ))
+	{
+		if( std::filesystem::is_directory( sourcePath, ec ))
+		{
+			auto finalDestPath = backupPath / sourcePath.parent_path().filename();
+
+			// Create subdirectory
+			if( !std::filesystem::create_directory( finalDestPath, ec ))
+			{
+				if( ec && ec != std::errc::file_exists )
+				{
+					Console.Error( oldstrutil::format( "Backup error creating destination subdirectory '%s'. Reason: %s (%d)", finalDestPath.string().c_str(), ec.message().c_str(), ec.value() ));
+				}
+			}
+
+			// Perform recursive copy
+			try
+			{
+				std::filesystem::copy( sourcePath, finalDestPath, std::filesystem::copy_options::recursive | std::filesystem::copy_options::overwrite_existing );
+			}
+			catch( const std::filesystem::filesystem_error &e )
+			{
+				Console.Error( oldstrutil::format( "Backup error copying '%s' to '%s'. Error: %s (code: %d)", sourcePath.string().c_str(), finalDestPath.string().c_str(), e.code().message().c_str(), e.code().value() ));
+			}
+		}
+		else
+		{
+			if( ec )
+			{
+				Console.Error( oldstrutil::format( "Backup error while performing type check for path ('%s'): %s.", sourcePath.string().c_str(), ec.message().c_str() ));
+			}
+			else
+			{
+				Console.Warning( oldstrutil::format( "Path ('%s') is not a directory, skipping.", sourcePath.string().c_str() ));
+			}			
+		}
+	}
+	else
+	{
+		if( ec )
+		{
+			Console.Error( oldstrutil::format( "Backup error while checking for existence of directory ('%s'): %s.", sourcePath.string().c_str(), ec.message().c_str() ));
+		}
+		else
+		{
+			Console.Warning( oldstrutil::format( "Directory ('%s') not found during backup, skipping.", sourcePath.string().c_str() ));
+		}
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -29,7 +76,6 @@ static void BackupFile( const std::string &filename, std::string backupDir )
 //o------------------------------------------------------------------------------------------------o
 void FileArchive( void )
 {
-	Console << "Beginning backup... ";
 	auto mytime = std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() );
 	struct tm ttemp;
 	char tbuffer[100];
@@ -38,38 +84,32 @@ void FileArchive( void )
 
 	std::string backupRoot	= cwmWorldState->ServerData()->Directory( CSDDP_BACKUP );
 	backupRoot				+= timenow;
-	auto makeResult = std::filesystem::create_directory( std::filesystem::path( backupRoot ));
 
-	if( makeResult  )
+	std::error_code ec;
+	auto makeResult = std::filesystem::create_directories( std::filesystem::path( backupRoot ), ec );
+
+	if( makeResult )
 	{
-		Console << "NOTICE: Accounts not backed up. Archiving will change. Sorry for the trouble." << myendl;
-
-		BackupFile( "house.wsc", backupRoot );
-
-		// effect backups
-		BackupFile( "effects.wsc", backupRoot );
-
-		const SI16 AreaX = UpperX / 8;	// we're storing 8x8 grid arrays together
-		const SI16 AreaY = UpperY / 8;
-
-		auto backupPath = oldstrutil::format( "%s%s/", cwmWorldState->ServerData()->Directory( CSDDP_SHARED ).c_str(), timenow.c_str() );
-
-		for( SI16 counter1 = 0; counter1 < AreaX; ++counter1 )	// move left->right
-		{
-			for( SI16 counter2 = 0; counter2 < AreaY; ++counter2 )	// move up->down
-			{
-				auto filename1 = oldstrutil::format( "%i.%i.wsc", counter1, counter2 );
-				BackupFile( filename1, backupRoot );
-			}
-		}
-		BackupFile( "overflow.wsc", backupRoot );
-		BackupFile( "jails.wsc", backupRoot );
-		BackupFile( "guilds.wsc", backupRoot );
-		BackupFile( "regions.wsc", backupRoot );
+		Console << "Backing up world data, accounts, books and message board posts...";
+		auto sharedPath = cwmWorldState->ServerData()->Directory( CSDDP_SHARED );
+		BackupEntireDirectory( sharedPath, backupRoot );
+		auto booksPath = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS );
+		BackupEntireDirectory( booksPath, backupRoot );
+		auto msgBoardPath = cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD );
+		BackupEntireDirectory( msgBoardPath, backupRoot );
+		auto accountsPath = cwmWorldState->ServerData()->Directory( CSDDP_ACCOUNTS );
+		BackupEntireDirectory( accountsPath, backupRoot );
+		Console << "Finished backup" << myendl;
 	}
 	else
 	{
-		Console << "Cannot create backup directory, please check available disk space" << myendl;
+		if( ec )
+		{
+			Console.Error( oldstrutil::format( "Unable to create backup directory at '%s'. Reason: %s", backupRoot.c_str(), ec.message().c_str() ));
+		}
+		else
+		{
+			Console << "Cannot create backup directory, please check available disk space" << myendl;
+		}
 	}
-	Console << "Finished backup" << myendl;
 }

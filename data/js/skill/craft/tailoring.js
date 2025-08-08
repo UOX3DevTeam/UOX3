@@ -14,7 +14,7 @@ const craftGumpID = 4027;
 
 const myPage = [
 	// Page 1 - Hats
-	[11415, 11416, 11417, 11418, 11419, 11420, 11421, 11422, 11423, 11424, 11425],
+	[11415, 11416, 11417, 11418, 11419, 11420, 11421, 11422, 11423, 11424, 11425, 11470],
 
 	// Page 2 - Shirts and Pants
 	[11426, 11427, 11428, 11429, 11430, 11431, 11432, 11433, 11434, 11435, 11436, 11437, 11438, 11439],
@@ -202,6 +202,8 @@ function onGumpPress( pSock, pButton, gumpData )
 			makeID = 140; timerID = 1; break;
 		case 110: // jester hat
 			makeID = 141; timerID = 1; break;
+		case 111: // tall straw hat
+			makeID = 135; timerID = 1; break;
 		case 200: // doublet
 			makeID = 142; timerID = 2; break;
 		case 201: // shirt
@@ -312,6 +314,8 @@ function onGumpPress( pSock, pButton, gumpData )
 			itemDetailsID = 140; break;
 		case 2110: // jester hat
 			itemDetailsID = 141; break;
+		case 2111: // tall straw hat
+			itemDetailsID = 186; break;
 		case 2200: // doublet
 			itemDetailsID = 142; break;
 		case 2201: // shirt
@@ -578,10 +582,25 @@ function onCallback2( pSock, ourObj )
 		{
 			// Calculate amount of resources returned based on player's mining skill, item's wear and tear,
 			// and amount of resources that went into making the item in the first place
-			var itemHitpointsPercentage = Math.floor(( ourObj.health * 100 ) / ourObj.maxhp );
+			if( ourObj.health >= 1 || ourObj.usesLeft >= 1 )
+			{
+				var healthPercentage = 0;
+				if( ourObj.health >= 1 )
+				{
+					healthPercentage = Math.floor( ( ourObj.health * 100 ) / ourObj.maxhp );
+				}
 
-			// Reduce amount of resources returned based on state of object's wear and tear
-			resourceAmount = Math.floor(( maxResourceAmount * itemHitpointsPercentage ) / 100 );
+				var usesPercentage = 0;
+				if( ourObj.usesLeft >= 1 )
+				{
+					usesPercentage = Math.floor( ( ourObj.usesLeft * 100 ) / ourObj.maxUses );
+				}
+
+				var itemPercentage = usesPercentage > 0 ? Math.min( healthPercentage, usesPercentage ) : healthPercentage;
+
+				// Reduce amount of resources returned based on state of object's wear and tear
+				resourceAmount = Math.floor( ( maxResourceAmount * itemPercentage ) / 100 );
+			}
 
 			// Halve the amount of resources returned
 			resourceAmount = Math.max( Math.floor( resourceAmount / 2 ), 1 );
@@ -610,7 +629,7 @@ function onCallback2( pSock, ourObj )
 	ourObj.Delete();
 
 	// Run a generic skill check to give player a chance to increase their tailoring skill
-	mChar.CheckSkill( 34, 0, 1000 );
+	mChar.CheckSkill( 34, 0, mChar.skillCaps.tailoring );
 
 	// Determine the actual resource item to add to player's backpack
 	// We'll default to one specific resource per material type

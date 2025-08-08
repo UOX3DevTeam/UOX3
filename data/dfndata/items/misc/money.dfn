@@ -80,3 +80,16 @@ name=copper coin
 id=0x0eec
 amount=20
 }
+
+[bankcheck]
+{
+get=base_item
+name=a bank check
+id=0x14F0
+color=0x34
+weight=100
+pileable=0
+decay=1
+newbie=1
+script=5015
+}

@@ -2,11 +2,11 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "kill", 2, true );
-	RegisterCommand( "resurrect", 2, true );
-	RegisterCommand( "res", 2, true );
-	RegisterCommand( "shavehair", 2, true );
-	RegisterCommand( "shavebeard", 2, true );
+	RegisterCommand( "kill", 8, true );
+	RegisterCommand( "resurrect", 8, true );
+	RegisterCommand( "res", 8, true );
+	RegisterCommand( "shavehair", 8, true );
+	RegisterCommand( "shavebeard", 8, true );
 }
 
 function command_KILL( socket, cmdString )
@@ -75,6 +75,18 @@ function onCallback0( socket, ourObj )
 			{
 				ourLayer.Delete();
 			}
+
+			// Reset the hair/beard style and colour properties if those were removed
+			if( layer == 0x0b  ) // hair
+			{
+				ourObj.hairStyle = 0;
+				ourObj.hairColour = 0;
+			}
+			else if( layer == 0x10 ) // beard
+			{
+				ourObj.beardStyle = 0;
+				ourObj.beardColour = 0;
+			}
 		}
 	}
 }
@@ -97,3 +109,5 @@ function onCallback1( socket, ourObj )
 		ourObj.Resurrect();
 	}
 }
+
+function _restorecontext_() {}

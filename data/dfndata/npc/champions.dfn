@@ -26,6 +26,7 @@ FX2=10
 POISONSTRENGTH=4
 RACE=18
 FLAG=NEUTRAL
+ORIGIN=ml
 }
 
 [abyssmalhorror]
@@ -57,6 +58,7 @@ FX2=10
 POISONSTRENGTH=4
 RACE=18
 FLAG=NEUTRAL
+ORIGIN=aos
 }
 
 [bonedaemon]
@@ -88,6 +90,7 @@ FX2=10
 RACE=18
 RUNS
 FLAG=NEUTRAL
+ORIGIN=aos
 }
 
 [barracoon]
@@ -128,6 +131,7 @@ NPCWANDER=4
 FX2=10
 RUNS
 FLAG=NEUTRAL
+ORIGIN=td
 }
 
 [darkfather]
@@ -160,6 +164,7 @@ NPCWANDER=4
 FX2=10
 RUNS
 FLAG=NEUTRAL
+ORIGIN=aos
 }
 
 [darknightcreeper]
@@ -193,6 +198,7 @@ NPCWANDER=4
 FX2=10
 RUNS
 FLAG=NEUTRAL
+ORIGIN=aos
 }
 
 [dreadhorn]
@@ -217,6 +223,7 @@ NPCAI=2
 NPCWANDER=4
 FX2=10
 FLAG=NEUTRAL
+ORIGIN=ml
 }
 
 [fleshrenderer]
@@ -242,6 +249,7 @@ NPCWANDER=4
 FX2=10
 RUNS
 FLAG=NEUTRAL
+ORIGIN=aos
 }
 
 [impaler]
@@ -271,6 +279,7 @@ NPCWANDER=4
 FX2=10
 RUNS
 FLAG=NEUTRAL
+ORIGIN=aos
 }
 
 [ladymelisande]
@@ -295,6 +304,7 @@ NPCAI=2
 NPCWANDER=4
 FX2=10
 FLAG=NEUTRAL
+ORIGIN=ml
 }
 
 [lordoaks]
@@ -326,6 +336,7 @@ NPCWANDER=4
 FX2=10
 RUNS
 FLAG=NEUTRAL
+ORIGIN=td
 }
 
 [mephitis]
@@ -352,6 +363,7 @@ NPCWANDER=4
 FX2=10
 RUNS
 FLAG=NEUTRAL
+ORIGIN=td
 }
 
 [interredgrizzle]
@@ -380,6 +392,7 @@ NPCAI=2
 NPCWANDER=4
 FX2=10
 FLAG=NEUTRAL
+ORIGIN=ml
 }
 
 [neira]
@@ -417,6 +430,7 @@ NPCWANDER=4
 FX2=10
 RUNS
 FLAG=NEUTRAL
+ORIGIN=aos
 }
 
 [rikktor]
@@ -443,6 +457,7 @@ NPCWANDER=4
 FX2=10
 RUNS
 FLAG=NEUTRAL
+ORIGIN=td
 }
 
 [semidar]
@@ -473,6 +488,7 @@ NPCWANDER=4
 FX2=10
 RUNS
 FLAG=NEUTRAL
+ORIGIN=td
 }
 
 [serado]
@@ -499,6 +515,7 @@ NPCAI=2
 NPCWANDER=4
 FX2=10
 FLAG=NEUTRAL
+ORIGIN=se
 }
 
 [shadowknight]
@@ -531,6 +548,7 @@ NPCWANDER=4
 FX2=10
 RUNS
 FLAG=NEUTRAL
+ORIGIN=aos
 }
 
 [shimmeringeffusion]
@@ -561,6 +579,7 @@ NPCWANDER=4
 FX2=10
 RUNS
 FLAG=NEUTRAL
+ORIGIN=ml
 }
 
 [silvani]
@@ -591,6 +610,7 @@ NPCWANDER=4
 FX2=10
 RUNS
 FLAG=NEUTRAL
+ORIGIN=td
 }
 
 [theharrower]
@@ -620,6 +640,7 @@ NPCWANDER=4
 FX2=10
 RUNS
 FLAG=NEUTRAL
+ORIGIN=aos
 }
 
 [trueharrower]
@@ -650,6 +671,7 @@ NPCWANDER=4
 FX2=10
 RUNS
 FLAG=NEUTRAL
+ORIGIN=aos
 }
 
 [travesty]
@@ -680,4 +702,5 @@ NPCWANDER=4
 FX2=10
 RUNS
 FLAG=NEUTRAL
+ORIGI=ml
 }

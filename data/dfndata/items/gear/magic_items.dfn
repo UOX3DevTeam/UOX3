@@ -238,6 +238,16 @@ morey=2
 script=3300
 }
 
+// Fireworks Wand
+[fireworks_wand]
+{
+get=base_item
+name=fireworks wand
+id=0x0df2
+type=118
+morex=50
+}
+
 [glacialstaff]
 {
 get=0x0df1

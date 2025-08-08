@@ -8,6 +8,19 @@ const coOwnHousesOnSameAccount = GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" );
 const protectPrivateHouses = GetServerSetting( "PROTECTPRIVATEHOUSES" );
 const visitorPurgeTimer = 86400; // visitor list for house purged every 24 hours
 
+// Fetch INI settings for access to safe logout in house, which if enabled does two things:
+// 1. Allows player to safely and instantly log out inside the house
+// 2. Prevents player from being automatically booted from the house when they logout
+const safeCoOwnerLogout = GetServerSetting( "SafeCoOwnerLogout" );
+const safeFriendLogout = GetServerSetting( "SafeFriendLogout" );
+const safeGuestLogout = GetServerSetting( "SafeGuestLogout" );
+
+// Also fetch INI settings for keyless access to house, to help determine who needs to be automatically
+// booted from house after safely logging out (because they might not be able to open the door!)
+const keylessGuestAccess = GetServerSetting( "KeylessGuestAccess" );
+const keylessFriendAccess = GetServerSetting( "KeylessFriendAccess" );
+const keylessCoOwnerAccess = GetServerSetting( "KeylessCoOwnerAccess" );
+
 function onHouseCommand( pSocket, iMulti, cmdID )
 {
 	if( ValidateObject( iMulti ) && !iMulti.IsBoat() && iMulti.IsInMulti( pSocket.currentChar ))
@@ -80,11 +93,17 @@ function onEntrance( iMulti, charEntering, objType )
 		}
 
 		// Prevent unauthorized visitors from entering private buildings
-		if( !ValidateObject( charEntering.owner ) || !ValidateObject( iMulti.owner ) || ( ValidateObject( charEntering.owner ) && charEntering.owner != iMulti.owner ))
+		var charToCheck = charEntering;
+		if( ValidateObject( charEntering.owner ))
+		{
+			// If the character has an owner, check the owner's access instead
+			charToCheck = charEntering.owner;
+		}
+		if( !ValidateObject( iMulti.owner ) || ( charToCheck != iMulti.owner ))
 		{
 			if( !iMulti.isPublic && protectPrivateHouses
-				&& ( !iMulti.IsOnOwnerList( charEntering ) && !iMulti.IsOnFriendList( charEntering ) && !iMulti.IsOnGuestList( charEntering )
-					&& ( !coOwnHousesOnSameAccount || !ValidateObject( iMulti.owner ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum != charEntering.accountNum ))))
+				&& ( !iMulti.IsOnOwnerList( charToCheck ) && !iMulti.IsOnFriendList( charToCheck ) && !iMulti.IsOnGuestList( charToCheck )
+					&& ( !coOwnHousesOnSameAccount || !ValidateObject( iMulti.owner ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum != charToCheck.accountNum ))))
 			{
 				// Prevent unauthorized visitors from entering private buildings
 				PreventMultiAccess( iMulti, charEntering, 1, 1817 ); // This is a private home
@@ -93,16 +112,16 @@ function onEntrance( iMulti, charEntering, objType )
 		}
 
 		// Update visitor count for players entering a public building (don't count owners, or friends of owners)
-		if( iMulti.isPublic && !iMulti.IsOnOwnerList( charEntering ) && !iMulti.IsOnFriendList( charEntering ))
+		if( iMulti.isPublic && !charEntering.npc && !iMulti.IsOnOwnerList( charEntering ) && !iMulti.IsOnFriendList( charEntering ))
 		{
 			// Has more than 24 hours passed since the visitorTracker was last cleared? If so, clear it now
-			var lastPurgeTime = iMulti.GetTag( "lastPurge" );
+			var lastPurgeTime = parseInt( iMulti.GetTag( "lastPurge" ));
 			if( lastPurgeTime != 0 )
 			{
-				if(( GetCurrentClock() - parseInt( lastPurgeTime )) / 1000 > visitorPurgeTimer )
+				if(( Date.now() - lastPurgeTime ) / 1000 > visitorPurgeTimer )
 				{
 					PurgeVisitTracker( iMulti );
-					iMulti.SetTag( "lastPurge", GetCurrentClock().toString() );
+					iMulti.SetTag( "lastPurge", Date.now().toString() );
 				}
 
 				// Count visitor if they haven't entered the building for the past 24 hours
@@ -116,7 +135,7 @@ function onEntrance( iMulti, charEntering, objType )
 			else
 			{
 				// Tag didn't exist! This is the first visit, ever
-				iMulti.SetTag( "lastPurge", GetCurrentClock().toString() );
+				iMulti.SetTag( "lastPurge", Date.now().toString() );
 
 				// Assume no file exists already, and just add visitor directly!
 				if( AddVisitor( iMulti, charEntering ))
@@ -134,6 +153,48 @@ function onEntrance( iMulti, charEntering, objType )
 	}
 
 	return true;
+}
+
+function onMultiLogout( iMulti, cPlayer )
+{
+	// Always validate owner logging out of their own house
+	// Returning true makes core UOX3 go through with the "safe/instant logout" code portion
+	if( ValidateObject( iMulti.owner ))
+	{
+		if( iMulti.owner == cPlayer || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == cPlayer.accountNum ))
+		{
+			return true;
+		}
+	}
+
+	// Allow co-owners, friends and/or guests to safely logout in the house if enabled
+	if(( safeCoOwnerLogout && iMulti.IsOnOwnerList( cPlayer ))
+		|| ( safeFriendLogout && iMulti.IsOnFriendList( cPlayer ))
+		|| ( safeGuestLogout && iMulti.IsOnGuestList( cPlayer ) ))
+	{
+		if(( !keylessCoOwnerAccess && iMulti.IsOnOwnerList( cPlayer ))
+			|| ( !keylessFriendAccess && iMulti.IsOnFriendList( cPlayer ))
+			|| ( !keylessGuestAccess && iMulti.IsOnGuestList( cPlayer )))
+		{
+			// Look for key in their backpack. If they don't have one, boot them out
+			var foundKey = false;
+			var iPack = cPlayer.pack;
+			if( iPack != null )
+			{
+				foundKey = TriggerEvent( 4500, "FindKeyInPack", cPlayer, iPack, iMulti );
+			}
+
+			if( !foundKey )
+			{
+				PreventMultiAccess( iMulti, cPlayer, 2, 0 );
+			}
+		}
+		return true;
+	}
+
+	// Default to booting player from house on logout, and disallowing safe logout
+	PreventMultiAccess( iMulti, cPlayer, 2, 0 );
+	return false;
 }
 
 function PreventMultiAccess( iMulti, charEntering, ejectReason, dictEntry )
@@ -176,6 +237,10 @@ function PreventMultiAccess( iMulti, charEntering, ejectReason, dictEntry )
 		else if( ejectReason == 1 )
 		{
 			charEntering.SysMessage( GetDictionaryEntry( dictEntry, charEntering.socket.language )); // This is a private home
+		}
+		else if( ejectReason == 2 )
+		{
+			// Character logged out and got ejected, no message needed
 		}
 	}
 }
@@ -250,7 +315,7 @@ function AddVisitor( iMulti, charEntering )
 	if( mFile != null )
 	{
 		// Append a new line to the file with the visitor's serial and timestamp
-		var visitTime = GetCurrentClock();
+		var visitTime = Date.now();
 		var newLine = ( charEntering.serial ).toString() + "," + visitTime.toString();
 		mFile.Write( newLine + "\n" );
 		mFile.Close()

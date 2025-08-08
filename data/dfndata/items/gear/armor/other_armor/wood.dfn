@@ -2,9 +2,11 @@
 // Woodland Arms - N/S
 [0x2b6c]
 {
-getpub15=0x2b6c_pub15
+gett2a=0x2b6c_t2a
+getlbr=0x2b6c_lbr
 getaos=0x2b6c_aos
 gettol=0x2b6c_tol
+sectionid=0x2b6c
 }
 
 // Woodland Arms - E/W
@@ -24,9 +26,11 @@ get=0x2b6c 0x3163
 // Woodland Chest - E/W
 [0x2b67]
 {
-getpub15=0x2b67_pub15
+gett2a=0x2b67_t2a
+getlbr=0x2b67_lbr
 getaos=0x2b67_aos
 gettol=0x2b67_tol
+sectionid=0x2b67
 }
 
 // Woodland Chest - N/S
@@ -46,9 +50,11 @@ get=0x2b67 0x315e
 // Woodland Armor (Female) - E/W
 [0x2b6d]
 {
-getpub15=0x2b6d_pub15
+gett2a=0x2b6d_t2a
+getlbr=0x2b6d_lbr
 getaos=0x2b6d_aos
 gettol=0x2b6d_tol
+sectionid=0x2b6d
 }
 
 // Woodland Armor (Female) - N/S
@@ -59,7 +65,7 @@ id=0x3164
 }
 
 // Woodland Armor (Female) - Alias
-[woodlandchest]
+[woodlandarmor]
 {
 get=0x2b6d 0x3164
 }
@@ -68,9 +74,11 @@ get=0x2b6d 0x3164
 // Woodland Gauntlet - E/W
 [0x2b6a]
 {
-getpub15=0x2b6a_pub15
+gett2a=0x2b6a_t2a
+getlbr=0x2b6a_lbr
 getaos=0x2b6a_aos
 gettol=0x2b6a_tol
+sectionid=0x2b6a
 }
 
 // Woodland Gauntlet - N/S
@@ -90,9 +98,11 @@ get=0x2b6a 0x3161
 // Woodland Leggings - E/W
 [0x2b6b]
 {
-getpub15=0x2b6b_pub15
+gett2a=0x2b6b_t2a
+getlbr=0x2b6b_lbr
 getaos=0x2b6b_aos
 gettol=0x2b6b_tol
+sectionid=0x2b6b
 }
 
 // Woodland Leggings - N/S
@@ -113,9 +123,11 @@ get=0x2b6b 0x3162
 // Woodland Gorget - E/W
 [0x2b69]
 {
-getpub15=0x2b69_pub15
+gett2a=0x2b69_t2a
+getlbr=0x2b69_lbr
 getaos=0x2b69_aos
 gettol=0x2b69_tol
+sectionid=0x2b69
 }
 
 // Woodland Gorget - N/S
@@ -136,9 +148,11 @@ get=0x2b69 0x3160
 // Raven Helm - N/S
 [0x2b71]
 {
-getpub15=0x2b71_pub15
+gett2a=0x2b71_t2a
+getlbr=0x2b71_lbr
 getaos=0x2b71_aos
 gettol=0x2b71_tol
+sectionid=0x2b71
 }
 
 // Raven Helm - E/W
@@ -158,9 +172,11 @@ get=0x2b71 0x3168
 // Vulture Helm - N/S
 [0x2b72]
 {
-getpub15=0x2b72_pub15
+gett2a=0x2b72_t2a
+getlbr=0x2b72_lbr
 getaos=0x2b72_aos
 gettol=0x2b72_tol
+sectionid=0x2b72
 }
 
 // Vulture Helm - E/W
@@ -180,9 +196,11 @@ get=0x2b72 0x3169
 // Winged Helm - N/S
 [0x2b73]
 {
-getpub15=0x2b73_pub15
+gett2a=0x2b73_t2a
+getlbr=0x2b73_lbr
 getaos=0x2b73_aos
 gettol=0x2b73_tol
+sectionid=0x2b73
 }
 
 // Winged Helm - E/W

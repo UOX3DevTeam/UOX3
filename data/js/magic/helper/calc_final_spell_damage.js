@@ -9,7 +9,7 @@ function CalcFinalSpellDamage( caster, target, baseDmg, spellResisted )
 	}
 
 	var casterEval = caster.skills.evaluatingintel;
-	var targetResist = target.skills.magicresistance;
+	var targetResist = target.skills.magicresistance + ( target.race.magicResistance * 10 );
 
 	// Add damage bonus/penalty based on caster's eval int vs target's resist
 	if( targetResist > casterEval )

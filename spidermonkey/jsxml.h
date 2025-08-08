@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
  *
  * ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -39,8 +39,9 @@
 #ifndef jsxml_h___
 #define jsxml_h___
 
-#include "jsstddef.h"
 #include "jspubtd.h"
+#include "jsobj.h"
+#include "jscell.h"
 
 extern const char js_AnyName_str[];
 extern const char js_AttributeName_str[];
@@ -52,81 +53,73 @@ extern const char js_gt_entity_str[];
 extern const char js_lt_entity_str[];
 extern const char js_quot_entity_str[];
 
-struct JSXMLNamespace {
-    JSObject            *object;
-    JSString            *prefix;
-    JSString            *uri;
-    JSBool              declared;       /* true if declared in its XML tag */
-};
-
-extern JSXMLNamespace *
-js_NewXMLNamespace(JSContext *cx, JSString *prefix, JSString *uri,
-                   JSBool declared);
-
-extern void
-js_MarkXMLNamespace(JSContext *cx, JSXMLNamespace *ns);
-
-extern void
-js_FinalizeXMLNamespace(JSContext *cx, JSXMLNamespace *ns);
-
-extern JSObject *
-js_NewXMLNamespaceObject(JSContext *cx, JSString *prefix, JSString *uri,
-                         JSBool declared);
-
-extern JSObject *
-js_GetXMLNamespaceObject(JSContext *cx, JSXMLNamespace *ns);
-
-struct JSXMLQName {
-    JSObject            *object;
-    JSString            *uri;
-    JSString            *prefix;
-    JSString            *localName;
-};
-
-extern JSXMLQName *
-js_NewXMLQName(JSContext *cx, JSString *uri, JSString *prefix,
-               JSString *localName);
-
-extern void
-js_MarkXMLQName(JSContext *cx, JSXMLQName *qn);
-
-extern void
-js_FinalizeXMLQName(JSContext *cx, JSXMLQName *qn);
-
-extern JSObject *
-js_NewXMLQNameObject(JSContext *cx, JSString *uri, JSString *prefix,
-                     JSString *localName);
-
-extern JSObject *
-js_GetXMLQNameObject(JSContext *cx, JSXMLQName *qn);
-
-extern JSObject *
-js_GetAttributeNameObject(JSContext *cx, JSXMLQName *qn);
-
-extern JSObject *
-js_ConstructXMLQNameObject(JSContext *cx, jsval nsval, jsval lnval);
-
 typedef JSBool
-(* JS_DLL_CALLBACK JSIdentityOp)(const void *a, const void *b);
+(* JSIdentityOp)(const void *a, const void *b);
 
 struct JSXMLArray {
     uint32              length;
     uint32              capacity;
     void                **vector;
     JSXMLArrayCursor    *cursors;
+
+    void init() {
+        length = capacity = 0;
+        vector = NULL;
+        cursors = NULL;
+    }
+
+    void finish(JSContext *cx);
+
+    bool setCapacity(JSContext *cx, uint32 capacity);
+    void trim();
+};
+
+struct JSXMLArrayCursor
+{
+    JSXMLArray       *array;
+    uint32           index;
+    JSXMLArrayCursor *next;
+    JSXMLArrayCursor **prevp;
+    void             *root;
+
+    JSXMLArrayCursor(JSXMLArray *array)
+      : array(array), index(0), next(array->cursors), prevp(&array->cursors),
+        root(NULL)
+    {
+        if (next)
+            next->prevp = &next;
+        array->cursors = this;
+    }
+
+    ~JSXMLArrayCursor() { disconnect(); }
+
+    void disconnect() {
+        if (!array)
+            return;
+        if (next)
+            next->prevp = prevp;
+        *prevp = next;
+        array = NULL;
+    }
+
+    void *getNext() {
+        if (!array || index >= array->length)
+            return NULL;
+        return root = array->vector[index++];
+    }
+
+    void *getCurrent() {
+        if (!array || index >= array->length)
+            return NULL;
+        return root = array->vector[index];
+    }
+
+    void trace(JSTracer *trc);
 };
 
 #define JSXML_PRESET_CAPACITY   JS_BIT(31)
 #define JSXML_CAPACITY_MASK     JS_BITMASK(31)
 #define JSXML_CAPACITY(array)   ((array)->capacity & JSXML_CAPACITY_MASK)
-
-struct JSXMLArrayCursor {
-    JSXMLArray          *array;
-    uint32              index;
-    JSXMLArrayCursor    *next;
-    JSXMLArrayCursor    **prevp;
-    void                *root;
-};
 
 /*
  * NB: don't reorder this enum without changing all array initializers that
@@ -152,33 +145,17 @@ typedef enum JSXMLClass {
 #include "jsclist.h"
 #endif
 
-struct JSXML {
-#ifdef DEBUG_notme
-    JSCList             links;
-    uint32              serial;
-#endif
-    JSObject            *object;
-    void                *domnode;       /* DOM node if mapped info item */
-    JSXML               *parent;
-    JSXMLQName          *name;
-    uint16              xml_class;      /* discriminates u, below */
-    uint16              xml_flags;      /* flags, see below */
-    union {
-        struct JSXMLListVar {
-            JSXMLArray  kids;           /* NB: must come first */
-            JSXML       *target;
-            JSXMLQName  *targetprop;
-        } list;
-        struct JSXMLVar {
-            JSXMLArray  kids;           /* NB: must come first */
-            JSXMLArray  namespaces;
-            JSXMLArray  attrs;
-        } elem;
-        JSString        *value;
-    } u;
+typedef struct JSXMLListVar {
+    JSXMLArray          kids;           /* NB: must come first */
+    JSXML               *target;
+    JSObject            *targetprop;
+} JSXMLListVar;
 
-    /* Don't add anything after u -- see js_NewXML for why. */
-};
+typedef struct JSXMLElemVar {
+    JSXMLArray          kids;           /* NB: must come first */
+    JSXMLArray          namespaces;
+    JSXMLArray          attrs;
+} JSXMLElemVar;
 
 /* union member shorthands */
 #define xml_kids        u.list.kids
@@ -188,9 +165,6 @@ struct JSXML {
 #define xml_attrs       u.elem.attrs
 #define xml_value       u.value
 
-/* xml_flags values */
-#define XMLF_WHITESPACE_TEXT    0x1
-
 /* xml_class-testing macros */
 #define JSXML_HAS_KIDS(xml)     JSXML_CLASS_HAS_KIDS((xml)->xml_class)
 #define JSXML_HAS_VALUE(xml)    JSXML_CLASS_HAS_VALUE((xml)->xml_class)
@@ -199,17 +173,45 @@ struct JSXML {
                                  ? (xml)->xml_kids.length                     \
                                  : 0)
 
+struct JSXML : js::gc::Cell {
+#ifdef DEBUG_notme
+    JSCList             links;
+    uint32              serial;
+#endif
+    JSObject            *object;
+    void                *domnode;       /* DOM node if mapped info item */
+    JSXML               *parent;
+    JSObject            *name;
+    uint32              xml_class;      /* discriminates u, below */
+    uint32              xml_flags;      /* flags, see below */
+    union {
+        JSXMLListVar    list;
+        JSXMLElemVar    elem;
+        JSString        *value;
+    } u;
+    
+    void finalize(JSContext *cx) {
+        if (JSXML_HAS_KIDS(this)) {
+            xml_kids.finish(cx);
+            if (xml_class == JSXML_CLASS_ELEMENT) {
+                xml_namespaces.finish(cx);
+                xml_attrs.finish(cx);
+            }
+        }
+#ifdef DEBUG_notme
+        JS_REMOVE_LINK(&links);
+#endif
+    }
+};
+
+/* xml_flags values */
+#define XMLF_WHITESPACE_TEXT    0x1
+
 extern JSXML *
 js_NewXML(JSContext *cx, JSXMLClass xml_class);
 
 extern void
-js_MarkXML(JSContext *cx, JSXML *xml);
-
-extern void
-js_FinalizeXML(JSContext *cx, JSXML *xml);
-
-extern JSObject *
-js_ParseNodeToXMLObject(JSContext *cx, JSParseNode *pn);
+js_TraceXML(JSTracer *trc, JSXML *xml);
 
 extern JSObject *
 js_NewXMLObject(JSContext *cx, JSXMLClass xml_class);
@@ -217,20 +219,53 @@ js_NewXMLObject(JSContext *cx, JSXMLClass xml_class);
 extern JSObject *
 js_GetXMLObject(JSContext *cx, JSXML *xml);
 
-extern JS_FRIEND_DATA(JSXMLObjectOps)   js_XMLObjectOps;
-extern JS_FRIEND_DATA(JSClass)          js_XMLClass;
-extern JS_FRIEND_DATA(JSExtendedClass)  js_NamespaceClass;
-extern JS_FRIEND_DATA(JSExtendedClass)  js_QNameClass;
-extern JS_FRIEND_DATA(JSClass)          js_AttributeNameClass;
-extern JS_FRIEND_DATA(JSClass)          js_AnyNameClass;
+extern JS_FRIEND_DATA(js::Class) js_XMLClass;
+extern JS_FRIEND_DATA(js::Class) js_NamespaceClass;
+extern JS_FRIEND_DATA(js::Class) js_QNameClass;
+extern JS_FRIEND_DATA(js::Class) js_AttributeNameClass;
+extern JS_FRIEND_DATA(js::Class) js_AnyNameClass;
+extern js::Class                 js_XMLFilterClass;
 
 /*
- * Macros to test whether an object or a value is of type "xml" (per typeof).
- * NB: jsapi.h must be included before any call to VALUE_IS_XML.
+ * Methods to test whether an object or a value is of type "xml" (per typeof).
  */
-#define OBJECT_IS_XML(cx,obj)   ((obj)->map->ops == &js_XMLObjectOps.base)
-#define VALUE_IS_XML(cx,v)      (!JSVAL_IS_PRIMITIVE(v) &&                    \
-                                 OBJECT_IS_XML(cx, JSVAL_TO_OBJECT(v)))
+inline bool
+JSObject::isXML() const
+{
+    return getClass() == &js_XMLClass;
+}
+
+inline bool
+JSObject::isXMLId() const
+{
+    js::Class *clasp = getClass();
+    return clasp == &js_QNameClass ||
+           clasp == &js_AttributeNameClass ||
+           clasp == &js_AnyNameClass;
+}
+
+#define VALUE_IS_XML(v)      (!JSVAL_IS_PRIMITIVE(v) && JSVAL_TO_OBJECT(v)->isXML())
+
+inline bool
+JSObject::isNamespace() const
+{
+    return getClass() == &js_NamespaceClass;
+}
+
+inline bool
+JSObject::isQName() const
+{
+    js::Class* clasp = getClass();
+    return clasp == &js_QNameClass ||
+           clasp == &js_AttributeNameClass ||
+           clasp == &js_AnyNameClass;
+}
+
+static inline bool
+IsXML(const js::Value &v)
+{
+    return v.isObject() && v.toObject().isXML();
+}
 
 extern JSObject *
 js_InitNamespaceClass(JSContext *cx, JSObject *obj);
@@ -239,25 +274,26 @@ extern JSObject *
 js_InitQNameClass(JSContext *cx, JSObject *obj);
 
 extern JSObject *
-js_InitAttributeNameClass(JSContext *cx, JSObject *obj);
-
-extern JSObject *
-js_InitAnyNameClass(JSContext *cx, JSObject *obj);
-
-extern JSObject *
 js_InitXMLClass(JSContext *cx, JSObject *obj);
 
 extern JSObject *
 js_InitXMLClasses(JSContext *cx, JSObject *obj);
 
 extern JSBool
-js_GetFunctionNamespace(JSContext *cx, jsval *vp);
+js_GetFunctionNamespace(JSContext *cx, js::Value *vp);
+
+/*
+ * If obj is QName corresponding to function::name, set *funidp to name's id,
+ * otherwise set *funidp to void.
+ */
+JSBool
+js_IsFunctionQName(JSContext *cx, JSObject *obj, jsid *funidp);
 
 extern JSBool
 js_GetDefaultXMLNamespace(JSContext *cx, jsval *vp);
 
 extern JSBool
-js_SetDefaultXMLNamespace(JSContext *cx, jsval v);
+js_SetDefaultXMLNamespace(JSContext *cx, const js::Value &v);
 
 /*
  * Return true if v is a XML QName object, or if it converts to a string that
@@ -268,35 +304,36 @@ extern JSBool
 js_IsXMLName(JSContext *cx, jsval v);
 
 extern JSBool
-js_ToAttributeName(JSContext *cx, jsval *vp);
+js_ToAttributeName(JSContext *cx, js::Value *vp);
 
-extern JSString *
-js_EscapeAttributeValue(JSContext *cx, JSString *str);
+extern JSFlatString *
+js_EscapeAttributeValue(JSContext *cx, JSString *str, JSBool quote);
 
 extern JSString *
 js_AddAttributePart(JSContext *cx, JSBool isName, JSString *str,
                     JSString *str2);
 
-extern JSString *
+extern JSFlatString *
 js_EscapeElementValue(JSContext *cx, JSString *str);
 
 extern JSString *
-js_ValueToXMLString(JSContext *cx, jsval v);
+js_ValueToXMLString(JSContext *cx, const js::Value &v);
+
+extern JSObject *
+js_ConstructXMLQNameObject(JSContext *cx, const js::Value & nsval,
+                           const js::Value & lnval);
 
 extern JSBool
-js_GetAnyName(JSContext *cx, jsval *vp);
+js_GetAnyName(JSContext *cx, jsid *idp);
+
+/*
+ * Note: nameval must be either QName, AttributeName, or AnyName.
+ */
+extern JSBool
+js_FindXMLProperty(JSContext *cx, const js::Value &nameval, JSObject **objp, jsid *idp);
 
 extern JSBool
-js_FindXMLProperty(JSContext *cx, jsval name, JSObject **objp, jsval *namep);
-
-extern JSBool
-js_GetXMLProperty(JSContext *cx, JSObject *obj, jsval name, jsval *vp);
-
-extern JSBool
-js_GetXMLFunction(JSContext *cx, JSObject *obj, jsid id, jsval *vp);
-
-extern JSBool
-js_SetXMLProperty(JSContext *cx, JSObject *obj, jsval name, jsval *vp);
+js_GetXMLMethod(JSContext *cx, JSObject *obj, jsid id, js::Value *vp);
 
 extern JSBool
 js_GetXMLDescendants(JSContext *cx, JSObject *obj, jsval id, jsval *vp);
@@ -305,16 +342,13 @@ extern JSBool
 js_DeleteXMLListElements(JSContext *cx, JSObject *listobj);
 
 extern JSBool
-js_FilterXMLList(JSContext *cx, JSObject *obj, jsbytecode *pc, jsval *vp);
+js_StepXMLListFilter(JSContext *cx, JSBool initialized);
 
 extern JSObject *
-js_ValueToXMLObject(JSContext *cx, jsval v);
+js_ValueToXMLObject(JSContext *cx, const js::Value &v);
 
 extern JSObject *
-js_ValueToXMLListObject(JSContext *cx, jsval v);
-
-extern JSObject *
-js_CloneXMLObject(JSContext *cx, JSObject *obj);
+js_ValueToXMLListObject(JSContext *cx, const js::Value &v);
 
 extern JSObject *
 js_NewXMLSpecialObject(JSContext *cx, JSXMLClass xml_class, JSString *name,
@@ -328,5 +362,13 @@ js_MakeXMLCommentString(JSContext *cx, JSString *str);
 
 extern JSString *
 js_MakeXMLPIString(JSContext *cx, JSString *name, JSString *str);
+
+/* The caller must ensure that either v1 or v2 is an object. */
+extern JSBool
+js_TestXMLEquality(JSContext *cx, const js::Value &v1, const js::Value &v2,
+                   JSBool *bp);
+
+extern JSBool
+js_ConcatenateXML(JSContext *cx, JSObject *obj1, JSObject *obj2, js::Value *vp);
 
 #endif /* jsxml_h___ */

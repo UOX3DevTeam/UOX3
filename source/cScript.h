@@ -7,9 +7,12 @@ class CPIGumpInput;
 
 enum ScriptEvent
 {
-	seOnCreateDFN = 0,			//	*	Done for PCs on global script
+	seOnCreateDFN = 0,
 	seOnCreateTile,
+	seOnCreatePlayer,		//	*	Done for PCs on global script
 	seOnCommand,
+	seOnProfileRequest,		//	**
+	seOnProfileUpdate,		//	**
 	seOnDelete,				//	**
 	seOnSpeech,				//	*	Missing item response at the moment
 	seInRange,				//	*	Missing character in range
@@ -36,8 +39,10 @@ enum ScriptEvent
 	seOnSwing,
 	seOnDecay,
 	seOnTransfer,
-	seOnLeaving,			//	**
 	seOnEntrance,			//	**
+	seOnLeaving,			//	**
+	seOnMultiLogout,		//	**
+	seOnBoatTurn,           //  **
 	seOnEquipAttempt,		//	**
 	seOnEquip,				//	**
 	seOnUnequipAttempt,		//	**
@@ -74,6 +79,7 @@ enum ScriptEvent
 	seOnEnterRegion,		//  **
 	seOnLeaveRegion,		//	**
 	seOnSpellTarget,
+	seOnSpellTargetSelect,
 	seOnSpellCast,
 	seOnSpellSuccess,
 	seOnTalk,
@@ -89,6 +95,7 @@ enum ScriptEvent
 	seOnIterateSpawnRegions,
 	seOnPacketReceive,
 	seOnCharDoubleClick,	//	**  the event that replaces hardcoded character doubleclick-stuff
+	seOnDismount,
 	seOnSkillGump,			//	**	allows overriding client's request to open default skill gump
 	seOnCombatStart,		//	**	allows overriding what happens when combat is initiated
 	seOnAICombatTarget,		//	**	allows overriding target selection taking place for regular AI behaviours
@@ -96,6 +103,7 @@ enum ScriptEvent
 	seOnDeathBlow,
 	seOnCombatDamageCalc,
 	seOnDamage,
+	seOnDamageDeal,
 	seOnGumpPress,
 	seOnGumpInput,
 	seOnScrollingGumpPress,
@@ -109,10 +117,14 @@ enum ScriptEvent
 	seOnCarveCorpse,
 	seOnDyeTarget,
 	seOnQuestGump,
+	seOnGuildButton,
 	seOnHelpButton,
+	seOnContextMenuRequest,
+	seOnContextMenuSelect,
 	seOnWarModeToggle,
 	seOnSpecialMove,
-	seOnFacetChange
+	seOnFacetChange,
+	seOnReleasePet
 };
 
 struct SEGump_st
@@ -128,6 +140,17 @@ struct SEGumpData_st
 	std::vector<SI16>			nIDs;
 };
 
+// A simple struct to pass error details from the JS Error Reporter
+// back to the main C++ thread.
+struct JSErrorInfo
+{
+	std::string message;
+	std::string filename;
+	std::string lineSource;
+	std::string tokenPointer;
+	uintN lineNum = 0;
+};
+
 class cScript
 {
 private:
@@ -135,6 +158,8 @@ private:
 	JSScript *			targScript;
 	JSContext *			targContext;
 	JSObject *			targObject;
+	JSObject *			scriptObj;
+	UI16						scriptID;
 
 	bool				isFiring;
 	UI08				runTime;
@@ -150,6 +175,7 @@ private:
 	std::vector<SEGump_st *>		gumpDisplays;
 
 	void		Cleanup( void );
+	JSBool	InvokeEvent( const char* name, uintN argc, jsval* argv, jsval* rval );
 
 public:
 	void		CollectGarbage( void );
@@ -157,15 +183,16 @@ public:
 	size_t		NewGumpList( void );
 	SEGump_st *	GetGumpList( SI32 index );
 	void		RemoveGumpList( SI32 index );
-	void		SendGumpList( SI32 index, CSocket *toSendTo );
 
 	void		HandleGumpPress( CPIGumpMenuSelect *packet );
 	void		HandleGumpInput( CPIGumpInput *pressing );
 
-	cScript( std::string targFile, UI08 runTime );
+	cScript( std::string targFile, UI08 runTime, UI16 scrID );
 	~cScript();
 
 	JSObject *	Object( void ) const;	// returns object pointer
+
+	UI16		GetScriptID( void ) const;
 
 
 	//|	Modification	-	08162003 - Added these event to handle any script initialization and clean up as the server starts, and is shut down
@@ -173,9 +200,10 @@ public:
 	bool		OnStop( void );
 	//
 	bool		OnPacketReceive( CSocket *mSock, UI16 packetNum );
-	bool		OnIterate( CBaseObject *a, UI32 &b );
+	bool		OnIterate( CBaseObject *a, UI32 &b, CSocket *mSock );
 	bool		OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b );
-	bool		OnCreate( CBaseObject *thingCreated, bool dfnCreated );
+	bool		OnCreate( CBaseObject *thingCreated, bool dfnCreated, bool isPlayer );
+	bool		DoesEventExist( const char *eventToFind );
 	SI08		OnCommand( CSocket *mSock, std::string command );
 	bool		OnDelete( CBaseObject *thingDestroyed );
 	SI08		OnSpeech( const char *speech, CChar *personTalking, CBaseObject *talkingTo );
@@ -190,10 +218,12 @@ public:
 	SI08		OnDispel( CBaseObject *dispelled );
 	bool		OnSkill( CBaseObject *skillUse, SI08 skillUsed );
 	bool		OnStat( void );
+	SI08		OnProfileUpdate( CSocket *mSock, std::string profileText );
+	std::string		OnProfileRequest( CSocket *mSock, CChar *profileOwner );
 	std::string		OnTooltip( CBaseObject *myObj, CSocket *pSocket );
-	std::string		OnNameRequest( CBaseObject *myObj, CChar *nameRequester );
-	bool		OnAttack( CChar *attacker, CChar *defender );
-	bool		OnDefense( CChar *attacker, CChar *defender );
+	std::string		OnNameRequest( CBaseObject *myObj, CChar *nameRequester, UI08 requestSource );
+	bool        OnAttack( CChar *attacker, CChar *defender, bool hitStatus, SI08 hitLoc, UI16 damageDealt );
+	bool        OnDefense( CChar *attacker, CChar *defender, bool hitStatus, SI08 hitLoc, UI16 damageReceived );
 	SI08		OnSkillGain( CChar *player, SI08 skill, UI32 skillAmtGained );
 	SI08		OnSkillLoss( CChar *player, SI08 skill, UI32 skillAmtLost );
 	bool		OnSkillChange( CChar *player, SI08 skill, SI32 skillAmtChanged );
@@ -202,12 +232,14 @@ public:
 	SI08		OnStatLoss( CChar *player, UI32 stat, UI32 statLossAmount );
 	bool		OnStatChange( CChar *player, UI32 stat, SI32 statChangeAmount );
 	SI08		OnDrop( CItem *item, CChar *dropper );
-	SI08		OnPickup( CItem *item, CChar *pickerUpper );
+	SI08		OnPickup( CItem *item, CChar *pickerUpper, CBaseObject *objCont );
 	bool		OnContRemoveItem( CItem *contItem, CItem *item, CChar *pickerUpper );
 	SI08		OnSwing( CItem *swinging, CChar *swinger, CChar *swingTarg );
 	SI08		OnDecay( CItem *decaying );
-	SI08		OnLeaving( CMultiObj *left, CBaseObject *leaving );
 	SI08		OnEntrance( CMultiObj *left, CBaseObject *leaving );
+	SI08		OnLeaving( CMultiObj *left, CBaseObject *leaving );
+	SI08		OnMultiLogout( CMultiObj* iMulti, CChar* cPlayer );
+	SI08		OnBoatTurn( CBoatObj* iMulti, UI08 oldDir, UI08 newDir, CItem *iTiller );
 	SI08		OnEquipAttempt( CChar *equipper, CItem *equipping );
 	SI08		OnEquip( CChar *equipper, CItem *equipping );
 	SI08		OnUnequipAttempt( CChar *equipper, CItem *equipping );
@@ -233,10 +265,11 @@ public:
 	bool		OnThirstChange( CChar* pChanging, SI08 newStatus );
 	SI08		OnStolenFrom( CChar *stealing, CChar *stolenFrom, CItem *stolen );
 	SI08		OnSnooped( CChar *snooped, CChar *snooper, bool success );
-	SI08		OnSnoopAttempt( CChar *snooped, CChar *snooper );
+	SI08		OnSnoopAttempt( CChar *snooped, CItem *pack, CChar *snooper );
 	bool		OnEnterRegion( CChar *entering, UI16 region );
 	bool		OnLeaveRegion( CChar *entering, UI16 region );
 	SI08		OnSpellTarget( CBaseObject *target, CChar *caster, UI08 spellNum );
+	SI08		OnSpellTargetSelect( CChar *caster, CBaseObject *target, UI08 spellNum );
 	bool		DoCallback( CSocket *tSock, SERIAL targeted, UI08 callNum );
 	SI16		OnSpellCast( CChar *tChar, UI08 SpellId );
 	SI16		OnScrollCast( CChar *tChar, UI08 SpellId );
@@ -245,18 +278,21 @@ public:
 	bool		OnSpeechInput( CChar *myChar, CItem *myItem, const char *mySpeech );
 	SI08		OnSpellGain( CItem *book, const UI08 spellNum );
 	SI08		OnSpellLoss( CItem *book, const UI08 spellNum );
-	SI08		OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill, const UI16 highSkill, bool isCraftSkill );
+	SI08		OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill, const UI16 highSkill, bool isCraftSkill, SI08 overrideOutcome );
 	SI08		OnDropItemOnNpc( CChar *srcChar, CChar *targChar, CItem *i );
 	SI08		OnDropItemOnItem( CItem *item, CChar *dropper, CItem *dest );
 	SI08		OnVirtueGumpPress( CChar *mChar, CChar *tChar, UI16 buttonId );
 	SI08		OnScrollingGumpPress( CSocket *tSock, UI16 gumpId, UI16 buttonId );
 	SI08		OnQuestGump( CChar *mChar );
+	SI08		OnGuildButton( CChar *mChar );
 	SI08		OnHelpButton( CChar *mChar );
+	SI08		OnContextMenuRequest( CSocket *tSock, CBaseObject *baseObj );
+	SI08		OnContextMenuSelect( CSocket *tSock, CBaseObject *baseObj, UI16 popupEntry );
 	SI08		OnWarModeToggle( CChar *mChar );
 	SI08		OnSpecialMove( CChar *mChar, UI08 abilityId );
 	SI08		OnFacetChange( CChar *mChar, const UI08 oldFacet, const UI08 newFacet );
 
-	bool		AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s );
+	bool		AreaObjFunc( const char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s );
 	bool		CallParticularEvent( const char *eventToCall, jsval *params, SI32 numParams, jsval *eventRetVal );
 
 	bool		ScriptRegistration( std::string scriptType );
@@ -265,6 +301,7 @@ public:
 
 	bool		MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, SI32 spellNum );
 	SI08		OnCharDoubleClick( CChar *currChar, CChar *targChar );
+	SI08		OnDismount( CChar *currChar, CChar *npcMount );
 	SI08		OnSkillGump( CChar *mChar );
 	SI08		OnUseBandageMacro( CSocket *mSock, CChar *targChar, CItem *bandageItem );
 	SI08		OnAICombatTarget( CChar *attacker, CChar *target );
@@ -275,14 +312,16 @@ public:
 
 	SI16		OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill, UI08 hitLoc );
 	SI08		OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue, WeatherType damageType );
+	SI08		OnDamageDeal( CChar *attacker, CChar *damaged, SI16 damageValue, WeatherType damageType );
 	SI08		OnBuy( CSocket *targSock, CChar *objVendor );
-	SI08		OnBuyFromVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought );
-	SI08		OnSellToVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold );
+	SI08		OnBuyFromVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought, UI16 numItemsBuying );
+	SI08		OnSellToVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold, UI16 numItemsSelling );
 	SI08		OnSell( CSocket *targSock, CChar *objVendor );
-	SI08		OnBoughtFromVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought );
-	SI08		OnSoldToVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold );
+	SI08		OnBoughtFromVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought, UI16 numItemsBought );
+	SI08		OnSoldToVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold, UI16 numItemsSold );
 	SI08		OnHouseCommand( CSocket *targSock, CMultiObj *multiObj, UI08 targId );
 	SI08		OnMakeItem( CSocket *mSock, CChar *objChar, CItem *objItem, UI16 createEntryId );
+	SI08		OnReleasePet( CChar *owner, CChar *pet );
 
 	//	Critical handler type stuff
 	bool		IsFiring( void );

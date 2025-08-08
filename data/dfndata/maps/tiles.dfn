@@ -66,15 +66,133 @@
 // PLAYANIMONCE=	// Flag 5, bit 6 (0x20)
 // MULTIMOVABLE=	// Flag 5, bit 7 (0x40)
 
+// Lacks NoShoot flag
+[TILE 0x02A0]
+{
+CANNOTSHOOTTHRU=1
+}
+
+[TILE 0x03E0]
+{
+CANNOTSHOOTTHRU=1
+}
+
+[TILE 0x03E1]
+{
+CANNOTSHOOTTHRU=1
+}
+
+// Lacks NoShoot flag in older client versions
+[TILE 0x07BD]
+{
+CANNOTSHOOTTHRU=1
+}
+
+[TILE 0x07BE]
+{
+CANNOTSHOOTTHRU=1
+}
+
+[TILE 0x07BF]
+{
+CANNOTSHOOTTHRU=1
+}
+
+[TILE 0x07C0]
+{
+CANNOTSHOOTTHRU=1
+}
+
+[TILE 0x07C1]
+{
+CANNOTSHOOTTHRU=1
+}
+
+[TILE 0x07C2]
+{
+CANNOTSHOOTTHRU=1
+}
+
+[TILE 0x07C3]
+{
+CANNOTSHOOTTHRU=1
+}
+
+[TILE 0x07C4]
+{
+CANNOTSHOOTTHRU=1
+}
+
+[TILE 0x07C5]
+{
+CANNOTSHOOTTHRU=1
+}
+
+[TILE 0x07C6]
+{
+CANNOTSHOOTTHRU=1
+}
+
+[TILE 0x07C9]
+{
+CANNOTSHOOTTHRU=1
+}
+
+[TILE 0x07CA]
+{
+CANNOTSHOOTTHRU=1
+}
+
+[TILE 0x07CB]
+{
+CANNOTSHOOTTHRU=1
+}
+
+[TILE 0x07CC]
+{
+CANNOTSHOOTTHRU=1
+}
+
+[TILE 0x07CD]
+{
+CANNOTSHOOTTHRU=1
+}
+
+[TILE 0x07CE]
+{
+CANNOTSHOOTTHRU=1
+}
+
+[TILE 0x07CF]
+{
+CANNOTSHOOTTHRU=1
+}
+
+[TILE 0x07D0]
+{
+CANNOTSHOOTTHRU=1
+}
+
+// Missing stair right flag
+// Incorrectly set stair back flag
+[TILE 0x0899]
+{
+CLIMBABLEBIT1=1
+CLIMBABLEBIT2=0
+}
+
 [TILE 0x08A5]
 {
-HEIGHT=22
-CLIMBABLEBIT2=1
+HEIGHT=30
 }
 
 [TILE 0x08A6]
 {
-HEIGHT=22
+HEIGHT=30
+}
+
+[TILE 0x2FDE]
+{
 CLIMBABLEBIT2=1
 }
 
@@ -294,6 +412,12 @@ STANDABLE=0
 [TILE 0x1559]
 {
 LIQUIDWET=1
+}
+
+// Height of this watertile is 1 in tiledata
+[TILE 0x34d2]
+{
+HEIGHT=0
 }
 
 // Standable items that probably shouldn't be standable

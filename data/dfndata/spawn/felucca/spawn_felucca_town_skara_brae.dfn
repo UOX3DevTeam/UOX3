@@ -3,7 +3,7 @@
 
 [REGIONSPAWN 1000]
 {
-NAME=Skara Brae innkeeper
+NAME=Skara Brae - Innkeeper
 NPC=innkeeper
 MAXNPCS=1
 X1=601
@@ -15,9 +15,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1001]
 {
-NAME=Skara Brae shipwright
+NAME=Skara Brae - Superior Ships
 NPC=shipwright
 MAXNPCS=1
 X1=600
@@ -29,9 +30,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1002]
 {
-NAME=Skara Brae healer
+NAME=Skara Brae - Healer
 NPC=healer
 MAXNPCS=1
 X1=617
@@ -43,9 +45,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1003]
 {
-NAME=Skara Brae tailor
+NAME=Skara Brae - Tailor
 NPC=tailor
 MAXNPCS=1
 X1=649
@@ -57,9 +60,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1004]
 {
-NAME=Skara Brae blacksmith
+NAME=Skara Brae - Blacksmith
 NPC=blacksmith
 MAXNPCS=1
 X1=625
@@ -71,9 +75,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1005]
 {
-NAME=Skara Brae carpenter
+NAME=Skara Brae - Carpenter
 NPC=carpenter
 MAXNPCS=1
 X1=626
@@ -85,9 +90,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1006]
 {
-NAME=Skara Brae weaponsmith
+NAME=Skara Brae - Weaponsmith
 NPC=weaponsmith
 MAXNPCS=1
 X1=649
@@ -99,9 +105,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1007]
 {
-NAME=Skara Brae alchemist
+NAME=Skara Brae - Mystic Treasures
 NPC=alchemist
 MAXNPCS=1
 X1=666
@@ -113,9 +120,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1008]
 {
-NAME=Skara Brae farmer
+NAME=Skara Brae - Farmer
 NPC=farmer
 MAXNPCS=1
 X1=608
@@ -127,9 +135,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1009]
 {
-NAME=Skara Brae mage
+NAME=Skara Brae - Mage
 NPC=mage
 MAXNPCS=1
 X1=601
@@ -141,9 +150,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1010]
 {
-NAME=Skara Brae bowyer
+NAME=Skara Brae - Bowyer
 NPC=bowyer
 MAXNPCS=1
 X1=596
@@ -155,9 +165,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1011]
 {
-NAME=Skara Brae provisioner
+NAME=Skara Brae - Sundry Supplies
 NPC=provisioner
 MAXNPCS=1
 X1=579
@@ -169,9 +180,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1012]
 {
-NAME=Skara Brae butcher
+NAME=Skara Brae - Butcher
 NPC=butcher
 MAXNPCS=1
 X1=577
@@ -183,9 +195,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1013]
 {
-NAME=Skara Brae cook
+NAME=Skara Brae - The Shattered Skull
 NPC=cook
 MAXNPCS=1
 X1=553
@@ -197,9 +210,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1014]
 {
-NAME=Skara Brae armorer
+NAME=Skara Brae - Armorer
 NPC=armourer
 MAXNPCS=1
 X1=586
@@ -211,9 +225,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1015]
 {
-NAME=Skara Brae beekeeper
+NAME=Skara Brae - Beekeeper
 NPC=beekeeper
 MAXNPCS=1
 X1=592
@@ -225,9 +240,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1016]
 {
-NAME=Skara Brae bowyer
+NAME=Skara Brae - Bowyer
 NPC=bowyer
 MAXNPCS=1
 X1=560
@@ -239,9 +255,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1017]
 {
-NAME=Skara Brae animal trainer
+NAME=Skara Brae - Animal Trainer
 NPC=animaltrainer
 MAXNPCS=1
 X1=569
@@ -254,4 +271,510 @@ MAXTIME=600
 CALL=1
 }
 
-EOF
+[REGIONSPAWN 1018]
+{
+NAME=Skara Brae - Thief Guildmaster
+NPCLIST=thiefguildmaster
+MAXNPCS=1
+X1=554
+Y1=2128
+X2=671
+Y2=2278
+WORLD=0
+ONLYOUTSIDE=1
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1019]
+{
+NAME=Bank of Skara Brae
+NPC=banker
+MAXNPCS=1
+X1=585
+Y1=2144
+X2=588
+Y2=2150
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1020]
+{
+NAME=Skara Brae - Ranger's Guild
+NPC=ranger
+MAXNPCS=4
+X1=744
+Y1=2136
+X2=751
+Y2=2150
+WORLD=0
+MINTIME=30
+MAXTIME=60
+CALL=1
+}
+
+[REGIONSPAWN 1021]
+{
+NAME=Skara Brae - Ranger
+NPC=ranger
+MAXNPCS=2
+X1=745
+Y1=2265
+X2=750
+Y2=2270
+WORLD=0
+MINTIME=30
+MAXTIME=60
+CALL=1
+}
+
+[REGIONSPAWN 1022]
+{
+NAME=Skara Brae - Ranger
+NPC=ranger
+MAXNPCS=2
+X1=785
+Y1=2217
+X2=790
+Y2=2228
+WORLD=0
+MINTIME=30
+MAXTIME=60
+CALL=1
+}
+
+[REGIONSPAWN 1023]
+{
+NAME=Skara Brae - Ranger
+NPC=ranger
+MAXNPCS=2
+X1=809
+Y1=2193
+X2=821
+Y2=2198
+WORLD=0
+MINTIME=30
+MAXTIME=60
+CALL=1
+}
+
+[REGIONSPAWN 1024]
+{
+NAME=Skara Brae - Ranger
+NPC=ranger
+MAXNPCS=2
+X1=865
+Y1=2312
+X2=871
+Y2=2323
+WORLD=0
+MINTIME=30
+MAXTIME=60
+CALL=1
+}
+
+[REGIONSPAWN 1025]
+{
+NAME=Skara Brae - Farmer
+NPC=farmer
+MAXNPCS=1
+X1=793
+Y1=2265
+X2=805
+Y2=2269
+WORLD=0
+MINTIME=30
+MAXTIME=60
+CALL=1
+}
+
+[REGIONSPAWN 1026]
+{
+GET=1025
+NAME=Skara Brae - Peasant
+NPC=peasant
+}
+
+[REGIONSPAWN 1027]
+{
+NAME=Skara Brae - Farmer
+NPC=farmer
+MAXNPCS=1
+X1=809
+Y1=2320
+X2=814
+Y2=2333
+WORLD=0
+MINTIME=30
+MAXTIME=60
+CALL=1
+}
+
+[REGIONSPAWN 1028]
+{
+GET=1027
+NAME=Skara Brae - Peasant
+NPC=peasant
+}
+
+[REGIONSPAWN 1029]
+{
+NAME=Skara Brae - Farmer
+NPC=farmer
+MAXNPCS=1
+X1=889
+Y1=2385
+X2=894
+Y2=2397
+WORLD=0
+MINTIME=30
+MAXTIME=60
+CALL=1
+}
+
+[REGIONSPAWN 1030]
+{
+GET=1029
+NAME=Skara Brae - Peasant
+NPC=peasant
+}
+
+[REGIONSPAWN 1031]
+{
+NAME=Skara Brae - Farmland Animals 1
+NPC=farmlist
+MAXNPCS=20
+X1=711
+Y1=2051
+X2=831
+Y2=2409
+WORLD=0
+MINTIME=30
+MAXTIME=60
+CALL=3
+}
+
+[REGIONSPAWN 1032]
+{
+NAME=Skara Brae - Farmland Animals 2
+NPC=farmlist
+MAXNPCS=7
+X1=836
+Y1=2307
+X2=914
+Y2=2456
+WORLD=0
+MINTIME=30
+MAXTIME=60
+CALL=1
+}
+
+[REGIONSPAWN 1033]
+{
+NAME=Skara Brae - Mystic Treasures
+NPC=hairstylist
+MAXNPCS=1
+X1=657
+Y1=2139
+X2=664
+Y2=2141
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1034]
+{
+NAME=Skara Brae - Shear Pleasure
+NPC=weaver
+MAXNPCS=1
+X1=648
+Y1=2177
+X2=654
+Y2=2184
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1035]
+{
+GET=1034
+NAME=Skara Brae - Shear Pleasure
+NPC=spinner
+}
+
+[REGIONSPAWN 1036]
+{
+NAME=Skara Brae - West Docks
+NPC=fisher
+MAXNPCS=1
+X1=644
+Y1=2234
+X2=666
+Y2=2238
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1037]
+{
+GET=1036
+NAME=Skara Brae - West Docks
+NPC=sailor
+}
+
+[REGIONSPAWN 1038]
+{
+NAME=Skara Brae - Towncrier
+NPC=towncrier
+MAXNPCS=1
+X1=628
+Y1=2235
+X2=628
+Y2=2235
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1039]
+{
+NAME=Skara Brae - Sundry Supplies
+NPC=cobbler
+MAXNPCS=1
+X1=587
+Y1=2224
+X2=590
+Y2=2225
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1040]
+{
+NAME=Skara Brae - Superior Ships
+NPC=mapmaker
+MAXNPCS=1
+X1=602
+Y1=2279
+X2=603
+Y2=2285
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1041]
+{
+NAME=Skara Brae - Town Hall
+NPC=architect
+MAXNPCS=2
+X1=545
+Y1=2209
+X2=566
+Y2=2214
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1042]
+{
+GET=1013
+NAME=Skara Brae - The Shattered Skull
+NPC=tavernkeeper
+}
+
+[REGIONSPAWN 1043]
+{
+NAME=Skara Brae - The Shattered Skull
+NPC=waiter
+MAXNPCS=1
+X1=552
+Y1=2178
+X2=565
+Y2=2185
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1044]
+{
+NAME=Skara Brae - The Shattered Skull
+NPC=waiter
+MAXNPCS=1
+X1=560
+Y1=2168
+X2=565
+Y2=2178
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1045]
+{
+NAME=Skara Brae - Rangers' Guild
+NPC=ranger
+MAXNPCS=3
+X1=552
+Y1=2136
+X2=566
+Y2=2149
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1046]
+{
+NAME=Bank of Skara Brae
+NPC=banker
+MAXNPCS=1
+X1=591
+Y1=2145
+X2=598
+Y2=2149
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1047]
+{
+NAME=Skara Brae - Builders' Delight
+NPC=architect
+MAXNPCS=1
+X1=625
+Y1=2153
+X2=631
+Y2=2158
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1050]
+{
+NAME=Skara Brae - Carrot Field 1
+ITEM=carrot_resource
+MAXITEMS=10
+X1=817
+Y1=2252
+X2=830
+Y2=2257
+WORLD=0
+MINTIME=30
+MAXTIME=60
+CALL=3
+}
+
+[REGIONSPAWN 1051]
+{
+NAME=Skara Brae - Carrot Field 2
+ITEM=carrot_resource
+MAXITEMS=10
+X1=817
+Y1=2262
+X2=830
+Y2=2267
+WORLD=0
+MINTIME=30
+MAXTIME=60
+CALL=3
+}
+
+[REGIONSPAWN 1060]
+{
+NAME=Skara Brae - Onion Field 1
+ITEM=onion_resource
+MAXITEMS=10
+X1=817
+Y1=2272
+X2=830
+Y2=2277
+WORLD=0
+MINTIME=30
+MAXTIME=60
+CALL=3
+}
+
+[REGIONSPAWN 1061]
+{
+NAME=Skara Brae - Onion Field 2
+ITEM=onion_resource
+MAXITEMS=10
+X1=817
+Y1=2282
+X2=830
+Y2=2287
+WORLD=0
+MINTIME=30
+MAXTIME=60
+CALL=3
+}
+
+[REGIONSPAWN 1070]
+{
+NAME=Skara Brae - Cotton Field 1
+ITEM=cotton_resource
+MAXITEMS=25
+X1=817
+Y1=2345
+X2=830
+Y2=2366
+WORLD=0
+MINTIME=30
+MAXTIME=60
+CALL=5
+}
+
+[REGIONSPAWN 1080]
+{
+NAME=Skara Brae - Wheat Field 1
+ITEM=wheat_resource
+MAXITEMS=25
+X1=836
+Y1=2345
+X2=843
+Y2=2359
+WORLD=0
+MINTIME=30
+MAXTIME=60
+CALL=5
+}
+
+[REGIONSPAWN 1081]
+{
+NAME=Skara Brae - Wheat Field 2
+ITEM=wheat_resource
+MAXITEMS=35
+X1=797
+Y1=2153
+X2=830
+Y2=2174
+WORLD=0
+MINTIME=30
+MAXTIME=60
+CALL=5
+}

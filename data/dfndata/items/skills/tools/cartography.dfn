@@ -1,0 +1,15 @@
+[mapmakerspen]
+{
+Get=base_item
+name=Mapmakers Pen
+id=0x0fc0
+weight=100
+value=6 3
+restock=20
+decay=1
+good=56
+maxuses=75
+usesleft=25
+script=4031
+script=2200// uses left tooltip
+}

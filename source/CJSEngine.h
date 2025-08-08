@@ -39,6 +39,7 @@ enum JSPrototypes
 	JSP_CREATEENTRY,
 	JSP_CREATEENTRIES,
 	JSP_TIMER,
+	JSP_SCRIPT,
 	JSP_COUNT
 };
 
@@ -83,6 +84,7 @@ public:
 
 	JSObject *	AcquireObject( IUEEntries iType, void *index );
 	void		ReleaseObject( IUEEntries IType, void *index );
+
 };
 
 class CJSEngine

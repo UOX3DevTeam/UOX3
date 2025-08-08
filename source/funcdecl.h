@@ -44,6 +44,8 @@ UI16	GetDist( Point3_st a, Point3_st b );
 UI16	GetOldDist( CBaseObject *a, CBaseObject *b );
 UI16	GetDist3D( CBaseObject *a, CBaseObject *b );
 UI16	GetDist3D( Point3_st a, Point3_st b );
+R32		GetApproxDist( Point3_st a, Point3_st b );
+R32		GetApproxDist( CBaseObject *a, CBaseObject *b );
 auto	FindPlayersInVisrange( CBaseObject *myObj ) -> std::vector<CSocket *>;
 auto	FindPlayersInOldVisrange( CBaseObject *myObj ) -> std::vector<CSocket *>;
 auto	FindNearbyPlayers( SI16 x, SI16 y, SI08 z, UI16 distance ) -> std::vector<CSocket *>;
@@ -97,10 +99,11 @@ TIMERVAL GetPoisonTickTime( UI08 poisonStrength );
 //o------------------------------------------------------------------------------------------------o
 // Amount related
 //o------------------------------------------------------------------------------------------------o
-UI32	GetItemAmount( CChar *s, UI16 realId, UI16 realColour = 0x0000, UI32 realMoreVal = 0x0, bool colorCheck = false );
+UI32	GetItemAmount( CChar *s, UI16 realId, UI16 realColour = 0x0000, UI32 realMoreVal = 0x0, bool colorCheck = false, bool moreCheck = false, std::string sectionId = "" );
+UI32	GetSubItemAmount( CItem* p, UI16 realId, UI16 realColour = 0x0000, UI32 realMoreVal = 0x0, bool colorCheck = false, bool moreCheck = false, std::string sectionId = "" );
 UI32	GetTotalItemCount( CItem *objCont );
-UI32	DeleteItemAmount( CChar *s, UI32 amount, UI16 realId, UI16 realColour = 0x0000, UI32 realMoreVal = 0x0 );
-UI32	DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realId, UI16 realColour = 0x0000, UI32 realMoreVal = 0x0 );
+UI32	DeleteItemAmount( CChar *s, UI32 amount, UI16 realId, UI16 realColour = 0x0000, UI32 realMoreVal = 0x0, bool colorCheck = false, bool moreCheck = false, std::string sectionId = "" );
+UI32	DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realId, UI16 realColour = 0x0000, UI32 realMoreVal = 0x0, bool colorCheck = false, bool moreCheck = false, std::string sectionId = "" );
 UI32	GetBankCount( CChar *p, UI16 itemId, UI16 realColour = 0x0000, UI32 realMoreVal = 0x0 );
 UI32	DeleteBankItem( CChar *p, UI32 amt, UI16 itemId, UI16 realColour = 0x0000, UI32 realMoreVal = 0x0 );
 
@@ -117,6 +120,7 @@ CChar *			FindItemOwner( CItem *p );
 CBaseObject *	FindItemOwner( CItem *i, ObjectType &objType );
 CItem *			FindRootContainer( CItem *i );
 CItem *			FindItemOfType( CChar *toFind, ItemTypes type );
+CItem *			FindItemOfSectionId( CChar *toFind, std::string sectionId );
 CItem *			FindItem( CChar *toFind, UI16 itemId );
 
 //o------------------------------------------------------------------------------------------------o
@@ -130,6 +134,7 @@ void	UpdateFlag( CChar *mChar );
 // Combat Stuff
 //o------------------------------------------------------------------------------------------------o
 void	MakeCriminal( CChar *c );
+void	FlagForStealing( CChar *c );
 bool	WillResultInCriminal( CChar *mChar, CChar *targ );
 void	CallGuards( CChar *mChar, CChar *targChar );
 void	CallGuards( CChar *mChar );
@@ -137,12 +142,12 @@ void	CallGuards( CChar *mChar );
 //o------------------------------------------------------------------------------------------------o
 // Time Functions
 //o------------------------------------------------------------------------------------------------o
-inline TIMERVAL BuildTimeValue( R32 timeFromNow )
+inline TIMERVAL BuildTimeValue( R64 timeFromNow )
 {
-	return static_cast<TIMERVAL>( cwmWorldState->GetUICurrentTime() + ( static_cast<R32>( 1000 ) * timeFromNow ));
+	return static_cast<TIMERVAL>( cwmWorldState->GetUICurrentTime() + static_cast<TIMERVAL>( std::round( 1000 * timeFromNow )));
 }
 
-UI32	GetClock( void );
+TIMERVAL	GetClock( void );
 inline char *	RealTime( char *time_str )
 {
 	auto timet = std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() );
@@ -219,12 +224,11 @@ inline UI32 GetMinutesSinceEpoch()
 //o------------------------------------------------------------------------------------------------o
 // Misc Functions
 //o------------------------------------------------------------------------------------------------o
-R32			RoundNumber( R32 toRound);
 bool		IsNumber( const std::string& str );
 bool		FileExists( const std::string& filepath );
 void		DismountCreature( CChar *s );
 size_t		GetTileName( CItem& mItem, std::string& itemname );
-std::string	GetNpcDictName( CChar *mChar, CSocket *tSock = nullptr );
+std::string	GetNpcDictName( CChar *mChar, CSocket *tSock = nullptr, UI08 requestSource = 0 );
 std::string	GetNpcDictTitle( CChar *mChar, CSocket *tSock = nullptr );
 bool		LineOfSight( CSocket *s, CChar *mChar, SI16 x2, SI16 y2, SI08 z2, UI08 checkfor, bool useSurfaceZ, SI08 z2Top = 0, bool checkDistance = true );
 bool		CheckItemLineOfSight( CChar *mChar, CItem *i );

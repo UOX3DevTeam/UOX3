@@ -80,9 +80,10 @@ struct MiningData_st
 	UI16 minSkill;		// minimum skill needed to make the ingot
 	std::string name;	// name of the ingot: no need to be fixed, as we're loading it dynamically
 	SI32 makemenu;		// the makemenu required for making with
-	UI16 oreChance; // default chance of finding ore type if nothing else is specified
+	UI16 oreChance;		// default chance of finding ore type if nothing else is specified
+	UI16 scriptID;		// scriptID assigned to ore items
 
-	MiningData_st() : oreName( "" ), colour( 0 ), minSkill( 0 ), name( "" ), makemenu( 0 ), oreChance( 0 )
+	MiningData_st() : oreName( "" ), colour( 0 ), minSkill( 0 ), name( "" ), makemenu( 0 ), oreChance( 0 ), scriptID( 0 )
 	{
 	}
 };
@@ -137,11 +138,10 @@ private:
 
 	SI08 FindSkillPoint( UI08 sk, SI32 value );
 	void AnvilTarget( CSocket *s, CItem& item, MiningData_st *oreType );
-	void HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool success );
+	void HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool success, SKILLVAL skAmt = 0, bool triggerEvent = true );
 
 	bool LoadMiningData( void );
 	void LoadCreateMenus( void );
-	bool AdvanceSkill( CChar *s, UI08 sk, bool skillused );
 
 public:
 	CSkills();
@@ -149,8 +149,6 @@ public:
 
 	SI32 CalcRankAvg( CChar *player, CreateEntry_st& skillMake );
 
-	TargetFunc GraveDig;
-	TargetFunc Mine;
 	TargetFunc Persecute;
 	TargetFunc RepairMetal;
 	TargetFunc SmeltOre;
@@ -174,10 +172,11 @@ public:
 	void Snooping( CSocket *s, CChar *target, CItem *pack );
 
 	UI16 CalculatePetControlChance( CChar *mChar, CChar *Npc );
-	bool CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool isCraftSkill = false );
+	bool CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool isCraftSkill = false, SI08 forceResult = 0 );
 	void SkillUse( CSocket *s, UI08 x );
 	void UpdateSkillLevel( CChar *c, UI08 s) const;
 	void AdvanceStats( CChar *s, UI08 sk, bool skillsuccess );
+	bool AdvanceSkill( CChar *s, UI08 sk, bool skillused, SKILLVAL skAmt = 0, bool triggerEvent = true );
 
 	size_t		GetNumberOfOres( void );
 	MiningData_st *GetOre( size_t number );

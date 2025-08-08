@@ -2,9 +2,9 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "gate", 1, true );
-	RegisterCommand( "recall", 1, true );
-	RegisterCommand( "mark", 1, true );
+	RegisterCommand( "gate", 4, true );
+	RegisterCommand( "recall", 4, true );
+	RegisterCommand( "mark", 4, true );
 }
 
 function command_GATE( socket, cmdString )
@@ -52,7 +52,7 @@ function onCallback1( socket, ourObj )
 			var serialPart4 = ( shipSerial % 256 );
 			var shipMulti = CalcMultiFromSer( serialPart1, serialPart2, serialPart3, serialPart4 );
 
-			if( ValidateObject( shipMulti ) && shipMulti.isBoat() )
+			if( ValidateObject( shipMulti ) && shipMulti.IsBoat() )
 			{
 				if( shipMulti.worldnumber == socket.currentChar.worldnumber && shipMulti.instanceID == socket.currentChar.instanceID )
 				{
@@ -102,12 +102,6 @@ function onCallback2( socket, ourObj )
 		if( !ValidateObject( ourObj.container ) || FindRootContainer( ourObj, 0 ) != mChar.pack )
 		{
 			socket.SysMessage( GetDictionaryEntry( 1763 )); // That item must be in your backpack before it can be used.
-			return;
-		}
-
-		if( ourObj.id != 0x1f17 )
-		{
-			pUser.SysMessage( "That rune is not blank." );
 			return;
 		}
 

@@ -21,7 +21,7 @@ public:
 	virtual void	Flag( UI08 toPut );
 	virtual void	HighlightColour( UI08 color );
 	CPCharLocBody &	operator = ( CChar &toCopy );
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPacketSpeech : public CPUOXBuffer
@@ -462,7 +462,7 @@ public:
 	virtual void	AddResponse( UI16 modelNum, UI16 colour, std::string responseText );
 	virtual void	Finalize( void );
 	CPOpenGump &operator = ( CChar &toCopy );
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPTargetCursor : public CPUOXBuffer
@@ -523,6 +523,22 @@ public:
 	virtual void	DamageMax( UI16 value );
 	virtual void	DamageMin( UI16 value );
 	virtual void	TithingPoints( UI32 value );
+    // Extended-6 (UOKR+) Stat Methods
+	virtual void	PhysicalResistCap( UI16 value );
+	virtual void	FireResistCap( UI16 value );
+	virtual void	ColdResistCap( UI16 value );
+	virtual void	PoisonResistCap( UI16 value );
+	virtual void	EnergyResistCap( UI16 value );
+	virtual void	HitChanceIncrease( UI16 value );
+	virtual void	SwingSpeedIncrease( UI16 value );
+	virtual void	DamageChanceIncrease( UI16 value );
+	virtual void	LowerReagentCost( UI16 value );
+	virtual void    DefenseChanceIncrease( UI16 value );
+	virtual void    DefenseChanceIncreaseCap( UI16 value );
+	virtual void    SpellDamageIncrease( UI16 value );
+	virtual void    FasterCastRecovery( UI16 value );
+	virtual void    FasterCasting( UI16 value );
+	virtual void    LowerManaCost( UI16 value );
 };
 
 class CPIdleWarning : public CPUOXBuffer
@@ -691,21 +707,21 @@ class CPEnableClientFeatures : public CPUOXBuffer
 {
 public:
 	CPEnableClientFeatures( CSocket *mSock );
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPNegotiateAssistantFeatures : public CPUOXBuffer
 {
 public:
 	CPNegotiateAssistantFeatures( CSocket *mSock );
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPKrriosClientSpecial : public CPUOXBuffer
 {
 public:
 	CPKrriosClientSpecial( CSocket *mSock, CChar * mChar, UI08 type, bool locations );
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPLogoutResponse : public CPUOXBuffer
@@ -897,7 +913,7 @@ public:
 	}
 	virtual	void	SetMap( UI08 newMap );
 	CPMapChange&	operator = ( CBaseObject& moving );
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPCloseGump : public CPUOXBuffer
@@ -911,7 +927,7 @@ public:
 	virtual			~CPCloseGump()
 	{
 	}
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPItemsInContainer : public CPUOXBuffer
@@ -938,7 +954,7 @@ public:
 	void			VendorSerial( SERIAL toSet );
 	virtual void	AddItem( CItem *toAdd, UI16 itemNum, CSocket *mSock );
 	void			Add( UI16 itemNum, SERIAL toAdd, SERIAL cont, UI08 amount );
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPCorpseClothing : public CPUOXBuffer
@@ -971,7 +987,7 @@ public:
 	virtual void	NumberOfItems( UI08 numItems );
 	virtual UI08	NumberOfItems( void ) const;
 	virtual void	AddItem( CItem *toAdd, CTownRegion *tReg, UI16 &baseOffset );
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPCharAndStartLoc : public CPUOXBuffer
@@ -992,7 +1008,7 @@ public:
 	virtual auto 	AddStartLocation( __STARTLOCATIONDATA__ *sLoc, UI08 locOffset  ) -> void;
 	virtual auto	NewAddStartLocation( __STARTLOCATIONDATA__ *sLoc, UI08 locOffset ) -> void;
 	CPCharAndStartLoc& operator = ( CAccountBlock_st& actbBlock );
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPUpdScroll : public CPUOXBuffer
@@ -1334,7 +1350,7 @@ public:
 	void			addText( const std::string& msg );
 
 	void			Finalize( void );
-	virtual void	Log( std::ofstream &outStream, bool fullHeader ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader ) override;
 };
 
 class CPNewSpellBook : public CPUOXBuffer
@@ -1387,6 +1403,12 @@ protected:
 		std::string ourText;
 		UI32 stringNum;
 		size_t stringLen;
+		SI16 sortOrder = DEFAULT_TOOLTIP_SORT; // default, if nothing else is specified
+
+		// Overload the less-than operator for sorting
+		bool operator<( const ToolTipEntry_st& other ) const {
+			return sortOrder < other.sortOrder;
+		}
 	};
 	std::vector<ToolTipEntry_st> ourEntries;
 
@@ -1539,11 +1561,11 @@ protected:
 	virtual void	InternalReset( void ) override;
 public:
 	CPPopupMenu();
-	CPPopupMenu( CChar&, CSocket& );
+	CPPopupMenu( CBaseObject&, CSocket& );
 	virtual			~CPPopupMenu()
 	{
 	}
-	virtual void	CopyData( CChar&, CSocket& );
+	virtual void	CopyData( CBaseObject&, CSocket& );
 };
 
 class CPClilocMessage : public CPUOXBuffer
@@ -1578,7 +1600,7 @@ public:
 	{
 	}
 	void			AddMember( CChar *member );
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPPartyInvitation : public CPUOXBuffer
@@ -1590,7 +1612,7 @@ public:
 	virtual			~CPPartyInvitation()
 	{
 	}
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 	void			Leader( CChar *leader );
 };
 
@@ -1604,7 +1626,7 @@ public:
 	{
 	}
 	void			AddMember( CChar *member );
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPPartyTell : public CPUOXBuffer
@@ -1616,7 +1638,7 @@ public:
 	virtual			~CPPartyTell()
 	{
 	}
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPDropItemApproved : public CPUOXBuffer

@@ -9,16 +9,16 @@ function onAICombatTarget( savageNpc, pTarget )
 
 	// Don't allow if target has AI_HEALER_G, or is an animal and monsters vs animals is disabled
 	if( pTarget.aitype == 1
-		|| ( pTarget.isAnimal && ( !monstersVsAnimals || animalAttackChance < RandomNumber( 1, 1000 ))))
+		|| ( pTarget.isAnimal && !ValidateObject( pTarget.owner ) && ( !monstersVsAnimals || animalAttackChance < RandomNumber( 1, 1000 ))))
 		return false;
 
 	// Don't attack racial allies
 	var raceCompare = RaceCompareByRace( savageNpc.race.id, pTarget.race.id );
-	if( raceCompare >= 1 )
+	if( !ValidateObject( pTarget.owner ) && raceCompare >= 1 )
 		return false;
 
 	// Don't attack other monsters, unless racial enemies
-	if(( savageNpc.aitype == 2 || savageNpc.aitype == 11 ) && ( pTarget.aitype == 2 || pTarget.aitype == 11 ) && raceCompare >= 0 )
+	if( !ValidateObject( pTarget.owner ) && (( savageNpc.aitype == 2 || savageNpc.aitype == 11 ) && ( pTarget.aitype == 2 || pTarget.aitype == 11 ) && raceCompare >= 0 ))
 		return false;
 
 	// See if pTarget is wearing savage kin paint kit
@@ -100,8 +100,11 @@ function onCombatDamageCalc( pAttacker, pDefender, fightSkill, hitLoc )
 		damage = RandomNumber( 0, 4 );
 	}
 
-	// Half remaining damage by 2 if PUB15 or earlier
-	damage /= 2;
+	// Half remaining damage by 2 if LBR or earlier
+	if( EraStringToNum( GetServerSetting( "CoreShardEra" )) <= EraStringToNum( "lbr" ))
+	{
+		damage /= 2;
+	}
 
 	// If defender is a player, damage is divided by this modifier from uox.ini (modifier defaults to 1)
 	if( !pDefender.npc )
@@ -110,7 +113,6 @@ function onCombatDamageCalc( pAttacker, pDefender, fightSkill, hitLoc )
 	}
 
 	// Apply Savage damage bonuses against large tamed animals
-	var sectID = pDefender.sectionID;
 	if( bonusDamageList.indexOf( pDefender.sectionID ))
 	{
 		damage *= 3;

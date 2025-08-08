@@ -7,7 +7,7 @@ const scriptID = 3305;
 // spells.dfn
 const useAttackerMagerySkill = false;
 
-function onAttack( mAttacker, mDefender )
+function onAttack( mAttacker, mDefender, hitStatus, hitLoc, damageDealt )
 {
 	// Fetch weapon in main hand
 	var iWeapon = mAttacker.FindItemLayer( 0x01 );
@@ -30,7 +30,10 @@ function onAttack( mAttacker, mDefender )
 	// Check if the item has any charges left
 	if( spellCharges == 0 )
 	{
-		mAttacker.socket.SysMessage( GetDictionaryEntry( 9401, mAttacker.socket.language )); // This item is out of charges.
+		if( mAttacker.socket != null )
+		{
+			mAttacker.socket.SysMessage( GetDictionaryEntry( 9401, mAttacker.socket.language )); // This item is out of charges.
+		}
 		return;
 	}
 
@@ -240,8 +243,8 @@ function CheckTargetResist( resistDifficulty, mDefender, spellCircle )
 	if( ValidateObject( mDefender ) )
 	{
 		var resistResult = mDefender.CheckSkill( 26, 80 * spellCircle, 800 + ( 80 * spellCircle ));
-		var defaultChance = mDefender.skills.magicresistance / 5;
-		var resistChance = mDefender.skills.magicresistance - ((( resistDifficulty - 20 ) / 5 ) + ( spellCircle * 5 ));
+		var defaultChance = ( mDefender.skills.magicresistance + ( mDefender.race.magicResistance * 10 )) / 5;
+		var resistChance = ( mDefender.skills.magicresistance + ( mDefender.race.magicResistance * 10 )) - ((( resistDifficulty - 20 ) / 5 ) + ( spellCircle * 5 ));
 		if( defaultChance > resistChance )
 		{
 			resistChance = defaultChance;

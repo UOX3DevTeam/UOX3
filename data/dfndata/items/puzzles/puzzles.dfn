@@ -1,0 +1,45 @@
+[powergenerator]
+{
+name=power generator
+id=0x0073
+colour=0x0451
+weight=255
+movable=0
+script=5036//power generator.js
+}
+
+[powergenerator_2]
+{
+name=power generator
+id=0x0076
+colour=0x0451
+weight=255
+movable=0
+}
+
+[powergenerator_3]
+{
+name=power generator
+id=0x0075
+colour=0x0451
+weight=255
+movable=0
+}
+
+[powergenerator_4]
+{
+name=power generator
+id=0x37f4
+colour=0x0451
+weight=255
+movable=0
+}
+
+[powergenerator_ctrlpanel]
+{
+name=control panel
+id=0x0bdc
+colour=0x0835
+weight=255
+movable=0
+}

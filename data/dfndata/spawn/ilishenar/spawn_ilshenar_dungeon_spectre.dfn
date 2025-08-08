@@ -1,0 +1,95 @@
+// 17700 to 17749
+[REGIONSPAWN 17700]
+{
+NAME=Spectre Entrance 0_1
+NPC=etherealwarrior
+MAXNPCS=2
+X1=1354
+Y1=1068
+X2=1371
+Y2=1080
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// shade, spectre, wraith, ghoul
+[REGIONSPAWN 17701]
+{
+NAME=Spectre 1_1
+NPCLIST=spectre_npclist_1
+MAXNPCS=10
+X1=1962
+Y1=1015
+X2=1982
+Y2=1067
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// shade, spectre, wraith, ghoul
+[REGIONSPAWN 17702]
+{
+NAME=Spectre 1_2
+NPCLIST=spectre_npclist_1
+MAXNPCS=5
+X1=1950
+Y1=1054
+X2=1981
+Y2=1064
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// shade, spectre, wraith, ghoul
+[REGIONSPAWN 17703]
+{
+NAME=Spectre 1_3
+NPCLIST=spectre_npclist_1
+MAXNPCS=5
+X1=1982
+Y1=1054
+X2=2014
+Y2=1064
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// shade, spectre, wraith, ghoul
+[REGIONSPAWN 17704]
+{
+NAME=Spectre 1_4
+NPCLIST=spectre_npclist_1
+MAXNPCS=5
+X1=1955
+Y1=1077
+X2=1981
+Y2=1097
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// shade, spectre, wraith, ghoul
+[REGIONSPAWN 17705]
+{
+NAME=Spectre 1_5
+NPCLIST=spectre_npclist_1
+MAXNPCS=5
+X1=1982
+Y1=1077
+X2=2009
+Y2=1097
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}

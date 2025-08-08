@@ -1,0 +1,1913 @@
+
+// Ringmail Gloves - LBR stats (default)
+[0x13eb_lbr]
+{
+get=base_ring_gloves
+def=22
+dexadd=-1
+hp=41 51
+str=20
+value=122 61
+weight=200
+}
+
+// Ringmail Tunic - LBR stats (default)
+[0x13ec_lbr]
+{
+get=base_ring_tunic
+def=22
+dexadd=-2
+hp=41 51
+str=20
+value=218 109
+weight=1500
+}
+
+// Ringmail Sleeves - LBR stats (default)
+[0x13ee_lbr]
+{
+get=base_ring_sleeves
+def=22
+dexadd=-1
+hp=41 51
+str=20
+value=147 73
+weight=1500
+}
+
+// Ringmail Leggings - LBR stats (default)
+[0x13f0_lbr]
+{
+get=base_ring_leggings
+def=22
+dexadd=-1
+hp=41 51
+str=20
+value=147 73
+weight=1500
+}
+
+// Chainmail
+
+// Chainmail Coif - LBR stats (default)
+[0x13bb_lbr]
+{
+get=base_chain_coif
+def=28
+hp=36 44
+str=20
+value=130 65
+weight=700
+}
+
+// Chainmail Leggings - LBR stats (default)
+[0x13be_lbr]
+{
+get=base_chain_leggings
+def=28
+dexadd=-3
+hp=46 58
+str=20
+value=166 83
+weight=700
+}
+
+// Chainmail Tunic - LBR stats (default)
+[0x13bf_lbr]
+{
+get=base_chain_tunic
+def=28
+dexadd=-5
+hp=46 58
+str=20
+value=207 103
+weight=700
+}
+
+// Plate Armor
+
+// Female Plate - LBR stats (default)
+[0x1c04_lbr]
+{
+get=base_fem_plate
+def=30
+dexadd=-5
+hp=51 65
+str=45
+value=245 122
+weight=400
+}
+
+// Platemail Arms - LBR stats (default)
+[0x1410_lbr]
+{
+get=base_plate_arms
+def=40
+dexadd=-2
+hp=51 65
+str=40
+value=181 90
+weight=500
+}
+
+// Platemail Leggings - LBR stats (default)
+[0x1411_lbr]
+{
+get=base_plate_leggings
+def=40
+dexadd=-6
+hp=51 65
+str=60
+value=218 109
+weight=700
+}
+
+// Platemail Gorget - LBR stats (default)
+[0x1413_lbr]
+{
+get=base_plate_gorget
+def=40
+dexadd=-1
+hp=40 65
+str=30
+value=124 70
+weight=200
+}
+
+// Platemail Gloves - LBR stats (default)
+[0x1414_lbr]
+{
+get=base_plate_gloves
+def=40
+dexadd=-2
+hp=51 65
+str=30
+value=145 72
+weight=200
+}
+
+// Platemail Chest - LBR stats (default)
+[0x1415_lbr]
+{
+get=base_plate_chest
+def=40
+dexadd=-8
+hp=51 65
+str=60
+value=273 136
+weight=1000
+}
+
+// Leather
+
+// Leather Sleeves - LBR stats (default)
+[0x13c5_lbr]
+{
+get=base_leather_sleeves
+def=13
+hp=31 37
+str=10
+value=80 40
+weight=200
+}
+
+// Leather Gloves - LBR stats (default)
+[0x13c6_lbr]
+{
+get=base_leather_gloves
+def=13
+hp=31 37
+str=10
+value=60 30
+weight=100
+}
+
+// Leather Gorget - LBR stats (default)
+[0x13c7_lbr]
+{
+get=base_leather_gorget
+def=13
+hp=13 37
+str=10
+value=74 37
+weight=200
+}
+
+// Leather Cap - LBR stats (default)
+[0x1db9_lbr]
+{
+get=base_leather_cap
+def=13
+hp=31 37
+str=15
+value=68 31
+weight=100
+}
+
+// Leather Leggings - LBR stats (default)
+[0x13cb_lbr]
+{
+get=base_leather_leggings
+def=13
+hp=31 37
+str=10
+value=80 40
+weight=400
+}
+
+// Leather Tunic - LBR stats (default)
+[0x13cc_lbr]
+{
+get=base_leather_tunic
+def=13
+hp=31 37
+str=15
+value=101 52
+weight=700
+}
+
+// Leather Shorts (Female) - LBR stats (default)
+[0x1c00_lbr]
+{
+get=base_leather_shorts
+def=13
+hp=31 37
+str=10
+value=86 43
+weight=300
+}
+
+// Leather Armor (Female) - LBR stats (default)
+[0x1c06_lbr]
+{
+get=base_leather_armor
+def=13
+hp=31 37
+str=15
+value=116 58
+weight=100
+}
+
+// Leather Skirt (Female) - LBR stats (default)
+[0x1c08_lbr]
+{
+get=base_leather_skirt
+def=13
+hp=31 37
+str=10
+value=87 43
+weight=100
+}
+
+// Leather Bustier (Female) - LBR stats (default)
+[0x1c0a_lbr]
+{
+get=base_leather_bustier
+def=13
+hp=31 37
+str=10
+value=97 48
+weight=100
+}
+
+// Studded Leather
+
+// Studded Sleeves - LBR stats (default)
+[0x13d4_lbr]
+{
+get=base_studded_sleeves
+def=16
+hp=36 44
+str=25
+value=87 43
+weight=400
+}
+
+// Studded Gloves - LBR stats (default)
+[0x13d5_lbr]
+{
+get=base_studded_gloves
+def=16
+hp=36 44
+str=25
+value=79 39
+weight=100
+}
+
+// Studded Gorget - LBR stats (default)
+[0x13d6_lbr]
+{
+get=base_studded_gorget
+def=16
+hp=16 44
+str=25
+value=73 36
+weight=100
+}
+
+// Studded Leggings - LBR stats (default)
+[0x13da_lbr]
+{
+get=base_studded_leggings
+def=16
+hp=36 44
+str=35
+value=103 51
+weight=300
+}
+
+// Studded Tunic - LBR stats (default)
+[0x13db_lbr]
+{
+get=base_studded_tunic
+def=16
+hp=36 44
+str=35
+value=128 64
+weight=700
+}
+
+// Studded Armor (Female) - LBR stats (default)
+[0x1c02_lbr]
+{
+get=base_studded_armor
+def=16
+hp=101 115
+str=35
+value=142 71
+weight=600
+}
+
+// Studded Bustier (Female) - LBR stats (default)
+[0x1c0c_lbr]
+{
+get=base_studded_bustier
+def=16
+hp=101 115
+str=25
+value=120 60
+weight=100
+}
+
+// Bone Armor
+
+// Bone Arms - LBR stats (default)
+[0x144e_lbr]
+{
+get=base_bone_arms
+def=30
+dexadd=-2
+hp=26 30
+str=40
+value=156 78
+weight=200
+}
+
+// Bone Armor - LBR stats (default)
+[0x144f_lbr]
+{
+get=base_bone_armor
+def=30
+dexadd=-6
+hp=26 30
+str=40
+value=234 117
+weight=600
+}
+
+// Bone Gauntlets - LBR stats (default)
+[0x1450_lbr]
+{
+get=base_bone_gauntlets
+def=30
+dexadd=-1
+hp=26 30
+str=40
+value=133 66
+weight=200
+}
+
+// Bone Helm - LBR stats (default)
+[0x1451_lbr]
+{
+get=base_bone_helm
+def=30
+hp=26 30
+str=40
+value=157 71
+weight=300
+}
+
+// Bone Legs - LBR stats (default)
+[0x1452_lbr]
+{
+get=base_bone_legs
+def=30
+dexadd=-4
+hp=26 30
+str=40
+value=179 89
+weight=300
+}
+
+// Orc Helm - LBR stats (default)
+[0x1f0b_lbr]
+{
+get=base_orc_helm
+def=20
+hp=31 70
+value=105 48
+weight=500
+}
+
+// Helmets
+
+// Close Helm - LBR stats (default)
+[0x1408_lbr]
+{
+get=base_close_helm
+def=30
+hp=46 58
+str=40
+value=145 72
+weight=500
+}
+
+// Helmet - LBR stats (default)
+[0x140a_lbr]
+{
+get=base_helmet
+def=30
+hp=46 58
+str=40
+value=116 58
+weight=500
+}
+
+// Bascinet - LBR stats (default)
+[0x140c_lbr]
+{
+get=base_bascinet
+def=18
+hp=101 115
+str=10
+value=127 46
+weight=500
+}
+
+// Norse Helm - LBR stats (default)
+[0x140e_lbr]
+{
+get=base_norse_helm
+def=30
+hp=46 58
+str=40
+value=145 53
+weight=500
+}
+
+// Plate Helm - LBR stats (default)
+[0x1412_lbr]
+{
+get=base_plate_helm
+def=40
+dexadd=-1
+hp=46 58
+str=40
+value=170 85
+weight=500
+}
+
+// SE Plate Armor
+
+// Heavy Platemail Jingasa - LBR stats (default)
+[0x2777_lbr]
+{
+get=base_heavy_platemail_jingasa
+def=50
+dexadd=-1
+hp=59 78
+str=40
+value=555 285
+weight=500
+}
+
+// Decorative Platemail Kabuto - LBR stats (default)
+[0x2778_lbr]
+{
+get=base_decorative_platemail_kabuto
+def=43
+dexadd=-1
+hp=65 83
+str=50
+value=694 352
+weight=700
+}
+
+// Platemail Do - LBR stats (default)
+[0x277d_lbr]
+{
+get=base_platemail_do
+def=38
+dexadd=-8
+hp=79 86
+str=55
+value=426 227
+weight=1100
+}
+
+// Platemail Hiro Sode - LBR stats (default)
+[0x2780_lbr]
+{
+get=base_platemail_hiro_sode
+def=38
+dexadd=-2
+hp=57 76
+str=50
+value=206 103
+weight=200
+}
+
+// Light Platemail Jingasa - LBR stats (default)
+[0x2781_lbr]
+{
+get=base_light_platemail_jingasa
+def=50
+dexadd=-1
+hp=65 67
+str=51
+value=267 121
+weight=500
+}
+
+// Small Platemail Jingasa - LBR stats (default)
+[0x2784_lbr]
+{
+get=base_small_platemail_jingasa
+def=50
+dexadd=-1
+hp=65 67
+str=40
+value=267 121
+weight=500
+}
+
+// Platemail Battle Kabuto - LBR stats (default)
+[0x2785_lbr]
+{
+get=base_platemail_battle_kabuto
+def=43
+dexadd=-1
+hp=71 72
+str=50
+value=225 102
+weight=700
+}
+
+// Platemail Suneate - LBR stats (default)
+[0x2788_lbr]
+{
+get=base_platemail_suneate
+def=38
+dexadd=-6
+hp=57 67
+str=55
+value=204 90
+weight=700
+}
+
+// Platemail Kabuto - LBR stats (default)
+[0x2789_lbr]
+{
+get=base_platemail_kabuto
+def=43
+dexadd=-1
+hp=71 72
+str=50
+value=225 102
+weight=700
+}
+
+// Kabuto - LBR stats (default)
+[0x236c_lbr]
+{
+get=base_kabuto
+def=36
+dexadd=-1
+hp=45 53
+str=55
+value=188 86
+weight=500
+}
+
+// Platemail Haidate - LBR stats (default)
+[0x278d_lbr]
+{
+get=base_platemail_haidate
+def=38
+dexadd=-6
+hp=57 67
+str=55
+value=214 95
+weight=700
+}
+
+// Chainmail Hatsuburi - LBR stats (default)
+[0x2774_lbr]
+{
+get=base_chainmail_hatsuburi
+def=36
+hp=65 83
+str=35
+value=555 285
+weight=800
+}
+
+// Platemail Hatsuburi - LBR stats (default)
+[0x2775_lbr]
+{
+get=base_platemail_hatsuburi
+def=36
+dexadd=-1
+hp=65 83
+str=45
+value=555 285
+weight=500
+}
+
+// Platemail Mempo - LBR stats (default)
+[0x2779_lbr]
+{
+get=base_platemail_mempo
+def=38
+dexadd=-1
+hp=42 72
+str=40
+value=166 87
+weight=300
+}
+
+// SE Ninja Leather
+
+// Leather Ninja Hood - LBR stats (default)
+[0x278e_lbr]
+{
+get=base_leather_ninja_hood
+def=15
+hp=30 50
+str=10
+value=73 33
+weight=200
+}
+
+// Leather Ninja Belt - LBR stats (default)
+[0x2790_lbr]
+{
+get=base_leather_ninja_belt
+str=10
+value=36 16
+weight=100
+}
+
+// Leather Ninja Pants - LBR stats (default)
+[0x2791_lbr]
+{
+get=base_leather_ninja_pants
+def=15
+hp=41 51
+str=10
+value=45 20
+weight=300
+}
+
+// Leather Ninja Mitts - LBR stats (default)
+[0x2792_lbr]
+{
+get=base_leather_ninja_mitts
+def=15
+hp=26 26
+str=10
+value=71 35
+weight=200
+}
+
+// Leather Ninja Jacket - LBR stats (default)
+[0x2793_lbr]
+{
+get=base_leather_ninja_jacket
+def=15
+hp=40 49
+str=10
+value=70 38
+weight=500
+}
+
+// SE Samurai Leather
+
+// Leather Jingasa - LBR stats (default)
+[0x2776_lbr]
+{
+get=base_leather_jingasa
+def=21
+hp=24 33
+str=20
+value=80 37
+weight=300
+}
+
+// Leather Mempo - LBR stats (default)
+[0x277a_lbr]
+{
+get=base_leather_mempo
+def=15
+hp=25 41
+str=25
+value=64 34
+weight=200
+}
+
+// Leather Do - LBR stats (default)
+[0x277b_lbr]
+{
+get=base_leather_do
+def=15
+hp=46 55
+str=30
+value=120 62
+weight=600
+}
+
+// Leather Hiro Sode - LBR stats (default)
+[0x277e_lbr]
+{
+get=base_leather_hiro_sode
+def=15
+hp=41 51
+str=20
+value=45 21
+weight=100
+}
+
+// Leather Suneate - LBR stats (default)
+[0x2786_lbr]
+{
+get=base_leather_suneate
+def=15
+hp=26 41
+str=15
+value=50 21
+weight=400
+}
+
+// Leather Haidate - LBR stats (default)
+[0x278a_lbr]
+{
+get=base_leather_haidate
+def=15
+hp=31 41
+str=15
+value=49 23
+weight=400
+}
+
+// SE Samurai Studded Armor
+
+// Studded Do - LBR stats (default)
+[0x277c_lbr]
+{
+get=base_studded_do
+def=15
+hp=53 61
+str=35
+value=179 97
+weight=800
+}
+
+// Studded Hiro Sode - LBR stats (default)
+[0x277f_lbr]
+{
+get=base_studded_hiro_sode
+def=15
+hp=46 56
+str=20
+value=68 30
+weight=100
+}
+
+// Studded Suneate - LBR stats (default)
+[0x2787_lbr]
+{
+get=base_studded_suneate
+def=15
+hp=36 51
+str=20
+value=71 32
+weight=500
+}
+
+// Studded Haidate - LBR stats (default)
+[0x278b_lbr]
+{
+get=base_studded_haidate
+def=15
+hp=36 46
+str=20
+value=69 30
+weight=500
+}
+
+// Studded Mempo - LBR stats (default)
+[0x279d_lbr]
+{
+get=base_studded_mempo
+def=15
+hp=21 41
+str=25
+value=66 32
+weight=200
+}
+
+// ML Leaf Armor
+
+// Leaf Arms - LBR stats (default)
+[0x2fc8_lbr]
+{
+get=base_leaf_arms
+def=16
+hp=31 41
+str=10
+value=71 35
+weight=200
+}
+
+// Leaf Tunic - LBR stats (default)
+[0x2fc5_lbr]
+{
+get=base_leaf_tunic
+def=16
+hp=40 49
+str=15
+value=117 59
+weight=200
+}
+
+// Leaf Armor (Female) - LBR stats (default)
+[0x2fcb_lbr]
+{
+get=base_leaf_armor
+def=16
+hp=40 49
+str=15
+value=117 59
+weight=200
+}
+
+// Leaf Gloves - LBR stats (default)
+[0x2fc6_lbr]
+{
+get=base_leaf_gloves
+def=16
+hp=31 39
+str=10
+value=71 35
+weight=200
+}
+
+// Leaf Gorget - LBR stats (default)
+[0x2fc7_lbr]
+{
+get=base_leaf_gorget
+def=16
+hp=21 41
+str=10
+value=64 34
+weight=200
+}
+
+// Leaf Leggings - LBR stats (default)
+[0x2fc9_lbr]
+{
+get=base_leaf_leggings
+def=16
+hp=31 41
+str=15
+value=90 45
+weight=200
+}
+
+// Leaf Tonlet - LBR stats (default)
+[0x2fca_lbr]
+{
+get=base_leaf_tonlet
+def=16
+hp=31 41
+str=10
+value=90 45
+weight=200
+}
+
+// ML Hide Armor
+
+// Hide Pauldrons - LBR stats (default)
+[0x2b77_lbr]
+{
+get=base_hide_pauldrons
+def=22
+hp=36 46
+str=15
+value=107 54
+weight=400
+}
+
+// Hide Tunic - LBR stats (default)
+[0x2b74_lbr]
+{
+get=base_hide_tunic
+def=22
+hp=46 55
+str=20
+value=172 86
+weight=600
+}
+
+// Hide Armor (Female) - LBR stats (default)
+[0x2b79_lbr]
+{
+get=base_hide_armor
+def=22
+hp=46 55
+str=20
+value=172 86
+weight=600
+}
+
+// Hide Gloves - LBR stats (default)
+[0x2b75_lbr]
+{
+get=base_hide_gloves
+def=22
+hp=36 44
+str=10
+value=107 53
+weight=200
+}
+
+// Hide Pants - LBR stats (default)
+[0x2b78_lbr]
+{
+get=base_hide_pants
+def=22
+hp=36 46
+str=20
+value=131 65
+weight=500
+}
+
+// Hide Gorget - LBR stats (default)
+[0x2b76_lbr]
+{
+get=base_hide_gorget
+def=22
+hp=25 46
+str=15
+value=98 52
+weight=300
+}
+
+// Dragon Armor
+
+// Dragon Sleeves - LBR stats (default)
+[0x2657_lbr]
+{
+get=base_dragon_sleeves
+def=22
+dexadd=-1
+hp=57 76
+str=50
+value=98 49
+weight=200
+}
+
+// Dragon Breastplate - LBR stats (default)
+[0x2641_lbr]
+{
+get=base_dragon_breastplate
+def=22
+dexadd=-5
+hp=73 92
+str=50
+value=172 86
+weight=1100
+}
+
+// Dragon Gloves - LBR stats (default)
+[0x2643_lbr]
+{
+get=base_dragon_gloves
+def=22
+dexadd=-1
+hp=57 74
+str=50
+value=98 49
+weight=200
+}
+
+// Dragon Helm - LBR stats (default)
+[0x2645_lbr]
+{
+get=base_dragon_helm
+def=22
+hp=65 83
+str=55
+value=115 52
+weight=500
+}
+
+// Dragon Leggings - LBR stats (default)
+[0x2647_lbr]
+{
+get=base_dragon_leggings
+def=22
+dexadd=-5
+hp=57 77
+str=50
+value=131 65
+weight=600
+}
+
+// ML Woodland Armor
+
+// Woodland Arms - LBR stats (default)
+[0x2b6c_lbr]
+{
+get=base_woodland_arms
+def=40
+dexadd=-2
+hp=51 66
+str=55
+value=179 89
+weight=500
+}
+
+// Woodland Chest - LBR stats (default)
+[0x2b67_lbr]
+{
+get=base_woodland_chest
+def=40
+dexadd=-4
+hp=66 80
+str=65
+value=313 156
+weight=800
+}
+
+// Woodland Armor (Female) - LBR stats (default)
+[0x2b6d_lbr]
+{
+get=base_woodland_armor
+def=40
+dexadd=-4
+hp=66 80
+str=65
+value=313 156
+weight=800
+}
+
+// Woodland Gauntlet - LBR stats (default)
+[0x2b6a_lbr]
+{
+get=base_woodland_gauntlets
+def=40
+dexadd=-2
+hp=51 64
+str=45
+value=178 88
+weight=200
+}
+
+// Woodland Leggings - LBR stats (default)
+[0x2b6b_lbr]
+{
+get=base_woodland_leggings
+def=40
+dexadd=-4
+hp=51 67
+str=60
+value=239 119
+weight=800
+}
+
+// Woodland Gorget - LBR stats (default)
+[0x2b69_lbr]
+{
+get=base_woodland_gorget
+def=40
+dexadd=-1
+hp=35 67
+str=40
+value=170 90
+weight=300
+}
+
+// ML Helmets
+
+// Circlet - LBR stats (default)
+[0x2b6e_lbr]
+{
+get=base_circlet
+def=7
+hp=59 72
+str=10
+value=37 17
+weight=200
+}
+
+// Royal Circlet - LBR stats (default)
+[0x2b6f_lbr]
+{
+get=base_royal_circlet
+def=7
+hp=24 39
+str=10
+value=37 17
+weight=200
+}
+
+// Gemmed Circlet - LBR stats (default)
+[0x2b70_lbr]
+{
+get=base_gemmed_circlet
+def=7
+hp=24 39
+str=10
+value=37 17
+weight=200
+}
+
+// Raven Helm - LBR stats (default)
+[0x2b71_lbr]
+{
+get=base_raven_helm
+def=36
+hp=36 59
+str=20
+value=188 86
+weight=500
+}
+
+// Vulture Helm - LBR stats (default)
+[0x2b72_lbr]
+{
+get=base_vulture_helm
+def=36
+hp=59 72
+str=20
+value=188 86
+weight=500
+}
+
+// Winged Helm - LBR stats (default)
+[0x2b73_lbr]
+{
+get=base_winged_helm
+def=36
+hp=53 61
+str=20
+value=188 86
+weight=500
+}
+
+// Elven Glasses - LBR stats (default)
+[0x2fb8_lbr]
+{
+get=base_elven_glasses
+def=14
+hp=43 53
+str=35
+value=73 33
+weight=200
+}
+
+// SA Gargoyle Armor
+
+// Gargish Cloth Arms - LBR stats (default)
+[0x0404_lbr]
+{
+get=base_gargish_cloth_arms
+def=38
+hp=41 51
+str=15
+value=57 28
+weight=200
+}
+
+// Gargish Cloth Arms (Female) - LBR stats (default)
+[0x0403_lbr]
+{
+get=base_female_gargish_cloth_arms
+def=38
+hp=41 51
+str=15
+value=57 28
+weight=200
+}
+
+// Gargish Cloth Chest - LBR stats (default)
+[0x0406_lbr]
+{
+get=base_gargish_cloth_chest
+def=38
+hp=53 61
+str=20
+value=107 62
+weight=200
+}
+
+// Female Gargish Cloth Chest - LBR stats (default)
+[0x0405_lbr]
+{
+get=base_female_gargish_cloth_chest
+def=38
+hp=53 61
+str=20
+value=114 59
+weight=200
+}
+
+// Gargish Cloth Leggings - LBR stats (default)
+[0x040a_lbr]
+{
+get=base_gargish_cloth_leggings
+def=38
+hp=41 51
+str=15
+value=60 26
+weight=200
+}
+
+// Female Gargish Cloth Leggings - LBR stats (default)
+[0x0409_lbr]
+{
+get=base_female_gargish_cloth_leggings
+def=38
+hp=41 51
+str=15
+value=65 24
+weight=200
+}
+
+// Gargish Cloth Kilt - LBR stats (default)
+[0x0408_lbr]
+{
+get=base_gargish_cloth_kilt
+def=38
+hp=41 58
+str=15
+value=51 26
+weight=200
+}
+
+// Gargish Cloth Kilt (Female) - LBR stats (default)
+[0x0407_lbr]
+{
+get=base_female_gargish_cloth_kilt
+def=38
+hp=41 51
+str=15
+value=52 24
+weight=200
+}
+
+// Gargish Cloth Wing Armor - LBR stats (default)
+[0x45a4_lbr]
+{
+get=base_gargish_cloth_wing_armor
+str=10
+weight=200
+}
+
+// SA Gargish Leather Armor
+
+// Gargish Leather Arms - LBR stats (default)
+[0x0302_lbr]
+{
+get=base_gargish_leather_arms
+def=40
+hp=31 51
+str=20
+value=74 38
+weight=400
+}
+
+// Female Gargish Leather Arms - LBR stats (default)
+[0x0301_lbr]
+{
+get=base_gargish_leather_arms
+def=40
+hp=31 51
+str=20
+value=68 39
+weight=400
+}
+
+// Gargish Leather Chest - LBR stats (default)
+[0x0304_lbr]
+{
+get=base_gargish_leather_chest
+def=40
+hp=40 61
+str=20
+value=106 64
+weight=800
+}
+
+// Female Gargish Leather Chest - LBR stats (default)
+[0x0303_lbr]
+{
+get=base_female_gargish_leather_chest
+def=40
+hp=40 61
+str=20
+value=106 64
+weight=800
+}
+
+// Gargish Leather Leggings - LBR stats (default)
+[0x0306_lbr]
+{
+get=base_gargish_leather_leggings
+def=40
+hp=31 51
+str=15
+value=61 27
+weight=500
+}
+
+// Female Gargish Leather Leggings - LBR stats (default)
+[0x0305_lbr]
+{
+get=base_female_gargish_leather_leggings
+def=40
+hp=31 51
+str=15
+value=61 27
+weight=500
+}
+
+// Gargish Leather Kilt - LBR stats (default)
+[0x0311_lbr]
+{
+get=base_gargish_leather_kilt
+def=40
+hp=31 51
+str=20
+value=77 39
+weight=500
+}
+
+// Female Gargish Leather Kilt - LBR stats (default)
+[0x0310_lbr]
+{
+get=base_female_gargish_leather_kilt
+def=40
+hp=31 51
+str=20
+value=84 37
+weight=500
+}
+
+// Gargish Leather Wing Armor - LBR stats (default)
+[0x457e_lbr]
+{
+get=base_gargish_leather_wing_armor
+str=10
+weight=200
+}
+
+// SA Gargish Plate Armor
+
+// Gargish Plate Arms - LBR stats (default)
+[0x0308_lbr]
+{
+get=base_gargish_plate_arms
+def=61
+dexadd=-2
+hp=51 66
+str=55
+value=304 152
+weight=500
+}
+
+// Female Gargish Plate Arms - LBR stats (default)
+[0x0307_lbr]
+{
+get=base_female_gargish_plate_arms
+def=61
+dexadd=-2
+hp=51 66
+str=55
+value=336 168
+weight=500
+}
+
+// Gargish Plate Chest - LBR stats (default)
+[0x030a_lbr]
+{
+get=base_gargish_plate_chest
+def=61
+dexadd=-8
+hp=66 80
+str=65
+value=635 338
+weight=1100
+}
+
+// Female Gargish Plate Chest - LBR stats (default)
+[0x0309_lbr]
+{
+get=base_female_gargish_plate_chest
+def=61
+dexadd=-8
+hp=66 80
+str=65
+value=661 98
+weight=1100
+}
+
+// Gargish Plate Leggings - LBR stats (default)
+[0x030e_lbr]
+{
+get=base_gargish_plate_leggings
+def=61
+dexadd=-6
+hp=51 67
+str=60
+value=323 143
+weight=700
+}
+
+// Female Gargish Plate Leggings - LBR stats (default)
+[0x030d_lbr]
+{
+get=base_female_gargish_plate_leggings
+def=61
+dexadd=-6
+hp=51 67
+str=60
+value=338 150
+weight=700
+}
+
+// Gargish Plate Kilt - LBR stats (default)
+[0x030c_lbr]
+{
+get=base_gargish_plate_kilt
+def=61
+dexadd=-6
+hp=51 67
+str=55
+value=336 149
+weight=500
+}
+
+// Female Gargish Plate Kilt - LBR stats (default)
+[0x030b_lbr]
+{
+get=base_female_gargish_plate_kilt
+def=61
+dexadd=-6
+hp=51 67
+str=55
+value=307 137
+weight=500
+}
+
+// SA Gargish Stone Armor
+
+// Gargish Stone Arms - LBR stats (default)
+[0x0284_lbr]
+{
+get=base_gargish_stone_arms
+def=45
+dexadd=-2
+hp=41 51
+str=30
+value=107 54
+weight=1000
+}
+
+// Female Gargish Stone Arms - LBR stats (default)
+[0x0283_lbr]
+{
+get=base_female_gargish_stone_arms
+def=45
+dexadd=-2
+hp=41 51
+str=30
+value=107 54
+weight=1000
+}
+
+// Gargish Stone Chest - LBR stats (default)
+[0x0286_lbr]
+{
+get=base_gargish_stone_chest
+def=45
+dexadd=-8
+hp=53 61
+str=30
+value=195 104
+weight=1600
+}
+
+// Female Gargish Stone Chest - LBR stats (default)
+[0x0285_lbr]
+{
+get=base_female_gargish_stone_chest
+def=45
+dexadd=-8
+hp=53 61
+str=30
+value=185 98
+weight=1600
+}
+
+// Gargish Stone Leggings - LBR stats (default)
+[0x028a_lbr]
+{
+get=base_gargish_stone_leggings
+def=45
+dexadd=-8
+hp=41 51
+str=30
+value=103 45
+weight=1600
+}
+
+// Female Gargish Stone Leggings - LBR stats (default)
+[0x0289_lbr]
+{
+get=base_female_gargish_stone_leggings
+def=45
+dexadd=-8
+hp=41 51
+str=30
+value=105 47
+weight=1600
+}
+
+// Gargish Stone Kilt - LBR stats (default)
+[0x0288_lbr]
+{
+get=base_gargish_stone_kilt
+def=45
+dexadd=-8
+hp=41 51
+str=30
+value=120 53
+weight=1000
+}
+
+// Female Gargish Stone Kilt - LBR stats (default)
+[0x0287_lbr]
+{
+get=base_female_gargish_stone_kilt
+def=45
+dexadd=-8
+hp=41 51
+str=30
+value=123 54
+weight=1000
+}
+
+// ToL Dragon Turtle Hide Armor
+
+// Dragon Turtle Hide Arms - LBR stats (default)
+[0x782e_lbr]
+{
+get=base_dragon_turtle_hide_arms
+def=30
+hp=36 46
+str=20
+value=134 67
+weight=200
+}
+
+// Dragon Turtle Hide Chest - LBR stats (default)
+[0x782a_lbr]
+{
+get=base_dragon_turtle_hide_chest
+def=30
+hp=46 55
+str=20
+value=234 117
+weight=800
+}
+
+// Dragon Turtle Hide Bustier - LBR stats (default)
+[0x782b_lbr]
+{
+get=base_dragon_turtle_hide_bustier
+def=30
+hp=46 55
+str=20
+value=234 117
+weight=600
+}
+
+// Dragon Turtle Hide Helm - LBR stats (default)
+[0x782d_lbr]
+{
+get=base_dragon_turtle_hide_helm
+def=30
+hp=24 39
+str=25
+value=157 71
+weight=400
+}
+
+// Dragon Turtle Hide Leggings - LBR stats (default)
+[0x782c_lbr]
+{
+get=base_dragon_turtle_hide_leggings
+def=30
+hp=36 46
+str=20
+value=179 89
+weight=600
+}
+
+// ToL Tiger Pelt Armor
+
+// Tiger Pelt Chest - LBR stats (default)
+[0x7822_lbr]
+{
+get=base_tiger_pelt_chest
+def=22
+hp=40 49
+str=20
+value=172 86
+weight=600
+}
+
+// Tiger Pelt Bustier - LBR stats (default)
+[0x7823_lbr]
+{
+get=base_tiger_pelt_bustier
+def=22
+hp=40 49
+str=20
+value=172 86
+weight=600
+}
+
+// Tiger Pelt Helm - LBR stats (default)
+[0x7828_lbr]
+{
+get=base_tiger_pelt_helm
+def=22
+hp=36 44
+str=25
+value=115 52
+weight=400
+}
+
+// Tiger Pelt Leggings - LBR stats (default)
+[0x7824_lbr]
+{
+get=base_tiger_pelt_leggings
+def=22
+hp=31 44
+str=20
+value=131 65
+weight=400
+}
+
+// Tiger Pelt Shorts - LBR stats (default)
+[0x7825_lbr]
+{
+get=base_tiger_pelt_shorts
+def=22
+hp=31 41
+str=20
+value=131 65
+weight=300
+}
+
+// Tiger Pelt Long Skirt - LBR stats (default)
+[0x7826_lbr]
+{
+get=base_tiger_pelt_long_skirt
+def=22
+hp=31 41
+str=20
+value=131 65
+weight=100
+}
+
+// Tiger Pelt Skirt - LBR stats (default)
+[0x7827_lbr]
+{
+get=base_tiger_pelt_skirt
+def=22
+hp=31 41
+str=20
+value=131 65
+weight=100
+}
+
+// Tiger Pelt Collar - LBR stats (default)
+[0x7829_lbr]
+{
+get=base_tiger_pelt_collar
+def=22
+hp=21 41
+str=25
+value=94 49
+weight=200
+}
+
+// Shields
+
+// Bronze Shield - LBR stats (default)
+[0x1b72_lbr]
+{
+get=base_bronze_shield
+def=10
+hp=26 30
+str=20
+value=91 45
+weight=600
+}
+
+// Buckler - LBR stats (default)
+[0x1b73_lbr]
+{
+get=base_buckler
+def=7
+hp=41 51
+str=15
+value=66 33
+weight=500
+}
+
+// Metal Kite Shield - LBR stats (default)
+[0x1b74_lbr]
+{
+get=base_metal_kite_shield
+def=16
+hp=101 115
+str=30
+value=135 67
+weight=500
+}
+
+// Heater Shield - LBR stats (default)
+[0x1b76_lbr]
+{
+get=base_heater_shield
+def=23
+hp=31 37
+str=30
+value=175 87
+weight=800
+}
+
+// Metal Shield - LBR stats (default)
+[0x1b7b_lbr]
+{
+get=base_metal_shield
+def=9
+hp=36 44
+str=10
+value=98 49
+weight=600
+}
+
+// Kite Shield (Wooden) - LBR stats (default)
+[0x1b78_lbr]
+{
+get=base_wooden_kite_shield
+def=12
+hp=46 58
+str=15
+value=121 60
+weight=700
+}
+
+// Wooden Shield - LBR stats (default)
+[0x1b7a_lbr]
+{
+get=base_wooden_shield
+def=8
+hp=21 23
+str=5
+value=62 31
+weight=500
+}
+
+// Order Shield - LBR stats (default)
+[0x1bc4_lbr]
+{
+get=base_order_shield
+def=30
+hp=101 115
+value=196 98
+weight=600
+}
+
+// Chaos Shield - LBR stats (default)
+[0x1bc3_lbr]
+{
+get=base_chaos_shield
+def=32
+hp=101 115
+value=209 104
+weight=500
+}
+
+// Gargish Chaos Shield - LBR stats (default)
+[0x4228_lbr]
+{
+get=base_gargish_chaos_shield
+def=32
+hp=101 115
+value=209 104
+weight=500
+}
+
+// Gargish Kite Shield - LBR stats (default)
+[0x4201_lbr]
+{
+get=base_gargish_kite_shield
+def=18
+hp=47 62
+str=20
+value=118 59
+weight=700
+}
+
+// Gargish Order Shield - LBR stats (default)
+[0x422a_lbr]
+{
+get=base_gargish_order_shield
+def=30
+hp=101 115
+value=196 98
+weight=600
+}
+
+// Large Plate Shield - LBR stats (default)
+[0x4204_lbr]
+{
+get=base_large_plate_shield
+def=32
+hp=53 67
+str=35
+value=209 104
+weight=800
+}
+
+// Large Stone Shield - LBR stats (default)
+[0x4205_lbr]
+{
+get=base_large_stone_shield
+def=9
+hp=53 67
+str=10
+value=59 29
+weight=700
+}
+
+// Medium Plate Shield - LBR stats (default)
+[0x4203_lbr]
+{
+get=base_medium_plate_shield
+def=18
+hp=53 67
+str=20
+value=118 59
+weight=600
+}
+
+// Small Plate Shield - LBR stats (default)
+[0x4202_lbr]
+{
+get=base_small_plate_shield
+def=9
+hp=26 31
+str=10
+value=59 29
+weight=600
+}
+
+// Gargish Wooden Shield - LBR stats (default)
+[0x4200_lbr]
+{
+get=base_gargish_wooden_shield
+def=8
+hp=21 23
+str=5
+value=62 31
+weight=500
+}

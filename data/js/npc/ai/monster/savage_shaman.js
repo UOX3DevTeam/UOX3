@@ -336,7 +336,7 @@ function MassPoisonEffect( savageShaman )
 			if( nearbyChar.poison <= poisonStrength )
 			{
 				var poisonDuration = CalcPoisonDuration( poisonStrength );
-				nearbyChar.SetPoisoned( poisonStrength, poisonDuration * 1000 );
+				nearbyChar.SetPoisoned( poisonStrength, poisonDuration * 1000, savageShaman );
 			}
 		}
 	}
@@ -410,3 +410,5 @@ function CalcPoisonDuration( poisonStrength )
 	}
 	return poisonDuration;
 }
+
+function _restorecontext_() {}

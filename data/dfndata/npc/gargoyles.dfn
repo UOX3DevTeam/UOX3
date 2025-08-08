@@ -14,6 +14,7 @@ GOLD=50 150
 LOOT=midlevelscrolls
 LOOT=randomgems,2
 LOOT=randompotions,2
+LOOT=TreasureMapLvl1Loot
 STR=146 175
 DEX=76 95
 INT=81 105
@@ -49,6 +50,7 @@ GOLD=150 250
 LOOT=randompotions
 LOOT=randomgems,2
 LOOT=stoneGargoyleLoot
+LOOT=TreasureMapLvl2Loot
 STR=246 275
 DEX=76 95
 INT=81 105
@@ -68,11 +70,13 @@ TOPEACE=714 5
 RACE=3
 RUNS
 FLAG=NEUTRAL
+ORIGIN=t2a
 }
 
 [enslavedgargoyle]
 {
 NAME=#//an enslaved gargoyle
+NAMELIST=12
 TITLE=5066//the enslaved gargoyle
 ID=0x02f1
 DIRECTION=RND
@@ -95,7 +99,9 @@ RACE=3
 TOPROV=708
 TOPEACE=708 5
 RUNS
+NPCAI=2
 FLAG=NEUTRAL
+ORIGIN=td
 }
 
 [firegargoyle]
@@ -109,6 +115,7 @@ GOLD=200 300
 LOOT=randomgems,2
 LOOT=randompotions
 LOOT=midlevelscrolls
+LOOT=TreasureMapLvl1Loot
 STR=351 400
 DEX=126 145
 INT=226 250
@@ -131,6 +138,7 @@ TOPROV=960
 TOPEACE=960 5
 RUNS
 FLAG=NEUTRAL
+ORIGIN=uor
 SCRIPT=3300
 SCRIPT=3507
 }
@@ -138,6 +146,7 @@ SCRIPT=3507
 [gargoyledestroyer]
 {
 NAME=#//a gargoyle destroyer
+NAMELIST=12
 TITLE=5099//the gargoyle destroyer
 ID=0x02f3
 DIRECTION=RND
@@ -170,12 +179,14 @@ TOPROV=1108
 TOPEACE=1108 5
 RUNS
 FLAG=NEUTRAL
+ORIGIN=td
 SCRIPT=3300
 }
 
 [gargoyleenforcer]
 {
 NAME=#//a gargoyle enforcer
+NAMELIST=12
 TITLE=5100//the gargoyle enforcer
 ID=0x02f2
 DIRECTION=RND
@@ -207,6 +218,7 @@ TOPROV=880
 TOPEACE=880 5
 RUNS
 FLAG=NEUTRAL
+ORIGIN=td
 SCRIPT=3300
 }
 
@@ -241,6 +253,7 @@ TOPROV=600
 TOPEACE=600 5
 RUNS
 FLAG=NEUTRAL
+ORIGIN=sa
 }
 
 [gargoylemason]
@@ -272,4 +285,5 @@ TOPROV=600
 TOPEACE=600 5
 RUNS
 FLAG=NEUTRAL
+ORIGIN=sa
 }

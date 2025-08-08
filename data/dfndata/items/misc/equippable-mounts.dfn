@@ -315,6 +315,7 @@ NEWBIE
 {
 NAME=a swampdragon
 ID=0x3EBD
+COLOR=0x851
 LAYER=25
 NEWBIE
 }

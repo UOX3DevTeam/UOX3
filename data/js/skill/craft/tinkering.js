@@ -223,7 +223,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		case 217: // Tool Kit (Tinker's tools)
 			makeID = 213; timerID = 2; break;
 		case 218: // Fletcher's Tools
-			makeID = 214; timerID = 2; break;
+			makeID = 284; timerID = 2; break;
 		// Page 3 - Parts
 		case 300: // Barrel Hoops
 			makeID = 224; timerID = 3; break;
@@ -382,7 +382,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		case 2217: // Tool Kit (Tinker's tools)
 			itemDetailsID = 213; break;
 		case 2218: // Fletcher's Tools
-			itemDetailsID = 214; break;
+			itemDetailsID = 284; break;
 		// Page 3 - Parts
 		case 2300: // Barrel Hoops
 			itemDetailsID = 224; break;

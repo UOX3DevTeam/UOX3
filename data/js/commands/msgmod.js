@@ -2,7 +2,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "msgmod", 2, true );
+	RegisterCommand( "msgmod", 8, true );
 }
 
 function command_MSGMOD( socket, cmdString )

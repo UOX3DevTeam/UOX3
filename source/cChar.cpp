@@ -79,6 +79,8 @@ const UI32 BIT_DISPELLABLE		=	12; // 0x1000
 const UI32 BIT_TEMPREFLECTED	=	13; // 0x2000
 const UI32 BIT_NONEEDREAGS		=	14; // 0x4000
 const UI32 BIT_PERMREFLECTED	=	15; // 0x8000
+const UI32 BIT_HIDEFAMEKARMATITLE	=	16; // 0x10000
+const UI32 BIT_SEER				= 17; // 0x20000
 
 // Character Bools
 const UI32 BIT_UNICODE			=	1;
@@ -86,7 +88,7 @@ const UI32 BIT_NPC				=	2;
 const UI32 BIT_SHOP				=	3;
 const UI32 BIT_DEAD				=	4;
 const UI32 BIT_ATWAR			=	5;
-const UI32 BIT_ATTACKFIRST		=	6;
+const UI32 BIT_DISGUISED		=	6;
 const UI32 BIT_ONHORSE			=	7;
 const UI32 BIT_TOWNTITLE		=	8;
 const UI32 BIT_REACTIVEARMOUR	=	9;
@@ -113,10 +115,15 @@ const UI32 BIT_EVADE			=	29; // This property is not saved
 const UI32 BIT_FLYING			=	30; // This property is not saved
 const UI32 BIT_WILLTHIRST		=	31;
 const UI32 BIT_HIRELING			=	32;
+const UI32 BIT_ISPASSIVE		=	33;
+const UI32 BIT_HASSTOLEN		=	34;
+const UI32 BIT_KARMALOCK		=	35;
+const UI32 BIT_ISCLIMBING		=	36;
 
 const UI32 BIT_MOUNTED			=	0;
 const UI32 BIT_STABLED			=	1;
 const UI32 BIT_AWAKE			=   2;
+const UI32 BIT_COMBATLOS		=	3;
 
 // Player defaults
 
@@ -141,14 +148,16 @@ const UI16			DEFPLAYER_DEATHS			= 0;
 const SERIAL		DEFPLAYER_TOWNVOTE 			= INVALIDSERIAL;
 const SI08			DEFPLAYER_TOWNPRIV 			= 0;
 const UI16			DEFPLAYER_CONTROLSLOTSUSED	= 0;
-const UI32			DEFPLAYER_CREATEDON			= 0;
+const TIMERVAL		DEFPLAYER_CREATEDON			= 0;
+const UI32			DEFPLAYER_NPCGUILDJOINED	= 0;
+const UI32			DEFPLAYER_PLAYTIME			= 0;
 
 CChar::PlayerValues_st::PlayerValues_st() : callNum( DEFPLAYER_CALLNUM ), playerCallNum( DEFPLAYER_PLAYERCALLNUM ), trackingTarget( DEFPLAYER_TRACKINGTARGET ),
 squelched( DEFPLAYER_SQUELCHED ), commandLevel( DEFPLAYER_COMMANDLEVEL ), postType( DEFPLAYER_POSTTYPE ), hairStyle( DEFPLAYER_HAIRSTYLE ), beardStyle( DEFPLAYER_BEARDSTYLE ),
 hairColour( DEFPLAYER_HAIRCOLOUR ), beardColour( DEFPLAYER_BEARDCOLOUR ), speechItem( nullptr ), speechMode( DEFPLAYER_SPEECHMODE ), speechId( DEFPLAYER_SPEECHID ),
 speechCallback( nullptr ), robe( DEFPLAYER_ROBE ), accountNum( DEFPLAYER_ACCOUNTNUM ), origSkin( DEFPLAYER_ORIGSKIN ), origId( DEFPLAYER_ORIGID ),
 fixedLight( DEFPLAYER_FIXEDLIGHT ), deaths( DEFPLAYER_DEATHS ), socket( nullptr ), townVote( DEFPLAYER_TOWNVOTE ), townPriv( DEFPLAYER_TOWNPRIV ), controlSlotsUsed( DEFPLAYER_CONTROLSLOTSUSED ),
-createdOn( DEFPLAYER_CREATEDON )
+createdOn( DEFPLAYER_CREATEDON ), npcGuildJoined( DEFPLAYER_NPCGUILDJOINED ), playTime( DEFPLAYER_PLAYTIME )
 {
 	//memset( &lockState[0],		0, sizeof( UI08 )		* (INTELLECT+1) );
 	// Changed to the following, as only the 15?16? first lockStates would get initialized or whanot
@@ -177,6 +186,7 @@ const SI16			DEFNPC_PEACEING 			= 0x7FFF;
 const SI16			DEFNPC_PROVOING				= 0x7FFF;
 const SI16			DEFNPC_FLEEAT 				= 0;
 const SI16			DEFNPC_REATTACKAT 			= 0;
+const UI08			DEFNPC_FLEEDISTANCE			= 0;
 const UI08			DEFNPC_SPLIT 				= 0;
 const UI08			DEFNPC_SPLITCHANCE 			= 0;
 const UI08			DEFNPC_TRAININGPLAYERIN		= 0;
@@ -191,23 +201,26 @@ const UI16			DEFNPC_TAMEDHUNGERRATE		= 0;
 const UI16			DEFNPC_TAMEDTHIRSTRATE      = 0;
 const UI08			DEFNPC_HUNGERWILDCHANCE		= 0;
 const UI08			DEFNPC_THIRSTWILDCHANCE     = 0;
-const R32			DEFNPC_MOVEMENTSPEED		= -1;
+const R64			DEFNPC_MOVEMENTSPEED		= -1.0;
 const SI08			DEFNPC_PATHFAIL				= -1;
 const UI16			DEFNPC_CONTROLSLOTS			= 0;
 const UI16			DEFNPC_MAXLOYALTY			= 100;
 const UI16			DEFNPC_LOYALTY				= 25;
 const UI16			DEFNPC_ORNERINESS			= 0;
+const SI08			DEFNPC_PATHRESULT			= 0;
+const UI16			DEFNPC_PATHTARGX			= 0;
+const UI16			DEFNPC_PATHTARGY			= 0;
 
 CChar::NPCValues_st::NPCValues_st() : wanderMode( DEFNPC_WANDER ), oldWanderMode( DEFNPC_OLDWANDER ), fTarg( DEFNPC_FTARG ), fz( DEFNPC_FZ1 ),
 aiType( DEFNPC_AITYPE ), spellAttack( DEFNPC_SPATTACK ), spellDelay( DEFNPC_SPADELAY ), taming( DEFNPC_TAMING ), fleeAt( DEFNPC_FLEEAT ),
-reAttackAt( DEFNPC_REATTACKAT ), splitNum( DEFNPC_SPLIT ), splitChance( DEFNPC_SPLITCHANCE ), trainingPlayerIn( DEFNPC_TRAININGPLAYERIN ),
+reAttackAt( DEFNPC_REATTACKAT ), fleeDistance( DEFNPC_FLEEDISTANCE ), splitNum( DEFNPC_SPLIT ), splitChance( DEFNPC_SPLITCHANCE ), trainingPlayerIn( DEFNPC_TRAININGPLAYERIN ),
 goldOnHand( DEFNPC_HOLDG ), questType( DEFNPC_QUESTTYPE ), questDestRegion( DEFNPC_QUESTDESTREGION ), questOrigRegion( DEFNPC_QUESTORIGREGION ),
 petGuarding( nullptr ), npcFlag( DEFNPC_NPCFLAG ), boolFlags( DEFNPC_BOOLFLAG ), peaceing( DEFNPC_PEACEING ), provoing( DEFNPC_PROVOING ),
 tamedHungerRate( DEFNPC_TAMEDHUNGERRATE ), tamedThirstRate( DEFNPC_TAMEDTHIRSTRATE ), hungerWildChance( DEFNPC_HUNGERWILDCHANCE ), 
 thirstWildChance( DEFNPC_THIRSTWILDCHANCE ), walkingSpeed( DEFNPC_MOVEMENTSPEED ), runningSpeed( DEFNPC_MOVEMENTSPEED ), 
-fleeingSpeed( DEFNPC_MOVEMENTSPEED ), pathFail( DEFNPC_PATHFAIL ), controlSlots( DEFNPC_CONTROLSLOTS ), maxLoyalty( DEFNPC_MAXLOYALTY ), 
-loyalty( DEFNPC_LOYALTY ), orneriness( DEFNPC_ORNERINESS ), mountedWalkingSpeed( DEFNPC_MOVEMENTSPEED ), mountedRunningSpeed( DEFNPC_MOVEMENTSPEED ),
-mountedFleeingSpeed( DEFNPC_MOVEMENTSPEED )
+fleeingSpeed( DEFNPC_MOVEMENTSPEED ), pathFail( DEFNPC_PATHFAIL ), pathResult( DEFNPC_PATHRESULT ), pathTargX( DEFNPC_PATHTARGX ), pathTargY( DEFNPC_PATHTARGY ),
+controlSlots( DEFNPC_CONTROLSLOTS ), maxLoyalty( DEFNPC_MAXLOYALTY ), loyalty( DEFNPC_LOYALTY ), orneriness( DEFNPC_ORNERINESS ), mountedWalkingSpeed( DEFNPC_MOVEMENTSPEED ),
+mountedRunningSpeed( DEFNPC_MOVEMENTSPEED ), mountedFleeingSpeed( DEFNPC_MOVEMENTSPEED )
 {
 	fx[0] = fx[1] = fy[0] = fy[1] = DEFNPC_WANDERAREA;
 	petFriends.resize( 0 );
@@ -248,11 +261,13 @@ const UI08			DEFCHAR_RUNNING				= 0;
 const RACEID		DEFCHAR_RACEGATE 			= INVALIDID;
 const UI08			DEFCHAR_STEP				= 1;
 const UI16			DEFCHAR_PRIV				= 0;
-const UI32			DEFCHAR_LASTMOVETIME		= 0;
+const TIMERVAL		DEFCHAR_LASTMOVETIME		= 0;
+const TIMERVAL		DEFCHAR_LASTCOMBATTIME		= 0;
 //const UI16			DEFCHAR_NOMOVE 				= 0;
 //const UI16			DEFCHAR_POISONCHANCE 		= 0;
 const UI08			DEFCHAR_POISONSTRENGTH 		= 0;
 const BodyType		DEFCHAR_BODYTYPE			= BT_OTHER;
+const UI16			DEFCHAR_NPCGUILD			= 0;
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar::CChar() constructor
@@ -268,7 +283,8 @@ emoteColor( DEFCHAR_EMOTECOLOUR ), cell( DEFCHAR_CELL ), packItem( nullptr ),
 targ( DEFCHAR_TARG ), attacker( DEFCHAR_ATTACKER ), hunger( DEFCHAR_HUNGER ), thirst( DEFCHAR_THIRST ), regionNum( DEFCHAR_REGIONNUM ), town( DEFCHAR_TOWN ),
 advObj( DEFCHAR_ADVOBJ ), guildFealty( DEFCHAR_GUILDFEALTY ), guildNumber( DEFCHAR_GUILDNUMBER ), flag( DEFCHAR_FLAG ),
 spellCast( DEFCHAR_SPELLCAST ), nextAct( DEFCHAR_NEXTACTION ), stealth( DEFCHAR_STEALTH ), running( DEFCHAR_RUNNING ),
-raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), PoisonStrength( DEFCHAR_POISONSTRENGTH ), bodyType( DEFCHAR_BODYTYPE ), lastMoveTime( DEFCHAR_LASTMOVETIME )
+raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), PoisonStrength( DEFCHAR_POISONSTRENGTH ), bodyType( DEFCHAR_BODYTYPE ), lastMoveTime( DEFCHAR_LASTMOVETIME ),
+lastCombatTime( DEFCHAR_LASTCOMBATTIME ), npcGuild( DEFCHAR_NPCGUILD )
 {
 	ownedItems.clear();
 	itemLayers.clear();
@@ -278,12 +294,14 @@ raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), Poison
 	objType		= OT_CHAR;
 	name		= "Mr. noname";
 	sectionId	= "UNKNOWN";
+	guildTitle	= "Member";
 
 	memset( &regen[0],			0, sizeof( TIMERVAL )	* 3 );
 	memset( &weathDamage[0],	0, sizeof( TIMERVAL )	* WEATHNUM );
 	memset( &charTimers[0],		0, sizeof( TIMERVAL )	* tCHAR_COUNT );
 	memset( &baseskill[0],		0, sizeof( SKILLVAL )	* ALLSKILLS );
 	memset( &skill[0],			0, sizeof( SKILLVAL )	* ( INTELLECT + 1 ));
+	memset( &skillCap[0],		0, sizeof( SKILLVAL )	* ( INTELLECT + 1 ));
 
 	//SetCanTrain( true );
 	bools.set( BIT_TRAIN, true );
@@ -310,10 +328,22 @@ raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), Poison
 	bools.set( BIT_MAXSTAMFIXED, false );
 	//SetCanAttack( true );
 	bools.set( BIT_CANATTACK, true );
+	//SetKarmaLock( false );
+	bools.set( BIT_KARMALOCK, false );
+	bools.set( BIT_ISCLIMBING, false );
 	//SetBrkPeaceChanceGain( 0 );
 	brkPeaceChanceGain = 0;
 	//SetBrkPeaceChance( 0 );
 	brkPeaceChance = 0;
+
+	// Initialize the hunger rate of the new character, default to global setting
+	auto hungerRate = cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE );
+	if( Races->DoesHunger( GetRace() ))
+	{
+		// Override with setting from race, if applicable
+		hungerRate	 = Races->GetHungerRate( GetRace() );
+	}
+	SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>( hungerRate )));
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -409,6 +439,27 @@ void CChar::SetPathResult( SI08 newValue )
 	if( IsValidNPC() )
 	{
 		mNPC->pathResult = newValue;
+		SetLastPathCalc( cwmWorldState->GetUICurrentTime() );
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::GetLastPathCalc()
+//|					CChar::SetLastPathCalc()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Get/Set the end result of pathfinding, to pass on to onPathfindEnd event
+//o------------------------------------------------------------------------------------------------o
+UI32 CChar::GetLastPathCalc( void ) const
+{
+	UI32 rVal = DEFNPC_PATHFAIL;
+	rVal = mNPC->lastPathCalc;
+	return rVal;
+}
+void CChar::SetLastPathCalc( UI32 newValue )
+{
+	if( IsValidNPC() )
+	{
+		mNPC->lastPathCalc = cwmWorldState->GetUICurrentTime();
 	}
 }
 
@@ -464,17 +515,20 @@ SI08 CChar::GetHunger( void ) const
 }
 bool CChar::SetHunger( SI08 newValue )
 {
-	std::vector<UI16> scriptTriggers = GetScriptTriggers();
-	for( auto i : scriptTriggers )
+	if( IsValidPlayer() || IsValidNPC() )
 	{
-		cScript *toExecute = JSMapping->GetScript( i );
-		if( toExecute != nullptr )
+		std::vector<UI16> scriptTriggers = GetScriptTriggers();
+		for( auto i : scriptTriggers )
 		{
-			// If script returns false/0/nothing, prevent hunger from changing, and prevent
-			// other scripts with event from running
-			if( toExecute->OnHungerChange(( this ), hunger ) == 0 )
+			cScript *toExecute = JSMapping->GetScript( i );
+			if( toExecute != nullptr )
 			{
-				return false;
+				// If script returns false/0/nothing, prevent hunger from changing, and prevent
+				// other scripts with event from running
+				if( toExecute->OnHungerChange(( this ), hunger ) == 0 )
+				{
+					return false;
+				}
 			}
 		}
 	}
@@ -503,9 +557,9 @@ void CChar::DoHunger( CSocket *mSock )
 		SI16 hungerDamage;
 		if( !IsNpc() && mSock != nullptr )	// Do Hunger for player chars
 		{
-			if( WillHunger() && GetCommandLevel() == CL_PLAYER  )
+			if( WillHunger() && GetCommandLevel() < CL_CNS )
 			{
-				if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+				if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() )
 				{
 					if( Races->DoesHunger( GetRace() )) // prefer the hunger settings frome the race
 					{
@@ -547,7 +601,7 @@ void CChar::DoHunger( CSocket *mSock )
 							}
 						}
 					}
-					SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>( hungerRate )));
+					SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R64>( hungerRate )));
 				}
 			}
 		}
@@ -557,7 +611,7 @@ void CChar::DoHunger( CSocket *mSock )
 			if( !WillHunger() || GetMounted() || GetStabled() )
 				return;
 
-			if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+			if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() )
 			{
 				hungerRate	 = Races->GetHungerRate( GetRace() );
 				hungerDamage = Races->GetHungerDamage( GetRace() );
@@ -570,13 +624,14 @@ void CChar::DoHunger( CSocket *mSock )
 				{
 					[[maybe_unused]] bool retVal = Damage( hungerDamage, PHYSICAL );
 				}
-				SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>( hungerRate )));
+				SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R64>( hungerRate )));
 			}
 		}
 		else if( IsTamed() && GetTamedHungerRate() > 0 )
 		{
+			TAGMAPOBJECT deadPet = GetTag( "isPetDead" );
 			// Handle hunger for pets
-			if( !WillHunger() || GetMounted() || GetStabled() )
+			if( !WillHunger() || GetMounted() || GetStabled() || deadPet.m_IntValue == 1 )
 				return;
 
 			// Pets don't hunger if owner is offline
@@ -590,7 +645,7 @@ void CChar::DoHunger( CSocket *mSock )
 					return;
 			}
 
-			if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+			if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() )
 			{
 				// Get hungerrate for tamed creatures
 				hungerRate = GetTamedHungerRate();
@@ -600,7 +655,7 @@ void CChar::DoHunger( CSocket *mSock )
 					// Make pet more hungry
 					DecHunger();
 				}
-				else if( GetLoyalty() == 0 && static_cast<UI08>(RandomNum( 0, 100 )) <= GetTamedHungerWildChance() )
+				else if( GetLoyalty() == 0 && static_cast<UI08>(RandomNum( 1, 100 )) <= GetTamedHungerWildChance() )
 				{
 					// Make pet go wild from hunger, but only if loyalty is zero
 					CChar *owner = GetOwnerObj();
@@ -620,7 +675,7 @@ void CChar::DoHunger( CSocket *mSock )
 				}
 
 				// Set timer for next time pet should grow more hungry
-				SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>( hungerRate )));
+				SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R64>( hungerRate )));
 			}
 		}
 	}
@@ -639,17 +694,20 @@ SI08 CChar::GetThirst( void ) const
 
 bool CChar::SetThirst( SI08 newValue )
 {
-	std::vector<UI16> scriptTriggers = GetScriptTriggers();
-	for( auto i : scriptTriggers )
+	if( IsValidPlayer() || IsValidNPC() )
 	{
-		cScript* toExecute = JSMapping->GetScript( i );
-		if( toExecute != nullptr )
+		std::vector<UI16> scriptTriggers = GetScriptTriggers();
+		for( auto i : scriptTriggers )
 		{
-			// If script returns false/0/nothing, prevent thirst from changing, and prevent
-			// other scripts with event from running
-			if( toExecute->OnThirstChange(( this ), thirst ) == 0 )
+			cScript* toExecute = JSMapping->GetScript( i );
+			if( toExecute != nullptr )
 			{
-				return false;
+				// If script returns false/0/nothing, prevent thirst from changing, and prevent
+				// other scripts with event from running
+				if( toExecute->OnThirstChange(( this ), thirst ) == 0 )
+				{
+					return false;
+				}
 			}
 		}
 	}
@@ -678,9 +736,9 @@ void CChar::DoThirst( CSocket* mSock )
 		SI16 thirstDrain;
 		if( !IsNpc() && mSock != nullptr )  // Do Thirst for player chars
 		{
-			if( WillThirst() && GetCommandLevel() == CL_PLAYER )
+			if( WillThirst() && GetCommandLevel() < CL_CNS )
 			{
-				if( GetTimer( tCHAR_THIRST ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+				if( GetTimer( tCHAR_THIRST ) <= cwmWorldState->GetUICurrentTime() )
 				{
 					if( Races->DoesThirst( GetRace() )) // prefer the thirst settings frome the race
 					{
@@ -720,7 +778,7 @@ void CChar::DoThirst( CSocket* mSock )
 							mSock->SysMessage( 2052 ); // You have no stamina because of dehydration.
 						}
 					}
-					SetTimer( tCHAR_THIRST, BuildTimeValue( static_cast<R32>( thirstRate )));
+					SetTimer( tCHAR_THIRST, BuildTimeValue( static_cast<R64>( thirstRate )));
 				}
 			}
 		}
@@ -728,7 +786,7 @@ void CChar::DoThirst( CSocket* mSock )
 		{
 			if( WillThirst() && !GetMounted() && !GetStabled() )
 			{
-				if( GetTimer( tCHAR_THIRST ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+				if( GetTimer( tCHAR_THIRST ) <= cwmWorldState->GetUICurrentTime() )
 				{
 					thirstRate = Races->GetThirstRate( GetRace() );
 					thirstDrain = Races->GetThirstDrain( GetRace() );
@@ -741,7 +799,7 @@ void CChar::DoThirst( CSocket* mSock )
 					{
 						SetStamina( std::max( static_cast<SI16>( 1 ), static_cast<SI16>( GetStamina() - thirstDrain )));
 					}
-					SetTimer( tCHAR_THIRST, BuildTimeValue( static_cast<R32>( thirstRate )));
+					SetTimer( tCHAR_THIRST, BuildTimeValue( static_cast<R64>( thirstRate )));
 				}
 			}
 		}
@@ -759,7 +817,7 @@ void CChar::DoThirst( CSocket* mSock )
 						return;
 				}
 
-				if( GetTimer( tCHAR_THIRST ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+				if( GetTimer( tCHAR_THIRST ) <= cwmWorldState->GetUICurrentTime() )
 				{
 					thirstRate = GetTamedThirstRate();
 
@@ -772,7 +830,7 @@ void CChar::DoThirst( CSocket* mSock )
 						SetOwner( nullptr );
 						SetThirst( 6 );
 					}
-					SetTimer( tCHAR_THIRST, BuildTimeValue( static_cast<R32>( thirstRate )));
+					SetTimer( tCHAR_THIRST, BuildTimeValue( static_cast<R64>( thirstRate )));
 				}
 			}
 		}
@@ -1065,6 +1123,23 @@ void CChar::SetCanAttack( bool newValue )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::GetKarmaLock()
+//|					CChar::SetKarmaLock()
+//|	Date		-	8. Dec, 2024
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether the char karma is locked
+//o------------------------------------------------------------------------------------------------o
+bool CChar::GetKarmaLock( void ) const
+{
+	return bools.test( BIT_KARMALOCK );
+}
+void CChar::SetKarmaLock( bool newValue )
+{
+	bools.set( BIT_KARMALOCK, newValue );
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar::IsAtWar()
 //|					CChar::SetWar()
 //o------------------------------------------------------------------------------------------------o
@@ -1077,6 +1152,11 @@ bool CChar::IsAtWar( void ) const
 void CChar::SetWar( bool newValue )
 {
 	bools.set( BIT_ATWAR, newValue );
+	if( GetSocket() != nullptr )
+	{
+		CPWarMode wMode( newValue ? 1 : 0 );
+		GetSocket()->Send( &wMode );
+	}
 	UpdateRegion();
 
 	if( !IsNpc() )
@@ -1093,18 +1173,36 @@ void CChar::SetWar( bool newValue )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CChar::DidAttackFirst()
-//|					CChar::SetAttackFirst()
+//|	Function	-	CChar::IsPassive()
+//|					CChar::SetPassive()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Returns/Sets whether the character attacked first
+//|	Purpose		-	Returns/Sets whether the character is passive in combat. Primarily used to
+//|					allow players to "tab out" of combat and not hit back even though someone is
+//|					hitting them
 //o------------------------------------------------------------------------------------------------o
-bool CChar::DidAttackFirst( void ) const
+bool CChar::IsPassive( void ) const
 {
-	return bools.test( BIT_ATTACKFIRST );
+	return bools.test( BIT_ISPASSIVE );
 }
-void CChar::SetAttackFirst( bool newValue )
+void CChar::SetPassive( bool newValue )
 {
-	bools.set( BIT_ATTACKFIRST, newValue );
+	bools.set( BIT_ISPASSIVE, newValue );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::HasStolen()
+//|					CChar::HasStolen()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns/Sets whether the character has stolen something in the last X minutes
+//|					since their last death
+//o------------------------------------------------------------------------------------------------o
+auto CChar::HasStolen() -> bool
+{
+	return bools.test( BIT_HASSTOLEN );
+}
+auto CChar::HasStolen( bool newValue ) -> void
+{
+	bools.set( BIT_HASSTOLEN, newValue );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1278,6 +1376,21 @@ void CChar::IsIncognito( bool newValue )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::IsDisguised()
+//|					CChar::IsDisguised()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Returns/Sets whether the character is disguised
+//o------------------------------------------------------------------------------------------------o
+bool CChar::IsDisguised( void ) const
+{
+	return bools.test( BIT_DISGUISED );
+}
+void CChar::IsDisguised( bool newValue )
+{
+	bools.set( BIT_DISGUISED, newValue );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::IsUsingPotion()
 //|					CChar::SetUsingPotion()
 //| Date		-	13 March 2001
@@ -1403,6 +1516,21 @@ void CChar::SetInBuilding( bool newValue )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::IsClimbing()
+//|					CChar::IsClimbing()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether the character is currently climbing (a ladder)
+//o------------------------------------------------------------------------------------------------o
+bool CChar::IsClimbing( void ) const
+{
+	return bools.test( BIT_ISCLIMBING );
+}
+void CChar::IsClimbing( bool newValue )
+{
+	bools.set( BIT_ISCLIMBING, newValue );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar::SetPeace()
 //| Date		-	25.Feb, 2006
 //o------------------------------------------------------------------------------------------------o
@@ -1419,7 +1547,6 @@ void CChar::SetPeace( UI32 newValue )
 		}
 		SetTarg( nullptr );
 		SetAttacker( nullptr );
-		SetAttackFirst( false );
 		SetTimer( tCHAR_PEACETIMER, BuildTimeValue( newValue ));
 	}
 	else
@@ -1431,13 +1558,14 @@ void CChar::SetPeace( UI32 newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Function	-  CChar::RemoveSelfFromOwner()
 //o------------------------------------------------------------------------------------------------o
-//| Purpose		-  Removes character from its owner's pet list
+//| Purpose		-  Removes character from its owner's pet (and follower) list
 //o------------------------------------------------------------------------------------------------o
 void CChar::RemoveSelfFromOwner( void )
 {
 	CChar *oldOwner = GetOwnerObj();
 	if( ValidateObject( oldOwner ))
 	{
+		oldOwner->GetFollowerList()->Remove( this );
 		oldOwner->GetPetList()->Remove( this );
 		oldOwner->UpdateRegion();
 	}
@@ -1447,7 +1575,7 @@ void CChar::RemoveSelfFromOwner( void )
 //o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::AddSelfToOwner()
 //o------------------------------------------------------------------------------------------------o
-//| Purpose		-	Adds character to its new owner's pet list
+//| Purpose		-	Adds character to its new owner's pet (and follower) list
 //o------------------------------------------------------------------------------------------------o
 void CChar::AddSelfToOwner( void )
 {
@@ -1460,6 +1588,7 @@ void CChar::AddSelfToOwner( void )
 	else
 	{
 		newOwner->GetPetList()->Add( this );
+		newOwner->AddFollower( this );
 		newOwner->UpdateRegion();
 		if( !CanBeHired() )
 		{
@@ -1908,11 +2037,11 @@ void CChar::SetSpellCast( SI08 newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the character's special privileges
 //o------------------------------------------------------------------------------------------------o
-UI16 CChar::GetPriv( void ) const
+UI32 CChar::GetPriv( void ) const
 {
-	return static_cast<UI16>( priv.to_ulong() );
+	return static_cast<UI32>( priv.to_ulong() );
 }
-void CChar::SetPriv( UI16 newValue )
+void CChar::SetPriv( UI32 newValue )
 {
 	priv = newValue;
 	UpdateRegion();
@@ -1939,6 +2068,29 @@ void CChar::SetBaseSkill( SKILLVAL newSkillValue, UI08 skillToSet )
 	{
 		baseskill[skillToSet] = newSkillValue;
 		UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::GetSkillCap()
+//|					CChar::SetSkillCap()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets a character's specified skill cap (without modifiers)
+//o------------------------------------------------------------------------------------------------o
+SKILLVAL CChar::GetSkillCap( UI08 skillToGet ) const
+{
+	SKILLVAL rVal = 0;
+	if( skillToGet <= INTELLECT )
+	{
+		rVal            = skillCap[skillToGet];
+	}
+	return ( rVal > 0 ? rVal : cwmWorldState->ServerData()->ServerSkillCapStatus() );
+}
+void CChar::SetSkillCap( SKILLVAL newSkillCapValue, UI08 skillToSet )
+{
+	if( skillToSet <= INTELLECT )
+	{
+		skillCap[skillToSet] = newSkillCapValue;
 	}
 }
 
@@ -2261,6 +2413,21 @@ void CChar::SetNoNeedReags( bool newValue )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::HideFameKarmaTitle()
+//|					CChar::HideFameKarmaTitle()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Checks/Sets whether fame/karma titles should show for character
+//o------------------------------------------------------------------------------------------------o
+bool CChar::HideFameKarmaTitle( void ) const
+{
+	return priv.test( BIT_HIDEFAMEKARMATITLE );
+}
+void CChar::HideFameKarmaTitle( bool newValue )
+{
+	priv.set( BIT_HIDEFAMEKARMATITLE, newValue );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::Dupe()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Duplicate character - used for splitting NPCs when hit in combat
@@ -2350,6 +2517,7 @@ void CChar::CopyData( CChar *target )
 	target->SetCanTrain( CanTrain() );
 	target->SetLastOn( GetLastOn() );
 	target->SetLastOnSecs( GetLastOnSecs() );
+	target->SetPlayTime( GetPlayTime() );
 	target->SetGuildTitle( guildTitle );
 	target->SetGuildFealty( guildFealty );
 	target->SetGuildNumber( guildNumber );
@@ -2360,11 +2528,15 @@ void CChar::CopyData( CChar *target )
 	target->SetNextAct( nextAct );
 	target->SetSquelched( GetSquelched() );
 	target->SetMeditating( IsMeditating() );
+	target->SetHitChance( GetHitChance() );
+	target->SetDefenseChance( GetDefenseChance() );
 	target->SetStealth( stealth );
 	target->SetRunning( running );
 	target->SetRace( GetRace() );
 	target->SetRaceGate( raceGate );
 	target->SetCarve( carve );
+	target->SetNPCGuild( npcGuild );
+	target->SetNPCGuildJoined( npcGuild );
 	for( UI08 counter2 = 0; counter2 < WEATHNUM; ++counter2 )
 	{
 		target->SetWeathDamage( weathDamage[counter2], counter2 );
@@ -2438,6 +2610,10 @@ void CChar::CopyData( CChar *target )
 
 	// Add any script triggers present on object to the new object
 	target->scriptTriggers = GetScriptTriggers();
+
+	// Don't forget to copy the tags
+	target->tags = GetTagMap();
+	target->tempTags = GetTempTagMap();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2469,11 +2645,11 @@ FlagColors CChar::FlagColour( CChar *toCompare )
 	{
 		retVal = FC_MURDERER;
 	}
-	else if( IsCriminal() )
+	else if( IsCriminal() || HasStolen() || CheckPermaGreyFlag( toCompare->GetSerial() ))
 	{
 		retVal = FC_CRIMINAL;
 	}
-	else if( IsNeutral() )
+	else if( IsNeutral() || CheckAggressorFlag( toCompare->GetSerial() ))
 	{
 		retVal = FC_NEUTRAL;
 	}
@@ -2558,7 +2734,7 @@ auto CChar::RemoveAllObjectsFromSight( CSocket *mSock ) -> void
 						
 				if( this != tempChar && ( tempX >= minX && tempX <= maxX && tempY >= minY && tempY <= maxY ) &&
 					( IsOnline(( *tempChar )) || tempChar->IsNpc() ||
-					( IsGM() && cwmWorldState->ServerData()->ShowOfflinePCs() )))
+					(( IsGM() || GetAccount().wAccountIndex == 0 ) && cwmWorldState->ServerData()->ShowOfflinePCs() )))
 				{
 					mSock->Send( &charToSend );
 				}
@@ -2625,7 +2801,7 @@ void CChar::SendToSocket( CSocket *s, bool drawGamePlayer )
 			alwaysSendItemHue = true;
 		}
 
-		if( mCharObj == this && drawGamePlayer && mCharObj->GetVisible() == 0 )
+		if( mCharObj == this && drawGamePlayer && ( mCharObj->GetVisible() == 0 || mCharObj->IsDead() ))
 		{
 			// Only send this when updating after a teleport/world change
 			CPDrawGamePlayer gpToSend(( *this ));
@@ -2633,11 +2809,11 @@ void CChar::SendToSocket( CSocket *s, bool drawGamePlayer )
 
 			SendWornItems( s );
 		}
-		else if( GetVisible() == VT_GHOSTHIDDEN && !mCharObj->IsDead() && GetCommandLevel() >= mCharObj->GetCommandLevel() )
+		else if( GetVisible() == VT_GHOSTHIDDEN && mCharObj->GetAccount().wAccountIndex != 0 && !mCharObj->IsDead() && GetCommandLevel() >= mCharObj->GetCommandLevel() )
 		{
 			return;
 		}
-		else if( mCharObj != this && GetCommandLevel() >= mCharObj->GetCommandLevel() 
+		else if( mCharObj != this && mCharObj->GetAccount().wAccountIndex != 0 && GetCommandLevel() >= mCharObj->GetCommandLevel() 
 			&& (( GetVisible() != VT_VISIBLE && GetVisible() != VT_GHOSTHIDDEN ) || ( !IsNpc() && !IsOnline(( *this )))))
 		{
 			return;
@@ -2688,7 +2864,7 @@ auto CChar::Teleport() -> void
 {
 	CSocket *mSock = GetSocket();
 	RemoveFromSight();
-	Update( nullptr, true );
+	Update( nullptr, true, true, false );
 	if( mSock != nullptr )
 	{
 		UI16 visrange = mSock->Range() + Races->VisRange( GetRace() );
@@ -2717,7 +2893,7 @@ auto CChar::Teleport() -> void
 				auto tempY = tempChar->GetY();
 				if( this != tempChar && ( tempX >= minX && tempX <= maxX && tempY >= minY && tempY <= maxY ) &&
 					( IsOnline(( *tempChar )) || tempChar->IsNpc() ||
-					( IsGM() && cwmWorldState->ServerData()->ShowOfflinePCs() )))
+					(( IsGM() || GetAccount().wAccountIndex == 0 ) && cwmWorldState->ServerData()->ShowOfflinePCs() )))
 				{
 					tempChar->SendToSocket( mSock );
 				}
@@ -2784,7 +2960,7 @@ void CChar::ExposeToView( void )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends update to all those in range
 //o------------------------------------------------------------------------------------------------o
-void CChar::Update( CSocket *mSock, bool drawGamePlayer, bool sendToSelf )
+void CChar::Update( CSocket *mSock, bool drawGamePlayer, bool sendToSelf, bool triggerInRangeEvent )
 {
 	if( mSock != nullptr )
 	{
@@ -2801,6 +2977,12 @@ void CChar::Update( CSocket *mSock, bool drawGamePlayer, bool sendToSelf )
 					SendToSocket( tSock, drawGamePlayer );
 				}
 				SendToSocket( tSock, drawGamePlayer );
+
+				if( triggerInRangeEvent && tSock->CurrcharObj() != this )
+				{
+					Movement->DoJSInRange( this, tSock->CurrcharObj() );
+					Movement->DoJSInRange( tSock->CurrcharObj(), this );
+				}
 			}
 		}
 	}
@@ -2823,6 +3005,7 @@ CItem *CChar::GetItemAtLayer( ItemLayers Layer )
 	return rVal;
 }
 
+void Bounce( CSocket *bouncer, CItem *bouncing, UI08 mode = 5 );
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar::WearItem()
 //|	Date		-	13 March 2001
@@ -2842,6 +3025,32 @@ bool CChar::WearItem( CItem *toWear )
 			// If script returns false, prevent item from being equipped
 			if( tScript->OnEquipAttempt( this, toWear ) == 0 )
 			{
+				CSocket *mSock = this->GetSocket();
+				if( mSock != nullptr )
+				{
+					Bounce( mSock, toWear );
+				}
+				return false;
+			}
+		}
+	}
+
+	scriptTriggers.clear();
+	scriptTriggers.shrink_to_fit();
+	scriptTriggers = this->GetScriptTriggers();
+	for( auto i : scriptTriggers )
+	{
+		cScript *tScript = JSMapping->GetScript( i );
+		if( tScript != nullptr )
+		{
+			// If script returns false, prevent item from being equipped
+			if( tScript->OnEquipAttempt( this, toWear ) == 0 )
+			{
+				CSocket *mSock = this->GetSocket();
+				if( mSock != nullptr )
+				{
+					Bounce( mSock, toWear );
+				}
 				return false;
 			}
 		}
@@ -2851,11 +3060,15 @@ bool CChar::WearItem( CItem *toWear )
 	ItemLayers tLayer = toWear->GetLayer();
 	if( tLayer != IL_NONE )	// Layer == 0 is a special case, for things like trade windows and such
 	{
-		if( ValidateObject( GetItemAtLayer( tLayer )))
+		auto itemAtLayer = GetItemAtLayer( tLayer );
+		if( ValidateObject( itemAtLayer ))
 		{
 #if defined( UOX_DEBUG_MODE )
-			std::string charName = GetNpcDictName( this );
-			Console.Warning( oldstrutil::format( "Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X, from section [%s]) - another item is already equipped in that layer!", toWear->GetName().c_str(), toWear->GetSerial(), tLayer, charName.c_str(), serial, GetSectionId().c_str() ));
+			if( itemAtLayer->GetSectionId() != toWear->GetSectionId() )
+			{
+				std::string charName = GetNpcDictName( this, nullptr, NRS_SYSTEM );
+				Console.Warning( oldstrutil::format( "Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X, from section [%s]) - another item (%s) is already equipped in that layer!", toWear->GetName().c_str(), toWear->GetSerial(), tLayer, charName.c_str(), serial, GetSectionId().c_str(), itemAtLayer->GetName().c_str() ));
+			}
 #endif
 			rValue = false;
 		}
@@ -2867,11 +3080,34 @@ bool CChar::WearItem( CItem *toWear )
 			IncDexterity2( itemLayers[tLayer]->GetDexterity2() );
 			IncIntelligence2( itemLayers[tLayer]->GetIntelligence2() );
 
+			IncHealthRegenBonus( itemLayers[tLayer]->GetHealthRegenBonus() );
+			IncStaminaRegenBonus( itemLayers[tLayer]->GetStaminaRegenBonus() );
+			IncManaRegenBonus( itemLayers[tLayer]->GetManaRegenBonus() );
+
+			IncSwingSpeedIncrease( itemLayers[tLayer]->GetSwingSpeedIncrease() );
+
+			IncHealthLeech( itemLayers[tLayer]->GetHealthLeech() );
+			IncStaminaLeech( itemLayers[tLayer]->GetStaminaLeech() );
+			IncManaLeech( itemLayers[tLayer]->GetManaLeech() );
+
+			IncLuck( itemLayers[tLayer]->GetLuck() );
+
+			IncHitChance( itemLayers[tLayer]->GetHitChance() );
+			IncDefenseChance( itemLayers[tLayer]->GetDefenseChance() );
+
+			IncTithing( itemLayers[tLayer]->GetTithing() );
+
+			IncHealthBonus( itemLayers[tLayer]->GetHealthBonus() );
+			IncStaminaBonus( itemLayers[tLayer]->GetStaminaBonus() );
+			IncManaBonus( itemLayers[tLayer]->GetManaBonus() );
+
+			IncDamageIncrease( itemLayers[tLayer]->GetDamageIncrease() );
+
 			if( toWear->IsPostLoaded() )
 			{
 				if( itemLayers[tLayer]->GetPoisoned() )
 				{
-					SetPoisoned( GetPoisoned() + itemLayers[tLayer]->GetPoisoned() );	// should be +, not -
+					SetPoisonStrength( GetPoisonStrength() + itemLayers[tLayer]->GetPoisoned() );	// should be +, not -
 				}
 
 				std::vector<UI16> scriptTriggers = toWear->GetScriptTriggers();
@@ -2919,6 +3155,22 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 			}
 		}
 
+		scriptTriggers.clear();
+		scriptTriggers.shrink_to_fit();
+		scriptTriggers = this->GetScriptTriggers();
+		for( auto i : scriptTriggers )
+		{
+			cScript *tScript = JSMapping->GetScript( i );
+			if( tScript != nullptr )
+			{
+				// If script returns false, prevent item from being equipped
+				if( tScript->OnUnequipAttempt( this, itemLayers[Layer] ) == 0 )
+				{
+					return false;
+				}
+			}
+		}
+
 		if( Layer == IL_PACKITEM )	// It's our pack!
 		{
 			SetPackItem( nullptr );
@@ -2926,18 +3178,46 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 		IncStrength2( -itemLayers[Layer]->GetStrength2() );
 		IncDexterity2( -itemLayers[Layer]->GetDexterity2() );
 		IncIntelligence2( -itemLayers[Layer]->GetIntelligence2() );
+
+		IncHealthRegenBonus( -itemLayers[Layer]->GetHealthRegenBonus() );
+		IncStaminaRegenBonus( -itemLayers[Layer]->GetStaminaRegenBonus() );
+		IncManaRegenBonus( -itemLayers[Layer]->GetManaRegenBonus() );
+
+		IncSwingSpeedIncrease( -itemLayers[Layer]->GetSwingSpeedIncrease() );
+
+		IncHealthLeech( -itemLayers[Layer]->GetHealthLeech() );
+		IncStaminaLeech( -itemLayers[Layer]->GetStaminaLeech() );
+		IncManaLeech( -itemLayers[Layer]->GetManaLeech() );
+
+		IncLuck( -itemLayers[Layer]->GetLuck() );
+
+		IncHitChance( -itemLayers[Layer]->GetHitChance() );
+		IncDefenseChance( -itemLayers[Layer]->GetDefenseChance() );
+
+		IncTithing( -itemLayers[Layer]->GetTithing() );
+
+		IncHealthBonus( -itemLayers[Layer]->GetHealthBonus() );
+		IncStaminaBonus( -itemLayers[Layer]->GetStaminaBonus() );
+		IncManaBonus( -itemLayers[Layer]->GetManaBonus() );
+
+		IncDamageIncrease( -itemLayers[Layer]->GetDamageIncrease() );
+
 		if( itemLayers[Layer]->GetPoisoned() )
 		{
-			if( itemLayers[Layer]->GetPoisoned() > GetPoisoned() )
+			SetPoisonStrength( std::max( 0, GetPoisonStrength() - itemLayers[Layer]->GetPoisoned() ));
+			if( itemLayers[Layer]->GetPoisoned() > GetPoisonStrength() )
 			{
-				SetPoisoned( 0 );
+				SetPoisonStrength( 0 );
 			}
 			else
 			{
-				SetPoisoned( GetPoisoned() - itemLayers[Layer]->GetPoisoned() );
+				SetPoisonStrength( GetPoisonStrength() - itemLayers[Layer]->GetPoisoned() );
 			}
 		}
 
+		scriptTriggers.clear();
+		scriptTriggers.shrink_to_fit();
+		scriptTriggers = itemLayers[Layer]->GetScriptTriggers();
 		for( auto i : scriptTriggers )
 		{
 			cScript *tScript = JSMapping->GetScript( i );
@@ -3011,12 +3291,12 @@ bool CChar::FinishedItems( void )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Dump character data to worldfile
 //o------------------------------------------------------------------------------------------------o
-bool CChar::DumpHeader( std::ofstream &outStream ) const
+bool CChar::DumpHeader( std::ostream &outStream ) const
 {
 	outStream << "[CHARACTER]" << '\n';
 	return true;
 }
-bool CChar::DumpBody( std::ofstream &outStream ) const
+bool CChar::DumpBody( std::ostream &outStream ) const
 {
 	CBaseObject::DumpBody( outStream );	// Make the default save of BaseObject members now
 
@@ -3056,7 +3336,16 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 		outStream << "MAXSTAM=" + std::to_string( maxStam ) + newLine;
 	}
 	outStream << "Town=" + std::to_string( GetTown() ) + newLine;
-	outStream << "SummonTimer=" + std::to_string( GetTimer( tNPC_SUMMONTIME )) + newLine;
+	TIMERVAL sTime = GetTimer( tNPC_SUMMONTIME );
+	outStream << "SummonTimer=";
+	if( sTime == 0 || sTime < cwmWorldState->GetUICurrentTime() )
+	{
+		outStream << std::to_string( 0 ) + newLine;
+	}
+	else
+	{
+		outStream << std::to_string( sTime - cwmWorldState->GetUICurrentTime() ) + newLine;
+	}
 	outStream << "MayLevitate=" + std::to_string(( MayLevitate() ? 1 : 0 )) + newLine;
 	outStream << "Stealth=" + std::to_string( GetStealth() ) + newLine;
 	outStream << "Reserved=" + std::to_string( GetCell() ) + newLine;
@@ -3069,16 +3358,21 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	outStream << "BaseSkills=";
 	for( UI08 bsc = 0; bsc < ALLSKILLS; ++bsc )
 	{
-		outStream << "[" + std::to_string( bsc ) + "," + std::to_string( GetBaseSkill( bsc )) + "]-";
+		outStream << "[" + std::to_string( bsc ) + "," + std::to_string( GetBaseSkill( bsc )) + "," + std::to_string( skillCap[bsc] ) + "]-";
 	}
 	outStream << "[END]" << newLine;
 
 	outStream << "GuildNumber=" + std::to_string( GetGuildNumber() ) + newLine;
+	outStream << "NpcGuild=" + std::to_string( GetNPCGuild() ) + newLine;
+	outStream << "NpcGuildJoined=" + std::to_string( GetNPCGuildJoined() ) + newLine;
 	outStream << "FontType=" + std::to_string( GetFontType() ) + newLine;
 	outStream << "TownTitle=" + std::to_string(( GetTownTitle() ? 1 : 0 )) + newLine;
 	//-------------------------------------------------------------------------------------------
 	outStream << "CanRun=" + std::to_string((( CanRun() && IsNpc() ) ? 1 : 0 )) + newLine;
 	outStream << "CanAttack=" + std::to_string(( GetCanAttack() ? 1 : 0 )) + newLine;
+	outStream << "HitChance=" + std::to_string( GetHitChance() ) + newLine;
+	outStream << "DefChance=" + std::to_string( GetDefenseChance() ) + newLine;
+	outStream << "KarmaLock=" + std::to_string(( GetKarmaLock() ? 1 : 0 )) + newLine;
 	outStream << "AllMove=" + std::to_string(( AllMove() ? 1 : 0 )) + newLine;
 	outStream << "IsNpc=" + std::to_string(( IsNpc() ? 1 : 0 )) + newLine;
 	outStream << "IsShop=" + std::to_string(( IsShop() ? 1 : 0 )) + newLine;
@@ -3122,7 +3416,7 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	}
 	return true;
 }
-void CChar::NPCValues_st::DumpBody( std::ofstream& outStream )
+void CChar::NPCValues_st::DumpBody( std::ostream& outStream )
 {
 	const char newLine = '\n';
 
@@ -3173,7 +3467,7 @@ void CChar::NPCValues_st::DumpBody( std::ofstream& outStream )
 		}
 	}
 }
-void CChar::PlayerValues_st::DumpBody( std::ofstream& outStream )
+void CChar::PlayerValues_st::DumpBody( std::ostream& outStream )
 {
 	const char newLine = '\n';
 
@@ -3191,6 +3485,7 @@ void CChar::PlayerValues_st::DumpBody( std::ofstream& outStream )
 	outStream << "LastOn=" + lastOn + newLine;
 	outStream << "LastOnSecs=" + std::to_string( lastOnSecs ) + newLine;
 	outStream << "CreatedOn=" + std::to_string( createdOn ) + newLine;
+	outStream << "PlayTime=" + std::to_string( playTime ) + newLine;
 	outStream << "OrgName=" + origName + newLine;
 	outStream << "CommandLevel=" + std::to_string( commandLevel ) + newLine;	// command level
 	outStream << "Squelched=" + std::to_string( squelched ) + newLine;
@@ -3229,7 +3524,7 @@ void CChar::PlayerValues_st::DumpBody( std::ofstream& outStream )
 //|	Purpose		-	Saves character to worldfile - returns true/false indicating the success
 //|					of the write operation
 //o------------------------------------------------------------------------------------------------o
-bool CChar::Save( std::ofstream &outStream )
+bool CChar::Save( std::ostream &outStream )
 {
 	bool rValue = false;
 	if( !IsFree() )
@@ -3281,14 +3576,378 @@ void CChar::BreakConcentration( CSocket *sock )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::GetAggressorFlags()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Returns the list of characters the player is marked as aggressor towards
+//o------------------------------------------------------------------------------------------------o
+auto CChar::GetAggressorFlags() const -> const std::unordered_map<SERIAL, TargetInfo>
+{
+	return aggressorFlags;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-  CChar::AddAggressorFlag()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-  Adds character serial to list of serials player is aggressor to, along with timestamp
+//|					for when aggressor flag will timeout for that particular serial
+//o------------------------------------------------------------------------------------------------o
+auto CChar::AddAggressorFlag( SERIAL toAdd ) -> void
+{
+	if( aggressorFlags.count( toAdd ) == 0 )
+	{
+		// Not found in list already, add to list
+		aggressorFlags[toAdd] = {cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_AGGRESSORFLAG ), IsNpc()};
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-  CChar::RemoveAggressorFlag()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-  Removes character serial from list of characters player is aggressor to
+//o------------------------------------------------------------------------------------------------o
+auto CChar::RemoveAggressorFlag( SERIAL toRemove ) -> void
+{
+	aggressorFlags.erase( toRemove );
+
+	// Aggressor flag removed, so loop through player's corpses so flagging can be updated for those!
+	for( auto tempCorpse = GetOwnedCorpses()->First(); !GetOwnedCorpses()->Finished(); tempCorpse = GetOwnedCorpses()->Next() )
+	{
+		if( ValidateObject( tempCorpse ))
+		{
+			tempCorpse->Dirty( UT_UPDATE );
+		}
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::CheckAggressorFlag()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if serial is in character's aggressorToList, and returns true if it is,
+//|					or false if it is not, or if the timestamp has expired (at which point it also
+//|					removes the entry from the list)
+//o------------------------------------------------------------------------------------------------o
+auto CChar::CheckAggressorFlag( SERIAL toCheck ) -> bool
+{
+	auto it = aggressorFlags.find( toCheck );
+	if( it != aggressorFlags.end() )
+	{
+		// Serial found, but timestamp might be out of date!
+		if( it->second.timestamp > cwmWorldState->GetUICurrentTime() )
+		{
+			// timestamp is still valid, still aggressor
+			return true;
+		}
+		else
+		{
+			// Timestamp has expired - remove it from the list
+			RemoveAggressorFlag( toCheck );
+		}
+	}
+
+	return false; // serial not found, or timestamp expired and no longer aggressor
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::IsAggressor()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if character has any current, non-expired aggressor flags
+//o------------------------------------------------------------------------------------------------o
+auto CChar::IsAggressor( bool checkForPlayersOnly ) -> bool
+{
+	bool isAggressor = false;
+	if( !aggressorFlags.empty() )
+	{
+		for( auto it = aggressorFlags.begin(); it != aggressorFlags.end(); ++it )
+		{
+			// Ignore aggressor flags against NPCs if checking for players only
+			if( checkForPlayersOnly && it->second.isNpc )
+				continue;
+
+			// Check if any of the entries has a non-expired aggressor timer
+			if( it->second.timestamp > cwmWorldState->GetUICurrentTime() )
+			{
+				isAggressor = true;
+				break;
+			}
+		}
+	}
+	return isAggressor;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::UpdateAggressorFlagTimestamp()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Updates aggressor timestamp if serial is found in list
+//o------------------------------------------------------------------------------------------------o
+auto CChar::UpdateAggressorFlagTimestamp( SERIAL toUpdate ) -> void
+{
+	auto it = aggressorFlags.find( toUpdate );
+	if( it != aggressorFlags.end() )
+	{
+		it->second.timestamp = cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_AGGRESSORFLAG );
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::AggressorFlagMaintenance()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Performs maintenance on character's list of aggressor flags and removes expired entries
+//o------------------------------------------------------------------------------------------------o
+auto CChar::AggressorFlagMaintenance() -> void
+{
+	// Loop through list of aggressor flags and add any serials with expired timers to a vector
+	std::vector<SERIAL> serialsToRemove;
+	for( auto it = aggressorFlags.begin(); it != aggressorFlags.end(); ++it )
+	{
+		if( it->second.timestamp <= cwmWorldState->GetUICurrentTime() )
+		{
+			serialsToRemove.push_back( it->first );
+		}
+	}
+
+	// Then loop through vector of serials with expired timers, and safely remove them from the list
+	for( SERIAL toRemove : serialsToRemove )
+	{
+		RemoveAggressorFlag( toRemove );
+		if( ValidateObject( GetTarg() ) && GetTarg()->GetSerial() == toRemove )
+		{
+			Combat->InvalidateAttacker( this );
+		}
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::ClearAggressorFlags()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Clears the character's entire list of aggressor flags
+//o------------------------------------------------------------------------------------------------o
+auto CChar::ClearAggressorFlags() -> void
+{
+	aggressorFlags.clear();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::GetPermaGreyFlags()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Returns the list of permagrey flags for player
+//o------------------------------------------------------------------------------------------------o
+auto CChar::GetPermaGreyFlags() const -> const std::unordered_map<SERIAL, TargetInfo>
+{
+	return permaGreyFlags;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-  CChar::AddPermaGreyFlag()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-  Adds character to list of characters player has a permagrey flag towards, along
+//|					with timestamp for when permagrey flag will timeout for that particular serial (if ever)
+//o------------------------------------------------------------------------------------------------o
+auto CChar::AddPermaGreyFlag( SERIAL toAdd ) -> void
+{
+	if( permaGreyFlags.count( toAdd ) == 0 )
+	{
+		// Not found in list already, add to list
+		permaGreyFlags[toAdd] = {cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_PERMAGREYFLAG ), IsNpc()};
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-  CChar::RemovePermaGreyFlag()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-  Removes character from list of characters player is permagrey for
+//o------------------------------------------------------------------------------------------------o
+auto CChar::RemovePermaGreyFlag( SERIAL toRemove ) -> void
+{
+	permaGreyFlags.erase( toRemove );
+
+	// Permagrey flag removed, so loop through player's corpses so flagging can be updated for those!
+	for( auto tempCorpse = GetOwnedCorpses()->First(); !GetOwnedCorpses()->Finished(); tempCorpse = GetOwnedCorpses()->Next() )
+	{
+		if( ValidateObject( tempCorpse ))
+		{
+			tempCorpse->Dirty( UT_UPDATE );
+		}
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::CheckPermaGreyFlags()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if serial is in character's permaGreyFlags, and returns true if it is,
+//|					or false if it is not, or if the timestamp has expired (at which point it also
+//|					removes the entry from the list)
+//o------------------------------------------------------------------------------------------------o
+auto CChar::CheckPermaGreyFlag( SERIAL toCheck ) -> bool
+{
+	auto it = permaGreyFlags.find( toCheck );
+	if( it != permaGreyFlags.end() )
+	{
+		// Serial found, but timestamp might be out of date!
+		if(  it->second.timestamp > cwmWorldState->GetUICurrentTime() )
+		{
+			// timestamp is still valid, permagrey flag still active
+			return true;
+		}
+		else
+		{
+			// Timestamp has expired - remove it from the list
+			RemovePermaGreyFlag( toCheck );
+		}
+	}
+
+	return false; // serial not found, or timestamp expired and permagrey flag no longer active
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::IsPermaGrey()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if character has any active permagrey flags
+//o------------------------------------------------------------------------------------------------o
+auto CChar::IsPermaGrey( bool checkForPlayersOnly ) -> bool
+{
+	bool isPermaGrey = false;
+	if( !permaGreyFlags.empty() )
+	{
+		for( auto it = permaGreyFlags.begin(); it != permaGreyFlags.end(); ++it )
+		{
+			// Ignore aggressor flags against NPCs if checking for players only
+			if( checkForPlayersOnly && it->second.isNpc )
+				continue;
+
+			// Check if any of the entries has a non-expired permagrey flag timer
+			if( it->second.timestamp > cwmWorldState->GetUICurrentTime() )
+			{
+				isPermaGrey = true;
+				break;
+			}
+		}
+	}
+	return isPermaGrey;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::UpdatePermaGreyFlagTimestamp()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Updates aggressor timestamp if serial is found in list
+//o------------------------------------------------------------------------------------------------o
+auto CChar::UpdatePermaGreyFlagTimestamp( SERIAL toUpdate ) -> void
+{
+	auto it = permaGreyFlags.find( toUpdate );
+	if( it != permaGreyFlags.end() )
+	{
+		it->second.timestamp = cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_PERMAGREYFLAG );
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::PermaGreyFlagMaintenance()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Performs maintenance on character's list of permagrey flags and removes expired entries
+//o------------------------------------------------------------------------------------------------o
+auto CChar::PermaGreyFlagMaintenance() -> void
+{
+	// Loop through list of permagrey flags and add any serials with expired timers to a vector
+	std::vector<SERIAL> serialsToRemove;
+	for( auto it = permaGreyFlags.begin(); it != permaGreyFlags.end(); ++it )
+	{
+		if( it->second.timestamp <= cwmWorldState->GetUICurrentTime() )
+		{
+			serialsToRemove.push_back( it->first );
+		}
+	}
+
+	// Then loop through vector of serials with expired timers, and safely remove them from the list
+	for( SERIAL toRemove : serialsToRemove )
+	{
+		RemovePermaGreyFlag( toRemove );
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::ClearPermaGreyFlags()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Clears the character's entire list of permagrey flags
+//o------------------------------------------------------------------------------------------------o
+auto CChar::ClearPermaGreyFlags() -> void
+{
+	permaGreyFlags.clear();
+}
+
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::GetPetList()
 //| Date		-	13 March 2001
 //o------------------------------------------------------------------------------------------------o
-//| Purpose		-	Returns the list of pets the character owns
+//| Purpose		-	Returns the list of ALL pets the character owns, regardless of where they might be
 //o------------------------------------------------------------------------------------------------o
 GenericList<CChar *> *CChar::GetPetList( void )
 {
-	return &petsControlled;
+	return &petsOwned;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::GetFollowerList()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Returns the list of active followers the character has
+//o------------------------------------------------------------------------------------------------o
+GenericList<CChar *> *CChar::GetFollowerList( void )
+{
+	return &activeFollowers;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::AddFollower()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Adds an owned NPC to character's list of followers
+//o------------------------------------------------------------------------------------------------o
+auto CChar::AddFollower( CChar *npcToAdd ) -> bool
+{
+	// Only add NPC as follower if they are not stabled
+	if( ValidateObject( npcToAdd ) && !npcToAdd->GetStabled() )
+	{
+		return GetFollowerList()->Add( npcToAdd );
+	}
+
+	return false;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::RemoveFollower()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Removes a follower from character's list of followers
+//o------------------------------------------------------------------------------------------------o
+auto CChar::RemoveFollower( CChar *followerToRemove ) -> bool
+{
+	return GetFollowerList()->Remove( followerToRemove );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::GetOwnedCorpses()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Returns the list of the player's corpses
+//o------------------------------------------------------------------------------------------------o
+auto CChar::GetOwnedCorpses() -> GenericList<CItem *>*
+{
+	return &ownedCorpses;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::AddCorpse()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Adds a corpse to character's list of corpses
+//o------------------------------------------------------------------------------------------------o
+auto CChar::AddCorpse( CItem *corpseToAdd ) -> bool
+{
+	return GetOwnedCorpses()->Add( corpseToAdd );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::RemoveCorpse()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Removes a corpse from character's list of corpses
+//o------------------------------------------------------------------------------------------------o
+auto CChar::RemoveCorpse( CItem *corpseToRemove ) -> bool
+{
+	return GetOwnedCorpses()->Remove( corpseToRemove );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3367,7 +4026,7 @@ UI16 CChar::GetMaxHP( void )
 		oldRace			= GetRace();
 
 	}
-	return maxHP;
+	return maxHP + GetHealthBonus();
 }
 void CChar::SetMaxHP( UI16 newmaxhp, UI16 newoldstr, RACEID newoldrace )
 {
@@ -3410,7 +4069,7 @@ void CChar::SetFixedMaxHP( SI16 newmaxhp )
 SI16 CChar::GetMaxMana( void )
 {
 	if(( maxMana_oldint != GetIntelligence() || oldRace != GetRace() ) && !GetMaxManaFixed() )
-		//if int/race changed since last calculation, recalculate maxHp
+		//if int/race changed since last calculation, recalculate maxMana
 	{
 		CRace *pRace = Races->Race( GetRace() );
 
@@ -3427,7 +4086,7 @@ SI16 CChar::GetMaxMana( void )
 		oldRace			= GetRace();
 
 	}
-	return maxMana;
+	return maxMana + GetManaBonus();
 }
 void CChar::SetMaxMana( SI16 newmaxmana, UI16 newoldint, RACEID newoldrace )
 {
@@ -3469,7 +4128,7 @@ void CChar::SetFixedMaxMana( SI16 newmaxmana )
 //o------------------------------------------------------------------------------------------------o
 SI16 CChar::GetMaxStam( void )
 {
-	// If dex/race changed since last calculation, recalculate maxHp
+	// If dex/race changed since last calculation, recalculate maxStam
 	if(( maxStam_olddex != GetDexterity() || oldRace != GetRace() ) && !GetMaxStamFixed() )
 	{
 		CRace *pRace = Races->Race( GetRace() );
@@ -3487,7 +4146,7 @@ SI16 CChar::GetMaxStam( void )
 		oldRace			= GetRace();
 
 	}
-	return maxStam;
+	return maxStam + GetStaminaBonus();
 }
 void CChar::SetMaxStam( SI16 newmaxstam, UI16 newolddex, RACEID newoldrace )
 {
@@ -3539,10 +4198,20 @@ SI16 CChar::ActualStrength( void ) const
 //o------------------------------------------------------------------------------------------------o
 SI16 CChar::GetStrength( void ) const
 {
-	return static_cast<SI16>( CBaseObject::GetStrength() + GetStrength2() );
+	auto tempStr = static_cast<SI16>( CBaseObject::GetStrength() + GetStrength2() );
+	if( tempStr < 1 )
+	{
+		tempStr = 1;
+	}
+	return tempStr;
 }
 void CChar::SetStrength( SI16 newValue )
 {
+	if( newValue < 1 )
+	{
+		newValue = 1;
+	}
+
 	CBaseObject::SetStrength( newValue );
 	Dirty( UT_HITPOINTS );
 	UpdateRegion();
@@ -3568,10 +4237,20 @@ SI16 CChar::ActualIntelligence( void ) const
 //o------------------------------------------------------------------------------------------------o
 SI16 CChar::GetIntelligence( void ) const
 {
-	return static_cast<SI16>( CBaseObject::GetIntelligence() + GetIntelligence2() );
+	auto tempInt = static_cast<SI16>( CBaseObject::GetIntelligence() + GetIntelligence2() );
+	if( tempInt < 1 )
+	{
+		tempInt = 1;
+	}
+	return tempInt;
 }
 void CChar::SetIntelligence( SI16 newValue )
 {
+	if( newValue < 1 )
+	{
+		newValue = 1;
+	}
+
 	CBaseObject::SetIntelligence( newValue );
 	Dirty( UT_MANA );
 	UpdateRegion();
@@ -3597,10 +4276,20 @@ SI16 CChar::ActualDexterity( void ) const
 //o------------------------------------------------------------------------------------------------o
 SI16 CChar::GetDexterity( void ) const
 {
-	return static_cast<SI16>( CBaseObject::GetDexterity() + GetDexterity2() );
+	auto tempDex = static_cast<SI16>( CBaseObject::GetDexterity() + GetDexterity2() );
+	if( tempDex < 1 )
+	{
+		tempDex = 1;
+	}
+	return tempDex;
 }
 void CChar::SetDexterity( SI16 newValue )
 {
+	if( newValue < 1 )
+	{
+		newValue = 1;
+	}
+	
 	CBaseObject::SetDexterity( newValue );
 	Dirty( UT_STAMINA );
 	UpdateRegion();
@@ -3842,12 +4531,21 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 							break;
 						}
 						auto secs = oldstrutil::sections( value, "," );
-						if( secs.size() != 2 )
+						if( secs.size() != 2 && secs.size() != 3 )
 						{
 							break;
 						}
+
 						auto skillNum = static_cast<SkillLock>( std::stoul( secs[0].substr( 1 ), nullptr, 0 ));
-						auto skillValue = static_cast<UI16>( std::stoul( secs[1].substr( 0, secs[1].size() - 1 ), nullptr, 0 ));
+						auto skillValue = ( secs.size() == 2 ? 
+							static_cast<UI16>( std::stoul( secs[1].substr( 0, secs[1].size() - 1 ), nullptr, 0 )) :
+							static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( secs[1], "//" )), nullptr, 0 )));
+						UI16 skillCapValue = 0;
+						if( secs.size() == 3 )
+						{
+							skillCapValue = static_cast<UI16>( std::stoul( secs[2].substr( 0, secs[2].size() - 1 ), nullptr, 0 ));
+						}
+						SetSkillCap( skillCapValue, skillNum );
 						SetBaseSkill( skillValue, skillNum );
 					}
 					rValue = true;
@@ -3922,6 +4620,11 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 					SetDead(( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) == 1 ));
 					rValue = true;
 				}
+				else if( UTag == "DEFCHANCE" )
+				{
+					SetDefenseChance( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					rValue = true;
+				}
 				break;
 			case 'E':
 				if( UTag == "EMOTION" )
@@ -3978,12 +4681,12 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "FLEEINGSPEED" )
 				{
-					SetFleeingSpeed( static_cast<R32>( std::stof( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
+					SetFleeingSpeed( static_cast<R64>( std::stod( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
 					rValue = true;
 				}
 				else if( UTag == "FLEEINGSPEEDMOUNTED" )
 				{
-					SetMountedFleeingSpeed( static_cast<R32>( std::stof( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
+					SetMountedFleeingSpeed( static_cast<R64>( std::stod( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
 					rValue = true;
 				}
 				break;
@@ -4010,7 +4713,12 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				break;
 			case 'H':
-				if( UTag == "HUNGER" )
+				if( UTag == "HITCHANCE" )
+				{
+					SetHitChance( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					rValue = true;
+				}
+				else if( UTag == "HUNGER" )
 				{
 					SetHunger( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
@@ -4054,6 +4762,13 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 					rValue = true;
 				}
 				break;
+			case 'K':
+				if( UTag == "KARMALOCK" )
+				{
+					SetKarmaLock( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) == 1 );
+					rValue = true;
+				}
+				break;
 			case 'L':
 				if( UTag == "LASTON" )
 				{
@@ -4079,7 +4794,8 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "MURDERTIMER" )
 				{
-					SetTimer( tCHAR_MURDERRATE, BuildTimeValue( static_cast<R32>( std::stof( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ))))));
+					auto murderDecayTime = static_cast<TIMERVAL>( std::stoull( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 ));
+					SetTimer( tCHAR_MURDERRATE, murderDecayTime > 0 ? murderDecayTime + cwmWorldState->GetUICurrentTime() : 0 );
 					rValue = true;
 				}
 				else if( UTag == "MAXHP" )
@@ -4131,6 +4847,16 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				{
 					SetNPCFlag( static_cast<cNPC_FLAG>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					UpdateFlag( this );
+					rValue = true;
+				}
+				else if( UTag == "NPCGUILD" )
+				{
+					SetNPCGuild( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					rValue = true;
+				}
+				else if( UTag == "NPCGUILDJOINED" )
+				{
+					SetNPCGuildJoined( static_cast<UI64>( std::stoull( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				break;
@@ -4204,7 +4930,13 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "PEACETIMER" )
 				{
-					SetTimer( tCHAR_PEACETIMER, BuildTimeValue( static_cast<R32>( std::stof( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ))))));
+					auto peaceTimer = static_cast<TIMERVAL>( std::stoull( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 ));
+					SetTimer( tCHAR_PEACETIMER, peaceTimer > 0 ? peaceTimer + cwmWorldState->GetUICurrentTime() : 0 );
+					rValue = true;
+				}
+				else if( UTag == "PLAYTIME" )
+				{
+					SetPlayTime( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				break;
@@ -4258,12 +4990,12 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "RUNNINGSPEED" )
 				{
-					SetRunningSpeed( static_cast<R32>( std::stof( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
+					SetRunningSpeed( static_cast<R64>( std::stod( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
 					rValue = true;
 				}
 				else if( UTag == "RUNNINGSPEEDMOUNTED" )
 				{
-					SetMountedRunningSpeed( static_cast<R32>( std::stof( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
+					SetMountedRunningSpeed( static_cast<R64>( std::stod( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
 					rValue = true;
 				}
 				break;
@@ -4288,7 +5020,8 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "SUMMONTIMER" )
 				{
-					SetTimer( tNPC_SUMMONTIME, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					auto summonTimer = static_cast<TIMERVAL>( std::stoull( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 ));
+					SetTimer( tNPC_SUMMONTIME, summonTimer > 0 ? summonTimer + cwmWorldState->GetUICurrentTime() : 0 );
 					rValue = true;
 				}
 				else if( UTag == "SAY" )
@@ -4432,12 +5165,12 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "WALKINGSPEED" )
 				{
-					SetWalkingSpeed( static_cast<R32>( std::stof( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
+					SetWalkingSpeed( static_cast<R64>( std::stod( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
 					rValue = true;
 				}
 				else if( UTag == "WALKINGSPEEDMOUNTED" )
 				{
-					SetMountedWalkingSpeed( static_cast<R32>( std::stof( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
+					SetMountedWalkingSpeed( static_cast<R64>( std::stod( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
 					rValue = true;
 				}
 				break;
@@ -4478,11 +5211,14 @@ bool CChar::LoadRemnants( void )
 	}
 
 	const UI16 acct = GetAccount().wAccountIndex;
+
+	// Max body/anim ID supported in default client is 2048 (or 0x800),
+	// though custom clients like CUO can be modified to bypass this limit
 	if( GetId() > 0x999 )
 	{
 		if( acct == AB_INVALID_ID )
 		{
-			std::string charName = GetNpcDictName( this );
+			std::string charName = GetNpcDictName( this, nullptr, NRS_SYSTEM );
 			Console.Warning( oldstrutil::format( "NPC: %s with serial 0x%X with bugged body found, deleting", charName.c_str(), GetSerial() ));
 			rValue = false;
 		}
@@ -4506,7 +5242,7 @@ bool CChar::LoadRemnants( void )
 		{
 			if( IsNpc() )
 			{
-				std::string charName = GetNpcDictName( this );
+				std::string charName = GetNpcDictName( this, nullptr, NRS_SYSTEM );
 				Console.Warning( oldstrutil::format( "NPC: %s with serial 0x%X found outside valid world locations, deleting", charName.c_str(), GetSerial() ));
 				rValue = false;
 			}
@@ -4520,10 +5256,106 @@ bool CChar::LoadRemnants( void )
 			if( !IsNpc() )
 			{
 				Accounts->AddCharacter( GetAccountNum(), this );	// account ID, and account object.
+
+#if defined( UOX_DEBUG_MODE )
+				// Sanity-check lastOn vs lastOnSecs for player characters
+				ValidateLastOn();
+#endif
 			}
 		}
 	}
 	return rValue;
+}
+
+void CChar::ValidateLastOn()
+{
+	if( !GetLastOn().empty() )
+	{
+		const std::string currentLastOnString = GetLastOn();
+		UI32 currentLastOnSecs = GetLastOnSecs();
+		time_t currentTime = time( nullptr );
+		const time_t futureThreshold = currentTime + 93600; // ~26 hours buffer to account for timezone variance - we don't want any time travellers
+
+		bool requiresUpdateFromStr = false;
+		std::string updateReason = "";
+
+		// First, check if we actually need to update anything
+		if( currentLastOnSecs == 0 )
+		{
+			requiresUpdateFromStr = true;
+			updateReason = "LastOnSecs was 0";
+		}
+		else if( currentLastOnSecs > futureThreshold )
+		{
+			requiresUpdateFromStr = true;
+			updateReason = "LastOnSecs > future threshold (" + std::to_string( currentLastOnSecs ) + ")";
+		}
+		else
+		{
+			// LastOnSecs is > 0 and not unreasonably far into the future - let's validate
+			char checkBuffer[100];
+			const time_t secsToCheck = static_cast<time_t>( currentLastOnSecs );
+			char *resultPtr = mctime( checkBuffer, sizeof( checkBuffer ), &secsToCheck );
+			if( resultPtr != nullptr && checkBuffer[0] != '\0' )
+			{
+				// Trim whitespace from output
+				std::string tempStringFromBuffer = checkBuffer;
+				std::string currentSecsAsString = oldstrutil::trim( tempStringFromBuffer );
+
+				if( currentLastOnString != currentSecsAsString )
+				{
+					requiresUpdateFromStr = true;
+					updateReason = "Mismatch between string and mctime LastOnSecs ('" + currentSecsAsString + "')";
+				}
+				else
+				{
+					// Strings match! Existing LastOnSecs is validated and consistent. Do nothing.
+					requiresUpdateFromStr = false;
+				}
+			}
+			else // mctime call failed or returned empty string
+			{
+				Console.Warning( oldstrutil::format( "mctime failed during validation for char %u, ts %u. Cannot validate, no update.", GetSerial(), currentLastOnSecs ));
+				requiresUpdateFromStr = false; // Can't validate, don't update
+			}
+		}
+
+		if( requiresUpdateFromStr )
+		{
+			// Parsing logic using std::get_time and mktime remains the same
+			std::tm timeStructParse = {};
+			std::stringstream ssParse( currentLastOnString );
+			const std::locale c_localeParse( "C" );
+			[[maybe_unused]] std::locale prevLocaleParse = ssParse.imbue( c_localeParse );
+			std::string formatParse = "%a %b %d %H:%M:%S %Y";
+			ssParse >> std::get_time( &timeStructParse, formatParse.c_str() );
+			if( !ssParse.fail() )
+			{
+				timeStructParse.tm_isdst = -1;
+				time_t parsedTimestamp = mktime( &timeStructParse );
+				if( parsedTimestamp != -1 && parsedTimestamp <= futureThreshold )
+				{
+					SetLastOnSecs( static_cast<UI32>( parsedTimestamp ));
+					Console.Log( oldstrutil::format( "Updating LastOnSecs for char %u to %u based on lastOn. Reason: %s. Parsing: '%s'",
+						GetSerial(), GetLastOnSecs(), updateReason.c_str(), currentLastOnString.c_str() ));
+				}
+				else if( parsedTimestamp == -1 )
+				{
+					Console.Warning( oldstrutil::format( "mktime failed for char %u after parsing: %s", GetSerial(), currentLastOnString.c_str() ));
+				}
+				else
+				{
+					// parsedTimestamp > futureThreshold
+					Console.Warning( oldstrutil::format( "Parsed timestamp for char %u ALSO future date (%lld). Skipping update.", GetSerial(), static_cast<long long>( parsedTimestamp )));
+				}
+			}
+			else
+			{
+				// get_time failed
+				Console.Warning( oldstrutil::format( "std::get_time failed to parse char %u, LastOn string: '%s'", GetSerial(), currentLastOnString.c_str() ));
+			}
+		}
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4578,8 +5410,7 @@ void CChar::PostLoadProcessing( void )
 		SetPackItem( nullptr );
 	}
 
-	SI32 maxWeight = GetStrength() * cwmWorldState->ServerData()->WeightPerStr() + 40;
-	if( GetWeight() <= 0 || GetWeight() > MAX_WEIGHT || GetWeight() > maxWeight )
+	if( GetWeight() <= 0 || GetWeight() > MAX_WEIGHT || GetWeight() > GetWeightMax() )
 	{
 		SetWeight( Weight->CalcCharWeight( this ));
 	}
@@ -4637,7 +5468,7 @@ void CChar::TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool
 		{
 			if( GetTimer( tCHAR_ANTISPAM ) < cwmWorldState->GetUICurrentTime() )
 			{
-				SetTimer( tCHAR_ANTISPAM, BuildTimeValue( 10 ));
+				SetTimer( tCHAR_ANTISPAM, BuildTimeValue( 10.0 ));
 				canSpeak = true;
 			}
 		}
@@ -4700,7 +5531,7 @@ void CChar::TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool
 				unicodeMessage.Colour( txtColor );
 				unicodeMessage.Type( msgType );
 				unicodeMessage.Language( "ENG" );
-				unicodeMessage.Name( this->GetNameRequest( mChar ));
+				unicodeMessage.Name( this->GetNameRequest( mChar, NRS_SPEECH ));
 				unicodeMessage.ID( INVALIDID );
 				unicodeMessage.Serial( GetSerial() );
 
@@ -4772,6 +5603,7 @@ void CChar::TextMessage( CSocket *s, SI32 dictEntry, SpeechType msgType, int spa
 		va_list argptr;
 		va_start( argptr, spamTimer );
 		auto msg = oldstrutil::format( txt, argptr );
+		va_end( argptr ); // va_end in same function as va_start
 		if( msg.size() > 512 )
 		{
 			msg = msg.substr( 0, 512 );
@@ -4868,41 +5700,65 @@ void CChar::Cleanup( void )
 				tItem->Delete();
 			}
 		}
+
+		// Clear up some stuff for our target in combat
 		CChar *tempChar = nullptr;
 		tempChar = GetTarg();
 		if( ValidateObject( tempChar ))
 		{
+			// Clear char as target of target, if set
 			if( tempChar->GetTarg() == this )
 			{
 				tempChar->SetTarg( nullptr );
-				tempChar->SetAttacker( nullptr );
-				tempChar->SetAttackFirst( false );
-				if( tempChar->IsAtWar() )
+
+				if( tempChar->IsAtWar() && tempChar->IsNpc() )
 				{
+					// What if target is fighting other characters too?
 					tempChar->ToggleCombat();
 				}
 			}
-			SetTarg( nullptr );
-		}
-		tempChar = GetAttacker();
-		if( ValidateObject( tempChar ))
-		{
+
+			// Remove char as target's attacker, if set
 			if( tempChar->GetAttacker() == this )
 			{
 				tempChar->SetAttacker( nullptr );
 			}
 
+			// Remove char from target's aggressorToList
+			tempChar->RemoveAggressorFlag( this->GetSerial() );
+
+			SetTarg( nullptr );
+		}
+
+		// Do the same for our attacker (who could be a different character than our target)
+		tempChar = GetAttacker();
+		if( ValidateObject( tempChar ))
+		{
+			// Again, clear this char as attacker of our attacker, if set
+			if( tempChar->GetAttacker() == this )
+			{
+				tempChar->SetAttacker( nullptr );
+			}
+
+			// Also clear attacker's target, if it matches this char
 			if( tempChar->GetTarg() == this )
 			{
 				tempChar->SetTarg( nullptr );
-				tempChar->SetAttackFirst( false );
-				if( tempChar->IsAtWar() )
+				if( tempChar->IsAtWar() && tempChar->IsNpc() )
 				{
 					tempChar->ToggleCombat();
 				}
 			}
+
+			// Remove char from attacker's aggressorToList
+			tempChar->RemoveAggressorFlag( this->GetSerial() );
+
 			SetAttacker( nullptr );
 		}
+
+		// Clear char's list of aggressor flags
+		ClearAggressorFlags();
+
 
 		// If we delete a NPC we should delete his tempeffects as well
 		std::vector<CTEffect *> removedEffect;
@@ -4964,7 +5820,7 @@ void CChar::Cleanup( void )
 
 		if( IsGuarded() )
 		{
-			CChar *petGuard = Npcs->GetGuardingPet( this, this );
+			CChar *petGuard = Npcs->GetGuardingFollower( this, this );
 			if( ValidateObject( petGuard ))
 			{
 				petGuard->SetGuarding( nullptr );
@@ -4973,11 +5829,32 @@ void CChar::Cleanup( void )
 		}
 		Npcs->StopPetGuarding( this );
 
-		for( tempChar = petsControlled.First(); !petsControlled.Finished(); tempChar = petsControlled.Next() )
+		// Clear out char's followers
+		for( tempChar = activeFollowers.First(); !activeFollowers.Finished(); tempChar = activeFollowers.Next() )
+		{
+			if( ValidateObject( tempChar ) )
+			{
+				tempChar->SetOwner( nullptr );
+				RemoveFollower( tempChar );
+			}
+		}
+
+		// Clear out char's list of owned pets
+		for( tempChar = petsOwned.First(); !petsOwned.Finished(); tempChar = petsOwned.Next() )
 		{
 			if( ValidateObject( tempChar ))
 			{
 				tempChar->SetOwner( nullptr );
+			}
+		}
+
+		// Clear out char's list of owned corpses
+		for( auto tempCorpse = ownedCorpses.First(); !ownedCorpses.Finished(); tempCorpse = ownedCorpses.Next() )
+		{
+			if( ValidateObject( tempCorpse ))
+			{
+				tempCorpse->SetOwner( nullptr );
+				RemoveCorpse( tempCorpse );
 			}
 		}
 
@@ -4986,6 +5863,7 @@ void CChar::Cleanup( void )
 		if( ValidateObject( oldOwner ))
 		{
 			oldOwner->SetControlSlotsUsed( std::max( 0, oldOwner->GetControlSlotsUsed() - GetControlSlots() ));
+			oldOwner->GetFollowerList()->Remove( this );
 		}
 
 		RemoveSelfFromOwner();	// Let's remove it from our owner (if any)
@@ -5044,6 +5922,18 @@ void CChar::SetPoisoned( UI08 newValue )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::SetPoisonedBy()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Sets poisoned state of character
+//o------------------------------------------------------------------------------------------------o
+void CChar::SetPoisonedBy( SERIAL newValue )
+{
+	CBaseObject::SetPoisonedBy( newValue );
+	Dirty( UT_UPDATE );
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::SetStrength2()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Sets bonus strength stat for character
@@ -5077,6 +5967,74 @@ void CChar::SetIntelligence2( SI16 nVal )
 	CBaseObject::SetIntelligence2( nVal );
 	Dirty( UT_MANA );
 	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::SetHealthBonus()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Sets bonus Hits stat for character
+//o------------------------------------------------------------------------------------------------o
+void CChar::SetHealthBonus( SI16 nVal )
+{
+	CBaseObject::SetHealthBonus( nVal );
+	Dirty( UT_HITPOINTS );
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::SetStaminaBonus()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Sets bonus Stam stat for character
+//o------------------------------------------------------------------------------------------------o
+void CChar::SetStaminaBonus( SI16 nVal )
+{
+	CBaseObject::SetStaminaBonus( nVal );
+	Dirty( UT_STAMINA );
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::SetManaBonus()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Sets bonus Mana stat for character
+//o------------------------------------------------------------------------------------------------o
+void CChar::SetManaBonus( SI16 nVal )
+{
+	CBaseObject::SetManaBonus( nVal );
+	Dirty( UT_MANA );
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::IncHealthBonus()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Increments GetHealthBonus (modifications) by toAdd
+//o------------------------------------------------------------------------------------------------o
+void CChar::IncHealthBonus( SI16 toAdd )
+{
+	SetHealthBonus( static_cast<SI16>( GetHealthBonus() + toAdd ));
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::IncStaminaBonus()
+//| Date		-	26 May 2024
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Increments GetBonusStam (modifications) by toAdd
+//o------------------------------------------------------------------------------------------------o
+void CChar::IncStaminaBonus( SI16 toAdd )
+{
+	SetStaminaBonus( static_cast<SI16>( GetStaminaBonus() + toAdd ));
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::IncManaBonus()
+//| Date		-	26 May 2024
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Increments GetBonusMana (modifications) by toAdd
+//o------------------------------------------------------------------------------------------------o
+void CChar::IncManaBonus( SI16 toAdd )
+{
+	SetManaBonus( static_cast<SI16>( GetManaBonus() + toAdd ));
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5249,13 +6207,28 @@ void CChar::SetRobe( SERIAL newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets timestamp for when player last moved
 //o------------------------------------------------------------------------------------------------o
-UI32 CChar::LastMoveTime( void ) const
+TIMERVAL CChar::LastMoveTime( void ) const
 {
 	return lastMoveTime;
 }
-void CChar::LastMoveTime( UI32 newValue )
+void CChar::LastMoveTime( TIMERVAL newValue )
 {
 	lastMoveTime = newValue;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::GetLastCombatTime()
+//|					CChar::SetLastCombatTime()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets timestamp for when player last combat
+//o------------------------------------------------------------------------------------------------o
+TIMERVAL CChar::GetLastCombatTime() const
+{
+	return lastCombatTime;
+}
+void CChar::SetLastCombatTime( TIMERVAL newValue )
+{
+	lastCombatTime = newValue;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5319,7 +6292,7 @@ void CChar::SetLastOnSecs( UI32 newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets timestamp (in seconds) for when player character was created
 //o------------------------------------------------------------------------------------------------o
-UI32 CChar::GetCreatedOn( void ) const
+TIMERVAL CChar::GetCreatedOn( void ) const
 {
 	UI32 rVal = 0;
 	if( IsValidPlayer() )
@@ -5328,11 +6301,35 @@ UI32 CChar::GetCreatedOn( void ) const
 	}
 	return rVal;
 }
-void CChar::SetCreatedOn( UI32 newValue )
+void CChar::SetCreatedOn( TIMERVAL newValue )
 {
 	if( IsValidPlayer() )
 	{
 		mPlayer->createdOn = newValue;
+		UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::GetPlayTime()
+//|					CChar::SetPlayTime()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets/Updates play time (in minutes) of character since it was created
+//o------------------------------------------------------------------------------------------------o
+auto CChar::GetPlayTime() const -> UI32
+{
+	UI32 rVal = 0;
+	if( IsValidPlayer() )
+	{
+		rVal = mPlayer->playTime;
+	}
+	return rVal;
+}
+auto CChar::SetPlayTime( UI32 newValue ) -> void
+{
+	if( IsValidPlayer() )
+	{
+		mPlayer->playTime = newValue;
 		UpdateRegion();
 	}
 }
@@ -5433,21 +6430,30 @@ void CChar::SetStabled( bool newValue )
 	{
 		mNPC->boolFlags.set( BIT_STABLED, newValue );
 		UpdateRegion();
+	}
+}
 
-		CChar *oldOwner = GetOwnerObj();
-		if( ValidateObject( oldOwner ))
-		{
-			if( newValue == true )
-			{
-				oldOwner->GetPetList()->Remove( this );
-				oldOwner->UpdateRegion();
-			}
-			else if( newValue == false )
-			{
-				oldOwner->GetPetList()->Add( this );
-				oldOwner->UpdateRegion();
-			}
-		}
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::GetCombatLos()
+//|					CChar::HasCombatLos()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets whether character currently has Line-of-Sight to target in combat
+//o------------------------------------------------------------------------------------------------o
+bool CChar::GetCombatLos( void ) const
+{
+	bool rVal = false;
+	if( IsValidNPC() )
+	{
+		rVal = mNPC->boolFlags.test( BIT_COMBATLOS );
+	}
+
+	return rVal;
+}
+void CChar::SetCombatLos( bool newValue )
+{
+	if( IsValidNPC() )
+	{
+		mNPC->boolFlags.set( BIT_COMBATLOS, newValue );
 	}
 }
 
@@ -6424,14 +7430,14 @@ void CChar::DoLoyaltyUpdate( void )
 	if( !ValidateObject( GetOwnerObj() ))
 		return;
 
-	if( GetTimer( tNPC_LOYALTYTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+	if( GetTimer( tNPC_LOYALTYTIME ) <= cwmWorldState->GetUICurrentTime() )
 	{
 		UI16 loyaltyRate = cwmWorldState->ServerData()->SystemTimer( tSERVER_LOYALTYRATE );
 		if( GetLoyalty() > 0 )
 		{
 			// Reduce loyalty by 1, reset timer
 			SetLoyalty( std::max( 0, GetLoyalty() - 1 ));
-			SetTimer( tNPC_LOYALTYTIME, BuildTimeValue( static_cast<R32>( loyaltyRate )));
+			SetTimer( tNPC_LOYALTYTIME, BuildTimeValue( static_cast<R64>( loyaltyRate )));
 
 			// Provide some feedback to the player, if they're online
 			CSocket *mSock = GetOwnerObj()->GetSocket();
@@ -6683,6 +7689,46 @@ void CChar::SetNPCAiType( SI16 newValue )
 	if( IsValidNPC() )
 	{
 		mNPC->aiType = newValue;
+		UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::GetNPCGuild()
+//|					CChar::SetNPCGuild()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets the NPC Guild the character belongs to
+//o------------------------------------------------------------------------------------------------o
+UI16 CChar::GetNPCGuild( void ) const
+{
+	return npcGuild;
+}
+void CChar::SetNPCGuild( UI16 newValue )
+{
+	npcGuild = newValue;
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::GetNPCGuildJoined()
+//|					CChar::SetNPCGuildJoined()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets timestamp (in seconds) for when player character joined NPC guild
+//o------------------------------------------------------------------------------------------------o
+TIMERVAL CChar::GetNPCGuildJoined( void ) const
+{
+	TIMERVAL rVal = 0;
+	if( IsValidPlayer() )
+	{
+		rVal = mPlayer->npcGuildJoined;
+	}
+	return rVal;
+}
+void CChar::SetNPCGuildJoined(TIMERVAL newValue )
+{
+	if( IsValidPlayer() )
+	{
+		mPlayer->npcGuildJoined = newValue;
 		UpdateRegion();
 	}
 }
@@ -7367,6 +8413,36 @@ void CChar::SetReattackAt( SI16 newValue )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function    -   CChar::GetFleeDistance()
+//|                 CChar::SetFleeDistance()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets the distance an NPC has moved since entering flee/scared wander mode
+//o------------------------------------------------------------------------------------------------o
+UI08 CChar::GetFleeDistance( void ) const
+{
+	UI08 retVal = DEFNPC_FLEEDISTANCE;
+	if( IsValidNPC() )
+	{
+		retVal = mNPC->fleeDistance;
+	}
+	return retVal;
+}
+void CChar::SetFleeDistance( UI08 newValue )
+{
+	if( !IsValidNPC() )
+	{
+		if( DEFNPC_FLEEDISTANCE != newValue )
+		{
+			CreateNPC();
+		}
+	}
+	if( IsValidNPC() )
+	{
+		mNPC->fleeDistance = newValue;
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::PopDirection()
 //|					CChar::PushDirection()
 //o------------------------------------------------------------------------------------------------o
@@ -7431,6 +8507,106 @@ void CChar::FlushPath( void )
 			PopDirection();
 		}
 	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::GetCombatIgnore()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Returns the list of targets ignored by NPC in combat
+//o------------------------------------------------------------------------------------------------o
+auto CChar::GetCombatIgnore() const -> const std::unordered_map<SERIAL, TargetInfo>
+{
+	return mNPC->combatIgnore;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-  CChar::AddToCombatIgnore()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-  Adds serial to list of targets being ignored by NPC in combat, along
+//|					with timestamp for when the ignoring of that serial expires
+//o------------------------------------------------------------------------------------------------o
+auto CChar::AddToCombatIgnore( SERIAL toAdd, bool isNpc ) -> void
+{
+	if( mNPC->combatIgnore.count( toAdd ) == 0 )
+	{
+		// Not found in list already, add to list
+		mNPC->combatIgnore[toAdd] = {cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_COMBATIGNORE ), isNpc};
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-  CChar::RemoveFromCombatIgnore()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-  Removes serial from list of targets being ignored by NPC in combat
+//o------------------------------------------------------------------------------------------------o
+auto CChar::RemoveFromCombatIgnore( SERIAL toRemove ) -> void
+{
+	mNPC->combatIgnore.erase( toRemove );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::CheckCombatIgnore()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if serial is in NPC's list of ignored targets in combat, and 
+//|					returns true if it is, or false if it is not - or if the timestamp has expired
+//|					(at which point it also removes the entry from the list)
+//o------------------------------------------------------------------------------------------------o
+auto CChar::CheckCombatIgnore( SERIAL toCheck ) -> bool
+{
+	auto it = mNPC->combatIgnore.find( toCheck );
+	if( it != mNPC->combatIgnore.end() )
+	{
+		// Serial found, but timestamp might be out of date!
+		if(  it->second.timestamp > cwmWorldState->GetUICurrentTime() )
+		{
+			// timestamp is still valid, still ignoring target in combat
+			return true;
+		}
+		else
+		{
+			// Timestamp has expired - remove it from the list
+			RemoveFromCombatIgnore( toCheck );
+		}
+	}
+
+	return false; // serial not found, or timestamp expired and target no longer ignored in combat
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::CombatIgnoreMaintenance()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Performs maintenance on list of character serials being ignored by NPC in combat
+//o------------------------------------------------------------------------------------------------o
+auto CChar::CombatIgnoreMaintenance() -> void
+{
+	if( mNPC == nullptr )
+		return;
+
+	// Loop through list of ignored targets in combat and add any serials with expired timers to a vector
+	std::vector<SERIAL> serialsToRemove;
+	for( auto it = mNPC->combatIgnore.begin(); it != mNPC->combatIgnore.end(); ++it )
+	{
+		if( it->second.timestamp <= cwmWorldState->GetUICurrentTime() )
+		{
+			serialsToRemove.push_back( it->first );
+		}
+	}
+
+	// Then loop through vector of serials with expired timers, and safely remove them from the list
+	for( SERIAL toRemove : serialsToRemove )
+	{
+		RemoveFromCombatIgnore( toRemove );
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::ClearCombatIgnore()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Clears the NPC's entire list of permagrey flags
+//o------------------------------------------------------------------------------------------------o
+auto CChar::ClearCombatIgnore() -> void
+{
+	mNPC->combatIgnore.clear();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -7731,9 +8907,9 @@ void CChar::SetNPCFlag( cNPC_FLAG flagType )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC's walking speed
 //o------------------------------------------------------------------------------------------------o
-R32 CChar::GetWalkingSpeed( void ) const
+R64 CChar::GetWalkingSpeed( void ) const
 {
-	R32 retVal = cwmWorldState->ServerData()->NPCWalkingSpeed();
+	R64 retVal = cwmWorldState->ServerData()->NPCWalkingSpeed();
 
 	if( IsValidNPC() )
 	{
@@ -7748,7 +8924,7 @@ R32 CChar::GetWalkingSpeed( void ) const
 #endif
 	return retVal;
 }
-void CChar::SetWalkingSpeed( R32 newValue )
+void CChar::SetWalkingSpeed( R64 newValue )
 {
 	if( !IsValidNPC() )
 	{
@@ -7769,9 +8945,9 @@ void CChar::SetWalkingSpeed( R32 newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC's running speed
 //o------------------------------------------------------------------------------------------------o
-R32 CChar::GetRunningSpeed( void ) const
+R64 CChar::GetRunningSpeed( void ) const
 {
-	R32 retVal = cwmWorldState->ServerData()->NPCRunningSpeed();
+	R64 retVal = cwmWorldState->ServerData()->NPCRunningSpeed();
 
 	if( IsValidNPC() )
 	{
@@ -7786,7 +8962,7 @@ R32 CChar::GetRunningSpeed( void ) const
 #endif
 	return retVal;
 }
-void CChar::SetRunningSpeed( R32 newValue )
+void CChar::SetRunningSpeed( R64 newValue )
 {
 	if( !IsValidNPC() )
 	{
@@ -7807,9 +8983,9 @@ void CChar::SetRunningSpeed( R32 newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC's fleeing speed
 //o------------------------------------------------------------------------------------------------o
-R32 CChar::GetFleeingSpeed( void ) const
+R64 CChar::GetFleeingSpeed( void ) const
 {
-	R32 retVal = cwmWorldState->ServerData()->NPCFleeingSpeed();
+	R64 retVal = cwmWorldState->ServerData()->NPCFleeingSpeed();
 
 	if( IsValidNPC() )
 	{
@@ -7824,7 +9000,7 @@ R32 CChar::GetFleeingSpeed( void ) const
 #endif
 	return retVal;
 }
-void CChar::SetFleeingSpeed( R32 newValue )
+void CChar::SetFleeingSpeed( R64 newValue )
 {
 	if( !IsValidNPC() )
 	{
@@ -7844,9 +9020,9 @@ void CChar::SetFleeingSpeed( R32 newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC's mounted walking speed
 //o------------------------------------------------------------------------------------------------o
-R32 CChar::GetMountedWalkingSpeed( void ) const
+R64 CChar::GetMountedWalkingSpeed( void ) const
 {
-	R32 retVal = cwmWorldState->ServerData()->NPCMountedWalkingSpeed();
+	R64 retVal = cwmWorldState->ServerData()->NPCMountedWalkingSpeed();
 
 	if( IsValidNPC() )
 	{
@@ -7861,7 +9037,7 @@ R32 CChar::GetMountedWalkingSpeed( void ) const
 #endif
 	return retVal;
 }
-void CChar::SetMountedWalkingSpeed( R32 newValue )
+void CChar::SetMountedWalkingSpeed( R64 newValue )
 {
 	if( !IsValidNPC() )
 	{
@@ -7881,9 +9057,9 @@ void CChar::SetMountedWalkingSpeed( R32 newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC's mounted running speed
 //o------------------------------------------------------------------------------------------------o
-R32 CChar::GetMountedRunningSpeed( void ) const
+R64 CChar::GetMountedRunningSpeed( void ) const
 {
-	R32 retVal = cwmWorldState->ServerData()->NPCMountedRunningSpeed();
+	R64 retVal = cwmWorldState->ServerData()->NPCMountedRunningSpeed();
 
 	if( IsValidNPC() )
 	{
@@ -7898,7 +9074,7 @@ R32 CChar::GetMountedRunningSpeed( void ) const
 #endif
 	return retVal;
 }
-void CChar::SetMountedRunningSpeed( R32 newValue )
+void CChar::SetMountedRunningSpeed( R64 newValue )
 {
 	if( !IsValidNPC() )
 	{
@@ -7918,9 +9094,9 @@ void CChar::SetMountedRunningSpeed( R32 newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC's fleeing speed
 //o------------------------------------------------------------------------------------------------o
-R32 CChar::GetMountedFleeingSpeed( void ) const
+R64 CChar::GetMountedFleeingSpeed( void ) const
 {
-	R32 retVal = cwmWorldState->ServerData()->NPCMountedFleeingSpeed();
+	R64 retVal = cwmWorldState->ServerData()->NPCMountedFleeingSpeed();
 
 	if( IsValidNPC() )
 	{
@@ -7935,7 +9111,7 @@ R32 CChar::GetMountedFleeingSpeed( void ) const
 #endif
 	return retVal;
 }
-void CChar::SetMountedFleeingSpeed( R32 newValue )
+void CChar::SetMountedFleeingSpeed( R64 newValue )
 {
 	if( !IsValidNPC() )
 	{
@@ -8008,11 +9184,29 @@ void CChar::ReactOnDamage( [[maybe_unused]] WeatherType damageType, CChar *attac
 	if( ValidateObject( attacker ))
 	{
 		// Let the target react upon damage
-		attacker->SetAttackFirst(( GetTarg() != attacker ));
+		// If attacker is attacking someone who is not already an aggressor to the attacker...
+		auto cAttackOwner = attacker->GetOwnerObj();
+		if( ValidateObject( cAttackOwner ) )
+		{
+			if( !CheckAggressorFlag( cAttackOwner->GetSerial() ) )
+			{
+				// Add both owner and pet/hireling/summon as aggressor of target!
+				cAttackOwner->AddAggressorFlag( this->GetSerial() );
+				attacker->AddAggressorFlag( this->GetSerial() );
+			}
+		}
+		else
+		{
+			if( !CheckAggressorFlag( attacker->GetSerial() ))
+			{
+				// ...add cAttack as aggressor of target!
+				attacker->AddAggressorFlag( this->GetSerial() );
+			}
+		}
+
 		if( !attacker->IsInvulnerable() && ( !ValidateObject( GetTarg() ) || !ObjInRange( this, GetTarg(), DIST_INRANGE )))
 		{
 			SetAttacker( attacker );
-			SetAttackFirst( false );
 			if( IsNpc() )
 			{
 				if( GetVisible() == VT_TEMPHIDDEN || attacker->GetVisible() == VT_INVISIBLE )
@@ -8049,6 +9243,24 @@ void CChar::ReactOnDamage( [[maybe_unused]] WeatherType damageType, CChar *attac
 //o------------------------------------------------------------------------------------------------o
 bool CChar::Damage( SI16 damageValue, WeatherType damageType, CChar *attacker, bool doRepsys )
 {
+	CSocket *mSock = GetSocket(), *attSock = nullptr, *attOwnerSock = nullptr;
+
+	if( ValidateObject( attacker ))
+	{
+		std::vector<UI16> attScriptTriggers = attacker->GetScriptTriggers();
+		for( auto i : attScriptTriggers )
+		{
+			cScript *toExecute = JSMapping->GetScript( i );
+			if( toExecute != nullptr )
+			{
+				// If event returns false, prevent damage!
+				auto retVal = toExecute->OnDamageDeal( attacker, this, damageValue, damageType );
+				if( retVal == 0 )
+					return false;
+			}
+		}
+	}
+
 	std::vector<UI16> scriptTriggers = GetScriptTriggers();
 	for( auto i : scriptTriggers )
 	{
@@ -8061,8 +9273,6 @@ bool CChar::Damage( SI16 damageValue, WeatherType damageType, CChar *attacker, b
 				return false;
 		}
 	}
-
-	CSocket *mSock = GetSocket(), *attSock = nullptr, *attOwnerSock = nullptr;
 
 	if( ValidateObject( attacker ))
 	{
@@ -8146,8 +9356,13 @@ bool CChar::Damage( SI16 damageValue, WeatherType damageType, CChar *attacker, b
 		// Reputation system
 		if( doRepsys )
 		{
-			if( WillResultInCriminal( attacker, this )) //REPSYS
+			// If attacker is an aggressor to the character, and if this action will result in a criminal flag
+			if( attacker->CheckAggressorFlag( this->GetSerial() ) && WillResultInCriminal( attacker, this )) //REPSYS
 			{
+				// Update aggressor flag timer
+				attacker->UpdateAggressorFlagTimestamp( this->GetSerial() );
+
+				// Flag attacker as criminal
 				MakeCriminal( attacker );
 				bool regionGuarded = ( GetRegion()->IsGuarded() );
 				if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && IsNpc() && GetNpcAiType() != AI_GUARD && cwmWorldState->creatures[this->GetId()].IsHuman() )
@@ -8200,7 +9415,7 @@ SI16 CChar::GetKarma( void ) const
 {
 	if( GetOwnerObj() != nullptr && IsTamed() )
 	{
-		if( ValidateObject( GetOwnerObj() ))
+		if( ValidateObject( GetOwnerObj() ) && GetOwnerObj() != this )
 		{
 			// Pets inherit the karma of their owner
 			return GetOwnerObj()->GetKarma();
@@ -8237,8 +9452,9 @@ void CChar::Die( CChar *attacker, bool doRepsys )
 		if( this != attacker && doRepsys )	// can't gain fame and karma for suicide :>
 		{
 			CSocket *attSock = attacker->GetSocket();
-			if( attacker->DidAttackFirst() && WillResultInCriminal( attacker, this ))
+			if( attacker->CheckAggressorFlag( this->GetSerial() ) && WillResultInCriminal( attacker, this ))
 			{
+				attacker->UpdateAggressorFlagTimestamp( this->GetSerial() );
 				attacker->SetKills( attacker->GetKills() + 1 );
 				attacker->SetTimer( tCHAR_MURDERRATE, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_MURDERDECAY ));
 				if( !attacker->IsNpc() )
@@ -8268,6 +9484,29 @@ void CChar::Die( CChar *attacker, bool doRepsys )
 	{
 		HandleDeath( this, nullptr );
 	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::CheckDamageTrack()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Check if char with specified serial dealt damage to character within last X secs
+//o------------------------------------------------------------------------------------------------o
+auto CChar::CheckDamageTrack( SERIAL serialToCheck, TIMERVAL lastXSeconds ) -> bool
+{
+	TIMERVAL currentTime	= cwmWorldState->GetUICurrentTime();
+	for( DamageTrackEntry_st *i = damageDealt.First(); !damageDealt.Finished(); i = damageDealt.Next() )
+	{
+		if( i->damager == serialToCheck )
+		{
+			// Did the last damage dealt happen within the last X seconds?
+			if( currentTime < ( i->lastDamageDone + ( lastXSeconds * 1000 )))
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8317,6 +9556,17 @@ void CChar::SetWeight( SI32 newVal, [[maybe_unused]] bool doWeightUpdate )
 	Dirty( UT_STATWINDOW );
 	weight = newVal;
 	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::GetWeightMax()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets maximum weight in stones a character can hold
+//o------------------------------------------------------------------------------------------------o
+auto CChar::GetWeightMax() const -> SI32
+{
+	SI16 racialWeightBonus = Races->Race( GetRace() )->MaxWeightBonus();
+	return ( GetStrength() * cwmWorldState->ServerData()->WeightPerStr() ) + 40 + racialWeightBonus;
 }
 
 //o------------------------------------------------------------------------------------------------o

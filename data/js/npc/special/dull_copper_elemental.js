@@ -13,3 +13,5 @@ function DealAreaDamage( srcObj, trgChar )
 		trgChar.Damage( 30, 1 );
 	}
 }
+
+function _restorecontext_() {}

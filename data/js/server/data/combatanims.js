@@ -49,6 +49,7 @@ function GetFootCombatAnim( pUser, weaponType )
 		case "TWOHND_LG_SWORDS":
 		case "BARDICHE":
 		case "TWOHND_AXES":
+		case "TWOHND_STAFFS":
 		{
 			switch( RandomNumber( 0, 1 ) )
 			{
@@ -102,6 +103,7 @@ function GetHorseCombatAnim( pUser, weaponType )
 		case "BARDICHE":
 		case "TWOHND_AXES":
 		case "LG_MACES":
+		case "TWOHND_STAFFS":
 			combatAnim = 0x1D;
 			break;
 		case "DEF_SWORDS":

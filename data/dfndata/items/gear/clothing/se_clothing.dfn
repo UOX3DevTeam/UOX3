@@ -12,6 +12,8 @@ layer=0x11
 value=20 10
 decay=1
 good=18
+origin=se
+sectionid=0x2782
 }
 
 // Male Kimono
@@ -36,6 +38,8 @@ layer=0x11
 value=20 10
 decay=1
 good=18
+origin=se
+sectionid=0x2783
 }
 
 // Female Kimono
@@ -60,6 +64,8 @@ layer=0x5
 weight=500
 decay=1
 good=18
+origin=se
+sectionid=0x2794
 }
 
 // Cloth Ninja Jacket
@@ -84,6 +90,8 @@ layer=0x11
 weight=300
 decay=1
 good=18
+origin=se
+sectionid=0x2799
 }
 
 // Kamishimo
@@ -108,6 +116,8 @@ layer=0x17
 weight=200
 decay=1
 good=18
+origin=se
+sectionid=0x279a
 }
 
 // Hakama
@@ -132,6 +142,8 @@ layer=0x04
 weight=200
 decay=1
 good=18
+origin=se
+sectionid=0x279b
 }
 
 // Tattsuke-hakama
@@ -156,6 +168,8 @@ layer=0x05
 weight=300
 decay=1
 good=18
+origin=se
+sectionid=0x279c
 }
 
 // Hakama-shita
@@ -180,6 +194,8 @@ layer=0x0c
 weight=100
 decay=1
 good=18
+origin=se
+sectionid=0x27a0
 }
 
 // Obi
@@ -204,6 +220,8 @@ layer=0x11
 weight=300
 decay=1
 good=18
+origin=se
+sectionid=0x27a1
 }
 
 // Jin-Baori

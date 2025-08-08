@@ -2,8 +2,8 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "set", 2, true );
-	RegisterCommand( "setpoisoned", 2, true );
+	RegisterCommand( "set", 8, true );
+	RegisterCommand( "setpoisoned", 8, true );
 }
 
 function command_SET( socket, cmdString )
@@ -41,7 +41,9 @@ function onCallback0( socket, ourObj )
 
 	var splitString = socket.xText.split( " " );
 	var uKey = splitString[0].toUpperCase();
-	var nVal = parseInt( splitString[1] );
+	var nVal = splitString[1];
+	nVal = nVal === "true" ? 1 : nVal === "false" ? 0 : parseInt( nVal );
+
 	switch( uKey )
 	{
 	case "NAME":
@@ -63,8 +65,61 @@ function onCallback0( socket, ourObj )
 		ourObj.intelligence = nVal;
 		okMsg( socket );
 		break;
+	case "HITCHANCE":
+		ourObj.hitChance = nVal;
+		okMsg( socket );
+		break;
+	case "DEFENSECHANCE":
+		ourObj.defenseChance = nVal;
+		okMsg( socket );
+		break;
+	case "DAMAGEINCREASE":
+		ourObj.damageIncrease = nVal;
+		okMsg(socket);
+		break;
 	case "FAME":
 		ourObj.fame = nVal;
+		okMsg( socket );
+		break;
+	case "DEF":
+	case "RESISTARMOR":
+		ourObj.Resist( 1, nVal );
+		okMsg( socket );
+		break;
+	case "RESISTLIGHT":
+		ourObj.Resist( 2, nVal );
+		okMsg( socket );
+		break;
+	case "RESISTWATER":
+		ourObj.Resist( 3, nVal );
+		okMsg( socket );
+		break;
+	case "RESISTCOLD":
+		ourObj.Resist( 4, nVal );
+		okMsg( socket );
+		break;
+	case "RESISTFIRE":
+		ourObj.Resist( 5, nVal );
+		okMsg( socket );
+		break;
+	case "RESISTENERGY":
+		ourObj.Resist( 6, nVal );
+		okMsg( socket );
+		break;
+	case "RESISTPOISON":
+		ourObj.Resist( 7, nVal );
+		okMsg( socket );
+		break;
+	case "HEALTHREGENBONUS":
+		ourObj.healthRegenBonus = nVal;
+		okMsg( socket );
+		break;
+	case "STAMINAREGENBONUS":
+		ourObj.staminaRegenBonus = nVal;
+		okMsg( socket );
+		break;
+	case "MANAREGENBONUS":
+		ourObj.manaRegenBonus = nVal;
 		okMsg( socket );
 		break;
 	case "HP":
@@ -99,6 +154,10 @@ function onCallback0( socket, ourObj )
 		ourObj.mana = nVal;
 		okMsg( socket );
 		break;
+	case "ORIGIN":
+		ourObj.origin = socket.xText.substring( 7 );
+		okMsg( socket );
+		break;
 	case "OWNER":
 		socket.tempObj = ourObj;
 		socket.CustomTarget( 1, GetDictionaryEntry( 8104, socket.language )); // Choose character to own this object
@@ -109,6 +168,10 @@ function onCallback0( socket, ourObj )
 		break;
 	case "POISON":
 		ourObj.poison = nVal;
+		okMsg( socket );
+		break;
+	case "POISONEDBY":
+		ourObj.poisonedBy = nVal;
 		okMsg( socket );
 		break;
 	case "X":
@@ -132,6 +195,10 @@ function onCallback0( socket, ourObj )
 	case "TEMPDEX":
 	case "TEMPDEXTERITY":
 		ourObj.tempdex = nVal;
+		okMsg( socket );
+		break;
+	case "SWINGSPEEDINC":
+		ourObj.swingSpeedIncrease = nVal;
 		okMsg( socket );
 		break;
 	case "WIPABLE":
@@ -182,11 +249,19 @@ function onCallback0( socket, ourObj )
 		}
 		break;
 	case "SECTIONID":
-		ourObj.sectionID = socket.xText.substring( 5 );
+		ourObj.sectionID = socket.xText.substring( 10 );
+		okMsg( socket );
+		break;
+	case "LUCK":
+		ourObj.luck = nVal;
 		okMsg( socket );
 		break;
 	case "SHOULDSAVE":
 		ourObj.shouldSave = ( nVal == 1 );
+		okMsg( socket );
+		break;
+	case "TITHING":
+		ourObj.tithing = nVal;
 		okMsg( socket );
 		break;
 	default:
@@ -209,10 +284,19 @@ function onCallback0( socket, ourObj )
 // Item-specific properties
 function HandleSetItem( socket, ourItem, uKey, splitString )
 {
-	var nVal = parseInt( splitString[1] );
+	var nVal = splitString[1];
+	nVal = nVal === "true" ? 1 : nVal === "false" ? 0 : parseInt( nVal );
 
 	switch( uKey )
 	{
+	case "ARTIFACTRARITY":
+		ourItem.artifactRarity = nVal;
+		okMsg( socket );
+		break;
+	case "DURABILITYHPBONUS":
+		ourItem.durabilityHpBonus = nVal;
+		okMsg( socket );
+		break;
 	case "ID":
 		ourItem.id = nVal;
 		okMsg( socket );
@@ -266,6 +350,39 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		}
 		okMsg( socket );
 		break;
+	case "MORE0":
+		if( splitString[4] )
+		{
+			ourItem.more0 = splitString[1] + " " + splitString[2] + " " + splitString[3] + " " + splitString[4];
+		}
+		else
+		{
+			ourItem.more0 = nVal;
+		}
+		okMsg( socket );
+		break;
+	case "MORE1":
+		if( splitString[4] )
+		{
+			ourItem.more1 = splitString[1] + " " + splitString[2] + " " + splitString[3] + " " + splitString[4];
+		}
+		else
+		{
+			ourItem.more1 = nVal;
+		}
+		okMsg( socket );
+		break;
+	case "MORE2":
+		if( splitString[4] )
+		{
+			ourItem.more2 = splitString[1] + " " + splitString[2] + " " + splitString[3] + " " + splitString[4];
+		}
+		else
+		{
+			ourItem.more2 = nVal;
+		}
+		okMsg( socket );
+		break;
 	case "MOREX":
 		if( splitString[4] )
 		{
@@ -310,6 +427,10 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		break;
 	case "NEWBIE":
 		ourItem.isNewbie = ( nVal == 1 );
+		okMsg( socket );
+		break;
+	case "POISONCHARGES":
+		ourItem.poisonCharges = nVal;
 		okMsg( socket );
 		break;
 	case "DIVINELOCK":
@@ -365,6 +486,38 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		ourItem.Resist( 1, nVal );
 		okMsg( socket );
 		break;
+	case "LOWERSTATREQ":
+		ourItem.lowerStatReq = nVal;
+		okMsg( socket );
+		break;
+	case "HEALTHLEECH":
+		ourItem.healthLeech = nVal;
+		okMsg( socket );
+		break;
+	case "HEALTHBONUS":
+		ourItem.healthBonus = nVal;
+		okMsg( socket );
+		break;
+	case "MANALEECH":
+		ourItem.manaLeech = nVal;
+		okMsg( socket );
+		break;
+	case "MANABONUS":
+		ourItem.manaBonus = nVal;
+		okMsg( socket );
+		break;
+	case "STAMINALEECH":
+		ourItem.staminaLeech = nVal;
+		okMsg( socket );
+		break;
+	case "STAMINABONUS":
+		ourItem.staminaBonus = nVal;
+		okMsg( socket );
+		break;
+	case "KARMALOCK":
+		ourItem.karmaLock = nVal;
+		okMsg( socket );
+		break;
 	case "ARMORCLASS":
 	case "ARMOURCLASS":
 	case "AC":
@@ -375,6 +528,20 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		ourItem.layer = nVal;
 		okMsg( socket );
 		break;
+	case "DAMAGE":
+		var splitValues = socket.xText.split( " " );
+		if( splitValues[2] )
+		{
+			ourItem.lodamage = parseInt( splitValues[1] );
+			ourItem.hidamage = parseInt( splitValues[2] );
+		}
+		else
+		{
+			ourItem.lodamage = parseInt( splitValues[1] );
+			ourItem.hidamage = parseInt( splitValues[1] );
+		}
+		ourItem.Refresh();
+		okMsg( socket );
 	case "LODAMAGE":
 		ourItem.lodamage = nVal;
 		okMsg( socket );
@@ -415,6 +582,10 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		ourItem.usesLeft = nVal;
 		okMsg( socket );
 		break;
+	case "STEALABLE":
+		ourItem.stealable = nVal;
+		okMsg( socket );
+		break;
 	default:
 		if( ourItem.isSpawner )
 		{
@@ -438,7 +609,8 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 // Spawner-specific properties
 function HandleSetSpawner( socket, ourSpawn, uKey, splitString )
 {
-	var nVal = parseInt( splitString[1] );
+	var nVal = splitString[1];
+	nVal = nVal === "true" ? 1 : nVal === "false" ? 0 : parseInt( nVal );
 
 	switch( uKey )
 	{
@@ -472,7 +644,8 @@ function HandleSetSpawner( socket, ourSpawn, uKey, splitString )
 // Character-specific properties
 function HandleSetChar( socket, ourChar, uKey, splitString )
 {
-	var nVal = parseInt( splitString[1] );
+	var nVal = splitString[1];
+	nVal = nVal === "true" ? 1 : nVal === "false" ? 0 : parseInt( nVal );
 
 	switch( uKey )
 	{
@@ -559,6 +732,18 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 		ourChar.aitype = nVal;
 		okMsg( socket );
 		break;
+	case "POISONSTRENGTH":
+		ourChar.poisonStrength = Math.max( 0, Math.min( 4, nVal ));
+		okMsg( socket );
+		break;
+	case "NPCGUILD":
+		ourChar.npcGuild = nVal;
+		okMsg( socket );
+		break;
+	case "NPCGUILDJOINED":
+		ourChar.npcGuildJoined = nVal;
+		okMsg( socket );
+		break;
 	case "VULNERABLE":
 		ourChar.vulnerable = ( nVal == 1 );
 		okMsg( socket );
@@ -573,6 +758,24 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 		break;
 	case "COMMANDLEVEL":
 		ourChar.commandlevel = nVal;
+		okMsg( socket );
+		break;
+	case "HAIRSTYLE":
+		ourChar.hairStyle = nVal;
+		okMsg( socket );
+		break;
+	case "HAIRCOLOUR":
+	case "HAIRCOLOR":
+		ourChar.hairColour = nVal;
+		okMsg( socket );
+		break;
+	case "BEARDSTYLE":
+		ourChar.beardStyle = nVal;
+		okMsg( socket );
+		break;
+	case "BEARDCOLOUR":
+	case "BEARDCOLOR":
+		ourChar.beardColour = nVal;
 		okMsg( socket );
 		break;
 	case "Z":
@@ -629,6 +832,10 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 		break;
 	case "MAXSTAMINA":
 		ourChar.maxstamina = nVal;
+		okMsg( socket );
+		break;
+	case "STAMINA":
+		ourChar.stamina = nVal;
 		okMsg( socket );
 		break;
 	case "HUNGER":
@@ -796,12 +1003,12 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 			okMsg( socket );
 		}
 		break;
-	case "UNUSED9":
+	case "ISYOUNG":
 		if( !ourChar.npc )
 		{
 			var myAccount = ourChar.account;
-			myAccount.unused9 = ( nVal == 1 );
-			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET UNUSED9 " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			myAccount.isYoung = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISYOUNG " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
 			okMsg( socket );
 		}
 		break;
@@ -879,7 +1086,8 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 
 function HandleSetSocket( socket, uKey, splitString )
 {
-	var nVal = parseInt( splitString[1] );
+	var nVal = splitString[1];
+	nVal = nVal === "true" ? 1 : nVal === "false" ? 0 : parseInt( nVal );
 
 	switch( uKey )
 	{
@@ -967,3 +1175,5 @@ function okMsg( socket )
 	// Sends verification to the player that the specified value was successfully set.
 	socket.SysMessage( GetDictionaryEntry( 1756, socket.language )); // Value successfully set.
 }
+
+function _restorecontext_() {}

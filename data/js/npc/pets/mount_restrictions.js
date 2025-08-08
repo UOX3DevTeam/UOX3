@@ -1,5 +1,9 @@
 function onCharDoubleClick( pUser, targChar )
 {
+	// Override restrictions for GMs and Admins
+	if( pUser.isGM || pUser.isAdmin )
+		return true;
+
 	switch( targChar.id )
 	{
 		case 0x007a: // Unicorn

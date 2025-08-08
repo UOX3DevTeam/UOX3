@@ -48,53 +48,69 @@ enum UpdateTypes
 class CBaseObject
 {
 protected:
-	TAGMAP2						tags;
-	TAGMAP2						tempTags;
-	std::string				title;
-	ObjectType				objType;
-	RACEID						race;
-	SI16							x;
-	SI16							y;
-	SI08							z;
-	UI16							id;
-	UI16							colour;
-	UI08							dir;
-	SERIAL						serial;
-	CMultiObj					*multis;
-	SERIAL						spawnSerial;
-	SERIAL						owner;
-	UI08							worldNumber;
-	UI16							instanceId;
-	SI16							strength;
-	SI16							dexterity;
-	SI16							intelligence;
-	SI16							hitpoints;
-	VisibleTypes			visible;
-	SI16							hiDamage;
-	SI16							loDamage;
-	SI32							weight;
-	SI16							mana;
-	SI16							stamina;
-	UI16							scriptTrig;
-	SI16							st2;
-	SI16							dx2;
-	SI16							in2;
-	mutable SI32			FilePosition;
-	SERIAL						tempMulti;
-	std::string				name;
-	std::string				sectionId;
+	TAGMAP2				tags;
+	TAGMAP2				tempTags;
+	std::string			title;
+	ObjectType			objType;
+	RACEID				race;
+	SI16				x;
+	SI16				y;
+	SI08				z;
+	UI16				id;
+	UI16				colour;
+	UI08				dir;
+	SERIAL				serial;
+	CMultiObj			*multis;
+	SERIAL				spawnSerial;
+	SERIAL				owner;
+	UI08				worldNumber;
+	UI16				instanceId;
+	SI16				strength;
+	SI16				dexterity;
+	SI16				intelligence;
+	SI16				hitpoints;
+	SI16				healthRegenBonus;
+	SI16				staminaRegenBonus;
+	SI16				manaRegenBonus;
+	SI16				luck;
+	SI16				hitChance;
+	SI16				defenseChance;
+	VisibleTypes		visible;
+	SI16				hiDamage;
+	SI16				loDamage;
+	SI32				weight;
+	SI16				mana;
+	SI16				stamina;
+	SI16				swingSpeedIncrease;
+	SI16				damageIncrease;
+	SI16				healthLeech;
+	SI16				staminaLeech;
+	SI16				manaLeech;
+	SI32				tithing;
+	UI16				scriptTrig;
+	SI16				st2;
+	SI16				dx2;
+	SI16				in2;
+	SI16				healthBonus;
+	SI16				staminaBonus;
+	SI16				manaBonus;
+	mutable SI32		FilePosition;
+	SERIAL				tempMulti;
+	std::string			name;
+	std::string			sectionId;
 	std::vector<UI16>	scriptTriggers;
-	UI08							poisoned;
-	SI16							carve; // Carve.dfn entry
-	SI16							oldLocX;
-	SI16							oldLocY;
-	SI08							oldLocZ;
-	SI16							oldTargLocX;
-	SI16							oldTargLocY;
-	SI16							fame;
-	SI16							karma;
-	SI16							kills;
-	UI16							subRegion;
+	UI08				poisoned;
+	SERIAL				poisonedBy;
+	SI16				carve; // Carve.dfn entry
+	SI16				oldLocX;
+	SI16				oldLocY;
+	SI08				oldLocZ;
+	SI16				oldTargLocX;
+	SI16				oldTargLocY;
+	SI16				fame;
+	SI16				karma;
+	SI16				kills;
+	UI16				subRegion;
 
 	void			RemoveFromMulti( bool fireTrigger = true );
 	void			AddToMulti( bool fireTrigger = true );
@@ -103,37 +119,48 @@ protected:
 
 	UI16			resistances[WEATHNUM];
 
-	SERIAL		tempContainerSerial;
+	SERIAL			tempContainerSerial;
 
 	bool			nameRequestActive;
+	//std::string	origin;	// Stores expansion item originates from
+	UI08			origin;	// Stores expansion item originates from
 
 	void			CopyData( CBaseObject *target );
 
 public:
 
-	Point3_st			GetOldLocation( void );
+	Point3_st				GetOldLocation( void );
 
-	size_t				GetNumTags( void ) const;
+	size_t					GetNumTags( void ) const;
+	auto					GetTagMap() const -> const TAGMAP2;
+	auto					GetTempTagMap() const -> const TAGMAP2;
 
-	TAGMAPOBJECT	GetTag( std::string tagname ) const;
+	TAGMAPOBJECT			GetTag( std::string tagname ) const;
 	void					SetTag( std::string tagname, TAGMAPOBJECT tagval );
 
-	TAGMAPOBJECT	GetTempTag( std::string tempTagName ) const;
+	TAGMAPOBJECT			GetTempTag( std::string tempTagName ) const;
 	void					SetTempTag( std::string tempTagName, TAGMAPOBJECT tagVal );
 
 	void					SetResist( UI16 newValue, WeatherType damage );
 	UI16					GetResist( WeatherType damage ) const;
 
 	void					SetTitle( std::string newtitle );
-	std::string		GetTitle( void ) const;
-	virtual void	SetMana( SI16 mn );
+	std::string				GetTitle( void ) const;
+
+	//void					SetOrigin( std::string newOrigin );
+	//std::string				GetOrigin( void ) const;
+
+	void					SetOrigin( UI08 value );
+	UI08					GetOrigin() const;
+
+	virtual void			SetMana( SI16 mn );
 	SI16					GetMana( void ) const;
-	virtual void	SetStamina( SI16 stam );
+	virtual void			SetStamina( SI16 stam );
 	SI16					GetStamina( void ) const;
 	SI32					GetFilePosition( void ) const;
 	SI32					SetFilePosition( SI32 filepos );
 
-	virtual				~CBaseObject();
+	virtual					~CBaseObject();
 	CBaseObject( void );
 
 	SI16					GetOldTargLocX( void ) const;
@@ -141,7 +168,7 @@ public:
 	SI16					GetX( void ) const;
 	SI16					GetY( void ) const;
 	SI08					GetZ( void ) const;
-	Point3_st			GetLocation( void ) const;
+	Point3_st				GetLocation( void ) const;
 
 	void					SetOldTargLocX( SI16 newvalue );
 	void					SetOldTargLocY( SI16 newvalue );
@@ -149,10 +176,10 @@ public:
 	void					SetY( SI16 newValue );
 	void					SetZ( SI08 newValue );
 	void					WalkXY( SI16 newX, SI16 newY );
-	virtual	void	SetOldLocation( SI16 newX, SI16 newY, SI08 newZ ) = 0;
-	virtual	void	SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world, UI16 instanceId ) = 0;
-	virtual	void	SetLocation( SI16 newX, SI16 newY, SI08 newZ ) = 0;
-	virtual	void	SetLocation( const CBaseObject *toSet ) = 0;
+	virtual void			SetOldLocation( SI16 newX, SI16 newY, SI08 newZ ) = 0;
+	virtual void			SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world, UI16 instanceId ) = 0;
+	virtual void			SetLocation( SI16 newX, SI16 newY, SI08 newZ ) = 0;
+	virtual void			SetLocation( const CBaseObject *toSet ) = 0;
 
 	UI16					GetId( void ) const;
 	UI16					GetColour( void ) const;
@@ -164,15 +191,15 @@ public:
 	void					SetId( UI08 newValue, UI08 part );
 
 	SI32					GetWeight( void ) const;
-	virtual	void	SetWeight( SI32 newVal, bool doWeightUpdate = true ) = 0;
+	virtual void			SetWeight( SI32 newVal, bool doWeightUpdate = true ) = 0;
 
-	SERIAL				GetSerial( void ) const;
-	SERIAL				GetSpawn( void ) const;
-	SERIAL				GetOwner( void ) const;
-	SERIAL				GetMulti( void ) const;
-	CMultiObj *		GetMultiObj( void ) const;
-	CSpawnItem *	GetSpawnObj( void ) const;
-	CChar *				GetOwnerObj( void ) const;
+	SERIAL					GetSerial( void ) const;
+	SERIAL					GetSpawn( void ) const;
+	SERIAL					GetOwner( void ) const;
+	SERIAL					GetMulti( void ) const;
+	CMultiObj *				GetMultiObj( void ) const;
+	CSpawnItem *			GetSpawnObj( void ) const;
+	CChar *					GetOwnerObj( void ) const;
 
 	UI08					GetSerial( UI08 part ) const;
 	UI08					GetSpawn( UI08 part ) const;
@@ -181,45 +208,74 @@ public:
 	void					SetMulti( CMultiObj *newMulti, bool fireTrigger = true );
 	void					SetSerial( SERIAL newSerial );
 	void					SetSpawn( SERIAL newSpawn );
-	virtual	void	SetOwner( CChar *newOwner );
+	virtual void			SetOwner( CChar *newOwner );
 
-	virtual	bool	Save( std::ofstream &outStream ) = 0;
-	virtual	bool	DumpHeader( std::ofstream &outStream ) const = 0;
-	virtual	bool	DumpBody( std::ofstream &outStream ) const;
-	bool					DumpFooter( std::ofstream &outStream ) const;
-	bool					Load( std::ifstream &inStream );
+	virtual bool			Save( std::ostream &outStream ) = 0;
+	virtual bool			DumpHeader( std::ostream &outStream ) const = 0;
+	virtual bool			DumpBody( std::ostream &outStream ) const;
+	bool					DumpFooter( std::ostream &outStream ) const;
+	bool					Load( std::istream &inStream );
 
-	virtual	bool	HandleLine( std::string &UTag, std::string &data );
+	virtual bool			HandleLine( std::string &UTag, std::string &data );
 
-	RACEID				GetRace( void ) const;
+	RACEID					GetRace( void ) const;
 	void					SetRace( RACEID newValue );
 
-	std::string		GetNameRequest( CChar *nameRequester );
-	std::string		GetName( void ) const;
+	std::string				GetNameRequest( CChar *nameRequester, UI08 requestSource );
+	std::string				GetName( void ) const;
 	void					SetName( std::string newName );
 
-	std::string		GetSectionId( void ) const;
+	std::string				GetSectionId( void ) const;
 	void					SetSectionId( std::string newSectionID );
 
-	virtual	SI16	GetStrength( void ) const;
-	virtual	SI16	GetDexterity( void ) const;
-	virtual	SI16	GetIntelligence( void ) const;
+	virtual SI16			GetStrength( void ) const;
+	virtual SI16			GetDexterity( void ) const;
+	virtual SI16			GetIntelligence( void ) const;
 	SI16					GetHP( void ) const;
 
-	virtual	void	SetStrength( SI16 newValue );
-	virtual	void	SetDexterity( SI16 newValue );
-	virtual	void	SetIntelligence( SI16 newValue );
-	virtual	void	SetHP( SI16 newValue );
+	virtual SI16			GetHealthRegenBonus( void ) const;
+	virtual SI16			GetStaminaRegenBonus( void ) const;
+	virtual SI16			GetManaRegenBonus( void ) const;
+
+	virtual void			SetStrength( SI16 newValue );
+	virtual void			SetDexterity( SI16 newValue );
+	virtual void			SetIntelligence( SI16 newValue );
+	virtual void			SetHP( SI16 newValue );
 	void					IncHP( SI16 amtToChange );
+
+	virtual void			SetHealthRegenBonus( SI16 newValue );
+	virtual void			SetStaminaRegenBonus( SI16 newValue );
+	virtual void			SetManaRegenBonus( SI16 newValue );
+	virtual SI16			GetSwingSpeedIncrease( void ) const;
+	virtual void			SetSwingSpeedIncrease( SI16 newValue );
+
+	virtual SI32			GetTithing( void ) const;
+	virtual void			SetTithing( SI32 newValue );
+
+	void					IncSwingSpeedIncrease( SI16 toInc = 1 );
+
+	virtual SI16			GetDamageIncrease( void ) const;
+	virtual void			SetDamageIncrease( SI16 newValue );
+
+	void					IncDamageIncrease( SI16 toInc = 1 );
+
+	virtual SI16			GetLuck( void ) const;
+	virtual void			SetLuck( SI16 newValue );
+
+	virtual SI16			GetHitChance( void ) const;
+	virtual void			SetHitChance( SI16 newValue );
+
+	virtual SI16			GetDefenseChance( void ) const;
+	virtual void			SetDefenseChance( SI16 newValue );
 
 	void					SetDir( UI08 newDir, bool sendUpdate = true );
 	UI08					GetDir( void ) const;
 
 	void					SetVisible( VisibleTypes newValue );
-	VisibleTypes	GetVisible( void ) const;
+	VisibleTypes			GetVisible( void ) const;
 
-	ObjectType		GetObjType( void ) const;
-	virtual	bool	CanBeObjType( ObjectType toCompare ) const;
+	ObjectType				GetObjType( void ) const;
+	virtual bool			CanBeObjType( ObjectType toCompare ) const;
 
 	SI16					GetHiDamage( void ) const;
 	SI16					GetLoDamage( void ) const;
@@ -237,16 +293,49 @@ public:
 	SI16					GetDexterity2( void ) const;
 	SI16					GetIntelligence2( void ) const;
 
-	virtual	void	SetStrength2( SI16 nVal );
-	virtual	void	SetDexterity2( SI16 nVal );
-	virtual	void	SetIntelligence2( SI16 nVal );
+	virtual void			SetStrength2( SI16 nVal );
+	virtual void			SetDexterity2( SI16 nVal );
+	virtual void			SetIntelligence2( SI16 nVal );
 
 	void					IncStrength( SI16 toInc = 1 );
 	void					IncDexterity( SI16 toInc = 1 );
 	void					IncIntelligence( SI16 toInc = 1 );
 
-	virtual	void	PostLoadProcessing( void );
-	virtual	bool	LoadRemnants( void ) = 0;
+	void					IncHealthRegenBonus( SI16 toInc = 1 );
+	void					IncStaminaRegenBonus( SI16 toInc = 1 );
+	void					IncManaRegenBonus( SI16 toInc = 1 );
+
+	SI16					GetHealthLeech( void ) const;
+	virtual void			SetHealthLeech( SI16 nVal );
+
+	SI16					GetStaminaLeech( void ) const;
+	virtual void			SetStaminaLeech( SI16 nVal );
+
+	SI16					GetManaLeech( void ) const;
+	virtual void			SetManaLeech( SI16 nVal );
+
+	void					IncHealthLeech( SI16 toInc = 1 );
+	void					IncStaminaLeech( SI16 toInc = 1 );
+	void					IncManaLeech( SI16 toInc = 1 );
+
+	void					IncLuck( SI16 toInc = 1 );
+
+	void					IncHitChance( SI16 toInc = 1 );
+	void					IncDefenseChance( SI16 toInc = 1 );
+
+	void					IncTithing( SI32 toInc = 1 );
+
+	SI16					GetHealthBonus( void ) const;
+	virtual void			SetHealthBonus( SI16 nVal );
+
+	SI16					GetStaminaBonus( void ) const;
+	virtual void			SetStaminaBonus( SI16 nVal );
+
+	SI16					GetManaBonus( void ) const;
+	virtual void			SetManaBonus( SI16 nVal );
+
+	virtual void			PostLoadProcessing( void );
+	virtual bool			LoadRemnants( void ) = 0;
 
 	UI08					WorldNumber( void ) const;
 	void					WorldNumber( UI08 value );
@@ -258,21 +347,24 @@ public:
 	void					SetSubRegion( UI16 value );
 
 	UI08					GetPoisoned( void ) const;
-	virtual	void	SetPoisoned( UI08 newValue );
+	virtual void			SetPoisoned( UI08 newValue );
+
+	SERIAL					GetPoisonedBy( void ) const;
+	virtual void			SetPoisonedBy( SERIAL newValue );
 
 	SI16					GetCarve( void ) const;
 	void					SetCarve( SI16 newValue );
 
-	virtual	void	Update( CSocket *mSock = nullptr, bool drawGamePlayer = false, bool sendToSelf = true ) = 0;
-	virtual	void	SendToSocket( CSocket *mSock, bool drawGamePlayer = false ) = 0;
-	virtual	void	Dirty( UpdateTypes updateType );
+	virtual	void			Update( CSocket *mSock = nullptr, bool drawGamePlayer = false, bool sendToSelf = true, bool triggerInRangeEvent = false ) = 0;
+	virtual	void			SendToSocket( CSocket *mSock, bool drawGamePlayer = false ) = 0;
+	virtual	void			Dirty( UpdateTypes updateType );
 	void					RemoveFromRefreshQueue( void );
 
-	virtual void	Delete( void ) = 0;
-	virtual void	Cleanup( void );
+	virtual void			Delete( void ) = 0;
+	virtual void			Cleanup( void );
 
-	virtual	void	RemoveSelfFromOwner( void ) = 0;
-	virtual	void	AddSelfToOwner( void ) = 0;
+	virtual	void			RemoveSelfFromOwner( void ) = 0;
+	virtual	void			AddSelfToOwner( void ) = 0;
 
 	bool					IsFree( void ) const;
 	bool					IsDeleted( void ) const;

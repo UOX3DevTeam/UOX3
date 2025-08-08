@@ -1,4 +1,4 @@
-[NPCLIST Location_Oasis]
+[NPCLIST Oasis]
 {
 corpser
 npclist=allettin
@@ -10,61 +10,50 @@ reaper
 npclist=alltroll
 }
 
-[NPCLIST Location_Cyclops_Valley]
+[NPCLIST Cyclops_Valley]
 {
-Titan
+titan
 cyclops
 }
 
-[NPCLIST Location_The_Ruins]
+[NPCLIST The_Ruins]
 {
-Skeleton
+skeleton
 boneaxeman
-Wraith
-Spectre
-Ghoul
+wraith
+spectre
+ghoul
 }
 
-[NPCLIST Location_City_of_the_Dead]
+[NPCLIST City_of_the_Dead]
 {
-Skeleton
-Lich
-boneaxeman
-Ghoul
-Skeleton
-boneaxeman
-Ghoul
-BoneKnight
-BoneMagi
+2|skeleton
+2|boneaxeman
+2|ghoul
+lich
+boneknight
+bonemagi
 }
 
-[NPCLIST Location_Orc_Fort]
+[NPCLIST Orc_Fort]
 {
 npclist=weakorc
 orcmage
 orclord
 }
 
-[NPCLIST Location_Terathan_Keep]
+[NPCLIST Orc_Fort_Savages]
 {
-allterathans
+savageshaman
+savagewarrior
 }
 
-[NPCLIST Location_Ophidian_Lair]
+[NPCLIST Ophidian_Lair]
 {
-allophidians
+npclist=allophidians
 }
 
-[NPCLIST Location_Hoppers_Bog]
-{
-slime
-alligator
-bullfrog
-swamptentacle
-gianttoad
-}
-
-[NPCLIST Location_Kos_Heb_West_East]
+[NPCLIST Kos_Heb_West_East]
 {
 frosttroll
 snowele
@@ -76,7 +65,7 @@ walrus
 whitewolf
 }
 
-[NPCLIST Location_Damwin_Thicket]
+[NPCLIST Damwin_Thicket]
 {
 blackbear
 brownbear
@@ -95,42 +84,40 @@ bird
 timberwolf
 }
 
-[NPCLIST Location_Lost_Lands_Desert]
+[NPCLIST Lost_Lands_Desert]
 {
-cyclops
-npclist=allettin
-headless
-imp
-greatermongbat
-mummy
-allophidians
-ophjusticar
-ophzealot
-npclist=weakorc
-orcmage
-orclord
-stonegargoyle
-stoneharpy
-titan
-wyvern
-blackbear
-cougar
-desertostard
-eagle
-forestostard
-frenziedostard
-hind
-allhorselist
-rabbit
-rat
-llama
-raven
-scorpion
-bird
-timberwolf
+115|scorpion
+110|imp
+105|wyvern
+100|desertostard
+95|headless
+90|stonegargoyle
+80|stoneharpy
+70|npclist=allettin
+60|npclist=weakorc
+50|orcmage
+40|mummy
+30|orclord
+25|llama
+20|frenziedostard
+15|bird
+10|rat
 }
 
-[NPCLIST Location_Sak_Teb]
+[NPCLIST Sak_Teb_Swamp]
+{
+alligator
+swamptentacle
+bullfrog
+giantserpent
+gianttoad
+mongbat
+snake
+swamptentacle
+mongbat
+}
+
+[NPCLIST Sak_Teb_Lava]
 {
 efreet
 fireele
@@ -139,19 +126,9 @@ hellcat
 lavalizard
 lavaserpent
 lavasnake
-mongbat
-largehellcat
-swamptentacle
-alligator
-bullfrog
-giantserpent
-gianttoad
-mongbat
-snake
-swamptentacle
 }
 
-[NPCLIST Location_Terra_Sanctum]
+[NPCLIST Terra_Sanctum]
 {
 corpser
 giantserpent
@@ -161,16 +138,90 @@ panther
 silverserpent
 }
 
-[NPCLIST Location_Wyvern_Isle]
+[NPCLIST Wyvern_Isle]
 {
 wyvern
 }
 
-[NPCLIST Location_Wyvern_Point]
+[NPCLIST Wyvern_Point]
 {
 wyvern
 imp
 scorpion
+}
+
+[NPCLIST lost_lands_plains]
+{
+26|npclist=allbirds
+24|sheep
+22|cow
+22|bull
+20|goat
+18|jackrabbit
+18|rabbit
+16|rat
+14|llama
+14|mongbat
+12|hind
+12|hart
+10|graywolf
+10|npclist=allhorselist
+8|headless
+}
+
+[NPCLIST lost_lands_forest]
+{
+26|npclist=allbirds
+24|npclist=allbears
+22|greatermongbat
+22|npclist=allhorselist
+20|timberwolf
+20|hind
+18|llama
+18|forestostard
+16|cougar
+16|headless
+14|hart
+12|frenziedostard
+8|npclist=allettin
+8|npclist=alltroll
+6|harpy
+4|reaper
+4|corpser
+}
+
+[NPCLIST lost_lands_jungle]
+{
+25|gorilla
+22|tropicalbird
+19|giantserpent
+16|mongbat
+13|corpser
+10|panther
+}
+
+[NPCLIST lost_lands_swamp]
+{
+18|alligator
+17|giantserpent
+15|bogling
+14|gianttoad
+13|bullfrog
+12|bogthing
+11|mongbat
+10|snake
+9|giantrat
+8|sewerrat
+//7|plaguebeast
+6|swamptentacle
+5|swampdragon
+//4|plaguebeastlord
+}
+
+[NPCLIST delucia_town_animals]
+{
+60|sheep
+40|cow
 }
 
 EOF

@@ -7,6 +7,7 @@ const UI08 BIT_ANIMAL		=	2;
 const UI08 BIT_WATER		=	3;
 const UI08 BIT_AMPHI		=	4;
 const UI08 BIT_HUMAN		=	5;
+const UI08 BIT_PACKANIMAL	=	6;
 
 class CCreatures
 {
@@ -24,13 +25,14 @@ class CCreatures
 	//              # 4 water creatures
 	//				# 5 amphibians (water + land)
 	//				# 6 human-bit
+	//				# 7 packanimal-bit
 	//
 	// icon: used for tracking, to set the appropriate icon
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 private:
 	UI16				creatureId;
 	UI16				soundList[SND_COUNT];
-	std::bitset<6>		who_am_i;
+	std::bitset<7>		who_am_i;
 	UI16				icon;
 	UI16				mountId;
 	struct CreatureAnim_st
@@ -186,12 +188,14 @@ public:
 	}
 
 	bool	IsAnimal( void ) const		{		return who_am_i.test( BIT_ANIMAL );		}
+	bool	IsPackAnimal( void ) const	{		return who_am_i.test( BIT_PACKANIMAL );	}
 	bool	IsHuman( void ) const		{		return who_am_i.test( BIT_HUMAN );		}
 	bool	AntiBlink( void ) const		{		return who_am_i.test( BIT_ANTIBLINK );	}
 	bool	CanFly( void ) const		{		return who_am_i.test( BIT_CANFLY );		}
 	bool	IsWater( void ) const		{		return who_am_i.test( BIT_WATER );		}
 	bool	IsAmphibian( void ) const	{		return who_am_i.test( BIT_AMPHI );		}
 	void	IsAnimal( bool value )		{		who_am_i.set( BIT_ANIMAL, value );		}
+	void	IsPackAnimal( bool value )	{		who_am_i.set( BIT_PACKANIMAL, value );	}
 	void	IsHuman( bool value )		{		who_am_i.set( BIT_HUMAN, value );		}
 	void	AntiBlink( bool value )		{		who_am_i.set( BIT_ANTIBLINK, value );	}
 	void	CanFly( bool value )		{		who_am_i.set( BIT_CANFLY, value );		}
@@ -278,7 +282,7 @@ inline R32 Point3_st::MagSquared( void ) const
 
 inline void Point3_st::Normalize( void )
 {
-	R32 foo = 1 / Mag3D();
+	R32 foo = static_cast<R32>( 1 / Mag3D() );
 	x *= foo;
 	y *= foo;
 	z *= foo;
@@ -306,11 +310,13 @@ class CTeleLocationEntry
 {
 private:
 	Point3_st	src;
-	UI08	srcWorld;
+	SI08	srcWorld;
 	Point3_st	trg;
-	UI08	trgWorld;
+	SI08	trgWorld;
+	SI08	minEra;
+	SI08	maxEra;
 public:
-	CTeleLocationEntry() : srcWorld( 0xFF ), trgWorld( 0 )
+	CTeleLocationEntry() : srcWorld( 0xFF ), trgWorld( 0 ), minEra( -1 ), maxEra( -1 )
 	{
 		src.Assign( 0, 0, ILLEGAL_Z );
 		trg.Assign( 0, 0, ILLEGAL_Z );
@@ -323,11 +329,11 @@ public:
 	{
 		src.Assign( x, y, z );
 	}
-	UI08 SourceWorld( void ) const
+	SI08 SourceWorld( void ) const
 	{
 		return srcWorld;
 	}
-	void SourceWorld( UI08 newVal )
+	void SourceWorld( SI08 newVal )
 	{
 		srcWorld = newVal;
 	}
@@ -339,13 +345,29 @@ public:
 	{
 		trg.Assign( x, y, z );
 	}
-	UI08 TargetWorld( void ) const
+	SI08 TargetWorld( void ) const
 	{
 		return trgWorld;
 	}
-	void TargetWorld( UI08 newVal )
+	void TargetWorld( SI08 newVal )
 	{
 		trgWorld = newVal;
+	}
+	SI08 MinEra( void ) const
+	{
+		return minEra;
+	}
+	void MinEra( SI08 newVal )
+	{
+		minEra = newVal;
+	}
+	SI08 MaxEra( void ) const
+	{
+		return maxEra;
+	}
+	void MaxEra( SI08 newVal )
+	{
+		maxEra = newVal;
 	}
 };
 

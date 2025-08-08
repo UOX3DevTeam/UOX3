@@ -4,7 +4,7 @@
 /***************************/
 
 #include "uox3.h"
-#include "gump.h"
+#include "CGump.h"
 #include "CPacketSend.h"
 #include <cstdint>
 

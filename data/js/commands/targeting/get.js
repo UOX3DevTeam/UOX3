@@ -2,7 +2,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "get", 2, true );
+	RegisterCommand( "get", 8, true );
 }
 
 function command_GET( socket, cmdString )
@@ -47,6 +47,15 @@ function onCallback0( socket, ourObj )
 	case "INTELLIGENCE":
 		socket.SysMessage( ourObj.intelligence );
 		break;
+	case "HITCHANCE":
+		socket.SysMessage( ourObj.hitChance );
+		break;
+	case "DEFENSECHANCE":
+		socket.SysMessage( ourObj.defenseChance );
+		break;
+	case "DAMAGEINCREASE":
+		socket.SysMessage( ourObj.damageIncrease );
+		break;
 	case "FAME":
 		socket.SysMessage( ourObj.fame );
 		break;
@@ -59,6 +68,9 @@ function onCallback0( socket, ourObj )
 		break;
 	case "KILLS":
 		socket.SysMessage( ourObj.murdercount );
+		break;
+	case "ISAGGRESSOR":
+		socket.SysMessage( )
 		break;
 	case "HUE":
 	case "SKIN":
@@ -81,6 +93,15 @@ function onCallback0( socket, ourObj )
 	case "MULTI":
 		socket.SysMessage( ourObj.multi );
 		break;
+	case "HEALTHREGENBONUS":
+		socket.SysMessage( ourObj.healthRegenBonus );
+		break;
+	case "STAMINAREGENBONUS":
+		socket.SysMessage( ourObj.staminaRegenBonus );
+		break;
+	case "MANAREGENBONUS":
+		socket.SysMessage( ourObj.manaRegenBonus );
+		break;
 	case "OWNER":
 		if( ourObj.owner )
 		{
@@ -91,11 +112,17 @@ function onCallback0( socket, ourObj )
 			socket.SysMessage( "null" );
 		}
 		break;
+	case "ORIGIN":
+		socket.SysMessage( ourObj.origin );
+		break;
 	case "PERMANENTMAGICREFLECT":
 		socket.SysMessage( ourObj.permanentMagicReflect );
 		break;
 	case "POISON":
 		socket.SysMessage( ourObj.poison );
+		break;
+	case "POISONEDBY":
+		socket.SysMessage( ourObj.poisonedBy );
 		break;
 	case "X":
 		socket.SysMessage( ourObj.x );
@@ -114,6 +141,9 @@ function onCallback0( socket, ourObj )
 	case "TEMPDEX":
 	case "TEMPDEXTERITY":
 		socket.SysMessage( ourObj.tempdex );
+		break;
+	case "TITHING":
+		socket.SysMessage( ourObj.tithing );
 		break;
 	case "WIPABLE":
 	case "WIPEABLE":
@@ -138,8 +168,35 @@ function onCallback0( socket, ourObj )
 	case "DAMAGEABLE":
 		socket.SysMessage( ourObj.isDamageable );
 		break;
+	case "LUCK":
+		socket.SysMessage( ourObj.luck );
+		break;
 	case "REGION":
 		socket.SysMessage( ourObj.region.id + " ( " + ourObj.region.name + ")" );
+		break;
+	case "DEF":
+	case "ARMOUR":
+	case "ARMOR":
+	case "RESISTARMOR":
+		socket.SysMessage( ourObj.Resist( 1 ));
+		break;
+	case "RESISTLIGHT":
+		socket.SysMessage( ourObj.Resist( 2 ));
+		break;
+	case "RESISTWATER":
+		socket.SysMessage( ourObj.Resist( 3 ));
+		break;
+	case "RESISTCOLD":
+		socket.SysMessage( ourObj.Resist( 4 ));
+		break;
+	case "RESISTFIRE":
+		socket.SysMessage( ourObj.Resist( 5 ));
+		break;
+	case "RESISTENERGY":
+		socket.SysMessage( ourObj.Resist( 6 ));
+		break;
+	case "RESISTPOISON":
+		socket.SysMessage( ourObj.Resist( 7 ));
 		break;
 	case "SCRIPTTRIGGER":
 	{
@@ -162,6 +219,12 @@ function onCallback0( socket, ourObj )
 	}
 	case "SECTIONID":
 		socket.SysMessage( ourObj.sectionID );
+		break;
+	case "SPAWNSERIAL":
+		socket.SysMessage( ourObj.spawnSerial );
+		break;
+	case "SWINGSPEEDINC":
+		socket.SysMessage( ourObj.swingSpeedIncrease );
 		break;
 	case "SHOULDSAVE":
 		socket.SysMessage( ourObj.shouldSave );
@@ -188,6 +251,9 @@ function HandleGetItem( socket, ourItem, uKey )
 {
 	switch( uKey )
 	{
+	case "ARTIFACTRARITY":
+		socket.SysMessage( ourItem.artifactRarity );
+		break;
 	case "ID":
 		var ourID = ( ourItem.id ).toString( 16 );
 		while( ourID.length < 4 )
@@ -229,6 +295,18 @@ function HandleGetItem( socket, ourItem, uKey )
 		var hexVal = "0x" + ( "00000000" + ( Number( ourItem.more ).toString( 16 ))).slice( -8 )
 		socket.SysMessage( ourItem.more + " ( " + hexVal + ")" );
 		break;
+	case "MORE0":
+		var hexVal = "0x" + ( "00000000" + ( Number( ourItem.more ).toString( 16 ))).slice( -8 )
+		socket.SysMessage( ourItem.more0 + " ( " + hexVal + ")" );
+		break;
+	case "MORE1":
+		var hexVal = "0x" + ( "00000000" + ( Number( ourItem.more ).toString( 16 ))).slice( -8 )
+		socket.SysMessage( ourItem.more1 + " ( " + hexVal + ")" );
+		break;
+	case "MORE2":
+		var hexVal = "0x" + ( "00000000" + ( Number( ourItem.more ).toString( 16 ))).slice( -8 )
+		socket.SysMessage( ourItem.more2 + " ( " + hexVal + ")" );
+		break;
 	case "MOREX":
 		var hexVal = "0x" + ( "00000000" + ( Number( ourItem.morex ).toString( 16 ))).slice( -8 )
 		socket.SysMessage( ourItem.morex + " ( " + hexVal + ")" );
@@ -251,6 +329,9 @@ function HandleGetItem( socket, ourItem, uKey )
 		break;
 	case "NEWBIE":
 		socket.SysMessage( ourItem.isNewbie );
+		break;
+	case "POISONCHARGES":
+		socket.SysMessage( ourItem.poisonCharges );
 		break;
 	case "DIVINELOCK":
 		socket.SysMessage( ourItem.divinelock );
@@ -276,8 +357,35 @@ function HandleGetItem( socket, ourItem, uKey )
 	case "DESC":
 		socket.SysMessage( ourItem.desc );
 		break;
-	case "DEF":
-		socket.SysMessage( ourItem.Resist( 1 ));
+	case "LOWERSTATREQ":
+		socket.SysMessage( ourItem.lowerStatReq );
+		break;
+	case "HEALTHLEECH":
+		socket.SysMessage( ourItem.healthLeech );
+		break;
+	case "HEALTHBONUS":
+		socket.SysMessage( ourItem.healthBonus );
+		break;
+	case "MANALEECH":
+		socket.SysMessage( ourItem.manaLeech );
+		break;
+	case "MANABONUS":
+		socket.SysMessage( ourItem.manaBonus );
+		break;
+	case "STAMINALEECH":
+		socket.SysMessage( ourItem.staminaLeech );
+		break;
+	case "STAMINABONUS":
+		socket.SysMessage( ourItem.staminaBonus );
+		break;
+	case "KARMALOCK":
+		socket.SysMessage( ourItem.karmaLock );
+		break;
+	case "ARTIFACTRARITY":
+		socket.SysMessage( ourItem.artifactRarity);
+		break;
+	case "DURABILITYHPBONUS":
+		socket.SysMessage( ourItem.durabilityHpBonus );
 		break;
 	case "ARMORCLASS":
 	case "ARMOURCLASS":
@@ -324,6 +432,9 @@ function HandleGetItem( socket, ourItem, uKey )
 		break;
 	case "USESLEFT":
 		socket.SysMessage( ourItem.usesLeft );
+		break;
+	case "STEALABLE":
+		socket.SysMessage( ourItem.stealable );
 		break;
 	default:
 		if( ourItem.isSpawner )
@@ -396,8 +507,45 @@ function HandleGetChar( socket, ourChar, uKey )
 	case "CONTROLSLOTSUSED":
 		socket.SysMessage( ourChar.controlSlotsUsed );
 		break;
+	case "CRIMINAL":
+		socket.SysMessage( ourChar.criminal );
+		break;
+	case "INNOCENT":
+		socket.SysMessage( ourChar.innocent );
+		break;
+	case "MURDERER":
+		socket.SysMessage( ourChar.murderer );
+		break;
+	case "PERMAGREY":
+		socket.SysMessage( ourChar.IsPermaGrey() );
+		break;
+	case "HASSTOLEN":
+		socket.SysMessage( ourChar.hasStolen );
+		break;
+	case "AGGRESSOR":
+		socket.SysMessage( ourChar.IsAggressor() );
+		break;
 	case "PETCOUNT":
 		socket.SysMessage( ourChar.petCount );
+		break;
+	case "FOLLOWERCOUNT":
+		socket.SysMessage( ourChar.followerCount );
+		break;
+	case "GUILD":
+		{
+			let ourGuild = ourChar.guild;
+			if( ourGuild != null )
+			{
+				socket.SysMessage( ourChar.guild.name );
+			}
+			else
+			{
+				socket.SysMessage( "Character does not currently belong in a guild." );
+			}
+		}
+		break;
+	case "GUILDNUMBER":
+		socket.SysMessage( ourChar.guildNumber );
 		break;
 	case "MAXLOYALTY":
 		socket.SysMessage( ourChar.maxLoyalty );
@@ -441,12 +589,46 @@ function HandleGetChar( socket, ourChar, uKey )
 	case "OLDWANDERTYPE":
 		socket.SysMessage( ourChar.oldWandertype );
 		break;
+	case "NPCGUILD":
+		socket.SysMessage( ourChar.npcGuild );
+		break;
+	case "NPCGUILDJOINED":
+		if( !ourChar.npc )
+		{
+			var npcGuildJoined = ourChar.npcGuildJoined;
+			if( npcGuildJoined > 0 )
+			{
+				// Output raw value of timestamp
+				socket.SysMessage( npcGuildJoined );
+
+				// Calculate date of timestamp, and output as a formatted date
+				var joinedDate = new Date( npcGuildJoined * 60000 );
+				var options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+				var formattedDateTime = joinedDate.toLocaleString( undefined, options );
+				socket.SysMessage( "Character joined guild on " + formattedDateTime );
+
+				// Calculate the duration in days, hours, and minutes, and output
+				var durationInMinutes = Math.floor( Date.now() / ( 60 * 1000 )) - npcGuildJoined;
+				var days = Math.floor(durationInMinutes / (24 * 60));
+				var hours = Math.floor((durationInMinutes % (24 * 60)) / 60);
+				var minutes = durationInMinutes % 60;
+				socket.SysMessage( "(" + days + " days, " + hours + " hours, " + minutes + " minutes ago)" );
+			}
+			else
+			{
+				socket.SysMessage( "Character has not joined an NPC Guild yet." );
+			}
+		}
+		break;
 	case "DIR":
 	case "DIRECTION":
 		socket.SysMessage( ourChar.direction );
 		break;
 	case "NPCAI":
 		socket.SysMessage( ourChar.aitype );
+		break;
+	case "POISONSTRENGTH":
+		socket.SysMessage( ourChar.poisonStrength );
 		break;
 	case "VULNERABLE":
 		socket.SysMessage( ourChar.vulnerable );
@@ -459,6 +641,20 @@ function HandleGetChar( socket, ourChar, uKey )
 		break;
 	case "COMMANDLEVEL":
 		socket.SysMessage( ourChar.commandlevel );
+		break;
+	case "HAIRSTYLE":
+		socket.SysMessage( ourChar.hairStyle );
+		break;
+	case "HAIRCOLOUR":
+	case "HAIRCOLOR":
+		socket.SysMessage( ourChar.hairColour );
+		break;
+	case "BEARDSTYLE":
+		socket.SysMessage( ourChar.beardStyle );
+		break;
+	case "BEARDCOLOUR":
+	case "BEARDCOLOR":
+		socket.SysMessage( ourChar.beardColour );
 		break;
 	case "Z":
 		socket.SysMessage( ourChar.z );
@@ -487,10 +683,6 @@ function HandleGetChar( socket, ourChar, uKey )
 	case "VISIBLE":
 		socket.SysMessage( ourChar.visible );
 		break;
-	case "ARMOUR":
-	case "ARMOR":
-		socket.SysMessage( ourChar.Resist( 1 ));
-		break;
 	case "MAXHP":
 		socket.SysMessage( ourChar.maxhp );
 		break;
@@ -499,6 +691,9 @@ function HandleGetChar( socket, ourChar, uKey )
 		break;
 	case "MAXSTAMINA":
 		socket.SysMessage( ourChar.maxstamina );
+		break;
+	case "STAMINA":
+		socket.SysMessage( ourChar.stamina );
 		break;
 	case "HUNGER":
 		socket.SysMessage( ourChar.hunger );
@@ -689,12 +884,12 @@ function HandleGetChar( socket, ourChar, uKey )
 			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET ISSLOT7BLOCKED> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
 		}
 		break;
-	case "UNUSED9":
+	case "ISYOUNG":
 		if( !ourChar.npc )
 		{
 			var myAccount = ourChar.account;
-			socket.SysMessage( "unused9: " + myAccount.unused9 );
-			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET UNUSED9> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			socket.SysMessage( "isYoung: " + myAccount.isYoung );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET ISYOUNG> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
 		}
 		break;
 	case "UNUSED10":

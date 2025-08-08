@@ -2,7 +2,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "delid", 2, true );
+	RegisterCommand( "delid", 8, true );
 }
 
 function command_DELID( socket, cmdString )
@@ -33,3 +33,5 @@ function onIterate( toCheck )
 	}
 	return false;
 }
+
+function _restorecontext_() {}

@@ -3,7 +3,7 @@
 
 [REGIONSPAWN 1200]
 {
-NAME=Vesper healer
+NAME=Vesper - Healer of Vesper
 NPC=healer
 MAXNPCS=1
 X1=2914
@@ -30,9 +30,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1202]
 {
-NAME=Vesper innkeeper
+NAME=Vesper - The Ironwood Inn
 NPC=innkeeper
 MAXNPCS=1
 X1=2775
@@ -44,9 +45,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1204]
 {
-NAME=Vesper leatherworker
+NAME=Vesper - Tanner's Shop
 NPC=leatherworker
 MAXNPCS=1
 X1=2857
@@ -58,9 +60,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1205]
 {
-NAME=Vesper jeweler
+NAME=Vesper - Vesper Museum
 NPC=jeweler
 MAXNPCS=1
 X1=2929
@@ -72,9 +75,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1206]
 {
-NAME=Vesper armorer
+NAME=Vesper - Vesper Museum
 NPC=armourer
 MAXNPCS=1
 X1=2928
@@ -86,9 +90,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1207]
 {
-NAME=Vesper bard
+NAME=Vesper - Vesper Museum
 NPC=bard
 MAXNPCS=1
 X1=2914
@@ -100,9 +105,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1208]
 {
-NAME=Vesper shipwright
+NAME=Vesper - The Majestic Boat
 NPC=shipwright
 MAXNPCS=1
 X1=2946
@@ -114,10 +120,11 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1209]
 {
-NAME=Vesper cook
-NPC=cook
+NAME=Vesper - The Marsh Hall
+NPC=tavernkeeper
 MAXNPCS=1
 X1=2896
 Y1=913
@@ -128,9 +135,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1210]
 {
-NAME=Vesper provisioner
+NAME=Vesper - The Adventurer's Friend
 NPC=provisioner
 MAXNPCS=1
 X1=2843
@@ -142,9 +150,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1211]
 {
-NAME=Vesper tailor
+NAME=Vesper - The Spinning Wheel (Center)
 NPC=tailor
 MAXNPCS=1
 X1=2841
@@ -156,9 +165,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1212]
 {
-NAME=Vesper blacksmith
+NAME=Vesper - The Ironworks
 NPC=blacksmith
 MAXNPCS=1
 X1=2865
@@ -170,9 +180,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1213]
 {
-NAME=Vesper armorer
+NAME=Vesper - Warrior's Companion
 NPC=armourer
 MAXNPCS=1
 X1=2843
@@ -184,9 +195,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1214]
 {
-NAME=Vesper weaponsmith
+NAME=Vesper - Warrior's Companion
 NPC=weaponsmith
 MAXNPCS=1
 X1=2843
@@ -198,9 +210,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1215]
 {
-NAME=Vesper bowyer
+NAME=Vesper - The Ranger's Tool
 NPC=bowyer
 MAXNPCS=1
 X1=2864
@@ -212,9 +225,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1216]
 {
-NAME=Vesper tinker
+NAME=Vesper - The Gadget's Corner
 NPC=tinker
 MAXNPCS=1
 X1=2897
@@ -226,9 +240,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1217]
 {
-NAME=Vesper carpenter
+NAME=Vesper - The Hammer and Nail
 NPC=carpenter
 MAXNPCS=1
 X1=2913
@@ -240,9 +255,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1218]
 {
-NAME=Vesper architect
+NAME=Vesper - The Hammer and Nail
 NPC=architect
 MAXNPCS=1
 X1=2921
@@ -254,9 +270,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1219]
 {
-NAME=Vesper jeweler
+NAME=Vesper - The Shimmering Jewel
 NPC=jeweler
 MAXNPCS=1
 X1=2874
@@ -268,9 +285,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1220]
 {
-NAME=Vesper banker
+NAME=Vesper - The Mint of Vesper
 NPC=banker
 MAXNPCS=2
 X1=2881
@@ -282,9 +300,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1221]
 {
-NAME=Vesper mage
+NAME=Vesper - The Magical Light
 NPC=mage
 MAXNPCS=1
 X1=2913
@@ -296,9 +315,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1222]
 {
-NAME=Vesper alchemist
+NAME=Vesper - The Bubbling Brew
 NPC=alchemist
 MAXNPCS=1
 X1=2889
@@ -310,9 +330,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1223]
 {
-NAME=Vesper tailor
+NAME=Vesper - The Spinning Wheel (North)
 NPC=tailor
 MAXNPCS=1
 X1=2961
@@ -324,9 +345,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1224]
 {
-NAME=Vesper spinner
+NAME=Vesper - The Spinning Wheel (North)
 NPC=spinner
 MAXNPCS=1
 X1=2955
@@ -338,9 +360,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1225]
 {
-NAME=Vesper provisioner
+NAME=Vesper - The Adventurer's Supplies
 NPC=provisioner
 MAXNPCS=1
 X1=2993
@@ -352,9 +375,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1226]
 {
-NAME=Vesper beekeeper
+NAME=Vesper - The Busy Bees
 NPC=beekeeper
 MAXNPCS=1
 X1=2958
@@ -366,9 +390,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1227]
 {
-NAME=Vesper baker
+NAME=Vesper - The Twisted Baker
 NPC=baker
 MAXNPCS=1
 X1=2994
@@ -380,9 +405,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1228]
 {
-NAME=Vesper butcher
+NAME=Vesper - The Butcher's Knife
 NPC=butcher
 MAXNPCS=1
 X1=2987
@@ -394,9 +420,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1229]
 {
-NAME=Vesper fisherlady
+NAME=Vesper - Fisherman's Wharf
 NPC=fisher
 MAXNPCS=1
 X1=3016
@@ -408,9 +435,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1230]
 {
-NAME=Vesper farmer
+NAME=Vesper - Farmer's Market
 NPC=farmer
 MAXNPCS=1
 X1=3017
@@ -422,9 +450,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1231]
 {
-NAME=Vesper shipwright
+NAME=Vesper - The Majestic Boat
 NPC=shipwright
 MAXNPCS=1
 X1=2994
@@ -436,9 +465,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1232]
 {
-NAME=Vesper mage
+NAME=Vesper - The Magician's Friend
 NPC=mage
 MAXNPCS=1
 X1=2993
@@ -450,9 +480,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 1233]
 {
-NAME=Vesper innkeeper
+NAME=Vesper - Vesper Youth Hostel
 NPC=innkeeper
 MAXNPCS=1
 X1=2969
@@ -465,4 +496,298 @@ MAXTIME=600
 CALL=1
 }
 
-EOF
+[REGIONSPAWN 1234]
+{
+NAME=Thief Guildmaster
+NPCLIST=thiefguildmaster
+MAXNPCS=1
+X1=2837
+Y1=680
+X2=3031
+Y2=950
+WORLD=0
+ONLYOUTSIDE=1
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1235]
+{
+NAME=Vesper - Vesper Stables
+NPC=animaltrainer
+MAXNPCS=1
+X1=2873
+Y1=658
+X2=2875
+Y2=665
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1236]
+{
+NAME=Vesper - Tanner's Shop
+NPC=tanner
+MAXNPCS=1
+X1=2857
+Y1=999
+X2=2861
+Y2=1003
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1237]
+{
+NAME=Vesper - Tanner's Shop
+NPC=furtrader
+MAXNPCS=1
+X1=2865
+Y1=1000
+X2=2869
+Y2=1003
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1238]
+{
+NAME=Vesper - The Marsh Hall
+NPC=waiter
+MAXNPCS=2
+X1=2892
+Y1=901
+X2=2905
+Y2=917
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+
+[REGIONSPAWN 1239]
+{
+NAME=Vesper - The Champions of Light
+NPC=fighter
+MAXNPCS=3
+X1=2832
+Y1=896
+X2=2838
+Y2=918
+WORLD=0
+MINTIME=60
+MAXTIME=90
+CALL=1
+}
+
+
+[REGIONSPAWN 1240]
+{
+NAME=Vesper - The Spinning Wheel
+NPC=weaver
+MAXNPCS=1
+X1=2835
+Y1=880
+X2=2846
+Y2=886
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1241]
+{
+GET=1240
+NAME=Vesper - The Spinning Wheel
+NPC=spinner
+}
+
+[REGIONSPAWN 1242]
+{
+NAME=Vesper - The Adventurer's Friend
+NPC=cobbler
+MAXNPCS=1
+X1=2835
+Y1=867
+X2=2841
+Y2=870
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1243]
+{
+NAME=Vesper - The Majestic Boat
+NPC=mapmaker
+MAXNPCS=1
+X1=2994
+Y1=814
+X2=2995
+Y2=821
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1244]
+{
+NAME=Vesper - The Magician's Friend
+NPC=herbalist
+MAXNPCS=1
+X1=2993
+Y1=839
+X2=2998
+Y2=846
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1245]
+{
+NAME=Vesper - Fisher (Docks)
+NPC=fisher
+MAXNPCS=1
+X1=3015
+Y1=826
+X2=3040
+Y2=829
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1246]
+{
+GET=1245
+NAME=Vesper - Sailor (Docks)
+NPC=sailor
+MINTIME=60
+MAXTIME=90
+}
+
+[REGIONSPAWN 1247]
+{
+NAME=Vesper - The Coloured Canvas
+NPC=artist
+MAXNPCS=2
+X1=2904
+Y1=705
+X2=2909
+Y2=717
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=2
+}
+
+[REGIONSPAWN 1248]
+{
+NAME=Vesper - The Musician's Hall
+NPC=bard
+MAXNPCS=2
+X1=2880
+Y1=737
+X2=2894
+Y2=750
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=2
+}
+
+[REGIONSPAWN 1249]
+{
+NAME=Vesper - Towncrier (SW)
+NPC=towncrier
+MAXNPCS=1
+X1=2768
+Y1=983
+X2=2768
+Y2=983
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1250]
+{
+NAME=Vesper - Towncrier (SW)
+NPC=towncrier
+MAXNPCS=1
+X1=2895
+Y1=686
+X2=2895
+Y2=686
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1251]
+{
+NAME=Vesper - The Ore of Vesper
+NPC=miner
+MAXNPCS=1
+X1=2852
+Y1=730
+X2=2861
+Y2=742
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1252]
+{
+NAME=Vesper - The Magical Light
+NPC=herbalist
+MAXNPCS=1
+X1=2913
+Y1=669
+X2=2926
+Y2=678
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 1253]
+{
+GET=1224
+NAME=Vesper - The Spinning Wheel (North)
+NPC=weaver
+}
+
+[REGIONSPAWN 1254]
+{
+NAME=Vesper - The Adventurer's Supplies
+NPC=cobbler
+MAXNPCS=1
+X1=2979
+Y1=635
+X2=2990
+Y2=638
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}

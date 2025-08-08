@@ -86,11 +86,12 @@ typedef struct JSDHashTableOps  JSDHashTableOps;
  * Table entry header structure.
  *
  * In order to allow in-line allocation of key and value, we do not declare
- * either here.  Instead, the API uses const void *key as a formal parameter,
- * and asks each entry for its key when necessary via a getKey callback, used
- * when growing or shrinking the table.  Other callback types are defined
- * below and grouped into the JSDHashTableOps structure, for single static
- * initialization per hash table sub-type.
+ * either here.  Instead, the API uses const void *key as a formal parameter.
+ * The key need not be stored in the entry; it may be part of the value, but
+ * need not be stored at all.
+ *
+ * Callback types are defined below and grouped into the JSDHashTableOps
+ * structure, for single static initialization per hash table sub-type.
  *
  * Each hash table sub-type should nest the JSDHashEntryHdr structure at the
  * front of its particular entry type.  The keyHash member contains the result
@@ -237,36 +238,25 @@ struct JSDHashTable {
  * equal to 0; but note that jsdhash.c code will never call with 0 nbytes).
  */
 typedef void *
-(* JS_DLL_CALLBACK JSDHashAllocTable)(JSDHashTable *table, uint32 nbytes);
+(* JSDHashAllocTable)(JSDHashTable *table, uint32 nbytes);
 
 typedef void
-(* JS_DLL_CALLBACK JSDHashFreeTable) (JSDHashTable *table, void *ptr);
-
-/*
- * When a table grows or shrinks, each entry is queried for its key using this
- * callback.  NB: in that event, entry is not in table any longer; it's in the
- * old entryStore vector, which is due to be freed once all entries have been
- * moved via moveEntry callbacks.
- */
-typedef const void *
-(* JS_DLL_CALLBACK JSDHashGetKey)    (JSDHashTable *table,
-                                      JSDHashEntryHdr *entry);
+(* JSDHashFreeTable) (JSDHashTable *table, void *ptr);
 
 /*
  * Compute the hash code for a given key to be looked up, added, or removed
  * from table.  A hash code may have any JSDHashNumber value.
  */
 typedef JSDHashNumber
-(* JS_DLL_CALLBACK JSDHashHashKey)   (JSDHashTable *table, const void *key);
+(* JSDHashHashKey)   (JSDHashTable *table, const void *key);
 
 /*
  * Compare the key identifying entry in table with the provided key parameter.
  * Return JS_TRUE if keys match, JS_FALSE otherwise.
  */
 typedef JSBool
-(* JS_DLL_CALLBACK JSDHashMatchEntry)(JSDHashTable *table,
-                                      const JSDHashEntryHdr *entry,
-                                      const void *key);
+(* JSDHashMatchEntry)(JSDHashTable *table, const JSDHashEntryHdr *entry,
+                      const void *key);
 
 /*
  * Copy the data starting at from to the new entry storage at to.  Do not add
@@ -275,9 +265,8 @@ typedef JSBool
  * any reference-decrementing callback shortly.
  */
 typedef void
-(* JS_DLL_CALLBACK JSDHashMoveEntry)(JSDHashTable *table,
-                                     const JSDHashEntryHdr *from,
-                                     JSDHashEntryHdr *to);
+(* JSDHashMoveEntry)(JSDHashTable *table, const JSDHashEntryHdr *from,
+                     JSDHashEntryHdr *to);
 
 /*
  * Clear the entry and drop any strong references it holds.  This callback is
@@ -285,8 +274,7 @@ typedef void
  * but only if the given key is found in the table.
  */
 typedef void
-(* JS_DLL_CALLBACK JSDHashClearEntry)(JSDHashTable *table,
-                                      JSDHashEntryHdr *entry);
+(* JSDHashClearEntry)(JSDHashTable *table, JSDHashEntryHdr *entry);
 
 /*
  * Called when a table (whether allocated dynamically by itself, or nested in
@@ -294,7 +282,7 @@ typedef void
  * allows table->ops-specific code to finalize table->data.
  */
 typedef void
-(* JS_DLL_CALLBACK JSDHashFinalize)  (JSDHashTable *table);
+(* JSDHashFinalize)  (JSDHashTable *table);
 
 /*
  * Initialize a new entry, apart from keyHash.  This function is called when
@@ -304,9 +292,8 @@ typedef void
  * table.
  */
 typedef JSBool
-(* JS_DLL_CALLBACK JSDHashInitEntry)(JSDHashTable *table,
-                                     JSDHashEntryHdr *entry,
-                                     const void *key);
+(* JSDHashInitEntry)(JSDHashTable *table, JSDHashEntryHdr *entry,
+                     const void *key);
 
 /*
  * Finally, the "vtable" structure for JSDHashTable.  The first eight hooks
@@ -339,7 +326,6 @@ struct JSDHashTableOps {
     /* Mandatory hooks.  All implementations must provide these. */
     JSDHashAllocTable   allocTable;
     JSDHashFreeTable    freeTable;
-    JSDHashGetKey       getKey;
     JSDHashHashKey      hashKey;
     JSDHashMatchEntry   matchEntry;
     JSDHashMoveEntry    moveEntry;
@@ -367,9 +353,6 @@ struct JSDHashEntryStub {
     JSDHashEntryHdr hdr;
     const void      *key;
 };
-
-extern JS_PUBLIC_API(const void *)
-JS_DHashGetKeyStub(JSDHashTable *table, JSDHashEntryHdr *entry);
 
 extern JS_PUBLIC_API(JSDHashNumber)
 JS_DHashVoidPtrKeyStub(JSDHashTable *table, const void *key);
@@ -454,6 +437,30 @@ JS_DHashTableSetAlphaBounds(JSDHashTable *table,
 #define JS_DHASH_MIN_ALPHA(table, k)                                          \
     ((float)((table)->entrySize / sizeof(void *) - 1)                         \
      / ((table)->entrySize / sizeof(void *) + (k)))
+
+/*
+ * Default max/min alpha, and macros to compute the value for the |capacity|
+ * parameter to JS_NewDHashTable and JS_DHashTableInit, given default or any
+ * max alpha, such that adding entryCount entries right after initializing the
+ * table will not require a reallocation (so JS_DHASH_ADD can't fail for those
+ * JS_DHashTableOperate calls).
+ *
+ * NB: JS_DHASH_CAP is a helper macro meant for use only in JS_DHASH_CAPACITY.
+ * Don't use it directly!
+ */
+#define JS_DHASH_DEFAULT_MAX_ALPHA 0.75
+#define JS_DHASH_DEFAULT_MIN_ALPHA 0.25
+
+#define JS_DHASH_CAP(entryCount, maxAlpha)                                    \
+    ((uint32)((double)(entryCount) / (maxAlpha)))
+
+#define JS_DHASH_CAPACITY(entryCount, maxAlpha)                               \
+    (JS_DHASH_CAP(entryCount, maxAlpha) +                                     \
+     (((JS_DHASH_CAP(entryCount, maxAlpha) * (uint8)(0x100 * (maxAlpha)))     \
+       >> 8) < (entryCount)))
+
+#define JS_DHASH_DEFAULT_CAPACITY(entryCount)                                 \
+    JS_DHASH_CAPACITY(entryCount, JS_DHASH_DEFAULT_MAX_ALPHA)
 
 /*
  * Finalize table's data, free its entry storage using table->ops->freeTable,
@@ -563,11 +570,30 @@ JS_DHashTableRawRemove(JSDHashTable *table, JSDHashEntryHdr *entry);
  * the entry being enumerated, rather than returning JS_DHASH_REMOVE.
  */
 typedef JSDHashOperator
-(* JS_DLL_CALLBACK JSDHashEnumerator)(JSDHashTable *table, JSDHashEntryHdr *hdr,
-                                      uint32 number, void *arg);
+(* JSDHashEnumerator)(JSDHashTable *table, JSDHashEntryHdr *hdr, uint32 number,
+                      void *arg);
 
 extern JS_PUBLIC_API(uint32)
 JS_DHashTableEnumerate(JSDHashTable *table, JSDHashEnumerator etor, void *arg);
+
+#ifdef DEBUG
+/**
+ * Mark a table as immutable for the remainder of its lifetime.  This
+ * changes the implementation from ASSERTing one set of invariants to
+ * ASSERTing a different set.
+ *
+ * When a table is NOT marked as immutable, the table implementation
+ * asserts that the table is not mutated from its own callbacks.  It
+ * assumes the caller protects the table from being accessed on multiple
+ * threads simultaneously.
+ *
+ * When the table is marked as immutable, the re-entry assertions will
+ * no longer trigger erroneously due to multi-threaded access.  Instead,
+ * mutations will cause assertions.
+ */
+extern JS_PUBLIC_API(void)
+JS_DHashMarkTableImmutable(JSDHashTable *table);
+#endif
 
 #ifdef JS_DHASHMETER
 #include <stdio.h>

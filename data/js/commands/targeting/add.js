@@ -2,11 +2,11 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "add", 2, true );
-	RegisterCommand( "itemmenu", 2, true );
-	RegisterCommand( "addx", 2, true );
-	RegisterCommand( "addxitem", 2, true );
-	RegisterCommand( "addxspawner", 2, true );
+	RegisterCommand( "add", 8, true );
+	RegisterCommand( "itemmenu", 8, true );
+	RegisterCommand( "addx", 8, true );
+	RegisterCommand( "addxitem", 8, true );
+	RegisterCommand( "addxspawner", 8, true );
 }
 
 function command_ADD( socket, cmdString )
@@ -15,8 +15,13 @@ function command_ADD( socket, cmdString )
 	{
 		var stringID = "";
 		var splitString = cmdString.split( " " );
+		socket.tempInt2 = 0;
+		socket.addAmount = 1; // default amount
 		switch( splitString[0].toUpperCase() )
 		{
+			case "NPCLIST":
+				socket.tempInt2 = 1;
+				// fallthrough
 			case "NPC":
 				if( splitString[1] )
 				{
@@ -28,6 +33,15 @@ function command_ADD( socket, cmdString )
 				if( splitString[1] )
 				{
 					// .add item itemID
+					if( splitString[2] ) // Check for optional amount
+					{
+						// .add item itemID amount
+						let amount = parseInt( splitString[2] );
+						if( !isNaN( amount ) && amount > 0 )
+						{
+							socket.addAmount = amount;
+						}
+					}
 					socket.xText = splitString[1];
 					socket.CustomTarget( 2, GetDictionaryEntry( 8069, socket.language ) + " " + splitString[1] ); // Select location for scripted item:
 				}
@@ -106,18 +120,26 @@ function onCallback0( socket, ourObj )
 		var x = socket.GetWord( 11 );
 		var y = socket.GetWord( 13 );
 		var z = socket.GetSByte( 16 );
+		var StrangeByte = socket.GetWord(1);
 
 		// If connected with a client lower than v7.0.9, manually add height of targeted tile
-		if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+		if(( StrangeByte == 0 && ourObj.isItem ) || ( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 ))
 		{
 			z += GetTileHeight( socket.GetWord( 17 ));
 		}
 
 		var npcSection = socket.xText;
 		socket.xText = null;
-		var newChar = SpawnNPC( npcSection, x, y, z, mChar.worldnumber, mChar.instanceID );
 
-		if( newChar && newChar.isChar )
+		var useNpcList = false;
+		if( socket.tempInt2 )
+		{
+			useNpcList = true;
+			socket.tempInt2 = null;
+		}
+
+		var newChar = SpawnNPC( npcSection, x, y, z, mChar.worldnumber, mChar.instanceID, useNpcList );
+		if( ValidateObject( newChar ) && newChar.isChar )
 		{
 			newChar.InitWanderArea();
 		}
@@ -155,6 +177,16 @@ function onCallback1( socket, ourObj )
 				mChar.SysMessage( GetDictionaryEntry( 8073, socket.language )); // That character has no backpack, no item added
 			}
 		}
+		else if( StrangeByte == 0 && ourObj.isItem && ourObj.type == 1 )
+		{
+			// If target is an item, and a container, add item to the container
+			var newItem = CreateBlankItem( socket, mChar, 1, "", itemID, 0, "ITEM", false );
+			if( ValidateObject( newItem ))
+			{
+				newItem.container = ourObj;
+				newItem.PlaceInPack();
+			}
+		}
 		else
 		{
 			var x = socket.GetWord( 11 );
@@ -162,7 +194,7 @@ function onCallback1( socket, ourObj )
 			var z = socket.GetSByte( 16 );
 
 			// If connected with a client lower than v7.0.9, manually add height of targeted tile
-			if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+			if(( StrangeByte == 0 && ourObj.isItem ) || ( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 ))
 			{
 				z += GetTileHeight( socket.GetWord( 17 ));
 			}
@@ -205,6 +237,14 @@ function onCallback2( socket, ourObj )
 	{
 		var iSection = socket.xText;
 		socket.xText = null;
+
+		// Get amount to add
+		var itemAmount = socket.addAmount;
+		if( itemAmount == null || itemAmount < 1 )
+		{
+			itemAmount = 1;
+		}
+
 		var StrangeByte = socket.GetWord( 1 );
 		if( StrangeByte == 0 && ourObj.isChar  )
 		{
@@ -212,11 +252,21 @@ function onCallback2( socket, ourObj )
 			var backpack = ourObj.FindItemLayer( 21 );
 			if( backpack != null )
 			{
-				var newItem = CreateDFNItem( socket, ourObj, iSection, 1, "ITEM", true );
+				var newItem = CreateDFNItem( socket, ourObj, iSection, itemAmount, "ITEM", true );
 			}
 			else
 			{
 				mChar.SysMessage( GetDictionaryEntry( 8073, socket.language )); // That character has no backpack, no item added
+			}
+		}
+		else if( StrangeByte == 0 && ourObj.isItem && ourObj.type == 1 )
+		{
+			// If target is an item, and a container, add item to the container
+			var newItem = CreateDFNItem( socket, ourObj, iSection, itemAmount, "ITEM", false );
+			if( ValidateObject( newItem ))
+			{
+				newItem.container = ourObj;
+				newItem.PlaceInPack();
 			}
 		}
 		else
@@ -226,12 +276,12 @@ function onCallback2( socket, ourObj )
 			var z = socket.GetSByte( 16 );
 
 			// If connected with a client lower than v7.0.9, manually add height of targeted tile
-			if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+			if(( StrangeByte == 0 && ourObj.isItem ) || ( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 ))
 			{
 				z += GetTileHeight( socket.GetWord( 17 ));
 			}
 
-			var newItem = CreateDFNItem( socket, mChar, iSection, 1, "ITEM", false );
+			var newItem = CreateDFNItem( socket, mChar, iSection, itemAmount, "ITEM", false );
 			if( newItem )
 			{
 				newItem.SetLocation( x, y, z );
@@ -256,9 +306,10 @@ function onCallback3( socket, ourObj )
 		var x = socket.GetWord( 11 );
 		var y = socket.GetWord( 13 );
 		var z = socket.GetSByte( 16 );
+		var StrangeByte = socket.GetWord(1);
 
 		// If connected with a client lower than v7.0.9, manually add height of targeted tile
-		if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+		if(( StrangeByte == 0 && ourObj.isItem ) || ( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 ))
 		{
 			z += GetTileHeight( socket.GetWord( 17 ));
 		}
@@ -293,9 +344,10 @@ function onCallback4( socket, ourObj )
 		var x = socket.GetWord( 11 );
 		var y = socket.GetWord( 13 );
 		var z = socket.GetSByte( 16 );
+		var StrangeByte = socket.GetWord(1);
 
 		// If connected with a client lower than v7.0.9, manually add height of targeted tile
-		if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+		if(( StrangeByte == 0 && ourObj.isItem ) || ( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 ))
 		{
 			z += GetTileHeight( socket.GetWord( 17 ));
 		}
@@ -434,3 +486,5 @@ function AddXItemSpawner( socket, cmdString, itemType )
 		}
 	}
 }
+
+function _restorecontext_() {}

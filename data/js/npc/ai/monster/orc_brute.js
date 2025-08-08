@@ -1,9 +1,9 @@
 // Throws orc lord at attackers who cast magic at him
 // Dispells summoned creatures
 
-const dispelSummonsDelay = 10;
+const orcBrute_DispelSummonsDelay = 10;
 
-function onSpellTarget( myTarget, myTargetType, pCaster, spellID )
+function onSpellTarget( myTarget, pCaster, spellID )
 {
 	var spell = Spells[spellID];
 	if( spell.aggressiveSpell )
@@ -60,13 +60,13 @@ function onAISliver( mNPC )
 		return;
 
 	var nextDispelTime = mNPC.GetTempTag( "nextDispel" );
-	if( nextDispelTime < GetCurrentClock() || nextDispelTime > GetCurrentClock() + ( dispelSummonsDelay * 2000 ))
+	if( nextDispelTime < GetCurrentClock() || nextDispelTime > GetCurrentClock() + ( orcBrute_DispelSummonsDelay * 2000 ))
 	{
 		// Look for nearby summoned creatures
 		AreaCharacterFunction( "LookForSummonedCreatures", mNPC, 5 );
 
 		// Set a "timer" for when to next be allowed to use the dispel
-		nextDispelTime = (( RandomNumber( dispelSummonsDelay, dispelSummonsDelay * 2 ) * 1000 ) + GetCurrentClock() );
+		nextDispelTime = (( RandomNumber( orcBrute_DispelSummonsDelay, orcBrute_DispelSummonsDelay * 2 ) * 1000 ) + GetCurrentClock() );
 		mNPC.SetTempTag( "nextDispel", nextDispelTime );
 	}
 }
@@ -83,3 +83,5 @@ function LookForSummonedCreatures( mNPC, targChar )
 		targChar.Delete();
 	}
 }
+
+function _restorecontext_() {}

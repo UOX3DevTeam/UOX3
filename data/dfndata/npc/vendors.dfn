@@ -83,6 +83,16 @@ GET=m_fisher f_fisher
 GET=m_furtrader f_furtrader
 }
 
+[gypsyanimaltrainer]
+{
+GET=m_gypsyanimaltrainer f_gypsyanimaltrainer
+}
+
+[gypsybanker]
+{
+GET=m_gypsybanker f_gypsybanker
+}
+
 [hairstylist]
 {
 GET=m_hairstylist f_hairstylist
@@ -103,14 +113,29 @@ GET=m_herbalist f_herbalist
 GET=m_innkeeper f_innkeeper
 }
 
+[ironworker]
+{
+GET=m_ironworker f_ironworker
+}
+
 [jeweler]
 {
 GET=m_jeweler f_jeweler
 }
 
+[leatherworker]
+{
+GET=m_leatherworker f_leatherworker
+}
+
 [mage]
 {
 GET=m_mage f_mage
+}
+
+[mapmaker]
+{
+GET=m_mapmaker f_mapmaker
 }
 
 [miner]
@@ -133,6 +158,11 @@ GET=m_scribe f_scribe
 GET=m_shipwright f_shipwright
 }
 
+[spinner]
+{
+GET=m_spinner f_spinner
+}
+
 [tailor]
 {
 GET=m_tailor f_tailor
@@ -153,10 +183,15 @@ GET=m_tavernkeeper f_tavernkeeper
 GET=m_tinker f_tinker
 }
 
-//[vet]
-//{Note: Not implanted Yet
-//GET=m_vet f_vet
-//}
+[vagabond]
+{
+GET=m_vagabond f_vagabond
+}
+
+[veterinarian]
+{
+GET=m_veterinarian f_veterinarian
+}
 
 [waiter]
 {

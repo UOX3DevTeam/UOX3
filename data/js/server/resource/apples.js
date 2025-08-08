@@ -5,8 +5,8 @@
 // and until it's up no more apples can be picked. Once the timer is over,
 // new apples are added. The appearance of the tree indicates whether or
 // not there are any apples left to pick.
-var resourceGrowthDelay = 120000; //Delay in milliseconds before resources respawns
-var maxResource = 5; //maximum amount of resources on a given item
+const appleGrowthDelay = 120000; //Delay in milliseconds before resources respawns
+const maxAppleResource = 5; //maximum amount of resources on a given item
 
 function onUseChecked( pUser, iUsed )
 {
@@ -20,7 +20,7 @@ function onUseChecked( pUser, iUsed )
 	{
 		iUsed.SetTag( "initialized", 1 ); 			 // Marks tree as initialized
 		iUsed.SetTag( "Apples", 1 ); 				 // If set to 1, there are apples to be picked, if 0 there are no ripe apples
-		iUsed.SetTag( "AppleCounter", maxResource ); // Add 5 apples to the tree initially
+		iUsed.SetTag( "AppleCounter", maxAppleResource ); // Add 5 apples to the tree initially
 	}
 	var apples = iUsed.GetTag( "Apples" );
 	var appleCount = iUsed.GetTag( "AppleCounter" );
@@ -62,7 +62,7 @@ function onUseChecked( pUser, iUsed )
 					iUsed.id = 0x0d99; 
 				}
 				iUsed.SetTag( "Apples", 0 );
-				iUsed.StartTimer( resourceGrowthDelay, 1, true ); // Puts in a delay until next time apples respawn
+				iUsed.StartTimer( appleGrowthDelay, 1, true ); // Puts in a delay until next time apples respawn
 			}
 		}
 	}
@@ -73,7 +73,7 @@ function onTimer( iUsed, timerID )
 {
 	if( timerID == 1 )
 	{
-		iUsed.SetTag( "AppleCounter", maxResource );
+		iUsed.SetTag( "AppleCounter", maxAppleResource );
 		iUsed.SetTag( "Apples", 1 );
 		if( iUsed.id == 0x0d95 )
 		{

@@ -7,7 +7,7 @@
 
 #include "uox3.h"
 #include "PageVector.h"
-#include "gump.h"
+#include "CGump.h"
 
 PageVector *GMQueue;
 PageVector *CounselorQueue;

@@ -19,7 +19,7 @@
 #include "PageVector.h"
 #include "speech.h"
 #include "cHTMLSystem.h"
-#include "gump.h"
+#include "CGump.h"
 #include "cEffects.h"
 #include "classes.h"
 #include "regions.h"
@@ -254,7 +254,7 @@ void Command_GetLight( CSocket *s )
 			}
 			else
 			{
-				s->SysMessage( 1632, static_cast<LIGHTLEVEL>(RoundNumber( i - Races->VisLevel( mChar->GetRace() )))); // Current light level is %i
+				s->SysMessage( 1632, static_cast<LIGHTLEVEL>(std::round( i - Races->VisLevel( mChar->GetRace() )))); // Current light level is %i
 			}
 		}
 		else
@@ -533,7 +533,7 @@ void Command_Shutdown( void )
 {
 	if( Commands->NumArguments() == 2 )
 	{
-		cwmWorldState->SetEndTime( BuildTimeValue( static_cast<R32>( Commands->Argument( 1 ))));
+		cwmWorldState->SetEndTime( BuildTimeValue( static_cast<R64>( Commands->Argument( 1 ))));
 		if( Commands->Argument( 1 ) == 0 )
 		{
 			cwmWorldState->SetEndTime( 0 );
@@ -563,7 +563,7 @@ void Command_Tell( CSocket *s )
 
 		CChar *mChar		= i->CurrcharObj();
 		CChar *tChar		= s->CurrcharObj();
-		std::string temp	= mChar->GetNameRequest( tChar ) + " tells " + tChar->GetNameRequest( mChar ) + ": " + txt;
+		std::string temp	= mChar->GetNameRequest( tChar, 0 ) + " tells " + tChar->GetNameRequest( mChar, NRS_SPEECH ) + ": " + txt;
 
 		if( cwmWorldState->ServerData()->UseUnicodeMessages() )
 		{
@@ -584,7 +584,7 @@ void Command_Tell( CSocket *s )
 			}
 			unicodeMessage.Type( TALK );
 			unicodeMessage.Language( "ENG" );
-			unicodeMessage.Name( mChar->GetNameRequest( tChar ));
+			unicodeMessage.Name( mChar->GetNameRequest( tChar, NRS_SPEECH ));
 			unicodeMessage.ID( INVALIDID );
 			unicodeMessage.Serial( mChar->GetSerial() );
 			s->Send( &unicodeMessage );
@@ -734,7 +734,7 @@ bool RespawnFunctor( CBaseObject *a, [[maybe_unused]] UI32 &b, [[maybe_unused]] 
 				CSpawnItem *spawnItem = static_cast<CSpawnItem *>( i );
 				if( !spawnItem->DoRespawn() )
 				{
-					spawnItem->SetTempTimer( BuildTimeValue( static_cast<R32>( RandomNum( spawnItem->GetInterval( 0 ) * 60, spawnItem->GetInterval( 1 ) * 60 ))));
+					spawnItem->SetTempTimer( BuildTimeValue( static_cast<R64>( RandomNum( spawnItem->GetInterval( 0 ) * 60, spawnItem->GetInterval( 1 ) * 60 ))));
 				}
 			}
 			else
@@ -783,6 +783,8 @@ void Command_RegSpawn( CSocket *s )
 
 		if( oldstrutil::upper( Commands->CommandString( 2, 2 )) == "ALL" )
 		{
+			// Force a round of respawns across all spawn regions
+			const TIMERVAL s_t = GetClock();
 			std::for_each( cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&itemsSpawned, &npcsSpawned]( std::pair<UI16, CSpawnRegion *> entry )
 			{
 				if( entry.second )
@@ -798,6 +800,38 @@ void Command_RegSpawn( CSocket *s )
 			{
 				s->SysMessage( 9022, cwmWorldState->spawnRegions.size() ); // Failed to spawn any new items or npcs in %u SpawnRegions
 			}
+			const TIMERVAL e_t = GetClock();
+			Console.Print( oldstrutil::format( "RegionSpawn cycle completed in %.02fsec\n", ( static_cast<R32>( e_t - s_t )) / 1000.0f ));
+		}
+		else if( oldstrutil::upper( Commands->CommandString( 2, 2 )) == "MAX" )
+		{
+			// Force respawn all spawn regions to max
+			const TIMERVAL s_t = GetClock();
+			std::for_each( cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&itemsSpawned, &npcsSpawned]( std::pair<UI16, CSpawnRegion *> entry )
+			{
+				auto maxTries = 1000;
+				auto numTries = 0;
+				if( entry.second )
+				{
+					while( numTries < maxTries
+						&& ( entry.second->GetCurrentCharAmt() < entry.second->GetMaxCharSpawn()
+						|| entry.second->GetCurrentItemAmt() < entry.second->GetMaxItemSpawn() ))
+					{
+						entry.second->DoRegionSpawn( itemsSpawned, npcsSpawned );
+						numTries++;
+					}
+				}
+			});
+			if( itemsSpawned || npcsSpawned )
+			{
+				s->SysMessage( 9021, itemsSpawned, npcsSpawned, cwmWorldState->spawnRegions.size() ); // Spawned %u items and %u npcs in %u SpawnRegions
+			}
+			else
+			{
+				s->SysMessage( 9022, cwmWorldState->spawnRegions.size() ); // Failed to spawn any new items or npcs in %u SpawnRegions
+			}
+			const TIMERVAL e_t = GetClock();
+			Console.Print( oldstrutil::format( "Maximum RegionSpawn cycles completed in %.02fsec\n", ( static_cast<R32>( e_t - s_t )) / 1000.0f ));
 		}
 		else
 		{

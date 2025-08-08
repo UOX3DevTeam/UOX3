@@ -37,25 +37,109 @@
 #include "PartySystem.h"
 
 void MakeShop( CChar *c );
+void ScriptError( JSContext *cx, const char *txt, ... );
 
-JSBool CGuildsProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] jsval id, jsval *vp )
+std::map< std::string, intN >		propLookupAccount;
+std::map< std::string, intN >		propLookupChar;
+std::map< std::string, intN >		propLookupConsole;
+std::map< std::string, intN >		propLookupGuild;
+std::map< std::string, intN >		propLookupItem;
+std::map< std::string, intN >		propLookupParty;
+std::map< std::string, intN >		propLookupRace;
+std::map< std::string, intN >		propLookupRegion;
+std::map< std::string, intN >		propLookupResource;
+std::map< std::string, intN >		propLookupSkills;
+std::map< std::string, intN >		propLookupSocket;
+std::map< std::string, intN >		propLookupSpawnRegion;
+
+
+UI16    GetPropByName( JSPrototypes protoNum, const std::string& prop )
+{
+	const std::map< std::string, intN > * toScan = nullptr;
+	switch( protoNum )
+	{
+	case JSP_ITEM: toScan = &propLookupItem; break;
+	case JSP_CHAR: toScan = &propLookupChar; break;
+	case JSP_SOCK: toScan = &propLookupSocket; break;
+	case JSP_GUILD: toScan = &propLookupGuild; break;
+	case JSP_RACE: toScan = &propLookupRace; break;
+	case JSP_REGION: toScan = &propLookupRegion; break;
+	case JSP_SPAWNREGION: toScan = &propLookupSpawnRegion; break;
+	case JSP_RESOURCE: toScan = &propLookupResource; break;
+	case JSP_ACCOUNT: toScan = &propLookupAccount; break;
+	case JSP_CONSOLE: toScan = &propLookupConsole; break;
+	case JSP_PARTY: toScan = &propLookupParty; break;
+	case JSP_GLOBALSKILLS: toScan = &propLookupSkills; break;
+	case JSP_SPELL:
+	case JSP_SPELLS:
+	case JSP_GLOBALSKILL:
+	case JSP_ACCOUNTS:
+	case JSP_FILE:
+	case JSP_CREATEENTRY:
+	case JSP_CREATEENTRIES:
+	case JSP_TIMER:
+	case JSP_SCRIPT:
+	case JSP_GUMP:
+	case JSP_PACKET:
+		break;
+	};
+	if( toScan != nullptr )
+	{
+		std::map< std::string, intN >::const_iterator citer = toScan->find( prop );
+		if( citer != toScan->cend() ) {
+			return citer->second;
+		}
+		else {
+			return 0xFFFF;
+		}
+	}
+	else
+	{
+		return 0xFFFF;
+	}
+
+}
+
+UI16 getScriptID( JSContext *cx, jsid id, JSPrototypes section )
+{
+	UI16 propID = 0xFFFF;
+	if( JSID_IS_STRING( id ) )
+	{
+		auto str = JSID_TO_STRING( id );
+		char* chars = JS_EncodeString( cx, str );
+		propID = GetPropByName( section, chars );
+		if( propID == 0xFFFF )
+		{
+			Console.Log( oldstrutil::format( "String property '%s' found on object type %d in script %d", chars, section, JSMapping->currentActive()->GetScriptID() ), "warning.log");
+		}
+		js_free( chars );
+	}
+	else if( JSID_IS_INT( id ) )
+	{
+		propID = JSID_TO_INT( id );
+	}
+	return propID;
+}
+
+
+JSBool CGuildsProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	*vp = INT_TO_JSVAL( 0 );
 	return JS_TRUE;
 }
 
-JSBool CGuildsProps_setProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] jsval id, [[maybe_unused]] jsval *vp )
+JSBool CGuildsProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
 {
 	return JS_TRUE;
 }
 
-JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
-	size_t spellId = JSVAL_TO_INT( id );
+	size_t spellId = JSID_TO_INT( id );
 
 	if( spellId >= Magic->spells.size() )
 	{
-		Console.Error( oldstrutil::format( "Spells: Invalid Spell ID (%i) provided", spellId )); // Revise please...
+		ScriptError( cx, oldstrutil::format( "Spells: Invalid Spell ID (%i) provided", spellId ).c_str() );
 		*vp = JSVAL_NULL;
 		return JS_FALSE;
 	}
@@ -63,7 +147,7 @@ JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	CSpellInfo *mySpell = &Magic->spells[spellId];
 	if( mySpell == nullptr )
 	{
-		Console.Error( oldstrutil::format( "Spells: Invalid Spell with spellId %i", spellId ));
+		ScriptError( cx, oldstrutil::format( "Spells: Invalid Spell with spellId %i", spellId ).c_str() );
 		*vp = JSVAL_NULL;
 		return JS_FALSE;
 	}
@@ -76,12 +160,12 @@ JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	return JS_TRUE;
 }
 
-JSBool CSpellProps_setProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] jsval id, [[maybe_unused]] jsval *vp )
+JSBool CSpellProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
 {
 	return JS_TRUE;
 }
 
-JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CSpellInfo *gPriv = static_cast<CSpellInfo*>( JS_GetPrivate( cx, obj ));
 	if( gPriv == nullptr )
@@ -89,12 +173,12 @@ JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 
 	std::string spellName = "";
 
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
 		JSString *tString = nullptr;
 		bool bDone = false;
 		size_t i = 0;
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CSP_ID:
 				for( i = 0; i < Magic->spells.size() && !bDone; ++i )
@@ -146,6 +230,11 @@ JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 			case CSP_ASH:				*vp = INT_TO_JSVAL( gPriv->Reagants().ash );			break;
 			case CSP_SHADE:				*vp = INT_TO_JSVAL( gPriv->Reagants().shade );			break;
 			case CSP_GARLIC:			*vp = INT_TO_JSVAL( gPriv->Reagants().garlic );			break;
+			case CSP_BATWING:			*vp = INT_TO_JSVAL( gPriv->Reagants().batwing );		break;
+			case CSP_DAEMONBLOOD:		*vp = INT_TO_JSVAL( gPriv->Reagants().daemonblood );	break;
+			case CSP_GRAVEDUST:			*vp = INT_TO_JSVAL( gPriv->Reagants().gravedust );		break;
+			case CSP_NOXCRYSTAL:		*vp = INT_TO_JSVAL( gPriv->Reagants().noxcrystal );		break;
+			case CSP_PIGIRON:			*vp = INT_TO_JSVAL( gPriv->Reagants().pigiron );		break;
 			case CSP_REQUIRETARGET:		*vp = BOOLEAN_TO_JSVAL( gPriv->RequireTarget() );		break;
 			case CSP_REQUIREITEM:		*vp = BOOLEAN_TO_JSVAL( gPriv->RequireItemTarget() );	break;
 			case CSP_REQUIRECHAR:		*vp = BOOLEAN_TO_JSVAL( gPriv->RequireCharTarget() );	break;
@@ -157,19 +246,20 @@ JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 			case CSP_RESISTABLE:		*vp = BOOLEAN_TO_JSVAL( gPriv->Resistable() );			break;
 			case CSP_SOUNDEFFECT:		*vp = INT_TO_JSVAL( gPriv->Effect() );					break;
 			case CSP_ENABLED:			*vp = BOOLEAN_TO_JSVAL( gPriv->Enabled() );				break;
+			case CSP_TITHING:			*vp = INT_TO_JSVAL( gPriv->Tithing() );					break;
 			default:																			break;
 		}
 	}
 	return JS_TRUE;
 }
 
-JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
-	size_t skillId = JSVAL_TO_INT( id );
+	size_t skillId = JSID_TO_INT( id );
 
 	if( skillId > THROWING )
 	{
-		Console.Error( "Invalid Skill ID, must be between 0 and 57" ); // Revise please...
+		ScriptError( cx, oldstrutil::format( "Invalid Skill ID, must be between 0 and 57" ).c_str() );
 		*vp = JSVAL_NULL;
 		return JS_FALSE;
 	}
@@ -177,7 +267,7 @@ JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, j
 	CWorldMain::Skill_st *mySkill = &cwmWorldState->skill[skillId];
 	if( mySkill == nullptr )
 	{
-		Console.Error( "Invalid Skill" );
+		ScriptError( cx, oldstrutil::format( "Invalid Skill" ).c_str() );
 		*vp = JSVAL_NULL;
 		return JS_FALSE;
 	}
@@ -190,12 +280,12 @@ JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, j
 	return JS_TRUE;
 }
 
-JSBool CGlobalSkillProps_setProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] jsval id, [[maybe_unused]] jsval *vp )
+JSBool CGlobalSkillProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
 {
 	return JS_TRUE;
 }
 
-JSBool CGlobalSkillProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CGlobalSkillProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CWorldMain::Skill_st *gPriv = static_cast<CWorldMain::Skill_st*>( JS_GetPrivate( cx, obj ));
 	if( gPriv == nullptr )
@@ -203,10 +293,10 @@ JSBool CGlobalSkillProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 
 	std::string skillName = "";
 
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
 		JSString *tString = nullptr;
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CGSKILL_NAME:
 				tString = JS_NewStringCopyZ( cx, gPriv->name.c_str() );
@@ -227,11 +317,11 @@ JSBool CGlobalSkillProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 	return JS_TRUE;
 }
 
-JSBool CTimerProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, jsval id, jsval *vp )
+JSBool CTimerProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			// Character timers (PC and NPC)
 			case TIMER_TIMEOUT:			*vp = INT_TO_JSVAL( tCHAR_TIMEOUT );		break;
@@ -251,6 +341,8 @@ JSBool CTimerProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]]
 			case TIMER_FIREFIELDTICK:	*vp = INT_TO_JSVAL( tCHAR_FIREFIELDTICK );	break;
 			case TIMER_POISONFIELDTICK:	*vp = INT_TO_JSVAL( tCHAR_POISONFIELDTICK );break;
 			case TIMER_PARAFIELDTICK:	*vp = INT_TO_JSVAL( tCHAR_PARAFIELDTICK );	break;
+			case TIMER_YOUNGHEAL:		*vp = INT_TO_JSVAL( tCHAR_YOUNGHEAL );		break;
+			case TIMER_YOUNGMESSAGE:	*vp = INT_TO_JSVAL( tCHAR_YOUNGMESSAGE );	break;
 			case TIMER_MOVETIME:		*vp = INT_TO_JSVAL( tNPC_MOVETIME );		break;
 			case TIMER_SPATIMER:		*vp = INT_TO_JSVAL( tNPC_SPATIMER );		break;
 			case TIMER_SUMMONTIME:		*vp = INT_TO_JSVAL( tNPC_SUMMONTIME );		break;
@@ -275,14 +367,14 @@ JSBool CTimerProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]]
 	return JS_TRUE;
 }
 
-JSBool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
-	UI16 createEntryId = static_cast<UI16>( JSVAL_TO_INT( id ));
+	UI16 createEntryId = static_cast<UI16>( JSID_TO_INT( id ));
 
 	CreateEntry_st *myCreateEntry = Skills->FindItem( createEntryId );
 	if( myCreateEntry == nullptr )
 	{
-		Console.Error( oldstrutil::format( "Invalid create entry ID (%i)", createEntryId ));
+		ScriptError( cx, oldstrutil::format( "Invalid create entry ID (%i)", createEntryId ).c_str() );
 		*vp = JSVAL_NULL;
 		return JS_FALSE;
 	}
@@ -295,21 +387,21 @@ JSBool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsval id, 
 	return JS_TRUE;
 }
 
-JSBool CCreateEntryProps_setProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] jsval id, [[maybe_unused]] jsval *vp )
+JSBool CCreateEntryProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
 {
 	return JS_TRUE;
 }
 
-JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CreateEntry_st *gPriv = static_cast<CreateEntry_st*>( JS_GetPrivate( cx, obj ));
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
 		JSString *tString = nullptr;
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 		case CMAKE_ID:
 			*vp = INT_TO_JSVAL( gPriv->targId );
@@ -410,7 +502,7 @@ JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 	return JS_TRUE;
 }
 
-JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CItem *gPriv = static_cast<CItem *>( JS_GetPrivate( cx, obj ));
 	SERIAL TempSerial = INVALIDSERIAL;
@@ -418,10 +510,12 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 	if( !ValidateObject( gPriv ))
 		return JS_FALSE;
 
-	if( JSVAL_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_ITEM );
+
+	if( propID != 0xFFFF )
 	{
 		JSString *tString = nullptr;
-		switch( JSVAL_TO_INT( id ))
+		switch( propID )
 		{
 			case CIP_SECTIONID:
 				tString = JS_NewStringCopyZ( cx, gPriv->GetSectionId().c_str() );
@@ -476,7 +570,8 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_VISIBLE:		*vp = INT_TO_JSVAL( static_cast<UI08>( gPriv->GetVisible() ));	break;
 			case CIP_SERIAL:
 			{
-				if( !INT_FITS_IN_JSVAL( gPriv->GetSerial() ))
+				int64_t serialVal = gPriv->GetSerial();
+				if( serialVal < INT_MIN || serialVal > INT_MAX )
 				{
 					JS_NewNumberValue( cx, gPriv->GetSerial(), vp );
 				}
@@ -565,7 +660,8 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_TYPE:			*vp = INT_TO_JSVAL( static_cast<UI16>( gPriv->GetType() ));		break;
 			case CIP_MORE:
 			{
-				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MORE )))
+				int64_t moreVal = gPriv->GetTempVar( CITV_MORE );
+				if( moreVal < INT_MIN || moreVal > INT_MAX )
 				{
 					 JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MORE ), vp );
 				}
@@ -575,9 +671,49 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				}
 				break;
 			}
+			case CIP_MORE0:
+			{
+				int64_t more0Val = gPriv->GetTempVar( CITV_MORE0 );
+				if( more0Val < INT_MIN || more0Val > INT_MAX )
+				{
+					JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MORE0 ), vp );
+				}
+				else
+				{
+					*vp = INT_TO_JSVAL( gPriv->GetTempVar( CITV_MORE0 ));
+				}
+				break;
+			}
+			case CIP_MORE1:
+			{
+				int64_t more1Val = gPriv->GetTempVar( CITV_MORE1 );
+				if( more1Val < INT_MIN || more1Val > INT_MAX )
+				{
+					JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MORE1 ), vp );
+				}
+				else
+				{
+					*vp = INT_TO_JSVAL( gPriv->GetTempVar( CITV_MORE1 ));
+				}
+				break;
+			}
+			case CIP_MORE2:
+			{
+				int64_t more2Val = gPriv->GetTempVar( CITV_MORE2 );
+				if( more2Val < INT_MIN || more2Val > INT_MAX )
+				{
+					JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MORE2 ), vp );
+				}
+				else
+				{
+					*vp = INT_TO_JSVAL( gPriv->GetTempVar( CITV_MORE2 ));
+				}
+				break;
+			}
 			case CIP_MOREX:
 			{
-				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MOREX )))
+				int64_t morexVal = gPriv->GetTempVar( CITV_MOREX );
+				if( morexVal < INT_MIN || morexVal > INT_MAX )
 				{
 					JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MOREX ), vp );
 				}
@@ -589,7 +725,8 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			}
 			case CIP_MOREY:
 			{
-				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MOREY )))
+				int64_t moreyVal = gPriv->GetTempVar( CITV_MOREY );
+				if( moreyVal < INT_MIN || moreyVal > INT_MAX )
 				{
 					JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MOREY ), vp );
 				}
@@ -601,7 +738,8 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			}
 			case CIP_MOREZ:
 			{
-				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MOREZ )))
+				int64_t morezVal = gPriv->GetTempVar( CITV_MOREZ );
+				if( morezVal < INT_MIN || morezVal > INT_MAX )
 				{
 					JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MOREZ ), vp );
 				}
@@ -622,6 +760,9 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_HIDAMAGE:		*vp = INT_TO_JSVAL( gPriv->GetHiDamage() );			break;
 			case CIP_AC:			*vp = INT_TO_JSVAL( gPriv->GetArmourClass() );		break;
 			case CIP_DEF:			*vp = INT_TO_JSVAL( gPriv->GetResist( PHYSICAL ));	break;
+			case CIP_HEALTHREGENBONUS:	*vp = INT_TO_JSVAL( gPriv->GetHealthRegenBonus() );			break;
+			case CIP_STAMINAREGENBONUS:	*vp = INT_TO_JSVAL( gPriv->GetStaminaRegenBonus() );			break;
+			case CIP_MANAREGENBONUS:	*vp = INT_TO_JSVAL( gPriv->GetManaRegenBonus() );			break;
 			case CIP_RESISTCOLD:	*vp = INT_TO_JSVAL( gPriv->GetResist( COLD ));		break;
 			case CIP_RESISTHEAT:	*vp = INT_TO_JSVAL( gPriv->GetResist( HEAT ));		break;
 			case CIP_RESISTLIGHT:	*vp = INT_TO_JSVAL( gPriv->GetResist( LIGHT ));	break;
@@ -636,7 +777,22 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_DAMAGEPOISON:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( POISON ));	break;
 			case CIP_DAMAGERAIN:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( RAIN ));	break;
 			case CIP_DAMAGESNOW:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( SNOW ));	break;
+			case CIP_SWINGSPEEDINCREASE:	*vp = INT_TO_JSVAL( gPriv->GetSwingSpeedIncrease() );			break;
 			case CIP_SPEED:			*vp = INT_TO_JSVAL( gPriv->GetSpeed() );			break;
+			case CIP_DURABILITYHPBONUS:	*vp = INT_TO_JSVAL( gPriv->GetDurabilityHpBonus() );			break;
+			case CIP_LOWERSTATREQ:		*vp = INT_TO_JSVAL( gPriv->GetLowerStatReq() );			break;
+			case CIP_HEALTHLEECH:	*vp = INT_TO_JSVAL( gPriv->GetHealthLeech() );			break;
+			case CIP_STAMINALEECH:	*vp = INT_TO_JSVAL( gPriv->GetStaminaLeech() );			break;
+			case CIP_MANALEECH:		*vp = INT_TO_JSVAL( gPriv->GetManaLeech() );			break;
+			case CIP_HITCHANCE:	*vp = INT_TO_JSVAL( gPriv->GetHitChance() );			break;
+			case CIP_DEFENSECHANCE:	*vp = INT_TO_JSVAL( gPriv->GetDefenseChance() );			break;
+			case CIP_LUCK:				*vp = INT_TO_JSVAL( gPriv->GetLuck() );				break;
+			case CIP_HEALTHBONUS:		*vp = INT_TO_JSVAL( gPriv->GetHealthBonus() );			break;
+			case CIP_STAMINABONUS:		*vp = INT_TO_JSVAL( gPriv->GetStaminaBonus() );			break;
+			case CIP_MANABONUS:		*vp = INT_TO_JSVAL( gPriv->GetManaBonus() );			break;
+			case CIP_ARTIFACTRARITY:		*vp = INT_TO_JSVAL( gPriv->GetArtifactRarity() );			break;
+			case CIP_DAMAGEINCREASE:		*vp = INT_TO_JSVAL( gPriv->GetDamageIncrease() );			break;
+
 			case CIP_NAME2:
 				tString = JS_NewStringCopyZ( cx, gPriv->GetName2().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
@@ -667,12 +823,15 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_RANK:			*vp = INT_TO_JSVAL( gPriv->GetRank() );			break;
 			case CIP_CREATOR:		*vp = INT_TO_JSVAL( gPriv->GetCreator() );		break;
 			case CIP_POISON:		*vp = INT_TO_JSVAL( gPriv->GetPoisoned() );		break;
+			case CIP_POISONEDBY:	*vp = INT_TO_JSVAL( gPriv->GetPoisonedBy() );	break;
+			case CIP_POISONCHARGES:	*vp = INT_TO_JSVAL( gPriv->GetPoisonCharges() );	break;
 			case CIP_DIR:			*vp = INT_TO_JSVAL( gPriv->GetDir() );			break;
 			case CIP_WIPABLE:		*vp = INT_TO_JSVAL( gPriv->IsWipeable() );		break;
 			case CIP_BUYVALUE:		*vp = INT_TO_JSVAL( gPriv->GetBuyValue() );		break;
 			case CIP_SELLVALUE:		*vp = INT_TO_JSVAL( gPriv->GetSellValue() );	break;
 			case CIP_VENDORPRICE:	*vp = INT_TO_JSVAL( gPriv->GetVendorPrice() );	break;
 			case CIP_RESTOCK:		*vp = INT_TO_JSVAL( gPriv->GetRestock() );		break;
+			case CIP_GOOD:			*vp = INT_TO_JSVAL( gPriv->GetGood() );			break;
 			case CIP_DIVINELOCK:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsDivineLocked() ); break;
 			case CIP_WEIGHT:		*vp = INT_TO_JSVAL( gPriv->GetWeight() );		break;
 			case CIP_WEIGHTMAX:		*vp = INT_TO_JSVAL( gPriv->GetWeightMax() );	break;
@@ -690,7 +849,12 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				tString = JS_NewStringCopyZ( cx, gPriv->GetEvent().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
 				break;
-			case CIP_TEMPTIMER:		*vp = INT_TO_JSVAL( gPriv->GetTempTimer() / 1000 );		break;
+			case CIP_TEMPLASTTRADED:
+				JS_NewNumberValue( cx,  gPriv->GetTempLastTraded(), vp );
+				break;
+			case CIP_TEMPTIMER:
+				JS_NewNumberValue( cx, gPriv->GetTempTimer(), vp );
+				break;
 			case CIP_SHOULDSAVE:	*vp = BOOLEAN_TO_JSVAL( gPriv->ShouldSave() );			break;
 			case CIP_ISNEWBIE:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsNewbie() );			break;
 			case CIP_ISDISPELLABLE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsDispellable() );		break;
@@ -709,6 +873,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_ISMETALTYPE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsMetalType() );			break;
 			case CIP_ISLEATHERTYPE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsLeatherType() );		break;
 			case CIP_CANBELOCKEDDOWN:	*vp = BOOLEAN_TO_JSVAL( gPriv->CanBeLockedDown() );	break;
+			case CIP_TITHING:		*vp = INT_TO_JSVAL( gPriv->GetTithing() );					break;
 			case CIP_ISCONTTYPE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsContType() );			break;
 			case CIP_CARVESECTION:	*vp = INT_TO_JSVAL( gPriv->GetCarve() );				break;
 			case CIP_AMMOID:		*vp = INT_TO_JSVAL( gPriv->GetAmmoId() );				break;
@@ -732,8 +897,15 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				}
 				break;
 			}
-			case CIP_SPAWNSERIAL:	*vp = INT_TO_JSVAL( gPriv->GetSpawn() );				break;
+			case CIP_SPAWNSERIAL:
+				JS_NewNumberValue( cx, gPriv->GetSpawn(), vp );
+				break;
+			case CIP_ORIGIN:
+				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( gPriv->GetOrigin() )).c_str() );
+				*vp = STRING_TO_JSVAL( tString );
+				break;
 			case CIP_ISITEMHELD:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsHeldOnCursor() );		break;
+			case CIP_STEALABLE:		*vp = INT_TO_JSVAL( gPriv->GetStealable() );				break;
 
 				// The following entries are specifically for CSpawnItem objects
 			case CIP_SPAWNSECTION:
@@ -1000,6 +1172,16 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 					*vp = JSVAL_NULL;
 				}
 				break;
+			case CIP_MOVETYPE:
+				if( gPriv->GetObjType() == OT_BOAT )
+				{
+					*vp = INT_TO_JSVAL(( static_cast<CBoatObj *>( gPriv )->GetMoveType() ));
+				}
+				else
+				{
+					*vp = JSVAL_NULL;
+				}
+				break;
 			default:
 				break;
 		}
@@ -1007,17 +1189,19 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 	return JS_TRUE;
 }
 
-JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CItemProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
 {
 	CItem *gPriv = static_cast<CItem *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( gPriv ))
 		return JS_FALSE;
 
 	JSEncapsulate encaps( cx, vp );
-	if( JSVAL_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_ITEM );
+
+	if( propID != 0xFFFF )
 	{
 		TIMERVAL newTime;
-		switch( JSVAL_TO_INT( id ))
+		switch( propID )
 		{
 			case CIP_SECTIONID:		gPriv->SetSectionId( encaps.toString() );					break;
 			case CIP_NAME:			gPriv->SetName( encaps.toString() );						break;
@@ -1050,7 +1234,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				cScript *toExecute	= JSMapping->GetScript( scriptId );
 				if( toExecute == nullptr )
 				{
-					Console.Error( oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", oldstrutil::number( scriptId ).c_str() ));
+					ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
 				}
 				else
 				{
@@ -1067,7 +1251,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 					cScript *toExecute	= JSMapping->GetScript( scriptId );
 					if( toExecute == nullptr )
 					{
-						Console.Error( oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", oldstrutil::number( scriptId ).c_str() ));
+						ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
 					}
 					else
 					{
@@ -1125,6 +1309,60 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				else
 				{
 					gPriv->SetTempVar( CITV_MORE, encaps.toInt() );
+				}
+				break;
+			}
+			case CIP_MORE0:
+			{
+				auto sEncaps = encaps.toString();
+				sEncaps = oldstrutil::trim( oldstrutil::removeTrailing( sEncaps, "//" ));
+				auto encapsSections = oldstrutil::sections( sEncaps, " " );
+				if( encapsSections.size() >= 4 )
+				{
+					gPriv->SetTempVar( CITV_MORE0, 1, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[0], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE0, 2, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[1], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE0, 3, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[2], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE0, 4, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[3], "//" )), nullptr, 0 )));
+				}
+				else
+				{
+					gPriv->SetTempVar( CITV_MORE0, encaps.toInt() );
+				}
+				break;
+			}
+			case CIP_MORE1:
+			{
+				auto sEncaps = encaps.toString();
+				sEncaps = oldstrutil::trim( oldstrutil::removeTrailing( sEncaps, "//" ));
+				auto encapsSections = oldstrutil::sections( sEncaps, " " );
+				if( encapsSections.size() >= 4 )
+				{
+					gPriv->SetTempVar( CITV_MORE1, 1, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[0], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE1, 2, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[1], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE1, 3, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[2], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE1, 4, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[3], "//" )), nullptr, 0 )));
+				}
+				else
+				{
+					gPriv->SetTempVar( CITV_MORE1, encaps.toInt() );
+				}
+				break;
+			}
+			case CIP_MORE2:
+			{
+				auto sEncaps = encaps.toString();
+				sEncaps = oldstrutil::trim( oldstrutil::removeTrailing( sEncaps, "//" ));
+				auto encapsSections = oldstrutil::sections( sEncaps, " " );
+				if( encapsSections.size() >= 4 )
+				{
+					gPriv->SetTempVar( CITV_MORE2, 1, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[0], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE2, 2, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[1], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE2, 3, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[2], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE2, 4, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[3], "//" )), nullptr, 0 )));
+				}
+				else
+				{
+					gPriv->SetTempVar( CITV_MORE2, encaps.toInt() );
 				}
 				break;
 			}
@@ -1191,17 +1429,24 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_ITEMSINSIDE:																break;
 			case CIP_DECAYABLE:		gPriv->SetDecayable( encaps.toBool() );				 		break;
 			case CIP_DECAYTIME:
-				newTime = encaps.toInt();
-				if( newTime != 0 )
+			{
+				jsdouble newTime_double;
+				JS_ValueToNumber( cx, *vp, &newTime_double );
+				newTime = 0;
+				if( newTime_double != 0 )
 				{
-					newTime = BuildTimeValue( newTime );
+					newTime = BuildTimeValue( static_cast<R64>( newTime_double ));
 				}
 				gPriv->SetDecayTime( newTime );
 				break;
+			}
 			case CIP_LODAMAGE:		gPriv->SetLoDamage( static_cast<SI16>( encaps.toInt() ));			break;
 			case CIP_HIDAMAGE:		gPriv->SetHiDamage( static_cast<SI16>( encaps.toInt() ));			break;
 			case CIP_AC:			gPriv->SetArmourClass( static_cast<UI08>( encaps.toInt() ));		break;
 			case CIP_DEF:			gPriv->SetResist( static_cast<UI16>( encaps.toInt() ), PHYSICAL );	break;
+			case CIP_HEALTHREGENBONUS:	gPriv->SetHealthRegenBonus( static_cast<SI16>( encaps.toInt() ));	break;
+			case CIP_STAMINAREGENBONUS:	gPriv->SetStaminaRegenBonus( static_cast<SI16>( encaps.toInt() ));	break;
+			case CIP_MANAREGENBONUS:	gPriv->SetManaRegenBonus( static_cast<SI16>( encaps.toInt() ));	break;
 			case CIP_RESISTCOLD:	gPriv->SetResist( static_cast<UI16>( encaps.toInt() ), COLD );		break;
 			case CIP_RESISTHEAT:	gPriv->SetResist( static_cast<UI16>( encaps.toInt() ), HEAT );		break;
 			case CIP_RESISTLIGHT:	gPriv->SetResist( static_cast<UI16>( encaps.toInt() ), LIGHT );		break;
@@ -1217,6 +1462,19 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_DAMAGERAIN:	gPriv->SetWeatherDamage( RAIN, encaps.toBool() );			break;
 			case CIP_DAMAGESNOW:	gPriv->SetWeatherDamage( SNOW, encaps.toBool() );			break;
 			case CIP_SPEED:			gPriv->SetSpeed( static_cast<UI08>( encaps.toInt() ));		break;
+			case CIP_LOWERSTATREQ:	gPriv->SetLowerStatReq( static_cast<SI16>( encaps.toInt() ));	break;
+			case CIP_SWINGSPEEDINCREASE:	gPriv->SetSwingSpeedIncrease( static_cast<SI16>( encaps.toInt() ));	break;
+			case CIP_HEALTHLEECH:	gPriv->SetHealthLeech( static_cast<SI16>( encaps.toInt() ));	break;
+			case CIP_STAMINALEECH:	gPriv->SetStaminaLeech( static_cast<SI16>( encaps.toInt() ));	break;
+			case CIP_MANALEECH:		gPriv->SetManaLeech( static_cast<SI16>( encaps.toInt() ));	break;
+			case CIP_HITCHANCE:	gPriv->SetHitChance( static_cast<SI16>( encaps.toInt() ));	break;
+			case CIP_DEFENSECHANCE:	gPriv->SetDefenseChance( static_cast<SI16>( encaps.toInt() ));	break;
+			case CIP_LUCK:			gPriv->SetLuck( static_cast<SI16>( encaps.toInt() ));		break;
+			case CIP_HEALTHBONUS:		gPriv->SetHealthBonus( static_cast<SI16>( encaps.toInt() ));	break;
+			case CIP_STAMINABONUS:		gPriv->SetStaminaBonus( static_cast<SI16>( encaps.toInt() ));	break;
+			case CIP_MANABONUS:		gPriv->SetManaBonus( static_cast<SI16>( encaps.toInt() ));	break;
+			case CIP_ARTIFACTRARITY:	gPriv->SetArtifactRarity( static_cast<SI16>( encaps.toInt() ));	break;
+			case CIP_DURABILITYHPBONUS:	gPriv->SetDurabilityHpBonus( static_cast<SI16>( encaps.toInt() ));	break;
 			case CIP_NAME2:			gPriv->SetName2( encaps.toString() );						break;
 			case CIP_RACE:			gPriv->SetRace( static_cast<RACEID>( encaps.toInt() ));		break;
 			case CIP_MAXHP:			gPriv->SetMaxHP( static_cast<SI16>( encaps.toInt() ));		break;
@@ -1225,12 +1483,15 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_RANK:			gPriv->SetRank( static_cast<SI08>( encaps.toInt() ));		break;
 			case CIP_CREATOR:		gPriv->SetCreator( static_cast<SERIAL>( encaps.toInt() ));	break;
 			case CIP_POISON:		gPriv->SetPoisoned( static_cast<UI08>( encaps.toInt() ));	break;
+			case CIP_POISONEDBY:	gPriv->SetPoisonedBy( static_cast<UI32>( encaps.toInt() ));	break;
+			case CIP_POISONCHARGES:	gPriv->SetPoisonCharges( static_cast<UI16>( encaps.toInt() ));	break;
 			case CIP_DIR:			gPriv->SetDir( static_cast<SI16>( encaps.toInt() ));		break;
 			case CIP_WIPABLE:		gPriv->SetWipeable( encaps.toBool() );						break;
 			case CIP_BUYVALUE:		gPriv->SetBuyValue( static_cast<UI32>( encaps.toInt() ));	break;
 			case CIP_SELLVALUE:		gPriv->SetSellValue( static_cast<UI32>( encaps.toInt() ));	break;
 			case CIP_VENDORPRICE:	gPriv->SetVendorPrice( static_cast<UI32>( encaps.toInt() ));break;
 			case CIP_RESTOCK:		gPriv->SetRestock( static_cast<UI16>( encaps.toInt() ));	break;
+			case CIP_GOOD:			gPriv->SetGood( static_cast<UI16>( encaps.toInt() ));		break;
 			case CIP_DIVINELOCK:	gPriv->SetDivineLock( encaps.toBool() );					break;
 			case CIP_WEIGHT:		gPriv->SetWeight( static_cast<SI32>( encaps.toInt() ));		break;
 			case CIP_WEIGHTMAX:		gPriv->SetWeightMax( static_cast<SI32>( encaps.toInt() ));	break;
@@ -1242,12 +1503,30 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_CORPSE:		gPriv->SetCorpse( encaps.toBool() );						break;
 			case CIP_DESC:			gPriv->SetDesc( encaps.toString() );						break;
 			case CIP_EVENT:			gPriv->SetEvent( encaps.toString() );						break;
+			case CIP_TEMPLASTTRADED:
+			{
+				jsdouble newTime_double;
+				JS_ValueToNumber( cx, *vp, &newTime_double );
+				newTime = 0;
+				if( newTime_double != 0 )
+				{
+					newTime = BuildTimeValue( static_cast<R64>( newTime_double ));
+				}
+				gPriv->SetTempLastTraded( newTime );
+				break;
+			}
 			case CIP_TEMPTIMER:
-				newTime = encaps.toInt();
-				if( newTime != 0 )
-					newTime = BuildTimeValue( newTime );
+			{
+				jsdouble newTime_double;
+				JS_ValueToNumber( cx, *vp, &newTime_double );
+				newTime = 0;
+				if( newTime_double != 0 )
+				{
+					newTime = BuildTimeValue( static_cast<R64>( newTime_double ));
+				}
 				gPriv->SetTempTimer( newTime );
 				break;
+			}
 			case CIP_SHOULDSAVE:	gPriv->ShouldSave( encaps.toBool() );						break;
 			case CIP_ISNEWBIE:		gPriv->SetNewbie( encaps.toBool() );						break;
 			case CIP_ISDISPELLABLE:	gPriv->SetDispellable( encaps.toBool() );					break;
@@ -1269,7 +1548,9 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_MAXRANGE:		gPriv->SetMaxRange( static_cast<UI08>( encaps.toInt() ));	break;
 			case CIP_BASERANGE:		gPriv->SetBaseRange( static_cast<UI08>( encaps.toInt() ));	break;
 			case CIP_REGION:		gPriv->SetRegion( static_cast<UI16>( encaps.toInt() ));		break;
+			case CIP_ORIGIN:		gPriv->SetOrigin( cwmWorldState->ServerData()->EraStringToEnum( encaps.toString() ));						break;
 			case CIP_ISITEMHELD:	gPriv->SetHeldOnCursor( encaps.toBool() );					break;
+			case CIP_STEALABLE:		gPriv->SetStealable( static_cast<UI08>( encaps.toInt() ));	break;
 
 				// The following entries are specifically for CSpawnItem objects
 			case CIP_SPAWNSECTION:
@@ -1387,26 +1668,34 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 					( static_cast<CMultiObj *>( gPriv ))->SetBanY( static_cast<SI16>( encaps.toInt() ));
 				}
 				break;
+			case CIP_MOVETYPE:
+				if( gPriv->GetObjType() == OT_BOAT )
+				{
+					( static_cast<CBoatObj *>( gPriv ))->SetMoveType( static_cast<SI08>( encaps.toInt() ));
+				}
+				break;
 			default:
 				break;
 		}
 	}
+
 	return JS_TRUE;
 }
 
-JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CChar *gPriv = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( gPriv ))
 		return JS_FALSE;
 
-	if( JSVAL_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_CHAR );
+	if( propID != 0xFFFF )
 	{
 		CItem *TempItem			= nullptr;
 		JSObject *TempObject	= nullptr;
 		JSString *tString = nullptr;
-		switch( JSVAL_TO_INT( id ))
+		switch( propID )
 		{
 			case CCP_ACCOUNTNUM:	*vp = INT_TO_JSVAL( gPriv->GetAccountNum() );	break;
 			case CCP_ACCOUNT:
@@ -1424,18 +1713,29 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				break;
 			}
 			case CCP_CREATEDON: *vp = INT_TO_JSVAL( gPriv->GetCreatedOn() );		break;
+			case CCP_PLAYTIME: *vp = INT_TO_JSVAL( gPriv->GetPlayTime() );		break;
 			case CCP_NAME:
 				{
 					CSocket *tSock = nullptr;
-					//JSObject *tempSock = JSEngine->AcquireObject( IUE_SOCK, tSock, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
 
-					std::string mCharName = GetNpcDictName( gPriv, tSock );
+					std::string mCharName = GetNpcDictName( gPriv, tSock, NRS_SCRIPT );
 					std::string convertedString = oldstrutil::stringToWstringToString( mCharName );
 
 					tString = JS_NewStringCopyZ( cx, convertedString.c_str() );
 					*vp = STRING_TO_JSVAL( tString );
 					break;
 				}
+			case CCP_ORIGNAME:
+			{
+				[[maybe_unused]] CSocket *tSock = nullptr;
+
+				std::string mCharName = gPriv->GetOrgName();
+				std::string convertedString = oldstrutil::stringToWstringToString( mCharName );
+
+				tString = JS_NewStringCopyZ( cx, convertedString.c_str() );
+				*vp = STRING_TO_JSVAL( tString );
+				break;
+			}
 			case CCP_TITLE:
 				tString = JS_NewStringCopyZ( cx, gPriv->GetTitle().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
@@ -1488,14 +1788,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_VISIBLE:		*vp = INT_TO_JSVAL( static_cast<UI08>( gPriv->GetVisible() ));	break;
 			case CCP_SERIAL:
 			{
-				if( !INT_FITS_IN_JSVAL( gPriv->GetSerial() ))
-				{
-					JS_NewNumberValue( cx, gPriv->GetSerial(), vp );
-				}
-				else
-				{
-					*vp = INT_TO_JSVAL( gPriv->GetSerial() );
-				}
+				JS_NewNumberValue( cx, gPriv->GetSerial(), vp );
 				break;
 			}
 			case CCP_HEALTH:		*vp = INT_TO_JSVAL( gPriv->GetHP() );				break;
@@ -1587,6 +1880,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_KARMA:			*vp = INT_TO_JSVAL( gPriv->GetKarma() );				break;
 			case CCP_ATTACK:		*vp = INT_TO_JSVAL( Combat->CalcAttackPower( gPriv, true ));	break;
 			case CCP_CANATTACK:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetCanAttack() );		break;
+			case CCP_KARMALOCK:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetKarmaLock() );		break;
 			case CCP_FLEEAT:		*vp = INT_TO_JSVAL( gPriv->GetFleeAt() );				break;
 			case CCP_REATTACKAT:	*vp = INT_TO_JSVAL( gPriv->GetReattackAt() );			break;
 			case CCP_BRKPEACE:		*vp = INT_TO_JSVAL( gPriv->GetBrkPeaceChance() );		break;
@@ -1653,6 +1947,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				}
 				break;
 			}
+			case CCP_HASSTOLEN:		*vp = BOOLEAN_TO_JSVAL( gPriv->HasStolen() );	break;
 			case CCP_CRIMINAL:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsCriminal() );	break;
 			case CCP_MURDERER:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsMurderer() );	break;
 			case CCP_INNOCENT:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsInnocent() );	break;
@@ -1697,6 +1992,13 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				}
 				break;
 			}
+			case CCP_HEALTHREGENBONUS:		*vp = INT_TO_JSVAL( gPriv->GetHealthRegenBonus() );			break;
+			case CCP_STAMINAREGENBONUS:		*vp = INT_TO_JSVAL( gPriv->GetStaminaRegenBonus() );			break;
+			case CCP_MANAREGENBONUS:			*vp = INT_TO_JSVAL( gPriv->GetManaRegenBonus() );			break;
+			case CCP_ORIGIN:
+				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( gPriv->GetOrigin() )).c_str() );
+				*vp = STRING_TO_JSVAL( tString );
+				break;
 			case CCP_TOWN:
 			{
 				UI16 tempTownId	= 0xFF;
@@ -1733,6 +2035,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				}
 				break;
 			}
+			case CCP_GUILDNUMBER: *vp = INT_TO_JSVAL( gPriv->GetGuildNumber() );		break;
 			case CCP_SOCKET:
 			{ // So we can declare the variables here
 				CSocket *tSock = gPriv->GetSocket();
@@ -1750,7 +2053,9 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_ISCHAR:		*vp = JSVAL_TRUE;									break;
 			case CCP_ISITEM:		*vp = JSVAL_FALSE;									break;
 			case CCP_ISSPAWNER:		*vp = JSVAL_FALSE;									break;
-			case CCP_SPAWNSERIAL:	*vp = INT_TO_JSVAL( gPriv->GetSpawn() );			break;
+			case CCP_SPAWNSERIAL:
+				JS_NewNumberValue( cx, gPriv->GetSpawn(), vp );
+				break;
 			case CCP_MAXHP:			*vp = INT_TO_JSVAL( gPriv->GetMaxHP() );			break;
 			case CCP_MAXSTAMINA:	*vp = INT_TO_JSVAL( gPriv->GetMaxStam() );			break;
 			case CCP_MAXMANA:		*vp = INT_TO_JSVAL( gPriv->GetMaxMana() );			break;
@@ -1761,6 +2066,8 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_FX2:			*vp = INT_TO_JSVAL( gPriv->GetFx( 1 ));				break;
 			case CCP_FY2:			*vp = INT_TO_JSVAL( gPriv->GetFy( 1 ));				break;
 			case CCP_FZ:			*vp = INT_TO_JSVAL( gPriv->GetFz() );				break;
+			case CCP_PATHTARGX:		*vp = INT_TO_JSVAL( gPriv->GetPathTargX() );		break;
+			case CCP_PATHTARGY:		*vp = INT_TO_JSVAL( gPriv->GetPathTargY() );		break;
 			case CCP_ISONHORSE:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsOnHorse() );		break;
 			case CCP_ISFLYING:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsFlying() );		break;
 			case CCP_ISGUARDED:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsGuarded() );		break;
@@ -1791,6 +2098,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_TINTELLIGENCE:	*vp = INT_TO_JSVAL( gPriv->GetIntelligence2() );	break;
 			case CCP_TSTRENGTH:		*vp = INT_TO_JSVAL( gPriv->GetStrength2() );		break;
 			case CCP_POISON:		*vp = INT_TO_JSVAL( gPriv->GetPoisoned() );			break;
+			case CCP_POISONEDBY:	*vp = INT_TO_JSVAL( gPriv->GetPoisonedBy() );		break;
 			case CCP_LIGHTLEVEL:	*vp = INT_TO_JSVAL( gPriv->GetFixedLight() );		break;
 			case CCP_VULNERABLE:	*vp = BOOLEAN_TO_JSVAL( !gPriv->IsInvulnerable() );	break;
 			case CCP_HUNGERSTATUS:	*vp = BOOLEAN_TO_JSVAL( gPriv->WillHunger() );		break;
@@ -1801,12 +2109,16 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_ATWAR:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsAtWar() );			break;
 			case CCP_SPELLCAST:		*vp = INT_TO_JSVAL( gPriv->GetSpellCast() );		break;
 			case CCP_ISCASTING:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsCasting() || gPriv->IsJSCasting() );		break;
-			case CCP_PRIV:			*vp = INT_TO_JSVAL( gPriv->GetPriv() );				break;
+			case CCP_PRIV:			JS_NewNumberValue( cx, gPriv->GetPriv(), vp ); 		break;
 			case CCP_TOWNPRIV:		*vp = INT_TO_JSVAL( gPriv->GetTownPriv() );			break;
 			case CCP_GUILDTITLE:
 				tString = JS_NewStringCopyZ( cx, gPriv->GetGuildTitle().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
 				break;
+			case CCP_HAIRSTYLE:		*vp = INT_TO_JSVAL( gPriv->GetHairStyle() );		break;
+			case CCP_HAIRCOLOUR:	*vp = INT_TO_JSVAL( gPriv->GetHairColour() );		break;
+			case CCP_BEARDSTYLE:	*vp = INT_TO_JSVAL( gPriv->GetBeardStyle() );		break;
+			case CCP_BEARDCOLOUR:	*vp = INT_TO_JSVAL( gPriv->GetBeardColour() );		break;
 			case CCP_FONTTYPE:		*vp = INT_TO_JSVAL( gPriv->GetFontType() );			break;
 			case CCP_SAYCOLOUR:		*vp = INT_TO_JSVAL( gPriv->GetSayColour() );		break;
 			case CCP_EMOTECOLOUR:	*vp = INT_TO_JSVAL( gPriv->GetEmoteColour() );		break;
@@ -1833,16 +2145,28 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				JS_SetPrivate( cx, TempObject, gPriv );
 				*vp	= OBJECT_TO_JSVAL( TempObject );
 				break;
+			case CCP_SKILLCAP:
+				TempObject = JS_NewObject( cx, &UOXSkillsCap_class, nullptr, obj );
+				JS_DefineProperties( cx, TempObject, CSkillsProps );
+				JS_SetPrivate( cx, TempObject, gPriv );
+				*vp = OBJECT_TO_JSVAL( TempObject );
+				break;
 			case CCP_DEATHS:		*vp = INT_TO_JSVAL( gPriv->GetDeaths() );					break;
 			case CCP_OWNERCOUNT:	*vp = INT_TO_JSVAL( static_cast<UI08>( gPriv->GetOwnerCount() ));		break;
 			case CCP_NEXTACT:		*vp = INT_TO_JSVAL( gPriv->GetNextAct() );					break;
 			case CCP_PETCOUNT:		*vp = INT_TO_JSVAL( static_cast<UI08>( gPriv->GetPetList()->Num() ));	break;
+			case CCP_FOLLOWERCOUNT:		*vp = INT_TO_JSVAL( static_cast<UI08>( gPriv->GetFollowerList()->Num() ));	break;
 			case CCP_OWNEDITEMSCOUNT:	*vp = INT_TO_JSVAL( gPriv->GetOwnedItems()->size() );	break;
 			case CCP_CELL:			*vp = INT_TO_JSVAL( gPriv->GetCell() );						break;
 			case CCP_ALLMOVE:		*vp = BOOLEAN_TO_JSVAL( gPriv->AllMove() );					break;
 			case CCP_HOUSEICONS:	*vp = BOOLEAN_TO_JSVAL( gPriv->ViewHouseAsIcon() );			break;
 			case CCP_SPATTACK:		*vp = INT_TO_JSVAL( gPriv->GetSpAttack() );					break;
 			case CCP_SPDELAY:		*vp = INT_TO_JSVAL( gPriv->GetSpDelay() );					break;
+			case CCP_SWINGSPEEDINCREASE:	*vp = INT_TO_JSVAL( gPriv->GetSwingSpeedIncrease() );		break;
+			case CCP_LUCK:			*vp = INT_TO_JSVAL( gPriv->GetLuck() );						break;
+			case CCP_DAMAGEINCREASE:*vp = INT_TO_JSVAL( gPriv->GetDamageIncrease() );			break;
+			case CCP_HITCHANCE:		*vp = INT_TO_JSVAL( gPriv->GetHitChance() );				break;
+			case CCP_DEFENSECHANCE:	*vp = INT_TO_JSVAL( gPriv->GetDefenseChance() );			break;
 			case CCP_AITYPE:		*vp = INT_TO_JSVAL( gPriv->GetNpcAiType() );				break;
 			case CCP_SPLIT:			*vp = INT_TO_JSVAL( gPriv->GetSplit() );					break;
 			case CCP_SPLITCHANCE:	*vp = INT_TO_JSVAL( gPriv->GetSplitChance() );				break;
@@ -1853,6 +2177,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_ISJAILED:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsJailed() );				break;
 			case CCP_MAGICREFLECT:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsTempReflected() );			break;
 			case CCP_PERMMAGICREFLECT:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsPermReflected() );		break;
+			case CCP_HIDEFAMEKARMATITLE: *vp = BOOLEAN_TO_JSVAL( gPriv->HideFameKarmaTitle() );	break;
 			case CCP_TAMED:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsTamed() );					break;
 			case CCP_TAMEDHUNGERRATE: *vp = INT_TO_JSVAL( gPriv->GetTamedHungerRate() );		break;
 			case CCP_TAMEDTHIRSTRATE: *vp = INT_TO_JSVAL( gPriv->GetTamedThirstRate() );		break;
@@ -1872,9 +2197,11 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_POISONSTRENGTH:	*vp = INT_TO_JSVAL( gPriv->GetPoisonStrength() );		break;
 			case CCP_ISPOLYMORPHED:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsPolymorphed() );			break;
 			case CCP_ISINCOGNITO:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsIncognito() );				break;
+			case CCP_ISDISGUISED:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsDisguised() );				break;
 			case CCP_CANRUN:		*vp = BOOLEAN_TO_JSVAL( gPriv->CanRun() );					break;
 			case CCP_ISMEDITATING:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsMeditating() );			break;
 			case CCP_ISGM:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsGM() );					break;
+			case CCP_TITHING:		*vp = INT_TO_JSVAL( gPriv->GetTithing() );					break;
 			case CCP_CANBROADCAST:	*vp = BOOLEAN_TO_JSVAL( gPriv->CanBroadcast() );			break;
 			case CCP_SINGCLICKSER:	*vp = BOOLEAN_TO_JSVAL( gPriv->GetSingClickSer() );			break;
 			case CCP_NOSKILLTITLES:	*vp = BOOLEAN_TO_JSVAL( gPriv->NoSkillTitles() );			break;
@@ -1885,12 +2212,13 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_ISDISPELLABLE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsDispellable() );			break;
 			case CCP_NONEEDREAGS:	*vp = BOOLEAN_TO_JSVAL( gPriv->NoNeedReags() );				break;
 			case CCP_ISANIMAL:		*vp	= BOOLEAN_TO_JSVAL( cwmWorldState->creatures[gPriv->GetId()].IsAnimal() ); break;
+			case CCP_ISPACKANIMAL:	*vp	= BOOLEAN_TO_JSVAL( cwmWorldState->creatures[gPriv->GetId()].IsPackAnimal() ); break;
 			case CCP_ISHUMAN:		*vp	= BOOLEAN_TO_JSVAL( cwmWorldState->creatures[gPriv->GetId()].IsHuman() ); break;
 			case CCP_ORGID:			*vp = INT_TO_JSVAL( gPriv->GetOrgId() );					break;
 			case CCP_ORGSKIN:		*vp = INT_TO_JSVAL( gPriv->GetOrgSkin() );					break;
 			case CCP_NPCFLAG:		*vp = INT_TO_JSVAL( static_cast<SI32>(gPriv->GetNPCFlag() ));break;
+			case CCP_NPCGUILD:		*vp = INT_TO_JSVAL( gPriv->GetNPCGuild() );					break;
 			case CCP_ISSHOP:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsShop() );					break;
-			case CCP_ATTACKFIRST:	*vp = BOOLEAN_TO_JSVAL( gPriv->DidAttackFirst() );			break;
 			case CCP_MAXLOYALTY:	*vp = INT_TO_JSVAL( gPriv->GetMaxLoyalty() );				break;
 			case CCP_LOYALTY:		*vp = INT_TO_JSVAL( gPriv->GetLoyalty() );					break;
 			case CCP_LOYALTYRATE:
@@ -1960,29 +2288,43 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				break;
 			case CCP_HOUSESOWNED:		*vp = INT_TO_JSVAL( gPriv->CountHousesOwned( false ));	break;
 			case CCP_HOUSESCOOWNED:		*vp = INT_TO_JSVAL( gPriv->CountHousesOwned( true ));	break;
+			case CCP_LASTON:
+			{
+				auto lastOnString = gPriv->GetLastOn();
+				tString = JS_NewStringCopyZ( cx, lastOnString.c_str() );
+				*vp = STRING_TO_JSVAL( tString );
+				break;
+			}
+			case CCP_LASTONSECS:
+				JS_NewNumberValue( cx, gPriv->GetLastOnSecs(), vp );
+				break;
 			default:
 				break;
 		}
 	}
+
 	return JS_TRUE;
 }
 
-JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CCharacterProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
 {
 	CChar *gPriv = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( gPriv ))
 		return JS_FALSE;
 
 	JSEncapsulate encaps( cx, vp );
+	UI16 propID = getScriptID( cx, id, JSP_CHAR );
 
-	if( JSVAL_IS_INT( id ))
+	if( propID != 0xFFFF )
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( propID )
 		{
 			case CCP_ACCOUNTNUM:	gPriv->SetAccountNum( static_cast<UI16>( encaps.toInt() ));					break;
 			case CCP_CREATEDON:		break;
+			case CCP_PLAYTIME:		gPriv->SetPlayTime( static_cast<UI32>( encaps.toInt() ));					break;
 			case CCP_SECTIONID:		gPriv->SetSectionId( encaps.toString() );									break;
 			case CCP_NAME:			gPriv->SetName( encaps.toString() );										break;
+			case CCP_ORIGNAME:		gPriv->SetOrgName( encaps.toString() );										break;
 			case CCP_TITLE:			gPriv->SetTitle( encaps.toString() );										break;
 			case CCP_X:				gPriv->SetLocation( static_cast<SI16>( encaps.toInt() ), gPriv->GetY(), gPriv->GetZ() );	break;
 			case CCP_Y:				gPriv->SetLocation( gPriv->GetX(), static_cast<SI16>( encaps.toInt() ), gPriv->GetZ() );	break;
@@ -2016,7 +2358,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				cScript *toExecute	= JSMapping->GetScript( scriptId );
 				if( toExecute == nullptr )
 				{
-					Console.Error( oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", oldstrutil::number( scriptId ).c_str() ));
+					ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
 				}
 				else
 				{
@@ -2033,7 +2375,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 					cScript *toExecute	= JSMapping->GetScript( scriptId );
 					if( toExecute == nullptr )
 					{
-						Console.Error( oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", oldstrutil::number( scriptId ).c_str() ));
+						ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
 					}
 					else
 					{
@@ -2098,6 +2440,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_HUNGER:		gPriv->SetHunger( static_cast<SI08>( encaps.toInt() ));	break;
 			case CCP_THIRST:		gPriv->SetThirst( static_cast<SI08>( encaps.toInt() ));	break;
 			case CCP_CANATTACK:		gPriv->SetCanAttack( encaps.toBool() );					break;
+			case CCP_KARMALOCK:		gPriv->SetKarmaLock( encaps.toBool() );					break;
 			case CCP_FLEEAT:		gPriv->SetFleeAt( static_cast<SI16>( encaps.toInt() ));	break;
 			case CCP_REATTACKAT:	gPriv->SetReattackAt( static_cast<SI16>( encaps.toInt() ));			break;
 			case CCP_BRKPEACE:		gPriv->SetBrkPeaceChance( encaps.toInt() );				break;
@@ -2108,6 +2451,20 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_MAXHP:			gPriv->SetFixedMaxHP( static_cast<SI16>( encaps.toInt() ));			break;
 			case CCP_MAXMANA:		gPriv->SetFixedMaxMana( static_cast<SI16>( encaps.toInt() ));		break;
 			case CCP_MAXSTAMINA:	gPriv->SetFixedMaxStam( static_cast<SI16>( encaps.toInt() ));		break;
+			case CCP_HASSTOLEN:
+			{
+				if( encaps.toBool() )
+				{
+					FlagForStealing( gPriv );
+				}
+				else
+				{
+					gPriv->HasStolen( false );
+					gPriv->SetTimer( tCHAR_STEALFLAG, 0 );
+					UpdateFlag( gPriv );
+				}
+				break;
+			}
 			case CCP_CRIMINAL:
 				if( encaps.toBool() )
 				{
@@ -2217,6 +2574,10 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_AWAKE:			gPriv->SetAwake( encaps.toBool() );						break;
 			case CCP_DIRECTION:		gPriv->SetDir( static_cast<UI08>( encaps.toInt() ));	break;
 			case CCP_REGION:		gPriv->SetRegion( static_cast<UI16>( encaps.toInt() ));	break;
+			case CCP_HEALTHREGENBONUS:	gPriv->SetHealthRegenBonus( static_cast<SI16>( encaps.toInt() ));	break;
+			case CCP_STAMINAREGENBONUS:	gPriv->SetStaminaRegenBonus( static_cast<SI16>( encaps.toInt() ));	break;
+			case CCP_MANAREGENBONUS:	gPriv->SetManaRegenBonus( static_cast<SI16>( encaps.toInt() ));	break;
+			case CCP_ORIGIN:		gPriv->SetOrigin( cwmWorldState->ServerData()->EraStringToEnum( encaps.toString() ));	break;
 			case CCP_TOWN:
 				cwmWorldState->townRegions[gPriv->GetTown()]->RemoveTownMember( *gPriv );
 				if( *vp != JSVAL_NULL )
@@ -2236,6 +2597,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 					}
 				}
 				break;
+			case CCP_GUILDNUMBER: gPriv->SetGuildNumber( static_cast<SI16>( encaps.toInt() ));	break;
 			case CCP_OLDWANDERTYPE: gPriv->SetOldNpcWander( static_cast<SI08>( encaps.toInt() )); 		break;
 			case CCP_WANDERTYPE: 	gPriv->SetNpcWander( static_cast<SI08>( encaps.toInt() ), true );	break;
 			case CCP_FX1:			gPriv->SetFx( static_cast<SI16>( encaps.toInt() ), 0 );	break;
@@ -2243,6 +2605,8 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_FX2:			gPriv->SetFx( static_cast<SI16>( encaps.toInt() ), 1 );	break;
 			case CCP_FY2:			gPriv->SetFy( static_cast<SI16>( encaps.toInt() ), 1 );	break;
 			case CCP_FZ:			gPriv->SetFz( static_cast<SI08>( encaps.toInt() ));		break;
+			case CCP_PATHTARGX:		gPriv->SetPathTargX( static_cast<UI16>( encaps.toInt() ));		break;
+			case CCP_PATHTARGY:		gPriv->SetPathTargY( static_cast<UI16>( encaps.toInt() ));		break;
 			case CCP_TDEXTERITY:	gPriv->SetDexterity2( encaps.toInt() );					break;
 			case CCP_TINTELLIGENCE:	gPriv->SetIntelligence2( encaps.toInt() );				break;
 			case CCP_TSTRENGTH:		gPriv->SetStrength2( encaps.toInt() );					break;
@@ -2277,9 +2641,13 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				gPriv->SetJSCasting( isCasting );
 			}
 				break;
-			case CCP_PRIV:			gPriv->SetPriv( static_cast<UI16>( encaps.toInt() ));			break;
+			case CCP_PRIV:			gPriv->SetPriv( static_cast<UI32>( encaps.toInt() ));			break;
 			case CCP_TOWNPRIV:		gPriv->SetTownpriv( static_cast<SI08>( encaps.toInt() ));		break;
 			case CCP_GUILDTITLE:	gPriv->SetGuildTitle( encaps.toString() );						break;
+			case CCP_HAIRSTYLE:		gPriv->SetHairStyle( static_cast<UI16>( encaps.toInt() ) );		break;
+			case CCP_HAIRCOLOUR:	gPriv->SetHairColour( static_cast<UI16>( encaps.toInt() ) );	break;
+			case CCP_BEARDSTYLE:	gPriv->SetBeardStyle( static_cast<UI16>( encaps.toInt() ) );	break;
+			case CCP_BEARDCOLOUR:	gPriv->SetBeardColour( static_cast<UI16>( encaps.toInt() ) );	break;
 			case CCP_FONTTYPE:		gPriv->SetFontType( static_cast<SI08>( encaps.toInt() ));		break;
 			case CCP_SAYCOLOUR:		gPriv->SetSayColour( static_cast<COLOUR>( encaps.toInt() ));	break;
 			case CCP_EMOTECOLOUR:	gPriv->SetEmoteColour( static_cast<COLOUR>( encaps.toInt() ));	break;
@@ -2299,6 +2667,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				break;
 			case CCP_RACEGATE:		gPriv->SetRaceGate( static_cast<RACEID>( encaps.toInt() ));	break;
 			case CCP_SKILLLOCK:																	break;
+			case CCP_SKILLCAP:																	break;
 			case CCP_DEATHS:		gPriv->SetDeaths( static_cast<UI16>( encaps.toInt() ));		break;
 			case CCP_NEXTACT:		gPriv->SetNextAct( static_cast<UI08>( encaps.toInt() ));	break;
 			case CCP_CELL:			gPriv->SetCell( static_cast<SI08>( encaps.toInt() ));		break;
@@ -2306,6 +2675,10 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_HOUSEICONS:	gPriv->SetViewHouseAsIcon( encaps.toBool() );				break;
 			case CCP_SPATTACK:		gPriv->SetSpAttack( static_cast<SI16>( encaps.toInt() ));	break;
 			case CCP_SPDELAY:		gPriv->SetSpDelay( static_cast<SI08>( encaps.toInt() ));	break;
+			case CCP_SWINGSPEEDINCREASE:	gPriv->SetSwingSpeedIncrease( static_cast<SI16>( encaps.toInt() ));		break;
+			case CCP_LUCK:			gPriv->SetLuck( static_cast<SI16>( encaps.toInt() ));		break;
+			case CCP_HITCHANCE:		gPriv->SetHitChance( static_cast<SI16>( encaps.toInt() ));	break;
+			case CCP_DEFENSECHANCE:	gPriv->SetDefenseChance( static_cast<SI16>( encaps.toInt() ));	break;
 			case CCP_AITYPE:		gPriv->SetNPCAiType( static_cast<SI16>( encaps.toInt() ));	break;
 			case CCP_SPLIT:			gPriv->SetSplit( static_cast<UI08>( encaps.toInt() ));		break;
 			case CCP_SPLITCHANCE:	gPriv->SetSplitChance( static_cast<UI08>( encaps.toInt() ));break;
@@ -2315,6 +2688,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_SQUELCH:		gPriv->SetSquelched( static_cast<UI08>( encaps.toInt() ));	break;
 			case CCP_MAGICREFLECT:	gPriv->SetTempReflected( encaps.toBool() );					break;
 			case CCP_PERMMAGICREFLECT:	gPriv->SetPermReflected( encaps.toBool() );				break;
+			case CCP_HIDEFAMEKARMATITLE: gPriv->HideFameKarmaTitle( encaps.toBool() );			break;
 			case CCP_TAMED:			gPriv->SetTamed( encaps.toBool() );							break;
 			case CCP_TAMEDHUNGERRATE: gPriv->SetTamedHungerRate( static_cast<UI16>( encaps.toInt() )); break;
 			case CCP_TAMEDTHIRSTRATE: gPriv->SetTamedThirstRate( static_cast<UI16>( encaps.toInt() )); break;
@@ -2329,9 +2703,11 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_SKILLTOPROV:	gPriv->SetProvoing( encaps.toInt() );			break;
 			case CCP_SKILLTOPEACE:	gPriv->SetPeaceing( encaps.toInt() );			break;
 			case CCP_POISON:		gPriv->SetPoisoned( static_cast<UI08>( encaps.toInt() ));			break;
+			case CCP_POISONEDBY:	gPriv->SetPoisoned( static_cast<UI32>( encaps.toInt() ));			break;
 			case CCP_POISONSTRENGTH:	gPriv->SetPoisonStrength( static_cast<UI08>( encaps.toInt() ));	break;
 			case CCP_ISPOLYMORPHED:	gPriv->IsPolymorphed( encaps.toBool() );		break;
 			case CCP_ISINCOGNITO:	gPriv->IsIncognito( encaps.toBool() );			break;
+			case CCP_ISDISGUISED:	gPriv->IsDisguised( encaps.toBool() );			break;
 			case CCP_CANRUN:		gPriv->SetRun( encaps.toBool() );				break;
 			case CCP_ISGUARDED:		gPriv->SetGuarded( encaps.toBool() );			break;
 			case CCP_GUARDING:
@@ -2350,6 +2726,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				break;
 			case CCP_ISMEDITATING:	gPriv->SetMeditating( encaps.toBool() );			break;
 			case CCP_ISGM:			gPriv->SetGM( encaps.toBool() );					break;
+			case CCP_TITHING:		gPriv->SetTithing( static_cast<SI32>( encaps.toInt() ));		break;
 			case CCP_CANBROADCAST:	gPriv->SetBroadcast( encaps.toBool() );				break;
 			case CCP_SINGCLICKSER:	gPriv->SetSingClickSer( encaps.toBool() );			break;
 			case CCP_NOSKILLTITLES:	gPriv->SetSkillTitles( encaps.toBool() );			break;
@@ -2365,6 +2742,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				gPriv->SetNPCFlag( static_cast<cNPC_FLAG>( encaps.toInt() ));
 				UpdateFlag( gPriv );
 				break;
+			case CCP_NPCGUILD:		gPriv->SetNPCGuild( static_cast<UI16>( encaps.toInt() ));	break;
 			case CCP_ISSHOP:
 				if( encaps.toBool() )
 				{
@@ -2385,7 +2763,6 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 					gPriv->Update();
 				}
 				break;
-			case CCP_ATTACKFIRST:	gPriv->SetAttackFirst( encaps.toBool() );		break;
 			case CCP_MAXLOYALTY:	gPriv->SetMaxLoyalty( static_cast<UI16>( encaps.toInt() ));	break;
 			case CCP_LOYALTY:		gPriv->SetLoyalty( static_cast<UI16>( encaps.toInt() ));	break;
 			case CCP_SHOULDSAVE:	gPriv->ShouldSave( encaps.toBool() );			break;
@@ -2406,19 +2783,22 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				break;
 		}
 	}
+
 	return JS_TRUE;
 }
 
-JSBool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CTownRegion *gPriv = static_cast<CTownRegion *>( JS_GetPrivate( cx, obj ));
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
-	if( JSVAL_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_REGION );
+
+	if( propID != 0xFFFF )
 	{
 		JSString *tString = nullptr;
-		switch( JSVAL_TO_INT( id ))
+		switch( propID )
 		{
 			case CREGP_NAME:
 				tString = JS_NewStringCopyZ( cx, gPriv->GetName().c_str() );
@@ -2452,6 +2832,7 @@ JSBool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 			case CREGP_ISSAFEZONE:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsSafeZone() );			break;
 			case CREGP_HEALTH:				*vp = INT_TO_JSVAL( gPriv->GetHealth() );				break;
 			case CREGP_ISDUNGEON:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsDungeon() );			break;
+			case CREGP_ISDISABLED:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsDisabled() );			break;
 			case CREGP_CHANCEBIGORE:		*vp = INT_TO_JSVAL( gPriv->GetChanceBigOre() );			break;
 			case CREGP_NUMOREPREFERENCES:	*vp = INT_TO_JSVAL( gPriv->GetNumOrePreferences() );	break;
 			case CREGP_POPULATION:			*vp = INT_TO_JSVAL( gPriv->GetPopulation() );			break;
@@ -2506,16 +2887,18 @@ JSBool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	}
 	return JS_TRUE;
 }
-JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CRegionProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
 {
 	CTownRegion *gPriv = static_cast<CTownRegion *>( JS_GetPrivate( cx, obj ));
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
 	JSEncapsulate encaps( cx, vp );
-	if( JSVAL_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_REGION );
+
+	if( propID != 0xFFFF )
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( propID )
 		{
 			case CREGP_NAME:				gPriv->SetName( encaps.toString() );						break;
 			case CREGP_MAYOR:				gPriv->SetMayorSerial( static_cast<UI32>( encaps.toInt() )); break;
@@ -2532,6 +2915,7 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 			case CREGP_ISSAFEZONE:			gPriv->IsSafeZone( encaps.toBool() );						break;
 			case CREGP_HEALTH:				gPriv->SetHealth( static_cast<SI16>( encaps.toInt() ));		break;
 			case CREGP_ISDUNGEON:			gPriv->IsDungeon( encaps.toBool() );						break;
+			case CREGP_ISDISABLED:			gPriv->IsDisabled( encaps.toBool() );						break;
 			case CREGP_CHANCEBIGORE:		gPriv->SetChanceBigOre( static_cast<UI08>( encaps.toInt() ));	break;
 			case CREGP_NUMGUARDS:			gPriv->SetNumGuards( static_cast<UI16>( encaps.toInt() ));	break;
 			case CREGP_SCRIPTTRIGGER:
@@ -2541,7 +2925,7 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				cScript *toExecute	= JSMapping->GetScript( scriptId );
 				if( toExecute == nullptr )
 				{
-					Console.Error( oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", oldstrutil::number( scriptId ).c_str() ));
+					ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
 				}
 				else
 				{
@@ -2558,7 +2942,7 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 					cScript *toExecute	= JSMapping->GetScript( scriptId );
 					if( toExecute == nullptr )
 					{
-						Console.Error( oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", oldstrutil::number( scriptId ).c_str() ));
+						ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
 					}
 					else
 					{
@@ -2585,19 +2969,22 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				break;
 		}
 	}
+
 	return JS_TRUE;
 }
-JSBool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CSpawnRegion *gPriv = static_cast<CSpawnRegion *>( JS_GetPrivate( cx, obj ));
 
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
-	if( JSVAL_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_SPAWNREGION );
+
+	if( propID != 0xFFFF )
 	{
 		JSString *tString = nullptr;
-		switch( JSVAL_TO_INT( id ))
+		switch( propID )
 		{
 			case CSPAWNREGP_NAME:
 				tString = JS_NewStringCopyZ( cx, gPriv->GetName().c_str() );
@@ -2654,6 +3041,7 @@ JSBool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 			case CSPAWNREGP_MAXTIME:				*vp = INT_TO_JSVAL( gPriv->GetMaxTime() );						break;
 			case CSPAWNREGP_ONLYOUTSIDE:			*vp = BOOLEAN_TO_JSVAL( gPriv->GetOnlyOutside() );				break;
 			case CSPAWNREGP_ISSPAWNER:				*vp = BOOLEAN_TO_JSVAL( gPriv->IsSpawner() );					break;
+			case CSPAWNREGP_FORCESPAWN:				*vp = BOOLEAN_TO_JSVAL( gPriv->GetForceSpawn() );				break;
 			case CSPAWNREGP_X1:						*vp = INT_TO_JSVAL( gPriv->GetX1() );							break;
 			case CSPAWNREGP_Y1:						*vp = INT_TO_JSVAL( gPriv->GetY1() );							break;
 			case CSPAWNREGP_X2:						*vp = INT_TO_JSVAL( gPriv->GetX2() );							break;
@@ -2670,7 +3058,7 @@ JSBool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 
 	return JS_TRUE;
 }
-JSBool CSpawnRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CSpawnRegionProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
 {
 	CSpawnRegion *gPriv = static_cast<CSpawnRegion *>( JS_GetPrivate( cx, obj ));
 
@@ -2678,9 +3066,11 @@ JSBool CSpawnRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, js
 		return JS_FALSE;
 
 	JSEncapsulate encaps( cx, vp );
-	if( JSVAL_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_SPAWNREGION );
+
+	if( propID != 0xFFFF )
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( propID )
 		{
 			case CSPAWNREGP_NAME:				gPriv->SetName( encaps.toString() );							break;
 			case CSPAWNREGP_ITEM:				gPriv->SetItem( encaps.toString() );							break;
@@ -2694,6 +3084,7 @@ JSBool CSpawnRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, js
 			case CSPAWNREGP_MAXTIME:			gPriv->SetMaxTime( static_cast<UI08>( encaps.toInt() ));		break;
 			case CSPAWNREGP_ONLYOUTSIDE:		gPriv->SetOnlyOutside( encaps.toBool() );						break;
 			case CSPAWNREGP_ISSPAWNER:			gPriv->IsSpawner( encaps.toBool() );							break;
+			case CSPAWNREGP_FORCESPAWN:			gPriv->SetForceSpawn( encaps.toBool() );						break;
 			case CSPAWNREGP_X1:					gPriv->SetX1( static_cast<SI16>( encaps.toInt() ));				break;
 			case CSPAWNREGP_Y1:					gPriv->SetY1( static_cast<SI16>( encaps.toInt() ));				break;
 			case CSPAWNREGP_X2:					gPriv->SetX2( static_cast<SI16>( encaps.toInt() ));				break;
@@ -2711,21 +3102,29 @@ JSBool CSpawnRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, js
 	return JS_TRUE;
 }
 
-JSBool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CGuild *gPriv = static_cast<CGuild *>( JS_GetPrivate( cx, obj ));
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
-	if( JSVAL_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_GUILD );
+
+	if( propID != 0xFFFF )
 	{
 		JSString *tString = nullptr;
-		switch( JSVAL_TO_INT( id ))
+		switch( propID )
 		{
 			case CGP_NAME:
 				tString = JS_NewStringCopyZ( cx, gPriv->Name().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
 				break;
+			case CGP_ID:
+			{
+				GUILDID guildId = GuildSys->FindGuildId( gPriv );
+				*vp = INT_TO_JSVAL( guildId );
+				break;
+			}
 			case CGP_TYPE:			*vp = INT_TO_JSVAL( gPriv->Type() );		break;
 			case CGP_MASTER:
 				CChar *gMaster;
@@ -2759,9 +3158,6 @@ JSBool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 				break;
 			case CGP_NUMMEMBERS:	*vp = INT_TO_JSVAL( gPriv->NumMembers() );	break;
 			case CGP_NUMRECRUITS:	*vp = INT_TO_JSVAL( gPriv->NumRecruits() );	break;
-			case CGP_MEMBERS:
-			case CGP_RECRUITS:
-				break;
 			case CGP_CHARTER:
 				tString = JS_NewStringCopyZ( cx, gPriv->Charter().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
@@ -2780,18 +3176,22 @@ JSBool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 	}
 	return JS_TRUE;
 }
-JSBool CGuildProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CGuildProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
 {
 	CGuild *gPriv = static_cast<CGuild *>( JS_GetPrivate( cx, obj ));
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
 	JSEncapsulate encaps( cx, vp );
-	if( JSVAL_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_GUILD );
+
+	if( propID != 0xFFFF )
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( propID )
 		{
 			case CGP_NAME:				gPriv->Name( encaps.toString() );						break;
+			case CGP_ID:
+				break;
 			case CGP_TYPE:				gPriv->Type( static_cast<GuildType>( encaps.toInt() ));	break;
 			case CGP_MASTER:
 				if( *vp != JSVAL_NULL )
@@ -2821,9 +3221,6 @@ JSBool CGuildProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 					gPriv->Stone( INVALIDSERIAL );
 				}
 				break;
-			case CGP_MEMBERS:
-			case CGP_RECRUITS:
-				break;
 			case CGP_CHARTER:			gPriv->Charter( encaps.toString() );				break;
 			case CGP_ABBREVIATION:		gPriv->Abbreviation( encaps.toString().c_str() );	break;
 			case CGP_WEBPAGE:			gPriv->Webpage( encaps.toString() );				break;
@@ -2831,36 +3228,30 @@ JSBool CGuildProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 				break;
 		}
 	}
+
 	return JS_TRUE;
 }
-JSBool CRaceProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CRaceProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CRace *gPriv = static_cast<CRace *>( JS_GetPrivate( cx, obj ));
 
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
-	if( JSVAL_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_RACE );
+
+	if( propID != 0xFFFF )
 	{
 		JSString *tString = nullptr;
 		UI08 TempRace = 0;
-		switch( JSVAL_TO_INT( id ))
+		switch( propID )
 		{
 			case CRP_ID:
-				for( TempRace = 0; TempRace < Races->Count(); ++TempRace )
-				{
-					if( Races->Race( TempRace ) == gPriv )
-					{
-						*vp = INT_TO_JSVAL( TempRace );
-						break;
-					}
-				}
+				*vp = INT_TO_JSVAL( gPriv->GetRaceID() );
 				break;
 			case CRP_NAME:
 				tString = JS_NewStringCopyZ( cx, gPriv->Name().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
-				break;
-			case CRP_WEAKTOWEATHER:
 				break;
 			case CRP_REQUIRESBEARD:		*vp = BOOLEAN_TO_JSVAL( gPriv->RequiresBeard() );		break;
 			case CRP_REQUIRESNOBEARD:	*vp = BOOLEAN_TO_JSVAL( gPriv->NoBeard() );				break;
@@ -2868,8 +3259,6 @@ JSBool CRaceProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CRP_GENDERRESTRICT:	*vp = INT_TO_JSVAL( gPriv->GenderRestriction() );		break;
 			case CRP_ARMOURCLASS:		*vp = INT_TO_JSVAL( gPriv->ArmourClassRestriction() );	break;
 			case CRP_LANGUAGESKILLMIN:	*vp = INT_TO_JSVAL( gPriv->LanguageMin() );				break;
-			case CRP_SKILLADJUSTMENT:
-				break;
 			case CRP_POISONRESISTANCE:	JS_NewNumberValue( cx, gPriv->PoisonResistance(), vp ); break;
 			case CRP_MAGICRESISTANCE:	JS_NewNumberValue( cx, gPriv->MagicResistance(), vp );  break;
 			case CRP_VISIBLEDISTANCE:	*vp = INT_TO_JSVAL( gPriv->VisibilityRange() );			break;
@@ -2881,28 +3270,26 @@ JSBool CRaceProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 	return JS_TRUE;
 }
 
-JSBool CRaceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CRaceProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
 {
 	CRace *gPriv = static_cast<CRace *>( JS_GetPrivate( cx, obj ));
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
 	JSEncapsulate encaps( cx, vp );
-	if( JSVAL_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_RACE );
+
+	if( propID != 0xFFFF )
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( propID )
 		{
 			case CRP_NAME:				gPriv->Name( encaps.toString() );						break;
-			case CRP_WEAKTOWEATHER:
-				break;
 			case CRP_REQUIRESBEARD:		gPriv->RequiresBeard( encaps.toBool() );				break;
 			case CRP_REQUIRESNOBEARD:	gPriv->NoBeard( encaps.toBool() );						break;
 			case CRP_ISPLAYERRACE:		gPriv->IsPlayerRace( encaps.toBool() );					break;
 			case CRP_GENDERRESTRICT:	gPriv->GenderRestriction( static_cast<GENDER>( encaps.toInt() ));		break;
 			case CRP_ARMOURCLASS:		gPriv->ArmourClassRestriction( static_cast<UI08>( encaps.toInt() ));	break;
 			case CRP_LANGUAGESKILLMIN:	gPriv->LanguageMin( static_cast<UI16>( encaps.toInt() ));				break;
-			case CRP_SKILLADJUSTMENT:
-				break;
 			case CRP_POISONRESISTANCE:	gPriv->PoisonResistance( encaps.toFloat() );					break;
 			case CRP_MAGICRESISTANCE:	gPriv->MagicResistance( encaps.toFloat() );						break;
 			case CRP_VISIBLEDISTANCE:	gPriv->VisibilityRange( static_cast<SI08>( encaps.toInt() ));	break;
@@ -2911,19 +3298,22 @@ JSBool CRaceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				break;
 		}
 	}
+
 	return JS_TRUE;
 }
 
-JSBool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CSocketProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
 {
 	CSocket *gPriv = static_cast<CSocket *>( JS_GetPrivate( cx, obj ));
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
 	JSEncapsulate encaps( cx, vp );
-	if( JSVAL_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_SOCK );
+
+	if( propID != 0xFFFF )
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( propID )
 		{
 			case CSOCKP_ACCOUNT:
 				break;
@@ -2961,17 +3351,12 @@ JSBool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 					gPriv->TempObj2( static_cast<CBaseObject *>( encaps.toObject() ));
 				}
 				break;
-			case CSOCKP_BUFFER:
-				break;
 			case CSOCKP_XTEXT:				gPriv->XText( encaps.toString() );						break;
+			case CSOCKP_XTEXT2:				gPriv->XText2( encaps.toString() );						break;
 			case CSOCKP_CLICKZ:				gPriv->ClickZ( static_cast<SI08>( encaps.toInt() ));	break;
-			case CSOCKP_ADDID:
-				break;
 			case CSOCKP_NEWCLIENT:			gPriv->NewClient( encaps.toBool() );					break;
 			case CSOCKP_FIRSTPACKET:		gPriv->FirstPacket( encaps.toBool() );					break;
 			case CSOCKP_CRYPTCLIENT:		gPriv->CryptClient( encaps.toBool() );					break;
-			case CSOCKP_CLIENTIP:
-				break;
 			case CSOCKP_WALKSEQUENCE:		gPriv->WalkSequence( static_cast<SI16>( encaps.toInt() ));		break;
 			case CSOCKP_CURRENTSPELLTYPE:	gPriv->CurrentSpellType( static_cast<SI08>( encaps.toInt() ));	break;
 			case CSOCKP_LOGGING:			gPriv->Logging( encaps.toBool() );								break;
@@ -2997,20 +3382,23 @@ JSBool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				break;
 		}
 	}
+
 	return JS_TRUE;
 }
 
-JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CSocket *gPriv = static_cast<CSocket *>( JS_GetPrivate( cx, obj ));
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
-	if( JSVAL_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_SOCK );
+
+	if( propID != 0xFFFF )
 	{
 		CChar *myChar;
 		JSString *tString = nullptr;
-		switch( JSVAL_TO_INT( id ))
+		switch( propID )
 		{
 			case CSOCKP_ACCOUNT:
 			{
@@ -3027,6 +3415,7 @@ JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				break;
 			}
 			case CSOCKP_CURRENTCHAR:
+			{
 				myChar = gPriv->CurrcharObj();
 				if( !ValidateObject( myChar ))
 				{
@@ -3037,7 +3426,8 @@ JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 					JSObject *myObj		= JSEngine->AcquireObject( IUE_CHAR, myChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
 					*vp = OBJECT_TO_JSVAL( myObj );
 				}
-
+				break;
+			}
 			case CSOCKP_IDLETIMEOUT:
 				break;
 			case CSOCKP_WASIDLEWARNED:		*vp = BOOLEAN_TO_JSVAL( gPriv->WasIdleWarned() );		break;
@@ -3087,19 +3477,16 @@ JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				}
 			}
 				break;
-			case CSOCKP_BUFFER:
-				break;
 			case CSOCKP_XTEXT:				
 				tString = JS_NewStringCopyZ( cx, gPriv->XText().c_str() );
 				*vp = STRING_TO_JSVAL( tString );	break;
+			case CSOCKP_XTEXT2:				
+				tString = JS_NewStringCopyZ( cx, gPriv->XText2().c_str() );
+				*vp = STRING_TO_JSVAL( tString );	break;
 			case CSOCKP_CLICKZ:				*vp = INT_TO_JSVAL( gPriv->ClickZ() );					break;
-			case CSOCKP_ADDID:
-				break;
 			case CSOCKP_NEWCLIENT:			*vp = BOOLEAN_TO_JSVAL( gPriv->NewClient() );			break;
 			case CSOCKP_FIRSTPACKET:		*vp = BOOLEAN_TO_JSVAL( gPriv->FirstPacket() );			break;
 			case CSOCKP_CRYPTCLIENT:		*vp = BOOLEAN_TO_JSVAL( gPriv->CryptClient() );			break;
-			case CSOCKP_CLIENTIP:
-				break;
 			case CSOCKP_WALKSEQUENCE:		*vp = INT_TO_JSVAL( gPriv->WalkSequence() );			break;
 			case CSOCKP_CURRENTSPELLTYPE:	*vp = INT_TO_JSVAL( gPriv->CurrentSpellType() );		break;
 			case CSOCKP_LOGGING:			*vp = BOOLEAN_TO_JSVAL( gPriv->Logging() );				break;
@@ -3162,7 +3549,7 @@ JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	return JS_TRUE;
 }
 
-JSBool CSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	JSEncapsulate myClass( cx, obj );
 	CChar *myChar = static_cast<CChar*>( myClass.toObject() );
@@ -3170,7 +3557,7 @@ JSBool CSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	if( !ValidateObject( myChar ))
 		return JS_FALSE;
 
-	UI08 skillId		= static_cast<UI08>( JSVAL_TO_INT( id ));
+	UI08 skillId		= static_cast<UI08>( JSID_TO_INT( id ));
 
 	if( myClass.ClassName() == "UOXSkills" )
 	{
@@ -3188,11 +3575,15 @@ JSBool CSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	{
 		*vp = INT_TO_JSVAL( static_cast<UI08>( myChar->GetSkillLock( skillId )));
 	}
+	else if( myClass.ClassName() == "UOXSkillsCap" )
+	{
+		*vp = INT_TO_JSVAL( myChar->GetSkillCap( skillId ));
+	}
 
 	return JS_TRUE;
 }
 
-JSBool CSkillsProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CSkillsProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
 {
 	JSEncapsulate myClass( cx, obj );
 	CChar *myChar = static_cast<CChar*>( myClass.toObject() );
@@ -3201,7 +3592,8 @@ JSBool CSkillsProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 		return JS_FALSE;
 
 	JSEncapsulate encaps( cx, vp );
-	UI08 skillId		= static_cast<UI08>( JSVAL_TO_INT( id ));
+	UI16 propID = getScriptID( cx, id, JSP_GLOBALSKILLS );
+	UI08 skillId		= static_cast<UI08>( propID );
 	SI16 newSkillValue	= static_cast<SI16>( encaps.toInt() );
 	UI08 i				= 0;
 
@@ -3263,6 +3655,20 @@ JSBool CSkillsProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 			myChar->SetSkillLock( static_cast<SkillLock>( newSkillValue ), skillId );
 		}
 	}
+	else if( myClass.ClassName() == "UOXSkillsCap" )
+	{
+		if( skillId == ALLSKILLS )
+		{
+			for( i = 0; i < ALLSKILLS; ++i )
+			{
+				myChar->SetSkillCap( newSkillValue, i );
+			}
+		}
+		else
+		{
+			myChar->SetSkillCap( newSkillValue, skillId );
+		}
+	}
 
 	if( !myChar->IsNpc() )
 	{
@@ -3282,19 +3688,20 @@ JSBool CSkillsProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 			}
 		}
 	}
+
 	return JS_TRUE;
 }
 
-JSBool CGumpDataProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CGumpDataProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	SEGumpData_st *gPriv = static_cast<SEGumpData_st *>( JS_GetPrivate( cx, obj ));
 
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CGumpData_ID:
 				*vp = INT_TO_JSVAL( gPriv->nIDs.size() );
@@ -3309,16 +3716,17 @@ JSBool CGumpDataProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval
 	return JS_TRUE;
 }
 
-JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CAccountBlock_st *myAccount = static_cast<CAccountBlock_st *>( JS_GetPrivate( cx, obj ));
 	if( myAccount == nullptr )
 		return JS_FALSE;
 
-	if( JSVAL_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_ACCOUNT );
+	if( propID != 0xFFFF )
 	{
 		JSString *tString = nullptr;
-		switch( JSVAL_TO_INT( id ))
+		switch( propID )
 		{
 			case CACCOUNT_ID:	*vp = INT_TO_JSVAL( myAccount->wAccountIndex );		break;
 			case CACCOUNT_USERNAME:
@@ -3333,8 +3741,9 @@ JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 				tString = JS_NewStringCopyZ( cx, ( myAccount->sContact ).c_str() );
 				*vp = STRING_TO_JSVAL( tString );
 				break;
-			case CACCOUNT_TIMEBAN: *vp = INT_TO_JSVAL( myAccount->wTimeBan );		break;
-			case CACCOUNT_FIRSTLOGIN: *vp = INT_TO_JSVAL( myAccount->wFirstLogin );		break;
+			case CACCOUNT_TIMEBAN: *vp = INT_TO_JSVAL( myAccount->wTimeBan );				break;
+			case CACCOUNT_FIRSTLOGIN: *vp = INT_TO_JSVAL( myAccount->wFirstLogin );			break;
+			case CACCOUNT_TOTALPLAYTIME: *vp = INT_TO_JSVAL( myAccount->wTotalPlayTime );	break;
 			case CACCOUNT_CHARACTER1:
 			{
 				if( myAccount->dwCharacters[0] != INVALIDSERIAL )
@@ -3540,7 +3949,7 @@ JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 			case CACCOUNT_CHARSLOT5BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_CHARACTER5 ));	break;
 			case CACCOUNT_CHARSLOT6BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_CHARACTER6 ));	break;
 			case CACCOUNT_CHARSLOT7BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_CHARACTER7 ));	break;
-			case CACCOUNT_UNUSED9:			*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_UNUSED9 ));	break;
+			case CACCOUNT_YOUNG:			*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_YOUNG ));		break;
 			case CACCOUNT_UNUSED10:			*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_UNUSED10 ));	break;
 			case CACCOUNT_SEER:				*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_SEER ));		break;
 			case CACCOUNT_COUNSELOR:		*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_COUNSELOR ));	break;
@@ -3553,7 +3962,7 @@ JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 	return JS_TRUE;
 }
 
-JSBool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CAccountProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
 {
 	CAccountBlock_st *myAccount = static_cast<CAccountBlock_st *>( JS_GetPrivate( cx, obj ));
 	if( myAccount == nullptr )
@@ -3561,9 +3970,10 @@ JSBool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 
 	JSEncapsulate encaps( cx, vp );
 
-	if( JSVAL_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_ACCOUNT );
+	if( propID != 0xFFFF )
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( propID )
 		{
 			case CACCOUNT_ID: 
 			case CACCOUNT_USERNAME:
@@ -3580,6 +3990,7 @@ JSBool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 			case CACCOUNT_LASTIP:
 			case CACCOUNT_FIRSTLOGIN:
 				break;
+			case CACCOUNT_TOTALPLAYTIME:		myAccount->wTotalPlayTime = static_cast<UI32>( encaps.toInt() );	break;
 			case CACCOUNT_PASSWORD:
 			{
 				std::string newPass = encaps.toString();
@@ -3620,7 +4031,7 @@ JSBool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 			case CACCOUNT_CHARSLOT5BLOCKED:	myAccount->wFlags.set( AB_FLAGS_CHARACTER5, encaps.toBool() );	break;
 			case CACCOUNT_CHARSLOT6BLOCKED:	myAccount->wFlags.set( AB_FLAGS_CHARACTER6, encaps.toBool() );	break;
 			case CACCOUNT_CHARSLOT7BLOCKED:	myAccount->wFlags.set( AB_FLAGS_CHARACTER7, encaps.toBool() );	break;
-			case CACCOUNT_UNUSED9:			myAccount->wFlags.set( AB_FLAGS_UNUSED9, encaps.toBool() );		break;
+			case CACCOUNT_YOUNG:			myAccount->wFlags.set( AB_FLAGS_YOUNG, encaps.toBool() );		break;
 			case CACCOUNT_UNUSED10:			myAccount->wFlags.set( AB_FLAGS_UNUSED10, encaps.toBool() );	break;
 			case CACCOUNT_SEER:				myAccount->wFlags.set( AB_FLAGS_SEER, encaps.toBool() );		break;
 			case CACCOUNT_COUNSELOR:		myAccount->wFlags.set( AB_FLAGS_COUNSELOR, encaps.toBool() );	break;
@@ -3629,14 +4040,15 @@ JSBool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 				break;
 		}
 	}
+
 	return JS_TRUE;
 }
 
-JSBool CConsoleProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, jsval id, jsval *vp )
+JSBool CConsoleProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CCONSOLE_MODE:		*vp = INT_TO_JSVAL( Console.CurrentMode() );	break;
 			case CCONSOLE_LOGECHO:	*vp = INT_TO_JSVAL( Console.LogEcho() );		break;
@@ -3647,12 +4059,13 @@ JSBool CConsoleProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused
 	return JS_TRUE;
 }
 
-JSBool CConsoleProps_setProperty( JSContext *cx, [[maybe_unused]] JSObject *obj, jsval id, jsval *vp )
+JSBool CConsoleProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
 {
 	JSEncapsulate encaps( cx, vp );
-	if( JSVAL_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_CONSOLE );
+	if( propID != 0xFFFF )
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( propID )
 		{
 			case CCONSOLE_MODE:		Console.CurrentMode( encaps.toInt() );		break;
 			case CCONSOLE_LOGECHO:	Console.LogEcho( encaps.toBool() );			break;
@@ -3660,18 +4073,20 @@ JSBool CConsoleProps_setProperty( JSContext *cx, [[maybe_unused]] JSObject *obj,
 				break;
 		}
 	}
+
 	return JS_TRUE;
 }
 
-JSBool CScriptSectionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CScriptSectionProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CScriptSection *gPriv = static_cast<CScriptSection *>( JS_GetPrivate( cx, obj ));
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
-	if( JSVAL_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_CONSOLE );
+	if( propID != 0xFFFF )
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( propID )
 		{
 			case CSS_NUMTAGS:		*vp = INT_TO_JSVAL( gPriv->NumEntries() );			break;
 			case CSS_ATEND:			*vp = BOOLEAN_TO_JSVAL( gPriv->AtEnd() );			break;
@@ -3683,30 +4098,22 @@ JSBool CScriptSectionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, 
 	return JS_TRUE;
 }
 
-JSBool CScriptSectionProps_setProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] jsval id, [[maybe_unused]] jsval *vp )
+JSBool CScriptSectionProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
 {
-	/*		JSEncapsulate encaps( cx, vp );
-		if( JSVAL_IS_INT( id ))
-		{
-			switch( JSVAL_TO_INT( id ))
-			{
-			default:
-				break;
-			}
-		}*/
 		return JS_TRUE;
 }
 
-JSBool CResourceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CResourceProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
 {
 	MapResource_st *gPriv = static_cast<MapResource_st*>( JS_GetPrivate( cx, obj ));
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
 	JSEncapsulate encaps( cx, vp );
-	if( JSVAL_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_RESOURCE );
+	if( propID != 0xFFFF )
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( propID )
 		{
 			case CRESP_LOGAMT:				gPriv->logAmt	= encaps.toInt();			break;
 			case CRESP_LOGTIME:
@@ -3729,18 +4136,20 @@ JSBool CResourceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval
 			default:																	break;
 		}
 	}
+
 	return JS_TRUE;
 }
 
-JSBool CResourceProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CResourceProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	MapResource_st *gPriv = static_cast<MapResource_st*>( JS_GetPrivate( cx, obj ));
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
-	if( JSVAL_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_RESOURCE );
+	if( propID != 0xFFFF )
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( propID )
 		{
 			case CRESP_LOGAMT:				*vp = INT_TO_JSVAL( gPriv->logAmt );			break;
 			case CRESP_LOGTIME:				JS_NewNumberValue( cx, gPriv->logTime, vp );	break;
@@ -3754,16 +4163,17 @@ JSBool CResourceProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval
 	return JS_TRUE;
 }
 
-JSBool CPartyProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CPartyProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
 {
 	Party *gPriv = static_cast<Party *>( JS_GetPrivate( cx, obj ));
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
 	JSEncapsulate encaps( cx, vp );
-	if( JSVAL_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_PARTY );
+	if( propID != 0xFFFF )
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( propID )
 		{
 			case CPARTYP_LEADER:
 			{
@@ -3793,18 +4203,20 @@ JSBool CPartyProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 			default:																	break;
 		}
 	}
+
 	return JS_TRUE;
 }
 
-JSBool CPartyProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CPartyProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	Party *gPriv = static_cast<Party *>( JS_GetPrivate( cx, obj ));
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
-	if( JSVAL_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_PARTY );
+	if( propID != 0xFFFF )
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( propID )
 		{
 			case CPARTYP_LEADER:
 			{
@@ -3826,86 +4238,25 @@ JSBool CPartyProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 	return JS_TRUE;
 }
 
-JSBool CSocket_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp )
+JSBool CScriptProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
-	JSEncapsulate srcObj( cx, obj );
-	CSocket *srcSock = static_cast<CSocket *>( srcObj.toObject() );
-	JSEncapsulate trgObj( cx, &v );
-	if( trgObj.isType( JSOT_OBJECT ))
+	cScript *gPriv = static_cast<cScript*>( JS_GetPrivate( cx, obj ) );
+	if( JSID_IS_INT( id ) && JSID_TO_INT( id ) == CSCRIPT_SCRIPTID )
 	{
-		if( srcObj.ClassName() != trgObj.ClassName() )
-		{
-			*bp = JS_FALSE;
-		}
-		else
-		{
-			CSocket *trgSock = static_cast<CSocket *>( trgObj.toObject() );
-			*bp = ( srcSock == trgSock ) ? JS_TRUE : JS_FALSE;
-		}
+		*vp = INT_TO_JSVAL( gPriv->GetScriptID() );
 	}
-	else
+	else if( JSID_IS_STRING( id ) )
 	{
-		*bp = ( srcSock == nullptr && trgObj.isType( JSOT_NULL )) ? JS_TRUE : JS_FALSE;
-	}
-	return JS_TRUE;
-}
-JSBool CBaseObject_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp )
-{
-	JSEncapsulate srcObj( cx, obj );
-	CBaseObject *src = static_cast<CBaseObject *>( srcObj.toObject() );
-	if( !ValidateObject( src ))
-	{
-		*bp = JS_FALSE;
-	}
-	else
-	{
-		JSEncapsulate trgObj( cx, &v );
-		if( trgObj.isType( JSOT_OBJECT ))
+		// This is trying to resolve *everything* - functions, global variables, etc
+		// We *only* care about script_id
+		JSString* str = JSID_TO_STRING( id );
+		char* chars = JS_EncodeString(cx, str);
+		std::string propID(chars);
+		if( propID == "script_id" )
 		{
-			if( srcObj.ClassName() != trgObj.ClassName() )
-			{
-				*bp = JS_FALSE;
-			}
-			else
-			{
-				CBaseObject *trg = static_cast<CBaseObject *>( trgObj.toObject() );
-				if( !ValidateObject( trg ))
-				{
-					*bp = JS_FALSE;
-				}
-				else	// both valid base objects!  Now, we'll declare equality based on SERIAL, not pointer
-				{
-					*bp = ( src->GetSerial() == trg->GetSerial() ) ? JS_TRUE : JS_FALSE;
-				}
-			}
+			*vp = INT_TO_JSVAL( gPriv->GetScriptID() );
 		}
-		else
-		{
-			*bp = ( src == nullptr && trgObj.isType( JSOT_NULL )) ? JS_TRUE : JS_FALSE;
-		}
-	}
-	return JS_TRUE;
-}
-JSBool CParty_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp )
-{
-	JSEncapsulate srcObj( cx, obj );
-	Party *srcParty = static_cast<Party *>( srcObj.toObject() );
-	JSEncapsulate trgObj( cx, &v );
-	if( trgObj.isType( JSOT_OBJECT ))
-	{
-		if( srcObj.ClassName() != trgObj.ClassName() )
-		{
-			*bp = JS_FALSE;
-		}
-		else
-		{
-			Party *trgParty	= static_cast<Party *>( trgObj.toObject() );
-			*bp = ( srcParty == trgParty ) ? JS_TRUE : JS_FALSE;
-		}
-	}
-	else
-	{
-		*bp = ( srcParty == nullptr && trgObj.isType( JSOT_NULL )) ? JS_TRUE : JS_FALSE;
+		js_free(chars);
 	}
 	return JS_TRUE;
 }

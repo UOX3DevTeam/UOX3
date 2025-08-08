@@ -35,7 +35,7 @@ const bool LOGDEFAULT = false;
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dumps packet stream to log file
 //o------------------------------------------------------------------------------------------------o
-void DumpStream( std::ofstream &outStream, const char *strToDump, UI08 num )
+void DumpStream( std::ostream &outStream, const char *strToDump, UI08 num )
 {
 	outStream << "  ";
 	for( UI08 parseBuff = 0; parseBuff < num; ++parseBuff )
@@ -57,7 +57,7 @@ void DumpStream( std::ofstream &outStream, const char *strToDump, UI08 num )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Log packet stream in large buffer
 //o------------------------------------------------------------------------------------------------o
-void DoPacketLogging( std::ofstream &outStream, size_t buffLen, std::vector<UI08>& myBuffer )
+void DoPacketLogging( std::ostream &outStream, size_t buffLen, std::vector<UI08>& myBuffer )
 {
 	outStream << std::hex;
 	char qbuffer[8];
@@ -89,7 +89,7 @@ void DoPacketLogging( std::ofstream &outStream, size_t buffLen, std::vector<UI08
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Log packet stream in regular buffer
 //o------------------------------------------------------------------------------------------------o
-void DoPacketLogging( std::ofstream &outStream, size_t buffLen, const UI08 *myBuffer )
+void DoPacketLogging( std::ostream &outStream, size_t buffLen, const UI08 *myBuffer )
 {
 	outStream << std::hex;
 	char qbuffer[8];
@@ -184,6 +184,20 @@ std::string CSocket::XText( void )
 void CSocket::XText( const std::string &newValue )
 {
 	xtext = newValue;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CSocket::XText2()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the socket's xtext2 buffer
+//o------------------------------------------------------------------------------------------------o
+std::string CSocket::XText2( void )
+{
+	return xtext2;
+}
+void CSocket::XText2( const std::string &newValue )
+{
+	xtext2 = newValue;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -399,11 +413,11 @@ void CSocket::ForceOffline( bool newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the time point at which the char times out
 //o------------------------------------------------------------------------------------------------o
-SI32 CSocket::IdleTimeout( void ) const
+TIMERVAL CSocket::IdleTimeout( void ) const
 {
 	return idleTimeout;
 }
-void CSocket::IdleTimeout( SI32 newValue )
+void CSocket::IdleTimeout( TIMERVAL newValue )
 {
 	idleTimeout = newValue;
 	wasIdleWarned = false;
@@ -457,11 +471,11 @@ void CSocket::SkillDelayMsgShown( bool value )
 //|	Purpose		-	Gets/Sets the time point at which the player gets kicked if assistant tool
 //|					has not responded to request to negotiate for features
 //o------------------------------------------------------------------------------------------------o
-SI32 CSocket::NegotiateTimeout( void ) const
+TIMERVAL CSocket::NegotiateTimeout( void ) const
 {
 	return negotiateTimeout;
 }
-void CSocket::NegotiateTimeout( SI32 newValue )
+void CSocket::NegotiateTimeout( TIMERVAL newValue )
 {
 	negotiateTimeout = newValue;
 }
@@ -659,6 +673,7 @@ void CSocket::InternalReset( void )
 	memset( buffer, 0, MAXBUFFER );
 	memset( outbuffer, 0, MAXBUFFER );
 	xtext.reserve( MAXBUFFER );
+	xtext2.reserve( MAXBUFFER );
 	addid[0] = addid[1] = addid[2] = addid[3] = 0;
 	clientip[0] = clientip[1] = clientip[2] = clientip[3] = 0;
 	// set the socket to nonblocking
@@ -729,7 +744,7 @@ bool CSocket::FlushBuffer( bool doLog )
 #if defined( UOX_DEBUG_MODE )
 			if( sendResult != len )
 			{
-				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 739" << std::endl;
+				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 747" << std::endl;
 			}
 #endif
 		}
@@ -739,7 +754,7 @@ bool CSocket::FlushBuffer( bool doLog )
 #if defined( UOX_DEBUG_MODE )
 			if( sendResult != outlength )
 			{
-				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 744" << std::endl;
+				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 757" << std::endl;
 			}
 #endif
 		}
@@ -793,7 +808,7 @@ bool CSocket::FlushLargeBuffer( bool doLog )
 #if defined( UOX_DEBUG_MODE )
 			if( sendResult != len )
 			{
-				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 789" << std::endl;
+				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 811" << std::endl;
 			}
 #endif
 		}
@@ -803,7 +818,7 @@ bool CSocket::FlushLargeBuffer( bool doLog )
 #if defined( UOX_DEBUG_MODE )
 			if( sendResult != outlength )
 			{
-				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 796" << std::endl;
+				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 821" << std::endl;
 			}
 #endif
 		}
@@ -1045,8 +1060,8 @@ SI32 CSocket::Receive( SI32 x, bool doLog )
 {
 	SI32 count			= 0;
 	UI08 recvAttempts	= 0;
-	UI32 curTime		= GetClock();
-	UI32 nexTime		= curTime;
+	TIMERVAL curTime		= GetClock();
+	TIMERVAL nexTime		= curTime;
 	do
 	{
 		count = static_cast<int>( recv( static_cast<UOXSOCKET>( cliSocket ), ( char * )&buffer[inlength], x - inlength, 0 ));
@@ -1535,7 +1550,7 @@ void CSocket::Send( CPUOXBuffer *toSend )
 #if defined( UOX_DEBUG_MODE )
 		if( sendResult != len )
 		{
-			std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 1492" << std::endl;
+			std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 1553" << std::endl;
 		}
 #endif
 	}
@@ -1546,7 +1561,7 @@ void CSocket::Send( CPUOXBuffer *toSend )
 #if defined( UOX_DEBUG_MODE )
 		if( sendResult != len )
 		{
-			std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 1501" << std::endl;
+			std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 1564" << std::endl;
 		}
 #endif
 	}
@@ -1848,6 +1863,7 @@ void CSocket::SysMessage( const std::string txt, ... )
 
 	va_start( argptr, txt );
 	auto msg = oldstrutil::format( txt, argptr );
+	va_end( argptr ); // va_end in same function as va_start
 	if( msg.size() > 512 )
 	{
 		msg = msg.substr( 0, 512 );
@@ -1949,6 +1965,7 @@ void CSocket::SysMessage( SI32 dictEntry, ... )
 
 	va_start( argptr, dictEntry );
 	auto msg = oldstrutil::format( txt, argptr );
+	va_end( argptr ); // va_end in same function as va_start
 	if( msg.size() > 512 )
 	{
 		msg = msg.substr( 0, 512 );
@@ -2000,8 +2017,8 @@ void CSocket::ObjMessage( SI32 dictEntry, CBaseObject *getObj, R32 secsFromNow, 
 
 	va_list argptr;
 	va_start( argptr, Colour );
-
 	ObjMessage( oldstrutil::format( txt, argptr ).c_str(), getObj, secsFromNow, Colour );
+	va_end( argptr ); // va_end in same function as va_start
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2132,7 +2149,7 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 	UI08 a2 = i->GetSerial( 2 );
 	UI08 a3 = i->GetSerial( 3 );
 	UI08 a4 = i->GetSerial( 4 );
-	std::string charName = GetNpcDictName( i, this );
+	std::string charName = GetNpcDictName( i, this, NRS_SINGLECLICK );
 	CChar *mChar = CurrcharObj();
 	if( mChar->GetSingClickSer() || showSer )
 	{
@@ -2174,7 +2191,15 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 	{
 		if( i->IsTamed() && ValidateObject( i->GetOwnerObj() ) && !cwmWorldState->creatures[i->GetId()].IsHuman() )
 		{
-			charName += " (tame) ";
+			TAGMAPOBJECT petBond = i->GetTag( "isBondedPet" );
+			if( petBond.m_IntValue == 1  )
+			{
+				charName += " " + Dictionary->GetEntry( 19335, Language() ); //  (bonded)
+			}
+			else
+			{
+				charName += " " + Dictionary->GetEntry( 19336, Language() ); //  (tame)
+			}
 		}
 
 		// Show NPC title over their head?
@@ -2188,17 +2213,17 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 	// Show (invulnerable) tags over the heads of invulnerable characters?
 	if( i->IsInvulnerable() && cwmWorldState->ServerData()->ShowInvulnerableTagOverhead() )
 	{
-		charName += " (invulnerable)";
+		charName += " " + Dictionary->GetEntry( 19337, Language() ); //  (invulnerable)
 	}
 	if( i->IsFrozen() )
 	{
-		charName += " (frozen) ";
+		charName += " " + Dictionary->GetEntry( 19338, Language() ); //  (frozen)
 	}
 	if( i->IsGuarded() )
 	{
-		charName += " (guarded)";
+		charName += " " + Dictionary->GetEntry( 19339, Language() ); //  (guarded)
 	}
-	if( i->GetGuildNumber() != -1 && !i->IsIncognito() )
+	if( i->GetGuildNumber() != -1 && !i->IsIncognito() && !i->IsDisguised() )
 	{
 		GuildSys->DisplayTitle( this, i );
 	}
@@ -2238,7 +2263,25 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 COLOUR CSocket::GetFlagColour( CChar *src, CChar *trg )
 {
 	COLOUR retVal = 0x0058;
-	switch( trg->FlagColour( src ))
+	auto flagColour = trg->FlagColour( src );
+
+	if( trg->CheckAggressorFlag( src->GetSerial() ))
+	{
+		// trg char is an aggressor to src, and should appear grey
+		flagColour = FC_NEUTRAL;
+	}
+	if( trg->CheckPermaGreyFlag( src->GetSerial() ))
+	{
+		// trg char is permagrey to src
+		flagColour = FC_CRIMINAL;
+	}
+	if( trg->HasStolen() )
+	{
+		// trg char has stolen recently. Appear grey!
+		flagColour = FC_CRIMINAL;
+	}
+
+	switch( flagColour )
 	{
 		case FC_INNOCENT:		retVal = 0x0059;		break;	// Blue
 		case FC_NEUTRAL:
@@ -2248,6 +2291,47 @@ COLOUR CSocket::GetFlagColour( CChar *src, CChar *trg )
 		case FC_FRIEND:			retVal = 0x003F;		break;	// Green
 		case FC_ENEMY:			retVal = 0x0090;		break;	// Orange
 		case FC_INVULNERABLE:	retVal = 0x0035;		break;	// Yellow
+	}
+
+	return retVal;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CSocket::GetHtmlFlagColour()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets the current html flag colour associated with the socket
+//o------------------------------------------------------------------------------------------------o
+auto CSocket::GetHtmlFlagColour( CChar *src, CChar *trg ) -> std::string
+{
+	std::string retVal = "#00FFFF";
+	auto flagColour = trg->FlagColour( src );
+
+	if( trg->CheckAggressorFlag( src->GetSerial() ))
+	{
+		// trg char is an aggressor to src, and should appear grey
+		flagColour = FC_NEUTRAL;
+	}
+	if( trg->CheckPermaGreyFlag( src->GetSerial() ))
+	{
+		// trg char is permagrey to src
+		flagColour = FC_CRIMINAL;
+	}
+	if( trg->HasStolen() )
+	{
+		// trg char has stolen recently. Appear grey!
+		flagColour = FC_CRIMINAL;
+	}
+
+	switch( flagColour )
+	{
+		case FC_INNOCENT:		retVal = "#00FFFF";		break;	// Blue
+		case FC_NEUTRAL:
+		case FC_CRIMINAL:
+		default:				retVal = "#808080";		break;	// Gray
+		case FC_MURDERER:		retVal = "#FF0000";		break;	// Red
+		case FC_FRIEND:			retVal = "#00FF00";		break;	// Green
+		case FC_ENEMY:			retVal = "#FFA500";		break;	// Orange
+		case FC_INVULNERABLE:	retVal = "#FFFF00";		break;	// Yellow
 	}
 
 	return retVal;
@@ -2283,6 +2367,7 @@ void CSocket::SendTargetCursor( UI08 targType, UI08 targId, UI08 cursorType, SI3
 	va_list argptr;
 	va_start( argptr, dictEntry );
 	auto msg = oldstrutil::format( txt, argptr );
+	va_end( argptr ); // va_end in same function as va_start
 	if( msg.size() > 512 )
 	{
 		msg = msg.substr( 0, 512 );
@@ -2431,7 +2516,7 @@ void CSocket::StatWindow( CBaseObject *targObj, bool updateParty )
 		if( !targChar->IsNpc() && mChar == targChar )
 		{
 			toSend.Gold( GetItemAmount( targChar, 0x0EED ));
-			toSend.AC( Combat->CalcDef( targChar, 0, false ));
+			toSend.AC( Combat->CalcDef( targChar, 0, false, PHYSICAL, false, true ));
 		}
 
 		Send( &toSend );
@@ -2703,6 +2788,11 @@ void CSocket::OpenPack( CItem *i, bool isPlayerVendor )
 	Send( &contSend );
 	CPItemsInContainer itemsIn( this, i, 0x0, isPlayerVendor );
 	Send( &itemsIn );
+
+	// Add player's socket to list of players who have opened container,
+	// and also add container to player's list of opened containers
+	i->GetContOpenedByList()->Add( this );
+	this->GetContsOpenedList()->Add( i );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2743,6 +2833,11 @@ void CSocket::OpenBank( CChar *i )
 	CPWornItem toWear = ( *bankBox );
 	Send( &toWear );
 	OpenPack( bankBox );
+}
+
+auto CSocket::GetContsOpenedList() -> GenericList<CItem *> *
+{
+	return &contsOpened;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2879,7 +2974,7 @@ UI32 CPUOXBuffer::PackedLength( void ) const
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Log sent packets to log file
 //o------------------------------------------------------------------------------------------------o
-void CPUOXBuffer::Log( std::ofstream &outStream, bool fullHeader )
+void CPUOXBuffer::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -2901,7 +2996,7 @@ CPInputBuffer::CPInputBuffer( CSocket *input )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Log received packets to log file
 //o------------------------------------------------------------------------------------------------o
-void CPInputBuffer::Log( std::ofstream &outStream, bool fullHeader )
+void CPInputBuffer::Log( std::ostream &outStream, bool fullHeader )
 {
 	UI08 *buffer	= tSock->Buffer();
 	const UI32 len	= tSock->InLength();

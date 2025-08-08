@@ -1,0 +1,294 @@
+[base_map]
+{
+get=0x14ec
+name=map
+id=0x14ec
+}
+
+[smallworldmap]
+{
+get=base_map
+name=small world map
+script=5403
+custominttag=Map 1
+}
+
+[largeworldmap]
+{
+get=base_map
+name=large world map
+script=5403
+custominttag=Map 2
+}
+
+[britainmap]
+{
+get=base_map
+name=britain map
+script=5403
+custominttag=Map 3
+}
+
+[britaintoskarabraemap]
+{
+get=base_map
+name=britain to skara brae map
+script=5403
+custominttag=Map 4
+}
+
+[britaintotrinsicmap]
+{
+get=base_map
+name=britain to trinsic map
+script=5403
+custominttag=Map 5
+}
+
+[bucsdenmap]
+{
+get=base_map
+name=bucs den map
+script=5403
+custominttag=Map 6
+}
+
+[bucsdentomaginciamap]
+{
+get=base_map
+name=bucs den to magincia map
+script=5403
+custominttag=Map 7
+}
+
+[bucsdentoocllomap]
+{
+get=base_map
+name=bucs den to ocllo map
+script=5403
+custominttag=Map 8
+}
+
+[jhelommap]
+{
+get=base_map
+name=jhelom map
+script=5403
+custominttag=Map 9
+}
+
+[maginciamap]
+{
+get=base_map
+name=magincia map
+script=5403
+custominttag=Map 10
+}
+
+[maginciatoocllomap]
+{
+get=base_map
+name=magincia to ocllo map
+script=5403
+custominttag=Map 11
+}
+
+[minocmap]
+{
+get=base_map
+name=minoc map
+script=5403
+custominttag=Map 12
+}
+
+[minoctoyewmap]
+{
+get=base_map
+name=minoc to yew map
+script=5403
+custominttag=Map 13
+}
+
+[minoctovespermap]
+{
+get=base_map
+name=minoc to vesper map
+script=5403
+custominttag=Map 14
+}
+
+[moonglowmap]
+{
+get=base_map
+name=moonglow map
+script=5403
+custominttag=Map 15
+}
+
+[moonglowtonujelmmap]
+{
+get=base_map
+name=moonglow to nujelm map
+script=5403
+custominttag=Map 16
+}
+
+[nujelmmap]
+{
+get=base_map
+name=nujelm map
+script=5403
+custominttag=Map 17
+}
+
+[nujelmtomaginciamap]
+{
+get=base_map
+name=nujelm to magincia map
+script=5403
+custominttag=Map 18
+}
+
+[occlomap]
+{
+get=base_map
+name=occlo map
+script=5403
+custominttag=Map 19
+}
+
+[serpentsholdmap]
+{
+get=base_map
+name=serpents hold map
+script=5403
+custominttag=Map 20
+}
+
+[serpentsholdtoocllomap]
+{
+get=base_map
+name=serpents hold to ocllo map
+script=5403
+custominttag=Map 21
+}
+
+[skarabraemap]
+{
+get=base_map
+name=skara brae map
+script=5403
+custominttag=Map 22
+}
+
+[trinsicmap]
+{
+get=base_map
+name=trinsic map
+script=5403
+custominttag=Map 23
+}
+
+[trinsictobucsdenmap]
+{
+get=base_map
+name=trinsic to bucs den map
+script=5403
+custominttag=Map 24
+}
+
+[trinsictojhelommap]
+{
+get=base_map
+name=trinsic to jhelom map
+script=5403
+custominttag=Map 25
+}
+
+[vespermap]
+{
+get=base_map
+name=vesper map
+script=5403
+custominttag=Map 26
+}
+
+[vespertonujelmmap]
+{
+get=base_map
+name=vesper to nujelm map
+script=5403
+custominttag=Map 27
+}
+
+[yewmap]
+{
+get=base_map
+name=yew map
+script=5403
+custominttag=Map 28
+}
+
+[yewtobritainmap]
+{
+get=base_map
+name=yew to britain map
+script=5403
+custominttag=Map 29
+}
+
+[tokunomap]
+{
+get=base_map
+name=tokunomap
+script=5403
+custominttag=Map 30
+}
+
+[malasmap]
+{
+get=base_map
+name=malas map
+script=5403
+custominttag=Map 31
+}
+
+[ilshenarmap]
+{
+get=base_map
+name=ilshenar map
+script=5403
+custominttag=Map 32
+}
+
+[termurmap]
+{
+get=base_map
+name=termur map
+script=5403
+custominttag=Map 33
+}
+
+[craftedlocalmap]
+{
+get=base_map
+name=local map
+script=5404
+custominttag=Map 50
+}
+
+[craftedcitymap]
+{
+get=base_map
+name=city map
+script=5404
+custominttag=Map 50
+}
+
+[craftedseachart]
+{
+get=base_map
+name=sea chart
+script=5404
+custominttag=Map 50
+}

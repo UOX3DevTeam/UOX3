@@ -351,7 +351,7 @@ auto CJSMappingSection::Parse( Script *fileAssocData ) -> void
 			{
 				try
 				{
-					auto toAdd = new cScript( fullPath, runTime );
+					auto toAdd = new cScript( fullPath, runTime, scriptId );
 					if( toAdd )
 					{
 						scriptIdMap[scriptId]			= toAdd;
@@ -361,7 +361,7 @@ auto CJSMappingSection::Parse( Script *fileAssocData ) -> void
 				}
 				catch( std::runtime_error &e )
 				{
-					Console.Error( oldstrutil::format( "Compiling %s caused a construction failure (Details: %s)", fullPath.c_str(), e.what() ));
+					Console.Error( e.what() );
 				}
 			}
 		}
@@ -442,7 +442,7 @@ auto CJSMappingSection::Reload( UI16 toLoad ) -> void
 									scriptIdMap[toLoad] = nullptr;
 								}
 							}
-							auto toAdd = new cScript( fullPath, runTime );
+							auto toAdd = new cScript( fullPath, runTime, scriptId );
 							if( toAdd )
 							{
 								scriptIdMap[scriptId]			= toAdd;
@@ -452,7 +452,7 @@ auto CJSMappingSection::Reload( UI16 toLoad ) -> void
 						}
 						catch( std::runtime_error &e )
 						{
-							Console.Error( oldstrutil::format( "Compiling %s caused a construction failure (Details: %s)", fullPath.c_str(), e.what() ));
+							Console.Error( e.what() );
 						}
 					}
 					return;

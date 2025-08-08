@@ -576,7 +576,7 @@ public:
 	UI32					PackedLength( void ) const;
 	const UI08 *			PackedPointer( void ) const;
 
-	virtual void			Log( std::ofstream &outStream, bool fullHeader = true );
+	virtual void			Log( std::ostream &outStream, bool fullHeader = true );
 };
 
 class CPInputBuffer
@@ -592,7 +592,7 @@ public:
 	}
 
 	virtual void			Receive( void ) = 0;
-	virtual void			Log( std::ofstream &outStream, bool fullHeader = true );
+	virtual void			Log( std::ostream &outStream, bool fullHeader = true );
 	virtual bool			Handle( void );
 	void					SetSocket( CSocket *toSet );
 	CSocket *				GetSocket( void ) const;
@@ -615,29 +615,12 @@ public:
 	CSocket *	GetSockPtr( UOXSOCKET s );
 	UOXSOCKET	FindNetworkPtr( CSocket *toFind );
 
-	CSocket *	FirstSocket( void );
-	CSocket *	NextSocket( void );
-	CSocket *	PrevSocket( void );
-	CSocket *	LastSocket( void );
-	bool		FinishedSockets( void );
-
 	void		CheckConnections( void );
 	void		CheckMessages( void );
 
 	void		Transfer( CSocket *s );
 
 	size_t		PeakConnectionCount( void ) const;
-
-	void		PushConn( void );
-	void		PopConn( void );
-	void 		pushConn( void );
-	void 		popConn( void );
-
-	void		pushLogg();
-	void 		popLogg();
-
-	void		PushLogg( void );
-	void		PopLogg( void );
 
 	// Login Specific
 	void		LoginDisconnect( UOXSOCKET s );
@@ -667,9 +650,6 @@ private:
 	struct sockaddr_in		client_addr;
 
 	size_t					peakConnectionCount;
-
-	std::vector<std::vector<CSocket *>::iterator>	connIteratorBackup, loggIteratorBackup;
-	std::vector<CSocket *>::iterator					currConnIter, currLoggIter;
 
 	void		LoadFirewallEntries( void );
 	void		GetMsg( UOXSOCKET s );

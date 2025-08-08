@@ -59,3 +59,32 @@ function onUseChecked( pUser, iUsed )
 	}
 	return false;
 }
+
+// Display value of bank check
+function onTooltip( bankCheck )
+{
+	var tooltipText = "";
+	var checkSize = bankCheck.GetTag( "CheckSize" );
+	// 2793=Value: %i
+	tooltipText = GetDictionaryEntry( 2793 ).replace( /%i/gi, checkSize ); // Value: %i
+	bankCheck.SetTempTag( "clilocTooltip", 1042971 ); // ~1_NOTHING~
+	return tooltipText;
+}
+
+// Show value as part of name if tooltips are disabled
+const aosTooltipsEnabledClient = GetClientFeature( 4 );
+const aosTooltipsEnabledServer = GetServerFeature( 5 );
+function onNameRequest( bankCheck, pUser )
+{
+	// Default name
+	var nameString = bankCheck.name;
+
+	if( !aosTooltipsEnabledClient && !aosTooltipsEnabledServer )
+	{
+		nameString = bankCheck.name + " " + GetDictionaryEntry( 2794, pUser.socket.language ).replace( /%i/gi, bankCheck.GetTag( "CheckSize" )); // for %i gold
+	}
+
+	return nameString;
+}
+
+function _restorecontext_() {}

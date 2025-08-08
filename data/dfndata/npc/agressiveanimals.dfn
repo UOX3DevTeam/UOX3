@@ -1,3 +1,13 @@
+// Base humanoid with shared DFN tags
+[base_agressiveanimals]
+{
+DIRECTION=RND
+BACKPACK
+NPCWANDER=4
+FX2=20
+FLAG=NEUTRAL
+}
+
 [direwolf]
 {
 NAME=#//a dire wolf
@@ -95,6 +105,7 @@ CARVE=19
 RACE=8
 FLAG=NEUTRAL
 CONTROLSLOTS=1
+ORIGIN=t2a
 }
 
 [scorpion]
@@ -194,6 +205,36 @@ RUNS
 CARVE=83
 NPCAI=2
 RACE=4
+ORIGIN=t2a
 SCRIPT=3300
 SCRIPT=3503
+}
+
+//bake kitsune - Base NPC with shared DFN tags
+[base_bakekitsune]
+{
+GET=base_agressiveanimals
+NAME=#//a bake kitsune
+ID=0x0f6
+NPCAI=2
+FLAG=EVIL
+CARVE=98
+RUNS
+ORIGIN=se
+SCRIPT=3220// bakekitsune.js
+}
+
+[bakekitsune]
+{
+GETUO=bakekitsune_se
+GETT2A=bakekitsune_se
+GETUOR=bakekitsune_se
+GETTD=bakekitsune_se
+GETLBR=bakekitsune_se
+GETAOS=bakekitsune_se
+GETSE=bakekitsune_se
+GETML=bakekitsune_se
+GETSA=bakekitsune_se
+GETHS=bakekitsune_se
+GETTOL=bakekitsune_se
 }

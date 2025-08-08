@@ -7,6 +7,7 @@ interval=1 5
 visible=1
 decay=0
 movable=2
+script=2205
 }
 
 [orcspawn]
@@ -1221,5 +1222,166 @@ type=125
 spawnobjlist=escorts
 amount=1
 }
+
+[puzzlechest-spawn]
+{
+get=base_spawner
+name=Puzzle Chest Spawn
+type=61
+spawnobj=puzzlechest
+}
+
+[puzzlechest-spawn-ns]
+{
+get=base_spawner
+name=Puzzle Chest Spawn
+type=61
+spawnobj=puzzlechest-ns
+}
+
+[puzzlestrongbox-spawn]
+{
+get=puzzlechest-spawn
+spawnobj=puzzlestrongbox
+}
+
+[puzzlestrongbox-spawn-ns]
+{
+get=puzzlechest-spawn
+spawnobj=puzzlestrongbox-ns
+}
+
+[carrotspawn]
+{
+get=base_spawner
+name=Carrot Spawner
+id=0x1F14
+type=61
+spawnobj=carrot_resource
+amount=1
+interval=60 60
+}
+
+[onionspawn]
+{
+get=base_spawner
+name=Onion Spawner
+id=0x1F14
+type=61
+spawnobj=onion_resource
+amount=1
+interval=60 60
+}
+
+[turnipspawn]
+{
+get=base_spawner
+name=Turnip Spawner
+id=0x1F14
+type=61
+spawnobj=turnip_resource
+amount=1
+interval=60 60
+}
+
+[cabbagespawn]
+{
+get=base_spawner
+name=Cabbage Spawner
+id=0x1F14
+type=61
+spawnobj=cabbage_resource
+amount=1
+interval=60 60
+}
+
+[watermelonspawn]
+{
+get=base_spawner
+name=Watermelon Spawner
+id=0x1F14
+type=61
+spawnobj=watermelon_resource
+amount=1
+interval=60 60
+}
+
+[gourdspawn]
+{
+get=base_spawner
+name=Gourd Spawner
+id=0x1F14
+type=61
+spawnobj=gourd_resource
+amount=1
+interval=60 60
+}
+
+[pumpkinspawn]
+{
+get=base_spawner
+name=Pumpkin Spawner
+id=0x1F14
+type=61
+spawnobj=pumpkin_resource
+amount=1
+interval=60 60
+}
+
+[squashspawn]
+{
+get=base_spawner
+name=Squash Spawner
+id=0x1F14
+type=61
+spawnobj=squash_resource
+amount=1
+interval=60 60
+}
+
+[honeydewmelonspawn]
+{
+get=base_spawner
+name=Honeydew Melon Spawner
+id=0x1F14
+type=61
+spawnobj=honeydewmelon_resource
+amount=1
+interval=60 60
+}
+
+[canteloupespawn]
+{
+get=base_spawner
+name=Canteloupe Spawner
+id=0x1F14
+type=61
+spawnobj=canteloupe_resource
+amount=1
+interval=60 60
+}
+
+[garlicspawn]
+{
+get=base_spawner
+name=Garlic Spawner
+id=0x1F14
+type=61
+spawnobj=garlic_resource
+amount=1
+interval=60 60
+}
+
+[flaxspawn]
+{
+get=base_spawner
+name=Flax Spawner
+id=0x1F14
+type=61
+spawnobj=flax_resource
+amount=1
+interval=60 60
+}
+
 
 EOF

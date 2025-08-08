@@ -311,10 +311,12 @@ auto MultiCollection::LoadMultiCollection( const std::filesystem::path &uodir, T
 	if( std::filesystem::exists( multifile ))
 	{
 		// It does, so lets load the uop
+		Console << "\t" << uodir.string() << "MultiCollection.uop" << "\t\t";
 		rValue = LoadMultiCollection( uodir, "", info );
 	}
 	else
 	{
+		Console << "\t" << uodir.string() << "multi.mul" << " / multi.idx" << "\t\t";
 		rValue = LoadMul( uodir, info );
 	}
 	return rValue;
@@ -475,7 +477,7 @@ auto MultiCollection::ProcessData( bool isHS, int index, std::vector<std::uint8_
 		else
 		{
 			auto flag = std::uint32_t( 0 );
-			std::copy( data.data() + ( entry * size ) + 4, data.data() + ( entry * size ) + 8 + 4, reinterpret_cast<std::uint8_t*>( &flag ));
+			std::copy( data.data() + ( entry * size ) + 4, data.data() + ( entry * size ) + 4 + 4, reinterpret_cast<std::uint8_t*>( &flag ));
 			item.flag = static_cast<std::uint16_t>( flag );
 		}
 		if( first )
@@ -500,7 +502,7 @@ auto MultiCollection::ProcessData( bool isHS, int index, std::vector<std::uint8_
 
 		multi.items.push_back( item );
 	}
-	_multis[index] = multi;
+	_multis.insert_or_assign( static_cast<int>( index ), std::move( multi ));
 }
 
 auto MultiCollection::Size() const -> size_t

@@ -1,0 +1,17 @@
+// Weapon Stats matching up april 8 publish 4
+//
+// Items in this file are generally not added or referenced directly.
+// Reference instead, the corresponding entries in the root weapons folder, which then
+// picks the correct sub-entry based on the active NPC ruleset on the server
+
+// Wand - T2A stats (default)
+[0x0df2_t2a]
+{
+get=base_wand
+weight=200
+value=30 15
+damage=2 6
+hp=31 70
+spd=35
+str=1
+}

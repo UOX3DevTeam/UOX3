@@ -1,0 +1,511 @@
+// 17650 to 17699
+[REGIONSPAWN 17650]
+{
+NAME=Sorcerers 1_1
+NPC=zombie
+MAXNPCS=2
+X1=402
+Y1=41
+X2=447
+Y2=87
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// acid elemental, fire elemental, blood elemental
+[REGIONSPAWN 17651]
+{
+NAME=Sorcerers 1_2
+NPCLIST=sorc_ele_1
+MAXNPCS=5
+X1=448
+Y1=60
+X2=462
+Y2=85
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// shade, mongbat
+[REGIONSPAWN 17652]
+{
+NAME=Sorcerers 1_3
+NPCLIST=sorc_npclist_1
+MAXNPCS=7
+X1=391
+Y1=56
+X2=403
+Y2=81
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// gargoyle > stone gargoyle > shade > lich
+[REGIONSPAWN 17653]
+{
+NAME=Sorcerers 1_4
+NPCLIST=sorc_npclist_2
+MAXNPCS=6
+X1=440
+Y1=9
+X2=453
+Y2=28
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// headless one, mongbat
+[REGIONSPAWN 17654]
+{
+NAME=Sorcerers 1_5
+NPCLIST=sorc_npclist_3
+MAXNPCS=4
+X1=419
+Y1=9
+X2=437
+Y2=23
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// headless one, mongbat > earthele
+[REGIONSPAWN 17655]
+{
+NAME=Sorcerers 1_6
+NPCLIST=sorc_npclist_4
+MAXNPCS=6
+X1=455
+Y1=9
+X2=472
+Y2=24
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+[REGIONSPAWN 17656]
+{
+NAME=Sorcerers 1_7
+NPC=bloodele
+MAXNPCS=1
+X1=376
+Y1=22
+X2=386
+Y2=37
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+[REGIONSPAWN 17657]
+{
+NAME=Sorcerers 1_8
+NPCLIST=Skeleton, Boneknight
+MAXNPCS=6
+X1=418
+Y1=82
+X2=436
+Y2=109
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+[REGIONSPAWN 17665]
+{
+NAME=Sorcerers 2_1
+NPC=bloodele
+MAXNPCS=1
+X1=248
+Y1=14
+X2=255
+Y2=28
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// gazer > gazerlarva > eldergazer
+[REGIONSPAWN 17666]
+{
+NAME=Sorcerers 2_2
+NPCLIST=sorc_npclist_5
+MAXNPCS=7
+X1=273
+Y1=11
+X2=289
+Y2=29
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// daemon > balron
+[REGIONSPAWN 17667]
+{
+NAME=Sorcerers 2_3
+NPCLIST=sorc_npclist_6
+MAXNPCS=3
+X1=230
+Y1=43
+X2=246
+Y2=54
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+[REGIONSPAWN 17668]
+{
+NAME=Sorcerers 2_4
+NPC=Imp
+MAXNPCS=4
+X1=205
+Y1=46
+X2=222
+Y2=85
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// shade, zombie > gargoyle > evilmage > dreadspider > wyvern
+[REGIONSPAWN 17669]
+{
+NAME=Sorcerers 2_5
+NPCLIST=sorc_npclist_7
+MAXNPCS=9
+X1=247
+Y1=69
+X2=274
+Y2=98
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// hellhound > bloodelemental
+[REGIONSPAWN 17670]
+{
+NAME=Sorcerers 2_6
+NPCLIST=sorc_npclist_8
+MAXNPCS=7
+X1=268
+Y1=42
+X2=294
+Y2=60
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+[REGIONSPAWN 17671]
+{
+NAME=Sorcerers 2_7
+NPC=dullcopperele
+MAXNPCS=5
+X1=298
+Y1=12
+X2=311
+Y2=28
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+[REGIONSPAWN 17672]
+{
+NAME=Sorcerers 2_8
+NPC=lichlord
+MAXNPCS=2
+X1=292
+Y1=75
+X2=326
+Y2=107
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// poisonele, bloodele
+[REGIONSPAWN 17673]
+{
+NAME=Sorcerers 2_9
+NPCLIST=sorc_npclist_9
+MAXNPCS=2
+X1=292
+Y1=75
+X2=326
+Y2=107
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+[REGIONSPAWN 17674]
+{
+NAME=Sorcerers 2_10
+NPC=gargoyle
+MAXNPCS=4
+X1=328
+Y1=29
+X2=343
+Y2=53
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// shade > lich
+[REGIONSPAWN 17675]
+{
+NAME=Sorcerers 2_11
+NPCLIST=sorc_npclist_10
+MAXNPCS=2
+X1=328
+Y1=29
+X2=343
+Y2=53
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+[REGIONSPAWN 17676]
+{
+NAME=Sorcerers 2_12
+NPC=bloodele
+MAXNPCS=1
+X1=346
+Y1=33
+X2=353
+Y2=50
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+[REGIONSPAWN 17685]
+{
+NAME=Sorcerers 3_1
+NPC=bloodele
+MAXNPCS=1
+X1=140
+Y1=76
+X2=148
+Y2=89
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+[REGIONSPAWN 17686]
+{
+NAME=Sorcerers 3_2
+NPC=evilmagelord
+MAXNPCS=1
+X1=136
+Y1=49
+X2=152
+Y2=73
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+[REGIONSPAWN 17687]
+{
+NAME=Sorcerers 3_3
+NPC=bloodele
+MAXNPCS=1
+X1=154
+Y1=49
+X2=165
+Y2=69
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+[REGIONSPAWN 17688]
+{
+NAME=Sorcerers 3_4
+NPCLIST=balron
+MAXNPCS=1
+X1=145
+Y1=21
+X2=157
+Y2=31
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+[REGIONSPAWN 17689]
+{
+NAME=Sorcerers 3_5
+NPCLIST=eldergazer
+MAXNPCS=1
+X1=145
+Y1=21
+X2=153
+Y2=21
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+[REGIONSPAWN 17690]
+{
+NAME=Sorcerers 3_6
+NPCLIST=eldergazer
+MAXNPCS=1
+X1=154
+Y1=15
+X2=163
+Y2=32
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+[REGIONSPAWN 17691]
+{
+NAME=Sorcerers 3_7
+NPC=Efreet
+MAXNPCS=2
+X1=155
+Y1=6
+X2=165
+Y2=12
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// bonemagi, skeletalmage > mummy
+[REGIONSPAWN 17692]
+{
+NAME=Sorcerers 3_8
+NPCLIST=sorc_npclist_11
+MAXNPCS=7
+X1=97
+Y1=25
+X2=126
+Y2=61
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// mummy > lichlord
+[REGIONSPAWN 17693]
+{
+NAME=Sorcerers 3_9
+NPCLIST=sorc_npclist_12
+MAXNPCS=6
+X1=60
+Y1=54
+X2=73
+Y2=85
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// boneknight, skeletalknight
+[REGIONSPAWN 17694]
+{
+NAME=Sorcerers 3_10
+NPCLIST=sorc_npclist_13
+MAXNPCS=4
+X1=108
+Y1=105
+X2=158
+Y2=118
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+[REGIONSPAWN 17695]
+{
+NAME=Sorcerers 3_11
+NPC=bloodele
+MAXNPCS=1
+X1=120
+Y1=105
+X2=143
+Y2=119
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// boneknight, skeletalknight < bonemagi, skeletalmage < mummy < lichlord
+[REGIONSPAWN 17696]
+{
+NAME=Sorcerers 2.5
+NPCLIST=sorc_npclist_14
+MAXNPCS=12
+X1=225
+Y1=113
+X2=246
+Y2=142
+WORLD=2
+MINTIME=1
+MAXTIME=3
+CALL=1
+}
+
+// lich > blood ele, poison ele > lichlord
+[REGIONSPAWN 17697]
+{
+NAME=Sorcerers 2_13
+NPCLIST=sorc_npclist_15
+MAXNPCS=4
+X1=297
+Y1=78
+X2=323
+Y2=101
+WORLD=2
+MINTIME=1
+MAXTIME=2
+CALL=1
+}

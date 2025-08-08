@@ -15,13 +15,14 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 7901]
 {
-NAME=Serpents hold baker
+NAME=Serpents Hold - Plenty of Dough
 NPC=baker
 MAXNPCS=1
 X1=2973
-Y1=3352
+Y1=3353
 X2=2976
 Y2=3354
 WORLD=1
@@ -29,9 +30,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 7902]
 {
-NAME=Serpents hold herbalist
+NAME=Serpents Hold - Britannian Herbs
 NPC=herbalist
 MAXNPCS=1
 X1=3009
@@ -43,9 +45,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 7903]
 {
-NAME=Serpents hold mage
+NAME=Serpents Hold - Serpents Spells
 NPC=mage
 MAXNPCS=1
 X1=3001
@@ -57,9 +60,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 7904]
 {
-NAME=Serpents hold healer
+NAME=Serpents Hold - Healer
 NPC=healer
 MAXNPCS=1
 X1=3000
@@ -71,9 +75,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 7905]
 {
-NAME=Serpents hold provisioner
+NAME=Serpents Hold - Supplier
 NPC=provisioner
 MAXNPCS=1
 X1=3004
@@ -85,9 +90,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 7906]
 {
-NAME=Serpents hold blacksmith
+NAME=Serpents Hold - Blacksmith
 NPC=blacksmith
 MAXNPCS=1
 X1=3001
@@ -99,6 +105,7 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 7907]
 {
 NAME=Serpents hold healer
@@ -113,10 +120,11 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 7908]
 {
-NAME=Serpents hold tavernkeeper
-NPC=innkeeper
+NAME=Serpents Hold - The Day and Lion Pub
+NPC=tavernkeeper
 MAXNPCS=1
 X1=2968
 Y1=3416
@@ -127,9 +135,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 7909]
 {
-NAME=Serpents hold innkeeper
+NAME=Serpents Hold - The Broken Arrow Inn
 NPC=innkeeper
 MAXNPCS=1
 X1=2962
@@ -141,6 +150,7 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 7910]
 {
 NAME=Serpents hold guard
@@ -155,9 +165,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 7911]
 {
-NAME=Serpents hold weaponsmith
+NAME=Serpents Hold - Serpents Arms
 NPC=weaponsmith
 MAXNPCS=1
 X1=3015
@@ -169,6 +180,7 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 7912]
 {
 NAME=Serpents hold tavernkeeper
@@ -183,9 +195,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 7913]
 {
-NAME=Serpents hold weaponsmith
+NAME=Serpents Hold - Warriors Guild
 NPC=weaponsmith
 MAXNPCS=1
 X1=3048
@@ -197,9 +210,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 7914]
 {
-NAME=Serpents hold bowyer
+NAME=Serpents Hold - Silver Serpent Bows
 NPC=bowyer
 MAXNPCS=1
 X1=3050
@@ -211,6 +225,7 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 7915]
 {
 NAME=Serpents hold guard
@@ -225,6 +240,7 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 7916]
 {
 NAME=Serpents hold animal trainer
@@ -239,6 +255,7 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 7917]
 {
 NAME=Serpents hold guard
@@ -253,6 +270,7 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 7918]
 {
 NAME=Serpents hold tinker
@@ -267,9 +285,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 7919]
 {
-NAME=Serpents hold animal trainer
+NAME=Serpents Hold - Stablery
 NPC=animaltrainer
 MAXNPCS=1
 X1=2909
@@ -281,9 +300,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 7920]
 {
-NAME=Serpents hold butcher
+NAME=Serpents Hold - Meats
 NPC=butcher
 MAXNPCS=1
 X1=2906
@@ -295,9 +315,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 7921]
 {
-NAME=Serpents hold tailor
+NAME=Serpents Hold - Silver Serpent Tailors
 NPC=tailor
 MAXNPCS=1
 X1=2874
@@ -309,6 +330,7 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 7922]
 {
 NAME=Serpents hold guard
@@ -323,6 +345,7 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 7923]
 {
 NAME=Serpents hold guard
@@ -338,4 +361,93 @@ MAXTIME=600
 CALL=1
 }
 
-EOF
+[REGIONSPAWN 7924]
+{
+NAME=Thief Guildmaster
+NPCLIST=thiefguildmaster
+MAXNPCS=1
+X1=2860
+Y1=3363
+X2=3067
+Y2=3511
+WORLD=1
+ONLYOUTSIDE=1
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 7925]
+{
+NAME=Serpents Hold - Bank
+NPC=banker
+MAXNPCS=2
+X1=2874
+Y1=3466
+X2=2879
+Y2=3476
+WORLD=1
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 7926]
+{
+NAME=Serpents Hold - Warrior Guild
+NPC=fighter
+MAXNPCS=2
+X1=3050
+Y1=3385
+X2=3055
+Y2=3399
+WORLD=1
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 7927]
+{
+NAME=Serpents Hold - Silver Serpent Tailors
+NPC=weaver
+MAXNPCS=1
+X1=2872
+Y1=3496
+X2=2878
+Y2=3503
+WORLD=1
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 7928]
+{
+NAME=Serpents Hold - Silver Serpent Tailors
+NPC=spinner
+MAXNPCS=1
+X1=2881
+Y1=3496
+X2=2886
+Y2=3499
+WORLD=1
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 7929]
+{
+NAME=Serpents Hold - Fisherman's Brew
+NPC=waiter
+MAXNPCS=1
+X1=3018
+Y1=3450
+X2=3020
+Y2=3461
+WORLD=1
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
