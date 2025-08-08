@@ -3638,6 +3638,260 @@ Y=0
 Z=0
 }
 
+// dirt 1
+[HOUSE ITEM 600]
+{ 
+ITEM=dirt1
+X=0
+Y=0
+Z=0
+}
+
+// a hole
+[HOUSE ITEM 602]
+{
+ITEM=ahole
+X=0
+Y=0
+Z=0
+}
+
+// dirt 2
+[HOUSE ITEM 603]
+{ 
+ITEM=dirt2
+X=1
+Y=1
+Z=0
+}
+
+// dirt 3
+[HOUSE ITEM 604]
+{ 
+ITEM=dirt3
+X=1
+Y=0
+Z=0
+}
+
+// dirt 4
+[HOUSE ITEM 605]
+{ 
+ITEM=dirt4
+X=1
+Y=-1
+Z=0
+}
+
+// dirt 5
+[HOUSE ITEM 606]
+{ 
+ITEM=dirt5
+X=0
+Y=-1
+Z=0
+}
+
+// dirt 6
+[HOUSE ITEM 607]
+{ 
+ITEM=dirt6
+X=-1
+Y=-1
+Z=0
+}
+
+// dirt 7
+[HOUSE ITEM 608]
+{ 
+ITEM=dirt7
+X=-1
+Y=0
+Z=0
+}
+
+// dirt 8
+[HOUSE ITEM 609]
+{ 
+ITEM=dirt8
+X=-1
+Y=1
+Z=0
+}
+
+// dirt 9
+[HOUSE ITEM 610]
+{ 
+ITEM=dirt9
+X=0
+Y=1
+Z=0
+}
+
+// entrance hole
+[HOUSE ITEM 611]
+{ 
+ITEM=solenentrancehole
+X=0
+Y=0
+Z=0
+}
+
+// entrance hole
+[HOUSE ITEM 612]
+{ 
+ITEM=solenentrancehole
+X=1
+Y=0
+Z=0
+}
+
+// entrance hole
+[HOUSE ITEM 613]
+{ 
+ITEM=solenentrancehole2
+X=1
+Y=1
+Z=0
+}
+
+// entrance hole
+[HOUSE ITEM 614]
+{ 
+ITEM=solenentrancehole
+X=0
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 615]
+{ 
+ITEM=shentrancepeice1
+X=-1
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 616]
+{ 
+ITEM=shentrancepeice2
+X=0
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 617]
+{ 
+ITEM=shentrancepeice3
+X=1
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 618]
+{ 
+ITEM=shentrancepeice4
+X=2
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 619]
+{ 
+ITEM=shentrancepeice5
+X=-1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 620]
+{ 
+ITEM=shentrancepeice6
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 621]
+{ 
+ITEM=shentrancepeice6
+X=1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 622]
+{ 
+ITEM=shentrancepeice7
+X=2
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 623]
+{ 
+ITEM=shentrancepeice8
+X=-1
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 624]
+{ 
+ITEM=shentrancepeice6
+X=0
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 625]
+{ 
+ITEM=shentrancepeice6
+X=1
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 626]
+{ 
+ITEM=shentrancepeice9
+X=2
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 627]
+{ 
+ITEM=shentrancepeice10
+X=-1
+Y=2
+Z=0
+}
+
+[HOUSE ITEM 628]
+{ 
+ITEM=shentrancepeice11
+X=0
+Y=2
+Z=0
+}
+
+[HOUSE ITEM 629]
+{ 
+ITEM=shentrancepeice12
+X=1
+Y=2
+Z=0
+}
+
+[HOUSE ITEM 630]
+{ 
+ITEM=shentrancepeice13
+X=2
+Y=2
+Z=0
+}
+
 // Dull Copper Colored Anvil 1/1
 [HOUSE ITEM 700]
 {
