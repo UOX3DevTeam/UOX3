@@ -8,6 +8,7 @@ function onUseChecked( pUser, iPowder )
 	socket.CustomTarget( 0 );
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback0( socket, myTarget )
 {
 	var pUser = socket.currentChar;

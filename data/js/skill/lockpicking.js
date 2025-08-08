@@ -18,6 +18,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback0( pSock, ourObj )
 {
 	var bItem = pSock.tempObj;

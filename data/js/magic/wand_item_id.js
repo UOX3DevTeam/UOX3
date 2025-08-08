@@ -81,6 +81,7 @@ function onTimer( mChar, timerID )
         mSock.CustomTarget( 0, Spells[timerID].strToSay );
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback0( mSock, ourTarg )
 {
 	var mChar = mSock.currentChar;

@@ -14,6 +14,7 @@ function TreasureDigging( pUser )
 		socket.CustomTarget(0, GetDictionaryEntry( 5707, socket.language ));//Where do you wish to dig?
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback0( socket, myTarget )
 {
 	var pUser = socket.currentChar;

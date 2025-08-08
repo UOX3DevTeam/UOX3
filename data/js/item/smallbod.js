@@ -248,6 +248,7 @@ function CombineItemWithBod( pUser, smallBOD )
 	}
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback0( socket, myTarget )
 {
 	var gumpID = scriptID + 0xffff;

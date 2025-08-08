@@ -32,6 +32,7 @@ function onUseChecked( pUser, iBowl )
 	return true;
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback1( socket, myTarget )
 {
 	if( socket == null )

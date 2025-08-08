@@ -22,6 +22,7 @@ function onUseChecked( pUser, iUsed )
     pUser.CustomTarget( 0 );
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback0( socket, targetObj )
 {
     // Abort if player cancels target cursor or clicks empty space.

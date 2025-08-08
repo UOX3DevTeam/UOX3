@@ -17,6 +17,7 @@ function command_FULLSTATS( socket, cmdString )
 	socket.CustomTarget( 0, targMsg );
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback0( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ( ourObj.isChar || (( ourObj.isItem || ourObj.isMulti ) && ourObj.isDamageable )))
@@ -43,6 +44,7 @@ function command_HEAL( socket, cmdString )
 	socket.CustomTarget( 1, targMsg );
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback1( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ( ourObj.isChar || (( ourObj.isItem || ourObj.isMulti ) && ourObj.isDamageable )))
@@ -69,6 +71,7 @@ function command_STAMINA( socket, cmdString )
 	socket.CustomTarget( 2, targMsg );
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback2( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )
@@ -85,6 +88,7 @@ function command_MANA( socket, cmdString )
 	socket.CustomTarget( 3, targMsg );
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback3( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )
@@ -101,6 +105,7 @@ function command_CURE( socket, cmdString )
 	socket.CustomTarget( 4, targMsg );
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback4( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )

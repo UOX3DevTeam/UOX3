@@ -71,6 +71,7 @@ function onGumpPress( socket, pButton, gumpData )
 	}
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback0( socket, myTarget )
 {
 	var iUsed = socket.tempObj;

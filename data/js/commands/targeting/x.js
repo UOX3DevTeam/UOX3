@@ -59,6 +59,7 @@ function command_XTELEPORT( socket, cmdString )
 	socket.CustomTarget( 0, targMsg );
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback0( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ))
@@ -101,6 +102,7 @@ function command_XGO( socket, cmdString )
 	}
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback1( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ))
@@ -132,6 +134,7 @@ function onCallback1( socket, ourObj )
 	socket.xText = null;
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback2( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ))

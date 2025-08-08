@@ -78,6 +78,7 @@ function onGumpPress( socket, pButton, gumpData )
         pUser.SysMessage( GetDictionaryEntry( 2067, socket.language )); // You must be in your house to do this.
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback1( socket, ourObj )
 {
 	var tChar = socket.currentChar;
@@ -119,6 +120,7 @@ function onCallback1( socket, ourObj )
 	}
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback2( socket, ourObj )
 {
 	var tChar = socket.currentChar;
@@ -160,6 +162,7 @@ function onCallback2( socket, ourObj )
 	}
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback3( socket, ourObj )
 {
 	var tChar = socket.currentChar;

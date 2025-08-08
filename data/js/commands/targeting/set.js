@@ -33,6 +33,7 @@ function command_SET( socket, cmdString )
 }
 
 // Common Object properties
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback0( socket, ourObj )
 {
 	if( socket.GetWord( 1 ) && !ValidateObject( ourObj ))
@@ -1140,6 +1141,7 @@ function HandleSetSocket( socket, uKey, splitString )
 	return true;
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback1( socket, ourObj )
 {
 	var toOwn = socket.tempObj;
@@ -1161,6 +1163,7 @@ function command_SETPOISONED( socket, cmdString )
 	}
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback2( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )

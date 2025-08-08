@@ -84,6 +84,7 @@ function DoItemChecks( socket, pUser, iUsed )
 	return true;
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback1( socket, ourObj )
 {
 	var mChar = socket.currentChar;

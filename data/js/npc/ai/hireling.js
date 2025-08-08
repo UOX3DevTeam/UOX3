@@ -918,6 +918,7 @@ function CalculateHirelingPay( hireling )
 	return Math.round( payPerDay );
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback0( socket, myTarget )
 {
 	if( socket == null )

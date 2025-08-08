@@ -319,6 +319,7 @@ function CountGoldInBank( pTalking, bankBox )
 }
 
 // Select item to deposit into bankbox
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback0( pSock, ourObj )
 {
 	var pTalking = pSock.currentChar;

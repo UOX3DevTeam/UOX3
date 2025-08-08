@@ -445,6 +445,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	}
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback1( pSock, ourObj )
 {
 	var pUser = pSock.currentChar;
@@ -501,6 +502,7 @@ function UnravelTarget( pSock )
 }
 
 // Clothes and leather armor can be unravelled back into cloth and leather
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback2( pSock, ourObj )
 {
 	// Unravel item, get cloth/leather in return

@@ -55,7 +55,8 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
-function onCallback0( socket, myTarget)
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+function onCallback0( socket, myTarget )
 {
 	var pUser = socket.currentChar;
 	var iUsed = socket.tempObj;

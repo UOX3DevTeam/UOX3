@@ -530,6 +530,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	}
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback2( pSock, targObj )
 {
 	var pUser = pSock.currentChar;

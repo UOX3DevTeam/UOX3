@@ -15,6 +15,7 @@ function command_FOLLOW( socket, cmdString )
 	socket.CustomTarget( 0, targMsg );
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback0( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )
@@ -25,6 +26,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback1( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )
@@ -55,6 +57,7 @@ function command_NPCRECT( socket, cmdString )
 	}
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback2( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar && ourObj.npc )
@@ -79,6 +82,7 @@ function command_NPCCIRCLE( socket, cmdString )
 	}
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback3( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar && ourObj.npc )

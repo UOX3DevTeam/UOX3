@@ -24,6 +24,7 @@ function command_INCX( socket, cmdString )
 	socket.CustomTarget( 0, targMsg );
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback0( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ))
@@ -47,6 +48,7 @@ function command_INCY( socket, cmdString )
 	socket.CustomTarget( 1, targMsg );
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback1( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ))
@@ -66,6 +68,7 @@ function command_INCZ( socket, cmdString )
 	socket.CustomTarget( 2, targMsg );
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback2( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) )
@@ -89,6 +92,7 @@ function command_INCID( socket, cmdString )
 	socket.CustomTarget( 3, targMsg.replace( /%i/gi, socket.tempint ));
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback3( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ))

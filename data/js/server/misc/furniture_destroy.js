@@ -23,6 +23,7 @@ function onUseChecked( pUser, iUsed )
 	}
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback0( tSock, tItem )
 {
 	var tChar = tSock.currentChar;

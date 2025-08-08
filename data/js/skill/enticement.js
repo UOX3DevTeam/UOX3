@@ -30,6 +30,7 @@ function onSkill( pUser, objType, skillUsed )
 }
 
 // Enticement - First Target
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback0( pSock, ourObj )
 {
 	if( ValidateObject( ourObj ) && ourObj.isChar )
@@ -89,6 +90,7 @@ function onCallback0( pSock, ourObj )
 }
 
 // Enticement - Second Target
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback1( pSock, toFollow )
 {
 	if( ValidateObject( toFollow ))

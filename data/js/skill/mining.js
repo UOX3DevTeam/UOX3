@@ -118,6 +118,7 @@ function onUseChecked( pUser, iUsed )
 	return true;
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback1( socket, ourObj )
 {
 	if( socket == null )

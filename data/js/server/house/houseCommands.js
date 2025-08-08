@@ -105,6 +105,7 @@ function FindHouseSign( pChar, itemToCheck, pSocket )
 }
 
 // Transfer house ownership - Callback
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback0( pSocket, myTarget )
 {
 	var pUser = pSocket.currentChar;
@@ -216,6 +217,7 @@ function AddOwner( pSocket, iMulti )
 }
 
 // Add co-owner - Callback
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback1( pSocket, myTarget )
 {
 	var pUser = pSocket.currentChar;
@@ -310,6 +312,7 @@ function RemoveOwnerTrigger( pSocket, iMulti )
 }
 
 // Remove co-owner - Callback
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback2( pSocket, myTarget )
 {
 	var pUser = pSocket.currentChar;
@@ -433,6 +436,7 @@ function AddFriend( pSocket, iMulti )
 }
 
 // Add friend - Callback
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback3( pSocket, myTarget )
 {
 	var pUser = pSocket.currentChar;
@@ -518,6 +522,7 @@ function RemoveFriendTrigger( pSocket, iMulti )
 }
 
 // Remove friend - Callback
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback4( pSocket, myTarget )
 {
 	var pUser = pSocket.currentChar;
@@ -619,6 +624,7 @@ function AddGuest( pSocket, iMulti )
 }
 
 // Add guest - Callback
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback11( pSocket, myTarget )
 {
 	var pUser = pSocket.currentChar;
@@ -709,6 +715,7 @@ function RemoveGuestTrigger( pSocket, iMulti )
 }
 
 // Remove guest - Callback
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback12( pSocket, myTarget )
 {
 	var pUser = pSocket.currentChar;
@@ -802,6 +809,7 @@ function BanPlayer( pSocket, iMulti )
 }
 
 // Add player to ban list
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback5( pSocket, myTarget )
 {
 	var pUser = pSocket.currentChar;
@@ -894,6 +902,7 @@ function UnbanPlayerTrigger( pSocket, iMulti )
 }
 
 // Unban player
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback6( pSocket, myTarget )
 {
 	var pUser = pSocket.currentChar;
@@ -975,6 +984,7 @@ function EjectPlayer( pSocket, iMulti )
 }
 
 // Eject player from house
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback7( pSocket, myTarget )
 {
 	var pUser = pSocket.currentChar;
@@ -1090,6 +1100,7 @@ function LockdownItem( pSocket, iMulti )
 }
 
 // Lockdown Item
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback8( pSocket, myTarget )
 {
 	var pUser = pSocket.currentChar;
@@ -1256,6 +1267,7 @@ function ReleaseItem( pSocket, iMulti )
 }
 
 // Release Item
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback9( pSocket, myTarget )
 {
 	var pUser = pSocket.currentChar;
@@ -1396,6 +1408,7 @@ function SecureContainer( pSocket, iMulti )
 }
 
 // Secure Container
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback10( pSocket, myTarget )
 {
 	var pUser = pSocket.currentChar;

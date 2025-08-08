@@ -290,6 +290,7 @@ function onTimer( mChar, timerID )
 	}
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback0( mSock, ourTarg )
 {
 	var mChar = mSock.currentChar;

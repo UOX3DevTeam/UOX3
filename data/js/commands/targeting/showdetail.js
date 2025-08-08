@@ -12,6 +12,7 @@ function command_SHOWDETAIL( socket, cmdString )
 	socket.CustomTarget( 0, GetDictionaryEntry( 8110, socket.language )); // Select Item to get Type Info from:
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback0( socket, ourObj )
 {
 	var message;

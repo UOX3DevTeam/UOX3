@@ -93,6 +93,7 @@ function onSkill( pThief, objType, skillUsed )
 	return true;
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback0( pSock, myTarget )
 {
 	if( pSock == null )

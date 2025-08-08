@@ -32,6 +32,7 @@ function onSkill( pUser, objType, skillUsed )
 	return true;
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback0( pSock, ourObj )
 {
 	if( ValidateObject( ourObj ) && ourObj.isChar )
@@ -98,6 +99,7 @@ function onCallback0( pSock, ourObj )
 	}
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback1( pSock, toAttack )
 {
 	if( ValidateObject( toAttack ))

@@ -67,6 +67,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 {
 	var pUser = pSock.currentChar;
@@ -224,6 +225,7 @@ function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 	}
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 {
 	var pUser = pSock.currentChar;

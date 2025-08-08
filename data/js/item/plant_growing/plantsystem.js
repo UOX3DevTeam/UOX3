@@ -1392,6 +1392,7 @@ function PollinatePlant( pUser, iUsed )
 		pUser.CustomTarget( 1, GetDictionaryEntry( 19116, socket.language ));//Target the plant you wish to cross-pollinate to.
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback1( pSock, myTarget )
 {
 	var iUsed = pSock.tempObj;
@@ -2125,6 +2126,7 @@ function addPotion( pUser, iUsed, button )
 	pUser.CustomTarget( 0 );
 }
 
+/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
 function onCallback0( pSock, myTarget )
 {
 	var iUsed = pSock.tempObj;
