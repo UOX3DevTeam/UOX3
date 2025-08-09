@@ -7,6 +7,7 @@ const UI08 BIT_ANIMAL		=	2;
 const UI08 BIT_WATER		=	3;
 const UI08 BIT_AMPHI		=	4;
 const UI08 BIT_HUMAN		=	5;
+const UI08 BIT_PACKANIMAL	=	6;
 
 class CCreatures
 {
@@ -24,13 +25,14 @@ class CCreatures
 	//              # 4 water creatures
 	//				# 5 amphibians (water + land)
 	//				# 6 human-bit
+	//				# 7 packanimal-bit
 	//
 	// icon: used for tracking, to set the appropriate icon
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 private:
 	UI16				creatureId;
 	UI16				soundList[SND_COUNT];
-	std::bitset<6>		who_am_i;
+	std::bitset<7>		who_am_i;
 	UI16				icon;
 	UI16				mountId;
 	struct CreatureAnim_st
@@ -186,12 +188,14 @@ public:
 	}
 
 	bool	IsAnimal( void ) const		{		return who_am_i.test( BIT_ANIMAL );		}
+	bool	IsPackAnimal( void ) const	{		return who_am_i.test( BIT_PACKANIMAL );	}
 	bool	IsHuman( void ) const		{		return who_am_i.test( BIT_HUMAN );		}
 	bool	AntiBlink( void ) const		{		return who_am_i.test( BIT_ANTIBLINK );	}
 	bool	CanFly( void ) const		{		return who_am_i.test( BIT_CANFLY );		}
 	bool	IsWater( void ) const		{		return who_am_i.test( BIT_WATER );		}
 	bool	IsAmphibian( void ) const	{		return who_am_i.test( BIT_AMPHI );		}
 	void	IsAnimal( bool value )		{		who_am_i.set( BIT_ANIMAL, value );		}
+	void	IsPackAnimal( bool value )	{		who_am_i.set( BIT_PACKANIMAL, value );	}
 	void	IsHuman( bool value )		{		who_am_i.set( BIT_HUMAN, value );		}
 	void	AntiBlink( bool value )		{		who_am_i.set( BIT_ANTIBLINK, value );	}
 	void	CanFly( bool value )		{		who_am_i.set( BIT_CANFLY, value );		}
