@@ -779,6 +779,7 @@ void CPICreateCharacter::NewbieItems( CChar *mChar )
 	}
 }
 
+void MakeStatusTarget( CSocket *sock, CChar *optionalTargChar = nullptr, const std::string cmdLvlString = "" );
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	bool CPICreateCharacter::Handle( void )
 //o------------------------------------------------------------------------------------------------o
@@ -821,13 +822,6 @@ bool CPICreateCharacter::Handle( void )
 			SetNewCharGenderAndRace( mChar );
 
 			mChar->SetPriv( cwmWorldState->ServerData()->ServerStartPrivs() );
-
-			CAccountBlock_st& actbTemp2 = mChar->GetAccount();
-			if( actbTemp2.wAccountIndex != AB_INVALID_ID && actbTemp2.wFlags.test( AB_FLAGS_GM ))
-			{
-				mChar->SetPriv( 0xFF );
-				mChar->SetCommandLevel( CL_GM );
-			}
 
 			if( tSock->ClientType() == CV_SA3D || tSock->ClientType() == CV_HS3D )
 			{
@@ -919,6 +913,29 @@ bool CPICreateCharacter::Handle( void )
 			SetNewCharSkillsStats( mChar );
 
 			NewbieItems( mChar );
+
+			CAccountBlock_st& actbTemp2 = mChar->GetAccount();
+			if( actbTemp2.wAccountIndex != AB_INVALID_ID )
+			{
+				if( actbTemp2.wFlags.test( AB_FLAGS_GM ))
+				{
+					mChar->SetPriv( 0xFF );
+					mChar->SetCommandLevel( CL_GM );
+				}
+				else if( actbTemp2.wFlags.test( AB_FLAGS_SEER ))
+				{
+
+					MakeStatusTarget( tSock, mChar, "SEER" );
+					mChar->SetPriv( 0x4F );
+					mChar->SetCommandLevel( CL_SEER );
+				}
+				else if( actbTemp2.wFlags.test( AB_FLAGS_COUNSELOR ))
+				{
+					MakeStatusTarget( tSock, mChar, "CNS" );
+					mChar->SetPriv( 0x38);
+					mChar->SetCommandLevel( CL_CNS );
+				}
+			}
 
 			// Added for my client - Krrios
 			if( pattern3 == 0xFF ) // Signal that this is not the standard client
@@ -1402,9 +1419,6 @@ void StartChar( CSocket *mSock, bool onCreate )
 			pllToSend.Level( 0 );
 			mSock->Send( &pllToSend );
 
-			CPWarMode wMode( 0 );
-			mSock->Send( &wMode );
-
 			CItem *nItem = mChar->GetItemAtLayer( IL_PACKITEM );
 			mChar->SetPackItem( nItem );
 
@@ -1517,7 +1531,7 @@ void StartChar( CSocket *mSock, bool onCreate )
 			if( mChar->WorldNumber() > 0 )
 			{
 				// Without this, world will not be properly updated in regular UO clients until they take the first step
-				mChar->Update();
+				mChar->Update( nullptr, false, true, true );
 			}
 
 			// Re-add player to party, if they are in one!
@@ -1649,7 +1663,7 @@ auto MoveItemsToCorpse( CChar &mChar, CItem *iCorpse ) -> void
 			case IL_PACKITEM:
 			{
 				// Only move player's items from backpack to corpse if young system is disabled OR player is not on a young account
-				if( !cwmWorldState->ServerData()->YoungPlayerSystem() || !mChar.GetAccount().wFlags.test( AB_FLAGS_YOUNG ))
+				if( mChar.IsNpc() || ( !cwmWorldState->ServerData()->YoungPlayerSystem() || !mChar.GetAccount().wFlags.test( AB_FLAGS_YOUNG )))
 				{
 					std::vector<CItem *> moveItems;
 					auto jCont = j->GetContainsList();
@@ -1658,7 +1672,7 @@ auto MoveItemsToCorpse( CChar &mChar, CItem *iCorpse ) -> void
 						if( ValidateObject( k ))
 						{
 							// If the character dying is a pack animal, drop everything they're carrying - including newbie items and spellbooks
-							if(( mChar.GetId() == 0x0123 || mChar.GetId() == 0x0124 || mChar.GetId() == 0x0317 ) || ( !k->IsNewbie() && k->GetType() != IT_SPELLBOOK ))
+							if(( cwmWorldState->creatures[mChar.GetId()].IsPackAnimal() ) || ( !k->IsNewbie() && k->GetType() != IT_SPELLBOOK ))
 							{
 								// Store a reference to the item we want to move...
 								moveItems.push_back( k );
@@ -1747,6 +1761,12 @@ void HandleDeath( CChar *mChar, CChar *attacker )
 			Effects->DeathAction( mChar, iCorpse, fallDirection );
 		}
 
+		// Store information on the corpse about the origins of the poison that was on character when they died
+		if( mChar->GetPoisoned() > 0 )
+		{
+			iCorpse->SetPoisonedBy( mChar->GetPoisonedBy() );
+		}
+
 		// Prevent followers from following ghost of dead player
 		auto mFollowerList = mChar->GetFollowerList();
 		for( const auto &tempChar : mFollowerList->collection() )
@@ -1804,6 +1824,7 @@ void HandleDeath( CChar *mChar, CChar *attacker )
 	mChar->SetFrozen( false );
 	mChar->SetHP( 0 );
 	mChar->SetPoisoned( 0 );
+	mChar->SetPoisonedBy( INVALIDSERIAL );
 	mChar->SetPoisonStrength( 0 );
 
 	// Remove any permagrey flags on the character, but replace with a temporary criminal flag instead
@@ -1891,6 +1912,12 @@ void HandleDeath( CChar *mChar, CChar *attacker )
 	else
 	{
 		mChar->Dirty( UT_LOCATION );
+	}
+
+	// Reset skill usage status for all skills
+	for( UI08 i = 0; i < ALLSKILLS; ++i )
+	{
+		mChar->SkillUsed( false, i );
 	}
 
 	// Play death music

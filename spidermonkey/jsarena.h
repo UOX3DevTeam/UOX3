@@ -95,34 +95,7 @@ struct JSArenaPool {
 #endif
 };
 
-#ifdef JS_ARENAMETER
-#define JS_INIT_NAMED_ARENA_POOL(pool, name, size, align, quotap)             \
-    JS_InitArenaPool(pool, name, size, align, quotap)
-#else
-#define JS_INIT_NAMED_ARENA_POOL(pool, name, size, align, quotap)             \
-    JS_InitArenaPool(pool, size, align, quotap)
-#endif
-
-/*
- * If the including .c file uses only one power-of-2 alignment, it may define
- * JS_ARENA_CONST_ALIGN_MASK to the alignment mask and save a few instructions
- * per ALLOCATE and GROW.
- */
-#ifdef JS_ARENA_CONST_ALIGN_MASK
-#define JS_ARENA_ALIGN(pool, n) (((jsuword)(n) + JS_ARENA_CONST_ALIGN_MASK)   \
-                                 & ~(jsuword)JS_ARENA_CONST_ALIGN_MASK)
-
-#define JS_INIT_ARENA_POOL(pool, name, size, quotap)                          \
-    JS_INIT_NAMED_ARENA_POOL(pool, name, size, JS_ARENA_CONST_ALIGN_MASK + 1, \
-                             quotap)
-
-#else
 #define JS_ARENA_ALIGN(pool, n) (((jsuword)(n) + (pool)->mask) & ~(pool)->mask)
-
-#define JS_INIT_ARENA_POOL(pool, name, size, align, quotap)                   \
-    JS_INIT_NAMED_ARENA_POOL(pool, name, size, align, quotap)
-
-#endif
 
 #define JS_ARENA_ALLOCATE(p, pool, nb)                                        \
     JS_ARENA_ALLOCATE_CAST(p, void *, pool, nb)
@@ -153,6 +126,7 @@ struct JSArenaPool {
         else                                                                  \
             _a->avail = _p + _nb;                                             \
         p = (type) _p;                                                        \
+        STATIC_ASSUME(!p || ubound((char *)p) >= nb)                          \
         JS_ArenaCountAllocation(pool, nb);                                    \
     JS_END_MACRO
 
@@ -176,6 +150,7 @@ struct JSArenaPool {
         } else {                                                              \
             p = (type) JS_ArenaGrow(pool, p, size, incr);                     \
         }                                                                     \
+        STATIC_ASSUME(!p || ubound((char *)p) >= size + incr);                \
         JS_ArenaCountGrowth(pool, size, incr);                                \
     JS_END_MACRO
 
@@ -227,18 +202,16 @@ struct JSArenaPool {
         if ((pool)->current == (a)) (pool)->current = &(pool)->first;         \
         *(pnext) = (a)->next;                                                 \
         JS_CLEAR_ARENA(a);                                                    \
-        free(a);                                                              \
+        js_free(a);                                                              \
         (a) = NULL;                                                           \
     JS_END_MACRO
 
 /*
  * Initialize an arena pool with a minimum size per arena of size bytes.
- * Always call JS_SET_ARENA_METER_NAME before calling this or use
- * JS_INIT_ARENA_POOL macro to provide a name for for debugging and metering.
  */
 extern JS_PUBLIC_API(void)
-JS_INIT_NAMED_ARENA_POOL(JSArenaPool *pool, const char *name, size_t size,
-                         size_t align, size_t *quotap);
+JS_InitArenaPool(JSArenaPool *pool, const char *name, size_t size,
+                 size_t align, size_t *quotap);
 
 /*
  * Free the arenas in pool.  The user may continue to allocate from pool

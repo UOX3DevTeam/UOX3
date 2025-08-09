@@ -1520,13 +1520,13 @@
 1513=jest trochę zniszczony.
 1514=jest nietrwały i niegodny zaufania.
 1515=rozpada się.
-1516=byłby niezwykle zabójczy.
-1517=byłaby lepszą bronią.
-1518= zadałby sporo obrażeń i bólu.
-1519= prawdopodobnie zraniłby twojego przeciwnika dość mocno.
-1520= wyrządziłby trochę szkód.
-1521= wyrządziłby minimalne obrażenia.
-1522= mógłby lekko zadrapać twojego przeciwnika.
+1516=Byłby niezwykle zabójczy,
+1517=Byłaby lepszą bronią,
+1518=Zadałby sporo obrażeń i bólu,
+1519=Prawdopodobnie zraniłby twojego przeciwnika dość mocno,
+1520=Wyrządziłby trochę szkód,
+1521=Wyrządziłby minimalne obrażenia,
+1522=Mógłby lekko zadrapać twojego przeciwnika,
 1523= i jest bardzo szybki.
 1524= i jest szybki.
 1525= i jest powolny.
@@ -2458,6 +2458,18 @@
 2585=Wlewasz trochę cydru do pojemnika.
 2586=Wlejesz trochę likieru do pojemnika.
 2587=Wlewasz trochę wina do kieliszka.
+2588=Te marchewki nie są jeszcze gotowe do zbioru.
+2589=Nie udało ci się zebrać żadnej marchewki.
+2590=Zebrałeś jedną marchewkę.
+2591=Te cebule nie są jeszcze gotowe do zbioru.
+2592=Nie udało ci się zebrać żadnej cebuli.
+2593=Zebrałeś jedną cebulę.
+2594=Ta rzepa nie jest jeszcze gotowa do zbioru.
+2595=Nie udało ci się zebrać żadnej rzepy.
+2596=Zebrałeś jedną rzepę.
+2597=Ta kapusta nie jest jeszcze gotowa do zbioru.
+2598=Nie udało ci się zebrać żadnej kapusty.
+2599=Zebrałeś jedną kapustę.
 // [2600-2699] Skrypt administratora gracza/NPC/spawnu
 2600=Wybrany NPC (%s, %i) został usunięty.
 2601=Ostrzeżenie: nie znaleziono plecaka postaci!
@@ -2977,6 +2989,7 @@
 3574=duch ostrza
 3605=elf płci męskiej
 3606=elfka
+3637=spektralna zbroja
 3666=mężczyzna gargulca
 3667=kobieta gargulec
 3689=Lord Czasu
@@ -3295,13 +3308,14 @@
 5149=egzekutor
 5150=plamisty skorpion
 5151=dragoń chaosu
-5152= elitarny smok chaosu
+5152=elitarny smok chaosu
 5153=cygańska dziewica
 5154=cygański treser zwierząt
 5155=cygański bankier
 5156=cygański wróżbita
 5157=Włóczęga
 5158=Żelazny robotnik
+5159=tropikalny ptak
 // [5500-5600] Wiadomości świąteczne
 5500=Gdzie chcesz umieścić tę dekorację?
 5501=Dekoracja musi być umieszczona obok ściany.
@@ -3488,6 +3502,20 @@
 6302=Te informacje już znasz.
 6303=Nauczyłeś się robić przedmioty ze szkła. Będziesz musiał znaleźć górników, którzy wydobędą drobny piasek, aby móc wyprodukować te przedmioty.
 6304=Musisz mieć wolną rękę, żeby wypić miksturę.
+6310=Nie możesz tego otruć! Możesz otruć tylko broń białą lub przebijającą, jedzenie lub napoje.
+6311=Otrułeś swój cel!
+6312=Trucizna wydaje się przestać działać.
+6313=Nie możesz tego otruć! Możesz otruć tylko broń białą jednoręczną lub przebijającą, jedzenie lub napoje.
+6314=Nie możesz tego otruć! Możesz otruć tylko broń zakaźną i jedzenie.
+6315=Popełniasz poważny błąd podczas nakładania trucizny.
+6316=Krew miesza się z trucizną i zaczyna korodować twoją broń.
+6317=Oczyściłeś przedmiot.
+6318=Trucizna na twojej broni wydaje się przestać działać.
+6319=Wygląda, jakby z pozostałości ostrza kapał kwas.
+6320=Wygląda, jakby jakaś substancja topiła kawałki ostrza.
+6321=Wygląda, jakby ostrze było pokryte kwaśną substancją.
+6322=Wygląda, jakby ostrze zawierało substancję żrącą.
+6323=Wygląda, jakby ostrze zawierało niewielką ilość substancji żrącej.
 // [7000-7499] AI Scripts
 7000=Jesteś przestępcą i nie masz dostępu do swojej skrytki bankowej.
 7001=Którą pozycję chcesz umieścić w swojej skrytce bankowej?
@@ -4099,7 +4127,7 @@
 8944=To nie wydaje się być prawidłowym NPC-id z DFNs.
 8945=Wybierz cel dla ruchomego statusu %i:
 8946=Wybierz cel do ustawienia jako nierozkładalny:
-// [9000-9500] Różne
+// [9000-9499] Różne
 9000=Nie możesz użyć tej umiejętności będąc zamrożonym.
 9001=Ta postać nie może latać!
 9002=Zostałeś zaproszony do przyłączenia się do partii, wpisz /accept lub /decline aby odpowiedzieć na zaproszenie.
@@ -4369,6 +4397,28 @@
 9410=Nauczyłeś się wydobywać drobny piasek. Podczas wydobywania celuj w obszary piaszczyste w poszukiwaniu drobnego piasku.
 9411=Nauczyłeś się wydobywać kamienie. Podczas wydobywania celuj w góry, aby znaleźć kamienie.
 9412=Nie ma tu piasku do wydobycia.
+// [9500-9550] Zbiór różnych zasobów
+9500=Ta tykwa nie jest jeszcze gotowa do zbioru.
+9501=Nie udało ci się zebrać żadnej tykwy.
+9502=Zebrałeś tykwę.
+9503=Ta dynia nie jest jeszcze gotowa do zbioru.
+9504=Nie udało ci się zebrać żadnej dyni.
+9505=Zebrałeś dynię.
+9506=Ta dynia nie jest jeszcze gotowa do zbioru.
+9507=Nie udało ci się zebrać żadnej dyni.
+9508=Zebrałeś dynię.
+9509=Ten arbuz nie jest jeszcze gotowy do zbioru.
+9510=Nie udało ci się zebrać żadnych arbuzów.
+9511=Zebrałeś arbuza.
+9512=Ten melon miodowy nie jest jeszcze gotowy do zbioru.
+9513=Nie udało ci się zebrać żadnych melonów miodowych.
+9514=Zebrałeś melona miodowego.
+9515=Ten kantalupa nie jest jeszcze gotowa do zbioru.
+9516=Nie udało ci się zebrać żadnego kantalupa.
+9517=Zebrałeś kantalupę.
+9518=Ten czosnek nie jest jeszcze gotowy do zbioru.
+9519=Nie udało ci się zebrać żadnego czosnku.
+9520=Zebrałeś czosnek.
 // [9800-9899] Edytor spawnera
 9800=Edytor obiektów spawnera
 9801=Nazwa spawnera
@@ -4755,6 +4805,7 @@
 11467=kościane ramiona
 11468=kostne legginsy
 11469=zbroja kościana
+11470=wysoki słomkowy kapelusz
 // 11601 - 11800 Gotowanie Umiejętność rzemieślnicza
 11601=MENU GOTOWANIA
 11602=Składniki
@@ -5204,6 +5255,7 @@
 17619=Jako członek gildii, mogę dać ci za to wyższą cenę!
 17620=To za mało, by pokryć opłatę za członkostwo w gildii, przykro mi.
 17621=Czas od dołączenia do gildii: %i minut.
+17622=Ta gildia nie ma mistrza gildii.
 // [17701-17710] Zdolności broni
 17701=Otrzymujesz paraliżujący cios!
 17702=Zadajesz paraliżujący cios!
@@ -5480,5 +5532,45 @@
 19234=Twoje zamieszanie minęło, możesz teraz uzbroić broń!
 19235=Nie jesteś już śmiertelnie ranny.
 19236=Krwawiące rany się zagoiły, już nie krwawisz!
+// [19301-19330] Związany i martwy zwierzak
+19301=Nie możesz handlować martwym zwierzakiem.
+19302=Martwy zwierzak nie może atakować.
+19303=Nie masz wystarczających umiejętności, aby wskrzesić tego zwierzaka.
+19304=Można wskrzesić tylko zwierzaki związane ze swoim właścicielem.
+19306=Pomyślnie wskrzesiłeś zwierzaka!
+19307=Możesz wskrzesić tylko zwierzaki związane ze swoim właścicielem.
+19308=Twój zwierzak nawiązał z tobą więź!
+19309=Twój zwierzak nie żyje i nie zareaguje na to polecenie.
+19310=Zrywasz więź ze swoim zwierzakiem.
+19311=Czy na pewno chcesz zerwać więź ze swoim zwierzakiem?
+19311=Uwolnienie ducha zwierzaka zniszczy go, bez szansy na odzyskanie. Czy chcesz kontynuować?
+19312=Właściciel zwierzaka musi być w pobliżu, aby podjąć próbę wskrzeszenia.
+19313=Twój zwierzak nie może nawiązać z tobą więzi, dopóki nie wzrośnie twoja zdolność oswajania zwierząt.
+19314=Twój zwierzak nie może nawiązać z tobą więzi, dopóki nie wzrośnie twoja zdolność bushido.
+19315=Można wskrzesić tylko zwierzaki związane ze swoim właścicielem.
+19316=Zwierzę musi znajdować się w tym samym domu co ty, aby zostać wskrzeszone.
+19317=Właściciel zwierzaka musi znajdować się w tym domu, zanim będziesz mógł wskrzesić to stworzenie.
+19318=Wybierz zwierzaka, z którym chcesz się związać. Naciśnij ESC, aby anulować. Ten przedmiot zostanie zużyty po pomyślnym użyciu, więc wybieraj mądrze!
+19319=Anulowano wiązanie ze zwierzakiem.
+19320=Ten zwierzak jest już związany z tobą.
+19321=To nie jest twój zwierzak! 19322=Czy na pewno chcesz uwolnić swojego zwierzaka? Przywołane zwierzaki znikną na stałe!
+19323=Nie możesz wykonywać korzystnych działań na swoim celu.
+19324=Wybierz zwierzaka, aby natychmiast się z nim związać.
+19325=Nieprawidłowy cel.
+19326=To stworzenie musi zostać oswojone, zanim będzie można je związać.
+19327=To zwierzę jest już związane.
+19328=Zwierzę zostało natychmiast związane!
+19329=Na tym serwerze łączenie zwierząt jest wyłączone.
+19330=Nie masz przy sobie wystarczającej ilości złota, aby zapłacić opłatę.
+19331=Z twojego plecaka pobrano %i złota.
+19332=Twój pupil został wskrzeszony.
+19333=[Oswojony]
+19334=[Związany]
+19335=związany
+19336=oswojony
+19337=niezniszczalny
+19338=zamrożony
+19339=strzeżony
+19340=Duch tego stworzenia jest pozbawiony spójności. Spróbuj ponownie za kilka minut.
 }
 EOF

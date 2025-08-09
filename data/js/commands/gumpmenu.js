@@ -1,7 +1,7 @@
 function CommandRegistration()
 {
-	RegisterCommand( "gumpmenu", 2, true );
-	RegisterCommand( "nacct", 2, true );
+	RegisterCommand( "gumpmenu", 8, true );
+	RegisterCommand( "nacct", 8, true );
 }
 
 // This command is used to open specific gumps from dfndata/misc/gumps.dfn

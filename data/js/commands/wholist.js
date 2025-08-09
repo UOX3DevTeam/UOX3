@@ -2,10 +2,10 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "wholist", 2, true );
-	RegisterCommand( "forcewho", 2, true ); // shortcut to 'wholist force
-	RegisterCommand( "playeradmin", 2, true ); // alias, to match up with npcadmin/spawnadmin commands
-	RegisterCommand( "npcadmin", 2, true ); // display all NPCs instead of players
+	RegisterCommand( "wholist", 8, true );
+	RegisterCommand( "forcewho", 8, true ); // shortcut to 'wholist force
+	RegisterCommand( "playeradmin", 8, true ); // alias, to match up with npcadmin/spawnadmin commands
+	RegisterCommand( "npcadmin", 8, true ); // display all NPCs instead of players
 }
 
 var adminPlayerList = [];
@@ -115,7 +115,7 @@ function onIterate( toCheck, socket )
 			adminNpcList.push( toCheck );
 			return true;
 		}
-		else if( !toCheck.npc && ( toCheck == socket.currentChar || toCheck.commandlevel < socket.currentChar.commandlevel ))
+		else if( !toCheck.npc && ( toCheck == socket.currentChar || ( toCheck.commandlevel < socket.currentChar.commandlevel || !toCheck.IsGM )))
 		{
 			if( socket.tempInt2 == 0 || ( socket.tempInt2 == 1 && toCheck.socket ) || ( socket.tempInt2 == -1 && !toCheck.socket ))
 			{
@@ -250,7 +250,7 @@ function DisplayCharacterListGump( socket, filteredList, incFilterString, sortBy
 		// Teleport-to-character button
 		if( pageSlice[i].serial != socket.currentChar.serial )
 		{
-			charListGump.AddButton( 152, baseYPos + 4 + ( 26 * i ), 9028, 9026, 1, 0, 1000000 + pageSlice[i].serial );
+			charListGump.AddButton( 152, baseYPos + 4 + ( 26 * i ), 9028, 9026, 1, 0, 100000000 + pageSlice[i].serial );
 			charListGump.AddToolTip( charAdminTooltipClilocID, socket, GetDictionaryEntry( 2614, sockLang )); // Teleport to character
 		}
 		charListGump.AddText( 157, baseYPos + 5 + ( 26 * i ), btnColor, "t" );
@@ -258,13 +258,13 @@ function DisplayCharacterListGump( socket, filteredList, incFilterString, sortBy
 		// Get/Fetch-character button
 		if( pageSlice[i].serial != socket.currentChar.serial )
 		{
-			charListGump.AddButton( 172, baseYPos + 4 + ( 26 * i ), 9028, 9026, 1, 0, 2000000 + pageSlice[i].serial );
+			charListGump.AddButton( 172, baseYPos + 4 + ( 26 * i ), 9028, 9026, 1, 0, 200000000 + pageSlice[i].serial );
 			charListGump.AddToolTip( charAdminTooltipClilocID, socket, GetDictionaryEntry( 2615, sockLang )); // Get character
 		}
 		charListGump.AddText( 178, baseYPos + 5 + ( 26 * i ), btnColor, "g" );
 
 		// Inspect character
-		charListGump.AddButton( 192, baseYPos + 4 + ( 26 * i ), 9028, 9026, 1, 0, 3000000 + pageSlice[i].serial );
+		charListGump.AddButton( 192, baseYPos + 4 + ( 26 * i ), 9028, 9026, 1, 0, 300000000 + pageSlice[i].serial );
 		charListGump.AddToolTip( charAdminTooltipClilocID, socket, GetDictionaryEntry( 2616, sockLang )); // Inspect character
 		charListGump.AddText( 200, baseYPos + 5 + ( 26 * i ), 1000, "i" );
 
@@ -275,20 +275,20 @@ function DisplayCharacterListGump( socket, filteredList, incFilterString, sortBy
 			// Jail/Release character
 			if( pageSlice[i].serial != socket.currentChar.serial )
 			{
-				charListGump.AddButton( 212, baseYPos + 4 + ( 26 * i ), 9028, 9026, 1, 0, 4000000 + pageSlice[i].serial );
+				charListGump.AddButton( 212, baseYPos + 4 + ( 26 * i ), 9028, 9026, 1, 0, 400000000 + pageSlice[i].serial );
 				charListGump.AddToolTip( charAdminTooltipClilocID, socket, GetDictionaryEntry( 2617, sockLang )); // Jail/Release character
 			}
 			charListGump.AddText( 218, baseYPos + 5 + ( 26 * i ), btnColor, "j" );
 
 			// Kick player
-			charListGump.AddButton( 232, baseYPos + 4 + ( 26 * i ), 9028, 9026, 1, 0, 5000000 + pageSlice[i].serial );
+			charListGump.AddButton( 232, baseYPos + 4 + ( 26 * i ), 9028, 9026, 1, 0, 500000000 + pageSlice[i].serial );
 			charListGump.AddToolTip( charAdminTooltipClilocID, socket, GetDictionaryEntry( 2618, sockLang )); // Kick player
 			charListGump.AddText( 239, baseYPos + 5 + ( 26 * i ), 1000, "k" );
 
 			// Ban player
 			if( pageSlice[i].serial != socket.currentChar.serial )
 			{
-				charListGump.AddButton( 252, baseYPos + 4 + ( 26 * i ), 9028, 9026, 1, 0, 6000000 + pageSlice[i].serial );
+				charListGump.AddButton( 252, baseYPos + 4 + ( 26 * i ), 9028, 9026, 1, 0, 600000000 + pageSlice[i].serial );
 				charListGump.AddToolTip( charAdminTooltipClilocID, socket, GetDictionaryEntry( 2619, sockLang )); // Ban Player
 			}
 			charListGump.AddText( 259, baseYPos + 5 + ( 26 * i ), btnColor, "b" );
@@ -298,7 +298,7 @@ function DisplayCharacterListGump( socket, filteredList, incFilterString, sortBy
 		{
 			// NPC only
 			// Delete NPC (with confirmation)
-			charListGump.AddButton( 252, baseYPos + 4 + ( 26 * i ), 9028, 9026, 1, 0, 7000000 + pageSlice[i].serial );
+			charListGump.AddButton( 252, baseYPos + 4 + ( 26 * i ), 9028, 9026, 1, 0, 700000000 + pageSlice[i].serial );
 			charListGump.AddToolTip( charAdminTooltipClilocID, socket, GetDictionaryEntry( 2620, sockLang )); // Remove NPC
 			charListGump.AddText( 259, baseYPos + 5 + ( 26 * i ), 33, "r" );
 			horizontalBtnCount++;
@@ -544,16 +544,16 @@ function onGumpPress( socket, pButton, gumpData )
 			break;
 		default:
 			// Buttons 11 to 999999, reserved for character serials
-			if( pButton >= 50 && pButton < 1000000 )
+			if( pButton >= 50 && pButton < 100000000 )
 			{
 				// Bring up Tweak menu for character
 				socket.SetDWord( 7, pButton - 50 );
 				pUser.ExecuteCommand( "tweak" );
 			}
-			else if( pButton < 2000000 )
+			else if( pButton < 200000000 )
 			{
 				// Teleport to character
-				var targSerial = pButton - 1000000;
+				var targSerial = pButton - 100000000;
 				var targChar = CalcCharFromSer( targSerial );
 				pUser.StartTimer( 50, 0, this.script_id );
 				if( ValidateObject( targChar ))
@@ -561,10 +561,10 @@ function onGumpPress( socket, pButton, gumpData )
 					pUser.Teleport( targChar );
 				}
 			}
-			else if( pButton < 3000000 )
+			else if( pButton < 300000000 )
 			{
 				// Get/Teleport character to GM
-				var targSerial = pButton - 2000000;
+				var targSerial = pButton - 200000000;
 				var targChar = CalcCharFromSer( targSerial );
 				pUser.StartTimer( 50, 0, this.script_id );
 				if( ValidateObject( targChar ))
@@ -572,10 +572,10 @@ function onGumpPress( socket, pButton, gumpData )
 					pUser.ExecuteCommand( "xteleport 0x" + targSerial.toString(16) );
 				}
 			}
-			else if( pButton < 4000000 )
+			else if( pButton < 400000000 )
 			{
 				// Inspect character
-				var targSerial = pButton - 3000000;
+				var targSerial = pButton - 300000000;
 				var targChar = CalcCharFromSer( targSerial );
 				pUser.StartTimer( 50, 0, this.script_id );
 				if( ValidateObject( targChar ))
@@ -623,10 +623,10 @@ function onGumpPress( socket, pButton, gumpData )
 				}
 				pUser.StartTimer( 50, 0, this.script_id );
 			}
-			else if( pButton < 5000000 )
+			else if( pButton < 500000000 )
 			{
 				// Jail/Release character
-				var targSerial = pButton - 4000000;
+				var targSerial = pButton - 400000000;
 				var targChar = CalcCharFromSer( targSerial );
 				pUser.StartTimer( 50, 0, this.script_id );
 				if( ValidateObject( targChar ))
@@ -646,10 +646,10 @@ function onGumpPress( socket, pButton, gumpData )
 					}
 				}
 			}
-			else if( pButton < 6000000 )
+			else if( pButton < 600000000 )
 			{
 				// Kick player
-				var targSerial = pButton - 5000000;
+				var targSerial = pButton - 500000000;
 				var targChar = CalcCharFromSer( targSerial );
 				pUser.StartTimer( 50, 0, this.script_id );
 				if( ValidateObject( targChar ))
@@ -666,10 +666,10 @@ function onGumpPress( socket, pButton, gumpData )
 					}
 				}
 			}
-			else if( pButton < 7000000 )
+			else if( pButton < 700000000 )
 			{
 				// Ban/Unban player
-				var targSerial = pButton - 6000000;
+				var targSerial = pButton - 600000000;
 				var targChar = CalcCharFromSer( targSerial );
 				pUser.StartTimer( 50, 0, this.script_id );
 				if( ValidateObject( targChar ))
@@ -698,10 +698,10 @@ function onGumpPress( socket, pButton, gumpData )
 					}
 				}
 			}
-			else if( pButton < 8000000 )
+			else if( pButton < 800000000 )
 			{
 				// Remove NPC - with confirmation
-				var targSerial = pButton - 7000000;
+				var targSerial = pButton - 700000000;
 				var targChar = CalcCharFromSer( targSerial );
 				if( ValidateObject( targChar ))
 				{

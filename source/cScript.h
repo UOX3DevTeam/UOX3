@@ -11,6 +11,8 @@ enum ScriptEvent
 	seOnCreateTile,
 	seOnCreatePlayer,		//	*	Done for PCs on global script
 	seOnCommand,
+	seOnProfileRequest,		//	**
+	seOnProfileUpdate,		//	**
 	seOnDelete,				//	**
 	seOnSpeech,				//	*	Missing item response at the moment
 	seInRange,				//	*	Missing character in range
@@ -115,12 +117,14 @@ enum ScriptEvent
 	seOnCarveCorpse,
 	seOnDyeTarget,
 	seOnQuestGump,
+	seOnGuildButton,
 	seOnHelpButton,
 	seOnContextMenuRequest,
 	seOnContextMenuSelect,
 	seOnWarModeToggle,
 	seOnSpecialMove,
-	seOnFacetChange
+	seOnFacetChange,
+	seOnReleasePet
 };
 
 struct SEGump_st
@@ -136,6 +140,17 @@ struct SEGumpData_st
 	std::vector<SI16>			nIDs;
 };
 
+// A simple struct to pass error details from the JS Error Reporter
+// back to the main C++ thread.
+struct JSErrorInfo
+{
+	std::string message;
+	std::string filename;
+	std::string lineSource;
+	std::string tokenPointer;
+	uintN lineNum = 0;
+};
+
 class cScript
 {
 private:
@@ -143,6 +158,8 @@ private:
 	JSScript *			targScript;
 	JSContext *			targContext;
 	JSObject *			targObject;
+	JSObject *			scriptObj;
+	UI16						scriptID;
 
 	bool				isFiring;
 	UI08				runTime;
@@ -158,6 +175,7 @@ private:
 	std::vector<SEGump_st *>		gumpDisplays;
 
 	void		Cleanup( void );
+	JSBool	InvokeEvent( const char* name, uintN argc, jsval* argv, jsval* rval );
 
 public:
 	void		CollectGarbage( void );
@@ -165,15 +183,16 @@ public:
 	size_t		NewGumpList( void );
 	SEGump_st *	GetGumpList( SI32 index );
 	void		RemoveGumpList( SI32 index );
-	void		SendGumpList( SI32 index, CSocket *toSendTo );
 
 	void		HandleGumpPress( CPIGumpMenuSelect *packet );
 	void		HandleGumpInput( CPIGumpInput *pressing );
 
-	cScript( std::string targFile, UI08 runTime );
+	cScript( std::string targFile, UI08 runTime, UI16 scrID );
 	~cScript();
 
 	JSObject *	Object( void ) const;	// returns object pointer
+
+	UI16		GetScriptID( void ) const;
 
 
 	//|	Modification	-	08162003 - Added these event to handle any script initialization and clean up as the server starts, and is shut down
@@ -184,7 +203,7 @@ public:
 	bool		OnIterate( CBaseObject *a, UI32 &b, CSocket *mSock );
 	bool		OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b );
 	bool		OnCreate( CBaseObject *thingCreated, bool dfnCreated, bool isPlayer );
-	bool		DoesEventExist( char *eventToFind );
+	bool		DoesEventExist( const char *eventToFind );
 	SI08		OnCommand( CSocket *mSock, std::string command );
 	bool		OnDelete( CBaseObject *thingDestroyed );
 	SI08		OnSpeech( const char *speech, CChar *personTalking, CBaseObject *talkingTo );
@@ -199,6 +218,8 @@ public:
 	SI08		OnDispel( CBaseObject *dispelled );
 	bool		OnSkill( CBaseObject *skillUse, SI08 skillUsed );
 	bool		OnStat( void );
+	SI08		OnProfileUpdate( CSocket *mSock, std::string profileText );
+	std::string		OnProfileRequest( CSocket *mSock, CChar *profileOwner );
 	std::string		OnTooltip( CBaseObject *myObj, CSocket *pSocket );
 	std::string		OnNameRequest( CBaseObject *myObj, CChar *nameRequester, UI08 requestSource );
 	bool        OnAttack( CChar *attacker, CChar *defender, bool hitStatus, SI08 hitLoc, UI16 damageDealt );
@@ -263,6 +284,7 @@ public:
 	SI08		OnVirtueGumpPress( CChar *mChar, CChar *tChar, UI16 buttonId );
 	SI08		OnScrollingGumpPress( CSocket *tSock, UI16 gumpId, UI16 buttonId );
 	SI08		OnQuestGump( CChar *mChar );
+	SI08		OnGuildButton( CChar *mChar );
 	SI08		OnHelpButton( CChar *mChar );
 	SI08		OnContextMenuRequest( CSocket *tSock, CBaseObject *baseObj );
 	SI08		OnContextMenuSelect( CSocket *tSock, CBaseObject *baseObj, UI16 popupEntry );
@@ -270,7 +292,7 @@ public:
 	SI08		OnSpecialMove( CChar *mChar, UI08 abilityId );
 	SI08		OnFacetChange( CChar *mChar, const UI08 oldFacet, const UI08 newFacet );
 
-	bool		AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s );
+	bool		AreaObjFunc( const char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s );
 	bool		CallParticularEvent( const char *eventToCall, jsval *params, SI32 numParams, jsval *eventRetVal );
 
 	bool		ScriptRegistration( std::string scriptType );
@@ -299,6 +321,7 @@ public:
 	SI08		OnSoldToVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold, UI16 numItemsSold );
 	SI08		OnHouseCommand( CSocket *targSock, CMultiObj *multiObj, UI08 targId );
 	SI08		OnMakeItem( CSocket *mSock, CChar *objChar, CItem *objItem, UI16 createEntryId );
+	SI08		OnReleasePet( CChar *owner, CChar *pet );
 
 	//	Critical handler type stuff
 	bool		IsFiring( void );

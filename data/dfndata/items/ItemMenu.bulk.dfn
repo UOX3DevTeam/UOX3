@@ -11982,6 +11982,8 @@ ADDITEM=0x0F0C
 ADDITEM=0x0F0C-b
 0x0F0C=greater heal potion
 ADDITEM=0x0F0C-c
+0x0F04=pet bonding potion
+ADDITEM=petbondingpotion
 <=Previous Menu
 ITEMMENU=8
 }

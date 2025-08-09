@@ -100,6 +100,7 @@ protected:
 	std::string			sectionId;
 	std::vector<UI16>	scriptTriggers;
 	UI08				poisoned;
+	SERIAL				poisonedBy;
 	SI16				carve; // Carve.dfn entry
 	SI16				oldLocX;
 	SI16				oldLocY;
@@ -360,10 +361,13 @@ public:
 	UI08					GetPoisoned( void ) const;
 	virtual void			SetPoisoned( UI08 newValue );
 
+	SERIAL					GetPoisonedBy( void ) const;
+	virtual void			SetPoisonedBy( SERIAL newValue );
+
 	SI16					GetCarve( void ) const;
 	void					SetCarve( SI16 newValue );
 
-	virtual	void			Update( CSocket *mSock = nullptr, bool drawGamePlayer = false, bool sendToSelf = true ) = 0;
+	virtual	void			Update( CSocket *mSock = nullptr, bool drawGamePlayer = false, bool sendToSelf = true, bool triggerInRangeEvent = false ) = 0;
 	virtual	void			SendToSocket( CSocket *mSock, bool drawGamePlayer = false ) = 0;
 	virtual	void			Dirty( UpdateTypes updateType );
 	void					RemoveFromRefreshQueue( void );

@@ -1520,13 +1520,13 @@
 1513=ist etwas stark beschädigt.
 1514=ist fadenscheinig und nicht vertrauenswürdig.
 1515=fällt auseinander.
-1516= wäre außerordentlich tödlich.
-1517= wäre eine überlegene Waffe.
-1518= würde ziemlich viel Schaden und Schmerz zufügen.
-1519= würde dem Gegner wahrscheinlich ziemlich viel Schaden zufügen.
-1520= würde etwas Schaden anrichten.
-1521= würde minimalen Schaden anrichten.
-1522= könnte den Gegner leicht kratzen.
+1516=Wäre außerordentlich tödlich,
+1517=Wäre eine überlegene Waffe,
+1518=Würde ziemlich viel Schaden und Schmerz zufügen,
+1519=Würde dem Gegner wahrscheinlich ziemlich viel Schaden zufügen,
+1520=Würde etwas Schaden anrichten,
+1521=Würde minimalen Schaden anrichten,
+1522=Wönnte den Gegner leicht kratzen,
 1523= und ist sehr schnell.
 1524= und ist schnell.
 1525= und ist langsam.
@@ -2458,6 +2458,18 @@
 2585=Sie schütten etwas Apfelwein in den Behälter.
 2586=Sie schütten etwas Likör in den Behälter.
 2587=Sie schütten etwas Wein in das Glas.
+2588=Diese Karotten sind noch nicht reif für die Ernte.
+2589=Du hast keine Karotten geerntet.
+2590=Du erntest eine Karotte.
+2591=Diese Zwiebeln sind noch nicht reif für die Ernte.
+2592=Du hast keine Zwiebeln geerntet.
+2593=Du erntest eine Zwiebel.
+2594=Diese Rübe ist noch nicht reif für die Ernte.
+2595=Du kannst keine Rüben ernten.
+2596=Du erntest eine Rübe.
+2597=Dieser Kohl ist noch nicht reif für die Ernte.
+2598=Du kannst keinen Kohl ernten.
+2599=Du erntest einen Kohl.
 // [2600-2699] Player/NPC/Spawn Admin Script
 2600=Ausgewählter NPC (%s, %i) wurde entfernt.
 2601=Warnung: Kein Rucksack am Charakter gefunden!
@@ -2977,6 +2989,7 @@
 3574=ein Klingengeist
 3605=ein männlicher Elf
 3606=Elfe weiblich
+3637=eine spektrale Rüstung
 3666=ein männlicher Gargoyle
 3667=ein Gargoyle weiblich
 3689=Zeitfürst
@@ -3302,6 +3315,7 @@
 5156=die Zigeuner-Wahrsagerin
 5157=der Vagabund
 5158=der Eisenarbeiter
+5159=ein tropischer Vogel
 // [5500-5600] Feiertagsnachrichten
 5500=Wo möchten Sie diese Dekoration platzieren?
 5501=Die Dekoration muss neben einer Wand platziert werden.
@@ -3488,6 +3502,20 @@
 6302=Sie haben diese Informationen bereits erfahren.
 6303=Du hast gelernt, Gegenstände aus Glas herzustellen. Sie müssen Bergleute finden, die feinen Sand abbauen, damit Sie diese Gegenstände herstellen können.
 6304=Sie müssen freie Hand haben, um einen Trank zu trinken.
+6310=Das kannst du nicht vergiften! Du kannst nur Klingen- oder Stichwaffen, Lebensmittel oder Getränke vergiften.
+6311=Du hast dein Ziel vergiftet!
+6312=Die Wirkung des Giftes scheint nachgelassen zu haben.
+6313=Das kannst du nicht vergiften! Du kannst nur einhändige Klingen- oder Stichwaffen, Lebensmittel oder Getränke vergiften.
+6314=Das kannst du nicht vergiften! Du kannst nur infektiöse Waffen und Lebensmittel vergiften.
+6315=Du machst einen schweren Fehler beim Auftragen des Giftes.
+6316=Blut vermischt sich mit dem Gift und beginnt, deine Waffe zu zerfressen.
+6317=Du hast den Gegenstand gereinigt.
+6318=Das Gift auf deiner Waffe scheint seine Wirkung verloren zu haben.
+6319=Es sieht so aus, als würde Säure von den Überresten der Klinge tropfen.
+6320=Es sieht so aus, als würde eine Substanz Teile der Klinge zerfressen.
+6321=Es sieht so aus, als wäre diese Klinge mit einer säurehaltigen Substanz bedeckt.
+6322=Es sieht so aus, als wäre diese Klinge mit einer ätzenden Substanz bedeckt.
+6323=Es sieht so aus, als wäre diese Klinge mit einer leicht ätzenden Substanz bedeckt.
 // [7000-7499] AI Scripts
 7000=Du bist ein Verbrecher und kannst nicht auf dein Bankschließfach zugreifen.
 7001=Welchen Gegenstand möchten Sie in Ihr Bankschließfach einzahlen?
@@ -4099,7 +4127,7 @@
 8944=Das scheint keine gültige NPC-ID aus den DFNs zu sein.
 8945=Ziel für beweglichen Status auswählen %i:
 8946=Ziel wählen, das als nicht verfallbar eingestuft werden soll:
-// [9000-9500] Misc
+// [9000-9499] Misc
 9000=Diese Fähigkeit kann nicht verwendet werden, wenn sie eingefroren ist.
 9001=Diesem Charakter ist es nicht erlaubt, zu fliegen!
 9002=Sie wurden eingeladen, einer Gruppe beizutreten, geben Sie /accept oder /decline ein, um die Einladung zu bearbeiten
@@ -4369,6 +4397,28 @@
 9410=Du hast gelernt, wie man feinen Sand abbaut. Zielen Sie beim Abbau auf Sandflächen ab, um nach Feinsand zu suchen.
 9411=Du hast gelernt, Steine abzubauen. Zielen Sie beim Bergbau auf Berge, um Steine zu finden.
 9412=Hier gibt es keinen Sand zum Abbauen.
+// [9500-9550] Verschiedene Ressourcenernte
+9500=Dieser Kürbis ist noch nicht reif für die Ernte.
+9501=Du hast keinen Kürbis gepflückt.
+9502=Du hast einen Kürbis geerntet.
+9503=Dieser Kürbis ist noch nicht reif für die Ernte.
+9504=Du kannst keine Kürbisse pflücken.
+9505=Du erntest einen Kürbis.
+9506=Dieser Kürbis ist noch nicht reif für die Ernte.
+9507=Du kannst keine Kürbisse pflücken.
+9508=Du erntest einen Kürbis.
+9509=Diese Wassermelone ist noch nicht reif für die Ernte.
+9510=Du hast keine Wassermelonen gepflückt.
+9511=Du erntest eine Wassermelone.
+9512=Diese Honigmelone ist noch nicht reif für die Ernte.
+9513=Du hast keine Honigmelonen gepflückt.
+9514=Du erntest eine Honigmelone.
+9515=Diese Cantaloupe-Melone ist noch nicht reif für die Ernte.
+9516=Du kannst keine Cantaloupe-Melonen pflücken.
+9517=Du erntest eine Cantaloupe-Melone.
+9518=Dieser Knoblauch ist noch nicht reif für die Ernte.
+9519=Du kannst keinen Knoblauch pflücken.
+9520=Du erntest eine Knoblauchknolle.
 // [9800-9899] Spawner-Editor
 9800=Spawner-Objekteditor
 9801=Spawner-Name
@@ -4756,6 +4806,7 @@
 11467=Knochenarme
 11468=Knochen-Leggins
 11469=Knochenpanzer
+11470=hoher Strohhut
 // 11601 - 11800 Handwerkliche Fertigkeit des Kochens
 11601=KOCHMENÜ
 11602=Zutaten
@@ -5205,6 +5256,7 @@
 17619=Als Gildenmitglied kann ich Ihnen dafür einen Premiumpreis anbieten!
 17620=Das ist nicht genug, um den Mitgliedsbeitrag für die Gilde zu bezahlen, tut mir leid.
 17621=Zeit seit dem Beitritt zur Gilde: %i Minuten.
+17622=Diese Gilde hat keinen Gildenmeister.
 // [17701-17710] Waffenfähigkeiten
 17701=Du erhältst einen lähmenden Schlag!
 17702=Du versetztest einen lähmenden Schlag!
@@ -5481,5 +5533,46 @@
 19234=Ihre Verwirrung ist vorüber, Sie können jetzt eine Waffe bewaffnen!
 19235=Sie sind nicht mehr tödlich verwundet.
 19236=Die blutenden Wunden sind verheilt, Sie bluten nicht mehr!
+// [19301-19330] Verbundenes und totes Haustier
+19301=Du kannst ein totes Haustier nicht tauschen.
+19302=Das tote Haustier kann nicht angreifen.
+19303=Du bist nicht geschickt genug, um dieses Haustier wiederzubeleben.
+19304=Nur Haustiere, die mit ihrem Besitzer verbunden sind, können wiederbelebt werden.
+19306=Du hast das Haustier erfolgreich wiederbelebt!
+19307=Du kannst nur Haustiere wiederbeleben, die mit ihrem Besitzer verbunden sind.
+19308=Dein Haustier hat eine Bindung zu dir aufgebaut!
+19309=Dein Haustier ist tot und reagiert nicht auf diesen Befehl.
+19310=Du löst die Bindung zu deinem Haustier.
+19311=Möchtest du die Bindung zu deinem Haustier wirklich lösen?
+19311=Das Freilassen eines Geister-Haustiers zerstört es und kann nicht wiederhergestellt werden. Möchten Sie fortfahren?
+19312=Der Besitzer des Haustiers muss in der Nähe sein, um die Wiederbelebung zu versuchen.
+19313=Ihr Haustier kann keine Bindung zu Ihnen aufbauen, bis Ihre Fähigkeit zur Tierzähmung gestiegen ist.
+19314=Ihr Haustier kann keine Bindung zu Ihnen aufbauen, bis Ihre Bushido-Fähigkeit gestiegen ist.
+19315=Nur Haustiere, die mit ihrem Besitzer verbunden sind, können wiederbelebt werden.
+19316=Das Tier muss sich im selben Haus wie Sie befinden, um wiederbelebt zu werden.
+19317=Der Besitzer des Haustiers muss sich in diesem Haus befinden, bevor Sie dieses Tier wiederbeleben können.
+19318=Zielen Sie auf das Haustier, mit dem Sie eine Bindung aufbauen möchten. Drücken Sie ESC, um abzubrechen. Dieser Gegenstand wird bei erfolgreicher Verwendung verbraucht, wählen Sie also mit Bedacht!
+19319=Tierbindung abgebrochen.
+19320=Das Haustier ist bereits mit Ihnen verbunden.
+19321=Das ist nicht dein Haustier!
+19322=Möchtest du dein Haustier wirklich freilassen? Beschworene Haustiere verschwinden dauerhaft!
+19323=Du kannst keine positiven Handlungen an deinem Ziel vornehmen.
+19324=Wähle ein Haustier für die sofortige Bindung aus.
+19325=Ungültiges Ziel.
+19326=Diese Kreatur muss gezähmt werden, bevor sie gebunden werden kann.
+19327=Das Haustier ist bereits gebunden.
+19328=Das Haustier wurde sofort gebunden!
+19329=Die Haustierbindung ist auf diesem Server deaktiviert.
+19330=Du hast nicht genug Gold dabei, um die Gebühr zu bezahlen.
+19331=%i Gold wurden aus deinem Rucksack entnommen.
+19332=Dein Haustier wurde wiederbelebt.
+19333=[Zahm]
+19334=[Gebunded]
+19335=gebunden
+19336=zahm
+19337=unverwundbar
+19338=eingefroren
+19339=bewacht
+19340=Der Geist dieser Kreatur ist nicht einheitlich. Versuchen Sie es in ein paar Minuten erneut.
 }
 EOF

@@ -96,35 +96,36 @@ const itemProp = {
 	origin:74,
 	owner:75,
 	poison:76,
-	race:77,
-	rank:78,
-	resistHeat:79,
-	resistCold:80,
-	resistLight:81,
-	resistLightning:82,
-	resistPoison:83,
-	resistRain:84,
-	resistSnow:85,
-	restock:86,
-	scripttrigger:87,
-	sectionalist:88,
-	sectionID:89,
-	sellvalue:90,
-	spawnsection:91,
-	speed:92,
-	stealable:93,
-	strength:94,
-	tempTimer:95,
-	type:96,
-	usesLeft:97,
-	visible:98,
-	weight:99,
-	weightMax:100,
-	wipable:101,
-	worldnumber:102,
-	x:103,
-	y:104,
-	z:105
+	poisonCharges:77,
+	race:78,
+	rank:79,
+	resistHeat:80,
+	resistCold:81,
+	resistLight:82,
+	resistLightning:83,
+	resistPoison:84,
+	resistRain:85,
+	resistSnow:86,
+	restock:87,
+	scripttrigger:88,
+	sectionalist:89,
+	sectionID:90,
+	sellvalue:91,
+	spawnsection:92,
+	speed:93,
+	stealable:94,
+	strength:95,
+	tempTimer:96,
+	type:97,
+	usesLeft:98,
+	visible:99,
+	weight:100,
+	weightMax:101,
+	wipable:102,
+	worldnumber:103,
+	x:104,
+	y:105,
+	z:106
 };
 
 // List of character properties to handle
@@ -448,8 +449,8 @@ const accountPropCount = 26;
 
 function CommandRegistration()
 {
-	RegisterCommand( "tweak", 2, true );
-	RegisterCommand( "props", 2, true ); // alias
+	RegisterCommand( "tweak", 8, true );
+	RegisterCommand( "props", 8, true ); // alias
 }
 
 function command_TWEAK( pSocket, cmdString )
@@ -1248,6 +1249,10 @@ function HandleItemTarget( pSocket, myTarget )
 				itemLabelTooltip 	= GetDictionaryEntry( 8178, pSocket.language ); // Poison level of item from 0 to 5
 				itemValue 			= ( myTarget.poison ).toString();
 				break;
+			case itemProp.poisonCharges:
+				itemLabelTooltip 	= GetDictionaryEntry( 8260, pSocket.language ); // Amount of poison charges on item
+				itemValue 			= ( myTarget.poisonCharges ).toString();
+				break;
 			case itemProp.race:
 				itemLabelTooltip 	= GetDictionaryEntry( 8179, pSocket.language ); // Item deals double damage versus specified race
 				itemValue 			= ( myTarget.race != null ? ( myTarget.race.id ).toString() + " ( " + ( myTarget.race.name ).toString() + " )" : "-" );
@@ -1746,8 +1751,26 @@ function HandleCharTarget( pSocket, myTarget )
 				charValue 			= ( myTarget.gender ).toString();
 				break;
 			case charProp.guild:
-				charLabelTooltip 	= GetDictionaryEntry( 8328, pSocket.language ); // Player guild character belongs to, if any
-				charValue 			= ( myTarget.guild != null ? ( myTarget.guild.name + " (Guildstone: " + ( myTarget.guild.stone != null && myTarget.guild.stone.serial ) + " )" ) : "Not in Guild" );
+				{
+					charLabelTooltip 	= GetDictionaryEntry( 8328, pSocket.language ); // Player guild character belongs to, if any
+					charValue = "NOT IN GUILD";
+					let guild = myTarget.guild;
+					if( guild != null )
+					{
+						var guildName = guild.name;
+						if( guildName != "" )
+						{
+							charValue = guildName;
+							var guildStone = guild.stone;
+							if( guildStone != null )
+							{
+								var guildSerial = guildStone.serial;
+								charValue += " (Guildstone: " + guildStone.serial + ")";
+							}
+						}
+					}
+					//charValue 			= ( myTarget.guild != null ? ( myTarget.guild.name + " (Guildstone: " + ( myTarget.guild.stone != null && myTarget.guild.stone.serial ) + " )" ) : "Not in Guild" );
+				}
 				break;
 			case charProp.guildTitle:
 				charLabelTooltip 	= GetDictionaryEntry( 8329, pSocket.language ); // Guild title of character
@@ -4484,6 +4507,13 @@ function onGumpPress( pSocket, pButton, gumpData )
 			maxLength = 1;
 			maxVal = 5;
 			break;
+		case itemProp.poisonStrength:
+			propertyName = "poisonStrength";
+			propertyType = "Integer";
+			propertyHint = GetDictionaryEntry( 8260, pSocket.language ); // Amount of poison charges on item
+			maxLength = 5;
+			maxVal = 32767;
+			break;
 		case itemProp.race:
 			propertyName = "race";
 			propertyType = "Integer";
@@ -6400,7 +6430,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 			}
 			else
 			{
-				if( pButton == charProp.isGM && pSocket.currentChar.commandlevel < 5 )
+				if( pButton == charProp.isGM && pSocket.currentChar.commandlevel < GetCommandLevelVal( "ADMIN" ))
 				{
 					pSocket.SysMessage( GetDictionaryEntry( 8817, pSocket.language )); // Only Admins can modify someone's GM status!
 				}

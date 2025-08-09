@@ -428,10 +428,10 @@ bool CPIGetItem::Handle( void )
 	if( !ourChar->AllMove() && ( i->GetMovable() == 2 || i->IsLockedDown() ||
 								( tile.Weight() == 255 && i->GetMovable() != 1 )))
 	{
-		if( ourChar->GetCommandLevel() < 2 || tSock->PickupSpot() != PL_OWNPACK )
+		if( ourChar->GetCommandLevel() < CL_GM || tSock->PickupSpot() != PL_OWNPACK )
 		{
 			tSock->SysMessage( 9064 ); // You cannot pick that up.
-			if( ourChar->GetCommandLevel() >= 2 )
+			if( ourChar->GetCommandLevel() >= CL_GM )
 			{
 				tSock->SysMessage( 9099 ); // Tip: Try 'ALLMOVE ON command or modify item's movable property with 'TWEAK command!
 			}
@@ -1021,6 +1021,7 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 
 					// Apply poison on target
 					targNPC->SetPoisoned( poisonStrength );
+					targNPC->SetPoisonedBy( mChar->GetSerial() );
 
 					// Set time until next time poison "ticks"
 					targNPC->SetTimer( tCHAR_POISONTIME, BuildTimeValue( GetPoisonTickTime( poisonStrength )));
@@ -1049,7 +1050,7 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 				mSock->SysMessage( 1780 ); // That pet is already stuffed, it can't eat more.
 			}
 		}
-		else if( isGM || targNPC->GetId() == 0x0123 || targNPC->GetId() == 0x0124 || targNPC->GetId() == 0x0317 ) // It's a pack animal
+		else if( isGM || cwmWorldState->creatures[targNPC->GetId()].IsPackAnimal() ) // It's a pack animal
 		{
 			dropResult = 2;
 		}
@@ -1302,7 +1303,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 	if( !nChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != nChar ) ||
 								( tile.Weight() == 255 && i->GetMovable() != 1 )))
 	{
-		if( nChar->GetCommandLevel() < 2 || mSock->PickupSpot() != PL_OWNPACK )
+		if( nChar->GetCommandLevel() < CL_GM || mSock->PickupSpot() != PL_OWNPACK )
 		{
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 			{
@@ -1353,7 +1354,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 			if( newZ > ( nChar->GetZ() + ( 20 - tile.Height() )))
 			{
 				// Item is too tall - can't drop it this high up
-				if( nChar->GetCommandLevel() >= 2 || nChar->IsGM() )
+				if( nChar->GetCommandLevel() >= CL_SEER || nChar->IsGM() )
 				{
 					// GM override
 					mSock->SysMessage( 91 ); // Item placement rule overruled by GM privileges - Z too high for normal players!
@@ -1373,7 +1374,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 		else if( newZ + tile.Height() > z + tile.Height() )
 		{
 			// Item is too tall - can't drop it this high up
-			if( nChar->GetCommandLevel() >= 2 || nChar->IsGM() )
+			if( nChar->GetCommandLevel() >= CL_SEER || nChar->IsGM() )
 			{
 				// GM override
 				mSock->SysMessage( 91 ); // Item placement rule overruled by GM privileges - Z too high for normal players!
@@ -1758,7 +1759,7 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 		}
 		else if( contOwner->IsNpc() && contOwner->GetNpcAiType() == AI_PLAYERVENDOR )
 		{
-			if( contOwner->GetOwnerObj() == &mChar || mChar.GetCommandLevel() > CL_PLAYER )
+			if( contOwner->GetOwnerObj() == &mChar || mChar.GetCommandLevel() >= CL_GM )
 			{
 				// Clear old values, if item have 'em
 				iDropped.SetDesc( "" );
@@ -1782,7 +1783,7 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 			}
 		}
 		else if( mChar.GetCommandLevel() < CL_CNS && ( !contOwner->IsNpc() || !contOwner->IsTamed() ||
-													  ( contOwner->GetId() != 0x0123 && contOwner->GetId() != 0x0124 && contOwner->GetId() != 0x0317 ) ||
+													  ( !cwmWorldState->creatures[contOwner->GetId()].IsPackAnimal() ) ||
 													  ( contOwner->GetOwnerObj() != &mChar && !Npcs->CheckPetFriend( &mChar, contOwner ))))
 		{
 			if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
@@ -1953,7 +1954,7 @@ void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 
 	if( !mChar->AllMove() && ( nItem->GetMovable() == 2 || ( nItem->IsLockedDown() && nItem->GetOwnerObj() != mChar ) ||
 								( tile.Weight() == 255 && nItem->GetMovable() != 1 )))
 	{
-		if( mChar->GetCommandLevel() < 2 || mSock->PickupSpot() != PL_OWNPACK )
+		if( mChar->GetCommandLevel() < CL_GM || mSock->PickupSpot() != PL_OWNPACK )
 		{
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 			{
@@ -2449,7 +2450,10 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 	std::string skillProwessTitle;
 	std::string fameTitle;
 	GetSkillProwessTitle( pdoll, skillProwessTitle );
-	GetFameTitle( pdoll, fameTitle );
+	if( !pdoll->HideFameKarmaTitle() )
+	{
+		GetFameTitle( pdoll, fameTitle );
+	}
 
 	bool bContinue = false;
 	if( pdoll->IsGM() )
@@ -2655,7 +2659,7 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 		}
 		else if( !cwmWorldState->creatures[c->GetId()].IsHuman() && !c->IsDead() )
 		{
-			if( c->GetId() == 0x0123 || c->GetId() == 0x0124 || c->GetId() == 0x0317 )	// Is a pack animal
+			if( cwmWorldState->creatures[c->GetId()].IsPackAnimal() )	// Is a pack animal
 			{
 				if( mChar->IsDead() )
 				{

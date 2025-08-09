@@ -3,6 +3,7 @@
 #include "StringUtility.hpp"
 #include "jsobj.h"
 #include "jsutil.h"
+#include "SEFunctions.h"
 
 void JSEncapsulate::InternalReset( void )
 {
@@ -162,17 +163,9 @@ std::string JSEncapsulate::ClassName( void )
 			}
 			if( obj2 != nullptr )
 			{
-				JSClass *mClass = OBJ_GET_CLASS( cx, obj2 );
-				if( mClass->flags & JSCLASS_IS_EXTENDED )	// extended class
-				{
-					JSExtendedClass *mClass2 = reinterpret_cast<JSExtendedClass *>( mClass ); // (JSExtendedClass *)mClass;
-					className					= mClass2->base.name;
-				}
-				else
-				{
-					className = mClass->name;
-				}
-				rVal = className;
+				js::Class* mClass = obj2->getClass();
+				rVal = oldstrutil::trim( mClass->name ); // Remove any whitespace, though I wouldn't have expected any?
+				className = rVal;	// Ensure we update the cached value for subsequent calls
 			}
 		}
 		classCached = true;
@@ -197,7 +190,7 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 					break;
 				case JSOT_BOOL:		intVal = (( JSVAL_TO_BOOLEAN(( *vp )) == JS_TRUE) ? 1 : 0 );	break;
 				case JSOT_STRING:
-					svalue = JS_GetStringBytes( JS_ValueToString( cx, *vp ));
+					svalue = JS_GetStringBytes( cx, *vp );
 					intVal = std::stoi( svalue, nullptr, 0 );
 					break;
 				default:
@@ -218,7 +211,7 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 					break;
 				case JSOT_BOOL:		floatVal	= (( JSVAL_TO_BOOLEAN(( *vp )) == JS_TRUE ) ? 1.0f : 0.0f );	break;
 				case JSOT_STRING:
-					svalue		= JS_GetStringBytes( JS_ValueToString( cx, *vp ));
+					svalue		= JS_GetStringBytes( cx, *vp );
 					floatVal	= std::stof( svalue );
 					break;
 				default:
@@ -239,7 +232,7 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 					break;
 				case JSOT_BOOL:		boolVal = ( JSVAL_TO_BOOLEAN(( *vp )) == JS_TRUE );	break;
 				case JSOT_STRING:
-					svalue	= JS_GetStringBytes( JS_ValueToString( cx, *vp ));
+					svalue	= JS_GetStringBytes( cx, *vp );
 					boolVal = ( oldstrutil::upper( svalue ) == "TRUE" );
 					break;
 				default:
@@ -270,7 +263,7 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 					}
 					break;
 				case JSOT_STRING:
-					stringVal	= JS_GetStringBytes( JS_ValueToString( cx, *vp ));
+					stringVal	= JS_GetStringBytes( cx, *vp );
 					break;
 				default:
 				case JSOT_COUNT:

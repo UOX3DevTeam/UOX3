@@ -36,27 +36,17 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#include "jsconfig.h"
-
-#if JS_HAS_SCRIPT_OBJECT
-# define SCRIPT_INIT                    js_InitScriptClass
-#else
-# define SCRIPT_INIT                    js_InitNullClass
-#endif
+#include "jsversion.h"
 
 #if JS_HAS_XML_SUPPORT
 # define XML_INIT                       js_InitXMLClass
 # define NAMESPACE_INIT                 js_InitNamespaceClass
 # define QNAME_INIT                     js_InitQNameClass
-# define ANYNAME_INIT                   js_InitAnyNameClass
-# define ATTRIBUTE_INIT                 js_InitAttributeNameClass
 # define XMLFILTER_INIT                 js_InitXMLFilterClass
 #else
 # define XML_INIT                       js_InitNullClass
 # define NAMESPACE_INIT                 js_InitNullClass
 # define QNAME_INIT                     js_InitNullClass
-# define ANYNAME_INIT                   js_InitNullClass
-# define ATTRIBUTE_INIT                 js_InitNullClass
 # define XMLFILTER_INIT                 js_InitNullClass
 #endif
 
@@ -64,18 +54,6 @@
 # define GENERATOR_INIT                 js_InitIteratorClasses
 #else
 # define GENERATOR_INIT                 js_InitNullClass
-#endif
-
-#if JS_HAS_NO_SUCH_METHOD
-# define NO_SUCH_METHOD_INIT            js_InitNoSuchMethodClass
-#else
-# define NO_SUCH_METHOD_INIT            js_InitNullClass
-#endif
-
-#if JS_HAS_FILE_OBJECT
-# define FILE_INIT                      js_InitFileClass
-#else
-# define FILE_INIT                      js_InitNullClass
 #endif
 
 /*
@@ -88,41 +66,42 @@ JS_PROTO(Object,                 1,     js_InitFunctionAndObjectClasses)
 JS_PROTO(Function,               2,     js_InitFunctionAndObjectClasses)
 JS_PROTO(Array,                  3,     js_InitArrayClass)
 JS_PROTO(Boolean,                4,     js_InitBooleanClass)
-JS_PROTO(Call,                   5,     js_InitCallClass)
+JS_PROTO(JSON,                   5,     js_InitJSONClass)
 JS_PROTO(Date,                   6,     js_InitDateClass)
 JS_PROTO(Math,                   7,     js_InitMathClass)
 JS_PROTO(Number,                 8,     js_InitNumberClass)
 JS_PROTO(String,                 9,     js_InitStringClass)
 JS_PROTO(RegExp,                10,     js_InitRegExpClass)
-JS_PROTO(Script,                11,     SCRIPT_INIT)
-JS_PROTO(XML,                   12,     XML_INIT)
-JS_PROTO(Namespace,             13,     NAMESPACE_INIT)
-JS_PROTO(QName,                 14,     QNAME_INIT)
-JS_PROTO(AnyName,               15,     ANYNAME_INIT)
-JS_PROTO(AttributeName,         16,     ATTRIBUTE_INIT)
-JS_PROTO(Error,                 17,     js_InitExceptionClasses)
-JS_PROTO(InternalError,         18,     js_InitExceptionClasses)
-JS_PROTO(EvalError,             19,     js_InitExceptionClasses)
-JS_PROTO(RangeError,            20,     js_InitExceptionClasses)
-JS_PROTO(ReferenceError,        21,     js_InitExceptionClasses)
-JS_PROTO(SyntaxError,           22,     js_InitExceptionClasses)
-JS_PROTO(TypeError,             23,     js_InitExceptionClasses)
-JS_PROTO(URIError,              24,     js_InitExceptionClasses)
-JS_PROTO(Generator,             25,     GENERATOR_INIT)
-JS_PROTO(Iterator,              26,     js_InitIteratorClasses)
-JS_PROTO(StopIteration,         27,     js_InitIteratorClasses)
-JS_PROTO(UnusedProto28,         28,     js_InitNullClass)
-JS_PROTO(File,                  29,     FILE_INIT)
-JS_PROTO(Block,                 30,     js_InitBlockClass)
-JS_PROTO(XMLFilter,             31,     XMLFILTER_INIT)
-JS_PROTO(NoSuchMethod,          32,     NO_SUCH_METHOD_INIT)
+JS_PROTO(XML,                   11,     XML_INIT)
+JS_PROTO(Namespace,             12,     NAMESPACE_INIT)
+JS_PROTO(QName,                 13,     QNAME_INIT)
+JS_PROTO(Reflect,               14,     js_InitReflectClass)
+JS_PROTO(ASTNode,               15,     js_InitReflectClass)
+JS_PROTO(Error,                 16,     js_InitExceptionClasses)
+JS_PROTO(InternalError,         17,     js_InitExceptionClasses)
+JS_PROTO(EvalError,             18,     js_InitExceptionClasses)
+JS_PROTO(RangeError,            19,     js_InitExceptionClasses)
+JS_PROTO(ReferenceError,        20,     js_InitExceptionClasses)
+JS_PROTO(SyntaxError,           21,     js_InitExceptionClasses)
+JS_PROTO(TypeError,             22,     js_InitExceptionClasses)
+JS_PROTO(URIError,              23,     js_InitExceptionClasses)
+JS_PROTO(Generator,             24,     GENERATOR_INIT)
+JS_PROTO(Iterator,              25,     js_InitIteratorClasses)
+JS_PROTO(StopIteration,         26,     js_InitIteratorClasses)
+JS_PROTO(ArrayBuffer,           27,     js_InitTypedArrayClasses)
+JS_PROTO(Int8Array,             28,     js_InitTypedArrayClasses)
+JS_PROTO(Uint8Array,            29,     js_InitTypedArrayClasses)
+JS_PROTO(Int16Array,            30,     js_InitTypedArrayClasses)
+JS_PROTO(Uint16Array,           31,     js_InitTypedArrayClasses)
+JS_PROTO(Int32Array,            32,     js_InitTypedArrayClasses)
+JS_PROTO(Uint32Array,           33,     js_InitTypedArrayClasses)
+JS_PROTO(Float32Array,          34,     js_InitTypedArrayClasses)
+JS_PROTO(Float64Array,          35,     js_InitTypedArrayClasses)
+JS_PROTO(Uint8ClampedArray,     36,     js_InitTypedArrayClasses)
+JS_PROTO(Proxy,                 37,     js_InitProxyClass)
+JS_PROTO(AnyName,               38,     js_InitNullClass)
 
-#undef SCRIPT_INIT
 #undef XML_INIT
 #undef NAMESPACE_INIT
 #undef QNAME_INIT
-#undef ANYNAME_INIT
-#undef ATTRIBUTE_INIT
 #undef GENERATOR_INIT
-#undef FILE_INIT
-#undef NO_SUCH_METHOD_INIT

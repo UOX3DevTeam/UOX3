@@ -1021,3 +1021,44 @@ batwing
 990|blank
 10|treasuremaplvl6
 }
+
+// Random journals from Khaldun
+[LOOTLIST lysanders_journals]
+{
+lysanders_notebook_1
+lysanders_notebook_2
+lysanders_notebook_3
+lysanders_notebook_7
+lysanders_notebook_8
+lysanders_notebook_11
+}
+
+[LOOTLIST tavaras_journals]
+{
+tavaras_journal_1
+tavaras_journal_2
+tavaras_journal_3
+tavaras_journal_6
+tavaras_journal_7
+tavaras_journal_8
+tavaras_journal_9
+tavaras_journal_11
+tavaras_journal_14
+tavaras_journal_16
+tavaras_journal_16b
+tavaras_journal_17
+tavaras_journal_19
+}
+
+[LOOTLIST grimmochs_journals]
+{
+grimmoch_journal_1
+grimmoch_journal_2
+grimmoch_journal_3
+grimmoch_journal_6
+grimmoch_journal_7
+grimmoch_journal_11
+grimmoch_journal_14
+grimmoch_journal_17
+grimmoch_journal_23
+}

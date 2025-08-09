@@ -1,6 +1,7 @@
 name: UOX3 Build
 
 on:
+  workflow_dispatch:
   push:
 
     paths-ignore:
@@ -13,6 +14,8 @@ on:
       - '**.sln'
       - '**.vcxproj'
       - '**.xcodeproj'
+    tags-ignore:
+      - 'v*-release' # This will ignore all version tags ending with '-release' like v1.0-release
 
   pull_request:
     paths-ignore:
@@ -34,7 +37,8 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest]
+
     # You can convert this to a matrix build if you need cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ${{ matrix.os }}

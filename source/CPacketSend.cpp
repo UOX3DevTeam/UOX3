@@ -7618,7 +7618,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		tempEntry.sortOrder = 5;
 		FinalizeData( tempEntry, totalStringLen );
 	}
-	else if(( cItem.GetWeight() / 100 ) >= 1 && cItem.GetType() != IT_SPAWNCONT && cItem.GetType() != IT_LOCKEDSPAWNCONT && cItem.GetType() != IT_UNLOCKABLESPAWNCONT )
+	else if( cItem.GetWeight() != 25500 && ( cItem.GetWeight() / 100 ) >= 1 && cItem.GetType() != IT_SPAWNCONT && cItem.GetType() != IT_LOCKEDSPAWNCONT && cItem.GetType() != IT_UNLOCKABLESPAWNCONT )
 	{
 		if(( cItem.GetWeight() / 100 ) == 1 )
 		{
@@ -7743,6 +7743,38 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 				}
 				tempEntry.sortOrder = 105;
 				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetPoisoned() > 0 && cItem.GetPoisonCharges() > 0 )
+			{
+				auto itemCont = cItem.GetCont();
+				if( cItem.GetHiDamage() == 0 || ( ValidateObject( itemCont ) && (( itemCont->CanBeObjType( OT_ITEM ) && FindRootContainer( static_cast<CItem *>( itemCont )) == tSock->CurrcharObj()->GetPackItem() ) || ( itemCont->CanBeObjType( OT_CHAR ) && tSock->CurrcharObj() == static_cast<CChar *>( itemCont )))))
+				{
+					switch( cItem.GetPoisoned() )
+					{
+						case 1: // Lesser Poison
+							tempEntry.stringNum = 1062412; // lesser poison charges: ~1_val~
+							break;
+						case 2: // Poison
+							tempEntry.stringNum = 1062413; // poison charges: ~1_val~
+							break;
+						case 3: // Greater Poison
+							tempEntry.stringNum = 1062414; // greater poison charges: ~1_val~
+							break;
+						case 4: // Deadly Poison
+							tempEntry.stringNum = 1062415; // deadly poison charges: ~1_val~
+							break;
+						case 5: // Lethal Poison
+							tempEntry.stringNum = 1062416; // lethal poison charges: ~1_val~
+							break;
+						default:
+							break;
+					}
+
+					tempEntry.ourText = oldstrutil::number( cItem.GetPoisonCharges() );
+					tempEntry.sortOrder = 107;
+					FinalizeData( tempEntry, totalStringLen );
+				}
 			}
 
 			if( cItem.GetHiDamage() > 0 )
@@ -8118,7 +8150,7 @@ void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 	std::string fameTitle = "";
 	if( cwmWorldState->ServerData()->ShowReputationTitleInTooltip() )
 	{
-		if( cwmWorldState->creatures[mChar.GetId()].IsHuman() && !mChar.IsIncognito() && !mChar.IsDisguised() )
+		if( cwmWorldState->creatures[mChar.GetId()].IsHuman() && !mChar.IsIncognito() && !mChar.IsDisguised() && !mChar.HideFameKarmaTitle() )
 		{
 			GetFameTitle( &mChar, fameTitle );
 			fameTitle = oldstrutil::trim( fameTitle );
@@ -8167,6 +8199,28 @@ void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 			auto raceName = Races->Name( mChar.GetRace() );
 			tempEntry.ourText = oldstrutil::format( "%s", ( "("s + raceName + ")"s ).c_str() );
 			tempEntry.sortOrder = 10;
+			FinalizeData( tempEntry, totalStringLen );
+		}
+	}
+
+	// Is character tame/bonded?
+	if( mChar.IsNpc() && mChar.IsTamed() && !cwmWorldState->creatures[mChar.GetId()].IsHuman() )
+	{
+		TAGMAPOBJECT petBond = mChar.GetTag( "isBondedPet" );
+		if( petBond.m_IntValue == 1 )
+		{
+			// Bonded
+			tempEntry.stringNum = 1042971; // ~1_NOTHING~
+			tempEntry.ourText = oldstrutil::format( "%s", Dictionary->GetEntry( 19334, tSock->Language() ).c_str() ); // [Bonded]
+			tempEntry.sortOrder = 12;
+			FinalizeData( tempEntry, totalStringLen );
+		}
+		else
+		{
+			// Tame
+			tempEntry.stringNum = 1042971; // ~1_NOTHING~
+			tempEntry.ourText = oldstrutil::format( "%s", Dictionary->GetEntry( 19333, tSock->Language() ).c_str() ); // [Tame]
+			tempEntry.sortOrder = 12;
 			FinalizeData( tempEntry, totalStringLen );
 		}
 	}
@@ -8371,7 +8425,7 @@ auto CPSellList::AddContainer( CTownRegion *tReg, CItem *spItem, CItem *ourPack,
 	{
 		if( ValidateObject( opItem ))
 		{
-			if( opItem->GetType() == IT_CONTAINER )
+			if( opItem->GetType() == IT_CONTAINER && opItem->GetContainsList()->Num() > 0 )
 			{
 				AddContainer( tReg, spItem, opItem, packetLen );
 			}
@@ -9209,7 +9263,7 @@ void CPPopupMenu::CopyData( CBaseObject& toCopy, CSocket &tSock )
 	// Open Backpack
 	//	|| ( toCopy.IsTamed() && ValidateObject( toCopy.GetOwnerObj() ) && toCopy.GetOwnerObj() == mChar && !toCopy.CanBeHired() )))
 	if( toCopyChar->GetQuestType() != QT_ESCORTQUEST && (( toCopy.GetSerial() == tSock.CurrcharObj()->GetSerial() 
-		|| toCopy.GetId() == 0x0123 || toCopy.GetId() == 0x0124 || toCopy.GetId() == 0x0317 ) && ValidateObject( toCopyChar->GetPackItem() )))
+		|| cwmWorldState->creatures[toCopyChar->GetId()].IsPackAnimal() ) && ValidateObject( toCopyChar->GetPackItem() )))
 	{
 		if( numEntries > 0 )
 		{

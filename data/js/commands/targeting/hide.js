@@ -2,8 +2,8 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "hide", 2, true );
-	RegisterCommand( "unhide", 2, true );
+	RegisterCommand( "hide", 8, true );
+	RegisterCommand( "unhide", 8, true );
 }
 
 function command_HIDE( socket, cmdString )
