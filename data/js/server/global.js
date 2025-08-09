@@ -1,9 +1,11 @@
 // Global Script
 // Supported Events trigger for every character/item, use with care
+const questSystemEnabled = true;
 function onLogin( socket, pChar )
 {
 	const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 	const youngPlayerSystem = GetServerSetting( "YoungPlayerSystem" );
+	const loginQuest = false;
 
 	// Display Admin Welcome Gump for characters on admin account, until a choice has been made
 	if( pChar.accountNum == 0 )
@@ -41,9 +43,15 @@ function onLogin( socket, pChar )
 	}
 
 	// Attach OnQuest Toggle
-	if(!pChar.HasScriptTrigger( 5805 ))
+	if(!pChar.HasScriptTrigger( 5805 ) && questSystemEnabled )
 	{
 		pChar.AddScriptTrigger( 5805 );
+	}
+
+	if( loginQuest && questSystemEnabled )
+	{
+		// Show the login quest gump
+		TriggerEvent( 5813, "LoginQuest", pChar );
 	}
 
 	if( youngPlayerSystem && pChar.account.isYoung )
@@ -125,7 +133,7 @@ function onCreatePlayer( pChar )
 
 function onQuestGump( pUser ) 
 {
-	if( ValidateObject( pUser ) && !pUser.dead )
+	if( ValidateObject( pUser ) && !pUser.dead && questSystemEnabled )
 	{
 		TriggerEvent( 5803, "QuestMenu", pUser );
 	}
