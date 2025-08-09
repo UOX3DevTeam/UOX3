@@ -1,4 +1,83 @@
-function QuestList(questID)
+/**
+ * =============================================================================
+ *                              QUEST LIST MODULE
+ * =============================================================================
+ * 
+ *  File: QuestList.js
+ *  Purpose:
+ *    Centralized registry of all quest definitions for the game.
+ *    Provides a consistent structure for quest data, enabling retrieval
+ *    by ID or iteration over all available quests.
+ * 
+ *  Usage:
+ *    - QuestList() -> Returns an array of all quest definitions.
+ *    - QuestList(questID) -> Returns the quest with the given ID, or null if not found.
+ * 
+ * =============================================================================
+ *  QUEST OBJECT STRUCTURE
+ * =============================================================================
+ * 
+ *  Core Details:
+ *  -------------
+ *   title           - Display name of the quest.
+ *   description     - Narrative/backstory shown in quest log.
+ *   uncomplete      - NPC text when quest is not yet complete.
+ *   complete        - NPC text when quest is completed.
+ *   refuse          - NPC text when player declines the quest.
+ *   npcPhrases      - Optional NPC idle chatter.
+ * 
+ *  Quest Classification:
+ *  ----------------------
+ *   type            - Quest type (collect, kill, collectTime, killTime, multi, skillGain, delivery).
+ *   category        - Quest grouping (e.g., "Side Quests", "Daily").
+ * 
+ *  Flags & Control:
+ *  ----------------
+ *   doneOnce        - If true, quest can only be completed once.
+ *   questTurnIn     - 1 = Requires NPC turn-in, 0 = Auto-complete.
+ *   bankGold        - 1 = Gold to bank, 0 = Gold to player's pack.
+ * 
+ *  Objectives:
+ *  -----------
+ *   targetItems     - Items to collect: itemID, name, amount.
+ *   targetKills     - Monsters to defeat: monsterID, name, amount.
+ * 
+ *  Rewards:
+ *  --------
+ *   rewards         - Gold, items, or skill rewards.
+ * 
+ *  Regions & Location:
+ *  -------------------
+ *   targetRegion    - Region ID where quest is active.
+ *   regionName      - Friendly name for quest region.
+ * 
+ *  Skill Quests:
+ *  -------------
+ *   targetSkill     - Required skill ID.
+ *   maxSkillPoints  - Max points needed.
+ *   minPoint        - Minimum skill points gained.
+ *   maxPoint        - Maximum skill points gained.
+ * 
+ *  Quest Chains:
+ *  -------------
+ *   nextQuestID     - Next quest in chain, or null.
+ * 
+ *  Delivery Quests:
+ *  ----------------
+ *   deliveryItem    - Item details: itemID, name, amount.
+ *   targetDelivery  - NPC target: sectionID, name, location (x, y, z, world).
+ * 
+ * =============================================================================
+ *  FUNCTION SIGNATURE
+ * =============================================================================
+ *   QuestList(questID?)
+ *     questID - Optional quest ID. If omitted, returns all quests.
+ *     Returns - Quest object, array of quests, or null if ID not found.
+ * 
+ * =============================================================================
+ */
+
+function QuestList( questID )
 {
 	var questList = {
 		//New Player Quests
