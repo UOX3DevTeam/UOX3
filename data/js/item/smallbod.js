@@ -1,3 +1,5 @@
+const scriptID = 5042;
+
 const BODTypesToSkillNames = {
 	1: "blacksmithing",
 	2: "tailoring"
@@ -38,6 +40,7 @@ function onCreateDFN( objMade, objType )
 
 function onUseChecked( pUser, smallBOD )
 {
+	var gumpID = scriptID + 0xffff;
 	var socket = pUser.socket;
 	if( socket == null )
 		return false;
@@ -89,6 +92,7 @@ function onUseChecked( pUser, smallBOD )
 			}
 
 			smallBOD.Refresh();
+			socket.CloseGump( gumpID, 0 );
 			SmallBODGump( pUser, smallBOD );
 		}
 	}
@@ -241,9 +245,9 @@ function CombineItemWithBod( pUser, smallBOD )
 	}
 }
 
-
 function onCallback0( socket, myTarget )
 {
+	var gumpID = scriptID + 0xffff;
 	var pUser = socket.currentChar;
 	var smallBOD = pUser.bodItem;
 	var bodSectionID 	= smallBOD.GetTag( "bodSectionID" ); // sectionID of item required by BOD
@@ -259,6 +263,7 @@ function onCallback0( socket, myTarget )
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
 	if( cancelCheck == 255 || !myTarget )
 	{
+		socket.CloseGump( gumpID, 0 );
 		SmallBODGump( pUser, smallBOD );
 		return;
 	}
@@ -287,6 +292,7 @@ function onCallback0( socket, myTarget )
 			if( reqExceptional && myTarget.rank != 10 )
 			{
 				socket.SysMessage( GetDictionaryEntry( 17262, socket.language )); // The item must be exceptional.
+				socket.CloseGump( gumpID, 0 );
 				SmallBODGump( pUser, smallBOD );
 				return;
 			}
@@ -376,6 +382,7 @@ function onCallback0( socket, myTarget )
 				{
 					pUser.CustomTarget( 0 );
 				}
+				socket.CloseGump( gumpID, 0 );
 				SmallBODGump( pUser, smallBOD );
 			}
 		}
@@ -383,6 +390,7 @@ function onCallback0( socket, myTarget )
 	else
 	{
 		socket.SysMessage( GetDictionaryEntry( 17264, socket.language )); // The item is not in the request.
+		socket.CloseGump( gumpID, 0 );
 		SmallBODGump( pUser, smallBOD );
 	}
 }

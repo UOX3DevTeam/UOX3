@@ -4992,7 +4992,7 @@ bool CPIPopupMenuSelect::Handle( void )
 			break;
 		case 0x000B:	// Open Backpack
 			if( mChar->GetCommandLevel() >= CL_CNS || cwmWorldState->creatures[targChar->GetId()].IsHuman() 
-				|| targChar->GetId() == 0x0123 || targChar->GetId() == 0x0124 || targChar->GetId() == 0x0317 )	// Only Humans and Pack Animals have Packs
+				|| cwmWorldState->creatures[targChar->GetId()].IsPackAnimal() )	// Only Humans and Pack Animals have Packs
 			{
 				if( mChar->IsDead() )
 				{
