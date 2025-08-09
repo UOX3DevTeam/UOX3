@@ -591,6 +591,12 @@ void LoadCreatures( void )
 								cwmWorldState->creatures[i].MountId( static_cast<UI16>( std::stoul( data, nullptr, 0 )));
 							}
 							break;
+						case 'P':
+							if( UTag == "PACKANIMAL" )
+							{
+								cwmWorldState->creatures[i].IsPackAnimal( true );
+							}
+							break;
 						case 'S':
 							if( UTag == "SOUNDFLAG" )
 							{
