@@ -402,7 +402,8 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"GARGOYLEMAXWEIGHTBONUS"s, 379},
 	{"MAXNPCAGGRORANGE"s, 380},
 	{"POISONCORROSIONSYSTEM"s, 381},
-	{"PETBONDINGENABLED"s, 382}
+	{"PETBONDINGENABLED"s, 382},
+	{"QUESTSENABLED"s, 383}
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -519,6 +520,7 @@ constexpr auto BIT_HEALINGAFFECTHEALTHREGEN			= UI32( 107 );
 constexpr auto BIT_HUNGERAFFECTHEALTHREGEN			= UI32( 108 );
 constexpr auto BIT_THIRSTAFFECTSTAMINAREGEN			= UI32( 109 );
 constexpr auto BIT_POISONCORROSIONSYSTEM			= UI32( 110 );
+constexpr auto BIT_QUESTSENABLED					= UI32( 111 );
 
 
 // New uox3.ini format lookup
@@ -662,6 +664,7 @@ auto CServerData::ResetDefaults() -> void
 	InternalAccountStatus( true );
 	YoungPlayerSystem( true );
 	KarmaLocking( true );
+	QuestsEnabled( true );
 	CombatMaxRange( 10 );
 	CombatMaxSpellRange( 10 );
 	CombatMaxNpcAggroRange( 10 );
@@ -2368,6 +2371,20 @@ auto CServerData::KarmaLocking() const -> bool
 auto CServerData::KarmaLocking( bool newVal ) -> void
 {
 	boolVals.set( BIT_KARMALOCKING, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::QuestsEnabled()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether the QuestsEnabled system is enabled
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::QuestsEnabled() const -> bool
+{
+	return boolVals.test( BIT_QUESTSENABLED );
+}
+auto CServerData::QuestsEnabled( bool newVal ) -> void
+{
+	boolVals.set( BIT_QUESTSENABLED, newVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5552,6 +5569,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "ENABLENPCGUILDPREMIUMS=" << ( EnableNPCGuildPremiums() ? 1 : 0 ) << '\n';
 		ofsOutput << "YOUNGPLAYERSYSTEM=" << ( YoungPlayerSystem() ? 1 : 0 ) << '\n';
 		ofsOutput << "KARMALOCKING=" << ( KarmaLocking() ? 1 : 0 ) << '\n';
+		ofsOutput << "QUESTSENABLED=" << ( QuestsEnabled() ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[pets and followers]" << '\n' << "{" << '\n';
@@ -7247,6 +7265,9 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 382:	// PETBONDINGENABLED
 			PetBondingEnabled(( static_cast<SI16>( std::stoi( value, nullptr, 0 )) == 1 ));
 			break;
+		case 383:	 // QUESTSENABLED
+			QuestsEnabled( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+			break;   
 		default:
 			rValue = false;
 			break;

@@ -1,6 +1,6 @@
 // Global Script
 // Supported Events trigger for every character/item, use with care
-const questSystemEnabled = true;
+const questSystemEnabled = GetServerSetting( "QuestsEnabled" );
 function onLogin( socket, pChar )
 {
 	const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
