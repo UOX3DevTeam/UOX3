@@ -572,6 +572,24 @@ declare global {
               vendorPrice:       number;
               weightMax:         number;
               wipable:           number;
+    ApplyRank( rank: number, maxRank: number ): void;
+    Carve( target: Socket ): boolean;
+    Dupe( target: SocketOrNull ): Item;
+    GetMoreVar( name: string, part: number ): number;
+    GetTileName(): string;
+    Glow( target: Socket ): void;
+    HasSpell( spellId: number ): boolean;
+    IsBoat(): boolean;
+    IsMulti(): boolean;
+    IsOnFoodList( foodList: string ): boolean;
+    LockDown(): void;
+    OpenPlank(): void;
+    PlaceInPack( autoStack: boolean ): void;
+    RemoveSpell( spellId: number ): void;
+    SetCont( newCont: BaseObject ): boolean;
+    SetMoreVar( name: string, part: number, value: number ): void;
+    SoundEffect( soundId: number, allHear: boolean, monsterId?: number ): void;
+    UnGlow( target: Socket ): void;
   }
   type UOXItem_class = Item;
   type ItemOrNull = Item | null | undefined;

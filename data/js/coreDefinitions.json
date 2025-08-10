@@ -4714,7 +4714,40 @@
           "type": "number"
         }
       ],
-      "methods": []
+      "methods": [
+        { "name": "ApplyRank",     "cppName": "CItem_ApplyRank",     "params": { "num": 2, "list": [
+          { "name": "rank",    "type": "number", "required": true },
+          { "name": "maxRank", "type": "number", "required": true }
+          ] }, "returns": "void" },
+        { "name": "Carve",         "cppName": "CItem_Carve",         "params": { "num": 1, "list": [ { "name": "target", "type": "Socket", "required": true } ] }, "returns": "boolean" },
+        { "name": "Dupe",          "cppName": "CItem_Dupe",          "params": { "num": 1, "list": [ { "name": "target", "type": "SocketOrNull", "required": true } ] }, "returns": "Item" },
+        { "name": "GetMoreVar",    "cppName": "CItem_GetMoreVar",    "params": { "num": 2, "list": [
+          { "name": "name", "type": "string", "required": true },
+          { "name": "part", "type": "number", "required": true }
+          ] }, "returns": "number" },
+        { "name": "GetTileName",   "cppName": "CItem_GetTileName",   "params": { "num": 0, "list": [] }, "returns": "string" },
+        { "name": "Glow",          "cppName": "CItem_Glow",          "params": { "num": 1, "list": [ { "name": "target", "type": "Socket", "required": true } ] }, "returns": "void" },
+        { "name": "HasSpell",      "cppName": "CMisc_HasSpell",      "params": { "num": 1, "list": [ { "name": "spellId", "type": "number", "required": true } ] }, "returns": "boolean" },
+        { "name": "IsBoat",        "cppName": "CBase_IsBoat",        "params": { "num": 0, "list": [] }, "returns": "boolean" },
+        { "name": "IsMulti",       "cppName": "CItem_IsMulti",       "params": { "num": 0, "list": [] }, "returns": "boolean" },
+        { "name": "IsOnFoodList",  "cppName": "CItem_IsOnFoodList",  "params": { "num": 1, "list": [ { "name": "foodList", "type": "string", "required": true } ] }, "returns": "boolean" },
+        { "name": "LockDown",      "cppName": "CItem_LockDown",      "params": { "num": 0, "list": [] }, "returns": "void" },
+        { "name": "OpenPlank",     "cppName": "CItem_OpenPlank",     "params": { "num": 0, "list": [] }, "returns": "void" },
+        { "name": "PlaceInPack",   "cppName": "CItem_PlaceInPack",   "params": { "num": 1, "list": [ { "name": "autoStack", "type": "boolean", "required": true } ] }, "returns": "void" },
+        { "name": "RemoveSpell",   "cppName": "CMisc_RemoveSpell",   "params": { "num": 1, "list": [ { "name": "spellId", "type": "number", "required": true } ] }, "returns": "void" },
+        { "name": "SetCont",       "cppName": "CItem_SetCont",       "params": { "num": 1, "list": [ { "name": "newCont", "type": "BaseObject", "required": true } ] }, "returns": "boolean" },
+        { "name": "SetMoreVar",    "cppName": "CItem_SetMoreVar",    "params": { "num": 3, "list": [
+          { "name": "name",  "type": "string", "required": true },
+          { "name": "part",  "type": "number", "required": true },
+          { "name": "value", "type": "number", "required": true }
+          ] }, "returns": "void" },
+        { "name": "SoundEffect",   "cppName": "CMisc_SoundEffect",   "params": { "num": 2, "max": 3, "list": [
+          { "name": "soundId",   "type": "number", "required": true  },
+          { "name": "allHear",   "type": "boolean", "required": true  },
+          { "name": "monsterId", "type": "number", "required": false }
+          ] }, "returns": "void" },
+        { "name": "UnGlow",        "cppName": "CItem_UnGlow",        "params": { "num": 1, "list": [ { "name": "target", "type": "Socket", "required": true } ] }, "returns": "void" }
+      ]
     },
     {
       "name": "SpawnItem",
