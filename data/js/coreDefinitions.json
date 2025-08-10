@@ -1707,7 +1707,8 @@
         {
           "name": "isChar",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": "boolean"
+          "type": "boolean",
+          "readOnly": true
         },
         {
           "name": "isDispellable",
@@ -1722,7 +1723,8 @@
         {
           "name": "isItem",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": "boolean"
+          "type": "boolean",
+          "readOnly": true
         },
         {
           "name": "isSpawner",
@@ -3213,6 +3215,18 @@
       "aka": "UOXChar_class",
       "properties": [
         {
+          "name": "isChar",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "true",
+          "readOnly": true
+        },
+        {
+          "name": "isItem",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "false",
+          "readOnly": true
+        },
+        {
           "name": "account",
           "cppName": "CCP_ACCOUNT",
           "cppType": "JSPROP_ENUMANDPERM",
@@ -4154,6 +4168,18 @@
       "extends": "BaseObject",
       "aka": "UOXItem_class",
       "properties": [
+        {
+          "name": "isChar",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "false",
+          "readOnly": true
+        },
+        {
+          "name": "isItem",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "true",
+          "readOnly": true
+        },
         {
           "name": "amount",
           "cppName": "CIP_AMOUNT",

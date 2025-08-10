@@ -54,10 +54,10 @@ declare global {
               id:                 number;
               instanceID:         number;
               intelligence:       number;
-              isChar:             boolean;
+    readonly  isChar:             boolean;
               isDispellable:      boolean;
               isGuarded:          boolean;
-              isItem:             boolean;
+    readonly  isItem:             boolean;
               isSpawner:          boolean;
               lodamage:           number;
               luck:               number;
@@ -263,6 +263,7 @@ declare global {
               isAnimal:              boolean;
               isAwake:               boolean;
               isCasting:             boolean;
+    readonly  isChar:                true;
               isCounselor:           boolean;
               isDisguised:           boolean;
               isFlying:              boolean;
@@ -270,6 +271,7 @@ declare global {
               isGMPageable:          boolean;
               isHuman:               boolean;
               isIncognito:           boolean;
+    readonly  isItem:                false;
               isJailed:              boolean;
               isMeditating:          boolean;
               isonhorse:             boolean;
@@ -516,11 +518,13 @@ declare global {
               good:              number;
               healthBonus:       number;
               healthLeech:       number;
+    readonly  isChar:            false;
     readonly  isContType:        boolean;
               isDamageable:      boolean;
               isDoorOpen:        boolean;
               isDyeable:         boolean;
     readonly  isFieldSpell:      boolean;
+    readonly  isItem:            true;
               isItemHeld:        boolean;
     readonly  isLeatherType:     boolean;
     readonly  isLockedDown:      boolean;
