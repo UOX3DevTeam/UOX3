@@ -4255,14 +4255,182 @@
         { "name": "GetFriendList",                 "cppName": "CChar_GetFriendList",                 "params": { "num":  0, "list": [] }, "returns": "Character[]" },
         { "name": "GetPetList",                    "cppName": "CChar_GetPetList",                    "params": { "num":  0, "list": [] }, "returns": "Character[]" },
         { "name": "GetTimer",                      "cppName": "CMisc_GetTimer",                      "params": { "num": 1, "list": [ { "name": "timerID", "type": "SocketTimerID", "required": true } ] }, "returns": "number" },
+        { "name": "HasBeenOwner",                  "cppName": "CChar_HasBeenOwner",                  "params": { "num":  1, "list": [ { "name": "toCheck", "type": "Character", "required": true } ] }, "returns": "boolean" },
+        { "name": "HasSpell",                      "cppName": "CMisc_HasSpell",                      "params": { "num":  1, "list": [ { "name": "spellId", "type": "number", "required": true } ] }, "returns": "boolean" },
+        { "name": "Heal",                          "cppName": "CChar_Heal",                          "params": { "num":  1, "max": 2, "list": [
+          { "name": "amount", "type": "number",     "required": true },
+          { "name": "healer", "type": "CharOrNull", "required": false }
+        ] }, "returns": "void" },
+        { "name": "InitiateCombat",                "cppName": "CChar_InitiateCombat",                "params": { "num":  1, "list": [ { "name": "target", "type": "Character", "required": true } ] }, "returns": "boolean" },
+        { "name": "InitWanderArea",                "cppName": "CChar_InitWanderArea",                "params": { "num":  0, "list": [] }, "returns": "void" },
+        { "name": "InvalidateAttacker",            "cppName": "CChar_InvalidateAttacker",            "params": { "num":  0, "list": [] }, "returns": "void" },
+        { "name": "IsAggressor",                   "cppName": "CChar_IsAggressor",                   "params": { "num":  0, "max": 1, "list": [ { "name": "playerOnly", "type": "boolean", "required": false } ] }, "returns": "boolean" },
+        { "name": "IsPermaGrey",                   "cppName": "CChar_IsPermaGrey",                   "params": { "num":  0, "max": 1, "list": [ { "name": "playerOnly", "type": "boolean", "required": false } ] }, "returns": "boolean" },
+        { "name": "Jail",                          "cppName": "CChar_Jail",                          "params": { "num":  0, "max": 1, "list": [ { "name": "numSecs",    "type": "number",  "required": false } ] }, "returns": "void" },
+        { "name": "Kill",                          "cppName": "CChar_Kill",                          "params": { "num":  0, "list": [] }, "returns": "void" },
+        { "name": "MagicEffect",                   "cppName": "CChar_MagicEffect",                   "params": { "num":  1, "list": [ { "name": "spellId", "type": "number", "required": true } ] }, "returns": "void" },
+        { "name": "MakeMenu",                      "cppName": "CMisc_MakeMenu",                      "params": { "num":  2, "list": [
+          { "name": "menu",     "type": "number", "required": true },
+          { "name": "skillNum", "type": "number", "required": true } 
+        ] }, "returns": "void" },
+        { "name": "Mark",                          "cppName": "CChar_Mark",                          "params": { "num":  1, "list": [{ "name": "toMark", "type": "Item", "required": true } ] }, "returns": "void" },
+        { "name": "OpenBank",                      "cppName": "CChar_OpenBank",                      "params": { "num":  0, "max": 1, "list": [{ "name": "target", "type": "Socket", "required": false } ] }, "returns": "void" },
+        { "name": "OpenLayer",                     "cppName": "CChar_OpenLayer",                     "params": { "num":  2, "list": [
+          { "name": "target", "type": "Socket", "required": true },
+          { "name": "layer",  "type": "number", "required": true }
+        ] }, "returns": "void" },
+        { "name": "PopUpTarget",                   "cppName": "CMisc_PopUpTarget",                   "params": { "num":  1, "max": 2, "list": [
+          { "name": "tNum",  "type": "number", "required":  true },
+          { "name": "toSay", "type": "string", "required": false }
+        ] }, "returns": "void" },
+        { "name": "ReactOnDamage",                 "cppName": "CChar_ReactOnDamage",                 "params": { "num":  1, "list": [
+          { "name": "dmgType",  "type": "WeatherType", "required":  true },
+          { "name": "attacker", "type": "Character",   "required": false }
+        ] }, "returns": "void" },
+        { "name": "Recall",                        "cppName": "CChar_Recall",                        "params": { "num":  1, "list": [ { "name": "tablet", "type": "Item", "required": true } ] }, "returns": "void" },
+        { "name": "Release",                       "cppName": "CChar_Release",                       "params": { "num":  0, "list": [] }, "returns": "void" },
+        { "name": "RemoveAggressorFlag",           "cppName": "CChar_RemoveAggressorFlag",           "params": { "num":  1, "list": [ { "name": "target", "type": "Character", "required": true } ] }, "returns": "void" },
+        { "name": "RemoveFollower",                "cppName": "CChar_RemoveFollower",                "params": { "num":  1, "list": [ { "name": "target", "type": "Character", "required": true } ] }, "returns": "void" },
+        { "name": "RemoveFriend",                  "cppName": "CChar_RemoveFriend",                  "params": { "num":  1, "list": [ { "name": "target", "type": "Character", "required": true } ] }, "returns": "void" },
+        { "name": "RemovePermaGreyFlag",           "cppName": "CChar_RemovePermaGreyFlag",           "params": { "num":  1, "list": [ { "name": "target", "type": "Character", "required": true } ] }, "returns": "void" },
+        { "name": "RemoveSpell",                   "cppName": "CMisc_RemoveSpell",                   "params": { "num":  1, "list": [ { "name": "spellId", "type": "number", "required": true } ] }, "returns": "void" },
+        { "name": "Resurrect",                     "cppName": "CChar_Resurrect",                     "params": { "num":  0, "list": [] }, "returns": "void" },
+        { "name": "RunTo",                         "cppName": "CChar_RunTo",                         "params": {
+          "sets": [
+            { "num": 2, "list": [
+              { "name": "target",   "type": "Item",   "required": true },
+              { "name": "maxSteps", "type": "number", "required": true }
+            ] },
+            {
+              "num": 3,
+              "max": 5,
+              "list": [
+                { "name": "x",            "type": "number",  "required": true  },
+                { "name": "y",            "type": "number",  "required": true  },
+                { "name": "maxSteps",     "type": "number",  "required": true  },
+                { "name": "allowPartial", "type": "boolean", "required": false },
+                { "name": "ignoreDoors",  "type": "boolean", "required": false }
+              ]
+            }
+          ] }, "returns": "void" },
+        { "name": "SellTo",                        "cppName": "CMisc_SellTo",                        "params": { "num":  1, "list": [ { "name": "target", "type": "Character", "required": true } ] }, "returns": "boolean" },
+        { "name": "SetInvisible",                  "cppName": "CChar_SetInvisible",                  "params": { "num":  1, "max": 2, "list": [
+          { "name": "value",   "type": "VisibleTypes", "required":  true },
+          { "name": "timeout", "type": "number",       "required": false } 
+        ] }, "returns": "void" },
         { "name": "SetLocation",         "cppName": "CBase_Teleport",             "params": { 
           "sets": [
             { "num": 0, "list": [] }
           ] }, "returns": "void" },
+        { "name": "SetPoisoned",                   "cppName": "CChar_SetPoisoned",                   "params": { "num":  1, "max": 3, "list": [
+          { "name": "poisonLevel", "type": "number",    "required":  true },
+          { "name": "wearOff",     "type": "number",    "required": false },
+          { "name": "poisoner",    "type": "Character", "required": false } 
+        ] }, "returns": "void" },
+        { "name": "SetSkillByName",                "cppName": "CChar_SetSkillByName",                "params": { "num":  2, "list": [
+          { "name": "skill", "type": "string", "required": true },
+          { "name": "value", "type": "number", "required": true } 
+        ] }, "returns": "void" },
+        { "name": "SetTimer",
+          "cppName": "CMisc_SetTimer",
+          "params": { "num": 2, "list": [
+            { "name": "timerID", "type": "SocketTimerID", "required": true },
+            { "name": "value",   "type": "number", "required": true }
+          ] }, "returns": "void"
+        },
+        { "name": "SoundEffect",   "cppName": "CMisc_SoundEffect",   "params": { "num": 2, "max": 3, "list": [
+          { "name": "soundId",   "type": "number", "required": true  },
+          { "name": "allHear",   "type": "boolean", "required": true  },
+          { "name": "monsterId", "type": "number", "required": false }
+        ] }, "returns": "void" },
+        { "name": "SpeechInput",                   "cppName": "CChar_SpeechInput",                   "params": { "num":  1, "max": 2, "list": [
+          { "name": "speechId", "type": "number", "required": true },
+          { "name": "talking",  "type": "Item",   "required": false }
+        ] }, "returns": "void" },
+        { "name": "SpellFail",                     "cppName": "CChar_SpellFail",                     "params": { "num":  0, "list": [] }, "returns": "void" },
+        { "name": "SpellMoveEffect",               "cppName": "CChar_SpellMoveEffect",               "params": { "num":  2, "list": [
+          { "name": "spell",  "type": "Spell",     "required": true },
+          { "name": "target", "type": "Character", "required": true } 
+        ] }, "returns": "void" },
+        { "name": "SpellStaticEffect",             "cppName": "CChar_SpellStaticEffect",             "params": { "num":  1, "list": [ { "name": "spell", "type": "Spell", "required": true } ] }, "returns": "void" },
         { "name": "Teleport",            "cppName": "CBase_Teleport",             "params": { 
           "sets": [
             { "num": 0, "list": [] }
-          ] }, "returns": "void" }
+          ] }, "returns": "void" },
+        { "name": "SysMessage",                    "cppName": "CMisc_SysMessage",                    "params": {
+          "sets": [
+            { "num": 1, "max": 10, "list": [
+              { "name": "value1",  "type": "string", "required":  true },
+              { "name": "value2",  "type": "string", "required": false },
+              { "name": "value3",  "type": "string", "required": false },
+              { "name": "value4",  "type": "string", "required": false },
+              { "name": "value5",  "type": "string", "required": false },
+              { "name": "value6",  "type": "string", "required": false },
+              { "name": "value7",  "type": "string", "required": false },
+              { "name": "value8",  "type": "string", "required": false },
+              { "name": "value9",  "type": "string", "required": false },
+              { "name": "value10", "type": "string", "required": false }
+            ] },
+            { "num": 2, "max": 10, "list": [
+              { "name": "msgColor", "type": "number", "required":  true },
+              { "name": "value1",   "type": "string", "required":  true },
+              { "name": "value2",   "type": "string", "required": false },
+              { "name": "value3",   "type": "string", "required": false },
+              { "name": "value4",   "type": "string", "required": false },
+              { "name": "value5",   "type": "string", "required": false },
+              { "name": "value6",   "type": "string", "required": false },
+              { "name": "value7",   "type": "string", "required": false },
+              { "name": "value8",   "type": "string", "required": false },
+              { "name": "value9",   "type": "string", "required": false }
+            ] }
+        ] }, "returns": "void" },
+        { "name": "TurnToward",                    "cppName": "CChar_TurnToward",                    "params": { 
+          "sets": [
+          { "num": 1, "list": [ { "name": "target", "type": "BaseObject", "required": true } ] },
+          { "num": 2, "list": [
+            { "name": "x", "type": "number", "required": true },
+            { "name": "y", "type": "number", "required": true }
+          ] }
+        ] }, "returns": "void" },
+        { "name": "UpdateAggressorFlagTimestamp",  "cppName": "CChar_UpdateAggressorFlagTimestamp",  "params": { "num":  1, "list": [ { "name": "target", "type": "Character", "required": true } ] }, "returns": "void" },
+        { "name": "UpdatePermaGreyFlagTimestamp",  "cppName": "CChar_UpdatePermaGreyFlagTimestamp",  "params": { "num":  1, "list": [ { "name": "target", "type": "Character", "required": true } ] }, "returns": "void" },
+        { "name": "WalkTo",                        "cppName": "CChar_WalkTo",                        "params": {
+          "sets": [
+            { "num": 2, "list": [
+              { "name": "target",   "type": "Item",   "required": true },
+              { "name": "maxSteps", "type": "number", "required": true }
+            ] },
+            {
+              "num": 3,
+              "max": 5,
+              "list": [
+                { "name": "x",            "type": "number",  "required": true  },
+                { "name": "y",            "type": "number",  "required": true  },
+                { "name": "maxSteps",     "type": "number",  "required": true  },
+                { "name": "allowPartial", "type": "boolean", "required": false },
+                { "name": "ignoreDoors",  "type": "boolean", "required": false }
+              ]
+            }
+        ] }, "returns": "void" },
+        { "name": "Wander",                        "cppName": "CChar_Wander",                        "params": { "num":  3, "max": 4, "list": [
+          { "name": "x1", "type": "number", "required":  true },
+          { "name": "y1", "type": "number", "required":  true },
+          { "name": "x2", "type": "number", "required":  true },
+          { "name": "y2", "type": "number", "required": false } 
+        ] }, "returns": "void" },
+        { "name": "WhisperMessage",                "cppName": "CChar_WhisperMessage",                "params": { "num":  1, "list": [ { "name": "msg", "type": "string", "required": true } ] }, "returns": "void" },
+        { "name": "YellMessage",                   "cppName": "CChar_YellMessage",                   "params": { "num":  1, "list": [ { "name": "msg", "type": "string", "required": true } ] }, "returns": "void" },
+        { "name": "CanSee",                        "cppName": "CBase_CanSee",                        "params": {
+          "sets": [
+            { "num": 1, "list": [ { "name": "target",   "type": "Socket | Character | Item",   "required": true } ] },
+            { "num": 3,
+              "list": [
+                { "name": "x", "type": "number",  "required": true  },
+                { "name": "y", "type": "number",  "required": true  },
+                { "name": "z", "type": "number",  "required": true  }
+              ]
+            }
+        ] }, "returns": "boolean" }
       ]
     },
     {
