@@ -359,6 +359,45 @@ declare global {
               wandertype:            number;
               willhunger:            boolean;
               willthirst:            boolean;
+    AddAggressorFlag( target: Character ): void;
+    AddFollower( target: Character ): boolean;
+    AddFriend( target: Character ): boolean;
+    AddPermaGreyFlag( target: Character ): void;
+    AddSkill( skillId: number, skillAmt: number, triggerEvent: boolean ): void;
+    AddSpell( spellNum: number ): void;
+    BoltEffect(): void;
+    BreakConcentration(): void;
+    BuyFrom( npc: Character ): void;
+    CalculateControlChance( target: Character ): number;
+    CastSpell( spellNum: number, immediate?: boolean ): boolean | void;
+    CheckAggressorFlag( target: Character ): boolean;
+    CheckPermaGreyFlag( target: Character ): boolean;
+    CheckSkill( skillId: number, minSkill: number, maxSkill: number, isCraftSkill?: boolean, forceResult?: number ): boolean;
+    ClearAggressorFlags(): void;
+    ClearFriendList(): void;
+    ClearPermaGreyFlags(): void;
+    CustomTarget( tNum: number, toSay?: string, cursor?: number ): void;
+    Damage( damage: number, element?: WeatherType, attacker?: Character | null | undefined, doRepSys?: boolean ): void;
+    Defense( hitLoc: number, resistType: boolean, doArmorDamage: WeatherType, ignoreMedable?: boolean, includeShield?: boolean ): number;
+    DirectionTo( target: BaseObject ): number;
+    DirectionTo( x: number, y: number ): number;
+    Dismount(): void;
+    DoAction( action: number, subAction?: number, frameCount?: number, frameDelay?: number, playBackwards?: boolean ): void;
+    Dupe(): void;
+    EmoteMessage( msg: string, allSay?: boolean, hue?: number, target?: SpeechTarget | null, serial?: number ): void;
+    ExecuteCommand( msg: string ): void;
+    ExplodeItem( target: Item, damage: number, dmgType: number, explodeNearby?: boolean ): void;
+    FindItemLayer( layerId: number ): Item;
+    FindItemSection( sectionId: string ): ItemOrNull;
+    FindItemType( typeId: ItemTypes ): ItemOrNull;
+    Follow( target: CharOrNull ): void;
+    Gate( target: Item ): void;
+    Gate( place: number ): void;
+    Gate( x: number, y: number, z: number, world: number, instance?: number ): void;
+    GetFollowerList(): Character[];
+    GetFriendList(): Character[];
+    GetPetList(): Character[];
+    GetTimer( timerID: SocketTimerID ): number;
     SetLocation(): void;
     Teleport(): void;
   }
@@ -598,6 +637,113 @@ declare global {
   type UOXItem_class = Item;
   type ItemOrNull = Item | null | undefined;
   type ItemOrSerial = Item | number;
+  enum ItemTypes {
+    IT_NOTYPE = 0,            
+    IT_CONTAINER = 1,         
+    IT_CASTLEGATEOPENER = 2,  
+    IT_CASTLEGATE = 3,        
+    IT_TELEPORTITEM = 6,      
+    IT_KEY = 7,               
+    IT_LOCKEDCONTAINER = 8,   
+    IT_SPELLBOOK = 9,         
+    IT_MAP = 10,              
+    IT_BOOK = 11,             
+    IT_DOOR = 12,             
+    IT_LOCKEDDOOR = 13,       
+    IT_FOOD = 14,             
+    IT_MAGICWAND = 15,        
+    IT_RESURRECTOBJECT = 16,  
+    IT_CRYSTALBALL = 18,      
+    IT_POTION = 19,           
+    IT_TRADEWINDOW = 20,      
+    IT_TOWNSTONE = 35,        
+    IT_RUNEBOOK = 49,         
+    IT_RECALLRUNE = 50,       
+    IT_GATE = 51,             
+    IT_OBJTELEPORTER = 60,    
+    IT_ITEMSPAWNER = 61,      
+    IT_NPCSPAWNER = 62,       
+    IT_SPAWNCONT = 63,        
+    IT_LOCKEDSPAWNCONT = 64,  
+    IT_UNLOCKABLESPAWNCONT = 65,
+    IT_AREASPAWNER = 69,      
+    IT_ADVANCEGATE = 80,      
+    IT_MULTIADVANCEGATE = 81, 
+    IT_MONSTERGATE = 82,      
+    IT_RACEGATE = 83,         
+    IT_DAMAGEOBJECT = 85,     
+    IT_TRASHCONT = 87,        
+    IT_SOUNDOBJECT = 88,      
+    IT_MAPCHANGEOBJECT = 89,  
+    IT_WORLDCHANGEGATE = 90,  
+    IT_MORPHOBJECT = 101,     
+    IT_UNMORPHOBJECT = 102,   
+    IT_DRINK = 105,           
+    IT_STANDINGHARP = 106,    
+    IT_SHIELD = 107,          
+    IT_ZEROKILLSGATE = 111,   
+    IT_PLANK = 117,           
+    IT_FIREWORKSWAND = 118,   
+    IT_SPELLCHANNELING = 119, 
+    IT_ESCORTNPCSPAWNER = 125,
+    IT_RENAMEDEED = 186,      
+    IT_LEATHERREPAIRTOOL = 190,
+    IT_BOWREPAIRTOOL = 191,   
+    IT_TILLER = 200,          
+    IT_HOUSEADDON = 201,      
+    IT_GUILDSTONE = 202,      
+    IT_HOUSESIGN = 203,       
+    IT_TINKERTOOL = 204,      
+    IT_METALREPAIRTOOL = 205, 
+    IT_FORGE = 207,           
+    IT_DYE = 208,             
+    IT_DYEVAT = 209,          
+    IT_MODELMULTI = 210,      
+    IT_ARCHERYBUTTE = 211,    
+    IT_DRUM = 212,            
+    IT_TAMBOURINE = 213,      
+    IT_HARP = 214,            
+    IT_LUTE = 215,            
+    IT_AXE = 216,             
+    IT_PLAYERVENDORDEED = 217,
+    IT_SMITHYTOOL = 218,      
+    IT_CARPENTRYTOOL = 219,   
+    IT_MININGTOOL = 220,      
+    IT_EMPTYVIAL = 221,       
+    IT_UNSPUNFABRIC = 222,    
+    IT_UNCOOKEDFISH = 223,    
+    IT_UNCOOKEDMEAT = 224,    
+    IT_SPUNFABRIC = 225,      
+    IT_FLETCHINGTOOL = 226,   
+    IT_CANNONBALL = 227,      
+    IT_WATERPITCHER = 228,    
+    IT_UNCOOKEDDOUGH = 229,   
+    IT_SEWINGKIT = 230,       
+    IT_ORE = 231,             
+    IT_MESSAGEBOARD = 232,    
+    IT_SWORD = 233,           
+    IT_CAMPING = 234,         
+    IT_MAGICSTATUE = 235,     
+    IT_GUILLOTINE = 236,      
+    IT_FLOURSACK = 238,       
+    IT_OPENFLOURSACK = 239,   
+    IT_FISHINGPOLE = 240,     
+    IT_CLOCK = 241,           
+    IT_MORTAR = 242,          
+    IT_SCISSORS = 243,        
+    IT_BANDAGE = 244,         
+    IT_SEXTANT = 245,         
+    IT_HAIRDYE = 246,         
+    IT_LOCKPICK = 247,        
+    IT_COTTONPLANT = 248,     
+    IT_TINKERAXLE = 249,      
+    IT_TINKERAWG = 250,       
+    IT_TINKERCLOCK = 251,     
+    IT_TINKERSEXTANT = 252,   
+    IT_TRAININGDUMMY = 253,   
+    IT_PETTRANSFERDEED = 254, 
+    IT_COUNT = 255,           
+  }
   interface MiningData {
               colour:    number;
               makemenu:  number;
@@ -827,6 +973,36 @@ declare global {
   }
   type SocketOrNull = Socket | null | undefined;
   enum SocketTimerID {
+    tCHAR_TIMEOUT = 0,          // Global Character Timer
+    tCHAR_INVIS = 1,            // Global Character Timer
+    tCHAR_HUNGER = 2,           // Global Character Timer
+    tCHAR_THIRST = 3,           // Global Character Timer
+    tCHAR_POISONTIME = 4,       // Global Character Timer
+    tCHAR_POISONTEXT = 5,       // Global Character Timer
+    tCHAR_POISONWEAROFF = 6,    // Global Character Timer
+    tCHAR_SPELLTIME = 7,        // Global Character Timer
+    tCHAR_SPELLRECOVERYTIME = 8, // Global Character Timer
+    tCHAR_ANTISPAM = 9,         // Global Character Timer
+    tCHAR_CRIMFLAG = 10,        // Global Character Timer
+    tCHAR_STEALFLAG = 11,       // Global Character Timer
+    tCHAR_MURDERRATE = 12,      // Global Character Timer
+    tCHAR_PEACETIMER = 13,      // Global Character Timer
+    tCHAR_FLYINGTOGGLE = 14,    // Global Character Timer
+    tCHAR_FIREFIELDTICK = 15,   // Global Character Timer
+    tCHAR_POISONFIELDTICK = 16, // Global Character Timer
+    tCHAR_PARAFIELDTICK = 17,   // Global Character Timer
+    tCHAR_YOUNGHEAL = 18,       // Global Character Timer
+    tCHAR_YOUNGMESSAGE = 19,    // Global Character Timer
+    tNPC_MOVETIME = 20,         // NPC Timer
+    tNPC_SPATIMER = 21,         // NPC Timer
+    tNPC_SUMMONTIME = 22,       // NPC Timer
+    tNPC_EVADETIME = 23,        // NPC Timer
+    tNPC_LOYALTYTIME = 24,      // NPC Timer
+    tNPC_IDLEANIMTIME = 25,     // NPC Timer
+    tNPC_PATHFINDDELAY = 26,    // NPC Timer
+    tNPC_FLEECOOLDOWN = 27,     // NPC Timer
+    tPC_LOGOUT = 28,            // PC Timer
+    tCHAR_COUNT = 29,          
   }
   interface SpawnItem extends Item {
               maxinterval:  number;
@@ -917,47 +1093,47 @@ declare global {
   type UOXSpell = Spell;
   enum TileFlags {
     TF_FLOORLEVEL = 0,  // Background
-    TF_HOLDABLE,        // Weapon
-    TF_TRANSPARENT,     // SignGuildBanner
-    TF_TRANSLUCENT,     // WebDirtBlood
-    TF_WALL,            // WallVertTile
-    TF_DAMAGING,       
-    TF_BLOCKING,        // Impassable
-    TF_WET,             // LiquidWet
-    TF_UNKNOWN1,        // Ignored
-    TF_SURFACE,         // Standable
-    TF_CLIMBABLE,       // Bridge
-    TF_STACKABLE,       // Generic
-    TF_WINDOW,          // WindowArchDoor
-    TF_NOSHOOT,         // CannotShootThru
-    TF_DISPLAYA,        // Prefix A
-    TF_DISPLAYAN,       // Prefix An
-    TF_DESCRIPTION,     // Internal
-    TF_FOLIAGE,         // FadeWithTrans
-    TF_PARTIALHUE,     
-    TF_UNKNOWN2,       
-    TF_MAP,            
-    TF_CONTAINER,      
-    TF_WEARABLE,        // Equipable
-    TF_LIGHT,           // LightSource
-    TF_ANIMATED,       
-    TF_NODIAGONAL,      // 'HoverOver' in SA clients and later, to determine if tiles can be moved on by flying gargoyles
-    TF_UNKNOWN3,        // 'NoDiagonal' in SA clients and later?
-    TF_ARMOR,           // WholeBodyItem
-    TF_ROOF,            // WallRoofWeap
-    TF_DOOR,           
-    TF_STAIRBACK,       // ClimbableBit1
-    TF_STAIRRIGHT,      // ClimbableBit2
-    TF_ALPHABLEND,      // Blend Alphas, tile blending
-    TF_USENEWART,       // Uses new art style?
-    TF_ARTUSED,         // Is art being used?
-    TF_BIT36,           // Unknown/Unused
-    TF_NOSHADOW,        // Disallow shadow on this tile, lightsource? lava?
-    TF_PIXELBLEED,      // Let pixels bleed in to other tiles? Is this Disabling Texture Clamp?
-    TF_PLAYANIMONCE,    // Play tile animation once.
-    TF_BIT40,           // Unknown/Unused
-    TF_MULTIMOVABLE,    // Movable multi? Cool ships and vehicles etc?
-    TF_COUNT,          
+    TF_HOLDABLE = 1,    // Weapon
+    TF_TRANSPARENT = 2, // SignGuildBanner
+    TF_TRANSLUCENT = 3, // WebDirtBlood
+    TF_WALL = 4,        // WallVertTile
+    TF_DAMAGING = 5,   
+    TF_BLOCKING = 6,    // Impassable
+    TF_WET = 7,         // LiquidWet
+    TF_UNKNOWN1 = 8,    // Ignored
+    TF_SURFACE = 9,     // Standable
+    TF_CLIMBABLE = 10,  // Bridge
+    TF_STACKABLE = 11,  // Generic
+    TF_WINDOW = 12,     // WindowArchDoor
+    TF_NOSHOOT = 13,    // CannotShootThru
+    TF_DISPLAYA = 14,   // Prefix A
+    TF_DISPLAYAN = 15,  // Prefix An
+    TF_DESCRIPTION = 16, // Internal
+    TF_FOLIAGE = 17,    // FadeWithTrans
+    TF_PARTIALHUE = 18,
+    TF_UNKNOWN2 = 19,  
+    TF_MAP = 20,       
+    TF_CONTAINER = 21, 
+    TF_WEARABLE = 22,   // Equipable
+    TF_LIGHT = 23,      // LightSource
+    TF_ANIMATED = 24,  
+    TF_NODIAGONAL = 25, // 'HoverOver' in SA clients and later, to determine if tiles can be moved on by flying gargoyles
+    TF_UNKNOWN3 = 26,   // 'NoDiagonal' in SA clients and later?
+    TF_ARMOR = 27,      // WholeBodyItem
+    TF_ROOF = 28,       // WallRoofWeap
+    TF_DOOR = 29,      
+    TF_STAIRBACK = 30,  // ClimbableBit1
+    TF_STAIRRIGHT = 31, // ClimbableBit2
+    TF_ALPHABLEND = 32, // Blend Alphas, tile blending
+    TF_USENEWART = 33,  // Uses new art style?
+    TF_ARTUSED = 34,    // Is art being used?
+    TF_BIT36 = 35,      // Unknown/Unused
+    TF_NOSHADOW = 36,   // Disallow shadow on this tile, lightsource? lava?
+    TF_PIXELBLEED = 37, // Let pixels bleed in to other tiles? Is this Disabling Texture Clamp?
+    TF_PLAYANIMONCE = 38, // Play tile animation once.
+    TF_BIT40 = 39,      // Unknown/Unused
+    TF_MULTIMOVABLE = 40, // Movable multi? Cool ships and vehicles etc?
+    TF_COUNT = 41,     
   }
   interface Timer {
   }
@@ -1004,140 +1180,140 @@ declare global {
   type TownRegionOrNull = TownRegion | null | undefined;
   enum UnicodeTypes {
     ZERO = 0,          
-    UT_ARA,            
-    UT_ARI,            
-    UT_ARE,            
-    UT_ARL,            
-    UT_ARG,            
-    UT_ARM,            
-    UT_ART,            
-    UT_ARO,            
-    UT_ARY,            
-    UT_ARS,            
-    UT_ARJ,            
-    UT_ARB,            
-    UT_ARK,            
-    UT_ARU,            
-    UT_ARH,            
-    UT_ARQ,            
-    UT_BGR,            
-    UT_CAT,            
-    UT_CHT,            
-    UT_CHS,            
-    UT_ZHH,            
-    UT_ZHI,            
-    UT_ZHM,            
-    UT_CSY,            
-    UT_DAN,            
-    UT_DEU,            
-    UT_DES,            
-    UT_DEA,            
-    UT_DEL,            
-    UT_DEC,            
-    UT_ELL,            
-    UT_ENU,            
-    UT_ENG,            
-    UT_ENA,            
-    UT_ENC,            
-    UT_ENZ,            
-    UT_ENI,            
-    UT_ENS,            
-    UT_ENJ,            
-    UT_ENB,            
-    UT_ENL,            
-    UT_ENT,            
-    UT_ENW,            
-    UT_ENP,            
-    UT_ESP,            
-    UT_ESM,            
-    UT_ESN,            
-    UT_ESG,            
-    UT_ESC,            
-    UT_ESA,            
-    UT_ESD,            
-    UT_ESV,            
-    UT_ESO,            
-    UT_ESR,            
-    UT_ESS,            
-    UT_ESF,            
-    UT_ESL,            
-    UT_ESY,            
-    UT_ESZ,            
-    UT_ESB,            
-    UT_ESE,            
-    UT_ESH,            
-    UT_ESI,            
-    UT_ESU,            
-    UT_FIN,            
-    UT_FRA,            
-    UT_FRB,            
-    UT_FRC,            
-    UT_FRS,            
-    UT_FRL,            
-    UT_FRM,            
-    UT_HEB,            
-    UT_HUN,            
-    UT_ISL,            
-    UT_ITA,            
-    UT_ITS,            
-    UT_JPN,            
-    UT_KOR,            
-    UT_NLD,            
-    UT_NLB,            
-    UT_NOR,            
-    UT_NON,            
-    UT_PLK,            
-    UT_PTB,            
-    UT_PTG,            
-    UT_ROM,            
-    UT_RUS,            
-    UT_HRV,            
-    UT_SRL,            
-    UT_SRB,            
-    UT_SKY,            
-    UT_SQI,            
-    UT_SVE,            
-    UT_SVF,            
-    UT_THA,            
-    UT_TRK,            
-    UT_URP,            
-    UT_IND,            
-    UT_UKR,            
-    UT_BEL,            
-    UT_SLV,            
-    UT_ETI,            
-    UT_LVI,            
-    UT_LTH,            
-    UT_LTC,            
-    UT_FAR,            
-    UT_VIT,            
-    UT_HYE,            
-    UT_AZE,            
-    UT_EUQ,            
-    UT_MKI,            
-    UT_AFK,            
-    UT_KAT,            
-    UT_FOS,            
-    UT_HIN,            
-    UT_MSL,            
-    UT_MSB,            
-    UT_KAZ,            
-    UT_SWK,            
-    UT_UZB,            
-    UT_TAT,            
-    UT_BEN,            
-    UT_PAN,            
-    UT_GUJ,            
-    UT_ORI,            
-    UT_TAM,            
-    UT_TEL,            
-    UT_KAN,            
-    UT_MAL,            
-    UT_ASM,            
-    UT_MAR,            
-    UT_SAN,            
-    UT_KOK,            
-    TOTAL_LANGUAGES,   
+    UT_ARA = 1,        
+    UT_ARI = 2,        
+    UT_ARE = 3,        
+    UT_ARL = 4,        
+    UT_ARG = 5,        
+    UT_ARM = 6,        
+    UT_ART = 7,        
+    UT_ARO = 8,        
+    UT_ARY = 9,        
+    UT_ARS = 10,       
+    UT_ARJ = 11,       
+    UT_ARB = 12,       
+    UT_ARK = 13,       
+    UT_ARU = 14,       
+    UT_ARH = 15,       
+    UT_ARQ = 16,       
+    UT_BGR = 17,       
+    UT_CAT = 18,       
+    UT_CHT = 19,       
+    UT_CHS = 20,       
+    UT_ZHH = 21,       
+    UT_ZHI = 22,       
+    UT_ZHM = 23,       
+    UT_CSY = 24,       
+    UT_DAN = 25,       
+    UT_DEU = 26,       
+    UT_DES = 27,       
+    UT_DEA = 28,       
+    UT_DEL = 29,       
+    UT_DEC = 30,       
+    UT_ELL = 31,       
+    UT_ENU = 32,       
+    UT_ENG = 33,       
+    UT_ENA = 34,       
+    UT_ENC = 35,       
+    UT_ENZ = 36,       
+    UT_ENI = 37,       
+    UT_ENS = 38,       
+    UT_ENJ = 39,       
+    UT_ENB = 40,       
+    UT_ENL = 41,       
+    UT_ENT = 42,       
+    UT_ENW = 43,       
+    UT_ENP = 44,       
+    UT_ESP = 45,       
+    UT_ESM = 46,       
+    UT_ESN = 47,       
+    UT_ESG = 48,       
+    UT_ESC = 49,       
+    UT_ESA = 50,       
+    UT_ESD = 51,       
+    UT_ESV = 52,       
+    UT_ESO = 53,       
+    UT_ESR = 54,       
+    UT_ESS = 55,       
+    UT_ESF = 56,       
+    UT_ESL = 57,       
+    UT_ESY = 58,       
+    UT_ESZ = 59,       
+    UT_ESB = 60,       
+    UT_ESE = 61,       
+    UT_ESH = 62,       
+    UT_ESI = 63,       
+    UT_ESU = 64,       
+    UT_FIN = 65,       
+    UT_FRA = 66,       
+    UT_FRB = 67,       
+    UT_FRC = 68,       
+    UT_FRS = 69,       
+    UT_FRL = 70,       
+    UT_FRM = 71,       
+    UT_HEB = 72,       
+    UT_HUN = 73,       
+    UT_ISL = 74,       
+    UT_ITA = 75,       
+    UT_ITS = 76,       
+    UT_JPN = 77,       
+    UT_KOR = 78,       
+    UT_NLD = 79,       
+    UT_NLB = 80,       
+    UT_NOR = 81,       
+    UT_NON = 82,       
+    UT_PLK = 83,       
+    UT_PTB = 84,       
+    UT_PTG = 85,       
+    UT_ROM = 86,       
+    UT_RUS = 87,       
+    UT_HRV = 88,       
+    UT_SRL = 89,       
+    UT_SRB = 90,       
+    UT_SKY = 91,       
+    UT_SQI = 92,       
+    UT_SVE = 93,       
+    UT_SVF = 94,       
+    UT_THA = 95,       
+    UT_TRK = 96,       
+    UT_URP = 97,       
+    UT_IND = 98,       
+    UT_UKR = 99,       
+    UT_BEL = 100,      
+    UT_SLV = 101,      
+    UT_ETI = 102,      
+    UT_LVI = 103,      
+    UT_LTH = 104,      
+    UT_LTC = 105,      
+    UT_FAR = 106,      
+    UT_VIT = 107,      
+    UT_HYE = 108,      
+    UT_AZE = 109,      
+    UT_EUQ = 110,      
+    UT_MKI = 111,      
+    UT_AFK = 112,      
+    UT_KAT = 113,      
+    UT_FOS = 114,      
+    UT_HIN = 115,      
+    UT_MSL = 116,      
+    UT_MSB = 117,      
+    UT_KAZ = 118,      
+    UT_SWK = 119,      
+    UT_UZB = 120,      
+    UT_TAT = 121,      
+    UT_BEN = 122,      
+    UT_PAN = 123,      
+    UT_GUJ = 124,      
+    UT_ORI = 125,      
+    UT_TAM = 126,      
+    UT_TEL = 127,      
+    UT_KAN = 128,      
+    UT_MAL = 129,      
+    UT_ASM = 130,      
+    UT_MAR = 131,      
+    UT_SAN = 132,      
+    UT_KOK = 133,      
+    TOTAL_LANGUAGES = 134,
   }
   interface UOXResource {
               fishAmount: number;
