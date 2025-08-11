@@ -44,7 +44,7 @@
  * 
  *  Rewards:
  *  --------
- *   rewards         - Gold, items, or skill rewards.
+ *   rewards         - Karama, Fame, Gold, items, or skill rewards.
  * 
  *  Regions & Location:
  *  -------------------
