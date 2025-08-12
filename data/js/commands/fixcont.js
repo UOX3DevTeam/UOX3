@@ -56,7 +56,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	}
 }
 
-/** @type { ( obj: Character | Item, mSock: Socket ) => void } */
+/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
 function onIterate( toCheck )
 {
 	if( toCheck.type == 1 ) // Is it a container?

@@ -12,7 +12,7 @@ function command_ZEROKILLS( socket, cmdString )
 	socket.SysMessage( GetDictionaryEntry( 23, socket.language )); // All player kills are now 0.
 }
 
-/** @type { ( obj: Character | Item, mSock: Socket ) => void } */
+/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
 function onIterate( toCheck )
 {
 	if( toCheck && toCheck.isChar )

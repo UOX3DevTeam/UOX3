@@ -569,7 +569,7 @@ function ApplyExplosionDamage( timerObj, targetChar )
 }
 
 // Show real name to those who have identified potion
-/** @type { ( myObj: BaseObject, nameRequester: Character, requestSource: number ) => void } */
+/** @type { ( myObj: BaseObject, nameRequester: Character, requestSource: number ) => string } */
 function onNameRequest( iPotion, pUser )
 {
 	// Default name

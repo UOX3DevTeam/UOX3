@@ -7718,7 +7718,7 @@
           { "name": "enemy", "type": "Character", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onEnterRegion",
@@ -7740,7 +7740,7 @@
           { "name": "leaving", "type": "BaseObject", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onEquip",
@@ -7751,7 +7751,7 @@
           { "name": "equipping", "type": "Item", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onEquipAttempt",
@@ -7762,7 +7762,7 @@
           { "name": "equipping", "type": "Item", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onFacetChange",
@@ -7774,7 +7774,7 @@
             { "name": "newFacet", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onFall",
@@ -7796,7 +7796,7 @@
           { "name": "oldStatus", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onHelpButton",
@@ -7807,7 +7807,7 @@
           { "name": "mChar", "type": "Character", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onHouseCommand",
@@ -7819,7 +7819,7 @@
           { "name": "targId", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onHungerChange",
@@ -7830,7 +7830,7 @@
           { "name": "newStatus", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onIterate",
@@ -7841,7 +7841,7 @@
           { "name": "mSock", "type": "Socket", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onIterateSpawnRegions",
@@ -7852,7 +7852,7 @@
           { "name": "b", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onLeaveRegion",
@@ -7874,7 +7874,7 @@
           { "name": "leaving", "type": "BaseObject", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onLightChange",
@@ -7885,7 +7885,7 @@
           { "name": "lightLevel", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onLogin",
@@ -7896,7 +7896,7 @@
           { "name": "pPlayer", "type": "Character", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onLogout",
@@ -7907,7 +7907,7 @@
           { "name": "pPlayer", "type": "Character", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onLoyaltyChange",
@@ -7918,7 +7918,7 @@
           { "name": "newStatus", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onMakeItem",
@@ -7945,7 +7945,7 @@
           { "name": "oldCharY",    "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onMultiLogout",
@@ -7956,7 +7956,7 @@
           { "name": "cPlayer", "type": "Character", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onNameRequest",
@@ -7968,7 +7968,7 @@
           { "name": "requestSource", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "string"
     },
     {
       "name": "onPacketReceive",
@@ -7979,7 +7979,7 @@
           { "name": "packetNum", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onPathfindEnd",
@@ -7990,7 +7990,7 @@
           { "name": "pathfindResult", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onPickup",

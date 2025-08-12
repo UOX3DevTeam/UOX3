@@ -1,6 +1,6 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
-/** @type { ( equipper: Character, equipping: Item ) => void } */
+/** @type { ( equipper: Character, equipping: Item ) => boolean } */
 function onEquip( pEquipper, iEquipped ) 
 {
 	pEquipper.AddScriptTrigger( 7003 );

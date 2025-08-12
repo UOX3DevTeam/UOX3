@@ -2,7 +2,7 @@
 // @ts-check
 // Global Script
 // Supported Events trigger for every character/item, use with care
-/** @type { ( sockPlayer: Socket, pPlayer: Character ) => void } */
+/** @type { ( sockPlayer: Socket, pPlayer: Character ) => boolean } */
 function onLogin( socket, pChar )
 {
 	const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
@@ -76,7 +76,7 @@ function onLogin( socket, pChar )
 	}
 }
 
-/** @type { ( sockPlayer: Socket, pPlayer: Character ) => void } */
+/** @type { ( sockPlayer: Socket, pPlayer: Character ) => boolean } */
 function onLogout( pSock, pChar )
 {
 	var minSinceLogin = Math.round( GetCurrentClock() / 1000 / 60 ) - parseInt( pChar.GetTempTag( "loginTime" ));
@@ -220,7 +220,7 @@ function onDecay( iDecaying )
 }
 
 // Override the hard-coded help menu and display a JS based one
-/** @type { ( mChar: Character ) => void } */
+/** @type { ( mChar: Character ) => boolean } */
 function onHelpButton( pChar )
 {
 	TriggerEvent( 2, "DisplayHelpMenu", pChar );

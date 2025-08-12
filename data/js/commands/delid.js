@@ -23,7 +23,7 @@ function command_DELID( socket, cmdString )
 	}
 }
 
-/** @type { ( obj: Character | Item, mSock: Socket ) => void } */
+/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
 function onIterate( toCheck )
 {
 	if( toCheck && toCheck.isItem )

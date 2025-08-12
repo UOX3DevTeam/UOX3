@@ -241,7 +241,7 @@ function onDropItemOnItem( iDropped, pUser, potionKeg )
 }
 
 // Show real name to owner, and to those who have identified potion keg
-/** @type { ( myObj: BaseObject, nameRequester: Character, requestSource: number ) => void } */
+/** @type { ( myObj: BaseObject, nameRequester: Character, requestSource: number ) => string } */
 function onNameRequest( potionKeg, pUser )
 {
 	// Default name

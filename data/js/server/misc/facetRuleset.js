@@ -208,7 +208,7 @@ function onSnoopAttempt( pSnooped, targPack, pSnooping )
 	return true;
 }
 
-/** @type { ( pChanging: Character, newStatus: number, oldStatus: number ) => void } */
+/** @type { ( pChanging: Character, newStatus: number, oldStatus: number ) => boolean } */
 function onFlagChange( pChanging, newStatus, oldStatus )
 {
 	var worldNum = pChanging.worldnumber;

@@ -488,7 +488,7 @@ function InitializeSwitchDoorCombo( iSwitch, pSock )
 	return false;
 }
 
-/** @type { ( obj: Character | Item, mSock: Socket ) => void } */
+/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
 function onIterate( myObject, pSock )
 {
 	let iSwitch = pSock.iSwitch;

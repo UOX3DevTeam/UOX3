@@ -100,7 +100,7 @@ function onCallback1( socket, ourObj )
 	}
 }
 
-/** @type { ( obj: Character | Item, mSock: Socket ) => void } */
+/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
 function onIterate( toCheck )
 {
 	if( toCheck && toCheck.isItem && toCheck.container == null )

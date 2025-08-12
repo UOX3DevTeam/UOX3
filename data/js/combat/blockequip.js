@@ -1,6 +1,6 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
-/** @type { ( equipper: Character, equipping: Item ) => void } */
+/** @type { ( equipper: Character, equipping: Item ) => boolean } */
 function onEquipAttempt( pEquipper, iEquipped )
 {
 	var blockEquip = pEquipper.GetTempTag( "blockEquip" );

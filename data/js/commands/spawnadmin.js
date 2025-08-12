@@ -41,7 +41,7 @@ function ShowSpawnerList( socket, cmdString, filteredList, filterString )
 	DisplaySpawnerListGump( socket, filteredList, filterString, 0 );
 }
 
-/** @type { ( obj: Character | Item, mSock: Socket ) => void } */
+/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
 function onIterate( toCheck, socket )
 {
 	if( socket == null )

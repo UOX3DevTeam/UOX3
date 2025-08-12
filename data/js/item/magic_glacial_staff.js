@@ -60,7 +60,7 @@ function onSpeech( strSaid, pTalking, iTalkingTo )
 	}
 }
 
-/** @type { ( equipper: Character, equipping: Item ) => void } */
+/** @type { ( equipper: Character, equipping: Item ) => boolean } */
 function onEquip( pEquipper, iEquipped )
 {
 	if( !GetServerSetting( "ItemsDetectSpeech" ))

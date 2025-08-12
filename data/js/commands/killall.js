@@ -20,7 +20,7 @@ function command_KILLALL( socket, cmdString )
 	socket.SysMessage( tempMsg.replace( /%i/gi, count.toString() ));
 }
 
-/** @type { ( obj: Character | Item, mSock: Socket ) => void } */
+/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
 function onIterate( toCheck )
 {
 	if( toCheck && toCheck.isChar )

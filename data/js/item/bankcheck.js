@@ -78,7 +78,7 @@ function onTooltip( bankCheck )
 // Show value as part of name if tooltips are disabled
 const aosTooltipsEnabledClient = GetClientFeature( 4 );
 const aosTooltipsEnabledServer = GetServerFeature( 5 );
-/** @type { ( myObj: BaseObject, nameRequester: Character, requestSource: number ) => void } */
+/** @type { ( myObj: BaseObject, nameRequester: Character, requestSource: number ) => string } */
 function onNameRequest( bankCheck, pUser )
 {
 	// Default name

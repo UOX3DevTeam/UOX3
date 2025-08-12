@@ -524,7 +524,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
-/** @type { ( tObject: BaseObject, lightLevel: number ) => void } */
+/** @type { ( tObject: BaseObject, lightLevel: number ) => boolean } */
 function onLightChange( iLight, lightLevel )
 {
 	if( ValidateObject( iLight ) && iLight.isItem && dynamicLampPosts == true )

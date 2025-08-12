@@ -5,7 +5,7 @@ const paralyzingBlow = true;
 const crushingBlow = true;
 const concussionBlow = true;
 
-/** @type { ( equipper: Character, equipping: Item ) => void } */
+/** @type { ( equipper: Character, equipping: Item ) => boolean } */
 function onEquip( pEquipper, iEquipped ) 
 {
 	pEquipper.AddScriptTrigger( 5050 );

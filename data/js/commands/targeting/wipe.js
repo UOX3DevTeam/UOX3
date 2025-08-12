@@ -297,7 +297,7 @@ function DoWipe( socket, ourObj )
 }
 
 // Iterate through all objects of specified type
-/** @type { ( obj: Character | Item, mSock: Socket ) => void } */
+/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
 function onIterate( toCheck, socket )
 {
 	if( ValidateObject( toCheck ))

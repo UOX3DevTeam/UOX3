@@ -9,7 +9,7 @@ function PacketRegistration()
 	RegisterPacket( 0xF1, 0x0 );
 }
 
-/** @type { ( mSock: Socket, packetNum: number ) => void } */
+/** @type { ( mSock: Socket, packetNum: number ) => boolean } */
 function onPacketReceive( pSocket, packetNum )
 {
 	var cmd = pSocket.GetByte( 0 );

@@ -103,7 +103,7 @@ function ShowNpcList( socket, cmdString, filteredList, filterString )
 	DisplayCharacterListGump( socket, filteredList, filterString, 0, 2 );
 }
 
-/** @type { ( obj: Character | Item, mSock: Socket ) => void } */
+/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
 function onIterate( toCheck, socket )
 {
 	if( socket == null )

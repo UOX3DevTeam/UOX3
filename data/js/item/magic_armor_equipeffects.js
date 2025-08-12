@@ -3,7 +3,7 @@
 // Equip-effects for magical armors
 // See magicarmor.js for details on full setup
 
-/** @type { ( equipper: Character, equipping: Item ) => void } */
+/** @type { ( equipper: Character, equipping: Item ) => boolean } */
 function onEquip( pEquipper, iEquipped )
 {
 	if( iEquipped.type != 15 )

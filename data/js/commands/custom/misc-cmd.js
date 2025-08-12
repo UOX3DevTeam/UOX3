@@ -1482,7 +1482,7 @@ function command_RESETSKILLCAPS( pSock, execString )
 	pSock.SysMessage( "Reset skillcaps for " + resetCount + " players back to default." );
 }
 
-/** @type { ( obj: Character | Item, mSock: Socket ) => void } */
+/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
 function onIterate( toCheck )
 {
 	if( toCheck.isChar && !toCheck.npc )
@@ -1500,7 +1500,7 @@ function command_RESETSKILLUSAGE( pSock, execString )
 	pSock.SysMessage( "Reset skill usage for " + resetCount + " players back to false." );
 }
 
-/** @type { ( obj: Character | Item, mSock: Socket ) => void } */
+/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
 function onIterate( toCheck )
 {
 	if( toCheck.isChar && !toCheck.npc )

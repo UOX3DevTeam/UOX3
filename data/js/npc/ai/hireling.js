@@ -1362,7 +1362,7 @@ function PatrolArea( socket, pChar, myTarget )
 	}
 }
 
-/** @type { ( npc: Character, pathfindResult: number ) => void } */
+/** @type { ( npc: Character, pathfindResult: number ) => boolean } */
 function onPathfindEnd( hireling, pathfindResult )
 {
 	if( ValidateObject( hireling ))

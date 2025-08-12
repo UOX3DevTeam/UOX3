@@ -15,7 +15,7 @@
 // 		Ancient smithy hammer
 //			Increase blacksmithing skill by 10, 15, 30 or 60 points when equipped
 
-/** @type { ( equipper: Character, equipping: Item ) => void } */
+/** @type { ( equipper: Character, equipping: Item ) => boolean } */
 function onEquip( pEquipper, iEquipped )
 {
 	var skillBonusID = iEquipped.GetTag( "skillBonusID" );

@@ -8,7 +8,7 @@
 const magicWeaponSpellScriptID = 3305;
 
 // When equipped, add script trigger for magic weapon spells to player
-/** @type { ( equipper: Character, equipping: Item ) => void } */
+/** @type { ( equipper: Character, equipping: Item ) => boolean } */
 function onEquip( pEquipper, iEquipped )
 {
 	pEquipper.AddScriptTrigger( magicWeaponSpellScriptID );
