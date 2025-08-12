@@ -106,7 +106,7 @@ const termurBanks = [
 // If false, regular players will also get directions to nearest bank and/or moongate
 const youngPlayerDirectionsOnly = true;
 
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;

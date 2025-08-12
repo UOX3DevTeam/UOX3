@@ -1542,7 +1542,7 @@ declare global {
   function onBoughtFromVendor( targSock: Socket, objVendor: Character, objItemBought: BaseObject, numItemsBought: number ): void;
   function onBuy( targSock: Socket, objVendor: Character ): void;
   function onBuyFromVendor( targSock: Socket, objVendor: Character, objItemBought: BaseObject, numItemsBuying: number ): void;
-  function onCallback( tSock: Socket, targeted: number, callNum: number ): void;
+  function onCallback( tSock: Socket, target: Character | Item | null ): void;
   function onCarveCorpse( player: Character, corpse: Item ): void;
   function onCharDoubleClick( currChar: Character, targChar: Character ): void;
   function onClick( sockPlayer: Socket, objClicked: BaseObject ): void;
@@ -1558,7 +1558,7 @@ declare global {
   function onCreatePlayer( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ): void;
   function onCreateTile( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ): void;
   function onDamage( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ): void;
-  function onDamageDeal( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ): void;
+  function onDamageDeal( attacker: Character, damaged: Character, damageValue: number, damageType: WeatherType ): void;
   function onDeath( pDead: Character, iCorpse: Item ): void;
   function onDeathBlow( mKilled: Character, mKiller: Character ): void;
   function onDecay( decaying: Item ): void;
@@ -1580,7 +1580,7 @@ declare global {
   function onHelpButton( mChar: Character ): void;
   function onHouseCommand( targSock: Socket, multiObj: Multi, targId: number ): void;
   function onHungerChange( pChanging: Character, newStatus: number ): void;
-  function onIterate( a: BaseObject, b: number, mSock: Socket ): void;
+  function onIterate( obj: Character | Item, mSock: Socket ): void;
   function onIterateSpawnRegions( a: SpawnRegion, b: number ): void;
   function onLeaveRegion( entering: Character, region: number ): void;
   function onLeaving( left: Multi, leaving: BaseObject ): void;

@@ -37,7 +37,7 @@ function command_BOLT( socket, cmdString )
 	socket.CustomTarget( 1, targMsg );
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )
@@ -57,7 +57,7 @@ function command_NPCACTION( socket, cmdString )
 	}
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )

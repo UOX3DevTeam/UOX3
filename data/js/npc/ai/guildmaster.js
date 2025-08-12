@@ -130,6 +130,7 @@ function CheckGuildRelation( npcGuildA, npcGuildB )
 	return 0; // No relation
 }
 
+/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => void } */
 function onSpeech( strSaid, pChar, npcGuildMaster )
 {
 	if( strSaid )
@@ -215,6 +216,7 @@ function onSpeech( strSaid, pChar, npcGuildMaster )
 	}
 }
 
+/** @type { ( srcChar: Character, targChar: Character, i: Item ) => void } */
 function onDropItemOnNpc( pChar, npcGuildMaster, iDropped )
 {
 	var pSock = pChar.socket;

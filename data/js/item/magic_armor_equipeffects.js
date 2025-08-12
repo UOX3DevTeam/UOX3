@@ -3,6 +3,7 @@
 // Equip-effects for magical armors
 // See magicarmor.js for details on full setup
 
+/** @type { ( equipper: Character, equipping: Item ) => void } */
 function onEquip( pEquipper, iEquipped )
 {
 	if( iEquipped.type != 15 )
@@ -101,6 +102,7 @@ function onEquip( pEquipper, iEquipped )
 }
 
 // Display amount of charges left on magic armor in item tooltips
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => void } */
 function onTooltip( myObj )
 {
 	var tooltipText = "";

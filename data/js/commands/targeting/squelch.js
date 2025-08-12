@@ -38,7 +38,7 @@ function command_SQUELCH( socket, cmdString )
 	socket.CustomTarget( 0, targMsg );
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar && ourObj.online )

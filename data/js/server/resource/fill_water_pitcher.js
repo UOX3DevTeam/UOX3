@@ -5,7 +5,7 @@
 // For use only with the UOX3 emulator or any other with the authors permission
 // Target resource, fill water pitcher
 
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	//var iPackOwner = GetPackOwner( iUsed, 0 );
@@ -18,7 +18,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( tSock, targSerial )
 {
 	var tItem = CalcItemFromSer( targSerial );

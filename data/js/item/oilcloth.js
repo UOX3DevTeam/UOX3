@@ -1,6 +1,6 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var itemOwner = GetPackOwner( iUsed, 0 );
@@ -20,7 +20,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, myTarget )
 {
 	var iUsed = pSock.tempObj;

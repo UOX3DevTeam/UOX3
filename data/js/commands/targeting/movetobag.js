@@ -20,7 +20,7 @@ function command_BRINGTOPACK( socket, cmdString )
 	command_MOVETOBAG( socket, cmdString );
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	var ourChar = socket.currentChar;

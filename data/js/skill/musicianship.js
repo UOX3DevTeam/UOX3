@@ -1,6 +1,6 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var wellPlayed = pUser.CheckSkill( 29, 0, pUser.skillCaps.musicianship );

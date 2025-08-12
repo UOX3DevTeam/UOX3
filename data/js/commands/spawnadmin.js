@@ -41,6 +41,7 @@ function ShowSpawnerList( socket, cmdString, filteredList, filterString )
 	DisplaySpawnerListGump( socket, filteredList, filterString, 0 );
 }
 
+/** @type { ( obj: Character | Item, mSock: Socket ) => void } */
 function onIterate( toCheck, socket )
 {
 	if( socket == null )
@@ -573,6 +574,7 @@ function FilterListByName( listToFilter, filterString, strictFilter )
 	return filteredList;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( timerID == 0 )

@@ -7,6 +7,7 @@ function SkillRegistration()
 
 const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 
+/** @type { ( skillUse: BaseObject, skillUsed: number ) => void } */
 function onSkill( pUser, objType, skillUsed )
 {
 	var pSock = pUser.socket;

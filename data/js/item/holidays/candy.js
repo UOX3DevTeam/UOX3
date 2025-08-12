@@ -1,6 +1,6 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked(pUser, iUsed)
 {
 	var socket = pUser.socket;
@@ -72,6 +72,7 @@ function getRandomIndex( array )
 	return Math.floor( Math.random() * array.length );
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( pUser, timerID ) 
 {
 	var socket = pUser.socket;

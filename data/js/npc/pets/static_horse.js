@@ -11,6 +11,7 @@ var maxFollowers = GetServerSetting( "MaxFollowers" );
 const petBondingEnabled = GetServerSetting( "PetBondingEnabled" );
 
 // Runs before purchase is validated by server
+/** @type { ( targSock: Socket, objVendor: Character, objItemBought: BaseObject, numItemsBuying: number ) => void } */
 function onBuyFromVendor( pSock, vendor, iBought, numItemsBought )
 {
 	var pUser = pSock.currentChar;
@@ -40,6 +41,7 @@ function onBuyFromVendor( pSock, vendor, iBought, numItemsBought )
 }
 
 // Runs after purchase has been completed
+/** @type { ( targSock: Socket, objVendor: Character, objItemBought: BaseObject, numItemsBought: number ) => void } */
 function onBoughtFromVendor( pSock, Vendor, iBought, numItemsBought )
 {
 	if( pSock && iBought )
@@ -48,7 +50,7 @@ function onBoughtFromVendor( pSock, Vendor, iBought, numItemsBought )
 	}
 }
 
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	// randomize the horse given

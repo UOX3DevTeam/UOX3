@@ -25,7 +25,7 @@ function onUseChecked ( pUser, iUsed )
 	return false;
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSocket, myTarget )
 {
 	if( pSocket == null )
@@ -102,6 +102,7 @@ function onCallback0( pSocket, myTarget )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( spinWheel, timerID )
 {
 	if( timerID == 0 )

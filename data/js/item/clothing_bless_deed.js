@@ -1,6 +1,6 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
     const pSocket = pUser.socket;
@@ -22,7 +22,7 @@ function onUseChecked( pUser, iUsed )
     pUser.CustomTarget( 0 );
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, targetObj )
 {
     // Abort if player cancels target cursor or clicks empty space.

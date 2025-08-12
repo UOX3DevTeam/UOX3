@@ -5,6 +5,7 @@ function SpellRegistration()
 	RegisterSpell( 2, true );	// Create Food, ID from spells.dfn
 }
 
+/** @type { ( tChar: Character, SpellId: number ) => void } */
 function onSpellCast( mSock, mChar, directCast, spellNum )
 {
 	// Are we recovering from another spell that was just cast
@@ -217,6 +218,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	return true;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( mChar, timerID )
 {
 	mChar.isCasting = false;
@@ -240,6 +242,7 @@ function onTimer( mChar, timerID )
 	}
 }
 
+/** @type { ( tChar: Character, SpellId: number ) => void } */
 function onSpellSuccess( mSock, mChar, ourTarg )
 {
 	if( mChar.isCasting )

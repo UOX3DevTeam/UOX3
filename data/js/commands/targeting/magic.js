@@ -15,7 +15,7 @@ function command_GATE( socket, cmdString )
 	socket.CustomTarget( 0, targMsg );
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	var mChar 	= socket.currentChar;
@@ -39,7 +39,7 @@ function command_RECALL( socket, cmdString )
 	socket.CustomTarget( 1, targMsg );
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	var mChar = socket.currentChar;
@@ -92,7 +92,7 @@ function command_MARK( socket, cmdString )
 	socket.CustomTarget( 2, targMsg );
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( socket, ourObj )
 {
 	var mChar = socket.currentChar;

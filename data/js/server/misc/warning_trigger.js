@@ -7,6 +7,7 @@
 // Range at which onMoveDetect triggers is determined by part 1 of object's MORE property
 // Warning on movement will only display once per user per server session (until temp tag expires, basically)
 
+/** @type { ( targSock: Socket, objColliding: Character, objCollideWith: BaseObject ) => void } */
 function onCollide( pSock, pChar, iObject )
 {
 	if( !ValidateObject( pChar ) || !pChar.isChar || pChar.npc || pChar.dead || pChar.isGM || pChar.isCounselor || pChar.visible == 3 )
@@ -16,6 +17,7 @@ function onCollide( pSock, pChar, iObject )
 	return false;
 }
 
+/** @type { ( sourceObj: BaseObject, CharInRange: Character, rangeToChar: number, oldCharX: number, oldCharY: number ) => void } */
 function onMoveDetect( iObj, pChar, rangeToChar, oldCharX, oldCharY )
 {
 	if( !ValidateObject( pChar ) || !pChar.isChar || pChar.npc || pChar.dead || pChar.isGM || pChar.isCounselor || pChar.visible == 3 )

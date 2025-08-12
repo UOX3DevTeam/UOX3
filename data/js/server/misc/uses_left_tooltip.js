@@ -1,6 +1,7 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
 // Display remaining uses left in a tooltip, based on item's usesLeft property
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => void } */
 function onTooltip( myObj )
 {
 	var tooltipText = "";

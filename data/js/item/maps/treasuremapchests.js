@@ -1,5 +1,6 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
+/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	if( !ValidateObject( objMade ))
@@ -20,6 +21,7 @@ const spawnOnItemPickup = {
 	5: ["lichlord", "daemon", " eldergazer", "poisonele", "bloodele"],
 	6: ["LichLord", "daemon", " eldergazer", "poisonele", "bloodele"],};
 
+/** @type { ( contItem: Item, item: Item, pickerUpper: Character ) => void } */
 function onContRemoveItem( iCont, iItem, pChar )
 {
 	var forceSpawnLimit = iCont.GetTag( "spawnCount" );
@@ -56,6 +58,7 @@ function onContRemoveItem( iCont, iItem, pChar )
 	iCont.decaytime = 30; // Set it to decay in 60 seconds, so it decays before item respawns kick in
 }
 
+/** @type { ( item: Item, dropper: Character, dest: Item ) => void } */
 function onDropItemOnItem( iDropped, cDropper, iDroppedOn )
 {
 	var socket = cDropper.socket;

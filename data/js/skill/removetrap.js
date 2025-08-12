@@ -5,6 +5,7 @@ function SkillRegistration()
 	RegisterSkill( 48, true );	// Remove Trap
 }
 
+/** @type { ( skillUse: BaseObject, skillUsed: number ) => void } */
 function onSkill( pUser, objType, skillUsed )
 {
 	var pSock = pUser.socket;
@@ -29,7 +30,7 @@ function onSkill( pUser, objType, skillUsed )
 	return true;
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, ourObj )
 {
 	if( !ValidateObject( ourObj ) || !ourObj.isItem )

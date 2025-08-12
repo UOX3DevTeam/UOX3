@@ -1,7 +1,7 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
 // Strongbox
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var pSocket = pUser.socket;
@@ -26,6 +26,7 @@ function onUseChecked( pUser, iUsed )
 	return true;
 }
 
+/** @type { ( item: Item, dropper: Character, dest: Item ) => void } */
 function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
 {
 	if( !ValidateObject( iDropped )	|| !ValidateObject( pDropper ) || !ValidateObject( iDroppedOn ))

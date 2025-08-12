@@ -5,6 +5,7 @@
 // Ice Strike - In Corp Del
 // Paralyze - An Ex Del
 
+/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	if( objType == 0 && ValidateObject( objMade ))
@@ -30,6 +31,7 @@ function onCreateDFN( objMade, objType )
 }
 
 // This event only triggers if ITEMSDETECTSPEECH setting in UOX.INI is enabled
+/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => void } */
 function onSpeech( strSaid, pTalking, iTalkingTo )
 {
 	// If player says the words of power for a magic spell enabled on the glacial staff,
@@ -58,6 +60,7 @@ function onSpeech( strSaid, pTalking, iTalkingTo )
 	}
 }
 
+/** @type { ( equipper: Character, equipping: Item ) => void } */
 function onEquip( pEquipper, iEquipped )
 {
 	if( !GetServerSetting( "ItemsDetectSpeech" ))
@@ -70,7 +73,7 @@ function onEquip( pEquipper, iEquipped )
 	}
 }
 
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -98,7 +101,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, myTarget )
 {
 	var mChar = socket.currentChar;
@@ -133,6 +136,7 @@ function onCallback1( socket, myTarget )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( mChar, timerID )
 {
 	if( !ValidateObject( mChar ) || !mChar.isChar || mChar.dead || !mChar.online )

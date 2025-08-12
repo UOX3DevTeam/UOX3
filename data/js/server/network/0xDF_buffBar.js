@@ -91,6 +91,7 @@ function RemoveBuff( pUser, iconID )
 	pUser.KillJSTimer( iconID, 2204 );
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( pUser, timerID )
 {
 	if( !ValidateObject( pUser ))

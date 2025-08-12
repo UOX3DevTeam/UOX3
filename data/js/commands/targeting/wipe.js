@@ -197,7 +197,7 @@ function CallWipe( socket, cmdString )
 }
 
 // Choose first of two locations defining area to wipe
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike
@@ -212,7 +212,7 @@ function onCallback0( socket, ourObj )
 }
 
 // Choose second of two locations defining area to wipe
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike
@@ -297,6 +297,7 @@ function DoWipe( socket, ourObj )
 }
 
 // Iterate through all objects of specified type
+/** @type { ( obj: Character | Item, mSock: Socket ) => void } */
 function onIterate( toCheck, socket )
 {
 	if( ValidateObject( toCheck ))

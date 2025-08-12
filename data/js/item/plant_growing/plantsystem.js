@@ -3,7 +3,7 @@
 const scriptID = 19100;// this is the script id
 const PlantDelayTimer = 82800000;//82800000 Every 23 hours plant grows
 
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var gumpID = scriptID + 0xffff;
@@ -27,6 +27,7 @@ function onUseChecked( pUser, iUsed )
 	}
 }
 
+/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	// This function initializes default settings when creating a new object, especially for objects like a bowl of dirt.
@@ -501,6 +502,7 @@ function ApplyPotions( myPlant )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( myPlant, timerID )
 {
 	if( !ValidateObject( myPlant ))
@@ -1392,7 +1394,7 @@ function PollinatePlant( pUser, iUsed )
 		pUser.CustomTarget( 1, GetDictionaryEntry( 19116, socket.language ));//Target the plant you wish to cross-pollinate to.
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( pSock, myTarget )
 {
 	var iUsed = pSock.tempObj;
@@ -2126,7 +2128,7 @@ function addPotion( pUser, iUsed, button )
 	pUser.CustomTarget( 0 );
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, myTarget )
 {
 	var iUsed = pSock.tempObj;
@@ -2396,6 +2398,7 @@ function SetToDecorativeGump( pUser, iUsed )
 	SetToDecorativeGump.Free();
 }
 
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => void } */
 function onTooltip( myPlant ) 
 {
 	var tooltipText = "";

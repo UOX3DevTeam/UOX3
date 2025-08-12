@@ -1,6 +1,7 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
 // Random spells cast by pixies upon death
+/** @type { ( mKilled: Character, mKiller: Character ) => void } */
 function onDeathBlow( pKilled, pKiller )
 {
 	if( CastRandomSpell( pKilled ))

@@ -41,7 +41,7 @@ function onUseChecked ( pUser, iUsed )
 	return false;
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( tSock, myTarget )
 {
 	var pUser = tSock.currentChar;
@@ -98,6 +98,7 @@ function SearchForFlourMills( srcChar, trgItem, iUsed )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	switch( timerID )

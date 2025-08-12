@@ -100,6 +100,7 @@ function ItemInHandCheck( mChar, mSock, spellType )
 	return true;
 }
 
+/** @type { ( tChar: Character, SpellId: number ) => void } */
 function onSpellCast( mSock, mChar, directCast, spellNum )
 {
 	// Are we recovering from another spell that was just cast
@@ -280,6 +281,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	return true;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( mChar, timerID )
 {
 	mChar.isCasting = false;
@@ -319,7 +321,7 @@ function onTimer( mChar, timerID )
 	}
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( mSock, ourTarg )
 {
 	var mChar = mSock.currentChar;
@@ -351,6 +353,7 @@ function onCallback0( mSock, ourTarg )
 	}
 }
 
+/** @type { ( tChar: Character, SpellId: number ) => void } */
 function onSpellSuccess( mSock, mChar, ourTarg, spellID )
 {
 

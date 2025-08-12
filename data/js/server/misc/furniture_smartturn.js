@@ -4,7 +4,7 @@
 // Will turn supported furniture clockwise when said furniture is double-clicked or dropped on the ground
 
 // Turn the furniture when double-clicked
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	// Don't override double-click type for item
@@ -55,6 +55,7 @@ function LookForSittingPlayers( srcItem, trgChar, pSock )
 }
 
 // Turn the furniture when dropped
+/** @type { ( item: Item, dropper: Character ) => void } */
 function onDrop( iDropped, pDropper )
 {
 	SmartTurn( iDropped );

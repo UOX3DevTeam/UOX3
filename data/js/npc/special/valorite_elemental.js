@@ -1,6 +1,7 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
 // Valorite Elementals reflect back part of any physical damage dealt
+/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => void } */
 function onDamage( damaged, attacker, damageValue, damageType )
 {
 	if( damageType == 1 ) // Physical damage

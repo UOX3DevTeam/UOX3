@@ -2,7 +2,7 @@
 // @ts-check
 // Switch pattern: 3 - 4 - 1 - 5
 
-/** @type {( pUser: Character, iSwitch: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iSwitch )
 {
 	// Flip the switch

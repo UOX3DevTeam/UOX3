@@ -8,7 +8,7 @@
 // use axe : target furniture : destroy it when its not locked down
 // 09/02/2003 Updated by Xuri; xuri@sensewave.com
 
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed ) 
 {
 	// is it in users pack?
@@ -23,7 +23,7 @@ function onUseChecked( pUser, iUsed )
 	}
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( tSock, tItem )
 {
 	var tChar = tSock.currentChar;

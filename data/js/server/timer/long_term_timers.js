@@ -12,6 +12,7 @@ function StartLongTermTimer( timerObj, timerID, duration )
 	timerObj.StartTimer( duration, timerID, true );
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( !ValidateObject( timerObj ))

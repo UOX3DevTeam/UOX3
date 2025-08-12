@@ -32,7 +32,7 @@ function command_DELETE( socket, cmdString )
 	command_REMOVE( socket, cmdString );
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ))
@@ -152,7 +152,7 @@ function command_DELETECHAR( socket, cmdString )
 	socket.CustomTarget( 1, targMsg, 1 );
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar && ourObj != socket.currentChar )
@@ -177,7 +177,7 @@ function command_REMOVEMULTI( socket, cmdString )
 	socket.CustomTarget( 2, targMsg );
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( socket, ourObj )
 {
 	if( !ValidateObject( ourObj ) && socket.GetWord( 1 ))

@@ -1,5 +1,6 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
+/** @type { ( user: Character, iUsing: Item ) => void } */
 function onUseUnChecked( pUser, iUsed )
 {
 	var userSocket = pUser.socket;
@@ -30,6 +31,7 @@ function onUseUnChecked( pUser, iUsed )
 	return false;
 }
 
+/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => void } */
 function onSpeech( strSaid, pTalking, shrineListener )
 {
 	// Define the shrines and their corresponding morex values and mantras
@@ -87,6 +89,7 @@ function onSpeech( strSaid, pTalking, shrineListener )
 	return 1;
 }
 
+/** @type { ( tSock: Socket, baseObj: BaseObject ) => void } */
 function onContextMenuRequest( socket, shrine )
 {
 	var coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
@@ -159,6 +162,7 @@ function WriteMenuEntry( packet, offset, uniqueID, clilocID, flag, hue )
 	return offset;
 }
 
+/** @type { ( tSock: Socket, baseObj: BaseObject, popupEntry: number ) => void } */
 function onContextMenuSelect( socket, shrine, popupEntry )
 {
 	var pUser = socket.currentChar;

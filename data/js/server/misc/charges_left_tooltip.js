@@ -1,6 +1,7 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
 // Display remaining charges left in a tooltip, based on item's usesLeft property
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => void } */
 function onTooltip(iUsed, pSocket)
 {
 	var tooltipText = "";

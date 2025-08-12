@@ -1,6 +1,7 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
 // Teleporter between Orc Caves levels 2 and 3
+/** @type { ( targSock: Socket, objColliding: Character, objCollideWith: BaseObject ) => void } */
 function onCollide( pSock, pChar, iObject )
 {
 	if( !ValidateObject( pChar ) || !pChar.isChar || pChar.npc )
@@ -22,6 +23,7 @@ function onCollide( pSock, pChar, iObject )
 	return true;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( timerID == 0 )

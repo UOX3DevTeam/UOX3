@@ -67,7 +67,7 @@ function onUseCheckedTriggered( pUser, targChar, iUsed )
 	return;
 }
 
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	if( ValidateObject( pUser ) && ValidateObject( iUsed ) && iUsed.isItem )
@@ -118,7 +118,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	let bItem = socket.tempObj;
@@ -566,6 +566,7 @@ function SetSkillInUse( socket, mChar, ourObj, skillNum, healingTime, setVal )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( mChar, timerID )
 {
 	if( !ValidateObject( mChar ))

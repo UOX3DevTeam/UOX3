@@ -22,7 +22,7 @@ function command_TELESTUFF( socket, cmdString )
 	socket.CustomTarget( 0, targMsg );
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	var targMsg;
@@ -42,7 +42,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
@@ -92,7 +92,7 @@ function command_TELEPORT( socket, cmdString )
 	command_TELE( socket, cmdString );
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( socket, ourObj )
 {
 	var cancelCheck = parseInt( socket.GetByte( 11 ));

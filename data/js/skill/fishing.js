@@ -19,7 +19,7 @@ const staticWaterTiles = [
 	0x5653, 0x565e
 ];
 
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -84,7 +84,7 @@ function DoItemChecks( socket, pUser, iUsed )
 	return true;
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	var mChar = socket.currentChar;
@@ -344,6 +344,7 @@ function weightedRandom( min, max )
  	return Math.round( max / ( Math.random() * max + min ));
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( fishingTool, timerID )
 {
 	if( !ValidateObject( fishingTool ))

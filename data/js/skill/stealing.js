@@ -43,6 +43,7 @@ const specialMonsterLootOverride = -1; // -1 = no override, 0 = always false, 1 
 // If enabled, players can steal from town guards just as they can from any other NPC
 const stealFromGuardsOverride = false;
 
+/** @type { ( skillUse: BaseObject, skillUsed: number ) => void } */
 function onSkill( pThief, objType, skillUsed )
 {
 	var pSock = pThief.socket;
@@ -93,7 +94,7 @@ function onSkill( pThief, objType, skillUsed )
 	return true;
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, myTarget )
 {
 	if( pSock == null )
@@ -1192,6 +1193,7 @@ function DoStealing( pSock, itemOwner, itemToSteal, randomItem )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( !ValidateObject( timerObj ))

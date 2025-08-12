@@ -8,18 +8,21 @@
 const magicWeaponSpellScriptID = 3305;
 
 // When equipped, add script trigger for magic weapon spells to player
+/** @type { ( equipper: Character, equipping: Item ) => void } */
 function onEquip( pEquipper, iEquipped )
 {
 	pEquipper.AddScriptTrigger( magicWeaponSpellScriptID );
 }
 
 // Remove script trigger on unequip
+/** @type { ( equipper: Character, equipping: Item ) => void } */
 function onUnequip( pUnequipper, iUnequipped )
 {
 	pUnequipper.RemoveScriptTrigger( magicWeaponSpellScriptID );
 }
 
 // Display amount of charges left on magic weapon in item tooltips
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => void } */
 function onTooltip( myObj )
 {
 	var tooltipText = "";

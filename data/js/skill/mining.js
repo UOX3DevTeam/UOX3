@@ -93,7 +93,7 @@ const validMapSandTilesIDs = [
 	0x659, 0x65A, 0x657, 0x658, 0x659, 0x65A, 0x667, 0x668, 0x669, 0x66A
 ];
 
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -118,7 +118,7 @@ function onUseChecked( pUser, iUsed )
 	return true;
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	if( socket == null )
@@ -396,6 +396,7 @@ function SandMining( socket, mChar, targX, targY )
 	mChar.StartTimer( 1500, 1, true );
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( mChar, timerID )
 {
 	switch( timerID )

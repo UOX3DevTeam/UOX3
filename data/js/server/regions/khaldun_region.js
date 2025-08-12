@@ -1,5 +1,6 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
+/** @type { ( entering: Character, region: number ) => void } */
 function onEnterRegion( pEntering, regionEntered )
 {
 	if( regionEntered == 42 ) // Khaldun
@@ -13,6 +14,7 @@ function onEnterRegion( pEntering, regionEntered )
 	}
 }
 
+/** @type { ( entering: Character, region: number ) => void } */
 function onLeaveRegion( pLeaving, regionLeft )
 {
 	if( regionLeft == 42 )

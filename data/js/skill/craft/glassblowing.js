@@ -54,6 +54,7 @@ function PageX( socket, pUser, pageNum )
 	myGump.Free();
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( pUser, timerID )
 {
 	if( !ValidateObject( pUser ))

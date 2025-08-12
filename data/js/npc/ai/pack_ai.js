@@ -5,12 +5,14 @@
 // within line of sight to also attack the same target
 // "Pack" is simply defined as any other creature of same type within range at a given time
 
+/** @type { ( attacker: Character, defender: Character ) => void } */
 function onCombatStart( pAttacker, pDefender )
 {
 	AreaCharacterFunction( "AlertPack", pAttacker, 18 );
 	return true;
 }
 	
+/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => void } */
 function onDamage( damaged, attacker, damageValue, damageType )
 {
 	AreaCharacterFunction( "AlertPack", damaged, 18 );

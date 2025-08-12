@@ -1,6 +1,6 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;
@@ -64,6 +64,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( timerID == 1 )
@@ -91,6 +92,7 @@ function onTimer( timerObj, timerID )
 	}
 }
 
+/** @type { ( targSock: Socket, objColliding: Character, objCollideWith: BaseObject ) => void } */
 function onCollide( pSock, pUser, iUsed )
 {
 	if( iUsed.id == 0x0de3 )

@@ -10,6 +10,7 @@ var maxBankItemAmt = 125;
 // Script ID for banker AI script
 var bankCheckTrigger = 5015;
 
+/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => void } */
 function onSpeech( strSaid, pTalking, pTalkingTo )
 {
 	if( strSaid )
@@ -319,7 +320,7 @@ function CountGoldInBank( pTalking, bankBox )
 }
 
 // Select item to deposit into bankbox
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, ourObj )
 {
 	var pTalking = pSock.currentChar;

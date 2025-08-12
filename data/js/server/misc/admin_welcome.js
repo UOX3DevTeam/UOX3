@@ -581,6 +581,7 @@ function SaveSeenWelcomeGump( socket )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	var pSocket = timerObj.socket;

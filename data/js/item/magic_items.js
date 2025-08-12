@@ -74,6 +74,7 @@ const tier5armors = new Array( "0x1410", "0x1411", "0x1412", "0x1413", "0x1414",
 const magicWands = new Array( "0x0df2", "0x0df3", "0x0df4", "0x0df5", "0x13f8", "0x13f9" );
 
 // (Potentially) create magic item on corpse upon death
+/** @type { ( pDead: Character, iCorpse: Item ) => void } */
 function onDeath( cNpc, iCorpse )
 {
 	// Double check that both NPC and corpse exist - they should,
@@ -151,6 +152,7 @@ function onDeath( cNpc, iCorpse )
 // Function that runs upon creation of dummy items with this script attached,
 // with the intention of adding random magic weapons directly, either via GM command
 // or as guaranteed loot in treasure chests, on boss NPCs etc
+/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	if( objType == 0 && ValidateObject( objMade ))

@@ -11,6 +11,7 @@
 // If combat ends and the NPC is still alive, the magic shield will be re-activated in
 // a couple of seconds
 
+/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
 function onCreateDFN( exodusNPC, objType )
 {
 	if( objType != 1 || !exodusNPC.npc )
@@ -20,6 +21,7 @@ function onCreateDFN( exodusNPC, objType )
 	exodusNPC.SetTag( "ShieldHP", exodusNPC.maxhp );
 }
 
+/** @type { ( attacker: Character, target: Character ) => void } */
 function onAICombatTarget( exodusNPC, pTarget )
 {
 	// Whenever exodusNPC enters combat, display shield, if it's active
@@ -32,6 +34,7 @@ function onAICombatTarget( exodusNPC, pTarget )
 	return true;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( exodusNPC, timerID )
 {
 	// As long as timerID is under 10, play the effect again
@@ -60,12 +63,14 @@ function onTimer( exodusNPC, timerID )
 	}
 }
 
+/** @type { ( attacker: Character, defender: Character ) => void } */
 function onCombatEnd( exodusNPC, targChar )
 {
 	exodusNPC.StartTimer( 5000, 20, true )
 	return true;
 }
 
+/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => void } */
 function onDamage( exodusNPC, attacker, damageValue, damageType )
 {
 	var immuneToMagic = false;
@@ -151,6 +156,7 @@ function onDamage( exodusNPC, attacker, damageValue, damageType )
 }
 
 // Clockwork Minion's periodic electric burst aoe attack
+/** @type { ( swinging: Item, swinger: Character, swingTarg: Character ) => void } */
 function onSwing( iSwung, pSwinging, pSwingAt )
 {
 	if( pSwinging.id == 0x02f5 && RandomNumber( 1, 10 ) > 1 )

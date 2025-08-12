@@ -5,6 +5,7 @@
 
 const orcBrute_DispelSummonsDelay = 10;
 
+/** @type { ( target: BaseObject, caster: Character, spellNum: number ) => void } */
 function onSpellTarget( myTarget, pCaster, spellID )
 {
 	var spell = Spells[spellID];
@@ -24,6 +25,7 @@ function onSpellTarget( myTarget, pCaster, spellID )
 	return false;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( !ValidateObject( timerObj ))
@@ -56,6 +58,7 @@ function onTimer( timerObj, timerID )
 	}
 }
 
+/** @type { ( pSliver: Character ) => void } */
 function onAISliver( mNPC )
 {
 	if( !mNPC.atWar )

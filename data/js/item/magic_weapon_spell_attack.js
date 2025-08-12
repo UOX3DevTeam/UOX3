@@ -9,6 +9,7 @@ const scriptID = 3305;
 // spells.dfn
 const useAttackerMagerySkill = false;
 
+/** @type { ( attacker: Character, defender: Character, hitStatus: boolean, hitLoc: number, damageDealt: number ) => void } */
 function onAttack( mAttacker, mDefender, hitStatus, hitLoc, damageDealt )
 {
 	// Fetch weapon in main hand

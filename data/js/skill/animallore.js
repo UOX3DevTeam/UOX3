@@ -19,6 +19,7 @@ const seEnabled = false;
 // If enabled, a creature's skill in Mysticism, Focus and Spellweaving will show
 const saEnabled = false;
 
+/** @type { ( skillUse: BaseObject, skillUsed: number ) => void } */
 function onSkill( pUser, objType, skillUsed )
 {
 	var pSock = pUser.socket;
@@ -38,7 +39,7 @@ function onSkill( pUser, objType, skillUsed )
 	return true;
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, ourObj )
 {
 	var pUser = pSock.currentChar;

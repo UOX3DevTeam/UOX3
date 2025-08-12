@@ -3,6 +3,7 @@
 const savageShamanScriptID = 3213; // scriptID of this script from jse_fileassociations.scp
 
 // Chance of triggering Tribal Dance for Savage Shamans when hit in combat
+/** @type { ( attacker: Character, defender: Character, hitStatus: boolean, hitLoc: number, damageReceived: number ) => void } */
 function onDefense( pAttacker, savageShaman )
 {
 	if( RandomNumber( 1, 5 ) == 5 ) // 20% chance on hit to start a savage dance, if they're not already casting
@@ -73,6 +74,7 @@ function SeekDancePartners( savageShaman, dancePartner )
 	return false;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( savageShaman, timerID )
 {
 	if( !ValidateObject( savageShaman ))

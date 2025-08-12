@@ -11,6 +11,7 @@ const powerGenLockpickReq = 650;
 const powerGenShowTakenPath = true; // Show player's (successful) path through the puzzle?
 
 // Upon spawning, add the rest of the items making up the power generator
+/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	// Start timer to create sub-components
@@ -20,6 +21,7 @@ function onCreateDFN( objMade, objType )
 	objMade.RemoveScriptTrigger( powerGenScriptID );
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( timerID == 1 )
@@ -97,6 +99,7 @@ function onTimer( timerObj, timerID )
 }
 
 // When player interacts with the control panel, bring up gump
+/** @type { ( user: Character, iUsing: Item ) => void } */
 function onUseUnChecked( pUser, iUsed )
 {
 	var pSocket = pUser.socket;
@@ -542,6 +545,7 @@ function SolvePuzzle( pUser, controlPanel )
 	controlPanel.Delete();
 }
 
+/** @type { ( thingDestroyed: BaseObject ) => void } */
 function onDelete( controlPanel, objType )
 {
 	// Fetch references to other pieces and delete them

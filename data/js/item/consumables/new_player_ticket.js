@@ -10,7 +10,7 @@ const spellBookReward = ( EraStringToNum( GetServerSetting( "CoreShardEra" )) >=
 const rangerArmorOverride = false;
 const spellBookRewardOverride = false;
 
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -37,7 +37,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, myTarget )
 {
 	if( socket == null )
@@ -235,6 +235,7 @@ function onGumpPress( socket, pButton, gumpData )
 	newPlayerTicket.Delete();
 }
 
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => void } */
 function onTooltip( iUsed, pSocket )
 {
 	var tooltipText = "";

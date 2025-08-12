@@ -45,7 +45,7 @@ function onUseChecked ( pUser, iUsed )
 	return false;
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( tSock, myTarget )
 {
 	var pUser = tSock.currentChar;
@@ -149,7 +149,7 @@ function onCallback0( tSock, myTarget )
 	pUser.SoundEffect( 0x0055, true );
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( tSock, myTarget )
 {
 	var pUser = tSock.currentChar;

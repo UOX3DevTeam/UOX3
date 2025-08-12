@@ -8,6 +8,7 @@ const enableGuidedMovement = true;
 const enableMovementRestrictions = true;
 
 // Game piece is dropped on an object, or in a container
+/** @type { ( item: Item, dropper: Character, dest: Item ) => void } */
 function onDropItemOnItem( iDropped, pDropper, gameBoard )
 {
 	if( iDropped.container != gameBoard )
@@ -685,6 +686,7 @@ function CheckForEnPassant( iDropped, gameBoard, turnCount )
 	return -1;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( timerID == 1 )
@@ -846,12 +848,14 @@ function ConfirmSurrender( pDropper, iDropped, gameBoard )
 }
 
 // Game piece is dropped on a character
+/** @type { ( srcChar: Character, targChar: Character, i: Item ) => void } */
 function onDropItemOnNpc( pDropper, pDroppedOn, iDropped )
 {
 	return 0;
 }
 
 // Game piece is dropped on ground outside board
+/** @type { ( item: Item, dropper: Character ) => void } */
 function onDrop( iDropped, pDropper )
 {
 	return 0;

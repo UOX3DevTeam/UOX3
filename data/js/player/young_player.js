@@ -189,6 +189,7 @@ function GiveYoungPlayerItems( pSock, pChar )
 }
 
 // Detect renounce Young message from player
+/** @type { ( myChar: Character, mySpeech: string ) => void } */
 function onTalk( pTalking, strSaid )
 {
 	if( !youngPlayerSystem )
@@ -245,6 +246,7 @@ function RevokeYoungStatus( pSock, pChar, revokeReason )
 }
 
 // Handles situations where the Young player is the target of spells
+/** @type { ( target: BaseObject, caster: Character, spellNum: number ) => void } */
 function onSpellTarget( myTarget, pCaster, spellID )
 {
 	// We don't care if caster and target is the same - allow it!
@@ -266,6 +268,7 @@ function onSpellTarget( myTarget, pCaster, spellID )
 }
 
 // Handles situations where the Young player is the caster of spells
+/** @type { ( caster: Character, target: BaseObject, spellNum: number ) => void } */
 function onSpellTargetSelect( pCaster, myTarget, spellID )
 {
 	// We don't care if caster and target is the same - allow it!
@@ -298,6 +301,7 @@ function onSpellTargetSelect( pCaster, myTarget, spellID )
 }
 
 // Detect stat change to re-run check of young status
+/** @type { ( player: Character, stat: number, statChangeAmount: number ) => void } */
 function onStatChange( pChar, statID, statChange )
 {
 	var pSock = pChar.socket;
@@ -313,6 +317,7 @@ function onStatChange( pChar, statID, statChange )
 }
 
 // Detect skill change to re-run check of young status
+/** @type { ( player: Character, skill: number, skillAmtChanged: number ) => void } */
 function onSkillChange( pChar, skillID, skillChange )
 {
 	var pSock = pChar.socket;
@@ -329,6 +334,7 @@ function onSkillChange( pChar, skillID, skillChange )
 
 // This will trigger both for Young player when attacking
 // and when someone else attacks Young player
+/** @type { ( attacker: Character, defender: Character ) => void } */
 function onCombatStart( pAttacker, pDefender )
 {
 	// Allow by default, let code/other scripts handle it
@@ -376,6 +382,7 @@ function onCombatStart( pAttacker, pDefender )
 }
 
 // Triggers when Young player deals damage
+/** @type { ( attacker: Character, damaged: Character, damageValue: number, damageType: WeatherType ) => void } */
 function onDamageDeal( pAttacker, pTarget, damageValue, damageType )
 {
 	if( !ValidateObject( pAttacker ) || !ValidateObject( pTarget ))
@@ -406,6 +413,7 @@ function onDamageDeal( pAttacker, pTarget, damageValue, damageType )
 }
 
 // Triggers when Young player takes damage
+/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => void } */
 function onDamage( damaged, pAttacker, damageValue, damageType )
 {
 	if( !ValidateObject( damaged ))
@@ -439,6 +447,7 @@ function onDamage( damaged, pAttacker, damageValue, damageType )
 }
 
 // Handle death of young player
+/** @type { ( pDead: Character, iCorpse: Item ) => void } */
 function onDeath( pDead, iCorpse )
 {
 	if( !ValidateObject( pDead ))
@@ -527,6 +536,7 @@ function TeleportToSafety( pDead, pSock )
 }
 
 // Trigger death notice after a short delay
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( timerID == 1 )
@@ -563,6 +573,7 @@ function ShowDeathNotice( pChar )
 }
 
 // Show dungeon warning to Young player upon entering dungeon with hostile monsters
+/** @type { ( entering: Character, region: number ) => void } */
 function onEnterRegion( pEntering, regionEntered )
 {
 	var townRegion = GetTownRegion( regionEntered );
@@ -630,6 +641,7 @@ function onGumpPress( pSock, pButton, gumpData )
 }
 
 // Display [Young] tag in tooltip
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => void } */
 function onTooltip( pChar )
 {
 	var tooltipText = "";

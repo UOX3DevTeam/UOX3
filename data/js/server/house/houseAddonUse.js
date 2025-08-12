@@ -7,7 +7,7 @@
 // Instead, this script is triggered via entries in jse_objectassociations.scp, and call on the
 // hard-coded target requests that would normally be executed for the non-addon variant of the
 // items
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	if( !ValidateObject( iUsed ))
@@ -66,7 +66,7 @@ function onUseChecked( pUser, iUsed )
 }
 
 // Spinning Wheel functionality
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSocket, myTarget )
 {
 	var pUser = pSocket.currentChar;
@@ -113,7 +113,7 @@ function onCallback0( pSocket, myTarget )
 }
 
 // Loom functionality
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( pSocket, myTarget )
 {
 	var pUser = pSocket.currentChar;

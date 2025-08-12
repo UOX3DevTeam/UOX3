@@ -1,6 +1,6 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	Roll( pUser, iUsed );
@@ -35,6 +35,7 @@ function Roll( pUser, iUsed )
 	}
 }
 
+/** @type { ( tSock: Socket, baseObj: BaseObject ) => void } */
 function onContextMenuRequest( socket, targObj )
 {
 	// handle your own packet with context menu here
@@ -65,6 +66,7 @@ function onContextMenuRequest( socket, targObj )
 	return false;
 }
 
+/** @type { ( tSock: Socket, baseObj: BaseObject, popupEntry: number ) => void } */
 function onContextMenuSelect( socket, targObj, popupEntry )
 {
 	var pUser = socket.currentChar;

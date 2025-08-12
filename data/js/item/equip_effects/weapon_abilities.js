@@ -5,17 +5,20 @@ const paralyzingBlow = true;
 const crushingBlow = true;
 const concussionBlow = true;
 
+/** @type { ( equipper: Character, equipping: Item ) => void } */
 function onEquip( pEquipper, iEquipped ) 
 {
 	pEquipper.AddScriptTrigger( 5050 );
 }
 
 // Remove script trigger on unequip
+/** @type { ( equipper: Character, equipping: Item ) => void } */
 function onUnequip( pUnequipper, iUnequipped ) 
 {
 	pUnequipper.RemoveScriptTrigger( 5050 );
 }
 
+/** @type { ( attacker: Character, defender: Character, hitStatus: boolean, hitLoc: number, damageDealt: number ) => void } */
 function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 {
 	const coreShardEra = GetServerSetting( "CoreShardEra" );
@@ -130,6 +133,7 @@ function ConcussionBlow( pAttacker, pDefender )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( timerID == 1 )

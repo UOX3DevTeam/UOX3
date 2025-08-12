@@ -5,7 +5,7 @@
 
 // TESTSCRIPT for positioning an item
 
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	// get users socket

@@ -17,7 +17,7 @@ If it's a treasure map, the script checks if the map has been decoded and displa
 // TODO: Figure out how to prevent map from being opened multiple times
 */
 
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, mapItem )
 {
 	var socket = pUser.socket;

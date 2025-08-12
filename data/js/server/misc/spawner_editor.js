@@ -2,7 +2,7 @@
 // @ts-check
 var spawnEditorTooltipClilocID = 1042971; // Cliloc ID to use for tooltips. 1042971 should work with clients from ~v3.0.x to modern day
 
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -236,6 +236,7 @@ function onGumpPress( socket, pButton, gumpData )
 	}
 }
 
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => void } */
 function onTooltip( spawner )
 {
 	var typeName = "";

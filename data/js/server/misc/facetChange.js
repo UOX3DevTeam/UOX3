@@ -1,5 +1,6 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
+/** @type { ( mChar: Character, oldFacet: number, newFacet: number ) => void } */
 function onFacetChange( mChar, oldFacet, newFacet )
 {
 	// Add a specific script to all characters that switch to the Trammel facet,

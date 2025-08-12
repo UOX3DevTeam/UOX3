@@ -13,6 +13,7 @@ const shadowfiend_SearchInterval = 5000;
 const shadowfiend_SearchHiddenInterval = 2500;
 const shadowfiend_SearchRange = 10;
 
+/** @type { ( srcObj: BaseObject, objInRange: BaseObject ) => void } */
 function inRange( shadowfiend, objInRange )
 {
 	if( !ValidateObject( objInRange ) || objInRange.isItem || ( objInRange.isChar && ( objInRange.npc || ( !objInRange.online || objInRange.dead ))))
@@ -29,6 +30,7 @@ function inRange( shadowfiend, objInRange )
 	}
 }
 
+/** @type { ( pSliver: Character ) => void } */
 function onAISliver( shadowfiend )
 {
 	if( !shadowfiend._isSearchEnabled || shadowfiend._isSearching )
@@ -65,6 +67,7 @@ function onAISliver( shadowfiend )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( shadowfiend, timerID )
 {
 	if( !ValidateObject( shadowfiend ))

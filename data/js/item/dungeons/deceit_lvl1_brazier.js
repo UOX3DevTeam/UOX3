@@ -2,7 +2,7 @@
 // @ts-check
 // Brazier spawns lich
 
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var iTime = GetCurrentClock();

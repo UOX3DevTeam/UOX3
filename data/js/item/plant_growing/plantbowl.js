@@ -11,7 +11,7 @@ const validMapDirtIDs = [0x9 ,0x15 ,0x71 ,0x7C ,0x82 ,0xA7 ,0xDC ,0xE3 ,0xE8 ,0x
 	,0x71FB ,0x72C9 ,0x72CA
 ];
 
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iBowl )
 {
 	var socket = pUser.socket;
@@ -32,7 +32,7 @@ function onUseChecked( pUser, iBowl )
 	return true;
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, myTarget )
 {
 	if( socket == null )

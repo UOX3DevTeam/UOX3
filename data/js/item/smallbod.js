@@ -13,6 +13,7 @@ const BODSubtypeMinMax = {
 };
 
 // Can also be triggered by creating BOD from admin menu or add command: 'add item smallbod
+/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	if( !ValidateObject( objMade ))
@@ -40,7 +41,7 @@ function onCreateDFN( objMade, objType )
 	}
 }
 
-/** @type {( pUser: Character, smallBOD: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, smallBOD )
 {
 	var gumpID = scriptID + 0xffff;
@@ -248,7 +249,7 @@ function CombineItemWithBod( pUser, smallBOD )
 	}
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, myTarget )
 {
 	var gumpID = scriptID + 0xffff;
@@ -399,6 +400,7 @@ function onCallback0( socket, myTarget )
 	}
 }
 
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => void } */
 function onTooltip( smallBOD )
 {
 	var tooltipText = "";

@@ -34,6 +34,7 @@ var houseTradeTime = "";
 // treated as if they were co-owners of the house
 const coOwnHousesOnSameAccount = GetServerSetting( "CoOwnHousesOnSameAccount" );
 
+/** @type { ( user: Character, iUsing: Item ) => void } */
 function onUseUnChecked( pUser, iUsed )
 {
 	// Grab reference to multi stored on sign

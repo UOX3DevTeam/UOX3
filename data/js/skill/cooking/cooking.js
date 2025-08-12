@@ -13,7 +13,7 @@
 // Raw Eggs : Heat source : Fried Eggs
 // sauage or cheese pizza : Heat source : pizza
 
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	// get users socket
@@ -49,7 +49,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( tSock, myTarget )
 {
 	Cooking( tSock, myTarget )
@@ -146,6 +146,7 @@ function Cooking( tSock, myTarget )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( pUser, timerID )
 {
 	if( !ValidateObject( pUser ) || pUser.socket == null )

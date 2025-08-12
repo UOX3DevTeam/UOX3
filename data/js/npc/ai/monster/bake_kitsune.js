@@ -1,5 +1,6 @@
 /// <reference path="../../../definitions.d.ts" />
 // @ts-check
+/** @type { ( srcObj: BaseObject, objInRange: BaseObject ) => void } */
 function inRange( bakeKitsune, objInRange ) 
 {
 	if( !ValidateObject( objInRange ) || objInRange.npc || !objInRange.online || objInRange.dead || objInRange.isGM || objInRange.isCounselor || myNPC.tamed )
@@ -151,6 +152,7 @@ function CreateDisguise( bakeKitsune )
 	bakeKitsune.StartTimer( 75000, 0, true );
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( bakeKitsune, timerID ) 
 {
 	var disguiseOnOff = bakeKitsune.GetTempTag( "Disguise" );
@@ -199,6 +201,7 @@ function RemoveDisguise( bakeKitsune )
 	disguiseTimer = null;
 }
 
+/** @type { ( mKilled: Character, mKiller: Character ) => void } */
 function onDeathBlow( bakeKitsune, pKiller )
 {
 	RemoveDisguise( bakeKitsune );

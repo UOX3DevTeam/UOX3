@@ -20,7 +20,7 @@ function command_JAIL( socket, cmdString )
 	socket.CustomTarget( 0, targMsg, 1 );
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )
@@ -46,7 +46,7 @@ function command_RELEASE( socket, cmdString )
 	socket.CustomTarget( 1, targMsg, 2 );
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )

@@ -334,6 +334,7 @@ function GetSnoopDifficulty( targCont )
 	return minDifficulty;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( !ValidateObject( timerObj ))

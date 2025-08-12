@@ -1,7 +1,7 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
 // Herding is triggered via double-clicking a Shepherd's Crook or regular Crook
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -29,7 +29,7 @@ function onUseChecked( pUser, iUsed )
 	}
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, myTarget )
 {
 	var pUser = socket.currentChar;
@@ -86,7 +86,7 @@ function onCallback0( socket, myTarget )
 	}
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, myTarget )
 {
 	var targetChar = socket.tempObj;

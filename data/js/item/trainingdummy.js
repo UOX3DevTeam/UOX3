@@ -4,7 +4,7 @@
 // If true, UOX3 will attempt to automatically make training dummies damageable if they're not already
 const damageableDummies = true;
 
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;
@@ -160,6 +160,7 @@ function safetyMeasure( iUsed )
 
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( iUsed, timerID )
 {
 	if( timerID == 1 )

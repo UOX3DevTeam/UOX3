@@ -99,6 +99,7 @@ function FindNearbyHeatSources( pUser, trgItem, pSock )
 	return ( heatSources.indexOf( trgItem.id ) != -1 );
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( pUser, timerID )
 {
 	if( !ValidateObject( pUser ))

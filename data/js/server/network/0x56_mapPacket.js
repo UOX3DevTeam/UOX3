@@ -62,7 +62,7 @@ Action Flag command
 6: Toggle Edit Map (Client)
 7: Reply From Server to Action 6*/
 
-/** @type {(pSocket: Socket, packetNum: number) => void} */
+/** @type { ( mSock: Socket, packetNum: number ) => void } */
 function onPacketReceive( pSocket, packetNum )
 {
 	var pUser = pSocket.currentChar;

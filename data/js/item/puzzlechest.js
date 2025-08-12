@@ -80,6 +80,7 @@ function CompareSolutions( solutionCylinders, guessCylinders )
 	};
 }
 
+/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
 function onCreateDFN( objMade, objType ) 
 {
 	if( objType == 0 )
@@ -90,7 +91,7 @@ function onCreateDFN( objMade, objType )
 	}
 }
 
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, pItem )
 {
 	var socket = pUser.socket;

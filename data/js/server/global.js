@@ -2,6 +2,7 @@
 // @ts-check
 // Global Script
 // Supported Events trigger for every character/item, use with care
+/** @type { ( sockPlayer: Socket, pPlayer: Character ) => void } */
 function onLogin( socket, pChar )
 {
 	const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
@@ -75,6 +76,7 @@ function onLogin( socket, pChar )
 	}
 }
 
+/** @type { ( sockPlayer: Socket, pPlayer: Character ) => void } */
 function onLogout( pSock, pChar )
 {
 	var minSinceLogin = Math.round( GetCurrentClock() / 1000 / 60 ) - parseInt( pChar.GetTempTag( "loginTime" ));
@@ -95,6 +97,7 @@ function onLogout( pSock, pChar )
 	}
 }
 
+/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
 function onCreatePlayer( pChar )
 {
 	const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
@@ -161,6 +164,7 @@ function CheckCustomGlobalData( fileName, dataToCheck )
 const corpseDecayTimer = GetServerSetting( "CORPSEDECAYTIMER" );
 const playerCorpseIDs = [ 0x0190, 0x0191, 0x025D, 0x025E, 0x029A, 0x029B ];
 // Handle turning player corpses into bones
+/** @type { ( decaying: Item ) => void } */
 function onDecay( iDecaying )
 {
 	// If not a corpse, or if corpse has no owner (i.e. NPC corpse), allow code to decay item like normal
@@ -216,6 +220,7 @@ function onDecay( iDecaying )
 }
 
 // Override the hard-coded help menu and display a JS based one
+/** @type { ( mChar: Character ) => void } */
 function onHelpButton( pChar )
 {
 	TriggerEvent( 2, "DisplayHelpMenu", pChar );
@@ -223,12 +228,14 @@ function onHelpButton( pChar )
 }
 
 // Override hard-coded snooping request and go with scripted one
+/** @type { ( snooped: Character, pack: Item, snooper: Character ) => void } */
 function onSnoopAttempt( snoopTarget, targCont, pUser )
 {
 	return TriggerEvent( 4055, "SnoopAttempt", snoopTarget, targCont, pUser );
 }
 
 // Look for Gem of Salvation in player's backpack to give them chance to resurrect
+/** @type { ( pDead: Character, iCorpse: Item ) => void } */
 function onDeath( pDead, iCorpse )
 {
 	if( !ValidateObject( pDead ) || pDead.npc || !pDead.online )
@@ -238,6 +245,7 @@ function onDeath( pDead, iCorpse )
 }
 
 // Triggers based on bandage macro in client
+/** @type { ( mSock: Socket, targChar: Character, bandageItem: Item ) => void } */
 function onUseBandageMacro( pSock, targChar, bandageItem )
 {
 	if( pSock != null && ValidateObject( targChar ) && ValidateObject( bandageItem ) && bandageItem.amount >= 1 )

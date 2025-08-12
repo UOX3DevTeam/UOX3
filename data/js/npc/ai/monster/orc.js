@@ -5,6 +5,7 @@
 const monstersVsAnimals = GetServerSetting( "MonstersVsAnimals" );
 const animalAttackChance = GetServerSetting( "AnimalAttackChance" );
 
+/** @type { ( attacker: Character, target: Character ) => void } */
 function onAICombatTarget( pChar, pTarget )
 {
 	if( !ValidateObject( pTarget ))
@@ -44,6 +45,7 @@ function onAICombatTarget( pChar, pTarget )
 	return true;
 }
 
+/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => void } */
 function onDamage( pDefender, pAttacker, damageValue, damageType )
 {
 	if( !ValidateObject( pAttacker ))

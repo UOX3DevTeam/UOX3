@@ -288,7 +288,7 @@ function command_XSAY( pSock, execString )
 }
 
 //Rename
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -308,7 +308,7 @@ function onCallback0( pSock, myTarget )
 }
 
 //Freeze
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -332,7 +332,7 @@ function onCallback1( pSock, myTarget )
 }
 
 //Unfreeze
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -369,7 +369,7 @@ function onCallback2( pSock, myTarget )
 }
 
 // Make target invulnerable
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback3( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -393,7 +393,7 @@ function onCallback3( pSock, myTarget )
 }
 
 // Make target vulnerable
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback4( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -417,7 +417,7 @@ function onCallback4( pSock, myTarget )
 }
 
 // Addpack without parameters
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback5( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -451,7 +451,7 @@ function onCallback5( pSock, myTarget )
 }
 
 // ADDPACK callback function
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback6( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -498,7 +498,7 @@ function onCallback6( pSock, myTarget )
 	pUser.SetTag( "AddFromHex", null );
 }
 // Set Tag
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback8( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -528,7 +528,7 @@ function onCallback8( pSock, myTarget )
 }
 
 // Get Tag
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback9( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -548,7 +548,7 @@ function onCallback9( pSock, myTarget )
 }
 
 // Nodecay
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback10( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -571,7 +571,7 @@ function onCallback10( pSock, myTarget )
 }
 
 // Decay
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback11( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -594,7 +594,7 @@ function onCallback11( pSock, myTarget )
 }
 
 // XSAY
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback12( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -614,7 +614,7 @@ function command_LINKDOORS( pSock, execString )
 	pSock.CustomTarget( 13, GetDictionaryEntry( 8898, pSock.language )); // Which two doors do you want to link? (1/2)
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback13( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -654,7 +654,7 @@ function command_UNLINKDOORS( pSock, execString )
 	pSock.CustomTarget( 14, GetDictionaryEntry( 8901, pSock.language )); // Unlink which two doors? (1/2)
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback14( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -698,7 +698,7 @@ function command_SETAMMOEFFECT( pSock, execString )
 	}
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback15( pSock, myTarget )
 {
 	var ammoEffect = pSock.xText;
@@ -717,7 +717,7 @@ function command_SETAMMOTYPE( pSock, execString )
 	}
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback16( pSock, myTarget )
 {
 	var ammoType = pSock.xText;
@@ -732,7 +732,7 @@ function command_GETAMMOEFFECT( pSock, execString )
 	pSock.CustomTarget( 17, GetDictionaryEntry( 8906, pSock.language )); // Get ammoeffect from which bow?
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback17( pSock, myTarget )
 {
 	var ammoEffect = myTarget.ammoEffect;
@@ -745,7 +745,7 @@ function command_GETAMMOTYPE( pSock, execString )
 	pSock.CustomTarget( 18, GetDictionaryEntry( 8908, pSock.language )); // Get ammotype from which bow?
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback18( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -787,7 +787,7 @@ function command_XREGIONINFO( pSock, execString )
 	pSock.CustomTarget( 19, GetDictionaryEntry( 8910, pSock.language )); // Get region info for which character?
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback19( pSock, myTarget )
 {
 	var myTargetRegion = myTarget.region;
@@ -804,7 +804,7 @@ function command_CONT( pSock, execString )
 	pSock.CustomTarget( 20, GetDictionaryEntry( 8911, pSock.language )); // Set which item as nonmovable container?
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback20( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -830,7 +830,7 @@ function command_ENDFIGHT( pSock, execString )
 	pSock.CustomTarget( 21, GetDictionaryEntry( 8915, pSock.language )); // Subdue which fight?
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback21( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -868,7 +868,7 @@ function command_GETMULTI( pSock )
 	pSock.CustomTarget( 22, GetDictionaryEntry( 8919, pSock.language )); // Get MultiObj from which item?
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback22( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -897,7 +897,7 @@ function command_FINDITEM( pSock, execString )
 	pSock.xText = execString;
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback23( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -945,7 +945,7 @@ function command_MOVESPEED( pSock, execString )
 	}
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback24( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -967,7 +967,7 @@ function onCallback24( pSock, myTarget )
 }
 
 // Make target immortal (can take damage, but will never die)
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback25( pSock, myTarget )
 {
 	var immortalScript = 3510; // Script ID of immortality.js, set in jse_fileassociations.scp
@@ -996,7 +996,7 @@ function onCallback25( pSock, myTarget )
 }
 
 // Make target mortal (can die)
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback26( pSock, myTarget )
 {
 	var immortalScript = 3510; // Script ID of immortality.js, set in jse_fileassociations.scp
@@ -1024,7 +1024,7 @@ function onCallback26( pSock, myTarget )
 }
 
 // SetTempTag
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback27( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -1054,7 +1054,7 @@ function onCallback27( pSock, myTarget )
 }
 
 // GetTempTag
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback28( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -1092,7 +1092,7 @@ function command_GETJSTIMER( pSock, execString )
 	pSock.CustomTarget( 29, GetDictionaryEntry( 2763, pSock.language )); // Fetch remaining time of JS timer for which object?
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback29( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -1144,7 +1144,7 @@ function command_SETJSTIMER( pSock, execString )
 	pSock.CustomTarget( 30, GetDictionaryEntry( 2768, pSock.language )); // Set remaining time of JS timer for which object?
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback30( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -1195,7 +1195,7 @@ function command_KILLJSTIMER( pSock, execString )
 	pSock.CustomTarget( 31, GetDictionaryEntry( 2769, pSock.language )); // Kill specified JS timer for which object?
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback31( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -1241,7 +1241,7 @@ function command_ADDHOUSE( socket, cmdString )
 	}
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback32( socket, ourObj )
 {
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
@@ -1293,7 +1293,7 @@ function command_ADDMULTI( socket, cmdString )
 	}
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback33( socket, ourObj )
 {
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
@@ -1330,7 +1330,7 @@ function command_USEITEM( pSock, execString )
 	pSock.CustomTarget( 34, GetDictionaryEntry( 97, pSock.language )); // Use which item?
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback34( socket, ourObj )
 {
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
@@ -1352,7 +1352,7 @@ function command_GETTAGMAP( pSock, execString )
 	pSock.CustomTarget( 35, GetDictionaryEntry( 92, pSock.language )); // Get persistent tag map for which object?
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback35( pSock, ourObj )
 {
 	var cancelCheck = parseInt( pSock.GetByte( 11 ));
@@ -1390,7 +1390,7 @@ function command_GETTEMPTAGMAP( pSock, execString )
 	pSock.CustomTarget( 36, GetDictionaryEntry( 94, pSock.language )); // Get temporary tag map for which object?
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback36( pSock, ourObj )
 {
 	var cancelCheck = parseInt( pSock.GetByte( 11 ));
@@ -1428,7 +1428,7 @@ function command_LISTPETS( pSock, execString )
 	pSock.CustomTarget( 37, GetDictionaryEntry( 2775, pSock.language )); // Get list of pets for which character?
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback37( pSock, ourObj )
 {
 	var cancelCheck = parseInt( pSock.GetByte( 11 ));
@@ -1454,7 +1454,7 @@ function command_LISTFOLLOWERS( pSock, execString )
 	pSock.CustomTarget( 38, GetDictionaryEntry( 2776, pSock.language )); // Get list of followers for which character?
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback38( pSock, ourObj )
 {
 	var cancelCheck = parseInt( pSock.GetByte( 11 ));
@@ -1482,6 +1482,7 @@ function command_RESETSKILLCAPS( pSock, execString )
 	pSock.SysMessage( "Reset skillcaps for " + resetCount + " players back to default." );
 }
 
+/** @type { ( obj: Character | Item, mSock: Socket ) => void } */
 function onIterate( toCheck )
 {
 	if( toCheck.isChar && !toCheck.npc )
@@ -1499,6 +1500,7 @@ function command_RESETSKILLUSAGE( pSock, execString )
 	pSock.SysMessage( "Reset skill usage for " + resetCount + " players back to false." );
 }
 
+/** @type { ( obj: Character | Item, mSock: Socket ) => void } */
 function onIterate( toCheck )
 {
 	if( toCheck.isChar && !toCheck.npc )

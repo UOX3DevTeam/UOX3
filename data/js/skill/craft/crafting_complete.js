@@ -15,6 +15,7 @@ const exceptionalDamageBonusAoS = 35; // 35% bonus damage (originally 20% in pub
 const exceptionalArmorBonusUOR = 20; // 20% bonus to AR
 const exceptionalArmorBonusAoS = 15; // 15% bonus to resists
 
+/** @type { ( mSock: Socket, objChar: Character, objItem: Item, createEntryId: number ) => void } */
 function onMakeItem( pSock, pCrafter, itemCrafted, craftEntryID )
 {
 	if( pSock == null || !ValidateObject( pCrafter ))

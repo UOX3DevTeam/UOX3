@@ -14,7 +14,7 @@
 // The gates are animated up/down to max/min heights based on MOREX (part 2, for min)
 // and MOREX (part 3, for max) values.
 
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -80,6 +80,7 @@ function SearchForGate( iUsed, trgItem )
 	return false;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( !ValidateObject( timerObj ))

@@ -4,6 +4,7 @@ const petBondingEnabled = GetServerSetting( "PetBondingEnabled" );
 const vetGumpCooldown = 4000; // milliseconds
 const scriptID = 3109;
 
+/** @type { ( srcObj: BaseObject, objInRange: BaseObject ) => void } */
 function inRange( npcVet, player )
 {
 	if( !petBondingEnabled )
@@ -38,6 +39,7 @@ function inRange( npcVet, player )
 	npcVet.SetTempTag( "vetNearbyPlayersList", nearbyPlayersList.join( "," ));
 }
 
+/** @type { ( pSliver: Character ) => void } */
 function onAISliver( npcVet )
 {
 	if( !petBondingEnabled )
@@ -115,6 +117,7 @@ function onAISliver( npcVet )
 }
 
 // Let players re-trigger the resurrection gump by talking to the vet
+/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => void } */
 function onSpeech( strSaid, pTalking, pTalkingTo )
 {
 	if( !pTalking.npc )

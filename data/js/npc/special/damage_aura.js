@@ -4,6 +4,7 @@
 // To add a damage aura to an NPC, add their ID and details of their aura to the GetAuraInit and
 // GetAuraProperties functions at the bottom of the script, and then assign script 3503 to the NPC!
 
+/** @type { ( attacker: Character, defender: Character ) => void } */
 function onCombatStart( pChar, myTarget )
 {
 	if( ValidateObject( myTarget ) && !pChar.GetTempTag( "AOERunning" ))
@@ -15,6 +16,7 @@ function onCombatStart( pChar, myTarget )
 	return true;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( timerID == 1 )

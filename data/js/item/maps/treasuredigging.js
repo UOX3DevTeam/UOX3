@@ -14,7 +14,7 @@ function TreasureDigging( pUser )
 		socket.CustomTarget(0, GetDictionaryEntry( 5707, socket.language ));//Where do you wish to dig?
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, myTarget )
 {
 	var pUser = socket.currentChar;
@@ -195,6 +195,7 @@ function playDiggingAnimation( pUser )
 		pUser.DoAction( 0x0B );
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID ) 
 {
 	var pUser = timerObj.tempObj;

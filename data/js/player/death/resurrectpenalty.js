@@ -89,6 +89,7 @@ function ResurrectSkillPenalty( pUser )
 }
 
 // Skill Recovery handler triggered by StartTimer
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( timerID == 0 )

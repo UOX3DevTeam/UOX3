@@ -10,7 +10,7 @@ const alchemyBonusModifier = parseInt( GetServerSetting( "AlchemyBonusModifier" 
 const randomizePotionCountdown = false; // If true, add/remove +1/-1 seconds to explosion potion countdowns
 const reqFreeHands = true;
 
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -329,7 +329,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	var mChar = socket.currentChar;
@@ -390,7 +390,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	var mChar = socket.currentChar;
@@ -435,6 +435,7 @@ function onCallback1( socket, ourObj )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	var countdown = 0;
@@ -568,6 +569,7 @@ function ApplyExplosionDamage( timerObj, targetChar )
 }
 
 // Show real name to those who have identified potion
+/** @type { ( myObj: BaseObject, nameRequester: Character, requestSource: number ) => void } */
 function onNameRequest( iPotion, pUser )
 {
 	// Default name
@@ -592,6 +594,7 @@ function onNameRequest( iPotion, pUser )
 }
 
 // Add tooltip details
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => void } */
 function onTooltip( iPotion, pSocket )
 {
 	var pUser = null;

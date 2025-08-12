@@ -7544,8 +7544,8 @@
       "params": {
         "num": 4,
         "list": [
-          { "name": "damaged",     "type": "Character",   "required": true },
           { "name": "attacker",    "type": "Character",   "required": true },
+          { "name": "damaged",     "type": "Character",   "required": true },
           { "name": "damageValue", "type": "number",      "required": true },
           { "name": "damageType",  "type": "WeatherType", "required": true }
         ]
@@ -7800,8 +7800,7 @@
       "cppName": "OnIterate",
       "params": {
         "list": [
-          { "name": "a",     "type": "BaseObject", "required": true },
-          { "name": "b",     "type": "number", "required": true },
+          { "name": "obj",   "type": "Character | Item", "required": true },
           { "name": "mSock", "type": "Socket", "required": true }
         ]
       },

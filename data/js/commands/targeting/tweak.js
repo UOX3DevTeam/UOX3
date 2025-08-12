@@ -492,7 +492,7 @@ function command_PROPS( pSocket, cmdString )
 }
 
 // Callback function for targeting an object after using 'tweak command
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSocket, myTarget )
 {
 	pSocket.currentChar.SetTag( "tweakRegion", null );
@@ -551,7 +551,7 @@ function onCallback0( pSocket, myTarget )
 }
 
 // Callback function for selection of new target for object properties
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( pSocket, myTarget )
 {
 	var socketLang = pSocket.language;

@@ -2,6 +2,7 @@
 // @ts-check
 // Hits all nearby characters when they attack with their axe
 
+/** @type { ( attacker: Character, defender: Character, hitStatus: boolean, hitLoc: number, damageDealt: number ) => void } */
 function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 {
 	pAttacker.SetTempTag( "pDefenderSerial", ( pDefender.serial ).toString() );

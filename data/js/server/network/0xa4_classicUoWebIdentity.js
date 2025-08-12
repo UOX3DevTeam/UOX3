@@ -15,7 +15,7 @@ function PacketRegistration()
 	RegisterPacket( 0xa4, 0x0 ); // Overrides 0xA4 SystemInfo packet
 }
 
-/** @type {(pSocket: Socket, packetNum: number) => void} */
+/** @type { ( mSock: Socket, packetNum: number ) => void } */
 function onPacketReceive( pSocket, packetNum )
 {
 	var cmd = pSocket.GetByte( 0 );

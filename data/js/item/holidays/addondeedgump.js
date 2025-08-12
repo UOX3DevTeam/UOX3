@@ -4,7 +4,7 @@
 This file is here for you to have a gump with placing single item addons, example as the wreath you can select the direction and target the area you wish it to be placed.
 */
 
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -71,7 +71,7 @@ function onGumpPress( socket, pButton, gumpData )
 	}
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, myTarget )
 {
 	var iUsed = socket.tempObj;

@@ -96,7 +96,7 @@ const gargoyleFemaleHorns = [
 	[0, 0, 0, 0, 2200] // None/Bald
 ];
 
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;
@@ -359,6 +359,7 @@ function onGumpPress( pSock, buttonID, gumpData )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( pUser, timerID )
 {
 	if( timerID == 1 )

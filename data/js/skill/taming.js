@@ -14,6 +14,7 @@ const maxTimesTamed = 5; // The maximum number of times a pet can be tamed (by d
 const checkPetControlDifficulty = GetServerSetting( "CheckPetControlDifficulty" );
 const petBondingEnabled = GetServerSetting( "PetBondingEnabled" );
 
+/** @type { ( skillUse: BaseObject, skillUsed: number ) => void } */
 function onSkill( pUser, objType, skillUsed )
 {
 	var pSock = pUser.socket;
@@ -50,7 +51,7 @@ function onSkill( pUser, objType, skillUsed )
 	return true;
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, ourObj )
 {
 	var pUser = pSock.currentChar;
@@ -130,6 +131,7 @@ function onCallback0( pSock, ourObj )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( pUser, timerID )
 {
 	if( !RunTameChecks( pUser ))

@@ -5,6 +5,7 @@ function SkillRegistration()
 	RegisterSkill( 47, true );	// Stealth
 }
 
+/** @type { ( skillUse: BaseObject, skillUsed: number ) => void } */
 function onSkill( pUser, objType, skillUsed )
 {
 	var pSock = pUser.socket;

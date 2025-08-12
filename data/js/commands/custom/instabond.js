@@ -12,7 +12,7 @@ function command_INSTABOND( socket, cmdString )
 	socket.CustomTarget( 0, GetDictionaryEntry( 19324, socket.language ));//Select a pet to instantly bond.
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	const petBondingEnabled = GetServerSetting( "PetBondingEnabled" );

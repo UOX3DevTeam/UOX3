@@ -1,5 +1,6 @@
 /// <reference path="../../../definitions.d.ts" />
 // @ts-check
+/** @type { ( attacker: Character, defender: Character ) => void } */
 function onCombatStart( pKappa, pDefender )
 {
 	if(IsNearWater( pKappa ))
@@ -12,6 +13,7 @@ function onCombatStart( pKappa, pDefender )
 	}
 }
 
+/** @type { ( attacker: Character, defender: Character, hitStatus: boolean, hitLoc: number, damageDealt: number ) => void } */
 function onAttack( pKappa, pDefender )
 {
 	// If Kappa is near water, drain life and heal Kappa

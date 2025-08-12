@@ -14,6 +14,7 @@ const enableAncientSOS = false;
 const ancientSOSHue = 0x481;
 const ancientSOSDropRate = 3 / 20; // 4/55 for ToL+? or 1/20
 
+/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	if( objType == 0 && ValidateObject( objMade ))
@@ -100,7 +101,7 @@ function CheckForValidSOSLocation( xLoc, yLoc, worldNum )
 	return valid;
 }
 
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;

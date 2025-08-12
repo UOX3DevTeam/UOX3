@@ -78,6 +78,7 @@ function PageX( socket, pUser, pageNum )
 	myGump.Free();
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( pUser, timerID )
 {
 	if( !ValidateObject( pUser ))
@@ -530,7 +531,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	}
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( pSock, targObj )
 {
 	var pUser = pSock.currentChar;

@@ -302,6 +302,7 @@ const BODTypesToRewardsAoS = {
 	2: TailorRewardTiersToItems
 };
 
+/** @type { ( targSock: Socket, objVendor: Character, objItemSold: BaseObject, numItemsSold: number ) => void } */
 function onSoldToVendor( pSock, npcVendor, iSold )
 {
 	var pUser = pSock.currentChar;
@@ -337,6 +338,7 @@ function CheckBodTimers( pUser, bodType )
 	}
 }
 
+/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => void } */
 function onSpeech( myString, pUser, myNPC )
 {
 	if( !ValidateObject( pUser ) || !ValidateObject( myNPC ) || !offerBodsFromContextMenu || !pUser.InRange( myNPC, 8 ))
@@ -664,6 +666,7 @@ function SelectBodEntry( bodType, bodSubtype, considerPlayerSkill, pSkill )
 	return CreateEntries[validItems[rndCreateIndex]];
 }
 
+/** @type { ( srcChar: Character, targChar: Character, i: Item ) => void } */
 function onDropItemOnNpc( pDropper, npcDroppedOn, iDropped )
 {
 	var socket = pDropper.socket;

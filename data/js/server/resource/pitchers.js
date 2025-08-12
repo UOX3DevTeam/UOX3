@@ -17,7 +17,7 @@
 // Todo: Descriptions for how full a liquid container is
 const pitcherScriptID = 2100;
 
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;
@@ -67,7 +67,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 {
 	var pUser = pSock.currentChar;
@@ -225,7 +225,7 @@ function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 	}
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 {
 	var pUser = pSock.currentChar;
@@ -1070,6 +1070,7 @@ function switchGobletID( Pitcher )
 }
 
 // Display remaining uses left in a tooltip
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => void } */
 function onTooltip( myObj )
 {
 	var tooltipText = "";
@@ -1084,6 +1085,7 @@ function onTooltip( myObj )
 }
 
 // Set up tags for any new items added
+/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	if( !objMade.GetTag( "ContentsType" ))

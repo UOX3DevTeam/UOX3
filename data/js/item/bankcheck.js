@@ -4,7 +4,7 @@
 // v1.02
 // Last Updated: 5. July 2021
 
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;
@@ -64,6 +64,7 @@ function onUseChecked( pUser, iUsed )
 }
 
 // Display value of bank check
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => void } */
 function onTooltip( bankCheck )
 {
 	var tooltipText = "";
@@ -77,6 +78,7 @@ function onTooltip( bankCheck )
 // Show value as part of name if tooltips are disabled
 const aosTooltipsEnabledClient = GetClientFeature( 4 );
 const aosTooltipsEnabledServer = GetServerFeature( 5 );
+/** @type { ( myObj: BaseObject, nameRequester: Character, requestSource: number ) => void } */
 function onNameRequest( bankCheck, pUser )
 {
 	// Default name

@@ -3,6 +3,7 @@
 // Accuracy bonus for magical items
 // See magicweapons.js for details on full setup
 
+/** @type { ( equipper: Character, equipping: Item ) => void } */
 function onEquip( pEquipper, iEquipped )
 {
 	// Get bonus values
@@ -23,6 +24,7 @@ function onEquip( pEquipper, iEquipped )
 	}
 }
 
+/** @type { ( equipper: Character, equipping: Item ) => void } */
 function onUnequip( pEquipper, iEquipped )
 {
 	// Get bonus values

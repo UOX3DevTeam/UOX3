@@ -3,6 +3,7 @@
 // Other settings
 const randomizePumpkinCountdown = false; // If true, add/remove +1/-1 seconds to explosion potion countdowns
 
+/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
 function onCreateDFN( objMade, objType ) 
 {
 	var idList = [0x0C6B, 0x0C6A, 0x0C6C];
@@ -49,7 +50,7 @@ function getRandomPumpkinName( objMade )
 // Using explosion potion effect.
 // Missing: colors as well for the pumpkins
 
-/** @type {( pUser: Character, iUsed: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed ) 
 {
 	var socket = pUser.socket;
@@ -95,7 +96,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	var mChar = socket.currentChar;
@@ -156,6 +157,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID ) 
 {
 	var countdown = 0;
@@ -274,6 +276,7 @@ function ApplyExplosionDamage( timerObj, targetChar )
 	}
 }
 
+/** @type { ( item: Item, pickerUpper: Character, objCont: BaseObject ) => void } */
 function onPickup( iPickedUp, pGrabber, containerObj )
 {
 	var pSock = pGrabber.socket;

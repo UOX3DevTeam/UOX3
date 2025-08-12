@@ -1,5 +1,6 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
+/** @type { ( mChar: Character, abilityId: number ) => void } */
 function onSpecialMove( pUser, abilityID )
 {
 	// Define the array of restricted ability IDs
@@ -323,6 +324,7 @@ function DeductMana(  pUser, abilityID )
 	pUser.SetTempTag( "doubleMana", iTime.toString() );
 }
 
+/** @type { ( attacker: Character, defender: Character, getFightSkill: number, hitLoc: number ) => void } */
 function onCombatDamageCalc( pAttacker, pDefender, fightSkill, hitLoc )
 {
 	var abilityID = pAttacker.GetTempTag( "abilityID" );
@@ -401,6 +403,7 @@ function onCombatHit( pAttacker, pDefender )
 	onAbility( pAttacker, pDefender, abilityID );
 }
 
+/** @type { ( attacker: Character, defender: Character, hitStatus: boolean, hitLoc: number, damageDealt: number ) => void } */
 function onAttack( pAttacker, pDefender )
 {
 	var abilityID = pAttacker.GetTempTag( "abilityID" );
@@ -829,6 +832,7 @@ function onAbility( pAttacker, pDefender, abilityID )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	var socket = timerObj.socket;

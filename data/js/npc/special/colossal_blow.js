@@ -1,6 +1,7 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
 // Handle Colossal Blow special ability - a stunning attack that applies a peacemaking effect
+/** @type { ( attacker: Character, defender: Character, hitStatus: boolean, hitLoc: number, damageDealt: number ) => void } */
 function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 {
 	// Don't perform scolossal blow if attacker is invalid or dead
@@ -91,6 +92,7 @@ function GetStunProps( pAttacker )
 	return stunProps;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( timerID == 1 )

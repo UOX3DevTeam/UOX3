@@ -2,12 +2,14 @@
 // @ts-check
 // This script creates and decorates an orc camp when an item with the script attached is created
 // Associated Orc NPCs (or eventual Prisoner escortees) are spawned separately using regional spawn system
+/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
 function onCreateDFN( baseCampItem, objType )
 {
 	// Start a timer to make sure item has been placed correctly in the world before we try to fetch its coordinates
 	baseCampItem.StartTimer( 10, 1, 5501 );
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( baseCampItem, timerID )
 {
 	var multiID = baseCampItem.morex;
@@ -120,6 +122,7 @@ function onTimer( baseCampItem, timerID )
 }
 
 // If base camp item is deleted, delete all associated decorative items as well
+/** @type { ( thingDestroyed: BaseObject ) => void } */
 function onDelete( baseCampItem, objType )
 {
 	// Delete the actual multi

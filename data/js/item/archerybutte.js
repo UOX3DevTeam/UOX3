@@ -1,5 +1,6 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
+/** @type { ( user: Character, iUsing: Item ) => void } */
 function onUseUnChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;

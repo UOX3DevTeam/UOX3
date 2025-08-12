@@ -40,7 +40,7 @@
 
 const switchScriptID = 4761; // ID of this script in jse_fileassociations.scp
 
-/** @type {( pUser: Character, iSwitch: Item ) => boolean} */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iSwitch )
 {
 	if( !ValidateObject( pUser ) || !ValidateObject( iSwitch ))
@@ -269,6 +269,7 @@ function TriggerSwitchAndDoorEffects( iSwitch )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( !ValidateObject( timerObj ))
@@ -487,6 +488,7 @@ function InitializeSwitchDoorCombo( iSwitch, pSock )
 	return false;
 }
 
+/** @type { ( obj: Character | Item, mSock: Socket ) => void } */
 function onIterate( myObject, pSock )
 {
 	let iSwitch = pSock.iSwitch;

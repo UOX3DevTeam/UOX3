@@ -29,7 +29,7 @@ function onUseChecked ( pUser, iUsed )
 	return false;
 }
 
-/** @type {( socket: Socket, ourObj: null | Item | Character ) => void} */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( tSock, myTarget )
 {
 	Baking( tSock, myTarget );
@@ -107,6 +107,7 @@ function Baking( tSock, myTarget )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( pUser, timerID )
 {
 	if( !ValidateObject( pUser ) || pUser.socket == null )
