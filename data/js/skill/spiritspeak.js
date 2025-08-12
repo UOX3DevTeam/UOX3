@@ -5,7 +5,7 @@ function SkillRegistration()
 	RegisterSkill( 32, true );	// Spirit Speak
 }
 
-/** @type { ( skillUse: BaseObject, skillUsed: number ) => void } */
+/** @type { ( skillUse: BaseObject, skillUsed: number, objType: 0 | 1 ) => void } */
 function onSkill( pUser, objType, skillUsed )
 {
 	var pSock = pUser.socket;

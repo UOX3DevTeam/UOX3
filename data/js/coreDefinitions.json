@@ -1435,10 +1435,10 @@
       "params": {
         "num": 1,
         "list": [
-          { "name": "obj", "type": "CharOrItem", "required": true }
+          { "name": "obj", "type": "Character | Item | null | undefined", "required": true }
         ]
       },
-      "returns": "boolean"
+      "returns": "obj is Character | Item"
     },
     {
       "name": "ApplyDamageBonuses",
@@ -1902,7 +1902,10 @@
         { "name": "GetTempEffect",       "cppName": "CBase_GetTempEffect",        "params": { "num": 1, "list": [ { "name": "effectID", "type": "number",     "required": true } ] }, "returns": "number" },
         { "name": "GetTempTag",          "cppName": "CBase_GetTempTag",           "params": { "num": 1, "list": [ { "name": "tag",      "type": "string",     "required": true } ] }, "returns": "string | boolean | number" },
         { "name": "HasScriptTrigger",    "cppName": "CBase_HasScriptTrigger",     "params": { "num": 1, "list": [ { "name": "scriptId", "type": "number",     "required": true } ] }, "returns": "boolean" },
-        { "name": "InRange",             "cppName": "CBase_InRange",              "params": { "num": 2, "list": [ { "name": "other",    "type": "BaseObject", "required": true } ] }, "returns": "boolean" },
+        { "name": "InRange",             "cppName": "CBase_InRange",              "params": { "num": 2, "list": [
+          { "name": "other",    "type": "BaseObject", "required": true },
+          { "name": "distance", "type": "number",     "required": true }
+        ] }, "returns": "boolean" },
         { "name": "KillJSTimer",         "cppName": "CBase_KillJSTimer",          "params": { "num": 2, "list": [ { "name": "timerId",  "type": "number",     "required": true }, { "name": "scriptId",  "type": "number",     "required": true } ] }, "returns": "number" },
         { "name": "KillTimers",          "cppName": "CBase_KillTimers",           "params": { "num": 1, "list": [ { "name": "triggerId","type": "number",     "required": false} ] }, "returns": "void" },
         { "name": "PauseJSTimer",        "cppName": "CBase_PauseJSTimer",         "params": { "num": 2, "list": [ { "name": "timerId",  "type": "number",     "required": true }, { "name": "scriptId",  "type": "number",     "required": true } ] }, "returns": "number" },
@@ -3064,7 +3067,44 @@
     },
     {
       "name": "Timer",
-      "aka": "UOXTimer"
+      "aka": "UOXTimer",
+      "values": [
+        { "label": "TIMEOUT",              "value":  0, "comment": "Character timer" },
+        { "label": "INVIS",                "value":  1, "comment": "Character timer" },
+        { "label": "HUNGER",               "value":  2, "comment": "Character timer" },
+        { "label": "THIRST",               "value":  3, "comment": "Character timer" },
+        { "label": "POISONTIME",           "value":  4, "comment": "Character timer" },
+        { "label": "POISONTEXT",           "value":  5, "comment": "Character timer" },
+        { "label": "POISONWEAROFF",        "value":  6, "comment": "Character timer" },
+        { "label": "SPELLTIME",            "value":  7, "comment": "Character timer" },
+        { "label": "SPELLRECOVERYTIME",    "value":  8, "comment": "Character timer" },
+        { "label": "CRIMFLAG",             "value":  9, "comment": "Character timer" },
+        { "label": "ANTISPAM",             "value": 10, "comment": "Character timer" },
+        { "label": "MURDERRATE",           "value": 11, "comment": "Character timer" },
+        { "label": "PEACETIMER",           "value": 12, "comment": "Character timer" },
+        { "label": "FLYINGTOGGLE",         "value": 13, "comment": "Character timer" },
+        { "label": "FIREFIELDTICK",        "value": 14, "comment": "Character timer" },
+        { "label": "POISONFIELDTICK",      "value": 15, "comment": "Character timer" },
+        { "label": "PARAFIELDTICK",        "value": 16, "comment": "Character timer" },
+        { "label": "YOUNGHEAL",            "value": 17, "comment": "Character timer" },
+        { "label": "YOUNGMESSAGE",         "value": 18, "comment": "Character timer" },
+        { "label": "MOVETIME",             "value": 19, "comment": "Character timer" },
+        { "label": "SPATIMER",             "value": 20, "comment": "Character timer" },
+        { "label": "SUMMONTIME",           "value": 21, "comment": "Character timer" },
+        { "label": "EVADETIME",            "value": 22, "comment": "Character timer" },
+        { "label": "LOYALTYTIME",          "value": 23, "comment": "Character timer" },
+        { "label": "IDLEANIMTIME",         "value": 24, "comment": "Character timer" },
+        { "label": "LOGOUT",               "value": 25, "comment": "Character timer" },
+        { "label": "SOCK_SKILLDELAY",      "value": 26, "comment": "Socket timer" },
+        { "label": "SOCK_OBJDELAY",        "value": 27, "comment": "Socket timer" },
+        { "label": "SOCK_SPIRITSPEAK",     "value": 28, "comment": "Socket timer" },
+        { "label": "SOCK_TRACKING",        "value": 29, "comment": "Socket timer" },
+        { "label": "SOCK_FISHING",         "value": 30, "comment": "Socket timer" },
+        { "label": "SOCK_MUTETIME",        "value": 31, "comment": "Socket timer" },
+        { "label": "SOCK_TRACKINGDISPLAY", "value": 32, "comment": "Socket timer" },
+        { "label": "SOCK_TRAFFICWARDEN",   "value": 33, "comment": "Socket timer" },
+        { "label": "COUNT",                "value": 34, "comment": "Socket timer" }
+      ]
     },
     {
       "name": "SCRIPT",
@@ -8040,7 +8080,8 @@
       "params": {
         "list": [
           { "name": "skillUse", "type": "BaseObject", "required": true },
-          { "name": "skillUsed", "type": "number", "required": true }
+          { "name": "skillUsed", "type": "number", "required": true },
+          { "name": "objType", "type": "0 | 1", "required": true }
         ]
       },
       "returns": "void"

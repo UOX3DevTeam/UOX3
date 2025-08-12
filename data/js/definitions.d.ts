@@ -106,7 +106,7 @@ declare global {
     GetTempTag( tag: string ): string | boolean | number;
     GetTempTagMap(): void;
     HasScriptTrigger( scriptId: number ): boolean;
-    InRange( other: BaseObject ): boolean;
+    InRange( other: BaseObject, distance: number ): boolean;
     KillJSTimer( timerId: number, scriptId: number ): number;
     KillTimers( triggerId?: number ): void;
     NextItem(): void;
@@ -1185,9 +1185,43 @@ declare global {
     TF_MULTIMOVABLE = 40, // Movable multi? Cool ships and vehicles etc?
     TF_COUNT = 41,     
   }
-  interface Timer {
+  enum Timer {
+    TIMEOUT = 0,             // Character timer
+    INVIS = 1,               // Character timer
+    HUNGER = 2,              // Character timer
+    THIRST = 3,              // Character timer
+    POISONTIME = 4,          // Character timer
+    POISONTEXT = 5,          // Character timer
+    POISONWEAROFF = 6,       // Character timer
+    SPELLTIME = 7,           // Character timer
+    SPELLRECOVERYTIME = 8,   // Character timer
+    CRIMFLAG = 9,            // Character timer
+    ANTISPAM = 10,           // Character timer
+    MURDERRATE = 11,         // Character timer
+    PEACETIMER = 12,         // Character timer
+    FLYINGTOGGLE = 13,       // Character timer
+    FIREFIELDTICK = 14,      // Character timer
+    POISONFIELDTICK = 15,    // Character timer
+    PARAFIELDTICK = 16,      // Character timer
+    YOUNGHEAL = 17,          // Character timer
+    YOUNGMESSAGE = 18,       // Character timer
+    MOVETIME = 19,           // Character timer
+    SPATIMER = 20,           // Character timer
+    SUMMONTIME = 21,         // Character timer
+    EVADETIME = 22,          // Character timer
+    LOYALTYTIME = 23,        // Character timer
+    IDLEANIMTIME = 24,       // Character timer
+    LOGOUT = 25,             // Character timer
+    SOCK_SKILLDELAY = 26,    // Socket timer
+    SOCK_OBJDELAY = 27,      // Socket timer
+    SOCK_SPIRITSPEAK = 28,   // Socket timer
+    SOCK_TRACKING = 29,      // Socket timer
+    SOCK_FISHING = 30,       // Socket timer
+    SOCK_MUTETIME = 31,      // Socket timer
+    SOCK_TRACKINGDISPLAY = 32, // Socket timer
+    SOCK_TRAFFICWARDEN = 33, // Socket timer
+    COUNT = 34,              // Socket timer
   }
-  type UOXTimer = Timer;
   interface TownRegion {
               appearance:        number;
               canCastAggressive: boolean;
@@ -1525,7 +1559,7 @@ declare global {
   function TriggerEvent( scriptId: number, eventToFire: string, ...extra: any[] ): boolean;
   function TriggerTrap( src: CharOrSocket, item: Item ): void;
   function UseItem( src: CharOrSocket, item: Item ): void;
-  function ValidateObject( obj: CharOrItem ): boolean;
+  function ValidateObject( obj: Character | Item | null | undefined ): obj is Character | Item;
   function WillResultInCriminal( source: Character, target: Character ): boolean;
   function WorldBrightLevel( newLevel?: number ): number;
   function WorldDarkLevel( newLevel?: number ): number;
@@ -1601,7 +1635,7 @@ declare global {
   function onScrollingGumpPress( tSock: Socket, gumpId: number, buttonId: number ): void;
   function onSell( targSock: Socket, objVendor: Character ): void;
   function onSellToVendor( targSock: Socket, objVendor: Character, objItemSold: BaseObject, numItemsSelling: number ): void;
-  function onSkill( skillUse: BaseObject, skillUsed: number ): void;
+  function onSkill( skillUse: BaseObject, skillUsed: number, objType: 0 | 1 ): void;
   function onSkillChange( player: Character, skill: number, skillAmtChanged: number ): void;
   function onSkillCheck( myChar: Character, skill: number, lowSkill: number, highSkill: number, isCraftSkill: boolean ): void;
   function onSkillGain( player: Character, skill: number, skillAmtGained: number ): void;
