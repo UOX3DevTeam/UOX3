@@ -1,6 +1,6 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
-/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	if( !ValidateObject( objMade ))
@@ -58,7 +58,7 @@ function onContRemoveItem( iCont, iItem, pChar )
 	iCont.decaytime = 30; // Set it to decay in 60 seconds, so it decays before item respawns kick in
 }
 
-/** @type { ( item: Item, dropper: Character, dest: Item ) => void } */
+/** @type { ( item: Item, dropper: Character, dest: Item ) => number } */
 function onDropItemOnItem( iDropped, cDropper, iDroppedOn )
 {
 	var socket = cDropper.socket;

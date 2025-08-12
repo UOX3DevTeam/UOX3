@@ -27,7 +27,7 @@ function onUseChecked( pUser, iUsed )
 	}
 }
 
-/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	// This function initializes default settings when creating a new object, especially for objects like a bowl of dirt.

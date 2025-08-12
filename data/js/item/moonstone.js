@@ -11,7 +11,7 @@
 
 var invalidTiles = new Array( "0x00a8", "0x00a9", "0x00aa", "0x00ab", "0x0136", "0x0137", "0x01f4", "0x01f5", "0x01f6", "0x01f7" );
 
-/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	// If the moonstone is spawned in Felucca, it becomes a Trammel Moonstone
@@ -198,7 +198,7 @@ function onTimer( iUsed, timerID )
 	}
 }
 
-/** @type { ( targSock: Socket, objColliding: Character, objCollideWith: BaseObject ) => void } */
+/** @type { ( targSock: Socket, objColliding: Character, objCollideWith: BaseObject ) => boolean } */
 function onCollide( trgSock, srcChar, trgItem )
 {
 	// If user collides with item after it changes to moongate form, teleport him. 

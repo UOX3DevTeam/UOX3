@@ -20,7 +20,7 @@
 
 const inactiveTimer = 60; // After this amount of seconds, an inactive trap will reactivate
 
-/** @type { ( targSock: Socket, objColliding: Character, objCollideWith: BaseObject ) => void } */
+/** @type { ( targSock: Socket, objColliding: Character, objCollideWith: BaseObject ) => boolean } */
 function onCollide( pSock, pChar, iTrap )
 {
 	if( !ValidateObject( pChar ) || !ValidateObject( iTrap ) || pChar.npc || ( !pChar.npc && ( pChar.dead || pChar.isGM || pChar.isCounselor )))

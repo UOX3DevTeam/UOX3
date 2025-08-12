@@ -933,7 +933,7 @@ function onSpeechInput( pUser, runeBook, pSpeech, pSpeechID )
 }
 
 const maxRunes = 16;
-/** @type { ( item: Item, dropper: Character, dest: Item ) => void } */
+/** @type { ( item: Item, dropper: Character, dest: Item ) => number } */
 function onDropItemOnItem( iDropped, pUser, runeBook )
 {
 	var pSocket = pUser.socket;

@@ -2,7 +2,7 @@
 // @ts-check
 // This script creates and decorates an orc camp when an item with the script attached is created
 // Associated Orc NPCs (or eventual Prisoner escortees) are spawned separately using regional spawn system
-/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( baseCampItem, objType )
 {
 	// Start a timer to make sure item has been placed correctly in the world before we try to fetch its coordinates

@@ -338,7 +338,7 @@ function CheckBodTimers( pUser, bodType )
 	}
 }
 
-/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => void } */
+/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => null | undefined | number | boolean } */
 function onSpeech( myString, pUser, myNPC )
 {
 	if( !ValidateObject( pUser ) || !ValidateObject( myNPC ) || !offerBodsFromContextMenu || !pUser.InRange( myNPC, 8 ))
@@ -666,7 +666,7 @@ function SelectBodEntry( bodType, bodSubtype, considerPlayerSkill, pSkill )
 	return CreateEntries[validItems[rndCreateIndex]];
 }
 
-/** @type { ( srcChar: Character, targChar: Character, i: Item ) => void } */
+/** @type { ( srcChar: Character, targChar: Character, i: Item ) => number } */
 function onDropItemOnNpc( pDropper, npcDroppedOn, iDropped )
 {
 	var socket = pDropper.socket;

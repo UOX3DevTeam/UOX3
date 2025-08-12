@@ -3,7 +3,7 @@
 const dragonArmors = [ "0x2645", "0x2647", "0x2643", "0x2641", "0x2657" ];
 
 // Choose and apply scale material to chaos dragoon armor
-/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( chaosDragoonNPC, objType )
 {
 	if( objType != 1 || !chaosDragoonNPC.npc )
@@ -94,7 +94,7 @@ function AddScaleLoot( chaosDragoonNPC, scaleColor )
 	var scaleLoot = CreateDFNItem( null, chaosDragoonNPC, scaleItem, amount, "ITEM", true );
 }
 
-/** @type { ( pDead: Character, iCorpse: Item ) => void } */
+/** @type { ( pDead: Character, iCorpse: Item ) => boolean } */
 function onDeath( chaosDragoonNPC, iCorpse )
 {
 	// Spawn a (non-armored) swamp dragon after chaos dragoon NPC dies

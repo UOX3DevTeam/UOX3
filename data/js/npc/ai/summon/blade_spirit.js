@@ -2,7 +2,7 @@
 // @ts-check
 // This event runs instead of regular, hard-coded target selection for summoned Blade Spirits
 
-/** @type { ( attacker: Character, target: Character ) => void } */
+/** @type { ( attacker: Character, target: Character ) => boolean } */
 function onAICombatTarget( pChar, pTarget )
 {
 	if( !ValidateObject( pTarget ))

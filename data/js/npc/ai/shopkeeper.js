@@ -13,7 +13,7 @@ const youngPlayerSystem = GetServerSetting("YoungPlayerSystem");
 
 const coreShardEra = GetServerSetting( "CoreShardEra" );
 
-/** @type { ( targSock: Socket, objVendor: Character, objItemBought: BaseObject, numItemsBought: number ) => void } */
+/** @type { ( targSock: Socket, objVendor: Character, objItemBought: BaseObject, numItemsBought: number ) => boolean } */
 function onBoughtFromVendor( pSock, npcShopkeep, iBought, iAmount )
 {
 	if( pSock == null || !ValidateObject( npcShopkeep ) || !ValidateObject( iBought ))

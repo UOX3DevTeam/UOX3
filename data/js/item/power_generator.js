@@ -11,7 +11,7 @@ const powerGenLockpickReq = 650;
 const powerGenShowTakenPath = true; // Show player's (successful) path through the puzzle?
 
 // Upon spawning, add the rest of the items making up the power generator
-/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	// Start timer to create sub-components

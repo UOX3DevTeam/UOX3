@@ -1,7 +1,7 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
 // NPCs like Shadow Iron Elementals are immune to magic
-/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => void } */
+/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => boolean } */
 function onDamage( damaged, attacker, damageValue, damageType )
 {
 	if( damageType == 5 ) // Magical damage

@@ -2,7 +2,7 @@
 // @ts-check
 // Cow-Tipping!
 
-/** @type { ( currChar: Character, targChar: Character ) => void } */
+/** @type { ( currChar: Character, targChar: Character ) => boolean } */
 function onCharDoubleClick( pUser, targChar )
 {
 	var rndValue = RandomNumber( 0, 100 );

@@ -55,7 +55,7 @@ function LookForSittingPlayers( srcItem, trgChar, pSock )
 }
 
 // Turn the furniture when dropped
-/** @type { ( item: Item, dropper: Character ) => void } */
+/** @type { ( item: Item, dropper: Character ) => number } */
 function onDrop( iDropped, pDropper )
 {
 	SmartTurn( iDropped );

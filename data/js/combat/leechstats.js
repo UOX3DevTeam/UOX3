@@ -13,7 +13,7 @@ function onUnequip( pUnequipper, iUnequipped )
 	pUnequipper.RemoveScriptTrigger( 7003 );
 }
 
-/** @type { ( attacker: Character, damaged: Character, damageValue: number, damageType: WeatherType ) => void } */
+/** @type { ( attacker: Character, damaged: Character, damageValue: number, damageType: WeatherType ) => boolean } */
 function onDamageDeal( attacker, damaged, damageValue, damageType ) 
 {
 	// Fetch weapon in main hand or secondary hand

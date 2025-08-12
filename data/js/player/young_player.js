@@ -268,7 +268,7 @@ function onSpellTarget( myTarget, pCaster, spellID )
 }
 
 // Handles situations where the Young player is the caster of spells
-/** @type { ( caster: Character, target: BaseObject, spellNum: number ) => void } */
+/** @type { ( caster: Character, target: BaseObject, spellNum: number ) => number } */
 function onSpellTargetSelect( pCaster, myTarget, spellID )
 {
 	// We don't care if caster and target is the same - allow it!
@@ -334,7 +334,7 @@ function onSkillChange( pChar, skillID, skillChange )
 
 // This will trigger both for Young player when attacking
 // and when someone else attacks Young player
-/** @type { ( attacker: Character, defender: Character ) => void } */
+/** @type { ( attacker: Character, defender: Character ) => boolean } */
 function onCombatStart( pAttacker, pDefender )
 {
 	// Allow by default, let code/other scripts handle it
@@ -382,7 +382,7 @@ function onCombatStart( pAttacker, pDefender )
 }
 
 // Triggers when Young player deals damage
-/** @type { ( attacker: Character, damaged: Character, damageValue: number, damageType: WeatherType ) => void } */
+/** @type { ( attacker: Character, damaged: Character, damageValue: number, damageType: WeatherType ) => boolean } */
 function onDamageDeal( pAttacker, pTarget, damageValue, damageType )
 {
 	if( !ValidateObject( pAttacker ) || !ValidateObject( pTarget ))
@@ -413,7 +413,7 @@ function onDamageDeal( pAttacker, pTarget, damageValue, damageType )
 }
 
 // Triggers when Young player takes damage
-/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => void } */
+/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => boolean } */
 function onDamage( damaged, pAttacker, damageValue, damageType )
 {
 	if( !ValidateObject( damaged ))
@@ -447,7 +447,7 @@ function onDamage( damaged, pAttacker, damageValue, damageType )
 }
 
 // Handle death of young player
-/** @type { ( pDead: Character, iCorpse: Item ) => void } */
+/** @type { ( pDead: Character, iCorpse: Item ) => boolean } */
 function onDeath( pDead, iCorpse )
 {
 	if( !ValidateObject( pDead ))

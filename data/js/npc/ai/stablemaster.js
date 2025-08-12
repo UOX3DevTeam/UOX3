@@ -25,7 +25,7 @@ const stableZ = 0;
 // Script ID assigned to this script in jse_fileassociations.scp. Used to prevent multiple instances of same gump being opened
 const stableScriptID = 3105;
 
-/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => void } */
+/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => null | undefined | number | boolean } */
 function onSpeech( strSaid, pTalking, stableMaster )
 {
 	var pSock = pTalking.socket;

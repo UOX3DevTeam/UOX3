@@ -80,7 +80,7 @@ const searchInterval = 5000;
 const searchRange = 8;
 const searchTimer = 15000;
 
-/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => void } */
+/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => null | undefined | number | boolean } */
 function onSpeech( myString, myPlayer, myNPC )
 {
 	// Don't react to NPCs
@@ -173,7 +173,7 @@ function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 }
 
 // Triggers when NPC takes damage
-/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => void } */
+/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => boolean } */
 function onDamage( damaged, attacker, damageValue, damageType )
 {
 	// Random chance to speak when defending
@@ -203,7 +203,7 @@ function onDamage( damaged, attacker, damageValue, damageType )
 }
 
 // Triggers when NPC dies
-/** @type { ( mKilled: Character, mKiller: Character ) => void } */
+/** @type { ( mKilled: Character, mKiller: Character ) => boolean } */
 function onDeathBlow( pDead, pKiller )
 {
 	// Only do this for orcs, lizardmen and ratmen

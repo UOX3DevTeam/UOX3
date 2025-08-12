@@ -2,7 +2,7 @@
 // @ts-check
 // This script ensures dungeon treasures will decay after a certain amount of time, so they
 // can respawn elsewhere.
-/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	if( !ValidateObject( objMade ))

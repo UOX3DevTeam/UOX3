@@ -39,7 +39,7 @@ function inRange( npcVet, player )
 	npcVet.SetTempTag( "vetNearbyPlayersList", nearbyPlayersList.join( "," ));
 }
 
-/** @type { ( pSliver: Character ) => void } */
+/** @type { ( pSliver: Character ) => boolean } */
 function onAISliver( npcVet )
 {
 	if( !petBondingEnabled )
@@ -117,7 +117,7 @@ function onAISliver( npcVet )
 }
 
 // Let players re-trigger the resurrection gump by talking to the vet
-/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => void } */
+/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => null | undefined | number | boolean } */
 function onSpeech( strSaid, pTalking, pTalkingTo )
 {
 	if( !pTalking.npc )

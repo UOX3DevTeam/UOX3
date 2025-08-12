@@ -11,7 +11,7 @@
 // If combat ends and the NPC is still alive, the magic shield will be re-activated in
 // a couple of seconds
 
-/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( exodusNPC, objType )
 {
 	if( objType != 1 || !exodusNPC.npc )
@@ -21,7 +21,7 @@ function onCreateDFN( exodusNPC, objType )
 	exodusNPC.SetTag( "ShieldHP", exodusNPC.maxhp );
 }
 
-/** @type { ( attacker: Character, target: Character ) => void } */
+/** @type { ( attacker: Character, target: Character ) => boolean } */
 function onAICombatTarget( exodusNPC, pTarget )
 {
 	// Whenever exodusNPC enters combat, display shield, if it's active
@@ -63,14 +63,14 @@ function onTimer( exodusNPC, timerID )
 	}
 }
 
-/** @type { ( attacker: Character, defender: Character ) => void } */
+/** @type { ( attacker: Character, defender: Character ) => boolean } */
 function onCombatEnd( exodusNPC, targChar )
 {
 	exodusNPC.StartTimer( 5000, 20, true )
 	return true;
 }
 
-/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => void } */
+/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => boolean } */
 function onDamage( exodusNPC, attacker, damageValue, damageType )
 {
 	var immuneToMagic = false;

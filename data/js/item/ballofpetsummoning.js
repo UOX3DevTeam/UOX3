@@ -2,7 +2,7 @@
 // @ts-check
 var maxControlSlots = GetServerSetting("MaxControlSlots");
 var maxFollowers = GetServerSetting("MaxFollowers");
-/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	const maxCharges = 30;
@@ -217,7 +217,7 @@ function ReleasePet( petObj, petNum, pUser )
 	petObj.Follow( pUser );
 }
 
-/** @type { ( tSock: Socket, baseObj: BaseObject ) => void } */
+/** @type { ( tSock: Socket, baseObj: BaseObject ) => boolean } */
 function onContextMenuRequest( socket, targObj )
 {
 	var Pet = CalcCharFromSer(parseInt( targObj.GetTag( "petSerial" )));
@@ -280,7 +280,7 @@ function onContextMenuRequest( socket, targObj )
 	return false;
 }
 
-/** @type { ( tSock: Socket, baseObj: BaseObject, popupEntry: number ) => void } */
+/** @type { ( tSock: Socket, baseObj: BaseObject, popupEntry: number ) => boolean } */
 function onContextMenuSelect( socket, targObj, popupEntry )
 {
 	var Pet = CalcCharFromSer( parseInt( targObj.GetTag( "petSerial" )));

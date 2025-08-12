@@ -3,7 +3,7 @@
 // Teleporter into the City of Wind, which comes with a skill requirement
 // Only characters with 71.5 Magery or above can enter the city
 
-/** @type { ( targSock: Socket, objColliding: Character, objCollideWith: BaseObject ) => void } */
+/** @type { ( targSock: Socket, objColliding: Character, objCollideWith: BaseObject ) => boolean } */
 function onCollide( pSock, pChar, iObject )
 {
 	if( !ValidateObject( pChar ) || !pChar.isChar || pChar.npc )

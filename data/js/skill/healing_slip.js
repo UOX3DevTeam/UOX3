@@ -4,7 +4,7 @@ const healSlipScriptID = 4014; // script ID assigned to this script in jse_filea
 const coreShardEra = GetServerSetting( "CoreShardEra" );
 
 // For registering "slips" when attempting to heal someone with bandages
-/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => void } */
+/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => boolean } */
 function onDamage( damaged, attacker, damageValue, damageType )
 {
 	if( !damaged.skillsused.healing && !damaged.skillsused.veterinary )

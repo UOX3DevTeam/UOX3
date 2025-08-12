@@ -39,7 +39,7 @@ function inRange( pCharacter, objInRange )
 }
 
 // This triggers the keyword-based healing/resurrection
-/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => void } */
+/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => null | undefined | number | boolean } */
 function onSpeech( strSaid, pTalking, npcHealer )
 {
 	if( strSaid == "heal" )

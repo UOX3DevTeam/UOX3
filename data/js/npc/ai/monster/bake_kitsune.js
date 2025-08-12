@@ -201,7 +201,7 @@ function RemoveDisguise( bakeKitsune )
 	disguiseTimer = null;
 }
 
-/** @type { ( mKilled: Character, mKiller: Character ) => void } */
+/** @type { ( mKilled: Character, mKiller: Character ) => boolean } */
 function onDeathBlow( bakeKitsune, pKiller )
 {
 	RemoveDisguise( bakeKitsune );

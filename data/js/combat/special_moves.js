@@ -324,7 +324,7 @@ function DeductMana(  pUser, abilityID )
 	pUser.SetTempTag( "doubleMana", iTime.toString() );
 }
 
-/** @type { ( attacker: Character, defender: Character, getFightSkill: number, hitLoc: number ) => void } */
+/** @type { ( attacker: Character, defender: Character, getFightSkill: number, hitLoc: number ) => number } */
 function onCombatDamageCalc( pAttacker, pDefender, fightSkill, hitLoc )
 {
 	var abilityID = pAttacker.GetTempTag( "abilityID" );

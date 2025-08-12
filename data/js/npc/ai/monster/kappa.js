@@ -1,6 +1,6 @@
 /// <reference path="../../../definitions.d.ts" />
 // @ts-check
-/** @type { ( attacker: Character, defender: Character ) => void } */
+/** @type { ( attacker: Character, defender: Character ) => boolean } */
 function onCombatStart( pKappa, pDefender )
 {
 	if(IsNearWater( pKappa ))

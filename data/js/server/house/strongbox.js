@@ -26,7 +26,7 @@ function onUseChecked( pUser, iUsed )
 	return true;
 }
 
-/** @type { ( item: Item, dropper: Character, dest: Item ) => void } */
+/** @type { ( item: Item, dropper: Character, dest: Item ) => number } */
 function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
 {
 	if( !ValidateObject( iDropped )	|| !ValidateObject( pDropper ) || !ValidateObject( iDroppedOn ))

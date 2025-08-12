@@ -1085,7 +1085,7 @@ function onTooltip( myObj )
 }
 
 // Set up tags for any new items added
-/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	if( !objMade.GetTag( "ContentsType" ))

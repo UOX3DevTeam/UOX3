@@ -7294,7 +7294,7 @@
           { "name": "target",   "type": "Character", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onAISliver",
@@ -7305,7 +7305,7 @@
           { "name": "pSliver", "type": "Character", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onAttack",
@@ -7334,7 +7334,7 @@
           { "name": "iTiller", "type": "Item",     "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onBoughtFromVendor",
@@ -7348,7 +7348,7 @@
           { "name": "numItemsBought", "type": "number",     "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onBuy",
@@ -7360,7 +7360,7 @@
           { "name": "objVendor", "type": "Character", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onBuyFromVendor",
@@ -7374,7 +7374,7 @@
           { "name": "numItemsBuying", "type": "number",     "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onCallback",
@@ -7398,7 +7398,7 @@
           { "name": "corpse", "type": "Item",      "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onCharDoubleClick",
@@ -7410,7 +7410,7 @@
           { "name": "targChar", "type": "Character", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onClick",
@@ -7422,7 +7422,7 @@
           { "name": "objClicked", "type": "BaseObject", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onCollide",
@@ -7435,7 +7435,7 @@
           { "name": "objCollideWith", "type": "BaseObject", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onCombatDamageCalc",
@@ -7449,7 +7449,7 @@
           { "name": "hitLoc",        "type": "number",    "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "number"
     },
     {
       "name": "onCombatEnd",
@@ -7461,7 +7461,7 @@
           { "name": "defender", "type": "Character", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onCombatStart",
@@ -7473,7 +7473,7 @@
           { "name": "defender", "type": "Character", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onCommand",
@@ -7485,7 +7485,7 @@
           { "name": "command", "type": "string", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onContextMenuRequest",
@@ -7497,7 +7497,7 @@
           { "name": "baseObj", "type": "BaseObject", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onContextMenuSelect",
@@ -7510,7 +7510,7 @@
           { "name": "popupEntry", "type": "number",     "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onContRemoveItem",
@@ -7529,11 +7529,10 @@
       "name": "onCreateDFN",
       "cppName": "OnCreateDFN",
       "params": {
-        "num": 3,
+        "num": 2,
         "list": [
           { "name": "thingCreated", "type": "BaseObject", "required": true },
-          { "name": "dfnCreated",   "type": "boolean",    "required": true },
-          { "name": "isPlayer",     "type": "boolean",    "required": true }
+          { "name": "thingType",   "type": "0 | 1"   ,    "required": true }
         ]
       },
       "returns": "void"
@@ -7542,11 +7541,10 @@
       "name": "onCreatePlayer",
       "cppName": "OnCreatePlayer",
       "params": {
-        "num": 3,
+        "num": 2,
         "list": [
           { "name": "thingCreated", "type": "BaseObject", "required": true },
-          { "name": "dfnCreated",   "type": "boolean",    "required": true },
-          { "name": "isPlayer",     "type": "boolean",    "required": true }
+          { "name": "thingType",   "type": "0 | 1"   ,    "required": true }
         ]
       },
       "returns": "void"
@@ -7555,11 +7553,10 @@
       "name": "onCreateTile",
       "cppName": "OnCreateTile",
       "params": {
-        "num": 3,
+        "num": 2,
         "list": [
           { "name": "thingCreated", "type": "BaseObject", "required": true },
-          { "name": "dfnCreated",   "type": "boolean",    "required": true },
-          { "name": "isPlayer",     "type": "boolean",    "required": true }
+          { "name": "thingType",   "type": "0 | 1"   ,    "required": true }
         ]
       },
       "returns": "void"
@@ -7576,7 +7573,7 @@
           { "name": "damageType",  "type": "WeatherType", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onDamageDeal",
@@ -7590,7 +7587,7 @@
           { "name": "damageType",  "type": "WeatherType", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onDeath",
@@ -7602,7 +7599,7 @@
               { "name": "iCorpse", "type": "Item",      "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onDeathBlow",
@@ -7614,7 +7611,7 @@
               { "name": "mKiller", "type": "Character", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onDecay",
@@ -7625,7 +7622,7 @@
           { "name": "decaying", "type": "Item", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onDefense",
@@ -7662,7 +7659,7 @@
           { "name": "dispelled", "type": "BaseObject", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onDrop",
@@ -7674,7 +7671,7 @@
           { "name": "dropper", "type": "Character", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "number"
     },
     {
       "name": "onDropItemOnItem",
@@ -7686,7 +7683,7 @@
           { "name": "dest", "type": "Item", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "number"
     },
     {
       "name": "onDropItemOnNpc",
@@ -7698,7 +7695,7 @@
           { "name": "i", "type": "Item", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "number"
     },
     {
       "name": "onDyeTarget",
@@ -7710,7 +7707,7 @@
           { "name": "target", "type": "Item", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onEnterEvadeState",
@@ -8204,7 +8201,7 @@
           { "name": "talkingTo", "type": "BaseObject", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "null | undefined | number | boolean"
     },
     {
       "name": "onSpeechInput",
@@ -8284,7 +8281,7 @@
           { "name": "spellNum", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "number"
     },
     {
       "name": "onStart",

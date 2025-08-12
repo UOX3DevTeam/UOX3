@@ -97,7 +97,7 @@ function onLogout( pSock, pChar )
 	}
 }
 
-/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreatePlayer( pChar )
 {
 	const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
@@ -164,7 +164,7 @@ function CheckCustomGlobalData( fileName, dataToCheck )
 const corpseDecayTimer = GetServerSetting( "CORPSEDECAYTIMER" );
 const playerCorpseIDs = [ 0x0190, 0x0191, 0x025D, 0x025E, 0x029A, 0x029B ];
 // Handle turning player corpses into bones
-/** @type { ( decaying: Item ) => void } */
+/** @type { ( decaying: Item ) => boolean } */
 function onDecay( iDecaying )
 {
 	// If not a corpse, or if corpse has no owner (i.e. NPC corpse), allow code to decay item like normal
@@ -235,7 +235,7 @@ function onSnoopAttempt( snoopTarget, targCont, pUser )
 }
 
 // Look for Gem of Salvation in player's backpack to give them chance to resurrect
-/** @type { ( pDead: Character, iCorpse: Item ) => void } */
+/** @type { ( pDead: Character, iCorpse: Item ) => boolean } */
 function onDeath( pDead, iCorpse )
 {
 	if( !ValidateObject( pDead ) || pDead.npc || !pDead.online )

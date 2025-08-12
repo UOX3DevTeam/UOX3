@@ -5,7 +5,7 @@ const fireBreathDelay = 5;
 const fireBreathMaxRange = 12;
 const fireBreathManaCost = 30;
 
-/** @type { ( pSliver: Character ) => void } */
+/** @type { ( pSliver: Character ) => boolean } */
 function onAISliver( mNPC )
 {
 	var nextFireBallTime = parseInt( mNPC.GetTempTag( "nextFB" ));

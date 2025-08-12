@@ -4,7 +4,7 @@
 // 7-day bonding countdown. Without feeding, bonding will not begin.
 const enablePetBondingViaFood = true;
 
-/** @type { ( mKilled: Character, mKiller: Character ) => void } */
+/** @type { ( mKilled: Character, mKiller: Character ) => boolean } */
 function onDeathBlow( killedPet, petKiller )
 {
 	if( killedPet.tamed && killedPet.GetTag( "isBondedPet" ))
@@ -59,7 +59,7 @@ function onDeathBlow( killedPet, petKiller )
 	return true;
 }
 
-/** @type { ( targSock: Socket, objColliding: Character, objCollideWith: BaseObject ) => void } */
+/** @type { ( targSock: Socket, objColliding: Character, objCollideWith: BaseObject ) => boolean } */
 function onCollide( socket, objCollider, objCollideWith )
 {
 	if( objCollideWith.GetTag( "isPetDead" ) == true )
@@ -95,7 +95,7 @@ function outOfRange( pet, objVanish )
 	}
 }
 
-/** @type { ( attacker: Character, defender: Character ) => void } */
+/** @type { ( attacker: Character, defender: Character ) => boolean } */
 function onCombatStart( pAttacker, pDefender )
 {
 	// If the target is a dead pet, block combat and reset NPC state
@@ -175,7 +175,7 @@ function onSpellTarget( myTarget, pCaster, spellID )
 	return 0;
 }
 
-/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => void } */
+/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => boolean } */
 function onDamage( damaged, pAttacker, damageValue, damageType )
 {
 	if (!ValidateObject( damaged ))
@@ -209,7 +209,7 @@ function onDamage( damaged, pAttacker, damageValue, damageType )
 	return true;
 }
 
-/** @type { ( currChar: Character, targChar: Character ) => void } */
+/** @type { ( currChar: Character, targChar: Character ) => boolean } */
 function onCharDoubleClick( pUser, pet )
 {
 	if( pet.GetTag( "isPetDead" ) == true )
@@ -243,7 +243,7 @@ function onReleasePet( pUser, pet )
 	return true;
 }
 
-/** @type { ( srcChar: Character, targChar: Character, i: Item ) => void } */
+/** @type { ( srcChar: Character, targChar: Character, i: Item ) => number } */
 function onDropItemOnNpc( pDropper, pPet, iFood )
 {
 	if( pPet.GetTag( "isPetDead" ) == true )

@@ -10,7 +10,7 @@ var maxBankItemAmt = 125;
 // Script ID for banker AI script
 var bankCheckTrigger = 5015;
 
-/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => void } */
+/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => null | undefined | number | boolean } */
 function onSpeech( strSaid, pTalking, pTalkingTo )
 {
 	if( strSaid )

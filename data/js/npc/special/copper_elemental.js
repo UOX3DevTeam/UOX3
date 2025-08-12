@@ -1,7 +1,7 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
 // Copper Elementals reflect back part of any physical damage dealt
-/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => void } */
+/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => boolean } */
 function onDamage( damaged, attacker, damageValue, damageType )
 {
 	if( damageType == 1 ) // Physical damage

@@ -8,7 +8,7 @@ const undeadSummonList = [
 const lichSummonMinCooldown = 5;
 const lichSummonMaxCount = 3;
 
-/** @type { ( caster: Character, target: BaseObject, spellNum: number ) => void } */
+/** @type { ( caster: Character, target: BaseObject, spellNum: number ) => number } */
 function onSpellTargetSelect( pTarget, npcLich, spellID )
 {
 	let chanceToSummon = RandomNumber( 1, 100 );
@@ -188,7 +188,7 @@ function SummonUndead( npcLich, pTarget )
 	}
 }
 
-/** @type { ( attacker: Character, defender: Character ) => void } */
+/** @type { ( attacker: Character, defender: Character ) => boolean } */
 function onCombatEnd( npcLich, pTarget )
 {
 	// Restore lich to original appearance
@@ -202,7 +202,7 @@ function onCombatEnd( npcLich, pTarget )
 	return true;
 }
 
-/** @type { ( mKilled: Character, mKiller: Character ) => void } */
+/** @type { ( mKilled: Character, mKiller: Character ) => boolean } */
 function onDeathBlow( npcLich, pKiller )
 {
 	// Call onCombatEnd to revert lich back to original form before dying

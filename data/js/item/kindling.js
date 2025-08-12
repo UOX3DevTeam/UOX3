@@ -92,7 +92,7 @@ function onTimer( timerObj, timerID )
 	}
 }
 
-/** @type { ( targSock: Socket, objColliding: Character, objCollideWith: BaseObject ) => void } */
+/** @type { ( targSock: Socket, objColliding: Character, objCollideWith: BaseObject ) => boolean } */
 function onCollide( pSock, pUser, iUsed )
 {
 	if( iUsed.id == 0x0de3 )

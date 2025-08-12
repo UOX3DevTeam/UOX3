@@ -80,7 +80,7 @@ const maxFollowers = GetServerSetting( "MaxFollowers" ); // The maximum amount o
 const maxControlSlots = GetServerSetting( "MaxControlSlots" ); // The max amount of pet control slots a player can have active at a given time
 const maxPetOwners = GetServerSetting( "MaxPetOwners" ); // The max amount of owners a pet/hireling is willing to accept orders from in its lifetime
 
-/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => void } */
+/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => null | undefined | number | boolean } */
 function onSpeech( pSpeech, pChar, hireling )
 {
 	var pSock = pChar.socket;
@@ -628,7 +628,7 @@ function ResetHireling( hireling )
 }
 
 // Handle dropping of gold on NPC to hire them
-/** @type { ( srcChar: Character, targChar: Character, i: Item ) => void } */
+/** @type { ( srcChar: Character, targChar: Character, i: Item ) => number } */
 function onDropItemOnNpc( pChar, hireling, iDropped )
 {
 	var hPack = hireling.pack;

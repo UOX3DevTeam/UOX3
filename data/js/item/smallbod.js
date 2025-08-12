@@ -13,7 +13,7 @@ const BODSubtypeMinMax = {
 };
 
 // Can also be triggered by creating BOD from admin menu or add command: 'add item smallbod
-/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	if( !ValidateObject( objMade ))

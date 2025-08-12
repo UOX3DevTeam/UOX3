@@ -30,7 +30,7 @@ function inRange( shadowfiend, objInRange )
 	}
 }
 
-/** @type { ( pSliver: Character ) => void } */
+/** @type { ( pSliver: Character ) => boolean } */
 function onAISliver( shadowfiend )
 {
 	if( !shadowfiend._isSearchEnabled || shadowfiend._isSearching )

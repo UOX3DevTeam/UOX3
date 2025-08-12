@@ -41,7 +41,7 @@ function onUseChecked( pUser, iUsed )
 	return true;
 }
 
-/** @type { ( item: Item, dropper: Character, dest: Item ) => void } */
+/** @type { ( item: Item, dropper: Character, dest: Item ) => number } */
 function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
 {
 	// If any object is dropped on this container, disallow and bounce item back where it came from

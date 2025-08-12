@@ -3,7 +3,7 @@
 // This script handles the return of stolen items to their owners in the event of
 // player dying within X seconds (see stealing.js) of stealing the items
 
-/** @type { ( pDead: Character, iCorpse: Item ) => void } */
+/** @type { ( pDead: Character, iCorpse: Item ) => boolean } */
 function onDeath( pDead, iCorpse )
 {
 	// Loop through items on the corpse, and return stolen items to their original

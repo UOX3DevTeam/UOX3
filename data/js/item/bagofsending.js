@@ -1,6 +1,6 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
-/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	const maxCharges = 30;
@@ -136,7 +136,7 @@ function onCallback0( socket, myTarget )
 	}
 }
 
-/** @type { ( tSock: Socket, baseObj: BaseObject ) => void } */
+/** @type { ( tSock: Socket, baseObj: BaseObject ) => boolean } */
 function onContextMenuRequest( socket, targObj )
 {
 	// handle your own packet with context menu here
@@ -167,7 +167,7 @@ function onContextMenuRequest( socket, targObj )
 	return false;
 }
 
-/** @type { ( tSock: Socket, baseObj: BaseObject, popupEntry: number ) => void } */
+/** @type { ( tSock: Socket, baseObj: BaseObject, popupEntry: number ) => boolean } */
 function onContextMenuSelect( socket, targObj, popupEntry )
 {
 	var pUser = socket.currentChar;

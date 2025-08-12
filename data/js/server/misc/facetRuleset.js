@@ -33,7 +33,7 @@ const regionBladeSpiritTargetOverride = [];
 const regionEnergyVortexTargetOverride = [];
 const regionBardProvokeOverride = [];
 
-/** @type { ( attacker: Character, defender: Character ) => void } */
+/** @type { ( attacker: Character, defender: Character ) => boolean } */
 function onCombatStart( pAttacker, pDefender )
 {
 	var socket = pAttacker.socket;
@@ -290,7 +290,7 @@ function onPickup( iPickedUp, pGrabber )
 
 // Players cannot collide with non-locked down items or shove other players in Trammel/Ilshenar
 // TODO: How is collision with non-locked down items overridden? Client prevents movement through blocking items...
-/** @type { ( targSock: Socket, objColliding: Character, objCollideWith: BaseObject ) => void } */
+/** @type { ( targSock: Socket, objColliding: Character, objCollideWith: BaseObject ) => boolean } */
 function onCollide( trgSock, srcChar, trgObj )
 {
 	if( !ValidateObject( srcChar ) || !ValidateObject( trgObj ))
@@ -475,7 +475,7 @@ function FacetRuleBardProvoke( sourceChar, targetChar )
 	return true;
 }
 
-/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => void } */
+/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => boolean } */
 function onDamage( targetChar, sourceChar, damageValue, damageType )
 {
 	// Allow all damage without a source character, or with a non-tame/non-hirling NPC as the source

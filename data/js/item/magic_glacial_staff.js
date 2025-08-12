@@ -5,7 +5,7 @@
 // Ice Strike - In Corp Del
 // Paralyze - An Ex Del
 
-/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	if( objType == 0 && ValidateObject( objMade ))
@@ -31,7 +31,7 @@ function onCreateDFN( objMade, objType )
 }
 
 // This event only triggers if ITEMSDETECTSPEECH setting in UOX.INI is enabled
-/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => void } */
+/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => null | undefined | number | boolean } */
 function onSpeech( strSaid, pTalking, iTalkingTo )
 {
 	// If player says the words of power for a magic spell enabled on the glacial staff,

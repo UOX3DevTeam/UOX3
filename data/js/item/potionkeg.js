@@ -103,7 +103,7 @@ function HasUserTastedItem( pUser, potionItem )
 	return false;
 }
 
-/** @type { ( item: Item, dropper: Character, dest: Item ) => void } */
+/** @type { ( item: Item, dropper: Character, dest: Item ) => number } */
 function onDropItemOnItem( iDropped, pUser, potionKeg )
 {
 	var socket = pUser.socket;

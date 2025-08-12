@@ -58,7 +58,7 @@ function onTimer( timerObj, timerID )
 	}
 }
 
-/** @type { ( pSliver: Character ) => void } */
+/** @type { ( pSliver: Character ) => boolean } */
 function onAISliver( mNPC )
 {
 	if( !mNPC.atWar )

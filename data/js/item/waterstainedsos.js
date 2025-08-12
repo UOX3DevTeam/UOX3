@@ -14,7 +14,7 @@ const enableAncientSOS = false;
 const ancientSOSHue = 0x481;
 const ancientSOSDropRate = 3 / 20; // 4/55 for ToL+? or 1/20
 
-/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	if( objType == 0 && ValidateObject( objMade ))

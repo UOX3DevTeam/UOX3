@@ -63,7 +63,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
-/** @type { ( targSock: Socket, objColliding: Character, objCollideWith: BaseObject ) => void } */
+/** @type { ( targSock: Socket, objColliding: Character, objCollideWith: BaseObject ) => boolean } */
 function onCollide( srcSock, pUser, iUsed )
 {
 	if( srcSock == null || !CanUseGate( srcSock, pUser ))

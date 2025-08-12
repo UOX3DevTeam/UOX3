@@ -3,7 +3,7 @@
 // Other settings
 const randomizePumpkinCountdown = false; // If true, add/remove +1/-1 seconds to explosion potion countdowns
 
-/** @type { ( thingCreated: BaseObject, dfnCreated: boolean, isPlayer: boolean ) => void } */
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( objMade, objType ) 
 {
 	var idList = [0x0C6B, 0x0C6A, 0x0C6C];

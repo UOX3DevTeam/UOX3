@@ -1,6 +1,6 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
-/** @type { ( caster: Character, target: BaseObject, spellNum: number ) => void } */
+/** @type { ( caster: Character, target: BaseObject, spellNum: number ) => number } */
 function onSpellTargetSelect( myTarget, pCaster, spellID )
 {
 	if( !ValidateObject( pCaster ))

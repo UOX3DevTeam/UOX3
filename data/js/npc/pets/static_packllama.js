@@ -12,7 +12,7 @@ var maxFollowers = GetServerSetting( "MaxFollowers" );
 const petBondingEnabled = GetServerSetting( "PetBondingEnabled" );
 
 // Runs before purchase is validated by server
-/** @type { ( targSock: Socket, objVendor: Character, objItemBought: BaseObject, numItemsBuying: number ) => void } */
+/** @type { ( targSock: Socket, objVendor: Character, objItemBought: BaseObject, numItemsBuying: number ) => boolean } */
 function onBuyFromVendor( pSock, vendor, iBought, numItemsBought )
 {
 	var pUser = pSock.currentChar;
@@ -42,7 +42,7 @@ function onBuyFromVendor( pSock, vendor, iBought, numItemsBought )
 }
 
 // Runs after purchase has been completed
-/** @type { ( targSock: Socket, objVendor: Character, objItemBought: BaseObject, numItemsBought: number ) => void } */
+/** @type { ( targSock: Socket, objVendor: Character, objItemBought: BaseObject, numItemsBought: number ) => boolean } */
 function onBoughtFromVendor( pSock, Vendor, iBought, numItemsBought )
 {
 	if( pSock && iBought )

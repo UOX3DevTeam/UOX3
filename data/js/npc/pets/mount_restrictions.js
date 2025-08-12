@@ -1,6 +1,6 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
-/** @type { ( currChar: Character, targChar: Character ) => void } */
+/** @type { ( currChar: Character, targChar: Character ) => boolean } */
 function onCharDoubleClick( pUser, targChar )
 {
 	// Override restrictions for GMs and Admins
