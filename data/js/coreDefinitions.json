@@ -7340,11 +7340,10 @@
       "name": "onCallback",
       "cppName": "OnCallback",
       "params": {
-        "num": 3,
+        "num": 2,
         "list": [
-          { "name": "tSock",    "type": "Socket", "required": true },
-          { "name": "targeted", "type": "number", "required": true },
-          { "name": "callNum",  "type": "number", "required": true }
+          { "name": "tSock",  "type": "Socket", "required": true },
+          { "name": "target", "type": "Character | Item | null", "required": true }
         ]
       },
       "returns": "void"
