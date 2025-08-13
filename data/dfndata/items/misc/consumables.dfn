@@ -313,7 +313,7 @@ decay=1
 origin=lbr
 }
 
-[recipescroll]
+[base_recipe_scroll]
 { 
 get=base_item
 name=recipe scroll
@@ -324,12 +324,11 @@ amount=1
 decay=1
 script=5061//recipe scroll
 origin=ml
-custominttag=recipeID 0|0
 }
 
-[platemailarmor]
+[skullcap_recipe]
 {//Example of recipe
-get=recipescroll
+get=base_recipe_scroll
 custominttag=recipeID 18
-customstringtag=recipeName platemail (tunic)
+customstringtag=recipeName skullcap
 }
