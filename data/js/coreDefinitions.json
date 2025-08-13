@@ -7258,6 +7258,283 @@
       ]
     },
     {
+      "name": "Gump",
+      "type": "class",
+      "properties": [],
+      "methods": [
+        { "name": "Free",                "cppName": "CGump_Free",                "params": { "num":  0, "list": [] }, "returns": "void" },
+        { "name": "AddBackground",       "cppName": "CGump_AddBackground",       "params": { "num":  5, "list": [
+          { "name": "topLeft",     "type": "number", "required": true },
+          { "name": "topRight",    "type": "number", "required": true },
+          { "name": "bottomLeft",  "type": "number", "required": true },
+          { "name": "bottomRight", "type": "number", "required": true },
+          { "name": "image",       "type": "number", "required": true }
+        ] }, "returns": "void" },
+        { "name": "AddButton",           "cppName": "CGump_AddButton",           "params": { 
+          "sets":
+          [
+            {
+              "num":  6, "list": [
+                { "name": "topLeft",  "type": "number", "required": true },
+                { "name": "topRight", "type": "number", "required": true },
+                { "name": "image",    "type": "number", "required": true },
+                { "name": "x1",       "type": "number", "required": true },
+                { "name": "pageNum",  "type": "number", "required": true },
+                { "name": "buttonId", "type": "number", "required": true }
+              ]
+            },
+            {
+              "num":  7, "list": [
+                { "name": "topLeft",  "type": "number", "required": true },
+                { "name": "topRight", "type": "number", "required": true },
+                { "name": "image1",   "type": "number", "required": true },
+                { "name": "image2",   "type": "number", "required": true },
+                { "name": "x1",       "type": "number", "required": true },
+                { "name": "pageNum",  "type": "number", "required": true },
+                { "name": "buttonId", "type": "number", "required": true }
+              ]
+            }
+          ] }, "returns": "void" },
+        { "name": "AddButtonTileArt",    "cppName": "CGump_AddButtonTileArt",    "params": { "num": 11, "list": [
+          { "name": "topLeft",    "type": "number", "required": true },
+          { "name": "topRight",   "type": "number", "required": true },
+          { "name": "tileIdNorm", "type": "number", "required": true },
+          { "name": "tileIdPush", "type": "number", "required": true },
+          { "name": "buttonType", "type": "number", "required": true },
+          { "name": "pageNum",    "type": "number", "required": true },
+          { "name": "buttonId",   "type": "number", "required": true },
+          { "name": "tileId",     "type": "number", "required": true },
+          { "name": "hue",        "type": "number", "required": true },
+          { "name": "tileX",      "type": "number", "required": true },
+          { "name": "tileY",      "type": "number", "required": true }
+        ] }, "returns": "void" },
+        { "name": "AddPageButton",       "cppName": "CGump_AddPageButton",       "params": {
+          "sets":
+          [
+            {
+              "num":  4, "list": [
+                { "name": "topLeft",  "type": "number", "required": true },
+                { "name": "topRight", "type": "number", "required": true },
+                { "name": "image",    "type": "number", "required": true },
+                { "name": "pageNum",  "type": "number", "required": true }
+              ]
+            },
+            {
+              "num":  5, "list": [
+                { "name": "topLeft",  "type": "number", "required": true },
+                { "name": "topRight", "type": "number", "required": true },
+                { "name": "image1",   "type": "number", "required": true },
+                { "name": "image2",   "type": "number", "required": true },
+                { "name": "pageNum",  "type": "number", "required": true }
+              ]
+            }
+          ] }, "returns": "void" },
+        { "name": "AddCheckbox",         "cppName": "CGump_AddCheckbox",         "params": {
+          "sets":
+          [
+            {
+              "num":  5, "list": [
+                { "name": "topLeft",   "type": "number", "required": true },
+                { "name": "topRight",  "type": "number", "required": true },
+                { "name": "image",     "type": "number", "required": true },
+                { "name": "initState", "type": "number", "required": true },
+                { "name": "relay",     "type": "number", "required": true }
+              ]
+            },
+            {
+              "num":  6, "list": [
+                { "name": "topLeft",   "type": "number", "required": true },
+                { "name": "topRight",  "type": "number", "required": true },
+                { "name": "image1",    "type": "number", "required": true },
+                { "name": "image2",    "type": "number", "required": true },
+                { "name": "initState", "type": "number", "required": true },
+                { "name": "relay",     "type": "number", "required": true }
+              ]
+            }
+          ] }, "returns": "void" },
+        { "name": "AddCheckerTrans",     "cppName": "CGump_AddCheckerTrans",     "params": { "num":  4, "list": [
+          { "name": "x",      "type": "number", "required": true },
+          { "name": "y",      "type": "number", "required": true },
+          { "name": "width",  "type": "number", "required": true },
+          { "name": "height", "type": "number", "required": true }
+        ] }, "returns": "void" },
+        { "name": "AddCroppedText",      "cppName": "CGump_AddCroppedText",      "params": { "num":  6, "list": [
+          { "name": "x",      "type": "number", "required": true },
+          { "name": "y",      "type": "number", "required": true },
+          { "name": "hue",    "type": "number", "required": true },
+          { "name": "width",  "type": "number", "required": true },
+          { "name": "height", "type": "number", "required": true },
+          { "name": "text",   "type": "string", "required": true }
+        ] }, "returns": "void" },
+        { "name": "AddGroup",            "cppName": "CGump_AddGroup",            "params": { "num":  1, "list": [{ "name": "id", "type": "number", "required": true }] }, "returns": "void" },
+        { "name": "EndGroup",            "cppName": "CGump_EndGroup",            "params": { "num":  0, "list": [] }, "returns": "void" },
+        { "name": "AddGump",             "cppName": "CGump_AddGump",             "params": { "num":  3, "max": 4, "list": [
+          { "name": "topLeft",   "type": "number", "required": true },
+          { "name": "topRight",  "type": "number", "required": true },
+          { "name": "image",     "type": "number", "required": true },
+          { "name": "rgbColor",  "type": "number", "required": false }
+        ] }, "returns": "void" },
+        { "name": "AddGumpColor",        "cppName": "CGump_AddGumpColor",        "params": { "num":  4, "list": [
+          { "name": "topLeft",   "type": "number", "required": true },
+          { "name": "topRight",  "type": "number", "required": true },
+          { "name": "image",     "type": "number", "required": true },
+          { "name": "rgbColor",  "type": "number", "required": true }
+        ] }, "returns": "void" },
+        { "name": "AddHTMLGump",         "cppName": "CGump_AddHTMLGump",         "params": { "num":  7, "list": [
+          { "name": "x",            "type": "number",  "required": true },
+          { "name": "y",            "type": "number",  "required": true },
+          { "name": "width",        "type": "number",  "required": true },
+          { "name": "height",       "type": "number",  "required": true },
+          { "name": "hasBorder",    "type": "boolean", "required": true },
+          { "name": "hasScrollbar", "type": "boolean", "required": true },
+          { "name": "text",         "type": "string",  "required": true }
+        ] }, "returns": "void" },
+        { "name": "AddPage",             "cppName": "CGump_AddPage",             "params": { "num":  1, "list": [{ "name": "id", "type": "number", "required": true }] }, "returns": "void" },
+        { "name": "AddPicture",          "cppName": "CGump_AddPicture",          "params": { "num":  3, "list": [
+          { "name": "topLeft",   "type": "number", "required": true },
+          { "name": "topRight",  "type": "number", "required": true },
+          { "name": "image",     "type": "number", "required": true }
+        ] }, "returns": "void" },
+        { "name": "AddPictureColor",     "cppName": "CGump_AddPictureColor",     "params": { "num":  4, "list": [
+          { "name": "topLeft",   "type": "number", "required": true },
+          { "name": "topRight",  "type": "number", "required": true },
+          { "name": "image",     "type": "number", "required": true },
+          { "name": "rgbColor",  "type": "number", "required": true }
+        ] }, "returns": "void" },
+        { "name": "AddPicInPic",         "cppName": "CGump_AddPicInPic",         "params": { "num":  7, "list": [
+          { "name": "x",         "type": "number", "required": true },
+          { "name": "y",         "type": "number", "required": true },
+          { "name": "image",     "type": "number", "required": true },
+          { "name": "spriteX",   "type": "number", "required": true },
+          { "name": "spriteY",   "type": "number", "required": true },
+          { "name": "width",     "type": "number", "required": true },
+          { "name": "height",    "type": "number", "required": true }
+        ] }, "returns": "void" },
+        { "name": "AddItemProperty",     "cppName": "CGump_AddItemProperty",     "params": { "num":  1, "list": [{ "name": "obj", "type": "BaseObject", "required": true }] }, "returns": "void" },
+        { "name": "AddRadio",            "cppName": "CGump_AddRadio",            "params": {
+          "sets":
+          [
+            {
+              "num":  5, "list": [
+                { "name": "topLeft",   "type": "number", "required": true },
+                { "name": "topRight",  "type": "number", "required": true },
+                { "name": "image",     "type": "number", "required": true },
+                { "name": "initState", "type": "number", "required": true },
+                { "name": "relay",     "type": "number", "required": true }
+              ]
+            },
+            {
+              "num":  6, "list": [
+                { "name": "topLeft",   "type": "number", "required": true },
+                { "name": "topRight",  "type": "number", "required": true },
+                { "name": "image1",    "type": "number", "required": true },
+                { "name": "image2",    "type": "number", "required": true },
+                { "name": "initState", "type": "number", "required": true },
+                { "name": "relay",     "type": "number", "required": true }
+              ]
+            }
+          ] }, "returns": "void" },
+        { "name": "AddText",             "cppName": "CGump_AddText",             "params": { "num":  4, "list": [
+          { "name": "x",    "type": "number", "required": true },
+          { "name": "y",    "type": "number", "required": true },
+          { "name": "hue",  "type": "number", "required": true },
+          { "name": "text", "type": "string", "required": true }
+        ] }, "returns": "void" },
+        { "name": "AddTextEntry",        "cppName": "CGump_AddTextEntry",        "params": { "num":  8, "list": [
+          { "name": "topLeft",        "type": "number", "required": true },
+          { "name": "topRight",       "type": "number", "required": true },
+          { "name": "width",          "type": "number", "required": true },
+          { "name": "height",         "type": "number", "required": true },
+          { "name": "hue",            "type": "number", "required": true },
+          { "name": "relay",          "type": "number", "required": true },
+          { "name": "initTextIndex",  "type": "number", "required": true },
+          { "name": "text",           "type": "string", "required": true }
+        ] }, "returns": "void" },
+        { "name": "AddTextEntryLimited", "cppName": "CGump_AddTextEntryLimited", "params": { "num":  9, "list": [
+          { "name": "topLeft",        "type": "number", "required": true },
+          { "name": "topRight",       "type": "number", "required": true },
+          { "name": "width",          "type": "number", "required": true },
+          { "name": "height",         "type": "number", "required": true },
+          { "name": "hue",            "type": "number", "required": true },
+          { "name": "relay",          "type": "number", "required": true },
+          { "name": "initTextIndex",  "type": "number", "required": true },
+          { "name": "text",           "type": "string", "required": true },
+          { "name": "textEntrySize",  "type": "number", "required": true }
+        ] }, "returns": "void" },
+        { "name": "AddTiledGump",        "cppName": "CGump_AddTiledGump",        "params": { "num":  5, "list": [
+          { "name": "x",            "type": "number", "required": true },
+          { "name": "y",            "type": "number", "required": true },
+          { "name": "width",        "type": "number", "required": true },
+          { "name": "height",       "type": "number", "required": true },
+          { "name": "gumpId",       "type": "number", "required": true }
+        ] }, "returns": "void" },
+        { "name": "AddToolTip",          "cppName": "CGump_AddToolTip",          "params": { "num": 1, "max": 11, "list": [
+          { "name": "tooltip",           "type": "number", "required": true },
+          { "name": "value1",            "type": "string", "required": false },
+          { "name": "value2",            "type": "string", "required": false },
+          { "name": "value3",            "type": "string", "required": false },
+          { "name": "value4",            "type": "string", "required": false },
+          { "name": "value5",            "type": "string", "required": false },
+          { "name": "value6",            "type": "string", "required": false },
+          { "name": "value7",            "type": "string", "required": false },
+          { "name": "value8",            "type": "string", "required": false },
+          { "name": "value9",            "type": "string", "required": false },
+          { "name": "value10",           "type": "string", "required": false }
+        ] }, "returns": "void" },
+        { "name": "AddXMFHTMLGump",      "cppName": "CGump_AddXMFHTMLGump",      "params": { "num":  7, "list": [
+          { "name": "x",            "type": "number",  "required": true },
+          { "name": "y",            "type": "number",  "required": true },
+          { "name": "width",        "type": "number",  "required": true },
+          { "name": "height",       "type": "number",  "required": true },
+          { "name": "nmbr",         "type": "number",  "required": true },
+          { "name": "hasBorder",    "type": "boolean", "required": true },
+          { "name": "hasScrollbar", "type": "boolean", "required": true }
+        ] }, "returns": "void" },
+        { "name": "AddXMFHTMLGumpColor", "cppName": "CGump_AddXMFHTMLGumpColor", "params": { "num":  8, "list": [
+          { "name": "x",            "type": "number",  "required": true },
+          { "name": "y",            "type": "number",  "required": true },
+          { "name": "width",        "type": "number",  "required": true },
+          { "name": "height",       "type": "number",  "required": true },
+          { "name": "nmbr",         "type": "number",  "required": true },
+          { "name": "hasBorder",    "type": "boolean", "required": true },
+          { "name": "hasScrollbar", "type": "boolean", "required": true },
+          { "name": "rgbColor",     "type": "number",  "required": true }
+        ] }, "returns": "void" },
+        { "name": "AddXMFHTMLTok",       "cppName": "CGump_AddXMFHTMLTok",       "params": { "num": 11, "list": [
+          { "name": "x",            "type": "number",  "required": true },
+          { "name": "y",            "type": "number",  "required": true },
+          { "name": "width",        "type": "number",  "required": true },
+          { "name": "height",       "type": "number",  "required": true },
+          { "name": "hasBorder",    "type": "boolean", "required": true },
+          { "name": "hasScrollbar", "type": "boolean", "required": true },
+          { "name": "rgbColor",     "type": "number",  "required": true },
+          { "name": "nmbr",         "type": "number",  "required": true },
+          { "name": "cliloc1",      "type": "string",  "required": true },
+          { "name": "cliloc2",      "type": "string",  "required": true },
+          { "name": "cliloc3",      "type": "string",  "required": true }
+        ] }, "returns": "void" },
+        { "name": "MasterGump",          "cppName": "CGump_MasterGump",          "params": { "num":  1, "list": [{ "name": "gumpId", "type": "number", "required": true }] }, "returns": "void" },
+        { "name": "NoClose",             "cppName": "CGump_NoClose",             "params": { "num":  0, "list": [] }, "returns": "void" },
+        { "name": "NoDispose",           "cppName": "CGump_NoDispose",           "params": { "num":  0, "list": [] }, "returns": "void" },
+        { "name": "NoMove",              "cppName": "CGump_NoMove",              "params": { "num":  0, "list": [] }, "returns": "void" },
+        { "name": "NoResize",            "cppName": "CGump_NoResize",            "params": { "num":  0, "list": [] }, "returns": "void" },
+        { "name": "Send",                "cppName": "CGump_Send",                "params": { "num":  1, "list": [{ "name": "target", "type": "Socket | Character", "required": true }] }, "returns": "void" }      ]
+    },
+    {
+      "name": "GumpData",
+      "type": "class",
+      "properties": [
+        { "name": "buttons",  "cppID": "CGumpData_Button", "cppType": "JSPROP_ENUMANDPERM", "readOnly": true, "type": "number" },
+        { "name": "IDs",      "cppID": "CGumpData_ID",     "cppType": "JSPROP_ENUMANDPERM", "readOnly": true, "type": "number" }
+      ],
+      "methods": [
+        { "name": "Free",      "cppName": "CGumpData_Free",      "params": { "num": 0, "list": [] }, "returns": "void" },
+        { "name": "getButton", "cppName": "CGumpData_GetButton", "params": { "num": 1, "list": [ { "name": "index", "type": "number", "required": true } ] }, "returns": "number" },
+        { "name": "getID",     "cppName": "CGumpData_GetId",     "params": { "num": 1, "list": [ { "name": "index", "type": "number", "required": true } ] }, "returns": "number" },
+        { "name": "getEdit",   "cppName": "CGumpData_GetEdit",   "params": { "num": 1, "list": [ { "name": "index", "type": "number", "required": true } ] }, "returns": "string" }
+      ]
+    },
+    {
       "name": "MiningData",
       "aka": "MiningData_st",
       "properties": [

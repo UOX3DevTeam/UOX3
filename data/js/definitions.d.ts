@@ -570,6 +570,55 @@ declare global {
     GT_CHAOS = 2,  
     GT_UNKNOWN = 3,
   }
+  class Gump {
+    AddBackground( topLeft: number, topRight: number, bottomLeft: number, bottomRight: number, image: number ): void;
+    AddButton( topLeft: number, topRight: number, image: number, x1: number, pageNum: number, buttonId: number ): void;
+    AddButton( topLeft: number, topRight: number, image1: number, image2: number, x1: number, pageNum: number, buttonId: number ): void;
+    AddButtonTileArt( topLeft: number, topRight: number, tileIdNorm: number, tileIdPush: number, buttonType: number, pageNum: number, buttonId: number, tileId: number, hue: number, tileX: number, tileY: number ): void;
+    AddCheckbox( topLeft: number, topRight: number, image: number, initState: number, relay: number ): void;
+    AddCheckbox( topLeft: number, topRight: number, image1: number, image2: number, initState: number, relay: number ): void;
+    AddCheckerTrans( x: number, y: number, width: number, height: number ): void;
+    AddCroppedText( x: number, y: number, hue: number, width: number, height: number, text: string ): void;
+    AddGroup( id: number ): void;
+    AddGump( topLeft: number, topRight: number, image: number, rgbColor?: number ): void;
+    AddGumpColor( topLeft: number, topRight: number, image: number, rgbColor: number ): void;
+    AddHTMLGump( x: number, y: number, width: number, height: number, hasBorder: boolean, hasScrollbar: boolean, text: string ): void;
+    AddItemProperty( obj: BaseObject ): void;
+    AddPage( id: number ): void;
+    AddPageButton( topLeft: number, topRight: number, image: number, pageNum: number ): void;
+    AddPageButton( topLeft: number, topRight: number, image1: number, image2: number, pageNum: number ): void;
+    AddPicInPic( x: number, y: number, image: number, spriteX: number, spriteY: number, width: number, height: number ): void;
+    AddPicture( topLeft: number, topRight: number, image: number ): void;
+    AddPictureColor( topLeft: number, topRight: number, image: number, rgbColor: number ): void;
+    AddRadio( topLeft: number, topRight: number, image: number, initState: number, relay: number ): void;
+    AddRadio( topLeft: number, topRight: number, image1: number, image2: number, initState: number, relay: number ): void;
+    AddText( x: number, y: number, hue: number, text: string ): void;
+    AddTextEntry( topLeft: number, topRight: number, width: number, height: number, hue: number, relay: number, initTextIndex: number, text: string ): void;
+    AddTextEntryLimited( topLeft: number, topRight: number, width: number, height: number, hue: number, relay: number, initTextIndex: number, text: string, textEntrySize: number ): void;
+    AddTiledGump( x: number, y: number, width: number, height: number, gumpId: number ): void;
+    AddToolTip( tooltip: number, value1?: string, value2?: string, value3?: string, value4?: string, value5?: string, value6?: string, value7?: string, value8?: string, value9?: string, value10?: string ): void;
+    AddXMFHTMLGump( x: number, y: number, width: number, height: number, nmbr: number, hasBorder: boolean, hasScrollbar: boolean ): void;
+    AddXMFHTMLGumpColor( x: number, y: number, width: number, height: number, nmbr: number, hasBorder: boolean, hasScrollbar: boolean, rgbColor: number ): void;
+    AddXMFHTMLTok( x: number, y: number, width: number, height: number, hasBorder: boolean, hasScrollbar: boolean, rgbColor: number, nmbr: number, cliloc1: string, cliloc2: string, cliloc3: string ): void;
+    EndGroup(): void;
+    Free(): void;
+    MasterGump( gumpId: number ): void;
+    NoClose(): void;
+    NoDispose(): void;
+    NoMove(): void;
+    NoResize(): void;
+    Send( target: Socket | Character ): void;
+    constructor();
+  }
+  class GumpData {
+    readonly  buttons: number;
+    readonly  IDs:     number;
+    Free(): void;
+    getButton( index: number ): number;
+    getEdit( index: number ): string;
+    getID( index: number ): number;
+    constructor();
+  }
   interface Item extends BaseObject {
               ac:                number;
               ammoFX:            number;
