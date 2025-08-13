@@ -1,3 +1,4 @@
+
 {
   "globalFuncs": [
     {
@@ -849,7 +850,7 @@
           { "name": "...extra", "type": "any[]", "required": true }
         ]
       },
-      "returns": "boolean"
+      "returns": "any"
     },
     {
       "name": "DoesEventExist",
