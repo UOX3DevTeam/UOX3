@@ -7,6 +7,7 @@ function CommandRegistration()
 	RegisterCommand( "dupe", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_DUPE( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 38, socket.language );

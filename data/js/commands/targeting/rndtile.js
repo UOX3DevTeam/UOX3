@@ -12,6 +12,7 @@ function CommandRegistration()
 	RegisterCommand( "rndtile", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RNDTILE( pSock, cmdString )
 {
 	if( !pSock )

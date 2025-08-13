@@ -9,6 +9,7 @@ function CommandRegistration()
 	RegisterCommand( "disablemoongates", 10, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ENABLEMOONGATES( socket, cmdString )
 {
 	var pUser = socket.currentChar;
@@ -32,6 +33,7 @@ function command_ENABLEMOONGATES( socket, cmdString )
 	ReloadJSFile( 5011 );// reloads items/moongate.js
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_DISABLEMOONGATES( socket, cmdString )
 {
 	var pUser = socket.currentChar;

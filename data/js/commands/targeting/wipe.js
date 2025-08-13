@@ -9,12 +9,14 @@ function CommandRegistration()
 	RegisterCommand( "iwipe", 10, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_WIPE( socket, cmdString )
 {
 	iWipe = false;
 	CallWipe( socket, cmdString );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_IWIPE( socket, cmdString )
 {
 	// Inverted wipe - wipes area OUTSIDE specified target locations/coordinates

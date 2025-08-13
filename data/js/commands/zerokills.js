@@ -5,6 +5,7 @@ function CommandRegistration()
 	RegisterCommand( "zerokills", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ZEROKILLS( socket, cmdString )
 {
 	socket.SysMessage( GetDictionaryEntry( 22, socket.language )); // Zeroing all player kills...

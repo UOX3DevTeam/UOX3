@@ -9,6 +9,7 @@ function CommandRegistration()
 	RegisterCommand( "npccircle", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_FOLLOW( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 228, socket.language ); // Select player for the NPC to follow.
@@ -40,6 +41,7 @@ function onCallback1( socket, ourObj )
 	socket.tempObj = null;
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_NPCRECT( socket, cmdString )
 {
 	if( cmdString )
@@ -66,6 +68,7 @@ function onCallback2( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_NPCCIRCLE( socket, cmdString )
 {
 	if( cmdString )

@@ -6,6 +6,7 @@ function CommandRegistration()
 	RegisterCommand( "fix", 4, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_FIX( socket, cmdString )
 {
 	var mChar = socket.currentChar;

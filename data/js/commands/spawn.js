@@ -9,6 +9,7 @@ function CommandRegistration()
 	RegisterCommand( "disablespawns", 10, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ENABLESPAWNS( socket, cmdString )
 {
 	var pUser = socket.currentChar;
@@ -31,6 +32,7 @@ function command_ENABLESPAWNS( socket, cmdString )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_DISABLESPAWNS( socket, cmdString )
 {
 	var pUser = socket.currentChar;

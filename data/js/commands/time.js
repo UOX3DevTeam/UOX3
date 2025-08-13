@@ -7,6 +7,7 @@ function CommandRegistration()
 	RegisterCommand( "time", 4, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_TIME( socket, cmdString )
 {
 	TellTime( socket );

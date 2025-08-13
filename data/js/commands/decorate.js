@@ -126,6 +126,7 @@ function CommandRegistration()
 	RegisterCommand( "decorate", 10, true ); // Admin only command
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_DECORATE( socket, cmdString )
 {
 	// Reset arrays used for saving/loading decorations

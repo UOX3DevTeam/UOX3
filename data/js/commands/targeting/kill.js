@@ -11,6 +11,7 @@ function CommandRegistration()
 	RegisterCommand( "shavebeard", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_KILL( socket, cmdString )
 {
 	if( cmdString )
@@ -25,12 +26,14 @@ function command_KILL( socket, cmdString )
 }
 
 // Alias of 'kill hair
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_SHAVEHAIR( socket, cmdString )
 {
 	command_KILL( socket, cmdString + "hair" );
 }
 
 // Alias of 'kill beard
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_SHAVEBEARD( socket, cmdString )
 {
 	command_KILL( socket, cmdString + "beard" );
@@ -94,12 +97,14 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RESURRECT( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 194, socket.language ); // Select character to resurrect.
 	socket.CustomTarget( 1, targMsg );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RES( socket, cmdString )
 {
 	command_RESURRECT( socket, cmdString );

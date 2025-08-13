@@ -7,6 +7,7 @@ function CommandRegistration()
 	RegisterCommand( "cstats", 4, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ISTATS( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 182, socket.language ); // Select item to inspect.
@@ -119,6 +120,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_CSTATS( socket, cmdString )
 {
 	var target = CalcCharFromSer( socket.GetDWord( 7 ));

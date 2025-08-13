@@ -6,6 +6,7 @@ function CommandRegistration()
 	RegisterCommand( "xgate", 4, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_XGATE( socket, cmdString )
 {
 	var mChar = socket.currentChar;

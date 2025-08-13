@@ -8,6 +8,7 @@ function CommandRegistration()
 	RegisterCommand( "release", 4, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_JAIL( socket, cmdString )
 {
 	socket.tempint = 86400;
@@ -40,6 +41,7 @@ function onCallback0( socket, ourObj )
 	socket.tempint = 0;
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RELEASE( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 181, socket.language ); // Select player to release from jail.

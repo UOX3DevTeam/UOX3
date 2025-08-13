@@ -9,6 +9,7 @@ function CommandRegistration()
 	RegisterCommand( "mark", 4, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_GATE( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 226, socket.language );
@@ -33,6 +34,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RECALL( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 224, socket.language ); // Select rune from which to recall.
@@ -86,6 +88,7 @@ function onCallback1( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_MARK( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 225 ); // Select rune to mark.

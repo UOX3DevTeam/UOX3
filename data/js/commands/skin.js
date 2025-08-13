@@ -7,6 +7,7 @@ function CommandRegistration()
 	RegisterCommand( "skin", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_SKIN( socket, cmdString )
 {
 	if( cmdString )

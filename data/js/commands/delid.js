@@ -7,6 +7,7 @@ function CommandRegistration()
 	RegisterCommand( "delid", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_DELID( socket, cmdString )
 {
 	if( cmdString )

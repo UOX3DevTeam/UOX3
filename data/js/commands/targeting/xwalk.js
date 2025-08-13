@@ -13,6 +13,7 @@ function CommandRegistration()
 	RegisterCommand( "xturn", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_XWALK( socket, cmdString )
 {
 	var pUser = socket.currentChar;
@@ -33,6 +34,7 @@ function command_XWALK( socket, cmdString )
 	pUser.CustomTarget( 0, GetDictionaryEntry( 8254, socket.language )); // Select NPC to move remotely using xwalk:
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_XRUN( socket, cmdString )
 {
 	var pUser = socket.currentChar;
@@ -53,6 +55,7 @@ function command_XRUN( socket, cmdString )
 	pUser.CustomTarget( 0, GetDictionaryEntry( 8253, socket.language )); // Select NPC to move remotely using xrun:
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_XTURN( socket, cmdString )
 {
 	var pUser = socket.currentChar;

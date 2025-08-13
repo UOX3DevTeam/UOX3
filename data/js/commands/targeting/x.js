@@ -9,6 +9,7 @@ function CommandRegistration()
 	RegisterCommand( "xgo", 4, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_XTELEPORT( socket, cmdString )
 {
 	if( cmdString )
@@ -68,6 +69,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_XGO( socket, cmdString )
 {
 	if( cmdString )

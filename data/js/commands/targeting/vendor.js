@@ -10,6 +10,7 @@ function CommandRegistration()
 	RegisterCommand( "removeshop", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_BUY( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 233, socket.language ); // Select the shopkeeper you'd like to buy from.
@@ -23,6 +24,7 @@ function onCallback0( socket, ourObj )
 		socket.BuyFrom( ourObj );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_SELL( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 236, socket.language ); // Select the NPC to sell to.
@@ -38,6 +40,7 @@ function onCallback1( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_REMOVESHOP( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 262, socket.language ); // Select shopkeeper to remove shop packs from.

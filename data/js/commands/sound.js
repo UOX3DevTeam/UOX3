@@ -9,6 +9,7 @@ function CommandRegistration()
 	RegisterCommand( "midi", 8, true ); // Alias for music command
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_SFX( socket, cmdString )
 {
 	if( cmdString )
@@ -18,6 +19,7 @@ function command_SFX( socket, cmdString )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_MUSIC( socket, cmdString )
 {
 	if( cmdString )
@@ -27,6 +29,7 @@ function command_MUSIC( socket, cmdString )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_MIDI( socket, cmdString )
 {
 	command_MUSIC( socket, cmdString )

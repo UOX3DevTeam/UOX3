@@ -7,6 +7,7 @@ function CommandRegistration()
 	RegisterCommand( "makeshop", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_MAKESHOP( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 232, socket.language ); // Select the character to add shopkeeper buy containers to.

@@ -10,18 +10,21 @@ function CommandRegistration()
 	RegisterCommand( "unban", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_KICK( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 196, socket.language ); // Select character to kick.
 	socket.CustomTarget( 0, targMsg );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_DISCONNECT( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 196, socket.language ); // Select character to kick.
 	socket.CustomTarget( 0, targMsg );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_BAN( socket, cmdString )
 {
 	var banDuration = 60 * 24;
@@ -43,6 +46,7 @@ function command_BAN( socket, cmdString )
 	socket.CustomTarget( 1, targMsg, 1 );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_UNBAN( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 2019, socket.language); // Select character to unban.

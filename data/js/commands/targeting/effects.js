@@ -7,6 +7,7 @@ function CommandRegistration()
 	RegisterCommand( "npcaction", 8, true ); // Play an action on targeted NPC (or player) character
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ACTION( socket, cmdString )
 {
 	if( cmdString )
@@ -31,6 +32,7 @@ function command_ACTION( socket, cmdString )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_BOLT( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 195, socket.language ); // Select character to bolt.
@@ -47,6 +49,7 @@ function onCallback1( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_NPCACTION( socket, cmdString )
 {
 	if( cmdString )

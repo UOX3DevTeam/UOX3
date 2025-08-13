@@ -7,6 +7,7 @@ function CommandRegistration()
 	RegisterCommand( "instabond", 10, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_INSTABOND( socket, cmdString )
 {
 	socket.CustomTarget( 0, GetDictionaryEntry( 19324, socket.language ));//Select a pet to instantly bond.

@@ -8,6 +8,7 @@ function CommandRegistration()
 	RegisterCommand( "cleanup", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_CLEANUP( socket, cmdString )
 {
 	socket.SysMessage( GetDictionaryEntry( 83, socket.language )); // Cleaning corpses and closing gates...

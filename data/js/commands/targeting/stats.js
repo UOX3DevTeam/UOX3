@@ -11,6 +11,7 @@ function CommandRegistration()
 	RegisterCommand( "mana", 4, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_FULLSTATS( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 243, socket.language ); // Select creature to restore full stats.
@@ -38,6 +39,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_HEAL( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 227, socket.language ); // Select person to heal.
@@ -65,6 +67,7 @@ function onCallback1( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_STAMINA( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 231, socket.language ); // Select person to refresh.
@@ -82,6 +85,7 @@ function onCallback2( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_MANA( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 230, socket.language ); // Select person to restore mana to.
@@ -99,6 +103,7 @@ function onCallback3( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_CURE( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 1974, socket.language ); // Select person to cure.

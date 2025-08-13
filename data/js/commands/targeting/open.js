@@ -7,6 +7,7 @@ function CommandRegistration()
 	RegisterCommand( "openlayer", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_OPENBANK( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 186, socket.language ); // Select target to open bank of.
@@ -22,6 +23,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_OPENLAYER( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 53, socket.language ); // Select the character to open the container on.

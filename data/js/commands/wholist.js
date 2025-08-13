@@ -17,21 +17,25 @@ var adminNpcListUpdated = 0;
 var adminNpcListForceUpdate = false;
 const charAdminTooltipClilocID = 1042971; // Cliloc ID to use for tooltips. 1042971 should work with clients from ~v3.0.x to modern day
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_WHOLIST( socket, cmdString )
 {
 	ShowPlayerList( socket, cmdString, null, null );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_PLAYERADMIN( socket, cmdString )
 {
 	ShowPlayerList( socket, cmdString, null, null );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_FORCEWHO( socket, cmdString )
 {
 	ShowPlayerList( socket, "force", null, null );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_NPCADMIN( socket, cmdString )
 {
 	ShowNpcList( socket, "npcadmin", null, null );

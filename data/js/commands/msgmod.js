@@ -7,6 +7,7 @@ function CommandRegistration()
 	RegisterCommand( "msgmod", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_MSGMOD( socket, cmdString )
 {
 	var pUser = socket.currentChar;

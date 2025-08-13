@@ -6,6 +6,7 @@ function CommandRegistration()
 	RegisterCommand( "allmove", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ALLMOVE( socket, cmdString )
 {
 	var pUser = socket.currentChar;

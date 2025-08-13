@@ -10,6 +10,7 @@ function CommandRegistration()
 	RegisterCommand( "removescptrig", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_GETSCPTRIG( socket, cmdString )
 {
 	socket.CustomTarget( 0, GetDictionaryEntry( 2041, socket.language )); // Select target to get script triggers for:
@@ -37,6 +38,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_SETSCPTRIG( socket, cmdString )
 {
 	if( cmdString )
@@ -82,6 +84,7 @@ function onCallback1( socket, ourObj )
 }
 
 // Add a new script trigger to an object's list of triggers
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ADDSCPTRIG( socket, cmdString )
 {
 	if( cmdString )
@@ -116,6 +119,7 @@ function onCallback2( socket, ourObj )
 }
 
 // Remove specified script trigger from object
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_REMOVESCPTRIG( socket, cmdString )
 {
 	if( cmdString )

@@ -9,6 +9,7 @@ function CommandRegistration()
 	RegisterCommand( "houseicons", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_HOUSEICONS( socket, cmdString )
 {
 	var pUser = socket.currentChar;

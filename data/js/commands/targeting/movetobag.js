@@ -8,6 +8,7 @@ function CommandRegistration()
 	RegisterCommand( "bringtopack", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_MOVETOBAG( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 197, socket.language ); // Select an item to move into your bag.
@@ -15,6 +16,7 @@ function command_MOVETOBAG( socket, cmdString )
 }
 
 // Alias of MOVETOBAG
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_BRINGTOPACK( socket, cmdString )
 {
 	command_MOVETOBAG( socket, cmdString );

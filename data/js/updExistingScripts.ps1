@@ -35,7 +35,10 @@ $content.events | ForEach-Object {
   $_ | Add-Member -MemberType NoteProperty -Name "JSDoc" -Value $jsDoc
 }
 
-#$content.events | Select-Object -Property name, regex, jsdoc | Format-Table
+$possibles = $content.events | Select-Object -Property name, Regex, JSDoc
+
+# Now add the extra e.g. command registration
+$possibles += @( [PSCustomObject]@{ name = "Command Registration"; Regex = "function command_.+\("; JSDoc = '/** @type { ( socket: Socket, cmdString: string ) => void } */'  } )
 
 $jsFiles = Get-ChildItem -Path $PSScriptRoot -Recurse -Include *.js
 foreach( $js in $jsFiles ) {
@@ -45,7 +48,7 @@ foreach( $js in $jsFiles ) {
   $anyChange = $false
   $inserts = @()
   for( $line = 0 ; $line -lt $lines.Length; $line++ ) {
-    foreach( $possible in $content.events ) {
+    foreach( $possible in $possibles ) {
       #Write-Output "Checking $($possible.name)"
       if( $lines[$line] -match $possible.Regex ) {
         # Got a match ... did the previous line look like JSDoc?

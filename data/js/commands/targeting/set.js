@@ -8,6 +8,7 @@ function CommandRegistration()
 	RegisterCommand( "setpoisoned", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_SET( socket, cmdString )
 {
 	if( cmdString )
@@ -1153,6 +1154,7 @@ function onCallback1( socket, ourObj )
 	socket.tempObj = null;
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_SETPOISONED( socket, cmdString )
 {
 	if( cmdString )

@@ -11,11 +11,13 @@ function CommandRegistration()
 }
 
 // Alias of TELESTUFF
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_MOVE( socket, cmdString )
 {
 	command_TELESTUFF( socket, cmdString );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_TELESTUFF( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 250, socket.language ); // Select player/object to teleport.
@@ -80,6 +82,7 @@ function onCallback1( socket, ourObj )
 	socket.tempObj = null;
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_TELE( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 185, socket.language ); // Select teleport target.
@@ -87,6 +90,7 @@ function command_TELE( socket, cmdString )
 }
 
 // Alias of TELE
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_TELEPORT( socket, cmdString )
 {
 	command_TELE( socket, cmdString );

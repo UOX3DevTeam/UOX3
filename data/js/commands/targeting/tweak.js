@@ -455,6 +455,7 @@ function CommandRegistration()
 	RegisterCommand( "props", 8, true ); // alias
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_TWEAK( pSocket, cmdString )
 {
 	if( GetServerSetting( "ServerLanguage" ) == 7 || GetServerSetting( "ServerLanguage" ) == 0 && pSocket.language == 24 )
@@ -486,6 +487,7 @@ function command_TWEAK( pSocket, cmdString )
 }
 
 // Alias of TWEAK
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_PROPS( pSocket, cmdString )
 {
 	command_TWEAK( pSocket, cmdString );

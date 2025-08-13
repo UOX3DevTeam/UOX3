@@ -30,6 +30,7 @@ function CommandRegistration()
 }
 
 //Repeated Command: INCX <value>
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RINCX( pSock, execString )
 {
 	if( !isNaN( execString ))
@@ -69,6 +70,7 @@ function onCallback0( pSock, myTarget )
 }
 
 //Repeated Command: INCY <value>
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RINCY( pSock, execString )
 {
 	if( !isNaN( execString ))
@@ -108,6 +110,7 @@ function onCallback1( pSock, myTarget )
 }
 
 //Repeated Command: INCZ <value>
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RINCZ( pSock, execString )
 {
 	if( !isNaN( execString ))
@@ -146,6 +149,7 @@ function onCallback2( pSock, myTarget )
 }
 
 //Repeated Command: SET TYPE <type>
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RTYPE( pSock, execString )
 {
 	if( !isNaN( execString ))
@@ -185,6 +189,7 @@ function onCallback4( pSock, myTarget )
 }
 
 //Repeated Command: DYE <hex-id>
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RDYE( pSock, execString )
 {
 	if( !isNaN( execString ))
@@ -222,6 +227,7 @@ function onCallback5( pSock, myTarget )
 }
 
 //Repeated Command: ADD <hex-id>
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RADD( pSock, execString )
 {
 	// if( !isNaN( execString ))
@@ -349,11 +355,13 @@ function onCallback6( pSock, myTarget )
 }
 
 //Repeated Command: REMOVE
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RREMOVE( pSock, execString )
 {
 	pSock.CustomTarget( 7, GetDictionaryEntry( 8938, pSock.language ), 1 ); // Which object do you wish to remove?
 }
 //Repeated Command: M DELETE
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_M( pSock, execString )
 {
 	var splitString = execString.split( " " );
@@ -459,6 +467,7 @@ function onCallback7( pSock, myTarget )
 }
 
 //Repeated Command: ADD ITEM <item-id from dfns>
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RADDITEM( pSock, execString )
 {
 	pSock.xText = execString;
@@ -548,6 +557,7 @@ function onCallback8( pSock, myTarget )
 }
 
 //Repeated Command: TELE <select target location>
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RTELE( pSock, execString )
 {
 	pSock.CustomTarget( 9, GetDictionaryEntry( 8942, pSock.language )); // Select location to teleport to:
@@ -582,6 +592,7 @@ function onCallback9( pSock, myTarget )
 }
 
 //Repeated Command: ADD NPC <npc-id from DFNs>
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RADDNPC( pSock, execString )
 {
 	pSock.xText = execString;
@@ -627,6 +638,7 @@ function onCallback10( pSock, myTarget )
 }
 
 //Repeated Command: ADD SPAWNER <item-id from dfns>
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RADDSPAWNER( pSock, execString )
 {
 	pSock.xText = execString;
@@ -711,6 +723,7 @@ function onCallback11( pSock, myTarget )
 }
 
 //Repeated Command: RINCID <value>
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RINCID( pSock, execString )
 {
 	if( !isNaN( execString ))
@@ -749,6 +762,7 @@ function onCallback12( pSock, myTarget )
 }
 
 // Repeated Command: RMOVABLE <value>
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RMOVABLE( pSock, execString )
 {
 	if( !isNaN( execString ))
@@ -788,6 +802,7 @@ function onCallback13( pSock, myTarget )
 }
 
 // Repeated Command: RNODECAY <value>
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RNODECAY( pSock, execString )
 {
 	pSock.CustomTarget( 14, GetDictionaryEntry( 8946, pSock.language )); // Select target to set as non-decayable:

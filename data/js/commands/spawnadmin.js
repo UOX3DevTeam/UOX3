@@ -13,6 +13,7 @@ var spawnerListUpdated = 0;
 var spawnerListTooltipClilocID = 1042971; // Cliloc ID to use for tooltips. 1042971 should work with clients from ~v3.0.x to modern day
 var spawnerListForceUpdate = false;
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_SPAWNADMIN( socket, cmdString )
 {
 	ShowSpawnerList( socket, cmdString, null, null );

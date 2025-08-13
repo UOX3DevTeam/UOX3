@@ -10,6 +10,7 @@ function CommandRegistration()
 	RegisterCommand( "deletechar", 10, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_REMOVE( socket, cmdString )
 {
 	socket.tempint = null;
@@ -27,6 +28,7 @@ function command_REMOVE( socket, cmdString )
 }
 
 // Alias for REMOVE command
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_DELETE( socket, cmdString )
 {
 	command_REMOVE( socket, cmdString );
@@ -146,6 +148,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_DELETECHAR( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 1618, socket.language ); // Which player do you wish to delete?
@@ -170,6 +173,7 @@ function onCallback1( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_REMOVEMULTI( socket, cmdString )
 {
 	socket.tempint = null;

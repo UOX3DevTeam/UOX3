@@ -7,6 +7,7 @@ function CommandRegistration()
 	RegisterCommand( "addsign", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ADDSIGN( socket, cmdString )
 {
 	var pUser = socket.currentChar;

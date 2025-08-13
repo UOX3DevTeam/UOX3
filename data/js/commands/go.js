@@ -9,6 +9,7 @@ function CommandRegistration()
 	RegisterCommand( "go", 4, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_GO( socket, cmdString )
 {
 	var mChar = socket.currentChar;

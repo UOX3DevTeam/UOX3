@@ -5,6 +5,7 @@ function CommandRegistration()
 	RegisterCommand( "acctlogins", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ACCTLOGINS( socket, cmdString )
 {
 	if( cmdString )

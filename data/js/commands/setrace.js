@@ -7,6 +7,7 @@ function CommandRegistration()
 	RegisterCommand( "setrace", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_SETRACE( socket, cmdString )
 {
 	if( cmdString )

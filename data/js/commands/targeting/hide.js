@@ -8,6 +8,7 @@ function CommandRegistration()
 	RegisterCommand( "unhide", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_HIDE( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 244, socket.language );
@@ -30,6 +31,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_UNHIDE( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 245, socket.language ); // Select creature to reveal.

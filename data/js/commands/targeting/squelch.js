@@ -6,6 +6,7 @@ function CommandRegistration()
 	RegisterCommand( "squelch", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_MUTE( socket, cmdString )
 {
 	if( cmdString )
@@ -22,6 +23,7 @@ function command_MUTE( socket, cmdString )
 	socket.CustomTarget( 0, targMsg );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_SQUELCH( socket, cmdString )
 {
 	if( cmdString )

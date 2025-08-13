@@ -6,6 +6,7 @@ function CommandRegistration()
 	RegisterCommand( "where", 4, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_WHERE( socket, cmdString )
 {
 	var mChar = socket.currentChar;

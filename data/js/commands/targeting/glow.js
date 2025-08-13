@@ -8,6 +8,7 @@ function CommandRegistration()
 	RegisterCommand( "unglow", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_GLOW( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 258, socket.language ); // Select item to make glowing.
@@ -23,6 +24,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_UNGLOW( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 259, socket.language ); // Select item to deactivate glowing.

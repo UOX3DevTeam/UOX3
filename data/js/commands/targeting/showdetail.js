@@ -7,6 +7,7 @@ function CommandRegistration()
 	RegisterCommand( "showdetail", 4, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_SHOWDETAIL( socket, cmdString )
 {
 	socket.CustomTarget( 0, GetDictionaryEntry( 8110, socket.language )); // Select Item to get Type Info from:

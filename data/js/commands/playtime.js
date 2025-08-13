@@ -8,6 +8,7 @@ function CommandRegistration()
 	RegisterCommand( "playtime", 0, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_PLAYTIME( socket, cmdString )
 {
 	var pChar = socket.currentChar;

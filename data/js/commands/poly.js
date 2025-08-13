@@ -7,6 +7,7 @@ function CommandRegistration()
 	RegisterCommand( "poly", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_POLY( socket, cmdString )
 {
 	if( cmdString )

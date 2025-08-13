@@ -12,6 +12,7 @@ function CommandRegistration()
 	RegisterCommand( "fixcont", 10, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_FIXCONT( socket, cmdString )
 {
 	var confirmGump = new Gump;

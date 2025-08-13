@@ -11,6 +11,7 @@ function CommandRegistration()
 	RegisterCommand( "addxspawner", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ADD( socket, cmdString )
 {
 	if( cmdString )
@@ -374,6 +375,7 @@ function onCallback4( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ITEMMENU( socket, cmdString )
 {
 	if( cmdString )
@@ -382,6 +384,7 @@ function command_ITEMMENU( socket, cmdString )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ADDX( socket, cmdString )
 {
 	var mChar = socket.currentChar;
@@ -414,6 +417,7 @@ function command_ADDX( socket, cmdString )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ADDXITEM( socket, cmdString )
 {
 	var mChar = socket.currentChar;
@@ -423,6 +427,7 @@ function command_ADDXITEM( socket, cmdString )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ADDXSPAWNER( socket, cmdString )
 {
 	var mChar = socket.currentChar;

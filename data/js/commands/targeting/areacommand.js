@@ -7,6 +7,7 @@ function CommandRegistration()
 	RegisterCommand( "areacommand", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_AREACOMMAND( socket, cmdString )
 {
 	if( cmdString )

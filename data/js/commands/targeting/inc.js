@@ -10,6 +10,7 @@ function CommandRegistration()
 	RegisterCommand( "incid", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_INCX( socket, cmdString )
 {
 	if( cmdString )
@@ -34,6 +35,7 @@ function onCallback0( socket, ourObj )
 	socket.tempint = 0;
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_INCY( socket, cmdString )
 {
 	if( cmdString )
@@ -58,6 +60,7 @@ function onCallback1( socket, ourObj )
 	socket.tempint = 0;
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_INCZ( socket, cmdString )
 {
 	if( cmdString )
@@ -78,6 +81,7 @@ function onCallback2( socket, ourObj )
 	socket.tempint = 0;
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_INCID( socket, cmdString )
 {
 	if( cmdString )

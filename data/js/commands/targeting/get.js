@@ -7,6 +7,7 @@ function CommandRegistration()
 	RegisterCommand( "get", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_GET( socket, cmdString )
 {
 	if( cmdString )
