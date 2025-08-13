@@ -1,3 +1,6 @@
+13/08/2025 - Xoduz (#412)
+Removed labels from automated changelog workflow
+
 13/08/2025 - Dragon Slayer (#409)
 	[FIX] Fixed issue with .WalkTo() Character JS Method that was missing the if( argc < 2 || argc > 5 ) line
 	[FIX] Fixed error msg for .RunTo() Character JS Method that referenced WalkTo instead of RunTo
