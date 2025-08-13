@@ -1,3 +1,7 @@
+13/08/2025 - Xoduz (#410)
+Updated automatic changelog workflow
+Manually updated changelog with previous PR merge details
+
 13/08/2025 - Dragon Slayer (#409)
 	[FIX] Fixed issue with .WalkTo() Character JS Method that was missing the if( argc < 2 || argc > 5 ) line
 	[FIX] Fixed error msg for .RunTo() Character JS Method that referenced WalkTo instead of RunTo
