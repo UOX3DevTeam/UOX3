@@ -4992,7 +4992,7 @@ bool CPIPopupMenuSelect::Handle( void )
 			break;
 		case 0x000B:	// Open Backpack
 			if( mChar->GetCommandLevel() >= CL_CNS || cwmWorldState->creatures[targChar->GetId()].IsHuman() 
-				|| targChar->GetId() == 0x0123 || targChar->GetId() == 0x0124 || targChar->GetId() == 0x0317 )	// Only Humans and Pack Animals have Packs
+				|| cwmWorldState->creatures[targChar->GetId()].IsPackAnimal() )	// Only Humans and Pack Animals have Packs
 			{
 				if( mChar->IsDead() )
 				{
@@ -6090,6 +6090,31 @@ bool CPIAOSCommand::Handle( void )
 		case 0x0028:			//Guild :: Paperdoll button
 			if( cwmWorldState->ServerData()->PaperdollGuildButton() )
 			{
+				CChar *myChar	= tSock->CurrcharObj();
+				std::vector<UI16> scriptTriggers = myChar->GetScriptTriggers();
+				for( auto scriptTrig : scriptTriggers )
+				{
+					cScript *toExecute = JSMapping->GetScript( scriptTrig );
+					if( toExecute != nullptr )
+					{
+						if( toExecute->OnGuildButton( myChar ) == 1 )
+						{
+							return true;
+						}
+					}
+				}
+
+				// No individual scripts handling OnQuestGump returned true - let's check global script!
+				cScript *toExecute = JSMapping->GetScript( static_cast<UI16>( 0 ));
+				if( toExecute != nullptr )
+				{
+					if( toExecute->OnGuildButton( myChar ) == 1 )
+					{
+						return true;
+					}
+				}
+
+				// If no event triggered, or no event returned true - display default guild menu if player is in a guild
 				if( tSock->CurrcharObj()->GetGuildNumber() != - 1 )
 				{
 					GuildSys->Menu( tSock, BasePage + 1, static_cast<GUILDID>( tSock->CurrcharObj()->GetGuildNumber() ));

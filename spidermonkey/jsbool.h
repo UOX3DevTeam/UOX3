@@ -43,21 +43,17 @@
  * JS boolean interface.
  */
 
-JS_BEGIN_EXTERN_C
+#include "jsapi.h"
+#include "jsobj.h"
+#include "jsstr.h"
 
-/*
- * Crypto-booleans, not visible to script but used internally by the engine.
- *
- * JSVAL_HOLE is a useful value for identifying a hole in an array.  It's also
- * used in the interpreter to represent "no exception pending".  In general it
- * can be used to represent "no value".
- *
- * JSVAL_ARETURN is used to throw asynchronous return for generator.close().
- */
-#define JSVAL_HOLE      BOOLEAN_TO_JSVAL(2)
-#define JSVAL_ARETURN   BOOLEAN_TO_JSVAL(3)
+extern js::Class js_BooleanClass;
 
-extern JSClass js_BooleanClass;
+inline bool
+JSObject::isBoolean() const
+{
+    return getClass() == &js_BooleanClass;
+}
 
 extern JSObject *
 js_InitBooleanClass(JSContext *cx, JSObject *obj);
@@ -65,9 +61,14 @@ js_InitBooleanClass(JSContext *cx, JSObject *obj);
 extern JSString *
 js_BooleanToString(JSContext *cx, JSBool b);
 
-extern JSBool
-js_ValueToBoolean(jsval v);
+namespace js {
 
-JS_END_EXTERN_C
+extern bool
+BooleanToStringBuffer(JSContext *cx, JSBool b, StringBuffer &sb);
+
+} /* namespace js */
+
+extern JSBool
+js_ValueToBoolean(const js::Value &v);
 
 #endif /* jsbool_h___ */

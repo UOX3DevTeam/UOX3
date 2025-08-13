@@ -294,6 +294,7 @@ lastCombatTime( DEFCHAR_LASTCOMBATTIME ), npcGuild( DEFCHAR_NPCGUILD )
 	objType		= OT_CHAR;
 	name		= "Mr. noname";
 	sectionId	= "UNKNOWN";
+	guildTitle	= "Member";
 
 	memset( &regen[0],			0, sizeof( TIMERVAL )	* 3 );
 	memset( &weathDamage[0],	0, sizeof( TIMERVAL )	* WEATHNUM );

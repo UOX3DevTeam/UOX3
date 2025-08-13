@@ -1050,7 +1050,7 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 				mSock->SysMessage( 1780 ); // That pet is already stuffed, it can't eat more.
 			}
 		}
-		else if( isGM || targNPC->GetId() == 0x0123 || targNPC->GetId() == 0x0124 || targNPC->GetId() == 0x0317 ) // It's a pack animal
+		else if( isGM || cwmWorldState->creatures[targNPC->GetId()].IsPackAnimal() ) // It's a pack animal
 		{
 			dropResult = 2;
 		}
@@ -1808,7 +1808,7 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 			}
 		}
 		else if( mChar.GetCommandLevel() < CL_CNS && ( !contOwner->IsNpc() || !contOwner->IsTamed() ||
-													  ( contOwner->GetId() != 0x0123 && contOwner->GetId() != 0x0124 && contOwner->GetId() != 0x0317 ) ||
+													  ( !cwmWorldState->creatures[contOwner->GetId()].IsPackAnimal() ) ||
 													  ( contOwner->GetOwnerObj() != &mChar && !Npcs->CheckPetFriend( &mChar, contOwner ))))
 		{
 			if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
@@ -2684,7 +2684,7 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 		}
 		else if( !cwmWorldState->creatures[c->GetId()].IsHuman() && !c->IsDead() )
 		{
-			if( c->GetId() == 0x0123 || c->GetId() == 0x0124 || c->GetId() == 0x0317 )	// Is a pack animal
+			if( cwmWorldState->creatures[c->GetId()].IsPackAnimal() )	// Is a pack animal
 			{
 				if( mChar->IsDead() )
 				{

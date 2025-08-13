@@ -124,7 +124,7 @@ function onGumpPress( socket, pButton, gumpData )
 						spawnAmount = 1;
 						spawnRadius = 0;
 					}
-					break
+					break;
 				case 1: // npc
 					if( iUsed.type != 62 )
 					{
@@ -155,8 +155,6 @@ function onGumpPress( socket, pButton, gumpData )
 				case 4: // This is actually our checkbox, if no radio buttons are selected!
 					checkBtnSpawnlist = 4; // Put the value into the "checkbox" variable!
 					break;
-				default:
-					break;
 			}
 
 			// Update spawner properties
@@ -170,26 +168,26 @@ function onGumpPress( socket, pButton, gumpData )
 			{
 				iUsed.mininterval = minInterval;
 				let tmpMsg = GetDictionaryEntry( 9825, socket.language ); // Min Time updated to %i
-				iUsed.TextMessage( tmpMsg.replace( /%i/gi, mininterval), false, 0x3b2, 0, pUser.serial );
+				iUsed.TextMessage( tmpMsg.replace( /%i/gi, minInterval ), false, 0x3b2, 0, pUser.serial );
 			}
 			if( maxInterval != iUsed.maxinterval )
 			{
 				iUsed.maxinterval = maxInterval;
 				let tmpMsg = GetDictionaryEntry( 9826, socket.language ); // Max Time updated to %i
-				iUsed.TextMessage( tmpMsg.replace( /%i/gi, maxinterval), false, 0x3b2, 0, pUser.serial );
+				iUsed.TextMessage( tmpMsg.replace( /%i/gi, maxInterval ), false, 0x3b2, 0, pUser.serial );
 			}
 			if( spawnAmount != iUsed.amount )
 			{
 				iUsed.amount = spawnAmount;
 				let tmpMsg = GetDictionaryEntry( 9827, socket.language ); // Amount updated to %i
-				iUsed.TextMessage( tmpMsg.replace( /%i/gi, spawnAmount), false, 0x3b2, 0, pUser.serial );
+				iUsed.TextMessage( tmpMsg.replace( /%i/gi, spawnAmount ), false, 0x3b2, 0, pUser.serial );
 			}
 			if( spawnRadius != iUsed.GetMoreVar( "more", 3 ))
 			{
 				iUsed.SetMoreVar( "more", 3, spawnRadius );
 				iUsed.SetMoreVar( "more", 4, spawnRadius );
 				let tmpMsg = GetDictionaryEntry( 9828, socket.language ); // Spawn Radius updated to %i
-				iUsed.TextMessage( tmpMsg.replace( /%i/gi, spawnRadius), false, 0x3b2, 0, pUser.serial );
+				iUsed.TextMessage( tmpMsg.replace( /%i/gi, spawnRadius ), false, 0x3b2, 0, pUser.serial );
 			}
 
 			// Update spawner name
@@ -199,7 +197,7 @@ function onGumpPress( socket, pButton, gumpData )
 			}
 			else if( spawnerName.length > 50 )
 			{
-				pSocket.SysMessage( GetDictionaryEntry( 9271, pSocket.language )); // That name is too long. Maximum 50 chars.
+				socket.SysMessage( GetDictionaryEntry( 9271, socket.language )); // That name is too long. Maximum 50 chars.
 			}
 			else if( spawnerName != iUsed.name )
 			{
@@ -228,8 +226,6 @@ function onGumpPress( socket, pButton, gumpData )
 
 			spawnerGump( socket, pUser, iUsed );
 			break;
-		default:
-			break;
 	}
 }
 
@@ -257,12 +253,12 @@ function onTooltip( spawner )
 	tooltipText = "Spawn Section: " + spawner.spawnsection;
 	tooltipText += "\n" + "Spawn Type: " + typeName;
 	tooltipText += "\n" + "Spawn List: " + spawnList;
-	tooltipText += "\n" + "Amount: " + "<basefont color=#00ff00>" + spawner.amount + "</big></basefont >";
-	tooltipText += "\n" + "Min Interval: " + "<basefont color=#00ff00>" + spawner.mininterval + "</big></basefont>" + " Max Interval: " + "<basefont color=#00ff00>" + spawner.maxinterval + "</big></basefont>";
+	tooltipText += "\n" + "Amount: " + "<basefont color=#00ff00><big>" + spawner.amount + "</big></basefont >";
+	tooltipText += "\n" + "Min Interval: " + "<basefont color=#00ff00><big>" + spawner.mininterval + "</big></basefont>" + " Max Interval: " + "<basefont color=#00ff00><big>" + spawner.maxinterval + "</big></basefont>";
 	if( spawner.type == 69 )
 	{
-		tooltipText += "\n" + "Radius: " + "<basefont color=#00ff00>" + spawner.GetMoreVar( "more", 3 ) + "</big></basefont >";
+		tooltipText += "\n" + "Radius: " + "<basefont color=#00ff00><big>" + spawner.GetMoreVar( "more", 3 ) + "</big></basefont >";
 	}
-	tooltipText += "\n" + "Region: " + "<basefont color=#00ff00>" + spawner.region.name + "</big></basefont>";
+	tooltipText += "\n" + "Region: " + "<basefont color=#00ff00><big>" + spawner.region.name + "</big></basefont>";
 	return tooltipText;
 }
