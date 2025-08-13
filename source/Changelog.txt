@@ -1,3 +1,7 @@
+13/08/2025 - Dragon Slayer (#409)
+	[FIX] Fixed issue with .WalkTo() Character JS Method that was missing the if( argc < 2 || argc > 5 ) line
+	[FIX] Fixed error msg for .RunTo() Character JS Method that referenced WalkTo instead of RunTo
+
 05/08/2025 - Dragon Slayer (#403)
 	[FIX] Fixed an issue with Bulk Order Deeds where the gump would remain open after accepting/declining a BOD offer
 
