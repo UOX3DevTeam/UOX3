@@ -8178,7 +8178,7 @@ JSBool CBase_FinishedItems( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_WalkTo( JSContext *cx, uintN argc, jsval *vp )
 {
-
+	if( argc < 2 || argc > 5 )
 	{
 		ScriptError( cx, "WalkTo: Invalid number of arguments (takes 2 to 5)" );
 		return JS_FALSE;
@@ -8292,7 +8292,7 @@ JSBool CChar_RunTo( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc < 2 || argc > 5 )
 	{
-		ScriptError( cx, "WalkTo: Invalid number of arguments (takes 2 to 5)" );
+		ScriptError( cx, "RunTo: Invalid number of arguments (takes 2 to 5)" );
 		return JS_FALSE;
 	}
 	jsval *argv = JS_ARGV( cx, vp );
