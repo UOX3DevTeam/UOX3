@@ -407,5 +407,3 @@ function onIterate( toCheck, socket )
 	}
 	return false;
 }
-
-function _restorecontext_() {}

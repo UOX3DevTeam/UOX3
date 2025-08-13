@@ -190,5 +190,3 @@ function ElectricBurstAoE( exodusNPC, trgChar )
 	}
 	return true;
 }
-
-function _restorecontext_() {}

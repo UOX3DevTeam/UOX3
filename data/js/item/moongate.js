@@ -667,5 +667,3 @@ function DisplayTravelGump( srcSock, pUser )
 	}
 	myGump.Send( srcSock );
 }
-
-function _restorecontext_() {}

@@ -231,5 +231,3 @@ function onCallback2( socket, ourObj )
 		}
 	}
 }
-
-function _restorecontext_() {}

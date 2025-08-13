@@ -518,5 +518,3 @@ function AutoUnequipAttempt( itemLHand, itemRHand, mChar )
 	}
 	return { lHandBlocks: lHandBlocks, rHandBlocks: rHandBlocks };
 }
-
-function _restorecontext_() {}

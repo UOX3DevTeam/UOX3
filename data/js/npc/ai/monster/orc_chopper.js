@@ -31,5 +31,3 @@ function HitNearbyTargets( pAttacker, targChar )
 		targChar.Damage( damage, 1, pAttacker, false );
 	}
 }
-
-function _restorecontext_() {}

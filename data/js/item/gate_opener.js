@@ -102,5 +102,3 @@ function onTimer( timerObj, timerID )
 	}
 	timerObj.SetTempTag( "isBusy", false );
 }
-
-function _restorecontext_() {}

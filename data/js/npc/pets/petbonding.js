@@ -380,5 +380,3 @@ function onGumpPress( pSock, pButton, gumpData )
 		petSerial.Delete();
 	}
 }
-
-function _restorecontext_() {}

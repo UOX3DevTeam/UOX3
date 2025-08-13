@@ -827,5 +827,3 @@ function onCallback14( pSock, myTarget )
 		pSock.SysMessage( GetDictionaryEntry( 8932, pSock.language )); // Repeating command ended.
 	}
 }
-
-function _restorecontext_() {}

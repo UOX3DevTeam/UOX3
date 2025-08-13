@@ -390,5 +390,3 @@ function onTimer( pUser, timerID )
 		pUser.isDisguised = false;
 	}
 }
-
-function _restorecontext_() {}

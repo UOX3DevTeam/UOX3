@@ -14,5 +14,3 @@ function onTooltip( myObj )
 	}
 	return tooltipText;
 }
-
-function _restorecontext_() {}

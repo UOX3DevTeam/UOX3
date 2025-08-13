@@ -75,5 +75,3 @@ function DealAreaDamage( srcObj, trgChar )
 
 	return false;
 }
-
-function _restorecontext_() {}

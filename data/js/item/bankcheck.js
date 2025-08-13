@@ -91,5 +91,3 @@ function onNameRequest( bankCheck, pUser )
 
 	return nameString;
 }
-
-function _restorecontext_() {}

@@ -118,5 +118,3 @@ function onCallback1( socket, ourObj )
 		ourObj.Resurrect();
 	}
 }
-
-function _restorecontext_() {}

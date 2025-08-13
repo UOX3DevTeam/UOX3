@@ -349,5 +349,3 @@ function onUseUnChecked( pUser, iUsed )
 	}
 	return false;
 }
-
-function _restorecontext_() {}

@@ -498,5 +498,3 @@ function AddXItemSpawner( socket, cmdString, itemType )
 		}
 	}
 }
-
-function _restorecontext_() {}

@@ -56,5 +56,3 @@ function onUseChecked( pUser, iUsed )
 	}
 	return false;
 }
-
-function _restorecontext_() {}

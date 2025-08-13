@@ -111,5 +111,3 @@ function onTimer( timerObj, timerID )
 		timerObj.SetTempTag( "colossalBlowCD", null );
 	}
 }
-
-function _restorecontext_() {}

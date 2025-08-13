@@ -180,5 +180,3 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 	}
 	return false;
 }
-
-function _restorecontext_() {}

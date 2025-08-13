@@ -541,6 +541,3 @@ function CheckCorpseCarving( pChar, corpseOwner, iCorpse )
 	return true;
 }
 
-// Dummy function to restore script context after other JS events have triggered and executed
-// as part of something happening in this script
-function _restorecontext_() {}

@@ -103,5 +103,3 @@ function onGumpPress( pSock, pButton, gumpData )
 
 	pDead.frozen = false;
 }
-
-function _restorecontext_() {}

@@ -1581,5 +1581,3 @@ function command_CLEARWEATHER( pSock, execString )
 	mRegion.weather = 0;
 	pSock.SysMessage( "Weather override disabled for current region (" + mRegion.name + ")" );
 }
-
-function _restorecontext_() {}

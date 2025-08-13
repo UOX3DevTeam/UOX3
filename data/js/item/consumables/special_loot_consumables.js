@@ -316,5 +316,3 @@ function onTimer( timerObj, timerID )
 			break;
 	}
 }
-
-function _restorecontext_() {}

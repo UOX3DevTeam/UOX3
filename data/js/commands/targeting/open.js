@@ -46,5 +46,3 @@ function onCallback1( socket, ourObj )
 		ourObj.OpenLayer( socket, socket.tempInt );
 	}
 }
-
-function _restorecontext_() {}

@@ -133,5 +133,3 @@ function GetAuraProperties( trgChar )
 	}
 	return auraProps;
 }
-
-function _restorecontext_() {}

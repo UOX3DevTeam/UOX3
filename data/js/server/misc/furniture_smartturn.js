@@ -226,5 +226,3 @@ var explicitAdd = [
 	0x9c18, 0xa304, 0xa306, 0xa308, // Safe// Metal chest// Rusty metal chest// Gold chest
 	0xa30a
 ];
-
-function _restorecontext_() {}

@@ -562,5 +562,3 @@ function onDelete( controlPanel, objType )
 
 	return true;
 }
-
-function _restorecontext_() {}

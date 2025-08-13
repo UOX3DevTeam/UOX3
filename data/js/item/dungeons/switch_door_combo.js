@@ -513,5 +513,3 @@ function onIterate( myObject, pSock )
 
 	return false;
 }
-
-function _restorecontext_() {}

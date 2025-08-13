@@ -402,5 +402,3 @@ function onMoveDetect( iTrap, pChar, rangeToChar, oldCharX, oldCharY )
 	}
 	return true;
 }
-
-function _restorecontext_() {}

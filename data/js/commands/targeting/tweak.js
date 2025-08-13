@@ -6730,5 +6730,3 @@ const itemTypeNames = {
 	253:"IT_TRAININGDUMMY",
 	255:"IT_COUNT"
 }
-
-function _restorecontext_() { }

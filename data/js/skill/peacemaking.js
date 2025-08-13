@@ -170,5 +170,3 @@ function PeaceMakeArea( pUser, targChar )
 		return true;
 	}
 }
-
-function _restorecontext_() {}

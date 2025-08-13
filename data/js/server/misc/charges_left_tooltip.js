@@ -19,5 +19,3 @@ function onTooltip(iUsed, pSocket)
 	}
 	return tooltipText;
 }
-
-function _restorecontext_() {}

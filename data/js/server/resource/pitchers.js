@@ -1094,8 +1094,6 @@ function onCreateDFN( objMade, objType )
 	}
 }
 
-function _restorecontext_() {}
-
 // Sound Effects:
 //38 = "grab" some water with a pitcher
 //49 = drinking a little

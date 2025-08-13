@@ -638,5 +638,3 @@ const locationMap = {
 		return false;
 	}
 };
-
-function _restorecontext_() {}

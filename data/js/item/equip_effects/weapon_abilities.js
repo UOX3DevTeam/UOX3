@@ -148,5 +148,3 @@ function onTimer( timerObj, timerID )
 		timerObj.SetTag( "concussion", null );
 	}
 }
-
-function _restorecontext_() {}

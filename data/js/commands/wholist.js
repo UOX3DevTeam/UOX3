@@ -821,5 +821,3 @@ function SendWornItemPacket( socket, objectToSend, targChar )
 	socket.Send( pStream );
 	pStream.Free();
 }
-
-function _restorecontext_() {}

@@ -2480,5 +2480,3 @@ function onTooltip( myPlant )
 
 	return tooltipText;
 }
-
-function _restorecontext_() {}

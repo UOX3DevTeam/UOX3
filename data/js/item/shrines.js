@@ -255,5 +255,3 @@ function onGumpPress( pSock, pButton, gumpData )
 			break;
 	}
 }
-
-function _restorecontext_() {}

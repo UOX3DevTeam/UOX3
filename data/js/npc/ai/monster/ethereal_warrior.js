@@ -169,5 +169,3 @@ function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 		}
 	}
 }
-
-function _restorecontext_() {}

@@ -266,5 +266,3 @@ function onTimer( timerObj, timerID )
 		}
 	}
 }
-
-function _restorecontext_() {}

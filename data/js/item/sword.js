@@ -192,5 +192,3 @@ function CarveCorpse( socket, mChar, ourObj )
 		socket.SysMessage( GetDictionaryEntry( 393, socket.language )); // That is too far away.
 	}
 }
-
-function _restorecontext_() {}

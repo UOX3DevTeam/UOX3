@@ -70,5 +70,3 @@ function onCallback0( socket, myTarget )
 		return false;
 	}
 }
-
-function _restorecontext_() {}

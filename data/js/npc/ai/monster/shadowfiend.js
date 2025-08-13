@@ -196,5 +196,3 @@ function SearchForPlayers( shadowfiend, trgChar, pSock )
 		return true;
 	}
 }
-
-function _restorecontext_() {}

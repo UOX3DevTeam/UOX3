@@ -86,5 +86,3 @@ function DetectHiddenLoop( srcChar, trgChar, pSock )
 	}
 	return false;
 }
-
-function _restorecontext_() {}

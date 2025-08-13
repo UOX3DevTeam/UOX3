@@ -190,5 +190,3 @@ function onTimer( timerObj, timerID )
 		onGumpPress( socket, 0 ); //Fake-push button 0, response buttonID in packet seems broken
 	}
 }
-
-function _restorecontext_() {}

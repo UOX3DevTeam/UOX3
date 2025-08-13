@@ -847,5 +847,3 @@ function WeightedRandom( min, max )
 {
  	return Math.round( max / ( Math.random() * max + min ));
 }
-
-function _restorecontext_() {}

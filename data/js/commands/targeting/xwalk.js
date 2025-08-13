@@ -130,5 +130,3 @@ function onCallback1( socket, myTarget )
 		socket.ignoreDoors = null;
 	}
 }
-
-function _restorecontext_() {}

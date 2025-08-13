@@ -122,5 +122,3 @@ function searchForNearbyChars( campfire, trgChar )
 		campfire.SetTag( trgChar.serial & 0x00FFFFFF, true );
 	}
 }
-
-function _restorecontext_() {}

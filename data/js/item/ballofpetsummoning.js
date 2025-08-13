@@ -349,5 +349,3 @@ function onSpeechInput( pUser, targObj, pSpeech, pSpeechID )
 			break;
 	}
 }
-
-function _restorecontext_() { }

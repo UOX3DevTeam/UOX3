@@ -399,5 +399,3 @@ function DivideDepositedGold( pTalking, bankBox, depositAmt )
 		}
 	}
 }
-
-function _restorecontext_() {}

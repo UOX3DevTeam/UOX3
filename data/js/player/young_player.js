@@ -652,8 +652,6 @@ function onTooltip( pChar )
 	return tooltipText;
 }
 
-function _restorecontext_() {}
-
 // [✓] 	As a young player, you may not cast beneficial spells onto older players.
 // [] 	As a young player, you may not use beneficial skills on older players.
 // [✓] 	Some young warrior felled this, and you cannot bring yourself to take any items from the corpse.

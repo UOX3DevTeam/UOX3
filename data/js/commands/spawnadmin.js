@@ -583,5 +583,3 @@ function onTimer( timerObj, timerID )
 		DisplaySpawnerListGump( timerObj.socket, null, "", 0 );
 	}
 }
-
-function _restorecontext_() {}

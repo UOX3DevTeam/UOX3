@@ -179,5 +179,3 @@ function GetFireBreathInfo( mNPC )
 	mNPC.SetTag( "fbFXHue", fireBreathFXColor );
 	mNPC.SetTag( "fbSFX", fireBreathSFX );
 }
-
-function _restorecontext_() {}
