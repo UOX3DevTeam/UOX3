@@ -7,11 +7,15 @@ on:
 
 jobs:
   update-changelog:
+    if: >
+      github.event.pull_request.merged == true &&
+      github.actor != 'github-actions[bot]'
+
+    runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
 
-    if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -46,9 +50,18 @@ jobs:
             echo -e "$NEW_ENTRY" > source/Changelog.txt
           fi
 
-      - name: Commit and push changelog
-        uses: stefanzweifel/git-auto-commit-action@v4
+      - name: Create Pull Request with Changelog Update
+        id: cpr
+        uses: peter-evans/create-pull-request@v6
         with:
-          branch: ${{ github.event.pull_request.base.ref }}
-          commit_message: "docs(changelog): Update Changelog.txt from PR #${{ github.event.pull_request.number }}"
-          file_pattern: "source/Changelog.txt"
+          commit-message: "docs(changelog): Update Changelog.txt from PR #${{ github.event.pull_request.number }}"
+          title: "Docs: Update Changelog for #${{ github.event.pull_request.number }}"
+          body: "Automated changelog update. This PR will be auto-merged."
+          branch: "changelog/pr-${{ github.event.pull_request.number }}"
+          base: ${{ github.event.pull_request.base.ref }}
+
+      - name: Enable Auto-Merge via GitHub CLI
+        if: steps.cpr.outputs.pull-request-number
+        run: gh pr merge --auto --squash "${{ steps.cpr.outputs.pull-request-number }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
