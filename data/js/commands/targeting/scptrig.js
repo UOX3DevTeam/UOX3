@@ -16,7 +16,7 @@ function command_GETSCPTRIG( socket, cmdString )
 	socket.CustomTarget( 0, GetDictionaryEntry( 2041, socket.language )); // Select target to get script triggers for:
 }
 
-/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ( ourObj.isChar || ourObj.isItem ))
@@ -61,7 +61,7 @@ function command_SETSCPTRIG( socket, cmdString )
 	}
 }
 
-/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ( ourObj.isChar || ourObj.isItem ))
@@ -105,7 +105,7 @@ function command_ADDSCPTRIG( socket, cmdString )
 	}
 }
 
-/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ( ourObj.isChar || ourObj.isItem ))
@@ -142,7 +142,7 @@ function command_REMOVESCPTRIG( socket, cmdString )
 	}
 }
 
-/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback3( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ( ourObj.isChar || ourObj.isItem ))

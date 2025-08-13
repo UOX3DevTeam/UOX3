@@ -111,7 +111,7 @@ function command_ADD( socket, cmdString )
 	}
 }
 
-/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
@@ -154,7 +154,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
-/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
@@ -231,7 +231,7 @@ function onCallback1( socket, ourObj )
 	}
 }
 
-/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( socket, ourObj )
 {
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
@@ -300,7 +300,7 @@ function onCallback2( socket, ourObj )
 	}
 }
 
-/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback3( socket, ourObj )
 {
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
@@ -339,7 +339,7 @@ function onCallback3( socket, ourObj )
 	}
 }
 
-/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback4( socket, ourObj )
 {
 	var cancelCheck = parseInt( socket.GetByte( 11 ));

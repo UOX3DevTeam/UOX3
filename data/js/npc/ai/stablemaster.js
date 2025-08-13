@@ -419,7 +419,7 @@ function ReleasePet( petObj, petNum, stableMaster, pUser, sayReleaseMsg )
 }
 
 // Stable targeted pet
-/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, ourObj )
 {
 	var cancelCheck = parseInt( pSock.GetByte( 11 ));

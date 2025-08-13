@@ -69,7 +69,7 @@ function onUseChecked( pUser, iUsed )
 }
 
 // Key targetting
-/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -172,7 +172,7 @@ function onCallback0( pSock, myTarget )
 	pSock.SysMessage( GetDictionaryEntry( 1025, pSock.language )); //That does not have a lock.
 }
 
-/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( pSock, myTarget )
 {
 	// keyring targeting
@@ -257,7 +257,7 @@ function onCallback1( pSock, myTarget )
 	pSock.SysMessage( GetDictionaryEntry( 1025, pSock.language )); // That does not have a lock.
 }
 
-/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( pSock, myTarget )
 {
 	// Empty keyring targeting
@@ -323,7 +323,7 @@ function onCallback2( pSock, myTarget )
 }
 
 // Using a blank key, target a key to copy
-/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback3( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;

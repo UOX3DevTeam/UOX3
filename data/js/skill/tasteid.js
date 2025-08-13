@@ -19,7 +19,7 @@ function onSkill( pUser, objType, skillUsed )
 	return true;
 }
 
-/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, ourObj )
 {
 	var pUser = pSock.currentChar;

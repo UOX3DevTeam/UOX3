@@ -3306,7 +3306,7 @@
           "name": "allmove",
           "cppName": "CCP_ALLMOVE",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": "boolean"
+          "type": "true"
         },
         {
           "name": "attack",
@@ -4462,7 +4462,7 @@
         { "name": "YellMessage",                   "cppName": "CChar_YellMessage",                   "params": { "num":  1, "list": [ { "name": "msg", "type": "string", "required": true } ] }, "returns": "void" },
         { "name": "CanSee",                        "cppName": "CBase_CanSee",                        "params": {
           "sets": [
-            { "num": 1, "list": [ { "name": "target",   "type": "Socket | BaseObject",   "required": true } ] },
+            { "num": 1, "list": [ { "name": "target",   "type": "Socket | Character | Item",   "required": true } ] },
             { "num": 3,
               "list": [
                 { "name": "x", "type": "number",  "required": true  },
@@ -5744,7 +5744,7 @@
               {
                 "num": 1,
                 "list": [
-                  { "name": "target",   "type": "Socket | BaseObject", "required": true }
+                  { "name": "target",   "type": "Socket | Character | Item", "required": true }
                 ]
               },
               {
@@ -7660,7 +7660,7 @@
         "num": 2,
         "list": [
           { "name": "tSock",  "type": "Socket", "required": true },
-          { "name": "target", "type": "BaseObject | null", "required": true }
+          { "name": "target", "type": "Character | Item | null", "required": true }
         ]
       },
       "returns": "void"
@@ -8114,7 +8114,7 @@
       "cppName": "OnIterate",
       "params": {
         "list": [
-          { "name": "obj",   "type": "BaseObject", "required": true },
+          { "name": "obj",   "type": "Character | Item", "required": true },
           { "name": "mSock", "type": "Socket", "required": true }
         ]
       },

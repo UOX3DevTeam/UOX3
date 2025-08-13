@@ -29,7 +29,7 @@ function onUseChecked( pUser, iUsed )
 	}
 }
 
-/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, myTarget )
 {
 	var pUser = socket.currentChar;
@@ -86,7 +86,7 @@ function onCallback0( socket, myTarget )
 	}
 }
 
-/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, myTarget )
 {
 	var targetChar = socket.tempObj;

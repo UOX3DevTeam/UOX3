@@ -107,7 +107,7 @@ function ShowNpcList( socket, cmdString, filteredList, filterString )
 	DisplayCharacterListGump( socket, filteredList, filterString, 0, 2 );
 }
 
-/** @type { ( obj: BaseObject, mSock: Socket ) => boolean } */
+/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
 function onIterate( toCheck, socket )
 {
 	if( socket == null )

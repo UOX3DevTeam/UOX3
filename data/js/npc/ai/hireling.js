@@ -921,7 +921,7 @@ function CalculateHirelingPay( hireling )
 	return Math.round( payPerDay );
 }
 
-/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, myTarget )
 {
 	if( socket == null )
