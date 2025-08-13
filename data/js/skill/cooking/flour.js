@@ -42,7 +42,7 @@ function onUseChecked ( pUser, iUsed )
 	return false;
 }
 
-/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
 function onCallback0( tSock, myTarget )
 {
 	var pUser = tSock.currentChar;

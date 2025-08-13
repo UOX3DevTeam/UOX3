@@ -531,7 +531,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	}
 }
 
-/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
 function onCallback2( pSock, targObj )
 {
 	var pUser = pSock.currentChar;

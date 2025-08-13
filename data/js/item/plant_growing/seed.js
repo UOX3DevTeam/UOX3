@@ -21,7 +21,7 @@ function onUseChecked( pUser, iUsed )
 	return true;
 }
 
-/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
 function onCallback0( pSock, myTarget )
 {
 	const PlantDelayTimer = 82800000;//82800000 Every 23 hours plant grows

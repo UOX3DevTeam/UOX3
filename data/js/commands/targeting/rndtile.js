@@ -61,7 +61,7 @@ function command_RNDTILE( pSock, cmdString )
 }
 
 //First target location in boundary box
-/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
 function onCallback0( pSock, myTarget )
 {
 	if( !pSock )
@@ -84,7 +84,7 @@ function onCallback0( pSock, myTarget )
 }
 
 //Second target location in boundary box
-/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
 function onCallback1( pSock, myTarget )
 {
 	if( !pSock )

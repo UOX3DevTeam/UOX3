@@ -22,7 +22,7 @@ function onUseChecked( pUser, iUsed )
     pUser.CustomTarget( 0 );
 }
 
-/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
 function onCallback0( socket, targetObj )
 {
     // Abort if player cancels target cursor or clicks empty space.

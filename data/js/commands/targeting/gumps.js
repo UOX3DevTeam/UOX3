@@ -23,7 +23,7 @@ function command_ISTATS( socket, cmdString )
 // Decaytime
 // Good
 // Random Value Rate
-/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj && ourObj.isItem )
@@ -144,7 +144,7 @@ function command_CSTATS( socket, cmdString )
 // LastOn
 // Multi
 // Region
-/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	// if( !socket.GetWord( 1 ) && ourObj && ourObj.isChar )

@@ -14,7 +14,7 @@ function command_MAKESHOP( socket, cmdString )
 	socket.CustomTarget( 0, targMsg );
 }
 
-/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	if( ValidateObject( ourObj ))

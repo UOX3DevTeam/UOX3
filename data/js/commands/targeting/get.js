@@ -23,7 +23,7 @@ function command_GET( socket, cmdString )
 }
 
 // Common Object Properties
-/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	if( socket.GetWord( 1 ) && !ValidateObject( ourObj ))

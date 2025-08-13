@@ -63,7 +63,7 @@ function command_XTURN( socket, cmdString )
 	pUser.CustomTarget( 0, GetDictionaryEntry( 8255, socket.language )); // Select NPC to turn remotely using xturn:
 }
 
-/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
 function onCallback0( socket, myTarget )
 {
 	var pUser = socket.currentChar;
@@ -79,7 +79,7 @@ function onCallback0( socket, myTarget )
 	}
 }
 
-/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
 function onCallback1( socket, myTarget )
 {
 	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike

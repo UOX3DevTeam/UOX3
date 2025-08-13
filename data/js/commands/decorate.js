@@ -1997,7 +1997,7 @@ function DecorateWorld( socket )
 	socket.CloseGump( decorate_scriptID + 0xffff, 0 );
 }
 
-/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
+/** @type { ( obj: BaseObject, mSock: Socket ) => boolean } */
 function onIterate( toCheck )
 {
 	if( ValidateObject( toCheck ) && toCheck.isItem && toCheck.container == null && !toCheck.isMulti && !ValidateObject( toCheck.multi ) && toCheck.shouldSave && !toCheck.decayable )

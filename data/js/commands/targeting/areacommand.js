@@ -22,7 +22,7 @@ function command_AREACOMMAND( socket, cmdString )
 	}
 }
 
-/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
@@ -35,7 +35,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
-/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
@@ -101,7 +101,7 @@ function onCallback1( socket, ourObj )
 	}
 }
 
-/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
+/** @type { ( obj: BaseObject, mSock: Socket ) => boolean } */
 function onIterate( toCheck )
 {
 	if( toCheck && toCheck.isItem && toCheck.container == null )

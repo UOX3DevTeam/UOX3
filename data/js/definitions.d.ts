@@ -209,7 +209,7 @@ declare global {
               actualIntelligence:    number;
               actualStrength:        number;
               aitype:                number;
-              allmove:               true;
+              allmove:               boolean;
               attack:                number;
               attacker:              CharOrNull;
               atWar:                 boolean;
@@ -369,7 +369,7 @@ declare global {
     BreakConcentration(): void;
     BuyFrom( npc: Character ): void;
     CalculateControlChance( target: Character ): number;
-    CanSee( target: Socket | Character | Item ): boolean;
+    CanSee( target: Socket | BaseObject ): boolean;
     CanSee( x: number, y: number, z: number ): boolean;
     CastSpell( spellNum: number, immediate?: boolean ): boolean | void;
     CheckAggressorFlag( target: Character ): boolean;
@@ -1032,7 +1032,7 @@ declare global {
               xText:            string;
               xText2:           string;
     BuyFrom( npc: Character ): void;
-    CanSee( target: Socket | Character | Item ): boolean;
+    CanSee( target: Socket | BaseObject ): boolean;
     CanSee( x: number, y: number, z: number ): boolean;
     CloseGump( gumpId: number, buttonId: number ): void;
     CustomTarget( tNum: number, toSay?: string, cursorType?: number ): void;
@@ -1625,7 +1625,7 @@ declare global {
   function onBoughtFromVendor( targSock: Socket, objVendor: Character, objItemBought: BaseObject, numItemsBought: number ): boolean;
   function onBuy( targSock: Socket, objVendor: Character ): boolean;
   function onBuyFromVendor( targSock: Socket, objVendor: Character, objItemBought: BaseObject, numItemsBuying: number ): boolean;
-  function onCallback( tSock: Socket, target: Character | Item | null ): void;
+  function onCallback( tSock: Socket, target: BaseObject | null ): void;
   function onCarveCorpse( player: Character, corpse: Item ): boolean;
   function onCharDoubleClick( currChar: Character, targChar: Character ): boolean;
   function onClick( sockPlayer: Socket, objClicked: BaseObject ): boolean;
@@ -1663,7 +1663,7 @@ declare global {
   function onHelpButton( mChar: Character ): boolean;
   function onHouseCommand( targSock: Socket, multiObj: Multi, targId: number ): boolean;
   function onHungerChange( pChanging: Character, newStatus: number ): boolean;
-  function onIterate( obj: Character | Item, mSock: Socket ): boolean;
+  function onIterate( obj: BaseObject, mSock: Socket ): boolean;
   function onIterateSpawnRegions( a: SpawnRegion, b: number ): boolean;
   function onLeaveRegion( entering: Character, region: number ): void;
   function onLeaving( left: Multi, leaving: BaseObject ): boolean;

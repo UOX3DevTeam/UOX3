@@ -31,7 +31,7 @@ function onSkill( pUser, objType, skillUsed )
 }
 
 // Enticement - First Target
-/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
 function onCallback0( pSock, ourObj )
 {
 	if( ValidateObject( ourObj ) && ourObj.isChar )
@@ -91,7 +91,7 @@ function onCallback0( pSock, ourObj )
 }
 
 // Enticement - Second Target
-/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
 function onCallback1( pSock, toFollow )
 {
 	if( ValidateObject( toFollow ))

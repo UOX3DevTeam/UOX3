@@ -66,7 +66,7 @@ function onUseChecked( pUser, iUsed )
 }
 
 // Spinning Wheel functionality
-/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
 function onCallback0( pSocket, myTarget )
 {
 	var pUser = pSocket.currentChar;
@@ -113,7 +113,7 @@ function onCallback0( pSocket, myTarget )
 }
 
 // Loom functionality
-/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+/** @type { ( tSock: Socket, target: BaseObject | null ) => void } */
 function onCallback1( pSocket, myTarget )
 {
 	var pUser = pSocket.currentChar;
