@@ -102,7 +102,7 @@ function onEquip( pEquipper, iEquipped )
 }
 
 // Display amount of charges left on magic armor in item tooltips
-/** @type { ( myObj: BaseObject, pSocket: Socket ) => void } */
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( myObj )
 {
 	var tooltipText = "";

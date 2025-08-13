@@ -99,7 +99,7 @@ function onTimer( timerObj, timerID )
 }
 
 // When player interacts with the control panel, bring up gump
-/** @type { ( user: Character, iUsing: Item ) => void } */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseUnChecked( pUser, iUsed )
 {
 	var pSocket = pUser.socket;

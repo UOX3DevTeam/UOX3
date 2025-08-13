@@ -400,7 +400,7 @@ function onCallback0( socket, myTarget )
 	}
 }
 
-/** @type { ( myObj: BaseObject, pSocket: Socket ) => void } */
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( smallBOD )
 {
 	var tooltipText = "";

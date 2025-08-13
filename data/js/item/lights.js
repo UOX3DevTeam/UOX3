@@ -565,7 +565,7 @@ function onLightChange( iLight, lightLevel )
 	return false;
 }
 
-/** @type { ( equipper: Character, equipping: Item ) => void } */
+/** @type { ( equipper: Character, equipping: Item ) => boolean } */
 function onUnequip( pEquipper, iEquipped )
 {
 	if( ValidateObject( iEquipped ) && iEquipped.isItem && unequipEnabled == true )

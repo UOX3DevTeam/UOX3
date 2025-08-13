@@ -58,7 +58,7 @@ function onBoughtFromVendor( pSock, npcShopkeep, iBought, iAmount )
 	return false;
 }
 
-/** @type { ( targSock: Socket, objVendor: Character, objItemSold: BaseObject, numItemsSold: number ) => void } */
+/** @type { ( targSock: Socket, objVendor: Character, objItemSold: BaseObject, numItemsSold: number ) => boolean } */
 function onSoldToVendor( pSock, npcShopkeep, iSold, iAmount )
 {
 	if( pSock == null || !ValidateObject( npcShopkeep ) || !ValidateObject( iSold ))

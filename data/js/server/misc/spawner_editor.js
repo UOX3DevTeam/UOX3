@@ -236,7 +236,7 @@ function onGumpPress( socket, pButton, gumpData )
 	}
 }
 
-/** @type { ( myObj: BaseObject, pSocket: Socket ) => void } */
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( spawner )
 {
 	var typeName = "";

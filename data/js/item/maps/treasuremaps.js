@@ -365,7 +365,7 @@ function TreasureMapCoords( socket, mapItem )
 	socket.SoundEffect( 0x249, true );
 }
 
-/** @type { ( myObj: BaseObject, pSocket: Socket ) => void } */
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( map, pSocket )
 {
 	var tooltipText = "";

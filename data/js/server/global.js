@@ -228,7 +228,7 @@ function onHelpButton( pChar )
 }
 
 // Override hard-coded snooping request and go with scripted one
-/** @type { ( snooped: Character, pack: Item, snooper: Character ) => void } */
+/** @type { ( snooped: Character, pack: Item, snooper: Character ) => boolean } */
 function onSnoopAttempt( snoopTarget, targCont, pUser )
 {
 	return TriggerEvent( 4055, "SnoopAttempt", snoopTarget, targCont, pUser );
@@ -245,7 +245,7 @@ function onDeath( pDead, iCorpse )
 }
 
 // Triggers based on bandage macro in client
-/** @type { ( mSock: Socket, targChar: Character, bandageItem: Item ) => void } */
+/** @type { ( mSock: Socket, targChar: Character, bandageItem: Item ) => boolean } */
 function onUseBandageMacro( pSock, targChar, bandageItem )
 {
 	if( pSock != null && ValidateObject( targChar ) && ValidateObject( bandageItem ) && bandageItem.amount >= 1 )

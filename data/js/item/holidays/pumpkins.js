@@ -276,7 +276,7 @@ function ApplyExplosionDamage( timerObj, targetChar )
 	}
 }
 
-/** @type { ( item: Item, pickerUpper: Character, objCont: BaseObject ) => void } */
+/** @type { ( item: Item, pickerUpper: Character, objCont: BaseObject ) => boolean } */
 function onPickup( iPickedUp, pGrabber, containerObj )
 {
 	var pSock = pGrabber.socket;

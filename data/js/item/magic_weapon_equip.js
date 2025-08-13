@@ -15,14 +15,14 @@ function onEquip( pEquipper, iEquipped )
 }
 
 // Remove script trigger on unequip
-/** @type { ( equipper: Character, equipping: Item ) => void } */
+/** @type { ( equipper: Character, equipping: Item ) => boolean } */
 function onUnequip( pUnequipper, iUnequipped )
 {
 	pUnequipper.RemoveScriptTrigger( magicWeaponSpellScriptID );
 }
 
 // Display amount of charges left on magic weapon in item tooltips
-/** @type { ( myObj: BaseObject, pSocket: Socket ) => void } */
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( myObj )
 {
 	var tooltipText = "";

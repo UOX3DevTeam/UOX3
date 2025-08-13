@@ -156,7 +156,7 @@ function onDamage( exodusNPC, attacker, damageValue, damageType )
 }
 
 // Clockwork Minion's periodic electric burst aoe attack
-/** @type { ( swinging: Item, swinger: Character, swingTarg: Character ) => void } */
+/** @type { ( swinging: Item, swinger: Character, swingTarg: Character ) => boolean } */
 function onSwing( iSwung, pSwinging, pSwingAt )
 {
 	if( pSwinging.id == 0x02f5 && RandomNumber( 1, 10 ) > 1 )

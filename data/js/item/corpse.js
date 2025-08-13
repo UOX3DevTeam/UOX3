@@ -28,7 +28,7 @@ function onCarveCorpse( pChar, iCorpse )
 }
 
 // Triggers when someone tries to pick up an item from the corpse
-/** @type { ( item: Item, pickerUpper: Character, objCont: BaseObject ) => void } */
+/** @type { ( item: Item, pickerUpper: Character, objCont: BaseObject ) => boolean } */
 function onPickup( iPickedUp, pGrabber, containerObj )
 {
 	if( !ValidateObject( iPickedUp) || !ValidateObject( pGrabber ) || !ValidateObject( containerObj ))

@@ -146,7 +146,7 @@ function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 	}
 }
 
-/** @type { ( target: BaseObject, caster: Character, spellNum: number ) => void } */
+/** @type { ( target: BaseObject, caster: Character, spellNum: number ) => number } */
 function onSpellTarget( myTarget, pCaster, spellID )
 {
 	// We don't care if caster and target is the same - allow it!

@@ -1070,7 +1070,7 @@ function switchGobletID( Pitcher )
 }
 
 // Display remaining uses left in a tooltip
-/** @type { ( myObj: BaseObject, pSocket: Socket ) => void } */
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( myObj )
 {
 	var tooltipText = "";

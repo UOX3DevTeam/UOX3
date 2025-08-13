@@ -25,7 +25,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
-/** @type { ( skillUse: BaseObject, skillUsed: number, objType: 0 | 1 ) => void } */
+/** @type { ( skillUse: BaseObject, skillUsed: number, objType: 0 | 1 ) => boolean } */
 function onSkill( pUser, objType, skillUsed )
 {
 	var pSock = pUser.socket;

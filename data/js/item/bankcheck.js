@@ -64,7 +64,7 @@ function onUseChecked( pUser, iUsed )
 }
 
 // Display value of bank check
-/** @type { ( myObj: BaseObject, pSocket: Socket ) => void } */
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( bankCheck )
 {
 	var tooltipText = "";

@@ -24,7 +24,7 @@ function onEquip( pEquipper, iEquipped )
 	}
 }
 
-/** @type { ( equipper: Character, equipping: Item ) => void } */
+/** @type { ( equipper: Character, equipping: Item ) => boolean } */
 function onUnequip( pEquipper, iEquipped )
 {
 	// Get bonus values

@@ -335,7 +335,7 @@ function onNameRequest( potionKeg, pUser )
 	return nameString;
 }
 
-/** @type { ( myObj: BaseObject, pSocket: Socket ) => void } */
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( potionKeg, pSocket )
 {
 	var pUser = null;

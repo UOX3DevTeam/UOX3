@@ -14,7 +14,7 @@
 // Message is either "hard-scripted" based on an ID stored in item's MOREY property, or
 // uses the item's DESC property if no valid MOREY value is provided
 
-/** @type { ( myObj: BaseObject, pSocket: Socket ) => void } */
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( myObj )
 {
 	var tooltipText = "";

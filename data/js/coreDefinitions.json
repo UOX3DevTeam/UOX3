@@ -8002,7 +8002,7 @@
           { "name": "objCont", "type": "BaseObject", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onQuestGump",
@@ -8012,7 +8012,7 @@
           { "name": "mChar", "type": "Character", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onResurrect",
@@ -8022,7 +8022,7 @@
           { "name": "pAlive", "type": "Character", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onScrollCast",
@@ -8033,7 +8033,7 @@
           { "name": "SpellId", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "number"
     },
     {
       "name": "onScrollingGumpPress",
@@ -8045,7 +8045,7 @@
           { "name": "buttonId", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onSell",
@@ -8056,7 +8056,7 @@
           { "name": "objVendor", "type": "Character", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onSellToVendor",
@@ -8069,7 +8069,7 @@
           { "name": "numItemsSelling", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onSkill",
@@ -8081,7 +8081,7 @@
           { "name": "objType", "type": "0 | 1", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onSkillChange",
@@ -8107,7 +8107,7 @@
           { "name": "isCraftSkill", "type": "boolean", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onSkillGain",
@@ -8119,7 +8119,7 @@
           { "name": "skillAmtGained", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onSkillGump",
@@ -8129,7 +8129,7 @@
           { "name": "mChar", "type": "Character", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onSkillLoss",
@@ -8141,7 +8141,7 @@
           { "name": "skillAmtLost", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onSnoopAttempt",
@@ -8153,7 +8153,7 @@
           { "name": "snooper", "type": "Character", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onSnooped",
@@ -8165,7 +8165,8 @@
           { "name": "success", "type": "boolean", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "void",
+      "comment": "Never invoked!"
     },
     {
       "name": "onSoldToVendor",
@@ -8178,7 +8179,7 @@
           { "name": "numItemsSold", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onSpecialMove",
@@ -8189,7 +8190,7 @@
           { "name": "abilityId", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onSpeech",
@@ -8224,7 +8225,7 @@
           { "name": "SpellId", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "number"
     },
     {
       "name": "onSpellGain",
@@ -8235,7 +8236,7 @@
           { "name": "spellNum", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onSpellLoss",
@@ -8246,7 +8247,7 @@
           { "name": "spellNum", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onSpellSuccess",
@@ -8257,7 +8258,7 @@
           { "name": "SpellId", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onSpellTarget",
@@ -8269,7 +8270,7 @@
           { "name": "spellNum", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "number"
     },
     {
       "name": "onSpellTargetSelect",
@@ -8286,7 +8287,8 @@
     {
       "name": "onStart",
       "cppName": "OnStart",
-      "returns": "void"
+      "returns": "void",
+      "comments": "Never invoked"
     },
     {
       "name": "onStat",
@@ -8316,7 +8318,8 @@
           { "name": "statGainAmount", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "void",
+      "comments": "Never invoked"
     },
     {
       "name": "onStatGained",
@@ -8329,7 +8332,7 @@
           { "name": "statGainedAmount", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onStatLoss",
@@ -8341,7 +8344,7 @@
           { "name": "statLossAmount", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onSteal",
@@ -8353,7 +8356,8 @@
           { "name": "victim", "type": "Character", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "void",
+      "comments": "Never invoked"
     },
     {
       "name": "onStolenFrom",
@@ -8365,12 +8369,14 @@
           { "name": "stolen", "type": "Item", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "void",
+      "comments": "Never invoked"
     },
     {
       "name": "onStop",
       "cppName": "OnStop",
-      "returns": "void"
+      "returns": "void",
+      "comments": "Never invoked"
     },
     {
       "name": "onSwing",
@@ -8382,12 +8388,13 @@
           { "name": "swingTarg", "type": "Character", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onSystemSlice",
       "cppName": "OnSystemSlice",
-      "returns": "void"
+      "returns": "void",
+      "comments": "Never invoked"
     },
     {
       "name": "onTalk",
@@ -8398,7 +8405,7 @@
           { "name": "mySpeech", "type": "string", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onTempChange",
@@ -8420,7 +8427,7 @@
           { "name": "newStatus", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onTimer",
@@ -8442,7 +8449,7 @@
           { "name": "pSocket", "type": "Socket", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "string"
     },
     {
       "name": "onUnequip",
@@ -8453,7 +8460,7 @@
           { "name": "equipping", "type": "Item", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onUnequipAttempt",
@@ -8464,7 +8471,7 @@
           { "name": "equipping", "type": "Item", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onUseBandageMacro",
@@ -8476,7 +8483,7 @@
           { "name": "bandageItem", "type": "Item", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onUseChecked",
@@ -8498,7 +8505,7 @@
           { "name": "iUsing", "type": "Item", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onVirtueGumpPress",
@@ -8510,7 +8517,7 @@
           { "name": "buttonId", "type": "number", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onWarModeToggle",
@@ -8520,7 +8527,7 @@
           { "name": "mChar", "type": "Character", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onWeatherChange",
@@ -8565,10 +8572,6 @@
     {
       "name": "CreateEntries",
       "type": "UOXCreateEntries"
-    },
-    {
-      "name": "Timer",
-      "type": "UOXTimer"
     },
     {
       "name": "SCRIPT",

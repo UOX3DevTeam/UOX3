@@ -235,7 +235,7 @@ function onGumpPress( socket, pButton, gumpData )
 	newPlayerTicket.Delete();
 }
 
-/** @type { ( myObj: BaseObject, pSocket: Socket ) => void } */
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( iUsed, pSocket )
 {
 	var tooltipText = "";

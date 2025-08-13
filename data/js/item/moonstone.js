@@ -236,7 +236,7 @@ function onCollide( trgSock, srcChar, trgItem )
 	}
 }
 
-/** @type { ( item: Item, pickerUpper: Character, objCont: BaseObject ) => void } */
+/** @type { ( item: Item, pickerUpper: Character, objCont: BaseObject ) => boolean } */
 function onPickup( iPickedUp, pGrabber )
 {
 	if( iPickedUp.id == 0x0f6c )

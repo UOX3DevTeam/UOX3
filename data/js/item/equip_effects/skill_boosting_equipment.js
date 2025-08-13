@@ -34,7 +34,7 @@ function onEquip( pEquipper, iEquipped )
 	}
 }
 
-/** @type { ( equipper: Character, equipping: Item ) => void } */
+/** @type { ( equipper: Character, equipping: Item ) => boolean } */
 function onUnequip( pUnequipper, iUnequipped )
 {
 	var skillBonusID = iUnequipped.GetTag( "skillBonusID" );
@@ -54,7 +54,7 @@ function onUnequip( pUnequipper, iUnequipped )
 }
 
 // Display bonus skill in tooltip
-/** @type { ( myObj: BaseObject, pSocket: Socket ) => void } */
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( myObj )
 {
 	var tooltipText = "";

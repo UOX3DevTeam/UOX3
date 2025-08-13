@@ -2398,7 +2398,7 @@ function SetToDecorativeGump( pUser, iUsed )
 	SetToDecorativeGump.Free();
 }
 
-/** @type { ( myObj: BaseObject, pSocket: Socket ) => void } */
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( myPlant ) 
 {
 	var tooltipText = "";

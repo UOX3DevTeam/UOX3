@@ -7,7 +7,7 @@ function SpellRegistration()
 	RegisterSpell( 1, true );	// say, clumsy, same as in the spells.dfn file
 }
 
-/** @type { ( tChar: Character, SpellId: number ) => void } */
+/** @type { ( tChar: Character, SpellId: number ) => number } */
 function onSpellCast( socket, character, directCast, spellNum )
 {
 	if( directCast )

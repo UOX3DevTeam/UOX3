@@ -1,7 +1,7 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
 // Very high chance of tribal spear breaking upon being picked up from Savage's corpse
-/** @type { ( item: Item, pickerUpper: Character, objCont: BaseObject ) => void } */
+/** @type { ( item: Item, pickerUpper: Character, objCont: BaseObject ) => boolean } */
 function onPickup( iPickedUp, pGrabber )
 {
 	var pSock = pGrabber.socket;

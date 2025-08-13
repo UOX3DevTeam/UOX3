@@ -1,6 +1,6 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
-/** @type { ( mChar: Character, abilityId: number ) => void } */
+/** @type { ( mChar: Character, abilityId: number ) => boolean } */
 function onSpecialMove( pUser, abilityID )
 {
 	// Define the array of restricted ability IDs

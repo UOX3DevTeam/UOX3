@@ -302,7 +302,7 @@ const BODTypesToRewardsAoS = {
 	2: TailorRewardTiersToItems
 };
 
-/** @type { ( targSock: Socket, objVendor: Character, objItemSold: BaseObject, numItemsSold: number ) => void } */
+/** @type { ( targSock: Socket, objVendor: Character, objItemSold: BaseObject, numItemsSold: number ) => boolean } */
 function onSoldToVendor( pSock, npcVendor, iSold )
 {
 	var pUser = pSock.currentChar;

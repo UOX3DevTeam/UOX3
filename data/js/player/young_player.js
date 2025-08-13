@@ -189,7 +189,7 @@ function GiveYoungPlayerItems( pSock, pChar )
 }
 
 // Detect renounce Young message from player
-/** @type { ( myChar: Character, mySpeech: string ) => void } */
+/** @type { ( myChar: Character, mySpeech: string ) => boolean } */
 function onTalk( pTalking, strSaid )
 {
 	if( !youngPlayerSystem )
@@ -246,7 +246,7 @@ function RevokeYoungStatus( pSock, pChar, revokeReason )
 }
 
 // Handles situations where the Young player is the target of spells
-/** @type { ( target: BaseObject, caster: Character, spellNum: number ) => void } */
+/** @type { ( target: BaseObject, caster: Character, spellNum: number ) => number } */
 function onSpellTarget( myTarget, pCaster, spellID )
 {
 	// We don't care if caster and target is the same - allow it!
@@ -641,7 +641,7 @@ function onGumpPress( pSock, pButton, gumpData )
 }
 
 // Display [Young] tag in tooltip
-/** @type { ( myObj: BaseObject, pSocket: Socket ) => void } */
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( pChar )
 {
 	var tooltipText = "";

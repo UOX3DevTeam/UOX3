@@ -5,7 +5,7 @@
 
 const orcBrute_DispelSummonsDelay = 10;
 
-/** @type { ( target: BaseObject, caster: Character, spellNum: number ) => void } */
+/** @type { ( target: BaseObject, caster: Character, spellNum: number ) => number } */
 function onSpellTarget( myTarget, pCaster, spellID )
 {
 	var spell = Spells[spellID];

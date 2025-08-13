@@ -594,7 +594,7 @@ function onNameRequest( iPotion, pUser )
 }
 
 // Add tooltip details
-/** @type { ( myObj: BaseObject, pSocket: Socket ) => void } */
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( iPotion, pSocket )
 {
 	var pUser = null;

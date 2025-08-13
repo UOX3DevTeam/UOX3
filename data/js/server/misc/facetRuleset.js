@@ -79,7 +79,7 @@ function onCombatStart( pAttacker, pDefender )
 }
 
 // Players cannot cast aggressive spells at other players in Trammel/Ilshenar/Malas
-/** @type { ( target: BaseObject, caster: Character, spellNum: number ) => void } */
+/** @type { ( target: BaseObject, caster: Character, spellNum: number ) => number } */
 function onSpellTarget( myTarget, pCaster, spellID )
 {
 	// We don't care if caster and target is the same
@@ -187,7 +187,7 @@ function onSteal( pThief, iStolen, pVictim )
 }
 
 // Players cannot snoop the backpacks of other players in Trammel/Ilshenar/Malas
-/** @type { ( snooped: Character, pack: Item, snooper: Character ) => void } */
+/** @type { ( snooped: Character, pack: Item, snooper: Character ) => boolean } */
 function onSnoopAttempt( pSnooped, targPack, pSnooping )
 {
 	if( !ValidateObject( pSnooped ) || !ValidateObject( pSnooping ) || !ValidateObject( targPack ))
@@ -245,7 +245,7 @@ function onFlagChange( pChanging, newStatus, oldStatus )
 }
 
 // Handle corpse-looting rules
-/** @type { ( item: Item, pickerUpper: Character, objCont: BaseObject ) => void } */
+/** @type { ( item: Item, pickerUpper: Character, objCont: BaseObject ) => boolean } */
 function onPickup( iPickedUp, pGrabber )
 {
 	var pSock = pGrabber.socket;
