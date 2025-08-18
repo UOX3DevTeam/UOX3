@@ -235,6 +235,24 @@ function onDeath( pDead, iCorpse )
 	return TriggerEvent( 5045, "onDeath", pDead, iCorpse );
 }
 
+function onGuildButton( pChar )
+{
+	if( !ValidateObject( pChar ))
+		return false;
+
+	if( pChar.guild )
+	{
+       TriggerEvent( 8003, "GuildMenu", pChar );
+	   return true;
+	}
+    else
+	{
+        TriggerEvent( 8003, "GuildCreation", pChar );
+		return true;
+	}
+
+}
+
 // Triggers based on bandage macro in client
 function onUseBandageMacro( pSock, targChar, bandageItem )
 {
