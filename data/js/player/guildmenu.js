@@ -28,7 +28,7 @@ function GuildCreation( pUser )
 	guildMenu.AddButton( 210, 340, 0xF1, 0xF3, 1, 0, 0 );
 	guildMenu.AddButton( 100, 340, 0xF7, 0xF8, 1, 0, 1 );
 
-	guildMenu.Send(socket);
+	guildMenu.Send( socket );
 	guildMenu.Free();
 }
 
