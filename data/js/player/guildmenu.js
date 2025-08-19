@@ -32,6 +32,111 @@ function GuildCreation( pUser )
 	guildMenu.Free();
 }
 
+function GuildMenu( pUser )
+{
+	var guildMenu = new Gump;
+	var socket = pUser.socket;
+	var guildinfo = pUser.guild;
+
+	guildMenu.AddPage( 1 );
+	guildMenu.AddBackground( 0, 0, 600, 600, 0x6DB );
+	guildMenu.AddBackground( 0, 0, 600, 100, 0x6DB );
+	guildMenu.AddHTMLGump( 280, 40, 300, 35, false, false, "<basefont color=#ffffff>Guild Main Menu</basefont>" );
+	guildMenu.AddPicture( 240, 15, 0x0ED4 );
+	guildMenu.AddBackground( 0, 0, 180, 600, 0x6DB );
+	guildMenu.AddHTMLGump( 30, 20, 300, 35, false, false, "<basefont color=#ffffff>Guild Roster</basefont>" );
+	guildMenu.AddPageButton( 135, 20, 0xFA5, 2 );
+	guildMenu.AddPicture( -5, 20, 0x0FC0 );
+	guildMenu.AddHTMLGump( 30, 60, 300, 35, false, false, "<basefont color=#ffffff>Guild Information</basefont>" );
+	guildMenu.AddPageButton( 135, 60, 0xFA5, 3 );
+	guildMenu.AddPicture( -5, 60, 0x0FC0 );
+	guildMenu.AddHTMLGump( 30, 100, 300, 35, false, false, "<basefont color=#ffffff>Guild Recruitment</basefont>" );
+	guildMenu.AddPageButton( 135, 100, 0xFA5, 4 );
+	guildMenu.AddPicture( -5, 100, 0x0FC0 );
+
+	guildMenu.AddHTMLGump( 350, 120, 300, 35, false, false, "<basefont color=#ffffff>Guild News</basefont>" );
+	guildMenu.AddBackground( 230, 150, 320, 300, 0x2486 );
+	guildMenu.AddHTMLGump( 240, 160, 300, 35, false, false, "<basefont color=#1111111>news Test hey look i posted news</basefont>" );
+	guildMenu.AddHTMLGump( 310, 500, 300, 35, false, false, "<basefont color=#ffffff>Guild Message of the Day</basefont>" );
+	guildMenu.AddBackground( 230, 520, 320, 50, 0x2486 );
+	guildMenu.AddHTMLGump( 240, 530, 300, 35, false, false, "<basefont color=#1111111>I own you today my slaves</basefont>" );
+
+	guildMenu.AddPage( 2 );
+	guildMenu.AddBackground( 0, 0, 600, 600, 0x6DB );
+	guildMenu.AddBackground( 0, 0, 600, 100, 0x6DB );
+	guildMenu.AddHTMLGump( 280, 40, 300, 35, false, false, "<basefont color=#ffffff>Guild Main Menu Page 2</basefont>" );
+	guildMenu.AddPicture( 240, 15, 0x0ED4 );
+	guildMenu.AddBackground( 0, 0, 180, 600, 0x6DB );
+	guildMenu.AddHTMLGump( 30, 20, 300, 35, false, false, "<basefont color=#0fffff>Guild Roster</basefont>" );
+	guildMenu.AddPageButton( 135, 20, 0xFA5, 1 );
+	guildMenu.AddPicture( -5, 20, 0x0FC0 );
+	guildMenu.AddHTMLGump( 30, 60, 300, 35, false, false, "<basefont color=#ffffff>Guild Information</basefont>" );
+	guildMenu.AddPageButton( 135, 60, 0xFA5, 3 );
+	guildMenu.AddPicture( -5, 60, 0x0FC0 );
+	guildMenu.AddHTMLGump( 30, 100, 300, 35, false, false, "<basefont color=#ffffff>Guild Recruitment</basefont>" );
+	guildMenu.AddPageButton( 135, 100, 0xFA5, 4 );
+	guildMenu.AddPicture( -5, 100, 0x0FC0 );
+	guildMenu.AddHTMLGump( 240, 120, 300, 35, false, false, "<basefont color=#ffffff>Name</basefont>" );
+	guildMenu.AddHTMLGump( 380, 120, 300, 35, false, false, "<basefont color=#ffffff>Rank</basefont>" );
+	guildMenu.AddHTMLGump( 500, 120, 300, 35, false, false, "<basefont color=#ffffff>Status</basefont>" );
+
+	guildMenu.AddPage( 3 );
+	guildMenu.AddBackground( 0, 0, 600, 600, 0x6DB );
+	guildMenu.AddBackground( 0, 0, 600, 100, 0x6DB );
+	guildMenu.AddHTMLGump( 280, 40, 300, 35, false, false, "<basefont color=#ffffff>Guild Main Menu Page 3</basefont>" );
+	guildMenu.AddPicture( 240, 15, 0x0ED4 );
+	guildMenu.AddBackground( 0, 0, 180, 600, 0x6DB );
+	guildMenu.AddHTMLGump( 30, 20, 300, 35, false, false, "<basefont color=#ffffff>Guild Roster</basefont>" );
+	guildMenu.AddPageButton( 135, 20, 0xFA5, 2 );
+	guildMenu.AddPicture( -5, 20, 0x0FC0 );
+	guildMenu.AddHTMLGump( 30, 60, 300, 35, false, false, "<basefont color=#0fffff>Guild Information</basefont>" );
+	guildMenu.AddPageButton( 135, 60, 0xFA5, 1 );
+	guildMenu.AddPicture( -5, 60, 0x0FC0 );
+	guildMenu.AddHTMLGump( 30, 100, 300, 35, false, false, "<basefont color=#ffffff>Guild Recruitment</basefont>" );
+	guildMenu.AddPageButton( 135, 100, 0xFA5, 4 );
+	guildMenu.AddPicture( -5, 100, 0x0FC0 );
+	guildMenu.AddPicture( 220, 120, 0x0FBD );
+	guildMenu.AddHTMLGump( 280, 120, 300, 35, false, false, "<basefont color=#ffffff>Guild Name: " + guildinfo.name.toString() +  "</basefont>" );
+	guildMenu.AddHTMLGump( 280, 140, 300, 35, false, false, "<basefont color=#ffffff>Guild Abbreviation: " + guildinfo.abbreviation.toString() +  "</basefont>" );
+	var guildType = guildinfo.type;
+	var type = "";
+	var typeID = 0;
+	switch( guildType )
+	{
+		case 0: type = "Standard"; typeID = 0x1BC7; break;
+		case 1: type = "Order"; typeID = 0x1BC4; break;
+		case 2: type = "Chaos"; typeID = 0x1BC3; break;
+	}
+	guildMenu.AddPicture( 220, 160, typeID );
+	guildMenu.AddHTMLGump( 280, 160, 300, 35, false, false, "<basefont color=#ffffff>Guild Type: " + type +  "</basefont>" );
+	guildMenu.AddHTMLGump( 280, 180, 300, 35, false, false, "<basefont color=#ffffff>Guild Member Count: " + guildinfo.numMembers.toString() +  "</basefont>" );
+	guildMenu.AddHTMLGump( 280, 200, 300, 35, false, false, "<basefont color=#ffffff>Guild Recruit Count: " + guildinfo.numRecruits.toString() +  "</basefont>" );
+
+	guildMenu.AddPage( 4 );
+	guildMenu.AddBackground( 0, 0, 600, 600, 0x6DB );
+	guildMenu.AddBackground( 0, 0, 600, 100, 0x6DB );
+	guildMenu.AddHTMLGump( 280, 40, 300, 35, false, false, "<basefont color=#ffffff>Guild Main Menu Page 2</basefont>" );
+	guildMenu.AddPicture( 240, 15, 0x0ED4 );
+	guildMenu.AddBackground( 0, 0, 180, 600, 0x6DB );
+	guildMenu.AddHTMLGump( 30, 20, 300, 35, false, false, "<basefont color=#ffffff>Guild Roster</basefont>" );
+	guildMenu.AddPageButton( 135, 20, 0xFA5, 2 );
+	guildMenu.AddPicture( -5, 20, 0x0FC0 );
+	guildMenu.AddHTMLGump( 30, 60, 300, 35, false, false, "<basefont color=#ffffff>Guild Information</basefont>" );
+	guildMenu.AddPageButton( 135, 60, 0xFA5, 3 );
+	guildMenu.AddPicture( -5, 60, 0x0FC0 );
+	guildMenu.AddHTMLGump( 30, 100, 300, 35, false, false, "<basefont color=#0fffff>Guild Recruitment</basefont>" );
+	guildMenu.AddPageButton( 135, 100, 0xFA5, 1 );
+	guildMenu.AddPicture( -5, 100, 0x0FC0 );
+	guildMenu.AddHTMLGump( 200, 120, 300, 35, false, false, "<basefont color=#ffffff>View recruits</basefont>" );
+	guildMenu.AddHTMLGump( 350, 120, 300, 35, false, false, "<basefont color=#ffffff>Accept/Reject</basefont>" );
+	guildMenu.AddButton( 350, 140, 0xFB7, 0xFB9, 1, 0, 2 );//Accept
+	guildMenu.AddButton( 400, 140, 0xFB4, 0xFB6, 1, 0, 3 );//Reject
+	guildMenu.AddHTMLGump( 480, 120, 300, 35, false, false, "<basefont color=#ffffff>Invite new recruit</basefont>" );
+	guildMenu.AddButton( 520, 140, 0xFAE, 0xFB0, 1, 0, 3 );//invite
+	guildMenu.Send( socket );
+	guildMenu.Free();
+}
+
 function onGumpPress( pSock, pButton, gumpData )
 {
 	var pChar = pSock.currentChar;
