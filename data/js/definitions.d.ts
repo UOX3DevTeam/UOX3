@@ -552,6 +552,7 @@ declare global {
   interface Guild {
               abbreviation: string;
               charter:      string;
+    readonly  id:           string;
               master:       CharOrNull;
               name:         string;
               numMembers:   number;
@@ -560,7 +561,15 @@ declare global {
               type:         GuildTypes;
               webPage:      string;
     AcceptRecruit( recruit: Character ): void;
+    AddMember( member: Character ): boolean;
+    AddRecruit( recruit: Character ): boolean;
+    IsAlly( other: Guild ): boolean;
     IsAtPeace(): boolean;
+    IsAtWar( other: Guild ): boolean;
+    IsNeutral( other: Guild ): boolean;
+    RecruitToMember( recruit: Character ): boolean;
+    RemoveMember( member: Character ): boolean;
+    RemoveRecruit( recruit: Character ): boolean;
   }
   type UOXGuild_class = Guild;
   type GuildOrNull = Guild | null | undefined;
@@ -1660,6 +1669,7 @@ declare global {
   function onFacetChange( mChar: Character, oldFacet: number, newFacet: number ): boolean;
   function onFall( pFall: Character ): void;
   function onFlagChange( pChanging: Character, newStatus: number, oldStatus: number ): boolean;
+  function onGuildButton( presser: Character ): boolean;
   function onHelpButton( mChar: Character ): boolean;
   function onHouseCommand( targSock: Socket, multiObj: Multi, targId: number ): boolean;
   function onHungerChange( pChanging: Character, newStatus: number ): boolean;

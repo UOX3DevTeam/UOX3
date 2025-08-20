@@ -6654,6 +6654,13 @@
           "type": "string"
         },
         {
+          "name": "id",
+          "cppID": "CGP_NAME",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string",
+          "readOnly": true
+        },
+        {
           "name": "type",
           "cppID": "CGP_TYPE",
           "cppType": "JSPROP_ENUMANDPERM",
@@ -6722,7 +6729,13 @@
           "cppName": "CGuild_AcceptRecruit",
           "params": {
             "num": 1,
-            "list": [ { "name": "recruit", "type": "Character", "required": true } ]
+            "list": [
+              {
+                "name": "recruit",
+                "type": "Character",
+                "required": true
+              }
+            ]
           },
           "returns": "void"
         },
@@ -6732,6 +6745,126 @@
           "params": {
             "num": 0,
             "list": []
+          },
+          "returns": "boolean"
+        },
+        {
+          "name": "AddMember",
+          "cppName": "CGuild_AddMember",
+          "params": {
+            "num": 1,
+            "list": [
+              {
+                "name": "member",
+                "type": "Character",
+                "required": true
+              }
+            ]
+          },
+          "returns": "boolean"
+        },
+        {
+          "name": "AddRecruit",
+          "cppName": "CGuild_AddRecruit",
+          "params": {
+            "num": 1,
+            "list": [
+              {
+                "name": "recruit",
+                "type": "Character",
+                "required": true
+              }
+            ]
+          },
+          "returns": "boolean"
+        },
+        {
+          "name": "RemoveRecruit",
+          "cppName": "CGuild_RemoveRecruit",
+          "params": {
+            "num": 1,
+            "list": [
+              {
+                "name": "recruit",
+                "type": "Character",
+                "required": true
+              }
+            ]
+          },
+          "returns": "boolean"
+        },
+        {
+          "name": "RemoveMember",
+          "cppName": "CGuild_RemoveMember",
+          "params": {
+            "num": 1,
+            "list": [
+              {
+                "name": "member",
+                "type": "Character",
+                "required": true
+              }
+            ]
+          },
+          "returns": "boolean"
+        },
+        {
+          "name": "RecruitToMember",
+          "cppName": "CGuild_RecruitToMember",
+          "params": {
+            "num": 1,
+            "list": [
+              {
+                "name": "recruit",
+                "type": "Character",
+                "required": true
+              }
+            ]
+          },
+          "returns": "boolean"
+        },
+        {
+          "name": "IsAtWar",
+          "cppName": "CGuild_IsAtWar",
+          "params": {
+            "num": 1,
+            "list": [
+              {
+                "name": "other",
+                "type": "Guild",
+                "required": true
+              }
+            ]
+          },
+          "returns": "boolean"
+        },
+        {
+          "name": "IsAlly",
+          "cppName": "CGuild_IsAlly",
+          "params": {
+            "num": 1,
+            "list": [
+              {
+                "name": "other",
+                "type": "Guild",
+                "required": true
+              }
+            ]
+          },
+          "returns": "boolean"
+        },
+        {
+          "name": "IsNeutral",
+          "cppName": "CGuild_IsNeutral",
+          "params": {
+            "num": 1,
+            "list": [
+              {
+                "name": "other",
+                "type": "Guild",
+                "required": true
+              }
+            ]
           },
           "returns": "boolean"
         }
@@ -8828,6 +8961,16 @@
         ]
       },
       "returns": "void"
+    },
+    {
+      "name": "onGuildButton",
+      "cppName": "OnGuildButton",
+      "params": {
+        "list": [
+          { "name": "presser", "type": "Character", "required": true }
+        ]
+      },
+      "returns": "boolean"
     }
   ],
   "globals": [
