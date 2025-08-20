@@ -4647,6 +4647,243 @@ JSBool CGuild_IsNeutral( JSContext *cx, uintN argc, jsval *vp )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function   -  CGuild_SendInvite()
+//| Prototype  -  bool SendInvite( trgChar )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose    -  Records a pending invite for target character (does NOT add recruit yet)
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_SendInvite( JSContext *cx, uintN argc, jsval *vp )
+{
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	if( argc != 1 )
+	{
+		ScriptError( cx, "(SendInvite) Invalid Parameter Count: %d", argc );
+		return JS_FALSE;
+	}
+
+	CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+	if( myGuild == nullptr )
+	{
+		ScriptError( cx, "(SendInvite) Invalid Object assigned" );
+		return JS_FALSE;
+	}
+
+	jsval *argv = JS_ARGV( cx, vp );
+	if( !JSVAL_IS_OBJECT( argv[0] ))
+	{
+		ScriptError( cx, "(SendInvite) Expected character object" );
+		return JS_FALSE;
+	}
+
+	CChar *tChar = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	if( tChar == nullptr )
+	{
+		ScriptError( cx, "(SendInvite) Invalid character object" );
+		return JS_FALSE;
+	}
+
+	// Basic gatekeeping: already in a guild or already known to us
+	if( tChar->GetGuildNumber() != -1 || myGuild->IsMember( *tChar ) || myGuild->IsRecruit( *tChar ) || myGuild->IsInvited( *tChar ) )
+	{
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+		return JS_TRUE;
+	}
+
+	myGuild->AddInvite( *tChar );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ) );
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function   -  CGuild_AcceptInvite()
+//| Prototype  -  bool AcceptInvite()
+//|              bool AcceptInvite( trgChar )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose    -  Accept pending invite; moves target into RECRUITS (not member)
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_AcceptInvite( JSContext *cx, uintN argc, jsval *vp )
+{
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+	if( myGuild == nullptr )
+	{
+		ScriptError( cx, "(AcceptInvite) Invalid Object assigned" );
+		return JS_FALSE;
+	}
+
+	CChar *tChar = nullptr;
+	if( argc == 0 )
+	{
+		// Accept for parent character
+		JSObject *Parent = JS_GetParent( cx, obj );
+		tChar = static_cast<CChar*>( JS_GetPrivate( cx, Parent ));
+	}
+	else if( argc == 1 )
+	{
+		jsval *argv = JS_ARGV( cx, vp );
+		if( !JSVAL_IS_OBJECT( argv[0] ))
+		{
+			ScriptError( cx, "(AcceptInvite) Expected character object" );
+			return JS_FALSE;
+		}
+		tChar = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	}
+	else
+	{
+		ScriptError( cx, "(AcceptInvite) Invalid Parameter Count: %d", argc );
+		return JS_FALSE;
+	}
+
+	if( tChar == nullptr )
+	{
+		ScriptError( cx, "(AcceptInvite) Invalid character object" );
+		return JS_FALSE;
+	}
+
+	if( !myGuild->IsInvited( *tChar ) || tChar->GetGuildNumber() != -1 )
+	{
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+		return JS_TRUE;
+	}
+
+	// Remove from pending, add as RECRUIT, and bind to this guild
+	myGuild->RemoveInvite( *tChar );
+	myGuild->NewRecruit( *tChar );
+
+	// Set their guild number to this guild (via collection lookup)
+	GUILDID gid = GuildSys ? GuildSys->FindGuildId( myGuild ) : -1;
+	if( gid != -1 )
+		tChar->SetGuildNumber( gid );
+
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ) );
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function   -  CGuild_DeclineInvite()
+//| Prototype  -  bool DeclineInvite()
+//|              bool DeclineInvite( trgChar )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose    -  Declines/removes a pending invite; no guild state change otherwise
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_DeclineInvite( JSContext *cx, uintN argc, jsval *vp )
+{
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+	if( myGuild == nullptr )
+	{
+		ScriptError( cx, "(DeclineInvite) Invalid Object assigned" );
+		return JS_FALSE;
+	}
+
+	CChar *tChar = nullptr;
+	if( argc == 0 )
+	{
+		JSObject *Parent = JS_GetParent( cx, obj );
+		tChar = static_cast<CChar*>( JS_GetPrivate( cx, Parent ));
+	}
+	else if( argc == 1 )
+	{
+		jsval *argv = JS_ARGV( cx, vp );
+		if( !JSVAL_IS_OBJECT( argv[0] ))
+		{
+			ScriptError( cx, "(DeclineInvite) Expected character object" );
+			return JS_FALSE;
+		}
+		tChar = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	}
+	else
+	{
+		ScriptError( cx, "(DeclineInvite) Invalid Parameter Count: %d", argc );
+		return JS_FALSE;
+	}
+
+	if( tChar == nullptr )
+	{
+		ScriptError( cx, "(DeclineInvite) Invalid character object" );
+		return JS_FALSE;
+	}
+
+	if( myGuild->IsInvited( *tChar ) )
+	{
+		myGuild->RemoveInvite( *tChar );
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ) );
+	}
+	else
+	{
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+	}
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function   -  CGuild_NumInvites()
+//| Prototype  -  SI32 NumInvites()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose    -  Returns number of pending invites
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_NumInvites( JSContext *cx, uintN argc, jsval *vp )
+{
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	if( argc != 0 )
+	{
+		ScriptError( cx, "(NumInvites) Invalid Parameter Count: %d", argc );
+		return JS_FALSE;
+	}
+
+	CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+	if( myGuild == nullptr )
+	{
+		ScriptError( cx, "(NumInvites) Invalid Object assigned" );
+		return JS_FALSE;
+	}
+
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI32>( myGuild->NumInvites() )));
+	return JS_TRUE;
+}
+
+
+//o------------------------------------------------------------------------------------------------o
+//| Function   -  CGuild_IsInvited()
+//| Prototype  -  bool IsInvited( trgChar )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose    -  Checks if target has a pending invite to this guild
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_IsInvited( JSContext *cx, uintN argc, jsval *vp )
+{
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	if( argc != 1 )
+	{
+		ScriptError( cx, "(IsInvited) Invalid Parameter Count: %d", argc );
+		return JS_FALSE;
+	}
+
+	CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+	if( myGuild == nullptr )
+	{
+		ScriptError( cx, "(IsInvited) Invalid Object assigned" );
+		return JS_FALSE;
+	}
+
+	jsval *argv = JS_ARGV( cx, vp );
+	if( !JSVAL_IS_OBJECT( argv[0] ))
+	{
+		ScriptError( cx, "(IsInvited) Expected character object" );
+		return JS_FALSE;
+	}
+
+	CChar *tChar = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	if( tChar == nullptr )
+	{
+		ScriptError( cx, "(IsInvited) Invalid character object" );
+		return JS_FALSE;
+	}
+
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myGuild->IsInvited( *tChar ) ) );
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBase_ResourceCount()
 //|	Prototype	-	int ResourceCount( realId, colour )
 //|					int ResourceCount( realId, colour, moreVal )

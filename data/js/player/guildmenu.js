@@ -34,34 +34,27 @@ function GuildCreation( pUser )
 
 function GetRankName( guild, mChar )
 {
-	// Try common places first; fall back to "Member"
-	// Replace these getters if your shard stores rank differently.
-	var r = ( mChar && mChar.GetTag ) ? mChar.GetTag( "guildRankName" ) : null;
-	if( r && r.length )
-		return r;
+	if( !guild || !mChar )
+		return "";
 
-	// Example: if you have a guild API like GetMemberRankName(serial)
-	if( guild && guild.GetMemberRankName )
+	// Check recruits list
+	var recs = guild.recruits || [];
+	for( var i = 0; i < recs.length; i++ )
 	{
-		try { r = guild.GetMemberRankName( mChar.serial ); } catch( e ) { /* ignore */ }
-		if( r && r.length )
-			return r;
+		if( recs[i] && recs[i].serial === mChar.serial )
+			return "Recruit";
 	}
 
-	// Example: if rank numeric tag exists
-	var rn =  (mChar && mChar.GetTag ) ? mChar.GetTag( "guildRank" ) : null;
-	if( rn != null )
+	// Check members list
+	var mems = guild.members || guild.member || [];
+	for( var j = 0; j < mems.length; j++ )
 	{
-		switch( rn|0 )
-		{
-			case 3: return "Leader";
-			case 2: return "Officer";
-			case 1: return "Veteran";
-			default: return "Member";
-		}
+		if( mems[j] && mems[j].serial === mChar.serial )
+			return "Member";
 	}
 
-	return "Member";
+	// Not found in either list
+	return "";
 }
 
 function GetOnlineStatus( mChar )
@@ -71,21 +64,14 @@ function GetOnlineStatus( mChar )
 	return ( mChar && mChar.socket ) ? "Online" : "Offline";
 }
 
-// ---- Constants (top of script or near GuildMenu) ----
-var BTN_ACCEPT_BASE = 12000;   // Accept buttons: 12000 + rowIndex
-var BTN_REJECT_BASE = 13000;   // Reject buttons: 13000 + rowIndex
-var BTN_PREV_RECR   = 14001;   // Prev page
-var BTN_NEXT_RECR   = 14002;   // Next page
-var BTN_INVITE      = 14003;   // Invite button (your existing one can use this id)
-
 function GetRosterOffset( pUser )
 {
     var off = pUser.GetTag ? ( pUser.GetTag( "recruitOffset" )|0 ) : 0;
-    if (off < 0)
+    if( off < 0 )
 		off = 0;
     return off;
 }
-function SetRosterOffset(pUser, off)
+function SetRosterOffset( pUser, off )
 {
     if( pUser.SetTag )
 		pUser.SetTag( "recruitOffset", off|0 );
@@ -105,7 +91,7 @@ function RenderRecruitList( guildMenu, pUser )
 
     // Invite UI
     guildMenu.AddHTMLGump( 200, 520, 180, 24, false, false, "<basefont color=#ffffff>Invite new recruit</basefont>" );
-    guildMenu.AddButton( 520, 520, 0xFAE, 0xFB0, 1, 0, BTN_INVITE ); // Invite button
+    guildMenu.AddButton( 520, 520, 0xFAE, 0xFB0, 1, 0, 14003 ); // Invite button
 
     if (!recruits.length)
     {
@@ -120,9 +106,9 @@ function RenderRecruitList( guildMenu, pUser )
 
     // Prev/Next page buttons
     if( offset > 0 )
-        guildMenu.AddButton(200, 520, 0xFA5, 0xFA7, 1, 0, BTN_PREV_RECR );
+        guildMenu.AddButton(200, 520, 0xFA5, 0xFA7, 1, 0, 14001 );
     if( end < recruits.length )
-        guildMenu.AddButton(250, 520, 0xFA5, 0xFA7, 1, 0, BTN_NEXT_RECR );
+        guildMenu.AddButton(250, 520, 0xFA5, 0xFA7, 1, 0, 14002 );
 
     // Rows
     for( var i = offset, row = 0; i < end; i++, row++ )
@@ -134,10 +120,10 @@ function RenderRecruitList( guildMenu, pUser )
         guildMenu.AddHTMLGump( 200, rowStartY + row*rowHeight, 200, 22, false, false, "<basefont color=#ffffff>" + name + "</basefont>" );
 
         // Accept
-        guildMenu.AddButton( 420, rowStartY + row*rowHeight, 0xFB7, 0xFB9, 1, 0, BTN_ACCEPT_BASE + row );
+        guildMenu.AddButton( 420, rowStartY + row*rowHeight, 0xFB7, 0xFB9, 1, 0, 12000 + row );
 
         // Reject
-        guildMenu.AddButton( 465, rowStartY + row*rowHeight, 0xFB4, 0xFB6, 1, 0, BTN_REJECT_BASE + row );
+        guildMenu.AddButton( 465, rowStartY + row*rowHeight, 0xFB4, 0xFB6, 1, 0, 13000 + row );
     }
 }
 
@@ -195,8 +181,7 @@ function GuildMenu( pUser )
 	// Header labels are already added above; now print rows
 	if( members.length === 0 )
 	{
-		guildMenu.AddHTMLGump( 240, rowStartY, 320, 22, false, false,
-			"<basefont color=#c0c0c0>No members found</basefont>" );
+		guildMenu.AddHTMLGump( 240, rowStartY, 320, 22, false, false, "<basefont color=#c0c0c0>No members found</basefont>" );
 	}
 	else
 	{
@@ -204,7 +189,7 @@ function GuildMenu( pUser )
 		for( var i = 0; i < showCount; i++ )
 		{
 			var m = members[i];
-			var name = (m && m.name) ? m.name : ("0x" + (m ? m.serial.toString(16).toUpperCase() : "00000000"));
+			var name = ( m && m.name ) ? m.name : ( "0x" + ( m ? m.serial.toString( 16 ).toUpperCase() : "00000000" ));
 			var rank = GetRankName( guildinfo, m );
 			var status = GetOnlineStatus( m );
 
@@ -213,7 +198,7 @@ function GuildMenu( pUser )
 			// Rank column
 			guildMenu.AddHTMLGump( 380, rowStartY + (i * rowHeight), 100, 22, false, false, "<basefont color=#ffffff>" + rank + "</basefont>" );
 		// Status column (green/red for quick scanning)
-		var statusColor = (status === "Online") ? "#00ff00" : "#ff4040";
+		var statusColor = ( status === "Online" ) ? "#00ff00" : "#ff4040";
 		guildMenu.AddHTMLGump( 500, rowStartY + (i * rowHeight), 80, 22, false, false, "<basefont color=" + statusColor + ">" + status + "</basefont>" );
 		}
 	}
@@ -270,7 +255,7 @@ function GuildMenu( pUser )
 	guildMenu.AddPicture(-5, 100, 0x0FC0);
 
 	// Render recruits list + per-row buttons
-	RenderRecruitList(guildMenu, pUser);
+	RenderRecruitList( guildMenu, pUser );
 
 	guildMenu.Send( socket );
 	guildMenu.Free();
@@ -280,35 +265,33 @@ function onGumpPress( pSock, pButton, gumpData )
 {
 	var pUser = pSock.currentChar;
 
-	switch( pButton )
+	if( pButton === 0 )
+		return; // no button pressed, early out
+
+	if( pButton === 1 ) // Create Guild
 	{
-		case 0:// abort and do nothing
-			break;
-		case 1:
+		var Text1 = gumpData.getEdit(0);
+		var Text2 = gumpData.getEdit(1);
+		if( pUser.guild == null )
 		{
-			var Text1 = gumpData.getEdit(0);
-			var Text2 = gumpData.getEdit(1);
-			if( pUser.guild == null )
+			pUser.TextMessage( "Not currently in a guild... Creating new guild...", false, 0x3b2, 0, pUser.serial );
+			var newGuild = CreateNewGuild();
+			if( newGuild )
 			{
-				pUser.TextMessage( "Not currently in a guild... Creating new guild...", false, 0x3b2, 0, pUser.serial );
-				var newGuild = CreateNewGuild();
-				if( newGuild )
-				{
-					newGuild.name = Text1;
-					newGuild.abbreviation = Text2;
-					newGuild.type = 0;
-					newGuild.AddMember( pUser );
-					newGuild.master = pUser;
-					pUser.guildTitle = "Guild Master";
-					pUser.TextMessage( "Guild automatically created: " + newGuild.name, false, 0x3b2, 0, pUser.serial );
-				}
-				break;
+				newGuild.name = Text1;
+				newGuild.abbreviation = Text2;
+				newGuild.type = 0;
+				newGuild.AddMember( pUser );
+				newGuild.master = pUser;
+				pUser.guildTitle = "Guild Master";
+				pUser.TextMessage( "Guild automatically created: " + newGuild.name, false, 0x3b2, 0, pUser.serial );
 			}
-			else
-			{
-			   pUser.TextMessage( "Currently member of: " + pUser.guild.name, false, 0x3b2, 0, pUser.serial );
-			   break;
-			}
+			return;
+		}
+		else
+		{
+			pUser.TextMessage( "Currently member of: " + pUser.guild.name, false, 0x3b2, 0, pUser.serial );
+			return;
 		}
 	}
 	var guildinfo = pUser.guild;
@@ -318,13 +301,13 @@ function onGumpPress( pSock, pButton, gumpData )
 		return;
 
     // Paging
-    if( pButton === BTN_PREV_RECR || pButton === BTN_NEXT_RECR )
+    if( pButton === 14001 || pButton === 14002 )
     {
         var recruits = guildinfo.recruits || [];
         var maxRows = 14;
         var offset = GetRosterOffset( pUser );
 
-        if( pButton === BTN_PREV_RECR )
+        if( pButton === 14001 )
             offset = Math.max( 0, offset - maxRows );
         else
             offset = Math.min(Math.max( 0, recruits.length - 1 ), offset + maxRows );
@@ -337,41 +320,94 @@ function onGumpPress( pSock, pButton, gumpData )
     }
 
     // Invite
-    if( pButton === BTN_INVITE )
+    if( pButton === 14003 )
     {
-        // If you later add a text-entry for name, read it here:
-        // var name = gumpData.getText(0).trim();
-        // Do your invite flow here.
 		pSock.CustomTarget( 0, "Select a player to invite." );
-        pSock.SysMessage( "Invite flow not implemented yet." );
         GuildMenu( pUser );
         return;
     }
 
     // Accept / Reject ranges
-    if( pButton >= BTN_ACCEPT_BASE && pButton < ( BTN_ACCEPT_BASE + 1000 ))
+    if( pButton >= 12000 && pButton < ( 12000 + 1000 ))
     {
-        var row = pButton - BTN_ACCEPT_BASE;
+        var row = pButton - 12000;
         HandleRecruitAction( pSock, pUser, guildinfo, row, true );
         return;
     }
-    if( pButton >= BTN_REJECT_BASE && pButton < ( BTN_REJECT_BASE + 1000 ))
+    if( pButton >= 13000 && pButton < ( 13000 + 1000 ))
     {
-        var row = pButton - BTN_REJECT_BASE;
+        var row = pButton - 13000;
         HandleRecruitAction( pSock, pUser, guildinfo, row, false );
         return;
     }
 }
 
-function onCallback0( socket, ourObj )
+/*function onCallback0( socket, ourObj )
 {
 	var pUser = socket.currentChar;
-	// Fetch myChar's guild
-	var myGuild = pUser.guild;
-	if( myGuild != null )
+	var guild = pUser.guild;
+	if( guild != null )
 	{
 		// Add ourObj as recruit in myChar's guild
-		myGuild.AddRecruit( ourObj );
+		guild.AddRecruit( ourObj );
+	}
+}*/
+function onCallback0( socket, target )
+{
+	var pUser = socket.currentChar;
+	if( !pUser )
+		return;
+
+	var guild = pUser.guild;
+	if( !guild )
+	{
+		socket.SysMessage( "You are not in a guild." );
+		return;
+	}
+
+	if( !target || !target.isChar )
+	{
+		socket.SysMessage( "That is not a valid character." );
+		return;
+	}
+
+	// Check if target already has a guild
+	if( target.guild )
+	{
+		if( target.guild === guild )
+		{
+			socket.SysMessage( target.name + " is already in your guild." );
+		}
+		else
+		{
+			socket.SysMessage( target.name + " is already a member of another guild." );
+		}
+		return;
+	}
+
+	// Already a recruit?
+	var recruits = guild.recruits || [];
+	for( var i = 0; i < recruits.length; i++ )
+	{
+		if( recruits[i] && recruits[i].serial === target.serial )
+		{
+			socket.SysMessage( target.name + " is already a recruit." );
+			return;
+		}
+	}
+
+	// Passed checks: add as recruit
+	try
+	{
+		guild.AddRecruit( target );
+		socket.SysMessage( "Invited " + ( target.name || "player" ) + " as a recruit." );
+
+		if( target.socket )
+			target.socket.SysMessage( "You have been invited to join " + ( guild.name || "a guild" ) + " as a recruit." );
+	}
+	catch( e )
+	{
+		socket.SysMessage( "Failed to invite recruit." );
 	}
 }
 
@@ -419,7 +455,7 @@ function HandleRecruitAction( pSock, pUser, guildinfo, row, doAccept )
 
     // Optional: keep offset sane if list shrank
     if( offset >= ( recruits.length - 1 ) && offset > 0 )
-        SetRosterOffset(pUser, offset - 1 );
+        SetRosterOffset( pUser, offset - 1 );
 
     // Refresh gump so the row list updates immediately
     GuildMenu( pUser );

@@ -270,6 +270,11 @@ JSBool CGuild_RecruitToMember( JSContext *cx, uintN argc, jsval *vp );
 JSBool CGuild_IsAtWar( JSContext *cx, uintN argc, jsval *vp );
 JSBool CGuild_IsAlly( JSContext *cx, uintN argc, jsval *vp );
 JSBool CGuild_IsNeutral( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_SendInvite( JSContext* cx, uintN argc, jsval* vp );
+JSBool CGuild_AcceptInvite( JSContext* cx, uintN argc, jsval* vp );
+JSBool CGuild_DeclineInvite( JSContext* cx, uintN argc, jsval* vp );
+JSBool CGuild_IsInvited( JSContext* cx, uintN argc, jsval* vp );
+JSBool CGuild_NumInvites( JSContext* cx, uintN argc, jsval* vp );
 
 // Misc
 JSBool CMisc_SoundEffect( JSContext *cx, uintN argc, jsval *vp );
@@ -668,6 +673,11 @@ inline JSFunctionSpec CGuild_Methods[] =
 	{ "IsAtWar",			CGuild_IsAtWar,				1, 0 },
 	{ "IsAlly",				CGuild_IsAlly,				1, 0 },
 	{ "IsNeutral",			CGuild_IsNeutral,			1, 0 },
+	{ "SendInvite",		    CGuild_SendInvite,			1, 0 },
+	{ "AcceptInvite",		CGuild_AcceptInvite,		0, 0 },
+	{ "DeclineInvite",		CGuild_DeclineInvite,		0, 0 },
+	{ "IsInvited",			CGuild_IsInvited,			1, 0 },
+	{ "NumInvites",			CGuild_NumInvites,			0, 0 },
 	JS_FS_END
 };
 

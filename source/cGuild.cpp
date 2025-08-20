@@ -26,8 +26,10 @@ CGuild::CGuild() : name( "" ), gType( GT_STANDARD ), charter( "" ), webpage( "" 
 	abbreviation[0] = 0;
 	recruits.resize( 0 );
 	members.resize( 0 );
+    invites.resize(  0 );
 	recruitPtr		= recruits.end();
 	memberPtr		= members.end();
+    invitePtr		= invites.end();
 	warPtr			= relationList.end();
 	allyPtr			= relationList.end();
 }
@@ -642,6 +644,129 @@ GUILDREL *CGuild::GuildRelationList( void )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::AddInvite( CChar& )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Add a pending invite for the given character (by serial)
+//|                Skips if already member/recruit/invited
+//o------------------------------------------------------------------------------------------------o
+void CGuild::AddInvite( CChar& c )
+{
+    AddInvite( c.GetSerial() );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::AddInvite( SERIAL )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Add a pending invite for the given serial
+//|                Skips if already member/recruit/invited
+//o------------------------------------------------------------------------------------------------o
+void CGuild::AddInvite( SERIAL s )
+{
+    if( IsMember( s ) || IsRecruit( s ) || IsInvited( s ) )
+        return;
+    invites.push_back( s );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::RemoveInvite( CChar& )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Remove a pending invite for the given character (by serial)
+//o------------------------------------------------------------------------------------------------o
+void CGuild::RemoveInvite( CChar& c )
+{
+    RemoveInvite( c.GetSerial() );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::RemoveInvite( SERIAL )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Remove a pending invite for the given serial, if present
+//o------------------------------------------------------------------------------------------------o
+void CGuild::RemoveInvite( SERIAL s )
+{
+    auto it = std::find( invites.begin(), invites.end(), s );
+    if( it != invites.end() )
+        invites.erase( it );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::IsInvited( CChar& ) const
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Check if the character has a pending invite (by serial)
+//o------------------------------------------------------------------------------------------------o
+bool CGuild::IsInvited( CChar& c ) const
+{
+    return IsInvited( c.GetSerial() );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::IsInvited( SERIAL ) const
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Check if the serial has a pending invite
+//o------------------------------------------------------------------------------------------------o
+bool CGuild::IsInvited( SERIAL s ) const
+{
+    return std::find( invites.begin(), invites.end(), s ) != invites.end();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::NumInvites() const
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Return number of pending invites
+//o------------------------------------------------------------------------------------------------o
+size_t CGuild::NumInvites() const
+{
+    return invites.size();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::InviteNumber( size_t ) const
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Return invite serial at index, or INVALIDSERIAL if out of range
+//o------------------------------------------------------------------------------------------------o
+SERIAL CGuild::InviteNumber( size_t i ) const
+{
+    return ( i < invites.size() ) ? invites[i] : INVALIDSERIAL;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::FirstInvite()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Position iterator at first invite and return its serial,
+//|                or INVALIDSERIAL if list is empty
+//o------------------------------------------------------------------------------------------------o
+SERIAL CGuild::FirstInvite()
+{
+    invitePtr = invites.begin();
+    return FinishedInvites() ? INVALIDSERIAL : *invitePtr;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::NextInvite()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Advance to next invite and return its serial,
+//|                or INVALIDSERIAL if at end
+//o------------------------------------------------------------------------------------------------o
+SERIAL CGuild::NextInvite()
+{
+    if( FinishedInvites() )
+        return INVALIDSERIAL;
+    ++invitePtr;
+    return FinishedInvites() ? INVALIDSERIAL : *invitePtr;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::FinishedInvites()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Return true if invite iterator is at end
+//o------------------------------------------------------------------------------------------------o
+bool CGuild::FinishedInvites()
+{
+    return invitePtr == invites.end();
+}
+
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGuild::Save()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Save guild data to worldfiles
@@ -653,6 +778,10 @@ void CGuild::Save( std::ostream &toSave, GUILDID gNum )
 	toSave << "ABBREVIATION=" << abbreviation << '\n';
 	toSave << "TYPE=" << GTypeNames[gType] << '\n';
 	toSave << "CHARTER=" << charter << '\n';
+	for(auto s : invites)
+	{
+		toSave << "INVITE=" << s << '\n';
+	}
 	toSave << "WEBPAGE=" << webpage << '\n';
 	toSave << "STONE=" << stone << '\n';
 	toSave << "MASTER=" << master << '\n';
@@ -711,6 +840,12 @@ void CGuild::Load( CScriptSection *toRead )
 				if( UTag == "CHARTER" )
 				{
 					Charter( data );
+				}
+				break;
+			case 'I':
+				if(UTag == "INVITE")
+				{
+					AddInvite(static_cast<UI32>(std::stoul(data, nullptr, 0)));
 				}
 				break;
 			case 'M':

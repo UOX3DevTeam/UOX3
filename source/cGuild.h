@@ -49,6 +49,9 @@ private:
 
 	GUILDREL_ITERATOR	warPtr;
 	GUILDREL_ITERATOR	allyPtr;
+
+	std::vector<SERIAL> invites;
+	std::vector<SERIAL>::iterator	invitePtr;
 public:
 
 	GUILDID		FirstWar( void );
@@ -123,6 +126,19 @@ public:
 	bool		IsMember( SERIAL toCheck ) const;
 	bool		IsRecruit( CChar &toCheck ) const;
 	bool		IsMember( CChar &toCheck ) const;
+
+	SERIAL      FirstInvite();
+	SERIAL      NextInvite();
+	bool        FinishedInvites();
+	SERIAL      InviteNumber( size_t i ) const;
+	size_t      NumInvites() const;
+
+	void        AddInvite( CChar &c );
+	void        AddInvite( SERIAL s );
+	void        RemoveInvite( CChar &c );
+	void        RemoveInvite( SERIAL s );
+	bool        IsInvited( CChar &c ) const;
+	bool        IsInvited( SERIAL s ) const;
 };
 
 typedef std::map< GUILDID, CGuild * > GUILDLIST;
