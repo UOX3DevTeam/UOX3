@@ -9,7 +9,8 @@ jobs:
   update-changelog:
     if: >
       github.event.pull_request.merged == true &&
-      github.actor != 'github-actions[bot]'
+      github.actor != 'github-actions[bot]' &&
+      !contains(github.event.pull_request.labels.*.name, 'skip changelog')
 
     runs-on: ubuntu-latest
     permissions:
@@ -31,6 +32,11 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           TIMESTAMP=$(date -d "$MERGED_AT" +'%d/%m/%Y')
+
+          # Check if the PR body is empty and set a default if it is
+          if [ -z "$PR_BODY" ]; then
+            PR_BODY="No PR description provided."
+          fi
 
           # Convert markdown-style list items into indented changelog lines
           FORMATTED_BODY=$(echo "$PR_BODY" | sed 's/^[[:space:]]\{2,\}- /        /; s/^- /    /')
@@ -59,9 +65,4 @@ jobs:
           body: "Automated changelog update. This PR will be auto-merged."
           branch: "changelog/pr-${{ github.event.pull_request.number }}"
           base: ${{ github.event.pull_request.base.ref }}
-
-      - name: Enable Auto-Merge via GitHub CLI
-        if: steps.cpr.outputs.pull-request-number
-        run: gh pr merge --auto --squash "${{ steps.cpr.outputs.pull-request-number }}"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          labels: "automated changelog merge"
