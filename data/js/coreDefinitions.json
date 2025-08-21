@@ -8971,6 +8971,28 @@
         ]
       },
       "returns": "boolean"
+    },
+    {
+      "name": "onProfileRequest",
+      "cppName": "OnProfileRequest",
+      "params": {
+        "list": [
+          { "name": "myObj",        "type": "Socket",    "required": true },
+          { "name": "profileOwner", "type": "Character", "required": true }
+        ]
+      },
+      "returns": "string"
+    },
+    {
+      "name": "onProfileRequest",
+      "cppName": "OnProfileRequest",
+      "params": {
+        "list": [
+          { "name": "myObj",       "type": "Socket", "required": true },
+          { "name": "profileText", "type": "string", "required": true }
+        ]
+      },
+      "returns": "voi"
     }
   ],
   "globals": [

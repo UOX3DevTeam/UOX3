@@ -1688,6 +1688,8 @@ declare global {
   function onPacketReceive( mSock: Socket, packetNum: number ): boolean;
   function onPathfindEnd( npc: Character, pathfindResult: number ): boolean;
   function onPickup( item: Item, pickerUpper: Character, objCont: BaseObject ): boolean;
+  function onProfileRequest( myObj: Socket, profileOwner: Character ): string;
+  function onProfileRequest( myObj: Socket, profileText: string ): voi;
   function onQuestGump( mChar: Character ): boolean;
   function onResurrect( pAlive: Character ): boolean;
   function onScrollCast( tChar: Character, SpellId: number ): number;
