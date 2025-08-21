@@ -44,7 +44,7 @@ const specialMonsterLootOverride = -1; // -1 = no override, 0 = always false, 1 
 const stealFromGuardsOverride = false;
 
 /** @type { ( skillUse: BaseObject, skillUsed: number, objType: 0 | 1 ) => boolean } */
-function onSkill( pThief, objType, skillUsed )
+function onSkill( pThief, skillUsed, objType )
 {
 	var pSock = pThief.socket;
 	if( pSock )

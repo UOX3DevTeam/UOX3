@@ -6,7 +6,7 @@ function SkillRegistration()
 }
 
 /** @type { ( skillUse: BaseObject, skillUsed: number, objType: 0 | 1 ) => boolean } */
-function onSkill( pUser, objType, skillUsed )
+function onSkill( pUser, skillUsed, objType )
 {
 	var pSock = pUser.socket;
 	if( pSock )
