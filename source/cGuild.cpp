@@ -26,10 +26,14 @@ CGuild::CGuild() : name( "" ), gType( GT_STANDARD ), charter( "" ), webpage( "" 
 	abbreviation[0] = 0;
 	recruits.resize( 0 );
 	members.resize( 0 );
-    invites.resize(  0 );
+    invites.resize( 0 );
+    veterans.resize( 0 );
+    officers.resize( 0 );
 	recruitPtr		= recruits.end();
 	memberPtr		= members.end();
     invitePtr		= invites.end();
+    veteranPtr		= veterans.end();
+    officerPtr		= officers.end();
 	warPtr			= relationList.end();
 	allyPtr			= relationList.end();
 }
@@ -37,9 +41,11 @@ CGuild::CGuild() : name( "" ), gType( GT_STANDARD ), charter( "" ), webpage( "" 
 CGuild::~CGuild()
 {
 	JSEngine->ReleaseObject( IUE_GUILD, this );
-
 	recruits.clear();
 	members.clear();
+    invites.clear();
+    veterans.clear();
+    officers.clear();
 	relationList.clear();
 }
 
@@ -651,7 +657,7 @@ GUILDREL *CGuild::GuildRelationList( void )
 //o------------------------------------------------------------------------------------------------o
 void CGuild::AddInvite( CChar& c )
 {
-    AddInvite( c.GetSerial() );
+	AddInvite( c.GetSerial() );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -662,9 +668,9 @@ void CGuild::AddInvite( CChar& c )
 //o------------------------------------------------------------------------------------------------o
 void CGuild::AddInvite( SERIAL s )
 {
-    if( IsMember( s ) || IsRecruit( s ) || IsInvited( s ) )
-        return;
-    invites.push_back( s );
+	if( IsMember( s ) || IsRecruit( s ) || IsInvited( s ) )
+		return;
+	invites.push_back( s );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -674,7 +680,7 @@ void CGuild::AddInvite( SERIAL s )
 //o------------------------------------------------------------------------------------------------o
 void CGuild::RemoveInvite( CChar& c )
 {
-    RemoveInvite( c.GetSerial() );
+	RemoveInvite( c.GetSerial() );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -684,9 +690,9 @@ void CGuild::RemoveInvite( CChar& c )
 //o------------------------------------------------------------------------------------------------o
 void CGuild::RemoveInvite( SERIAL s )
 {
-    auto it = std::find( invites.begin(), invites.end(), s );
-    if( it != invites.end() )
-        invites.erase( it );
+	auto it = std::find( invites.begin(), invites.end(), s );
+	if( it != invites.end() )
+		invites.erase( it );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -696,7 +702,7 @@ void CGuild::RemoveInvite( SERIAL s )
 //o------------------------------------------------------------------------------------------------o
 bool CGuild::IsInvited( CChar& c ) const
 {
-    return IsInvited( c.GetSerial() );
+	return IsInvited( c.GetSerial() );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -706,7 +712,7 @@ bool CGuild::IsInvited( CChar& c ) const
 //o------------------------------------------------------------------------------------------------o
 bool CGuild::IsInvited( SERIAL s ) const
 {
-    return std::find( invites.begin(), invites.end(), s ) != invites.end();
+	return std::find( invites.begin(), invites.end(), s ) != invites.end();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -716,7 +722,7 @@ bool CGuild::IsInvited( SERIAL s ) const
 //o------------------------------------------------------------------------------------------------o
 size_t CGuild::NumInvites() const
 {
-    return invites.size();
+	return invites.size();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -726,7 +732,7 @@ size_t CGuild::NumInvites() const
 //o------------------------------------------------------------------------------------------------o
 SERIAL CGuild::InviteNumber( size_t i ) const
 {
-    return ( i < invites.size() ) ? invites[i] : INVALIDSERIAL;
+	return ( i < invites.size() ) ? invites[i] : INVALIDSERIAL;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -737,8 +743,8 @@ SERIAL CGuild::InviteNumber( size_t i ) const
 //o------------------------------------------------------------------------------------------------o
 SERIAL CGuild::FirstInvite()
 {
-    invitePtr = invites.begin();
-    return FinishedInvites() ? INVALIDSERIAL : *invitePtr;
+	invitePtr = invites.begin();
+	return FinishedInvites() ? INVALIDSERIAL : *invitePtr;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -749,10 +755,10 @@ SERIAL CGuild::FirstInvite()
 //o------------------------------------------------------------------------------------------------o
 SERIAL CGuild::NextInvite()
 {
-    if( FinishedInvites() )
-        return INVALIDSERIAL;
-    ++invitePtr;
-    return FinishedInvites() ? INVALIDSERIAL : *invitePtr;
+	if( FinishedInvites() )
+		return INVALIDSERIAL;
+	++invitePtr;
+	return FinishedInvites() ? INVALIDSERIAL : *invitePtr;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -762,9 +768,224 @@ SERIAL CGuild::NextInvite()
 //o------------------------------------------------------------------------------------------------o
 bool CGuild::FinishedInvites()
 {
-    return invitePtr == invites.end();
+	return invitePtr == invites.end();
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::NewVeteran()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Adds a new Veteran to the guild
+//| Notes       - Removes character from Recruit, Member, or Officer lists if present
+//o------------------------------------------------------------------------------------------------o
+void CGuild::NewVeteran( CChar& c )
+{
+	 NewVeteran( c.GetSerial() );
+}
+void CGuild::NewVeteran( SERIAL s )
+{
+	RemoveRecruit( s);
+	RemoveMember( s );
+	RemoveOfficer( s );
+	veterans.push_back( s );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::RemoveVeteran()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Removes a Veteran from the guild
+//o------------------------------------------------------------------------------------------------o
+void CGuild::RemoveVeteran( CChar& c )
+{
+	RemoveVeteran( c.GetSerial() );
+}
+void CGuild::RemoveVeteran( SERIAL s )
+{
+	auto it = std::find( veterans.begin(), veterans.end(), s );
+	if( it != veterans.end() )
+		veterans.erase( it );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::VeteranNumber( size_t ) const
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Return serial of Veteran at index, or INVALIDSERIAL if out of range
+//o------------------------------------------------------------------------------------------------o
+SERIAL CGuild::VeteranNumber( size_t i ) const
+{
+	return ( i < veterans.size() ) ? veterans[i] : INVALIDSERIAL;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::IsVeteran( CChar& ) const
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Check if character is a Veteran of this guild
+//o------------------------------------------------------------------------------------------------o
+bool CGuild::IsVeteran( CChar& c ) const
+{
+	return IsVeteran( c.GetSerial() );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::IsVeteran()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Checks if specified character is a Veteran of the guild
+//o------------------------------------------------------------------------------------------------o
+bool CGuild::IsVeteran( SERIAL s ) const
+{
+	return std::find( veterans.begin(), veterans.end(), s ) != veterans.end();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::FirstVeteran()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Returns serial of first Veteran in guild (or INVALIDSERIAL if none)
+//o------------------------------------------------------------------------------------------------o
+SERIAL CGuild::FirstVeteran()
+{
+	veteranPtr = veterans.begin();
+	return FinishedVeterans() ? INVALIDSERIAL : *veteranPtr;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::NextVeteran()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Returns serial of next Veteran in list (or INVALIDSERIAL if finished)
+//o------------------------------------------------------------------------------------------------o
+SERIAL CGuild::NextVeteran()
+{
+	if( FinishedVeterans() )
+		return INVALIDSERIAL;
+	++veteranPtr;
+	return FinishedVeterans() ? INVALIDSERIAL : *veteranPtr;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::FinishedVeterans()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Returns true if there are no more Veterans left to iterate
+//o------------------------------------------------------------------------------------------------o
+bool CGuild::FinishedVeterans()
+{
+	return veteranPtr == veterans.end(); 
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::NumVeterans()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Returns number of Veterans in the guild
+//o------------------------------------------------------------------------------------------------o
+size_t CGuild::NumVeterans() const 
+{
+	return veterans.size(); 
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::NewOfficer()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Adds a new Officer to the guild
+//| Notes       - Removes character from Recruit, Member, or Veteran lists if present
+//o------------------------------------------------------------------------------------------------o
+void CGuild::NewOfficer(CChar& c)
+{
+	NewOfficer( c.GetSerial() );
+}
+void CGuild::NewOfficer( SERIAL s )
+{
+	RemoveRecruit( s );
+	RemoveMember( s );
+	RemoveVeteran( s );
+	officers.push_back( s );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::RemoveOfficer()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Removes an Officer from the guild
+//o------------------------------------------------------------------------------------------------o
+void CGuild::RemoveOfficer( CChar& c ) 
+{
+	RemoveOfficer( c.GetSerial() );
+}
+void CGuild::RemoveOfficer (SERIAL s )
+{
+	auto it = std::find( officers.begin(), officers.end(), s );
+	if( it != officers.end())
+		officers.erase( it );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::OfficerNumber( size_t ) const
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Return serial of Officer at index, or INVALIDSERIAL if out of range
+//o------------------------------------------------------------------------------------------------o
+SERIAL CGuild::OfficerNumber( size_t i ) const
+{
+	return ( i < officers.size() ) ? officers[i] : INVALIDSERIAL;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::IsOfficer( CChar& ) const
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Check if character is an Officer of this guild
+//o------------------------------------------------------------------------------------------------o
+bool CGuild::IsOfficer( CChar& c ) const
+{
+	return IsOfficer( c.GetSerial() );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::IsOfficer()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Checks if specified character is an Officer of the guild
+//o------------------------------------------------------------------------------------------------o
+bool CGuild::IsOfficer(SERIAL s) const
+{
+	return std::find( officers.begin(), officers.end(), s ) != officers.end();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::FirstOfficer()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Returns serial of first Officer in guild (or INVALIDSERIAL if none)
+//o------------------------------------------------------------------------------------------------o
+SERIAL CGuild::FirstOfficer()
+{
+	officerPtr = officers.begin();
+	return FinishedOfficers() ? INVALIDSERIAL : *officerPtr;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::NextOfficer()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Returns serial of next Officer in list (or INVALIDSERIAL if finished)
+//o------------------------------------------------------------------------------------------------o
+SERIAL CGuild::NextOfficer()
+{
+	if( FinishedOfficers() )
+		return INVALIDSERIAL;
+	++officerPtr;
+	return FinishedOfficers() ? INVALIDSERIAL : *officerPtr;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::FinishedOfficers()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Returns true if there are no more Officers left to iterate
+//o------------------------------------------------------------------------------------------------o
+bool CGuild::FinishedOfficers()
+{
+	return officerPtr == officers.end(); 
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::NumOfficers()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Returns number of Officers in the guild
+//o------------------------------------------------------------------------------------------------o
+size_t CGuild::NumOfficers() const 
+{
+	return officers.size(); 
+}
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGuild::Save()

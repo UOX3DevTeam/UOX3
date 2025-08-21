@@ -4817,33 +4817,6 @@ JSBool CGuild_DeclineInvite( JSContext *cx, uintN argc, jsval *vp )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//| Function   -  CGuild_NumInvites()
-//| Prototype  -  SI32 NumInvites()
-//o------------------------------------------------------------------------------------------------o
-//| Purpose    -  Returns number of pending invites
-//o------------------------------------------------------------------------------------------------o
-JSBool CGuild_NumInvites( JSContext *cx, uintN argc, jsval *vp )
-{
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	if( argc != 0 )
-	{
-		ScriptError( cx, "(NumInvites) Invalid Parameter Count: %d", argc );
-		return JS_FALSE;
-	}
-
-	CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
-	if( myGuild == nullptr )
-	{
-		ScriptError( cx, "(NumInvites) Invalid Object assigned" );
-		return JS_FALSE;
-	}
-
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI32>( myGuild->NumInvites() )));
-	return JS_TRUE;
-}
-
-
-//o------------------------------------------------------------------------------------------------o
 //| Function   -  CGuild_IsInvited()
 //| Prototype  -  bool IsInvited( trgChar )
 //o------------------------------------------------------------------------------------------------o
@@ -4880,6 +4853,450 @@ JSBool CGuild_IsInvited( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myGuild->IsInvited( *tChar ) ) );
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function   -  CGuild_AddVeteran()
+//| Prototype  -  bool AddVeteran( trgChar )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose    -  Adds a character to the guild as a Veteran
+//|              (removes from recruit/member/officer if needed)
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_AddVeteran( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	if( argc != 1 )
+	{
+		ScriptError( cx, "AddVeteran: Invalid number of arguments (requires 1)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+
+	// default return value
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+
+	if( myClass.ClassName() == "UOXGuild" )
+	{
+		CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+		if( myGuild == nullptr )
+		{
+			ScriptError( cx, "AddVeteran: Invalid guild" );
+			return JS_FALSE;
+		}
+
+		JSEncapsulate toAdd( cx, &( argv[0] ));
+		CChar *trgChar = static_cast<CChar *>( toAdd.toObject() );
+		if( !ValidateObject( trgChar ))
+		{
+			ScriptError( cx, "AddVeteran: Invalid character to add" );
+			return JS_FALSE;
+		}
+
+		myGuild->NewVeteran( *trgChar );
+		GUILDID guildId = GuildSys->FindGuildId( myGuild );
+		trgChar->SetGuildNumber( guildId );
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
+	}
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function   -  CGuild_RemoveVeteran()
+//| Prototype  -  bool RemoveVeteran( trgChar )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose    -  Removes a character from the guild's Veteran list
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_RemoveVeteran( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	if( argc != 1 )
+	{
+		ScriptError( cx, "RemoveVeteran: Invalid number of arguments (requires 1)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+
+	if( myClass.ClassName() == "UOXGuild" )
+	{
+		CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+		if( myGuild == nullptr )
+		{
+			ScriptError( cx, "RemoveVeteran: Invalid guild" );
+			return JS_FALSE;
+		}
+
+		JSEncapsulate toAdd( cx, &( argv[0] ));
+		CChar *trgChar = static_cast<CChar *>( toAdd.toObject() );
+		if( !ValidateObject( trgChar ))
+		{
+			ScriptError( cx, "RemoveVeteran: Invalid character to remove" );
+			return JS_FALSE;
+		}
+
+		myGuild->RemoveVeteran( *trgChar );
+		trgChar->SetGuildNumber( -1 );
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
+	}
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function   -  CGuild_IsVeteran()
+//| Prototype  -  bool IsVeteran( trgChar )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose    -  Returns true if character is in the Veteran list
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_IsVeteran( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	if( argc != 1 )
+	{
+		ScriptError( cx, "IsVeteran: Invalid number of arguments (requires 1)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+
+	if( myClass.ClassName() == "UOXGuild" )
+	{
+		CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+		if( myGuild == nullptr )
+		{
+			ScriptError( cx, "IsVeteran: Invalid guild" );
+			return JS_FALSE;
+		}
+
+		JSEncapsulate toChk( cx, &( argv[0] ));
+		CChar *trgChar = static_cast<CChar *>( toChk.toObject() );
+		if( !ValidateObject( trgChar ))
+		{
+			ScriptError( cx, "IsVeteran: Invalid character" );
+			return JS_FALSE;
+		}
+
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myGuild->IsVeteran( *trgChar )));
+	}
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function   -  CGuild_AddOfficer()
+//| Prototype  -  bool AddOfficer( trgChar )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose    -  Adds a character to the guild as an Officer
+//|              (removes from recruit/member/veteran if needed)
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_AddOfficer( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	if( argc != 1 )
+	{
+		ScriptError( cx, "AddOfficer: Invalid number of arguments (requires 1)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+
+	if( myClass.ClassName() == "UOXGuild" )
+	{
+		CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+		if( myGuild == nullptr )
+		{
+			ScriptError( cx, "AddOfficer: Invalid guild" );
+			return JS_FALSE;
+		}
+
+		JSEncapsulate toAdd( cx, &( argv[0] ));
+		CChar *trgChar = static_cast<CChar *>( toAdd.toObject() );
+		if( !ValidateObject( trgChar ))
+		{
+			ScriptError( cx, "AddOfficer: Invalid character to add" );
+			return JS_FALSE;
+		}
+
+		myGuild->NewOfficer( *trgChar );
+		GUILDID guildId = GuildSys->FindGuildId( myGuild );
+		trgChar->SetGuildNumber( guildId );
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
+	}
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function   -  CGuild_RemoveOfficer()
+//| Prototype  -  bool RemoveOfficer( trgChar )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose    -  Removes a character from the guild's Officer list
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_RemoveOfficer( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	if( argc != 1 )
+	{
+		ScriptError( cx, "RemoveOfficer: Invalid number of arguments (requires 1)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+
+	if( myClass.ClassName() == "UOXGuild" )
+	{
+		CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+		if( myGuild == nullptr )
+		{
+			ScriptError( cx, "RemoveOfficer: Invalid guild" );
+			return JS_FALSE;
+		}
+
+		JSEncapsulate toAdd( cx, &( argv[0] ));
+		CChar *trgChar = static_cast<CChar *>( toAdd.toObject() );
+		if( !ValidateObject( trgChar ))
+		{
+			ScriptError( cx, "RemoveOfficer: Invalid character to remove" );
+			return JS_FALSE;
+		}
+
+		myGuild->RemoveOfficer( *trgChar );
+		trgChar->SetGuildNumber( -1 );
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
+	}
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function   -  CGuild_IsOfficer()
+//| Prototype  -  bool IsOfficer( trgChar )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose    -  Returns true if character is in the Officer list
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_IsOfficer( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	if( argc != 1 )
+	{
+		ScriptError( cx, "IsOfficer: Invalid number of arguments (requires 1)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+
+	if( myClass.ClassName() == "UOXGuild" )
+	{
+		CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+		if( myGuild == nullptr )
+		{
+			ScriptError( cx, "IsOfficer: Invalid guild" );
+			return JS_FALSE;
+		}
+
+		JSEncapsulate toChk( cx, &( argv[0] ));
+		CChar *trgChar = static_cast<CChar *>( toChk.toObject() );
+		if( !ValidateObject( trgChar ))
+		{
+			ScriptError( cx, "IsOfficer: Invalid character" );
+			return JS_FALSE;
+		}
+
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myGuild->IsOfficer( *trgChar )));
+	}
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function   -  CGuild_MemberToVeteran()
+//| Prototype  -  bool MemberToVeteran( trgChar )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose    -  Promotes a character from Member to Veteran
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_MemberToVeteran( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	if( argc != 1 )
+	{
+		ScriptError( cx, "MemberToVeteran: Invalid number of arguments (requires 1)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+
+	if( myClass.ClassName() == "UOXGuild" )
+	{
+		CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+		if( myGuild == nullptr )
+		{
+			ScriptError( cx, "MemberToVeteran: Invalid guild" );
+			return JS_FALSE;
+		}
+
+		JSEncapsulate toProm( cx, &( argv[0] ));
+		CChar *trgChar = static_cast<CChar *>( toProm.toObject() );
+		if( !ValidateObject( trgChar ))
+		{
+			ScriptError( cx, "MemberToVeteran: Invalid character" );
+			return JS_FALSE;
+		}
+
+		myGuild->RemoveMember( *trgChar );
+		myGuild->NewVeteran( *trgChar );
+		GUILDID guildId = GuildSys->FindGuildId( myGuild );
+		trgChar->SetGuildNumber( guildId );
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
+	}
+	return JS_TRUE;
+}
+
+
+//o------------------------------------------------------------------------------------------------o
+//| Function   -  CGuild_VeteranToOfficer()
+//| Prototype  -  bool VeteranToOfficer( trgChar )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose    -  Promotes a character from Veteran to Officer
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_VeteranToOfficer( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	if( argc != 1 )
+	{
+		ScriptError( cx, "VeteranToOfficer: Invalid number of arguments (requires 1)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+
+	if( myClass.ClassName() == "UOXGuild" )
+	{
+		CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+		if( myGuild == nullptr )
+		{
+			ScriptError( cx, "VeteranToOfficer: Invalid guild" );
+			return JS_FALSE;
+		}
+
+		JSEncapsulate toProm( cx, &( argv[0] ));
+		CChar *trgChar = static_cast<CChar *>( toProm.toObject() );
+		if( !ValidateObject( trgChar ))
+		{
+			ScriptError( cx, "VeteranToOfficer: Invalid character" );
+			return JS_FALSE;
+		}
+
+		myGuild->RemoveVeteran( *trgChar );
+		myGuild->NewOfficer( *trgChar );
+		GUILDID guildId = GuildSys->FindGuildId( myGuild );
+		trgChar->SetGuildNumber( guildId );
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
+	}
+	return JS_TRUE;
+}
+
+
+//o------------------------------------------------------------------------------------------------o
+//| Function   -  CGuild_OfficerToVeteran()   // (optional)
+//| Prototype  -  bool OfficerToVeteran( trgChar )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose    -  Demotes a character from Officer to Veteran
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_OfficerToVeteran( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	if( argc != 1 )
+	{
+		ScriptError( cx, "OfficerToVeteran: Invalid number of arguments (requires 1)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+
+	if( myClass.ClassName() == "UOXGuild" )
+	{
+		CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+		if( myGuild == nullptr )
+		{
+			ScriptError( cx, "OfficerToVeteran: Invalid guild" );
+			return JS_FALSE;
+		}
+
+		JSEncapsulate toDem( cx, &( argv[0] ));
+		CChar *trgChar = static_cast<CChar *>( toDem.toObject() );
+		if( !ValidateObject( trgChar ))
+		{
+			ScriptError( cx, "OfficerToVeteran: Invalid character" );
+			return JS_FALSE;
+		}
+
+		myGuild->RemoveOfficer( *trgChar );
+		myGuild->NewVeteran( *trgChar );
+		GUILDID guildId = GuildSys->FindGuildId( myGuild );
+		trgChar->SetGuildNumber( guildId );
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
+	}
+	return JS_TRUE;
+}
+
+
+//o------------------------------------------------------------------------------------------------o
+//| Function   -  CGuild_VeteranToMember()    // (optional)
+//| Prototype  -  bool VeteranToMember( trgChar )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose    -  Demotes a character from Veteran to Member
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_VeteranToMember( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	if( argc != 1 )
+	{
+		ScriptError( cx, "VeteranToMember: Invalid number of arguments (requires 1)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+
+	if( myClass.ClassName() == "UOXGuild" )
+	{
+		CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+		if( myGuild == nullptr )
+		{
+			ScriptError( cx, "VeteranToMember: Invalid guild" );
+			return JS_FALSE;
+		}
+
+		JSEncapsulate toDem( cx, &( argv[0] ));
+		CChar *trgChar = static_cast<CChar *>( toDem.toObject() );
+		if( !ValidateObject( trgChar ))
+		{
+			ScriptError( cx, "VeteranToMember: Invalid character" );
+			return JS_FALSE;
+		}
+
+		myGuild->RemoveVeteran( *trgChar );
+		myGuild->NewMember( *trgChar );
+		GUILDID guildId = GuildSys->FindGuildId( myGuild );
+		trgChar->SetGuildNumber( guildId );
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
+	}
 	return JS_TRUE;
 }
 

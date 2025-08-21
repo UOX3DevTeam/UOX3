@@ -42,16 +42,19 @@ private:
 	SERIAL			master;
 	std::vector<SERIAL>	recruits;
 	std::vector<SERIAL>	members;
+	std::vector<SERIAL> veterans;
+	std::vector<SERIAL> officers;
+	std::vector<SERIAL> invites;
 	GUILDREL		relationList;
 
 	std::vector<SERIAL>::iterator	recruitPtr;
 	std::vector<SERIAL>::iterator	memberPtr;
+	std::vector<SERIAL>::iterator	veteranPtr;
+	std::vector<SERIAL>::iterator	officerPtr;
+	std::vector<SERIAL>::iterator	invitePtr;
 
 	GUILDREL_ITERATOR	warPtr;
 	GUILDREL_ITERATOR	allyPtr;
-
-	std::vector<SERIAL> invites;
-	std::vector<SERIAL>::iterator	invitePtr;
 public:
 
 	GUILDID		FirstWar( void );
@@ -103,6 +106,32 @@ public:
 	size_t		NumMembers() const;
 	size_t		NumRecruits() const;
 
+	SERIAL      FirstVeteran();
+	SERIAL      NextVeteran();
+	bool        FinishedVeterans();
+	SERIAL      VeteranNumber( size_t rNum ) const;
+	size_t      NumVeterans() const;
+
+	void        NewVeteran( CChar &newVeteran );
+	void        NewVeteran( SERIAL newVeteran );
+	void        RemoveVeteran( CChar &newVeteran );
+	void        RemoveVeteran( SERIAL newVeteran );
+	bool        IsVeteran( CChar &toCheck ) const;
+	bool        IsVeteran( SERIAL toCheck ) const;
+
+	SERIAL      FirstOfficer();
+	SERIAL      NextOfficer();
+	bool        FinishedOfficers();
+	SERIAL      OfficerNumber( size_t rNum ) const;
+	size_t      NumOfficers() const;
+
+	void        NewOfficer( CChar &newOfficer );
+	void        NewOfficer( SERIAL newOfficer );
+	void        RemoveOfficer( CChar &newOfficer );
+	void        RemoveOfficer( SERIAL newOfficer );
+	bool        IsOfficer( CChar &toCheck ) const;
+	bool        IsOfficer( SERIAL toCheck ) const;
+
 	GUILDRELATION	RelatedToGuild( GUILDID otherGuild ) const;
 	bool		IsAtWar( GUILDID otherGuild ) const;
 	bool		IsNeutral( GUILDID otherGuild ) const;
@@ -130,15 +159,15 @@ public:
 	SERIAL      FirstInvite();
 	SERIAL      NextInvite();
 	bool        FinishedInvites();
-	SERIAL      InviteNumber( size_t i ) const;
+	SERIAL      InviteNumber( size_t rNum ) const;
 	size_t      NumInvites() const;
 
-	void        AddInvite( CChar &c );
-	void        AddInvite( SERIAL s );
-	void        RemoveInvite( CChar &c );
-	void        RemoveInvite( SERIAL s );
-	bool        IsInvited( CChar &c ) const;
-	bool        IsInvited( SERIAL s ) const;
+	void        AddInvite( CChar &addinvite );
+	void        AddInvite( SERIAL addinvite );
+	void        RemoveInvite( CChar &addinvite );
+	void        RemoveInvite( SERIAL addinvite );
+	bool        IsInvited( CChar &toCheck ) const;
+	bool        IsInvited( SERIAL toCheck ) const;
 };
 
 typedef std::map< GUILDID, CGuild * > GUILDLIST;

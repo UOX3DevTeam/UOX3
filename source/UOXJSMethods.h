@@ -274,7 +274,16 @@ JSBool CGuild_SendInvite( JSContext* cx, uintN argc, jsval* vp );
 JSBool CGuild_AcceptInvite( JSContext* cx, uintN argc, jsval* vp );
 JSBool CGuild_DeclineInvite( JSContext* cx, uintN argc, jsval* vp );
 JSBool CGuild_IsInvited( JSContext* cx, uintN argc, jsval* vp );
-JSBool CGuild_NumInvites( JSContext* cx, uintN argc, jsval* vp );
+JSBool CGuild_AddVeteran( JSContext* cx, uintN argc, jsval* vp );
+JSBool CGuild_RemoveVeteran( JSContext* cx, uintN argc, jsval* vp );
+JSBool CGuild_IsVeteran( JSContext* cx, uintN argc, jsval* vp );
+JSBool CGuild_AddOfficer( JSContext* cx, uintN argc, jsval* vp );
+JSBool CGuild_RemoveOfficer( JSContext* cx, uintN argc, jsval* vp );
+JSBool CGuild_IsOfficer(JSContext* cx, uintN argc, jsval* vp );
+JSBool CGuild_MemberToVeteran( JSContext* cx, uintN argc, jsval* vp );
+JSBool CGuild_VeteranToMember( JSContext* cx, uintN argc, jsval* vp );
+JSBool CGuild_VeteranToOfficer( JSContext* cx, uintN argc, jsval* vp );
+JSBool CGuild_OfficerToVeteran( JSContext* cx, uintN argc, jsval* vp );
 
 // Misc
 JSBool CMisc_SoundEffect( JSContext *cx, uintN argc, jsval *vp );
@@ -677,7 +686,16 @@ inline JSFunctionSpec CGuild_Methods[] =
 	{ "AcceptInvite",		CGuild_AcceptInvite,		0, 0 },
 	{ "DeclineInvite",		CGuild_DeclineInvite,		0, 0 },
 	{ "IsInvited",			CGuild_IsInvited,			1, 0 },
-	{ "NumInvites",			CGuild_NumInvites,			0, 0 },
+	{ "AddVeteran",			CGuild_AddVeteran,	        1, 0 },
+	{ "RemoveVeteran",		CGuild_RemoveVeteran,	    1, 0 },
+	{ "IsVeteran",			CGuild_IsVeteran,	        1, 0 },
+	{ "MemberToVeteran",	CGuild_MemberToVeteran,		1, 0 },
+	{ "AddOfficer",			CGuild_AddOfficer,			1, 0 },
+	{ "RemoveOfficer",		CGuild_RemoveOfficer,		1, 0 },
+	{ "IsOfficer",			CGuild_IsOfficer,			1, 0 },
+	{ "VeteranToOfficer",	CGuild_VeteranToOfficer,	1, 0 },
+	{ "OfficerToVeteran",	CGuild_OfficerToVeteran,	1, 0 },
+	{ "VeteranToMember",	CGuild_VeteranToMember,		1, 0 },
 	JS_FS_END
 };
 

@@ -3214,6 +3214,80 @@ JSBool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp
 				*vp = OBJECT_TO_JSVAL( arr );
 				break;
 			}
+			case CGP_VETERANS:
+			{
+				JSObject* arr = JS_NewArrayObject( cx, 0, nullptr );
+				int idx = 0;
+
+				for( auto tChar = gPriv->FirstVeteran(); !gPriv->FinishedVeterans(); tChar = gPriv->NextVeteran() )
+				{
+					CChar* c = CalcCharObjFromSer( tChar );
+					if( !ValidateObject( c ))
+						continue;
+
+					JSObject* jChar = JSEngine->AcquireObject( IUE_CHAR, c, JSEngine->FindActiveRuntime(JS_GetRuntime( cx )));
+					if( !jChar )
+						continue;
+
+					jsval v = OBJECT_TO_JSVAL( jChar );
+					JS_SetElement( cx, arr, idx++, &v );
+				}
+
+				*vp = OBJECT_TO_JSVAL( arr );
+				break;
+			}
+			case CGP_OFFICERS:
+			{
+				JSObject* arr = JS_NewArrayObject( cx, 0, nullptr );
+				int idx = 0;
+
+				for( auto tChar = gPriv->FirstOfficer(); !gPriv->FinishedOfficers(); tChar = gPriv->NextOfficer() )
+				{
+					CChar* c = CalcCharObjFromSer(tChar);
+					if (!ValidateObject(c))
+						continue;
+
+					JSObject* jChar = JSEngine->AcquireObject( IUE_CHAR, c, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+					if( !jChar )
+						continue;
+
+					jsval v = OBJECT_TO_JSVAL( jChar );
+					JS_SetElement( cx, arr, idx++, &v );
+				}
+
+				*vp = OBJECT_TO_JSVAL( arr );
+				break;
+			}
+			case CGP_INVITES:
+			{
+				JSObject* arr = JS_NewArrayObject( cx, 0, nullptr );
+				int idx = 0;
+
+				for( auto tChar = gPriv->FirstInvite(); !gPriv->FinishedInvites(); tChar = gPriv->NextInvite() )
+				{
+					CChar* c = CalcCharObjFromSer( tChar );
+					if( !ValidateObject( c ))
+						continue;
+
+					JSObject* jChar = JSEngine->AcquireObject( IUE_CHAR, c, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+					if( !jChar )
+						continue;
+
+					jsval v = OBJECT_TO_JSVAL( jChar );
+					JS_SetElement( cx, arr, idx++, &v );
+				}
+
+				*vp = OBJECT_TO_JSVAL(arr);
+				break;
+			}
+			case CGP_NUMVETERANS:  *vp = INT_TO_JSVAL( gPriv->NumVeterans() );  break;
+			case CGP_NUMOFFICERS:  *vp = INT_TO_JSVAL( gPriv->NumOfficers() );  break;
+			case CGP_NUMINVITES:
+			{
+				// returns the number of pending invites
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI32>( gPriv->NumInvites() )));
+				break;
+			}
 			default:
 				break;
 		}
