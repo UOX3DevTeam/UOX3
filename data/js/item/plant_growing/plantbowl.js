@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Valid map target IDs for dirt
 const validMapDirtIDs = [0x9 ,0x15 ,0x71 ,0x7C ,0x82 ,0xA7 ,0xDC ,0xE3 ,0xE8 ,0xEB
 	,0x141 ,0x144 ,0x14C ,0x15C ,0x169 ,0x174 ,0x1DC ,0x1EF ,0x272 ,0x275
@@ -9,6 +11,7 @@ const validMapDirtIDs = [0x9 ,0x15 ,0x71 ,0x7C ,0x82 ,0xA7 ,0xDC ,0xE3 ,0xE8 ,0x
 	,0x71FB ,0x72C9 ,0x72CA
 ];
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iBowl )
 {
 	var socket = pUser.socket;
@@ -29,6 +32,7 @@ function onUseChecked( pUser, iBowl )
 	return true;
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, myTarget )
 {
 	if( socket == null )

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Helpful clilocs
 //  1042971 - ~1_NOTHING~	// Any custom string
 // 	1062613 - "~1_NAME~" 	// String in quotes, first letter of first word NOT capitalized automatically
@@ -12,6 +14,7 @@
 // Message is either "hard-scripted" based on an ID stored in item's MOREY property, or
 // uses the item's DESC property if no valid MOREY value is provided
 
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( myObj )
 {
 	var tooltipText = "";
@@ -29,6 +32,7 @@ function onTooltip( myObj )
 	return tooltipText;
 }
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	iUsed.TextMessage( GetHintMessage( iUsed, false ), false, 0x3b2, 0, pUser.serial );
@@ -60,5 +64,3 @@ function GetHintMessage( iUsed, useHtml )
 	}
 	return hintText;
 }
-
-function _restorecontext_() {}

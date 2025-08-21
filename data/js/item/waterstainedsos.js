@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // List of valid map water tiles, used to determine location of shipwreck
 const mapWaterTiles = [ 0x00a8, 0x00a9, 0x00aa, 0x00ab ];
 
@@ -12,6 +14,7 @@ const enableAncientSOS = false;
 const ancientSOSHue = 0x481;
 const ancientSOSDropRate = 3 / 20; // 4/55 for ToL+? or 1/20
 
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	if( objType == 0 && ValidateObject( objMade ))
@@ -98,6 +101,7 @@ function CheckForValidSOSLocation( xLoc, yLoc, worldNum )
 	return valid;
 }
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;

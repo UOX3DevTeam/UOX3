@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // If enabled in INI setting, explosion potions get bonus damage from alchemy skill
 // using this formula: ( attacker's alchemy skill / 10 ) / alchemyBonusModifier
 // Example: (1000 skillpoints / 10 ) / 5 = 20 bonus damage
@@ -8,6 +10,7 @@ const alchemyBonusModifier = parseInt( GetServerSetting( "AlchemyBonusModifier" 
 const randomizePotionCountdown = false; // If true, add/remove +1/-1 seconds to explosion potion countdowns
 const reqFreeHands = true;
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -326,6 +329,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	var mChar = socket.currentChar;
@@ -386,6 +390,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	var mChar = socket.currentChar;
@@ -430,6 +435,7 @@ function onCallback1( socket, ourObj )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	var countdown = 0;
@@ -563,6 +569,7 @@ function ApplyExplosionDamage( timerObj, targetChar )
 }
 
 // Show real name to those who have identified potion
+/** @type { ( myObj: BaseObject, nameRequester: Character, requestSource: number ) => string } */
 function onNameRequest( iPotion, pUser )
 {
 	// Default name
@@ -587,6 +594,7 @@ function onNameRequest( iPotion, pUser )
 }
 
 // Add tooltip details
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( iPotion, pSocket )
 {
 	var pUser = null;
@@ -614,5 +622,3 @@ function onTooltip( iPotion, pSocket )
 
 	return tooltipText;
 }
-
-function _restorecontext_() {}

@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This command deletes _ALL_ items in the world that matches specified ID
 
 function CommandRegistration()
@@ -5,6 +7,7 @@ function CommandRegistration()
 	RegisterCommand( "delid", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_DELID( socket, cmdString )
 {
 	if( cmdString )
@@ -21,6 +24,7 @@ function command_DELID( socket, cmdString )
 	}
 }
 
+/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
 function onIterate( toCheck )
 {
 	if( toCheck && toCheck.isItem )
@@ -33,5 +37,3 @@ function onIterate( toCheck )
 	}
 	return false;
 }
-
-function _restorecontext_() {}

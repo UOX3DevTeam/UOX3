@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Decorate command - by Xuri (xuri@uox3.org)
 // v1.7
 //		1.7 - 10/06/2025
@@ -124,6 +126,7 @@ function CommandRegistration()
 	RegisterCommand( "decorate", 10, true ); // Admin only command
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_DECORATE( socket, cmdString )
 {
 	// Reset arrays used for saving/loading decorations
@@ -1594,6 +1597,7 @@ function DisplayProgressGump( socket, progressText, percentage )
 	progressGump.Free();
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( timerID == 1 )
@@ -1993,6 +1997,7 @@ function DecorateWorld( socket )
 	socket.CloseGump( decorate_scriptID + 0xffff, 0 );
 }
 
+/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
 function onIterate( toCheck )
 {
 	if( ValidateObject( toCheck ) && toCheck.isItem && toCheck.container == null && !toCheck.isMulti && !ValidateObject( toCheck.multi ) && toCheck.shouldSave && !toCheck.decayable )
@@ -2218,5 +2223,3 @@ function CheckForDuplicate( srcItem, trgItem, pSock )
 	}
 	return false;
 }
-
-function _restorecontext_() {}

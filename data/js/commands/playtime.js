@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // All players can access this command, which lets them know the individual playtime of their
 // current character and the total playtime of their account
 
@@ -6,6 +8,7 @@ function CommandRegistration()
 	RegisterCommand( "playtime", 0, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_PLAYTIME( socket, cmdString )
 {
 	var pChar = socket.currentChar;

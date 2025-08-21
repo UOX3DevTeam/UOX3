@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // UOX3 Speech File (JavaScript)
 // Converted by Dark-Storm
 // Date: 29.12.2001 2:07 am
@@ -12,6 +14,7 @@
 // word "hello" and leaves off any preceding or trailing letters/numbers/symbols, enclose the trigger-word in \b \b. Example: /\bhello\b/
 // By adding an additional "i" behind the last forward slash, you specify that the search is case-insensitive, example: /\bhello\b/i
 
+/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => null | undefined | number | boolean } */
 function onSpeech( myString, myPlayer, myNPC )
 {
 	if( !myNPC.InRange( myPlayer, 2 ) )

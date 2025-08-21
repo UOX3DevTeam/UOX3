@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 function SkillRegistration()
 {
 	RegisterSkill( 2, true );	// Animal Lore
@@ -17,7 +19,8 @@ const seEnabled = false;
 // If enabled, a creature's skill in Mysticism, Focus and Spellweaving will show
 const saEnabled = false;
 
-function onSkill( pUser, objType, skillUsed )
+/** @type { ( skillUse: BaseObject, skillUsed: number, objType: 0 | 1 ) => boolean } */
+function onSkill( pUser, skillUsed, objType )
 {
 	var pSock = pUser.socket;
 	if( pSock )
@@ -36,6 +39,7 @@ function onSkill( pUser, objType, skillUsed )
 	return true;
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, ourObj )
 {
 	var pUser = pSock.currentChar;

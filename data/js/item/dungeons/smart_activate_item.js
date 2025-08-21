@@ -1,3 +1,6 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
+/** @type { ( sourceObj: BaseObject, CharInRange: Character, rangeToChar: number, oldCharX: number, oldCharY: number ) => boolean } */
 function onMoveDetect( iObj, pChar, rangeToChar, oldCharX, oldCharY )
 {
 	if( !ValidateObject( pChar ) || !pChar.isChar || pChar.npc || pChar.dead || pChar.isGM || pChar.isCounselor || pChar.visible == 3 )

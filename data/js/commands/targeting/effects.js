@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 function CommandRegistration()
 {
 	RegisterCommand( "action", 8, true ); // Play an action on GM's character
@@ -5,6 +7,7 @@ function CommandRegistration()
 	RegisterCommand( "npcaction", 8, true ); // Play an action on targeted NPC (or player) character
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ACTION( socket, cmdString )
 {
 	if( cmdString )
@@ -29,12 +32,14 @@ function command_ACTION( socket, cmdString )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_BOLT( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 195, socket.language ); // Select character to bolt.
 	socket.CustomTarget( 1, targMsg );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )
@@ -44,6 +49,7 @@ function onCallback1( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_NPCACTION( socket, cmdString )
 {
 	if( cmdString )
@@ -54,6 +60,7 @@ function command_NPCACTION( socket, cmdString )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )

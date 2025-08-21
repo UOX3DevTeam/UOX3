@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This is a generic script for determining weapon types based on item-ID,
 // or combat skill based on equipped weapon type.
 //

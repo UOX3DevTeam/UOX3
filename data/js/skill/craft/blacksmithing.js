@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 const textHue = 0x480;				// Color of the text.
 const blacksmithID = 4023;			// Use this to tell the gump what script to close.
 const bronzeID = 4015;
@@ -324,6 +326,7 @@ function SmeltTarget( pSock )
 }
 
 // Armor and weapons can be smelted back into ingots.
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( pSock, ourObj )
 {
 	// Smelt item, get ingots in return
@@ -507,6 +510,7 @@ function RepairTarget( pSock )
 	pSock.CustomTarget( 2, GetDictionaryEntry( 485, pSock.language )); // What item would you like to repair?
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( pSock, ourObj )
 {
 	// Repair Item
@@ -669,6 +673,7 @@ function onCallback2( pSock, ourObj )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( pUser, timerID )
 {
 	if( !ValidateObject( pUser ))
@@ -1152,5 +1157,3 @@ function onGumpPress( pSock, pButton, gumpData )
 		TriggerEvent( itemDetailsScriptID, "ItemDetailGump", pUser );
 	}
 }
-
-function _restorecontext_() {}

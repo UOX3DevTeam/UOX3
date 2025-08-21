@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // GM commands to adjust character stats
 
 function CommandRegistration()
@@ -9,12 +11,14 @@ function CommandRegistration()
 	RegisterCommand( "mana", 4, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_FULLSTATS( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 243, socket.language ); // Select creature to restore full stats.
 	socket.CustomTarget( 0, targMsg );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ( ourObj.isChar || (( ourObj.isItem || ourObj.isMulti ) && ourObj.isDamageable )))
@@ -35,12 +39,14 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_HEAL( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 227, socket.language ); // Select person to heal.
 	socket.CustomTarget( 1, targMsg );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ( ourObj.isChar || (( ourObj.isItem || ourObj.isMulti ) && ourObj.isDamageable )))
@@ -61,12 +67,14 @@ function onCallback1( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_STAMINA( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 231, socket.language ); // Select person to refresh.
 	socket.CustomTarget( 2, targMsg );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )
@@ -77,12 +85,14 @@ function onCallback2( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_MANA( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 230, socket.language ); // Select person to restore mana to.
 	socket.CustomTarget( 3, targMsg );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback3( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )
@@ -93,12 +103,14 @@ function onCallback3( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_CURE( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 1974, socket.language ); // Select person to cure.
 	socket.CustomTarget( 4, targMsg );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback4( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )

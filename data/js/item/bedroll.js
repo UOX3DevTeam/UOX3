@@ -1,3 +1,6 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var srcSock = pUser.socket;
@@ -167,6 +170,7 @@ function onGumpPress(srcSock, myButtonID )
     }
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( timerID == 1 && timerObj )
@@ -186,5 +190,3 @@ function onTimer( timerObj, timerID )
 		onGumpPress( socket, 0 ); //Fake-push button 0, response buttonID in packet seems broken
 	}
 }
-
-function _restorecontext_() {}
