@@ -5301,6 +5301,460 @@ JSBool CGuild_VeteranToMember( JSContext *cx, uintN argc, jsval *vp )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild_AddRank()
+//| Prototype   -  int AddRank( name, prio )
+//|               int AddRank( name, prio, flags )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Define or update a rank; returns rankId (stable).
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_AddRank( JSContext *cx, uintN argc, jsval *vp )
+{
+    if( argc < 2 || argc > 3 )
+    {
+        ScriptError( cx, "AddRank: Invalid number of arguments (requires 2 or 3)" );
+        return JS_FALSE;
+    }
+
+    JSObject* obj = JS_THIS_OBJECT( cx, vp );
+    CGuild* myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+    if( myGuild == nullptr )
+    {
+        ScriptError( cx, "AddRank: Invalid guild" );
+        return JS_FALSE;
+    }
+
+    jsval* argv = JS_ARGV( cx, vp );
+
+    JSEncapsulate eName( cx, &(argv[0]) );
+    std::string name = eName.toString();
+
+    SI32 prio = JSVAL_TO_INT( argv[1] );
+    UI32 flags = (argc == 3) ? (UI32)JSVAL_TO_INT( argv[2] ) : 0;
+
+    size_t id = myGuild->AddRank( name, prio, flags );
+    JS_SET_RVAL( cx, vp, INT_TO_JSVAL( (SI32)id ) );
+    return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild_RemoveRankByName()
+//| Prototype   -  bool RemoveRankByName( name )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Removes a rank by name; fails if any member currently holds it.
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_RemoveRankByName( JSContext *cx, uintN argc, jsval *vp )
+{
+    if( argc != 1 )
+    {
+        ScriptError( cx, "RemoveRankByName: Invalid number of arguments (requires 1)" );
+        return JS_FALSE;
+    }
+
+    JSObject* obj = JS_THIS_OBJECT( cx, vp );
+    CGuild* myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+    if( myGuild == nullptr )
+    {
+        ScriptError( cx, "RemoveRankByName: Invalid guild" );
+        return JS_FALSE;
+    }
+
+    jsval* argv = JS_ARGV( cx, vp );
+    JSEncapsulate eName( cx, &(argv[0]) );
+    std::string name = eName.toString();
+
+    bool ok = myGuild->RemoveRankByName( name );
+    JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ok ) );
+    return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild_RenameRank()
+//| Prototype   -  bool RenameRank( oldName, newName )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Renames a rank; id/priority/flags stay same.
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_RenameRank( JSContext *cx, uintN argc, jsval *vp )
+{
+    if( argc != 2 )
+    {
+        ScriptError( cx, "RenameRank: Invalid number of arguments (requires 2)" );
+        return JS_FALSE;
+    }
+
+    JSObject* obj = JS_THIS_OBJECT( cx, vp );
+    CGuild* myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+    if( myGuild == nullptr )
+    {
+        ScriptError( cx, "RenameRank: Invalid guild" );
+        return JS_FALSE;
+    }
+
+    jsval* argv = JS_ARGV( cx, vp );
+    JSEncapsulate eOld( cx, &(argv[0]) );
+    JSEncapsulate eNew( cx, &(argv[1]) );
+    std::string oldName = eOld.toString();
+    std::string newName = eNew.toString();
+
+    bool ok = myGuild->RenameRank( oldName, newName );
+    JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ok ) );
+    return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild_GetRankIdByName()
+//| Prototype   -  int GetRankIdByName( name )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Returns rankId for a rank name, or -1 if not found.
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_GetRankIdByName( JSContext *cx, uintN argc, jsval *vp )
+{
+    if( argc != 1 )
+    {
+        ScriptError( cx, "GetRankIdByName: Invalid number of arguments (requires 1)" );
+        return JS_FALSE;
+    }
+
+    JSObject* obj = JS_THIS_OBJECT( cx, vp );
+    CGuild* myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+    if( myGuild == nullptr )
+    {
+        ScriptError( cx, "GetRankIdByName: Invalid guild" );
+        return JS_FALSE;
+    }
+
+    jsval* argv = JS_ARGV( cx, vp );
+    JSEncapsulate eName( cx, &(argv[0]) );
+    std::string name = eName.toString();
+
+    SI32 id = myGuild->FindRankIdByName( name );
+    JS_SET_RVAL( cx, vp, INT_TO_JSVAL( id ) );
+    return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild_SetRankByName()
+//| Prototype   -  bool SetRank( trgChar, rankName )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Assigns a rank to a character by name.
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_SetRankByName( JSContext *cx, uintN argc, jsval *vp )
+{
+    if( argc != 2 )
+    {
+        ScriptError( cx, "SetRank: Invalid number of arguments (requires 2)" );
+        return JS_FALSE;
+    }
+
+    JSObject* obj = JS_THIS_OBJECT( cx, vp );
+    CGuild* myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+    if( myGuild == nullptr )
+    {
+        ScriptError( cx, "SetRank: Invalid guild" );
+        return JS_FALSE;
+    }
+
+    jsval* argv = JS_ARGV( cx, vp );
+    JSEncapsulate eChar( cx, &(argv[0]) );
+    CChar* trgChar = static_cast<CChar*>( eChar.toObject() );
+    if( !ValidateObject( trgChar ))
+    {
+        ScriptError( cx, "SetRank: Invalid character" );
+        return JS_FALSE;
+    }
+
+    JSEncapsulate eName( cx, &(argv[1]) );
+    std::string name = eName.toString();
+
+    bool ok = myGuild->SetRank( trgChar->GetSerial(), name );
+    JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ok ) );
+    return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild_HasRank()
+//| Prototype   -  bool HasRank( trgChar, rankName )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Checks if character currently has the named rank.
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_HasRank( JSContext *cx, uintN argc, jsval *vp )
+{
+    if( argc != 2 )
+    {
+        ScriptError( cx, "HasRank: Invalid number of arguments (requires 2)" );
+        return JS_FALSE;
+    }
+
+    JSObject* obj = JS_THIS_OBJECT( cx, vp );
+    CGuild* myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+    if( myGuild == nullptr )
+    {
+        ScriptError( cx, "HasRank: Invalid guild" );
+        return JS_FALSE;
+    }
+
+    jsval* argv = JS_ARGV( cx, vp );
+    JSEncapsulate eChar( cx, &(argv[0]) );
+    CChar* trgChar = static_cast<CChar*>( eChar.toObject() );
+    if( !ValidateObject( trgChar ))
+    {
+        ScriptError( cx, "HasRank: Invalid character" );
+        return JS_FALSE;
+    }
+
+    JSEncapsulate eName( cx, &(argv[1]) );
+    std::string name = eName.toString();
+
+    bool ok = myGuild->HasRank( trgChar->GetSerial(), name );
+    JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ok ) );
+    return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild_GetRankNameOf()
+//| Prototype   -  string GetRankName( trgChar )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Gets the current rank name for a character, or "" if none.
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_GetRankNameOf( JSContext *cx, uintN argc, jsval *vp )
+{
+    if( argc != 1 )
+    {
+        ScriptError( cx, "GetRankName: Invalid number of arguments (requires 1)" );
+        return JS_FALSE;
+    }
+
+    JSObject* obj = JS_THIS_OBJECT( cx, vp );
+    CGuild* myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+    if( myGuild == nullptr )
+    {
+        ScriptError( cx, "GetRankName: Invalid guild" );
+        return JS_FALSE;
+    }
+
+    jsval* argv = JS_ARGV( cx, vp );
+    JSEncapsulate eChar( cx, &(argv[0]) );
+    CChar* trgChar = static_cast<CChar*>( eChar.toObject() );
+    if( !ValidateObject( trgChar ))
+    {
+        ScriptError( cx, "GetRankName: Invalid character" );
+        return JS_FALSE;
+    }
+
+    std::string r = myGuild->GetRankName( trgChar->GetSerial() );
+    JSString* js = JS_NewStringCopyZ( cx, r.c_str() );
+    if( js == nullptr )
+    {
+        ScriptError( cx, "GetRankName: Failed to allocate JS string" );
+        return JS_FALSE;
+    }
+    JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( js ) );
+    return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild_GetRankIdOf()
+//| Prototype   -  int GetRankId( trgChar )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Gets current rank id for a character; -1 if none.
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_GetRankIdOf( JSContext *cx, uintN argc, jsval *vp )
+{
+    if( argc != 1 )
+    {
+        ScriptError( cx, "GetRankId: Invalid number of arguments (requires 1)" );
+        return JS_FALSE;
+    }
+
+    JSObject* obj = JS_THIS_OBJECT( cx, vp );
+    CGuild* myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+    if( myGuild == nullptr )
+    {
+        ScriptError( cx, "GetRankId: Invalid guild" );
+        return JS_FALSE;
+    }
+
+    jsval* argv = JS_ARGV( cx, vp );
+    JSEncapsulate eChar( cx, &(argv[0]) );
+    CChar* trgChar = static_cast<CChar*>( eChar.toObject() );
+    if( !ValidateObject( trgChar ))
+    {
+        ScriptError( cx, "GetRankId: Invalid character" );
+        return JS_FALSE;
+    }
+
+    SI32 id = myGuild->GetRankId( trgChar->GetSerial() );
+    JS_SET_RVAL( cx, vp, INT_TO_JSVAL( id ) );
+    return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild_Promote()
+//| Prototype   -  bool Promote( trgChar )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Moves character to next higher rank (by priority order).
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_Promote( JSContext *cx, uintN argc, jsval *vp )
+{
+    if( argc != 1 )
+    {
+        ScriptError( cx, "Promote: Invalid number of arguments (requires 1)" );
+        return JS_FALSE;
+    }
+
+    JSObject* obj = JS_THIS_OBJECT( cx, vp );
+    CGuild* myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+    if( myGuild == nullptr )
+    {
+        ScriptError( cx, "Promote: Invalid guild" );
+        return JS_FALSE;
+    }
+
+    jsval* argv = JS_ARGV( cx, vp );
+    JSEncapsulate eChar( cx, &(argv[0]) );
+    CChar* trgChar = static_cast<CChar*>( eChar.toObject() );
+    if( !ValidateObject( trgChar ))
+    {
+        ScriptError( cx, "Promote: Invalid character" );
+        return JS_FALSE;
+    }
+
+    bool ok = myGuild->Promote( *trgChar );
+    JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ok ) );
+    return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild_Demote()
+//| Prototype   -  bool Demote( trgChar )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Moves character to next lower rank (by priority order).
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_Demote( JSContext *cx, uintN argc, jsval *vp )
+{
+    if( argc != 1 )
+    {
+        ScriptError( cx, "Demote: Invalid number of arguments (requires 1)" );
+        return JS_FALSE;
+    }
+
+    JSObject* obj = JS_THIS_OBJECT( cx, vp );
+    CGuild* myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+    if( myGuild == nullptr )
+    {
+        ScriptError( cx, "Demote: Invalid guild" );
+        return JS_FALSE;
+    }
+
+    jsval* argv = JS_ARGV( cx, vp );
+    JSEncapsulate eChar( cx, &(argv[0]) );
+    CChar* trgChar = static_cast<CChar*>( eChar.toObject() );
+    if( !ValidateObject( trgChar ))
+    {
+        ScriptError( cx, "Demote: Invalid character" );
+        return JS_FALSE;
+    }
+
+    bool ok = myGuild->Demote( *trgChar );
+    JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ok ) );
+    return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild_NumRanks()
+//| Prototype   -  int NumRanks()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Returns number of defined ranks.
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_NumRanks( JSContext *cx, uintN argc, jsval *vp )
+{
+    if( argc != 0 )
+    {
+        ScriptError( cx, "NumRanks: Invalid number of arguments (requires 0)" );
+        return JS_FALSE;
+    }
+
+    JSObject* obj = JS_THIS_OBJECT( cx, vp );
+    CGuild* myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+    if( myGuild == nullptr )
+    {
+        ScriptError( cx, "NumRanks: Invalid guild" );
+        return JS_FALSE;
+    }
+
+    SI32 n = (SI32)myGuild->NumRanks();
+    JS_SET_RVAL( cx, vp, INT_TO_JSVAL( n ) );
+    return JS_TRUE;
+}
+
+// GetRankNameById(id) -> string
+JSBool CGuild_GetRankNameById(JSContext* cx, uintN argc, jsval* vp)
+{
+    if (argc != 1) { ScriptError(cx, "GetRankNameById: requires 1 arg"); return JS_FALSE; }
+    JSObject* obj = JS_THIS_OBJECT(cx, vp);
+    CGuild* g = static_cast<CGuild*>(JS_GetPrivate(cx, obj));
+    if (!g) { ScriptError(cx, "GetRankNameById: invalid guild"); return JS_FALSE; }
+
+    jsval* argv = JS_ARGV(cx, vp);
+    SI32 id = JSVAL_TO_INT(argv[0]); // id comes from JS as number
+    std::string name = g->GetRankNameById((size_t)id);
+    JSString* js = JS_NewStringCopyZ(cx, name.c_str());
+    if (!js) return JS_FALSE;
+    JS_SET_RVAL(cx, vp, STRING_TO_JSVAL(js));
+    return JS_TRUE;
+}
+
+// GetRankPrioById(id) -> int
+JSBool CGuild_GetRankPrioById(JSContext* cx, uintN argc, jsval* vp)
+{
+    if (argc != 1) { ScriptError(cx, "GetRankPrioById: requires 1 arg"); return JS_FALSE; }
+    JSObject* obj = JS_THIS_OBJECT(cx, vp);
+    CGuild* g = static_cast<CGuild*>(JS_GetPrivate(cx, obj));
+    if (!g) { ScriptError(cx, "GetRankPrioById: invalid guild"); return JS_FALSE; }
+
+    jsval* argv = JS_ARGV(cx, vp);
+    SI32 id = JSVAL_TO_INT(argv[0]);
+    SI32 pr = g->GetRankPrioById((size_t)id);
+    JS_SET_RVAL(cx, vp, INT_TO_JSVAL(pr));
+    return JS_TRUE;
+}
+
+// RemoveRankById(id) -> bool
+JSBool CGuild_RemoveRankById(JSContext* cx, uintN argc, jsval* vp)
+{
+    if (argc != 1) { ScriptError(cx, "RemoveRankById: requires 1 arg"); return JS_FALSE; }
+    JSObject* obj = JS_THIS_OBJECT(cx, vp);
+    CGuild* g = static_cast<CGuild*>(JS_GetPrivate(cx, obj));
+    if (!g) { ScriptError(cx, "RemoveRankById: invalid guild"); return JS_FALSE; }
+
+    jsval* argv = JS_ARGV(cx, vp);
+    SI32 id = JSVAL_TO_INT(argv[0]);
+    bool ok = g->RemoveRankById((size_t)id);
+    JS_SET_RVAL(cx, vp, BOOLEAN_TO_JSVAL(ok));
+    return JS_TRUE;
+}
+
+// SetRankById(char, id) -> bool
+JSBool CGuild_SetRankById(JSContext* cx, uintN argc, jsval* vp)
+{
+    if (argc != 2) { ScriptError(cx, "SetRankById: requires 2 args"); return JS_FALSE; }
+    JSObject* obj = JS_THIS_OBJECT(cx, vp);
+    CGuild* g = static_cast<CGuild*>(JS_GetPrivate(cx, obj));
+    if (!g) { ScriptError(cx, "SetRankById: invalid guild"); return JS_FALSE; }
+
+    jsval* argv = JS_ARGV(cx, vp);
+
+    JSEncapsulate eChar(cx, &(argv[0]));
+    CChar* c = static_cast<CChar*>(eChar.toObject());
+    if (!ValidateObject(c)) { ScriptError(cx, "SetRankById: invalid char"); return JS_FALSE; }
+
+    SI32 id = JSVAL_TO_INT(argv[1]);
+    bool ok = g->SetRankById(c->GetSerial(), (size_t)id);
+    JS_SET_RVAL(cx, vp, BOOLEAN_TO_JSVAL(ok));
+    return JS_TRUE;
+}
+
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBase_ResourceCount()
 //|	Prototype	-	int ResourceCount( realId, colour )
 //|					int ResourceCount( realId, colour, moreVal )

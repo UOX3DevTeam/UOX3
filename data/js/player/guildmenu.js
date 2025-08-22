@@ -1,3 +1,23 @@
+// --- Ranks page constants ---
+var PAGE_RANKS = 5;
+
+// text entries on ranks page
+var TE_NEW_RANK_NAME = 100;  // text entry id for new rank name
+var TE_NEW_RANK_PRIO = 101;  // text entry id for new rank priority
+var TE_SET_RANK_NAME = 102;  // per-member set rank name (shared single box)
+
+// buttons on ranks page
+var BTN_ADD_RANK      = 15000;
+var BTN_REFRESH       = 15001;
+
+// per-rank delete buttons: 15100 + row
+var BTN_DEL_RANK_BASE = 15100;
+
+// per-member controls:
+var BTN_PROMOTE_BASE  = 15200; // 15200 + row
+var BTN_DEMOTE_BASE   = 15300; // 15300 + row
+var BTN_SET_RANK_BASE = 15400; // 15400 + row
+
 function GuildCreation( pUser )
 {
 	var guildMenu = new Gump;
@@ -152,6 +172,9 @@ function GuildMenu( pUser )
 	guildMenu.AddHTMLGump( 30, 100, 300, 35, false, false, "<basefont color=#ffffff>Guild Recruitment</basefont>" );
 	guildMenu.AddPageButton( 135, 100, 0xFA5, 4 );
 	guildMenu.AddPicture( -5, 100, 0x0FC0 );
+	guildMenu.AddHTMLGump( 30, 130, 300, 35, false, false, "<basefont color=#ffffff>Guild Ranks</basefont>" );
+	guildMenu.AddPageButton( 135, 130, 0xFA5, 5 );
+	guildMenu.AddPicture( -5, 130, 0x0FC0 );
 
 	guildMenu.AddHTMLGump( 350, 120, 300, 35, false, false, "<basefont color=#ffffff>Guild News</basefont>" );
 	guildMenu.AddBackground( 230, 150, 320, 300, 0x2486 );
@@ -175,6 +198,9 @@ function GuildMenu( pUser )
 	guildMenu.AddHTMLGump( 30, 100, 300, 35, false, false, "<basefont color=#ffffff>Guild Recruitment</basefont>" );
 	guildMenu.AddPageButton( 135, 100, 0xFA5, 4 );
 	guildMenu.AddPicture( -5, 100, 0x0FC0 );
+	guildMenu.AddHTMLGump( 30, 130, 300, 35, false, false, "<basefont color=#ffffff>Guild Ranks</basefont>" );
+	guildMenu.AddPageButton( 135, 130, 0xFA5, 5 );
+	guildMenu.AddPicture( -5, 130, 0x0FC0 );
 	guildMenu.AddHTMLGump( 240, 120, 300, 35, false, false, "<basefont color=#ffffff>Name</basefont>" );
 	guildMenu.AddHTMLGump( 380, 120, 300, 35, false, false, "<basefont color=#ffffff>Rank</basefont>" );
 	guildMenu.AddHTMLGump( 500, 120, 300, 35, false, false, "<basefont color=#ffffff>Status</basefont>" );
@@ -256,6 +282,129 @@ function GuildMenu( pUser )
 
 	// Render recruits list + per-row buttons
 	RenderRecruitList( guildMenu, pUser );
+
+	// ===== Page 5: RANKS (fixed layout) =====
+	guildMenu.AddPage(PAGE_RANKS);
+
+	// --- layout constants ---
+	var L = 190;             // left panel X
+	var R = 390;             // right panel X
+	var T = 140;             // panels top
+	var W = 180;             // panel width
+	var H = 360;             // panel height
+	var ROW_H = 22;          // row height
+	var PAD_X = 8;           // inner padding
+	var PAD_Y = 6;
+
+	guildMenu.AddBackground(0, 0, 600, 600, 0x6DB);
+	guildMenu.AddBackground(0, 0, 600, 100, 0x6DB);
+	guildMenu.AddHTMLGump(280, 40, 300, 35, false, false, "<basefont color=#ffffff>Guild Ranks</basefont>");
+	guildMenu.AddPicture(240, 15, 0x0ED4);
+
+	// left nav (same as other pages)
+	guildMenu.AddBackground(0, 0, 180, 600, 0x6DB);
+	guildMenu.AddHTMLGump(30, 20, 300, 35, false, false, "<basefont color=#ffffff>Guild Roster</basefont>");
+	guildMenu.AddPageButton(135, 20, 0xFA5, 2);
+	guildMenu.AddPicture(-5, 20, 0x0FC0);
+
+	guildMenu.AddHTMLGump(30, 60, 300, 35, false, false, "<basefont color=#ffffff>Guild Information</basefont>");
+	guildMenu.AddPageButton(135, 60, 0xFA5, 3);
+	guildMenu.AddPicture(-5, 60, 0x0FC0);
+
+	guildMenu.AddHTMLGump(30, 100, 300, 35, false, false, "<basefont color=#ffffff>Guild Recruitment</basefont>");
+	guildMenu.AddPageButton(135, 100, 0xFA5, 4);
+	guildMenu.AddPicture(-5, 100, 0x0FC0);
+
+	// section headers
+	guildMenu.AddHTMLGump(L, 120, 160, 24, false, false, "<basefont color=#ffffff>Ranks</basefont>");
+	guildMenu.AddHTMLGump(R, 120, 160, 24, false, false, "<basefont color=#ffffff>Members</basefont>");
+
+	// panels
+	guildMenu.AddBackground(L, T, W, H, 0x2486);
+	guildMenu.AddBackground(R, T, W+20, H, 0x2486);
+
+// --- ranks header row ---
+guildMenu.AddHTMLGump(L + PAD_X, T + PAD_Y, W - 2*PAD_X, 18, false, false,
+    "<basefont color=#111111>Name</basefont>");
+guildMenu.AddHTMLGump(L + PAD_X, T + PAD_Y + 16, 60, 18, false, false,
+    "<basefont color=#111111>Prio</basefont>");
+
+var nRanks = (guildinfo && guildinfo.NumRanks) ? guildinfo.NumRanks() : 0;
+var maxRankRows = Math.max(0, Math.min(12, Math.floor((H - 110) / ROW_H)));
+
+var shown = 0;
+for (var id = 0; id < nRanks && shown < maxRankRows; ++id) {
+    // pull name/prio (bindings should return "" / -1 for deleted)
+    var rName = guildinfo.GetRankNameById ? guildinfo.GetRankNameById(id) : "";
+    var rPrio = guildinfo.GetRankPrioById ? guildinfo.GetRankPrioById(id) : -1;
+
+    // skip tombstoned/deleted ranks
+    if (!rName || rName === "(deleted)" || rPrio < 0 || rPrio >= 2147480000)
+        continue;
+
+    var y = T + 46 + shown * ROW_H;
+
+    guildMenu.AddHTMLGump(L + PAD_X, y, 110, 18, false, false,
+        "<basefont color=#111111>" + rName + "</basefont>");
+    guildMenu.AddHTMLGump(L + PAD_X + 115, y, 30, 18, false, false,
+        "<basefont color=#111111>" + rPrio + "</basefont>");
+
+    // IMPORTANT: encode the *rankId* (not the row) in the button id
+    guildMenu.AddButton(L + W - PAD_X - 20, y, 0xFB4, 0xFB6, 1, 0,
+        BTN_DEL_RANK_BASE + id);
+
+    shown++;
+}
+
+
+	// --- add rank area (bottom of left panel) ---
+	var AY = T + H - 84; // start of add-area
+	guildMenu.AddHTMLGump(L + PAD_X, AY, W - 2*PAD_X, 18, false, false,"<basefont color=#111111>Add Rank</basefont>");
+
+	guildMenu.AddHTMLGump(L + PAD_X, AY + 20, 40, 18, false, false,"<basefont color=#111111>Name</basefont>");
+
+	guildMenu.AddHTMLGump(L + PAD_X, AY + 42, 40, 18, false, false,"<basefont color=#111111>Prio</basefont>");
+
+	// add / refresh buttons centered
+	guildMenu.AddButton(L + W - PAD_X - 42, AY + 40, 0xFB7, 0xFB9, 1, 0, BTN_ADD_RANK);
+	guildMenu.AddButton(L + W - PAD_X - 20, AY + 40, 0xFA5, 0xFA7, 1, 0, BTN_REFRESH);
+
+	// --- members header & rows ---
+	guildMenu.AddHTMLGump(R + PAD_X, T + PAD_Y, 160, 18, false, false,"<basefont color=#111111>Name / Rank</basefont>");
+
+	var members = (guildinfo && (guildinfo.member || guildinfo.members)) || [];
+	var maxMemberRows = Math.floor((H - 64) / ROW_H);
+	maxMemberRows = Math.max(0, Math.min(12, maxMemberRows));
+
+	for (var r = 0; r < Math.min(members.length, maxMemberRows); ++r)
+	{
+	   var m = members[r];
+	   var y2 = T + 34 + r*ROW_H;
+
+		var mName = (m && m.name) ? m.name
+              : ("0x" + (m ? m.serial.toString(16).toUpperCase() : "00000000"));
+		var mRank = (guildinfo.GetRankName) ? guildinfo.GetRankName(m)
+              : GetRankName(guildinfo, m);
+
+		// name
+		guildMenu.AddHTMLGump(R + PAD_X, y2, 120, 18, false, false,"<basefont color=#111111>" + mName + "</basefont>");
+		// rank (smaller)
+		guildMenu.AddHTMLGump(R + PAD_X + 120, y2, 70, 18, false, false,"<small><basefont color=#666666>" + (mRank || "(none)") + "</basefont></small>");
+
+		// buttons aligned in a neat column on the right
+		var bx = R + W + 20 - PAD_X - 20;  // inside right panel
+		guildMenu.AddButton(bx, y2,     0xFAE, 0xFB0, 1, 0, BTN_PROMOTE_BASE + r); // up
+		guildMenu.AddButton(bx-22, y2,  0xFA5, 0xFA7, 1, 0, BTN_DEMOTE_BASE + r); // down
+		guildMenu.AddButton(bx-44, y2,  0xFB7, 0xFB9, 1, 0, BTN_SET_RANK_BASE + r); // set
+	}
+
+	// single “Set Rank (name)” entry at bottom right
+	guildMenu.AddHTMLGump(R + PAD_X, T + H - 54, 160, 18, false, false,"<basefont color=#111111>Set Rank (name)</basefont>");
+
+
+	guildMenu.AddTextEntryLimited(L + PAD_X + 44, AY + 20, W - 2*PAD_X - 44, 18, 0, 1, 100, "test", 32);
+	guildMenu.AddTextEntryLimited(L + PAD_X + 44, AY + 42, 48, 18, 0, 1, 101, "1", 6);
+	guildMenu.AddTextEntryLimited(R + PAD_X, T + H - 32, W - 2*PAD_X, 18, 0, 0, 103, "test", 32);
 
 	guildMenu.Send( socket );
 	guildMenu.Free();
@@ -340,18 +489,116 @@ function onGumpPress( pSock, pButton, gumpData )
         HandleRecruitAction( pSock, pUser, guildinfo, row, false );
         return;
     }
+
+	// ===== RANKS PAGE HANDLERS =====
+
+	// Only allow guild master (optional rule)
+	if (pButton === BTN_ADD_RANK)
+	{
+    // add rank
+	var newName = gumpData.getEdit(0);
+	var prioStr = gumpData.getEdit(1)
+	var prio = parseInt(prioStr, 10);
+	if (isNaN(prio))
+		prio = 0;
+
+    //if (!newName.length)
+	//{
+     //   pSock.SysMessage("Enter a rank name.");
+    //}
+	//else
+	//{
+        //try
+		//{
+            guildinfo.AddRank(newName, prio);
+            pSock.SysMessage("Added/updated rank: " + newName + " (prio " + prio + ")");
+        //} 
+		//catch (e) 
+		//{
+        //    pSock.SysMessage("Failed to add rank.");
+        //}
+    //}
+		GuildMenu(pUser);
+		return;
+	}
+
+	if (pButton === BTN_REFRESH)
+	{
+		GuildMenu(pUser);
+		return;
+	}
+
+// delete rank (button carries *rankId*)
+else if (pButton >= BTN_DEL_RANK_BASE && pButton < BTN_DEL_RANK_BASE + 100000) {
+    var rankId = pButton - BTN_DEL_RANK_BASE;
+
+    var ok = false;
+    if (guildinfo.RemoveRankById) {
+        try { ok = guildinfo.RemoveRankById(rankId); } catch (e) {}
+    } else if (guildinfo.GetRankNameById && guildinfo.RemoveRankByName) {
+        var delName = guildinfo.GetRankNameById(rankId);
+        if (delName && delName !== "(deleted)") {
+            try { ok = guildinfo.RemoveRankByName(delName); } catch (e) {}
+        }
+    }
+
+    pSock.SysMessage(ok ? "Rank removed." : "Could not remove (in use?)");
+    GuildMenu(pUser);
+    return;
 }
 
-/*function onCallback0( socket, ourObj )
+// promote/demote member by row
+else if (pButton >= BTN_PROMOTE_BASE && pButton < BTN_PROMOTE_BASE + 1000)
 {
-	var pUser = socket.currentChar;
-	var guild = pUser.guild;
-	if( guild != null )
+    var r = pButton - BTN_PROMOTE_BASE;
+    var members = (guildinfo.member || guildinfo.members) || [];
+    if (r >= 0 && r < members.length)
 	{
-		// Add ourObj as recruit in myChar's guild
-		guild.AddRecruit( ourObj );
-	}
-}*/
+        try { guildinfo.Promote(members[r]); pSock.SysMessage("Promoted " + (members[r].name||"member")); }
+        catch(e){ pSock.SysMessage("Promote failed."); }
+    }
+    GuildMenu(pUser);
+    return;
+}
+else if (pButton >= BTN_DEMOTE_BASE && pButton < BTN_DEMOTE_BASE + 1000) {
+    var r2 = pButton - BTN_DEMOTE_BASE;
+    var members2 = (guildinfo.member || guildinfo.members) || [];
+    if (r2 >= 0 && r2 < members2.length) {
+        try { guildinfo.Demote(members2[r2]); pSock.SysMessage("Demoted " + (members2[r2].name||"member")); }
+        catch(e){ pSock.SysMessage("Demote failed."); }
+    }
+    GuildMenu(pUser);
+    return;
+}
+
+// Set rank — 15400..15499
+else if (pButton >= BTN_SET_RANK_BASE && pButton < BTN_SET_RANK_BASE + 100) {
+    var r3 = pButton - BTN_SET_RANK_BASE;
+    var members3 = (guildinfo.member || guildinfo.members) || [];
+
+    // On this page: 0=new rank name, 1=new rank prio, 2="Set Rank (name)"
+    var rankNameToSet = (gumpData.getEdit ? gumpData.getEdit(2) : "") || "";
+    rankNameToSet = rankNameToSet.replace(/^\s+|\s+$/g, "");
+
+    if (!rankNameToSet.length) {
+        pSock.SysMessage("Enter a rank name first.");
+        GuildMenu(pUser);
+        return;
+    }
+    if (r3 >= 0 && r3 < members3.length) {
+        try {
+            var okSet = guildinfo.SetRank(members3[r3], rankNameToSet);
+            pSock.SysMessage(okSet ? ("Set rank '" + rankNameToSet + "' for " + (members3[r3].name || "member"))
+                                   : "SetRank failed (unknown rank?)");
+        } catch(e) {
+            pSock.SysMessage("SetRank failed.");
+        }
+    }
+    GuildMenu(pUser);
+    return;
+}
+}
+
 function onCallback0( socket, target )
 {
 	var pUser = socket.currentChar;
