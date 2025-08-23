@@ -6338,6 +6338,269 @@ function onTooltip( myItem, pSocket )
 			</li>
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#questSystem" id="questSystem"><span>Quest System</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<p>The <span class="hl">Quest System</span> adds structured, data-driven quests that can be offered by NPCs, auto-started at login, or progressed via world events like kills, skill gains, entering regions, or item interactions. It is implemented with a small set of scripts:</p>
+						<ul>
+							<li><span class="hl">js/server/quests/quest_core.js</span> – Core engine: validation, starting/completing, progress I/O</li>
+							<li><span class="hl">js/server/quests/quest_lists.js</span> – Registry of <em>all quest definitions</em> (IDs, text, objectives, rewards)</li>
+							<li><span class="hl">js/server/quests/quest_menu.js</span> – Player quest log UI</li>
+							<li><span class="hl">js/server/quests/quest_conversation_gump.js</span> – Narrative accept/decline dialog</li>
+							<li><span class="hl">js/server/quests/quest_item.js</span> – Quest items & turn‑ins</li>
+							<li><span class="hl">js/server/quests/events/quest_event_ondeathblow.js</span> – Progress from kills</li>
+							<li><span class="hl">js/server/quests/events/quest_event_onenterregion.js</span> – Progress from entering a region</li>
+							<li><span class="hl">js/server/quests/events/quest_event_onskillgain.js</span> – Progress from skill gain</li>
+							<li><span class="hl">js/server/quests/events/quest_event_onquesttoggle.js</span> – Track accept/abandon/toggle</li>
+							<li><span class="hl">js/server/quests/quest_login.js</span> – Optional one‑time login quest offer</li>
+						</ul>
+
+						<h3>Server & Global Settings</h3>
+						<p>Make sure the system is enabled:</p>
+						<input type="checkbox" id="spoiler_quest_settings">
+						<p>
+							<strong>UOX3/uox.ini</strong><br>
+							<span class="hl">QuestsEnabled=1</span>
+						</p>
+						<p>
+							<strong>js/server/global.js</strong><br>
+							<span class="hl">const loginQuest = true;</span> // Enables the one‑time login quest offer
+						</p>
+
+						<h3>Quick‑Guide</h3>
+						<ol>
+							<li><strong>Enable the system</strong> — turn on <span class="hl">QuestsEnabled</span> in <code>uox3.ini</code> and (optionally) set <code>loginQuest = true</code> in <code>global.js</code>.</li>
+							<li><strong>Spawn a Quest Giver</strong> — place at least one NPC from <span class="hl">dfndata/npc/questgivers.dfn</span> in the world. (See the example DFN below.)</li>
+							<li><strong>Hook your quests</strong> — ensure your quest giver has the conversation script and a <span class="hl">QuestID</span> tag. Existing quests in your <code>quest_lists.js</code> will then be usable.</li>
+							<li><strong>PROFIT!</strong> — players can now talk to that NPC to start questing.</li>
+						</ol>
+
+						<h3>Login Quest (one‑time offer)</h3>
+						<p>When <span class="hl">loginQuest</span> is true, <span class="hl">quest_login.js</span> can present a single introductory quest (great for onboarding a fresh character into a story arc or tutorial). The script tracks which quests a player has already been offered and accepted/declined, so the same login quest is not repeatedly shown.</p>
+						<input type="checkbox" id="spoiler_quest_login">
+						<label for="spoiler_quest_login">How the Login Offer Works <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<ul>
+								<li>Set <code>autoQuestID</code> inside <span class="hl">quest_login.js</span> to the quest you want to offer first (e.g., <code>9001</code>).</li>
+								<li>Player settings track whether the player has seen that quest: <code>ShowLoginQuestOffers</code> flag and a <code>SeenQuests</code> map.</li>
+								<li>If the player hasn’t accepted the quest yet and hasn’t seen the offer, the system opens <span class="hl">QuestConversationGump</span> with accept/decline.</li>
+								<li>Perfect for a guided “Welcome to the world” mission that demonstrates basics like talking to an NPC, traveling to a region, harvesting, or crafting.</li>
+							</ul>
+						</div>
+
+						<h3>Quest Parameters (Definition Schema)</h3>
+						<p>Define quests in <span class="hl">quest_lists.js</span>. Each quest entry supports the following fields:</p>
+						<input type="checkbox" id="spoiler_quest_params">
+						<label for="spoiler_quest_params">Available Parameters <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<div class="settingsDiv">
+								<p><span class="hl">Core Details</span></p>
+								<ul>
+									<li><strong>title</strong> – Display name</li>
+									<li><strong>description</strong> – Log text / story</li>
+									<li><strong>uncomplete</strong> – NPC text while incomplete</li>
+									<li><strong>complete</strong> – NPC text on completion</li>
+									<li><strong>refuse</strong> – NPC text on decline</li>
+									<li><strong>npcPhrases</strong> – Optional idle chatter</li>
+								</ul>
+							</div>
+							<div class="settingsDiv">
+								<p><span class="hl">Classification</span></p>
+								<ul>
+									<li><strong>type</strong> – <em>collect</em> | <em>kill</em> | <em>collectTime</em> | <em>killTime</em> | <em>multi</em> | <em>skillGain</em> | <em>delivery</em></li>
+									<li><strong>category</strong> – e.g., Main Story, Side, Daily, World</li>
+								</ul>
+							</div>
+							<div class="settingsDiv">
+								<p><span class="hl">Flags & Control</span></p>
+								<ul>
+									<li><strong>doneOnce</strong> – If true, only completable once</li>
+									<li><strong>questTurnIn</strong> – 1 = NPC turn‑in required, 0 = auto‑complete</li>
+									<li><strong>bankGold</strong> – 1 = deposit rewards to bank, 0 = to pack</li>
+									<li><strong>oneTimeQuest</strong> – Special flag for unique offers</li>
+									<li><strong>timeLimit</strong> – Optional timer (seconds)</li>
+									<li><strong>dailyQuest</strong>, <strong>resetDailyTime</strong> – Daily repeat rules</li>
+								</ul>
+							</div>
+							<div class="settingsDiv">
+								<p><span class="hl">Objectives</span></p>
+								<ul>
+									<li><strong>targetItems</strong> – Array of items to collect: { <em>itemID</em>, <em>name</em>, <em>amount</em> }</li>
+									<li><strong>targetKills</strong> – Array of mobs to defeat: { <em>monsterID</em>, <em>name</em>, <em>amount</em> }</li>
+									<li><strong>targetRegion</strong> – Region ID to enter; <strong>regionName</strong> is a friendly label</li>
+									<li><strong>targetSkill</strong> – For skillGain quests; supports <strong>minPoint</strong>/<strong>maxPoint</strong> or <strong>maxSkillPoints</strong></li>
+									<li><strong>deliveryItem</strong> – { <em>sectionID</em>, <em>name</em>, <em>amount</em> } with quest‑colored package</li>
+									<li><strong>targetDelivery</strong> – NPC receiver descriptor: { <em>sectionID</em>, <em>name</em>, <em>location</em> }</li>
+								</ul>
+							</div>
+							<div class="settingsDiv">
+								<p><span class="hl">Rewards</span></p>
+								<ul>
+									<li><strong>rewards</strong> – Fame, Karma, Gold, items, skill bonuses, etc.</li>
+									<li><strong>nextQuestID</strong> – Optional chain to next quest</li>
+								</ul>
+							</div>
+						</div>
+
+						<h3>Questgiver NPC Setup</h3>
+						<p>Attach the conversation script and tag the quest ID on the NPC (DFN example):</p>
+						<input type="checkbox" id="spoiler_questgiver_dfn">
+						<label for="spoiler_questgiver_dfn">Questgiver DFN Example <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+<pre><code>[mugg]
+{
+GET=basehuman
+NAME=Mugg the Miner
+TITLE=Quest Giver
+ID=0x0190
+PRIV=4
+SKIN=0x840A
+EQUIPITEM=0x2047//afro
+EQUIPITEM=pickaxe
+EQUIPITEM=boots
+COLOR=0x901
+EQUIPITEM=shortpants
+COLOR=0x3B2
+EQUIPITEM=shirt
+COLOR=0x22B
+EQUIPITEM=skullcap
+COLOR=0x177
+EQUIPITEM=halfapron
+COLOR=0x5F1
+EQUIPITEM=0x1414//plategloves
+STR=100 100
+DEX=100 100
+INT=25 25
+SCRIPT=5802//questconversation.js
+CUSTOMINTTAG=QuestID 1//More ore Please
+}
+</code></pre>
+						</div>
+
+						<h3>Quest Examples</h3>
+						<p>Expand to see each quest example</p>
+						<input type="checkbox" id="spoiler_quest_examples">
+						<label for="spoiler_quest_examples">Quest Examples <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<input type="checkbox" id="spoiler_q_collect">
+							<label for="spoiler_q_collect">Collect Quest (turn‑in or auto‑complete) <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+<pre><code class="language-javascript">{
+  questID: 1001,
+  title: "More Ore, Please",
+  description: "Mugg needs iron ore for his smelter.",
+  type: "collect",
+  category: "Side Quests",
+  targetItems: [{ itemID: "ironore", name: "iron ore", amount: 20 }],
+  questTurnIn: 1, // talk to Mugg when done
+  rewards: { gold: 500, fame: 10 },
+  doneOnce: true
+}
+</code></pre>
+							</div>
+
+							<input type="checkbox" id="spoiler_q_kill">
+							<label for="spoiler_q_kill">Kill Quest (progress via onDeathBlow) <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+<pre><code class="language-javascript">{
+  questID: 1010,
+  title: "Rat Problem",
+  description: "Cull the vermin in the cellar.",
+  type: "kill",
+  targetKills: [{ monsterID: "rat", name: "giant rat", amount: 8 }],
+  rewards: { gold: 300, karma: 5 }
+}
+</code></pre>
+							</div>
+
+							<input type="checkbox" id="spoiler_q_region">
+							<label for="spoiler_q_region">Exploration Quest (onEnterRegion) <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+<pre><code class="language-javascript">{
+  questID: 1020,
+  title: "Scout the Mines",
+  description: "Enter the Minoc mines and report back.",
+  type: "multi",
+  targetRegion: 12,
+  regionName: "Minoc Mines",
+  rewards: { gold: 250 }
+}
+</code></pre>
+							</div>
+
+							<input type="checkbox" id="spoiler_q_skill">
+							<label for="spoiler_q_skill">Skill Gain Quest (onSkillGain) <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+<pre><code class="language-javascript">{
+  questID: 1030,
+  title: "Lessons in Mining",
+  description: "Raise Mining through practice.",
+  type: "skillGain",
+  targetSkill: 8,          // skill ID for Mining
+  minPoint: 10,            // minimum points to gain during quest
+  maxPoint: 60,            // maximum points to gain during quest
+  rewards: { gold: 200 }
+}
+</code></pre>
+							</div>
+
+							<input type="checkbox" id="spoiler_q_delivery">
+							<label for="spoiler_q_delivery">Delivery Quest <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+<pre><code class="language-javascript">{
+  questID: 1040,
+  title: "Special Delivery",
+  description: "Carry this package to the smith.",
+  type: "delivery",
+  deliveryItem: { sectionID: "delivery_pkg", name: "Wrapped Parcel", amount: 1 },
+  targetDelivery: { sectionID: "blacksmith", name: "Ronan the Smith" },
+  rewards: { gold: 450, fame: 5 }
+}
+</code></pre>
+							</div>
+
+							<input type="checkbox" id="spoiler_q_timed">
+							<label for="spoiler_q_timed">Timed Kill/Collect (timeLimit) <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+<pre><code class="language-javascript">{
+  questID: 1050,
+  title: "Beat the Clock",
+  description: "Collect mushrooms before they spoil.",
+  type: "collectTime",
+  targetItems: [{ itemID: "mushroom", name: "mushroom", amount: 12 }],
+  timeLimit: 900,
+  rewards: { gold: 350 }
+}
+</code></pre>
+							</div>
+
+							<input type="checkbox" id="spoiler_q_chain">
+							<label for="spoiler_q_chain">Quest Chain (nextQuestID) <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+<pre><code class="language-javascript">{
+  questID: 2000,
+  title: "A Miner Challenge",
+  description: "Prove your mettle, then continue the story.",
+  type: "kill",
+  targetKills: [{ monsterID: "earth_elem", name: "earth elemental", amount: 3 }],
+  rewards: { gold: 800, fame: 15 },
+  nextQuestID: 2001
+}
+</code></pre>
+							</div>
+						</div>
+
+						<h3>Tips</h3>
+						<ul>
+							<li>Put narrative and branching in <span class="hl">quest_conversation_gump.js</span> for a clean content pipeline.</li>
+							<li>Use <span class="hl">doneOnce</span> for unique stories; <span class="hl">dailyQuest</span>/<span class="hl">resetDailyTime</span> for repeatables.</li>
+							<li>Delivery quests automatically add a colored parcel to the player’s backpack when started.</li>
+						</ul>
+					</div>
+				</div>
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#raceSystem" id="raceSystem"><span>Race System</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
