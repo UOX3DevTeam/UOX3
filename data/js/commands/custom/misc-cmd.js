@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Miscellaneous Custom Commands || by Xuri (xuri at uox3.org)
 // v1.09
 // Last Updated: 2. March 2021
@@ -66,6 +68,7 @@ function CommandRegistration()
 	RegisterCommand( "clearweather", 10, true ); // Clear up weather effect
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RENAME( pSock, execString )
 {
 	var pUser = pSock.currentChar;
@@ -82,23 +85,27 @@ function command_RENAME( pSock, execString )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_REFRESH( pSock, execString )
 {
 	var pUser = pSock.currentChar;
 	pUser.Teleport( pUser.x, pUser.y, pUser.z );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_FREEZE( pSock, execString )
 {
 	pSock.CustomTarget( 1, GetDictionaryEntry( 8853, pSock.language )); // What do you wish to freeze to the ground?
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_UNFREEZE( pSock, execString )
 {
 	pSock.CustomTarget( 2, GetDictionaryEntry( 8854, pSock.language )); // What do you wish to unfreeze?
 }
 
 //Open a specified webpage in default browser
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_BROWSE( pSock, execString )
 {
 	if( execString != "" )
@@ -111,6 +118,7 @@ function command_BROWSE( pSock, execString )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_INVUL( pSock, execString )
 {
 	if( execString == "" || execString == "true" || execString == 1 )
@@ -126,20 +134,24 @@ function command_INVUL( pSock, execString )
 		pSock.SysMessage( GetDictionaryEntry( 8858, pSock.language )); // Accepted arguments for this command: true or false, 1 or 0!
 	}
 }
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_NOINVUL( pSock, execString )
 {
 	command_INVUL( pSock, "false" );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_IMMORTAL( pSock, execString )
 {
 	pSock.CustomTarget( 25, GetDictionaryEntry( 8856, pSock.language )); // Whom do you wish to make immortal?
 }
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_MORTAL( pSock, execString )
 {
 	pSock.CustomTarget( 26, GetDictionaryEntry( 8856, pSock.language )); // Whom do you wish to make mortal?
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ADDPACK( pSock, execString )
 {
 	var pUser = pSock.currentChar;
@@ -173,6 +185,7 @@ function command_ADDPACK( pSock, execString )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_SETTAG( pSock, execString )
 {
 	var pUser = pSock.currentChar;
@@ -202,6 +215,7 @@ function command_SETTAG( pSock, execString )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_GETTAG( pSock, execString )
 {
 	var pUser = pSock.currentChar;
@@ -216,6 +230,7 @@ function command_GETTAG( pSock, execString )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_SETTEMPTAG( pSock, execString )
 {
 	var pUser = pSock.currentChar;
@@ -245,6 +260,7 @@ function command_SETTEMPTAG( pSock, execString )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_GETTEMPTAG( pSock, execString )
 {
 	var pUser = pSock.currentChar;
@@ -259,18 +275,21 @@ function command_GETTEMPTAG( pSock, execString )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_NODECAY( pSock, execString )
 {
 	var pUser = pSock.currentChar;
 	pUser.CustomTarget( 10, GetDictionaryEntry( 8866, pSock.language )); // Select an item to set as NOT decayable:
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_DECAY( pSock, execString )
 {
 	var pUser = pSock.currentChar;
 	pUser.CustomTarget( 11, GetDictionaryEntry( 8867, pSock.language )); // Select an item to set as decayable:
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_XSAY( pSock, execString )
 {
 	var pUser = pSock.currentChar;
@@ -286,6 +305,7 @@ function command_XSAY( pSock, execString )
 }
 
 //Rename
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -305,6 +325,7 @@ function onCallback0( pSock, myTarget )
 }
 
 //Freeze
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -328,6 +349,7 @@ function onCallback1( pSock, myTarget )
 }
 
 //Unfreeze
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -364,6 +386,7 @@ function onCallback2( pSock, myTarget )
 }
 
 // Make target invulnerable
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback3( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -387,6 +410,7 @@ function onCallback3( pSock, myTarget )
 }
 
 // Make target vulnerable
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback4( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -410,6 +434,7 @@ function onCallback4( pSock, myTarget )
 }
 
 // Addpack without parameters
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback5( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -443,6 +468,7 @@ function onCallback5( pSock, myTarget )
 }
 
 // ADDPACK callback function
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback6( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -489,6 +515,7 @@ function onCallback6( pSock, myTarget )
 	pUser.SetTag( "AddFromHex", null );
 }
 // Set Tag
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback8( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -518,6 +545,7 @@ function onCallback8( pSock, myTarget )
 }
 
 // Get Tag
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback9( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -537,6 +565,7 @@ function onCallback9( pSock, myTarget )
 }
 
 // Nodecay
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback10( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -559,6 +588,7 @@ function onCallback10( pSock, myTarget )
 }
 
 // Decay
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback11( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -581,6 +611,7 @@ function onCallback11( pSock, myTarget )
 }
 
 // XSAY
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback12( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -595,11 +626,13 @@ function onCallback12( pSock, myTarget )
 }
 
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_LINKDOORS( pSock, execString )
 {
 	pSock.CustomTarget( 13, GetDictionaryEntry( 8898, pSock.language )); // Which two doors do you want to link? (1/2)
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback13( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -634,11 +667,13 @@ function onCallback13( pSock, myTarget )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_UNLINKDOORS( pSock, execString )
 {
 	pSock.CustomTarget( 14, GetDictionaryEntry( 8901, pSock.language )); // Unlink which two doors? (1/2)
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback14( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -673,6 +708,7 @@ function onCallback14( pSock, myTarget )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_SETAMMOEFFECT( pSock, execString )
 {
 	if( execString != "" )
@@ -682,6 +718,7 @@ function command_SETAMMOEFFECT( pSock, execString )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback15( pSock, myTarget )
 {
 	var ammoEffect = pSock.xText;
@@ -691,6 +728,7 @@ function onCallback15( pSock, myTarget )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_SETAMMOTYPE( pSock, execString )
 {
 	if( execString != "" )
@@ -700,6 +738,7 @@ function command_SETAMMOTYPE( pSock, execString )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback16( pSock, myTarget )
 {
 	var ammoType = pSock.xText;
@@ -709,23 +748,27 @@ function onCallback16( pSock, myTarget )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_GETAMMOEFFECT( pSock, execString )
 {
 	pSock.CustomTarget( 17, GetDictionaryEntry( 8906, pSock.language )); // Get ammoeffect from which bow?
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback17( pSock, myTarget )
 {
 	var ammoEffect = myTarget.ammoEffect;
 	pUser.TextMessage( GetDictionaryEntry( 8907, pSock.language ) + " " + ammoEffect ); // AmmoEffect on selected bow:
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_GETAMMOTYPE( pSock, execString )
 {
 	var pUser = pSock.currentChar;
 	pSock.CustomTarget( 18, GetDictionaryEntry( 8908, pSock.language )); // Get ammotype from which bow?
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback18( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -733,6 +776,7 @@ function onCallback18( pSock, myTarget )
 	pUser.TextMessage( GetDictionaryEntry( 8909, pSock.language ) + " " + ammoType ); // AmmoType on selected bow:
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_UNDRESS( pSock, execString )
 {
 	var pUser = pSock.currentChar;
@@ -750,6 +794,7 @@ function command_UNDRESS( pSock, execString )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_REGIONINFO( pSock, execString )
 {
 	var pUser = pSock.currentChar;
@@ -762,11 +807,13 @@ function command_REGIONINFO( pSock, execString )
 	pSock.SysMessage( "IsSafeZone: " + pRegion.isSafeZone );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_XREGIONINFO( pSock, execString )
 {
 	pSock.CustomTarget( 19, GetDictionaryEntry( 8910, pSock.language )); // Get region info for which character?
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback19( pSock, myTarget )
 {
 	var myTargetRegion = myTarget.region;
@@ -778,11 +825,13 @@ function onCallback19( pSock, myTarget )
 	pSock.SysMessage( "xIsSafeZone: " + myTargetRegion.isSafeZone );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_CONT( pSock, execString )
 {
 	pSock.CustomTarget( 20, GetDictionaryEntry( 8911, pSock.language )); // Set which item as nonmovable container?
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback20( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -803,11 +852,13 @@ function onCallback20( pSock, myTarget )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ENDFIGHT( pSock, execString )
 {
 	pSock.CustomTarget( 21, GetDictionaryEntry( 8915, pSock.language )); // Subdue which fight?
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback21( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -840,11 +891,13 @@ function onCallback21( pSock, myTarget )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_GETMULTI( pSock )
 {
 	pSock.CustomTarget( 22, GetDictionaryEntry( 8919, pSock.language )); // Get MultiObj from which item?
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback22( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -866,6 +919,7 @@ function onCallback22( pSock, myTarget )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_FINDITEM( pSock, execString )
 {
 	var tempMsg = GetDictionaryEntry( 8922, pSock.language ); // Find item at layer %s on which character?
@@ -873,6 +927,7 @@ function command_FINDITEM( pSock, execString )
 	pSock.xText = execString;
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback23( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -899,6 +954,7 @@ function onCallback23( pSock, myTarget )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_MOVESPEED( pSock, execString )
 {
 	switch( execString )
@@ -920,6 +976,7 @@ function command_MOVESPEED( pSock, execString )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback24( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -941,6 +998,7 @@ function onCallback24( pSock, myTarget )
 }
 
 // Make target immortal (can take damage, but will never die)
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback25( pSock, myTarget )
 {
 	var immortalScript = 3510; // Script ID of immortality.js, set in jse_fileassociations.scp
@@ -969,6 +1027,7 @@ function onCallback25( pSock, myTarget )
 }
 
 // Make target mortal (can die)
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback26( pSock, myTarget )
 {
 	var immortalScript = 3510; // Script ID of immortality.js, set in jse_fileassociations.scp
@@ -996,6 +1055,7 @@ function onCallback26( pSock, myTarget )
 }
 
 // SetTempTag
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback27( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -1025,6 +1085,7 @@ function onCallback27( pSock, myTarget )
 }
 
 // GetTempTag
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback28( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -1042,11 +1103,13 @@ function onCallback28( pSock, myTarget )
 	pUser.SetTempTag( "TempTag", null );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_WELCOME( pSock, execString )
 {
 	TriggerEvent( 1, "DisplayAdminWelcomeGump", pSock, pSock.currentChar );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_GETJSTIMER( pSock, execString )
 {
 	var params = execString.replace( /\s/g, '').split( "," );
@@ -1062,6 +1125,7 @@ function command_GETJSTIMER( pSock, execString )
 	pSock.CustomTarget( 29, GetDictionaryEntry( 2763, pSock.language )); // Fetch remaining time of JS timer for which object?
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback29( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -1097,6 +1161,7 @@ function onCallback29( pSock, myTarget )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_SETJSTIMER( pSock, execString )
 {
 	var params = execString.replace( /\s/g, '').split( "," );
@@ -1113,6 +1178,7 @@ function command_SETJSTIMER( pSock, execString )
 	pSock.CustomTarget( 30, GetDictionaryEntry( 2768, pSock.language )); // Set remaining time of JS timer for which object?
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback30( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -1148,6 +1214,7 @@ function onCallback30( pSock, myTarget )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_KILLJSTIMER( pSock, execString )
 {
 	var params = execString.replace( /\s/g, '').split( "," );
@@ -1163,6 +1230,7 @@ function command_KILLJSTIMER( pSock, execString )
 	pSock.CustomTarget( 31, GetDictionaryEntry( 2769, pSock.language )); // Kill specified JS timer for which object?
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback31( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -1188,6 +1256,7 @@ function onCallback31( pSock, myTarget )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ADDHOUSE( socket, cmdString )
 {
 	if( cmdString )
@@ -1208,6 +1277,7 @@ function command_ADDHOUSE( socket, cmdString )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback32( socket, ourObj )
 {
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
@@ -1239,6 +1309,7 @@ function onCallback32( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ADDMULTI( socket, cmdString )
 {
 	if( cmdString )
@@ -1259,6 +1330,7 @@ function command_ADDMULTI( socket, cmdString )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback33( socket, ourObj )
 {
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
@@ -1290,11 +1362,13 @@ function onCallback33( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_USEITEM( pSock, execString )
 {
 	pSock.CustomTarget( 34, GetDictionaryEntry( 97, pSock.language )); // Use which item?
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback34( socket, ourObj )
 {
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
@@ -1311,11 +1385,13 @@ function onCallback34( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_GETTAGMAP( pSock, execString )
 {
 	pSock.CustomTarget( 35, GetDictionaryEntry( 92, pSock.language )); // Get persistent tag map for which object?
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback35( pSock, ourObj )
 {
 	var cancelCheck = parseInt( pSock.GetByte( 11 ));
@@ -1348,11 +1424,13 @@ function onCallback35( pSock, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_GETTEMPTAGMAP( pSock, execString )
 {
 	pSock.CustomTarget( 36, GetDictionaryEntry( 94, pSock.language )); // Get temporary tag map for which object?
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback36( pSock, ourObj )
 {
 	var cancelCheck = parseInt( pSock.GetByte( 11 ));
@@ -1385,11 +1463,13 @@ function onCallback36( pSock, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_LISTPETS( pSock, execString )
 {
 	pSock.CustomTarget( 37, GetDictionaryEntry( 2775, pSock.language )); // Get list of pets for which character?
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback37( pSock, ourObj )
 {
 	var cancelCheck = parseInt( pSock.GetByte( 11 ));
@@ -1410,11 +1490,13 @@ function onCallback37( pSock, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_LISTFOLLOWERS( pSock, execString )
 {
 	pSock.CustomTarget( 38, GetDictionaryEntry( 2776, pSock.language )); // Get list of followers for which character?
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback38( pSock, ourObj )
 {
 	var cancelCheck = parseInt( pSock.GetByte( 11 ));
@@ -1436,12 +1518,14 @@ function onCallback38( pSock, ourObj )
 }
 
 // Reset corrupted skill caps for player characters. Only use in emergency.
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RESETSKILLCAPS( pSock, execString )
 {
 	var resetCount = IterateOver( "CHARACTER" );
 	pSock.SysMessage( "Reset skillcaps for " + resetCount + " players back to default." );
 }
 
+/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
 function onIterate( toCheck )
 {
 	if( toCheck.isChar && !toCheck.npc )
@@ -1453,12 +1537,14 @@ function onIterate( toCheck )
 }
 
 // Reset stuck skill usage for player characters. Only use in emergency.
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RESETSKILLUSAGE( pSock, execString )
 {
 	var resetCount = IterateOver( "CHARACTER" );
 	pSock.SysMessage( "Reset skill usage for " + resetCount + " players back to false." );
 }
 
+/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
 function onIterate( toCheck )
 {
 	if( toCheck.isChar && !toCheck.npc )
@@ -1470,6 +1556,7 @@ function onIterate( toCheck )
 }
 
 // Override weather for current region and make it RAIN
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RAIN( pSock, execString )
 {
 	var mRegion = pSock.currentChar.region;
@@ -1478,6 +1565,7 @@ function command_RAIN( pSock, execString )
 }
 
 // Override weather for current region and make it SNOW
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_SNOW( pSock, execString )
 {
 	var mRegion = pSock.currentChar.region;
@@ -1486,11 +1574,10 @@ function command_SNOW( pSock, execString )
 }
 
 // Clear up any override weather-effects in current region
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_CLEARWEATHER( pSock, execString )
 {
 	var mRegion = pSock.currentChar.region;
 	mRegion.weather = 0;
 	pSock.SysMessage( "Weather override disabled for current region (" + mRegion.name + ")" );
 }
-
-function _restorecontext_() {}

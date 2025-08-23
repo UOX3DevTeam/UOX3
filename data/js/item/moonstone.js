@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Moonstone Script
 
 // invalidTiles contains hex-id's of various maptiles that count as "invalid" if the user
@@ -9,6 +11,7 @@
 
 var invalidTiles = new Array( "0x00a8", "0x00a9", "0x00aa", "0x00ab", "0x0136", "0x0137", "0x01f4", "0x01f5", "0x01f6", "0x01f7" );
 
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	// If the moonstone is spawned in Felucca, it becomes a Trammel Moonstone
@@ -26,6 +29,7 @@ function onCreateDFN( objMade, objType )
 	}
 }
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	if( pUser.visible == 1 || pUser.visible == 2 )
@@ -157,6 +161,7 @@ function onUseChecked( pUser, iUsed )
 	return false;	
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( iUsed, timerID )
 {
 	if( timerID == 1 )
@@ -193,6 +198,7 @@ function onTimer( iUsed, timerID )
 	}
 }
 
+/** @type { ( targSock: Socket, objColliding: Character, objCollideWith: BaseObject ) => boolean } */
 function onCollide( trgSock, srcChar, trgItem )
 {
 	// If user collides with item after it changes to moongate form, teleport him. 
@@ -230,6 +236,7 @@ function onCollide( trgSock, srcChar, trgItem )
 	}
 }
 
+/** @type { ( item: Item, pickerUpper: Character, objCont: BaseObject ) => boolean } */
 function onPickup( iPickedUp, pGrabber )
 {
 	if( iPickedUp.id == 0x0f6c )

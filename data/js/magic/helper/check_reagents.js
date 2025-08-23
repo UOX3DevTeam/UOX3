@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 function CheckReagents( mChar, mSpell )
 {
 	var failedCheck = 0;

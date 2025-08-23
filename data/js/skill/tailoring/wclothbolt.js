@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // tailoring script
 // Last Updated: October 31st 2021
 // five balls of yarn/spools of thread : loom : bolt of cloth
@@ -23,6 +25,7 @@ function onUseChecked ( pUser, iUsed )
 	return false;
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSocket, myTarget )
 {
 	if( pSocket == null )

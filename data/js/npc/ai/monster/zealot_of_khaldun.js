@@ -1,3 +1,6 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
+/** @type { ( mKilled: Character, mKiller: Character ) => boolean } */
 function onDeathBlow( zealot, pKiller )
 {
 	// Prevent death when zealot is in their human form, morph into undead

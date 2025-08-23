@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This command allows GM to fetch
 
 function CommandRegistration()
@@ -5,6 +7,7 @@ function CommandRegistration()
 	RegisterCommand( "get", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_GET( socket, cmdString )
 {
 	if( cmdString )
@@ -20,6 +23,7 @@ function command_GET( socket, cmdString )
 }
 
 // Common Object Properties
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	if( socket.GetWord( 1 ) && !ValidateObject( ourObj ))

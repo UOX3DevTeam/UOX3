@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Let's test our spell casting scripts... what fun!
 
 function SpellRegistration()
@@ -5,6 +7,7 @@ function SpellRegistration()
 	RegisterSpell( 1, true );	// say, clumsy, same as in the spells.dfn file
 }
 
+/** @type { ( tChar: Character, SpellId: number ) => number } */
 function onSpellCast( socket, character, directCast, spellNum )
 {
 	if( directCast )
@@ -46,6 +49,7 @@ function onSpellCast( socket, character, directCast, spellNum )
 	return true;	// we succeeded in casting (consumption for wand/scroll)
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( character, timerID )
 {
 	character.TextMessage( "Spell casting timer has elapsed, time to throw up other stuff, wheeee!" );

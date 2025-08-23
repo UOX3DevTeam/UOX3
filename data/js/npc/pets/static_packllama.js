@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // create pet from static script
 // 17/06/2001 Yeshe; yeshe@manofmystery.org
 // Updated by Xuri
@@ -10,6 +12,7 @@ var maxFollowers = GetServerSetting( "MaxFollowers" );
 const petBondingEnabled = GetServerSetting( "PetBondingEnabled" );
 
 // Runs before purchase is validated by server
+/** @type { ( targSock: Socket, objVendor: Character, objItemBought: BaseObject, numItemsBuying: number ) => boolean } */
 function onBuyFromVendor( pSock, vendor, iBought, numItemsBought )
 {
 	var pUser = pSock.currentChar;
@@ -39,6 +42,7 @@ function onBuyFromVendor( pSock, vendor, iBought, numItemsBought )
 }
 
 // Runs after purchase has been completed
+/** @type { ( targSock: Socket, objVendor: Character, objItemBought: BaseObject, numItemsBought: number ) => boolean } */
 function onBoughtFromVendor( pSock, Vendor, iBought, numItemsBought )
 {
 	if( pSock && iBought )
@@ -47,6 +51,7 @@ function onBoughtFromVendor( pSock, Vendor, iBought, numItemsBought )
 	}
 }
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var nSpawned = SpawnNPC( "packllama", pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );

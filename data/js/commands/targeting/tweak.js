@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // The 'tweak command lets GMs and Admins modify properties of targeted objects
 // This script replaces the previously hard-coded command
 //
@@ -453,6 +455,7 @@ function CommandRegistration()
 	RegisterCommand( "props", 8, true ); // alias
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_TWEAK( pSocket, cmdString )
 {
 	if( GetServerSetting( "ServerLanguage" ) == 7 || GetServerSetting( "ServerLanguage" ) == 0 && pSocket.language == 24 )
@@ -484,12 +487,14 @@ function command_TWEAK( pSocket, cmdString )
 }
 
 // Alias of TWEAK
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_PROPS( pSocket, cmdString )
 {
 	command_TWEAK( pSocket, cmdString );
 }
 
 // Callback function for targeting an object after using 'tweak command
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSocket, myTarget )
 {
 	pSocket.currentChar.SetTag( "tweakRegion", null );
@@ -548,6 +553,7 @@ function onCallback0( pSocket, myTarget )
 }
 
 // Callback function for selection of new target for object properties
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( pSocket, myTarget )
 {
 	var socketLang = pSocket.language;
@@ -6724,5 +6730,3 @@ const itemTypeNames = {
 	253:"IT_TRAININGDUMMY",
 	255:"IT_COUNT"
 }
-
-function _restorecontext_() { }

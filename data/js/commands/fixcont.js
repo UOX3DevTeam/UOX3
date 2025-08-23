@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This ADMIN-only command will iterate through all items in the worldfiles and
 // update - for containers only - the...
 // 		weight (if container is empty and does no weight-value is already defined)
@@ -10,6 +12,7 @@ function CommandRegistration()
 	RegisterCommand( "fixcont", 10, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_FIXCONT( socket, cmdString )
 {
 	var confirmGump = new Gump;
@@ -54,6 +57,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	}
 }
 
+/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
 function onIterate( toCheck )
 {
 	if( toCheck.type == 1 ) // Is it a container?
@@ -362,5 +366,3 @@ function onIterate( toCheck )
 	}
 	return false;
 }
-
-function _restorecontext_() {}

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This script handles speech and speech responses by humanoid monsters such as orcs, lizardmen and
 // ratmen, as well as intelligent creatures such as wisps
 
@@ -78,6 +80,7 @@ const searchInterval = 5000;
 const searchRange = 8;
 const searchTimer = 15000;
 
+/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => null | undefined | number | boolean } */
 function onSpeech( myString, myPlayer, myNPC )
 {
 	// Don't react to NPCs
@@ -103,6 +106,7 @@ function onSpeech( myString, myPlayer, myNPC )
 	Speech( myNPC, myString );
 }
 
+/** @type { ( srcObj: BaseObject, objInRange: BaseObject ) => void } */
 function inRange( myNPC, objInRange )
 {
 	if( !ValidateObject( objInRange ) || objInRange.npc || !objInRange.online || objInRange.dead || objInRange.isGM || objInRange.isCounselor )
@@ -128,6 +132,7 @@ function inRange( myNPC, objInRange )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( srcChar, timerID )
 {
 	if( timerID < searchAmount )
@@ -152,6 +157,7 @@ function searchForPlayers( srcChar, trgChar, pSock )
 }
 
 // Triggers when NPC attacks
+/** @type { ( attacker: Character, defender: Character, hitStatus: boolean, hitLoc: number, damageDealt: number ) => void } */
 function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 {
 	// Random chance to speak when killing someone
@@ -167,6 +173,7 @@ function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 }
 
 // Triggers when NPC takes damage
+/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => boolean } */
 function onDamage( damaged, attacker, damageValue, damageType )
 {
 	// Random chance to speak when defending
@@ -196,6 +203,7 @@ function onDamage( damaged, attacker, damageValue, damageType )
 }
 
 // Triggers when NPC dies
+/** @type { ( mKilled: Character, mKiller: Character ) => boolean } */
 function onDeathBlow( pDead, pKiller )
 {
 	// Only do this for orcs, lizardmen and ratmen
@@ -415,5 +423,3 @@ function GetTextSound( myNPC )
 			return 0x00;
 	}
 }
-
-function _restorecontext_() {}

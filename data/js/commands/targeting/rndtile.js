@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Syntax: 'RNDTILE <startID> <endID> <hue> <Z>(optional) <movable true/false>(optional)
 // Example 1: 'RNDTILE 0x04a9 0x04ac 0x0			//random floor tiles of hue 0x0
 // Example 2: 'RNDTILE 0x04a9 0x04ac 0x0 20 		//random floor tiles of hue 0x0 at Z 20
@@ -10,6 +12,7 @@ function CommandRegistration()
 	RegisterCommand( "rndtile", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RNDTILE( pSock, cmdString )
 {
 	if( !pSock )
@@ -58,6 +61,7 @@ function command_RNDTILE( pSock, cmdString )
 }
 
 //First target location in boundary box
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, myTarget )
 {
 	if( !pSock )
@@ -80,6 +84,7 @@ function onCallback0( pSock, myTarget )
 }
 
 //Second target location in boundary box
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( pSock, myTarget )
 {
 	if( !pSock )

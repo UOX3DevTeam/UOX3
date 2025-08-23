@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This command is used to enable/disable spawn regions in specific facets
 const facetList = [ "felucca", "trammel", "ilshenar", "malas", "tokuno", "termur" ];
 
@@ -7,6 +9,7 @@ function CommandRegistration()
 	RegisterCommand( "disablespawns", 10, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ENABLESPAWNS( socket, cmdString )
 {
 	var pUser = socket.currentChar;
@@ -29,6 +32,7 @@ function command_ENABLESPAWNS( socket, cmdString )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_DISABLESPAWNS( socket, cmdString )
 {
 	var pUser = socket.currentChar;

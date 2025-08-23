@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "checkJs": true,
+        "strict": true,
+        "noEmit": true,
+
+        // Treat every .js/.ts file as an ES module
+        "moduleDetection": "force"
+    },
+    "include": ["definitions.d.ts", "**/*"]
+}

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This script can be used for long term JS timers (max 49 days!) for objects
 // Script will be automatically removed from object when no long term timers are active
 const scriptID = 3;
@@ -10,6 +12,7 @@ function StartLongTermTimer( timerObj, timerID, duration )
 	timerObj.StartTimer( duration, timerID, true );
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( !ValidateObject( timerObj ))

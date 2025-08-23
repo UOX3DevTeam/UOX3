@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 //	Banker AI
 //	Responds to bank-commands:
 // 	BANK, BALANCE/STATEMENT, CHECK, WITHDRAW # and DEPOSIT # or DEPOSIT without arguments to get target cursor
@@ -8,6 +10,7 @@ var maxBankItemAmt = 125;
 // Script ID for banker AI script
 var bankCheckTrigger = 5015;
 
+/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => null | undefined | number | boolean } */
 function onSpeech( strSaid, pTalking, pTalkingTo )
 {
 	if( strSaid )
@@ -317,6 +320,7 @@ function CountGoldInBank( pTalking, bankBox )
 }
 
 // Select item to deposit into bankbox
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, ourObj )
 {
 	var pTalking = pSock.currentChar;
@@ -395,5 +399,3 @@ function DivideDepositedGold( pTalking, bankBox, depositAmt )
 		}
 	}
 }
-
-function _restorecontext_() {}

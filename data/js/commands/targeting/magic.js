@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // These commands are shortcuts for casting gate, recall and mark spells with no mana/reagent costs
 
 function CommandRegistration()
@@ -7,12 +9,14 @@ function CommandRegistration()
 	RegisterCommand( "mark", 4, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_GATE( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 226, socket.language );
 	socket.CustomTarget( 0, targMsg );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	var mChar 	= socket.currentChar;
@@ -30,12 +34,14 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RECALL( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 224, socket.language ); // Select rune from which to recall.
 	socket.CustomTarget( 1, targMsg );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	var mChar = socket.currentChar;
@@ -82,12 +88,14 @@ function onCallback1( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_MARK( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 225 ); // Select rune to mark.
 	socket.CustomTarget( 2, targMsg );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( socket, ourObj )
 {
 	var mChar = socket.currentChar;
