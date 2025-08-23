@@ -19,7 +19,7 @@ function QuestMenu( pUser )
 		var questEntry = activeQuests[i];
 
 		// Check if this quest belongs to the current player
-		if (questEntry.serial != playerSerial)
+		if( questEntry.serial != playerSerial )
 			continue;
 
 		var quest = TriggerEvent( 5801, "QuestList", questEntry.questID );
@@ -27,8 +27,10 @@ function QuestMenu( pUser )
 		if( quest )
 		{
 			// Trim and normalize categories for comparison
-			var questCategory = manualTrim( quest.category || "" ).toLowerCase();
-			var playerCategory = manualTrim( currentCategory || "" ).toLowerCase();
+			//var questCategory = manualTrim( quest.category || "" ).toLowerCase();
+			//var playerCategory = manualTrim( currentCategory || "" ).toLowerCase();
+			var questCategory = ( quest.category || "" ).trim().toLowerCase();
+			var playerCategory = ( currentCategory || "" ).trim().toLowerCase();
 
 			if( playerCategory == "all quests" || questCategory == playerCategory )
 			{
@@ -48,7 +50,7 @@ function QuestMenu( pUser )
 	if( useTransparentBackground )
 	{
 		gump.AddCheckerTrans( 30, 120, 296, 447 ); // Transparent background
-		var titleHue = 1160;
+		titleHue = 1160;
 	}
 	gump.AddGump( 70, 130, 1577 );
 	gump.AddText( 135, 200, titleHue, "Quest Journal" );
@@ -67,19 +69,19 @@ function QuestMenu( pUser )
 		gump.AddPage( page + 1 );
 
 		var startIndex = page * questsPerPage;
-		var endIndex = Math.min(startIndex + questsPerPage, filteredQuests.length );
+		var endIndex = Math.min( startIndex + questsPerPage, filteredQuests.length );
 
-		for( var i = startIndex; i < endIndex; i++ )
+		for( var j = startIndex; j < endIndex; j++ )
 		{
-			var questEntry = filteredQuests[i];
+			var questEntry = filteredQuests[j];
 			var quest = TriggerEvent( 5801, "QuestList", questEntry.questID );
-			var buttonY = questListStartY + (( i % questsPerPage ) * 25 ); // Reduced spacing
+			var buttonY = questListStartY + (( j % questsPerPage ) * 25 ); // Reduced spacing
 
-			if (!quest)
+			if( !quest )
 				continue;
 
 			// Add quest name with a navigation button for details
-			gump.AddPageButton( 40, buttonY, 1141, 1143, totalPages + i + 1 ); // Navigate to quest details
+			gump.AddPageButton( 40, buttonY, 1141, 1143, totalPages + j + 1 ); // Navigate to quest details
 			gump.AddText( 80, buttonY + 5, 0, quest.title );
 		}
 
@@ -101,15 +103,15 @@ function QuestMenu( pUser )
 	}
 
 	// Add quest details pages
-	for( var i = 0; i < filteredQuests.length; i++ )
+	for( var m = 0; m < filteredQuests.length; m++ )
 	{
-		var questEntry = filteredQuests[i];
+		var questEntry = filteredQuests[m];
 		var quest = TriggerEvent( 5801, "QuestList", questEntry.questID );
 
 		if( !quest )
 			continue;
 
-		gump.AddPage( totalPages + i + 1 );
+		gump.AddPage( totalPages + m + 1 );
 
 		// Add the quest details background
 		gump.AddBackground( 350, 120, 306, 350, 1579 ); // Details background
@@ -139,7 +141,7 @@ function QuestMenu( pUser )
 		gump.AddHTMLGump( 370, 350, 266, 100, true, true, rewards );
 
 		// Add a back button to return to the main quest list
-		var originalPage = Math.floor( i / questsPerPage ) + 1;
+		var originalPage = Math.floor( m / questsPerPage ) + 1;
 		gump.AddPageButton( 225, 530, 247, 249, originalPage ); // Back Button
 	}
 
@@ -171,14 +173,14 @@ function QuestMenu( pUser )
 	gump.AddBackground(365, 205, 280, 22, 9350);
 	gump.AddText(370, 205, 0, "Sort by Quest Category");
 	// Add category selection buttons
-	for( var i = 0; i < categories.length; i++ ) 
+	for( var l = 0; l < categories.length; l++ ) 
 	{
 		var categoryStartY = 230; // Adjusted start position for categories
-		var yPosition = categoryStartY + i * 25; // Spacing between categories
-		var isSelected = categories[i] == currentCategory;
-		gump.AddCheckbox( 370, yPosition, 210, 0, i + 1000 ); //CheckBox
+		var yPosition = categoryStartY + l * 25; // Spacing between categories
+		var isSelected = categories[l] == currentCategory;
+		gump.AddCheckbox( 370, yPosition, 210, 0, l + 1000 ); //CheckBox
 		//gump.AddButton( 370, yPosition, isSelected ? 1141 : 1143, isSelected ? 1141 : 1143, 1, 0, i + 1000 ); // Category buttons
-		gump.AddText( 400, yPosition, isSelected ? 500 : wordHue, categories[i] );
+		gump.AddText( 400, yPosition, isSelected ? 500 : wordHue, categories[l] );
 	}
 
 	var showLoginQuests = playerSettings["ShowLoginQuestOffers"] != false;
@@ -211,18 +213,28 @@ function CompletedQuestsMenu( pUser )
 
 	// Read completed quests
 	var playerSettings = TriggerEvent( 5800, "ReadPlayerSettings", pUser ) || {};
-	var completedQuests = TriggerEvent( 5800, "ReadArchivedQuests", pUser );
+	var completedQuests = TriggerEvent( 5800, "ReadArchivedQuests", pUser ) || [];
 	var useTransparentBackground = playerSettings["UseTransparentBackground"] || false;
 
-	// Ensure unique entries
+	var uniqueIds = {};
 	var uniqueQuests = [];
 	for( var i = 0; i < completedQuests.length; i++ )
 	{
-		if( uniqueQuests.indexOf( completedQuests[i] ) == -1 )
+		var id = (typeof completedQuests[i] === "object") ? completedQuests[i].questID : completedQuests[i];
+		if( !uniqueIds[id] )
 		{
-			uniqueQuests.push( completedQuests[i] );
+			uniqueIds[id] = 1; uniqueQuests.push(id);
 		}
 	}
+	// Ensure unique entries
+	//var uniqueQuests = [];
+	//for( var i = 0; i < completedQuests.length; i++ )
+	//{
+	//	if( uniqueQuests.indexOf( completedQuests[i] ) == -1 )
+	//	{
+	//		uniqueQuests.push( completedQuests[i] );
+	//	}
+	//}
 
 	var questsPerPage = 10; // Number of quests per page
 	var totalPages = Math.ceil( uniqueQuests.length / questsPerPage );

@@ -4,7 +4,7 @@ function StartQuest( player, questID )
 	var socket = player.socket;
 	var questProgressArray = ReadQuestProgress( player );
 
-	if( !CheckQuest( player, questID ))
+	if( !CheckQuest( player, questID, "start" ))
 	{
 		return; // Stop execution if the quest cannot proceed
 	}
@@ -125,7 +125,7 @@ function CheckQuest( player, questID, mode)
 	var archivedQuests = ReadArchivedQuests( player );
 
 	// Check if already working on this quest
-	if (mode == "start")
+	if( mode == "start" )
 	{
 		// Check if the quest is already in progress
 		// Ensure no duplicate quests for the same player

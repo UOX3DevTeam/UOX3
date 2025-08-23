@@ -110,7 +110,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		case 0: // Close gump
 			break;
 		case 1: // Accept quest
-			if (loginQuestID >= 0 && loginQuestID != null)
+			if( loginQuestID >= 1 && loginQuestID != null )
 			{
 				TriggerEvent( 5800, "StartQuest", pUser, loginQuestID );
 			}
@@ -751,6 +751,19 @@ function QuestNpcInterAction( pUser, questNpc )
 			questNpc.TurnToward( pUser );
 			questNpc.TextMessage( "I'm sorry, I have nothing for you at this time." );
 			return false;
+		}
+	}
+
+		// Fetch player's progress for the current quest
+	var questProgressArray = TriggerEvent( 5800, "ReadQuestProgress", pUser );
+	var currentQuestProgress = null;
+
+	for( var i = 0; i < questProgressArray.length; i++ ) 
+	{
+		if( questProgressArray[i].questID == playerQuestID ) 
+		{
+			currentQuestProgress = questProgressArray[i];
+			break;
 		}
 	}
 

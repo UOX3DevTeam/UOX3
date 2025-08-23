@@ -1246,6 +1246,7 @@ function QuestList( questID )
 			oneTimeQuest: 1
 		}
 	};
+
 	// Return the full quest list if no questID is provided
 	if( !questID )
 	{
