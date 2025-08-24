@@ -202,7 +202,7 @@ function ResignQuest( player, questID )
 	return true;
 }
 
-function ManageQuestItems( player, questID, mark )
+/*function ManageQuestItems( player, questID, mark )
 {
 	var socket = player.socket;
 	var pack = player.pack; // Get the player's backpack
@@ -213,15 +213,14 @@ function ManageQuestItems( player, questID, mark )
 		return;
 	}
 
-	var currentItem;
 	var quest = TriggerEvent( 5801, "QuestList", questID ); // Fetch quest details
-
 	if( !quest || ( !quest.targetItems && !quest.deliveryItem )) 
 	{
 		return;
 	}
 
 	// Iterate through all items in the player's backpack
+	var currentItem;
 	for( currentItem = pack.FirstItem(); !pack.FinishedItems(); currentItem = pack.NextItem())
 	{
 		if( !ValidateObject( currentItem ))
@@ -237,7 +236,7 @@ function ManageQuestItems( player, questID, mark )
 				var targetItem = quest.targetItems[i];
 
 				// Check if the item matches the quest requirement
-				var questSectionID = targetItem.GetTag("QuestSectionID") || targetItem.sectionID;
+				var questSectionID = targetItem.GetTag( "QuestSectionID") || targetItem.sectionID;
 				if( String( currentItem.sectionID ) == String( targetItem.sectionID ) || ( currentItem.sectionID == questSectionID ))
 				{
 					if( mark )
@@ -309,7 +308,131 @@ function ManageQuestItems( player, questID, mark )
 			}
 		}
 	}
+}*/
+
+function ManageQuestItems(player, questID, mark)
+{
+	var socket = player.socket;
+	var pack   = player.pack;
+
+	if (!ValidateObject(pack))
+	{
+		socket.SysMessage(GetDictionaryEntry(19606, socket.language)); // You do not have a backpack.
+		return;
+	}
+
+	// Try to fetch quest info, but DO NOT early-return on failure when unmarking
+	var quest = TriggerEvent(5801, "QuestList", questID) || {};
+
+	// Build a quick lookup for sectionIDs (for mark path and as a fallback on unmark)
+	var sectionLookup = {};
+	if (quest.targetItems && quest.targetItems.length)
+	{
+		for (var i = 0; i < quest.targetItems.length; i++)
+		{
+			// targetItems are data objects, not items; don't call GetTag on them
+			sectionLookup[String(quest.targetItems[i].sectionID)] = true;
+		}
+	}
+
+	function unmarkItem(it)
+	{
+		var saved = it.GetTag("saveColor");
+		if (saved != null && !isNaN(parseInt(saved)))
+			it.color = parseInt(saved);
+		else
+			it.color = 0; // default
+
+		it.isNewbie  = false;
+		it.isDyeable = true;
+
+		it.SetTag("QuestItem", null);
+		it.SetTag("QuestSectionID", null);
+		it.SetTag("QuestID", null);
+		it.SetTag("saveColor", null);
+
+		it.RemoveScriptTrigger(5806);
+	}
+
+	// Optional: handle items inside nested containers
+	function forEachItemIn(container, fn)
+	{
+		for (var ci = container.FirstItem(); !container.FinishedItems(); ci = container.NextItem())
+		{
+			if (!ValidateObject(ci)) continue;
+			fn(ci);
+			// If this item is itself a container, walk it too (API mirrors backpacks)
+			if (typeof ci.FirstItem === "function" && typeof ci.FinishedItems === "function")
+			{
+				forEachItemIn(ci, fn);
+			}
+		}
+	}
+
+	forEachItemIn(pack, function(currentItem)
+	{
+		if (mark)
+		{
+			// Collection targets
+			var matchesTarget = sectionLookup[String(currentItem.sectionID)] === true;
+
+			// Delivery target
+			if (!matchesTarget && quest.type == "delivery" && quest.deliveryItem)
+			{
+				matchesTarget = (String(currentItem.sectionID) == String(quest.deliveryItem.sectionID));
+			}
+
+			if (matchesTarget && !currentItem.GetTag("QuestItem"))
+			{
+				currentItem.SetTag("saveColor", currentItem.color);
+				currentItem.color     = 0x04ea; // Orange hue
+				currentItem.isNewbie  = true;
+				currentItem.isDyeable = false;
+
+				currentItem.SetTag("QuestItem", true);
+				currentItem.SetTag("QuestSectionID", currentItem.sectionID);
+				currentItem.SetTag("QuestID", questID);           // <-- tie to quest!
+
+				currentItem.AddScriptTrigger(5806);
+				// socket.SysMessage("Marked item as a quest item.");
+			}
+			return;
+		}
+
+		// UNMARK path (resign). Prefer exact QuestID match; fall back to section match if quest data exists.
+		if (currentItem.GetTag("QuestItem"))
+		{
+			var itemQuestID   = currentItem.GetTag("QuestID");
+			var itemSectionID = String(currentItem.GetTag("QuestSectionID") || currentItem.sectionID);
+
+			var belongsToThisQuest =
+				(itemQuestID != null && String(itemQuestID) == String(questID)) ||
+				(sectionLookup[itemSectionID] === true) ||           // fallback if QuestID wasn’t set earlier
+				(itemQuestID == null && !quest.targetItems);         // last resort if we have no quest data at all
+
+			if (belongsToThisQuest)
+			{
+				unmarkItem(currentItem);
+				// socket.SysMessage("Unmarked quest item.");
+			}
+		}
+
+		// Delivery items on resign: delete only if they belong to this quest
+		if (quest.type == "delivery" && quest.deliveryItem)
+		{
+			if (String(currentItem.sectionID) == String(quest.deliveryItem.sectionID))
+			{
+				// avoid nuking unrelated items: require QuestID match or at least QuestItem tag
+				if (String(currentItem.GetTag("QuestID")) == String(questID) || currentItem.GetTag("QuestItem"))
+				{
+					currentItem.Delete();
+					socket.SysMessage("Deleted delivery item: " + quest.deliveryItem.name);
+				}
+			}
+		}
+	});
 }
+
 
 function GetQuestObjectives( quest, questProgress ) 
 {
@@ -950,7 +1073,7 @@ function onContextMenuRequest( socket, targObj )
 
 	offset += 2; // for each additional entry
 
-	toSend.WriteShort(  offset, 0x000b );    // Unique ID
+	toSend.WriteShort(  offset, 0x000C );    // Unique ID
 	toSend.WriteShort(  offset += 2, 6155 ); // Cancel Quest
 	toSend.WriteShort(  offset += 2, 0x0020 ); // Flag, color enabled
 	toSend.WriteShort(  offset += 2, 0x03E0 ); // Hue of text
@@ -962,12 +1085,12 @@ function onContextMenuRequest( socket, targObj )
 	return false;
 }
 
-function onContextMenuSelect( socket, targObj, popupEntry )
+function onContextMenuSelect( socket, questNpc, popupEntry )
 {
 	var pUser = socket.currentChar;
 
 	// Validate the targeted object and player
-	if( !ValidateObject( pUser ) || !ValidateObject( targObj ))
+	if( !ValidateObject( pUser ) || !ValidateObject( questNpc ))
 	{
 		return false;
 	}
@@ -977,28 +1100,44 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 		case 0x000A: // Quest Conversation
 			{
 				// Validate the targeted object and player
-				if( !ValidateObject( pUser ) || !ValidateObject( targObj ))
+				if( !ValidateObject( pUser ) || !ValidateObject( questNpc ))
 				{
 					return false;
 				}
 
 				// Check if the player is within range
-				if( !targObj.InRange( pUser, 2 ))
+				if( !questNpc.InRange( pUser, 2 ))
 				{
 					pUser.SysMessage( "You are too far away." );
 					return false;
 				}
 
-				QuestNpcInterAction( pUser, targObj );
+				QuestNpcInterAction( pUser, questNpc );
 			}
 			break;
-		case 0x000B: // Cancel Quest (Optional)
+		case 0x000C: // Cancel Quest (Optional)
 			{
-				var initialQuestID = parseInt( targObj.GetTag( "QuestID" ), 10 );
+				// Validate the targeted object and player
+				if( !ValidateObject( pUser ) || !ValidateObject( questNpc ))
+				{
+					return false;
+				}
+
+				// Check if the player is within range
+				if( !questNpc.InRange( pUser, 2 ))
+				{
+					pUser.SysMessage( "You are too far away." );
+					return false;
+				}
+
+				var initialQuestID = parseInt( questNpc.GetTag( "QuestID" ), 10 );
 				var playerQuestID = ResolvePlayerQuestID( pUser, initialQuestID );
-				var quest = TriggerEvent( 5801, "QuestList", playerQuestID );
-				targObj.TextMessage( quest.refuse );
-				pUser.SoundEffect(  0x5B4, true  );
+				ResignQuest( pUser, playerQuestID );
+				ManageQuestItems( pUser, playerQuestID, false );
+				pUser.SoundEffect( 0x5B3, true );
+				//var quest = TriggerEvent( 5801, "QuestList", playerQuestID );
+				//targObj.TextMessage( quest.refuse );
+				//pUser.SoundEffect(  0x5B4, true  );
 			}
 			break;
 		default:

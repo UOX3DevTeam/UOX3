@@ -1,3 +1,5 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
 //const DebugMessages = false;
 function StartQuest( player, questID )
 {
@@ -176,6 +178,7 @@ function CheckQuest( player, questID, mode)
 	return true;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	var player = timerObj; // Assuming timerObj is the player object

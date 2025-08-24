@@ -1,3 +1,6 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
+
 // Script attached to quest items
 function onEquipAttempt( pEquipper, iEquipped )
 {
@@ -23,6 +26,7 @@ function onDrop( iDropped, pDropper )
 	return 1; // Default allow for other cases
 }
 
+/** @type { ( item: Item, dropper: Character, dest: Item ) => number } */
 function onDropItemOnItem( iDropped, cDropper, iDroppedOn )
 {
 	var pSock = cDropper.socket;
@@ -105,6 +109,7 @@ function onUseChecked( pUser, iUsed )
 	return true; // Allow usage for non-quest items
 }
 
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( questitem, pSocket ) 
 {
 	var tooltipText = "[" + GetDictionaryEntry( 19636, pSocket.language ) + "]"; // Quest Item

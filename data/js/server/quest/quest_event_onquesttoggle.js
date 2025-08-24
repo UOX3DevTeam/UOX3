@@ -1,3 +1,6 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
+
 function onQuestToggle( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -11,6 +14,7 @@ function onQuestToggle( pUser, iUsed )
 	return true;
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, iTarget )
 {
 	var pUser = socket.currentChar;
