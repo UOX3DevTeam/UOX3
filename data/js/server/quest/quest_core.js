@@ -4,7 +4,7 @@ function StartQuest( player, questID )
 	var socket = player.socket;
 	var questProgressArray = ReadQuestProgress( player );
 
-	if( !CheckQuest( player, questID, "start" ))
+	if( !CheckQuest( player, questID ))
 	{
 		return; // Stop execution if the quest cannot proceed
 	}
@@ -656,6 +656,7 @@ function ItemCollected( player, item, isToggledOff )
 							UpdateQuestProgress( player, questEntry.questID, item.sectionID, amountToAdd, "collect" );
 
 							item.SetTag( "saveColor", item.color );
+							item.SetTag( "saveType", item.type );
 							item.color = 0x04ea; // orange hue
 							item.isDyeable = false;
 							item.isNewbie = true;

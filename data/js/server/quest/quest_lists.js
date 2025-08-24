@@ -1216,7 +1216,7 @@ function QuestList( questID )
 			resetDailyTime: 24, // Reset after 24 hours
 			targetItems: [{ sectionID: "ore", amount: 50, name: "Iron Ore"}], // Ore ID
 			rewards: [
-				{ type: "gold", amount: 2000, name: "Gold"},
+				{ type: "gold", amount: 2000, name: "Gold" },
 				{ type: "item", sectionID: "0x1F4C", amount: 1, name: "Recall Scroll" }
 			]
 		},
@@ -1225,7 +1225,7 @@ function QuestList( questID )
 			description: "A mysterious package has been left for you. Deliver it to Nail in Britain.",
 			type: "delivery",
 			deliveryItem: {
-				sectionID: "0x0E21",
+				sectionID: "0x09a9",
 				name: "Sealed Package",
 				amount: 1
 			},
@@ -1240,7 +1240,7 @@ function QuestList( questID )
 				}
 			},
 			rewards: [
-				{ type: "gold", amount: 500 },
+				{ type: "gold", amount: 500, name: "Gold" },
 				{ type: "item", sectionID: "reward_ring_of_swiftness", name: "Ring of Swiftness", amount: 1 }
 			],
 			oneTimeQuest: 1

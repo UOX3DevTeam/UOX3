@@ -39,7 +39,6 @@ function onDropItemOnItem( iDropped, cDropper, iDroppedOn )
 		// Allow stacking if both items are pileable and of the same type
 		if( iDropped.isPileable && iDroppedOn.isPileable && iDropped.sectionID == iDroppedOn.sectionID )
 		{
-			//cDropper.TextMessage( "You stacked the quest item successfully." ); debug msg
 			return true;
 		}
 		else
@@ -64,11 +63,8 @@ function onDropItemOnItem( iDropped, cDropper, iDroppedOn )
 		return false;
 	}
 
-	//cDropper.TextMessage( "You successfully dropped the quest item into your main backpack." ); debug msg
 	return true;
 }
-
-
 
 function onPickup( iPickedUp, pGrabber, containerObj )
 {
@@ -97,9 +93,9 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 	return true; // Allow the pickup
 }
 
-
 function onUseChecked( pUser, iUsed ) 
 {
+	var pSock = pUser.socket;
 	if( iUsed.GetTag( "QuestItem" ))
 	{
 		pUser.TextMessage( GetDictionaryEntry( 19635, pSock.language )); // Quest items cannot be used in this way.

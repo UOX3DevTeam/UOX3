@@ -103,16 +103,17 @@ function onGumpPress( pSock, pButton, gumpData )
 	var initialQuestID = parseInt( questNpc.GetTag( "QuestID" ), 10 );
 	var playerQuestID = ResolvePlayerQuestID( pUser, initialQuestID );
 	var quest = TriggerEvent( 5801, "QuestList", playerQuestID );
-	var loginQuestID = parseInt( pUser.GetTempTag( "questConversationID" ));
+	var loginQuestID = parseInt( pUser.GetTempTag( "questConversationID" ), 10 );
 
 	switch( pButton )
 	{
 		case 0: // Close gump
 			break;
 		case 1: // Accept quest
-			if( loginQuestID >= 1 && loginQuestID != null )
+			if ( loginQuestID !== null && loginQuestID !== undefined && loginQuestID >= 1 )
 			{
 				TriggerEvent( 5800, "StartQuest", pUser, loginQuestID );
+				pUser.SetTempTag( "questConversationID", null );
 			}
 			else
 			{
