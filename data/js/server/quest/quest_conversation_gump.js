@@ -110,7 +110,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		case 0: // Close gump
 			break;
 		case 1: // Accept quest
-			if ( loginQuestID !== null && loginQuestID !== undefined && loginQuestID >= 1 )
+			if( loginQuestID !== null && loginQuestID !== undefined && loginQuestID >= 1 )
 			{
 				TriggerEvent( 5800, "StartQuest", pUser, loginQuestID );
 				pUser.SetTempTag( "questConversationID", null );
