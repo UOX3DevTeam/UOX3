@@ -1,8 +1,11 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This script handles functionality of potion kegs
 const maxPotion = 100; // Max potions in a potion keg
 const limitLockedDownKegUsage = false; // If set to true, only owner/co-owners/friends can use locked down potion kegs
 const limitLockedDownPotionDrop = false; // If set to true, only owner/co-owner/friends can drop potions on locked down potion kegs
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, potionKeg )
 {
 	var socket = pUser.socket;
@@ -100,6 +103,7 @@ function HasUserTastedItem( pUser, potionItem )
 	return false;
 }
 
+/** @type { ( item: Item, dropper: Character, dest: Item ) => number } */
 function onDropItemOnItem( iDropped, pUser, potionKeg )
 {
 	var socket = pUser.socket;
@@ -237,6 +241,7 @@ function onDropItemOnItem( iDropped, pUser, potionKeg )
 }
 
 // Show real name to owner, and to those who have identified potion keg
+/** @type { ( myObj: BaseObject, nameRequester: Character, requestSource: number ) => string } */
 function onNameRequest( potionKeg, pUser )
 {
 	// Default name
@@ -330,6 +335,7 @@ function onNameRequest( potionKeg, pUser )
 	return nameString;
 }
 
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( potionKeg, pSocket )
 {
 	var pUser = null;

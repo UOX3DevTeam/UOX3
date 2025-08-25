@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 const textHue = 0x480;				// Color of the text.
 const Blacksmithing = 4023;
 const Carpentry = 4025;

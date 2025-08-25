@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 function ResurrectFamePenalty( pUser )
 {
 	if( pUser.fame > 0 )
@@ -87,6 +89,7 @@ function ResurrectSkillPenalty( pUser )
 }
 
 // Skill Recovery handler triggered by StartTimer
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( timerID == 0 )
@@ -130,5 +133,3 @@ function onTimer( timerObj, timerID )
 		}
 	}
 }
-
-function _restorecontext_() {}

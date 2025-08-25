@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Keys and Keyrings
 // Version 1.7
 // Last updated: September 12. 2022
@@ -25,6 +27,7 @@ const keyScriptID = 5013; // Script-ID from JSE_FILEASSOCIATIONS.SCP! Change to 
 const coOwnHousesOnSameAccount = GetServerSetting( "CoOwnHousesOnSameAccount" );
 
 // Adding keys to keyrings
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;
@@ -66,6 +69,7 @@ function onUseChecked( pUser, iUsed )
 }
 
 // Key targetting
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -168,6 +172,7 @@ function onCallback0( pSock, myTarget )
 	pSock.SysMessage( GetDictionaryEntry( 1025, pSock.language )); //That does not have a lock.
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( pSock, myTarget )
 {
 	// keyring targeting
@@ -252,6 +257,7 @@ function onCallback1( pSock, myTarget )
 	pSock.SysMessage( GetDictionaryEntry( 1025, pSock.language )); // That does not have a lock.
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( pSock, myTarget )
 {
 	// Empty keyring targeting
@@ -317,6 +323,7 @@ function onCallback2( pSock, myTarget )
 }
 
 // Using a blank key, target a key to copy
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback3( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -367,6 +374,7 @@ function onCallback3( pSock, myTarget )
 	pSock.SysMessage( GetDictionaryEntry( 2743, pSock.language )); // You can't make a copy of that.
 }
 
+/** @type { ( myChar: Character, myItem: Item, mySpeech: string ) => void } */
 function onSpeechInput( pUser, pItem, pSpeech, pSpeechID )
 {
 	var pSock = pUser.socket;

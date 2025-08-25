@@ -1,9 +1,12 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 function SkillRegistration()
 {
 	RegisterSkill( 48, true );	// Remove Trap
 }
 
-function onSkill( pUser, objType, skillUsed )
+/** @type { ( skillUse: BaseObject, skillUsed: number, objType: 0 | 1 ) => boolean } */
+function onSkill( pUser, skillUsed, objType )
 {
 	var pSock = pUser.socket;
 	if( pSock )
@@ -27,6 +30,7 @@ function onSkill( pUser, objType, skillUsed )
 	return true;
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, ourObj )
 {
 	if( !ValidateObject( ourObj ) || !ourObj.isItem )

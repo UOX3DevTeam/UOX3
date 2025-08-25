@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Stable-master, by Xuri (xuri@xoduz.org)
 // Version: 1.2
 // Last Updated: September 10th 2022
@@ -23,6 +25,7 @@ const stableZ = 0;
 // Script ID assigned to this script in jse_fileassociations.scp. Used to prevent multiple instances of same gump being opened
 const stableScriptID = 3105;
 
+/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => null | undefined | number | boolean } */
 function onSpeech( strSaid, pTalking, stableMaster )
 {
 	var pSock = pTalking.socket;
@@ -416,6 +419,7 @@ function ReleasePet( petObj, petNum, stableMaster, pUser, sayReleaseMsg )
 }
 
 // Stable targeted pet
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, ourObj )
 {
 	var cancelCheck = parseInt( pSock.GetByte( 11 ));

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 const coreShardEra = GetServerSetting( "CoreShardEra" );
 const timeBetweenMurdererVisit = 2592000; // 30 days between each time a murderer can visit Ilshenar
 
@@ -31,6 +33,7 @@ const regionBladeSpiritTargetOverride = [];
 const regionEnergyVortexTargetOverride = [];
 const regionBardProvokeOverride = [];
 
+/** @type { ( attacker: Character, defender: Character ) => boolean } */
 function onCombatStart( pAttacker, pDefender )
 {
 	var socket = pAttacker.socket;
@@ -76,6 +79,7 @@ function onCombatStart( pAttacker, pDefender )
 }
 
 // Players cannot cast aggressive spells at other players in Trammel/Ilshenar/Malas
+/** @type { ( target: BaseObject, caster: Character, spellNum: number ) => number } */
 function onSpellTarget( myTarget, pCaster, spellID )
 {
 	// We don't care if caster and target is the same
@@ -166,6 +170,7 @@ function onSpellTarget( myTarget, pCaster, spellID )
 }
 
 // Players cannot steal from other players in Trammel/Ilshenar/Malas
+/** @type { ( thief: Character, theft: Item, victim: Character ) => void } */
 function onSteal( pThief, iStolen, pVictim )
 {
 	if( !ValidateObject( pThief ) || !ValidateObject( pVictim ))
@@ -182,6 +187,7 @@ function onSteal( pThief, iStolen, pVictim )
 }
 
 // Players cannot snoop the backpacks of other players in Trammel/Ilshenar/Malas
+/** @type { ( snooped: Character, pack: Item, snooper: Character ) => boolean } */
 function onSnoopAttempt( pSnooped, targPack, pSnooping )
 {
 	if( !ValidateObject( pSnooped ) || !ValidateObject( pSnooping ) || !ValidateObject( targPack ))
@@ -202,6 +208,7 @@ function onSnoopAttempt( pSnooped, targPack, pSnooping )
 	return true;
 }
 
+/** @type { ( pChanging: Character, newStatus: number, oldStatus: number ) => boolean } */
 function onFlagChange( pChanging, newStatus, oldStatus )
 {
 	var worldNum = pChanging.worldnumber;
@@ -238,6 +245,7 @@ function onFlagChange( pChanging, newStatus, oldStatus )
 }
 
 // Handle corpse-looting rules
+/** @type { ( item: Item, pickerUpper: Character, objCont: BaseObject ) => boolean } */
 function onPickup( iPickedUp, pGrabber )
 {
 	var pSock = pGrabber.socket;
@@ -282,6 +290,7 @@ function onPickup( iPickedUp, pGrabber )
 
 // Players cannot collide with non-locked down items or shove other players in Trammel/Ilshenar
 // TODO: How is collision with non-locked down items overridden? Client prevents movement through blocking items...
+/** @type { ( targSock: Socket, objColliding: Character, objCollideWith: BaseObject ) => boolean } */
 function onCollide( trgSock, srcChar, trgObj )
 {
 	if( !ValidateObject( srcChar ) || !ValidateObject( trgObj ))
@@ -466,6 +475,7 @@ function FacetRuleBardProvoke( sourceChar, targetChar )
 	return true;
 }
 
+/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => boolean } */
 function onDamage( targetChar, sourceChar, damageValue, damageType )
 {
 	// Allow all damage without a source character, or with a non-tame/non-hirling NPC as the source
@@ -531,6 +541,3 @@ function CheckCorpseCarving( pChar, corpseOwner, iCorpse )
 	return true;
 }
 
-// Dummy function to restore script context after other JS events have triggered and executed
-// as part of something happening in this script
-function _restorecontext_() {}

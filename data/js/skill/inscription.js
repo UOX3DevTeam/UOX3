@@ -1,8 +1,11 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 function SkillRegistration()
 {
 	RegisterSkill( 23, true );	// Inscription
 }
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -22,7 +25,8 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
-function onSkill( pUser, objType, skillUsed )
+/** @type { ( skillUse: BaseObject, skillUsed: number, objType: 0 | 1 ) => boolean } */
+function onSkill( pUser, skillUsed, objType )
 {
 	var pSock = pUser.socket;
 	if( pSock )
@@ -33,6 +37,7 @@ function onSkill( pUser, objType, skillUsed )
 	return true;
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, ourObj )
 {
 	var pUser = pSock.currentChar;

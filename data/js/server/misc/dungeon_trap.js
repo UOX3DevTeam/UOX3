@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Dungeon Trap script
 // Last Updated: 10/11/2021
 //
@@ -18,6 +20,7 @@
 
 const inactiveTimer = 60; // After this amount of seconds, an inactive trap will reactivate
 
+/** @type { ( targSock: Socket, objColliding: Character, objCollideWith: BaseObject ) => boolean } */
 function onCollide( pSock, pChar, iTrap )
 {
 	if( !ValidateObject( pChar ) || !ValidateObject( iTrap ) || pChar.npc || ( !pChar.npc && ( pChar.dead || pChar.isGM || pChar.isCounselor )))
@@ -162,6 +165,7 @@ function DeactivateTrap( iTrap )
 	iTrap.StartTimer( inactiveTimer * 1000, 125, true );
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( !ValidateObject( timerObj ))
@@ -343,6 +347,7 @@ function ApplyTrapDamage( iTrap, trgChar )
 }
 
 // Used by the flameSpurtTrap
+/** @type { ( sourceObj: BaseObject, CharInRange: Character, rangeToChar: number, oldCharX: number, oldCharY: number ) => boolean } */
 function onMoveDetect( iTrap, pChar, rangeToChar, oldCharX, oldCharY )
 {
 	if( !ValidateObject( pChar ) || !pChar.isChar || pChar.npc || pChar.dead || pChar.isGM || pChar.isCounselor || pChar.visible == 3 )
@@ -397,5 +402,3 @@ function onMoveDetect( iTrap, pChar, rangeToChar, oldCharX, oldCharY )
 	}
 	return true;
 }
-
-function _restorecontext_() {}

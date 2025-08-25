@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 const LabelHue = 0x480;				// Color of the text.
 const LabelColor = 0x7FFF;			// Second Color of text.
 const scriptID = 4032;				// Use this to tell the gump what script to close.
@@ -76,6 +78,7 @@ function PageX( socket, pUser, pageNum )
 	myGump.Free();
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( pUser, timerID )
 {
 	if( !ValidateObject( pUser ))
@@ -528,6 +531,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( pSock, targObj )
 {
 	var pUser = pSock.currentChar;

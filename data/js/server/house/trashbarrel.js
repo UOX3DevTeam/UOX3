@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Trash Barrel, adapted from Xuri's Device-For-Disposal-Of-Unwanted-Items (aka Trash-can) script
 // Last Updated: 11. October 2020
 
@@ -18,6 +20,7 @@ var sellValueMultipier = 0.5;	// If based on sell value of item, apply this mult
 var trashDisposeTimer = 180000; // 180000 ms = 180.000 seconds = 3 minutes
 var maxContainerWeight = 40000; // Max weight trash container can hold
 
+/** @type { ( item: Item, dropper: Character, dest: Item ) => number } */
 function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
 {
 	// Safe-guard to stop trashcans from getting deleted if they're dropped into another container
@@ -131,6 +134,7 @@ function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
 	return 2; // Don't use hard code, don't bounce item
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( iDroppedOn, timerID )
 {
 	if( timerID == 1 )

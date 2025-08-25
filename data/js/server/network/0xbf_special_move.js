@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 function ClearSpecialMove( pUser, abilityID )
 {
 	var socket = pUser.socket;

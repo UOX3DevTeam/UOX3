@@ -1,9 +1,12 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This command opens a gate to a specific location
 function CommandRegistration()
 {
 	RegisterCommand( "xgate", 4, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_XGATE( socket, cmdString )
 {
 	var mChar = socket.currentChar;

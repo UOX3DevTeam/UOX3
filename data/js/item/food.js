@@ -1,3 +1,6 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -87,5 +90,3 @@ function onUseChecked( pUser, iUsed )
 	}
 	return false;
 }
-
-function _restorecontext_() {}

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Admin Welcome Gump
 // Triggered for characters logging in with admin account (account 0) until a
 // choice has been made in these gumps, regarding starting with a blank world or loading default UOX3 world templates
@@ -579,6 +581,7 @@ function SaveSeenWelcomeGump( socket )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	var pSocket = timerObj.socket;

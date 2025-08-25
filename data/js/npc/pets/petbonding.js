@@ -1,7 +1,10 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Enables pet bonding through feeding. When true, pets must be fed after taming to start the 
 // 7-day bonding countdown. Without feeding, bonding will not begin.
 const enablePetBondingViaFood = true;
 
+/** @type { ( mKilled: Character, mKiller: Character ) => boolean } */
 function onDeathBlow( killedPet, petKiller )
 {
 	if( killedPet.tamed && killedPet.GetTag( "isBondedPet" ))
@@ -56,6 +59,7 @@ function onDeathBlow( killedPet, petKiller )
 	return true;
 }
 
+/** @type { ( targSock: Socket, objColliding: Character, objCollideWith: BaseObject ) => boolean } */
 function onCollide( socket, objCollider, objCollideWith )
 {
 	if( objCollideWith.GetTag( "isPetDead" ) == true )
@@ -65,6 +69,7 @@ function onCollide( socket, objCollider, objCollideWith )
 	return true;
 }
 
+/** @type { ( srcObj: BaseObject, objInRange: BaseObject ) => void } */
 function inRange( pet, objInRange )
 {
 	if (objInRange.socket == null)
@@ -77,6 +82,7 @@ function inRange( pet, objInRange )
 	}
 }
 
+/** @type { ( srcObj: BaseObject, objVanish: BaseObject ) => void } */
 function outOfRange( pet, objVanish )
 {
 	if( objVanish.socket == null )
@@ -89,6 +95,7 @@ function outOfRange( pet, objVanish )
 	}
 }
 
+/** @type { ( attacker: Character, defender: Character ) => boolean } */
 function onCombatStart( pAttacker, pDefender )
 {
 	// If the target is a dead pet, block combat and reset NPC state
@@ -116,6 +123,7 @@ function onCombatStart( pAttacker, pDefender )
 	return true;
 }
 
+/** @type { ( attacker: Character, defender: Character, hitStatus: boolean, hitLoc: number, damageDealt: number ) => void } */
 function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 {
 	// Block attack if defender is a dead pet
@@ -138,6 +146,7 @@ function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 	}
 }
 
+/** @type { ( target: BaseObject, caster: Character, spellNum: number ) => number } */
 function onSpellTarget( myTarget, pCaster, spellID )
 {
 	// We don't care if caster and target is the same - allow it!
@@ -166,6 +175,7 @@ function onSpellTarget( myTarget, pCaster, spellID )
 	return 0;
 }
 
+/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => boolean } */
 function onDamage( damaged, pAttacker, damageValue, damageType )
 {
 	if (!ValidateObject( damaged ))
@@ -199,6 +209,7 @@ function onDamage( damaged, pAttacker, damageValue, damageType )
 	return true;
 }
 
+/** @type { ( currChar: Character, targChar: Character ) => boolean } */
 function onCharDoubleClick( pUser, pet )
 {
 	if( pet.GetTag( "isPetDead" ) == true )
@@ -232,6 +243,7 @@ function onReleasePet( pUser, pet )
 	return true;
 }
 
+/** @type { ( srcChar: Character, targChar: Character, i: Item ) => number } */
 function onDropItemOnNpc( pDropper, pPet, iFood )
 {
 	if( pPet.GetTag( "isPetDead" ) == true )
@@ -277,6 +289,7 @@ function StartBonding( pUser, pPet )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( timerID == 32 )
@@ -367,5 +380,3 @@ function onGumpPress( pSock, pButton, gumpData )
 		petSerial.Delete();
 	}
 }
-
-function _restorecontext_() {}

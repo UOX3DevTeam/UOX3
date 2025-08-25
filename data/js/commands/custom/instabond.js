@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 //Script to allow GMs to instantly bond a pet.
 
 function CommandRegistration()
@@ -5,11 +7,13 @@ function CommandRegistration()
 	RegisterCommand( "instabond", 10, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_INSTABOND( socket, cmdString )
 {
 	socket.CustomTarget( 0, GetDictionaryEntry( 19324, socket.language ));//Select a pet to instantly bond.
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	const petBondingEnabled = GetServerSetting( "PetBondingEnabled" );

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 const enableUOX3Craft = 0;            // Disable or enable to use old uox3 menus.
 const blacksmithID = 4023;			// Use this to tell the gump what script to close.
 const Carpentry = 4025;
@@ -9,6 +11,7 @@ const Cooking = 4034;
 const Cartography = 4035;
 const Glassblowing = 4036;
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // These commands are used to remove/delete objects
 
 function CommandRegistration()
@@ -8,6 +10,7 @@ function CommandRegistration()
 	RegisterCommand( "deletechar", 10, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_REMOVE( socket, cmdString )
 {
 	socket.tempint = null;
@@ -25,11 +28,13 @@ function command_REMOVE( socket, cmdString )
 }
 
 // Alias for REMOVE command
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_DELETE( socket, cmdString )
 {
 	command_REMOVE( socket, cmdString );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ))
@@ -143,12 +148,14 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_DELETECHAR( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 1618, socket.language ); // Which player do you wish to delete?
 	socket.CustomTarget( 1, targMsg, 1 );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar && ourObj != socket.currentChar )
@@ -166,6 +173,7 @@ function onCallback1( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_REMOVEMULTI( socket, cmdString )
 {
 	socket.tempint = null;
@@ -173,6 +181,7 @@ function command_REMOVEMULTI( socket, cmdString )
 	socket.CustomTarget( 2, targMsg );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( socket, ourObj )
 {
 	if( !ValidateObject( ourObj ) && socket.GetWord( 1 ))
@@ -222,5 +231,3 @@ function onCallback2( socket, ourObj )
 		}
 	}
 }
-
-function _restorecontext_() {}

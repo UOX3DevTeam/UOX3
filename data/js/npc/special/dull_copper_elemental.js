@@ -1,3 +1,6 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
+/** @type { ( pDead: Character, iCorpse: Item ) => boolean } */
 function onDeath( pDead, iCorpse )
 {
 	iCorpse.StaticEffect( 0x36B0, 0, 0x09 );
@@ -13,5 +16,3 @@ function DealAreaDamage( srcObj, trgChar )
 		trgChar.Damage( 30, 1 );
 	}
 }
-
-function _restorecontext_() {}

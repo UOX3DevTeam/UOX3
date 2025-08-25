@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Helper function to calculate spell resist
 function CheckResist( sourceChar, targetChar, spellCircle )
 {

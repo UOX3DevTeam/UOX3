@@ -55,6 +55,10 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>August 21st, 2025</h4>
+						<ul>
+							<li>Added details for using the TypeScript bindings</li>
+						</ul>
 						<h4>June 29th, 2025</h4>
 						<ul>
 							<li>Added details for new JS Events: onProfileRequest, onProfileUpdate</li>
@@ -170,6 +174,128 @@
 					<div class="spoiler">
 						<p>The first and most obvious way to resolve this problem is to start learning how to script! Read the documentation, follow the examples, check out existing scripts and try out tweaks. You can either post your suggestion/request in the <a href="https://www.uox3.org/forums/viewforum.php?f=8" title="UOX3.org Forums - Feature Requests, Wishes, Suggestions" target="_blank">Feature Requests - Wishes - Suggestions</a> section of the UOX3.org forums, giving other users the chance to chime in and potentially back up your suggestion, or you can hop on to the <a href="https://discord.gg/uBAXxhF" rel="noopener" title="Real-time chat in Discord" target="_blank">UOX3 Discord</a> and air your idea in the chat!</p>
 					</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#typescriptBindings" id="typescriptBindings"><span>Validating with TypeScript</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<p>TypeScript bindings for the core functions, classes and events are now available for use in an optional validation scenario.</p>
+						<p>This will help to minimise logic problems prior to actually attempting to execute the script in UOX3.  Note that this is not a foolproof system and because we're not operating in a browser, may be slightly inaccurate.</p>
+						<input type="checkbox" id="spoiler_docs_ts_overview"/>
+						<label for="spoiler_docs_ts_overview">Overview <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>The bindings consist of a few key components:</p>
+							<ul>
+								<li>The extensible core JSON file from which the definitions are built (data/js/coreDefinitions.json)</li>
+								<li>The TypeScript definition file (data/js/definitions.d.ts)</li>
+								<li>A tsconfig.json file that configures an editor to use the definitions and force analysis of the Javascript</li>
+								<li>The updated scripts themselves</li>
+								<li>A set of PowerShell scripts to refresh the definitions and existing scripts</li>
+							</ul>
+							<p>As a user of UOX3, you are going to be most interested in how to use the TypeScript definition file, the updated scripts, and the PowerShell script updExistingScripts that can be used to refresh any definitions in your scripts.</p>
+						</div>
+						<input type="checkbox" id="spoiler_docs_ts_ide"/>
+						<label for="spoiler_docs_ts_ide">Setting up your IDE <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>If you're using VS Code, this becomes a straight forward exercise.  You have TypeScript support natively.</p>
+							<p>Simply open up a VS Code workspace in the root of your application, or at least the data/js folder.</p>
+							<p>At this point, you can open existing shipped scripts and see the validation in play.  Typed variables will show Intellisense for the supported properties and methods they know about.</p>
+							<p>If you're not using VS Code, ensure that your IDE of interest has a TypeScript plugin of some sort installed.</p>
+						</div>
+						<input type="checkbox" id="spoiler_docs_ts_custom_scripts"/>
+						<label for="spoiler_docs_ts_custom_scripts">Adding validation to your custom scripts <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>As long as your script lives under the data/js folder, adding validation to your script is a straightforward process.</p>
+							<p>Firstly, open your script in your IDE of choice.  Add the following code to the top of the script and save it:</p>
+							<pre><code class="language-javascript">/// &lt;reference path="../../definitions.d.ts" /&gt; <br />
+// @ts-check</code></pre>
+							<p>Ensure that you adjust the reference path based on how deeply nested your script is in the JS folder structure.</p>
+							<p>Once saved, validation will start occurring.  But you'll now need to add some JSDoc to any event implementations or functions you write.</p>
+							<p>For implemented events, the simplest way is to run the updExistingScripts PowerShell script.  This will walk through all the JavaScript files
+								and refresh any JSDoc for implemented events.  This will ensure that the implemented events have the right type definitions.  For example, the onPacketReceive event would look like:</p>
+							<pre><code class="language-javascript">/** @type { ( mSock: Socket, packetNum: number ) => boolean } */
+function onPacketReceive( pSocket, packetNum )</code></pre>
+							<p>Note the variable names in the JSDoc are less important than the type.  But this indicates onPacketReceive takes a Socket and a number, and should return a boolean.</p>
+							<p>For any functions you write, just follow the same sort of pattern.</p>
+						</div>
+						<input type="checkbox" id="spoiler_docs_ts_internal_syntax"/>
+						<label for="spoiler_docs_ts_internal_syntax">Syntax for types, etc (Developers) <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<h4>Function definition syntax</h4>
+							<p>Whether it's a global function or a class method, the function definition syntax is the same.  A function appears as a JSON object like so:</p>
+							<pre><code class="language-javascript">    {
+      "name": "StringToNum",
+      "cppName": "SE_StringToNum",
+      "params": {
+        "num": 1,
+        "max": 1,
+        "list": [
+          { "name": "value", "type": "string", "required": true }
+        ]
+      },
+      "returns": "number"
+    }</code></pre>
+							<p>The name is how JavaScript will see it.  The cppName is the name as implemented in the core code.</p>
+							<p>Parameters wise, num is the minimum number of arguments it accepts and max (optional, assumed to be num) is the maximum</p>
+							<p>From there, there is an entry for each parameter in the list.  This is another JSON object, and has a name (variable name), type (data type) and an indicator if it's mandatory (required) </p>
+							<p>And lastly, there is the returns field, which indicates the data type that will be returned (if any).</p>
+							<p>There is an alternative syntax for functions that take different parameter sets, but these are much rarer and shouldn't be encouraged.  Look at FindMulti for an example of this.</p>
+							<h4>Data type syntax</h4>
+							<pre><code class="language-javascript">    {
+      "name": "BaseObject",
+      "aka": "InternalType",
+      "extends": "ParentType",
+      "type": "optional",
+      "properties": [],
+      "methods": [],
+      "comments": "If any - ignored"
+    }</code></pre>
+							<p>That is the syntax for a standard type.  Note that "extends" isn't used for most things, unless it truly is an inherited situation.  Omitting it will cause no trouble if it's not got a parent.</p>
+							<p>"aka" sets up a type alias you can use if you're more comfortable using the internal name (if one is supplied).  It is optional.</p>
+							<p>Likewise, "type" is optional, but sometimes required if it needs to be defined as a "class" rather than the default of "interface" (e.g. if it needs an explicit constructor).</p>
+							<h4>Enum syntax</h4>
+							<pre><code class="language-javascript">    {
+      "name": "CommandLevels",
+      "values": [
+        { "label": "CL_PLAYER", "value": 0 },
+        { "label": "CL_CNS"   , "value": 1 },
+        { "label": "CL_GM"    , "value": 2 },
+        { "label": "CL_ADMIN" , "value": 3 }
+      ]
+    }</code></pre>
+							<p>In this case because it has a "values" element, it's treated like an enum.  Each label is defined as a concrete known value with the associated value.</p>
+							<h4>Property syntax</h4>
+							<pre><code class="language-javascript">        {
+          "name": "id",
+          "cppName": "CSP_ID",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        }</code></pre>
+							<p>The "name" reflects the property name as seen in your script.</p>
+							<p>The "cppName" and "cppType" are internal identifiers (and currently documentation only)</p>
+							<p>The "readOnly" field is optional, but will tell JavaScript that it cannot update that value if true</p>
+							<p>And "type" indicates the TypeScript type associated with it, be it built in or one of our custom ones.</p>
+						</div>
+						<input type="checkbox" id="spoiler_docs_ts_adding_new_event_prop"/>
+						<label for="spoiler_docs_ts_adding_new_event_prop">Adding new event, function or property definition (Developers) <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>If a new event, function or property has been added in the core, then you'll need to ensure it is documented.  The key to this will be updating the coreDefinitions.json file, and recreating the definitions.d.ts file</p>
+							<p>To recreate the file, navigate to the data/js folder from a PowerShell prompt and execute <pre>./crtTypeDefs.ps1 > definitions.d.ts</pre></p>
+							<p>Also ensure you use the updExistingScripts PowerShell script if you have added a new event or changed the signature of a global function or event.</p>
+							<h4>Adding a new Global function</h4>
+							<p>Open up the coreDefinitions.json file and look for the "globalFuncs" array.  Add another element at the end of the list using the syntax as described above.</p>
+							<h4>Adding a new data type</h4>
+							<p>Within the coreDefinitions.json file, look for the "types" section.  Define a new type using the syntax from above.</p>
+							<h4>Adding a new property</h4>
+							<p>Within the coreDefinitions.json file, look for the type of interest.  This should be in a "types" section.  Using the property syntax from above, add to the list of properties.</p>
+							<h4>Adding a new method</h4>
+							<p>Within the coreDefinitions.json file, look for the type of interest that will receive the method.  This should be in a "types" section.  Using the function  syntax from above, add to the list of methods.</p>
+							<h4>Adding a new Event</h4>
+							<p>Open up the coreDefinitions.json file and look for the "events" array.  Add another element at the end of the list using the syntax as described above.</p>
+						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
 			</li>
