@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // how to use
 // TriggerEvent( 2204, "AddBuff", mChar, buffIcon, priCliloc, scndCliloc, seconds, " " + ourObj.name ); name sent
 // TriggerEvent( 2204, "AddBuff", mChar, buffIcon, priCliloc, scndCliloc, seconds, " " + "blah blah msg" ); any msg sent
@@ -89,6 +91,7 @@ function RemoveBuff( pUser, iconID )
 	pUser.KillJSTimer( iconID, 2204 );
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( pUser, timerID )
 {
 	if( !ValidateObject( pUser ))

@@ -1,3 +1,6 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( objMade, objType ) 
 {
 	if( objType == 0 )

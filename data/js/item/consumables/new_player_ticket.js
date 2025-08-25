@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This script handles New Player Tickets given to all newly created characters on Young accounts
 
 // Rewards enabled/disabled based on CoreShardEra setting in UOX.INI
@@ -8,6 +10,7 @@ const spellBookReward = ( EraStringToNum( GetServerSetting( "CoreShardEra" )) >=
 const rangerArmorOverride = false;
 const spellBookRewardOverride = false;
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -34,6 +37,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, myTarget )
 {
 	if( socket == null )
@@ -231,9 +235,10 @@ function onGumpPress( socket, pButton, gumpData )
 	newPlayerTicket.Delete();
 }
 
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( iUsed, pSocket )
 {
 	var tooltipText = "";
-	tooltipText = GetDictionaryEntry( 18770, pSocket.language ); // This is half a prize ticket! Double-click this ticket and target any other ticket marked NEW PLAYER and get a prize! This ticket will only work for YOU, so don’t give it away!
+	tooltipText = GetDictionaryEntry( 18770, pSocket.language ); // This is half a prize ticket! Double-click this ticket and target any other ticket marked NEW PLAYER and get a prize! This ticket will only work for YOU, so donï¿½t give it away!
 	return tooltipText;
 }

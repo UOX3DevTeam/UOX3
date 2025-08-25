@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This script is not functioning correctly and is not used
 // It is thought solely for educational purposes
 
@@ -6,6 +8,7 @@
 // use axe : target furniture : destroy it when its not locked down
 // 09/02/2003 Updated by Xuri; xuri@sensewave.com
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed ) 
 {
 	// is it in users pack?
@@ -20,6 +23,7 @@ function onUseChecked( pUser, iUsed )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( tSock, tItem )
 {
 	var tChar = tSock.currentChar;

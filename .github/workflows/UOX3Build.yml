@@ -4,6 +4,11 @@ on:
   workflow_dispatch:
   push:
 
+    # For pushes, only trigger against main branches
+    branches:
+      - master
+      - develop
+
     paths-ignore:
       - '**.js'
       - '**.dfn'
@@ -17,6 +22,7 @@ on:
     tags-ignore:
       - 'v*-release' # This will ignore all version tags ending with '-release' like v1.0-release
 
+  # For pull requests, trigger when new PR is opened AND whenever PR is updated
   pull_request:
     paths-ignore:
       - '**.js'

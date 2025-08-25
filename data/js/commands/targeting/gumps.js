@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // These commands show item or character properties for targeted objects
 function CommandRegistration()
 {
@@ -5,6 +7,7 @@ function CommandRegistration()
 	RegisterCommand( "cstats", 4, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ISTATS( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 182, socket.language ); // Select item to inspect.
@@ -20,6 +23,7 @@ function command_ISTATS( socket, cmdString )
 // Decaytime
 // Good
 // Random Value Rate
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj && ourObj.isItem )
@@ -116,6 +120,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_CSTATS( socket, cmdString )
 {
 	var target = CalcCharFromSer( socket.GetDWord( 7 ));
@@ -139,6 +144,7 @@ function command_CSTATS( socket, cmdString )
 // LastOn
 // Multi
 // Region
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	// if( !socket.GetWord( 1 ) && ourObj && ourObj.isChar )

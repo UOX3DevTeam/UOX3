@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This script is attached to magical weapons generated as loot/treasure by the magic_items.js script
 // It handles attaching/removing necessary scripts to the player as they equip/unequip those
 // magic weapons
@@ -6,18 +8,21 @@
 const magicWeaponSpellScriptID = 3305;
 
 // When equipped, add script trigger for magic weapon spells to player
+/** @type { ( equipper: Character, equipping: Item ) => boolean } */
 function onEquip( pEquipper, iEquipped )
 {
 	pEquipper.AddScriptTrigger( magicWeaponSpellScriptID );
 }
 
 // Remove script trigger on unequip
+/** @type { ( equipper: Character, equipping: Item ) => boolean } */
 function onUnequip( pUnequipper, iUnequipped )
 {
 	pUnequipper.RemoveScriptTrigger( magicWeaponSpellScriptID );
 }
 
 // Display amount of charges left on magic weapon in item tooltips
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( myObj )
 {
 	var tooltipText = "";

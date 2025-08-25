@@ -1,5 +1,8 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 var maxControlSlots = GetServerSetting("MaxControlSlots");
 var maxFollowers = GetServerSetting("MaxFollowers");
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	const maxCharges = 30;
@@ -17,6 +20,7 @@ function onCreateDFN( objMade, objType )
 	}
 }
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -65,7 +69,8 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
-function onCallback0( socket, myTarget)
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+function onCallback0( socket, myTarget )
 {
 	var pUser = socket.currentChar;
 	var requiredCharges = 1;
@@ -212,6 +217,7 @@ function ReleasePet( petObj, petNum, pUser )
 	petObj.Follow( pUser );
 }
 
+/** @type { ( tSock: Socket, baseObj: BaseObject ) => boolean } */
 function onContextMenuRequest( socket, targObj )
 {
 	var Pet = CalcCharFromSer(parseInt( targObj.GetTag( "petSerial" )));
@@ -274,6 +280,7 @@ function onContextMenuRequest( socket, targObj )
 	return false;
 }
 
+/** @type { ( tSock: Socket, baseObj: BaseObject, popupEntry: number ) => boolean } */
 function onContextMenuSelect( socket, targObj, popupEntry )
 {
 	var Pet = CalcCharFromSer( parseInt( targObj.GetTag( "petSerial" )));
@@ -306,6 +313,7 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 	return false;
 }
 
+/** @type { ( myChar: Character, myItem: Item, mySpeech: string ) => void } */
 function onSpeechInput( pUser, targObj, pSpeech, pSpeechID )
 {
 	var pSocket = pUser.socket;
@@ -341,5 +349,3 @@ function onSpeechInput( pUser, targObj, pSpeech, pSpeechID )
 			break;
 	}
 }
-
-function _restorecontext_() { }

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // tailoring script
 // Last Updated: October 31st 2021
 // bale of cotton : spinning wheel : six spools of thread
@@ -23,6 +25,7 @@ function onUseChecked ( pUser, iUsed )
 	return false;
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSocket, myTarget )
 {
 	if( pSocket == null )
@@ -99,6 +102,7 @@ function onCallback0( pSocket, myTarget )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( spinWheel, timerID )
 {
 	if( timerID == 0 )

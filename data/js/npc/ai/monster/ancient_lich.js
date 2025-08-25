@@ -1,3 +1,5 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
 // Ancient Lich can summon other undeads, and even transform into them to "hide"
 const undeadSummonList = [
 	"skeleton", "zombie", "spectre"
@@ -6,6 +8,7 @@ const undeadSummonList = [
 const lichSummonMinCooldown = 5;
 const lichSummonMaxCount = 3;
 
+/** @type { ( caster: Character, target: BaseObject, spellNum: number ) => number } */
 function onSpellTargetSelect( pTarget, npcLich, spellID )
 {
 	let chanceToSummon = RandomNumber( 1, 100 );
@@ -185,6 +188,7 @@ function SummonUndead( npcLich, pTarget )
 	}
 }
 
+/** @type { ( attacker: Character, defender: Character ) => boolean } */
 function onCombatEnd( npcLich, pTarget )
 {
 	// Restore lich to original appearance
@@ -198,6 +202,7 @@ function onCombatEnd( npcLich, pTarget )
 	return true;
 }
 
+/** @type { ( mKilled: Character, mKiller: Character ) => boolean } */
 function onDeathBlow( npcLich, pKiller )
 {
 	// Call onCombatEnd to revert lich back to original form before dying

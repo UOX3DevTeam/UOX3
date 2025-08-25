@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Cotton-Picking Script
 // 20/02/2006 Xuri; xuri@uox3.org
 // When a (dynamic) cotton plant is double-clicked, it may yield some cotton.
@@ -7,6 +9,7 @@ const cottonGrowthIntervalMin = 30000; // Min delay in milliseconds between each
 const cottonGrowthIntervalMax = 90000; // Max delay in milliseconds between each growth phase
 const cottonResourceDecay = 3600; // Time (in seconds) it takes for resource to decay, allowing another to spawn in its place if spawned using spawn regions. 0 to disable decay
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var isInRange = pUser.InRange( iUsed, 3 );
@@ -52,6 +55,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( iUsed, timerID )
 {
 	if( timerID == 1 ) // Starts phase 1 of cottong growth

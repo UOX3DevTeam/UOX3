@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This command allows GMs to duplicate the selected object and create one or more identical ones
 
 function CommandRegistration()
@@ -5,6 +7,7 @@ function CommandRegistration()
 	RegisterCommand( "dupe", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_DUPE( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 38, socket.language );
@@ -19,6 +22,7 @@ function command_DUPE( socket, cmdString )
 	socket.CustomTarget( 0, targMsg );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	var targMsg = GetDictionaryEntry( 38, socket.language );

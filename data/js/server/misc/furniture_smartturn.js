@@ -1,7 +1,10 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Furniture Smart Turn
 // Will turn supported furniture clockwise when said furniture is double-clicked or dropped on the ground
 
 // Turn the furniture when double-clicked
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	// Don't override double-click type for item
@@ -52,6 +55,7 @@ function LookForSittingPlayers( srcItem, trgChar, pSock )
 }
 
 // Turn the furniture when dropped
+/** @type { ( item: Item, dropper: Character ) => number } */
 function onDrop( iDropped, pDropper )
 {
 	SmartTurn( iDropped );
@@ -222,5 +226,3 @@ var explicitAdd = [
 	0x9c18, 0xa304, 0xa306, 0xa308, // Safe// Metal chest// Rusty metal chest// Gold chest
 	0xa30a
 ];
-
-function _restorecontext_() {}

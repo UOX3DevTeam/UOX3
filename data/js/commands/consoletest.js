@@ -1,8 +1,11 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 function CommandRegistration()
 {
 	RegisterCommand( "consoletest", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_CONSOLETEST( socket, cmdString )
 {
 	// Time to do a console functionality test!

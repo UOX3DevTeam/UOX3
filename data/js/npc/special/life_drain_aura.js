@@ -1,4 +1,7 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // For creatures that can drain life of nearby players/pets when they are hit in combat
+/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => boolean } */
 function onDamage( damaged, attacker, damageValue, damageType )
 {
 	if( damageType == 1 ) // Physical damage
@@ -72,5 +75,3 @@ function DealAreaDamage( srcObj, trgChar )
 
 	return false;
 }
-
-function _restorecontext_() {}

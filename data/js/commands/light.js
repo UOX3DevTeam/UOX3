@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // These commands can be used to update the light levels in the game
 
 function CommandRegistration()
@@ -7,6 +9,7 @@ function CommandRegistration()
 	RegisterCommand( "dungeonlight", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_BRIGHTLIGHT( socket, cmdString )
 {
 	if( cmdString )
@@ -18,6 +21,7 @@ function command_BRIGHTLIGHT( socket, cmdString )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_DARKLIGHT( socket, cmdString )
 {
 	if( cmdString )
@@ -29,6 +33,7 @@ function command_DARKLIGHT( socket, cmdString )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_DUNGEONLIGHT( socket, cmdString )
 {
 	if( cmdString )

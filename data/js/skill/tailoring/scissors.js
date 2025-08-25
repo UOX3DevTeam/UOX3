@@ -1,9 +1,12 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Scissor-usage; Sheep-shearing, cloth-cutting
 // 24/07/2021 Xuri; xuri@uox3.org
 // This script contains all the default functions of the scissors,
 // from sheep-shearing to cloth cutting.
 var aosEnabled = 0;
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -28,6 +31,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;

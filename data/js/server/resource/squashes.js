@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Squash-Picking Script
 // 14/06/2025 Xuri; xuri@uox3.org
 // When (dynamic)squashes are double-clicked, it's setup with
@@ -9,6 +11,7 @@ const squashGrowthIntervalMin = 30000; // Min delay in milliseconds between each
 const squashGrowthIntervalMax = 90000; // Max delay in milliseconds between each growth phase
 const squashResourceDecay = 3600; // Time (in seconds) it takes for resource to decay, allowing another to spawn in its place if spawned using spawn regions. 0 to disable decay
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var isInRange = pUser.InRange( iUsed, 3 );
@@ -56,6 +59,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( iUsed, timerID )
 {
 	if( timerID == 1 ) // Starts phase 1 of squash growth

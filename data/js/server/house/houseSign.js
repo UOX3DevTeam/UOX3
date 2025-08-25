@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // House menu that appears when double-clicking the sign on a house
 // Uses script trigger 15001, applied via jse_typeassociations.scp based on type 203 - IT_HOUSESIGN
 var lockdowns = 0;
@@ -32,6 +34,7 @@ var houseTradeTime = "";
 // treated as if they were co-owners of the house
 const coOwnHousesOnSameAccount = GetServerSetting( "CoOwnHousesOnSameAccount" );
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseUnChecked( pUser, iUsed )
 {
 	// Grab reference to multi stored on sign
