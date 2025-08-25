@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This command lets GMs move a targeted object to their own backpack
 
 function CommandRegistration()
@@ -6,6 +8,7 @@ function CommandRegistration()
 	RegisterCommand( "bringtopack", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_MOVETOBAG( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 197, socket.language ); // Select an item to move into your bag.
@@ -13,11 +16,13 @@ function command_MOVETOBAG( socket, cmdString )
 }
 
 // Alias of MOVETOBAG
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_BRINGTOPACK( socket, cmdString )
 {
 	command_MOVETOBAG( socket, cmdString );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	var ourChar = socket.currentChar;

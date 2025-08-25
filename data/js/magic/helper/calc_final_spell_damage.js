@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Helper function to calculate final spell damage based on a specified base damage, whether
 // spell was resisted, and whether caster's eval int is higher than target's magic resistance
 function CalcFinalSpellDamage( caster, target, baseDmg, spellResisted )

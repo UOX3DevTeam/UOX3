@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 doorTypes = new Array (
 	0x00E8, 0x0314, 0x0324, 0x0334, 0x0344, 0x0354, 0x0675, 0x0685,
 	0x0695, 0x06A5, 0x06B5, 0x06C5, 0x06D5, 0x06E5, 0x0824, 0x0839,
@@ -13,6 +15,7 @@ const keylessGuestAccess 	= GetServerSetting( "KeylessGuestAccess" );
 // Fetch setting for whether all characters on a player's account co-own houses together
 const coOwnHousesOnSameAccount = GetServerSetting( "CoOwnHousesOnSameAccount" );
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -297,6 +300,7 @@ function UseDoor( iUsed, isOpen )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( iUsed, timerID )
 {
 	if( !iUsed.isDoorOpen )
@@ -480,5 +484,3 @@ function FindKeyInPack( pUser, pPack, iUsed )
 	}
 	return false;
 }
-
-function _restorecontext_() {}

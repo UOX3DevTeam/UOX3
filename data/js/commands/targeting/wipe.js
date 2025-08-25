@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // These commands let shard admins wipe either all or a selection of objects based on certain
 // conditions specified in command parameters
 
@@ -7,12 +9,14 @@ function CommandRegistration()
 	RegisterCommand( "iwipe", 10, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_WIPE( socket, cmdString )
 {
 	iWipe = false;
 	CallWipe( socket, cmdString );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_IWIPE( socket, cmdString )
 {
 	// Inverted wipe - wipes area OUTSIDE specified target locations/coordinates
@@ -195,6 +199,7 @@ function CallWipe( socket, cmdString )
 }
 
 // Choose first of two locations defining area to wipe
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike
@@ -209,6 +214,7 @@ function onCallback0( socket, ourObj )
 }
 
 // Choose second of two locations defining area to wipe
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike
@@ -293,6 +299,7 @@ function DoWipe( socket, ourObj )
 }
 
 // Iterate through all objects of specified type
+/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
 function onIterate( toCheck, socket )
 {
 	if( ValidateObject( toCheck ))
@@ -400,5 +407,3 @@ function onIterate( toCheck, socket )
 	}
 	return false;
 }
-
-function _restorecontext_() {}

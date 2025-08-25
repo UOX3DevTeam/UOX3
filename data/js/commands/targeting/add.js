@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // These commands let GMs add items in a variety of ways
 
 function CommandRegistration()
@@ -9,6 +11,7 @@ function CommandRegistration()
 	RegisterCommand( "addxspawner", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ADD( socket, cmdString )
 {
 	if( cmdString )
@@ -108,6 +111,7 @@ function command_ADD( socket, cmdString )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
@@ -150,6 +154,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
@@ -226,6 +231,7 @@ function onCallback1( socket, ourObj )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( socket, ourObj )
 {
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
@@ -294,6 +300,7 @@ function onCallback2( socket, ourObj )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback3( socket, ourObj )
 {
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
@@ -332,6 +339,7 @@ function onCallback3( socket, ourObj )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback4( socket, ourObj )
 {
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
@@ -367,6 +375,7 @@ function onCallback4( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ITEMMENU( socket, cmdString )
 {
 	if( cmdString )
@@ -375,6 +384,7 @@ function command_ITEMMENU( socket, cmdString )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ADDX( socket, cmdString )
 {
 	var mChar = socket.currentChar;
@@ -407,6 +417,7 @@ function command_ADDX( socket, cmdString )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ADDXITEM( socket, cmdString )
 {
 	var mChar = socket.currentChar;
@@ -416,6 +427,7 @@ function command_ADDXITEM( socket, cmdString )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ADDXSPAWNER( socket, cmdString )
 {
 	var mChar = socket.currentChar;
@@ -486,5 +498,3 @@ function AddXItemSpawner( socket, cmdString, itemType )
 		}
 	}
 }
-
-function _restorecontext_() {}

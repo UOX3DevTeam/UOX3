@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 function ShearSheep( pUser, sheep )
 {
 	if( !sheep || !pUser )

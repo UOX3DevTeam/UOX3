@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 const shardName = GetServerSetting( "ServerName" );
 const shardURL = "https://myshard.example.com";
 const maxSafeTeleportsPerDay = GetServerSetting( "MaxSafeTeleportsPerDay" ); // Determines amount of "safe teleports" players get per day
@@ -572,6 +574,7 @@ function TeleportToRandomSafeLocation( pSock )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( !ValidateObject( timerObj ))
@@ -873,5 +876,3 @@ const safeChaosShrineLocations = [
 		[674, 4013, -43] // No Chaos shrines, so just teleport player to a remote area on the map
 	]
 ];
-
-function _restorecontext_() {}

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This command lets GMs apply certain other commands to all objects within an area
 
 function CommandRegistration()
@@ -5,6 +7,7 @@ function CommandRegistration()
 	RegisterCommand( "areacommand", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_AREACOMMAND( socket, cmdString )
 {
 	if( cmdString )
@@ -19,6 +22,7 @@ function command_AREACOMMAND( socket, cmdString )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
@@ -31,6 +35,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
@@ -96,6 +101,7 @@ function onCallback1( socket, ourObj )
 	}
 }
 
+/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
 function onIterate( toCheck )
 {
 	if( toCheck && toCheck.isItem && toCheck.container == null )
@@ -128,5 +134,3 @@ function onIterate( toCheck )
 	}
 	return false;
 }
-
-function _restorecontext_() {}

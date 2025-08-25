@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This command can be used to kill all characters (or a percentage of all characters)
 
 function CommandRegistration()
@@ -5,6 +7,7 @@ function CommandRegistration()
 	RegisterCommand( "killall", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_KILLALL( socket, cmdString )
 {
 	percentToKill = 100;
@@ -18,6 +21,7 @@ function command_KILLALL( socket, cmdString )
 	socket.SysMessage( tempMsg.replace( /%i/gi, count.toString() ));
 }
 
+/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
 function onIterate( toCheck )
 {
 	if( toCheck && toCheck.isChar )
@@ -32,5 +36,3 @@ function onIterate( toCheck )
 	}
 	return false;
 }
-
-function _restorecontext_() {}

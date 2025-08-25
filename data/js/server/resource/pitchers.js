@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Pitchers and Bottles - Jugs and Mugs, by Xuri (xuri@uox3.org)
 // Version: 1.6
 // Last Updated: July 24th 2021
@@ -15,6 +17,7 @@
 // Todo: Descriptions for how full a liquid container is
 const pitcherScriptID = 2100;
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;
@@ -64,6 +67,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 {
 	var pUser = pSock.currentChar;
@@ -221,6 +225,7 @@ function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 {
 	var pUser = pSock.currentChar;
@@ -804,7 +809,7 @@ function switchPitcherID( pSock, Pitcher )
 			//Pitcher.name = "empty glass pitcher";
 			break;
 		case 0x0ff9:case 0x09f0: case 0x1f95:case 0x1f97:case 0x1f99:case 0x1f9b:case 0x1f9d:
-			Pitcher.id = 0x0ff6; //left facing¨
+			Pitcher.id = 0x0ff6; //left facingï¿½
 			//Pitcher.name = "empty glass pitcher";
 			break;
 		case 0x099b:case 0x099f:case 0x09c7:
@@ -1065,6 +1070,7 @@ function switchGobletID( Pitcher )
 }
 
 // Display remaining uses left in a tooltip
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( myObj )
 {
 	var tooltipText = "";
@@ -1079,6 +1085,7 @@ function onTooltip( myObj )
 }
 
 // Set up tags for any new items added
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	if( !objMade.GetTag( "ContentsType" ))
@@ -1086,8 +1093,6 @@ function onCreateDFN( objMade, objType )
 		setupLiquidObject( objMade );
 	}
 }
-
-function _restorecontext_() {}
 
 // Sound Effects:
 //38 = "grab" some water with a pitcher

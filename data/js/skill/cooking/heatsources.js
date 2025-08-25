@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 function HeatSource( tileID )
 {
 	// In case its an oven, fireplace, campfire or fire pit

@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 const PuzzleChestCylinder = {
 	None: 0xE73,
 	LightBlue: 0x186F,
@@ -78,6 +80,7 @@ function CompareSolutions( solutionCylinders, guessCylinders )
 	};
 }
 
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( objMade, objType ) 
 {
 	if( objType == 0 )
@@ -88,6 +91,7 @@ function onCreateDFN( objMade, objType )
 	}
 }
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, pItem )
 {
 	var socket = pUser.socket;

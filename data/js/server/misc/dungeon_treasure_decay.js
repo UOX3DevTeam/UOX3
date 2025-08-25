@@ -1,5 +1,8 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This script ensures dungeon treasures will decay after a certain amount of time, so they
 // can respawn elsewhere.
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	if( !ValidateObject( objMade ))
@@ -10,6 +13,7 @@ function onCreateDFN( objMade, objType )
 	objMade.decaytime = 60 * 10; // 10 minutes
 }
 
+/** @type { ( contItem: Item, item: Item, pickerUpper: Character ) => void } */
 function onContRemoveItem( iCont, iItem, pChar )
 {
 	if( !ValidateObject( iCont ) || !ValidateObject( iItem ))

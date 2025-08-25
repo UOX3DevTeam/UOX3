@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // tailoring script
 // 17/06/2001 Yeshe; yeshe@manofmystery.org
 // 21/07/2003 Xuri; Updated/Rewrote the script
@@ -25,6 +27,7 @@ function onUseChecked ( pUser, iUsed )
 	return false;
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSocket, myTarget )
 {
 	if( pSocket == null )
@@ -101,6 +104,7 @@ function onCallback0( pSocket, myTarget )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( spinWheel, timerID )
 {
 	if( timerID == 0 )

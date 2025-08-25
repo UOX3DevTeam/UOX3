@@ -1,9 +1,12 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Handles functionality of special consumables thieves can steal from monsters
 
 const manaDraughtTimer = 60000 * 10; // 10 minutes
 const seedOfLifeTimer = 60000 * 10; // 10 minutes
 const balmLotionTimer = 60000 * 30; // 30 minutes
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;
@@ -269,6 +272,7 @@ function ConsumeBalmLotion( pUser, iUsed, balmType )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( timerID >= 3 && timerID <= 8 )
@@ -312,5 +316,3 @@ function onTimer( timerObj, timerID )
 			break;
 	}
 }
-
-function _restorecontext_() {}

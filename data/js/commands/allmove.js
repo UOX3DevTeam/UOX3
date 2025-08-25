@@ -1,9 +1,12 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This command lets GMs pick up and move even items that are marked as non-movable
 function CommandRegistration()
 {
 	RegisterCommand( "allmove", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ALLMOVE( socket, cmdString )
 {
 	var pUser = socket.currentChar;

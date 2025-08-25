@@ -1,5 +1,8 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This script handles the double-click functionality of all swords/knives
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -24,6 +27,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	var mChar = socket.currentChar;
@@ -188,5 +192,3 @@ function CarveCorpse( socket, mChar, ourObj )
 		socket.SysMessage( GetDictionaryEntry( 393, socket.language )); // That is too far away.
 	}
 }
-
-function _restorecontext_() {}
