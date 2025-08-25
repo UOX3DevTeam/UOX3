@@ -1,8 +1,11 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 function CommandRegistration()
 {
 	RegisterCommand( "showtime", 4, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_SHOWTIME( socket, cmdString )
 {
 	var hour 	= GetHour();

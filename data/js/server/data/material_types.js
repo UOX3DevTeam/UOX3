@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This is a generic script for determining the (primary) type of material an item is composed of,
 // such as "wood", "metal", "stone", "plant", etc. 
 // Initially used to check for items made of metal for the purpose of smelting, but can also be

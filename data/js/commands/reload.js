@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // These commands are alternate ways (to UOX3 console commands) for
 // reloading INI, DFNs, JS files, etc.
 
@@ -17,6 +19,7 @@ function CommandRegistration()
 	RegisterCommand( "reloadall", 10, true ); //reload everything
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RELOADACCOUNTS( socket, cmdString )
 {
 	var dictMessage = GetDictionaryEntry( 86, socket.language );
@@ -24,6 +27,7 @@ function command_RELOADACCOUNTS( socket, cmdString )
 	Reload( 9 );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RELOADDEFS( socket, cmdString )
 {
 	var dictMessage = GetDictionaryEntry( 1748, socket.language ); // Reloading new scripts...
@@ -31,6 +35,7 @@ function command_RELOADDEFS( socket, cmdString )
 	Reload( 4 );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RELOADINI( socket, cmdString )
 {
 	var dictMessage = GetDictionaryEntry( 45, socket.language ); // INI file reloaded.
@@ -38,6 +43,7 @@ function command_RELOADINI( socket, cmdString )
 	Reload( 7 );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RELOADJSFILE( socket, cmdString )
 {
 	var scriptID = parseInt( cmdString );
@@ -46,48 +52,56 @@ function command_RELOADJSFILE( socket, cmdString )
 	ReloadJSFile( scriptID );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RELOADALLJS( socket, cmdString )
 {
 	socket.SysMessage( GetDictionaryEntry( 8004, socket.language )); // Attempting Reload of all JavaScripts.
 	Reload( 5 );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RELOADREGIONS( socket, cmdString )
 {
 	socket.SysMessage( GetDictionaryEntry( 8005, socket.language )); // Attempting Reload of Regions.
 	Reload( 0 );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RELOADSPAWNREGIONS( socket, cmdString )
 {
 	socket.SysMessage( GetDictionaryEntry( 68, socket.language )); // Spawnregions reloaded.
 	Reload( 1 );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RELOADALL( socket, cmdString )
 {
 	BroadcastMessage( GetDictionaryEntry( 1746, socket.language )); // Possible pause... reloading server scripts
 	Reload( 8 );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RELOADSPELLS( socket, cmdString )
 {
 	socket.SysMessage( GetDictionaryEntry( 8006, socket.language )); // Reloading spells...
 	Reload( 2 );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RELOADCOMMANDS( socket, cmdString )
 {
 	socket.SysMessage( GetDictionaryEntry( 8007, socket.language )); // Reloading commands..
 	Reload( 3 );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RELOADHTML( socket, cmdString )
 {
 	socket.SysMessage( GetDictionaryEntry( 8008, socket.language )); // Reloading HTML Templates..
 	Reload( 6 );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RELOADDICTIONARIES( socket, cmdString )
 {
 	socket.SysMessage( GetDictionaryEntry( 8009, socket.language )); // Reloading Dictionaries..

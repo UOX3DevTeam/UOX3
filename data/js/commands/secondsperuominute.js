@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This command displays the value of the "secondsperuominute" setting from UOX.INI
 
 function CommandRegistration()
@@ -5,6 +7,7 @@ function CommandRegistration()
 	RegisterCommand( "secondsperuominute", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_SECONDSPERUOMINUTE( socket, cmdString )
 {
 	if( cmdString )

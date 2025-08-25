@@ -1,8 +1,11 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
 // Throws orc lord at attackers who cast magic at him
 // Dispells summoned creatures
 
 const orcBrute_DispelSummonsDelay = 10;
 
+/** @type { ( target: BaseObject, caster: Character, spellNum: number ) => number } */
 function onSpellTarget( myTarget, pCaster, spellID )
 {
 	var spell = Spells[spellID];
@@ -22,6 +25,7 @@ function onSpellTarget( myTarget, pCaster, spellID )
 	return false;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( !ValidateObject( timerObj ))
@@ -54,6 +58,7 @@ function onTimer( timerObj, timerID )
 	}
 }
 
+/** @type { ( pSliver: Character ) => boolean } */
 function onAISliver( mNPC )
 {
 	if( !mNPC.atWar )
@@ -83,5 +88,3 @@ function LookForSummonedCreatures( mNPC, targChar )
 		targChar.Delete();
 	}
 }
-
-function _restorecontext_() {}

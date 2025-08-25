@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Main Sources
 // 	Publish 71 - https://wiki.stratics.com/index.php?title=UO:Publish_Notes_from_2011-07-21
 
@@ -65,6 +67,7 @@ function onUseCheckedTriggered( pUser, targChar, iUsed )
 	return;
 }
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	if( ValidateObject( pUser ) && ValidateObject( iUsed ) && iUsed.isItem )
@@ -115,6 +118,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	let bItem = socket.tempObj;
@@ -562,6 +566,7 @@ function SetSkillInUse( socket, mChar, ourObj, skillNum, healingTime, setVal )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( mChar, timerID )
 {
 	if( !ValidateObject( mChar ))
@@ -667,7 +672,7 @@ function onTimer( mChar, timerID )
 
 								if(( now - deathTime ) < waitTime)
 								{
-									socket.SysMessage( GetDictionaryEntry( 19340, pSock.language )); // That creature’s spirit lacks cohesion. Try again in a few minutes.
+									socket.SysMessage( GetDictionaryEntry( 19340, pSock.language )); // That creatureï¿½s spirit lacks cohesion. Try again in a few minutes.
 									return;
 								}
 

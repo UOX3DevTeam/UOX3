@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This script handles special interactions between players and shopkeepers
 // that take place when players attempt (and/or succeed) at trading with these
 
@@ -11,6 +13,7 @@ const youngPlayerSystem = GetServerSetting("YoungPlayerSystem");
 
 const coreShardEra = GetServerSetting( "CoreShardEra" );
 
+/** @type { ( targSock: Socket, objVendor: Character, objItemBought: BaseObject, numItemsBought: number ) => boolean } */
 function onBoughtFromVendor( pSock, npcShopkeep, iBought, iAmount )
 {
 	if( pSock == null || !ValidateObject( npcShopkeep ) || !ValidateObject( iBought ))
@@ -55,6 +58,7 @@ function onBoughtFromVendor( pSock, npcShopkeep, iBought, iAmount )
 	return false;
 }
 
+/** @type { ( targSock: Socket, objVendor: Character, objItemSold: BaseObject, numItemsSold: number ) => boolean } */
 function onSoldToVendor( pSock, npcShopkeep, iSold, iAmount )
 {
 	if( pSock == null || !ValidateObject( npcShopkeep ) || !ValidateObject( iSold ))

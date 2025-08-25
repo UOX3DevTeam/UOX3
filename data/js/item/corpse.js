@@ -1,6 +1,9 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This script is assigned to all corpses by default, in code, but can be overridden on individual items and/or via global script
 const youngPlayerSystem = GetServerSetting( "YoungPlayerSystem" );
 
+/** @type { ( player: Character, corpse: Item ) => boolean } */
 function onCarveCorpse( pChar, iCorpse )
 {
 	var corpseOwner = iCorpse.owner;
@@ -25,6 +28,7 @@ function onCarveCorpse( pChar, iCorpse )
 }
 
 // Triggers when someone tries to pick up an item from the corpse
+/** @type { ( item: Item, pickerUpper: Character, objCont: BaseObject ) => boolean } */
 function onPickup( iPickedUp, pGrabber, containerObj )
 {
 	if( !ValidateObject( iPickedUp) || !ValidateObject( pGrabber ) || !ValidateObject( containerObj ))

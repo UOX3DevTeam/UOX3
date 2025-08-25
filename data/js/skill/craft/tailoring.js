@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 const textHue = 0x480;					// Color hue for all text in the crafting gump
 const scriptID = 4030;					// Script ID used to identify and close this gump
 const gumpDelay = 2000;					// Delay (ms) before gump reappears after crafting
@@ -5,8 +7,7 @@ const repairDelay = 200;				// Delay (ms) before gump reappears after selecting 
 const itemDetailsScriptID = 4026;		// Script ID used to show item detail tooltips
 const craftGumpID = 4027;				// TriggerEvent ID used to build the crafting gump UI
 const itemsPerPage = 10;				// Number of craftable items shown per gump subpage
-const displayUnlearnedRecipes = true;	// Show recipes player hasn’t learned
-
+const displayUnlearnedRecipes = true;	// Show recipes player hasnï¿½t learned
 //////////////////////////////////////////////////////////////////////////////////////////
 // UOX3 Tailoring CraftingMap Configuration
 //
@@ -48,7 +49,7 @@ const displayUnlearnedRecipes = true;	// Show recipes player hasn’t learned
 // 999: { customName: "harrys sword", page: 1, timerID: 1 },
 //
 // // Recipe-locked item (only craftable if recipe is learned)
-// – 185: { dictID: 11469, page: 8, timerID: 8, recipeID: 185 },
+// ï¿½ 185: { dictID: 11469, page: 8, timerID: 8, recipeID: 185 },
 //
 // Organization:
 // - Items are grouped by `page` value (e.g., Hats, Armor, etc.).
@@ -268,6 +269,7 @@ function PageX( socket, pUser, pageNum )
 	tailoringMenu.Free();
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( pUser, timerID )
 {
 	if( !ValidateObject( pUser ))
@@ -277,7 +279,7 @@ function onTimer( pUser, timerID )
 
 	if( timerID >= 1 && timerID <= 8 )
 	{
-		PageX( socket, pUser, timerID ); // Pages 1–8
+		PageX( socket, pUser, timerID ); // Pages 1ï¿½8
 	}
 	else if ( timerID == 999 )
 	{
@@ -454,7 +456,8 @@ function onGumpPress( socket, pButton, gumpData )
 	}
 }
 
-function onCallback1( socket, ourObj )
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+function onCallback1( pSock, ourObj )
 {
 	var pUser = socket.currentChar;
 	if( !ValidateObject( pUser ))
@@ -522,7 +525,8 @@ function UnravelTarget( socket )
 }
 
 // Clothes and leather armor can be unravelled back into cloth and leather
-function onCallback2( socket, ourObj )
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+function onCallback2( pSock, ourObj )
 {
 	// Unravel item, get cloth/leather in return
 	var mChar = socket.currentChar;

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 /*When a player uses a certain item (referred to as mapItem), it triggers the onUseChecked function.
 This function then sets up various preset maps based on the item used, such as maps for different cities or worlds within the game.
 
@@ -15,6 +17,7 @@ If it's a treasure map, the script checks if the map has been decoded and displa
 // TODO: Figure out how to prevent map from being opened multiple times
 */
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, mapItem )
 {
 	var socket = pUser.socket;
@@ -362,6 +365,7 @@ function TreasureMapCoords( socket, mapItem )
 	socket.SoundEffect( 0x249, true );
 }
 
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( map, pSocket )
 {
 	var tooltipText = "";

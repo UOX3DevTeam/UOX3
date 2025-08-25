@@ -1,5 +1,8 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Switch pattern: 3 - 4 - 1 - 5
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iSwitch )
 {
 	// Flip the switch
@@ -145,5 +148,3 @@ function ResetAllSwitches( srcItem, trgItem )
 		trgItem.morey = 0;
 	}
 }
-
-function _restorecontext_() {}

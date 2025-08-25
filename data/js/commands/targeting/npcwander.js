@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // These commands can be used to handle changes to NPC wandermodes
 
 function CommandRegistration()
@@ -7,12 +9,14 @@ function CommandRegistration()
 	RegisterCommand( "npccircle", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_FOLLOW( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 228, socket.language ); // Select player for the NPC to follow.
 	socket.CustomTarget( 0, targMsg );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )
@@ -23,6 +27,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )
@@ -36,6 +41,7 @@ function onCallback1( socket, ourObj )
 	socket.tempObj = null;
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_NPCRECT( socket, cmdString )
 {
 	if( cmdString )
@@ -53,6 +59,7 @@ function command_NPCRECT( socket, cmdString )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar && ourObj.npc )
@@ -61,6 +68,7 @@ function onCallback2( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_NPCCIRCLE( socket, cmdString )
 {
 	if( cmdString )
@@ -77,6 +85,7 @@ function command_NPCCIRCLE( socket, cmdString )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback3( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar && ourObj.npc )

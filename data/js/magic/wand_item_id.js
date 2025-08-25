@@ -1,9 +1,12 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Item Identification as cast by Wands/Gnarled Staffs
 function SpellRegistration()
 {
     RegisterSpell( 65, true );
 }
 
+/** @type { ( tChar: Character, SpellId: number ) => number } */
 function onSpellCast( mSock, mChar, directCast, spellNum )
 {
     // Are we already casting?
@@ -67,6 +70,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
     return true;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( mChar, timerID )
 {
     // Free caster from spellcasting action
@@ -79,6 +83,7 @@ function onTimer( mChar, timerID )
         mSock.CustomTarget( 0, Spells[timerID].strToSay );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( mSock, ourTarg )
 {
 	var mChar = mSock.currentChar;
@@ -104,6 +109,7 @@ function onCallback0( mSock, ourTarg )
 	}
 }
 
+/** @type { ( tChar: Character, SpellId: number ) => boolean } */
 function onSpellSuccess( mSock, mChar, ourTarg )
 {
     if( mChar.isCasting )
@@ -126,10 +132,9 @@ function onSpellSuccess( mSock, mChar, ourTarg )
     TriggerEvent( 818, "onCallback0", mSock, ourTarg );
 }
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
     pUser.CastSpell( 65 );
     return false;
 }
-
-function _restorecontext_() {}

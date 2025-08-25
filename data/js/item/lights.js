@@ -1,8 +1,11 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 const dblClck = true; // If true enables lampposts to be double clicked on and off.
 const dynamicLampPosts = true; // This enables and disables lamp post to change from on and off with light settings.
 const brightLvl = 10; // This Setting is for how bright or dark it has to be for lamps to turn on and off. the Higher the number the Darker the Lower the Number the lighter.
 const unequipEnabled = false; // This setting allows the touch and candle to be turned off automatic if unequiped.
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var pSocket = pUser.socket;
@@ -521,6 +524,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
+/** @type { ( tObject: BaseObject, lightLevel: number ) => boolean } */
 function onLightChange( iLight, lightLevel )
 {
 	if( ValidateObject( iLight ) && iLight.isItem && dynamicLampPosts == true )
@@ -561,6 +565,7 @@ function onLightChange( iLight, lightLevel )
 	return false;
 }
 
+/** @type { ( equipper: Character, equipping: Item ) => boolean } */
 function onUnequip( pEquipper, iEquipped )
 {
 	if( ValidateObject( iEquipped ) && iEquipped.isItem && unequipEnabled == true )

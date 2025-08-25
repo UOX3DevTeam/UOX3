@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Honey/Wax-Picking Script
 // Originally written by Cav
 // Rewritten by Xuri 24/01/2005 ;xuri@uox3.org
@@ -7,6 +9,7 @@
 const honeyGrowthDelay = 120000; //Delay in milliseconds before resources respawns
 const maxHoneyResource = 5; //maximum amount of resources on a given item
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var isInRange = pUser.InRange( iUsed, 3 );
@@ -90,6 +93,7 @@ function onUseChecked( pUser, iUsed )
 }
 
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( iUsed, timerID )
 {
 	if( timerID == 1 )

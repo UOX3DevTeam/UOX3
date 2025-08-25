@@ -1,3 +1,6 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( equipment, pSocket )
 {
 	var healingBonus = parseInt( equipment.GetTag( "healingBonus" ));

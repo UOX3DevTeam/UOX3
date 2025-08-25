@@ -1,3 +1,5 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
 // Ethereal Warrior
 
 // ethWar_SearchAmount = Number of times healer will look around for chars to resurrect before stopping
@@ -13,6 +15,7 @@ const ethWar_SearchTimer = 15000;
 const ethWar_ResTimer = 30000;
 const ethWar_ManaCostRes = 50;
 
+/** @type { ( srcObj: BaseObject, objInRange: BaseObject ) => void } */
 function inRange( pCharacter, objInRange )
 {
 	if( !ValidateObject( objInRange ) || objInRange.isItem || ( objInRange.isChar && ( objInRange.npc || ( !objInRange.online || !objInRange.dead ))))
@@ -36,6 +39,7 @@ function inRange( pCharacter, objInRange )
 }
 
 // This triggers the keyword-based healing/resurrection
+/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => null | undefined | number | boolean } */
 function onSpeech( strSaid, pTalking, npcHealer )
 {
 	if( strSaid == "heal" )
@@ -71,6 +75,7 @@ function Resurrect( deadChar, npcHealer )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( srcChar, timerID )
 {
 	if( !ValidateObject( srcChar ))
@@ -110,6 +115,7 @@ function SearchForWounded( srcChar, trgChar, pSock )
 }
 
 // Handle draining of health, stamina and mana on attack
+/** @type { ( attacker: Character, defender: Character, hitStatus: boolean, hitLoc: number, damageDealt: number ) => void } */
 function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 {
 	if( !ValidateObject( pDefender ))
@@ -163,5 +169,3 @@ function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 		}
 	}
 }
-
-function _restorecontext_() {}
