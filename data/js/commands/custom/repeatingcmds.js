@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Repeating Commands || by Xuri ( xuri at uox3.org )
 // v1.15
 // Last updated: 06/11/2021
@@ -28,6 +30,7 @@ function CommandRegistration()
 }
 
 //Repeated Command: INCX <value>
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RINCX( pSock, execString )
 {
 	if( !isNaN( execString ))
@@ -42,6 +45,7 @@ function command_RINCX( pSock, execString )
 		pSock.SysMessage( ReqNum );
 	}
 }
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, myTarget )
 {
 	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike
@@ -66,6 +70,7 @@ function onCallback0( pSock, myTarget )
 }
 
 //Repeated Command: INCY <value>
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RINCY( pSock, execString )
 {
 	if( !isNaN( execString ))
@@ -80,6 +85,7 @@ function command_RINCY( pSock, execString )
 		pSock.SysMessage( ReqNum );
 	}
 }
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( pSock, myTarget )
 {
 	// If user cancels targeting with Escape, ClassicUO still sends a targeting response ( unlike
@@ -104,6 +110,7 @@ function onCallback1( pSock, myTarget )
 }
 
 //Repeated Command: INCZ <value>
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RINCZ( pSock, execString )
 {
 	if( !isNaN( execString ))
@@ -117,6 +124,7 @@ function command_RINCZ( pSock, execString )
 		pSock.SysMessage( ReqNum );
 	}
 }
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( pSock, myTarget )
 {
 	// If user cancels targeting with Escape, ClassicUO still sends a targeting response ( unlike
@@ -141,6 +149,7 @@ function onCallback2( pSock, myTarget )
 }
 
 //Repeated Command: SET TYPE <type>
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RTYPE( pSock, execString )
 {
 	if( !isNaN( execString ))
@@ -155,6 +164,7 @@ function command_RTYPE( pSock, execString )
 		pSock.SysMessage( ReqNum );
 	}
 }
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback4( pSock, myTarget )
 {
 	// If user cancels targeting with Escape, ClassicUO still sends a targeting response ( unlike
@@ -179,6 +189,7 @@ function onCallback4( pSock, myTarget )
 }
 
 //Repeated Command: DYE <hex-id>
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RDYE( pSock, execString )
 {
 	if( !isNaN( execString ))
@@ -192,6 +203,7 @@ function command_RDYE( pSock, execString )
 		pSock.SysMessage( ReqNum );
 	}
 }
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback5( pSock, myTarget )
 {
 	// If user cancels targeting with Escape, ClassicUO still sends a targeting response ( unlike
@@ -215,6 +227,7 @@ function onCallback5( pSock, myTarget )
 }
 
 //Repeated Command: ADD <hex-id>
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RADD( pSock, execString )
 {
 	// if( !isNaN( execString ))
@@ -266,6 +279,7 @@ function command_RADD( pSock, execString )
 		// pSock.SysMessage( ReqNum );
 	//}
 }
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback6( pSock, myTarget )
 {
 	// If user cancels targeting with Escape, ClassicUO still sends a targeting response ( unlike
@@ -341,11 +355,13 @@ function onCallback6( pSock, myTarget )
 }
 
 //Repeated Command: REMOVE
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RREMOVE( pSock, execString )
 {
 	pSock.CustomTarget( 7, GetDictionaryEntry( 8938, pSock.language ), 1 ); // Which object do you wish to remove?
 }
 //Repeated Command: M DELETE
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_M( pSock, execString )
 {
 	var splitString = execString.split( " " );
@@ -354,6 +370,7 @@ function command_M( pSock, execString )
 		pSock.CustomTarget( 7, GetDictionaryEntry( 8938, pSock.language ), 1 ); // Which object do you wish to remove?
 	}
 }
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback7( pSock, myTarget )
 {
 	// If user cancels targeting with Escape, ClassicUO still sends a targeting response ( unlike
@@ -450,12 +467,14 @@ function onCallback7( pSock, myTarget )
 }
 
 //Repeated Command: ADD ITEM <item-id from dfns>
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RADDITEM( pSock, execString )
 {
 	pSock.xText = execString;
 	var tempMsg = GetDictionaryEntry( 8940, pSock.language ); // Select target location for item %s:
 	pSock.CustomTarget( 8, tempMsg.replace( /%s/gi, execString ));
 }
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback8( pSock, myTarget )
 {
 	// If user cancels targeting with Escape, ClassicUO still sends a targeting response ( unlike
@@ -538,10 +557,12 @@ function onCallback8( pSock, myTarget )
 }
 
 //Repeated Command: TELE <select target location>
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RTELE( pSock, execString )
 {
 	pSock.CustomTarget( 9, GetDictionaryEntry( 8942, pSock.language )); // Select location to teleport to:
 }
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback9( pSock, myTarget )
 {
 	// If user cancels targeting with Escape, ClassicUO still sends a targeting response ( unlike
@@ -571,12 +592,14 @@ function onCallback9( pSock, myTarget )
 }
 
 //Repeated Command: ADD NPC <npc-id from DFNs>
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RADDNPC( pSock, execString )
 {
 	pSock.xText = execString;
 	var tempMsg = GetDictionaryEntry( 8943, pSock.language ); // Select target location for the [%s]:
 	pSock.CustomTarget( 10, tempMsg.replace( /%s/gi, execString ));
 }
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback10( pSock, myTarget )
 {
 	// If user cancels targeting with Escape, ClassicUO still sends a targeting response ( unlike
@@ -615,12 +638,14 @@ function onCallback10( pSock, myTarget )
 }
 
 //Repeated Command: ADD SPAWNER <item-id from dfns>
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RADDSPAWNER( pSock, execString )
 {
 	pSock.xText = execString;
 	var tempMsg = GetDictionaryEntry( 9060, pSock.language ); // Select target location for spawner %s:
 	pSock.CustomTarget( 11, tempMsg.replace( /%s/gi, execString ));
 }
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback11( pSock, myTarget )
 {
 	// If user cancels targeting with Escape, ClassicUO still sends a targeting response ( unlike
@@ -698,6 +723,7 @@ function onCallback11( pSock, myTarget )
 }
 
 //Repeated Command: RINCID <value>
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RINCID( pSock, execString )
 {
 	if( !isNaN( execString ))
@@ -711,6 +737,7 @@ function command_RINCID( pSock, execString )
 		pSock.SysMessage( ReqNum );
 	}
 }
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback12( pSock, myTarget )
 {
 	// If user cancels targeting with Escape, ClassicUO still sends a targeting response ( unlike
@@ -735,6 +762,7 @@ function onCallback12( pSock, myTarget )
 }
 
 // Repeated Command: RMOVABLE <value>
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RMOVABLE( pSock, execString )
 {
 	if( !isNaN( execString ))
@@ -749,6 +777,7 @@ function command_RMOVABLE( pSock, execString )
 		pSock.SysMessage( ReqNum );
 	}
 }
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback13( pSock, myTarget )
 {
 	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike
@@ -773,10 +802,12 @@ function onCallback13( pSock, myTarget )
 }
 
 // Repeated Command: RNODECAY <value>
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RNODECAY( pSock, execString )
 {
 	pSock.CustomTarget( 14, GetDictionaryEntry( 8946, pSock.language )); // Select target to set as non-decayable:
 }
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback14( pSock, myTarget )
 {
 	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike
@@ -796,5 +827,3 @@ function onCallback14( pSock, myTarget )
 		pSock.SysMessage( GetDictionaryEntry( 8932, pSock.language )); // Repeating command ended.
 	}
 }
-
-function _restorecontext_() {}

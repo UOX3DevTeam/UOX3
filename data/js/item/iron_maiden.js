@@ -1,6 +1,9 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Iron Maiden
 // Giver of very intimate, spiky hugs
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -50,6 +53,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( timerID < 2 )

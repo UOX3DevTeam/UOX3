@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Tool used by Tinkerers to craft Iron Golems
 const maxControlSlots = GetServerSetting( "MaxControlSlots" );
 
@@ -5,6 +7,7 @@ const maxControlSlots = GetServerSetting( "MaxControlSlots" );
 const maxFollowers = GetServerSetting( "MaxFollowers" );
 const golemControlSlots = 4;
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;

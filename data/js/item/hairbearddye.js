@@ -1,4 +1,7 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This script handles dying of hairs and beards
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	// Store iUsed as a custom property on pUser

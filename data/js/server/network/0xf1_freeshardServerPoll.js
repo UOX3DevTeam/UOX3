@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Handler for Freeshard Server Poll requests from
 // CUO Web (https://play.classicuo.org)
 // Last Updated: 3. Decemeber, 2024
@@ -7,7 +9,8 @@ function PacketRegistration()
 	RegisterPacket( 0xF1, 0x0 );
 }
 
-function onPacketReceive( pSocket, packetNum, subCommand )
+/** @type { ( mSock: Socket, packetNum: number ) => boolean } */
+function onPacketReceive( pSocket, packetNum )
 {
 	var cmd = pSocket.GetByte( 0 );
 	if( cmd != packetNum )
@@ -47,6 +50,7 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 	return;
 }
 
+/** @type {(pSocket: Socket) => void} */
 function SendServerPollInfoCompact( pSocket )
 {
 	var uptime = Math.floor( GetCurrentClock() / 1000 ) - Math.floor( GetStartTime() / 1000 );
@@ -72,6 +76,7 @@ function SendServerPollInfoCompact( pSocket )
 	Console.Log( "Response sent to Freeshard Server Poll Packet (totalOnline: " + totalOnline + ", upTimeInSeconds: " + uptime );
 }
 
+/** @type {(pSocket: Socket) => void} */
 function SendServerPollInfoExtended( pSocket )
 {
 	var protocolVersion = 2;

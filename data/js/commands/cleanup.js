@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This command cleans up corpses and moongates. Should normally never have to be used,
 // since these things are handled by the automatic garbage collection anyway
 
@@ -6,6 +8,7 @@ function CommandRegistration()
 	RegisterCommand( "cleanup", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_CLEANUP( socket, cmdString )
 {
 	socket.SysMessage( GetDictionaryEntry( 83, socket.language )); // Cleaning corpses and closing gates...
@@ -16,6 +19,7 @@ function command_CLEANUP( socket, cmdString )
 }
 
 var bloodIDs = [ 0x1645, 0x122A, 0x122B, 0x122C, 0x122D, 0x122E, 0x122F ];
+/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
 function onIterate( toCheck )
 {
 	if( toCheck && toCheck.isItem )
@@ -36,5 +40,3 @@ function onIterate( toCheck )
 	}
 	return false;
 }
-
-function _restorecontext_() {}

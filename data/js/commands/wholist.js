@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Menu displaying all player characterss/NPCs in the world, with options for search/filter/edit
 
 function CommandRegistration()
@@ -15,21 +17,25 @@ var adminNpcListUpdated = 0;
 var adminNpcListForceUpdate = false;
 const charAdminTooltipClilocID = 1042971; // Cliloc ID to use for tooltips. 1042971 should work with clients from ~v3.0.x to modern day
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_WHOLIST( socket, cmdString )
 {
 	ShowPlayerList( socket, cmdString, null, null );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_PLAYERADMIN( socket, cmdString )
 {
 	ShowPlayerList( socket, cmdString, null, null );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_FORCEWHO( socket, cmdString )
 {
 	ShowPlayerList( socket, "force", null, null );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_NPCADMIN( socket, cmdString )
 {
 	ShowNpcList( socket, "npcadmin", null, null );
@@ -101,6 +107,7 @@ function ShowNpcList( socket, cmdString, filteredList, filterString )
 	DisplayCharacterListGump( socket, filteredList, filterString, 0, 2 );
 }
 
+/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
 function onIterate( toCheck, socket )
 {
 	if( socket == null )
@@ -734,6 +741,7 @@ function FilterListByName( listToFilter, filterString, strictFilter )
 	return filteredList;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( timerID != 0 )
@@ -813,5 +821,3 @@ function SendWornItemPacket( socket, objectToSend, targChar )
 	socket.Send( pStream );
 	pStream.Free();
 }
-
-function _restorecontext_() {}

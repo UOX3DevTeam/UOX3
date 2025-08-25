@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Returns an array with sextant coordinates
 // Can be called from another script using
 // 	var coordsArray = TriggerEvent( 2503, "GetMapCoordinates", xCoord, yCoord, worldNum )

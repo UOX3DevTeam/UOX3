@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This command tells the command user the current in-game time
 
 function CommandRegistration()
@@ -5,6 +7,7 @@ function CommandRegistration()
 	RegisterCommand( "time", 4, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_TIME( socket, cmdString )
 {
 	TellTime( socket );

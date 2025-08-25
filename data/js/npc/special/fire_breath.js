@@ -1,8 +1,11 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Fire Breath
 const fireBreathDelay = 5;
 const fireBreathMaxRange = 12;
 const fireBreathManaCost = 30;
 
+/** @type { ( pSliver: Character ) => boolean } */
 function onAISliver( mNPC )
 {
 	var nextFireBallTime = parseInt( mNPC.GetTempTag( "nextFB" ));
@@ -53,6 +56,7 @@ function CastFireBreath( mNPC )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( mNPC, timerID )
 {
 	if( timerID == 0 && ValidateObject( mNPC ))
@@ -175,5 +179,3 @@ function GetFireBreathInfo( mNPC )
 	mNPC.SetTag( "fbFXHue", fireBreathFXColor );
 	mNPC.SetTag( "fbSFX", fireBreathSFX );
 }
-
-function _restorecontext_() {}

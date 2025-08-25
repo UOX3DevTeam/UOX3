@@ -1,4 +1,7 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Guildstone Deed/Stone
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	// Check if object is in player's backpack
@@ -107,5 +110,3 @@ function checkForNearbyDoors( pUser, itemToCheck, pSocket )
 	}
 	return false;
 }
-
-function _restorecontext_() {}

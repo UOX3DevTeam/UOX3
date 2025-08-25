@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 function CheckTravelRestrictions( targPlayer, spellNum, targX, targY, targWorld, targInstanceID )
 {
     const targRegion = GetTownRegionFromXY( targX, targY, targWorld, targInstanceID );

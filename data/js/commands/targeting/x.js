@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // These commands are used for teleporting targeted objects to user's location, or teleport them
 // to a specified location
 
@@ -7,6 +9,7 @@ function CommandRegistration()
 	RegisterCommand( "xgo", 4, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_XTELEPORT( socket, cmdString )
 {
 	if( cmdString )
@@ -57,6 +60,7 @@ function command_XTELEPORT( socket, cmdString )
 	socket.CustomTarget( 0, targMsg );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ))
@@ -65,6 +69,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_XGO( socket, cmdString )
 {
 	if( cmdString )
@@ -99,6 +104,7 @@ function command_XGO( socket, cmdString )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ))
@@ -130,6 +136,7 @@ function onCallback1( socket, ourObj )
 	socket.xText = null;
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ))

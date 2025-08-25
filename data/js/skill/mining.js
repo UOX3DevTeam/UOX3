@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This script handles all functionality related to mining, grave digging
 
 // The MineCheck setting determines where players are able to mine
@@ -91,6 +93,7 @@ const validMapSandTilesIDs = [
 	0x659, 0x65A, 0x657, 0x658, 0x659, 0x65A, 0x667, 0x668, 0x669, 0x66A
 ];
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -115,6 +118,7 @@ function onUseChecked( pUser, iUsed )
 	return true;
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	if( socket == null )
@@ -392,6 +396,7 @@ function SandMining( socket, mChar, targX, targY )
 	mChar.StartTimer( 1500, 1, true );
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( mChar, timerID )
 {
 	switch( timerID )
@@ -842,5 +847,3 @@ function WeightedRandom( min, max )
 {
  	return Math.round( max / ( Math.random() * max + min ));
 }
-
-function _restorecontext_() {}

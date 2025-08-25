@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Used to trigger hard-coded targeting actions for some items that normally rely on their item
 // type for functionality, but then lose that functionality when becoming a house addon, since
 // all house addons end up with item type IT_HOUSEADDON
@@ -5,6 +7,7 @@
 // Instead, this script is triggered via entries in jse_objectassociations.scp, and call on the
 // hard-coded target requests that would normally be executed for the non-addon variant of the
 // items
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	if( !ValidateObject( iUsed ))
@@ -63,6 +66,7 @@ function onUseChecked( pUser, iUsed )
 }
 
 // Spinning Wheel functionality
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSocket, myTarget )
 {
 	var pUser = pSocket.currentChar;
@@ -109,6 +113,7 @@ function onCallback0( pSocket, myTarget )
 }
 
 // Loom functionality
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( pSocket, myTarget )
 {
 	var pUser = pSocket.currentChar;

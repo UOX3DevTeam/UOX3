@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 function SkillRegistration()
 {
 	RegisterSkill( 22, true );	// Provocation
@@ -7,7 +9,8 @@ function SkillRegistration()
 const isProvokeDifficultyBased = ( GetServerSetting( "CoreShardEra" ) >= EraStringToNum ( "aos" ));
 const useLoSCheckForProvocation = true;
 
-function onSkill( pUser, objType, skillUsed )
+/** @type { ( skillUse: BaseObject, skillUsed: number, objType: 0 | 1 ) => boolean } */
+function onSkill( pUser, skillUsed, objType )
 {
 	var pSock = pUser.socket;
 	if( pSock )
@@ -30,6 +33,7 @@ function onSkill( pUser, objType, skillUsed )
 	return true;
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, ourObj )
 {
 	if( ValidateObject( ourObj ) && ourObj.isChar )
@@ -96,6 +100,7 @@ function onCallback0( pSock, ourObj )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( pSock, toAttack )
 {
 	if( ValidateObject( toAttack ))

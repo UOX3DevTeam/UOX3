@@ -1,19 +1,24 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Enable and Disable the weapon Special Moves
 const paralyzingBlow = true;
 const crushingBlow = true;
 const concussionBlow = true;
 
+/** @type { ( equipper: Character, equipping: Item ) => boolean } */
 function onEquip( pEquipper, iEquipped ) 
 {
 	pEquipper.AddScriptTrigger( 5050 );
 }
 
 // Remove script trigger on unequip
+/** @type { ( equipper: Character, equipping: Item ) => boolean } */
 function onUnequip( pUnequipper, iUnequipped ) 
 {
 	pUnequipper.RemoveScriptTrigger( 5050 );
 }
 
+/** @type { ( attacker: Character, defender: Character, hitStatus: boolean, hitLoc: number, damageDealt: number ) => void } */
 function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 {
 	const coreShardEra = GetServerSetting( "CoreShardEra" );
@@ -97,7 +102,7 @@ function CrushingBlow( pAttacker, pDefender )
 
 /*
 If a swordsman is using a two-handed weapon, he may sometimes deliver a Concussion Blow,
-during which the victim’s intelligence is halved for 30 seconds. The effects of a concussion blow are not cumulative,
+during which the victimï¿½s intelligence is halved for 30 seconds. The effects of a concussion blow are not cumulative,
 once a target is the victim of a concussion blow, they cannot be hit in that manner again for 30 seconds. 
 The base chance to deliver this special blow is your Anatomy skill level divided by 4.
 */
@@ -128,6 +133,7 @@ function ConcussionBlow( pAttacker, pDefender )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( timerID == 1 )
@@ -142,5 +148,3 @@ function onTimer( timerObj, timerID )
 		timerObj.SetTag( "concussion", null );
 	}
 }
-
-function _restorecontext_() {}

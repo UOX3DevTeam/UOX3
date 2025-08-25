@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Alternative castle gate opener
 // Last Updated: 12/11/2021
 //
@@ -12,6 +14,7 @@
 // The gates are animated up/down to max/min heights based on MOREX (part 2, for min)
 // and MOREX (part 3, for max) values.
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -77,6 +80,7 @@ function SearchForGate( iUsed, trgItem )
 	return false;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( !ValidateObject( timerObj ))
@@ -98,5 +102,3 @@ function onTimer( timerObj, timerID )
 	}
 	timerObj.SetTempTag( "isBusy", false );
 }
-
-function _restorecontext_() {}

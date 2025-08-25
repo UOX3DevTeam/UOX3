@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Pear-Picking Script
 // 20/02/2006 Xuri; xuri@sensewave.com
 // When a (dynamic) pear tree is double-clicked, it's setup with
@@ -8,6 +10,7 @@
 const pearGrowthDelay = 120000; //Delay in milliseconds before resources respawns
 const maxPearResource = 5; //maximum amount of resources on a given item
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var isInRange = pUser.InRange( iUsed, 3 );
@@ -70,6 +73,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( iUsed, timerID )
 {
 	if( timerID == 1 )

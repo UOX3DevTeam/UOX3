@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This script is attached to characters when a magic weapon with a spell effect is equipped
 const scriptID = 3305;
 
@@ -7,6 +9,7 @@ const scriptID = 3305;
 // spells.dfn
 const useAttackerMagerySkill = false;
 
+/** @type { ( attacker: Character, defender: Character, hitStatus: boolean, hitLoc: number, damageDealt: number ) => void } */
 function onAttack( mAttacker, mDefender, hitStatus, hitLoc, damageDealt )
 {
 	// Fetch weapon in main hand

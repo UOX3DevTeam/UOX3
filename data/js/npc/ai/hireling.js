@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Hirelings, by Xuri (xuri@uox3.org)
 // Version: 1.1
 // Last Updated: September 10th 2022
@@ -78,6 +80,7 @@ const maxFollowers = GetServerSetting( "MaxFollowers" ); // The maximum amount o
 const maxControlSlots = GetServerSetting( "MaxControlSlots" ); // The max amount of pet control slots a player can have active at a given time
 const maxPetOwners = GetServerSetting( "MaxPetOwners" ); // The max amount of owners a pet/hireling is willing to accept orders from in its lifetime
 
+/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => null | undefined | number | boolean } */
 function onSpeech( pSpeech, pChar, hireling )
 {
 	var pSock = pChar.socket;
@@ -625,6 +628,7 @@ function ResetHireling( hireling )
 }
 
 // Handle dropping of gold on NPC to hire them
+/** @type { ( srcChar: Character, targChar: Character, i: Item ) => number } */
 function onDropItemOnNpc( pChar, hireling, iDropped )
 {
 	var hPack = hireling.pack;
@@ -804,6 +808,7 @@ function onDropItemOnNpc( pChar, hireling, iDropped )
 	return true;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( hireling, timerID )
 {
 	if( !ValidateObject( hireling ))
@@ -916,6 +921,7 @@ function CalculateHirelingPay( hireling )
 	return Math.round( payPerDay );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, myTarget )
 {
 	if( socket == null )
@@ -1356,6 +1362,7 @@ function PatrolArea( socket, pChar, myTarget )
 	}
 }
 
+/** @type { ( npc: Character, pathfindResult: number ) => boolean } */
 function onPathfindEnd( hireling, pathfindResult )
 {
 	if( ValidateObject( hireling ))
@@ -1474,6 +1481,7 @@ function onPathfindEnd( hireling, pathfindResult )
 	}
 }
 
+/** @type { ( srcObj: BaseObject, objInRange: BaseObject ) => void } */
 function inRange( hireling, objInRange )
 {
 	if( ValidateObject( hireling.owner ) && hireling.owner.socket != null )

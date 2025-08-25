@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 function CommandRegistration()
 {
 	RegisterCommand( "cnsyell", 4, true );
@@ -8,6 +10,7 @@ function CommandRegistration()
 }
 
 // Yell so all Counselors can hear it
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_CNSYELL( socket, cmdString )
 {
 	if( cmdString )
@@ -17,6 +20,7 @@ function command_CNSYELL( socket, cmdString )
 }
 
 // Yell so all Seers can hear it
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_GMYELL( socket, cmdString )
 {
 	if( cmdString )
@@ -26,6 +30,7 @@ function command_GMYELL( socket, cmdString )
 }
 
 // Yell so all GMs can hear it
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_GMYELL( socket, cmdString )
 {
 	if( cmdString )
@@ -35,6 +40,7 @@ function command_GMYELL( socket, cmdString )
 }
 
 // Yell so all Admins can hear it
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ADMINYELL( socket, cmdString )
 {
 	if( cmdString )
@@ -44,6 +50,7 @@ function command_ADMINYELL( socket, cmdString )
 }
 
 // Yell so _everyone_ can hear it
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_YELL( socket, cmdString )
 {
 	if( cmdString )
