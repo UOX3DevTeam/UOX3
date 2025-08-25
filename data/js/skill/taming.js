@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 function SkillRegistration()
 {
 	RegisterSkill( 35, true );	// Animal Taming
@@ -12,7 +14,8 @@ const maxTimesTamed = 5; // The maximum number of times a pet can be tamed (by d
 const checkPetControlDifficulty = GetServerSetting( "CheckPetControlDifficulty" );
 const petBondingEnabled = GetServerSetting( "PetBondingEnabled" );
 
-function onSkill( pUser, objType, skillUsed )
+/** @type { ( skillUse: BaseObject, skillUsed: number, objType: 0 | 1 ) => boolean } */
+function onSkill( pUser, skillUsed, objType )
 {
 	var pSock = pUser.socket;
 	if( pSock )
@@ -48,6 +51,7 @@ function onSkill( pUser, objType, skillUsed )
 	return true;
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, ourObj )
 {
 	var pUser = pSock.currentChar;
@@ -127,6 +131,7 @@ function onCallback0( pSock, ourObj )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( pUser, timerID )
 {
 	if( !RunTameChecks( pUser ))
@@ -422,5 +427,3 @@ function CheckTamingRestrictions( toTame, pUser )
 			return false;
 	}
 }
-
-function _restorecontext_() {}

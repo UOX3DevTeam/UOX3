@@ -1,3 +1,6 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
+/** @type { ( attacker: Character, defender: Character, hitStatus: boolean, hitLoc: number, damageDealt: number ) => void } */
 function onAttack( pAttacker, pDefender ) 
 {
 	if( RandomNumber( 1, 100 ) <= 20 )

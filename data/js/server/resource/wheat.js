@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Wheat-Picking Script
 // 20/02/2006 Xuri; xuri@uox3.org
 // When (dynamic)wheat is double-clicked, it's setup with
@@ -10,6 +12,7 @@ const wheatGrowthIntervalMax = 90000; // Max delay in milliseconds between each 
 const wheatWiltingDelay = 300000; // Delay in milliseconds before fully grown wheat wilts
 const wheatResourceDecay = 3600; // Time (in seconds) it takes for resource to decay, allowing another to spawn in its place if spawned using spawn regions. 0 to disable decay
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var isInRange = pUser.InRange( iUsed, 3 );
@@ -56,6 +59,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( iUsed, timerID )
 {
 	if( timerID == 1 ) // Starts phase 1 of wheat growth

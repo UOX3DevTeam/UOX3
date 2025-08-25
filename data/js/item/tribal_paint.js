@@ -1,4 +1,7 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Script for Tribal Paint/Savage Kin Paint consumable
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;

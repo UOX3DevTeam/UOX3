@@ -1,3 +1,6 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
+/** @type { ( equipper: Character, equipping: Item ) => boolean } */
 function onEquipAttempt( pEquipper, iEquipped )
 {
 	var blockEquip = pEquipper.GetTempTag( "blockEquip" );
@@ -11,6 +14,7 @@ function onEquipAttempt( pEquipper, iEquipped )
 	return true;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	var mChar = CalcCharFromSer(parseInt( timerObj.GetTempTag( "charSer" )))

@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 const mapWaterTiles = [ 0x00a8,0x00a9,0x00aa,0x00ab ];
 const staticWaterTiles = [
 	0x1797, 0x179c,
@@ -17,6 +19,7 @@ const staticWaterTiles = [
 	0x5653, 0x565e
 ];
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -81,6 +84,7 @@ function DoItemChecks( socket, pUser, iUsed )
 	return true;
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	var mChar = socket.currentChar;
@@ -340,6 +344,7 @@ function weightedRandom( min, max )
  	return Math.round( max / ( Math.random() * max + min ));
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( fishingTool, timerID )
 {
 	if( !ValidateObject( fishingTool ))

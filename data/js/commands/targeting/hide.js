@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // These commands let GMs permanently hide or unhide objects
 
 function CommandRegistration()
@@ -6,12 +8,14 @@ function CommandRegistration()
 	RegisterCommand( "unhide", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_HIDE( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 244, socket.language );
 	socket.CustomTarget( 0, targMsg );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ))
@@ -27,12 +31,14 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_UNHIDE( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 245, socket.language ); // Select creature to reveal.
 	socket.CustomTarget( 1, targMsg );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ))

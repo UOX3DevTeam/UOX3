@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // These commands let GMs send players to jail/release players from jail
 
 function CommandRegistration()
@@ -6,6 +8,7 @@ function CommandRegistration()
 	RegisterCommand( "release", 4, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_JAIL( socket, cmdString )
 {
 	socket.tempint = 86400;
@@ -18,6 +21,7 @@ function command_JAIL( socket, cmdString )
 	socket.CustomTarget( 0, targMsg, 1 );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )
@@ -37,12 +41,14 @@ function onCallback0( socket, ourObj )
 	socket.tempint = 0;
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_RELEASE( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 181, socket.language ); // Select player to release from jail.
 	socket.CustomTarget( 1, targMsg, 2 );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )

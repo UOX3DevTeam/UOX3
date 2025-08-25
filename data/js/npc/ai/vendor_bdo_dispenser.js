@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This script handles BOD offers from shopkeepers
 const offerBodsFromItemSales = GetServerSetting( "OfferBODsFromItemSales" ); // If true, BODs can be offered by vendor upon selling items to them
 const offerBodsFromContextMenu = GetServerSetting( "OfferBODsFromContextMenu" ); // Not present in LBR, disabled by default. Needs to be a server setting
@@ -300,6 +302,7 @@ const BODTypesToRewardsAoS = {
 	2: TailorRewardTiersToItems
 };
 
+/** @type { ( targSock: Socket, objVendor: Character, objItemSold: BaseObject, numItemsSold: number ) => boolean } */
 function onSoldToVendor( pSock, npcVendor, iSold )
 {
 	var pUser = pSock.currentChar;
@@ -335,6 +338,7 @@ function CheckBodTimers( pUser, bodType )
 	}
 }
 
+/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => null | undefined | number | boolean } */
 function onSpeech( myString, pUser, myNPC )
 {
 	if( !ValidateObject( pUser ) || !ValidateObject( myNPC ) || !offerBodsFromContextMenu || !pUser.InRange( myNPC, 8 ))
@@ -662,6 +666,7 @@ function SelectBodEntry( bodType, bodSubtype, considerPlayerSkill, pSkill )
 	return CreateEntries[validItems[rndCreateIndex]];
 }
 
+/** @type { ( srcChar: Character, targChar: Character, i: Item ) => number } */
 function onDropItemOnNpc( pDropper, npcDroppedOn, iDropped )
 {
 	var socket = pDropper.socket;

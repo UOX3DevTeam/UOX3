@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Menu displaying all item-based spawners, letting you edit them on-the-fly from menu
 
 function CommandRegistration()
@@ -11,6 +13,7 @@ var spawnerListUpdated = 0;
 var spawnerListTooltipClilocID = 1042971; // Cliloc ID to use for tooltips. 1042971 should work with clients from ~v3.0.x to modern day
 var spawnerListForceUpdate = false;
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_SPAWNADMIN( socket, cmdString )
 {
 	ShowSpawnerList( socket, cmdString, null, null );
@@ -39,6 +42,7 @@ function ShowSpawnerList( socket, cmdString, filteredList, filterString )
 	DisplaySpawnerListGump( socket, filteredList, filterString, 0 );
 }
 
+/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
 function onIterate( toCheck, socket )
 {
 	if( socket == null )
@@ -571,6 +575,7 @@ function FilterListByName( listToFilter, filterString, strictFilter )
 	return filteredList;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( timerID == 0 )
@@ -578,5 +583,3 @@ function onTimer( timerObj, timerID )
 		DisplaySpawnerListGump( timerObj.socket, null, "", 0 );
 	}
 }
-
-function _restorecontext_() {}

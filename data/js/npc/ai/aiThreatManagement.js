@@ -1,3 +1,6 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
+/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => boolean } */
 function onDamage( damaged, attacker, damageValue, damageType )
 {
 	if( !ValidateObject( attacker ) || damaged == attacker )

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This is a generic script for determining combat animations based on whether or not a character is mounted
 // You can call this script from an external script by using either of the two following lines after
 // first defining weaponType through weapontypes.js (scriptID 2500)...

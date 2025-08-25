@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Remote Movement Commands!
 //
 // Use 'xwalk <target> <target-location> to make the targeted character walk to targeted location
@@ -11,6 +13,7 @@ function CommandRegistration()
 	RegisterCommand( "xturn", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_XWALK( socket, cmdString )
 {
 	var pUser = socket.currentChar;
@@ -31,6 +34,7 @@ function command_XWALK( socket, cmdString )
 	pUser.CustomTarget( 0, GetDictionaryEntry( 8254, socket.language )); // Select NPC to move remotely using xwalk:
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_XRUN( socket, cmdString )
 {
 	var pUser = socket.currentChar;
@@ -51,6 +55,7 @@ function command_XRUN( socket, cmdString )
 	pUser.CustomTarget( 0, GetDictionaryEntry( 8253, socket.language )); // Select NPC to move remotely using xrun:
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_XTURN( socket, cmdString )
 {
 	var pUser = socket.currentChar;
@@ -58,6 +63,7 @@ function command_XTURN( socket, cmdString )
 	pUser.CustomTarget( 0, GetDictionaryEntry( 8255, socket.language )); // Select NPC to turn remotely using xturn:
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, myTarget )
 {
 	var pUser = socket.currentChar;
@@ -73,6 +79,7 @@ function onCallback0( socket, myTarget )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, myTarget )
 {
 	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike
@@ -123,5 +130,3 @@ function onCallback1( socket, myTarget )
 		socket.ignoreDoors = null;
 	}
 }
-
-function _restorecontext_() {}

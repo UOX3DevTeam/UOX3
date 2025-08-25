@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Switch Door Combo
 //
 // This script can be used to link up switches to doors, which will be
@@ -38,6 +40,7 @@
 
 const switchScriptID = 4761; // ID of this script in jse_fileassociations.scp
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iSwitch )
 {
 	if( !ValidateObject( pUser ) || !ValidateObject( iSwitch ))
@@ -266,6 +269,7 @@ function TriggerSwitchAndDoorEffects( iSwitch )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( !ValidateObject( timerObj ))
@@ -484,6 +488,7 @@ function InitializeSwitchDoorCombo( iSwitch, pSock )
 	return false;
 }
 
+/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
 function onIterate( myObject, pSock )
 {
 	let iSwitch = pSock.iSwitch;
@@ -508,5 +513,3 @@ function onIterate( myObject, pSock )
 
 	return false;
 }
-
-function _restorecontext_() {}

@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 const disguiseDuration = 1000 * 60 * 120; // 2 hours
 
 const humanMaleHair = [
@@ -94,6 +96,7 @@ const gargoyleFemaleHorns = [
 	[0, 0, 0, 0, 2200] // None/Bald
 ];
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;
@@ -356,6 +359,7 @@ function onGumpPress( pSock, buttonID, gumpData )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( pUser, timerID )
 {
 	if( timerID == 1 )
@@ -386,5 +390,3 @@ function onTimer( pUser, timerID )
 		pUser.isDisguised = false;
 	}
 }
-
-function _restorecontext_() {}

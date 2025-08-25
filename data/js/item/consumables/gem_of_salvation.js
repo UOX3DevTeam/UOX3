@@ -1,3 +1,6 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
+/** @type { ( pDead: Character, iCorpse: Item ) => boolean } */
 function onDeath( pDead, iCorpse )
 {
 	if( !ValidateObject( pDead ) || pDead.npc || !pDead.online )
@@ -100,5 +103,3 @@ function onGumpPress( pSock, pButton, gumpData )
 
 	pDead.frozen = false;
 }
-
-function _restorecontext_() {}

@@ -1,3 +1,15 @@
+21/08/2025 - strattond (#414)
+    [ADD] Typescript definitions for events, methods and exposed classes from the core
+        NOTE: This is *incomplete* and further revisions may be required.  Additionally, it does NOT force you to use it - if you code the existing way, it'll still work.  This just gives you sanity on scripting.
+    [ADD] Add PowerShell script to create new TS file from core JSON updates
+    [ADD] Add PowerShell script to update or add JSDoc for appropriate functions in existing scripts
+    [UPD] Existing scripts have JSDoc annotations for the parts that matter to ensure bindings take effect
+    [FIX] Fixed incorrect parameter order in all scripts that use onSkill JS event
+
+20/08/2025 - Xuri (#415)
+	[FIX] Fixed issue with github workflow files that prevented automatic update of changelog.txt based on PR descriptions. Skip by assigning 'skip changelog' label to PR
+	[FIX] Updated UOX3 Build github workflow to prevent double-building on creation of new pull requests. Now triggers either for pushes to main branches OR for creation/update of PRs
+
 13/08/2025 - Dragon Slayer (#409)
 	[FIX] Fixed issue with .WalkTo() Character JS Method that was missing the if( argc < 2 || argc > 5 ) line
 	[FIX] Fixed error msg for .RunTo() Character JS Method that referenced WalkTo instead of RunTo

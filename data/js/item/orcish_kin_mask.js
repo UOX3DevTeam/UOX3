@@ -1,4 +1,7 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Equip-effects for masks of orcish kin
+/** @type { ( equipper: Character, equipping: Item ) => boolean } */
 function onEquipAttempt( pEquipper, iEquipped )
 {
 	var pSocket = pEquipper.socket;
@@ -24,6 +27,7 @@ function onEquipAttempt( pEquipper, iEquipped )
 	return true;
 }
 
+/** @type { ( equipper: Character, equipping: Item ) => boolean } */
 function onEquip( pEquipper, iEquipped )
 {
 	// Reduce equipper's karma

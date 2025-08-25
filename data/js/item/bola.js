@@ -1,3 +1,6 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -52,7 +55,8 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
-function onCallback0( socket, myTarget)
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+function onCallback0( socket, myTarget )
 {
 	var pUser = socket.currentChar;
 	var iUsed = socket.tempObj;
@@ -124,6 +128,7 @@ function onCallback0( socket, myTarget)
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( pUser, timerID )
 {
 	var socket = pUser.socket;

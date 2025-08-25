@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Sends a packet to toggle ghost mode appearance for an NPC on the client.
 // Typically used to make dead pets or NPCs appear as transparent ghosts without affecting game logic.
 function SendNpcGhostMode( pSock, unknownFlag, petSerial, ghostFlag )

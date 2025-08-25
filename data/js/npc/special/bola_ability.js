@@ -1,4 +1,7 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Allows NPC to swing a bola and dismount a mounted player/character
+/** @type { ( attacker: Character, defender: Character, hitStatus: boolean, hitLoc: number, damageDealt: number ) => void } */
 function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 {
 	// Don't swing bola if attacker is invalid or dead
@@ -46,6 +49,7 @@ function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( timerID == 1 )

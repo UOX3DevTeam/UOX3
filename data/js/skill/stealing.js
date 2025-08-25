@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 function SkillRegistration()
 {
 	RegisterSkill( 33, true );	// Stealing
@@ -41,7 +43,8 @@ const specialMonsterLootOverride = -1; // -1 = no override, 0 = always false, 1 
 // If enabled, players can steal from town guards just as they can from any other NPC
 const stealFromGuardsOverride = false;
 
-function onSkill( pThief, objType, skillUsed )
+/** @type { ( skillUse: BaseObject, skillUsed: number, objType: 0 | 1 ) => boolean } */
+function onSkill( pThief, skillUsed, objType )
 {
 	var pSock = pThief.socket;
 	if( pSock )
@@ -91,6 +94,7 @@ function onSkill( pThief, objType, skillUsed )
 	return true;
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, myTarget )
 {
 	if( pSock == null )
@@ -1189,6 +1193,7 @@ function DoStealing( pSock, itemOwner, itemToSteal, randomItem )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( !ValidateObject( timerObj ))
@@ -1348,7 +1353,3 @@ function CleanupSpecialItem( itemToSteal )
 		}
 	}
 }
-
-// Dummy function to restore script context after other JS events have triggered and executed
-// as part of something happening in this script
-function _restorecontext_() {}

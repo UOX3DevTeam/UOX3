@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 const textHue = 0x480;				// Color of the text.
 const scriptID = 4030;				// Use this to tell the gump what script to close.
 const gumpDelay = 2000;				// Timer for the gump to reapear after crafting.
@@ -74,6 +76,7 @@ function PageX( socket, pUser, pageNum )
 	myGump.Free();
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( pUser, timerID )
 {
 	if( !ValidateObject( pUser ))
@@ -443,6 +446,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( pSock, ourObj )
 {
 	var pUser = pSock.currentChar;
@@ -499,6 +503,7 @@ function UnravelTarget( pSock )
 }
 
 // Clothes and leather armor can be unravelled back into cloth and leather
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( pSock, ourObj )
 {
 	// Unravel item, get cloth/leather in return

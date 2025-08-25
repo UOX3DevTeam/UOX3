@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This command is used to show the item type and some details about that for targeted object
 
 function CommandRegistration()
@@ -5,11 +7,13 @@ function CommandRegistration()
 	RegisterCommand( "showdetail", 4, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_SHOWDETAIL( socket, cmdString )
 {
 	socket.CustomTarget( 0, GetDictionaryEntry( 8110, socket.language )); // Select Item to get Type Info from:
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	var message;

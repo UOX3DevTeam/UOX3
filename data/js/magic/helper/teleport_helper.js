@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Helper function to use when teleporting
 function TeleportHelper( mChar, targX, targY, targZ, targWorld, targInstanceID, includePets )
 {

@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Moongate.js (v1.5)
 // Gump driven gates for location and facet travel 
 // Originally written by Rais 7th Feb 02
@@ -31,6 +33,7 @@ var enableMalas = GetMoongateFacetStatus( 3 );
 var enableTokuno = GetMoongateFacetStatus( 4 );
 var enableTerMur = GetMoongateFacetStatus( 5 );
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed ) 
 { 
 	// get users socket
@@ -60,6 +63,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
+/** @type { ( targSock: Socket, objColliding: Character, objCollideWith: BaseObject ) => boolean } */
 function onCollide( srcSock, pUser, iUsed )
 {
 	if( srcSock == null || !CanUseGate( srcSock, pUser ))
@@ -663,5 +667,3 @@ function DisplayTravelGump( srcSock, pUser )
 	}
 	myGump.Send( srcSock );
 }
-
-function _restorecontext_() {}

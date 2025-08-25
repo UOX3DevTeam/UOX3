@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 function CommandRegistration()
 {
 	RegisterCommand( "gumpmenu", 8, true );
@@ -5,6 +7,7 @@ function CommandRegistration()
 }
 
 // This command is used to open specific gumps from dfndata/misc/gumps.dfn
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_GUMPMENU( socket, cmdString )
 {
 	if( cmdString )
@@ -14,6 +17,7 @@ function command_GUMPMENU( socket, cmdString )
 }
 
 // This command is used to open a proof-of-concept (nonfunctional) account management gump
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_NACCT( socket, cmdString )
 {
 	if( cmdString )

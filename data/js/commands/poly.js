@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This command is a shortcut for changing the body ID of user
 
 function CommandRegistration()
@@ -5,6 +7,7 @@ function CommandRegistration()
 	RegisterCommand( "poly", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_POLY( socket, cmdString )
 {
 	if( cmdString )

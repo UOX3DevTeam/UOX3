@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This command is used to quickly teleport to a specific place, character, or set of coordinates
 // See location map at bottom of file for list of locations to teleport directly to using
 // 'go [locationName]
@@ -7,6 +9,7 @@ function CommandRegistration()
 	RegisterCommand( "go", 4, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_GO( socket, cmdString )
 {
 	var mChar = socket.currentChar;
@@ -635,5 +638,3 @@ const locationMap = {
 		return false;
 	}
 };
-
-function _restorecontext_() {}

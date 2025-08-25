@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // GM commands for teleporting user and/or other objects around
 
 function CommandRegistration()
@@ -9,17 +11,20 @@ function CommandRegistration()
 }
 
 // Alias of TELESTUFF
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_MOVE( socket, cmdString )
 {
 	command_TELESTUFF( socket, cmdString );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_TELESTUFF( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 250, socket.language ); // Select player/object to teleport.
 	socket.CustomTarget( 0, targMsg );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	var targMsg;
@@ -39,6 +44,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
@@ -76,6 +82,7 @@ function onCallback1( socket, ourObj )
 	socket.tempObj = null;
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_TELE( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 185, socket.language ); // Select teleport target.
@@ -83,11 +90,13 @@ function command_TELE( socket, cmdString )
 }
 
 // Alias of TELE
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_TELEPORT( socket, cmdString )
 {
 	command_TELE( socket, cmdString );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( socket, ourObj )
 {
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
@@ -129,5 +138,3 @@ function doTele( toTele, targX, targY, targZ )
 	toTele.SetLocation( targX, targY, targZ );
 	toTele.StaticEffect( 0x372A, 0x09, 0x06 );
 }
-
-function _restorecontext_() {}

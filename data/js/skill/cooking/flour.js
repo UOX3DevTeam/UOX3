@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // cooking script
 // 17/06/2001 Yeshe; yeshe@manofmystery.org
 // 21/07/2003 Xuri; Updated/rewrote the script
@@ -40,6 +42,7 @@ function onUseChecked ( pUser, iUsed )
 	return false;
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( tSock, myTarget )
 {
 	var pUser = tSock.currentChar;

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This command is a shortcut for the "vendor buy/vendor sell" voice commands,
 // and to turn shopkeeper NPCs into normal NPCs
 
@@ -8,24 +10,28 @@ function CommandRegistration()
 	RegisterCommand( "removeshop", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_BUY( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 233, socket.language ); // Select the shopkeeper you'd like to buy from.
 	socket.CustomTarget( 0, targMsg );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )
 		socket.BuyFrom( ourObj );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_SELL( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 236, socket.language ); // Select the NPC to sell to.
 	socket.CustomTarget( 1, targMsg );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )
@@ -34,12 +40,14 @@ function onCallback1( socket, ourObj )
 	}
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_REMOVESHOP( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 262, socket.language ); // Select shopkeeper to remove shop packs from.
 	socket.CustomTarget( 2, targMsg );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )

@@ -1,0 +1,26 @@
+# .github/workflows/auto_merge_changelog_PR.yml
+name: Auto-Merge Changelog PR
+
+on:
+  # Run when a pull request is opened or a label is added
+  pull_request_target:
+    types:
+      - opened
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: write
+    steps:
+      - name: Merge Changelog PR
+        # This only triggers when github-actions[bot] creates a PR with 'automated changelog merge' label
+        if: >
+          github.event.pull_request.user.login == 'github-actions[bot]' &&
+          contains(github.event.pull_request.labels.*.name, 'automated changelog merge')
+        run: |
+          # --admin allows ovverriding requirement for approval before merging PR
+          gh pr merge --squash --admin "${{ github.event.pull_request.number }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
