@@ -310,129 +310,129 @@ function ResignQuest( player, questID )
 	}
 }*/
 
-function ManageQuestItems(player, questID, mark)
+function ManageQuestItems( player, questID, mark )
 {
 	var socket = player.socket;
-	var pack   = player.pack;
+	var pack = player.pack;
 
-	if (!ValidateObject(pack))
+	if( !ValidateObject( pack ))
 	{
-		socket.SysMessage(GetDictionaryEntry(19606, socket.language)); // You do not have a backpack.
+		socket.SysMessage( GetDictionaryEntry( 19606, socket.language )); // You do not have a backpack.
 		return;
 	}
 
 	// Try to fetch quest info, but DO NOT early-return on failure when unmarking
-	var quest = TriggerEvent(5801, "QuestList", questID) || {};
+	var quest = TriggerEvent( 5801, "QuestList", questID ) || {};
 
 	// Build a quick lookup for sectionIDs (for mark path and as a fallback on unmark)
 	var sectionLookup = {};
-	if (quest.targetItems && quest.targetItems.length)
+	if( quest.targetItems && quest.targetItems.length )
 	{
-		for (var i = 0; i < quest.targetItems.length; i++)
+		for( var i = 0; i < quest.targetItems.length; i++ )
 		{
 			// targetItems are data objects, not items; don't call GetTag on them
-			sectionLookup[String(quest.targetItems[i].sectionID)] = true;
+			sectionLookup[String( quest.targetItems[i].sectionID )] = true;
 		}
 	}
 
-	function unmarkItem(it)
+	function unmarkItem( item )
 	{
-		var saved = it.GetTag("saveColor");
-		if (saved != null && !isNaN(parseInt(saved)))
-			it.color = parseInt(saved);
+		var saved = item.GetTag( "saveColor" );
+		if( saved != null && !isNaN(parseInt( saved )))
+			item.color = parseInt( saved );
 		else
-			it.color = 0; // default
+			item.color = 0; // default
 
-		it.isNewbie  = false;
-		it.isDyeable = true;
+		item.isNewbie  = false;
+		item.isDyeable = true;
 
-		it.SetTag("QuestItem", null);
-		it.SetTag("QuestSectionID", null);
-		it.SetTag("QuestID", null);
-		it.SetTag("saveColor", null);
+		item.SetTag( "QuestItem", null );
+		item.SetTag( "QuestSectionID", null );
+		item.SetTag( "QuestID", null );
+		item.SetTag( "saveColor", null );
 
-		it.RemoveScriptTrigger(5806);
+		item.RemoveScriptTrigger( 5806 );
 	}
 
 	// Optional: handle items inside nested containers
-	function forEachItemIn(container, fn)
+	function forEachItemIn( container, fn )
 	{
-		for (var ci = container.FirstItem(); !container.FinishedItems(); ci = container.NextItem())
+		for (var containerItem = container.FirstItem(); !container.FinishedItems(); containerItem = container.NextItem())
 		{
-			if (!ValidateObject(ci)) continue;
-			fn(ci);
+			if( !ValidateObject( containerItem ))
+				continue;
+			fn( containerItem );
 			// If this item is itself a container, walk it too (API mirrors backpacks)
-			if (typeof ci.FirstItem === "function" && typeof ci.FinishedItems === "function")
+			if( typeof containerItem.FirstItem === "function" && typeof containerItem.FinishedItems === "function" )
 			{
-				forEachItemIn(ci, fn);
+				forEachItemIn( containerItem, fn );
 			}
 		}
 	}
 
-	forEachItemIn(pack, function(currentItem)
+	forEachItemIn( pack, function( currentItem )
 	{
-		if (mark)
+		if( mark )
 		{
 			// Collection targets
 			var matchesTarget = sectionLookup[String(currentItem.sectionID)] === true;
 
 			// Delivery target
-			if (!matchesTarget && quest.type == "delivery" && quest.deliveryItem)
+			if( !matchesTarget && quest.type == "delivery" && quest.deliveryItem )
 			{
-				matchesTarget = (String(currentItem.sectionID) == String(quest.deliveryItem.sectionID));
+				matchesTarget = ( String( currentItem.sectionID ) == String( quest.deliveryItem.sectionID ));
 			}
 
-			if (matchesTarget && !currentItem.GetTag("QuestItem"))
+			if( matchesTarget && !currentItem.GetTag( "QuestItem" ))
 			{
-				currentItem.SetTag("saveColor", currentItem.color);
+				currentItem.SetTag( "saveColor", currentItem.color );
 				currentItem.color     = 0x04ea; // Orange hue
 				currentItem.isNewbie  = true;
 				currentItem.isDyeable = false;
 
-				currentItem.SetTag("QuestItem", true);
-				currentItem.SetTag("QuestSectionID", currentItem.sectionID);
-				currentItem.SetTag("QuestID", questID);           // <-- tie to quest!
+				currentItem.SetTag( "QuestItem", true );
+				currentItem.SetTag( "QuestSectionID", currentItem.sectionID);
+				currentItem.SetTag( "QuestID", questID );
 
-				currentItem.AddScriptTrigger(5806);
+				currentItem.AddScriptTrigger( 5806 );
 				// socket.SysMessage("Marked item as a quest item.");
 			}
 			return;
 		}
 
 		// UNMARK path (resign). Prefer exact QuestID match; fall back to section match if quest data exists.
-		if (currentItem.GetTag("QuestItem"))
+		if( currentItem.GetTag( "QuestItem" ))
 		{
-			var itemQuestID   = currentItem.GetTag("QuestID");
-			var itemSectionID = String(currentItem.GetTag("QuestSectionID") || currentItem.sectionID);
+			var itemQuestID   = currentItem.GetTag( "QuestID" );
+			var itemSectionID = String( currentItem.GetTag( "QuestSectionID" ) || currentItem.sectionID );
 
 			var belongsToThisQuest =
-				(itemQuestID != null && String(itemQuestID) == String(questID)) ||
-				(sectionLookup[itemSectionID] === true) ||           // fallback if QuestID wasn’t set earlier
-				(itemQuestID == null && !quest.targetItems);         // last resort if we have no quest data at all
+				( itemQuestID != null && String( itemQuestID ) == String( questID )) ||
+				( sectionLookup[itemSectionID] === true ) ||           // fallback if QuestID wasn’t set earlier
+				( itemQuestID == null && !quest.targetItems );         // last resort if we have no quest data at all
 
-			if (belongsToThisQuest)
+			if( belongsToThisQuest )
 			{
-				unmarkItem(currentItem);
+				unmarkItem( currentItem );
 				// socket.SysMessage("Unmarked quest item.");
 			}
 		}
 
 		// Delivery items on resign: delete only if they belong to this quest
-		if (quest.type == "delivery" && quest.deliveryItem)
+		if( quest.type == "delivery" && quest.deliveryItem )
 		{
-			if (String(currentItem.sectionID) == String(quest.deliveryItem.sectionID))
+			if( String( currentItem.sectionID ) == String( quest.deliveryItem.sectionID ))
 			{
 				// avoid nuking unrelated items: require QuestID match or at least QuestItem tag
-				if (String(currentItem.GetTag("QuestID")) == String(questID) || currentItem.GetTag("QuestItem"))
+				if( String( currentItem.GetTag( "QuestID" )) == String( questID ) || currentItem.GetTag( "QuestItem" ))
 				{
 					currentItem.Delete();
-					socket.SysMessage("Deleted delivery item: " + quest.deliveryItem.name);
+					socket.SysMessage( "Deleted delivery item: " + quest.deliveryItem.name );
 				}
 			}
 		}
 	});
 }
-
 
 function GetQuestObjectives( quest, questProgress ) 
 {
