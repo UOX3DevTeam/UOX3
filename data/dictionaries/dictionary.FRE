@@ -3288,6 +3288,7 @@
 4406=un automate blackrock
 4407=Lasher
 4408=un cheval palomino
+4409=un Dragon Hildebrandt
 4410=un coureur de vent
 4415=un tricératops
 4416=un tigre à dents de sabre
@@ -3319,6 +3320,22 @@
 4528=un bébé capybara
 4541=lapin de malheur
 4542=Bébé lapin de l'enfer
+4553 = une Manticore
+4574 = un sac de patates
+4575 = un boss orc
+4576 = un chien de l'enfer orc
+4638 = un ours zombie
+4641 = UOholder Mêlée
+4642 = UOholder Magie
+4643 = UOholder Limace
+4644 = Grand Chula
+4645 = Petit Chula
+4646 = Arbre corrompu
+4651 = Clydesdale
+4652 = Clydesdale Terre
+4653 = Clydesdale Feu
+4656 = Clydesdale Eau
+4657 = Clydesdale Air
 // [5000-5499] Additional PNJ names and titles (not linked to ID)
 5000=une vigne fouettante
 5001=un canari
