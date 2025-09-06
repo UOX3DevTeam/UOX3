@@ -102,9 +102,6 @@ var exitMap = {
 	"5655,1792": [729, 1451]
 };
 
-// =====================================================
-// Main Use Handler
-// =====================================================
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -113,7 +110,7 @@ function onUseChecked( pUser, iUsed )
 
 	if( socket && iUsed && iUsed.isItem )
 	{
-		if( !iUsed.InRange( pUser, 3 ) )
+		if( !iUsed.InRange( pUser, 3 ))
 		{
 			pUser.SysMessage( "I can't reach that." );
 			return false;
@@ -121,7 +118,7 @@ function onUseChecked( pUser, iUsed )
 
 		if( iUsed.sectionID == "solenentrancehole" || iUsed.sectionID == "solenentrancehole2" )
 		{
-			if( !teleportFromMap( pUser, iUsed, entranceMap ) )
+			if( !teleportFromMap( pUser, iUsed, entranceMap ))
 			{
 				var examine = iUsed.GetTag( "Examined" );
 				var rand = RandomNumber( 1, 100 );
@@ -145,9 +142,6 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
-// =====================================================
-// Helper - Teleport from coordinate map
-// =====================================================
 function teleportFromMap( pUser, iUsed, map )
 {
 	var coords = map[iUsed.x + "," + iUsed.y];
@@ -159,9 +153,6 @@ function teleportFromMap( pUser, iUsed, map )
 	return false;
 }
 
-// =====================================================
-// Unified Teleport with Pets
-// =====================================================
 function TeleportWithPets( pUser, x, y, z )
 {
 	var followerList = pUser.GetFollowerList();
@@ -177,9 +168,6 @@ function TeleportWithPets( pUser, x, y, z )
 	pUser.Teleport( x, y, z );
 }
 
-// =====================================================
-// Collision Handler - Spawn Ants
-// =====================================================
 function onCollide( pSock, pUser, iObject )
 {
 	if( !ValidateObject( pUser ) || !pUser.isChar || pUser.npc )
@@ -213,26 +201,24 @@ function onCollide( pSock, pUser, iObject )
 	return true;
 }
 
-// =====================================================
-// Timer Handler
-// =====================================================
 function onTimer( iObject, timerID )
 {
 	if( timerID == 1 )
+	{
 		iObject.SetTag( "Spawned", false );
+	}
 }
 
-// =====================================================
-// Spawn Ant Helper
-// =====================================================
 function SpawnAnt( iObject )
 {
 	var type = ( RandomNumber( 1, 3 ) < 2 ) ? "worker" : "warrior";
 	var color = ( iObject.worldnumber == 0 ) ? "black" : "red";
 
-	var ant = SpawnNPC( color + "solen" + type, iObject.x, iObject.y, iObject.z, iObject.worldnumber, iObject.instanceID );
-	if( ValidateObject( ant ) )
+	var ant = SpawnNPC( color + "_solen_" + type, iObject.x, iObject.y, iObject.z, iObject.worldnumber, iObject.instanceID );
+	if( ValidateObject( ant ))
+	{
 		ant.AddScriptTrigger( 3214 );
+	}
 
 	return ant;
 }
