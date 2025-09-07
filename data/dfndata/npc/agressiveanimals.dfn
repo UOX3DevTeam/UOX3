@@ -8,64 +8,39 @@ FX2=20
 FLAG=NEUTRAL
 }
 
-[direwolf]
+[base_direwolf]
 {
+GET=base_agressiveanimals
 NAME=#//a dire wolf
 ID=0x0017
-DIRECTION=RND
-BACKPACK
-STR=96 120
-DEX=81 105
-INT=36 60
-KARMA=-2500
-FAME=2500
-HIDING=50 150
-MAGICRESISTANCE=580 750
-PARRYING=630 750
-TACTICS=500 700
-WRESTLING=600 800
-DAMAGE=6 22
-DEF=11
-NPCAI=2
-NPCWANDER=4
-FX2=30
-TOPROV=503
-TOPEACE=503 5
-TOTAME=831
 TAMEDHUNGER=600 30
 FOOD=meat
 RUNS
 CARVE=12
 RACE=8
-FLAG=NEUTRAL
 CONTROLSLOTS=1
 }
 
-[giantrat]
+[direwolf]
 {
+GETUO=direwolf_t2a
+GETT2A=direwolf_t2a
+GETUOR=direwolf_t2a
+GETTD=direwolf_t2a
+GETLBR=direwolf_t2a
+GETAOS=direwolf_aos
+GETSE=direwolf_aos
+GETML=direwolf_aos
+GETSA=direwolf_aos
+GETHS=direwolf_aos
+GETTOL=direwolf_aos
+}
+
+[base_giantrat]
+{
+GET=base_agressiveanimals
 NAME=#//a giant rat
 ID=0x00d7
-DIRECTION=RND
-BACKPACK
-GOLD=0 25
-STR=32 74
-DEX=46 65
-INT=16 30
-MANAMAX=0
-KARMA=-300
-FAME=300
-MAGICRESISTANCE=250 300
-PARRYING=450 550
-TACTICS=290 440
-WRESTLING=290 440
-DAMAGE=3 9
-DEF=9
-NPCWANDER=4
-FX2=20
-NPCAI=2
-TOPROV=258
-TOPEACE=258 5
-TOTAME=291
 TAMEDHUNGER=600 30
 FOOD=rat
 CARVE=18
@@ -74,31 +49,26 @@ FLAG=NEUTRAL
 CONTROLSLOTS=1
 }
 
-[gianttoad]
+[giantrat]
 {
+GETUO=giantrat_2ta
+GETT2A=giantrat_2ta
+GETUOR=giantrat_2ta
+GETTD=giantrat_2ta
+GETLBR=giantrat_2ta
+GETAOS=giantrat_aos
+GETSE=giantrat_aos
+GETML=giantrat_aos
+GETSA=giantrat_aos
+GETHS=giantrat_aos
+GETTOL=giantrat_aos
+}
+
+[base_gianttoad]
+{
+GET=base_agressiveanimals
 NAME=#//a giant toad
 ID=0x0050
-DIRECTION=RND
-BACKPACK
-GOLD=0 25
-STR=76 100
-DEX=6 25
-INT=11 20
-MANAMAX=0
-KARMA=-750
-FAME=750
-MAGICRESISTANCE=250 400
-PARRYING=380 730
-TACTICS=400 600
-WRESTLING=400 600
-DAMAGE=2 20
-DEF=12
-NPCWANDER=4
-FX2=30
-NPCAI=2
-TOPROV=273
-TOPEACE=273 5
-TOTAME=771
 TAMEDHUNGER=600 30
 FOOD=toad
 CARVE=19
@@ -108,33 +78,27 @@ CONTROLSLOTS=1
 ORIGIN=t2a
 }
 
-[scorpion]
+[gianttoad]
 {
+GETUO=gianttoad_t2a
+GETT2A=gianttoad_t2a
+GETUOR=gianttoad_t2a
+GETTD=gianttoad_t2a
+GETLBR=gianttoad_t2a
+GETAOS=gianttoad_aos
+GETSE=gianttoad_aos
+GETML=gianttoad_aos
+GETSA=gianttoad_aos
+GETHS=gianttoad_aos
+GETTOL=gianttoad_aos
+}
+
+[base_scorpion]
+{
+GET=base_agressiveanimals
 NAME=#//a giant scorpion
 ID=0x0030
 SKIN=0000
-DIRECTION=RND
-BACKPACK
-STR=73 115
-DEX=76 95
-INT=16 30
-MANAMAX=0
-KARMA=-2000
-FAME=2000
-MAGICRESISTANCE=300 350
-PARRYING=600 700
-TACTICS=600 750
-WRESTLING=500 650
-POISONING=800 1000
-DAMAGE=3 12
-DEF=14
-NPCWANDER=4
-FX2=20
-NPCAI=2
-POISONSTRENGTH=3
-TOPROV=651
-TOPEACE=651 5
-TOTAME=471
 TAMEDHUNGER=600 30
 FOOD=meat
 RUNS
@@ -143,28 +107,26 @@ FLAG=NEUTRAL
 CONTROLSLOTS=1
 }
 
-[sewerrat]
+[scorpion]
 {
+GETUO=scorpion_t2a
+GETT2A=scorpion_t2a
+GETUOR=scorpion_t2a
+GETTD=scorpion_t2a
+GETLBR=scorpion_t2a
+GETAOS=scorpion_aos
+GETSE=scorpion_aos
+GETML=scorpion_aos
+GETSA=scorpion_aos
+GETHS=scorpion_aos
+GETTOL=scorpion_aos
+}
+
+[base_sewerrat]
+{
+GET=base_agressiveanimals
 NAME=5005//a sewer rat
 ID=0x00ee
-DIRECTION=RND
-BACKPACK
-STR=9
-DEX=25
-INT=6 10
-MANAMAX=0
-KARMA=-300
-FAME=300
-MAGICRESISTANCE=500
-TACTICS=500
-WRESTLING=500
-DAMAGE=1 2
-DEF=3
-NPCWANDER=4
-FX2=20
-TOPROV=55
-TOPEACE=55 5
-TOTAME=0
 TAMEDHUNGER=600 30
 FOOD=rat
 NPCAI=2
@@ -174,33 +136,27 @@ FLAG=NEUTRAL
 CONTROLSLOTS=1
 }
 
-[phoenix]
+[sewerrat]
 {
+GETUO=sewerrat_t2a
+GETT2A=sewerrat_t2a
+GETUOR=sewerrat_t2a
+GETTD=sewerrat_t2a
+GETLBR=sewerrat_t2a
+GETAOS=sewerrat_aos
+GETSE=sewerrat_aos
+GETML=sewerrat_aos
+GETSA=sewerrat_aos
+GETHS=sewerrat_aos
+GETTOL=sewerrat_aos
+}
+
+[base_phoenix]
+{
+GET=base_agressiveanimals
 NAME=3832//a phoenix
 ID=0x0005
 SKIN=0x04B9
-DIRECTION=RND
-BACKPACK
-GOLD=600 1000
-LOOT=randomgems,5
-STR=504 700
-DEX=202 300
-INT=504 700
-FAME=15000
-MAGERY=900 1000
-MAGICRESISTANCE=860 1350
-MEDITATION=750 1000
-TACTICS=800 900
-WRESTLING=900 1000
-DAMAGE=20 30
-DEF=25
-NPCWANDER=4
-FX2=30
-SPATTACK=8
-SPADELAY=10
-TOPROV=1086
-TOPEACE=1086 5
-TOTAME=2000
 RUNS
 CARVE=83
 NPCAI=2
@@ -208,6 +164,21 @@ RACE=4
 ORIGIN=t2a
 SCRIPT=3300
 SCRIPT=3503
+}
+
+[phoenix]
+{
+GETUO=phoenix_t2a
+GETT2A=phoenix_t2a
+GETUOR=phoenix_t2a
+GETTD=phoenix_t2a
+GETLBR=phoenix_t2a
+GETAOS=phoenix_aos
+GETSE=phoenix_aos
+GETML=phoenix_aos
+GETSA=phoenix_aos
+GETHS=phoenix_aos
+GETTOL=phoenix_aos
 }
 
 //bake kitsune - Base NPC with shared DFN tags
@@ -226,12 +197,12 @@ SCRIPT=3220// bakekitsune.js
 
 [bakekitsune]
 {
-GETUO=bakekitsune_se
-GETT2A=bakekitsune_se
-GETUOR=bakekitsune_se
-GETTD=bakekitsune_se
-GETLBR=bakekitsune_se
-GETAOS=bakekitsune_se
+GETUO=bakekitsune_t2a
+GETT2A=bakekitsune_t2a
+GETUOR=bakekitsune_t2a
+GETTD=bakekitsune_t2a
+GETLBR=bakekitsune_t2a
+GETAOS=bakekitsune_aos
 GETSE=bakekitsune_se
 GETML=bakekitsune_se
 GETSA=bakekitsune_se
