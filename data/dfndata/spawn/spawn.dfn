@@ -83,7 +83,7 @@
 // spawn_felucca_dungeon_delucia_passage.dfn [4150-4199]
 // spawn_felucca_dungeon_orc dungeon.dfn 	[4200-4249]
 // spawn_felucca_dungeon_khaldun.dfn 		[4250-4299]  // Note: Not Spawned npc are not in yet
-// spawn_felucca_dungeon_solen_hives.dfn	[4300-4349]  // Note: Not Spawned npcs and teleport locations not in yet
+// spawn_felucca_dungeon_solen_hives.dfn	[4300-4349]
 // spawn_felucca_dungeon_blackthorns.dfn 	[4350-4399]  // Note: Not Spawned Is not Pre AOS
 // spawn_felucca_dungeon_painted_caves.dfn	[4400-4449]  // Note: Not Spawned Is Not Pre AOS
 // spawn_felucca_dungeon_prism_of_light.dfn	[4450-4499]  // Note: Not Spawned Is Not Pre AOS
@@ -157,7 +157,7 @@
 // spawn_trammel_dungeon_delucia_passage.dfn [14150-14199]
 // spawn_trammel_dungeon_orc dungeon.dfn 	[14200-14249]
 // spawn_trammel_dungeon_khaldun.dfn 		[14250-14299]  // Note: Not Spawned npc are not in yet
-// spawn_trammel_dungeon_solen_hives.dfn	[14300-14349]  // Note: Not Spawned npcs and teleport locations not in yet
+// spawn_trammel_dungeon_solen_hives.dfn	[14300-14349]
 // spawn_trammel_dungeon_blackthorns.dfn 	[14350-14399]  // Note: Not Spawned Is not Pre AOS
 // spawn_trammel_dungeon_painted_caves.dfn	[14400-14449]  // Note: Not Spawned Is Not Pre AOS
 // spawn_trammel_dungeon_prism_of_light.dfn	[14450-14499]  // Note: Not Spawned Is Not Pre AOS
