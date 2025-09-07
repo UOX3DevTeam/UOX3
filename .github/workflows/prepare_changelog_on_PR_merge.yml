@@ -1,0 +1,25 @@
+# .github/workflows/prepare-changelog.yml
+name: Prepare Changelog Entry
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  prepare:
+    if: >
+      github.event.pull_request.merged == true &&
+      github.actor != 'github-actions[bot]' &&
+      !contains(github.event.pull_request.labels.*.name, 'skip changelog')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Signal Artifact
+        run: touch signal.txt
+      - name: Upload Signal Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          # Encode BOTH the PR number and the base branch name
+          name: changelog-trigger-pr-${{ github.event.pull_request.number }}-base-${{ github.event.pull_request.base.ref }}
+          path: signal.txt
+          retention-days: 1
