@@ -1,10 +1,19 @@
+07/09/2025 - DragonSlayer62 (#419)
+    [ADD] Added Missing container Gumps and Container IDs
+
+07/09/2025 - Dragon Slayer (#418)
+	[ADD] Added New Legacy creature entries in dfndata/creatures/creatures.dfn:
+		Dragon Hildebrant, Manticore mount, Manticore Large, Potato Sack, Orc Boss, Orc hellhound, Bear Zombie mount, UOholder_Melee, UOholder_Magic, UOholder_Slug, Chula_Large, Chula_Small, Corrupted_Tree, Horse_Clydesdale, Horse_Elemental_Earth, Horse_Elemental_Fire, Horse_Elemental_Water, Horse_Elemental_Air
+	[FIX] Fixed icon for Mini Capybara entry in dfndata/creatures/creatures.dfn
+	[ADD] Added dictionary entries for new creature entries
+
 21/08/2025 - strattond (#414)
-    [ADD] Typescript definitions for events, methods and exposed classes from the core
-        NOTE: This is *incomplete* and further revisions may be required.  Additionally, it does NOT force you to use it - if you code the existing way, it'll still work.  This just gives you sanity on scripting.
-    [ADD] Add PowerShell script to create new TS file from core JSON updates
-    [ADD] Add PowerShell script to update or add JSDoc for appropriate functions in existing scripts
-    [UPD] Existing scripts have JSDoc annotations for the parts that matter to ensure bindings take effect
-    [FIX] Fixed incorrect parameter order in all scripts that use onSkill JS event
+	[ADD] Typescript definitions for events, methods and exposed classes from the core
+		NOTE: This is *incomplete* and further revisions may be required.  Additionally, it does NOT force you to use it - if you code the existing way, it'll still work.  This just gives you sanity on scripting.
+	[ADD] Add PowerShell script to create new TS file from core JSON updates
+	[ADD] Add PowerShell script to update or add JSDoc for appropriate functions in existing scripts
+	[UPD] Existing scripts have JSDoc annotations for the parts that matter to ensure bindings take effect
+	[FIX] Fixed incorrect parameter order in all scripts that use onSkill JS event
 
 20/08/2025 - Xuri (#415)
 	[FIX] Fixed issue with github workflow files that prevented automatic update of changelog.txt based on PR descriptions. Skip by assigning 'skip changelog' label to PR
