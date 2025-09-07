@@ -1,6 +1,20 @@
-// =====================================================
-// Solen Hive Teleport & Spawn Script (UOX3 Format)
-// =====================================================
+/*
+*	Solen Hives and Ants was introduced in LBR during a event called When Ants Attack.
+*
+*	We have the Randomly spawning black holes that can be put out with event tags for events.
+*	Description how it works
+*	1. When walked on it will spawn 2 to 5 ants
+*	2. Keeps track of the deaths of each ant so it cant over spawn the area.
+*	3. Has a 5 min cool down so it can't keep spawning when walking over.
+*	4. Double click on the hole and it will take you to the solen hive.
+*
+*	We also have the Main Solen hive Entrances.
+*	Description how it works
+*	1. You double click it will take you down to the solen hive depending on what location you are using.
+*	2. Double click in the middle of the black inside the solen hive it will return you to the surface.
+*
+*	World Decorations that come with this file will place the Main Entrances and Exits around the World for Felucca Map only.
+*/
 
 // Entrance coordinates
 var entranceMap = {
