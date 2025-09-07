@@ -2715,6 +2715,18 @@ void CSocket::OpenPack( CItem *i, bool isPlayerVendor )
 			case PT_GIFTBOX6:
 				contSend.Model( 0x11F );
 				break;
+			case PT_GIFTBOX7:
+				contSend.Model( 0x120 );
+				break;
+			case PT_GIFTBOX8:
+				contSend.Model( 0x121 );
+				break;
+			case PT_GIFTBOX9:
+				contSend.Model( 0x122 );
+				break;
+			case PT_GIFTBOX10:
+				contSend.Model( 0x777A );
+				break;
 			case PT_SEBASKET:
 				contSend.Model( 0x108 );
 				break;
@@ -2774,6 +2786,18 @@ void CSocket::OpenPack( CItem *i, bool isPlayerVendor )
 				break;
 			case PT_MAILBOX9:
 				contSend.Model( 0x11A ); // Square gray mailbox
+				break;
+			case PT_KINGSCOLLECTION:
+				contSend.Model( 0x4D0C );
+				break;
+			case PT_WEDDINGCHEST:
+				contSend.Model( 0x266A );
+				break;
+			case PT_HEARTSHAPEDBOX:
+				contSend.Model( 0x9CDA );
+				break;
+			case PT_GIFTCONTAINERSNL:
+				contSend.Model( 0x9D88 );
 				break;
 			case PT_UNKNOWN:
 				Console.Warning( oldstrutil::format( "OpenPack() passed an invalid container type: 0x%X", i->GetSerial() ));
