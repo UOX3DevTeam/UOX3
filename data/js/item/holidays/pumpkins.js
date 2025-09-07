@@ -1,6 +1,9 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Other settings
 const randomizePumpkinCountdown = false; // If true, add/remove +1/-1 seconds to explosion potion countdowns
 
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( objMade, objType ) 
 {
 	var idList = [0x0C6B, 0x0C6A, 0x0C6C];
@@ -42,11 +45,12 @@ function getRandomPumpkinName( objMade )
 }
 
 // 2006 Pumpkins
-// Missing: The Shadow Colored Jack O’ Lanterns, both big and small, are also useable. When used and targeted anywhere, they explode in a large 5×5 tile field of flames.
-// Missing: The Shadow Colored Jack O’ Lanterns, both big and small, are also useable.When used and targeted anywhere, they explode in a large 5×5 tile field of flames.
+// Missing: The Shadow Colored Jack Oï¿½ Lanterns, both big and small, are also useable. When used and targeted anywhere, they explode in a large 5ï¿½5 tile field of flames.
+// Missing: The Shadow Colored Jack Oï¿½ Lanterns, both big and small, are also useable.When used and targeted anywhere, they explode in a large 5ï¿½5 tile field of flames.
 // Using explosion potion effect.
 // Missing: colors as well for the pumpkins
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed ) 
 {
 	var socket = pUser.socket;
@@ -92,6 +96,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	var mChar = socket.currentChar;
@@ -152,6 +157,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID ) 
 {
 	var countdown = 0;
@@ -270,6 +276,7 @@ function ApplyExplosionDamage( timerObj, targetChar )
 	}
 }
 
+/** @type { ( item: Item, pickerUpper: Character, objCont: BaseObject ) => boolean } */
 function onPickup( iPickedUp, pGrabber, containerObj )
 {
 	var pSock = pGrabber.socket;

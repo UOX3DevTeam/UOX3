@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Commands to handle kicking, banning and unbanning players from the server
 
 function CommandRegistration()
@@ -8,18 +10,21 @@ function CommandRegistration()
 	RegisterCommand( "unban", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_KICK( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 196, socket.language ); // Select character to kick.
 	socket.CustomTarget( 0, targMsg );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_DISCONNECT( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 196, socket.language ); // Select character to kick.
 	socket.CustomTarget( 0, targMsg );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_BAN( socket, cmdString )
 {
 	var banDuration = 60 * 24;
@@ -41,12 +46,14 @@ function command_BAN( socket, cmdString )
 	socket.CustomTarget( 1, targMsg, 1 );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_UNBAN( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 2019, socket.language); // Select character to unban.
 	socket.CustomTarget( 2, targMsg );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar && ourObj.online )
@@ -61,6 +68,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )
@@ -95,6 +103,7 @@ function onCallback1( socket, ourObj )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )

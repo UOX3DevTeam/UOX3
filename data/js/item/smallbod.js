@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 const scriptID = 5042;
 
 const BODTypesToSkillNames = {
@@ -11,6 +13,7 @@ const BODSubtypeMinMax = {
 };
 
 // Can also be triggered by creating BOD from admin menu or add command: 'add item smallbod
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	if( !ValidateObject( objMade ))
@@ -38,6 +41,7 @@ function onCreateDFN( objMade, objType )
 	}
 }
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, smallBOD )
 {
 	var gumpID = scriptID + 0xffff;
@@ -245,6 +249,7 @@ function CombineItemWithBod( pUser, smallBOD )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, myTarget )
 {
 	var gumpID = scriptID + 0xffff;
@@ -395,6 +400,7 @@ function onCallback0( socket, myTarget )
 	}
 }
 
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( smallBOD )
 {
 	var tooltipText = "";

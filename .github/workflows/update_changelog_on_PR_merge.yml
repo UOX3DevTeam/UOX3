@@ -1,67 +1,88 @@
-name: Update Changelog on PR Merge
+# .github/workflows/update-changelog.yml
+name: Update Changelog File
 
 on:
-  pull_request:
-    types:
-      - closed
+  workflow_run:
+    workflows: ["Prepare Changelog Entry"]
+    types: [completed]
 
 jobs:
-  update-changelog:
-    if: >
-      github.event.pull_request.merged == true &&
-      github.actor != 'github-actions[bot]'
-
+  update:
+    if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     permissions:
+      actions: read
       contents: write
       pull-requests: write
 
     steps:
+      - name: Get Info from Artifact Name
+        id: get_info
+        # THIS BLOCK IS NOW CORRECTED TO THE STANDARD SYNTAX
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ARTIFACT_NAME=$(gh api /repos/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}/artifacts | jq -r '.artifacts[] | .name' | grep 'changelog-trigger-pr-')
+          PR_NUMBER=$(echo "$ARTIFACT_NAME" | sed -n 's/changelog-trigger-pr-\([0-9]*\)-base-.*/\1/p')
+          BASE_BRANCH=$(echo "$ARTIFACT_NAME" | sed -n 's/changelog-trigger-pr-[0-9]*-base-\(.*\)/\1/p')
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+          echo "base_branch=$BASE_BRANCH" >> $GITHUB_OUTPUT
+
+      - name: Get Merged PR Data
+        id: pr_data
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.get_info.outputs.pr_number }}
+        run: |
+          PR_JSON=$(gh api /repos/${{ github.repository }}/pulls/${PR_NUMBER})
+          echo "author=$(echo "$PR_JSON" | jq -r .user.login)" >> $GITHUB_OUTPUT
+          echo "merged_at=$(echo "$PR_JSON" | jq -r .merged_at)" >> $GITHUB_OUTPUT
+          body=$(echo "$PR_JSON" | jq -r .body)
+          if [ "$body" = "null" ]; then
+            body="No description provided."
+          fi
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo "$body" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.base.ref }}
-          fetch-depth: 0
+          ref: ${{ steps.get_info.outputs.base_branch }}
 
       - name: Prepend to Changelog
         env:
-          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
-          PR_BODY: ${{ github.event.pull_request.body }}
-          MERGED_AT: ${{ github.event.pull_request.merged_at }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_AUTHOR: ${{ steps.pr_data.outputs.author }}
+          PR_BODY: ${{ steps.pr_data.outputs.body }}
+          MERGED_AT: ${{ steps.pr_data.outputs.merged_at }}
+          PR_NUMBER: ${{ steps.get_info.outputs.pr_number }}
         run: |
           TIMESTAMP=$(date -d "$MERGED_AT" +'%d/%m/%Y')
-
-          # Convert markdown-style list items into indented changelog lines
           FORMATTED_BODY=$(echo "$PR_BODY" | sed 's/^[[:space:]]\{2,\}- /        /; s/^- /    /')
 
-          # Create the new entry content in a variable
           NEW_ENTRY=$(cat <<EOF
           ${TIMESTAMP} - ${PR_AUTHOR} (#${PR_NUMBER})
           $FORMATTED_BODY
           EOF
           )
 
-          # If the changelog exists, prepend the new entry with a separating newline.
-          # Otherwise, just create the file with the new entry.
-          if [ -f "source/Changelog.txt" ]; then
-            echo -e "$NEW_ENTRY\n" | cat - source/Changelog.txt > temp_changelog.txt && mv temp_changelog.txt source/Changelog.txt
+          CHANGELOG_PATH="source/Changelog.txt"
+          if [ -f "$CHANGELOG_PATH" ]; then
+            echo -e "$NEW_ENTRY\n" | cat - "$CHANGELOG_PATH" > temp_changelog.txt && mv temp_changelog.txt "$CHANGELOG_PATH"
           else
-            echo -e "$NEW_ENTRY" > source/Changelog.txt
+            echo -e "$NEW_ENTRY" > "$CHANGELOG_PATH"
           fi
 
       - name: Create Pull Request with Changelog Update
-        id: cpr
         uses: peter-evans/create-pull-request@v6
         with:
-          commit-message: "docs(changelog): Update Changelog.txt from PR #${{ github.event.pull_request.number }}"
-          title: "Docs: Update Changelog for #${{ github.event.pull_request.number }}"
-          body: "Automated changelog update. This PR will be auto-merged."
-          branch: "changelog/pr-${{ github.event.pull_request.number }}"
-          base: ${{ github.event.pull_request.base.ref }}
-
-      - name: Enable Auto-Merge via GitHub CLI
-        if: steps.cpr.outputs.pull-request-number
-        run: gh pr merge --auto --squash "${{ steps.cpr.outputs.pull-request-number }}"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Use the App's credentials to create the PR
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          # The rest of the parameters remain the same
+          commit-message: "docs(changelog): Update Changelog.txt from PR #${{ steps.get_info.outputs.pr_number }}"
+          title: "Docs: Update Changelog for #${{ steps.get_info.outputs.pr_number }}"
+          body: "Automated changelog update from #${{ steps.get_info.outputs.pr_number }}. This PR will be auto-merged."
+          branch: "changelog/pr-${{ steps.get_info.outputs.pr_number }}"
+          base: ${{ steps.get_info.outputs.base_branch }}
+          labels: "automated changelog merge"

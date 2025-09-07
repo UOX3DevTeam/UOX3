@@ -1,14 +1,19 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
+/** @type { ( equipper: Character, equipping: Item ) => boolean } */
 function onEquip( pEquipper, iEquipped ) 
 {
 	pEquipper.AddScriptTrigger( 7003 );
 }
 
 // Remove script trigger on unequip
+/** @type { ( equipper: Character, equipping: Item ) => boolean } */
 function onUnequip( pUnequipper, iUnequipped )
 {
 	pUnequipper.RemoveScriptTrigger( 7003 );
 }
 
+/** @type { ( attacker: Character, damaged: Character, damageValue: number, damageType: WeatherType ) => boolean } */
 function onDamageDeal( attacker, damaged, damageValue, damageType ) 
 {
 	// Fetch weapon in main hand or secondary hand

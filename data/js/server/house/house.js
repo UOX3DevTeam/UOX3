@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // These house commands are triggered by client sending some specific keywords that are
 // detected as such by UOX3, and then forwarded to this script.
 //
@@ -21,6 +23,7 @@ const keylessGuestAccess = GetServerSetting( "KeylessGuestAccess" );
 const keylessFriendAccess = GetServerSetting( "KeylessFriendAccess" );
 const keylessCoOwnerAccess = GetServerSetting( "KeylessCoOwnerAccess" );
 
+/** @type { ( targSock: Socket, multiObj: Multi, targId: number ) => boolean } */
 function onHouseCommand( pSocket, iMulti, cmdID )
 {
 	if( ValidateObject( iMulti ) && !iMulti.IsBoat() && iMulti.IsInMulti( pSocket.currentChar ))
@@ -68,6 +71,7 @@ function onHouseCommand( pSocket, iMulti, cmdID )
 
 // Handle ejecting players to SE corner of multi when attempting to enter a building they cannot enter
 // Also handle updating visitor counter for public houses
+/** @type { ( left: Multi, leaving: BaseObject ) => boolean } */
 function onEntrance( iMulti, charEntering, objType )
 {
 	// First do some standard validation checking to make sure both house
@@ -155,6 +159,7 @@ function onEntrance( iMulti, charEntering, objType )
 	return true;
 }
 
+/** @type { ( iMulti: Multi, cPlayer: Character ) => boolean } */
 function onMultiLogout( iMulti, cPlayer )
 {
 	// Always validate owner logging out of their own house

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This script runs some ownership checks on houses before allowing a player to place
 // additional houses. The actual house-placement part is handled in code.
 
@@ -11,6 +13,7 @@ const canOwnAndCoOwnHouses = GetServerSetting( "CanOwnAndCoOwnHouses" );
 const maxHousesOwnable = GetServerSetting( "MaxHousesOwnable" );
 const maxHousesCoOwnable = GetServerSetting( "MaxHousesCoOwnable" );
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	if( iUsed.morex == 0 )

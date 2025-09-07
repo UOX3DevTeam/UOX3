@@ -1,7 +1,10 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
 const monstersVsAnimals = GetServerSetting( "MonstersVsAnimals" );
 const animalAttackChance = GetServerSetting( "AnimalAttackChance" );
 
 // Override target selection to make sure they don't attack players with tribal paint applied
+/** @type { ( attacker: Character, target: Character ) => boolean } */
 function onAICombatTarget( savageNpc, pTarget )
 {
 	if( !ValidateObject( pTarget ))
@@ -36,6 +39,7 @@ function onAICombatTarget( savageNpc, pTarget )
 }
 
 // Remove tribal paint from attacker if applicable
+/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => boolean } */
 function onDamage( savageNpc, pAttacker, damageValue, damageType )
 {
 	if( !ValidateObject( pAttacker ))
@@ -77,6 +81,7 @@ const bonusDamageList = [ "graydragon", "reddragon", "graydrake", "reddrake", "s
 		"nightmare", "darknightmare", "manenightmare", "purenightmare", "daemon-summon" ];
 
 // Override combat damage calculations to ensure Savages can deal more damage against certain creatures
+/** @type { ( attacker: Character, defender: Character, getFightSkill: number, hitLoc: number ) => number } */
 function onCombatDamageCalc( pAttacker, pDefender, fightSkill, hitLoc )
 {
 	// Get attacker's base damage

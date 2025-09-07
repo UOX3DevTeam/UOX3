@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 const textHue = 0x480;				// Color of the text.
 const scriptID = 4025;				// Use this to tell the gump what script to close.
 const gumpDelay = 2000;				// Timer for the gump to reappear after crafting.
@@ -85,6 +87,7 @@ function RepairTarget( pSock )
 	pSock.CustomTarget( 2, GetDictionaryEntry( 485, pSock.language )); // What item would you like to repair?
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( pSock, ourObj )
 {
 	// Repair Item
@@ -236,6 +239,7 @@ function onCallback2( pSock, ourObj )
 	}
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( pUser, timerID )
 {
 	if( !ValidateObject( pUser ))

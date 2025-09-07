@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // use dough : target heat source : bread
 // use dough : target jar of honey : sweet dough
 // use dough : target apple : Unbaked Apple Pie
@@ -43,6 +45,7 @@ function onUseChecked ( pUser, iUsed )
 	return false;
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( tSock, myTarget )
 {
 	var pUser = tSock.currentChar;
@@ -146,6 +149,7 @@ function onCallback0( tSock, myTarget )
 	pUser.SoundEffect( 0x0055, true );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( tSock, myTarget )
 {
 	var pUser = tSock.currentChar;

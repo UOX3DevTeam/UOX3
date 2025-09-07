@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Runebook.js (v1.01)
 // Rewritten mostly from scratch by Xuri (xuri@uox3.org)
 // Inspired by the original Runebook script by Rais
@@ -12,6 +14,7 @@ const scriptID = 5029;		// Script ID assigned to this script in jse_fileassociat
 const useDelay = 7000; 		// 7 seconds between each time a runebook can be used
 const tooltipClilocID = 1042971; // Cliloc ID to use for tooltips. 1042971 should work with clients from ~v3.0.x to modern day
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, runeBook )
 {
 	// Use maximum charges set on runebook, if any
@@ -812,6 +815,7 @@ function CastSpell( pSocket, pUser, spellNum, checkReagentReq )
 	pUser.StartTimer( delay, spellNum, true );
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	var pSocket = timerObj.socket;
@@ -893,6 +897,7 @@ function CheckAccessRights( pSocket, pUser, runeBook )
 }
 
 // Handle renaming of Runebook
+/** @type { ( myChar: Character, myItem: Item, mySpeech: string ) => void } */
 function onSpeechInput( pUser, runeBook, pSpeech, pSpeechID )
 {
 	var pSocket = pUser.socket;
@@ -928,6 +933,7 @@ function onSpeechInput( pUser, runeBook, pSpeech, pSpeechID )
 }
 
 const maxRunes = 16;
+/** @type { ( item: Item, dropper: Character, dest: Item ) => number } */
 function onDropItemOnItem( iDropped, pUser, runeBook )
 {
 	var pSocket = pUser.socket;
@@ -1124,5 +1130,3 @@ function GetMapCoordinates( xCoord, yCoord, worldNum )
 
 	return resultArray;
 }
-
-function _restorecontext_() {}

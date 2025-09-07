@@ -1,8 +1,11 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 const dblClck = true; // If true enables lampposts to be double clicked on and off.
 const dynamicLampPosts = true; // This enables and disables lamp post to change from on and off with light settings.
 const brightLvl = 10; // This Setting is for how bright or dark it has to be for lamps to turn on and off. the Higher the number the Darker the Lower the Number the lighter.
 const unequipEnabled = false; // This setting allows the touch and candle to be turned off automatic if unequiped.
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var pSocket = pUser.socket;
@@ -177,6 +180,9 @@ function onUseChecked( pUser, iUsed )
 		case 0x0B21: //simple lamp post id unlit
 		case 0x0B23: //glass lamp post id unlit
 		case 0x0B25: //fancy lamp post id unlit
+		case 0xAE0C: //simple snow covered lamp post id unlit
+		case 0xAE0E: //glass snow covered lamp post id unlit
+		case 0xAE10: //fancy snow covered lamp post id unlit
 			if( dblClck == true )
 			{
 				soundObject.SoundEffect( 0x03BE, allHearSound );
@@ -188,6 +194,9 @@ function onUseChecked( pUser, iUsed )
 		case 0x0B20: //simple lamp post id lit
 		case 0x0B22: //glass lamp post id lit
 		case 0x0B24: //fancy lamp post id lit
+		case 0xAE0B: //simple snow covered lamp post id lit
+		case 0xAE0D: //glass snow covered lamp post id lit
+		case 0xAE0F: //fancy snow covered lamp post id lit
 			if( dblClck == true )
 			{
 				soundObject.SoundEffect( 0x0047, allHearSound );
@@ -402,6 +411,55 @@ function onUseChecked( pUser, iUsed )
 			iUsed.dir = 99;
 			iUsed.id = 0x4C42;
 			break;
+		case 0xAFD1: //lit Candy Cane Lamp Post
+		case 0xAFD3: //lit Candy Cane Lamp Post
+			soundObject.SoundEffect( 0x0047, allHearSound );
+			iUsed.dir = 29;
+			iUsed.id++;
+			break;
+		case 0xAFD2: //unlit Candy Cane Lamp Post
+		case 0xAFD4: //unlit Candy Cane Lamp Post
+			soundObject.SoundEffect( 0x03BE, allHearSound );
+			iUsed.dir = 99;
+			iUsed.id--;
+			break;
+		case 0xA5BA: //unlit red Lamppost
+		case 0xA5BF: //unlit blue Lamppost
+		case 0xA5C4: //unlit green Lamppost
+		case 0xA5C9: //unlit purple Lamppost
+		case 0xA747: //unlit gargoyle_lamp
+		case 0xA74B: //unlit gargoyle_lamp
+			soundObject.SoundEffect( 0x03BE, allHearSound );
+			iUsed.dir = 29;
+			iUsed.id++;
+			break;
+		case 0xA5BB: //lit red Lamppost
+		case 0xA5C0: //lit blue Lamppost
+		case 0xA5C5: //lit green Lamppost
+		case 0xA5CA: //lit pruple Lamppost
+		case 0xA748: //lit gargoyle_lamp
+		case 0xA74C: //lit gargoyle_lamp
+			soundObject.SoundEffect( 0x0047, allHearSound );
+			iUsed.dir = 99;
+			iUsed.id--;
+			break;
+		case 0xAFA3: //unlit The Burning King
+		case 0xAFAE: //unlit The Burning King
+		case 0xA7C5: //unlit Holiday_Candle_Arran
+		case 0xA7C9: //unlit Holiday_Candle_Arran
+			soundObject.SoundEffect( 0x03BE, allHearSound );
+			lightDir = 29;
+			iUsed.id++;
+			break;
+		case 0xAFA4: //lit The Burning King
+		case 0xAFAF: //lit The Burning King
+		case 0xA7C6: //lit Holiday_Candle_Arran
+		case 0xA7CA: //lit Holiday_Candle_Arran
+			soundObject.SoundEffect( 0x0047, allHearSound );
+			iUsed.morex = iUsed.dir;
+			iUsed.dir = 99;
+			iUsed.id--;
+			break;
 		//Halloween pumpkins
 		case 0xA396: //unlit Octopus
 		case 0xA39A: //unlit tall tree
@@ -440,7 +498,26 @@ function onUseChecked( pUser, iUsed )
 		case 0xA77D: //unlit medusa left
 		case 0xA781: //unlit deamon right
 		case 0xA785: //unlit deamon left
-			soundObject.SoundEffect(0x03BE, allHearSound);
+		case 0xA9AA: //unlit Pumpkin Scythe
+		case 0xA9AE: //unlit Pumpkin Pirate Ship
+		case 0xA9B2: //unlit Pumpkin Pirate Skull
+		case 0xACBD: //unlit Pumpkin wide Face01
+		case 0xACC1: //unlit Pumpkin wide Face02
+		case 0xACC5: //unlit Pumpkin wide Face03
+		case 0xACC9: //unlit Pumpkin wide Face04
+		case 0xACCD: //unlit Pumpkin wide Face05
+		case 0xACD1: //unlit Pumpkin wide Face06
+		case 0xACD5: //unlit Pumpkin wide Face07
+		case 0xACD9: //unlit Pumpkin wide Face08
+		case 0xACDD: //unlit Pumpkin wide Face09
+		case 0xACE1: //unlit Pumpkin wide Face10
+		case 0xB258: //unlit Pumpkin Warty Serpen
+		case 0xB25C: //unlit Pumpkin Warty Raven
+		case 0xB260: //unlit Pumpkin White Void Cat
+		case 0xB264: //unlit Pumpkin White Toothy
+		case 0xB268: //unlit Pumpkin Striped Black
+		case 0xB26C: //unlit Pumpkin Striped Smile
+			soundObject.SoundEffect( 0x03BE, allHearSound );
 			lightDir = 1;
 			iUsed.id++;
 			break;
@@ -481,17 +558,36 @@ function onUseChecked( pUser, iUsed )
 		case 0xA77E: //lit medusa left
 		case 0xA782: //lit deamon right
 		case 0xA786: //lit deamon left
-			soundObject.SoundEffect(0x0047, allHearSound);
+		case 0xA9AB: //lit Pumpkin Scythe
+		case 0xA9AF: //lit Pumpkin Pirate Ship
+		case 0xA9B3: //lit Pumpkin Pirate Skull
+		case 0xACBE: //lit Pumpkin wide Face01
+		case 0xACC2: //lit Pumpkin wide Face02
+		case 0xACC6: //lit Pumpkin wide Face03
+		case 0xACCA: //lit Pumpkin wide Face04
+		case 0xACCE: //lit Pumpkin wide Face05
+		case 0xACD2: //lit Pumpkin wide Face06
+		case 0xACD6: //lit Pumpkin wide Face07
+		case 0xACDA: //lit Pumpkin wide Face08
+		case 0xACDE: //lit Pumpkin wide Face09
+		case 0xACE2: //lit Pumpkin wide Face10
+		case 0xB259: //lit Pumpkin Warty Serpen
+		case 0xB25D: //lit Pumpkin Warty Raven
+		case 0xB261: //lit Pumpkin White Void Cat
+		case 0xB265: //lit Pumpkin White Toothy
+		case 0xB269: //lit Pumpkin Striped Black
+		case 0xB26D: //lit Pumpkin Striped Smile
+			soundObject.SoundEffect( 0x0047, allHearSound );
 			lightDir = 99;
 			iUsed.id--;
 			break;
 		case 0x9934: //unlit Tall Witch
-			soundObject.SoundEffect(0x03BE, allHearSound);
+			soundObject.SoundEffect( 0x03BE, allHearSound );
 			lightDir = 1;
 			iUsed.id = 0x9931;
 			break;
 		case 0x9931: //lit Tall Witch
-			soundObject.SoundEffect(0x0047, allHearSound);
+			soundObject.SoundEffect( 0x0047, allHearSound );
 			lightDir = 1;
 			iUsed.id = 0x9934;
 			break;
@@ -501,7 +597,7 @@ function onUseChecked( pUser, iUsed )
 	if( lightDir > 0 )
 	{
 		// If the light source is turned off...
-		if( iUsed.dir == 0 || iUsed.dir == 99)
+		if( iUsed.dir == 0 || iUsed.dir == 99 )
 		{
 			// ...  AND has a value saved in morex
 			if( iUsed.morex != 0 )
@@ -521,6 +617,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
+/** @type { ( tObject: BaseObject, lightLevel: number ) => boolean } */
 function onLightChange( iLight, lightLevel )
 {
 	if( ValidateObject( iLight ) && iLight.isItem && dynamicLampPosts == true )
@@ -530,6 +627,9 @@ function onLightChange( iLight, lightLevel )
 			case 0x0B21: //simple lamp post id unlit
 			case 0x0B23: //glass lamp post id unlit
 			case 0x0B25: //fancy lamp post id unlit
+			case 0xAE0C: //simple snow covered lamp post id unlit
+			case 0xAE0E: //glass snow covered lamp post id unlit
+			case 0xAE10: //fancy snow covered lamp post id unlit
 				if( lightLevel > brightLvl )
 				{
 					if( iLight.dir == 0 || iLight.dir == 99 )
@@ -549,6 +649,9 @@ function onLightChange( iLight, lightLevel )
 			case 0x0B20: //simple lamp post id lit
 			case 0x0B22: //glass lamp post id lit
 			case 0x0B24: //fancy lamp post id lit
+			case 0xAE0B: //simple snow covered lamp post id lit
+			case 0xAE0D: //glass snow covered lamp post id lit
+			case 0xAE0F: //fancy snow covered lamp post id lit
 				if( lightLevel < brightLvl )
 				{
 					iLight.morex = iLight.dir;
@@ -561,6 +664,7 @@ function onLightChange( iLight, lightLevel )
 	return false;
 }
 
+/** @type { ( equipper: Character, equipping: Item ) => boolean } */
 function onUnequip( pEquipper, iEquipped )
 {
 	if( ValidateObject( iEquipped ) && iEquipped.isItem && unequipEnabled == true )

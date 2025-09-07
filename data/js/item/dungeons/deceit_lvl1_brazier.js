@@ -1,5 +1,8 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Brazier spawns lich
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var iTime = GetCurrentClock();

@@ -1,8 +1,11 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
 // This event runs instead of regular, hard-coded target selection for AI_EVIL
 
 const monstersVsAnimals = GetServerSetting( "MonstersVsAnimals" );
 const animalAttackChance = GetServerSetting( "AnimalAttackChance" );
 
+/** @type { ( attacker: Character, target: Character ) => boolean } */
 function onAICombatTarget( pChar, pTarget )
 {
 	if( !ValidateObject( pTarget ))
@@ -42,6 +45,7 @@ function onAICombatTarget( pChar, pTarget )
 	return true;
 }
 
+/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => boolean } */
 function onDamage( pDefender, pAttacker, damageValue, damageType )
 {
 	if( !ValidateObject( pAttacker ))

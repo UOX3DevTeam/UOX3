@@ -1,8 +1,11 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 function CommandRegistration()
 {
 	RegisterCommand( "zerokills", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ZEROKILLS( socket, cmdString )
 {
 	socket.SysMessage( GetDictionaryEntry( 22, socket.language )); // Zeroing all player kills...
@@ -10,6 +13,7 @@ function command_ZEROKILLS( socket, cmdString )
 	socket.SysMessage( GetDictionaryEntry( 23, socket.language )); // All player kills are now 0.
 }
 
+/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
 function onIterate( toCheck )
 {
 	if( toCheck && toCheck.isChar )
@@ -19,5 +23,3 @@ function onIterate( toCheck )
 	}
 	return false;
 }
-
-function _restorecontext_() {}
