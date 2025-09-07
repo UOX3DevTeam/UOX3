@@ -226,6 +226,14 @@ inline JSPropertySpec CGuildProperties[] =
 	{ "charter",		CGP_CHARTER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "abbreviation",	CGP_ABBREVIATION,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "webPage",		CGP_WEBPAGE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "members",		CGP_MEMBERS,		JSPROP_ENUMPERMRO, nullptr, nullptr },
+	{ "recruits",		CGP_RECRUITS,		JSPROP_ENUMPERMRO, nullptr, nullptr },
+	{ "veterans",		CGP_VETERANS,		JSPROP_ENUMPERMRO, nullptr, nullptr },
+	{ "officers",		CGP_OFFICERS,		JSPROP_ENUMPERMRO, nullptr, nullptr },
+	{ "invites",		CGP_INVITES,		JSPROP_ENUMPERMRO, nullptr, nullptr },
+	{ "numInvites",		CGP_NUMINVITES,		JSPROP_ENUMPERMRO, nullptr, nullptr },
+	{ "numVeterans",	CGP_NUMVETERANS,	JSPROP_ENUMPERMRO, nullptr, nullptr },
+	{ "numOfficers",	CGP_NUMOFFICERS,	JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ nullptr,			static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
 };
 

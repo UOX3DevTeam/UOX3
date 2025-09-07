@@ -13,6 +13,7 @@
 #ifndef va_start
 #include <cstdarg>
 #endif
+#include <numeric>
 
 using namespace std::string_literals;
 
@@ -26,8 +27,14 @@ CGuild::CGuild() : name( "" ), gType( GT_STANDARD ), charter( "" ), webpage( "" 
 	abbreviation[0] = 0;
 	recruits.resize( 0 );
 	members.resize( 0 );
+    invites.resize( 0 );
+    veterans.resize( 0 );
+    officers.resize( 0 );
 	recruitPtr		= recruits.end();
 	memberPtr		= members.end();
+    invitePtr		= invites.end();
+    veteranPtr		= veterans.end();
+    officerPtr		= officers.end();
 	warPtr			= relationList.end();
 	allyPtr			= relationList.end();
 }
@@ -35,9 +42,11 @@ CGuild::CGuild() : name( "" ), gType( GT_STANDARD ), charter( "" ), webpage( "" 
 CGuild::~CGuild()
 {
 	JSEngine->ReleaseObject( IUE_GUILD, this );
-
 	recruits.clear();
 	members.clear();
+    invites.clear();
+    veterans.clear();
+    officers.clear();
 	relationList.clear();
 }
 
@@ -642,140 +651,799 @@ GUILDREL *CGuild::GuildRelationList( void )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CGuild::Save()
+//| Function    -  CGuild::AddInvite( CChar& )
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Save guild data to worldfiles
+//| Purpose     -  Add a pending invite for the given character (by serial)
+//|                Skips if already member/recruit/invited
 //o------------------------------------------------------------------------------------------------o
-void CGuild::Save( std::ostream &toSave, GUILDID gNum )
+void CGuild::AddInvite( CChar& c )
 {
-	toSave << "[GUILD " << gNum << ']' << '\n' << "{" << '\n';
-	toSave << "NAME=" << name << '\n';
-	toSave << "ABBREVIATION=" << abbreviation << '\n';
-	toSave << "TYPE=" << GTypeNames[gType] << '\n';
-	toSave << "CHARTER=" << charter << '\n';
-	toSave << "WEBPAGE=" << webpage << '\n';
-	toSave << "STONE=" << stone << '\n';
-	toSave << "MASTER=" << master << '\n';
-	std::for_each( recruits.begin(), recruits.end(), [&toSave] ( SERIAL entry )
-	{
-		toSave << "RECRUIT=" << entry << '\n';
-
-	});
-	std::for_each( members.begin(), members.end(), [&toSave] ( SERIAL entry )
-	{
-		toSave << "MEMBER=" << entry << '\n';
-		
-	});
-	GUILDREL::const_iterator relly = relationList.begin();
-	while( relly != relationList.end() )
-	{
-		toSave << GRelationNames[relly->second] << " " << relly->first <<'\n';
-		++relly;
-	}
-	toSave << "}" << '\n' << '\n';
+	AddInvite( c.GetSerial() );
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CGuild::Load()
+//| Function    -  CGuild::AddInvite( SERIAL )
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Load guilds from guilds worldfile
+//| Purpose     -  Add a pending invite for the given serial
+//|                Skips if already member/recruit/invited
 //o------------------------------------------------------------------------------------------------o
-void CGuild::Load( CScriptSection *toRead )
+void CGuild::AddInvite( SERIAL s )
 {
-	std::string tag;
-	std::string data;
-	std::string UTag;
-	for( const auto &sec : toRead->collection() )
-	{
-		tag = sec->tag;
-		data = sec->data;
-		if( tag.empty() )
-			continue;
+	if( IsMember( s ) || IsRecruit( s ) || IsInvited( s ) )
+		return;
+	invites.push_back( s );
+}
 
-		UTag = oldstrutil::upper( tag );
-		switch(( UTag.data()[0] ))
-		{
-			case '{':
-			case '/':	break;	// open section, comment, we don't really care;)
-			case 'A':
-				if( UTag == "ABBREVIATION" )
-				{
-					Abbreviation( data.c_str() );
-				}
-				else if( UTag == "ALLY" )
-				{
-					SetGuildRelation( static_cast<SI16>( std::stoi( data, nullptr, 0 )), GR_ALLY );
-				}
-				break;
-			case 'C':
-				if( UTag == "CHARTER" )
-				{
-					Charter( data );
-				}
-				break;
-			case 'M':
-				if( UTag == "MASTER" )
-				{
-					Master( static_cast<UI32>( std::stoul( data, nullptr, 0 )));
-				}
-				else if( UTag == "MEMBER" )
-				{
-					NewMember( static_cast<UI32>( std::stoul( data, nullptr, 0 )));
-				}
-				break;
-			case 'N':
-				if( UTag == "NAME" )
-				{
-					Name( data );
-				}
-				else if( UTag == "NEUTRAL" )
-				{
-					SetGuildRelation( static_cast<SI16>( std::stoi( data, nullptr, 0 )), GR_NEUTRAL );
-				}
-				break;
-			case 'R':
-				if( UTag == "RECRUIT" )
-				{
-					NewRecruit( static_cast<UI32>( std::stoul( data, nullptr, 0 )));
-				}
-				break;
-			case 'S':
-				if( UTag == "STONE" )
-				{
-					Stone( static_cast<UI32>( std::stoul( data, nullptr, 0 )));
-				}
-				break;
-			case 'T':
-				if( UTag == "TYPE" )
-				{
-					for( GuildType gt = GT_STANDARD; gt < GT_COUNT; gt = static_cast<GuildType>( gt + static_cast<GuildType>( 1 )))
-					{
-						if( data == GTypeNames[gt] )
-						{
-							Type( gt );
-							break;
-						}
-					}
-				}
-				break;
-			case 'U':
-				if( UTag == "UNKNOWN" )
-				{
-					SetGuildRelation( static_cast<SI16>( std::stoi( data, nullptr, 0 )), GR_UNKNOWN );
-				}
-				break;
-			case 'W':
-				if( UTag == "WEBPAGE" )
-				{
-					Webpage( data );
-				}
-				else if( UTag == "WAR" )
-				{
-					SetGuildRelation( static_cast<SI16>( std::stoi( data, nullptr, 0 )), GR_WAR );
-				}
-				break;
-		}
-	}
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::RemoveInvite( CChar& )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Remove a pending invite for the given character (by serial)
+//o------------------------------------------------------------------------------------------------o
+void CGuild::RemoveInvite( CChar& c )
+{
+	RemoveInvite( c.GetSerial() );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::RemoveInvite( SERIAL )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Remove a pending invite for the given serial, if present
+//o------------------------------------------------------------------------------------------------o
+void CGuild::RemoveInvite( SERIAL s )
+{
+	auto it = std::find( invites.begin(), invites.end(), s );
+	if( it != invites.end() )
+		invites.erase( it );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::IsInvited( CChar& ) const
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Check if the character has a pending invite (by serial)
+//o------------------------------------------------------------------------------------------------o
+bool CGuild::IsInvited( CChar& c ) const
+{
+	return IsInvited( c.GetSerial() );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::IsInvited( SERIAL ) const
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Check if the serial has a pending invite
+//o------------------------------------------------------------------------------------------------o
+bool CGuild::IsInvited( SERIAL s ) const
+{
+	return std::find( invites.begin(), invites.end(), s ) != invites.end();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::NumInvites() const
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Return number of pending invites
+//o------------------------------------------------------------------------------------------------o
+size_t CGuild::NumInvites() const
+{
+	return invites.size();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::InviteNumber( size_t ) const
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Return invite serial at index, or INVALIDSERIAL if out of range
+//o------------------------------------------------------------------------------------------------o
+SERIAL CGuild::InviteNumber( size_t i ) const
+{
+	return ( i < invites.size() ) ? invites[i] : INVALIDSERIAL;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::FirstInvite()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Position iterator at first invite and return its serial,
+//|                or INVALIDSERIAL if list is empty
+//o------------------------------------------------------------------------------------------------o
+SERIAL CGuild::FirstInvite()
+{
+	invitePtr = invites.begin();
+	return FinishedInvites() ? INVALIDSERIAL : *invitePtr;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::NextInvite()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Advance to next invite and return its serial,
+//|                or INVALIDSERIAL if at end
+//o------------------------------------------------------------------------------------------------o
+SERIAL CGuild::NextInvite()
+{
+	if( FinishedInvites() )
+		return INVALIDSERIAL;
+	++invitePtr;
+	return FinishedInvites() ? INVALIDSERIAL : *invitePtr;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::FinishedInvites()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Return true if invite iterator is at end
+//o------------------------------------------------------------------------------------------------o
+bool CGuild::FinishedInvites()
+{
+	return invitePtr == invites.end();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::NewVeteran()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Adds a new Veteran to the guild
+//| Notes       - Removes character from Recruit, Member, or Officer lists if present
+//o------------------------------------------------------------------------------------------------o
+void CGuild::NewVeteran( CChar& c )
+{
+	 NewVeteran( c.GetSerial() );
+}
+void CGuild::NewVeteran( SERIAL s )
+{
+	RemoveRecruit( s);
+	RemoveMember( s );
+	RemoveOfficer( s );
+	veterans.push_back( s );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::RemoveVeteran()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Removes a Veteran from the guild
+//o------------------------------------------------------------------------------------------------o
+void CGuild::RemoveVeteran( CChar& c )
+{
+	RemoveVeteran( c.GetSerial() );
+}
+void CGuild::RemoveVeteran( SERIAL s )
+{
+	auto it = std::find( veterans.begin(), veterans.end(), s );
+	if( it != veterans.end() )
+		veterans.erase( it );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::VeteranNumber( size_t ) const
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Return serial of Veteran at index, or INVALIDSERIAL if out of range
+//o------------------------------------------------------------------------------------------------o
+SERIAL CGuild::VeteranNumber( size_t i ) const
+{
+	return ( i < veterans.size() ) ? veterans[i] : INVALIDSERIAL;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::IsVeteran( CChar& ) const
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Check if character is a Veteran of this guild
+//o------------------------------------------------------------------------------------------------o
+bool CGuild::IsVeteran( CChar& c ) const
+{
+	return IsVeteran( c.GetSerial() );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::IsVeteran()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Checks if specified character is a Veteran of the guild
+//o------------------------------------------------------------------------------------------------o
+bool CGuild::IsVeteran( SERIAL s ) const
+{
+	return std::find( veterans.begin(), veterans.end(), s ) != veterans.end();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::FirstVeteran()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Returns serial of first Veteran in guild (or INVALIDSERIAL if none)
+//o------------------------------------------------------------------------------------------------o
+SERIAL CGuild::FirstVeteran()
+{
+	veteranPtr = veterans.begin();
+	return FinishedVeterans() ? INVALIDSERIAL : *veteranPtr;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::NextVeteran()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Returns serial of next Veteran in list (or INVALIDSERIAL if finished)
+//o------------------------------------------------------------------------------------------------o
+SERIAL CGuild::NextVeteran()
+{
+	if( FinishedVeterans() )
+		return INVALIDSERIAL;
+	++veteranPtr;
+	return FinishedVeterans() ? INVALIDSERIAL : *veteranPtr;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::FinishedVeterans()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Returns true if there are no more Veterans left to iterate
+//o------------------------------------------------------------------------------------------------o
+bool CGuild::FinishedVeterans()
+{
+	return veteranPtr == veterans.end(); 
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::NumVeterans()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Returns number of Veterans in the guild
+//o------------------------------------------------------------------------------------------------o
+size_t CGuild::NumVeterans() const 
+{
+	return veterans.size(); 
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::NewOfficer()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Adds a new Officer to the guild
+//| Notes       - Removes character from Recruit, Member, or Veteran lists if present
+//o------------------------------------------------------------------------------------------------o
+void CGuild::NewOfficer(CChar& c)
+{
+	NewOfficer( c.GetSerial() );
+}
+void CGuild::NewOfficer( SERIAL s )
+{
+	RemoveRecruit( s );
+	RemoveMember( s );
+	RemoveVeteran( s );
+	officers.push_back( s );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::RemoveOfficer()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Removes an Officer from the guild
+//o------------------------------------------------------------------------------------------------o
+void CGuild::RemoveOfficer( CChar& c ) 
+{
+	RemoveOfficer( c.GetSerial() );
+}
+void CGuild::RemoveOfficer (SERIAL s )
+{
+	auto it = std::find( officers.begin(), officers.end(), s );
+	if( it != officers.end())
+		officers.erase( it );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::OfficerNumber( size_t ) const
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Return serial of Officer at index, or INVALIDSERIAL if out of range
+//o------------------------------------------------------------------------------------------------o
+SERIAL CGuild::OfficerNumber( size_t i ) const
+{
+	return ( i < officers.size() ) ? officers[i] : INVALIDSERIAL;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::IsOfficer( CChar& ) const
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Check if character is an Officer of this guild
+//o------------------------------------------------------------------------------------------------o
+bool CGuild::IsOfficer( CChar& c ) const
+{
+	return IsOfficer( c.GetSerial() );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::IsOfficer()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Checks if specified character is an Officer of the guild
+//o------------------------------------------------------------------------------------------------o
+bool CGuild::IsOfficer(SERIAL s) const
+{
+	return std::find( officers.begin(), officers.end(), s ) != officers.end();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::FirstOfficer()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Returns serial of first Officer in guild (or INVALIDSERIAL if none)
+//o------------------------------------------------------------------------------------------------o
+SERIAL CGuild::FirstOfficer()
+{
+	officerPtr = officers.begin();
+	return FinishedOfficers() ? INVALIDSERIAL : *officerPtr;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::NextOfficer()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Returns serial of next Officer in list (or INVALIDSERIAL if finished)
+//o------------------------------------------------------------------------------------------------o
+SERIAL CGuild::NextOfficer()
+{
+	if( FinishedOfficers() )
+		return INVALIDSERIAL;
+	++officerPtr;
+	return FinishedOfficers() ? INVALIDSERIAL : *officerPtr;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::FinishedOfficers()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Returns true if there are no more Officers left to iterate
+//o------------------------------------------------------------------------------------------------o
+bool CGuild::FinishedOfficers()
+{
+	return officerPtr == officers.end(); 
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CGuild::NumOfficers()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Returns number of Officers in the guild
+//o------------------------------------------------------------------------------------------------o
+size_t CGuild::NumOfficers() const 
+{
+	return officers.size(); 
+}
+
+// local ASCII case-insensitive equality (avoid locale pitfalls)
+static bool iequals_ascii( const std::string& a, const std::string& b )
+{
+    if( a.size() != b.size() ) return false;
+    for( size_t i = 0; i < a.size(); ++i )
+    {
+        unsigned char ca = static_cast<unsigned char>(a[i]);
+        unsigned char cb = static_cast<unsigned char>(b[i]);
+        if( std::tolower(ca) != std::tolower(cb) ) return false;
+    }
+    return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::RebuildRankOrder_()
+//| Prototype   -  void RebuildRankOrder_()
+//| Purpose     -  Rebuild derived promotion order after ranks change; keeps IDs stable.
+//o------------------------------------------------------------------------------------------------o
+void CGuild::RebuildRankOrder_()
+{
+    orderByPrio.resize( ranks.size() );
+    std::iota( orderByPrio.begin(), orderByPrio.end(), size_t(0) );
+
+    std::stable_sort( orderByPrio.begin(), orderByPrio.end(),
+        [&]( size_t ida, size_t idb )
+        {
+            return ranks[ida].prio < ranks[idb].prio;
+        } );
+
+    idToOrderIndex.assign( ranks.size(), 0 );
+    for( size_t i = 0; i < orderByPrio.size(); ++i )
+        idToOrderIndex[ orderByPrio[i] ] = i;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::AddRank()
+//| Prototype   -  size_t AddRank( const std::string& name, SI32 prio, UI32 flags = 0 )
+//| Purpose     -  Add a new rank definition to this guild, or update an existing one.
+//| Notes       -  Rank IDs are stable (index in ranks vector). Promotion order is separate.
+//o------------------------------------------------------------------------------------------------o
+size_t CGuild::AddRank( const std::string& name, SI32 prio, UI32 flags )
+{
+    for( size_t i = 0; i < ranks.size(); ++i )
+    {
+        if( iequals_ascii( ranks[i].name, name ) )
+        {
+            ranks[i].prio  = prio;
+            ranks[i].flags = flags;
+            RebuildRankOrder_();
+            return i;
+        }
+    }
+    ranks.push_back( { name, prio, flags } );
+    RebuildRankOrder_();
+    return ranks.size() - 1;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::RemoveRankByName()
+//| Prototype   -  bool RemoveRankByName( const std::string& name )
+//| Purpose     -  Remove a rank; fails if any member currently holds it.
+//| Notes       -  Keeps rankId space stable via tombstoning (name -> "(deleted)", prio=INT_MAX).
+//o------------------------------------------------------------------------------------------------o
+bool CGuild::RemoveRankByName( const std::string& name )
+{
+    SI32 id = FindRankIdByName( name );
+    if( id < 0 ) return false;
+    size_t rid = static_cast<size_t>( id );
+
+    // deny remove if in use
+    for( const auto& kv : rankOf )
+        if( kv.second == rid )
+            return false;
+
+    ranks[rid].name  = "(deleted)";
+    ranks[rid].prio  = std::numeric_limits<SI32>::max();
+    ranks[rid].flags = 0;
+    RebuildRankOrder_();
+    return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::RenameRank()
+//| Prototype   -  bool RenameRank( const std::string& oldName, const std::string& newName )
+//| Purpose     -  Change name only; stable ID, prio and flags unaffected.
+//o------------------------------------------------------------------------------------------------o
+bool CGuild::RenameRank( const std::string& oldName, const std::string& newName )
+{
+    SI32 id = FindRankIdByName( oldName );
+    if( id < 0 ) return false;
+    ranks[ static_cast<size_t>(id) ].name = newName;
+    return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::FindRankIdByName()
+//| Prototype   -  SI32 FindRankIdByName( const std::string& name ) const
+//| Purpose     -  Lookup rankId by name (case-insensitive); -1 if missing.
+//o------------------------------------------------------------------------------------------------o
+SI32 CGuild::FindRankIdByName( const std::string& name ) const
+{
+    for( size_t i = 0; i < ranks.size(); ++i )
+        if( iequals_ascii( ranks[i].name, name ) )
+            return static_cast<SI32>( i );
+    return -1;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::GetRankId()
+//| Prototype   -  SI32 GetRankId( SERIAL s ) const
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Returns the current rank id for a member; -1 if none.
+//o------------------------------------------------------------------------------------------------o
+SI32 CGuild::GetRankId(SERIAL s) const
+{
+    auto it = rankOf.find(s);
+    if (it == rankOf.end())
+        return -1;
+    size_t id = it->second;
+    return (id < ranks.size()) ? static_cast<SI32>(id) : -1;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::NumRanks() / GetRankDef()
+//| Prototype   -  size_t NumRanks() const
+//|               const RankDef* GetRankDef( size_t rankId ) const
+//| Purpose     -  Introspection utilities for rank registry.
+//o------------------------------------------------------------------------------------------------o
+size_t CGuild::NumRanks() const
+{
+    return ranks.size();
+}
+const CGuild::RankDef* CGuild::GetRankDef( size_t rankId ) const
+{
+    if( rankId >= ranks.size() ) return nullptr;
+    return &ranks[rankId];
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::SetRank() / HasRank()
+//| Prototype   -  bool SetRank( CChar& c, const std::string& rankName )
+//|               bool SetRank( SERIAL s, const std::string& rankName )
+//|               bool HasRank( CChar& c, const std::string& rankName ) const
+//|               bool HasRank( SERIAL s, const std::string& rankName ) const
+//| Purpose     -  Assign/check a character’s rank.
+//o------------------------------------------------------------------------------------------------o
+bool CGuild::SetRank( CChar& c, const std::string& rankName )
+{
+    return SetRank( c.GetSerial(), rankName );
+}
+bool CGuild::SetRank( SERIAL s, const std::string& rankName )
+{
+    SI32 id = FindRankIdByName( rankName );
+    if( id < 0 ) return false;
+    rankOf[s] = static_cast<size_t>( id );
+    return true;
+}
+bool CGuild::HasRank( CChar& c, const std::string& rankName ) const
+{
+    return HasRank( c.GetSerial(), rankName );
+}
+bool CGuild::HasRank( SERIAL s, const std::string& rankName ) const
+{
+    SI32 id = FindRankIdByName( rankName );
+    if( id < 0 ) return false;
+    auto it = rankOf.find( s );
+    return ( it != rankOf.end() ) && ( it->second == static_cast<size_t>( id ) );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::GetRankName()
+//| Prototype   -  const std::string GetRankName( CChar& c ) const
+//|               const std::string GetRankName( SERIAL s ) const
+//| Purpose     -  Get current rank name; empty if none.
+//o------------------------------------------------------------------------------------------------o
+const std::string CGuild::GetRankName( CChar& c ) const
+{
+    return GetRankName( c.GetSerial() );
+}
+const std::string CGuild::GetRankName( SERIAL s ) const
+{
+    auto it = rankOf.find( s );
+    if( it == rankOf.end() ) return "";
+    size_t id = it->second;
+    return ( id < ranks.size() ) ? ranks[id].name : "";
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::Promote() / Demote()
+//| Prototype   -  bool Promote( CChar& c )
+//|               bool Demote( CChar& c )
+//| Purpose     -  Move to next higher/lower rank by priority.
+//o------------------------------------------------------------------------------------------------o
+bool CGuild::Promote( CChar& c )
+{
+    if( ranks.empty() ) return false;
+    auto it = rankOf.find( c.GetSerial() );
+    if( it == rankOf.end() ) return false;
+
+    size_t curId = it->second;
+    if( curId >= idToOrderIndex.size() ) return false;
+
+    size_t pos = idToOrderIndex[curId];
+    if( pos + 1 >= orderByPrio.size() ) return false; // already top
+
+    size_t nextId = orderByPrio[pos + 1];
+    it->second = nextId;
+    return true;
+}
+bool CGuild::Demote( CChar& c )
+{
+    if( ranks.empty() ) return false;
+    auto it = rankOf.find( c.GetSerial() );
+    if( it == rankOf.end() ) return false;
+
+    size_t curId = it->second;
+    if( curId >= idToOrderIndex.size() ) return false;
+
+    size_t pos = idToOrderIndex[curId];
+    if( pos == 0 ) return false; // already bottom
+
+    size_t prevId = orderByPrio[pos - 1];
+    it->second = prevId;
+    return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::CountInRank() / ListRank()
+//| Prototype   -  size_t CountInRank( const std::string& rankName ) const
+//|               void   ListRank( const std::string& rankName, std::vector<SERIAL>& out ) const
+//| Purpose     -  Query members in a specific rank.
+//o------------------------------------------------------------------------------------------------o
+size_t CGuild::CountInRank( const std::string& rankName ) const
+{
+    SI32 id = FindRankIdByName( rankName );
+    if( id < 0 ) return 0;
+    size_t rid = static_cast<size_t>( id );
+    size_t count = 0;
+    for( const auto& kv : rankOf )
+        if( kv.second == rid ) ++count;
+    return count;
+}
+void CGuild::ListRank( const std::string& rankName, std::vector<SERIAL>& out ) const
+{
+    out.clear();
+    SI32 id = FindRankIdByName( rankName );
+    if( id < 0 ) return;
+    size_t rid = static_cast<size_t>( id );
+    for( const auto& kv : rankOf )
+        if( kv.second == rid ) out.push_back( kv.first );
+}
+
+SI32 CGuild::GetRankPrioById(size_t id) const
+{
+    if (id >= ranks.size()) return std::numeric_limits<SI32>::max();
+    return ranks[id].prio;
+}
+
+std::string CGuild::GetRankNameById(size_t id) const
+{
+    if (id >= ranks.size()) return std::string();
+    return ranks[id].name;
+}
+
+bool CGuild::RemoveRankById(size_t id)
+{
+    if (id >= ranks.size()) return false;
+
+    // deny remove if in use
+    for (const auto& kv : rankOf)
+        if (kv.second == id)
+            return false;
+
+    ranks[id].name  = "(deleted)";
+    ranks[id].prio  = std::numeric_limits<SI32>::max();
+    ranks[id].flags = 0;
+    RebuildRankOrder_();
+    return true;
+}
+
+bool CGuild::SetRankById(SERIAL s, size_t id)
+{
+    if (id >= ranks.size()) return false;
+    rankOf[s] = id;
+    return true;
+}
+
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::Save()
+//| Purpose     -  Save guild data (supports dynamic ranks; writes legacy lines for compat).
+//o------------------------------------------------------------------------------------------------o
+void CGuild::Save( std::ostream& toSave, GUILDID gNum )
+{
+    toSave << "[GUILD " << gNum << "]\n{\n";
+    toSave << "NAME=" << name << '\n';
+    toSave << "ABBREVIATION=" << abbreviation << '\n';
+    toSave << "TYPE=" << GTypeNames[gType] << '\n';
+    toSave << "CHARTER=" << charter << '\n';
+    for( auto s : invites ) toSave << "INVITE=" << s << '\n';
+    toSave << "WEBPAGE=" << webpage << '\n';
+    toSave << "STONE=" << stone << '\n';
+    toSave << "MASTER=" << master << '\n';
+
+    // Dynamic ranks
+    for( const auto& r : ranks )
+        toSave << "RANKDEF=" << r.name << ',' << r.prio << ',' << r.flags << '\n';
+
+    for( const auto& kv : rankOf )
+    {
+        size_t rid = kv.second;
+        if( rid < ranks.size() )
+            toSave << "RANKMEM=" << ranks[rid].name << ',' << kv.first << '\n';
+    }
+
+    // Optional: legacy lines for backward compatibility
+    auto writeLegacy = [&]( const char* legacyName, const char* key )
+    {
+        SI32 id = FindRankIdByName( legacyName );
+        if( id < 0 ) return;
+        size_t rid = static_cast<size_t>( id );
+        for( const auto& kv : rankOf )
+            if( kv.second == rid )
+                toSave << key << '=' << kv.first << '\n';
+    };
+    writeLegacy( "Recruit", "RECRUIT" );
+    writeLegacy( "Member",  "MEMBER" );
+    writeLegacy( "Veteran", "VETERAN" );
+    writeLegacy( "Officer", "OFFICER" );
+
+    for( auto it = relationList.begin(); it != relationList.end(); ++it )
+        toSave << GRelationNames[it->second] << ' ' << it->first << '\n';
+
+    toSave << "}\n\n";
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild::Load()
+//| Purpose     -  Load guild data (accepts dynamic and legacy formats).
+//o------------------------------------------------------------------------------------------------o
+void CGuild::Load( CScriptSection* toRead )
+{
+    // clear transient maps; keep ranks unless you want file to dictate them
+    // ranks.clear(); // uncomment if you want file to fully define ranks
+    invites.clear();
+    rankOf.clear();
+
+    bool sawRankDef = false;
+
+    auto setRankLegacy = [&]( const char* rankName, const std::string& data )
+    {
+        SERIAL s = static_cast<UI32>( std::stoul( data, nullptr, 0 ) );
+        AddRank( rankName, /*prio*/ 0 ); // no-op if exists
+        SetRank( s, rankName );
+    };
+
+    for( const auto& sec : toRead->collection() )
+    {
+        std::string tag  = sec->tag;
+        std::string data = sec->data;
+        if( tag.empty() ) continue;
+
+        std::string UTag = oldstrutil::upper( tag );
+        switch( UTag[0] )
+        {
+            case '{': case '/': break;
+
+            case 'A':
+                if( UTag == "ABBREVIATION" ) Abbreviation( data.c_str() );
+                else if( UTag == "ALLY" )   SetGuildRelation( static_cast<SI16>( std::stoi( data, nullptr, 0 )), GR_ALLY );
+                break;
+
+            case 'C':
+                if( UTag == "CHARTER" ) Charter( data );
+                break;
+
+            case 'I':
+                if( UTag == "INVITE" ) AddInvite( static_cast<UI32>( std::stoul( data, nullptr, 0 ) ) );
+                break;
+
+            case 'M':
+                if( UTag == "MASTER" ) Master( static_cast<UI32>( std::stoul( data, nullptr, 0 ) ) );
+                else if( UTag == "MEMBER" ) setRankLegacy( "Member", data );
+                break;
+            case 'N':
+                if( UTag == "NAME" ) Name( data );
+                else if( UTag == "NEUTRAL" ) SetGuildRelation( static_cast<SI16>( std::stoi( data, nullptr, 0 ) ), GR_NEUTRAL );
+                break;
+
+            case 'O':
+                if( UTag == "OFFICER" ) setRankLegacy( "Officer", data );
+                break;
+
+            case 'R':
+                if( UTag == "RECRUIT" ) setRankLegacy( "Recruit", data );
+                else if( UTag == "RANKDEF" )
+                {
+                    // name,prio[,flags]
+                    auto p1 = data.find(',');
+                    if( p1 == std::string::npos ) { AddRank( data, (SI32)ranks.size() ); sawRankDef = true; break; }
+                    auto p2 = data.find(',', p1 + 1);
+                    auto name  = data.substr( 0, p1 );
+                    auto prio  = std::stoi( data.substr( p1 + 1, (p2 == std::string::npos ? data.size() : p2) - (p1 + 1) ) );
+                    auto flags = (p2 == std::string::npos) ? 0u : (UI32)std::stoul( data.substr( p2 + 1 ) );
+                    AddRank( name, prio, flags );
+                    sawRankDef = true;
+                }
+                else if( UTag == "RANKMEM" )
+                {
+                    // name,serial
+                    auto p = data.find(',');
+                    if( p != std::string::npos )
+                    {
+                        auto name = data.substr( 0, p );
+                        SERIAL s  = static_cast<UI32>( std::stoul( data.substr( p + 1 ) ) );
+                        AddRank( name, (SI32)ranks.size() );
+                        SetRank( s, name );
+                    }
+                }
+                break;
+
+            case 'S':
+                if( UTag == "STONE" ) Stone( static_cast<UI32>( std::stoul( data, nullptr, 0 ) ) );
+                break;
+
+            case 'T':
+                if( UTag == "TYPE" )
+                {
+                    for( GuildType gt = GT_STANDARD; gt < GT_COUNT; gt = static_cast<GuildType>( gt + static_cast<GuildType>( 1 ) ) )
+                        if( data == GTypeNames[gt] ) { Type( gt ); break; }
+                }
+                break;
+
+            case 'U':
+                if( UTag == "UNKNOWN" ) SetGuildRelation( static_cast<SI16>( std::stoi( data, nullptr, 0 ) ), GR_UNKNOWN );
+                break;
+
+            case 'V':
+                if( UTag == "VETERAN" ) setRankLegacy( "Veteran", data );
+                break;
+
+            case 'W':
+                if( UTag == "WEBPAGE" ) Webpage( data );
+                else if( UTag == "WAR" ) SetGuildRelation( static_cast<SI16>( std::stoi( data, nullptr, 0 ) ), GR_WAR );
+                break;
+        }
+    }
+
+    // If file provided no rank defs, ensure defaults for legacy mapping.
+    if( !sawRankDef )
+    {
+        AddRank( "Recruit", 0 );
+        AddRank( "Member",  1 );
+        AddRank( "Veteran", 2 );
+        AddRank( "Officer", 3 );
+    }
 }
 
 //o------------------------------------------------------------------------------------------------o
