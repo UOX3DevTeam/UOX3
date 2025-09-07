@@ -3096,6 +3096,8 @@ auto CItem::PlaceInPack() -> void
 			SetY(( RandomNum( 65, 127 )));
 			break;
 		case PT_BAG:
+		case PT_HEARTSHAPEDBOX:
+		case PT_INCUBATOR:
 			SetX(( RandomNum( 29, 93 )));
 			SetY(( RandomNum( 34, 96 )));
 			break;
@@ -3146,12 +3148,14 @@ auto CItem::PlaceInPack() -> void
 			SetX(( RandomNum( 33, 98 )));
 			break;
 		case PT_CRATE:
+		case PT_GIFTCONTAINERSNL:
 			SetY(( RandomNum( 10, 68 )));
 			SetX(( RandomNum( 20, 126 )));
 			break;
 		case PT_WCHEST:
 		case PT_SCHEST:
 		case PT_GCHEST:
+		case PT_KINGSCOLLECTION:
 			SetY(( RandomNum( 105, 139 )));
 			SetX(( RandomNum( 18, 118 )));
 			break;
