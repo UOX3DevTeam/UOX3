@@ -1,4 +1,4 @@
-[direwolf_t2a]
+[direwolf_lbr]
 {
 GET=base_direwolf
 STR=96 120
@@ -18,7 +18,7 @@ TOPEACE=503 5
 TOTAME=831
 }
 
-[giantrat_2ta]
+[giantrat_lbr]
 {
 GET=base_giantrat
 GOLD=0 25
@@ -39,7 +39,7 @@ TOPEACE=258 5
 TOTAME=291
 }
 
-[gianttoad_t2a]
+[gianttoad_lbr]
 {
 GET=base_gianttoad
 GOLD=0 25
@@ -60,7 +60,7 @@ TOPEACE=273 5
 TOTAME=771
 }
 
-[scorpion_t2a]
+[scorpion_lbr]
 {
 GET=base_scorpion
 STR=73 115
@@ -82,7 +82,7 @@ TOPEACE=651 5
 TOTAME=471
 }
 
-[sewerrat_t2a]
+[sewerrat_lbr]
 {
 GET=base_sewerrat
 STR=9
@@ -101,7 +101,7 @@ TOPEACE=55 5
 TOTAME=0
 }
 
-[phoenix_t2a]
+[phoenix_lbr]
 {
 GET=base_phoenix
 GOLD=600 1000
@@ -124,7 +124,7 @@ TOPEACE=1086 5
 TOTAME=2000
 }
 
-[bakekitsune_t2a]
+[bakekitsune_lbr]
 {
 GET=base_bakekitsune
 GOLD=300 400

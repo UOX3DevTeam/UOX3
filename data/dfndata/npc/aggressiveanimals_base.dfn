@@ -1,5 +1,5 @@
 // Base humanoid with shared DFN tags
-[base_agressiveanimals]
+[base_aggressiveanimals]
 {
 DIRECTION=RND
 BACKPACK
@@ -10,7 +10,7 @@ FLAG=NEUTRAL
 
 [base_direwolf]
 {
-GET=base_agressiveanimals
+GET=base_aggressiveanimals
 NAME=#//a dire wolf
 ID=0x0017
 TAMEDHUNGER=600 30
@@ -23,11 +23,11 @@ CONTROLSLOTS=1
 
 [direwolf]
 {
-GETUO=direwolf_t2a
-GETT2A=direwolf_t2a
-GETUOR=direwolf_t2a
-GETTD=direwolf_t2a
-GETLBR=direwolf_t2a
+GETUO=direwolf_lbr
+GETT2A=direwolf_lbr
+GETUOR=direwolf_lbr
+GETTD=direwolf_lbr
+GETLBR=direwolf_lbr
 GETAOS=direwolf_aos
 GETSE=direwolf_aos
 GETML=direwolf_aos
@@ -38,14 +38,13 @@ GETTOL=direwolf_aos
 
 [base_giantrat]
 {
-GET=base_agressiveanimals
+GET=base_aggressiveanimals
 NAME=#//a giant rat
 ID=0x00d7
 TAMEDHUNGER=600 30
 FOOD=rat
 CARVE=18
 RACE=2
-FLAG=NEUTRAL
 CONTROLSLOTS=1
 }
 
@@ -66,25 +65,24 @@ GETTOL=giantrat_aos
 
 [base_gianttoad]
 {
-GET=base_agressiveanimals
+GET=base_aggressiveanimals
 NAME=#//a giant toad
 ID=0x0050
 TAMEDHUNGER=600 30
 FOOD=toad
 CARVE=19
 RACE=8
-FLAG=NEUTRAL
 CONTROLSLOTS=1
 ORIGIN=t2a
 }
 
 [gianttoad]
 {
-GETUO=gianttoad_t2a
-GETT2A=gianttoad_t2a
-GETUOR=gianttoad_t2a
-GETTD=gianttoad_t2a
-GETLBR=gianttoad_t2a
+GETUO=gianttoad_lbr
+GETT2A=gianttoad_lbr
+GETUOR=gianttoad_lbr
+GETTD=gianttoad_lbr
+GETLBR=gianttoad_lbr
 GETAOS=gianttoad_aos
 GETSE=gianttoad_aos
 GETML=gianttoad_aos
@@ -95,7 +93,7 @@ GETTOL=gianttoad_aos
 
 [base_scorpion]
 {
-GET=base_agressiveanimals
+GET=base_aggressiveanimals
 NAME=#//a giant scorpion
 ID=0x0030
 SKIN=0000
@@ -103,17 +101,16 @@ TAMEDHUNGER=600 30
 FOOD=meat
 RUNS
 RACE=8
-FLAG=NEUTRAL
 CONTROLSLOTS=1
 }
 
 [scorpion]
 {
-GETUO=scorpion_t2a
-GETT2A=scorpion_t2a
-GETUOR=scorpion_t2a
-GETTD=scorpion_t2a
-GETLBR=scorpion_t2a
+GETUO=scorpion_lbr
+GETT2A=scorpion_lbr
+GETUOR=scorpion_lbr
+GETTD=scorpion_lbr
+GETLBR=scorpion_lbr
 GETAOS=scorpion_aos
 GETSE=scorpion_aos
 GETML=scorpion_aos
@@ -124,7 +121,7 @@ GETTOL=scorpion_aos
 
 [base_sewerrat]
 {
-GET=base_agressiveanimals
+GET=base_aggressiveanimals
 NAME=5005//a sewer rat
 ID=0x00ee
 TAMEDHUNGER=600 30
@@ -132,17 +129,16 @@ FOOD=rat
 NPCAI=2
 CARVE=44
 RACE=2
-FLAG=NEUTRAL
 CONTROLSLOTS=1
 }
 
 [sewerrat]
 {
-GETUO=sewerrat_t2a
-GETT2A=sewerrat_t2a
-GETUOR=sewerrat_t2a
-GETTD=sewerrat_t2a
-GETLBR=sewerrat_t2a
+GETUO=sewerrat_lbr
+GETT2A=sewerrat_lbr
+GETUOR=sewerrat_lbr
+GETTD=sewerrat_lbr
+GETLBR=sewerrat_lbr
 GETAOS=sewerrat_aos
 GETSE=sewerrat_aos
 GETML=sewerrat_aos
@@ -153,7 +149,7 @@ GETTOL=sewerrat_aos
 
 [base_phoenix]
 {
-GET=base_agressiveanimals
+GET=base_aggressiveanimals
 NAME=3832//a phoenix
 ID=0x0005
 SKIN=0x04B9
@@ -168,11 +164,11 @@ SCRIPT=3503
 
 [phoenix]
 {
-GETUO=phoenix_t2a
-GETT2A=phoenix_t2a
-GETUOR=phoenix_t2a
-GETTD=phoenix_t2a
-GETLBR=phoenix_t2a
+GETUO=phoenix_lbr
+GETT2A=phoenix_lbr
+GETUOR=phoenix_lbr
+GETTD=phoenix_lbr
+GETLBR=phoenix_lbr
 GETAOS=phoenix_aos
 GETSE=phoenix_aos
 GETML=phoenix_aos
@@ -184,7 +180,7 @@ GETTOL=phoenix_aos
 //bake kitsune - Base NPC with shared DFN tags
 [base_bakekitsune]
 {
-GET=base_agressiveanimals
+GET=base_aggressiveanimals
 NAME=#//a bake kitsune
 ID=0x0f6
 NPCAI=2
@@ -197,11 +193,11 @@ SCRIPT=3220// bakekitsune.js
 
 [bakekitsune]
 {
-GETUO=bakekitsune_t2a
-GETT2A=bakekitsune_t2a
-GETUOR=bakekitsune_t2a
-GETTD=bakekitsune_t2a
-GETLBR=bakekitsune_t2a
+GETUO=bakekitsune_lbr
+GETT2A=bakekitsune_lbr
+GETUOR=bakekitsune_lbr
+GETTD=bakekitsune_lbr
+GETLBR=bakekitsune_lbr
 GETAOS=bakekitsune_aos
 GETSE=bakekitsune_se
 GETML=bakekitsune_se
