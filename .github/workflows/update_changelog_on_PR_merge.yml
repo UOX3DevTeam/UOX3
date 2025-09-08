@@ -76,8 +76,8 @@ jobs:
         id: get_token
         uses: actions/create-github-app-token@v2
         with:
-          app_id: ${{ secrets.APP_ID }}
-          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
 
       # Use generated token to create the PR
       - name: Create Pull Request with Changelog Update
