@@ -8,188 +8,164 @@
 //-=                                                        =-
 //-==========================================================-
 
-[corpser]
+[base_agressiveplants]
 {
-NAME=#//a corpser
-ID=0x0008
 DIRECTION=RND
 BACKPACK
-GOLD=0 50
-PACKITEM=0x0f83
-PACKITEM=0x1be0,10
-STR=156 180
-DEX=26 45
-INT=26 40
-MANAMAX=0
-KARMA=-1000
-FAME=1000
-MAGICRESISTANCE=150 200
-PARRYING=150 250
-TACTICS=450 600
-WRESTLING=450 600
-DAMAGE=3 30
-DEF=9
-NPCWANDER=5
+NPCWANDER=4
+FX2=20
 NPCAI=2
-TOPROV=378
-TOPEACE=378 5
-RACE=18
 FLAG=NEUTRAL
+}
+
+[base_corpser]
+{
+GET=base_agressiveplants
+NAME=#//a corpser
+ID=0x0008
+RACE=18
+NPCWANDER=5
+}
+
+[corpser]
+{
+GETUO=corpser_lbr
+GETT2A=corpser_lbr
+GETUOR=corpser_lbr
+GETTD=corpser_lbr
+GETLBR=corpser_lbr
+GETAOS=corpser_aos
+GETSE=corpser_aos
+GETML=corpser_aos
+GETSA=corpser_aos
+GETHS=corpser_aos
+GETTOL=corpser_aos
+}
+
+[base_reaper]
+{
+GET=base_agressiveplants
+NAME=#//a reaper
+ID=0x002f
+NPCWANDER=5
+NPCAI=11
+RACE=18
 }
 
 [reaper]
 {
-NAME=#//a reaper
-ID=0x002f
-DIRECTION=RND
-BACKPACK
-GOLD=50 150
-PACKITEM=0x0f90
-PACKITEM=0x1be0,10
-LOOT=TreasureMapLvl2Loot
-STR=66 215
-DEX=66 75
-INT=101 250
-STAMINAMAX=0
-KARMA=-3500
-FAME=3500
-MAGERY=900 1000
-EVALUATINGINTEL=0 250
-MAGICRESISTANCE=1000 1250
-PARRYING=500 600
-TACTICS=450 600
-WRESTLING=500 600
-SPATTACK=7
-SPADELAY=7
-DAMAGE=5 15
-DEF=20
+GETUO=reaper_lbr
+GETT2A=reaper_lbr
+GETUOR=reaper_lbr
+GETTD=reaper_lbr
+GETLBR=reaper_lbr
+GETAOS=reaper_aos
+GETSE=reaper_aos
+GETML=reaper_aos
+GETSA=reaper_aos
+GETHS=reaper_aos
+GETTOL=reaper_aos
+}
+
+[base_swamptentacle]
+{
+GET=base_agressiveplants
+NAME=#//a swamp tentacle
+ID=0x0042
 NPCWANDER=5
-NPCAI=11
-TOPROV=741
-TOPEACE=741 5
 RACE=18
-FLAG=NEUTRAL
 }
 
 [swamptentacle]
 {
-NAME=#//a swamp tentacle
-ID=0x0042
-DIRECTION=RND
-BACKPACK
-GOLD=50 150
-PACKITEM=0x0f84,3
-STR=96 120
-DEX=66 85
-INT=16 30
-MANAMAX=0
-KARMA=-3000
-FAME=3000
-MAGICRESISTANCE=150 200
-PARRYING=550 650
-TACTICS=650 800
-WRESTLING=650 800
-DAMAGE=3 15
-DEF=15
+GETUO=swamptentacle_lbr
+GETT2A=swamptentacle_lbr
+GETUOR=swamptentacle_lbr
+GETTD=swamptentacle_lbr
+GETLBR=swamptentacle_lbr
+GETAOS=swamptentacle_aos
+GETSE=swamptentacle_aos
+GETML=swamptentacle_aos
+GETSA=swamptentacle_aos
+GETHS=swamptentacle_aos
+GETTOL=swamptentacle_aos
+}
+
+[base_whippingvine]
+{
+GET=base_agressiveplants
+NAME=5000//a whipping vine
+ID=0x0008
 NPCWANDER=5
-NPCAI=2
-TOPROV=480
-TOPEACE=480 5
 RACE=18
-FLAG=NEUTRAL
+ORIGIN=lbr
 }
 
 [whippingvine]
 {
-NAME=5000//a whipping vine
-ID=0x0008
-DIRECTION=RND
-BACKPACK
-PACKITEM=0x0f81,1 10
-PACKITEM=0x0f83
-LOOT=randomreagents,3
-STR=251 300
-DEX=76 100
-INT=26 40
-MANAMAX=0
-KARMA=-1000
-FAME=1000
-MAGICRESISTANCE=700
-PARRYING=500
-TACTICS=700
-WRESTLING=700
-DAMAGE=9 48
-DEF=10
-NPCWANDER=5
-NPCAI=2
-TOPROV=766
-TOPEACE=766 5
+GETUO=whippingvine_lbr
+GETT2A=whippingvine_lbr
+GETUOR=whippingvine_lbr
+GETTD=whippingvine_lbr
+GETLBR=whippingvine_lbr
+GETAOS=whippingvine_aos
+GETSE=whippingvine_aos
+GETML=whippingvine_aos
+GETSA=whippingvine_aos
+GETHS=whippingvine_aos
+GETTOL=whippingvine_aos
+}
+
+[base_quagmire]
+{
+NAME=#//a quagmire
+ID=0x0315
 RACE=18
-FLAG=NEUTRAL
 ORIGIN=aos
 }
 
 [quagmire]
 {
-NAME=#//a quagmire
-ID=0x0315
-DIRECTION=RND
-BACKPACK
-GOLD=50 150
-STR=101 130
-DEX=66 85
-INT=31 55
-KARMA=-1500
-FAME=1500
-MAGICRESISTANCE=650 750
-PARRYING=500
-TACTICS=500 600
-WRESTLING=600 800
-DAMAGE=6 17
-DEF=20
-NPCWANDER=4
-FX1=-1
-FY1=-1
-FZ1=-1
-FX2=20
-NPCAI=2
-POISONSTRENGTH=3
-TOPROV=710
-TOPEACE=710 5
+GETUO=quagmire_lbr
+GETT2A=quagmire_lbr
+GETUOR=quagmire_lbr
+GETTD=quagmire_lbr
+GETLBR=quagmire_lbr
+GETAOS=quagmire_aos
+GETSE=quagmire_aos
+GETML=quagmire_aos
+GETSA=quagmire_aos
+GETHS=quagmire_aos
+GETTOL=quagmire_aos
+}
+
+[base_bogthing]
+{
+NAME=#//a bog thing
+ID=0x030c
 RACE=18
-FLAG=NEUTRAL
 ORIGIN=aos
 }
 
 [bogthing]
 {
-NAME=#//a bog thing
-ID=0x030c
-DIRECTION=RND
-BACKPACK
-GOLD=100 150
-LOOT=randomreagents,4
-PACKITEM=0x1be0,10
-STR=801 900
-DEX=46 65
-INT=36 50
-MANAMAX=0
-KARMA=-8000
-FAME=8000
-MAGICRESISTANCE=900 950
-PARRYING=500 650
-TACTICS=700 850
-WRESTLING=650 800
-DAMAGE=7 47
-DEF=20
-NPCWANDER=4
-FX1=-1
-FY1=-1
-FZ1=-1
-FX2=20
-NPCAI=2
-TOPROV=861
-TOPEACE=861 5
+GETUO=bogthing_lbr
+GETT2A=bogthing_lbr
+GETUOR=bogthing_lbr
+GETTD=bogthing_lbr
+GETLBR=bogthing_lbr
+GETAOS=bogthing_aos
+GETSE=bogthing_aos
+GETML=bogthing_aos
+GETSA=bogthing_aos
+GETHS=bogthing_aos
+GETTOL=bogthing_aos
+}
+
+[base_bogling]
+{
+NAME=#//a bogling
+ID=0x030b
 RACE=18
 FLAG=NEUTRAL
 ORIGIN=aos
@@ -197,33 +173,70 @@ ORIGIN=aos
 
 [bogling]
 {
-NAME=#//a bogling
-ID=0x030b
-DIRECTION=RND
-BACKPACK
-GOLD=40 60
-PACKITEM=0x1be0,4
-STR=96 120
-DEX=91 115
-INT=21 45
-KARMA=-450
-FAME=450
-MAGICRESISTANCE=750 1000
-PARRYING=500 550
-TACTICS=550 800
-WRESTLING=550 750
-DAMAGE=8 12
-DEF=15
-NPCWANDER=4
-FX1=-1
-FY1=-1
-FZ1=-1
-FX2=20
-NPCAI=2
-TOPROV=615
-TOPEACE=615 5
-RACE=18
-FLAG=NEUTRAL
-ORIGIN=aos
+GETUO=bogling_lbr
+GETT2A=bogling_lbr
+GETUOR=bogling_lbr
+GETTD=bogling_lbr
+GETLBR=bogling_lbr
+GETAOS=bogling_aos
+GETSE=bogling_aos
+GETML=bogling_aos
+GETSA=bogling_aos
+GETHS=bogling_aos
+GETTOL=bogling_aos
 }
 
+//Unique Creatures Extinct
+[base_doomtree]
+{
+GET=base_agressiveplants
+NAME=doom tree
+ID=0x002f
+SKIN=0x0966
+NPCWANDER=5
+NPCAI=11
+RACE=18
+FLAG=EVIL
+}
+
+[doomtree]
+{
+GETUO=doomtree_lbr
+GETT2A=doomtree_lbr
+GETUOR=doomtree_lbr
+GETTD=doomtree_lbr
+GETLBR=doomtree_lbr
+GETAOS=doomtree_lbr
+GETSE=doomtree_lbr
+GETML=doomtree_lbr
+GETSA=doomtree_lbr
+GETHS=doomtree_lbr
+GETTOL=doomtree_lbr
+}
+
+[base_deathwillow]
+{
+GET=base_agressiveplants
+NAME=death willow
+ID=0x002f
+SKIN=0x0966
+NPCWANDER=5
+NPCAI=11
+RACE=18
+FLAG=EVIL
+}
+
+[doomtree]
+{
+GETUO=deathwillow_lbr
+GETT2A=deathwillow_lbr
+GETUOR=deathwillow_lbr
+GETTD=deathwillow_lbr
+GETLBR=deathwillow_lbr
+GETAOS=deathwillow_lbr
+GETSE=deathwillow_lbr
+GETML=deathwillow_lbr
+GETSA=deathwillow_lbr
+GETHS=deathwillow_lbr
+GETTOL=deathwillow_lbr
+}
