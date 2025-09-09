@@ -7,32 +7,42 @@ NPCWANDER=4
 FX2=20
 }
 
-//------------------------------------------------------------------------------------------------//
+[base_brownbear]
+{
+GET=base_animals
+NAME=#//a bear
+ID=0x00a7
+TAMEDHUNGER=600 30
+FOOD=bear
+CARVE=3
+RUNS
+RACE=8
+NPCAI=6
+CONTROLSLOTS=1
+}
 
 [brownbear]
 {
+GETUO=brownbear_lbr
+GETT2A=brownbear_lbr
+GETUOR=brownbear_lbr
+GETTD=brownbear_lbr
+GETLBR=brownbear_lbr
+GETAOS=brownbear_aos
+GETSE=brownbear_aos
+GETML=brownbear_aos
+GETSA=brownbear_aos
+GETHS=brownbear_aos
+GETTOL=brownbear_aos
+}
+
+[base_blackbear]
+{
+GET=base_animals
 NAME=#//a bear
-ID=0x00a7
-DIRECTION=RND
-BACKPACK
-STR=76 100
-DEX=26 45
-INT=23 47
-MANAMAX=0
-FAME=450
-MAGICRESISTANCE=200 400
-PARRYING=250 450
-TACTICS=400 600
-WRESTLING=400 600
-DAMAGE=2 12
-DEF=8
-TOPROV=296
-TOPEACE=296 5
-TOTAME=459
+ID=0x00d3
 TAMEDHUNGER=600 30
 FOOD=bear
-NPCWANDER=4
-FX2=30
 CARVE=3
 RUNS
 RACE=8
@@ -42,40 +52,24 @@ CONTROLSLOTS=1
 
 [blackbear]
 {
-GET=brownbear
-NAME=#//a bear
-ID=0x00d3
-DEX=56 75
-INT=11 14
-DAMAGE=2 12
-DEF=8
-TOPROV=310
-TOPEACE=310 5
-TOTAME=351
+GETUO=blackbear_lbr
+GETT2A=blackbear_lbr
+GETUOR=blackbear_lbr
+GETTD=blackbear_lbr
+GETLBR=blackbear_lbr
+GETAOS=blackbear_aos
+GETSE=blackbear_aos
+GETML=blackbear_aos
+GETSA=blackbear_aos
+GETHS=blackbear_aos
+GETTOL=blackbear_aos
 }
 
-[boar]
+[base_boar]
 {
+GET=base_animals
 NAME=#//a boar
 ID=0x0122
-DIRECTION=RND
-BACKPACK
-STR=25
-DEX=15
-INT=5
-MANAMAX=0
-FAME=300
-MAGICRESISTANCE=900
-PARRYING=950
-TACTICS=500
-WRESTLING=500
-DAMAGE=3 6
-DEF=5
-NPCWANDER=4
-FX2=30
-TOPROV=75
-TOPEACE=75 5
-TOTAME=291
 TAMEDHUNGER=600 30
 FOOD=boar
 CARVE=4
@@ -83,29 +77,27 @@ RACE=9
 CONTROLSLOTS=1
 }
 
-[bull]
+[boar]
 {
+GETUO=boar_lbr
+GETT2A=boar_lbr
+GETUOR=boar_lbr
+GETTD=boar_lbr
+GETLBR=boar_lbr
+GETAOS=boar_aos
+GETSE=boar_aos
+GETML=boar_aos
+GETSA=boar_aos
+GETHS=boar_aos
+GETTOL=boar_aos
+}
+
+[base_bull]
+{
+GET=base_animals
 NAME=#//a bull
 ID=0x00e8
 SKINLIST=13
-DIRECTION=RND
-BACKPACK
-STR=77 111
-DEX=56 75
-INT=47 75
-MANAMAX=0
-FAME=600
-MAGICRESISTANCE=180 250
-PARRYING=430 550
-TACTICS=680 850
-WRESTLING=400 58
-DAMAGE=4 9
-DEF=14
-NPCWANDER=4
-FX2=30
-TOPROV=358
-TOPEACE=358 5
-TOTAME=711
 TAMEDHUNGER=600 30
 FOOD=hay
 CARVE=5
@@ -113,29 +105,27 @@ RACE=9
 CONTROLSLOTS=1
 }
 
-[bullfrog]
+[bull]
 {
+GETUO=bull_lbr
+GETT2A=bull_lbr
+GETUOR=bull_lbr
+GETTD=bull_lbr
+GETLBR=bull_lbr
+GETAOS=bull_aos
+GETSE=bull_aos
+GETML=bull_aos
+GETSA=bull_aos
+GETHS=bull_aos
+GETTOL=bull_aos
+}
+
+[base_bullfrog]
+{
+GET=base_animals
 NAME=#//a bullfrog
 ID=0x0051
 SKIN=0000
-DIRECTION=RND
-BACKPACK
-STR=46 70
-DEX=6 25
-INT=11 20
-MANAMAX=0
-FAME=350
-MAGICRESISTANCE=250 400
-PARRYING=380 730
-TACTICS=400 600
-WRESTLING=400 600
-DAMAGE=1 2
-DEF=3
-NPCWANDER=4
-FX2=30
-TOPROV=292
-TOPEACE=292 5
-TOTAME=231
 TAMEDHUNGER=600 30
 FOOD=carnivore
 CARVE=6
@@ -144,29 +134,27 @@ CONTROLSLOTS=1
 ORIGIN=t2a
 }
 
-[cat]
+[bullfrog]
 {
+GETUO=bullfrog_lbr
+GETT2A=bullfrog_lbr
+GETUOR=bullfrog_lbr
+GETTD=bullfrog_lbr
+GETLBR=bullfrog_lbr
+GETAOS=bullfrog_aos
+GETSE=bullfrog_aos
+GETML=bullfrog_aos
+GETSA=bullfrog_aos
+GETHS=bullfrog_aos
+GETTOL=bullfrog_aos
+}
+
+[base_cat]
+{
+GET=base_animals
 NAME=#//a cat
 ID=0x00c9
 SKINLIST=13
-DIRECTION=RND
-BACKPACK
-STR=9
-DEX=35
-INT=5
-MANAMAX=0
-HIDING=150 350
-MAGICRESISTANCE=500
-PARRYING=250
-TACTICS=400
-WRESTLING=500
-DAMAGE=1
-DEF=4
-NPCWANDER=4
-FX2=30
-TOPROV=60
-TOPEACE=60 5
-TOTAME=0
 TAMEDHUNGER=600 30
 FOOD=carnivore
 RUNS
@@ -176,29 +164,26 @@ NPCAI=6
 CONTROLSLOTS=1
 }
 
-[cougar]
+[cat]
 {
+GETUO=cat_lbr
+GETT2A=cat_lbr
+GETUOR=cat_lbr
+GETTD=cat_lbr
+GETLBR=cat_lbr
+GETAOS=cat_aos
+GETSE=cat_aos
+GETML=cat_aos
+GETSA=cat_aos
+GETHS=cat_aos
+GETTOL=cat_aos
+}
+
+[base_cougar]
+{
+GET=base_animals
 NAME=#//a cougar
 ID=0x003f
-DIRECTION=RND
-BACKPACK
-STR=56 80
-DEX=66 85
-INT=26 50
-MANAMAX=0
-FAME=450
-HIDING=50 150
-MAGICRESISTANCE=150 300
-PARRYING=550 650
-TACTICS=450 600
-WRESTLING=450 600
-DAMAGE=2 12
-DEF=8
-NPCWANDER=4
-FX2=30
-TOPROV=333
-TOPEACE=333 5
-TOTAME=411
 TAMEDHUNGER=600 30
 FOOD=carnivore
 RUNS
@@ -208,28 +193,26 @@ NPCAI=6
 CONTROLSLOTS=1
 }
 
-[cow]
+[cougar]
 {
+GETUO=cougar_lbr
+GETT2A=cougar_lbr
+GETUOR=cougar_lbr
+GETTD=cougar_lbr
+GETLBR=cougar_lbr
+GETAOS=cougar_aos
+GETSE=cougar_aos
+GETML=cougar_aos
+GETSA=cougar_aos
+GETHS=cougar_aos
+GETTOL=cougar_aos
+}
+
+[base_cow]
+{
+GET=base_animals
 NAME=#//a cow
 ID=0x00d8
-DIRECTION=RND
-BACKPACK
-STR=30
-DEX=15
-INT=5
-MANAMAX=0
-FAME=300
-MAGICRESISTANCE=550
-PARRYING=550
-TACTICS=550
-WRESTLING=550
-DAMAGE=1 4
-DEF=5
-NPCWANDER=4
-FX2=30
-TOPROV=66
-TOPEACE=66 5
-TOTAME=111
 TAMEDHUNGER=600 30
 FOOD=cow
 CARVE=10
@@ -238,29 +221,27 @@ SCRIPT=3200
 CONTROLSLOTS=1
 }
 
-[dog]
+[cow]
 {
+GETUO=cow_lbr
+GETT2A=cow_lbr
+GETUOR=cow_lbr
+GETTD=cow_lbr
+GETLBR=cow_lbr
+GETAOS=cow_aos
+GETSE=cow_aos
+GETML=cow_aos
+GETSA=cow_aos
+GETHS=cow_aos
+GETTOL=cow_aos
+}
+
+[base_dog]
+{
+GET=base_animals
 NAME=#//a dog
 ID=0x00d9
 SKINLIST=13
-DIRECTION=RND
-BACKPACK
-STR=27 37
-DEX=28 43
-INT=29 37
-MANAMAX=0
-FAME=300
-MAGICRESISTANCE=220 470
-PARRYING=280 530
-TACTICS=190 310
-FENCING=190 310
-DAMAGE=4 7
-DEF=6
-NPCWANDER=4
-FX2=30
-TOPROV=187
-TOPEACE=187 5
-TOTAME=0
 TAMEDHUNGER=600 30
 FOOD=meat
 RUNS
@@ -270,28 +251,26 @@ NPCAI=6
 CONTROLSLOTS=1
 }
 
-[goat]
+[dog]
 {
+GETUO=dog_lbr
+GETT2A=dog_lbr
+GETUOR=dog_lbr
+GETTD=dog_lbr
+GETLBR=dog_lbr
+GETAOS=dog_aos
+GETSE=dog_aos
+GETML=dog_aos
+GETSA=dog_aos
+GETHS=dog_aos
+GETTOL=dog_aos
+}
+
+[base_goat]
+{
+GET=base_animals
 NAME=#//a goat
 ID=0x00d1
-DIRECTION=RND
-BACKPACK
-STR=19
-DEX=15
-INT=5
-MANAMAX=0
-FAME=150
-MAGICRESISTANCE=500
-PARRYING=500
-TACTICS=500
-WRESTLING=500
-DAMAGE=3 4
-DEF=5
-NPCWANDER=4
-FX2=30
-TOPROV=54
-TOPEACE=54 5
-TOTAME=111
 TAMEDHUNGER=600 30
 FOOD=goat
 CARVE=20
@@ -299,28 +278,26 @@ RACE=9
 CONTROLSLOTS=1
 }
 
-[gorilla]
+[goat]
 {
+GETUO=goat_lbr
+GETT2A=goat_lbr
+GETUOR=goat_lbr
+GETTD=goat_lbr
+GETLBR=goat_lbr
+GETAOS=goat_aos
+GETSE=goat_aos
+GETML=goat_aos
+GETSA=goat_aos
+GETHS=goat_aos
+GETTOL=goat_aos
+}
+
+[base_gorilla]
+{
+GET=base_animals
 NAME=#//a gorilla
 ID=0x001d
-DIRECTION=RND
-BACKPACK
-STR=53 95
-DEX=36 55
-INT=36 60
-MANAMAX=0
-FAME=450
-MAGICRESISTANCE=450 600
-PARRYING=430 530
-TACTICS=430 580
-WRESTLING=430 580
-DAMAGE=2 12
-DEF=10
-NPCWANDER=4
-FX2=30
-TOPROV=311
-TOPEACE=311 5
-TOTAME=0
 TAMEDHUNGER=600 30
 FOOD=gorilla
 CARVE=21
@@ -329,31 +306,27 @@ RACE=9
 CONTROLSLOTS=1
 }
 
-[greywolf]
+[gorilla]
 {
+GETUO=gorilla_lbr
+GETT2A=gorilla_lbr
+GETUOR=gorilla_lbr
+GETTD=gorilla_lbr
+GETLBR=gorilla_lbr
+GETAOS=gorilla_aos
+GETSE=gorilla_aos
+GETML=gorilla_aos
+GETSA=gorilla_aos
+GETHS=gorilla_aos
+GETTOL=gorilla_aos
+}
+
+[base_greywolf]
+{
+GET=base_animals
 NAME=#//a grey wolf
 ID=0x0019
 SKIN=0x03e6
-DIRECTION=RND
-BACKPACK
-STR=56 80
-DEX=56 75
-INT=31 55
-MANAMAX=0
-KARMA=0
-FAME=450
-HIDING=450 600
-MAGICRESISTANCE=200 350
-PARRYING=450 550
-TACTICS=450 600
-WRESTLING=450 600
-DAMAGE=2 8
-DEF=9
-NPCWANDER=4
-FX2=30
-TOPROV=302
-TOPEACE=302 5
-TOTAME=531
 TAMEDHUNGER=600 30
 FOOD=meat
 RUNS
@@ -363,33 +336,31 @@ NPCAI=6
 CONTROLSLOTS=1
 }
 
-[graywolf]
+[greywolf]
 {
-get=greywolf
+GETUO=greywolf_lbr
+GETT2A=greywolf_lbr
+GETUOR=greywolf_lbr
+GETTD=greywolf_lbr
+GETLBR=greywolf_lbr
+GETAOS=greywolf_aos
+GETSE=greywolf_aos
+GETML=greywolf_aos
+GETSA=greywolf_aos
+GETHS=greywolf_aos
+GETTOL=greywolf_aos
 }
 
-[grizbear]
+[graywolf]
 {
+GET=greywolf
+}
+
+[base_grizbear]
+{
+GET=base_animals
 NAME=#//a grizzly bear
 ID=0x00D4
-DIRECTION=RND
-BACKPACK
-STR=126 155
-DEX=81 105
-INT=16 40
-MANAMAX=0
-FAME=1000
-MAGICRESISTANCE=250 400
-PARRYING=700 850
-TACTICS=700 1000
-WRESTLING=450 700
-DAMAGE=6 15
-DEF=12
-NPCWANDER=4
-FX2=30
-TOPROV=474
-TOPEACE=474 5
-TOTAME=591
 TAMEDHUNGER=600 30
 FOOD=bear
 CARVE=24
@@ -399,28 +370,31 @@ NPCAI=6
 CONTROLSLOTS=1
 }
 
-[hart]
+[grizbear]
 {
+GETUO=grizbear_lbr
+GETT2A=grizbear_lbr
+GETUOR=grizbear_lbr
+GETTD=grizbear_lbr
+GETLBR=grizbear_lbr
+GETAOS=grizbear_aos
+GETSE=grizbear_aos
+GETML=grizbear_aos
+GETSA=grizbear_aos
+GETHS=grizbear_aos
+GETTOL=grizbear_aos
+}
+
+[grizzlybear]
+{
+GET=grizbear
+}
+
+[base_hart]
+{
+GET=base_animals
 NAME=#//a great hart
 ID=0x00ea
-DIRECTION=RND
-BACKPACK
-STR=41 71
-DEX=47 77
-INT=27 57
-MANAMAX=0
-FAME=300
-MAGICRESISTANCE=270 450
-PARRYING=250 430
-TACTICS=30 48
-WRESTLING=30 48
-DAMAGE=4 10
-DEF=12
-NPCWANDER=4
-FX2=30
-TOPROV=273
-TOPEACE=273 5
-TOTAME=591
 TAMEDHUNGER=600 30
 FOOD=deer
 RUNS
@@ -429,29 +403,37 @@ RACE=9
 CONTROLSLOTS=1
 }
 
-[hind]
+[hart]
 {
+GETUO=hart_lbr
+GETT2A=hart_lbr
+GETUOR=hart_lbr
+GETTD=hart_lbr
+GETLBR=hart_lbr
+GETAOS=hart_aos
+GETSE=hart_aos
+GETML=hart_aos
+GETSA=hart_aos
+GETHS=hart_aos
+GETTOL=hart_aos
+}
+
+[greathart]
+{
+GET=hart
+}
+
+[whitehart]
+{
+GET=hart
+NAME=a white hart
+}
+
+[base_hind]
+{
+GET=base_animals
 NAME=#//a hind
 ID=0x00ed
-DIRECTION=RND
-BACKPACK
-STR=21 51
-DEX=47 77
-INT=17 47
-MANAMAX=0
-FAME=300
-HIDING=100 300
-MAGICRESISTANCE=150
-PARRYING=220
-TACTICS=190
-WRESTLING=260
-DAMAGE=4 4
-DEF=4
-NPCWANDER=4
-FX2=30
-TOPROV=182
-TOPEACE=182 5
-TOTAME=231
 TAMEDHUNGER=600 30
 FOOD=deer
 RUNS
@@ -461,63 +443,69 @@ NPCAI=12
 CONTROLSLOTS=1
 }
 
+[hind]
+{
+GETUO=hind_lbr
+GETT2A=hind_lbr
+GETUOR=hind_lbr
+GETTD=hind_lbr
+GETLBR=hind_lbr
+GETAOS=hind_aos
+GETSE=hind_aos
+GETML=hind_aos
+GETSA=hind_aos
+GETHS=hind_aos
+GETTOL=hind_aos
+}
+
+[base_jackrabbit]
+{
+GET=base_animals
+NAME=5004//a jack rabbit
+}
+
 [jackrabbit]
 {
-GET=rabbit
-NAME=5004//a jack rabbit
-STR=15
-DEX=25
-INT=5
-MANAMAX=0
-HIDING=450 600
-DAMAGE=1 2
-DEF=2
-TOPROV=59
-TOPEACE=59 5
+GETUO=jackrabbit_lbr
+GETT2A=jackrabbit_lbr
+GETUOR=jackrabbit_lbr
+GETTD=jackrabbit_lbr
+GETLBR=jackrabbit_lbr
+GETAOS=jackrabbit_aos
+GETSE=jackrabbit_aos
+GETML=jackrabbit_aos
+GETSA=jackrabbit_aos
+GETHS=jackrabbit_aos
+GETTOL=jackrabbit_aos
+}
+
+[base_mountaingoat]
+{
+GET=base_animals
+NAME=#//a mountain goat
+ID=0x0058
 }
 
 [mountaingoat]
 {
-GET=goat
-NAME=#//a mountain goat
-ID=0x0058
-STR=22 64
-DEX=56 75
-INT=16 30
-MANAMAX=0
-FAME=300
-DAMAGE=3 7
-DEF=8
-MAGICRESISTANCE=250 300
-PARRYING=450 550
-TACTICS=290 440
-WRESTLING=290 440
-TOPROV=260
-TOPEACE=260 5
+GETUO=mountaingoat_lbr
+GETT2A=mountaingoat_lbr
+GETUOR=mountaingoat_lbr
+GETTD=mountaingoat_lbr
+GETLBR=mountaingoat_lbr
+GETAOS=mountaingoat_aos
+GETSE=mountaingoat_aos
+GETML=mountaingoat_aos
+GETSA=mountaingoat_aos
+GETHS=mountaingoat_aos
+GETTOL=mountaingoat_aos
 }
 
-[packhorse]
+[base_packhorse]
 {
+GET=base_animals
 NAME=#//a pack horse
 ID=0x0123
-DIRECTION=RND
-BACKPACK
-STR=44 120
-DEX=36 55
-INT=6 10
-MANAMAX=0
-STAMINAMAX=81 100
-KARMA=200
-MAGICRESISTANCE=250 300
-PARRYING=350 450
-TACTICS=290 440
-WRESTLING=290 440
-DAMAGE=4 12
-DEF=9
-FX2=30
-TOPROV=329
-TOPEACE=329 5
-TOTAME=291
 TAMEDHUNGER=600 30
 FOOD=horse
 RUNS
@@ -526,28 +514,26 @@ RACE=9
 CONTROLSLOTS=1
 }
 
-[packllama]
+[packhorse]
 {
+GETUO=packhorse_lbr
+GETT2A=packhorse_lbr
+GETUOR=packhorse_lbr
+GETTD=packhorse_lbr
+GETLBR=packhorse_lbr
+GETAOS=packhorse_aos
+GETSE=packhorse_aos
+GETML=packhorse_aos
+GETSA=packhorse_aos
+GETHS=packhorse_aos
+GETTOL=packhorse_aos
+}
+
+[base_packllama]
+{
+GET=base_animals
 NAME=#//a pack llama
 ID=0x0124
-DIRECTION=RND
-BACKPACK
-STR=52 80
-DEX=36 55
-INT=16 30
-MANAMAX=0
-STAMINAMAX=86 105
-KARMA=200
-MAGICRESISTANCE=150 200
-PARRYING=350 450
-TACTICS=190 290
-WRESTLING=190 290
-DAMAGE=2 6
-DEF=8
-FX2=30
-TOPROV=242
-TOPEACE=242 5
-TOTAME=291
 TAMEDHUNGER=600 30
 FOOD=horse
 RUNS
@@ -556,29 +542,26 @@ RACE=9
 CONTROLSLOTS=1
 }
 
-[panther]
+[packllama]
 {
+GETUO=packllama_lbr
+GETT2A=packllama_lbr
+GETUOR=packllama_lbr
+GETTD=packllama_lbr
+GETLBR=packllama_lbr
+GETAOS=packllama_aos
+GETSE=packllama_aos
+GETML=packllama_aos
+GETSA=packllama_aos
+GETHS=packllama_aos
+GETTOL=packllama_aos
+}
+
+[base_panther]
+{
+GET=base_animals
 NAME=#//a panther
 ID=0x00d6
-DIRECTION=RND
-BACKPACK
-STR=61 85
-DEX=86 105
-INT=26 50
-MANAMAX=0
-FAME=450
-HIDING=150 250
-MAGICRESISTANCE=150 300
-PARRYING=550 650
-TACTICS=500 650
-WRESTLING=500 650
-DAMAGE=2 14
-DEF=8
-NPCWANDER=4
-FX2=30
-TOPROV=365
-TOPEACE=365 5
-TOTAME=531
 TAMEDHUNGER=600 30
 FOOD=carnivore
 RUNS
@@ -588,28 +571,26 @@ NPCAI=6
 CONTROLSLOTS=1
 }
 
-[pig]
+[panther]
 {
+GETUO=panther_lbr
+GETT2A=panther_lbr
+GETUOR=panther_lbr
+GETTD=panther_lbr
+GETLBR=panther_lbr
+GETAOS=panther_aos
+GETSE=panther_aos
+GETML=panther_aos
+GETSA=panther_aos
+GETHS=panther_aos
+GETTOL=panther_aos
+}
+
+[base_pig]
+{
+GET=base_animals
 NAME=#//a pig
 ID=0x00cb
-DIRECTION=RND
-BACKPACK
-STR=20
-DEX=20
-INT=5
-MANAMAX=0
-FAME=150
-MAGICRESISTANCE=500
-PARRYING=500
-TACTICS=500
-WRESTLING=500
-DAMAGE=2 4
-DEF=6
-NPCWANDER=4
-FX2=30
-TOPROV=59
-TOPEACE=59 5
-TOTAME=111
 TAMEDHUNGER=600 30
 FOOD=boar
 CARVE=35
@@ -617,28 +598,26 @@ RACE=9
 CONTROLSLOTS=1
 }
 
-[polarbear]
+[pig]
 {
+GETUO=pig_lbr
+GETT2A=pig_lbr
+GETUOR=pig_lbr
+GETTD=pig_lbr
+GETLBR=pig_lbr
+GETAOS=pig_aos
+GETSE=pig_aos
+GETML=pig_aos
+GETSA=pig_aos
+GETHS=pig_aos
+GETTOL=pig_aos
+}
+
+[base_polarbear]
+{
+GET=base_animals
 NAME=#//a polar bear
 ID=0x00d5
-DIRECTION=RND
-BACKPACK
-STR=116 140
-DEX=81 105
-INT=26 50
-MANAMAX=0
-FAME=1500
-MAGICRESISTANCE=450 600
-PARRYING=100 250
-TACTICS=600 900
-WRESTLING=450 700
-DAMAGE=5 14
-DEF=9
-NPCWANDER=4
-FX2=30
-TOPROV=389
-TOPEACE=389 5
-TOTAME=351
 TAMEDHUNGER=600 30
 FOOD=bear
 CARVE=36
@@ -648,31 +627,27 @@ NPCAI=6
 CONTROLSLOTS=1
 }
 
-[rabbit]
+[polarbear]
 {
+GETUO=polarbear_lbr
+GETT2A=polarbear_lbr
+GETUOR=polarbear_lbr
+GETTD=polarbear_lbr
+GETLBR=polarbear_lbr
+GETAOS=polarbear_aos
+GETSE=polarbear_aos
+GETML=polarbear_aos
+GETSA=polarbear_aos
+GETHS=polarbear_aos
+GETTOL=polarbear_aos
+}
+
+[base_rabbit]
+{
+GET=base_animals
 NAME=#//a rabbit
 ID=0x00cd
 SKINLIST=13
-DIRECTION=RND
-BACKPACK
-STR=6 10
-DEX=26 38
-INT=6 14
-MANAMAX=0
-FAME=150
-HIDING=250 450
-MAGICRESISTANCE=500
-PARRYING=500
-TACTICS=500
-WRESTLING=500
-DAMAGE=1
-DEF=3
-NPCWANDER=4
-FX2=30
-RUNS
-TOPROV=60
-TOPEACE=60 5
-TOTAME=0
 TAMEDHUNGER=600 30
 FOOD=rabbit
 CARVE=37
@@ -681,29 +656,32 @@ CONTROLSLOTS=1
 NPCAI=12
 }
 
-[rat]
+[rabbit]
 {
+GETUO=rabbit_lbr
+GETT2A=rabbit_lbr
+GETUOR=rabbit_lbr
+GETTD=rabbit_lbr
+GETLBR=rabbit_lbr
+GETAOS=rabbit_aos
+GETSE=rabbit_aos
+GETML=rabbit_aos
+GETSA=rabbit_aos
+GETHS=rabbit_aos
+GETTOL=rabbit_aos
+}
+
+[easterbunny]
+{
+GET=rabbit
+NAME=a easter bunny
+}
+
+[base_rat]
+{
+GET=base_animals
 NAME=#//a rat
 ID=0x00ee
-DIRECTION=RND
-BACKPACK
-STR=9
-DEX=35
-INT=5
-MANAMAX=0
-KARMA=-150
-FAME=150
-MAGICRESISTANCE=400
-PARRYING=400
-TACTICS=400
-WRESTLING=400
-DAMAGE=1 2
-DEF=3
-NPCWANDER=4
-FX2=20
-TOPROV=60
-TOPEACE=60 5
-TOTAME=0
 TAMEDHUNGER=600 30
 FOOD=rat
 CARVE=44
@@ -711,28 +689,32 @@ RACE=23
 CONTROLSLOTS=1
 }
 
-[sheep]
+[rat]
 {
+GETUO=rat_lbr
+GETT2A=rat_lbr
+GETUOR=rat_lbr
+GETTD=rat_lbr
+GETLBR=rat_lbr
+GETAOS=rat_aos
+GETSE=rat_aos
+GETML=rat_aos
+GETSA=rat_aos
+GETHS=rat_aos
+GETTOL=rat_aos
+}
+
+[townrat]
+{
+GET=rat
+NAME=a town rat
+}
+
+[base_sheep]
+{
+GET=base_animals
 NAME=#//a sheep
 ID=0x00cf
-DIRECTION=RND
-BACKPACK
-STR=19
-DEX=25
-INT=5
-MANAMAX=0
-FAME=300
-MAGICRESISTANCE=500
-PARRYING=500
-TACTICS=600
-WRESTLING=500
-DAMAGE=1 2
-DEF=3
-NPCWANDER=4
-FX2=30
-TOPROV=65
-TOPEACE=65 5
-TOTAME=111
 TAMEDHUNGER=600 30
 FOOD=sheep
 CARVE=42
@@ -741,30 +723,27 @@ RACE=9
 CONTROLSLOTS=1
 }
 
-[snowleopard]
+[sheep]
 {
+GETUO=sheep_lbr
+GETT2A=sheep_lbr
+GETUOR=sheep_lbr
+GETTD=sheep_lbr
+GETLBR=sheep_lbr
+GETAOS=sheep_aos
+GETSE=sheep_aos
+GETML=sheep_aos
+GETSA=sheep_aos
+GETHS=sheep_aos
+GETTOL=sheep_aos
+}
+
+[base_snowleopard]
+{
+GET=base_animals
 NAME=#//a snow leopard
 ID=0x0040
 SKIN=0x048
-DIRECTION=RND
-BACKPACK
-STR=56 80
-DEX=66 85
-INT=26 50
-MANAMAX=0
-FAME=450
-HIDING=50 250
-MAGICRESISTANCE=250 350
-PARRYING=550 650
-TACTICS=450 600
-WRESTLING=400 500
-DAMAGE=2 10
-DEF=12
-NPCWANDER=4
-FX2=30
-TOPROV=343
-TOPEACE=343 5
-TOTAME=531
 TAMEDHUNGER=600 30
 FOOD=carnivore
 RUNS
@@ -774,29 +753,26 @@ NPCAI=6
 CONTROLSLOTS=1
 }
 
-[timberwolf]
+[snowleopard]
 {
+GETUO=snowleopard_lbr
+GETT2A=snowleopard_lbr
+GETUOR=snowleopard_lbr
+GETTD=snowleopard_lbr
+GETLBR=snowleopard_lbr
+GETAOS=snowleopard_aos
+GETSE=snowleopard_aos
+GETML=snowleopard_aos
+GETSA=snowleopard_aos
+GETHS=snowleopard_aos
+GETTOL=snowleopard_aos
+}
+
+[base_timberwolf]
+{
+GET=base_animals
 NAME=#//a timber wolf
 ID=0x00e1
-DIRECTION=RND
-BACKPACK
-STR=56 80
-DEX=56 75
-INT=11 25
-MANAMAX=0
-FAME=450
-HIDING=50 100
-MAGICRESISTANCE=280 450
-PARRYING=430 550
-TACTICS=300 500
-WRESTLING=400 600
-DAMAGE=4 10
-DEF=9
-NPCWANDER=4
-FX2=30
-TOPROV=294
-TOPEACE=294 5
-TOTAME=231
 TAMEDHUNGER=600 30
 FOOD=meat
 RUNS
@@ -806,30 +782,27 @@ NPCAI=6
 CONTROLSLOTS=1
 }
 
-[whitewolf]
+[timberwolf]
 {
+GETUO=timberwolf_lbr
+GETT2A=timberwolf_lbr
+GETUOR=timberwolf_lbr
+GETTD=timberwolf_lbr
+GETLBR=timberwolf_lbr
+GETAOS=timberwolf_aos
+GETSE=timberwolf_aos
+GETML=timberwolf_aos
+GETSA=timberwolf_aos
+GETHS=timberwolf_aos
+GETTOL=timberwolf_aos
+}
+
+[base_whitewolf]
+{
+GET=base_animals
 NAME=#//a white wolf
 ID=0x0025
 SKIN=0x038a
-DIRECTION=RND
-BACKPACK
-STR=56 80
-DEX=56 75
-INT=31 55
-MANAMAX=0
-FAME=450
-HIDING=50 200
-MAGICRESISTANCE=200 350
-PARRYING=450 550
-TACTICS=450 600
-WRESTLING=450 600
-DAMAGE=2 8
-DEF=8
-NPCWANDER=4
-FX2=30
-TOPROV=323
-TOPEACE=323 5
-TOTAME=651
 TAMEDHUNGER=600 30
 FOOD=meat
 RUNS
@@ -839,58 +812,84 @@ NPCAI=6
 CONTROLSLOTS=1
 }
 
-[silverwolf]
+[whitewolf]
 {
+GETUO=whitewolf_lbr
+GETT2A=whitewolf_lbr
+GETUOR=whitewolf_lbr
+GETTD=whitewolf_lbr
+GETLBR=whitewolf_lbr
+GETAOS=whitewolf_aos
+GETSE=whitewolf_aos
+GETML=whitewolf_aos
+GETSA=whitewolf_aos
+GETHS=whitewolf_aos
+GETTOL=whitewolf_aos
+}
+
+[base_silverwolf]
+{
+GET=base_animals
 NAME=#//a silver wolf
 ID=0x0064
-DIRECTION=RND
-BACKPACK
-STR=96 120
-DEX=81 105
-INT=36 60
-KARMA=2500
-FAME=2500
-HIDING=50 150
-MAGICRESISTANCE=580 750
-PARRYING=630 750
-TACTICS=500 700
-WRESTLING=600 800
-DAMAGE=6 22
-DEF=11
-NPCAI=5
-NPCWANDER=4
-FX2=30
-TOPROV=503
-TOPEACE=503 5
-TOTAME=831
 TAMEDHUNGER=600 30
 FOOD=meat
 RUNS
 CARVE=12
 RACE=8
-FLAG=NEUTRAL
+NPCAI=5
 CONTROLSLOTS=1
+}
+
+[silverwolf]
+{
+GETUO=silverwolf_lbr
+GETT2A=silverwolf_lbr
+GETUOR=silverwolf_lbr
+GETTD=silverwolf_lbr
+GETLBR=silverwolf_lbr
+GETAOS=silverwolf_aos
+GETSE=silverwolf_aos
+GETML=silverwolf_aos
+GETSA=silverwolf_aos
+GETHS=silverwolf_aos
+GETTOL=silverwolf_aos
+}
+
+[base_squirrel]
+{
+GET=base_animals
+NAME=#//a squirrel
+ID=0x0116
+TAMEDHUNGER=600 30
+FOOD=fruit
+RUNS
+RACE=9
+CONTROLSLOTS=1
+NPCAI=12
+ORIGIN=ml
 }
 
 [squirrel]
 {
-NAME=#//a squirrel
-ID=0x0116
-DIRECTION=RND
-BACKPACK
-STR=44 50
-DEX=35
-INT=5
-MAGICRESISTANCE=40
-PARRYING=40
-TACTICS=40
-WRESTLING=40
-DAMAGE=1 2
-NPCWANDER=4
-FX2=30
-TOPROV=150
-TOPEACE=150 5
-TOTAME=0
+GETUO=squirrel_lbr
+GETT2A=squirrel_lbr
+GETUOR=squirrel_lbr
+GETTD=squirrel_lbr
+GETLBR=squirrel_lbr
+GETAOS=squirrel_aos
+GETSE=squirrel_aos
+GETML=squirrel_aos
+GETSA=squirrel_aos
+GETHS=squirrel_aos
+GETTOL=squirrel_aos
+}
+
+[base_ferret]
+{
+GET=base_animals
+NAME=#//a ferret
+ID=0x0117
 TAMEDHUNGER=600 30
 FOOD=fruit
 RUNS
@@ -902,31 +901,17 @@ ORIGIN=ml
 
 [ferret]
 {
-NAME=#//a ferret
-ID=0x0117
-DIRECTION=RND
-BACKPACK
-STR=41 48
-DEX=55
-INT=75
-MAGICRESISTANCE=40
-PARRYING=40
-TACTICS=40
-WRESTLING=40
-DAMAGE=7 9
-DEF=1
-NPCWANDER=4
-FX2=30
-TOPROV=150
-TOPEACE=150 5
-TOTAME=0
-TAMEDHUNGER=600 30
-FOOD=fruit
-RUNS
-RACE=9
-CONTROLSLOTS=1
-NPCAI=12
-ORIGIN=ml
+GETUO=ferret_lbr
+GETT2A=ferret_lbr
+GETUOR=ferret_lbr
+GETTD=ferret_lbr
+GETLBR=ferret_lbr
+GETAOS=ferret_aos
+GETSE=ferret_aos
+GETML=ferret_aos
+GETSA=ferret_aos
+GETHS=ferret_aos
+GETTOL=ferret_aos
 }
 
 //crane - Base NPC with shared DFN tags
@@ -975,4 +960,92 @@ GETML=gaman_se
 GETSA=gaman_se
 GETHS=gaman_se
 GETTOL=gaman_se
+}
+
+[base_vorpalbunny]
+{
+GET=base_animals
+NAME=a vorpal bunny
+ID=0x00cd
+SKIN=0x480
+TAMEDHUNGER=600 30
+FOOD=rabbit
+CARVE=37
+RACE=9
+RUNS
+CONTROLSLOTS=1
+NPCAI=12
+}
+
+[vorpalbunny]
+{
+GETUO=vorpalbunny_aos
+GETT2A=vorpalbunny_aos
+GETUOR=vorpalbunny_aos
+GETTD=vorpalbunny_aos
+GETLBR=vorpalbunny_aos
+GETAOS=vorpalbunny_aos
+GETSE=vorpalbunny_aos
+GETML=vorpalbunny_aos
+GETSA=vorpalbunny_aos
+GETHS=vorpalbunny_aos
+GETTOL=vorpalbunny_aos
+}
+
+[base_whitewolf]
+{
+GET=base_animals
+NAME=a white wolf
+ID=0x0034
+TAMEDHUNGER=600 30
+FOOD=meat
+RUNS
+CARVE=12
+RACE=8
+NPCAI=5
+CONTROLSLOTS=1
+}
+
+[whitewolf]
+{
+GETUO=whitewolf_aos
+GETT2A=whitewolf_aos
+GETUOR=whitewolf_aos
+GETTD=whitewolf_aos
+GETLBR=whitewolf_aos
+GETAOS=whitewolf_aos
+GETSE=whitewolf_aos
+GETML=whitewolf_aos
+GETSA=whitewolf_aos
+GETHS=whitewolf_aos
+GETTOL=whitewolf_aos
+}
+
+[base_skitteringhopper]
+{
+GET=base_animals
+NAME=a skittering hopper
+ID=0x012E
+TAMEDHUNGER=600 30
+FOOD=meat
+RUNS
+CARVE=12
+RACE=8
+NPCAI=5
+CONTROLSLOTS=1
+}
+
+[skitteringhopper]
+{
+GETUO=skitteringhopper_aos
+GETT2A=skitteringhopper_aos
+GETUOR=skitteringhopper_aos
+GETTD=skitteringhopper_aos
+GETLBR=skitteringhopper_aos
+GETAOS=skitteringhopper_aos
+GETSE=skitteringhopper_aos
+GETML=skitteringhopper_aos
+GETSA=skitteringhopper_aos
+GETHS=skitteringhopper_aos
+GETTOL=skitteringhopper_aos
 }
