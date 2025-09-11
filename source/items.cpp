@@ -1459,6 +1459,8 @@ PackTypes cItem::GetPackType( CItem *i )
 		case 0x0FAE:	// barrel with lids
 		case 0x1AD7:	// potion kegs
 		case 0x1940:	// barrel with lids
+		case 0x9E36:	// miniwinebarrel
+		case 0x9E37:	// miniwinebarrel
 			packType = PT_BARREL;
 			break;
 		case 0x0E7A:	// square basket
@@ -1512,6 +1514,10 @@ PackTypes cItem::GetPackType( CItem *i )
 			break;
 		case 0x0E42:	// wooden chest
 		case 0x0E43:	// wooden chest
+		case 0xA639:	// pirate chest
+		case 0xA63A:	// pirate chest
+		case 0xA63B:	// pirate chest
+		case 0xA63C:	// pirate chest
 			packType = PT_WCHEST;
 			break;
 		case 0x0E80:	// brass box
@@ -1588,6 +1594,8 @@ PackTypes cItem::GetPackType( CItem *i )
 			break;
 		case 0x24DB:	// SE basket
 		case 0x24DC:	// SE basket
+		case 0xA0DB:	// enchanted picnic basket
+		case 0xA0DC:	// enchanted picnic basket
 			packType = PT_SEBASKET;
 			break;
 		case 0x280B:	// SE chest
@@ -1629,6 +1637,24 @@ PackTypes cItem::GetPackType( CItem *i )
 			break;
 		case 0x46A7:	// SA giftbox
 			packType = PT_GIFTBOX6;
+			break;
+		case 0x49CC:	// heart shaped box
+		case 0x49D0:	// heart shaped box
+		case 0x49CA:	// heart shaped box
+		case 0x49CB:	// heart shaped box
+			packType = PT_GIFTBOX7;
+			break;
+		case 0x49C8:	// ValentinesDay Box
+		case 0x49C9:	// ValentinesDay Box
+			packType = PT_GIFTBOX8;
+			break;
+		case 0x9E1A:	// christmas_special_pr
+			packType = PT_GIFTBOX9;
+			break;
+		case 0x9A92:	// Xmas Box01
+		case 0x9A93:	// Xmas Box02
+		case 0x9A94:	// Xmas Box03
+			packType = PT_GIFTBOX10;
 			break;
 		case 0x0E1C:	// Backgammon board
 		case 0x0FAD:	// Backgammon board
@@ -1694,6 +1720,28 @@ PackTypes cItem::GetPackType( CItem *i )
 		case 0x4143:	// Square gray mailbox
 		case 0x4144:	// Square gray mailbox
 			packType = PT_MAILBOX9;
+			break;
+		case 0x9F94:	// Wedding Chest
+		case 0x9F95:	// Wedding Chest
+			packType = PT_WEDDINGCHEST;
+			break;
+		case 0x4D0C:	// The King's Collection
+		case 0x4D0D:	// The King's Collection
+			packType = PT_KINGSCOLLECTION;
+			break;
+		case 0x407C:	// incubator
+		case 0x407d:	// incubator
+			packType = PT_INCUBATOR;
+			break;
+		case 0xB1C4:	// Holiday Gift Parcel
+		case 0xB1C5:	// Holiday Gift Parcel
+		case 0xB1C6:	// Holiday Gift Pouch
+		case 0xB1C7:	// Holiday Gift Parcel
+		case 0xB1C8:	// Holiday Gift Parcel
+		case 0xB1C9:	// Holiday Gift Bag Large
+		case 0xB1CA:	// Holiday Gift Bag Medium
+		case 0xB1CB:	// Holiday Gift Bag Small
+			packType = PT_GIFTCONTAINERSNL;
 			break;
 		default:
 			packType = PT_UNKNOWN;
