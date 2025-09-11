@@ -28,7 +28,7 @@ class CHandleCombat
 private:
 	bool	HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg );
 
-	bool	CastSpell( CChar *mChar, CChar *ourTarg, SI08 spellNum );
+	bool	CastSpell( CChar *mChar, CChar *ourTarg, SI32 spellNum );
 
 	SI16	CalcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc );
 

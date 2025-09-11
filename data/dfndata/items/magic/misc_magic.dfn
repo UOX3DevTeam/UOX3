@@ -153,7 +153,7 @@ script=2203// charges_left_tooltip.js
 }
 
 [0x2252]
-{
+{//empty book
 get=base_item
 name=paladin spellbook
 id=0x2252
@@ -163,6 +163,7 @@ decay=1
 good=28
 origin=aos
 sectionid=0x2252
+type=100
 }
 
 [paladinspellbook]
@@ -170,8 +171,14 @@ sectionid=0x2252
 get=0x2252
 }
 
+[paladinspellbook1]
+{//full
+get=0x2252
+spells=0x3ff 0x0 0x0
+}
+
 [0x2253]
-{
+{//empty
 get=base_item
 name=necromancer book
 id=0x2253
@@ -181,11 +188,25 @@ decay=1
 good=28
 origin=aos
 sectionid=0x2253
+type=99
 }
 
 [necromancerbook]
 {
 get=0x2253
+}
+
+// Pre-filled spellbooks
+[necromancerbook1]
+{//animate dead, evil omen, pain spike, summon familiar, wraith form
+get=0x2253
+spells=0x8981 0x0 0x0
+}
+
+[necromancerbook2]
+{//fullbook
+get=0x2253
+spells=0x1FFFF 0x0 0x0
 }
 
 [0x2d9d]

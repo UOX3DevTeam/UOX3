@@ -3181,12 +3181,12 @@ auto CItem::PlaceInPack() -> void
 //o------------------------------------------------------------------------------------------------o
 auto CItem::GetSpell( UI08 part ) const -> UI32
 {
-	UI32 rValue = 0;
 	if( part < 3 )
 	{
-		rValue = spells[part];
+		UI32 value = spells[part];
+		return value;
 	}
-	return rValue;
+	return 0;
 }
 auto CItem::SetSpell( UI08 part, UI32 newValue ) -> void
 {
