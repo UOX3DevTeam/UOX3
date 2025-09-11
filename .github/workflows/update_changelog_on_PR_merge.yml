@@ -18,7 +18,6 @@ jobs:
     steps:
       - name: Get Info from Artifact Name
         id: get_info
-        # THIS BLOCK IS NOW CORRECTED TO THE STANDARD SYNTAX
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -73,13 +72,18 @@ jobs:
             echo -e "$NEW_ENTRY" > "$CHANGELOG_PATH"
           fi
 
+      - name: Generate a token from the GitHub App
+        id: get_token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      # Use generated token to create the PR
       - name: Create Pull Request with Changelog Update
         uses: peter-evans/create-pull-request@v6
         with:
-          # Use the App's credentials to create the PR
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-          # The rest of the parameters remain the same
+          token: ${{ steps.get_token.outputs.token }}
           commit-message: "docs(changelog): Update Changelog.txt from PR #${{ steps.get_info.outputs.pr_number }}"
           title: "Docs: Update Changelog for #${{ steps.get_info.outputs.pr_number }}"
           body: "Automated changelog update from #${{ steps.get_info.outputs.pr_number }}. This PR will be auto-merged."
