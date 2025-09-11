@@ -220,6 +220,7 @@
 4013=skill/fishing.js
 4014=skill/healing_slip.js
 4015=skill/herding.js
+4022=skill/craft/recipe_data.js
 4023=skill/craft/blacksmithing.js
 4025=skill/craft/carpentry.js
 4026=skill/craft/itemdetailgump.js
@@ -314,6 +315,7 @@
 5060=item/elixirofingots.js
 5061=item/puzzlechest.js
 5062=item/shrines.js
+5063=item/recipescroll.js
 
 19100=item/plant_growing/plantsystem.js
 19101=item/plant_growing/plantbowl.js

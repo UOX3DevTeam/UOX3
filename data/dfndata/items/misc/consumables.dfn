@@ -312,3 +312,23 @@ amount=1
 decay=1
 origin=lbr
 }
+
+[base_recipe_scroll]
+{ 
+get=base_item
+name=recipe scroll
+id=0x2831
+weight=100
+pileable=1
+amount=1
+decay=1
+script=5061//recipe scroll
+origin=ml
+}
+
+[skullcap_recipe]
+{//Example of recipe
+get=base_recipe_scroll
+custominttag=recipeID 18
+customstringtag=recipeName skullcap
+}
