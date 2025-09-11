@@ -28,12 +28,12 @@ GETT2A=ambitious_black_solen_queen_lbr
 GETUOR=ambitious_black_solen_queen_lbr
 GETTD=ambitious_black_solen_queen_lbr
 GETLBR=ambitious_black_solen_queen_lbr
-GETAOS=ambitious_black_solen_queen_lbr
-GETSE=ambitious_black_solen_queen_lbr
-GETML=ambitious_black_solen_queen_lbr
-GETSA=ambitious_black_solen_queen_lbr
-GETHS=ambitious_black_solen_queen_lbr
-GETTOL=ambitious_black_solen_queen_lbr
+GETAOS=ambitious_black_solen_queen_aos
+GETSE=ambitious_black_solen_queen_aos
+GETML=ambitious_black_solen_queen_aos
+GETSA=ambitious_black_solen_queen_aos
+GETHS=ambitious_black_solen_queen_aos
+GETTOL=ambitious_black_solen_queen_aos
 }
 
 // black infilrator queen - Base NPC with shared DFN tags
@@ -54,12 +54,12 @@ GETT2A=black_infilrator_queen_lbr
 GETUOR=black_infilrator_queen_lbr
 GETTD=black_infilrator_queen_lbr
 GETLBR=black_infilrator_queen_lbr
-GETAOS=black_infilrator_queen_lbr
-GETSE=black_infilrator_queen_lbr
-GETML=black_infilrator_queen_lbr
-GETSA=black_infilrator_queen_lbr
-GETHS=black_infilrator_queen_lbr
-GETTOL=black_infilrator_queen_lbr
+GETAOS=black_infilrator_queen_aos
+GETSE=black_infilrator_queen_aos
+GETML=black_infilrator_queen_aos
+GETSA=black_infilrator_queen_aos
+GETHS=black_infilrator_queen_aos
+GETTOL=black_infilrator_queen_aos
 }
 
 // black solen infilrator warrior - Base NPC with shared DFN tags
@@ -80,12 +80,12 @@ GETT2A=black_solen_infilrator_warrior_lbr
 GETUOR=black_solen_infilrator_warrior_lbr
 GETTD=black_solen_infilrator_warrior_lbr
 GETLBR=black_solen_infilrator_warrior_lbr
-GETAOS=black_solen_infilrator_warrior_lbr
-GETSE=black_solen_infilrator_warrior_lbr
-GETML=black_solen_infilrator_warrior_lbr
-GETSA=black_solen_infilrator_warrior_lbr
-GETHS=black_solen_infilrator_warrior_lbr
-GETTOL=black_solen_infilrator_warrior_lbr
+GETAOS=black_solen_infilrator_warrior_aos
+GETSE=black_solen_infilrator_warrior_aos
+GETML=black_solen_infilrator_warrior_aos
+GETSA=black_solen_infilrator_warrior_aos
+GETHS=black_solen_infilrator_warrior_aos
+GETTOL=black_solen_infilrator_warrior_aos
 }
 
 // black queen - Base NPC with shared DFN tags
@@ -106,12 +106,12 @@ GETT2A=black_queen_lbr
 GETUOR=black_queen_lbr
 GETTD=black_queen_lbr
 GETLBR=black_queen_lbr
-GETAOS=black_queen_lbr
-GETSE=black_queen_lbr
-GETML=black_queen_lbr
-GETSA=black_queen_lbr
-GETHS=black_queen_lbr
-GETTOL=black_queen_lbr
+GETAOS=black_queen_aos
+GETSE=black_queen_aos
+GETML=black_queen_aos
+GETSA=black_queen_aos
+GETHS=black_queen_aos
+GETTOL=black_queen_aos
 }
 
 // black solen warrior - Base NPC with shared DFN tags
@@ -132,12 +132,12 @@ GETT2A=black_solen_warrior_lbr
 GETUOR=black_solen_warrior_lbr
 GETTD=black_solen_warrior_lbr
 GETLBR=black_solen_warrior_lbr
-GETAOS=black_solen_warrior_lbr
-GETSE=black_solen_warrior_lbr
-GETML=black_solen_warrior_lbr
-GETSA=black_solen_warrior_lbr
-GETHS=black_solen_warrior_lbr
-GETTOL=black_solen_warrior_lbr
+GETAOS=black_solen_warrior_aos
+GETSE=black_solen_warrior_aos
+GETML=black_solen_warrior_aos
+GETSA=black_solen_warrior_aos
+GETHS=black_solen_warrior_aos
+GETTOL=black_solen_warrior_aos
 }
 
 // black solen worker - Base NPC with shared DFN tags
@@ -158,12 +158,12 @@ GETT2A=black_solen_worker_lbr
 GETUOR=black_solen_worker_lbr
 GETTD=black_solen_worker_lbr
 GETLBR=black_solen_worker_lbr
-GETAOS=black_solen_worker_lbr
-GETSE=black_solen_worker_lbr
-GETML=black_solen_worker_lbr
-GETSA=black_solen_worker_lbr
-GETHS=black_solen_worker_lbr
-GETTOL=black_solen_worker_lbr
+GETAOS=black_solen_worker_aos
+GETSE=black_solen_worker_aos
+GETML=black_solen_worker_aos
+GETSA=black_solen_worker_aos
+GETHS=black_solen_worker_aos
+GETTOL=black_solen_worker_aos
 }
 
 // black solen matriarch - Base NPC with shared DFN tags
@@ -186,12 +186,12 @@ GETT2A=black_solen_matriarch_lbr
 GETUOR=black_solen_matriarch_lbr
 GETTD=black_solen_matriarch_lbr
 GETLBR=black_solen_matriarch_lbr
-GETAOS=black_solen_matriarch_lbr
-GETSE=black_solen_matriarch_lbr
-GETML=black_solen_matriarch_lbr
-GETSA=black_solen_matriarch_lbr
-GETHS=black_solen_matriarch_lbr
-GETTOL=black_solen_matriarch_lbr
+GETAOS=black_solen_matriarch_aos
+GETSE=black_solen_matriarch_aos
+GETML=black_solen_matriarch_aos
+GETSA=black_solen_matriarch_aos
+GETHS=black_solen_matriarch_aos
+GETTOL=black_solen_matriarch_aos
 }
 
 // ambitious red solen queen - Base NPC with shared DFN tags
@@ -212,12 +212,12 @@ GETT2A=ambitious_red_solen_queen_lbr
 GETUOR=ambitious_red_solen_queen_lbr
 GETTD=ambitious_red_solen_queen_lbr
 GETLBR=ambitious_red_solen_queen_lbr
-GETAOS=ambitious_red_solen_queen_lbr
-GETSE=ambitious_red_solen_queen_lbr
-GETML=ambitious_red_solen_queen_lbr
-GETSA=ambitious_red_solen_queen_lbr
-GETHS=ambitious_red_solen_queen_lbr
-GETTOL=ambitious_red_solen_queen_lbr
+GETAOS=ambitious_red_solen_queen_aos
+GETSE=ambitious_red_solen_queen_aos
+GETML=ambitious_red_solen_queen_aos
+GETSA=ambitious_red_solen_queen_aos
+GETHS=ambitious_red_solen_queen_aos
+GETTOL=ambitious_red_solen_queen_aos
 }
 
 // red infilrator queen - Base NPC with shared DFN tags
@@ -237,12 +237,12 @@ GETT2A=red_infilrator_queen_lbr
 GETUOR=red_infilrator_queen_lbr
 GETTD=red_infilrator_queen_lbr
 GETLBR=red_infilrator_queen_lbr
-GETAOS=red_infilrator_queen_lbr
-GETSE=red_infilrator_queen_lbr
-GETML=red_infilrator_queen_lbr
-GETSA=red_infilrator_queen_lbr
-GETHS=red_infilrator_queen_lbr
-GETTOL=red_infilrator_queen_lbr
+GETAOS=red_infilrator_queen_aos
+GETSE=red_infilrator_queen_aos
+GETML=red_infilrator_queen_aos
+GETSA=red_infilrator_queen_aos
+GETHS=red_infilrator_queen_aos
+GETTOL=red_infilrator_queen_aos
 }
 
 // red solen infilrator warrior - Base NPC with shared DFN tags
@@ -262,12 +262,12 @@ GETT2A=red_solen_infilrator_warrior_lbr
 GETUOR=red_solen_infilrator_warrior_lbr
 GETTD=red_solen_infilrator_warrior_lbr
 GETLBR=red_solen_infilrator_warrior_lbr
-GETAOS=red_solen_infilrator_warrior_lbr
-GETSE=red_solen_infilrator_warrior_lbr
-GETML=red_solen_infilrator_warrior_lbr
-GETSA=red_solen_infilrator_warrior_lbr
-GETHS=red_solen_infilrator_warrior_lbr
-GETTOL=red_solen_infilrator_warrior_lbr
+GETAOS=red_solen_infilrator_warrior_aos
+GETSE=red_solen_infilrator_warrior_aos
+GETML=red_solen_infilrator_warrior_aos
+GETSA=red_solen_infilrator_warrior_aos
+GETHS=red_solen_infilrator_warrior_aos
+GETTOL=red_solen_infilrator_warrior_aos
 }
 
 // red queen - Base NPC with shared DFN tags
@@ -287,12 +287,12 @@ GETT2A=red_queen_lbr
 GETUOR=red_queen_lbr
 GETTD=red_queen_lbr
 GETLBR=red_queen_lbr
-GETAOS=red_queen_lbr
-GETSE=red_queen_lbr
-GETML=red_queen_lbr
-GETSA=red_queen_lbr
-GETHS=red_queen_lbr
-GETTOL=red_queen_lbr
+GETAOS=red_queen_aos
+GETSE=red_queen_aos
+GETML=red_queen_aos
+GETSA=red_queen_aos
+GETHS=red_queen_aos
+GETTOL=red_queen_aos
 }
 
 // red solen warrior - Base NPC with shared DFN tags
@@ -312,12 +312,12 @@ GETT2A=red_solen_warrior_lbr
 GETUOR=red_solen_warrior_lbr
 GETTD=red_solen_warrior_lbr
 GETLBR=red_solen_warrior_lbr
-GETAOS=red_solen_warrior_lbr
-GETSE=red_solen_warrior_lbr
-GETML=red_solen_warrior_lbr
-GETSA=red_solen_warrior_lbr
-GETHS=red_solen_warrior_lbr
-GETTOL=red_solen_warrior_lbr
+GETAOS=red_solen_warrior_aos
+GETSE=red_solen_warrior_aos
+GETML=red_solen_warrior_aos
+GETSA=red_solen_warrior_aos
+GETHS=red_solen_warrior_aos
+GETTOL=red_solen_warrior_aos
 }
 
 // red solen worker - Base NPC with shared DFN tags
@@ -337,12 +337,12 @@ GETT2A=red_solen_worker_lbr
 GETUOR=red_solen_worker_lbr
 GETTD=red_solen_worker_lbr
 GETLBR=red_solen_worker_lbr
-GETAOS=red_solen_worker_lbr
-GETSE=red_solen_worker_lbr
-GETML=red_solen_worker_lbr
-GETSA=red_solen_worker_lbr
-GETHS=red_solen_worker_lbr
-GETTOL=red_solen_worker_lbr
+GETAOS=red_solen_worker_aos
+GETSE=red_solen_worker_aos
+GETML=red_solen_worker_aos
+GETSA=red_solen_worker_aos
+GETHS=red_solen_worker_aos
+GETTOL=red_solen_worker_aos
 }
 
 // red solen matriarch - Base NPC with shared DFN tags
@@ -364,10 +364,10 @@ GETT2A=red_solen_matriarch_lbr
 GETUOR=red_solen_matriarch_lbr
 GETTD=red_solen_matriarch_lbr
 GETLBR=red_solen_matriarch_lbr
-GETAOS=red_solen_matriarch_lbr
-GETSE=red_solen_matriarch_lbr
-GETML=red_solen_matriarch_lbr
-GETSA=red_solen_matriarch_lbr
-GETHS=red_solen_matriarch_lbr
-GETTOL=red_solen_matriarch_lbr
+GETAOS=red_solen_matriarch_aos
+GETSE=red_solen_matriarch_aos
+GETML=red_solen_matriarch_aos
+GETSA=red_solen_matriarch_aos
+GETHS=red_solen_matriarch_aos
+GETTOL=red_solen_matriarch_aos
 }
