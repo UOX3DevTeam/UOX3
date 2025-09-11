@@ -288,3 +288,391 @@ X=0
 Y=0
 Z=0
 }
+
+// Champion Plateform
+[HOUSE 1000]
+{
+ID=0x3EE
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_ITEM=5000
+HOUSE_ITEM=5001
+HOUSE_ITEM=5002
+HOUSE_ITEM=5003
+HOUSE_ITEM=5004
+HOUSE_ITEM=5005
+HOUSE_ITEM=5006
+HOUSE_ITEM=5007
+HOUSE_ITEM=5008
+HOUSE_ITEM=5009
+HOUSE_ITEM=5010
+HOUSE_ITEM=5011
+HOUSE_ITEM=5012
+HOUSE_ITEM=5013
+HOUSE_ITEM=5014
+HOUSE_ITEM=5015
+HOUSE_ITEM=5016
+HOUSE_ITEM=5017
+HOUSE_ITEM=5018
+HOUSE_ITEM=5019
+HOUSE_ITEM=5020
+HOUSE_ITEM=5021
+HOUSE_ITEM=5022
+HOUSE_ITEM=5023
+HOUSE_ITEM=5024
+HOUSE_ITEM=5025
+HOUSE_ITEM=5026
+HOUSE_ITEM=5027
+HOUSE_ITEM=5028
+HOUSE_ITEM=5029
+HOUSE_ITEM=5030
+HOUSE_ITEM=5031
+HOUSE_ITEM=5032
+HOUSE_ITEM=5033
+HOUSE_ITEM=5034
+}
+
+[HOUSE ITEM 516]
+{ Steps
+ITEM=housesteps
+NODECAY
+X=0//west is - east is +
+Y=18//south is + north is -
+Z=0
+}
+
+[HOUSE ITEM 517]
+{ Steps
+ITEM=housesteps
+NODECAY
+X=1//west is - east is +
+Y=18//south is + north is -
+Z=0
+}
+
+[HOUSE ITEM 518]
+{ Steps
+ITEM=housesteps
+NODECAY
+X=-1//west is - east is +
+Y=18//south is + north is -
+Z=0
+}
+
+[HOUSE ITEM 5000]
+{ 
+ITEM=housesteps1
+NODECAY
+X=-2//west is - east is +
+Y=-2//south is + north is -
+Z=0
+}
+[HOUSE ITEM 5001]
+{ 
+ITEM=housesteps2
+NODECAY
+X=2//west is - east is +
+Y=2//south is + north is -
+Z=0
+}
+[HOUSE ITEM 5002]
+{ 
+ITEM=housesteps3
+NODECAY
+X=-2//west is - east is +
+Y=2//south is + north is -
+Z=0
+}
+[HOUSE ITEM 5003]
+{ 
+ITEM=housesteps4
+NODECAY
+X=2//west is - east is +
+Y=-2//south is + north is -
+Z=0
+}
+
+[HOUSE ITEM 5004]
+{ 
+ITEM=housesteps5
+NODECAY
+X=0//west is - east is +
+Y=0//south is + north is -
+Z=0
+}
+
+[HOUSE ITEM 5005]
+{ 
+ITEM=housesteps5
+NODECAY
+X=1//west is - east is +
+Y=0//south is + north is -
+Z=0
+}
+
+[HOUSE ITEM 5006]
+{ 
+ITEM=housesteps5
+NODECAY
+X=-1//west is - east is +
+Y=0//south is + north is -
+Z=0
+}
+
+[HOUSE ITEM 5007]
+{ 
+ITEM=housesteps5
+NODECAY
+X=0//west is - east is +
+Y=1//south is + north is -
+Z=0
+}
+
+[HOUSE ITEM 5008]
+{ 
+ITEM=housesteps5
+NODECAY
+X=0//west is - east is +
+Y=-1//south is + north is -
+Z=0
+}
+
+[HOUSE ITEM 5009]
+{ 
+ITEM=housesteps5
+NODECAY
+X=1//west is - east is +
+Y=1//south is + north is -
+Z=0
+}
+
+[HOUSE ITEM 5010]
+{ 
+ITEM=housesteps5
+NODECAY
+X=-1//west is - east is +
+Y=-1//south is + north is -
+Z=0
+}
+
+[HOUSE ITEM 5011]
+{ 
+ITEM=housesteps5
+NODECAY
+X=-1//west is - east is +
+Y=1//south is + north is -
+Z=0
+}
+
+[HOUSE ITEM 5012]
+{ 
+ITEM=housesteps5
+NODECAY
+X=1//west is - east is +
+Y=-1//south is + north is -
+Z=0
+}
+
+[HOUSE ITEM 5013]
+{ 
+ITEM=housesteps6
+NODECAY
+X=0//west is - east is +
+Y=2//south is + north is -
+Z=0
+}
+
+[HOUSE ITEM 5014]
+{ 
+ITEM=housesteps6
+NODECAY
+X=1//west is - east is +
+Y=2//south is + north is -
+Z=0
+}
+
+[HOUSE ITEM 5015]
+{ 
+ITEM=housesteps6
+NODECAY
+X=-1//west is - east is +
+Y=2//south is + north is -
+Z=0
+}
+
+[HOUSE ITEM 5016]
+{ 
+ITEM=housesteps7
+NODECAY
+X=2//west is - east is +
+Y=0//south is + north is -
+Z=0
+}
+
+[HOUSE ITEM 5017]
+{ 
+ITEM=housesteps7
+NODECAY
+X=2//west is - east is +
+Y=1//south is + north is -
+Z=0
+}
+
+[HOUSE ITEM 5018]
+{ 
+ITEM=housesteps7
+NODECAY
+X=2//west is - east is +
+Y=-1//south is + north is -
+Z=0
+}
+
+[HOUSE ITEM 5019]
+{
+ITEM=housesteps8
+NODECAY
+X=0//west is - east is +
+Y=-2//south is + north is -
+Z=0
+}
+
+[HOUSE ITEM 5020]
+{
+ITEM=housesteps8
+NODECAY
+X=1//west is - east is +
+Y=-2//south is + north is -
+Z=0
+}
+
+[HOUSE ITEM 5021]
+{
+ITEM=housesteps8
+NODECAY
+X=-1//west is - east is +
+Y=-2//south is + north is -
+Z=0
+}
+
+[HOUSE ITEM 5022]
+{
+ITEM=housesteps9
+NODECAY
+X=-2//west is - east is +
+Y=0//south is + north is -
+Z=0
+}
+
+[HOUSE ITEM 5023]
+{
+ITEM=housesteps9
+NODECAY
+X=-2//west is - east is +
+Y=1//south is + north is -
+Z=0
+}
+
+[HOUSE ITEM 5024]
+{
+ITEM=housesteps9
+NODECAY
+X=-2//west is - east is +
+Y=-1//south is + north is -
+Z=0
+}
+
+[HOUSE ITEM 5024]
+{
+ITEM=housesteps9
+NODECAY
+X=-2//west is - east is +
+Y=-1//south is + north is -
+Z=0
+}
+
+[HOUSE ITEM 5025]
+{ PENTA-T-LEFT
+ITEM=0x0FE7
+NODECAY
+X=-1
+Y=-1
+Z=5
+}
+[HOUSE ITEM 5026]
+{ PENTA-TOP
+ITEM=0x0FE8
+NODECAY
+X=0
+Y=-1
+Z=5
+}
+[HOUSE ITEM 5027]
+{ PENTA-TOP-RIGHT
+ITEM=0x0FEB
+NODECAY
+X=1
+Y=-1
+Z=5
+}
+[HOUSE ITEM 5028]
+{ PENTA-LEFT
+ITEM=0x0FE6
+NODECAY
+X=-1
+Y=0
+Z=5
+}
+[HOUSE ITEM 5029]
+{ PENTA-MIDDLE
+ITEM=0x0FEA
+NODECAY
+X=0
+Y=0
+Z=5
+}
+[HOUSE ITEM 5030]
+{ PENTA-RIGHT
+ITEM=0x0FEE
+NODECAY
+X=1
+Y=0
+Z=5
+}
+[HOUSE ITEM 5031]
+{ PENTA-B-LEFT
+ITEM=0x0FE9
+NODECAY
+X=-1
+Y=1
+Z=5
+}
+
+[HOUSE ITEM 5032]
+{ PENTA-B
+ITEM=0x0FEC
+NODECAY
+X=0
+Y=1
+Z=5
+}
+
+[HOUSE ITEM 5033]
+{ PENTA-B-RIGHT
+ITEM=0x0FED
+NODECAY
+X=1
+Y=1
+Z=5
+}
+
+[HOUSE ITEM 5034]
+{
+ITEM=championsystem
+NODECAY
+X=0//west is - east is +
+Y=0//south is + north is -
+Z=15
+}

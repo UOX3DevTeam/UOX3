@@ -63,3 +63,11 @@ gettd=smallbod_oldid
 getlbr=smallbod_oldid
 CUSTOMINTTAG=bodType 2
 }
+
+[ChampionAltarDeed]
+{
+NAME=Champion Altar Deed
+ID=0x14F0
+script=7502
+morex=1000
+}
