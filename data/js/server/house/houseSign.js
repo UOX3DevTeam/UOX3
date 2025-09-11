@@ -471,6 +471,24 @@ function onGumpPress( pSocket, pButton, gumpData )
 				TriggerEvent( 15002, "DeclareHousePrivate", pSocket, iMulti );
 			}
 			break;
+		case 60: // Turn off Grandfathered status
+			if( pUser.isGM || iMulti.IsOwner( pUser ))
+			{
+				iMulti.SetTag( "Grandfathered", false );
+				iMulti.KillTimers();
+				HouseOwnerGump( pUser );
+			}
+			break;
+		case 61: // Turn on Grandfathered status
+			if( pUser.isGM || iMulti.IsOwner( pUser ))
+			{
+				iMulti.SetTag( "Grandfathered", true );
+				iMulti.StartTimer( 1800000, 1, true );//approx. 30 minutes
+				iMulti.SetTag( "decayStage", 1 );
+				iMulti.SetTag( "init", true );
+				HouseOwnerGump( pUser );
+			}
+			break;
 		default:
 			break;
 	}
@@ -662,6 +680,26 @@ function HouseGuestGump( pUser )
 // Gump displayed to house owners
 function HouseOwnerGump( pUser )
 {
+
+	var decayStages = {
+	1: "Like New",
+	2: "Slightly Worn",
+	3: "Somewhat Worn",
+	4: "Fairly Worn",
+	5: "Greatly Worn",
+	6: "In Danger of Collapsing"
+	};
+
+	var decayStageText = "";
+	if( ValidateObject( iSign ) && iSign.multi )
+	{
+		var stage = parseInt( iSign.multi.GetTag( "decayStage" ), 10 );
+		if( iSign.multi.GetTag( "Grandfathered" ))
+			decayStageText = "<BASEFONT COLOR=#00FF00>Grandfathered - No Decay</BASEFONT>";
+		else if( stage > 0 && decayStages[stage] )
+			decayStageText = "Condition: <BASEFONT COLOR=#FF0000>" + decayStages[stage] + "</BASEFONT>";
+	}
+
 	var pLanguage = pUser.socket.language;
 	var houseOwnerGump = new Gump;
 	// Page 0 - Shared with all other pages
@@ -687,6 +725,10 @@ function HouseOwnerGump( pUser )
 	// Page 1 - Information
 	houseOwnerGump.AddPage( 1 );
 	houseOwnerGump.AddHTMLGump( 35, 145, 350,  20, 0, 0, GetDictionaryEntry( 2800, pLanguage ) + " " + houseOwner ); // House Owner: Owner name
+
+	if( decayStageText != "" )
+		houseOwnerGump.AddHTMLGump( 220, 145, 350, 20, 0, 0, decayStageText ); // Decay Condition
+
 	if( !houseIsPublic )
 	{
 		// This house is // private
@@ -767,6 +809,18 @@ function HouseOwnerGump( pUser )
 	{
 		houseOwnerGump.AddButton( 35, 245, 2714, 2715, 1, 0, 54);	// Button - Declare this building to be private.
 	}
+
+	if( pUser.isGM )
+	{
+		if( iSign.multi.GetTag( "Grandfathered" ))
+		{
+			houseOwnerGump.AddButton( 35, 285, 2714, 2715, 1, 0, 60);	// Button - Disable GrandFather Status
+		}
+		else
+		{
+			houseOwnerGump.AddButton( 35, 285, 2714, 2715, 1, 0, 61);	// Button - Enable GrandFather Status
+		}
+	}
 	houseOwnerGump.AddHTMLGump( 60, 155, 350, 20, 23, 0, GetDictionaryEntry( 2840, pLanguage )); // Transfer ownership of the house
 	houseOwnerGump.AddHTMLGump( 60, 185, 350, 20, 24, 0, GetDictionaryEntry( 2841, pLanguage )); // Demolish the house and get a deed back
 	houseOwnerGump.AddHTMLGump( 60, 215, 350, 20, 25, 0, GetDictionaryEntry( 2842, pLanguage )); // Change the house locks
@@ -777,6 +831,18 @@ function HouseOwnerGump( pUser )
 	else
 	{
 		houseOwnerGump.AddHTMLGump( 60, 245, 350, 40, 26, 0, GetDictionaryEntry( 2844, pLanguage )); // Declare this building to be private.
+	}
+
+	if( pUser.isGM )
+	{
+		if( iSign.multi.GetTag( "Grandfathered" ))
+		{
+			houseOwnerGump.AddHTMLGump( 60, 285, 350, 20, 25, 0, "Grandfathered Disable" );
+		}
+		else
+		{
+			houseOwnerGump.AddHTMLGump( 60, 285, 350, 20, 25, 0, "Grandfathered Enable" );
+		}
 	}
 
 	houseOwnerGump.Send( pUser.socket );
