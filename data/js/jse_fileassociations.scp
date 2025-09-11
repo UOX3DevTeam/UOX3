@@ -314,6 +314,7 @@
 5060=item/elixirofingots.js
 5061=item/puzzlechest.js
 5062=item/shrines.js
+5063=item/jacobspickaxe.js
 
 19100=item/plant_growing/plantsystem.js
 19101=item/plant_growing/plantbowl.js
@@ -350,6 +351,20 @@
 5607=item/holidays/snowpile.js
 5608=item/holidays/addondeedgump.js
 5609=item/holidays/redeedaddon.js
+
+//-------------------------------------------
+// Quest System [5800-5850]
+//-------------------------------------------
+5800=server/quest/quest_core.js
+5801=server/quest/quest_lists.js
+5802=server/quest/quest_conversation_gump.js
+5803=server/quest/quest_menu.js
+5805=server/quest/quest_event_onquesttoggle.js
+5806=server/quest/quest_item.js
+5810=server/quest/quest_event_ondeathblow.js
+5811=server/quest/quest_event_onskillgain.js
+5812=server/quest/quest_event_onenterregion.js
+5813=server/quest/quest_login.js
 
 //-------------------------------------------
 // Magic Related Scripts [6000-6500]

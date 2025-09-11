@@ -5593,5 +5593,43 @@
 19338=(frozen)
 19339=(guarded)
 19340=That creature’s spirit lacks cohesion. Try again in a few minutes.
+// [19600-19700] Quest System
+19600=Target the item you wish to toggle Quest Item status on <ESC> to cancel
+19601=The item must be in your backpack to toggle its quest status.
+19602=This quest does not exist.
+19603=You need to have all required quest items to turn in this quest.
+19604=You are not currently on this quest.
+19605=The quest has been completely removed from your progress.
+19606=You do not have a backpack.
+19607=You have completed the skill training for this quest!
+19608=You are still missing some items for this quest.
+19609=All quest items have been turned in successfully.
+19610=You don't have the required item to deliver.
+19611=You have delivered the required item!
+19612=You have completed all quests
+19613=You do not have the required item to deliver.
+19614=You have delivered the required item!
+19615=Failed to create the delivery item.
+19616=You are already under the effect of an accelerated skillgain scroll.
+19617=You have accepted the Quest.
+19618=You are already working on this quest.
+19619=This quest can only be completed once, and you have already completed it.
+19620=You have successfully delivered the item!
+19621=You don't have the required item to deliver.
+19622=This is not the correct NPC to deliver the item.
+19623=You've completed the quest! Don't forget to collect your reward.
+19624=No progress updated for the quest.
+19625=You haven't completed the quest yet.
+19626=Quest data could not be retrieved.
+19627=Gold has been deposited into your bank.
+19628=Bank is full. Gold added to your backpack.
+19629=Cannot decrease further. Current count is 0.
+19630=This item cannot be equipped as it is a quest item.
+19631=Quest items cannot be dropped on the ground.
+19632=This item is not marked as a quest item.
+19633=You can only drop quest items into the top-most level of your backpack while you still need them for your quest.
+19634=Stacks of quest items cannot be unstacked.
+19635=Quest items cannot be used in this way.
+19636=Quest Item
 }
 EOF

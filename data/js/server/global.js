@@ -1,12 +1,16 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
 // Global Script
+
 // Supported Events trigger for every character/item, use with care
+const questSystemEnabled = GetServerSetting( "QuestsEnabled" );
+
 /** @type { ( sockPlayer: Socket, pPlayer: Character ) => boolean } */
 function onLogin( socket, pChar )
 {
 	const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 	const youngPlayerSystem = GetServerSetting( "YoungPlayerSystem" );
+	const loginQuest = false;
 
 	// Display Admin Welcome Gump for characters on admin account, until a choice has been made
 	if( pChar.accountNum == 0 )
@@ -41,6 +45,18 @@ function onLogin( socket, pChar )
 	if( !pChar.HasScriptTrigger( 2508 ))
 	{
 		pChar.AddScriptTrigger( 2508 );
+	}
+
+	// Attach OnQuest Toggle
+	if(!pChar.HasScriptTrigger( 5805 ) && questSystemEnabled )
+	{
+		pChar.AddScriptTrigger( 5805 );
+	}
+
+	if( loginQuest && questSystemEnabled )
+	{
+		// Show the login quest gump
+		TriggerEvent( 5813, "LoginQuest", pChar );
 	}
 
 	if( youngPlayerSystem && pChar.account.isYoung )
@@ -119,6 +135,18 @@ function onCreatePlayer( pChar )
 	if( coreShardEra >= EraStringToNum( "aos" ) && ( !pChar.npc && !pChar.HasScriptTrigger( 7001 )))
 	{
 		pChar.AddScriptTrigger( 7001 );
+	}
+}
+
+function onQuestGump( pUser ) 
+{
+	if( ValidateObject( pUser ) && !pUser.dead && questSystemEnabled )
+	{
+		TriggerEvent( 5803, "QuestMenu", pUser );
+	}
+	else
+	{
+		pUser.SysMessage( "Something is wrong, pUser is not valid or is dead." );
 	}
 }
 

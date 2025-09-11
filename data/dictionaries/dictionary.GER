@@ -5591,5 +5591,43 @@
 19338=eingefroren
 19339=bewacht
 19340=Der Geist dieser Kreatur ist nicht einheitlich. Versuchen Sie es in ein paar Minuten erneut.
+// [19600-19700] Quest-System
+19600=Zielen Sie auf das Objekt, dessen Quest-Objektstatus Sie ändern möchten, und drücken Sie <ESC>, um abzubrechen.
+19601=Das Objekt muss sich in Ihrem Rucksack befinden, um seinen Quest-Status zu ändern.
+19602=Diese Quest existiert nicht.
+19603=Sie müssen alle erforderlichen Quest-Objekte haben, um diese Quest abgeben zu können.
+19604=Sie befinden sich derzeit nicht in dieser Quest.
+19605=Die Quest wurde vollständig aus Ihrem Fortschritt entfernt.
+19606=Sie haben keinen Rucksack.
+19607=Sie haben das Fertigkeitstraining für diese Quest abgeschlossen!
+19608=Ihnen fehlen noch einige Objekte für diese Quest.
+19609=Alle Quest-Objekte wurden erfolgreich abgegeben.
+19610=Sie haben das erforderliche Objekt nicht zum Abliefern.
+19611=Sie haben das erforderliche Objekt abgeliefert!
+19612=Du hast alle Quests abgeschlossen
+19613=Du hast den benötigten Gegenstand nicht zum Abliefern.
+19614=Du hast den benötigten Gegenstand abgeliefert!
+19615=Liefergegenstand konnte nicht erstellt werden.
+19616=Du stehst bereits unter dem Einfluss einer Schriftrolle für beschleunigten Fertigkeitserwerb.
+19617=Du hast die Quest angenommen.
+19618=Du arbeitest bereits an dieser Quest.
+19619=Diese Quest kann nur einmal abgeschlossen werden, und du hast sie bereits abgeschlossen.
+19620=Du hast den Gegenstand erfolgreich geliefert!
+19621=Du hast den benötigten Gegenstand nicht.
+19622=Dies ist nicht der richtige NPC für die Lieferung.
+19623=Du hast die Quest abgeschlossen! Vergiss nicht, deine Belohnung abzuholen.
+19624=Für die Quest wurde kein Fortschritt angezeigt.
+19625=Du hast die Quest noch nicht abgeschlossen.
+19626=Questdaten konnten nicht abgerufen werden.
+19627=Gold wurde auf deine Bank eingezahlt.
+19628=Bank ist voll. Gold wurde deinem Rucksack hinzugefügt.
+19629=Kann nicht weiter verringert werden. Aktueller Zählerstand: 0.
+19630=Dieser Gegenstand kann nicht angelegt werden, da es sich um einen Questgegenstand handelt.
+19631=Questgegenstände können nicht auf den Boden fallen gelassen werden.
+19632=Dieser Gegenstand ist nicht als Questgegenstand gekennzeichnet.
+19633=Du kannst Questgegenstände nur in die oberste Ebene deines Rucksacks fallen lassen, solange du sie noch für deine Quest benötigst.
+19634=Stapel von Questgegenständen können nicht auseinandergenommen werden.
+19635=Questgegenstände können nicht auf diese Weise verwendet werden.
+19636=Questgegenstand
 }
 EOF
