@@ -1,134 +1,142 @@
+[base_clockwork]
+{
+DIRECTION=RND
+BACKPACK
+NPCWANDER=4
+FX2=20
+}
+
+[base_craftedgolem]
+{
+GET=base_clockwork
+Name=golem
+ID=0x02f0
+NPCWANDER=2
+WALKINGSPEED=0.8
+COLOUR=0x835
+CONTROLSLOTS=4
+CUSTOMINTTAG=repairResource 0x1f1c
+ORIGIN=td
+SCRIPT=3511// Colossal Blow
+}
+
 [craftedgolem]
 {
+GETUO=craftedgolem_lbr
+GETT2A=craftedgolem_lbr
+GETUOR=craftedgolem_lbr
+GETTD=craftedgolem_lbr
+GETLBR=craftedgolem_lbr
+GETAOS=craftedgolem_lbr
+GETSE=craftedgolem_aos
+GETML=craftedgolem_aos
+GETSA=craftedgolem_aos
+GETHS=craftedgolem_aos
+GETTOL=craftedgolem_aos
+}
+
+[base_golem]
+{
+GET=base_clockwork
 Name=golem
 ID=0x02f0
 COLOUR=0x835
-DIRECTION=RND
-STR=251 350
-DEX=76 100
-INT=101 150
-FAME=10
-KARMA=10
-DAMAGE=8 29
-DEF=12 30
-MAGICRESISTANCE=1500 1900
-PARRYING=600 1000
-TACTICS=600 1000
-WRESTLING=600 1000
 NPCWANDER=2
 WALKINGSPEED=0.8
-TOPROV=2000
-TOPEACE=784 5
-TOTAME=2000
-CONTROLSLOTS=4
-FLAG=NEUTRAL
-CUSTOMINTTAG=repairResource 0x1f1c
+NPCAI=2
 ORIGIN=td
 SCRIPT=3511// Colossal Blow
 }
 
 [golem]
 {
-get=craftedgolem
-BACKPACK
-PACKITEM=0x1bf2,11 25
-LOOT=arcane_gems
-LOOT=randomgems,2
-LOOT=golemLoot
-NPCWANDER=4
-FX2=30
+GETUO=golem_lbr
+GETT2A=golem_lbr
+GETUOR=golem_lbr
+GETTD=golem_lbr
+GETLBR=golem_lbr
+GETAOS=golem_aos
+GETSE=golem_aos
+GETML=golem_aos
+GETSA=golem_aos
+GETHS=golem_aos
+GETTOL=golem_aos
+}
+
+[base_exodusoverseer]
+{
+GET=base_clockwork
+NAME=#//exodus overseer
+ID=0x02f4
 NPCAI=2
+RACE=27
+ORIGIN=td
+SCRIPT=3211//exodus clockwork AI
 }
 
 [exodusoverseer]
 {
-NAME=#//exodus overseer
-ID=0x02f4
-DIRECTION=RND
-BACKPACK
-GOLD=30 250
-LOOT=exodusOverseerLoot
-LOOT=arcane_gems
-STR=551 650
-DEX=76 95
-INT=61 90
-KARMA=-10000
-FAME=10000
-MAGICRESISTANCE=800 980
-PARRYING=800 980
-TACTICS=800 980
-WRESTLING=800 980
-DAMAGE=12 20
-DEF=25
-NPCWANDER=4
-FX2=20
+GETUO=exodusoverseer_lbr
+GETT2A=exodusoverseer_lbr
+GETUOR=exodusoverseer_lbr
+GETTD=exodusoverseer_lbr
+GETLBR=exodusoverseer_lbr
+GETAOS=exodusoverseer_aos
+GETSE=exodusoverseer_aos
+GETML=exodusoverseer_aos
+GETSA=exodusoverseer_aos
+GETHS=exodusoverseer_aos
+GETTOL=exodusoverseer_aos
+}
+
+[base_exodusminionlord]
+{
+GET=base_clockwork
+NAME=#//exodus minion lord
+ID=0x02fb
 NPCAI=2
-TOPROV=821
-TOPEACE=821 5
 RACE=27
-FLAG=NEUTRAL
 ORIGIN=td
 SCRIPT=3211//exodus clockwork AI
 }
 
 [exodusminionlord]
 {
-NAME=#//exodus minion lord
-ID=0x02fb
-DIRECTION=RND
-BACKPACK
-GOLD=80 700
-LOOT=exodusMinionLordLoot,2
-LOOT=arcane_gems
-STR=1500 1600
-DEX=71 80
-INT=61 90
-KARMA=-15000
-FAME=15000
-MAGICRESISTANCE=990 1000
-PARRYING=990 1000
-TACTICS=990 1000
-WRESTLING=990 1000
-DAMAGE=14 30
-DEF=35
-NPCWANDER=4
-FX2=20
+GETUO=exodusminionlord_lbr
+GETT2A=exodusminionlord_lbr
+GETUOR=exodusminionlord_lbr
+GETTD=exodusminionlord_lbr
+GETLBR=exodusminionlord_lbr
+GETAOS=exodusminionlord_aos
+GETSE=exodusminionlord_aos
+GETML=exodusminionlord_aos
+GETSA=exodusminionlord_aos
+GETHS=exodusminionlord_aos
+GETTOL=exodusminionlord_aos
+}
+
+[base_exodusminion]
+{
+GET=base_clockwork
+NAME=#//exodus minion
+ID=0x02f5
 NPCAI=2
-TOPROV=2000
-TOPEACE=2000 5
 RACE=27
-FLAG=NEUTRAL
 ORIGIN=td
 SCRIPT=3211//exodus clockwork AI
 }
 
 [exodusminion]
 {
-NAME=#//exodus minion
-ID=0x02f5
-DIRECTION=RND
-BACKPACK
-GOLD=25 220
-LOOT=exodusMinionLoot
-LOOT=arcane_gems
-STR=851 950
-DEX=71 80
-INT=61 90
-KARMA=-18000
-FAME=18000
-MAGICRESISTANCE=990 1000
-PARRYING=990 1000
-TACTICS=990 1000
-WRESTLING=990 1000
-DAMAGE=13 25
-DEF=30
-NPCWANDER=4
-FX2=20
-NPCAI=2
-TOPROV=920
-TOPEACE=920 5
-RACE=27
-FLAG=NEUTRAL
-ORIGIN=td
-SCRIPT=3211//exodus clockwork AI
+GETUO=exodusminion_lbr
+GETT2A=exodusminion_lbr
+GETUOR=exodusminion_lbr
+GETTD=exodusminion_lbr
+GETLBR=exodusminion_lbr
+GETAOS=exodusminion_aos
+GETSE=exodusminion_aos
+GETML=exodusminion_aos
+GETSA=exodusminion_aos
+GETHS=exodusminion_aos
+GETTOL=exodusminion_aos
 }
