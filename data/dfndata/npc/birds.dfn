@@ -1,26 +1,55 @@
-[bird]
+[base_birds]
 {
+DIRECTION=RND
+BACKPACK
+NPCWANDER=4
+FX2=20
+FLAG=NEUTRAL
+}
+
+[base_bird]
+{
+GET=base_birds
 NAME=#//a bird
 NAMELIST=8
 ID=0x0006
 SKINLIST=11
-DIRECTION=RND
-BACKPACK
-STR=1 4
-DEX=25
-INT=1 4
-MANAMAX=0
-FAME=150
-HIDING=50
-PARRYING=50
-TACTICS=50
-WRESTLING=50
-DAMAGE=2
-NPCWANDER=4
-FX2=30
-TOPROV=46
-TOPEACE=46 5
-TOTAME=69
+TAMEDHUNGER=600 30
+FOOD=bird
+CARVE=2
+RUNS
+RACE=4
+NPCAI=12
+CONTROLSLOTS=1
+}
+
+[bird]
+{
+GETUO=bird_lbr
+GETT2A=bird_lbr
+GETUOR=bird_lbr
+GETTD=bird_lbr
+GETLBR=bird_lbr
+GETAOS=bird_lbr
+GETSE=bird_aos
+GETML=bird_aos
+GETSA=bird_aos
+GETHS=bird_aos
+GETTOL=bird_aos
+}
+
+[tropicalbird]
+{
+GET=bird
+NAME=5159//a tropical bird
+}
+
+[base_canary]
+{
+GET=base_birds
+NAME=5001//a canary
+ID=0x0006
+SKIN=0x00fd
 TAMEDHUNGER=600 30
 FOOD=bird
 CARVE=2
@@ -32,50 +61,24 @@ CONTROLSLOTS=1
 
 [canary]
 {
-GET=bird
-NAME=5001//a canary
-SKIN=0x00fd
-STR=1 3
-DEX=10
-INT=5 10
-TACTICS=10
-WRESTLING=10
-DAMAGE=1
-DEF=1
-RACE=4
+GETUO=canary_lbr
+GETT2A=canary_lbr
+GETUOR=canary_lbr
+GETTD=canary_lbr
+GETLBR=canary_lbr
+GETAOS=canary_aos
+GETSE=canary_aos
+GETML=canary_aos
+GETSA=canary_aos
+GETHS=canary_aos
+GETTOL=canary_aos
 }
 
-[tropicalbird]
+[base_chicken]
 {
-GET=bird
-NAME=5159//a tropical bird
-}
-
-[crow]
-{
-GET=raven
-NAME=3283//a crow
-}
-
-[chicken]
-{
+GET=base_birds
 NAME=#//a chicken
 ID=0x00d0
-DIRECTION=RND
-BACKPACK
-STR=5
-DEX=15
-INT=5
-FAME=150
-TACTICS=50
-WRESTLING=50
-DAMAGE=2
-DEF=1
-NPCWANDER=4
-FX2=30
-TOPROV=34
-TOPEACE=34 5
-TOTAME=0
 TAMEDHUNGER=600 30
 FOOD=hay
 CARVE=8
@@ -84,55 +87,55 @@ NPCAI=12
 CONTROLSLOTS=1
 }
 
-[crane]
+[chicken]
 {
+GETUO=chicken_lbr
+GETT2A=chicken_lbr
+GETUOR=chicken_lbr
+GETTD=chicken_lbr
+GETLBR=chicken_lbr
+GETAOS=chicken_aos
+GETSE=chicken_aos
+GETML=chicken_aos
+GETSA=chicken_aos
+GETHS=chicken_aos
+GETTOL=chicken_aos
+}
+
+[base_crane]
+{
+GET=base_birds
 NAME=#//a crane
 ID=0x00fe
-DIRECTION=RND
-BACKPACK
-STR=25 35
-INT=10 15
-DEX=15 25
-HPMAX=25 35
-DEF=5
-DAMAGE=2
-MAGICRESISTANCE=40 50
-WRESTLING=100 110
-TACTICS=100 110
-NPCWANDER=4
-FX2=30
-TOPROV=92
-TOPEACE=92 5
 CARVE=2
 RUNS
 RACE=4
+NPCAI=12
+CONTROLSLOTS=1
 ORIGIN=se
+}
+
+[crane]
+{
+GETUO=crane_lbr
+GETT2A=crane_lbr
+GETUOR=crane_lbr
+GETTD=crane_lbr
+GETLBR=crane_lbr
+GETAOS=crane_se
+GETSE=crane_se
+GETML=crane_se
+GETSA=crane_se
+GETHS=crane_se
+GETTOL=crane_se
 }
 
 [eagle]
 {
+GET=base_birds
 NAME=#//an eagle
 ID=0x0005
 SKIN=0000
-DIRECTION=RND
-BACKPACK
-STR=31 47
-DEX=36 60
-INT=8 20
-MANAMAX=0
-FAME=300
-KARMA=0
-MAGICRESISTANCE=150 300
-PARRYING=250 400
-TACTICS=180 370
-WRESTLING=200 300
-DAMAGE=4 10
-DEF=11
-NPCWANDER=4
-FX2=30
-TOPROV=220
-TOPEACE=220 5
-TOTAME=171
 TAMEDHUNGER=600 30
 FOOD=carnivore
 CARVE=15
@@ -141,76 +144,111 @@ RACE=4
 CONTROLSLOTS=1
 }
 
-[falcon]
+[eagle]
 {
-GET=bird
+GETUO=eagle_lbr
+GETT2A=eagle_lbr
+GETUOR=eagle_lbr
+GETTD=eagle_lbr
+GETLBR=eagle_lbr
+GETAOS=eagle_aos
+GETSE=eagle_aos
+GETML=eagle_aos
+GETSA=eagle_aos
+GETHS=eagle_aos
+GETTOL=eagle_aos
+}
+
+[base_falcon]
+{
+GET=base_birds
 NAME=5002//a falcon
 ID=0x0006
 SKIN=0x0224
-STR=18 28
-DEX=42 68
-INT=6 15
-HPMAX=13 18
-FAME=190
-MAGICRESISTANCE=200 350
-PARRYING=200 300
-TACTICS=200 370
-WRESTLING=200 300
-DAMAGE=3 9
-DEF=9
-TOPROV=100
-TOPEACE=100 5
-TOTAME=100
 TAMEDHUNGER=600 30
+FOOD=bird
 CARVE=2
 RUNS
 RACE=4
+NPCAI=12
 CONTROLSLOTS=1
+}
+
+[falcon]
+{
+GETUO=falcon_lbr
+GETT2A=falcon_lbr
+GETUOR=falcon_lbr
+GETTD=falcon_lbr
+GETLBR=falcon_lbr
+GETAOS=falcon_aos
+GETSE=falcon_aos
+GETML=falcon_aos
+GETSA=falcon_aos
+GETHS=falcon_aos
+GETTOL=falcon_aos
 }
 
 [hawk]
 {
-GET=bird
+GET=base_birds
 NAME=5003//a hawk
 SKIN=0x0224
-STR=20 30
-DEX=40 66
-INT=8 20
-HPMAX=12 20
-FAME=200
-MAGICRESISTANCE=150 300
-PARRYING=200 300
-TACTICS=140 370
-WRESTLING=200 300
-DAMAGE=3 9
-DEF=9
-TOPROV=100
-TOPEACE=100 5
-TOTAME=100
 TAMEDHUNGER=600 30
 FOOD=carnivore
 CARVE=2
 RUNS
 RACE=4
+NPCAI=12
+CONTROLSLOTS=1
+}
+
+[hawk]
+{
+GETUO=hawk_lbr
+GETT2A=hawk_lbr
+GETUOR=hawk_lbr
+GETTD=hawk_lbr
+GETLBR=hawk_lbr
+GETAOS=hawk_aos
+GETSE=hawk_aos
+GETML=hawk_aos
+GETSA=hawk_aos
+GETHS=hawk_aos
+GETTOL=hawk_aos
+}
+
+[base_raven]
+{
+GET=base_birds
+NAME=5006//a raven
+SKIN=0x1
+TAMEDHUNGER=600 30
+FOOD=bird
+CARVE=2
+RUNS
+RACE=4
+NPCAI=12
+CONTROLSLOTS=1
 }
 
 [raven]
 {
-GET=bird
-NAME=5006//a raven
-SKIN=0x1
-STR=9
-DEX=25
-INT=5
-MANAMAX=0
-FAME=300
-HIDING=50 150
-MAGICRESISTANCE=50
-PARRYING=51
-TACTICS=100
-WRESTLING=100
-DAMAGE=1
-DEF=3
-RACE=4
-NPCAI=12
+GETUO=raven_lbr
+GETT2A=raven_lbr
+GETUOR=raven_lbr
+GETTD=raven_lbr
+GETLBR=raven_lbr
+GETAOS=raven_aos
+GETSE=raven_aos
+GETML=raven_aos
+GETSA=raven_aos
+GETHS=raven_aos
+GETTOL=raven_aos
+}
+
+[crow]
+{
+GET=raven
+NAME=3283//a crow
 }
