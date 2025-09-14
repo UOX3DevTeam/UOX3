@@ -30,12 +30,12 @@ GETT2A=abyssmalhorror_lbr
 GETUOR=abyssmalhorror_lbr
 GETTD=abyssmalhorror_lbr
 GETLBR=abyssmalhorror_lbr
-GETAOS=abyssmalhorror_lbr
-GETSE=abyssmalhorror_lbr
-GETML=abyssmalhorror_lbr
-GETSA=abyssmalhorror_lbr
-GETHS=abyssmalhorror_lbr
-GETTOL=abyssmalhorror_lbr
+GETAOS=abyssmalhorror_aos
+GETSE=abyssmalhorror_aos
+GETML=abyssmalhorror_aos
+GETSA=abyssmalhorror_aos
+GETHS=abyssmalhorror_aos
+GETTOL=abyssmalhorror_aos
 }
 
 [base_balron]
@@ -61,12 +61,12 @@ GETT2A=balron_lbr
 GETUOR=balron_lbr
 GETTD=balron_lbr
 GETLBR=balron_lbr
-GETAOS=balron_lbr
-GETSE=balron_lbr
-GETML=balron_lbr
-GETSA=balron_lbr
-GETHS=balron_lbr
-GETTOL=balron_lbr
+GETAOS=balron_aos
+GETSE=balron_aos
+GETML=balron_aos
+GETSA=balron_aos
+GETHS=balron_aos
+GETTOL=balron_aos
 }
 
 [base_daemon]
@@ -92,12 +92,12 @@ GETT2A=daemon_lbr
 GETUOR=daemon_lbr
 GETTD=daemon_lbr
 GETLBR=daemon_lbr
-GETAOS=daemon_lbr
-GETSE=daemon_lbr
-GETML=daemon_lbr
-GETSA=daemon_lbr
-GETHS=daemon_lbr
-GETTOL=daemon_lbr
+GETAOS=daemon_aos
+GETSE=daemon_aos
+GETML=daemon_aos
+GETSA=daemon_aos
+GETHS=daemon_aos
+GETTOL=daemon_aos
 }
 
 [base_armeddaemon]
@@ -122,12 +122,12 @@ GETT2A=armeddaemon_lbr
 GETUOR=armeddaemon_lbr
 GETTD=armeddaemon_lbr
 GETLBR=armeddaemon_lbr
-GETAOS=armeddaemon_lbr
-GETSE=armeddaemon_lbr
-GETML=armeddaemon_lbr
-GETSA=armeddaemon_lbr
-GETHS=armeddaemon_lbr
-GETTOL=armeddaemon_lbr
+GETAOS=armeddaemon_aos
+GETSE=armeddaemon_aos
+GETML=armeddaemon_aos
+GETSA=armeddaemon_aos
+GETHS=armeddaemon_aos
+GETTOL=armeddaemon_aos
 }
 
 [base_bonedaemon]
@@ -149,12 +149,12 @@ GETT2A=bonedaemon_lbr
 GETUOR=bonedaemon_lbr
 GETTD=bonedaemon_lbr
 GETLBR=bonedaemon_lbr
-GETAOS=bonedaemon_lbr
-GETSE=bonedaemon_lbr
-GETML=bonedaemon_lbr
-GETSA=bonedaemon_lbr
-GETHS=bonedaemon_lbr
-GETTOL=bonedaemon_lbr
+GETAOS=bonedaemon_aos
+GETSE=bonedaemon_aos
+GETML=bonedaemon_aos
+GETSA=bonedaemon_aos
+GETHS=bonedaemon_aos
+GETTOL=bonedaemon_aos
 }
 
 [base_exodus]
@@ -179,12 +179,12 @@ GETT2A=exodus_lbr
 GETUOR=exodus_lbr
 GETTD=exodus_lbr
 GETLBR=exodus_lbr
-GETAOS=exodus_lbr
-GETSE=exodus_lbr
-GETML=exodus_lbr
-GETSA=exodus_lbr
-GETHS=exodus_lbr
-GETTOL=exodus_lbr
+GETAOS=exodus_aos
+GETSE=exodus_aos
+GETML=exodus_aos
+GETSA=exodus_aos
+GETHS=exodus_aos
+GETTOL=exodus_aos
 }
 
 [base_icefiend]
@@ -207,12 +207,12 @@ GETT2A=icefiend_lbr
 GETUOR=icefiend_lbr
 GETTD=icefiend_lbr
 GETLBR=icefiend_lbr
-GETAOS=icefiend_lbr
-GETSE=icefiend_lbr
-GETML=icefiend_lbr
-GETSA=icefiend_lbr
-GETHS=icefiend_lbr
-GETTOL=icefiend_lbr
+GETAOS=icefiend_aos
+GETSE=icefiend_aos
+GETML=icefiend_aos
+GETSA=icefiend_aos
+GETHS=icefiend_aos
+GETTOL=icefiend_aos
 }
 
 [base_imp]
@@ -240,12 +240,12 @@ GETT2A=imp_lbr
 GETUOR=imp_lbr
 GETTD=imp_lbr
 GETLBR=imp_lbr
-GETAOS=imp_lbr
-GETSE=imp_lbr
-GETML=imp_lbr
-GETSA=imp_lbr
-GETHS=imp_lbr
-GETTOL=imp_lbr
+GETAOS=imp_aos
+GETSE=imp_aos
+GETML=imp_aos
+GETSA=imp_aos
+GETHS=imp_aos
+GETTOL=imp_aos
 }
 
 [base_mongbat]
@@ -267,12 +267,12 @@ GETT2A=mongbat_lbr
 GETUOR=mongbat_lbr
 GETTD=mongbat_lbr
 GETLBR=mongbat_lbr
-GETAOS=mongbat_lbr
-GETSE=mongbat_lbr
-GETML=mongbat_lbr
-GETSA=mongbat_lbr
-GETHS=mongbat_lbr
-GETTOL=mongbat_lbr
+GETAOS=mongbat_aos
+GETSE=mongbat_aos
+GETML=mongbat_aos
+GETSA=mongbat_aos
+GETHS=mongbat_aos
+GETTOL=mongbat_aos
 }
 
 [base_greatermongbat]
@@ -294,12 +294,12 @@ GETT2A=greatermongbat_lbr
 GETUOR=greatermongbat_lbr
 GETTD=greatermongbat_lbr
 GETLBR=greatermongbat_lbr
-GETAOS=greatermongbat_lbr
-GETSE=greatermongbat_lbr
-GETML=greatermongbat_lbr
-GETSA=greatermongbat_lbr
-GETHS=greatermongbat_lbr
-GETTOL=greatermongbat_lbr
+GETAOS=greatermongbat_aos
+GETSE=greatermongbat_aos
+GETML=greatermongbat_aos
+GETSA=greatermongbat_aos
+GETHS=greatermongbat_aos
+GETTOL=greatermongbat_aos
 }
 
 [base_arcanedaemon]
@@ -321,12 +321,12 @@ GETT2A=arcanedaemon_lbr
 GETUOR=arcanedaemon_lbr
 GETTD=arcanedaemon_lbr
 GETLBR=arcanedaemon_lbr
-GETAOS=arcanedaemon_lbr
-GETSE=arcanedaemon_lbr
-GETML=arcanedaemon_lbr
-GETSA=arcanedaemon_lbr
-GETHS=arcanedaemon_lbr
-GETTOL=arcanedaemon_lbr
+GETAOS=arcanedaemon_aos
+GETSE=arcanedaemon_aos
+GETML=arcanedaemon_aos
+GETSA=arcanedaemon_aos
+GETHS=arcanedaemon_aos
+GETTOL=arcanedaemon_aos
 }
 
 [base_moloch]
@@ -346,12 +346,12 @@ GETT2A=moloch_lbr
 GETUOR=moloch_lbr
 GETTD=moloch_lbr
 GETLBR=moloch_lbr
-GETAOS=moloch_lbr
-GETSE=moloch_lbr
-GETML=moloch_lbr
-GETSA=moloch_lbr
-GETHS=moloch_lbr
-GETTOL=moloch_lbr
+GETAOS=moloch_aos
+GETSE=moloch_aos
+GETML=moloch_aos
+GETSA=moloch_aos
+GETHS=moloch_aos
+GETTOL=moloch_aos
 }
 
 [base_chaosdaemon]
@@ -371,12 +371,12 @@ GETT2A=chaosdaemon_lbr
 GETUOR=chaosdaemon_lbr
 GETTD=chaosdaemon_lbr
 GETLBR=chaosdaemon_lbr
-GETAOS=chaosdaemon_lbr
-GETSE=chaosdaemon_lbr
-GETML=chaosdaemon_lbr
-GETSA=chaosdaemon_lbr
-GETHS=chaosdaemon_lbr
-GETTOL=chaosdaemon_lbr
+GETAOS=chaosdaemon_aos
+GETSE=chaosdaemon_aos
+GETML=chaosdaemon_aos
+GETSA=chaosdaemon_aos
+GETHS=chaosdaemon_aos
+GETTOL=chaosdaemon_aos
 }
 
 [base_shadowfiend]
@@ -397,12 +397,12 @@ GETT2A=shadowfiend_lbr
 GETUOR=shadowfiend_lbr
 GETTD=shadowfiend_lbr
 GETLBR=shadowfiend_lbr
-GETAOS=shadowfiend_lbr
-GETSE=shadowfiend_lbr
-GETML=shadowfiend_lbr
-GETSA=shadowfiend_lbr
-GETHS=shadowfiend_lbr
-GETTOL=shadowfiend_lbr
+GETAOS=shadowfiend_aos
+GETSE=shadowfiend_aos
+GETML=shadowfiend_aos
+GETSA=shadowfiend_aos
+GETHS=shadowfiend_aos
+GETTOL=shadowfiend_aos
 }
 
 //oni - Base NPC with shared DFN tags
@@ -416,11 +416,11 @@ ORIGIN=se
 
 [oni]
 {
-GETUO=oni_se
-GETT2A=oni_se
-GETUOR=oni_se
-GETTD=oni_se
-GETLBR=oni_se
+GETUO=oni_lbr
+GETT2A=oni_lbr
+GETUOR=oni_lbr
+GETTD=oni_lbr
+GETLBR=oni_lbr
 GETAOS=oni_se
 GETSE=oni_se
 GETML=oni_se
