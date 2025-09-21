@@ -2,9 +2,16 @@
 // Tiger Pelt Chest
 [0x7822]
 {
+getuo=0x7822_t2a
 gett2a=0x7822_t2a
+getuor=0x7822_t2a
+gettd=0x7822_lbr
 getlbr=0x7822_lbr
 getaos=0x7822_aos
+getse=0x7822_aos
+getml=0x7822_tol
+getsa=0x7822_tol
+geths=0x7822_tol
 gettol=0x7822_tol
 sectionid=0x7822
 }
@@ -19,9 +26,16 @@ get=0x7822
 // Tiger Pelt Bustier
 [0x7823]
 {
+getuo=0x7823_t2a
 gett2a=0x7823_t2a
+getuor=0x7823_t2a
+gettd=0x7823_lbr
 getlbr=0x7823_lbr
 getaos=0x7823_aos
+getse=0x7823_aos
+getml=0x7823_tol
+getsa=0x7823_tol
+geths=0x7823_tol
 gettol=0x7823_tol
 sectionid=0x7823
 }
@@ -36,9 +50,16 @@ get=0x7823
 // Tiger Pelt Helm
 [0x7828]
 {
+getuo=0x7828_t2a
 gett2a=0x7828_t2a
+getuor=0x7828_t2a
+gettd=0x7828_lbr
 getlbr=0x7828_lbr
 getaos=0x7828_aos
+getse=0x7828_aos
+getml=0x7828_tol
+getsa=0x7828_tol
+geths=0x7828_tol
 gettol=0x7828_tol
 sectionid=0x7828
 }
@@ -53,9 +74,16 @@ get=0x7828
 // Tiger Pelt Leggings
 [0x7824]
 {
+getuo=0x7824_t2a
 gett2a=0x7824_t2a
+getuor=0x7824_t2a
+gettd=0x7824_lbr
 getlbr=0x7824_lbr
 getaos=0x7824_aos
+getse=0x7824_aos
+getml=0x7824_tol
+getsa=0x7824_tol
+geths=0x7824_tol
 gettol=0x7824_tol
 sectionid=0x7824
 }
@@ -70,9 +98,16 @@ get=0x7824
 // Tiger Pelt Shorts
 [0x7825]
 {
+getuo=0x7825_t2a
 gett2a=0x7825_t2a
+getuor=0x7825_t2a
+gettd=0x7825_lbr
 getlbr=0x7825_lbr
 getaos=0x7825_aos
+getse=0x7825_aos
+getml=0x7825_tol
+getsa=0x7825_tol
+geths=0x7825_tol
 gettol=0x7825_tol
 sectionid=0x7825
 }
@@ -87,9 +122,16 @@ get=0x7825
 // Tiger Pelt Long Skirt
 [0x7826]
 {
+getuo=0x7826_t2a
 gett2a=0x7826_t2a
+getuor=0x7826_t2a
+gettd=0x7826_lbr
 getlbr=0x7826_lbr
 getaos=0x7826_aos
+getse=0x7826_aos
+getml=0x7826_tol
+getsa=0x7826_tol
+geths=0x7826_tol
 gettol=0x7826_tol
 sectionid=0x7826
 }
@@ -104,9 +146,16 @@ get=0x7826
 // Tiger Pelt Skirt
 [0x7827]
 {
+getuo=0x7827_t2a
 gett2a=0x7827_t2a
+getuor=0x7827_t2a
+gettd=0x7827_lbr
 getlbr=0x7827_lbr
 getaos=0x7827_aos
+getse=0x7827_aos
+getml=0x7827_tol
+getsa=0x7827_tol
+geths=0x7827_tol
 gettol=0x7827_tol
 sectionid=0x7827
 }
@@ -121,9 +170,16 @@ get=0x7827
 // Tiger Pelt Collar
 [0x7829]
 {
+getuo=0x7829_t2a
 gett2a=0x7829_t2a
+getuor=0x7829_t2a
+gettd=0x7829_lbr
 getlbr=0x7829_lbr
 getaos=0x7829_aos
+getse=0x7829_aos
+getml=0x7829_tol
+getsa=0x7829_tol
+geths=0x7829_tol
 gettol=0x7829_tol
 sectionid=0x7829
 }
