@@ -2,9 +2,16 @@
 // Woodland Arms - N/S
 [0x2b6c]
 {
+getuo=0x2b6c_t2a
 gett2a=0x2b6c_t2a
+getuor=0x2b6c_t2a
+gettd=0x2b6c_lbr
 getlbr=0x2b6c_lbr
 getaos=0x2b6c_aos
+getse=0x2b6c_aos
+getml=0x2b6c_tol
+getsa=0x2b6c_tol
+geths=0x2b6c_tol
 gettol=0x2b6c_tol
 sectionid=0x2b6c
 }
@@ -26,9 +33,16 @@ get=0x2b6c 0x3163
 // Woodland Chest - E/W
 [0x2b67]
 {
+getuo=0x2b67_t2a
 gett2a=0x2b67_t2a
+getuor=0x2b67_t2a
+gettd=0x2b67_lbr
 getlbr=0x2b67_lbr
 getaos=0x2b67_aos
+getse=0x2b67_aos
+getml=0x2b67_tol
+getsa=0x2b67_tol
+geths=0x2b67_tol
 gettol=0x2b67_tol
 sectionid=0x2b67
 }
@@ -46,13 +60,20 @@ id=0x315e
 get=0x2b67 0x315e
 }
 
-// -----------= WOODLAND ARMOR (Female) =----------- //
+// -----------= WOODLAND ARMOR (FEMALE) =----------- //
 // Woodland Armor (Female) - E/W
 [0x2b6d]
 {
+getuo=0x2b6d_t2a
 gett2a=0x2b6d_t2a
+getuor=0x2b6d_t2a
+gettd=0x2b6d_lbr
 getlbr=0x2b6d_lbr
 getaos=0x2b6d_aos
+getse=0x2b6d_aos
+getml=0x2b6d_tol
+getsa=0x2b6d_tol
+geths=0x2b6d_tol
 gettol=0x2b6d_tol
 sectionid=0x2b6d
 }
@@ -74,9 +95,16 @@ get=0x2b6d 0x3164
 // Woodland Gauntlet - E/W
 [0x2b6a]
 {
+getuo=0x2b6a_t2a
 gett2a=0x2b6a_t2a
+getuor=0x2b6a_t2a
+gettd=0x2b6a_lbr
 getlbr=0x2b6a_lbr
 getaos=0x2b6a_aos
+getse=0x2b6a_aos
+getml=0x2b6a_tol
+getsa=0x2b6a_tol
+geths=0x2b6a_tol
 gettol=0x2b6a_tol
 sectionid=0x2b6a
 }
@@ -98,9 +126,16 @@ get=0x2b6a 0x3161
 // Woodland Leggings - E/W
 [0x2b6b]
 {
+getuo=0x2b6b_t2a
 gett2a=0x2b6b_t2a
+getuor=0x2b6b_t2a
+gettd=0x2b6b_lbr
 getlbr=0x2b6b_lbr
 getaos=0x2b6b_aos
+getse=0x2b6b_aos
+getml=0x2b6b_tol
+getsa=0x2b6b_tol
+geths=0x2b6b_tol
 gettol=0x2b6b_tol
 sectionid=0x2b6b
 }
@@ -123,9 +158,16 @@ get=0x2b6b 0x3162
 // Woodland Gorget - E/W
 [0x2b69]
 {
+getuo=0x2b69_t2a
 gett2a=0x2b69_t2a
+getuor=0x2b69_t2a
+gettd=0x2b69_lbr
 getlbr=0x2b69_lbr
 getaos=0x2b69_aos
+getse=0x2b69_aos
+getml=0x2b69_tol
+getsa=0x2b69_tol
+geths=0x2b69_tol
 gettol=0x2b69_tol
 sectionid=0x2b69
 }
@@ -148,9 +190,16 @@ get=0x2b69 0x3160
 // Raven Helm - N/S
 [0x2b71]
 {
+getuo=0x2b71_t2a
 gett2a=0x2b71_t2a
+getuor=0x2b71_t2a
+gettd=0x2b71_lbr
 getlbr=0x2b71_lbr
 getaos=0x2b71_aos
+getse=0x2b71_aos
+getml=0x2b71_tol
+getsa=0x2b71_tol
+geths=0x2b71_tol
 gettol=0x2b71_tol
 sectionid=0x2b71
 }
@@ -172,9 +221,16 @@ get=0x2b71 0x3168
 // Vulture Helm - N/S
 [0x2b72]
 {
+getuo=0x2b72_t2a
 gett2a=0x2b72_t2a
+getuor=0x2b72_t2a
+gettd=0x2b72_lbr
 getlbr=0x2b72_lbr
 getaos=0x2b72_aos
+getse=0x2b72_aos
+getml=0x2b72_tol
+getsa=0x2b72_tol
+geths=0x2b72_tol
 gettol=0x2b72_tol
 sectionid=0x2b72
 }
@@ -196,9 +252,16 @@ get=0x2b72 0x3169
 // Winged Helm - N/S
 [0x2b73]
 {
+getuo=0x2b73_t2a
 gett2a=0x2b73_t2a
+getuor=0x2b73_t2a
+gettd=0x2b73_lbr
 getlbr=0x2b73_lbr
 getaos=0x2b73_aos
+getse=0x2b73_aos
+getml=0x2b73_tol
+getsa=0x2b73_tol
+geths=0x2b73_tol
 gettol=0x2b73_tol
 sectionid=0x2b73
 }
@@ -210,7 +273,7 @@ get=0x2b73
 id=0x316a
 }
 
-// - Alias
+// Winged Helm - Alias
 [wingedhelm]
 {
 get=0x2b73 0x316a

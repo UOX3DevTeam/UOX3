@@ -591,12 +591,28 @@ UI16 cAccountClass::CreateAccountSystem( void )
 				}
 				// Ok we have to write the new username.uad file in the directory
 				WriteUADHeader( fsOut, actbTemp );
-				// Ok write out the characters and the charcter names if we know them
+				// Ok write out the characters and the character names if we know them
 				for( SI32 i = 0; i < CHARACTERCOUNT; ++i )
 				{
+					std::string charName = "UNKNOWN";
+					CChar *tChar = actbTemp.lpCharacters[i];
+					if( tChar != nullptr )
+					{
+						// Check if the character is Incognito or Disguised
+						if( tChar->IsIncognito() || tChar->IsDisguised() )
+						{
+							// If so, use their original name for the file
+							charName = tChar->GetOrgName();
+						}
+						else
+						{
+							charName = tChar->GetName();
+						}
+					}
+
 					fsOut << "CHARACTER-" << ( i + 1 ) << " 0x" << std::hex 
 						<< ( actbTemp.dwCharacters[i] != INVALIDSERIAL ? actbTemp.lpCharacters[i]->GetSerial() : INVALIDSERIAL ) 
-						<< " [" << ( char* )( actbTemp.lpCharacters[i] != nullptr ? actbTemp.lpCharacters[i]->GetName().c_str() : "UNKNOWN" ) << "]\n";
+						<< " [" << charName << "]\n";
 				}
 				// Close the files since we dont need them anymore
 				fsOut.close();
@@ -696,13 +712,22 @@ void cAccountClass::WriteAccountSection( CAccountBlock_st& actbTemp, std::fstrea
 	{
 		SERIAL charSer			= INVALIDSERIAL;
 		std::string charName	= "UNKNOWN";
-		if( actbTemp.lpCharacters[ii] != nullptr && actbTemp.dwCharacters[ii] != INVALIDSERIAL )
+		CChar *tChar = actbTemp.lpCharacters[ii];
+		if( tChar != nullptr && actbTemp.dwCharacters[ii] != INVALIDSERIAL )
 		{
 			charSer		= actbTemp.dwCharacters[ii];
-			charName	= actbTemp.lpCharacters[ii]->GetName();
+			if( tChar->IsIncognito() || tChar->IsDisguised() )
+			{
+				// Use character's original name if incognito/disguised
+				charName	= tChar->GetOrgName();
+			}
+			else
+			{
+				charName	= tChar->GetName();
+			}
 		}
 		fsOut << "CHARACTER-" << std::dec << ( ii + 1 ) << " 0x" << std::hex << charSer << std::dec;
-		fsOut << " [" << charName.c_str() << "]" << std::endl;
+		fsOut << " [" << charName << "]" << std::endl;
 	}
 	fsOut << "}" << std::endl << std::endl;
 
@@ -847,11 +872,27 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 	// Ok write out the characters and the charcter names if we know them
 	for( UI08 i = 0; i < CHARACTERCOUNT; ++i )
 	{
+		std::string charName = "INVALID";
+		CChar *tChar = actbTemp.lpCharacters[i];
+		if( tChar != nullptr )
+		{
+			// Check if character is Incognito or Disguised, and use original name if true
+			if( tChar->IsIncognito() || tChar->IsDisguised() )
+			{
+				charName = tChar->GetOrgName();
+			}
+			else
+			{
+				charName = tChar->GetName();
+			}
+		}
+
+		// Write character serial and name to file
 		fsAccountsUAD << "CHARACTER-" << ( i + 1 ) << " 0x" << std::hex 
-			<< ( actbTemp.dwCharacters[i] != INVALIDSERIAL ? actbTemp.dwCharacters[i]:INVALIDSERIAL ) 
-			<< " [" << ( char* )( actbTemp.lpCharacters[i] != nullptr ? actbTemp.lpCharacters[i]->GetName().c_str() : "INVALID" ) 
-			<< "]\n";
+			<< ( actbTemp.dwCharacters[i] != INVALIDSERIAL ? actbTemp.dwCharacters[i] : INVALIDSERIAL )
+			<< " [" << charName << "]\n";
 	}
+
 	// Close the files since we dont need them anymore
 	fsAccountsUAD.close();
 	// Ok now we can add this record to the accounts.adm file
@@ -1546,7 +1587,25 @@ bool cAccountClass::DelAccount( UI16 wAccountId )
 		// If this slot is 0xffffffff or (-1) then we dont need to put it into the orphans.adm
 		if( actbId.dwCharacters[jj] != INVALIDSERIAL ) // Ok build then write what we need to the file
 		{
-			fsOrphansADM << "," << actbId.lpCharacters[jj]->GetName() << "," << actbId.lpCharacters[jj]->GetX() 
+			std::string charName = "INVALID";
+			CChar *tChar = actbId.lpCharacters[jj];
+
+			if( tChar != nullptr )
+			{
+				// Check if the character is incognito or disguised
+				if( tChar->IsIncognito() || tChar->IsDisguised() )
+				{
+					// If so, use their original name for the file
+					charName = tChar->GetOrgName();
+				}
+				else
+				{
+					// Otherwise, use their current name
+					charName = tChar->GetName();
+				}
+			}
+
+			fsOrphansADM << "," << charName << "," << actbId.lpCharacters[jj]->GetX() 
 				<< "," << actbId.lpCharacters[jj]->GetY() << "," << static_cast<SI32>( actbId.lpCharacters[jj]->GetZ() ) << std::endl;
 		}
 	}
@@ -1686,8 +1745,21 @@ SI08 cAccountClass::DelCharacter( UI16 wAccountId, UI08 nSlot )
 	}
 
 	// Ok build then write what we need to the file
+	std::string charName = "UNKNOWN";
+	CChar *tChar = actbId.lpCharacters[nSlot];
+	if( tChar != nullptr )
+	{
+		if( tChar->IsIncognito() || tChar->IsDisguised() )
+		{
+			charName = tChar->GetOrgName();
+		}
+		else
+		{
+			charName = tChar->GetName();
+		}
+	}
 	fsOrphansADM << actbId.sUsername << "=0x" << std::hex << actbId.dwCharacters[nSlot] << "," 
-		<< ( actbId.lpCharacters[nSlot] != nullptr ? actbId.lpCharacters[nSlot]->GetName() : "UNKNOWN" ) << ",0x" 
+		<< charName << ",0x" 
 		<< ( actbId.lpCharacters[nSlot] != nullptr ? actbId.lpCharacters[nSlot]->GetX() : 0 ) << ",0x" 
 		<< ( actbId.lpCharacters[nSlot] != nullptr ? actbId.lpCharacters[nSlot]->GetY() : 0 ) << "," << std::dec 
 		<< ( actbId.lpCharacters[nSlot] != nullptr ? static_cast<SI32>( actbId.lpCharacters[nSlot]->GetZ() ) : static_cast<SI32>( 0 )) << std::endl;
@@ -1918,9 +1990,27 @@ UI16 cAccountClass::Save( [[maybe_unused]] bool bForceLoad )
 		// Ok write out the characters and the charcter names if we know them
 		for( UI08 ii = 0; ii < CHARACTERCOUNT; ++ii )
 		{
+			std::string charName = "INVALID";
+			CChar *tChar = actbId.lpCharacters[ii];
+
+			if( tChar != nullptr )
+			{
+				// Check if the character is incognito or disguised
+				if( tChar->IsIncognito() || tChar->IsDisguised() )
+				{
+					// If so, use their original name for the file
+					charName = tChar->GetOrgName();
+				}
+				else
+				{
+					// Otherwise, use their current name
+					charName = tChar->GetName();
+				}
+			}
+
 			fsAccountsUad << "CHARACTER-" << ( ii + 1 ) << " 0x" << std::hex 
 				<< ( actbId.dwCharacters[ii] != INVALIDSERIAL ? actbId.dwCharacters[ii]:INVALIDSERIAL) << " [" 
-				<< ( char* )( actbId.lpCharacters[ii] != nullptr ? actbId.lpCharacters[ii]->GetName().c_str() : "INVALID" ) << "]\n";
+				<< charName << "]\n";
 		}
 		// Close the files since we dont need them anymore
 		fsAccountsUad.close();

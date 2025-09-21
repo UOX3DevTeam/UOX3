@@ -21,9 +21,16 @@ script=4015// herding skill
 // Crook - E/W
 [0x13f4]
 {
+getuo=0x13f4_t2a
 gett2a=0x13f4_t2a
+getuor=0x13f4_t2a
+gettd=0x13f4_lbr
 getlbr=0x13f4_lbr
 getaos=0x13f4_aos
+getse=0x13f4_aos
+getml=0x13f4_tol
+getsa=0x13f4_tol
+geths=0x13f4_tol
 gettol=0x13f4_tol
 sectionid=0x13f4
 }
@@ -61,9 +68,16 @@ script=4015// herding skill
 // Shepherd's Crook - E/W
 [0x0e81]
 {
+getuo=0x0e81_t2a
 gett2a=0x0e81_t2a
+getuor=0x0e81_t2a
+gettd=0x0e81_lbr
 getlbr=0x0e81_lbr
 getaos=0x0e81_aos
+getse=0x0e81_aos
+getml=0x0e81_tol
+getsa=0x0e81_tol
+geths=0x0e81_tol
 gettol=0x0e81_tol
 sectionid=0x0e81
 }
@@ -97,9 +111,16 @@ restock=10
 // Gnarled Staff - N/S
 [0x13f8]
 {
+getuo=0x13f8_t2a
 gett2a=0x13f8_t2a
+getuor=0x13f8_t2a
+gettd=0x13f8_lbr
 getlbr=0x13f8_lbr
 getaos=0x13f8_aos
+getse=0x13f8_aos
+getml=0x13f8_tol
+getsa=0x13f8_tol
+geths=0x13f8_tol
 gettol=0x13f8_tol
 sectionid=0x13f8
 }
@@ -133,9 +154,16 @@ restock=10
 // Black Staff - E/W
 [0x0df0]
 {
+getuo=0x0df0_t2a
 gett2a=0x0df0_t2a
+getuor=0x0df0_t2a
+gettd=0x0df0_lbr
 getlbr=0x0df0_lbr
 getaos=0x0df0_aos
+getse=0x0df0_aos
+getml=0x0df0_tol
+getsa=0x0df0_tol
+geths=0x0df0_tol
 gettol=0x0df0_tol
 sectionid=0x0df0
 }
@@ -169,9 +197,16 @@ restock=10
 // Quarter Staff - N/S
 [0x0e89]
 {
+getuo=0x0e89_t2a
 gett2a=0x0e89_t2a
+getuor=0x0e89_t2a
+gettd=0x0e89_lbr
 getlbr=0x0e89_lbr
 getaos=0x0e89_aos
+getse=0x0e89_aos
+getml=0x0e89_tol
+getsa=0x0e89_tol
+geths=0x0e89_tol
 gettol=0x0e89_tol
 sectionid=0x0e89
 }
@@ -205,9 +240,16 @@ restock=10
 // Halberd - E/W
 [0x143e]
 {
+getuo=0x143e_t2a
 gett2a=0x143e_t2a
+getuor=0x143e_t2a
+gettd=0x143e_lbr
 getlbr=0x143e_lbr
 getaos=0x143e_aos
+getse=0x143e_aos
+getml=0x143e_tol
+getsa=0x143e_tol
+geths=0x143e_tol
 gettol=0x143e_tol
 sectionid=0x143e
 }
@@ -260,9 +302,16 @@ restock=10
 // Bardiche - N/S
 [0x0f4d]
 {
+getuo=0x0f4d_t2a
 gett2a=0x0f4d_t2a
+getuor=0x0f4d_t2a
+gettd=0x0f4d_lbr
 getlbr=0x0f4d_lbr
 getaos=0x0f4d_aos
+getse=0x0f4d_aos
+getml=0x0f4d_tol
+getsa=0x0f4d_tol
+geths=0x0f4d_tol
 gettol=0x0f4d_tol
 sectionid=0x0f4d
 }
@@ -300,9 +349,16 @@ restock=10
 // Scythe - E/W
 [0x26ba]
 {
+getuo=0x26ba_t2a
 gett2a=0x26ba_t2a
+getuor=0x26ba_t2a
+gettd=0x26ba_lbr
 getlbr=0x26ba_lbr
 getaos=0x26ba_aos
+getse=0x26ba_aos
+getml=0x26ba_tol
+getsa=0x26ba_tol
+geths=0x26ba_tol
 gettol=0x26ba_tol
 sectionid=0x26ba
 }
@@ -337,9 +393,16 @@ restock=10
 // Bladed Staff - E/W
 [0x26bd]
 {
+getuo=0x26bd_t2a
 gett2a=0x26bd_t2a
+getuor=0x26bd_t2a
+gettd=0x26bd_lbr
 getlbr=0x26bd_lbr
 getaos=0x26bd_aos
+getse=0x26bd_aos
+getml=0x26bd_tol
+getsa=0x26bd_tol
+geths=0x26bd_tol
 gettol=0x26bd_tol
 sectionid=0x26bd
 }
@@ -374,9 +437,16 @@ restock=10
 // Double Bladed Staff - E/W
 [0x26bf]
 {
+getuo=0x26bf_t2a
 gett2a=0x26bf_t2a
+getuor=0x26bf_t2a
+gettd=0x26bf_lbr
 getlbr=0x26bf_lbr
 getaos=0x26bf_aos
+getse=0x26bf_aos
+getml=0x26bf_tol
+getsa=0x26bf_tol
+geths=0x26bf_tol
 gettol=0x26bf_tol
 sectionid=0x26bf
 }
@@ -414,9 +484,16 @@ restock=10
 // Wild Staff - N/S
 [0x2d25]
 {
+getuo=0x2d25_t2a
 gett2a=0x2d25_t2a
+getuor=0x2d25_t2a
+gettd=0x2d25_lbr
 getlbr=0x2d25_lbr
 getaos=0x2d25_aos
+getse=0x2d25_aos
+getml=0x2d25_tol
+getsa=0x2d25_tol
+geths=0x2d25_tol
 gettol=0x2d25_tol
 sectionid=0x2d25
 }
@@ -454,9 +531,16 @@ restock=10
 // Gargish Bardiche - N/W
 [0x48b4]
 {
+getuo=0x48b4_t2a
 gett2a=0x48b4_t2a
+getuor=0x48b4_t2a
+gettd=0x48b4_lbr
 getlbr=0x48b4_lbr
 getaos=0x48b4_aos
+getse=0x48b4_aos
+getml=0x48b4_tol
+getsa=0x48b4_tol
+geths=0x48b4_tol
 gettol=0x48b4_tol
 sectionid=0x48b4
 }
@@ -491,9 +575,16 @@ restock=10
 // Gargish Scythe - N/S
 [0x48c4]
 {
+getuo=0x48c4_t2a
 gett2a=0x48c4_t2a
+getuor=0x48c4_t2a
+gettd=0x48c4_lbr
 getlbr=0x48c4_lbr
 getaos=0x48c4_aos
+getse=0x48c4_aos
+getml=0x48c4_tol
+getsa=0x48c4_tol
+geths=0x48c4_tol
 gettol=0x48c4_tol
 sectionid=0x48c4
 }
@@ -528,9 +619,16 @@ restock=10
 // Serpentstone Staff - N/S
 [0x0906]
 {
+getuo=0x0906_t2a
 gett2a=0x0906_t2a
+getuor=0x0906_t2a
+gettd=0x0906_lbr
 getlbr=0x0906_lbr
 getaos=0x0906_aos
+getse=0x0906_aos
+getml=0x0906_tol
+getsa=0x0906_tol
+geths=0x0906_tol
 gettol=0x0906_tol
 sectionid=0x0906
 }
@@ -565,9 +663,16 @@ restock=10
 // Gargish Gnarled Staff - N/S
 [0x48b8]
 {
+getuo=0x48b8_t2a
 gett2a=0x48b8_t2a
+getuor=0x48b8_t2a
+gettd=0x48b8_lbr
 getlbr=0x48b8_lbr
 getaos=0x48b8_aos
+getse=0x48b8_aos
+getml=0x48b8_tol
+getsa=0x48b8_tol
+geths=0x48b8_tol
 gettol=0x48b8_tol
 sectionid=0x48b8
 }
@@ -602,9 +707,16 @@ restock=10
 // Glass Staff - N/S
 [0x0905]
 {
+getuo=0x0905_t2a
 gett2a=0x0905_t2a
+getuor=0x0905_t2a
+gettd=0x0905_lbr
 getlbr=0x0905_lbr
 getaos=0x0905_aos
+getse=0x0905_aos
+getml=0x0905_tol
+getsa=0x0905_tol
+geths=0x0905_tol
 gettol=0x0905_tol
 sectionid=0x0905
 }

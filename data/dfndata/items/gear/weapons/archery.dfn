@@ -20,9 +20,16 @@ maxrange=8
 // Crossbow - N/S
 [0x0f4f]
 {
+getuo=0x0f4f_t2a
 gett2a=0x0f4f_t2a
+getuor=0x0f4f_t2a
+gettd=0x0f4f_lbr
 getlbr=0x0f4f_lbr
 getaos=0x0f4f_aos
+getse=0x0f4f_aos
+getml=0x0f4f_tol
+getsa=0x0f4f_tol
+geths=0x0f4f_tol
 gettol=0x0f4f_tol
 sectionid=0x0f4f
 }
@@ -59,9 +66,16 @@ maxrange=8
 // Heavy Crossbow - E/W
 [0x13fc]
 {
+getuo=0x13fc_t2a
 gett2a=0x13fc_t2a
+getuor=0x13fc_t2a
+gettd=0x13fc_lbr
 getlbr=0x13fc_lbr
 getaos=0x13fc_aos
+getse=0x13fc_aos
+getml=0x13fc_tol
+getsa=0x13fc_tol
+geths=0x13fc_tol
 gettol=0x13fc_tol
 sectionid=0x13fc
 }
@@ -98,9 +112,16 @@ maxrange=10
 // Bow - N/S
 [0x13b1]
 {
+getuo=0x13b1_t2a
 gett2a=0x13b1_t2a
+getuor=0x13b1_t2a
+gettd=0x13b1_lbr
 getlbr=0x13b1_lbr
 getaos=0x13b1_aos
+getse=0x13b1_aos
+getml=0x13b1_tol
+getsa=0x13b1_tol
+geths=0x13b1_tol
 gettol=0x13b1_tol
 sectionid=0x13b1
 }
@@ -141,9 +162,16 @@ origin=aos
 // Composite Bow - E/W
 [0x26c2]
 {
+getuo=0x26c2_t2a
 gett2a=0x26c2_t2a
+getuor=0x26c2_t2a
+gettd=0x26c2_lbr
 getlbr=0x26c2_lbr
 getaos=0x26c2_aos
+getse=0x26c2_aos
+getml=0x26c2_tol
+getsa=0x26c2_tol
+geths=0x26c2_tol
 gettol=0x26c2_tol
 sectionid=0x26c2
 }
@@ -182,9 +210,16 @@ origin=aos
 // Repeating Crossbow - E/W
 [0x26c3]
 {
+getuo=0x26c3_t2a
 gett2a=0x26c3_t2a
+getuor=0x26c3_t2a
+gettd=0x26c3_lbr
 getlbr=0x26c3_lbr
 getaos=0x26c3_aos
+getse=0x26c3_aos
+getml=0x26c3_tol
+getsa=0x26c3_tol
+geths=0x26c3_tol
 gettol=0x26c3_tol
 sectionid=0x26c3
 }
@@ -225,9 +260,16 @@ origin=se
 // Yumi - E/W
 [0x27a5]
 {
+getuo=0x27a5_t2a
 gett2a=0x27a5_t2a
+getuor=0x27a5_t2a
+gettd=0x27a5_lbr
 getlbr=0x27a5_lbr
 getaos=0x27a5_aos
+getse=0x27a5_aos
+getml=0x27a5_tol
+getsa=0x27a5_tol
+geths=0x27a5_tol
 gettol=0x27a5_tol
 sectionid=0x27a5
 }
@@ -268,9 +310,16 @@ origin=ml
 // Elven Composite Longbow - E/W
 [0x2d1e]
 {
+getuo=0x2d1e_t2a
 gett2a=0x2d1e_t2a
+getuor=0x2d1e_t2a
+gettd=0x2d1e_lbr
 getlbr=0x2d1e_lbr
 getaos=0x2d1e_aos
+getse=0x2d1e_aos
+getml=0x2d1e_tol
+getsa=0x2d1e_tol
+geths=0x2d1e_tol
 gettol=0x2d1e_tol
 sectionid=0x2d1e
 }
@@ -308,9 +357,16 @@ origin=ml
 // Magical Shortbow - E/W
 [0x2d2b]
 {
+getuo=0x2d2b_t2a
 gett2a=0x2d2b_t2a
+getuor=0x2d2b_t2a
+gettd=0x2d2b_lbr
 getlbr=0x2d2b_lbr
 getaos=0x2d2b_aos
+getse=0x2d2b_aos
+getml=0x2d2b_tol
+getsa=0x2d2b_tol
+geths=0x2d2b_tol
 gettol=0x2d2b_tol
 sectionid=0x2d2b
 }
@@ -327,6 +383,3 @@ id=0x2d1f
 {
 get=0x2d2b 0x2d1f
 }
-
-
-EOF
