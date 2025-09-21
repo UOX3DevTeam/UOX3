@@ -2,9 +2,16 @@
 // Leaf Arms - N/S
 [0x2fc8]
 {
+getuo=0x2fc8_t2a
 gett2a=0x2fc8_t2a
+getuor=0x2fc8_t2a
+gettd=0x2fc8_lbr
 getlbr=0x2fc8_lbr
 getaos=0x2fc8_aos
+getse=0x2fc8_aos
+getml=0x2fc8_tol
+getsa=0x2fc8_tol
+geths=0x2fc8_tol
 gettol=0x2fc8_tol
 sectionid=0x2fc8
 }
@@ -26,9 +33,16 @@ get=0x2fc8 0x317e
 // Leaf Tunic - E/W
 [0x2fc5]
 {
+getuo=0x2fc5_t2a
 gett2a=0x2fc5_t2a
+getuor=0x2fc5_t2a
+gettd=0x2fc5_lbr
 getlbr=0x2fc5_lbr
 getaos=0x2fc5_aos
+getse=0x2fc5_aos
+getml=0x2fc5_tol
+getsa=0x2fc5_tol
+geths=0x2fc5_tol
 gettol=0x2fc5_tol
 sectionid=0x2fc5
 }
@@ -50,9 +64,16 @@ get=0x2fc5 0x317b
 // Leaf Armor (Female) - E/W
 [0x2fcb]
 {
+getuo=0x2fcb_t2a
 gett2a=0x2fcb_t2a
+getuor=0x2fcb_t2a
+gettd=0x2fcb_lbr
 getlbr=0x2fcb_lbr
 getaos=0x2fcb_aos
+getse=0x2fcb_aos
+getml=0x2fcb_tol
+getsa=0x2fcb_tol
+geths=0x2fcb_tol
 gettol=0x2fcb_tol
 sectionid=0x2fcb
 }
@@ -74,9 +95,16 @@ get=0x2fcb 0x3181
 // Leaf Gloves - E/W
 [0x2fc6]
 {
+getuo=0x2fc6_t2a
 gett2a=0x2fc6_t2a
+getuor=0x2fc6_t2a
+gettd=0x2fc6_lbr
 getlbr=0x2fc6_lbr
 getaos=0x2fc6_aos
+getse=0x2fc6_aos
+getml=0x2fc6_tol
+getsa=0x2fc6_tol
+geths=0x2fc6_tol
 gettol=0x2fc6_tol
 sectionid=0x2fc6
 }
@@ -98,9 +126,16 @@ get=0x2fc6 0x317c
 // Leaf Gorget - E/W
 [0x2fc7]
 {
+getuo=0x2fc7_t2a
 gett2a=0x2fc7_t2a
+getuor=0x2fc7_t2a
+gettd=0x2fc7_lbr
 getlbr=0x2fc7_lbr
 getaos=0x2fc7_aos
+getse=0x2fc7_aos
+getml=0x2fc7_tol
+getsa=0x2fc7_tol
+geths=0x2fc7_tol
 gettol=0x2fc7_tol
 sectionid=0x2fc7
 }
@@ -122,9 +157,16 @@ get=0x2fc7 0x317d
 // Leaf Leggings - N/S
 [0x2fc9]
 {
+getuo=0x2fc9_t2a
 gett2a=0x2fc9_t2a
+getuor=0x2fc9_t2a
+gettd=0x2fc9_lbr
 getlbr=0x2fc9_lbr
 getaos=0x2fc9_aos
+getse=0x2fc9_aos
+getml=0x2fc9_tol
+getsa=0x2fc9_tol
+geths=0x2fc9_tol
 gettol=0x2fc9_tol
 sectionid=0x2fc9
 }
@@ -146,9 +188,16 @@ get=0x2fc9 0x317f
 // Leaf Tonlet - N/S
 [0x2fca]
 {
+getuo=0x2fca_t2a
 gett2a=0x2fca_t2a
+getuor=0x2fca_t2a
+gettd=0x2fca_lbr
 getlbr=0x2fca_lbr
 getaos=0x2fca_aos
+getse=0x2fca_aos
+getml=0x2fca_tol
+getsa=0x2fca_tol
+geths=0x2fca_tol
 gettol=0x2fca_tol
 sectionid=0x2fca
 }
