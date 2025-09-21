@@ -40,9 +40,16 @@ restock=10
 // Fukiya - E/W
 [0x27aa]
 {
+getuo=0x27aa_t2a
 gett2a=0x27aa_t2a
+getuor=0x27aa_t2a
+gettd=0x27aa_lbr
 getlbr=0x27aa_lbr
 getaos=0x27aa_aos
+getse=0x27aa_aos
+getml=0x27aa_tol
+getsa=0x27aa_tol
+geths=0x27aa_tol
 gettol=0x27aa_tol
 sectionid=0x27aa
 }

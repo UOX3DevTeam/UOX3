@@ -271,6 +271,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				}
 				break;
 			}
+			case DFNTAG_GETUO:
 			case DFNTAG_GETT2A:
 			case DFNTAG_GETUOR:
 			case DFNTAG_GETTD:
@@ -287,6 +288,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				std::string tagName = "";
 				switch( cwmWorldState->ServerData()->ExpansionCoreShardEra() )
 				{
+					case ER_UO:		if( tag == DFNTAG_GETUO ) { getParent = true; tagName = "GETUO"; }			break;
 					case ER_T2A:	if( tag == DFNTAG_GETT2A ) { getParent = true; tagName = "GETT2A"; }		break;
 					case ER_UOR:	if( tag == DFNTAG_GETUOR ) { getParent = true; tagName = "GETUOR"; }		break;
 					case ER_TD:		if( tag == DFNTAG_GETTD ) { getParent = true; tagName = "GETTD"; }			break;
