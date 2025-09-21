@@ -17,9 +17,16 @@ restock=10
 // Cutlass - E/W
 [0x1440]
 {
+getuo=0x1440_t2a
 gett2a=0x1440_t2a
+getuor=0x1440_t2a
+gettd=0x1440_lbr
 getlbr=0x1440_lbr
 getaos=0x1440_aos
+getse=0x1440_aos
+getml=0x1440_tol
+getsa=0x1440_tol
+geths=0x1440_tol
 gettol=0x1440_tol
 sectionid=0x1440
 }
@@ -52,9 +59,16 @@ restock=10
 // Katana - E/W
 [0x13fe]
 {
+getuo=0x13fe_t2a
 gett2a=0x13fe_t2a
+getuor=0x13fe_t2a
+gettd=0x13fe_lbr
 getlbr=0x13fe_lbr
 getaos=0x13fe_aos
+getse=0x13fe_aos
+getml=0x13fe_tol
+getsa=0x13fe_tol
+geths=0x13fe_tol
 gettol=0x13fe_tol
 sectionid=0x13fe
 }
@@ -87,9 +101,16 @@ restock=10
 // Broadsword - N/S
 [0x0f5e]
 {
+getuo=0x0f5e_t2a
 gett2a=0x0f5e_t2a
+getuor=0x0f5e_t2a
+gettd=0x0f5e_lbr
 getlbr=0x0f5e_lbr
 getaos=0x0f5e_aos
+getse=0x0f5e_aos
+getml=0x0f5e_tol
+getsa=0x0f5e_tol
+geths=0x0f5e_tol
 gettol=0x0f5e_tol
 sectionid=0x0f5e
 }
@@ -122,9 +143,16 @@ restock=10
 // Longsword - E/W
 [0x0f60]
 {
+getuo=0x0f60_t2a
 gett2a=0x0f60_t2a
+getuor=0x0f60_t2a
+gettd=0x0f60_lbr
 getlbr=0x0f60_lbr
 getaos=0x0f60_aos
+getse=0x0f60_aos
+getml=0x0f60_tol
+getsa=0x0f60_tol
+geths=0x0f60_tol
 gettol=0x0f60_tol
 sectionid=0x0f60
 }
@@ -157,9 +185,16 @@ restock=10
 // Long Sword (thin) - E/W
 [0x13b7]
 {
+getuo=0x13b7_t2a
 gett2a=0x13b7_t2a
+getuor=0x13b7_t2a
+gettd=0x13b7_lbr
 getlbr=0x13b7_lbr
 getaos=0x13b7_aos
+getse=0x13b7_aos
+getml=0x13b7_tol
+getsa=0x13b7_tol
+geths=0x13b7_tol
 gettol=0x13b7_tol
 sectionid=0x13b7
 }
@@ -192,9 +227,16 @@ restock=10
 // Scimitar - E/W
 [0x13b5]
 {
+getuo=0x13b5_t2a
 gett2a=0x13b5_t2a
+getuor=0x13b5_t2a
+gettd=0x13b5_lbr
 getlbr=0x13b5_lbr
 getaos=0x13b5_aos
+getse=0x13b5_aos
+getml=0x13b5_tol
+getsa=0x13b5_tol
+geths=0x13b5_tol
 gettol=0x13b5_tol
 sectionid=0x13b5
 }
@@ -227,9 +269,16 @@ restock=10
 // Viking Sword - N/S
 [0x13b9]
 {
+getuo=0x13b9_t2a
 gett2a=0x13b9_t2a
+getuor=0x13b9_t2a
+gettd=0x13b9_lbr
 getlbr=0x13b9_lbr
 getaos=0x13b9_aos
+getse=0x13b9_aos
+getml=0x13b9_tol
+getsa=0x13b9_tol
+geths=0x13b9_tol
 gettol=0x13b9_tol
 sectionid=0x13b9
 }
@@ -267,9 +316,16 @@ restock=10
 // Bone Harvester - E/W
 [0x26bb]
 {
+getuo=0x26bb_t2a
 gett2a=0x26bb_t2a
+getuor=0x26bb_t2a
+gettd=0x26bb_lbr
 getlbr=0x26bb_lbr
 getaos=0x26bb_aos
+getse=0x26bb_aos
+getml=0x26bb_tol
+getsa=0x26bb_tol
+geths=0x26bb_tol
 gettol=0x26bb_tol
 sectionid=0x26bb
 }
@@ -304,9 +360,16 @@ restock=10
 // Crescent Blade - E/W
 [0x26c1]
 {
+getuo=0x26c1_t2a
 gett2a=0x26c1_t2a
+getuor=0x26c1_t2a
+gettd=0x26c1_lbr
 getlbr=0x26c1_lbr
 getaos=0x26c1_aos
+getse=0x26c1_aos
+getml=0x26c1_tol
+getsa=0x26c1_tol
+geths=0x26c1_tol
 gettol=0x26c1_tol
 sectionid=0x26c1
 }
@@ -341,9 +404,16 @@ restock=10
 // Paladin Sword - E/W
 [0x26ce]
 {
+getuo=0x26ce_t2a
 gett2a=0x26ce_t2a
+getuor=0x26ce_t2a
+gettd=0x26ce_lbr
 getlbr=0x26ce_lbr
 getaos=0x26ce_aos
+getse=0x26ce_aos
+getml=0x26ce_tol
+getsa=0x26ce_tol
+geths=0x26ce_tol
 gettol=0x26ce_tol
 sectionid=0x26ce
 }
@@ -381,9 +451,16 @@ restock=10
 // No-Dachi - E/W
 [0x27a2]
 {
+getuo=0x27a2_t2a
 gett2a=0x27a2_t2a
+getuor=0x27a2_t2a
+gettd=0x27a2_lbr
 getlbr=0x27a2_lbr
 getaos=0x27a2_aos
+getse=0x27a2_aos
+getml=0x27a2_tol
+getsa=0x27a2_tol
+geths=0x27a2_tol
 gettol=0x27a2_tol
 sectionid=0x27a2
 }
@@ -418,9 +495,16 @@ restock=10
 // Wakizashi - E/W
 [0x27a4]
 {
+getuo=0x27a4_t2a
 gett2a=0x27a4_t2a
+getuor=0x27a4_t2a
+gettd=0x27a4_lbr
 getlbr=0x27a4_lbr
 getaos=0x27a4_aos
+getse=0x27a4_aos
+getml=0x27a4_tol
+getsa=0x27a4_tol
+geths=0x27a4_tol
 gettol=0x27a4_tol
 sectionid=0x27a4
 }
@@ -455,9 +539,16 @@ restock=10
 // Bokuto - E/W
 [0x27a8]
 {
+getuo=0x27a8_t2a
 gett2a=0x27a8_t2a
+getuor=0x27a8_t2a
+gettd=0x27a8_lbr
 getlbr=0x27a8_lbr
 getaos=0x27a8_aos
+getse=0x27a8_aos
+getml=0x27a8_tol
+getsa=0x27a8_tol
+geths=0x27a8_tol
 gettol=0x27a8_tol
 sectionid=0x27a8
 }
@@ -492,9 +583,16 @@ restock=10
 // Daisho - E/W
 [0x27a9]
 {
+getuo=0x27a9_t2a
 gett2a=0x27a9_t2a
+getuor=0x27a9_t2a
+gettd=0x27a9_lbr
 getlbr=0x27a9_lbr
 getaos=0x27a9_aos
+getse=0x27a9_aos
+getml=0x27a9_tol
+getsa=0x27a9_tol
+geths=0x27a9_tol
 gettol=0x27a9_tol
 sectionid=0x27a9
 }
@@ -533,9 +631,16 @@ restock=10
 // Elven Machete - N/S
 [0x2d29]
 {
+getuo=0x2d29_t2a
 gett2a=0x2d29_t2a
+getuor=0x2d29_t2a
+gettd=0x2d29_lbr
 getlbr=0x2d29_lbr
 getaos=0x2d29_aos
+getse=0x2d29_aos
+getml=0x2d29_tol
+getsa=0x2d29_tol
+geths=0x2d29_tol
 gettol=0x2d29_tol
 sectionid=0x2d29
 }
@@ -570,9 +675,16 @@ restock=10
 // Radiant Scimitar - N/S
 [0x2d29]
 {
+getuo=0x2d29_t2a
 gett2a=0x2d29_t2a
+getuor=0x2d29_t2a
+gettd=0x2d29_lbr
 getlbr=0x2d29_lbr
 getaos=0x2d29_aos
+getse=0x2d29_aos
+getml=0x2d29_tol
+getsa=0x2d29_tol
+geths=0x2d29_tol
 gettol=0x2d29_tol
 sectionid=0x2d29
 }
@@ -607,9 +719,16 @@ restock=10
 // Rune Blade - N/S
 [0x2d26]
 {
+getuo=0x2d26_t2a
 gett2a=0x2d26_t2a
+getuor=0x2d26_t2a
+gettd=0x2d26_lbr
 getlbr=0x2d26_lbr
 getaos=0x2d26_aos
+getse=0x2d26_aos
+getml=0x2d26_tol
+getsa=0x2d26_tol
+geths=0x2d26_tol
 gettol=0x2d26_tol
 sectionid=0x2d26
 }
@@ -647,9 +766,16 @@ restock=10
 // Dread Sword - N/S
 [0x090b]
 {
+getuo=0x090b_t2a
 gett2a=0x090b_t2a
+getuor=0x090b_t2a
+gettd=0x090b_lbr
 getlbr=0x090b_lbr
 getaos=0x090b_aos
+getse=0x090b_aos
+getml=0x090b_tol
+getsa=0x090b_tol
+geths=0x090b_tol
 gettol=0x090b_tol
 sectionid=0x090b
 }
@@ -684,9 +810,16 @@ restock=10
 // Gargish Bone Harvester - N/S
 [0x48c6]
 {
+getuo=0x48c6_t2a
 gett2a=0x48c6_t2a
+getuor=0x48c6_t2a
+gettd=0x48c6_lbr
 getlbr=0x48c6_lbr
 getaos=0x48c6_aos
+getse=0x48c6_aos
+getml=0x48c6_tol
+getsa=0x48c6_tol
+geths=0x48c6_tol
 gettol=0x48c6_tol
 sectionid=0x48c6
 }
@@ -721,9 +854,16 @@ restock=10
 // Glass Sword - N/S
 [0x090c]
 {
+getuo=0x090c_t2a
 gett2a=0x090c_t2a
+getuor=0x090c_t2a
+gettd=0x090c_lbr
 getlbr=0x090c_lbr
 getaos=0x090c_aos
+getse=0x090c_aos
+getml=0x090c_tol
+getsa=0x090c_tol
+geths=0x090c_tol
 gettol=0x090c_tol
 sectionid=0x090c
 }
@@ -758,9 +898,16 @@ restock=10
 // Gargish Cleaver - N/S
 [0x48ae]
 {
+getuo=0x48ae_t2a
 gett2a=0x48ae_t2a
+getuor=0x48ae_t2a
+gettd=0x48ae_lbr
 getlbr=0x48ae_lbr
 getaos=0x48ae_aos
+getse=0x48ae_aos
+getml=0x48ae_tol
+getsa=0x48ae_tol
+geths=0x48ae_tol
 gettol=0x48ae_tol
 sectionid=0x48ae
 }
@@ -795,9 +942,16 @@ restock=10
 // Gargish Katana - N/S
 [0x48ba]
 {
+getuo=0x48ba_t2a
 gett2a=0x48ba_t2a
+getuor=0x48ba_t2a
+gettd=0x48ba_lbr
 getlbr=0x48ba_lbr
 getaos=0x48ba_aos
+getse=0x48ba_aos
+getml=0x48ba_tol
+getsa=0x48ba_tol
+geths=0x48ba_tol
 gettol=0x48ba_tol
 sectionid=0x48ba
 }
@@ -832,9 +986,16 @@ restock=10
 // Gargish Butcher Knife - N/S
 [0x48b6]
 {
+getuo=0x48b6_t2a
 gett2a=0x48b6_t2a
+getuor=0x48b6_t2a
+gettd=0x48b6_lbr
 getlbr=0x48b6_lbr
 getaos=0x48b6_aos
+getse=0x48b6_aos
+getml=0x48b6_tol
+getsa=0x48b6_tol
+geths=0x48b6_tol
 gettol=0x48b6_tol
 sectionid=0x48b6
 }
@@ -869,9 +1030,16 @@ restock=10
 // Stone War Sword - N/S
 [0x0900]
 {
+getuo=0x0900_t2a
 gett2a=0x0900_t2a
+getuor=0x0900_t2a
+gettd=0x0900_lbr
 getlbr=0x0900_lbr
 getaos=0x0900_aos
+getse=0x0900_aos
+getml=0x0900_tol
+getsa=0x0900_tol
+geths=0x0900_tol
 gettol=0x0900_tol
 sectionid=0x0900
 }
@@ -906,9 +1074,16 @@ restock=10
 // Gargish Talwar - N/S
 [0x0908]
 {
+getuo=0x0908_t2a
 gett2a=0x0908_t2a
+getuor=0x0908_t2a
+gettd=0x0908_lbr
 getlbr=0x0908_lbr
 getaos=0x0908_aos
+getse=0x0908_aos
+getml=0x0908_tol
+getsa=0x0908_tol
+geths=0x0908_tol
 gettol=0x0908_tol
 sectionid=0x0908
 }
@@ -943,9 +1118,16 @@ restock=10
 // Gargish Daisho - N/S
 [0x48d0]
 {
+getuo=0x48d0_t2a
 gett2a=0x48d0_t2a
+getuor=0x48d0_t2a
+gettd=0x48d0_lbr
 getlbr=0x48d0_lbr
 getaos=0x48d0_aos
+getse=0x48d0_aos
+getml=0x48d0_tol
+getsa=0x48d0_tol
+geths=0x48d0_tol
 gettol=0x48d0_tol
 sectionid=0x48d0
 }
@@ -983,9 +1165,16 @@ restock=10
 // Bladed Whip - N/S
 [0xa28b]
 {
+getuo=0xa28b_t2a
 gett2a=0xa28b_t2a
+getuor=0xa28b_t2a
+gettd=0xa28b_lbr
 getlbr=0xa28b_lbr
 getaos=0xa28b_aos
+getse=0xa28b_aos
+getml=0xa28b_tol
+getsa=0xa28b_tol
+geths=0xa28b_tol
 gettol=0xa28b_tol
 sectionid=0xa28b
 }

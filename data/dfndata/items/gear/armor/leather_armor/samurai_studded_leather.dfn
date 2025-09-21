@@ -1,9 +1,16 @@
 // Studded Do - E/W
 [0x277c]
 {
+getuo=0x277c_t2a
 gett2a=0x277c_t2a
+getuor=0x277c_t2a
+gettd=0x277c_lbr
 getlbr=0x277c_lbr
 getaos=0x277c_aos
+getse=0x277c_aos
+getml=0x277c_tol
+getsa=0x277c_tol
+geths=0x277c_tol
 gettol=0x277c_tol
 sectionid=0x277c
 }
@@ -24,9 +31,16 @@ get=0x277c 0x27c7
 // Studded Hiro Sode - E/W
 [0x277f]
 {
+getuo=0x277f_t2a
 gett2a=0x277f_t2a
+getuor=0x277f_t2a
+gettd=0x277f_lbr
 getlbr=0x277f_lbr
 getaos=0x277f_aos
+getse=0x277f_aos
+getml=0x277f_tol
+getsa=0x277f_tol
+geths=0x277f_tol
 gettol=0x277f_tol
 sectionid=0x277f
 }
@@ -47,9 +61,16 @@ get=0x277f 0x27ca
 // Studded Suneate - E/W
 [0x2787]
 {
+getuo=0x2787_t2a
 gett2a=0x2787_t2a
+getuor=0x2787_t2a
+gettd=0x2787_lbr
 getlbr=0x2787_lbr
 getaos=0x2787_aos
+getse=0x2787_aos
+getml=0x2787_tol
+getsa=0x2787_tol
+geths=0x2787_tol
 gettol=0x2787_tol
 sectionid=0x2787
 }
@@ -70,9 +91,16 @@ get=0x2787 0x27d2
 // Studded Haidate - N/S
 [0x278b]
 {
+getuo=0x278b_t2a
 gett2a=0x278b_t2a
+getuor=0x278b_t2a
+gettd=0x278b_lbr
 getlbr=0x278b_lbr
 getaos=0x278b_aos
+getse=0x278b_aos
+getml=0x278b_tol
+getsa=0x278b_tol
+geths=0x278b_tol
 gettol=0x278b_tol
 sectionid=0x278b
 }
@@ -93,9 +121,16 @@ get=0x278b 0x27d6
 // Studded Mempo - N/S
 [0x279d]
 {
+getuo=0x279d_t2a
 gett2a=0x279d_t2a
+getuor=0x279d_t2a
+gettd=0x279d_lbr
 getlbr=0x279d_lbr
 getaos=0x279d_aos
+getse=0x279d_aos
+getml=0x279d_tol
+getsa=0x279d_tol
+geths=0x279d_tol
 gettol=0x279d_tol
 sectionid=0x279d
 }

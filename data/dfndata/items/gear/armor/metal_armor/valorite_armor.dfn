@@ -763,7 +763,7 @@ sectionid=0x140a-va
 // Valorite Helmet - N/S
 [0x140b-va]
 {
-get=0x140b-va
+get=0x140a-va
 id=0x140b
 }
 
@@ -904,6 +904,19 @@ color=0x8ab
 sectionid=0x1b74-va
 }
 
+// Valorite Kite Shield (Metal) - E/W
+[0x1b75-va]
+{
+get=0x1b74-va
+id=0x1b75
+}
+
+// Valorite Kite Shield (Metal) - Alias
+[valoritemetalkiteshield]
+{
+get=0x1b74-va 0x1b75-va
+}
+
 // Valorite Heater Shield - N/S
 [0x1b76-va]
 {
@@ -917,7 +930,20 @@ color=0x8ab
 sectionid=0x1b76-va
 }
 
-// Valorite Kite Shield (Wood) - N/S
+// Valorite Heater Shield - E/W
+[0x1b77-va]
+{
+get=0x1b76-va
+id=0x1b77
+}
+
+// Valorite Heater Shield - Alias
+[valoriteheatershield]
+{
+get=0x1b76-va 0x1b77-va
+}
+
+// Valorite Kite Shield (Wooden) - N/S
 [0x1b78-va]
 {
 gett2a=0x1b78_t2a
@@ -930,20 +956,20 @@ color=0x8ab
 sectionid=0x1b78-va
 }
 
-// Valorite Kite Shield (wood) - E/W
+// Valorite Kite Shield (Wooden) - E/W
 [0x1b79-va]
 {
 get=0x1b78-va
 id=0x1b79
 }
 
-// Valorite Kite Shield (wood) - Alias
-[valoritemetalkiteshield]
+// Valorite Kite Shield (Wooden) - Alias
+[valoritewoodenkiteshield]
 {
 get=0x1b78-va 0x1b79-va
 }
 
-// AgapiteWooden Shield
+// Valorite Wooden Shield
 [0x1b7a-va]
 {
 gett2a=0x1b7a_t2a
@@ -1016,7 +1042,7 @@ sectionid=0x1bc4-va
 // Valorite Order Shield - E/W
 [0x1bc5-va]
 {
-get=0x1bc5-va
+get=0x1bc4-va
 id=0x1bc5
 }
 
