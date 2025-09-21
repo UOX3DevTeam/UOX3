@@ -3,9 +3,16 @@
 // Gargish Stone Arms - E/W
 [0x0284]
 {
+getuo=0x0284_t2a
 gett2a=0x0284_t2a
+getuor=0x0284_t2a
+gettd=0x0284_lbr
 getlbr=0x0284_lbr
 getaos=0x0284_aos
+getse=0x0284_aos
+getml=0x0284_tol
+getsa=0x0284_tol
+geths=0x0284_tol
 gettol=0x0284_tol
 sectionid=0x0284
 }
@@ -26,9 +33,16 @@ get=0x0284 0x4058
 // Female Gargish Stone Arms - E/W
 [0x0283]
 {
+getuo=0x0283_t2a
 gett2a=0x0283_t2a
+getuor=0x0283_t2a
+gettd=0x0283_lbr
 getlbr=0x0283_lbr
 getaos=0x0283_aos
+getse=0x0283_aos
+getml=0x0283_tol
+getsa=0x0283_tol
+geths=0x0283_tol
 gettol=0x0283_tol
 sectionid=0x0283
 }
@@ -51,9 +65,16 @@ get=0x0283 0x4057
 // Gargish Stone Chest - E/W
 [0x0286]
 {
+getuo=0x0286_t2a
 gett2a=0x0286_t2a
+getuor=0x0286_t2a
+gettd=0x0286_lbr
 getlbr=0x0286_lbr
 getaos=0x0286_aos
+getse=0x0286_aos
+getml=0x0286_tol
+getsa=0x0286_tol
+geths=0x0286_tol
 gettol=0x0286_tol
 sectionid=0x0286
 }
@@ -74,9 +95,16 @@ get=0x0286 0x405a
 // Female Gargish Stone Chest - E/W
 [0x0285]
 {
+getuo=0x0285_t2a
 gett2a=0x0285_t2a
+getuor=0x0285_t2a
+gettd=0x0285_lbr
 getlbr=0x0285_lbr
 getaos=0x0285_aos
+getse=0x0285_aos
+getml=0x0285_tol
+getsa=0x0285_tol
+geths=0x0285_tol
 gettol=0x0285_tol
 sectionid=0x0285
 }
@@ -99,9 +127,16 @@ get=0x0285 0x4059
 // Gargish Stone Leggings - E/W
 [0x028a]
 {
+getuo=0x028a_t2a
 gett2a=0x028a_t2a
+getuor=0x028a_t2a
+gettd=0x028a_lbr
 getlbr=0x028a_lbr
 getaos=0x028a_aos
+getse=0x028a_aos
+getml=0x028a_tol
+getsa=0x028a_tol
+geths=0x028a_tol
 gettol=0x028a_tol
 sectionid=0x028a
 }
@@ -122,9 +157,16 @@ get=0x028a 0x405e
 // Female Gargish Stone Leggings - E/W
 [0x0289]
 {
+getuo=0x0289_t2a
 gett2a=0x0289_t2a
+getuor=0x0289_t2a
+gettd=0x0289_lbr
 getlbr=0x0289_lbr
 getaos=0x0289_aos
+getse=0x0289_aos
+getml=0x0289_tol
+getsa=0x0289_tol
+geths=0x0289_tol
 gettol=0x0289_tol
 sectionid=0x0289
 }
@@ -145,9 +187,16 @@ get=0x0289 0x405d
 // Gargish Stone Kilt - E/W
 [0x0288]
 {
+getuo=0x0288_t2a
 gett2a=0x0288_t2a
+getuor=0x0288_t2a
+gettd=0x0288_lbr
 getlbr=0x0288_lbr
 getaos=0x0288_aos
+getse=0x0288_aos
+getml=0x0288_tol
+getsa=0x0288_tol
+geths=0x0288_tol
 gettol=0x0288_tol
 sectionid=0x0288
 }
@@ -168,9 +217,16 @@ get=0x0288 0x405c
 // Female Gargish Stone Kilt - E/W
 [0x0287]
 {
+getuo=0x0287_t2a
 gett2a=0x0287_t2a
+getuor=0x0287_t2a
+gettd=0x0287_lbr
 getlbr=0x0287_lbr
 getaos=0x0287_aos
+getse=0x0287_aos
+getml=0x0287_tol
+getsa=0x0287_tol
+geths=0x0287_tol
 gettol=0x0287_tol
 sectionid=0x0287
 }
