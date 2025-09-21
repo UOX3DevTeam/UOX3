@@ -17,9 +17,16 @@ restock=10
 // Cleaver - E/W
 [0x0ec2]
 {
+getuo=0x0ec2_t2a
 gett2a=0x0ec2_t2a
+getuor=0x0ec2_t2a
+gettd=0x0ec2_lbr
 getlbr=0x0ec2_lbr
 getaos=0x0ec2_aos
+getse=0x0ec2_aos
+getml=0x0ec2_tol
+getsa=0x0ec2_tol
+geths=0x0ec2_tol
 gettol=0x0ec2_tol
 sectionid=0x0ec2
 }
@@ -53,9 +60,16 @@ restock=10
 // Skinning Knife - N/S
 [0x0ec4]
 {
+getuo=0x0ec4_t2a
 gett2a=0x0ec4_t2a
+getuor=0x0ec4_t2a
+gettd=0x0ec4_lbr
 getlbr=0x0ec4_lbr
 getaos=0x0ec4_aos
+getse=0x0ec4_aos
+getml=0x0ec4_tol
+getsa=0x0ec4_tol
+geths=0x0ec4_tol
 gettol=0x0ec4_tol
 sectionid=0x0ec4
 }
@@ -89,9 +103,16 @@ restock=10
 // Dagger - N/S
 [0x0f51]
 {
+getuo=0x0f51_t2a
 gett2a=0x0f51_t2a
+getuor=0x0f51_t2a
+gettd=0x0f51_lbr
 getlbr=0x0f51_lbr
 getaos=0x0f51_aos
+getse=0x0f51_aos
+getml=0x0f51_tol
+getsa=0x0f51_tol
+geths=0x0f51_tol
 gettol=0x0f51_tol
 sectionid=0x0f51
 }
@@ -125,9 +146,16 @@ restock=10
 // Butcher Knife - N/S
 [0x13f6]
 {
+getuo=0x13f6_t2a
 gett2a=0x13f6_t2a
+getuor=0x13f6_t2a
+gettd=0x13f6_lbr
 getlbr=0x13f6_lbr
 getaos=0x13f6_aos
+getse=0x13f6_aos
+getml=0x13f6_tol
+getsa=0x13f6_tol
+geths=0x13f6_tol
 gettol=0x13f6_tol
 sectionid=0x13f6
 }
@@ -165,9 +193,16 @@ restock=10
 // Leafblade - N/S
 [0x2d22]
 {
+getuo=0x2d22_t2a
 gett2a=0x2d22_t2a
+getuor=0x2d22_t2a
+gettd=0x2d22_lbr
 getlbr=0x2d22_lbr
 getaos=0x2d22_aos
+getse=0x2d22_aos
+getml=0x2d22_tol
+getsa=0x2d22_tol
+geths=0x2d22_tol
 gettol=0x2d22_tol
 sectionid=0x2d22
 }
@@ -202,9 +237,16 @@ restock=10
 // Assassin Spike - N/S
 [0x2d21]
 {
+getuo=0x2d21_t2a
 gett2a=0x2d21_t2a
+getuor=0x2d21_t2a
+gettd=0x2d21_lbr
 getlbr=0x2d21_lbr
 getaos=0x2d21_aos
+getse=0x2d21_aos
+getml=0x2d21_tol
+getsa=0x2d21_tol
+geths=0x2d21_tol
 gettol=0x2d21_tol
 sectionid=0x2d21
 }
@@ -242,9 +284,16 @@ restock=10
 // Gargish Dagger - N/S
 [0x0902]
 {
+getuo=0x0902_t2a
 gett2a=0x0902_t2a
+getuor=0x0902_t2a
+gettd=0x0902_lbr
 getlbr=0x0902_lbr
 getaos=0x0902_aos
+getse=0x0902_aos
+getml=0x0902_tol
+getsa=0x0902_tol
+geths=0x0902_tol
 gettol=0x0902_tol
 sectionid=0x0902
 }

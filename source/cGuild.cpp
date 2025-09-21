@@ -2324,7 +2324,12 @@ void CGuildCollection::GumpChoice( CSocket *s )
 
 					gList[trgGuild]->RemoveMember(( *tChar ));
 					tChar->SetGuildNumber( -1 );
-					s->SysMessage( 1689, tChar->GetName().c_str() ); // You have dismissed %s from your guild!
+					std::string charName = tChar->GetName();
+					if( tChar->IsIncognito() || tChar->IsDisguised() )
+					{
+						charName = tChar->GetOrgName();
+					}
+					s->SysMessage( 1689, charName.c_str() ); // You have dismissed %s from your guild!
 					auto tSock = tChar->GetSocket();
 					if( tSock != nullptr )
 					{
@@ -2489,7 +2494,12 @@ void CGuildCollection::Resign( CSocket *s )
 		auto newGuildMaster = CalcCharObjFromSer( nGuild->Master() );
 		if( ValidateObject( newGuildMaster ))
 		{
-			nGuild->TellMembers( 1692, newGuildMaster->GetName().c_str(), nGuild->Name().c_str() ); // %s is now the new Guild Master of %s!
+			std::string charName = newGuildMaster->GetName();
+			if( newGuildMaster->IsIncognito() || newGuildMaster->IsDisguised() )
+			{
+				charName = newGuildMaster->GetOrgName();
+			}
+			nGuild->TellMembers( 1692, charName.c_str(), nGuild->Name().c_str() ); // %s is now the new Guild Master of %s!
 		}
 	}
 

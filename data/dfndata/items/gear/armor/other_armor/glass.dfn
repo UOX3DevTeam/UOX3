@@ -1,9 +1,16 @@
 // Elven Glasses - E/W
 [0x2fb8]
 {
+getuo=0x2fb8_t2a
 gett2a=0x2fb8_t2a
+getuor=0x2fb8_t2a
+gettd=0x2fb8_lbr
 getlbr=0x2fb8_lbr
 getaos=0x2fb8_aos
+getse=0x2fb8_aos
+getml=0x2fb8_tol
+getsa=0x2fb8_tol
+geths=0x2fb8_tol
 gettol=0x2fb8_tol
 sectionid=0x2fb8
 }
