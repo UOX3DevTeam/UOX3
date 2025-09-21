@@ -21,11 +21,22 @@ hpbonus=100
 // Shadow Ringmail Gloves - N/S
 [0x13eb-s]
 {
-getlbr=0x13eb_t2a
+getuo=0x13eb_t2a
+gett2a=0x13eb_t2a
+getuor=0x13eb_t2a
+gettd=0x13eb_lbr
 getlbr=0x13eb_lbr
 getaos=0x13eb_aos
+getse=0x13eb_aos
+getml=0x13eb_tol
+getsa=0x13eb_tol
+geths=0x13eb_tol
 gettol=0x13eb_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x13eb-s
@@ -47,11 +58,22 @@ get=0x13eb-s 0x13f2-s
 // Shadow Ringmail Tunic - N/S
 [0x13ec-s]
 {
-getlbr=0x13ec_t2a
+getuo=0x13ec_t2a
+gett2a=0x13ec_t2a
+getuor=0x13ec_t2a
+gettd=0x13ec_lbr
 getlbr=0x13ec_lbr
 getaos=0x13ec_aos
+getse=0x13ec_aos
+getml=0x13ec_tol
+getsa=0x13ec_tol
+geths=0x13ec_tol
 gettol=0x13ec_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x13ec-s
@@ -73,11 +95,22 @@ get=0x13ec-s 0x13ed-s
 // Shadow Ringmail Sleeves - N/S
 [0x13ee-s]
 {
-getlbr=0x13ee_t2a
+getuo=0x13ee_t2a
+gett2a=0x13ee_t2a
+getuor=0x13ee_t2a
+gettd=0x13ee_lbr
 getlbr=0x13ee_lbr
 getaos=0x13ee_aos
+getse=0x13ee_aos
+getml=0x13ee_tol
+getsa=0x13ee_tol
+geths=0x13ee_tol
 gettol=0x13ee_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x13ee-s
@@ -99,11 +132,22 @@ get=0x13ee-s 0x13ef-s
 // Shadow Ringmail Leggings - N/S
 [0x13f0-s]
 {
-getlbr=0x13f0_t2a
+getuo=0x13f0_t2a
+gett2a=0x13f0_t2a
+getuor=0x13f0_t2a
+gettd=0x13f0_lbr
 getlbr=0x13f0_lbr
 getaos=0x13f0_aos
+getse=0x13f0_aos
+getml=0x13f0_tol
+getsa=0x13f0_tol
+geths=0x13f0_tol
 gettol=0x13f0_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x13f0-s
@@ -127,11 +171,22 @@ get=0x13f0-s 0x13f1-s
 // Shadow Chainmail Coif - N/S
 [0x13bb-s]
 {
-getlbr=0x13bb_t2a
+getuo=0x13bb_t2a
+gett2a=0x13bb_t2a
+getuor=0x13bb_t2a
+gettd=0x13bb_lbr
 getlbr=0x13bb_lbr
 getaos=0x13bb_aos
+getse=0x13bb_aos
+getml=0x13bb_tol
+getsa=0x13bb_tol
+geths=0x13bb_tol
 gettol=0x13bb_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x13bb-s
@@ -147,17 +202,28 @@ id=0x13c0
 // Shadow Chainmail Coif - Alias
 [shadowchainmailcoif]
 {
-get=0x13bb 0x13c0
+get=0x13bb-s 0x13c0-s
 }
 
 // Shadow Chainmail Leggings - N/S
 [0x13be-s]
 {
-getlbr=0x13be_t2a
+getuo=0x13be_t2a
+gett2a=0x13be_t2a
+getuor=0x13be_t2a
+gettd=0x13be_lbr
 getlbr=0x13be_lbr
 getaos=0x13be_aos
+getse=0x13be_aos
+getml=0x13be_tol
+getsa=0x13be_tol
+geths=0x13be_tol
 gettol=0x13be_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x13be-s
@@ -179,11 +245,22 @@ get=0x13be-s 0x13c3-s
 // Shadow Chainmail Tunic - N/S
 [0x13bf-s]
 {
-getlbr=0x13bf_t2a
+getuo=0x13bf_t2a
+gett2a=0x13bf_t2a
+getuor=0x13bf_t2a
+gettd=0x13bf_lbr
 getlbr=0x13bf_lbr
 getaos=0x13bf_aos
+getse=0x13bf_aos
+getml=0x13bf_tol
+getsa=0x13bf_tol
+geths=0x13bf_tol
 gettol=0x13bf_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x13bf-s
@@ -205,11 +282,22 @@ get=0x13bf-s 0x13c4-s
 // Shadow Female Plate - N/S
 [0x1c04-s]
 {
-getlbr=0x1c04_t2a
+getuo=0x1c04_t2a
+gett2a=0x1c04_t2a
+getuor=0x1c04_t2a
+gettd=0x1c04_lbr
 getlbr=0x1c04_lbr
 getaos=0x1c04_aos
+getse=0x1c04_aos
+getml=0x1c04_tol
+getsa=0x1c04_tol
+geths=0x1c04_tol
 gettol=0x1c04_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x1c04-s
@@ -233,11 +321,22 @@ get=0x1c04-s 0x1c05-s
 // Shadow Platemail Arms - E/W
 [0x1410-s]
 {
-getlbr=0x1410_t2a
+getuo=0x1410_t2a
+gett2a=0x1410_t2a
+getuor=0x1410_t2a
+gettd=0x1410_lbr
 getlbr=0x1410_lbr
 getaos=0x1410_aos
+getse=0x1410_aos
+getml=0x1410_tol
+getsa=0x1410_tol
+geths=0x1410_tol
 gettol=0x1410_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x1410-s
@@ -259,11 +358,22 @@ get=0x1410-s 0x1417-s
 // Shadow Platemail Leggings - N/S
 [0x1411-s]
 {
-getlbr=0x1411_t2a
+getuo=0x1411_t2a
+gett2a=0x1411_t2a
+getuor=0x1411_t2a
+gettd=0x1411_lbr
 getlbr=0x1411_lbr
 getaos=0x1411_aos
+getse=0x1411_aos
+getml=0x1411_tol
+getsa=0x1411_tol
+geths=0x1411_tol
 gettol=0x1411_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x1411-s
@@ -285,11 +395,22 @@ get=0x1411-s 0x141a-s
 // Shadow Platemail Gorget
 [0x1413-s]
 {
-getlbr=0x1413_t2a
+getuo=0x1413_t2a
+gett2a=0x1413_t2a
+getuor=0x1413_t2a
+gettd=0x1413_lbr
 getlbr=0x1413_lbr
 getaos=0x1413_aos
+getse=0x1413_aos
+getml=0x1413_tol
+getsa=0x1413_tol
+geths=0x1413_tol
 gettol=0x1413_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x1413-s
@@ -304,11 +425,22 @@ get=0x1413-s
 // Shadow Platemail Gloves - N/S
 [0x1414-s]
 {
-getlbr=0x1414_t2a
+getuo=0x1414_t2a
+gett2a=0x1414_t2a
+getuor=0x1414_t2a
+gettd=0x1414_lbr
 getlbr=0x1414_lbr
 getaos=0x1414_aos
+getse=0x1414_aos
+getml=0x1414_tol
+getsa=0x1414_tol
+geths=0x1414_tol
 gettol=0x1414_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x1414-s
@@ -330,11 +462,22 @@ get=0x1414-s 0x1418-s
 // Shadow Platemail Chest - N/S
 [0x1415-s]
 {
-getlbr=0x1415_t2a
+getuo=0x1415_t2a
+gett2a=0x1415_t2a
+getuor=0x1415_t2a
+gettd=0x1415_lbr
 getlbr=0x1415_lbr
 getaos=0x1415_aos
+getse=0x1415_aos
+getml=0x1415_tol
+getsa=0x1415_tol
+geths=0x1415_tol
 gettol=0x1415_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x1415-s
@@ -358,11 +501,22 @@ get=0x1415-s 0x1416-s
 // Shadow Heavy Platemail Jingasa - A
 [0x2777-s]
 {
-getlbr=0x2777_t2a
+getuo=0x2777_t2a
+gett2a=0x2777_t2a
+getuor=0x2777_t2a
+gettd=0x2777_lbr
 getlbr=0x2777_lbr
 getaos=0x2777_aos
+getse=0x2777_aos
+getml=0x2777_tol
+getsa=0x2777_tol
+geths=0x2777_tol
 gettol=0x2777_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x2777-s
@@ -384,11 +538,22 @@ get=0x2777-s 0x27c2-s
 // Shadow Decorative Platemail Kabuto - A
 [0x2778-s]
 {
-getlbr=0x2778_t2a
+getuo=0x2778_t2a
+gett2a=0x2778_t2a
+getuor=0x2778_t2a
+gettd=0x2778_lbr
 getlbr=0x2778_lbr
 getaos=0x2778_aos
+getse=0x2778_aos
+getml=0x2778_tol
+getsa=0x2778_tol
+geths=0x2778_tol
 gettol=0x2778_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x2778-s
@@ -410,11 +575,22 @@ get=0x2778-s 0x27c3-s
 // Shadow Platemail Do - A
 [0x277d-s]
 {
-getlbr=0x277d_t2a
+getuo=0x277d_t2a
+gett2a=0x277d_t2a
+getuor=0x277d_t2a
+gettd=0x277d_lbr
 getlbr=0x277d_lbr
 getaos=0x277d_aos
+getse=0x277d_aos
+getml=0x277d_tol
+getsa=0x277d_tol
+geths=0x277d_tol
 gettol=0x277d_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x277d-s
@@ -436,11 +612,22 @@ get=0x277d-s 0x27c8-s
 // Shadow Platemail Hiro Sode - A
 [0x2780-s]
 {
-getlbr=0x2780_t2a
+getuo=0x2780_t2a
+gett2a=0x2780_t2a
+getuor=0x2780_t2a
+gettd=0x2780_lbr
 getlbr=0x2780_lbr
 getaos=0x2780_aos
+getse=0x2780_aos
+getml=0x2780_tol
+getsa=0x2780_tol
+geths=0x2780_tol
 gettol=0x2780_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x2780-s
@@ -462,11 +649,22 @@ get=0x2780-s 0x27cb-s
 // Shadow Platemail Jingasa - A
 [0x2781-s]
 {
-getlbr=0x2781_t2a
+getuo=0x2781_t2a
+gett2a=0x2781_t2a
+getuor=0x2781_t2a
+gettd=0x2781_lbr
 getlbr=0x2781_lbr
 getaos=0x2781_aos
+getse=0x2781_aos
+getml=0x2781_tol
+getsa=0x2781_tol
+geths=0x2781_tol
 gettol=0x2781_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x2781-s
@@ -488,11 +686,22 @@ get=0x2781-s 0x27cc-s
 // Shadow Small Platemail Jingasa - A
 [0x2784-s]
 {
-getlbr=0x2784_t2a
+getuo=0x2784_t2a
+gett2a=0x2784_t2a
+getuor=0x2784_t2a
+gettd=0x2784_lbr
 getlbr=0x2784_lbr
 getaos=0x2784_aos
+getse=0x2784_aos
+getml=0x2784_tol
+getsa=0x2784_tol
+geths=0x2784_tol
 gettol=0x2784_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x2784-s
@@ -514,11 +723,22 @@ get=0x2784-s 0x27cf-s
 // Shadow Platemail Battle Kabuto - A
 [0x2785-s]
 {
-getlbr=0x2785_t2a
+getuo=0x2785_t2a
+gett2a=0x2785_t2a
+getuor=0x2785_t2a
+gettd=0x2785_lbr
 getlbr=0x2785_lbr
 getaos=0x2785_aos
+getse=0x2785_aos
+getml=0x2785_tol
+getsa=0x2785_tol
+geths=0x2785_tol
 gettol=0x2785_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x2785-s
@@ -540,11 +760,22 @@ get=0x2785-s 0x27d0-s
 // Shadow Platemail Suneate - A
 [0x2788-s]
 {
-getlbr=0x2788_t2a
+getuo=0x2788_t2a
+gett2a=0x2788_t2a
+getuor=0x2788_t2a
+gettd=0x2788_lbr
 getlbr=0x2788_lbr
 getaos=0x2788_aos
+getse=0x2788_aos
+getml=0x2788_tol
+getsa=0x2788_tol
+geths=0x2788_tol
 gettol=0x2788_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x2788-s
@@ -566,11 +797,22 @@ get=0x2788-s 0x27d3-s
 // Shadow Platemail Kabuto - A
 [0x2789-s]
 {
-getlbr=0x2789_t2a
+getuo=0x2789_t2a
+gett2a=0x2789_t2a
+getuor=0x2789_t2a
+gettd=0x2789_lbr
 getlbr=0x2789_lbr
 getaos=0x2789_aos
+getse=0x2789_aos
+getml=0x2789_tol
+getsa=0x2789_tol
+geths=0x2789_tol
 gettol=0x2789_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x2789-s
@@ -592,11 +834,22 @@ get=0x2789-s 0x27d4-s
 // Shadow Kabuto - A
 [0x236c-s]
 {
-getlbr=0x236c_t2a
+getuo=0x236c_t2a
+gett2a=0x236c_t2a
+getuor=0x236c_t2a
+gettd=0x236c_lbr
 getlbr=0x236c_lbr
 getaos=0x236c_aos
+getse=0x236c_aos
+getml=0x236c_tol
+getsa=0x236c_tol
+geths=0x236c_tol
 gettol=0x236c_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x236c-s
@@ -618,11 +871,22 @@ get=0x236c-s 0x236d-s
 // Shadow Platemail Haidate - A
 [0x278d-s]
 {
-getlbr=0x278d_t2a
+getuo=0x278d_t2a
+gett2a=0x278d_t2a
+getuor=0x278d_t2a
+gettd=0x278d_lbr
 getlbr=0x278d_lbr
 getaos=0x278d_aos
+getse=0x278d_aos
+getml=0x278d_tol
+getsa=0x278d_tol
+geths=0x278d_tol
 gettol=0x278d_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x278d-s
@@ -644,11 +908,22 @@ get=0x278d-s 0x27d8-s
 // Shadow Platemail Hatsuburi - A
 [0x2775-s]
 {
-getlbr=0x2775_t2a
+getuo=0x2775_t2a
+gett2a=0x2775_t2a
+getuor=0x2775_t2a
+gettd=0x2775_lbr
 getlbr=0x2775_lbr
 getaos=0x2775_aos
+getse=0x2775_aos
+getml=0x2775_tol
+getsa=0x2775_tol
+geths=0x2775_tol
 gettol=0x2775_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x2775-s
@@ -670,11 +945,22 @@ get=0x2775-s 0x27c0-s
 // Shadow Chainmail Hatsuburi - A
 [0x2774-s]
 {
-getlbr=0x2774_t2a
+getuo=0x2774_t2a
+gett2a=0x2774_t2a
+getuor=0x2774_t2a
+gettd=0x2774_lbr
 getlbr=0x2774_lbr
 getaos=0x2774_aos
+getse=0x2774_aos
+getml=0x2774_tol
+getsa=0x2774_tol
+geths=0x2774_tol
 gettol=0x2774_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x2774-s
@@ -696,11 +982,22 @@ get=0x2774-s 0x27bf-s
 // Shadow Platemail Mempo - E/W
 [0x2779-s]
 {
-getlbr=0x2779_t2a
+getuo=0x2779_t2a
+gett2a=0x2779_t2a
+getuor=0x2779_t2a
+gettd=0x2779_lbr
 getlbr=0x2779_lbr
 getaos=0x2779_aos
+getse=0x2779_aos
+getml=0x2779_tol
+getsa=0x2779_tol
+geths=0x2779_tol
 gettol=0x2779_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x2779-s
@@ -724,11 +1021,22 @@ get=0x2779-s 0x27c4-s
 // Shadow Close Helm - E/W
 [0x1408-s]
 {
-getlbr=0x1408_t2a
+getuo=0x1408_t2a
+gett2a=0x1408_t2a
+getuor=0x1408_t2a
+gettd=0x1408_lbr
 getlbr=0x1408_lbr
 getaos=0x1408_aos
+getse=0x1408_aos
+getml=0x1408_tol
+getsa=0x1408_tol
+geths=0x1408_tol
 gettol=0x1408_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x1408-s
@@ -750,11 +1058,22 @@ get=0x1408-s 0x1409-s
 // Shadow Helmet - E/W
 [0x140a-s]
 {
-getlbr=0x140a_t2a
+getuo=0x140a_t2a
+gett2a=0x140a_t2a
+getuor=0x140a_t2a
+gettd=0x140a_lbr
 getlbr=0x140a_lbr
 getaos=0x140a_aos
+getse=0x140a_aos
+getml=0x140a_tol
+getsa=0x140a_tol
+geths=0x140a_tol
 gettol=0x140a_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x140a-s
@@ -763,7 +1082,7 @@ sectionid=0x140a-s
 // Shadow Helmet - N/S
 [0x140b-s]
 {
-get=0x140b-s
+get=0x140a-s
 id=0x140b
 }
 
@@ -776,11 +1095,22 @@ get=0x140a-s 0x140b-s
 // Shadow Bascinet - E/W
 [0x140c-s]
 {
-getlbr=0x140c_t2a
+getuo=0x140c_t2a
+gett2a=0x140c_t2a
+getuor=0x140c_t2a
+gettd=0x140c_lbr
 getlbr=0x140c_lbr
 getaos=0x140c_aos
+getse=0x140c_aos
+getml=0x140c_tol
+getsa=0x140c_tol
+geths=0x140c_tol
 gettol=0x140c_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x140c-s
@@ -802,11 +1132,22 @@ get=0x140c-s 0x140d-s
 // Shadow Norse Helm - E/W
 [0x140e-s]
 {
-getlbr=0x140e_t2a
+getuo=0x140e_t2a
+gett2a=0x140e_t2a
+getuor=0x140e_t2a
+gettd=0x140e_lbr
 getlbr=0x140e_lbr
 getaos=0x140e_aos
+getse=0x140e_aos
+getml=0x140e_tol
+getsa=0x140e_tol
+geths=0x140e_tol
 gettol=0x140e_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x140e-s
@@ -828,11 +1169,22 @@ get=0x140e-s 0x140f-s
 // Shadow Plate Helm - N/S
 [0x1412-s]
 {
-getlbr=0x1412_t2a
+getuo=0x1412_t2a
+gett2a=0x1412_t2a
+getuor=0x1412_t2a
+gettd=0x1412_lbr
 getlbr=0x1412_lbr
 getaos=0x1412_aos
+getse=0x1412_aos
+getml=0x1412_tol
+getsa=0x1412_tol
+geths=0x1412_tol
 gettol=0x1412_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x1412-s
@@ -856,11 +1208,22 @@ get=0x1412-s 0x1419-s
 // Shadow Shadow Shield
 [0x1b72-s]
 {
-getlbr=0x1b72_t2a
+getuo=0x1b72_t2a
+gett2a=0x1b72_t2a
+getuor=0x1b72_t2a
+gettd=0x1b72_lbr
 getlbr=0x1b72_lbr
 getaos=0x1b72_aos
+getse=0x1b72_aos
+getml=0x1b72_tol
+getsa=0x1b72_tol
+geths=0x1b72_tol
 gettol=0x1b72_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x1b72-s
@@ -875,11 +1238,22 @@ get=0x1b72-s
 // Shadow Buckler
 [0x1b73-s]
 {
-getlbr=0x1b73_t2a
+getuo=0x1b73_t2a
+gett2a=0x1b73_t2a
+getuor=0x1b73_t2a
+gettd=0x1b73_lbr
 getlbr=0x1b73_lbr
 getaos=0x1b73_aos
+getse=0x1b73_aos
+getml=0x1b73_tol
+getsa=0x1b73_tol
+geths=0x1b73_tol
 gettol=0x1b73_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x1b73-s
@@ -894,63 +1268,133 @@ get=0x1b73-s
 // Shadow Kite Shield (Metal) - N/S
 [0x1b74-s]
 {
-getlbr=0x1b74_t2a
+getuo=0x1b74_t2a
+gett2a=0x1b74_t2a
+getuor=0x1b74_t2a
+gettd=0x1b74_lbr
 getlbr=0x1b74_lbr
 getaos=0x1b74_aos
+getse=0x1b74_aos
+getml=0x1b74_tol
+getsa=0x1b74_tol
+geths=0x1b74_tol
 gettol=0x1b74_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x1b74-s
 }
 
+// Shadow Kite Shield (Metal) - E/W
+[0x1b75-s]
+{
+get=0x1b74-s
+id=0x1b75
+}
+
+// Shadow Kite Shield (Metal) - Alias
+[shadowmetalkiteshield]
+{
+get=0x1b74-s 0x1b75-s
+}
+
 // Shadow Heater Shield - N/S
 [0x1b76-s]
 {
-getlbr=0x1b76_t2a
+getuo=0x1b76_t2a
+gett2a=0x1b76_t2a
+getuor=0x1b76_t2a
+gettd=0x1b76_lbr
 getlbr=0x1b76_lbr
 getaos=0x1b76_aos
+getse=0x1b76_aos
+getml=0x1b76_tol
+getsa=0x1b76_tol
+geths=0x1b76_tol
 gettol=0x1b76_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x1b76-s
 }
 
-// Shadow Kite Shield (Wood) - N/S
+// Shadow Heater Shield - E/W
+[0x1b77-s]
+{
+get=0x1b76-s
+id=0x1b77
+}
+
+// Shadow Heater Shield - Alias
+[shadowheatershield]
+{
+get=0x1b76-s 0x1b77-s
+}
+
+// Shadow Kite Shield (Wooden) - N/S
 [0x1b78-s]
 {
-getlbr=0x1b78_t2a
+getuo=0x1b78_t2a
+gett2a=0x1b78_t2a
+getuor=0x1b78_t2a
+gettd=0x1b78_lbr
 getlbr=0x1b78_lbr
 getaos=0x1b78_aos
+getse=0x1b78_aos
+getml=0x1b78_tol
+getsa=0x1b78_tol
+geths=0x1b78_tol
 gettol=0x1b78_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x1b78-s
 }
 
-// Shadow Kite Shield (wood) - E/W
+// Shadow Kite Shield (Wooden) - E/W
 [0x1b79-s]
 {
 get=0x1b78-s
 id=0x1b79
 }
 
-// Shadow Kite Shield (wood) - Alias
-[shadowmetalkiteshield]
+// Shadow Kite Shield (Wooden) - Alias
+[shadowwoodenkiteshield]
 {
 get=0x1b78-s 0x1b79-s
 }
 
-// AgapiteWooden Shield
+// Shadow Wooden Shield
 [0x1b7a-s]
 {
-getlbr=0x1b7a_t2a
+getuo=0x1b7a_t2a
+gett2a=0x1b7a_t2a
+getuor=0x1b7a_t2a
+gettd=0x1b7a_lbr
 getlbr=0x1b7a_lbr
 getaos=0x1b7a_aos
+getse=0x1b7a_aos
+getml=0x1b7a_tol
+getsa=0x1b7a_tol
+geths=0x1b7a_tol
 gettol=0x1b7a_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x1b7a-s
@@ -965,11 +1409,22 @@ get=0x1b7a-s
 // Shadow Metal Shield
 [0x1b7b-s]
 {
-getlbr=0x1b7b_t2a
+getuo=0x1b7b_t2a
+gett2a=0x1b7b_t2a
+getuor=0x1b7b_t2a
+gettd=0x1b7b_lbr
 getlbr=0x1b7b_lbr
 getaos=0x1b7b_aos
+getse=0x1b7b_aos
+getml=0x1b7b_tol
+getsa=0x1b7b_tol
+geths=0x1b7b_tol
 gettol=0x1b7b_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x1b7b-s
@@ -984,11 +1439,22 @@ get=0x1b7b-s
 // Shadow Chaos Shield
 [0x1bc3-s]
 {
-getlbr=0x1bc3_t2a
+getuo=0x1bc3_t2a
+gett2a=0x1bc3_t2a
+getuor=0x1bc3_t2a
+gettd=0x1bc3_lbr
 getlbr=0x1bc3_lbr
 getaos=0x1bc3_aos
+getse=0x1bc3_aos
+getml=0x1bc3_tol
+getsa=0x1bc3_tol
+geths=0x1bc3_tol
 gettol=0x1bc3_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x1bc3-s
@@ -1003,11 +1469,22 @@ get=0x1bc3-s
 // Shadow Order Shield - N/S
 [0x1bc4-s]
 {
-getlbr=0x1bc4_t2a
+getuo=0x1bc4_t2a
+gett2a=0x1bc4_t2a
+getuor=0x1bc4_t2a
+gettd=0x1bc4_lbr
 getlbr=0x1bc4_lbr
 getaos=0x1bc4_aos
+getse=0x1bc4_aos
+getml=0x1bc4_tol
+getsa=0x1bc4_tol
+geths=0x1bc4_tol
 gettol=0x1bc4_tol
 getaos=shadow_armor_bonus_aos
+getse=shadow_armor_bonus_aos
+getml=shadow_armor_bonus_tol
+getsa=shadow_armor_bonus_tol
+geths=shadow_armor_bonus_tol
 gettol=shadow_armor_bonus_tol
 color=0x966
 sectionid=0x1bc4-s
@@ -1016,7 +1493,7 @@ sectionid=0x1bc4-s
 // Shadow Order Shield - E/W
 [0x1bc5-s]
 {
-get=0x1bc5-s
+get=0x1bc4-s
 id=0x1bc5
 }
 

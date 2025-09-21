@@ -2,9 +2,16 @@
 // Hide Pauldrons - N/S
 [0x2b77]
 {
+getuo=0x2b77_t2a
 gett2a=0x2b77_t2a
+getuor=0x2b77_t2a
+gettd=0x2b77_lbr
 getlbr=0x2b77_lbr
 getaos=0x2b77_aos
+getse=0x2b77_aos
+getml=0x2b77_tol
+getsa=0x2b77_tol
+geths=0x2b77_tol
 gettol=0x2b77_tol
 sectionid=0x2b77
 }
@@ -26,9 +33,16 @@ get=0x2b77 0x316e
 // Hide Tunic - E/W
 [0x2b74]
 {
+getuo=0x2b74_t2a
 gett2a=0x2b74_t2a
+getuor=0x2b74_t2a
+gettd=0x2b74_lbr
 getlbr=0x2b74_lbr
 getaos=0x2b74_aos
+getse=0x2b74_aos
+getml=0x2b74_tol
+getsa=0x2b74_tol
+geths=0x2b74_tol
 gettol=0x2b74_tol
 sectionid=0x2b74
 }
@@ -50,9 +64,16 @@ get=0x2b74 0x316b
 // Hide Armor (Female) - E/W
 [0x2b79]
 {
+getuo=0x2b79_t2a
 gett2a=0x2b79_t2a
+getuor=0x2b79_t2a
+gettd=0x2b79_lbr
 getlbr=0x2b79_lbr
 getaos=0x2b79_aos
+getse=0x2b79_aos
+getml=0x2b79_tol
+getsa=0x2b79_tol
+geths=0x2b79_tol
 gettol=0x2b79_tol
 sectionid=0x2b79
 }
@@ -74,9 +95,16 @@ get=0x2b79 0x3170
 // Hide Gloves - E/W
 [0x2b75]
 {
+getuo=0x2b75_t2a
 gett2a=0x2b75_t2a
+getuor=0x2b75_t2a
+gettd=0x2b75_lbr
 getlbr=0x2b75_lbr
 getaos=0x2b75_aos
+getse=0x2b75_aos
+getml=0x2b75_tol
+getsa=0x2b75_tol
+geths=0x2b75_tol
 gettol=0x2b75_tol
 sectionid=0x2b75
 }
@@ -98,9 +126,16 @@ get=0x2b75 0x316c
 // Hide Pants - N/S
 [0x2b78]
 {
+getuo=0x2b78_t2a
 gett2a=0x2b78_t2a
+getuor=0x2b78_t2a
+gettd=0x2b78_lbr
 getlbr=0x2b78_lbr
 getaos=0x2b78_aos
+getse=0x2b78_aos
+getml=0x2b78_tol
+getsa=0x2b78_tol
+geths=0x2b78_tol
 gettol=0x2b78_tol
 sectionid=0x2b78
 }
@@ -122,9 +157,16 @@ get=0x2b78 0x316f
 // Hide Gorget - E/W
 [0x2b76]
 {
+getuo=0x2b76_t2a
 gett2a=0x2b76_t2a
+getuor=0x2b76_t2a
+gettd=0x2b76_lbr
 getlbr=0x2b76_lbr
 getaos=0x2b76_aos
+getse=0x2b76_aos
+getml=0x2b76_tol
+getsa=0x2b76_tol
+geths=0x2b76_tol
 gettol=0x2b76_tol
 sectionid=0x2b76
 }
@@ -148,9 +190,16 @@ get=0x2b76 0x316d
 // Dragon Turtle Hide Arms
 [0x782e]
 {
+getuo=0x782e_t2a
 gett2a=0x782e_t2a
+getuor=0x782e_t2a
+gettd=0x782e_lbr
 getlbr=0x782e_lbr
 getaos=0x782e_aos
+getse=0x782e_aos
+getml=0x782e_tol
+getsa=0x782e_tol
+geths=0x782e_tol
 gettol=0x782e_tol
 sectionid=0x782e
 }
@@ -165,9 +214,16 @@ get=0x782e
 // Dragon Turtle Hide Chest
 [0x782a]
 {
+getuo=0x782a_t2a
 gett2a=0x782a_t2a
+getuor=0x782a_t2a
+gettd=0x782a_lbr
 getlbr=0x782a_lbr
 getaos=0x782a_aos
+getse=0x782a_aos
+getml=0x782a_tol
+getsa=0x782a_tol
+geths=0x782a_tol
 gettol=0x782a_tol
 sectionid=0x782a
 }
@@ -181,9 +237,16 @@ get=0x782a
 // Dragon Turtle Hide Bustier
 [0x782b]
 {
+getuo=0x782b_t2a
 gett2a=0x782b_t2a
+getuor=0x782b_t2a
+gettd=0x782b_lbr
 getlbr=0x782b_lbr
 getaos=0x782b_aos
+getse=0x782b_aos
+getml=0x782b_tol
+getsa=0x782b_tol
+geths=0x782b_tol
 gettol=0x782b_tol
 sectionid=0x782b
 }
@@ -198,9 +261,16 @@ get=0x782b
 // Dragon Turtle Hide Helm
 [0x782d]
 {
+getuo=0x782d_t2a
 gett2a=0x782d_t2a
+getuor=0x782d_t2a
+gettd=0x782d_lbr
 getlbr=0x782d_lbr
 getaos=0x782d_aos
+getse=0x782d_aos
+getml=0x782d_tol
+getsa=0x782d_tol
+geths=0x782d_tol
 gettol=0x782d_tol
 sectionid=0x782d
 }
@@ -216,9 +286,16 @@ get=0x782d
 // Dragon Turtle Hide Leggings
 [0x782c]
 {
+getuo=0x782c_t2a
 gett2a=0x782c_t2a
+getuor=0x782c_t2a
+gettd=0x782c_lbr
 getlbr=0x782c_lbr
 getaos=0x782c_aos
+getse=0x782c_aos
+getml=0x782c_tol
+getsa=0x782c_tol
+geths=0x782c_tol
 gettol=0x782c_tol
 sectionid=0x782c
 }
