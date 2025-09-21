@@ -3,9 +3,16 @@
 // Gargish Cloth Arms - E/W
 [0x0404]
 {
+getuo=0x0404_t2a
 gett2a=0x0404_t2a
+getuor=0x0404_t2a
+gettd=0x0404_lbr
 getlbr=0x0404_lbr
 getaos=0x0404_aos
+getse=0x0404_aos
+getml=0x0404_tol
+getsa=0x0404_tol
+geths=0x0404_tol
 gettol=0x0404_tol
 sectionid=0x0404
 }
@@ -26,9 +33,16 @@ get=0x0404 0x4060
 // Female Gargish Cloth Arms - E/W
 [0x0403]
 {
+getuo=0x0403_t2a
 gett2a=0x0403_t2a
+getuor=0x0403_t2a
+gettd=0x0403_lbr
 getlbr=0x0403_lbr
 getaos=0x0403_aos
+getse=0x0403_aos
+getml=0x0403_tol
+getsa=0x0403_tol
+geths=0x0403_tol
 gettol=0x0403_tol
 sectionid=0x0403
 }
@@ -51,9 +65,16 @@ get=0x0403 0x405f
 // Gargish Cloth Chest - E/W
 [0x0406]
 {
+getuo=0x0406_t2a
 gett2a=0x0406_t2a
+getuor=0x0406_t2a
+gettd=0x0406_lbr
 getlbr=0x0406_lbr
 getaos=0x0406_aos
+getse=0x0406_aos
+getml=0x0406_tol
+getsa=0x0406_tol
+geths=0x0406_tol
 gettol=0x0406_tol
 sectionid=0x0406
 }
@@ -74,9 +95,16 @@ get=0x0405 0x4062
 // Female Gargish Cloth Chest - E/W
 [0x0405]
 {
+getuo=0x0405_t2a
 gett2a=0x0405_t2a
+getuor=0x0405_t2a
+gettd=0x0405_lbr
 getlbr=0x0405_lbr
 getaos=0x0405_aos
+getse=0x0405_aos
+getml=0x0405_tol
+getsa=0x0405_tol
+geths=0x0405_tol
 gettol=0x0405_tol
 sectionid=0x0405
 }
@@ -99,9 +127,16 @@ get=0x0405 0x4061
 // Gargish Cloth Leggings - E/W
 [0x040a]
 {
+getuo=0x040a_t2a
 gett2a=0x040a_t2a
+getuor=0x040a_t2a
+gettd=0x040a_lbr
 getlbr=0x040a_lbr
 getaos=0x040a_aos
+getse=0x040a_aos
+getml=0x040a_tol
+getsa=0x040a_tol
+geths=0x040a_tol
 gettol=0x040a_tol
 sectionid=0x040a
 }
@@ -122,9 +157,16 @@ get=0x040a 0x4066
 // Female Gargish Cloth Leggings - E/W
 [0x0409]
 {
+getuo=0x0409_t2a
 gett2a=0x0409_t2a
+getuor=0x0409_t2a
+gettd=0x0409_lbr
 getlbr=0x0409_lbr
 getaos=0x0409_aos
+getse=0x0409_aos
+getml=0x0409_tol
+getsa=0x0409_tol
+geths=0x0409_tol
 gettol=0x0409_tol
 sectionid=0x0409
 }
@@ -145,9 +187,16 @@ get=0x0409 0x4065
 // Gargish Cloth Kilt - E/W
 [0x0408]
 {
+getuo=0x0408_t2a
 gett2a=0x0408_t2a
+getuor=0x0408_t2a
+gettd=0x0408_lbr
 getlbr=0x0408_lbr
 getaos=0x0408_aos
+getse=0x0408_aos
+getml=0x0408_tol
+getsa=0x0408_tol
+geths=0x0408_tol
 gettol=0x0408_tol
 sectionid=0x0408
 }
@@ -168,9 +217,16 @@ get=0x0408 0x4064
 // Gargish Cloth Kilt (Female) - E/W
 [0x0407]
 {
+getuo=0x0407_t2a
 gett2a=0x0407_t2a
+getuor=0x0407_t2a
+gettd=0x0407_lbr
 getlbr=0x0407_lbr
 getaos=0x0407_aos
+getse=0x0407_aos
+getml=0x0407_tol
+getsa=0x0407_tol
+geths=0x0407_tol
 gettol=0x0407_tol
 sectionid=0x0407
 }
@@ -193,9 +249,16 @@ get=0x0407 0x4063
 // Gargish Cloth Wing Armor - N/S
 [0x45a4]
 {
+getuo=0x45a4_t2a
 gett2a=0x45a4_t2a
+getuor=0x45a4_t2a
+gettd=0x45a4_lbr
 getlbr=0x45a4_lbr
 getaos=0x45a4_aos
+getse=0x45a4_aos
+getml=0x45a4_tol
+getsa=0x45a4_tol
+geths=0x45a4_tol
 gettol=0x45a4_tol
 sectionid=0x45a4
 }

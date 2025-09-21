@@ -705,6 +705,9 @@ function HandleGetChar( socket, ourChar, uKey )
 	case "HUNGERRATE":
 		socket.SysMessage( ourChar.hungerRate );
 		break;
+	case "PRIV":
+		socket.SysMessage( ourChar.priv );
+		break;
 	case "AWAKE":
 		socket.SysMessage( ourChar.isAwake );
 		break;
