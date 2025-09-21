@@ -565,6 +565,7 @@ packitem=0x0f8d,30
 				  <div class="text-component">
 					<h3>OS / Platform</h3>
 					<p>UOX3 comes with cross-platform support for running on a variety of <strong>Windows</strong> (~Win7 to Win10), <strong>Linux</strong> and <strong>macOS</strong> versions, in both 32bit and 64bit.</p>
+					<p><strong>IMPORTANT:</strong> If you're running UOX3 on Windows, and your system complains about a missing .dll file (like MSVCP140.dll) when you start UOX3, you might need to install the <a href="https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170" title="Microsoft Visual C++ Redistributable latest supported downloads" target="_blank">latest VC++ Redistributable</a> (x86 and x64) from Microsoft.</p>
 					<h3>Hardware</h3>
 					<p>Default install size for UOX3 alone clocks in at under 8MB of disk space, with an additional 400-500 MB being required for data files from Ultima Online. Total size will grow based on amount of content added to shard. Minimum 1+ GB free disk space recommended.</p>
 					<p>Default memory usage for an empty shard ranges starts off using around ~3.8GB of RAM, but can grow based on the amount of content added to the shard and the number of players connected at any given time. Minimum 6GB+ RAM recommended.</p>
@@ -5268,6 +5269,7 @@ packitem=0x0f8d,30
 						<li><strong>macOS</strong> - (XCode) Compiled uox3 binary can be found in <strong>UOX3\make\XCode\Build\Products\Release</strong></li>
 						<li><strong>Either Platform</strong> - (CMake, manual) Compiled uox3 binary can be found in <strong>UOX3\make\cmake\build</strong>
 					</ul>
+					<p><strong>IMPORTANT:</strong> If you're running UOX3 on Windows, and your system complains about a missing .dll file (like MSVCP140.dll) when you start UOX3, you might need to install the <a href="https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170" title="Microsoft Visual C++ Redistributable latest supported downloads" target="_blank">latest VC++ Redistributable</a> (x86 and x64) from Microsoft.</p>
 					<p><strong>It is recommended</strong> to run your UOX3 shard from a separate, dedicated directory instead of the data directory in your local UOX3 git repository, to avoid potential git conflicts and accidental overwrites when pulling updates to UOX3 from GitHub in the future.</p>
 					<p>Once you have all the files in place, you can follow the regular steps listed under <a href="#configureUOX3" title="UOX3 Docs - Configuring Your UOX3 Shard">Installation and Setup > Configuring Your UOX3 Shard</a> to finish your UOX3 setup!</p>
 				</div> <!-- cd-faq__content -->

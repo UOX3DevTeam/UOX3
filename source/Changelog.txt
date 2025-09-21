@@ -1,3 +1,12 @@
+21/09/2025 - Xoduz (#432)
+    [UPD] Updated all Item definitions for weapons and armor to always inherit a default set of properties regardless of era. Some eras default to data from other eras, in cases where there's not much difference between them. GETUO, GET2A, GETUOR all point to the definition entries for T2A, while GETTD, GETLBR all point to LBR entries, GETAOS, GETSE point to AOS entries, and GETML and above all point to TOL entries.
+    [FIX] Fixed many instances of GET tags pointing to incorrect entries, including some cases that were self-referential, and some duplicate era-specific tags
+    [FIX] Fixed some missing variant/aliases for kite/heater shields across all colored armor types
+    [FIX] Added missing GETUO tag support in code for Item definitions, which was only defined for NPC definitions previously
+    [FIX] System messages about dismissing guild members and broadcasts to guild members about new Guild Master now use the actual names of the characters being dismissed/promoted to GM, even if the characters are incognito/disguised
+    [FIX] Account system will now save the actual names of characters on the account, even if they are incognito/disguised
+    [FIX] Added 'get priv and 'set priv # commands to js/commands/targeting/get/set.js the privilege property for characters
+
 07/09/2025 - DragonSlayer62 (#419)
     [ADD] Added Missing container Gumps and Container IDs
 

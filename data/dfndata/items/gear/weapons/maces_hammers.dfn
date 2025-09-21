@@ -17,9 +17,16 @@ restock=10
 // War Axe - E/W
 [0x13af]
 {
+getuo=0x13af_t2a
 gett2a=0x13af_t2a
+getuor=0x13af_t2a
+gettd=0x13af_lbr
 getlbr=0x13af_lbr
 getaos=0x13af_aos
+getse=0x13af_aos
+getml=0x13af_tol
+getsa=0x13af_tol
+geths=0x13af_tol
 gettol=0x13af_tol
 sectionid=0x13af
 }
@@ -56,9 +63,16 @@ script=2200// uses left tooltip
 // Smith's Hammer - E/W
 [0x13e3]
 {
+getuo=0x13e3_t2a
 gett2a=0x13e3_t2a
+getuor=0x13e3_t2a
+gettd=0x13e3_lbr
 getlbr=0x13e3_lbr
 getaos=0x13e3_aos
+getse=0x13e3_aos
+getml=0x13e3_tol
+getsa=0x13e3_tol
+geths=0x13e3_tol
 gettol=0x13e3_tol
 sectionid=0x13e3
 }
@@ -92,9 +106,16 @@ restock=10
 // Club - E/W
 [0x13b3]
 {
+getuo=0x13b3_t2a
 gett2a=0x13b3_t2a
+getuor=0x13b3_t2a
+gettd=0x13b3_lbr
 getlbr=0x13b3_lbr
 getaos=0x13b3_aos
+getse=0x13b3_aos
+getml=0x13b3_tol
+getsa=0x13b3_tol
+geths=0x13b3_tol
 gettol=0x13b3_tol
 sectionid=0x13b3
 }
@@ -128,9 +149,16 @@ restock=10
 // Sledge Hammer - E/W
 [0x0fb4]
 {
+getuo=0x0fb4_t2a
 gett2a=0x0fb4_t2a
+getuor=0x0fb4_t2a
+gettd=0x0fb4_lbr
 getlbr=0x0fb4_lbr
 getaos=0x0fb4_aos
+getse=0x0fb4_aos
+getml=0x0fb4_tol
+getsa=0x0fb4_tol
+geths=0x0fb4_tol
 gettol=0x0fb4_tol
 sectionid=0x0fb4
 }
@@ -164,9 +192,16 @@ restock=10
 // Mace - N/S
 [0x0f5c]
 {
+getuo=0x0f5c_t2a
 gett2a=0x0f5c_t2a
+getuor=0x0f5c_t2a
+gettd=0x0f5c_lbr
 getlbr=0x0f5c_lbr
 getaos=0x0f5c_aos
+getse=0x0f5c_aos
+getml=0x0f5c_tol
+getsa=0x0f5c_tol
+geths=0x0f5c_tol
 gettol=0x0f5c_tol
 sectionid=0x0f5c
 }
@@ -200,9 +235,16 @@ restock=10
 // War Mace - E/W
 [0x1406]
 {
+getuo=0x1406_t2a
 gett2a=0x1406_t2a
+getuor=0x1406_t2a
+gettd=0x1406_lbr
 getlbr=0x1406_lbr
 getaos=0x1406_aos
+getse=0x1406_aos
+getml=0x1406_tol
+getsa=0x1406_tol
+geths=0x1406_tol
 gettol=0x1406_tol
 sectionid=0x1406
 }
@@ -236,9 +278,16 @@ restock=10
 // War Hammer - E/W
 [0x1438]
 {
+getuo=0x1438_t2a
 gett2a=0x1438_t2a
+getuor=0x1438_t2a
+gettd=0x1438_lbr
 getlbr=0x1438_lbr
 getaos=0x1438_aos
+getse=0x1438_aos
+getml=0x1438_tol
+getsa=0x1438_tol
+geths=0x1438_tol
 gettol=0x1438_tol
 sectionid=0x1438
 }
@@ -272,9 +321,16 @@ restock=10
 // Maul - E/W
 [0x143a]
 {
+getuo=0x143a_t2a
 gett2a=0x143a_t2a
+getuor=0x143a_t2a
+gettd=0x143a_lbr
 getlbr=0x143a_lbr
 getaos=0x143a_aos
+getse=0x143a_aos
+getml=0x143a_tol
+getsa=0x143a_tol
+geths=0x143a_tol
 gettol=0x143a_tol
 sectionid=0x143a
 }
@@ -308,9 +364,16 @@ restock=10
 // Hammer Pick - E/W
 [0x143c]
 {
+getuo=0x143c_t2a
 gett2a=0x143c_t2a
+getuor=0x143c_t2a
+gettd=0x143c_lbr
 getlbr=0x143c_lbr
 getaos=0x143c_aos
+getse=0x143c_aos
+getml=0x143c_tol
+getsa=0x143c_tol
+geths=0x143c_tol
 gettol=0x143c_tol
 sectionid=0x143c
 }
@@ -348,9 +411,16 @@ restock=10
 // Scepter - E/W
 [0x26bc]
 {
+getuo=0x26bc_t2a
 gett2a=0x26bc_t2a
+getuor=0x26bc_t2a
+gettd=0x26bc_lbr
 getlbr=0x26bc_lbr
 getaos=0x26bc_aos
+getse=0x26bc_aos
+getml=0x26bc_tol
+getsa=0x26bc_tol
+geths=0x26bc_tol
 gettol=0x26bc_tol
 sectionid=0x26bc
 }
@@ -388,9 +458,16 @@ restock=10
 // Tessen - E/W
 [0x27a3]
 {
+getuo=0x27a3_t2a
 gett2a=0x27a3_t2a
+getuor=0x27a3_t2a
+gettd=0x27a3_lbr
 getlbr=0x27a3_lbr
 getaos=0x27a3_aos
+getse=0x27a3_aos
+getml=0x27a3_tol
+getsa=0x27a3_tol
+geths=0x27a3_tol
 gettol=0x27a3_tol
 sectionid=0x27a3
 }
@@ -425,9 +502,16 @@ restock=10
 // Tetsubo - E/W
 [0x27a6]
 {
+getuo=0x27a6_t2a
 gett2a=0x27a6_t2a
+getuor=0x27a6_t2a
+gettd=0x27a6_lbr
 getlbr=0x27a6_lbr
 getaos=0x27a6_aos
+getse=0x27a6_aos
+getml=0x27a6_tol
+getsa=0x27a6_tol
+geths=0x27a6_tol
 gettol=0x27a6_tol
 sectionid=0x27a6
 }
@@ -462,9 +546,16 @@ restock=10
 // Nunchaku - E/W
 [0x27ae]
 {
+getuo=0x27ae_t2a
 gett2a=0x27ae_t2a
+getuor=0x27ae_t2a
+gettd=0x27ae_lbr
 getlbr=0x27ae_lbr
 getaos=0x27ae_aos
+getse=0x27ae_aos
+getml=0x27ae_tol
+getsa=0x27ae_tol
+geths=0x27ae_tol
 gettol=0x27ae_tol
 sectionid=0x27ae
 }
@@ -502,9 +593,16 @@ restock=10
 // Diamond Mace - E/W
 [0x2d24]
 {
+getuo=0x2d24_t2a
 gett2a=0x2d24_t2a
+getuor=0x2d24_t2a
+gettd=0x2d24_lbr
 getlbr=0x2d24_lbr
 getaos=0x2d24_aos
+getse=0x2d24_aos
+getml=0x2d24_tol
+getsa=0x2d24_tol
+geths=0x2d24_tol
 gettol=0x2d24_tol
 sectionid=0x2d24
 }
@@ -519,7 +617,7 @@ id=0x2d30
 // Diamond Mace - Alias
 [diamondmace]
 {
-get=0x27ae 0x2d30
+get=0x2d24 0x2d30
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -542,9 +640,16 @@ restock=10
 // Gargish Maul - N/S
 [0x48c2]
 {
+getuo=0x48c2_t2a
 gett2a=0x48c2_t2a
+getuor=0x48c2_t2a
+gettd=0x48c2_lbr
 getlbr=0x48c2_lbr
 getaos=0x48c2_aos
+getse=0x48c2_aos
+getml=0x48c2_tol
+getsa=0x48c2_tol
+geths=0x48c2_tol
 gettol=0x48c2_tol
 sectionid=0x48c2
 }
@@ -579,9 +684,16 @@ restock=10
 // Disc Mace - N/S
 [0x0903]
 {
+getuo=0x0903_t2a
 gett2a=0x0903_t2a
+getuor=0x0903_t2a
+gettd=0x0903_lbr
 getlbr=0x0903_lbr
 getaos=0x0903_aos
+getse=0x0903_aos
+getml=0x0903_tol
+getsa=0x0903_tol
+geths=0x0903_tol
 gettol=0x0903_tol
 sectionid=0x0903
 }
@@ -616,9 +728,16 @@ restock=10
 // Gargish War Hammer - N/S
 [0x48c0]
 {
+getuo=0x48c0_t2a
 gett2a=0x48c0_t2a
+getuor=0x48c0_t2a
+gettd=0x48c0_lbr
 getlbr=0x48c0_lbr
 getaos=0x48c0_aos
+getse=0x48c0_aos
+getml=0x48c0_tol
+getsa=0x48c0_tol
+geths=0x48c0_tol
 gettol=0x48c0_tol
 sectionid=0x48c0
 }
@@ -653,9 +772,16 @@ restock=10
 // Gargish Tessen - N/S
 [0x48cc]
 {
+getuo=0x48cc_t2a
 gett2a=0x48cc_t2a
+getuor=0x48cc_t2a
+gettd=0x48cc_lbr
 getlbr=0x48cc_lbr
 getaos=0x48cc_aos
+getse=0x48cc_aos
+getml=0x48cc_tol
+getsa=0x48cc_tol
+geths=0x48cc_tol
 gettol=0x48cc_tol
 sectionid=0x48cc
 }
@@ -693,9 +819,16 @@ restock=10
 // Barbed Whip - N/S
 [0xa289]
 {
+getuo=0xa289_t2a
 gett2a=0xa289_t2a
+getuor=0xa289_t2a
+gettd=0xa289_lbr
 getlbr=0xa289_lbr
 getaos=0xa289_aos
+getse=0xa289_aos
+getml=0xa289_tol
+getsa=0xa289_tol
+geths=0xa289_tol
 gettol=0xa289_tol
 sectionid=0xa289
 }
