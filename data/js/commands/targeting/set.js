@@ -846,6 +846,10 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 		ourChar.hunger = nVal;
 		okMsg( socket );
 		break;
+	case "PRIV":
+		ourChar.priv = nVal;
+		okMsg( socket );
+		break;
 	case "AWAKE":
 		ourChar.isAwake = nVal;
 		okMsg( socket );
