@@ -19,9 +19,16 @@ origin=sa
 // Soul Glaives - E/W
 [0x090a]
 {
+getuo=0x090a_t2a
 gett2a=0x090a_t2a
+getuor=0x090a_t2a
+gettd=0x090a_lbr
 getlbr=0x090a_lbr
 getaos=0x090a_aos
+getse=0x090a_aos
+getml=0x090a_tol
+getsa=0x090a_tol
+geths=0x090a_tol
 gettol=0x090a_tol
 sectionid=0x090a
 }
@@ -57,9 +64,16 @@ origin=sa
 // Boomerang - E/W
 [0x08ff]
 {
+getuo=0x08ff_t2a
 gett2a=0x08ff_t2a
+getuor=0x08ff_t2a
+gettd=0x08ff_lbr
 getlbr=0x08ff_lbr
 getaos=0x08ff_aos
+getse=0x08ff_aos
+getml=0x08ff_tol
+getsa=0x08ff_tol
+geths=0x08ff_tol
 gettol=0x08ff_tol
 sectionid=0x08ff
 }
@@ -97,9 +111,16 @@ origin=sa
 // Cyclone - N/S
 [0x0901]
 {
+getuo=0x0901_t2a
 gett2a=0x0901_t2a
+getuor=0x0901_t2a
+gettd=0x0901_lbr
 getlbr=0x0901_lbr
 getaos=0x0901_aos
+getse=0x0901_aos
+getml=0x0901_tol
+getsa=0x0901_tol
+geths=0x0901_tol
 gettol=0x0901_tol
 sectionid=0x0901
 }

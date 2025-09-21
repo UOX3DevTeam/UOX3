@@ -3,9 +3,16 @@
 // Gargish Plate Arms - N/S
 [0x0308]
 {
+getuo=0x0308_t2a
 gett2a=0x0308_t2a
+getuor=0x0308_t2a
+gettd=0x0308_lbr
 getlbr=0x0308_lbr
 getaos=0x0308_aos
+getse=0x0308_aos
+getml=0x0308_tol
+getsa=0x0308_tol
+geths=0x0308_tol
 gettol=0x0308_tol
 sectionid=0x0308
 }
@@ -26,9 +33,16 @@ get=0x0308 0x4050
 // Female Gargish Plate Arms - N/S
 [0x0307]
 {
+getuo=0x0307_t2a
 gett2a=0x0307_t2a
+getuor=0x0307_t2a
+gettd=0x0307_lbr
 getlbr=0x0307_lbr
 getaos=0x0307_aos
+getse=0x0307_aos
+getml=0x0307_tol
+getsa=0x0307_tol
+geths=0x0307_tol
 gettol=0x0307_tol
 sectionid=0x0307
 }
@@ -51,9 +65,16 @@ get=0x0307 0x404f
 // Gargish Plate Chest - E/W
 [0x030a]
 {
+getuo=0x030a_t2a
 gett2a=0x030a_t2a
+getuor=0x030a_t2a
+gettd=0x030a_lbr
 getlbr=0x030a_lbr
 getaos=0x030a_aos
+getse=0x030a_aos
+getml=0x030a_tol
+getsa=0x030a_tol
+geths=0x030a_tol
 gettol=0x030a_tol
 sectionid=0x030a
 }
@@ -74,9 +95,16 @@ get=0x030a 0x4052
 // Female Gargish Plate Chest - E/W
 [0x0309]
 {
+getuo=0x0309_t2a
 gett2a=0x0309_t2a
+getuor=0x0309_t2a
+gettd=0x0309_lbr
 getlbr=0x0309_lbr
 getaos=0x0309_aos
+getse=0x0309_aos
+getml=0x0309_tol
+getsa=0x0309_tol
+geths=0x0309_tol
 gettol=0x0309_tol
 sectionid=0x0309
 }
@@ -99,9 +127,16 @@ get=0x0309 0x4051
 // Gargish Plate Leggings - N/S
 [0x030e]
 {
+getuo=0x030e_t2a
 gett2a=0x030e_t2a
+getuor=0x030e_t2a
+gettd=0x030e_lbr
 getlbr=0x030e_lbr
 getaos=0x030e_aos
+getse=0x030e_aos
+getml=0x030e_tol
+getsa=0x030e_tol
+geths=0x030e_tol
 gettol=0x030e_tol
 sectionid=0x030e
 }
@@ -122,9 +157,16 @@ get=0x030e 0x4056
 // Female Gargish Plate Leggings - E/W
 [0x030d]
 {
+getuo=0x030d_t2a
 gett2a=0x030d_t2a
+getuor=0x030d_t2a
+gettd=0x030d_lbr
 getlbr=0x030d_lbr
 getaos=0x030d_aos
+getse=0x030d_aos
+getml=0x030d_tol
+getsa=0x030d_tol
+geths=0x030d_tol
 gettol=0x030d_tol
 sectionid=0x030d
 }
@@ -145,9 +187,16 @@ get=0x030d 0x4055
 // Gargish Plate Kilt - E/W
 [0x030c]
 {
+getuo=0x030c_t2a
 gett2a=0x030c_t2a
+getuor=0x030c_t2a
+gettd=0x030c_lbr
 getlbr=0x030c_lbr
 getaos=0x030c_aos
+getse=0x030c_aos
+getml=0x030c_tol
+getsa=0x030c_tol
+geths=0x030c_tol
 gettol=0x030c_tol
 sectionid=0x030c
 }
@@ -168,9 +217,16 @@ get=0x030c 0x4054
 // Female Gargish Plate Kilt - E/W
 [0x030b]
 {
+getuo=0x030b_t2a
 gett2a=0x030b_t2a
+getuor=0x030b_t2a
+gettd=0x030b_lbr
 getlbr=0x030b_lbr
 getaos=0x030b_aos
+getse=0x030b_aos
+getml=0x030b_tol
+getsa=0x030b_tol
+geths=0x030b_tol
 gettol=0x030b_tol
 sectionid=0x030b
 }

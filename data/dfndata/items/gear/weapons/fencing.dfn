@@ -17,9 +17,16 @@ restock=10
 // Spear - N/S
 [0x0f62]
 {
+getuo=0x0f62_t2a
 gett2a=0x0f62_t2a
+getuor=0x0f62_t2a
+gettd=0x0f62_lbr
 getlbr=0x0f62_lbr
 getaos=0x0f62_aos
+getse=0x0f62_aos
+getml=0x0f62_tol
+getsa=0x0f62_tol
+geths=0x0f62_tol
 gettol=0x0f62_tol
 sectionid=0x0f62
 }
@@ -40,14 +47,20 @@ get=0x0f62 0x0f63
 // Tribal Spear
 [tribalspear]
 {
-gett2a=tribalspear_t2a
-getlbr=tribalspear_lbr
-getaos=tribalspear_aos
-gettol=tribalspear_tol
 name=tribal spear
 color=0x0345
-damage=4 40
 script=5038//tribal_spear.js
+getuo=tribalspear_t2a
+gett2a=tribalspear_t2a
+getuor=tribalspear_t2a
+getlbr=tribalspear_lbr
+gettd=tribalspear_lbr
+getaos=tribalspear_aos
+getse=tribalspear_aos
+getml=tribalspear_tol
+getsa=tribalspear_tol
+geths=tribalspear_tol
+gettol=tribalspear_tol
 }
 
 // Kryss - Base item
@@ -66,9 +79,16 @@ restock=10
 // Kryss - E/W
 [0x1400]
 {
+getuo=0x1400_t2a
 gett2a=0x1400_t2a
+getuor=0x1400_t2a
+gettd=0x1400_lbr
 getlbr=0x1400_lbr
 getaos=0x1400_aos
+getse=0x1400_aos
+getml=0x1400_tol
+getsa=0x1400_tol
+geths=0x1400_tol
 gettol=0x1400_tol
 sectionid=0x1400
 }
@@ -102,9 +122,16 @@ restock=10
 // Short Spear - E/W
 [0x1402]
 {
+getuo=0x1402_t2a
 gett2a=0x1402_t2a
+getuor=0x1402_t2a
+gettd=0x1402_lbr
 getlbr=0x1402_lbr
 getaos=0x1402_aos
+getse=0x1402_aos
+getml=0x1402_tol
+getsa=0x1402_tol
+geths=0x1402_tol
 gettol=0x1402_tol
 sectionid=0x1402
 }
@@ -138,9 +165,16 @@ restock=10
 // War Fork - E/W
 [0x1404]
 {
+getuo=0x1404_t2a
 gett2a=0x1404_t2a
+getuor=0x1404_t2a
+gettd=0x1404_lbr
 getlbr=0x1404_lbr
 getaos=0x1404_aos
+getse=0x1404_aos
+getml=0x1404_tol
+getsa=0x1404_tol
+geths=0x1404_tol
 gettol=0x1404_tol
 sectionid=0x1404
 }
@@ -174,9 +208,16 @@ restock=10
 // Pitchfork - N/S
 [0x0e87]
 {
+getuo=0x0e87_t2a
 gett2a=0x0e87_t2a
+getuor=0x0e87_t2a
+gettd=0x0e87_lbr
 getlbr=0x0e87_lbr
 getaos=0x0e87_aos
+getse=0x0e87_aos
+getml=0x0e87_tol
+getsa=0x0e87_tol
+geths=0x0e87_tol
 gettol=0x0e87_tol
 sectionid=0x0e87
 }
@@ -214,9 +255,16 @@ restock=10
 // Pike - E/W
 [0x26be]
 {
+getuo=0x26be_t2a
 gett2a=0x26be_t2a
+getuor=0x26be_t2a
+gettd=0x26be_lbr
 getlbr=0x26be_lbr
 getaos=0x26be_aos
+getse=0x26be_aos
+getml=0x26be_tol
+getsa=0x26be_tol
+geths=0x26be_tol
 gettol=0x26be_tol
 sectionid=0x26be
 }
@@ -251,9 +299,16 @@ restock=10
 // Lance - E/W
 [0x26c0]
 {
+getuo=0x26c0_t2a
 gett2a=0x26c0_t2a
+getuor=0x26c0_t2a
+gettd=0x26c0_lbr
 getlbr=0x26c0_lbr
 getaos=0x26c0_aos
+getse=0x26c0_aos
+getml=0x26c0_tol
+getsa=0x26c0_tol
+geths=0x26c0_tol
 gettol=0x26c0_tol
 sectionid=0x26c0
 }
@@ -290,9 +345,16 @@ restock=10
 // Lajatang - E/W
 [0x27a7]
 {
+getuo=0x27a7_t2a
 gett2a=0x27a7_t2a
+getuor=0x27a7_t2a
+gettd=0x27a7_lbr
 getlbr=0x27a7_lbr
 getaos=0x27a7_aos
+getse=0x27a7_aos
+getml=0x27a7_tol
+getsa=0x27a7_tol
+geths=0x27a7_tol
 gettol=0x27a7_tol
 sectionid=0x27a7
 }
@@ -327,9 +389,16 @@ restock=10
 // Tekagi - E/W
 [0x27ab]
 {
+getuo=0x27ab_t2a
 gett2a=0x27ab_t2a
+getuor=0x27ab_t2a
+gettd=0x27ab_lbr
 getlbr=0x27ab_lbr
 getaos=0x27ab_aos
+getse=0x27ab_aos
+getml=0x27ab_tol
+getsa=0x27ab_tol
+geths=0x27ab_tol
 gettol=0x27ab_tol
 sectionid=0x27ab
 }
@@ -364,9 +433,16 @@ restock=10
 // Kama - E/W
 [0x27ad]
 {
+getuo=0x27ad_t2a
 gett2a=0x27ad_t2a
+getuor=0x27ad_t2a
+gettd=0x27ad_lbr
 getlbr=0x27ad_lbr
 getaos=0x27ad_aos
+getse=0x27ad_aos
+getml=0x27ad_tol
+getsa=0x27ad_tol
+geths=0x27ad_tol
 gettol=0x27ad_tol
 sectionid=0x27ad
 }
@@ -401,9 +477,16 @@ restock=10
 // Sai - E/W
 [0x27af]
 {
+getuo=0x27af_t2a
 gett2a=0x27af_t2a
+getuor=0x27af_t2a
+gettd=0x27af_lbr
 getlbr=0x27af_lbr
 getaos=0x27af_aos
+getse=0x27af_aos
+getml=0x27af_tol
+getsa=0x27af_tol
+geths=0x27af_tol
 gettol=0x27af_tol
 sectionid=0x27af
 }
@@ -441,9 +524,16 @@ restock=10
 // War Cleaver - N/S
 [0x2d23]
 {
+getuo=0x2d23_t2a
 gett2a=0x2d23_t2a
+getuor=0x2d23_t2a
+gettd=0x2d23_lbr
 getlbr=0x2d23_lbr
 getaos=0x2d23_aos
+getse=0x2d23_aos
+getml=0x2d23_tol
+getsa=0x2d23_tol
+geths=0x2d23_tol
 gettol=0x2d23_tol
 sectionid=0x2d23
 }
@@ -478,9 +568,16 @@ restock=10
 // Elven Spellblade - N/S
 [0x2d20]
 {
+getuo=0x2d20_t2a
 gett2a=0x2d20_t2a
+getuor=0x2d20_t2a
+gettd=0x2d20_lbr
 getlbr=0x2d20_lbr
 getaos=0x2d20_aos
+getse=0x2d20_aos
+getml=0x2d20_tol
+getsa=0x2d20_tol
+geths=0x2d20_tol
 gettol=0x2d20_tol
 sectionid=0x2d20
 }
@@ -518,9 +615,16 @@ restock=10
 // Gargish War Fork - N/S
 [0x48be]
 {
+getuo=0x48be_t2a
 gett2a=0x48be_t2a
+getuor=0x48be_t2a
+gettd=0x48be_lbr
 getlbr=0x48be_lbr
 getaos=0x48be_aos
+getse=0x48be_aos
+getml=0x48be_tol
+getsa=0x48be_tol
+geths=0x48be_tol
 gettol=0x48be_tol
 sectionid=0x48be
 }
@@ -555,9 +659,16 @@ restock=10
 // Shortblade - N/S
 [0x0907]
 {
+getuo=0x0907_t2a
 gett2a=0x0907_t2a
+getuor=0x0907_t2a
+gettd=0x0907_lbr
 getlbr=0x0907_lbr
 getaos=0x0907_aos
+getse=0x0907_aos
+getml=0x0907_tol
+getsa=0x0907_tol
+geths=0x0907_tol
 gettol=0x0907_tol
 sectionid=0x0907
 }
@@ -592,9 +703,16 @@ restock=10
 // Bloodblade - N/S
 [0x08fe]
 {
+getuo=0x08fe_t2a
 gett2a=0x08fe_t2a
+getuor=0x08fe_t2a
+gettd=0x08fe_lbr
 getlbr=0x08fe_lbr
 getaos=0x08fe_aos
+getse=0x08fe_aos
+getml=0x08fe_tol
+getsa=0x08fe_tol
+geths=0x08fe_tol
 gettol=0x08fe_tol
 sectionid=0x08fe
 }
@@ -629,9 +747,16 @@ restock=10
 // Gargish Kryss - N/S
 [0x48bc]
 {
+getuo=0x48bc_t2a
 gett2a=0x48bc_t2a
+getuor=0x48bc_t2a
+gettd=0x48bc_lbr
 getlbr=0x48bc_lbr
 getaos=0x48bc_aos
+getse=0x48bc_aos
+getml=0x48bc_tol
+getsa=0x48bc_tol
+geths=0x48bc_tol
 gettol=0x48bc_tol
 sectionid=0x48bc
 }
@@ -666,9 +791,16 @@ restock=10
 // Spiked Whip - N/S
 [0xa28a]
 {
+getuo=0xa28a_t2a
 gett2a=0xa28a_t2a
+getuor=0xa28a_t2a
+gettd=0xa28a_lbr
 getlbr=0xa28a_lbr
 getaos=0xa28a_aos
+getse=0xa28a_aos
+getml=0xa28a_tol
+getsa=0xa28a_tol
+geths=0xa28a_tol
 gettol=0xa28a_tol
 sectionid=0xa28a
 }
@@ -703,9 +835,16 @@ restock=10
 // Gargish Lance - N/S
 [0x48ca]
 {
+getuo=0x48ca_t2a
 gett2a=0x48ca_t2a
+getuor=0x48ca_t2a
+gettd=0x48ca_lbr
 getlbr=0x48ca_lbr
 getaos=0x48ca_aos
+getse=0x48ca_aos
+getml=0x48ca_tol
+getsa=0x48ca_tol
+geths=0x48ca_tol
 gettol=0x48ca_tol
 sectionid=0x48ca
 }
@@ -740,9 +879,16 @@ restock=10
 // Gargish Pike - N/S
 [0x48c8]
 {
+getuo=0x48c8_t2a
 gett2a=0x48c8_t2a
+getuor=0x48c8_t2a
+gettd=0x48c8_lbr
 getlbr=0x48c8_lbr
 getaos=0x48c8_aos
+getse=0x48c8_aos
+getml=0x48c8_tol
+getsa=0x48c8_tol
+geths=0x48c8_tol
 gettol=0x48c8_tol
 sectionid=0x48c8
 }
@@ -777,9 +923,16 @@ restock=10
 // Dual Pointed Spear - N/S
 [0x0904]
 {
+getuo=0x0904_t2a
 gett2a=0x0904_t2a
+getuor=0x0904_t2a
+gettd=0x0904_lbr
 getlbr=0x0904_lbr
 getaos=0x0904_aos
+getse=0x0904_aos
+getml=0x0904_tol
+getsa=0x0904_tol
+geths=0x0904_tol
 gettol=0x0904_tol
 sectionid=0x0904
 }
@@ -814,9 +967,16 @@ restock=10
 // Gargish Tekagi - N/S
 [0x48ce]
 {
+getuo=0x48ce_t2a
 gett2a=0x48ce_t2a
+getuor=0x48ce_t2a
+gettd=0x48ce_lbr
 getlbr=0x48ce_lbr
 getaos=0x48ce_aos
+getse=0x48ce_aos
+getml=0x48ce_tol
+getsa=0x48ce_tol
+geths=0x48ce_tol
 gettol=0x48ce_tol
 sectionid=0x48ce
 }

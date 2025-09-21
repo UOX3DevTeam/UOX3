@@ -1,9 +1,16 @@
 // Studded Sleeves - E/W
 [0x13d4]
 {
+getuo=0x13d4_t2a
 gett2a=0x13d4_t2a
+getuor=0x13d4_t2a
+gettd=0x13d4_lbr
 getlbr=0x13d4_lbr
 getaos=0x13d4_aos
+getse=0x13d4_aos
+getml=0x13d4_tol
+getsa=0x13d4_tol
+geths=0x13d4_tol
 gettol=0x13d4_tol
 sectionid=0x13d4
 }
@@ -24,9 +31,16 @@ get=0x13d4 0x13dc
 // Studded Gloves - E/W
 [0x13d5]
 {
+getuo=0x13d5_t2a
 gett2a=0x13d5_t2a
+getuor=0x13d5_t2a
+gettd=0x13d5_lbr
 getlbr=0x13d5_lbr
 getaos=0x13d5_aos
+getse=0x13d5_aos
+getml=0x13d5_tol
+getsa=0x13d5_tol
+geths=0x13d5_tol
 gettol=0x13d5_tol
 sectionid=0x13d5
 }
@@ -47,9 +61,16 @@ get=0x13d5 0x13dd
 // Studded Gorget
 [0x13d6]
 {
+getuo=0x13d6_t2a
 gett2a=0x13d6_t2a
+getuor=0x13d6_t2a
+gettd=0x13d6_lbr
 getlbr=0x13d6_lbr
 getaos=0x13d6_aos
+getse=0x13d6_aos
+getml=0x13d6_tol
+getsa=0x13d6_tol
+geths=0x13d6_tol
 gettol=0x13d6_tol
 sectionid=0x13d6
 }
@@ -63,9 +84,16 @@ get=0x13d6
 // Studded Leggings - E/W
 [0x13da]
 {
+getuo=0x13da_t2a
 gett2a=0x13da_t2a
+getuor=0x13da_t2a
+gettd=0x13da_lbr
 getlbr=0x13da_lbr
 getaos=0x13da_aos
+getse=0x13da_aos
+getml=0x13da_tol
+getsa=0x13da_tol
+geths=0x13da_tol
 gettol=0x13da_tol
 sectionid=0x13da
 }
@@ -86,9 +114,16 @@ get=0x13da 0x13e1
 // Studded Tunic - E/W
 [0x13db]
 {
+getuo=0x13db_t2a
 gett2a=0x13db_t2a
+getuor=0x13db_t2a
+gettd=0x13db_lbr
 getlbr=0x13db_lbr
 getaos=0x13db_aos
+getse=0x13db_aos
+getml=0x13db_tol
+getsa=0x13db_tol
+geths=0x13db_tol
 gettol=0x13db_tol
 sectionid=0x13db
 }
@@ -109,9 +144,16 @@ get=0x13db 0x13e2
 // Studded Armor (Female) - E/W
 [0x1c02]
 {
+getuo=0x1c02_t2a
 gett2a=0x1c02_t2a
+getuor=0x1c02_t2a
+gettd=0x1c02_lbr
 getlbr=0x1c02_lbr
 getaos=0x1c02_aos
+getse=0x1c02_aos
+getml=0x1c02_tol
+getsa=0x1c02_tol
+geths=0x1c02_tol
 gettol=0x1c02_tol
 sectionid=0x1c02
 }
@@ -132,9 +174,16 @@ get=0x1c02 0x1c03
 // Studded Bustier (Female) - E/W
 [0x1c0c]
 {
+getuo=0x1c0c_t2a
 gett2a=0x1c0c_t2a
+getuor=0x1c0c_t2a
+gettd=0x1c0c_lbr
 getlbr=0x1c0c_lbr
 getaos=0x1c0c_aos
+getse=0x1c0c_aos
+getml=0x1c0c_tol
+getsa=0x1c0c_tol
+geths=0x1c0c_tol
 gettol=0x1c0c_tol
 sectionid=0x1c0c
 }
