@@ -11,6 +11,12 @@ function CommandRegistration()
 	RegisterCommand( "addxspawner", 8, true );
 }
 
+// Collapse spaces/underscores/dashes and lowercase, e.g. "Brown Horse" -> "brownhorse"
+function normalizeSectionID( str )
+{
+	return ( str || "" ).replace( /[\s_\-]+/g, "" ).toLowerCase();
+}
+
 /** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ADD( socket, cmdString )
 {
@@ -28,25 +34,46 @@ function command_ADD( socket, cmdString )
 			case "NPC":
 				if( splitString[1] )
 				{
-					socket.xText = splitString[1];
-					socket.CustomTarget( 0, GetDictionaryEntry( 8068, socket.language ) + " " + splitString[1] ); // Select location for NPC:
+					// Join everything after "npc", normalize it
+					var rawNpc = splitString.slice(1).join(" ");
+					var normalizedNpc = normalizeSectionID( rawNpc );
+
+					// If last token is a number, treat it as amount
+					var maybeAmount = parseInt(splitString[splitString.length - 1]);
+					if( !isNaN( maybeAmount ) && maybeAmount > 0 )
+					{
+						socket.addAmount = maybeAmount;
+						rawNpc = splitString.slice( 1, -1 ).join(" ");
+						normalizedNpc = normalizeSectionID( rawNpc );
+					}
+					else
+					{
+						socket.addAmount = 1;
+					}
+
+					socket.xText = normalizedNpc;
+					socket.CustomTarget( 0, GetDictionaryEntry( 8068, socket.language ) + " " + normalizedNpc ); // Select location for NPC:
 				}
 				break;
 			case "ITEM":
 				if( splitString[1] )
 				{
-					// .add item itemID
-					if( splitString[2] ) // Check for optional amount
+					// Join everything after "item" into one string, normalize it
+					let rawItem = splitString.slice(1).join(" ");
+					let normalizedItem = normalizeSectionID( rawItem );
+
+					// If the *last* token looks like a number, treat that as amount
+					let maybeAmount = parseInt(splitString[splitString.length - 1]);
+					if( !isNaN( maybeAmount ) && maybeAmount > 0 )
 					{
-						// .add item itemID amount
-						let amount = parseInt( splitString[2] );
-						if( !isNaN( amount ) && amount > 0 )
-						{
-							socket.addAmount = amount;
-						}
+						socket.addAmount = maybeAmount;
+						// Strip off that number when building the ID
+						rawItem = splitString.slice(1, -1).join(" ");
+						normalizedItem = normalizeSectionID( rawItem );
 					}
-					socket.xText = splitString[1];
-					socket.CustomTarget( 2, GetDictionaryEntry( 8069, socket.language ) + " " + splitString[1] ); // Select location for scripted item:
+
+					socket.xText = normalizedItem;
+					socket.CustomTarget( 2, GetDictionaryEntry( 8069, socket.language ) + " " + normalizedItem ); // Select location for scripted item:
 				}
 				break;
 			case "SPAWNER":
@@ -119,37 +146,72 @@ function onCallback0( socket, ourObj )
 		return;
 
 	var mChar = socket.currentChar;
-	if( mChar )
+	if( !mChar ) return;
+
+	var x = socket.GetWord( 11 );
+	var y = socket.GetWord( 13 );
+	var z = socket.GetSByte( 16 );
+	var StrangeByte = socket.GetWord( 1 );
+
+	// Pre-7.0.9 client: add tile height if needed
+	if(( StrangeByte == 0 && ourObj.isItem ) || ( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 ))
 	{
-		var x = socket.GetWord( 11 );
-		var y = socket.GetWord( 13 );
-		var z = socket.GetSByte( 16 );
-		var StrangeByte = socket.GetWord(1);
+		z += GetTileHeight( socket.GetWord( 17 ));
+	}
 
-		// If connected with a client lower than v7.0.9, manually add height of targeted tile
-		if(( StrangeByte == 0 && ourObj.isItem ) || ( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 ))
+	var npcSection = socket.xText;
+	socket.xText = null;
+
+	var useNpcList = false;
+	if( socket.tempInt2 )
+	{
+		useNpcList = true;
+		socket.tempInt2 = null;
+	}
+
+	// Amount defaults to 1. If NPCLIST is used, we ignore amount to avoid repeated pickers
+	var amount = socket.addAmount;
+	if( amount == null || amount < 1 ) amount = 1;
+	if( useNpcList ) amount = 1;
+
+	// Try to spawn one; if not found, retry with normalized fallback
+	function trySpawnOnce(section)
+	{
+		var c = SpawnNPC( section, x, y, z, mChar.worldnumber, mChar.instanceID, useNpcList );
+		if( ValidateObject( c ) && c.isChar )
 		{
-			z += GetTileHeight( socket.GetWord( 17 ));
+			c.InitWanderArea();
+			return c;
 		}
+		return null;
+	}
 
-		var npcSection = socket.xText;
-		socket.xText = null;
-
-		var useNpcList = false;
-		if( socket.tempInt2 )
+	// First spawn (with fallback to normalized form of what we already normalized—harmless)
+	var first = trySpawnOnce( npcSection );
+	if( !first )
+	{
+		var altSection = normalizeSectionID( npcSection );
+		if( altSection && altSection !== npcSection )
 		{
-			useNpcList = true;
-			socket.tempInt2 = null;
+			first = trySpawnOnce( altSection );
+			if( first ) npcSection = altSection;
 		}
+	}
 
-		var newChar = SpawnNPC( npcSection, x, y, z, mChar.worldnumber, mChar.instanceID, useNpcList );
-		if( ValidateObject( newChar ) && newChar.isChar )
+	if( !first )
+	{
+		mChar.SysMessage( GetDictionaryEntry( 8072, socket.language ) + " " + npcSection ); // NPC-section not found in DFNs:
+		return;
+	}
+
+	// Spawn remaining (amount-1) at the same ground location
+	for( var i = 1; i < amount; i++ )
+	{
+		var extra = trySpawnOnce( npcSection );
+		if( !extra )
 		{
-			newChar.InitWanderArea();
-		}
-		else
-		{
-			mChar.SysMessage( GetDictionaryEntry( 8072, socket.language ) + " " + npcSection ); // NPC-section not found in DFNs:
+			// If one of the later spawns fails, just stop quietly
+			break;
 		}
 	}
 }
@@ -244,59 +306,169 @@ function onCallback2( socket, ourObj )
 		var iSection = socket.xText;
 		socket.xText = null;
 
-		// Get amount to add
+		// Get amount to add (default 1)
 		var itemAmount = socket.addAmount;
 		if( itemAmount == null || itemAmount < 1 )
-		{
 			itemAmount = 1;
-		}
 
 		var StrangeByte = socket.GetWord( 1 );
-		if( StrangeByte == 0 && ourObj.isChar  )
+
+		// Helper to spawn N items into a character's pack
+		function spawnToPack(targetChar, section, count)
 		{
-			//If target is a character, add item to backpack
+			var made = 0;
+			// Try once with 'count' to allow stacking DFNs to do it in one go
+			var first = CreateDFNItem( socket, targetChar, section, count, "ITEM", true );
+			if( ValidateObject(first) )
+			{
+				made += (first.amount && first.amount > 0) ? first.amount : 1;
+
+				// If it didn't stack up to requested amount, add the rest one by one
+				while( made < count )
+				{
+					var extra = CreateDFNItem( socket, targetChar, section, 1, "ITEM", true );
+					if( ValidateObject(extra) )
+					{
+						made += (extra.amount && extra.amount > 0) ? extra.amount : 1;
+					}
+					else
+					{
+						break;
+					}
+				}
+				return true;
+			}
+			return false;
+		}
+
+		// Helper to spawn N items into a container item
+		function spawnToContainer(containerItem, section, count)
+		{
+			var made = 0;
+
+			// First try a single spawn with 'count' (in case DFN stacks)
+			var first = CreateDFNItem( socket, mChar, section, count, "ITEM", false );
+			if( ValidateObject(first) )
+			{
+				first.container = containerItem;
+				first.PlaceInPack();
+
+				made += (first.amount && first.amount > 0) ? first.amount : 1;
+
+				while( made < count )
+				{
+					var extra = CreateDFNItem( socket, mChar, section, 1, "ITEM", false );
+					if( ValidateObject(extra) )
+					{
+						extra.container = containerItem;
+						extra.PlaceInPack();
+						made += (extra.amount && extra.amount > 0) ? extra.amount : 1;
+					}
+					else
+					{
+						break;
+					}
+				}
+				return true;
+			}
+			return false;
+		}
+
+		// Helper to spawn N items on the ground at x,y,z
+		function spawnToWorld(x, y, z, section, count)
+		{
+			var made = 0;
+
+			var first = CreateDFNItem( socket, mChar, section, count, "ITEM", false );
+			if( ValidateObject(first) )
+			{
+				first.SetLocation( x, y, z );
+				made += (first.amount && first.amount > 0) ? first.amount : 1;
+
+				while( made < count )
+				{
+					var extra = CreateDFNItem( socket, mChar, section, 1, "ITEM", false );
+					if( ValidateObject(extra) )
+					{
+						extra.SetLocation( x, y, z );
+						made += (extra.amount && extra.amount > 0) ? extra.amount : 1;
+					}
+					else
+					{
+						break;
+					}
+				}
+				return true;
+			}
+			return false;
+		}
+
+		// Target is a character? -> put in their backpack
+		if( StrangeByte == 0 && ourObj.isChar )
+		{
 			var backpack = ourObj.FindItemLayer( 21 );
 			if( backpack != null )
 			{
-				var newItem = CreateDFNItem( socket, ourObj, iSection, itemAmount, "ITEM", true );
+				var ok = spawnToPack( ourObj, iSection, itemAmount );
+				if( !ok )
+				{
+					// Fallback: try normalized section ID (handles "long sword" -> "longsword")
+					var alt = normalizeSectionID( iSection );
+					if( alt && alt != iSection )
+					{
+						ok = spawnToPack( ourObj, alt, itemAmount );
+						if( ok ) iSection = alt;
+					}
+				}
+				if( !ok )
+					mChar.SysMessage( GetDictionaryEntry( 8074, socket.language ) + " " + iSection ); // Item-section not found in DFNs:
 			}
 			else
 			{
 				mChar.SysMessage( GetDictionaryEntry( 8073, socket.language )); // That character has no backpack, no item added
 			}
+			return;
 		}
-		else if( StrangeByte == 0 && ourObj.isItem && ourObj.type == 1 )
-		{
-			// If target is an item, and a container, add item to the container
-			var newItem = CreateDFNItem( socket, ourObj, iSection, itemAmount, "ITEM", false );
-			if( ValidateObject( newItem ))
-			{
-				newItem.container = ourObj;
-				newItem.PlaceInPack();
-			}
-		}
-		else
-		{
-			var x = socket.GetWord( 11 );
-			var y = socket.GetWord( 13 );
-			var z = socket.GetSByte( 16 );
 
-			// If connected with a client lower than v7.0.9, manually add height of targeted tile
-			if(( StrangeByte == 0 && ourObj.isItem ) || ( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 ))
-			{
-				z += GetTileHeight( socket.GetWord( 17 ));
-			}
-
-			var newItem = CreateDFNItem( socket, mChar, iSection, itemAmount, "ITEM", false );
-			if( newItem )
-			{
-				newItem.SetLocation( x, y, z );
-			}
-		}
-		if( !newItem )
+		// Target is a container item? -> drop into that container
+		if( StrangeByte == 0 && ourObj.isItem && ourObj.type == 1 )
 		{
-			mChar.SysMessage( GetDictionaryEntry( 8074, socket.language ) + " " + iSection ); // Item-section not found in DFNs:
+			var ok2 = spawnToContainer( ourObj, iSection, itemAmount );
+			if( !ok2 )
+			{
+				var alt2 = normalizeSectionID( iSection );
+				if( alt2 && alt2 != iSection )
+				{
+					ok2 = spawnToContainer( ourObj, alt2, itemAmount );
+					if( ok2 ) iSection = alt2;
+				}
+			}
+			if( !ok2 )
+				mChar.SysMessage( GetDictionaryEntry( 8074, socket.language ) + " " + iSection );
+			return;
 		}
+
+		// Otherwise, world location
+		var x = socket.GetWord( 11 );
+		var y = socket.GetWord( 13 );
+		var z = socket.GetSByte( 16 );
+
+		// Pre-7.0.9 clients need tile height added
+		if(( StrangeByte == 0 && ourObj.isItem ) || ( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 ))
+			z += GetTileHeight( socket.GetWord( 17 ));
+
+		var ok3 = spawnToWorld( x, y, z, iSection, itemAmount );
+		if( !ok3 )
+		{
+			var alt3 = normalizeSectionID( iSection );
+			if( alt3 && alt3 != iSection )
+			{
+				ok3 = spawnToWorld( x, y, z, alt3, itemAmount );
+				if( ok3 ) iSection = alt3;
+			}
+		}
+		if( !ok3 )
+			mChar.SysMessage( GetDictionaryEntry( 8074, socket.language ) + " " + iSection );
 	}
 }
 
