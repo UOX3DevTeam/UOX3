@@ -27,12 +27,12 @@ GETT2A=airele_lbr
 GETUOR=airele_lbr
 GETTD=airele_lbr
 GETLBR=airele_lbr
-GETSE=airele_lbr
-GETML=airele_lbr
-GETSA=airele_lbr
-GETHS=airele_lbr
-GETTOL=airele_lbr
 GETAOS=airele_aos
+GETSE=airele_aos
+GETML=airele_aos
+GETSA=airele_aos
+GETHS=airele_aos
+GETTOL=airele_aos
 }
 
 [base_earthele]
@@ -51,12 +51,12 @@ GETT2A=earthele_lbr
 GETUOR=earthele_lbr
 GETTD=earthele_lbr
 GETLBR=earthele_lbr
-GETSE=earthele_lbr
-GETML=earthele_lbr
-GETSA=earthele_lbr
-GETHS=earthele_lbr
-GETTOL=earthele_lbr
 GETAOS=earthele_aos
+GETSE=earthele_aos
+GETML=earthele_aos
+GETSA=earthele_aos
+GETHS=earthele_aos
+GETTOL=earthele_aos
 }
 
 [base_fireele]
@@ -77,12 +77,12 @@ GETT2A=fireele_lbr
 GETUOR=fireele_lbr
 GETTD=fireele_lbr
 GETLBR=fireele_lbr
-GETSE=fireele_lbr
-GETML=fireele_lbr
-GETSA=fireele_lbr
-GETHS=fireele_lbr
-GETTOL=fireele_lbr
 GETAOS=fireele_aos
+GETSE=fireele_aos
+GETML=fireele_aos
+GETSA=fireele_aos
+GETHS=fireele_aos
+GETTOL=fireele_aos
 }
 
 [base_waterele]
@@ -104,12 +104,12 @@ GETT2A=waterele_lbr
 GETUOR=waterele_lbr
 GETTD=waterele_lbr
 GETLBR=waterele_lbr
-GETSE=waterele_lbr
-GETML=waterele_lbr
-GETSA=waterele_lbr
-GETHS=waterele_lbr
-GETTOL=waterele_lbr
 GETAOS=waterele_aos
+GETSE=waterele_aos
+GETML=waterele_aos
+GETSA=waterele_aos
+GETHS=waterele_aos
+GETTOL=waterele_aos
 }
 
 [base_bloodele]
@@ -131,12 +131,12 @@ GETT2A=bloodele_lbr
 GETUOR=bloodele_lbr
 GETTD=bloodele_lbr
 GETLBR=bloodele_lbr
-GETSE=bloodele_lbr
-GETML=bloodele_lbr
-GETSA=bloodele_lbr
-GETHS=bloodele_lbr
-GETTOL=bloodele_lbr
 GETAOS=bloodele_aos
+GETSE=bloodele_aos
+GETML=bloodele_aos
+GETSA=bloodele_aos
+GETHS=bloodele_aos
+GETTOL=bloodele_aos
 }
 
 [base_poisonele]
@@ -159,12 +159,12 @@ GETT2A=poisonele_lbr
 GETUOR=poisonele_lbr
 GETTD=poisonele_lbr
 GETLBR=poisonele_lbr
-GETSE=poisonele_lbr
-GETML=poisonele_lbr
-GETSA=poisonele_lbr
-GETHS=poisonele_lbr
-GETTOL=poisonele_lbr
 GETAOS=poisonele_aos
+GETSE=poisonele_aos
+GETML=poisonele_aos
+GETSA=poisonele_aos
+GETHS=poisonele_aos
+GETTOL=poisonele_aos
 }
 
 [base_iceele]
@@ -187,12 +187,12 @@ GETT2A=iceele_lbr
 GETUOR=iceele_lbr
 GETTD=iceele_lbr
 GETLBR=iceele_lbr
-GETSE=iceele_lbr
-GETML=iceele_lbr
-GETSA=iceele_lbr
-GETHS=iceele_lbr
-GETTOL=iceele_lbr
 GETAOS=iceele_aos
+GETSE=iceele_aos
+GETML=iceele_aos
+GETSA=iceele_aos
+GETHS=iceele_aos
+GETTOL=iceele_aos
 }
 
 [base_snowele]
@@ -213,12 +213,12 @@ GETT2A=snowele_lbr
 GETUOR=snowele_lbr
 GETTD=snowele_lbr
 GETLBR=snowele_lbr
-GETSE=snowele_lbr
-GETML=snowele_lbr
-GETSA=snowele_lbr
-GETHS=snowele_lbr
-GETTOL=snowele_lbr
 GETAOS=snowele_aos
+GETSE=snowele_aos
+GETML=snowele_aos
+GETSA=snowele_aos
+GETHS=snowele_aos
+GETTOL=snowele_aos
 }
 
 [base_acidele]
@@ -240,12 +240,12 @@ GETT2A=acidele_lbr
 GETUOR=acidele_lbr
 GETTD=acidele_lbr
 GETLBR=acidele_lbr
-GETSE=acidele_lbr
-GETML=acidele_lbr
-GETSA=acidele_lbr
-GETHS=acidele_lbr
-GETTOL=acidele_lbr
 GETAOS=acidele_aos
+GETSE=acidele_aos
+GETML=acidele_aos
+GETSA=acidele_aos
+GETHS=acidele_aos
+GETTOL=acidele_aos
 }
 
 [base_crystalele]
@@ -265,12 +265,12 @@ GETT2A=crystalele_lbr
 GETUOR=crystalele_lbr
 GETTD=crystalele_lbr
 GETLBR=crystalele_lbr
-GETSE=crystalele_lbr
-GETML=crystalele_lbr
-GETSA=crystalele_lbr
-GETHS=crystalele_lbr
-GETTOL=crystalele_lbr
 GETAOS=crystalele_aos
+GETSE=crystalele_aos
+GETML=crystalele_aos
+GETSA=crystalele_aos
+GETHS=crystalele_aos
+GETTOL=crystalele_aos
 }
 
 [base_dullcopperele]
@@ -293,12 +293,12 @@ GETT2A=dullcopperele_lbr
 GETUOR=dullcopperele_lbr
 GETTD=dullcopperele_lbr
 GETLBR=dullcopperele_lbr
-GETSE=dullcopperele_lbr
-GETML=dullcopperele_lbr
-GETSA=dullcopperele_lbr
-GETHS=dullcopperele_lbr
-GETTOL=dullcopperele_lbr
 GETAOS=dullcopperele_aos
+GETSE=dullcopperele_aos
+GETML=dullcopperele_aos
+GETSA=dullcopperele_aos
+GETHS=dullcopperele_aos
+GETTOL=dullcopperele_aos
 }
 
 [base_shadowironele]
@@ -321,12 +321,12 @@ GETT2A=shadowironele_lbr
 GETUOR=shadowironele_lbr
 GETTD=shadowironele_lbr
 GETLBR=shadowironele_lbr
-GETSE=shadowironele_lbr
-GETML=shadowironele_lbr
-GETSA=shadowironele_lbr
-GETHS=shadowironele_lbr
-GETTOL=shadowironele_lbr
 GETAOS=shadowironele_aos
+GETSE=shadowironele_aos
+GETML=shadowironele_aos
+GETSA=shadowironele_aos
+GETHS=shadowironele_aos
+GETTOL=shadowironele_aos
 }
 
 [base_copperele]
@@ -350,12 +350,12 @@ GETT2A=copperele_lbr
 GETUOR=copperele_lbr
 GETTD=copperele_lbr
 GETLBR=copperele_lbr
-GETSE=copperele_lbr
-GETML=copperele_lbr
-GETSA=copperele_lbr
-GETHS=copperele_lbr
-GETTOL=copperele_lbr
 GETAOS=copperele_aos
+GETSE=copperele_aos
+GETML=copperele_aos
+GETSA=copperele_aos
+GETHS=copperele_aos
+GETTOL=copperele_aos
 }
 
 [base_bronzeele]
@@ -378,12 +378,12 @@ GETT2A=bronzeele_lbr
 GETUOR=bronzeele_lbr
 GETTD=bronzeele_lbr
 GETLBR=bronzeele_lbr
-GETSE=bronzeele_lbr
-GETML=bronzeele_lbr
-GETSA=bronzeele_lbr
-GETHS=bronzeele_lbr
-GETTOL=bronzeele_lbr
 GETAOS=bronzeele_aos
+GETSE=bronzeele_aos
+GETML=bronzeele_aos
+GETSA=bronzeele_aos
+GETHS=bronzeele_aos
+GETTOL=bronzeele_aos
 }
 
 [base_goldele]
@@ -405,12 +405,12 @@ GETT2A=goldele_lbr
 GETUOR=goldele_lbr
 GETTD=goldele_lbr
 GETLBR=goldele_lbr
-GETSE=goldele_lbr
-GETML=goldele_lbr
-GETSA=goldele_lbr
-GETHS=goldele_lbr
-GETTOL=goldele_lbr
 GETAOS=goldele_aos
+GETSE=goldele_aos
+GETML=goldele_aos
+GETSA=goldele_aos
+GETHS=goldele_aos
+GETTOL=goldele_aos
 }
 
 [base_agapiteele]
@@ -432,12 +432,12 @@ GETT2A=agapiteele_lbr
 GETUOR=agapiteele_lbr
 GETTD=agapiteele_lbr
 GETLBR=agapiteele_lbr
-GETSE=agapiteele_lbr
-GETML=agapiteele_lbr
-GETSA=agapiteele_lbr
-GETHS=agapiteele_lbr
-GETTOL=agapiteele_lbr
 GETAOS=agapiteele_aos
+GETSE=agapiteele_aos
+GETML=agapiteele_aos
+GETSA=agapiteele_aos
+GETHS=agapiteele_aos
+GETTOL=agapiteele_aos
 }
 
 [base_veriteele]
@@ -459,12 +459,12 @@ GETT2A=veriteele_lbr
 GETUOR=veriteele_lbr
 GETTD=veriteele_lbr
 GETLBR=veriteele_lbr
-GETSE=veriteele_lbr
-GETML=veriteele_lbr
-GETSA=veriteele_lbr
-GETHS=veriteele_lbr
-GETTOL=veriteele_lbr
 GETAOS=veriteele_aos
+GETSE=veriteele_aos
+GETML=veriteele_aos
+GETSA=veriteele_aos
+GETHS=veriteele_aos
+GETTOL=veriteele_aos
 }
 
 [base_valoriteele]
@@ -488,12 +488,12 @@ GETT2A=valoriteele_lbr
 GETUOR=valoriteele_lbr
 GETTD=valoriteele_lbr
 GETLBR=valoriteele_lbr
-GETSE=valoriteele_lbr
-GETML=valoriteele_lbr
-GETSA=valoriteele_lbr
-GETHS=valoriteele_lbr
-GETTOL=valoriteele_lbr
 GETAOS=valoriteele_aos
+GETSE=valoriteele_aos
+GETML=valoriteele_aos
+GETSA=valoriteele_aos
+GETHS=valoriteele_aos
+GETTOL=valoriteele_aos
 }
 
 [base_energyvortex]
@@ -513,12 +513,12 @@ GETT2A=energyvortex_lbr
 GETUOR=energyvortex_lbr
 GETTD=energyvortex_lbr
 GETLBR=energyvortex_lbr
-GETSE=energyvortex_lbr
-GETML=energyvortex_lbr
-GETSA=energyvortex_lbr
-GETHS=energyvortex_lbr
-GETTOL=energyvortex_lbr
 GETAOS=energyvortex_aos
+GETSE=energyvortex_aos
+GETML=energyvortex_aos
+GETSA=energyvortex_aos
+GETHS=energyvortex_aos
+GETTOL=energyvortex_aos
 }
 
 [base_raiju]
