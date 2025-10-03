@@ -19,7 +19,7 @@ function onCallback1( socket, iTarget )
 {
 	var pUser = socket.currentChar;
 
-	if( !ValidateObject(iTarget) || !iTarget.isItem )
+	if( !ValidateObject( iTarget ) || !iTarget.isItem )
 	{
 		socket.SysMessage( GetDictionaryEntry( 711, socket.language ));//"That is not a valid item."
 		return;
