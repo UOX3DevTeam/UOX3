@@ -414,19 +414,19 @@ function addNavigation( gump, socket, pageIndex, totalPages )
 	y += CTRL_GAP;
 
 	// Link mode toggle
-	var linkOn = ( pUser.GetTag("doorLinkMode" )|0 ) === 1;
+	var linkOn = ( pUser.GetTempTag("doorLinkMode" )|0 ) === 1;
 	gump.AddHTMLGump( PANEL_X_LABEL, y, 120, 20, false, false, "<basefont color=#ffffff>Link: " + ( linkOn ? "ON" : "OFF" ) + "</basefont>" );
 	gump.AddButton( PANEL_X_BTN, y - 2, linkOn ? 0x0FB0 : 0x0FAE, linkOn ? 0x0FB0 : 0x0FAE, 1, 0, BTN_TOGGLE_LINK );
 	y += CTRL_GAP;
 
 	// (optional) Unlink mode toggle
-	var unlinkOn = ( pUser.GetTag( "doorUnlinkMode" )|0 ) === 1;
+	var unlinkOn = ( pUser.GetTempTag( "doorUnlinkMode" )|0 ) === 1;
 	gump.AddHTMLGump( PANEL_X_LABEL, y, 120, 20, false, false, "<basefont color=#ffffff>Unlink: " + ( unlinkOn ? "ON" : "OFF" ) + "</basefont>" );
 	gump.AddButton( PANEL_X_BTN, y - 2, unlinkOn ? 0x0FB0 : 0x0FAE, unlinkOn ? 0x0FB0 : 0x0FAE, 1, 0, BTN_TOGGLE_UNLINK );
 
 	// Auto-link on Add toggle
 	y += CTRL_GAP;
-	var autoLinkOn = ( socket.currentChar.GetTag( "doorLinkOnAdd" )|0 ) === 1;
+	var autoLinkOn = ( pUser.GetTempTag( "doorLinkOnAdd" )|0 ) === 1;
 	gump.AddHTMLGump( PANEL_X_LABEL, y, 140, 20, false, false, "<basefont color=#ffffff>Auto-link: " + ( autoLinkOn ? "ON" : "OFF" ) + "</basefont>" );
 	gump.AddButton( PANEL_X_BTN, y - 2, autoLinkOn ? 0x0FB0 : 0x0FAE, autoLinkOn ? 0x0FB0 : 0x0FAE, 1, 0, BTN_TOGGLE_LINK_ADD )
 	y += CTRL_GAP;
@@ -641,19 +641,19 @@ function showListPage( pUser, viewName, artList, pageIndex )
 	y += CTRL_GAP;
 
 	// Link mode toggle
-	var linkOn = ( pUser.GetTag( "doorLinkMode" )|0 ) === 1;
+	var linkOn = ( pUser.GetTempTag( "doorLinkMode" )|0 ) === 1;
 	gump.AddHTMLGump( PANEL_X_LABEL, y, 120, 20, false, false, "<basefont color=#ffffff>Link: " + ( linkOn ? "ON" : "OFF" ) + "</basefont>" );
 	gump.AddButton( PANEL_X_BTN, y - 2, linkOn ? 0x0FB0 : 0x0FAE, linkOn ? 0x0FB0 : 0x0FAE, 1, 0, BTN_TOGGLE_LINK );
 	y += CTRL_GAP;
 
 	// (optional) Unlink mode toggle
-	var unlinkOn = ( pUser.GetTag( "doorUnlinkMode" )|0 ) === 1;
+	var unlinkOn = ( pUser.GetTempTag( "doorUnlinkMode" )|0 ) === 1;
 	gump.AddHTMLGump( PANEL_X_LABEL, y, 120, 20, false, false, "<basefont color=#ffffff>Unlink: " + ( unlinkOn ? "ON" : "OFF" ) + "</basefont>" );
 	gump.AddButton( PANEL_X_BTN, y - 2, unlinkOn ? 0x0FB0 : 0x0FAE, unlinkOn ? 0x0FB0 : 0x0FAE, 1, 0, BTN_TOGGLE_UNLINK );
 	y += CTRL_GAP;
 
 	// Auto-link on Add toggle
-	var autoLinkOn = ( socket.currentChar.GetTag( "doorLinkOnAdd" )|0 ) === 1;
+	var autoLinkOn = ( pUser.GetTempTag( "doorLinkOnAdd" )|0 ) === 1;
 	gump.AddHTMLGump( PANEL_X_LABEL, y, 140, 20, false, false, "<basefont color=#ffffff>Auto-link: " + (autoLinkOn ? "ON" : "OFF" ) + "</basefont>" );
 	gump.AddButton( PANEL_X_BTN, y - 2, autoLinkOn ? 0x0FB0 : 0x0FAE, autoLinkOn ? 0x0FB0 : 0x0FAE, 1, 0, BTN_TOGGLE_LINK_ADD )
 	y += CTRL_GAP;
@@ -912,12 +912,12 @@ function onGumpPress( socket, pButton, gumpData )
 	// --- Link mode ---
 	if( pButton === BTN_TOGGLE_LINK )
 	{
-		var link = ( pUser.GetTag( "doorLinkMode" )|0 ) === 1 ? 0 : 1;
-		pUser.SetTag( "doorLinkMode", link );
+		var link = ( pUser.GetTempTag( "doorLinkMode" )|0 ) === 1 ? 0 : 1;
+		pUser.SetTempTag( "doorLinkMode", link );
 		// Turning link ON cancels unlink mode, and vice versa
 		if( link ) 
 		{ 
-			pUser.SetTag( "doorUnlinkMode", 0 ); 
+			pUser.SetTempTag( "doorUnlinkMode", 0 ); 
 			socket.clickX = null; socket.tempObj = null;
 		    socket.CustomTarget( CBID_LINK, GetDictionaryEntry( 8898, socket.language ));// Which two doors do you want to link? (1/2)
 		}
@@ -946,12 +946,12 @@ function onGumpPress( socket, pButton, gumpData )
 	// --- Unlink mode (optional) ---
 	if( pButton === BTN_TOGGLE_UNLINK )
 	{
-		var unlink = ( pUser.GetTag( "doorUnlinkMode" )|0 ) === 1 ? 0 : 1;
-		pUser.SetTag("doorUnlinkMode", unlink );
+		var unlink = ( pUser.GetTempTag( "doorUnlinkMode" )|0 ) === 1 ? 0 : 1;
+		pUser.SetTempTag("doorUnlinkMode", unlink );
 
 		if( unlink )
 		{ 
-			pUser.SetTag( "doorLinkMode", 0 );
+			pUser.SetTempTag( "doorLinkMode", 0 );
 			socket.clickX = null; socket.tempObj = null;
 		    socket.CustomTarget( CBID_UNLINK, GetDictionaryEntry( 8901, socket.language )); // Unlink which two doors? (1/2)
 		}
@@ -980,12 +980,12 @@ function onGumpPress( socket, pButton, gumpData )
 
 	if( pButton === BTN_TOGGLE_LINK_ADD )
 	{
-		var linkon = ( pUser.GetTag( "doorLinkOnAdd" )|0 ) === 1 ? 0 : 1;
-		pUser.SetTag( "doorLinkOnAdd", linkon );
+		var linkon = ( pUser.GetTempTag( "doorLinkOnAdd" )|0 ) === 1 ? 0 : 1;
+		pUser.SetTempTag( "doorLinkOnAdd", linkon );
 
 		if( !linkon )
 		{
-			pUser.SetTag( "doorLinkPendingSer", null ); // clear any half pair
+			pUser.SetTempTag( "doorLinkPendingSer", null ); // clear any half pair
 			socket.SysMessage( "Auto-link " + ( linkon ? "enabled" : "disabled") + "." );
 		}
 
@@ -1159,13 +1159,13 @@ function onCallback0( socket, ourObj )
 	itm.Refresh();
 
 	// --- Auto-link on Add ---
-	if(( pUser.GetTag( "doorLinkOnAdd" )|0 ) === 1 )
+	if(( pUser.GetTempTag( "doorLinkOnAdd" )|0 ) === 1 )
 	{
-		var pendingSer = pUser.GetTag( "doorLinkPendingSer" );
+		var pendingSer = pUser.GetTempTag( "doorLinkPendingSer" );
 		if( !pendingSer )
 		{
 			// This is the first door of the pair
-			pUser.SetTag( "doorLinkPendingSer", String(itm.serial) );
+			pUser.SetTempTag( "doorLinkPendingSer", String(itm.serial) );
 			socket.SysMessage( "First door captured. Place the second door to link." );
 		} 
 		else 
@@ -1181,7 +1181,7 @@ function onCallback0( socket, ourObj )
 				socket.SysMessage( "Could not link the doors (missing or same item)." );
 			}
 			// Clear pending so the next placement starts a fresh pair
-			pUser.SetTag( "doorLinkPendingSer", null );
+			pUser.SetTempTag( "doorLinkPendingSer", null );
 		}
 	}
 
@@ -1258,7 +1258,7 @@ function onCallback2( pSock, myTarget )
 	var pUser = pSock.currentChar;
 
 	// Only handle when Link mode is actually ON (prevents accidental triggers)
-	if(( pUser.GetTag( "doorLinkMode" )|0 ) !== 1 )
+	if(( pUser.GetTempTag( "doorLinkMode" )|0 ) !== 1 )
 	{ 
 		pSock.clickX = null;
 		pSock.tempObj = null;
@@ -1307,7 +1307,7 @@ function onCallback2( pSock, myTarget )
 
 		// For continuous linking while mode is ON, reset for the next pair:
 		pSock.clickX = null; pSock.tempObj = null;
-		if(( pUser.GetTag( "doorLinkMode" )|0 ) === 1 )
+		if(( pUser.GetTempTag( "doorLinkMode" )|0 ) === 1 )
 		{
 			pSock.CustomTarget(13, GetDictionaryEntry( 8898, pSock.language )); // (1/2)
 		}
@@ -1322,7 +1322,7 @@ function onCallback2( pSock, myTarget )
 function onCallback3( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
-	if(( pUser.GetTag( "doorUnlinkMode" )|0 ) !== 1 ) 
+	if(( pUser.GetTempTag( "doorUnlinkMode" )|0 ) !== 1 ) 
 	{ 
 		pSock.clickX = null;
 		pSock.tempObj = null;
@@ -1363,7 +1363,7 @@ function onCallback3( pSock, myTarget )
 
 		// Keep mode active for next pair
 		pSock.clickX = null; pSock.tempObj = null;
-		if(( pUser.GetTag( "doorUnlinkMode" )|0 ) === 1 )
+		if(( pUser.GetTempTag( "doorUnlinkMode" )|0 ) === 1 )
 		{
 			pSock.CustomTarget( 14, GetDictionaryEntry( 8901, pSock.language )); // (1/2)
 		}
