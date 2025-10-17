@@ -118,7 +118,7 @@ decay=0
 SCRIPT=2752
 }
 
-[shentrancepeice1]
+[shentrancepiece1]
 {
 ID=0x549
 weight=100
@@ -126,7 +126,7 @@ movable=2
 decay=0
 }
 
-[shentrancepeice2]
+[shentrancepiece2]
 {
 ID=0x54D
 weight=100
@@ -134,7 +134,7 @@ movable=2
 decay=0
 }
 
-[shentrancepeice3]
+[shentrancepiece3]
 {
 ID=0x54E
 weight=100
@@ -142,7 +142,7 @@ movable=2
 decay=0
 }
 
-[shentrancepeice4]
+[shentrancepiece4]
 {
 ID=0x548
 weight=100
@@ -150,7 +150,7 @@ movable=2
 decay=0
 }
 
-[shentrancepeice5]
+[shentrancepiece5]
 {
 ID=0x54B
 weight=100
@@ -158,7 +158,7 @@ movable=2
 decay=0
 }
 
-[shentrancepeice6]
+[shentrancepiece6]
 {
 ID=0x53B
 weight=100
@@ -166,7 +166,7 @@ movable=2
 decay=0
 }
 
-[shentrancepeice7]
+[shentrancepiece7]
 {
 ID=0x544
 weight=100
@@ -174,7 +174,7 @@ movable=2
 decay=0
 }
 
-[shentrancepeice8]
+[shentrancepiece8]
 {
 ID=0x54C
 weight=100
@@ -182,7 +182,7 @@ movable=2
 decay=0
 }
 
-[shentrancepeice9]
+[shentrancepiece9]
 {
 ID=0x545
 weight=100
@@ -190,7 +190,7 @@ movable=2
 decay=0
 }
 
-[shentrancepeice10]
+[shentrancepiece10]
 {
 ID=0x547
 weight=100
@@ -198,7 +198,7 @@ movable=2
 decay=0
 }
 
-[shentrancepeice11]
+[shentrancepiece11]
 {
 ID=0x541
 weight=100
@@ -206,7 +206,7 @@ movable=2
 decay=0
 }
 
-[shentrancepeice12]
+[shentrancepiece12]
 {
 ID=0x543
 weight=100
@@ -214,7 +214,7 @@ movable=2
 decay=0
 }
 
-[shentrancepeice13]
+[shentrancepiece13]
 {
 ID=0x540
 weight=100

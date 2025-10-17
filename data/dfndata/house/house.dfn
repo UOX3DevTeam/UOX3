@@ -3766,7 +3766,7 @@ Z=0
 
 [HOUSE ITEM 615]
 { 
-ITEM=shentrancepeice1
+ITEM=shentrancepiece1
 X=-1
 Y=-1
 Z=0
@@ -3774,7 +3774,7 @@ Z=0
 
 [HOUSE ITEM 616]
 { 
-ITEM=shentrancepeice2
+ITEM=shentrancepiece2
 X=0
 Y=-1
 Z=0
@@ -3782,7 +3782,7 @@ Z=0
 
 [HOUSE ITEM 617]
 { 
-ITEM=shentrancepeice3
+ITEM=shentrancepiece3
 X=1
 Y=-1
 Z=0
@@ -3790,7 +3790,7 @@ Z=0
 
 [HOUSE ITEM 618]
 { 
-ITEM=shentrancepeice4
+ITEM=shentrancepiece4
 X=2
 Y=-1
 Z=0
@@ -3798,7 +3798,7 @@ Z=0
 
 [HOUSE ITEM 619]
 { 
-ITEM=shentrancepeice5
+ITEM=shentrancepiece5
 X=-1
 Y=0
 Z=0
@@ -3806,7 +3806,7 @@ Z=0
 
 [HOUSE ITEM 620]
 { 
-ITEM=shentrancepeice6
+ITEM=shentrancepiece6
 X=0
 Y=0
 Z=0
@@ -3814,7 +3814,7 @@ Z=0
 
 [HOUSE ITEM 621]
 { 
-ITEM=shentrancepeice6
+ITEM=shentrancepiece6
 X=1
 Y=0
 Z=0
@@ -3822,7 +3822,7 @@ Z=0
 
 [HOUSE ITEM 622]
 { 
-ITEM=shentrancepeice7
+ITEM=shentrancepiece7
 X=2
 Y=0
 Z=0
@@ -3830,7 +3830,7 @@ Z=0
 
 [HOUSE ITEM 623]
 { 
-ITEM=shentrancepeice8
+ITEM=shentrancepiece8
 X=-1
 Y=1
 Z=0
@@ -3838,7 +3838,7 @@ Z=0
 
 [HOUSE ITEM 624]
 { 
-ITEM=shentrancepeice6
+ITEM=shentrancepiece6
 X=0
 Y=1
 Z=0
@@ -3846,7 +3846,7 @@ Z=0
 
 [HOUSE ITEM 625]
 { 
-ITEM=shentrancepeice6
+ITEM=shentrancepiece6
 X=1
 Y=1
 Z=0
@@ -3854,7 +3854,7 @@ Z=0
 
 [HOUSE ITEM 626]
 { 
-ITEM=shentrancepeice9
+ITEM=shentrancepiece9
 X=2
 Y=1
 Z=0
@@ -3862,7 +3862,7 @@ Z=0
 
 [HOUSE ITEM 627]
 { 
-ITEM=shentrancepeice10
+ITEM=shentrancepiece10
 X=-1
 Y=2
 Z=0
@@ -3870,7 +3870,7 @@ Z=0
 
 [HOUSE ITEM 628]
 { 
-ITEM=shentrancepeice11
+ITEM=shentrancepiece11
 X=0
 Y=2
 Z=0
@@ -3878,7 +3878,7 @@ Z=0
 
 [HOUSE ITEM 629]
 { 
-ITEM=shentrancepeice12
+ITEM=shentrancepiece12
 X=1
 Y=2
 Z=0
@@ -3886,7 +3886,7 @@ Z=0
 
 [HOUSE ITEM 630]
 { 
-ITEM=shentrancepeice13
+ITEM=shentrancepiece13
 X=2
 Y=2
 Z=0
