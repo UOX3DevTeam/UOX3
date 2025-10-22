@@ -34,46 +34,42 @@ function command_ADD( socket, cmdString )
 			case "NPC":
 				if( splitString[1] )
 				{
-					// Join everything after "npc", normalize it
-					var rawNpc = splitString.slice(1).join(" ");
-					var normalizedNpc = normalizeSectionID( rawNpc );
-
-					// If last token is a number, treat it as amount
-					var maybeAmount = parseInt(splitString[splitString.length - 1]);
+					// Join tokens after "npc"
+					var tokens = splitString.slice( 1 );
+					// Trailing number => amount
+					var maybeAmount = parseInt( tokens[tokens.length - 1] );
 					if( !isNaN( maybeAmount ) && maybeAmount > 0 )
 					{
 						socket.addAmount = maybeAmount;
-						rawNpc = splitString.slice( 1, -1 ).join(" ");
-						normalizedNpc = normalizeSectionID( rawNpc );
+						tokens.pop();
 					}
 					else
-					{
 						socket.addAmount = 1;
-					}
 
-					socket.xText = normalizedNpc;
-					socket.CustomTarget( 0, GetDictionaryEntry( 8068, socket.language ) + " " + normalizedNpc ); // Select location for NPC:
+					// Keep underscores/dashes/spaces; just lowercase
+					var rawNpc = tokens.join(" ").toLowerCase();
+
+					socket.xText = rawNpc;
+					socket.CustomTarget( 0, GetDictionaryEntry( 8068, socket.language ) + " " + rawNpc ); // Select location for NPC:
 				}
 				break;
+
 			case "ITEM":
 				if( splitString[1] )
 				{
-					// Join everything after "item" into one string, normalize it
-					let rawItem = splitString.slice(1).join(" ");
-					let normalizedItem = normalizeSectionID( rawItem );
-
-					// If the *last* token looks like a number, treat that as amount
-					let maybeAmount = parseInt(splitString[splitString.length - 1]);
+					var tokens = splitString.slice(1);
+					var maybeAmount = parseInt( tokens[tokens.length - 1] );
 					if( !isNaN( maybeAmount ) && maybeAmount > 0 )
 					{
 						socket.addAmount = maybeAmount;
-						// Strip off that number when building the ID
-						rawItem = splitString.slice(1, -1).join(" ");
-						normalizedItem = normalizeSectionID( rawItem );
+						tokens.pop();
 					}
 
-					socket.xText = normalizedItem;
-					socket.CustomTarget( 2, GetDictionaryEntry( 8069, socket.language ) + " " + normalizedItem ); // Select location for scripted item:
+					// Keep underscores/dashes/spaces; just lowercase
+					var rawItem = tokens.join(" ").toLowerCase();
+
+					socket.xText = rawItem;
+					socket.CustomTarget( 2, GetDictionaryEntry( 8069, socket.language ) + " " + rawItem ); // Select location for scripted item:
 				}
 				break;
 			case "SPAWNER":
