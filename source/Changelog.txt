@@ -1,3 +1,6 @@
+22/10/2025 - uox3-changelog-bot[bot] (#437)
+Automated changelog update from #426. This PR will be auto-merged.
+
 22/10/2025 - DragonSlayer62 (#426)
     [ADD] Added new NPC definition for Treefellow in plant_base.dfn, with _t2a, _lbr and _aos variants in respective files
     [ADD] Added new NPC definitions for Doom Tree and Death Willow in agressiveplants.dfn
