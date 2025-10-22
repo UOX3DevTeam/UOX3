@@ -118,6 +118,7 @@ GETTOL=whippingvine_aos
 
 [base_quagmire]
 {
+GET=base_agressiveplants
 NAME=#//a quagmire
 ID=0x0315
 RACE=18
@@ -141,6 +142,7 @@ GETTOL=quagmire_aos
 
 [base_bogthing]
 {
+GET=base_agressiveplants
 NAME=#//a bog thing
 ID=0x030c
 RACE=18
@@ -164,6 +166,7 @@ GETTOL=bogthing_aos
 
 [base_bogling]
 {
+GET=base_agressiveplants
 NAME=#//a bogling
 ID=0x030b
 RACE=18

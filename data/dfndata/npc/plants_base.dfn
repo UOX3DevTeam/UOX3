@@ -9,7 +9,7 @@ FLAG=NEUTRAL
 
 [base_treefellow]
 {
-GET=base_agressiveplants
+GET=base_plants
 NAME=#//a treefellow
 ID=0x012d
 RACE=18
