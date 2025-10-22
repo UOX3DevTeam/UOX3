@@ -1,3 +1,8 @@
+22/10/2025 - DragonSlayer62 (#426)
+    [ADD] Added new NPC definition for Treefellow in plant_base.dfn, with _t2a, _lbr and _aos variants in respective files
+    [ADD] Added new NPC definitions for Doom Tree and Death Willow in agressiveplants.dfn
+    [UPD] Renamed agressiveplants.dfn to aggressiveplants_base.dfn and redefined NPC entries within as base definitions, with _lbr and _aos variants in respective files
+
 21/09/2025 - Xoduz (#432)
     [UPD] Updated all Item definitions for weapons and armor to always inherit a default set of properties regardless of era. Some eras default to data from other eras, in cases where there's not much difference between them. GETUO, GET2A, GETUOR all point to the definition entries for T2A, while GETTD, GETLBR all point to LBR entries, GETAOS, GETSE point to AOS entries, and GETML and above all point to TOL entries.
     [FIX] Fixed many instances of GET tags pointing to incorrect entries, including some cases that were self-referential, and some duplicate era-specific tags
