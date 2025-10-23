@@ -3638,91 +3638,91 @@ Y=0
 Z=0
 }
 
-// dirt 1
+// solenanthole dirt 1
 [HOUSE ITEM 600]
 { 
-ITEM=dirt1
+ITEM=solenantholedirt1
 X=0
 Y=0
 Z=0
 }
 
-// a hole
+// solenanthole
 [HOUSE ITEM 602]
 {
-ITEM=ahole
+ITEM=solenanthole
 X=0
 Y=0
 Z=0
 }
 
-// dirt 2
+// solenanthole dirt 2
 [HOUSE ITEM 603]
 { 
-ITEM=dirt2
+ITEM=solenantholedirt2
 X=1
 Y=1
 Z=0
 }
 
-// dirt 3
+// solenanthole dirt 3
 [HOUSE ITEM 604]
 { 
-ITEM=dirt3
+ITEM=solenantholedirt3
 X=1
 Y=0
 Z=0
 }
 
-// dirt 4
+// solenanthole dirt 4
 [HOUSE ITEM 605]
 { 
-ITEM=dirt4
+ITEM=solenantholedirt4
 X=1
 Y=-1
 Z=0
 }
 
-// dirt 5
+// solenanthole dirt 5
 [HOUSE ITEM 606]
 { 
-ITEM=dirt5
+ITEM=solenantholedirt5
 X=0
 Y=-1
 Z=0
 }
 
-// dirt 6
+// solenanthole dirt 6
 [HOUSE ITEM 607]
 { 
-ITEM=dirt6
+ITEM=solenantholedirt6
 X=-1
 Y=-1
 Z=0
 }
 
-// dirt 7
+// solenanthole dirt 7
 [HOUSE ITEM 608]
 { 
-ITEM=dirt7
+ITEM=solenantholedirt7
 X=-1
 Y=0
 Z=0
 }
 
-// dirt 8
+// solenanthole dirt 8
 [HOUSE ITEM 609]
 { 
-ITEM=dirt8
+ITEM=solenanthole dirt8
 X=-1
 Y=1
 Z=0
 }
 
-// dirt 9
+// solenanthole dirt 9
 [HOUSE ITEM 610]
 { 
-ITEM=dirt9
+ITEM=solenantholedirt9
 X=0
 Y=1
 Z=0

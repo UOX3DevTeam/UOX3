@@ -1,6 +1,6 @@
 // solen ant hole bits and pieces
 
-[base_dirt]
+[base_solenantholedirt]
 {
 NAME=dirt
 weight=100
@@ -8,13 +8,13 @@ movable=2
 decay=0
 }
 
-[dirt1]
+[solenantholedirt1]
 {
-GET=base_dirt
+GET=base_solenantholedirt
 ID=0x914
 }
 
-[ahole]
+[solenanthole]
 {
 NAME=a hole
 ID=0x122A
@@ -25,55 +25,55 @@ SCRIPT=2752
 decay=0
 }
 
-[dirt2]
+[solenantholedirt2]
 {
-GET=base_dirt
+GET=base_solenantholedirt
 ID=0x1B23
 COLOUR=0x970
 }
 
-[dirt3]
+[solenantholedirt3]
 {
-GET=base_dirt
+GET=base_solenantholedirt
 ID=0xEE0
 }
 
-[dirt4]
+[solenantholedirt4]
 {
-GET=base_dirt
+GET=base_solenantholedirt
 ID=0x1B24
 COLOUR=0x970
 }
 
-[dirt5]
+[solenantholedirt5]
 {
-GET=base_dirt
+GET=base_solenantholedirt
 ID=0xEE1
 }
 
-[dirt6]
+[solenantholedirt6]
 {
-GET=base_dirt
+GET=base_solenantholedirt
 ID=0x1B25
 COLOUR=0x970
 }
 
-[dirt7]
+[solenantholedirt7]
 {
-GET=base_dirt
+GET=base_solenantholedirt
 ID=0xEE2
 }
 
-[dirt8]
+[solenantholedirt8]
 {
-GET=base_dirt
+GET=base_solenantholedirt
 ID=0x1B26
 COLOUR=0x970
 }
 
-[dirt9]
+[solenantholedirt9]
 {
-GET=base_dirt
+GET=base_solenantholedirt
 ID=0xED3
 }
 

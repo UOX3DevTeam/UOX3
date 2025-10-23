@@ -88,7 +88,7 @@ TOPEACE=796 5
 {
 GET=base_black_solen_warrior
 GOLD=250 350
-//Bracelet of Binding needs created
+//Missing Loot Item Bracelet of Binding
 PACKITEM=picnicbasket
 PACKITEM=zoogifungus,3 13
 LOOT=randomgems
