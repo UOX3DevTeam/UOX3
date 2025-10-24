@@ -241,11 +241,11 @@ function onUseChecked( pUser, iUsed )
 
 		// Try entrance map first
 		if( teleportFromMap( pUser, key, entranceMap ))
-			return true;
+			return false;
 
 		// Then try exit map
 		if( teleportFromMap( pUser, key, exitMap ))
-			return true;
+			return false;
 	}
 	return false;
 }

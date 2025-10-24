@@ -350,6 +350,14 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 			{
 				adminWelcome.AddToolTip( tooltipClilocID, socket, "Decorations for floating wharf/village in the middle of the sea, only accessible by boat.<br> Added in client v7.0.9.0!" );
 			}
+			// Solen Hive Entrances
+			adminWelcome.AddCheckbox( 480, 190, 9722, 2153, 0, checkboxStartID + 12 );
+			adminWelcome.AddHTMLGump( 515, 195, 250, 20, 0, 0, "<BASEFONT color=#EEEEEE>Solen Hive</BASEFONT>" );
+			adminWelcome.AddHTMLGump( 515, 215, 250, 40, true, false, "Adds Solen Hive Entrances around the map" );
+			if( enableTooltips )
+			{
+				adminWelcome.AddToolTip( tooltipClilocID, socket, "Adds Solen Hive Entrances around the map" );
+			}
 			break;
 		case 3: // Trammel
 			adminWelcome.AddHTMLGump( 480, 40, 250, 20, 0, 0, "<CENTER><BIG><BASEFONT color=#3D9A2B>Trammel Decoration Addons</BASEFONT></BIG></CENTER>" );
@@ -727,6 +735,9 @@ function onTimer( timerObj, timerID )
 						break;
 					case 11: // Sea Market
 						pSocket.currentChar.ExecuteCommand( "decorate load felucca_seamarket|silent multiple" );
+						break;
+					case 12: // Solen Hive Entrances
+						pSocket.currentChar.ExecuteCommand( "decorate load felucca_solenhive|silent multiple" );
 						break;
 					// Trammel Addons
 					case 30: // Revamped Castle Blackthorn
