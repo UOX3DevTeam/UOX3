@@ -3,6 +3,25 @@ cmake_minimum_required(VERSION 3.18)
 project(uox3 VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 
+# 1. Fix for SpiderMonkey architecture detection (for AVMPLUS_AMD64)
+#    Use CMake's reliable variable to set the flag SpiderMonkey misses.
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
+    message(STATUS "Forcing AVMPLUS_AMD64 for x86_64 build")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DAVMPLUS_AMD64")
+endif()
+
+# 2. Fix for modern, strict GCC compilers (like on new Ubuntu/WSL)
+#    Adds permissive flags only if using GCC greater than 10.0
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 10.0)
+    message(STATUS "Applying compatibility flags for modern GCC ${CMAKE_CXX_COMPILER_VERSION}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -Wno-narrowing")
+
+    # Add POSIX headers only needed on Linux
+    if(UNIX AND NOT APPLE)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -include unistd.h -include sys/mman.h")
+    endif()
+endif()
+
 # *************************************************************************
 # The basic executable we are making
 # *************************************************************************
