@@ -491,6 +491,7 @@ declare global {
   interface Console {
               logEcho: number;
               mode:    number;
+    BeginRestart(): void;
     BeginShutdown(): void;
     ClearScreen(): void;
     Error( value: string ): void;
