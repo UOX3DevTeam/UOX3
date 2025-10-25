@@ -309,6 +309,7 @@ function onCollide( pSock, pUser, iObject )
 			spawnCount++;
 			iObject.SetTag( "spawnCount", spawnCount );
 			ant.SetTag( "parentSerial", ( iObject.serial ).toString() );
+			ant.Wander( iObject.x, iObject.y, 10 );
 		}
 	}
 	return true;
