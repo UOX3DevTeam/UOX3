@@ -9591,6 +9591,23 @@ JSBool CConsole_PrintSpecial( JSContext *cx, uintN argc, jsval *vp )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CConsole_BeginRestart()
+//|	Prototype	-	void BeginRestart()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Start the UOX3 restart sequence
+//o------------------------------------------------------------------------------------------------o
+JSBool CConsole_BeginRestart( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc != 0 )
+	{
+		ScriptError( cx, "BeginRestart: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+	messageLoop << MSG_RESTART;
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CConsole_BeginShutdown()
 //|	Prototype	-	void BeginShutdown()
 //o------------------------------------------------------------------------------------------------o
