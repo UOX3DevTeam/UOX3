@@ -89,4 +89,4 @@ jobs:
           body: "Automated changelog update from #${{ steps.get_info.outputs.pr_number }}. This PR will be auto-merged."
           branch: "changelog/pr-${{ steps.get_info.outputs.pr_number }}"
           base: ${{ steps.get_info.outputs.base_branch }}
-          labels: "automated changelog merge"
+          labels: "automated changelog merge, skip changelog"
