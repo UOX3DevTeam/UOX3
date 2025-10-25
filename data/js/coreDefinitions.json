@@ -2937,6 +2937,14 @@
           "returns": "void"
         },
         {
+          "name": "BeginRestart",
+          "cppName": "CConsole_BeginRestart",
+          "params": {
+            "num": 0
+          },
+          "returns": "void"
+        },
+        {
           "name": "BeginShutdown",
           "cppName": "CConsole_BeginShutdown",
           "params": {

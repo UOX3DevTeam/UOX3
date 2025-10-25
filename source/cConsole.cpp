@@ -1012,6 +1012,11 @@ auto CConsole::Process(std::int32_t c) -> void
 		SI32 j = 0;
 		switch( c )
 		{
+			case 'R':
+				// Force server to restart
+				messageLoop << "CMD: Restarting server...";
+				messageLoop << MSG_RESTART;
+				break;
 			case '!':
 				// Force server to save accounts file
 				messageLoop << "CMD: Saving Accounts... ";
@@ -1272,8 +1277,8 @@ auto CConsole::Process(std::int32_t c) -> void
 				messageLoop << MSG_SECTIONBEGIN;
 				messageLoop << " ShardOP:";
 				messageLoop << "    * - Lock/Unlock Console ? - Commands list(this)";
-				messageLoop << "    C - Configuration       H - Unused";
-				messageLoop << "    Y - Console Broadcast   Q - Quit/Exit           ";
+				messageLoop << "    C - Configuration       Y - Console Broadcast";
+				messageLoop << "    Q - Quit/Exit           R - Restart Server";
 				messageLoop << " Load Commands:";
 				messageLoop << "    1 - Ini                 2 - Accounts";
 				messageLoop << "    3 - Regions             4 - Spawn Regions";
@@ -1282,10 +1287,6 @@ auto CConsole::Process(std::int32_t c) -> void
 				messageLoop << "    9 - HTML Templates      0 - ALL(1-9)";
 				messageLoop << " Save Commands:";
 				messageLoop << "    ! - Accounts            @ - World(w/AccountImport)";
-				messageLoop << "    # - Unused              $ - Unused";
-				messageLoop << "    % - Unused              ^ - Unused";
-				messageLoop << "    & - Unused              ( - Unused";
-				messageLoop << "    ) - Unused";
 				messageLoop << " Server Maintenence:";
 				messageLoop << "    P - Performance         W - Characters Online";
 				messageLoop << "    M - Memory Information  T - 10 Minute Shutdown";

@@ -1,3 +1,7 @@
+25/10/2025 - Xoduz (#439)
+    [ADD] Added functionality to trigger a server restart from within UOX3, either via console ('R'), command ('restart) or JS Console Method (.BeginRestart()). This will first perform a world save, then do a clean shut down before restarting UOX3 in a new process
+    [FIX] Fixed SpiderMonkey compilation on modern GCC (Linux/WSL) by adding missing architecture detection and compatibility flags to CMakeLists.txt
+
 22/10/2025 - DragonSlayer62 (#426)
     [ADD] Added new NPC definition for Treefellow in plant_base.dfn, with _t2a, _lbr and _aos variants in respective files
     [ADD] Added new NPC definitions for Doom Tree and Death Willow in agressiveplants.dfn
