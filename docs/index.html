@@ -766,6 +766,7 @@ packitem=0x0f8d,30
 					<div class="spoiler">
 						<p>Should you ever need to shut down UOX3 for any reason, it's important that you do it correctly to avoid any loss of data. If you simply close UOX3 using the 'x' in the corner of the window, any changes made since the last worldsave will be permanently lost.</p>
 						<p>Instead, either use the in-game GM command <span class="hl">'shutdown #</span> (where # is the number of seconds until shutdown), or press <span class="hl">*</span> in the UOX3 console to disable safe-mode, followed by either <span class="hl">Q</span> or <span class="hl">Esc</span>. This will prompt UOX3 to initiate the shutdown process, saving the game world and freeing up used memory.</p>
+						<p>If your intention is to <strong>restart</strong> the server entirely, you can also use the <span class="hl">'restart</span> command, or press '<span class="hl">r</span>' in the unlocked UOX3 console. This will save your world, do a clean shutdown and then restart UOX3 in a new process. Useful if you've made .ini changes that need a restart to go into effect (remember to reload the ini file before the restart if you made those changes manually though).</p>
 					</div>
 				  </div>
 				</div> <!-- cd-faq__content -->
@@ -3751,6 +3752,14 @@ packitem=0x0f8d,30
 							Parameters: <span class="hl"><em>(nothing)</em></span></p>
 						</div>
 
+						<input type="checkbox" id="spoiler_cmd_restart">
+						<label for="spoiler_cmd_restart">restart <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>Initiates server restart sequence.</p>
+							<p>Command: <span class="hl">'restart</span><br>
+							Parameters: <span class="hl"><em>(nothing)</em></span></p>
+						</div>
+
 						<input type="checkbox" id="spoiler_cmd_restock">
 						<label for="spoiler_cmd_restock">restock <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
@@ -4401,6 +4410,8 @@ packitem=0x0f8d,30
 						<p><span class="hl">?</span> - Displays console command list.</p>
 						<p><span class="hl">C</span> - Displays some basic server setting information.</p>
 						<p><span class="hl">Y</span> - Console broadcast. Will broadcast a system message entered in console, to all online players.</p>
+						<p><span class="hl">Q</span> - Quit/Shutdown UOX3 completely, after performing a world save.</p>
+						<p><span class="hl">R</span> - Restarts UOX3 in a new process after performing a world save and a clean shutdown.</p>
 					</div>
 					<input type="checkbox" id="spoiler_console_cmd_load">
 					<label for="spoiler_console_cmd_load">Load Commands <i class="fas fa-angle-down"></i></label>
@@ -5167,7 +5178,7 @@ packitem=0x0f8d,30
 								<ul>
 									<li>Be sure to also install <span class="hl">Desktop development with C++</span> via the Visual Studio Installer, along with the individual component titled <span class="hl">VC++ 2017 version 15.9 v14.16 latest v141 tools</span> (VS2017) or <span class="hl">MSVC v143 - VS 2022 C++ x64/x86 build tools</span> (VS2022). CMake is included for command-line builds.</li>
 								</ul>
-							<li><strong>Linux</strong> (Debian-based) - Run <span class="hl">sudo apt install build-essential cmake</span> in a Terminal: (or use your Linux distro's package manager)</li>
+							<li><strong>Linux</strong> (Debian-based) - Run <span class="hl">sudo apt-get update</span> + <span class="hl">sudo apt install build-essential cmake</span> in a Terminal: (or use your Linux distro's package manager)</li>
 							<li><strong>FreeBSD</strong> - Run <span class="hl">pkg install cmake</span> in a Terminal. Alternatively, build cmake via ports if desired.</li>
 							<li><strong>macOS</strong> - Download <a href="https://apps.apple.com/us/app/xcode/id497799835?mt=12" title="XCode" target="_blank">Xcode</a> (for building with an IDE) via the App Store, and/or <a href="https://cmake.org/download/" title="CMake" target="_blank">CMake</a> (for command-line builds)</li>
 							<li><strong>Docker/Podman</strong> - Ensure that it is downloaded and installed (Windows) or installed from your package manager</li>
