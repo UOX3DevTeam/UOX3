@@ -363,6 +363,7 @@ JSBool CConsole_ClearScreen( JSContext *cx, uintN argc, jsval *vp );
 JSBool CConsole_PrintBasedOnVal( JSContext *cx, uintN argc, jsval *vp );
 JSBool CConsole_MoveTo( JSContext *cx, uintN argc, jsval *vp );
 JSBool CConsole_PrintSpecial( JSContext *cx, uintN argc, jsval *vp );
+JSBool CConsole_BeginRestart( JSContext *cx, uintN argc, jsval *vp );
 JSBool CConsole_BeginShutdown( JSContext *cx, uintN argc, jsval *vp );
 JSBool CConsole_Reload( JSContext *cx, uintN argc, jsval *vp );
 
@@ -803,6 +804,7 @@ inline JSFunctionSpec CConsole_Methods[] =
 	{ "PrintBasedOnVal",	CConsole_PrintBasedOnVal,	1, 0 },
 	{ "MoveTo",				CConsole_MoveTo,			2, 0 },
 	{ "PrintSpecial",		CConsole_PrintSpecial,		2, 0 },
+	{ "BeginRestart",		CConsole_BeginRestart,		0, 0 },
 	{ "BeginShutdown",		CConsole_BeginShutdown,		0, 0 },
 	{ "Reload",				CConsole_Reload,			1, 0 },
 	JS_FS_END
