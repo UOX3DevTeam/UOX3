@@ -278,36 +278,42 @@ function TeleportWithPets( pUser, x, y, z )
 
 function onCollide( pSock, pUser, iObject )
 {
-	if( !ValidateObject( pUser ) || !pUser.isChar || pUser.npc )
+	if( !ValidateObject (pUser ) || !pUser.isChar || pUser.npc )
 		return false;
 
 	if( iObject.sectionID == "solenentrancehole" || iObject.sectionID == "solenentrancehole2" ||
 		iObject.sectionID == "shexitteleporter" || iObject.GetTag( "Examined" ) == 1 )
 		return false;
 
-	if( iObject.GetTag( "Spawned" ) == true )
+	var blocking = AreaItemFunction( "Solen_CountCooldown", iObject, 2, pSock );
+	if( blocking > 0 )
 		return false;
 
-	var spawnCount = iObject.GetTag( "spawnCount" );
-	if( spawnCount < 5 )
-	{
-		var count = 1 + RandomNumber( 1, 4 );
+	var spawnCount = parseInt( iObject.GetTag( "spawnCount" ), 10 ) || 0;
+	if( spawnCount >= 5 )
+		return true;
 
-		for( var i = 0; i < count && spawnCount < 5; ++i )
+	var free     = 5 - spawnCount;
+	var roll     = RandomNumber( 1, 4 );          // 1..4 inclusive
+	var toSpawn  = ( roll < free ) ? roll : free; // cap to free slots
+	if( toSpawn <= 0 )
+		return true;
+
+	AreaItemFunction( "Solen_LockCluster", iObject, 2, pSock );
+
+	for( var i = 0; i < toSpawn; ++i )
+	{
+		var ant = SpawnAnt( iObject );
+		if( ValidateObject( ant )) 
 		{
-			var ant = SpawnAnt( iObject );
-			if( ValidateObject( ant ) )
-			{
-				spawnCount++;
-				iObject.SetTag( "spawnCount", spawnCount );
-				iObject.SetTag( "Spawned", true );
-				iObject.StartTimer( 300000, 1, true ); // 5 min cooldown
-				ant.SetTag( "parentSerial", ( iObject.serial ).toString() );
-			}
+			spawnCount++;
+			iObject.SetTag( "spawnCount", spawnCount );
+			ant.SetTag( "parentSerial", ( iObject.serial ).toString() );
 		}
 	}
 	return true;
 }
+
 
 function onTimer( iObject, timerID )
 {
@@ -329,4 +335,22 @@ function SpawnAnt( iObject )
 	}
 
 	return ant;
+}
+
+function Solen_CountCooldown( srcObj, trgItem, pSock )
+{
+	if( !ValidateObject( trgItem ))
+		return false;
+	return ( trgItem.GetTag( "Spawned" ) === true );
+}
+
+function Solen_LockCluster( srcObj, trgItem, pSock )
+{
+	if( !ValidateObject( trgItem ))
+		return false;
+
+	trgItem.SetTag( "Spawned", true );
+	trgItem.StartTimer( 300000, 1, true ); // timerID=1
+
+	return true;e
 }
