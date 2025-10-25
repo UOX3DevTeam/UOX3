@@ -331,7 +331,8 @@ function SpawnAnt( iObject )
 	var ant = SpawnNPC( color + "_solen_" + type, iObject.x, iObject.y, iObject.z, iObject.worldnumber, iObject.instanceID );
 	if( ValidateObject( ant ))
 	{
-		ant.AddScriptTrigger( 3214 );
+		ant.AddScriptTrigger( 3514 );
+		ant.shouldSave = false;
 	}
 
 	return ant;
