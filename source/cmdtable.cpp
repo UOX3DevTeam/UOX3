@@ -31,6 +31,9 @@
 #include "StringUtility.hpp"
 
 #include "Dictionary.h"
+#include "cThreadQueue.h"
+
+extern CThreadQueue messageLoop;
 
 void CollectGarbage( void );
 void EndMessage( SI32 x );
@@ -521,6 +524,20 @@ void Command_SetTime( void )
 			cwmWorldState->ServerData()->ServerTimeMinutes( newminutes );
 		}
 	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	Command_Restart()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Initiates a full server restart that in the end starts a new process
+//o------------------------------------------------------------------------------------------------o
+void Command_Restart( void )
+{
+	// Broadcast to all players that the restart is happening
+	SysBroadcast( "The server is restarting NOW." ); 
+
+	// Push the restart message to the main message loop
+	messageLoop << MSG_RESTART;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1514,6 +1531,7 @@ void CCommands::CommandReset()
 	CommandMap["RESPAWN"]			= CommandMapEntry_st( CL_GM,		CMD_FUNC,		(CMD_DEFINE)&Command_Respawn);
 	CommandMap["REGSPAWN"]			= CommandMapEntry_st( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&Command_RegSpawn);
 	CommandMap["REPORTBUG"]			= CommandMapEntry_st( CL_PLAYER,	CMD_SOCKFUNC,	(CMD_DEFINE)&Command_ReportBug);
+	CommandMap["RESTART"]			= CommandMapEntry_st( CL_ADMIN,		CMD_FUNC,		(CMD_DEFINE)&Command_Restart);
 	//S
 	CommandMap["SETPOST"]			= CommandMapEntry_st( CL_CNS,		CMD_SOCKFUNC,	(CMD_DEFINE)&Command_SetPost);
 	CommandMap["SPAWNKILL"]			= CommandMapEntry_st( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&Command_SpawnKill);
