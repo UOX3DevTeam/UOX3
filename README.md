@@ -23,7 +23,7 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 
   > * **Windows** - Download and install [Community Edition of Visual Studio 2017 or 2022](https://visualstudio.microsoft.com/downloads/).
   > * * Be sure to also install **Desktop development with C++** via the Visual Studio Installer, along with the individual component titled **VC++ 2017 version 15.9 v14.16 latest v141 tools** (VS2017) or **MSVC v143 - VS 2022 C++ x64/x86 build tools** (VS2022). CMake is included for command-line builds.
-  > * **Linux (Debian-based)** - Run `sudo apt install build-essential cmake` in a Terminal:  (or use your Linux distro's package manager)
+  > * **Linux (Debian-based)** - Run `sudo apt-get update` + `sudo apt install build-essential cmake` in a Terminal:  (or use your Linux distro's package manager)
   > * **FreeBSD** - Run `pkg install cmake` in a Terminal. Alternatively, build `cmake` via ports if desired.
   > * **macOS** - Download [Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12) (for building with an IDE) via the App Store, and/or [CMake](https://cmake.org/download/) (for command-line builds)
   > * **Docker/Podman** - Ensure that it is downloaded and installed (Windows) or installed from your package manager

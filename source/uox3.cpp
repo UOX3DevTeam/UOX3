@@ -82,6 +82,9 @@
 #if PLATFORM == WINDOWS
 #include <process.h>
 #include <conio.h>
+#include <windows.h>
+#else
+#include <unistd.h>
 #endif
 
 
@@ -102,6 +105,7 @@ bool isWorldSaving = false;
 bool conThreadCloseOk	= false;
 bool netpollthreadclose	= false;
 auto saveOnShutdown = false;
+std::atomic<bool> g_bPerformRestart = false;
 
 //o------------------------------------------------------------------------------------------------o
 // Classes we will use
@@ -445,6 +449,67 @@ auto main( SI32 argc, char *argv[] ) ->int
 	SetConsoleCtrlHandler( exit_handler, false );
 #endif
 	
+	if( g_bPerformRestart )
+	{
+		Console << "Attempting to restart the server..." << myendl;
+
+#if PLATFORM == WINDOWS
+
+		// Reconstruct the command line from argv
+		std::string cmdLine = "";
+		for(int i = 0; i < argc; ++i )
+		{
+			// Add quotes to handle paths with spaces
+			cmdLine += "\""; 
+			cmdLine += argv[i];
+			cmdLine += "\" ";
+		}
+
+		STARTUPINFO si;
+		PROCESS_INFORMATION pi;
+		ZeroMemory( &si, sizeof( si ));
+		si.cb = sizeof( si );
+		ZeroMemory( &pi, sizeof( pi ));
+
+		// Start the child process, using CREATE_NEW_CONSOLE
+		if( CreateProcess( NULL,           // Application name (use cmdLine)
+			( LPSTR )cmdLine.c_str(), // Command line
+			NULL,           // Process handle not inheritable
+			NULL,           // Thread handle not inheritable
+			FALSE,          // Set handle inheritance to FALSE
+			CREATE_NEW_CONSOLE, // Creation flags
+			NULL,           // Use parent's environment block
+			NULL,           // Use parent's starting directory
+			&si,            // Pointer to STARTUPINFO
+			&pi ))          // Pointer to PROCESS_INFORMATION
+		{
+			// Successfully launched, close handles so we don't leak them
+			Console.PrintDone();
+			CloseHandle( pi.hProcess );
+			CloseHandle( pi.hThread );
+
+			// Now, perform the final exit of this (parent) process
+			conThreadCloseOk = true;
+			Shutdown( 0 );
+		}
+		else
+		{
+			// Failed to launch new process
+			Console.Error( "Failed to restart server. CreateProcess failed." );
+			// Fall through to the normal shutdown
+		}
+#else
+		// On Linux/POSIX, execv replaces the current process image
+		// with a new one loaded from the executable file.
+		// The new process inherits the PID but gets a fresh memory space.
+		execv( argv[0], argv );
+
+		// If execv returns, it means it failed.
+		Console.Error( "Failed to restart server. execv failed." );
+		// Fall through to the normal shutdown
+#endif
+	}
+
 	Console.Log( "Server Shutdown!\n=======================================================================\n" , "server.log" );
 	
 	conThreadCloseOk = true;	//	This will signal the console thread to close
@@ -811,6 +876,10 @@ auto DoMessageLoop() -> void
 		switch( tVal.actualMessage )
 		{
 			case MSG_SHUTDOWN: 	cwmWorldState->SetKeepRun( false ); break;
+			case MSG_RESTART:
+				g_bPerformRestart = true;
+				cwmWorldState->SetKeepRun( false ); // This triggers the main loop to exit
+				break;
 			case MSG_COUNT: 	break;
 			case MSG_WORLDSAVE: cwmWorldState->SetOldTime( 0 ); break;
 			case MSG_PRINT: 	Console << tVal.data << myendl; break;
