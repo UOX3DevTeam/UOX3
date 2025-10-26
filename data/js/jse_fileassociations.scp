@@ -176,6 +176,7 @@
 3226=npc/ai/monster/ancient_lich.js
 3227=npc/ai/monster/zealot_of_khaldun.js
 3228=npc/ai/monster/shadowfiend.js
+3229=npc/ai/summon/animated_dead.js
 
 // Magic Items
 3300=item/magic_items.js
@@ -359,6 +360,7 @@
 6002=magic/helper/check_travel_restrictions.js
 6003=magic/helper/teleport_helper.js
 6004=magic/helper/check_reagents.js
+6005=magic/helper/wraith_leech.js
 6101=magic/chivalry/cleansebyfire.js
 6102=magic/chivalry/closewounds.js
 6103=magic/chivalry/consecrateweapon.js
@@ -479,6 +481,8 @@
 601=magic/level1targ.js
 602=magic/createfood.js
 700=magic/wand_item_id.js
+750=magic/chivalry/paladinspells.js
+751=magic/necrospells.js
 }
 
 [SKILLUSE_SCRIPTS]

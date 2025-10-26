@@ -1475,6 +1475,7 @@ JSBool CItemProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool str
 			case CIP_MANABONUS:		gPriv->SetManaBonus( static_cast<SI16>( encaps.toInt() ));	break;
 			case CIP_ARTIFACTRARITY:	gPriv->SetArtifactRarity( static_cast<SI16>( encaps.toInt() ));	break;
 			case CIP_DURABILITYHPBONUS:	gPriv->SetDurabilityHpBonus( static_cast<SI16>( encaps.toInt() ));	break;
+			case CIP_DAMAGEINCREASE:	gPriv->SetDamageIncrease( static_cast<SI16>( encaps.toInt() ));	break;
 			case CIP_NAME2:			gPriv->SetName2( encaps.toString() );						break;
 			case CIP_RACE:			gPriv->SetRace( static_cast<RACEID>( encaps.toInt() ));		break;
 			case CIP_MAXHP:			gPriv->SetMaxHP( static_cast<SI16>( encaps.toInt() ));		break;
@@ -2679,6 +2680,7 @@ JSBool CCharacterProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBoo
 			case CCP_LUCK:			gPriv->SetLuck( static_cast<SI16>( encaps.toInt() ));		break;
 			case CCP_HITCHANCE:		gPriv->SetHitChance( static_cast<SI16>( encaps.toInt() ));	break;
 			case CCP_DEFENSECHANCE:	gPriv->SetDefenseChance( static_cast<SI16>( encaps.toInt() ));	break;
+			case CCP_DAMAGEINCREASE:	gPriv->SetDamageIncrease( static_cast<SI16>( encaps.toInt() ));		break;
 			case CCP_AITYPE:		gPriv->SetNPCAiType( static_cast<SI16>( encaps.toInt() ));	break;
 			case CCP_SPLIT:			gPriv->SetSplit( static_cast<UI08>( encaps.toInt() ));		break;
 			case CCP_SPLITCHANCE:	gPriv->SetSplitChance( static_cast<UI08>( encaps.toInt() ));break;

@@ -79,6 +79,9 @@ function onLogin( socket, pChar )
 /** @type { ( sockPlayer: Socket, pPlayer: Character ) => boolean } */
 function onLogout( pSock, pChar )
 {
+	// Force-exit any active necro form on logout
+    TriggerEvent(751, "ExitNecroFormOnLogout", pSock, pChar);
+
 	var minSinceLogin = Math.round( GetCurrentClock() / 1000 / 60 ) - parseInt( pChar.GetTempTag( "loginTime" ));
 	pChar.playTime += minSinceLogin;
 	pChar.account.totalPlayTime += minSinceLogin;
