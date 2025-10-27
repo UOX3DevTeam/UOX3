@@ -1,0 +1,233 @@
+[ambitious_black_solen_queen_lbr]
+{//Quest Npc
+GET=base_ambitious_black_solen_queen
+}
+
+[black_infilrator_queen_lbr]
+{
+GET=base_black_infilrator_queen
+GOLD=250 350
+PACKITEM=picnicbasket
+PACKITEM=zoogifungus,4 16
+LOOT=randomgems
+STR=327 350
+DEX=145 162
+INT=96 113
+DEF=72
+DAMAGE=10 15
+MAGICRESISTANCE=900 900
+TACTICS=900 900
+WRESTLING=910 910
+FAME=6500
+KARM=-6500
+TOPROV=497
+TOPEACE=497 5
+}
+
+[black_solen_infilrator_warrior_lbr]
+{
+GET=base_black_solen_infilrator_warrior
+GOLD=250 350
+PACKITEM=picnicbasket
+PACKITEM=zoogifungus,3 13
+LOOT=randomgems
+STR=206 228
+DEX=123 143
+INT=66 90
+DEF=72
+DAMAGE=5 15
+MAGICRESISTANCE=800 800
+TACTICS=800 800
+WRESTLING=820 820
+FAME=3000
+KARM=-3000
+TOPROV=415
+TOPEACE=415 5
+}
+
+[black_queen_lbr]
+{
+GET=base_black_queen
+GOLD=500 800
+PACKITEM=picnicbasket
+PACKITEM=zoogifungus,5 25
+PACKITEM=crystalballofpetsummoning
+LOOT=randomgems
+STR=298 319
+DEX=121 137
+INT=78 99
+DEF=52
+DAMAGE=15 20
+MAGICRESISTANCE=700 700
+TACTICS=900 900
+WRESTLING=910 910
+FAME=4500
+KARM=-4500
+TOPROV=497
+TOPEACE=497 5
+}
+
+[black_solen_warrior_lbr]
+{
+GET=base_black_solen_warrior
+GOLD=250 350
+//Bracelet of Binding needs created
+PACKITEM=picnicbasket
+PACKITEM=zoogifungus,3 13
+LOOT=randomgems
+STR=196 218
+DEX=104 120
+INT=38 59
+DEF=52
+DAMAGE=5 15
+MAGICRESISTANCE=600 600
+TACTICS=800 800
+WRESTLING=820 820
+FAME=3000
+KARM=-3000
+TOPROV=345
+TOPEACE=345 5
+}
+
+[black_solen_worker_lbr]
+{
+GET=base_black_solen_worker
+GOLD=80 150
+PACKITEM=picnicbasket
+PACKITEM=zoogifungus,1 6
+LOOT=randomgems
+STR=96 119
+DEX=82 105
+INT=37 60
+DEF=32
+DAMAGE=5 7
+MAGICRESISTANCE=600 600
+TACTICS=650 650
+WRESTLING=637 640
+FAME=1500
+KARM=-1500
+TOPROV=345
+TOPEACE=345 5
+}
+
+[black_solen_matriarch_lbr]
+{//Quest Npc
+GET=base_black_solen_matriarch
+}
+
+[ambitious_red_solen_queen_lbr]
+{//Quest Npc
+GET=base_ambitious_red_solen_queen
+}
+
+[red_infilrator_queen_lbr]
+{
+GET=base_red_infilrator_queen
+GOLD=250 350
+PACKITEM=picnicbasket
+PACKITEM=zoogifungus,4 16
+LOOT=randomgems
+STR=327 350
+DEX=145 162
+INT=96 113
+DEF=72
+DAMAGE=10 15
+MAGICRESISTANCE=900 900
+TACTICS=900 900
+WRESTLING=910 910
+FAME=6500
+KARM=-6500
+TOPROV=497
+TOPEACE=497 5
+}
+
+[red_solen_infilrator_warrior_lbr]
+{
+GET=base_red_solen_infilrator_warrior
+GOLD=250 350
+PACKITEM=picnicbasket
+PACKITEM=zoogifungus,3 13
+LOOT=randomgems
+STR=206 228
+DEX=123 143
+INT=66 90
+DEF=72
+DAMAGE=5 15
+MAGICRESISTANCE=800 800
+TACTICS=800 800
+WRESTLING=820 820
+FAME=3000
+KARM=-3000
+TOPROV=415
+TOPEACE=415 5
+}
+
+[red_queen_lbr]
+{
+GET=base_red_queen
+GOLD=500 800
+PACKITEM=picnicbasket
+PACKITEM=zoogifungus,5 25
+PACKITEM=crystalballofpetsummoning
+LOOT=randomgems
+STR=298 319
+DEX=121 137
+INT=78 99
+DEF=52
+DAMAGE=15 20
+MAGICRESISTANCE=700 700
+TACTICS=900 900
+WRESTLING=910 910
+FAME=4500
+KARM=-4500
+TOPROV=497
+TOPEACE=497 5
+}
+
+[red_solen_warrior_lbr]
+{
+GET=base_red_solen_warrior
+GOLD=250 350
+//Bracelet of Binding needs created
+PACKITEM=picnicbasket
+PACKITEM=zoogifungus,3 13
+LOOT=randomgems
+STR=196 218
+DEX=104 120
+INT=38 59
+DEF=52
+DAMAGE=5 15
+MAGICRESISTANCE=600 600
+TACTICS=800 800
+WRESTLING=820 820
+FAME=3000
+KARM=-3000
+TOPROV=345
+TOPEACE=345 5
+}
+
+[red_solen_worker_lbr]
+{
+GET=base_red_solen_worker
+GOLD=80 150
+PACKITEM=picnicbasket
+PACKITEM=zoogifungus,1 6
+LOOT=randomgems
+STR=96 119
+DEX=82 105
+INT=37 60
+DEF=32
+DAMAGE=5 7
+MAGICRESISTANCE=600 600
+TACTICS=650 650
+WRESTLING=637 640
+FAME=1500
+KARM=-1500
+TOPROV=345
+TOPEACE=345 5
+}
+
+[red_solen_matriarch_lbr]
+{//Quest Npc
+GET=base_red_solen_matriarch
+}
