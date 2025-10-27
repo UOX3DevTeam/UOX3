@@ -60,7 +60,7 @@ function onCallback0( pSock, ourObj )
 		var skillToTame = ourObj.skillToTame;
 		var pLanguage 	= pSock.language;
 
-		if( !ourObj.npc || skillToTame == 0x7FFF )
+		if( !ourObj.npc || skillToTame == 0x7FFF || ourObj.GetTag( "animated" ))
 		{
 			pSock.SysMessage( GetDictionaryEntry( 1593, pLanguage )); // You can't tame that creature
 			return;

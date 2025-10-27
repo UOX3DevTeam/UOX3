@@ -36,11 +36,18 @@ function onAICombatTarget( pChar, pTarget )
 function onTimer( mChar, timerID )
 {
 	var socket = mChar.socket;
-	switch( timerID )
+	switch (timerID)
 	{
 		case 1:
 			mChar.Kill();
-		break;
+			break;
+		case 2:
+			if (mChar.GetTag("ad_decay"))
+			{
+				mChar.health = Math.max(1, mChar.health - 5);
+				mChar.StartTimer(5000, 2, 3229);
+			}
+			break;
 	}
 }
 
@@ -48,4 +55,14 @@ function onDeath( pDead, iCorpse )
 {
 	iCorpse.SetTag("animated", true);
 	return true;
+}
+
+function onReleasePet( player, pet )
+{
+	return false;
+}
+
+function onTalk( myChar, mySpeech )
+{
+	return false;
 }

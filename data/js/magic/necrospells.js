@@ -365,11 +365,21 @@ function onTimer(mChar, timerID)
     if (timerID == 112)
 	{
         if (mSock)
-			mChar.SetTimer(Timer.SPELLRECOVERYTIME, Spells[109].recoveryDelay);
+			mChar.SetTimer(Timer.SPELLRECOVERYTIME, Spells[112].recoveryDelay);
         // call success with self as target (not used, but keeps flow consistent)
         onSpellSuccess(mSock, mChar, mChar, 109);
         return;
     }
+
+	if (timerID == 113)
+	{
+        if (mSock)
+			mChar.SetTimer(Timer.SPELLRECOVERYTIME, Spells[113].recoveryDelay);
+        // call success with self as target (not used, but keeps flow consistent)
+        onSpellSuccess(mSock, mChar, mChar, 109);
+        return;
+    }
+
 	// --- Wraith Form: no target required ---
 	if (timerID == 116)
 	{
@@ -535,8 +545,23 @@ function onSpellSuccess(mSock, mChar, ourTarg, spellID)
 		}
 	}
 
+	// --- Vampiric Embrace: garlic hurts when casting garlic-using spells ---
+	if (mChar.GetTag("necroForm") === "vampire" && SpellNeedsGarlic(mSpell))
+	{
+		// OSI-style tick: 17–23 damage as fire (adjust damage type to your shard’s index)
+		var dmg = 17 + RandomNumber(0, 6); // 17-23
+		mChar.Damage(dmg, 5);              // 5 = fire on most UOX3 builds; change if yours differs
+		// (optional) feedback
+		if (mSock) mSock.SysMessage("The garlic sears your undead flesh!");
+	}
+
 	// This is where the code actually executes ... all of this setup for a single line of code!
 	DispatchSpell(spellNum, mSpell, sourceChar, ourTarg, mChar);
+}
+
+function SpellNeedsGarlic(mSpell){
+	// your spells expose per-reg counts (garlic, ash, etc). If it needs 1 garlic, return true
+	return !!(mSpell && (mSpell.garlic|0) > 0);
 }
 
 // ----- Familiar entries (OSI thresholds) -----
@@ -553,22 +578,21 @@ var DisabledColor32 = 0x4A8B52;
 
 function ExitFormByKey(pChar, pSock, key)
 {
-	switch (key) 
-	{
-		case "horrific": ExitHorrificBeast(pChar, pSock); break;
-		case "lich":     ExitLichForm(pChar, pSock);     break;
-		case "wraith":   ExitWraithForm(pChar, pSock);   break;
-	}
+    switch (key){
+        case "horrific": ExitHorrificBeast(pChar, pSock); break;
+        case "lich":     ExitLichForm(pChar, pSock);      break;
+        case "wraith":   ExitWraithForm(pChar, pSock);    break;
+        case "vampire":  ExitVampiricEmbrace(pChar, pSock); break;
+    }
 }
 
-function EnterFormByKey(pChar, pSock, key) 
-{
-	switch (key)
-	{
-		case "horrific": EnterHorrificBeast(pChar, pSock); break;
-		case "lich":     EnterLichForm(pChar, pSock);     break;
-		case "wraith":   EnterWraithForm(pChar, pSock);   break;
-	}
+function EnterFormByKey(pChar, pSock, key){
+    switch (key){
+        case "horrific": EnterHorrificBeast(pChar, pSock);     break;
+        case "lich":     EnterLichForm(pChar, pSock);          break;
+        case "wraith":   EnterWraithForm(pChar, pSock);        break;
+        case "vampire":  EnterVampiricEmbrace(pChar, pSock);   break;
+    }
 }
 
 function ExitNecroFormOnLogout(pSock, pChar)
@@ -580,7 +604,7 @@ function ExitNecroFormOnLogout(pSock, pChar)
 		return true;
 
     // remove any form-specific triggers (e.g., Wraith mana-leech)
-    pChar.RemoveScriptTrigger(7004); // safe to call even if not present
+    pChar.RemoveScriptTrigger(6005); // safe to call even if not present
 
     switch (cur)
     {
@@ -615,166 +639,95 @@ function ToggleNecroForm(pChar, formKey)
 
 function DispatchSpell(spellNum, mSpell, sourceChar, ourTarg, caster) 
 {
-	if (spellNum == 101 )// animate dead
+	if (spellNum == 101) // Animate Dead
 	{
-		if (caster.socket.GetWord(1) || !ValidateObject(ourTarg))
+		var sock = caster.socket;
+
+		// Validate corpse target
+		if (!ValidateObject(ourTarg) || ourTarg.isChar || ourTarg.GetTag("animated"))
 		{
-			caster.socket.SysMessage(GetDictionaryEntry(749, caster.socket.language)); // That is not a corpse!
+			if (sock) sock.SysMessage(GetDictionaryEntry(749, sock.language)); // That is not a corpse!
 			return;
 		}
 
-		if (ourTarg.isHuman || ourTarg.GetTag("animated"))
+		// Cannot animate human corpses (OSI animates “non-humans”; keep it simple)
+		if (ourTarg.isHuman)
 		{
-			caster.socket.SysMessage("There's not enough life force there to animate."); // There's not enough life force there to animate.
+			if (sock) sock.SysMessage("There is not enough life force there to animate.");
 			return;
 		}
 
-		var animateDead = 0;
-		switch (ourTarg.sectionID) 
+		// Basic reagent requirement already handled by your reagent system (6004), mana cost already deducted.
+
+		// Compute caster ability cap vs corpse fame (simple OSI-style gate)
+		var necro = caster.skills.necromancy | 0;     // 0..1000
+		var ss = caster.skills.spiritspeak | 0;    // 0..1000
+		var casterAbility = ((necro * 0.3) + (ss * 0.3)) * 60; // tuned smaller than earlier *180; we only use for flavor
+		var fame = Math.max(ourTarg.fame | 0, 0);
+		if (casterAbility > fame) casterAbility = fame;
+
+		// Pick animated template
+		var animatedType = pickAnimatedType(ourTarg);
+		if (!animatedType)
 		{
-			// AnimateDead = 1
-			case "DreadSpider":
-			case "FrostSpider":
-			case "GiantSpider":
-			case "GiantBlackWidow":
-			case "BlackSolenInfiltratorQueen":
-			case "BlackSolenInfiltratorWarrior":
-			case "BlackSolenQueen":
-			case "BlackSolenWarrior":
-			case "BlackSolenWorker":
-			case "RedSolenInfiltratorQueen":
-			case "RedSolenInfiltratorWarrior":
-			case "RedSolenQueen":
-			case "RedSolenWarrior":
-			case "RedSolenWorker":
-			case "TerathanAvenger":
-			case "TerathanDrone":
-			case "TerathanMatriarch":
-			case "TerathanWarrior":
-				animateDead = 1;
-				break;
-
-			// AnimateDead = 2
-			case "horse":
-			case "Nightmare":
-			case "FireSteed":
-			case "Kirin":
-			case "Unicorn":
-				animateDead = 2;
-				break;
-
-			// AnimateDead = 3
-			case "BloodElemental":
-			case "EarthElemental":
-			case "SummonedEarthElemental":
-			case "AgapiteElemental":
-			case "BronzeElemental":
-			case "CopperElemental":
-			case "DullCopperElemental":
-			case "GoldenElemental":
-			case "ShadowIronElemental":
-			case "ValoriteElemental":
-			case "VeriteElemental":
-			case "PoisonElemental":
-			case "FireElemental":
-			case "SummonedFireElemental":
-			case "SnowElemental":
-			case "AirElemental":
-			case "SummonedAirElemental":
-			case "WaterElemental":
-			case "ToxicElemental":
-				animateDead = 3;
-				break;
-
-			// AnimateDead = 4
-			case "AncientWyrm":
-			case "Dragon":
-			case "GreaterDragon":
-			case "SerpentineDragon":
-			case "ShadowWyrm":
-			case "SkeletalDragon":
-			case "WhiteWyrm":
-			case "Drake":
-			case "Wyvern":
-			case "LesserHiryu":
-			case "Hiryu":
-				animateDead = 4;
-				break;
-		}
-
-		if (animateDead == 0)
-		{
-			caster.socket.SysMessage("There's not enough life force there to animate."); // There's not enough life force there to animate.
+			if (sock) sock.SysMessage("There is not enough life force there to animate.");
 			return;
 		}
 
-		// Calculate Value based on caster's skills
-		var necroSkill = caster.skills.necromancy; // Assuming skills are accessed this way
-		var spiritSpeakSkill = caster.skills.spiritspeak;
-		var value = ((necroSkill * 0.3) + (spiritSpeakSkill * 0.3)) * 180;
-		var fame = ourTarg.fame; // Assuming fame is an accessible property
-		if (value > fame)
+		// Spawn it at the corpse
+		var mob = SpawnNPC(animatedType, ourTarg.x, ourTarg.y, ourTarg.z, ourTarg.worldnumber);
+		if (!ValidateObject(mob))
 		{
-			value = fame; // Adjust value if it exceeds target fame
-		}
-
-		// Determine the creature to spawn
-		var npcName = "";
-		switch (animateDead)
-		{
-			case 1: // Arachnid
-				npcName = "orc";//MoundOfMaggots
-				break;
-			case 2: // Equinae
-				if (value >= 10000)
-				{
-					npcName = "skeletalmount";
-				}
-				else
-				{
-					npcName = "skeletalmount";
-				}
-				break;
-			default:
-				caster.socket.SysMessage("error please report to gm");
-				return;
-		}
-
-		if (npcName == "")
-		{
-			caster.socket.SysMessage("error please report to gm");
+			if (sock) sock.SysMessage("The dead refuse your call.");
 			return;
 		}
 
-		// Spawn the selected NPC
-		var nSpawned = SpawnNPC(npcName, ourTarg.x, ourTarg.y, ourTarg.z, ourTarg.worldnumber);
-		if (nSpawned != null)
-		{
-			nSpawned.owner = caster;
-			nSpawned.Follow(caster);
-			nSpawned.SetTag("ownerSerial", caster.serial);
-			nSpawned.SetTag("animated", true);
-			nSpawned.wandertype = 2;
-			nSpawned.aitype = 88;
-			nSpawned.AddScriptTrigger(3229);//animated script
-			nSpawned.fame = 0;
-			nSpawned.karma = -1500;
-			nSpawned.StartTimer(86400000, 1, 3229);
-			caster.SysMessage("You have successfully animated a " + npcName + "!");
+		// OSI behavior: they cannot be commanded, tend to follow you, attack anything (except humans), decay,
+		// max of 3 at a time, and do not use follower slots.
+		mob.tamed = false;
+		//mob.owner = caster;              // not controllable
+		mob.loyalty = 100;               // ensure no pet mechanics kick in
+		mob.wandertype = 2;            // wander but we’ll nudge follow
+		mob.aitype = 88;               // your shard’s “hostile roam” AI (you already used this)
+		mob.skillToTame = 22000;        // untamable
+		mob.Follow(caster);            // “tend to follow you” feel (they’re still not commandable)
+		// Also add pet to player's list of active followers
+		caster.AddFollower( mob );
+		mob.SetTag("animated", 1);
+		mob.SetTag("animatedBy", caster.serial);
 
-			ourTarg.colour = 1109;
-			ourTarg.SetTag("animated", true);
-			//ourTarg.Delete();
-		}
-		else
-		{
-			caster.SysMessage("Failed to animate the dead. Something went wrong.");
-		}
+		// Attach your animate-dead script (AI+timers); 3229 is what you showed
+		mob.AddScriptTrigger(3229);
+
+		// Mark corpse & make it look drained
+		ourTarg.colour = 1109;
+		ourTarg.SetTag("animated", true);
+
+		// Life span: keep your 24h kill timer (ID=1 in your 3229 file), plus soft HP decay pings
+		mob.StartTimer(86400000, 1, 3229);
+		StartAnimateDecay(mob);
+
+		// Track and enforce cap 3 (OSI nukes an old one if you create another)
+		TrackAnimatedAndCullIfNeeded(caster, mob.serial);
+
+		// Cosmetic: classic stat FX + small sound (DFN handled STATFX; this is just a ping if you like)
+		// caster.FixedParticles(0x3728, 1, 10, 9910, 0);
+
+		if (sock) sock.SysMessage("Dark energies bind the corpse to your will… for a time.");
+		return;
 	}
 
-	if (spellNum == 106) { ToggleNecroForm(caster, "horrific"); return; } // Horrific Beast
+	if (spellNum == 106)
+	{
+		ToggleNecroForm(caster, "horrific");
+		return;
+	}
 
-	if (spellNum == 107) { ToggleNecroForm(caster, "lich");     return; } // Lich Form
+	if (spellNum == 107)
+	{ 
+		ToggleNecroForm(caster, "lich");
+		return;
+	}
 
 	if (spellNum == 112) // Summon Familiar
     {
@@ -792,7 +745,17 @@ function DispatchSpell(spellNum, mSpell, sourceChar, ourTarg, caster)
         return;
     }
 
-	if (spellNum == 116) { ToggleNecroForm(caster, "wraith");   return; } // Wraith Form
+	if (spellNum == 113)
+	{ // Vampiric Embrace
+		ToggleNecroForm(caster, "vampire");
+		return;
+	}
+
+	if (spellNum == 116)
+	{
+		ToggleNecroForm(caster, "wraith");
+		return;
+	}
 
 }
 
@@ -976,6 +939,242 @@ function ExitHorrificBeast(pChar, pSock)
 		pSock.SysMessage("You return to your normal form.");
 }
 
+function EnterVampiricEmbrace(pChar, pSock)
+{
+	// save original look once
+	if (!pChar.GetTag("origBody")) pChar.SetTag("origBody", pChar.id);
+	if (!pChar.GetTag("origSkinColor")) pChar.SetTag("origSkinColor", pChar.color);
+
+	// ServUO-style body choice: gargoyles get a special vampire body, others keep race body
+	// (male gargoyle = 666, female gargoyle = 667)
+	if (pChar.race == 2 )
+	{
+		var female = !(pChar.gender == 0);
+		pChar.id = female ? 667 : 666;
+	}
+
+	pChar.SetTag("necroForm", "vampire");
+
+	// Effects (UOGuide): 20% life drain on weapon damage, +15 Stamina Regen, +3 Mana Regen,
+	// -25 Fire Resist, “resistant to most poisons” (orange petals-like), garlic hurts on cast,
+	// +25% damage taken from Undead Slayer. :contentReference[oaicite:0]{index=0}
+	if (!pChar.GetTag("Vamp_LeechPct"))
+		pChar.SetTag("Vamp_LeechPct", 20);
+	// turn on HP-leech trigger
+	if (!pChar.GetTag("vampLeechOn")) 
+	{
+		pChar.AddScriptTrigger(6006);
+		pChar.SetTag("vampLeechOn", 1);
+	}
+	pChar.staminaRegenBonus = (pChar.staminaRegenBonus | 0) + 15;
+	pChar.manaRegenBonus = (pChar.manaRegenBonus | 0) + 3;
+
+	// resist shifts
+	var fire = pChar.Resist(5);
+	var poison = pChar.Resist(7);
+	pChar.Resist(5, fire - 25); // -25 fire
+	pChar.Resist(7, poison + 70); // poison
+
+	// mark poison handling & cure-potion lockout
+	pChar.SetTag("Vamp_PoisonShield", 1);   // treat like “orange petals”
+	pChar.SetTag("Vamp_NoCurePotions", 1);  // block cure potions while active
+
+	// mark garlic-on-cast pulse (we’ll damage when garlic is detected on a cast)
+	pChar.SetTag("Vamp_GarlicPain", 1);
+
+	// optional: attach a small script to apply the life-leech & garlic checks on hits/casts
+	// if you already have a general “onHit/onCast” trigger, you can do this there instead.
+	// pChar.AddScriptTrigger(7006);
+
+	pChar.Refresh();
+
+	// Buff icon (ids are shard-specific; use yours)
+	TriggerEvent(2204, "AddBuff", pChar, 1087, 1028812, 1153768, 0, "\t20\t15\t3\t25");
+	TriggerEvent(2204, "AddBuff", pChar, 1100, 1153785, 1153814, 0, "");
+
+	if (pSock) pSock.SysMessage("You assume a vampiric guise.");
+}
+
+function ExitVampiricEmbrace(pChar, pSock)
+{
+	// restore appearance
+	var orig = parseInt(pChar.GetTag("origBody"), 10);
+	if (!isNaN(orig)) pChar.id = orig;
+	var origColor = parseInt(pChar.GetTag("origSkinColor"), 10);
+	if (!isNaN(origColor)) pChar.color = origColor;
+
+	// remove effects
+	pChar.healthLeechPercent = 0;
+	pChar.staminaRegenBonus = Math.max(0, (pChar.staminaRegenBonus | 0) - 15);
+	pChar.manaRegenBonus = Math.max(0, (pChar.manaRegenBonus | 0) - 3);
+
+	// undo fire resist shift
+	var fire = pChar.Resist(5);
+	var poison = pChar.Resist(7)
+	pChar.Resist(5, fire + 25);
+	pChar.Resist(7, poison - 70); // poison
+
+	// clear tags
+	pChar.SetTag("necroForm", null);
+	pChar.SetTag("origBody", null);
+	pChar.SetTag("origSkinColor", null);
+	pChar.SetTag("Vamp_PoisonShield", null);
+	pChar.SetTag("Vamp_NoCurePotions", null);
+	pChar.SetTag("Vamp_GarlicPain", null);
+		// turn off HP-leech trigger
+	pChar.RemoveScriptTrigger(6006);
+	pChar.SetTag("vampLeechOn", null);
+
+	// optional: clear tuning tags
+	pChar.SetTag("Vamp_LeechPct", null);
+	pChar.SetTag("Vamp_LeechMeleeOnly", null);
+
+	// pChar.RemoveScriptTrigger(7006);
+
+	pChar.Refresh();
+
+	TriggerEvent(2204, "RemoveBuff", pChar, 1087);
+	TriggerEvent(2204, "RemoveBuff", pChar, 1100);
+
+	if (pSock) pSock.SysMessage("The vampiric guise fades.");
+}
+
+// ---- Helpers for Animate Dead ---------------------------------------------
+
+/** get list (array) of active animated dead serials from caster tags */
+function GetAnimatedList(pChar){
+    var raw = (pChar.GetTag("animatedList") || "").toString();
+    if (!raw.length) return [];
+    return raw.split(",").map(function(s){ return parseInt(s,10); }).filter(function(n){ return n>0; });
+}
+
+/** persist list back to tag */
+function SetAnimatedList(pChar, list){
+    pChar.SetTag("animatedList", list.join(","));
+}
+
+/** add a new animated to list; if >3, kill oldest one to match OSI behavior */
+function TrackAnimatedAndCullIfNeeded(pChar, newSer){
+    var list = GetAnimatedList(pChar);
+    list.push(newSer);
+
+    // Cull to max 3 (Animated Dead do NOT use follower slots on OSI)
+    while (list.length > 3){
+        var oldSer = list.shift();
+        var oldMob = CalcCharFromSer(oldSer);
+        if (ValidateObject(oldMob)){
+            // visually poof then kill
+            oldMob.StartTimer(50, 1, 3229); // your 3229 script handles timed kill; this nudges it
+            oldMob.Kill();
+        }
+    }
+    SetAnimatedList(pChar, list);
+}
+
+/** gentle HP decay every few seconds; attach as tag so 3229 can also read if desired */
+function StartAnimateDecay(mob)
+{
+	// tick every 5s for ~5 HP; adjust to taste
+	mob.SetTag("ad_decay", 1);
+	mob.StartTimer(5000, 2, 3229); // your 3229 can check timerID==2 to do: mob.health = Math.max(1, mob.health-5)
+}
+
+// ---------- Animate Dead: spawn mapping ----------
+
+// Exact sectionID -> spawn template override (all lowercase keys)
+// Use this when you want a very specific result for one creature type
+var ANIMATE_SPAWN_OVERRIDE = {
+	// equinae examples
+	"horse": "skeletalmount",
+	"nightmare": "skeletalmount",
+	"firesteed": "skeletalmount",
+	"kirin": "skeletalmount",
+	"unicorn": "skeletalmount",
+
+	// spiders/terathans -> pick your undead here
+	"dreadspider": "moundofmaggots",   // or "skeleton"
+	"terathanwarrior": "boneknight"
+	// ...add any other explicit mappings you want
+};
+
+// Default per-bucket results if no section override was found
+var ANIMATE_BUCKET_DEFAULT = {
+	1: "skeleton",        // Arachnids -> skeleton (or "moundofmaggots")
+	2: "skeletalmount",   // Equinae  -> skeletal mount
+	3: "",                // Elementals: disallow by default (empty means “no”)
+	4: ""                 // Dragons: disallow by default
+};
+
+// Fame-tier fallback (used only when bucket default is empty AND no override matched)
+function spawnByFame(fame)
+{
+	if (fame >= 15000) return "boneknight";
+	if (fame >= 6000) return "skeletalmage"; // or "skeleton"
+	return "zombie";
+}
+
+// Final picker that DispatchSpell uses
+function pickAnimatedType(ourCorpse)
+{
+	var sec = (ourCorpse.sectionID || "").toLowerCase();
+	if (ANIMATE_SPAWN_OVERRIDE[sec])
+		return ANIMATE_SPAWN_OVERRIDE[sec];
+
+	var bucket = classifyCorpseSectionID(sec);
+	if (bucket === 0)
+		return ""; // not animatable
+
+	var def = ANIMATE_BUCKET_DEFAULT[bucket] || "";
+	if (def && def.length) 
+		return def;
+
+	// bucket has no default -> use fame fallback (lets you “enable” buckets 3/4 via fame if desired)
+	return spawnByFame(Math.max(ourCorpse.fame | 0, 0));
+}
+
+// ---------- Animate Dead: valid sources by sectionID (lowercase) ----------
+function makeSet(arr) { var s = {}; for (var i = 0; i < arr.length; i++) s[arr[i]] = 1; return s; }
+
+// Source buckets (add/remove as your shard needs)
+var SEC_ARACHNIDS = makeSet([
+	"dreadspider", "frostspider", "giantspider", "giantblackwidow",
+	"blacksoleninfiltratorqueen", "blacksoleninfiltratorwarrior",
+	"blacksolenqueen", "blacksolenwarrior", "blacksolenworker",
+	"redsoleninfiltratorqueen", "redsoleninfiltratorwarrior",
+	"redsolenqueen", "redsolenwarrior", "redsolenworker",
+	"terathanavenger", "terathandrone", "terathanmatriarch", "terathanwarrior"
+]);
+
+var SEC_EQUINAE = makeSet([
+	"horse", "nightmare", "firesteed", "kirin", "unicorn"
+]);
+
+var SEC_ELEMENTALS = makeSet([
+	"bloodelemental", "earthelemental", "summonedearthelemental",
+	"agapiteelemental", "bronzeelemental", "copperelemental",
+	"dullcopperelemental", "goldenelemental", "shadowironelemental",
+	"valoriteelemental", "veriteelemental", "poisonelemental",
+	"fireelemental", "summonedfireelemental", "snowelemental",
+	"airelemental", "summonairelemental", "waterelemental", "toxicelemental"
+]);
+
+var SEC_DRAGONS = makeSet([
+	"ancientwyrm", "dragon", "greaterdragon", "serpentinedragon",
+	"shadowwyrm", "skeletaldragon", "whitewyrm", "drake", "wyvern",
+	"lesserhiryu", "hiryu"
+]);
+
+function classifyCorpseSectionID(secID)
+{
+	if (!secID) return 0;
+	var s = ("" + secID).toLowerCase();
+	if (SEC_ARACHNIDS[s]) return 1;   // Arachnid bucket
+	if (SEC_EQUINAE[s]) return 2;    // Equinae bucket
+	if (SEC_ELEMENTALS[s]) return 3;  // Elemental bucket
+	if (SEC_DRAGONS[s]) return 4;    // Dragon bucket
+	return 0; // not animatable
+}
+
 // Function to check if an equipped item allows casting
 function isSpellCastingAllowed(item)
 {
@@ -1047,7 +1246,7 @@ function OpenSummonFamiliarGump(pSock, pChar)
 	for (var i = 0; i < FamiliarEntries.length; i++)
 	{
 		var E = FamiliarEntries[i];
-		var enabled = (necro >= E.necReq10 && spirit >= E.ssReq10);
+		var enabled = (necro >= E.necReq*10 && spirit >= E.ssReq*10);
 
 		g.AddButton(27, 53 + (i * 21), 9702, 1, 1, i + 1);
 
@@ -1097,7 +1296,7 @@ function onGumpPress(pSock, buttonID, gumpID)
 	// Skill gate check
 	var necro = pChar.skills.necromancy | 0;   // 0..1000
 	var spirit = pChar.skills.spiritspeak | 0;
-	if (necro < entry.necReq10 || spirit < entry.ssReq10)
+	if (necro < entry.necReq*10 || spirit < entry.ssReq*10)
 	{
 		// Example localized message style (swap #s if you have a matching cliloc)
 		// pSock.SysMessage(GetDictionaryEntry(XXXX, pSock.language));
@@ -1141,7 +1340,7 @@ function onGumpPress(pSock, buttonID, gumpID)
 	n.Follow(pChar);
 	n.SetTag("isFamiliar", 1);
 	n.SetTag("familiarOf", pChar.serial);
-	pChar.controlSlotsUsed = pUpCharser.controlSlotsUsed + n.controlSlots;
+	pChar.controlSlotsUsed = pChar.controlSlotsUsed + n.controlSlots;
 
 	// Also add pet to player's list of active followers
 	pUser.AddFollower(n);

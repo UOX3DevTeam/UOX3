@@ -66,7 +66,7 @@ function onUseChecked( pUser, iUsed )
 				break;
 			case 2:		// Cure Potion
 				var pPoison = pUser.poison;
-				if( pPoison > 0 )
+				if( pPoison > 0 && pUser.GetTag("Vamp_NoCurePotions") == 0 )
 				{
 					var chanceToCure = RandomNumber( 1, 100 );
 					switch( iUsed.morez )
