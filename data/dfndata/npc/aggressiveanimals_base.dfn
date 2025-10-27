@@ -50,11 +50,11 @@ CONTROLSLOTS=1
 
 [giantrat]
 {
-GETUO=giantrat_2ta
-GETT2A=giantrat_2ta
-GETUOR=giantrat_2ta
-GETTD=giantrat_2ta
-GETLBR=giantrat_2ta
+GETUO=giantrat_lbr
+GETT2A=giantrat_lbr
+GETUOR=giantrat_lbr
+GETTD=giantrat_lbr
+GETLBR=giantrat_lbr
 GETAOS=giantrat_aos
 GETSE=giantrat_aos
 GETML=giantrat_aos
