@@ -1046,4 +1046,18 @@ ghoul
 10|teramatriarch
 }
 
+//black solen
+[NPCLIST black_solen]
+{
+50|black_solen_worker
+50|black_solen_warrior
+}
+
+//red solen
+[NPCLIST red_solen]
+{
+50|red_solen_worker
+50|red_solen_warrior
+}
+
 EOF
