@@ -4762,8 +4762,6 @@ ANIM_ATTACK1=0x04,4
 ANIM_ATTACK2=0x05,4
 ANIM_ATTACK3=0x06,4
 MOVEMENT=LAND
-
-MOVEMENT=LAND
 }
 // End - Necromancy Transformed Player Models
 
