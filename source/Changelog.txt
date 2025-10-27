@@ -1,3 +1,6 @@
+27/10/2025 - DragonSlayer62 (#441)
+    [FIX] Fixed issue where setting JS Char/Item property .damageIncrease was not handled in code
+
 25/10/2025 - Xoduz (#439)
     [ADD] Added functionality to trigger a server restart from within UOX3, either via console ('R'), command ('restart) or JS Console Method (.BeginRestart()). This will first perform a world save, then do a clean shut down before restarting UOX3 in a new process
     [FIX] Fixed SpiderMonkey compilation on modern GCC (Linux/WSL) by adding missing architecture detection and compatibility flags to CMakeLists.txt
