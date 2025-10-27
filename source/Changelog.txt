@@ -1,3 +1,14 @@
+27/10/2025 - DragonSlayer62 (#158)
+    [ADD] Added Solen Ants black and red
+    [ADD] Added Solen Spawns for Felucca and Trammel
+    [ADD] Added Solen hive teleporters
+    [ADD] Added Solen Hive Dungeon Trammel Region
+    [FIX] Fixed an issue with admin welcome gump where checkbox ID for decoration addons in Trammel were off by 1, resulting in wrong decorations being loaded
+    [UPD] Resized admin welcome gump to accommodate additional decoration addons in Trammel
+
+27/10/2025 - DragonSlayer62 (#441)
+    [FIX] Fixed issue where setting JS Char/Item property .damageIncrease was not handled in code
+
 25/10/2025 - Xoduz (#439)
     [ADD] Added functionality to trigger a server restart from within UOX3, either via console ('R'), command ('restart) or JS Console Method (.BeginRestart()). This will first perform a world save, then do a clean shut down before restarting UOX3 in a new process
     [FIX] Fixed SpiderMonkey compilation on modern GCC (Linux/WSL) by adding missing architecture detection and compatibility flags to CMakeLists.txt
