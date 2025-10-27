@@ -322,6 +322,20 @@ PLAYERRACE=1
 RACIALENEMY=29
 }
 
+[RACE 31]
+{
+NAME=black ants
+PLAYERRACE=1
+RACIALENEMY=32
+}
+
+[RACE 32]
+{
+NAME=red ants
+PLAYERRACE=1
+RACIALENEMY=31
+}
+
 // Equipment Lists ----------------------------------------------------
 
 // Common Equipment, usable by all
