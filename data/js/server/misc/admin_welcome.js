@@ -185,12 +185,12 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 
 	// Add background, and checkered overlay
 	//adminWelcome.AddBackground( 0, 0, 530, gumpMainBackgroundHeight + 130, gumpMainBackground );
-	adminWelcome.AddBackground( 0, 0, 800, gumpMainBackgroundHeight + 130, gumpMainBackground );
+	adminWelcome.AddBackground( 0, 0, 800, gumpMainBackgroundHeight + 200, gumpMainBackground );
 
 	if( enableTransparentGump )
 	{
 		//adminWelcome.AddCheckerTrans( 0, 5, 530, gumpMainBackgroundHeight + 120 );
-		adminWelcome.AddCheckerTrans( 0, 5, 800, gumpMainBackgroundHeight + 120 );
+		adminWelcome.AddCheckerTrans( 0, 5, 800, gumpMainBackgroundHeight + 190 );
 	}
 
 	//adminWelcome.AddButton( 460, 5, exitButtonOff, exitButtonOn, 1, 0, 0 ); 	// Exit Button
@@ -327,7 +327,7 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 	}
 
 	// Add section with facet-specific additions
-	adminWelcome.AddBackground( 475, 30, 310, 380, gumpSecondaryBackground );
+	adminWelcome.AddBackground( 475, 30, 310, 460, gumpSecondaryBackground );
 	switch( pageNum )
 	{
 		case 2: // Felucca
@@ -349,6 +349,15 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 			if( enableTooltips )
 			{
 				adminWelcome.AddToolTip( tooltipClilocID, socket, "Decorations for floating wharf/village in the middle of the sea, only accessible by boat.<br> Added in client v7.0.9.0!" );
+			}
+
+			// Solen Hive Entrances
+			adminWelcome.AddCheckbox( 480, 200, 9722, 2153, 0, checkboxStartID + 12 );
+			adminWelcome.AddHTMLGump( 515, 205, 250, 20, 0, 0, "<BASEFONT color=#EEEEEE>Solen Hive</BASEFONT>" );
+			adminWelcome.AddHTMLGump( 515, 225, 250, 40, true, false, "Adds Solen Hive Entrances around the map" );
+			if( enableTooltips )
+			{
+				adminWelcome.AddToolTip( tooltipClilocID, socket, "Adds Solen Hive Entrances around the map" );
 			}
 			break;
 		case 3: // Trammel
@@ -381,7 +390,7 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 				adminWelcome.AddToolTip( tooltipClilocID, socket, "Decorations for original city of Magincia, prior to its destruction.<br>Only exists in client versions earlier than 6.0.3.1!" );
 			}
 
-			// Sea Market
+			// New Haven
 			adminWelcome.AddCheckbox( 480, 270, 9722, 2153, 0, checkboxStartID + 13 );
 			adminWelcome.AddHTMLGump( 515, 275, 250, 20, 0, 0, "<BASEFONT color=#EEEEEE>New Haven</BASEFONT>" );
 			adminWelcome.AddHTMLGump( 515, 295, 250, 40, true, false, "Young Player city, replaces Ocllo on Trammel (v6.0.0 and later)" );
@@ -390,7 +399,7 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 				adminWelcome.AddToolTip( tooltipClilocID, socket, "Decorations for New Haven, that exists in place of Ocllo on Trammel facet.<br>Replaced the earlier Ocllo-replacement Haven!" );
 			}
 
-			// New Haven
+			// Sea Market
 			adminWelcome.AddCheckbox( 480, 340, 9722, 2153, 0, checkboxStartID + 14 );
 			adminWelcome.AddHTMLGump( 515, 345, 250, 20, 0, 0, "<BASEFONT color=#EEEEEE>Sea Market</BASEFONT>" );
 			adminWelcome.AddHTMLGump( 515, 365, 250, 40, true, false, "Floating wharf/village at sea, added in High Seas (v7.0.9.0 and later)" );
@@ -398,8 +407,16 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 			{
 				adminWelcome.AddToolTip( tooltipClilocID, socket, "Decorations for floating wharf/village in the middle of the sea, only accessible by boat.<br> Added in client v7.0.9.0!" );
 			}
-			break;
 
+			// Solen Hive Entrances
+			adminWelcome.AddCheckbox( 480, 410, 9722, 2153, 0, checkboxStartID + 15 );
+			adminWelcome.AddHTMLGump( 515, 415, 250, 20, 0, 0, "<BASEFONT color=#EEEEEE>Solen Hive</BASEFONT>" );
+			adminWelcome.AddHTMLGump( 515, 435, 250, 40, true, false, "Adds Solen Hive Entrances around the map" );
+			if( enableTooltips )
+			{
+				adminWelcome.AddToolTip( tooltipClilocID, socket, "Adds Solen Hive Entrances around the map" );
+			}
+			break;
 		case 4: // Ilshenar
 			adminWelcome.AddHTMLGump( 480, 40, 250, 20, 0, 0, "<CENTER><BIG><BASEFONT color=#3D9A2B>Ilshenar Decoration Addons</BASEFONT></BIG></CENTER>" );
 
@@ -474,7 +491,7 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 	adminWelcome.AddBackground( 15, gumpMainBackgroundHeight + 20, 140, 20, gumpSecondaryBackground );
 	adminWelcome.AddHTMLGump( 30, gumpMainBackgroundHeight + 20, 150, 20, false, false, "<p><basefont color=#ffffff>Facet Info:</basefont></p>" );
 
-	adminWelcome.AddHTMLGump( 15, gumpMainBackgroundHeight + 40, 450, 80, true, true, facetText );
+	adminWelcome.AddHTMLGump( 15, gumpMainBackgroundHeight + 40, 450, 140, true, true, facetText );
 
 	return adminWelcome;
 }
@@ -728,18 +745,27 @@ function onTimer( timerObj, timerID )
 					case 11: // Sea Market
 						pSocket.currentChar.ExecuteCommand( "decorate load felucca_seamarket|silent multiple" );
 						break;
+					case 12: // Solen Hive Entrances
+						pSocket.currentChar.ExecuteCommand( "decorate load felucca_solenhive|silent multiple" );
+						break;
 					// Trammel Addons
 					case 30: // Revamped Castle Blackthorn
 						pSocket.currentChar.ExecuteCommand( "decorate load trammel_blackthorncastle|silent multiple" );
 						break;
-					case 31: // Original Magincia
+					case 31: // Original Castle Blackthorn
+						pSocket.currentChar.ExecuteCommand( "decorate load trammel_blackthorncastle_orig|silent multiple" );
+						break;
+					case 32: // Original Magincia
 						pSocket.currentChar.ExecuteCommand( "decorate load trammel_magincia_original|silent multiple" );
 						break;
-					case 32: // New Haven
+					case 33: // New Haven
 						pSocket.currentChar.ExecuteCommand( "decorate load trammel_newhaven|silent multiple" );
 						break;
-					case 33: // Sea Market
+					case 34: // Sea Market
 						pSocket.currentChar.ExecuteCommand( "decorate load trammel_seamarket|silent multiple" );
+						break;
+					case 35: // Solen Hive Entrances
+						pSocket.currentChar.ExecuteCommand( "decorate load trammel_solenhive|silent multiple" );
 						break;
 					// Ilshenar Addons
 					case 50: // Ver Lor Reg - Gargoyle City
