@@ -506,6 +506,12 @@ function QuestRewards( player, quest, socket )
 				player.fame += reward.amount;
 				socket.SysMessage( "You gained " + reward.amount + " fame!" );
 				break;
+			case "skill":
+				SkillReward( player, reward, socket );
+				break;
+			case "skillpoints":
+				SkillPointsPoolReward( player, reward, socket );
+				break;
 			default:
 				socket.SysMessage( "Unknown reward type: " + reward.type );
 		}
@@ -813,6 +819,145 @@ function GetSkillName(skillID)
 	return skillNames[skillID] || "unknown skill";
 }
 
+// Map common aliases -> canonical keys used by baseskills/skillCaps
+var skillAliasMap = {
+	// combat
+	"swords": "swordsmanship", "swordsmanship": "swordsmanship",
+	"mace": "macefighting", "macing": "macefighting", "macefighting": "macefighting",
+	"fencing": "fencing", "wrestling": "wrestling", "archery": "archery",
+	// magic
+	"magery": "magery", "evalint": "evaluatingintelligence", "evaluating intelligence": "evaluatingintelligence",
+	"evaluatingintelligence": "evaluatingintelligence", "meditation": "meditation",
+	"resist": "magicresistance", "resistingspells": "magicresistance", "magicresistance": "magicresistance",
+	// crafts & misc (just a few common ones; names already match)
+	"tactics": "tactics", "anatomy": "anatomy", "healing": "healing",
+	"blacksmith": "blacksmith", "carpentry": "carpentry", "tinkering": "tinkering",
+	"tailoring": "tailoring", "inscription": "inscription", "musicianship": "musicianship",
+	"stealth": "stealth", "hiding": "hiding", "provocation": "provocation", "peacemaking": "peacemaking",
+	"cartography": "cartography", "mining": "mining", "lumberjacking": "lumberjacking",
+	// newer
+	"chivalry": "chivalry", "bushido": "bushido", "ninjitsu": "ninjitsu", "spellweaving": "spellweaving"
+};
+
+function NormalizeKey( skill )
+{
+	return String( skill || "" ).replace( /\s+/g, "" ).toLowerCase();
+}
+
+// Accepts numeric ID or name; returns canonical baseskills key, or null
+function resolveSkillKey( skillNameOrId )
+{
+	var skillNumber = parseInt( skillNameOrId, 10 );
+	if( !isNaN(skillNumber ))
+	{
+		var getSkill = GetSkillName(skillNumber);
+		return ( getSkill && getSkill !== "unknown skill" ) ? getSkill : null;
+	}
+
+	var key = NormalizeKey( skillNameOrId );
+	// exact match first
+	if (skillAliasMap.hasOwnProperty( key ))
+		return skillAliasMap[key];
+	// if caller already used canonical (e.g. "magery"), allow it
+	return key || null;
+}
+
+function GetBaseSkillTenths( player, key )
+{
+	// baseskills.* is 0..1000
+	var value = player.baseskills[key];
+	return ( typeof value === "number" ) ? ( value | 0 ) : 0;
+}
+
+function SetBaseSkillTenths( player, key, valTenths )
+{
+	player.baseskills[key] = ( valTenths | 0 );
+}
+
+function GetSkillCapTenths( player, key )
+{
+	var cap = player.skillCaps[key];
+	// fallback to 100.0 if undefined/not numeric
+	return ( typeof cap === "number" && cap > 0 ) ? (cap | 0) : 1000;
+}
+
+// Add to a specific skill (amount = decimal points, e.g. 2.5 -> +2.5)
+function SkillReward( player, reward, socket )
+{
+	var key = resolveSkillKey( reward.skill );
+	if( !key || player.baseskills[key] === undefined )
+	{
+		socket.SysMessage( "Quest reward error: Unknown skill '" + reward.skill + "'." );
+		return;
+	}
+
+	var addTenths = Math.round(( +reward.amount || 0 ) * 10 );
+	if( addTenths === 0 )
+	{
+		socket.SysMessage( "Quest reward notice: 0 skill points specified for " + reward.skill + "." );
+		return;
+	}
+
+	var cur = GetBaseSkillTenths( player, key );
+	var cap = GetSkillCapTenths( player, key );
+	var nxt = Math.max( 0, Math.min( cur + addTenths, cap ));
+
+	SetBaseSkillTenths( player, key, nxt );
+
+	var gained = ( nxt - cur ) / 10.0;
+	if( gained > 0 )
+		socket.SysMessage( "You gained " + gained.toFixed(1) + " in " + key + "!" );
+	else
+		socket.SysMessage( "Your " + key + " is already at its cap." );
+}
+
+// Optional pooled points (stored in tenths under 'UnspentSkillPoints' tag)
+function SkillPointsPoolReward( player, reward, socket )
+{
+	var addTenths = Math.round(( +reward.amount || 0 ) * 10 );
+	if( addTenths <= 0 )
+	{ 
+		socket.SysMessage( "Quest reward notice: 0 pooled skill points specified." );
+		return;
+	}
+
+	var cur = parseInt( player.GetTag( "UnspentSkillPoints" ), 10 ) || 0;
+	player.SetTag( "UnspentSkillPoints", String( cur + addTenths ));
+	socket.SysMessage("You received " + ( addTenths / 10 ).toFixed( 1 ) + " unspent skill points!" );
+}
+
+// Spend pooled points into a specific skill
+function SpendSkillPoints( player, socket, skillNameOrId, amount ) 
+{
+	var key = resolveSkillKey( skillNameOrId );
+	if( !key || player.baseskills[key] === undefined )
+	{
+		socket.SysMessage( "Unknown skill: " + skillNameOrId );
+		return;
+	}
+
+	var pool = parseInt(player.GetTag( "UnspentSkillPoints" ), 10 ) || 0;
+	var spendTenths = Math.min( pool, Math.round(( +amount || 0 ) * 10 ));
+	if( spendTenths <= 0 ) 
+	{ 
+		socket.SysMessage( "No unspent points to spend." );
+		return;
+	}
+
+	var cur = GetBaseSkillTenths( player, key );
+	var cap = GetSkillCapTenths( player, key );
+	var room = Math.max( 0, cap - cur );
+	var applied = Math.min( room, spendTenths );
+	if( applied <= 0 )
+	{ 
+		socket.SysMessage( "That skill is already at its cap." );
+		return;
+	}
+
+	SetBaseSkillTenths( player, key, cur + applied );
+	player.SetTag( "UnspentSkillPoints", String(pool - applied ));
+	socket.SysMessage( "Allocated " + ( applied / 10 ).toFixed( 1 ) + " points to " + key + "." );
+}
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////

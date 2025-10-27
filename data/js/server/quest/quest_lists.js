@@ -28,7 +28,7 @@
  * 
  *  Quest Classification:
  *  ----------------------
- *   type            - Quest type (collect, kill, collectTime, killTime, multi, skillGain, delivery).
+ *   type            - Quest type (collect, kill, collectTime, killTime, multi, skillGain, delivery, skill, skillpoints).
  *   category        - Quest grouping (e.g., "Side Quests", "Daily").
  * 
  *  Flags & Control:
@@ -73,6 +73,10 @@
  *   QuestList(questID?)
  *     questID - Optional quest ID. If omitted, returns all quests.
  *     Returns - Quest object, array of quests, or null if ID not found.
+ * 
+ *	 How to spend skillpoints pooled.
+ *      SpendSkillPoints( player, socket, "Magery", 3.0 );   // +3.0 Magery ( respects skillCaps )
+ *      SpendSkillPoints( player, socket, 27, 2.5 );         // +2.5 to skill ID 27 ( e.g., Tactics )
  * 
  * =============================================================================
  */
@@ -1241,6 +1245,12 @@ function QuestList( questID )
 			},
 			rewards: [
 				{ type: "gold", amount: 500, name: "Gold" },
+				// +5.0 Magery (by name)
+				{ type: "skill", skill: "Magery", amount: 5.0 },
+				// +2.5 Tactics (by numeric ID)
+				{ type: "skill", skill: 27, amount: 2.5 },
+				// +10.0 pooled points
+				{ type: "skillpoints", amount: 10.0 },
 				{ type: "item", sectionID: "reward_ring_of_swiftness", name: "Ring of Swiftness", amount: 1 }
 			],
 			oneTimeQuest: 1

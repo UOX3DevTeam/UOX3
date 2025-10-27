@@ -336,8 +336,8 @@ function onGumpPress( pSock, pButton, gumpData )
 	// Handle button presses for navigating between active and completed quests
 	if( pButton == 1 ) 
 	{
-		pSock.CloseGump(gumpID, 0);
-		QuestMenu(pUser);
+		pSock.CloseGump( gumpID, 0 );
+		QuestMenu( pUser );
 	}
 	else if( pButton == 20 )
 	{
@@ -385,7 +385,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			// Save the updated settings
 			TriggerEvent( 5800, "SavePlayerSettings", pUser, playerSettings );
 
-			pSock.SysMessage( "Transparency " + (playerSettings["UseTransparentBackground"] ? "enabled" : "disabled" ) + "." );
+			pSock.SysMessage( "Transparency " + ( playerSettings["UseTransparentBackground"] ? "enabled" : "disabled" ) + "." );
 
 			// Refresh the options menu
 			pSock.CloseGump( gumpID, 0 );
