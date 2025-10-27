@@ -472,7 +472,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 			}
 			break;
 		case 60: // Turn off Grandfathered status
-			if( pUser.isGM || iMulti.IsOwner( pUser ))
+			if( pUser.isGM )
 			{
 				iMulti.SetTag( "Grandfathered", false );
 				iMulti.KillTimers();
@@ -480,7 +480,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 			}
 			break;
 		case 61: // Turn on Grandfathered status
-			if( pUser.isGM || iMulti.IsOwner( pUser ))
+			if( pUser.isGM )
 			{
 				iMulti.SetTag( "Grandfathered", true );
 				iMulti.StartTimer( 1800000, 1, true );//approx. 30 minutes
