@@ -5613,7 +5613,7 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 			case 383:	// HOUSEITEMSDELETEONDECAY
 				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HouseItemsDeleteOnDecay() ) );
 				break;
-			case 384:	// HOUSEGRANDFATHERSYSTEM
+			case 384:	// HOUSEGRANDFATHEREDSYSTEM
 				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HouseGrandFatheredSystem() ) );
 				break;
 			case 385:	// DECAYSTAGELIKENEWMINS

@@ -25,7 +25,7 @@ const keylessCoOwnerAccess = GetServerSetting( "KeylessCoOwnerAccess" );
 
 const houseDecay = GetServerSetting( "HouseDecay" );
 const houseItemsDeleteOnDecay = GetServerSetting( "HouseItemsDeleteOnDecay" );
-const houseGrandFatheredSystem = GetServerSetting( "HouseGrandfatheredSystem" );
+const houseGrandFatheredSystem = GetServerSetting( "HouseGrandFatheredSystem" );
 
 const decayStageLikeNewMins = GetServerSetting( "DecayStageLikeNewMins" );
 const decayStageLowhrs = GetServerSetting( "DecayStageLowHrs" );
@@ -88,12 +88,12 @@ function onHouseCommand( pSocket, iMulti, cmdID )
 /** @type { ( left: Multi, leaving: BaseObject ) => boolean } */
 function onEntrance( iMulti, charEntering, objType )
 {
-	//Start Decay timer if decay is enabled or init is not true.
-	if( !iMulti.GetTag( "init" ))
+	//Start Decay timer if decay is enabled or houseDecayInit is not true.
+	if( !iMulti.GetTag( "houseDecayInit" ))
 	{
 		iMulti.StartTimer( decayLikeNewMS, 1, 15000 );//approx. 30 minutes
 		iMulti.SetTag( "decayStage", 1 );
-		iMulti.SetTag( "init", true );
+		iMulti.SetTag( "houseDecayInit", true );
 	}
 
 	// First do some standard validation checking to make sure both house
@@ -248,7 +248,7 @@ function onTimer( iMulti, timerID )
 		return;
 	}
 
-	var choseDays = Math.random() < 0.5 ? decayLowMS : decayHiMS;// Random 2 to 3 days timer.
+	var rndDecayStageTime = Math.random() < 0.5 ? decayLowMS : decayHiMS;// Random 2 to 3 days timer.
 	switch( timerID )
 	{
 		case 1:
@@ -256,19 +256,19 @@ function onTimer( iMulti, timerID )
 			iMulti.SetTag( "decayStage", timerID );
 			break;//Like New
 		case 2:
-			iMulti.StartTimer( choseDays, 3, 15000 );//2 to 3 days
+			iMulti.StartTimer( rndDecayStageTime, 3, 15000 );//2 to 3 days
 			iMulti.SetTag( "decayStage", timerID );
 			break;//Slightly Worn
 		case 3:
-			iMulti.StartTimer( choseDays, 4, 15000 );//2 to 3 days
+			iMulti.StartTimer( rndDecayStageTime, 4, 15000 );//2 to 3 days
 			iMulti.SetTag( "decayStage", timerID );
 			break;//Somewhat Worn
 		case 4:
-			iMulti.StartTimer( choseDays, 5, 15000 );//2 to 3 days
+			iMulti.StartTimer( rndDecayStageTime, 5, 15000 );//2 to 3 days
 			iMulti.SetTag( "decayStage", timerID );
 			break;//Fairly Worn
 		case 5:
-			iMulti.StartTimer( choseDays, 6, 15000 );//2 to 3 days
+			iMulti.StartTimer( rndDecayStageTime, 6, 15000 );//2 to 3 days
 			iMulti.SetTag( "decayStage", timerID );
 
 			var owner = iMulti.owner;
