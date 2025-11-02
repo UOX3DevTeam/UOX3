@@ -3759,7 +3759,8 @@ auto CServerData::HouseGrandFatheredSystem( bool newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::DecayStageLikeNewMins()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the time in minutes for which houses are considered 'like new' after being placed
+//|	Purpose		-	Gets/Sets the time in minutes for which houses are considered 'like new' 
+//| after being placed
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::DecayStageLikeNewMins() const -> UI32
 {
@@ -3773,7 +3774,8 @@ auto CServerData::DecayStageLikeNewMins( UI32 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::DecayStageLowHrs()
 //o------------------------------------------------------------------------------------------------o
-//| Purpose		-	Gets or sets Lower bound (in hours) for each intermediate decay stage. Together with DECAYSTAGEHIHRS, this defines a random window per stage.
+//| Purpose		-	Gets or sets Lower bound (in hours) for each intermediate decay stage. Together
+//| with DECAYSTAGEHIHRS, this defines a random window per stage.
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::DecayStageLowHrs() const -> UI32
 {
@@ -3787,7 +3789,8 @@ auto CServerData::DecayStageLowHrs( UI32 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::DecayStageHiHrs()
 //o------------------------------------------------------------------------------------------------o
-//| Purpose		-	Gets or sets Upper bound (in hours) for each intermediate decay stage. Each stage lasts a random duration between LOW and HI.
+//| Purpose		-	Gets or sets Upper bound (in hours) for each intermediate decay stage. 
+//| Each stage lasts a random duration between LOW and HI.
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::DecayStageHiHrs() const -> UI32
 {
