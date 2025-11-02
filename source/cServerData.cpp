@@ -403,7 +403,14 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"MAXNPCAGGRORANGE"s, 380},
 	{"POISONCORROSIONSYSTEM"s, 381},
 	{"PETBONDINGENABLED"s, 382},
-	{"QUESTSENABLED"s, 383}
+	{"HOUSEITEMSDELETEONDECAY"s, 383},
+	{"HOUSEGRANDFATHEREDSYSTEM"s, 384},
+	{"DECAYSTAGELIKENEWMINS"s, 385},
+	{"DECAYSTAGELOWHRS"s, 386},
+	{"DECAYSTAGEHIHRS"s, 387},
+	{"DECAYSTAGEDANGERHRS"s, 388},
+	{"HOUSEDECAY"s, 389},
+  {"QUESTSENABLED"s, 390}
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -520,7 +527,10 @@ constexpr auto BIT_HEALINGAFFECTHEALTHREGEN			= UI32( 107 );
 constexpr auto BIT_HUNGERAFFECTHEALTHREGEN			= UI32( 108 );
 constexpr auto BIT_THIRSTAFFECTSTAMINAREGEN			= UI32( 109 );
 constexpr auto BIT_POISONCORROSIONSYSTEM			= UI32( 110 );
-constexpr auto BIT_QUESTSENABLED					= UI32( 111 );
+constexpr auto BIT_HOUSEDECAY						= UI32( 111 );
+constexpr auto BIT_HOUSEITEMSDELETEONDECAY			= UI32( 112 );
+constexpr auto BIT_HOUSEGRANDFATHERED				= UI32( 113 );
+constexpr auto BIT_QUESTSENABLED					= UI32( 114 );
 
 
 // New uox3.ini format lookup
@@ -989,6 +999,13 @@ auto CServerData::ResetDefaults() -> void
 	KeylessCoOwnerAccess( true );
 	KeylessFriendAccess( true );
 	KeylessGuestAccess( false );
+	HouseDecay( true );
+	HouseItemsDeleteOnDecay( false );
+	HouseGrandFatheredSystem( false );
+	DecayStageLikeNewMins( 30 );
+	DecayStageLowHrs( 48 );
+	DecayStageHiHrs( 72 );
+	DecayStageDangerHrs( 18 );
 
 	// Bulk Order Deeds
 	OfferBODsFromItemSales( true );
@@ -3715,6 +3732,107 @@ auto CServerData::KeylessGuestAccess( bool newVal ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::HouseDecay()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether House Decay is enabled or disabled
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::HouseDecay() const -> bool
+{
+	return boolVals.test( BIT_HOUSEDECAY );
+}
+auto CServerData::HouseDecay( bool newVal ) -> void
+{
+	boolVals.set( BIT_HOUSEDECAY, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::HouseItemsDeleteOnDecay()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether Items in houses should be deleted when the house decays
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::HouseItemsDeleteOnDecay() const -> bool
+{
+	return boolVals.test( BIT_HOUSEITEMSDELETEONDECAY );
+}
+auto CServerData::HouseItemsDeleteOnDecay( bool newVal ) -> void
+{
+	boolVals.set( BIT_HOUSEITEMSDELETEONDECAY, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::HouseGrandFathered()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether houses are grandfathered (i.e. not subject to decay)
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::HouseGrandFatheredSystem() const -> bool
+{
+	return boolVals.test( BIT_HOUSEGRANDFATHERED );
+}
+auto CServerData::HouseGrandFatheredSystem( bool newVal ) -> void
+{
+	boolVals.set( BIT_HOUSEGRANDFATHERED, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::DecayStageLikeNewMins()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the time in minutes for which houses are considered 'like new' 
+//| after being placed
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::DecayStageLikeNewMins() const -> UI32
+{
+	return numMinsDecayStageLikeNew;
+}
+auto CServerData::DecayStageLikeNewMins( UI32 value ) -> void
+{
+	numMinsDecayStageLikeNew = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::DecayStageLowHrs()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets or sets Lower bound (in hours) for each intermediate decay stage. Together
+//| with DECAYSTAGEHIHRS, this defines a random window per stage.
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::DecayStageLowHrs() const -> UI32
+{
+	return numHrsDecayStageLow;
+}
+auto CServerData::DecayStageLowHrs( UI32 value ) -> void
+{
+	numHrsDecayStageLow = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::DecayStageHiHrs()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets or sets Upper bound (in hours) for each intermediate decay stage. 
+//| Each stage lasts a random duration between LOW and HI.
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::DecayStageHiHrs() const -> UI32
+{
+	return numHrsDecayStageHi;
+}
+auto CServerData::DecayStageHiHrs( UI32 value ) -> void
+{
+	numHrsDecayStageHi = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::DecayStageDangerHrs()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the time in hours for which houses are considered 'danger' in decay stage
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::DecayStageDangerHrs() const -> UI32
+{
+	return numHrsDecayStageDanger;
+}
+auto CServerData::DecayStageDangerHrs( UI32 value ) -> void
+{
+	numHrsDecayStageDanger = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::PaperdollGuildButton()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether guild menu can be accessed from paperdoll button or not
@@ -5764,6 +5882,13 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "KEYLESSCOOWNERACCESS=" << ( KeylessCoOwnerAccess() ? 1 : 0 ) << '\n';
 		ofsOutput << "KEYLESSFRIENDACCESS=" << ( KeylessFriendAccess() ? 1 : 0 ) << '\n';
 		ofsOutput << "KEYLESSGUESTACCESS=" << ( KeylessGuestAccess() ? 1 : 0 ) << '\n';
+		ofsOutput << "HOUSEDECAY=" << ( HouseDecay() ? 1 : 0 ) << '\n';
+		ofsOutput << "HOUSEITEMSDELETEONDECAY=" << ( HouseItemsDeleteOnDecay() ? 1 : 0 ) << '\n';
+		ofsOutput << "HOUSEGRANDFATHEREDSYSTEM=" << ( HouseGrandFatheredSystem() ? 1 : 0 ) << '\n';
+		ofsOutput << "DECAYSTAGELIKENEWMINS=" << DecayStageLikeNewMins() << '\n';
+		ofsOutput << "DECAYSTAGELOWHRS=" << DecayStageLowHrs() << '\n';
+		ofsOutput << "DECAYSTAGEHIHRS=" << DecayStageHiHrs() << '\n';
+		ofsOutput << "DECAYSTAGEDANGERHRS=" << DecayStageDangerHrs() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[bulk order deeds]" << '\n' << "{" << '\n';
@@ -7265,9 +7390,30 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 382:	// PETBONDINGENABLED
 			PetBondingEnabled(( static_cast<SI16>( std::stoi( value, nullptr, 0 )) == 1 ));
 			break;
-		case 383:	 // QUESTSENABLED
+		case 383:	// HOUSEITEMSDELETEONDECAY
+			HouseItemsDeleteOnDecay( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
+			break;
+		case 384:	// HOUSEGRANDFATHEREDSYSTEM
+			HouseGrandFatheredSystem( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
+			break;
+		case 385:	// DECAYSTAGELIKENEWMINS
+			DecayStageLikeNewMins( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 386:	// DECAYSTAGELOWHRS
+			DecayStageLowHrs( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 387:	// DECAYSTAGEHIHRS
+			DecayStageHiHrs( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 388:	// DECAYSTAGEDANGERHRS
+			DecayStageDangerHrs( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 389:	// HOUSEDECAY
+			HouseDecay( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
+			break;
+    case 390:	 // QUESTSENABLED
 			QuestsEnabled( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
-			break;   
+			break;  
 		default:
 			rValue = false;
 			break;

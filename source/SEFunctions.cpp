@@ -5612,7 +5612,29 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 				break;
 			case 383:	// QUESTSENABLED
 				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->QuestsEnabled() ) );
+			case 383:	// HOUSEITEMSDELETEONDECAY
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HouseItemsDeleteOnDecay() ) );
 				break;
+			case 384:	// HOUSEGRANDFATHEREDSYSTEM
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HouseGrandFatheredSystem() ) );
+				break;
+			case 385:	// DECAYSTAGELIKENEWMINS
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->DecayStageLikeNewMins() ) ) );
+				break;
+			case 386:	// DECAYSTAGELOWHRS
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->DecayStageLowHrs() ) ) );
+				break;
+			case 387:	// DECAYSTAGEHIHRS
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->DecayStageHiHrs() ) ) );
+				break;
+			case 388:	// DECAYSTAGEDANGERHRS
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->DecayStageDangerHrs() ) ) );
+				break;
+			case 389:	// HOUSEDECAY
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HouseDecay() ) );
+				break;
+      case 390:	// QUESTSENABLED
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->QuestsEnabled() ) );
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );
 				return false;
