@@ -3773,7 +3773,7 @@ auto CServerData::DecayStageLikeNewMins( UI32 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::DecayStageLowHrs()
 //o------------------------------------------------------------------------------------------------o
-//| Purpose — Gets or sets Lower bound (in hours) for each intermediate decay stage. Together with DECAYSTAGEHIHRS, this defines a random window per stage.
+//| Purpose		-	Gets or sets Lower bound (in hours) for each intermediate decay stage. Together with DECAYSTAGEHIHRS, this defines a random window per stage.
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::DecayStageLowHrs() const -> UI32
 {
@@ -3787,7 +3787,7 @@ auto CServerData::DecayStageLowHrs( UI32 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::DecayStageHiHrs()
 //o------------------------------------------------------------------------------------------------o
-//| Purpose — Gets or sets Upper bound (in hours) for each intermediate decay stage. Each stage lasts a random duration between LOW and HI.
+//| Purpose		-	Gets or sets Upper bound (in hours) for each intermediate decay stage. Each stage lasts a random duration between LOW and HI.
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::DecayStageHiHrs() const -> UI32
 {
