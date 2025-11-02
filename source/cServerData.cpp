@@ -3773,7 +3773,8 @@ auto CServerData::DecayStageLikeNewMins( UI32 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::DecayStageLowHrs()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the time in hours for which houses are considered 'low' in decay stage
+//| Purpose — Gets or sets the number of hours a house remains in the 'Low' decay stage.
+//| Defines the minimum and maximum time required to advance to the next decay state.
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::DecayStageLowHrs() const -> UI32
 {
@@ -3787,7 +3788,8 @@ auto CServerData::DecayStageLowHrs( UI32 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::DecayStageHiHrs()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the time in hours for which houses are considered 'high' in decay stage
+//| Purpose — Gets or sets the number of hours a house remains in the 'High' decay stage.
+//| Defines the minimum and maximum time required to advance to the next decay state.
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::DecayStageHiHrs() const -> UI32
 {
