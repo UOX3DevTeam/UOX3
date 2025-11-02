@@ -2561,6 +2561,46 @@ packitem=0x0f8d,30
 							Allow guests of house to use locked doors in house without key in pack.
 							</p>
 						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">KEYLESSGUESTACCESS</span><strong>=0</strong><br>
+							Allow guests of house to use locked doors in house without key in pack.
+							</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">HOUSEDECAY</span><strong>=1</strong><br>
+							Master toggle for the housing decay system. <em>1</em> = enabled (houses progress through decay stages); <em>0</em> = disabled (no decay).
+							</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">HOUSEITEMSDELETEONDECAY</span><strong>=0</strong><br>
+							What happens to items when a house collapses. <em>1</em> = delete all house items on collapse; <em>0</em> = leave items in the world (recoverable/lootable).
+							</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">HOUSEGRANDFATHEREDSYSTEM</span><strong>=0</strong><br>
+							 If enabled, allows GMs to mark houses as "grandfathered", which prevent them from decaying
+							 </p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">DECAYSTAGELIKENEWMINS</span><strong>=30</strong><br>
+							 Minutes a newly placed house remains <em>Like New</em> before entering the normal decay cycle.
+							</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">DECAYSTAGELOWHRS</span><strong>=48</strong><br>
+							Lower bound (in hours) for each intermediate decay stage. Together with <span class="hl">DECAYSTAGEHIHRS</span>, this defines a random window per stage.
+							</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">DECAYSTAGEHIHRS</span><strong>=72</strong><br>
+							 Upper bound (in hours) for each intermediate decay stage. Each stage lasts a random duration between <em>LOW</em> and <em>HI</em>.
+							 </p>
+						</div>
+						<div class="settingsDiv">
+							 <p><span class="hl">DECAYSTAGEDANGERHRS</span><strong>=18</strong><br>
+							 Hours a house stays <em>In Danger of Collapsing</em> (IDOC) before it collapses.
+							 </p>
+						</div>
 					</div>
 
 					<input type="checkbox" id="spoiler_ini_bods">
