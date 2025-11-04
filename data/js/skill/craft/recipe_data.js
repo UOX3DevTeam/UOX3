@@ -4,7 +4,7 @@ function AddRecipe( pUser, iUsed, recipeID, recipeSectionID )
 	var recipeName = iUsed.GetTag( "recipeName" )
 
 	// Read Recipe
-	var myData = TriggerEvent( 4022, "ReadRecipeID", pUser );
+	var myData = ReadRecipeID( pUser );
 
 	for( let i = 0; i < myData.length; i++ )
 	{
@@ -31,7 +31,7 @@ function NeedRecipe( pSock, recipeID )
 	var pUser = pSock.currentChar;
 
 	// Read Recipe
-	var myData = TriggerEvent( 4022, "ReadRecipeID", pUser );
+	var myData = ReadRecipeID( pUser );
 
 	if( myData && myData.length > 0 )
 	{
@@ -63,9 +63,9 @@ function WriteRecipeID( pUser, myData )
     // Create a new file object
     var mFile = new UOXCFile();
 	var userSerial = pUser.serial.toString();
-	var fileName = "Recipes" + userSerial +".jsdata";
+	var fileName = "Recipes_" + userSerial +".jsdata";
 
-	mFile.Open( fileName, "w", "Recipes" ); // Open file for Writing
+	mFile.Open( fileName, "w", "CraftingRecipes_" ); // Open file for Writing
     if( mFile != null )
     {
         // Loop through each entry in myData and save it to a new line
@@ -89,12 +89,12 @@ function ReadRecipeID( pUser )
     // Create a new file object
     var mFile = new UOXCFile();
 	var userSerial = pUser.serial;
-	var fileName = "Recipes" + userSerial + ".jsdata";
+	var fileName = "Recipes_" + userSerial + ".jsdata";
 
 	// Create an array variable to store contents of Recipe
     var myArray = [];
 
-	mFile.Open(fileName, "r", "Recipes" );
+	mFile.Open(fileName, "r", "CraftingRecipes_" );
     if( mFile && mFile.Length() >= 0 )
     {
         // Read until we reach the end of the file, or until we find a match for the recipe
@@ -118,5 +118,3 @@ function ReadRecipeID( pUser )
 	//pUser.SysMessage(myArray.length)
     return myArray;
 }
-
-function _restorecontext_() {}
