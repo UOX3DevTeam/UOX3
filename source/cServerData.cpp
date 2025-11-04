@@ -410,7 +410,7 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"DECAYSTAGEHIHRS"s, 387},
 	{"DECAYSTAGEDANGERHRS"s, 388},
 	{"HOUSEDECAY"s, 389},
-  {"QUESTSENABLED"s, 390}
+	{"QUESTSENABLED"s, 390}
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -7411,7 +7411,7 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 389:	// HOUSEDECAY
 			HouseDecay( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
 			break;
-    case 390:	 // QUESTSENABLED
+		case 390:	 // QUESTSENABLED
 			QuestsEnabled( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
 			break;  
 		default:

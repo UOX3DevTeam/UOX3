@@ -5610,8 +5610,6 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 			case 382:	// PETBONDINGENABLED
 				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->PetBondingEnabled() ) );
 				break;
-			case 383:	// QUESTSENABLED
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->QuestsEnabled() ) );
 			case 383:	// HOUSEITEMSDELETEONDECAY
 				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HouseItemsDeleteOnDecay() ) );
 				break;
@@ -5633,8 +5631,9 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 			case 389:	// HOUSEDECAY
 				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HouseDecay() ) );
 				break;
-      case 390:	// QUESTSENABLED
+			case 390:	// QUESTSENABLED
 				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->QuestsEnabled() ) );
+				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );
 				return false;
