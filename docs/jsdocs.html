@@ -14259,6 +14259,34 @@ var partyMember3 = myParty.GetMember( 3 );</code></pre>
 							</div>
 						</div>
 
+												<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_race_CanEquip" />
+							<label for="spoiler_method_race_CanEquip">CanEquip <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool CanEquip( itemId );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns true if members of this race can equip the specified item ID.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">var p = socket.currentChar;
+var race = p.race;
+if( race && race.CanEquip( 0x1415 ) )
+{
+  p.SysMessage( "Your race can equip that item." );
+}
+else
+{
+  p.SysMessage( "Your race cannot equip that item." );
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
 						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_race_IsValidBeardColor"/>
 							<label for="spoiler_method_race_IsValidBeardColor">IsValidBeardColor <i class="fas fa-angle-down"></i></label>
