@@ -64,7 +64,7 @@ function onSkill( pThief, skillUsed, objType )
 		// Since T2A, and New Player Experience, players marked as "young" cannot steal from other players OR NPCs
 		if( youngPlayerSystem && pThief.account.isYoung )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 1997, pSock.language )); // As a Young player, you cannot use the stealing skill
+			pSock.SysMessage( GetDictionaryEntry( 9197, pSock.language )); // As a Young player, you cannot use the stealing skill
 			return true;
 		}
 

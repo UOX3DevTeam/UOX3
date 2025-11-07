@@ -400,7 +400,8 @@ function ReleasePet( petObj, petNum, stableMaster, pUser, sayReleaseMsg )
 	petObj.stabled = 0;
 	petObj.visible = 0;
 	petObj.frozen = false;
-	petObj.hungerstatus = true;
+	petObj.willhunger = true;
+	petObj.willthirst = true;
 	petObj.vulnerable = true;
 	petObj.Teleport( pUser );
 	var totalStabledPets = parseInt( pUser.GetTag( "totalStabledPets" ));
@@ -548,7 +549,8 @@ function StablePet( pUser, ourObj, slotNum, stableMaster )
 		ourObj.wandertype = 0;
 		ourObj.frozen = true;
 		ourObj.hunger = 6;
-		ourObj.hungerstatus = false;
+		ourObj.willhunger = false;
+		ourObj.willthirst = false;
 		ourObj.vulnerable = false;
 		ourObj.Teleport( stableX, stableY, stableZ );
 
