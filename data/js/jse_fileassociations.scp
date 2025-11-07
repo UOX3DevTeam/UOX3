@@ -177,6 +177,7 @@
 3226=npc/ai/monster/ancient_lich.js
 3227=npc/ai/monster/zealot_of_khaldun.js
 3228=npc/ai/monster/shadowfiend.js
+3229=npc/ai/mannequin.js
 
 // Magic Items
 3300=item/magic_items.js
@@ -386,6 +387,15 @@
 15005=server/house/strongbox.js
 15006=server/house/playerVendorDeed.js
 15007=server/house/houseAddonUse.js
+15008=server/house/mannequindeed.js
+
+//-------------------------------------------
+// Helper Scripts [18000-18500]
+//-------------------------------------------
+18000=server/network/helpers/openpaperdoll.js
+18001=server/network/helpers/modifycontextmenu.js
+18002=server/misc/helpers/profanitycheck.js
+}
 }
 
 //-------------------------------------------

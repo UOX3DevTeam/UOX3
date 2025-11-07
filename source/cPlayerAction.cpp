@@ -663,9 +663,18 @@ bool CPIEquipItem::Handle( void )
 
 	if( !ourChar->IsGM() && k != ourChar )	// players cant equip items on other players or npc`s paperdolls.  // GM PRIVS
 	{
-		Bounce( tSock, i );
-		tSock->SysMessage( 1186 ); // You can't put items on other players!
-		return true;
+		TAGMAPOBJECT tMann  = k->GetTag( "Mannequin" );
+		bool isMann         = ( tMann.m_IntValue != 0 );
+		TAGMAPOBJECT tOwner = k->GetTag( "MannequinOwner" );
+		SERIAL ownerSer     = INVALIDSERIAL;
+
+		bool isOwner = ( ownerSer != INVALIDSERIAL && ownerSer == ourChar->GetSerial() ) || ( k->GetOwnerObj() == ourChar );
+		if( !( isMann && isOwner ))
+		{
+			Bounce( tSock, i );
+			tSock->SysMessage( 1186 ); // You can't put items on other players!
+			return true;
+		}
 	}
 
 	if( ourChar->IsDead() )
