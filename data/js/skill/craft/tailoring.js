@@ -8,6 +8,7 @@ const itemDetailsScriptID = 4026;		// Script ID used to show item detail tooltip
 const craftGumpID = 4027;				// TriggerEvent ID used to build the crafting gump UI
 const itemsPerPage = 10;				// Number of craftable items shown per gump subpage
 const displayUnlearnedRecipes = true;	// Show recipes player hasn't learned
+const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 //////////////////////////////////////////////////////////////////////////////////////////
 // UOX3 Tailoring CraftingMap Configuration
 //
@@ -50,6 +51,11 @@ const displayUnlearnedRecipes = true;	// Show recipes player hasn't learned
 //
 // // Recipe-locked item (only craftable if recipe is learned)
 // 185: { dictID: 11469, page: 8, timerID: 8, recipeID: 185 },
+//
+// // Era Gating
+// 130: { dictID: 11415, page: 1, timerID: 1, minEra: "uo" },          // from UO and up
+// 185: { dictID: 11469, page: 8, timerID: 8, recipeID: 185, minEra: "aos" }, // AoS+
+// 169: { dictID: 11454, page: 6, timerID: 6, maxEra: "lbr" },         // up to LBR
 //
 // Organization:
 // - Items are grouped by `page` value (e.g., Hats, Armor, etc.).
@@ -150,7 +156,7 @@ function PageX( socket, pUser, pageNum )
 		let needsRecipe = data.recipeID;
 		let showAll = displayUnlearnedRecipes;
 
-		if( !needsRecipe || showAll || HasLearnedRecipe( pUser, needsRecipe ) )
+		if( eraOK( data ) && ( !needsRecipe || showAll || HasLearnedRecipe( pUser, needsRecipe )))
 		{
 			myPage[page - 1].push( data.dictID );
 		}
@@ -387,6 +393,12 @@ function onGumpPress( socket, pButton, gumpData )
 			{
 				// Check if recipe required and not known
 				let data = CraftingMap[makeID];
+				if( data && !eraOK( data ))
+				{
+					socket.SysMessage( "That item is not available in this era." );
+					return;
+				}
+
 				if( data.recipeID && !TriggerEvent( 4022, "NeedRecipe", pUser, data.recipeID ))
 				{
 					socket.SysMessage("You must learn that recipe from a scroll.");
@@ -407,6 +419,12 @@ function onGumpPress( socket, pButton, gumpData )
 		{
 			// Check if recipe required and not known
 			let data = CraftingMap[makeID];
+			if( data && !eraOK( data ))
+			{
+				socket.SysMessage( "That item is not available in this era." );
+				return;
+			}
+
 			if( data.recipeID && !TriggerEvent( 4022, "NeedRecipe", pUser, data.recipeID ))
 			{
 				socket.SysMessage("You must learn that recipe from a scroll.");
@@ -720,4 +738,15 @@ function HasLearnedRecipe( pUser, recipeID )
 			return true;
 	}
 	return false;
+}
+
+function eraOK( entry )
+{
+	// Optional per-entry gates. Accept either/both. Strings like "lbr","aos","ml","tol".
+	// If not present, the entry is valid for all eras.
+	if( entry.minEra && coreShardEra < EraStringToNum( entry.minEra ))
+		return false;
+	if( entry.maxEra && coreShardEra > EraStringToNum( entry.maxEra ))
+		return false;
+	return true;
 }
