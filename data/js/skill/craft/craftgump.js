@@ -295,6 +295,7 @@ function CraftingGumpMenu( myGump, socket )
 	return;
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( pSock, pButton, gumpData )
 {
 	var pUser = pSock.currentChar;

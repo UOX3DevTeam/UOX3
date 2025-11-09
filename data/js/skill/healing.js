@@ -990,6 +990,7 @@ function ResurrectBondedPet( socket, deadPet )
 	deadPet.SetTag( "isPetDead", false );
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( socket, pButton, gumpData )
 {
 	var resurrectTarg = socket.currentChar;

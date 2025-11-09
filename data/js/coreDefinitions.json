@@ -8981,6 +8981,18 @@
       "returns": "boolean"
     },
     {
+      "name": "onGumpPress",
+      "cppName": "HandleGumpPress",
+      "params": {
+        "list": [
+          { "name": "myObj",   "type": "Socket",    "required": true },
+          { "name": "pressed", "type": "number",    "required": true },
+          { "name": "gump",    "type": "GumpData",  "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
       "name": "onProfileRequest",
       "cppName": "OnProfileRequest",
       "params": {
