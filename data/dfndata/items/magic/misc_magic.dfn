@@ -249,7 +249,7 @@ health=80
 maxhp=80
 newbie
 origin=ml
-script=7531
+script=5064
 }
 
 [0x9C17]
