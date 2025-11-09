@@ -1947,6 +1947,7 @@ function ItemDetailsGump( itemGump, pUser )
 	itemGump.AddText(  500, 219, textHue, "*"  );
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( pSock, pButton, gumpData )
 {
 	var pUser = pSock.currentChar;

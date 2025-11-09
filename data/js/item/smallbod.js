@@ -215,6 +215,7 @@ function SmallBODGump( pUser, smallBOD )
 	bodGump.Free();
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( socket, pButton, gumpData )
 {
 	var pUser = socket.currentChar;

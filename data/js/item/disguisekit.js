@@ -241,6 +241,7 @@ function ShowDisguiseKitMenu( socket, pUser )
 	dGump.Free(); // clear this gump from uox-memory
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( pSock, buttonID, gumpData )
 {
 	if( pSock == null )
