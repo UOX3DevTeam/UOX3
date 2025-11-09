@@ -135,6 +135,7 @@ function onUseUnChecked( pUser, iUsed )
 }
 
 // Handle button presses in the house menu
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( pSocket, pButton, gumpData )
 {
 	var pUser = pSocket.currentChar;
