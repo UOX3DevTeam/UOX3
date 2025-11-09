@@ -1,3 +1,7 @@
+09/11/2025 - DragonSlayer62 (#446)
+    [FIX] Fixed hunger and thirst being set wrong when pet was stabled or claimed.
+    [FIX] Fixed stealing.js had wrong dictionary number message.
+
 09/11/2025 - strattond (#449)
     [ADD] onGumpPress event definition
     [UPD] Existing scripts with definitions
