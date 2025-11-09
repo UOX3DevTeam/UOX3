@@ -5591,5 +5591,8 @@
 19338=eingefroren
 19339=bewacht
 19340=Der Geist dieser Kreatur ist nicht einheitlich. Versuchen Sie es in ein paar Minuten erneut.
+19341=Du kennst dieses Rezept bereits.
+19342=Du hast ein neues Rezept gelernt: %i
+19343=Du musst dieses Rezept von einer Schriftrolle lernen.
 }
 EOF
