@@ -1,3 +1,7 @@
+09/11/2025 - strattond (#449)
+    [ADD] onGumpPress event definition
+    [UPD] Existing scripts with definitions
+
 02/11/2025 - DragonSlayer62 (#404)
     [ADD] Added House Decay System, which automatically marks and collapses unattended houses over time. Decay stages and timers are configurable via the uox.ini file.
 
