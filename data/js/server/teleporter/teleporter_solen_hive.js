@@ -222,6 +222,7 @@ var exitMap = {
 	"5655,1792": [729, 1451]
 };
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -276,6 +277,7 @@ function TeleportWithPets( pUser, x, y, z )
 	pUser.Teleport( x, y, z );
 }
 
+/** @type { ( targSock: Socket, objColliding: Character, objCollideWith: BaseObject ) => boolean } */
 function onCollide( pSock, pUser, iObject )
 {
 	if( !ValidateObject (pUser ) || !pUser.isChar || pUser.npc )
@@ -316,6 +318,7 @@ function onCollide( pSock, pUser, iObject )
 }
 
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( iObject, timerID )
 {
 	if( timerID == 1 )
