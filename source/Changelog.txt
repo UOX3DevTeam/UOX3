@@ -1,3 +1,21 @@
+09/11/2025 - DragonSlayer62 (#405)
+    [ADD] Added "Last Ten" button to crafting gumps to show last ten items crafted
+    [UPD] Updated tailoring crafting gump to remember last sub page that was open
+    [FIX] "Make Last" button in crafting menus no longer requires user to re-select cloth
+    [UPD] Updated tailoring.js header describing how to use the new crafting system.
+    [ADD] Added Era gatting, any entry gated with minEra: "aos" will be hidden from the menu unless CoreShardEra >= "aos". If your shard era is pre-AoS, those items don’t get added to the page list at all.
+    [ADD] Added new recipe system, currently implemented for tailoring only.
+        Craftable items in the tailoring CraftingMap can now be locked behind learnable recipes.
+        Recipes are tied to specific items using a `recipeID`, defined both in the `CraftingMap` and on scroll items via `custominttag`.
+        Recipe scrolls (e.g., `[recipescroll]`) allow players to learn new crafting options when used.
+        The system supports optional naming of recipes via `customstringtag=recipeName`, allowing display in UI and messages.
+        If a player has not learned the recipe, the item will be hidden or marked as uncraftable (based on `displayUnlearnedRecipes` setting).
+    [UPD] Updated Dictionary files with new messges
+
+09/11/2025 - DragonSlayer62 (#446)
+    [FIX] Fixed hunger and thirst being set wrong when pet was stabled or claimed.
+    [FIX] Fixed stealing.js had wrong dictionary number message.
+
 09/11/2025 - strattond (#449)
     [ADD] onGumpPress event definition
     [UPD] Existing scripts with definitions
