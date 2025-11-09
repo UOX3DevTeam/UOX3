@@ -7212,6 +7212,8 @@ JSBool CRace_CanWearArmour( JSContext *cx, uintN argc, jsval *vp )
 //|    Prototype    -    bool CanEquip( itemId)
 //o------------------------------------------------------------------------------------------------o
 //|    Purpose      -    Checks if members of race can equip specified item
+//|	                 This is based on the presence (or lack thereof) of ALLOWEQUIPLIST/BANEQUIPLIST
+//|	                 entries in races.dfn
 //o------------------------------------------------------------------------------------------------o
 JSBool CRace_CanEquip( JSContext *cx, uintN argc, jsval *vp )
 {
