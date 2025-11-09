@@ -28,6 +28,7 @@ function ReDeedAddon( pUser, iUsed )
 	wreathaddongump.Free();
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( pSock, pButton, gumpData )
 {
 	var pUser = pSock.currentChar;
