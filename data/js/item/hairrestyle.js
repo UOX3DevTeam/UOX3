@@ -120,6 +120,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( pSock, myButtonID )
 {
 	var myPlayer = pSock.currentChar;
