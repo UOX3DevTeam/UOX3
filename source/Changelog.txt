@@ -1,3 +1,6 @@
+09/11/2025 - DragonSlayer62 (#453)
+    [UPD] Updated System Messages in Pitchers and SoundEffect.
+
 09/11/2025 - DragonSlayer62 (#405)
     [ADD] Added "Last Ten" button to crafting gumps to show last ten items crafted
     [UPD] Updated tailoring crafting gump to remember last sub page that was open
