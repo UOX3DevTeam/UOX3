@@ -78,7 +78,7 @@ function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 	var tileID	= pSock.GetWord( 17 );
 	var Pitcher = pSock.tempObj;
 
-	if( !ValidateObject( pUser ) || !ValidateObject( myTarget ))
+	if( !ValidateObject( pUser ))
 	{
 		return;
 	}
@@ -293,6 +293,9 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 	}
 	else if( !StrangeByte && myTarget.isChar )
 	{ //If target is a character
+		if( !ValidateObject( myTarget ))
+			return;
+
 		if(( pUser.x > targX + 3 ) || ( pUser.x < targX - 3 ) || ( pUser.y > targY + 3 ) || ( pUser.y < targY - 3 ) || ( pUser.z > targZ + 15 ) || ( pUser.z < targZ - 15 ))
 		{
 			pSock.SysMessage( GetDictionaryEntry( 2555, pSock.language )); // You are too far away from the target!
