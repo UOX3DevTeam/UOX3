@@ -286,6 +286,7 @@ JSBool CMisc_SysMessage( JSContext *cx, uintN argc, jsval *vp );
 
 // Race methods
 JSBool CRace_CanWearArmour( JSContext *cx, uintN argc, jsval *vp );
+JSBool CRace_CanEquip( JSContext *cx, uintN argc, jsval *vp );
 JSBool CRace_IsValidHairColour( JSContext *cx, uintN argc, jsval *vp );
 JSBool CRace_IsValidSkinColour( JSContext *cx, uintN argc, jsval *vp );
 JSBool CRace_IsValidBeardColour( JSContext *cx, uintN argc, jsval *vp );
@@ -675,6 +676,7 @@ inline JSFunctionSpec CGuild_Methods[] =
 inline JSFunctionSpec CRace_Methods[] =
 {
 	{ "CanWearArmour",		CRace_CanWearArmour,		1, 0 },
+	{ "CanEquip",	        CRace_CanEquip,		        1, 0 },
 	{ "IsValidHairColour",	CRace_IsValidHairColour,	1, 0 },
 	{ "IsValidSkinColour",	CRace_IsValidSkinColour,	1, 0 },
 	{ "IsValidBeardColour",	CRace_IsValidBeardColour,	1, 0 },
