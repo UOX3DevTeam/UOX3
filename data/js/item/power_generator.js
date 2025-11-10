@@ -369,6 +369,7 @@ function InitializePuzzle( controlPanel )
 	}).join( "|" ));
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( pSocket, buttonID, gumpData )
 {
 	if( pSocket == null )

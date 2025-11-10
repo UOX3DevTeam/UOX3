@@ -5591,6 +5591,10 @@
 19337=(invulnerable)
 19338=(frozen)
 19339=(guarded)
+19340=That creature’s spirit lacks cohesion. Try again in a few minutes.
+19341=You already know this recipe.
+19342=You have learned a new recipe: %i
+19343=You must learn that recipe from a scroll.
 // [19600-19700] Quest System
 19600=Target the item you wish to toggle Quest Item status on <ESC> to cancel
 19601=The item must be in your backpack to toggle its quest status.

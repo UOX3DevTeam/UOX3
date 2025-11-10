@@ -141,6 +141,7 @@ function displayGump(srcSock, pUser)
 	myGump.Free();
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress(srcSock, myButtonID )
 {
 	var srcChar = srcSock.currentChar;

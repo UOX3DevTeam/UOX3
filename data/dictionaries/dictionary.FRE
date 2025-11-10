@@ -5745,6 +5745,9 @@
 19338=gelé
 19339=gardé
 19340=L'esprit de cette créature manque de cohésion. Réessayez dans quelques minutes.
+19341=Vous connaissez déjà cette recette.
+19342=Vous avez appris une nouvelle recette : %i
+19343=Vous devez apprendre cette recette à partir d'un parchemin.
 // [19600-19700] Système de quête
 19600=Ciblez l'objet dont vous souhaitez changer le statut d'objet de quête sur <ESC> pour annuler
 19601=L'objet doit être dans votre sac à dos pour changer son statut de quête.

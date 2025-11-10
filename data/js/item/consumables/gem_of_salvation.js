@@ -60,6 +60,7 @@ function DisplayResurrectGump( pDead )
 	gemResurrectGump.Free();
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( pSock, pButton, gumpData )
 {
 	var pDead = pSock.currentChar;
