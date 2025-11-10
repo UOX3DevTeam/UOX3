@@ -83,6 +83,7 @@ function AddBlueBack( myGump )
 	myGump.AddCheckerTrans( 15, 14, signGumpWidth - 29, signGumpHeight - 29 );
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( pSock, pButton, gumpData )
 {
 	var pUser = pSock.currentChar;
