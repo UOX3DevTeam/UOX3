@@ -127,6 +127,7 @@ function CanUseGate( srcSock, pUser )
 	return true;
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( srcSock, myButton )
 {
 	// Get character from socket

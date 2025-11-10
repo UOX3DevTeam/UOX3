@@ -314,6 +314,7 @@ function BugReportGump( pSock )
 	bugreportGump.Free();
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( pSock, pButton, gumpData )
 {
 	var pUser = pSock.currentChar;
