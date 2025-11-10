@@ -371,6 +371,7 @@ function DisplayGump( pSocket, pUser, runeBook )
 	runeBookGump.Free();
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( pSocket, myButton, gumpData )
 {
 	if( pSocket == null )

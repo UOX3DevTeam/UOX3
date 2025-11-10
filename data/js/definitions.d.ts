@@ -1671,6 +1671,7 @@ declare global {
   function onFall( pFall: Character ): void;
   function onFlagChange( pChanging: Character, newStatus: number, oldStatus: number ): boolean;
   function onGuildButton( presser: Character ): boolean;
+  function onGumpPress( myObj: Socket, pressed: number, gump: GumpData ): void;
   function onHelpButton( mChar: Character ): boolean;
   function onHouseCommand( targSock: Socket, multiObj: Multi, targId: number ): boolean;
   function onHungerChange( pChanging: Character, newStatus: number ): boolean;

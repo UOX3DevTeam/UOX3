@@ -225,6 +225,7 @@ function onMultiLogout( iMulti, cPlayer )
 }
 
 // Timer to Start House Decay
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( iMulti, timerID )
 {
 	if( !ValidateObject( iMulti ))
