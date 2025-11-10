@@ -317,6 +317,14 @@
 5061=item/puzzlechest.js
 5062=item/shrines.js
 
+//-------------------------------------------
+// Aquarium Scripts [5100-5105]
+//-------------------------------------------
+5100=item/aquarium.js
+5101=item/aquariumfish.js
+5102=item/aquariumdecoration.js
+5103=item/fishbowl.js
+
 19100=item/plant_growing/plantsystem.js
 19101=item/plant_growing/plantbowl.js
 19102=item/plant_growing/seed.js

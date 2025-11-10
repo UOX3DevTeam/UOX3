@@ -829,3 +829,200 @@ weight=1000
 movable=2
 decay=0
 }
+
+[0x3060]
+{ south
+get=base_item
+name=a aquarium
+id=0x3060
+weight=1000
+movable=2
+decay=0
+script=5100
+}
+
+[0x3061]
+{ south
+get=base_item
+name=a aquarium
+id=0x3061
+weight=1000
+movable=2
+decay=0
+}
+
+[0x3062]
+{ east
+get=base_item
+name=a aquarium
+id=0x3062
+weight=1000
+movable=2
+decay=0
+script=5100
+}
+
+[0x3063]
+{ east
+get=base_item
+name=a aquarium
+id=0x3063
+weight=1000
+movable=2
+decay=0
+}
+
+[0xA3A6]
+{
+get=base_item
+name=Small Elegant Aquarium
+id=0xA3A6
+weight=1000
+movable=2
+decay=0
+script=5100
+}
+
+[0xA3B0]
+{// right part south
+get=base_item
+name=Wall Mounted Aquarium
+id=0xA3B0
+weight=1000
+movable=2
+decay=0
+}
+
+[0xA3B5]
+{// middle part south
+get=base_item
+name=Wall Mounted Aquarium
+id=0xA3B5
+weight=1000
+movable=2
+decay=0
+script=5100
+}
+
+[0xA3BA]
+{// left part south
+get=base_item
+name=Wall Mounted Aquarium
+id=0xA3BA
+weight=1000
+movable=2
+decay=0
+}
+
+[0xA3BF]
+{// right part east
+get=base_item
+name=Wall Mounted Aquarium
+id=0xA3BF
+weight=1000
+movable=2
+decay=0
+}
+
+[0xA3C4]
+{// middle part east
+get=base_item
+name=Wall Mounted Aquarium
+id=0xA3C4
+weight=1000
+movable=2
+decay=0
+script=5100
+}
+
+[0xA3C9]
+{// left part east
+get=base_item
+name=Wall Mounted Aquarium
+id=0xA3C9
+weight=1000
+movable=2
+decay=0
+}
+
+[0xA3CE]
+{// middle part south
+get=base_item
+name=Large Aquarium
+id=0xA3CE
+weight=1000
+movable=2
+decay=0
+script=5100
+}
+
+[0xA3D3]
+{// right part south
+get=base_item
+name=Large Aquarium
+id=0xA3D3
+weight=1000
+movable=2
+decay=0
+}
+
+[0xA3D4]
+{// middle part part south
+get=base_item
+name=Large Aquarium
+id=0xA3D4
+weight=1000
+movable=2
+decay=0
+}
+
+[0xA3D5]
+{// left part part south
+get=base_item
+name=Large Aquarium
+id=0xA3D5
+weight=1000
+movable=2
+decay=0
+}
+
+[0xA3D6]
+{// middle part south
+get=base_item
+name=Large Aquarium
+id=0xA3D6
+weight=1000
+movable=2
+decay=0
+script=5100
+}
+
+[0xA3DB]
+{// right part south
+get=base_item
+name=Large Aquarium
+id=0xA3DB
+weight=1000
+movable=2
+decay=0
+}
+
+[0xA3DC]
+{// middle part part south
+get=base_item
+name=Large Aquarium
+id=0xA3DC
+weight=1000
+movable=2
+decay=0
+}
+
+[0xA3DD]
+{// left part part south
+get=base_item
+name=Large Aquarium
+id=0xA3DD
+weight=1000
+movable=2
+decay=0
+}
