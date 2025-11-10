@@ -544,6 +544,7 @@ function DisplayLoadingWorldTips( socket )
 	worldLoadTips.Free();
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( pSocket, pButton, gumpData )
 {
 	totalCheckBoxes = 36;

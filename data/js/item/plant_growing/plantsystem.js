@@ -1232,6 +1232,7 @@ function CodexOFWisdomPacket( socket, topicID )
 	helpPacket.Free();
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( socket, button, PlantGump )
 {
 	var pUser = socket.currentChar;
