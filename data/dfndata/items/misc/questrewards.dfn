@@ -85,7 +85,7 @@ custominttag=skillBonusID 45
 custominttag=skillBonusVal 100
 script=2200// uses left tooltip
 script=4050// mining.js
-script=5063//jacobspickaxe.js
+script=5065//jacobspickaxe.js
 script=5043//skill_boosting_equipment.js
 sectionid=jacobspickaxe
 }
