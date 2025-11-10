@@ -431,6 +431,7 @@ function onCallback0( pSock, ourObj )
 	}
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( socket, button, uoxAnimalLoreGump )
 {
 	switch( button )

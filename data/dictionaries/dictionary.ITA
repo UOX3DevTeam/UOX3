@@ -5590,5 +5590,8 @@
 19338=congelato
 19339=sorvegliato
 19340=Lo spirito di quella creatura manca di coesione. Riprova tra qualche minuto.
+19341=Conosci già questa ricetta.
+19342=Hai imparato una nuova ricetta: %i
+19343=Devi imparare quella ricetta da una pergamena.
 }
 EOF

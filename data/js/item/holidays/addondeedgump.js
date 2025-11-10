@@ -51,6 +51,7 @@ function AddonGump( pUser, iUsed )
 	addongump.Free();
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( socket, pButton, gumpData )
 {
 	var pUser = socket.currentChar;
