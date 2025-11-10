@@ -7208,6 +7208,37 @@ JSBool CRace_CanWearArmour( JSContext *cx, uintN argc, jsval *vp )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|    Function		-    CRace_CanEquip()
+//|    Prototype    -    bool CanEquip( itemId)
+//o------------------------------------------------------------------------------------------------o
+//|    Purpose      -    Checks if members of race can equip specified item
+//|	                 This is based on the presence (or lack thereof) of ALLOWEQUIPLIST/BANEQUIPLIST
+//|	                 entries in races.dfn
+//o------------------------------------------------------------------------------------------------o
+JSBool CRace_CanEquip( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	if( argc != 1 )
+	{
+		ScriptError( cx, "CanEquip: Invalid number of arguments (takes 1, item ID)" );
+		return JS_FALSE;
+	}
+
+	CRace *myRace = static_cast<CRace *>( JS_GetPrivate( cx, obj ));
+	if( myRace == nullptr )
+	{
+		ScriptError( cx, "CanEquip: Unknown Object has been passed" );
+		return JS_FALSE;
+	}
+
+	UI16 itemId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	bool canEquip = myRace->CanEquipItem( itemId );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( canEquip ));    // they can equip the item
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CRace_IsValidHairColour()
 //|	Prototype	-	bool IsValidRaceHairColour( tColour )
 //o------------------------------------------------------------------------------------------------o

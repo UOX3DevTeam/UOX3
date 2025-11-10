@@ -529,6 +529,7 @@ function SmallBODAcceptGump( pUser, myNPC )
 	bodGump.Free();
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( socket, pButton, gumpData )
 {
 	if( socket == null )
