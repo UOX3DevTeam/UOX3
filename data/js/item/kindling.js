@@ -40,26 +40,26 @@ function onUseChecked( pUser, iUsed )
 				iUsed.decayable = false;
 
 				// Successfully created campfire
-				pUser.SysMessage( GetDictionaryEntry( 1765, pSock.language ));
+				pSock.SysMessage( GetDictionaryEntry( 1765, pSock.language ));
 				// You feel it would take a few moments to secure your camp.
-				pUser.SysMessage( GetDictionaryEntry( 1790, pSock.language ));
+				pSock.SysMessage( GetDictionaryEntry( 1790, pSock.language ));
 
 				//Campfire burns for 30 seconds to secure camp
 				iUsed.StartTimer( 30000, 1, true );
 			}
 			else // You fail to ignite the campfire.
 			{
-				pUser.SysMessage( GetDictionaryEntry( 1764, pSock.language ));
+				pSock.SysMessage( GetDictionaryEntry( 1764, pSock.language ));
 			}
 		}
 		else // There is not a spot nearby to place your campfire.
 		{
-			pUser.SysMessage( GetDictionaryEntry( 1789, pSock.language ));
+			pSock.SysMessage( GetDictionaryEntry( 1789, pSock.language ));
 		}
 	}
 	else // That item must be in your backpack before it can be used.
 	{
-		pUser.SysMessage( GetDictionaryEntry( 1763, pSock.language ));
+		pSock.SysMessage( GetDictionaryEntry( 1763, pSock.language ));
 	}
 	return false;
 }
@@ -112,11 +112,12 @@ function onCollide( pSock, pUser, iUsed )
 
 function searchForNearbyChars( campfire, trgChar )
 {
+	var socket = trgChar.socket;
 	// Only apply secure-camp tag to players who are online, out of combat, !criminal
 	if( trgChar.online && !trgChar.criminal && !trgChar.atWar && trgChar.attacker == null )
 	{
 		// The camp is now secure.
-		trgChar.SysMessage( GetDictionaryEntry( 1791, trgChar.socket.language ));
+		socket.SysMessage( GetDictionaryEntry( 1791, socket.language ));
 
 		// Add player's serial as custom tag on campfire to mark it as secure for said character
 		campfire.SetTag( trgChar.serial & 0x00FFFFFF, true );
