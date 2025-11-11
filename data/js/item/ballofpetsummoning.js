@@ -87,12 +87,12 @@ function onCallback0( socket, myTarget )
 	var itemOwner = GetPackOwner( iUsed, 0 );
 	if( itemOwner == null || itemOwner.serial != pUser.serial )
 	{
-		pUser.SysMessage( GetDictionaryEntry( 18748, socket.language )); // That must be in your pack for you to use it.
+		socket.SysMessage( GetDictionaryEntry( 18748, socket.language )); // That must be in your pack for you to use it.
 		return false;
 	}
 	else if (charges == 0 )
 	{
-		pUser.SysMessage( GetDictionaryEntry( 0, socket.language )); // This item is out of charges.
+		socket.SysMessage( GetDictionaryEntry( 0, socket.language )); // This item is out of charges.
 		return false;
 	}
 
@@ -100,12 +100,12 @@ function onCallback0( socket, myTarget )
 	{
 		if( myTarget.owner != pUser )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 19051, socket.language )); // You may only link your own pets to a Crystal Ball of Pet Summoning.
+			socket.SysMessage( GetDictionaryEntry( 19051, socket.language )); // You may only link your own pets to a Crystal Ball of Pet Summoning.
 			return false;
 		}
 		else if( requiredCharges > charges )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 19052, socket.language )); // The Crystal Ball darkens. It must be charged before it can be used again.
+			socket.SysMessage( GetDictionaryEntry( 19052, socket.language )); // The Crystal Ball darkens. It must be charged before it can be used again.
 			return false;
 		}
 		else
@@ -140,7 +140,7 @@ function SummonPet( pUser, iUsed )
 
 	if( charges == 0)
 	{
-		pUser.SysMessage( GetDictionaryEntry( 19055, socket.language )); // The Crystal Ball darkens. It must be charged before it can be used again.
+		socket.SysMessage( GetDictionaryEntry( 19055, socket.language )); // The Crystal Ball darkens. It must be charged before it can be used again.
 		return false;
 	}
 	else if( ValidateObject( Pet ) && Pet.mounted == true)
@@ -148,7 +148,7 @@ function SummonPet( pUser, iUsed )
 		socket.SysMessage( GetDictionaryEntry( 19056, socket.language )); // The Crystal Ball fills with a yellow mist. Why would you summon your pet while riding it?
 		return false;
 	}
-	else if( maxControlSlots > 0 && (pUser.controlSlotsUsed + iUsed.morez > maxControlSlots) || pUser.petCount >= maxFollowers ) 
+	else if( maxControlSlots > 0 && ( pUser.controlSlotsUsed + iUsed.morez > maxControlSlots ) || pUser.petCount >= maxFollowers ) 
 	{
 		socket.SysMessage( GetDictionaryEntry( 19057, socket.language )); // The Crystal Ball fills with a blue mist. Your pet is not responding to the summons.
 		return false;
@@ -313,7 +313,7 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 	return false;
 }
 
-/** @type { ( myChar: Character, myItem: Item, mySpeech: string ) => void } */
+/** @type { ( myChar: Character, myItem: Item, mySpeech: string, mySpeechId: number ) => void } */
 function onSpeechInput( pUser, targObj, pSpeech, pSpeechID )
 {
 	var pSocket = pUser.socket;

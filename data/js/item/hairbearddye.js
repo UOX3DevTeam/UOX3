@@ -52,17 +52,17 @@ function onUseChecked( pUser, iUsed )
 		if( itemToDye == null && iUsed.morex == 0 )
 		{
 			// No hair!
-			pUser.SysMessage( GetDictionaryEntry( 17100, socket.language )); // You have no hair to dye.
+			socket.SysMessage( GetDictionaryEntry( 17100, socket.language )); // You have no hair to dye.
 		}
 		else if( itemToDye == null && iUsed.morex == 1 )
 		{
 			// No beard!
-			pUser.SysMessage( GetDictionaryEntry( 17116, socket.language )); // You have no beard to dye.
+			socket.SysMessage( GetDictionaryEntry( 17116, socket.language )); // You have no beard to dye.
 		}
 		else if( itemToDye == null && itemToDye2 == null )
 		{
 			// No hair or beard!
-			pUser.SysMessage( GetDictionaryEntry( 17120, socket.language )); // You have no hair or beard to dye.
+			socket.SysMessage( GetDictionaryEntry( 17120, socket.language )); // You have no hair or beard to dye.
 		}
 	}
 	return false;
@@ -235,8 +235,8 @@ function onGumpPress( pSock, pButton, gumpData )
 	var itemOwner = GetPackOwner( iUsed, 0 );
 	if( itemOwner == null || itemOwner != pUser )
 	{
-		pUser.SysMessage( GetDictionaryEntry( 1763, pSock.language )); // That item must be in your backpack before it can be used.
-		return false;
+		pSock.SysMessage( GetDictionaryEntry( 1763, pSock.language )); // That item must be in your backpack before it can be used.
+		return;
 	}
 
 	var scriptID = 5040;
