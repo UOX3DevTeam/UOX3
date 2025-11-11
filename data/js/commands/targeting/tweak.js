@@ -4001,6 +4001,7 @@ function ShowInputGump( pUser, targetObj, propertyName, propertyType, maxLength,
 }
 
 // Handle button-presses in gumps
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( pSocket, pButton, gumpData )
 {
 	var targetObj = pSocket.tempObj2;

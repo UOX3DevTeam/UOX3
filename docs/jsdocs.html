@@ -14238,12 +14238,12 @@ var partyMember3 = myParty.GetMember( 3 );</code></pre>
 					<div class="text-component">
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_method_race_CanWearArmor"/>
-							<label for="spoiler_method_race_CanWearArmor">CanWearArmor <i class="fas fa-angle-down"></i></label>
+							<input type="checkbox" id="spoiler_method_race_CanWearArmour"/>
+							<label for="spoiler_method_race_CanWearArmour">CanWearArmour <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>bool CanWearArmor( armorClass );</em></p>
+									<p><em>bool CanWearArmour( armorClass );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -14251,7 +14251,7 @@ var partyMember3 = myParty.GetMember( 3 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">if( pUser.race.CanWearArmor( 1 ))
+									<pre><code class="language-javascript">if( pUser.race.CanWearArmour( 1 ))
 {
 	pUser.TextMessage( "Woho! My race can wear items of armor class 1!" );
 }</code></pre>
@@ -14260,12 +14260,41 @@ var partyMember3 = myParty.GetMember( 3 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_method_race_IsValidBeardColor"/>
-							<label for="spoiler_method_race_IsValidBeardColor">IsValidBeardColor <i class="fas fa-angle-down"></i></label>
+							<input type="checkbox" id="spoiler_method_race_CanEquip" />
+							<label for="spoiler_method_race_CanEquip">CanEquip <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>bool IsValidBeardColor( colour );</em></p>
+									<p><em>bool CanEquip( itemId );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns true if members of this race can equip the specified item ID.
+									This is based on the presence (or lack thereof) of ALLOWEQUIPLIST/BANEQUIPLIST entries in races.dfn</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">var p = socket.currentChar;
+var race = p.race;
+if( race && race.CanEquip( 0x1415 ) )
+{
+  p.SysMessage( "Your race can equip that item." );
+}
+else
+{
+  p.SysMessage( "Your race cannot equip that item." );
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_race_IsValidBeardColour"/>
+							<label for="spoiler_method_race_IsValidBeardColour">IsValidBeardColour <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool IsValidBeardColour( colour );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -14282,12 +14311,12 @@ var partyMember3 = myParty.GetMember( 3 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_method_race_IsValidHairColor"/>
-							<label for="spoiler_method_race_IsValidHairColor">IsValidHairColor <i class="fas fa-angle-down"></i></label>
+							<input type="checkbox" id="spoiler_method_race_IsValidHairColour"/>
+							<label for="spoiler_method_race_IsValidHairColour">IsValidHairColour <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>bool IsValidHairColor( colour );</em></p>
+									<p><em>bool IsValidHairColour( colour );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -14304,12 +14333,12 @@ var partyMember3 = myParty.GetMember( 3 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_method_race_IsValidSkinColor"/>
-							<label for="spoiler_method_race_IsValidSkinColor">IsValidSkinColor <i class="fas fa-angle-down"></i></label>
+							<input type="checkbox" id="spoiler_method_race_IsValidSkinColour"/>
+							<label for="spoiler_method_race_IsValidSkinColour">IsValidSkinColour <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>bool IsValidSkinColor( colour );</em></p>
+									<p><em>bool IsValidSkinColour( colour );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
