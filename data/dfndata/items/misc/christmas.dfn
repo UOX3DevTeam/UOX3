@@ -615,225 +615,208 @@ COLOUR=1153
 
 [treeneedles]
 {
+get=base_item
 id=0xCD7
 dyeable=0
 decay=0
+movable=2
+}
+
+[base_ornament]
+{
+get=base_item
+dyeable=0
+decay=0
+movable=2
 }
 
 [treeornament1]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF0F
-dyeable=0
-decay=0
 }
 
 [treeornament2]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF10
-dyeable=0
-decay=0
 }
 
 [treeornament3]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF12
-dyeable=0
-decay=0
 }
 
 [treeornament4]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF13
-dyeable=0
-decay=0
 }
 
 [treeornament5]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF14
-dyeable=0
-decay=0
 }
 
 [treeornament6]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF15
-dyeable=0
-decay=0
 }
 
 [treeornament7]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF16
-dyeable=0
-decay=0
 }
 
 [treeornament8]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF17
-dyeable=0
-decay=0
 }
 
 [treeornament9]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF18
-dyeable=0
-decay=0
 }
 
 [treeornament10]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF19
-dyeable=0
-decay=0
 }
 
 [treeornament11]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF20
-dyeable=0
-decay=0
 }
 
 [treeornament12]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF22
-dyeable=0
-decay=0
 }
 
 [treeornament13]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF23
-dyeable=0
-decay=0
 }
 
 [treeornament14]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF24
-dyeable=0
-decay=0
 }
 
 [treeornament15]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF26
-dyeable=0
-decay=0
 }
 
 [treeornament16]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF27
-dyeable=0
-decay=0
 }
 
 [treeornament17]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF29
-dyeable=0
-decay=0
 }
 
 [treeornament18]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF30
-dyeable=0
-decay=0
 }
 
 [treeornament19]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF1A
-dyeable=0
-decay=0
 }
 
 [treeornament20]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF1B
-dyeable=0
-decay=0
 }
 
 [treeornament21]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF1C
-dyeable=0
-decay=0
 }
 
 [treeornament22]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF1E
-dyeable=0
-decay=0
 }
 
 [treeornament23]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF1F
-dyeable=0
-decay=0
 }
 
 [treeornament24]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF2A
-dyeable=0
-decay=0
 }
 
 [treeornament25]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF2B
-dyeable=0
-decay=0
 }
 
 [treeornament26]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF2F
-dyeable=0
-decay=0
 }
 
 [treeornament27]
 {
+get=base_ornament
 NAME=a tree ornament
 id=0xF28
-dyeable=0
-decay=0
 }
 
 [0xB1C4]
