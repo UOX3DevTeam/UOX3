@@ -3,7 +3,7 @@ function onCreateDFN( objMade, objType )
 	if( objType == 0 ) 
 	{
 		// Start a timer to replenish charges every 5 minutes
-		objMade.StartTimer( 5000, 0, 5063 ); // 300000 ms = 5 minutes
+		objMade.StartTimer( 5000, 0, 5065 ); // 300000 ms = 5 minutes
 	}
 }
 
@@ -17,6 +17,6 @@ function onTimer( timerObj, timerID )
 			timerObj.usesLeft += 1; // Regain one charge
 		}
 		// Restart the timer to continue regenerating charges
-		timerObj.StartTimer( 5000, 0, 5063 );
+		timerObj.StartTimer( 5000, 0, 5065 );
 	}
 }
