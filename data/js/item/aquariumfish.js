@@ -1,4 +1,4 @@
-var AIR_MS = 300000; // 5 minutes, like RunUO DeathDelay
+var AIR_MS = 300000; // 5 minutes
 
 function isDead( item )
 {
@@ -23,7 +23,6 @@ function killFish( item )
 /** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( objMade, objType )
 {
-	// Only items
 	if( objType == 0 )
 	{
 		objMade.SetTag( "fishAirActive", 1 );
@@ -34,23 +33,17 @@ function onCreateDFN( objMade, objType )
 /** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( iOwner, timerID )
 {
-	if( timerID !== 1 )
-		return;
-
-	// If timer isn't marked active anymore, do nothing
 	if(( iOwner.GetTag( "fishAirActive" ) == null ))
 		return;
 
-	// If still gasping in unsafe place, kill
 	killFish( iOwner );
 }
 
 /** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( myObj, pSocket )
 {
-	// Emulate RunUO’s description selection
 	var live = !isDead( myObj );
-	var unusualByID = ( myObj.id > 0x3B0F ); // matches RunUO logic
+	var unusualByID = ( myObj.id > 0x3B0F );
 	var hasHue = (( myObj.color | 0 ) !== 0 );
 
 	var desc;
@@ -63,8 +56,7 @@ function onTooltip( myObj, pSocket )
 
 	var tooltipText = [desc];
 
-	// Show “Gasping for air” if the timer is currently active and fish is alive
-	if( live && ( ( myObj.GetTag( "fishAirActive" ) | 0 ) === 1 ))
+	if( live && ( myObj.GetTag( "fishAirActive" ) === 1 ))
 		tooltipText.push( "Gasping for air" );
 
 	myObj.SetTempTag( "clilocTooltip", 1042971 ); // ~1_NOTHING~

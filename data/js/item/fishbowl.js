@@ -89,7 +89,7 @@ function recreateFishToPack( pUser, bowl )
 	return true;
 }
 
-/** @type { ( user: Character, iUsing: Item ) => boolean } */
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	if( objType === 0 )
@@ -139,6 +139,7 @@ function onDropItemOnItem( iDropped, cDropper, iDroppedOn )
 	return 1;
 }
 
+/** @type { ( tSock: Socket, baseObj: BaseObject ) => boolean } */
 function onContextMenuRequest( socket, targObj )
 {
 	if( !ValidateObject( targObj ))
@@ -154,6 +155,7 @@ function onContextMenuRequest( socket, targObj )
 	return false;
 }
 
+/** @type { ( tSock: Socket, baseObj: BaseObject, popupEntry: number ) => boolean } */
 function onContextMenuSelect( socket, targObj, entryID )
 {
 	if( !ValidateObject( targObj ))

@@ -458,6 +458,7 @@ function showEvents( pUser, aquarium )
 }
 
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( pSocket, buttonID )
 {
 	var pUser = pSocket.currentChar;
@@ -477,7 +478,7 @@ function onGumpPress( pSocket, buttonID )
 	if( cur > count ) 
 		cur = count;
 
-	// Remove current page’s item
+	// Remove current pages item
 	if( buttonID >= ( 1000 +1 ) && buttonID <= ( 1000 + count ))
 	{
 		var idx = ( buttonID - 1000 ) - 1;
@@ -677,7 +678,7 @@ function onDropItemOnItem( iDropped, cDropper, iDroppedOn )
 			iDropped.SetTag( "ContentsType", 1 );
 			iDropped.SetTag( "ContentsName", "nothing" );
 
-			// caller context isn’t guaranteed to have a socket; just pass null/undefined
+			// caller context isnt guaranteed to have a socket; just pass null/undefined
 			TriggerEvent( 2100, "switchPitcherID", null, iDropped );
 		}
 		cDropper.SoundEffect( 37, true );
