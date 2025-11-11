@@ -1691,7 +1691,7 @@ declare global {
   function onPathfindEnd( npc: Character, pathfindResult: number ): boolean;
   function onPickup( item: Item, pickerUpper: Character, objCont: BaseObject ): boolean;
   function onProfileRequest( myObj: Socket, profileOwner: Character ): string;
-  function onProfileRequest( myObj: Socket, profileText: string ): voi;
+  function onProfileRequest( myObj: Socket, profileText: string ): void;
   function onQuestGump( mChar: Character ): boolean;
   function onResurrect( pAlive: Character ): boolean;
   function onScrollCast( tChar: Character, SpellId: number ): number;
@@ -1709,7 +1709,7 @@ declare global {
   function onSoldToVendor( targSock: Socket, objVendor: Character, objItemSold: BaseObject, numItemsSold: number ): boolean;
   function onSpecialMove( mChar: Character, abilityId: number ): boolean;
   function onSpeech( speech: string, personTalking: Character, talkingTo: BaseObject ): null | undefined | number | boolean;
-  function onSpeechInput( myChar: Character, myItem: Item, mySpeech: string ): void;
+  function onSpeechInput( myChar: Character, myItem: Item, mySpeech: string, mySpeechId: number  ): void;
   function onSpellCast( tChar: Character, SpellId: number ): number;
   function onSpellGain( book: Item, spellNum: number ): boolean;
   function onSpellLoss( book: Item, spellNum: number ): boolean;

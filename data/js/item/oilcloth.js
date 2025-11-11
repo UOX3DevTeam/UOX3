@@ -3,6 +3,7 @@
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
+	var socket = pUser.socket;
 	var itemOwner = GetPackOwner( iUsed, 0 );
 	if( pUser.visible == 1 || pUser.visible == 2 )
 	{
@@ -10,12 +11,12 @@ function onUseChecked( pUser, iUsed )
 	}
 	if( itemOwner == null || itemOwner != pUser )
 	{
-		pUser.SysMessage( GetDictionaryEntry( 1763, pUser.socket.language )); // That item must be in your backpack before it can be used.
+		socket.SysMessage( GetDictionaryEntry( 1763, socket.language )); // That item must be in your backpack before it can be used.
 	}
 	else
 	{
-		pUser.socket.tempObj = iUsed;
-		pUser.CustomTarget( 0, GetDictionaryEntry( 2751, pUser.socket.language )); // Select the weapon or armour you wish to use the cloth on.
+		socket.tempObj = iUsed;
+		socket.CustomTarget( 0, GetDictionaryEntry( 2751, socket.language )); // Select the weapon or armour you wish to use the cloth on.
 	}
 	return false;
 }
@@ -25,13 +26,18 @@ function onCallback0( pSock, myTarget )
 {
 	var iUsed = pSock.tempObj;
 	var pUser = pSock.currentChar;
+	if( !ValidateObject( pUser ))
+	{
+		return;
+	}
+
 	if( !pSock.GetWord( 1 ) && myTarget.isItem )
 	{
 		// That must be in your pack for you to use it.
 		var itemOwner = GetPackOwner( myTarget, 0 );
 		if( itemOwner == null || itemOwner != pUser )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 1763, pSock.language )); //That item must be in your backpack before it can be used.
+			pSock.SysMessage( GetDictionaryEntry( 1763, pSock.language )); //That item must be in your backpack before it can be used.
 		}
 		else
 		{
