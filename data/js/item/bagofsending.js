@@ -79,13 +79,13 @@ function onCallback0( socket, myTarget )
 	var itemOwner = GetPackOwner( iUsed, 0 );
 	if( itemOwner == null || itemOwner.serial != pUser.serial )
 	{
-		pUser.SysMessage( GetDictionaryEntry( 19070, socket.language )); // The bag of sending must be in your backpack
-		return false;
+		socket.SysMessage( GetDictionaryEntry( 19070, socket.language )); // The bag of sending must be in your backpack
+		return;
 	}
 	else if( charges == 0 )
 	{
-		pUser.SysMessage( GetDictionaryEntry( 0, socket.language )); // This item is out of charges.
-		return false;
+		socket.SysMessage( GetDictionaryEntry( 0, socket.language )); // This item is out of charges.
+		return;
 	}
 
 	if( !socket.GetWord( 1 ) && myTarget.isItem )
@@ -94,32 +94,32 @@ function onCallback0( socket, myTarget )
 		if( !ValidateObject( bankBox ))
 		{
 			socket.SysMessage( GetDictionaryEntry( 19071, socket.language ));// Error: No valid bankbox found! Please contact a GM for assistance.
-			return false;
+			return;
 		}
 		else if( !ValidateObject( myTarget.container ) || myTarget.container != pUser.pack )
 		{
 			socket.SysMessage( GetDictionaryEntry( 19072, socket.language )); // You may only send items from your backpack to your bank box.
-			return false;
+			return;
 		}
 		else if( myTarget.type == 1 || myTarget == iUsed || myTarget.sectionID == "bagofsending" )
 		{
 			socket.SysMessage( GetDictionaryEntry( 19073, socket.language )); // You may only send items from your backpack to your bank box.
-			return false;
+			return;
 		}
 		else if( bankBox.totalItemCount >= bankBox.maxItems )
 		{
 			socket.SysMessage( GetDictionaryEntry( 19074, socket.language )); // Your bank box is full.
-			return false;
+			return;
 		}
 		else if( bankBox.weight + ( myTarget.weight * myTarget.amount ) > bankBox.weightMax )
 		{
 			socket.SysMessage( GetDictionaryEntry( 9183, socket.language )); // Your bank box is overloaded and cannot hold any more weight.
-			return false;
+			return;
 		}
 		else if( requiredCharges > charges )
 		{
 			socket.SysMessage( GetDictionaryEntry( 19075, socket.language )); // You don't have enough charges to send that much weight
-			return false;
+			return;
 		}
 		else
 		{
@@ -132,7 +132,7 @@ function onCallback0( socket, myTarget )
 	else
 	{
 		socket.SysMessage( GetDictionaryEntry( 19077, socket.language )); // The bag of sending rejects that item.
-		return false;
+		return;
 	}
 }
 

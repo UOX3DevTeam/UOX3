@@ -17,7 +17,7 @@ function onUseChecked( pUser, iUsed )
 			var itemOwner = GetPackOwner( iUsed, 0 );
 			if( itemOwner == null || itemOwner.serial != pUser.serial )
 			{
-				pUser.SysMessage( GetDictionaryEntry( 1763, pSocket.language )); // That item must be in your backpack before it can be used.
+				pSocket.SysMessage( GetDictionaryEntry( 1763, pSocket.language )); // That item must be in your backpack before it can be used.
 				return false;
 			}
 
@@ -26,7 +26,7 @@ function onUseChecked( pUser, iUsed )
 			if( !ValidateObject( iMulti ) || !iMulti.IsInMulti( pUser ))
 			{
 				// Player vendors can only be placed in houses!
-				pUser.SysMessage( GetDictionaryEntry( 2723, pSocket.language )); // Guildstones can only be placed in houses!
+				pSocket.SysMessage( GetDictionaryEntry( 2723, pSocket.language )); // Guildstones can only be placed in houses!
 				return false;
 			}
 
@@ -34,7 +34,7 @@ function onUseChecked( pUser, iUsed )
 			if( !iMulti.IsOwner( pUser ))
 			{
 				// Only the house owner can guildstones in a house!
-				pUser.SysMessage( GetDictionaryEntry( 2724, pSocket.language )); // Only the house owner can place a guildstone in a house!
+				pSocket.SysMessage( GetDictionaryEntry( 2724, pSocket.language )); // Only the house owner can place a guildstone in a house!
 				return false;
 			}
 
