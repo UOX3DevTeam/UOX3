@@ -138,6 +138,7 @@ function onCreatePlayer( pChar )
 	}
 }
 
+/** @type { ( mChar: Character ) => boolean } */
 function onQuestGump( pUser ) 
 {
 	if( ValidateObject( pUser ) && !pUser.dead && questSystemEnabled )

@@ -1592,7 +1592,7 @@ function processKills( entry, player )
 		player.SysMessage( "Processing kills: " + killsStr );
 	}*/
 
-	// If killsStr is empty, there’s nothing to process
+	// If killsStr is empty, thereï¿½s nothing to process
 	if( killsStr == "" )
 	{
 		/*if( DebugMessages )

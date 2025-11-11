@@ -96,6 +96,7 @@ function QuestConversationGump( pUser, npcTarget, questID )
 	gump.Free();
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( pSock, pButton, gumpData )
 {
 	var pUser = pSock.currentChar;
@@ -408,7 +409,7 @@ function ManageQuestItems( player, questID, mark )
 
 			var belongsToThisQuest =
 				( itemQuestID != null && String( itemQuestID ) == String( questID )) ||
-				( sectionLookup[itemSectionID] === true ) ||           // fallback if QuestID wasn’t set earlier
+				( sectionLookup[itemSectionID] === true ) ||           // fallback if QuestID wasnï¿½t set earlier
 				( itemQuestID == null && !quest.targetItems );         // last resort if we have no quest data at all
 
 			if( belongsToThisQuest )
@@ -802,6 +803,7 @@ function FindQuestItems( player, questID )
 	return questItems;
 }
 
+/** @type { ( currChar: Character, targChar: Character ) => boolean } */
 function onCharDoubleClick( pUser, questNpc ) 
 {
 	QuestNpcInterAction( pUser, questNpc );
@@ -1048,6 +1050,7 @@ function isArray( value )
 	return Object.prototype.toString.call( value ) == "[object Array]";
 }
 
+/** @type { ( tSock: Socket, baseObj: BaseObject ) => boolean } */
 function onContextMenuRequest( socket, targObj )
 {
 	// handle your own packet with context menu here
@@ -1085,6 +1088,7 @@ function onContextMenuRequest( socket, targObj )
 	return false;
 }
 
+/** @type { ( tSock: Socket, baseObj: BaseObject, popupEntry: number ) => boolean } */
 function onContextMenuSelect( socket, questNpc, popupEntry )
 {
 	var pUser = socket.currentChar;

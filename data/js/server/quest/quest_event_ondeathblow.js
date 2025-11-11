@@ -1,4 +1,5 @@
 // Handle NPC kills for quests
+/** @type { ( mKilled: Character, mKiller: Character ) => boolean } */
 function onDeathBlow( victim, player )
 {
 	if( !ValidateObject( player ) || !ValidateObject( victim ))

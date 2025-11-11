@@ -2,11 +2,13 @@
 // @ts-check
 
 // Script attached to quest items
+/** @type { ( equipper: Character, equipping: Item ) => boolean } */
 function onEquipAttempt( pEquipper, iEquipped )
 {
 	TriggerEvent( 5800, "EquipAttempt", pEquipper, iEquipped );
 }
 
+/** @type { ( item: Item, dropper: Character ) => number } */
 function onDrop( iDropped, pDropper )
 {
 	var pSock = pDropper.socket;
@@ -70,6 +72,7 @@ function onDropItemOnItem( iDropped, cDropper, iDroppedOn )
 	return true;
 }
 
+/** @type { ( item: Item, pickerUpper: Character, objCont: BaseObject ) => boolean } */
 function onPickup( iPickedUp, pGrabber, containerObj )
 {
 	var pSock = pGrabber.socket;
@@ -97,6 +100,7 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 	return true; // Allow the pickup
 }
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed ) 
 {
 	var pSock = pUser.socket;
