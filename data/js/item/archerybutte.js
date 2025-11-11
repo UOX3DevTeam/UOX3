@@ -10,7 +10,7 @@ function onUseUnChecked( pUser, iUsed )
 
 	if( pUser.dead == 1 )
 	{
-		pUser.SysMessage( GetDictionaryEntry( 330, pSock.language )); // You are dead and cannot do that.
+		pSock.SysMessage( GetDictionaryEntry( 330, pSock.language )); // You are dead and cannot do that.
 		return false;
 	}
 
@@ -18,7 +18,7 @@ function onUseUnChecked( pUser, iUsed )
 	{
 		if(( lastUsed + 10000 ) > timeNow )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 2450, pSock.language )); // Someone else is using this right now.
+			pSock.SysMessage( GetDictionaryEntry( 2450, pSock.language )); // Someone else is using this right now.
 			return false;
 		}
 	}
@@ -35,21 +35,21 @@ function onUseUnChecked( pUser, iUsed )
 				{
 					var newArrows = CreateDFNItem( pUser.socket, pUser, "0x0f3f", stuckArrows, "ITEM", true );
 					var tempMsg = GetDictionaryEntry( 2451, pSock.language ) // You retrieve %i arrows from the target.
-					pUser.SysMessage( tempMsg.replace( /%i/gi, stuckArrows ) );
+					pSock.SysMessage( tempMsg.replace( /%i/gi, stuckArrows ) );
 				}
 				if( stuckBolts > 0 )
 				{
 					var newBolts = CreateDFNItem( pUser.socket, pUser, "0x1bfb", stuckBolts, "ITEM", true );
 					var tempMsg = GetDictionaryEntry( 2452, pSock.language ) // You retrieve %i crossbow bolts from the target.
-					pUser.SysMessage( tempMsg.replace( /%i/gi, stuckBolts ) );
+					pSock.SysMessage( tempMsg.replace( /%i/gi, stuckBolts ) );
 				}
 			}
 			else
 			{
-				pUser.SysMessage( GetDictionaryEntry( 943, pSock.language )); //This target is empty
+				pSock.SysMessage( GetDictionaryEntry( 943, pSock.language )); //This target is empty
 			}
 
-			pUser.SysMessage( GetDictionaryEntry( 2453, pSock.language )); // You reset the target score.
+			pSock.SysMessage( GetDictionaryEntry( 2453, pSock.language )); // You reset the target score.
 			iUsed.SetTag( "stuckArrows", 0 );
 			iUsed.SetTag( "stuckBolts", 0 );
 			iUsed.SetTag( "totalScore", 0 );
@@ -64,16 +64,16 @@ function onUseUnChecked( pUser, iUsed )
 		}
 		else
 		{
-			pUser.SysMessage( GetDictionaryEntry( 1766, pSock.language )); // You are too close to the target.
+			pSock.SysMessage( GetDictionaryEntry( 1766, pSock.language )); // You are too close to the target.
 		}
 	}
 	else if( !iUsed.InRange( pUser, 12 ))
 	{
-		pUser.SysMessage( GetDictionaryEntry( 1767, pSock.language )); // You are too far away from the archery butte to get an accurate shot.
+		pSock.SysMessage( GetDictionaryEntry( 1767, pSock.language )); // You are too far away from the archery butte to get an accurate shot.
 	}
 	else if(( lastUsed + 1500 ) > timeNow )
 	{
-		pUser.SysMessage( GetDictionaryEntry( 1762, pSock.language )); // You must wait before you can use that item again.
+		pSock.SysMessage( GetDictionaryEntry( 1762, pSock.language )); // You must wait before you can use that item again.
 		return false;
 	}
 	else
@@ -81,7 +81,7 @@ function onUseUnChecked( pUser, iUsed )
 		// Close enough, and not too far away =)
 		if( pUser.isonhorse )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 1757, pSock.language )); // Please dismount first.
+			pSock.SysMessage( GetDictionaryEntry( 1757, pSock.language )); // Please dismount first.
 			return false;
 		}
 		if( pUser.visible == 1 || pUser.visible == 2 )
@@ -93,18 +93,18 @@ function onUseUnChecked( pUser, iUsed )
 			if( pUser.direction != 6 )
 			{
 				pUser.TurnToward( iUsed );
-				pUser.SysMessage( GetDictionaryEntry( 2454, pSock.language )); // You turn to face the target.
+				pSock.SysMessage( GetDictionaryEntry( 2454, pSock.language )); // You turn to face the target.
 				return false;
 			}
 			if( pUser.x < iUsed.x || pUser.y != iUsed.y )
 			{
 				if( pUser.x < iUsed.x )
 				{
-					pUser.SysMessage( GetDictionaryEntry( 1768, pSock.language )); // You would do better to stand in front of the archery butte.
+					pSock.SysMessage( GetDictionaryEntry( 1768, pSock.language )); // You would do better to stand in front of the archery butte.
 				}
 				if( pUser.y != iUsed.y )
 				{
-					pUser.SysMessage( GetDictionaryEntry( 1769, pSock.language )); // You aren't properly lined up with the archery butte to get an accurate shot.
+					pSock.SysMessage( GetDictionaryEntry( 1769, pSock.language )); // You aren't properly lined up with the archery butte to get an accurate shot.
 				}
 				return false;
 			}
@@ -114,18 +114,18 @@ function onUseUnChecked( pUser, iUsed )
 			if( pUser.direction != 0 )
 			{
 				pUser.TurnToward( iUsed );
-				pUser.SysMessage( GetDictionaryEntry( 2454, pSock.language )); // You turn to face the target.
+				pSock.SysMessage( GetDictionaryEntry( 2454, pSock.language )); // You turn to face the target.
 				return false;
 			}
 			if( pUser.y < iUsed.y || pUser.x != iUsed.x )
 			{
 				if( pUser.y < iUsed.y )
 				{
-					pUser.SysMessage( GetDictionaryEntry( 1768, pSock.language )); // You would do better to stand in front of the archery butte.
+					pSock.SysMessage( GetDictionaryEntry( 1768, pSock.language )); // You would do better to stand in front of the archery butte.
 				}
 				if( pUser.x != iUsed.x )
 				{
-					pUser.SysMessage( GetDictionaryEntry( 1769, pSock.language )); // You aren't properly lined up with the archery butte to get an accurate shot.
+					pSock.SysMessage( GetDictionaryEntry( 1769, pSock.language )); // You aren't properly lined up with the archery butte to get an accurate shot.
 				}
 				return false;
 			}
@@ -133,7 +133,7 @@ function onUseUnChecked( pUser, iUsed )
 		var weaponType = TriggerEvent( 2500, "GetWeaponType", pUser, null );
 		if( weaponType != "BOWS" && weaponType != "XBOWS" )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 947, pSock.language )); // You need to equip a bow to use this.
+			pSock.SysMessage( GetDictionaryEntry( 947, pSock.language )); // You need to equip a bow to use this.
 			return false;
 		}
 		else
@@ -145,7 +145,7 @@ function onUseUnChecked( pUser, iUsed )
 					var arrowCount = pUser.ResourceCount( 0x0F3F, 0 );
 					if( arrowCount == 0 )
 					{
-						pUser.SysMessage( GetDictionaryEntry( 1770, pSock.language )); // You do not have any arrows with which to practice.
+						pSock.SysMessage( GetDictionaryEntry( 1770, pSock.language )); // You do not have any arrows with which to practice.
 						return false;
 					}
 					else
@@ -161,7 +161,7 @@ function onUseUnChecked( pUser, iUsed )
 					var boltCount = pUser.ResourceCount( 0x1BFB, 0 );
 					if( boltCount == 0 )
 					{
-						pUser.SysMessage( GetDictionaryEntry( 1771, pSock.language )); // You do not have any bolts with which to practice.
+						pSock.SysMessage( GetDictionaryEntry( 1771, pSock.language )); // You do not have any bolts with which to practice.
 						return false;
 					}
 					else
@@ -179,7 +179,7 @@ function onUseUnChecked( pUser, iUsed )
 			if( !pUser.CheckSkill( 31, 0, 250 ))
 			{
 				pUser.SoundEffect( 0x0238, true );
-				pUser.SysMessage( GetDictionaryEntry( 951, pSock.language )); // You miss the target.
+				pSock.SysMessage( GetDictionaryEntry( 951, pSock.language )); // You miss the target.
 				var tempMsg = GetDictionaryEntry( 2455, pSock.language ) // %s misses!
 				iUsed.TextMessage( tempMsg.replace( /%s/gi, pUser.name ) );
 			}
@@ -327,7 +327,7 @@ function onUseUnChecked( pUser, iUsed )
 				else
 				{
 					pUser.SoundEffect( 0x0238, true );
-					pUser.SysMessage( GetDictionaryEntry( 951, pSock.language )); //You miss the target.
+					pSock.SysMessage( GetDictionaryEntry( 951, pSock.language )); //You miss the target.
 					var tempMsg = GetDictionaryEntry( 2455, pSock.language ) // %s misses
 					iUsed.TextMessage( tempMsg.replace( /%s/gi, pUser.name ) );
 				}
