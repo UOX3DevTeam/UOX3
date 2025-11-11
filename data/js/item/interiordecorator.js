@@ -9,7 +9,7 @@ function onUseChecked( pUser, iUsed )
 		var itemOwner = GetPackOwner( iUsed, 0 );
 		if( itemOwner == null || itemOwner.serial != pUser.serial )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 1763, socket.language )); // That item must be in your backpack before it can be used.
+			socket.SysMessage( GetDictionaryEntry( 1763, socket.language )); // That item must be in your backpack before it can be used.
 		}
 		else
 		{
@@ -17,30 +17,30 @@ function onUseChecked( pUser, iUsed )
 			if( ValidateObject( iMulti ) && ( iMulti.IsOnOwnerList( pUser )
 				|| ( GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" ) && iMulti.owner.accountNum == pUser.accountNum )))
 			{
-				var ret = displaygump(iUsed, pUser);
+				interiorDecoratorGump( pUser );
 			}
 			else
 			{
-				pUser.SysMessage( GetDictionaryEntry( 2067, socket.language )); // You must be in your house to do this.
+				socket.SysMessage( GetDictionaryEntry( 2067, socket.language )); // You must be in your house to do this.
 			}
 		}
 	}
 	return false;
 }
 
-function displaygump( socket, pUser )
+function interiorDecoratorGump( pUser )
 {
-	var myGump = new Gump;
-	myGump.AddPage( 0 );
-	myGump.AddBackground( 0, 0, 200, 200, 2600 );
-	myGump.AddButton( 50, 45, 0x868, 1, 0, 1 );
-	myGump.AddXMFHTMLGump( 90, 50, 70, 40, 1018323, false, false );//turn
-	myGump.AddButton( 50, 95, 0x868, 1, 0, 2 );
-	myGump.AddXMFHTMLGump( 90, 100, 70, 40, 1018324, false, false );//up
-	myGump.AddButton( 50, 145, 0x868, 1, 0, 3 );
-	myGump.AddXMFHTMLGump( 90, 150, 70, 40, 1018325, false, false );//down
-	myGump.Send( pUser );
-	myGump.Free();
+	var interiorGump = new Gump;
+	interiorGump.AddPage( 0 );
+	interiorGump.AddBackground( 0, 0, 200, 200, 2600 );
+	interiorGump.AddButton( 50, 45, 0x868, 1, 0, 1 );
+	interiorGump.AddXMFHTMLGump( 90, 50, 70, 40, 1018323, false, false );//turn
+	interiorGump.AddButton( 50, 95, 0x868, 1, 0, 2 );
+	interiorGump.AddXMFHTMLGump( 90, 100, 70, 40, 1018324, false, false );//up
+	interiorGump.AddButton( 50, 145, 0x868, 1, 0, 3 );
+	interiorGump.AddXMFHTMLGump( 90, 150, 70, 40, 1018325, false, false );//down
+	interiorGump.Send( pUser );
+	interiorGump.Free();
 	return false;
 }
 
@@ -59,43 +59,45 @@ function onGumpPress( socket, pButton, gumpData )
 			case 1: // Turn
 	  			var targMsg3 = GetDictionaryEntry( 2068, socket.language ); // Select an object to turn.
 	    		socket.CustomTarget( 3, targMsg3 );
-				var ret = displaygump( socket, pUser );
+				interiorDecoratorGump( pUser );
 				break;
 			case 2: // Up
 				var targMsg2 = GetDictionaryEntry( 2069, socket.language ); // Select an object to increase its height.
 	    		socket.CustomTarget( 2, targMsg2 );
-				var ret = displaygump( socket, pUser );
+				interiorDecoratorGump( pUser );
 				break;
 			case 3: // Down
 				var targMsg1 = GetDictionaryEntry( 2070, socket.language ); // Select an object to lower its height.
 	    		socket.CustomTarget( 1, targMsg1 );
-				var ret = displaygump( socket, pUser );
+				interiorDecoratorGump( pUser );
 				break;
 			default:
 				break;
 		}
 	}
     else
-        pUser.SysMessage( GetDictionaryEntry( 2067, socket.language )); // You must be in your house to do this.
+	{
+        socket.SysMessage( GetDictionaryEntry( 2067, socket.language )); // You must be in your house to do this.
+	}
 }
 
 /** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
-	var tChar = socket.currentChar;
+	var pUser = socket.currentChar;
 	if( !ValidateObject( ourObj ) || !ourObj.isItem || ourObj.movable != 3 )
 	{
 		socket.SysMessage( GetDictionaryEntry( 2072, socket.language )); // You can only use the interior decorator on locked down items.
 		return;
 	}
 
-	var iMulti = tChar.multi;
+	var iMulti = pUser.multi;
 	if( !ValidateObject( iMulti )
-		|| ( !iMulti.IsOnOwnerList( tChar )
-			&& (( GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" ) && ( !ValidateObject( iMulti.owner ) || iMulti.owner.accountNum != tChar.accountNum ))
+		|| ( !iMulti.IsOnOwnerList( pUser )
+			&& (( GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" ) && ( !ValidateObject( iMulti.owner ) || iMulti.owner.accountNum != pUser.accountNum ))
 				|| ( !GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" )))))
 	{
-		tChar.SysMessage( GetDictionaryEntry( 2067, socket.language )); // You must be in your house to do this.
+		socket.SysMessage( GetDictionaryEntry( 2067, socket.language )); // You must be in your house to do this.
 		return;
 	}
 
@@ -124,7 +126,7 @@ function onCallback1( socket, ourObj )
 /** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( socket, ourObj )
 {
-	var tChar = socket.currentChar;
+	var pUser = socket.currentChar;
 	if( !ValidateObject( ourObj ) || !ourObj.isItem || ourObj.movable != 3 )
 	{
 		socket.SysMessage( GetDictionaryEntry( 2072, socket.language )); // You can only use the interior decorator on locked down items.
@@ -133,11 +135,11 @@ function onCallback2( socket, ourObj )
 
 	var iMulti = ourObj.multi;
 	if( !ValidateObject( iMulti )
-		|| ( !iMulti.IsOnOwnerList( tChar )
-			&& (( GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" ) && ( !ValidateObject( iMulti.owner ) || iMulti.owner.accountNum != tChar.accountNum ))
+		|| ( !iMulti.IsOnOwnerList( pUser )
+			&& (( GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" ) && ( !ValidateObject( iMulti.owner ) || iMulti.owner.accountNum != pUser.accountNum ))
 				|| ( !GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" )))))
 	{
-		tChar.SysMessage( GetDictionaryEntry( 2067, socket.language )); // You must be in your house to do this.
+		socket.SysMessage( GetDictionaryEntry( 2067, socket.language )); // You must be in your house to do this.
 		return;
 	}
 
@@ -166,7 +168,7 @@ function onCallback2( socket, ourObj )
 /** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback3( socket, ourObj )
 {
-	var tChar = socket.currentChar;
+	var pUser = socket.currentChar;
 	if( !ValidateObject( ourObj ) || !ourObj.isItem || ourObj.movable != 3 )
 	{
 		socket.SysMessage( GetDictionaryEntry( 2072, socket.language )); // You can only use the interior decorator on locked down items.
@@ -175,11 +177,11 @@ function onCallback3( socket, ourObj )
 
 	var iMulti = ourObj.multi;
 	if( !ValidateObject( iMulti )
-		|| ( !iMulti.IsOnOwnerList( tChar )
-			&& (( GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" ) && ( !ValidateObject( iMulti.owner ) || iMulti.owner.accountNum != tChar.accountNum ))
+		|| ( !iMulti.IsOnOwnerList( pUser )
+			&& (( GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" ) && ( !ValidateObject( iMulti.owner ) || iMulti.owner.accountNum != pUser.accountNum ))
 				|| ( !GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" )))))
 	{
-		tChar.SysMessage( GetDictionaryEntry( 2067, socket.language )); // You must be in your house to do this.
+		socket.SysMessage( GetDictionaryEntry( 2067, socket.language )); // You must be in your house to do this.
 		return;
 	}
 
