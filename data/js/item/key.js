@@ -374,7 +374,7 @@ function onCallback3( pSock, myTarget )
 	pSock.SysMessage( GetDictionaryEntry( 2743, pSock.language )); // You can't make a copy of that.
 }
 
-/** @type { ( myChar: Character, myItem: Item, mySpeech: string ) => void } */
+/** @type { ( myChar: Character, myItem: Item, mySpeech: string, mySpeechId: number ) => void } */
 function onSpeechInput( pUser, pItem, pSpeech, pSpeechID )
 {
 	var pSock = pUser.socket;
