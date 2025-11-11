@@ -313,7 +313,7 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 	return false;
 }
 
-/** @type { ( myChar: Character, myItem: Item, mySpeech: string ) => void } */
+/** @type { ( myChar: Character, myItem: Item, mySpeech: string, mySpeechId: number ) => void } */
 function onSpeechInput( pUser, targObj, pSpeech, pSpeechID )
 {
 	var pSocket = pUser.socket;

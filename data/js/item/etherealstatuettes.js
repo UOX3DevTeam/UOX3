@@ -3,6 +3,7 @@ const maxControlSlots = GetServerSetting( "MaxControlSlots" );
 const maxFollowers = GetServerSetting( "MaxFollowers" );
 const coreShardEra = EraStringToNum(GetServerSetting("CoreShardEra"));
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var iTime = GetCurrentClock();
@@ -92,6 +93,7 @@ function onUseChecked( pUser, iUsed )
 	pUser.StartTimer( 1300, 1, 5300 );
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( pUser, timerID )
 {
 	var socket = pUser.socket;
