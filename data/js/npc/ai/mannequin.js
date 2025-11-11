@@ -1,7 +1,9 @@
-// ---- Era gating ------------------------------------------------------------
 var Era_Type = EraStringToNum(GetServerSetting("CoreShardEra"));
+var ARMOR_LAYERS = [0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x0A, 0x0D, 0x11, 0x13, 0x14, 0x16, 0x17, 0x18];
+var RESIST_LAYERS = [ 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0C, 0x0D, 0x0E, 0x11, 0x12, 0x13, 0x14, 0x16, 0x17, 0x18];
+// Wearable layers (skip hair/facial/backpack/mount/vendor/bank)
+var EQUIP_LAYERS = [0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0C,0x0D,0x0E,0x0F,0x11,0x12,0x13,0x14,0x16,0x17,0x18];
 
-// ---- Context menu / basic handlers ----------------------------------------
 function onContextMenuRequest( socket, targObj )
 {
 	var pUser = socket.currentChar;
@@ -83,7 +85,6 @@ function onCharDoubleClick( pUser, targChar )
 	return false;
 }
 
-// Display remaining uses left in a tooltip, based on item's UsesLeft tag
 function onTooltip( myObj, pSocket )
 {
 	var tooltipText = "";
@@ -132,13 +133,13 @@ function CustomizeMannequinBody( socket )
 	gump.AddCheckerTrans( 10, 10, 280, 110);
 	gump.AddXMFHTMLTok( 10, 12, 280, 18, false, false, 0x7FFF, 1151582, "", "", "" );// <center>CUSTOMIZE BODY</center>
 
-	if( Era_Type >= EraStringToNum("lbr"))
+	if( Era_Type >= EraStringToNum( "lbr" ))
 	{
 		gump.AddXMFHTMLTok( 45, 52, 180, 18, false, false, 0x7FFF, 1072255, "", "", "" );// Human
 		gump.AddButton( 10, 50, 0xFA5, 1, 0, 1 );
 	}
 
-	if( Era_Type >= EraStringToNum("ml"))
+	if( Era_Type >= EraStringToNum( "ml" ))
 	{
 		gump.AddXMFHTMLTok(45, 72, 180, 18, false, false, 0x7FFF, 1072256, "", "", "" );// Elf
 		gump.AddButton(10, 70, 0xFA5, 1, 0, 2 );
@@ -157,13 +158,6 @@ function CustomizeMannequinBody( socket )
 	gump.Free();
 }
 
-// ---- Layers ----------------------------------------------------------------
-var ARMOR_LAYERS = [0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x0A, 0x0D, 0x11, 0x13, 0x14, 0x16, 0x17, 0x18];
-var RESIST_LAYERS = [ 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0C, 0x0D, 0x0E, 0x11, 0x12, 0x13, 0x14, 0x16, 0x17, 0x18];
-// Wearable layers (skip hair/facial/backpack/mount/vendor/bank)
-var EQUIP_LAYERS = [0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0C,0x0D,0x0E,0x0F,0x11,0x12,0x13,0x14,0x16,0x17,0x18];
-
-// ---- Icon atlas ------------------------------------------------------------
 var Icons = {
 	StrengthBonus:	ABS( 120, 30 ), DexterityBonus:	ABS( 90, 0),		IntelligenceBonus:	ABS( 240, 0 ),
 	HitPointsInc:	ABS( 180, 0 ),	StaminaInc:		ABS( 90,30),
@@ -262,7 +256,6 @@ var PAGE2 = [
 	}
 ];
 
-// ---- Item/prop helpers -----------------------------------------------------
 function getItemLo( item )
 {
 	return ( !item || !ValidateObject( item )) ? 0 : ( parseInt( item.lodamage, 10 ) || 0 );
@@ -333,9 +326,6 @@ function safeInt( value )
 	return isNaN( value ) ? 0 : value;
 }
 
-// Single helper: sum any equipped-item property across RESIST_LAYERS
-// raw === true -> return exact sum
-// otherwise    -> coerce to int like old code with |0
 function sumProp( mannequin, propName, raw )
 {
 	if( !ValidateObject( mannequin )) 
@@ -349,8 +339,6 @@ function sumProp( mannequin, propName, raw )
 	}
 	return raw === true ? total : (total | 0);
 }
-
-// ---- Render context --------------------------------------------------------
 
 function buildContext( mannequin )
 {
@@ -388,7 +376,6 @@ function buildContext( mannequin )
 	return ctx;
 }
 
-// ---- Era filtering ---------------------------------------------------------
 function filterSectionsForEra( sections )
 {
     var out = [];
@@ -398,9 +385,8 @@ function filterSectionsForEra( sections )
 
     var isLBRonly = ( Era_Type >= eraLBR && Era_Type < eraAOS );
     var isAOSonly = ( Era_Type >= eraAOS && Era_Type < eraML );
-    var isMLplus  = ( Era_Type >= eraML ); // SA/HS/TOL/etc.
+    var isMLplus  = ( Era_Type >= eraML );
 
-    // Helper: shallow-clone a row
     function cloneRow( row )
 	{
         var r = {};
@@ -410,7 +396,6 @@ function filterSectionsForEra( sections )
         return r;
     }
 
-    // If ML+ (e.g., TOL), include everything (just clone)
     if( isMLplus )
     {
         for( var s = 0; s < sections.length; s++ )
@@ -433,7 +418,6 @@ function filterSectionsForEra( sections )
         return out;
     }
 
-    // Otherwise, filter per-era
     function includeByEraKey(k)
 	{
         k = k || "";
@@ -479,7 +463,6 @@ function filterSectionsForEra( sections )
     return out;
 }
 
-// ---- Gump render helpers ---------------------------------------------------
 var MANN_CTX = null;
 
 function fmtVal( row )
@@ -520,7 +503,6 @@ function fmtVal( row )
 	return "<BASEFONT COLOR=#80BFFF>" + base + cap + "</BASEFONT>";
 }
 
-// ---- Gump bits -------------------------------------------------------------
 function ABS( sx, sy, w, h )
 {
 	return { sx: sx | 0, sy: sy | 0, w: w || 30, h: h || 30 };
@@ -587,7 +569,6 @@ function drawSection( gump, y, section )
 	return y + 3;
 }
 
-// ---- Entry points ----------------------------------------------------------
 function OpenMannequinStatsGump( socket, mannequin, page )
 {
 	page = page | 0;
@@ -625,7 +606,6 @@ function OpenMannequinStatsGump( socket, mannequin, page )
 	MANN_CTX = null;
 }
 
-// Move any equipped items from the mannequin to the player's backpack
 function moveMannequinGearToPlayerPack( mannequin, pUser )
 {
     if(!ValidateObject( mannequin ) || !ValidateObject( pUser ))
@@ -654,7 +634,7 @@ function moveMannequinGearToPlayerPack( mannequin, pUser )
 
     if( moved > 0 ) 
 	{
-        pUser.SysMessage( "You retrieve "+moved+" item"+( moved===1?"":"s" )+" from the mannequin." );
+        pUser.SysMessage( "You retrieve " + moved + " item"+( moved===1 ? "" : "s" )+" from the mannequin." );
     }
     return moved;
 }
@@ -668,11 +648,9 @@ function packCanFit( pUser, item )
 	if( !ValidateObject( pack )) 
 		return false;
 
-	// basic item-count check
 	if( pack.totalItemCount >= pack.maxItems )
 		return false;
 
-	// optional weight check if shard uses it (assume 0/undefined means ignore)
 	if(( pack.maxWeight|0 ) > 0 )
 	{
 		var addW = ( item.weight|0 );
@@ -714,7 +692,6 @@ function placeInPackOrDrop( pUser, item )
 	return {packed:false, dropped:true};
 }
 
-// Try to equip by assigning container = char; engine picks correct layer automatically
 function equipOn( char, item, ownerForFallback )
 {
 	if( !ValidateObject( char ) || !ValidateObject( item ))
@@ -723,8 +700,6 @@ function equipOn( char, item, ownerForFallback )
 	item.container = char;
 	item.Refresh();
 
-	// success check: item ended up on char and sits on some valid layer
-	// (FindItemLayer(item.layer) should find itself)
 	var ok = ( item.container === char );
 	if( ok )
 	{
@@ -734,7 +709,6 @@ function equipOn( char, item, ownerForFallback )
 	if( ok )
 		return {equipped:true, packed:false, dropped:false};
 
-	// couldn’t equip (gender/race/slot rules etc). Fallback to owner pack or drop.
 	if( ValidateObject( ownerForFallback ))
 		return placeInPackOrDrop( ownerForFallback, item );
 
@@ -746,7 +720,6 @@ function isSwapFail( res )
 	return ( res && !res.equipped && ( res.packed || res.dropped )) ? 1 : 0;
 }
 
-// Swap a single (non-hand) layer between player and mannequin
 function swapLayer( pUser, mann, layer )
 {
 	var u = pUser.FindItemLayer( layer );
@@ -759,15 +732,12 @@ function swapLayer( pUser, mann, layer )
 
 	if( ValidateObject( u ) && ValidateObject( m ))
 	{
-		// park player’s piece first ( parking is not a failure )
 		placeInPackOrDrop( pUser, u );
 
-		// mannequin -> player
 		var r1 = equipOn( pUser, m, pUser );
 		failed += isSwapFail( r1 );
 		moved++;
 
-		// player’s parked -> mannequin
 		var r2 = equipOn( mann, u, pUser );
 		failed += isSwapFail( r2 );
 		moved++;
@@ -792,7 +762,6 @@ function swapLayer( pUser, mann, layer )
 	return {moved:0, failed:failed};
 }
 
-// Hands need a strict sequence to avoid 2H vs 1H/shield conflicts
 function swapHands( pUser, mannequin )
 {
 	var moved = 0, failed = 0;
@@ -802,7 +771,6 @@ function swapHands( pUser, mannequin )
 	var mannequinRight = mannequin.FindItemLayer( 0x01 );
 	var mannequinLeft = mannequin.FindItemLayer( 0x02 );
 
-	// 1 ) park player hands ( not counted as failure )
 	if( ValidateObject( userRight ))
 	{
 		placeInPackOrDrop( pUser, userRight );
@@ -815,7 +783,6 @@ function swapHands( pUser, mannequin )
 		moved++;
 	}
 
-	// 2 ) equip mannequin -> player ( right then left )
 	if( ValidateObject( mannequinRight ))
 	{ 
 		var a = equipOn( pUser, mannequinRight, pUser );
@@ -830,7 +797,6 @@ function swapHands( pUser, mannequin )
 		moved++;
 	}
 
-	// 3 ) equip parked player items -> mannequin ( right then left )
 	if( ValidateObject( userRight ))
 	{
 		var c = equipOn( mannequin, userRight, pUser );
@@ -846,7 +812,6 @@ function swapHands( pUser, mannequin )
 	return {moved:moved, failed:failed};
 }
 
-// Public: swap all wearable gear between player and mannequin
 function switchMannequinClothing( pUser, mannequin )
 {
 	if( !ValidateObject( pUser ) || !ValidateObject( mannequin ))
@@ -859,9 +824,7 @@ function switchMannequinClothing( pUser, mannequin )
 	}
 
 	var totalMoved = 0, totalFailed = 0;
-
-	// non-hand layers
-	for ( var i = 0; i < EQUIP_LAYERS.length; i++ )
+	for( var i = 0; i < EQUIP_LAYERS.length; i++ )
 	{
 		var isLayer = EQUIP_LAYERS[i];
 		if( isLayer === 0x01 || isLayer === 0x02 ) continue;
@@ -870,7 +833,6 @@ function switchMannequinClothing( pUser, mannequin )
 		totalFailed += r.failed;
 	}
 
-	// hands
 	var hr = swapHands( pUser, mannequin );
 	totalMoved += hr.moved;
 	totalFailed += hr.failed;
@@ -901,7 +863,7 @@ function setRaceGender(  mannequin, race, gender, pUser )
 
     gender = gender ? 1 : 0;
 
-    if( ( mannequin.race === 2 ) || ( race === 2 ))
+    if(( mannequin.race === 2 ) || ( race === 2 ))
         moveMannequinGearToPlayerPack( mannequin, pUser );
 
     mannequin.race = race;
@@ -944,21 +906,21 @@ function onGumpPress( pSock, iButton, gumpData )
 					mannequin.SetTag( "Description", "" );   // or mann.DelTag("Description") if you prefer removing it
 					mannequin.Refresh();
 					if( pUser && pUser.socket )
-						pUser.SysMessage( "Description cleared." );
+						pSock.SysMessage( "Description cleared." );
 					break
 				}
 
 				if( !res.ok )
 				{
 					if( pUser && pUser.socket )
-						pUser.SysMessage( "Invalid description: " + res.reason + "." );
+						pSock.SysMessage( "Invalid description: " + res.reason + "." );
 					break;
 				}
 
 				mannequin.SetTag( "Description", res.value );
 				mannequin.Refresh();
 				if( pUser && pUser.socket )
-					pUser.SysMessage( "Description updated." );
+					pSock.SysMessage( "Description updated." );
 				break;
 			}
 	}
