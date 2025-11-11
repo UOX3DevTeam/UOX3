@@ -3,23 +3,23 @@
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
-	var socket = pUser.socket;
-	socket.tempObj = iUsed;
-	if( socket && iUsed && iUsed.isItem )
+	var pSocket = pUser.socket;
+	if( pSocket && iUsed && iUsed.isItem )
 	{
+		pSocket.tempObj = iUsed;
 		var itemOwner = GetPackOwner( iUsed, 0 );
 		if( itemOwner == null || itemOwner.serial != pUser.serial )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 1763, socket.language )); // That item must be in your backpack before it can be used.
+			pSocket.SysMessage( GetDictionaryEntry( 1763, pSocket.language )); // That item must be in your backpack before it can be used.
 		}
 		else if( pUser.skills.carpentry < 900 )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 2863, socket.language )); // You are not skilled enough as a carpenter to use this.
+			pSocket.SysMessage( GetDictionaryEntry( 2863, pSocket.language )); // You are not skilled enough as a carpenter to use this.
 		}
 		else
 		{
-			var targMsg = GetDictionaryEntry( 2864, socket.language ); // Target the corpse to make a trophy out of.
-			socket.CustomTarget( 1, targMsg );
+			var targMsg = GetDictionaryEntry( 2864, pSocket.language ); // Target the corpse to make a trophy out of.
+			pSocket.CustomTarget( 1, targMsg );
 		}
 	}
 	return false;

@@ -7,7 +7,11 @@ const damageableDummies = true;
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
-	var pSock = pUser.socket;
+	var pSocket = pUser.socket;
+	if( pSocket == null )
+	{
+		return false;
+	}
 
 	if( pUser.visible == 1 || pUser.visible == 2 )
 	{
@@ -17,7 +21,7 @@ function onUseChecked( pUser, iUsed )
 	//Check if user is in range of combat dummy
 	if( !iUsed.InRange( pUser, 1 ))
 	{
-		pUser.SysMessage( GetDictionaryEntry( 482, pSock.language )); //You need to be closer to use that.
+		pSocket.SysMessage( GetDictionaryEntry( 482, pSocket.language )); //You need to be closer to use that.
 		return false;
 	}
 	else if( iUsed.id == 0x1070 || iUsed.id == 0x1074 ) //if training dummy is motionless
@@ -26,7 +30,7 @@ function onUseChecked( pUser, iUsed )
 		var weaponType = TriggerEvent( 2500, "GetWeaponType", pUser, null );
 		if( weaponType == "BOWS" || weaponType == "XBOWS" )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 938, pSock.language )); //Practice archery on archery buttes!
+			pSocket.SysMessage( GetDictionaryEntry( 938, pSocket.language )); //Practice archery on archery buttes!
 			return false;
 		}
 
@@ -69,7 +73,7 @@ function onUseChecked( pUser, iUsed )
 		//Check the player's tactics skill to see if he gets chance to gain more skill
 		if( pUser.skills.tactics > 250 )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 939, pSock.language )); //You feel you would gain no more from using that.
+			pSocket.SysMessage( GetDictionaryEntry( 939, pSocket.language )); //You feel you would gain no more from using that.
 		}
 		else
 		{
@@ -101,7 +105,7 @@ function onUseChecked( pUser, iUsed )
 		    myPacket.WriteByte( 0, 0x0B ); // Write packetID (0x0B) at position 0
 		    myPacket.WriteLong( 1, iUsed.serial ); // Write character serial at position 1 (0+WriteByte, or 0+1)
 		    myPacket.WriteShort( 5, dummyRandomDamage ); // Write damage number at position 5 (1+WriteLong, or 1+4)
-		    pSock.Send( myPacket ); // Send stream to socket
+		    pSocket.Send( myPacket ); // Send stream to socket
 		    myPacket.Free(); // Free up stream
 
 		    // Update the training dummy's health
@@ -136,7 +140,7 @@ function onUseChecked( pUser, iUsed )
 			//Safety measure in case timer ever breaks and dummy never stops swinging
 			safetyMeasure( iUsed );
 
-			pUser.SysMessage( GetDictionaryEntry( 483, pSock.language )); //You must wait for it to stop swinging!
+			pSocket.SysMessage( GetDictionaryEntry( 483, pSocket.language )); //You must wait for it to stop swinging!
 		}
 	}
 	return false;
@@ -194,5 +198,3 @@ function stopDummy( iUsed )
 		iUsed.SetTag( "failedToUse", 0 ); 	//reset values on dummy
 	}
 }
-
-function restorecontext() {}

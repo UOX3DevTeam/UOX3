@@ -6,8 +6,8 @@
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
-	var pSock = pUser.socket;
-	if( pSock == null || !ValidateObject( iUsed ) || !pUser.CanSee( iUsed ))
+	var pSocket = pUser.socket;
+	if( pSocket == null || !ValidateObject( iUsed ) || !pUser.CanSee( iUsed ))
 		return false;
 
 	if( pUser.InRange( iUsed, 3 ))
@@ -46,13 +46,13 @@ function onUseChecked( pUser, iUsed )
 		{
 			// Invalid teleport item
 			Console.Warning( "Invalid setup of item using teleport_item.js (" + this.script_id + ")" );
-			pSock.SysMessage( "Invalid setup of item using teleport_item.js (" + this.script_id + ")" );
+			pSocket.SysMessage( "Invalid setup of item using teleport_item.js (" + this.script_id + ")" );
 		}
 	}
 	else
 	{
 		// Too far away
-		pSock.SysMessage( GetDictionaryEntry( 389, pSock.language )); // That is too far away and you cannot reach it.
+		pSocket.SysMessage( GetDictionaryEntry( 389, pSocket.language )); // That is too far away and you cannot reach it.
 	}
 	return false;
 }

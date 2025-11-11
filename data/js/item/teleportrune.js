@@ -3,16 +3,16 @@
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
-	var socket = pUser.socket;
+	var pSocket = pUser.socket;
 	if ( pUser.visible == 1 || pUser.visible == 2 )
 	{
 		pUser.visible = 0;
 	}
-	if( socket && iUsed && iUsed.isItem )
+	if( pSocket && iUsed && iUsed.isItem )
 	{
-		socket.tempObj = iUsed;
-		var targMsg = GetDictionaryEntry( 401, socket.language ); //Select teleport target.
-		socket.CustomTarget( 1, targMsg );
+		pSocket.tempObj = iUsed;
+		var targMsg = GetDictionaryEntry( 401, pSocket.language ); //Select teleport target.
+		pSocket.CustomTarget( 1, targMsg );
 	}
 	return false;
 }
@@ -20,13 +20,13 @@ function onUseChecked( pUser, iUsed )
 /** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
-	var mChar = socket.currentChar;
-	if ( mChar.visible == 1 || mChar.visible == 2 )
+	var pUser = socket.currentChar;
+	if( pUser )
 	{
-		mChar.visible = 0;
-	}
-	if( mChar )
-	{
+		if( pUser.visible == 1 || pUser.visible == 2 )
+		{
+			pUser.visible = 0;
+		}
 		var targX;
 		var targY;
 		var targZ;
@@ -49,8 +49,8 @@ function onCallback1( socket, ourObj )
 				targZ += GetTileHeight( socket.GetWord( 17 ));
 			}
 		}
-		mChar.SoundEffect( 0x01FE, true );
-		mChar.SetLocation( targX, targY, targZ );
-		mChar.StaticEffect( 0x372A, 0x09, 0x06 );
+		pUser.SoundEffect( 0x01FE, true );
+		pUser.SetLocation( targX, targY, targZ );
+		pUser.StaticEffect( 0x372A, 0x09, 0x06 );
 	}
 }
