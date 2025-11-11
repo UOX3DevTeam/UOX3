@@ -1,15 +1,15 @@
-var ATLAS_MAX_RUNES = 48;       // 3 pages * 16 rows
-var ATLAS_MAX_CHARGES = 100;    // default cap; override via .maxhp on the item
-var ATLAS_COOLDOWN_MS = 7000;   // 7s, like Runebook
-var SCRIPT_ID = 5063;			// jse_fileassociations.scp
-var SPELL_RECALL = 32;
-var SPELL_GATE = 52;
-var SPELL_SACRED_JOUR = 209;    // optional – button shown only if user has spell
+let ATLAS_MAX_RUNES = 48;       // 3 pages * 16 rows
+let ATLAS_MAX_CHARGES = 100;    // default cap; override via .maxhp on the item
+let ATLAS_COOLDOWN_MS = 7000;   // 7s, like Runebook
+let SCRIPT_ID = 5063;			// jse_fileassociations.scp
+let SPELL_RECALL = 32;
+let SPELL_GATE = 52;
+let SPELL_SACRED_JOUR = 209;    // optional – button shown only if user has spell
 
-function mapHue( worldNum )
+function mapHue( worldNumber )
 {
 	// Tram( 0 )=0xA, Fel( 1 )=0x51, Malas( 4 )=0x44E, Tokuno( 3 )=0x482, TerMur( 5 )=0x66D
-	switch( worldNum | 0 )
+	switch( worldNumber | 0 )
 	{
 		case 0: return 0x000A;
 		case 1: return 0x0051;
@@ -20,11 +20,11 @@ function mapHue( worldNum )
 	}
 }
 
-function GetMapCoordinates( xCoord, yCoord, worldNum )
+function GetMapCoordinates( xCoord, yCoord, worldNumber )
 {
 	var resultArray = [], xCenter = 0, yCenter = 0, xWidth = 5120, yHeight = 4096;
 
-	switch ( worldNum )
+	switch ( worldNumber )
 	{
 		case 0:
 		case 1:
@@ -100,15 +100,16 @@ function CheckAccessRights( socket, pUser, atlas )
 	return true;
 }
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, atlas )
 {
-	var socket = pUser.socket;
+	var pSocket = pUser.socket;
 
 	var now = GetCurrentClock(  );
 	var nextUse = parseInt( atlas.GetTag( "useDelayed" ));
 	if(( now - nextUse ) < ATLAS_COOLDOWN_MS )
 	{
-		socket.SysMessage( GetDictionaryEntry( 9250, socket.language ));
+		pSocket.SysMessage( GetDictionaryEntry( 9250, pSocket.language ));
 		return false;
 	}
 
@@ -117,7 +118,7 @@ function onUseChecked( pUser, atlas )
 	{
 		if( !atlas.InRange( pUser, 3 ))
 		{
-			socket.SysMessage( GetDictionaryEntry( 393, socket.language ));
+			pSocket.SysMessage( GetDictionaryEntry( 393, pSocket.language ));
 			return false;
 		}
 	}
@@ -128,12 +129,12 @@ function onUseChecked( pUser, atlas )
 			var owner = GetPackOwner( root, 0 );
 			if( ValidateObject( owner ))
 			{ 
-				socket.SysMessage( GetDictionaryEntry( 9251, socket.language )); 
+				pSocket.SysMessage( GetDictionaryEntry( 9251, pSocket.language )); 
 				return false;
 			}
 			else if( !root.InRange( pUser, 3 ))
 			{ 
-				socket.SysMessage( GetDictionaryEntry( 393, socket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 393, pSocket.language ));
 				return false;
 			}
 		}
@@ -143,15 +144,15 @@ function onUseChecked( pUser, atlas )
 	var inUse = atlas.GetTag( "inUse" );
 	if( inUse )
 	{
-		var ser = atlas.GetTag( "userSerial" );
-		if( ser != 0 )
+		var serial = atlas.GetTag( "userSerial" );
+		if( serial != 0 )
 		{
-			var other = CalcCharFromSer( ser & 0x00FFFFFF );
+			var other = CalcCharFromSer( serial & 0x00FFFFFF );
 			if( ValidateObject( other ) && other != pUser )
 			{
 				if( other.online && other.InRange( atlas, 3 ))
 				{ 
-					socket.SysMessage( GetDictionaryEntry( 2450, socket.language ));
+					pSocket.SysMessage( GetDictionaryEntry( 2450, pSocket.language ));
 					return false;
 				}
 			}
@@ -159,12 +160,12 @@ function onUseChecked( pUser, atlas )
 	}
 
 	var cap = atlas.maxhp > 0 ? atlas.maxhp : ATLAS_MAX_CHARGES;
-	atlas.SetTempTag( "atlasMaxCharges", cap.toString(  ));
+	atlas.SetTempTag( "atlasMaxCharges", cap);
 	atlas.SetTag( "inUse", true );
 	atlas.SetTag( "userSerial", ( pUser.serial ).toString(  ));
 	pUser.SoundEffect( 0x58, false );
 
-	var page = parseInt( atlas.GetTag( "atlasPage" )) || 0;
+	var page = parseInt( atlas.GetTag( "atlasPage" ));
 	DisplayAtlasGump( socket, pUser, atlas, page );
 	return false;
 }
@@ -172,23 +173,23 @@ function onUseChecked( pUser, atlas )
 function DisplayAtlasGump( socket, pUser, atlas, pageIndex )
 {
 	// persist page
-	atlas.SetTag( "atlasPage", ( pageIndex | 0 ).toString(  ));
+	atlas.SetTag( "atlasPage", pageIndex.toString());
 
-	var cap = parseInt( atlas.GetTempTag( "atlasMaxCharges" )) || ATLAS_MAX_CHARGES;
+	var cap = atlas.GetTempTag( "atlasMaxCharges" ) || ATLAS_MAX_CHARGES;
 	var charges = atlas.health | 0;
-	var selected = parseInt( atlas.GetTag( "selectedSlot" )); // 1..48, or NaN
-	var defaultSlot = parseInt( atlas.GetTag( "defaultRuneLoc" )) || 0;
+	var selected = atlas.GetTag( "selectedSlot" ); // 1..48, or NaN
+	var defaultSlot = parseInt( atlas.GetTag( "defaultRuneLoc" ));
 
-	var g = new Gump;
-	g.AddPage( 0 );
-	g.AddGump( 0, 0, 39923 );
+	var runicGump = new Gump;
+	runicGump.AddPage( 0 );
+	runicGump.AddGump( 0, 0, 39923 );
 
 	// Top header text ( Charges, Rename )
-	g.AddHTMLGump( 60, 9, 147, 22, false, false, "<BASEFONT size=4>Charges:</BASEFONT>" );
-	g.AddHTMLGump( 110, 9, 97, 22, false, false, "<BASEFONT size=4>" + charges + " / " + cap + "</BASEFONT>" );
+	runicGump.AddHTMLGump( 60, 9, 147, 22, false, false, "<BASEFONT size=4>Charges:</BASEFONT>" );
+	runicGump.AddHTMLGump( 110, 9, 97, 22, false, false, "<BASEFONT size=4>" + charges + " / " + cap + "</BASEFONT>" );
 
-	g.AddHTMLGump( 264, 9, 144, 18, false, false, "<BASEFONT size=3>rename book</BASEFONT>" );
-	g.AddButton( 248, 14, 2103, 2103, 1, 0, 1 ); // Rename
+	runicGump.AddHTMLGump( 264, 9, 144, 18, false, false, "<BASEFONT size=3>rename book</BASEFONT>" );
+	runicGump.AddButton( 248, 14, 2103, 2103, 1, 0, 1 ); // Rename
 
 	// Grid of 16 entries, two columns of 8, starting at slot S = pageIndex*16 + 1
 	var startSlot = pageIndex * 16 + 1;
@@ -216,8 +217,8 @@ function DisplayAtlasGump( socket, pUser, atlas, pageIndex )
 		var bx = 46 + ( col * 205 ); var by = 55 + ( row * 20 ); // select button
 		var tx = 62 + ( col * 205 ); var ty = 50 + ( row * 20 ); // description
 
-		g.AddButton( bx, by, 2103, 2104, 1, 0, 100 + ( slot - 1 ));
-		g.AddCroppedText( tx, ty, hue, 144, 18, desc );
+		runicGump.AddButton( bx, by, 2103, 2104, 1, 0, 100 + ( slot - 1 ));
+		runicGump.AddCroppedText( tx, ty, hue, 144, 18, desc );
 	}
 
 	// Selected entry details ( coords + action area )
@@ -238,71 +239,78 @@ function DisplayAtlasGump( socket, pUser, atlas, pageIndex )
 		entryName = e[0] || "Empty";
 	}
 
-	g.AddHTMLGump( 25, 254, 182, 18, false, false, "<CENTER><BASEFONT size=3>" + coordsText + "</BASEFONT></CENTER>" );
+	runicGump.AddHTMLGump( 25, 254, 182, 18, false, false, "<CENTER><BASEFONT size=3>" + coordsText + "</BASEFONT></CENTER>" );
 
 	// Set Default
-	g.AddHTMLGump( 62, 290, 144, 18, false, false, "<BASEFONT size=3>Set default</BASEFONT>" );
-	g.AddButton( 46, 295, 2103, 2103, 1, 0, 2 );
+	runicGump.AddHTMLGump( 62, 290, 144, 18, false, false, "<BASEFONT size=3>Set default</BASEFONT>" );
+	runicGump.AddButton( 46, 295, 2103, 2103, 1, 0, 2 );
 
 	// Drop Rune
-	g.AddHTMLGump( 62, 310, 144, 18, false, false, "<BASEFONT size=3>Drop rune</BASEFONT>" );
-	g.AddButton( 46, 315, 2103, 2103, 1, 0, 3 );
+	runicGump.AddHTMLGump( 62, 310, 144, 18, false, false, "<BASEFONT size=3>Drop rune</BASEFONT>" );
+	runicGump.AddButton( 46, 315, 2103, 2103, 1, 0, 3 );
 
 	// Entry name centered near bottom
-	g.AddHTMLGump( 25, 348, 182, 18, false, false, "<CENTER><BASEFONT size=3>" + entryName + "</BASEFONT></CENTER>" );
+	runicGump.AddHTMLGump( 25, 348, 182, 18, false, false, "<CENTER><BASEFONT size=3>" + entryName + "</BASEFONT></CENTER>" );
 
 	// Right-side action list ( Recall Spell / Recall Charge / Gate / Sacred )
 	var hy = 284, by = 289;
 
-	g.AddHTMLGump( 280, hy, 128, 18, false, false, "<BASEFONT size=3>Recall ( Spell )</BASEFONT>" );
-	g.AddButton( 264, by, 2103, 2103, 1, 0, 4 );
+	runicGump.AddHTMLGump( 280, hy, 128, 18, false, false, "<BASEFONT size=3>Recall ( Spell )</BASEFONT>" );
+	runicGump.AddButton( 264, by, 2103, 2103, 1, 0, 4 );
 	hy += 18; by += 18;
 
 	if( charges > 0 )
 	{
-		g.AddHTMLGump( 280, hy, 128, 18, false, false, "<BASEFONT size=3>Recall ( Charge )</BASEFONT>" );
-		g.AddButton( 264, by, 2103, 2103, 1, 0, 5 );
+		runicGump.AddHTMLGump( 280, hy, 128, 18, false, false, "<BASEFONT size=3>Recall ( Charge )</BASEFONT>" );
+		runicGump.AddButton( 264, by, 2103, 2103, 1, 0, 5 );
 		hy += 18; by += 18;
 	}
 
 	// Gate Travel ( Magery >= ~66 in RunUO; here we always show; validation happens in cast )
-	g.AddHTMLGump( 280, hy, 128, 18, false, false, "<BASEFONT size=3>Gate Travel</BASEFONT>" );
-	g.AddButton( 264, by, 2103, 2103, 1, 0, 6 );
+	runicGump.AddHTMLGump( 280, hy, 128, 18, false, false, "<BASEFONT size=3>Gate Travel</BASEFONT>" );
+	runicGump.AddButton( 264, by, 2103, 2103, 1, 0, 6 );
 	hy += 18; by += 18;
 
 	// Sacred Journey ( only if player has it; we show conditionally )
 	if( pUser.HasSpell && pUser.HasSpell( SPELL_SACRED_JOUR ))
 	{
-		g.AddHTMLGump( 280, hy, 128, 18, false, false, "<BASEFONT size=3>Sacred Journey</BASEFONT>" );
-		g.AddButton( 264, by, 2103, 2103, 1, 0, 7 );
+		runicGump.AddHTMLGump( 280, hy, 128, 18, false, false, "<BASEFONT size=3>Sacred Journey</BASEFONT>" );
+		runicGump.AddButton( 264, by, 2103, 2103, 1, 0, 7 );
 	}
 
 	// Page nav
 	if( pageIndex < 2 )
-		g.AddButton( 374, 3, 2206, 2206, 1, 0, 1150 );
+		runicGump.AddButton( 374, 3, 2206, 2206, 1, 0, 1150 );
 	if( pageIndex > 0 )
-		g.AddButton( 23, 5, 2205, 2205, 1, 0, 1151 );
+		runicGump.AddButton( 23, 5, 2205, 2205, 1, 0, 1151 );
 
 	// carry state
 	socket.tempObj2 = atlas;
 
-	g.Send( socket );
-	g.Free(  );
+	runicGump.Send( socket );
+	runicGump.Free(  );
 }
 
-function onGumpPress( socket, btn, gumpData )
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
+function onGumpPress( pSocket, btn, gumpData )
 {
-	if( !socket )
+	if( !pSocket )
 		return;
 
-	var atlas = socket.tempObj2; socket.tempObj2 = null;
+	var atlas = pSocket.tempObj2;
+	socket.tempObj2 = null;
 	if( !ValidateObject( atlas ))
 	{
-		socket.SysMessage( GetDictionaryEntry( 9258, socket.language ));
+		pSocket.SysMessage( GetDictionaryEntry( 9258, pSocket.language ));
 		return;
 	}
 
-	var pUser = socket.currentChar;
+	var pUser = pSocket.currentChar;
+
+	if( !ValidateObject( pUser ))
+	{
+		return;
+	}
 
 	// range recheck
 	if( !pUser.InRange( atlas, 3 ))
@@ -312,23 +320,23 @@ function onGumpPress( socket, btn, gumpData )
 		{
 			if( !pUser.InRange( root, 3 ))
 			{
-				socket.SysMessage( GetDictionaryEntry( 393, socket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 393, pSocket.language ));
 				atlas.SetTag( "inUse", null );
 				atlas.SetTag( "userSerial", null );
-				return false;
+				return;
 			}
 		}
 		else
 		{ 
-			socket.SysMessage( GetDictionaryEntry( 393, socket.language ));
+			pSocket.SysMessage( GetDictionaryEntry( 393, pSocket.language ));
 			atlas.SetTag( "inUse", null );
 			atlas.SetTag( "userSerial", null );
-			return false;
+			return;
 		}
 	}
 
-	var page = parseInt( atlas.GetTag( "atlasPage" )) || 0;
-	var cap = parseInt( atlas.GetTempTag( "atlasMaxCharges" )) || ATLAS_MAX_CHARGES;
+	var page =  atlas.GetTag( "atlasPage" );
+	var cap = atlas.GetTempTag( "atlasMaxCharges" ) || ATLAS_MAX_CHARGES;
 
 	// Close
 	if( btn === 0 )
@@ -342,22 +350,22 @@ function onGumpPress( socket, btn, gumpData )
 	if( btn === 1150 )
 	{
 		page = Math.min( 2, page + 1 );
-		atlas.SetTag( "atlasPage", page.toString());
-		return DisplayAtlasGump( socket, pUser, atlas, page );
+		atlas.SetTag( "atlasPage", page);
+		return DisplayAtlasGump( pSocket, pUser, atlas, page );
 	}
 	if( btn === 1151 )
 	{ 
 		page = Math.max( 0, page - 1 );
-		atlas.SetTag( "atlasPage", page.toString());
-		return DisplayAtlasGump( socket, pUser, atlas, page );
+		atlas.SetTag( "atlasPage", page);
+		return DisplayAtlasGump( pSocket, pUser, atlas, page );
 	}
 
 	// Rename
 	if( btn === 1 )
 	{
-		if( !CheckAccessRights( socket, pUser, atlas ))
+		if( !CheckAccessRights( pSocket, pUser, atlas ))
 			return;
-		socket.SysMessage( GetDictionaryEntry( 9261, socket.language )); // enter title
+		pSocket.SysMessage( GetDictionaryEntry( 9261, pSocket.language )); // enter title
 		pUser.SpeechInput( 1, atlas );
 		return;
 	}
@@ -371,20 +379,20 @@ function onGumpPress( socket, btn, gumpData )
 	}
 
 	// Read current selection
-	var selected = parseInt( atlas.GetTag( "selectedSlot" ));
-	var hasSel = !!( selected && selected >= 1 && selected <= ATLAS_MAX_RUNES );
-	var entryTag = hasSel ? atlas.GetTag( "rune" + selected + "Data" ) : 0;
+	var selected = atlas.GetTag( "selectedSlot" );
+	var hasSelected = !!( selected && selected >= 1 && selected <= ATLAS_MAX_RUNES );
+	var entryTag = hasSelected ? atlas.GetTag( "rune" + selected + "Data" ) : 0;
 
 	switch( btn )
 	{
 		case 2: // Set Default
-			if( !hasSel )
+			if( !hasSelected )
 			{ 
-				socket.SysMessage( GetDictionaryEntry( 9260, socket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9260, pSocket.language ));
 				break;
 			}
 
-			if( !CheckAccessRights( socket, pUser, atlas ))
+			if( !CheckAccessRights( pSocket, pUser, atlas ))
 				return;
 
 			if( entryTag != 0 )
@@ -392,37 +400,37 @@ function onGumpPress( socket, btn, gumpData )
 				var s = entryTag.split( "," );
 				atlas.morex = s[2] | 0; atlas.morey = s[3] | 0; atlas.morez = s[4] | 0; atlas.more = s[5] | 0; if( s[6] ) atlas.more0 = s[6] | 0;
 				atlas.SetTag( "defaultRuneLoc", selected );
-				socket.SysMessage( GetDictionaryEntry( 9259, socket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9259, pSocket.language ));
 			}
 			else
-				socket.SysMessage( GetDictionaryEntry( 9260, socket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9260, pSocket.language ));
 			break;
 
 		case 3: // Drop Rune
-			if( !hasSel )
+			if( !hasSelected )
 			{
-				socket.SysMessage( GetDictionaryEntry( 9260, socket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9260, pSocket.language ));
 				break;
 			}
 
-			if( !CheckAccessRights( socket, pUser, atlas ))
+			if( !CheckAccessRights( pSocket, pUser, atlas ))
 				return;
 
 			var pack = pUser.pack;
 			if( pack.totalItemCount >= pack.maxItems || pack.weight >= pack.weightMax )
 			{ 
-				socket.SysMessage( GetDictionaryEntry( 9263, socket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9263, pSocket.language ));
 				break;
 			}
 
 			if( entryTag != 0 )
 			{
 				var s2 = entryTag.split( "," );
-				var dropped = CreateDFNItem( socket, pUser, "0x1f14", 1, "ITEM", true );
+				var dropped = CreateDFNItem( pSocket, pUser, "0x1f14", 1, "ITEM", true );
 				dropped.morex = s2[2] | 0; dropped.morey = s2[3] | 0; dropped.morez = s2[4] | 0; dropped.more = s2[5] | 0; if( s2[6] ) dropped.more0 = s2[6] | 0;
 				dropped.name = s2[0];
 
-				if(( atlas.GetTag( "defaultRuneLoc" ) | 0 ) === selected )
+				if(( atlas.GetTag( "defaultRuneLoc" ) === selected ))
 				{
 					atlas.SetTag( "defaultRuneLoc", null );
 					atlas.morex = 0;
@@ -433,78 +441,89 @@ function onGumpPress( socket, btn, gumpData )
 				}
 
 				atlas.SetTag( "rune" + selected + "Data", null );
-				var cnt = parseInt( atlas.GetTag( "runeCount" )) | 0; atlas.SetTag( "runeCount", Math.max( 0, cnt - 1 ));
-				socket.SysMessage( GetDictionaryEntry( 9264, socket.language ));
+				var cnt = atlas.GetTag( "runeCount" );
+				atlas.SetTag( "runeCount", Math.max( 0, cnt - 1 ));
+				pSocket.SysMessage( GetDictionaryEntry( 9264, pSocket.language ));
+				break;
 			}
 			else
-				socket.SysMessage( GetDictionaryEntry( 9265, socket.language ));
+			{
+				pSocket.SysMessage( GetDictionaryEntry( 9265, pSocket.language ));
+			}
 			break;
 
 		case 4: // Recall ( Spell )
-			if( !hasSel || entryTag == 0 ) 
+			if( !hasSelected || entryTag == 0 ) 
 			{
-				socket.SysMessage( GetDictionaryEntry( 9260, socket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9260, pSocket.language ));
 				break;
 			}
-			socket.tempObj2 = atlas; socket.tempInt2 = selected;
-			atlas.SetTag( "inUse", null ); atlas.SetTag( "userSerial", null );
+			pSocket.tempObj2 = atlas; 
+			pSocket.tempInt2 = selected;
+			atlas.SetTag( "inUse", null );
+			atlas.SetTag( "userSerial", null );
 			atlas.SetTempTag( "useDelayed", GetCurrentClock().toString());
-			CastAtlasSpell( socket, pUser, SPELL_RECALL, true );
+			CastAtlasSpell( pSocket, pUser, SPELL_RECALL, true );
 			return;
 
 		case 5: // Recall ( Charge )
-			if( !hasSel || entryTag == 0 )
+			if( !hasSelected || entryTag == 0 )
 			{
-				socket.SysMessage( GetDictionaryEntry( 9260, socket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9260, pSocket.language ));
 				break;
 			}
 
 			if(( atlas.health | 0 ) <= 0 )
 			{ 
-				socket.SysMessage( GetDictionaryEntry( 9262, socket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9262, pSocket.language ));
 				atlas.health = 0;
 				break;
 			}
 			atlas.health = Math.max( 0, ( atlas.health | 0 ) - 1 );
-			socket.tempObj2 = atlas; socket.tempInt2 = selected;
-			atlas.SetTag( "inUse", null ); atlas.SetTag( "userSerial", null );
+			pSocket.tempObj2 = atlas;
+			pSocket.tempInt2 = selected;
+			atlas.SetTag( "inUse", null );
+			atlas.SetTag( "userSerial", null );
 			atlas.SetTempTag( "useDelayed", GetCurrentClock().toString());
-			CastAtlasSpell( socket, pUser, SPELL_RECALL, false );
+			CastAtlasSpell( pSocket, pUser, SPELL_RECALL, false );
 			return;
 
 		case 6: // Gate Travel
-			if( !hasSel || entryTag == 0 )
+			if( !hasSelected || entryTag == 0 )
 			{ 
-				socket.SysMessage( GetDictionaryEntry( 9260, socket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9260, pSocket.language ));
 				break;
 			}
-			socket.tempObj2 = atlas; socket.tempInt2 = selected;
-			atlas.SetTag( "inUse", null ); atlas.SetTag( "userSerial", null );
+			pSocket.tempObj2 = atlas; pSocket.tempInt2 = selected;
+			atlas.SetTag( "inUse", null );
+			atlas.SetTag( "userSerial", null );
 			atlas.SetTempTag( "useDelayed", GetCurrentClock().toString());
-			CastAtlasSpell( socket, pUser, SPELL_GATE, true );
+			CastAtlasSpell( pSocket, pUser, SPELL_GATE, true );
 			return;
 
 		case 7: // Sacred Journey ( optional )
-			if( !hasSel || entryTag == 0 ) 
+			if( !hasSelected || entryTag == 0 ) 
 			{ 
-				socket.SysMessage( GetDictionaryEntry( 9260, socket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9260, pSocket.language ));
 				break;
 			}
 			if( !( pUser.HasSpell && pUser.HasSpell( SPELL_SACRED_JOUR )))
 			{
-				socket.SysMessage( GetDictionaryEntry( 9266, socket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9266, pSocket.language ));
 				break;
 			}
-			socket.tempObj2 = atlas; socket.tempInt2 = selected;
-			atlas.SetTag( "inUse", null ); atlas.SetTag( "userSerial", null );
+			pSocket.tempObj2 = atlas;
+			pSocket.tempInt2 = selected;
+			atlas.SetTag( "inUse", null );
+			atlas.SetTag( "userSerial", null );
 			atlas.SetTempTag( "useDelayed", GetCurrentClock().toString());
-			CastAtlasSpell( socket, pUser, SPELL_SACRED_JOUR, true );
+			CastAtlasSpell( pSocket, pUser, SPELL_SACRED_JOUR, true );
 			return;
 
 		default: break;
 	}
 
-	DisplayAtlasGump( socket, pUser, atlas, page );
+	DisplayAtlasGump( pSocket, pUser, atlas, page );
 }
 
 function CastAtlasSpell( socket, pUser, spellNum, checkReagents )
@@ -630,21 +649,22 @@ function CastAtlasSpell( socket, pUser, spellNum, checkReagents )
 /** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
-	var socket = timerObj.socket;
-	if( !socket )
+	var pSocket = timerObj.socket;
+	if( !pSocket )
 		return;
 
-	var atlas = socket.tempObj2; socket.tempObj2 = null;
+	var atlas = pSocket.tempObj2; 
+	pSocket.tempObj2 = null;
 	if( !ValidateObject( atlas ))
 	{ 
-		socket.SysMessage( GetDictionaryEntry( 9267, socket.language ));
+		pSocket.SysMessage( GetDictionaryEntry( 9267, pSocket.language ));
 		return;
 	}
 
-	var slot = socket.tempInt2 | 0; socket.tempInt2 = 0;
+	var slot = pSocket.tempInt2 | 0; pSocket.tempInt2 = 0;
 	if( slot < 1 || slot > ATLAS_MAX_RUNES )
 	{
-		socket.SysMessage( GetDictionaryEntry( 9267, socket.language ));
+		pSocket.SysMessage( GetDictionaryEntry( 9267, pSocket.language ));
 		return;
 	}
 
@@ -667,23 +687,23 @@ function onTimer( timerObj, timerID )
 /* --------------------------- Drag/drop + Rename --------------------------- */
 function onDropItemOnItem( iDropped, pUser, atlas )
 {
-	var socket = pUser.socket;
+	var pSocket = pUser.socket;
 
 	if( iDropped.type == 50 ) // recall rune
 	{
-		if( !CheckAccessRights( socket, pUser, atlas ))
+		if( !CheckAccessRights( pSocket, pUser, atlas ))
 			return false;
 
 		if( iDropped.morex == 0 && iDropped.morey == 0 && iDropped.morez == 0 )
 		{
-			socket.SysMessage( GetDictionaryEntry( 431, pUser.socket.language ));
+			pSocket.SysMessage( GetDictionaryEntry( 431, pSocket.language ));
 			return false;
 		}
 
-		var count = parseInt( atlas.GetTag( "runeCount" )) | 0;
+		var count = atlas.GetTag( "runeCount" );
 		if( count >= ATLAS_MAX_RUNES ) 
 		{ 
-			socket.SysMessage( GetDictionaryEntry( 9273, socket.language ));
+			pSocket.SysMessage( GetDictionaryEntry( 9273, pSocket.language ));
 			return false;
 		}
 
@@ -698,13 +718,14 @@ function onDropItemOnItem( iDropped, pUser, atlas )
 				atlas.SetTag( "runeCount", count + 1 );
 				iDropped.Delete(  );
 
-				var msg = GetDictionaryEntry( 9274, socket.language );
-				socket.SysMessage( msg.replace( /%s/gi, nm ));
+				var msg = GetDictionaryEntry( 9274, pSocket.language );
+				pSocket.SysMessage( msg.replace( /%s/gi, nm ));
 
 				// select the newly added and jump to correct page
 				atlas.SetTag( "selectedSlot", i );
-				var pageForI = (( i - 1 ) / 16 ) | 0; atlas.SetTag( "atlasPage", pageForI.toString(  ));
-				socket.CloseGump( 0xffff + SCRIPT_ID, 0 );
+				var pageForI = (( i - 1 ) / 16 ) | 0;
+				atlas.SetTag( "atlasPage", pageForI);
+				pSocket.CloseGump( 0xffff + SCRIPT_ID, 0 );
 				onUseChecked( pUser, atlas );
 				return 2;
 			}
@@ -716,7 +737,7 @@ function onDropItemOnItem( iDropped, pUser, atlas )
 		var c = atlas.health | 0;
 		if( c >= cap )
 		{ 
-			socket.SysMessage( GetDictionaryEntry( 9275, socket.language ));
+			pSocket.SysMessage( GetDictionaryEntry( 9275, pSocket.language ));
 			return false;
 		}
 
@@ -731,15 +752,15 @@ function onDropItemOnItem( iDropped, pUser, atlas )
 				atlas.health = cap; 
 				iDropped.amount -= ( cap - c );
 			}
-			socket.SysMessage( GetDictionaryEntry( 9276, socket.language ));
+			pSocket.SysMessage( GetDictionaryEntry( 9276, pSocket.language ));
 		}
 		else
 		{
 			atlas.health = c + 1; iDropped.Delete(  );
-			socket.SysMessage( GetDictionaryEntry( 9277, socket.language ));
+			pSocket.SysMessage( GetDictionaryEntry( 9277, pSocket.language ));
 		}
 
-		socket.CloseGump( 0xffff + SCRIPT_ID, 0 );
+		pSocket.CloseGump( 0xffff + SCRIPT_ID, 0 );
 		onUseChecked( pUser, atlas );
 		return 2;
 	}
@@ -747,18 +768,18 @@ function onDropItemOnItem( iDropped, pUser, atlas )
 	return true;
 }
 
-/** @type { (  myChar: Character, myItem: Item, mySpeech: string  ) => void } */
+/** @type { ( myChar: Character, myItem: Item, mySpeech: string, mySpeechID: Number ) => void } */
 function onSpeechInput( pUser, atlas, text, id )
 {
-	var socket = pUser.socket;
-	if( !ValidateObject( socket ))
+	var pSocket = pUser.socket;
+	if( !ValidateObject( pSocket ))
 	{
 		return;
 	}
 
 	if( text == null || text == " " )
 	{ 
-		socket.SysMessage( GetDictionaryEntry( 9270, socket.language ));
+		pSocket.SysMessage( GetDictionaryEntry( 9270, pSocket.language ));
 		return;
 	}
 
@@ -767,17 +788,17 @@ function onSpeechInput( pUser, atlas, text, id )
 		case 1:
 			if( text.length > 50 )
 			{ 
-				pUser.SysMessage( GetDictionaryEntry( 9271, socket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9271, pSocket.language ));
 				return;
 			}
 			if( ValidateObject( atlas ))
 			{
 				atlas.name = text;
-				var msg = GetDictionaryEntry( 9272, socket.language );
-				socket.SysMessage( msg.replace( /%s/gi, atlas.name ));
+				var msg = GetDictionaryEntry( 9272, pSocket.language );
+				pSocket.SysMessage( msg.replace( /%s/gi, atlas.name ));
 			}
 			else
-				socket.SysMessage( GetDictionaryEntry( 9267, socket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9267, pSocket.language ));
 			break;
 		default: break;
 	}
