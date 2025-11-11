@@ -1,3 +1,6 @@
+09/11/2025 - DragonSlayer62 (#445)
+    [ADD] Added CanEquip that checks if members of race can equip specified item (Thanks , Xuri).
+
 09/11/2025 - DragonSlayer62 (#453)
     [UPD] Updated System Messages in Pitchers and SoundEffect.
 
