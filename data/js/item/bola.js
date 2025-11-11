@@ -24,22 +24,22 @@ function onUseChecked( pUser, iUsed )
 		var itemOwner = GetPackOwner( iUsed, 0 );
 		if( itemOwner == null || itemOwner.serial != pUser.serial )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 2712, socket.language )); // The bola must be in your pack to use it.
+			socket.SysMessage( GetDictionaryEntry( 2712, socket.language )); // The bola must be in your pack to use it.
 			return false;
 		}
 		else if( pUser.isonhorse )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 2713, socket.language )); // You cannot use this while riding a mount.
+			socket.SysMessage( GetDictionaryEntry( 2713, socket.language )); // You cannot use this while riding a mount.
 			return false;
 		}
 		else if( pUser.isflying ) 
 		{
-			pUser.SysMessage( GetDictionaryEntry( 2797, socket.language )); // You can't use this while flying!
+			socket.SysMessage( GetDictionaryEntry( 2797, socket.language )); // You can't use this while flying!
 			return false;
 		}
 		else if(( iTime - NextUse ) < Delay )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 2715, socket.language )); // You have to wait a few moments before you can use another bola!
+			socket.SysMessage( GetDictionaryEntry( 2715, socket.language )); // You have to wait a few moments before you can use another bola!
 			return false;
 		}
 		else
