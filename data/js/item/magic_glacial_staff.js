@@ -151,7 +151,7 @@ function onTimer( pUser, timerID )
 		if( pSocket != null )
 		{
 			pUser.SoundEffect( 0x003e, true );
-			pSocket.SysMessage( GetDictionaryEntry( 2799, pSocket.language ); // All charges have been expended for the glacial staff, which shatters in your hands!
+			pSocket.SysMessage( GetDictionaryEntry( 2799, pSocket.language )); // All charges have been expended for the glacial staff, which shatters in your hands!
 		}
 		glacialStaff.Delete();
 	}
