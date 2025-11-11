@@ -2679,6 +2679,10 @@
 2867=Použiješ svou výbavu na výrobu trofeje.
 2868=Tohle nevypadá jako něco, co bys chtěl mít pověšené na zdi.
 2869=Nemáš dostatek desek.
+2870=K postavení golema potřebujete energetický krystal.
+2871=K postavení golema potřebujete více železných ingotů.
+2872=K postavení golema potřebujete více bronzových ingotů.
+2873=K postavení golema potřebujete více ozubených kol.
 // [3000-4999] Animal and Monster names
 3001=zlobr
 3002=ettin
@@ -5589,5 +5593,8 @@
 19338=zmrazený
 19339=střežený
 19340=Duch toho tvora postrádá soudržnost. Zkuste to znovu za pár minut.
+19341=Tento recept už znáte.
+19342=Naučili jste se nový recept: %i
+19343=Musíte se ho naučit ze svitku.
 }
 EOF

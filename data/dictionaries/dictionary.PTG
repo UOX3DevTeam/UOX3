@@ -2681,6 +2681,10 @@
 2867=Você utiliza o seu kit para fazer o troféu.
 2868=Isso não se parece com algo que se queira pendurar numa parede.
 2869=Não tens tábuas suficientes.
+2870=Precisas de um cristal de energia para construir um golem.
+2871=Precisas de mais lingotes de ferro para construir um golem.
+2872=Precisas de mais lingotes de bronze para construir um golem.
+2873=Precisas de mais engrenagens para construir um golem.
 // [3000-4999] Animal and Monster names
 3001=um ogre
 3002=an ettin
@@ -5591,5 +5595,8 @@
 19338=congelado
 19339=protegido
 19340=O espírito daquela criatura não tem coesão. Tente novamente dentro de alguns minutos.
+19341=Já conhece esta receita.
+19342=Aprendeu uma nova receita: %i
+19343=Deve aprender esta receita num pergaminho.
 }
 EOF

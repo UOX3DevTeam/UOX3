@@ -3222,6 +3222,15 @@
           "returns": "boolean"
         },
         {
+          "name": "CanEquip",
+          "cppName": "CRace_CanEquip",
+          "params": {
+            "num": 1,
+            "list": [ { "name": "item", "type": "Item", "required": true } ]
+          },
+          "returns": "boolean"
+        },
+        {
           "name": "IsValidHairColour",
           "cppName": "CRace_IsValidHairColour",
           "params": {
@@ -8630,7 +8639,8 @@
         "list": [
           { "name": "myChar", "type": "Character", "required": true },
           { "name": "myItem", "type": "Item", "required": true },
-          { "name": "mySpeech", "type": "string", "required": true }
+          { "name": "mySpeech", "type": "string", "required": true },
+          { "name": "mySpeechId", "type": "number", "required": true }
         ]
       },
       "returns": "void"
@@ -8981,6 +8991,18 @@
       "returns": "boolean"
     },
     {
+      "name": "onGumpPress",
+      "cppName": "HandleGumpPress",
+      "params": {
+        "list": [
+          { "name": "myObj",   "type": "Socket",    "required": true },
+          { "name": "pressed", "type": "number",    "required": true },
+          { "name": "gump",    "type": "GumpData",  "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
       "name": "onProfileRequest",
       "cppName": "OnProfileRequest",
       "params": {
@@ -8992,15 +9014,15 @@
       "returns": "string"
     },
     {
-      "name": "onProfileRequest",
-      "cppName": "OnProfileRequest",
+      "name": "onProfileUpdate",
+      "cppName": "onProfileUpdate",
       "params": {
         "list": [
           { "name": "myObj",       "type": "Socket", "required": true },
           { "name": "profileText", "type": "string", "required": true }
         ]
       },
-      "returns": "voi"
+      "returns": "void"
     }
   ],
   "globals": [

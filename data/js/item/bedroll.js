@@ -38,7 +38,7 @@ function onUseChecked( pUser, iUsed )
 		{
 			if( !iUsed.InRange( pUser, 2 ))
 			{
-				pUser.SysMessage( GetDictionaryEntry( 482, srcSock.language )); //You need to be closer to use that.
+				srcSock.SysMessage( GetDictionaryEntry( 482, srcSock.language )); //You need to be closer to use that.
 				return false;
 			}
 		}
@@ -77,22 +77,22 @@ function onUseChecked( pUser, iUsed )
 					}
 					else
 					{
-						pUser.SysMessage( GetDictionaryEntry( 2704, srcSock.language )); // There are no secure campfires nearby.
+						srcSock.SysMessage( GetDictionaryEntry( 2704, srcSock.language )); // There are no secure campfires nearby.
 					}
 				}
 				else
 				{
-					pUser.SysMessage( GetDictionaryEntry( 482, srcSock.language )); //You need to be closer to use that.
+					srcSock.SysMessage( GetDictionaryEntry( 482, srcSock.language )); //You need to be closer to use that.
 				}
 			}
 			else
 			{
-				pUser.SysMessage( GetDictionaryEntry( 2705, srcSock.language )); // This needs to be lying on the ground.
+				srcSock.SysMessage( GetDictionaryEntry( 2705, srcSock.language )); // This needs to be lying on the ground.
 			}
 		}
 		else
 		{
-			pUser.SysMessage( GetDictionaryEntry( 2706, srcSock.language )); // You cannot do this while in combat, or while having a criminal flag.
+			srcSock.SysMessage( GetDictionaryEntry( 2706, srcSock.language )); // You cannot do this while in combat, or while having a criminal flag.
 		}
 
 		// Roll up bedroll
@@ -141,6 +141,7 @@ function displayGump(srcSock, pUser)
 	myGump.Free();
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress(srcSock, myButtonID )
 {
 	var srcChar = srcSock.currentChar;

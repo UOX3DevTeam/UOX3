@@ -371,6 +371,7 @@ function DisplayGump( pSocket, pUser, runeBook )
 	runeBookGump.Free();
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( pSocket, myButton, gumpData )
 {
 	if( pSocket == null )
@@ -897,7 +898,7 @@ function CheckAccessRights( pSocket, pUser, runeBook )
 }
 
 // Handle renaming of Runebook
-/** @type { ( myChar: Character, myItem: Item, mySpeech: string ) => void } */
+/** @type { ( myChar: Character, myItem: Item, mySpeech: string, mySpeechId: number ) => void } */
 function onSpeechInput( pUser, runeBook, pSpeech, pSpeechID )
 {
 	var pSocket = pUser.socket;

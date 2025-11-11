@@ -24,7 +24,7 @@ function onUseChecked( pUser, iUsed )
 	var itemOwner = GetPackOwner( iUsed, 0 );
 	if( itemOwner == null || itemOwner.serial != pUser.serial )
 	{
-		pUser.SysMessage( GetDictionaryEntry( 1763, socket.language )); // That item must be in your backpack before it can be used.
+		socket.SysMessage( GetDictionaryEntry( 1763, socket.language )); // That item must be in your backpack before it can be used.
 		return false;
 	}
 
@@ -39,15 +39,15 @@ function onUseChecked( pUser, iUsed )
 	{
 		if( pUser.controlSlotsUsed + golemControlSlots > maxControlSlots )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 2390, pSock.language )); // That would exceed your maximum number of pet control slots.
+			socket.SysMessage( GetDictionaryEntry( 2390, socket.language )); // That would exceed your maximum number of pet control slots.
 			return;
 		}
 	}
 	else if( pUser.followerCount >= maxFollowers )
 	{
 		// Only checked if maxControlSlots is set to 0
-		var tempMsg = GetDictionaryEntry( 2346, pSock.language ); // You can maximum have %i pets/followers active at the same time.
-		pSock.SysMessage( tempMsg.replace( /%i/gi, maxFollowers ));
+		var tempMsg = GetDictionaryEntry( 2346, socket.language ); // You can maximum have %i pets/followers active at the same time.
+		socket.SysMessage( tempMsg.replace( /%i/gi, maxFollowers ));
 		return;
 	}
 
@@ -55,19 +55,19 @@ function onUseChecked( pUser, iUsed )
 	// 1 power crystal, 50 iron ingots, 50 bronze ingots and 5 gears
 	if( pUser.ResourceCount( 0x1f1c ) < 1 )
 	{
-		socket.SysMessage(); // You need a power crystal to construct a golem.
+		socket.SysMessage(GetDictionaryEntry( 2870, socket.language )); // You need a power crystal to construct a golem.
 	}
 	else if( pUser.ResourceCount( 0x1bf2 ) < 50 )
 	{
-		socket.SysMessage(); // You need more iron ingots to construct a golem.
+		socket.SysMessage(GetDictionaryEntry( 2871, socket.language )); // You need more iron ingots to construct a golem.
 	}
 	else if( pUser.ResourceCount( 0x1bf2, 0x06d6 ) < 50 )
 	{
-		socket.SysMessage(); // You need more bronze ingots to construct a golem.
+		socket.SysMessage(GetDictionaryEntry( 2872, socket.language )); // You need more bronze ingots to construct a golem.
 	}
 	else if( pUser.ResourceCount( ) < 5 )
 	{
-		socket.SysMessage(); // You need more gears to construct a golem.
+		socket.SysMessage(GetDictionaryEntry( 2873, socket.language )); // You need more gears to construct a golem.
 	}
 	else
 	{

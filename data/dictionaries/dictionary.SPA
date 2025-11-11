@@ -2681,6 +2681,10 @@
 2867=Usa su equipo para hacer el trofeo.
 2868=Eso no parece algo que quieras colgar en la pared.
 2869=No tienes suficientes tablas.
+2870=Necesitas un cristal de poder para construir un gólem.
+2871=Necesitas más lingotes de hierro para construir un gólem.
+2872=Necesitas más lingotes de bronce para construir un gólem.
+2873=Necesitas más engranajes para construir un gólem.
 // [3000-4999] Nombres de animales y monstruos
 3001=un ogro
 3002=un ettin
@@ -5590,5 +5594,8 @@
 19338=congelado
 19339=vigilado
 19340=El espíritu de esa criatura carece de cohesión. Inténtalo de nuevo en unos minutos.
+19341=Ya conoces esta receta.
+19342=Has aprendido una nueva receta: %i
+19343=Debes aprender esa receta de un pergamino.
 }
 EOF

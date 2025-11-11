@@ -12,7 +12,7 @@ function onUseChecked( pUser, iUsed )
     const itemOwner = GetPackOwner( iUsed, 0 );
     if ( itemOwner == null || itemOwner.serial != pUser.serial )
     {
-        pUser.SysMessage( GetDictionaryEntry( 1763, pSocket.language )); // That item must be in your backpack before it can be used.
+        pSocket.SysMessage( GetDictionaryEntry( 1763, pSocket.language )); // That item must be in your backpack before it can be used.
         return false;
     }
 
