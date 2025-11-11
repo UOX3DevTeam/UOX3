@@ -1,30 +1,29 @@
-// ----- UI constants -----
 var tooltipproperty = 1042971;
 var width  = 740;
 var height = 400;
-var BTN_ID_BASE = 1;   // avoid 0 which is 'cancel'
-var GRID_LEFT   = 40;   // comfy left margin
-var GRID_TOP    = 34;   // push top row down a bit
-var COL_SPACING = 105;  // keep this
-var ROW_SPACING = 120;  // more room between rows
-var SECOND_ROW_BUMP = 54;   // try 24–28px; tweak to taste
+var BTN_ID_BASE = 1;
+var GRID_LEFT   = 40;
+var GRID_TOP    = 34;
+var COL_SPACING = 105;
+var ROW_SPACING = 120;
+var SECOND_ROW_BUMP = 54;
 var CTRL_W   = 250;
-var CTRL_X   = width - CTRL_W;  // start x of the control stack
-var CTRL_GAP = 22;              // vertical spacing between lines
-var PANEL_Y_START = 18;      // <— single source of truth for top Y
+var CTRL_X   = width - CTRL_W;
+var CTRL_GAP = 22;
+var PANEL_Y_START = 18;
 var PANEL_X_LABEL = CTRL_X + 8;
-var PANEL_X_BTN   = PANEL_X_LABEL + 95; // label col width (~92)
+var PANEL_X_BTN   = PANEL_X_LABEL + 95;
 var BTN_NEXT     = 9001;
 var BTN_BACK     = 9002;
-var BTN_UNDO_LAST = 9301;          // "Undo Last" (deletes last placed door)
-var BTN_REPEAT_LAST = 9302; // near BTN_UNDO_LAST
+var BTN_UNDO_LAST = 9301;
+var BTN_REPEAT_LAST = 9302;
 var BTN_TOGGLE_PAINT = 9303;
-var CBID_PLACE_DOOR = 0;         // onCallback0 will run after you pick a spot
+var CBID_PLACE_DOOR = 0;
 var UNDO_MAX = 20;
 var BTN_TAB_FAV  = 9201;
 var BTN_TAB_REC  = 9202;
 var BTN_TAB_CAT  = 9203;
-var STAR_OFFSET  = 10000; // star button id = STAR_OFFSET + slotButtonId
+var STAR_OFFSET  = 10000;
 var CATALOG_VIEW = "catalog";
 var FAV_VIEW     = "favorites";
 var REC_VIEW     = "recent";
@@ -35,19 +34,16 @@ var BTN_HUE_M10   = 9403;
 var BTN_HUE_M1    = 9404;
 var BTN_HUE_P1    = 9405;
 var BTN_HUE_P10   = 9406;
-var HUE_EDIT_ID   = 17;     // only text entry in this gump
-var CBID_PICK_HUE = 1;   // onCallback1 for “Pick Hue”
+var HUE_EDIT_ID   = 17;
+var CBID_PICK_HUE = 1;
 var BTN_TOGGLE_LINK   = 9501;
-var BTN_TOGGLE_UNLINK = 9502;   // optional, for unlink mode
-var BTN_TOGGLE_LINK_ADD = 9503;   // UI toggle
-var CBID_LINK   = 2;  // onCallback2
-var CBID_UNLINK = 3;  // onCallback3
+var BTN_TOGGLE_UNLINK = 9502;
+var BTN_TOGGLE_LINK_ADD = 9503;
+var CBID_LINK   = 2; 
+var CBID_UNLINK = 3;
 
-// map buttonId -> itemID to add (refilled every render)
 var buttonToItem = {};
 
-// =================== Catalog Data ===================
-// Each page: 8 slots (artId shown and cmd used for radd)
 var PAGES = [
 	// Page 1 - Metal Doors
 	{
@@ -309,7 +305,6 @@ var PAGES = [
 	}
 ];
 
-// Build a quick art-info map for Fav/Recent pages
 var ARTINFO = {};
 function buildArtInfo() 
 {
@@ -330,19 +325,20 @@ function CommandRegistration()
 	RegisterCommand( "adddoor", 2, true ); // GM-only
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_ADDDOOR( socket, cmdString )
 {
 	var pUser = socket.currentChar;
 	var view  = getView( pUser );
-	var page  = pUser.GetTempTag( "getdoor" ) || 1;
+	var page  = pUser.GetTempTag( "getdoor" );
 
 	if( view === FAV_VIEW )
 	{
-		showFavorites( pUser, ( page|0 ) - 1 );
+		showFavorites( pUser,  page - 1 );
 	}
 	else if( view === REC_VIEW )
 	{
-		showRecent( pUser, ( page|0 ) - 1 );
+		showRecent( pUser, page - 1 );
 	}
 	else
 	{
@@ -464,14 +460,12 @@ function addNavigation( gump, socket, pageIndex, totalPages )
 
 }
 
-// Favorite “star” icons: off=0x0647, on=0x0648
 function addStarButton( gump, socket, starBtnId, isFav, btnX, btnY )
 {
-	// place star just above-right of the small arrow button
-	var bx = btnX + 22;   // horizontal nudge from the arrow
-	var by = btnY - 10;   // sit clearly above the door, not between rows
+	var bx = btnX + 22;
+	var by = btnY - 10;
 
-	var up   = isFav ? 0x0648 : 0x0647; // yellow if favorite, brown if not
+	var up   = isFav ? 0x0648 : 0x0647;
 	var down = up;
 
 	gump.AddButton( bx, by, up, down, 1, 0, starBtnId );
@@ -485,7 +479,6 @@ function showDoorPage( pUser, pageIndex )
 	var socket = pUser.socket;
 	var DoorGump = new Gump;
 
-	// clamp and remember
 	if( pageIndex < 0 )
 		pageIndex = 0;
 
@@ -497,7 +490,6 @@ function showDoorPage( pUser, pageIndex )
 	DoorGump.AddPage( 0 );
 	AddBlueBack( DoorGump );
 
-	// clear stale button map
 	buttonToItem = {};
 
 	var page = PAGES[pageIndex];
@@ -506,15 +498,13 @@ function showDoorPage( pUser, pageIndex )
 		var s     = page.slots[i];
 		var btnId = BTN_ID_BASE + ( pageIndex * 100 ) + i;
 
-		// 2x4 grid position
 		var col  = i % 4;
 		var row  = ( i / 4 ) | 0;
 		var rowBump = ( row === 1 ? SECOND_ROW_BUMP : 0 );
 		var btnX = GRID_LEFT + ( col * COL_SPACING );
 		var btnY = GRID_TOP  + ( row * ROW_SPACING ) + rowBump;
-		// When computing picture coords in BOTH renderers:
-		var picX = btnX - 10;   // leave as-is
-		var picY = btnY + 20;   // leave as-is
+		var picX = btnX - 10;
+		var picY = btnY + 20;
 
 		buttonToItem[btnId] = s.cmd;
 
@@ -532,7 +522,6 @@ function showDoorPage( pUser, pageIndex )
 	DoorGump.Free();
 }
 
-// Generic renderer for a list of artIds (8 per page)
 function showListPage( pUser, viewName, artList, pageIndex )
 {
 	setView( pUser, viewName );
@@ -706,6 +695,7 @@ function showRecent( pUser, pageIndex )
 	showListPage( pUser, REC_VIEW, rec, pageIndex || 0 );
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( socket, pButton, gumpData )
 {
 	var pUser = socket.currentChar;
@@ -869,7 +859,7 @@ function onGumpPress( socket, pButton, gumpData )
 
 		// repaint current view
 		var view = getView( pUser );
-		var pageIdx = ( pUser.GetTempTag( "getdoor" ) || 1 ) - 1;
+		var pageIdx = ( pUser.GetTempTag( "getdoor" ) - 1);
 		if( view === CATALOG_VIEW )
 		{
 			showDoorPage( pUser, pageIdx );
@@ -887,13 +877,13 @@ function onGumpPress( socket, pButton, gumpData )
 
 	if( pButton === BTN_TOGGLE_PAINT )
 	{
-		var on = ( pUser.GetTempTag( "doorPaintMode" )|0 ) === 1 ? 0 : 1;
+		var on = ( pUser.GetTempTag( "doorPaintMode" ) === 1 ? 0 : 1);
 
 		pUser.SetTempTag( "doorPaintMode", on );
 		socket.SysMessage( "Paint mode " + ( on ? "enabled" : "disabled") + "." );
 
 		var view = getView( pUser );
-		var pageIdx = ( pUser.GetTempTag( "getdoor" ) || 1 ) - 1;
+		var pageIdx = ( pUser.GetTempTag( "getdoor" ) - 1);
 		if( view === CATALOG_VIEW )
 		{
 			showDoorPage( pUser, pageIdx );
@@ -912,7 +902,7 @@ function onGumpPress( socket, pButton, gumpData )
 	// --- Link mode ---
 	if( pButton === BTN_TOGGLE_LINK )
 	{
-		var link = ( pUser.GetTempTag( "doorLinkMode" )|0 ) === 1 ? 0 : 1;
+		var link = ( pUser.GetTempTag( "doorLinkMode" ) === 1 ? 0 : 1);
 		pUser.SetTempTag( "doorLinkMode", link );
 		// Turning link ON cancels unlink mode, and vice versa
 		if( link ) 
@@ -927,7 +917,7 @@ function onGumpPress( socket, pButton, gumpData )
 		}
 
 		var view = getView( pUser );
-		var pageIdx = ( pUser.GetTempTag( "getdoor" ) || 1 ) - 1;
+		var pageIdx = ( pUser.GetTempTag( "getdoor"  ) - 1);
 		if( view === CATALOG_VIEW )
 		{
 			showDoorPage( pUser, pageIdx );
@@ -946,7 +936,7 @@ function onGumpPress( socket, pButton, gumpData )
 	// --- Unlink mode (optional) ---
 	if( pButton === BTN_TOGGLE_UNLINK )
 	{
-		var unlink = ( pUser.GetTempTag( "doorUnlinkMode" )|0 ) === 1 ? 0 : 1;
+		var unlink = ( pUser.GetTempTag( "doorUnlinkMode" ) === 1 ? 0 : 1);
 		pUser.SetTempTag("doorUnlinkMode", unlink );
 
 		if( unlink )
@@ -962,7 +952,7 @@ function onGumpPress( socket, pButton, gumpData )
 		}
 
 		var view = getView( pUser );
-		var pageIdx = ( pUser.GetTempTag( "getdoor" ) || 1 ) - 1;
+		var pageIdx = ( pUser.GetTempTag( "getdoor" ) - 1);
 		if( view === CATALOG_VIEW )
 		{
 			showDoorPage( pUser, pageIdx );
@@ -980,7 +970,7 @@ function onGumpPress( socket, pButton, gumpData )
 
 	if( pButton === BTN_TOGGLE_LINK_ADD )
 	{
-		var linkon = ( pUser.GetTempTag( "doorLinkOnAdd" )|0 ) === 1 ? 0 : 1;
+		var linkon = ( pUser.GetTempTag( "doorLinkOnAdd" ) === 1 ? 0 : 1);
 		pUser.SetTempTag( "doorLinkOnAdd", linkon );
 
 		if( !linkon )
@@ -990,7 +980,7 @@ function onGumpPress( socket, pButton, gumpData )
 		}
 
 		var view = getView( pUser );
-		var pageIdx = ( pUser.GetTempTag( "getdoor" ) || 1 ) - 1;
+		var pageIdx = ( pUser.GetTempTag( "getdoor" ) - 1);
 		if( view === CATALOG_VIEW )
 		{
 			showDoorPage( pUser, pageIdx );
@@ -1016,7 +1006,7 @@ function onGumpPress( socket, pButton, gumpData )
 
 		// repaint current view
 		var view = getView( pUser );
-		var pageIdx = ( pUser.GetTempTag( "getdoor" ) || 1 ) - 1;
+		var pageIdx = ( pUser.GetTempTag( "getdoor" ) - 1);
 		if( view === CATALOG_VIEW )
 		{
 			showDoorPage( pUser, pageIdx );
@@ -1068,7 +1058,7 @@ function onGumpPress( socket, pButton, gumpData )
 		setHue( pUser, cur );
 		socket.SysMessage( "Hue set to " + fmtHue( cur ) + "." );
 		var view = getView( pUser );
-		var pageIdx = ( pUser.GetTempTag( "getdoor" ) || 1 ) - 1;
+		var pageIdx = ( pUser.GetTempTag( "getdoor" ) - 1);
 		if( view === CATALOG_VIEW )
 		{
 			showDoorPage( pUser, pageIdx );
@@ -1090,7 +1080,7 @@ function onGumpPress( socket, pButton, gumpData )
 		socket.CustomTarget( CBID_PICK_HUE, "Select an item/char to copy hue from." );
 		// keep gump open
 		var view = getView( pUser );
-		var pageIdx = ( pUser.GetTempTag( "getdoor" ) || 1 ) - 1;
+		var pageIdx = ( pUser.GetTempTag( "getdoor" ) - 1);
 		if( view === CATALOG_VIEW )
 		{
 			showDoorPage( pUser, pageIdx );
@@ -1122,6 +1112,7 @@ function onGumpPress( socket, pButton, gumpData )
 }
 
 // Target result handler for placing a door
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	var pUser   = socket.currentChar;
@@ -1132,7 +1123,7 @@ function onCallback0( socket, ourObj )
 		return;
 	}
 
-	var itemId = parseInt( pending, 10 ) || 0;
+	var itemId = parseInt( pending, 10 );
 	if( !itemId ) 
 	{
 		socket.SysMessage( "Invalid pending door ID." );
@@ -1159,7 +1150,7 @@ function onCallback0( socket, ourObj )
 	itm.Refresh();
 
 	// --- Auto-link on Add ---
-	if(( pUser.GetTempTag( "doorLinkOnAdd" )|0 ) === 1 )
+	if(( pUser.GetTempTag( "doorLinkOnAdd" ) === 1 )
 	{
 		var pendingSer = pUser.GetTempTag( "doorLinkPendingSer" );
 		if( !pendingSer )
@@ -1193,7 +1184,7 @@ function onCallback0( socket, ourObj )
 
 	// Keep the same view/page visible
 	var view = getView( pUser );
-	var pageIdx = ( pUser.GetTempTag( "getdoor" ) || 1 ) - 1;
+	var pageIdx = ( pUser.GetTempTag( "getdoor" ) - 1 );
 	if( view === CATALOG_VIEW )
 	{
 		showDoorPage( pUser, pageIdx );
@@ -1209,7 +1200,7 @@ function onCallback0( socket, ourObj )
 
 	pUser.SetTempTag( "doorLastItemId", String( itemId ));
 
-	if(( pUser.GetTempTag( "doorPaintMode")|0) === 1 )
+	if(pUser.GetTempTag( "doorPaintMode") === 1 )
 	{
 		// immediately ask for another placement of the SAME pending item
 		socket.CustomTarget( 0, "Select where to place the door (paint mode)." );
@@ -1221,6 +1212,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	var pUser = socket.currentChar;
@@ -1237,7 +1229,7 @@ function onCallback1( socket, ourObj )
 
 	// repaint
 	var view = getView(pUser);
-	var pageIdx = ( pUser.GetTempTag( "getdoor" ) || 1 ) - 1;
+	var pageIdx = ( pUser.GetTempTag( "getdoor" ) - 1 );
 	if( view === CATALOG_VIEW )
 	{
 		showDoorPage( pUser, pageIdx );
@@ -1253,12 +1245,13 @@ function onCallback1( socket, ourObj )
 }
 
 // ===== Link two doors (mode-friendly) =====
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
 
 	// Only handle when Link mode is actually ON (prevents accidental triggers)
-	if(( pUser.GetTempTag( "doorLinkMode" )|0 ) !== 1 )
+	if(( pUser.GetTempTag( "doorLinkMode" ) !== 1 )
 	{ 
 		pSock.clickX = null;
 		pSock.tempObj = null;
@@ -1307,7 +1300,7 @@ function onCallback2( pSock, myTarget )
 
 		// For continuous linking while mode is ON, reset for the next pair:
 		pSock.clickX = null; pSock.tempObj = null;
-		if(( pUser.GetTempTag( "doorLinkMode" )|0 ) === 1 )
+		if(( pUser.GetTempTag( "doorLinkMode" ) === 1 )
 		{
 			pSock.CustomTarget(13, GetDictionaryEntry( 8898, pSock.language )); // (1/2)
 		}
@@ -1319,10 +1312,11 @@ function onCallback2( pSock, myTarget )
 }
 
 // ===== Unlink two doors (mode-friendly) =====
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback3( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
-	if(( pUser.GetTempTag( "doorUnlinkMode" )|0 ) !== 1 ) 
+	if(( pUser.GetTempTag( "doorUnlinkMode" ) !== 1 ) 
 	{ 
 		pSock.clickX = null;
 		pSock.tempObj = null;
@@ -1363,7 +1357,7 @@ function onCallback3( pSock, myTarget )
 
 		// Keep mode active for next pair
 		pSock.clickX = null; pSock.tempObj = null;
-		if(( pUser.GetTempTag( "doorUnlinkMode" )|0 ) === 1 )
+		if(( pUser.GetTempTag( "doorUnlinkMode" ) === 1 )
 		{
 			pSock.CustomTarget( 14, GetDictionaryEntry( 8901, pSock.language )); // (1/2)
 		}
@@ -1392,16 +1386,30 @@ function writeArrTag( pUser, tagName, arr )
 function isFavorite( pUser, artId )
 {
 	var fav = readArrTag(pUser, "doorFavorites");
-	for(var i=0;i<fav.length;i++) if (fav[i] === artId) return true;
+	for(var i=0;i<fav.length;i++) 
+		if (fav[i] === artId)
+			return true;
 	return false;
 }
 function toggleFavorite( pUser, artId ) 
 {
-	var fav = readArrTag(pUser, "doorFavorites");
+	var fav = readArrTag( pUser, "doorFavorites" );
 	var i = -1;
-	for(var k=0;k<fav.length;k++) if (fav[k] === artId) { i = k; break; }
-	if(i >= 0) fav.splice(i,1); else fav.push(artId);
-	writeArrTag(pUser, "doorFavorites", fav);
+	for( var k=0;k<fav.length;k++ )
+	{
+		if (fav[k] === artId)
+		{
+			i = k;
+			break;
+		}
+	}
+
+	if( i >= 0 )
+		fav.splice( i,1 );
+	else
+		fav.push( artId );
+
+	writeArrTag( pUser, "doorFavorites", fav );
 }
 
 function pushRecent( pUser, artId )
@@ -1475,26 +1483,21 @@ function performUndoLast( pUser )
 	return true;
 }
 
-	// Returns {x,y,z,world,inst, fromGround:true/false}
 function getTargetLocation( socket, pUser, fallbackObj )
 {
-	// When player clicks ground, these fields are filled in the target packet
-	// (same offsets you showed: 11, 13, 16)
 	if( socket.GetWord( 1 ))
-	{ // non-zero -> ground/land tile target present
+	{ 
 		var x = socket.GetWord( 11 );
 		var y = socket.GetWord( 13 );
 		var z = socket.GetSByte( 16 );
 		return { x:x, y:y, z:z, world:pUser.worldnumber, inst:pUser.instanceID, fromGround:true };
 	}
 
-	// Otherwise, if they clicked an object, use its coords
 	if( ValidateObject( fallbackObj ))
 	{
 		return { x: fallbackObj.x, y: fallbackObj.y, z: fallbackObj.z, world: fallbackObj.worldnumber, inst: fallbackObj.instanceID, fromGround:false};
 	}
 
-	// Fallback: player’s feet
 	return { x: pUser.x, y: pUser.y, z: pUser.z, world: pUser.worldnumber, inst: pUser.instanceID, fromGround:false };
 }
 
