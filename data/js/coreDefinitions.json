@@ -9014,7 +9014,7 @@
       "returns": "string"
     },
     {
-      "name": "onProfileRequest",
+      "name": "onProfileUpdate",
       "cppName": "onProfileUpdate",
       "params": {
         "list": [
