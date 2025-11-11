@@ -25,11 +25,13 @@ const ChampionNameToID = {
 	"Vermin": 6
 };
 
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	objMade.StartTimer( 5000, 13, 7500 );
 }
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, altar )
 {
 	var socket = pUser.socket;
@@ -187,6 +189,7 @@ function IsPlayerNearby( src, player, sock )
 		return true;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( altar, timerID )
 {
 	if( !ValidateObject( altar ))
@@ -596,6 +599,7 @@ function ChampionMenu( socket, altar )
 	champalter.Free();
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( socket, pButton, gumpData )
 {
 	var pUser = socket.currentChar;
@@ -614,7 +618,7 @@ function onGumpPress( socket, pButton, gumpData )
 		case 0: // Close gump, no changes
 			break;
 		case 1:
-			// This assumes radiobtnGroup1 now returns the actual numeric ID (1–6)
+			// This assumes radiobtnGroup1 now returns the actual numeric ID (1ï¿½6)
 			if (ChampionIDToName.hasOwnProperty(radiobtnGroup1))
 			{
 				altar.SetTag("championType", radiobtnGroup1);
@@ -712,6 +716,7 @@ function onGumpPress( socket, pButton, gumpData )
 	}
 }
 
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( altar, pSocket )
 {
 	if( !ValidateObject( altar ))

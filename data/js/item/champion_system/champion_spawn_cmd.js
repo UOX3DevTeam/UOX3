@@ -3,6 +3,7 @@ function CommandRegistration()
 	RegisterCommand( "spawnchamps", 8, true );
 }
 
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_SPAWNCHAMPS( socket, cmdString )
 {
 	let pChar = socket.currentChar;

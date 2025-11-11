@@ -1,5 +1,6 @@
 const disableTopDamager = true; // Set to true to disable top damager logic and if so then aall loot is free for players to fight over.
 
+/** @type { ( mKilled: Character, mKiller: Character ) => boolean } */
 function onDeathBlow( pKilled, pKiller )
 {
 	let altar = CalcItemFromSer( parseInt( pKilled.GetTag( "championSpawnID" )));
@@ -72,6 +73,7 @@ function onDeathBlow( pKilled, pKiller )
 	return true;
 }
 
+/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => boolean } */
 function onDamage( damaged, attacker, damageValue, damageType )
 {
 	if( !disableTopDamager || !ValidateObject( attacker ) || !ValidateObject( damaged ))
