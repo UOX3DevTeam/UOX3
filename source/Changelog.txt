@@ -1,3 +1,10 @@
+11/11/2025 - DragonSlayer62 (#457)
+    [FIX] Fixed Definitions.d.ts had misspelled void and onSpeechInput was missing SpeechID.
+    [UPD] Updated lots of js scripts to use socket with system message where needed instead of pUser.
+    [FIX] Fixed House Christmas Tree Items with a base ornament and Removed unused house_item line on the tree addon.
+    [UPD] Updated Dictonary with missing golem construct messages and updated the js script to match.
+    [UPD] Updated InteriorDecorator.js  gump with correct uox3 standard naming.
+
 09/11/2025 - DragonSlayer62 (#445)
     [ADD] Added CanEquip that checks if members of race can equip specified item (Thanks , Xuri).
 
