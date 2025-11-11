@@ -4,6 +4,7 @@ var RESIST_LAYERS = [ 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A
 // Wearable layers (skip hair/facial/backpack/mount/vendor/bank)
 var EQUIP_LAYERS = [0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0C,0x0D,0x0E,0x0F,0x11,0x12,0x13,0x14,0x16,0x17,0x18];
 
+/** @type { ( tSock: Socket, baseObj: BaseObject ) => boolean } */
 function onContextMenuRequest( socket, targObj )
 {
 	var pUser = socket.currentChar;
@@ -37,6 +38,7 @@ function onContextMenuRequest( socket, targObj )
 	return false;
 }
 
+/** @type { ( tSock: Socket, baseObj: BaseObject, popupEntry: number ) => boolean } */
 function onContextMenuSelect( socket, targObj, popupEntry )
 {
 	var pUser = socket.currentChar;
@@ -79,12 +81,14 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 	return false;
 }
 
+/** @type { ( currChar: Character, targChar: Character ) => boolean } */
 function onCharDoubleClick( pUser, targChar )
 {
 	TriggerEvent( 18000, "OpenPaperdoll", pUser.socket, targChar )
 	return false;
 }
 
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( myObj, pSocket )
 {
 	var tooltipText = "";
@@ -98,6 +102,7 @@ function onTooltip( myObj, pSocket )
 	return tooltipText;
 }
 
+/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => null | undefined | number | boolean } */
 function onSpeech( strSaid, pTalking, pTalkingTo )
 {
 	return 1;
@@ -873,6 +878,7 @@ function setRaceGender(  mannequin, race, gender, pUser )
 	mannequin.Refresh();
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( pSock, iButton, gumpData )
 {
 	var pUser = pSock.currentChar;
