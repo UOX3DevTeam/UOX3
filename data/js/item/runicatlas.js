@@ -4,7 +4,7 @@ let ATLAS_COOLDOWN_MS = 7000;   // 7s, like Runebook
 let SCRIPT_ID = 5063;			// jse_fileassociations.scp
 let SPELL_RECALL = 32;
 let SPELL_GATE = 52;
-let SPELL_SACRED_JOUR = 209;    // optional – button shown only if user has spell
+let SPELL_SACRED_JOUR = 209;    // optional button shown only if user has spell
 
 function mapHue( worldNumber )
 {
@@ -685,6 +685,7 @@ function onTimer( timerObj, timerID )
 }
 
 /* --------------------------- Drag/drop + Rename --------------------------- */
+/** @type { ( item: Item, dropper: Character, dest: Item ) => number } */
 function onDropItemOnItem( iDropped, pUser, atlas )
 {
 	var pSocket = pUser.socket;
@@ -768,7 +769,7 @@ function onDropItemOnItem( iDropped, pUser, atlas )
 	return true;
 }
 
-/** @type { ( myChar: Character, myItem: Item, mySpeech: string, mySpeechID: Number ) => void } */
+/** @type { ( myChar: Character, myItem: Item, mySpeech: string, mySpeechId: number ) => void } */
 function onSpeechInput( pUser, atlas, text, id )
 {
 	var pSocket = pUser.socket;
