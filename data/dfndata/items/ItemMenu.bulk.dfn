@@ -14339,3 +14339,66 @@ ADDITEM=churchatnightmini
 <=Previous Menu
 ITEMMENU=4
 }
+
+[ITEMMENU 264]
+{
+ethereal_statues.dfn
+0x42C6=retouching tool
+ADDITEM=retouchingtool
+0x20DD=ethereal horse statuette
+ADDITEM=etherealhorsestatuette
+0x20F6=ethereal llama statuette
+ADDITEM=etherealllamastatuette
+0x2135=ethereal ostard statuette
+ADDITEM=etherealostardstatuette
+0x2615=ethereal ridgeback statuette
+ADDITEM=etherealridgebackstatuette
+0x2615=ethereal swamp dragon statuette
+ADDITEM=etherealswampdragonstatuette
+0x260F=ethereal beetle statuette
+ADDITEM=etherealbeetlestatuette
+0x25A0=ethereal ki-rin statuette
+ADDITEM=etherealkirinstatuette
+0x25CE=ethereal unicorn statuette
+ADDITEM=etherealunicornstatuette
+0x276A=ethereal hiryu statuette
+ADDITEM=etherealhiryustatuette
+0x2D96=ethereal cusidhe statuette
+ADDITEM=etherealcusidhestatuette
+0x2d95=ethereal reptalon statuette
+ADDITEM=etherealreptalonstatuette
+0x3FFD=ancient hell hound statuette
+ADDITEM=etherealancienthellhoundstatuette
+0x2D9C=charger of the fallen statuette
+ADDITEM=chargerofthefallenstatuette
+0x46F8=rideable boura statuette
+ADDITEM=rideablebourastatuette
+0x9E35=lasher
+ADDITEM=lasherstatuette
+0xA010=ethereal dragon statuette
+ADDITEM=etherealdragonstatuette
+0xA554=ethereal war boar statuette
+ADDITEM=etherealwarboarstatuette
+0x9DD6=tarantula statuette
+ADDITEM=tarantulastatuette
+0x9844=ethereal tiger statuette
+ADDITEM=etherealtigerstatuette
+0x20E1=rideable polar bear
+ADDITEM=rideablepolarbearstatuette
+0x9ED5=windrunner
+ADDITEM=windrunnerstatuette
+0xA0C0=eowmu
+ADDITEM=eowmustatuette
+0xA335=coconut crab
+ADDITEM=coconutcrabstatuette
+0xA57B=capybara
+ADDITEM=capybarastatuette
+0xA138=skeletal cat
+ADDITEM=skeletalcatstatuette
+0xA771=manticore
+ADDITEM=manticorestatuette
+0xAF77=moldering ursine
+ADDITEM=molderingursinestatuette
+<=Previous Menu
+ITEMMENU=9
+}
