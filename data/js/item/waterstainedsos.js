@@ -104,48 +104,48 @@ function CheckForValidSOSLocation( xLoc, yLoc, worldNum )
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
-	var socket = pUser.socket;
-	if( socket && ValidateObject( iUsed ) && iUsed.isItem )
+	var pSocket = pUser.socket;
+	if( pSocket && ValidateObject( iUsed ) && iUsed.isItem )
 	{
 		var itemOwner = GetPackOwner( iUsed, 0 );
 		if( itemOwner == null || itemOwner.serial != pUser.serial )
 		{
-			socket.SysMessage( GetDictionaryEntry( 1763, socket.language )); // That item must be in your backpack before it can be used.
+			pSocket.SysMessage( GetDictionaryEntry( 1763, pSocket.language )); // That item must be in your backpack before it can be used.
 			return false;
 		}
 
 		// Make sure the SOS message actually contains valid coordinates
 		if( iUsed.morex == 0 || iUsed.morey == 0 )
 		{
-			socket.SysMessage( GetDictionaryEntry( 2787, socket.language )); // This message has sustained too much water damage, and any writing on it is no longer legible.
+			pSocket.SysMessage( GetDictionaryEntry( 2787, pSocket.language )); // This message has sustained too much water damage, and any writing on it is no longer legible.
 			return false;
 		}
 
 		// Display SOS message with the location coordinates
 		var sosMsgID = iUsed.GetTag( "sosMsgID" );
-		DisplaySOSGump( socket, pUser, iUsed, sosMsgID );
+		DisplaySOSGump( pSocket, iUsed, sosMsgID );
 	}
 	return false;
 }
 
-function DisplaySOSGump( socket, pUser, iUsed, sosMsgID )
+function DisplaySOSGump( pSocket, iUsed, sosMsgID )
 {
 	// Prepare SOS Message
 	var mapCoords = TriggerEvent( 2503, "GetMapCoordinates", iUsed.morex, iUsed.morey, iUsed.morez );
 
 	// var sosCoords = (iUsed.morex).toString() + ", " + (iUsed.morey).toString();
 	var sosCoords = mapCoords[3] + "o " + mapCoords[4] + "'" + ( mapCoords[5] ? "N" : "S" ) + " " + mapCoords[0] + "o " + mapCoords[1] + "'" + ( mapCoords[2] ? "W" : "E" );
-	var sosMsg = GetDictionaryEntry( sosMsgID, socket.language );
+	var sosMsg = GetDictionaryEntry( sosMsgID, pSocket.language );
 	sosMsg = ( sosMsg.replace( /%s/gi, sosCoords ));
 
 	// Close existing gump, if any
-	socket.CloseGump( scriptID + 0xffff, 0 );
+	pSocket.CloseGump( scriptID + 0xffff, 0 );
 
 	// Open new gump
 	var sosGump = new Gump;
 	sosGump.AddPage( 0 );
 	sosGump.AddBackground( 0, 0, 250, 350, 2520 ); // 9390 for ancient SOS background
 	sosGump.AddHTMLGump( 30, 50, 190, 420, false, false, sosMsg );
-	sosGump.Send( socket );
+	sosGump.Send( pSocket );
 	sosGump.Free();
 }

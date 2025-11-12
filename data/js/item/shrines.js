@@ -3,11 +3,13 @@
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseUnChecked( pUser, iUsed )
 {
-	var userSocket = pUser.socket;
+	var pSocket = pUser.socket;
+	if( pSocket == null )
+		return false;
 
 	if( !pUser.InRange( iUsed, 2 ))
 	{
-		socket.SysMessage( GetDictionaryEntry( 400, socket.language )); // That is too far away.
+		pSocket.SysMessage( GetDictionaryEntry( 400, pSocket.language )); // That is too far away.
 		return false;
 	}
 
@@ -24,7 +26,7 @@ function onUseUnChecked( pUser, iUsed )
 	{
 		pUser.StaticEffect( 0x373A, 0, 15 );
 		pUser.SetPoisoned( 0, 0 );
-		userSocket.SysMessage(GetDictionaryEntry( 1346, userSocket.language )); // The poison was cured!
+		pSocket.SysMessage(GetDictionaryEntry( 1346, pSocket.language )); // The poison was cured!
 	}
 
 	// Prevent hard-code from running
@@ -34,6 +36,10 @@ function onUseUnChecked( pUser, iUsed )
 /** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => null | undefined | number | boolean } */
 function onSpeech( strSaid, pTalking, shrineListener )
 {
+	var pSocket = pTalking.socket;
+	if( pSocket == null )
+		return false;
+
 	// Define the shrines and their corresponding morex values and mantras
 	var shrines = {
 		1: "mu", // Compassion
@@ -65,21 +71,21 @@ function onSpeech( strSaid, pTalking, shrineListener )
 		{
 			if(shrineKey == 9)
 			{
-				if( pTalking.karmaLocked == false && pTalking.karma > 0 )
+				if( pTalking.karmaLock == false && pTalking.karma > 0 )
 				{
 					// Lock the karma for Chaos shrine
-					pTalking.karmaLocked = true;
-					pTalking.SysMessage( GetDictionaryEntry( 5752, pTalking.socket.language ));// Your karma has been locked. Your karma can no longer be raised.
+					pTalking.karmaLock = true;
+					pSocket.SysMessage( GetDictionaryEntry( 5752, pSocket.language ));// Your karma has been locked. Your karma can no longer be raised.
 					return 2;
 				}
 			}
 			else
 			{
-				if( pTalking.karmaLocked == true )
+				if( pTalking.karmaLock == true )
 				{
 					// Unlock the karma
-					pTalking.karmaLocked = false;
-					pTalking.SysMessage( GetDictionaryEntry( 5753, pTalking.socket.language ));// Your karma has been unlocked. Your karma can be raised again.
+					pTalking.karmaLock = false;
+					pSocket.SysMessage( GetDictionaryEntry( 5753, pSocket.language ));// Your karma has been unlocked. Your karma can be raised again.
 					return 2;
 				}
 			}
@@ -94,6 +100,11 @@ function onContextMenuRequest( socket, shrine )
 {
 	var coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 	var pUser = socket.currentChar;
+
+	if(	!ValidateObject( pUser ))
+	{
+		return false;
+	}
 
 	// Determine the number of entries based on era and user state
 	var numEntries = 0; // Start with zero and increment as needed
@@ -131,7 +142,7 @@ function onContextMenuRequest( socket, shrine )
 	// Add context menu entries
 	if( addKarmaOption )
 	{
-		offset = WriteMenuEntry( toSend, offset, 0x000a, pUser.karmaLocked ? 6197 : 6196, 0x0020, 0x03E0 ); // Lock/Unlock Karma
+		offset = WriteMenuEntry( toSend, offset, 0x000a, pUser.karmaLock ? 6197 : 6196, 0x0020, 0x03E0 ); // Lock/Unlock Karma
 	}
 
 	if( pUser.dead && !pUser.murderer || ( pUser.murderer && iUsed.morex == 1 ))
@@ -166,36 +177,41 @@ function WriteMenuEntry( packet, offset, uniqueID, clilocID, flag, hue )
 function onContextMenuSelect( socket, shrine, popupEntry )
 {
 	var pUser = socket.currentChar;
+	if(	!ValidateObject( pUser ))
+	{
+		return false;
+	}
+
 	switch( popupEntry )
 	{
 		case 10://Karma Locking
 			if( !pUser.InRange( shrine, 2 )) 
 			{
 				socket.SysMessage( GetDictionaryEntry( 400, socket.language )); // That is too far away.
-				return;
+				return false;
 			}
 
-			if( pUser.karmaLocked == true ) 
+			if( pUser.karmaLock == true ) 
 			{
-				pUser.karmaLocked = false;
+				pUser.karmaLock = false;
 				socket.SysMessage( GetDictionaryEntry( 5753, socket.language )); // Your karma has been unlocked. Your karma can be raised again.
 			}
 			else
 			{
-				pUser.karmaLocked = true;
+				pUser.karmaLock = true;
 				socket.SysMessage( GetDictionaryEntry( 5752, socket.language )); // Your karma has been locked. Your karma can no longer be raised.
 			}
 			break;
 		case 11:// Resurrect
 			if( !pUser.dead ) 
 			{
-				return;
+				return false;
 			}
 
 			if( !pUser.InRange( shrine, 2 ))
 			{
 				socket.SysMessage( GetDictionaryEntry( 400, socket.language )); // That is too far away.
-				return;
+				return false;
 			}
 			else
 			{
@@ -231,7 +247,7 @@ function ResurrectGump( pUser, iUsed )
 	ResurrectGump.AddButton( 65, 227, 4005, 4007, 1, 0, 1 );
 	ResurrectGump.AddHTMLGump( 100, 230, 110, 35, false, false, GetDictionaryEntry( 2708, pSocket.language )); // CONTINUE
 
-	ResurrectGump.Send(pSocket );
+	ResurrectGump.Send( pSocket );
 	ResurrectGump.Free();
 }
 
@@ -239,6 +255,11 @@ function ResurrectGump( pUser, iUsed )
 function onGumpPress( pSock, pButton, gumpData )
 {
 	var pUser = pSock.currentChar;
+	if(	!ValidateObject( pUser ))
+	{
+		return;
+	}
+
 	switch( pButton )
 	{
 		case 0:
