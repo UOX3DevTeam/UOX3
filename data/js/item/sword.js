@@ -5,19 +5,19 @@
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
-	var socket = pUser.socket;
-	if( socket && iUsed && iUsed.isItem )
+	var pSocket = pUser.socket;
+	if( pSocket && iUsed && iUsed.isItem )
 	{
 		var itemOwner = GetPackOwner( iUsed, 0 );
 		if( itemOwner == null || itemOwner.serial != pUser.serial )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 6019, socket.language )); // This must be in your backpack or equipped before it can be used.
+			pSocket.SysMessage( GetDictionaryEntry( 6019, pSocket.language )); // This must be in your backpack or equipped before it can be used.
 			return false;
 		}
 		else if( iUsed.type != 15 )
 		{
-			var targMsg = GetDictionaryEntry( 462, socket.language ); // What would you like to use that on?
-			socket.CustomTarget( 1, targMsg );
+			var targMsg = GetDictionaryEntry( 462, pSocket.language ); // What would you like to use that on?
+			pSocket.CustomTarget( 1, targMsg );
 		}
 		else
 		{
@@ -30,8 +30,8 @@ function onUseChecked( pUser, iUsed )
 /** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
-	var mChar = socket.currentChar;
-	if( mChar && mChar.isChar )
+	var pUser = socket.currentChar;
+	if( pUser && pUser.isChar )
 	{
 		var tileID = 0;
 		if( !ourObj )
@@ -43,7 +43,7 @@ function onCallback1( socket, ourObj )
 			tileID = ourObj.id;
 			if( tileID == 0x00df || tileID == 0x00cf )
 			{
-				TriggerEvent( 2012, "ShearSheep", mChar, ourObj );
+				TriggerEvent( 2012, "ShearSheep", pUser, ourObj );
 				return;
 			}
 			else
@@ -60,21 +60,21 @@ function onCallback1( socket, ourObj )
 				tileID == 0x0D43 || tileID == 0x0D58 || tileID == 0x0D59 || tileID == 0x0D70 || tileID == 0x0D85 ||
 				tileID == 0x0D94 || tileID == 0x0D95 || tileID == 0x0D98 || tileID == 0x0DA4 || tileID == 0x0DA8 ) // Trees
 			{
-				MakeKindling( socket, mChar );
+				MakeKindling( socket, pUser );
 			}
 			else if( ourObj )
 			{
 				if( tileID >= 0x09CC && tileID <= 0x09CF )	// Fish
 				{
-					MakeFishSteaks( socket, mChar, ourObj );
+					MakeFishSteaks( socket, pUser, ourObj );
 				}
 				else if( tileID == 0x1be0 || ( tileID >= 0x1BD7 && tileID <= 0x1BE2 ))	// Bowcraft
 				{
-					BowCraft( socket, mChar, ourObj, tileID );
+					BowCraft( socket, pUser, ourObj, tileID );
 				}
 				else if( tileID == 0x2006 )
 				{
-					CarveCorpse( socket, mChar, ourObj );
+					CarveCorpse( socket, pUser, ourObj );
 				}
 				else
 				{
@@ -85,10 +85,10 @@ function onCallback1( socket, ourObj )
 	}
 }
 
-function BowCraft( socket, mChar, ourObj, tileID )
+function BowCraft( socket, pUser, ourObj, tileID )
 {
 	var ownerObj = GetPackOwner( ourObj, 0 );
-	if( ownerObj && mChar.serial == ownerObj.serial )
+	if( ownerObj && pUser.serial == ownerObj.serial )
 	{
 		socket.MakeMenu( 49, 8 );
 	}
@@ -98,10 +98,10 @@ function BowCraft( socket, mChar, ourObj, tileID )
 	}
 }
 
-function MakeFishSteaks( socket, mChar, ourObj )
+function MakeFishSteaks( socket, pUser, ourObj )
 {
 	var ownerObj = GetPackOwner( ourObj, 0 );
-	if( ownerObj && mChar.serial == ownerObj.serial )
+	if( ownerObj && pUser.serial == ownerObj.serial )
 	{
 		var fishSteakAmount = ourObj.amount * 4;
 		if( fishSteakAmount > 65534 )
@@ -111,21 +111,21 @@ function MakeFishSteaks( socket, mChar, ourObj )
 			{
 				if( fishSteakAmount > 65534 )
 				{
-					CreateDFNItem( mChar.socket, mChar, "0x097A", 65535, "ITEM", true );
+					CreateDFNItem( socket, pUser, "0x097A", 65535, "ITEM", true );
 					fishSteakAmount -= 65535;
 				}
 				else
 				{
-					CreateDFNItem( mChar.socket, mChar, "0x097A", fishSteakAmount, "ITEM", true );
+					CreateDFNItem( socket, pUser, "0x097A", fishSteakAmount, "ITEM", true );
 				}
 			}
 		}
 		else
 		{
-			CreateDFNItem( mChar.socket, mChar, "0x097A", fishSteakAmount, "ITEM", true );
+			CreateDFNItem( socket, pUser, "0x097A", fishSteakAmount, "ITEM", true );
 		}
 
-		mChar.SysMessage( GetDictionaryEntry( 9338, socket.language )); // You slice your fish into raw fish steaks
+		socket.SysMessage( GetDictionaryEntry( 9338, socket.language )); // You slice your fish into raw fish steaks
 		ourObj.Delete();
 	}
 	else
@@ -134,11 +134,11 @@ function MakeFishSteaks( socket, mChar, ourObj )
 	}
 }
 
-function MakeKindling( socket, mChar )
+function MakeKindling( socket, pUser )
 {
-	var distX = Math.abs( mChar.x - socket.GetWord( 11 ));
-	var distY = Math.abs( mChar.y - socket.GetWord( 13 ));
-	var distZ = Math.abs( mChar.z - socket.GetSByte( 16 ));
+	var distX = Math.abs( pUser.x - socket.GetWord( 11 ));
+	var distY = Math.abs( pUser.y - socket.GetWord( 13 ));
+	var distZ = Math.abs( pUser.z - socket.GetSByte( 16 ));
 
 	if( distX > 5 || distY > 5 || distZ > 9 )
 	{
@@ -146,27 +146,27 @@ function MakeKindling( socket, mChar )
 		return;
 	}
 
-	if( mChar.isonhorse )
+	if( pUser.isonhorse )
 	{
-		mChar.DoAction( 0x1D );
+		pUser.DoAction( 0x1D );
 	}
 	else
 	{
-		mChar.DoAction( 0x0D );
+		pUser.DoAction( 0x0D );
 	}
 
-	mChar.SoundEffect( 0x013E, true );
-	CreateDFNItem( socket, mChar, "0x0DE1", 1, "ITEM", true );
+	pUser.SoundEffect( 0x013E, true );
+	CreateDFNItem( socket, pUser, "0x0DE1", 1, "ITEM", true );
 	socket.SysMessage( GetDictionaryEntry( 1049, socket.language )); // You hack at the tree and produce some kindling.
 }
 
-function CarveCorpse( socket, mChar, ourObj )
+function CarveCorpse( socket, pUser, ourObj )
 {
-	if( mChar.InRange( ourObj, 3 ))
+	if( pUser.InRange( ourObj, 3 ))
 	{
-		if( mChar.visible == 1 || mChar.visible == 2 )
+		if( pUser.visible == 1 || pUser.visible == 2 )
 		{
-			mChar.visible = 0;
+			pUser.visible = 0;
 		}
 
 		var moreYPart1 = ourObj.GetMoreVar( "morey", 1 );
@@ -178,7 +178,7 @@ function CarveCorpse( socket, mChar, ourObj )
 		{
 			if(( moreYPart2 != 0 || ourObj.carveSection != -1 ) && ourObj.Carve( socket ))
 			{
-				mChar.DoAction( 0x20 );
+				pUser.DoAction( 0x20 );
 				ourObj.SetMoreVar( "morey", 1, 1 ); // Mark corpse as carved
 			}
 		}
