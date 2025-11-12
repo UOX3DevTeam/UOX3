@@ -58,6 +58,10 @@ function AddonGump( pUser, iUsed )
 function onGumpPress( socket, pButton, gumpData )
 {
 	var pUser = socket.currentChar;
+
+	if( !ValidateObject( pUser ))
+		return;
+
 	var targMsg = GetDictionaryEntry( 5500, socket.language );// Where would you like to place this decoration?
 
 	var iMulti = pUser.multi;
