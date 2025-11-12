@@ -33,11 +33,9 @@ function onDeath( pDead, iCorpse )
 // Display self-resurrection gump to player because they had a Gem of Salvation in their inventory on death
 function DisplayResurrectGump( pDead )
 {
-	var pSock = pDead.socket;
-	if( pSock == null )
+	var pSocket = pDead.socket;
+	if( pSocket == null )
 		return;
-
-	var pLang = pSock.language;
 
 	var gemResurrectGump = new Gump;
 	gemResurrectGump.NoClose();
@@ -45,32 +43,32 @@ function DisplayResurrectGump( pDead )
 	gemResurrectGump.AddPage( 0 );
 	gemResurrectGump.AddBackground( 0, 0, 400, 350, 2600 );
 
-	gemResurrectGump.AddHTMLGump( 0, 20, 400, 35, 0, 0, ( "<CENTER>" + GetDictionaryEntry( 18502, pLang ) + "</CENTER>" )); // Resurrection
+	gemResurrectGump.AddHTMLGump( 0, 20, 400, 35, 0, 0, ( "<CENTER>" + GetDictionaryEntry( 18502, pSocket.language ) + "</CENTER>" )); // Resurrection
 
 	// It is possible for you to be resurrected here by this healer. Do you wish to try?<br>CONTINUE - You chose to try to come back to life now.<br>CANCEL - You prefer to remain a ghost for now.
-	gemResurrectGump.AddHTMLGump( 50, 55, 300, 140, 0, 0, "<CENTER>" + GetDictionaryEntry( 18503, pLang ) + "</CENTER>" );
+	gemResurrectGump.AddHTMLGump( 50, 55, 300, 140, 0, 0, "<CENTER>" + GetDictionaryEntry( 18503, pSocket.language ) + "</CENTER>" );
 
 	gemResurrectGump.AddButton( 200, 227, 4005, 4007, 1, 0, 0 ); // CANCEL
-	gemResurrectGump.AddHTMLGump( 235, 230, 110, 35, 0, 0, "<CENTER>" + GetDictionaryEntry( 2709, pLang ) + "</CENTER>" );
+	gemResurrectGump.AddHTMLGump( 235, 230, 110, 35, 0, 0, "<CENTER>" + GetDictionaryEntry( 2709, pSocket.language ) + "</CENTER>" );
 
 	gemResurrectGump.AddButton( 65, 227, 4005, 4007, 1, 0, 1 ); // CONTINUE
-	gemResurrectGump.AddHTMLGump( 100, 230, 110, 35, 0, 0, "<CENTER>" + GetDictionaryEntry( 2708, pLang ) + "</CENTER>" );
+	gemResurrectGump.AddHTMLGump( 100, 230, 110, 35, 0, 0, "<CENTER>" + GetDictionaryEntry( 2708, pSocket.language ) + "</CENTER>" );
 
-	gemResurrectGump.Send( pSock );
+	gemResurrectGump.Send( pSocket );
 	gemResurrectGump.Free();
 }
 
 /** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
-function onGumpPress( pSock, pButton, gumpData )
+function onGumpPress( pSocket, pButton, gumpData )
 {
-	var pDead = pSock.currentChar;
+	var pDead = pSocket.currentChar;
 
 	// Don't continue if character is invalid
 	if( !ValidateObject( pDead ))
 		return;
 
-	var gemOfSalvation = pSock.tempObj;
-	pSock.tempObj = null;
+	var gemOfSalvation = pSocket.tempObj;
+	pSocket.tempObj = null;
 	if( !ValidateObject( gemOfSalvation ))
 	{
 		return;
@@ -83,7 +81,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		case 1: // Resurrect
 			pDead.SoundEffect( 0x0214, true );
 			pDead.Resurrect();
-			pDead.SysMessage( GetDictionaryEntry( 18501, pSock.language )); // The gem infuses you with its power and is destroyed in the process.
+			pSocket.SysMessage( GetDictionaryEntry( 18501, pSocket.language )); // The gem infuses you with its power and is destroyed in the process.
 
 			// Store a timestamp for when Gem of Salvation was last used
 			pDead.SetTag( "lastUsedGoS", Math.round( Date.now() / 1000 ).toString() );
