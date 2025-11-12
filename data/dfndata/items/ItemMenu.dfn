@@ -510,6 +510,8 @@ ITEMMENU=122
 ITEMMENU=250
 <=Holidays
 ITEMMENU=251
+<=Quest Rewards
+ITEMMENU=262
 <=Previous Menu
 ITEMMENU=1
 }

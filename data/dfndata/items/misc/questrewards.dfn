@@ -92,7 +92,7 @@ sectionid=jacobspickaxe
 
 [claspofconcentration]
 {
-get=silverbracelet
+get=0x1086
 name=Clasp of Concentration
 newbie
 staminaregen=2
