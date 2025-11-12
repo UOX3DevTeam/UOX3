@@ -1,3 +1,7 @@
+12/11/2025 - strattond (#460)
+[FIX] TypeScript definitions need to support 2 flavours of onSpellCast
+[UPD] Update existing scripts with revised scripts
+
 12/11/2025 - DragonSlayer62 (#459)
     [FIX] Fixed incorrect property reference in js/item/potion.js; was .decay, should be .decayable
     [FIX] Fixed incorrect property reference in js/item/shrines.js; was .karmaLocked, should be .karmaLock
