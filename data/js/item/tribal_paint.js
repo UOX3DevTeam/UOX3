@@ -4,30 +4,30 @@
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
-	var socket = pUser.socket;
-	if( socket && iUsed && iUsed.isItem )
+	var pSocket = pUser.socket;
+	if( pSocket && iUsed && iUsed.isItem )
 	{
 		// Check to see if it's locked down
 		if( iUsed.movable == 2 || iUsed.movable == 3 )
 		{
-			socket.SysMessage( GetDictionaryEntry( 774, socket.language ) ); //That is locked down and you cannot use it
+			pSocket.SysMessage( GetDictionaryEntry( 774, pSocket.language ) ); //That is locked down and you cannot use it
 			return false;
 		}
 
 		if( pUser.isIncognito )
 		{
-			socket.SysMessage( GetDictionaryEntry( 1677, socket.language )); // You cannot disguise yourself while incognito.
+			pSocket.SysMessage( GetDictionaryEntry( 1677, pSocket.language )); // You cannot disguise yourself while incognito.
 		}
 		else if( pUser.isPolymorphed )
 		{
-			socket.SysMessage( GetDictionaryEntry( 1678, socket.language )); // You cannot disguise yourself while polymorphed.
+			pSocket.SysMessage( GetDictionaryEntry( 1678, pSocket.language )); // You cannot disguise yourself while polymorphed.
 		}
 		else
 		{
 			var helmLayerItem = pUser.FindItemLayer( 0x06 );
 			if( pUser.isDisguised || ( ValidateObject( helmLayerItem ) && helmLayerItem.sectionID == "orcishkinmask" ))
 			{
-				socket.SysMessage( GetDictionaryEntry( 1679, socket.language )); // You are already disguised.
+				pSocket.SysMessage( GetDictionaryEntry( 1679, pSocket.language )); // You are already disguised.
 			}
 			else
 			{
@@ -39,7 +39,7 @@ function onUseChecked( pUser, iUsed )
 				TriggerEvent( 3, "StartLongTermTimer", pUser, 5000, 1000 * 60 * 60 * 24 * 7 ); // 7 days
 
 				// You now bear the markings of the savage tribe.  Your body paint will last about a week or you can remove it with an oil cloth
-				socket.SysMessage( GetDictionaryEntry( 1680, socket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 1680, pSocket.language ));
 
 				// Delete the tribal paint
 				iUsed.Delete();

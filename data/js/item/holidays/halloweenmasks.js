@@ -15,7 +15,7 @@ function onCreateDFN( objMade, objType )
 			case 5: maskname = "A Porcelain Mask"; break;
 			default: maskname = "A Mask"; break;
 		}
-		objMade.SetRandomName( 2009 );
+		objMade.SetRandomName( "2009" );
 		var newName = objMade.name;
 		objMade.name = maskname + " hand painted by " + newName;
 	}
