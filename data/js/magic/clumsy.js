@@ -329,7 +329,7 @@ function SuccessfulSpellCast( mChar, ourTarg )
 {
 	var mSock = mChar.socket;
 	if( mChar.isCasting )
-		return false;
+		return;
 
 	var spellNum = mChar.spellCast;
 	var mSpell		= Spells[spellNum];
@@ -364,11 +364,11 @@ function SuccessfulSpellCast( mChar, ourTarg )
 		{
 			mSock.SysMessage( GetDictionaryEntry( 712, mSock.language )); // You can't cast on someone that far away!
 		}
-		return true;
+		return;
 	}
 
 	if( !mChar.CanSee( ourTarg ))
-		return false; 
+		return; 
 
 	var attackTarget = false;
 	var targRegion = ourTarg.region;
@@ -380,7 +380,7 @@ function SuccessfulSpellCast( mChar, ourTarg )
 			{
 				mSock.SysMessage( GetDictionaryEntry( 1799, mSock.language )); // Hostile actions are not permitted in this safe area.
 			}
-			return false;
+			return;
 		}
 		if( !targRegion.canCastAggressive )
 		{
@@ -388,7 +388,7 @@ function SuccessfulSpellCast( mChar, ourTarg )
 			{
 				mSock.SysMessage( GetDictionaryEntry( 709, mSock.language )); // You can't cast in town!
 			}
-			return false;
+			return;
 		}
 		if( !ourTarg.vulnerable || ourTarg.aiType == 17 )
 		{
@@ -396,7 +396,7 @@ function SuccessfulSpellCast( mChar, ourTarg )
 			{
 				mSock.SysMessage( GetDictionaryEntry( 713, mSock.language )); // They are invulnerable merchants!
 			}
-			return false;
+			return;
 		}
 
 		attackTarget = true;
@@ -436,7 +436,7 @@ function SuccessfulSpellCast( mChar, ourTarg )
 			mChar.SetTimer( Timer.SPELLTIME, 0 );
 			mChar.isCasting = false;
 			mChar.spellCast = -1;
-			return false;
+			return;
 		}
 	}
 
