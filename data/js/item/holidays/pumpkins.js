@@ -282,8 +282,8 @@ function ApplyExplosionDamage( timerObj, targetChar )
 function onPickup( iPickedUp, pGrabber, containerObj )
 {
 	var pSocket = pGrabber.socket;
-	if (pSocket == null)
-		return true;
+	if( pSocket == null )
+		return false;
 
 	var idList = [0x4de, 0x4df];
 	var randomID = Math.floor( Math.random() * 2 );
@@ -324,6 +324,6 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 		case 5: //bank
 			return true;
 		default:
-			return true;
+			return false;
 	}
 }
