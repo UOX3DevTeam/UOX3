@@ -20,23 +20,26 @@ If it's a treasure map, the script checks if the map has been decoded and displa
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, mapItem )
 {
-	var socket = pUser.socket;
-	if( socket && mapItem && mapItem.isItem )
+	var pSocket = pUser.socket;
+	if( pSocket && mapItem && mapItem.isItem )
 	{
 		var itemOwner = GetPackOwner(mapItem, 0);
 		if( itemOwner == null || itemOwner.serial != pUser.serial )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 1763, socket.language )); // That item must be in your backpack before it can be used.
+			pSocket.SysMessage( GetDictionaryEntry( 1763, pSocket.language )); // That item must be in your backpack before it can be used.
 			return false;
 		}
 
-		CraftedMaps( socket, mapItem );
+		CraftedMaps( pSocket, mapItem );
 	}
 }
 
-function CraftedMaps( socket, mapItem )
+function CraftedMaps( pSocket, mapItem )
 {
-	var pUser = socket.currentChar;
+	var pUser = pSocket.currentChar;
+	if( pSocket == null )
+		return;
+
 	switch ( mapItem.GetTag( "Map" ))
 	{
 		case 50:// Crafted Map
@@ -52,22 +55,22 @@ function CraftedMaps( socket, mapItem )
 				var xbottom = parseInt( mybox[2] );
 				var ybottom = parseInt( mybox[3] );
 
-				TriggerEvent( 1503, "SendMapDetails", socket, mapItem, height, width, xtop, ytop, xbottom, ybottom );
-				TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
-				TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
+				TriggerEvent( 1503, "SendMapDetails", pSocket, mapItem, height, width, xtop, ytop, xbottom, ybottom );
+				TriggerEvent( 1503, "SendMapDisplay", pSocket, mapItem );
+				TriggerEvent( 1503, "SendMapEditable", pSocket, mapItem, false );
 				break;
 			}			
 			else
 			{
-				socket.SysMessage( GetDictionaryEntry( 5700, socket.language ));// It appears to be blank.
+				pSocket.SysMessage( GetDictionaryEntry( 5700, pSocket.language ));// It appears to be blank.
 				break;
 			}
 	}
 }
 
-function CraftedMapCoords( socket, mapItem )
+function CraftedMapCoords( pSocket, mapItem )
 {
-	var pUser = socket.currentChar;
+	var pUser = pSocket.currentChar;
 	var skillValue = ( pUser.baseskills.cartography/10 ).toFixed( 1 );
 
 	// Define the minimum and maximum distances
