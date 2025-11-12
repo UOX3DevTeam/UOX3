@@ -3,8 +3,11 @@
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
-	var socket = pUser.socket;
-	socket.tempObj = iUsed;
+	var pSocket = pUser.socket;
+	if( pSocket == null )
+		return false;
+
+	pSocket.tempObj = iUsed;
 	ReDeedAddon( pUser, iUsed );
 }
 
@@ -35,7 +38,6 @@ function onGumpPress( pSock, pButton, gumpData )
 	var iUsed = pSock.tempObj;
 	var iMulti = FindMulti(iUsed.x, iUsed.y, iUsed.z, pSock.currentChar.worldnumber);
 
-
 	var deedName = "";
 	switch( pButton ) 
 	{
@@ -58,7 +60,7 @@ function onGumpPress( pSock, pButton, gumpData )
 
 	if( deedName != "" ) 
 	{
-		var deeditem = CreateDFNItem( pSock, pSock.currentChar, deedName, 1, "ITEM", true );
+		var deeditem = CreateDFNItem( pSock, pUser, deedName, 1, "ITEM", true );
 		if( ValidateObject( deeditem ))
 		{
 			iUsed.Delete();

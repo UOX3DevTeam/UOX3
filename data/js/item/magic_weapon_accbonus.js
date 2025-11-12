@@ -22,6 +22,7 @@ function onEquip( pEquipper, iEquipped )
 	{
 		pEquipper.baseskills.tactics += accBonus;
 	}
+	return false;
 }
 
 /** @type { ( equipper: Character, equipping: Item ) => boolean } */
@@ -43,4 +44,5 @@ function onUnequip( pEquipper, iEquipped )
 	{
 		pEquipper.baseskills.tactics -= accBonus;
 	}
+	return false;
 }

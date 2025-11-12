@@ -3,7 +3,12 @@
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed ) // Handling for using a Magic Scroll
 {
-	var pSock = pUser.socket;
+	var pSocket = pUser.socket;
+	if( pSocket == null )
+	{
+		return false;
+	}
+
 	if ( pUser.visible == 1 || pUser.visible == 2 )
 	{
 		pUser.visible = 0;
@@ -14,17 +19,17 @@ function onUseChecked( pUser, iUsed ) // Handling for using a Magic Scroll
 		var iMulti = iUsed.multi;
 		if( !ValidateObject( iMulti ) || ( !iMulti.IsOnOwnerList( pUser ) && !iMulti.IsOnFriendList( pUser )))
 		{
-			pSock.SysMessage( GetDictionaryEntry( 1032, pSock.language )); // That is not yours!
+			pSocket.SysMessage( GetDictionaryEntry( 1032, pSocket.language )); // That is not yours!
 			return false;
 		}
 	}
-	if( pSock && iUsed && iUsed.isItem )
+	if( pSocket && iUsed && iUsed.isItem )
 	{
 		var usedID = iUsed.id;
 		if( usedID > 0x1F2C && usedID  < 0x1F6D )
 		{
 			var success = false;
-			pSock.currentSpellType = 1; // spell from scroll
+			pSocket.currentSpellType = 1; // spell from scroll
 			if( usedID == 0x1F2D )	// Reactive Armor spell scrolls
 			{
 				success = pUser.CastSpell( 7 );

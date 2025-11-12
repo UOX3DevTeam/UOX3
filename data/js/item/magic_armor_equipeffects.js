@@ -6,8 +6,15 @@
 /** @type { ( equipper: Character, equipping: Item ) => boolean } */
 function onEquip( pEquipper, iEquipped )
 {
+	var pSocket = pEquipper.socket;
+
 	if( iEquipped.type != 15 )
-		return;
+		return false;
+
+	if( !ValidateObject( pSocket ))
+	{
+		 return false;
+	}
 
 	// Fetch which spell is enabled for this item
 	var spellCircle = iEquipped.morex;
@@ -17,8 +24,8 @@ function onEquip( pEquipper, iEquipped )
 	// Check if the item has any charges left
 	if( spellCharges == 0 )
 	{
-		pEquipper.socket.SysMessage( GetDictionaryEntry( 0, pEquipper.socket.language )); // This item is out of charges.
-		return;
+		pSocket.SysMessage( GetDictionaryEntry( 0, pSocket.language )); // This item is out of charges.
+		return false;
 	}
 
 	// Play effects associated with spell
@@ -88,7 +95,6 @@ function onEquip( pEquipper, iEquipped )
 			break;
 		case 44: // Invisibility
 			pEquipper.visible = 2;
-
 			var invisTimer = GetServerSetting( "InvisibilityTimer" );
 			pEquipper.SetTimer( Timer.INVIS, invisTimer );
 

@@ -3,12 +3,16 @@
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
-	var pSock = pUser.socket;
+	var pSocket = pUser.socket;
+	if( pSocket == null )
+	{
+		return false;
+	}
 
 	//Check if user is in range of pickpocket dip
 	if( !iUsed.InRange( pUser, 1 ) )
 	{
-		pUser.SysMessage( GetDictionaryEntry( 482, pSock.language )); //You need to be closer to use that.
+		pSocket.SysMessage( GetDictionaryEntry( 482, pSocket.language )); //You need to be closer to use that.
 		return false;
 	}
 	if( iUsed.id == 0x1E2C )
@@ -26,34 +30,34 @@ function onUseChecked( pUser, iUsed )
 		{
 			//Safety measure in case timer ever breaks.
 			safetyMeasure( iUsed );
-			pUser.SysMessage( GetDictionaryEntry( 1762, pSock.language )); //You must wait before you can use that item again.
+			pSocket.SysMessage( GetDictionaryEntry( 1762, pSocket.language )); //You must wait before you can use that item again.
 			return false;
 		}
 
 		//Check if character is mounted or not, and then call up an external script to determine combat animations
 		if( pUser.isonhorse )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 1757, pSock.language )); //Please dismount first.
+			pSocket.SysMessage( GetDictionaryEntry( 1757, pSocket.language )); //Please dismount first.
 			return false;
 		}
 
 		//Check the player's tactics skill to see if he gets chance to gain more skill
 		if( pUser.skills.stealing > 250 )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 1758, pSock.language )); //Your ability to steal cannot improve any further by simply practicing on a dummy.
+			pSocket.SysMessage( GetDictionaryEntry( 1758, pSocket.language )); //Your ability to steal cannot improve any further by simply practicing on a dummy.
 		}
 		else
 		{
 			if( pUser.CheckSkill( 33, 0, 250 ))
 			{
-				pUser.SysMessage( GetDictionaryEntry( 1760, pSock.language )); //You successfully avoid disturbing the dip while searching it.
+				pSocket.SysMessage( GetDictionaryEntry( 1760, pSocket.language )); //You successfully avoid disturbing the dip while searching it.
 				pUser.SoundEffect( 0x4F, true );
 				iUsed.SetTag( "inUse", 1 );
 				iUsed.StartTimer( 2500, 2, true );
 			}
 			else
 			{
-				pUser.SysMessage( GetDictionaryEntry( 1759, pSock.language )); //You carelessly bump the dip and start it swinging.
+				pSocket.SysMessage( GetDictionaryEntry( 1759, pSocket.language )); //You carelessly bump the dip and start it swinging.
 				pUser.SoundEffect( 0x390, true );
 				iUsed.id++;
 				//Star a timer so the pickpocket dip doesn't swing forever
@@ -65,7 +69,7 @@ function onUseChecked( pUser, iUsed )
 	{
 		//Safety measure in case timer ever breaks.
 		SafetyMeasure( iUsed );
-		pUser.SysMessage( GetDictionaryEntry( 483, pSock.language )); //You must wait for it to stop swinging!
+		pSocket.SysMessage( GetDictionaryEntry( 483, pSocket.language )); //You must wait for it to stop swinging!
 	}
 	return false;
 }
