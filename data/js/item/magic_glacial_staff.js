@@ -37,7 +37,7 @@ function onSpeech( strSaid, pTalking, iTalkingTo )
 	// If player says the words of power for a magic spell enabled on the glacial staff,
 	// activate said spell, so the next time user double-clicks the staff, that's the spell
 	// that will be cast
-	var lHand = pUser.FindItemLayer( 0x02 );
+	var lHand = pTalking.FindItemLayer( 0x02 );
 	if( lHand != iTalkingTo ) // will only work if glacial staff is equipped
 		return false;
 
@@ -71,13 +71,14 @@ function onEquip( pEquipper, iEquipped )
 		iEquipped.morex = iEquipped.morey;
 		iEquipped.morey = prevSpell;
 	}
+	return false;
 }
 
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
-	var socket = pUser.socket;
-	if( socket && ValidateObject( iUsed ) && iUsed.isItem )
+	var pSocket = pUser.socket;
+	if( pSocket && ValidateObject( iUsed ) && iUsed.isItem )
 	{
 		var lHand = pUser.FindItemLayer( 0x02 );
 		if( lHand != iUsed ) // will only work if glacial staff is equipped
@@ -86,15 +87,15 @@ function onUseChecked( pUser, iUsed )
 		var itemOwner = GetPackOwner( iUsed, 0 );
 		if( itemOwner == null || itemOwner.serial != pUser.serial )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 1763, socket.language )); // That item must be in your backpack before it can be used.
+			pSocket.SysMessage( GetDictionaryEntry( 1763, pSocket.language )); // That item must be in your backpack before it can be used.
 			return false;
 		}
 
 		if( iUsed.morez > 0 ) // Still has charges left
 		{
-			var targMsg = GetDictionaryEntry( 443, socket.language ); // What would you like to use that on?
+			var targMsg = GetDictionaryEntry( 443, pSocket.language ); // What would you like to use that on?
 			pUser.SetTag( "staffSerial", ( iUsed.serial ).toString() );
-			socket.CustomTarget( 1, targMsg );
+			pSocket.CustomTarget( 1, targMsg );
 		}
 
 	}
@@ -104,86 +105,83 @@ function onUseChecked( pUser, iUsed )
 /** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, myTarget )
 {
-	var mChar = socket.currentChar;
-	if( ValidateObject( mChar ) && ValidateObject( myTarget ) && myTarget.isChar )
+	var pUser = socket.currentChar;
+	if( ValidateObject( pUser ) && ValidateObject( myTarget ) && myTarget.isChar )
 	{
 		if( !myTarget.vulnerable )
 			return;
 
-		var glacialStaff = CalcItemFromSer( parseInt( mChar.GetTag( "staffSerial" )));
+		var glacialStaff = CalcItemFromSer( parseInt( pUser.GetTag( "staffSerial" )));
 		var activeSpell = glacialStaff.morex;
 
-		mChar.SetTimer( Timer.SPELLTIME, 1500 );
-		mChar.isCasting = true;
-		mChar.TurnToward( myTarget );
-		mChar.DoAction( 17 );
-		mChar.SetTag( "glacialTarg", myTarget.serial );
+		pUser.SetTimer( Timer.SPELLTIME, 1500 );
+		pUser.isCasting = true;
+		pUser.TurnToward( myTarget );
+		pUser.DoAction( 17 );
+		pUser.SetTag( "glacialTarg", myTarget.serial );
 
 		switch( activeSpell )
 		{
 			case 0: // Ice Ball
-				mChar.StartTimer( 1500, 0, true );
+				pUser.StartTimer( 1500, 0, true );
 				break;
 			case 1: // Ice Strike
-				mChar.StartTimer( 1500, 1, true );
+				pUser.StartTimer( 1500, 1, true );
 				break;
 			case 2: // Paralyze
-				mChar.StartTimer( 1500, 2, true );
-				break;
-			default:
+				pUser.StartTimer( 1500, 2, true );
 				break;
 		}
 	}
 }
 
 /** @type { ( tObject: BaseObject, timerId: number ) => void } */
-function onTimer( mChar, timerID )
+function onTimer( pUser, timerID )
 {
-	if( !ValidateObject( mChar ) || !mChar.isChar || mChar.dead || !mChar.online )
+	var pSocket = pUser.socket;
+	if( !ValidateObject( pUser ) || !pUser.isChar || pUser.dead || !pUser.online )
 		return;
 
-	mChar.isCasting = false;
-	var glacialStaff = CalcItemFromSer( parseInt( mChar.GetTag( "staffSerial" )));
+	pUser.isCasting = false;
+	var glacialStaff = CalcItemFromSer( parseInt( pUser.GetTag( "staffSerial" )));
 	glacialStaff.morez--;
 	if( glacialStaff.morez == 0 )
 	{
 		// Shatter glacial staff
-		if( mChar.socket != null )
+		if( pSocket != null )
 		{
-			mChar.SoundEffect( 0x003e, true );
-			mChar.socket.SysMessage( "All charges have been expended for the glacial staff, which shatters in your hands!" );
+			pUser.SoundEffect( 0x003e, true );
+			pSocket.SysMessage( GetDictionaryEntry( 2799, pSocket.language )); // All charges have been expended for the glacial staff, which shatters in your hands!
 		}
 		glacialStaff.Delete();
 	}
 
-	var targetChar = CalcCharFromSer( parseInt( mChar.GetTag( "glacialTarg" )));
+	var targetChar = CalcCharFromSer( parseInt( pUser.GetTag( "glacialTarg" )));
 	if( !ValidateObject( targetChar ) || !targetChar.isChar || targetChar.dead || ( !targetChar.npc && !targetChar.online ) || !targetChar.vulnerable )
 	{
-		mChar.TextMessage( "Nope 1" );
-		mChar.TextMessage( targetChar );
 		return;
 	}
 
 	if( WillResultInCriminal( mChar, targetChar ))
-		mChar.criminal = true;
+		pUser.criminal = true;
 
 	switch( timerID )
 	{
 		case 0: // Ice Ball
 			var iceBallFX = 0x36D4;
-			DoMovingEffect( mChar, targetChar, iceBallFX, 0x06, 0x00, true, 0x047f, 0xa );
+			DoMovingEffect( pUser, targetChar, iceBallFX, 0x06, 0x00, true, 0x047f, 0xa );
 			if( targetChar.magicReflect )
 			{
-				DoMovingEffect( targetChar, mChar, iceBallFX, 0x06, 0x00, true, 0x047f, 0xa );
-				targetChar = mChar;
+				DoMovingEffect( targetChar, pUser, iceBallFX, 0x06, 0x00, true, 0x047f, 0xa );
+				targetChar = pUser;
 			}
 			if( CheckResist( 381, targetChar, 3 ))
 			{
-				targetChar.Damage( RandomNumber( 5, 7 ), 4, mChar, true );
+				targetChar.Damage( RandomNumber( 5, 7 ), 4, pUser, true );
 			}
 			else
 			{
-				targetChar.Damage( RandomNumber( 10, 15 ), 4, mChar, true );
+				targetChar.Damage( RandomNumber( 10, 15 ), 4, pUser, true );
 			}
 			break;
 		case 1: // Ice Strike
@@ -191,17 +189,17 @@ function onTimer( mChar, timerID )
 			DoMovingEffect( targetChar, targetChar, iceStrikeFX, 0x06, 0x1e, false, 0x047f, 0xa );
 			if( targetChar.magicReflect )
 			{
-				DoMovingEffect( mChar, mChar, iceStrikeFX, 0x06, 0x1e, false, 0x047f, 0xa );
-				targetChar = mChar;
+				DoMovingEffect( pUser, pUser, iceStrikeFX, 0x06, 0x1e, false, 0x047f, 0xa );
+				targetChar = pUser;
 			}
 			targetChar.SoundEffect( 0x0208, true );
 			if( CheckResist( 881, targetChar, 7 ))
 			{
-				targetChar.Damage( RandomNumber( 20, 30 ), 4, mChar, true );
+				targetChar.Damage( RandomNumber( 20, 30 ), 4, pUser, true );
 			}
 			else
 			{
-				targetChar.Damage( RandomNumber( 10, 15 ), 4, mChar, true );
+				targetChar.Damage( RandomNumber( 10, 15 ), 4, pUser, true );
 			}
 			break;
 		case 2: // Paralyze
@@ -220,7 +218,7 @@ function CheckResist( resistDifficulty, targetChar, spellCircle )
 {
 	// Perform a skill check for magic resistance
 	var resistSuccess = targetChar.CheckSkill( 26, 80*spellCircle, 800+(80*spellCircle) );
-	var targSock = targetChar.socket;
+	var pSocket = targetChar.socket;
 
 	// Check which is higher between user's normal resist chance and a fallback value
 	// To ensure user always has a chance of resisting, however small their resist skill (except at 0)
@@ -233,9 +231,9 @@ function CheckResist( resistDifficulty, targetChar, spellCircle )
 
 	if( RandomNumber( 1, 100 ) < resistChance / 10 )
 	{
-		if( targSock )
+		if( pSocket )
 		{
-			targSock.SysMessage( GetDictionaryEntry( 699, targSock.language )); // You feel yourself resisting magical energy!
+			pSocket.SysMessage( GetDictionaryEntry( 699, pSocket.language )); // You feel yourself resisting magical energy!
 		}
 		resistSuccess = true;
 	}

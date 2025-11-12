@@ -1127,7 +1127,7 @@ void CChar::SetCanAttack( bool newValue )
 //|					CChar::SetKarmaLock()
 //|	Date		-	8. Dec, 2024
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether the char karma is locked
+//|	Purpose		-	Gets/Sets whether the character karma is locked. When locked, karma cannot increase or decrease.
 //o------------------------------------------------------------------------------------------------o
 bool CChar::GetKarmaLock( void ) const
 {
