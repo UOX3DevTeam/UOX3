@@ -44,10 +44,10 @@ const switchScriptID = 4761; // ID of this script in jse_fileassociations.scp
 function onUseChecked( pUser, iSwitch )
 {
 	if( !ValidateObject( pUser ) || !ValidateObject( iSwitch ))
-		return;
+		return false;
 
 	if( !pUser.CanSee( iSwitch ))
-		return;
+		return false;
 
 	// Perform initialization first of all, to perform initial
 	// required link-up with doors based on a unique ID
@@ -58,7 +58,7 @@ function onUseChecked( pUser, iSwitch )
 		{
 			Console.Warning( "Failed to Initialize Switch/Door combo for switch with serial: " + iSwitch.serial.toString() );
 			iSwitch.TextMessage( "You try to flip the switch, but nothing happens.", false, 0x3b2, 0, pUser.serial );
-			return;
+			return false;
 		}
 	}
 
@@ -67,7 +67,7 @@ function onUseChecked( pUser, iSwitch )
 	if( switchType != 1 && switchType != 2 )
 	{
 		Console.Warning( "Switch (serial: " + iSwitch.serial.toString() + ") has unknown switch type (" + switchType + "), aborting script execution!" );
-		return;
+		return false;
 	}
 
 	// Check if switch has already been flipped
@@ -78,7 +78,7 @@ function onUseChecked( pUser, iSwitch )
 		{
 			// Timer based. Player needs to wait to use switch again!
 			iSwitch.TextMessage( "This mechanism cannot be engaged again so soon.", false, 0x3b2, 0, pUser.serial );
-			return;
+			return false;
 		}
 		else if( switchType == 1 )
 		{
@@ -92,7 +92,7 @@ function onUseChecked( pUser, iSwitch )
 				// Toggle the switch, reset back to original
 				ResetSwitchAndDoors( iSwitch );
 			}
-			return;
+			return false;
 		}
 	}
 

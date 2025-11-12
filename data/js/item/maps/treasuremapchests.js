@@ -61,7 +61,10 @@ function onContRemoveItem( iCont, iItem, pChar )
 /** @type { ( item: Item, dropper: Character, dest: Item ) => number } */
 function onDropItemOnItem( iDropped, cDropper, iDroppedOn )
 {
-	var socket = cDropper.socket;
-	socket.SysMessage( GetDictionaryEntry( 5713, socket.language ));// The chest refuses to be filled with any more treasure.
-	return false;
+	var pSocket = cDropper.socket;
+	if( pSocket == null )
+		return 0;
+
+	pSocket.SysMessage( GetDictionaryEntry( 5713, pSocket.language ));// The chest refuses to be filled with any more treasure.
+	return 0;
 }
