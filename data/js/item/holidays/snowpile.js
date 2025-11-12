@@ -57,7 +57,7 @@ function onUseChecked( pUser, iUsed )
 function onCallback0( socket, myTarget )
 {
 	var pUser = socket.currentChar;
-	if( pUser == null )
+	if( !ValidateObject( pUser ))
 	{	
 		return;
 	}
@@ -73,10 +73,7 @@ function onCallback0( socket, myTarget )
 		pUser.DoAction( 0x9 );
 		pUser.SoundEffect( 0x145, true );
 		DoMovingEffect( pUser.x, pUser.y, pUser.z + 15, myTarget.x, myTarget.y, myTarget.z + 3, 0x36E4, 0x7, 0x00, true, 0x480, 0 );
-		if( myTarget.socket != null )
-		{
-			myTarget.socket.SysMessage( GetDictionaryEntry( 5508, myTarget.socket.language )); // You have just been hit by a snowball!
-		}
+		myTarget.SysMessage( GetDictionaryEntry( 5508, myTarget.socket.language )); // You have just been hit by a snowball!
 		socket.SysMessage( GetDictionaryEntry (5509, socket.language )); // You throw the snowball and hit the target!
 	}
 	else

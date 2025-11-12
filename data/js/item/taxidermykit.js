@@ -4,7 +4,7 @@
 function onUseChecked( pUser, iUsed )
 {
 	var pSocket = pUser.socket;
-	if( pSocket && iUsed && iUsed.isItem )
+	if( pSocket && ValidateObject( iUsed ) && iUsed.isItem )
 	{
 		pSocket.tempObj = iUsed;
 		var itemOwner = GetPackOwner( iUsed, 0 );

@@ -35,6 +35,7 @@ function onUseChecked( pUser, iUsed )
 
 function AddonGump( pUser, iUsed )
 {
+	var pSocket = pUser.socket;
 	var addongump = new Gump;
 
 	var addonID = AddonDisplayID( iUsed );
@@ -49,7 +50,7 @@ function AddonGump( pUser, iUsed )
 	addongump.AddButton( 50, 35, 0x868, 0x869, 1, 0, 1 );
 	addongump.AddButton( 145, 35, 0x868, 0x869, 1, 0, 1 );
 
-	addongump.Send( pUser );
+	addongump.Send( pSocket );
 	addongump.Free();
 }
 
@@ -57,9 +58,6 @@ function AddonGump( pUser, iUsed )
 function onGumpPress( socket, pButton, gumpData )
 {
 	var pUser = socket.currentChar;
-	if( pUser == null )
-		return;
-
 	var targMsg = GetDictionaryEntry( 5500, socket.language );// Where would you like to place this decoration?
 
 	var iMulti = pUser.multi;
@@ -85,7 +83,7 @@ function onCallback0( socket, myTarget )
 	var targX = socket.GetWord(11);
 	var targY = socket.GetWord(13);
 	var targZ = socket.GetSByte(16);
-	if( pUser == null )
+	if( !ValidateObject( pUser ))
 	{
 		return;
 	}

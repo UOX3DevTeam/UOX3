@@ -101,7 +101,7 @@ function onContextMenuRequest( socket, shrine )
 	var coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 	var pUser = socket.currentChar;
 
-	if(	pUser == null)
+	if(	!ValidateObject( pUser ))
 	{
 		return false;
 	}
@@ -177,7 +177,7 @@ function WriteMenuEntry( packet, offset, uniqueID, clilocID, flag, hue )
 function onContextMenuSelect( socket, shrine, popupEntry )
 {
 	var pUser = socket.currentChar;
-	if(	pUser == null)
+	if(	!ValidateObject( pUser ))
 	{
 		return false;
 	}
@@ -255,7 +255,7 @@ function ResurrectGump( pUser, iUsed )
 function onGumpPress( pSock, pButton, gumpData )
 {
 	var pUser = pSock.currentChar;
-	if(	pUser == null)
+	if(	!ValidateObject( pUser ))
 	{
 		return;
 	}

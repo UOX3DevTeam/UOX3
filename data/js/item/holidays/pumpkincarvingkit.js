@@ -4,7 +4,7 @@
 function onUseChecked( pUser, iUsed )
 {
 	var pSocket = pUser.socket;
-	if ( pUser.visible == 1 || pUser.visible == 2 )
+	if( pUser.visible == 1 || pUser.visible == 2 )
 	{
 		pUser.visible = 0;
 	}
@@ -40,7 +40,7 @@ function onUseChecked( pUser, iUsed )
 function onCallback0( socket, myTarget )
 {
 	var pUser = socket.currentChar;
-	if( pUser == null )
+	if( !ValidateObject( pUser ))
 		return;
 	// An array of item options
 	var itemPumpkins = ["tallwitch", "talluo", "tallankh", "tallspider", "tallbat", "tallskull", "talldemon", "tallspirit", "tallscalele"];

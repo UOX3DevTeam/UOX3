@@ -21,7 +21,7 @@ function onUseChecked( pUser, iUsed )
 function onCallback1( socket, ourObj )
 {
 	var pUser = socket.currentChar;
-	if( pUser )
+	if( ValidateObject( pUser ))
 	{
 		if( pUser.visible == 1 || pUser.visible == 2 )
 		{

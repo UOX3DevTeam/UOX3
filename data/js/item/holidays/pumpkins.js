@@ -54,8 +54,10 @@ function getRandomPumpkinName( objMade )
 function onUseChecked( pUser, iUsed ) 
 {
 	var pSocket = pUser.socket;
+
 	if( pSocket == null )
 		return false;
+
 	var itemOwner = GetPackOwner( iUsed, 0 );
 	if( pUser.visible == 1 || pUser.visible == 2 )
 	{
@@ -103,7 +105,7 @@ function onCallback0( socket, ourObj )
 {
 	var pUser = socket.currentChar;
 	var iUsed = socket.tempObj;
-	if( pUser && pUser.isChar && iUsed && iUsed.isItem )
+	if( ValidateObject( pUser ) && pUser.isChar && iUsed && iUsed.isItem )
 	{
 		var StrangeByte = socket.GetWord( 1 );
 		if( StrangeByte == 0 && ourObj )
@@ -318,7 +320,7 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 		case 2: //ownpack
 			return true;
 		case 3: //otherpack
-			return true;
+			return false;
 		case 4: //paperdoll
 			return true;
 		case 5: //bank
