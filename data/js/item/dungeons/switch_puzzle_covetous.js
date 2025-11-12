@@ -94,7 +94,7 @@ function onUseChecked( pUser, iSwitch )
 				isNextSwitch = 0;
 
 				// Spawn a reward lich lord!
-				var lichLord = SpawnNPC( "lichlord", 5431, 1876, 0, pUser.worldnumber, pUser.instanceID );
+				SpawnNPC( "lichlord", 5431, 1876, 0, pUser.worldnumber, pUser.instanceID );
 			}
 			else
 			{

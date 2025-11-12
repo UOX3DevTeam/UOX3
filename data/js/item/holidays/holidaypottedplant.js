@@ -3,11 +3,11 @@
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
-	var socket = pUser.socket;
+	var pSocket = pUser.socket;
 	var itemOwner = GetPackOwner( iUsed, 0 );
 	if( itemOwner == null || itemOwner.serial != pUser.serial) 
 	{
-		socket.SysMessage( GetDictionaryEntry( 1763, socket.language )); // The item must be in your backpack to use it.
+		pSocket.SysMessage( GetDictionaryEntry( 1763, pSocket.language )); // The item must be in your backpack to use it.
 		return false;
 	}
 
@@ -16,8 +16,8 @@ function onUseChecked( pUser, iUsed )
 
 function PottedPlantGump( pUser, iUsed )
 {
-	var socket = pUser.socket;
-	socket.tempObj = iUsed;
+	var pSocket = pUser.socket;
+	pSocket.tempObj = iUsed;
 	var pottedPlant = new Gump;
 
 	pottedPlant.AddPage( 0 );
@@ -48,7 +48,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	if( itemOwner == null || itemOwner.serial != pUser.serial )
 	{
 		pSock.SysMessage( GetDictionaryEntry(1763, pSock.language )); // The item must be in your backpack to use it.
-		return false;
+		return;
 	}
 
 	var pottedplant = "";
@@ -60,7 +60,7 @@ function onGumpPress( pSock, pButton, gumpData )
 
 	if( pottedplant != "" )
 	{
-		var pottedplant = CreateDFNItem( pUser.socket, pUser, pottedplant, 1, "ITEM", true );
+		var pottedplant = CreateDFNItem( pSock, pUser, pottedplant, 1, "ITEM", true );
 		pottedplant.movable = 1;
 		pottedplant.decay = 1;
 		iUsed.Delete();

@@ -20,17 +20,17 @@ If it's a treasure map, the script checks if the map has been decoded and displa
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, mapItem )
 {
-	var socket = pUser.socket;
-	if( socket && mapItem && mapItem.isItem )
+	var pSocket = pUser.socket;
+	if( pSocket && mapItem && mapItem.isItem )
 	{
 		var itemOwner = GetPackOwner(mapItem, 0);
 		if( itemOwner == null || itemOwner.serial != pUser.serial )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 1763, socket.language )); // That item must be in your backpack before it can be used.
+			pSocket.SysMessage( GetDictionaryEntry( 1763, pSocket.language )); // That item must be in your backpack before it can be used.
 			return false;
 		}
 
-		MapPresets( socket, mapItem );
+		MapPresets( pSocket, mapItem );
 	}
 }
 
@@ -277,10 +277,10 @@ function MapPresets( socket, mapItem )
 			break;
 	}
 
-	DisplayPinsOnMap( socket, mapItem );
+	DisplayPinsOnMap( pSocket, mapItem );
 }
 
-function DisplayPinsOnMap( socket, mapItem )
+function DisplayPinsOnMap( pSocket, mapItem )
 {
 	var pins = [];
 	if (mapItem.GetTag("pins"))
@@ -298,7 +298,7 @@ function DisplayPinsOnMap( socket, mapItem )
 		var piny = parseInt(pin[1] );
 
 		// Assuming sendAddMapPin is correctly implemented
-		TriggerEvent( 1503, "SendAddMapPin", socket, mapItem, pinx, piny );
+		TriggerEvent( 1503, "SendAddMapPin", pSocket, mapItem, pinx, piny );
 	}
-	TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
+	TriggerEvent( 1503, "SendMapEditable", pSocket, mapItem, false );
 }

@@ -3,8 +3,11 @@
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked(pUser, iUsed)
 {
-	var socket = pUser.socket;
-	socket.tempObj = iUsed;
+	var pSocket = pUser.socket;
+	if( pSocket == null )
+		return false;
+
+	pSocket.tempObj = iUsed;
 
 	var soundNumbers = [0x03A, 0x03B, 0x03C];
 	var randomIndex = Math.floor( Math.random() * soundNumbers.length );
@@ -16,8 +19,8 @@ function onUseChecked(pUser, iUsed)
 	{
 		if( Acidity == 30 ) 
 		{
-			socket.SysMessage( GetDictionaryEntry(5503, socket.language ));// The extreme pain in your teeth subsides.
-			return;
+			pSocket.SysMessage( GetDictionaryEntry(5503, pSocket.language ));// The extreme pain in your teeth subsides.
+			return false;
 		}
 		else 
 		{
@@ -61,8 +64,8 @@ function onUseChecked(pUser, iUsed)
 	else 
 	{
 		iUsed.Delete();
-		socket.SysMessage( GetDictionaryEntry(5504, socket.language ));//You feel as if you could eat as much as you wanted!
-		pUser.SoundEffect(randomSoundNumber, false);
+		pSocket.SysMessage( GetDictionaryEntry( 5504, pSocket.language ));//You feel as if you could eat as much as you wanted!
+		pUser.SoundEffect( randomSoundNumber, false );
 	}
 }
 
@@ -75,7 +78,7 @@ function getRandomIndex( array )
 /** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( pUser, timerID ) 
 {
-	var socket = pUser.socket;
+	var pSocket = pUser.socket;
 	var Acidity = pUser.GetTempTag( "Acidity" );
 	const phrases = [
 		"ARRGH! My tooth hurts sooo much!",
@@ -91,7 +94,7 @@ function onTimer( pUser, timerID )
 		{
 			if( Acidity == 30 ) 
 			{
-				socket.SysMessage( GetDictionaryEntry( 5503, socket.language ));// The extreme pain in your teeth subsides.
+				pSocket.SysMessage( GetDictionaryEntry( 5503, pSocket.language ));// The extreme pain in your teeth subsides.
 				pUser.StartTimer( 1000, 1, true );
 				return;
 			}
