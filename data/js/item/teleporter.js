@@ -3,8 +3,8 @@
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
-	var socket = pUser.socket;
-	if( socket && iUsed && iUsed.isItem && pUser.CanSee( iUsed ))
+	var pSocket = pUser.socket;
+	if( pSocket && iUsed && iUsed.isItem && pUser.CanSee( iUsed ))
 	{
 		if( pUser.InRange( iUsed, 3 ))
 		{
