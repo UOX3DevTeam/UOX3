@@ -3,26 +3,29 @@
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iPowder )
 {
-	var socket = pUser.socket;
-	socket.tempObj = iPowder;
-	socket.CustomTarget( 0 );
+	var pSocket = pUser.socket;
+	if( pSocket == null )
+	{
+		return false;
+	}
+
+	pSocket.tempObj = iPowder;
+	pSocket.CustomTarget( 0 );
 }
 
 /** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, myTarget )
 {
-	var pUser = socket.currentChar;
 	var iPowder = socket.tempObj;
-
 	if( !socket.GetWord( 1 ) && myTarget.isItem && ( myTarget.sectionID == "bagofsending" || myTarget.sectionID == "crystalballofpetsummoning" ))
 	{
 		var chargeTag = myTarget.GetTag("charges");
 		if( !chargeTag )
-			return false;
+			return;
 
 		var myCharges = chargeTag.split("|");
 		if( myCharges.length != 3 )
-			return false;
+			return;
 
 		var charges = parseInt( myCharges[0] );
 		var reCharges = parseInt( myCharges[1] );
@@ -31,7 +34,7 @@ function onCallback0( socket, myTarget )
 		if( charges >= maxCharges )
 		{
 			socket.SysMessage( GetDictionaryEntry( 19081, socket.language )); //  This item cannot absorb any more powder of translocation.
-			return false;
+			return;
 		}
 
 		var maxReCharges = maxCharges - charges;
@@ -41,7 +44,7 @@ function onCallback0( socket, myTarget )
 			if( maxReCharges == 0 )
 			{
 				socket.SysMessage( GetDictionaryEntry( 19082, socket.language )); //  This item has been oversaturated with powder of translocation and can no longer be recharged.
-				return false;
+				return;
 			}
 		}
 
@@ -67,6 +70,6 @@ function onCallback0( socket, myTarget )
 	else
 	{
 		socket.SysMessage( GetDictionaryEntry( 19084, socket.language )); //  Powder of translocation has no effect on this item.
-		return false;
+		return;
 	}
 }

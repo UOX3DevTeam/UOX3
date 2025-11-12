@@ -4,14 +4,14 @@
 
 function TreasureDigging( pUser )
 {
-	var socket = pUser.socket;
+	var pSocket = pUser.socket;
 	if( pUser.GetTempTag( "digging" ) == 1 )
 	{
-		socket.SysMessage( GetDictionaryEntry( 5706, socket.language ));// You are already digging treasure.
+		pSocket.SysMessage( GetDictionaryEntry( 5706, pSocket.language ));// You are already digging treasure.
 		return false;
 	}
 	else
-		socket.CustomTarget(0, GetDictionaryEntry( 5707, socket.language ));//Where do you wish to dig?
+		pSocket.CustomTarget(0, GetDictionaryEntry( 5707, pSocket.language ));//Where do you wish to dig?
 }
 
 /** @type { ( tSock: Socket, target: Character | Item | null ) => void } */

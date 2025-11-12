@@ -13,26 +13,26 @@ const spellBookRewardOverride = false;
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
-	var socket = pUser.socket;
-	if( socket == null || !ValidateObject( iUsed ))
+	var pSocket = pUser.socket;
+	if( pSocket == null || !ValidateObject( iUsed ))
 		return false;
 
 
 	var itemPack = GetPackOwner( iUsed, 0 );
 	if( iUsed.owner != pUser || parseInt( iUsed.GetTag( "ticketUsableBy" )) != pUser.serial )
 	{
-		pUser.SysMessage( GetDictionaryEntry( 18747, socket.language )); // This isn't your ticket! Shame on you! You have to use YOUR ticket.
+		pSocket.SysMessage( GetDictionaryEntry( 18747, pSocket.language )); // This isn't your ticket! Shame on you! You have to use YOUR ticket.
 	}
 	else if( itemPack == null || itemPack.serial != pUser.serial )
 	{
-		pUser.SysMessage( GetDictionaryEntry( 18748, socket.language )); // That must be in your pack for you to use it.
+		pSocket.SysMessage( GetDictionaryEntry( 18748, pSocket.language )); // That must be in your pack for you to use it.
 	}
 	else
 	{
 		// Keep a reference to the ticket used
 		pUser.SetTempTag( "youngTicketSerial", ( iUsed.serial ).toString() );
-		socket.tempObj = iUsed;
-		pUser.socket.CustomTarget( 0, GetDictionaryEntry( 18749, socket.language )); // Target any other ticket marked NEW PLAYER to win a prize.
+		pSocket.tempObj = iUsed;
+		pSocket.CustomTarget( 0, GetDictionaryEntry( 18749, pSocket.language )); // Target any other ticket marked NEW PLAYER to win a prize.
 	}
 	return false;
 }
@@ -64,7 +64,7 @@ function onCallback0( socket, myTarget )
 			else if( itemOwner == null || itemOwner.serial != pUser.serial )
 			{
 				// Don't allow using a ticket outside of backpack
-				pUser.SysMessage( GetDictionaryEntry( 18751, socket.language )); // The item must be in your backpack to use it.
+				socket.SysMessage( GetDictionaryEntry( 18751, socket.language )); // The item must be in your backpack to use it.
 				return;
 			}
 			else if( myTarget.sectionID == "newplayerticket" )

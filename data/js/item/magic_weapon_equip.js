@@ -12,6 +12,7 @@ const magicWeaponSpellScriptID = 3305;
 function onEquip( pEquipper, iEquipped )
 {
 	pEquipper.AddScriptTrigger( magicWeaponSpellScriptID );
+	return false;
 }
 
 // Remove script trigger on unequip
@@ -19,6 +20,7 @@ function onEquip( pEquipper, iEquipped )
 function onUnequip( pUnequipper, iUnequipped )
 {
 	pUnequipper.RemoveScriptTrigger( magicWeaponSpellScriptID );
+	return false;
 }
 
 // Display amount of charges left on magic weapon in item tooltips
