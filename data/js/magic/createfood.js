@@ -5,7 +5,7 @@ function SpellRegistration()
 	RegisterSpell( 2, true );	// Create Food, ID from spells.dfn
 }
 
-/** @type { ( tChar: Character, SpellId: number ) => number } */
+/** @type { ( sock: Socket, tChar: Character, direct: boolean, SpellId: number ) => boolean } */
 function onSpellCast( mSock, mChar, directCast, spellNum )
 {
 	// Are we recovering from another spell that was just cast
