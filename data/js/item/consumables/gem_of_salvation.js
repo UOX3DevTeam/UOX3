@@ -33,9 +33,11 @@ function onDeath( pDead, iCorpse )
 // Display self-resurrection gump to player because they had a Gem of Salvation in their inventory on death
 function DisplayResurrectGump( pDead )
 {
-	var pSocket = pDead.socket;
-	if( pSocket == null )
+	var pSock = pDead.socket;
+	if( pSock == null )
 		return;
+
+	var pLang = pSock.language;
 
 	var gemResurrectGump = new Gump;
 	gemResurrectGump.NoClose();
@@ -43,18 +45,18 @@ function DisplayResurrectGump( pDead )
 	gemResurrectGump.AddPage( 0 );
 	gemResurrectGump.AddBackground( 0, 0, 400, 350, 2600 );
 
-	gemResurrectGump.AddHTMLGump( 0, 20, 400, 35, 0, 0, ( "<CENTER>" + GetDictionaryEntry( 18502, pSocket.language ) + "</CENTER>" )); // Resurrection
+	gemResurrectGump.AddHTMLGump( 0, 20, 400, 35, 0, 0, ( "<CENTER>" + GetDictionaryEntry( 18502, pLang ) + "</CENTER>" )); // Resurrection
 
 	// It is possible for you to be resurrected here by this healer. Do you wish to try?<br>CONTINUE - You chose to try to come back to life now.<br>CANCEL - You prefer to remain a ghost for now.
-	gemResurrectGump.AddHTMLGump( 50, 55, 300, 140, 0, 0, "<CENTER>" + GetDictionaryEntry( 18503, pSocket.language ) + "</CENTER>" );
+	gemResurrectGump.AddHTMLGump( 50, 55, 300, 140, 0, 0, "<CENTER>" + GetDictionaryEntry( 18503, pLang ) + "</CENTER>" );
 
 	gemResurrectGump.AddButton( 200, 227, 4005, 4007, 1, 0, 0 ); // CANCEL
-	gemResurrectGump.AddHTMLGump( 235, 230, 110, 35, 0, 0, "<CENTER>" + GetDictionaryEntry( 2709, pSocket.language ) + "</CENTER>" );
+	gemResurrectGump.AddHTMLGump( 235, 230, 110, 35, 0, 0, "<CENTER>" + GetDictionaryEntry( 2709, pLang ) + "</CENTER>" );
 
 	gemResurrectGump.AddButton( 65, 227, 4005, 4007, 1, 0, 1 ); // CONTINUE
-	gemResurrectGump.AddHTMLGump( 100, 230, 110, 35, 0, 0, "<CENTER>" + GetDictionaryEntry( 2708, pSocket.language ) + "</CENTER>" );
+	gemResurrectGump.AddHTMLGump( 100, 230, 110, 35, 0, 0, "<CENTER>" + GetDictionaryEntry( 2708, pLang ) + "</CENTER>" );
 
-	gemResurrectGump.Send( pSocket );
+	gemResurrectGump.Send( pSock );
 	gemResurrectGump.Free();
 }
 
