@@ -5,7 +5,11 @@ var moonPhase = new Array( "a full moon", "waning gibbous", "in it's last quarte
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
-	pUser.TextMessage( GetDictionaryEntry( 2757, pUser.socket.language ), false, 0x03b2 ); // You peer into the heavens, seeking the moons...
+	var pSocket = pUser.socket;
+	if( pSocket == null )
+		return false;
+
+	pUser.TextMessage( GetDictionaryEntry( 2757, pSocket.language ), false, 0x03b2 ); // You peer into the heavens, seeking the moons...
 	pUser.TextMessage( "Trammel : " + moonPhase[Moon( 1 )], false, 0x03b2 );
 	pUser.TextMessage( "Felucca : " + moonPhase[Moon( 0 )], false, 0x03b2 );
 	return false;

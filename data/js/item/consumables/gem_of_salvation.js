@@ -61,16 +61,16 @@ function DisplayResurrectGump( pDead )
 }
 
 /** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
-function onGumpPress( pSock, pButton, gumpData )
+function onGumpPress( pSocket, pButton, gumpData )
 {
-	var pDead = pSock.currentChar;
+	var pDead = pSocket.currentChar;
 
 	// Don't continue if character is invalid
 	if( !ValidateObject( pDead ))
 		return;
 
-	var gemOfSalvation = pSock.tempObj;
-	pSock.tempObj = null;
+	var gemOfSalvation = pSocket.tempObj;
+	pSocket.tempObj = null;
 	if( !ValidateObject( gemOfSalvation ))
 	{
 		return;
@@ -83,7 +83,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		case 1: // Resurrect
 			pDead.SoundEffect( 0x0214, true );
 			pDead.Resurrect();
-			pDead.SysMessage( GetDictionaryEntry( 18501, pSock.language )); // The gem infuses you with its power and is destroyed in the process.
+			pSocket.SysMessage( GetDictionaryEntry( 18501, pSocket.language )); // The gem infuses you with its power and is destroyed in the process.
 
 			// Store a timestamp for when Gem of Salvation was last used
 			pDead.SetTag( "lastUsedGoS", Math.round( Date.now() / 1000 ).toString() );

@@ -229,7 +229,7 @@ function onTimer( mChar, timerID )
 
 	if( mChar.npc )
 	{
-		onSpellSuccess( null, mChar, ourTarg );
+		SuccessfulSpellCast( mChar, ourTarg );
 	}
 	else
 	{
@@ -237,14 +237,15 @@ function onTimer( mChar, timerID )
 		if( mSock != null )
 		{
 			mChar.SetTimer( Timer.SPELLRECOVERYTIME, Spells[mChar.spellCast].recoveryDelay );
-			onSpellSuccess( mSock, mChar, ourTarg );
+			SuccessfulSpellCast( mChar, ourTarg );
 		}
 	}
 }
 
 /** @type { ( tChar: Character, SpellId: number ) => boolean } */
-function onSpellSuccess( mSock, mChar, ourTarg )
+function SuccessfulSpellCast(mChar, ourTarg )
 {
+	var mSock = mChar.socket;
 	if( mChar.isCasting )
 		return;
 

@@ -293,7 +293,7 @@ function onTimer( mChar, timerID )
 		var ourTarg = mChar.target;
 		if( ourTarg && ourTarg.isChar )
 		{
-			onSpellSuccess( null, mChar, ourTarg, timerID );
+			SuccessfulSpellCast( null, mChar, ourTarg, timerID );
 		}
 	}
 	else
@@ -341,7 +341,7 @@ function onCallback0( mSock, ourTarg )
 			}
 		}
 
-		onSpellSuccess( mSock, mChar, ourTarg, 0 );
+		SuccessfulSpellCast( mSock, mChar, ourTarg, 0 );
 	}
 	else
 	{
@@ -354,7 +354,7 @@ function onCallback0( mSock, ourTarg )
 }
 
 /** @type { ( tChar: Character, SpellId: number ) => boolean } */
-function onSpellSuccess( mSock, mChar, ourTarg, spellID )
+function SuccessfulSpellCast( mSock, mChar, ourTarg, spellID )
 {
 
 	if( mChar.isCasting )
