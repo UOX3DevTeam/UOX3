@@ -14,6 +14,7 @@ id=0x42C6
 weight=100
 decay=1
 script=5302
+SCRIPT=5303//vet reward tooltips
 newbie
 origin=hs
 custominttag=vetRewardYear 11

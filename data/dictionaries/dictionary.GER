@@ -3538,6 +3538,24 @@
 6321=Es sieht so aus, als wäre diese Klinge mit einer säurehaltigen Substanz bedeckt.
 6322=Es sieht so aus, als wäre diese Klinge mit einer ätzenden Substanz bedeckt.
 6323=Es sieht so aus, als wäre diese Klinge mit einer leicht ätzenden Substanz bedeckt.
+// [6500-6520] Skripte für Ätherische Reittiere
+6500=Du kannst dein Ätherisches Reittier nicht absteigen, weil dein Rucksack es nicht aufnehmen kann.
+6501=Dies muss in der obersten Schicht deines Rucksacks sein, um es zu benutzen.
+6502=Du musst den Zauber beenden, bevor du einen anderen benutzt.
+6503=Gargoyles können keine Tiere reiten.
+6504=Bitte steige zuerst ab.
+6505=Das kannst du nicht tun, während du verwandelt bist.
+6506=Du kannst gerade kein Reittier herbeirufen.
+6507=Dein Versuch, dein Ätherisches Reittier zu beschwören, wurde unterbrochen!
+6508=Du beschwörst dein Ätherisches Reittier.
+6509=Du musst den Gegenstand in deinem Rucksack haben, um ihn zu benutzen.
+6510=Ziele das Ätherische Reittier, das du erneut berühren möchtest.
+6511=Das muss in deinem Rucksack sein, damit du es verwenden kannst.
+6512=Das ist kein gültiges Ziel.
+6513=Du musst den Gegenstand in deinem Rucksack haben, um ihn anzvisieren.
+6514=Du kannst diesen Gegenstand dafür nicht verwenden.
+6515=Der Körper deines Ätherischen Reittiers wurde verfestigt.
+6516=Die Transparenz deines Ätherischen Reittiers wurde wiederhergestellt.
 // [7000-7499] AI Scripts
 7000=Du bist ein Verbrecher und kannst nicht auf dein Bankschließfach zugreifen.
 7001=Welchen Gegenstand möchten Sie in Ihr Bankschließfach einzahlen?

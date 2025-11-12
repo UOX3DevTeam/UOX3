@@ -3538,6 +3538,24 @@
 6321=Sembra che questa lama sia ricoperta da una sostanza acida.
 6322=Sembra che questa lama contenga un elemento corrosivo.
 6323=Sembra che questa lama contenga un leggero elemento corrosivo.
+// [6500-6520] Script per la Cavalcatura Eterea
+6500=Non puoi scendere dalla tua cavalcatura eterea perché il tuo inventario non può contenerla.
+6501=Deve trovarsi nello strato superiore del tuo inventario per poterla utilizzare.
+6502=Devi terminare l'incantesimo in corso prima di usarne un altro.
+6503=I gargoyle non possono cavalcare animali.
+6504=Per favore, scendi prima.
+6505=Non puoi farlo mentre sei polimorfato.
+6506=Non puoi evocare una cavalcatura in questo momento.
+6507=Sei stato interrotto mentre tentavi di evocare la tua cavalcatura eterea!
+6508=Evocchi il tuo destriero etereo.
+6509=Devi avere l'oggetto nel tuo zaino per poterlo usare.
+6510=Seleziona la cavalcatura eterea che vuoi ritoccare.
+6511=Deve trovarsi nel tuo inventario per poterlo usare.
+6512=Non è un obiettivo valido.
+6513=Devi avere l'oggetto nel tuo zaino per poterlo selezionare.
+6514=Non puoi usare questo oggetto per questo.
+6515=Il corpo della tua cavalcatura eterea è stato solidificato.
+6516=La trasparenza della tua cavalcatura eterea è stata ripristinata.
 // [7000-7499] AI Scripts
 7000=Tu sei un criminale e non puoi accedere alla tua cassaforte.
 7001=Quale oggetto desidera depositare nella sua cassetta di sicurezza?

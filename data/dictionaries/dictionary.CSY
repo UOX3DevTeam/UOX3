@@ -3536,6 +3536,24 @@
 6321=Vypadá to, jako by byla čepel pokryta kyselou látkou.
 6322=Vypadá to, jako by na čepeli byla korozivní látka.
 6323=Vypadá to, jako by na čepeli byla slabě korozivní látka.
+// [6500-6520] Skripty pro éterická jezdectví  
+6500=Nemůžete sesednout ze svého éterického zvířete, protože váš batoh nemůže pojmout předmět  
+6501=Toto musí být v horní vrstvě vašeho batohu, abyste jej mohli použít.  
+6502=Musíte dokončit sesílání kouzla, než použijete další.  
+6503=Gargoylové nemohou jezdit na zvířatech.  
+6504=Nejprve, prosím, sesedněte.  
+6505=To nemůžete udělat, když jste polymorfováni.  
+6506=Právě nyní nemůžete povolat jezdce.  
+6507=Při pokusu o povolání vašeho éterického jezdce jste byli přerušeni!  
+6508=Povoláváte svého éterického oře.  
+6509=Abyste jej mohli použít, musíte mít předmět ve svém batohu.  
+6510=Cílujte éterického jezdce, kterého chcete znovu upravit.  
+6511=Mělo by to být ve vašem batohu, abyste to mohli použít.  
+6512=To není platný cíl.  
+6513=Abyste mohli cílit, musíte mít předmět ve svém batohu.  
+6514=Nemůžete tento předmět použít k tomuto účelu.  
+6515=Tělo vašeho éterického jezdce bylo ztuhlé.  
+6516=Průhlednost vašeho éterického jezdce byla obnovena.
 // [7000-7499] AI Scripts
 7000=Jsi zločinec a nemáš přístup ke své bankovní schránce.
 7001=Který předmět si přeješ uložit do své bankovní schránky?

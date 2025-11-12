@@ -1,9 +1,14 @@
 function onCharDoubleClick( pUser, targChar )
 {
 	var pPack = pUser.pack;
+	var pSocket = pUser.socket;
+
+	if( pSocket == null )
+		return false;
+
 	if( pPack.totalItemCount >= pPack.maxItems || pPack.weight >= pPack.weightMax )
 	{
-		pSocket.SysMessage( "You cannot dismount your ethereal because your pack cannot hold it" ); // You cannot dismount your ethereal because your pack cannot hold it
+		pSocket.SysMessage( GetDictionaryEntry( 6500, pSocket.language )); // You cannot dismount your ethereal because your pack cannot hold it
 	}
 	else
 	{
@@ -91,5 +96,3 @@ function DismountEtherealMount( pUser )
 		}
 	}
 }
-
-function _restorecontext_() {}

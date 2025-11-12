@@ -3537,6 +3537,24 @@
 6321=It looks as if this blade is covered with an acidic substance.
 6322=It looks like this blade has a corrosive element on it.
 6323=It looks like this blade has a light corrosive element on it.
+// [6500-6520] Ethereal Mount Scripts
+6500=You cannot dismount your ethereal because your pack cannot hold i
+6501=This must be in the top layer of your pack to use it.
+6502=You must finish casting before using another one.
+6503=Gargoyles are unable to ride animals.
+6504=Please dismount first.
+6505=You can't do that while polymorphed.
+6506=You cannot summon a mount right now.
+6507=You have been disrupted while attempting to summon your ethereal mount!
+6508=You summon your ethereal steed.
+6509=You must have the object in your backpack to use it.
+6510=Target the ethereal mount you wish to retouch.
+6511=That must be in your pack for you to use it.
+6512=That is not a valid target.
+6513=You must have the item in your backpack to target it.
+6514=You cannot use this item for it.
+6515=Your ethereal mount's body has been solidified.
+6516=Your ethereal mount's transparency has been restored.
 // [7000-7499] AI Scripts
 7000=Thou art a criminal and cannot access thy bank box.
 7001=Which item do you wish to deposit in your bank box?

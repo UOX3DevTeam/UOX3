@@ -3702,6 +3702,24 @@
 6321=On dirait que cette lame est recouverte d'une substance acide.
 6322=On dirait que cette lame contient un élément corrosif.
 6323=On dirait que cette lame contient un élément légèrement corrosif.
+// [6500-6520] Scripts de monture éthérée
+6500=Vous ne pouvez pas descendre de votre éthérée car votre sac ne peut pas la contenir
+6501=Cet objet doit être dans la couche supérieure de votre sac pour être utilisé.
+6502=Vous devez terminer votre incantation avant d'en utiliser une autre.
+6503=Les gargouilles ne peuvent pas monter d'animaux.
+6504=Veuillez descendre d'abord.
+6505=Vous ne pouvez pas faire cela tout en étant polymorphé.
+6506=Vous ne pouvez pas invoquer une monture pour le moment.
+6507=Vous avez été interrompu en tentant d'invoquer votre monture éthérée !
+6508=Vous invoquez votre monture éthérée.
+6509=Vous devez avoir l'objet dans votre sac pour l'utiliser.
+6510=Visez la monture éthérée que vous souhaitez retoucher.
+6511=Cela doit être dans votre sac pour que vous puissiez l'utiliser.
+6512=Ce n'est pas une cible valide.
+6513=Vous devez avoir l'objet dans votre sac pour le cibler.
+6514=Vous ne pouvez pas utiliser cet objet pour cela.
+6515=Le corps de votre monture éthérée a été solidifié.
+6516=La transparence de votre monture éthérée a été restaurée.
 // [7000-7499] AI Scripts
 7000=Tu es un criminel et tu ne peux pas accéder à ton coffre de banque.
 7001=Quel objet souhaitez-vous déposer dans votre coffret bancaire ?

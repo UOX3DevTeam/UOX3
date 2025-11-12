@@ -3538,6 +3538,24 @@
 6321=Parece que esta lâmina está coberta por uma substância ácida.
 6322=Parece que esta lâmina tem um elemento corrosivo.
 6323=Parece que esta lâmina tem um elemento corrosivo leve.
+// [6500-6520] Scripts de Montaria Etérea
+6500=Não pode desmontar o seu etéreo porque a sua mochila não consegue segurá-lo
+6501=Isto deve estar na camada superior da sua mochila para o usar.
+6502=Deve terminar de conjurar antes de usar outro.
+6503=As gárgulas não conseguem montar animais.
+6504=Por favor, desmonte primeiro.
+6505=Não pode fazer isso enquanto estiver transformado.
+6506=Não pode invocar uma montaria neste momento.
+6507=Foi interrompido ao tentar invocar o seu montaria etérea!
+6508=Convoca o seu corcel etéreo.
+6509=Deve ter o objeto na sua mochila para o usar.
+6510=Selecione a montaria etérea que deseja voltar a tocar.
+6511=Isso deve estar na sua mochila para poder usá-lo.
+6512=Esse não é um alvo válido.
+6513=Deve ter o item na sua mochila para o selecionar.
+6514=Não pode usar este item para isso.
+6515=O corpo da sua montaria etérea foi solidificado.
+6516=A transparência da sua montaria etérea foi restaurada.
 // [7000-7499] AI Scripts
 7000=Tu és um criminoso e não podes aceder à tua caixa bancária.
 7001=Que artigo deseja depositar na sua caixa bancária?

@@ -3538,6 +3538,24 @@
 6321=Wygląda, jakby ostrze było pokryte kwaśną substancją.
 6322=Wygląda, jakby ostrze zawierało substancję żrącą.
 6323=Wygląda, jakby ostrze zawierało niewielką ilość substancji żrącej.
+// [6500-6520] Skrypty Niebiańskiego Rumaka
+6500=Nie możesz zejść z niebiańskiego rumaka, ponieważ twój ekwipunek nie może tego pomieścić.
+6501=Aby go użyć, musi znajdować się w górnej warstwie twojego ekwipunku.
+6502=Musisz zakończyć rzucanie czaru, zanim użyjesz kolejnego.
+6503=Gargulce nie mogą jeździć na zwierzętach.
+6504=Proszę najpierw zejść z rumaka.
+6505=Nie możesz tego zrobić, będąc przemienionym.
+6506=Nie możesz teraz przywołać rumaka.
+6507=Twoja próba przywołania niebiańskiego rumaka została przerwana!
+6508=Przywołujesz swojego niebiańskiego konia.
+6509=Musisz mieć przedmiot w plecaku, aby go użyć.
+6510=Wybierz niebiańskiego rumaka, którego chcesz odnowić.
+6511=To musi znajdować się w twoim plecaku, abyś mógł tego użyć.
+6512=To nie jest prawidłowy cel.
+6513=Musisz mieć przedmiot w plecaku, aby na niego wskazać.
+6514=Nie możesz użyć tego przedmiotu w tym celu.
+6515=Ciało twojego niebiańskiego rumaka zostało upostaciowione.
+6516=Przezroczystość twojego niebiańskiego rumaka została przywrócona.
 // [7000-7499] AI Scripts
 7000=Jesteś przestępcą i nie masz dostępu do swojej skrytki bankowej.
 7001=Którą pozycję chcesz umieścić w swojej skrytce bankowej?

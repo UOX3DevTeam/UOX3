@@ -1,7 +1,7 @@
 const maxControlSlots = GetServerSetting( "MaxControlSlots" );
 // maxFollowers only comes into play if maxControlSlots is set to 0 in UOX.INI
 const maxFollowers = GetServerSetting( "MaxFollowers" );
-const coreShardEra = EraStringToNum(GetServerSetting("CoreShardEra"));
+const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ) );
 
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
@@ -13,65 +13,68 @@ function onUseChecked( pUser, iUsed )
 
 	// Find owner of root container iUsed is contained in, if any
 	var packOwner = GetPackOwner( iUsed, 0 );
-	var socket = pUser.socket;
+	var pSocket = pUser.socket;
+	if( pSocket == null || !ValidateObject( pUser ))
+		return false;
+
 	var etherealMount = pUser.FindItemLayer( 0x19 );
 
 	if( packOwner == null && packOwner.serial != pUser.serial )
 	{
-		socket.SysMessage( "This must be in the top layer of your pack to use it." );// This must be in the top layer of your pack to use it.
-		return;
+		pSocket.SysMessage( GetDictionaryEntry( 6501, pSocket.language ));// This must be in the top layer of your pack to use it.
+		return false;
 	}
 
 	if( delayed )
 	{
-		socket.SysMessage( "You must finish casting before using another one." );// You must finish casting before using another one.
-		return;
+		pSocket.SysMessage( GetDictionaryEntry( 6502, pSocket.language ));// You must finish casting before using another one.
+		return false;
 	}
 
 	NextUse = NextUse != null ? parseInt( NextUse ) : 0;
 
 	if(( iTime - NextUse ) < Delay )
 	{
-		pUser.SysMessage( "You must finish casting before using another one." );// You must finish casting before using another one.
-		return;
+		pSocket.SysMessage( GetDictionaryEntry( 6502, pSocket.language ));// You must finish casting before using another one.
+		return false;
 	}
 
 	if( pUser.race == 2 )
 	{
-		socket.SysMessage( "Gargoyles are unable to ride animals." );// Gargoyles are unable to ride animals.
-		return;
+		pSocket.SysMessage( GetDictionaryEntry( 6503, pSocket.language ));// Gargoyles are unable to ride animals.
+		return false;
 	}
 
 	if( etherealMount != null )
 	{
-		socket.SysMessage( "Please dismount first." );// Please dismount first.
-		return;
+		pSocket.SysMessage( GetDictionaryEntry( 6504, pSocket.language ));// Please dismount first.
+		return false;
 	}
 
 	if( pUser.isPolymorphed )
 	{
-		socket.SysMessage( "You can't do that while polymorphed." );// You can't do that while polymorphed.
-		return;
+		pSocket.SysMessage( GetDictionaryEntry( 6505, pSocket.language ));// You can't do that while polymorphed.
+		return false;
 	}
 
 	if( pUser.frozen || pUser.dead )
 	{
-		socket.SysMessage( "You cannot summon a mount right now." );// You cannot summon a mount right now.
-		return;
+		pSocket.SysMessage( GetDictionaryEntry( 6506, pSocket.language ));// You cannot summon a mount right now.
+		return false;
 	}
 
 	if( maxControlSlots > 0 )
 	{
 		if( pUser.controlSlotsUsed + 1 > maxControlSlots )
 		{
-			socket.SysMessage( GetDictionaryEntry( 2390, socket.language )); // That would exceed your maximum pet control slots.
-			return;
+			pSocket.SysMessage( GetDictionaryEntry( 2390, socket.language )); // That would exceed your maximum pet control slots.
+			return false;
 		}
 	}
 	else if( maxFollowers > 0 && ( pUser.followerCount + 1 > maxFollowers ))
 	{
-		socket.SysMessage( GetDictionaryEntry( 2400, socket.language )); // You have too many followers already!
-		return;
+		pSocket.SysMessage( GetDictionaryEntry( 2400, socket.language )); // You have too many followers already!
+		return false;
 	}
 
 	// Apply spell delay
@@ -96,10 +99,14 @@ function onUseChecked( pUser, iUsed )
 /** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( pUser, timerID )
 {
-	var socket = pUser.socket;
+
+	var pSocket = pUser.socket;
+	if( pSocket == null )
+		return;
+
 	if( pUser.atWar || pUser.attacker != null)
 	{
-		socket.SysMessage( "You have been disrupted while attempting to summon your ethereal mount!" ); // You have been disrupted while attempting to summon your ethereal mount!
+		pSocket.SysMessage( GetDictionaryEntry( 6507, pSocket.language )); // You have been disrupted while attempting to summon your ethereal mount!
 		pUser.SetTag( "EtherealMountStatueSerial", null );
 		pUser.SetTag( "EtherealMountSectionID", null );
 		pUser.frozen = false;
@@ -108,7 +115,7 @@ function onTimer( pUser, timerID )
 
 	if( pUser.dead )
 	{
-		socket.SysMessage( "You have been disrupted while attempting to summon your ethereal mount!" ); // You have been disrupted while attempting to summon your ethereal mount!
+		pSocket.SysMessage( GetDictionaryEntry( 6507, pSocket.language )); // You have been disrupted while attempting to summon your ethereal mount!
 		pUser.SetTag( "EtherealMountStatueSerial", null );
 		pUser.SetTag( "EtherealMountSectionID", null );
 		pUser.frozen = false;
@@ -170,7 +177,6 @@ function onTimer( pUser, timerID )
 
 		if( !statueData )
 		{
-			pUser.SysMessage( "Unknown etherealSectionID: " + etherealSectionID );
 			pUser.SetTag( "EtherealMountStatueSerial", null );
 			pUser.SetTag( "EtherealMountSectionID", null );
 			pUser.frozen = false;
@@ -221,9 +227,7 @@ function onTimer( pUser, timerID )
 		pUser.SetTag( "EtherealMountSectionID", null );
 		pUser.frozen = false;
 		pUser.AddScriptTrigger( 5301 );
-		socket.SysMessage( "You summon your ethereal steed." );
+		pSocket.SysMessage( GetDictionaryEntry( 6508, pSocket.language )); // You summon your ethereal steed.
 		etherealStatuette.Delete();
 	}
 }
-
-function _restorecontext_() {}
