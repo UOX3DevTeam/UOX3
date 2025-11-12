@@ -45,8 +45,8 @@ function onCreateDFN( objMade, objType )
 function onUseChecked( pUser, smallBOD )
 {
 	var gumpID = scriptID + 0xffff;
-	var socket = pUser.socket;
-	if( socket == null )
+	var pSocket = pUser.socket;
+	if( pSocket == null )
 		return false;
 
 	if( pUser.InRange( pUser, 2 ))
@@ -60,7 +60,7 @@ function onUseChecked( pUser, smallBOD )
 		// Check to see if it's locked down
 		if( smallBOD.movable == 3 )
 		{
-			socket.SysMessage( GetDictionaryEntry( 774, socket.language )); //That is locked down and you cannot use it
+			pSocket.SysMessage( GetDictionaryEntry( 774, pSocket.language )); //That is locked down and you cannot use it
 			return false;
 		}
 		else 
@@ -96,7 +96,7 @@ function onUseChecked( pUser, smallBOD )
 			}
 
 			smallBOD.Refresh();
-			socket.CloseGump( gumpID, 0 );
+			pSocket.CloseGump( gumpID, 0 );
 			SmallBODGump( pUser, smallBOD );
 		}
 	}
@@ -110,7 +110,7 @@ function SmallBODGump( pUser, smallBOD )
 	var graphicID 		= smallBOD.GetTag( "graphicID" ); // graphicID of the item set when item is created
 	var reqExceptional 	= smallBOD.GetTag( "reqExceptional" ); // flag that specifies whether item has to be exceptional or not
 	var materialColor	= smallBOD.GetTag( "materialColor" ); // color of primary resource required to craft item
-	var socket = pUser.socket;
+	var pSocket = pUser.socket;
 	var bodGump = new Gump;
 
 	pUser.bodItem = smallBOD; // Store BOD on the user for access in callbacks.
@@ -125,34 +125,34 @@ function SmallBODGump( pUser, smallBOD )
 	bodGump.AddGump( 45, 245, 10460 );
 	bodGump.AddGump( 480, 245, 10460 );
 
-	bodGump.AddHTMLGump( 225, 25, 120, 20, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 17250, socket.language ) + "</basefont>" ); // A bulk order
+	bodGump.AddHTMLGump( 225, 25, 120, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17250, pSocket.language ) + "</basefont>" ); // A bulk order
 
-	bodGump.AddHTMLGump( 75, 48, 250, 20, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 17251, socket.language ) + "</basefont>"); // Amount to make:
+	bodGump.AddHTMLGump( 75, 48, 250, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17251, pSocket.language ) + "</basefont>"); // Amount to make:
 	bodGump.AddText( 275, 48, 1152, amountMax );
 
-	bodGump.AddHTMLGump( 275, 76, 200, 20, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 17252, socket.language ) + "</basefont>"); // Amount finished:
+	bodGump.AddHTMLGump( 275, 76, 200, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17252, pSocket.language ) + "</basefont>"); // Amount finished:
 	bodGump.AddText( 275, 96, 0x480, amountCur );
 
-	bodGump.AddHTMLGump( 75, 72, 120, 20, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 17253, socket.language ) + "</basefont>" ); // Item requested:
+	bodGump.AddHTMLGump( 75, 72, 120, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17253, pSocket.language ) + "</basefont>" ); // Item requested:
 
 	if( reqExceptional )
 	{
-		bodGump.AddHTMLGump( 75, 96, 210, 20, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 17254, socket.language ) + " " + itemName + "</basefont>");// exceptional
+		bodGump.AddHTMLGump( 75, 96, 210, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17254, pSocket.language ) + " " + itemName + "</basefont>");// exceptional
 	}
 	else
 	{
-		bodGump.AddHTMLGump( 75, 96, 210, 20, 0, 0, "<basefont color=#ffffff>" + itemName + "</basefont>");
+		bodGump.AddHTMLGump( 75, 96, 210, 20, false, false, "<basefont color=#ffffff>" + itemName + "</basefont>");
 	}
 
 	bodGump.AddPicture( 410, 72, graphicID );// image of the item requested
 	if( reqExceptional || materialColor > 0 )
 	{
-		bodGump.AddHTMLGump( 75, 120, 200, 20, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 17255, socket.language ) + "</basefont>" ); // Special requirements to meet:
+		bodGump.AddHTMLGump( 75, 120, 200, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17255, pSocket.language ) + "</basefont>" ); // Special requirements to meet:
 	}
 
 	if( reqExceptional )
 	{
-		bodGump.AddHTMLGump( 75, 144, 300, 20, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 17256, socket.language ) + "</basefont>"); // All items must be exceptional.
+		bodGump.AddHTMLGump( 75, 144, 300, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17256, pSocket.language ) + "</basefont>"); // All items must be exceptional.
 	}
 
 	if( materialColor > 0 ) // checks to see if a material is required for the bod.
@@ -201,15 +201,15 @@ function SmallBODGump( pUser, smallBOD )
 		}
 		if( materialName != "" )
 		{
-			bodGump.AddHTMLGump( 75, y, 300, 20, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 17257, socket.language ) + " " + materialName + " material</basefont>" ); // All items must be made with 
+			bodGump.AddHTMLGump( 75, y, 300, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17257, pSocket.language ) + " " + materialName + " material</basefont>" ); // All items must be made with 
 		}
 	}
 
 	bodGump.AddButton( 125, 192, 4005, 4007, 1, 0, 1 );
-	bodGump.AddHTMLGump( 160, 192, 300, 20, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 17258, socket.language ) + "</basefont>" ); // Combine this deed with the item requested.
+	bodGump.AddHTMLGump( 160, 192, 300, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17258, pSocket.language ) + "</basefont>" ); // Combine this deed with the item requested.
 
 	bodGump.AddButton( 125, 216, 4005, 4007, 1, 0, 0 );
-	bodGump.AddHTMLGump( 160, 216, 120, 20, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10290, socket.language ) + "</basefont>" ); // EXIT
+	bodGump.AddHTMLGump( 160, 216, 120, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 10290, pSocket.language ) + "</basefont>" ); // EXIT
 
 	bodGump.Send( pUser );
 	bodGump.Free();
@@ -234,13 +234,13 @@ function onGumpPress( socket, pButton, gumpData )
 
 function CombineItemWithBod( pUser, smallBOD )
 {
-	var socket = pUser.socket;
+	var pSocket = pUser.socket;
 	var amountMax = smallBOD.GetTag( "amountMax" ); // amount you have to make of the item
 	var amountCur = smallBOD.GetTag( "amountCur" ); // amount you have combined
 
 	if( amountCur >= amountMax )
 	{
-		pUser.TextMessage( GetDictionaryEntry( 17260, socket.language ), false, 0x3b2, 0, pUser.serial ); // The maximum amount of requested items have already been combined to this deed.
+		pUser.TextMessage( GetDictionaryEntry( 17260, pSocket.language ), false, 0x3b2, 0, pUser.serial ); // The maximum amount of requested items have already been combined to this deed.
 		return;
 	}
 	else
