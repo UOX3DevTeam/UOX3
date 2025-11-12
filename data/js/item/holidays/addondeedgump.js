@@ -7,14 +7,17 @@ This file is here for you to have a gump with placing single item addons, exampl
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
-	var socket = pUser.socket;
-	socket.tempObj = iUsed;
+	var pSocket = pUser.socket;
+	if( pSocket == null )
+		return false;
+
+	pSocket.tempObj = iUsed;
 	var iMulti = pUser.multi;
 	var itemOwner = GetPackOwner( iUsed, 0 );
 
 	if( itemOwner == null || itemOwner.serial != pUser.serial ) 
 	{
-		socket.SysMessage( GetDictionaryEntry( 1763, socket.language )); // The item must be in your backpack to use it.
+		pSocket.SysMessage( GetDictionaryEntry( 1763, pSocket.language )); // The item must be in your backpack to use it.
 		return false;
 	}
 
@@ -25,14 +28,14 @@ function onUseChecked( pUser, iUsed )
 	}
 	else
 	{
-		socket.SysMessage(GetDictionaryEntry( 2067, socket.language )); // You must be in your house to do this.
+		pSocket.SysMessage(GetDictionaryEntry( 2067, pSocket.language )); // You must be in your house to do this.
 		return false;
 	}
 }
 
 function AddonGump( pUser, iUsed )
 {
-	var socket = pUser.socket;
+	var pSocket = pUser.socket;
 	var addongump = new Gump;
 
 	var addonID = AddonDisplayID( iUsed );
@@ -47,7 +50,7 @@ function AddonGump( pUser, iUsed )
 	addongump.AddButton( 50, 35, 0x868, 0x869, 1, 0, 1 );
 	addongump.AddButton( 145, 35, 0x868, 0x869, 1, 0, 1 );
 
-	addongump.Send( pUser );
+	addongump.Send( pSocket );
 	addongump.Free();
 }
 
@@ -55,6 +58,10 @@ function AddonGump( pUser, iUsed )
 function onGumpPress( socket, pButton, gumpData )
 {
 	var pUser = socket.currentChar;
+
+	if( !ValidateObject( pUser ))
+		return;
+
 	var targMsg = GetDictionaryEntry( 5500, socket.language );// Where would you like to place this decoration?
 
 	var iMulti = pUser.multi;
@@ -76,16 +83,20 @@ function onGumpPress( socket, pButton, gumpData )
 function onCallback0( socket, myTarget )
 {
 	var iUsed = socket.tempObj;
-	var mChar = socket.currentChar;
+	var pUser = socket.currentChar;
 	var targX = socket.GetWord(11);
 	var targY = socket.GetWord(13);
 	var targZ = socket.GetSByte(16);
+	if( !ValidateObject( pUser ))
+	{
+		return;
+	}
 
-	var iMulti = FindMulti( targX, targY, targZ, socket.currentChar.worldnumber );
-	var NorthWall = CheckDynamicFlag( targX, targY - 1, targZ, socket.currentChar.worldnumber, mChar.instanceID, 4 );
-	var WestWall = CheckDynamicFlag( targX - 1, targY, targZ, socket.currentChar.worldnumber, mChar.instanceID, 4 );
+	var iMulti = FindMulti( targX, targY, targZ, pUser.worldnumber );
+	var NorthWall = CheckDynamicFlag( targX, targY - 1, targZ, pUser.worldnumber, pUser.instanceID, 4 );
+	var WestWall = CheckDynamicFlag( targX - 1, targY, targZ, pUser.worldnumber, pUser.instanceID, 4 );
 
-	if(ValidateObject( iMulti ) && !iMulti.IsBoat() && iMulti.IsInMulti( socket.currentChar )) 
+	if(ValidateObject( iMulti ) && !iMulti.IsBoat() && iMulti.IsInMulti( pUser )) 
 	{
 		if (ValidateObject( myTarget ))
 		{

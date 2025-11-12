@@ -109,28 +109,28 @@ const youngPlayerDirectionsOnly = true;
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
-	var socket = pUser.socket;
-	if( socket && ValidateObject( iUsed ) && iUsed.isItem )
+	var pSocket = pUser.socket;
+	if( pSocket && ValidateObject( iUsed ) && iUsed.isItem )
 	{
 		var itemOwner = GetPackOwner( iUsed, 0 );
 		if( itemOwner == null || itemOwner.serial != pUser.serial )
 		{
-			socket.SysMessage( GetDictionaryEntry( 1763, socket.language )); // That item must be in your backpack before it can be used.
+			pSocket.SysMessage( GetDictionaryEntry( 1763, pSocket.language )); // That item must be in your backpack before it can be used.
 			return false;
 		}
 
 		if( pUser.region.isDungeon || IsInBuilding( pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID, true ))
 		{
 			// Cannot use in a dungeon
-			socket.SysMessage( GetDictionaryEntry( 2789, socket.language )); // You can only use this outdoors.
+			pSocket.SysMessage( GetDictionaryEntry( 2789, pSocket.language )); // You can only use this outdoors.
 			return false;
 		}
 
 		var mapCoords = TriggerEvent( 2503, "GetMapCoordinates", pUser.x, pUser.y, pUser.worldnumber );
 		var mapCoordsString = mapCoords[3] + "o " + mapCoords[4] + "'" + ( mapCoords[5] ? "N" : "S" ) + " " + mapCoords[0] + "o " + mapCoords[1] + "'" + ( mapCoords[2] ? "W" : "E" );
-		var finalString = GetDictionaryEntry( 274, socket.language ); // You are at %s
+		var finalString = GetDictionaryEntry( 274, pSocket.language ); // You are at %s
 		finalString = ( finalString.replace( /%s/gi, mapCoordsString ));
-		socket.SysMessage( finalString );
+		pSocket.SysMessage( finalString );
 
 		if( !youngPlayerDirectionsOnly || pUser.account.isYoung )
 		{
@@ -170,8 +170,8 @@ function onUseChecked( pUser, iUsed )
 			const closestMoongate = FindClosestLocation( pUser.x, pUser.y, moongates );
 			const closestBank = FindClosestLocation( pUser.x, pUser.y, banks );
 
-			pUser.SysMessage( GetDictionaryEntry( 18744, socket.language ), closestMoongate.direction, closestMoongate.name, closestMoongate.distance ); // Nearest moongate: %s, near %s (%i m away)
-			pUser.SysMessage( GetDictionaryEntry( 18745, socket.language ), closestBank.direction, closestBank.name, closestBank.distance ); // Nearest bank: %s, near %s (%i m away)
+			pSocket.SysMessage( GetDictionaryEntry( 18744, pSocket.language ), closestMoongate.direction, closestMoongate.name, closestMoongate.distance ); // Nearest moongate: %s, near %s (%i m away)
+			pSocket.SysMessage( GetDictionaryEntry( 18745, pSocket.language ), closestBank.direction, closestBank.name, closestBank.distance ); // Nearest bank: %s, near %s (%i m away)
 		}
 
 	}
