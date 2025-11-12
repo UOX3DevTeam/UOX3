@@ -20,17 +20,17 @@ If it's a treasure map, the script checks if the map has been decoded and displa
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, mapItem )
 {
-	var socket = pUser.socket;
-	if( socket && mapItem && mapItem.isItem )
+	var pSocket = pUser.socket;
+	if( pSocket && mapItem && mapItem.isItem )
 	{
 		var itemOwner = GetPackOwner(mapItem, 0);
 		if( itemOwner == null || itemOwner.serial != pUser.serial )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 1763, socket.language )); // That item must be in your backpack before it can be used.
+			pSocket.SysMessage( GetDictionaryEntry( 1763, pSocket.language )); // That item must be in your backpack before it can be used.
 			return false;
 		}
 
-		TreasureMap( socket, mapItem );
+		TreasureMap( pSocket, mapItem );
 	}
 }
 
