@@ -159,8 +159,6 @@ function onTimer( pUser, timerID )
 	var targetChar = CalcCharFromSer( parseInt( pUser.GetTag( "glacialTarg" )));
 	if( !ValidateObject( targetChar ) || !targetChar.isChar || targetChar.dead || ( !targetChar.npc && !targetChar.online ) || !targetChar.vulnerable )
 	{
-		pUser.TextMessage( "Nope 1" );
-		pUser.TextMessage( targetChar );
 		return;
 	}
 
