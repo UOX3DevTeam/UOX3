@@ -12,6 +12,7 @@ const useAttackerMagerySkill = false;
 /** @type { ( attacker: Character, defender: Character, hitStatus: boolean, hitLoc: number, damageDealt: number ) => void } */
 function onAttack( mAttacker, mDefender, hitStatus, hitLoc, damageDealt )
 {
+	var pSocket = mAttacker.socket;
 	// Fetch weapon in main hand
 	var iWeapon = mAttacker.FindItemLayer( 0x01 );
 	if( !ValidateObject( iWeapon ))
@@ -33,9 +34,9 @@ function onAttack( mAttacker, mDefender, hitStatus, hitLoc, damageDealt )
 	// Check if the item has any charges left
 	if( spellCharges == 0 )
 	{
-		if( mAttacker.socket != null )
+		if( pSocket != null )
 		{
-			mAttacker.socket.SysMessage( GetDictionaryEntry( 9401, mAttacker.socket.language )); // This item is out of charges.
+			pSocket.SysMessage( GetDictionaryEntry( 9401, pSocket.language )); // This item is out of charges.
 		}
 		return;
 	}
