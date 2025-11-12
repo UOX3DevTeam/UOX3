@@ -100,6 +100,10 @@ function QuestConversationGump( pUser, npcTarget, questID )
 function onGumpPress( pSock, pButton, gumpData )
 {
 	var pUser = pSock.currentChar;
+
+	if( !ValidateObject( pUser ))
+		return;
+
 	var questNpc = CalcCharFromSer( parseInt( pUser.GetTag( "questNpcSerial" )));
 	var initialQuestID = parseInt( questNpc.GetTag( "QuestID" ), 10 );
 	var playerQuestID = ResolvePlayerQuestID( pUser, initialQuestID );
@@ -475,6 +479,7 @@ function GetQuestObjectives( quest, questProgress )
 		objectives += "- " + minutes + " minute( s ) and " + seconds + " second( s )<br>";
 	}
 
+	// Delivery
 	if( quest.type == "delivery" ) 
 	{
 		objectives += "<b>Delivery Quest:</b><br>";

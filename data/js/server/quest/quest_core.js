@@ -225,7 +225,7 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 		var questEntry = questProgressArray[i];
 
 		// Ensure the quest belongs to the current player
-		if (questEntry.serial != player.serial || questEntry.questID != questID) 
+		if( questEntry.serial != player.serial || questEntry.questID != questID ) 
 		{
 			continue;
 		}
@@ -514,6 +514,7 @@ function QuestRewards( player, quest, socket )
 				break;
 			default:
 				socket.SysMessage( "Unknown reward type: " + reward.type );
+				break;
 		}
 	});
 }
@@ -848,7 +849,7 @@ function NormalizeKey( skill )
 function resolveSkillKey( skillNameOrId )
 {
 	var skillNumber = parseInt( skillNameOrId, 10 );
-	if( !isNaN(skillNumber ))
+	if( !isNaN( skillNumber ))
 	{
 		var getSkill = GetSkillName(skillNumber);
 		return ( getSkill && getSkill !== "unknown skill" ) ? getSkill : null;
@@ -856,7 +857,7 @@ function resolveSkillKey( skillNameOrId )
 
 	var key = NormalizeKey( skillNameOrId );
 	// exact match first
-	if (skillAliasMap.hasOwnProperty( key ))
+	if( skillAliasMap.hasOwnProperty( key ))
 		return skillAliasMap[key];
 	// if caller already used canonical (e.g. "magery"), allow it
 	return key || null;
@@ -878,7 +879,7 @@ function GetSkillCapTenths( player, key )
 {
 	var cap = player.skillCaps[key];
 	// fallback to 100.0 if undefined/not numeric
-	return ( typeof cap === "number" && cap > 0 ) ? (cap | 0) : 1000;
+	return ( typeof cap === "number" && cap > 0 ) ? ( cap | 0 ) : 1000;
 }
 
 // Add to a specific skill (amount = decimal points, e.g. 2.5 -> +2.5)
@@ -923,7 +924,7 @@ function SkillPointsPoolReward( player, reward, socket )
 
 	var cur = parseInt( player.GetTag( "UnspentSkillPoints" ), 10 ) || 0;
 	player.SetTag( "UnspentSkillPoints", String( cur + addTenths ));
-	socket.SysMessage("You received " + ( addTenths / 10 ).toFixed( 1 ) + " unspent skill points!" );
+	socket.SysMessage( "You received " + ( addTenths / 10 ).toFixed( 1 ) + " unspent skill points!" );
 }
 
 // Spend pooled points into a specific skill
@@ -1024,7 +1025,6 @@ function ReadPlayerSettings( player )
 
 	return settings; // Return parsed settings
 }
-
 
 function SavePlayerSettings( player, settings ) 
 {
@@ -1189,7 +1189,6 @@ function ReadFailedQuests( player )
 
 	return failedQuests;
 }
-
 
 function ArchiveCompletedQuest( player, completedQuest )
 {

@@ -11,17 +11,21 @@ function onEquipAttempt( pEquipper, iEquipped )
 /** @type { ( item: Item, dropper: Character ) => number } */
 function onDrop( iDropped, pDropper )
 {
-	var pSock = pDropper.socket;
+	var pSocket = pDropper.socket;
+	if( pSocket == null )
+	{
+		return 0;
+	}
 
 	// Fetch the serial of the drop target
-	var temp1 = pSock.GetByte( 10 );
-	var temp2 = pSock.GetByte( 11 );
-	var temp3 = pSock.GetByte( 12 );
-	var temp4 = pSock.GetByte( 13 );
+	var temp1 = pSocket.GetByte( 10 );
+	var temp2 = pSocket.GetByte( 11 );
+	var temp3 = pSocket.GetByte( 12 );
+	var temp4 = pSocket.GetByte( 13 );
 
 	if( temp2 == 0xFF )
 	{ // do not allow Drop on the ground
-		pSock.SysMessage( GetDictionaryEntry( 19631, pSock.language ));//Quest items cannot be dropped on the ground.
+		pSocket.SysMessage( GetDictionaryEntry( 19631, pSocket.language ));//Quest items cannot be dropped on the ground.
 		return 0; // Prevent ground drop
 	}
 
@@ -31,12 +35,17 @@ function onDrop( iDropped, pDropper )
 /** @type { ( item: Item, dropper: Character, dest: Item ) => number } */
 function onDropItemOnItem( iDropped, cDropper, iDroppedOn )
 {
-	var pSock = cDropper.socket;
+	var pSocket = cDropper.socket;
+	if( pSocket == null )
+	{
+		return 0;
+	}
+
 	// Check if the dropped item is marked as a quest item
 	if( !iDropped.GetTag( "QuestItem" ))
 	{
-		pSock.SysMessage( GetDictionaryEntry( 19632, pSock.language )); // This item is not marked as a quest item.
-		return true;
+		pSocket.SysMessage( GetDictionaryEntry( 19632, pSocket.language )); // This item is not marked as a quest item.
+		return 1;
 	}
 
 	// Check if the item is being dropped on another quest item
@@ -45,37 +54,40 @@ function onDropItemOnItem( iDropped, cDropper, iDroppedOn )
 		// Allow stacking if both items are pileable and of the same type
 		if( iDropped.isPileable && iDroppedOn.isPileable && iDropped.sectionID == iDroppedOn.sectionID )
 		{
-			return true;
+			return 1;
 		}
 		else
 		{
-			pSock.SysMessage( GetDictionaryEntry( 19633, pSock.language )); // You can only drop quest items into the top-most level of your backpack while you still need them for your quest.
-			return false;
+			pSocket.SysMessage( GetDictionaryEntry( 19633, pSocket.language )); // You can only drop quest items into the top-most level of your backpack while you still need them for your quest.
+			return 0;
 		}
 	}
 
 	if( iDroppedOn.layer != 21 ) 
 	{
-		pSock.SysMessage( GetDictionaryEntry( 19633, pSock.language )); // You can only drop quest items into the top-most level of your backpack while you still need them for your quest.
-
-		return false;
+		pSocket.SysMessage( GetDictionaryEntry( 19633, pSocket.language )); // You can only drop quest items into the top-most level of your backpack while you still need them for your quest.
+		return 0;
 	}
 
 	// Find owner of root container iDropped is contained in, if any
 	var packOwner = GetPackOwner( iDropped, 0 );
 	if( packOwner != null && packOwner.serial != cDropper.serial )
 	{
-		pSock.SysMessage( GetDictionaryEntry( 19633, pSock.language )); // You can only drop quest items into the top-most level of your backpack while you still need them for your quest.
-		return false;
+		pSocket.SysMessage( GetDictionaryEntry( 19633, pSocket.language )); // You can only drop quest items into the top-most level of your backpack while you still need them for your quest.
+		return 0;
 	}
 
-	return true;
+	return 1;
 }
 
 /** @type { ( item: Item, pickerUpper: Character, objCont: BaseObject ) => boolean } */
 function onPickup( iPickedUp, pGrabber, containerObj )
 {
-	var pSock = pGrabber.socket;
+	var pSocket = pGrabber.socket;
+	if( pSocket == null )
+	{
+		return false;
+	}
 
 	// Check if the item is marked as a quest item
 	if( !iPickedUp.GetTag( "QuestItem" ))
@@ -88,11 +100,11 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 	{
 		// Handle stackable quest items
 		var totalAmount = iPickedUp.amount; // Default to 1 if amount is not set
-		var pickupAmount = pSock.GetWord( 5 ); // Assuming this retrieves the amount being picked up
+		var pickupAmount = pSocket.GetWord( 5 ); // Assuming this retrieves the amount being picked up
 
 		if( pickupAmount !== totalAmount )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 19634, pSock.language )); // Stacks of quest items cannot be unstacked.
+			pSocket.SysMessage( GetDictionaryEntry( 19634, pSocket.language )); // Stacks of quest items cannot be unstacked.
 			return false; // Prevent partial stack pickup
 		}
 	}
@@ -103,10 +115,15 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed ) 
 {
-	var pSock = pUser.socket;
+	var pSocket = pUser.socket;
+	if( pSocket == null )
+	{
+		return false;
+	}
+
 	if( iUsed.GetTag( "QuestItem" ))
 	{
-		pUser.TextMessage( GetDictionaryEntry( 19635, pSock.language )); // Quest items cannot be used in this way.
+		pUser.TextMessage( GetDictionaryEntry( 19635, pSocket.language )); // Quest items cannot be used in this way.
 		return false; // Prevent usage
 	}
 
