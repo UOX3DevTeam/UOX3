@@ -279,7 +279,7 @@ function onTimer( mChar, timerID )
 		var ourTarg = mChar.target;
 		if( ourTarg && ourTarg.isChar )
 		{
-			onSpellSuccess( null, mChar, ourTarg );
+			SuccessfulSpellCast( mChar, ourTarg );
 		}
 	}
 	else
@@ -312,7 +312,7 @@ function onCallback0( mSock, ourTarg )
 			}
 		}
 
-		onSpellSuccess( mSock, mChar, ourTarg );
+		SuccessfulSpellCast( mChar, ourTarg );
 	}
 	else
 	{
@@ -325,24 +325,13 @@ function onCallback0( mSock, ourTarg )
 }
 
 /** @type { ( tChar: Character, SpellId: number ) => boolean } */
-function onSpellSuccess( mSock, mChar, ourTarg )
+function SuccessfulSpellCast( mChar, ourTarg )
 {
+	var mSock = mChar.socket;
 	if( mChar.isCasting )
-		return;
+		return false;
 
-	var spellNum	= mChar.spellCast;
-	if( spellNum == -1 )
-	{
-		if( spellID != -1 )
-		{
-			spellNum = spellID;
-		}
-		else
-		{
-			return;
-		}
-	}
-
+	var spellNum = mChar.spellCast;
 	var mSpell		= Spells[spellNum];
 	var spellType	= 0;
 	var sourceChar	= mChar;
@@ -365,7 +354,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 			mChar.SetTimer( Timer.SPELLTIME, 0 );
 			mChar.isCasting = false;
 			mChar.spellCast = -1;
-			return;
+			return false;
 		}
 	}
 
@@ -375,11 +364,11 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 		{
 			mSock.SysMessage( GetDictionaryEntry( 712, mSock.language )); // You can't cast on someone that far away!
 		}
-		return;
+		return true;
 	}
 
 	if( !mChar.CanSee( ourTarg ))
-		return;
+		return false; 
 
 	var attackTarget = false;
 	var targRegion = ourTarg.region;
@@ -391,7 +380,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 			{
 				mSock.SysMessage( GetDictionaryEntry( 1799, mSock.language )); // Hostile actions are not permitted in this safe area.
 			}
-			return;
+			return false;
 		}
 		if( !targRegion.canCastAggressive )
 		{
@@ -399,7 +388,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 			{
 				mSock.SysMessage( GetDictionaryEntry( 709, mSock.language )); // You can't cast in town!
 			}
-			return;
+			return false;
 		}
 		if( !ourTarg.vulnerable || ourTarg.aiType == 17 )
 		{
@@ -407,7 +396,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 			{
 				mSock.SysMessage( GetDictionaryEntry( 713, mSock.language )); // They are invulnerable merchants!
 			}
-			return;
+			return false;
 		}
 
 		attackTarget = true;
@@ -418,8 +407,8 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 			{
 				ourTarg.magicReflect = false;
 				ourTarg.StaticEffect( 0x373A, 0, 15 );
-				sourceChar 	= ourTarg;
-				ourTarg		= mChar;
+				sourceChar = ourTarg;
+				ourTarg	= mChar;
 			}
 		}
 	}
@@ -447,7 +436,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 			mChar.SetTimer( Timer.SPELLTIME, 0 );
 			mChar.isCasting = false;
 			mChar.spellCast = -1;
-			return;
+			return false;
 		}
 	}
 
