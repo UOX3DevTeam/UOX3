@@ -1,6 +1,6 @@
 12/11/2025 - strattond (#460)
-[FIX] TypeScript definitions need to support 2 flavours of onSpellCast
-[UPD] Update existing scripts with revised scripts
+    [FIX] TypeScript definitions need to support 2 flavours of onSpellCast
+    [UPD] Update existing scripts with revised scripts
 
 12/11/2025 - DragonSlayer62 (#459)
     [FIX] Fixed incorrect property reference in js/item/potion.js; was .decay, should be .decayable
@@ -74,6 +74,7 @@
     [FIX] Added missing GETUO tag support in code for Item definitions, which was only defined for NPC definitions previously
     [FIX] System messages about dismissing guild members and broadcasts to guild members about new Guild Master now use the actual names of the characters being dismissed/promoted to GM, even if the characters are incognito/disguised
     [FIX] Account system will now save the actual names of characters on the account, even if they are incognito/disguised
+
     [FIX] Added 'get priv and 'set priv # commands to js/commands/targeting/get/set.js the privilege property for characters
 
 07/09/2025 - DragonSlayer62 (#419)
