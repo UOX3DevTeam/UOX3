@@ -9,26 +9,26 @@ const balmLotionTimer = 60000 * 30; // 30 minutes
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
-	var pSock = pUser.socket;
-	if( pSock != null && ValidateObject( iUsed ) && iUsed.isItem )
+	var pSocket = pUser.socket;
+	if( pSocket != null && ValidateObject( iUsed ) && iUsed.isItem )
 	{
 		var itemOwner = GetPackOwner( iUsed, 0 );
 		if( itemOwner == null || itemOwner.serial != pUser.serial )
 		{
-			socket.SysMessage( GetDictionaryEntry( 1763, socket.language )); // That item must be in your backpack before it can be used.
+			pSocket.SysMessage( GetDictionaryEntry( 1763, pSocket.language )); // That item must be in your backpack before it can be used.
 			return false;
 		}
 
 		if( pUser.isUsingPotion )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 430, socket.language )); // You must wait a while before using another potion.
+			pSocket.SysMessage( GetDictionaryEntry( 430, pSocket.language )); // You must wait a while before using another potion.
 			return false;
 		}
 
 		// Check to see if it's locked down
 		if( iUsed.movable == 2 || iUsed.movable == 3 )
 		{
-			socket.SysMessage( GetDictionaryEntry( 774, socket.language ) ); //That is locked down and you cannot use it
+			pSocket.SysMessage( GetDictionaryEntry( 774, pSocket.language ) ); //That is locked down and you cannot use it
 			return false;
 		}
 
@@ -81,14 +81,14 @@ function HandleConsumableEffect( pUser, iUsed )
 
 function ConsumeManaDraught( pUser, iUsed )
 {
-	var pSock = pUser.socket;
+	var pSocket = pUser.socket;
 	if( pUser.GetTag( "hasConsumedMD" ) == 1 )
 	{
 		var activeDraughtTimer = pUser.GetJSTimer( 1, 5044 );
 		if( activeDraughtTimer > 0 )
 		{
 			var timeLeft = (( activeDraughtTimer - GetCurrentClock() ) / 1000 ).toFixed( 0 );
-			pSock.SysMessage( GetDictionaryEntry( 18504, pSock.language ), timeLeft ); // You must wait %i seconds before you can use this item.
+			pSocket.SysMessage( GetDictionaryEntry( 18504, pSocket.language ), timeLeft ); // You must wait %i seconds before you can use this item.
 			return;
 		}
 		else
@@ -99,12 +99,12 @@ function ConsumeManaDraught( pUser, iUsed )
 
 	if( pUser.mana == pUser.maxmana )
 	{
-		pSock.SysMessage( GetDictionaryEntry( 18505, pSock.language )); // You are already at full mana.
+		pSocket.SysMessage( GetDictionaryEntry( 18505, pSocket.language )); // You are already at full mana.
 		return;
 	}
 
 	pUser.mana = Math.min( pUser.maxmana, ( pUser.mana + RandomNumber( 25, 40 )));
-	pUser.SysMessage( GetDictionaryEntry( 18506, pSock.language )); // The sour draught instantly restores some of your mana!
+	pSocket.SysMessage( GetDictionaryEntry( 18506, pSocket.language )); // The sour draught instantly restores some of your mana!
 	pUser.StaticEffect( 0x376A, 0x09, 0x06 );
 	pUser.SoundEffect( 0x01E3, true );
 	if( pUser.id > 0x0189 && !pUser.isonhorse )
@@ -133,14 +133,14 @@ function ConsumeManaDraught( pUser, iUsed )
 
 function ConsumeSeedOfLife( pUser, iUsed )
 {
-	var pSock = pUser.socket;
+	var pSocket = pUser.socket;
 	if( pUser.GetTag( "hasConsumedSoL" ) == 1 )
 	{
 		var activeSeedTimer = pUser.GetJSTimer( 2, 5044 );
 		if( activeSeedTimer > 0 )
 		{
 			var timeLeft = (( activeSeedTimer - GetCurrentClock() ) / 60000 ).toFixed( 0 );
-			pSock.SysMessage( GetDictionaryEntry( 18504, pSock.language ), timeLeft ); // You must wait %i seconds before you can use this item.
+			pSocket.SysMessage( GetDictionaryEntry( 18504, pSocket.language ), timeLeft ); // You must wait %i seconds before you can use this item.
 			return;
 		}
 		else
@@ -151,12 +151,12 @@ function ConsumeSeedOfLife( pUser, iUsed )
 
 	if( pUser.health == pUser.maxhealth )
 	{
-		pSock.SysMessage( GetDictionaryEntry( 18507, pSock.language )); // You are already at full health.
+		pSocket.SysMessage( GetDictionaryEntry( 18507, pSocket.language )); // You are already at full health.
 		return;
 	}
 
 	pUser.health = Math.min( pUser.maxhealth, ( pUser.health + RandomNumber( 25, 40 )));
-	pUser.SysMessage( GetDictionaryEntry( 18508, pSock.language )); // The bitter seed instantly restores some of your health!
+	pUser.SysMessage( GetDictionaryEntry( 18508, pSocket.language )); // The bitter seed instantly restores some of your health!
 
 	// Play some effects
 	pUser.StaticEffect( 0x376A, 0x09, 0x06 );
@@ -187,10 +187,10 @@ function ConsumeSeedOfLife( pUser, iUsed )
 
 function ConsumeBalmLotion( pUser, iUsed, balmType )
 {
-	var pSock = pUser.socket;
+	var pSocket = pUser.socket;
 	if( pUser.GetTag( "activeBalmLotion" ) > 0 )
 	{
-		pSock.SysMessage( GetDictionaryEntry( 18509, pSock.language )); // You are already under the effect of a balm or lotion.
+		pSocket.SysMessage( GetDictionaryEntry( 18509, pSocket.language )); // You are already under the effect of a balm or lotion.
 		return;
 	}
 
@@ -201,14 +201,14 @@ function ConsumeBalmLotion( pUser, iUsed, balmType )
 			// fire (blazing gargoyles) by 50-100%, rolled per tick. Does not protect against spells or weapons
 			// Lasts 30 minutes
 			pUser.SetTag( "activeBalmLotion", 1 );
-			pUser.SysMessage( GetDictionaryEntry( 18510, pSock.language )); // You apply the ointment and suddenly feel less vulnerable!
+			pSocket.SysMessage( GetDictionaryEntry( 18510, pSocket.language )); // You apply the ointment and suddenly feel less vulnerable!
 			pUser.StartTimer( balmLotionTimer, 3, true );
 			break;
 		case 2: // Balm of Strength
 			// Player gains 10 Str
 			// Lasts 30 minutes
 			pUser.SetTag( "activeBalmLotion", 2 );
-			pUser.SysMessage( GetDictionaryEntry( 18511, pSock.language )); // You apply the balm and suddenly feel stronger!
+			pSocket.SysMessage( GetDictionaryEntry( 18511, pSocket.language )); // You apply the balm and suddenly feel stronger!
 			pUser.strength += 10;
 			pUser.StartTimer( balmLotionTimer, 4, true );
 			break;
@@ -216,7 +216,7 @@ function ConsumeBalmLotion( pUser, iUsed, balmType )
 			// Player gains 10 Dex
 			// Lasts 30 minutes
 			pUser.SetTag( "activeBalmLotion", 3 );
-			pUser.SysMessage( GetDictionaryEntry( 18512, pSock.language )); // You apply the balm and suddenly feel more agile!
+			pSocket.SysMessage( GetDictionaryEntry( 18512, pSocket.language )); // You apply the balm and suddenly feel more agile!
 			pUser.dexterity += 10;
 			pUser.StartTimer( balmLotionTimer, 5, true );
 			break;
@@ -224,7 +224,7 @@ function ConsumeBalmLotion( pUser, iUsed, balmType )
 			// Player gains 10 Int
 			// Lasts 30 minutes
 			pUser.SetTag( "activeBalmLotion", 4 );
-			pUser.SysMessage( GetDictionaryEntry( 18513, pSock.language )); // You apply the balm and suddenly feel wiser!
+			pSocket.SysMessage( GetDictionaryEntry( 18513, pSocket.language )); // You apply the balm and suddenly feel wiser!
 			pUser.intelligence += 10;
 			pUser.StartTimer( balmLotionTimer, 6, true );
 			break;
@@ -232,14 +232,14 @@ function ConsumeBalmLotion( pUser, iUsed, balmType )
 			// Reduce damage from Life Drain (Succubus, Tentacles of the Harrower) by 50-100%, rolled each tick
 			// Lasts 30 minutes
 			pUser.SetTag( "activeBalmLotion", 5 );
-			pUser.SysMessage( GetDictionaryEntry( 18514, pSock.language )); // You apply the Life Shield Lotion.
+			pSocket.SysMessage( GetDictionaryEntry( 18514, pSocket.language )); // You apply the Life Shield Lotion.
 			pUser.StartTimer( balmLotionTimer, 7, true );
 			break;
 		case 6: // Stone Skin Lotion
 			// Player gains 30 physical resist, but loses 5 fire & cold resist
 			// Lasts 30 minutes
 			pUser.SetTag( "activeBalmLotion", 6 );
-			pUser.SysMessage( GetDictionaryEntry( 18515, pSock.language )); // You apply the Stone Skin Lotion.
+			pSocket.SysMessage( GetDictionaryEntry( 18515, pSocket.language )); // You apply the Stone Skin Lotion.
 			pUser.StartTimer( balmLotionTimer, 8, true );
 			pUser.Resist( 1, pUser.Resist( 1 ) + 30 );
 			pUser.Resist( 4, pUser.Resist( 4 ) - 5 );
@@ -275,12 +275,13 @@ function ConsumeBalmLotion( pUser, iUsed, balmType )
 /** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
+	var pSocket = timerObj.socket;
 	if( timerID >= 3 && timerID <= 8 )
 	{
 		timerObj.SetTag( "activeBalmLotion", null );
-		if( timerObj.socket != null )
+		if( pSocket != null )
 		{
-			timerObj.socket.SysMessage( GetDictionaryEntry( 18516, pSock.language )); // The effects of the balm or lotion have worn off.
+			pSocket.SysMessage( GetDictionaryEntry( 18516, pSocket.language )); // The effects of the balm or lotion have worn off.
 		}
 	}
 
