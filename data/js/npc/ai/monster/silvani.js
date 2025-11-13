@@ -51,5 +51,3 @@ function CountSilvaniPixies( pQueen, pChar, pSock )
 
 	return false;
 }
-
-function _restorecontext_() {}

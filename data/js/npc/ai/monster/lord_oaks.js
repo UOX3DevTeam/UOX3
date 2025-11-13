@@ -1,4 +1,4 @@
-function onDamage(damaged, attacker, damageValue, damageType)
+function onDamage( damaged, attacker, damageValue, damageType )
 {
 	if( !ValidateObject( damaged ) || !ValidateObject( attacker ))
 		return true;
@@ -100,5 +100,3 @@ function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 		}
 	}
 }
-
-function _restorecontext_() {}

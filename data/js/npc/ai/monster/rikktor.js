@@ -28,5 +28,3 @@ function EarthQuake( rikktor, target, sock )
 
 	return true;
 }
-
-function _restorecontext_() {}
