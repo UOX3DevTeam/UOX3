@@ -1,4 +1,4 @@
-const disableTopDamager = true; // Set to true to disable top damager logic and if so then aall loot is free for players to fight over.
+const disableTopDamager = true; // Set to true to disable top damager logic and if so then all loot is free for players to fight over.
 
 /** @type { ( mKilled: Character, mKiller: Character ) => boolean } */
 function onDeathBlow( pKilled, pKiller )
@@ -21,12 +21,12 @@ function onDeathBlow( pKilled, pKiller )
 		return true;
 	}
 
-	var stage = parseInt( altar.GetTag( "spawnStage" )) || 1;
-	var kills = parseInt( altar.GetTag( "killCount" )) || 0;
+	var stage = parseInt( altar.GetTag( "spawnStage" ));
+	var kills = parseInt( altar.GetTag( "killCount" ));
 	var spawnData = TriggerEvent( 7500, "GetSpawnRankData", stage );
 	var threshold = spawnData.maxKills;
-	var redSkulls = parseInt( altar.GetTag( "redSkullCount" )) || 1;
-	var whiteSkulls = parseInt( altar.GetTag( "whiteSkullCount" )) || 0;
+	var redSkulls = parseInt( altar.GetTag( "redSkullCount" ));
+	var whiteSkulls = parseInt( altar.GetTag( "whiteSkullCount" ));
 
 	kills += 1;
 	altar.SetTag( "killCount", kills );
@@ -133,7 +133,7 @@ function onDamage( damaged, attacker, damageValue, damageType )
 	// Rebuild the damageMap tag
 	let newTag = [];
 	for( let i = 0; i < topList.length; ++i )
-		newTag.push(topList[i][0] + ":" + topList[i][1]);
+		newTag.push( topList[i][0] + ":" + topList[i][1] );
 
 	damaged.SetTag("damageMap", newTag.join(";"));
 	return true;

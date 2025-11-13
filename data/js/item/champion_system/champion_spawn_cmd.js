@@ -14,7 +14,6 @@ function SetupChampionAltars( pUser )
 {
 	let socket = pUser.socket;
 
-
 	let altarData = [
 		{ type: "Unholy", x: 5178, y: 708, z: 0 },
 		{ type: "Vermin", x: 5557, y: 824, z: 45 },

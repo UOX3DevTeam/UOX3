@@ -34,8 +34,11 @@ function onCreateDFN( objMade, objType )
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, altar )
 {
-	var socket = pUser.socket;
-	socket.tempObj = altar;
+	var pSocket = pUser.socket;
+	if( !ValidateObject( pSocket ))
+		return false;
+
+	pSocket.tempObj = altar;
 
 	if( !ValidateObject( altar ) || !ValidateObject( pUser ))
 		return false;
@@ -239,29 +242,29 @@ function onTimer( altar, timerID )
 			}
 		case 13: // Champion Spawn with OnCreateDFN
 			{
-				if(altar.x == 5178 && altar.y == 708 )
+				if( altar.x == 5178 && altar.y == 708 )
 				{
-					altar.SetTag("championType", 5); // Unholy
+					altar.SetTag( "championType", 5 ); // Unholy
 				}
-				else if(altar.x == 5557 && altar.y == 824 )
+				else if( altar.x == 5557 && altar.y == 824 )
 				{
-					altar.SetTag("championType", 6); //Vermin
+					altar.SetTag( "championType", 6 ); //Vermin
 				}
-				else if(altar.x == 5259 && altar.y == 837 )
+				else if( altar.x == 5259 && altar.y == 837 )
 				{
-					altar.SetTag("championType", 3);//Cold
+					altar.SetTag( "championType", 3 );//Cold
 				}
-				else if(altar.x == 5814 && altar.y == 1350 )
+				else if( altar.x == 5814 && altar.y == 1350 )
 				{
-					altar.SetTag("championType", 1);//Abyss
+					altar.SetTag( "championType", 1 );//Abyss
 				}
-				else if(altar.x == 5190 && altar.y == 1605 )
+				else if( altar.x == 5190 && altar.y == 1605 )
 				{
-					altar.SetTag("championType", 2);//Arachnid
+					altar.SetTag( "championType", 2 );//Arachnid
 				}
-				else if(altar.x == 5559 && altar.y == 3757 )
+				else if( altar.x == 5559 && altar.y == 3757 )
 				{
-					altar.SetTag("championType", 4);//Forest
+					altar.SetTag( "championType", 4 );//Forest
 				}
 				else
 				{
@@ -297,22 +300,22 @@ function DecayChampionProgressIfEmpty( altar )
 	if( CheckForNearbyPlayers( altar ) > 0)
 		return;
 
-	let stage = parseInt( altar.GetTag( "spawnStage" )) || 1;
-	let redSkulls = parseInt( altar.GetTag( "redSkullCount" )) || 1;
-	let whiteSkulls = parseInt( altar.GetTag( "whiteSkullCount" )) || 0;
-	let kills = parseInt( altar.GetTag( "killCount" )) || 0;
+	let stage = parseInt( altar.GetTag( "spawnStage" ));
+	let redSkulls = parseInt( altar.GetTag( "redSkullCount" ));
+	let whiteSkulls = parseInt( altar.GetTag( "whiteSkullCount" ));
+	let kills = parseInt( altar.GetTag( "killCount" ));
 
 	let changed = false;
 
 	// Slowly reduce kills over time
 	if( kills > 0 )
 	{
-		kills = Math.max(0, kills - 5); // Decay by 5 per tick
-		altar.SetTag("killCount", kills);
+		kills = Math.max( 0, kills - 5 ); // Decay by 5 per tick
+		altar.SetTag( "killCount", kills );
 
-		let data = GetSpawnRankData(stage);
+		let data = GetSpawnRankData( stage );
 		let threshold = data.maxKills;
-		let skullCount = Math.min(4, Math.floor((kills / threshold) * 100 / 20));
+		let skullCount = Math.min( 4, Math.floor(( kills / threshold ) * 100 / 20 ));
 		altar.SetTag( "whiteSkullCount", skullCount );
 		TriggerEvent( 7500, "PlaceWhiteSkulls", altar, kills, stage );
 
@@ -348,7 +351,7 @@ function RankForLevel( level )
 {
 	for( var i = 0; i < rankBreaks.length; ++i )
 	{
-		if ( level <= rankBreaks[i] )
+		if( level <= rankBreaks[i] )
 			return i;
 	}
 	return rankBreaks.length;
@@ -465,7 +468,7 @@ function PlaceWhiteSkulls( altar, killCount, stage )
 
 function DelayedGoldExplosion(altar)
 {
-	if (!ValidateObject(altar))
+	if( !ValidateObject( altar ))
 		return;
 
 	altar.StartTimer(1000, 2, 7500); //1 second delay, timerID 2
@@ -541,13 +544,13 @@ function ChampionMenu( socket, altar )
 	// Champion Type
 	champalter.AddHTMLGump( 20, 68, 140, 22, false, false, "<basefont color=#ffffff>Champion Type:</basefont>" );
 	const championTypes = ["Abyss", "Arachnid", "Cold", "Forest", "Unholy", "Vermin"];
-	let currentID = parseInt( altar.GetTag( "championType" )) || 0;
+	let currentID = parseInt( altar.GetTag( "championType" ));
 
 	let champY = 100;
 	const columnsPerRow = 3;
 
 	champalter.AddGroup(2); // Radio group 2 (avoid clashing)
-	for (let i = 0; i < championTypes.length; ++i)
+	for( let i = 0; i < championTypes.length; ++i )
 	{
 		let name = championTypes[i];
 		let id = ChampionNameToID[name];
@@ -728,7 +731,7 @@ function onTooltip( altar, pSocket )
 	let redSkulls = parseInt( altar.GetTag( "redSkullCount" )) || 0;
 	let whiteSkulls = parseInt( altar.GetTag( "whiteSkullCount" )) || 0;
 	let kills = parseInt( altar.GetTag( "killCount" )) || 0;
-	let currentMobCount = AreaCharacterFunction( "ChampionSpawnNpc", altar, 60, null );
+	let currentMobCount = AreaCharacterFunction( "ChampionSpawnNpc", altar, 80, null );
 	let maxSpawn = altar.morex;
 
 	let tooltipText =
