@@ -1,8 +1,9 @@
 let POWER_RARITY_BY_BONUS = {
-	5:  "wonderous", // adjust spelling if you want "wondrous"
+	5:  "wonderous",
 	10: "exalted",
 	15: "mythical",
-	20: "legendary"
+	20: "legendary",
+	25: "ultimate"
 };
 
 let POWER_SKILL_DISPLAY = {
