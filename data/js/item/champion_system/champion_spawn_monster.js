@@ -1,4 +1,48 @@
 const disableTopDamager = true; // Set to true to disable top damager logic and if so then all loot is free for players to fight over.
+// Who can get scrolls at most?
+const POWER_SCROLL_MAX_RECEIVERS = 6;
+
+// Rarity weights (higher bonus = rarer; total should sum up to something sensible)
+const POWER_SCROLL_RARITY_TABLE = [
+	{ bonus: 5,  weight: 60 },  // Wonderous (+5)
+	{ bonus: 10, weight: 25 },  // Exalted (+10)
+	{ bonus: 15, weight: 10 },  // Mythical (+15)
+	{ bonus: 20, weight: 5 }    // Legendary (+20)
+	//{ bonus: 25, weight: 1 }    // Ultima (+25)
+];
+
+var coreShardEra = EraStringToNum( GetServerSetting("CoreShardEra" ));
+
+// Minimum era per skill. If not listed here, skill is assumed pre-AoS and
+// always allowed.
+var SKILL_MIN_ERA = {
+	// AoS-era skills
+	necromancy: "aos",
+	chivalry: "aos",
+
+	// Samurai Empire
+	focus: "se",
+	bushido: "se",
+	ninjitsu: "se",
+
+	// Stygian Abyss / later
+	spellweaving: "sa",
+	mysticism: "sa",
+	throwing: "sa"
+};
+
+function isSkillAllowedByEra( skillProp )
+{
+	var minEraName = SKILL_MIN_ERA[skillProp];
+	if( !minEraName )
+	{
+		// No min era defined -> treat as classic skill, always allowed
+		return true;
+	}
+
+	var minEra = EraStringToNum( minEraName );
+	return ( coreShardEra >= minEra );
+}
 
 /** @type { ( mKilled: Character, mKiller: Character ) => boolean } */
 function onDeathBlow( pKilled, pKiller )
@@ -210,9 +254,97 @@ function RewardTopDamagers( pKilled, altar )
 				}
 			}
 		}
+
+		// Power scrolls to top N (Fel only)
+		if( spawnData && spawnData.powerScrollSkills && spawnData.powerScrollSkills.length > 0 )
+		{
+			var maxPS = Math.min( POWER_SCROLL_MAX_RECEIVERS, top5.length );
+			for( var idx = 0; idx < maxPS; ++idx )
+			{
+				var psSerial = top5[idx][0];
+				var psPlayer = CalcCharFromSer( psSerial );
+				if( ValidateObject( psPlayer ))
+					giveChampionPowerScroll( psPlayer, spawnData, altar );
+			}
+		}
 	}
 	else
 	{
-		altar.TextMessage("The Champion has fallen!");
+		altar.TextMessage( "The Champion has fallen!" );
+	}
+}
+
+function rollPowerScrollBonus()
+{
+	var total = 0;
+	for( var i = 0; i < POWER_SCROLL_RARITY_TABLE.length; ++i )
+		total += POWER_SCROLL_RARITY_TABLE[i].weight;
+
+	var roll = RandomNumber( 0, total - 1 );
+	var accum = 0;
+
+	for( var j = 0; j < POWER_SCROLL_RARITY_TABLE.length; ++j )
+	{
+		accum += POWER_SCROLL_RARITY_TABLE[j].weight;
+		if( roll < accum )
+			return POWER_SCROLL_RARITY_TABLE[j].bonus;
+	}
+	return 5;
+}
+
+function rollPowerScrollSkill( spawnData )
+{
+	if( !spawnData || !spawnData.powerScrollSkills || spawnData.powerScrollSkills.length === 0 )
+		return null;
+
+	var list = spawnData.powerScrollSkills;
+	var allowed = [];
+
+	// Filter list by era
+	for( var i = 0; i < list.length; ++i )
+	{
+		var skillProp = list[i];
+		if( isSkillAllowedByEra( skillProp ))
+			allowed.push( skillProp );
+	}
+
+	// If nothing is allowed for this era, no scroll will be generated
+	if( allowed.length === 0 )
+		return null;
+
+	var idx = RandomNumber( 0, allowed.length - 1 );
+	return allowed[idx];
+}
+
+// DFN section name: powerscroll_<skill>_<bonus>
+function rollPowerScrollSection( spawnData )
+{
+	var skillProp = rollPowerScrollSkill( spawnData );
+	if( !skillProp )
+		return null;
+
+	var bonus = rollPowerScrollBonus();
+	return "powerscroll_" + skillProp + "_" + bonus;
+}
+
+// Give one power scroll to player (Fel-only)
+function giveChampionPowerScroll( player, spawnData, altar )
+{
+	if( !ValidateObject( player ) || !spawnData || !ValidateObject( altar ))
+		return;
+
+	var facet = altar.worldnumber;
+	if( facet !== 0 )
+		return;
+
+	var sectionID = rollPowerScrollSection( spawnData );
+	if( !sectionID )
+		return;
+
+	var scroll = CreateDFNItem( player.socket, player, sectionID, 1, "ITEM", true) ;
+	if( ValidateObject( scroll ))
+	{
+		scroll.Refresh();
+		player.SysMessage( "You have been rewarded with a Scroll of Power!" );
 	}
 }
