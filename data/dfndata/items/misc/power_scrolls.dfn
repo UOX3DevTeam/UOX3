@@ -1,0 +1,1139 @@
+// ============================================================================
+// Power Scrolls (Scrolls of Power) - DFN
+// Base + all skills you listed, for bonuses: +5, +10, +15, +20
+// Requires JS script 7504 (power_scrolls.js) that reads:
+//   customstringtag=powerSkill <skillProp>
+//   custominttag=powerBonus <5|10|15|20>
+// ============================================================================
+
+[base_powerscroll]
+{
+get=base_item
+name=Scroll of Power
+id=0x14F0
+colour=0x481
+weight=100
+pileable=0
+amount=1
+decay=1
+script=7504
+origin=aos
+customstringtag=powerSkill allskills
+custominttag=powerBonus 0
+}
+
+// --------------------------------------------------------------------------
+// Swordsmanship
+// --------------------------------------------------------------------------
+
+[powerscroll_swordsmanship_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Swordsmanship
+customstringtag=powerSkill swordsmanship
+custominttag=powerBonus 5
+}
+
+[powerscroll_swordsmanship_10]
+{
+get=base_powerscroll
+name=exalted scroll of Swordsmanship
+customstringtag=powerSkill swordsmanship
+custominttag=powerBonus 10
+}
+
+[powerscroll_swordsmanship_15]
+{
+get=base_powerscroll
+name=mythical scroll of Swordsmanship
+customstringtag=powerSkill swordsmanship
+custominttag=powerBonus 15
+}
+
+[powerscroll_swordsmanship_20]
+{
+get=base_powerscroll
+name=legendary scroll of Swordsmanship
+customstringtag=powerSkill swordsmanship
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Fencing
+// --------------------------------------------------------------------------
+
+[powerscroll_fencing_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Fencing
+customstringtag=powerSkill fencing
+custominttag=powerBonus 5
+}
+
+[powerscroll_fencing_10]
+{
+get=base_powerscroll
+name=exalted scroll of Fencing
+customstringtag=powerSkill fencing
+custominttag=powerBonus 10
+}
+
+[powerscroll_fencing_15]
+{
+get=base_powerscroll
+name=mythical scroll of Fencing
+customstringtag=powerSkill fencing
+custominttag=powerBonus 15
+}
+
+[powerscroll_fencing_20]
+{
+get=base_powerscroll
+name=legendary scroll of Fencing
+customstringtag=powerSkill fencing
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Mace Fighting
+// --------------------------------------------------------------------------
+
+[powerscroll_macefighting_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Mace Fighting
+customstringtag=powerSkill macefighting
+custominttag=powerBonus 5
+}
+
+[powerscroll_macefighting_10]
+{
+get=base_powerscroll
+name=exalted scroll of Mace Fighting
+customstringtag=powerSkill macefighting
+custominttag=powerBonus 10
+}
+
+[powerscroll_macefighting_15]
+{
+get=base_powerscroll
+name=mythical scroll of Mace Fighting
+customstringtag=powerSkill macefighting
+custominttag=powerBonus 15
+}
+
+[powerscroll_macefighting_20]
+{
+get=base_powerscroll
+name=legendary scroll of Mace Fighting
+customstringtag=powerSkill macefighting
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Archery
+// --------------------------------------------------------------------------
+
+[powerscroll_archery_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Archery
+customstringtag=powerSkill archery
+custominttag=powerBonus 5
+}
+
+[powerscroll_archery_10]
+{
+get=base_powerscroll
+name=exalted scroll of Archery
+customstringtag=powerSkill archery
+custominttag=powerBonus 10
+}
+
+[powerscroll_archery_15]
+{
+get=base_powerscroll
+name=mythical scroll of Archery
+customstringtag=powerSkill archery
+custominttag=powerBonus 15
+}
+
+[powerscroll_archery_20]
+{
+get=base_powerscroll
+name=legendary scroll of Archery
+customstringtag=powerSkill archery
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Wrestling
+// --------------------------------------------------------------------------
+
+[powerscroll_wrestling_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Wrestling
+customstringtag=powerSkill wrestling
+custominttag=powerBonus 5
+}
+
+[powerscroll_wrestling_10]
+{
+get=base_powerscroll
+name=exalted scroll of Wrestling
+customstringtag=powerSkill wrestling
+custominttag=powerBonus 10
+}
+
+[powerscroll_wrestling_15]
+{
+get=base_powerscroll
+name=mythical scroll of Wrestling
+customstringtag=powerSkill wrestling
+custominttag=powerBonus 15
+}
+
+[powerscroll_wrestling_20]
+{
+get=base_powerscroll
+name=legendary scroll of Wrestling
+customstringtag=powerSkill wrestling
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Parrying
+// --------------------------------------------------------------------------
+
+[powerscroll_parrying_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Parrying
+customstringtag=powerSkill parrying
+custominttag=powerBonus 5
+}
+
+[powerscroll_parrying_10]
+{
+get=base_powerscroll
+name=exalted scroll of Parrying
+customstringtag=powerSkill parrying
+custominttag=powerBonus 10
+}
+
+[powerscroll_parrying_15]
+{
+get=base_powerscroll
+name=mythical scroll of Parrying
+customstringtag=powerSkill parrying
+custominttag=powerBonus 15
+}
+
+[powerscroll_parrying_20]
+{
+get=base_powerscroll
+name=legendary scroll of Parrying
+customstringtag=powerSkill parrying
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Tactics
+// --------------------------------------------------------------------------
+
+[powerscroll_tactics_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Tactics
+customstringtag=powerSkill tactics
+custominttag=powerBonus 5
+}
+
+[powerscroll_tactics_10]
+{
+get=base_powerscroll
+name=exalted scroll of Tactics
+customstringtag=powerSkill tactics
+custominttag=powerBonus 10
+}
+
+[powerscroll_tactics_15]
+{
+get=base_powerscroll
+name=mythical scroll of Tactics
+customstringtag=powerSkill tactics
+custominttag=powerBonus 15
+}
+
+[powerscroll_tactics_20]
+{
+get=base_powerscroll
+name=legendary scroll of Tactics
+customstringtag=powerSkill tactics
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Anatomy
+// --------------------------------------------------------------------------
+
+[powerscroll_anatomy_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Anatomy
+customstringtag=powerSkill anatomy
+custominttag=powerBonus 5
+}
+
+[powerscroll_anatomy_10]
+{
+get=base_powerscroll
+name=exalted scroll of Anatomy
+customstringtag=powerSkill anatomy
+custominttag=powerBonus 10
+}
+
+[powerscroll_anatomy_15]
+{
+get=base_powerscroll
+name=mythical scroll of Anatomy
+customstringtag=powerSkill anatomy
+custominttag=powerBonus 15
+}
+
+[powerscroll_anatomy_20]
+{
+get=base_powerscroll
+name=legendary scroll of Anatomy
+customstringtag=powerSkill anatomy
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Healing
+// --------------------------------------------------------------------------
+
+[powerscroll_healing_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Healing
+customstringtag=powerSkill healing
+custominttag=powerBonus 5
+}
+
+[powerscroll_healing_10]
+{
+get=base_powerscroll
+name=exalted scroll of Healing
+customstringtag=powerSkill healing
+custominttag=powerBonus 10
+}
+
+[powerscroll_healing_15]
+{
+get=base_powerscroll
+name=mythical scroll of Healing
+customstringtag=powerSkill healing
+custominttag=powerBonus 15
+}
+
+[powerscroll_healing_20]
+{
+get=base_powerscroll
+name=legendary scroll of Healing
+customstringtag=powerSkill healing
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Magery
+// --------------------------------------------------------------------------
+
+[powerscroll_magery_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Magery
+customstringtag=powerSkill magery
+custominttag=powerBonus 5
+}
+
+[powerscroll_magery_10]
+{
+get=base_powerscroll
+name=exalted scroll of Magery
+customstringtag=powerSkill magery
+custominttag=powerBonus 10
+}
+
+[powerscroll_magery_15]
+{
+get=base_powerscroll
+name=mythical scroll of Magery
+customstringtag=powerSkill magery
+custominttag=powerBonus 15
+}
+
+[powerscroll_magery_20]
+{
+get=base_powerscroll
+name=legendary scroll of Magery
+customstringtag=powerSkill magery
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Meditation
+// --------------------------------------------------------------------------
+
+[powerscroll_meditation_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Meditation
+customstringtag=powerSkill meditation
+custominttag=powerBonus 5
+}
+
+[powerscroll_meditation_10]
+{
+get=base_powerscroll
+name=exalted scroll of Meditation
+customstringtag=powerSkill meditation
+custominttag=powerBonus 10
+}
+
+[powerscroll_meditation_15]
+{
+get=base_powerscroll
+name=mythical scroll of Meditation
+customstringtag=powerSkill meditation
+custominttag=powerBonus 15
+}
+
+[powerscroll_meditation_20]
+{
+get=base_powerscroll
+name=legendary scroll of Meditation
+customstringtag=powerSkill meditation
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Evaluate Intelligence
+// --------------------------------------------------------------------------
+
+[powerscroll_evaluatingintel_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Evaluate Intelligence
+customstringtag=powerSkill evaluatingintel
+custominttag=powerBonus 5
+}
+
+[powerscroll_evaluatingintel_10]
+{
+get=base_powerscroll
+name=exalted scroll of Evaluate Intelligence
+customstringtag=powerSkill evaluatingintel
+custominttag=powerBonus 10
+}
+
+[powerscroll_evaluatingintel_15]
+{
+get=base_powerscroll
+name=mythical scroll of Evaluate Intelligence
+customstringtag=powerSkill evaluatingintel
+custominttag=powerBonus 15
+}
+
+[powerscroll_evaluatingintel_20]
+{
+get=base_powerscroll
+name=legendary scroll of Evaluate Intelligence
+customstringtag=powerSkill evaluatingintel
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Magic Resistance
+// --------------------------------------------------------------------------
+
+[powerscroll_magicresistance_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Magic Resistance
+customstringtag=powerSkill magicresistance
+custominttag=powerBonus 5
+}
+
+[powerscroll_magicresistance_10]
+{
+get=base_powerscroll
+name=exalted scroll of Magic Resistance
+customstringtag=powerSkill magicresistance
+custominttag=powerBonus 10
+}
+
+[powerscroll_magicresistance_15]
+{
+get=base_powerscroll
+name=mythical scroll of Magic Resistance
+customstringtag=powerSkill magicresistance
+custominttag=powerBonus 15
+}
+
+[powerscroll_magicresistance_20]
+{
+get=base_powerscroll
+name=legendary scroll of Magic Resistance
+customstringtag=powerSkill magicresistance
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Stealing
+// --------------------------------------------------------------------------
+
+[powerscroll_stealing_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Stealing
+customstringtag=powerSkill stealing
+custominttag=powerBonus 5
+}
+
+[powerscroll_stealing_10]
+{
+get=base_powerscroll
+name=exalted scroll of Stealing
+customstringtag=powerSkill stealing
+custominttag=powerBonus 10
+}
+
+[powerscroll_stealing_15]
+{
+get=base_powerscroll
+name=mythical scroll of Stealing
+customstringtag=powerSkill stealing
+custominttag=powerBonus 15
+}
+
+[powerscroll_stealing_20]
+{
+get=base_powerscroll
+name=legendary scroll of Stealing
+customstringtag=powerSkill stealing
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Throwing
+// --------------------------------------------------------------------------
+
+[powerscroll_throwing_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Throwing
+customstringtag=powerSkill throwing
+custominttag=powerBonus 5
+}
+
+[powerscroll_throwing_10]
+{
+get=base_powerscroll
+name=exalted scroll of Throwing
+customstringtag=powerSkill throwing
+custominttag=powerBonus 10
+}
+
+[powerscroll_throwing_15]
+{
+get=base_powerscroll
+name=mythical scroll of Throwing
+customstringtag=powerSkill throwing
+custominttag=powerBonus 15
+}
+
+[powerscroll_throwing_20]
+{
+get=base_powerscroll
+name=legendary scroll of Throwing
+customstringtag=powerSkill throwing
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Stealth
+// --------------------------------------------------------------------------
+
+[powerscroll_stealth_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Stealth
+customstringtag=powerSkill stealth
+custominttag=powerBonus 5
+}
+
+[powerscroll_stealth_10]
+{
+get=base_powerscroll
+name=exalted scroll of Stealth
+customstringtag=powerSkill stealth
+custominttag=powerBonus 10
+}
+
+[powerscroll_stealth_15]
+{
+get=base_powerscroll
+name=mythical scroll of Stealth
+customstringtag=powerSkill stealth
+custominttag=powerBonus 15
+}
+
+[powerscroll_stealth_20]
+{
+get=base_powerscroll
+name=legendary scroll of Stealth
+customstringtag=powerSkill stealth
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Animal Taming
+// --------------------------------------------------------------------------
+
+[powerscroll_taming_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Animal Taming
+customstringtag=powerSkill taming
+custominttag=powerBonus 5
+}
+
+[powerscroll_taming_10]
+{
+get=base_powerscroll
+name=exalted scroll of Animal Taming
+customstringtag=powerSkill taming
+custominttag=powerBonus 10
+}
+
+[powerscroll_taming_15]
+{
+get=base_powerscroll
+name=mythical scroll of Animal Taming
+customstringtag=powerSkill taming
+custominttag=powerBonus 15
+}
+
+[powerscroll_taming_20]
+{
+get=base_powerscroll
+name=legendary scroll of Animal Taming
+customstringtag=powerSkill taming
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Animal Lore
+// --------------------------------------------------------------------------
+
+[powerscroll_animallore_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Animal Lore
+customstringtag=powerSkill animallore
+custominttag=powerBonus 5
+}
+
+[powerscroll_animallore_10]
+{
+get=base_powerscroll
+name=exalted scroll of Animal Lore
+customstringtag=powerSkill animallore
+custominttag=powerBonus 10
+}
+
+[powerscroll_animallore_15]
+{
+get=base_powerscroll
+name=mythical scroll of Animal Lore
+customstringtag=powerSkill animallore
+custominttag=powerBonus 15
+}
+
+[powerscroll_animallore_20]
+{
+get=base_powerscroll
+name=legendary scroll of Animal Lore
+customstringtag=powerSkill animallore
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Veterinary
+// --------------------------------------------------------------------------
+
+[powerscroll_veterinary_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Veterinary
+customstringtag=powerSkill veterinary
+custominttag=powerBonus 5
+}
+
+[powerscroll_veterinary_10]
+{
+get=base_powerscroll
+name=exalted scroll of Veterinary
+customstringtag=powerSkill veterinary
+custominttag=powerBonus 10
+}
+
+[powerscroll_veterinary_15]
+{
+get=base_powerscroll
+name=mythical scroll of Veterinary
+customstringtag=powerSkill veterinary
+custominttag=powerBonus 15
+}
+
+[powerscroll_veterinary_20]
+{
+get=base_powerscroll
+name=legendary scroll of Veterinary
+customstringtag=powerSkill veterinary
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Musicianship
+// --------------------------------------------------------------------------
+
+[powerscroll_musicianship_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Musicianship
+customstringtag=powerSkill musicianship
+custominttag=powerBonus 5
+}
+
+[powerscroll_musicianship_10]
+{
+get=base_powerscroll
+name=exalted scroll of Musicianship
+customstringtag=powerSkill musicianship
+custominttag=powerBonus 10
+}
+
+[powerscroll_musicianship_15]
+{
+get=base_powerscroll
+name=mythical scroll of Musicianship
+customstringtag=powerSkill musicianship
+custominttag=powerBonus 15
+}
+
+[powerscroll_musicianship_20]
+{
+get=base_powerscroll
+name=legendary scroll of Musicianship
+customstringtag=powerSkill musicianship
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Provocation
+// --------------------------------------------------------------------------
+
+[powerscroll_provocation_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Provocation
+customstringtag=powerSkill provocation
+custominttag=powerBonus 5
+}
+
+[powerscroll_provocation_10]
+{
+get=base_powerscroll
+name=exalted scroll of Provocation
+customstringtag=powerSkill provocation
+custominttag=powerBonus 10
+}
+
+[powerscroll_provocation_15]
+{
+get=base_powerscroll
+name=mythical scroll of Provocation
+customstringtag=powerSkill provocation
+custominttag=powerBonus 15
+}
+
+[powerscroll_provocation_20]
+{
+get=base_powerscroll
+name=legendary scroll of Provocation
+customstringtag=powerSkill provocation
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Discordance
+// --------------------------------------------------------------------------
+
+[powerscroll_discordance_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Discordance
+customstringtag=powerSkill discordance
+custominttag=powerBonus 5
+}
+
+[powerscroll_discordance_10]
+{
+get=base_powerscroll
+name=exalted scroll of Discordance
+customstringtag=powerSkill discordance
+custominttag=powerBonus 10
+}
+
+[powerscroll_discordance_15]
+{
+get=base_powerscroll
+name=mythical scroll of Discordance
+customstringtag=powerSkill discordance
+custominttag=powerBonus 15
+}
+
+[powerscroll_discordance_20]
+{
+get=base_powerscroll
+name=legendary scroll of Discordance
+customstringtag=powerSkill discordance
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Peacemaking
+// --------------------------------------------------------------------------
+
+[powerscroll_peacemaking_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Peacemaking
+customstringtag=powerSkill peacemaking
+custominttag=powerBonus 5
+}
+
+[powerscroll_peacemaking_10]
+{
+get=base_powerscroll
+name=exalted scroll of Peacemaking
+customstringtag=powerSkill peacemaking
+custominttag=powerBonus 10
+}
+
+[powerscroll_peacemaking_15]
+{
+get=base_powerscroll
+name=mythical scroll of Peacemaking
+customstringtag=powerSkill peacemaking
+custominttag=powerBonus 15
+}
+
+[powerscroll_peacemaking_20]
+{
+get=base_powerscroll
+name=legendary scroll of Peacemaking
+customstringtag=powerSkill peacemaking
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Chivalry
+// --------------------------------------------------------------------------
+
+[powerscroll_chivalry_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Chivalry
+customstringtag=powerSkill chivalry
+custominttag=powerBonus 5
+}
+
+[powerscroll_chivalry_10]
+{
+get=base_powerscroll
+name=exalted scroll of Chivalry
+customstringtag=powerSkill chivalry
+custominttag=powerBonus 10
+}
+
+[powerscroll_chivalry_15]
+{
+get=base_powerscroll
+name=mythical scroll of Chivalry
+customstringtag=powerSkill chivalry
+custominttag=powerBonus 15
+}
+
+[powerscroll_chivalry_20]
+{
+get=base_powerscroll
+name=legendary scroll of Chivalry
+customstringtag=powerSkill chivalry
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Focus
+// --------------------------------------------------------------------------
+
+[powerscroll_focus_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Focus
+customstringtag=powerSkill focus
+custominttag=powerBonus 5
+}
+
+[powerscroll_focus_10]
+{
+get=base_powerscroll
+name=exalted scroll of Focus
+customstringtag=powerSkill focus
+custominttag=powerBonus 10
+}
+
+[powerscroll_focus_15]
+{
+get=base_powerscroll
+name=mythical scroll of Focus
+customstringtag=powerSkill focus
+custominttag=powerBonus 15
+}
+
+[powerscroll_focus_20]
+{
+get=base_powerscroll
+name=legendary scroll of Focus
+customstringtag=powerSkill focus
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Necromancy
+// --------------------------------------------------------------------------
+
+[powerscroll_necromancy_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Necromancy
+customstringtag=powerSkill necromancy
+custominttag=powerBonus 5
+}
+
+[powerscroll_necromancy_10]
+{
+get=base_powerscroll
+name=exalted scroll of Necromancy
+customstringtag=powerSkill necromancy
+custominttag=powerBonus 10
+}
+
+[powerscroll_necromancy_15]
+{
+get=base_powerscroll
+name=mythical scroll of Necromancy
+customstringtag=powerSkill necromancy
+custominttag=powerBonus 15
+}
+
+[powerscroll_necromancy_20]
+{
+get=base_powerscroll
+name=legendary scroll of Necromancy
+customstringtag=powerSkill necromancy
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Bushido
+// --------------------------------------------------------------------------
+
+[powerscroll_bushido_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Bushido
+customstringtag=powerSkill bushido
+custominttag=powerBonus 5
+}
+
+[powerscroll_bushido_10]
+{
+get=base_powerscroll
+name=exalted scroll of Bushido
+customstringtag=powerSkill bushido
+custominttag=powerBonus 10
+}
+
+[powerscroll_bushido_15]
+{
+get=base_powerscroll
+name=mythical scroll of Bushido
+customstringtag=powerSkill bushido
+custominttag=powerBonus 15
+}
+
+[powerscroll_bushido_20]
+{
+get=base_powerscroll
+name=legendary scroll of Bushido
+customstringtag=powerSkill bushido
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Ninjitsu
+// --------------------------------------------------------------------------
+
+[powerscroll_ninjitsu_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Ninjitsu
+customstringtag=powerSkill ninjitsu
+custominttag=powerBonus 5
+}
+
+[powerscroll_ninjitsu_10]
+{
+get=base_powerscroll
+name=exalted scroll of Ninjitsu
+customstringtag=powerSkill ninjitsu
+custominttag=powerBonus 10
+}
+
+[powerscroll_ninjitsu_15]
+{
+get=base_powerscroll
+name=mythical scroll of Ninjitsu
+customstringtag=powerSkill ninjitsu
+custominttag=powerBonus 15
+}
+
+[powerscroll_ninjitsu_20]
+{
+get=base_powerscroll
+name=legendary scroll of Ninjitsu
+customstringtag=powerSkill ninjitsu
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Spellweaving
+// --------------------------------------------------------------------------
+
+[powerscroll_spellweaving_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Spellweaving
+customstringtag=powerSkill spellweaving
+custominttag=powerBonus 5
+}
+
+[powerscroll_spellweaving_10]
+{
+get=base_powerscroll
+name=exalted scroll of Spellweaving
+customstringtag=powerSkill spellweaving
+custominttag=powerBonus 10
+}
+
+[powerscroll_spellweaving_15]
+{
+get=base_powerscroll
+name=mythical scroll of Spellweaving
+customstringtag=powerSkill spellweaving
+custominttag=powerBonus 15
+}
+
+[powerscroll_spellweaving_20]
+{
+get=base_powerscroll
+name=legendary scroll of Spellweaving
+customstringtag=powerSkill spellweaving
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Spirit Speak
+// --------------------------------------------------------------------------
+
+[powerscroll_spiritspeak_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Spirit Speak
+customstringtag=powerSkill spiritspeak
+custominttag=powerBonus 5
+}
+
+[powerscroll_spiritspeak_10]
+{
+get=base_powerscroll
+name=exalted scroll of Spirit Speak
+customstringtag=powerSkill spiritspeak
+custominttag=powerBonus 10
+}
+
+[powerscroll_spiritspeak_15]
+{
+get=base_powerscroll
+name=mythical scroll of Spirit Speak
+customstringtag=powerSkill spiritspeak
+custominttag=powerBonus 15
+}
+
+[powerscroll_spiritspeak_20]
+{
+get=base_powerscroll
+name=legendary scroll of Spirit Speak
+customstringtag=powerSkill spiritspeak
+custominttag=powerBonus 20
+}
+
+// --------------------------------------------------------------------------
+// Mysticism
+// --------------------------------------------------------------------------
+
+[powerscroll_mysticism_5]
+{
+get=base_powerscroll
+name=wonderous scroll of Mysticism
+customstringtag=powerSkill mysticism
+custominttag=powerBonus 5
+}
+
+[powerscroll_mysticism_10]
+{
+get=base_powerscroll
+name=exalted scroll of Mysticism
+customstringtag=powerSkill mysticism
+custominttag=powerBonus 10
+}
+
+[powerscroll_mysticism_15]
+{
+get=base_powerscroll
+name=mythical scroll of Mysticism
+customstringtag=powerSkill mysticism
+custominttag=powerBonus 15
+}
+
+[powerscroll_mysticism_20]
+{
+get=base_powerscroll
+name=legendary scroll of Mysticism
+customstringtag=powerSkill mysticism
+custominttag=powerBonus 20
+}
