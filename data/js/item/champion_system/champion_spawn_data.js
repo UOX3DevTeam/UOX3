@@ -18,6 +18,12 @@
 //                      normal rewards for the top damagers when the champion
 //                      dies. RewardTopDamagers() picks one random entry from
 //                      this list per rewarded player.
+//   UniqueList		  - Rare, unique style reward items. At most one per champ
+//                      kill. Weighted as rare in logic script.
+//   SharedList       - Common / standard reward items. Can drop for multiple
+//                      top damagers. Weighted as the main pool.
+//   DecorativeList   - Decorative / vanity items (statues, banners, hue cloth,
+//                      etc). Weighted as uncommon.
 // 
 //  stageNames        - Array of strings for the 3 title steps shown on the
 //                      altar as the spawn advances. Example for Abyss:
@@ -52,6 +58,9 @@ const ChampionSpawnTable = {
 		name: "Abyss Champion",
 		boss: "semidar",
 		rewards: ["0x0F0E", "0x0F0F", "0x0F10"],
+		UniqueList:      [ /* "abyss_unique_artifact_1", ... */ ],
+		SharedList:      [ /* "abyss_shared_reward_1", ... */ ],
+		DecorativeList:  [ /* "abyss_deco_statue_1", ... */ ],
 		stageNames: ["Foe", "Assassin", "Conqueror"],
 		levels: [
 			["greatermongbat", "imp"],
@@ -74,6 +83,9 @@ const ChampionSpawnTable = {
 		name: "Arachnid Champion",
 		boss: "mephitis",
 		rewards: ["0x0F0E", "0x0F0F", "0x0F10"],
+		UniqueList:      [ /* "abyss_unique_artifact_1", ... */ ],
+		SharedList:      [ /* "abyss_shared_reward_1", ... */ ],
+		DecorativeList:  [ /* "abyss_deco_statue_1", ... */ ],
 		stageNames: ["bane", "killer", "vanquisher"],
 		levels: [
 			["scorpion", "giantspider"],
@@ -96,6 +108,9 @@ const ChampionSpawnTable = {
 		name: "Cold Blood Champion",
 		boss: "Rikktor",
 		rewards: ["0x0F0E", "0x0F0F", "0x0F10"],
+		UniqueList:      [ /* "abyss_unique_artifact_1", ... */ ],
+		SharedList:      [ /* "abyss_shared_reward_1", ... */ ],
+		DecorativeList:  [ /* "abyss_deco_statue_1", ... */ ],
 		stageNames: ["Blight", "Slayer", "Destroyer"],
 		levels: [
 			["lizardman", "snake"],
@@ -119,6 +134,9 @@ const ChampionSpawnTable = {
 		boss: "lordoaks",
 		//miniBoss: "silvani",
 		rewards: ["0x0F0E", "0x0F0F", "0x0F10"],
+		UniqueList:      [ /* "abyss_unique_artifact_1", ... */ ],
+		SharedList:      [ /* "abyss_shared_reward_1", ... */ ],
+		DecorativeList:  [ /* "abyss_deco_statue_1", ... */ ],
 		stageNames: ["Enemy", "Curse", "Slaughter"],
 		levels: [
 			["pixie", "shadowwisp"],
@@ -141,6 +159,9 @@ const ChampionSpawnTable = {
 		name: "Unholy Terror Champion",
 		boss: "neira",
 		rewards: ["0x0F0E", "0x0F0F", "0x0F10"],
+		UniqueList:      [ /* "abyss_unique_artifact_1", ... */ ],
+		SharedList:      [ /* "abyss_shared_reward_1", ... */ ],
+		DecorativeList:  [ /* "abyss_deco_statue_1", ... */ ],
 		stageNames: ["Scourge", "Punisher", "Nemesis"],
 		levels: [
 			["ghoul", "shade", "spectre", "wraith"],
@@ -163,6 +184,9 @@ const ChampionSpawnTable = {
 		name: "Vermin Horde Champion",
 		boss: "barracoon",
 		rewards: ["0x0F0E", "0x0F0F", "0x0F10"],
+		UniqueList:      [ /* "abyss_unique_artifact_1", ... */ ],
+		SharedList:      [ /* "abyss_shared_reward_1", ... */ ],
+		DecorativeList:  [ /* "abyss_deco_statue_1", ... */ ],
 		stageNames: ["adversary", "subjugator", "eradictor"],
 		levels: [
 			["giantrat", "slime"],

@@ -725,12 +725,12 @@ function onTooltip( altar, pSocket )
 	if( !ValidateObject( altar ))
 		return "";
 
-	let type = altar.GetTag( "championType" ) || 0;
+	let type = altar.GetTag( "championType" );
 	let active = altar.GetTag( "spawnActive" ) == 1 ? "Yes" : "No";
-	let stage = altar.GetTag( "spawnStage" ) || 1;
-	let redSkulls = parseInt( altar.GetTag( "redSkullCount" )) || 0;
-	let whiteSkulls = parseInt( altar.GetTag( "whiteSkullCount" )) || 0;
-	let kills = parseInt( altar.GetTag( "killCount" )) || 0;
+	let stage = altar.GetTag( "spawnStage" );
+	let redSkulls = parseInt( altar.GetTag( "redSkullCount" ));
+	let whiteSkulls = parseInt( altar.GetTag( "whiteSkullCount" ));
+	let kills = parseInt( altar.GetTag( "killCount" ));
 	let currentMobCount = AreaCharacterFunction( "ChampionSpawnNpc", altar, 80, null );
 	let maxSpawn = altar.morex;
 

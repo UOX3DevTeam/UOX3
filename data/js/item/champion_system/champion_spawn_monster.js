@@ -11,7 +11,13 @@ const POWER_SCROLL_RARITY_TABLE = [
 	//{ bonus: 25, weight: 1 }    // Ultima (+25)
 ];
 
-var coreShardEra = EraStringToNum( GetServerSetting("CoreShardEra" ));
+const CHAMPION_REWARD_CATEGORY_TABLE = [
+	{ key: "UniqueList",     weight: 5 },   // rare
+	{ key: "SharedList",     weight: 25 },  // common
+	{ key: "DecorativeList", weight: 10 }   // uncommon
+];
+
+var coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 
 // Minimum era per skill. If not listed here, skill is assumed pre-AoS and
 // always allowed.
@@ -255,6 +261,24 @@ function RewardTopDamagers( pKilled, altar )
 			}
 		}
 
+		// Normal rewards (weighted by Unique/Shared/Decorative)
+		var uniqueGiven = false;
+
+		for (var k = 0; k < top5.length; ++k)
+		{
+			var serial = top5[k][0];
+			var damage = top5[k][1];
+			var player = CalcCharFromSer(serial);
+
+			if (ValidateObject(player))
+			{
+				player.SysMessage("You were among the top 5 damagers! (" + damage + " damage)");
+
+				// Weighted category rewards
+				uniqueGiven = giveChampionStandardReward(player, spawnData, uniqueGiven);
+			}
+		}
+
 		// Power scrolls to top N (Fel only)
 		if( spawnData && spawnData.powerScrollSkills && spawnData.powerScrollSkills.length > 0 )
 		{
@@ -347,4 +371,114 @@ function giveChampionPowerScroll( player, spawnData, altar )
 		scroll.Refresh();
 		player.SysMessage( "You have been rewarded with a Scroll of Power!" );
 	}
+}
+
+function RewardListForCategory( spawnData, key )
+{
+	if( !spawnData )
+		return [];
+	var list = spawnData[key];
+	if( !list || !list.length )
+		return [];
+	return list;
+}
+
+// Roll a category, respecting:
+// - weights above
+// - only categories that actually have items
+// - UniqueList only once per champ kill (via uniqueAlreadyGiven flag)
+function rollChampionRewardCategory( spawnData, uniqueAlreadyGiven )
+{
+	var candidates = [];
+	for( var i = 0; i < CHAMPION_REWARD_CATEGORY_TABLE.length; ++i )
+	{
+		var entry = CHAMPION_REWARD_CATEGORY_TABLE[i];
+		if( entry.key === "UniqueList" && uniqueAlreadyGiven )
+			continue;
+
+		var list = RewardListForCategory( spawnData, entry.key );
+		if( list.length === 0 )
+			continue;
+
+		candidates.push( entry );
+	}
+
+	if( candidates.length === 0 )
+		return null;
+
+	var total = 0;
+	for( var j = 0; j < candidates.length; ++j )
+		total += candidates[j].weight;
+
+	var roll = RandomNumber( 0, total - 1 );
+	var accum = 0;
+
+	for( var k = 0; k < candidates.length; ++k )
+	{
+		accum += candidates[k].weight;
+		if (roll < accum)
+			return candidates[k].key;
+	}
+	return null;
+}
+
+// Roll a concrete DFN section for a reward (using the category logic)
+function rollChampionRewardSection( spawnData, uniqueAlreadyGiven )
+{
+	var category = rollChampionRewardCategory( spawnData, uniqueAlreadyGiven );
+	if( !category )
+	{
+		// fallback to legacy rewards list if all new lists are empty
+		if( spawnData && spawnData.rewards && spawnData.rewards.length > 0 )
+		{
+			var idxLegacy = RandomNumber( 0, spawnData.rewards.length - 1 );
+			return spawnData.rewards[idxLegacy];
+		}
+		return null;
+	}
+
+	var pool = RewardListForCategory( spawnData, category );
+	if( pool.length === 0 )
+		return null;
+
+	var idx = RandomNumber( 0, pool.length - 1 );
+	return { section: pool[idx], category: category };
+}
+
+// Give a normal champion reward to player, returns updated unique flag
+function giveChampionStandardReward( player, spawnData, uniqueAlreadyGiven )
+{
+	if( !ValidateObject(player) || !spawnData )
+		return uniqueAlreadyGiven;
+
+	var result = rollChampionRewardSection( spawnData, uniqueAlreadyGiven );
+	if( !result)
+		return uniqueAlreadyGiven;
+
+	var sectionID, category;
+	if( typeof result === "string" )
+	{
+		// fallback legacy result
+		sectionID = result;
+		category = "Legacy";
+	}
+	else
+	{
+		sectionID = result.section;
+		category = result.category;
+	}
+
+	var item = CreateDFNItem( player.socket, player, sectionID, 1, "ITEM", true );
+	if( ValidateObject( item ))
+	{
+		item.Refresh();
+
+		// Optional debug / flavor:
+		player.SysMessage("You receive a " + category + " champion reward.");
+	}
+
+	if( category === "UniqueList" )
+		return true; // mark unique as given
+
+	return uniqueAlreadyGiven;
 }
