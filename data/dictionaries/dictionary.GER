@@ -3538,6 +3538,16 @@
 6321=Es sieht so aus, als wäre diese Klinge mit einer säurehaltigen Substanz bedeckt.
 6322=Es sieht so aus, als wäre diese Klinge mit einer ätzenden Substanz bedeckt.
 6323=Es sieht so aus, als wäre diese Klinge mit einer leicht ätzenden Substanz bedeckt.
+// [6540-6550] Dawns Musikbox
+6540=Du musst den Gegenstand in deinem Rucksack haben oder ihn gesichert haben, um ihn zu benutzen.
+6541=Wähle eine Dawns Musikbox als Ziel aus, um dieses Lied hinzuzufügen.
+6542=Du musst eine Dawns Musikbox als Ziel auswählen.
+6543=Das ist keine Dawns Musikbox.
+6544=Kein Musikgerät ist in der Warteschlange.
+6545=Das Musikgerät konnte nicht gefunden werden.
+6546=Diesem Gerät ist kein Lied zugewiesen.
+6547=Dieser Liedtitel befindet sich bereits in der Musikbox.
+6548=Dieses Lied wurde der Musikbox hinzugefügt.
 // [7000-7499] AI Scripts
 7000=Du bist ein Verbrecher und kannst nicht auf dein Bankschließfach zugreifen.
 7001=Welchen Gegenstand möchten Sie in Ihr Bankschließfach einzahlen?

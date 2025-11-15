@@ -3538,6 +3538,16 @@
 6321=Parece que esta lâmina está coberta por uma substância ácida.
 6322=Parece que esta lâmina tem um elemento corrosivo.
 6323=Parece que esta lâmina tem um elemento corrosivo leve.
+// [6540-6550] Caixa de Música da Aurora
+6540=Necessita de ter o item na mochila ou bloqueado para o utilizar.
+6541=Selecione uma Caixa de Música da Aurora para adicionar esta música.
+6542=Necessita de selecionar uma Caixa de Música da Aurora.
+6543=Isto não é uma Caixa de Música da Aurora.
+6544=Não está pendente qualquer equipamento musical.
+6545=O equipamento musical não foi encontrado.
+6546=Este equipamento não tem qualquer música atribuída.
+6547=Esta música já está na caixa de música.
+6548=Esta música foi adicionada à caixa de música.
 // [7000-7499] AI Scripts
 7000=Tu és um criminoso e não podes aceder à tua caixa bancária.
 7001=Que artigo deseja depositar na sua caixa bancária?

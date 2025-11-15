@@ -98,32 +98,32 @@ function DawnsGetTrackList( box )
 
 	for( var i = 0; i < parts.length; i++ )
 	{
-		var v = parseInt( parts[i], 10 );
-		if( !isNaN( v ) && v >= 0 )
-			result.push( v );
+		var value = parseInt( parts[i], 10 );
+		if( !isNaN( value ) && value >= 0 )
+			result.push( value );
 	}
 
 	return result;
 }
 
-function DawnsSetTrackList( box, arr )
+function DawnsSetTrackList( msuicbox, tracks )
 {
-	var s = "";
-	for( var i = 0; i < arr.length; i++ )
+	var serial = "";
+	for( var i = 0; i < tracks.length; i++ )
 	{
 		if( i > 0 )
-			s += ",";
-		s += arr[i];
+			serial += ",";
+		serial += tracks[i];
 	}
-	box.SetTag( "dawns_tracks", s );
-	box.Refresh();
+	msuicbox.SetTag( "dawns_tracks", serial );
+	msuicbox.Refresh();
 }
 
-function DawnsTrackExists( arr, trackID )
+function DawnsTrackExists( tracks, trackID )
 {
-	for( var i = 0; i < arr.length; i++ )
+	for( var i = 0; i < tracks.length; i++ )
 	{
-		if( arr[i] === trackID )
+		if( tracks[i] === trackID )
 			return true;
 	}
 	return false;
@@ -145,9 +145,9 @@ function onCreateDFN( objMade, objType  )
 		{
 			while( tracks.length < 4 )
 			{
-				var t = DawnsRandomTrack( DawnsMusicRarity.Common );
-				if( t >= 0 && !DawnsTrackExists( tracks, t ))
-					tracks.push( t );
+				var trackId = DawnsRandomTrack( DawnsMusicRarity.Common );
+				if( trackId >= 0 && !DawnsTrackExists( tracks, trackId ))
+					tracks.push( trackId );
 			}
 			DawnsSetTrackList( objMade, tracks );
 		}
@@ -161,9 +161,13 @@ function onCreateDFN( objMade, objType  )
 			var rarity = DawnsMusicRarity.Common;
 
 			if( rarityTag === DawnsMusicRarity.Uncommon )
+			{
 				rarity = DawnsMusicRarity.Uncommon;
+			}
 			else if( rarityTag === DawnsMusicRarity.Rare )
+			{
 				rarity = DawnsMusicRarity.Rare;
+			}
 
 			var track = DawnsRandomTrack( rarity );
 			if( track >= 0 )
@@ -189,7 +193,7 @@ function onUseChecked( pUser, iUsed )
 	{
 		if( !pUser.InRange( iUsed, 2 ))
 		{
-			pUser.SysMessage( "You are too far away to use that." );
+			pSocket.SysMessage( GetDictionaryEntry( 2500, pSocket.language )); // You are too far away to reach that.
 			return false;
 		}
 
@@ -199,7 +203,7 @@ function onUseChecked( pUser, iUsed )
 
 		if( !isInPack && !isLockedDown )
 		{
-			pSocket.SysMessage( "You must have the item in your backpack or locked down in order to use it." );
+			pSocket.SysMessage( GetDictionaryEntry( 6540, pSocket.language )); // You must have the item in your backpack or locked down in order to use it.
 			return false;
 		}
 
@@ -211,7 +215,7 @@ function onUseChecked( pUser, iUsed )
 	{
 		pUser.SetTempTag( "dawns_pendingGear", iUsed.serial );
 
-		var msg = "Target a Dawns Music Box to add this song.";
+		var msg = GetDictionaryEntry( 6541, pSocket.language ); // Target a Dawns Music Box to add this song.
 		pSocket.CustomTarget( 1, msg );
 
 		return false;
@@ -502,7 +506,7 @@ function DawnsStopMusic( pUser )
 	if( boxSerial )
 	{
 		var box = CalcItemFromSer( boxSerial );
-		if( ValidateObject( box ) && ((box.GetTag( "dawns_box" )) === 1) )
+		if( ValidateObject( box ) && (( box.GetTag( "dawns_box" )) === 1) )
 		{
 			box.KillJSTimer( 1, 5070);
 
@@ -590,7 +594,7 @@ function onCallback1( socket, targetObj )
 
 	if( !ValidateObject( targetObj ) || !targetObj.isItem )
 	{
-		socket.SysMessage( "You must target a Dawns Music Box." );
+		socket.SysMessage( GetDictionaryEntry( 6542, socket.language )); // You must target a Dawns Music Box.
 		return;
 	}
 
@@ -598,7 +602,7 @@ function onCallback1( socket, targetObj )
 	var isBox = targetObj.GetTag( "dawns_box" );
 	if( isBox !== 1 )
 	{
-		socket.SysMessage( "That is not a Dawns Music Box." );
+		socket.SysMessage( GetDictionaryEntry( 6543, socket.language )); // That is not a Dawns Music Box.
 		return;
 	}
 
@@ -606,28 +610,28 @@ function onCallback1( socket, targetObj )
 	var gearSer = pUser.GetTempTag( "dawns_pendingGear" );
 	if( gearSer === 0 )
 	{
-		socket.SysMessage( "No music gear is pending." );
+		socket.SysMessage( GetDictionaryEntry( 6544, socket.language )); // No music gear is pending.
 		return;
 	}
 
 	var gear = CalcItemFromSer( gearSer );
 	if( !ValidateObject( gear ) || (gear.GetTag( "dawns_gear" )) !== 1 )
 	{
-		socket.SysMessage( "The music gear could not be found." );
+		socket.SysMessage( GetDictionaryEntry( 6545, socket.language )); // The music gear could not be found.
 		return;
 	}
 
 	var musicID = gear.GetTag( "dawns_music" );
 	if( musicID <= 0 )
 	{
-		socket.SysMessage( "This gear has no song assigned." );
+		socket.SysMessage( GetDictionaryEntry( 6546, socket.language )); // This gear has no song assigned.
 		return;
 	}
 
 	var tracks = DawnsGetTrackList( targetObj );
 	if( DawnsTrackExists( tracks, musicID ))
 	{
-		socket.SysMessage( "This song track is already in the music box." );
+		socket.SysMessage( GetDictionaryEntry( 6547, socket.language )); // This song track is already in the music box.
 		return;
 	}
 
@@ -635,7 +639,7 @@ function onCallback1( socket, targetObj )
 	DawnsSetTrackList( targetObj, tracks );
 	gear.Delete();
 
-	socket.SysMessage( "This song has been added to the music box." );
+	socket.SysMessage( GetDictionaryEntry( 6548, socket.language )); // This song has been added to the music box.
 
 	pUser.SetTempTag( "dawns_pendingGear", null );
 }
