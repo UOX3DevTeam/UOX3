@@ -337,7 +337,7 @@ HOUSE_ITEM=5034
 
 [HOUSE ITEM 516]
 { Steps
-ITEM=housesteps
+ITEM=plateformsteps
 NODECAY
 X=0//west is - east is +
 Y=18//south is + north is -
@@ -346,7 +346,7 @@ Z=0
 
 [HOUSE ITEM 517]
 { Steps
-ITEM=housesteps
+ITEM=plateformsteps
 NODECAY
 X=1//west is - east is +
 Y=18//south is + north is -
@@ -355,7 +355,7 @@ Z=0
 
 [HOUSE ITEM 518]
 { Steps
-ITEM=housesteps
+ITEM=plateformsteps
 NODECAY
 X=-1//west is - east is +
 Y=18//south is + north is -
@@ -364,7 +364,7 @@ Z=0
 
 [HOUSE ITEM 5000]
 { 
-ITEM=housesteps1
+ITEM=plateformsteps1
 NODECAY
 X=-2//west is - east is +
 Y=-2//south is + north is -
@@ -372,7 +372,7 @@ Z=0
 }
 [HOUSE ITEM 5001]
 { 
-ITEM=housesteps2
+ITEM=plateformsteps2
 NODECAY
 X=2//west is - east is +
 Y=2//south is + north is -
@@ -380,7 +380,7 @@ Z=0
 }
 [HOUSE ITEM 5002]
 { 
-ITEM=housesteps3
+ITEM=plateformsteps3
 NODECAY
 X=-2//west is - east is +
 Y=2//south is + north is -
@@ -388,7 +388,7 @@ Z=0
 }
 [HOUSE ITEM 5003]
 { 
-ITEM=housesteps4
+ITEM=plateformsteps4
 NODECAY
 X=2//west is - east is +
 Y=-2//south is + north is -
@@ -397,7 +397,7 @@ Z=0
 
 [HOUSE ITEM 5004]
 { 
-ITEM=housesteps5
+ITEM=plateformsteps5
 NODECAY
 X=0//west is - east is +
 Y=0//south is + north is -
@@ -406,7 +406,7 @@ Z=0
 
 [HOUSE ITEM 5005]
 { 
-ITEM=housesteps5
+ITEM=plateformsteps5
 NODECAY
 X=1//west is - east is +
 Y=0//south is + north is -
@@ -415,7 +415,7 @@ Z=0
 
 [HOUSE ITEM 5006]
 { 
-ITEM=housesteps5
+ITEM=plateformsteps5
 NODECAY
 X=-1//west is - east is +
 Y=0//south is + north is -
@@ -424,7 +424,7 @@ Z=0
 
 [HOUSE ITEM 5007]
 { 
-ITEM=housesteps5
+ITEM=plateformsteps5
 NODECAY
 X=0//west is - east is +
 Y=1//south is + north is -
@@ -433,7 +433,7 @@ Z=0
 
 [HOUSE ITEM 5008]
 { 
-ITEM=housesteps5
+ITEM=plateformsteps5
 NODECAY
 X=0//west is - east is +
 Y=-1//south is + north is -
@@ -442,7 +442,7 @@ Z=0
 
 [HOUSE ITEM 5009]
 { 
-ITEM=housesteps5
+ITEM=plateformsteps5
 NODECAY
 X=1//west is - east is +
 Y=1//south is + north is -
@@ -451,7 +451,7 @@ Z=0
 
 [HOUSE ITEM 5010]
 { 
-ITEM=housesteps5
+ITEM=plateformsteps5
 NODECAY
 X=-1//west is - east is +
 Y=-1//south is + north is -
@@ -460,7 +460,7 @@ Z=0
 
 [HOUSE ITEM 5011]
 { 
-ITEM=housesteps5
+ITEM=plateformsteps5
 NODECAY
 X=-1//west is - east is +
 Y=1//south is + north is -
@@ -469,7 +469,7 @@ Z=0
 
 [HOUSE ITEM 5012]
 { 
-ITEM=housesteps5
+ITEM=plateformsteps5
 NODECAY
 X=1//west is - east is +
 Y=-1//south is + north is -
@@ -478,7 +478,7 @@ Z=0
 
 [HOUSE ITEM 5013]
 { 
-ITEM=housesteps6
+ITEM=plateformsteps6
 NODECAY
 X=0//west is - east is +
 Y=2//south is + north is -
@@ -487,7 +487,7 @@ Z=0
 
 [HOUSE ITEM 5014]
 { 
-ITEM=housesteps6
+ITEM=plateformsteps6
 NODECAY
 X=1//west is - east is +
 Y=2//south is + north is -
@@ -496,7 +496,7 @@ Z=0
 
 [HOUSE ITEM 5015]
 { 
-ITEM=housesteps6
+ITEM=plateformsteps6
 NODECAY
 X=-1//west is - east is +
 Y=2//south is + north is -
@@ -505,7 +505,7 @@ Z=0
 
 [HOUSE ITEM 5016]
 { 
-ITEM=housesteps7
+ITEM=plateformsteps7
 NODECAY
 X=2//west is - east is +
 Y=0//south is + north is -
@@ -514,7 +514,7 @@ Z=0
 
 [HOUSE ITEM 5017]
 { 
-ITEM=housesteps7
+ITEM=plateformsteps7
 NODECAY
 X=2//west is - east is +
 Y=1//south is + north is -
@@ -523,7 +523,7 @@ Z=0
 
 [HOUSE ITEM 5018]
 { 
-ITEM=housesteps7
+ITEM=plateformsteps7
 NODECAY
 X=2//west is - east is +
 Y=-1//south is + north is -
@@ -532,7 +532,7 @@ Z=0
 
 [HOUSE ITEM 5019]
 {
-ITEM=housesteps8
+ITEM=plateformsteps8
 NODECAY
 X=0//west is - east is +
 Y=-2//south is + north is -
@@ -541,7 +541,7 @@ Z=0
 
 [HOUSE ITEM 5020]
 {
-ITEM=housesteps8
+ITEM=plateformsteps8
 NODECAY
 X=1//west is - east is +
 Y=-2//south is + north is -
@@ -550,7 +550,7 @@ Z=0
 
 [HOUSE ITEM 5021]
 {
-ITEM=housesteps8
+ITEM=plateformsteps8
 NODECAY
 X=-1//west is - east is +
 Y=-2//south is + north is -
@@ -559,7 +559,7 @@ Z=0
 
 [HOUSE ITEM 5022]
 {
-ITEM=housesteps9
+ITEM=plateformsteps9
 NODECAY
 X=-2//west is - east is +
 Y=0//south is + north is -
@@ -568,7 +568,7 @@ Z=0
 
 [HOUSE ITEM 5023]
 {
-ITEM=housesteps9
+ITEM=plateformsteps9
 NODECAY
 X=-2//west is - east is +
 Y=1//south is + north is -
@@ -577,7 +577,7 @@ Z=0
 
 [HOUSE ITEM 5024]
 {
-ITEM=housesteps9
+ITEM=plateformsteps9
 NODECAY
 X=-2//west is - east is +
 Y=-1//south is + north is -
@@ -586,7 +586,7 @@ Z=0
 
 [HOUSE ITEM 5024]
 {
-ITEM=housesteps9
+ITEM=plateformsteps9
 NODECAY
 X=-2//west is - east is +
 Y=-1//south is + north is -
