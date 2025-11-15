@@ -1,12 +1,12 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
-var DawnsMusicRarity = {
+let DawnsMusicRarity = {
 	Common: 0,
 	Uncommon: 1,
 	Rare: 2
 };
 
-var DawnsMusicInfo = {
+let DawnsMusicInfo = {
 	0:  { name: "OldUlt01",             cliloc: 1075142, rarity: DawnsMusicRarity.Common },
 	8:  { name: "Stones2",              cliloc: 1075143, rarity: DawnsMusicRarity.Common },
 	9:  { name: "Britain1",             cliloc: 1075144, rarity: DawnsMusicRarity.Common },
