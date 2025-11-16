@@ -672,7 +672,6 @@ function onGumpPress( pSock, buttonID, gumpData )
 				return;
 			}
 
-			// Instead of buying immediately, show confirmation gump
 			recipeBuyGump( pUser, book, r.id, r.price, r.name );
 
 			return;
@@ -685,7 +684,6 @@ function onGumpPress( pSock, buttonID, gumpData )
 
 function onSpeechInput( pUser, pItem, pSpeech, pSpeechID )
 {
-	// We only care about recipe book price input
 	if( pSpeechID !== 100 )
 		return;
 
