@@ -38,7 +38,6 @@ function onGumpPress( pSock, pButton, gumpData )
 	var iUsed = pSock.tempObj;
 	var iMulti = FindMulti(iUsed.x, iUsed.y, iUsed.z, pSock.currentChar.worldnumber);
 
-	pSock.SysMessage("sectionID: " + iUsed.sectionID + " id: 0x" + iUsed.id.toString(16));
 	if( pButton == 0 )
 		return;
 
