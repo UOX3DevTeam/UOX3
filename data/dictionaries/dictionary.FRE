@@ -3702,6 +3702,44 @@
 6321=On dirait que cette lame est recouverte d'une substance acide.
 6322=On dirait que cette lame contient un élément corrosif.
 6323=On dirait que cette lame contient un élément légèrement corrosif.
+// [6551-6600] Livre de recettes
+6551 = Le livre de recettes doit se trouver dans votre colis, face cachée et verrouillé, ou chez un vendeur pour être utilisé.
+6552 = Ce livre est conçu uniquement pour contenir des parchemins de recettes.
+6553 = Ce livre de recettes ne peut plus contenir de recettes uniques.
+6554 = Vous placez les %s dans le livre. 6555=Livre de recettes
+6556=Objet
+6557=Extension
+6558=Fabrication
+6559=Quantité
+6560=Définir le filtre
+6561=Objet
+6562=Prix
+6563=Acheter
+6564=Définir
+6565=Page précédente
+6566=Page suivante
+6567=Préférences de filtre
+6568=Effacer le filtre
+6569=Vous avez accepté d'acheter :
+6570=pour la quantité de :
+6571=Vous décidez de ne pas acheter cette recette.
+6572=Informations d'achat invalides.
+6573=La recette sélectionnée n'est pas disponible.
+6574=Il vous manque %s d'or dans votre inventaire ou votre banque.
+6575=Vous achetez la recette %s pour %s d'or.
+6576=Accès interdit.
+6577=La recette sélectionnée n'est pas disponible.
+6578=Votre sac à dos ne contient pas assez de place pour la recette.
+6579=La recette a été placée dans votre sac à dos.
+6580=Saisissez le prix en or de la recette : %s
+6581=Cette recette n'est pas à vendre.
+6582=Aucune recette sélectionnée pour la tarification.
+6583=Vous n'avez pas défini de prix.
+6584=Ce prix est invalide. Veuillez saisir un nombre.
+6585=Aucun parchemin correspondant à cette recette n'a été trouvé dans ce livre.
+6586=Vous avez fixé le prix à %s pour %s d'or.
+6587=%s d'or a été payé depuis votre sac à dos.
+6588=%s d'or a été payé depuis votre compte bancaire.
 // [7000-7499] AI Scripts
 7000=Tu es un criminel et tu ne peux pas accéder à ton coffre de banque.
 7001=Quel objet souhaitez-vous déposer dans votre coffret bancaire ?

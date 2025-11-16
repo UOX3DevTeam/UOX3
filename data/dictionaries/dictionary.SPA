@@ -3538,6 +3538,43 @@
 6321=Parece que esta hoja está cubierta de una sustancia ácida.
 6322=Parece que esta hoja tiene un elemento corrosivo.
 6323=Parece que esta hoja tiene un ligero elemento corrosivo.
+// [6551-6600] Libro de recetas
+6551=Para usarlo, debes llevar el libro de recetas en tu mochila, tenerlo bloqueado o venderlo a un vendedor.
+6552=Este libro solo sirve para guardar pergaminos de recetas.
+6553=Este libro de recetas no puede contener más recetas únicas.
+6554=Colocas los %s en el libro. 6555=Libro de recetas
+6556=Objeto
+6557=Expansión
+6558=Creación
+6559=Cantidad
+6560=Establecer filtro
+6561=Obtener
+6562=Precio
+6563=Comprar
+6564=Establecer
+6565=Página anterior
+6566=Página siguiente
+6567=Preferencias de filtro
+6568=Borrar filtro
+6569=Has aceptado comprar:
+6570=por la cantidad de:
+6571=Decides no comprar esta receta.
+6572=La información de compra no es válida.
+6573=La receta seleccionada no está disponible.
+6574=Necesitas %s de oro en tu mochila o banco.
+6575=Compras la receta %s por %s de oro.
+6576=No tienes permiso para acceder a esto. 6577=La receta seleccionada no está disponible.
+6578=No hay suficiente espacio en tu mochila para la receta.
+6579=La receta se ha guardado en tu mochila.
+6580=Introduce el precio en oro de la receta: %s
+6581=Esta receta no está a la venta.
+6582=No se ha seleccionado ninguna receta para fijar un precio.
+6583=No has introducido ningún precio.
+6584=Este precio no es válido. Introduce un número.
+6585=No se han encontrado pergaminos que coincidan con esta receta en este libro.
+6586=Has fijado el precio de %s en %s de oro.
+6587=Se han pagado %s de oro desde tu mochila.
+6588=Se han pagado %s de oro desde tu cuenta bancaria.
 // [7000-7499] Guiones de IA
 7000=Eres un delincuente y no puedes acceder a tu caja bancaria.
 7001=¿Qué artículo desea depositar en su caja?

@@ -22,7 +22,7 @@ function onUseChecked( pUser, iUsed )
 		}
 		else if( iUsed.movable == 2 || iUsed.movable == 3 )
 		{
-			pSocket.SysMessage( GetDictionaryEntry( 774, pSocket.Language )); //That is locked down and you cannot use it
+			pSocket.SysMessage( GetDictionaryEntry( 774, pSocket.language )); //That is locked down and you cannot use it
 		}
 		else 
 		{
