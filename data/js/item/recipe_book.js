@@ -42,12 +42,14 @@ function onUseChecked( pUser, iUsed )
 		return false;
 
 	// Require in pack or locked down
-	var inPack = (iUsed.container === pUser.pack);
-	var lockedDown = iUsed.movable === 3 || iUsed.movable === 2;
+	var inPack     = ( iUsed.container === pUser.pack );
+	var lockedDown = ( iUsed.movable === 3 || iUsed.movable === 2 );
+	var vendor     = checkPlayerVendor( iUsed );
+	var onVendor   = !!vendor;
 
-	if( !inPack && !lockedDown )
+	if( !inPack && !lockedDown && !onVendor )
 	{
-		pUser.SysMessage( "The recipe book must be in your pack or locked down to use it." );
+		pUser.SysMessage( "The recipe book must be in your pack, locked down, or on a vendor to use it." );
 		return false;
 	}
 
@@ -75,21 +77,21 @@ function onDropItemOnItem( iDropped, pUser, recipeBook )
 	if( recipeID <= 0 )
 	{
 		pUser.SysMessage( "This book is only designed to hold recipe scrolls." );
-		return 0; // bounce non-recipe back, like potion keg
+		return 0;
 	}
 
 	var existingIDs = {};
 	var uniqueCount = 0;
 
-	for( var it = recipeBook.FirstItem(); !recipeBook.FinishedItems(); it = recipeBook.NextItem() )
+	for( var item = recipeBook.FirstItem(); !recipeBook.FinishedItems(); item = recipeBook.NextItem() )
 	{
-		if( !ValidateObject( it ) || !it.isItem )
+		if( !ValidateObject( item ) || !item.isItem )
 			continue;
 
-		var rid = parseInt( it.GetTag( "recipeID" ), 10 ) | 0;
-		if( rid > 0 && !existingIDs[rid] )
+		var recipeid = item.GetTag( "recipeID" );
+		if( recipeid > 0 && !existingIDs[recipeid] )
 		{
-			existingIDs[rid] = true;
+			existingIDs[recipeid] = true;
 			uniqueCount++;
 		}
 	}
@@ -118,7 +120,6 @@ function recipeBookGump( pUser, book )
 
 	var rows = buildRecipeRows( book );
 
-	// Paging like the RunUO code
 	var page = book.GetTag( "rb_last_page" );
 	if( page < 0 )
 		page = 0;
@@ -150,12 +151,11 @@ function recipeBookGump( pUser, book )
 			count = 0;
 	}
 
-	// Flags like RunUO
-	var canLocked = (book.movable === 3);                 // locked down
-	var canDrop = (book.container === pUser.pack);        // in backpack
+	var canLocked = ( book.movable === 3 );
+	var canDrop = ( book.container === pUser.pack );
 	var vendor = checkPlayerVendor( book );
-	var canBuy = !!vendor;                            // true if book is on vendor (AI 17)
-	var canPrice = (canDrop || canBuy || canLocked);
+	var canBuy = !!vendor;
+	var canPrice = ( canDrop || canBuy || canLocked );
 	var width = canPrice ? 600 : 516;
 	var xOffset = (( 624 - width ) / 2) | 0;
 	var yOffset = 24;
@@ -166,25 +166,21 @@ function recipeBookGump( pUser, book )
 	recipeBookGump.AddBackground( xOffset + 10, yOffset + 10, width, 439, 5054 );
 	recipeBookGump.AddTiledGump( xOffset + 18, yOffset + 20, width - 17, 420, 2624 );
 
-	// Price column background if pricing enabled
 	if( canPrice )
 	{
 		recipeBookGump.AddTiledGump( xOffset + 573, yOffset + 64, 24, 352, 200 );
 		recipeBookGump.AddTiledGump( xOffset + 493, yOffset + 64, 78, 352, 1416 );
 	}
 
-	// Drop column background if canDrop
 	if( canDrop )
 		recipeBookGump.AddTiledGump( xOffset + 24, yOffset + 64, 32, 352, 1416 );
 
-	// Other column backgrounds
 	recipeBookGump.AddTiledGump( xOffset + 58,  yOffset + 64, 36,  352, 200 );   // icon
 	recipeBookGump.AddTiledGump( xOffset + 96,  yOffset + 64, 133, 352, 1416 );  // item
 	recipeBookGump.AddTiledGump( xOffset + 231, yOffset + 64, 80,  352, 200 );   // expansion
 	recipeBookGump.AddTiledGump( xOffset + 313, yOffset + 64, 100, 352, 1416 );  // crafting
 	recipeBookGump.AddTiledGump( xOffset + 415, yOffset + 64, 76,  352, 200 );   // amount
 
-	// Row separator lines
 	var tableIndex = 0;
 	for( var i = index; i < index + count && i < rows.length; i++ )
 	{
@@ -370,11 +366,122 @@ function recipeFilterGump( pUser, book )
 	filterGump.Free();
 }
 
+function recipeBuyGump( pUser, book, recipeID, price, name )
+{
+	var pSocket = pUser.socket;
+	if( pSocket == null )
+		return;
+
+	// Store pending purchase info on the player
+	pUser.SetTempTag( "RecipeBookBuyRID", recipeID );
+	pUser.SetTempTag( "RecipeBookBuyPrice", price );
+	pUser.SetTempTag( "RecipeBookSer", book.serial );
+
+	var g = new Gump();
+	g.AddPage( 0 );
+
+	// Background
+	g.AddBackground( 100, 10, 300, 150, 5054 );
+
+	// Text
+	g.AddText( 125, 25, 0x480, "You have agreed to purchase:" );
+	g.AddText( 125, 45, 0x480, name );
+	g.AddText( 125, 70, 0x480, "for the amount of:" );
+	g.AddText( 125, 90, 0x480, "" + price + " gold" );
+
+	// CANCEL button (501)
+	g.AddButton( 250, 130, 4005, 4007, 1, 0, 501 );
+	g.AddText( 282, 130, 0x480, "CANCEL" );
+
+	// OK button (500)
+	g.AddButton( 120, 130, 4005, 4007, 1, 0, 500 );
+	g.AddText( 152, 130, 0x480, "OKAY" );
+
+	g.Send( pSocket );
+	g.Free();
+}
+
 function onGumpPress( pSock, buttonID, gumpData )
 {
 	var pUser = pSock.currentChar;
 	if( !pUser )
 		return;
+
+	if( buttonID === 500 || buttonID === 501 )
+	{
+		var ser  = pUser.GetTempTag( "RecipeBookSer" );
+		if( ser <= 0 )
+			return;
+
+		var book = CalcItemFromSer( ser );
+		if( !ValidateObject( book ) || book.GetTag( "isRecipeBook" ) != 1)
+			return;
+
+		if( buttonID === 501 )
+		{
+			// Cancel
+			pUser.SysMessage( "You decide not to buy that recipe." );
+			recipeBookGump( pUser, book );
+			// Clear pending buy tags
+			pUser.SetTempTag( "RecipeBookBuyRID", null );
+			pUser.SetTempTag( "RecipeBookBuyPrice", null );
+			return;
+		}
+
+		// OK (500)
+		var rid   = pUser.GetTempTag( "RecipeBookBuyRID" );
+		var price = pUser.GetTempTag( "RecipeBookBuyPrice" );
+
+		if( rid <= 0 || price < 0 )
+		{
+			pUser.SysMessage( "Purchase information is invalid." );
+			recipeBookGump( pUser, book );
+			return;
+		}
+
+		// Check still available
+		var rows = buildRecipeRows( book );
+		var foundRow = null;
+		for( var i = 0; i < rows.length; i++ )
+		{
+			if( rows[i].id === rid )
+			{
+				foundRow = rows[i];
+				break;
+			}
+		}
+
+		if( !foundRow || foundRow.amount <= 0 )
+		{
+			pUser.SysMessage( "The recipe selected is not available." );
+			recipeBookGump( pUser, book );
+			return;
+		}
+
+		if( !payFromBackpackOrBank( pUser, price ))
+		{
+			pUser.SysMessage( "You need " + price + " gold in your backpack or bank." );
+			recipeBookGump( pUser, book );
+			return;
+		}
+
+		if( fromBookToChar( book, rid, pUser ))
+		{
+			book.Refresh();
+			pUser.SysMessage( "You buy the recipe '" + foundRow.name + "' for " + price + " gold." );
+		}
+		else
+		{
+			pUser.SysMessage( "The recipe selected is not available." );
+		}
+
+		// Clear pending buy tags
+		pUser.SetTempTag( "RecipeBookBuyRID", null );
+		pUser.SetTempTag( "RecipeBookBuyPrice", null );
+
+		recipeBookGump( pUser, book );
+		return;
+	}
 
 	// Find the book we opened this from
 	var ser = pUser.GetTempTag( "RecipeBookSer" );
@@ -565,27 +672,14 @@ function onGumpPress( pSock, buttonID, gumpData )
 				return;
 			}
 
-			if( !payFromBackpackOrBank( pUser, r.price ))
-			{
-				pUser.SysMessage( "You need " + r.price + " gold in your backpack or bank" );
-				recipeBookGump( pUser, book );
-				return;
-			}
+			// Instead of buying immediately, show confirmation gump
+			recipeBuyGump( pUser, book, r.id, r.price, r.name );
 
-			if( fromBookToChar( book, r.id, pUser ))
-			{
-				book.Refresh();
-			}
-			else
-			{
-				pUser.SysMessage( "The recipe selected is not available." );
-			}
-
-			recipeBookGump( pUser, book );
 			return;
 		}
 
 	}
+
 	return;
 }
 
