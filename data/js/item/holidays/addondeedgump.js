@@ -115,15 +115,17 @@ function onCallback0( socket, myTarget )
 			var itemID = addonID[0];
 			var itemID2 = addonID[1];
 
-			var addonitem = CreateDFNItem( socket, mChar, "0x232D", 1, "ITEM", true );
+			var addonitem = CreateDFNItem( socket, pUser, "0x232D", 1, "ITEM", true );
 			addonitem.Teleport( targX, targY, targZ );
 			if( NorthWall )
 			{
-				addonitem.id = itemID;
+				addonitem.id = itemID2;
+				addonitem.sectionID = "0x" + itemID2.toString(16);
 			}
 			else if( WestWall ) 
 			{
-				addonitem.id = itemID2;
+				addonitem.id = itemID;
+				addonitem.sectionID = "0x" + itemID.toString(16);
 			}
 			else
 			{
@@ -150,7 +152,7 @@ function onCallback0( socket, myTarget )
 The purpose of this function to determining itemID and itemID2 values based on the result of calling GetTag("addondeed") on the iUsed object.
 If the result is 1, it sets specific values for itemID and itemID2; otherwise, they remain 0.
 The function then returns an array containing these values. To a Gump and targetting cursor.
-Example of Dedd you make and add addondeed tag to
+Example of Deed you make and add addondeed tag to
 
 customint=addondeed 2 < long as you change this number the case below needs to match up.
 in the switch add case 2 and the two ids you want to be displayed on gump for west wall and north wall.
@@ -162,6 +164,7 @@ function AddonDisplayID( iUsed )
 	switch( iUsed.GetTag( "addondeed" ))
 	{
 		case 1: itemID = 0x232D; itemID2 = 0x232C; break;
+		case 2: itemID = 0xA12E; itemID2 = 0xA12F; break;
 		default: break;
 	}
 

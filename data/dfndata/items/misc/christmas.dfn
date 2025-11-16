@@ -225,6 +225,42 @@ id=0x232C
 get=0x232D 0x232C
 }
 
+[wreathdeed2]
+{
+get=base_item
+name=a holiday wreath deed
+id=0x14F0
+script=5608
+decay=1
+custominttag=addondeed 2
+}
+
+[0xA12E]
+{
+get=base_item
+name=a wreath
+id=0xA12E
+movable=1
+dyeable=1
+decay=1
+weight=100
+newbie
+script=5609
+custominttag=HolidayAddon 2
+}
+
+[0xA12F]
+{
+get=0xA12E
+id=0xA12F
+}
+
+[wreathaddon2]
+{
+get=0xA12E 0xA12F
+sectionID=wreathaddon2
+}
+
 [0x2328]
 {
 get=base_item

@@ -38,6 +38,10 @@ function onGumpPress( pSock, pButton, gumpData )
 	var iUsed = pSock.tempObj;
 	var iMulti = FindMulti(iUsed.x, iUsed.y, iUsed.z, pSock.currentChar.worldnumber);
 
+	pSock.SysMessage("sectionID: " + iUsed.sectionID + " id: 0x" + iUsed.id.toString(16));
+	if( pButton == 0 )
+		return;
+
 	var deedName = "";
 	switch( pButton ) 
 	{
@@ -45,9 +49,12 @@ function onGumpPress( pSock, pButton, gumpData )
 		case 1:
 			switch( iUsed.sectionID )
 			{
-				case "0x232C":
-				case "0x232D":
+				case "0x232c":
+				case "0x232d":
 				case "wreathaddon": deedName = "WreathDeed"; break;
+				case "0xa12e":
+				case "0xa12f":
+				case "wreathaddon2": deedName = "wreathdeed2"; break;
 				default:
 					pSock.SysMessage( GetDictionaryEntry( 5507, pSock.language ));
 					break;
