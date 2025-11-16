@@ -3574,7 +3574,7 @@
 6583=Sie haben keinen Preis festgelegt.
 6584=Dies ist kein gültiger Preis. Bitte geben Sie eine Zahl ein.
 6585=Für dieses Rezept wurden keine passenden Schriftrollen in diesem Buch gefunden.
-6586=Sie haben den Preis auf %s für %s Gold festgelegt.
+6586=Sie haben den Preis auf %s für %i Gold festgelegt.
 6587=%s Gold wurden aus Ihrem Rucksack bezahlt.
 6588=%s Gold wurden von Ihrem Bankkonto bezahlt.
 // [7000-7499] AI Scripts

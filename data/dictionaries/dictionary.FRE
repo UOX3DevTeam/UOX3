@@ -3737,7 +3737,7 @@
 6583=Vous n'avez pas défini de prix.
 6584=Ce prix est invalide. Veuillez saisir un nombre.
 6585=Aucun parchemin correspondant à cette recette n'a été trouvé dans ce livre.
-6586=Vous avez fixé le prix à %s pour %s d'or.
+6586=Vous avez fixé le prix à %s pour %i d'or.
 6587=%s d'or a été payé depuis votre sac à dos.
 6588=%s d'or a été payé depuis votre compte bancaire.
 // [7000-7499] AI Scripts

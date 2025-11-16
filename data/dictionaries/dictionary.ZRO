@@ -3574,7 +3574,7 @@
 6583=You did not type a price.
 6584=That is not a valid price. Please enter a number.
 6585=No matching scrolls were found in this book for that recipe.
-6586=You set the price for %s to %s gold.
+6586=You set the price for %s to %i gold.
 6587=%s gold has been paid from your backpack.
 6588=%s gold has been paid from your bank account.
 // [7000-7499] AI Scripts

@@ -765,9 +765,9 @@ function onSpeechInput( pUser, pItem, pSpeech, pSpeechID )
 		}
 	}
 
-	var setPriceMsg = GetDictionaryEntry( 6586, pSocket.language ); // "You set the price for '%s' to %s gold."
+	var setPriceMsg = GetDictionaryEntry( 6586, pSocket.language ); // "You set the price for %s to %i gold."
 	setPriceMsg = setPriceMsg.replace( "%s", name );
-	setPriceMsg = setPriceMsg.replace( "%s", price.toString() );
+	setPriceMsg = setPriceMsg.replace( "%i", price.toString() );
 	pSocket.SysMessage( setPriceMsg );
 	recipeBookGump( pUser, pItem );
 }
