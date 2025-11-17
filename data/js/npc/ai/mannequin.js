@@ -1,8 +1,8 @@
 var Era_Type = EraStringToNum(GetServerSetting("CoreShardEra"));
-var ARMOR_LAYERS = [0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x0A, 0x0D, 0x11, 0x13, 0x14, 0x16, 0x17, 0x18];
-var RESIST_LAYERS = [ 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0C, 0x0D, 0x0E, 0x11, 0x12, 0x13, 0x14, 0x16, 0x17, 0x18];
+let ARMOR_LAYERS = [0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x0A, 0x0D, 0x11, 0x13, 0x14, 0x16, 0x17, 0x18];
+let RESIST_LAYERS = [ 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0C, 0x0D, 0x0E, 0x11, 0x12, 0x13, 0x14, 0x16, 0x17, 0x18];
 // Wearable layers (skip hair/facial/backpack/mount/vendor/bank)
-var EQUIP_LAYERS = [0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0C,0x0D,0x0E,0x0F,0x11,0x12,0x13,0x14,0x16,0x17,0x18];
+let EQUIP_LAYERS = [0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0C,0x0D,0x0E,0x0F,0x11,0x12,0x13,0x14,0x16,0x17,0x18];
 
 /** @type { ( tSock: Socket, baseObj: BaseObject ) => boolean } */
 function onContextMenuRequest( socket, targObj )
@@ -408,14 +408,14 @@ function filterSectionsForEra( sections )
             var src = sections[s] || {};
             var sec = { header: src.header, rowsLeft: [], rowsRight: [] };
 
-            var L = src.rowsLeft  || [];
-            var R = src.rowsRight || [];
+            var leftHand = src.rowsLeft  || [];
+            var rightHand = src.rowsRight || [];
 
-            for( var i = 0; i < L.length; i++ )
-				sec.rowsLeft.push( cloneRow( L[i]||{} ));
+            for( var i = 0; i < leftHand.length; i++ )
+				sec.rowsLeft.push( cloneRow( leftHand[i]||{} ) );
 
-            for(var j = 0; j < R.length; j++ )
-				sec.rowsRight.push( cloneRow( R[j]||{} ));
+            for(var j = 0; j < rightHand.length; j++ )
+				sec.rowsRight.push( cloneRow( rightHand[j]||{} ) );
 
             if( sec.rowsLeft.length || sec.rowsRight.length )
 				out.push(sec);
@@ -452,9 +452,9 @@ function filterSectionsForEra( sections )
 
         for( var i2 = 0; i2 < L2.length; i2++ )
         {
-            var r = L2[i2] || {};
-            if( includeByEraKey( r.key ))
-				sec2.rowsLeft.push( cloneRow( r ));
+            var rightHand = L2[i2] || {};
+            if( includeByEraKey( rightHand.key ))
+				sec2.rowsLeft.push( cloneRow( rightHand ));
         }
         for( var j2 = 0; j2 < R2.length; j2++ )
         {
@@ -616,10 +616,14 @@ function moveMannequinGearToPlayerPack( mannequin, pUser )
     if(!ValidateObject( mannequin ) || !ValidateObject( pUser ))
 		return 0;
 
+	var pSocket = pUser.socket;
+	if( pSocket== null )
+		return 0;
+
     var isPack = pUser.pack;
     if( !ValidateObject( isPack ))
 	{
-        pUser.SysMessage( "You need a backpack to take the mannequin's gear." );
+        pSocket.SysMessage( "You need a backpack to take the mannequin's gear." );
         return 0;
     }
 
@@ -639,7 +643,7 @@ function moveMannequinGearToPlayerPack( mannequin, pUser )
 
     if( moved > 0 ) 
 	{
-        pUser.SysMessage( "You retrieve " + moved + " item"+( moved===1 ? "" : "s" )+" from the mannequin." );
+        pSocket.SysMessage( "You retrieve " + moved + " item"+( moved===1 ? "" : "s" )+" from the mannequin." );
     }
     return moved;
 }
@@ -725,10 +729,10 @@ function isSwapFail( res )
 	return ( res && !res.equipped && ( res.packed || res.dropped )) ? 1 : 0;
 }
 
-function swapLayer( pUser, mann, layer )
+function swapLayer( pUser, mannequin, layer )
 {
 	var u = pUser.FindItemLayer( layer );
-	var m = mann.FindItemLayer( layer );
+	var m = mannequin.FindItemLayer( layer );
 
 	var moved = 0, failed = 0;
 
@@ -743,7 +747,7 @@ function swapLayer( pUser, mann, layer )
 		failed += isSwapFail( r1 );
 		moved++;
 
-		var r2 = equipOn( mann, u, pUser );
+		var r2 = equipOn( mannequin, u, pUser );
 		failed += isSwapFail( r2 );
 		moved++;
 
@@ -759,7 +763,7 @@ function swapLayer( pUser, mann, layer )
 
 	if( ValidateObject( u ) && !ValidateObject( m ))
 	{
-		var r4 = equipOn( mann, u, pUser );
+		var r4 = equipOn( mannequin, u, pUser );
 		failed += isSwapFail( r4 ); moved++;
 		return {moved:moved, failed:failed};
 	}
@@ -822,9 +826,13 @@ function switchMannequinClothing( pUser, mannequin )
 	if( !ValidateObject( pUser ) || !ValidateObject( mannequin ))
 		return 0;
 
+	var pSocket = pUser.socket;
+	if( pSocket== null )
+		return 0;
+
 	if( !ValidateObject( pUser.pack ))
 	{
-		pUser.SysMessage( "You need a backpack to switch clothes." );
+		pSocket.SysMessage( "You need a backpack to switch clothes." );
 		return 0;
 	}
 
@@ -844,13 +852,12 @@ function switchMannequinClothing( pUser, mannequin )
 
 	if( totalMoved > 0 )
 	{
-		pUser.SysMessage( "You quickly swap clothes with the mannequin." );
+		pSocket.SysMessage( "You quickly swap clothes with the mannequin." );
 	}
 
 	if( totalFailed > 0 )
 	{
-		pUser.SysMessage( totalFailed + " item" + ( totalFailed===1?"":"s" ) +
-			" could not be swapped between you and the mannequin. These items are now in your backpack, or on the floor at your feet if your backpack is too full to hold them." );
+		pSocket.SysMessage( totalFailed + " item" + ( totalFailed===1?"":"s" ) + " could not be swapped between you and the mannequin. These items are now in your backpack, or on the floor at your feet if your backpack is too full to hold them." );
 	}
 
 	return totalMoved;
@@ -882,7 +889,7 @@ function setRaceGender(  mannequin, race, gender, pUser )
 function onGumpPress( pSock, iButton, gumpData )
 {
 	var pUser = pSock.currentChar;
-	var mannequinSer = parseInt( pUser.GetTempTag( "MANN_STATS_MANN" ) || "0", 10 );
+	var mannequinSer = pUser.GetTempTag( "MANN_STATS_MANN" );
 	var mannequin = CalcCharFromSer( mannequinSer );
 	if( !ValidateObject( pUser )) 
 	{

@@ -1,9 +1,6 @@
-// ---------- Tunables ----------
-var DESC_MAX_LEN = 200;
-
 // Baseline single-word profanity (no slurs here; keep repo-friendly).
 // Add/remove to suit your shard's policy.
-var BAD_WORDS = [
+let bad_words = [
 	"ass", "arse", "asshole", "arsehole", "bastard", "bitch", "bollocks", "bullshit", "crap", "damn", "darn",
 	"dick", "dickhead", "prick", "cock", "cocksucker", "cum", "cumming", "cumshot", "piss", "pissed", "pissing",
 	"fuck", "fucker", "fucking", "fuk", "fukin", "fuking", "motherfucker", "mf", "mofo",
@@ -15,14 +12,14 @@ var BAD_WORDS = [
 ];
 
 // Common multi-word phrases to block.
-var BAD_PHRASES = [
+let bad_phases = [
 	"son of a bitch", "piece of shit", "go to hell", "screw you", "shut the hell up",
 	"suck my dick", "blow job", "hand job", "rim job", "butt plug", "camel toe"
 ];
 
 // Optional: extra “policy” keywords you might consider odd/suspicious in a description
 // (links, contact solicitations, etc.). These are treated separately from profanity.
-var DISALLOWED_PATTERNS = [
+let disallowed_patterns = [
 	/(https?:\/\/|www\.)/i,            // links
 	/\bdiscord\.gg\b/i,                // invites
 	/\b(?:@|dot|d0t)\string?\w+\.\w+\b/i,   // obfuscated emails/domains
@@ -31,9 +28,9 @@ var DISALLOWED_PATTERNS = [
 ];
 
 // ---------- Normalization helpers (SpiderMonkey 1.8.5 / ES5-safe) ----------
-function toLower( s ) 
+function toLower( strings ) 
 {
-	return ( "" + s ).toLowerCase();
+	return ( "" + strings ).toLowerCase();
 }
 
 // Replace common leetspeak / lookalikes before checking
@@ -106,8 +103,8 @@ function phrasesToRegex( arr )
 	return new RegExp( "(?:^|\\string)(" + escaped.join( "|" ) + ")(?:\\string|$)", "i" );
 }
 
-var RE_BAD_WORDS = wordsToRegex( BAD_WORDS );
-var RE_BAD_PHRASES = phrasesToRegex( BAD_PHRASES );
+var RE_bad_words = wordsToRegex( bad_words );
+var RE_bad_phases = phrasesToRegex( bad_phases );
 
 // ---------- Validator ----------
 function validateDescription( raw, allowEmpty )
@@ -122,21 +119,21 @@ function validateDescription( raw, allowEmpty )
 	if( !string.replace( /\string/g, "" ))
 		return { ok: false, reason: "empty" };
 
-	if( string.length > DESC_MAX_LEN )
-		return { ok: false, reason: "too long (" + string.length + ">" + DESC_MAX_LEN + ")" };
+	if( string.length > 200 )
+		return { ok: false, reason: "too long (" + string.length + ">" + 200 + ")" };
 
-	for( var i = 0; i < DISALLOWED_PATTERNS.length; i++ )
+	for( var i = 0; i < disallowed_patterns.length; i++ )
 	{
-		if( DISALLOWED_PATTERNS[i].test( string ))
+		if( disallowed_patterns[i].test( string ))
 			return { ok: false, reason: "disallowed content" };
 	}
 
 	var norm = normalizeForCheck( string );
 
-	if( RE_BAD_WORDS.test( norm ))
+	if( RE_bad_words.test( norm ))
 		return { ok: false, reason: "contains profanity" };
 
-	if( RE_BAD_PHRASES.test( norm ))
+	if( RE_bad_phases.test( norm ))
 		return { ok: false, reason: "contains profanity" };
 
 	// Optional: minimum “signal” (avoid gibberish)
