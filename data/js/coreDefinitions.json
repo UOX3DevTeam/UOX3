@@ -8657,6 +8657,19 @@
       "returns": "number"
     },
     {
+      "name": "onSpellCast",
+      "cppName": "OnSpellCast",
+      "params": {
+        "list": [
+          { "name": "sock",    "type": "Socket",    "required": true },
+          { "name": "tChar",   "type": "Character", "required": true },
+          { "name": "direct",  "type": "boolean",   "required": true },
+          { "name": "SpellId", "type": "number",    "required": true }
+        ]
+      },
+      "returns": "boolean"
+    },
+    {
       "name": "onSpellGain",
       "cppName": "OnSpellGain",
       "params": {
