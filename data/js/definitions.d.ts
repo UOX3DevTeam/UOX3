@@ -954,6 +954,7 @@ declare global {
               requiresBeard:    boolean;
               requiresNoBeard:  boolean;
               visibleDistance:  number;
+    CanEquip( item: Item ): boolean;
     CanWearArmour( item: Item ): boolean;
     IsValidBeardColour( colour: number ): boolean;
     IsValidHairColour( colour: number ): boolean;
@@ -1709,8 +1710,9 @@ declare global {
   function onSoldToVendor( targSock: Socket, objVendor: Character, objItemSold: BaseObject, numItemsSold: number ): boolean;
   function onSpecialMove( mChar: Character, abilityId: number ): boolean;
   function onSpeech( speech: string, personTalking: Character, talkingTo: BaseObject ): null | undefined | number | boolean;
-  function onSpeechInput( myChar: Character, myItem: Item, mySpeech: string, mySpeechId: number  ): void;
+  function onSpeechInput( myChar: Character, myItem: Item, mySpeech: string, mySpeechId: number ): void;
   function onSpellCast( tChar: Character, SpellId: number ): number;
+  function onSpellCast( sock: Socket, tChar: Character, direct: boolean, SpellId: number ): boolean;
   function onSpellGain( book: Item, spellNum: number ): boolean;
   function onSpellLoss( book: Item, spellNum: number ): boolean;
   function onSpellSuccess( tChar: Character, SpellId: number ): boolean;

@@ -26,6 +26,8 @@ function onUseChecked( pUser, runeBook )
 
 	// get users socket
 	var pSocket = pUser.socket;
+	if( pSocket == null )
+		return false;
 
 	var iTime = GetCurrentClock();
 	var NextUse = parseInt( runeBook.GetTag( "useDelayed" ));
@@ -98,11 +100,11 @@ function onUseChecked( pUser, runeBook )
 	pUser.SoundEffect( 0x58, false );
 
 	// Display the gump
-	DisplayGump( pSocket, pUser, runeBook );
+	RuneBookGump( pSocket, runeBook );
 	return false;
 }
 
-function DisplayGump( pSocket, pUser, runeBook )
+function RuneBookGump( pSocket, runeBook )
 {
 	var runeBookCharges = runeBook.dir;
 	var defaultRuneLoc = runeBook.GetTag( "defaultRuneLoc" );
@@ -112,8 +114,8 @@ function DisplayGump( pSocket, pUser, runeBook )
 	runeBookGump.AddGump( 0, 0, 0x898 );
 
 	// Display front page
-	runeBookGump.AddHTMLGump( 40, 30, 120, 25, 1, 1, "<BASEFONT size=4>" + GetDictionaryEntry( 9252, pSocket.language ) + " " + runeBookCharges +  "</BASEFONT>" ); // Charges:
-	runeBookGump.AddHTMLGump( 200, 30, 130, 25, 1, 1, "<BASEFONT size=4>" + GetDictionaryEntry( 9253, pSocket.language ) + " " + maxCharges + "</BASEFONT>" ); // Max Charges:
+	runeBookGump.AddHTMLGump( 40, 30, 120, 25, false, false, "<BASEFONT size=4>" + GetDictionaryEntry( 9252, pSocket.language ) + " " + runeBookCharges +  "</BASEFONT>" ); // Charges:
+	runeBookGump.AddHTMLGump( 200, 30, 130, 25, false, false, "<BASEFONT size=4>" + GetDictionaryEntry( 9253, pSocket.language ) + " " + maxCharges + "</BASEFONT>" ); // Max Charges:
 
 	// Add numbered buttons at bottom of gump, pointing at different pages
 	runeBookGump.AddButton( 31, 178, 0x8b1, 0, 2, 0 );
@@ -154,7 +156,7 @@ function DisplayGump( pSocket, pUser, runeBook )
 	runeBookGump.AddPage( 1 );
 
 	runeBookGump.AddButton( 25, 8, 0x9aa, 1, 0, 20 ); // Rename Book button
-	runeBookGump.AddHTMLGump( 55, 10, 100, 25, 1, 1, "<BASEFONT size=4>" + GetDictionaryEntry( 9254, pSocket.language ) + "</BASEFONT>" ); // Rename Book
+	runeBookGump.AddHTMLGump( 55, 10, 100, 25, false, false, "<BASEFONT size=4>" + GetDictionaryEntry( 9254, pSocket.language ) + "</BASEFONT>" ); // Rename Book
 
 	// Add turn page button and masking gump
 	runeBookGump.AddButton( 293, 5, 0x89e, 0, 2, 0 );
@@ -182,11 +184,11 @@ function DisplayGump( pSocket, pUser, runeBook )
 			// Left hand side of first two pages
 			if( runeData == 0 || splitData == 0 )
 			{
-				runeBookGump.AddHTMLGump( leftTxtOffsetX, leftTxtOffsetY + ( 15 * ( i - 1 )), 120, 20, 1, 1, "<BASEFONT size=5>" + GetDictionaryEntry( 9255, pSocket.language ) + "</BASEFONT>" ); // Empty
+				runeBookGump.AddHTMLGump( leftTxtOffsetX, leftTxtOffsetY + ( 15 * ( i - 1 )), 120, 20, false, false, "<BASEFONT size=5>" + GetDictionaryEntry( 9255, pSocket.language ) + "</BASEFONT>" ); // Empty
 			}
 			else
 			{
-				runeBookGump.AddHTMLGump( leftTxtOffsetX, leftTxtOffsetY + ( 15 * ( i - 1)), 120, 20, 1, 1, "<BASEFONT color=#0xfd size=10>" + splitData[0] + "</BASEFONT>" );
+				runeBookGump.AddHTMLGump( leftTxtOffsetX, leftTxtOffsetY + ( 15 * ( i - 1)), 120, 20, false, false, "<BASEFONT color=#0xfd size=10>" + splitData[0] + "</BASEFONT>" );
 				runeBookGump.AddToolTip( tooltipClilocID, pSocket, splitData[0] );
 			}
 			runeBookGump.AddButton( leftBtnOffsetX, leftBtnOffsetY + ( 15 * ( i - 1 )), 0x837, 1, 0, 30 + i );
@@ -196,11 +198,11 @@ function DisplayGump( pSocket, pUser, runeBook )
 			// Right hand side of first two page
 			if( runeData == 0 || splitData == 0 )
 			{
-				runeBookGump.AddHTMLGump( rightTxtOffsetX, rightTxtOffsetY + ( 15 * ( i - 9 )), 120, 20, 1, 1, "<BASEFONT size=5>" + GetDictionaryEntry( 9255, pSocket.language ) + "</BASEFONT>" ); // Empty
+				runeBookGump.AddHTMLGump( rightTxtOffsetX, rightTxtOffsetY + ( 15 * ( i - 9 )), 120, 20, false, false, "<BASEFONT size=5>" + GetDictionaryEntry( 9255, pSocket.language ) + "</BASEFONT>" ); // Empty
 			}
 			else
 			{
-				runeBookGump.AddHTMLGump( rightTxtOffsetX, rightTxtOffsetY + ( 15 * ( i - 9 )), 120, 20, 1, 1, "<BASEFONT color=0xfd size=5>" + splitData[0] + "</BASEFONT>" );
+				runeBookGump.AddHTMLGump( rightTxtOffsetX, rightTxtOffsetY + ( 15 * ( i - 9 )), 120, 20, false, false, "<BASEFONT color=0xfd size=5>" + splitData[0] + "</BASEFONT>" );
 				runeBookGump.AddToolTip( tooltipClilocID, pSocket, splitData[0] );
 			}
 			runeBookGump.AddButton( rightBtnOffsetX, rightBtnOffsetY + ( 15 * ( i - 9 )), 0x837, 1, 0, 30 + i );
@@ -218,28 +220,28 @@ function DisplayGump( pSocket, pUser, runeBook )
 		switch( i )
 		{
 			case 0:
-				runeBookGump.AddHTMLGump( 38, 178, 40, 20, 1, 1, "<BASEFONT size=5>1</BASEFONT>" );
+				runeBookGump.AddHTMLGump( 38, 178, 40, 20, false, false, "<BASEFONT size=5>1</BASEFONT>" );
 				break;
 			case 1:
-				runeBookGump.AddHTMLGump( 70, 178, 40, 20, 1, 1, "<BASEFONT size=5>2</BASEFONT>" );
+				runeBookGump.AddHTMLGump( 70, 178, 40, 20, false, false, "<BASEFONT size=5>2</BASEFONT>" );
 				break;
 			case 2:
-				runeBookGump.AddHTMLGump( 105, 178, 40, 20, 1, 1, "<BASEFONT size=5>3</BASEFONT>" );
+				runeBookGump.AddHTMLGump( 105, 178, 40, 20, false, false, "<BASEFONT size=5>3</BASEFONT>" );
 				break;
 			case 3:
-				runeBookGump.AddHTMLGump( 139, 178, 40, 20, 1, 1, "<BASEFONT size=5>4</BASEFONT>" );
+				runeBookGump.AddHTMLGump( 139, 178, 40, 20, false, false, "<BASEFONT size=5>4</BASEFONT>" );
 				break;
 			case 4:
-				runeBookGump.AddHTMLGump( 207, 178, 40, 20, 1, 1, "<BASEFONT size=5>5</BASEFONT>" );
+				runeBookGump.AddHTMLGump( 207, 178, 40, 20, false, false, "<BASEFONT size=5>5</BASEFONT>" );
 				break;
 			case 5:
-				runeBookGump.AddHTMLGump( 241, 178, 40, 20, 1, 1, "<BASEFONT size=5>6</BASEFONT>" );
+				runeBookGump.AddHTMLGump( 241, 178, 40, 20, false, false, "<BASEFONT size=5>6</BASEFONT>" );
 				break;
 			case 6:
-				runeBookGump.AddHTMLGump( 275, 178, 40, 20, 1, 1, "<BASEFONT size=5>7</BASEFONT>" );
+				runeBookGump.AddHTMLGump( 275, 178, 40, 20, false, false, "<BASEFONT size=5>7</BASEFONT>" );
 				break;
 			case 7:
-				runeBookGump.AddHTMLGump( 310, 178, 40, 20, 1, 1, "<BASEFONT size=5>8</BASEFONT>" );
+				runeBookGump.AddHTMLGump( 310, 178, 40, 20, false, false, "<BASEFONT size=5>8</BASEFONT>" );
 				break;
 		}
 
@@ -262,7 +264,7 @@ function DisplayGump( pSocket, pUser, runeBook )
 		}
 
 		runeBookGump.AddButton( 60, 10, setDefaultBtn, 1, 0, ( i * 2 ) + 1 ); // ButtonIDs 1, 3, 5, 7, 9, 11, 13, 15
-	  	runeBookGump.AddHTMLGump( 74, 6, 120, 40, 1, 1, "<BASEFONT size=2>" + GetDictionaryEntry( 9256, pSocket.language ) + "</BASEFONT>" ); // Set Default
+	  	runeBookGump.AddHTMLGump( 74, 6, 120, 40, false, false, "<BASEFONT size=2>" + GetDictionaryEntry( 9256, pSocket.language ) + "</BASEFONT>" ); // Set Default
 
 	  	// Add internal recall button for rune
 		runeBookGump.AddButton( 28, 56, 0x837, 1, 0, ( i * 2 ) + 31 ); // ButtonIDs 31, 33, 35, 37, 39, 41, 43, 45
@@ -270,7 +272,7 @@ function DisplayGump( pSocket, pUser, runeBook )
 		// Add name of rune, and location
 		if( splitData == 0 )
 		{
-	  		runeBookGump.AddHTMLGump( 41, 52, 120, 25, 1, 1, "<BASEFONT size=5>" + GetDictionaryEntry( 9255, pSocket.language ) + "</BASEFONT>" ); // Empty
+	  		runeBookGump.AddHTMLGump( 41, 52, 120, 25, false, false, "<BASEFONT size=5>" + GetDictionaryEntry( 9255, pSocket.language ) + "</BASEFONT>" ); // Empty
 		}
 	  	else
 	  	{
@@ -284,10 +286,10 @@ function DisplayGump( pSocket, pUser, runeBook )
 		  	let yLatMin = mapCoords[4];
 		  	let ySouth = mapCoords[5];
 
-		  	runeBookGump.AddHTMLGump( 41, 52, 130, 40, 1, 1, "<BASEFONT color=#0xfd size=5>" + splitData[0] + "</BASEFONT>" );
+		  	runeBookGump.AddHTMLGump( 41, 52, 130, 40, false, false, "<BASEFONT color=#0xfd size=5>" + splitData[0] + "</BASEFONT>" );
 		  	runeBookGump.AddToolTip( tooltipClilocID, pSocket, splitData[0] );
 
-		  	runeBookGump.AddHTMLGump( 35, 90, 125, 25, 1, 1, "<CENTER><BASEFONT size=3>" + yLatDeg + "o " + yLatMin + "'" + ( ySouth ? "N" : "S" ) + " " + xLongDeg + "o " + xLongMin + "'" + ( xEast ? "W" : "E" ) + "</BASEFONT></CENTER>" );
+		  	runeBookGump.AddHTMLGump( 35, 90, 125, 25, false, false, "<CENTER><BASEFONT size=3>" + yLatDeg + "o " + yLatMin + "'" + ( ySouth ? "N" : "S" ) + " " + xLongDeg + "o " + xLongMin + "'" + ( xEast ? "W" : "E" ) + "</BASEFONT></CENTER>" );
 		  	if( showCoords )
 		  	{
 		  		runeBookGump.AddToolTip( tooltipClilocID, pSocket, splitData[2] + ", " + splitData[3].toString() );
@@ -296,7 +298,7 @@ function DisplayGump( pSocket, pUser, runeBook )
 
 	  	// Add drop rune button
 		runeBookGump.AddButton( 35, 110, 0x985, 1, 0, ( 101 + ( i * 2 ))); // ButtonIDs 101, 103, 105, 107, 109, 111, 113, 115
-		runeBookGump.AddHTMLGump( 45, 110, 100, 25, 1, 1, "<BASEFONT size=5>" + GetDictionaryEntry( 9257, pSocket.language ) + "</BASEFONT>" ); // Drop Rune
+		runeBookGump.AddHTMLGump( 45, 110, 100, 25, false, false, "<BASEFONT size=5>" + GetDictionaryEntry( 9257, pSocket.language ) + "</BASEFONT>" ); // Drop Rune
 
 		// Add Recall buttons
 		runeBookGump.AddButton( 35, 130, 0x8df, 1, 0, ( 121 + ( i * 2 ))); // ButtonIDs 121, 123, 125, 127, 129, 131, 133, 135
@@ -319,7 +321,7 @@ function DisplayGump( pSocket, pUser, runeBook )
 			setDefaultBtn = 0x938;
 		}
 		runeBookGump.AddButton( 190, 10, setDefaultBtn, 1, 0, ( i * 2 ) + 2 ); // ButtonIDs 2, 4, 6, 8, 10, 12, 14, 16
-	  	runeBookGump.AddHTMLGump( 204, 6, 120, 40, 1, 1, "<BASEFONT size=2>" + GetDictionaryEntry( 9256, pSocket.language ) + "</BASEFONT>" ); // Set Default
+	  	runeBookGump.AddHTMLGump( 204, 6, 120, 40, false, false, "<BASEFONT size=2>" + GetDictionaryEntry( 9256, pSocket.language ) + "</BASEFONT>" ); // Set Default
 
 		// Add internal recall button for rune
 	  	runeBookGump.AddButton( 192, 56, 0x837, 1, 0, ( i * 2 ) + 32 ); // ButtonIDs 32, 34, 36, 38, 40, 42, 44, 46
@@ -327,7 +329,7 @@ function DisplayGump( pSocket, pUser, runeBook )
 		// Add name of rune, and location
 		if( splitData == 0 )
 		{
-		  	runeBookGump.AddHTMLGump( 203, 52, 120, 25, 1, 1, "<BASEFONT size=5>" + GetDictionaryEntry( 9255, pSocket.language ) + "</BASEFONT>" ); // Empty
+		  	runeBookGump.AddHTMLGump( 203, 52, 120, 25, false, false, "<BASEFONT size=5>" + GetDictionaryEntry( 9255, pSocket.language ) + "</BASEFONT>" ); // Empty
 		}
 		else
 		{
@@ -341,10 +343,10 @@ function DisplayGump( pSocket, pUser, runeBook )
 		  	let yLatMin = mapCoords[4];
 		  	let ySouth = mapCoords[5];
 
-		  	runeBookGump.AddHTMLGump( 203, 52, 120, 50, 1, 1, "<BASEFONT color=#0xfd size=5>" + splitData[0] + "</BASEFONT>" );
+		  	runeBookGump.AddHTMLGump( 203, 52, 120, 50, false, false, "<BASEFONT color=#0xfd size=5>" + splitData[0] + "</BASEFONT>" );
 		  	runeBookGump.AddToolTip( tooltipClilocID, pSocket, splitData[0] );
 
-		  	runeBookGump.AddHTMLGump( 195, 90, 125, 25, 1, 1, "<CENTER><BASEFONT size=3>" + yLatDeg + "o " + yLatMin + "'" + ( ySouth ? "S" : "N" ) + " " + xLongDeg + "o " + xLongMin + "'" + ( xEast ? "E" : "W" ) + "</BASEFONT></CENTER>" );
+		  	runeBookGump.AddHTMLGump( 195, 90, 125, 25, false, false, "<CENTER><BASEFONT size=3>" + yLatDeg + "o " + yLatMin + "'" + ( ySouth ? "S" : "N" ) + " " + xLongDeg + "o " + xLongMin + "'" + ( xEast ? "E" : "W" ) + "</BASEFONT></CENTER>" );
 		  	if( showCoords )
 		  	{
 		  		runeBookGump.AddToolTip( tooltipClilocID, pSocket, splitData[2] + ", " + splitData[3].toString() );
@@ -353,7 +355,7 @@ function DisplayGump( pSocket, pUser, runeBook )
 
 	  	// Add drop rune button
 		runeBookGump.AddButton( 193, 110, 0x985, 1, 0, ( 102 + ( i * 2 ))); // ButtonIDs 102, 104, 106, 108, 110, 112, 114, 116
-	  	runeBookGump.AddHTMLGump( 203, 110, 100, 25, 1, 1, "<BASEFONT size=5>" + GetDictionaryEntry( 9257, pSocket.language ) + "</BASEFONT>" ); // Drop Rune
+	  	runeBookGump.AddHTMLGump( 203, 110, 100, 25, false, false, "<BASEFONT size=5>" + GetDictionaryEntry( 9257, pSocket.language ) + "</BASEFONT>" ); // Drop Rune
 
 	  	// Add Recall button
 		runeBookGump.AddButton( 193, 130, 0x8df, 1, 0, ( 122 + ( i * 2 ))); // ButtonIDs 122, 124, 126, 128, 130, 132, 134, 136
@@ -902,6 +904,9 @@ function CheckAccessRights( pSocket, pUser, runeBook )
 function onSpeechInput( pUser, runeBook, pSpeech, pSpeechID )
 {
 	var pSocket = pUser.socket;
+	if( pSocket == null )
+		return;
+
 	if( pSpeech == null || pSpeech == " " )
 	{
 		pSocket.SysMessage( GetDictionaryEntry( 9270, pSocket.language )); // That name is too short, or no name was entered.
@@ -938,18 +943,20 @@ const maxRunes = 16;
 function onDropItemOnItem( iDropped, pUser, runeBook )
 {
 	var pSocket = pUser.socket;
+	if( pSocket == null )
+		return 0;
 
 	if( iDropped.type == 50 ) // Recall Rune dropped on runeBook
 	{
 		// Verify that player is allowed to add runes to the runebook
 		if( !CheckAccessRights( pSocket, pUser, runeBook ))
-			return false;
+			return 0;
 
 		// Prevent player from adding a blank rune to the runebook
 		if( iDropped.morex == 0 && iDropped.morey == 0 && iDropped.morez == 0 )
 		{
 			pSocket.SysMessage( GetDictionaryEntry( 431, pUser.socket.language )); // That rune is not yet marked!
-			return false;
+			return 0;
 		}
 
 		// Make sure there's space in the runebook for the new rune
@@ -957,7 +964,7 @@ function onDropItemOnItem( iDropped, pUser, runeBook )
 		if( runeCount >= maxRunes )
 		{
 			pSocket.SysMessage( GetDictionaryEntry( 9273, pSocket.language )); // This runebook is full.
-			return false;
+			return 0;
 		}
 
 		// Find a free spot in the runebook, and add the rune there
@@ -991,7 +998,7 @@ function onDropItemOnItem( iDropped, pUser, runeBook )
 		if( charges >= maxCharges )
 		{
 			pSocket.SysMessage( GetDictionaryEntry( 9275, pSocket.language )); // This book already has the maximum amount of charges.
-			return false;
+			return 0;
 		}
 
 		// Is the player dropping a stack of scrolls?
@@ -1027,7 +1034,7 @@ function onDropItemOnItem( iDropped, pUser, runeBook )
 		return 2;
 	}
 
-	return true;
+	return 1;
 }
 
 function GetMapCoordinates( xCoord, yCoord, worldNum )

@@ -8,7 +8,11 @@ const limitLockedDownPotionDrop = false; // If set to true, only owner/co-owner/
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, potionKeg )
 {
-	var socket = pUser.socket;
+	var pSocket = pUser.socket;
+	if( pSocket == null )
+	{
+		return false;
+	}
 	var potionCount = parseInt( potionKeg.GetTag( "potionCount" ));
 	if( pUser.InRange( pUser, 2 ) && ( potionKeg.container != null || pUser.CanSee( potionKeg )))
 	{
@@ -20,7 +24,7 @@ function onUseChecked( pUser, potionKeg )
 			{
 				if( !iMulti.IsOnFriendList( pUser ) && !iMulti.IsOnOwnerList( pUser ))
 				{
-					socket.SysMessage( GetDictionaryEntry( 774, socket.language )); // That is locked down and you cannot use it
+					pSocket.SysMessage( GetDictionaryEntry( 774, pSocket.language )); // That is locked down and you cannot use it
 					return false;
 				}
 			}
@@ -39,16 +43,16 @@ function onUseChecked( pUser, potionKeg )
 			if( emptyBottles > 0 )
 			{
 				var potionSectionID = potionKeg.GetTag( "potionSectionID" );
-				var newPotion = CreateDFNItem( socket, pUser, potionSectionID, 1, "ITEM", true );
+				var newPotion = CreateDFNItem( pSocket, pUser, potionSectionID, 1, "ITEM", true );
 				if( ValidateObject( newPotion )) // Always validate that the item got created properly
 				{
-					socket.SysMessage( GetDictionaryEntry( 17200, socket.language )); // You pour some of the keg's contents into an empty bottle...
+					pSocket.SysMessage( GetDictionaryEntry( 17200, socket.language )); // You pour some of the keg's contents into an empty bottle...
 
 					// Reduce potionCount in keg
 					var potionCount = parseInt( potionKeg.GetTag( "potionCount" )) - 1;
 					potionKeg.SetTag( "potionCount", potionCount );
 					pUser.UseResource( 1, 0x0f0e );
-					socket.SysMessage( GetDictionaryEntry( 17201, socket.language )); // ...and place it into your backpack.
+					pSocket.SysMessage( GetDictionaryEntry( 17201, pSocket.language )); // ...and place it into your backpack.
 					pUser.SoundEffect( 0x240, true );
 					potionKeg.weight -= Math.round(( newPotion.weight / 5 ) * 4 ); // Four fifths of a potion's weight
 
@@ -74,17 +78,17 @@ function onUseChecked( pUser, potionKeg )
 			}
 			else
 			{
-				socket.SysMessage( GetDictionaryEntry( 17202, socket.language )); // you have no empty bottles.
+				pSocket.SysMessage( GetDictionaryEntry( 17202, pSocket.language )); // you have no empty bottles.
 			}
 		}
 		else 
 		{
-			socket.SysMessage( GetDictionaryEntry( 17211, socket.language )); // The keg is empty.
+			pSocket.SysMessage( GetDictionaryEntry( 17211, pSocket.language )); // The keg is empty.
 		}
 	}
 	else
 	{
-		socket.SysMessage( GetDictionaryEntry( 17204, socket.language )); // I can't reach that.
+		pSocket.SysMessage( GetDictionaryEntry( 17204, pSocket.language )); // I can't reach that.
 	}
 	return false;
 }
@@ -106,12 +110,17 @@ function HasUserTastedItem( pUser, potionItem )
 /** @type { ( item: Item, dropper: Character, dest: Item ) => number } */
 function onDropItemOnItem( iDropped, pUser, potionKeg )
 {
-	var socket = pUser.socket;
+	var pSocket = pUser.socket;
+	if( pSocket == null )
+	{
+		return 0;
+	}
+
 	if( iDropped.type != 19 ) // prevent script from running when moving the potion keg itself
 	{
 		if( iDropped.sectionID != "potionkeg" )
 		{
-			pUser.TextMessage( GetDictionaryEntry( 17210, socket.language ), false, 0x03b2 ); // The keg is not designed to hold that type of object.
+			pUser.TextMessage( GetDictionaryEntry( 17210, pSocket.language ), false, 0x03b2 ); // The keg is not designed to hold that type of object.
 		}
 		return 1;
 	}
@@ -122,7 +131,7 @@ function onDropItemOnItem( iDropped, pUser, potionKeg )
     // Make sure there's space in the potionKeg for the new potion
 	if( potionCount >= maxPotion )
 	{
-		socket.SysMessage( GetDictionaryEntry( 17206, socket.language )); // The keg will not hold any more!
+		pSocket.SysMessage( GetDictionaryEntry( 17206, pSocket.language )); // The keg will not hold any more!
 		return 0;
 	}
 	else if( potionKeg.sectionID == "potionKeg" && potionKeg.movable == 3 ) // Locked down
@@ -136,7 +145,7 @@ function onDropItemOnItem( iDropped, pUser, potionKeg )
 				if( !iMulti.IsOnFriendList( pUser ) && !iMulti.IsOnOwnerList( pUser ))
 				{
 					// Player is not a friend nor an owner/co-owner
-					socket.SysMessage( GetDictionaryEntry( 17205, socket.language )); // Only the owner can drop potions in this keg.
+					pSocket.SysMessage( GetDictionaryEntry( 17205, pSocket.language )); // Only the owner can drop potions in this keg.
 					return 0;
 				}
 			}
@@ -145,7 +154,7 @@ function onDropItemOnItem( iDropped, pUser, potionKeg )
 		{
 			// Anyone can continue filling up a partially filled locked-down potion keg, as long as they
 			// A) are the owner of the keg or B) have used Taste ID to identify contents of keg
-			socket.SysMessage( GetDictionaryEntry( 17205, socket.language )); // Only the owner can drop potions in this keg.
+			pSocket.SysMessage( GetDictionaryEntry( 17205, pSocket.language )); // Only the owner can drop potions in this keg.
 			return 0;
 		}
 	}
@@ -158,17 +167,17 @@ function onDropItemOnItem( iDropped, pUser, potionKeg )
 			var pPack = pUser.pack;
 			if( pPack.totalItemCount >= pPack.maxItems || pPack.weight >= pPack.weightMax ) 
 			{
-				socket.SysMessage( GetDictionaryEntry( 17207, socket.language )); // You don't have room for the empty bottle in your backpack.
+				pSocket.SysMessage( GetDictionaryEntry( 17207, pSocket.language )); // You don't have room for the empty bottle in your backpack.
 				return 0;
 			}
 			else if( iDropped.name2 != "#" && potionCount > 0 && potionKeg.name2 == "#" )
 			{
-				socket.SysMessage( GetDictionaryEntry( 2785, socket.language )); // Unidentified potions can only be placed in unidentified potion kegs" ); // Unidentified potions can only be placed in unidentified potion kegs
+				pSocket.SysMessage( GetDictionaryEntry( 2785, pSocket.language )); // Unidentified potions can only be placed in unidentified potion kegs" ); // Unidentified potions can only be placed in unidentified potion kegs
 				return 0;
 			}
 			else if( iDropped.name2 == "#" && potionCount > 0 && potionKeg.name2 != "#" )
 			{
-				socket.SysMessage( GetDictionaryEntry( 2786, socket.language )); // Identified potions can only be placed in identified potion kegs
+				pSocket.SysMessage( GetDictionaryEntry( 2786, pSocket.language )); // Identified potions can only be placed in identified potion kegs
 				return 0;
 			}
 			else
@@ -215,10 +224,10 @@ function onDropItemOnItem( iDropped, pUser, potionKeg )
 				}
 
 				// Creates a empty bottle make the potion keg be owned by the dropper and now refresh keg.
-				var emptyBottle = CreateDFNItem( socket, pUser, "0x0f0e", 1, "ITEM", true )
+				var emptyBottle = CreateDFNItem( pSocket, pUser, "0x0f0e", 1, "ITEM", true )
 				if( ValidateObject( emptyBottle ))
 				{
-					pUser.TextMessage( GetDictionaryEntry( 17208, socket.language ), false, 0x03b2 ); // You place the empty bottle in your backpack.
+					pUser.TextMessage( GetDictionaryEntry( 17208, pSocket.language ), false, 0x03b2 ); // You place the empty bottle in your backpack.
 					pUser.SoundEffect( 0x240, true );
 
 					// Only change owner if the keg is not locked down
@@ -233,7 +242,7 @@ function onDropItemOnItem( iDropped, pUser, potionKeg )
 		}
 		else 
 		{
-			pUser.TextMessage( GetDictionaryEntry( 17209, socket.language ), false, 0x03b2 ); // You decide that it would be a bad idea to mix different types of potions.
+			pUser.TextMessage( GetDictionaryEntry( 17209, pSocket.language ), false, 0x03b2 ); // You decide that it would be a bad idea to mix different types of potions.
 			return 0;
 		}
 	}

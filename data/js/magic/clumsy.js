@@ -98,7 +98,7 @@ function ItemInHandCheck( mChar, mSock, spellType )
 	return true;
 }
 
-/** @type { ( tChar: Character, SpellId: number ) => number } */
+/** @type { ( sock: Socket, tChar: Character, direct: boolean, SpellId: number ) => boolean } */
 function onSpellCast( mSock, mChar, directCast, spellNum )
 {
 	// Are we recovering from another spell that was just cast
@@ -279,7 +279,7 @@ function onTimer( mChar, timerID )
 		var ourTarg = mChar.target;
 		if( ourTarg && ourTarg.isChar )
 		{
-			onSpellSuccess( null, mChar, ourTarg );
+			SuccessfulSpellCast( mChar, ourTarg );
 		}
 	}
 	else
@@ -312,7 +312,7 @@ function onCallback0( mSock, ourTarg )
 			}
 		}
 
-		onSpellSuccess( mSock, mChar, ourTarg );
+		SuccessfulSpellCast( mChar, ourTarg );
 	}
 	else
 	{
@@ -325,24 +325,13 @@ function onCallback0( mSock, ourTarg )
 }
 
 /** @type { ( tChar: Character, SpellId: number ) => boolean } */
-function onSpellSuccess( mSock, mChar, ourTarg )
+function SuccessfulSpellCast( mChar, ourTarg )
 {
+	var mSock = mChar.socket;
 	if( mChar.isCasting )
 		return;
 
-	var spellNum	= mChar.spellCast;
-	if( spellNum == -1 )
-	{
-		if( spellID != -1 )
-		{
-			spellNum = spellID;
-		}
-		else
-		{
-			return;
-		}
-	}
-
+	var spellNum = mChar.spellCast;
 	var mSpell		= Spells[spellNum];
 	var spellType	= 0;
 	var sourceChar	= mChar;
@@ -365,7 +354,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 			mChar.SetTimer( Timer.SPELLTIME, 0 );
 			mChar.isCasting = false;
 			mChar.spellCast = -1;
-			return;
+			return false;
 		}
 	}
 
@@ -379,7 +368,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	}
 
 	if( !mChar.CanSee( ourTarg ))
-		return;
+		return; 
 
 	var attackTarget = false;
 	var targRegion = ourTarg.region;
@@ -418,8 +407,8 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 			{
 				ourTarg.magicReflect = false;
 				ourTarg.StaticEffect( 0x373A, 0, 15 );
-				sourceChar 	= ourTarg;
-				ourTarg		= mChar;
+				sourceChar = ourTarg;
+				ourTarg	= mChar;
 			}
 		}
 	}

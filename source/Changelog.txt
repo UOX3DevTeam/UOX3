@@ -1,3 +1,14 @@
+12/11/2025 - strattond (#460)
+	[FIX] TypeScript definitions need to support 2 flavours of onSpellCast
+	[UPD] Update existing scripts with revised scripts
+
+12/11/2025 - DragonSlayer62 (#459)
+    [FIX] Fixed incorrect property reference in js/item/potion.js; was .decay, should be .decayable
+    [FIX] Fixed incorrect property reference in js/item/shrines.js; was .karmaLocked, should be .karmaLock
+    [UPD] Updated many JavaScript scripts to use consistent socket variable naming - standardized all instances to pSocket instead of variations like pSock or socket
+    [UPD] Updated many JavaScript scripts with additional null socket checks to prevent crashes when socket is unavailable
+    [UPD] Updated documentation with missing details for .karmaLock Character JS property
+
 11/11/2025 - DragonSlayer62 (#457)
     [FIX] Fixed Definitions.d.ts had misspelled void and onSpeechInput was missing SpeechID.
     [UPD] Updated lots of js scripts to use socket with system message where needed instead of pUser.

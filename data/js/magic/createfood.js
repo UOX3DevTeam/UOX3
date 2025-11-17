@@ -5,7 +5,7 @@ function SpellRegistration()
 	RegisterSpell( 2, true );	// Create Food, ID from spells.dfn
 }
 
-/** @type { ( tChar: Character, SpellId: number ) => number } */
+/** @type { ( sock: Socket, tChar: Character, direct: boolean, SpellId: number ) => boolean } */
 function onSpellCast( mSock, mChar, directCast, spellNum )
 {
 	// Are we recovering from another spell that was just cast
@@ -229,7 +229,7 @@ function onTimer( mChar, timerID )
 
 	if( mChar.npc )
 	{
-		onSpellSuccess( null, mChar, ourTarg );
+		SuccessfulSpellCast( mChar, ourTarg );
 	}
 	else
 	{
@@ -237,14 +237,15 @@ function onTimer( mChar, timerID )
 		if( mSock != null )
 		{
 			mChar.SetTimer( Timer.SPELLRECOVERYTIME, Spells[mChar.spellCast].recoveryDelay );
-			onSpellSuccess( mSock, mChar, ourTarg );
+			SuccessfulSpellCast( mChar, ourTarg );
 		}
 	}
 }
 
 /** @type { ( tChar: Character, SpellId: number ) => boolean } */
-function onSpellSuccess( mSock, mChar, ourTarg )
+function SuccessfulSpellCast(mChar, ourTarg )
 {
+	var mSock = mChar.socket;
 	if( mChar.isCasting )
 		return;
 

@@ -53,7 +53,11 @@ function getRandomPumpkinName( objMade )
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed ) 
 {
-	var socket = pUser.socket;
+	var pSocket = pUser.socket;
+
+	if( pSocket == null )
+		return false;
+
 	var itemOwner = GetPackOwner( iUsed, 0 );
 	if( pUser.visible == 1 || pUser.visible == 2 )
 	{
@@ -62,13 +66,13 @@ function onUseChecked( pUser, iUsed )
 
 	if( itemOwner == null || itemOwner != pUser )
 	{
-		pUser.SysMessage( GetDictionaryEntry( 1763, pUser.socket.language )); // That item must be in your backpack before it can be used.
+		pSocket.SysMessage( GetDictionaryEntry( 1763, pSocket.language )); // That item must be in your backpack before it can be used.
 	}
 
 	if( iUsed.GetTag("jackolantern") == 1 )
 	{
 		// Store potion on socket and player serial on potion, for later!
-		socket.tempObj = iUsed;
+		pSocket.tempObj = iUsed;
 		iUsed.more = pUser.serial;
 		// Set radius of explosion
 		iUsed.morex = pUser.skills.alchemy / 250;
@@ -91,7 +95,7 @@ function onUseChecked( pUser, iUsed )
 			iUsed.StartTimer(( iCount - 1) * 1000, iCount, true );
 		}
 
-		socket.CustomTarget( 0, GetDictionaryEntry( 1348, socket.language )); //Now would be a good time to throw it!
+		pSocket.CustomTarget( 0, GetDictionaryEntry( 1348, pSocket.language )); //Now would be a good time to throw it!
 	}
 	return false;
 }
@@ -99,15 +103,15 @@ function onUseChecked( pUser, iUsed )
 /** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
-	var mChar = socket.currentChar;
+	var pUser = socket.currentChar;
 	var iUsed = socket.tempObj;
-	if( mChar && mChar.isChar && iUsed && iUsed.isItem )
+	if( ValidateObject( pUser ) && pUser.isChar && iUsed && iUsed.isItem )
 	{
 		var StrangeByte = socket.GetWord( 1 );
 		if( StrangeByte == 0 && ourObj )
 		{
 			// We need a LineOfSight check
-			if( mChar.CanSee( ourObj.x, ourObj.y, ourObj.z ))
+			if( pUser.CanSee( ourObj.x, ourObj.y, ourObj.z ))
 			{
 				iUsed.container = null;
 				iUsed.Teleport( ourObj );
@@ -135,7 +139,7 @@ function onCallback0( socket, ourObj )
 			}
 
 			// We need a LineOfSight check
-			if( mChar.CanSee( x, y, z ))
+			if( pUser.CanSee( x, y, z ))
 			{
 				iUsed.container = null;
 				iUsed.Teleport(x, y, z);
@@ -153,7 +157,7 @@ function onCallback0( socket, ourObj )
 		iUsed.movable = 2;
 
 		// Play moving effect of potion being thrown to potion's target location
-		DoMovingEffect( mChar, iUsed, iUsed.id, 5, 0, false, 0, 0 );
+		DoMovingEffect( pUser, iUsed, iUsed.id, 5, 0, false, 0, 0 );
 	}
 }
 
@@ -279,15 +283,17 @@ function ApplyExplosionDamage( timerObj, targetChar )
 /** @type { ( item: Item, pickerUpper: Character, objCont: BaseObject ) => boolean } */
 function onPickup( iPickedUp, pGrabber, containerObj )
 {
-	var pSock = pGrabber.socket;
+	var pSocket = pGrabber.socket;
+	if( pSocket == null )
+		return false;
+
 	var idList = [0x4de, 0x4df];
 	var randomID = Math.floor( Math.random() * 2 );
 
-	switch( pSock.pickupSpot )
+	switch( pSocket.pickupSpot )
 	{
 		case 0: //nowhere
 			return true;
-			break;
 		case 1: //ground
 			if( iPickedUp.GetTag( "jackolantern" ) == 1 || iPickedUp.GetTag( "pumpkin" ) == 1 )
 			{
@@ -311,21 +317,15 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 				}
 			}
 			return true;
-			break;
 		case 2: //ownpack
 			return true;
-			break;
 		case 3: //otherpack
-			return true;
-			break;
+			return false;
 		case 4: //paperdoll
 			return true;
-			break;
 		case 5: //bank
 			return true;
-			break;
 		default:
-			return true;
-			break;
+			return false;
 	}
 }
