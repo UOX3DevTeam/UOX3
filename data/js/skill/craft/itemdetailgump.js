@@ -1708,63 +1708,103 @@ function ItemDetailGump( pUser )
 		case 3000: // empty bottle
 			createEntry = CreateEntries[3000];
 			HARVEST = [13504];
-			mainSkill = parseInt(pUser.skills.alchemy);
+			mainSkill = parseInt( pUser.skills.alchemy );
 			break;
 		case 3001: // flask (small)
 			createEntry = CreateEntries[3001];
 			HARVEST = [13504];
-			mainSkill = parseInt(pUser.skills.alchemy);
+			mainSkill = parseInt( pUser.skills.alchemy );
 			break;
 		case 3002: // flask (medium)
 			createEntry = CreateEntries[3002];
 			HARVEST = [13504];
-			mainSkill = parseInt(pUser.skills.alchemy);
+			mainSkill = parseInt( pUser.skills.alchemy );
 			break;
 		case 3003: // flask (curved)
 			createEntry = CreateEntries[3003];
 			HARVEST = [13504];
-			mainSkill = parseInt(pUser.skills.alchemy);
+			mainSkill = parseInt( pUser.skills.alchemy );
 			break;
 		case 3004: // flask (large #1)
 			createEntry = CreateEntries[3004];
 			HARVEST = [13504];
-			mainSkill = parseInt(pUser.skills.alchemy);
+			mainSkill = parseInt( pUser.skills.alchemy );
 			break;
 		case 3005: // flask (large #2)
 			createEntry = CreateEntries[3005];
 			HARVEST = [13504];
-			mainSkill = parseInt(pUser.skills.alchemy);
+			mainSkill = parseInt( pUser.skills.alchemy );
 			break;
 		case 3006: // flask (bubbling blue)
 			createEntry = CreateEntries[3006];
 			HARVEST = [13504];
-			mainSkill = parseInt(pUser.skills.alchemy);
+			mainSkill = parseInt( pUser.skills.alchemy );
 			break;
 		case 3007: // flask (bubbling purple)
 			createEntry = CreateEntries[3007];
 			HARVEST = [13504];
-			mainSkill = parseInt(pUser.skills.alchemy);
+			mainSkill = parseInt( pUser.skills.alchemy );
 			break;
 		case 3008: // flask (bubbling red)
 			createEntry = CreateEntries[3008];
 			HARVEST = [13504];
-			mainSkill = parseInt(pUser.skills.alchemy);
+			mainSkill = parseInt( pUser.skills.alchemy );
 			break;
 		case 3009: // empty vials
 			createEntry = CreateEntries[3009];
 			HARVEST = [13504];
-			mainSkill = parseInt(pUser.skills.alchemy);
+			mainSkill = parseInt( pUser.skills.alchemy );
 			break;
 		case 3010: // full vials
 			createEntry = CreateEntries[3010];
 			HARVEST = [13504];
-			mainSkill = parseInt(pUser.skills.alchemy);
+			mainSkill = parseInt( pUser.skills.alchemy );
 			break;
 		case 3011: // spinning hourglass
 			createEntry = CreateEntries[3011];
 			HARVEST = [13504];
-			mainSkill = parseInt(pUser.skills.alchemy);
-      break;
+			mainSkill = parseInt( pUser.skills.alchemy );
+			break;
+		case 3012: // hollow prism
+			createEntry = CreateEntries[3012];
+			HARVEST = [13504];
+			mainSkill = parseInt( pUser.skills.alchemy );
+			break;
+		case 3013: // Gargoyle Floor Mirror
+			createEntry = CreateEntries[3013];
+			HARVEST = [13504];
+			mainSkill = parseInt( pUser.skills.alchemy );
+			break;
+		case 3014: // Gargoyle wall Mirror
+			createEntry = CreateEntries[3014];
+			HARVEST = [13504];
+			mainSkill = parseInt( pUser.skills.alchemy );
+			break;
+		case 3015: // Empty Venom Vial
+			createEntry = CreateEntries[3015];
+			HARVEST = [13504];
+			mainSkill = parseInt( pUser.skills.alchemy );
+			break;
+		case 3016: // Empty Oil Flask
+			createEntry = CreateEntries[3016];
+			HARVEST = [13504];
+			mainSkill = parseInt( pUser.skills.alchemy );
+			break;
+		case 3017: // Workable Glass
+			createEntry = CreateEntries[3017];
+			HARVEST = [13504];
+			mainSkill = parseInt( pUser.skills.alchemy );
+			break;
+		case 3018: // Glass Sword
+			createEntry = CreateEntries[3018];
+			HARVEST = [13504];
+			mainSkill = parseInt( pUser.skills.alchemy );
+			break;
+		case 3019: // Glass Staff
+			createEntry = CreateEntries[3019];
+			HARVEST = [13504];
+			mainSkill = parseInt( pUser.skills.alchemy );
+			break;
 		default:
 			break;
 	}
@@ -2090,7 +2130,7 @@ function onGumpPress( pSock, pButton, gumpData )
 							break;
 					}
 					break;
-        case 8: // Cartography
+				case 8: // Cartography
 					pUser.SetTempTag( "ITEMDETAILS", null );
 					pSock.CloseGump( gumpID, 0 );
 					switch( pUser.GetTempTag( "page" ))
@@ -2114,6 +2154,6 @@ function onGumpPress( pSock, pButton, gumpData )
               break;
           }
           break;
-			}
+		}
 	}
 }
