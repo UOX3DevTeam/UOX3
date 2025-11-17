@@ -6,7 +6,7 @@ function SpellRegistration()
     RegisterSpell( 65, true );
 }
 
-/** @type { ( tChar: Character, SpellId: number ) => number } */
+/** @type { ( sock: Socket, tChar: Character, direct: boolean, SpellId: number ) => boolean } */
 function onSpellCast( mSock, mChar, directCast, spellNum )
 {
     // Are we already casting?
