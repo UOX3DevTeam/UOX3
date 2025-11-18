@@ -255,7 +255,7 @@ function CraftingGumpMenu( myGump, socket )
 			break;
 	}
 
-	if( craftingSkillUsed != 2 && craftingSkillUsed != 6 && craftingSkillUsed != 8 )
+	if( craftingSkillUsed != 2 && craftingSkillUsed != 6 && craftingSkillUsed != 8 && craftingSkillUsed != 9 )
 	{
 		myGump.AddText( 50, 362, textHue, GetDictionaryEntry( resourcename, socket.language ) + " (" + resource.toString() + ")" );
 

@@ -36,7 +36,6 @@ const CraftingMap = {
 	// Page 2 Glass Weapons
 	3018: { customName: "glass sword", page: 2, timerID: 2, minEra: "sa" },    // Glass sword
 	3019: { customName: "glass staff", page: 2, timerID: 2, minEra: "sa" }    // Glass staff
-
 };
 
 function PageX( socket, pUser, pageNum )
@@ -44,13 +43,12 @@ function PageX( socket, pUser, pageNum )
 	if( !socket || !ValidateObject( pUser ))
 		return;
 
-	/** @type {number[]} */
 	var pageItems;
 
 	// Special "Last Ten" page uses stored makeIDs directly
 	if( pageNum == 999 )
 	{
-		var lastTenRaw = pUser.GetTag( "LastTenGlassblowing" );
+		var lastTenRaw = pUser.GetTempTag( "LastTenGlassblowing" );
 		var split = lastTenRaw.split( "," );
 		pageItems = [];
 
@@ -327,7 +325,7 @@ function onGumpPress( socket, pButton, gumpData )
     // Close gump
     if( pButton == 0 )
     {
-        pUser.SetTempTag( "MAKELAST_GLASS", null );
+        pUser.SetTempTag( "MakeLast_Glass", null );
         pUser.SetTempTag( "CRAFT", null );
         socket.CloseGump( gumpID, 0 );
         return;
@@ -339,7 +337,7 @@ function onGumpPress( socket, pButton, gumpData )
     // Make Last
     if( pButton == 5000 )
     {
-        var last = pUser.GetTempTag( "MAKELAST_GLASS" );
+        var last = pUser.GetTempTag( "MakeLast_Glass" );
         if( last )
             pButton = last;
         else
@@ -365,7 +363,7 @@ function onGumpPress( socket, pButton, gumpData )
             return;
         }
 
-        pUser.SetTempTag( "MAKELAST_GLASS", makeID );
+        pUser.SetTempTag( "MakeLast_Glass", makeID );
 
         MakeItem( socket, pUser, makeID );
         AddToLastTen( pUser, makeID );
@@ -400,7 +398,7 @@ function onGumpPress( socket, pButton, gumpData )
 // Last Ten
 function AddToLastTen( pUser, makeID )
 {
-    var raw = pUser.GetTag( "LastTenGlassblowing" ) || "";
+    var raw = pUser.GetTempTag( "LastTenGlassblowing" );
     var list = raw.split( "," );
 
     for( var i = 0; i < list.length; i++ )
@@ -420,7 +418,7 @@ function AddToLastTen( pUser, makeID )
             newList.push( entry );
     }
 
-    pUser.SetTag( "LastTenGlassblowing", newList.join( "," ) );
+    pUser.SetTempTag( "LastTenGlassblowing", newList.join( "," ) );
 }
 
 function HasLearnedRecipe( pUser, recipeID )

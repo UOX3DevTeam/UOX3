@@ -21,6 +21,7 @@ function ItemDetailGump( pUser )
 	var createEntry = null;
 	var HARVEST;
 	var mainSkill;
+	var recipeID = 0; // default: no recipe required
 	switch( pUser.GetTempTag( "ITEMDETAILS" ))
 	{
 		//Start Blacksmith
@@ -1814,6 +1815,14 @@ function ItemDetailGump( pUser )
 		return;
 	}
 
+	// Recipe flags
+	var needsRecipe = (recipeID > 0);
+	var hasRecipe = false;
+	if( needsRecipe )
+	{
+		hasRecipe = HasLearnedRecipe( pUser, recipeID );
+	}
+
 	// Fetch properties of create entry
 	var createName = createEntry.name; // name of the create entry
 	var createID = createEntry.id; // section id of item to craft
@@ -1857,7 +1866,7 @@ function ItemDetailGump( pUser )
 		var minSkill = skillReq[1];
 		var maxSkill = skillReq[2];
 
-		itemGump.AddHTMLGump( 170, 132 + ( i * 20 ), 200, 18, 0, 0, "<center> <basefont color=#ffffff>" + GetDictionaryEntry( 15000 + skills[i][0], socket.language ) + "</basefont> </center>" );
+		itemGump.AddHTMLGump( 170, 132 + ( i * 20 ), 200, 18, false, false, "<center> <basefont color=#ffffff>" + GetDictionaryEntry( 15000 + skills[i][0], socket.language ) + "</basefont> </center>" );
 		itemGump.AddText( 430, 132 + ( i * 20 ), textHue, skills[i][1]/10 );
 
 		if( i == 0 )
@@ -1952,6 +1961,22 @@ function ItemDetailGump( pUser )
 	{
 		itemGump.AddText( 430, 100, textHue, "-" ); // No chance of exceptional, not a wearable item!
 	}
+	if( needsRecipe )
+	{
+		var recipeMsg;
+		if( hasRecipe )
+		{
+			recipeMsg = "<basefont color=#00ff00>You have learned this recipe.</basefont>";
+		}
+		else
+		{
+			recipeMsg = "<basefont color=#ff0000>You have not learned this recipe.</basefont>";
+		}
+
+		// OTHER box starts at y=302, you already use 302+20 for the color note (dict 10006),
+		// so 302+40 (342) is a safe line under that.
+		itemGump.AddHTMLGump( 170, 342, 310, 18, false, false, recipeMsg );
+	}
 	itemGump.Send( pUser );
 	itemGump.Free();
 }
@@ -1972,18 +1997,18 @@ function ItemDetailsGump( itemGump, pUser )
 	itemGump.AddTiledGump( 165, 302, 355, 80, 2624 );
 	itemGump.AddTiledGump( 10, 387, 510, 22, 2624 );
 	itemGump.AddCheckerTrans( 10, 10, 510, 399 );
-    itemGump.AddHTMLGump( 170, 40, 150, 20, 0, 0, "<center> <basefont color=#ffffff>" + GetDictionaryEntry( 10000, socket.language ) + "</basefont> </center>" );  // ITEM
+    itemGump.AddHTMLGump( 170, 40, 150, 20, false, false, "<center> <basefont color=#ffffff>" + GetDictionaryEntry( 10000, socket.language ) + "</basefont> </center>" );  // ITEM
 
-	itemGump.AddHTMLGump( 10, 217, 150, 22, 0, 0, "<center> <basefont color=#ffffff>" + GetDictionaryEntry( 10001, socket.language ) + "</basefont> </center>" );  //<CENTER>MATERIALS</CENTER>
-	itemGump.AddHTMLGump( 10, 302, 150, 22, 0, 0, "<center> <basefont color=#ffffff>" + GetDictionaryEntry( 10002, socket.language ) + "</basefont> </center>" );  // <CENTER>OTHER</CENTER>
-	itemGump.AddHTMLGump( 170, 80, 250, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10003, socket.language ) + "</basefont>" );  // Success Chance:
+	itemGump.AddHTMLGump( 10, 217, 150, 22, false, false, "<center> <basefont color=#ffffff>" + GetDictionaryEntry( 10001, socket.language ) + "</basefont> </center>" );  //<CENTER>MATERIALS</CENTER>
+	itemGump.AddHTMLGump( 10, 302, 150, 22, false, false, "<center> <basefont color=#ffffff>" + GetDictionaryEntry( 10002, socket.language ) + "</basefont> </center>" );  // <CENTER>OTHER</CENTER>
+	itemGump.AddHTMLGump( 170, 80, 250, 18, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 10003, socket.language ) + "</basefont>" );  // Success Chance:
 	if( GetServerSetting( "RankSystem" ))
 	{
-		itemGump.AddHTMLGump( 170, 100, 250, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10004, socket.language ) + "</basefont>" );  // Exceptional Chance:
+		itemGump.AddHTMLGump( 170, 100, 250, 18, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 10004, socket.language ) + "</basefont>" );  // Exceptional Chance:
 	}
 	itemGump.AddButton( 15, 387, 0xfa5, 1, 0, 1 );
-	itemGump.AddHTMLGump( 50, 390, 150, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10005, socket.language ) + "</basefont>" );  // BACK
-	itemGump.AddHTMLGump( 170, ( 302 + 20 ), 310, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10006, socket.language ) + "</basefont>" );  // * The item retains the color of this material
+	itemGump.AddHTMLGump( 50, 390, 150, 18, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 10005, socket.language ) + "</basefont>" );  // BACK
+	itemGump.AddHTMLGump( 170, ( 302 + 20 ), 310, 18, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 10006, socket.language ) + "</basefont>" );  // * The item retains the color of this material
 	itemGump.AddText(  500, 219, textHue, "*"  );
 }
 
@@ -2156,4 +2181,19 @@ function onGumpPress( pSock, pButton, gumpData )
           break;
 		}
 	}
+}
+
+function HasLearnedRecipe( pUser, recipeID )
+{
+    var myData = TriggerEvent( 4022, "ReadRecipeID", pUser );
+    if( !myData || myData.length == 0 )
+        return false;
+
+    for( var i = 0; i < myData.length; i++ )
+    {
+        var data = myData[i].split( "," );
+        if( data[0] == recipeID )
+            return true;
+    }
+    return false;
 }
