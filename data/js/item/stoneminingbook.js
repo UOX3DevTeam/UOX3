@@ -22,12 +22,12 @@ function onUseChecked( pUser, iUsed )
 		}
 		else if( iUsed.movable == 2 || iUsed.movable == 3 )
 		{
-			pSocket.SysMessage( GetDictionaryEntry( 774, pSocket.Language )); //That is locked down and you cannot use it
+			pSocket.SysMessage( GetDictionaryEntry( 774, pSocket.language )); //That is locked down and you cannot use it
 		}
 		else 
 		{
 			pUser.SetTag( "GatheringStone", 1 );
-			pSocket.SysMessage( GetDictionaryEntry( 9411, pSocket.Language )); // You have learned to mine for stones.  Target mountains when mining to find stones.
+			pSocket.SysMessage( GetDictionaryEntry( 9411, pSocket.language )); // You have learned to mine for stones.  Target mountains when mining to find stones.
 			iUsed.Delete();
 		}
 	}

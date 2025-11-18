@@ -14,6 +14,7 @@ const Tinkering = 4032;
 const Cooking = 4034;
 const Cartography = 4035;
 const Glassblowing = 4036;
+const Masonry = 4037;
 
  // If enabled, players can craft coloured variants of weapons using Blacksmithing skill, though
  // unless the craftItems array in blacksmithing.js is updated with specific create entries for the
@@ -42,6 +43,16 @@ function CraftingGumpMenu( myGump, socket )
 	var leather3 = pUser.ResourceCount( 0x1082 );
 	var hides = pUser.ResourceCount( 0x1078 );
 	var hides1 = pUser.ResourceCount( 0x1079 );
+
+	var granite = pUser.ResourceCount( 0x1779 );
+	var dullcoppergranite = pUser.ResourceCount( 0x1779, 0x0973 );
+	var shadowirongranite = pUser.ResourceCount( 0x1779, 0x0966 );
+	var coppergranite = pUser.ResourceCount( 0x1779, 0x07dd );
+	var bronzegranite = pUser.ResourceCount( 0x1779, 0x06d6 );
+	var goldgranite = pUser.ResourceCount( 0x1779, 0x08a5 );
+	var agapitegranite = pUser.ResourceCount( 0x1779, 0x0979 );
+	var veritegranite = pUser.ResourceCount( 0x1779, 0x089f );
+	var valoritegranite = pUser.ResourceCount( 0x1779, 0x08ab );
 
 	var resourcename = 10291;
 	var resource = iron;
@@ -140,7 +151,55 @@ function CraftingGumpMenu( myGump, socket )
 		case 9: // Glassblowing
 			grouplist = [13502]; //CATEGORIES
 			gumpMenuName = 13501;//Cartography Menu
-      break;
+			break;
+		case 10: // Masonry
+			grouplist = [14002, 14003, 14004, 14005, 14006, 14007, 14008, 14009, 14010] //CATEGORIES
+			gumpMenuName = 14001;//Masonry Menu
+			switch( pUser.GetTempTag( "Granite" ))
+			{
+				case 0: // Granite
+					resourcename = 14011;
+					resource = granite;
+					break;
+				case 1: // Dull Copper
+					resourcename = 14012;
+					resource = dullcoppergranite;
+					break;
+				case 2: // Shadow Iron
+					resourcename = 14013;
+					resource = shadowirongranite;
+					break;
+				case 3: // Copper
+					resourcename = 14014;
+					resource = coppergranite;
+					break;
+				case 4: // Bronze
+					resourcename = 14015;
+					resource = bronzegranite;
+					break;
+				case 5: // Gold
+					resourcename = 14016;
+					resource = goldgranite;
+					break;
+				case 6: // Agapite
+					resourcename = 14017;
+					resource = agapitegranite;
+					break;
+				case 7: // Verite
+					resourcename = 14018;
+					resource = veritegranite;
+					break;
+				case 8: // Valorite
+					resourcename = 14019;
+					resource = valoritegranite;
+					break;
+				default: // Iron
+					resourcename = 14011;
+					resource = irongranite;
+					break;
+			}
+			repair = 49;
+			break;
 	}
 
 	myGump.AddPage( 0 );
@@ -346,8 +405,12 @@ function onGumpPress( pSock, pButton, gumpData )
 					break;
 				case 9:
 					TriggerEvent( Glassblowing, "PageX", pSock, pUser, 1 );
-          break;
-        default:
+					break;
+				case 10:
+					if( pUser.GetTempTag( "Granite" ) >= 0 && pUser.GetTempTag( "Granite" ) <= 8 )
+					{
+						TriggerEvent( Masonry, "PageX", pSock, pUser, 1 );
+					}
 					break;
 			}
 		case 2:
@@ -377,8 +440,11 @@ function onGumpPress( pSock, pButton, gumpData )
 					break;
 				case 7:
 					TriggerEvent( Tinkering, "PageX", pSock, pUser, 2 );
-					break;
-				default:
+				case 10:
+					if( pUser.GetTempTag( "Granite" ) >= 0 && pUser.GetTempTag( "Granite" ) <= 8 )
+					{
+						TriggerEvent( Masonry, "PageX", pSock, pUser, 2 );
+					}
 					break;
 			}
 		case 3:
@@ -409,7 +475,11 @@ function onGumpPress( pSock, pButton, gumpData )
 				case 7:
 					TriggerEvent( Tinkering, "PageX", pSock, pUser, 3 );
 					break;
-				default:
+				case 10:
+					if( pUser.GetTempTag( "Granite" ) >= 0 && pUser.GetTempTag( "Granite" ) <= 8 )
+					{
+						TriggerEvent( Masonry, "PageX", pSock, pUser, 3 );
+					}
 					break;
 			}
 		case 4:
@@ -437,7 +507,11 @@ function onGumpPress( pSock, pButton, gumpData )
 				case 7:
 					TriggerEvent( Tinkering, "PageX", pSock, pUser, 4 );
 					break;
-				default:
+				case 10:
+					if( pUser.GetTempTag( "Granite" ) >= 0 && pUser.GetTempTag( "Granite" ) <= 8 )
+					{
+						TriggerEvent( Masonry, "PageX", pSock, pUser, 4 );
+					}
 					break;
 			}
 		case 5:
@@ -459,7 +533,11 @@ function onGumpPress( pSock, pButton, gumpData )
 				case 7:
 					TriggerEvent( Tinkering, "PageX", pSock, pUser, 5 );
 					break;
-				default:
+				case 10:
+					if( pUser.GetTempTag( "Granite" ) >= 0 && pUser.GetTempTag( "Granite" ) <= 8 )
+					{
+						TriggerEvent( Masonry, "PageX", pSock, pUser, 5 );
+					}
 					break;
 			}
 		case 6:
@@ -481,7 +559,11 @@ function onGumpPress( pSock, pButton, gumpData )
 				case 7:
 					TriggerEvent( Tinkering, "PageX", pSock, pUser, 6 );
 					break;
-				default:
+				case 10:
+					if( pUser.GetTempTag( "Granite" ) >= 0 && pUser.GetTempTag( "Granite" ) <= 8 )
+					{
+						TriggerEvent( Masonry, "PageX", pSock, pUser, 6 );
+					}
 					break;
 			}
 		case 7:
@@ -503,7 +585,11 @@ function onGumpPress( pSock, pButton, gumpData )
 				case 7:
 					TriggerEvent( Tinkering, "PageX", pSock, pUser, 7 );
 					break;
-				default:
+				case 10:
+					if( pUser.GetTempTag( "Granite" ) >= 0 && pUser.GetTempTag( "Granite" ) <= 8 )
+					{
+						TriggerEvent( Masonry, "PageX", pSock, pUser, 7 );
+					}
 					break;
 			}
 		case 8:
@@ -519,6 +605,12 @@ function onGumpPress( pSock, pButton, gumpData )
 				case 7:
 					TriggerEvent( Tinkering, "PageX", pSock, pUser, 8 );
 					break;
+				case 10:
+					if( pUser.GetTempTag( "Granite" ) >= 0 && pUser.GetTempTag( "Granite" ) <= 8 )
+					{
+						TriggerEvent( Masonry, "PageX", pSock, pUser, 8 );
+					}
+					break;
 			}
 			break;
 		case 9:
@@ -533,6 +625,12 @@ function onGumpPress( pSock, pButton, gumpData )
 					break;
 				case 7:
 					TriggerEvent( Tinkering, "PageX", pSock, pUser, 9 );
+					break;
+				case 10:
+					if( pUser.GetTempTag( "Granite" ) >= 0 && pUser.GetTempTag( "Granite" ) <= 8 )
+					{
+						TriggerEvent( Masonry, "PageX", pSock, pUser, 9 );
+					}
 					break;
 			}
 			break;

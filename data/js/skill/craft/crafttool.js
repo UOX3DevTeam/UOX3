@@ -10,6 +10,7 @@ const Tinkering = 4032;
 const Cooking = 4034;
 const Cartography = 4035;
 const Glassblowing = 4036;
+const Masonry = 4037;
 
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
@@ -23,6 +24,7 @@ function onUseChecked( pUser, iUsed )
 	var gumpID6 = Cooking + 0xffff;
 	var gumpID7 = Tinkering + 0xffff;
 	var gumpID8 = Cartography + 0xffff;
+	var gumpID10 = Masonry + 0xffff;
 
 	if( socket && ValidateObject( iUsed ) && iUsed.isItem )
 	{
@@ -266,6 +268,33 @@ function onUseChecked( pUser, iUsed )
 					TriggerEvent( Glassblowing, "PageX", socket, pUser, tempPage);
 					break;
 				default: TriggerEvent( Glassblowing, "PageX", socket, pUser, 1);
+					break;
+			}
+		}
+		else if( iUsed.sectionID == "malletandchisel" )
+		{
+			if( pUser.GetTag( "StoneCrafting" ) == 0 )
+			{
+				socket.SysMessage( GetDictionaryEntry( 6297, socket.language ));// You havent learned masonry.
+				return false;
+			}
+			// Masonry
+			socket.CloseGump( gumpID10, 0 );
+			pUser.SetTempTag( "CRAFT", 10 );
+			switch( tempPage )
+			{
+				case 1: // Page 1
+				case 2: // Page 2
+				case 3: // Page 3
+				case 4: // Page 4
+				case 5: // Page 5
+				case 6: // Page 6
+				case 7: // Page 7
+				case 8: // Page 8
+				case 9: // Page 9
+					TriggerEvent( Masonry, "PageX", socket, pUser, tempPage);
+					break;
+				default: TriggerEvent( Masonry, "PageX", socket, pUser, 1);
 					break;
 			}
 		}

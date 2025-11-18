@@ -3518,6 +3518,9 @@
 6278=You have to use your taste identification skill to know more about this potion.
 6279=Tip: Skill check success guaranteed due to elevated command level!
 6280=Spellcast delay ignored due to elevated command level!
+6297=You havent learned masonry.
+6298=Only a Grandmaster Carpenter can learn from this book.
+6299= You have learned to make items from stone. You will need miners to gather stones for you to make these items.
 6300=You havent learned glassblowing.
 6301=Only a Grandmaster Alchemist can learn from this book.
 6302=You have already learned this information.
@@ -5022,6 +5025,26 @@
 13609=empty vials
 13610=full vials
 13611=spinning hourglass
+// 14001 - 14500 Masonary Crafting Skill
+14001=Masonry Menu
+14002=Decorations
+14003=Furniture
+14004=Statues
+14005=Misc Addons
+14006=Stone Armor
+14007=Stone Weapons
+14008=Stone Walls
+14009=Stone Stairs
+14010=Stone Floors
+14011=Granite
+14012=DullCopperGranite
+14013=ShadowIronGranite
+14014=CopperGranite
+14015=BronzeGranite
+14016=GoldGranite
+14017=AgapiteGranite
+14018=VeriteGranite
+14019=ValoriteGranite
 // 15000 Skills
 15000=Alchemy
 15001=Anatomy

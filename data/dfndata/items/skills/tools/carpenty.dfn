@@ -300,4 +300,33 @@ usesleft=25
 script=2200// uses left tooltip
 }
 
+[malletandchisel]
+{
+get=base_item
+name=mallet and chisel
+id=0x12B3
+colour=0x3B9
+weight=100
+value=9 4
+restock=20
+decay=1
+good=51
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
+script=4037// craft tool
+}
 
+[masonrybook]
+{
+get=base_item
+name=Making Valuables With Stonecrafting
+id=0xFBE
+weight=500
+movable=1
+pileable=1
+decay=1
+value=10637 5318
+origin=lbr
+script=5055
+}

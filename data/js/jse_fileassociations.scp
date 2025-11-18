@@ -236,6 +236,7 @@
 4034=skill/craft/cooking.js
 4035=skill/craft/cartography.js
 4036=skill/craft/glassblowing.js
+4037=skill/craft/masonry.js
 4050=skill/mining.js
 4055=skill/snooping.js
 
@@ -309,7 +310,7 @@
 5052=item/sandminingbook.js
 5053=item/stoneminingbook.js
 5054=item/glassblowingbook.js
-//reserved for granitebook
+5055=item/masonrybook.js
 5056=item/crystalball.js
 5057=item/ballofpetsummoning.js
 5058=item/bagofsending.js
