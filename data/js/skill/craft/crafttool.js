@@ -23,6 +23,7 @@ function onUseChecked( pUser, iUsed )
 	var gumpID6 = Cooking + 0xffff;
 	var gumpID7 = Tinkering + 0xffff;
 	var gumpID8 = Cartography + 0xffff;
+	var gumpID9 = Glassblowing + 0xffff;
 
 	if( socket && ValidateObject( iUsed ) && iUsed.isItem )
 	{
@@ -68,7 +69,7 @@ function onUseChecked( pUser, iUsed )
 			if( enableUOX3Craft == 1 )
 			{
 				TriggerEvent( 4006, "onUseChecked", pUser, iUsed );
-				return;
+				return false;
 			}
 			socket.CloseGump( gumpID, 0 );
 			pUser.SetTempTag( "CRAFT", 1 )
@@ -96,7 +97,7 @@ function onUseChecked( pUser, iUsed )
 			if( enableUOX3Craft == 1 )
 			{
 				TriggerEvent( 4007, "onUseChecked", pUser, iUsed );
-				return;
+				return false;
 			}
 			socket.CloseGump( gumpID2, 0 );
 			pUser.SetTempTag( "CRAFT", 2 )
@@ -118,7 +119,7 @@ function onUseChecked( pUser, iUsed )
 			if( enableUOX3Craft == 1 )
 			{
 				TriggerEvent( 4005, "onUseChecked", pUser, iUsed );
-				return;
+				return false;
 			}
 			socket.CloseGump( gumpID3, 0 );
 			pUser.SetTempTag( "CRAFT", 3 )
@@ -139,7 +140,7 @@ function onUseChecked( pUser, iUsed )
 			if( enableUOX3Craft == 1 )
 			{
 				TriggerEvent( 4004, "onUseChecked", pUser, iUsed );
-				return;
+				return false;
 			}
 			socket.CloseGump( gumpID4, 0 );
 			pUser.SetTempTag( "CRAFT", 4 )
@@ -193,7 +194,7 @@ function onUseChecked( pUser, iUsed )
 			{
 				//socket.SysMessage( "Old-school crafting gumps have not been implemented for Cooking. Use raw food with heat sources to cook!" );
 				TriggerEvent( 104, "onUseChecked", pUser, iUsed );
-				return;
+				return false;
 			}
 			socket.CloseGump( gumpID6, 0 );
 			pUser.SetTempTag( "CRAFT", 6 )
@@ -215,7 +216,7 @@ function onUseChecked( pUser, iUsed )
 			if( enableUOX3Craft == 1 )
 			{
 				TriggerEvent( 4003, "onUseChecked", pUser, iUsed );
-				return;
+				return false;
 			}
 			socket.CloseGump( gumpID7, 0 );
 			pUser.SetTempTag( "CRAFT", 7 )
@@ -255,14 +256,15 @@ function onUseChecked( pUser, iUsed )
 			if( pUser.GetTag( "GlassBlowing" ) == 0 )
 			{
 				socket.SysMessage( GetDictionaryEntry( 6300, socket.Language ));// You havent learned glassblowing.
-				return;
+				return false;
 			}
-			// Cartography
-			socket.CloseGump( gumpID8, 0 );
+			// Glassblowing
+			socket.CloseGump( gumpID9, 0 );
 			pUser.SetTempTag( "CRAFT", 9 );
 			switch( tempPage )
 			{
 				case 1: // Page 1
+				case 2: // Page 2
 					TriggerEvent( Glassblowing, "PageX", socket, pUser, tempPage);
 					break;
 				default: TriggerEvent( Glassblowing, "PageX", socket, pUser, 1);
