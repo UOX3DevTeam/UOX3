@@ -146,7 +146,7 @@ function CraftingGumpMenu( myGump, socket )
 				grouplist.push( 13503 ); // Glass Weapons
 			}
 			gumpMenuName = 13501;//Cartography Menu
-      break;
+			break;
 	}
 
 	myGump.AddPage( 0 );
