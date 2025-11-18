@@ -255,7 +255,7 @@ function onUseChecked( pUser, iUsed )
 		{
 			if( pUser.GetTag( "GlassBlowing" ) == 0 )
 			{
-				socket.SysMessage( GetDictionaryEntry( 6300, socket.Language ));// You havent learned glassblowing.
+				socket.SysMessage( GetDictionaryEntry( 6300, socket.language ));// You havent learned glassblowing.
 				return false;
 			}
 			// Glassblowing
@@ -265,9 +265,9 @@ function onUseChecked( pUser, iUsed )
 			{
 				case 1: // Page 1
 				case 2: // Page 2
-					TriggerEvent( Glassblowing, "PageX", socket, pUser, tempPage);
+					TriggerEvent( Glassblowing, "PageX", socket, pUser, tempPage );
 					break;
-				default: TriggerEvent( Glassblowing, "PageX", socket, pUser, 1);
+				default: TriggerEvent( Glassblowing, "PageX", socket, pUser, 1 );
 					break;
 			}
 		}

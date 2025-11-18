@@ -352,8 +352,8 @@ function onGumpPress( pSock, pButton, gumpData )
 					break;
 				case 9:
 					TriggerEvent( Glassblowing, "PageX", pSock, pUser, 1 );
-          break;
-        default:
+					break;
+				default:
 					break;
 			}
 		case 2:
