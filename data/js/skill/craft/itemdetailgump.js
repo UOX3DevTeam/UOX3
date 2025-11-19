@@ -2176,7 +2176,8 @@ function onGumpPress( pSock, pButton, gumpData )
 							TriggerEvent( Glassblowing, "PageX", pSock, pUser, pUser.GetTempTag( "page" ));
 							break;
 						default: TriggerEvent( Glassblowing, "PageX", pSock, pUser, 1 );
-              break;
+					}
+					break;
           }
           break;
 		}

@@ -48,7 +48,7 @@ function PageX( socket, pUser, pageNum )
 	// Special "Last Ten" page uses stored makeIDs directly
 	if( pageNum == 999 )
 	{
-		var lastTenRaw = pUser.GetTempTag( "LastTenGlassblowing" );
+		var lastTenRaw = pUser.GetTempTag( "LastTenGlassblowing" ) || "";
 		var split = lastTenRaw.split( "," );
 		pageItems = [];
 
@@ -398,7 +398,7 @@ function onGumpPress( socket, pButton, gumpData )
 // Last Ten
 function AddToLastTen( pUser, makeID )
 {
-    var raw = pUser.GetTempTag( "LastTenGlassblowing" );
+    var raw = pUser.GetTempTag( "LastTenGlassblowing" ) || "";
     var list = raw.split( "," );
 
     for( var i = 0; i < list.length; i++ )

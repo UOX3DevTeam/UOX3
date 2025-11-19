@@ -168,7 +168,7 @@ function PageX( socket, pUser, pageNum )
 
 	if( pageNum == 999 )
 	{
-		let lastTenRaw = pUser.GetTag( "LastTenTailoring" ) || "";
+		let lastTenRaw = pUser.GetTempTag( "LastTenTailoring" ) || "";
 		let split = lastTenRaw.split( "," );
 		pageItems = [];
 
@@ -701,7 +701,7 @@ function onCallback2( socket, ourObj )
 function AddToLastTen( pUser, makeID )
 {
 	// Append makeID to last ten list
-	var raw = pUser.GetTag( "LastTenTailoring" ) || "";
+	var raw = pUser.GetTempTag( "LastTenTailoring" ) || "";
 	var list = raw.split( "," );
 
 	// Remove if already in list
@@ -723,7 +723,7 @@ function AddToLastTen( pUser, makeID )
 			newList.push( entry );
 	}
 
-	pUser.SetTag( "LastTenTailoring", newList.join( "," ));
+	pUser.SetTempTag( "LastTenTailoring", newList.join( "," ));
 }
 
 function HasLearnedRecipe( pUser, recipeID )
