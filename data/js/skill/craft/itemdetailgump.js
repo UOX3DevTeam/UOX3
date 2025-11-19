@@ -11,6 +11,7 @@ const scriptID = 4026; // This script
 const Cooking = 4034;
 const Cartography = 4035;
 const Glassblowing = 4036;
+const Masonry = 4037;
 
 const exceptionalWearablesOnly = true;
 
@@ -1765,6 +1766,52 @@ function ItemDetailGump( pUser )
 			HARVEST = [13504];
 			mainSkill = parseInt(pUser.skills.alchemy);
       break;
+	  		//Start masonry
+		case 3500:// vase
+			createEntry = CreateEntries[3500];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3501:// large vase
+			createEntry = CreateEntries[3501];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3502:// small urn
+			createEntry = CreateEntries[3502];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3503:// Tower Sculpture
+			createEntry = CreateEntries[3503];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3504:// gargoyle painting
+			createEntry = CreateEntries[3504];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3505:// gargoyle sculpture
+			createEntry = CreateEntries[3505];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3506:// gargoyle vase
+			createEntry = CreateEntries[3506];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3507:// Tall 18th Anniversary Vase
+			createEntry = CreateEntries[3507];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3508:// Short 18th Anniversary Vase
+			createEntry = CreateEntries[3508];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
 		default:
 			break;
 	}
@@ -2111,9 +2158,28 @@ function onGumpPress( pSock, pButton, gumpData )
 							TriggerEvent( Glassblowing, "PageX", pSock, pUser, pUser.GetTempTag( "page" ));
 							break;
 						default: TriggerEvent( Glassblowing, "PageX", pSock, pUser, 1 );
-              break;
-          }
-          break;
+					}
+					break;
+			  	case 10: // masonry
+					pUser.SetTempTag( "ITEMDETAILS", null )
+					pSock.CloseGump( gumpID, 0 );
+					switch( pUser.GetTempTag("page" ))
+					{
+						case 1: // Page 1
+						case 2: // Page 2
+						case 3: // Page 3
+						case 4: // Page 4
+						case 5: // Page 5
+						case 6: // Page 6
+						case 7: // Page 7
+						case 8: // Page 8
+						case 9: // Page 9
+							TriggerEvent( Masonry, "PageX", pSock, pUser, pUser.GetTempTag( "page" ));
+							break;
+						default: TriggerEvent( Masonry, "PageX", pSock, pUser, 1 );
+							break;
+					}
+					break;
 			}
 	}
 }

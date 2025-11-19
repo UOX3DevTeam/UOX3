@@ -1,0 +1,44 @@
+[0x403d]
+{ 
+get=base_item
+name=gargoyle painting
+id=0x403d
+weight=1000
+movable=1
+}
+
+[0x403e]
+{ 
+get=0x403d
+id=0x403e
+}
+
+[0x403f]
+{ 
+get=base_item
+name=gargoyle sculpture
+id=0x403f
+weight=100
+movable=1
+}
+
+[0x4040]
+{ 
+get=0x403f
+id=0x4040
+}
+
+[0x4042]
+{ 
+get=base_item
+name=gargoyle vase
+id=0x4042
+weight=1000
+movable=1
+}
+
+[0x403e]
+{ 
+get=0x4042
+id=0x403e
+}

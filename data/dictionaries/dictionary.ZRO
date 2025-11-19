@@ -5022,6 +5022,35 @@
 13609=empty vials
 13610=full vials
 13611=spinning hourglass
+// 14001 - 14500 Masonary Crafting Skill
+14001=Masonry Menu
+14002=Decorations
+14003=Furniture
+14004=Statues
+14005=Misc Addons
+14006=Stone Armor
+14007=Stone Weapons
+14008=Stone Walls
+14009=Stone Stairs
+14010=Stone Floors
+14011=Granite
+14012=DullCopperGranite
+14013=ShadowIronGranite
+14014=CopperGranite
+14015=BronzeGranite
+14016=GoldGranite
+14017=AgapiteGranite
+14018=VeriteGranite
+14019=ValoriteGranite
+14050=vase
+14051=large vase
+14052=small urn
+14053=Tower Sculpture
+14054=gargoyle painting
+14055=gargoyle sculpture
+14056=gargoyle vase
+14057=Tall 18th Anniversary Vase
+14058=Short 18th Anniversary Vase
 // 15000 Skills
 15000=Alchemy
 15001=Anatomy

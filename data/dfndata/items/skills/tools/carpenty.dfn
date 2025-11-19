@@ -314,7 +314,7 @@ good=51
 maxuses=75
 usesleft=25
 script=2200// uses left tooltip
-script=4037// craft tool
+script=4031// craft tool
 }
 
 [masonrybook]

@@ -17,3 +17,17 @@ get=base_recipe_scroll
 custominttag=recipeID 18
 customstringtag=recipeName skullcap
 }
+
+[tall_18th_anniversary_vase_recipe]
+{
+get=base_recipe_scroll
+custominttag=recipeID 3500
+customstringtag=recipeName Tall 18th Anniversary Vase
+}
+
+[short_18th_anniversary_vase_recipe]
+{
+get=base_recipe_scroll
+custominttag=recipeID 3501
+customstringtag=recipeName Short 18th Anniversary Vase
+}

@@ -292,9 +292,12 @@ function onUseChecked( pUser, iUsed )
 				case 7: // Page 7
 				case 8: // Page 8
 				case 9: // Page 9
-					TriggerEvent( Masonry, "PageX", socket, pUser, tempPage);
+					TriggerEvent( Masonry, "PageX", socket, pUser, tempPage );
 					break;
-				default: TriggerEvent( Masonry, "PageX", socket, pUser, 1);
+				case 20:
+					TriggerEvent( Masonry, "Page20", socket, pUser );
+					break;
+				default: TriggerEvent( Masonry, "PageX", socket, pUser, 1 );
 					break;
 			}
 		}
