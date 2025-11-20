@@ -18,18 +18,18 @@ const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 // regular weapons with granite colour applied
 const allowColouredWeapons = GetServerSetting( "CraftColouredWeapons" );
 
-// Optional: if you later decide to make some blacksmith items recipe-locked, we will use this map:
+// Optional: if you later decide to make some masonry items recipe-locked, we will use this map:
 // MasonryMap[buttonID] = { dictID, page, timerID, graniteMake: [makeIDByOre], recipeID?, minEra?, maxEra? }
 // o--------------------------------------------------------------------------o
-// | Script        - blacksmith.js                                            |
-// | System        - Blacksmith Crafting Gump (Tailoring-style version)       |
+// | Script        - masonry.js                                               |
+// | System        - Masonry Crafting Gump							          |
 // o--------------------------------------------------------------------------o
 // | Purpose       -                                                          |
 // |   Provides the blacksmith crafting menu using the same data-driven       |
 // |   system used by the tailoring script.                                   |
 // |                                                                          |
 // |   All craftable items are defined in tables (myPage, craftItems) and     |
-// |   then mapped into a BlacksmithMap structure that controls:              |
+// |   then mapped into a MasonryMap structure that controls:                 |
 // |     - Which dictionary entry is shown per row                            |
 // |     - Which "makeID" entry is used for each ore type                     |
 // |     - Which page and timer ID to use when reopening the gump             |
@@ -37,12 +37,12 @@ const allowColouredWeapons = GetServerSetting( "CraftColouredWeapons" );
 // |     - Optional per-item custom names for display                         |
 // |                                                                          |
 // |   The script also handles:                                               |
-// |     - Ingot selection (iron / colored ores) with skill requirements      |
-// |     - Smelting metal items back into ingots                              |
-// |     - Repairing metal armor and weapons at an anvil                      |
+// |     - Granite selection (iron / colored ores) with skill requirements    |
+// |     - Smelting stone items back into Granite                             |
+// |     - Repairing stone armor and weapons at an anvil                      |
 // |     - Tool wear and runic hammer handling                                |
 // |     - A "Make Last" feature                                              |
-// |     - A "Last Ten Blacksmith" list (optional)                            |
+// |     - A "Last Ten Masonry" list (optional)                               |
 // o--------------------------------------------------------------------------o
 // | Data Tables                                                              |
 // o--------------------------------------------------------------------------o
@@ -58,33 +58,33 @@ const allowColouredWeapons = GetServerSetting( "CraftColouredWeapons" );
 // |                                                                          |
 // |   Each entry is a dictionary ID that will be used to look up the text    |
 // |   for that row, unless a customName is defined for that button in        |
-// |   BlacksmithMap.                                                         |
+// |   MasonryMap.                                                            |
 // |                                                                          |
 // | craftItems                                                               |
-// |   craftItems[oreIndex][pageIndex][itemIndex] = makeID                    |
-// |     oreIndex 0 = Iron                                                    |
-// |     oreIndex 1 = Dull Copper                                             |
-// |     oreIndex 2 = Shadow Iron                                             |
-// |     oreIndex 3 = Copper                                                  |
-// |     oreIndex 4 = Bronze                                                  |
-// |     oreIndex 5 = Gold                                                    |
-// |     oreIndex 6 = Agapite                                                 |
-// |     oreIndex 7 = Verite                                                  |
-// |     oreIndex 8 = Valorite                                                |
+// |   craftItems[graniteIndex][pageIndex][itemIndex] = makeID                |
+// |     graniteIndex 0 = Iron                                                |
+// |     graniteIndex 1 = Dull Copper                                         |
+// |     graniteIndex 2 = Shadow Iron                                         |
+// |     graniteIndex 3 = Copper                                              |
+// |     graniteIndex 4 = Bronze                                              |
+// |     graniteIndex 5 = Gold                                                |
+// |     graniteIndex 6 = Agapite                                             |
+// |     graniteIndex 7 = Verite                                              |
+// |     graniteIndex 8 = Valorite                                            |
 // |                                                                          |
-// |   For each ore type and page, this holds the createEntry ID used by      |
+// |   For each granite type and page, this holds the createEntry ID used by  |
 // |   MakeItem when the player crafts that item. The same index positions    |
 // |   on each page line up with the matching entries in myPage.              |
 // o--------------------------------------------------------------------------o
-// | BlacksmithMap                                                            |
+// | MasonryMap                                                            |
 // o--------------------------------------------------------------------------o
-// | BlacksmithMap is built automatically from myPage and craftItems.         |
+// | MasonryMap is built automatically from myPage and craftItems.            |
 // |                                                                          |
-// |   BlacksmithMap[buttonID] = {                                            |
+// |   MasonryMap[buttonID] = {                                               |
 // |       dictID    : number,     // Base dictionary entry for the row       |
 // |       page      : number,     // Main page (1..7, or 999 for Last Ten)   |
 // |       timerID   : number,     // Timer ID to reopen same page            |
-// |       oreMake   : number[],   // oreMake[oreIndex] = makeID              |
+// |       graniteMake : number[],   // graniteMake[graniteIndex] = makeID    |
 // |       customName: string?,    // Optional override for display text      |
 // |       recipeID  : number?,    // Optional recipe requirement             |
 // |       minEra    : string?,    // Optional minimum shard era              |
@@ -92,19 +92,21 @@ const allowColouredWeapons = GetServerSetting( "CraftColouredWeapons" );
 // |   };                                                                     |
 // |                                                                          |
 // | Button ID mapping (same as original script):                             |
-// |   Page 1 (Metal Armor) : 100..112                                        |
-// |   Page 2 (Helmets)     : 200..204                                        |
-// |   Page 3 (Shields)     : 300..305                                        |
-// |   Page 4 (Bladed)      : 400..407                                        |
-// |   Page 5 (Axes)        : 500..506                                        |
-// |   Page 6 (Polearms)    : 600..604                                        |
-// |   Page 7 (Bashing)     : 700..704                                        |
+// |   Page 1 (Decorations) : 100..108                                        |
+// |   Page 2 (Furniture)   : 200..205                                        |
+// |   Page 3 (Statues)     : 300..305                                        |
+// |   Page 4 (Misc Addons) : 400..407                                        |
+// |   Page 5 (Stone Armor) : 500..506                                        |
+// |   Page 6 (Stone Weapons) : 600..604                                      |
+// |   Page 7 (Stone Walls): 700..704										  |
+// |   Page 8 (Stone Stairs): 800..804										  |
+// |   Page 9 (Stone Floors): 900..904										  |
 // |                                                                          |
 // | Custom Names                                                             |
 // |   To override the display name for a specific row, set customName after  |
-// |   the BlacksmithMap has been initialized, for example:                   |
+// |   the MasonryMap has been initialized, for example:                      |
 // |                                                                          |
-// |       BlacksmithMap[400].customName = "Elven Broadsword";                |
+// |       MasonryMap[100].customName = "Hump vase";		                  |
 // |                                                                          |
 // |   PageX() will use this order of preference for text:                    |
 // |     1. entry.customName (if set)                                         |
@@ -112,7 +114,7 @@ const allowColouredWeapons = GetServerSetting( "CraftColouredWeapons" );
 // |     3. A fallback "[Unnamed Item: buttonID]"                             |
 // |                                                                          |
 // | Recipes                                                                  |
-// |   If recipeID is set on a BlacksmithMap entry, onGumpPress will call:    |
+// |   If recipeID is set on a MasonryMap entry, onGumpPress will call:       |
 // |       TriggerEvent(4022, "NeedRecipe", pUser, recipeID)                  |
 // |   to check if the player has learned that recipe. If not, the craft      |
 // |   attempt is blocked and a message is shown.                             |
@@ -127,29 +129,29 @@ const allowColouredWeapons = GetServerSetting( "CraftColouredWeapons" );
 // o--------------------------------------------------------------------------o
 // | Notes                                                                    |
 // o--------------------------------------------------------------------------o
-// | - This blacksmith script is intentionally structured to match the        |
-// |   tailoring crafting script, so future changes (recipes, era gating,     |
-// |   new categories, last ten behavior) can be implemented in the same     |
-// |   way for both systems.                                                  |
-// | - To add new blacksmith items, update myPage and craftItems, then        |
-// |   optionally decorate their BlacksmithMap entries with customName,       |
+// | - To add new Masonry items, update myPage and craftItems, then           |
+// |   optionally decorate their MasonryMap entries with customName,          |
 // |   recipeID, minEra, and maxEra.                                          |
 // o--------------------------------------------------------------------------o
 
 const myPage = [
 	// Page 1 - Decorations
-	[14050, 14051, 14052, 14053, 14054, 14055, 14056, 14057, 14058]
-	// Page 2 - Helmets
-	//[10230, 10231, 10232, 10233, 10234],
-	// Page 3 - Shields
-	//[10235, 10236, 10237, 10238, 10239, 10293],
-	 // Page 4 - Bladed
+	[14050, 14051, 14052, 14053, 14054, 14055, 14056, 14057, 14058],
+	// Page 2 - Furniture
+	[14059, 14060, 14061, 14062, 14063, 14064],
+	// Page 3 - Statues
+	[14065, 14066, 14067, 14068, 14069, 14070]
+	 // Page 4 - Misc Addons
 	//[10240, 10241, 10242, 10243, 10244, 10245, 10246, 10247],
-	// Page 5 - Axes
+	// Page 5 - Stone Armor
 	//[10248, 10249, 10250, 10251, 10252, 10253, 10254],
-	// Page 6 - PoleArms
+	// Page 6 - Stone Weapons
 	//[10255, 10256, 10257, 10258, 10259],
-	// Page 7 - Bashing
+	// Page 7 - Stone Walls
+	//[10260, 10261, 10262, 10263, 10264]
+	// Page 8 - Stone Stairs
+	//[10260, 10261, 10262, 10263, 10264]
+	// Page 9 - Stone Floors
 	//[10260, 10261, 10262, 10263, 10264]
 ];
 
@@ -157,18 +159,22 @@ const craftItems = [
 	// Iron
 	[
 		// Decorations
-		[3500, 3501, 3502, 3503, 3504, 3505, 3506, 3507, 3508]
-		// Helmets
-		//[ 46, 48, 45, 47, 49 ],
-		// Shields
-		//[ 1, 2, 6, 3, 5, 4 ],
-		// Bladed
+		[3500, 3501, 3502, 3503, 3504, 3505, 3506, 3507],
+		// Furniture
+		[ 3508, 3509, 3510, 3511, 3512, 3513 ],
+		// Statues
+		[ 3514, 3515, 3516, 3517, 3518, 3519 ]
+		// Misc Addons
 		//[ 25, 21, 20, 22, 23, 26, 24, 27 ],
-		// Axes
+		// Stone Armor
 		//[ 29, 28, 32, 30, 33, 31, 34 ],
-		// Polearms
+		// Stone Weapons
 		//[ 38, 39, 35, 36, 37 ],
-		// Bashing
+		// Stone Walls
+		//[ 44, 40, 41, 42, 43 ]
+		// Stone Stairs
+		//[ 44, 40, 41, 42, 43 ]
+		// Stone Floors
 		//[ 44, 40, 41, 42, 43 ]
 	],
 
@@ -374,20 +380,28 @@ const MasonryMap = {};
 })();
 
 // 3) AFTER initMasonryMap, you can override entries:
-// Page 1 Starts buttonID 100 - 108 for map example
+// Page 1 Starts buttonID 100 - 107 for map example
 //MasonryMap[100].customName = "Elven Broadsword";
 //MasonryMap[100].recipeID = 5101;   // if you want it recipe-locked
 //MasonryMap[100].minEra = "ml";     // if you want it ML and later only
 
-MasonryMap[102].minEra = "se";
-MasonryMap[103].minEra = "se";
-MasonryMap[104].minEra = "sa";
-MasonryMap[105].minEra = "sa";
-MasonryMap[106].minEra = "sa";
-MasonryMap[107].minEra = "tol";
+//Page 1 starts at 100
+MasonryMap[102].minEra = "se"; // small urn
+MasonryMap[103].minEra = "se"; // Tower Sculpture
+MasonryMap[104].minEra = "sa"; // gargoyle painting
+MasonryMap[105].minEra = "sa"; // gargoyle sculpture
+MasonryMap[106].minEra = "sa"; // gargoyle vase
+MasonryMap[107].minEra = "tol"; // Tall 18th Anniversary Vase
 MasonryMap[107].recipeID = 3500;
-MasonryMap[108].minEra = "tol";
+MasonryMap[108].minEra = "tol"; // Short 18th Anniversary Vase
 MasonryMap[108].recipeID = 3501;
+
+//Page 2 starts at 200
+MasonryMap[205].minEra = "sa"; // ritual table
+
+//Page 3 starts at 300
+MasonryMap[304].minEra = "sa"; // gargoyle statue
+MasonryMap[305].minEra = "sa"; // gryphon statue
 
 function PageX( socket, pUser, pageNum )
 {
@@ -1041,8 +1055,8 @@ function onGumpPress( pSock, pButton, gumpData )
         return;
     }
 
-    // Page buttons (1..7)
-    if( pButton >= 1 && pButton <= 7 )
+    // Page buttons (1..9)
+    if( pButton >= 1 && pButton <= 9 )
     {
         pUser.SetTempTag( "page", pButton );
         pUser.SetTempTag( "subPage", 1 );
@@ -1080,7 +1094,7 @@ function onGumpPress( pSock, pButton, gumpData )
     }
 
     // Handle "Make Last"
-    if(( pButton >= 100 && pButton <= 799 ) || pButton == 5000 )
+    if(( pButton >= 100 && pButton <= 998 ) || pButton == 5000 )
     {
         if( pButton == 5000 )
         {

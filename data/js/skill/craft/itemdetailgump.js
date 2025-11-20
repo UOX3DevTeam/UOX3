@@ -1812,6 +1812,61 @@ function ItemDetailGump( pUser )
 			HARVEST = [14011];
 			mainSkill = parseInt( pUser.skills.carpentry );
 			break;
+		case 3509:// 
+			createEntry = CreateEntries[3509];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3510:// 
+			createEntry = CreateEntries[3510];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3511:// 
+			createEntry = CreateEntries[3511];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3512:// 
+			createEntry = CreateEntries[3512];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3513:// 
+			createEntry = CreateEntries[3513];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3514:// 
+			createEntry = CreateEntries[3514];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3515:// 
+			createEntry = CreateEntries[3515];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3516:// 
+			createEntry = CreateEntries[3516];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3517:// 
+			createEntry = CreateEntries[3517];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3518:// 
+			createEntry = CreateEntries[3518];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3519:// 
+			createEntry = CreateEntries[3519];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
 		default:
 			break;
 	}

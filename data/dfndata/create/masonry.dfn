@@ -105,3 +105,159 @@ MINRANK=1
 MAXRANK=10
 SOUND=0x23D
 }
+
+//////////////////////////////////////
+////	        furniture        /////
+//////////////////////////////////////
+
+[ITEM 3508]
+{
+NAME=stone chair
+ID=0x1218
+RESOURCE=STONE 4
+SKILL=11 550 105
+ADDITEM=0x1218
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3509]
+{
+NAME=stone table (east)
+ID=0x14F0
+RESOURCE=STONE 6
+SKILL=11 650 1150
+ADDITEM=mediumstonetableeastdeed
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3510]
+{
+NAME=stone table (south)
+ID=0x14F0
+RESOURCE=STONE 6
+SKILL=11 650 1150
+ADDITEM=mediumstonetablesouthdeed
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3511]
+{
+NAME=large stone table (east)
+ID=0x14F0
+RESOURCE=STONE 9
+SKILL=11 750 1250
+ADDITEM=largestonetableeastdeed
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3512]
+{
+NAME=large stone table (south)
+ID=0x14F0
+RESOURCE=STONE 9
+SKILL=11 750 1250
+ADDITEM=largestonetablesouthdeed
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3513]
+{
+NAME=ritual table
+ID=0x14F0
+RESOURCE=STONE 8
+SKILL=11 940 1030
+ADDITEM=ritualtabledeed
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+//////////////////////////////////////
+////	        Statues          /////
+//////////////////////////////////////
+
+[ITEM 3514]
+{
+NAME=small statue (south)
+ID=0x139a
+RESOURCE=STONE 3
+SKILL=11 600 1100
+ADDITEM=0x139a
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3515]
+{
+NAME=small statue (north)
+ID=0x139b
+RESOURCE=STONE 3
+SKILL=11 600 1100
+ADDITEM=0x139b
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3516]
+{
+NAME=small statue (east)
+ID=0x139c
+RESOURCE=STONE 3
+SKILL=11 600 1100
+ADDITEM=0x139c
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3517]
+{
+NAME=pegasus statuette
+ID=0x139d
+RESOURCE=STONE 4
+SKILL=11 700 1200
+ADDITEM=0x139d
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3518]
+{
+NAME=gargoyle statue
+ID=0x494e
+RESOURCE=STONE 20
+SKILL=11 540 1040
+ADDITEM=0x494e
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3519]
+{
+NAME=gryphon statue
+ID=0x494e
+RESOURCE=STONE 15
+SKILL=11 540 1040
+ADDITEM=0x494e
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+//////////////////////////////////////
+////	        Misc Addons      /////
+//////////////////////////////////////
