@@ -10,10 +10,10 @@ const displayUnlearnedRecipes = true;  // Show recipes player has not learned
 const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ) );
 
 //////////////////////////////////////////////////////////////////////////////////////////
-// Glassblowing CraftingMap
+// Glassblowing GlassBlowingMap
 //////////////////////////////////////////////////////////////////////////////////////////
 
-const CraftingMap = {
+const GlassBlowingMap = {
     // Page 1 - Misc Glassware
     3000: { dictID: 13600, page: 1, timerID: 1 },                // empty bottle
     3001: { dictID: 13601, page: 1, timerID: 1 },                // flask (small)
@@ -61,15 +61,15 @@ function PageX( socket, pUser, pageNum )
 	}
 	else
 	{
-		// Build list of makeIDs for this page from CraftingMap
+		// Build list of makeIDs for this page from GlassBlowingMap
 		var makeIDs = [];
-		for( var makeIDStr in CraftingMap )
+		for( var makeIDStr in GlassBlowingMap )
 		{
-			if( !CraftingMap.hasOwnProperty( makeIDStr ))
+			if( !GlassBlowingMap.hasOwnProperty( makeIDStr ))
 				continue;
 
 			var makeID = parseInt( makeIDStr );
-			var data = CraftingMap[makeID];
+			var data = GlassBlowingMap[makeID];
 			if( !data || data.page != pageNum )
 				continue;
 
@@ -84,7 +84,7 @@ function PageX( socket, pUser, pageNum )
 		for( var k = 0; k < makeIDs.length; k++ )
 		{
 			var id = makeIDs[k];
-			var data2 = CraftingMap[id];
+			var data2 = GlassBlowingMap[id];
 			if( !data2 )
 				continue;
 
@@ -103,13 +103,13 @@ function PageX( socket, pUser, pageNum )
 			pageNum = 1;
 
 			makeIDs = [];
-			for( var makeIDStr2 in CraftingMap )
+			for( var makeIDStr2 in GlassBlowingMap )
 			{
-				if( !CraftingMap.hasOwnProperty( makeIDStr2 ))
+				if( !GlassBlowingMap.hasOwnProperty( makeIDStr2 ))
 					continue;
 
 				var makeID2 = parseInt( makeIDStr2 );
-				var data3 = CraftingMap[makeID2];
+				var data3 = GlassBlowingMap[makeID2];
 				if( !data3 || data3.page != 1 )
 					continue;
 
@@ -121,7 +121,7 @@ function PageX( socket, pUser, pageNum )
 			for( var m = 0; m < makeIDs.length; m++ )
 			{
 				var id2 = makeIDs[m];
-				var data4 = CraftingMap[id2];
+				var data4 = GlassBlowingMap[id2];
 				if( !data4 )
 					continue;
 
@@ -174,7 +174,7 @@ function PageX( socket, pUser, pageNum )
 		var entryText;
 		var buttonID = makeID;
 
-		var data5 = CraftingMap[makeID];
+		var data5 = GlassBlowingMap[makeID];
 
 		if( !data5 )
 		{
@@ -345,10 +345,10 @@ function onGumpPress( socket, pButton, gumpData )
     }
 
     // Craft buttons use makeID directly
-    if( CraftingMap[pButton] != undefined )
+    if( GlassBlowingMap[pButton] != undefined )
     {
         makeID = pButton;
-        var data = CraftingMap[makeID];
+        var data = GlassBlowingMap[makeID];
         timerID = data.timerID || 1;
 
         if( !eraOK( data ))
@@ -386,7 +386,7 @@ function onGumpPress( socket, pButton, gumpData )
     if( pButton >= 20000 && pButton < 30000 )
     {
         var detailMakeID = pButton - 20000;
-        if( CraftingMap[detailMakeID] )
+        if( GlassBlowingMap[detailMakeID] )
         {
             pUser.SetTempTag( "ITEMDETAILS", detailMakeID );
             TriggerEvent( itemDetailsScriptID, "ItemDetailGump", pUser );
