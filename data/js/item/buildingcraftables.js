@@ -92,6 +92,51 @@ function onDropItemOnNpc( pDropper, pDroppedOn, iDropped )
 	return 1;
 }
 
+function onDropItemOnItem( iDropped, cDropper, iDroppedOn )
+{
+	if( !ValidateObject( iDropped ) || !ValidateObject( cDropper ) || !ValidateObject( iDroppedOn ))
+		return 0;
+
+	var isBuilding =  iDropped.GetTag( "BuildingCraftable" ) === 1;
+	if( !isBuilding )
+		return 0
+
+	var owner = iDroppedOn.container;
+	if( ValidateObject( owner ) && owner.isChar && owner.sectionID == "packhorse" )
+	{
+		var sock = cDropper.socket;
+		if( sock )
+			sock.SysMessage( "You cannot place building pieces on a pack animal." );
+
+		return 0;
+	}
+
+	return 1;
+}
+
+function onDrop( iDropped, pDropper )
+{
+	if( !ValidateObject( iDropped ) || !ValidateObject( pDropper ))
+		return 0;
+
+	var isBuilding = iDropped.GetTag( "BuildingCraftable" ) === 1;
+	if( !isBuilding )
+		return 0;
+
+	var socket = pDropper.socket;
+	if( !isInOwnHouse( pDropper ))
+	{
+		if( socket != null)
+			socket.SysMessage( "The building piece crumbles when dropped on the ground." );
+
+		iDropped.Delete();
+		return 2;
+	}
+
+	return 1;
+}
+
+
 function isInOwnHouse( pUser )
 {
     if( !ValidateObject( pUser ))
