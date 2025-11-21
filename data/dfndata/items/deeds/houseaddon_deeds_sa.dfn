@@ -1,5 +1,6 @@
 [ritualtabledeed]
 {
+get=base_item
 name=ritual table
 id=0x14f0
 morex=2000
@@ -10,6 +11,7 @@ origin=sa
 
 [largegargoylebedeastdeed]
 {
+get=base_item
 name=large gargish bed (east)
 id=0x14f0
 morex=2001
@@ -20,6 +22,7 @@ origin=sa
 
 [largegargoylebedsouthdeed]
 {
+get=base_item
 name=large gargish bed (south)
 id=0x14f0
 morex=2002
@@ -30,6 +33,7 @@ origin=sa
 
 [gargishcoteasteastdeed]
 {
+get=base_item
 name=gargish cot (east)
 id=0x14f0
 morex=2003
@@ -40,6 +44,7 @@ origin=sa
 
 [gargishcoteastsouthdeed]
 {
+get=base_item
 name=gargish cot (south)
 id=0x14f0
 morex=2004
