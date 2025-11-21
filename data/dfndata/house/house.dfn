@@ -1697,22 +1697,6 @@ HOUSE_ITEM=639
 HOUSE_ITEM=640
 }
 
-// House Addon - ritual table
-[HOUSE 214]
-{
-ID=0x14F0
-SPACEX=1
-SPACEY=1
-CHARX=0
-CHARY=0
-CHARZ=0
-HOUSE_DEED=ritualtabledeed
-HOUSE_ITEM=641
-HOUSE_ITEM=642
-HOUSE_ITEM=643
-HOUSE_ITEM=644
-}
-
 [HOUSE ITEM 1]
 { Wooden Door (Small house)
 ITEM=0x06A5
@@ -4042,38 +4026,6 @@ Z=0
 ITEM=0x1204
 X=2
 Y=0
-Z=0
-}
-
-[HOUSE ITEM 641]
-{ 
-ITEM=0x4985
-X=0
-Y=0
-Z=0
-}
-
-[HOUSE ITEM 642]
-{ 
-ITEM=0x4984
-X=0
-Y=1
-Z=0
-}
-
-[HOUSE ITEM 643]
-{ 
-ITEM=0x4983
-X=1
-Y=0
-Z=0
-}
-
-[HOUSE ITEM 644]
-{ 
-ITEM=0x4982
-X=1
-Y=1
 Z=0
 }
 

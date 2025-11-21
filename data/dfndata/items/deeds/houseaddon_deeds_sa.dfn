@@ -1,0 +1,49 @@
+[ritualtabledeed]
+{
+name=ritual table
+id=0x14f0
+morex=2000
+value=1000 500
+restock=15
+origin=sa
+}
+
+[largegargoylebedeastdeed]
+{
+name=large gargish bed (east)
+id=0x14f0
+morex=2001
+value=1000 500
+restock=15
+origin=sa
+}
+
+[largegargoylebedsouthdeed]
+{
+name=large gargish bed (south)
+id=0x14f0
+morex=2002
+value=1000 500
+restock=15
+origin=sa
+}
+
+[gargishcoteasteastdeed]
+{
+name=gargish cot (east)
+id=0x14f0
+morex=2003
+value=1000 500
+restock=15
+origin=sa
+}
+
+[gargishcoteastsouthdeed]
+{
+name=gargish cot (south)
+id=0x14f0
+morex=2004
+value=1000 500
+restock=15
+origin=sa
+}

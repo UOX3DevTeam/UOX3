@@ -1,0 +1,31 @@
+[base_chair_sa]
+{ 
+get=base_item
+weight=10000
+movable=2
+origin=sa
+}
+
+[0x400e]
+{ E Gargoyle Cot
+get=base_chair_sa
+id=0x400e
+}
+
+[0x400f]
+{ E Gargoyle Cot
+get=base_chair_sa
+id=0x400f
+}
+
+[0x400d]
+{ S Gargoyle Cot
+get=base_chair_sa
+id=0x400d
+}
+
+[0x400c]
+{ S Gargoyle Cot
+get=base_chair_sa
+id=0x400c
+}

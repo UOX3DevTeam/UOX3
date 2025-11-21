@@ -23,6 +23,7 @@ customstringtag=recipeName skullcap
 get=base_recipe_scroll
 custominttag=recipeID 3500
 customstringtag=recipeName Tall 18th Anniversary Vase
+origin=sa
 }
 
 [short_18th_anniversary_vase_recipe]
@@ -30,4 +31,21 @@ customstringtag=recipeName Tall 18th Anniversary Vase
 get=base_recipe_scroll
 custominttag=recipeID 3501
 customstringtag=recipeName Short 18th Anniversary Vase
+origin=sa
+}
+
+[stone_anvil_east_recipe]
+{
+get=base_recipe_scroll
+custominttag=recipeID 3520
+customstringtag=recipeName Stone Anvil (East)
+origin=sa
+}
+
+[stone_anvil_south_recipe]
+{
+get=base_recipe_scroll
+custominttag=recipeID 3521
+customstringtag=recipeName Stone Anvil (South)
+origin=sa
 }
