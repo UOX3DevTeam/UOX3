@@ -297,6 +297,86 @@ function SmartTurn( iTurn )
     {
         iTurn.id = 0x01E8;
     }
+    else if( iTurn.id == 0x0789 ) // Rough steps
+    {
+        iTurn.id = 0x078A;
+    }
+    else if( iTurn.id == 0x078A )
+    {
+        iTurn.id = 0x078B;
+    }
+    else if( iTurn.id == 0x078B )
+    {
+        iTurn.id = 0x078C;
+    }
+    else if( iTurn.id == 0x078C )
+    {
+        iTurn.id = 0x0789;
+    }
+    else if( iTurn.id == 0x078D ) // Rough corner steps
+    {
+        iTurn.id = 0x078E;
+    }
+    else if( iTurn.id == 0x078E )
+    {
+        iTurn.id = 0x078F;
+    }
+    else if( iTurn.id == 0x078F )
+    {
+        iTurn.id = 0x0790;
+    }
+    else if( iTurn.id == 0x0790 )
+    {
+        iTurn.id = 0x078D;
+    }
+    else if( iTurn.id == 0x0791 ) // Rough rounded corner steps
+    {
+        iTurn.id = 0x0792;
+    }
+    else if( iTurn.id == 0x0792 )
+    {
+        iTurn.id = 0x0793;
+    }
+    else if( iTurn.id == 0x0793 )
+    {
+        iTurn.id = 0x0794;
+    }
+    else if( iTurn.id == 0x0794 )
+    {
+        iTurn.id = 0x0791;
+    }
+    else if( iTurn.id == 0x0795 ) // Rough inset steps
+    {
+        iTurn.id = 0x0796;
+    }
+    else if( iTurn.id == 0x0796 )
+    {
+        iTurn.id = 0x0797;
+    }
+    else if( iTurn.id == 0x0797 )
+    {
+        iTurn.id = 0x0798;
+    }
+    else if( iTurn.id == 0x0798 )
+    {
+        iTurn.id = 0x0795;
+    }
+    else if( iTurn.id == 0x0799 ) // Rough rounded inset steps
+    {
+        iTurn.id = 0x079A;
+    }
+    else if( iTurn.id == 0x079A )
+    {
+        iTurn.id = 0x079B;
+    }
+    else if( iTurn.id == 0x079B )
+    {
+        iTurn.id = 0x079C;
+    }
+    else if( iTurn.id == 0x079C )
+    {
+        iTurn.id = 0x0799;
+    }
 }
 
 var divorcedPairs = [ // they are paired up, but more than one index apart and out of order, [hex ID, add or subtract distance]
