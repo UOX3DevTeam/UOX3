@@ -307,30 +307,36 @@ get=base_craftable_wall
 id=0x079c
 }
 
+[base_craftable_door]
+{
+get=base_door
+script=5081
+weight=1000
+movable=1
+decay=1
+type=12
+}
+
 [StoneDoor_S_In]
 {
-get=base_craftable_wall
+get=base_craftable_door
 id=0x0326
-custominttag=CraftableDoor 1
 }
 
 [StoneDoor_E_Out]
 {
-get=base_craftable_wall
+get=base_craftable_door
 id=0x032C
-custominttag=CraftableDoor 1
 }
 
 [StoneDoor_S_Out]
 {
-get=base_craftable_wall
+get=base_craftable_door
 id=0x032a
-custominttag=CraftableDoor 1
 }
 
 [StoneDoor_E_In]
 {
-get=base_craftable_wall
+get=base_craftable_door
 id=0x0330
-custominttag=CraftableDoor 1
 }
