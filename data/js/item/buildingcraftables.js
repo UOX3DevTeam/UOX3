@@ -3,7 +3,10 @@
 /** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( iCreated, dfnSection )
 {
-    setLockedState( iCreated, false );
+	if( iCreated.GetTag( "CraftableDoor") == null )
+	{
+		setLockedState( iCreated, false );
+	}
 	iCreated.SetTag( "BuildingCraftable", 1 );
 }
 
@@ -44,20 +47,23 @@ function onUseChecked( pUser, iUsed )
         return false;
     }
 
-    var locked = iUsed.GetTag( "CraftWallLocked" );
+	if( iUsed.GetTag( "CraftableDoor") == null )
+	{
+		var locked = iUsed.GetTag( "CraftWallLocked" );
 
-    if( locked == 1)
-    {
-        setLockedState( iUsed, false );
-        if( pSocket )
-            pSocket.SysMessage( "You unlock the crafted wall. It can now be moved and will decay normally." );
-    }
-    else
-    {
-        setLockedState( iUsed, true );
-        if( pSocket )
-            pSocket.SysMessage( "You lock the crafted wall in place. It will no longer decay." );
-    }
+		if( locked == 1 )
+		{
+		    setLockedState( iUsed, false );
+		    if( pSocket )
+		        pSocket.SysMessage( "You unlock the crafted wall. It can now be moved and will decay normally." );
+		}
+		else
+		{
+		   setLockedState( iUsed, true );
+		   if( pSocket )
+		       pSocket.SysMessage( "You lock the crafted wall in place. It will no longer decay." );
+		}
+	}
 
     return false;
 }
@@ -65,20 +71,24 @@ function onUseChecked( pUser, iUsed )
 /** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( myObj, pSocket )
 {
-    var locked = myObj.GetTag( "CraftWallLocked" );
+	if( myObj.GetTag( "CraftableDoor") == null )
+	{
+		var locked = myObj.GetTag( "CraftWallLocked" );
 
-    if( locked == 1 )
-    {
-        // Line 1: House Only
-        // Line 2: unlock hint
-        return "House Only<br>You must double click this to unlock it.";
-    }
-    else
-    {
-        // Line 1: House Only
-        // Line 2: lock hint
-        return "House Only<br>You must double click this to lock it down.";
-    }
+		if( locked == 1 )
+		{
+		   // Line 1: House Only
+		   // Line 2: unlock hint
+		   return "House Only<br>You must double click this to unlock it.";
+		}
+		else
+		{
+		    // Line 1: House Only
+		    // Line 2: lock hint
+		    return "House Only<br>You must double click this to lock it down.";
+		}
+	}
+	return "House Only";
 }
 
 function onDropItemOnNpc( pDropper, pDroppedOn, iDropped )

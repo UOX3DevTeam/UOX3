@@ -306,3 +306,31 @@ id=0x079b
 get=base_craftable_wall
 id=0x079c
 }
+
+[StoneDoor_S_In]
+{
+get=base_craftable_wall
+id=0x0326
+custominttag=CraftableDoor 1
+}
+
+[StoneDoor_E_Out]
+{
+get=base_craftable_wall
+id=0x032C
+custominttag=CraftableDoor 1
+}
+
+[StoneDoor_S_Out]
+{
+get=base_craftable_wall
+id=0x032a
+custominttag=CraftableDoor 1
+}
+
+[StoneDoor_E_In]
+{
+get=base_craftable_wall
+id=0x0330
+custominttag=CraftableDoor 1
+}

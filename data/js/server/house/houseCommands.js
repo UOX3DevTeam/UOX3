@@ -1129,7 +1129,7 @@ function onCallback8( pSocket, myTarget )
 		{
 			pSocket.SysMessage( GetDictionaryEntry( 1888, pSocket.language )); // You cannot lock down trash barrels.
 		}
-		else if( myTarget.movable == 3 || myTarget.GetTag( "BuildingCraftable" ) == 1 )
+		else if( myTarget.movable == 3 || (myTarget.GetTag( "BuildingCraftable" ) == 1 && myTarget.GetTag( "CraftableDoor" ) == null ))
 		{
 			pSocket.SysMessage( GetDictionaryEntry( 1889, pSocket.language )); // That is already locked down!
 		}
