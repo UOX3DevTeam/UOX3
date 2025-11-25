@@ -1812,58 +1812,253 @@ function ItemDetailGump( pUser )
 			HARVEST = [14011];
 			mainSkill = parseInt( pUser.skills.carpentry );
 			break;
-		case 3509:// 
+		case 3509:// stone chair
 			createEntry = CreateEntries[3509];
 			HARVEST = [14011];
 			mainSkill = parseInt( pUser.skills.carpentry );
 			break;
-		case 3510:// 
+		case 3510:// stone table (east)
 			createEntry = CreateEntries[3510];
 			HARVEST = [14011];
 			mainSkill = parseInt( pUser.skills.carpentry );
 			break;
-		case 3511:// 
+		case 3511:// stone table (south)
 			createEntry = CreateEntries[3511];
 			HARVEST = [14011];
 			mainSkill = parseInt( pUser.skills.carpentry );
 			break;
-		case 3512:// 
+		case 3512:// large stone table (east)
 			createEntry = CreateEntries[3512];
 			HARVEST = [14011];
 			mainSkill = parseInt( pUser.skills.carpentry );
 			break;
-		case 3513:// 
+		case 3513:// large stone table (south)
 			createEntry = CreateEntries[3513];
 			HARVEST = [14011];
 			mainSkill = parseInt( pUser.skills.carpentry );
 			break;
-		case 3514:// 
+		case 3514:// ritual table
 			createEntry = CreateEntries[3514];
 			HARVEST = [14011];
 			mainSkill = parseInt( pUser.skills.carpentry );
 			break;
-		case 3515:// 
+		case 3515:// small statue (south)
 			createEntry = CreateEntries[3515];
 			HARVEST = [14011];
 			mainSkill = parseInt( pUser.skills.carpentry );
 			break;
-		case 3516:// 
+		case 3516:// small statue (north)
 			createEntry = CreateEntries[3516];
 			HARVEST = [14011];
 			mainSkill = parseInt( pUser.skills.carpentry );
 			break;
-		case 3517:// 
+		case 3517:// small statue (east)
 			createEntry = CreateEntries[3517];
 			HARVEST = [14011];
 			mainSkill = parseInt( pUser.skills.carpentry );
 			break;
-		case 3518:// 
+		case 3518:// pegasus statuette
 			createEntry = CreateEntries[3518];
 			HARVEST = [14011];
 			mainSkill = parseInt( pUser.skills.carpentry );
 			break;
-		case 3519:// 
+		case 3519:// gargoyle statue
 			createEntry = CreateEntries[3519];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3520:// gryphon statue
+			createEntry = CreateEntries[3520];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3521:// stone anvil (east)
+			createEntry = CreateEntries[3521];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3522:// stone anvil (south)
+			createEntry = CreateEntries[3522];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3523:// large gargish bed (east)
+			createEntry = CreateEntries[3523];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3524:// large gargish bed (south)
+			createEntry = CreateEntries[3524];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3525:// gargish cot (east)
+			createEntry = CreateEntries[3525];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3526:// gargish cot (south)
+			createEntry = CreateEntries[3526];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3527:// gargish stone arms
+			createEntry = CreateEntries[3527];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3528:// gargish stone chest
+			createEntry = CreateEntries[3528];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3529:// gargish stone leggings
+			createEntry = CreateEntries[3529];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3530:// gargish stone kilt
+			createEntry = CreateEntries[3530];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3531:// gargish stone arms
+			createEntry = CreateEntries[3531];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3532:// gargish stone chest
+			createEntry = CreateEntries[3532];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3533:// gargish stone leggings
+			createEntry = CreateEntries[3533];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3534:// gargish stone kilt
+			createEntry = CreateEntries[3534];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3535:// large stone shield
+			createEntry = CreateEntries[3535];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3536:// gargish stone amulet
+			createEntry = CreateEntries[3536];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3537:// stone war sword
+			createEntry = CreateEntries[3537];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3538:// rough windowless
+			createEntry = CreateEntries[3538];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3539:// rough window
+			createEntry = CreateEntries[3539];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3540:// rough arch
+			createEntry = CreateEntries[3540];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3541:// rough pillar
+			createEntry = CreateEntries[3541];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3542:// rough rounded arch
+			createEntry = CreateEntries[3542];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3543:// rough small arch
+			createEntry = CreateEntries[3543];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3544:// rough angled pillar
+			createEntry = CreateEntries[3544];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3545:// short rough
+			createEntry = CreateEntries[3545];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3546:// Stone Door S In
+			createEntry = CreateEntries[3546];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3547:// Stone Door E Out
+			createEntry = CreateEntries[3547];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3548:// Stone Door S Out
+			createEntry = CreateEntries[3548];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3549:// Stone Door E In
+			createEntry = CreateEntries[3549];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3550:// short rough
+			createEntry = CreateEntries[3550];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3551:// rough steps
+			createEntry = CreateEntries[3551];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3552:// rough corner steps
+			createEntry = CreateEntries[3552];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3553:// rough rounded corner step
+			createEntry = CreateEntries[3553];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3554:// rough inset steps
+			createEntry = CreateEntries[3554];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3555:// rough rounded inset steps
+			createEntry = CreateEntries[3555];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3556:// light paver
+			createEntry = CreateEntries[3556];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3557:// medium paver
+			createEntry = CreateEntries[3557];
+			HARVEST = [14011];
+			mainSkill = parseInt( pUser.skills.carpentry );
+			break;
+		case 3558:// dark paver
+			createEntry = CreateEntries[3558];
 			HARVEST = [14011];
 			mainSkill = parseInt( pUser.skills.carpentry );
 			break;
