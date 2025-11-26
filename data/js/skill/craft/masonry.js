@@ -1222,6 +1222,11 @@ function onGumpPress( pSock, pButton, gumpData )
 				if( entry.harvest4 && entry.harvest4.length > 0 )
 					pUser.SetTempTag("Harvest4", entry.harvest4[0]);
 
+				if( entry.recipeID && entry.recipeID > 0 )
+					pUser.SetTempTag( "needRecipeID", entry.recipeID );
+				else
+					pUser.SetTempTag( "needRecipeID", 0 ); 
+
 				pUser.SetTempTag( "ITEMDETAILS", graniteMakeID );
 				TriggerEvent( itemDetailsScriptID, "ItemDetailGump", pUser );
 			}

@@ -83,6 +83,7 @@ function ItemDetailGump( pUser )
 	var createEntry = null;
 	var harvestResource;
 	var mainSkill;
+	//var recipeID = 0; // default: no recipe required
 
 	var detailTag   = pUser.GetTempTag( "ITEMDETAILS" );
 	var skillTag    = pUser.GetTempTag( "Skill" );
@@ -90,6 +91,7 @@ function ItemDetailGump( pUser )
 	var harvest2Tag = pUser.GetTempTag( "Harvest2" );
 	var harvest3Tag = pUser.GetTempTag( "Harvest3" );
 	var harvest4Tag = pUser.GetTempTag( "Harvest4" );
+	var recipeID = pUser.GetTempTag( "needRecipeID" );
 
 	if( detailTag !== null )
 	{
@@ -126,6 +128,14 @@ function ItemDetailGump( pUser )
 	if( createEntry == null )
 	{
 		return;
+	}
+
+	// Recipe flags
+	var needsRecipe = ( recipeID > 0 );
+	var hasRecipe = false;
+	if( needsRecipe )
+	{
+		hasRecipe = HasLearnedRecipe( pUser, recipeID );
 	}
 
 	// Fetch properties of create entry
@@ -271,6 +281,23 @@ function ItemDetailGump( pUser )
 	else if( exceptionalWearablesOnly || !CheckTileFlag( createID, 22 )) // TF_WEARABLE?
 	{
 		itemGump.AddText( 430, 100, textHue, "-" ); // No chance of exceptional, not a wearable item!
+	}
+
+	if( needsRecipe )
+	{
+		var recipeMsg;
+		if( hasRecipe )
+		{
+			recipeMsg = "<basefont color=#00ff00>You have learned this recipe.</basefont>";
+		}
+		else
+		{
+			recipeMsg = "<basefont color=#ff0000>You have not learned this recipe.</basefont>";
+		}
+
+		// OTHER box starts at y=302, you already use 302+20 for the color note (dict 10006),
+		// so 302+40 (342) is a safe line under that.
+		itemGump.AddHTMLGump( 170, 342, 310, 18, false, false, recipeMsg );
 	}
 	itemGump.Send( socket );
 	itemGump.Free();
@@ -495,4 +522,19 @@ function onGumpPress( pSock, pButton, gumpData )
 					break;
 			}
 	}
+}
+
+function HasLearnedRecipe( pUser, recipeID )
+{
+    var myData = TriggerEvent( 4022, "ReadRecipeID", pUser );
+    if( !myData || myData.length == 0 )
+        return false;
+
+    for( var i = 0; i < myData.length; i++ )
+    {
+        var data = myData[i].split( "," );
+        if( data[0] == recipeID )
+            return true;
+    }
+    return false;
 }
