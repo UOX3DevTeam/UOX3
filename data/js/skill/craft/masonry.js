@@ -1,16 +1,15 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
-const textHue = 0x480;                 // Color of the text.
-const scriptID = 4023;                 // Script ID used to identify and close this gump
-const masonryID = scriptID;         // Backwards-compat alias
-const gumpDelay = 2000;                // Timer for the gump to reappear after crafting.
-const ingotDelay = 200;                // Timer for the gump to reappear after selecting an ingot.
-const repairDelay = 200;               // Timer for the gump to reappear after repairing an item
+const textHue = 0x480;					// Color of the text.
+const masonryID = 4023;					//  Script ID used to identify and close this gump
+const gumpDelay = 2000;					// Timer for the gump to reappear after crafting.
+const ingotDelay = 200;					// Timer for the gump to reappear after selecting an ingot.
+const repairDelay = 200;				// Timer for the gump to reappear after repairing an item
 const craftGumpID = 4027;
 const itemDetailsScriptID = 4026;
 
-const itemsPerPage = 10;               // Number of craftable items shown per gump subpage
-const displayUnlearnedRecipes = true;  // Show recipes player has not learned (if we add any later)
+const itemsPerPage = 10;				// Number of craftable items shown per gump subpage
+const displayUnlearnedRecipes = true;	// Show recipes player has not learned (if we add any later)
 const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 
 // If enabled, players can craft coloured variants of weapons, though unless the craftItems array
@@ -1112,7 +1111,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		return;
 	}
 
-	var gumpID = scriptID + 0xffff;
+	var gumpID = masonryID + 0xffff;
 
 	// Close / Exit
 	if( pButton == 0 )

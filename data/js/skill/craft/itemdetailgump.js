@@ -7,7 +7,7 @@ const Alchemy = 4028;
 const Fletching = 4029;
 const Tailoring = 4030;
 const Tinkering = 4032;
-const scriptID = 4026; // This script
+const itemDetailID = 4026; // This script
 const Cooking = 4034;
 const Cartography = 4035;
 const Glassblowing = 4036;
@@ -80,13 +80,13 @@ function ItemDetailGump( pUser )
 	var socket = pUser.socket;
 	var itemGump = new Gump;
 	var createEntry = null;
-	var HARVEST;
+	var harvestResource;
 	var mainSkill;
 
 	// --- Override from temp tags if present (minimal change) ---
 	var detailTag   = pUser.GetTempTag( "ITEMDETAILS" );
 	var skillTag    = pUser.GetTempTag( "Skill" );
-	var harvest1Tag = pUser.GetTempTag( "Harvest" );
+	var harvestTag = pUser.GetTempTag( "Harvest" );
 	var harvest2Tag = pUser.GetTempTag( "Harvest2" );
 	var harvest3Tag = pUser.GetTempTag( "Harvest3" );
 	var harvest4Tag = pUser.GetTempTag( "Harvest4" );
@@ -107,21 +107,21 @@ function ItemDetailGump( pUser )
 	}
 
 	// If harvest info is provided, rebuild HARVEST array
-	if( harvest1Tag !== null || harvest2Tag !== null || harvest3Tag !== null || harvest4Tag !== null )
+	if( harvestTag !== null || harvest2Tag !== null || harvest3Tag !== null || harvest4Tag !== null )
 	{
-		HARVEST = [];
+		harvestResource = [];
 
-		if( harvest1Tag !== null )
-			HARVEST.push( parseInt( harvest1Tag, 10 ));
+		if( harvestTag !== null )
+			harvestResource.push( parseInt( harvestTag, 10 ));
 
 		if( harvest2Tag !== null )
-			HARVEST.push( parseInt( harvest2Tag, 10 ));
+			harvestResource.push( parseInt( harvest2Tag, 10 ));
 
 		if( harvest3Tag !== null )
-			HARVEST.push( parseInt( harvest3Tag, 10 ));
+			harvestResource.push( parseInt( harvest3Tag, 10 ));
 		
 		if( harvest4Tag !== null )
-			HARVEST.push( parseInt( harvest4Tag, 10 ));
+			harvestResource.push( parseInt( harvest4Tag, 10 ));
 	}
 
 	/*switch( pUser.GetTempTag( "ITEMDETAILS" ))
@@ -2281,9 +2281,13 @@ function ItemDetailGump( pUser )
 		chance += (( pUser.intelligence * ( primaryCraftSkill.intelligence / 10 )) / 10000 );
 	}
 
-	for( var i = 0; i < HARVEST.length; i++ )
+	var maxHarvest = harvestResource.length;
+	if( resources.length < maxHarvest )
+		maxHarvest = resources.length;
+
+	for( var i = 0; i < maxHarvest; i++ )
 	{
-		itemGump.AddText( 170, 219 + ( i * 20 ), textHue, GetDictionaryEntry( HARVEST[i], socket.language ));
+		itemGump.AddText( 170, 219 + ( i * 20 ), textHue, GetDictionaryEntry( harvestResource[i], socket.language ));
 		itemGump.AddText( 430, 219 + ( i * 20 ), textHue, resources[i][0] );
 	}
 
@@ -2356,7 +2360,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		return;
 
 	var bItem = pSock.tempObj;
-	var gumpID = scriptID + 0xffff;
+	var gumpID = itemDetailID + 0xffff;
 	switch( pButton )
 	{
 		case 0:
