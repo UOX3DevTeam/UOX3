@@ -8,6 +8,8 @@ const craftGumpID = 4027;              // TriggerEvent ID used to build the craf
 const itemsPerPage = 10;               // Number of craftable items shown per gump subpage
 const displayUnlearnedRecipes = true;  // Show recipes player has not learned
 const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ) );
+const glassSkillID = 0;       // alchmey skill
+const glassHarvestDict = 13504; // sand
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Glassblowing GlassBlowingMap
@@ -37,6 +39,34 @@ const GlassBlowingMap = {
 	3018: { customName: "glass sword", page: 2, timerID: 2, minEra: "sa" },    // Glass sword
 	3019: { customName: "glass staff", page: 2, timerID: 2, minEra: "sa" }    // Glass staff
 };
+
+// After the GlassBlowingMap literal
+(function initGlassBlowingMap()
+{
+    for( var key in GlassBlowingMap )
+    {
+        if( !GlassBlowingMap.hasOwnProperty( key ))
+            continue;
+
+        var entry = GlassBlowingMap[key];
+
+        // Default skill (if not already set)
+        if( entry.skill === undefined )
+            entry.skill = glassSkillID;
+
+        // Default harvest list (if not already set)
+        if( !entry.harvest )
+            entry.harvest = [ glassHarvestDict ];
+
+        // If you have special cases, you can override here, e.g.:
+        // if( key == "3017" ) { // workable glass
+        //     entry.harvest = [ glassHarvestDict, 10016 ]; // sand + cloth
+        // }
+    }
+})();
+
+// If you ever need a specific item to use 2 or more resources, just override its harvest array:
+// GlassBlowingMap[3017].harvest = [ glassHarvestDict, 10016 ]; // two harvest resources
 
 function PageX( socket, pUser, pageNum )
 {
@@ -383,16 +413,50 @@ function onGumpPress( socket, pButton, gumpData )
     }
 
     // Detail buttons: 20000 + makeID
-    if( pButton >= 20000 && pButton < 30000 )
-    {
-        var detailMakeID = pButton - 20000;
-        if( GlassBlowingMap[detailMakeID] )
-        {
-            pUser.SetTempTag( "ITEMDETAILS", detailMakeID );
-            TriggerEvent( itemDetailsScriptID, "ItemDetailGump", pUser );
-        }
-        return;
-    }
+	// Detail buttons: 20000 + makeID
+	if( pButton >= 20000 && pButton < 30000 )
+	{
+		var detailMakeID = pButton - 20000;
+		var entry = GlassBlowingMap[detailMakeID];
+
+		if ( entry )
+		{
+			// Always set which item the detail script should show
+			pUser.SetTempTag( "ITEMDETAILS", detailMakeID );
+
+			// ---- SKILL ----
+			// Use entry.skill if present, otherwise 0
+			pUser.SetTempTag( "Skill", entry.skill || 0);
+
+			// ---- HARVESTS ----
+			// Clear out old values first
+			pUser.SetTempTag( "Harvest", null );
+			pUser.SetTempTag( "Harvest2", null );
+			pUser.SetTempTag( "Harvest3", null );
+			pUser.SetTempTag( "Harvest4", null );
+
+			// Fill from entry.harvest array if it exists
+			if(entry.harvest && entry.harvest.length > 0)
+			{
+				if( entry.harvest.length >= 1 )
+					pUser.SetTempTag("Harvest", entry.harvest[0] );
+
+				if( entry.harvest.length >= 2 )
+					pUser.SetTempTag("Harvest2", entry.harvest[1] );
+
+				if( entry.harvest.length >= 3 )
+					pUser.SetTempTag("Harvest3", entry.harvest[2] );
+
+				if( entry.harvest.length >= 4 )
+					pUser.SetTempTag("Harvest4", entry.harvest[3] );
+			}
+
+			// Now fire the generic detail gump
+			TriggerEvent(itemDetailsScriptID, "ItemDetailGump", pUser);
+		}
+		return;
+	}
+
 }
 
 // Last Ten
