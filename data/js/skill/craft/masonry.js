@@ -399,10 +399,15 @@ const MasonryMap = {};
                         dictID: dictID,
                         page: pageIdx + 1,
                         timerID: pageIdx + 1,
-                        graniteMake: []
+                        graniteMake: [],
                         // recipeID: undefined,
                         // minEra: undefined,
                         // maxEra: undefined
+						skill: 11,               // carpentry / masonry skill ID
+						harvest: [14011],        // granite dict
+						harvest2: [],             // optional second resource
+						harvest3: [],             // optional second resource
+						harvest4: []             // optional second resource
                     };
                 }
 
@@ -439,9 +444,13 @@ MasonryMap[400].recipeID = 3520;
 MasonryMap[401].minEra = "ml"; // stone anvil (south)
 MasonryMap[401].recipeID = 3521;
 MasonryMap[402].minEra = "sa"; // large gargish bed (east)
+MasonryMap[402].harvest2 = [10016]; // Cloth
 MasonryMap[403].minEra = "sa"; // large gargish bed (south)
+MasonryMap[403].harvest2 = [10016]; // Cloth
 MasonryMap[404].minEra = "sa"; // gargish cot (east)
+MasonryMap[404].harvest2 = [10016]; // Cloth
 MasonryMap[405].minEra = "sa"; // gargish cot (south)
+MasonryMap[405].harvest2 = [10016]; // Cloth
 //Page 5 starts at 500
 MasonryMap[500].minEra = "sa"; // gargish stone arms
 MasonryMap[501].minEra = "sa"; // gargish stone chest
@@ -1072,8 +1081,6 @@ function onGumpPress( pSock, pButton, gumpData )
     var pUser = pSock.currentChar;
     var usedMakeLast = false;
 
-	pSock.SysMessage( "DEBUG: button " + pButton );
-
     if( !ValidateObject( pUser ) || pUser.dead )
         return;
 
@@ -1201,6 +1208,21 @@ function onGumpPress( pSock, pButton, gumpData )
             var graniteMakeID = entry.graniteMake[0];
             if( graniteMakeID > 0 )
             {
+				// Masonry uses Carpentry skill
+				 pUser.SetTempTag("Skill", entry.skill | 0);
+
+				if( entry.harvest && entry.harvest.length > 0 )
+					pUser.SetTempTag("Harvest",  entry.harvest[0]);
+
+				if( entry.harvest2 && entry.harvest2.length > 0 )
+					pUser.SetTempTag("Harvest2", entry.harvest2[0]);
+
+				if( entry.harvest3 && entry.harvest3.length > 0 )
+					pUser.SetTempTag("Harvest3", entry.harvest3[0]);
+
+				if( entry.harvest4 && entry.harvest4.length > 0 )
+					pUser.SetTempTag("Harvest4", entry.harvest4[0]);
+
                 pUser.SetTempTag( "ITEMDETAILS", graniteMakeID );
                 TriggerEvent( itemDetailsScriptID, "ItemDetailGump", pUser );
             }

@@ -17,12 +17,114 @@ const exceptionalWearablesOnly = true;
 
 function ItemDetailGump( pUser )
 {
+	var skillNames = [
+	"alchemy",
+	"anatomy",
+	"animallore",
+	"itemid",
+	"armslore",
+	"parrying",
+	"begging",
+	"blacksmithing",
+	"bowcraft",
+	"peacemaking",
+	"camping",
+	"carpentry",
+	"cartography",
+	"cooking",
+	"detectinghidden",
+	"enticement",
+	"evaluatingintel",
+	"healing",
+	"fishing",
+	"forensics",
+	"herding",
+	"hiding",
+	"provocation",
+	"inscription",
+	"lockpicking",
+	"magery",
+	"magicresistance",
+	"tactics",
+	"snooping",
+	"musicianship",
+	"poisoning",
+	"archery",
+	"spiritspeak",
+	"stealing",
+	"tailoring",
+	"taming",
+	"tasteid",
+	"tinkering",
+	"tracking",
+	"veterinary",
+	"swordsmanship",
+	"macefighting",
+	"fencing",
+	"wrestling",
+	"lumberjacking",
+	"mining",
+	"meditation",
+	"stealth",
+	"removetrap",
+	"necromancy",
+	"focus",
+	"chivalry",
+	"bushido",
+	"ninjitsu",
+	"spellweaving ",
+	"mysticism ",
+	"imbuing",
+	"throwing "
+	];
 	var socket = pUser.socket;
 	var itemGump = new Gump;
 	var createEntry = null;
 	var HARVEST;
 	var mainSkill;
-	switch( pUser.GetTempTag( "ITEMDETAILS" ))
+
+	// --- Override from temp tags if present (minimal change) ---
+	var detailTag   = pUser.GetTempTag( "ITEMDETAILS" );
+	var skillTag    = pUser.GetTempTag( "Skill" );
+	var harvest1Tag = pUser.GetTempTag( "Harvest" );
+	var harvest2Tag = pUser.GetTempTag( "Harvest2" );
+	var harvest3Tag = pUser.GetTempTag( "Harvest3" );
+	var harvest4Tag = pUser.GetTempTag( "Harvest4" );
+
+	// If detail is provided, re-point createEntry
+	if( detailTag !== null )
+	{
+		createEntry = CreateEntries[ detailTag ];
+	}
+
+	if( skillTag >= 0 && skillTag < skillNames.length )
+	{
+		mainSkill = parseInt( pUser.skills[ skillNames[skillTag] ] );
+	}
+	else
+	{// if all fails fallback to alchemy
+		mainSkill = mainSkill = parseInt( pUser.skills.alchemy );
+	}
+
+	// If harvest info is provided, rebuild HARVEST array
+	if( harvest1Tag !== null || harvest2Tag !== null || harvest3Tag !== null || harvest4Tag !== null )
+	{
+		HARVEST = [];
+
+		if( harvest1Tag !== null )
+			HARVEST.push( parseInt( harvest1Tag, 10 ));
+
+		if( harvest2Tag !== null )
+			HARVEST.push( parseInt( harvest2Tag, 10 ));
+
+		if( harvest3Tag !== null )
+			HARVEST.push( parseInt( harvest3Tag, 10 ));
+		
+		if( harvest4Tag !== null )
+			HARVEST.push( parseInt( harvest4Tag, 10 ));
+	}
+
+	/*switch( pUser.GetTempTag( "ITEMDETAILS" ))
 	{
 		//Start Blacksmith
 		case 1:
@@ -2064,7 +2166,7 @@ function ItemDetailGump( pUser )
 			break;
 		default:
 			break;
-	}
+	}*/
 
 	if( createEntry == null )
 	{
