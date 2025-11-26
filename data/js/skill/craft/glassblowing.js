@@ -449,6 +449,11 @@ function onGumpPress( socket, pButton, gumpData )
 
 				if( entry.harvest.length >= 4 )
 					pUser.SetTempTag("Harvest4", entry.harvest[3] );
+
+				if( entry.recipeID && entry.recipeID > 0 )
+					pUser.SetTempTag( "needRecipeID", entry.recipeID );
+				else
+					pUser.SetTempTag( "needRecipeID", 0 ); 
 			}
 
 			// Now fire the generic detail gump
@@ -456,7 +461,6 @@ function onGumpPress( socket, pButton, gumpData )
 		}
 		return;
 	}
-
 }
 
 // Last Ten
