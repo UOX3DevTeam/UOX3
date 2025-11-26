@@ -310,7 +310,7 @@ weight=100
 value=9 4
 restock=20
 decay=1
-good=51
+good=53
 maxuses=75
 usesleft=25
 script=2200// uses left tooltip
@@ -327,6 +327,7 @@ movable=1
 pileable=1
 decay=1
 value=10637 5318
+good=53
 origin=lbr
 script=5055
 }

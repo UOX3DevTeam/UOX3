@@ -13540,6 +13540,10 @@ ADDITEM=0x10E5
 ADDITEM=0x10E6
 0x10E7=scorp
 ADDITEM=0x10E7
+0x12B3=mallet and chisel
+ADDITEM=malletandchisel
+0x0FBE=Making Valuables With Stonecrafting
+ADDITEM=masonrybook
 <=Previous Menu
 ITEMMENU=127
 }
