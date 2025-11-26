@@ -371,50 +371,50 @@ const MasonryMap = {};
 
 (function initMasonryMap()
 {
-    // graniteIndex: 0 = iron, 1 = dull copper, ... 8 = valorite
-    for( var graniteIndex = 0; graniteIndex < craftItems.length; graniteIndex++ )
-    {
-        var graniteRows = craftItems[graniteIndex];
+	// graniteIndex: 0 = iron, 1 = dull copper, ... 8 = valorite
+	for( var graniteIndex = 0; graniteIndex < craftItems.length; graniteIndex++ )
+	{
+		var graniteRows = craftItems[graniteIndex];
 
-        // pageIdx: 0..6 => pages 1..9
-        for( var pageIdx = 0; pageIdx < myPage.length; pageIdx++ )
-        {
-            var dictList = myPage[pageIdx];
-            var makeList = graniteRows[pageIdx];
+		// pageIdx: 0..6 => pages 1..9
+		for( var pageIdx = 0; pageIdx < myPage.length; pageIdx++ )
+		{
+			var dictList = myPage[pageIdx];
+			var makeList = graniteRows[pageIdx];
 
-            for( var i = 0; i < dictList.length && i < makeList.length; i++ )
-            {
-                // Old script uses:
-                // page 1 => 100..112
-                // page 2 => 200..204
-                // page 3 => 300..305
-                // etc.
-                var buttonID = ( ( pageIdx + 1 ) * 100 ) + i;
-                var dictID = dictList[i];
-                var makeID = makeList[i];
+			for( var i = 0; i < dictList.length && i < makeList.length; i++ )
+			{
+				// Old script uses:
+				// page 1 => 100..112
+				// page 2 => 200..204
+				// page 3 => 300..305
+				// etc.
+				var buttonID = ( ( pageIdx + 1 ) * 100 ) + i;
+				var dictID = dictList[i];
+				var makeID = makeList[i];
 
-                if( !MasonryMap[buttonID] )
-                {
-                    MasonryMap[buttonID] = {
-                        dictID: dictID,
-                        page: pageIdx + 1,
-                        timerID: pageIdx + 1,
-                        graniteMake: [],
-                        // recipeID: undefined,
-                        // minEra: undefined,
-                        // maxEra: undefined
+				if( !MasonryMap[buttonID] )
+				{
+					MasonryMap[buttonID] = {
+						dictID: dictID,
+						page: pageIdx + 1,
+						timerID: pageIdx + 1,
+						graniteMake: [],
+						// recipeID: undefined,
+						// minEra: undefined,
+						// maxEra: undefined
 						skill: 11,               // carpentry / masonry skill ID
 						harvest: [14011],        // granite dict
 						harvest2: [],             // optional second resource
 						harvest3: [],             // optional second resource
 						harvest4: []             // optional second resource
-                    };
-                }
+					};
+				}
 
-                MasonryMap[buttonID].graniteMake[graniteIndex] = makeID;
-            }
-        }
-    }
+				MasonryMap[buttonID].graniteMake[graniteIndex] = makeID;
+			}
+		}
+	}
 })();
 
 // 3) AFTER initMasonryMap, you can override entries:
@@ -491,142 +491,142 @@ MasonryMap[902].minEra = "tol"; // dark paver
 
 function PageX( socket, pUser, pageNum )
 {
-    if( !ValidateObject( pUser ))
-        return;
+	if( !ValidateObject( pUser ))
+		return;
 
-    // Pages 1 - 9: normal crafting pages
-    // Page 999: optional "Last Ten Blacksmith" (if you decide to use it later)
+	// Pages 1 - 9: normal crafting pages
+	// Page 999: optional "Last Ten Blacksmith" (if you decide to use it later)
 
-    var subPage = pUser.GetTempTag( "subPage" );
-    var pageItems = [];
+	var subPage = pUser.GetTempTag( "subPage" );
+	var pageItems = [];
 
-    if( pageNum == 999 )
-    {
-        var lastTenRaw = pUser.GetTempTag( "LastTenMasonry" ) || "";
-        var split = lastTenRaw.split( "," );
-        for( var i = 0; i < split.length; i++ )
-        {
-            var val = parseInt( split[i] );
-            if( !isNaN( val ) && MasonryMap[val] )
-                pageItems.push( val ); // here val is the buttonID itself
-        }
-    }
-    else
-    {
-        // Build list of buttonIDs for this page from MasonryMap
-        for( var buttonID in MasonryMap )
-        {
-            var data = MasonryMap[buttonID];
-            if( data.page == pageNum && eraOK( data ))
-            {
-                // If we later add recipes and want to hide unknown ones:
-                var needsRecipe = data.recipeID;
-                var showAll = displayUnlearnedRecipes;
-                if( !needsRecipe || showAll || HasLearnedRecipe( pUser, needsRecipe ))
-                {
-                    pageItems.push( parseInt( buttonID ) );
-                }
-            }
-        }
+	if( pageNum == 999 )
+	{
+		var lastTenRaw = pUser.GetTempTag( "LastTenMasonry" ) || "";
+		var split = lastTenRaw.split( "," );
+		for( var i = 0; i < split.length; i++ )
+		{
+			var val = parseInt( split[i] );
+			if( !isNaN( val ) && MasonryMap[val] )
+				pageItems.push( val ); // here val is the buttonID itself
+		}
+	}
+	else
+	{
+		// Build list of buttonIDs for this page from MasonryMap
+		for( var buttonID in MasonryMap )
+		{
+			var data = MasonryMap[buttonID];
+			if( data.page == pageNum && eraOK( data ))
+			{
+				// If we later add recipes and want to hide unknown ones:
+				var needsRecipe = data.recipeID;
+				var showAll = displayUnlearnedRecipes;
+				if( !needsRecipe || showAll || HasLearnedRecipe( pUser, needsRecipe ))
+				{
+					pageItems.push( parseInt( buttonID ) );
+				}
+			}
+		}
 
-        // Sort by buttonID to keep consistent ordering
-        pageItems.sort( function( a, b ){ return a - b; } );
-    }
+		// Sort by buttonID to keep consistent ordering
+		pageItems.sort( function( a, b ){ return a - b; } );
+	}
 
-    if( pageItems.length == 0 )
-    {
-        var emptyGump = new Gump;
-        TriggerEvent( craftGumpID, "CraftingGumpMenu", emptyGump, socket );
-        emptyGump.AddPage( 1 );
-        emptyGump.AddText( 220, 60, textHue, "No items available on this page." );
-        emptyGump.Send( socket );
-        emptyGump.Free();
-        return;
-    }
+	if( pageItems.length == 0 )
+	{
+		var emptyGump = new Gump;
+		TriggerEvent( craftGumpID, "CraftingGumpMenu", emptyGump, socket );
+		emptyGump.AddPage( 1 );
+		emptyGump.AddText( 220, 60, textHue, "No items available on this page." );
+		emptyGump.Send( socket );
+		emptyGump.Free();
+		return;
+	}
 
-    var totalSubPages = Math.ceil( pageItems.length / itemsPerPage );
+	var totalSubPages = Math.ceil( pageItems.length / itemsPerPage );
 
-    if( subPage < 1 )
-        subPage = 1;
-    if( subPage > totalSubPages )
-        subPage = totalSubPages;
+	if( subPage < 1 )
+		subPage = 1;
+	if( subPage > totalSubPages )
+		subPage = totalSubPages;
 
-    pUser.SetTempTag( "page", pageNum );
-    pUser.SetTempTag( "subPage", subPage );
+	pUser.SetTempTag( "page", pageNum );
+	pUser.SetTempTag( "subPage", subPage );
 
-    var startIndex = ( subPage - 1 ) * itemsPerPage;
-    var endIndex = Math.min( startIndex + itemsPerPage, pageItems.length );
+	var startIndex = ( subPage - 1 ) * itemsPerPage;
+	var endIndex = Math.min( startIndex + itemsPerPage, pageItems.length );
 
-    if( startIndex >= pageItems.length )
-    {
-        subPage = 1;
-        startIndex = 0;
-        endIndex = Math.min( itemsPerPage, pageItems.length );
-        pUser.SetTempTag( "subPage", subPage );
-    }
+	if( startIndex >= pageItems.length )
+	{
+		subPage = 1;
+		startIndex = 0;
+		endIndex = Math.min( itemsPerPage, pageItems.length );
+		pUser.SetTempTag( "subPage", subPage );
+	}
 
-    var resourceHue = pUser.GetTempTag( "resourceHue" );
-    var blacksmithMenu = new Gump;
-    TriggerEvent( craftGumpID, "CraftingGumpMenu", blacksmithMenu, socket );
-    blacksmithMenu.AddPage( 1 );
+	var resourceHue = pUser.GetTempTag( "resourceHue" );
+	var blacksmithMenu = new Gump;
+	TriggerEvent( craftGumpID, "CraftingGumpMenu", blacksmithMenu, socket );
+	blacksmithMenu.AddPage( 1 );
 
-    var drawIndex = 0;
+	var drawIndex = 0;
 
-    for( var i = startIndex; i < endIndex; i++ )
-    {
-        var buttonID = pageItems[i];
-        var data = MasonryMap[buttonID];
+	for( var i = startIndex; i < endIndex; i++ )
+	{
+		var buttonID = pageItems[i];
+		var data = MasonryMap[buttonID];
 
-        // Do not show weapons when colored granited ingots selected and colored granited weapons are disabled
-        if( !allowColouredWeapons && resourceHue > 0 && data.page == 6 )
-            continue;
+		// Do not show weapons when colored granited ingots selected and colored granited weapons are disabled
+		if( !allowColouredWeapons && resourceHue > 0 && data.page == 6 )
+			continue;
 
 		// Do not show walls when colored granited ingots selected and colored granited walls are disabled
-        if( !allowColouredBuildings && resourceHue > 0 && data.page > 6 )
-            continue;
+		if( !allowColouredBuildings && resourceHue > 0 && data.page > 6 )
+			continue;
 
-        var entryText = "";
-        if( data.customName )
-        {
-            entryText = data.customName;
-        }
-        else if( data.dictID )
-        {
-            entryText = GetDictionaryEntry( data.dictID, socket.language );
-            if( !entryText || entryText === "" )
-                entryText = "[Missing EntryID: " + data.dictID + "]";
-        }
-        else
-        {
-            entryText = "[Unnamed Item: " + buttonID + "]";
-        }
+		var entryText = "";
+		if( data.customName )
+		{
+			entryText = data.customName;
+		}
+		else if( data.dictID )
+		{
+			entryText = GetDictionaryEntry( data.dictID, socket.language );
+			if( !entryText || entryText === "" )
+				entryText = "[Missing EntryID: " + data.dictID + "]";
+		}
+		else
+		{
+			entryText = "[Unnamed Item: " + buttonID + "]";
+		}
 
-        // Same layout as tailoring: button, text, details button
-        blacksmithMenu.AddButton( 220, 60 + ( drawIndex * 20 ), 4005, 4007, 1, 0, buttonID );
-        blacksmithMenu.AddText( 255, 60 + ( drawIndex * 20 ), textHue, entryText );
-        blacksmithMenu.AddButton( 480, 60 + ( drawIndex * 20 ), 4011, 4012, 1, 0, 2000 + buttonID );
+		// Same layout as tailoring: button, text, details button
+		blacksmithMenu.AddButton( 220, 60 + ( drawIndex * 20 ), 4005, 4007, 1, 0, buttonID );
+		blacksmithMenu.AddText( 255, 60 + ( drawIndex * 20 ), textHue, entryText );
+		blacksmithMenu.AddButton( 480, 60 + ( drawIndex * 20 ), 4011, 4012, 1, 0, 2000 + buttonID );
 
-        drawIndex++;
-    }
+		drawIndex++;
+	}
 
-    // Prev subpage
-    if( subPage > 1 )
-    {
-        blacksmithMenu.AddButton( 220, 260, 4014, 4015, 1, 0, 8000 + ( subPage - 1 ));
-        blacksmithMenu.AddHTMLGump( 255, 263, 100, 18, 0, 0,
-            "<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.language ) + "</basefont>" );
-    }
+	// Prev subpage
+	if( subPage > 1 )
+	{
+		blacksmithMenu.AddButton( 220, 260, 4014, 4015, 1, 0, 8000 + ( subPage - 1 ));
+		blacksmithMenu.AddHTMLGump( 255, 263, 100, 18, 0, 0,
+			"<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.language ) + "</basefont>" );
+	}
 
-    // Next subpage
-    if( subPage < totalSubPages )
-    {
-        blacksmithMenu.AddButton( 370, 260, 4005, 4007, 1, 0, 9000 + ( subPage + 1 ));
-        blacksmithMenu.AddHTMLGump( 405, 263, 100, 18, 0, 0,
-            "<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.language ) + "</basefont>" );
-    }
+	// Next subpage
+	if( subPage < totalSubPages )
+	{
+		blacksmithMenu.AddButton( 370, 260, 4005, 4007, 1, 0, 9000 + ( subPage + 1 ));
+		blacksmithMenu.AddHTMLGump( 405, 263, 100, 18, 0, 0,
+			"<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.language ) + "</basefont>" );
+	}
 
-    blacksmithMenu.Send( socket );
-    blacksmithMenu.Free();
+	blacksmithMenu.Send( socket );
+	blacksmithMenu.Free();
 }
 
 function Page20( socket, pUser )
@@ -1055,159 +1055,159 @@ function onCallback2( pSock, ourObj )
 /** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( pUser, timerID )
 {
-    if( !ValidateObject( pUser ))
-        return;
+	if( !ValidateObject( pUser ))
+		return;
 
-    var socket = pUser.socket;
+	var socket = pUser.socket;
 
-    if( timerID >= 1 && timerID <= 9 )
-    {
-        PageX( socket, pUser, timerID ); // Pages 1 - 9
-    }
-    else if( timerID == 20 )
-    {
-        Page20( socket, pUser );          // Ingot selection
-    }
-    else if( timerID == 999 )
-    {
-        PageX( socket, pUser, 999 );     // Last Ten Blacksmith (if used)
-    }
+	if( timerID >= 1 && timerID <= 9 )
+	{
+		PageX( socket, pUser, timerID ); // Pages 1 - 9
+	}
+	else if( timerID == 20 )
+	{
+		Page20( socket, pUser );          // Ingot selection
+	}
+	else if( timerID == 999 )
+	{
+		PageX( socket, pUser, 999 );     // Last Ten Blacksmith (if used)
+	}
 }
 
 
 /** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( pSock, pButton, gumpData )
 {
-    var pUser = pSock.currentChar;
-    var usedMakeLast = false;
+	var pUser = pSock.currentChar;
+	var usedMakeLast = false;
 
-    if( !ValidateObject( pUser ) || pUser.dead )
-        return;
+	if( !ValidateObject( pUser ) || pUser.dead )
+		return;
 
-    var bItem = pSock.tempObj;
-    if( !ValidateObject( bItem ) || !pUser.InRange( bItem, 3 ))
-    {
-        pSock.SysMessage( GetDictionaryEntry( 461, pSock.language )); // You are too far away.
-        return;
-    }
+	var bItem = pSock.tempObj;
+	if( !ValidateObject( bItem ) || !pUser.InRange( bItem, 3 ))
+	{
+		pSock.SysMessage( GetDictionaryEntry( 461, pSock.language )); // You are too far away.
+		return;
+	}
 
-    if( bItem.movable == 3 )
-    {
-        pSock.SysMessage( GetDictionaryEntry( 6031, pSock.language )); // Locked down resources cannot be used!
-        return;
-    }
+	if( bItem.movable == 3 )
+	{
+		pSock.SysMessage( GetDictionaryEntry( 6031, pSock.language )); // Locked down resources cannot be used!
+		return;
+	}
 
-    var iPackOwner = GetPackOwner( bItem, 0 );
-    if( ValidateObject( iPackOwner ))
-    {
-        if( iPackOwner.serial != pUser.serial )
-        {
-            pSock.SysMessage( GetDictionaryEntry( 6032, pSock.language )); // That resource is in someone else's backpack!
-            return;
-        }
-    }
-    else
-    {
-        pSock.SysMessage( GetDictionaryEntry( 6022, pSock.language )); // This has to be in your backpack befgranite you can use it.
-        return;
-    }
+	var iPackOwner = GetPackOwner( bItem, 0 );
+	if( ValidateObject( iPackOwner ))
+	{
+		if( iPackOwner.serial != pUser.serial )
+		{
+			pSock.SysMessage( GetDictionaryEntry( 6032, pSock.language )); // That resource is in someone else's backpack!
+			return;
+		}
+	}
+	else
+	{
+		pSock.SysMessage( GetDictionaryEntry( 6022, pSock.language )); // This has to be in your backpack befgranite you can use it.
+		return;
+	}
 
-    var gumpID = scriptID + 0xffff;
+	var gumpID = scriptID + 0xffff;
 
-    // Close / Exit
-    if( pButton == 0 )
-    {
-        pUser.SetTempTag( "prevActionResult", null );
-        pUser.SetTempTag( "MAKELAST", null );
-        pSock.CloseGump( gumpID, 0 );
-        return;
-    }
+	// Close / Exit
+	if( pButton == 0 )
+	{
+		pUser.SetTempTag( "prevActionResult", null );
+		pUser.SetTempTag( "MAKELAST", null );
+		pSock.CloseGump( gumpID, 0 );
+		return;
+	}
 
-    // Repair Item
-    if( pButton == 49 )
-    {
-        RepairTarget( pSock );
-        return;
-    }
+	// Repair Item
+	if( pButton == 49 )
+	{
+		RepairTarget( pSock );
+		return;
+	}
 
-    // Select Materials (ingots)
-    if( pButton == 50 )
-    {
-        pSock.CloseGump( gumpID, 0 );
-        Page20( pSock, pUser );
-        return;
-    }
+	// Select Materials (ingots)
+	if( pButton == 50 )
+	{
+		pSock.CloseGump( gumpID, 0 );
+		Page20( pSock, pUser );
+		return;
+	}
 
-    // Smelt Item
-    if( pButton == 52 )
-    {
-        SmeltTarget( pSock );
-        return;
-    }
+	// Smelt Item
+	if( pButton == 52 )
+	{
+		SmeltTarget( pSock );
+		return;
+	}
 
-    // Page buttons (1..9)
-    if( pButton >= 1 && pButton <= 9 )
-    {
-        pUser.SetTempTag( "page", pButton );
-        pUser.SetTempTag( "subPage", 1 );
-        pSock.CloseGump( gumpID, 0 );
-        PageX( pSock, pUser, pButton );
-        return;
-    }
+	// Page buttons (1..9)
+	if( pButton >= 1 && pButton <= 9 )
+	{
+		pUser.SetTempTag( "page", pButton );
+		pUser.SetTempTag( "subPage", 1 );
+		pSock.CloseGump( gumpID, 0 );
+		PageX( pSock, pUser, pButton );
+		return;
+	}
 
-    // Last Ten page (if you wire it into the gump)
-    if( pButton == 11000 )
-    {
-        pUser.SetTempTag( "page", 999 );
-        pUser.SetTempTag( "subPage", 1 );
-        PageX( pSock, pUser, 999 );
-        return;
-    }
+	// Last Ten page (if you wire it into the gump)
+	if( pButton == 11000 )
+	{
+		pUser.SetTempTag( "page", 999 );
+		pUser.SetTempTag( "subPage", 1 );
+		PageX( pSock, pUser, 999 );
+		return;
+	}
 
-    // Subpage navigation (8000 = prev, 9000 = next)
-    if( pButton >= 8000 && pButton < 9000 )
-    {
-        var prevSub = pButton - 8000;
-        var curPage = pUser.GetTempTag( "page" );
-        pUser.SetTempTag( "subPage", prevSub );
-        PageX( pSock, pUser, curPage );
-        return;
-    }
+	// Subpage navigation (8000 = prev, 9000 = next)
+	if( pButton >= 8000 && pButton < 9000 )
+	{
+		var prevSub = pButton - 8000;
+		var curPage = pUser.GetTempTag( "page" );
+		pUser.SetTempTag( "subPage", prevSub );
+		PageX( pSock, pUser, curPage );
+		return;
+	}
 
-    if( pButton >= 9000 && pButton < 10000 )
-    {
-        var nextSub = pButton - 9000;
-        var curPage2 = pUser.GetTempTag( "page" );
-        pUser.SetTempTag( "subPage", nextSub );
-        PageX( pSock, pUser, curPage2 );
-        return;
-    }
+	if( pButton >= 9000 && pButton < 10000 )
+	{
+		var nextSub = pButton - 9000;
+		var curPage2 = pUser.GetTempTag( "page" );
+		pUser.SetTempTag( "subPage", nextSub );
+		PageX( pSock, pUser, curPage2 );
+		return;
+	}
 
-    // Handle "Make Last"
-    if(( pButton >= 100 && pButton <= 998 ) || pButton == 5000 )
-    {
-        if( pButton == 5000 )
-        {
-            pButton = pUser.GetTempTag( "MAKELAST" );
-            usedMakeLast = true;
-        }
-        else
-        {
-            pUser.SetTempTag( "MAKELAST", pButton );
-        }
-    }
+	// Handle "Make Last"
+	if(( pButton >= 100 && pButton <= 998 ) || pButton == 5000 )
+	{
+		if( pButton == 5000 )
+		{
+			pButton = pUser.GetTempTag( "MAKELAST" );
+			usedMakeLast = true;
+		}
+		else
+		{
+			pUser.SetTempTag( "MAKELAST", pButton );
+		}
+	}
 
-    // Item detail buttons (2000 + buttonID)
-    if( pButton >= 2000 && pButton < 3000 )
-    {
-        var detailButtonID = pButton - 2000;
-        var entry = MasonryMap[detailButtonID];
-        if( entry )
-        {
-            // For details we just pass the granite version (granite index 0) to 4026
-            var graniteMakeID = entry.graniteMake[0];
-            if( graniteMakeID > 0 )
-            {
+	// Item detail buttons (2000 + buttonID)
+	if( pButton >= 2000 && pButton < 3000 )
+	{
+		var detailButtonID = pButton - 2000;
+		var entry = MasonryMap[detailButtonID];
+		if( entry )
+		{
+			// For details we just pass the granite version (granite index 0) to 4026
+			var graniteMakeID = entry.graniteMake[0];
+			if( graniteMakeID > 0 )
+			{
 				// Masonry uses Carpentry skill
 				 pUser.SetTempTag("Skill", entry.skill | 0);
 
@@ -1223,275 +1223,275 @@ function onGumpPress( pSock, pButton, gumpData )
 				if( entry.harvest4 && entry.harvest4.length > 0 )
 					pUser.SetTempTag("Harvest4", entry.harvest4[0]);
 
-                pUser.SetTempTag( "ITEMDETAILS", graniteMakeID );
-                TriggerEvent( itemDetailsScriptID, "ItemDetailGump", pUser );
-            }
-        }
-        return;
-    }
+				pUser.SetTempTag( "ITEMDETAILS", graniteMakeID );
+				TriggerEvent( itemDetailsScriptID, "ItemDetailGump", pUser );
+			}
+		}
+		return;
+	}
 
-    // If this is a craft button in our map:
-    if( MasonryMap[pButton] != undefined )
-    {
-        var entry2 = MasonryMap[pButton];
-        var graniteID = pUser.GetTempTag( "Granite" );
-        var resourceHue = pUser.GetTempTag( "resourceHue" );
+	// If this is a craft button in our map:
+	if( MasonryMap[pButton] != undefined )
+	{
+		var entry2 = MasonryMap[pButton];
+		var graniteID = pUser.GetTempTag( "Granite" );
+		var resourceHue = pUser.GetTempTag( "resourceHue" );
 
-        // Ensure graniteID within range
-        if( graniteID < 0 || graniteID >= craftItems.length )
-            graniteID = 0;
+		// Ensure graniteID within range
+		if( graniteID < 0 || graniteID >= craftItems.length )
+			graniteID = 0;
 
-        // Era / recipe gating
-        if( !eraOK( entry2 ))
-        {
-            pSock.SysMessage( "That item is not available in this era." );
-            return;
-        }
+		// Era / recipe gating
+		if( !eraOK( entry2 ))
+		{
+			pSock.SysMessage( "That item is not available in this era." );
+			return;
+		}
 
-        if( entry2.recipeID && !TriggerEvent( 4022, "NeedRecipe", pUser, entry2.recipeID ))
-        {
-            pSock.SysMessage( "You must learn that recipe from a scroll." );
-            return;
-        }
+		if( entry2.recipeID && !TriggerEvent( 4022, "NeedRecipe", pUser, entry2.recipeID ))
+		{
+			pSock.SysMessage( "You must learn that recipe from a scroll." );
+			return;
+		}
 
-        // No colored granited weapons if disabled and using non-iron ingots
-        if( !allowColouredWeapons && resourceHue > 0 && entry2.page > 3 )
-        {
-            pSock.SysMessage( "You cannot use colored granited ingots for weapons on this shard." );
-            return;
-        }
+		// No colored granited weapons if disabled and using non-iron ingots
+		if( !allowColouredWeapons && resourceHue > 0 && entry2.page > 3 )
+		{
+			pSock.SysMessage( "You cannot use colored granited ingots for weapons on this shard." );
+			return;
+		}
 
-        var makeID = entry2.graniteMake[graniteID];
-        if( !makeID || makeID == 0 )
-        {
-            // Fallback to iron version if for some reason we did not get a specific granite entry
-            makeID = entry2.graniteMake[0];
-        }
+		var makeID = entry2.graniteMake[graniteID];
+		if( !makeID || makeID == 0 )
+		{
+			// Fallback to iron version if for some reason we did not get a specific granite entry
+			makeID = entry2.graniteMake[0];
+		}
 
-        if( !makeID || makeID == 0 )
-        {
-            pSock.SysMessage( "That item is not properly configured." );
-            return;
-        }
+		if( !makeID || makeID == 0 )
+		{
+			pSock.SysMessage( "That item is not properly configured." );
+			return;
+		}
 
-        // Runic hammer bonus logic (unchanged from your original)
-        pUser.AddScriptTrigger( 4033 );
+		// Runic hammer bonus logic (unchanged from your original)
+		pUser.AddScriptTrigger( 4033 );
 
-        MakeItem( pSock, pUser, makeID, resourceHue );
+		MakeItem( pSock, pUser, makeID, resourceHue );
 
-        // Tool wear
-        var toolUseLimit = GetServerSetting( "ToolUseLimit" );
-        var toolUseBreak = GetServerSetting( "ToolUseBreak" );
+		// Tool wear
+		var toolUseLimit = GetServerSetting( "ToolUseLimit" );
+		var toolUseBreak = GetServerSetting( "ToolUseBreak" );
 
-        var runicHammer = pUser.FindItemLayer( 0x01 ); // Right Hand
-        if( ValidateObject( runicHammer ) && runicHammer.GetTag( "runicHammer" ) && runicHammer.usesLeft > 0 )
-        {
-            pUser.SetTempTag( "usedRunicHammer", true );
-            pUser.SetTempTag( "runicHammerType", runicHammer.color );
+		var runicHammer = pUser.FindItemLayer( 0x01 ); // Right Hand
+		if( ValidateObject( runicHammer ) && runicHammer.GetTag( "runicHammer" ) && runicHammer.usesLeft > 0 )
+		{
+			pUser.SetTempTag( "usedRunicHammer", true );
+			pUser.SetTempTag( "runicHammerType", runicHammer.color );
 
-            if( toolUseLimit && runicHammer != bItem )
-            {
-                runicHammer.usesLeft -= 1;
-                if( runicHammer.usesLeft == 0 && toolUseBreak )
-                {
-                    runicHammer.Delete();
-                    pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language ));
-                }
-            }
-        }
+			if( toolUseLimit && runicHammer != bItem )
+			{
+				runicHammer.usesLeft -= 1;
+				if( runicHammer.usesLeft == 0 && toolUseBreak )
+				{
+					runicHammer.Delete();
+					pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language ));
+				}
+			}
+		}
 
-        if( toolUseLimit )
-        {
-            bItem.usesLeft -= 1;
-            if( bItem.usesLeft == 0 && toolUseBreak )
-            {
-                bItem.Delete();
-                pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language ));
-            }
-        }
+		if( toolUseLimit )
+		{
+			bItem.usesLeft -= 1;
+			if( bItem.usesLeft == 0 && toolUseBreak )
+			{
+				bItem.Delete();
+				pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language ));
+			}
+		}
 
-        // Track in last ten list for blacksmith
-        AddToLastTenmMasonry( pUser, pButton );
+		// Track in last ten list for blacksmith
+		AddToLastTenmMasonry( pUser, pButton );
 
-        // Reopen page after delay
-        pUser.StartTimer( gumpDelay, entry2.timerID, true );
-        return;
-    }
+		// Reopen page after delay
+		pUser.StartTimer( gumpDelay, entry2.timerID, true );
+		return;
+	}
 
-    // Granite selection buttons (Page20)
-    if( pButton >= 1000 && pButton <= 1008 )
-    {
-        var index = pButton - 1000; // 0..8
-        var newGraniteID = index;
-        var newResourceHue = 0;
+	// Granite selection buttons (Page20)
+	if( pButton >= 1000 && pButton <= 1008 )
+	{
+		var index = pButton - 1000; // 0..8
+		var newGraniteID = index;
+		var newResourceHue = 0;
 
-        // Optional: use Mining skill gating like ingots
-        var miningSkill = pUser.skills.mining | 0;
+		// Optional: use Mining skill gating like ingots
+		var miningSkill = pUser.skills.mining | 0;
 
-        switch( index )
-        {
-            case 0: // Iron
-                newResourceHue = 0;
-                break;
+		switch( index )
+		{
+			case 0: // Iron
+				newResourceHue = 0;
+				break;
 
-            case 1: // Dull Copper
-                if( miningSkill < 650 )
-                {
-                    pSock.CloseGump( gumpID, 0 );
-                    pUser.StartTimer( ingotDelay, 8, true );
-                    pUser.SetTempTag( "prevActionResult", "FAILED" );
-                    return;
-                }
-                newResourceHue = 0x0973;
-                break;
+			case 1: // Dull Copper
+				if( miningSkill < 650 )
+				{
+					pSock.CloseGump( gumpID, 0 );
+					pUser.StartTimer( ingotDelay, 8, true );
+					pUser.SetTempTag( "prevActionResult", "FAILED" );
+					return;
+				}
+				newResourceHue = 0x0973;
+				break;
 
-            case 2: // Shadow Iron
-                if( miningSkill < 700 )
-                {
-                    pSock.CloseGump( gumpID, 0 );
-                    pUser.StartTimer( ingotDelay, 8, true );
-                    pUser.SetTempTag( "prevActionResult", "FAILED" );
-                    return;
-                }
-                newResourceHue = 0x0966;
-                break;
+			case 2: // Shadow Iron
+				if( miningSkill < 700 )
+				{
+					pSock.CloseGump( gumpID, 0 );
+					pUser.StartTimer( ingotDelay, 8, true );
+					pUser.SetTempTag( "prevActionResult", "FAILED" );
+					return;
+				}
+				newResourceHue = 0x0966;
+				break;
 
-            case 3: // Copper
-                if( miningSkill < 750 )
-                {
-                    pSock.CloseGump( gumpID, 0 );
-                    pUser.StartTimer( ingotDelay, 8, true );
-                    pUser.SetTempTag( "prevActionResult", "FAILED" );
-                    return;
-                }
-                newResourceHue = 0x07dd;
-                break;
+			case 3: // Copper
+				if( miningSkill < 750 )
+				{
+					pSock.CloseGump( gumpID, 0 );
+					pUser.StartTimer( ingotDelay, 8, true );
+					pUser.SetTempTag( "prevActionResult", "FAILED" );
+					return;
+				}
+				newResourceHue = 0x07dd;
+				break;
 
-            case 4: // Bronze
-                if( miningSkill < 800 )
-                {
-                    pSock.CloseGump( gumpID, 0 );
-                    pUser.StartTimer( ingotDelay, 8, true );
-                    pUser.SetTempTag( "prevActionResult", "FAILED" );
-                    return;
-                }
-                newResourceHue = 0x06d6;
-                break;
+			case 4: // Bronze
+				if( miningSkill < 800 )
+				{
+					pSock.CloseGump( gumpID, 0 );
+					pUser.StartTimer( ingotDelay, 8, true );
+					pUser.SetTempTag( "prevActionResult", "FAILED" );
+					return;
+				}
+				newResourceHue = 0x06d6;
+				break;
 
-            case 5: // Gold
-                if( miningSkill < 850 )
-                {
-                    pSock.CloseGump( gumpID, 0 );
-                    pUser.StartTimer( ingotDelay, 8, true );
-                    pUser.SetTempTag( "prevActionResult", "FAILED" );
-                    return;
-                }
-                newResourceHue = 0x08a5;
-                break;
+			case 5: // Gold
+				if( miningSkill < 850 )
+				{
+					pSock.CloseGump( gumpID, 0 );
+					pUser.StartTimer( ingotDelay, 8, true );
+					pUser.SetTempTag( "prevActionResult", "FAILED" );
+					return;
+				}
+				newResourceHue = 0x08a5;
+				break;
 
-            case 6: // Agapite
-                if( miningSkill < 900 )
-                {
-                    pSock.CloseGump( gumpID, 0 );
-                    pUser.StartTimer( ingotDelay, 8, true );
-                    pUser.SetTempTag( "prevActionResult", "FAILED" );
-                    return;
-                }
-                newResourceHue = 0x0979;
-                break;
+			case 6: // Agapite
+				if( miningSkill < 900 )
+				{
+					pSock.CloseGump( gumpID, 0 );
+					pUser.StartTimer( ingotDelay, 8, true );
+					pUser.SetTempTag( "prevActionResult", "FAILED" );
+					return;
+				}
+				newResourceHue = 0x0979;
+				break;
 
-            case 7: // Verite
-                if( miningSkill < 950 )
-                {
-                    pSock.CloseGump( gumpID, 0 );
-                    pUser.StartTimer( ingotDelay, 8, true );
-                    pUser.SetTempTag( "prevActionResult", "FAILED" );
-                    return;
-                }
-                newResourceHue = 0x089f;
-                break;
+			case 7: // Verite
+				if( miningSkill < 950 )
+				{
+					pSock.CloseGump( gumpID, 0 );
+					pUser.StartTimer( ingotDelay, 8, true );
+					pUser.SetTempTag( "prevActionResult", "FAILED" );
+					return;
+				}
+				newResourceHue = 0x089f;
+				break;
 
-            case 8: // Valorite
-                if( miningSkill < 990 )
-                {
-                    pSock.CloseGump( gumpID, 0 );
-                    pUser.StartTimer( ingotDelay, 8, true );
-                    pUser.SetTempTag( "prevActionResult", "FAILED" );
-                    return;
-                }
-                newResourceHue = 0x08ab;
-                break;
-        }
+			case 8: // Valorite
+				if( miningSkill < 990 )
+				{
+					pSock.CloseGump( gumpID, 0 );
+					pUser.StartTimer( ingotDelay, 8, true );
+					pUser.SetTempTag( "prevActionResult", "FAILED" );
+					return;
+				}
+				newResourceHue = 0x08ab;
+				break;
+		}
 
-        // Store selection
-        pUser.SetTempTag( "Granite", newGraniteID );
-        pUser.SetTempTag( "resourceHue", newResourceHue );
-        pUser.SetTempTag( "prevActionResult", null );
-        pUser.SetTempTag( "MAKELAST", null );
+		// Store selection
+		pUser.SetTempTag( "Granite", newGraniteID );
+		pUser.SetTempTag( "resourceHue", newResourceHue );
+		pUser.SetTempTag( "prevActionResult", null );
+		pUser.SetTempTag( "MAKELAST", null );
 
-        // Close the material select gump
-        pSock.CloseGump( gumpID, 0 );
+		// Close the material select gump
+		pSock.CloseGump( gumpID, 0 );
 
-        // Go back to the last craft page, or default to page 1
-        var curPage = pUser.GetTempTag( "page" );
-        if( !curPage || curPage == 20 )
-            curPage = 1;
+		// Go back to the last craft page, or default to page 1
+		var curPage = pUser.GetTempTag( "page" );
+		if( !curPage || curPage == 20 )
+			curPage = 1;
 
-        pUser.SetTempTag( "page", curPage );
-        pUser.SetTempTag( "subPage", 1 );
-        PageX( pSock, pUser, curPage );
-        return;
-    }
+		pUser.SetTempTag( "page", curPage );
+		pUser.SetTempTag( "subPage", 1 );
+		PageX( pSock, pUser, curPage );
+		return;
+	}
 }
 
 function AddToLastTenmMasonry( pUser, buttonID )
 {
-    var raw = pUser.GetTempTag( "LastTenMasonry" ) || "";
-    var list = raw.split( "," );
+	var raw = pUser.GetTempTag( "LastTenMasonry" ) || "";
+	var list = raw.split( "," );
 
-    // Remove if already in list
-    for( var i = 0; i < list.length; i++ )
-    {
-        if( parseInt( list[i] ) == buttonID )
-        {
-            list.splice( i, 1 );
-            break;
-        }
-    }
+	// Remove if already in list
+	for( var i = 0; i < list.length; i++ )
+	{
+		if( parseInt( list[i] ) == buttonID )
+		{
+			list.splice( i, 1 );
+			break;
+		}
+	}
 
-    var newList = [buttonID];
-    for( var j = 0; j < list.length && newList.length < 10; j++ )
-    {
-        var entry = parseInt( list[j] );
-        if( !isNaN( entry ) && entry > 0 )
-            newList.push( entry );
-    }
+	var newList = [buttonID];
+	for( var j = 0; j < list.length && newList.length < 10; j++ )
+	{
+		var entry = parseInt( list[j] );
+		if( !isNaN( entry ) && entry > 0 )
+			newList.push( entry );
+	}
 
-    pUser.SetTempTag( "LastTenMasonry", newList.join( "," ) );
+	pUser.SetTempTag( "LastTenMasonry", newList.join( "," ) );
 }
 
 function HasLearnedRecipe( pUser, recipeID )
 {
-    var myData = TriggerEvent( 4022, "ReadRecipeID", pUser );
-    if( !myData || myData.length == 0 )
-        return false;
+	var myData = TriggerEvent( 4022, "ReadRecipeID", pUser );
+	if( !myData || myData.length == 0 )
+		return false;
 
-    for( var i = 0; i < myData.length; i++ )
-    {
-        var data = myData[i].split( "," );
-        if( data[0] == recipeID )
-            return true;
-    }
-    return false;
+	for( var i = 0; i < myData.length; i++ )
+	{
+		var data = myData[i].split( "," );
+		if( data[0] == recipeID )
+			return true;
+	}
+	return false;
 }
 
 function eraOK( entry )
 {
-    // Optional per-entry gates. Strings like "lbr","aos","ml","sa","hs","tol".
-    // If not present, the entry is valid for all eras.
-    if( entry.minEra && coreShardEra < EraStringToNum( entry.minEra ))
-        return false;
-    if( entry.maxEra && coreShardEra > EraStringToNum( entry.maxEra ))
-        return false;
-    return true;
+	// Optional per-entry gates. Strings like "lbr","aos","ml","sa","hs","tol".
+	// If not present, the entry is valid for all eras.
+	if( entry.minEra && coreShardEra < EraStringToNum( entry.minEra ))
+		return false;
+	if( entry.maxEra && coreShardEra > EraStringToNum( entry.maxEra ))
+		return false;
+	return true;
 }
