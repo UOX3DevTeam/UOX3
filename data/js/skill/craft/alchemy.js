@@ -22,7 +22,7 @@ const alchemySkillID        = 0;                     // Skill ID: Alchemy
 // |   recipeID?, minEra?, maxEra?, harvest?[] can be added later            |
 // o--------------------------------------------------------------------------o
 // If you want to add multi-reagent potions later 
-// (e.g. harvest: [ REAG_GARLIC, REAG_GINSENG ]), 
+// (e.g. harvest: [ garlic_dictNumber, ginseng_dictNumber ]), 
 // the same pattern will just work with no script changes.
 
 const AlchemyMap = {
