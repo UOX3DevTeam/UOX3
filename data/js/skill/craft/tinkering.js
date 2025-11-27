@@ -1,538 +1,584 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
-const LabelHue = 0x480;				// Color of the text.
-const LabelColor = 0x7FFF;			// Second Color of text.
-const scriptID = 4032;				// Use this to tell the gump what script to close.
-const gumpDelay = 2000;				// Timer for the gump to reapear after crafting.
-const itemDetailsScriptID = 4026;
-const craftGumpID = 4027;
+const textHue                 = 0x480;                 // Color of the text.
+const tinkeringID             = 4032;                  // Script ID for this tinkering gump
+const gumpDelay               = 2000;                  // Delay (ms) before gump reappears after crafting
+const itemDetailsScriptID     = 4026;                  // Generic item details gump
+const craftGumpID             = 4027;                  // Shared crafting menu frame
+const itemsPerPage            = 10;                    // Items per subpage
+const displayUnlearnedRecipes = true;                  // For future recipe use
+const coreShardEra            = EraStringToNum( GetServerSetting( "CoreShardEra" ));
+const tinkeringSkillID        = 37;                    // Index of "tinkering" in ItemDetailGump.skillNames[]
 
-//////////////////////////////////////////////////////////////////////////////////////////
-//  The section below is the tables for each page.
-//  All you have to do is add the item to your dictionary 
-//  and then list the dictionary number in the right page and it will
-//  add it to the crafting gump.
-///////////////////////////////////////////////////////////////////////////////////////////
+// o--------------------------------------------------------------------------o
+// | TinkeringMap                                                             |
+// o--------------------------------------------------------------------------o
+// | Keyed by makeID (create entry ID).                                      |
+// | Each entry:                                                             |
+// |   dictID      - dictionary entry for row text (11801..11982)           |
+// |   page        - main category page (1..9)                               |
+// |   timerID     - which page timer should reopen                          |
+// |   skill       - skill used (default: tinkeringSkillID)                  |
+// |   recipeID?   - optional recipe ID                                      |
+// |   minEra?, maxEra? - optional era gating                                |
+// |   harvest?[]  - optional dictIDs for MATERIALS list                     |
+// |   harvestNames?[] - optional custom material names                      |
+// |   requiresGemTarget? - jewelry requiring manual gem selection           |
+// o--------------------------------------------------------------------------o
 
-const myPage = [
+const TinkeringMap = {
 	// Page 1 - Wooden Items
-	[ 11801, 11802, 11803, 11804, 11805 ],
+	274: { dictID: 11801, page: 1, timerID: 1, harvest: [ 10014 ] }, // Axle
+	273: { dictID: 11802, page: 1, timerID: 1, harvest: [ 10014 ] }, // Clock Frame
+	270: { dictID: 11803, page: 1, timerID: 1, harvest: [ 10014 ] }, // Jointing Plane
+	271: { dictID: 11804, page: 1, timerID: 1, harvest: [ 10014 ] }, // Moulding Plane
+	272: { dictID: 11805, page: 1, timerID: 1, harvest: [ 10014 ] }, // Smoothing Plane
 
 	// Page 2 - Tools
-	[ 11820, 11821, 11822, 11823, 11824, 11825, 11826, 11827, 11828, 11829, 11830, 11831, 11832, 11833, 11834, 11835, 11836, 11837, 11838 ],
+	218: { dictID: 11820, page: 2, timerID: 2, harvest: [ 10015 ] }, // Dovetail Saw
+	215: { dictID: 11821, page: 2, timerID: 2, harvest: [ 10015 ] }, // Draw Knife
+	252: { dictID: 11822, page: 2, timerID: 2, harvest: [ 10015 ] }, // Froe
+	255: { dictID: 11823, page: 2, timerID: 2, harvest: [ 10015 ] }, // Hammer
+	214: { dictID: 11824, page: 2, timerID: 2, harvest: [ 10015 ] }, // Hatchet
+	258: { dictID: 11825, page: 2, timerID: 2, harvest: [ 10015 ] }, // Inshave
+	260: { dictID: 11826, page: 2, timerID: 2, harvest: [ 10015 ] }, // Lockpick
+	211: { dictID: 11827, page: 2, timerID: 2, harvest: [ 10015 ] }, // Mortar and Pestle
+	259: { dictID: 11828, page: 2, timerID: 2, harvest: [ 10015 ] }, // Pick Axe
+	217: { dictID: 11829, page: 2, timerID: 2, harvest: [ 10015 ] }, // Saw
+	210: { dictID: 11830, page: 2, timerID: 2, harvest: [ 10015 ] }, // Scissors
+	212: { dictID: 11831, page: 2, timerID: 2, harvest: [ 10015 ] }, // Scorp
+	216: { dictID: 11832, page: 2, timerID: 2, harvest: [ 10015 ] }, // Sewing Kit
+	254: { dictID: 11833, page: 2, timerID: 2, harvest: [ 10015 ] }, // Shovel
+	257: { dictID: 11834, page: 2, timerID: 2, harvest: [ 10015 ] }, // Sledge Hammer
+	256: { dictID: 11835, page: 2, timerID: 2, harvest: [ 10015 ] }, // Smith's Hammer
+	253: { dictID: 11836, page: 2, timerID: 2, harvest: [ 10015 ] }, // Tongs
+	213: { dictID: 11837, page: 2, timerID: 2, harvest: [ 10015 ] }, // Tool Kit (Tinker's tools)
+	284: { dictID: 11838, page: 2, timerID: 2, harvest: [ 10015 ] }, // Fletcher's Tools
 
 	// Page 3 - Parts
-	[ 11860, 11861, 11862, 11863, 11864, 11865, 11866 ],
+	224: { dictID: 11860, page: 3, timerID: 3, harvest: [ 10015 ] }, // Barrel Hoops
+	221: { dictID: 11861, page: 3, timerID: 3, harvest: [ 10015 ] }, // Barrel Tap
+	220: { dictID: 11862, page: 3, timerID: 3, harvest: [ 10015 ] }, // Clock parts
+	219: { dictID: 11863, page: 3, timerID: 3, harvest: [ 10015 ] }, // Gears
+	225: { dictID: 11864, page: 3, timerID: 3, harvest: [ 10015 ] }, // Hinge
+	223: { dictID: 11865, page: 3, timerID: 3, harvest: [ 10015 ] }, // Sextant parts
+	222: { dictID: 11866, page: 3, timerID: 3, harvest: [ 10015 ] }, // Springs
 
 	// Page 4 - Utensils
-	[ 11880, 11881, 11882, 11883, 11884, 11885, 11886, 11887, 11888, 11889, 11890, 11891 ],
+	226: { dictID: 11880, page: 4, timerID: 4, harvest: [ 10015 ] }, // Butcher Knife
+	232: { dictID: 11881, page: 4, timerID: 4, harvest: [ 10015 ] }, // Cleaver
+	230: { dictID: 11882, page: 4, timerID: 4, harvest: [ 10015 ] }, // Fork
+	231: { dictID: 11883, page: 4, timerID: 4, harvest: [ 10015 ] }, // Fork
+	235: { dictID: 11884, page: 4, timerID: 4, harvest: [ 10015 ] }, // Goblet
+	233: { dictID: 11885, page: 4, timerID: 4, harvest: [ 10015 ] }, // Knife
+	234: { dictID: 11886, page: 4, timerID: 4, harvest: [ 10015 ] }, // Knife
+	236: { dictID: 11887, page: 4, timerID: 4, harvest: [ 10015 ] }, // Pewter Mug
+	229: { dictID: 11888, page: 4, timerID: 4, harvest: [ 10015 ] }, // Plate
+	237: { dictID: 11889, page: 4, timerID: 4, harvest: [ 10015 ] }, // Skinning Knife
+	227: { dictID: 11890, page: 4, timerID: 4, harvest: [ 10015 ] }, // Spoon
+	228: { dictID: 11891, page: 4, timerID: 4, harvest: [ 10015 ] }, // Spoon
 
-	// Page 5 - Jewelry
-	[ 11900, 11901, 11902, 11903, 11904, 11905 ],
+	// Page 5 - Jewelry (gem-targeted)
+	243: { dictID: 11900, page: 5, timerID: 5, requiresGemTarget: true, harvest: [ 10015, 12005 ] }, // Bracelet
+	241: { dictID: 11901, page: 5, timerID: 5, requiresGemTarget: true, harvest: [ 10015, 12005 ] }, // Earrings
+	239: { dictID: 11902, page: 5, timerID: 5, requiresGemTarget: true, harvest: [ 10015, 12005 ] }, // Necklace (Golden beads)
+	240: { dictID: 11903, page: 5, timerID: 5, requiresGemTarget: true, harvest: [ 10015, 12005 ] }, // Necklace (Silver beads)
+	242: { dictID: 11904, page: 5, timerID: 5, requiresGemTarget: true, harvest: [ 10015, 12005 ] }, // Necklace (Round)
+	238: { dictID: 11905, page: 5, timerID: 5, requiresGemTarget: true, harvest: [ 10015, 12006 ] }, // Weddingband (newbiefied)
 
-	// Page 6 - Miscellaneuos
-	[ 11920, 11921, 11922, 11923, 11924, 11925, 11926, 11927 ],
+	// Page 6 - Miscellaneous
+	245: { dictID: 11920, page: 6, timerID: 6, harvest: [ 10015, 12000 ] }, // Candelabra (also appears in Candles page in old script)
+	248: { dictID: 11921, page: 6, timerID: 6, harvest: [ 10015 ] }, // Globe
+	251: { dictID: 11922, page: 6, timerID: 6, harvest: [ 10015 ] }, // Heating stand
+	247: { dictID: 11923, page: 6, timerID: 6, harvest: [ 10015 ] }, // Iron Key
+	244: { dictID: 11924, page: 6, timerID: 6, harvest: [ 10015 ] }, // Keyring
+	250: { dictID: 11925, page: 6, timerID: 6, harvest: [ 10015 ] }, // Lantern
+	246: { dictID: 11926, page: 6, timerID: 6, harvest: [ 10015 ] }, // Scales
+	249: { dictID: 11927, page: 6, timerID: 6, harvest: [ 10015 ] }, // Spy glass
 
 	// Page 7 - Multi-Component Items
-	[ 11940, 11941, 11942, 11943, 11946, 11947, 11948 ],
+	275: { dictID: 11940, page: 7, timerID: 7, harvest: [ 11801, 11863 ] }, // Axle and Gears
+	276: { dictID: 11941, page: 7, timerID: 7, harvest: [ 11802, 11862 ] }, // Clock
+	277: { dictID: 11942, page: 7, timerID: 7, harvest: [ 11802, 11862 ] }, // Clock
+	278: { dictID: 11943, page: 7, timerID: 7, harvest: [ 11801, 11863 ] }, // Clock Parts
+	279: { dictID: 11944, page: 7, timerID: 7, harvest: [ 10634 ] }, // Locked Box
+	280: { dictID: 11945, page: 7, timerID: 7, harvest: [ 10638 ] }, // Locked Chest
+	281: { dictID: 11946, page: 7, timerID: 7, harvest: [ 10642, 11861, 10612, 10928 ] }, // Potion Keg
+	282: { dictID: 11947, page: 7, timerID: 7, harvest: [ 11948 ] }, // Sextant
+	283: { dictID: 11948, page: 7, timerID: 7, harvest: [ 11801, 11863 ] }, // Sextant Parts
 
 	// Page 8 - Candles
-	[ 11960, 11961, 11962, 11963, 11964, 11965, 11966, 11967 ],
+	// NOTE: in the original script, Candelabra (245) appears here too.
+	// To avoid conflicts (map is keyed by makeID), this page uses the
+	// actual candle-specific items only.
+	310: { dictID: 11961, page: 8, timerID: 8, harvest: [ 10015, 12000 ] }, // Standing Candelabra
+	315: { dictID: 11962, page: 8, timerID: 8, harvest: [ 10015, 12000 ] }, // Regular Candle
+	312: { dictID: 11963, page: 8, timerID: 8, harvest: [ 12000 ] }, // Round Candle
+	316: { dictID: 11964, page: 8, timerID: 8, harvest: [ 12000, 12004 ] }, // Skull with Candle
+	314: { dictID: 11965, page: 8, timerID: 8, harvest: [ 12000 ] }, // Small Candle
+	311: { dictID: 11966, page: 8, timerID: 8, harvest: [ 10015, 12000 ] }, // Tall Candle
+	313: { dictID: 11967, page: 8, timerID: 8, harvest: [ 12000 ] }, // Thick Candle
 
 	// Page 9 - Traps
-	[ 11980, 11981, 11982 ]
-];
+	261: { dictID: 11980, page: 9, timerID: 9, harvest: [ 10015, 12001 ] }, // Dart Trap
+	263: { dictID: 11981, page: 9, timerID: 9, harvest: [ 10015, 12003 ] }, // Explosion Trap
+	262: { dictID: 11982, page: 9, timerID: 9, harvest: [ 10015, 12002 ] }  // Poison Trap
+};
 
+// Fill in defaults (skill, etc)
+(function initTinkeringMap()
+{
+	for( var key in TinkeringMap )
+	{
+		if( !TinkeringMap.hasOwnProperty( key ))
+			continue;
+
+		var entry = TinkeringMap[key];
+
+		if( entry.skill === undefined )
+			entry.skill = tinkeringSkillID;
+
+		// In future you can do e.g.:
+		//   entry.harvest      = [ woodDictID, ingotDictID ];
+		//   entry.harvestNames = [ "Wood", "Ingots" ];
+	}
+})();
+
+// o--------------------------------------------------------------------------o
+// | PageX() - build a page of tinkering items                                |
+// o--------------------------------------------------------------------------o
+/** @type { ( socket: Socket, pUser: Character, pageNum: number ) => void } */
 function PageX( socket, pUser, pageNum )
 {
-	// Pages 1 - 9
-	var myGump = new Gump;
-	pUser.SetTempTag( "page", pageNum );
-	TriggerEvent( craftGumpID, "CraftingGumpMenu", myGump, socket );
-	for ( var i = 0; i < myPage[pageNum - 1].length; i++ )
+	if( !socket || !ValidateObject( pUser ))
+		return;
+
+	var pageItems;
+
+	// Last Ten page (if you wire a tab to 999 later)
+	if( pageNum == 999 )
 	{
-		var index = i % 10;
-		if ( index == 0 )
+		var lastTenRaw = pUser.GetTempTag( "LastTenTinkering" ) || "";
+		var split = lastTenRaw.split( "," );
+		pageItems = [];
+
+		for( var i = 0; i < split.length; i++ )
 		{
-			if ( i > 0 )
+			var val = parseInt( split[i] );
+			if( !isNaN( val ))
+				pageItems.push( val );
+		}
+	}
+	else
+	{
+		// Collect all makeIDs for this page
+		var makeIDs = [];
+		for( var key in TinkeringMap )
+		{
+			if( !TinkeringMap.hasOwnProperty( key ))
+				continue;
+
+			var makeID = parseInt( key );
+			var data = TinkeringMap[makeID];
+			if( !data || data.page != pageNum )
+				continue;
+
+			makeIDs.push( makeID );
+		}
+
+		// Sort by dictID so order matches dictionary sequence
+		makeIDs.sort( function( a, b )
+		{
+			var ea = TinkeringMap[a];
+			var eb = TinkeringMap[b];
+			if( ea && eb )
+				return ( ea.dictID || 0 ) - ( eb.dictID || 0 );
+			return a - b;
+		});
+
+		// Era / recipe filtering
+		pageItems = [];
+		for( var k = 0; k < makeIDs.length; k++ )
+		{
+			var id = makeIDs[k];
+			var data2 = TinkeringMap[id];
+			if( !data2 )
+				continue;
+
+			var needsRecipe = data2.recipeID;
+			var showAll = displayUnlearnedRecipes;
+
+			if( eraOK( data2 ) && ( !needsRecipe || showAll || HasLearnedRecipe( pUser, needsRecipe )) )
+				pageItems.push( id );
+		}
+
+		// Fallback: if no items on this page and it's not page 1, go to page 1
+		if( pageItems.length == 0 && pageNum != 1 )
+		{
+			pageNum = 1;
+
+			makeIDs = [];
+			for( var key2 in TinkeringMap )
 			{
-				myGump.AddButton( 370, 260, 4005, 4007, 0, ( i / 10 ) + 1, 0 );
-				myGump.AddHTMLGump( 405, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.language ) + "</basefont>" );// NEXT PAGE
+				if( !TinkeringMap.hasOwnProperty( key2 ))
+					continue;
+
+				var mid2 = parseInt( key2 );
+				var d3 = TinkeringMap[mid2];
+				if( !d3 || d3.page != 1 )
+					continue;
+
+				makeIDs.push( mid2 );
 			}
 
-			myGump.AddPage( ( i / 10 ) + 1 );
-
-			if ( i > 0 )
+			makeIDs.sort( function( a, b )
 			{
-				myGump.AddButton( 220, 260, 4014, 4015, 0, i / 10, 0 );
-				myGump.AddHTMLGump( 255, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.language ) + "</basefont>" );// PREV PAGE
+				var ea2 = TinkeringMap[a];
+				var eb2 = TinkeringMap[b];
+				if( ea2 && eb2 )
+					return ( ea2.dictID || 0 ) - ( eb2.dictID || 0 );
+				return a - b;
+			});
+
+			pageItems = [];
+			for( var m = 0; m < makeIDs.length; m++ )
+			{
+				var id2 = makeIDs[m];
+				var data4 = TinkeringMap[id2];
+				if( !data4 )
+					continue;
+
+				var needsRecipe2 = data4.recipeID;
+				var showAll2 = displayUnlearnedRecipes;
+
+				if( eraOK( data4 ) && ( !needsRecipe2 || showAll2 || HasLearnedRecipe( pUser, needsRecipe2 )) )
+					pageItems.push( id2 );
 			}
 		}
-		myGump.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, ( 100 * pageNum ) + i );
-
-		myGump.AddText( 255, 60 + ( index * 20 ), LabelHue, GetDictionaryEntry( myPage[pageNum - 1][i], socket.language ) );
-
-		myGump.AddButton( 480, 60 + ( index * 20 ), 4011, 4012, 1, 0, 2000 + ( 100 * pageNum ) + i );
 	}
-	myGump.Send( socket );
-	myGump.Free();
+
+	// Subpage handling (future-proof; currently you effectively have 1 or 2 subpages per category)
+	var subPage = pUser.GetTempTag( "subPage" );
+	var totalSubPages = Math.ceil( pageItems.length / itemsPerPage );
+
+	if( totalSubPages < 1 )
+		totalSubPages = 1;
+	if( subPage < 1 )
+		subPage = 1;
+	if( subPage > totalSubPages )
+		subPage = totalSubPages;
+
+	pUser.SetTempTag( "page", pageNum );
+	pUser.SetTempTag( "subPage", subPage );
+
+	var startIndex = ( subPage - 1 ) * itemsPerPage;
+	var endIndex   = Math.min( startIndex + itemsPerPage, pageItems.length );
+
+	if( startIndex >= pageItems.length )
+	{
+		subPage    = 1;
+		startIndex = 0;
+		endIndex   = Math.min( itemsPerPage, pageItems.length );
+		pUser.SetTempTag( "subPage", subPage );
+	}
+
+	var tinkGump = new Gump;
+	TriggerEvent( craftGumpID, "CraftingGumpMenu", tinkGump, socket );
+	tinkGump.AddPage( 1 );
+
+	for( var j = startIndex; j < endIndex; j++ )
+	{
+		var index  = j - startIndex;
+		var makeID = pageItems[j];
+		var entryText;
+		var buttonID = makeID; // use makeID directly as buttonID
+
+		var data5 = TinkeringMap[makeID];
+
+		if( !data5 )
+		{
+			entryText = "[Missing MakeID: " + makeID + "]";
+		}
+		else
+		{
+			if( data5.customName )
+			{
+				entryText = data5.customName;
+			}
+			else if( data5.dictID )
+			{
+				entryText = GetDictionaryEntry( data5.dictID, socket.language );
+				if( !entryText || entryText === "" )
+					entryText = "[Missing EntryID: " + data5.dictID + "]";
+			}
+			else
+			{
+				entryText = "[Unnamed Item: " + makeID + "]";
+			}
+		}
+
+		// Craft button
+		tinkGump.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, buttonID );
+		tinkGump.AddText(   255, 60 + ( index * 20 ), textHue, entryText );
+
+		// Detail button: 20000 + makeID
+		tinkGump.AddButton( 480, 60 + ( index * 20 ), 4011, 4012, 1, 0, 20000 + buttonID );
+	}
+
+	// Prev subpage
+	if( subPage > 1 )
+	{
+		tinkGump.AddButton( 220, 260, 4014, 4015, 1, 0, 8000 + ( subPage - 1 ));
+		tinkGump.AddHTMLGump( 255, 263, 100, 18, false, false,
+			"<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.language ) + "</basefont>" ); // PREV PAGE
+	}
+
+	// Next subpage
+	if( subPage < totalSubPages )
+	{
+		tinkGump.AddButton( 370, 260, 4005, 4007, 1, 0, 9000 + ( subPage + 1 ));
+		tinkGump.AddHTMLGump( 405, 263, 100, 18, false, false,
+			"<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.language ) + "</basefont>" ); // NEXT PAGE
+	}
+
+	tinkGump.Send( socket );
+	tinkGump.Free();
 }
 
-/** @type { ( tObject: BaseObject, timerId: number ) => void } */
+/** @type { ( pUser: Character, timerID: number ) => void } */
 function onTimer( pUser, timerID )
 {
 	if( !ValidateObject( pUser ))
 		return;
 
-	var socket = pUser.socket;
+	var pSocket = pUser.socket;
+	if( pSocket == null )
+		return;
 
-	switch ( timerID )
+	if( timerID >= 1 && timerID <= 9 )
 	{
-		case 1: // Page 1 - Wooden Items
-		case 2: // Page 2 - Tools
-		case 3: // Page 3 - Parts
-		case 4: // Page 4 - Utensils
-		case 5: // Page 5 - Jewelry
-		case 6: // Page 6 - Miscellaneous
-		case 7: // Page 7 - Multi-Component Items
-		case 8: // Page 8 - Candles
-		case 9: // Page 9 - Traps
-			PageX( socket, pUser, timerID );
-			break;
+		PageX( pSocket, pUser, timerID );
+	}
+	else if( timerID == 999 )
+	{
+		PageX( pSocket, pUser, 999 );
 	}
 }
 
-/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
-function onGumpPress( pSock, pButton, gumpData )
+/** @type { ( socket: Socket, pButton: number, gumpData: GumpData ) => void } */
+function onGumpPress( socket, pButton, gumpData )
 {
-	var pUser = pSock.currentChar;
+	if( socket == null )
+		return;
 
-	// Don't continue if character is invalid, or worse... dead!
+	var pUser = socket.currentChar;
 	if( !ValidateObject( pUser ) || pUser.dead )
 		return;
 
 	// Don't continue if player no longer has access to the crafting tool
-	var bItem = pSock.tempObj;
-	if( !ValidateObject( bItem ) || !pUser.InRange( bItem, 3 ))
+	var tool = socket.tempObj;
+	if( !ValidateObject( tool ) || !pUser.InRange( tool, 3 ))
 	{
-		pSock.SysMessage( GetDictionaryEntry( 461, pSock.language )); // You are too far away.
+		socket.SysMessage( GetDictionaryEntry( 461, socket.language )); // You are too far away.
 		return;
 	}
 
-	if( bItem.movable == 3 )
+	if( tool.movable == 3 )
 	{
-		pSock.SysMessage( GetDictionaryEntry( 6031, pSock.language )); // Locked down resources cannot be used!
+		socket.SysMessage( GetDictionaryEntry( 6031, socket.language )); // Locked down resources cannot be used!
 		return;
 	}
 
-	var iPackOwner = GetPackOwner( bItem, 0 );
-	if( ValidateObject( iPackOwner )) // Is the item in a backpack?
+	var packOwner = GetPackOwner( tool, 0 );
+	if( ValidateObject( packOwner ))
 	{
-		if( iPackOwner.serial != pUser.serial ) // And if so does the pack belong to the user?
+		if( packOwner.serial != pUser.serial )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 6032, pSock.language )); // That resource is in someone else's backpack!
+			socket.SysMessage( GetDictionaryEntry( 6032, socket.language )); // That resource is in someone else's backpack!
 			return;
 		}
 	}
 	else
 	{
-		pSock.SysMessage( GetDictionaryEntry( 6022, pSock.language )); // This has to be in your backpack before you can use it.
+		socket.SysMessage( GetDictionaryEntry( 6022, socket.language )); // This has to be in your backpack before you can use it.
 		return;
 	}
 
-	var gumpID = scriptID + 0xffff;
-	var makeID = 0;
-	var itemDetailsID = 0;
+	var gumpID = tinkeringID + 0xffff;
+
+	// Subpage back / forward
+	if( pButton >= 8001 && pButton < 9000 )
+	{
+		var subPage = pButton - 8000;
+		var pageNum = pUser.GetTempTag( "page" );
+		pUser.SetTempTag( "subPage", subPage );
+		PageX( socket, pUser, pageNum );
+		return;
+	}
+
+	if( pButton >= 9001 && pButton < 10000 )
+	{
+		var subPage2 = pButton - 9000;
+		var pageNum2 = pUser.GetTempTag( "page" );
+		pUser.SetTempTag( "subPage", subPage2 );
+		PageX( socket, pUser, pageNum2 );
+		return;
+	}
+
+	// Page tabs (1–9)
+	if( pButton >= 1 && pButton <= 9 )
+	{
+		pUser.SetTempTag( "page", pButton );
+		pUser.SetTempTag( "subPage", 1 );
+		PageX( socket, pUser, pButton );
+		return;
+	}
+
+	// Last Ten (if you add a tab that sends 11000)
+	if( pButton == 11000 )
+	{
+		pUser.SetTempTag( "page", 999 );
+		pUser.SetTempTag( "subPage", 1 );
+		PageX( socket, pUser, 999 );
+		return;
+	}
+
+	// Close gump
+	if( pButton == 0 )
+	{
+		pUser.SetTempTag( "MakeLast_Tinkering", null );
+		pUser.SetTempTag( "CRAFT", null );
+		socket.CloseGump( gumpID, 0 );
+		return;
+	}
+
+	// Make Last
+	if( pButton == 5000 )
+	{
+		var last = pUser.GetTempTag( "MakeLast_Tinkering" );
+		if( last )
+			pButton = last;
+		else
+			return;
+	}
+
+	var makeID  = 0;
 	var timerID = 0;
 
-	if(( pButton >= 100 && pButton <= 950 ) || pButton == 5000 )
+	// Craft buttons use makeID directly
+	if( TinkeringMap[pButton] != undefined )
 	{
-		if( pButton == 5000 )
-		{
-			// Make Last button
-			pButton = pUser.GetTempTag( "MAKELAST" );
-		}
-		else
-		{
-			pUser.SetTempTag( "MAKELAST", pButton );
-		}
-	}
+		makeID = pButton;
+		var data = TinkeringMap[makeID];
+		timerID = data.timerID || 1;
 
-	switch ( pButton )
-	{
-		case 0: // Abort and do nothing
-			pUser.SetTempTag( "MAKELAST", null );
-			pUser.SetTempTag( "CRAFT", null )
-			pSock.CloseGump( gumpID, 0 );
-			break;
-		case 1: // Page 1 - Wooden Items
-		case 2: // Page 2 - Tools
-		case 3: // Page 3 - Parts
-		case 4: // Page 4 - Utensils
-		case 5: // Page 5 - Jewelry
-		case 6: // Page 6 - Miscellaneous
-		case 7: // Page 7 - Multi-Component Items
-		case 8: // Page 8 - Candles
-		case 9: // Page 9 - Traps
-			pSock.CloseGump( gumpID, 0 );
-			PageX( pSock, pUser, pButton );
-			break;
-		// Make Items
-		// Page 1 - Wooden Items
-		case 100: // Axle
-			makeID = 274; timerID = 1; break;
-		case 101: // Clock Frame
-			makeID = 273; timerID = 1; break;
-		case 102: // Jointing Plane
-			makeID = 270; timerID = 1; break;
-		case 103: // Moulding Plane
-			makeID = 271; timerID = 1; break;
-		case 104: // Smoothing Plane
-			makeID = 272; timerID = 1; break;
-		// Page 2 - Tools
-		case 200: // Dovetail Saw
-			makeID = 218; timerID = 2; break;
-		case 201: // Draw Knife
-			makeID = 215; timerID = 2; break;
-		case 202: // Froe
-			makeID = 252; timerID = 2; break;
-		case 203: // Hammer
-			makeID = 255; timerID = 2; break;
-		case 204: // Hatchet
-			makeID = 214; timerID = 2; break;
-		case 205: // Inshave
-			makeID = 258; timerID = 2; break;
-		case 206: // Lockpick
-			makeID = 260; timerID = 2; break;
-		case 207: // Mortar and Pestle
-			makeID = 211; timerID = 2; break;
-		case 208: // Pick Axe
-			makeID = 259; timerID = 2; break;
-		case 209: // Saw
-			makeID = 217; timerID = 2; break;
-		case 210: // Scissors
-			makeID = 210; timerID = 2; break;
-		case 211: // Scorp
-			makeID = 212; timerID = 2; break;
-		case 212: // Sewing Kit
-			makeID = 216; timerID = 2; break;
-		case 213: // Shovel
-			makeID = 254; timerID = 2; break;
-		case 214: // Sledge Hammer
-			makeID = 257; timerID = 2; break;
-		case 215: // Smith's Hammer
-			makeID = 256; timerID = 2; break;
-		case 216: // Tongs
-			makeID = 253; timerID = 2; break;
-		case 217: // Tool Kit (Tinker's tools)
-			makeID = 213; timerID = 2; break;
-		case 218: // Fletcher's Tools
-			makeID = 284; timerID = 2; break;
-		// Page 3 - Parts
-		case 300: // Barrel Hoops
-			makeID = 224; timerID = 3; break;
-		case 301: // Barrel Tap
-			makeID = 221; timerID = 3; break;
-		case 302: // Clock parts
-			makeID = 220; timerID = 3; break;
-		case 303: // Gears
-			makeID = 219; timerID = 3; break;
-		case 304: // Hinge
-			makeID = 225; timerID = 3; break;
-		case 305: // Sextant parts
-			makeID = 223; timerID = 3; break;
-		case 306: // Springs
-			makeID = 222; timerID = 3; break;
-		// Page 4 - Utensils
-		case 400: // Butcher Knife
-			makeID = 226; timerID = 4; break;
-		case 401: // Cleaver
-			makeID = 232; timerID = 4; break;
-		case 402: // Fork
-			makeID = 230; timerID = 4; break;
-		case 403: // Fork
-			makeID = 231; timerID = 4; break;
-		case 404: // Goblet
-			makeID = 235; timerID = 4; break;
-		case 405: // Knife
-			makeID = 233; timerID = 4; break;
-		case 406: // Knife
-			makeID = 234; timerID = 4; break;
-		case 407: // Pewter Mug
-			makeID = 236; timerID = 4; break;
-		case 408: // Plate
-			makeID = 229; timerID = 4; break;
-		case 409: // Skinning Knife
-			makeID = 237; timerID = 4; break;
-		case 410: // Spoon
-			makeID = 227; timerID = 4; break;
-		case 411: // Spoon
-			makeID = 228; timerID = 4; break;
-		// Page 5 - Jewelry
-		case 500: // Bracelet
-			makeID = 243; timerID = 5; break;
-		case 501: // Earrings
-			makeID = 241; timerID = 5; break;
-		case 502: // Necklage (Golden beads)
-			makeID = 239; timerID = 5; break;
-		case 503: // Necklace (Silver beads)
-			makeID = 240; timerID = 5; break;
-		case 504: // Necklace (Round)
-			makeID = 242; timerID = 5; break;
-		case 505: // Weddingband (newbiefied)
-			makeID = 238; timerID = 5; break;
-		// Page 6 - Miscellaneous
-		case 600: // Candelabra
-			makeID = 245; timerID = 6; break;
-		case 601: // Globe
-			makeID = 248; timerID = 6; break;
-		case 602: // Heating stand
-			makeID = 251; timerID = 6; break;
-		case 603: // Iron Key
-			makeID = 247; timerID = 6; break;
-		case 604: // Keyring
-			makeID = 244; timerID = 6; break;
-		case 605: // Lantern
-			makeID = 250; timerID = 6; break;
-		case 606: // Scales
-			makeID = 246; timerID = 6; break;
-		case 607: // Spy glass
-			makeID = 249; timerID = 6; break;
-		// Page 7 - Multi-Component Items
-		case 700: // Axle and Gears
-			makeID = 275; timerID = 7; break;
-		case 701: // Clock
-			makeID = 276; timerID = 7; break;
-		case 702: // Clock
-			makeID = 277; timerID = 7; break;
-		case 703: // Clock Parts
-			makeID = 278; timerID = 7; break;
-		case 704: // Potion Keg
-			makeID = 281; timerID = 7; break;
-		case 705: // Sextant
-			makeID = 282; timerID = 7; break;
-		case 706: // Sextant Parts
-			makeID = 283; timerID = 7; break;
-		// Page 8 - Candles
-		case 800: // Candelabra
-			makeID = 245; timerID = 8; break;
-		case 801: // Standing Candelabra
-			makeID = 310; timerID = 8; break;
-		case 802: // Regular Candle
-			makeID = 315; timerID = 8; break;
-		case 803: // Round Candle
-			makeID = 312; timerID = 8; break;
-		case 804: // Skull with Candle
-			makeID = 316; timerID = 8; break;
-		case 805: // Small Candle
-			makeID = 314; timerID = 8; break;
-		case 806: // Tall Candle
-			makeID = 311; timerID = 8; break;
-		case 807: // Thick Candle
-			makeID = 313; timerID = 8; break;
-		// Page 9 - Traps
-		case 900: // Dart Trap
-			makeID = 261; timerID = 9; break;
-		case 901: // Explosion Trap
-			makeID = 263; timerID = 9; break;
-		case 902: // Poison Trap
-			makeID = 262; timerID = 9; break;
-		// Show Item Details
-		case 2100: // Axle
-			itemDetailsID = 274; break;
-		case 2101: // Clock Frame
-			itemDetailsID = 273; break;
-		case 2102: // Jointing Plane
-			itemDetailsID = 270; break;
-		case 2103: // Moulding Plane
-			itemDetailsID = 271; break;
-		case 2104: // Smoothing Plane
-			itemDetailsID = 272; break;
-		// Page 2 - Tools
-		case 2200: // Dovetail Saw
-			itemDetailsID = 218; break;
-		case 2201: // Draw Knife
-			itemDetailsID = 215; break;
-		case 2202: // Froe
-			itemDetailsID = 252; break;
-		case 2203: // Hammer
-			itemDetailsID = 255; break;
-		case 2204: // Hatchet
-			itemDetailsID = 214; break;
-		case 2205: // Inshave
-			itemDetailsID = 258; break;
-		case 2206: // Lockpick
-			itemDetailsID = 260; break;
-		case 2207: // Mortar and Pestle
-			itemDetailsID = 211; break;
-		case 2208: // Pick Axe
-			itemDetailsID = 259; break;
-		case 2209: // Saw
-			itemDetailsID = 217; break;
-		case 2210: // Scissors
-			itemDetailsID = 210; break;
-		case 2211: // Scorp
-			itemDetailsID = 212; break;
-		case 2212: // Sewing Kit
-			itemDetailsID = 216; break;
-		case 2213: // Shovel
-			itemDetailsID = 254; break;
-		case 2214: // Sledge Hammer
-			itemDetailsID = 257; break;
-		case 2215: // Smith's Hammer
-			itemDetailsID = 256; break;
-		case 2216: // Tongs
-			itemDetailsID = 253; break;
-		case 2217: // Tool Kit (Tinker's tools)
-			itemDetailsID = 213; break;
-		case 2218: // Fletcher's Tools
-			itemDetailsID = 284; break;
-		// Page 3 - Parts
-		case 2300: // Barrel Hoops
-			itemDetailsID = 224; break;
-		case 2301: // Barrel Tap
-			itemDetailsID = 221; break;
-		case 2302: // Clock parts
-			itemDetailsID = 220; break;
-		case 2303: // Gears
-			itemDetailsID = 219; break;
-		case 2304: // Hinge
-			itemDetailsID = 225; break;
-		case 2305: // Sextant parts
-			itemDetailsID = 223; break;
-		case 2306: // Springs
-			itemDetailsID = 222; break;
-		// Page 4 - Utensils
-		case 2400: // Butcher Knife
-			itemDetailsID = 226; break;
-		case 2401: // Cleaver
-			itemDetailsID = 232; break;
-		case 2402: // Fork
-			itemDetailsID = 230; break;
-		case 2403: // Fork
-			itemDetailsID = 231; break;
-		case 2404: // Goblet
-			itemDetailsID = 235; break;
-		case 2405: // Knife
-			itemDetailsID = 233; break;
-		case 2406: // Knife
-			itemDetailsID = 234; break;
-		case 2407: // Pewter Mug
-			itemDetailsID = 236; break;
-		case 2408: // Plate
-			itemDetailsID = 229; break;
-		case 2409: // Skinning Knife
-			itemDetailsID = 237; break;
-		case 2410: // Spoon
-			itemDetailsID = 227; break;
-		case 2411: // Spoon
-			itemDetailsID = 228; break;
-		// Page 5 - Jewelry
-		case 2500: // Bracelet
-			itemDetailsID = 243; break;
-		case 2501: // Earrings
-			itemDetailsID = 241; break;
-		case 2502: // Necklage (Golden beads)
-			itemDetailsID = 239; break;
-		case 2503: // Necklace (Silver beads)
-			itemDetailsID = 240; break;
-		case 2504: // Necklace (Round)
-			itemDetailsID = 242; break;
-		case 2505: // Weddingband (newbiefied)
-			itemDetailsID = 238; break;
-		// Page 6 - Miscellaneous
-		case 2600: // Candelabra
-			itemDetailsID = 245; break;
-		case 2601: // Globe
-			itemDetailsID = 248; break;
-		case 2602: // Heating stand
-			itemDetailsID = 251; break;
-		case 2603: // Iron Key
-			itemDetailsID = 247; break;
-		case 2604: // Keyring
-			itemDetailsID = 244; break;
-		case 2605: // Lantern
-			itemDetailsID = 250; break;
-		case 2606: // Scales
-			itemDetailsID = 246; break;
-		case 2607: // Spy glass
-			itemDetailsID = 249; break;
-		// Page 7 - Multi-Component Items
-		case 2700: // Axle and Gears
-			itemDetailsID = 275; break;
-		case 2701: // Clock
-			itemDetailsID = 276; break;
-		case 2702: // Clock
-			itemDetailsID = 277; break;
-		case 2703: // Clock Parts
-			itemDetailsID = 278; break;
-		case 2704: // Potion Keg
-			itemDetailsID = 281; break;
-		case 2705: // Sextant
-			itemDetailsID = 282; break;
-		case 2706: // Sextant Parts
-			itemDetailsID = 283; break;
-		// Page 8 - Candles
-		case 2800: // Candelabra
-			itemDetailsID = 245; break;
-		case 2801: // Standing Candelabra
-			itemDetailsID = 310; break;
-		case 2802: // Regular Candle
-			itemDetailsID = 315; break;
-		case 2803: // Round Candle
-			itemDetailsID = 312; break;
-		case 2804: // Skull with Candle
-			itemDetailsID = 316; break;
-		case 2805: // Small Candle
-			itemDetailsID = 314; break;
-		case 2806: // Tall Candle
-			itemDetailsID = 311; break;
-		case 2807: // Thick Candle
-			itemDetailsID = 313; break;
-		// Page 9 - Traps
-		case 2900: // Dart Trap
-			itemDetailsID = 261; break;
-		case 2901: // Explosion Trap
-			itemDetailsID = 263; break;
-		case 2902: // Poison Trap
-			itemDetailsID = 262; break;
-		default:
-			break;
-	}
-
-	if( makeID != 0 )
-	{
-		if(( pButton >= 500 && pButton <= 505 ))
+		// Era / recipe checks
+		if( !eraOK( data ))
 		{
-			// Ask crafter which material to use
-			pUser.SetTempTag( "makeID", makeID );
-			pUser.SetTempTag( "timerID", timerID );
-			pUser.AddScriptTrigger( 4033 );
-			pSock.CustomTarget( 2, GetDictionaryEntry( 12008, pSock.language )); // Select material to use:
+			socket.SysMessage( "That item is not available in this era." );
 			return;
 		}
 
-		MakeItem( pSock, pUser, makeID );
+		if( data.recipeID && !TriggerEvent( 4022, "NeedRecipe", pUser, data.recipeID ))
+		{
+			socket.SysMessage( "You must learn that recipe from a scroll." );
+			return;
+		}
+
+		// Jewelry that needs gem targeting
+		if( data.requiresGemTarget )
+		{
+			pUser.SetTempTag( "makeID", makeID );
+			pUser.SetTempTag( "timerID", timerID );
+			pUser.AddScriptTrigger( 4033 ); // crafting_complete.js
+			socket.CustomTarget( 2, GetDictionaryEntry( 12008, socket.language )); // Select material to use:
+			return;
+		}
+
+		// Normal craft
+		pUser.SetTempTag( "MakeLast_Tinkering", makeID );
+
+		MakeItem( socket, pUser, makeID );
+		AddToLastTen( pUser, makeID );
+
 		if( GetServerSetting( "ToolUseLimit" ))
 		{
-			bItem.usesLeft -= 1;
-			if( bItem.usesLeft == 0 && GetServerSetting( "ToolUseBreak" ))
+			tool.usesLeft -= 1;
+			if( tool.usesLeft == 0 && GetServerSetting( "ToolUseBreak" ))
 			{
-				bItem.Delete();
-				pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language )); // You have worn out your tool!
-				// Play sound effect of tool breaking
+				tool.Delete();
+				socket.SysMessage( GetDictionaryEntry( 10202, socket.language )); // You have worn out your tool!
 			}
-		}		
-		pUser.StartTimer( gumpDelay, timerID, true );
+		}
+
+		pUser.StartTimer( gumpDelay, timerID, tinkeringID );
+		return;
 	}
-	else if( itemDetailsID != 0 )
+
+	// Detail buttons: 20000 + makeID
+	if( pButton >= 20000 && pButton < 30000 )
 	{
-		pUser.SetTempTag( "ITEMDETAILS", itemDetailsID );
-		TriggerEvent( itemDetailsScriptID, "ItemDetailGump", pUser );
+		var detailMakeID = pButton - 20000;
+		var entry = TinkeringMap[detailMakeID];
+
+		if( entry )
+		{
+			// Which item details to show
+			pUser.SetTempTag( "ITEMDETAILS", detailMakeID );
+
+			// Skill used
+			pUser.SetTempTag( "Skill", entry.skill || tinkeringSkillID );
+
+			// Clear old harvest tags
+			pUser.SetTempTag( "Harvest",  null );
+			pUser.SetTempTag( "Harvest2", null );
+			pUser.SetTempTag( "Harvest3", null );
+			pUser.SetTempTag( "Harvest4", null );
+
+			// Clear old custom harvest names
+			pUser.SetTempTag( "HarvestName",  null );
+			pUser.SetTempTag( "Harvest2Name", null );
+			pUser.SetTempTag( "Harvest3Name", null );
+			pUser.SetTempTag( "Harvest4Name", null );
+
+			// Optional harvest dictIDs
+			if( entry.harvest && entry.harvest.length > 0 )
+			{
+				if( entry.harvest.length >= 1 )
+					pUser.SetTempTag( "Harvest",  entry.harvest[0] );
+				if( entry.harvest.length >= 2 )
+					pUser.SetTempTag( "Harvest2", entry.harvest[1] );
+				if( entry.harvest.length >= 3 )
+					pUser.SetTempTag( "Harvest3", entry.harvest[2] );
+				if( entry.harvest.length >= 4 )
+					pUser.SetTempTag( "Harvest4", entry.harvest[3] );
+			}
+
+			// Optional custom names – plugs into your ItemDetail custom harvest name logic
+			if( entry.harvestNames && entry.harvestNames.length > 0 )
+			{
+				if( entry.harvestNames.length >= 1 )
+					pUser.SetTempTag( "HarvestName",  entry.harvestNames[0] );
+				if( entry.harvestNames.length >= 2 )
+					pUser.SetTempTag( "Harvest2Name", entry.harvestNames[1] );
+				if( entry.harvestNames.length >= 3 )
+					pUser.SetTempTag( "Harvest3Name", entry.harvestNames[2] );
+				if( entry.harvestNames.length >= 4 )
+					pUser.SetTempTag( "Harvest4Name", entry.harvestNames[3] );
+			}
+
+			if( entry.recipeID && entry.recipeID > 0 )
+				pUser.SetTempTag( "needRecipeID", entry.recipeID );
+			else
+				pUser.SetTempTag( "needRecipeID", 0 );
+
+			TriggerEvent( itemDetailsScriptID, "ItemDetailGump", pUser );
+		}
+		return;
 	}
 }
 
-/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+/** @type { ( pSock: Socket, targObj: Character | Item | null ) => void } */
 function onCallback2( pSock, targObj )
 {
 	var pUser = pSock.currentChar;
@@ -540,61 +586,109 @@ function onCallback2( pSock, targObj )
 		return;
 
 	// Fetch makeID and timerID from temp tag
-	var makeID = pUser.GetTempTag( "makeID" );
+	var makeID  = pUser.GetTempTag( "makeID" );
 	var timerID = pUser.GetTempTag( "timerID" );
 	pUser.SetTempTag( "makeID", null );
 	pUser.SetTempTag( "timerID", null );
 
 	var bItem = pSock.tempObj; // tool
-	if( ValidateObject( bItem ))
+	if( !ValidateObject( bItem ))
+		return;
+
+	if( ValidateObject( targObj ) && targObj.isItem )
 	{
-		if( ValidateObject( targObj ) && targObj.isItem )
+		// Make sure targeted item is in player's backpack
+		var iPackOwner = GetPackOwner( targObj, 0 );
+		if( ValidateObject( iPackOwner ))
 		{
-			// Make sure targeted item is in player's backpack
-			var iPackOwner = GetPackOwner( targObj, 0 );
-			if( ValidateObject( iPackOwner )) // Is the item in a backpack?
+			if( iPackOwner.serial != pUser.serial )
 			{
-				if( iPackOwner.serial != pUser.serial ) // And if so does the pack belong to the user?
-				{
-					pSock.SysMessage( GetDictionaryEntry( 6032, pSock.language )); // That resource is in someone else's backpack!
-					return;
-				}
+				pSock.SysMessage( GetDictionaryEntry( 6032, pSock.language )); // That resource is in someone else's backpack!
+				return;
 			}
-			else
+		}
+		else
+		{
+			pSock.SysMessage( GetDictionaryEntry( 6022, pSock.language )); // This has to be in your backpack before you can use it.
+			return;
+		}
+
+		// Jewelry: verify gem
+		if( makeID >= 238 && makeID <= 243 )
+		{
+			var resourceType = TriggerEvent( 2506, "GetResourceType", targObj.id );
+			if( resourceType != "gems" )
 			{
-				pSock.SysMessage( GetDictionaryEntry( 6022, pSock.language )); // This has to be in your backpack before you can use it.
+				pSock.SysMessage( GetDictionaryEntry( 12007, pSock.language )); // That's not a gem resource!
 				return;
 			}
 
-			if( makeID >= 238 && makeID <= 243 )
-			{
-				// Jewlery
-				var resourceType = TriggerEvent( 2506, "GetResourceType", targObj.id );
-				if( resourceType != "gems" )
-				{
-					pSock.SysMessage( GetDictionaryEntry( 12007, pSock.language )); // That's not a gem resource!
-					return;
-				}
+			// Tags used by crafting_complete.js
+			pUser.SetTempTag( "targetedSubResourceId",   targObj.id );
+			pUser.SetTempTag( "targetedSubResourceName", targObj.name );
+		}
 
-				// Set a temporary tag on character with ID of selected gem
-				// We'll check for this ID in the crafting process, and remove it
-				// in the onMakeItem event script (crafting_complete.js)
-				pUser.SetTempTag( "targetedSubResourceId", targObj.id );
-				pUser.SetTempTag( "targetedSubResourceName", targObj.name );
-			}
+		MakeItem( pSock, pUser, makeID );
+		AddToLastTen( pUser, makeID );
 
-			MakeItem( pSock, pUser, makeID );
-			if( GetServerSetting( "ToolUseLimit" ))
+		if( GetServerSetting( "ToolUseLimit" ))
+		{
+			bItem.usesLeft -= 1;
+			if( bItem.usesLeft == 0 && GetServerSetting( "ToolUseBreak" ))
 			{
-				bItem.usesLeft -= 1;
-				if( bItem.usesLeft == 0 && GetServerSetting( "ToolUseBreak" ))
-				{
-					bItem.Delete();
-					pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language )); // You have worn out your tool!
-					// Play sound effect of tool breaking
-				}
+				bItem.Delete();
+				pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language )); // You have worn out your tool!
 			}
-			pUser.StartTimer( gumpDelay, timerID, true );
+		}
+		pUser.StartTimer( gumpDelay, timerID, tinkeringID );
+	}
+}
+
+function AddToLastTen( pUser, makeID )
+{
+	var raw  = pUser.GetTempTag( "LastTenTinkering" ) || "";
+	var list = raw.split( "," );
+
+	for( var i = 0; i < list.length; i++ )
+	{
+		if( parseInt( list[i] ) == makeID )
+		{
+			list.splice( i, 1 );
+			break;
 		}
 	}
+
+	var newList = [ makeID ];
+	for( var j = 0; j < list.length && newList.length < 10; j++ )
+	{
+		var entry = parseInt( list[j] );
+		if( !isNaN( entry ) && entry > 0 )
+			newList.push( entry );
+	}
+
+	pUser.SetTempTag( "LastTenTinkering", newList.join( "," ) );
+}
+
+function HasLearnedRecipe( pUser, recipeID )
+{
+	var myData = TriggerEvent( 4022, "ReadRecipeID", pUser );
+	if( !myData || myData.length == 0 )
+		return false;
+
+	for( var i = 0; i < myData.length; i++ )
+	{
+		var data = myData[i].split( "," );
+		if( data[0] == recipeID )
+			return true;
+	}
+	return false;
+}
+
+function eraOK( entry )
+{
+	if( entry.minEra && coreShardEra < EraStringToNum( entry.minEra ))
+		return false;
+	if( entry.maxEra && coreShardEra > EraStringToNum( entry.maxEra ))
+		return false;
+	return true;
 }
