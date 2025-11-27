@@ -1,7 +1,7 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
 const textHue = 0x480;                 // Color hue for all text in the crafting gump
-const scriptID = 4036;                 // Script ID used to identify and close this gump
+const glassblowingID = 4036;                 // Script ID used to identify and close this gump
 const gumpDelay = 2000;                // Delay (ms) before gump reappears after crafting
 const itemDetailsScriptID = 4026;      // Script ID used to show item detail tooltips
 const craftGumpID = 4027;              // TriggerEvent ID used to build the crafting gump UI
@@ -313,7 +313,7 @@ function onGumpPress( socket, pButton, gumpData )
         return;
     }
 
-    var gumpID = scriptID + 0xffff;
+    var gumpID = glassblowingID + 0xffff;
 
     // Subpage back / forward
     if( pButton >= 8001 && pButton < 9000 )
@@ -408,7 +408,7 @@ function onGumpPress( socket, pButton, gumpData )
             }
         }
 
-        pUser.StartTimer( gumpDelay, timerID, scriptID );
+        pUser.StartTimer( gumpDelay, timerID, glassblowingID );
         return;
     }
 
@@ -457,7 +457,7 @@ function onGumpPress( socket, pButton, gumpData )
 			}
 
 			// Now fire the generic detail gump
-			TriggerEvent(itemDetailsScriptID, "ItemDetailGump", pUser);
+			TriggerEvent( itemDetailsScriptID, "ItemDetailGump", pUser );
 		}
 		return;
 	}
