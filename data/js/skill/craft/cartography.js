@@ -31,10 +31,10 @@ const cartographySkillID    = 12;                    // Skill index for "cartogr
 
 const CartographyMap = {
 	// Page 1 - Maps
-	2000: { dictID: 13100, page: 1, timerID: 1 }, // Local Map
-	2001: { dictID: 13101, page: 1, timerID: 1 }, // City Map
-	2002: { dictID: 13102, page: 1, timerID: 1 }, // Sea Chart
-	2003: { dictID: 13103, page: 1, timerID: 1 }  // World Map (base; world-specific in onGumpPress)
+	2000: { dictID: 13100, page: 1, timerID: 1, harvest: [ 13004 ] }, // Local Map
+	2001: { dictID: 13101, page: 1, timerID: 1, harvest: [ 13004 ] }, // City Map
+	2002: { dictID: 13102, page: 1, timerID: 1, harvest: [ 13004 ] }, // Sea Chart
+	2003: { dictID: 13103, page: 1, timerID: 1, harvest: [ 13004 ] }  // World Map (base; world-specific in onGumpPress)
 };
 
 // Fill in defaults (skill, etc)
