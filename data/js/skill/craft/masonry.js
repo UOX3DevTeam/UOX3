@@ -76,7 +76,7 @@ const allowColouredBuildings = false; // Set to true if you want coloured stone 
 // |   MakeItem when the player crafts that item. The same index positions    |
 // |   on each page line up with the matching entries in myPage.              |
 // o--------------------------------------------------------------------------o
-// | MasonryMap                                                            |
+// | MasonryMap                                                               |
 // o--------------------------------------------------------------------------o
 // | MasonryMap is built automatically from myPage and craftItems.            |
 // |                                                                          |
@@ -1208,19 +1208,19 @@ function onGumpPress( pSock, pButton, gumpData )
 			if( graniteMakeID > 0 )
 			{
 				// Masonry uses Carpentry skill
-				 pUser.SetTempTag("Skill", entry.skill | 0);
+				 pUser.SetTempTag( "Skill", entry.skill | 0 );
 
 				if( entry.harvest && entry.harvest.length > 0 )
-					pUser.SetTempTag("Harvest",  entry.harvest[0]);
+					pUser.SetTempTag( "Harvest",  entry.harvest[0] );
 
 				if( entry.harvest2 && entry.harvest2.length > 0 )
-					pUser.SetTempTag("Harvest2", entry.harvest2[0]);
+					pUser.SetTempTag( "Harvest2", entry.harvest2[0] );
 
 				if( entry.harvest3 && entry.harvest3.length > 0 )
-					pUser.SetTempTag("Harvest3", entry.harvest3[0]);
+					pUser.SetTempTag( "Harvest3", entry.harvest3[0] );
 
 				if( entry.harvest4 && entry.harvest4.length > 0 )
-					pUser.SetTempTag("Harvest4", entry.harvest4[0]);
+					pUser.SetTempTag( "Harvest4", entry.harvest4[0] );
 
 				if( entry.recipeID && entry.recipeID > 0 )
 					pUser.SetTempTag( "needRecipeID", entry.recipeID );
