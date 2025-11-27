@@ -93,7 +93,7 @@ const craftItems = [
 //       minEra?: string,
 //       maxEra?: string,
 //       skill: number,
-//       harvest: number[]
+//       harvest: number[]   // dictionary IDs for resources; labels can be overridden in ItemDetailGump
 //   };
 const CarpentryMap = {};
 
@@ -132,6 +132,10 @@ const CarpentryMap = {};
 	// If you need per-entry overrides in future (recipes, extra resources, era gating),
 	// you can do:
 	// CarpentryMap[704].harvest = [ harvestDict, 11402 ]; // wood + cloth
+	// CarpentryMap[109].harvest = [ harvestDict ];	 // Fishing Pole wood + cloth
+	// CarpentryMap[109].harvestNames = [ "", "Cloth" ];	 // Fishing Pole wood + cloth
+	// CarpentryMap[308].harvest = [ 0 ]; // open keg Barrel Staves Barrel Hoops Barrel Lid
+	// CarpentryMap[308].harvestNames = [ "Barrel Staves", "Barrel Hoops", "Barrel Lid" ]; // open keg Barrel Staves Barrel Hoops Barrel Lid
 	// CarpentryMap[709].minEra  = "ml";
 })();
 
@@ -149,8 +153,6 @@ CarpentryMap[702].harvest = [ harvestDict, 10016 ];	 // Large Bed (S) wood + clo
 CarpentryMap[703].harvest = [ harvestDict, 10016 ];	 // Large Bed (E) wood + cloth
 CarpentryMap[709].harvest = [ harvestDict, 10015 ];	 // Pentagram wood + ingots
 CarpentryMap[710].harvest = [ harvestDict, 10015 ];	 // Abbatoir wood + ingots
-
-
 CarpentryMap[800].harvest = [ harvestDict, 10016 ];	 // Dressform wood + cloth
 CarpentryMap[801].harvest = [ harvestDict, 10016 ];	 // Dressform wood + cloth
 CarpentryMap[802].harvest = [ harvestDict, 10016 ];	 // Spin Wheel (E) wood + cloth
@@ -161,13 +163,11 @@ CarpentryMap[806].harvest = [ harvestDict, 10015 ];	 // Stone Oven (E) wood + in
 CarpentryMap[807].harvest = [ harvestDict, 10015 ];	 // Stone Oven (S) wood + ingots
 CarpentryMap[808].harvest = [ harvestDict, 10015 ];	 // Flour Mill (E) wood + ingots
 CarpentryMap[809].harvest = [ harvestDict, 10015 ];	 // Flour Mill (S) wood + ingots
-
 CarpentryMap[900].harvest = [ harvestDict, 10015 ];	 // Small Forge wood + ingots
 CarpentryMap[901].harvest = [ harvestDict, 10015 ];	 // Large Forge (E) wood + ingots
 CarpentryMap[902].harvest = [ harvestDict, 10015 ];	 // Large Forge (S) wood + ingots
 CarpentryMap[903].harvest = [ harvestDict, 10015 ];	 // Anvil (E) wood + ingots
 CarpentryMap[904].harvest = [ harvestDict, 10015 ];	 // Anvil (S) wood + ingots
-
 CarpentryMap[1000].harvest = [ harvestDict, 10016 ]; // Dummy (E) wood + cloth
 CarpentryMap[1001].harvest = [ harvestDict, 10016 ]; // Dummy (S) wood + cloth
 CarpentryMap[1002].harvest = [ harvestDict, 10016 ]; // Pickpocket (E) wood + cloth
@@ -602,6 +602,12 @@ function onGumpPress( pSock, pButton, gumpData )
 			pUser.SetTempTag( "Harvest3", null );
 			pUser.SetTempTag( "Harvest4", null );
 
+			// Clear old harvest names
+			pUser.SetTempTag( "HarvestName",  null );
+			pUser.SetTempTag( "Harvest2Name", null );
+			pUser.SetTempTag( "Harvest3Name", null );
+			pUser.SetTempTag( "Harvest4Name", null );
+
 			if( dEntry.harvest && dEntry.harvest.length > 0 )
 			{
 				if( dEntry.harvest.length >= 1 )
@@ -612,6 +618,19 @@ function onGumpPress( pSock, pButton, gumpData )
 					pUser.SetTempTag( "Harvest3", dEntry.harvest[2] );
 				if( dEntry.harvest.length >= 4 )
 					pUser.SetTempTag( "Harvest4", dEntry.harvest[3] );
+			}
+
+			// OPTIONAL custom names – these override the dictionary string
+			if( dEntry.harvestNames && dEntry.harvestNames.length > 0 )
+			{
+				if( dEntry.harvestNames.length >= 1 )
+					pUser.SetTempTag( "HarvestName",  dEntry.harvestNames[0] );
+				if( dEntry.harvestNames.length >= 2 )
+					pUser.SetTempTag( "Harvest2Name", dEntry.harvestNames[1] );
+				if( dEntry.harvestNames.length >= 3 )
+					pUser.SetTempTag( "Harvest3Name", dEntry.harvestNames[2] );
+				if( dEntry.harvestNames.length >= 4 )
+					pUser.SetTempTag( "Harvest4Name", dEntry.harvestNames[3] );
 			}
 
 			if( dEntry.recipeID && dEntry.recipeID > 0 )

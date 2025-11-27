@@ -81,7 +81,9 @@ function ItemDetailGump( pUser )
 	var socket = pUser.socket;
 	var itemGump = new Gump;
 	var createEntry = null;
-	var harvestResource;
+	// Now supports both dict-based and custom harvest names
+	// harvestResource[i] = { id: number, name: string }
+	var harvestResource = [];
 	var mainSkill;
 
 	var detailTag   = pUser.GetTempTag( "ITEMDETAILS" );
@@ -90,6 +92,13 @@ function ItemDetailGump( pUser )
 	var harvest2Tag = pUser.GetTempTag( "Harvest2" );
 	var harvest3Tag = pUser.GetTempTag( "Harvest3" );
 	var harvest4Tag = pUser.GetTempTag( "Harvest4" );
+
+	// NEW: optional custom harvest names
+	var harvestNameTag   = pUser.GetTempTag( "HarvestName" );
+	var harvest2NameTag  = pUser.GetTempTag( "Harvest2Name" );
+	var harvest3NameTag  = pUser.GetTempTag( "Harvest3Name" );
+	var harvest4NameTag  = pUser.GetTempTag( "Harvest4Name" );
+
 	var recipeID = pUser.GetTempTag( "needRecipeID" );
 
 	if( detailTag !== null )
@@ -106,22 +115,45 @@ function ItemDetailGump( pUser )
 		mainSkill = mainSkill = parseInt( pUser.skills.alchemy );
 	}
 
-	// If harvest info is provided, rebuild HARVEST array
-	if( harvestTag !== null || harvest2Tag !== null || harvest3Tag !== null || harvest4Tag !== null )
+		// Helper to build harvest entries with both id + optional custom name
+	function makeHarvestObj(idTag, nameTag)
 	{
-		harvestResource = [];
+		// nothing set at all
+		var hasName = !!(nameTag && nameTag.length);
+		if (idTag === null && !hasName)
+			return null;
 
-		if( harvestTag !== null )
-			harvestResource.push( parseInt( harvestTag, 10 ));
+		var idNum = 0;
+		if (idTag !== null)
+		{
+			var n = parseInt(idTag, 10);
+			if (!isNaN(n) && n > 0)
+				idNum = n;
+		}
 
-		if( harvest2Tag !== null )
-			harvestResource.push( parseInt( harvest2Tag, 10 ));
+		// if no valid dict id and no name, skip
+		if (idNum === 0 && !hasName)
+			return null;
 
-		if( harvest3Tag !== null )
-			harvestResource.push( parseInt( harvest3Tag, 10 ));
-		
-		if( harvest4Tag !== null )
-			harvestResource.push( parseInt( harvest4Tag, 10 ));
+		return {
+			id: idNum,           // 0 = "no dict"
+			name: hasName ? nameTag : ""
+		};
+	}
+
+	// If harvest info is provided, rebuild harvestResource array
+	if( harvestTag !== null || harvest2Tag !== null || harvest3Tag !== null || harvest4Tag !== null
+		|| harvestNameTag !== null || harvest2NameTag !== null || harvest3NameTag !== null || harvest4NameTag !== null )
+	{
+		var h1 = makeHarvestObj( harvestTag,  harvestNameTag  );
+		var h2 = makeHarvestObj( harvest2Tag, harvest2NameTag );
+		var h3 = makeHarvestObj( harvest3Tag, harvest3NameTag );
+		var h4 = makeHarvestObj( harvest4Tag, harvest4NameTag );
+
+		if( h1 ) harvestResource.push( h1 );
+		if( h2 ) harvestResource.push( h2 );
+		if( h3 ) harvestResource.push( h3 );
+		if( h4 ) harvestResource.push( h4 );
 	}
 
 	if( createEntry == null )
@@ -249,9 +281,43 @@ function ItemDetailGump( pUser )
 	if( resources.length < maxHarvest )
 		maxHarvest = resources.length;
 
+	// MATERIALS list, now supporting custom names
 	for( var i = 0; i < maxHarvest; i++ )
 	{
-		itemGump.AddText( 170, 219 + ( i * 20 ), textHue, GetDictionaryEntry( harvestResource[i], socket.language ));
+		var hObj = harvestResource[i]; // { id, name }
+		var label = "";
+
+		if( hObj )
+		{
+			var dictText = "";
+			if( hObj.id && hObj.id > 0 )
+				dictText = GetDictionaryEntry( hObj.id, socket.language ) || "";
+
+			if( hObj.name && hObj.name.length > 0 )
+			{
+				// Both set: "Custom (Dict)"
+				if( dictText && dictText.length > 0 )
+					label = hObj.name + " (" + dictText + ")";
+				else
+					label = hObj.name;
+			}
+			else
+			{
+				// Only dict
+				label = dictText;
+			}
+
+			// Optional safety fallback if both are empty
+			if( !label || label.length === 0 )
+			{
+				if( hObj.id && hObj.id > 0 )
+					label = "Resource " + hObj.id;
+				else
+					label = "Resource";
+			}
+		}
+
+		itemGump.AddText( 170, 219 + ( i * 20 ), textHue, label );
 		itemGump.AddText( 430, 219 + ( i * 20 ), textHue, resources[i][0] );
 	}
 
@@ -476,7 +542,7 @@ function onGumpPress( pSock, pButton, gumpData )
 							break;
 					}
 					break;
-        case 8: // Cartography
+				case 8: // Cartography
 					pUser.SetTempTag( "ITEMDETAILS", null );
 					pSock.CloseGump( gumpID, 0 );
 					switch( pUser.GetTempTag( "page" ))
