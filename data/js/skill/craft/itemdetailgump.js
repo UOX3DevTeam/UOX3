@@ -83,7 +83,6 @@ function ItemDetailGump( pUser )
 	var createEntry = null;
 	var harvestResource;
 	var mainSkill;
-	//var recipeID = 0; // default: no recipe required
 
 	var detailTag   = pUser.GetTempTag( "ITEMDETAILS" );
 	var skillTag    = pUser.GetTempTag( "Skill" );
