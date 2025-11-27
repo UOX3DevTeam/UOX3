@@ -360,7 +360,7 @@ const BlacksmithMap = {};
 						// minEra: undefined,
 						// maxEra: undefined
 						skill: 7,                // blacksmithing skill ID
-						harvest: [10291],        // iron dict
+						harvest: [10015],        // ingots dict
 						harvest2: [],             // optional second resource
 						harvest3: [],             // optional second resource
 						harvest4: []             // optional second resource
