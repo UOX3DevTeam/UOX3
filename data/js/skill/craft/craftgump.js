@@ -20,6 +20,7 @@ const Masonry = 4037;
  // unless the craftItems array in blacksmithing.js is updated with specific create entries for the
  // coloured weapon variants, they'll just be regular weapons with ore colour applied
 const allowColouredWeapons = GetServerSetting( "CraftColouredWeapons" );
+const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 
 function CraftingGumpMenu( myGump, socket )
 {
@@ -150,6 +151,11 @@ function CraftingGumpMenu( myGump, socket )
 			break;
 		case 9: // Glassblowing
 			grouplist = [13502]; //CATEGORIES
+			// Only show Glass Weapons (page 2) in SA+ era
+			if( coreShardEra >= EraStringToNum( "sa" ))
+			{
+				grouplist.push( 13503 ); // Glass Weapons
+			}
 			gumpMenuName = 13501;//Cartography Menu
 			break;
 		case 10: // Masonry
@@ -308,7 +314,7 @@ function CraftingGumpMenu( myGump, socket )
 			break;
 	}
 
-	if( craftingSkillUsed != 2 && craftingSkillUsed != 6 && craftingSkillUsed != 8 )
+	if( craftingSkillUsed != 2 && craftingSkillUsed != 6 && craftingSkillUsed != 8  && craftingSkillUsed != 9 )
 	{
 		myGump.AddText( 50, 362, textHue, GetDictionaryEntry( resourcename, socket.language ) + " (" + resource.toString() + ")" );
 
