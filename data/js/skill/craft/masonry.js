@@ -1210,17 +1210,42 @@ function onGumpPress( pSock, pButton, gumpData )
 				// Masonry uses Carpentry skill
 				 pUser.SetTempTag( "Skill", entry.skill | 0 );
 
+				// Clear old harvests
+				pUser.SetTempTag( "Harvest", null );
+				pUser.SetTempTag( "Harvest2", null );
+				pUser.SetTempTag( "Harvest3", null );
+				pUser.SetTempTag( "Harvest4", null );
+
+				// Clear old harvest names
+				pUser.SetTempTag( "HarvestName", null );
+				pUser.SetTempTag( "Harvest2Name", null );
+				pUser.SetTempTag( "Harvest3Name", null );
+				pUser.SetTempTag( "Harvest4Name", null );
+
 				if( entry.harvest && entry.harvest.length > 0 )
-					pUser.SetTempTag( "Harvest",  entry.harvest[0] );
+				{
+					if( entry.harvest.length >= 1 )
+						pUser.SetTempTag( "Harvest", entry.harvest[0] );
+					if( entry.harvest.length >= 2 )
+						pUser.SetTempTag( "Harvest2", entry.harvest[1] );
+					if( entry.harvest.length >= 3 )
+						pUser.SetTempTag( "Harvest3", entry.harvest[2] );
+					if( entry.harvest.length >= 4 )
+						pUser.SetTempTag( "Harvest4", entry.harvest[3] );
+				}
 
-				if( entry.harvest2 && entry.harvest2.length > 0 )
-					pUser.SetTempTag( "Harvest2", entry.harvest2[0] );
-
-				if( entry.harvest3 && entry.harvest3.length > 0 )
-					pUser.SetTempTag( "Harvest3", entry.harvest3[0] );
-
-				if( entry.harvest4 && entry.harvest4.length > 0 )
-					pUser.SetTempTag( "Harvest4", entry.harvest4[0] );
+				// OPTIONAL custom names – these override the dictionary string
+				if( entry.harvestNames && entry.harvestNames.length > 0 )
+				{
+					if( entry.harvestNames.length >= 1 )
+						pUser.SetTempTag( "HarvestName", entry.harvestNames[0] );
+					if( entry.harvestNames.length >= 2 )
+						pUser.SetTempTag( "Harvest2Name", entry.harvestNames[1] );
+					if( entry.harvestNames.length >= 3 )
+						pUser.SetTempTag( "Harvest3Name", entry.harvestNames[2] );
+					if( entry.harvestNames.length >= 4 )
+						pUser.SetTempTag( "Harvest4Name", entry.harvestNames[3] );
+				}
 
 				if( entry.recipeID && entry.recipeID > 0 )
 					pUser.SetTempTag( "needRecipeID", entry.recipeID );

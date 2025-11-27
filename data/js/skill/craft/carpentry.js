@@ -588,13 +588,13 @@ function onGumpPress( pSock, pButton, gumpData )
 	if( pButton >= 2000 && pButton < 4000 )
 	{
 		var detailButtonID = pButton - 2000;
-		var dEntry         = CarpentryMap[detailButtonID];
+		var entry         = CarpentryMap[detailButtonID];
 
-		if( dEntry )
+		if( entry )
 		{
-			pUser.SetTempTag( "ITEMDETAILS", dEntry.makeID );
+			pUser.SetTempTag( "ITEMDETAILS", entry.makeID );
 
-			pUser.SetTempTag( "Skill", dEntry.skill || carpentrySkillID );
+			pUser.SetTempTag( "Skill", entry.skill || carpentrySkillID );
 
 			// Clear old harvests
 			pUser.SetTempTag( "Harvest",  null );
@@ -608,33 +608,33 @@ function onGumpPress( pSock, pButton, gumpData )
 			pUser.SetTempTag( "Harvest3Name", null );
 			pUser.SetTempTag( "Harvest4Name", null );
 
-			if( dEntry.harvest && dEntry.harvest.length > 0 )
+			if( entry.harvest && entry.harvest.length > 0 )
 			{
-				if( dEntry.harvest.length >= 1 )
-					pUser.SetTempTag( "Harvest",  dEntry.harvest[0] );
-				if( dEntry.harvest.length >= 2 )
-					pUser.SetTempTag( "Harvest2", dEntry.harvest[1] );
-				if( dEntry.harvest.length >= 3 )
-					pUser.SetTempTag( "Harvest3", dEntry.harvest[2] );
-				if( dEntry.harvest.length >= 4 )
-					pUser.SetTempTag( "Harvest4", dEntry.harvest[3] );
+				if( entry.harvest.length >= 1 )
+					pUser.SetTempTag( "Harvest",  entry.harvest[0] );
+				if( entry.harvest.length >= 2 )
+					pUser.SetTempTag( "Harvest2", entry.harvest[1] );
+				if( entry.harvest.length >= 3 )
+					pUser.SetTempTag( "Harvest3", entry.harvest[2] );
+				if( entry.harvest.length >= 4 )
+					pUser.SetTempTag( "Harvest4", entry.harvest[3] );
 			}
 
 			// OPTIONAL custom names – these override the dictionary string
-			if( dEntry.harvestNames && dEntry.harvestNames.length > 0 )
+			if( entry.harvestNames && entry.harvestNames.length > 0 )
 			{
-				if( dEntry.harvestNames.length >= 1 )
-					pUser.SetTempTag( "HarvestName",  dEntry.harvestNames[0] );
-				if( dEntry.harvestNames.length >= 2 )
-					pUser.SetTempTag( "Harvest2Name", dEntry.harvestNames[1] );
-				if( dEntry.harvestNames.length >= 3 )
-					pUser.SetTempTag( "Harvest3Name", dEntry.harvestNames[2] );
-				if( dEntry.harvestNames.length >= 4 )
-					pUser.SetTempTag( "Harvest4Name", dEntry.harvestNames[3] );
+				if( entry.harvestNames.length >= 1 )
+					pUser.SetTempTag( "HarvestName",  entry.harvestNames[0] );
+				if( entry.harvestNames.length >= 2 )
+					pUser.SetTempTag( "Harvest2Name", entry.harvestNames[1] );
+				if( entry.harvestNames.length >= 3 )
+					pUser.SetTempTag( "Harvest3Name", entry.harvestNames[2] );
+				if( entry.harvestNames.length >= 4 )
+					pUser.SetTempTag( "Harvest4Name", entry.harvestNames[3] );
 			}
 
-			if( dEntry.recipeID && dEntry.recipeID > 0 )
-				pUser.SetTempTag( "needRecipeID", dEntry.recipeID );
+			if( entry.recipeID && entry.recipeID > 0 )
+				pUser.SetTempTag( "needRecipeID", entry.recipeID );
 			else
 				pUser.SetTempTag( "needRecipeID", 0 );
 
