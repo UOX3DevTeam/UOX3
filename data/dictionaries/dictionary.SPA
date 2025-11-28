@@ -5217,6 +5217,16 @@
 17273=Tendrá que esperar unos segundos mientras inspecciono el último pedido.
 17274=La escritura de pedido a granel ha sido colocada en su mochila.
 17275=No tiene suficiente espacio en su mochila para la recompensa del pedido a granel.
+17276=Combinar esta escritura con otra.
+17277=No se trata de un pedido al por mayor.
+17278=Ambos pedidos deben ser de calidad excepcional.
+17279=Ambos pedidos deben usar el mismo tipo de recurso.
+17280=Los dos pedidos tienen diferentes cantidades solicitadas y no se pueden combinar.
+17281=El pedido con el que se combinará no se ha completado.
+17282=No se trata de un pedido al por mayor para esta gran solicitud.
+17283=Ya se ha combinado la cantidad máxima de artículos solicitados para esta escritura.
+17284=Los pedidos se han combinado.
+17285=Un gran pedido al por mayor
 // [17500-17529] Nombres de gremios NPC
 17500=Soy el %s de %d
 17501=El Gremio de las Artes Arcanas

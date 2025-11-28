@@ -5218,6 +5218,17 @@
 17273=You'll have to wait a few seconds while I inspect the last order.
 17274=The bulk order deed has been placed in your backpack.
 17275=You do not have enough room in your backpack for the bulk request's reward.
+17276=Combine this deed with another deed.
+17277=That is not a bulk order.
+17278=Both orders must be of exceptional quality.
+17279=Both orders must use the same resource type.
+17280=The two orders have different requested amounts and cannot be combined.
+17281=The order to combine with is not completed.
+17282=That is not a bulk order for this large request.
+17283=The maximum amount of requested items have already been combined to this deed.
+17284=The orders have been combined.
+17285=A large bulk order
+17286=This vendor cannot offer bulk orders.
 // [17500-17529] NPC Guilds Names
 17500=I am the %s of %d
 17501=The Guild of Arcane Arts

@@ -5373,6 +5373,16 @@
 17273=Vous allez devoir patienter quelques secondes pendant que j'inspecte la dernière commande.
 17274=L'acte de commande groupée a été placé dans votre sac à dos.
 17275=Vous n'avez pas assez de place dans votre sac à dos pour la récompense de la commande groupée.
+17276=Combinez cet acte avec un autre.
+17277=Il ne s'agit pas d'une commande groupée.
+17278=Les deux commandes doivent être d'une qualité exceptionnelle.
+17279=Les deux commandes doivent utiliser le même type de ressource.
+17280=Les deux commandes ont des quantités demandées différentes et ne peuvent pas être combinées.
+17281=La commande à combiner n'est pas terminée.
+17282=Il ne s'agit pas d'une commande groupée pour cette demande importante.
+17283=La quantité maximale d'articles demandés a déjà été combinée à cet acte.
+17284=Les commandes ont été combinées.
+17285=Une commande groupée importante.
 // [17500-17529] Noms des guildes de PNJ
 17500=Je suis le %s de %d
 17501=La guilde des arts arcaniques

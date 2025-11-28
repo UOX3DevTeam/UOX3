@@ -14,6 +14,9 @@ const fameRewardMultiplier = GetServerSetting( "BODFameRewardMultiplier" ); // D
 // If crafting coloured weapons is allowed, also include them in the BOD requests
 const canCraftColouredWeapons = GetServerSetting( "CraftColouredWeapons" );
 
+// Toggle large BODs on/off globally
+const offerLargeBODs = true;
+
 // Weapon CreateEntries Table
 const weaponCreateEntries = [
 	// Iron, Dull Copper, Shadow Iron, Copper, Bronze, Gold, Agapite, Verite, Valorite
@@ -106,6 +109,57 @@ const clothCreateEntries = [
 	[160]  // Shoes
 ];
 
+// Large weapon groups (from large*.cfg)
+const LargeBlacksmithWeaponGroups = {
+	// Large Swords bulk order: Broadsword, Cutlass, Katana, Longsword, Scimitar, Viking Sword
+	swords: [14, 3, 20, 6, 11, 4],
+
+	// Large Axe bulk order: Axe, Battle Axe, Double Axe, Executioner's Axe, Large Battle Axe, Two Handed Axe
+	axes: [15, 10, 8, 16, 9, 12],
+
+	// Large Mace bulk order: War Axe, Hammer Pick, Mace, Maul, War Hammer, War Mace
+	maces: [19, 5, 1, 2, 13, 7],
+
+	// Large Fencing bulk order: Dagger, Short Spear, Spear, War Fork, Kryss
+	fencing: [0, 21, 23, 18, 17],
+
+	// Large Polearms bulk order: Bardiche, Halberd
+	polearms: [22, 24]
+};
+
+// Large armor groups (from large*.cfg)
+const LargeBlacksmithArmorGroups = {
+	// Large Ring bulk order: Ringmail Gloves, Ringmail Sleeves, Ringmail Leggings, Ringmail Tunic
+	ring: [6, 7, 8, 9],
+
+	// Large Chain bulk order: Chainmail Coif, Chainmail Leggings, Chainmail Tunic
+	chain: [10, 11, 12],
+
+	// Large Plate bulk order: Platemail Gorget, Platemail Gloves, Platemail Arms, Platemail Legs, Platemail Tunic
+	plate: [13, 14, 15, 16, 17]
+};
+
+const LargeTailorGroups = {
+	// All hats
+	hats: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+
+	// Upper body cloth
+	shirts:   [12, 13, 14, 15],
+	outerwear:[16, 19, 20],      // Surcoat, Cloak, Robe
+
+	// Dresses
+	dresses:  [17, 18],
+
+	// Lower body
+	legs:     [22, 23, 24],      // Long Pants, Kilt, Skirt
+
+	// Sashes / aprons
+	sashesAprons: [25, 26, 27],  // Body Sash, Half Apron, Full Apron
+
+	// Misc
+	misc: [28, 29]               // Oil Cloth, Shoes
+};
+
 // Outer properties correspond to bodType tag.
 // Inner properties correspond to bodSubtype tag.
 const BODTypesToCreateEntries = {
@@ -122,6 +176,12 @@ const BODTypesToCreateEntries = {
 const BODTypeToDFNSectionID = {
 	1: "smallbod_blacksmith",
 	2: "smallbod_tailor"
+};
+
+// Large BOD DFN sections (you’ll need matching DFN entries)
+const BODTypeToLargeDFNSectionID = {
+	1: "largebod_blacksmith",
+	2: "largebod_tailor"
 };
 
 const BODTypesToSkillNames = {
@@ -314,7 +374,8 @@ function onSoldToVendor( pSock, npcVendor, iSold )
 			// Roll the dice!
 			if( RandomNumber( 1, 5 ) == 5 )
 			{
-				SmallBODAcceptGump( pUser, npcVendor );
+				// Decide small vs large based on skill/bodType
+				OfferBODFromVendor( pUser, npcVendor );
 			}
 		}
 	}
@@ -369,7 +430,8 @@ function onSpeech( myString, pUser, myNPC )
 					{
 						myNPC.SetTimer( Timer.MOVETIME, 1000 ); // Pause NPC in their tracks for a second
 						myNPC.TurnToward( pUser );
-						SmallBODAcceptGump( pUser, myNPC );
+						// Decide small vs large based on skill/bodType
+						OfferBODFromVendor( pUser, myNPC );
 						return 1;
 					}
 				}
@@ -440,32 +502,32 @@ function SmallBODAcceptGump( pUser, myNPC )
 	bodGump.AddPage( 0 );
 	bodGump.AddBackground( 25, 10, 430, 264, 5054 );
 
-    bodGump.AddTiledGump( 33, 20, 413, 245, 2624 );
-    bodGump.AddCheckerTrans( 33, 20, 413, 245 );
+	bodGump.AddTiledGump( 33, 20, 413, 245, 2624 );
+	bodGump.AddCheckerTrans( 33, 20, 413, 245 );
 
-    bodGump.AddGump( 20, 5, 10460 );
-    bodGump.AddGump( 430, 5, 10460 );
-    bodGump.AddGump( 20, 249, 10460 );
-    bodGump.AddGump( 430, 249, 10460 );
+	bodGump.AddGump( 20, 5, 10460 );
+	bodGump.AddGump( 430, 5, 10460 );
+	bodGump.AddGump( 20, 249, 10460 );
+	bodGump.AddGump( 430, 249, 10460 );
 
-	bodGump.AddHTMLGump( 190, 25, 120, 20, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 17250, socket.language ) + "</basefont>" ); // A bulk order
-	bodGump.AddHTMLGump( 40, 48, 350, 20, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 17267, socket.language ) + "</basefont>" ); // Ah!  Thanks for the goods!  Would you help me out?
+	bodGump.AddHTMLGump( 190, 25, 120, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17250, socket.language ) + "</basefont>" ); // A bulk order
+	bodGump.AddHTMLGump( 40, 48, 350, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17267, socket.language ) + "</basefont>" ); // Ah!  Thanks for the goods!  Would you help me out?
 
-	bodGump.AddHTMLGump( 40, 72, 210, 20, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 17251, socket.language ) + "</basefont>" ); // Amount to make:
+	bodGump.AddHTMLGump( 40, 72, 210, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17251, socket.language ) + "</basefont>" ); // Amount to make:
 	bodGump.AddText( 250, 72, 1152, amountMax );
 
-	bodGump.AddHTMLGump( 40, 96, 120, 20, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 17253, socket.language ) + "</basefont>" ); // Items requested:
-	bodGump.AddPicture( 325, 96, graphicID);// image of the item requested
-	bodGump.AddHTMLGump( 40, 120, 210, 20, 0, 0, "<basefont color=#ffffff>" + itemName + "</basefont>" );// itemName of item to make
+	bodGump.AddHTMLGump( 40, 96, 120, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17253, socket.language ) + "</basefont>" ); // Items requested:
+	bodGump.AddPicture( 325, 96, graphicID );// image of the item requested
+	bodGump.AddHTMLGump( 40, 120, 210, 20, false, false, "<basefont color=#ffffff>" + itemName + "</basefont>" );// itemName of item to make
 
 	if( reqExceptional || materialColor > 0 )
 	{
-		bodGump.AddHTMLGump( 40, 144, 210, 20, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 17255, socket.language ) + "</basefont>" ); // Special requirements to meet:
+		bodGump.AddHTMLGump( 40, 144, 210, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17255, socket.language ) + "</basefont>" ); // Special requirements to meet:
 	}
 
 	if( reqExceptional )
 	{
-		bodGump.AddHTMLGump( 40, 168, 350, 20, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 17256, socket.language ) + "</basefont>"); // All items must be exceptional.
+		bodGump.AddHTMLGump( 40, 168, 350, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17256, socket.language ) + "</basefont>"); // All items must be exceptional.
 	}
 
 	if( materialColor > 0 ) // checks to see if a material is required for the bod.
@@ -514,18 +576,18 @@ function SmallBODAcceptGump( pUser, myNPC )
 		}
 		if( materialName != "" )
 		{
-			bodGump.AddHTMLGump( 40, y, 350, 20, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 17257, socket.language ) + " " + materialName + " material</basefont>" );
+			bodGump.AddHTMLGump( 40, y, 350, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17257, socket.language ) + " " + materialName + " material</basefont>" );
 		}
 	}
-	bodGump.AddHTMLGump( 40, 216, 350, 20, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 17268, socket.language ) + "</basefont>" ); // Do you want to accept this order?
+	bodGump.AddHTMLGump( 40, 216, 350, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17268, socket.language ) + "</basefont>" ); // Do you want to accept this order?
 
-    bodGump.AddButton( 100, 240, 4005, 4007, 1, 0, 1 );
-    bodGump.AddHTMLGump( 135, 240, 120, 20, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 17269, socket.language ) + "</basefont>" ); // Ok
+	bodGump.AddButton( 100, 240, 4005, 4007, 1, 0, 1 );
+	bodGump.AddHTMLGump( 135, 240, 120, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17269, socket.language ) + "</basefont>" ); // Ok
 
-    bodGump.AddButton( 275, 240, 4005, 4007, 1, 0, 0 );
-    bodGump.AddHTMLGump( 310, 240, 120, 20, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 2709, socket.language ) + "</basefont>" ); // CANCEL
+	bodGump.AddButton( 275, 240, 4005, 4007, 1, 0, 0 );
+	bodGump.AddHTMLGump( 310, 240, 120, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 2709, socket.language ) + "</basefont>" ); // CANCEL
 
-	bodGump.Send( pUser );
+	bodGump.Send( socket );
 	bodGump.Free();
 }
 
@@ -539,43 +601,55 @@ function onGumpPress( socket, pButton, gumpData )
 	if( !ValidateObject( pUser ))
 		return;
 
-	var bodEntry = pUser.bodEntry;
-	if( typeof( bodEntry ) == "undefined" )
+	var hasSmallOffer = typeof( pUser.bodEntry ) !== "undefined";
+	var hasLargeOffer = typeof( pUser.largeBodOffer ) !== "undefined";
+
+	// No BOD offer context stored on player
+	if( !hasSmallOffer && !hasLargeOffer )
 		return;
 
-	var bodNPC = pUser.bodNPC;
-	if( typeof( bodNPC ) == "undefined" || !ValidateObject( bodNPC ))
-		return;
-
-	// Fetch some properties from the bodEntry
-	var amountMax = bodEntry.tempAmountMax;
-	var reqExceptional = bodEntry.tempReqExceptional;
-	var bodType = bodEntry.tempBodType;
-	const bodSubtype = bodEntry.tempBodSubtype;
-	var graphicID = bodEntry.id;
-	var itemName = bodEntry.name;
-	var materialColor = bodEntry.resources[0][1];
-	var bodSectionID = bodEntry.addItem;
-
-	switch( pButton )
+	// ---------------------------------------------------------------------
+	// SMALL BOD ACCEPT GUMP (existing behaviour)
+	// ---------------------------------------------------------------------
+	if( hasSmallOffer )
 	{
-		case 0: // Cancel BOD Offer
-			break;
-		case 1: // Accept BOD Offer
-			var playerPack = pUser.pack;
-			if( playerPack.totalItemCount >= playerPack.maxItems )
-			{
-				socket.SysMessage( GetDictionaryEntry( 1819, socket.language )); // Your backpack cannot hold any more items!
+		var bodEntry = pUser.bodEntry;
+		if( typeof( bodEntry ) == "undefined" )
+			return;
 
-				// Remove temporary reference to bodEntry on pUser
-				delete pUser.bodEntry;
-				delete pUser.bodNPC;
+		var bodNPC = pUser.bodNPC;
+		if( typeof( bodNPC ) == "undefined" || !ValidateObject( bodNPC ))
+			return;
 
-				return;
-			}
-			else
+		// Fetch some properties from the bodEntry
+		var amountMax      = bodEntry.tempAmountMax;
+		var reqExceptional = bodEntry.tempReqExceptional;
+		var bodType        = bodEntry.tempBodType;
+		var bodSubtype     = bodEntry.tempBodSubtype;
+		var graphicID      = bodEntry.id;
+		var itemName       = bodEntry.name;
+		var materialColor  = bodEntry.resources[0][1];
+		var bodSectionID   = bodEntry.addItem;
+
+		switch( pButton )
+		{
+			case 0: // Cancel BOD Offer
+				break;
+			case 1: // Accept BOD Offer
 			{
-				var smallBOD = CreateDFNItem( pUser.socket, pUser, BODTypeToDFNSectionID[bodType], 1, "ITEM", true );
+				var playerPack = pUser.pack;
+				if( playerPack.totalItemCount >= playerPack.maxItems )
+				{
+					socket.SysMessage( GetDictionaryEntry( 1819, socket.language )); // Your backpack cannot hold any more items!
+
+					// Remove temporary reference to bodEntry on pUser
+					delete pUser.bodEntry;
+					delete pUser.bodNPC;
+
+					return;
+				}
+
+				var smallBOD = CreateDFNItem( socket, pUser, BODTypeToDFNSectionID[bodType], 1, "ITEM", true );
 				if( ValidateObject( smallBOD ))
 				{
 					// Store the BOD properties as permanent tags on the BOD deed
@@ -586,22 +660,100 @@ function onGumpPress( socket, pButton, gumpData )
 					smallBOD.SetTag( "materialColor", materialColor );
 					smallBOD.SetTag( "bodSectionID", bodSectionID );
 					smallBOD.SetTag( "bodSubtype", bodSubtype );
+					smallBOD.SetTag( "bodType", bodType );
 					smallBOD.SetTag( "init", true );
 
 					pUser.TextMessage( GetDictionaryEntry( 17274, socket.language ), false, 0x3b2, 0, pUser.serial ); // The bulk order deed has been placed in your backpack.
 				}
+				break;
 			}
-			break;
-		default:
-			break;
+			default:
+				break;
+		}
+
+		// Remove temporary reference to bodEntry on pUser
+		delete pUser.bodEntry;
+		delete pUser.bodNPC;
+
+		// Regardless of whether player accepts or declines the BOD, apply cooldown
+		SetBODAcceptanceCooldown( pUser, bodType );
+		return;
 	}
 
-	// Remove temporary reference to bodEntry on pUser
-	delete pUser.bodEntry;
+	// ---------------------------------------------------------------------
+	// LARGE BOD ACCEPT GUMP
+	// ---------------------------------------------------------------------
+	if( hasLargeOffer )
+	{
+		var offer = pUser.largeBodOffer;
+		if( !offer )
+			return;
 
-	// Regardless of whether player accepts or declines the BOD, apply cooldown until next time
-	// they can get an offer for another BOD
-	SetBODAcceptanceCooldown( pUser, bodType );
+		var bodType        = offer.bodType | 0;
+		var bodSubtype     = offer.bodSubtype | 0;
+		var amountMax      = offer.amountMax | 0;
+		var reqExceptional = !!offer.reqExceptional;
+		var materialColor  = offer.materialColor | 0;
+		var entries        = offer.entries || [];
+
+		switch( pButton )
+		{
+			case 0: // Cancel
+				// Just drop through; deed is never created
+				break;
+
+			case 1: // Accept
+			{
+				var playerPack = pUser.pack;
+				if( playerPack.totalItemCount >= playerPack.maxItems )
+				{
+					socket.SysMessage( GetDictionaryEntry( 1819, socket.language )); // Your backpack cannot hold any more items!
+					delete pUser.largeBodOffer;
+					return;
+				}
+
+				var dfnSection = BODTypeToLargeDFNSectionID[bodType];
+				if( !dfnSection )
+				{
+					socket.SysMessage( "LargeBODAcceptGump: No DFN section defined for bodType " + bodType + "." );
+					delete pUser.largeBodOffer;
+					return;
+				}
+
+				var largeBOD = CreateDFNItem( socket, pUser, dfnSection, 1, "ITEM", true );
+				if( ValidateObject( largeBOD ))
+				{
+					largeBOD.SetTag( "bodType", bodType );
+					largeBOD.SetTag( "bodSubtype", bodSubtype );
+					largeBOD.SetTag( "amountMax", amountMax );
+					largeBOD.SetTag( "reqExceptional", reqExceptional );
+					largeBOD.SetTag( "materialColor", materialColor );
+					largeBOD.SetTag( "init", true );
+					largeBOD.SetTag( "entryCount", entries.length );
+
+					for( var i = 0; i < entries.length; ++i )
+					{
+						var e = entries[i] || {};
+						largeBOD.SetTag( "entry" + i + "_itemName", e.itemName || "" );
+						largeBOD.SetTag( "entry" + i + "_graphicID", e.graphicID | 0 );
+						largeBOD.SetTag( "entry" + i + "_bodSectionID", e.bodSectionID || "" );
+					}
+
+					// Same message as small BOD
+					pUser.TextMessage( GetDictionaryEntry( 17274, socket.language ), false, 0x3b2, 0, pUser.serial );
+				}
+				else
+				{
+					socket.SysMessage( "LargeBODAcceptGump: Failed to create the large BOD deed." );
+				}
+				break;
+			}
+		}
+
+		// Clear the offer and apply cooldown (same per-skill timer logic)
+		delete pUser.largeBodOffer;
+		SetBODAcceptanceCooldown( pUser, bodType );
+	}
 }
 
 function SetBODAcceptanceCooldown( pUser, bodType )
@@ -680,18 +832,27 @@ function onDropItemOnNpc( pDropper, npcDroppedOn, iDropped )
 		return true;
 	}
 
-	var amountMax 	  = iDropped.GetTag( "amountMax" ); 	 // amount you have to make of the item
-	var amountCur 	  = iDropped.GetTag( "amountCur" ); 	 // amount you have combined
-	var iBodType 	  = iDropped.GetTag( "bodType" ); 	     // BOD type of the BOD itself
-	var pBodType 	  = npcDroppedOn.GetTag( "bodType" );    // BOD type of the NPC BOD is dropped on, if any
+	var amountMax   = parseInt( iDropped.GetTag( "amountMax" ));  // amount you have to make of the item
+	var amountCur   = parseInt( iDropped.GetTag( "amountCur" ));  // amount you have combined (for small / aggregated for large)
+	var iBodType    = iDropped.GetTag( "bodType" );  // BOD type of the BOD itself
+	var pBodType    = npcDroppedOn.GetTag( "bodType" ); // BOD type of the NPC BOD is dropped on, if any
 
-	if( iDropped.sectionID.split("_")[0] == "smallbod" && pBodType > 0 )
+	var sectionRoot = "";
+	if( iDropped.sectionID && typeof iDropped.sectionID === "string" )
+	{
+		sectionRoot = iDropped.sectionID.split( "_" )[0];
+	}
+
+	// -------------------------------------------------------------
+	// SMALL BOD TURN-IN
+	// -------------------------------------------------------------
+	if( sectionRoot == "smallbod" && pBodType > 0 )
 	{
 		// Check if NPC accepts the type of BOD being dropped on them
 		if( iBodType != pBodType )
 		{
 			// That order is for some other shopkeeper.
-			npcDroppedOn.TextMessage( GetDictionaryEntry( 17272, socket.language ), false, 0x3b2, 0, pDropper.serial ); // That order is for some other shopkeeper.
+			npcDroppedOn.TextMessage( GetDictionaryEntry( 17272, socket.language ), false, 0x3b2, 0, pDropper.serial );
 			return false;
 		}
 
@@ -709,7 +870,7 @@ function onDropItemOnNpc( pDropper, npcDroppedOn, iDropped )
 			return false;
 		}
 
-		// Does player's backpack have space for the reward items (gold & special item?
+		// Does player's backpack have space for the reward items (gold & special item)?
 		var playerPack = pDropper.pack;
 		if( playerPack.totalItemCount >= ( playerPack.maxItems - 2 ))
 		{
@@ -731,6 +892,76 @@ function onDropItemOnNpc( pDropper, npcDroppedOn, iDropped )
 			iDropped.Delete();
 			return 2;
 		}
+
+		return false;
+	}
+
+	// -------------------------------------------------------------
+	// LARGE BOD TURN-IN
+	// -------------------------------------------------------------
+	if( sectionRoot == "largebod" && pBodType > 0 )
+	{
+		// Check if NPC accepts the type of BOD being dropped on them
+		if( iBodType != pBodType )
+		{
+			npcDroppedOn.TextMessage( GetDictionaryEntry( 17272, socket.language ), false, 0x3b2, 0, pDropper.serial ); // That order is for some other shopkeeper.
+			return false;
+		}
+
+		// Check that *each entry* in the large deed is complete
+		var entryCount      = parseInt( iDropped.GetTag( "entryCount" ));
+		var amountMaxLarge  = amountMax;
+
+		var allComplete = true;
+		for( var i = 0; i < entryCount; ++i )
+		{
+			var entryAmt = parseInt( iDropped.GetTag( "entry" + i + "_amount" ));
+			if( entryAmt < amountMaxLarge )
+			{
+				allComplete = false;
+				break;
+			}
+		}
+
+		if( !allComplete )
+		{
+			npcDroppedOn.TextMessage( GetDictionaryEntry( 17270, socket.language ), false, 0x3b2, 0, pDropper.serial ); // You have not completed the order yet.
+			return false;
+		}
+
+		// Check reward cooldown (reuse same timer space as small BODs)
+		var largeBodRewardCD = pDropper.GetJSTimer( iBodType * 10, 3214 );
+		if( largeBodRewardCD != 0 )
+		{
+			npcDroppedOn.TextMessage( GetDictionaryEntry( 17273, socket.language ), false, 0x3b2, 0, pDropper.serial ); // You'll have to wait a few seconds while I inspect the last order.
+			return false;
+		}
+
+		// Backpack space check
+		var playerPack2 = pDropper.pack;
+		if( playerPack2.totalItemCount >= ( playerPack2.maxItems - 2 ))
+		{
+			npcDroppedOn.TextMessage( GetDictionaryEntry( 17275, socket.language ), false, 0x3b2, 0, pDropper.serial );
+			return false;
+		}
+
+		if( DispenseBODRewards( pDropper, npcDroppedOn, iDropped ))
+		{
+			// Same 10-second “inspect” cooldown
+			pDropper.StartTimer( 10000, iBodType * 10, true );
+
+			// Kill offer cooldown for this bodType
+			var bodOfferCD2 = pDropper.GetJSTimer( iBodType, 3214 );
+			if( bodOfferCD2 != 0 )
+			{
+				pDropper.KillJSTimer( iBodType, 3214 );
+			}
+
+			iDropped.Delete();
+			return 2;
+		}
+
+		return false;
 	}
 
 	// Otherwise, reject the item drop and bounce it back where it came from
@@ -1010,4 +1241,374 @@ function MinMaxRewardModifiers( iDropped, bodType, numTiers )
 	}
 
 	return [Math.floor( minModPercent * numTiers ), Math.floor( maxModPercent * numTiers )];
+}
+
+function GetLargeGroupRowIndices( bodType, bodSubtype )
+{
+	// bodType: 1 = Blacksmith, 2 = Tailor
+	// bodSubtype: we’ll reuse your existing meaning:
+	//   smith: 1 = weapons, 2 = armor, 3 = both (we’ll treat like weapons for now)
+	if( bodType === 1 )
+	{
+		// BLACKSMITH
+		if( bodSubtype === 1 || bodSubtype === 3 )
+		{
+			// Weapon large BOD – pick a random weapon group
+			var keys = Object.keys(LargeBlacksmithWeaponGroups);
+			if( keys.length === 0 )
+				return null;
+
+			var pick = keys[Math.floor(Math.random() * keys.length)];
+			return {
+				groupName: pick,
+				sourceTable: weaponCreateEntries,
+				rowIndices: LargeBlacksmithWeaponGroups[pick]
+			};
+		}
+		else if( bodSubtype === 2 )
+		{
+			// Armor large BOD – pick a random armor group
+			var aKeys = Object.keys(LargeBlacksmithArmorGroups);
+			if( aKeys.length === 0 )
+				return null;
+
+			var aPick = aKeys[Math.floor(Math.random() * aKeys.length)];
+			return {
+				groupName: aPick,
+				sourceTable: armorCreateEntries,
+				rowIndices: LargeBlacksmithArmorGroups[aPick]
+			};
+		}
+	}
+	else if( bodType === 2 )
+	{
+		// TAILOR – stub for now; will need proper large cloth groupings
+		var tKeys = Object.keys(LargeTailorGroups);
+		if( tKeys.length === 0 )
+			return null;
+
+		var tPick = tKeys[Math.floor(Math.random() * tKeys.length)];
+		return {
+			groupName: tPick,
+			sourceTable: clothCreateEntries,
+			rowIndices: LargeTailorGroups[tPick]
+		};
+	}
+
+	return null;
+}
+
+function BuildLargeBODDef( bodType, bodSubtype, pSkill )
+{
+	var groupInfo = GetLargeGroupRowIndices( bodType, bodSubtype );
+	if( groupInfo == null )
+		return null;
+
+	var bodItemEntries = BODTypesToCreateEntries[bodType][bodSubtype];
+	if( !bodItemEntries )
+		return null;
+
+	var rowIndices   = groupInfo.rowIndices;
+	var sourceTable  = groupInfo.sourceTable;
+
+	// ------------------------------------------------------------
+	// Shared logic with small BODs: amountMax + reqExceptional
+	// ------------------------------------------------------------
+	var amountMax = 0;
+	var reqExceptional = false;
+
+	if( pSkill >= 700 )
+	{
+		if((( pSkill + 800 ) / 2 ) > RandomNumber( 0, 1000 ))
+		{
+			reqExceptional = true;
+		}
+		var values70 = [ 10, 15, 20, 20 ];
+		amountMax = values70[Math.floor(Math.random() * values70.length)];
+	}
+	else if( pSkill >= 500 )
+	{
+		var values50 = [ 10, 15, 15, 20 ];
+		amountMax = values50[Math.floor(Math.random() * values50.length)];
+	}
+	else
+	{
+		var valuesLow = [ 10, 10, 15, 20 ];
+		amountMax = valuesLow[Math.floor(Math.random() * valuesLow.length)];
+	}
+
+	// ------------------------------------------------------------
+	// Choose material index + color (similar to SelectBodEntry)
+	// ------------------------------------------------------------
+	var maxMaterialIndex = bodItemEntries[0].length - 1;
+	var materialIndex = 0;
+	if( canCraftColouredWeapons )
+	{
+		materialIndex = RandomNumber( 0, maxMaterialIndex );
+
+		// Gate to what player can realistically craft
+		if( pSkill < 700 )
+		{
+			// Below 70 skill: trend towards iron
+			materialIndex = 0;
+		}
+		else
+		{
+			// If player doesn't meet skill for rare ores, snap back to iron
+			var minSkillForMaterial = 1000 - (50 * (maxMaterialIndex - materialIndex));
+			if( pSkill < minSkillForMaterial )
+				materialIndex = 0;
+		}
+	}
+
+	// Get the color from the *first* row in the group
+	var firstRow = rowIndices[0];
+	var firstCreateIndex = bodItemEntries[firstRow][materialIndex];
+	var firstCreateEntry  = CreateEntries[firstCreateIndex];
+	var materialColor = 0;
+	if( firstCreateEntry && firstCreateEntry.resources && firstCreateEntry.resources[0] )
+	{
+		materialColor = firstCreateEntry.resources[0][1] | 0;
+	}
+
+	// ------------------------------------------------------------
+	// Build per-item entries used by LargeBODAcceptGump
+	// ------------------------------------------------------------
+	var entries = [];
+	for( var i = 0; i < rowIndices.length; i++ )
+	{
+		var row = rowIndices[i];
+
+		// row is a row index into bodItemEntries, which is the same table
+		// (weaponCreateEntries/armorCreateEntries) we used for small BODs.
+		var createIndex = bodItemEntries[row][materialIndex];
+		var ce = CreateEntries[createIndex];
+		if( !ce )
+			continue;
+
+		entries.push({
+			itemName:   ce.name || "Unknown item",
+			graphicID:  ce.id | 0,
+			bodSectionID: ce.addItem || ""
+		});
+	}
+
+	if( entries.length === 0 )
+		return null;
+
+	return {
+		bodType:        bodType,
+		bodSubtype:     bodSubtype,
+		amountMax:      amountMax,
+		reqExceptional: reqExceptional,
+		materialColor:  materialColor,
+		entries:        entries
+	};
+}
+
+function ShouldOfferLargeBOD( bodType, pSkill )
+{
+	// Only allow large BODs for smith & tailor for now
+	if( bodType != 1 && bodType != 2 )
+		return false;
+
+	// Below 70.0 skill => always small BOD
+	if( pSkill < 700 )
+		return false;
+
+	// 10% at 70.0 > 40% at 100.0
+	var t = ( pSkill - 700 ) / 300;        // 0..1
+	if( t < 0 ) t = 0;
+	if( t > 1 ) t = 1;
+
+	var chance = 0.10 + 0.30 * t;         // 0.10–0.40
+	return Math.random() < chance;
+}
+
+function OfferBODFromVendor( pUser, myNPC )
+{
+	if( !ValidateObject( pUser ) || !ValidateObject( myNPC ))
+		return;
+
+	var socket = pUser.socket;
+	if( socket == null )
+		return;
+
+	var bodType    = myNPC.GetTag( "bodType" );
+	var bodSubtype = myNPC.GetTag( "bodSubtype" );
+	if( !bodType || !BODTypesToSkillNames[bodType] )
+	{
+		socket.SysMessage( GetDictionaryEntry( 17286, socket.language )); // This vendor cannot offer bulk orders.
+		return;
+	}
+
+	// Use the same helper everywhere for skill lookup
+	var pSkill = GetBODSkill( pUser, bodType );
+
+	// Decide small vs large
+	if( offerLargeBODs && ShouldOfferLargeBOD( bodType, pSkill ))
+	{
+		// Build largeBodDef from our existing create entry tables
+		var largeBodDef = BuildLargeBODDef( bodType, bodSubtype, pSkill );
+		if( largeBodDef )
+		{
+			LargeBODAcceptGump( pUser, myNPC, largeBodDef );
+			return;
+		}
+
+		// If something failed (no groups / bad mapping), fall back to small BOD
+		Console.Log( "BuildLargeBODDef failed; falling back to small BOD for vendor " + myNPC.serial );
+		SmallBODAcceptGump( pUser, myNPC );
+	}
+	else
+	{
+		// Existing small BOD flow
+		SmallBODAcceptGump( pUser, myNPC );
+	}
+}
+
+function GetBODSkill( pUser, bodType )
+{
+	switch( bodType )
+	{
+		case 1: // Blacksmith
+			return pUser.skills.blacksmithing;
+		case 2: // Tailor
+			return pUser.skills.tailoring;
+		default:
+			return 0;
+	}
+}
+
+function LargeBODAcceptGump( pUser, myNPC, largeBodDef )
+{
+	var socket = pUser.socket;
+	if( socket == null || !ValidateObject( myNPC ) || !largeBodDef )
+		return;
+
+	// Pull out the properties from the definition, similar to how SmallBODAcceptGump
+	// pulls from bodEntry on the player.
+	var bodType        = largeBodDef.bodType | 0;
+	var bodSubtype     = largeBodDef.bodSubtype | 0;
+	var amountMax      = largeBodDef.amountMax | 0;
+	var reqExceptional = !!largeBodDef.reqExceptional;
+	var materialColor  = largeBodDef.materialColor | 0;
+	var entries        = largeBodDef.entries;
+
+	// If no large-BOD DFN template or no entries, bail out
+	if( !BODTypeToLargeDFNSectionID[bodType] || !entries || entries.length === 0 )
+		return;
+
+	// Store offer on player so onGumpPress can read it (like pUser.bodEntry / pUser.bodNPC)
+	pUser.largeBodOffer = {
+		npc: myNPC,
+		bodType: bodType,
+		bodSubtype: bodSubtype,
+		amountMax: amountMax,
+		reqExceptional: reqExceptional,
+		materialColor: materialColor,
+		entries: entries
+	};
+
+	// --- gump build below stays exactly like you had it ---
+	var bodGump = new Gump();
+	bodGump.AddPage( 0 );
+	bodGump.AddBackground( 25, 10, 430, 264, 5054 );
+
+	bodGump.AddTiledGump( 33, 20, 413, 245, 2624 );
+	bodGump.AddCheckerTrans( 33, 20, 413, 245 );
+
+	bodGump.AddGump( 20, 5, 10460 );
+	bodGump.AddGump( 430, 5, 10460 );
+	bodGump.AddGump( 20, 249, 10460 );
+	bodGump.AddGump( 430, 249, 10460 );
+
+	// "A bulk order"
+	bodGump.AddHTMLGump( 190, 25, 120, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17285, socket.language ) + "</basefont>" );
+
+	// "Ah! Thanks for the goods! Would you help me out?"
+	bodGump.AddHTMLGump( 40, 48, 350, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17267, socket.language ) + "</basefont>" );
+
+	// Amount to make
+	bodGump.AddHTMLGump( 40, 72, 210, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17251, socket.language ) + "</basefont>" );
+	bodGump.AddText( 250, 72, 1152, amountMax.toString() );
+
+	// Items requested
+	bodGump.AddHTMLGump( 40, 96, 120, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17253, socket.language ) + "</basefont>" );
+
+	// Show picture of first required item
+	if( entries.length > 0 && entries[0].graphicID )
+	{
+		bodGump.AddPicture( 325, 96, entries[0].graphicID );
+	}
+
+	// List each required item name
+	var itemStartY = 120;
+	var lineHeight = 20;
+	var maxVisible = 4; // we only have so much room in this gump
+
+	var y = itemStartY;
+	for( var i = 0; i < entries.length && i < maxVisible; ++i )
+	{
+		var e    = entries[i];
+		var name = e.itemName || "Unknown item";
+		bodGump.AddHTMLGump( 40, y, 260, 20, false, false, "<basefont color=#ffffff>" + name + "</basefont>" );
+		y += lineHeight;
+	}
+
+	// Where to start the "Special requirements" section:
+	// - at least 144 (old hard-coded position)
+	// - but always BELOW the last item line.
+	var reqStartY = Math.max(144, y + 4);
+
+	if( reqExceptional || materialColor > 0 )
+	{
+		bodGump.AddHTMLGump( 40, reqStartY, 210, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17255, socket.language ) + "</basefont>" ); // Special requirements to meet:
+	}
+
+	// Next line after header
+	var reqLineY = reqStartY + lineHeight;
+
+	if( reqExceptional )
+	{
+		bodGump.AddHTMLGump( 40, reqLineY, 350, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17256, socket.language ) + "</basefont>" ); // All items must be exceptional.
+		reqLineY += lineHeight;
+	}
+
+	if( materialColor > 0 )
+	{
+		var materialName = "";
+		switch( materialColor )
+		{
+			case 0:    materialName = "iron";        break;
+			case 2419: materialName = "dull copper"; break;
+			case 2406: materialName = "shadow iron"; break;
+			case 2414: materialName = "copper";      break;
+			case 1750: materialName = "bronze";      break;
+			case 2213: materialName = "gold";        break;
+			case 2425: materialName = "agapite";     break;
+			case 2207: materialName = "verite";      break;
+			case 2219: materialName = "valorite";    break;
+			default:   materialName = "iron";        break;
+		}
+
+		if( materialName !== "" )
+		{
+			bodGump.AddHTMLGump( 40, reqLineY, 350, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17257, socket.language ) + " " + materialName + " material</basefont>" );
+		}
+	}
+
+	// "Do you want to accept this order?"
+	bodGump.AddHTMLGump( 40, 216, 350, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17268, socket.language ) + "</basefont>" );
+
+	// OK
+	bodGump.AddButton( 100, 240, 4005, 4007, 1, 0, 1 );
+	bodGump.AddHTMLGump( 135, 240, 120, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 17269, socket.language ) + "</basefont>" );
+
+	// Cancel
+	bodGump.AddButton( 275, 240, 4005, 4007, 1, 0, 0 );
+	bodGump.AddHTMLGump( 310, 240, 120, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 2709, socket.language ) + "</basefont>" );
+
+	bodGump.Send( pUser );
+	bodGump.Free();
 }

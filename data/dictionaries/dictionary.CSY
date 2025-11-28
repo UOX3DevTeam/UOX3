@@ -5215,6 +5215,16 @@
 17273=Musíte několik vteřin počkat, než zkontroluji poslední objednávku.
 17274=Listina s hromadnou objednávkou byla vložena do tvého batohu.
 17275=Nemáš v batohu dost místa na odměnu za hromadnou objednávku.
+17276=Sloučit tuto objednávku s jinou objednávkou.
+17277=Toto není hromadná objednávka.
+17278=Obě objednávky musí být výjimečné kvality.
+17279=Obě objednávky musí používat stejný typ zdroje.
+17280=Obě objednávky mají různé požadované množství a nelze je sloučit.
+17281=Objednávka, se kterou se má sloučit, není dokončena.
+17282=Toto není hromadná objednávka pro tento velký požadavek.
+17283=Maximální počet požadovaných položek již byl sloučen do této objednávky.
+17284=Objednávky byly sloučeny.
+17285=Velká hromadná objednávka
 // [17500-17529] Názvy cechů NPC
 17500=Jsem %s z %d
 17501=Gilda arkanických umění
