@@ -74,6 +74,11 @@ function onLogin( socket, pChar )
 		TriggerEvent( 2204, "RemoveBuff", pChar, 1033 );
 		TriggerEvent( 2204, "AddBuff", pChar, 1033, 1075821, 1075820, timeLeft, "" );
 	}
+	//Attach Virtue ontalk script
+	if( !pChar.HasScriptTrigger( 8007 ))
+	{
+		pChar.AddScriptTrigger( 8007 );
+	}
 }
 
 /** @type { ( sockPlayer: Socket, pPlayer: Character ) => boolean } */
@@ -256,5 +261,11 @@ function onUseBandageMacro( pSock, targChar, bandageItem )
 			TriggerEvent( 4000, "onUseCheckedTriggered", pUser, targChar, bandageItem );
 		}
 	}
+	return true;
+}
+
+function onVirtueGumpPress( pUser, tChar, buttonID )
+{
+	TriggerEvent( 8004, "virtueGump", pUser, tChar );
 	return true;
 }
