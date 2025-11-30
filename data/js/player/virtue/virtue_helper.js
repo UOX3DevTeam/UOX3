@@ -38,16 +38,8 @@ function Virtue_GetValue( pChar, virtueIndex )
 
 	virtueIndex = Virtue_ClampIndex( virtueIndex );
 
-	var tagName = "virtue" + virtueIndex;
-	var raw = pChar.GetTag( tagName );
-	if( raw === null || raw === undefined )
-		return 0;
-
-	var num = Number( raw );
-	if( isNaN( num ))
-		return 0;
-
-	return num;
+	var all = Virtue_ReadAll( pChar );
+	return all[virtueIndex] || 0;
 }
 
 function Virtue_SetValue( pChar, virtueIndex, value )
@@ -59,8 +51,85 @@ function Virtue_SetValue( pChar, virtueIndex, value )
 	if( value < 0 )
 		value = 0;
 
-	var tagName = "virtue" + virtueIndex;
-	pChar.SetTag( tagName, value );
+	var all = Virtue_ReadAll( pChar );
+	all[virtueIndex] = value;
+
+	Virtue_WriteAll( pChar, all );
+}
+
+function Virtue_ReadAll( pChar )
+{
+	var vals = [];
+	if( !ValidateObject( pChar ))
+	{
+		for( var i = 0; i < 8; i++ )
+			vals[i] = 0;
+		return vals;
+	}
+
+	// New unified storage: "v0,v1,v2,v3,v4,v5,v6,v7"
+	var raw = pChar.GetTag( "VirtuePoints" );
+
+	if( raw && raw.length > 0 )
+	{
+		var parts = raw.split( "," );
+
+		for( var i = 0; i < 8; i++ )
+		{
+			var v = 0;
+			if( i < parts.length )
+			{
+				var n = Number( parts[i] );
+				if( !isNaN( n ) && n > 0 )
+					v = n;
+			}
+			vals[i] = v;
+		}
+	}
+	else
+	{
+		// Backwards compat: read old virtue0..virtue7 tags if present
+		for( var i = 0; i < 8; i++ )
+		{
+			var tagName = "virtue" + i;
+			var r = pChar.GetTag( tagName );
+			var n = Number( r );
+			if( isNaN( n ) || n < 0 )
+				n = 0;
+			vals[i] = n;
+		}
+	}
+
+	return vals;
+}
+
+function Virtue_WriteAll( pChar, vals )
+{
+	if( !ValidateObject( pChar ))
+		return;
+
+	// Make sure we always write 8 values
+	var parts = [];
+	for( var i = 0; i < 8; i++ )
+	{
+		var v = 0;
+		if( vals && i < vals.length )
+			v = Number( vals[i] ) || 0;
+
+		if( v < 0 )
+			v = 0;
+
+		parts[i] = v.toString();
+	}
+
+	// Single tag with comma separated list
+	pChar.SetTag( "VirtuePoints", parts.join( "," ) );
+
+	// Optional: keep old per-virtue tags in sync while you migrate
+	for( var j = 0; j < 8; j++ )
+	{
+		pChar.SetTag( "virtue" + j, Number( parts[j] ) || 0 );
+	}
 }
 
 function Virtue_GetMaxAmount( virtueIndex )
