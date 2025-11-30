@@ -79,11 +79,8 @@ function Sacrifice_Resurrect( pUser )
 	}
 
 	// Check available resurrects (0..3)
-	var resCount = pUser.GetTag( "sacrifice_res_count" );
-	if( isNaN( resCount ))
-		resCount = 0;
-
-	if( resCount <= 0 )
+	var data = Sacrifice_ReadData( pUser );
+	if( data.resCount <= 0 )
 	{
 		pSocket.SysMessage( "You do not have any resurrections left." );
 		return;
@@ -91,11 +88,11 @@ function Sacrifice_Resurrect( pUser )
 
 	pUser.Resurrect();
 
-	resCount -= 1;
-	if( resCount < 0 )
-		resCount = 0;
+	data.resCount -= 1;
+	if( data.resCount < 0 )
+		data.resCount = 0;
 
-	pUser.SetTag( "sacrifice_res_count", resCount.toString() );
+	Sacrifice_WriteData( pUser, data.lastGain, data.resCount, data.lastLoss );
 
 	pSocket.SysMessage( "You use the power of Sacrifice to return to life." );
 }
@@ -124,10 +121,9 @@ function Sacrifice_StartTarget( pUser )
 	}
 
 	// Gain delay: approximately one day between sacrifices
-	var now = GetCurrentClock();
-	var lastGain = pUser.GetTag( "sacrifice_last_gain_time" );
-	if( isNaN( lastGain ))
-		lastGain = 0;
+	var now  = GetCurrentClock();
+	var data = Sacrifice_ReadData( pUser );
+	var lastGain = data.lastGain;
 
 	if( now < ( lastGain + Sacrifice_GainDelayMs ))
 	{
@@ -207,14 +203,14 @@ function Sacrifice_HandleTarget( pUser, targ )
 	}
 
 	// Gain delay check
-	var now = GetCurrentClock();
-	var lastGain = pUser.GetTag( "sacrifice_last_gain_time" );
-	if( isNaN( lastGain ))
-		lastGain = 0;
+	var now  = GetCurrentClock();
+	var data = Sacrifice_ReadData( pUser );
+	var lastGain = data.lastGain;
+	var resCount = data.resCount;
 
 	if( now < ( lastGain + Sacrifice_GainDelayMs ))
 	{
-		pSocket.SysMessage( "You must wait approximately one day before sacrificing again." );
+		pUser.SysMessage( "You must wait approximately one day before sacrificing again." );
 		return;
 	}
 
@@ -256,34 +252,29 @@ function Sacrifice_HandleTarget( pUser, targ )
 	targ.Delete();
 
 	// Record last gain time
-	pUser.SetTag( "sacrifice_last_gain_time", now.toString() );
+	data.lastGain = now;
 
 	// Award Sacrifice virtue
 	var result = TriggerEvent( 8003, "Virtue_Award", pUser, VirtueName.Sacrifice, toGain );
 
 	if( result && result.success )
 	{
-		// Current available resurrects
-		var resCount = pUser.GetTag( "sacrifice_res_count" );
-		if( isNaN( resCount ))
-			resCount = 0;
-
 		if( result.gainedPath )
 		{
-			pSocket.SysMessage( "You have gained a path in Sacrifice!" );
+			pUser.SysMessage( "You have gained a path in Sacrifice!" );
 
-			// OSI: gaining a path adds a resurrection, up to 3
 			if( resCount < 3 )
 				resCount += 1;
 		}
 		else
 		{
-			pSocket.SysMessage( "You have gained in Sacrifice." );
+			pUser.SysMessage( "You have gained in Sacrifice." );
 		}
-
-		// Store updated resurrection count
-		pUser.SetTag( "sacrifice_res_count", resCount.toString() );
 	}
+
+	// Save updated data
+	data.resCount = resCount;
+	Sacrifice_WriteData( pUser, data.lastGain, data.resCount, data.lastLoss );
 
 	// Same message as OSI after a successful sacrifice
 	pSocket.SysMessage( "You must wait approximately one day before sacrificing again." );
@@ -303,12 +294,11 @@ function Sacrifice_CheckAtrophy( pUser )
 	if( !pSocket )
 		return;
 
-	var now = GetCurrentClock();
-	var lastLoss = pUser.GetTag( "sacrifice_last_loss_time" );
-	if( isNaN( lastLoss ))
-		lastLoss = 0;
+	var now  = GetCurrentClock();
+	var data = Sacrifice_ReadData( pUser );
 
-	if( now < ( lastLoss + Sacrifice_LossDelayMs ))
+	// Not time to decay yet
+	if( now < ( data.lastLoss + Sacrifice_LossDelayMs ))
 		return;
 
 	// Time to decay Sacrifice
@@ -320,14 +310,16 @@ function Sacrifice_CheckAtrophy( pUser )
 
 	// Update available resurrects to match current path (max 3)
 	var level = TriggerEvent( 8003, "Virtue_GetLevel", pUser, VirtueName.Sacrifice );
-	var resCount = level;
-	if( resCount > 3 )
-		resCount = 3;
-	if( resCount < 0 )
-		resCount = 0;
+	var newResCount = level;
+	if( newResCount > 3 )
+		newResCount = 3;
+	if( newResCount < 0 )
+		newResCount = 0;
 
-	pUser.SetTag( "sacrifice_res_count", resCount.toString() );
-	pUser.SetTag( "sacrifice_last_loss_time", now.toString() );
+	data.resCount = newResCount;
+	data.lastLoss = now;
+
+	Sacrifice_WriteData( pUser, data.lastGain, data.resCount, data.lastLoss );
 }
 
 /* -------------------------------------------------------------------------
@@ -353,4 +345,67 @@ function onCallback1( socket, ourObj )
 	}
 
 	Sacrifice_HandleTarget( pUser, ourObj );
+}
+
+function Sacrifice_ReadData( pUser )
+{
+	var data = { lastGain: 0, resCount: 0, lastLoss: 0 };
+
+	if( !ValidateObject( pUser ))
+		return data;
+
+	var raw = pUser.GetTag( "SacrificeGain" );
+
+	if( raw && raw.length > 0 )
+	{
+		var parts = raw.split( "," );
+
+		if( parts.length > 0 )
+		{
+			var g = Number( parts[0] );
+			if( !isNaN( g ) && g > 0 )
+				data.lastGain = g;
+		}
+
+		if( parts.length > 1 )
+		{
+			var r = Number( parts[1] );
+			if( !isNaN( r ) && r >= 0 )
+				data.resCount = r;
+		}
+
+		if( parts.length > 2 )
+		{
+			var l = Number( parts[2] );
+			if( !isNaN( l ) && l > 0 )
+				data.lastLoss = l;
+		}
+	}
+
+	// Clamp resCount 0..3
+	if( data.resCount < 0 )
+		data.resCount = 0;
+	if( data.resCount > 3 )
+		data.resCount = 3;
+
+	return data;
+}
+
+function Sacrifice_WriteData( pUser, lastGain, resCount, lastLoss )
+{
+	if( !ValidateObject( pUser ))
+		return;
+
+	if( lastGain < 0 )
+		lastGain = 0;
+	if( lastLoss < 0 )
+		lastLoss = 0;
+
+	if( resCount < 0 )
+		resCount = 0;
+	if( resCount > 3 )
+		resCount = 3;
+
+	var val = lastGain.toString() + "," + resCount.toString() + "," + lastLoss.toString();
+	pUser.SetTag( "SacrificeGain", val );
 }
