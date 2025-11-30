@@ -325,6 +325,7 @@ function Sacrifice_CheckAtrophy( pUser )
 /* -------------------------------------------------------------------------
    CustomTarget callback for Sacrifice target selection
    ------------------------------------------------------------------------- */
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	if( socket == null )

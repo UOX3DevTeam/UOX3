@@ -2774,6 +2774,92 @@ function onIterate( charCheck, socket )
 			</li>
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnKill" id="eventOnKill"><span>onKill</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onKill( killer, killed )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To perform actions on the attacker when they successfully kill another character.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>Called on scripts attached to the killer after the victim has died in combat, and only if the victim's onDeathBlow event (if any) allowed death to proceed.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li>Return values from onKill are currently ignored by the core.</li>
+								<li>For future compatibility, scripts may still return true or false, but this does not affect hard coded death handling.</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<ul>
+								<li>onKill is an attacker side event. Attach the script to the character that should react to kills (for example, players or special killer NPCs).</li>
+								<li>onKill runs after onDeathBlow has been processed on the victim. If onDeathBlow returns false and cancels death, onKill will not be triggered.</li>
+								<li>onKill is not called for suicides or cases where there is no valid attacker.</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p>
+								<span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">// Simple kill tracker for a player or NPC with this script attached
+
+function onKill( killer, killed )
+{
+	// Safety checks
+	if( !ValidateObject( killer ) || !ValidateObject( killed ) )
+		return;
+
+	// Optional: ignore kills where killer and killed are the same
+	if( killer.serial === killed.serial )
+		return;
+
+	// Example 1: basic message to the killer
+	if( killer.socket )
+	{
+		killer.socket.SysMessage( "You have slain " + killed.name + "." );
+	}
+
+	// Example 2: track total kills in a custom tag
+	var totalKills = killer.GetTag( "totalKills" ) | 0;
+	killer.SetTag( "totalKills", totalKills + 1 );
+
+	// Example 3: track separate PvM and PvP kills
+	if( killed.npc )
+	{
+		var pvmKills = killer.GetTag( "pvmKills" ) | 0;
+		killer.SetTag( "pvmKills", pvmKills + 1 );
+	}
+	else
+	{
+		var pvpKills = killer.GetTag( "pvpKills" ) | 0;
+		killer.SetTag( "pvpKills", pvpKills + 1 );
+	}
+
+	// Example 4: reward tokens for PvM kills only
+	if( killed.npc )
+	{
+		var tokens = killer.GetTag( "killTokens" ) | 0;
+		killer.SetTag( "killTokens", tokens + 5 );
+		if( killer.socket )
+		{
+			killer.socket.SysMessage( "You earn 5 kill tokens for defeating " + killed.name + "." );
+		}
+	}
+}
+</code></pre>
+							</p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnLeaveRegion" id="eventOnLeaveRegion"><span>onLeaveRegion</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">

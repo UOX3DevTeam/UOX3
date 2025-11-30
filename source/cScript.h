@@ -101,6 +101,7 @@ enum ScriptEvent
 	seOnAICombatTarget,		//	**	allows overriding target selection taking place for regular AI behaviours
 	seOnCombatEnd,			//	**	allows overriding what happens when combat ends
 	seOnDeathBlow,
+	seOnKill,
 	seOnCombatDamageCalc,
 	seOnDamage,
 	seOnDamageDeal,
@@ -309,7 +310,7 @@ public:
 	SI08		OnCombatEnd( CChar *attacker, CChar *defender );
 
 	SI08		OnDeathBlow( CChar *mKilled, CChar *mKiller );
-
+	SI08		OnKill( CChar *mKiller, CChar *mKilled );
 	SI16		OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill, UI08 hitLoc );
 	SI08		OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue, WeatherType damageType );
 	SI08		OnDamageDeal( CChar *attacker, CChar *damaged, SI16 damageValue, WeatherType damageType );

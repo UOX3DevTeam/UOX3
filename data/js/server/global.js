@@ -268,6 +268,7 @@ function onUseBandageMacro( pSock, targChar, bandageItem )
 	return true;
 }
 
+/** @type { ( mChar: Character, tChar: Character, buttonId: number ) => boolean } */
 function onVirtueGumpPress( pUser, tChar, buttonID )
 {
 	TriggerEvent( 8004, "virtueGump", pUser, tChar );

@@ -4147,6 +4147,40 @@ SI08 cScript::OnDeathBlow( CChar *mKilled, CChar *mKiller )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function    -   cScript::OnKill()
+//| Date        -   30th November, 2025
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -   Triggers for characters with event attached when they kill another character
+//| Notes       -   This is called after onDeathBlow on the victim has allowed death to proceed
+//|                 Return value is currently ignored by the core, but kept for consistency
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnKill( CChar *mKiller, CChar *mKilled )
+{
+	if( !ValidateObject( mKiller )) // || !ValidateObject( mKilled ))
+		return RV_NOFUNC;
+
+	if( !ExistAndVerify( seOnKill, "onKill" ))
+		return RV_NOFUNC;
+
+	jsval rval, params[2];
+	JSObject *killerObj = JSEngine->AcquireObject( IUE_CHAR, mKiller, runTime );
+	JSObject *killedObj = JSEngine->AcquireObject( IUE_CHAR, mKilled, runTime );
+
+	// JS: function onKill( killer, killed )
+	params[0] = OBJECT_TO_JSVAL( killerObj );
+	params[1] = OBJECT_TO_JSVAL( killedObj );
+
+	JSBool retVal = InvokeEvent( "onKill", 2, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnKill, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::OnCombatDamageCalc()
 //|	Date		-	21st March, 2006
 //o------------------------------------------------------------------------------------------------o

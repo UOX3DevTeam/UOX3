@@ -28,6 +28,8 @@ function virtueGump( pUser, tChar )
 	if( !pSocket )
 		return;
 
+	var isOwner = ( pUser.serial === tChar.serial );
+
 	var g = new Gump();
 
 	g.AddPage( 0 );
@@ -35,69 +37,90 @@ function virtueGump( pUser, tChar )
 	g.AddPage( 1 );
 
 	// Humility ( index 0 )
-	var humHue = TriggerEvent( 8003, "Virtue_GetHue", tChar, 0 );
+	var humHue   = TriggerEvent( 8003, "Virtue_GetHue", tChar, 0 );
 	var humTipID = Virtue_GetTooltipID( tChar, 0 );
-	g.AddButtonTileArt( 61, 71, 108, 108, 1, 0, 11, 0x1018, humHue, 61, 71 );
+	if( isOwner )
+	{
+		g.AddButtonTileArt( 61, 71, 108, 108, 1, 0, 11, 0x1018, humHue, 61, 71 );
+	}
 	g.AddGumpColor( 61, 71, 108, humHue );
 	g.AddToolTip( humTipID );
 
 	// Sacrifice ( index 1 )
-	var sacHue = TriggerEvent( 8003, "Virtue_GetHue", tChar, 1 );
+	var sacHue   = TriggerEvent( 8003, "Virtue_GetHue", tChar, 1 );
 	var sacTipID = Virtue_GetTooltipID( tChar, 1 );
-	g.AddButtonTileArt( 35, 135, 110, 110, 1, 0, 12, 0x1018, sacHue, 35, 135 );
+	if( isOwner )
+	{
+		g.AddButtonTileArt( 35, 135, 110, 110, 1, 0, 12, 0x1018, sacHue, 35, 135 );
+	}
 	g.AddGumpColor( 35, 135, 110, sacHue );
 	g.AddToolTip( sacTipID );
 
 	// Compassion ( index 2 )
-	var compHue = TriggerEvent( 8003, "Virtue_GetHue", tChar, 2 );
+	var compHue   = TriggerEvent( 8003, "Virtue_GetHue", tChar, 2 );
 	var compTipID = Virtue_GetTooltipID( tChar, 2 );
-	g.AddButtonTileArt( 211, 133, 105, 105, 1, 0, 13, 0x1018, compHue, 211, 133 );
+	if( isOwner )
+	{
+		g.AddButtonTileArt( 211, 133, 105, 105, 1, 0, 13, 0x1018, compHue, 211, 133 );
+	}
 	g.AddGumpColor( 211, 133, 105, compHue );
 	g.AddToolTip( compTipID );
 
 	// Spirituality ( index 3 )
-	var spirHue = TriggerEvent( 8003, "Virtue_GetHue", tChar, 3 );
+	var spirHue   = TriggerEvent( 8003, "Virtue_GetHue", tChar, 3 );
 	var spirTipID = Virtue_GetTooltipID( tChar, 3 );
-	g.AddButtonTileArt( 61, 195, 111, 111, 1, 0, 14, 0x1018, spirHue, 61, 195 );
+	if( isOwner )
+	{
+		g.AddButtonTileArt( 61, 195, 111, 111, 1, 0, 14, 0x1018, spirHue, 61, 195 );
+	}
 	g.AddGumpColor( 61, 195, 111, spirHue );
 	g.AddToolTip( spirTipID );
 
 	// Valor ( index 4 )
-	var valHue = TriggerEvent( 8003, "Virtue_GetHue", tChar, 4 );
+	var valHue   = TriggerEvent( 8003, "Virtue_GetHue", tChar, 4 );
 	var valTipID = Virtue_GetTooltipID( tChar, 4 );
-	g.AddButtonTileArt( 123, 46, 112, 112, 1, 0, 15, 0x1018, valHue, 123, 46 );
+	if( isOwner )
+	{
+		g.AddButtonTileArt( 123, 46, 112, 112, 1, 0, 15, 0x1018, valHue, 123, 46 );
+	}
 	g.AddGumpColor( 123, 46, 112, valHue );
 	g.AddToolTip( valTipID );
 
 	// Honor ( index 5 )
-	var honHue = TriggerEvent( 8003, "Virtue_GetHue", tChar, 5 );
+	var honHue   = TriggerEvent( 8003, "Virtue_GetHue", tChar, 5 );
 	var honTipID = Virtue_GetTooltipID( tChar, 5 );
-	g.AddButtonTileArt( 187, 70, 107, 107, 1, 0, 16, 0x1018, honHue, 187, 70 );
+	if( isOwner )
+	{
+		g.AddButtonTileArt( 187, 70, 107, 107, 1, 0, 16, 0x1018, honHue, 187, 70 );
+	}
 	g.AddGumpColor( 187, 70, 107, honHue );
 	g.AddToolTip( honTipID );
 
 	// Justice ( index 6 )
-	var jusHue = TriggerEvent( 8003, "Virtue_GetHue", tChar, 6 );
+	var jusHue   = TriggerEvent( 8003, "Virtue_GetHue", tChar, 6 );
 	var jusTipID = Virtue_GetTooltipID( tChar, 6 );
-	g.AddButtonTileArt( 186, 195, 109, 109, 1, 0, 17, 0x1018, jusHue, 186, 195 );
+	if( isOwner )
+	{
+		g.AddButtonTileArt( 186, 195, 109, 109, 1, 0, 17, 0x1018, jusHue, 186, 195 );
+	}
 	g.AddGumpColor( 186, 195, 109, jusHue );
 	g.AddToolTip( jusTipID );
 
 	// Honesty ( index 7 )
-	var honstHue = TriggerEvent( 8003, "Virtue_GetHue", tChar, 7 );
+	var honstHue   = TriggerEvent( 8003, "Virtue_GetHue", tChar, 7 );
 	var honstTipID = Virtue_GetTooltipID( tChar, 7 );
-	g.AddButtonTileArt( 121, 221, 106, 106, 1, 0, 18, 0x1018, honstHue, 121, 221 );
+	if( isOwner )
+	{
+		g.AddButtonTileArt( 121, 221, 106, 106, 1, 0, 18, 0x1018, honstHue, 121, 221 );
+	}
 	g.AddGumpColor( 121, 221, 106, honstHue );
 	g.AddToolTip( honstTipID );
 
-	// Only show status / close buttons when viewing self,
-	if( pUser.serial === tChar.serial )
+	// Only show status / close buttons when viewing self
+	if( isOwner )
 	{
-		// Button 1: open status gump
-		g.AddButton( 57, 269, 2027, 1, 0, 100 );
-
-		// Button 2: close (we just treat as close)
-		g.AddButton( 186, 269, 2071, 1, 0, 104 );
+		g.AddButton( 57, 269, 2027, 1, 0, 100 ); // status
+		g.AddButton( 186, 269, 2071, 1, 0, 104 ); // close
 	}
 
 	g.Send( pSocket );
@@ -274,6 +297,7 @@ function showVirtueInfoGump( pUser, virtueIndex, descriptionID, webPage )
 	g.Free();
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( socket, buttonID, gumpID )
 {
 	if( !socket || !socket.currentChar )

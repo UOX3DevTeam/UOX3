@@ -31,7 +31,7 @@ function Humility_StartPetTarget( pUser )
 	var level = TriggerEvent( 8003, "Virtue_GetLevel", pUser, VirtueName.Humility );
 	if( level < VirtueLevel.Seeker )
 	{
-		pUser.SysMessage( "You must be at least a Seeker of Humility to invoke this ability." );
+		pSocket.SysMessage( "You must be at least a Seeker of Humility to invoke this ability." );
 		return;
 	}
 	var msg = "Target the pet you wish to embrace with your Humility.";
@@ -43,31 +43,35 @@ function Humility_OnVirtueUsed( pUser, pet )
 	if( !ValidateObject( pUser ) || !ValidateObject( pet ))
 		return;
 
+	var pSocket = pUser.socket;
+	if( !pSocket )
+		return;
+
 	// Check virtue level (cheap double-check)
 	var level = TriggerEvent( 8003, "Virtue_GetLevel", pUser, VirtueName.Humility );
 	if( level < VirtueLevel.Seeker )
 	{
-		pUser.SysMessage( "You must be at least a Seeker of Humility to invoke this ability." );
+		pSocket.SysMessage( "You must be at least a Seeker of Humility to invoke this ability." );
 		return;
 	}
 
 	// Reject dead pets
 	if( pet.GetTag( "isPetDead" ) == true)
 	{
-		pUser.SysMessage( "You cannot embrace Humility on the dead!" );
+		pSocket.SysMessage( "You cannot embrace Humility on the dead!" );
 		return;
 	}
 
 	// Already buffed?
 	if( pet.GetTag( "humility_pet_owner" ) !== null )
 	{
-		pUser.SysMessage( "That pet has already embraced Humility." );
+		pSocket.SysMessage( "That pet has already embraced Humility." );
 		return;
 	}
 
 	// Spend some Humility points
 	TriggerEvent( 8003, "Virtue_Atrophy", pUser, VirtueName.Humility, 3200 );
-	pUser.SysMessage( "You have lost some Humility." );
+	pSocket.SysMessage( "You have lost some Humility." );
 
 	// Compute HPR bonus based on path
 	var hprBonus = 0;
@@ -83,13 +87,11 @@ function Humility_OnVirtueUsed( pUser, pet )
 	if( typeof curHpr !== "number" )
 		curHpr = 0;
 
-	pet.SetTag( "humility_hpr_base", curHpr );
+	Humility_WritePetData( pet, pUser.serial, curHpr );
 
 	// Apply new bonus (additive)
 	pet.healthRegenBonus = curHpr + hprBonus;
 
-	// Mark pet as embraced and owner linked
-	pet.SetTag( "humility_pet_owner", pUser.serial );
 	pUser.SetTag( "humility_pet_active", 1 );
 
 	// Visual / text feedback
@@ -103,48 +105,52 @@ function Humility_ToggleHunt( pUser )
 	if( !ValidateObject( pUser ))
 		return;
 
+	var pSocket = pUser.socket;
+	if( !pSocket )
+		return;
+
 	// Check alive state if you have a way; for now just proceed.
 	var state = pUser.GetTag( "humility_hunt_state" ); // "active", "expiring", or null
 
-	if( state === "active" )
+	var data = Humility_ReadHuntData( pUser );
+
+	// state: 0=none, 1=active, 2=expiring
+	if( data.state === 1 )
 	{
 		// First time saying it -> start expiring
-		var exp = pUser.GetTag( "humility_hunt_expiring" ) | 0;
-		if( exp === 0 )
+		if( data.expiring === 0 )
 		{
-			pUser.SetTag( "humility_hunt_expiring", 1 );
-			pUser.SetTag( "humility_hunt_state", "expiring" );
+			data.state    = 2; // expiring
+			data.expiring = 1;
 
-			pUser.SysMessage( "You have ended your journey on the Path of Humility." );
+			Humility_WriteHuntData( pUser, data.state, data.expiring, data.cooldownUntil );
+
+			pSocket.SysMessage( "You have ended your journey on the Path of Humility." );
 
 			// After 30 seconds, fully clear the hunt data
 			pUser.StartTimer( 30000, 5001, 8005 );
 		}
 		else
 		{
-			pUser.SysMessage( "You have already ended your journey on the Path of Humility. You must wait before you restart your path." );
+			pSocket.SysMessage( "You have already ended your journey on the Path of Humility. You must wait before you restart your path." );
 		}
 	}
-	else if( state === "expiring" )
+	else if( data.state === 2 )
 	{
 		// Already expiring; tell them to wait
-		pUser.SysMessage( "You have already ended your journey on the Path of Humility. You must wait before you restart your path." );
+		pSocket.SysMessage( "You have already ended your journey on the Path of Humility. You must wait before you restart your path." );
 	}
 	else
 	{
 		// Before starting a new hunt, check cooldown
-		var cd = pUser.GetTag("humility_hunt_cooldown");
-		if (cd !== null && cd !== undefined)
+		var now = GetCurrentClock();
+		if( data.cooldownUntil && now < data.cooldownUntil )
 		{
-			var now = GetCurrentClock();
-			if (now < Number(cd))
-			{
-				pUser.SysMessage("You must wait before you can begin another Humility Hunt.");
-				return;
-			}
+			pSocket.SysMessage( "You must wait before you can begin another Humility Hunt." );
+			return;
 		}
 
-		Humility_StartHunt(pUser);
+		Humility_StartHunt( pUser );
 	}
 }
 
@@ -153,14 +159,19 @@ function Humility_StartHunt( pUser )
 	if( !ValidateObject( pUser ))
 		return;
 
-	pUser.SetTag( "humility_hunt_state", "active" );
-	pUser.SetTag( "humility_hunt_expiring", 0 );
+	var pSocket = pUser.socket;
+	if( !pSocket )
+		return;
+
+	// state=1 (active), expiring=0, cooldownUntil=0
+	Humility_WriteHuntData( pUser, 1, 0, 0 );
 
 	// Apply resist debuff to the player
 	Humility_ApplyResistDebuff( pUser );
+	pUser.AddScriptTrigger(8006); // humility_registerkill.js
 
-	pUser.SysMessage( "You have begun your journey on the Path of Humility. Your resists have been debuffed by 70." );
-	pUser.SysMessage( "You are now on a Humility Hunt. For each kill while you forgo the protection of resists, you shall continue on your path to Humility. You may end your Hunt by speaking \"Lum Lum Lum\" at any time." );
+	pSocket.SysMessage( "You have begun your journey on the Path of Humility. Your resists have been debuffed by 70." );
+	pSocket.SysMessage( "You are now on a Humility Hunt. For each kill while you forgo the protection of resists, you shall continue on your path to Humility. You may end your Hunt by speaking \"Lum Lum Lum\" at any time." );
 
 	// Optional: visual indicator
 	pUser.TextMessage( "*You feel your defenses weaken as you follow the path of Humility.*" );
@@ -171,19 +182,23 @@ function Humility_OnHuntExpired( pUser )
 	if( !ValidateObject( pUser ))
 		return;
 
-	// Clear hunt tags
-	// Restore original resists
+	var pSocket = pUser.socket;
+	if( !pSocket )
+		return;
+
 	Humility_ClearResistDebuff( pUser );
+	pUser.RemoveScriptTrigger(8006); // humility_registerkill.js
 
-	pUser.SetTag( "humility_hunt_state", null );
-	pUser.SetTag( "humility_hunt_expiring", null );
+	var now = GetCurrentClock(); // ms timestamp
+	var cooldownUntil = now + 60000; // 60s cooldown
 
-	// set cooldown: store "next allowed" time in ms
-	var now = GetCurrentClock(); // whatever you use for ms timestamp
-	pUser.SetTag( "humility_hunt_cooldown", now + 60000 ); // 60s
-	pUser.SysMessage( "Your time on the Path of Humility has ended." );
+	// state back to 0 (none), expiring=0, set cooldown
+	Humility_WriteHuntData( pUser, 0, 0, cooldownUntil );
+
+	pSocket.SysMessage( "Your time on the Path of Humility has ended." );
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( !ValidateObject( timerObj ))
@@ -201,29 +216,27 @@ function onTimer( timerObj, timerID )
 	if( timerID === 5002 )
 	{
 		var pet = timerObj;
-		var ownerSerial = pet.GetTag( "humility_pet_owner" );
+		var data = Humility_ReadPetData( pet );
 
 		// Restore original healthRegenBonus
-		var baseHpr = pet.GetTag( "humility_hpr_base" );
-		if( baseHpr !== null && baseHpr !== undefined )
+		var baseHpr = data.baseHpr;
+		if( typeof baseHpr !== "number" || isNaN( baseHpr ))
+			baseHpr = 0;
+
+		pet.healthRegenBonus = baseHpr;
+
+		// Clear combined pet tag
+		pet.SetTag( "HumilityPet", null );
+
+		if( data.ownerSerial && data.ownerSerial > 0 )
 		{
-			var val = Number( baseHpr );
-			if( isNaN( val ))
-				val = 0;
-
-			pet.healthRegenBonus = val;
-		}
-
-		// Clear tags
-		pet.SetTag( "humility_hpr_base", null );
-		pet.SetTag( "humility_pet_owner", null );
-
-		if( ownerSerial !== null && ownerSerial !== undefined )
-		{
-			var owner = CalcCharFromSer( Number( ownerSerial ));
+			var owner = CalcCharFromSer( Number( data.ownerSerial ));
 			if( ValidateObject( owner ))
 			{
-				owner.SysMessage( "Your pet's power returns to normal." );
+				var pSocket = owner.socket;
+				if( !pSocket )
+					return;
+				pSocket.SysMessage( "Your pet's power returns to normal." );
 				owner.SetTag( "humility_pet_active", null );
 			}
 		}
@@ -233,6 +246,7 @@ function onTimer( timerObj, timerID )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, ourObj )
 {
 	if( !socket || !socket.currentChar )
@@ -251,16 +265,15 @@ function onCallback0( socket, ourObj )
 
 	if( !ValidateObject( ourObj ) || !ourObj.isChar )
 	{
-		pUser.SysMessage( "You can only embrace your Humility on a pet." );
+		socket.SysMessage( "You can only embrace your Humility on a pet." );
 		return;
 	}
 
 	var pet = ourObj;
-
-	// Already embraced?
-	if( pet.GetTag( "humility_pet_owner" ) !== null )
+	var data = Humility_ReadPetData( pet );
+	if( data.ownerSerial && data.ownerSerial > 0 )
 	{
-		pUser.SysMessage( "That pet has already embraced Humility." );
+		socket.SysMessage( "That pet has already embraced Humility." );
 		return;
 	}
 
@@ -334,4 +347,134 @@ function Humility_ClearResistDebuff( pChar )
 
 	pChar.SetTag( "humility_resist_debuffed", null );
 	pChar.TextMessage( "*Your defenses return to normal.*" );
+}
+
+// Humility pet data stored on the pet:
+// HumilityPet = "ownerSerial,baseHpr"
+function Humility_ReadPetData( pet )
+{
+	var data = { ownerSerial: 0, baseHpr: 0 };
+
+	if( !ValidateObject( pet ))
+		return data;
+
+	var raw = pet.GetTag( "HumilityPet" );
+	if( raw && raw.length > 0 )
+	{
+		var parts = raw.split( "," );
+
+		if( parts.length > 0 )
+		{
+			var s = Number( parts[0] );
+			if( !isNaN( s ) && s > 0 )
+				data.ownerSerial = s;
+		}
+
+		if( parts.length > 1 )
+		{
+			var h = Number( parts[1] );
+			if( !isNaN( h ))
+				data.baseHpr = h;
+		}
+	}
+	else
+	{
+		// Backwards compat: read old tags once if they exist
+		var oldOwner = Number( pet.GetTag( "humility_pet_owner" ));
+		if( !isNaN( oldOwner ) && oldOwner > 0 )
+			data.ownerSerial = oldOwner;
+
+		var oldHpr = Number( pet.GetTag( "humility_hpr_base" ));
+		if( !isNaN( oldHpr ))
+			data.baseHpr = oldHpr;
+	}
+
+	if( data.baseHpr < 0 )
+		data.baseHpr = 0;
+
+	return data;
+}
+
+function Humility_WritePetData( pet, ownerSerial, baseHpr )
+{
+	if( !ValidateObject( pet ))
+		return;
+
+	if( ownerSerial < 0 )
+		ownerSerial = 0;
+	if( baseHpr < 0 )
+		baseHpr = 0;
+
+	var val = ownerSerial.toString() + "," + baseHpr.toString();
+	pet.SetTag( "HumilityPet", val );
+}
+
+// Humility hunt data stored on the player:
+// HumilityHunt = "state,expiring,cooldownUntil"
+//   state: 0=none, 1=active, 2=expiring
+//   expiring: 0/1
+//   cooldownUntil: ms timestamp, 0 if none
+function Humility_ReadHuntData( pUser )
+{
+	var data = { state: 0, expiring: 0, cooldownUntil: 0 };
+
+	if( !ValidateObject( pUser ))
+		return data;
+
+	var raw = pUser.GetTag( "HumilityHunt" );
+	if( raw && raw.length > 0 )
+	{
+		var parts = raw.split( "," );
+
+		if( parts.length > 0 )
+		{
+			var st = Number( parts[0] );
+			if( !isNaN( st ) && st >= 0 )
+				data.state = st;
+		}
+
+		if( parts.length > 1 )
+		{
+			var ex = Number( parts[1] );
+			if( !isNaN( ex ) && ex >= 0 )
+				data.expiring = ex;
+		}
+
+		if( parts.length > 2 )
+		{
+			var cd = Number( parts[2] );
+			if( !isNaN( cd ) && cd > 0 )
+				data.cooldownUntil = cd;
+		}
+	}
+
+	// Clamp
+	if( data.state < 0 || data.state > 2 )
+		data.state = 0;
+	if( data.expiring < 0 )
+		data.expiring = 0;
+	if( data.expiring > 1 )
+		data.expiring = 1;
+	if( data.cooldownUntil < 0 )
+		data.cooldownUntil = 0;
+
+	return data;
+}
+
+function Humility_WriteHuntData( pUser, state, expiring, cooldownUntil )
+{
+	if( !ValidateObject( pUser ))
+		return;
+
+	if( state < 0 || state > 2 )
+		state = 0;
+	if( expiring < 0 )
+		expiring = 0;
+	if( expiring > 1 )
+		expiring = 1;
+	if( cooldownUntil < 0 )
+		cooldownUntil = 0;
+
+	var val = state.toString() + "," + expiring.toString() + "," + cooldownUntil.toString();
+	pUser.SetTag( "HumilityHunt", val );
 }
