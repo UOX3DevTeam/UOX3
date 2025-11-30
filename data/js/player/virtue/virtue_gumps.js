@@ -1,3 +1,24 @@
+// Description: Gumps for virtue system
+// virtue0 = Humility
+// virtue1 = Sacrifice
+// virtue2 = Compassion
+// virtue3 = Spirituality
+// virtue4 = Valor
+// virtue5 = Honor
+// virtue6 = Justice
+// virtue7 = Honesty
+//
+// Virtue levels by value:
+// 0 - 3999      -> None
+// 4000 - 9999   -> Seeker
+// 10000 - 19999 -> Follower
+// Max value     -> Knight
+//
+// Max values per virtue:
+// Humility, Compassion, Spirituality, Valor, Justice, Honesty -> 21000
+// Sacrifice -> 22000
+// Honor     -> 20000
+
 function virtueGump( pUser, tChar )
 {
 	if( !ValidateObject( pUser ) || !ValidateObject( tChar ))
@@ -13,30 +34,61 @@ function virtueGump( pUser, tChar )
 	g.AddGump( 30, 40, 104 );
 	g.AddPage( 1 );
 
-	// Humility
-	g.AddButtonTileArt( 61, 71, 108, 108, 1, 0, 11, 0x1018, TriggerEvent( 8003, "Virtue_GetHue", tChar, 5 ), 61, 71);
-	g.AddGumpColor( 61, 71, 108, TriggerEvent( 8003, "Virtue_GetHue", tChar, 0 ));
-	// Valor
-	g.AddButtonTileArt( 123, 46, 112, 112, 1, 0, 12, 0x1018, TriggerEvent( 8003, "Virtue_GetHue", tChar, 5 ), 123, 46);
-	g.AddGumpColor(123, 46, 112, TriggerEvent( 8003, "Virtue_GetHue", tChar, 4 ));
-	// Honor
-	g.AddButtonTileArt( 187, 70, 107, 107, 1, 0, 13, 0x1018, TriggerEvent( 8003, "Virtue_GetHue", tChar, 5 ), 187, 70);
-	g.AddGumpColor(187, 70, 107, TriggerEvent( 8003, "Virtue_GetHue", tChar, 5 ));
-	// Sacrifice
-	g.AddButtonTileArt( 35, 135, 105, 105, 1, 0, 14, 0x1018, TriggerEvent( 8003, "Virtue_GetHue", tChar, 1 ), 35, 135);
-	g.AddGumpColor(35, 135, 110, TriggerEvent( 8003, "Virtue_GetHue", tChar, 1 ));
-	// Compassion
-	g.AddButtonTileArt( 211, 133, 105, 105, 1, 0, 15, 0x1018, TriggerEvent( 8003, "Virtue_GetHue", tChar, 2 ), 211, 133);
-	g.AddGumpColor(211, 133, 105, TriggerEvent( 8003, "Virtue_GetHue", tChar, 2 ));
-	// Spirituality
-	g.AddButtonTileArt( 61, 195, 111, 111, 1, 0, 16, 0x1018, TriggerEvent( 8003, "Virtue_GetHue", tChar, 3 ), 61, 195);
-	g.AddGumpColor(61, 195, 111, TriggerEvent( 8003, "Virtue_GetHue", tChar, 3 ));
-	// Justice
-	g.AddButtonTileArt( 186, 195, 109, 109, 1, 0, 17, 0x1018, TriggerEvent( 8003, "Virtue_GetHue", tChar, 6 ), 186, 195);
-	g.AddGumpColor(186, 195, 109, TriggerEvent( 8003, "Virtue_GetHue", tChar, 6 ));
-	// Honesty
-	g.AddButtonTileArt( 121, 221, 106, 106, 1, 0, 18, 0x1018, TriggerEvent( 8003, "Virtue_GetHue", tChar, 7 ), 121, 221);
-	g.AddGumpColor(121, 221, 106, TriggerEvent( 8003, "Virtue_GetHue", tChar, 7 ));
+	// Humility ( index 0 )
+	var humHue = TriggerEvent( 8003, "Virtue_GetHue", tChar, 0 );
+	var humTipID = Virtue_GetTooltipID( tChar, 0 );
+	g.AddButtonTileArt( 61, 71, 108, 108, 1, 0, 11, 0x1018, humHue, 61, 71 );
+	g.AddGumpColor( 61, 71, 108, humHue );
+	g.AddToolTip( humTipID );
+
+	// Sacrifice ( index 1 )
+	var sacHue = TriggerEvent( 8003, "Virtue_GetHue", tChar, 1 );
+	var sacTipID = Virtue_GetTooltipID( tChar, 1 );
+	g.AddButtonTileArt( 35, 135, 110, 110, 1, 0, 12, 0x1018, sacHue, 35, 135 );
+	g.AddGumpColor( 35, 135, 110, sacHue );
+	g.AddToolTip( sacTipID );
+
+	// Compassion ( index 2 )
+	var compHue = TriggerEvent( 8003, "Virtue_GetHue", tChar, 2 );
+	var compTipID = Virtue_GetTooltipID( tChar, 2 );
+	g.AddButtonTileArt( 211, 133, 105, 105, 1, 0, 13, 0x1018, compHue, 211, 133 );
+	g.AddGumpColor( 211, 133, 105, compHue );
+	g.AddToolTip( compTipID );
+
+	// Spirituality ( index 3 )
+	var spirHue = TriggerEvent( 8003, "Virtue_GetHue", tChar, 3 );
+	var spirTipID = Virtue_GetTooltipID( tChar, 3 );
+	g.AddButtonTileArt( 61, 195, 111, 111, 1, 0, 14, 0x1018, spirHue, 61, 195 );
+	g.AddGumpColor( 61, 195, 111, spirHue );
+	g.AddToolTip( spirTipID );
+
+	// Valor ( index 4 )
+	var valHue = TriggerEvent( 8003, "Virtue_GetHue", tChar, 4 );
+	var valTipID = Virtue_GetTooltipID( tChar, 4 );
+	g.AddButtonTileArt( 123, 46, 112, 112, 1, 0, 15, 0x1018, valHue, 123, 46 );
+	g.AddGumpColor( 123, 46, 112, valHue );
+	g.AddToolTip( valTipID );
+
+	// Honor ( index 5 )
+	var honHue = TriggerEvent( 8003, "Virtue_GetHue", tChar, 5 );
+	var honTipID = Virtue_GetTooltipID( tChar, 5 );
+	g.AddButtonTileArt( 187, 70, 107, 107, 1, 0, 16, 0x1018, honHue, 187, 70 );
+	g.AddGumpColor( 187, 70, 107, honHue );
+	g.AddToolTip( honTipID );
+
+	// Justice ( index 6 )
+	var jusHue = TriggerEvent( 8003, "Virtue_GetHue", tChar, 6 );
+	var jusTipID = Virtue_GetTooltipID( tChar, 6 );
+	g.AddButtonTileArt( 186, 195, 109, 109, 1, 0, 17, 0x1018, jusHue, 186, 195 );
+	g.AddGumpColor( 186, 195, 109, jusHue );
+	g.AddToolTip( jusTipID );
+
+	// Honesty ( index 7 )
+	var honstHue = TriggerEvent( 8003, "Virtue_GetHue", tChar, 7 );
+	var honstTipID = Virtue_GetTooltipID( tChar, 7 );
+	g.AddButtonTileArt( 121, 221, 106, 106, 1, 0, 18, 0x1018, honstHue, 121, 221 );
+	g.AddGumpColor( 121, 221, 106, honstHue );
+	g.AddToolTip( honstTipID );
 
 	// Only show status / close buttons when viewing self,
 	if( pUser.serial === tChar.serial )
@@ -244,13 +296,16 @@ function onGumpPress( socket, buttonID, gumpID )
 			TriggerEvent( 8005, "Humility_StartPetTarget", pUser );
 			virtueGump( pUser, tChar );
 			break;
-		case 12: pUser.SysMessage("This virtue is not activated through the virtue menu."); virtueGump( pUser, tChar ); break;
-		case 13: pUser.SysMessage("This virtue is not activated through the virtue menu."); virtueGump( pUser, tChar ); break;
-		case 14: pUser.SysMessage("You must be a Seeker of Spirituality to invoke this Virtue."); virtueGump( pUser, tChar ); break;
-		case 15: pUser.SysMessage("Target the Champion Idol of the Champion you wish to challenge!."); virtueGump( pUser, tChar ); break;
-		case 16: pUser.SysMessage("Target what you wish to honor.."); virtueGump( pUser, tChar ); break;
-		case 17: pUser.SysMessage("You must reach the first path in this virtue to invoke it."); virtueGump( pUser, tChar ); break;
-		case 18: pUser.SysMessage("This virtue is not activated through the virtue menu."); virtueGump( pUser, tChar ); break;
+		case 12:
+			TriggerEvent( 8008, "Sacrifice_OnVirtueUsed", pUser );
+			virtueGump( pUser, tChar );
+			break;
+		case 13: pUser.SysMessage("Not In"); virtueGump( pUser, tChar ); break;
+		case 14: pUser.SysMessage("Not In"); virtueGump( pUser, tChar ); break;
+		case 15: pUser.SysMessage("Not In"); virtueGump( pUser, tChar ); break;
+		case 16: pUser.SysMessage("Not In"); virtueGump( pUser, tChar ); break;
+		case 17: pUser.SysMessage("Not In"); virtueGump( pUser, tChar ); break;
+		case 18: pUser.SysMessage("Not In"); virtueGump( pUser, tChar ); break;
 	}
 
 	// Main Virtue gump buttons
@@ -297,4 +352,17 @@ function onGumpPress( socket, buttonID, gumpID )
 
 	// Not our gump
 	return false;
+}
+
+function Virtue_GetTooltipID( tChar, virtueIndex )
+{
+	// level 0..3 from helper script
+	var level = TriggerEvent( 8003, "Virtue_GetLevel", tChar, virtueIndex );
+	if( level < 0 )
+		level = 0;
+	if( level > 3 )
+		level = 3;
+
+	var baseID = 1051000 + virtueIndex; // 0=Humility, 1=Sacrifice, etc
+	return baseID + ( level * 8 );
 }

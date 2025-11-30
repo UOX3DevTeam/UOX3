@@ -74,11 +74,15 @@ function onLogin( socket, pChar )
 		TriggerEvent( 2204, "RemoveBuff", pChar, 1033 );
 		TriggerEvent( 2204, "AddBuff", pChar, 1033, 1075821, 1075820, timeLeft, "" );
 	}
+
 	//Attach Virtue ontalk script
 	if( !pChar.HasScriptTrigger( 8007 ))
 	{
 		pChar.AddScriptTrigger( 8007 );
 	}
+
+	//Atrophy check: from login.
+	TriggerEvent( 8008, "Sacrifice_CheckAtrophy", pChar );
 }
 
 /** @type { ( sockPlayer: Socket, pPlayer: Character ) => boolean } */
