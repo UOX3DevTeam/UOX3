@@ -1094,13 +1094,13 @@ function QuestList( questID )
 			description: "Kill 1 dog and 1 cat.",
 			type: "kill",
 			targetKills: [
-				{ sectionID: "dog", amount: 1 }, // Kill 5 orcs
-				{ sectionID: "cat", amount: 1 }  // Kill 3 cats
+				{ npcID: "dog", amount: 1, name: "dog" }, // Kill 5 orcs
+				{ npcID: "cat", amount: 1, name: "cat"  }  // Kill 3 cats
 			],
 			rewards: [
-				{ type: "gold", amount: 1000 },
-				{ type: "karma", amount: 50 },
-				{ type: "fame", amount: 30 }
+				{ type: "gold", amount: 1000, name: "gold"  },
+				{ type: "karma", amount: 50, name: "karma"  },
+				{ type: "fame", amount: 30, name: "fame"  }
 			]
 		},
 		"1002": {
@@ -1123,7 +1123,7 @@ function QuestList( questID )
 				{ sectionID: "0x13e3", amount: 1 } // Collect 3 apples
 			],
 			targetKills: [
-				{ sectionID: "dog", amount: 1 }, // Kill 1 dog
+				{ npcID: "dog", amount: 1 }, // Kill 1 dog
 			],
 			rewards: [
 				{ type: "gold", amount: 500 }, // Give 500 gold
