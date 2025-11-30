@@ -329,7 +329,7 @@ function onGumpPress( socket, buttonID, gumpID )
 		case 15: pUser.SysMessage("Not In"); virtueGump( pUser, tChar ); break;
 		case 16: pUser.SysMessage("Not In"); virtueGump( pUser, tChar ); break;
 		case 17: pUser.SysMessage("Not In"); virtueGump( pUser, tChar ); break;
-		case 18: pUser.SysMessage("Not In"); virtueGump( pUser, tChar ); break;
+		case 18: pUser.SysMessage("This virtue is not activated through the virtue menu."); virtueGump( pUser, tChar ); break;
 	}
 
 	// Main Virtue gump buttons
