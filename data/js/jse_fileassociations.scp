@@ -384,6 +384,7 @@
 8006=player/virtue/humility_registerkill.js
 8007=player/virtue/virtue_ontalk.js
 8008=player/virtue/sacrifice_virtue.js
+8009=player/virtue/compassion_virtue.js
 
 // House Scripts [15000-15500]
 15000=server/house/house.js

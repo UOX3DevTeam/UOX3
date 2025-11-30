@@ -712,6 +712,7 @@ function onTimer( mChar, timerID )
 							{
 								resResult = 1;
 								ourObj.Resurrect();
+								TriggerEvent( 8009, "Compassion_OnPlayerResurrect", mChar, ourObj );
 								ourObj.StaticEffect( 0x376A, 10, 16 );
 								ourObj.SoundEffect( 0x214, true );
 								socket.SysMessage( GetDictionaryEntry( 1272, socket.language )); // You successfully resurrected the patient!
@@ -988,6 +989,12 @@ function ResurrectBondedPet( socket, deadPet )
 	deadPet.atWar = false;
 	deadPet.attacker = null;
 	deadPet.SetTag( "isPetDead", false );
+	// Compassion pet resurrection HP bonus
+	if( socket && socket.currentChar )
+	{
+		var healer = socket.currentChar;
+		TriggerEvent( 8009, "Compassion_OnPetResurrect", healer, deadPet );
+	}
 }
 
 /** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
@@ -1005,6 +1012,10 @@ function onGumpPress( socket, pButton, gumpData )
 			break;
 		case 1: // Continue button pressed
 			resurrectTarg.Resurrect();
+			if( ValidateObject( healer ))
+			{
+				 TriggerEvent( 8009, "Compassion_OnPlayerResurrect", healer, resurrectTarg );
+			}
 			resurrectTarg.StaticEffect( 0x376A, 10, 16 );
 			resurrectTarg.SoundEffect( 0x214, true );
 			resurrectTarg.frozen = false;

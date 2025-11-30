@@ -301,7 +301,7 @@ function showVirtueInfoGump( pUser, virtueIndex, descriptionID, webPage )
 function onGumpPress( socket, buttonID, gumpID )
 {
 	if( !socket || !socket.currentChar )
-		return false;
+		return;
 
 	var pUser = socket.currentChar;
 	var tChar = pUser;
@@ -324,7 +324,7 @@ function onGumpPress( socket, buttonID, gumpID )
 			TriggerEvent( 8008, "Sacrifice_OnVirtueUsed", pUser );
 			virtueGump( pUser, tChar );
 			break;
-		case 13: pUser.SysMessage("Not In"); virtueGump( pUser, tChar ); break;
+		case 13: pUser.SysMessage("This virtue is not activated through the virtue menu."); virtueGump( pUser, tChar ); break;
 		case 14: pUser.SysMessage("Not In"); virtueGump( pUser, tChar ); break;
 		case 15: pUser.SysMessage("Not In"); virtueGump( pUser, tChar ); break;
 		case 16: pUser.SysMessage("Not In"); virtueGump( pUser, tChar ); break;
@@ -340,13 +340,13 @@ function onGumpPress( socket, buttonID, gumpID )
 			virtueGumpStatus(pUser, tChar)
 		}
 
-		return true;
+		return;
 	}
 
 	if( buttonID === 101 )
 	{
 		virtueGump( pUser, tChar );
-		return true;
+		return;
 	}
 
 	if (buttonID === 102)
@@ -364,18 +364,18 @@ function onGumpPress( socket, buttonID, gumpID )
 		{
 			virtueGumpStatus( pUser, tChar )
 		}
-		return true;
+		return;
 	}
 
 	// Status gump: any button closes it, nothing else
 	if( buttonID === 104 )
 	{
 		// Status gump: any button closes it, nothing else
-		return false;
+		return;
 	}
 
 	// Not our gump
-	return false;
+	return;
 }
 
 function Virtue_GetTooltipID( tChar, virtueIndex )
