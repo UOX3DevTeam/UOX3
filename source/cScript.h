@@ -10,6 +10,7 @@ enum ScriptEvent
 	seOnCreateDFN = 0,
 	seOnCreateTile,
 	seOnCreatePlayer,		//	*	Done for PCs on global script
+	seOnSpawn,
 	seOnCommand,
 	seOnProfileRequest,		//	**
 	seOnProfileUpdate,		//	**
@@ -204,6 +205,7 @@ public:
 	bool		OnIterate( CBaseObject *a, UI32 &b, CSocket *mSock );
 	bool		OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b );
 	bool		OnCreate( CBaseObject *thingCreated, bool dfnCreated, bool isPlayer );
+	bool		OnSpawn( CBaseObject *objectSpawned, UI16 spawnRegionNum );
 	bool		DoesEventExist( const char *eventToFind );
 	SI08		OnCommand( CSocket *mSock, std::string command );
 	bool		OnDelete( CBaseObject *thingDestroyed );

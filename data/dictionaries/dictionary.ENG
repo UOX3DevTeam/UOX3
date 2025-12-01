@@ -5600,5 +5600,28 @@
 19341=You already know this recipe.
 19342=You have learned a new recipe: %i
 19343=You must learn that recipe from a scroll.
+// [30000-35000 ] Virtue System
+30000=You have gained a path in Humility!
+30001=You have gained in Humility!
+30002=You cannot gain more Humility.
+30003=You must be at least a Seeker of Humility to invoke this ability.
+30004=Target the pet you wish to embrace with your Humility.
+30005=You cannot embrace Humility on the dead!
+30006=That pet has already embraced Humility.
+30007=You have lost some Humility.
+30008=*Your pet surges with the power of your Humility!*
+30009=You have ended your journey on the Path of Humility.
+30010=You have already ended your journey on the Path of Humility. You must wait before you restart your path.
+30011=You must wait before you can begin another Humility Hunt.
+30012=You have begun your journey on the Path of Humility. Your resists have been debuffed by 70.
+30013=You are now on a Humility Hunt. For each kill while you forgo the protection of resists, you shall continue on your path to Humility. You may end your Hunt by speaking "Lum Lum Lum" at any time.
+30014=*You feel your defenses weaken as you follow the path of Humility.*
+30015=Your time on the Path of Humility has ended.
+30016=Your pet's power returns to normal.
+30017=*Your humility-empowered vigor fades away.*
+30018=You can only embrace your Humility on a pet.
+30019=That pet has already embraced Humility.
+30020=*Your defenses are weakened by your Humility Hunt.*
+30021=*Your defenses return to normal.*
 }
 EOF

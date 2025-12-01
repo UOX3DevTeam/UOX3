@@ -31,10 +31,10 @@ function Humility_StartPetTarget( pUser )
 	var level = TriggerEvent( 8003, "Virtue_GetLevel", pUser, VirtueName.Humility );
 	if( level < VirtueLevel.Seeker )
 	{
-		pSocket.SysMessage( "You must be at least a Seeker of Humility to invoke this ability." );
+		pSocket.SysMessage( GetDictionaryEntry( 30003, pSocket.language )); // You must be at least a Seeker of Humility to invoke this ability.
 		return;
 	}
-	var msg = "Target the pet you wish to embrace with your Humility.";
+	var msg = GetDictionaryEntry( 30004, pSocket.language ); // Target the pet you wish to embrace with your Humility.
 	pSocket.CustomTarget( 0, msg );
 }
 
@@ -51,27 +51,27 @@ function Humility_OnVirtueUsed( pUser, pet )
 	var level = TriggerEvent( 8003, "Virtue_GetLevel", pUser, VirtueName.Humility );
 	if( level < VirtueLevel.Seeker )
 	{
-		pSocket.SysMessage( "You must be at least a Seeker of Humility to invoke this ability." );
+		pSocket.SysMessage( GetDictionaryEntry( 30003, pSocket.language )); // You must be at least a Seeker of Humility to invoke this ability.
 		return;
 	}
 
 	// Reject dead pets
 	if( pet.GetTag( "isPetDead" ) == true)
 	{
-		pSocket.SysMessage( "You cannot embrace Humility on the dead!" );
+		pSocket.SysMessage( GetDictionaryEntry( 30005, pSocket.language )); // You cannot embrace Humility on the dead!
 		return;
 	}
 
 	// Already buffed?
 	if( pet.GetTag( "humility_pet_owner" ) !== null )
 	{
-		pSocket.SysMessage( "That pet has already embraced Humility." );
+		pSocket.SysMessage( GetDictionaryEntry( 30006, pSocket.language )); // That pet has already embraced Humility.
 		return;
 	}
 
 	// Spend some Humility points
 	TriggerEvent( 8003, "Virtue_Atrophy", pUser, VirtueName.Humility, 3200 );
-	pSocket.SysMessage( "You have lost some Humility." );
+	pSocket.SysMessage( GetDictionaryEntry( 30007, pSocket.language )); // You have lost some Humility.
 
 	// Compute HPR bonus based on path
 	var hprBonus = 0;
@@ -95,7 +95,7 @@ function Humility_OnVirtueUsed( pUser, pet )
 	pUser.SetTag( "humility_pet_active", 1 );
 
 	// Visual / text feedback
-	pet.TextMessage( "*Your pet surges with the power of your Humility!*" );
+	pet.TextMessage( "*Your pet surges with the power of your Humility!*" ); // *Your pet surges with the power of your Humility!*
 	// Start 20 minute buff timer on the pet (20 * 60 * 1000 = 1,200,000 ms)
 	pet.StartTimer( 1200000, 5002, 8005 );
 }
@@ -125,20 +125,21 @@ function Humility_ToggleHunt( pUser )
 
 			Humility_WriteHuntData( pUser, data.state, data.expiring, data.cooldownUntil );
 
-			pSocket.SysMessage( "You have ended your journey on the Path of Humility." );
+			pSocket.SysMessage( GetDictionaryEntry( 30009, pSocket.language )); // You have ended your journey on the Path of Humility.
 
 			// After 30 seconds, fully clear the hunt data
 			pUser.StartTimer( 30000, 5001, 8005 );
 		}
 		else
 		{
-			pSocket.SysMessage( "You have already ended your journey on the Path of Humility. You must wait before you restart your path." );
+			//You have already ended your journey on the Path of Humility. You must wait before you restart your path.
+			pSocket.SysMessage( GetDictionaryEntry( 30010, pSocket.language ));
 		}
 	}
 	else if( data.state === 2 )
 	{
-		// Already expiring; tell them to wait
-		pSocket.SysMessage( "You have already ended your journey on the Path of Humility. You must wait before you restart your path." );
+		// You have already ended your journey on the Path of Humility. You must wait before you restart your path.
+		pSocket.SysMessage( GetDictionaryEntry( 30010, pSocket.language ));
 	}
 	else
 	{
@@ -146,7 +147,7 @@ function Humility_ToggleHunt( pUser )
 		var now = GetCurrentClock();
 		if( data.cooldownUntil && now < data.cooldownUntil )
 		{
-			pSocket.SysMessage( "You must wait before you can begin another Humility Hunt." );
+			pSocket.SysMessage( GetDictionaryEntry( 30011, pSocket.language )); // You must wait before you can begin another Humility Hunt.
 			return;
 		}
 
@@ -170,11 +171,12 @@ function Humility_StartHunt( pUser )
 	Humility_ApplyResistDebuff( pUser );
 	pUser.AddScriptTrigger(8006); // humility_registerkill.js
 
-	pSocket.SysMessage( "You have begun your journey on the Path of Humility. Your resists have been debuffed by 70." );
-	pSocket.SysMessage( "You are now on a Humility Hunt. For each kill while you forgo the protection of resists, you shall continue on your path to Humility. You may end your Hunt by speaking \"Lum Lum Lum\" at any time." );
+	pSocket.SysMessage( GetDictionaryEntry( 30012, pSocket.language ) ); // You have begun your journey on the Path of Humility. Your resists have been debuffed by 70.
+	//You are now on a Humility Hunt. For each kill while you forgo the protection of resists, you shall continue on your path to Humility. You may end your Hunt by speaking \"Lum Lum Lum\" at any time.
+	pSocket.SysMessage( GetDictionaryEntry( 30013, pSocket.language ));
 
 	// Optional: visual indicator
-	pUser.TextMessage( "*You feel your defenses weaken as you follow the path of Humility.*" );
+	pUser.TextMessage( "*You feel your defenses weaken as you follow the path of Humility.*" ); // *You feel your defenses weaken as you follow the path of Humility.*
 }
 
 function Humility_OnHuntExpired( pUser )
@@ -195,7 +197,7 @@ function Humility_OnHuntExpired( pUser )
 	// state back to 0 (none), expiring=0, set cooldown
 	Humility_WriteHuntData( pUser, 0, 0, cooldownUntil );
 
-	pSocket.SysMessage( "Your time on the Path of Humility has ended." );
+	pSocket.SysMessage( GetDictionaryEntry( 30015, pSocket.language )); // Your time on the Path of Humility has ended.
 }
 
 /** @type { ( tObject: BaseObject, timerId: number ) => void } */
@@ -236,12 +238,12 @@ function onTimer( timerObj, timerID )
 				var pSocket = owner.socket;
 				if( !pSocket )
 					return;
-				pSocket.SysMessage( "Your pet's power returns to normal." );
+				pSocket.SysMessage( GetDictionaryEntry( 30016, pSocket.language )); // Your pet's power returns to normal.
 				owner.SetTag( "humility_pet_active", null );
 			}
 		}
 
-		pet.TextMessage( "*Your humility-empowered vigor fades away.*" );
+		pet.TextMessage( "*Your humility-empowered vigor fades away.*" ); // *Your humility-empowered vigor fades away.*
 		return;
 	}
 }
@@ -265,7 +267,7 @@ function onCallback0( socket, ourObj )
 
 	if( !ValidateObject( ourObj ) || !ourObj.isChar )
 	{
-		socket.SysMessage( "You can only embrace your Humility on a pet." );
+		socket.SysMessage( GetDictionaryEntry( 30018, socket.language )); // You can only embrace your Humility on a pet.
 		return;
 	}
 
@@ -273,7 +275,7 @@ function onCallback0( socket, ourObj )
 	var data = Humility_ReadPetData( pet );
 	if( data.ownerSerial && data.ownerSerial > 0 )
 	{
-		socket.SysMessage( "That pet has already embraced Humility." );
+		socket.SysMessage( GetDictionaryEntry( 30019, socket.language )); //That pet has already embraced Humility.
 		return;
 	}
 
@@ -316,7 +318,7 @@ function Humility_ApplyResistDebuff( pChar )
 	}
 
 	pChar.SetTag( "humility_resist_debuffed", 1 );
-	pChar.TextMessage( "*Your defenses are weakened by your Humility Hunt.*" );
+	pChar.TextMessage( "*Your defenses are weakened by your Humility Hunt.*" ); // *Your defenses are weakened by your Humility Hunt.*
 }
 
 function Humility_ClearResistDebuff( pChar )
@@ -346,7 +348,7 @@ function Humility_ClearResistDebuff( pChar )
 	}
 
 	pChar.SetTag( "humility_resist_debuffed", null );
-	pChar.TextMessage( "*Your defenses return to normal.*" );
+	pChar.TextMessage( "*Your defenses return to normal.*" ); // *Your defenses return to normal.*
 }
 
 // Humility pet data stored on the pet:

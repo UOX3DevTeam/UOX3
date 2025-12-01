@@ -155,23 +155,72 @@ function onCreateDFN( objMade, objType )
 
 	// 2) No explicit town set. Pick a random town from HonestyTownRegions.
 	var townNames = [];
-	for (var key in HonestyTownRegions)
+	for( var key in HonestyTownRegions )
 	{
-		if (HonestyTownRegions.hasOwnProperty(key))
-			townNames.push(key);
+		if( HonestyTownRegions.hasOwnProperty( key ))
+			townNames.push( key );
 	}
 
-	if (townNames.length === 0)
+	if( townNames.length === 0 )
 	{
 		// No towns configured; give up
 		return;
 	}
 
-	var idx = RandomNumber(0, townNames.length - 1);
+	var idx = RandomNumber( 0, townNames.length - 1 );
 	town = townNames[idx];
 
 	// Store on item for later use
 	objMade.SetTag("HonestyTown", town);
+
+	// 3) If owner not set yet, try to pick a random vendor from that town region
+	var vend = Honesty_FindVendorForTown( town );
+	if( ValidateObject( vend ))
+	{
+		owner = vend.name;
+		objMade.SetTag( "HonestyOwner", owner );
+	}
+
+	// 4) Finally, mark the item as a Honesty quest item
+	Honesty_OnLostItemCreated( objMade, town.toString(), owner ? owner.toString() : "" );
+}
+
+function onSpawn( objMade, spawnRegion  )
+{
+	if( !ValidateObject( objMade ) || !objMade.isItem )
+		return;
+
+	// If this is a Lost & Found box, do NOT treat it as a lost item
+	var boxTown = objMade.GetTag( "LostTownBox" );
+	if( boxTown === 1 )
+	{
+		// It is a bank box, skip lost-item logic
+		return;
+	}
+
+	// 1) Check if DFN already specified town/owner explicitly
+	var town  = objMade.GetTag( "HonestyTown" );
+	var owner = objMade.GetTag( "HonestyOwner" );
+
+	// 2) No explicit town set. Pick a random town from HonestyTownRegions.
+	var townNames = [];
+	for( var key in HonestyTownRegions )
+	{
+		if( HonestyTownRegions.hasOwnProperty( key ))
+			townNames.push( key );
+	}
+
+	if( townNames.length === 0 )
+	{
+		// No towns configured; give up
+		return;
+	}
+
+	var idx = RandomNumber( 0, townNames.length - 1 );
+	town = townNames[idx];
+
+	// Store on item for later use
+	objMade.SetTag( "HonestyTown", town );
 
 	// 3) If owner not set yet, try to pick a random vendor from that town region
 	var vend = Honesty_FindVendorForTown( town );

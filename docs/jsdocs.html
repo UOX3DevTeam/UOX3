@@ -4149,6 +4149,61 @@ function onSoldToVendor( pSock, Vendor, iSold, iAmount )
 			</li>
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnSpawn" id="eventOnSpawn"><span>onSpawn</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onSpawn( objSpawned, spawnRegion )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>Used for reacting to items/NPCs spawned from spawn regions</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<ul>
+								<li>When an item or non-player character is spawned from a REGIONSPAWN entry, event will trigger in any script attached to that object (including via ADDSCRIPT)</li>
+							</ul>
+							<p>Usable in Global script (scriptID 0)? For NPCs/Items, <span class="hl">No</span>.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<ul>
+								<li>objSpawned is the spawned object (item or character)</li>
+								<li>spawnRegion is the REGIONSPAWN ID (the number used in [REGIONSPAWN N])</li>
+								<li>The spawned object also receives a "spawnRegion" tag with the same value</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p>
+								<span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">// Script attached via ADDSCRIPT on REGIONSPAWN 100
+// Makes all spawned creatures from that region slightly stronger
+function onSpawn( objSpawned, spawnRegion )
+{
+	// Only care about REGIONSPAWN 100
+	if( spawnRegion != 100 )
+		return;
+
+	// Only affect characters
+	if( objSpawned.isChar )
+	{
+		// Mark where it came from
+		objSpawned.SetTag( "graveyardSpawnRegion", spawnRegion );
+
+		// Small stat boost
+		objSpawned.str = objSpawned.str + 5;
+		objSpawned.dex = objSpawned.dex + 5;
+	}
+}</code></pre>
+							</p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnSpeech" id="eventOnSpeech"><span>onSpeech</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">

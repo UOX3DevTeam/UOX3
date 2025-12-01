@@ -596,6 +596,45 @@ bool cScript::OnCreate( CBaseObject *thingCreated, bool dfnCreated, bool isPlaye
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function    -   cScript::OnSpawn()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -   Triggers for object with event attached when spawned from a spawn region
+//| Notes       -   Calls JS onSpawn( objSpawned, spawnRegion )
+//|                 spawnRegion is the REGIONSPAWN ID (UI32), or 0 if unknown
+//o------------------------------------------------------------------------------------------------o
+bool cScript::OnSpawn( CBaseObject *objectSpawned, UI16 spawnRegion )
+{
+	if( !ValidateObject( objectSpawned ))
+		return false;
+
+	if( !ExistAndVerify( seOnSpawn, "onSpawn" ))
+		return false;
+
+	jsval params[2], rval;
+	JSObject *jsObj = nullptr;
+
+	if( objectSpawned->GetObjType() == OT_CHAR )
+	{
+		jsObj = JSEngine->AcquireObject( IUE_CHAR, static_cast<CChar *>( objectSpawned ), runTime );
+	}
+	else
+	{
+		jsObj = JSEngine->AcquireObject( IUE_ITEM, static_cast<CItem *>( objectSpawned ), runTime );
+	}
+
+	params[0] = OBJECT_TO_JSVAL( jsObj );
+	params[1] = INT_TO_JSVAL( spawnRegion );
+
+	JSBool retVal = InvokeEvent( "onSpawn", 2, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnSpawn, false );
+	}
+
+	return ( retVal == JS_TRUE );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::OnDelete()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Runs when an object is deleted
