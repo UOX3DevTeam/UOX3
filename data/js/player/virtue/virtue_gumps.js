@@ -349,7 +349,7 @@ function onGumpPress( socket, buttonID, gumpID )
 		return;
 	}
 
-	if (buttonID === 102)
+	if( buttonID === 102 )
 	{
 		var virtueIndex = pUser.GetTempTag( "VirtueInfo_VirtueIndex" );
 		var virtueDescID = pUser.GetTempTag( "VirtueInfo_DescID" );
