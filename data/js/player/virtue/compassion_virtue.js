@@ -190,11 +190,15 @@ function Compassion_CanGain( pChar )
 		return result;
 	}
 
+	var pSocket = pChar.socket;
+	if( !pSocket )
+		return;
+
 	// Young players cannot earn Compassion
 	if( Compassion_IsYoung( pChar ))
 	{
 		result.canGain = false;
-		result.reason = "Young players cannot gain Compassion.";
+		result.reason = GetDictionaryEntry( 30038, pSocket.language ); // Young players cannot gain Compassion.
 		return result;
 	}
 
@@ -237,7 +241,7 @@ function Compassion_CanGain( pChar )
 	if( gainsToday >= 5 )
 	{
 		result.canGain = false;
-		result.reason = "You have already gained Compassion too many times today.";
+		result.reason = GetDictionaryEntry( 30039, pSocket.language );// You have already gained Compassion too many times today.
 		return result;
 	}
 
@@ -246,7 +250,7 @@ function Compassion_CanGain( pChar )
 	if( now < ( lastGainTime + delayMs ))
 	{
 		result.canGain = false;
-		result.reason = "You must wait a few minutes before gaining more Compassion.";
+		result.reason = GetDictionaryEntry( 30040, pSocket.language ); // You must wait a few minutes before gaining more Compassion.
 		return result;
 	}
 
@@ -261,14 +265,16 @@ function Compassion_AwardEscort( pChar, isPrisonerQuest, isNewHavenEscort )
 	if( !ValidateObject( pChar ))
 		return;
 
+	var pSocket = pChar.socket;
+	if( !pSocket )
+		return;
+
 	if( isNewHavenEscort )
 		return; // no Compassion from New Haven escorts
 
 	var can = Compassion_CanGain( pChar );
 	if( !can.canGain )
 	{
-		// Optional: message if you want
-		// pChar.SysMessage( can.reason );
 		return;
 	}
 
@@ -294,9 +300,9 @@ function Compassion_AwardEscort( pChar, isPrisonerQuest, isNewHavenEscort )
 		var msg = "";
 
 		if( result.gainedPath )
-			msg = "You have gained a path in Compassion!";
+			msg = GetDictionaryEntry( 30041, pSocket.language ); // You have gained a path in Compassion!
 		else
-			msg = "You have gained in Compassion!";
+			msg = GetDictionaryEntry( 30042, pSocket.language ); // You have gained in Compassion!
 
 		pChar.SysMessage( msg );
 

@@ -5598,5 +5598,55 @@
 19341=Ya conoces esta receta.
 19342=Has aprendido una nueva receta: %i
 19343=Debes aprender esa receta de un pergamino.
+// [30000-35000] Sistema de Virtudes
+30000=¡Has ganado un camino en Humildad!
+30001=¡Has ganado en Humildad!
+30002=No puedes ganar más Humildad.
+30003=Debes ser al menos un Buscador de Humildad para invocar esta habilidad.
+30004=Selecciona la mascota que deseas abrazar con tu Humildad.
+30005=¡No puedes abrazar Humildad en los muertos!
+30006=Esa mascota ya ha abrazado Humildad.
+30007=Has perdido algo de Humildad.
+30008=*¡Tu mascota se revitaliza con el poder de tu Humildad!*
+30009=Has terminado tu viaje en el Camino de la Humildad.
+30010=Ya has terminado tu viaje en el Camino de la Humildad. Debes esperar antes de reiniciar tu camino. 30011=Debes esperar antes de poder comenzar otra Cacería de Humildad.
+30012=Has comenzado tu viaje por el Camino de la Humildad. Tus resistencias se han reducido en 70.
+30013=Ahora estás en una Cacería de Humildad. Por cada muerte que consigas mientras renuncias a la protección de las resistencias, continuarás tu camino hacia la Humildad. Puedes finalizar tu Cacería diciendo "Lum Lum Lum" en cualquier momento.
+30014=*Sientes que tus defensas se debilitan al seguir el camino de la Humildad.*
+30015=Tu tiempo en el Camino de la Humildad ha terminado.
+30016=El poder de tu mascota vuelve a la normalidad.
+30017=*Tu vigor potenciado por la humildad se desvanece.*
+30018=Solo puedes abrazar tu Humildad en una mascota.
+30019=Esa mascota ya ha abrazado la Humildad. 30020=*Tus defensas se ven debilitadas por tu Caza de Humildad.*
+30021=*Tus defensas vuelven a la normalidad.*
+30022=No puedes hacer eso mientras estás oculto.
+30023=No puedes usar esta habilidad mientras estés marcado como criminal.
+30024=No puedes usar esta habilidad.
+30025=No te quedan resurrecciones.
+30026=Usas el poder de Sacrificio para volver a la vida.
+30027=Ya has alcanzado el camino más alto en esta virtud.
+30028=No tienes suficiente fama para sacrificar.
+30029=Debes esperar aproximadamente un día antes de volver a sacrificar.
+30030=Selecciona a la criatura que deseas liberar para sacrificar tu fama.
+30031=No puedes sacrificar tu fama por esa criatura.
+30032=No puedes sacrificarte por este monstruo porque está demasiado dañado.
+30033=Liberaste a la criatura.
+30034=¡Obtuviste un camino en Sacrificio!
+30035=Has ganado en Sacrificio.
+30036=Has perdido algo de Sacrificio.
+30037=No puedes sacrificar tu fama por eso.
+30038=Los jugadores jóvenes no pueden obtener Compasión.
+30039=Ya has obtenido Compasión demasiadas veces hoy.
+30040=Debes esperar unos minutos antes de obtener más Compasión.
+30041=¡Obtuviste un camino en Compasión!
+30042=¡Has ganado en Compasión!
+30043=Este objeto ya no es un objeto de la misión de Honestidad.
+30044=Este objeto no se ha perdido. 30045=Dejas el objeto en objetos perdidos. ¡Has ganado algo de honestidad!
+30046=¡Has ganado un camino en honestidad!
+30047=No notas nada inusual en este objeto.
+30048=Decides que este objeto debe ser devuelto a %s.
+30049=Decides que este objeto debe ser devuelto a una ciudad virtuosa, pero no sabes a cuál.
+30050=Decides que este objeto pertenece a %s.
+30051=No puedes determinar el propietario exacto, solo la ciudad.
 }
 EOF

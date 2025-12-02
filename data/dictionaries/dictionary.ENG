@@ -5623,5 +5623,35 @@
 30019=That pet has already embraced Humility.
 30020=*Your defenses are weakened by your Humility Hunt.*
 30021=*Your defenses return to normal.*
+30022=You cannot do that while hidden.
+30023=You cannot use this ability while flagged as a criminal.
+30024=You cannot use this ability.
+30025=You do not have any resurrections left.
+30026=You use the power of Sacrifice to return to life.
+30027=You have already attained the highest path in this virtue.
+30028=You do not have enough fame to sacrifice.
+30029=You must wait approximately one day before sacrificing again.
+30030=Target the creature you wish to set free so that you may sacrifice your fame.
+30031=You cannot sacrifice your fame for that creature.
+30032=You cannot sacrifice for this monster because it is too damaged.
+30033=You have set the creature free.
+30034=You have gained a path in Sacrifice!
+30035=You have gained in Sacrifice.
+30036=You have lost some Sacrifice.
+30037=You cannot sacrifice your fame for that.
+30038=Young players cannot gain Compassion.
+30039=You have already gained Compassion too many times today.
+30040=You must wait a few minutes before gaining more Compassion.
+30041=You have gained a path in Compassion!
+30042=You have gained in Compassion!
+30043=This item is no longer a Honesty quest item.
+30044=This is not a lost item.
+30045=You place the item in the lost and found. You have gained some Honesty!
+30046=You have gained a path in Honesty!
+30047=You notice nothing unusual about this item.
+30048=You determine that this item should be returned to %s
+30049=You determine that this item should be returned to a virtue town, but cannot say which.
+30050=You determine that this item belongs to %s
+30051=You cannot determine the exact owner, only the town.
 }
 EOF

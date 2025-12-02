@@ -44,26 +44,38 @@ function onCallback0( pSock, ourObj )
 			if( forensicSkill < 400 )
 			{
 				// Under 40.0 Forensics: basically nothing useful
-				pSock.SysMessage( "You notice nothing unusual about this item." );
+				pSock.SysMessage( GetDictionaryEntry( 30047, pLanguage )); // You notice nothing unusual about this item.
 			}
 			else if( forensicSkill < 650 )
 			{
 				// 40.0+ Forensics: can identify town only
 				if( town && town.length > 0 )
-					pSock.SysMessage( "You determine that this item should be returned to " + town + "." );
+				{
+					var tempName = GetDictionaryEntry( 30048, pLanguage ); // You determine that this item should be returned to %s
+					tempName = ( tempName.replace( /%s/gi, town.toString() ));
+					pSock.SysMessage( tempName );
+				}
 				else
-					pSock.SysMessage( "You determine that this item should be returned to a virtue town, but cannot say which." );
+					pSock.SysMessage( GetDictionaryEntry( 30049, pLanguage )); // You determine that this item should be returned to a virtue town, but cannot say which.
 			}
 			else
 			{
 				// 65.0+ Forensics: can identify town and possibly owner
 				if( town && town.length > 0 )
-					pSock.SysMessage( "You determine that this item should be returned to " + town + "." );
+				{
+					var tempName = GetDictionaryEntry( 30048, pLanguage ); // You determine that this item should be returned to %s
+					tempName = ( tempName.replace( /%s/gi, town.toString() ));
+					pSock.SysMessage( tempName );
+				}
 
 				if( owner && owner.length > 0 )
-					pSock.SysMessage( "You determine that this item belongs to " + owner + "." );
+								{
+					var tempName = GetDictionaryEntry( 30050, pLanguage ); // You determine that this item belongs to %s
+					tempName = ( tempName.replace( /%s/gi, owner.toString() ));
+					pSock.SysMessage( tempName );
+				}
 				else
-					pSock.SysMessage( "You cannot determine the exact owner, only the town." );
+					pSock.SysMessage( GetDictionaryEntry( 30051, pLanguage )); // You cannot determine the exact owner, only the town.
 			}
 
 			return;
