@@ -12,6 +12,7 @@ const enableNPCGuildPremiums = GetServerSetting( "EnableNPCGuildPremiums" );
 const youngPlayerSystem = GetServerSetting("YoungPlayerSystem");
 
 const coreShardEra = GetServerSetting( "CoreShardEra" );
+const honestyVirtueEnabled = GetServerSetting( "HonestyVirtueEnabled" );
 
 // Virtue indices (shared with virtue_helper.js)
 var VirtueName = VirtueName || {
@@ -64,9 +65,12 @@ function onBoughtFromVendor( pSock, npcShopkeep, iBought, iAmount )
 	// Honesty virtue discount (stacks with guild discount)
 	// Uses Virtue helper script 8003 and VirtueName.Honesty (index 7)
 	var honestyLevel = 0;
-	honestyLevel = TriggerEvent( 8003, "Virtue_GetLevel", pChar, VirtueName.Honesty );
+	if( honestyVirtueEnabled )
+	{
+		honestyLevel = TriggerEvent( 8003, "Virtue_GetLevel", pChar, VirtueName.Honesty );
+	}
 
-	if( honestyLevel > 0 )
+	if( honestyLevel > 0 && honestyVirtueEnabled )
 	{
 		// Base cost of this purchase
 		var itemCostHon = iBought.buyvalue * iAmount;

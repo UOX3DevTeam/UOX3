@@ -2,6 +2,10 @@
 // @ts-check
 // Global Script
 // Supported Events trigger for every character/item, use with care
+
+const virtueSystemEnabled = GetServerSetting( "VirtueSystemEnabled" );
+const sacrificeVirtueEnabled = GetServerSetting( "SacrificeVirtueEnabled" );
+
 /** @type { ( sockPlayer: Socket, pPlayer: Character ) => boolean } */
 function onLogin( socket, pChar )
 {
@@ -76,13 +80,16 @@ function onLogin( socket, pChar )
 	}
 
 	//Attach Virtue ontalk script
-	if( !pChar.HasScriptTrigger( 8007 ))
+	if( virtueSystemEnabled && !pChar.HasScriptTrigger( 8007 ))
 	{
 		pChar.AddScriptTrigger( 8007 );
 	}
 
-	//Atrophy check: from login.
-	TriggerEvent( 8008, "Sacrifice_CheckAtrophy", pChar );
+	if( virtueSystemEnabled && sacrificeVirtueEnabled )
+	{
+		//Atrophy check: from login.
+		TriggerEvent( 8008, "Sacrifice_CheckAtrophy", pChar );
+	}
 }
 
 /** @type { ( sockPlayer: Socket, pPlayer: Character ) => boolean } */
@@ -271,6 +278,9 @@ function onUseBandageMacro( pSock, targChar, bandageItem )
 /** @type { ( mChar: Character, tChar: Character, buttonId: number ) => boolean } */
 function onVirtueGumpPress( pUser, tChar, buttonID )
 {
-	TriggerEvent( 8004, "virtueGump", pUser, tChar );
-	return true;
+	if( virtueSystemEnabled )
+	{
+		TriggerEvent( 8004, "virtueGump", pUser, tChar );
+		return true;
+	}
 }

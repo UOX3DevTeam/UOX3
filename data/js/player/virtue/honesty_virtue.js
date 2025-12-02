@@ -2,6 +2,8 @@
 // @ts-check
 // add this script number to make lost items script=8010// honesty item
 
+const honestyVirtueEnabled = GetServerSetting( "HonestyVirtueEnabled" );
+
 var VirtueName = VirtueName || {
 	Humility:     0,
 	Sacrifice:    1,
@@ -143,6 +145,9 @@ function Honesty_TurnInLostItem( pUser, item, boxTown )
 
 function onCreateDFN( objMade, objType )
 {
+	if( !honestyVirtueEnabled )
+		return;
+
 	if( !ValidateObject( objMade ) || !objMade.isItem )
 		return;
 
@@ -192,6 +197,9 @@ function onCreateDFN( objMade, objType )
 
 function onSpawn( objMade, spawnRegion  )
 {
+	if( !honestyVirtueEnabled )
+		return;
+
 	if( !ValidateObject( objMade ) || !objMade.isItem )
 		return;
 

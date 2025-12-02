@@ -1,5 +1,7 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
+const honestyVirtueEnabled = GetServerSetting( "HonestyVirtueEnabled" );
+
 function SkillRegistration()
 {
 	RegisterSkill( 19, true );	// Forensics
@@ -30,7 +32,7 @@ function onCallback0( pSock, ourObj )
 		}
 
 		var honestyFlag = ourObj.GetTag( "HonestyQuest" );
-		if( honestyFlag === 1 || honestyFlag === "1" )
+		if( honestyFlag === 1 || honestyFlag === "1" && honestyVirtueEnabled)
 		{
 			// Skill value (0..1000), so 40.0 = 400, 65.0 = 650
 			var forensicSkill = pUser.skills.forensics | 0;

@@ -19,6 +19,11 @@
 // Sacrifice -> 22000
 // Honor     -> 20000
 
+const compassionVirtueEnabled = GetServerSetting( "CompassionVirtueEnabled" );
+const honestyVirtueEnabled = GetServerSetting( "HonestyVirtueEnabled" );
+const humilityVirtueEnabled = GetServerSetting( "HumilityVirtueEnabled" );
+const sacrificeVirtueEnabled = GetServerSetting( "SacrificeVirtueEnabled" );
+
 function virtueGump( pUser, tChar )
 {
 	if( !ValidateObject( pUser ) || !ValidateObject( tChar ))
@@ -317,12 +322,18 @@ function onGumpPress( socket, buttonID, gumpID )
 		case 7: showVirtueInfoGump( pUser, 6, 1052059, "http://uo.com/wiki/ultima-online-wiki/gameplay/npc-commercial-transactions/the-virtues/#justice"); break;
 		case 8: showVirtueInfoGump( pUser, 7, 1052060, "http://uo.com/wiki/ultima-online-wiki/gameplay/npc-commercial-transactions/the-virtues/#honesty"); break;
 		case 11:
-			TriggerEvent( 8005, "Humility_StartPetTarget", pUser );
-			virtueGump( pUser, tChar );
+			if( humilityVirtueEnabled )
+			{
+				TriggerEvent( 8005, "Humility_StartPetTarget", pUser );
+				virtueGump( pUser, tChar );
+			}
 			break;
 		case 12:
-			TriggerEvent( 8008, "Sacrifice_OnVirtueUsed", pUser );
-			virtueGump( pUser, tChar );
+			if( sacrificeVirtueEnabled )
+			{
+				TriggerEvent( 8008, "Sacrifice_OnVirtueUsed", pUser );
+				virtueGump( pUser, tChar );
+			}
 			break;
 		case 13: pUser.SysMessage("This virtue is not activated through the virtue menu."); virtueGump( pUser, tChar ); break;
 		case 14: pUser.SysMessage("Not In"); virtueGump( pUser, tChar ); break;

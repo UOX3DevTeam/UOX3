@@ -409,7 +409,12 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"DECAYSTAGELOWHRS"s, 386},
 	{"DECAYSTAGEHIHRS"s, 387},
 	{"DECAYSTAGEDANGERHRS"s, 388},
-	{"HOUSEDECAY"s, 389}
+	{"HOUSEDECAY"s, 389},
+	{"VIRTUESYSTEMENABLED"s, 390},
+	{"COMPASSIONVIRTUEENABLED"s, 391},
+	{"HONESTYVIRTUEENABLED"s, 392},
+	{"HUMILITYVIRTUEENABLED"s, 393},
+	{"SACRIFICEVIRTUEENABLED"s, 394}
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -529,6 +534,11 @@ constexpr auto BIT_POISONCORROSIONSYSTEM			= UI32( 110 );
 constexpr auto BIT_HOUSEDECAY						= UI32( 111 );
 constexpr auto BIT_HOUSEITEMSDELETEONDECAY			= UI32( 112 );
 constexpr auto BIT_HOUSEGRANDFATHERED				= UI32( 113 );
+constexpr auto BIT_VIRTUESYSTEMENABLED				= UI32( 114 );
+constexpr auto BIT_COMPASSIONVIRTUEENABLED			= UI32( 115 );
+constexpr auto BIT_HONESTYVIRTUEENABLED				= UI32( 116 );
+constexpr auto BIT_HUMILITYVIRTUEENABLED			= UI32( 117 );
+constexpr auto BIT_SACRIFICEVIRTUEENABLED			= UI32( 118 );
 
 
 // New uox3.ini format lookup
@@ -972,6 +982,13 @@ auto CServerData::ResetDefaults() -> void
 	SystemTimer( tSERVER_FISHINGBASE, 10 );
 	SystemTimer( tSERVER_FISHINGRANDOM, 5 );
 	SystemTimer( tSERVER_SPIRITSPEAK, 30 );
+
+	// VIRTUES
+	VirtueSystemEnabled( true );
+	CompassionVirtueEnabled( true );
+	HonestyVirtueEnabled( true );
+	HumilityVirtueEnabled( true );
+	SacrificeVirtueEnabled( true );
 
 	TitleColour( 0 );
 	LeftTextColour( 0 );
@@ -1487,6 +1504,76 @@ auto CServerData::PetBondingEnabled() const -> bool
 auto CServerData::PetBondingEnabled( bool newVal ) -> void
 {
 	boolVals.set( BIT_PETBONDINGENABLED, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::VirtueSystemEnabled()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets If Virtue System is enabled
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::VirtueSystemEnabled() const -> bool
+{
+	return boolVals.test( BIT_VIRTUESYSTEMENABLED );
+}
+auto CServerData::VirtueSystemEnabled( bool newVal ) -> void
+{
+	boolVals.set( BIT_VIRTUESYSTEMENABLED, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::CompassionVirtueEnabled()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets If Campassion Virtue is enabled
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::CompassionVirtueEnabled() const -> bool
+{
+	return boolVals.test( BIT_COMPASSIONVIRTUEENABLED );
+}
+auto CServerData::CompassionVirtueEnabled( bool newVal ) -> void
+{
+	boolVals.set( BIT_COMPASSIONVIRTUEENABLED, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::HonestyVirtueEnabled()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets If Honesty Virtue is enabled
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::HonestyVirtueEnabled() const -> bool
+{
+	return boolVals.test( BIT_HONESTYVIRTUEENABLED );
+}
+auto CServerData::HonestyVirtueEnabled( bool newVal ) -> void
+{
+	boolVals.set( BIT_HONESTYVIRTUEENABLED, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::HumilityVirtueEnabled()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets If Humility Virtue is enabled
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::HumilityVirtueEnabled() const -> bool
+{
+	return boolVals.test( BIT_HUMILITYVIRTUEENABLED );
+}
+auto CServerData::HumilityVirtueEnabled( bool newVal ) -> void
+{
+	boolVals.set( BIT_HUMILITYVIRTUEENABLED, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::SacrificeVirtueEnabled()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets If Sacrifice Virtue is enabled
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::SacrificeVirtueEnabled() const -> bool
+{
+	return boolVals.test( BIT_SACRIFICEVIRTUEENABLED );
+}
+auto CServerData::SacrificeVirtueEnabled( bool newVal ) -> void
+{
+	boolVals.set( BIT_SACRIFICEVIRTUEENABLED, newVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5820,6 +5907,14 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "AUTOUNEQUIPPEDCASTING=" << ( AutoUnequippedCasting() ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n';
 
+		ofsOutput << '\n' << "[virtues]" << '\n' << "{" << '\n';
+		ofsOutput << "VIRTUESYSTEMENABLED=" << ( VirtueSystemEnabled() ? 1 : 0 ) << '\n';
+		ofsOutput << "COMPASSIONVIRTUEENABLED=" << ( CompassionVirtueEnabled() ? 1 : 0 ) << '\n';
+		ofsOutput << "HONESTYVIRTUEENABLED=" << ( HonestyVirtueEnabled() ? 1 : 0 ) << '\n';
+		ofsOutput << "HUMILITYVIRTUEENABLED=" << ( HumilityVirtueEnabled() ? 1 : 0 ) << '\n';
+		ofsOutput << "SACRIFICEVIRTUEENABLED=" << ( SacrificeVirtueEnabled() ? 1 : 0 ) << '\n';
+		ofsOutput << "}" << '\n';
+
 		ofsOutput << '\n' << "[start locations]" << '\n' << "{" << '\n';
 		for( size_t lCtr = 0; lCtr < startlocations.size(); ++lCtr )
 		{
@@ -7392,6 +7487,21 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 389:	// HOUSEDECAY
 			HouseDecay( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
+			break;
+		case 390:	// VIRTUESYSTEMENABLED
+			VirtueSystemEnabled(( static_cast<SI16>( std::stoi( value, nullptr, 0 )) == 1 ));
+			break;
+		case 391:	// COMPASSIONVIRTUEENABLED
+			CompassionVirtueEnabled(( static_cast<SI16>( std::stoi( value, nullptr, 0 )) == 1 ));
+			break;
+		case 392:	// HONESTYVIRTUEENABLED
+			HonestyVirtueEnabled(( static_cast<SI16>( std::stoi( value, nullptr, 0 )) == 1 ));
+			break;
+		case 393:	// HUMILITYVIRTUEENABLED
+			HumilityVirtueEnabled(( static_cast<SI16>( std::stoi( value, nullptr, 0 )) == 1 ));
+			break;
+		case 394:	// SACRIFICEVIRTUEENABLED
+			SacrificeVirtueEnabled(( static_cast<SI16>( std::stoi( value, nullptr, 0 )) == 1 ));
 			break;
 		default:
 			rValue = false;
