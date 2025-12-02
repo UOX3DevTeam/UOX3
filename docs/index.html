@@ -7266,7 +7266,7 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 
 						<div class="settingsDiv"><p><span class="hl">VirtuePoints=val0,val1,val2,val3,val4,val5,val6,val7</span></p></div>
 
-						<p>This keeps all virtues in a single easy-to-parse location instead of eight separate tags. Scripts access them by index (0–7).</p>
+						<p>Scripts access them by index (0–7).</p>
 
 						<p>Example:</p>
 						<pre><code>VirtuePoints=22000,11000,4500,0,22000,22000,8000,6000</code></pre>
@@ -7278,10 +7278,37 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 						<div class="spoiler">
 							<p>A shared helper script (TriggerEvent ID <span class="hl">8003</span>) exposes a small API:</p>
 							<ul>
-								<li><span class="hl">Virtue_Get( pChar, virtueIndex )</span> – returns current points for a single virtue.</li>
-								<li><span class="hl">Virtue_Set( pChar, virtueIndex, newValue )</span> – clamps and stores a virtue value.</li>
-								<li><span class="hl">Virtue_Award( pChar, virtueIndex, amount )</span> – adds (or subtracts) points and handles caps, gain throttling and rank checks.</li>
-								<li><span class="hl">Virtue_DecodeRank( virtueValue )</span> – converts raw points into 0–3 tier (None, Seeker, Follower, Knight).</li>
+								<li>
+									<span class="hl">TriggerEvent(8003, "Virtue_Get", pChar, virtueIndex)</span><br>
+									Returns the current point value for a given virtue.
+								</li>
+
+								<li>
+									<span class="hl">TriggerEvent(8003, "Virtue_Set", pChar, virtueIndex, newValue)</span><br>
+									Clamps and stores a virtue value. Generally only used internally.
+								</li>
+
+								<li>
+									<span class="hl">TriggerEvent(8003, "Virtue_Award", pChar, virtueIndex, amount)</span><br>
+									Adds (or subtracts) virtue points, handles caps, and returns an object:<br>
+									<code>{ success:true/false, gainedPath:true/false, oldValue, newValue, oldLevel, newLevel }</code>
+								</li>
+
+								<li>
+									<span class="hl">TriggerEvent(8003, "Virtue_GetLevel", pChar, virtueIndex)</span><br>
+									Returns the tier (0–3):<br>
+									0 = None, 1 = Seeker, 2 = Follower, 3 = Knight.
+								</li>
+
+								<li>
+									<span class="hl">TriggerEvent(8003, "Virtue_GetHue", pChar, virtueIndex)</span><br>
+									Returns the correct hue for the virtue gump gem (based on OSI rules).
+								</li>
+
+								<li>
+									<span class="hl">TriggerEvent(8003, "Virtue_DecodeRank", virtueValue)</span><br>
+									Converts raw virtue points into rank tier (0–3).
+								</li>
 							</ul>
 							<p>All virtue-related systems (Honesty, Compassion, future Valor/Justice/etc.) call through this helper to keep behavior consistent across the shard.</p>
 						</div>
@@ -7321,29 +7348,28 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 						<h3>Implemented Virtue Mechanics</h3>
 						<p>The core system supports any virtue reward logic. Fully scripted virtue behaviors currently include:</p>
 
-						<h4>• Humility</h4>
+						<h4>Humility</h4>
 						<ul>
-							<li>Humility is fully tracked (index <strong>0</strong> in VirtuePoints) and available for scripts to query.</li>
+							<li>Humility is (index <strong>0</strong> in VirtuePoints).</li>
 							<li>Planned hooks include interactions with <strong>titles, bragging, public rewards, and fame displays</strong>.</li>
 							<li>By default, no automated gain/loss is wired yet, leaving behavior up to shard-specific design.</li>
 						</ul>
 
-						<h4>• Sacrifice</h4>
+						<h4>Sacrifice</h4>
 						<ul>
 							<li>System tracks <strong>resurrection sacrifices</strong> using a combined tag:</li>
 							<div class="settingsDiv"><p><span class="hl">SacrificeData=lastGain,lastLoss,resCount</span></p></div>
 							<li>Used to prevent abuse and track cooldowns between Sacrifice gains.</li>
-							<li>Can be extended to support OSI-style <strong>self-resurrection</strong> at higher Sacrifice tiers.</li>
 						</ul>
 
-						<h4>• Compassion</h4>
+						<h4>Compassion</h4>
 						<ul>
 							<li>Healing others grants Compassion based on <strong>effective healing done</strong>.</li>
 							<li>Built-in throttling to prevent spam-gains on the same target within a short time window.</li>
-							<li>Future expansion: escort revival, bonus rewards for healing in events, etc.</li>
+							<li>Bonus rewards for healing in events, etc.</li>
 						</ul>
 
-						<h4>• Honesty</h4>
+						<h4>Honesty</h4>
 						<p>The most fully implemented virtue so far. Includes:</p>
 						<ul>
 							<li><strong>Lost Item System</strong> – Lost items spawn with tags for owner, town, and expiration.</li>
