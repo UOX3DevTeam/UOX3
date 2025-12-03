@@ -5,6 +5,7 @@
 
 const virtueSystemEnabled = GetServerSetting( "VirtueSystemEnabled" );
 const sacrificeVirtueEnabled = GetServerSetting( "SacrificeVirtueEnabled" );
+const humilityVirtueEnabled = GetServerSetting( "HumilityVirtueEnabled" );
 
 /** @type { ( sockPlayer: Socket, pPlayer: Character ) => boolean } */
 function onLogin( socket, pChar )
@@ -80,7 +81,7 @@ function onLogin( socket, pChar )
 	}
 
 	//Attach Virtue ontalk script
-	if( virtueSystemEnabled && !pChar.HasScriptTrigger( 8007 ))
+	if(( virtueSystemEnabled && humilityVirtueEnabled ) && !pChar.HasScriptTrigger( 8007 ))
 	{
 		pChar.AddScriptTrigger( 8007 );
 	}
