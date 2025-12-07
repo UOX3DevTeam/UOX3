@@ -139,6 +139,8 @@ JSBool CChar_AddFollower( JSContext *cx, uintN argc, jsval *vp );
 JSBool CChar_RemoveFollower( JSContext *cx, uintN argc, jsval *vp );
 JSBool CChar_HasBeenOwner( JSContext *cx, uintN argc, jsval *vp );
 JSBool CChar_CalculateControlChance( JSContext *cx, uintN argc, jsval *vp );
+JSBool CChar_GetGuildFealty( JSContext* cx, uintN argc, jsval* vp );
+JSBool CChar_SetGuildFealty( JSContext* cx, uintN argc, jsval* vp );
 
 // Item Methods
 JSBool CItem_OpenPlank( JSContext *cx, uintN argc, jsval *vp );
@@ -527,6 +529,8 @@ inline JSFunctionSpec CChar_Methods[] =
 	{ "RemoveFollower",		CChar_RemoveFollower,		1, 0 },
 	{ "HasBeenOwner",		CChar_HasBeenOwner,			1, 0 },
 	{ "CalculateControlChance",	CChar_CalculateControlChance,	1, 0 },
+	{ "GetGuildFealty",		CChar_GetGuildFealty,			0, 0 },
+	{ "SetGuildFealty",		CChar_SetGuildFealty,			1, 0 },
 	{ "GetTempEffect",		CBase_GetTempEffect,		1, 0 },
 	{ "ReverseTempEffect",	CBase_ReverseTempEffect,		1, 0 },
 	{ "PauseTempEffect",	CBase_PauseTempEffect,		1, 0 },

@@ -5309,6 +5309,55 @@ JSBool CGuild_SetRankById(JSContext* cx, uintN argc, jsval* vp)
     return JS_TRUE;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CChar_GetGuildFealty()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  return the character's current guild fealty
+//o------------------------------------------------------------------------------------------------o
+JSBool CChar_GetGuildFealty( JSContext* cx, uintN argc, jsval* vp )
+{
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	if( obj == nullptr )
+		return JS_FALSE;
+
+	CChar* c = static_cast<CChar*>( JS_GetPrivate( cx, obj ) );
+	if( c == nullptr )
+		return JS_FALSE;
+
+	UI32 fealty = c->GetGuildFealty();
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<jsint>( fealty ) ) );
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CChar_SetGuildFealty()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  set the character's guild fealty target
+//o------------------------------------------------------------------------------------------------o
+JSBool CChar_SetGuildFealty( JSContext* cx, uintN argc, jsval* vp )
+{
+	if( argc != 1 )
+		return JS_FALSE;
+
+	jsval* argv = JS_ARGV( cx, vp );
+
+	if( !JSVAL_IS_INT( argv[0] ) )
+		return JS_FALSE;
+
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	if( obj == nullptr )
+		return JS_FALSE;
+
+	CChar* c = static_cast<CChar*>( JS_GetPrivate( cx, obj ) );
+	if( c == nullptr )
+		return JS_FALSE;
+
+	UI32 newFealty = static_cast<UI32>( JSVAL_TO_INT( argv[0] ) );
+	c->SetGuildFealty( newFealty );
+
+	JS_SET_RVAL( cx, vp, JSVAL_VOID );
+	return JS_TRUE;
+}
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBase_ResourceCount()

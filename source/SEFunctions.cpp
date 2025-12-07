@@ -1917,9 +1917,6 @@ JSBool SE_SetGuildRelation( JSContext* cx, uintN argc, jsval* vp )
 //| Function    -  SE_GetGuildRelationRequests()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose     -  Return pending relation requests for a guild
-//| Notes       -  JS prototype:
-//|                  var list = GetGuildRelationRequests( guildID );
-//|                Each entry: { fromId: <guildID>, relation: <0..4> }
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetGuildRelationRequests( JSContext* cx, uintN argc, jsval* vp )
 {
@@ -1966,8 +1963,6 @@ JSBool SE_GetGuildRelationRequests( JSContext* cx, uintN argc, jsval* vp )
 //| Function    -  SE_RemoveGuildRelationRequest()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose     -  Remove a pending relation request by index
-//| Notes       -  JS prototype:
-//|                  bool ok = RemoveGuildRelationRequest( guildID, index );
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_RemoveGuildRelationRequest( JSContext* cx, uintN argc, jsval* vp )
 {
@@ -1994,27 +1989,6 @@ JSBool SE_RemoveGuildRelationRequest( JSContext* cx, uintN argc, jsval* vp )
 //| Function    - SE_GetAllGuilds()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose     - Exposes the full list of existing guilds to JavaScript
-//|
-//| Notes       - JS Prototype:
-//|                 GetAllGuilds() : Array<Guild>
-//|
-//|              - Returns a JavaScript Array containing wrapped CGuild objects.
-//|                Each entry in the array is a valid Guild object as seen from JS
-//|                (same type as returned by CreateNewGuild / pChar.guild).
-//|
-//|              - If there are no guilds, an empty array is returned.
-//|              - If the guild system is not available, the function returns null.
-//|
-//|              - Typical usage in JS:
-//|                  var guilds = GetAllGuilds();
-//|                  for ( var i = 0; i < guilds.length; ++i )
-//|                  {
-//|                      var g = guilds[i];
-//|                      // g.name, g.abbreviation, g.numMembers, etc.
-//|                  }
-//|
-//|              - Useful for building UI such as guild war/ally search menus or
-//|                admin tools that need to browse or filter existing guilds.
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetAllGuilds( JSContext* cx, uintN argc, jsval* vp )
 {

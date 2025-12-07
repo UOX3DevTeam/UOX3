@@ -176,6 +176,10 @@ function GuildMenu(pUser)
 	guildMenu.AddPageButton(135, 170, 0xFA5, 7);
 	guildMenu.AddPicture(-5, 170, 0x0FC0);
 
+	guildMenu.AddHTMLGump(30, 200, 300, 35, false, false, "<basefont color=#ffffff>Guild Fealty</basefont>");
+	guildMenu.AddPageButton(135, 200, 0xFA5, 8);
+	guildMenu.AddPicture(-5, 200, 0x0FC0);
+
 	guildMenu.AddHTMLGump(350, 120, 300, 35, false, false, "<basefont color=#ffffff>Guild News</basefont>");
 	guildMenu.AddBackground(230, 150, 320, 300, 0x2486);
 	guildMenu.AddHTMLGump(240, 160, 300, 800, false, false, "<basefont color=#1111111>" + newsBody  + "</basefont>");
@@ -208,6 +212,10 @@ function GuildMenu(pUser)
 	guildMenu.AddHTMLGump(30, 170, 300, 35, false, false, "<basefont color=#ffffff>Guild Wars</basefont>");
 	guildMenu.AddPageButton(135, 170, 0xFA5, 7);
 	guildMenu.AddPicture(-5, 170, 0x0FC0);
+
+	guildMenu.AddHTMLGump(30, 200, 300, 35, false, false, "<basefont color=#ffffff>Guild Fealty</basefont>");
+	guildMenu.AddPageButton(135, 200, 0xFA5, 8);
+	guildMenu.AddPicture(-5, 200, 0x0FC0);
 
 	guildMenu.AddHTMLGump(240, 120, 300, 35, false, false, "<basefont color=#ffffff>Name</basefont>");
 	guildMenu.AddHTMLGump(380, 120, 300, 35, false, false, "<basefont color=#ffffff>Rank</basefont>");
@@ -267,6 +275,10 @@ function GuildMenu(pUser)
 	guildMenu.AddPageButton(135, 170, 0xFA5, 7);
 	guildMenu.AddPicture(-5, 170, 0x0FC0);
 
+	guildMenu.AddHTMLGump(30, 200, 300, 35, false, false, "<basefont color=#ffffff>Guild Fealty</basefont>");
+	guildMenu.AddPageButton(135, 200, 0xFA5, 8);
+	guildMenu.AddPicture(-5, 200, 0x0FC0);
+
 	guildMenu.AddPicture(220, 120, 0x0FBD);
 	guildMenu.AddHTMLGump(280, 120, 300, 35, false, false, "<basefont color=#ffffff>Guild Name: " + guildinfo.name.toString() + "</basefont>");
 	guildMenu.AddHTMLGump(280, 140, 300, 35, false, false, "<basefont color=#ffffff>Guild Abbreviation: " + guildinfo.abbreviation.toString() + "</basefont>");
@@ -315,6 +327,10 @@ function GuildMenu(pUser)
 	guildMenu.AddPageButton(135, 170, 0xFA5, 7);
 	guildMenu.AddPicture(-5, 170, 0x0FC0);
 
+	guildMenu.AddHTMLGump(30, 200, 300, 35, false, false, "<basefont color=#ffffff>Guild Fealty</basefont>");
+	guildMenu.AddPageButton(135, 200, 0xFA5, 8);
+	guildMenu.AddPicture(-5, 200, 0x0FC0);
+
 	RenderRecruitList(guildMenu, pUser);
 
 	guildMenu.AddPage(6);
@@ -341,6 +357,11 @@ function GuildMenu(pUser)
 	guildMenu.AddHTMLGump(30, 140, 300, 35, false, false, "<basefont color=#0fffff>Guild Settings</basefont>");
 	guildMenu.AddPageButton(135, 140, 0xFA5, 1);
 	guildMenu.AddPicture(-5, 140, 0x0FC0);
+
+	guildMenu.AddHTMLGump(30, 200, 300, 35, false, false, "<basefont color=#ffffff>Guild Fealty</basefont>");
+	guildMenu.AddPageButton(135, 200, 0xFA5, 8);
+	guildMenu.AddPicture(-5, 200, 0x0FC0);
+
 	guildMenu.AddBackground(200, 140, 360, 450, 0x2486);
 	guildMenu.AddHTMLGump(210, 150, 340, 20, false, false, "<basefont color=#111111>Guild Type</basefont>");
 
@@ -420,6 +441,10 @@ function GuildMenu(pUser)
 	guildMenu.AddHTMLGump(30, 170, 300, 35, false, false, "<basefont color=#0fffff>Guild Wars</basefont>");
 	guildMenu.AddPageButton(135, 170, 0xFA5, 1);
 	guildMenu.AddPicture(-5, 170, 0x0FC0);
+
+	guildMenu.AddHTMLGump(30, 200, 300, 35, false, false, "<basefont color=#ffffff>Guild Fealty</basefont>");
+	guildMenu.AddPageButton(135, 200, 0xFA5, 8);
+	guildMenu.AddPicture(-5, 200, 0x0FC0);
 
 	// Main panel
 	guildMenu.AddBackground(190, 120, 390, 430, 0x2486);
@@ -601,6 +626,102 @@ function GuildMenu(pUser)
 		}
 	}
 
+	// -------------------------------------------------
+	// PAGE 8 - Guild Fealty (vote for next guild master)
+	// -------------------------------------------------
+	guildMenu.AddPage(8);
+	guildMenu.AddBackground(0, 0, 600, 600, 0x6DB);
+	guildMenu.AddBackground(0, 0, 600, 100, 0x6DB);
+	guildMenu.AddHTMLGump(260, 40, 300, 35, false, false, "<basefont color=#ffffff>Guild Fealty</basefont>");
+	guildMenu.AddPicture(240, 15, 0x0ED4);
+
+	// Left nav – Fealty highlighted
+	guildMenu.AddBackground(0, 0, 180, 600, 0x6DB);
+
+	guildMenu.AddHTMLGump(30, 20, 300, 35, false, false, "<basefont color=#ffffff>Guild Roster</basefont>");
+	guildMenu.AddPageButton(135, 20, 0xFA5, 2);
+	guildMenu.AddPicture(-5, 20, 0x0FC0);
+
+	guildMenu.AddHTMLGump(30, 50, 300, 35, false, false, "<basefont color=#ffffff>Guild Information</basefont>");
+	guildMenu.AddPageButton(135, 50, 0xFA5, 3);
+	guildMenu.AddPicture(-5, 50, 0x0FC0);
+
+	guildMenu.AddHTMLGump(30, 80, 300, 35, false, false, "<basefont color=#ffffff>Guild Recruitment</basefont>");
+	guildMenu.AddPageButton(135, 80, 0xFA5, 4);
+	guildMenu.AddPicture(-5, 80, 0x0FC0);
+
+	guildMenu.AddHTMLGump(30, 110, 300, 35, false, false, "<basefont color=#ffffff>Guild Ranks</basefont>");
+	guildMenu.AddPageButton(135, 110, 0xFA5, 5);
+	guildMenu.AddPicture(-5, 110, 0x0FC0);
+
+	guildMenu.AddHTMLGump(30, 140, 300, 35, false, false, "<basefont color=#ffffff>Guild Settings</basefont>");
+	guildMenu.AddPageButton(135, 140, 0xFA5, 6);
+	guildMenu.AddPicture(-5, 140, 0x0FC0);
+
+	guildMenu.AddHTMLGump(30, 170, 300, 35, false, false, "<basefont color=#ffffff>Guild Wars</basefont>");
+	guildMenu.AddPageButton(135, 170, 0xFA5, 7);
+	guildMenu.AddPicture(-5, 170, 0x0FC0);
+
+	// Active: Guild Fealty
+	guildMenu.AddHTMLGump(30, 200, 300, 35, false, false, "<basefont color=#0fffff>Guild Fealty</basefont>");
+	guildMenu.AddPageButton(135, 200, 0xFA5, 1);
+	guildMenu.AddPicture(-5, 200, 0x0FC0);
+
+	// Main panel
+	guildMenu.AddBackground(190, 120, 390, 430, 0x2486);
+
+	// Current fealty
+	var currentFealtyTarget = GetGuildFealtyTarget(guildinfo, pUser);
+	var currentFealtyText;
+
+	if (currentFealtyTarget)
+	{
+		var cfName = currentFealtyTarget.name || ("0x" + currentFealtyTarget.serial.toString(16).toUpperCase());
+		currentFealtyText = "You currently pledge fealty to: " + cfName;
+	}
+	else
+	{
+		currentFealtyText = "You have not pledged fealty to any guild member.";
+	}
+
+	guildMenu.AddHTMLGump(200, 130, 360, 40, false, false, "<basefont color=#111111>" + currentFealtyText + "</basefont>");
+
+	// Clear vote button
+	guildMenu.AddButton(200, 170, 0xFB4, 0xFB6, 1, 0, 23100);
+	guildMenu.AddHTMLGump(235, 170, 200, 20, false, false, "<basefont color=#111111>Clear fealty vote</basefont>");
+
+	// NEW: “Change fealty” button -> CustomTarget(1, ...)
+	guildMenu.AddButton(200, 200, 0xFB7, 0xFB9, 1, 0, 23200);
+	guildMenu.AddHTMLGump(235, 200, 320, 20, false, false, "<basefont color=#111111>Click, then target a guild member to pledge fealty to.</basefont>");
+
+	// Member list (display only, no per-row buttons)
+	guildMenu.AddHTMLGump(200, 235, 160, 20, false, false, "<basefont color=#111111>Guild Members</basefont>");
+	guildMenu.AddHTMLGump(200, 255, 160, 20, false, false, "<basefont color=#111111>Name</basefont>");
+	guildMenu.AddHTMLGump(380, 255, 80, 20, false, false, "<basefont color=#111111>Rank</basefont>");
+
+	var fealtyMembers = (guildinfo.member || guildinfo.members) || [];
+	var rowStartY = 280;
+	var rowHeight = 22;
+	var maxRows = 12;
+
+	for (var fi = 0; fi < fealtyMembers.length && fi < maxRows; fi++)
+	{
+		var m = fealtyMembers[fi];
+		if (!m)
+			continue;
+
+		var fy = rowStartY + fi * rowHeight;
+		var mName = m.name || ("0x" + m.serial.toString(16).toUpperCase());
+		var mRank = (m.guildTitle) ||
+			(guildinfo.GetRankName ? guildinfo.GetRankName(m) : GetRankName(guildinfo, m)) || "(none)";
+
+		var isCurrent = (currentFealtyTarget && currentFealtyTarget.serial === m.serial);
+		var nameColor = isCurrent ? "#00a000" : "#111111";
+
+		guildMenu.AddHTMLGump(200, fy, 170, 20, false, false, "<basefont color=" + nameColor + ">" + mName + "</basefont>");
+		guildMenu.AddHTMLGump(380, fy, 80, 20, false, false, "<basefont color=#111111>" + mRank + "</basefont>");
+	}
+
 	guildMenu.AddPage(5);
 
 	// --- layout constants ---
@@ -643,6 +764,10 @@ function GuildMenu(pUser)
 	guildMenu.AddHTMLGump(30, 170, 300, 35, false, false, "<basefont color=#ffffff>Guild Wars</basefont>");
 	guildMenu.AddPageButton(135, 170, 0xFA5, 7);
 	guildMenu.AddPicture(-5, 170, 0x0FC0);
+
+	guildMenu.AddHTMLGump(30, 200, 300, 35, false, false, "<basefont color=#ffffff>Guild Fealty</basefont>");
+	guildMenu.AddPageButton(135, 200, 0xFA5, 8);
+	guildMenu.AddPicture(-5, 200, 0x0FC0);
 
 	// section headers
 	guildMenu.AddHTMLGump(L, 120, 160, 24, false, false, "<basefont color=#ffffff>Ranks</basefont>");
@@ -1384,6 +1509,36 @@ function onGumpPress(pSock, pButton, gumpData)
 		return;
 	}
 
+	if (pButton === 23100)
+	{
+		if (!pUser.SetGuildFealty)
+		{
+			pSock.SysMessage("Fealty option is not available. Ask an admin to check JS bindings.");
+			GuildMenu(pUser);
+			return;
+		}
+
+		pUser.SetGuildFealty(0);
+		pSock.SysMessage("You withdraw your guild fealty vote.");
+		GuildMenu(pUser);
+		return;
+	}
+
+	if (pButton === 23200)
+	{
+		if (!guildinfo)
+		{
+			pSock.SysMessage("You are not in a guild.");
+			return;
+		}
+
+		// callback id 1 -> onCallback1
+		pSock.CustomTarget(1, "Select a guild member to pledge fealty to.");
+		// Optionally re-open gump now, or wait until after targeting;
+		// re-opening is fine, the target cursor will still be active.
+		GuildMenu(pUser);
+		return;
+	}
 }
 
 function onCallback0(socket, target)
@@ -1436,6 +1591,55 @@ function onCallback0(socket, target)
 	if (target.socket)
 		target.socket.SysMessage("You have been invited to join " + (guild.name || "a guild") + " as a recruit.");
 }
+
+function onCallback1(socket, target)
+{
+	var pUser = socket.currentChar;
+	if (!pUser)
+		return;
+
+	var guild = pUser.guild;
+	if (!guild)
+	{
+		socket.SysMessage("You are not in a guild.");
+		return;
+	}
+
+	if (!target || !target.isChar)
+	{
+		socket.SysMessage("That is not a valid character.");
+		return;
+	}
+
+	// Target must be in the same guild
+	if (!target.guild || target.guild !== guild)
+	{
+		socket.SysMessage("You may only pledge fealty to a member of your own guild.");
+		return;
+	}
+
+	// Optional: do not allow fealty to self
+	if (target.serial === pUser.serial)
+	{
+		socket.SysMessage("You cannot pledge fealty to yourself.");
+		return;
+	}
+
+	if (!pUser.SetGuildFealty)
+	{
+		socket.SysMessage("Fealty option is not available. Ask an admin to check JS bindings.");
+		return;
+	}
+
+	pUser.SetGuildFealty(target);
+
+	var tName = target.name || ("0x" + target.serial.toString(16).toUpperCase());
+	socket.SysMessage("You pledge your guild fealty to " + tName + ".");
+
+	// Optionally refresh the guild menu so current fealty text updates
+	GuildMenu(pUser);
+}
+
 
 function HandleRecruitAction(pSock, pUser, guildinfo, row, doAccept)
 {
@@ -1878,4 +2082,23 @@ function SendAndRecordRelationRequest(srcGuild, trgGuild, relationInt)
 		return false;
 
 	return SendGuildRelationRequest(srcGuild.id, trgGuild.id, relationInt | 0);
+}
+
+function GetGuildFealtyTarget(guild, voter)
+{
+	if (!guild || !voter || !voter.GetGuildFealty)
+		return null;
+
+	var fealtySerial = voter.GetGuildFealty() | 0;
+	if (!fealtySerial)
+		return null;
+
+	var members = (guild.member || guild.members) || [];
+	for (var i = 0; i < members.length; i++)
+	{
+		var m = members[i];
+		if (m && m.serial === fealtySerial)
+			return m;
+	}
+	return null;
 }
