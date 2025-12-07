@@ -5242,71 +5242,128 @@ JSBool CGuild_NumRanks( JSContext *cx, uintN argc, jsval *vp )
     return JS_TRUE;
 }
 
-// GetRankNameById(id) -> string
-JSBool CGuild_GetRankNameById(JSContext* cx, uintN argc, jsval* vp)
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild_GetRankNameById()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Exposes rank name lookup by stable rank ID to JS.
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_GetRankNameById( JSContext* cx, uintN argc, jsval* vp )
 {
-    if (argc != 1) { ScriptError(cx, "GetRankNameById: requires 1 arg"); return JS_FALSE; }
-    JSObject* obj = JS_THIS_OBJECT(cx, vp);
-    CGuild* g = static_cast<CGuild*>(JS_GetPrivate(cx, obj));
-    if (!g) { ScriptError(cx, "GetRankNameById: invalid guild"); return JS_FALSE; }
+	if( argc != 1 )
+	{
+		ScriptError( cx, "GetRankNameById: requires 1 arg" );
+		return JS_FALSE;
+	}
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	CGuild* g = static_cast< CGuild* >( JS_GetPrivate( cx, obj ) );
+	if( !g )
+	{
+		ScriptError( cx, "GetRankNameById: invalid guild" );
+		return JS_FALSE;
+	}
 
-    jsval* argv = JS_ARGV(cx, vp);
-    SI32 id = JSVAL_TO_INT(argv[0]); // id comes from JS as number
-    std::string name = g->GetRankNameById((size_t)id);
-    JSString* js = JS_NewStringCopyZ(cx, name.c_str());
-    if (!js) return JS_FALSE;
-    JS_SET_RVAL(cx, vp, STRING_TO_JSVAL(js));
-    return JS_TRUE;
+	jsval* argv = JS_ARGV( cx, vp );
+	SI32 id = JSVAL_TO_INT( argv[ 0 ] ); // id comes from JS as number
+	std::string name = g->GetRankNameById( ( size_t ) id );
+	JSString* js = JS_NewStringCopyZ( cx, name.c_str() );
+
+	if( !js )
+		return JS_FALSE;
+
+	JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( js ) );
+	return JS_TRUE;
 }
 
-// GetRankPrioById(id) -> int
-JSBool CGuild_GetRankPrioById(JSContext* cx, uintN argc, jsval* vp)
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild_GetRankPrioById()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Exposes rank priority lookup by stable rank ID to JS.
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_GetRankPrioById( JSContext* cx, uintN argc, jsval* vp )
 {
-    if (argc != 1) { ScriptError(cx, "GetRankPrioById: requires 1 arg"); return JS_FALSE; }
-    JSObject* obj = JS_THIS_OBJECT(cx, vp);
-    CGuild* g = static_cast<CGuild*>(JS_GetPrivate(cx, obj));
-    if (!g) { ScriptError(cx, "GetRankPrioById: invalid guild"); return JS_FALSE; }
+	if( argc != 1 )
+	{
+		ScriptError( cx, "GetRankPrioById: requires 1 arg" );
+		return JS_FALSE;
+	}
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	CGuild* g = static_cast< CGuild* >( JS_GetPrivate( cx, obj ) );
+	if( !g )
+	{
+		ScriptError( cx, "GetRankPrioById: invalid guild" );
+		return JS_FALSE;
+	}
 
-    jsval* argv = JS_ARGV(cx, vp);
-    SI32 id = JSVAL_TO_INT(argv[0]);
-    SI32 pr = g->GetRankPrioById((size_t)id);
-    JS_SET_RVAL(cx, vp, INT_TO_JSVAL(pr));
-    return JS_TRUE;
+	jsval* argv = JS_ARGV( cx, vp );
+	SI32 id = JSVAL_TO_INT( argv[ 0 ] );
+	SI32 pr = g->GetRankPrioById( ( size_t ) id );
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( pr ) );
+	return JS_TRUE;
 }
 
-// RemoveRankById(id) -> bool
-JSBool CGuild_RemoveRankById(JSContext* cx, uintN argc, jsval* vp)
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild_RemoveRankById()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Allows JS to remove a rank definition by stable rank ID.
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_RemoveRankById( JSContext* cx, uintN argc, jsval* vp )
 {
-    if (argc != 1) { ScriptError(cx, "RemoveRankById: requires 1 arg"); return JS_FALSE; }
-    JSObject* obj = JS_THIS_OBJECT(cx, vp);
-    CGuild* g = static_cast<CGuild*>(JS_GetPrivate(cx, obj));
-    if (!g) { ScriptError(cx, "RemoveRankById: invalid guild"); return JS_FALSE; }
+	if( argc != 1 )
+	{
+		ScriptError( cx, "RemoveRankById: requires 1 arg" );
+		return JS_FALSE;
+	}
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	CGuild* g = static_cast< CGuild* >( JS_GetPrivate( cx, obj ) );
+	if( !g )
+	{
+		ScriptError( cx, "RemoveRankById: invalid guild" );
+		return JS_FALSE;
+	}
 
-    jsval* argv = JS_ARGV(cx, vp);
-    SI32 id = JSVAL_TO_INT(argv[0]);
-    bool ok = g->RemoveRankById((size_t)id);
-    JS_SET_RVAL(cx, vp, BOOLEAN_TO_JSVAL(ok));
-    return JS_TRUE;
+	jsval* argv = JS_ARGV( cx, vp );
+	SI32 id = JSVAL_TO_INT( argv[ 0 ] );
+	bool ok = g->RemoveRankById( ( size_t ) id );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ok ) );
+	return JS_TRUE;
 }
 
-// SetRankById(char, id) -> bool
-JSBool CGuild_SetRankById(JSContext* cx, uintN argc, jsval* vp)
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  CGuild_SetRankById()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Assigns a rank to a character by stable rank ID, from JS.
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_SetRankById( JSContext* cx, uintN argc, jsval* vp )
 {
-    if (argc != 2) { ScriptError(cx, "SetRankById: requires 2 args"); return JS_FALSE; }
-    JSObject* obj = JS_THIS_OBJECT(cx, vp);
-    CGuild* g = static_cast<CGuild*>(JS_GetPrivate(cx, obj));
-    if (!g) { ScriptError(cx, "SetRankById: invalid guild"); return JS_FALSE; }
+	if( argc != 2 )
+	{
+		ScriptError( cx, "SetRankById: requires 2 args" );
+		return JS_FALSE;
+	}
 
-    jsval* argv = JS_ARGV(cx, vp);
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	CGuild* g = static_cast< CGuild* >( JS_GetPrivate( cx, obj ) );
 
-    JSEncapsulate eChar(cx, &(argv[0]));
-    CChar* c = static_cast<CChar*>(eChar.toObject());
-    if (!ValidateObject(c)) { ScriptError(cx, "SetRankById: invalid char"); return JS_FALSE; }
+	if( !g )
+	{
+		ScriptError( cx, "SetRankById: invalid guild" );
+		return JS_FALSE;
+	}
 
-    SI32 id = JSVAL_TO_INT(argv[1]);
-    bool ok = g->SetRankById(c->GetSerial(), (size_t)id);
-    JS_SET_RVAL(cx, vp, BOOLEAN_TO_JSVAL(ok));
-    return JS_TRUE;
+	jsval* argv = JS_ARGV( cx, vp );
+
+	JSEncapsulate eChar( cx, &( argv[ 0 ] ) );
+	CChar* c = static_cast< CChar* >( eChar.toObject() );
+	if( !ValidateObject( c ) )
+	{
+		ScriptError( cx, "SetRankById: invalid char" );
+		return JS_FALSE;
+	}
+
+	SI32 id = JSVAL_TO_INT( argv[ 1 ] );
+	bool ok = g->SetRankById( c->GetSerial(), ( size_t ) id );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ok ) );
+	return JS_TRUE;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5320,12 +5377,12 @@ JSBool CChar_GetGuildFealty( JSContext* cx, uintN argc, jsval* vp )
 	if( obj == nullptr )
 		return JS_FALSE;
 
-	CChar* c = static_cast<CChar*>( JS_GetPrivate( cx, obj ) );
+	CChar* c = static_cast< CChar* >( JS_GetPrivate( cx, obj ) );
 	if( c == nullptr )
 		return JS_FALSE;
 
 	UI32 fealty = c->GetGuildFealty();
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<jsint>( fealty ) ) );
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast< jsint >( fealty ) ) );
 	return JS_TRUE;
 }
 
@@ -5341,18 +5398,18 @@ JSBool CChar_SetGuildFealty( JSContext* cx, uintN argc, jsval* vp )
 
 	jsval* argv = JS_ARGV( cx, vp );
 
-	if( !JSVAL_IS_INT( argv[0] ) )
+	if( !JSVAL_IS_INT( argv[ 0 ] ) )
 		return JS_FALSE;
 
 	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( obj == nullptr )
 		return JS_FALSE;
 
-	CChar* c = static_cast<CChar*>( JS_GetPrivate( cx, obj ) );
+	CChar* c = static_cast< CChar* >( JS_GetPrivate( cx, obj ) );
 	if( c == nullptr )
 		return JS_FALSE;
 
-	UI32 newFealty = static_cast<UI32>( JSVAL_TO_INT( argv[0] ) );
+	UI32 newFealty = static_cast< UI32 >( JSVAL_TO_INT( argv[ 0 ] ) );
 	c->SetGuildFealty( newFealty );
 
 	JS_SET_RVAL( cx, vp, JSVAL_VOID );

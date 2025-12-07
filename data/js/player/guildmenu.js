@@ -136,12 +136,13 @@ function GuildMenu(pUser)
 	var socket = pUser.socket;
 	var guildinfo = pUser.guild;
 	var motd = ReadGuildMOTD(guildinfo);
+
 	if (!motd.length)
 		motd = "No message of the day set.";
 
 	var newsList = ReadGuildNews(guildinfo);
 	if (!newsList.length)
-		newsList = [ "No guild news has been posted yet." ];
+		newsList = ["No guild news has been posted yet."];
 
 	var newsBody = newsList.join("<br><br>");
 
@@ -182,10 +183,10 @@ function GuildMenu(pUser)
 
 	guildMenu.AddHTMLGump(350, 120, 300, 35, false, false, "<basefont color=#ffffff>Guild News</basefont>");
 	guildMenu.AddBackground(230, 150, 320, 300, 0x2486);
-	guildMenu.AddHTMLGump(240, 160, 300, 800, false, false, "<basefont color=#1111111>" + newsBody  + "</basefont>");
+	guildMenu.AddHTMLGump(240, 160, 300, 800, false, false, "<basefont color=#1111111>" + newsBody + "</basefont>");
 	guildMenu.AddHTMLGump(310, 500, 300, 35, false, false, "<basefont color=#ffffff>Guild Message of the Day</basefont>");
 	guildMenu.AddBackground(230, 520, 320, 50, 0x2486);
-	guildMenu.AddHTMLGump(240, 530, 300, 35,false, false,"<basefont color=#1111111>" + motd + "</basefont>");
+	guildMenu.AddHTMLGump(240, 530, 300, 35, false, false, "<basefont color=#1111111>" + motd + "</basefont>");
 
 	guildMenu.AddPage(2);
 	guildMenu.AddBackground(0, 0, 600, 600, 0x6DB);
@@ -616,7 +617,7 @@ function GuildMenu(pUser)
 				guildMenu.AddHTMLGump(15, ry - 30, 220, 20, false, false, "<basefont color=#111111>" + nameText + " - " + relText + "</basefont>");
 
 				// Accept (button 21000 + ri)
-				guildMenu.AddButton(430, ry - 30 , 0xFB7, 0xFB9, 1, 0, 21000 + ri);
+				guildMenu.AddButton(430, ry - 30, 0xFB7, 0xFB9, 1, 0, 21000 + ri);
 				guildMenu.AddHTMLGump(460, ry - 30, 40, 20, false, false, "<basefont color=#111111>OK</basefont>");
 
 				// Decline (button 22000 + ri)
@@ -858,7 +859,7 @@ function GuildMenu(pUser)
 	guildMenu.AddGump(210, 285, 0x60);
 	guildMenu.AddTextEntryLimited(210, 295 + 18, 295, 20, 0, 0, 61002, " ", 33);
 	guildMenu.AddGump(210, 330, 0x60);
-    guildMenu.AddTextEntryLimited(210, 355, 300, 30, 0, 3, 61005, " ", 127);
+	guildMenu.AddTextEntryLimited(210, 355, 300, 30, 0, 3, 61005, " ", 127);
 	guildMenu.AddTextEntryLimited(210, 420, 320, 90, 0, 4, 61011, " ", 168);
 	guildMenu.AddTextEntryLimited(210, 505, 320, 30, 0, 4, 61011, " ", 60);
 	guildMenu.AddTextEntryLimited(210, 545, 320, 30, 0, 4, 61011, " ", 60);
@@ -1349,8 +1350,10 @@ function onGumpPress(pSock, pButton, gumpData)
 
 		// map type string -> relation int
 		var relInt = 0; // neutral
-		if (reqType === "WAR") relInt = 1;
-		else if (reqType === "ALLY") relInt = 2;
+		if (reqType === "WAR")
+			relInt = 1;
+		else if (reqType === "ALLY")
+			relInt = 2;
 
 		// *** This now calls the native C++ binding ***
 		var ok = SendAndRecordRelationRequest(guildinfo, targetGuild, relInt);
@@ -2060,7 +2063,7 @@ function ReadGuildRelationRequests(guild)
 			continue;
 
 		list.push({
-			fromId:   r.fromId | 0,
+			fromId: r.fromId | 0,
 			relation: r.relation | 0
 		});
 	}

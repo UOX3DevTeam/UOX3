@@ -543,6 +543,7 @@ bool CGuild::IsMember( CChar &toCheck ) const
 {
 	return IsMember( toCheck.GetSerial() );
 }
+
 //============================================================================================
 auto CGuild::IsMember( SERIAL toCheck ) const -> bool
 {
