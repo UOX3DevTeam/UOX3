@@ -28,7 +28,12 @@ const SI16 BasePage = 8000;
 
 typedef std::map<GUILDID, GUILDRELATION>	GUILDREL;
 typedef std::map<GUILDID, GUILDRELATION>::iterator GUILDREL_ITERATOR;
-typedef std::map<GUILDID, GUILDRELATION>::iterator GUILDREL_ITERATOR;
+
+struct GuildRelationRequest
+{
+    GUILDID       fromGuildId;
+    GUILDRELATION relation;
+};
 
 class CGuild
 {
@@ -42,41 +47,69 @@ private:
 	SERIAL			master;
 	std::vector<SERIAL>	recruits;
 	std::vector<SERIAL>	members;
-	std::vector<SERIAL> veterans;
-	std::vector<SERIAL> officers;
 	std::vector<SERIAL> invites;
 	GUILDREL		relationList;
 
 	std::vector<SERIAL>::iterator	recruitPtr;
 	std::vector<SERIAL>::iterator	memberPtr;
-	std::vector<SERIAL>::iterator	veteranPtr;
-	std::vector<SERIAL>::iterator	officerPtr;
 	std::vector<SERIAL>::iterator	invitePtr;
+	std::vector<GuildRelationRequest> relationRequests;
+	// ----- Dynamic Ranks (data-driven) -----
+	struct RankDef
+	{
+		std::string name;   // e.g. "Recruit", "Member", "Officer"
+		SI32        prio;   // promotion order (lower = lower rank)
+		UI32        flags;  // optional permissions bitmask
+	};
 
-// ----- Dynamic Ranks (data-driven) -----
-struct RankDef
-{
-    std::string name;   // e.g. "Recruit", "Member", "Officer"
-    SI32        prio;   // promotion order (lower = lower rank)
-    UI32        flags;  // optional permissions bitmask
-};
+	// Stable rank storage:
+	//  - ranks: append-only; index == rankId (STABLE)
+	//  - rankOf: char serial -> rankId
+	//  - orderByPrio: rankIds sorted by prio (for Promote/Demote)
+	//  - idToOrderIndex: rankId -> index in orderByPrio
+	std::vector<RankDef>                 ranks;
+	std::unordered_map<SERIAL, size_t>   rankOf;
+	std::vector<size_t>                  orderByPrio;
+	std::vector<size_t>                  idToOrderIndex;
 
-// Stable rank storage:
-//  - ranks: append-only; index == rankId (STABLE)
-//  - rankOf: char serial -> rankId
-//  - orderByPrio: rankIds sorted by prio (for Promote/Demote)
-//  - idToOrderIndex: rankId -> index in orderByPrio
-std::vector<RankDef>                 ranks;
-std::unordered_map<SERIAL, size_t>   rankOf;
-std::vector<size_t>                  orderByPrio;
-std::vector<size_t>                  idToOrderIndex;
-
-// Rebuild the promotion order after ranks change
-void RebuildRankOrder_();
+	// Rebuild the promotion order after ranks change
+	void RebuildRankOrder_();
 
 	GUILDREL_ITERATOR	warPtr;
 	GUILDREL_ITERATOR	allyPtr;
 public:
+    const std::vector<GuildRelationRequest>& GetRelationRequests() const { return relationRequests; }
+
+    void AddRelationRequest( GUILDID fromGuild, GUILDRELATION rel )
+    {
+        // Optional: overwrite existing request from same guild
+        for( auto& r : relationRequests )
+        {
+            if( r.fromGuildId == fromGuild )
+            {
+                r.relation = rel;
+                return;
+            }
+        }
+        GuildRelationRequest r;
+        r.fromGuildId = fromGuild;
+        r.relation    = rel;
+        relationRequests.push_back( r );
+    }
+
+    void RemoveRelationRequestByIndex( size_t idx )
+    {
+        if( idx >= relationRequests.size() )
+            return;
+        relationRequests.erase( relationRequests.begin() + idx );
+    }
+
+    void ClearRelationRequests()
+    {
+        relationRequests.clear();
+    }
+
+    const std::vector<GuildRelationRequest>& RelationRequests() const { return relationRequests; }
 
 	GUILDID		FirstWar( void );
 	GUILDID		NextWar( void );
@@ -126,32 +159,6 @@ public:
 
 	size_t		NumMembers() const;
 	size_t		NumRecruits() const;
-
-	SERIAL      FirstVeteran();
-	SERIAL      NextVeteran();
-	bool        FinishedVeterans();
-	SERIAL      VeteranNumber( size_t rNum ) const;
-	size_t      NumVeterans() const;
-
-	void        NewVeteran( CChar &newVeteran );
-	void        NewVeteran( SERIAL newVeteran );
-	void        RemoveVeteran( CChar &newVeteran );
-	void        RemoveVeteran( SERIAL newVeteran );
-	bool        IsVeteran( CChar &toCheck ) const;
-	bool        IsVeteran( SERIAL toCheck ) const;
-
-	SERIAL      FirstOfficer();
-	SERIAL      NextOfficer();
-	bool        FinishedOfficers();
-	SERIAL      OfficerNumber( size_t rNum ) const;
-	size_t      NumOfficers() const;
-
-	void        NewOfficer( CChar &newOfficer );
-	void        NewOfficer( SERIAL newOfficer );
-	void        RemoveOfficer( CChar &newOfficer );
-	void        RemoveOfficer( SERIAL newOfficer );
-	bool        IsOfficer( CChar &toCheck ) const;
-	bool        IsOfficer( SERIAL toCheck ) const;
 
 	GUILDRELATION	RelatedToGuild( GUILDID otherGuild ) const;
 	bool		IsAtWar( GUILDID otherGuild ) const;
@@ -304,6 +311,14 @@ public:
 	GUILDID			FindGuildId( const CGuild * );
 	CGuild *		Guild( GUILDID num ) const;
 	CGuild *		operator[]( GUILDID num );
+	// New: fill a vector with *all* guild pointers
+	void			GetAllGuilds( std::vector<CGuild*>& outGuilds ) const;
+
+	// Set direct relation between two guilds (both directions)
+	bool			SetRelation( GUILDID guildOne, GUILDID guildTwo, GUILDRELATION relation );
+
+	// Later you can turn this into a proper "pending request" system
+	bool			SendRelationRequest( GUILDID fromGuild, GUILDID toGuild, GUILDRELATION relation );
 	void			Save();
 	void			Load();
 	GUILDRELATION	Compare( GUILDID srcGuild, GUILDID trgGuild ) const;

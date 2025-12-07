@@ -1,35 +1,35 @@
 function GuildCreation(pUser)
 {
-	var guildMenu = new Gump;
+	var guildCreation = new Gump;
 	var socket = pUser.socket;
 
-	guildMenu.AddBackground(0, 0, 380, 380, 0x6DB);
-	guildMenu.AddCheckerTrans(8, 8, 360, 360);
-	guildMenu.AddHTMLGump(140, 40, 300, 35, false, false, "<basefont color=#ffffff>Guild Creation</basefont>");
-	guildMenu.AddPicture(80, 15, 0x0ED4);
+	guildCreation.AddBackground(0, 0, 380, 380, 0x6DB);
+	guildCreation.AddCheckerTrans(8, 8, 360, 360);
+	guildCreation.AddHTMLGump(140, 40, 300, 35, false, false, "<basefont color=#ffffff>Guild Creation</basefont>");
+	guildCreation.AddPicture(80, 15, 0x0ED4);
 
-	guildMenu.AddHTMLGump(30, 100, 300, 140, false, false, "<basefont color=#ffffff>Thou art not bound to any guild. To establish thine own, provide a unique name and tender the standard guild registration fee.</basefont>");
+	guildCreation.AddHTMLGump(30, 100, 300, 140, false, false, "<basefont color=#ffffff>Thou art not bound to any guild. To establish thine own, provide a unique name and tender the standard guild registration fee.</basefont>");
 
-	guildMenu.AddPicture(180, 170, 0x0EEF);
-	guildMenu.AddHTMLGump(30, 180, 300, 140, false, false, "<basefont color=#ffffff>Registration Fee:</basefont> <basefont color=#0fffff>25000</basefont>");
+	guildCreation.AddPicture(180, 170, 0x0EEF);
+	guildCreation.AddHTMLGump(30, 180, 300, 140, false, false, "<basefont color=#ffffff>Registration Fee:</basefont> <basefont color=#0fffff>25000</basefont>");
 
-	guildMenu.AddGump(140, 220, 1803);
-	guildMenu.AddGump(140, 260, 1803);
+	guildCreation.AddGump(140, 220, 1803);
+	guildCreation.AddGump(140, 260, 1803);
 
-	guildMenu.AddHTMLGump(30, 220, 110, 70, false, false, "<basefont color=#ffffff>Enter Guild Name:</basefont>");
-	guildMenu.AddHTMLGump(30, 240, 300, 140, false, false, "<SMALL><basefont color=#0fffff>Guild names may be up to 33 characters.</basefont></SMALL>");
+	guildCreation.AddHTMLGump(30, 220, 110, 70, false, false, "<basefont color=#ffffff>Enter Guild Name:</basefont>");
+	guildCreation.AddHTMLGump(30, 240, 300, 140, false, false, "<SMALL><basefont color=#0fffff>Guild names may be up to 33 characters.</basefont></SMALL>");
 
-	guildMenu.AddHTMLGump(30, 260, 110, 70, false, false, "<basefont color=#ffffff>Abbrevation:</basefont>");
-	guildMenu.AddHTMLGump(30, 280, 300, 140, false, false, "<SMALL><basefont color=#0fffff>Guild Abbrevation may be up to 3 characters.</basefont></SMALL>");
+	guildCreation.AddHTMLGump(30, 260, 110, 70, false, false, "<basefont color=#ffffff>Abbrevation:</basefont>");
+	guildCreation.AddHTMLGump(30, 280, 300, 140, false, false, "<SMALL><basefont color=#0fffff>Guild Abbrevation may be up to 3 characters.</basefont></SMALL>");
 
-	guildMenu.AddTextEntryLimited(140, 220, 200, 20, 0, 1, 7, pUser.name + "'s Guild", 33);
-	guildMenu.AddTextEntryLimited(140, 260, 200, 20, 0, 2, 8, "NEW", 3);
+	guildCreation.AddTextEntryLimited(140, 220, 200, 20, 0, 1, 7, pUser.name + "'s Guild", 33);
+	guildCreation.AddTextEntryLimited(140, 260, 200, 20, 0, 2, 8, "NEW", 3);
 
-	guildMenu.AddButton(210, 340, 0xF1, 0xF3, 1, 0, 0);
-	guildMenu.AddButton(100, 340, 0xF7, 0xF8, 1, 0, 1);
+	guildCreation.AddButton(210, 340, 0xF1, 0xF3, 1, 0, 0);
+	guildCreation.AddButton(100, 340, 0xF7, 0xF8, 1, 0, 1);
 
-	guildMenu.Send(socket);
-	guildMenu.Free();
+	guildCreation.Send(socket);
+	guildCreation.Free();
 }
 
 function GetRankName(guild, mChar)
@@ -37,7 +37,6 @@ function GetRankName(guild, mChar)
 	if (!guild || !mChar)
 		return "";
 
-	// Prefer engine-provided rank name if available
 	if (guild.GetRankName)
 	{
 		var r = guild.GetRankName(mChar);
@@ -65,8 +64,6 @@ function GetRankName(guild, mChar)
 
 function GetOnlineStatus(mChar)
 {
-	// Typical check: if socket exists, consider online
-	// Adjust if your shard exposes a direct online flag
 	return (mChar && mChar.socket) ? "Online" : "Offline";
 }
 
@@ -157,7 +154,7 @@ function GuildMenu(pUser)
 	guildMenu.AddBackground(0, 0, 600, 600, 0x6DB);
 	guildMenu.AddBackground(0, 0, 600, 100, 0x6DB);
 	guildMenu.AddHTMLGump(280, 40, 300, 35, false, false, "<basefont color=#ffffff>Guild Main Menu</basefont>");
-	guildMenu.AddPicture(240, 15, 0x0ED4);
+	guildMenu.AddPicture(230, 15, 0x0ED4); // 0xA581
 	guildMenu.AddBackground(0, 0, 180, 600, 0x6DB);
 	guildMenu.AddHTMLGump(30, 20, 300, 35, false, false, "<basefont color=#ffffff>Guild Roster</basefont>");
 	guildMenu.AddPageButton(135, 20, 0xFA5, 2);
@@ -175,6 +172,10 @@ function GuildMenu(pUser)
 	guildMenu.AddPageButton(135, 140, 0xFA5, 6);
 	guildMenu.AddPicture(-5, 140, 0x0FC0);
 
+	guildMenu.AddHTMLGump(30, 170, 300, 35, false, false, "<basefont color=#ffffff>Guild Wars</basefont>");
+	guildMenu.AddPageButton(135, 170, 0xFA5, 7);
+	guildMenu.AddPicture(-5, 170, 0x0FC0);
+
 	guildMenu.AddHTMLGump(350, 120, 300, 35, false, false, "<basefont color=#ffffff>Guild News</basefont>");
 	guildMenu.AddBackground(230, 150, 320, 300, 0x2486);
 	guildMenu.AddHTMLGump(240, 160, 300, 800, false, false, "<basefont color=#1111111>" + newsBody  + "</basefont>");
@@ -185,8 +186,8 @@ function GuildMenu(pUser)
 	guildMenu.AddPage(2);
 	guildMenu.AddBackground(0, 0, 600, 600, 0x6DB);
 	guildMenu.AddBackground(0, 0, 600, 100, 0x6DB);
-	guildMenu.AddHTMLGump(280, 40, 300, 35, false, false, "<basefont color=#ffffff>Guild Main Menu Page 2</basefont>");
-	guildMenu.AddPicture(240, 15, 0x0ED4);
+	guildMenu.AddHTMLGump(280, 40, 300, 35, false, false, "<basefont color=#ffffff>Guild Main Roster</basefont>");
+	guildMenu.AddPicture(230, 15, 0x0ED4);
 	guildMenu.AddBackground(0, 0, 180, 600, 0x6DB);
 	guildMenu.AddHTMLGump(30, 20, 300, 35, false, false, "<basefont color=#0fffff>Guild Roster</basefont>");
 	guildMenu.AddPageButton(135, 20, 0xFA5, 1);
@@ -203,6 +204,11 @@ function GuildMenu(pUser)
 	guildMenu.AddHTMLGump(30, 140, 300, 35, false, false, "<basefont color=#ffffff>Guild Settings</basefont>");
 	guildMenu.AddPageButton(135, 140, 0xFA5, 6);
 	guildMenu.AddPicture(-5, 140, 0x0FC0);
+
+	guildMenu.AddHTMLGump(30, 170, 300, 35, false, false, "<basefont color=#ffffff>Guild Wars</basefont>");
+	guildMenu.AddPageButton(135, 170, 0xFA5, 7);
+	guildMenu.AddPicture(-5, 170, 0x0FC0);
+
 	guildMenu.AddHTMLGump(240, 120, 300, 35, false, false, "<basefont color=#ffffff>Name</basefont>");
 	guildMenu.AddHTMLGump(380, 120, 300, 35, false, false, "<basefont color=#ffffff>Rank</basefont>");
 	guildMenu.AddHTMLGump(500, 120, 300, 35, false, false, "<basefont color=#ffffff>Status</basefont>");
@@ -238,8 +244,8 @@ function GuildMenu(pUser)
 	guildMenu.AddPage(3);
 	guildMenu.AddBackground(0, 0, 600, 600, 0x6DB);
 	guildMenu.AddBackground(0, 0, 600, 100, 0x6DB);
-	guildMenu.AddHTMLGump(280, 40, 300, 35, false, false, "<basefont color=#ffffff>Guild Main Menu Page 3</basefont>");
-	guildMenu.AddPicture(240, 15, 0x0ED4);
+	guildMenu.AddHTMLGump(280, 40, 300, 35, false, false, "<basefont color=#ffffff>Guild Main Information</basefont>");
+	guildMenu.AddPicture(230, 15, 0x0ED4);
 	guildMenu.AddBackground(0, 0, 180, 600, 0x6DB);
 	guildMenu.AddHTMLGump(30, 20, 300, 35, false, false, "<basefont color=#ffffff>Guild Roster</basefont>");
 	guildMenu.AddPageButton(135, 20, 0xFA5, 2);
@@ -256,6 +262,10 @@ function GuildMenu(pUser)
 	guildMenu.AddHTMLGump(30, 140, 300, 35, false, false, "<basefont color=#ffffff>Guild Settings</basefont>");
 	guildMenu.AddPageButton(135, 140, 0xFA5, 6);
 	guildMenu.AddPicture(-5, 140, 0x0FC0);
+
+	guildMenu.AddHTMLGump(30, 170, 300, 35, false, false, "<basefont color=#ffffff>Guild Wars</basefont>");
+	guildMenu.AddPageButton(135, 170, 0xFA5, 7);
+	guildMenu.AddPicture(-5, 170, 0x0FC0);
 
 	guildMenu.AddPicture(220, 120, 0x0FBD);
 	guildMenu.AddHTMLGump(280, 120, 300, 35, false, false, "<basefont color=#ffffff>Guild Name: " + guildinfo.name.toString() + "</basefont>");
@@ -277,8 +287,8 @@ function GuildMenu(pUser)
 	guildMenu.AddPage(4);
 	guildMenu.AddBackground(0, 0, 600, 600, 0x6DB);
 	guildMenu.AddBackground(0, 0, 600, 100, 0x6DB);
-	guildMenu.AddHTMLGump(280, 40, 300, 35, false, false, "<basefont color=#ffffff>Guild Main Menu Page 2</basefont>");
-	guildMenu.AddPicture(240, 15, 0x0ED4);
+	guildMenu.AddHTMLGump(280, 40, 300, 35, false, false, "<basefont color=#ffffff>Guild Main Recruitment</basefont>");
+	guildMenu.AddPicture(230, 15, 0x0ED4);
 
 	guildMenu.AddBackground(0, 0, 180, 600, 0x6DB);
 	guildMenu.AddHTMLGump(30, 20, 300, 35, false, false, "<basefont color=#ffffff>Guild Roster</basefont>");
@@ -301,21 +311,18 @@ function GuildMenu(pUser)
 	guildMenu.AddPageButton(135, 140, 0xFA5, 6);
 	guildMenu.AddPicture(-5, 140, 0x0FC0);
 
+	guildMenu.AddHTMLGump(30, 170, 300, 35, false, false, "<basefont color=#ffffff>Guild Wars</basefont>");
+	guildMenu.AddPageButton(135, 170, 0xFA5, 7);
+	guildMenu.AddPicture(-5, 170, 0x0FC0);
+
 	RenderRecruitList(guildMenu, pUser);
 
-	// -----------------------------------------------------------------
-	// PAGE 3 - SETTINGS (added last so its text entries come AFTER ranks)
-	// text entry indexes: 3..7
-	// -----------------------------------------------------------------
 	guildMenu.AddPage(6);
 	guildMenu.AddBackground(0, 0, 600, 600, 0x6DB);
 	guildMenu.AddBackground(0, 0, 600, 100, 0x6DB);
 	guildMenu.AddHTMLGump(280, 40, 300, 35, false, false, "<basefont color=#ffffff>Guild Settings</basefont>");
-	guildMenu.AddPicture(240, 15, 0x0ED4);
-
-	// left nav (Settings highlighted)
+	guildMenu.AddPicture(230, 15, 0x0ED4);
 	guildMenu.AddBackground(0, 0, 180, 600, 0x6DB);
-
 	guildMenu.AddHTMLGump(30, 20, 300, 35, false, false, "<basefont color=#ffffff>Guild Roster</basefont>");
 	guildMenu.AddPageButton(135, 20, 0xFA5, 2);
 	guildMenu.AddPicture(-5, 20, 0x0FC0);
@@ -328,12 +335,12 @@ function GuildMenu(pUser)
 	guildMenu.AddHTMLGump(30, 110, 300, 35, false, false, "<basefont color=#ffffff>Guild Ranks</basefont>");
 	guildMenu.AddPageButton(135, 110, 0xFA5, 5);
 	guildMenu.AddPicture(-5, 110, 0x0FC0);
-
-	guildMenu.AddHTMLGump(30, 140, 300, 35, false, false, "<basefont color=#ffffff>Guild Settings</basefont>");
+	guildMenu.AddHTMLGump(30, 170, 300, 35, false, false, "<basefont color=#ffffff>Guild Wars</basefont>");
+	guildMenu.AddPageButton(135, 170, 0xFA5, 7);
+	guildMenu.AddPicture(-5, 170, 0x0FC0);
+	guildMenu.AddHTMLGump(30, 140, 300, 35, false, false, "<basefont color=#0fffff>Guild Settings</basefont>");
 	guildMenu.AddPageButton(135, 140, 0xFA5, 1);
 	guildMenu.AddPicture(-5, 140, 0x0FC0);
-
-	// settings panel
 	guildMenu.AddBackground(200, 140, 360, 450, 0x2486);
 	guildMenu.AddHTMLGump(210, 150, 340, 20, false, false, "<basefont color=#111111>Guild Type</basefont>");
 
@@ -377,6 +384,223 @@ function GuildMenu(pUser)
 	guildMenu.AddButton(470, 150, 0xFB7, 0xFB9, 1, 0, 16001); // Cancel
 	guildMenu.AddHTMLGump(500, 150, 340, 40, false, false, "<basefont color=#111111>Cancel</basefont>");
 
+	// -------------------------------------------------
+	// PAGE 7 - Guild Wars
+	// -------------------------------------------------
+	guildMenu.AddPage(7);
+	guildMenu.AddBackground(0, 0, 600, 600, 0x6DB);
+	guildMenu.AddBackground(0, 0, 600, 100, 0x6DB);
+	guildMenu.AddHTMLGump(280, 40, 300, 35, false, false, "<basefont color=#ffffff>Guild Wars</basefont>");
+	guildMenu.AddPicture(230, 15, 0x0ED4);
+
+	// Left nav (Wars highlighted)
+	guildMenu.AddBackground(0, 0, 180, 600, 0x6DB);
+
+	guildMenu.AddHTMLGump(30, 20, 300, 35, false, false, "<basefont color=#ffffff>Guild Roster</basefont>");
+	guildMenu.AddPageButton(135, 20, 0xFA5, 2);
+	guildMenu.AddPicture(-5, 20, 0x0FC0);
+
+	guildMenu.AddHTMLGump(30, 50, 300, 35, false, false, "<basefont color=#ffffff>Guild Information</basefont>");
+	guildMenu.AddPageButton(135, 50, 0xFA5, 3);
+	guildMenu.AddPicture(-5, 50, 0x0FC0);
+
+	guildMenu.AddHTMLGump(30, 80, 300, 35, false, false, "<basefont color=#ffffff>Guild Recruitment</basefont>");
+	guildMenu.AddPageButton(135, 80, 0xFA5, 4);
+	guildMenu.AddPicture(-5, 80, 0x0FC0);
+
+	guildMenu.AddHTMLGump(30, 110, 300, 35, false, false, "<basefont color=#ffffff>Guild Ranks</basefont>");
+	guildMenu.AddPageButton(135, 110, 0xFA5, 5);
+	guildMenu.AddPicture(-5, 110, 0x0FC0);
+
+	guildMenu.AddHTMLGump(30, 140, 300, 35, false, false, "<basefont color=#ffffff>Guild Settings</basefont>");
+	guildMenu.AddPageButton(135, 140, 0xFA5, 6);
+	guildMenu.AddPicture(-5, 140, 0x0FC0);
+
+	// Wars (active)
+	guildMenu.AddHTMLGump(30, 170, 300, 35, false, false, "<basefont color=#0fffff>Guild Wars</basefont>");
+	guildMenu.AddPageButton(135, 170, 0xFA5, 1);
+	guildMenu.AddPicture(-5, 170, 0x0FC0);
+
+	// Main panel
+	guildMenu.AddBackground(190, 120, 390, 430, 0x2486);
+
+	// --- search area ---
+	var searchFilter = GetWarSearchFilter(pUser);
+	guildMenu.AddHTMLGump(200, 130, 360, 20, false, false, "<basefont color=#111111>Search guilds by name or abbreviation:</basefont>");
+
+	// Search button (pButton = 17000)
+	guildMenu.AddButton(430, 150, 0xFB7, 0xFB9, 1, 0, 17000);
+	guildMenu.AddHTMLGump(460, 150, 80, 20, false, false, "<basefont color=#111111>Search</basefont>");
+
+	// --- search results header ---
+	guildMenu.AddHTMLGump(200, 180, 160, 20, false, false, "<basefont color=#111111>Matching Guilds</basefont>");
+	guildMenu.AddHTMLGump(380, 180, 80, 20, false, false, "<basefont color=#111111>Relation</basefont>");
+	guildMenu.AddHTMLGump(470, 180, 110, 20, false, false, "<basefont color=#111111>Ally / War</basefont>");
+
+	var rowStartY = 205;
+	var rowHeight = 22;
+	var maxRows = 10;
+
+	// Filtered list
+	var matchGuilds = FilterGuildList(guildinfo, searchFilter);
+
+	if (!matchGuilds.length)
+	{
+		guildMenu.AddHTMLGump(200, rowStartY, 360, 20, false, false, "<basefont color=#111111>No guilds match the current filter.</basefont>");
+	}
+	else
+	{
+		var shown = 0;
+		for (var i = 0; i < matchGuilds.length && shown < maxRows; i++)
+		{
+			var g = matchGuilds[i];
+			if (!g)
+				continue;
+
+			var gy = rowStartY + shown * rowHeight;
+			var gName = g.name || ("Guild #" + g.id);
+			var gAbbr = g.abbreviation ? " [" + g.abbreviation + "]" : "";
+
+			guildMenu.AddHTMLGump(200, gy, 170, 20, false, false, "<basefont color=#111111>" + gName + gAbbr + "</basefont>");
+
+			// Current relation
+			var relText = "Unknown";
+			var relColor = "#808080";
+
+			// Debug info
+			var debugLine = "";
+
+			if (typeof CompareGuildByGuild !== "undefined")
+			{
+				var rel = CompareGuildByGuild(guildinfo.id, g.id);
+
+				// 0 - Neutral, 1 - War, 2 - Allied, 3 - Unknown, 4 - Same
+				if (rel === 0) { relText = "At Peace"; relColor = "#00a000"; }
+				else if (rel === 1) { relText = "At War"; relColor = "#ff4040"; }
+				else if (rel === 2) { relText = "Allied"; relColor = "#0080ff"; }
+				else if (rel === 4) { relText = "Same"; relColor = "#808080"; }
+			}
+			else
+			{
+				if (typeof Console !== "undefined" && Console.Print)
+					Console.Print("[GuildWars] CompareGuildByGuild is undefined in JS scope!");
+			}
+
+			guildMenu.AddHTMLGump(380, gy, 90, 20, false, false, "<basefont color=" + relColor + ">" + relText + "</basefont>");
+
+			// Buttons: Ally / War
+			// We encode the *index in matchGuilds* in the button id.
+			guildMenu.AddButton(470, gy, 0xFB7, 0xFB9, 1, 0, 18000 + i); // Offer Alliance
+			guildMenu.AddButton(505, gy, 0xFB4, 0xFB6, 1, 0, 19000 + i); // Declare War
+
+			shown++;
+		}
+	}
+
+	// --- current wars section ---
+	var warsHeaderY = 205 + maxRows * rowHeight + 15;
+	guildMenu.AddHTMLGump(200, warsHeaderY, 360, 20, false, false, "<basefont color=#111111>Guilds currently at war with you:</basefont>");
+
+	var warsStartY = warsHeaderY + 20;
+	var warsRowH = 20;
+	var warsMaxRows = 8;
+
+	var allGuilds = GetAllGuilds();
+	var warRow = 0;
+
+	if (!allGuilds || !allGuilds.length)
+	{
+		guildMenu.AddHTMLGump(200, warsStartY, 360, 20, false, false, "<basefont color=#111111>No other guilds found.</basefont>");
+	}
+	else
+	{
+		for (var j = 0; j < allGuilds.length && warRow < warsMaxRows; j++)
+		{
+			var wg = allGuilds[j];
+			if (!wg || wg.id === guildinfo.id)
+				continue;
+
+			var relation = (typeof CompareGuildByGuild !== "undefined")
+				? CompareGuildByGuild(guildinfo.id, wg.id) : 3;
+
+			if (relation !== 1) // only wars
+				continue;
+
+			var wy = warsStartY + warRow * warsRowH;
+			var wName = wg.name || ("Guild #" + wg.id);
+			var wAbbr = wg.abbreviation ? " [" + wg.abbreviation + "]" : "";
+
+			guildMenu.AddHTMLGump(200, wy, 220, 20, false, false, "<basefont color=#ff4040>" + wName + wAbbr + "</basefont>");
+
+			// Offer peace button (encoded with index in allGuilds)
+			guildMenu.AddButton(470, wy, 0xFA5, 0xFA7, 1, 0, 20000 + j);
+			guildMenu.AddHTMLGump(500, wy, 80, 20, false, false, "<basefont color=#111111>Offer Peace</basefont>");
+
+			warRow++;
+		}
+
+		if (warRow === 0)
+		{
+			guildMenu.AddHTMLGump(200, warsStartY, 360, 20, false, false, "<basefont color=#111111>Your guild is not currently at war with anyone.</basefont>");
+		}
+
+		// --- incoming relation requests section ---
+		var reqHeaderY = warsStartY + warsMaxRows * warsRowH + 30;
+		guildMenu.AddBackground(0, 600, 600, 100, 0x6DB);
+		guildMenu.AddBackground(10, 610, 580, 80, 0x2486);
+		guildMenu.AddHTMLGump(15, reqHeaderY - 30, 360, 20, false, false, "<basefont color=#111111>Pending relation requests for your guild:</basefont>");
+
+		var reqStartY = reqHeaderY + 20;
+		var reqRowH = 20;
+		var reqMaxRows = 8;
+
+		var incomingReqs = ReadGuildRelationRequests(guildinfo);
+
+		if (!incomingReqs || !incomingReqs.length)
+		{
+			guildMenu.AddHTMLGump(15, reqStartY - 30, 360, 20, false, false, "<basefont color=#111111>No pending alliance/war/peace requests.</basefont>");
+		}
+		else
+		{
+			for (var ri = 0; ri < incomingReqs.length && ri < reqMaxRows; ri++)
+			{
+				var r = incomingReqs[ri];
+				if (!r)
+					continue;
+
+				var fromGuild = FindGuildById(r.fromId);
+				var ry = reqStartY + ri * reqRowH;
+
+				var relText = "Unknown";
+				if (r.relation === 0) relText = "Peace offer";
+				else if (r.relation === 1) relText = "War declaration";
+				else if (r.relation === 2) relText = "Alliance proposal";
+
+				var nameText;
+				if (fromGuild)
+				{
+					var n = fromGuild.name || ("Guild #" + fromGuild.id);
+					var a = fromGuild.abbreviation ? " [" + fromGuild.abbreviation + "]" : "";
+					nameText = n + a;
+				}
+				else
+				{
+					nameText = "Guild #" + r.fromId;
+				}
+
+				guildMenu.AddHTMLGump(15, ry - 30, 220, 20, false, false, "<basefont color=#111111>" + nameText + " - " + relText + "</basefont>");
+
+				// Accept (button 21000 + ri)
+				guildMenu.AddButton(430, ry - 30 , 0xFB7, 0xFB9, 1, 0, 21000 + ri);
+				guildMenu.AddHTMLGump(460, ry - 30, 40, 20, false, false, "<basefont color=#111111>OK</basefont>");
+
+				// Decline (button 22000 + ri)
+				guildMenu.AddButton(510, ry - 30, 0xFB4, 0xFB6, 1, 0, 22000 + ri);
+				guildMenu.AddHTMLGump(540, ry - 30, 60, 20, false, false, "<basefont color=#111111>No</basefont>");
+			}
+		}
+	}
+
 	guildMenu.AddPage(5);
 
 	// --- layout constants ---
@@ -392,7 +616,7 @@ function GuildMenu(pUser)
 	guildMenu.AddBackground(0, 0, 600, 600, 0x6DB);
 	guildMenu.AddBackground(0, 0, 600, 100, 0x6DB);
 	guildMenu.AddHTMLGump(280, 40, 300, 35, false, false, "<basefont color=#ffffff>Guild Ranks</basefont>");
-	guildMenu.AddPicture(240, 15, 0x0ED4);
+	guildMenu.AddPicture(230, 15, 0x0ED4);
 
 	// left nav (same as other pages)
 	guildMenu.AddBackground(0, 0, 180, 600, 0x6DB);
@@ -408,13 +632,17 @@ function GuildMenu(pUser)
 	guildMenu.AddPageButton(135, 80, 0xFA5, 4);
 	guildMenu.AddPicture(-5, 80, 0x0FC0);
 
-	guildMenu.AddHTMLGump(30, 110, 300, 35, false, false, "<basefont color=#ffffff>Guild Ranks</basefont>");
+	guildMenu.AddHTMLGump(30, 110, 300, 35, false, false, "<basefont color=#0fffff>Guild Ranks</basefont>");
 	guildMenu.AddPageButton(135, 110, 0xFA5, 1);
 	guildMenu.AddPicture(-5, 110, 0x0FC0);
 
 	guildMenu.AddHTMLGump(30, 140, 300, 35, false, false, "<basefont color=#ffffff>Guild Settings</basefont>");
 	guildMenu.AddPageButton(135, 140, 0xFA5, 6);
 	guildMenu.AddPicture(-5, 140, 0x0FC0);
+
+	guildMenu.AddHTMLGump(30, 170, 300, 35, false, false, "<basefont color=#ffffff>Guild Wars</basefont>");
+	guildMenu.AddPageButton(135, 170, 0xFA5, 7);
+	guildMenu.AddPicture(-5, 170, 0x0FC0);
 
 	// section headers
 	guildMenu.AddHTMLGump(L, 120, 160, 24, false, false, "<basefont color=#ffffff>Ranks</basefont>");
@@ -487,15 +715,13 @@ function GuildMenu(pUser)
 		guildMenu.AddHTMLGump(R + PAD_X + 50, y2, 70, 18, false, false, "<small><basefont color=#2000000>" + (mRank || "(none)") + "</basefont></small>");
 
 		// buttons aligned in a neat column on the right
-		var bx = R + W + 20 - PAD_X - 20;  // inside right panel
+		var bx = R + W + 20 - PAD_X - 20;
 		guildMenu.AddButton(bx + 10, y2, 0xFAE, 0xFB0, 1, 0, 15200 + r); // up
 		guildMenu.AddButton(bx - 20, y2, 0xFA5, 0xFA7, 1, 0, 15300 + r); // down
 		guildMenu.AddButton(bx - 48, y2, 0xFB7, 0xFB9, 1, 0, 15400 + r); // set
 
 	}
 
-
-	// single “Set Rank (name)” entry at bottom right
 	guildMenu.AddHTMLGump(R + PAD_X, T + H - 54, 160, 18, false, false, "<basefont color=#111111>Set Rank (name)</basefont>");
 
 	guildMenu.AddTextEntryLimited(L + PAD_X + 44, AY + 20, W - 2 * PAD_X - 44, 18, 0, 1, 620020, " ", 32);
@@ -508,10 +734,12 @@ function GuildMenu(pUser)
 	guildMenu.AddTextEntryLimited(210, 295 + 18, 295, 20, 0, 0, 61002, " ", 33);
 	guildMenu.AddGump(210, 330, 0x60);
     guildMenu.AddTextEntryLimited(210, 355, 300, 30, 0, 3, 61005, " ", 127);
-
 	guildMenu.AddTextEntryLimited(210, 420, 320, 90, 0, 4, 61011, " ", 168);
 	guildMenu.AddTextEntryLimited(210, 505, 320, 30, 0, 4, 61011, " ", 60);
 	guildMenu.AddTextEntryLimited(210, 545, 320, 30, 0, 4, 61011, " ", 60);
+
+	guildMenu.AddPage(7);
+	guildMenu.AddTextEntryLimited(200, 150, 220, 20, 0, 0, 65001, " ", 32);
 
 	guildMenu.Send(socket);
 	guildMenu.Free();
@@ -854,6 +1082,14 @@ function onGumpPress(pSock, pButton, gumpData)
 	}
 	if (pButton === 16000) // Save
 	{
+		// Only Officer+ can edit MOTD/News (and GM can also change name/abbr)
+		if (!CanEditNewsAndMOTD(guildinfo, pUser))
+		{
+			pSock.SysMessage("Your rank does not allow editing the guild message of the day or news.");
+			GuildMenu(pUser);
+			return;
+		}
+
 		// text entry indexes 3..7 (after ranks entries)
 		var abbrStr = gumpData.getEdit(3);
 		var nameStr = gumpData.getEdit(4);
@@ -870,10 +1106,19 @@ function onGumpPress(pSock, pButton, gumpData)
 		//charterStr = charterStr.replace(/^\s+|\s+$/g, "");
 		motdStr = motdStr.replace(/^\s+|\s+$/g, "");
 
-		if (abbrStr.length)
-			guildinfo.abbreviation = abbrStr;
-		if (nameStr.length)
-			guildinfo.name = nameStr;
+		if (IsGuildMaster(guildinfo, pUser))
+		{
+			if (abbrStr.length)
+				guildinfo.abbreviation = abbrStr;
+			if (nameStr.length)
+				guildinfo.name = nameStr;
+		}
+		else
+		{
+			pSock.SysMessage("Only Guild Master can change the name of the Guild and Abbreviation");
+			GuildMenu(pUser);
+			return;
+		}
 
 		SaveGuildMOTD(guildinfo, motdStr);
 
@@ -925,6 +1170,220 @@ function onGumpPress(pSock, pButton, gumpData)
 		GuildMenu(pUser);
 		return;
 	}
+
+	if (pButton === 17000)
+	{
+		// This assumes our search text entry is edit index 9
+		var filterStr = gumpData.getEdit(9);
+		filterStr = filterStr.replace(/^\s+|\s+$/g, "");
+		SetWarSearchFilter(pUser, filterStr);
+
+		GuildMenu(pUser);
+		return;
+	}
+
+	if ((pButton >= 18000 && pButton < 18000 + 1000) ||
+		(pButton >= 19000 && pButton < 19000 + 1000))
+	{
+		if (!CanEditGuildWars(guildinfo, pUser))
+		{
+			pSock.SysMessage("Your rank does not allow changing guild war settings.");
+			GuildMenu(pUser);
+			return;
+		}
+
+		var searchFilter = GetWarSearchFilter(pUser);
+		var matches = FilterGuildList(guildinfo, searchFilter);
+
+		var idx, reqType;
+		if (pButton >= 18000 && pButton < 18000 + 1000)
+		{
+			idx = pButton - 18000;
+			reqType = "ALLY";
+		}
+		else
+		{
+			idx = pButton - 19000;
+			reqType = "WAR";
+		}
+
+		if (!matches || idx < 0 || idx >= matches.length)
+		{
+			pSock.SysMessage("That guild is no longer available.");
+			GuildMenu(pUser);
+			return;
+		}
+
+		var targetGuild = matches[idx];
+		if (!targetGuild || targetGuild.id === guildinfo.id)
+		{
+			pSock.SysMessage("Invalid guild selection.");
+			GuildMenu(pUser);
+			return;
+		}
+
+		// map type string -> relation int
+		var relInt = 0; // neutral
+		if (reqType === "WAR") relInt = 1;
+		else if (reqType === "ALLY") relInt = 2;
+
+		// *** This now calls the native C++ binding ***
+		var ok = SendAndRecordRelationRequest(guildinfo, targetGuild, relInt);
+
+		if (!ok)
+		{
+			pSock.SysMessage("Failed to send relation request. Ask an admin to check GuildSys->SendRelationRequest.");
+			GuildMenu(pUser);
+			return;
+		}
+
+		if (reqType === "ALLY")
+			pSock.SysMessage("Alliance request sent to " + (targetGuild.name || "that guild") + ".");
+		else
+			pSock.SysMessage("War declaration request sent to " + (targetGuild.name || "that guild") + ".");
+
+		GuildMenu(pUser);
+		return;
+	}
+
+	if (pButton >= 20000 && pButton < 20000 + 1000)
+	{
+		if (!CanEditGuildWars(guildinfo, pUser))
+		{
+			pSock.SysMessage("Your rank does not allow changing guild war settings.");
+			GuildMenu(pUser);
+			return;
+		}
+
+		var allGuilds = GetAllGuilds();
+		var idx = pButton - 20000;
+
+		if (!allGuilds || idx < 0 || idx >= allGuilds.length)
+		{
+			pSock.SysMessage("That guild is no longer available.");
+			GuildMenu(pUser);
+			return;
+		}
+
+		var targetGuild = allGuilds[idx];
+		if (!targetGuild || targetGuild.id === guildinfo.id)
+		{
+			pSock.SysMessage("Invalid guild selection.");
+			GuildMenu(pUser);
+			return;
+		}
+
+		// Only send peace offer if we are actually at war
+		var rel = (typeof CompareGuildByGuild !== "undefined")
+			? CompareGuildByGuild(guildinfo.id, targetGuild.id) : 3;
+
+		if (rel !== 1)
+		{
+			pSock.SysMessage("Your guild is not currently at war with that guild.");
+			GuildMenu(pUser);
+			return;
+		}
+
+		var ok = SendAndRecordRelationRequest(guildinfo, targetGuild, 0);
+		if (!ok)
+		{
+			pSock.SysMessage("Failed to send peace offer. Ask an admin to check GuildSys->SendRelationRequest.");
+			GuildMenu(pUser);
+			return;
+		}
+
+		pSock.SysMessage("Peace offer sent to " + (targetGuild.name || "that guild") + ".");
+		GuildMenu(pUser);
+		return;
+
+	}
+
+	if (pButton >= 21000 && pButton < 21000 + 1000)
+	{
+		if (!CanEditGuildWars(guildinfo, pUser))
+		{
+			pSock.SysMessage("Your rank does not allow changing guild war settings.");
+			GuildMenu(pUser);
+			return;
+		}
+
+		var idx = pButton - 21000;
+		var incomingReqs = ReadGuildRelationRequests(guildinfo);
+
+		if (!incomingReqs || idx < 0 || idx >= incomingReqs.length)
+		{
+			pSock.SysMessage("That relation request is no longer available.");
+			GuildMenu(pUser);
+			return;
+		}
+
+		var req = incomingReqs[idx];
+		var otherGuild = FindGuildById(req.fromId);
+
+		if (!otherGuild)
+		{
+			pSock.SysMessage("The requesting guild no longer exists.");
+			RemoveGuildRelationRequestByIndex(guildinfo, idx);
+			GuildMenu(pUser);
+			return;
+		}
+
+		var relInt = req.relation | 0;
+
+		// Apply the relation both ways via native binding
+		var ok = SetGuildRelation(guildinfo.id, otherGuild.id, relInt);
+		if (!ok)
+		{
+			pSock.SysMessage("Failed to apply relation. Ask an admin to check SetGuildRelation().");
+			GuildMenu(pUser);
+			return;
+		}
+
+		// Clean up the pending request
+		RemoveGuildRelationRequestByIndex(guildinfo, idx);
+
+		var relText = "Neutral";
+		if (relInt === 1) relText = "War";
+		else if (relInt === 2) relText = "Alliance";
+		else if (relInt === 0) relText = "Peace";
+
+		pSock.SysMessage("Relation with " + (otherGuild.name || "that guild") + " set to " + relText + ".");
+		GuildMenu(pUser);
+		return;
+	}
+
+	if (pButton >= 22000 && pButton < 22000 + 1000)
+	{
+		if (!CanEditGuildWars(guildinfo, pUser))
+		{
+			pSock.SysMessage("Your rank does not allow changing guild war settings.");
+			GuildMenu(pUser);
+			return;
+		}
+
+		var idx = pButton - 22000;
+		var incomingReqs = ReadGuildRelationRequests(guildinfo);
+
+		if (!incomingReqs || idx < 0 || idx >= incomingReqs.length)
+		{
+			pSock.SysMessage("That relation request is no longer available.");
+			GuildMenu(pUser);
+			return;
+		}
+
+		var req = incomingReqs[idx];
+		var otherGuild = FindGuildById(req.fromId);
+
+		if (otherGuild)
+			pSock.SysMessage("You decline the request from " + (otherGuild.name || "that guild") + ".");
+		else
+			pSock.SysMessage("You decline the request from a guild that no longer exists.");
+
+		RemoveGuildRelationRequestByIndex(guildinfo, idx);
+		GuildMenu(pUser);
+		return;
+	}
+
 }
 
 function onCallback0(socket, target)
@@ -1120,6 +1579,16 @@ function CanPromoteDemote(guild, pChar)
 	return prio >= 40;
 }
 
+function CanEditGuildWars(guild, pChar)
+{
+	if (IsGuildMaster(guild, pChar))
+		return true; // GM always allowed
+
+	var prio = GetRankPriority(guild, pChar);
+	// Officer (40) and above can change war/ally/peace
+	return prio >= 40;
+}
+
 function GetLowestRankName(guild)
 {
 	if (!guild || !guild.NumRanks || !guild.GetRankNameById || !guild.GetRankPrioById)
@@ -1153,13 +1622,8 @@ function manualTrim(str)
 	return String(str).replace(/^\s+|\s+$/g, "");
 }
 
-// -------------------------------------------------
-// Core: read/write generic guild config key/value
-// -------------------------------------------------
-
 function GetGuildConfigFileName(guild)
 {
-	// Swap to guild.serial if that’s what your bindings expose
 	return "Guild_" + guild.id + ".jsdata";
 }
 
@@ -1209,9 +1673,18 @@ function SaveGuildConfig(guild, cfg)
 	var mFile = new UOXCFile();
 	var fileName = GetGuildConfigFileName(guild);
 
-	mFile.Open(fileName, "w", "Guilds");
-	if (!mFile)
+	// IMPORTANT: check return value of Open()
+	var opened = mFile.Open(fileName, "w", "Guilds");
+	if (!opened)
+	{
+		if (typeof Console !== "undefined" && Console.Print)
+		{
+			Console.Print("[GuildConfig] Failed to open '" + fileName +
+				"' in root 'Guilds' for writing.");
+		}
+		mFile.Free();
 		return false;
+	}
 
 	for (var key in cfg)
 	{
@@ -1229,10 +1702,6 @@ function SaveGuildConfig(guild, cfg)
 	mFile.Free();
 	return true;
 }
-
-// -------------------------------------------------
-// MOTD helpers (now use config object)
-// -------------------------------------------------
 
 function SaveGuildMOTD(guild, motd)
 {
@@ -1253,10 +1722,6 @@ function ReadGuildMOTD(guild)
 	var cfg = ReadGuildConfig(guild);
 	return String(cfg.MOTD || "");
 }
-
-// -------------------------------------------------
-// News helpers (NEWS0..NEWS9)
-// -------------------------------------------------
 
 function SaveGuildNews(guild, newsArray)
 {
@@ -1305,4 +1770,112 @@ function ReadGuildNews(guild)
 	}
 
 	return news;
+}
+
+function CanEditNewsAndMOTD(guild, pChar)
+{
+	if (IsGuildMaster(guild, pChar))
+		return true; // GM always allowed
+
+	var prio = GetRankPriority(guild, pChar);
+	// Officer (40) and above can edit MOTD / News
+	return prio >= 40;
+}
+
+function FilterGuildList(myGuild, filterText)
+{
+	var all = GetAllGuilds(); // use native binding
+	if (!all || !all.length || !myGuild)
+		return [];
+
+	var f = String(filterText || "").toLowerCase();
+	var out = [];
+
+	for (var i = 0; i < all.length; i++)
+	{
+		var g = all[i];
+		if (!g || g.id === myGuild.id)
+			continue;
+
+		if (f.length)
+		{
+			var n = String(g.name || "").toLowerCase();
+			var a = String(g.abbreviation || "").toLowerCase();
+			if (n.indexOf(f) === -1 && a.indexOf(f) === -1)
+				continue;
+		}
+
+		out.push(g);
+	}
+	return out;
+}
+
+function GetWarSearchFilter(pUser)
+{
+	if (!pUser || !pUser.GetTag)
+		return "";
+	return String(pUser.GetTag("guildWarFilter") || "");
+}
+
+function SetWarSearchFilter(pUser, txt)
+{
+	if (!pUser || !pUser.SetTag)
+		return;
+	pUser.SetTag("guildWarFilter", String(txt || ""));
+}
+
+function FindGuildById(guildId)
+{
+	var all = GetAllGuilds();
+	if (!all || !all.length)
+		return null;
+
+	for (var i = 0; i < all.length; i++)
+	{
+		var g = all[i];
+		if (g && g.id === (guildId | 0))
+			return g;
+	}
+	return null;
+}
+
+function ReadGuildRelationRequests(guild)
+{
+	if (!guild || typeof GetGuildRelationRequests === "undefined")
+		return [];
+
+	var raw = GetGuildRelationRequests(guild.id);
+	if (!raw || !raw.length)
+		return [];
+
+	var list = [];
+	for (var i = 0; i < raw.length; i++)
+	{
+		var r = raw[i];
+		if (!r)
+			continue;
+
+		list.push({
+			fromId:   r.fromId | 0,
+			relation: r.relation | 0
+		});
+	}
+	return list;
+}
+
+function RemoveGuildRelationRequestByIndex(guild, index)
+{
+	if (!guild || typeof RemoveGuildRelationRequest === "undefined")
+		return false;
+
+	RemoveGuildRelationRequest(guild.id, index | 0);
+	return true;
+}
+
+function SendAndRecordRelationRequest(srcGuild, trgGuild, relationInt)
+{
+	if (!srcGuild || !trgGuild || typeof SendGuildRelationRequest === "undefined")
+		return false;
+
+	return SendGuildRelationRequest(srcGuild.id, trgGuild.id, relationInt | 0);
 }

@@ -1831,6 +1831,219 @@ JSBool SE_CompareGuildByGuild( JSContext *cx, uintN argc, jsval *vp )
 	return JS_TRUE;
 }
 
+//o-------------------------------------------------------------------------------------------------o
+//|	Function	-	SE_SendGuildRelationRequest()
+//o-------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Request a relation change (war / ally / peace) between two guilds
+//|	JS			-	SendGuildRelationRequest( srcGuildID, trgGuildID, relationType );
+//o-------------------------------------------------------------------------------------------------o
+JSBool SE_SendGuildRelationRequest( JSContext* cx, uintN argc, jsval* vp )
+{
+	jsval* argv = JS_ARGV( cx, vp );
+
+	if( argc != 3 || GuildSys == nullptr )
+		return JS_FALSE;
+
+	if( !JSVAL_IS_INT( argv[0] ) || !JSVAL_IS_INT( argv[1] ) || !JSVAL_IS_INT( argv[2] ) )
+		return JS_FALSE;
+
+	GUILDID srcGuildId = static_cast<GUILDID>( JSVAL_TO_INT( argv[0] ) );
+	GUILDID trgGuildId = static_cast<GUILDID>( JSVAL_TO_INT( argv[1] ) );
+	int     relInt     = JSVAL_TO_INT( argv[2] );
+
+	// Clamp relation into valid range [GR_NEUTRAL..GR_SAME]
+	if( relInt < GR_NEUTRAL )
+		relInt = GR_NEUTRAL;
+	if( relInt > GR_SAME )
+		relInt = GR_SAME;
+
+	GUILDRELATION relation = static_cast<GUILDRELATION>( relInt );
+
+	bool ok = GuildSys->SendRelationRequest( srcGuildId, trgGuildId, relation );
+
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ok ? JS_TRUE : JS_FALSE ) );
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	SE_SetGuildRelation()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Directly set the relation between two guilds
+//|	Notes		-	JS prototype:
+//|					bool ok = SetGuildRelation( srcGuildID, trgGuildID, relation );
+//|					relation: 0 = Neutral
+//|					          1 = War
+//|					          2 = Ally
+//|					          3 = Unknown
+//|					          4 = Same
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_SetGuildRelation( JSContext* cx, uintN argc, jsval* vp )
+{
+	jsval* argv = JS_ARGV( cx, vp );
+
+	if( argc != 3 || GuildSys == nullptr )
+		return JS_FALSE;
+
+	GUILDID srcID = static_cast<GUILDID>( JSVAL_TO_INT( argv[0] ));
+	GUILDID trgID = static_cast<GUILDID>( JSVAL_TO_INT( argv[1] ));
+	int relInt   = JSVAL_TO_INT( argv[2] );
+
+	// Clamp to valid range for GUILDRELATION
+	if( relInt < GR_NEUTRAL )
+		relInt = GR_NEUTRAL;
+	if( relInt > GR_SAME )
+		relInt = GR_SAME;
+
+	CGuild* src = GuildSys->Guild( srcID );
+	CGuild* trg = GuildSys->Guild( trgID );
+
+	bool ok = ( src != nullptr && trg != nullptr );
+
+	if( ok )
+	{
+		GUILDRELATION rel = static_cast<GUILDRELATION>( relInt );
+
+		// For menu / high-level stuff, SetGuildRelation is explicitly “menu-only”
+		// and just writes into relationList.
+		src->SetGuildRelation( trgID, rel );
+		trg->SetGuildRelation( srcID, rel );
+	}
+
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ok ? JS_TRUE : JS_FALSE ) );
+	return JS_TRUE;
+}
+
+// JS: var arr = GetGuildRelationRequests(guildId);
+//      arr[i] = { fromId: number, relation: number }
+JSBool SE_GetGuildRelationRequests( JSContext* cx, uintN argc, jsval* vp )
+{
+    jsval* argv = JS_ARGV( cx, vp );
+
+    if( argc != 1 || GuildSys == nullptr )
+        return JS_FALSE;
+    if( !JSVAL_IS_INT( argv[0] ) )
+        return JS_FALSE;
+
+    GUILDID gId = static_cast<GUILDID>( JSVAL_TO_INT( argv[0] ) );
+    CGuild* g   = GuildSys->Guild( gId );
+
+    JSObject* arrObj = JS_NewArrayObject( cx, 0, nullptr );
+    if( !arrObj )
+        return JS_FALSE;
+
+    if( g )
+    {
+        const auto& reqs = g->RelationRequests();
+        uint32 index = 0;
+        for( const auto& r : reqs )
+        {
+            JSObject* obj = JS_NewObject( cx, nullptr, nullptr, nullptr );
+            if( !obj )
+                continue;
+
+            jsval vFrom = INT_TO_JSVAL( (int)r.fromGuildId );
+            jsval vRel  = INT_TO_JSVAL( (int)r.relation );
+
+            JS_SetProperty( cx, obj, "fromId", &vFrom );
+            JS_SetProperty( cx, obj, "relation", &vRel );
+
+            jsval vObj = OBJECT_TO_JSVAL( obj );
+            JS_SetElement( cx, arrObj, index++, &vObj );
+        }
+    }
+
+    JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( arrObj ) );
+    return JS_TRUE;
+}
+
+// JS: RemoveGuildRelationRequestNative(guildId, idx);
+JSBool SE_RemoveGuildRelationRequest( JSContext* cx, uintN argc, jsval* vp )
+{
+    jsval* argv = JS_ARGV( cx, vp );
+
+    if( argc != 2 || GuildSys == nullptr )
+        return JS_FALSE;
+    if( !JSVAL_IS_INT( argv[0] ) || !JSVAL_IS_INT( argv[1] ) )
+        return JS_FALSE;
+
+    GUILDID gId = static_cast<GUILDID>( JSVAL_TO_INT( argv[0] ) );
+    int     idx = JSVAL_TO_INT( argv[1] );
+
+    CGuild* g = GuildSys->Guild( gId );
+    if( g && idx >= 0 )
+        g->RemoveRelationRequestByIndex( static_cast<size_t>( idx ) );
+
+    JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( JS_TRUE ) );
+    return JS_TRUE;
+}
+
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - SE_GetAllGuilds()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Exposes the full list of existing guilds to JavaScript
+//|
+//| Notes       - JS Prototype:
+//|                 GetAllGuilds() : Array<Guild>
+//|
+//|              - Returns a JavaScript Array containing wrapped CGuild objects.
+//|                Each entry in the array is a valid Guild object as seen from JS
+//|                (same type as returned by CreateNewGuild / pChar.guild).
+//|
+//|              - If there are no guilds, an empty array is returned.
+//|              - If the guild system is not available, the function returns null.
+//|
+//|              - Typical usage in JS:
+//|                  var guilds = GetAllGuilds();
+//|                  for ( var i = 0; i < guilds.length; ++i )
+//|                  {
+//|                      var g = guilds[i];
+//|                      // g.name, g.abbreviation, g.numMembers, etc.
+//|                  }
+//|
+//|              - Useful for building UI such as guild war/ally search menus or
+//|                admin tools that need to browse or filter existing guilds.
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_GetAllGuilds( JSContext* cx, uintN argc, jsval* vp )
+{
+	// Optional: keep this for consistency with other SE_ functions
+	JSObject* jsThis = JS_THIS_OBJECT( cx, vp );
+	if( jsThis == nullptr )
+		return JS_FALSE;
+
+	if( GuildSys == nullptr )
+	{
+		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		return JS_TRUE;
+	}
+
+	std::vector<CGuild*> allGuilds;
+	GuildSys->GetAllGuilds( allGuilds );
+
+	JSObject* arr = JS_NewArrayObject( cx, 0, nullptr );
+	if( arr == nullptr )
+		return JS_FALSE;
+
+	jsuint index = 0;
+	for( size_t i = 0; i < allGuilds.size(); ++i )
+	{
+		CGuild* g = allGuilds[i];
+		if( g == nullptr )
+			continue;
+
+		JSObject* jsGuildObj = JSEngine->AcquireObject( IUE_GUILD, g, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+
+		if( jsGuildObj != nullptr )
+		{
+			jsval gv = OBJECT_TO_JSVAL( jsGuildObj );
+			JS_SetElement( cx, arr, index++, &gv );
+		}
+	}
+
+	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( arr ) );
+	return JS_TRUE;
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	SE_CreateNewGuild()
 //|	Prototype	-	object CreateNewGuild()
