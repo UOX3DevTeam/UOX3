@@ -1913,8 +1913,14 @@ JSBool SE_SetGuildRelation( JSContext* cx, uintN argc, jsval* vp )
 	return JS_TRUE;
 }
 
-// JS: var arr = GetGuildRelationRequests(guildId);
-//      arr[i] = { fromId: number, relation: number }
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  SE_GetGuildRelationRequests()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Return pending relation requests for a guild
+//| Notes       -  JS prototype:
+//|                  var list = GetGuildRelationRequests( guildID );
+//|                Each entry: { fromId: <guildID>, relation: <0..4> }
+//o------------------------------------------------------------------------------------------------o
 JSBool SE_GetGuildRelationRequests( JSContext* cx, uintN argc, jsval* vp )
 {
     jsval* argv = JS_ARGV( cx, vp );
@@ -1956,7 +1962,13 @@ JSBool SE_GetGuildRelationRequests( JSContext* cx, uintN argc, jsval* vp )
     return JS_TRUE;
 }
 
-// JS: RemoveGuildRelationRequestNative(guildId, idx);
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  SE_RemoveGuildRelationRequest()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Remove a pending relation request by index
+//| Notes       -  JS prototype:
+//|                  bool ok = RemoveGuildRelationRequest( guildID, index );
+//o------------------------------------------------------------------------------------------------o
 JSBool SE_RemoveGuildRelationRequest( JSContext* cx, uintN argc, jsval* vp )
 {
     jsval* argv = JS_ARGV( cx, vp );
