@@ -1367,7 +1367,7 @@ function onGumpPress( pSock, pButton, gumpData )
 				if( miningSkill < 650 )
 				{
 					pSock.CloseGump( gumpID, 0 );
-					pUser.StartTimer( ingotDelay, 8, true );
+					pUser.StartTimer( ingotDelay, 20, true );
 					pUser.SetTempTag( "prevActionResult", "FAILED" );
 					return;
 				}
@@ -1378,7 +1378,7 @@ function onGumpPress( pSock, pButton, gumpData )
 				if( miningSkill < 700 )
 				{
 					pSock.CloseGump( gumpID, 0 );
-					pUser.StartTimer( ingotDelay, 8, true );
+					pUser.StartTimer( ingotDelay, 20, true );
 					pUser.SetTempTag( "prevActionResult", "FAILED" );
 					return;
 				}
@@ -1389,7 +1389,7 @@ function onGumpPress( pSock, pButton, gumpData )
 				if( miningSkill < 750 )
 				{
 					pSock.CloseGump( gumpID, 0 );
-					pUser.StartTimer( ingotDelay, 8, true );
+					pUser.StartTimer( ingotDelay, 20, true );
 					pUser.SetTempTag( "prevActionResult", "FAILED" );
 					return;
 				}
@@ -1400,7 +1400,7 @@ function onGumpPress( pSock, pButton, gumpData )
 				if( miningSkill < 800 )
 				{
 					pSock.CloseGump( gumpID, 0 );
-					pUser.StartTimer( ingotDelay, 8, true );
+					pUser.StartTimer( ingotDelay, 20, true );
 					pUser.SetTempTag( "prevActionResult", "FAILED" );
 					return;
 				}
@@ -1411,7 +1411,7 @@ function onGumpPress( pSock, pButton, gumpData )
 				if( miningSkill < 850 )
 				{
 					pSock.CloseGump( gumpID, 0 );
-					pUser.StartTimer( ingotDelay, 8, true );
+					pUser.StartTimer( ingotDelay, 20, true );
 					pUser.SetTempTag( "prevActionResult", "FAILED" );
 					return;
 				}
@@ -1422,7 +1422,7 @@ function onGumpPress( pSock, pButton, gumpData )
 				if( miningSkill < 900 )
 				{
 					pSock.CloseGump( gumpID, 0 );
-					pUser.StartTimer( ingotDelay, 8, true );
+					pUser.StartTimer( ingotDelay, 20, true );
 					pUser.SetTempTag( "prevActionResult", "FAILED" );
 					return;
 				}
@@ -1433,7 +1433,7 @@ function onGumpPress( pSock, pButton, gumpData )
 				if( miningSkill < 950 )
 				{
 					pSock.CloseGump( gumpID, 0 );
-					pUser.StartTimer( ingotDelay, 8, true );
+					pUser.StartTimer( ingotDelay, 20, true );
 					pUser.SetTempTag( "prevActionResult", "FAILED" );
 					return;
 				}
@@ -1444,7 +1444,7 @@ function onGumpPress( pSock, pButton, gumpData )
 				if( miningSkill < 990 )
 				{
 					pSock.CloseGump( gumpID, 0 );
-					pUser.StartTimer( ingotDelay, 8, true );
+					pUser.StartTimer( ingotDelay, 20, true );
 					pUser.SetTempTag( "prevActionResult", "FAILED" );
 					return;
 				}

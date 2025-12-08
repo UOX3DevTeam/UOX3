@@ -55,8 +55,17 @@ function CraftingGumpMenu( myGump, socket )
 	var veritegranite = pUser.ResourceCount( 0x1779, 0x089f );
 	var valoritegranite = pUser.ResourceCount( 0x1779, 0x08ab );
 
+	var redScales = pUser.ResourceCount( 0x26b4, 0x0663 ); // red scales
+	var yellowScales = pUser.ResourceCount( 0x26b4, 0x084d); // yellow scales
+	var blackScales = pUser.ResourceCount( 0x26b4, 0x0455); // Black scales
+	var greenScales = pUser.ResourceCount( 0x26b4, 0x0851); // Green scales
+	var whiteScales = pUser.ResourceCount( 0x26b4, 0x02c2 ); // White scales
+	var blueScales = pUser.ResourceCount( 0x26b4, 0x0006); // Blue scales
+
 	var resourcename = 10291;
+	var resourcename2 = 10291;
 	var resource = iron;
+	var resource2 = whiteScales;
 	var groupList;
 	var gumpMenuName = "";
 	var repair = 51;
@@ -133,6 +142,37 @@ function CraftingGumpMenu( myGump, socket )
 				default: // Iron
 					resourcename = 10291;
 					resource = iron;
+					break;
+			}
+			switch( pUser.GetTempTag( "Scale" ))
+			{
+				case 0:
+					resourcename2 = 20299;
+					resource2 = redScales;
+					break;
+				case 1:
+					resourcename2 = 20300;
+					resource2 = yellowScales;
+					break;
+				case 2:
+					resourcename2 = 20301;
+					resource2 = blackScales;
+					break;
+				case 3:
+					resourcename2 = 20302;
+					resource2 = greenScales;
+					break;
+				case 4:
+					resourcename2 = 20303;
+					resource2 = whiteScales;
+					break;
+				case 5:
+					resourcename2 = 20304;
+					resource2 = blueScales;
+					break;
+				default:
+					resourcename2 = 20299;
+					resource2 = redScales;
 					break;
 			}
 			repair = 49;
@@ -326,6 +366,8 @@ function CraftingGumpMenu( myGump, socket )
 
 		if( craftingSkillUsed == 5 )
 		{
+			myGump.AddText( 50, 380, textHue, GetDictionaryEntry( resourcename2, socket.language ) + " (" + resource2.toString() + ")" );
+			myGump.AddButton(15, 380, 4005, 4007, 1, 0, 51); // Material Selection Button
 			// Blacksmithing
 			myGump.AddButton(270, 342, 0xfa5, 1, 0, repair); // Repair Button
 			myGump.AddHTMLGump(305, 345, 150, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10212, socket.language ) + "</basefont>" );// REPAIR ITEM

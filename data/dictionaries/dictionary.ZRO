@@ -4616,6 +4616,12 @@
 10296=You have no knowledge on how to unravel that.
 10297=You unravel the item and place 5 resources in your pack.
 20298=You aren't skilled enough to unravel this.
+20299=RED SCALES
+20300=YELLOW SCALES
+20301=BLACK SCALES
+20302=GREEN SCALES
+20303=WHITE SCALES
+20304=BLUE SCALES
 // [10600-10900] Carpentry Crafting Skill
 10600=CARPENTRY MENU
 10601=Other
