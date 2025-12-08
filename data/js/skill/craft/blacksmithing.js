@@ -30,7 +30,6 @@ const OreTypes = [
 ];
 
 const ScaleTypes = [
-    // Example placeholders — replace with real values:
     { nameDict: 20299, hue: 0x0663, minSkill:  0 }, // Red
     { nameDict: 20300, hue: 0x084d, minSkill:  0 }, // Yellow
     { nameDict: 20301, hue: 0x0455, minSkill:  0 }, // Black
