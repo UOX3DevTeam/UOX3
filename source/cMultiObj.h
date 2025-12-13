@@ -116,6 +116,7 @@ public:
 	bool				IsOnOwnerList( CChar *toCheck ) const;
 	bool				CheckForAccountCoOwnership( CChar *toCheck ) const;
 	bool				IsOwner( CChar *toFind ) const;
+	bool				BuildHouseDesignBaseTiles( std::vector<HouseTileEntry> &out ) const;
 
 	void				AddToMulti( CBaseObject *toAdd );
 	void				RemoveFromMulti( CBaseObject *toRemove );
@@ -191,6 +192,50 @@ public:
 
 	virtual bool		CanBeObjType( ObjectType toCompare ) const override;
 };
+
+struct HouseTileEntry
+{
+    UI16 id;
+    SI08 x;
+    SI08 y;
+    SI08 z;
+};
+
+struct HouseCustomSession
+{
+    SERIAL houseSerial;
+    UI32 revision;
+	UI08 floor; // current floor selected by client (0 = ground)
+    std::vector<HouseTileEntry> tiles;
+
+	std::vector<HouseTileEntry> baseTiles; // foundation/plot tiles shown in designer
+    // New: for buttons
+    std::vector<HouseTileEntry> originalTiles; // snapshot from start of session
+    std::vector<HouseTileEntry> backupTiles;   // set by Backup button
+};
+
+bool HC_StartSession( CSocket *sock, SERIAL houseSerial );
+void HC_EndSession( CSocket *sock );
+HouseCustomSession *HC_GetSession( CSocket *sock );
+bool HC_IsSessionForHouse( CSocket *sock, SERIAL houseSerial );
+void HC_LoadExistingCustomTiles( HouseCustomSession &s, CItem *houseItem, CMultiObj *mMulti );
+void HC_BumpRevision( HouseCustomSession &s );
+bool HC_AddTile( HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z );
+bool HC_RemoveTile( HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z );
+bool HC_CommitSession( CSocket *sock );
+void HC_Backup( HouseCustomSession &s );
+void HC_Restore( HouseCustomSession &s );
+void HC_Revert( HouseCustomSession &s );
+void HC_ClearAll( HouseCustomSession &s );
+bool HC_RemoveTileAnyZ( HouseCustomSession &s, UI16 id, SI08 x, SI08 y );
+void HC_BuildCombinedTiles( const HouseCustomSession &s, std::vector<HouseTileEntry> &out );
+bool HC_LoadFoundationTiles( CSocket* sock, HouseCustomSession& s );
+
+namespace zlibhelper
+{
+    std::vector<UI08> Compress( const std::vector<UI08> &src );
+    std::vector<UI08> Decompress( const std::vector<UI08> &src, size_t outSize );
+}
 
 #endif
 

@@ -3,7 +3,6 @@
 
 #include "CPacketReceive.h"
 
-
 // Forward declare
 struct __STARTLOCATIONDATA__;
 
@@ -914,6 +913,36 @@ public:
 	virtual	void	SetMap( UI08 newMap );
 	CPMapChange&	operator = ( CBaseObject& moving );
 	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
+};
+
+class CPHouseCustomization : public CPUOXBuffer
+{
+protected:
+	virtual void	InternalReset( void ) override;
+	UI32			_houseSerial;
+	UI08			_mode;
+public:
+	CPHouseCustomization( UI32 houseSerial, bool begin );
+	virtual			~CPHouseCustomization() {}
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
+};
+
+class CPHouseDesignStateGeneral : public CPUOXBuffer
+{
+protected:
+	virtual void	InternalReset( void ) override;
+	UI32			_houseSerial;
+	UI32			_revision;
+public:
+	CPHouseDesignStateGeneral( UI32 houseSerial, UI32 revision );
+	virtual			~CPHouseDesignStateGeneral() {}
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
+};
+
+class CPHouseDesignStateDetailed : public CPUOXBuffer
+{
+public:
+    CPHouseDesignStateDetailed( SERIAL houseSerial, UI32 revision, const std::vector<HouseTileEntry> &tiles, bool enableResponse = true );
 };
 
 class CPCloseGump : public CPUOXBuffer

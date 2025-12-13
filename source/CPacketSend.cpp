@@ -4532,6 +4532,174 @@ CPMapChange& CPMapChange::operator = ( CBaseObject& moving )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function	- 	CPHouseCustomization
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		- 	Packet: 0xBF Subcommand 0x20 (Begin/End House Customization Mode)
+//o------------------------------------------------------------------------------------------------o
+void CPHouseCustomization::InternalReset( void )
+{
+	pStream.ReserveSize( 17 );
+	pStream.WriteByte( 0, 0xBF );
+	pStream.WriteShort( 1, 0x0011 );		// Packet length
+	pStream.WriteShort( 3, 0x0020 );		// Subcommand: House Customization
+	pStream.WriteLong( 5, _houseSerial );	// House serial
+	pStream.WriteByte( 9, _mode );		// 0x04 begin, 0x05 end
+	pStream.WriteShort( 10, 0x0000 );
+	pStream.WriteShort( 12, 0xFFFF );
+	pStream.WriteShort( 14, 0xFFFF );
+	pStream.WriteByte( 16, 0xFF );
+}
+
+CPHouseCustomization::CPHouseCustomization( UI32 houseSerial, bool begin )
+{
+	_houseSerial = houseSerial;
+	_mode = begin ? 0x04 : 0x05;
+	InternalReset();
+}
+
+void CPHouseCustomization::Log( std::ostream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+	{
+		outStream << "[SEND]Packet   : CPHouseCustomization 0xBF Subcommand: 0x20 --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
+	}
+	outStream << "House Serial    : " << std::hex << std::showbase << _houseSerial << std::dec << std::endl;
+	outStream << "Mode            : " << static_cast<UI16>( _mode ) << std::endl;
+	outStream << "  Raw dump     :" << std::endl;
+	CPUOXBuffer::Log( outStream, false );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	- 	CPHouseDesignStateGeneral
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		- 	Packet: 0xBF Subcommand 0x1D (House Revision State)
+//o------------------------------------------------------------------------------------------------o
+void CPHouseDesignStateGeneral::InternalReset( void )
+{
+	pStream.ReserveSize( 13 );
+	pStream.WriteByte( 0, 0xBF );
+	pStream.WriteShort( 1, 0x000D );		// Packet length
+	pStream.WriteShort( 3, 0x001D );		// Subcommand: Design State General
+	pStream.WriteLong( 5, _houseSerial );	// House serial
+	pStream.WriteLong( 9, _revision );		// Revision
+}
+
+CPHouseDesignStateGeneral::CPHouseDesignStateGeneral( UI32 houseSerial, UI32 revision )
+{
+	_houseSerial = houseSerial;
+	_revision = revision;
+	InternalReset();
+}
+
+void CPHouseDesignStateGeneral::Log( std::ostream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+	{
+		outStream << "[SEND]Packet   : CPHouseDesignStateGeneral 0xBF Subcommand: 0x1D --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
+	}
+	outStream << "House Serial    : " << std::hex << std::showbase << _houseSerial << std::dec << std::endl;
+	outStream << "Revision        : " << _revision << std::endl;
+	outStream << "  Raw dump     :" << std::endl;
+	CPUOXBuffer::Log( outStream, false );
+}
+
+CPHouseDesignStateDetailed::CPHouseDesignStateDetailed( SERIAL houseSerial, UI32 revision, const std::vector<HouseTileEntry> &tiles, bool enableResponse )
+{
+    // D8 header is 18 bytes:
+    // 0  : 0xD8
+    // 1-2: packet length
+    // 3  : compression type (0x03)
+    // 4  : enable response (0/1)
+    // 5-8: house serial (dword)
+    // 9-12: revision (dword)
+    // 13-14: tile count (word)
+    // 15-16: buffer length (word) - "totalLength"
+    // 17 : plane count (byte)
+
+    pStream.ReserveSize( 18 );
+    pStream.WriteByte( 0, 0xD8 );
+    pStream.WriteShort( 1, 18 ); // backfill later
+
+    pStream.WriteByte( 3, 0x03 );
+    pStream.WriteByte( 4, enableResponse ? 0x01 : 0x00 );
+
+    pStream.WriteLong( 5, static_cast<UI32>( houseSerial ));
+    pStream.WriteLong( 9, revision );
+
+    pStream.WriteShort( 13, static_cast<UI16>( tiles.size() ));
+
+    // backfill later
+    pStream.WriteShort( 15, 0 ); // buffer length
+    pStream.WriteByte( 17, 0 );  // plane count
+
+    const size_t MaxItemsPerStairBuffer = 750; // matches reference approach
+    UI08 planeCount = 0;
+    UI16 totalLength = 1; // includes the planeCount byte in the buffer
+
+    size_t tileIndex = 0;
+
+    while( tileIndex < tiles.size() && planeCount < 6 )
+    {
+        size_t count = tiles.size() - tileIndex;
+        if( count > MaxItemsPerStairBuffer )
+            count = MaxItemsPerStairBuffer;
+
+        std::vector<UI08> inflated( count * 5 );
+
+        size_t w = 0;
+        for( size_t i = 0; i < count; ++i )
+        {
+            const HouseTileEntry &t = tiles[tileIndex + i];
+
+            inflated[w++] = static_cast<UI08>(( t.id >> 8 ) & 0xFF );
+            inflated[w++] = static_cast<UI08>( t.id & 0xFF );
+            inflated[w++] = static_cast<UI08>( t.x );
+            inflated[w++] = static_cast<UI08>( t.y );
+            inflated[w++] = static_cast<UI08>( t.z );
+        }
+
+        std::vector<UI08> deflated = zlibhelper::Compress( inflated );
+
+        UI16 size12 = static_cast<UI16>( inflated.size() );
+        UI16 defl12 = static_cast<UI16>( deflated.size() );
+
+        UI08 hdr0 = static_cast<UI08>( 9 + planeCount ); // block type 9..14
+        UI08 hdr1 = static_cast<UI08>( size12 & 0xFF );
+        UI08 hdr2 = static_cast<UI08>( defl12 & 0xFF );
+        UI08 hdr3 = static_cast<UI08>((( size12 >> 4 ) & 0xF0 ) | (( defl12 >> 8 ) & 0x0F ));
+
+        // Append: 4-byte header + deflated bytes
+        const size_t oldSize = pStream.GetSize();
+        const size_t addSize = 4 + deflated.size();
+
+        pStream.ReserveSize( oldSize + addSize );
+
+        pStream.WriteByte( oldSize + 0, hdr0 );
+        pStream.WriteByte( oldSize + 1, hdr1 );
+        pStream.WriteByte( oldSize + 2, hdr2 );
+        pStream.WriteByte( oldSize + 3, hdr3 );
+
+        if( !deflated.empty() )
+        {
+            pStream.WriteArray( oldSize + 4, (UI08*)&deflated[0], deflated.size() );
+        }
+
+        totalLength = static_cast<UI16>( totalLength + static_cast<UI16>( addSize ));
+        ++planeCount;
+        tileIndex += count;
+    }
+
+    // Backfill buffer length and plane count
+    pStream.WriteShort( 15, totalLength );
+    pStream.WriteByte( 17, planeCount );
+
+    // Backfill full packet length
+    pStream.WriteShort( 1, static_cast<UI16>( pStream.GetSize() ));
+}
+
+
+
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPCloseGump( UI32 gumpId, UI32 buttonId )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet to close a generic/custom gump with a specified ID,

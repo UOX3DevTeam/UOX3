@@ -5861,3 +5861,167 @@ JSBool SE_INVALIDCOLOUR( JSContext *cx, uintN argc, jsval *vp )
 	JS_NewNumberValue( cx, INVALIDCOLOUR, &JS_RVAL( cx, vp ));
 	return JS_TRUE;
 }
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -   SE_HouseBeginCustomize( pChar, pMulti )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -   Puts client into house customization mode and initializes server session
+//|                Sends: 0xBF/0x20 begin, then 0xBF/0x1D revision, then 0xD8 design
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_HouseBeginCustomize( JSContext *cx, uintN argc, jsval *vp )
+{
+    jsval *argv = JS_ARGV( cx, vp );
+
+    if( argc != 2 )
+    {
+        ScriptError( cx, "HouseBeginCustomize: needs 2 arguments (pChar, pMulti)!" );
+        return JS_FALSE;
+    }
+
+    JSObject *mChar = JSVAL_TO_OBJECT( argv[0] );
+    CChar *pChar = static_cast<CChar *>( JS_GetPrivate( cx, mChar ));
+    if( !ValidateObject( pChar ))
+    {
+        ScriptError( cx, "HouseBeginCustomize: Invalid character" );
+        return JS_FALSE;
+    }
+
+    JSObject *mMulti = JSVAL_TO_OBJECT( argv[1] );
+    CItem *pMulti = static_cast<CItem *>( JS_GetPrivate( cx, mMulti ));
+    if( !ValidateObject( pMulti ))
+    {
+        ScriptError( cx, "HouseBeginCustomize: Invalid multi" );
+        return JS_FALSE;
+    }
+
+    CSocket *sock = pChar->GetSocket();
+    if( sock == nullptr )
+    {
+        ScriptError( cx, "HouseBeginCustomize: Character has no socket" );
+        return JS_FALSE;
+    }
+
+    const SERIAL houseSerial = pMulti->GetSerial();
+
+    // 1) Put client into customization mode FIRST
+    CPHouseCustomization beginPkt( houseSerial, true );
+    sock->Send( &beginPkt );
+
+    // 2) Start (or reset) server-side customization session
+    HC_StartSession( sock, houseSerial );
+
+    HouseCustomSession *s = HC_GetSession( sock );
+    if( s == nullptr || s->houseSerial != houseSerial )
+    {
+        ScriptError( cx, "HouseBeginCustomize: Failed to start house customization session" );
+        JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+        return JS_TRUE;
+    }
+
+    // Optional: if you want a consistent starting revision, set it here
+    // s->revision = 1;
+
+    // 3) Send current revision state (general)
+    CPHouseDesignStateGeneral revPkt( houseSerial, s->revision );
+    sock->Send( &revPkt );
+
+    // 4) Send detailed design (D8). This is required for ClassicUO to render correctly.
+    CPHouseDesignStateDetailed detPkt( houseSerial, s->revision, s->tiles, true );
+    sock->Send( &detPkt );
+
+    JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+    return JS_TRUE;
+}
+
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	- 	SE_HouseEndCustomize( pChar, pMulti )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		- 	Exits house customization mode (0xBF sub 0x20 end)
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_HouseEndCustomize( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval *argv = JS_ARGV( cx, vp );
+
+	if( argc != 2 )
+	{
+		ScriptError( cx, "HouseEndCustomize: needs 2 arguments (pChar, pMulti)!" );
+		return JS_FALSE;
+	}
+
+	JSObject *mChar = JSVAL_TO_OBJECT( argv[0] );
+	CChar *pChar = static_cast<CChar *>( JS_GetPrivate( cx, mChar ));
+	if( !ValidateObject( pChar ))
+	{
+		ScriptError( cx, "HouseEndCustomize: Invalid character" );
+		return JS_FALSE;
+	}
+
+	JSObject *mMulti = JSVAL_TO_OBJECT( argv[1] );
+	CItem *pMulti = static_cast<CItem *>( JS_GetPrivate( cx, mMulti ));
+	if( !ValidateObject( pMulti ))
+	{
+		ScriptError( cx, "HouseEndCustomize: Invalid multi" );
+		return JS_FALSE;
+	}
+
+	CSocket *sock = pChar->GetSocket();
+	if( sock == nullptr )
+	{
+		ScriptError( cx, "HouseEndCustomize: Character has no socket" );
+		return JS_FALSE;
+	}
+
+	CPHouseCustomization endPkt( pMulti->GetSerial(), false );
+	sock->Send( &endPkt );
+
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	- 	SE_HouseSendDesignRevision( pChar, pMulti, revision )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		- 	Sends 0xBF sub 0x1D revision packet to client
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_HouseSendDesignRevision( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval *argv = JS_ARGV( cx, vp );
+
+	if( argc != 3 )
+	{
+		ScriptError( cx, "HouseSendDesignRevision: needs 3 arguments (pChar, pMulti, revision)!" );
+		return JS_FALSE;
+	}
+
+	JSObject *mChar = JSVAL_TO_OBJECT( argv[0] );
+	CChar *pChar = static_cast<CChar *>( JS_GetPrivate( cx, mChar ));
+	if( !ValidateObject( pChar ))
+	{
+		ScriptError( cx, "HouseSendDesignRevision: Invalid character" );
+		return JS_FALSE;
+	}
+
+	JSObject *mMulti = JSVAL_TO_OBJECT( argv[1] );
+	CItem *pMulti = static_cast<CItem *>( JS_GetPrivate( cx, mMulti ));
+	if( !ValidateObject( pMulti ))
+	{
+		ScriptError( cx, "HouseSendDesignRevision: Invalid multi" );
+		return JS_FALSE;
+	}
+
+	UI32 revision = static_cast<UI32>( JSVAL_TO_INT( argv[2] ));
+
+	CSocket *sock = pChar->GetSocket();
+	if( sock == nullptr )
+	{
+		ScriptError( cx, "HouseSendDesignRevision: Character has no socket" );
+		return JS_FALSE;
+	}
+
+	CPHouseDesignStateGeneral revPkt( pMulti->GetSerial(), revision );
+	sock->Send( &revPkt );
+
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	return JS_TRUE;
+}

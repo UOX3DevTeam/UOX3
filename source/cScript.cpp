@@ -160,6 +160,9 @@ static JSFunctionSpec my_functions[] =
 
 	{ "RegisterSkill",				SE_RegisterSkill,			2, 0 },
 	{ "RegisterPacket",				SE_RegisterPacket,			2, 0 },
+	{ "HouseBeginCustomize",		SE_HouseBeginCustomize,		2, 0 },
+	{ "HouseEndCustomize",			SE_HouseEndCustomize,		2, 0 },
+	{ "HouseSendDesignRevision",	SE_HouseSendDesignRevision,	3, 0 },
 	{ "ReloadJSFile",				SE_ReloadJSFile,			1, 0 },
 
 	{ "ValidateObject",				SE_ValidateObject,			1, 0 },

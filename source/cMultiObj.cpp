@@ -24,6 +24,7 @@
 #include "uox3.h"
 #include "mapstuff.h"
 #include "osunique.hpp"
+#include <classes.h>
 const UI16	DEFMULTI_MAXLOCKDOWNS	= 256;
 const UI16	DEFMULTI_MAXSECURECONTAINERS = 4;
 const UI16	DEFMULTI_MAXFRIENDS = 50;
@@ -1672,4 +1673,379 @@ bool CBoatObj::CanBeObjType( ObjectType toCompare ) const
 		}
 	}
 	return rValue;
+}
+
+static std::unordered_map<SERIAL, HouseCustomSession> g_houseCustomSessions;
+
+bool HC_StartSession( CSocket *sock, SERIAL houseSerial )
+{
+    if( sock == nullptr )
+        return false;
+
+    CChar *chr = sock->CurrcharObj();
+    if( chr == nullptr )
+        return false;
+
+    HouseCustomSession s;
+    s.houseSerial = houseSerial;
+    s.revision = 1;
+    s.floor = 0;
+    s.tiles.clear();
+    s.originalTiles.clear();
+    s.backupTiles.clear();
+
+    // NEW: seed with foundation footprint so it stays visible in design mode
+    if( !HC_LoadFoundationTiles( sock, s ))
+    {
+        // If this fails, you can still allow customize, but user will see only ground.
+        // Up to you whether to return false here.
+    }
+
+    // Snapshot for revert
+    s.originalTiles = s.tiles;
+
+    g_houseCustomSessions[chr->GetSerial()] = s;
+    return true;
+}
+
+bool HC_LoadFoundationTiles( CSocket* sock, HouseCustomSession& s )
+{
+    CItem* houseItem = CalcItemObjFromSer( s.houseSerial );
+    if( !ValidateObject( houseItem ))
+        return false;
+
+    // You need the multi graphic (the house multi id).
+    // Depending on your core, this might be houseItem->GetId(), or from the CMultiObj.
+    CMultiObj* mMulti = FindMulti( houseItem );
+    if( !ValidateObject( mMulti ))
+        return false;
+
+    UI16 multiId = mMulti->GetId(); // replace with correct getter in your core
+
+    // Get multi components from MUL handler (replace with your actual API)
+    // for each component in multi definition:
+    //   UI16 tileId; SI16 dx, dy; SI08 dz;
+    //   HouseTileEntry e;
+    //   e.id = tileId;
+    //   e.x  = (SI08)dx;
+    //   e.y  = (SI08)dy;
+    //   e.z  = (SI08)( DESIGN_BASE_Z + dz ); // keep your current design-z convention
+    //   s.tiles.push_back(e);
+
+    return true;
+}
+
+void HC_EndSession( CSocket *sock )
+{
+    if( sock == nullptr )
+        return;
+
+    CChar *chr = sock->CurrcharObj();
+    if( chr == nullptr )
+        return;
+
+    g_houseCustomSessions.erase( chr->GetSerial() );
+}
+
+HouseCustomSession *HC_GetSession( CSocket *sock )
+{
+    if( sock == nullptr )
+        return nullptr;
+
+    CChar *chr = sock->CurrcharObj();
+    if( chr == nullptr )
+        return nullptr;
+
+    auto it = g_houseCustomSessions.find( chr->GetSerial() );
+    if( it == g_houseCustomSessions.end() )
+        return nullptr;
+
+    return &(it->second);
+}
+
+bool HC_IsSessionForHouse( CSocket *sock, SERIAL houseSerial )
+{
+    HouseCustomSession *s = HC_GetSession( sock );
+    return ( s != nullptr && s->houseSerial == houseSerial );
+}
+
+void HC_BumpRevision( HouseCustomSession &s )
+{
+    ++s.revision;
+    if( s.revision == 0 )
+        s.revision = 1;
+}
+
+bool HC_AddTile( HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z )
+{
+    HouseTileEntry e;
+    e.id = id;
+    e.x = x;
+    e.y = y;
+    e.z = z;
+    s.tiles.push_back( e );
+    return true;
+}
+
+bool HC_RemoveTile( HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z )
+{
+    for( auto it = s.tiles.begin(); it != s.tiles.end(); ++it )
+    {
+        if( it->id == id && it->x == x && it->y == y && it->z == z )
+        {
+            s.tiles.erase( it );
+            return true;
+        }
+    }
+    return false;
+}
+
+namespace zlibhelper
+{
+    std::vector<UI08> Decompress( const std::vector<UI08> &source, size_t decompressedSize )
+    {
+        uLongf srcSize = static_cast<uLongf>( source.size() );
+        uLongf dstSize = static_cast<uLongf>( decompressedSize );
+
+        std::vector<UI08> dest( decompressedSize, 0 );
+        int status = uncompress2( dest.data(), &dstSize, source.data(), &srcSize );
+        if( status != Z_OK )
+        {
+            dest.clear();
+            return dest;
+        }
+
+        dest.resize( dstSize );
+        return dest;
+    }
+
+    std::vector<UI08> Compress( const std::vector<UI08> &source )
+    {
+        uLongf outSize = compressBound( static_cast<uLong>( source.size() ) );
+        std::vector<UI08> out( outSize, 0 );
+
+        int status = compress2(
+            reinterpret_cast<Bytef*>( out.data() ), &outSize,
+            reinterpret_cast<const Bytef*>( source.data() ), static_cast<uLongf>( source.size() ),
+            Z_DEFAULT_COMPRESSION
+        );
+
+        if( status != Z_OK )
+        {
+            out.clear();
+            return out;
+        }
+
+        out.resize( outSize );
+        return out;
+    }
+}
+
+
+static void SetCustomHouseTag( CItem *i )
+{
+    TAGMAPOBJECT t;
+    t.m_IntValue     = 1;
+    t.m_ObjectType   = TAGMAP_TYPE_INT;
+    t.m_StringValue  = "";
+    i->SetTag( "customhouse", t );
+}
+
+static bool IsCustomHouseItem( CItem *i )
+{
+    if( !ValidateObject( i ))
+        return false;
+
+    TAGMAPOBJECT t = i->GetTag( "customhouse" );
+    if( t.m_ObjectType == TAGMAP_TYPE_INT && t.m_IntValue == 1 )
+        return true;
+
+    return false;
+}
+static const SI08 DESIGN_BASE_Z = 7;
+
+bool HC_CommitSession( CSocket *sock )
+{
+    if( sock == nullptr )
+        return false;
+
+    CChar *chr = sock->CurrcharObj();
+    if( chr == nullptr )
+    {
+        sock->SysMessage( "Commit: chr null" );
+        return false;
+    }
+
+    HouseCustomSession *s = HC_GetSession( sock );
+    if( s == nullptr )
+    {
+        sock->SysMessage( "Commit: no session" );
+        return false;
+    }
+
+    CItem *houseItem = CalcItemObjFromSer( s->houseSerial );
+    if( !ValidateObject( houseItem ))
+    {
+        sock->SysMessage( "Commit: houseItem invalid" );
+        return false;
+    }
+
+    CMultiObj *mMulti = FindMulti( houseItem );
+    if( !ValidateObject( mMulti ))
+    {
+        sock->SysMessage( "Commit: multi invalid" );
+        return false;
+    }
+
+    // Ownership check - adjust if your shard uses co-owners
+    if( !mMulti->IsOwner( chr ))
+    {
+        sock->SysMessage( "Commit: not owner" );
+        return false;
+    }
+
+	sock->SysMessage( "Commit: starting apply" );
+
+    // 1) Remove prior custom house components (ONLY those tagged customhouse=1)
+    auto itemList = mMulti->GetItemsInMultiList();
+    if( itemList != nullptr )
+    {
+        // Copy to a temp vector first so we do not mutate while iterating
+        std::vector<CItem*> toDelete;
+        for( const auto &obj : itemList->collection() )
+        {
+            CItem *it = static_cast<CItem*>( obj );
+            if( !ValidateObject( it ))
+                continue;
+
+            if( IsCustomHouseItem( it ))
+                toDelete.push_back( it );
+        }
+
+        for( auto it : toDelete )
+        {
+            if( ValidateObject( it ))
+                it->Delete();
+        }
+    }
+
+    // 2) Add new custom components from the session
+    const SI16 baseX = houseItem->GetX();
+    const SI16 baseY = houseItem->GetY();
+    const SI08 baseZ = houseItem->GetZ();
+
+    for( const auto &t : s->tiles )
+    {
+        // Create the component item (graphic = t.id)
+        // Use the same factory you use elsewhere for generic items
+		CItem *comp = Items->CreateItem( nullptr, chr, t.id, 1, 0, OT_ITEM );
+		if( !ValidateObject( comp ))
+		{
+			sock->SysMessage( "Commit: CreateBlankItem failed" );
+			continue;
+		}
+
+        comp->SetMovable( 2 ); // non-moveable like house addons
+        SetCustomHouseTag( comp );
+
+        // Convert relative coords (client) to world coords (server)
+        // NOTE: This assumes x/y/z in your session are relative to the house center.
+        const SI16 wx = static_cast<SI16>( baseX + t.x );
+        const SI16 wy = static_cast<SI16>( baseY + t.y );
+		const SI08 wz = (SI08)( baseZ + t.z );
+
+		char msg[96];
+		sprintf( msg, "Commit: baseZ=%d tileZ=%d -> wz=%d", (int)baseZ, (int)t.z, (int)wz );
+		sock->SysMessage( msg );
+
+        comp->SetLocation( wx, wy, wz, houseItem->WorldNumber(), houseItem->GetInstanceId() );
+
+        // Attach to multi for saving
+		comp->SetMulti( mMulti );
+		mMulti->AddToMulti( comp );
+		chr->Update( sock );
+		chr->Teleport();
+    }
+
+    return true;
+}
+
+void HC_LoadExistingCustomTiles( HouseCustomSession &s, CItem *houseItem, CMultiObj *mMulti )
+{
+    s.tiles.clear();
+
+    if( !ValidateObject( houseItem ) || !ValidateObject( mMulti ))
+        return;
+
+    auto itemList = mMulti->GetItemsInMultiList();
+    if( itemList == nullptr )
+        return;
+
+    const SI16 baseX = houseItem->GetX();
+    const SI16 baseY = houseItem->GetY();
+    const SI08 baseZ = houseItem->GetZ();
+
+    for( const auto &obj : itemList->collection() )
+    {
+        CItem *it = static_cast<CItem*>( obj );
+        if( !ValidateObject( it ))
+            continue;
+
+        if( !IsCustomHouseItem( it ))
+            continue;
+
+        HouseTileEntry e;
+        e.id = it->GetId();
+
+        // Convert world -> relative
+        e.x = (SI08)( it->GetX() - baseX );
+        e.y = (SI08)( it->GetY() - baseY );
+
+        // Store design z as "relative to baseZ" (this matches your commit logic: baseZ + t.z)
+        e.z = (SI08)( it->GetZ() - baseZ );
+
+        s.tiles.push_back( e );
+    }
+}
+
+void HC_Backup( HouseCustomSession &s )
+{
+    s.backupTiles = s.tiles;
+}
+
+void HC_Restore( HouseCustomSession &s )
+{
+    s.tiles = s.backupTiles;
+}
+
+void HC_Revert( HouseCustomSession &s )
+{
+    s.tiles = s.originalTiles;
+}
+
+void HC_ClearAll( HouseCustomSession &s )
+{
+    s.tiles.clear();
+}
+
+bool HC_RemoveTileAnyZ( HouseCustomSession &s, UI16 id, SI08 x, SI08 y )
+{
+    for( auto it = s.tiles.begin(); it != s.tiles.end(); ++it )
+    {
+        if( it->id == id && it->x == x && it->y == y )
+        {
+            s.tiles.erase( it );
+            return true;
+        }
+    }
+    return false;
+}
+
+void HC_BuildCombinedTiles( const HouseCustomSession &s, std::vector<HouseTileEntry> &out )
+{
+    out.clear();
+    out.reserve( s.baseTiles.size() + s.tiles.size() );
+
+    out.insert( out.end(), s.baseTiles.begin(), s.baseTiles.end() );
+    out.insert( out.end(), s.tiles.begin(), s.tiles.end() );
 }

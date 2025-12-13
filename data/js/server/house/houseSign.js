@@ -39,6 +39,7 @@ function onUseUnChecked( pUser, iUsed )
 {
 	// Grab reference to multi stored on sign
 	iMulti = iUsed.multi;
+	HouseBeginCustomize( pUser, iMulti );
 
 	if( ValidateObject( iMulti ))
 	{

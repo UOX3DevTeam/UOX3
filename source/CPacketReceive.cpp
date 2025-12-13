@@ -6005,9 +6005,32 @@ void CPIAOSCommand::Receive( void )
 	UI16 len = tSock->GetWord( 1 );
 	tSock->Receive( len, false );
 }
+
+static const SI08 DESIGN_BASE_Z = 7;
+
+static SI08 FloorToDesignZ( UI08 floor )
+{
+    if( floor > 4 )
+        floor = 4;
+    return (SI08)( DESIGN_BASE_Z + (floor * 20) );
+}
+
 bool CPIAOSCommand::Handle( void )
 {
-	switch( tSock->GetWord( 7 ))	// Which subcommand?
+    UI16 len = tSock->GetWord( 1 );
+
+    // 0xD7:
+    // [0] cmd
+    // [1-2] len
+    // [3-6] player serial
+    // [7-8] subcommand
+    UI32 playerSer = tSock->GetDWord( 3 );
+    UI16 subCmd    = tSock->GetWord( 7 );
+
+    // Debug (optional)
+    // Console.Print("D7 len=%u player=0x%X sub=0x%04X\n", len, playerSer, subCmd );
+
+	switch( subCmd )	// Which subcommand?
 	{
 			/*case 0x0002:	break;	//House Customisation :: Backup
 			 case 0x0003:	break;	//House Customisation :: Restore
@@ -6019,6 +6042,219 @@ bool CPIAOSCommand::Handle( void )
 			 case 0x000E:	break;	//House Customisation :: Synch
 			 case 0x0010:	break;	//House Customisation :: Clear
 			 case 0x0012:	break;	//House Customisation :: Switch Floors*/
+		case 0x0002: // Backup
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				return true;
+
+			HC_Backup( *s );
+			HC_BumpRevision( *s );
+
+			tSock->Send( &CPHouseDesignStateGeneral( s->houseSerial, s->revision ) );
+			std::vector<HouseTileEntry> sendTiles;
+			HC_BuildCombinedTiles( *s, sendTiles );
+			tSock->Send( &CPHouseDesignStateDetailed( s->houseSerial, s->revision, sendTiles, true ) );
+			return true;
+		}
+
+		case 0x0003: // Restore
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				return true;
+
+			HC_Restore( *s );
+			HC_BumpRevision( *s );
+
+			tSock->Send( &CPHouseDesignStateGeneral( s->houseSerial, s->revision ) );
+			std::vector<HouseTileEntry> sendTiles;
+			HC_BuildCombinedTiles( *s, sendTiles );
+			tSock->Send( &CPHouseDesignStateDetailed( s->houseSerial, s->revision, sendTiles, true ) );
+			return true;
+		}
+		case 0x0004: // Commit
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				return true;
+
+			SERIAL houseSerial = s->houseSerial;
+
+			tSock->SysMessage( "pushing commit" );
+
+			bool committed = HC_CommitSession( tSock );
+
+			tSock->Send( &CPHouseCustomization( houseSerial, false ) );
+			HC_EndSession( tSock );
+
+			if( !committed )
+				tSock->SysMessage( "testing Not commited" );
+
+			return true;
+		}
+		case 0x000E:
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				 return true;
+
+			SERIAL houseSerial = s->houseSerial;
+
+			CPHouseDesignStateGeneral revPkt( houseSerial, s->revision );
+			tSock->Send( &revPkt );
+
+			std::vector<HouseTileEntry> sendTiles;
+			HC_BuildCombinedTiles( *s, sendTiles );
+			tSock->Send( &CPHouseDesignStateDetailed( houseSerial, s->revision, sendTiles, true ) );
+
+			return true;
+		}
+
+		// ------------------------------------------------------------
+		// House customization place item
+		// ------------------------------------------------------------
+		case 0x0006:
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				return true;
+
+			SERIAL houseSerial = s->houseSerial;
+
+			UI32 itemID32 = tSock->GetDWord( 10 );
+			UI16 itemID = ( UI16 ) ( itemID32 & 0xFFFF );
+
+			SI16 x16 = ( SI16 ) tSock->GetDWord( 15 );
+			SI16 y16 = ( SI16 ) tSock->GetDWord( 20 );
+
+			// Clamp to SI08 if your struct uses SI08
+			if( x16 < -128 ) x16 = -128;
+			if( x16 > 127 )  x16 = 127;
+			if( y16 < -128 ) y16 = -128;
+			if( y16 > 127 )  y16 = 127;
+
+			SI08 x = ( SI08 ) x16;
+			SI08 y = ( SI08 ) y16;
+
+			SI08 z = FloorToDesignZ( s->floor );
+			HC_AddTile( *s, itemID, x, y, z );
+			HC_BumpRevision( *s );
+			char msg[64];
+			sprintf( msg, "Place floor=%u designZ=%d", (UI32)s->floor, (int)z );
+			tSock->SysMessage( msg );
+
+			tSock->Send( &CPHouseDesignStateGeneral( houseSerial, s->revision ) );
+			std::vector<HouseTileEntry> sendTiles;
+			HC_BuildCombinedTiles( *s, sendTiles );
+			tSock->Send( &CPHouseDesignStateDetailed( houseSerial, s->revision, sendTiles, true ) );
+			return true;
+		}
+		case 0x0005: // Destroy item
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				return true;
+
+			SERIAL houseSerial = s->houseSerial;
+
+			UI32 itemID32 = tSock->GetDWord( 10 );
+			UI16 itemID = ( UI16 ) ( itemID32 & 0xFFFF );
+
+			SI16 x16 = ( SI16 ) tSock->GetDWord( 15 );
+			SI16 y16 = ( SI16 ) tSock->GetDWord( 20 );
+
+			if( x16 < -128 ) x16 = -128;
+			if( x16 > 127 )  x16 = 127;
+			if( y16 < -128 ) y16 = -128;
+			if( y16 > 127 )  y16 = 127;
+
+			SI08 x = ( SI08 ) x16;
+			SI08 y = ( SI08 ) y16;
+
+			// Use the same design Z as placement
+			SI08 z = FloorToDesignZ( s->floor );
+
+			// Remove from session
+			bool removed = HC_RemoveTile( *s, itemID, x, y, z );
+
+			// If not found, fall back: remove by id/x/y ignoring z (handles client oddities)
+			if( !removed )
+				removed = HC_RemoveTileAnyZ( *s, itemID, x, y );
+
+			if( removed )
+				HC_BumpRevision( *s );
+
+			tSock->Send( &CPHouseDesignStateGeneral( houseSerial, s->revision ) );
+			std::vector<HouseTileEntry> sendTiles;
+			HC_BuildCombinedTiles( *s, sendTiles );
+			tSock->Send( &CPHouseDesignStateDetailed( houseSerial, s->revision, sendTiles, true ) );
+			return true;
+		}
+
+
+		case 0x000C: // House Customization :: Exit
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				return true;
+
+			SERIAL houseSerial = s->houseSerial;
+
+			// Tell client to exit customize mode
+			tSock->Send( &CPHouseCustomization( houseSerial, false ) );
+
+			// Destroy the session
+			HC_EndSession( tSock );
+			return true;
+		}
+		case 0x0010: // Clear
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				return true;
+
+			HC_ClearAll( *s );
+			HC_BumpRevision( *s );
+
+			tSock->Send( &CPHouseDesignStateGeneral( s->houseSerial, s->revision ) );
+			std::vector<HouseTileEntry> sendTiles;
+			HC_BuildCombinedTiles( *s, sendTiles );
+			tSock->Send( &CPHouseDesignStateDetailed( s->houseSerial, s->revision, sendTiles, true ) );
+			return true;
+		}
+		case 0x0012:
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				return true;
+
+			SERIAL houseSerial = s->houseSerial;
+
+			UI32 level = tSock->GetDWord( 10 );
+			s->floor = ( UI08 ) level;
+
+			tSock->Send( &CPHouseDesignStateGeneral( houseSerial, s->revision ) );
+			std::vector<HouseTileEntry> sendTiles;
+			HC_BuildCombinedTiles( *s, sendTiles );
+			tSock->Send( &CPHouseDesignStateDetailed( houseSerial, s->revision, sendTiles, true ) );
+			return true;
+		}
+		case 0x001A: // Revert
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				return true;
+
+			HC_Revert( *s );
+			HC_BumpRevision( *s );
+
+			tSock->Send( &CPHouseDesignStateGeneral( s->houseSerial, s->revision ) );
+			std::vector<HouseTileEntry> sendTiles;
+			HC_BuildCombinedTiles( *s, sendTiles );
+			tSock->Send( &CPHouseDesignStateDetailed( s->houseSerial, s->revision, sendTiles, true ) );
+			return true;
+		}
 		case 0x0019: //Special Moves :: Activate / Deactivate
 		{
 			//UI32 unknown = tSock->GetDWord( 9 );
