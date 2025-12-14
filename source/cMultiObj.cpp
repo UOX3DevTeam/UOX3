@@ -1800,48 +1800,6 @@ bool HC_RemoveTile( HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z )
     return false;
 }
 
-namespace zlibhelper
-{
-    std::vector<UI08> Decompress( const std::vector<UI08> &source, size_t decompressedSize )
-    {
-        uLongf srcSize = static_cast<uLongf>( source.size() );
-        uLongf dstSize = static_cast<uLongf>( decompressedSize );
-
-        std::vector<UI08> dest( decompressedSize, 0 );
-        int status = uncompress2( dest.data(), &dstSize, source.data(), &srcSize );
-        if( status != Z_OK )
-        {
-            dest.clear();
-            return dest;
-        }
-
-        dest.resize( dstSize );
-        return dest;
-    }
-
-    std::vector<UI08> Compress( const std::vector<UI08> &source )
-    {
-        uLongf outSize = compressBound( static_cast<uLong>( source.size() ) );
-        std::vector<UI08> out( outSize, 0 );
-
-        int status = compress2(
-            reinterpret_cast<Bytef*>( out.data() ), &outSize,
-            reinterpret_cast<const Bytef*>( source.data() ), static_cast<uLongf>( source.size() ),
-            Z_DEFAULT_COMPRESSION
-        );
-
-        if( status != Z_OK )
-        {
-            out.clear();
-            return out;
-        }
-
-        out.resize( outSize );
-        return out;
-    }
-}
-
-
 static void SetCustomHouseTag( CItem *i )
 {
     TAGMAPOBJECT t;
@@ -2048,4 +2006,45 @@ void HC_BuildCombinedTiles( const HouseCustomSession &s, std::vector<HouseTileEn
 
     out.insert( out.end(), s.baseTiles.begin(), s.baseTiles.end() );
     out.insert( out.end(), s.tiles.begin(), s.tiles.end() );
+}
+
+namespace zlibhelper
+{
+    std::vector<UI08> Decompress( const std::vector<UI08> &source, size_t decompressedSize )
+    {
+        uLongf srcSize = static_cast<uLongf>( source.size() );
+        uLongf dstSize = static_cast<uLongf>( decompressedSize );
+
+        std::vector<UI08> dest( decompressedSize, 0 );
+        int status = uncompress2( dest.data(), &dstSize, source.data(), &srcSize );
+        if( status != Z_OK )
+        {
+            dest.clear();
+            return dest;
+        }
+
+        dest.resize( dstSize );
+        return dest;
+    }
+
+    std::vector<UI08> Compress( const std::vector<UI08> &source )
+    {
+        uLongf outSize = compressBound( static_cast<uLong>( source.size() ) );
+        std::vector<UI08> out( outSize, 0 );
+
+        int status = compress2(
+            reinterpret_cast<Bytef*>( out.data() ), &outSize,
+            reinterpret_cast<const Bytef*>( source.data() ), static_cast<uLongf>( source.size() ),
+            Z_DEFAULT_COMPRESSION
+        );
+
+        if( status != Z_OK )
+        {
+            out.clear();
+            return out;
+        }
+
+        out.resize( outSize );
+        return out;
+    }
 }

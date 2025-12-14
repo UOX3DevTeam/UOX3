@@ -116,7 +116,6 @@ public:
 	bool				IsOnOwnerList( CChar *toCheck ) const;
 	bool				CheckForAccountCoOwnership( CChar *toCheck ) const;
 	bool				IsOwner( CChar *toFind ) const;
-	bool				BuildHouseDesignBaseTiles( std::vector<HouseTileEntry> &out ) const;
 
 	void				AddToMulti( CBaseObject *toAdd );
 	void				RemoveFromMulti( CBaseObject *toRemove );
