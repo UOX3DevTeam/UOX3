@@ -6008,11 +6008,18 @@ void CPIAOSCommand::Receive( void )
 
 static const SI08 DESIGN_BASE_Z = 7;
 
-static SI08 FloorToDesignZ( UI08 floor )
+static UI08 ClientLevelToFloor( UI32 level )
 {
-    if( floor > 4 )
-        floor = 4;
-    return (SI08)( DESIGN_BASE_Z + (floor * 20) );
+    // ClassicUO: 1=Level1, 2=Level2, 3=Level3
+    if( level == 0 )
+        return 0;
+
+    level -= 1;
+
+    if( level > 2 )
+        level = 2;
+
+    return (UI08)level;
 }
 
 bool CPIAOSCommand::Handle( void )
@@ -6137,7 +6144,8 @@ bool CPIAOSCommand::Handle( void )
 			SI08 x = ( SI08 ) x16;
 			SI08 y = ( SI08 ) y16;
 
-			SI08 z = FloorToDesignZ( s->floor );
+			//SI08 z = FloorToDesignZ( s->floor );
+			SI08 z = SessionDesignZ( s );
 			HC_AddTile( *s, itemID, x, y, z );
 			HC_BumpRevision( *s );
 			char msg[64];
@@ -6145,11 +6153,12 @@ bool CPIAOSCommand::Handle( void )
 			tSock->SysMessage( msg );
 
 			tSock->Send( &CPHouseDesignStateGeneral( houseSerial, s->revision ) );
-			std::vector<HouseTileEntry> sendTiles;
-			HC_BuildCombinedTiles( *s, sendTiles );
-			tSock->Send( &CPHouseDesignStateDetailed( houseSerial, s->revision, sendTiles, true ) );
+			std::vector<HouseTileEntry> combined;
+			HC_BuildCombinedTiles( *s, combined );
+			tSock->Send( &CPHouseDesignStateDetailed( houseSerial, s->revision, combined, true ) );
 			return true;
 		}
+
 		case 0x0005: // Destroy item
 		{
 			HouseCustomSession* s = HC_GetSession( tSock );
@@ -6173,8 +6182,8 @@ bool CPIAOSCommand::Handle( void )
 			SI08 y = ( SI08 ) y16;
 
 			// Use the same design Z as placement
-			SI08 z = FloorToDesignZ( s->floor );
-
+			///SI08 z = FloorToDesignZ( s->floor );
+			SI08 z = SessionDesignZ( s );
 			// Remove from session
 			bool removed = HC_RemoveTile( *s, itemID, x, y, z );
 
@@ -6233,6 +6242,20 @@ bool CPIAOSCommand::Handle( void )
 
 			UI32 level = tSock->GetDWord( 10 );
 			s->floor = ( UI08 ) level;
+			// Debug so you can confirm what ClassicUO is sending
+			char msg[64];
+			sprintf( msg, "SwitchFloor: level=%u -> z=%d", (UI32)s->floor, (int)FloorToDesignZ( s->floor ) );
+			tSock->SysMessage( msg );
+
+			s->clientLevel = (UI08)level;
+			s->floor = ClientLevelToFloor( level );
+			// Move player to correct design Z
+			CChar *chr = tSock->CurrcharObj();
+			if( ValidateObject( chr ))
+			{
+				chr->SetLocation( chr->GetX(), chr->GetY(), FloorToDesignZ( s->floor ), chr->WorldNumber(), chr->GetInstanceId() );
+				chr->Teleport();
+			}
 
 			tSock->Send( &CPHouseDesignStateGeneral( houseSerial, s->revision ) );
 			std::vector<HouseTileEntry> sendTiles;

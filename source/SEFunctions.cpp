@@ -5925,9 +5925,12 @@ JSBool SE_HouseBeginCustomize( JSContext *cx, uintN argc, jsval *vp )
     CPHouseDesignStateGeneral revPkt( houseSerial, s->revision );
     sock->Send( &revPkt );
 
-    // 4) Send detailed design (D8). This is required for ClassicUO to render correctly.
-    CPHouseDesignStateDetailed detPkt( houseSerial, s->revision, s->tiles, true );
-    sock->Send( &detPkt );
+	// 4) Send detailed design (D8) — MUST include foundation + custom tiles
+	std::vector<HouseTileEntry> sendTiles;
+	HC_BuildCombinedTiles( *s, sendTiles );
+
+	CPHouseDesignStateDetailed detPkt( houseSerial, s->revision, sendTiles, true );
+	sock->Send( &detPkt );
 
     JS_SET_RVAL( cx, vp, JSVAL_TRUE );
     return JS_TRUE;
@@ -5972,8 +5975,11 @@ JSBool SE_HouseEndCustomize( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	CPHouseCustomization endPkt( pMulti->GetSerial(), false );
-	sock->Send( &endPkt );
+    SERIAL houseSerial = pMulti->GetSerial();
+
+    // End customize mode
+    CPHouseCustomization endPkt( houseSerial, false );
+    sock->Send( &endPkt );
 
 	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 	return JS_TRUE;

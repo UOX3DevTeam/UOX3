@@ -204,6 +204,7 @@ struct HouseCustomSession
 {
     SERIAL houseSerial;
     UI32 revision;
+	UI08 clientLevel; // raw from client (1..3 typically)
 	UI08 floor; // current floor selected by client (0 = ground)
     std::vector<HouseTileEntry> tiles;
 
@@ -211,6 +212,16 @@ struct HouseCustomSession
     // New: for buttons
     std::vector<HouseTileEntry> originalTiles; // snapshot from start of session
     std::vector<HouseTileEntry> backupTiles;   // set by Backup button
+};
+
+enum FoundationType : UI08
+{
+    FT_DarkWood = 0,
+    FT_LightWood = 1,
+    FT_Dungeon = 2,
+    FT_Brick = 3,
+    FT_Stone = 4,
+    // add more as needed
 };
 
 bool HC_StartSession( CSocket *sock, SERIAL houseSerial );
@@ -229,6 +240,22 @@ void HC_ClearAll( HouseCustomSession &s );
 bool HC_RemoveTileAnyZ( HouseCustomSession &s, UI16 id, SI08 x, SI08 y );
 void HC_BuildCombinedTiles( const HouseCustomSession &s, std::vector<HouseTileEntry> &out );
 bool HC_LoadFoundationTiles( CSocket* sock, HouseCustomSession& s );
+void HC_ApplyFoundationBaseTiles( FoundationType fType, SI16 width, SI16 height, SI16 xCenter, SI16 yCenter, SI08 designZ, std::vector<HouseTileEntry> &baseTiles );
+void HC_RefreshHouseToClient( CSocket *sock, CItem *houseItem, CMultiObj *mMulti );
+
+static SI08 FloorToDesignZ( UI08 floor )
+{
+    // floor 0 = 7, floor 1 = 27, floor 2 = 47
+    return (SI08)( 7 + (floor * 20) );
+}
+
+static SI08 SessionDesignZ( const HouseCustomSession *s )
+{
+    if( s == nullptr )
+        return 7;
+
+    return FloorToDesignZ( s->floor );
+}
 
 namespace zlibhelper
 {

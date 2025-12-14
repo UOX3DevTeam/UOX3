@@ -1676,6 +1676,7 @@ bool CBoatObj::CanBeObjType( ObjectType toCompare ) const
 }
 
 static std::unordered_map<SERIAL, HouseCustomSession> g_houseCustomSessions;
+static const SI08 DESIGN_BASE_Z = 7;
 
 bool HC_StartSession( CSocket *sock, SERIAL houseSerial )
 {
@@ -1686,25 +1687,36 @@ bool HC_StartSession( CSocket *sock, SERIAL houseSerial )
     if( chr == nullptr )
         return false;
 
+    CItem *houseItem = CalcItemObjFromSer( houseSerial );
+    if( !ValidateObject( houseItem ) )
+        return false;
+
+    CMultiObj *mMulti = FindMulti( houseItem );
+    if( !ValidateObject( mMulti ) )
+        return false;
+
     HouseCustomSession s;
     s.houseSerial = houseSerial;
-    s.revision = 1;
-    s.floor = 0;
+    s.revision    = 1;
+	s.clientLevel = 1;
+    s.floor       = 0;
+
+    s.baseTiles.clear();
     s.tiles.clear();
     s.originalTiles.clear();
     s.backupTiles.clear();
 
-    // NEW: seed with foundation footprint so it stays visible in design mode
-    if( !HC_LoadFoundationTiles( sock, s ))
-    {
-        // If this fails, you can still allow customize, but user will see only ground.
-        // Up to you whether to return false here.
-    }
+    // 1) Seed foundation tiles into baseTiles
+    HC_LoadFoundationTiles( sock, s );
 
-    // Snapshot for revert
+    // 2) Load already committed custom items into tiles
+    HC_LoadExistingCustomTiles( s, houseItem, mMulti );
+
+    // 3) Snapshot for Revert / Backup (custom tiles only)
     s.originalTiles = s.tiles;
+    s.backupTiles   = s.tiles;
 
-    g_houseCustomSessions[chr->GetSerial()] = s;
+    g_houseCustomSessions[ chr->GetSerial() ] = s;
     return true;
 }
 
@@ -1714,26 +1726,59 @@ bool HC_LoadFoundationTiles( CSocket* sock, HouseCustomSession& s )
     if( !ValidateObject( houseItem ))
         return false;
 
-    // You need the multi graphic (the house multi id).
-    // Depending on your core, this might be houseItem->GetId(), or from the CMultiObj.
     CMultiObj* mMulti = FindMulti( houseItem );
     if( !ValidateObject( mMulti ))
         return false;
 
-    UI16 multiId = mMulti->GetId(); // replace with correct getter in your core
+    // ----------------------------------------------------------------
+    // Determine plot width/height and center offsets.
+    // You said mapstuff shows how to get x/y of a multi - use that same
+    // approach to compute bounds/size for the foundation.
+    // ----------------------------------------------------------------
 
-    // Get multi components from MUL handler (replace with your actual API)
-    // for each component in multi definition:
-    //   UI16 tileId; SI16 dx, dy; SI08 dz;
-    //   HouseTileEntry e;
-    //   e.id = tileId;
-    //   e.x  = (SI08)dx;
-    //   e.y  = (SI08)dy;
-    //   e.z  = (SI08)( DESIGN_BASE_Z + dz ); // keep your current design-z convention
-    //   s.tiles.push_back(e);
+    // UOX3 multis are ITEMID_MULTI (0x4000) + multiIndex
+    const UI16 multiNum = static_cast<UI16>( mMulti->GetId() - 0x4000 ); // same pattern as Map->MultiArea :contentReference[oaicite:2]{index=2}
 
-    return true;
+    if( !Map->MultiExists( multiNum ) )
+        return false;
+
+    const auto& structure = Map->SeekMulti( multiNum ); // contains minX/maxX/minY/maxY :contentReference[oaicite:3]{index=3}
+
+	SI16 width  = 7;
+	SI16 height = 7;
+	SI16 xCenter = width / 2;
+	SI16 yCenter = (height - 1) / 2; // note: height-1 vs height
+
+	if( width < 2 || height < 3 )
+		return false;
+
+    // ----------------------------------------------------------------
+    // Determine foundation type (store on the house foundation item as a tag)
+    // ----------------------------------------------------------------
+    UI08 fTypeVal = (UI08)FT_Stone;
+    TAGMAPOBJECT t = houseItem->GetTag( "foundationType" );
+    if( t.m_ObjectType == TAGMAP_TYPE_INT )
+        fTypeVal = (UI08)t.m_IntValue;
+
+    FoundationType fType = FT_Stone;//(FoundationType)fTypeVal;
+
+    // Design Z should be your “ground plane” in design space.
+    // If your client expects ground plane == DESIGN_BASE_Z, use that.
+    const SI08 designZ = 0;
+
+    // ----------------------------------------------------------------
+    // Apply foundation border tiles into baseTiles
+    // ----------------------------------------------------------------
+    HC_ApplyFoundationBaseTiles( fType, width, height, xCenter, yCenter, designZ, s.baseTiles );
+
+	char msg[128];
+	sprintf( msg, "Foundation: w=%d h=%d center=(%d,%d) baseTiles=%u",
+			(int)width, (int)height, (int)xCenter, (int)yCenter, (UI32)s.baseTiles.size() );
+	sock->SysMessage( msg );
+
+    return ( !s.baseTiles.empty() );
 }
+
 
 void HC_EndSession( CSocket *sock )
 {
@@ -1820,7 +1865,6 @@ static bool IsCustomHouseItem( CItem *i )
 
     return false;
 }
-static const SI08 DESIGN_BASE_Z = 7;
 
 bool HC_CommitSession( CSocket *sock )
 {
@@ -1921,9 +1965,9 @@ bool HC_CommitSession( CSocket *sock )
         // Attach to multi for saving
 		comp->SetMulti( mMulti );
 		mMulti->AddToMulti( comp );
-		chr->Update( sock );
-		chr->Teleport();
     }
+    // Force the committing player to see the final house immediately
+	HC_RefreshHouseToClient( sock, houseItem, mMulti );
 
     return true;
 }
@@ -2006,6 +2050,111 @@ void HC_BuildCombinedTiles( const HouseCustomSession &s, std::vector<HouseTileEn
 
     out.insert( out.end(), s.baseTiles.begin(), s.baseTiles.end() );
     out.insert( out.end(), s.tiles.begin(), s.tiles.end() );
+}
+
+static void GetFoundationGraphics( FoundationType type, UI16 &east, UI16 &south, UI16 &post, UI16 &corner )
+{
+    switch( type )
+    {
+        default:
+        case FT_DarkWood:  corner=0x0014; east=0x0015; south=0x0016; post=0x0017; break;
+        case FT_LightWood: corner=0x00BD; east=0x00BE; south=0x00BF; post=0x00C0; break;
+        case FT_Dungeon:   corner=0x02FD; east=0x02FF; south=0x02FE; post=0x0300; break;
+        case FT_Brick:     corner=0x0041; east=0x0043; south=0x0042; post=0x0044; break;
+        case FT_Stone:     corner=0x0065; east=0x0064; south=0x0063; post=0x0066; break;
+    }
+}
+
+static void HC_ApplyFoundationBaseTiles( FoundationType fType, SI16 width, SI16 height, SI16 xCenter, SI16 yCenter, SI08 designZ, std::vector<HouseTileEntry> &baseTiles )
+{
+    baseTiles.clear();
+
+    UI16 east, south, post, corner;
+    GetFoundationGraphics( fType, east, south, post, corner );
+
+    auto Add = [&]( UI16 id, SI16 rx, SI16 ry )
+    {
+        HouseTileEntry e;
+        e.id = id;
+        e.x  = (SI08)rx;
+        e.y  = (SI08)ry;
+        e.z  = designZ;
+        baseTiles.push_back( e );
+    };
+
+    // IMPORTANT: use height - 1 (not height - 2) for the far edge
+    const SI16 westCol  = 0 - xCenter;
+    const SI16 eastCol  = (width  - 1) - xCenter;
+    const SI16 southRow = 0 - yCenter;
+    const SI16 northRow = (height - 1) - yCenter;
+
+    // Corner / post anchors
+    Add( post,   westCol,  southRow );
+    Add( corner, eastCol,  northRow );
+
+    // South and North edges
+    for( SI16 x = 1; x < width; ++x )
+    {
+        Add( south, x - xCenter, southRow );
+
+        if( x < width - 1 )
+            Add( south, x - xCenter, northRow );
+    }
+
+    // West and East edges
+    for( SI16 y = 1; y < height; ++y )
+    {
+        Add( east, westCol, y - yCenter );
+
+        if( y < height - 1 )
+            Add( east, eastCol, y - yCenter );
+    }
+
+    // OPTIONAL: porch/front extension
+    // Disable this while aligning your rectangle; re-enable once aligned.
+    /*
+    {
+        const SI16 frontRow = (southRow - 1); // one tile outside the south edge
+        for( SI16 x = 0; x < width; ++x )
+            Add( south, x - xCenter, frontRow );
+
+        Add( post, westCol, frontRow );
+        Add( post, eastCol, frontRow );
+    }
+    */
+}
+
+static void HC_RefreshHouseToClient( CSocket *sock, CItem *houseItem, CMultiObj *mMulti )
+{
+    if( sock == nullptr || !ValidateObject( houseItem ) || !ValidateObject( mMulti ))
+        return;
+
+    // 1) If your core has a "send multi" or "send object" call, use it here.
+    // Different UOX3 branches vary; the safe fallback is to resend items in multi.
+
+    auto itemList = mMulti->GetItemsInMultiList();
+    if( itemList != nullptr )
+    {
+        for( const auto &obj : itemList->collection() )
+        {
+            CItem *it = static_cast<CItem*>( obj );
+            if( !ValidateObject( it ))
+                continue;
+
+            // Ensure the client receives the item state again.
+            // Many UOX3 objects have Update( sock ) or SendToSocket methods.
+            // Use whichever exists in your codebase.
+            it->Update( sock );
+        }
+    }
+
+    // 2) Resend the foundation/multi itself if you have a supported API.
+    // Some codebases support houseItem->Update(sock) or mMulti->Update(sock).
+    houseItem->Update( sock );
+
+    // 3) If needed, force the character to refresh world view
+    // (only if you have issues with stale multis)
+    // sock->CurrcharObj()->Teleport();
 }
 
 namespace zlibhelper
