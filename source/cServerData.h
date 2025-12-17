@@ -212,7 +212,7 @@ private:
 
 	// Once over 62, bitsets are costly.  std::vector<bool> has a special exception in the c++ specificaiton, to minimize wasted space for bools
 	// These should be updated
-	std::bitset<119>	boolVals;			// Many values stored this way, rather than using bools.
+	std::bitset<120>	boolVals;			// Many values stored this way, rather than using bools.
 	std::bitset<64>		spawnRegionsFacets;	// Used to determine which facets to enable spawn regions for, set in UOX>INI
 	std::bitset<64>		moongateFacets;		// Used to determine which facets to enable moongates for, set in UOX>INI
 
@@ -355,6 +355,12 @@ private:
 	R64			checkNpcAi;						//	How often (in seconds) NPCs can execute an AI routine
 	R64			checkSpawnRegions;				//	How often (in seconds) spawn regions are checked for new spawns
 	R64			flushTime;						//	How often (in minutes) online accounts are checked to see if they really ARE online
+
+	UI16		speedHackMaxDebt;
+	R64			speedHackMaxDebtAvg;
+	SI16		speedHackMaxCredit;
+	UI16		speedHackGraceThreshold;
+	UI16		speedHackThrottlePenalty;
 
 	// MessageBoards
 	UI08		msgPostingLevel;				//	If not 0, then players can post
@@ -1362,6 +1368,19 @@ public:
 
 	auto		GetJSEngineSize() const -> UI16;
 	auto		SetJSEngineSize( UI16 newVal ) -> void;
+
+	auto		SpeedHackDetection( bool value ) -> void;
+	auto		SpeedHackDetection() const -> bool;
+	auto		SpeedHackMaxDebt() const -> UI16;
+	auto		SpeedHackMaxDebt( UI16 newVal ) -> void;
+	auto		SpeedHackMaxDebtAvg() const -> R64;
+	auto		SpeedHackMaxDebtAvg( R64 newVal ) -> void;
+	auto		SpeedHackMaxCredit() const -> SI16;
+	auto		SpeedHackMaxCredit( SI16 newVal ) -> void;
+	auto		SpeedHackGraceThreshold() const -> UI16;
+	auto		SpeedHackGraceThreshold( UI16 newVal ) -> void;
+	auto		SpeedHackThrottlePenalty() const -> UI16;
+	auto		SpeedHackThrottlePenalty( UI16 newVal ) -> void;
 
 	auto		APSPerfThreshold() const -> UI16;
 	auto		APSPerfThreshold( UI16 newVal ) -> void;

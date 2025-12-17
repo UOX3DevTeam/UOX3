@@ -414,7 +414,13 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"COMPASSIONVIRTUEENABLED"s, 391},
 	{"HONESTYVIRTUEENABLED"s, 392},
 	{"HUMILITYVIRTUEENABLED"s, 393},
-	{"SACRIFICEVIRTUEENABLED"s, 394}
+	{"SACRIFICEVIRTUEENABLED"s, 394},
+	{"SPEEDHACKDETECTION", 400},
+	{"SPEEDHACKMAXDEBT", 401},
+	{"SPEEDHACKMAXDEBTAVG", 402},
+	{"SPEEDHACKMAXCREDIT", 403},
+	{"SPEEDHACKGRACETHRESHOLD", 404},
+	{"SPEEDHACKTHROTTLEPENALTY", 405}
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -539,6 +545,7 @@ constexpr auto BIT_COMPASSIONVIRTUEENABLED			= UI32( 115 );
 constexpr auto BIT_HONESTYVIRTUEENABLED				= UI32( 116 );
 constexpr auto BIT_HUMILITYVIRTUEENABLED			= UI32( 117 );
 constexpr auto BIT_SACRIFICEVIRTUEENABLED			= UI32( 118 );
+constexpr auto BIT_SPEEDHACKDETECTION				= UI32( 119 );
 
 
 // New uox3.ini format lookup
@@ -945,6 +952,7 @@ auto CServerData::ResetDefaults() -> void
 	AmbientFootsteps( false );
 	ServerCommandPrefix( '\'' );
 
+	// SPEEDUP
 	CheckSpawnRegionSpeed( 30 );
 	CheckItemsSpeed( 1.5 );
 	NPCWalkingSpeed( 0.6 );
@@ -954,6 +962,14 @@ auto CServerData::ResetDefaults() -> void
 	NPCMountedRunningSpeed( 0.12 );
 	NPCMountedFleeingSpeed( 0.2 );
 	AccountFlushTimer( 5.0 );
+
+	// ANTICHEAT
+	SpeedHackDetection( true );
+	SpeedHackMaxDebt( 350 );
+	SpeedHackMaxDebtAvg( 0.5 );
+	SpeedHackMaxCredit( -80 );
+	SpeedHackGraceThreshold( 2000 );
+	SpeedHackThrottlePenalty( 2000 );
 
 	// RESOURCES
 	ResourceAreaSize( 8 );
@@ -2846,6 +2862,90 @@ auto CServerData::CheckSpawnRegionSpeed( R64 value ) -> void
 	{
 		checkSpawnRegions = value;
 	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::SpeedHackDetection()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Enables/Disables movement detection for players caught speedhacking
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::SpeedHackDetection() const -> bool
+{
+	return boolVals.test( BIT_SPEEDHACKDETECTION );
+}
+auto CServerData::SpeedHackDetection( bool newVal ) -> void
+{
+	boolVals.set( BIT_SPEEDHACKDETECTION, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::SpeedHackMaxDebt()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the max accumulated movement debt (in ms) before throttling occurs
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::SpeedHackMaxDebt() const -> UI16
+{
+	return speedHackMaxDebt;
+}
+auto CServerData::SpeedHackMaxDebt( UI16 value ) -> void
+{
+	speedHackMaxDebt = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::SpeedHackMaxDebtAvg()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the max avg movement debt (in ms) before being logged for suspicious behavior
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::SpeedHackMaxDebtAvg() const -> R64
+{
+	return speedHackMaxDebtAvg;
+}
+auto CServerData::SpeedHackMaxDebtAvg( R64 value ) -> void
+{
+	speedHackMaxDebtAvg = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::SpeedHackMaxCredit()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the max movement credit (in ms) a player can accumulate to offset jitter
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::SpeedHackMaxCredit() const -> SI16
+{
+	return speedHackMaxCredit;
+}
+auto CServerData::SpeedHackMaxCredit( SI16 value ) -> void
+{
+	speedHackMaxCredit = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::SpeedHackGraceThreshold()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the time (in ms) since last movement before debt is reset (to deal with lag spikes)
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::SpeedHackGraceThreshold() const -> UI16
+{
+	return speedHackGraceThreshold;
+}
+auto CServerData::SpeedHackGraceThreshold( UI16 value ) -> void
+{
+	speedHackGraceThreshold = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::SpeedHackThrottlePenalty()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the movement penalty (in ms) applied when a speedhack is detected
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::SpeedHackThrottlePenalty() const -> UI16
+{
+	return speedHackThrottlePenalty;
+}
+auto CServerData::SpeedHackThrottlePenalty( UI16 value ) -> void
+{
+	speedHackThrottlePenalty = value;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5785,6 +5885,15 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "GLOBALATTACKSPEED=" << GlobalAttackSpeed() << '\n';
 		ofsOutput << "}" << '\n';
 
+		ofsOutput << '\n' << "[anticheat]" << '\n' << "{" << '\n';
+		ofsOutput << "SPEEDHACKDETECTION=" << ( SpeedHackDetection() ? 1 : 0 ) << '\n';
+		ofsOutput << "SPEEDHACKMAXDEBT=" << static_cast<UI16>( SpeedHackMaxDebt() ) << '\n';
+		ofsOutput << "SPEEDHACKMAXDEBTAVG=" << SpeedHackMaxDebtAvg() << '\n';
+		ofsOutput << "SPEEDHACKMAXCREDIT=" <<  static_cast<SI16>( SpeedHackMaxCredit() ) << '\n';
+		ofsOutput << "SPEEDHACKGRACETHRESHOLD=" << static_cast<UI16>( SpeedHackGraceThreshold() ) << '\n';
+		ofsOutput << "SPEEDHACKTHROTTLEPENALTY=" << static_cast<UI16>( SpeedHackThrottlePenalty() ) << '\n';
+		ofsOutput << "}" << '\n';
+
 		ofsOutput << '\n' << "[message boards]" << '\n' << "{" << '\n';
 		ofsOutput << "POSTINGLEVEL=" << static_cast<UI16>( MsgBoardPostingLevel() ) << '\n';
 		ofsOutput << "REMOVALLEVEL=" << static_cast<UI16>( MsgBoardPostRemovalLevel() ) << '\n';
@@ -7502,6 +7611,24 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 394:	// SACRIFICEVIRTUEENABLED
 			SacrificeVirtueEnabled(( static_cast<SI16>( std::stoi( value, nullptr, 0 )) == 1 ));
+      break;
+		case 400:	// SPEEDHACKDETECTION
+			SpeedHackDetection(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 401:	// SPEEDHACKMAXDEBT
+			SpeedHackMaxDebt( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 402:	// SPEEDHACKMAXDEBTAVG
+			SpeedHackMaxDebtAvg( std::stod( value ));
+			break;
+		case 403:	 // SPEEDHACKMAXCREDIT
+			SpeedHackMaxCredit( static_cast<SI16>( std::stoi( value, nullptr, 0 )));
+			break;
+		case 404:	// SPEEDHACKGRACETHRESHOLD
+			SpeedHackGraceThreshold( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 405:	// SPEEDHACKTHROTTLEPENALTY
+			SpeedHackThrottlePenalty( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
 			break;
 		default:
 			rValue = false;

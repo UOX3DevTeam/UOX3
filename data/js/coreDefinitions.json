@@ -3104,15 +3104,19 @@
         { "label": "LOYALTYTIME",          "value": 23, "comment": "Character timer" },
         { "label": "IDLEANIMTIME",         "value": 24, "comment": "Character timer" },
         { "label": "LOGOUT",               "value": 25, "comment": "Character timer" },
-        { "label": "SOCK_SKILLDELAY",      "value": 26, "comment": "Socket timer" },
-        { "label": "SOCK_OBJDELAY",        "value": 27, "comment": "Socket timer" },
-        { "label": "SOCK_SPIRITSPEAK",     "value": 28, "comment": "Socket timer" },
-        { "label": "SOCK_TRACKING",        "value": 29, "comment": "Socket timer" },
-        { "label": "SOCK_FISHING",         "value": 30, "comment": "Socket timer" },
-        { "label": "SOCK_MUTETIME",        "value": 31, "comment": "Socket timer" },
-        { "label": "SOCK_TRACKINGDISPLAY", "value": 32, "comment": "Socket timer" },
-        { "label": "SOCK_TRAFFICWARDEN",   "value": 33, "comment": "Socket timer" },
-        { "label": "COUNT",                "value": 34, "comment": "Socket timer" }
+        { "label": "YOUNGHEAL",            "value": 26, "comment": "Character timer" },
+        { "label": "YOUNGMESSAGE",         "value": 27, "comment": "Character timer" },
+        { "label": "SOCK_SKILLDELAY",      "value": 28, "comment": "Socket timer" },
+        { "label": "SOCK_OBJDELAY",        "value": 29, "comment": "Socket timer" },
+        { "label": "SOCK_SPIRITSPEAK",     "value": 30, "comment": "Socket timer" },
+        { "label": "SOCK_TRACKING",        "value": 31, "comment": "Socket timer" },
+        { "label": "SOCK_FISHING",         "value": 32, "comment": "Socket timer" },
+        { "label": "SOCK_MUTETIME",        "value": 33, "comment": "Socket timer" },
+        { "label": "SOCK_TRACKINGDISPLAY", "value": 34, "comment": "Socket timer" },
+        { "label": "SOCK_TRAFFICWARDEN",   "value": 35, "comment": "Socket timer" },
+        { "label": "SOCK_SPEEDHACKPENALTY",   "value": 36, "comment": "Socket timer" },
+        { "label": "SOCK_SPEEDHACKLOGGED",   "value": 37, "comment": "Socket timer" },
+        { "label": "COUNT",                "value": 38, "comment": "Socket timer" }
       ]
     },
     {
@@ -5313,6 +5317,30 @@
         {
           "name": "language",
           "cppID": "CSOCKP_LANGUAGE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "moveDebt",
+          "cppID": "CSOCKP_MOVEDEBT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "moveDebtAvg",
+          "cppID": "CSOCKP_MOVEDEBTAVG",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "moveBurstAllowance",
+          "cppID": "CSOCKP_MOVEBURSTALLOWANCE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "nextMoveTime",
+          "cppID": "CSOCKP_NEXTMOVETIME",
           "cppType": "JSPROP_ENUMANDPERM",
           "type": "number"
         },
@@ -8656,6 +8684,29 @@
         ]
       },
       "returns": "void"
+    },
+    {
+      "name": "onSpeedHackDetect",
+      "cppName": "OnSpeedHackDetect",
+      "params": {
+        "list": [
+          { "name": "pChar", "type": "Character", "required": true },
+          { "name": "deltaTime", "type": "number", "required": true }
+        ]
+      },
+      "returns": "boolean"
+    },
+    {
+      "name": "onSpeedHackSuspicion",
+      "cppName": "OnSpeedHackSuspicion",
+      "params": {
+        "list": [
+          { "name": "pChar", "type": "Character", "required": true },
+          { "name": "grossDebt", "type": "number", "required": true },
+          { "name": "deltaTime", "type": "number", "required": true }
+        ]
+      },
+      "returns": "boolean"
     },
     {
       "name": "onSpellCast",

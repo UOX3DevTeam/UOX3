@@ -5645,6 +5645,24 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 				break;
 			case 394:	// SACRIFICEVIRTUEENABLED
 				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->SacrificeVirtueEnabled() ) );
+        break;
+			case 400:	// SPEEDHACKDETECTTION
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->SpeedHackDetection() ));
+				break;
+			case 401:	 // SPEEDHACKMAXDEBT
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SpeedHackMaxDebt() )));
+				break;
+			case 402:	 // SPEEDHACKMAXDEBTAVG
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<R64>( cwmWorldState->ServerData()->SpeedHackMaxDebtAvg() )));
+				break;
+			case 403:	// SpeedHackMaxCredit
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->SpeedHackMaxCredit() )));
+				break;
+			case 404:	 // SPEEDHACKGRACETHRESHOLD
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SpeedHackGraceThreshold() )));
+				break;
+			case 405:	 // SPEEDHACKTHROTTLEPENALTY
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SpeedHackThrottlePenalty() )));
 				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );

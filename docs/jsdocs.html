@@ -28,8 +28,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 5. August, 2025</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.7b</small></p>
+	<p style="margin:0"><small>Last Updated: 12. December, 2025</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.7c</small></p>
 </div>
 
 <section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
@@ -55,6 +55,12 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>December 12th, 2025</h4>
+						<ul>
+							<li>Added details for new JS Events: onSpeedHackDetect, onSpeedHackSuspicion</li>
+							<li>Added details for new JS Socket Properties: nextMoveTime, moveDebt, moveDebtAvg, moveBurstAllowance</li>
+							<li>Added details for new socket timers: TIMER.SPEEDHACKPENALTY, TIMER>SPEEDHACKLOGGED</li>
+						</ul>
 						<h4>August 21st, 2025</h4>
 						<ul>
 							<li>Added details for using the TypeScript bindings</li>
@@ -4149,55 +4155,90 @@ function onSoldToVendor( pSock, Vendor, iSold, iAmount )
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#eventOnSpawn" id="eventOnSpawn"><span>onSpawn</span></a>
+				<a class="cd-faq__trigger" href="#eventOnSpecialMove" id="eventOnSpecialMove"><span>onSpecialMove</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onSpawn( objSpawned, spawnRegion )</em></p>
+							<p><em>function onSpecialMove( pUser, abilityID )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
-							<p>Used for reacting to items/NPCs spawned from spawn regions</p>
+							<p>To allow implementation of special abilities used during combat (or otherwise) when players toggle these from client.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
+							<p>Event triggers for pUser's script when player toggles a special move from a combat book in client</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
 							<ul>
-								<li>When an item or non-player character is spawned from a REGIONSPAWN entry, event will trigger in any script attached to that object (including via ADDSCRIPT)</li>
+								<li><strong>return false</strong> (or nothing) to allow other scripts with event to run</li>
+								<li><strong>return true</strong> to prevent other scripts with event from running</li>
 							</ul>
-							<p>Usable in Global script (scriptID 0)? For NPCs/Items, <span class="hl">No</span>.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
-							<ul>
-								<li>objSpawned is the spawned object (item or character)</li>
-								<li>spawnRegion is the REGIONSPAWN ID (the number used in [REGIONSPAWN N])</li>
-								<li>The spawned object also receives a "spawnRegion" tag with the same value</li>
-							</ul>
+							<p>Can be used in global scripts, or individual scripts attached to player characters. Lookup packet 0xD7, subCmd 0x19 in packet guides for updated details on special moves that are available, whose IDs range from 0x00 to 0x1D, or see list below (might be out of date):</p>
+							<input type="checkbox" id="spoiler_special_moves"/>
+							<label for="spoiler_special_moves">List of Special Moves sent from Client <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p>0x00 = Cancel Ability Attempt<br>
+								0x01 = Armor Ignore<br>
+								0x02 = Bleed Attack<br>
+								0x03 = Concusion Blow<br>
+								0x04 = Crushing Blow<br>
+								0x05 = Disarm<br>
+								0x06 = Dismount<br>
+								0x07 = Double Strike<br>
+								0x08 = Infecting<br>
+								0x09 = Mortal Strike<br>
+								0x0A = Moving Shot<br>
+								0x0B = Paralyzing Blow<br>
+								0x0C = Shadow Strike<br>
+								0x0D = Whirlwind Attack<br>
+								0x0E = Riding Swipe<br>
+								0x0F = Frenzied Whirlwind<br>
+								0x10 = Block<br>
+								0x11 = Defense Mastery<br>
+								0x12 = Nerve Strike<br>
+								0x13 = Talon Strike<br>
+								0x14 = Feint<br>
+								0x15 = Dual Wield<br>
+								0x16 = Double shot<br>
+								0x17 = Armor Peirce<br>
+								0x18 = Bladeweave<br>
+								0x19 = Force Arrow<br>
+								0x1A = Lightning Arrow<br>
+								0x1B = Psychic Attack<br>
+								0x1C = Serpent Arrow<br>
+								0x1D = Force of Nature</p>
+							</div>
+							<p>Server can send packet 0xBF, subCommand 0x21 to cancel the red highlighted state of the ability icon in the client, and reset the status of them.</p>
 						</div>
 						<div class="settingsDiv">
-							<p>
-								<span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">// Script attached via ADDSCRIPT on REGIONSPAWN 100
-// Makes all spawned creatures from that region slightly stronger
-function onSpawn( objSpawned, spawnRegion )
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">// Example where a timer is used to disable special move after two seconds
+function onSpecialMove( pUser, abilityID )
 {
-	// Only care about REGIONSPAWN 100
-	if( spawnRegion != 100 )
-		return;
+		pUser.TextMessage( "I'm activating ability #" + abilityID );
+		pUser.StartTimer( 2000, abilityID, true );
+		return true;
+}
 
-	// Only affect characters
-	if( objSpawned.isChar )
-	{
-		// Mark where it came from
-		objSpawned.SetTag( "graveyardSpawnRegion", spawnRegion );
-
-		// Small stat boost
-		objSpawned.str = objSpawned.str + 5;
-		objSpawned.dex = objSpawned.dex + 5;
-	}
-}</code></pre>
-							</p>
+function onTimer( timerObj, timerID )
+{
+		// Toggle ability off after 2 second timer has elapsed
+		var toSend = new Packet;
+		toSend.ReserveSize( 7 )
+		toSend.WriteByte( 0, 0xbf ); // Packet
+		toSend.WriteShort( 1, 0x07 ); // Length
+		toSend.WriteShort( 3, 0x21 ); // SubCmd
+		toSend.WriteByte( 5, timerID ); // Ability ID
+		toSend.WriteByte( 6, 0 ); // On/off
+		timerObj.socket.Send( toSend );
+		toSend.Free();
+}</code></pre></p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -4288,89 +4329,121 @@ function onSpeechInput( pUser, iUsed, pSpeech, pSpeechID )
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#eventOnSpecialMove" id="eventOnSpecialMove"><span>onSpecialMove</span></a>
+				<a class="cd-faq__trigger" href="#eventOnSpeedHackDetect" id="eventOnSpeedHackDetect"><span>onSpeedHackDetect</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onSpecialMove( pUser, abilityID )</em></p>
+							<p><em>function onSpeedHackDetect( pChar, deltaTime )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
-							<p>To allow implementation of special abilities used during combat (or otherwise) when players toggle these from client.</p>
+							<p>Allows custom behavior/response to players getting caught by automated speedhack detection system</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
-							<p>Event triggers for pUser's script when player toggles a special move from a combat book in client</p>
+							<p>When pChar has triggered the automatied speedhack detection system by moving faster than they're supposed to</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
 							<ul>
-								<li><strong>return false</strong> (or nothing) to allow other scripts with event to run</li>
-								<li><strong>return true</strong> to prevent other scripts with event from running</li>
+								<li><strong>return false/0</strong> Don't apply hard-coded movement throttling penalty, handle everything in script</li>
+								<li><strong>return true/1</strong> Let code continue to apply default movement throttling penalty</li>
 							</ul>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
-							<p>Can be used in global scripts, or individual scripts attached to player characters. Lookup packet 0xD7, subCmd 0x19 in packet guides for updated details on special moves that are available, whose IDs range from 0x00 to 0x1D, or see list below (might be out of date):</p>
-							<input type="checkbox" id="spoiler_special_moves"/>
-							<label for="spoiler_special_moves">List of Special Moves sent from Client <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<p>0x00 = Cancel Ability Attempt<br>
-								0x01 = Armor Ignore<br>
-								0x02 = Bleed Attack<br>
-								0x03 = Concusion Blow<br>
-								0x04 = Crushing Blow<br>
-								0x05 = Disarm<br>
-								0x06 = Dismount<br>
-								0x07 = Double Strike<br>
-								0x08 = Infecting<br>
-								0x09 = Mortal Strike<br>
-								0x0A = Moving Shot<br>
-								0x0B = Paralyzing Blow<br>
-								0x0C = Shadow Strike<br>
-								0x0D = Whirlwind Attack<br>
-								0x0E = Riding Swipe<br>
-								0x0F = Frenzied Whirlwind<br>
-								0x10 = Block<br>
-								0x11 = Defense Mastery<br>
-								0x12 = Nerve Strike<br>
-								0x13 = Talon Strike<br>
-								0x14 = Feint<br>
-								0x15 = Dual Wield<br>
-								0x16 = Double shot<br>
-								0x17 = Armor Peirce<br>
-								0x18 = Bladeweave<br>
-								0x19 = Force Arrow<br>
-								0x1A = Lightning Arrow<br>
-								0x1B = Psychic Attack<br>
-								0x1C = Serpent Arrow<br>
-								0x1D = Force of Nature</p>
-							</div>
-							<p>Server can send packet 0xBF, subCommand 0x21 to cancel the red highlighted state of the ability icon in the client, and reset the status of them.</p>
+							<ul>
+								<li><strong>deltaTime</strong> is the difference in ms between the expected arrival time and actual arrival time of the most recent movement packet. Positive values mean it arrived early (possible speeding), while negative values mean it arrived late (possible lag)</li>
+							</ul>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">// Example where a timer is used to disable special move after two seconds
-function onSpecialMove( pUser, abilityID )
+<pre><code class="language-javascript">function onSpeedHackDetect( pChar, deltaTime )
 {
-		pUser.TextMessage( "I'm activating ability #" + abilityID );
-		pUser.StartTimer( 2000, abilityID, true );
-		return true;
-}
+	// Other parameters to play with:
+	//   pChar.socket.moveDebt
+	//   pChar.socket.moveDebtAvg
+	//   pChar.socket.moveDebtSampleCount
 
-function onTimer( timerObj, timerID )
+	if( pChar.socket != nullptr )
+	{
+		// Let's ban the player's account for 24 hours
+		let pAccount == pChar.account;
+		pAccount.timeBan = 1440;
+		pAccount.socket.Disconnect();
+	}
+
+	// Return false, as we applied our own penalty instead of relying on hard-coded movement throttling
+	return false;
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnSpeedHackSuspicion" id="eventOnSpeedHackSuspicion"><span>onSpeedHackSuspicion</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onSpeedHackSuspicion( pChar, grossDebt, deltaTime )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>Allows custom behavior/response to suspected (but not confirmed by system) speedhacking</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When the system has detected a consistently high moving average debt for pChar, but not high enough to trigger the onSpeedHackDetect event</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return false/0</strong> - Let code continue as per normal</li>
+								<li><strong>return true/1</strong> - Deny movement request</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<ul>
+								<li><strong>grossDebt</strong> is the accumulated movement debt calculated before the anti-cheat system applies any caps, penalties or script-based overrides, and may differ from the .moveDebt property on socket as a result</li>
+								<li><strong>deltaTime</strong> is the difference in ms between the expected arrival time and actual arrival time of the most recent movement packet. Positive values mean it arrived early (possible speeding), while negative values mean it arrived late (possible lag)</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onSpeedHackSuspicion( pChar, grossDebt, deltaTime )
 {
-		// Toggle ability off after 2 second timer has elapsed
-		var toSend = new Packet;
-		toSend.ReserveSize( 7 )
-		toSend.WriteByte( 0, 0xbf ); // Packet
-		toSend.WriteShort( 1, 0x07 ); // Length
-		toSend.WriteShort( 3, 0x21 ); // SubCmd
-		toSend.WriteByte( 5, timerID ); // Ability ID
-		toSend.WriteByte( 6, 0 ); // On/off
-		timerObj.socket.Send( toSend );
-		toSend.Free();
+	var pSock = pChar.socket;
+	if( pSock == null )
+		return true;
+
+	// Log suspicious behavior, starting with player details
+	var logMsg = "[SPEED-AUDIT] Player: " + pPlayer.name + " (" + player.serial + ")";
+
+	// Include speed-related stats
+	logMsg += " | Delta: " + deltaTime + "ms";
+	logMsg += " | Move Debt: " + grossDebt + "ms (gross), " + pSock.moveDebt + "ms (net), " + pSock.moveDebtAvg + "ms (avg)";
+
+	// Provide some indicators for the suspicious behavior
+	if( deltaTime > 100 )
+	{
+		logMsg += " -> [Likely Lag Spike]";
+	}
+	else if( deltaTime < 25 && grossDebt > 350 && avgDebt > 200 )
+	{
+		logMsg += " -> [Potential Speedhack]";
+	}
+	else
+	{
+		logMsg += " -> [Suspicious]";
+	}
+
+	Console.Log( logMsg );
+
+	return 1;
 }</code></pre></p>
 						</div>
 					</div>
@@ -14951,7 +15024,9 @@ Timer.SOCK_TRACKING		// Time until next time player can track
 Timer.SOCK_FISHING		// Time until next time player can fish
 Timer.SOCK_MUTETIME		// Time until character is no longer muted
 Timer.SOCK_TRACKINGDISPLAY	// Time until next time tracking arrow updates
-Timer.SOCK_TRAFFICWARDEN 	// Time until next time traffic warden resets</code></pre></p>
+Timer.SOCK_TRAFFICWARDEN 	// Time until next time traffic warden resets
+Timer.SOCK_SPEEDHACKPENALTY // Time until next time player is allowed to move after getting throttled by anti-cheat
+Timer.SOCK_SPEEDHACKLOGGED 	// Time until next time suspicious speed-hack related behavior is logged</code></pre></p>
 									<p>Also see <strong>GetTimer()/SetTimer()</strong> Character Methods.</p>
 								</div>
 								<div class="settingsDiv">
@@ -17547,6 +17622,22 @@ myObject.propertyName = newValue;
 									<li>85 (UT_PTG) - Portuguese (Portugal)</li>
 								</ul>
 							</div>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.moveDebt</span> <strong>(int, <em>-75 to 2147483647</em>)</strong><br>
+							Get/Set the accumulated movement time debt in milliseconds. Positive values indicate the client is moving faster than allowed (early); negative values indicate a movement credit buffer accumulated from moving slowly or lagging. Max debt before triggering onSpeedHackDetection JS event is defined by the SPEEDHACKMAXDEBT setting in uox.ini</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.moveDebtAvg</span> <strong>(int, <em>-75 to 2147483647</em>)</strong><br>
+							Get/Set the accumulated movement time debt in milliseconds, on average over at least 100 samples. Positive values indicate the client is consistently moving faster than allowed (not fast enough to trigger definitive speedhack condition, but fast enough to trigger onSpeedHackSuspicion JS event, the threshold for which is defined by the SPEEDHACKMAXDEBTAVG setting in uox.ini); negative values indicate a consistent pattern of arriving slower than expected, due to high latency or just walking slowly.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.moveBurstAllowance</span> <strong>(int, <em>0 to 255</em>)</strong><br>
+							Get/Set the number of upcoming movement steps that will be processed immediately without incurring debt or penalty. Used to smooth out movement after server-side lag or teleports. Normally automatically set to 4 in code when conditions for this are triggered.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.nextMoveTime</span> <strong>(int, <em>0 to 4294967295</em>)</strong><br>
+							Get/Set the server timestamp (in ms) for when the next valid movement packet is expected to arrive. Used as the baseline for calculating time deltas in speedhack detection. Normally set automatically in code based on character's movement type (walking/running/etc)</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.pickupSpot</span> <strong>(int, <em>0-5</em>)</strong><br>

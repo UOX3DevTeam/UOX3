@@ -1196,6 +1196,7 @@
 1190=You are not smart enough to use that.
 1191=Your hands are full!
 1192=You are already holding something in that hand!
+1193=[SYSTEM] Slow down, champ! Take a breather.
 1197=Thank thee kindly, but I have done nothing to warrant a gift.
 1198=I thank thee for thy payment. That should give thee a good start on thy way. Farewell!
 1199=I am sorry, but I can only accept gold.
@@ -5087,7 +5088,7 @@
 //15990 Travel Restrictions
 15990=You are not allowed to travel there.
 15991=You cannot teleport from here to the destination.
-15991=You can not mark a rune here.
+15992=You can not mark a rune here.
 // 17000 - Shard Help Menu
 17000=Help Menu
 17001=General Gameplay Questions
@@ -5264,7 +5265,6 @@
 17605=I accept thy resignation.
 17606=That particular item costs %i gold pieces.
 17607=I don't know what you're talking about.
-17559=Welcome to the guild! Thou shalt find that fellow members shall grant thee lower prices in shops.
 17608=Thou art already a member of our guild.
 17609=Thou must resign from thy other guild first.
 17610=Welcome to %s!
