@@ -1,0 +1,119 @@
+{
+    "folders": [
+        {
+            "path": "../.."
+        }
+    ],
+    "settings": {
+        // INTELLISENSE
+        // Since we aren't using the extension to parse the project,
+        // we manually tell VS Code where the headers are (same as our first attempt).
+        "C_Cpp.default.includePath": [
+            "${workspaceFolder}/source",
+            "${workspaceFolder}/zlib",
+            "${workspaceFolder}/spidermonkey",
+            "${workspaceFolder}/utf8cpp"
+        ],
+        "C_Cpp.default.defines": [
+            "_DEBUG", "_CONSOLE", "STATIC_JS_API", "_CRT_SECURE_NO_WARNINGS"
+        ],
+        "C_Cpp.default.windowsSdkVersion": "10.0.19041.0",
+        "C_Cpp.default.compilerPath": "cl.exe",
+        "C_Cpp.default.intelliSenseMode": "windows-msvc-x64"
+    },
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            // -----------------------------------------------------------
+            // STEP 1: CONFIGURE (Generates the Build Files)
+            // Runs: cmake make/cmake -B ./build -DCMAKE_BUILD_TYPE=Release
+            // -----------------------------------------------------------
+            {
+                "label": "CMake: Configure (Release)",
+                "type": "shell",
+                "command": "cmake",
+                "args": [
+                    "make/cmake",
+                    "-B", "${workspaceFolder}/build",
+                    "-DCMAKE_BUILD_TYPE=Release"
+                ],
+                "group": "build"
+            },
+            {
+                "label": "CMake: Configure (Debug)",
+                "type": "shell",
+                "command": "cmake",
+                "args": [
+                    "make/cmake",
+                    "-B", "${workspaceFolder}/build",
+                    "-DCMAKE_BUILD_TYPE=Debug"
+                ],
+                "group": "build"
+            },
+
+            // -----------------------------------------------------------
+            // STEP 2: COMPILE (The actual build)
+            // Runs: cmake --build ./build --config Release
+            // -----------------------------------------------------------
+            {
+                "label": "Build UOX3 (Release)",
+                "type": "shell",
+                "command": "cmake",
+                "args": [
+                    "--build", "${workspaceFolder}/build",
+                    "--config", "Release"
+                ],
+                "group": {
+                    "kind": "build",
+                    "isDefault": true
+                },
+                "problemMatcher": "$msCompile",
+                // Dependency: Ensures we always have a configured project before building
+                "dependsOn": "CMake: Configure (Release)"
+            },
+            {
+                "label": "Build UOX3 (Debug)",
+                "type": "shell",
+                "command": "cmake",
+                "args": [
+                    "--build", "${workspaceFolder}/build",
+                    "--config", "Debug"
+                ],
+                "group": "build",
+                "problemMatcher": "$msCompile",
+                "dependsOn": "CMake: Configure (Debug)"
+            }
+        ]
+    },
+    "launch": {
+        "version": "0.2.0",
+        "configurations": [
+            {
+                "name": "Launch UOX3 (Release)",
+                "type": "cppvsdbg",
+                "request": "launch",
+                // CMake on Windows places the binary in build/Release/
+                "program": "${workspaceFolder}/build/Release/uox3.exe",
+                "args": [],
+                "stopAtEntry": false,
+                "cwd": "${workspaceFolder}/data",
+                "environment": [],
+                "console": "externalTerminal",
+                // Before launching, ensure we run the Build task
+                "preLaunchTask": "Build UOX3 (Release)"
+            },
+            {
+                "name": "Launch UOX3 (Debug)",
+                "type": "cppvsdbg",
+                "request": "launch",
+                "program": "${workspaceFolder}/build/Debug/uox3.exe",
+                "args": [],
+                "stopAtEntry": false,
+                "cwd": "${workspaceFolder}/data",
+                "environment": [],
+                "console": "externalTerminal",
+                "preLaunchTask": "Build UOX3 (Debug)"
+            }
+        ]
+    }
+}
