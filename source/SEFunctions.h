@@ -172,6 +172,7 @@ JSBool SE_CreateParty( JSContext *cx, uintN argc, jsval *vp );
 JSBool SE_GetClientFeature( JSContext *cx, uintN argc, jsval *vp );
 JSBool SE_GetServerFeature( JSContext *cx, uintN argc, jsval *vp );
 JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp );
+JSBool SE_SetServerSetting( JSContext *cx, uintN argc, jsval *vp );
 
 JSBool SE_DeleteFile( JSContext *cx, uintN argc, jsval *vp );
 

@@ -625,30 +625,28 @@ bool CSpawnRegion::Load( CScriptSection *toScan, bool isParentSpawnRegion )
 					else if( UTag == "ERAS" && !isParentSpawnRegion )
 					{
 						auto ssecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), "," );
-						if( ssecs.size() == 1 )
+						bool eraFound = false;
+						for( size_t i = 0; i < ssecs.size(); ++i )
 						{
-							// Only one era specified
-							if( cwmWorldState->ServerData()->EraStringToEnum( ssecs[0], false, false ) != cwmWorldState->ServerData()->ExpansionCoreShardEra() )
+							if( cwmWorldState->ServerData()->EraStringToEnum( oldstrutil::simplify( ssecs[i] ), false, false ) == cwmWorldState->ServerData()->ExpansionCoreShardEra() )
 							{
-								// SpawnRegion not intended for current shard era, abort!
-								return false;
+								eraFound = true;
+								break; 
 							}
 						}
-						else
+						if( !eraFound )
 						{
-							// Multiple eras specified
-							bool eraFound = false;
-							for( int i = 0; i < ssecs.size(); i++ )
+							return false; // Current era not included in whitelist, abort
+						}
+					}
+					else if( UTag == "EXCLUDEERAS" && !isParentSpawnRegion )
+					{
+						auto ssecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), "," );
+						for( size_t i = 0; i < ssecs.size(); ++i )
+						{
+							if( cwmWorldState->ServerData()->EraStringToEnum( oldstrutil::simplify( ssecs[i] ), false, false ) == cwmWorldState->ServerData()->ExpansionCoreShardEra() )
 							{
-								if( cwmWorldState->ServerData()->EraStringToEnum( oldstrutil::simplify( ssecs[i] ), false, false ) == cwmWorldState->ServerData()->ExpansionCoreShardEra() )
-								{
-									eraFound = true;
-								}
-							}
-							if( !eraFound )
-							{
-								// SpawnRegion not intended for current shard era, abort!
-								return false;
+								return false; // Found a blacklisted era, abort.
 							}
 						}
 					}

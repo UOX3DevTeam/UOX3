@@ -173,6 +173,7 @@ static JSFunctionSpec my_functions[] =
 	{ "GetClientFeature",			SE_GetClientFeature,		1, 0 },
 	{ "GetServerFeature",			SE_GetServerFeature,		1, 0 },
 	{ "GetServerSetting",			SE_GetServerSetting,		1, 0 },
+	{ "SetServerSetting",			SE_SetServerSetting,		1, 0 },
 
 	{ "DeleteFile",					SE_DeleteFile,				2, 0 },
 

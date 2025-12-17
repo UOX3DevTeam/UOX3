@@ -3,6 +3,7 @@
 
 [REGIONSPAWN 4250]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Lysander Gathenwale
 NPC=lysander_gathenwale
 MAXNPCS=1
@@ -18,6 +19,7 @@ CALL=1
 
 [REGIONSPAWN 4251]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Morg Bergen
 NPC=morg_bergen
 MAXNPCS=1
@@ -33,6 +35,7 @@ CALL=1
 
 [REGIONSPAWN 4252]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Tavara Sewel
 NPC=tavara_sewel
 MAXNPCS=1
@@ -48,6 +51,7 @@ CALL=1
 
 [REGIONSPAWN 4253]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Grimmoch Drummel
 NPC=grimmoch_drummel
 MAXNPCS=1
@@ -63,6 +67,7 @@ CALL=1
 
 [REGIONSPAWN 4255]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Ancient Lich 1
 NPC=ancientlich
 MAXNPCS=1
@@ -78,6 +83,7 @@ CALL=1
 
 [REGIONSPAWN 4256]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Ancient Lich 2
 NPC=ancientlich
 MAXNPCS=1
@@ -93,6 +99,7 @@ CALL=1
 
 [REGIONSPAWN 4257]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Bone Knight
 NPC=boneknight
 MAXNPCS=1
@@ -108,6 +115,7 @@ CALL=2
 
 [REGIONSPAWN 4258]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Bone Magi
 NPC=bonemage
 MAXNPCS=2
@@ -123,6 +131,7 @@ CALL=1
 
 [REGIONSPAWN 4259]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Cursed 1
 NPC=cursed
 MAXNPCS=1
@@ -138,6 +147,7 @@ CALL=1
 
 [REGIONSPAWN 4260]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Cursed 2
 NPC=cursed
 MAXNPCS=3
@@ -153,6 +163,7 @@ CALL=1
 
 [REGIONSPAWN 4261]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Cursed 3
 NPC=cursed
 MAXNPCS=4
@@ -168,6 +179,7 @@ CALL=1
 
 [REGIONSPAWN 4262]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Cursed 4
 NPC=cursed
 MAXNPCS=3
@@ -183,6 +195,7 @@ CALL=1
 
 [REGIONSPAWN 4263]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Tentacles of the Harrower
 NPC=tentacles_of_the_harrower
 MAXNPCS=1
@@ -198,6 +211,7 @@ CALL=1
 
 [REGIONSPAWN 4264]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Zealot Summoner 1
 NPC=zealot_summoner
 MAXNPCS=1
@@ -213,6 +227,7 @@ CALL=1
 
 [REGIONSPAWN 4265]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Zealot Summoner 2
 NPC=zealot_summoner
 MAXNPCS=1
@@ -228,6 +243,7 @@ CALL=1
 
 [REGIONSPAWN 4266]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Zealot Summoner 3
 NPC=zealot_summoner
 MAXNPCS=1
@@ -243,6 +259,7 @@ CALL=1
 
 [REGIONSPAWN 4267]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 GET=4264
 NAME=Khaldun - Zealot Knight 1
 NPC=zealot_knight
@@ -250,6 +267,7 @@ NPC=zealot_knight
 
 [REGIONSPAWN 4268]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 GET=4265
 NAME=Khaldun - Khaldun Zealot Knight 2
 NPC=zealot_knight
@@ -257,6 +275,7 @@ NPC=zealot_knight
 
 [REGIONSPAWN 4269]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 GET=4266
 NAME=Khaldun - Khaldun Zealot Knight 3
 NPC=zealot_knight
@@ -264,6 +283,7 @@ NPC=zealot_knight
 
 [REGIONSPAWN 4270]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 GET=4259
 NAME=Khaldun - Shadow Fiend 1
 NPC=shadowfiend
@@ -271,6 +291,7 @@ NPC=shadowfiend
 
 [REGIONSPAWN 4271]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 GET=4264
 NAME=Khaldun - Shadow Fiend 2
 NPC=shadowfiend
@@ -278,6 +299,7 @@ NPC=shadowfiend
 
 [REGIONSPAWN 4272]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 GET=4251
 NAME=Khaldun - Shadow Fiend 3
 NPC=shadowfiend
@@ -287,6 +309,7 @@ MAXTIME=20
 
 [REGIONSPAWN 4273]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 GET=4258
 NAME=Khaldun - Shadow Fiend 4
 NPC=shadowfiend
@@ -296,6 +319,7 @@ MAXTIME=30
 
 [REGIONSPAWN 4274]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Shadow Fiend 5
 NPC=shadowfiend
 MAXNPCS=1
@@ -311,6 +335,7 @@ CALL=1
 
 [REGIONSPAWN 4275]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Shadow Fiend 6
 NPC=shadowfiend
 MAXNPCS=2
@@ -326,6 +351,7 @@ CALL=1
 
 [REGIONSPAWN 4276]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Shadow Fiend 7
 NPC=shadowfiend
 MAXNPCS=2
@@ -341,6 +367,7 @@ CALL=1
 
 [REGIONSPAWN 4277]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Shadow Fiend 8
 NPC=shadowfiend
 MAXNPCS=1
@@ -357,6 +384,7 @@ CALL=1
 
 [REGIONSPAWN 4278]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Shadow Fiend 9
 NPC=shadowfiend
 MAXNPCS=1
@@ -372,6 +400,7 @@ CALL=1
 
 [REGIONSPAWN 4279]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Shadow Fiend 10
 NPC=shadowfiend
 MAXNPCS=1
@@ -387,6 +416,7 @@ CALL=1
 
 [REGIONSPAWN 4280]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Skeletal Knight 1
 NPC=skeletalknight
 MAXNPCS=1
@@ -402,6 +432,7 @@ CALL=1
 
 [REGIONSPAWN 4281]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Skeletal Knight 2
 NPC=skeletalknight
 MAXNPCS=1
@@ -417,6 +448,7 @@ CALL=1
 
 [REGIONSPAWN 4282]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Skeletal Knight 3
 NPC=skeletalknight
 MAXNPCS=2
@@ -432,6 +464,7 @@ CALL=1
 
 [REGIONSPAWN 4283]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Skeletal Knight 4
 NPC=skeletalknight
 MAXNPCS=1
@@ -447,6 +480,7 @@ CALL=1
 
 [REGIONSPAWN 4284]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Skeletal Mage
 NPC=skeletalmage
 MAXNPCS=1
@@ -462,6 +496,7 @@ CALL=1
 
 [REGIONSPAWN 4285]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Skeleton 1
 NPC=skeleton
 MAXNPCS=2
@@ -477,6 +512,7 @@ CALL=1
 
 [REGIONSPAWN 4286]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Skeleton 2
 NPC=skeleton
 MAXNPCS=2
@@ -492,6 +528,7 @@ CALL=1
 
 [REGIONSPAWN 4287]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Skeleton 3
 NPC=skeleton
 MAXNPCS=5
@@ -507,6 +544,7 @@ CALL=2
 
 [REGIONSPAWN 4288]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Skeleton 4
 NPC=skeleton
 MAXNPCS=3
@@ -522,6 +560,7 @@ CALL=1
 
 [REGIONSPAWN 4289]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Spectral Armor 1
 NPC=spectralarmor
 MAXNPCS=2
@@ -537,6 +576,7 @@ CALL=1
 
 [REGIONSPAWN 4290]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 GET=4288
 NAME=Khaldun - Spectral Armor 2
 NPC=spectralarmor
@@ -545,6 +585,7 @@ MAXNPCS=1
 
 [REGIONSPAWN 4291]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 GET=4259
 NAME=Khaldun - Zombie 1
 NPC=zombie
@@ -553,6 +594,7 @@ MAXNPCS=2
 
 [REGIONSPAWN 4292]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 GET=4264
 NAME=Khaldun - Zombie 2
 NPC=zombie
@@ -563,6 +605,7 @@ MAXTIME=20
 
 [REGIONSPAWN 4293]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 GET=4257
 NAME=Khaldun - Zombie 3
 NPC=zombie
@@ -573,6 +616,7 @@ CALL=1
 
 [REGIONSPAWN 4294]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 GET=4252
 NAME=Khaldun - Zombie 4
 NPC=zombie
@@ -582,6 +626,7 @@ MAXTIME=18
 
 [REGIONSPAWN 4295]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Zombie 5
 NPC=zombie
 MAXNPCS=2
@@ -597,6 +642,7 @@ CALL=1
 
 [REGIONSPAWN 4296]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 GET=4281
 NAME=Khaldun - Zombie 6
 NPC=zombie
@@ -604,6 +650,7 @@ NPC=zombie
 
 [REGIONSPAWN 4297]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Zombie 7
 NPC=zombie
 MAXNPCS=1
@@ -619,6 +666,7 @@ CALL=1
 
 [REGIONSPAWN 4298]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Zombie 8
 NPC=zombie
 MAXNPCS=2
@@ -634,6 +682,7 @@ CALL=1
 
 [REGIONSPAWN 4299]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Khaldun - Zombie 9
 NPC=zombie
 MAXNPCS=2

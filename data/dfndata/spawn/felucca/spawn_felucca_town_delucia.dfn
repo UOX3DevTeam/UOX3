@@ -3,6 +3,7 @@
 
 [REGIONSPAWN 1500]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=delucia - stables
 NPC=animaltrainer
 MAXNPCS=1
@@ -18,6 +19,7 @@ CALL=1
 
 [REGIONSPAWN 1501]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=delucia - hut of magics
 NPC=mage
 MAXNPCS=1
@@ -33,6 +35,7 @@ CALL=1
 
 [REGIONSPAWN 1502]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=delucia - ye olde eleventh bank
 NPC=banker
 MAXNPCS=2
@@ -48,6 +51,7 @@ CALL=2
 
 [REGIONSPAWN 1503]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=delucia - tailor shop
 NPC=tailor
 MAXNPCS=1
@@ -63,6 +67,7 @@ CALL=1
 
 [REGIONSPAWN 1504]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=delucia - zoots hammer
 NPC=blacksmith
 MAXNPCS=1
@@ -78,6 +83,7 @@ CALL=1
 
 [REGIONSPAWN 1505]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=delucia - the supply depot
 NPC=provisioner
 MAXNPCS=1
@@ -93,6 +99,7 @@ CALL=1
 
 [REGIONSPAWN 1506]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=delucia - the barely inn
 NPC=innkeeper
 MAXNPCS=1
@@ -108,6 +115,7 @@ CALL=1
 
 [REGIONSPAWN 1507]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=delucia - healer
 NPC=healer
 MAXNPCS=1
@@ -124,6 +132,7 @@ CALL=1
 // delucia - the supply depot
 [REGIONSPAWN 1508]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 GET=1505
 NPC=cobbler
 }
@@ -131,6 +140,7 @@ NPC=cobbler
 // delucia - zoot's hammer
 [REGIONSPAWN 1509]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 GET=1504
 NPC=armourer
 }
@@ -138,6 +148,7 @@ NPC=armourer
 // delucia - zoot's hammer
 [REGIONSPAWN 1510]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 GET=1504
 NPC=weaponsmith
 }
@@ -145,6 +156,7 @@ NPC=weaponsmith
 // delucia - tailor shop
 [REGIONSPAWN 1511]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 GET=1503
 NPC=weaver
 }
@@ -152,6 +164,7 @@ NPC=weaver
 // delucia - tailor shop
 [REGIONSPAWN 1512]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 GET=1503
 NPC=tanner
 }
@@ -159,12 +172,14 @@ NPC=tanner
 // delucia - tailor shop
 [REGIONSPAWN 1513]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 GET=1503
 NPC=furtrader
 }
 
 [REGIONSPAWN 1514]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=delucia - towncrier
 NPC=towncrier
 MAXNPCS=1
@@ -181,6 +196,7 @@ CALL=1
 // delucia - hut of magics
 [REGIONSPAWN 1515]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 GET=1501
 NPC=alchemist
 MAXNPCS=1
@@ -188,6 +204,7 @@ MAXNPCS=1
 
 [REGIONSPAWN 1516]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=delucia - hut of magics
 NPC=herbalist
 MAXNPCS=1
@@ -204,12 +221,14 @@ CALL=1
 // delucia - hut of magics
 [REGIONSPAWN 1517]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 GET=1516
 NPC=alchemist
 }
 
 [REGIONSPAWN 1518]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=delucia - tower 1st floor
 NPC=fighter
 MAXNPCS=2
@@ -225,6 +244,7 @@ CALL=1
 
 [REGIONSPAWN 1519]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=delucia - tower 2nd floor
 NPC=fighter
 MAXNPCS=2
@@ -241,6 +261,7 @@ CALL=1
 
 [REGIONSPAWN 1520]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=delucia - tower outside
 NPC=warrior
 MAXNPCS=2
@@ -256,6 +277,7 @@ CALL=1
 
 [REGIONSPAWN 1530]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Delucia Cotton Field 1
 ITEM=cotton_resource
 MAXITEMS=10
@@ -271,6 +293,7 @@ CALL=5
 
 [REGIONSPAWN 1531]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Delucia Cotton Field 2
 ITEM=cotton_resource
 MAXITEMS=10
@@ -286,6 +309,7 @@ CALL=5
 
 [REGIONSPAWN 1532]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Delucia Cotton Field 3
 ITEM=cotton_resource
 MAXITEMS=10
@@ -301,6 +325,7 @@ CALL=5
 
 [REGIONSPAWN 1533]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Delucia Cotton Field 4 (Orc Fort)
 ITEM=cotton_resource
 MAXITEMS=10
@@ -316,6 +341,7 @@ CALL=5
 
 [REGIONSPAWN 1534]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Delucia Turnip Field 1 (Orc Fort)
 ITEM=turnip_resource
 MAXITEMS=5
@@ -331,6 +357,7 @@ CALL=5
 
 [REGIONSPAWN 1535]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=Delucia Carrot Field 1 (Orc Fort)
 ITEM=carrot_resource
 MAXITEMS=5
@@ -346,6 +373,7 @@ CALL=5
 
 [REGIONSPAWN 1536]
 {
+ERAS=T2A,UOR,TD,LBR,AOS,SE,ML,SA,HS,TOL
 NAME=delucia - stables
 NPC=veterinarian
 MAXNPCS=1

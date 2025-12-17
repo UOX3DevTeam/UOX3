@@ -993,6 +993,1003 @@ packitem=0x0f8d,30
 
 		<ul id="additionalInfo" class="cd-faq__group">
 			<li class="cd-faq__title title-maindoc"><h1>Additional UOX3 Info</h1></li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#uox3ConfigureShardEra" id="configureShardEra"><span>Configure UOX3 for Specific UO Era</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+						<p>The <a href="index.html#uoxINISettings" title="UOX3 Documentatio - Additional UOX3 Info - UOX.INI Settings">UOX.INI Settings</a> contain several levers and knobs that can be used to tune your shard to specific eras of UO like T2A, LBR or AOS. Here's a quick guide for how to configure UOX3 for a given era; be sure to check the settings-section above for more details on each option!</p>
+						<h3>Original UO (1997)</h3>
+						<p>When UO released in 1997, there was no Lost Lands, no Felucca/Trammel split, no Ilshenar, no races, no factions. This era represents the <span class="hl">raw original UO experience</span> that existed at launch, before the arrival of any expansions.</p>
+						<input type="checkbox" id="spoiler_cmd_uoeraconfig">
+						<label for="spoiler_cmd_uoeraconfig">Configure UOX3 for (Original) UO Era <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<h3>Recommended Client Version</h3>
+							<p><strong>4.0.0p - 6.0.3.1</strong> (Retains original Magincia city)</p>
+							<h3>Map Settings</h3>
+							<p>If using a client version older than 6.x, rename <strong>uox3/dfndata/maps/maps.dfn</strong> to <strong>maps_dfn.bak</strong>, then rename either <strong>maps.4xclients.old</strong> (for 4.x client version) or <strong>maps.5xclients.new</strong> (for 5.x client versions) to <strong>maps.dfn</strong> instead.</p>
+							<p>This ensures UOX3 will read the map files correctly and treat them according to the size they had in those respective client versions, and not try to load map files for non-existent facets.</p>
+							<h3>UOX.INI Settings</h3>
+							<p><strong>[system]</strong></p>
+							<ul>
+								<li>contextmenus=0</li>
+							</ul>
+							<p><strong>[clientsupport]</strong></p>
+							<ul>
+								<li>CLIENTSUPPORT4000=0</li>
+								<li>CLIENTSUPPORT5000=0</li>
+								<li>CLIENTSUPPORT6000=0</li>
+								<li><span class="hl">Set ONE of these to 1, depending on client version range you're using (4.x, 5.x or 6.x before 6.0.5)</span>. If you choose to go with latest client instead, just set the latest entry in the list to 1.</li>
+							</ul>
+							<p><strong>[skill & stats]</strong></p>
+							<ul>
+								<li>SKILLCAP=7000</li>
+								<li>SKILLCAPSINGLE=1000</li>
+								<li>STATCAP=225</li>
+								<li>EXTENDEDSTARTINGSTATS=1<br>
+									<span class="hl">// only if using client v7.0.16+, which allows assigning more stat points during char creation!</span></li>
+								<li>EXTENDEDSTARTINGSKILLS=1<br>
+								<span class="hl">// only if using client v7.0.16+, which allows assigning more skill points during char creation!</span></li>
+								<li>SNOOPISCRIME=0/1<br>
+									<span class="hl"> // Make your choice; early in UO, snooping could flag the player as a criminal, but this was disabled in a later patch (before T2A).</span></li>
+								<li>ARMORAFFECTMANAREGEN=0</li>
+								<li>HEALTHREGENMODE=1</li>
+								<li>STAMINAREGENMODE=1</li>
+								<li>MANAREGENMODE=1</li>
+								<li>HEALTHREGENCAP=18</li>
+								<li>STAMINAREGENCAP=24</li>
+								<li>MANAREGENCAP=18</li>
+							</ul>
+							<p><strong>[timers]</strong></p>
+							<ul>
+								<li>CORPSEDECAYTIMER=420</li>
+								<li>NPCCORPSEDECAYTIMER=420</li>
+								<li>DECAYTIMER=3600</li>
+								<li>HITPOINTREGENTIMER=8</li>
+								<li>STAMINAREGENTIMER=2</li>
+								<li>MANAREGENTIMER=7</li>
+							</ul>
+							<p><strong>[expansion settings]</strong></p>
+							<ul>
+								<li>CORESHARDERA=uo</li>
+								<li>Leave the rest pointing to "core"</li>
+							</ul>
+							<p><strong>[default race bonuses]</strong></p>
+							<ul>
+								<li>Leave all at 0</li>
+							</ul>
+							<p><strong>[settings]</strong></p>
+							<ul>
+								<li>SELLMAXITEMS=5</li>
+								<li>BANKBUYTHRESHOLD=2000</li>
+								<li>RANKSYSTEM=1</li>
+								<li>DISPLAYMAKERSMARK=0</li>
+								<li>CLIENTFEATURES=0</li>
+								<li>SERVERFEATURES=0</li>
+								<li>SPAWNREGIONSFACETS=1</li>
+								<li>MOONGATEFACETS=1</li>
+								<li>BASICTOOLTIPSONLY=1</li>
+								<li>SHOWREPUTATIONTITLEINTOOLTIP=0</li>
+								<li>SHOWGUILDINFOINTOOLTIP=0</li>
+								<li>SHOWNPCTITLESINTOOLTIPS=0</li>
+								<li>SHOWNPCTITLESOVERHEAD=0</li>
+								<li>SHOWINVULNERABLETAGOVERHEAD=1</li>
+								<li>PAPERDOLLGUILDBUTTON=0</li>
+								<li>FORCENEWANIMATIONPACKET=0<br>
+									<span class="hl">// if client version used is below 7.0</span></li>
+								<li>MAPDIFFSENABLED=0</li>
+								<input type="checkbox" id="spoiler_cmd_mapdiffsimpactuo">
+								<label for="spoiler_cmd_mapdiffsimpactuo">Impact of mapdiffs enabled vs disabled for original UO<i class="fas fa-angle-down"></i></label>
+								<div class="spoiler">
+									<p>Town of Ocllo in Trammel facet with mapdiffs disabled vs enabled across different client versions:</p>
+<pre>	Client v5.0.0b - v5.0.9b with mapdiffs disabled = <strong>Original Ocllo</strong>
+	Client v5.0.0b - v5.0.9b with mapdiffs enabled = <strong>Old Haven</strong>
+	Client v6.0.0 - v7.0.8.2 with mapdiffs disabled = <strong>New Haven</strong>
+	Client v6.0.0 - v7.0.8.2with mapdiffs enabled = <strong>Old Haven</strong>
+	Client v7.0.30.1 (mapdiffs no longer a thing) = <strong>New Haven</strong></pre>
+								</div>
+								<li>TOOLUSELIMIT=1</li>
+								<li>TOOLUSEBREAK=1</li>
+								<li>ITEMREPAIRDURABILITYLOSS=1</li>
+								<li>CRAFTCOLOUREDWEAPONS=0</li>
+								<li>YOUNGPLAYERSYSTEM=0</li>
+								<li>KARMALOCKING=0</li>
+							</ul>
+							<p><strong>[pets and followers]</strong></p>
+							<ul>
+								<li>MAXCONTROLSLOTS=0</li>
+								<li>MAXFOLLOWERS=5</li>
+								<li>MAXPETOWNERS=100</li>
+								<li>CHECKPETCONTROLDIFFICULTY=0</li>
+								<li>PETLOYALTYGAINONSUCCESS=1</li>
+								<li>PETLOYALTYLOSSONFAILURE=1</li>
+								<li>PETLOYALTYRATE=600</li>
+								<li>PETBONDINGENABLED=0</li>
+							</ul>
+							<p><strong>[combat]</strong></p>
+							<ul>
+								<li>DISPLAYDAMAGENUMBERS=0</li>
+								<li>NPCDAMAGERATE=2</li>
+								<li>ATTACKSPEEDFROMSTAMINA=0</li>
+								<li>ARCHERYHITBONUS=0</li>
+								<li>ARCHERYSHOOTDELAY=1.0</li>
+								<li>SHOOTONANIMALBACK=1</li>
+								<li>WEAPONDAMAGECHANCE=8</li>
+								<li>ARMORDAMAGECHANCE=16</li>
+								<li>PARRYDAMAGECHANCE=10</li>
+								<li>ALCHEMYBONUSENABLED=0</li>
+								<li>ITEMSINTERRUPTCASTING=0</li>
+								<li>SHOWITEMRESISTSTATS=0</li>
+								<li>SHOWWEAPONDAMAGETYPES=0</li>
+								<li>WEAPONDAMAGEBONUSTYPE=2</li>
+								<li>POISONCORROSIONSYSTEM=0</li>
+							</ul>
+							<p><strong>[magic]</strong></p>
+							<ul>
+								<li>TRAVELSPELLSFROMBOATKEYS=0</li>
+								<li>TRAVELSPELLSWHILEOVERWEIGHT=1</li>
+								<li>MARKRUNESINMULTIS=0</li>
+								<li>TRAVELSPELLSWHILEAGGRESSOR=1</li>
+								<li>HIDESTATSFORUNKNOWNMAGICITEMS=1</li>
+							</ul>
+							<p><strong>[startup]</strong></p>
+							<ul>
+								<li>STARTGOLD=100</li>
+							</ul>
+							<p><strong>[houses]</strong></p>
+							<ul>
+								<li>TRACKHOUSESPERACCOUNT=0</li>
+								<li>CANOWNANDCOOWNHOUSES=0</li>
+								<li>COOWNHOUSESONSAMEACCOUNT=0</li>
+								<li>ITEMDECAYINHOUSES=0</li>
+								<li>PROTECTPRIVATEHOUSES=0</li>
+								<li>MAXHOUSESOWNABLE=1</li>
+								<li>MAXHOUSESCOOWNABLE=1</li>
+								<li>SAFECOOWNERLOGOUT=1</li>
+								<li>SAFEFRIENDLOGOUT=1</li>
+								<li>SAFEGUESTLOGOUT=0</li>
+								<li>KEYLESSOWNERACCESS=0</li>
+								<li>KEYLESSCOOWNERACCESS=0</li>
+								<li>KEYLESSFRIENDACCESS=0</li>
+								<li>KEYLESSGUESTACCESS=0</li>
+							</ul>
+							<p><strong>[bulk order deeds]</strong></p>
+							<ul>
+								<li>OFFERBODSFROMITEMSALES=0</li>
+								<li>OFFERBODSFROMCONTEXTMENU=0</li>
+							</ul>
+						</div>
+						<h3>The Second Age (1998)</h3>
+						<input type="checkbox" id="spoiler_cmd_t2adetails">
+						<label for="spoiler_cmd_t2adetails">Details about this expansion <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>The T2A expansion released in 1998 came with:</p>
+							<ul>
+								<li>✅<span class="hl">Lost Lands map expansion</span></li>
+								<li>✅<span class="hl">New creatures</span> (Giant Scorpion, Giant Toad, Phoenix, Doom Tree, Swamp Tentacle, Bullfrog, Dread Spider, Frost Spider, Terathan Avenger, Terathan Drone, Terathan Matriarch, Terathan Warrior, Ice Fiend, Imp, Poison Dragon, White Wyrm, Wyvern, Ice Elemental, Snow Elemental, Stone Gargoyle, Cyclops, Frost Troll, Titan, Efreet, Frost Ooze, Headless Mage, Hell Hound, Hell Hound Leader, Hellcat, Predator Hellcat, Stone Harpy, Dark Steed, Desert Ostard, Forest Ostard, Frenzied Ostard, Nightmare, Silver Steed, Ice Serpent, Ice Snake, Lava Lizard, Lava Serpent, Lava Snake, Ophidian Apprentice, Ophidian Avenger, Ophidian Enforcer, Ophidian Knight, Ophidian Matriarch, Ophidian Shaman, Ophidian Warrior, Rotting Corpse, Soulslave)</li>
+								<li>✅<span class="hl">Skill revamps</span> ()</li>
+								<li>✅<span class="hl">New skills</span> (Stealth, Remove Trap, Meditation)</li>
+							</ul>
+						</div>
+						<input type="checkbox" id="spoiler_cmd_t2aeraconfig">
+						<label for="spoiler_cmd_t2aeraconfig">Configure UOX3 for T2A Era <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<h3>Recommended Client Version</h3>
+							<p><strong>4.0.0p - 6.0.3.1</strong> (Retains original Magincia city)</p>
+							<h3>Map Settings</h3>
+							<p>If using a client version older than 6.x, rename <strong>uox3/dfndata/maps/maps.dfn</strong> to <strong>maps_dfn.bak</strong>, then rename either <strong>maps.4xclients.old</strong> (for 4.x client version) or <strong>maps.5xclients.new</strong> (for 5.x client versions) to <strong>maps.dfn</strong> instead.</p>
+							<p>This ensures UOX3 will read the map files correctly and treat them according to the size they had in those respective client versions, and not try to load map files for non-existent facets.</p>
+							<h3>UOX.INI Settings</h3>
+							<p><strong>[system]</strong></p>
+							<ul>
+								<li>contextmenus=0</li>
+							</ul>
+							<p><strong>[clientsupport]</strong></p>
+							<ul>
+								<li>CLIENTSUPPORT4000=0</li>
+								<li>CLIENTSUPPORT5000=0</li>
+								<li>CLIENTSUPPORT6000=0</li>
+								<li><span class="hl">Set ONE of these to 1, depending on client version range you're using (4.x, 5.x or 6.x before 6.0.5)</span>. If you choose to go with latest client instead, just set the latest entry in the list to 1.</li>
+							</ul>
+							<p><strong>[skill & stats]</strong></p>
+							<ul>
+								<li>SKILLCAP=7000</li>
+								<li>SKILLCAPSINGLE=1000</li>
+								<li>STATCAP=225</li>
+								<li>EXTENDEDSTARTINGSTATS=1<br>
+									<span class="hl">// only if using client v7.0.16+, which allows assigning more stat points during char creation!</span></li>
+								<li>EXTENDEDSTARTINGSKILLS=1<br>
+								<span class="hl">// only if using client v7.0.16+, which allows assigning more skill points during char creation!</span></li>
+								<li>ARMORAFFECTMANAREGEN=1</li>
+								<li>HEALTHREGENMODE=1</li>
+								<li>STAMINAREGENMODE=1</li>
+								<li>MANAREGENMODE=1</li>
+								<li>HEALTHREGENCAP=18</li>
+								<li>STAMINAREGENCAP=24</li>
+								<li>MANAREGENCAP=18</li>
+							</ul>
+							<p><strong>[timers]</strong></p>
+							<ul>
+								<li>CORPSEDECAYTIMER=900</li>
+								<li>NPCCORPSEDECAYTIMER=900</li>
+								<li>DECAYTIMER=3600</li>
+								<li>HITPOINTREGENTIMER=8</li>
+								<li>STAMINAREGENTIMER=2</li>
+								<li>MANAREGENTIMER=7</li>
+							</ul>
+							<p><strong>[expansion settings]</strong></p>
+							<ul>
+								<li>CORESHARDERA=t2a</li>
+								<li>Leave the rest pointing to "core"</li>
+							</ul>
+							<p><strong>[default race bonuses]</strong></p>
+							<ul>
+								<li>Leave all at 0</li>
+							</ul>
+							<p><strong>[settings]</strong></p>
+							<ul>
+								<li>SELLMAXITEMS=5</li>
+								<li>BANKBUYTHRESHOLD=2000</li>
+								<li>RANKSYSTEM=1</li>
+								<li>DISPLAYMAKERSMARK=1</li>
+								<li>CLIENTFEATURES=1</li>
+								<li>SERVERFEATURES=0</li>
+								<li>SPAWNREGIONSFACETS=1</li>
+								<li>MOONGATEFACETS=1</li>
+								<li>BASICTOOLTIPSONLY=1</li>
+								<li>SHOWREPUTATIONTITLEINTOOLTIP=0</li>
+								<li>SHOWGUILDINFOINTOOLTIP=0</li>
+								<li>SHOWNPCTITLESINTOOLTIPS=0</li>
+								<li>SHOWNPCTITLESOVERHEAD=0</li>
+								<li>SHOWINVULNERABLETAGOVERHEAD=1</li>
+								<li>PAPERDOLLGUILDBUTTON=0</li>
+								<li>MAXPLAYERBANKWEIGHT=2147483647</li>
+								<li>FORCENEWANIMATIONPACKET=0<br>
+									<span class="hl">// if client version used is below 7.0</span></li>
+								<li>MAPDIFFSENABLED=0</li>
+								<input type="checkbox" id="spoiler_cmd_mapdiffsimpactt2a">
+								<label for="spoiler_cmd_mapdiffsimpactt2a">Impact of mapdiffs enabled vs disabled for T2A<i class="fas fa-angle-down"></i></label>
+								<div class="spoiler">
+									<p>Town of Ocllo in Trammel facet with mapdiffs disabled vs enabled across different client versions:</p>
+<pre>	Client v5.0.0b - v5.0.9b with mapdiffs disabled = <strong>Original Ocllo</strong>
+	Client v5.0.0b - v5.0.9b with mapdiffs enabled = <strong>Old Haven</strong>
+	Client v6.0.0 - v7.0.8.2 with mapdiffs disabled = <strong>New Haven</strong>
+	Client v6.0.0 - v7.0.8.2with mapdiffs enabled = <strong>Old Haven</strong>
+	Client v7.0.30.1 (mapdiffs no longer a thing) = <strong>New Haven</strong></pre>
+								</div>
+								<li>TOOLUSELIMIT=1</li>
+								<li>TOOLUSEBREAK=1</li>
+								<li>ITEMREPAIRDURABILITYLOSS=1</li>
+								<li>CRAFTCOLOUREDWEAPONS=0</li>
+								<li>YOUNGPLAYERSYSTEM=0</li>
+								<li>KARMALOCKING=0</li>
+							</ul>
+							<p><strong>[pets and followers]</strong></p>
+							<ul>
+								<li>MAXCONTROLSLOTS=0</li>
+								<li>MAXFOLLOWERS=5</li>
+								<li>MAXPETOWNERS=100</li>
+								<li>CHECKPETCONTROLDIFFICULTY=1</li>
+								<li>PETLOYALTYGAINONSUCCESS=1</li>
+								<li>PETLOYALTYLOSSONFAILURE=1</li>
+								<li>PETLOYALTYRATE=900</li>
+								<li>PETBONDINGENABLED=0</li>
+							</ul>
+							<p><strong>[combat]</strong></p>
+							<ul>
+								<li>DISPLAYDAMAGENUMBERS=0</li>
+								<li>NPCDAMAGERATE=1</li>
+								<li>ATTACKSPEEDFROMSTAMINA=1</li>
+								<li>ARCHERYHITBONUS=0</li>
+								<li>ARCHERYSHOOTDELAY=1.0</li>
+								<li>SHOOTONANIMALBACK=1</li>
+								<li>WEAPONDAMAGECHANCE=17</li>
+								<li>ARMORDAMAGECHANCE=33</li>
+								<li>PARRYDAMAGECHANCE=20</li>
+								<li>ALCHEMYBONUSENABLED=0</li>
+								<li>ITEMSINTERRUPTCASTING=1</li>
+								<li>SHOWITEMRESISTSTATS=0</li>
+								<li>SHOWWEAPONDAMAGETYPES=0</li>
+								<li>WEAPONDAMAGEBONUSTYPE=2</li>
+								<li>POISONCORROSIONSYSTEM=0</li>
+							</ul>
+							<p><strong>[magic]</strong></p>
+							<ul>
+								<li>TRAVELSPELLSFROMBOATKEYS=1</li>
+								<li>TRAVELSPELLSWHILEOVERWEIGHT=0</li>
+								<li>MARKRUNESINMULTIS=0</li>
+								<li>TRAVELSPELLSWHILEAGGRESSOR=0</li>
+								<li>HIDESTATSFORUNKNOWNMAGICITEMS=1</li>
+							</ul>
+							<p><strong>[startup]</strong></p>
+							<ul>
+								<li>STARTGOLD=100</li>
+							</ul>
+							<p><strong>[houses]</strong></p>
+							<ul>
+								<li>TRACKHOUSESPERACCOUNT=0</li>
+								<li>CANOWNANDCOOWNHOUSES=0</li>
+								<li>COOWNHOUSESONSAMEACCOUNT=0</li>
+								<li>ITEMDECAYINHOUSES=1</li>
+								<li>PROTECTPRIVATEHOUSES=0</li>
+								<li>MAXHOUSESOWNABLE=1</li>
+								<li>MAXHOUSESCOOWNABLE=1</li>
+								<li>SAFECOOWNERLOGOUT=1</li>
+								<li>SAFEFRIENDLOGOUT=1</li>
+								<li>SAFEGUESTLOGOUT=0</li>
+								<li>KEYLESSOWNERACCESS=1</li>
+								<li>KEYLESSCOOWNERACCESS=0</li>
+								<li>KEYLESSFRIENDACCESS=0</li>
+								<li>KEYLESSGUESTACCESS=0</li>
+							</ul>
+							<p><strong>[bulk order deeds]</strong></p>
+							<ul>
+								<li>OFFERBODSFROMITEMSALES=0</li>
+								<li>OFFERBODSFROMCONTEXTMENU=0</li>
+							</ul>
+						</div>
+						<h3>Renaissance (2000)</h3>
+						<input type="checkbox" id="spoiler_cmd_uordetails">
+						<label for="spoiler_cmd_uordetails">Details about this expansion <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>Ultima Online: Renaissance released in May 2000 and came with:</p>
+							<ul>
+								<li>✅<span class="hl">Revised looting rights</span></li>
+								<li>✅<span class="hl">Revamped skill-gain rules</span> for several skills</li>
+								<li><span class="hl">New house designs</span></li>
+								<li>✅<span class="hl">Adjusted rules for combat</span> (archery, poisoning, parrying, lumberjacking and axes)</li>
+								<li>✅<span class="hl">New passive combat skills</span> (crushing blow, concussion blow, paralyzing blow)</li>
+								<li>✅Changes to <span class="hl">hit chance calculation</span></li>
+								<li>❌<span class="hl">Wrestling moves</span> (Disarm, Stun Punch)</li>
+								<li>✅<span class="hl">New creatures</span> (Shadow Fiend, Acid Elemental, Agapite Elemental, Bronze Elemental, Copper Elemental, Dull-Copper Elemental, Gold Elemental, Shadow Iron Elemental, Valorite Elemental, Verite Elemental, Fire Gargoyle, Arctic Ogre Lord, Spectral Armor, Faction Warhorses, Ophidian Justicar, Ophidian Zealot)</li>
+								<li>❌<span class="hl">Haven and young player tutorials</span></li>
+								<li>✅<span class="hl">Party System</span></li>
+								<li>❌<span class="hl">Factions</span></li>
+								<li>✅Most infamous for "doubling" the available landmass with the introduction of the <span class="hl">Felucca/Trammel facet split</span>.</li>
+							</ul>
+						</div>
+						<input type="checkbox" id="spoiler_cmd_uoreraconfig">
+						<label for="spoiler_cmd_uoreraconfig">Configure UOX3 for UOR Era <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<h3>Recommended Client Version</h3>
+							<p><strong>4.0.0p - 6.0.3.1</strong> (Retains original Magincia city)</p>
+							<h3>Map Settings</h3>
+							<p>If using a client version older than 6.x, rename <strong>uox3/dfndata/maps/maps.dfn</strong> to <strong>maps_dfn.bak</strong>, then rename either <strong>maps.4xclients.old</strong> (for 4.x client version) or <strong>maps.5xclients.new</strong> (for 5.x client versions) to <strong>maps.dfn</strong> instead.</p>
+							<p>This ensures UOX3 will read the map files correctly and treat them according to the size they had in those respective client versions, and not try to load map files for non-existent facets.</p>
+							<h3>UOX.INI Settings</h3>
+							<p><strong>[system]</strong></p>
+							<ul>
+								<li>contextmenus=0</li>
+							</ul>
+							<p><strong>[clientsupport]</strong></p>
+							<ul>
+								<li>CLIENTSUPPORT4000=0</li>
+								<li>CLIENTSUPPORT5000=0</li>
+								<li>CLIENTSUPPORT6000=0</li>
+								<li><span class="hl">Set ONE of these to 1, depending on client version range you're using (4.x, 5.x or 6.x before 6.0.5)</span>. If you choose to go with latest client instead, just set the latest entry in the list to 1.</li>
+							</ul>
+							<p><strong>[skill & stats]</strong></p>
+							<ul>
+								<li>SKILLCAP=7000</li>
+								<li>SKILLCAPSINGLE=1000</li>
+								<li>STATCAP=225</li>
+								<li>EXTENDEDSTARTINGSTATS=1<br>
+									<span class="hl">// only if using client v7.0.16+, which allows assigning more stat points during char creation!</span></li>
+								<li>EXTENDEDSTARTINGSKILLS=1<br>
+								<span class="hl">// only if using client v7.0.16+, which allows assigning more skill points during char creation!</span></li>
+								<li>ARMORAFFECTMANAREGEN=1</li>
+								<li>HEALTHREGENMODE=1</li>
+								<li>STAMINAREGENMODE=1</li>
+								<li>MANAREGENMODE=1</li>
+								<li>HEALTHREGENCAP=18</li>
+								<li>STAMINAREGENCAP=24</li>
+								<li>MANAREGENCAP=18</li>
+							</ul>
+							<p><strong>[timers]</strong></p>
+							<ul>
+								<li>CORPSEDECAYTIMER=900</li>
+								<li>NPCCORPSEDECAYTIMER=900</li>
+								<li>DECAYTIMER=3600</li>
+								<li>DECAYTIMERINHOUSE=3600</li>
+								<li>HITPOINTREGENTIMER=8</li>
+								<li>STAMINAREGENTIMER=2</li>
+								<li>MANAREGENTIMER=7</li>
+							</ul>
+							<p><strong>[expansion settings]</strong></p>
+							<ul>
+								<li>CORESHARDERA=uor</li>
+								<li>Leave the rest pointing to "core"</li>
+							</ul>
+							<p><strong>[default race bonuses]</strong></p>
+							<ul>
+								<li>Leave all at 0</li>
+							</ul>
+							<p><strong>[settings]</strong></p>
+							<ul>
+								<li>SELLMAXITEMS=5</li>
+								<li>BANKBUYTHRESHOLD=2000</li>
+								<li>RANKSYSTEM=1</li>
+								<li>DISPLAYMAKERSMARK=1</li>
+								<li>CLIENTFEATURES=3</li>
+								<li>SERVERFEATURES=0</li>
+								<li>SPAWNREGIONSFACETS=3 <br>
+									<span class="hl">// 1 = Felucca only, 3 = both Felucca and Trammel</li>
+								<li>MOONGATEFACETS=3 <br>
+									<span class="hl">// 1 = Felucca only, 3 = both Felucca and Trammel</li>
+								<li>BASICTOOLTIPSONLY=1</li>
+								<li>SHOWREPUTATIONTITLEINTOOLTIP=0</li>
+								<li>SHOWGUILDINFOINTOOLTIP=0</li>
+								<li>SHOWNPCTITLESINTOOLTIPS=0</li>
+								<li>SHOWNPCTITLESOVERHEAD=0</li>
+								<li>SHOWINVULNERABLETAGOVERHEAD=1</li>
+								<li>PAPERDOLLGUILDBUTTON=0</li>
+								<li>MAXPLAYERBANKWEIGHT=2147483647</li>
+								<li>FORCENEWANIMATIONPACKET=0<br>
+									<span class="hl">// if client version used is below 7.0</span></li>
+								<li>MAPDIFFSENABLED=0</li>
+								<input type="checkbox" id="spoiler_cmd_mapdiffsimpactuor">
+								<label for="spoiler_cmd_mapdiffsimpactuor">Impact of mapdiffs enabled vs disabled for UOR<i class="fas fa-angle-down"></i></label>
+								<div class="spoiler">
+									<p>Town of Ocllo in Trammel facet with mapdiffs disabled vs enabled across different client versions:</p>
+<pre>	Client v5.0.0b - v5.0.9b with mapdiffs disabled = <strong>Original Ocllo</strong>
+	Client v5.0.0b - v5.0.9b with mapdiffs enabled = <strong>Old Haven</strong>
+	Client v6.0.0 - v7.0.8.2 with mapdiffs disabled = <strong>New Haven</strong>
+	Client v6.0.0 - v7.0.8.2with mapdiffs enabled = <strong>Old Haven</strong>
+	Client v7.0.30.1 (mapdiffs no longer a thing) = <strong>New Haven</strong></pre>
+								</div>
+								<li>TOOLUSELIMIT=1</li>
+								<li>TOOLUSEBREAK=1</li>
+								<li>ITEMREPAIRDURABILITYLOSS=1</li>
+								<li>CRAFTCOLOUREDWEAPONS=0</li>
+								<li>YOUNGPLAYERSYSTEM=0</li>
+								<li>KARMALOCKING=1</li>
+							</ul>
+							<p><strong>[pets and followers]</strong></p>
+							<ul>
+								<li>MAXCONTROLSLOTS=0</li>
+								<li>MAXFOLLOWERS=5</li>
+								<li>MAXPETOWNERS=10</li>
+								<li>CHECKPETCONTROLDIFFICULTY=1</li>
+								<li>PETLOYALTYGAINONSUCCESS=1</li>
+								<li>PETLOYALTYLOSSONFAILURE=1</li>
+								<li>PETLOYALTYRATE=900</li>
+								<li>PETBONDINGENABLED=0</li>
+							</ul>
+							<p><strong>[combat]</strong></p>
+							<ul>
+								<li>DISPLAYDAMAGENUMBERS=0</li>
+								<li>NPCDAMAGERATE=1</li>
+								<li>ATTACKSPEEDFROMSTAMINA=1</li>
+								<li>ARCHERYHITBONUS=1</li>
+								<li>ARCHERYSHOOTDELAY=0.5</li>
+								<li>SHOOTONANIMALBACK=1</li>
+								<li>WEAPONDAMAGECHANCE=17</li>
+								<li>ARMORDAMAGECHANCE=33</li>
+								<li>PARRYDAMAGECHANCE=20</li>
+								<li>ALCHEMYBONUSENABLED=0</li>
+								<li>ITEMSINTERRUPTCASTING=0</li>
+								<li>SHOWITEMRESISTSTATS=0</li>
+								<li>SHOWWEAPONDAMAGETYPES=0</li>
+								<li>WEAPONDAMAGEBONUSTYPE=2</li>
+								<li>POISONCORROSIONSYSTEM=1</li>
+							</ul>
+							<p><strong>[magic]</strong></p>
+							<ul>
+								<li>TRAVELSPELLSFROMBOATKEYS=1</li>
+								<li>TRAVELSPELLSWHILEOVERWEIGHT=0</li>
+								<li>MARKRUNESINMULTIS=0</li>
+								<li>TRAVELSPELLSBETWEENWORLDS=0</li>
+								<li>TRAVELSPELLSWHILEAGGRESSOR=0</li>
+								<li>HIDESTATSFORUNKNOWNMAGICITEMS=1</li>
+							</ul>
+							<p><strong>[startup]</strong></p>
+							<ul>
+								<li>STARTGOLD=100</li>
+							</ul>
+							<p><strong>[houses]</strong></p>
+							<ul>
+								<li>TRACKHOUSESPERACCOUNT=1</li>
+								<li>CANOWNANDCOOWNHOUSES=0</li>
+								<li>COOWNHOUSESONSAMEACCOUNT=0</li>
+								<li>ITEMDECAYINHOUSES=1</li>
+								<li>PROTECTPRIVATEHOUSES=0</li>
+								<li>MAXHOUSESOWNABLE=1</li>
+								<li>MAXHOUSESCOOWNABLE=1</li>
+								<li>SAFECOOWNERLOGOUT=1</li>
+								<li>SAFEFRIENDLOGOUT=1</li>
+								<li>SAFEGUESTLOGOUT=0</li>
+								<li>KEYLESSOWNERACCESS=1</li>
+								<li>KEYLESSCOOWNERACCESS=0</li>
+								<li>KEYLESSFRIENDACCESS=0</li>
+								<li>KEYLESSGUESTACCESS=0</li>
+							</ul>
+							<p><strong>[bulk order deeds]</strong></p>
+							<ul>
+								<li>OFFERBODSFROMITEMSALES=0</li>
+								<li>OFFERBODSFROMCONTEXTMENU=0</li>
+							</ul>
+						</div>
+						<h3>Third Dawn (2001)</h3>
+						<input type="checkbox" id="spoiler_cmd_tddetails">
+						<label for="spoiler_cmd_tddetails">Details about this expansion <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>Best known for being the expansion that came at the same time as a failed attempt to replace the 2D client with a 3D one, Third Dawn also introduced things like:</p>
+							<ul>
+								<li>✅<span class="hl">Ilshenar</span></li>
+								<li>✅<span class="hl">Taxidermy</span></li>
+								<li>✅<span class="hl">New creatures</span> (Crafted Golem, Exodus Minion, Exodus Minion Lord, Exodus Overseer, Golem, Succubus, Serpentine Dragon, Skeletal Dragon, Enslaved Gargoyle, Gargoyle Destroyer, Gargoyle Enforcer, Frightened Orc, Orc Bomber, Orc Brute, Orc Chopper, Orc Scout, Centaur, Dark Wisp (Guardian), Ethereal Warrior, Pixie, Tentacles of the Harrower, Kirin, Ridgeback, Unicorn, Savages, Sea Horse, Ancient Lich)</li>
+								<li>❌Champion Spawns, and Champions (Barracoon the Piper, Lord Oaks, Mephitis, Rikktor, Semidar, Silvani)</li>
+								<li>❌<span class="hl">Veteran Rewards</span></li>
+								<li>✅<span class="hl">Combat damage changes</span></li>
+								<li>❌<span class="hl">Adjustments to power hour</span></li>
+								<li>✅<span class="hl">Commodity deeds</span></li>
+								<li>❌<span class="hl">Repair service contracts</span></li>
+								<li>✅<span class="hl">Secure house trading</span></li>
+								<li>❌<span class="hl">Enhanced Haven tutorials</span></li>
+								<li>✅<span class="hl">Context sensitive menus on NPCs</span></li>
+								<li>✅<span class="hl">Bulk Order Deeds</span></li>
+								<li>✅<span class="hl">Crafting system overhaul</span></li>
+							</ul>
+						</div>
+						<input type="checkbox" id="spoiler_cmd_tderaconfig">
+						<label for="spoiler_cmd_tderaconfig">Configure UOX3 for TD Era <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<h3>Recommended Client Versions</h3>
+							<p><strong>4.0.0p - 6.0.3.1</strong> (Original Magincia, and Blackthorn's Castle in Ilshenar if MAPDIFFS is enabled. If not, Castle is in ruins)</p>
+							<p><strong>6.0.4.0 - 6.0.14.2</strong> (Magincia Ruins, and Blackthorn's Castle in Ilshenar if MAPDIFFS is enabled. If not, Castle is in ruins)</p>
+							<p><strong>7.0.x - 7.0.13.0</strong> (Magincia Ruins, Blackthorn's Castle and Ver Lor Reg in Ilshenar, regardless of MAPDIFFS setting)
+							<p><strong>7.0.13.1 - 7.0.15.x</strong> (New Magincia, Blackthorn's Castle and Ver Lor Reg in Ilshenar, regardless of MAPDIFFS setting)</p>
+							<p><strong>7.0.15.x - 7.0.30.0</strong> (New Magincia + Unknown state of Blackthorn's Castle and Ver Lor Reg in Ilshenar)</p>
+							<p><strong>7.0.30.1+</strong> (New Magincia + Destroyed Ver Lor Reg and Ruins of Blackthorn's Castle in Ilshenar, Castle Blackthorn rebuilt in Britannia?)</p>
+							<h3>Map Settings</h3>
+							<p>If using a client version older than 6.x, rename <strong>uox3/dfndata/maps/maps.dfn</strong> to <strong>maps_dfn.bak</strong>, then rename either <strong>maps.4xclients.old</strong> (for 4.x client version) or <strong>maps.5xclients.new</strong> (for 5.x client versions) to <strong>maps.dfn</strong> instead.</p>
+							<p>This ensures UOX3 will read the map files correctly and treat them according to the size they had in those respective client versions, and not try to load map files for non-existent facets.</p>
+							<h3>UOX.INI Settings</h3>
+							<p><strong>[system]</strong></p>
+							<ul>
+								<li>contextmenus=0</li>
+							</ul>
+							<p><strong>[clientsupport]</strong></p>
+							<ul>
+								<li>CLIENTSUPPORT4000=0</li>
+								<li>CLIENTSUPPORT5000=0</li>
+								<li>CLIENTSUPPORT6000=0</li>
+								<li>CLIENTSUPPORT6050=0</li>
+								<li>CLIENTSUPPORT7000=0</li>
+								<li>CLIENTSUPPORT7090=0</li>
+								<li>CLIENTSUPPORT70160=0</li>
+								<li>CLIENTSUPPORT70240=0</li>
+								<li>CLIENTSUPPORT70300=0</li>
+								<li><span class="hl">Set ONE of these to 1, depending on client version range you're using (4.x, 5.x or 6.x before 6.0.5)</span>. If you choose to go with latest client instead, just set the latest entry in the list (CLIENTSUPPORT70610) to 1 instead.</li>
+							</ul>
+							<p><strong>[skill & stats]</strong></p>
+							<ul>
+								<li>SKILLCAP=7000</li>
+								<li>SKILLCAPSINGLE=1000</li>
+								<li>STATCAP=225</li>
+								<li>EXTENDEDSTARTINGSTATS=1<br>
+									<span class="hl">// only if using client v7.0.16+, which allows assigning more stat points during char creation!</span></li>
+								<li>EXTENDEDSTARTINGSKILLS=1<br>
+								<span class="hl">// only if using client v7.0.16+, which allows assigning more skill points during char creation!</span></li>
+								<li>ARMORAFFECTMANAREGEN=1</li>
+								<li>HEALTHREGENMODE=1</li>
+								<li>STAMINAREGENMODE=1</li>
+								<li>MANAREGENMODE=1</li>
+								<li>HEALTHREGENCAP=18</li>
+								<li>STAMINAREGENCAP=24</li>
+								<li>MANAREGENCAP=18</li>
+							</ul>
+							<p><strong>[timers]</strong></p>
+							<ul>
+								<li>CORPSEDECAYTIMER=900</li>
+								<li>NPCCORPSEDECAYTIMER=900</li>
+								<li>DECAYTIMER=3600</li>
+								<li>DECAYTIMERINHOUSE=3600</li>
+								<li>HITPOINTREGENTIMER=8</li>
+								<li>STAMINAREGENTIMER=2</li>
+								<li>MANAREGENTIMER=7</li>
+							</ul>
+							<p><strong>[expansion settings]</strong></p>
+							<ul>
+								<li>CORESHARDERA=uor</li>
+								<li>Leave the rest pointing to "core"</li>
+							</ul>
+							<p><strong>[default race bonuses]</strong></p>
+							<ul>
+								<li>Leave all at 0</li>
+							</ul>
+							<p><strong>[settings]</strong></p>
+							<ul>
+								<li>SELLMAXITEMS=5</li>
+								<li>BANKBUYTHRESHOLD=2000</li>
+								<li>RANKSYSTEM=1</li>
+								<li>DISPLAYMAKERSMARK=1</li>
+								<li>CLIENTFEATURES=7</li>
+								<li>SERVERFEATURES=8</li>
+								<li>SPAWNREGIONSFACETS=7 <br>
+									<span class="hl">// 1 = Felucca only, 3 = both Felucca and Trammel, 7 = Felucca/Trammel/Ilshenar</li>
+								<li>MOONGATEFACETS=7 <br>
+									<span class="hl">// 1 = Felucca only, 3 = both Felucca and Trammel, 7 = Felucca/Trammel/Ilshenar</li>
+								<li>BASICTOOLTIPSONLY=1</li>
+								<li>SHOWREPUTATIONTITLEINTOOLTIP=0</li>
+								<li>SHOWGUILDINFOINTOOLTIP=0</li>
+								<li>SHOWNPCTITLESINTOOLTIPS=0</li>
+								<li>SHOWNPCTITLESOVERHEAD=0</li>
+								<li>SHOWINVULNERABLETAGOVERHEAD=1</li>
+								<li>PAPERDOLLGUILDBUTTON=0</li>
+								<li>MAXPLAYERBANKWEIGHT=2147483647</li>
+								<li>FORCENEWANIMATIONPACKET=0<br>
+									<span class="hl">// if client version used is below 7.0</span></li>
+								<li>MAPDIFFSENABLED=0</li>
+								<input type="checkbox" id="spoiler_cmd_mapdiffsimpacttd">
+								<label for="spoiler_cmd_mapdiffsimpacttd">Impact of mapdiffs enabled vs disabled for TD<i class="fas fa-angle-down"></i></label>
+								<div class="spoiler">
+									<p>Town of Ocllo in Trammel facet with mapdiffs disabled vs enabled across different client versions:</p>
+<pre>	Client v5.0.0b - v5.0.9b with mapdiffs disabled = <strong>Original Ocllo</strong>
+	Client v5.0.0b - v5.0.9b with mapdiffs enabled = <strong>Old Haven</strong>
+	Client v6.0.0 - v7.0.8.2 with mapdiffs disabled = <strong>New Haven</strong>
+	Client v6.0.0 - v7.0.8.2with mapdiffs enabled = <strong>Old Haven</strong>
+	Client v7.0.30.1 (mapdiffs no longer a thing) = <strong>New Haven</strong></pre>
+<pre> 3.0.0 - 5.0.x with mapdiffs - Blackthorn's fortress stands
+	3.0.0 - 5.0.x without mapdiffs - Blackthorn's fortress is in ruins, but side-building stands
+
+	7.0.x with mapdiffs - gargoyle city and blackthorn's Blackthorn's fortress stands
+	7.0.x without mapdiffs - gargoyle city and blackthorn's Blackthorn's fortress stands
+
+	7.0.15.x - Gargoyle city and blackthorn's Blackthorn's fortress stands
+
+	7.0.30.1 - Gargoyle city destroyed, blackthorn's Blackthorn's fortress gone - including side building</pre>
+								</div>
+								<li>TOOLUSELIMIT=1</li>
+								<li>TOOLUSEBREAK=1</li>
+								<li>ITEMREPAIRDURABILITYLOSS=1</li>
+								<li>CRAFTCOLOUREDWEAPONS=0</li>
+								<li>YOUNGPLAYERSYSTEM=0</li>
+								<li>KARMALOCKING=1</li>
+							</ul>
+							<p><strong>[pets and followers]</strong></p>
+							<ul>
+								<li>MAXCONTROLSLOTS=0</li>
+								<li>MAXFOLLOWERS=5</li>
+								<li>MAXPETOWNERS=10</li>
+								<li>CHECKPETCONTROLDIFFICULTY=1</li>
+								<li>PETLOYALTYGAINONSUCCESS=1</li>
+								<li>PETLOYALTYLOSSONFAILURE=1</li>
+								<li>PETLOYALTYRATE=900</li>
+								<li>PETBONDINGENABLED=0</li>
+							</ul>
+							<p><strong>[combat]</strong></p>
+							<ul>
+								<li>DISPLAYDAMAGENUMBERS=0</li>
+								<li>NPCDAMAGERATE=1</li>
+								<li>ATTACKSPEEDFROMSTAMINA=1</li>
+								<li>ARCHERYHITBONUS=1</li>
+								<li>ARCHERYSHOOTDELAY=0.5</li>
+								<li>SHOOTONANIMALBACK=1</li>
+								<li>WEAPONDAMAGECHANCE=17</li>
+								<li>ARMORDAMAGECHANCE=33</li>
+								<li>PARRYDAMAGECHANCE=20</li>
+								<li>ALCHEMYBONUSENABLED=0</li>
+								<li>ITEMSINTERRUPTCASTING=0</li>
+								<li>SHOWITEMRESISTSTATS=0</li>
+								<li>SHOWWEAPONDAMAGETYPES=0</li>
+								<li>WEAPONDAMAGEBONUSTYPE=2</li>
+								<li>POISONCORROSIONSYSTEM=1</li>
+								<li>AUTOUNEQUIPPEDCASTING=1</li>
+							</ul>
+							<p><strong>[magic]</strong></p>
+							<ul>
+								<li>TRAVELSPELLSFROMBOATKEYS=1</li>
+								<li>TRAVELSPELLSWHILEOVERWEIGHT=0</li>
+								<li>MARKRUNESINMULTIS=0</li>
+								<li>TRAVELSPELLSBETWEENWORLDS=0</li>
+								<li>TRAVELSPELLSWHILEAGGRESSOR=0</li>
+								<li>HIDESTATSFORUNKNOWNMAGICITEMS=1</li>
+							</ul>
+							<p><strong>[startup]</strong></p>
+							<ul>
+								<li>STARTGOLD=100</li>
+							</ul>
+							<p><strong>[houses]</strong></p>
+							<ul>
+								<li>TRACKHOUSESPERACCOUNT=1</li>
+								<li>CANOWNANDCOOWNHOUSES=0</li>
+								<li>COOWNHOUSESONSAMEACCOUNT=0</li>
+								<li>ITEMDECAYINHOUSES=1</li>
+								<li>PROTECTPRIVATEHOUSES=0</li>
+								<li>MAXHOUSESOWNABLE=1</li>
+								<li>MAXHOUSESCOOWNABLE=1</li>
+								<li>SAFECOOWNERLOGOUT=1</li>
+								<li>SAFEFRIENDLOGOUT=1</li>
+								<li>SAFEGUESTLOGOUT=0</li>
+								<li>KEYLESSOWNERACCESS=1</li>
+								<li>KEYLESSCOOWNERACCESS=0</li>
+								<li>KEYLESSFRIENDACCESS=0</li>
+								<li>KEYLESSGUESTACCESS=0</li>
+							</ul>
+							<p><strong>[bulk order deeds]</strong></p>
+							<ul>
+								<li>OFFERBODSFROMITEMSALES=0</li>
+								<li>OFFERBODSFROMCONTEXTMENU=0</li>
+							</ul>
+						</div>
+						<h3><small>(Default)</small> Lord Blackthorn's Revenge (2002)</h3>
+						<input type="checkbox" id="spoiler_cmd_lbrdetails">
+						<label for="spoiler_cmd_lbrdetails">Details about this expansion <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>Technically, the <strong>Lord Blackthorn's Revenge</strong> expansion from 2002 was covered via two Publishes released in several parts throughout 2002:</p>
+							<p><span class="hl">Publish 15</span></p>
+							<ul>
+								<li>Continued where TD expansion left off</li>
+								<li>✅New creatures (Bog Thing, Bogling, Horde Minion, Betrayer, Blackthorn Juggernaut, Juka Lord, Juka Mage, Juka Warrior, Meer Captain, Meer Eternal, Meer Mage, Meer Warrior, Horde Minion (Summoned), Restless Soul, Shadow Wisp, Armored Swamp Dragon, Swamp Dragon, Chest Guardians)</li>
+								<li>✅"Make Last" buttons in crafting menus
+								<li>✅Easier selling of many items to NPC shopkeepers</li>
+								<li>❌Updated new player experience</li>
+								<li>❌Addition of the first virtue of the Virtue System (Sacrifice)</li>
+							</ul>
+							<p><span class="hl">Publish 16</span></p>
+							<ul>
+								<li>Laid the groundwork for the upcoming Age of Shadows expansion</li>
+								<li>❌Extensive changes to Bard and Tamer skills</li>
+								<li>❌Addition of Guaranteed Gain System</li>
+								<li>✅Updated PvP rulesets</li>
+								<li>❌Updates to house ownership and decay</li>
+								<li>❌Addition of three new virtues (Compassion, Justice and Valor)</li>
+							</ul>
+							<p><span class="hl">Note that UOX3 defaults to the LBR era, and more specifically to the Publish 15 one, while any changes that took place in Publish 16 are considered part of AOS as far as UOX3 is concerned.</span></p>
+						</div>
+						<input type="checkbox" id="spoiler_cmd_lbreraconfig">
+						<label for="spoiler_cmd_lbreraconfig">Configure UOX3 for LBR Era <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p><strong>No additional configuration required</strong> - UOX3 comes setup for the LBR expansion by default!</p>
+							<p>But as a reference point, here are the UOX3 settings that align with this expansion:</p>
+							// CRAFTCOLOUREDWEAPONS=0
+							// ITEMSINTERRUPTCASTING=0
+							// AUTOUNEQUIPPEDCASTING=1
+<pre>	Client v5.0.0b - v5.0.9b with mapdiffs disabled = <strong>Original Ocllo</strong>
+	Client v5.0.0b - v5.0.9b with mapdiffs enabled = <strong>Old Haven</strong>
+	Client v6.0.0 - v7.0.8.2 with mapdiffs disabled = <strong>New Haven</strong>
+	Client v6.0.0 - v7.0.8.2with mapdiffs enabled = <strong>Old Haven</strong>
+	Client v7.0.30.1 (mapdiffs no longer a thing) = <strong>New Haven</strong>
+
+	3.0.0 - 5.0.x with mapdiffs - Blackthorn's fortress stands
+	3.0.0 - 5.0.x without mapdiffs - Blackthorn's fortress is in ruins, but side-building stands
+
+	7.0.x with mapdiffs - gargoyle city and blackthorn's Blackthorn's fortress stands
+	7.0.x without mapdiffs - gargoyle city and blackthorn's Blackthorn's fortress stands
+
+	7.0.15.x - Gargoyle city and blackthorn's Blackthorn's fortress stands
+
+	7.0.30.1 - Gargoyle city destroyed, blackthorn's Blackthorn's fortress gone - including side building</pre>
+						</div>
+						<h3>Age of Shadows (2003)</h3>
+						<input type="checkbox" id="spoiler_cmd_aosdetails">
+						<label for="spoiler_cmd_aosdetails">Details about this expansion <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>The <strong>Age of Shadows</strong> expansion introduced:</p>
+							<ul>
+								<li>❌<span class="hl">New landmass (Malas)</span></li>
+								<li>✅<span class="hl">New item attributes and properties</span> including <span class="hl">elemental damage and resistances</span></li>
+								<li>❌<span class="hl">Colored weapons</span></li>
+								<li>✅Extensive <span class="hl">changes to combat calculations</span></li>
+								<li>✅<span class="hl">Updated stats on all armor and weapons</span></li>
+								<li>✅<span class="hl">Removal of the old-style magic weapons</span> (like "surpassingly accurate silver katana of power")</li>
+								<li>✅<span class="hl">New classes</span> (Paladin, Necromancer)</li>
+								<li>❌<span class="hl">New skills</span> (Chivalry, Necromancy)</li>
+								<li>❌New creatures (Quagmire, Whipping Wine, Skittering Hopper, Vorpal Bunny, Arcane Demon, Chaos Daemon, Devourer of Souls, Doppleganger, Gibberling, Moloch, Ravager, Zeefzorpul the Imp, Crystal Elemental, Sand Vortex, Dark Wolf (Familiar), Death Adder (Familiar), Hellsteed, Mound of Maggots, Revenant (Summoned), Shadow Wisp (Familiar), Vampire Bat (Familiar), Ambitious Black Solen Queen, Ambitious Red Solen Queen, Arielle, Black Solen Infiltrator Queen, Black Solen Infiltrator Warrior, Black Solen Matriarch, Black Solen Queen, Black Solen Warrior, Black Solen Worker, Gazer Larva, Plague Beast, Red Solen Infiltrator Queen, Red Solen Infiltrator Warrior, Red Solen Matriarch, Red Solen Queen, Red Solen Warrior, Red Solen Worker, Sphynx, Treefellow, Wanderer of the Void, Fire Steed, Giant Beetle, Skeletal Steed, Leviathan, Dark Guardian, Flesh Golem, Gore Fiend, Patchwork Skeleton, Wailing Banshee)</li>
+								<li>❌New champions (Abyssmal Horror, Bone Daemon, Dark Father, Darknight Creeper, Fleshrenderer, Neira the Necromancer, Shadow Knight, The Harrower, The True Harrower)</li>
+								<li>❌Paragon creatures</li>
+								<li>❌Bulk Order Books</li>
+								<li>❌Quick self-looting</li>
+								<li>❌Artifacts</li>
+								<li>and many many more smaller changes</li>
+							</ul>
+						</div>
+						<input type="checkbox" id="spoiler_cmd_aoseraconfig">
+						<label for="spoiler_cmd_aoseraconfig">Configure UOX3 for AOS Era <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>Test</p>
+							// PETBONDINGENABLED=1
+							// MAXCONTROLSLOTS=1
+							// CRAFTCOLOUREDWEAPONS=0
+							// TELEPORTTONEARESTSAFELOCATION=1
+							// TRACKHOUSESPERACCOUNT=1
+							// ITEMSINTERRUPTCASTING=0
+							// AUTOUNEQUIPPEDCASTING=1
+							// TRAVELSPELLSBETWEENWORLDS=1
+						</div>
+						<h3>Samurai Empire (2004)</h3>
+						<input type="checkbox" id="spoiler_cmd_sedetails">
+						<label for="spoiler_cmd_sedetails">Details about this expansion <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>Samurai Empire added an oriental theme to UO, and brought with it things like:</p>
+							<ul>
+								<li>✅New classes (Samurai, Ninja)</li>
+								<li>❌New skills (Bushido, Ninjitsu)</li>
+								<li>❌New map (Tokuno Islands)</li>
+								<li>❌New creatures and monsters (Revenant Lion, Bake Kitsune, Tsuki Wolf, Gaman, Rune Beetle, Fan Dancer, Oni, Kaze Kemono, Rai-Ju, Yomotsu Elder, Yomotsu Priest, Yomotsu Warrior, Black Order NPCs, Deathwatch Beetle, Deathwatch Bettle Hatchling, Kappa, Fire Beetle, Hiryu, Lesser Hiryu, Lady of the Snow, Serado the Awakened)</li>
+								<li>❌Revamped Guild system (and removal of Chaos/Order system)</li>
+								<li>❌Changes to Stealth, Fishing and Barding skills</li>
+								<li>❌Instanced loot</li>
+								<li>❌Mage rebalance</li>
+								<li>❌Guild/Alliance chat</li>
+								<li>❌Changes to swing delay in combat</li>
+							</ul>
+						</div>
+						<input type="checkbox" id="spoiler_cmd_seeraconfig">
+						<label for="spoiler_cmd_seeraconfig">Configure UOX3 for SE Era <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							// ARCHERYSHOOTDELAY=0.25 (Publish 32)
+							// CRAFTCOLOUREDWEAPONS=1
+							// ITEMSINTERRUPTCASTING=0
+							// AUTOUNEQUIPPEDCASTING=1
+						</div>
+						<h3>Mondain's Legacy (2005)</h3>
+						<input type="checkbox" id="spoiler_cmd_mldetails">
+						<label for="spoiler_cmd_mldetails">Details about this expansion <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>The Mondain's Legacy expansion introduced the first new playable race (aside from human) to UO - Elves! It also added:</p>
+							<ul>
+								<li>❌Racial abilities</li>
+								<li>❌New city (Heartwood)</li>
+								<li>❌New dungeons (Bedlam, Blighted Grove, Labyrinth, Painted Caves, Palace of Paroxysmus, Prism of Light, The Citadel)</li>
+								<li>❌New skill (Spellweaving)</li>
+								<li>❌New special moves (Bladeweave, Force Arrow, Lightning Arrow, Phsycic Attack, Serpent Arrow, Force of Nature)</li>
+								<li>❌Quest System</li>
+								<li>❌New creatures (Dark Wolf, Gnaw, Miasma, Winter Reaper, Albino Squirrel, Bravehorn, Ferret, Fire Rabbit, Grobu, Maul, Raging Grizzly Bear, Speckled Scorpion, Squirrel, Unicorn (Despise), Ursadane, Death Spider, Lady Issith, Lady Sabrix, Malefic, Sicarii, Silk, Virulent, Pyre, Swoop, Bulbous Petrification, Crystal Daemon, Daemon Berserker, Putrifier, Szavetra, Void Daemon, Abscess, Crimson Dragon, Greater Dragon, Grim, Hydra, Rend, Crystal Vortex, Flurry, Mistral, Nether Vortex, Tempest, Moug-Guur, Chiikkaha the Toothed, Lenley the Snitch, Lurg, Troglodyte, Fey, Fiend, Imprisoned Dog, Changeling, Corporeal Brume, Corrosive Slime, Crystal Lattice Seeker, Crystal Wisp, Dryad, Enigma, Enslaved Satyr, Fallen Warrior, Feral Treefellow, Fetid Essence, Guile, Huntsman, Insane Dryad, Interred Grizzle, Irk, Krysan, Mantra Effervescence, Master Theophilus, Minotaur, Minotaur Captain, Minotaur Scout, Nature's Fury, Saliva, Satyr, Spite, Tangle, Tormented Minotaur, Toxic Ooze, Charger of the Fallen, Cu Sidhe, Grizzled Mare, Reptalon, Coil, Crystal Hydra, Ophidian Brood Queen, Ophidian Healer, Thrasher, Crystal Sea Serpent, Drelgor the Impaler, Lady Jennifyr, Lady Marai, Master Jonath, Master Mikael, Pestilent Bandage, Red Death, Sir Patrick, Spectral Spellbinder, Unfrozen Mummy)</li>
+								<li>New Champions (Ilhenir the Stained, Meraktus the Tormented, Twaulo of the Glade)</li>
+								<li>❌Peerless bosses (Chief Paroxysmus, Dread Horn, Lady Melisandre, Monstrous Interred Grizzle, Shimmering Effusion, Travesty)</li>
+								<li>❌New housing tilesets</li>
+								<li>❌Additional item properties (Lower Ammo Cost, Increased Karma Loss)</li>
+								<li>✅Buff/debuff system</li>
+								<li>❌Personal Attendants</li>
+								<li>❌New Haven and updated new player experience</li>
+							</ul>
+						</div>
+						<input type="checkbox" id="spoiler_cmd_mleraconfig">
+						<label for="spoiler_cmd_mleraconfig">Configure UOX3 for ML Era <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							// Decay timer changed at some point from either 1 hour (or based on server save times) to 3 hours. May as well pick ML for that, as that could be argued as being the start of "modern" UO
+							// DECAYTIMER=10800
+							// DECAYTIMERINHOUSE=10800
+							// ITEMSINTERRUPTCASTING=0
+							// AUTOUNEQUIPPEDCASTING=1
+						</div>
+						<h3>Kingdom Reborn (2007)</h3>
+						<input type="checkbox" id="spoiler_cmd_krdetails">
+						<label for="spoiler_cmd_krdetails">Details about this expansion <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>With the "Kingdom Reborn Client" (later replaced by the Enhanced Client), the Kingdom Reborn expansion was in reality more of a client update than a proper expansion, but the following server-side changes were still done in the timeframe of this expansion:</p>
+							<ul>
+								<li>❌New crafting menu</li>
+								<li>❌Several updates to PvP rules</li>
+								<li>❌Random resource type respawn for wood and ore nodes</li>
+								<li>❌Salvage Bag</li>
+								<li>❌Updates to runic intensities for Blacksmithing and Tailoring</li>
+								<li>❌Updated Pet AI</li>
+								<li>❌Revamped Factions</li>
+								<li>❌Updated House placement rules</li>
+								<li>❌New Veteran Rewards</li>
+								<li>✅Revamped Stealing skill for PvE</li>
+								<li>❌Immunity/Diminishing Returns System for Talon Strike, Concussion Blow, Heal Potion usage, Dispel Evil, Dispel Proc (Weapons)</li>
+							</ul>
+						</div>
+						<input type="checkbox" id="spoiler_cmd_kreraconfig">
+						<label for="spoiler_cmd_kreraconfig">Configure UOX3 for KR Era <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							// ITEMSINTERRUPTCASTING=0
+							// AUTOUNEQUIPPEDCASTING=1
+						</div>
+						<h3>Stygian Abyss (2009)</h3>
+						<input type="checkbox" id="spoiler_cmd_sadetails">
+						<label for="spoiler_cmd_sadetails">Details about this expansion <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p></p>
+							<ul>
+								<li>✅New player Race (Gargoyle)</li>
+								<li>❌New map (Ter Mur)</li>
+								<li>❌New dungeon (Stygian Abyss)</li>
+								<li>✅New equipment (gargoyle weapons/armor/shields/clothes)</li>
+								<li>❌New creatures (Tangling Roots, Greater Poison Elemental, Bloodworms, Rotworm, Sentinel Spider, Green Goblin, Green Goblin Scout, Green Goblin Alchemist, Grey Goblin, Grey Goblin Mage, Grey Goblin Keeper, Iron Beetle, Wolf Spider, Gremlin, Mimic, High Plains Boura, Lowland Boura, Ruddy Boura, Chicken Lizard, Kepetch, Kepetch Ambusher, Raptor, Skree, Undead Gargoyle, Putrid Undead Gargoyle, Slith, Stone Slith, Toxic Slith, Slasher of Veils, Stygian Dragon, Medusa, Acid Slugs, Homunculus, Dragon Wolf, Navrey Night-Eyes, Maddening Horror, Lava Elemental, Shadow Dweller, Dream Wraith Clockwork Scorpion, Gargoyle Pet, Leather Wolf, Fire Ant, Trapdoor Spider, Clan Scratch Chieftain, Clan Scratch Henchrat, Clan Scratch Scrounger, Clan Scratch Savage Wolf, Clan Chitter Chieftain, Clan Chitter Tinkerer, Clan Chitter Assistant, Clan Chitter Clockwork Scorpion, Clan Ribbon Chieftain, Clan Ribbon Courtier, Clan Ribbon Supplicant, Clan Ribbon Plague Rat)</li>
+								<li>❌New champion spawns (Primeval Lich, Abyssal Infernal)
+								<li>❌New skills (Imbuing, Mysticism, Throwing)</li>
+								<li>❌New spells (Nether Bolt, Healing Stone, Purge Magic, Enchant, Sleep, Eagle Strike, Animated Weapon, Stone Form, Spell Trigger, Mass Sleep, Cleansing Winds, Bombard, Spell Plague, Hail Storm, Nether Cyclone, Rising Colossus)</li>
+								<li>❌New special moves (Infused Throw, Mystic Arc)</li>
+								<li>❌Loyalty system for in-game factions</li>
+								<li>❌New item properties (Blood Drinker, Battle Lust, Damage Eaters, Casting Focus, Hit Curse, Hit Fatigue, Hit Mana Drain, Reactive Paralyze, Resonance, Soul Charge, Splintering Weapon)</li>
+								<li>❌Tiered Quests</li>
+								<li>❌Updated character body and hue system with stacking effects</li>
+								<li>❌Mysticism revamp</li>
+								<li>❌Treasure map and chest revamp with location randomization and updated loot</li>
+								<li>❌New housing tilesets</li>
+							</ul>
+						</div>
+						<input type="checkbox" id="spoiler_cmd_saeraconfig">
+						<label for="spoiler_cmd_saeraconfig">Configure UOX3 for SA Era <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							// ITEMSINTERRUPTCASTING=0
+							// AUTOUNEQUIPPEDCASTING=1
+						</div>
+						<h3>High Seas (2010)</h3>
+						<input type="checkbox" id="spoiler_cmd_hsdetails">
+						<label for="spoiler_cmd_hsdetails">Details about this expansion <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>High Seas was the first and only "booster pack" released for UO. Not intended as a full-blown expansion, but more an update focused on a few specific features. Also the longest lasting era in UO (~5 years without another expansion) before Time of Legends hit. This lists out both changes that came with the High Seas launch as well as major updates that arrived in later publishes:</p>
+							<ul>
+								<li>❌Sea Market location</li>
+								<li>❌New Ship Types (Gargoyle/Tokuno/Orc Ships, Row Boat)</li>
+								<li>❌Smooth Boat Movement</li>
+								<li>❌Ship Weapons</li>
+								<li>❌Ship Damage States and Ship Repair</li>
+								<li>❌NPC Pirate and Merchant Ships</li>
+								<li>❌Ship Tracking</li>
+								<li>❌Boat Paints</li>
+								<li>❌Updated Ship Controls</li>
+								<li>❌Fishing skill updates (many new fish types)</li>
+								<li>❌Cooking skill updates (many new fish-related recipes)</li>
+								<li>❌New creatures (Darkmane, Prison Rat, Savage Pack Wolf, Ship Rat, Dendrite, Diabolical Seaweed, Mister Gobbles, Exodus Drone, Exodus Juggernaut, Exodus Sentinel, Daemon Mongbat, Djin, Doppleganger, Fire Daemon, Lesser Oni, Lifestealer, Minion of Scelestus, Prometheoid, Vampire Mongbat, Cold Drake, Corrupted Wyvern, Covetous Wyrm, Frost Dragon, Ice Wyrm, Obsidian Wyvern, Vicious Drake, Chaos Vortex, Clay Golem, Diseased Blood Elemental, Flame Elemental, Greater Earth Elemental, Molten Earth Elemental, Mud Elemental, Mud Pie, Purifying Blood Elemental, Searing Elemental, Stone Elemental, Unbound Energy Vortex, Venom Elemental, Vortex Elemental, Wind Elemental, Gargoyle Assassin, Gargoyle Outcast, Gargoyle Rouser, Hellion, Cave Troll, Fezzik the Ogre Cook, Hungry Ogre, Ogre Bonecrusher, Titan Rockhurler, Lizardman Defender, Lizardman Squatter, Lizardman Witchdoctor, Orc Footsoldier, Orc Ship Captain, Orcish Engineer, Ratman Assassin, Birling Blades, Arch Mage, Brigand Cannibal Mage, Corrupted Mage, Corrupted Wisp, Dazzled Harpy, Divine Guardian, Echidnite, Enraged Colossus, Eternal Gazer, Evil Mage lord, Fairy, Forest Nymph, Goey Maggots, Killer Pumpkin, Minotaur General, Paralithode, Renegade Changeling, Rock Mite, Ship Bat, Silenii, Soulbound Apprentice Mage, Soulbound Battle Mage, Soulbound Spellslinger, Strange Gazer, Vile Mage, Ethereal Ancient Hell Hound, Ridable Boura, Bexil the Dream Serpent, Magma Lizard, Naba, Parasitic Eel, Sea Snake, War Alligator, Angered Spirit, Bone Swordslinger, Covetous Revenant, Diseased Lich, Headless Miner, Master Instructor, Skeletrex, Vile Cadaver, Shadowlord, Quartz Elemental Guardian, Flame Elemental Guardian, Wind Elemental Guardian)
+								<li>❌New boss encounters (Osiredon the Scalis Enforcer, Cargul the Soulbinder, Charybdis, Exodus)</li>
+								<li>❌Level 7 Treasure Chests</li>
+								<li>❌Message in a Bottle Revamp</li>
+								<li>❌Salpeter mining</li>
+								<li>❌Magincia Housing Plot Lotto</li>
+								<li>❌Magincia Planting System</li>
+								<li>❌PvP-focused Game Balance Changes (Updates to Poisoning, Healing, Special Moves, Chivalry)</li>
+								<li>❌Dungeon Revamps (Shame, Wrong, Covetous, Despise)</li>
+								<li>❌Bard Mastery</li>
+								<li>❌PvP Arenas</li>
+								<li>❌Bulk Order Bribery</li>
+								<li>❌Runic Re-Forging</li>
+								<li>❌City Loyalty updates</li>
+								<li>❌City Elections</li>
+								<li>❌Improved Communication Crystals</li>
+								<li>❌Casino Games at Fortune's Fire Casino</li>
+								<li>❌Steward NPCs for player houses</li>
+								<li>❌Weapon Revamp (normalized based on weapon speed/handedness)</li>
+								<li>❌Special Moves Revamp</li>
+								<li>❌Armor Revamp</li>
+								<li>❌Player Veteran Titles</li>
+								<li>❌New dungeon (Castle Blackthorn)</li>
+								<li>❌Addition of Vice vs Virtue and removal of Faction System</li>
+								<li>❌Traders Quest</li>
+								<li>❌Global Loot Changes</li>
+								<li>❌Huntmaster's Challenge</li>
+							</ul>
+						</div>
+						<input type="checkbox" id="spoiler_cmd_hseraconfig">
+						<label for="spoiler_cmd_hseraconfig">Configure UOX3 for HS Era <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							// ITEMSINTERRUPTCASTING=0
+							// AUTOUNEQUIPPEDCASTING=1
+						</div>
+						<h3>Time of Legends (2015)</h3>
+						<input type="checkbox" id="spoiler_cmd_toldetails">
+						<label for="spoiler_cmd_toldetails">Details about this expansion <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>The first (and only, not counting New Legacy) expansion released under the reign of Broadsword, Time of Legends drew inspiration from Worlds of Ultima: The Savage Empire, and features:</p>
+							<ul>
+								<li>❌New map area (Valley of Eodon)</li>
+								<li>❌New creatures (Rabid Reindeer, Silverback Gorilla, Vicious Macaw, Twisted Holiday Tree, Blood Fox, Dragon Turtle Hatchling, Dragon Wolf, Great Ape, Sabre-Toothed Tiger, Tiger Cub, Wild Tiger, Agapite Kotl Automaton, Copper Kotl Automaton, Dull Copper Kotl Automaton, Golden Kotl Automaton, Kotl Automaton, Shadow Iron Kotl Automaton, Valorite Kotl Automaton, Verite Kotl Automaton, Perihelion, Virtue Bane, Crimson Drake, Platinum Dragon, Platinum Drake, Stygian Drake, Vile Drake, Hurricane Elemental, Infernus, Quicksilver Elemental, Vile Treefellow, Vile Water Elemental, Volcano Elemental, Zipatriotl, Abominable Snowman, Dessicated Myrmidex Larvae, Ensorcelled Armor, Ensorcelled Wips, Headless Elf, Ignis Fatalis, Jack in the Box, Jack the Pumpkin King, Krampus, Myrmidex Drone, Myrmidex Queen, Nightmare Fairy, Eowmu, Lasher, Dimetrosaur, Gallusaurus, Najasaurus, Saurosauros, Stocking Serpent, Triceratops, Triton, Tyrannosaurus Rex, Juo'nar the Lich, Ossein Ram, Skelemental Knight, Skelemental Mage, Spectral Kotl Warrior)</li>
+								<li>❌New champions (Dragon Turtle)</li>
+								<li>❌New virtues (Spirituality, Humility)</li>
+								<li>❌Skill Mastery System (Magery, Mysticism, Necromancy, Spellweaving, Bushido, Chivalry, Ninjitsu, Fencing, Mace Fighting, Swordsmanship, Throwing, Parrying, Poisoning, Wrestling, Animal Training, Archery)</li>
+								<li>❌Expanded Stonecrafting</li>
+								<li>❌Additional crafting recipes for Tailoring</li>
+								<li>Additional armor types (Dragon Turtle Armor)
+								<li>❌New housing tiles sets</li>
+								<li>❌Revamped currency system</li>
+							</ul>
+						</div>
+						<input type="checkbox" id="spoiler_cmd_toleraconfig">
+						<label for="spoiler_cmd_toleraconfig">Configure UOX3 for TOL Era <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							// ITEMSINTERRUPTCASTING=0
+							// AUTOUNEQUIPPEDCASTING=1
+						</div>
+					</div>
+				</div>
+			</li>
+
 			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#uoxINISettings" id="uoxINISettings"><span>UOX.INI Settings</span></a>
 				<div class="cd-faq__content">
@@ -1358,12 +2355,12 @@ packitem=0x0f8d,30
 							Amount of time in seconds between shopkeeper restocks.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">DECAYTIMER</span><strong>=1800</strong><br>
-							Amount of time in seconds a decayable item will remain on the ground before disappearing.</p>
+							<p><span class="hl">DECAYTIMER</span><strong>=3600</strong><br>
+							Amount of time in seconds a decayable item will remain on the ground before disappearing. In modern UO this is 3 hours. In older versions of UO, this may have been closer to 1 hour.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">DECAYTIMERINHOUSE</span><strong>=3600</strong><br>
-							Amount of time in seconds a decayable item will remain on the floor of a house before disappearing, if not locked down.</p>
+							Amount of time in seconds a decayable item will remain on the floor of a house before disappearing, if not locked down. This was introduced with Publish 2 (T2A), and was set to same duration as regular item decay. Prior to this, items in houses (and on boats) did not decay.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">INVISIBILITYTIMER</span><strong>=60</strong><br>
@@ -1663,14 +2660,14 @@ packitem=0x0f8d,30
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">CUTSCROLLREQUIREMENTS</span><strong>=1</strong><br>
-							If enabled, there is no skill requirements for casting spells from scrolls.</p>
+							If enabled, the skill requirements for casting spells from scrolls is lowered by ~2 spell circles.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">NPCTRAININGENABLED</span><strong>=1</strong><br>
 							If enabled, NPCs can train player-characters.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">HIDEWILEMOUNTED</span><strong>=1</strong><br>
+							<p><span class="hl">HIDEWHILEMOUNTED</span><strong>=1</strong><br>
 							If enabled, a character can hide/stealth while mounted.</p>
 						</div>
 						<div class="settingsDiv">
@@ -1721,7 +2718,7 @@ packitem=0x0f8d,30
 							<label for="spoiler_setting_serverfeatures">serverfeatures List <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>(0x01)</strong> <span class="hl">1</span>: Unknown<br>
-								<strong>(0x02)</strong> <span class="hl">2</span>: IGR<br>
+								<strong>(0x02)</strong> <span class="hl">2</span>: IGR (Internet Gaming Room support? Multiple connections to same account? Not functional)<br>
 								<strong>(0x04)</strong> <span class="hl">4</span>: OneChar - One char per account only, Siege Perilious style,<br>
 								<strong>(0x08)</strong> <span class="hl">8</span>: ContextMenus<br>
 								<strong>(0x10)</strong> <span class="hl">16</span>: LimitChar - Limit amount of chars, combine with OneChar<br>
@@ -1769,10 +2766,21 @@ packitem=0x0f8d,30
 							Toggles whether looting (innocent/blue) corpses is a crime or not</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">MOONGATEFACETS</span><strong>=0</strong><br>
+							Bitmask that controls for which facets public moongate travel is available.<br>
+							<span class="hl">0</span> // No facets enabled (default)<br>
+							<span class="hl">1</span> // Felucca<br>
+							<span class="hl">2</span> // Trammel<br>
+							<span class="hl">4</span> // Ilshenar<br>
+							<span class="hl">8</span> // Malas<br>
+							<span class="hl">16</span> // Tokuno<br>
+							<span class="hl">32</span> // Ter Mur<br>
+							Examples: A value of 1 = only Felucca is enabled, value of 3 = Felucca + Trammel, 10 = Malas + Ilshenar, 63 = all facets enabled, etc.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">BASICTOOLTIPSONLY</span><strong>=0</strong><br>
 							If enabled, tooltips will only show name and weight of items</p>
 						</div>
-
 						<div class="settingsDiv">
 							<p><span class="hl">SHOWREPUTATIONTITLEINTOOLTIP</span><strong>=1</strong><br>
 							If enabled, shows player's reputation title in tooltip. Defaults to 1</p>
@@ -1925,6 +2933,10 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="hl">PETLOYALTYRATE</span><strong>=900</strong><br>
 							Amount of seconds between each time pet loyalty is automatically reduced by 1. Takes 25 hours to deplete completely from max</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">PETBONDINGENABLED</span><strong>=0</strong><br>
+							If enabled, allows players to form a bond with their pets, causing the pets to turn into resurrectable ghosts on death</p>
 						</div>
 					</div>
 
@@ -2198,7 +3210,7 @@ packitem=0x0f8d,30
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">DISPLAYDAMAGENUMBERS</span><strong>=1</strong><br>
-							If 1, damage numbers are displayed above characters in combat.</p>
+							If 1, damage numbers are displayed above characters in combat. Only applicable for client version 3.0.8z or above.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">MONSTERSVSANIMALS</span><strong>=1</strong><br>
@@ -2372,7 +3384,7 @@ packitem=0x0f8d,30
 						</div>
 						<div class="settingsDiv">d
 							<p><span class="hl">TRAVELSPELLSBETWEENWORLDS</span><strong>=0</strong><br>
-							Toggle being able to travel via Recall and Gate spells from one facet to another</p>
+							Toggle being able to travel via Recall and Gate spells from one facet to another. This was disabled by default when Felucca/Trammel split was introduced in UOR, and enabled in AoS with Publish 17.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">TRAVELSPELLSWHILEAGGRESSOR</span><strong>=0</strong><br>
@@ -2392,8 +3404,8 @@ packitem=0x0f8d,30
 						</div>
 					</div>
 
-					<input type="checkbox" id="spoiler_ini_start locations">
-					<label for="spoiler_ini_start locations">[start locations] <i class="fas fa-angle-down"></i></label>
+					<input type="checkbox" id="spoiler_ini_start_locations">
+					<label for="spoiler_ini_start_locations">[start locations] <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<div class="settingsDiv">
 							<p>Start locations used by the character-creation process in the client. Fixed amount of locations, using the following format: <strong>LOCATION=TOWN,BUILDING,X,Y,Z,WORLD,INSTANCE,CLILOCMSG (description of town)</strong></p><br>
@@ -2410,8 +3422,8 @@ packitem=0x0f8d,30
 						</div>
 					</div>
 
-					<input type="checkbox" id="spoiler_ini_young_start locations">
-					<label for="spoiler_ini_start young_locations">[young start locations] <i class="fas fa-angle-down"></i></label>
+					<input type="checkbox" id="spoiler_ini_young_start_locations">
+					<label for="spoiler_ini_young_start_locations">[young start locations] <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<div class="settingsDiv">
 							<p>Start locations used by the character-creation process in the client, but applied only to Young characters created on Young player accounts. Use either a single location (to make all Young players start there), or follow the fixed amount based on regular [start locations] and either re-use those locations or specify specific young-start locations for each town - using the following format: <strong>YOUNGLOCATION=TOWN,BUILDING,X,Y,Z,WORLD,INSTANCE,CLILOCMSG (description of town)</strong></p><br>
@@ -2554,11 +3566,6 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="hl">KEYLESSFRIENDACCESS</span><strong>=1</strong><br>
 							Allow friends of house to use locked doors in house without key in pack.
-							</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">KEYLESSGUESTACCESS</span><strong>=0</strong><br>
-							Allow guests of house to use locked doors in house without key in pack.
 							</p>
 						</div>
 						<div class="settingsDiv">
@@ -2763,6 +3770,119 @@ packitem=0x0f8d,30
 					</div>
 				  </div>
 				</div>
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#uox3EraSettings" id="uox3EraSettings"><span>Era Specific Settings</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<h3>Era Specific Settings - Overview</h3>
+					<p>The <a href="index.html#uoxINISettings" title="UOX3 Documentatio - Additional UOX3 Info - UOX.INI Settings">UOX.INI Settings</a> contain several levers and knobs that can be used to tune your shard to specific eras of UO like T2A, LBR or AOS. Here's a quick guide for how to configure UOX3 for a given era:</p>
+					<p>The <a href="index.html#uoxINISettings" title="UOX3 Documentatio - Additional UOX3 Info - UOX.INI Settings">UOX.INI Settings</a> contain several levers and knobs that can be used to tune your shard to specific eras of UO like T2A, LBR or AOS. Here's an overview of the most important ones:</p>
+					<h4>[skill & stats]</h4>
+					<p></p>
+					<ul>
+						<li><span class="hl">SKILLCAP</span> - Total player char skill cap. 7000 (700.0) for SA era and earlier, 7200 (720.0) for HS and later</li>
+						<li><span class="hl">SKILLCAPSINGLE</span> - Default skill cap per individual skill. Can be overridden with powerscrolls, etc.</li>
+						<li><span class="hl">STATCAP</span> - Total player char stat cap. 225 by default, though official UO raises this to 230 for accounts 6 months or older, and to 260 with scrolls</li>
+						<li><span class="hl">EXTENDEDSTARTINGSTATS</span> - Extended starting stats (90 in total) for new characters created in client versions 7.0.16+ (sometime in HS era)</li>
+						<li><span class="hl">EXTENDEDSTARTINGSKILLS</span> - Extended starting skills (120 in total) for new characters created in client versions 7.0.16+ (sometime in HS era)</li>
+						<li><span class="hl">ARMORAFFECTMANAREGEN</span> - Toggles whether worn armor affects mana regeneration rate</li>
+						<li><span class="hl">STAMINAREGENMODE</span> - 0 = no passive regen rules, 1 = LBR and below, 2 = AoS and beyond, 3 = SA and beyond</li>
+						<li><span class="hl">MANAREGENMODE</span> - 0 = no passive regen rules, 1 = LBR and below, 2 = AoS (Pub17), 3 = AoS (Pub18) and SE, 4 = ML, 5 = KR and beyond</li>
+						<li><span class="hl">HEALTHREGENCAP</span> - Cap on bonuses player can get. SE and below = no effective cap, ML and beyond = 18 (hard cap)</li>
+						<li><span class="hl">STAMINAREGENCAP</span> - Cap on bonuses player can get. Same across all eras</li>
+						<li><span class="hl">MANAREGENCAP</span> - Cap on bonuses player can get. SE and below = no effective cap, ML and beyond = 18 (hard cap), KR and beyond = 30 (soft cap)</li>
+							(See <a href="index.html#statRegeneration" title="UOX3 Feature Documentation - Stat Regeneration">Stat Regeneration</a> for more details on regen modes and timers)
+					</ul>
+					<h4>[timers]</h4>
+					<ul>
+						<li><span class="hl">HITPOINTREGENTIMER</span> // seconds per HP regen</li>
+						<li><span class="hl">STAMINAREGENTIMER</span> // seconds per Stamina regen</li>
+						<li><span class="hl">MANAREGENTIMER</span> // seconds per Mana regen. Linked to MANAREGENMODE</li>
+					</ul>
+					<input type="checkbox" id="spoiler_cmd_manaregentimer">
+					<label for="spoiler_cmd_manaregentimer">MANAREGENTIMER details <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<ul>
+							<li>For 1 go with MANAREGENTIMER=7</li>
+							<li>For 2 go with -> MANAREGENTIMER=1</li>
+							<li>For 3 go with -> MANAREGENTIMER=7</li>
+							<li>For 4 go with -> MANAREGENTIMER=5</li>
+							<li>For 5 go with -> MANAREGENTIMER=5</li>
+						</ul>(See <a href="index.html#statRegeneration" title="UOX3 Feature Documentation - Stat Regeneration">Stat Regeneration</a> for more details on regen modes and timers)
+					</div>
+					<h4>[expansion settings]</h4>
+					<ul> <em>// See uox.ini settings for impact of each setting</em>
+						<li><span class="hl">CORESHARDERA</span> - Defines core era of shard. Determines what data for Item/NPCs/Spawn Regions/Teleport Locations get loaded</li>
+						<li><span class="hl">ARMORCALCULATION</span> - Defines which era (if different than "core") to base armor calculations on.</li>
+						<li><span class="hl">STRENGTHDAMAGEBONUS</span> - Defines which era to base strength damage bonus on</li>
+						<li><span class="hl">TACTICSDAMAGEBONUS</span> - Defines which era to base tactics damage bonus on</li>
+						<li><span class="hl">ANATOMYDAMAGEBONUS</span> - Defines which era to base anatomy damage bonus on</li>
+						<li><span class="hl">LUMBERJACKDAMAGEBONUS</span> - Defines which era to base lumberjack damage bonus on</li>
+						<li><span class="hl">RACIALDAMAGEBONUS</span> - Defines which era to base racial damage bonus cap on</li>
+						<li><span class="hl">DAMAGEBONUSCAP</span> - Defines which era to base damage bonus from items/effects on</li>
+						<li><span class="hl">SHIELDPARRY</span> - Defines which era to base shield parry calculations on</li>
+						<li><span class="hl">WEAPONPARRY</span> - Defines which era to base weapon parry calculations on</li>
+						<li><span class="hl">WRESTLINGPARRY</span> - Defines which era to base wrestling parry calculations on</li>
+						<li><span class="hl">COMBATHITCHANCE</span> - Defines which era to base combat hit chance calculations on</li>
+					</ul>
+					<input type="checkbox" id="spoiler_cmd_coreshardimpact">
+					<label for="spoiler_cmd_coreshardimpact">CoreShardEra Impact <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<h4>Impact on Item/NPC Definitions</h4>
+						<p>Depending on what the <span class="hl">CORESHARDERA</span> in uox.ini is set to, UOX3 will read from a different subset of data for Items, NPCs and even Spawn Regions to ensure that these all fit the chosen era as closely as possible.</p>
+						<p>For instance, when the above setting is set as "LBR" (the default), UOX3 will use the <span class="hl">getlbr</span> tag in Item/NPC definitions to use data from sections specific to the LBR era of UO, while ignoring any other era-specific tags such as <em>gett2a, getaos, getml</em> etc.</p>
+						<h4>Impact on Spawn Regions</h4>
+						<p><a href="index.html#uox3SpawnRegions" title="UOX3 Feature Documentation - Spawn Regions">Spawn Regions</a> support a DFN tag that can be used to specify which era - or eras - a given spawn region is valid for. If the tag is present, but for an era different than the chosen <strong>Core Shard Era</strong>, UOX3 will ignore it. Example of tag:</p>
+						<ul>
+							<li><span class="hl">ERAS=LBR</span> // Only active for LBR era</li>
+							<li><span class="hl">ERAS=ML,SA,HS,TOL</span> // Only active for ML era or above</li>
+						</ul>
+						<h4>Impact on Teleport Locations</h4>
+						<p>The chosen <strong>Core Shard Era</strong> also has an impact on <a href="index.html#teleportLocations" title="UOX3 Feature Documentation - Teleport Locations">teleport locations</a> defined in <span class="hl">js/teleport.scp</span>, which can optionally be setup to only be active for specific eras, and ignored by others. For example, in the center of Yew there's a teleport location that takes the player to Heartwood, a location that opened up with the Mondain's Legacy expansion. If the selected era is lower than ML, this teleport location will not be active.</p>
+					</div>
+
+					<h4>[default race bonuses]</h4>
+					<ul> <em>// Can be overridden via races.dfn</em>
+						<li><span class="hl">HUMANHEALTHREGENBONUS</span> - Health regen bonus for race 0 in races.dfn. Default to 2 for ML era or later</li>
+						<li><span class="hl">HUMANSTAMINAREGENBONUS</span> - Stamina regen bonus for race 0 in races.dfn. Default to 0 for all eras</li>
+						<li><span class="hl">HUMANMANAREGENBONUS</span> - Mana regen bonus for race 0 in races.dfn. Default to 0 for all eras</li>
+						<li><span class="hl">HUMANMAXWEIGHTBONUS</span> - Max weight bonus for race 0 in races.dfn. Default to a value of 60 for ML era or later</li>
+						<li><span class="hl">ELFHEALTHREGENBONUS</span> - Health regen bonus for race 1 in races.dfn. Default to 0 for all eras</li>
+						<li><span class="hl">ELFSTAMINAREGENBONUS</span> - Stamina regen bonus for race 1 in races.dfn. Default to 0 for all eras</li>
+						<li><span class="hl">ELFMANAREGENBONUS</span> - Mana regen bonus for race 1 in races.dfn. Default to 0 for all eras</li>
+						<li><span class="hl">ELFMAXWEIGHTBONUS</span> - Max weight bonus for race 1 in races.dfn. Default to 0 for all eras</li>
+						<li><span class="hl">GARGOYLEHEALTHREGENBONUS</span> - Health regen bonus for race 2 in races.dfn. Default to 0 for all eras</li>
+						<li><span class="hl">GARGOYLESTAMINAREGENBONUS</span> - Stamina regen bonus for race 2 in races.dfn. Default to 0 for all eras</li>
+						<li><span class="hl">GARGOYLEMANAREGENBONUS</span> - Mana regen bonus for race 2 in races.dfn. Default to 2 for SA era or later</li>
+						<li><span class="hl">GARGOYLEMAXWEIGHTBONUS</span> - Max weight bonus for race 2 in races.dfn. Default to 0 for all eras</li>
+					</ul>
+
+					<h4>[settings]</h4>
+					<ul>
+						...
+						<li>CLIENTFEATURES - </li>
+						<li>SERVERFEATURES - </li>
+						<li>SPAWNREGIONSFACETS - </li>
+						<li>TOOLUSELIMIT - </li>
+						<li>TOOLUSEBREAK - </li>
+						<li>ITEMREPAIRDURABILITYLOSS - </li>
+						<li>CRAFTCOLOUREDWEAPONS - </li>
+						<li>YOUNGPLAYERSYSTEM - </li>
+						<li>KARMALOCKING - </li>
+						...
+					</ul>
+					<h4>[settings]</h4>
+					<ul>
+						...
+						<li>MAXCONTROLSLOTS - </li>
+						<li>MAXFOLLOWERS - </li>
+						<li>CHECKPETCONTROLDIFFICULTY - </li>
+						...
+					</ul>
+				  </div>
+				</div> <!-- cd-faq__content -->
 			</li>
 
 			<li class="cd-faq__item">
@@ -12295,6 +13415,13 @@ function commandTitle()
 								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 								<p><strong>Contributors:</strong> Dragon Slayer, i vomit kittens, warden, Xuri, Maarc, Sydius</p>
 								<p><strong>Fun Facts:</strong> Lots of gameplay fixes! Cartography skill! Misc AoS item properties! Combat special moves! Custom object tooltip sorting! Pathfinding revamp! 64-bit timers! Pet Bonding!</p>
+							</div>
+							<input type="checkbox" id="spoiler_history_UOX3_099_7a"/>
+							<label for="spoiler_history_UOX3_099_7">UOX3 v0.99.7a (hotfix)<i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 30 July, 2025</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> Xuri</p>
 							</div>
 						</div>
 					</div>

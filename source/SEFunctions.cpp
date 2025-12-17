@@ -5645,6 +5645,374 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	SE_SetServerSetting()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sets the value of a specified server setting at runtime.
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_SetServerSetting( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc != 2 )
+	{
+		ScriptError( cx, "SetServerSetting: Invalid number of arguments (takes 2 - serverSettingName, newValue)" );
+		return JS_FALSE;
+	}
+
+	jsval* argv = JS_ARGV( cx, vp );
+	std::string settingName = oldstrutil::upper( JS_GetStringBytes( cx, argv[0] ));
+	jsval newValue = argv[1];
+
+	if( settingName.empty() )
+	{
+		ScriptError( cx, "SetServerSetting: Provided setting name was empty." );
+		return JS_FALSE;
+	}
+
+	auto settingId = cwmWorldState->ServerData()->LookupINIValue( settingName );
+	if( settingId == std::numeric_limits<SI32>::max() )
+	{
+		ScriptError( cx, "SetServerSetting: Invalid server setting name provided." );
+		return JS_FALSE;
+	}
+
+	// Use a helper lambda to safely convert jsval to double
+	auto ToDouble = [cx]( jsval val ) -> double {
+		double num = 0.0;
+		JS_ValueToNumber( cx, val, &num );
+		return num;
+	};
+
+	switch( settingId )
+	{
+		// String Settings
+		case 1: cwmWorldState->ServerData()->ServerName( JS_GetStringBytes( cx, newValue )); break; // SERVERNAME
+		case 3: // COMMANDPREFIX
+		{
+			std::string tempString = JS_GetStringBytes( cx, newValue );
+			if( !tempString.empty() )
+			{
+				cwmWorldState->ServerData()->ServerCommandPrefix( tempString[0] );
+			}
+			break;
+		}
+
+		// Boolean Settings
+		case 2: cwmWorldState->ServerData()->ServerConsoleLog( JSVAL_TO_BOOLEAN( newValue )); break; // CONSOLELOG
+		case 4: cwmWorldState->ServerData()->ServerAnnounceSaves( JSVAL_TO_BOOLEAN( newValue )); break; // ANNOUNCEWORLDSAVES
+		case 5: cwmWorldState->ServerData()->ServerBackups( JSVAL_TO_BOOLEAN( newValue )); break; // BACKUPSENABLED
+		case 12: cwmWorldState->ServerData()->ArmorAffectManaRegen( JSVAL_TO_BOOLEAN( newValue )); break; // ARMORAFFECTMANAREGEN
+		case 26: cwmWorldState->ServerData()->ServerJoinPartAnnouncements( JSVAL_TO_BOOLEAN( newValue )); break; // JOINPARTMSGS
+		case 27: cwmWorldState->ServerData()->DeathAnimationStatus( JSVAL_TO_BOOLEAN( newValue )); break; // DEATHANIMATION
+		case 47: cwmWorldState->ServerData()->PlayerCorpseLootDecay( JSVAL_TO_BOOLEAN( newValue )); break; // LOOTDECAYSWITHPLAYERCORPSE
+		case 49: cwmWorldState->ServerData()->GuardStatus( JSVAL_TO_BOOLEAN( newValue )); break; // GUARDSACTIVE
+		case 51: cwmWorldState->ServerData()->AmbientFootsteps( JSVAL_TO_BOOLEAN( newValue )); break; // AMBIENTFOOTSTEPS
+		case 52: cwmWorldState->ServerData()->InternalAccountStatus( JSVAL_TO_BOOLEAN( newValue )); break; // INTERNALACCOUNTCREATION
+		case 53: cwmWorldState->ServerData()->ShowOfflinePCs( JSVAL_TO_BOOLEAN( newValue )); break; // SHOWOFFLINEPCS
+		case 54: cwmWorldState->ServerData()->RogueStatus( JSVAL_TO_BOOLEAN( newValue )); break; // ROGUESENABLED
+		case 55: cwmWorldState->ServerData()->PlayerPersecutionStatus( JSVAL_TO_BOOLEAN( newValue )); break; // PLAYERPERSECUTION
+		case 58: cwmWorldState->ServerData()->SellByNameStatus( JSVAL_TO_BOOLEAN( newValue )); break; // SELLBYNAME
+		case 60: cwmWorldState->ServerData()->TradeSystemStatus( JSVAL_TO_BOOLEAN( newValue )); break; // TRADESYSTEM
+		case 61: cwmWorldState->ServerData()->RankSystemStatus( JSVAL_TO_BOOLEAN( newValue )); break; // RANKSYSTEM
+		case 62: cwmWorldState->ServerData()->CutScrollRequirementStatus( JSVAL_TO_BOOLEAN( newValue )); break; // CUTSCROLLREQUIREMENTS
+		case 69: cwmWorldState->ServerData()->EscortsEnabled( JSVAL_TO_BOOLEAN( newValue )); break; // ESCORTENABLED
+		case 90: cwmWorldState->ServerData()->StatsAffectSkillChecks( JSVAL_TO_BOOLEAN( newValue )); break; // STATSAFFECTSKILLCHECKS
+		case 95: cwmWorldState->ServerData()->CombatDisplayHitMessage( JSVAL_TO_BOOLEAN( newValue )); break; // DISPLAYHITMSG
+		case 96: cwmWorldState->ServerData()->CombatMonstersVsAnimals( JSVAL_TO_BOOLEAN( newValue )); break; // MONSTERSVSANIMALS
+		case 98: cwmWorldState->ServerData()->CombatAnimalsGuarded( JSVAL_TO_BOOLEAN( newValue )); break; // ANIMALSGUARDED
+		case 123: cwmWorldState->ServerData()->ServerTimeAMPM( JSVAL_TO_BOOLEAN( newValue )); break; // AMPM
+		case 125: cwmWorldState->ServerData()->SnoopIsCrime( JSVAL_TO_BOOLEAN( newValue )); break; // SNOOPISCRIME
+		case 133: cwmWorldState->ServerData()->ShootOnAnimalBack( JSVAL_TO_BOOLEAN( newValue )); break; // SHOOTONANIMALBACK
+		case 134: cwmWorldState->ServerData()->NPCTrainingStatus( JSVAL_TO_BOOLEAN( newValue )); break; // NPCTRAININGENABLED
+		case 137: cwmWorldState->ServerData()->CharHideWhileMounted( JSVAL_TO_BOOLEAN( newValue )); break; // HIDEWHILEMOUNTED
+		case 141: cwmWorldState->ServerData()->ServerUOGEnabled( JSVAL_TO_BOOLEAN( newValue )); break; // UOGENABLED
+		case 146: cwmWorldState->ServerData()->ServerOverloadPackets( JSVAL_TO_BOOLEAN( newValue )); break; // OVERLOADPACKETS
+		case 148: cwmWorldState->ServerData()->PetHungerOffline( JSVAL_TO_BOOLEAN( newValue )); break; // PETHUNGEROFFLINE
+		case 152: cwmWorldState->ServerData()->AdvancedPathfinding( JSVAL_TO_BOOLEAN( newValue )); break; // ADVANCEDPATHFINDING
+		case 154: cwmWorldState->ServerData()->LootingIsCrime( JSVAL_TO_BOOLEAN( newValue )); break; // LOOTINGISCRIME
+		case 157: cwmWorldState->ServerData()->BasicTooltipsOnly( JSVAL_TO_BOOLEAN( newValue )); break; // BASICTOOLTIPSONLY
+		case 158: cwmWorldState->ServerData()->GlobalItemDecay( JSVAL_TO_BOOLEAN( newValue )); break; // GLOBALITEMDECAY
+		case 159: cwmWorldState->ServerData()->ScriptItemsDecayable( JSVAL_TO_BOOLEAN( newValue )); break; // SCRIPTITEMSDECAYABLE
+		case 160: cwmWorldState->ServerData()->BaseItemsDecayable( JSVAL_TO_BOOLEAN( newValue )); break; // BASEITEMSDECAYABLE
+		case 161: cwmWorldState->ServerData()->ItemDecayInHouses( JSVAL_TO_BOOLEAN( newValue )); break; // ITEMDECAYINHOUSES
+		case 163: cwmWorldState->ServerData()->PaperdollGuildButton( JSVAL_TO_BOOLEAN( newValue )); break; // PAPERDOLLGUILDBUTTON
+		case 164: cwmWorldState->ServerData()->CombatAttackSpeedFromStamina( JSVAL_TO_BOOLEAN( newValue )); break; // ATTACKSPEEDFROMSTAMINA
+		case 169: cwmWorldState->ServerData()->CombatDisplayDamageNumbers( JSVAL_TO_BOOLEAN( newValue )); break; // DISPLAYDAMAGENUMBERS
+		case 182: cwmWorldState->ServerData()->ExtendedStartingStats( JSVAL_TO_BOOLEAN( newValue )); break; // EXTENDEDSTARTINGSTATS
+		case 183: cwmWorldState->ServerData()->ExtendedStartingSkills( JSVAL_TO_BOOLEAN( newValue )); break; // EXTENDEDSTARTINGSKILLS
+		case 193: cwmWorldState->ServerData()->ServerRandomStartingLocation( JSVAL_TO_BOOLEAN( newValue )); break; // RANDOMSTARTINGLOCATION
+		case 194: cwmWorldState->ServerData()->SetAssistantNegotiation( JSVAL_TO_BOOLEAN( newValue )); break; // ASSISTANTNEGOTIATION
+		case 195: cwmWorldState->ServerData()->KickOnAssistantSilence( JSVAL_TO_BOOLEAN( newValue )); break; // KICKONASSISTANTSILENCE
+		case 218: cwmWorldState->ServerData()->SetClassicUOMapTracker( JSVAL_TO_BOOLEAN( newValue )); break; // CLASSICUOMAPTRACKER
+		case 220: cwmWorldState->ServerData()->ProtectPrivateHouses( JSVAL_TO_BOOLEAN( newValue )); break; // PROTECTPRIVATEHOUSES
+		case 221: cwmWorldState->ServerData()->TrackHousesPerAccount( JSVAL_TO_BOOLEAN( newValue )); break; // TRACKHOUSESPERACCOUNT
+		case 224: cwmWorldState->ServerData()->CanOwnAndCoOwnHouses( JSVAL_TO_BOOLEAN( newValue )); break; // CANOWNANDCOOWNHOUSES
+		case 225: cwmWorldState->ServerData()->CoOwnHousesOnSameAccount( JSVAL_TO_BOOLEAN( newValue )); break; // COOWNHOUSESONSAMEACCOUNT
+		case 226: cwmWorldState->ServerData()->ItemsDetectSpeech( JSVAL_TO_BOOLEAN( newValue )); break; // ITEMSDETECTSPEECH
+		case 229: cwmWorldState->ServerData()->ForceNewAnimationPacket( JSVAL_TO_BOOLEAN( newValue )); break; // FORCENEWANIMATIONPACKET
+		case 230: cwmWorldState->ServerData()->MapDiffsEnabled( JSVAL_TO_BOOLEAN( newValue )); break; // MAPDIFFSENABLED
+		case 243: cwmWorldState->ServerData()->CombatArmorClassDamageBonus( JSVAL_TO_BOOLEAN( newValue )); break; // ARMORCLASSDAMAGEBONUS
+		case 244: cwmWorldState->ServerData()->FreeshardServerPoll( JSVAL_TO_BOOLEAN( newValue )); break; // FREESHARDSERVERPOLL
+		case 245: cwmWorldState->ServerData()->AlchemyDamageBonusEnabled( JSVAL_TO_BOOLEAN( newValue )); break; // ALCHEMYBONUSENABLED
+		case 249: cwmWorldState->ServerData()->UseUnicodeMessages( JSVAL_TO_BOOLEAN( newValue )); break; // USEUNICODEMESSAGES
+		case 253: cwmWorldState->ServerData()->PetThirstOffline( JSVAL_TO_BOOLEAN( newValue )); break; // PETTHIRSTOFFLINE
+		case 259: cwmWorldState->ServerData()->HungerSystemEnabled( JSVAL_TO_BOOLEAN( newValue )); break; // HUNGERENABLED
+		case 260: cwmWorldState->ServerData()->ThirstSystemEnabled( JSVAL_TO_BOOLEAN( newValue )); break; // THIRSTENABLED
+		case 261: cwmWorldState->ServerData()->TravelSpellsFromBoatKeys( JSVAL_TO_BOOLEAN( newValue )); break; // TRAVELSPELLSFROMBOATKEYS
+		case 262: cwmWorldState->ServerData()->TravelSpellsWhileOverweight( JSVAL_TO_BOOLEAN( newValue )); break; // TRAVELSPELLSWHILEOVERWEIGHT
+		case 263: cwmWorldState->ServerData()->MarkRunesInMultis( JSVAL_TO_BOOLEAN( newValue )); break; // MARKRUNESINMULTIS
+		case 264: cwmWorldState->ServerData()->TravelSpellsBetweenWorlds( JSVAL_TO_BOOLEAN( newValue )); break; // TRAVELSPELLSBETWEENWORLDS
+		case 265: cwmWorldState->ServerData()->TravelSpellsWhileAggressor( JSVAL_TO_BOOLEAN( newValue )); break; // TRAVELSPELLSWHILEAGGRESSOR
+		case 267: cwmWorldState->ServerData()->ServerNetworkLog( JSVAL_TO_BOOLEAN( newValue )); break; // NETWORKLOG
+		case 268: cwmWorldState->ServerData()->ServerSpeechLog( JSVAL_TO_BOOLEAN( newValue )); break; // SPEECHLOG
+		case 272: cwmWorldState->ServerData()->ServerContextMenus( JSVAL_TO_BOOLEAN( newValue )); break; // CONTEXTMENUS
+		case 274: cwmWorldState->ServerData()->CheckPetControlDifficulty( JSVAL_TO_BOOLEAN( newValue )); break; // CHECKPETCONTROLDIFFICULTY
+		case 278: cwmWorldState->ServerData()->ShowNpcTitlesInTooltips( JSVAL_TO_BOOLEAN( newValue )); break; // SHOWNPCTITLESINTOOLTIPS
+		case 282: cwmWorldState->ServerData()->ItemsInterruptCasting( JSVAL_TO_BOOLEAN( newValue )); break; // ITEMSINTERRUPTCASTING
+		case 294: cwmWorldState->ServerData()->ToolUseLimit( JSVAL_TO_BOOLEAN( newValue )); break; // TOOLUSELIMIT
+		case 295: cwmWorldState->ServerData()->ToolUseBreak( JSVAL_TO_BOOLEAN( newValue )); break; // TOOLUSEBREAK
+		case 296: cwmWorldState->ServerData()->ItemRepairDurabilityLoss( JSVAL_TO_BOOLEAN( newValue )); break; // ITEMREPAIRDURABILITYLOSS
+		case 297: cwmWorldState->ServerData()->HideStatsForUnknownMagicItems( JSVAL_TO_BOOLEAN( newValue )); break; // HIDESTATSFORUNKNOWNMAGICITEMS
+		case 298: cwmWorldState->ServerData()->CraftColouredWeapons( JSVAL_TO_BOOLEAN( newValue )); break; // CRAFTCOLOUREDWEAPONS
+		case 300: cwmWorldState->ServerData()->TeleportToNearestSafeLocation( JSVAL_TO_BOOLEAN( newValue )); break; // TELEPORTTONEARESTSAFELOCATION
+		case 301: cwmWorldState->ServerData()->AllowAwakeNPCs( JSVAL_TO_BOOLEAN( newValue )); break; // ALLOWAWAKENPCS
+		case 302: cwmWorldState->ServerData()->DisplayMakersMark( JSVAL_TO_BOOLEAN( newValue )); break; // DISPLAYMAKERSMARK
+		case 303: cwmWorldState->ServerData()->ShowNpcTitlesOverhead( JSVAL_TO_BOOLEAN( newValue )); break; // SHOWNPCTITLESOVERHEAD
+		case 304: cwmWorldState->ServerData()->ShowInvulnerableTagOverhead( JSVAL_TO_BOOLEAN( newValue )); break; // SHOWINVULNERABLETAGOVERHEAD
+		case 305: cwmWorldState->ServerData()->PetCombatTraining( JSVAL_TO_BOOLEAN( newValue )); break; // PETCOMBATTRAINING
+		case 306: cwmWorldState->ServerData()->HirelingCombatTraining( JSVAL_TO_BOOLEAN( newValue )); break; // HIRELINGCOMBATTRAINING
+		case 307: cwmWorldState->ServerData()->NpcCombatTraining( JSVAL_TO_BOOLEAN( newValue )); break; // NPCCOMBATTRAINING
+		case 309: cwmWorldState->ServerData()->ShowItemResistStats( JSVAL_TO_BOOLEAN( newValue )); break; // SHOWITEMRESISTSTATS
+		case 310: cwmWorldState->ServerData()->ShowWeaponDamageTypes( JSVAL_TO_BOOLEAN( newValue )); break; // SHOWWEAPONDAMAGETYPES
+		case 311: cwmWorldState->ServerData()->ShowRaceWithName( JSVAL_TO_BOOLEAN( newValue )); break; // SHOWRACEWITHNAME
+		case 312: cwmWorldState->ServerData()->ShowRaceInPaperdoll( JSVAL_TO_BOOLEAN( newValue )); break; // SHOWRACEINPAPERDOLL
+		case 316: cwmWorldState->ServerData()->CastSpellsWhileMoving( JSVAL_TO_BOOLEAN( newValue )); break; // CASTSPELLSWHILEMOVING
+		case 317: cwmWorldState->ServerData()->ShowReputationTitleInTooltip( JSVAL_TO_BOOLEAN( newValue )); break; // SHOWREPUTATIONTITLEINTOOLTIP
+		case 318: cwmWorldState->ServerData()->ShowGuildInfoInTooltip( JSVAL_TO_BOOLEAN( newValue )); break; // SHOWGUILDINFOINTOOLTIP
+		case 321: cwmWorldState->ServerData()->SafeCoOwnerLogout( JSVAL_TO_BOOLEAN( newValue )); break; // SAFECOOWNERLOGOUT
+		case 322: cwmWorldState->ServerData()->SafeFriendLogout( JSVAL_TO_BOOLEAN( newValue )); break; // SAFEFRIENDLOGOUT
+		case 323: cwmWorldState->ServerData()->SafeGuestLogout( JSVAL_TO_BOOLEAN( newValue )); break; // SAFEGUESTLOGOUT
+		case 324: cwmWorldState->ServerData()->KeylessOwnerAccess( JSVAL_TO_BOOLEAN( newValue )); break; // KEYLESSOWNERACCESS
+		case 325: cwmWorldState->ServerData()->KeylessCoOwnerAccess( JSVAL_TO_BOOLEAN( newValue )); break; // KEYLESSCOOWNERACCESS
+		case 326: cwmWorldState->ServerData()->KeylessFriendAccess( JSVAL_TO_BOOLEAN( newValue )); break; // KEYLESSFRIENDACCESS
+		case 327: cwmWorldState->ServerData()->KeylessGuestAccess( JSVAL_TO_BOOLEAN( newValue )); break; // KEYLESSGUESTACCESS
+		case 329: cwmWorldState->ServerData()->OfferBODsFromItemSales( JSVAL_TO_BOOLEAN( newValue )); break; // OFFERBODSFROMITEMSALES
+		case 330: cwmWorldState->ServerData()->OfferBODsFromContextMenu( JSVAL_TO_BOOLEAN( newValue )); break; // OFFERBODSFROMCONTEXTMENU
+		case 331: cwmWorldState->ServerData()->BODsFromCraftedItemsOnly( JSVAL_TO_BOOLEAN( newValue )); break; // BODSFROMCRAFTEDITEMSONLY
+		case 334: cwmWorldState->ServerData()->EnableNPCGuildDiscounts( JSVAL_TO_BOOLEAN( newValue )); break; // ENABLENPCGUILDDISCOUNTS
+		case 335: cwmWorldState->ServerData()->EnableNPCGuildPremiums( JSVAL_TO_BOOLEAN( newValue )); break; // ENABLENPCGUILDPREMIUMS
+		case 339: cwmWorldState->ServerData()->SnoopAwareness( JSVAL_TO_BOOLEAN( newValue )); break; // SNOOPAWARENESS
+		case 344: cwmWorldState->ServerData()->YoungPlayerSystem( JSVAL_TO_BOOLEAN( newValue )); break; // YOUNGPLAYERSYSTEM
+		case 348: cwmWorldState->ServerData()->AutoUnequippedCasting( JSVAL_TO_BOOLEAN( newValue )); break; // AUTOUNEQUIPPEDCASTING
+		case 349: cwmWorldState->ServerData()->NpcCorpseLootDecay( JSVAL_TO_BOOLEAN( newValue )); break; // LOOTDECAYSWITHNPCCORPSE
+		case 354: cwmWorldState->ServerData()->KarmaLocking( JSVAL_TO_BOOLEAN( newValue )); break; // KARMALOCKING
+		case 362: cwmWorldState->ServerData()->HealingAffectHealthRegen( JSVAL_TO_BOOLEAN( newValue )); break; // HEALINGAFFECTHEALTHREGEN
+		case 366: cwmWorldState->ServerData()->HungerAffectHealthRegen( JSVAL_TO_BOOLEAN( newValue )); break; // HUNGERAFFECTHEALTHREGEN
+		case 367: cwmWorldState->ServerData()->ThirstAffectStaminaRegen( JSVAL_TO_BOOLEAN( newValue )); break; // THIRSTAFFECTSTAMINAREGEN
+		case 381: cwmWorldState->ServerData()->PoisonCorrosionSystem( JSVAL_TO_BOOLEAN( newValue )); break; // POISONCORROSIONSYSTEM
+		case 382: cwmWorldState->ServerData()->PetBondingEnabled( JSVAL_TO_BOOLEAN( newValue )); break; // PETBONDINGENABLED
+
+			// Integer/Numeric Settings
+		case 6: cwmWorldState->ServerData()->ServerSavesTimer( static_cast<UI32>( JSVAL_TO_INT( newValue ))); break; // SAVESTIMER
+		case 7: cwmWorldState->ServerData()->ServerSkillTotalCap( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // SKILLCAP
+		case 8: cwmWorldState->ServerData()->ServerSkillDelay( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // SKILLDELAY
+		case 9: cwmWorldState->ServerData()->ServerStatCap( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // STATCAP
+		case 10: cwmWorldState->ServerData()->MaxStealthMovement( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // MAXSTEALTHMOVEMENTS
+		case 11: cwmWorldState->ServerData()->MaxStaminaMovement( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // MAXSTAMINAMOVEMENTS
+		case 13: cwmWorldState->ServerData()->SystemTimer( tSERVER_CORPSEDECAY, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // CORPSEDECAYTIMER
+		case 14: cwmWorldState->ServerData()->SystemTimer( tSERVER_WEATHER, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // WEATHERTIMER
+		case 15: cwmWorldState->ServerData()->SystemTimer( tSERVER_SHOPSPAWN, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // SHOPSPAWNTIMER
+		case 16: cwmWorldState->ServerData()->SystemTimer( tSERVER_DECAY, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // DECAYTIMER
+		case 17: cwmWorldState->ServerData()->SystemTimer( tSERVER_INVISIBILITY, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // INVISIBILITYTIMER
+		case 18: cwmWorldState->ServerData()->SystemTimer( tSERVER_OBJECTUSAGE, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // OBJECTUSETIMER
+		case 19: cwmWorldState->ServerData()->SystemTimer( tSERVER_GATE, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // GATETIMER
+		case 20: cwmWorldState->ServerData()->SystemTimer( tSERVER_POISON, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // POISONTIMER
+		case 21: cwmWorldState->ServerData()->SystemTimer( tSERVER_LOGINTIMEOUT, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // LOGINTIMEOUT
+		case 22: cwmWorldState->ServerData()->SystemTimer( tSERVER_HITPOINTREGEN, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // HITPOINTREGENTIMER
+		case 23: cwmWorldState->ServerData()->SystemTimer( tSERVER_STAMINAREGEN, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // STAMINAREGENTIMER
+		case 24: cwmWorldState->ServerData()->SystemTimer( tSERVER_FISHINGBASE, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // BASEFISHINGTIMER
+		case 34: cwmWorldState->ServerData()->MaxPetOwners( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // MAXPETOWNERS
+		case 35: cwmWorldState->ServerData()->MaxFollowers( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // MAXFOLLOWERS
+		case 36: cwmWorldState->ServerData()->MaxControlSlots( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // MAXCONTROLSLOTS
+		case 37: cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // MANAREGENTIMER
+		case 38: cwmWorldState->ServerData()->SystemTimer( tSERVER_FISHINGRANDOM, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // RANDOMFISHINGTIMER
+		case 39: cwmWorldState->ServerData()->SystemTimer( tSERVER_SPIRITSPEAK, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // SPIRITSPEAKTIMER
+		case 50: cwmWorldState->ServerData()->WorldAmbientSounds( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // AMBIENTSOUNDS
+		case 57: cwmWorldState->ServerData()->HtmlStatsStatus( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // HTMLSTATUSENABLED
+		case 59: cwmWorldState->ServerData()->SellMaxItemsStatus( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // SELLMAXITEMS
+		case 67: cwmWorldState->ServerData()->MsgBoardPostingLevel( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // POSTINGLEVEL
+		case 68: cwmWorldState->ServerData()->MsgBoardPostRemovalLevel( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // REMOVALLEVEL
+		case 70: cwmWorldState->ServerData()->SystemTimer( tSERVER_ESCORTWAIT, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // ESCORTINITEXPIRE
+		case 71: cwmWorldState->ServerData()->SystemTimer( tSERVER_ESCORTACTIVE, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // ESCORTACTIVEEXPIRE
+		case 72: cwmWorldState->ServerData()->ServerMoon( 0, static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // MOON1
+		case 73: cwmWorldState->ServerData()->ServerMoon( 1, static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // MOON2
+		case 74: cwmWorldState->ServerData()->DungeonLightLevel( static_cast<LIGHTLEVEL>( JSVAL_TO_INT( newValue ))); break; // DUNGEONLEVEL
+		case 75: cwmWorldState->ServerData()->WorldLightCurrentLevel( static_cast<LIGHTLEVEL>( JSVAL_TO_INT( newValue ))); break; // CURRENTLEVEL
+		case 76: cwmWorldState->ServerData()->WorldLightBrightLevel( static_cast<LIGHTLEVEL>( JSVAL_TO_INT( newValue ))); break; // BRIGHTLEVEL
+		case 77: cwmWorldState->ServerData()->TrackingBaseRange( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // BASERANGE
+		case 78: cwmWorldState->ServerData()->TrackingBaseTimer( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // BASETIMER
+		case 79: cwmWorldState->ServerData()->TrackingMaxTargets( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // MAXTARGETS
+		case 80: cwmWorldState->ServerData()->TrackingRedisplayTime( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // MSGREDISPLAYTIME
+		case 81: cwmWorldState->ServerData()->SystemTimer( tSERVER_MURDERDECAY, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // MURDERDECAYTIMER
+		case 82: cwmWorldState->ServerData()->RepMaxKills( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // MAXKILLS
+		case 83: cwmWorldState->ServerData()->SystemTimer( tSERVER_CRIMINAL, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // CRIMINALTIMER
+		case 84: cwmWorldState->ServerData()->MineCheck( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // MINECHECK
+		case 85: cwmWorldState->ServerData()->ResOre( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // OREPERAREA
+		case 86: cwmWorldState->ServerData()->ResOreTime( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // ORERESPAWNTIMER
+		case 87: cwmWorldState->ServerData()->ResourceAreaSize( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // RESOURCEAREASIZE
+		case 88: cwmWorldState->ServerData()->ResLogs( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // LOGSPERAREA
+		case 89: cwmWorldState->ServerData()->ResLogTime( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // LOGSRESPAWNTIMER
+		case 91: cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // HUNGERRATE
+		case 92: cwmWorldState->ServerData()->HungerDamage( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // HUNGERDMGVAL
+		case 93: cwmWorldState->ServerData()->CombatMaxRange( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // MAXRANGE
+		case 94: cwmWorldState->ServerData()->CombatMaxSpellRange( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // SPELLMAXRANGE
+		case 97: cwmWorldState->ServerData()->CombatAnimalsAttackChance( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // ANIMALATTACKCHANCE
+		case 99: cwmWorldState->ServerData()->CombatNpcDamageRate( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // NPCDAMAGERATE
+		case 100: cwmWorldState->ServerData()->CombatNPCBaseFleeAt( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // NPCBASEFLEEAT
+		case 101: cwmWorldState->ServerData()->CombatNPCBaseReattackAt( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // NPCBASEREATTACKAT
+		case 102: cwmWorldState->ServerData()->CombatAttackStamina( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // ATTACKSTAMINA
+		case 104: cwmWorldState->ServerData()->ServerStartGold( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // STARTGOLD
+		case 105: cwmWorldState->ServerData()->ServerStartPrivs( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // STARTPRIVS
+		case 106: cwmWorldState->ServerData()->SystemTimer( tSERVER_ESCORTDONE, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // ESCORTDONEEXPIRE
+		case 107: cwmWorldState->ServerData()->WorldLightDarkLevel( static_cast<LIGHTLEVEL>( JSVAL_TO_INT( newValue ))); break; // DARKLEVEL
+		case 108: cwmWorldState->ServerData()->TitleColour( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // TITLECOLOUR
+		case 109: cwmWorldState->ServerData()->LeftTextColour( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // LEFTTEXTCOLOUR
+		case 110: cwmWorldState->ServerData()->RightTextColour( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // RIGHTTEXTCOLOUR
+		case 111: cwmWorldState->ServerData()->ButtonCancel( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // BUTTONCANCEL
+		case 112: cwmWorldState->ServerData()->ButtonLeft( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // BUTTONLEFT
+		case 113: cwmWorldState->ServerData()->ButtonRight( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // BUTTONRIGHT
+		case 114: cwmWorldState->ServerData()->BackgroundPic( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // BACKGROUNDPIC
+		case 115: cwmWorldState->ServerData()->TownNumSecsPollOpen( static_cast<UI32>( JSVAL_TO_INT( newValue ))); break; // POLLTIME
+		case 116: cwmWorldState->ServerData()->TownNumSecsAsMayor( static_cast<UI32>( JSVAL_TO_INT( newValue ))); break; // MAYORTIME
+		case 117: cwmWorldState->ServerData()->TownTaxPeriod( static_cast<UI32>( JSVAL_TO_INT( newValue ))); break; // TAXPERIOD
+		case 118: cwmWorldState->ServerData()->TownGuardPayment( static_cast<UI32>( JSVAL_TO_INT( newValue ))); break; // GUARDSPAID
+		case 119: cwmWorldState->ServerData()->ServerTimeDay( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // DAY
+		case 120: cwmWorldState->ServerData()->ServerTimeHours( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // HOURS
+		case 121: cwmWorldState->ServerData()->ServerTimeMinutes( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // MINUTES
+		case 122: cwmWorldState->ServerData()->ServerTimeSeconds( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // SECONDS
+		case 124: cwmWorldState->ServerData()->SkillLevel( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // SKILLLEVEL
+		case 127: cwmWorldState->ServerData()->ServerSkillCap( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // SKILLCAPSINGLE
+		case 136: cwmWorldState->ServerData()->BackupRatio( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // BACKUPSAVERATIO
+		case 138: cwmWorldState->ServerData()->ServerSecondsPerUOMinute( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // SECONDSPERUOMINUTE
+		case 140: cwmWorldState->ServerData()->SystemTimer( tSERVER_POLYMORPH, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // POLYDURATION
+		case 142: cwmWorldState->ServerData()->ServerNetRcvTimeout( static_cast<UI32>( JSVAL_TO_INT( newValue ))); break; // NETRCVTIMEOUT
+		case 143: cwmWorldState->ServerData()->ServerNetSndTimeout( static_cast<UI32>( JSVAL_TO_INT( newValue ))); break; // NETSNDTIMEOUT
+		case 144: cwmWorldState->ServerData()->ServerNetRetryCount( static_cast<UI32>( JSVAL_TO_INT( newValue ))); break; // NETRETRYCOUNT
+		case 145: cwmWorldState->ServerData()->SetClientFeatures( static_cast<UI32>( JSVAL_TO_INT( newValue ))); break; // CLIENTFEATURES
+		case 149: cwmWorldState->ServerData()->PetOfflineTimeout( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // PETOFFLINETIMEOUT
+		case 150: cwmWorldState->ServerData()->SystemTimer( tSERVER_PETOFFLINECHECK, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // PETOFFLINECHECKTIMER
+		case 153: cwmWorldState->ServerData()->SetServerFeatures( static_cast<size_t>( JSVAL_TO_INT( newValue ))); break; // SERVERFEATURES
+		case 162: cwmWorldState->ServerData()->SetSpawnRegionsFacetStatus( static_cast<UI32>( JSVAL_TO_INT( newValue ))); break; // SPAWNREGIONSFACETS
+		case 184: cwmWorldState->ServerData()->CombatWeaponDamageChance( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // WEAPONDAMAGECHANCE
+		case 185: cwmWorldState->ServerData()->CombatArmorDamageChance( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // ARMORDAMAGECHANCE
+		case 186: cwmWorldState->ServerData()->CombatWeaponDamageMin( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // WEAPONDAMAGEMIN
+		case 187: cwmWorldState->ServerData()->CombatWeaponDamageMax( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // WEAPONDAMAGEMAX
+		case 188: cwmWorldState->ServerData()->CombatArmorDamageMin( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // ARMORDAMAGEMIN
+		case 189: cwmWorldState->ServerData()->CombatArmorDamageMax( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // ARMORDAMAGEMAX
+		case 192: cwmWorldState->ServerData()->FishingStaminaLoss( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // FISHINGSTAMINALOSS
+		case 219: cwmWorldState->ServerData()->SystemTimer( tSERVER_DECAYINHOUSE, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // DECAYTIMERINHOUSE
+		case 222: cwmWorldState->ServerData()->MaxHousesOwnable( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // MAXHOUSESOWNABLE
+		case 223: cwmWorldState->ServerData()->MaxHousesCoOwnable( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // MAXHOUSESCOOWNABLE
+		case 227: cwmWorldState->ServerData()->MaxPlayerPackItems( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // MAXPLAYERPACKITEMS
+		case 228: cwmWorldState->ServerData()->MaxPlayerBankItems( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // MAXPLAYERBANKITEMS
+		case 240: cwmWorldState->ServerData()->CombatParryDamageChance( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // PARRYDAMAGECHANCE
+		case 241: cwmWorldState->ServerData()->CombatParryDamageMin( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // PARRYDAMAGEMIN
+		case 242: cwmWorldState->ServerData()->CombatParryDamageMax( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // PARRYDAMAGEMAX
+		case 246: cwmWorldState->ServerData()->AlchemyDamageBonusModifier( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // ALCHEMYBONUSMODIFIER
+		case 247: cwmWorldState->ServerData()->SystemTimer( tSERVER_NPCFLAGUPDATETIMER, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // NPCFLAGUPDATETIMER
+		case 251: cwmWorldState->ServerData()->SystemTimer( tSERVER_THIRSTRATE, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // THIRSTRATE
+		case 252: cwmWorldState->ServerData()->ThirstDrain( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // THIRSTDRAINVAL
+		case 255: cwmWorldState->ServerData()->SystemTimer( tSERVER_BLOODDECAY, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // BLOODDECAYTIMER
+		case 256: cwmWorldState->ServerData()->SystemTimer( tSERVER_BLOODDECAYCORPSE, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // BLOODDECAYCORPSETIMER
+		case 257: cwmWorldState->ServerData()->CombatBloodEffectChance( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // BLOODEFFECTCHANCE
+		case 258: cwmWorldState->ServerData()->SystemTimer( tSERVER_NPCCORPSEDECAY, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // NPCCORPSEDECAYTIMER
+		case 266: cwmWorldState->ServerData()->BuyThreshold( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // BANKBUYTHRESHOLD
+		case 273: cwmWorldState->ServerData()->ServerLanguage( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // SERVERLANGUAGE
+		case 275: cwmWorldState->ServerData()->SetPetLoyaltyGainOnSuccess( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // PETLOYALTYGAINONSUCCESS
+		case 276: cwmWorldState->ServerData()->SetPetLoyaltyLossOnFailure( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // PETLOYALTYLOSSONFAILURE
+		case 277: cwmWorldState->ServerData()->SystemTimer( tSERVER_LOYALTYRATE, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // PETLOYALTYRATE
+		case 279: cwmWorldState->ServerData()->ResFish( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // FISHPERAREA
+		case 280: cwmWorldState->ServerData()->ResFishTime( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // FISHRESPAWNTIMER
+		case 281: cwmWorldState->ServerData()->CombatArcheryHitBonus( static_cast<SI08>( JSVAL_TO_INT( newValue ))); break; // ARCHERYHITBONUS
+		case 283: cwmWorldState->ServerData()->SysMsgColour( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // SYSMESSAGECOLOUR
+		case 291: cwmWorldState->ServerData()->MaxClientBytesIn( static_cast<UI32>( JSVAL_TO_INT( newValue ))); break; // MAXCLIENTBYTESIN
+		case 292: cwmWorldState->ServerData()->MaxClientBytesOut( static_cast<UI32>( JSVAL_TO_INT( newValue ))); break; // MAXCLIENTBYTESOUT
+		case 293: cwmWorldState->ServerData()->NetTrafficTimeban( static_cast<UI32>( JSVAL_TO_INT( newValue ))); break; // NETTRAFFICTIMEBAN
+		case 299: cwmWorldState->ServerData()->MaxSafeTeleportsPerDay( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // MAXSAFETELEPORTSPERDAY
+		case 319: cwmWorldState->ServerData()->MaxPlayerPackWeight( static_cast<SI32>( JSVAL_TO_INT( newValue ))); break; // MAXPLAYERPACKWEIGHT
+		case 320: cwmWorldState->ServerData()->MaxPlayerBankWeight( static_cast<SI32>( JSVAL_TO_INT( newValue ))); break; // MAXPLAYERBANKWEIGHT
+		case 328: cwmWorldState->ServerData()->WeaponDamageBonusType( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // WEAPONDAMAGEBONUSTYPE
+		case 336: cwmWorldState->ServerData()->SystemTimer( tSERVER_AGGRESSORFLAG, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // AGGRESSORFLAGTIMER
+		case 337: cwmWorldState->ServerData()->SystemTimer( tSERVER_PERMAGREYFLAG, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // PERMAGREYFLAGTIMER
+		case 338: cwmWorldState->ServerData()->SystemTimer( tSERVER_STEALINGFLAG, static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // STEALINGFLAGTIMER
+		case 340: cwmWorldState->ServerData()->APSPerfThreshold( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // APSPERFTHRESHOLD
+		case 341: cwmWorldState->ServerData()->APSInterval( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // APSINTERVAL
+		case 342: cwmWorldState->ServerData()->APSDelayStep( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // APSDELAYSTEP
+		case 343: cwmWorldState->ServerData()->APSDelayMaxCap( static_cast<UI16>( JSVAL_TO_INT( newValue ))); break; // APSDELAYMAXCAP
+		case 347: cwmWorldState->ServerData()->SetMoongateFacetStatus( static_cast<UI32>( JSVAL_TO_INT( newValue ))); break; // MOONGATEFACETS
+		case 350: cwmWorldState->ServerData()->HealthRegenCap( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // HEALTHREGENCAP
+		case 351: cwmWorldState->ServerData()->StaminaRegenCap( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // STAMINAREGENCAP
+		case 352: cwmWorldState->ServerData()->ManaRegenCap( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // MANAREGENCAP
+		case 353: cwmWorldState->ServerData()->SwingSpeedIncreaseCap( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // SWINGSPEEDINCREASECAP
+		case 363: cwmWorldState->ServerData()->HealthRegenMode( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // HPREGENMODE
+		case 364: cwmWorldState->ServerData()->StaminaRegenMode( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // STAMINAREGENMODE
+		case 365: cwmWorldState->ServerData()->ManaRegenMode( static_cast<UI08>( JSVAL_TO_INT( newValue ))); break; // MANAREGENMODE
+		case 368: cwmWorldState->ServerData()->HumanHealthRegenBonus( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // HUMANHEALTHREGENBONUS
+		case 369: cwmWorldState->ServerData()->HumanStaminaRegenBonus( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // HUMANSTAMINAREGENBONUS
+		case 370: cwmWorldState->ServerData()->HumanManaRegenBonus( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // HUMANMANAREGENBONUS
+		case 371: cwmWorldState->ServerData()->ElfHealthRegenBonus( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // ELFHEALTHREGENBONUS
+		case 372: cwmWorldState->ServerData()->ElfStaminaRegenBonus( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // ELFSTAMINAREGENBONUS
+		case 373: cwmWorldState->ServerData()->ElfManaRegenBonus( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // ELFMANAREGENBONUS
+		case 374: cwmWorldState->ServerData()->GargoyleHealthRegenBonus( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // GARGOYLEHEALTHREGENBONUS
+		case 375: cwmWorldState->ServerData()->GargoyleStaminaRegenBonus( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // GARGOYLESTAMINAREGENBONUS
+		case 376: cwmWorldState->ServerData()->GargoyleManaRegenBonus( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // GARGOYLEMANAREGENBONUS
+		case 377: cwmWorldState->ServerData()->HumanMaxWeightBonus( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // HUMANMAXWEIGHTBONUS
+		case 378: cwmWorldState->ServerData()->ElfMaxWeightBonus( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // ELFMAXWEIGHTBONUS
+		case 379: cwmWorldState->ServerData()->GargoyleMaxWeightBonus( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // GARGOYLEMAXWEIGHTBONUS
+		case 380: cwmWorldState->ServerData()->CombatMaxNpcAggroRange( static_cast<SI16>( JSVAL_TO_INT( newValue ))); break; // MAXNPCAGGRORANGE
+
+			// Floating Point Settings
+		case 56: cwmWorldState->ServerData()->AccountFlushTimer( ToDouble( newValue )); break; // ACCOUNTFLUSH
+		case 63: cwmWorldState->ServerData()->CheckItemsSpeed( ToDouble( newValue )); break; // CHECKITEMS
+		case 64: cwmWorldState->ServerData()->CheckBoatSpeed( ToDouble( newValue )); break; // CHECKBOATS
+		case 65: cwmWorldState->ServerData()->CheckNpcAISpeed( ToDouble( newValue )); break; // CHECKNPCAI
+		case 66: cwmWorldState->ServerData()->CheckSpawnRegionSpeed( ToDouble( newValue )); break; // CHECKSPAWNREGIONS
+		case 139: cwmWorldState->ServerData()->WeightPerStr( static_cast<R32>( ToDouble( newValue ))); break; // WEIGHTPERSTR
+		case 147: cwmWorldState->ServerData()->NPCWalkingSpeed( ToDouble( newValue )); break; // NPCMOVEMENTSPEED
+		case 155: cwmWorldState->ServerData()->NPCRunningSpeed( ToDouble( newValue )); break; // NPCRUNNINGSPEED
+		case 156: cwmWorldState->ServerData()->NPCFleeingSpeed( ToDouble( newValue )); break; // NPCFLEEINGSPEED
+		case 190: cwmWorldState->ServerData()->GlobalAttackSpeed( ToDouble( newValue )); break; // GLOBALATTACKSPEED
+		case 191: cwmWorldState->ServerData()->NPCSpellCastSpeed( ToDouble( newValue )); break; // NPCSPELLCASTSPEED
+		case 269: cwmWorldState->ServerData()->NPCMountedWalkingSpeed( ToDouble( newValue )); break; // NPCMOUNTEDWALKINGSPEED
+		case 270: cwmWorldState->ServerData()->NPCMountedRunningSpeed( ToDouble( newValue )); break; // NPCMOUNTEDRUNNINGSPEED
+		case 271: cwmWorldState->ServerData()->NPCMountedFleeingSpeed( ToDouble( newValue )); break; // NPCMOUNTEDFLEEINGSPEED
+		case 290: cwmWorldState->ServerData()->CombatArcheryShootDelay( ToDouble( newValue )); break; // ARCHERYSHOOTDELAY
+		case 308: cwmWorldState->ServerData()->GlobalRestockMultiplier( static_cast<R32>( ToDouble( newValue ))); break; // GLOBALRESTOCKMULTIPLIER
+		case 332: cwmWorldState->ServerData()->BODGoldRewardMultiplier( static_cast<R32>( ToDouble( newValue ))); break; // BODGOLDREWARDMULTIPLIER
+		case 333: cwmWorldState->ServerData()->BODFameRewardMultiplier( static_cast<R32>( ToDouble( newValue ))); break; // BODFAMEREWARDMULTIPLIER
+
+			// Era String Settings
+		case 231: cwmWorldState->ServerData()->ExpansionCoreShardEra( cwmWorldState->ServerData()->EraStringToEnum( JS_GetStringBytes( cx, newValue ))); break; // CORESHARDERA
+		case 232: cwmWorldState->ServerData()->ExpansionArmorCalculation( cwmWorldState->ServerData()->EraStringToEnum( JS_GetStringBytes( cx, newValue ))); break; // ARMORCALCULATION
+		case 233: cwmWorldState->ServerData()->ExpansionStrengthDamageBonus( cwmWorldState->ServerData()->EraStringToEnum( JS_GetStringBytes( cx, newValue ))); break; // STRENGTHDAMAGEBONUS
+		case 234: cwmWorldState->ServerData()->ExpansionTacticsDamageBonus( cwmWorldState->ServerData()->EraStringToEnum( JS_GetStringBytes( cx, newValue ))); break; // TACTICSDAMAGEBONUS
+		case 235: cwmWorldState->ServerData()->ExpansionAnatomyDamageBonus( cwmWorldState->ServerData()->EraStringToEnum( JS_GetStringBytes( cx, newValue ))); break; // ANATOMYDAMAGEBONUS
+		case 236: cwmWorldState->ServerData()->ExpansionLumberjackDamageBonus( cwmWorldState->ServerData()->EraStringToEnum( JS_GetStringBytes( cx, newValue ))); break; // LUMBERJACKDAMAGEBONUS
+		case 237: cwmWorldState->ServerData()->ExpansionRacialDamageBonus( cwmWorldState->ServerData()->EraStringToEnum( JS_GetStringBytes( cx, newValue ))); break; // RACIALDAMAGEBONUS
+		case 238: cwmWorldState->ServerData()->ExpansionDamageBonusCap( cwmWorldState->ServerData()->EraStringToEnum( JS_GetStringBytes( cx, newValue ))); break; // DAMAGEBONUSCAP
+		case 239: cwmWorldState->ServerData()->ExpansionShieldParry( cwmWorldState->ServerData()->EraStringToEnum( JS_GetStringBytes( cx, newValue ))); break; // SHIELDPARRY
+		case 313: cwmWorldState->ServerData()->ExpansionWeaponParry( cwmWorldState->ServerData()->EraStringToEnum( JS_GetStringBytes( cx, newValue ))); break; // WEAPONPARRY
+		case 314: cwmWorldState->ServerData()->ExpansionWrestlingParry( cwmWorldState->ServerData()->EraStringToEnum( JS_GetStringBytes( cx, newValue ))); break; // WRESTLINGPARRY
+		case 315: cwmWorldState->ServerData()->ExpansionCombatHitChance( cwmWorldState->ServerData()->EraStringToEnum( JS_GetStringBytes( cx, newValue ))); break; // COMBATHITCHANCE
+
+		default:
+			ScriptError( cx, "SetServerSetting: The specified server setting (%s) is not supported or is read-only.", settingName.c_str() );
+			return JS_FALSE;
+	}
+
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE ); // Indicate success
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	SE_GetClientFeature()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if a specific client feature is enabled on server

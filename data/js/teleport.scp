@@ -61,8 +61,8 @@ ENTRY=1491,     1640,   24,     6032,   1498,   25          //  [Britain_Sewer_x
 ENTRY=1491,     1642,   24,     6032,   1498,   25          //  [Britain_Sewer_x]
 ENTRY=6032,     1499,   All,    1490,   1640,   24          //  [Britain_Sewer_x_to_Britain]
 ENTRY=6032,     1501,   All,    1490,   1642,   24          //  [Britain_Sewer_x_to_Britain]
-ENTRY=6140,     1431,   All,    6137,   1408,   2           //  [Britain_Sewer_to_T2A_Cave]
-ENTRY=6141,     1431,   All,    6138,   1408,   2           //  [Britain_Sewer_to_T2A_Cave]
+ENTRY=6140,     1431,   All,    6137,   1408,   2,   -1,-1,    1, -1  //  [Britain_Sewer_to_T2A_Cave]
+ENTRY=6141,     1431,   All,    6138,   1408,   2,   -1,-1,    1, -1  //  [Britain_Sewer_to_T2A_Cave]
 
 // Felucca/Trammel - Buccaneer's Den
 ENTRY=2647,     2195,   -20,    2651,   2195,   5           //  [Buccaneers_Den_Exit2]
@@ -362,7 +362,8 @@ ENTRY=5450,     1359,   All,    5435,   1341,   0           //  [Khaldun_Pit_To_
 ENTRY=5454,     1359,   All,    5436,   1341,   0           //  [Khaldun_Pit_To_Laboratory_2]
 
 // Felucca/Trammel - Lost Lands
-ENTRY=5697,     3660,   All,    5658,   424,    0           //  [T2A_gy_to_Cave]
+ENTRY=6984,     338,    All,    535,    992,    0,    -1,-1,    8, -1  //  [Heartwood_to_World]
+ENTRY=5697,     3660,   All,    5658,   424,    0,    -1,-1,    1, 1   //  [T2A_gy_to_Cave]
 ENTRY=5736,     3196,   All,    4545,   852,    31          //  [Papua_to_Moonglow]
 ENTRY=6086,     3675,   All,    2398,   199,    0           //  [East_T2A_to_N._Minoc]
 ENTRY=6086,     3676,   All,    2399,   199,    0           //  [East_T2A_to_N._Minoc]
@@ -370,8 +371,8 @@ ENTRY=6074,     3332,   All,    6126,   1410,   15          //  [Hoppers_Bog_to_
 ENTRY=6075,     3332,   All,    6127,   1410,   15          //  [Hoppers_Bog_to_T2A_Cave]
 
 // Felucca/Trammel - Minoc to Lost Lands
-ENTRY=2398,     198,    0,      6087,   3675,   17          //  [N._Minoc_to_east_t2a]
-ENTRY=2399,     198,    0,      6087,   3676,   18          //  [N._Minoc_to_east_t2a]
+ENTRY=2398,     198,    0,      6087,   3675,   17,   -1,-1,    1, -1 //  [N._Minoc_to_east_t2a]
+ENTRY=2399,     198,    0,      6087,   3676,   18,   -1,-1,    1, -1 //  [N._Minoc_to_east_t2a]
 
 // Felucca/Trammel - Moongates - Uncomment to bring back a basic T2A style moongates
 //ENTRY=643,      2067,   All,    1337,   1998,   5           //  [Skara_Moongate_x]
@@ -391,7 +392,7 @@ ENTRY=4449,     1107,   All,    4539,   890,    27          //  [Moonglow_4_y]
 ENTRY=4449,     1115,   All,    4671,   1135,   10          //  [Moonglow_1_x]
 ENTRY=4496,     1475,   All,    4442,   1122,   4           //  [Moonglow_b_x]
 ENTRY=4540,     898,    All,    4442,   1122,   4           //  [Moonglow_b_x]
-ENTRY=4545,     851,    All,    5735,   3196,   11          //  [Moonglow_to_Papua]
+ENTRY=4545,     851,    All,    5735,   3196,   11,   -1,-1,    1, -1  //  [Moonglow_to_Papua]
 ENTRY=4619,     1203,   0,      4622,   1204,   23          //  [Moonglow_illusionist_to_roof]
 ENTRY=4627,     1207,   20,     4633,   1202,   0           //  [Moonglow_illusionist_to_floor]
 ENTRY=4663,     1134,   All,    4442,   1122,   4           //  [Moonglow_b_x]
@@ -547,8 +548,8 @@ ENTRY=6005,     1379,   All,    5151,   4062,   37          //  [Delucia_to_Trin
 ENTRY=6005,     1380,   All,    5151,   4063,   37          //  [Delucia_to_Trinsic_Passage]
 ENTRY=6005,     1381,   All,    5151,   4063,   37          //  [Delucia_to_Trinsic_Passage]
 ENTRY=6025,     1344,   All,    5138,   3664,   31          //  [Trinsic_Passage_to_W.T2A]
-ENTRY=6025,     1345,   All,    5138,   3665,   32          //  [Trinsic_Passage_to_W.T2A]
-ENTRY=6025,     1346,   All,    5138,   3665,   32          //  [Trinsic_Passage_to_W.T2A]
+ENTRY=6025,     1345,   All,    5138,   3665,   32,   -1,-1,    1, -1  //  [Trinsic_Passage_to_W.T2A]
+ENTRY=6025,     1346,   All,    5138,   3665,   32,   -1,-1,    1, -1  //  [Trinsic_Passage_to_W.T2A]
 
 // Felucca/Trammel - Trinsic Hidden Valley
 ENTRY=1653,     2963,   All,    1676,   2986,   1           //  [Hidden_Valley_m_b_x]
@@ -562,13 +563,13 @@ ENTRY=6137,     1409,   All,    6140,   1432,   5           //  [T2A_Cave_to_Bri
 ENTRY=6138,     1409,   All,    6141,   1432,   5           //  [T2A_Cave_to_Britain_Sewer]
 
 // Felucca/Trammel - Vesper Cemetery Passage to Lost Lands/T2A
-ENTRY=2776,     894,    All,    5685,   386,    1           //  [Vesper_gy_to_Cave]
-ENTRY=2776,     895,    All,    5685,   387,    2           //  [Vesper_gy_to_Cave]
+ENTRY=2776,     894,    All,    5685,   386,    1,   -1,-1,    1, -1  //  [Vesper_gy_to_Cave]
+ENTRY=2776,     895,    All,    5685,   387,    2,   -1,-1,    1, -1  //  [Vesper_gy_to_Cave]
 ENTRY=5658,     423,    All,    5697,   3659,   3           //  [Cave_to_T2A_gy]
-ENTRY=5686,     385,    All,    2777,   894,    -23         //  [Vesper_gy_to_Cave]
-ENTRY=5686,     386,    All,    2777,   894,    -23         //  [Vesper_gy_to_Cave]
-ENTRY=5686,     387,    All,    2777,   895,    -23         //  [Vesper_gy_to_Cave]
-ENTRY=2494,     3576,   All,    5905,   4070,   26          //  [Temple_Isle_to_T2A_temple]
+ENTRY=5686,     385,    All,    2777,   894,    -23,   -1,-1,    1, -1  //  [Vesper_gy_to_Cave]
+ENTRY=5686,     386,    All,    2777,   894,    -23,   -1,-1,    1, -1  //  [Vesper_gy_to_Cave]
+ENTRY=5686,     387,    All,    2777,   895,    -23,   -1,-1,    1, -1  //  [Vesper_gy_to_Cave]
+ENTRY=2494,     3576,   All,    5905,   4070,   26,   -1,-1,    1, -1  //  [Temple_Isle_to_T2A_temple]
 ENTRY=5906,     4069,   All,    2493,   3577,   5           //  [T2A_temple_to_Temple_Isle]
 
 // Felucca/Trammel - Wind

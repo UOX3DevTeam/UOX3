@@ -1,7 +1,17 @@
 UOX3 Changelog
 ------------------------
 -================================-
--= 18/07/2025 - UOX3 0.99.7 =-
+-= 30/07/2025 - UOX3 0.99.7a =-
+-================================-
+Contributors: Xuri (hotfix)
+
+Source Changes/Fixes:
+	Fixed a crash during loading of worldfiles caused by an issue with how certain timers (summon/peacemake) were saved and loaded
+	Fixed an issue where murder decay rate was not loaded properly for characters
+	Fixed an issue where summoned creatures with "scared animal" AI would try to escape from their summoner
+
+-================================-
+-= 19/07/2025 - UOX3 0.99.7 =-
 -================================-
 Contributors: Dragon Slayer, i vomit kittens, warden, Xuri, Maarc, Sydius
 Thanks to: cobrag0318

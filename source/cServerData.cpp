@@ -679,7 +679,7 @@ auto CServerData::ResetDefaults() -> void
 	// load defaults values
 	SystemTimer( tSERVER_SHOPSPAWN, 300 );
 	SystemTimer( tSERVER_POISON, 180 );
-	SystemTimer( tSERVER_DECAY, 300 );
+	SystemTimer( tSERVER_DECAY, 3600 );
 	SystemTimer( tSERVER_DECAYINHOUSE, 3600 );
 	ServerSkillTotalCap( 7000 );
 	ServerSkillCap( 1000 );
