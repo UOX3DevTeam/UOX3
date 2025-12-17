@@ -1196,6 +1196,7 @@
 1190=Sie sind nicht schlau genug, um das zu benutzen.
 1191=Deine Hände sind voll!
 1192=Du hältst bereits etwas in dieser Hand!
+1193=[SYSTEM] Mach mal langsam, Champ! Mach eine Pause.
 1197=Ich danke dir, aber ich habe nichts getan, was ein Geschenk rechtfertigt.
 1198=Ich danke dir für deine Zahlung. Das sollte Euch einen guten Start auf Eurem Weg geben. Lebt wohl!
 1199=Es tut mir leid, aber ich kann nur Gold annehmen.
@@ -5096,7 +5097,7 @@
 15060=Intelligenz
 15990=Sie dürfen nicht dorthin reisen.
 15991=Sie können sich nicht von hier zum Ziel teleportieren.
-15991=Sie können hier keine Rune markieren.
+15992=Sie können hier keine Rune markieren.
 // 17000 - Shard Help Menu
 17000=Menü "Hilfe
 17001=Allgemeine Fragen zum Gameplay
@@ -5273,7 +5274,6 @@
 17605=Ich akzeptiere deinen Austritt.
 17606=Dieser bestimmte Gegenstand kostet %i Goldstücke.
 17607=Ich weiß nicht, wovon du sprichst.
-17559=Willkommen in der Gilde! Du wirst feststellen, dass die anderen Mitglieder dir in den Geschäften niedrigere Preise gewähren werden.
 17608=Du bist bereits ein Mitglied unserer Gilde.
 17609=Du musst erst aus deiner anderen Gilde austreten.
 17610=Willkommen bei %s!

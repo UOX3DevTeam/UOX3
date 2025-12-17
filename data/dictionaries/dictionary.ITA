@@ -1196,6 +1196,7 @@
 1190=Non sei abbastanza intelligente per usarlo.
 1191=Le tue mani sono piene!
 1192=Tieni già qualcosa in quella mano!
+1193=[SISTEMA] Rallenta, campione! Prenditi una pausa.
 1197=Grazie di cuore, ma non ho fatto nulla per giustificare un regalo.
 1198=Ti ringrazio per il tuo pagamento. Questo dovrebbe darti un buon inizio sulla tua strada. Addio!
 1199=Mi dispiace, ma posso accettare solo oro.
@@ -5096,7 +5097,7 @@
 15060=Intelligenza
 15990=Non ti è consentito viaggiare lì.
 15991=Non puoi teletrasportarti da qui alla destinazione.
-15991=Non puoi contrassegnare una runa qui.
+15992=Non puoi contrassegnare una runa qui.
 // 17000 - Shard Help Menu
 17000=Menu Aiuto
 17001=Domande generali sul gioco
@@ -5273,7 +5274,6 @@
 17605=Accetto le tue dimissioni.
 17606=Questo particolare oggetto costa %i pezzi d'oro.
 17607=Non so di cosa stia parlando.
-17559=Benvenuto nella gilda! Scoprirai che i tuoi compagni ti garantiranno prezzi più bassi nei negozi.
 17608=Sei già un membro della nostra gilda.
 17609=Devi prima dimetterti dalla tua altra gilda.
 17610=Benvenuto a %s!
