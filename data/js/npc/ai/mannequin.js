@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 var Era_Type = EraStringToNum(GetServerSetting("CoreShardEra"));
 let ARMOR_LAYERS = [0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x0A, 0x0D, 0x11, 0x13, 0x14, 0x16, 0x17, 0x18];
 let RESIST_LAYERS = [ 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0C, 0x0D, 0x0E, 0x11, 0x12, 0x13, 0x14, 0x16, 0x17, 0x18];
@@ -45,7 +47,7 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 	switch( popupEntry )
 	{
 		case 0x000A: // paperdoll
-			TriggerEvent( 18000, "OpenPaperdoll", socket, targObj )
+			OpenPaperdoll( pUser.socket, targObj );
 			break;
 		case 0x000B: // rotate
 			var dir = ( targObj.direction | 0 ) + 1;
@@ -84,7 +86,7 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 /** @type { ( currChar: Character, targChar: Character ) => boolean } */
 function onCharDoubleClick( pUser, targChar )
 {
-	TriggerEvent( 18000, "OpenPaperdoll", pUser.socket, targChar )
+	OpenPaperdoll( pUser.socket, targChar );
 	return false;
 }
 
@@ -912,7 +914,7 @@ function onGumpPress( pSock, iButton, gumpData )
 		case 8:
 			{
 				var raw = gumpData.getEdit( 0 );
-				var res = TriggerEvent( 18002, "validateDescription", raw, true );
+				var res = validateDescription( raw, true );
 
 				if( res.cleared )
 				{
@@ -937,4 +939,71 @@ function onGumpPress( pSock, iButton, gumpData )
 				break;
 			}
 	}
+}
+
+function OpenPaperdoll( socket, targChar )
+{
+    // Create packet to open a paperdoll
+    var pStream = new Packet;
+    pStream.ReserveSize( 66 );
+    pStream.WriteByte( 0, 0x88 );
+    pStream.WriteLong( 1, targChar.serial );
+    pStream.WriteString( 5, targChar.name + ( targChar.title ? " " + targChar.title : "" ), targChar.name.length + ( targChar.title ? targChar.title.length + 1 : 0 ));
+    pStream.WriteByte( 65, 0x2 );
+    socket.Send( pStream );
+    pStream.Free();
+}
+
+			var DISALLOWED_PATTERNS = [
+	/(https?:\/\/|www\.)/i,   // links
+	/\bdiscord\.gg\b/i,       // invites
+	/<[^>]+>/,                // html-ish tags
+	/[\x00-\x1F\x7F]/         // control chars
+];
+
+// Optional: tighten/loosen as needed
+function hasOnlyNormalChars( s )
+{
+	// Allow common punctuation. Reject weird symbols.
+	// Note: keep it simple for ES5.
+	return /^[A-Za-z0-9 \t\r\n.,'"\-_:;!?()#&\/\[\]]+$/.test( s );
+}
+
+function trimSpaces( s )
+{
+	return ( "" + s ).replace(/\s+/g," ").replace(/^\s+|\s+$/g,"");
+}
+
+function validateDescription( raw, allowEmpty )
+{
+	var text = ( raw == null ) ? "" : "" + raw;
+
+	// allow clearing
+	if( allowEmpty && !text.replace(/\s/g,"") )
+		return { ok:true, value:"", cleared:true };
+
+	// disallow empty
+	if( !text.replace(/\s/g,"") )
+		return { ok:false, reason:"empty" };
+
+	// cap length
+	if( text.length > 200 )
+		return { ok:false, reason:"too long" };
+
+	// policy patterns
+	for( var i=0; i<DISALLOWED_PATTERNS.length; i++ )
+	{
+		if( DISALLOWED_PATTERNS[i].test( text ) )
+			return { ok:false, reason:"disallowed content" };
+	}
+
+	// character sanity
+	if( !hasOnlyNormalChars( text ) )
+		return { ok:false, reason:"contains unusual characters" };
+
+	// require at least one letter
+	if( !/[A-Za-z]/.test( text ) )
+		return { ok:false, reason:"needs letters" };
+
+	return { ok:true, value: trimSpaces( text ) };
 }

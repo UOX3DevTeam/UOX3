@@ -394,10 +394,7 @@
 //-------------------------------------------
 // Helper Scripts [18000-18500]
 //-------------------------------------------
-18000=server/network/helpers/openpaperdoll.js
 18001=server/network/helpers/modifycontextmenu.js
-18002=server/misc/helpers/profanitycheck.js
-}
 }
 
 //-------------------------------------------

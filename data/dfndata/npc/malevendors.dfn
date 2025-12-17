@@ -782,23 +782,6 @@ NPCWANDER=0
 GET=m_playervendor f_playervendor
 }
 
-[mannequin]
-{
-NAME=a mannequin
-ID=0x0190
-PRIV=4
-BACKPACK
-SKIN=1828
-FLAG=INNOCENT
-TOTAME=2000
-DIRECTION=4
-SCRIPT=3229
-NPCWANDER=0
-DEX=100
-INT=100
-STR=100
-}
-
 [m_tavernkeeper]
 {
 GET=basevendor
