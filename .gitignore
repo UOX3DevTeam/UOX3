@@ -153,6 +153,7 @@ _deps
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
+!.vscode/c_cpp_properties.json
 !.vscode/launch.json
 !.vscode/extensions.json
 !.vscode/*.code-snippets
@@ -564,6 +565,8 @@ FodyWeavers.xsd
 
 # VS Code files for those working on multiple tools
 *.code-workspace
+!make/VSCode/uox3_cmake.code-workspace
+!make/VSCode/uox3_msbuild.code-workspace
 
 # Local History for Visual Studio Code
 

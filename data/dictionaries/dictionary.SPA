@@ -1196,6 +1196,7 @@
 1190=No eres lo suficientemente inteligente como para usar eso.
 1191=¡Tienes las manos llenas!
 1192=¡Ya tienes algo en esa mano!
+1193=[SISTEMA] ¡Tranquilo, campeón! Tómate un respiro.
 1197=Te agradezco amablemente, pero no he hecho nada que justifique un regalo.
 1198=Le agradezco su pago. Eso debería darte un buen comienzo en tu camino. ¡Adiós!
 1199=Lo siento, pero sólo puedo aceptar oro.
@@ -5165,7 +5166,7 @@
 15060=Inteligencia
 15990=No tienes permitido viajar allí.
 15991=No puedes teletransportarte desde aquí al destino.
-15991=No puedes marcar una runa aquí.
+15992=No puedes marcar una runa aquí.
 // 17000 - Shard Help Menu
 17000=Menú de ayuda
 17001=Preguntas generales sobre el juego
@@ -5342,7 +5343,6 @@
 17605=Acepto tu renuncia.
 17606=Ese objeto en particular cuesta %i piezas de oro.
 17607=No sé de qué me está hablando.
-17559=¡Bienvenido al gremio! Descubrirás que los compañeros te concederán precios más bajos en las tiendas.
 17608=Ya eres miembro de nuestro gremio.
 17609=Primero debes darte de baja de tu otro gremio.
 17610=¡Bienvenido a %s!

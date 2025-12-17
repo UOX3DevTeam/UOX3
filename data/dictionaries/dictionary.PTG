@@ -1196,6 +1196,7 @@
 1190=Não és suficientemente esperto para usar isso.
 1191=Tuas mãos estão cheias!
 1192=Já estás a segurar algo nessa mão!
+1193=[SISTEMA] Calma, campeão! Dê um tempo.
 1197=Perdão, mas eu não fiz nada que justificasse um presente.
 1198=Agradeço-te pelo teu pagamento. Isto deve dar-te um bom começo no teu caminho. Adeus!
 1199=Sinto muito, mas só posso aceitar ouro.
@@ -5165,7 +5166,7 @@
 15060=Intelligence
 15990=Você não tem permissão para viajar para lá.
 15991=Você não pode se teletransportar daqui para o destino.
-15991=Você não pode marcar uma runa aqui.
+15992=Você não pode marcar uma runa aqui.
 // 17000 - Shard Help Menu
 17000=Menu Ajuda
 17001=Questões gerais de jogabilidade
@@ -5342,7 +5343,6 @@
 17605=Aceito a tua demissão.
 17606=Esse objecto custa %i moedas de ouro.
 17607=Não sei do que estás a falar.
-17559=Bem vindo ao grémio! Verás que os outros membros te concederão preços mais baixos nas lojas.
 17608=Já és membro do nosso grémio.
 17609=Deves primeiro demitir-te da tua outra Guild.
 17610=Bem vindo a %s!
