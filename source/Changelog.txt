@@ -1,3 +1,26 @@
+17/12/2025 - Xoduz (#471)
+    [ADD] Introduction of speedhack anti-cheat system which can detect when players are moving faster than intended and throttle them (default) while also allowing custom reactions via JS events. This system is governed by the following new settings in [anticheat] section of uox.ini:
+        SPEEDHACKDETECTION=1 // Enables/disables speedhack detection system
+        SPEEDHACKTHROTTLEPENALTY=2000 // Movement throttle penalty (in ms) applied when speedhack is detected
+        SPEEDHACKMAXDEBT=350 // Max movement debt (in ms) player can accumulate before throttling occurs
+        SPEEDHACKMAXDEBTAVG=0.5 // Max (moving) average debt as a factor of SPEEDHACKMAXDEBT player can accumulate before triggering logging for suspicious activity
+        SPEEDHACKMAXCREDIT=-75 // Movement credit (in ms) that acts as buffer for regular players against jitter, lag, etc
+        SPEEDHACKGRACETHRESHOLD=2000 // Grace threshold to handle large server/network lag spikes.
+    [ADD] Added new JS Events that allow reactions to detection/suspicion of speedhacking:
+        onSpeedHackDetection( pChar, deltaTime ) // Triggers when a player has crossed max threshold for speedhack detection
+        onSpeedHackSuspicion( pChar, rawMoveDebt, deltaTime ) // Triggers when a player has consistently crossed threshold for speedhack suspicion
+    [ADD] New JS Socket Properties:
+        .moveDebt // Accumulated time debt in ms indicating whether player's movement packets arrive early (potential speeding) or late (lag)
+        .moveDebtAvg // Accumulated time debt in ms, on average over at least 100 samples
+        .moveBurstAllowance // Number of upcoming movement steps that will be processed without incurring debt or penalty
+        .nextMoveTime // Timestamp in ms for when next valid movement packet is expected to arrive
+    [ADD] Added new system timers for Sockets and exposed to JS:
+        TIMER.SPEEDHACKPENALTY // Time until next time player is allowed to move after getting throttled by anti-cheat
+        TIMER.SPEEDHACKLOGGED // Time until next time suspicious speed-hack related behavior is logged
+    [FIX] Fixed a 20+ year old movement desynch bug that would cause players to start rubberbanding after taking ~255 steps
+    [UPD] Updated UOX3 and JS documentation with entries related to the new anti-cheat system,
+    [UPD] Updated dictionary files with new system message for anticheat, and addressed some duplicate ID issues
+
 12/11/2025 - strattond (#460)
 	[FIX] TypeScript definitions need to support 2 flavours of onSpellCast
 	[UPD] Update existing scripts with revised scripts
