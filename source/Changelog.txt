@@ -21,6 +21,11 @@
     [UPD] Updated UOX3 and JS documentation with entries related to the new anti-cheat system,
     [UPD] Updated dictionary files with new system message for anticheat, and addressed some duplicate ID issues
 
+17/12/2025 - Xoduz (#473)
+    [ADD] Added build/run support for Visual Studio Code editor through some dedicated workspace files:
+        make\VSCode\uox3_cmake.code-workspace // Relies on cmake and make\CMakeLists.txt for project configuration
+        make\VSCode\uox3_msbuild.code-workspace // Relies on msbuild and make\VS2022\uox3.sln for project configuration
+
 12/11/2025 - strattond (#460)
 	[FIX] TypeScript definitions need to support 2 flavours of onSpellCast
 	[UPD] Update existing scripts with revised scripts
