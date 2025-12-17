@@ -309,6 +309,8 @@ ITEMMENU=260
 ITEMMENU=261
 <=Misc Deeds
 ITEMMENU=70
+<=Reward House Deeds
+ITEMMENU=300
 <=Previous Menu
 ITEMMENU=1
 }
