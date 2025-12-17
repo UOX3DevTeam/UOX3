@@ -74,6 +74,11 @@ CMovement *Movement;
 
 #define XYMAX					256		// Maximum items UOX can handle on one X/Y square
 
+// Movement cost for speedhack prevention
+const SI32 MOVE_COST_WALK = 390;
+const SI32 MOVE_COST_RUN = 190;
+const SI32 MOVE_COST_MOUNT = 90;
+
 inline UI08 TurnClockWise( UI08 dir )
 {
 	UI08 t = (( dir & 0x07 ) + 1 ) % 8;
@@ -260,6 +265,10 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 	const bool amTurning = (( dir & 0x07 ) != c->GetDir() );
 	if( !amTurning )
 	{
+		// Run speedhack detection code and return if movement is denied
+		if( !SpeedHackDetection( mSock, c, dir, sequence ))
+			return;
+
 		if( !CheckForRunning( c, dir ))
 			return;
 
@@ -431,6 +440,7 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 		}
 
 		MoveCharForDirection( c, myx, myy, myz );
+
 		c->SetPathFail( 0 );
 		if( c->GetNpcWander() == WT_FLEE || c->GetNpcWander() == WT_SCARED )
 		{
@@ -471,6 +481,287 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 		CheckCharInsideBuilding( c, mSock, true);
 		CheckRegion( mSock, ( *c ), false );
 	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CMovement::SpeedHackDetection()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Runs checks for speedhack detection and logs suspicious behavior
+//o------------------------------------------------------------------------------------------------o
+bool CMovement::SpeedHackDetection( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
+{
+	// Skip for non-players or if speedhack detection is disabled
+	if( mSock == nullptr || c->GetCommandLevel() != 0 || !cwmWorldState->ServerData()->SpeedHackDetection() )
+		return true;
+
+	TIMERVAL currentTime = cwmWorldState->GetUICurrentTime();
+	TIMERVAL nextMoveTime = mSock->NextMovementTime();
+
+	SI64 sCurrentTime = static_cast<SI64>( currentTime );
+	SI64 sNextMoveTime = static_cast<SI64>( nextMoveTime );
+	SI32 deltaTime = static_cast<SI32>( sNextMoveTime - sCurrentTime ); // positive = early, negative = late
+	SI32 moveDebt = mSock->MovementDebt();
+	SI32 moveDebtForTracking = 0;
+	bool applyCost = true;
+	bool isUnderPenalty = ( mSock->GetTimer( tPC_SPEEDHACKPENALTY ) > currentTime );
+
+	// Grant burst allowance after major server-side lag/delay (such as a world save)
+	if( !isUnderPenalty && ( sCurrentTime - sNextMoveTime ) > cwmWorldState->ServerData()->SpeedHackGraceThreshold() )
+	{
+		// Forgive all debt
+		mSock->MovementDebt( 0 );
+		mSock->NextMovementTime( currentTime );
+
+		// Grant burst allowance to forgive next 4 movement packets
+		mSock->MovementBurstAllowance( 4 );
+
+		// Reset heuristic average so player is not punished by server-side lag/network lag
+		mSock->MovementDebtAverage( 0 );
+		mSock->MovementDebtSampleCount( 0 );
+	}
+	else
+	{
+
+		bool isEarly = ( deltaTime > 0 );
+
+		if( isEarly )
+		{
+			// Movement packet arrived EARLY
+			moveDebt += deltaTime;
+		}
+		else
+		{
+			// Movement packet arrived LATE (deltaTime is <= 0)
+			moveDebt -= ( -deltaTime ); // Pay down debt / build credit
+
+			// Grant burst allowance to forgive next 4 packets (amount client will send by
+			// default without waiting for ack), but only if player has paid off debt,
+			// or if they experienced a significant lag spike (like 150ms), and only if
+			// they don't already have any burst allowance
+			if(( moveDebt <= 0 || deltaTime < -150 ) && mSock->MovementBurstAllowance() == 0 )
+			{
+				mSock->MovementBurstAllowance( 4 );
+			}
+		}
+
+		// Clamp credit to its maximum buffer
+		auto speedHackMaxCredit = cwmWorldState->ServerData()->SpeedHackMaxCredit();
+		if( moveDebt < speedHackMaxCredit )
+		{
+			moveDebt = speedHackMaxCredit;
+		}
+
+		moveDebtForTracking = moveDebt;
+
+		// Check if throttled
+		if( moveDebt > cwmWorldState->ServerData()->SpeedHackMaxDebt() )
+		{
+			UI08 burstAllowance = mSock->MovementBurstAllowance();
+			if( isEarly && burstAllowance > 0 )
+			{
+				// Spend the allowance and reset debt to max credit
+				moveDebt = speedHackMaxCredit;
+				mSock->MovementBurstAllowance( burstAllowance - 1 );
+
+				applyCost = false;
+			}
+			else
+			{
+				bool applyPenalty = true;
+				auto moveStrikes = mSock->MovementSpeedHackStrikes();
+				auto throttlePenalty = cwmWorldState->ServerData()->SpeedHackThrottlePenalty();
+				//bool isUnderPenalty = ( mSock->GetTimer( tPC_SPEEDHACKPENALTY ) > currentTime );
+				if( !isUnderPenalty )
+				{
+					// Throttled! Moving too fast.
+					std::vector<UI16> scriptTriggers = c->GetScriptTriggers();
+					for( auto scriptTrig : scriptTriggers )
+					{
+						cScript *toExecute = JSMapping->GetScript( scriptTrig );
+						if( toExecute != nullptr )
+						{
+							// -1 == event doesn't exist, or returned -1
+							// 0 == script returned false, 0, or nothing - don't execute hard code
+							// 1 == script returned true or 1
+							if( toExecute->OnSpeedHackDetect( c, deltaTime ) == 0 )	// if it exists and we don't want hard code, return
+							{
+								applyPenalty = false;
+								break;
+							}
+						}
+					}
+
+					// Also check global script for event
+					cScript *toExecuteGlobal = JSMapping->GetScript( static_cast<UI16>( 0 ));
+					if( toExecuteGlobal != nullptr )
+					{
+						if( toExecuteGlobal->OnSpeedHackDetect( c, deltaTime ) == 0 )
+						{
+							applyPenalty = false;
+						}
+					}
+				}
+
+				// Apply movement throttle penalty
+				if( applyPenalty )
+				{
+					UI32 basePenalty = static_cast<UI32>( throttlePenalty );
+					UI32 penaltyDuration = basePenalty;
+
+					if( !isUnderPenalty )
+					{
+						// New offense: Calculate duration based on current strikes, then increment
+						// Cap multiplier shift at 4 (16x base penalty)
+						UI08 penaltyLevel = ( moveStrikes > 4 ? 4 : moveStrikes );
+						penaltyDuration = basePenalty * ( 1 << penaltyLevel );
+
+						if( moveStrikes < 255 )
+						{
+							mSock->MovementSpeedHackStrikes( moveStrikes + 1 );
+						}
+					}
+					else
+					{
+						// Existing penalty: Refresh duration based on current level (moveStrikes - 1)
+						// Do not increment moveStrikes for spamming while already frozen
+						UI08 currentLevel = ( moveStrikes > 0 ? moveStrikes - 1 : 0 );
+						UI08 penaltyLevel = ( currentLevel > 4 ? 4 : currentLevel );
+						penaltyDuration = basePenalty * ( 1 << penaltyLevel );
+					}
+
+					if( mSock->MovementDebt() < penaltyDuration )
+					{
+						Console.Log( oldstrutil::format( "Speedhack detected by player %s (%u)! Movement throttled (moveDebt: %i ms, strikes: %i, penaltyDuration: %i).", c->GetName().c_str(), c->GetSerial(), moveDebt, moveStrikes, penaltyDuration ));
+						mSock->SysMessage( 1193 ); // [SYSTEM] Slow down, champ! Take a breather.
+					}
+
+					mSock->MovementDebt( penaltyDuration ); // Cap debt so they don't get stuck
+					mSock->SetTimer( tPC_SPEEDHACKPENALTY, currentTime + penaltyDuration ); // Set penalty timer
+					mSock->NextMovementTime( currentTime ); // Sync to server's current time
+
+					// Hard penalty has already been applied, reset heuristic average
+					mSock->MovementDebtAverage( 0 );
+					mSock->MovementDebtSampleCount( 0 );
+
+					DenyMovement( mSock, c, sequence );
+					return false;
+				}
+				else
+				{
+					// Script said to not apply penalty, so... don't
+					moveDebt = 0; // Clear debt
+					mSock->NextMovementTime( currentTime );
+				}
+			}
+		}
+
+		// Store the new debt/credit value
+		mSock->MovementDebt( moveDebt );
+	}
+
+	// Apply movement cost based on type of movement
+	if( applyCost )
+	{
+		// Tracking of average movement debt over multiple samples
+		auto moveDebtSampleCount = mSock->MovementDebtSampleCount();
+		if( moveDebtSampleCount == 0 )
+		{
+			// Seed initial average debt from current moveDebt
+			mSock->MovementDebtAverage( moveDebtForTracking );
+			mSock->MovementDebtSampleCount( 1 );
+		}
+		else
+		{
+			// Keep track of running average for debt
+
+			// This magic number determines how quickly the average changes in
+			// response to variation in movement debt
+			const R64 alpha = 0.4f;
+			auto newMoveDebtAverage = static_cast<SI32>( alpha * moveDebtForTracking + ( 1.0f - alpha ) * mSock->MovementDebtAverage() );
+			mSock->MovementDebtAverage( newMoveDebtAverage );
+
+			// Keep track of sample count for average debt
+			if( moveDebtSampleCount < 255 )
+			{
+				mSock->MovementDebtSampleCount( moveDebtSampleCount + 1 );
+			}
+		}
+
+		// Only log suspicious behavior when sample counts are higher than 100
+		if( mSock->MovementDebtSampleCount() > 100 )
+		{
+			auto speedHackMaxDebt = cwmWorldState->ServerData()->SpeedHackMaxDebt();
+
+			// Establish a "suspicious behavior" threshold at 25% of the max debt
+			auto suspiciousThreshold = static_cast<SI32>( speedHackMaxDebt * 0.25f );
+
+			auto moveDebtAverage = mSock->MovementDebtAverage();
+			if( moveDebtAverage > suspiciousThreshold && moveDebtAverage < speedHackMaxDebt )
+			{
+				std::vector<UI16> scriptTriggers = c->GetScriptTriggers();
+				for( auto scriptTrig : scriptTriggers )
+				{
+					cScript *toExecute = JSMapping->GetScript( scriptTrig );
+					if( toExecute != nullptr )
+					{
+						// -1 == event doesn't exist, or returned -1
+						// 0 == script returned false, 0, or nothing - don't execute hard code
+						// 1 == script returned true or 1
+						if( toExecute->OnSpeedHackSuspicion( c, moveDebtForTracking, deltaTime ) == 0 )	// if it exists and we don't want hard code, return
+						{
+							mSock->NextMovementTime( currentTime );
+							DenyMovement( mSock, c, sequence );
+							return false;
+						}
+					}
+				}
+
+				// Also check global script for event
+				cScript *toExecuteGlobal = JSMapping->GetScript( static_cast<UI16>( 0 ));
+				if( toExecuteGlobal != nullptr )
+				{
+					if( toExecuteGlobal->OnSpeedHackSuspicion( c, moveDebtForTracking, deltaTime ) == 0 )
+					{
+						mSock->NextMovementTime( currentTime );
+						DenyMovement( mSock, c, sequence );
+						return false;
+					}
+				}
+			}
+
+			if( mSock->GetTimer( tPC_SPEEDHACKLOGGED ) < currentTime )
+			{
+				Console.Log( oldstrutil::format( "Suspected speedhack (Skimming): Player %s (%u) AvgDebt: %d", c->GetName().c_str(), c->GetSerial(), moveDebtAverage ));
+				mSock->SetTimer( tPC_SPEEDHACKLOGGED, BuildTimeValue( 60.0 )); // 1 minute delay until next addition to logs
+			}
+		}
+
+		// Apply actual movement cost
+		SI32 moveCost = MOVE_COST_WALK;
+		bool isRunning = ( dir & 0x80 );
+
+		if( c->IsOnHorse() || c->IsFlying() )
+		{
+			moveCost = ( isRunning ? MOVE_COST_MOUNT : MOVE_COST_RUN );
+		}
+		else if( isRunning )
+		{
+			moveCost = MOVE_COST_RUN;
+		}
+
+		TIMERVAL currentNextMove = mSock->NextMovementTime();
+
+		if( sNextMoveTime < sCurrentTime )
+		{
+			mSock->NextMovementTime( currentTime + moveCost );
+		}
+		else
+		{
+			mSock->NextMovementTime( currentNextMove + moveCost );
+		}
+	}
+
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -625,14 +916,30 @@ bool CMovement::VerifySequence( CChar *c, CSocket *mSock, SI16 sequence )
 {
 	if( mSock != nullptr )
 	{
-		if( mSock->WalkSequence() + 1 != sequence && sequence != 256 )
+		SI16 lastSeq = mSock->WalkSequence();
+
+		// 1. Explicitly handle the first move
+		if( lastSeq == -1 && sequence == 0 )
+		{
+			return true; 
+		}
+
+		// 2. Correctly calculate the *expected* next sequence
+		SI16 nextSeq = (lastSeq == 255) ? 1 : (lastSeq + 1);
+
+		// 3. Check for desync (wrong sequence)
+		//if( mSock->WalkSequence() + 1 != sequence && sequence != 256 ) // TEMP, remove this
+		if( nextSeq != sequence )
 		{
 			DenyMovement( mSock, c, sequence );
 			return false;
 		}
-		else if( mSock->WalkSequence() == sequence )
+		// 4. Check for duplicate packet
+		//else if( mSock->WalkSequence() == sequence ) // TEMP, remove this
+		if( lastSeq == sequence )
 		{
-			DenyMovement( mSock, c, sequence );
+			// Silently ignore, do not Deny
+			DenyMovement( mSock, c, sequence ); // TEMP, remove this
 			return false;
 		}
 	}
@@ -908,10 +1215,6 @@ void CMovement::SendWalkToPlayer( CChar *c, CSocket *mSock, SI16 sequence )
 
 		mSock->Send( &toSend );
 		mSock->WalkSequence( sequence );
-		if( mSock->WalkSequence() == 255 )
-		{
-			mSock->WalkSequence( 1 );
-		}
 	}
 }
 
