@@ -1196,6 +1196,7 @@
 1190=Nejste dostatečně chytří, abyste to mohli používat.
 1191=Máš plné ruce práce!
 1192=Už v té ruce něco držíš!
+1193=[SYSTÉM] Zpomal, šampióne! Dej si pauzu.
 1197=Laskavě ti děkuji, ale neudělal jsem nic, co by mě opravňovalo k daru.
 1198=Děkuji ti za tvou platbu. To by ti mělo dát dobrý začátek na tvé cestě. Sbohem!
 1199=Omlouvám se, ale mohu přijmout pouze zlato.
@@ -5102,7 +5103,7 @@
 15060=Inteligence
 15990=Nemáte povoleno tam cestovat.
 15991=Nemůžete se odtud teleportovat do cíle.
-15991=Nemůžete zde označit runu.
+15992=Nemůžete zde označit runu.
 // 17000 - Nabídka nápovědy pro střepy
 17000=Nabídka nápovědy
 17001=Obecné otázky ke hře
@@ -5279,7 +5280,6 @@
 17605=Přijímám tvou rezignaci.
 17606=Tento konkrétní předmět stojí %i zlatých.
 17607=Nevím, o čem to mluvíš.
-17559=Vítej v cechu! Zjistíš, že kolegové členové ti v obchodech poskytnou nižší ceny.
 17608=Jsi již členem našeho cechu.
 17609=Nejprve musíš vystoupit ze svého jiného cechu.
 17610=Vítej v %s!

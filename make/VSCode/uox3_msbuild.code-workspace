@@ -1,0 +1,93 @@
+{
+    "folders": [
+        {
+            // Actual project root is two folders up
+            "path": "../.."
+        }
+    ],
+    "settings": {
+        // This replaces c_cpp_properties.json
+        "C_Cpp.default.includePath": [
+            "${workspaceFolder}/**",
+            "${workspaceFolder}/source",
+            "${workspaceFolder}/zlib",
+            "${workspaceFolder}/spidermonkey",
+            "${workspaceFolder}/utf8cpp"
+        ],
+        "C_Cpp.default.defines": [
+            "_DEBUG", "_CONSOLE", "STATIC_JS_API", "_CRT_SECURE_NO_WARNINGS", "_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION", "UNICODE", "_UNICODE"
+        ],
+        "C_Cpp.default.compilerPath": "cl.exe",
+        "C_Cpp.default.intelliSenseMode": "windows-msvc-x64",
+        "C_Cpp.default.cppStandard": "c++17",
+        "C_Cpp.default.cStandard": "c11"
+    },
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "Build UOX3 (Debug)",
+                "type": "shell",
+                "command": "msbuild",
+                "args": [
+                    "make/VS2022/uox3.sln",
+                    "/p:Configuration=Debug",
+                    "/p:Platform=x64",
+                    "/t:Build",
+                    "/consoleloggerparameters:NoSummary"
+                ],
+                "problemMatcher": "$msCompile",
+                "group": {
+                    "kind": "build",
+                    "isDefault": false
+                }
+            },
+            {
+                "label": "Build UOX3 (Release)",
+                "type": "shell",
+                "command": "msbuild",
+                "args": [
+                    "make/VS2022/uox3.sln",
+                    "/p:Configuration=Release",
+                    "/p:Platform=x64",
+                    "/t:Build",
+                    "/consoleloggerparameters:NoSummary"
+                ],
+                "problemMatcher": "$msCompile",
+                "group": {
+                    "kind": "build",
+                    "isDefault": true
+                }
+            }
+        ]
+    },
+    "launch": {
+        "version": "0.2.0",
+        "configurations": [
+            {
+                "name": "UOX3 Debug",
+                "type": "cppvsdbg",
+                "request": "launch",
+                "program": "${workspaceFolder}/make/VS2022/x64/Debug/uox3.exe",
+                "args": [],
+                "stopAtEntry": false,
+                "cwd": "${workspaceFolder}/data",
+                "environment": [],
+                "console": "externalTerminal",
+                "preLaunchTask": "Build UOX3 (Debug)"
+            },
+            {
+                "name": "UOX3 Release",
+                "type": "cppvsdbg",
+                "request": "launch",
+                "program": "${workspaceFolder}/make/VS2022/x64/Release/uox3.exe",
+                "args": [],
+                "stopAtEntry": false,
+                "cwd": "${workspaceFolder}/data",
+                "environment": [],
+                "console": "externalTerminal",
+                "preLaunchTask": "Build UOX3 (Release)"
+            }
+        ]
+    }
+}

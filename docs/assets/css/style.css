@@ -248,3 +248,18 @@ pre > code {
 blockquote {
 	margin-left: 10px;
 }
+
+.imgLink {
+	border: none;
+	background: none;
+	display:inline-block;
+}
+.imgLink img
+{
+	height: 16em;
+}
+.imgLink:active img, .imgLink:focus img
+{
+	height: 100%;
+	width: 100%;
+}
