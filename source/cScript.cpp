@@ -836,6 +836,63 @@ SI08 cScript::OnMoveDetect( CBaseObject *sourceObj, CChar *charInRange, UI08 ran
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnSpeedHackDetect()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for object event is attached to when movement speed hack is detected
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnSpeedHackDetect( CChar *player, SI32 deltaTime )
+{
+	if( !ValidateObject( player ))
+		return RV_NOFUNC;
+
+	if( !ExistAndVerify( seOnSpeedHackDetect, "onSpeedHackDetect" ))
+		return RV_NOFUNC;
+
+	jsval rval, params[2];
+	JSObject *myChar	= JSEngine->AcquireObject( IUE_CHAR, player, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( myChar );
+	params[1] = INT_TO_JSVAL( deltaTime );
+
+	if( InvokeEvent( "onSpeedHackDetect", 2, params, &rval ) == JS_FALSE )
+	{
+		SetEventExists( seOnSpeedHackDetect, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnSpeedHackSuspicion()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for object event is attached to when movement speed hack is detected
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnSpeedHackSuspicion( CChar *player, SI32 grossDebt, SI32 deltaTime )
+{
+	if( !ValidateObject( player ))
+		return RV_NOFUNC;
+
+	if( !ExistAndVerify( seOnSpeedHackSuspicion, "onSpeedHackSuspicion" ))
+		return RV_NOFUNC;
+
+	jsval rval, params[3];
+	JSObject *myChar	= JSEngine->AcquireObject( IUE_CHAR, player, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( myChar );
+	params[1] = INT_TO_JSVAL( grossDebt );
+	params[2] = INT_TO_JSVAL( deltaTime );
+
+	if( InvokeEvent( "onSpeedHackSuspicion", 3, params, &rval ) == JS_FALSE )
+	{
+		SetEventExists( seOnSpeedHackSuspicion, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::OnSteal()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for item with event attached when stolen

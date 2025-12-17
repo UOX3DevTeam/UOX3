@@ -60,6 +60,8 @@ enum cS_TID
 	tPC_MUTETIME,
 	tPC_TRACKINGDISPLAY,
 	tPC_TRAFFICWARDEN,
+	tPC_SPEEDHACKPENALTY,
+	tPC_SPEEDHACKLOGGED,
 	tPC_COUNT
 };
 
@@ -156,6 +158,15 @@ private:
 
 	// Timer Vals moved here from CChar due to their inherently temporary nature and to reduce wasted memory
 	TIMERVAL		pcTimers[tPC_COUNT];
+
+	// Speedhack Prevention
+	TIMERVAL		nextMovementTime;
+	SI32			movementDebt;
+	SI32			movementDebtAverage;		// Moving average of debt
+	UI08			movementDebtSampleCount;	// Samples collected
+	UI08			movementBurstAllowance;
+	UI08			movementSpeedHackStrikes;
+
 public:
 	CSocket( size_t sockNum );
 	~CSocket();
@@ -270,6 +281,18 @@ public:
 	void			NegotiateTimeout( TIMERVAL newValue );
 	void			NegotiatedWithAssistant( bool value );
 	void			WalkSequence( SI16 newValue );
+	TIMERVAL		NextMovementTime( void ) const;
+	void			NextMovementTime( TIMERVAL newValue );
+	SI32			MovementDebt( void ) const;
+	void			MovementDebt( SI32 newValue );
+	SI32			MovementDebtAverage( void ) const;
+	void			MovementDebtAverage( SI32 newValue );
+	UI08			MovementDebtSampleCount( void ) const;
+	void			MovementDebtSampleCount( UI08 newValue );
+	UI08			MovementBurstAllowance( void ) const;
+	void			MovementBurstAllowance( UI08 newValue );
+	UI08			MovementSpeedHackStrikes( void ) const;
+	void			MovementSpeedHackStrikes( UI08 newValue );
 	void			AcctNo( UI16 newValue );
 	void			CryptClient( bool newValue );
 	void			CliSocket( size_t newValue );

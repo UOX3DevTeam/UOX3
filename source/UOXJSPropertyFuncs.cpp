@@ -359,7 +359,9 @@ JSBool CTimerProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp
 			case TIMER_SOCK_FISHING:		*vp = INT_TO_JSVAL( tPC_FISHING );			break;
 			case TIMER_SOCK_MUTETIME:		*vp = INT_TO_JSVAL( tPC_MUTETIME );			break;
 			case TIMER_SOCK_TRACKINGDISPLAY: *vp = INT_TO_JSVAL( tPC_TRACKINGDISPLAY );	break;
-			case TIMER_SOCK_TRAFFICWARDEN: *vp = INT_TO_JSVAL( tPC_TRAFFICWARDEN );		break;
+			case TIMER_SOCK_TRAFFICWARDEN:	*vp = INT_TO_JSVAL( tPC_TRAFFICWARDEN );	break;
+			case TIMER_SOCK_SPEEDHACKPENALTY:	*vp = INT_TO_JSVAL( tPC_SPEEDHACKPENALTY );		break;
+			case TIMER_SOCK_SPEEDHACKLOGGED:	*vp = INT_TO_JSVAL( tPC_SPEEDHACKLOGGED );		break;
 			default:
 				break;
 		}
@@ -3452,6 +3454,17 @@ JSBool CSocketProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool s
 			case CSOCKP_CLIENTSUBVER:		gPriv->ClientVersionSub( static_cast<UI08>( encaps.toInt() ));		break;
 			case CSOCKP_CLIENTLETTERVER:	gPriv->ClientVersionLetter( static_cast<UI08>( encaps.toInt() ));	break;
 			case CSOCKP_CLIENTTYPE:			gPriv->ClientType( static_cast<ClientTypes>( encaps.toInt() ));		break;
+			case CSOCKP_MOVEDEBT:			gPriv->MovementDebt( static_cast<SI32>( encaps.toInt() ));			break;
+			case CSOCKP_MOVEDEBTAVG:		gPriv->MovementDebtAverage( static_cast<SI32>( encaps.toInt() ));	break;
+			case CSOCKP_MOVEBURSTALLOWANCE:	gPriv->MovementBurstAllowance( static_cast<UI08>( encaps.toInt() ));break;
+			case CSOCKP_NEXTMOVETIME:
+			{
+				jsdouble newTime_double;
+				JS_ValueToNumber( cx, *vp, &newTime_double );
+
+				gPriv->NextMovementTime( static_cast<TIMERVAL>( newTime_double ));
+				break;
+			}
 			default:
 				break;
 		}
@@ -3581,6 +3594,10 @@ JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *v
 			case CSOCKP_CLIENTSUBVER:		*vp = INT_TO_JSVAL( gPriv->ClientVersionSub() );		break;
 			case CSOCKP_CLIENTLETTERVER:	*vp = INT_TO_JSVAL( gPriv->ClientVersionLetter() );		break;
 			case CSOCKP_CLIENTTYPE:			*vp = INT_TO_JSVAL( gPriv->ClientType() );				break;
+			case CSOCKP_MOVEDEBT:			*vp = INT_TO_JSVAL( gPriv->MovementDebt() );			break;
+			case CSOCKP_MOVEDEBTAVG:		*vp = INT_TO_JSVAL( gPriv->MovementDebtAverage() );		break;
+			case CSOCKP_MOVEBURSTALLOWANCE: *vp = INT_TO_JSVAL( gPriv->MovementBurstAllowance() );	break;
+			case CSOCKP_NEXTMOVETIME:		JS_NewNumberValue( cx, gPriv->NextMovementTime(), vp );	break;
 			case CSOCKP_TARGET:
 			{
 				SERIAL mySerial		= gPriv->GetDWord( 7 );

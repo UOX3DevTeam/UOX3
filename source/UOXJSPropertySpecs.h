@@ -127,6 +127,8 @@ inline JSPropertySpec CTimerProperties[] =
 	{ "SOCK_MUTETIME",			TIMER_SOCK_MUTETIME,		JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "SOCK_TRACKINGDISPLAY",	TIMER_SOCK_TRACKINGDISPLAY,	JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "SOCK_TRAFFICWARDEN",		TIMER_SOCK_TRAFFICWARDEN,	JSPROP_ENUMPERMRO, nullptr, nullptr },
+	{ "SOCK_SPEEDHACKPENALTY",	TIMER_SOCK_SPEEDHACKPENALTY,JSPROP_ENUMPERMRO, nullptr, nullptr },
+	{ "SOCK_SPEEDHACKLOGGED",	TIMER_SOCK_SPEEDHACKLOGGED,	JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ nullptr,					static_cast<SI08>(0),		static_cast<UI08>(0), nullptr, nullptr }
 };
 
@@ -669,6 +671,10 @@ inline JSPropertySpec CSocketProps[] =
 	{ "target",				CSOCKP_TARGET,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "tempObj",			CSOCKP_TEMPOBJ,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "tempObj2",			CSOCKP_TEMPOBJ2,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "nextMoveTime",		CSOCKP_NEXTMOVETIME,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "moveDebt",			CSOCKP_MOVEDEBT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "moveDebtAvg",		CSOCKP_MOVEDEBTAVG,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "moveBurstAllowance",	CSOCKP_MOVEBURSTALLOWANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ nullptr,				static_cast<SI08>(0),		static_cast<UI08>(0), nullptr, nullptr }
 };
 

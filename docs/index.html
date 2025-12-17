@@ -27,8 +27,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 5. August, 2025</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.7b</small></p>
+	<p style="margin:0"><small>Last Updated: 12. December, 2025</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.7c</small></p>
 </div>
 
 <div id="filterMainDocs" contenteditable="true" placeholder="(Search...)" style="margin: 0 auto; background-color: #fff; padding: 5px; width: 250px; margin-top: 5px;"></div>
@@ -60,6 +60,11 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>December 12th, 2025</h4>
+						<ul>
+							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> section with details on new [anticheat] section with additional settings: SPEEDHACKDETECTION, SPEEDHACKTHROTTLEPENALTY, SPEEDHACKMAXDEBT, SPEEDHACKMAXCREDIT, SPEEDHACKGRACETHRESHOLD</li>
+							<li>Added <a href="#antiCheat">Anti-Cheat</a> feature info with details on how the speedhack anti-cheat system can be used to detect and punish players using speedhacks</li>
+						</ul>
 						<h4>June 29th, 2025</h4>
 						<ul>
 							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> section with details on additional settings: POISONCORROSIONSYSTEM</li>
@@ -320,6 +325,7 @@ packitem=0x0f8d,30
 							<li><strong>Combat Tweaks</strong> - Cap the max range of archery weapons, turn off damage numbers in combat, give animals a chance to attack players or to flee once their health reaches the threshold you set.</li>
 							<li><strong>Maps, maps, maps</strong> - Support for pre-ML or post-ML map sizes (or custom sizes, if client allows), and for reading map data in either .mul or .uop formats.</li>
 							<li><strong>Housing</strong> - Track house ownership per character or per account, specify how many houses players can own/co-own, enable/disable item decay in houses, customize lockdowns, secure containers, vendors and more per house type.</li>
+							<li><strong>Anti-Cheat</strong> - Automatic detection and throttling of (and optional, customizable reactions to) players moving faster than intended.</li>
 						</ul>
 					</div>
 					<!--<h4>Custom Gameplay Features</h4>-->
@@ -782,10 +788,27 @@ packitem=0x0f8d,30
 
 					<h3>Option 1) Launch UO using ClassicUO</h3>
 					<p>The de-facto standard way of connecting to private UO shards these days is using <a href="https://www.classicuo.eu/" target="_blank" rel="noopener" title="ClassicUO - open source UO client">ClassicUO</a>, an open-source, cross-platform implementation of the UO client that also works on both <span class="hl">Windows</span>, <span class="hl">Linux</span> and <span class="hl">macOS</span> (data from original UO client still required).</p>
-					<p>Download, install and launch it, and after a short wait you'll be greeted by a screen similar to this:</p>
-					<div style="text-align:center; margin-bottom:10px;"><img style="width: 60%;" src="assets/images/classicuo_profile_setup.png" alt="Guide to ClassicUO profile setup"></div>
-					<p>Follow the arrows in the above image; <span class="hl">Add</span> a new profile, <strong>select it</strong>, then fill in your <strong>shard's name</strong>, your <strong>shard username/password</strong>, the <strong>shard's IP and port</strong>, and the <strong>path to your UO client</strong> installation/data folder. Hit <span class="hl">Save profile</span> and then <span class="hl">Back</span>!</p>
-					<p>From the next window that shows up, make sure your new profile is selected, then hit the <span class="hl">PLAY!</span> button. At this point the ClassicUO client should start up, and you should be ready to log in to your shard!</p>
+					<p>Download, install and start the ClassicUO launcher, then go <span class="hl">Select Profile -> New Profile</span> and fill in your <strong>shard's name</strong>, the <strong>path to your UO client</strong>, your admin <strong>shard username/password</strong> , and the <strong>shard's IP and port</strong>. Finally, click on <span class="hl">Save Changes</span>!</p>
+					<p>Ensure that your new profile is selected, then hit the <span class="hl">Play Desktop</span> button to start UO. The username and password should be auto-filled with the one you setup in the profile, so just hit <strong>Login</strong> in the UO window that opens!</p>
+					<div style="text-align:center; margin-bottom:10px;">
+						<p>(Click to expand images)</p>
+					  <button class="imgLink">
+							<img src="assets/images/cuo_launcher_1.png" alt="ClassicUO Launcher Guide - 1/5"/>
+					  </button>
+					  <button class="imgLink">
+							<img src="assets/images/cuo_launcher_2.png" alt="ClassicUO Launcher Guide - 2/5"/>
+					  </button><br>
+					  <button class="imgLink">
+							<img src="assets/images/cuo_launcher_3.png" alt="ClassicUO Launcher Guide - 3/5"/>
+					  </button>
+					  <button class="imgLink">
+							<img src="assets/images/cuo_launcher_4.png" alt="ClassicUO Launcher Guide - 4/5"/>
+					  </button><br>
+					  <button class="imgLink">
+							<img src="assets/images/cuo_launcher_5.png" alt="ClassicUO Launcher Guide - 5/5"/>
+					  </button>
+					</div>
+
 					<input type="checkbox" id="spoiler_classicUO"/>
 					<label for="spoiler_classicUO">More info about ClassicUO <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -2554,11 +2577,6 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="hl">KEYLESSFRIENDACCESS</span><strong>=1</strong><br>
 							Allow friends of house to use locked doors in house without key in pack.
-							</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">KEYLESSGUESTACCESS</span><strong>=0</strong><br>
-							Allow guests of house to use locked doors in house without key in pack.
 							</p>
 						</div>
 						<div class="settingsDiv">
@@ -5533,6 +5551,36 @@ packitem=0x0f8d,30
 						<p>The next time you log into your shard, you can use the following GM command to add your custom advancement gate item anywhere you want:</p>
 						<p><span class="hl">'add item adv_gate_mastersmith</span> (replace name with name you give your custom gate item)</p>
 					</div>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#antiCheat" id="antiCheat"><span>Anti-Cheat</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<p>By default, UOX3 comes with an <span class="hl">anti-cheat system</span> enabled, which automatically detects players who move faster than intended and throttles their movement in response, with minimal impact on regular players.</p>
+					<p>This system can be enabled/disabled and customized via the following settings under the <strong>[anticheat]</strong> section header in uox.ini:</p>
+					<div><blockquote>[anticheat]<br>
+						{<br>
+						<span class="hl">SPEEDHACKDETECTION=1</span> // Enables/disables speedhack detection system<br>
+						<span class="hl">SPEEDHACKTHROTTLEPENALTY=2000</span> // Movement throttle penalty (in ms) applied when speedhack is detected<br>
+						<span class="hl">SPEEDHACKMAXDEBT=350</span> // Max movement debt (in ms) player can accumulate before throttling occurs<br>
+						<span class="hl">SPEEDHACKMAXDEBTAVG=0.5</span> // Max (moving) average debt as a factor of SPEEDHACKMAXDEBT that player can accumulate over time before triggering log for suspicious activity<br>
+						<span class="hl">SPEEDHACKMAXCREDIT=-75</span> // Movement credit (in ms) that acts as a buffer for regular players against jitter, lag, etc<br>
+						<span class="hl">SPEEDHACKGRACETHRESHOLD=2000</span> // Grace threshold to handle large server/network lag spikes. The lower the value, the more forgiving it is of lag.<br>
+					}</blockquote></div>
+					<p>It relies on a "debt" and "penalty" system, where if player moves too fast, debt increases. If player moves normally/slowly, debt is paid off. If debt grows beyond the threshold defined by <strong>SPEEDHACKMAXDEBT</strong>, the penalty kicks in, in the form of a system timer that prevents movement for the duration defined by <strong>SPEEDHACKTHROTTLEPENALTY</strong>. It also resets this timer every time the player attempts to move again while already under the effects of the penalty; the only way to continue after being caught in the net is to wait out the full timer before attempting to move again.</p>
+					<p>Additionally, if they get caught in the "net" in the same session again, the <strong>throttle penalty is doubled</strong>. Then doubled again the next time. This can happen up to 4 times, after which the penalty applied stays at that level for the remainder of the session.
+					<ul>
+						<li>By increasing the <strong>SPEEDHACKMAXDEBT</strong> value the system can become more lenient (but also easier to abuse, as it allows players to move faster without penalty</li>
+						<li>By decreasing the <strong>SPEEDHACKMAXCREDIT</strong> value, the overall "buffer" against triggering false positives is increased for regular players</li>
+						<li>By decreasing the <strong>SPEEDHACKGRACETHRESHOLD</strong> value, the system becomes more forgiving of lag spikes, whether server or network induced, allowing the forgiving of debt to trigger more often.</li>
+					</ul>
+					<h4>onSpeedHackDetect JS Event</h4>
+					<p>The <span class="hl">onSpeedHackDetect</span> JS Event (see <a href="jsdocs.html#eventOnSpeedHackDetect" title="UOX3 JS Documentation - onSpeedHackDetect">JS Docs</a> for details) can also be used, in the global script or in specific scripts attached to players, to allow for custom behavior/response to speedhack detection - for instance to set up a "three strikes" system that applies a ban to the player account, notification system for GMs, etc.</p>
+					<h4>Moving Average and onSpeedHackSuspicion JS Event</h4>
+					<p>The system also keeps track of a moving average debt across up to 255 samples, and if that average grows higher than a threshold after a minimum amount of samples have been tracked, it will be logged as suspicious activity and will trigger the <span class="hl">onSpeedHackSuspicion</span> JS Event (see <a href="jsdocs.html#eventOnSpeedHackSuspicion" title="UOX3 JS Documentation - onSpeedHackSuspicion">JS Docs</a> for details).</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -12295,6 +12343,13 @@ function commandTitle()
 								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 								<p><strong>Contributors:</strong> Dragon Slayer, i vomit kittens, warden, Xuri, Maarc, Sydius</p>
 								<p><strong>Fun Facts:</strong> Lots of gameplay fixes! Cartography skill! Misc AoS item properties! Combat special moves! Custom object tooltip sorting! Pathfinding revamp! 64-bit timers! Pet Bonding!</p>
+							</div>
+							<input type="checkbox" id="spoiler_history_UOX3_099_7a"/>
+							<label for="spoiler_history_UOX3_099_7">UOX3 v0.99.7a (hotfix)<i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 30 July, 2025</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> Xuri</p>
 							</div>
 						</div>
 					</div>
