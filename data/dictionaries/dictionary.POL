@@ -1196,6 +1196,7 @@
 1190=Nie jesteś wystarczająco bystry by tego użyć.
 1191=Twoje ręce są pełne!
 1192=Już trzymasz coś w tej ręce!
+1193=[SYSTEM] Zwolnij, mistrzu! Zrób sobie przerwę.
 1197=Dziękuję ci uprzejmie, ale nie zrobiłem nic, co by uzasadniało prezent.
 1198=Dziękuję ci za twoją zapłatę. To powinno dać ci dobry start na twojej drodze. Żegnaj!
 1199=Przykro mi, ale mogę przyjąć tylko złoto.
@@ -5124,7 +5125,7 @@
 15060=Inteligencja
 15990=Nie wolno ci tam podróżować.
 15991=Nie możesz się stąd teleportować do miejsca docelowego.
-15991=Nie możesz tutaj zaznaczyć runy.
+15992=Nie możesz tutaj zaznaczyć runy.
 // 17000 - Shard Help Menu
 17000=Menu Pomoc
 17001=Ogólne pytania dotyczące rozgrywki
@@ -5301,7 +5302,6 @@
 17605=Przyjmuję twoją rezygnację.
 17606=Ten konkretny przedmiot kosztuje %i sztuk złota.
 17607=Nie wiem o czym mówisz.
-17559=Witamy w gildii! Przekonasz się, że inni członkowie przyznają ci niższe ceny w sklepach.
 17608=Jesteś już członkiem naszej gildii.
 17609=Musisz najpierw zrezygnować z członkostwa w innej gildii.
 17610=Witamy w %s!
