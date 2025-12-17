@@ -1318,6 +1318,7 @@
 1190=Vous n'etes pas assez intelligent pour utiliser cela.
 1191=Vos mains sont pleines!
 1192=Vous tenez deja quelque chose dans cette main!
+1193=[SYSTÈME] Doucement, champion ! Fais une pause.
 1197=Merci bien, mais je n'ai rien fait pour meriter ce cadeau.
 1198=Merci de votre paiement. Cela devrait vous donner de bonnes bases dans ce domaine. Au revoir!
 1199=Je suis desole, je n'accepte que l'or.
@@ -5242,7 +5243,7 @@
 15060=Intelligence
 15990=Vous n'êtes pas autorisé à y voyager.
 15991=Vous ne pouvez pas vous téléporter d'ici vers la destination.
-15991=Vous ne pouvez pas marquer une rune ici.
+15992=Vous ne pouvez pas marquer une rune ici.
 // 17000 - Shard Help Menu
 17000=Menu Aide
 17001=Questions générales sur le jeu
@@ -5419,7 +5420,6 @@
 17605=J'accepte ta démission.
 17606=Cet objet particulier coûte %i pièces d'or.
 17607=Je ne sais pas de quoi vous parlez.
-17559=Bienvenue dans la guilde ! Tu découvriras que les membres de la guilde t'accorderont des prix plus bas dans les magasins.
 17608=Tu es déjà membre de notre guilde.
 17609=Tu dois d'abord démissionner de ton autre guilde.
 17610=Bienvenue à %s !

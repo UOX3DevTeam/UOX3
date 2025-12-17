@@ -18,6 +18,8 @@ enum ScriptEvent
 	seInRange,				//	*	Missing character in range
 	seOnCollide,			//	**	Items only
 	seOnMoveDetect,			//	***
+	seOnSpeedHackDetect,	//	*****
+	seOnSpeedHackSuspicion,	//	*****
 	seOnSteal,				//	**
 	seOnDispel,				//	**
 	seOnSkill,
@@ -211,6 +213,8 @@ public:
 	bool		InRange( CBaseObject *srcObj, CBaseObject *objInRange );
 	SI08		OnCollide( CSocket *targSock, CChar *objColliding, CBaseObject *objCollideWith );
 	SI08		OnMoveDetect( CBaseObject *sourceObj, CChar *CharInRange, UI08 rangeToChar, UI16 oldCharX, UI16 oldCharY );
+	SI08		OnSpeedHackDetect( CChar *player, SI32 deltaTime );
+	SI08		OnSpeedHackSuspicion( CChar *player, SI32 grossDebt, SI32 deltaTime );
 	SI08		OnSteal( CChar *thief, CItem *theft, CChar *victim );
 	SI08		OnPathfindEnd( CChar *npc, SI08 pathfindResult );
 	SI08		OnEnterEvadeState( CChar *npc, CChar *enemy );
