@@ -1009,39 +1009,43 @@ declare global {
   }
   type UOXSkillsUsed = SkillsUsed;
   interface Socket {
-    readonly  account:          Account | undefined | null;
-    readonly  bytesReceived:    number;
-    readonly  bytesSent:        number;
-              clickX:           number;
-              clickY:           number;
-              clickZ:           number;
-              clientLetterVer:  number;
-              clientMajorVer:   number;
-              clientMinorVer:   number;
-              clientSubVer:     number;
-              clientType:       number;
-              cryptClient:      boolean;
-              currentChar:      Character | undefined | null;
-              currentSpellType: number;
-              firstPacket:      boolean;
-              language:         number;
-              logging:          boolean;
-              newClient:        boolean;
-    readonly  pickupSerial:     number;
-              pickupSpot:       number;
-              pickupX:          number;
-              pickupY:          number;
-              pickupZ:          number;
-    readonly  target:           BaseObject | undefined | null;
-              targetOK:         boolean;
-              tempInt:          number;
-              tempInt2:         number;
-              tempObj:          BaseObject | undefined | null;
-              tempObj2:         BaseObject | undefined | null;
-              walkSequence:     number;
-              wasIdleWarned:    boolean;
-              xText:            string;
-              xText2:           string;
+    readonly  account:            Account | undefined | null;
+    readonly  bytesReceived:      number;
+    readonly  bytesSent:          number;
+              clickX:             number;
+              clickY:             number;
+              clickZ:             number;
+              clientLetterVer:    number;
+              clientMajorVer:     number;
+              clientMinorVer:     number;
+              clientSubVer:       number;
+              clientType:         number;
+              cryptClient:        boolean;
+              currentChar:        Character | undefined | null;
+              currentSpellType:   number;
+              firstPacket:        boolean;
+              language:           number;
+              logging:            boolean;
+              moveBurstAllowance: number;
+              moveDebt:           number;
+              moveDebtAvg:        number;
+              newClient:          boolean;
+              nextMoveTime:       number;
+    readonly  pickupSerial:       number;
+              pickupSpot:         number;
+              pickupX:            number;
+              pickupY:            number;
+              pickupZ:            number;
+    readonly  target:             BaseObject | undefined | null;
+              targetOK:           boolean;
+              tempInt:            number;
+              tempInt2:           number;
+              tempObj:            BaseObject | undefined | null;
+              tempObj2:           BaseObject | undefined | null;
+              walkSequence:       number;
+              wasIdleWarned:      boolean;
+              xText:              string;
+              xText2:             string;
     BuyFrom( npc: Character ): void;
     CanSee( target: Socket | Character | Item ): boolean;
     CanSee( x: number, y: number, z: number ): boolean;
@@ -1246,41 +1250,45 @@ declare global {
     TF_COUNT = 41,     
   }
   enum Timer {
-    TIMEOUT = 0,             // Character timer
-    INVIS = 1,               // Character timer
-    HUNGER = 2,              // Character timer
-    THIRST = 3,              // Character timer
-    POISONTIME = 4,          // Character timer
-    POISONTEXT = 5,          // Character timer
-    POISONWEAROFF = 6,       // Character timer
-    SPELLTIME = 7,           // Character timer
-    SPELLRECOVERYTIME = 8,   // Character timer
-    CRIMFLAG = 9,            // Character timer
-    ANTISPAM = 10,           // Character timer
-    MURDERRATE = 11,         // Character timer
-    PEACETIMER = 12,         // Character timer
-    FLYINGTOGGLE = 13,       // Character timer
-    FIREFIELDTICK = 14,      // Character timer
-    POISONFIELDTICK = 15,    // Character timer
-    PARAFIELDTICK = 16,      // Character timer
-    YOUNGHEAL = 17,          // Character timer
-    YOUNGMESSAGE = 18,       // Character timer
-    MOVETIME = 19,           // Character timer
-    SPATIMER = 20,           // Character timer
-    SUMMONTIME = 21,         // Character timer
-    EVADETIME = 22,          // Character timer
-    LOYALTYTIME = 23,        // Character timer
-    IDLEANIMTIME = 24,       // Character timer
-    LOGOUT = 25,             // Character timer
-    SOCK_SKILLDELAY = 26,    // Socket timer
-    SOCK_OBJDELAY = 27,      // Socket timer
-    SOCK_SPIRITSPEAK = 28,   // Socket timer
-    SOCK_TRACKING = 29,      // Socket timer
-    SOCK_FISHING = 30,       // Socket timer
-    SOCK_MUTETIME = 31,      // Socket timer
-    SOCK_TRACKINGDISPLAY = 32, // Socket timer
-    SOCK_TRAFFICWARDEN = 33, // Socket timer
-    COUNT = 34,              // Socket timer
+    TIMEOUT = 0,              // Character timer
+    INVIS = 1,                // Character timer
+    HUNGER = 2,               // Character timer
+    THIRST = 3,               // Character timer
+    POISONTIME = 4,           // Character timer
+    POISONTEXT = 5,           // Character timer
+    POISONWEAROFF = 6,        // Character timer
+    SPELLTIME = 7,            // Character timer
+    SPELLRECOVERYTIME = 8,    // Character timer
+    CRIMFLAG = 9,             // Character timer
+    ANTISPAM = 10,            // Character timer
+    MURDERRATE = 11,          // Character timer
+    PEACETIMER = 12,          // Character timer
+    FLYINGTOGGLE = 13,        // Character timer
+    FIREFIELDTICK = 14,       // Character timer
+    POISONFIELDTICK = 15,     // Character timer
+    PARAFIELDTICK = 16,       // Character timer
+    YOUNGHEAL = 17,           // Character timer
+    YOUNGMESSAGE = 18,        // Character timer
+    MOVETIME = 19,            // Character timer
+    SPATIMER = 20,            // Character timer
+    SUMMONTIME = 21,          // Character timer
+    EVADETIME = 22,           // Character timer
+    LOYALTYTIME = 23,         // Character timer
+    IDLEANIMTIME = 24,        // Character timer
+    LOGOUT = 25,              // Character timer
+    YOUNGHEAL = 26,           // Character timer
+    YOUNGMESSAGE = 27,        // Character timer
+    SOCK_SKILLDELAY = 28,     // Socket timer
+    SOCK_OBJDELAY = 29,       // Socket timer
+    SOCK_SPIRITSPEAK = 30,    // Socket timer
+    SOCK_TRACKING = 31,       // Socket timer
+    SOCK_FISHING = 32,        // Socket timer
+    SOCK_MUTETIME = 33,       // Socket timer
+    SOCK_TRACKINGDISPLAY = 34, // Socket timer
+    SOCK_TRAFFICWARDEN = 35,  // Socket timer
+    SOCK_SPEEDHACKPENALTY = 36, // Socket timer
+    SOCK_SPEEDHACKLOGGED = 37, // Socket timer
+    COUNT = 38,               // Socket timer
   }
   interface TownRegion {
               appearance:        number;
@@ -1711,8 +1719,10 @@ declare global {
   function onSpecialMove( mChar: Character, abilityId: number ): boolean;
   function onSpeech( speech: string, personTalking: Character, talkingTo: BaseObject ): null | undefined | number | boolean;
   function onSpeechInput( myChar: Character, myItem: Item, mySpeech: string, mySpeechId: number ): void;
-  function onSpellCast( tChar: Character, SpellId: number ): number;
+  function onSpeedHackDetect( pChar: Character, deltaTime: number ): boolean;
+  function onSpeedHackSuspicion( pChar: Character, grossDebt: number, deltaTime: number ): boolean;
   function onSpellCast( sock: Socket, tChar: Character, direct: boolean, SpellId: number ): boolean;
+  function onSpellCast( tChar: Character, SpellId: number ): number;
   function onSpellGain( book: Item, spellNum: number ): boolean;
   function onSpellLoss( book: Item, spellNum: number ): boolean;
   function onSpellSuccess( tChar: Character, SpellId: number ): boolean;
