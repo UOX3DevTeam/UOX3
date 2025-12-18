@@ -319,6 +319,8 @@
 5062=item/shrines.js
 5063=item/recipescroll.js
 
+5090=item/houseplacementtool.js
+
 19100=item/plant_growing/plantsystem.js
 19101=item/plant_growing/plantbowl.js
 19102=item/plant_growing/seed.js
