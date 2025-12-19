@@ -1,5 +1,6 @@
 const humilityVirtueEnabled = GetServerSetting( "HumilityVirtueEnabled" );
 
+/** @type { ( myChar: Character, mySpeech: string ) => boolean } */
 function onTalk( myChar, mySpeech )
 {
 	if( humilityVirtueEnabled )

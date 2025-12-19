@@ -143,6 +143,7 @@ function Honesty_TurnInLostItem( pUser, item, boxTown )
 	item.Delete();
 }
 
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( objMade, objType )
 {
 	if( !honestyVirtueEnabled )
@@ -284,6 +285,7 @@ function Honesty_FindVendorForTown( townName )
 	return Honesty_FoundVendors[idx];
 }
 
+/** @type { ( obj: Character | Item, mSock: Socket ) => boolean } */
 function onIterate( charCheck )
 {
 	if( !ValidateObject( charCheck ))
@@ -315,6 +317,7 @@ function onIterate( charCheck )
 	return false;
 }
 
+/** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( myObj, pSocket )
 {
 	if( !ValidateObject( myObj ) || !myObj.isItem )
