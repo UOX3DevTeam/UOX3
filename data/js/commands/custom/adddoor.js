@@ -1,3 +1,6 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
+
 var tooltipproperty = 1042971;
 var width  = 740;
 var height = 400;
