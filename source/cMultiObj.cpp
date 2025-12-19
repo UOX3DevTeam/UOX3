@@ -25,6 +25,7 @@
 #include "mapstuff.h"
 #include "osunique.hpp"
 #include <classes.h>
+#include <CPacketSend.h>
 const UI16	DEFMULTI_MAXLOCKDOWNS	= 256;
 const UI16	DEFMULTI_MAXSECURECONTAINERS = 4;
 const UI16	DEFMULTI_MAXFRIENDS = 50;
@@ -1687,30 +1688,29 @@ bool HC_StartSession( CSocket *sock, SERIAL houseSerial )
     if( chr == nullptr )
         return false;
 
-    CItem *houseItem = CalcItemObjFromSer( houseSerial );
-    if( !ValidateObject( houseItem ) )
-        return false;
-
-    CMultiObj *mMulti = FindMulti( houseItem );
-    if( !ValidateObject( mMulti ) )
-        return false;
-
-    HouseCustomSession s;
-    s.houseSerial = houseSerial;
-    s.revision    = 1;
-	s.clientLevel = 1;
-    s.floor       = 0;
-
-    s.baseTiles.clear();
-    s.tiles.clear();
-    s.originalTiles.clear();
-    s.backupTiles.clear();
+	HouseCustomSession s;
+	s.houseSerial = houseSerial;
+	s.revision = 1;
+	s.floor = 0;
+	s.tiles.clear();
+	s.baseTiles.clear();
+	s.originalTiles.clear();
+	s.backupTiles.clear();
 
     // 1) Seed foundation tiles into baseTiles
     HC_LoadFoundationTiles( sock, s );
 
-    // 2) Load already committed custom items into tiles
-    HC_LoadExistingCustomTiles( s, houseItem, mMulti );
+
+	// Load already committed custom components into design tiles
+	CItem *houseItem = CalcItemObjFromSer( houseSerial );
+	if( ValidateObject( houseItem ))
+	{
+		CMultiObj *mMulti = FindMulti( houseItem );
+		if( ValidateObject( mMulti ))
+		{
+			HC_LoadExistingCustomTiles( s, houseItem, mMulti );
+		}
+	}
 
     // 3) Snapshot for Revert / Backup (custom tiles only)
     s.originalTiles = s.tiles;
@@ -1838,7 +1838,9 @@ bool HC_RemoveTile( HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z )
     {
         if( it->id == id && it->x == x && it->y == y && it->z == z )
         {
+            // Remove from session list first or last—either is fine as long as you captured 'item'
             s.tiles.erase( it );
+
             return true;
         }
     }
@@ -1948,7 +1950,13 @@ bool HC_CommitSession( CSocket *sock )
 		}
 
         comp->SetMovable( 2 ); // non-moveable like house addons
-        SetCustomHouseTag( comp );
+		TAGMAPOBJECT tagvalObject;
+		tagvalObject.m_ObjectType	= TAGMAP_TYPE_INT;
+		tagvalObject.m_IntValue		= 1;
+		tagvalObject.m_Destroy		= false;
+		tagvalObject.m_StringValue	= "";
+		comp->SetTag( "customhouse", tagvalObject );
+       // SetCustomHouseTag( comp );
 
         // Convert relative coords (client) to world coords (server)
         // NOTE: This assumes x/y/z in your session are relative to the house center.
@@ -1968,6 +1976,13 @@ bool HC_CommitSession( CSocket *sock )
     }
     // Force the committing player to see the final house immediately
 	HC_RefreshHouseToClient( sock, houseItem, mMulti );
+
+	// Force the committing player to see the final house immediately
+	std::vector<HouseTileEntry> sendTiles;
+	HC_BuildCombinedTiles( *s, sendTiles );
+
+	sock->Send( &CPHouseDesignStateGeneral( s->houseSerial, s->revision ) );
+	sock->Send( &CPHouseDesignStateDetailed( s->houseSerial, s->revision, sendTiles, true ) );
 
     return true;
 }
@@ -2056,12 +2071,12 @@ static void GetFoundationGraphics( FoundationType type, UI16 &east, UI16 &south,
 {
     switch( type )
     {
-        default:
         case FT_DarkWood:  corner=0x0014; east=0x0015; south=0x0016; post=0x0017; break;
         case FT_LightWood: corner=0x00BD; east=0x00BE; south=0x00BF; post=0x00C0; break;
         case FT_Dungeon:   corner=0x02FD; east=0x02FF; south=0x02FE; post=0x0300; break;
         case FT_Brick:     corner=0x0041; east=0x0043; south=0x0042; post=0x0044; break;
         case FT_Stone:     corner=0x0065; east=0x0064; south=0x0063; post=0x0066; break;
+		default:           break;
     }
 }
 
@@ -2155,6 +2170,17 @@ static void HC_RefreshHouseToClient( CSocket *sock, CItem *houseItem, CMultiObj 
     // 3) If needed, force the character to refresh world view
     // (only if you have issues with stale multis)
     // sock->CurrcharObj()->Teleport();
+}
+
+void HC_RemoveAtXYZ( HouseCustomSession& s, SI08 x, SI08 y, SI08 z )
+{
+	for( auto it = s.tiles.begin(); it != s.tiles.end(); )
+	{
+		if( it->x == x && it->y == y && it->z == z )
+			it = s.tiles.erase( it );
+		else
+			++it;
+	}
 }
 
 namespace zlibhelper

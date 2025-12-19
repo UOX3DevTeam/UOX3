@@ -206,9 +206,9 @@ struct HouseCustomSession
     UI32 revision;
 	UI08 clientLevel; // raw from client (1..3 typically)
 	UI08 floor; // current floor selected by client (0 = ground)
-    std::vector<HouseTileEntry> tiles;
 
-	std::vector<HouseTileEntry> baseTiles; // foundation/plot tiles shown in designer
+    std::vector<HouseTileEntry> baseTiles;     // foundation border, always visible in design
+    std::vector<HouseTileEntry> tiles;         // actual placed design tiles
     // New: for buttons
     std::vector<HouseTileEntry> originalTiles; // snapshot from start of session
     std::vector<HouseTileEntry> backupTiles;   // set by Backup button
@@ -242,18 +242,21 @@ void HC_BuildCombinedTiles( const HouseCustomSession &s, std::vector<HouseTileEn
 bool HC_LoadFoundationTiles( CSocket* sock, HouseCustomSession& s );
 void HC_ApplyFoundationBaseTiles( FoundationType fType, SI16 width, SI16 height, SI16 xCenter, SI16 yCenter, SI08 designZ, std::vector<HouseTileEntry> &baseTiles );
 void HC_RefreshHouseToClient( CSocket *sock, CItem *houseItem, CMultiObj *mMulti );
+void HC_RemoveAtXYZ( HouseCustomSession& s, SI08 x, SI08 y, SI08 z );
 
 static SI08 FloorToDesignZ( UI08 floor )
 {
-    // floor 0 = 7, floor 1 = 27, floor 2 = 47
+    // Your expected planes:
+    // floor 0 => 7
+    // floor 1 => 27
+    // floor 2 => 47
+    // floor 3 => 67 (if you allow it)
     return (SI08)( 7 + (floor * 20) );
 }
 
 static SI08 SessionDesignZ( const HouseCustomSession *s )
 {
-    if( s == nullptr )
-        return 7;
-
+    if( s == nullptr ) return 7;
     return FloorToDesignZ( s->floor );
 }
 

@@ -5921,31 +5921,33 @@ JSBool SE_HouseBeginCustomize( JSContext *cx, uintN argc, jsval *vp )
 
     const SERIAL houseSerial = pMulti->GetSerial();
 
-    // 1) Put client into customization mode FIRST
-    CPHouseCustomization beginPkt( houseSerial, true );
-    sock->Send( &beginPkt );
+	// 1) Put client into customization mode
+	sock->Send( &CPHouseCustomization( houseSerial, true ) );
 
-    // 2) Start (or reset) server-side customization session
-    HC_StartSession( sock, houseSerial );
+	// 2) Start session (this must load baseTiles)
+	if( !HC_StartSession( sock, houseSerial ) )
+	{
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		return JS_TRUE;
+	}
 
-    HouseCustomSession *s = HC_GetSession( sock );
-    if( s == nullptr || s->houseSerial != houseSerial )
-    {
-        ScriptError( cx, "HouseBeginCustomize: Failed to start house customization session" );
-        JS_SET_RVAL( cx, vp, JSVAL_FALSE );
-        return JS_TRUE;
-    }
+	HouseCustomSession *s = HC_GetSession( sock );
+	if( s == nullptr || s->houseSerial != houseSerial )
+	{
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		return JS_TRUE;
+	}
 
-    // Optional: if you want a consistent starting revision, set it here
-    // s->revision = 1;
 
-    // 3) Send current revision state (general)
-    CPHouseDesignStateGeneral revPkt( houseSerial, s->revision );
-    sock->Send( &revPkt );
+	// 3) Send revision
+	sock->Send( &CPHouseDesignStateGeneral( houseSerial, s->revision ) );
 
-	// 4) Send detailed design (D8) — MUST include foundation + custom tiles
+	// 4) Send D8 with base + custom
 	std::vector<HouseTileEntry> sendTiles;
 	HC_BuildCombinedTiles( *s, sendTiles );
+
+	CPHouseDesignStateGeneral revPkt( houseSerial, s->revision );
+	sock->Send( &revPkt );
 
 	CPHouseDesignStateDetailed detPkt( houseSerial, s->revision, sendTiles, true );
 	sock->Send( &detPkt );

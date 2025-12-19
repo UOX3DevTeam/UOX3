@@ -6008,18 +6008,13 @@ void CPIAOSCommand::Receive( void )
 
 static const SI08 DESIGN_BASE_Z = 7;
 
-static UI08 ClientLevelToFloor( UI32 level )
+static UI08 ClientLevelToFloor( UI32 clientLevel )
 {
-    // ClassicUO: 1=Level1, 2=Level2, 3=Level3
-    if( level == 0 )
-        return 0;
-
-    level -= 1;
-
-    if( level > 2 )
-        level = 2;
-
-    return (UI08)level;
+    // OSI typically: 1=ground, 2=1st, 3=2nd, 4=3rd
+    if( clientLevel <= 1 ) return 0;
+    if( clientLevel == 2 ) return 1;
+    if( clientLevel == 3 ) return 2;
+    return 3; // allow 4th view if you support it
 }
 
 bool CPIAOSCommand::Handle( void )
@@ -6086,35 +6081,79 @@ bool CPIAOSCommand::Handle( void )
 			if( s == nullptr )
 				return true;
 
-			SERIAL houseSerial = s->houseSerial;
-
 			tSock->SysMessage( "pushing commit" );
 
 			bool committed = HC_CommitSession( tSock );
 
-			tSock->Send( &CPHouseCustomization( houseSerial, false ) );
-			HC_EndSession( tSock );
-
 			if( !committed )
-				tSock->SysMessage( "testing Not commited" );
+				tSock->SysMessage( "Commit failed" );
 
-			return true;
-		}
-		case 0x000E:
-		{
-			HouseCustomSession* s = HC_GetSession( tSock );
-			if( s == nullptr )
-				 return true;
-
-			SERIAL houseSerial = s->houseSerial;
-
-			CPHouseDesignStateGeneral revPkt( houseSerial, s->revision );
-			tSock->Send( &revPkt );
+			// Bump revision and resend the *design* to keep ClassicUO in sync
+			if( committed )
+				HC_BumpRevision( *s );
 
 			std::vector<HouseTileEntry> sendTiles;
 			HC_BuildCombinedTiles( *s, sendTiles );
-			tSock->Send( &CPHouseDesignStateDetailed( houseSerial, s->revision, sendTiles, true ) );
 
+			tSock->Send( &CPHouseDesignStateGeneral( s->houseSerial, s->revision ) );
+			tSock->Send( &CPHouseDesignStateDetailed( s->houseSerial, s->revision, sendTiles, true ) );
+			return true;
+		}
+
+		case 0x0005: // Destroy item
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				return true;
+
+			SERIAL houseSerial = s->houseSerial;
+
+			UI32 itemID32 = tSock->GetDWord( 10 );
+			UI16 itemID = ( UI16 ) ( itemID32 & 0xFFFF );
+
+			SI16 x16 = ( SI16 ) tSock->GetDWord( 15 );
+			SI16 y16 = ( SI16 ) tSock->GetDWord( 20 );
+			SI16 z16 = (SI16)tSock->GetDWord( 25 );
+
+			if( x16 < -128 )
+				x16 = -128;
+
+			if( x16 > 127 )
+				x16 = 127;
+
+			if( y16 < -128 )
+				y16 = -128;
+
+			if( y16 > 127 )
+				y16 = 127;
+
+			SI08 x = ( SI08 ) x16;
+			SI08 y = ( SI08 ) y16;
+			SI08 pktZ = ( SI08 ) z16;
+			SI08 z = pktZ;
+
+			// OSI frequently sends 0 even when erasing upper floors.
+			// If packet Z is 0, use the session’s current design plane.
+			if( pktZ == 0 )
+				z = SessionDesignZ( s );
+
+			// Remove from session using computed Z first
+			bool removed = HC_RemoveTile( *s, itemID, x, y, z );
+
+			// Fall back attempts
+			if( !removed && z != pktZ )
+				removed = HC_RemoveTile( *s, itemID, x, y, pktZ );
+
+			if( !removed )
+				removed = HC_RemoveTileAnyZ( *s, itemID, x, y );
+
+			if( removed )
+				HC_BumpRevision( *s );
+
+			tSock->Send( &CPHouseDesignStateGeneral( houseSerial, s->revision ) );
+			std::vector<HouseTileEntry> sendTiles;
+			HC_BuildCombinedTiles( *s, sendTiles );
+			tSock->Send( &CPHouseDesignStateDetailed( houseSerial, s->revision, sendTiles, true ) );
 			return true;
 		}
 
@@ -6146,6 +6185,8 @@ bool CPIAOSCommand::Handle( void )
 
 			//SI08 z = FloorToDesignZ( s->floor );
 			SI08 z = SessionDesignZ( s );
+			// Replace anything already at that spot on that floor
+			HC_RemoveAtXYZ( *s, x, y, z );
 			HC_AddTile( *s, itemID, x, y, z );
 			HC_BumpRevision( *s );
 			char msg[64];
@@ -6158,50 +6199,6 @@ bool CPIAOSCommand::Handle( void )
 			tSock->Send( &CPHouseDesignStateDetailed( houseSerial, s->revision, combined, true ) );
 			return true;
 		}
-
-		case 0x0005: // Destroy item
-		{
-			HouseCustomSession* s = HC_GetSession( tSock );
-			if( s == nullptr )
-				return true;
-
-			SERIAL houseSerial = s->houseSerial;
-
-			UI32 itemID32 = tSock->GetDWord( 10 );
-			UI16 itemID = ( UI16 ) ( itemID32 & 0xFFFF );
-
-			SI16 x16 = ( SI16 ) tSock->GetDWord( 15 );
-			SI16 y16 = ( SI16 ) tSock->GetDWord( 20 );
-
-			if( x16 < -128 ) x16 = -128;
-			if( x16 > 127 )  x16 = 127;
-			if( y16 < -128 ) y16 = -128;
-			if( y16 > 127 )  y16 = 127;
-
-			SI08 x = ( SI08 ) x16;
-			SI08 y = ( SI08 ) y16;
-
-			// Use the same design Z as placement
-			///SI08 z = FloorToDesignZ( s->floor );
-			SI08 z = SessionDesignZ( s );
-			// Remove from session
-			bool removed = HC_RemoveTile( *s, itemID, x, y, z );
-
-			// If not found, fall back: remove by id/x/y ignoring z (handles client oddities)
-			if( !removed )
-				removed = HC_RemoveTileAnyZ( *s, itemID, x, y );
-
-			if( removed )
-				HC_BumpRevision( *s );
-
-			tSock->Send( &CPHouseDesignStateGeneral( houseSerial, s->revision ) );
-			std::vector<HouseTileEntry> sendTiles;
-			HC_BuildCombinedTiles( *s, sendTiles );
-			tSock->Send( &CPHouseDesignStateDetailed( houseSerial, s->revision, sendTiles, true ) );
-			return true;
-		}
-
-
 		case 0x000C: // House Customization :: Exit
 		{
 			HouseCustomSession* s = HC_GetSession( tSock );
@@ -6215,6 +6212,23 @@ bool CPIAOSCommand::Handle( void )
 
 			// Destroy the session
 			HC_EndSession( tSock );
+			return true;
+		}
+		case 0x000E:
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				 return true;
+
+			SERIAL houseSerial = s->houseSerial;
+
+			CPHouseDesignStateGeneral revPkt( houseSerial, s->revision );
+			tSock->Send( &revPkt );
+
+			std::vector<HouseTileEntry> sendTiles;
+			HC_BuildCombinedTiles( *s, sendTiles );
+			tSock->Send( &CPHouseDesignStateDetailed( houseSerial, s->revision, sendTiles, true ) );
+
 			return true;
 		}
 		case 0x0010: // Clear
@@ -6249,6 +6263,7 @@ bool CPIAOSCommand::Handle( void )
 
 			s->clientLevel = (UI08)level;
 			s->floor = ClientLevelToFloor( level );
+
 			// Move player to correct design Z
 			CChar *chr = tSock->CurrcharObj();
 			if( ValidateObject( chr ))
