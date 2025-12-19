@@ -1,5 +1,6 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
+
 let Skill_Filter = [
 	{ code: 0, label: "All" },
 	{ code: 1, label: "Blacksmith" },
@@ -32,6 +33,7 @@ let Amount_Filter = [
 	{ code: 2, label: "Unknown" }
 ];
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	if( !pUser || !iUsed )
@@ -402,6 +404,7 @@ function recipeBuyGump( pUser, book, recipeID, price, name )
 	g.Free();
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( pSocket, buttonID, gumpData )
 {
 	var pUser = pSocket.currentChar;
@@ -688,6 +691,7 @@ function onGumpPress( pSocket, buttonID, gumpData )
 	return;
 }
 
+/** @type { ( myChar: Character, myItem: Item, mySpeech: string, mySpeechId: number ) => void } */
 function onSpeechInput( pUser, pItem, pSpeech, pSpeechID )
 {
 	if( pSpeechID !== 100 )
@@ -748,7 +752,7 @@ function onSpeechInput( pUser, pItem, pSpeech, pSpeechID )
 	// Clear the temp tag
 	pUser.SetTempTag( "RecipeBookPriceRID", null );
 
-	// Name for feedback – pull from first matching scroll
+	// Name for feedback pull from first matching scroll
 	var name = "recipe " + recipeid;
 	for( var item2 = pItem.FirstItem(); !pItem.FinishedItems(); item2 = pItem.NextItem() )
 	{
