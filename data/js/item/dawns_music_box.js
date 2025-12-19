@@ -1,5 +1,6 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
+
 let DawnsMusicRarity = {
 	Common: 0,
 	Uncommon: 1,
