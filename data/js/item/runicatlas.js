@@ -1,3 +1,6 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
+
 let ATLAS_MAX_RUNES = 48;       // 3 pages * 16 rows
 let ATLAS_MAX_CHARGES = 100;    // default cap; override via .maxhp on the item
 let ATLAS_COOLDOWN_MS = 7000;   // 7s, like Runebook
