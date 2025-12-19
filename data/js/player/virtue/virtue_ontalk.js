@@ -1,3 +1,6 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
+
 const humilityVirtueEnabled = GetServerSetting( "HumilityVirtueEnabled" );
 
 /** @type { ( myChar: Character, mySpeech: string ) => boolean } */

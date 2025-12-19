@@ -1,3 +1,7 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
+
+/** @type { ( killer: Character, killed: Character ) => boolean } */
 function onKill( pkiller, pkilled )
 {
 	Humility_RegisterKill( pkiller, pkilled );

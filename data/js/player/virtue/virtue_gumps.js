@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Description: Gumps for virtue system
 // virtue0 = Humility
 // virtue1 = Sacrifice

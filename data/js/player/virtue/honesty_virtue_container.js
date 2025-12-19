@@ -1,3 +1,7 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
+
+/** @type { ( item: Item, dropper: Character, dest: Item ) => number } */
 function onDropItemOnItem( iDropped, cDropper, iDroppedOn )
 {
 	if( !ValidateObject( iDropped ) || !ValidateObject( cDropper ) || !ValidateObject( iDroppedOn ))
