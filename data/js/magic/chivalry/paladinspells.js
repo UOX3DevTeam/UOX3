@@ -163,6 +163,7 @@ function StatsCheck( mChar, mSock, spellType, mSpell )
 	return true;
 }
 
+/** @type { ( tChar: Character, SpellId: number ) => number } */
 function onSpellCast( mSock, mChar, directCast, spellNum )
 {
 	// Are we recovering from another spell that was just cast

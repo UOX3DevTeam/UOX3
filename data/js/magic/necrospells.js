@@ -125,6 +125,7 @@ function IsTransformSpell(spellNum)
     return (spellNum == 106 || spellNum == 107 || spellNum == 116);
 }
 
+/** @type { ( tChar: Character, SpellId: number ) => number } */
 function onSpellCast(mSock, mChar, directCast, spellNum)
 {
 	// Are we recovering from another spell that was just cast
@@ -548,7 +549,7 @@ function onSpellSuccess(mSock, mChar, ourTarg, spellID)
 	// --- Vampiric Embrace: garlic hurts when casting garlic-using spells ---
 	if (mChar.GetTag("necroForm") === "vampire" && SpellNeedsGarlic(mSpell))
 	{
-		// OSI-style tick: 17–23 damage as fire (adjust damage type to your shard’s index)
+		// OSI-style tick: 17ï¿½23 damage as fire (adjust damage type to your shardï¿½s index)
 		var dmg = 17 + RandomNumber(0, 6); // 17-23
 		mChar.Damage(dmg, 5);              // 5 = fire on most UOX3 builds; change if yours differs
 		// (optional) feedback
@@ -612,7 +613,7 @@ function ExitNecroFormOnLogout(pSock, pChar)
         case "lich":     ExitLichForm(pChar, pSock);      break;
         case "wraith":   ExitWraithForm(pChar, pSock);    break;
         default:
-            // Unknown/legacy form tag – just clear & refresh to avoid odd visuals
+            // Unknown/legacy form tag ï¿½ just clear & refresh to avoid odd visuals
             pChar.SetTag("necroForm", null);
             pChar.Refresh();
             break;
@@ -650,7 +651,7 @@ function DispatchSpell(spellNum, mSpell, sourceChar, ourTarg, caster)
 			return;
 		}
 
-		// Cannot animate human corpses (OSI animates “non-humans”; keep it simple)
+		// Cannot animate human corpses (OSI animates ï¿½non-humansï¿½; keep it simple)
 		if (ourTarg.isHuman)
 		{
 			if (sock) sock.SysMessage("There is not enough life force there to animate.");
@@ -687,10 +688,10 @@ function DispatchSpell(spellNum, mSpell, sourceChar, ourTarg, caster)
 		mob.tamed = false;
 		//mob.owner = caster;              // not controllable
 		mob.loyalty = 100;               // ensure no pet mechanics kick in
-		mob.wandertype = 2;            // wander but we’ll nudge follow
-		mob.aitype = 88;               // your shard’s “hostile roam” AI (you already used this)
+		mob.wandertype = 2;            // wander but weï¿½ll nudge follow
+		mob.aitype = 88;               // your shardï¿½s ï¿½hostile roamï¿½ AI (you already used this)
 		mob.skillToTame = 22000;        // untamable
-		mob.Follow(caster);            // “tend to follow you” feel (they’re still not commandable)
+		mob.Follow(caster);            // ï¿½tend to follow youï¿½ feel (theyï¿½re still not commandable)
 		// Also add pet to player's list of active followers
 		caster.AddFollower( mob );
 		mob.SetTag("animated", 1);
@@ -713,7 +714,7 @@ function DispatchSpell(spellNum, mSpell, sourceChar, ourTarg, caster)
 		// Cosmetic: classic stat FX + small sound (DFN handled STATFX; this is just a ping if you like)
 		// caster.FixedParticles(0x3728, 1, 10, 9910, 0);
 
-		if (sock) sock.SysMessage("Dark energies bind the corpse to your will… for a time.");
+		if (sock) sock.SysMessage("Dark energies bind the corpse to your willï¿½ for a time.");
 		return;
 	}
 
@@ -905,7 +906,7 @@ function EnterHorrificBeast(pChar, pSock)
     // Canon effects (set as tags so your combat/regen scripts can honor them):
     // +20 HPR 2 HP/sec
     // +25% Melee Damage Increase
-    // Base hand damage becomes 5–15
+    // Base hand damage becomes 5ï¿½15
 	pChar.healthRegenBonus = 20;
 	pChar.damageIncrease = 25;
     pChar.Refresh();
@@ -956,7 +957,7 @@ function EnterVampiricEmbrace(pChar, pSock)
 	pChar.SetTag("necroForm", "vampire");
 
 	// Effects (UOGuide): 20% life drain on weapon damage, +15 Stamina Regen, +3 Mana Regen,
-	// -25 Fire Resist, “resistant to most poisons” (orange petals-like), garlic hurts on cast,
+	// -25 Fire Resist, ï¿½resistant to most poisonsï¿½ (orange petals-like), garlic hurts on cast,
 	// +25% damage taken from Undead Slayer. :contentReference[oaicite:0]{index=0}
 	if (!pChar.GetTag("Vamp_LeechPct"))
 		pChar.SetTag("Vamp_LeechPct", 20);
@@ -976,14 +977,14 @@ function EnterVampiricEmbrace(pChar, pSock)
 	pChar.Resist(7, poison + 70); // poison
 
 	// mark poison handling & cure-potion lockout
-	pChar.SetTag("Vamp_PoisonShield", 1);   // treat like “orange petals”
+	pChar.SetTag("Vamp_PoisonShield", 1);   // treat like ï¿½orange petalsï¿½
 	pChar.SetTag("Vamp_NoCurePotions", 1);  // block cure potions while active
 
-	// mark garlic-on-cast pulse (we’ll damage when garlic is detected on a cast)
+	// mark garlic-on-cast pulse (weï¿½ll damage when garlic is detected on a cast)
 	pChar.SetTag("Vamp_GarlicPain", 1);
 
 	// optional: attach a small script to apply the life-leech & garlic checks on hits/casts
-	// if you already have a general “onHit/onCast” trigger, you can do this there instead.
+	// if you already have a general ï¿½onHit/onCastï¿½ trigger, you can do this there instead.
 	// pChar.AddScriptTrigger(7006);
 
 	pChar.Refresh();
@@ -1101,7 +1102,7 @@ var ANIMATE_SPAWN_OVERRIDE = {
 var ANIMATE_BUCKET_DEFAULT = {
 	1: "skeleton",        // Arachnids -> skeleton (or "moundofmaggots")
 	2: "skeletalmount",   // Equinae  -> skeletal mount
-	3: "",                // Elementals: disallow by default (empty means “no”)
+	3: "",                // Elementals: disallow by default (empty means ï¿½noï¿½)
 	4: ""                 // Dragons: disallow by default
 };
 
@@ -1128,7 +1129,7 @@ function pickAnimatedType(ourCorpse)
 	if (def && def.length) 
 		return def;
 
-	// bucket has no default -> use fame fallback (lets you “enable” buckets 3/4 via fame if desired)
+	// bucket has no default -> use fame fallback (lets you ï¿½enableï¿½ buckets 3/4 via fame if desired)
 	return spawnByFame(Math.max(ourCorpse.fame | 0, 0));
 }
 
@@ -1264,7 +1265,7 @@ const maxControlSlots = GetServerSetting("MaxControlSlots");
 // maxFollowers only comes into play if maxControlSlots is 0 in UOX.INI
 const maxFollowers = GetServerSetting("MaxFollowers");
 
-/** @type {(pSock: Socket, buttonID: number, gumpID: number) => void} */
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress(pSock, buttonID, gumpID)
 {
 	//if (!pSock || gumpID !== FAMILIAR_GUMP_ID)

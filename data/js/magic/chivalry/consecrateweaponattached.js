@@ -1,4 +1,5 @@
 // Function to handle timer expiration
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
 	if( timerID == 0 )
@@ -21,6 +22,7 @@ function onTimer( timerObj, timerID )
 }
 
 // Function to modify damage
+/** @type { ( attacker: Character, damaged: Character, damageValue: number, damageType: WeatherType ) => boolean } */
 function onDamageDeal( attacker, damaged, damageValue, damageType )
 {
 

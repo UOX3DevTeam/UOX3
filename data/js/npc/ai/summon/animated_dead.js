@@ -33,6 +33,7 @@ function onAICombatTarget( pChar, pTarget )
 	return true;
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( mChar, timerID )
 {
 	var socket = mChar.socket;
@@ -51,6 +52,7 @@ function onTimer( mChar, timerID )
 	}
 }
 
+/** @type { ( pDead: Character, iCorpse: Item ) => boolean } */
 function onDeath( pDead, iCorpse )
 {
 	iCorpse.SetTag("animated", true);
@@ -62,6 +64,7 @@ function onReleasePet( player, pet )
 	return false;
 }
 
+/** @type { ( myChar: Character, mySpeech: string ) => boolean } */
 function onTalk( myChar, mySpeech )
 {
 	return false;

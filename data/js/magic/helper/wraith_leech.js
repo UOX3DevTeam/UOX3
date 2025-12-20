@@ -3,7 +3,7 @@
 
 // Character Script Trigger: 6005 (Wraith Form mana leech)
 
-/** @type {(attacker: Character, damaged: Character, damageValue: number, damageType: WeatherType) => boolean} */
+/** @type { ( attacker: Character, damaged: Character, damageValue: number, damageType: WeatherType ) => boolean } */
 function onDamageDeal(attacker, damaged, damageValue, damageType)
 {
     if (!ValidateObject(attacker) || !ValidateObject(damaged) || damageValue <= 0)
