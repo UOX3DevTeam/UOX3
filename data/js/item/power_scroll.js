@@ -192,6 +192,7 @@ function applyPowerScroll( pUser, iScroll )
 	return 1;
 }
 
+/** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( iCreated )
 {
 	if( !ValidateObject( iCreated ))
@@ -208,7 +209,7 @@ function onCreateDFN( iCreated )
 
 
 // Event handlers -------------------------------------------------------------
-/** @type { (  user: Character, iUsing: Item  ) => boolean } */
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	if( !ValidateObject( pUser ) || !ValidateObject( iUsed ))
@@ -276,7 +277,7 @@ function powerScrollGump( pSocket, iScroll )
 	powerScrollGump.Free();
 }
 
-/** @type { (  myObj: Socket, pressed: number, gump: GumpData  ) => void } */
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( pSocket, myButton, gumpData )
 {
 	if( pSocket == null )
