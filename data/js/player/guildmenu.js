@@ -636,7 +636,7 @@ function GuildMenu(pUser)
 	guildMenu.AddHTMLGump(260, 40, 300, 35, false, false, "<basefont color=#ffffff>Guild Fealty</basefont>");
 	guildMenu.AddPicture(240, 15, 0x0ED4);
 
-	// Left nav – Fealty highlighted
+	// Left nav Fealty highlighted
 	guildMenu.AddBackground(0, 0, 180, 600, 0x6DB);
 
 	guildMenu.AddHTMLGump(30, 20, 300, 35, false, false, "<basefont color=#ffffff>Guild Roster</basefont>");
@@ -691,7 +691,7 @@ function GuildMenu(pUser)
 	guildMenu.AddButton(200, 170, 0xFB4, 0xFB6, 1, 0, 23100);
 	guildMenu.AddHTMLGump(235, 170, 200, 20, false, false, "<basefont color=#111111>Clear fealty vote</basefont>");
 
-	// NEW: “Change fealty” button -> CustomTarget(1, ...)
+	// NEW: Change fealty button -> CustomTarget(1, ...)
 	guildMenu.AddButton(200, 200, 0xFB7, 0xFB9, 1, 0, 23200);
 	guildMenu.AddHTMLGump(235, 200, 320, 20, false, false, "<basefont color=#111111>Click, then target a guild member to pledge fealty to.</basefont>");
 
@@ -871,6 +871,7 @@ function GuildMenu(pUser)
 	guildMenu.Free();
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress(pSock, pButton, gumpData)
 {
 	var pUser = pSock.currentChar;
@@ -1078,7 +1079,7 @@ function onGumpPress(pSock, pButton, gumpData)
 	}
 
 
-	// Set rank — 15400..15499
+	// Set rank 15400..15499
 	else if (pButton >= 15400 && pButton < 15400 + 100)
 	{
 		if (!CanPromoteDemote(guildinfo, pUser))
@@ -1116,7 +1117,7 @@ function onGumpPress(pSock, pButton, gumpData)
 		// Do not allow changing the guild master's rank through this UI
 		if (IsGuildMaster(guildinfo, target))
 		{
-			pSock.SysMessage("The guild master’s rank cannot be changed.");
+			pSock.SysMessage("The guild master's rank cannot be changed.");
 			GuildMenu(pUser);
 			return;
 		}
@@ -1147,7 +1148,7 @@ function onGumpPress(pSock, pButton, gumpData)
 		GuildMenu(pUser);
 		return;
 	}
-	// Kick member — 15500..15599
+	// Kick member - 15500..15599
 	else if (pButton >= 15500 && pButton < 15500 + 100)
 	{
 		if (!CanPromoteDemote(guildinfo, pUser))
@@ -1544,6 +1545,7 @@ function onGumpPress(pSock, pButton, gumpData)
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0(socket, target)
 {
 	var pUser = socket.currentChar;
@@ -1595,6 +1597,7 @@ function onCallback0(socket, target)
 		target.socket.SysMessage("You have been invited to join " + (guild.name || "a guild") + " as a recruit.");
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1(socket, target)
 {
 	var pUser = socket.currentChar;
@@ -1947,7 +1950,7 @@ function SaveGuildNews(guild, newsArray)
 	// Write new ones (max 10)
 	if (!newsArray || !newsArray.length)
 	{
-		// no news – just save cleared state
+		// no news - just save cleared state
 		return SaveGuildConfig(guild, cfg);
 	}
 

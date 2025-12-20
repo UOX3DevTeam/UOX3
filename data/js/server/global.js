@@ -244,6 +244,7 @@ function onDeath( pDead, iCorpse )
 	return TriggerEvent( 5045, "onDeath", pDead, iCorpse );
 }
 
+/** @type { ( presser: Character ) => boolean } */
 function onGuildButton( pChar )
 {
 	if( !ValidateObject( pChar ))
