@@ -410,7 +410,7 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"DECAYSTAGEHIHRS"s, 387},
 	{"DECAYSTAGEDANGERHRS"s, 388},
 	{"HOUSEDECAY"s, 389},
-	{"QUESTSENABLED"s, 390},
+	{"QUESTSENABLED"s, 395},
 	{"SPEEDHACKDETECTION", 400},
 	{"SPEEDHACKMAXDEBT", 401},
 	{"SPEEDHACKMAXDEBTAVG", 402},
@@ -536,8 +536,8 @@ constexpr auto BIT_POISONCORROSIONSYSTEM			= UI32( 110 );
 constexpr auto BIT_HOUSEDECAY						= UI32( 111 );
 constexpr auto BIT_HOUSEITEMSDELETEONDECAY			= UI32( 112 );
 constexpr auto BIT_HOUSEGRANDFATHERED				= UI32( 113 );
-constexpr auto BIT_QUESTSENABLED					= UI32( 114 );
 constexpr auto BIT_SPEEDHACKDETECTION				= UI32( 119 );
+constexpr auto BIT_QUESTSENABLED					= UI32( 120 );
 
 
 // New uox3.ini format lookup
@@ -7520,7 +7520,7 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 389:	// HOUSEDECAY
 			HouseDecay( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
 			break;
-		case 390:	 // QUESTSENABLED
+		case 395:	 // QUESTSENABLED
 			QuestsEnabled( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
 			break;  
 		case 400:	// SPEEDHACKDETECTION
