@@ -1,3 +1,6 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
+
 function QuestMenu( pUser )
 {
 	var socket = pUser.socket;
@@ -27,8 +30,6 @@ function QuestMenu( pUser )
 		if( quest )
 		{
 			// Trim and normalize categories for comparison
-			//var questCategory = manualTrim( quest.category || "" ).toLowerCase();
-			//var playerCategory = manualTrim( currentCategory || "" ).toLowerCase();
 			var questCategory = ( quest.category || "" ).trim().toLowerCase();
 			var playerCategory = ( currentCategory || "" ).trim().toLowerCase();
 
@@ -61,7 +62,6 @@ function QuestMenu( pUser )
 
 	// Adjust the quest list start position below the category buttons
 	var questListStartY = 110 + categories.length * 16;
-	//var questListStartY = 110 + categories.length * 30;
 
 	// Add pagination for filtered quests
 	for( var page = 0; page < totalPages; page++ )
@@ -226,15 +226,6 @@ function CompletedQuestsMenu( pUser )
 			uniqueIds[id] = 1; uniqueQuests.push(id);
 		}
 	}
-	// Ensure unique entries
-	//var uniqueQuests = [];
-	//for( var i = 0; i < completedQuests.length; i++ )
-	//{
-	//	if( uniqueQuests.indexOf( completedQuests[i] ) == -1 )
-	//	{
-	//		uniqueQuests.push( completedQuests[i] );
-	//	}
-	//}
 
 	var questsPerPage = 10; // Number of quests per page
 	var totalPages = Math.ceil( uniqueQuests.length / questsPerPage );

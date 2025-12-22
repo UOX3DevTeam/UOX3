@@ -1,3 +1,6 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
+
 function QuestConversationGump( pUser, npcTarget, questID )
 {
 	var socket = pUser.socket;
@@ -104,30 +107,56 @@ function onGumpPress( pSock, pButton, gumpData )
 	if( !ValidateObject( pUser ))
 		return;
 
-	var questNpc = CalcCharFromSer( parseInt( pUser.GetTag( "questNpcSerial" )));
-	var initialQuestID = parseInt( questNpc.GetTag( "QuestID" ), 10 );
-	var playerQuestID = ResolvePlayerQuestID( pUser, initialQuestID );
-	var quest = TriggerEvent( 5801, "QuestList", playerQuestID );
+	// If this gump was opened from login, we will NOT have an NPC.
 	var loginQuestID = parseInt( pUser.GetTempTag( "questConversationID" ), 10 );
+	var hasLoginQuest = ( loginQuestID !== null && loginQuestID !== undefined && loginQuestID > 0 );
+
+	var questNpc = null;
+	var playerQuestID = null;
+	var quest = null;
+
+	if( hasLoginQuest )
+	{
+		playerQuestID = loginQuestID;
+		quest = TriggerEvent( 5801, "QuestList", playerQuestID );
+	}
+	else
+	{
+		var npcSer = parseInt( pUser.GetTag( "questNpcSerial" ), 10 );
+		questNpc = CalcCharFromSer( npcSer );
+
+		if( !ValidateObject( questNpc ))
+			return; // normal NPC-based gump; no NPC means we can't proceed safely
+
+		var initialQuestID = parseInt( questNpc.GetTag( "QuestID" ), 10 );
+		playerQuestID = ResolvePlayerQuestID( pUser, initialQuestID );
+		quest = TriggerEvent( 5801, "QuestList", playerQuestID );
+	}
 
 	switch( pButton )
 	{
 		case 0: // Close gump
-			break;
-		case 1: // Accept quest
-			if( loginQuestID !== null && loginQuestID !== undefined && loginQuestID >= 1 )
-			{
-				TriggerEvent( 5800, "StartQuest", pUser, loginQuestID );
+			// Important: clear the login temp tag so later NPC gumps don't mis-detect
+			if( hasLoginQuest )
 				pUser.SetTempTag( "questConversationID", null );
-			}
-			else
-			{
-				TriggerEvent( 5800, "StartQuest", pUser, playerQuestID );
-			}
-			pUser.SoundEffect( 0x5B4, true );
 			break;
+
+		case 1: // Accept quest
+			TriggerEvent( 5800, "StartQuest", pUser, playerQuestID );
+			if( hasLoginQuest )
+				pUser.SetTempTag( "questConversationID", null );
+			break;
+
 		case 2: // Refuse quest
-			questNpc.TextMessage( quest.refuse );
+			if( quest && quest.refuse )
+			{
+				if( ValidateObject( questNpc ))
+					questNpc.TextMessage( quest.refuse );
+				else
+					pSock.SysMessage( quest.refuse ); // login flow has no NPC
+			}
+			if( hasLoginQuest )
+				pUser.SetTempTag( "questConversationID", null );
 			break;
 		case 3: // Turn in quest
 			if( playerQuestID )
@@ -206,114 +235,6 @@ function ResignQuest( player, questID )
 	socket.SysMessage( GetDictionaryEntry(19605, socket.language ));//The quest has been completely removed from your progress.
 	return true;
 }
-
-/*function ManageQuestItems( player, questID, mark )
-{
-	var socket = player.socket;
-	var pack = player.pack; // Get the player's backpack
-
-	if( !ValidateObject( pack ))
-	{
-		socket.SysMessage( GetDictionaryEntry( 19606, socket.language ));//You do not have a backpack.
-		return;
-	}
-
-	var quest = TriggerEvent( 5801, "QuestList", questID ); // Fetch quest details
-	if( !quest || ( !quest.targetItems && !quest.deliveryItem )) 
-	{
-		return;
-	}
-
-	// Iterate through all items in the player's backpack
-	var currentItem;
-	for( currentItem = pack.FirstItem(); !pack.FinishedItems(); currentItem = pack.NextItem())
-	{
-		if( !ValidateObject( currentItem ))
-		{
-			continue;
-		}
-
-		// Handle target items for collection quests
-		if( quest.targetItems )
-		{
-			for( var i = 0; i < quest.targetItems.length; i++ )
-			{
-				var targetItem = quest.targetItems[i];
-
-				// Check if the item matches the quest requirement
-				var questSectionID = targetItem.GetTag( "QuestSectionID") || targetItem.sectionID;
-				if( String( currentItem.sectionID ) == String( targetItem.sectionID ) || ( currentItem.sectionID == questSectionID ))
-				{
-					if( mark )
-					{
-						// Mark item as a quest item
-						if( !currentItem.GetTag( "QuestItem" ))
-						{
-							currentItem.SetTag( "saveColor", currentItem.color );
-							currentItem.color = 0x04ea; // Orange hue
-							currentItem.isNewbie = true;
-							currentItem.isDyeable = false;
-							currentItem.SetTag( "QuestItem", true );
-							currentItem.SetTag( "QuestSectionID", targetItem.sectionID );
-							currentItem.AddScriptTrigger( 5806 ); // Quest Item script trigger
-							socket.SysMessage( "Marked item as a quest item: " + targetItem.name );
-						}
-					}
-					else
-					{
-						// Unmark item as a quest item
-						if( currentItem.GetTag( "QuestItem" ))
-						{
-							var questItemColor = currentItem.GetTag( "saveColor" );
-							if( questItemColor != null && !isNaN( parseInt( questItemColor )))
-							{
-								currentItem.color = parseInt( questItemColor );
-							}
-							else
-							{
-								currentItem.color = 0; // fallback to default color (non-dyed)
-							}
-							currentItem.isNewbie = false;
-							currentItem.isDyeable = true;
-							currentItem.SetTag( "QuestItem", null );
-							currentItem.SetTag( "QuestSectionID", null );
-							currentItem.RemoveScriptTrigger( 5806 ); // Quest Item script trigger
-							socket.SysMessage( "Unmarked item as a quest item: " + targetItem.name );
-						}
-					}
-				}
-			}
-		}
-
-		// Handle delivery items
-		if( quest.type == "delivery" && quest.deliveryItem )
-		{
-			if( String( currentItem.sectionID ) == String( quest.deliveryItem.sectionID ))
-			{
-				if( mark )
-				{
-					// Mark delivery item as a quest item
-					if( !currentItem.GetTag( "QuestItem" ))
-					{
-						currentItem.SetTag( "saveColor", currentItem.color );
-						currentItem.color = 0x04ea; // Orange hue
-						currentItem.isNewbie = true;
-						currentItem.isDyeable = false;
-						currentItem.SetTag( "QuestItem", true );
-						currentItem.AddScriptTrigger( 5806 ); // Quest Item script trigger
-						socket.SysMessage( "Marked delivery item as a quest item: " + quest.deliveryItem.name );
-					}
-				}
-				else
-				{
-					// If resigning, delete the delivery item
-					currentItem.Delete();
-					socket.SysMessage( "Deleted delivery item: " + quest.deliveryItem.name );
-				}
-			}
-		}
-	}
-}*/
 
 function ManageQuestItems( player, questID, mark )
 {
@@ -464,9 +385,10 @@ function GetQuestObjectives( quest, questProgress )
 		for( var j = 0; j < quest.targetKills.length; j++ )
 		{
 			var targetKill = quest.targetKills[j];
+			var npcName = targetKill.name || "Unknown Npc"; // Use `name` if available, fallback to "Unknown Npc"
 			var killed = ( questProgress && questProgress.harvestKills[targetKill.npcID] ) || 0;
 
-			objectives += "- " + targetKill.npcID + ": " + killed + "/" + targetKill.amount + "<br>";
+			objectives += "- " + npcName + ": " + killed + "/" + targetKill.amount + "<br>";
 		}
 	}
 
@@ -1144,9 +1066,6 @@ function onContextMenuSelect( socket, questNpc, popupEntry )
 				ResignQuest( pUser, playerQuestID );
 				ManageQuestItems( pUser, playerQuestID, false );
 				pUser.SoundEffect( 0x5B3, true );
-				//var quest = TriggerEvent( 5801, "QuestList", playerQuestID );
-				//targObj.TextMessage( quest.refuse );
-				//pUser.SoundEffect(  0x5B4, true  );
 			}
 			break;
 		default:

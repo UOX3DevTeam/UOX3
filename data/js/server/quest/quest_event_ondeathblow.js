@@ -1,10 +1,10 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
+
 // Handle NPC kills for quests
 /** @type { ( mKilled: Character, mKiller: Character ) => boolean } */
-function onDeathBlow( victim, player )
+function onKill( player ,victim )
 {
-	if( !ValidateObject( player ) || !ValidateObject( victim ))
-		return true;
-
 	TriggerEvent( 5800, "CreatureKilled", victim, player );
 
 	return true;

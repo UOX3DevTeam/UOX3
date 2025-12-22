@@ -36,6 +36,7 @@
  *   doneOnce        - If true, quest can only be completed once.
  *   questTurnIn     - 1 = Requires NPC turn-in, 0 = Auto-complete.
  *   bankGold        - 1 = Gold to bank, 0 = Gold to player's pack.
+ *   requiresQuestID - questID - must be completed before this quest can be accepted
  * 
  *  Objectives:
  *  -----------
@@ -44,7 +45,8 @@
  * 
  *  Rewards:
  *  --------
- *   rewards         - Karama, Fame, Gold, items, or skill rewards.
+ *   rewards         - Karama, Fame, Gold, items, or skill rewards. virtue points are supported
+ *   virtue 		 - { type: "virtue", virtueIndex: 1, amount: 500, name: "Sacrifice" }  0 Humility, 1 Sacrifice, 2 Compassion, 3 Spirituality, 4 Valor, 5 Honor, 6 Justice, 7 Honesty
  * 
  *  Regions & Location:
  *  -------------------
@@ -1254,7 +1256,7 @@ function QuestList( questID )
 				{ type: "item", sectionID: "reward_ring_of_swiftness", name: "Ring of Swiftness", amount: 1 }
 			],
 			oneTimeQuest: 1
-		}
+		},
 	};
 
 	// Return the full quest list if no questID is provided

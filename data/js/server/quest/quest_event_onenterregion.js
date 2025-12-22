@@ -1,3 +1,6 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
+
 function onEnterRegion( pEntering, regionEntered )
 {
 	var pSock = pEntering.socket;
@@ -13,6 +16,7 @@ function onEnterRegion( pEntering, regionEntered )
 	{
 		return;
 	}
+
 	// Loop through active quests to check for skill training in the entered region
 	for( var i = 0; i < activeQuests.length; i++ )
 	{

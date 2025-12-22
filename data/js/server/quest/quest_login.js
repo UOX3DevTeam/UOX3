@@ -1,6 +1,9 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
+
 function LoginQuest( pChar )
 {
-	var autoQuestID = 9001; // Insert Starting Quest ID here
+	var autoQuestID = 20000; // Insert Starting Quest ID here
 
 	// Load settings and progress
 	var playerSettings = TriggerEvent( 5800, "ReadPlayerSettings", pChar ) || {};

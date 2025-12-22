@@ -33,6 +33,7 @@ function StartQuest( player, questID )
 			var targetKill = quest.targetKills[i];
 			harvestKills[targetKill.npcID] = 0; // Start with 0 kills
 		}
+		player.AddScriptTrigger( 5810 );// onKill quest trigger
 	}
 
 	// Add the delivery item to the player's backpack if it's a delivery quest
@@ -126,6 +127,24 @@ function CheckQuest( player, questID, mode)
 	var questProgressArray = ReadQuestProgress( player );
 	var archivedQuests = ReadArchivedQuests( player );
 
+	// Prerequisite quest gate
+	if( quest.requiresQuestID != null && quest.requiresQuestID != 0 )
+	{
+		var reqID = parseInt( quest.requiresQuestID, 10 );
+		if( reqID > 0 )
+		{
+			// archivedQuests is an array of questIDs
+			if( archivedQuests.indexOf( reqID ) == -1 )
+			{
+				var reqQuest = TriggerEvent( 5801, "QuestList", reqID );
+				var reqName = ( reqQuest && reqQuest.title ) ? reqQuest.title : ( "Quest #" + reqID );
+
+				socket.SysMessage( "You must complete \"" + reqName + "\" before you can start this quest." );
+				return false;
+			}
+		}
+	}
+
 	// Check if already working on this quest
 	if( mode == "start" )
 	{
@@ -174,7 +193,7 @@ function CheckQuest( player, questID, mode)
 			}
 		}
 	}
-
+	socket.SoundEffect( 0x5B4, true );
 	return true;
 }
 
@@ -512,6 +531,31 @@ function QuestRewards( player, quest, socket )
 			case "skillpoints":
 				SkillPointsPoolReward( player, reward, socket );
 				break;
+			case "virtue":
+				{
+					// Prefer numeric index 0..7 in reward.virtueIndex
+					var vIdx = parseInt( reward.virtueIndex, 10);
+					if( isNaN( vIdx ))
+						vIdx = 0;
+
+					var amt = parseInt( reward.amount, 10 ) || 0;
+					if( amt <= 0 )
+					{
+						socket.SysMessage( "Virtue reward amount invalid." );
+						break;
+					}
+
+					var result = TriggerEvent(8003, "Virtue_Award", player, vIdx, amt);
+
+					if( result && result.success )
+					{
+						if( result.gainedPath )
+							socket.SysMessage("You have gained a path in virtue!");
+						else
+							socket.SysMessage("You have gained in virtue.");
+					}
+					break;
+				}
 			default:
 				socket.SysMessage( "Unknown reward type: " + reward.type );
 				break;
@@ -545,13 +589,13 @@ function GoldReward( player, reward, bankBox, socket )
 function StartNextQuestInChain( player, questID, socket )
 {
 	var quest = TriggerEvent( 5801, "QuestList", questID );
-	if( quest && quest.nextQuestID )
+	if( quest && quest.nextQuestID != null && quest.nextQuestID != 0 )
 	{
 		var nextQuest = TriggerEvent( 5801, "QuestList", quest.nextQuestID );
 		if( nextQuest )
 		{
 			socket.SysMessage( "A new quest has been unlocked: " + nextQuest.title );
-			startQuest( player, parseInt( quest.nextQuestID ));
+			StartQuest( player, parseInt( quest.nextQuestID ));
 		}
 	}
 }
