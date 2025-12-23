@@ -485,6 +485,12 @@ function CompleteQuest( player, questID )
 		// Archive the completed quest
 		ArchiveCompletedQuest( player, questEntry );
 
+		ApplyQuestSetTags( player, quest );
+		ApplyQuestSetTagDeltas( player, quest );
+
+		ApplyQuestSetTempTags( player, quest );
+		ApplyQuestSetTempTagDeltas( player, quest );
+
 		// Cancel any active quest timer for this questID
 		player.KillJSTimer( questID, 5820 );
 
@@ -514,9 +520,24 @@ function QuestRewards( player, quest, socket )
 				GoldReward( player, reward, bankBox, socket );
 				break;
 			case "item":
-				CreateDFNItem( player.socket, player, reward.sectionID, reward.amount, "ITEM", true );
-				socket.SysMessage( "You receive a reward: " + reward.amount + " of item " + reward.name + "!" );
-				break;
+				{
+					var color = 0;
+					if( reward.color != null )
+					{
+						color = parseInt( reward.color, 10 );
+					}
+					else if( reward.hue != null )
+					{
+						color = parseInt( reward.hue, 10 );
+					}
+
+					if( isNaN( color ))
+						color = 0;
+
+					CreateDFNItem(player.socket, player, reward.sectionID, reward.amount, "ITEM", true, color );
+					socket.SysMessage("You receive a reward: " + reward.amount + " of item " + reward.name + "!");
+					break;
+				}
 			case "karma":
 				player.karma += reward.amount;
 				socket.SysMessage( "You gained " + reward.amount + " karma!" );
@@ -561,6 +582,163 @@ function QuestRewards( player, quest, socket )
 				break;
 		}
 	});
+}
+
+function ApplyQuestSetTags( player, quest )
+{
+	if( !quest || !quest.setTags )
+		return;
+
+	for( var key in quest.setTags )
+	{
+		if( !quest.setTags.hasOwnProperty( key ))
+			continue;
+
+		var val = quest.setTags[key];
+
+		// null/undefined => remove tag
+		if( val == null )
+			player.SetTag( key, null );
+		else
+			player.SetTag( key, val );
+	}
+}
+
+function ApplyQuestSetTempTags( player, quest )
+{
+	if( !quest || !quest.setTempTags )
+		return;
+
+	for( var key in quest.setTempTags )
+	{
+		if( !quest.setTempTags.hasOwnProperty( key ))
+			continue;
+
+		var val = quest.setTempTags[key];
+
+		// null/undefined => remove
+		if( val == null )
+			player.SetTempTag( key, null );
+		else
+			player.SetTempTag( key, val );
+	}
+}
+
+function ApplyQuestSetTagDeltas( player, quest )
+{
+	if( !quest || !quest.setTagDeltas )
+		return;
+
+	for( var key in quest.setTagDeltas )
+	{
+		if( !quest.setTagDeltas.hasOwnProperty( key ))
+			continue;
+
+		var deltaVal = quest.setTagDeltas[key];
+		var delta = ToIntOrZero( deltaVal );
+
+		var cur = GetIntTagOrZero( player, key );
+		var next = cur + delta;
+
+		// Optional clamp
+		var rule = ResolveDeltaRule( quest, key, "deltaRules", "deltaRulesDefault" );
+		if( rule )
+		{
+			var minVal = ( rule.hasOwnProperty( "min" ) ? ToIntOrZero( rule.min ) : null );
+			var maxVal = ( rule.hasOwnProperty( "max" ) ? ToIntOrZero( rule.max ) : null );
+
+			// If they specify only min or only max, we still clamp correctly
+			if( rule.hasOwnProperty( "min" ) || rule.hasOwnProperty( "max" ))
+				next = ClampInt( next, rule.hasOwnProperty( "min" ) ? minVal : null, rule.hasOwnProperty( "max" ) ? maxVal : null );
+		}
+
+		player.SetTag( key, next );
+	}
+}
+
+// Apply temp tag deltas with optional clamping
+function ApplyQuestSetTempTagDeltas( player, quest )
+{
+	if( !quest || !quest.setTempTagDeltas )
+		return;
+
+	for( var key in quest.setTempTagDeltas )
+	{
+		if( !quest.setTempTagDeltas.hasOwnProperty( key ))
+			continue;
+
+		var deltaVal = quest.setTempTagDeltas[key];
+		var delta = ToIntOrZero( deltaVal );
+
+		var cur = GetIntTempTagOrZero( player, key );
+		var next = cur + delta;
+
+		// Optional clamp
+		var rule = ResolveDeltaRule( quest, key, "tempDeltaRules", "tempDeltaRulesDefault" );
+		if( rule )
+		{
+			var minVal = ( rule.hasOwnProperty( "min" ) ? ToIntOrZero( rule.min ) : null );
+			var maxVal = ( rule.hasOwnProperty( "max" ) ? ToIntOrZero( rule.max ) : null );
+
+			if( rule.hasOwnProperty( "min" ) || rule.hasOwnProperty( "max" ))
+				next = ClampInt( next, rule.hasOwnProperty( "min" ) ? minVal : null, rule.hasOwnProperty( "max" ) ? maxVal : null );
+		}
+
+		player.SetTempTag( key, next );
+	}
+}
+
+function ToIntOrZero( v )
+{
+	if( v == null || v === "" )
+		return 0;
+
+	var n = parseInt( v, 10 );
+	if( isNaN( n ))
+		return 0;
+
+	return n;
+}
+
+function ClampInt( v, minVal, maxVal )
+{
+	if( minVal != null && v < minVal ) v = minVal;
+	if( maxVal != null && v > maxVal ) v = maxVal;
+	return v;
+}
+
+// Read tag as int; treat missing/non-numeric as 0
+function GetIntTagOrZero( obj, tagName )
+{
+	return ToIntOrZero( obj.GetTag( tagName ));
+}
+
+// Safely read a temp tag as int; treat missing/non-numeric as 0
+function GetIntTempTagOrZero( obj, tagName )
+{
+	if( !obj.GetTempTag )
+		return 0;
+	return ToIntOrZero( obj.GetTempTag( tagName ));
+}
+
+// Resolve the clamp rule for a given key:
+// - if quest.deltaRules has a rule for this key, use it
+// - else if quest.deltaRulesDefault exists, use that
+// - else return null (no clamping)
+function ResolveDeltaRule( quest, key, rulesObjName, defaultRuleName )
+{
+	if( !quest )
+		return null;
+
+	var rules = quest[rulesObjName];
+	if( rules && rules.hasOwnProperty( key ) && rules[key] )
+		return rules[key];
+
+	var defRule = quest[defaultRuleName];
+	if( defRule )
+		return defRule;
+
+	return null;
 }
 
 function GoldReward( player, reward, bankBox, socket )

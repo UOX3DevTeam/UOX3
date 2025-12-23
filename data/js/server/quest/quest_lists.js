@@ -33,9 +33,9 @@
  * 
  *  Flags & Control:
  *  ----------------
- *   doneOnce        - If true, quest can only be completed once.
+ *   oneTimeQuest        - If true, quest can only be completed once.
  *   questTurnIn     - 1 = Requires NPC turn-in, 0 = Auto-complete.
- *   bankGold        - 1 = Gold to bank, 0 = Gold to player's pack.
+ *   bankgold        - 1 = Gold to bank, 0 = Gold to player's pack.
  *   requiresQuestID - questID - must be completed before this quest can be accepted
  * 
  *  Objectives:
@@ -45,8 +45,10 @@
  * 
  *  Rewards:
  *  --------
- *   rewards         - Karama, Fame, Gold, items, or skill rewards. virtue points are supported
- *   virtue 		 - { type: "virtue", virtueIndex: 1, amount: 500, name: "Sacrifice" }  0 Humility, 1 Sacrifice, 2 Compassion, 3 Spirituality, 4 Valor, 5 Honor, 6 Justice, 7 Honesty
+ *   rewards         - Karama, Fame, Gold, items support color, or skill rewards. virtue points are supported
+ *   virtue          - { type: "virtue", virtueIndex: 1, amount: 500, name: "Sacrifice" }
+ *                    0 Humility, 1 Sacrifice, 2 Compassion, 3 Spirituality, 4 Valor,
+ *                    5 Honor, 6 Justice, 7 Honesty
  * 
  *  Regions & Location:
  *  -------------------
@@ -69,6 +71,51 @@
  *   deliveryItem    - Item details: itemID, name, amount.
  *   targetDelivery  - NPC target: sectionID, name, location (x, y, z, world).
  * 
+ *  Add/Removing Tags on quests:
+ *  ----------------------------
+ *   setTags         - Apply or remove persistent character tags when quest completes.
+ *                    Example:
+ *                      setTags: { "starterTier": 2, "needsTutorial": null }
+ *                    (null/undefined removes the tag)
+ * 
+ *   setTempTags     - Apply or remove temporary character tags when quest completes.
+ *                    Example:
+ *                      setTempTags: { "starterTier": 2, "needsTutorial": null }
+ *                    (null/undefined removes the temp tag)
+ * 
+ *  Tag Delta Updates (Generic / Optional):
+ *  --------------------------------------
+ *   setTagDeltas    - Adds (or subtracts) integer deltas to existing persistent tags.
+ *                    Missing/non-numeric tags are treated as 0.
+ *                    Example:
+ *                      setTagDeltas: { "FF_GuardStanding": 2, "WinterEventPoints": 5 }
+ * 
+ *   deltaRules      - Optional per-tag clamping rules for setTagDeltas.
+ *                    Example:
+ *                      deltaRules: {
+ *                        "FF_GuardStanding": { min: -100, max: 100 },
+ *                        "WinterEventPoints": { min: 0, max: 999 }
+ *                      }
+ *                    Notes:
+ *                      - If a rule omits min or max, only the provided bound is enforced.
+ *                      - If a rule is {} or has no min/max, no clamp is applied for that tag.
+ * 
+ *   deltaRulesDefault
+ *                  - Optional default clamp rule applied to any setTagDeltas key that does not
+ *                    have an explicit entry in deltaRules.
+ *                    Example:
+ *                      deltaRulesDefault: { min: 0, max: 100 }
+ * 
+ *   setTempTagDeltas
+ *                  - Adds (or subtracts) integer deltas to existing temporary tags.
+ *                    Example:
+ *                      setTempTagDeltas: { "FF_Suspicion": -1 }
+ * 
+ *   tempDeltaRules  - Optional per-tag clamping rules for setTempTagDeltas (same structure as deltaRules).
+ * 
+ *   tempDeltaRulesDefault
+ *                  - Optional default clamp rule for setTempTagDeltas (same structure as deltaRulesDefault).
+ * 
  * =============================================================================
  *  FUNCTION SIGNATURE
  * =============================================================================
@@ -76,9 +123,9 @@
  *     questID - Optional quest ID. If omitted, returns all quests.
  *     Returns - Quest object, array of quests, or null if ID not found.
  * 
- *	 How to spend skillpoints pooled.
- *      SpendSkillPoints( player, socket, "Magery", 3.0 );   // +3.0 Magery ( respects skillCaps )
- *      SpendSkillPoints( player, socket, 27, 2.5 );         // +2.5 to skill ID 27 ( e.g., Tactics )
+ *   How to spend skillpoints pooled.
+ *     SpendSkillPoints( player, socket, "Magery", 3.0 );   // +3.0 Magery ( respects skillCaps )
+ *     SpendSkillPoints( player, socket, 27, 2.5 );         // +2.5 to skill ID 27 ( e.g., Tactics )
  * 
  * =============================================================================
  */
