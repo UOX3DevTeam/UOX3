@@ -822,8 +822,8 @@ UI08 CHandleCombat::GetWeaponType( CItem *i )
 		case 0x0DF3: // Wand
 		case 0x0DF4: // Wand
 		case 0x0DF5: // Wand
-		case 0xA767: // EJ Wand
-		case 0xA768: // EJ Wand
+		case 0xA767: // Wand - ToL
+		case 0xA768: // Wand - ToL
 		case 0x13E3: //smith's hammer
 		case 0x13E4: //smith's hammer
 		case 0x13B3: //club
@@ -856,11 +856,11 @@ UI08 CHandleCombat::GetWeaponType( CItem *i )
 		case 0x48C3: //gargish maul - SA
 		case 0xA289: //barbed whip - ToL
 		case 0xA291: //barbed whip - ToL
-		case 0xAF2D: //Bottle
-		case 0xAEA4: //Air Paladin Hammer - EJ
-		case 0xAEB3: //Water Paladin Hammer - EJ
-		case 0xAEC2: //Earth Paladin Hammer - EJ
-		case 0xAED1: //Fire Paladin Hammer - EJ
+		case 0xAF2D: //Bottle - ToL
+		case 0xAEA4: //Air Paladin Hammer - ToL
+		case 0xAEB3: //Water Paladin Hammer - ToL
+		case 0xAEC2: //Earth Paladin Hammer - ToL
+		case 0xAED1: //Fire Paladin Hammer - ToL
 			return DEF_MACES;
 		// Large Maces
 		case 0x13F4: //crook
@@ -959,10 +959,10 @@ UI08 CHandleCombat::GetWeaponType( CItem *i )
 		case 0x48BD: //gargish kryss - SA
 		case 0xA28A: //spiked whip - ToL
 		case 0xA292: //spiked whip - ToL
-		case 0xAEA5: //Air Paladin fork - EJ
-		case 0xAEB4: //Water Paladin fork - EJ
-		case 0xAEC3: //Earth Paladin fork - EJ
-		case 0xAED2: //Fire Paladin fork - EJ
+		case 0xAEA5: //Air Paladin fork - ToL
+		case 0xAEB4: //Water Paladin fork - ToL
+		case 0xAEC3: //Earth Paladin fork - ToL
+		case 0xAED2: //Fire Paladin fork - ToL
 			return DEF_FENCING;
 		// Stabbing Fencing Weapons
 		case 0x0E87: //pitchfork
