@@ -11,9 +11,191 @@
 #include "cScript.h"
 #include "CJSEngine.h"
 
-
 #define XP 0
 #define YP 1
+
+struct BoatPartCfg
+{
+	bool hasItemId = false;
+	UI16 itemId = 0;
+
+	bool hasId2 = false;
+	UI08 id2[4] = { 0,0,0,0 }; // N,E,S,W (this is ID2, not direction)
+
+	bool hasOffset = false;
+	SI16 offX[4] = { 0,0,0,0 };
+	SI16 offY[4] = { 0,0,0,0 };
+};
+
+struct BoatPartsCfg
+{
+	BoatPartCfg portPlank;   // plank 0 (left)
+	BoatPartCfg starbPlank;  // plank 1 (right)
+	BoatPartCfg tiller;
+	BoatPartCfg hold;
+};
+
+static std::map<UI16, BoatPartsCfg> g_BoatPartsCfg; // key = multiID (houseId)
+
+static bool GetBoatPartsConfig( UI16 multiId, BoatPartsCfg &out )
+{
+	auto it = g_BoatPartsCfg.find( multiId );
+	if( it == g_BoatPartsCfg.end() )
+		return false;
+	out = it->second;
+	return true;
+}
+
+// New registry function (replaces RegisterBoatTillerConfig)
+void RegisterBoatPartsConfig(
+	UI16 multiId,
+	// Port plank
+	bool portHasItemId, UI16 portItemId,
+	bool portHasId2, const UI08 portId2[4],
+	bool portHasOffset, const SI16 portOffX[4], const SI16 portOffY[4],
+
+	// Starboard plank
+	bool starbHasItemId, UI16 starbItemId,
+	bool starbHasId2, const UI08 starbId2[4],
+	bool starbHasOffset, const SI16 starbOffX[4], const SI16 starbOffY[4],
+
+	// Hold
+	bool holdHasItemId, UI16 holdItemId,
+	bool holdHasId2, const UI08 holdId2[4],
+	bool holdHasOffset, const SI16 holdOffX[4], const SI16 holdOffY[4],
+
+	// Tiller
+	bool tillerHasItemId, UI16 tillerItemId,
+	bool tillerHasId2, const UI08 tillerId2[4],
+	bool tillerHasOffset, const SI16 tillerOffX[4], const SI16 tillerOffY[4]
+)
+{
+	BoatPartsCfg &cfg = g_BoatPartsCfg[multiId];
+
+	auto CopyId2 = []( BoatPartCfg &p, bool has, const UI08 v[4] )
+	{
+		p.hasId2 = has;
+		if( has )
+			for( int i = 0; i < 4; ++i ) p.id2[i] = v[i];
+	};
+
+	auto CopyOff = []( BoatPartCfg &p, bool has, const SI16 x[4], const SI16 y[4] )
+	{
+		p.hasOffset = has;
+		if( has )
+			for( int i = 0; i < 4; ++i ) { p.offX[i] = x[i]; p.offY[i] = y[i]; }
+	};
+
+	// ---- port plank ----
+	cfg.portPlank.hasItemId = portHasItemId;
+	cfg.portPlank.itemId    = portItemId;
+	CopyId2( cfg.portPlank, portHasId2, portId2 );
+	CopyOff( cfg.portPlank, portHasOffset, portOffX, portOffY );
+
+	// ---- starboard plank ----
+	cfg.starbPlank.hasItemId = starbHasItemId;
+	cfg.starbPlank.itemId    = starbItemId;
+	CopyId2( cfg.starbPlank, starbHasId2, starbId2 );
+	CopyOff( cfg.starbPlank, starbHasOffset, starbOffX, starbOffY );
+
+	// ---- hold ----
+	cfg.hold.hasItemId = holdHasItemId;
+	cfg.hold.itemId    = holdItemId;
+	CopyId2( cfg.hold, holdHasId2, holdId2 );
+	CopyOff( cfg.hold, holdHasOffset, holdOffX, holdOffY );
+
+	// ---- tiller ----
+	cfg.tiller.hasItemId = tillerHasItemId;
+	cfg.tiller.itemId    = tillerItemId;
+	CopyId2( cfg.tiller, tillerHasId2, tillerId2 );
+	CopyOff( cfg.tiller, tillerHasOffset, tillerOffX, tillerOffY );
+}
+
+// ---- block registry ----
+// keep these private in Boat.cpp
+struct BoatBlockRect
+{
+    SI16 xmin = 0;
+    SI16 xmax = 0;
+    SI16 ymin = 0;
+    SI16 ymax = 0;
+};
+
+struct BoatBlockCfg
+{
+    bool hasNS = false;
+    bool hasEW = false;
+    BoatBlockRect ns;
+    BoatBlockRect ew;
+};
+
+static std::map<UI16, BoatBlockCfg> g_BoatBlockCfg;
+
+// IMPORTANT: this must NOT be static if other code needs it
+bool GetBoatBlockConfig( UI16 multiId, BoatBlockCfg &out )
+{
+    auto it = g_BoatBlockCfg.find( multiId );
+    if( it == g_BoatBlockCfg.end() )
+        return false;
+    out = it->second;
+    return true;
+}
+
+// Called from house.cpp after DFN parse (NO struct in signature)
+void RegisterBoatBlockConfig(
+    UI16 multiId,
+    bool hasNS, SI16 nsXMin, SI16 nsXMax, SI16 nsYMin, SI16 nsYMax,
+    bool hasEW, SI16 ewXMin, SI16 ewXMax, SI16 ewYMin, SI16 ewYMax
+)
+{
+    BoatBlockCfg &cfg = g_BoatBlockCfg[multiId];
+    cfg.hasNS = hasNS;
+    cfg.hasEW = hasEW;
+
+    if( hasNS )
+    {
+        cfg.ns.xmin = nsXMin; cfg.ns.xmax = nsXMax;
+        cfg.ns.ymin = nsYMin; cfg.ns.ymax = nsYMax;
+    }
+    if( hasEW )
+    {
+        cfg.ew.xmin = ewXMin; cfg.ew.xmax = ewXMax;
+        cfg.ew.ymin = ewYMin; cfg.ew.ymax = ewYMax;
+    }
+}
+
+// ---- meta registry (ID2 range + fallback size) ----
+struct BoatMetaCfg
+{
+	bool hasId2Range = false;
+	UI08 id2Min = 0; // inclusive
+	UI08 id2Max = 0; // inclusive (normally id2Min + 3)
+
+	bool hasSizeType = false;
+	UI08 sizeType = 0; // 1=small, 2=medium, 3=large (fallback offset table)
+};
+
+static std::map<UI16, BoatMetaCfg> g_BoatMetaCfg; // key = multiId (houseId)
+
+static bool GetBoatMetaConfig( UI16 multiId, BoatMetaCfg &out )
+{
+	auto it = g_BoatMetaCfg.find( multiId );
+	if( it == g_BoatMetaCfg.end() )
+		return false;
+	out = it->second;
+	return true;
+}
+
+// Called from house.cpp after DFN parse
+void RegisterBoatMetaConfig( UI16 multiId, bool hasRange, UI08 id2Min, UI08 id2Max, bool hasSize, UI08 sizeType )
+{
+	BoatMetaCfg &m = g_BoatMetaCfg[multiId];
+	m.hasId2Range = hasRange;
+	m.id2Min      = id2Min;
+	m.id2Max      = id2Max;
+	m.hasSizeType = hasSize;
+	m.sizeType    = sizeType;
+}
 
 enum ShipOffsets
 {
@@ -209,7 +391,7 @@ void OpenPlank( CItem *p )
 		case 0xD5: p->SetId( 0xB1, 2 ); break;
 		case 0xD4: p->SetId( 0xB2, 2 ); break;
 		case 0x89: p->SetId( 0x8A, 2 ); break;
-		default: 	Console.Warning( oldstrutil::format( "Invalid plank ID called! Plank 0x%X '%s' [%u]", p->GetSerial(), p->GetName().c_str(), p->GetId() ));
+		default: 	Console.Warning( oldstrutil::format( "Invalid plank ID2 called! id2=0x%X item=0x%X serial=0x%X name='%s'", p->GetId(2), p->GetId(), p->GetSerial(), p->GetName().c_str() ));
 			break;
 	}
 }
@@ -252,6 +434,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 		case 15://medium dragon
 			type = 2;
 			break;
+
 		case 16:
 		case 17:
 		case 18:
@@ -262,116 +445,151 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 		case 23://large dragon
 			type = 3;
 			break;
+
 		default:
 			return true;
 	}
 
-	// If boat-movement includes turning, boat-direction needs to be switched around
-	if( turnBoat )
+	// Pick which direction we should use when deciding NS vs EW rect.
+	// - If we're turning, use moveDir (the new direction we're trying to become).
+	// - If we're just moving, use boatDir (current direction/orientation).
+	const UI08 checkDir = ( turnBoat ? ( moveDir & 0x0F ) : ( boatDir & 0x0F ) );
+
+	// ------------------------------------------------------------
+	// DFN override: per-boat blocking rect (new config)
+	// Uses checkDir to decide NS vs EW.
+	// ------------------------------------------------------------
+	bool usedDfnRect = false;
+
+	BoatBlockCfg blkCfg{};
+	if( GetBoatBlockConfig( b->GetId(), blkCfg ) )
 	{
-		switch( boatDir & 0x0F )
+		const bool isNS =
+			( checkDir == NORTHEAST ) || ( checkDir == SOUTHWEST ) ||
+			( checkDir == NORTH ) || ( checkDir == SOUTH );
+
+		if( isNS && blkCfg.hasNS )
 		{
-			case NORTHEAST:	// U
-			case SOUTHWEST:	// D
-			case NORTH:	// N
-			case SOUTH:	// S
-				boatDir = 2;
-				break;
-			case EAST: // E
-			case WEST: // W
-			case SOUTHEAST:	// E
-			case NORTHWEST:	// W
-				boatDir = 0;
-				break;
-			default: break;
+			x1 = cx + blkCfg.ns.xmin;
+			x2 = cx + blkCfg.ns.xmax;
+			y1 = cy + blkCfg.ns.ymin;
+			y2 = cy + blkCfg.ns.ymax;
+			usedDfnRect = true;
+		}
+		else if( !isNS && blkCfg.hasEW )
+		{
+			x1 = cx + blkCfg.ew.xmin;
+			x2 = cx + blkCfg.ew.xmax;
+			y1 = cy + blkCfg.ew.ymin;
+			y2 = cy + blkCfg.ew.ymax;
+			usedDfnRect = true;
 		}
 	}
 
-	//small = 5,11
-	//medium = 5, 13
-	//large = 5, 15
-	switch( moveDir & 0x0F )
+	// ------------------------------------------------------------
+	// Old fallback: hardcoded type-based rectangle
+	// (only used if DFN did not provide the relevant rect)
+	// ------------------------------------------------------------
+	if( !usedDfnRect )
 	{
-		case NORTHEAST:	// U
-		case SOUTHWEST:	// D
-		case NORTH:	// N
-		case SOUTH:	// S
-			switch( boatDir & 0x0F )
-			{
-				case NORTHEAST:	// U
-				case SOUTHWEST:	// D
-				case NORTH:	// N
-				case SOUTH:	// S
-					x1 = cx - 2; //Width of N/S ship as it moves N/S
-					x2 = cx + 3; //Width of N/S ship as it moves N/S
-					switch( type )
-					{
-						case 1: y1 = cy - 6; y2 = cy + 6; break; //Length of N/S ship as it moves N/S
-						case 2: y1 = cy - 7; y2 = cy + 7; break; //Length of N/S ship as it moves N/S
-						case 3: y1 = cy - 8; y2 = cy + 8; break; //Length of N/S ship as it moves N/S
-						default:	Console.Error( " Fallout of North/South switch() statement in cBoats::BlockBoat()" );	break;
-					}
-					break;
-				case EAST: // E
-				case WEST: // W
-				case SOUTHEAST:	// E
-				case NORTHWEST:	// W
-					y1 = cy - 2; //Width of E/W ship as it moves N/S
-					y2 = cy + 3; //Width of E/W ship as it moves N/S
-					switch( type )
-					{
-						case 1: x1 = cx - 6; x2 = cx + 6; break; //Length of E/W ship as it moves N/S
-						case 2: x1 = cx - 7; x2 = cx + 7; break; //Length of E/W ship as it moves N/S
-						case 3: x1 = cx - 8; x2 = cx + 8; break; //Length of E/W ship as it moves N/S
-						default:	Console.Error( " Fallout of East/West switch() statement in cBoats::BlockBoat()" );	break;
-					}
-					break;
-				default:	Console.Error( " Fallout of boatDir.switch() statement in cBoats::BlockBoat()" );	break;
-			}
-			break;
-		case EAST: // E
-		case WEST: // W
-		case SOUTHEAST:	// E
-		case NORTHWEST:	// W
-			switch( boatDir & 0x0F )
-			{
-				case EAST: // E
-				case WEST: // W
-				case SOUTHEAST:	// E
-				case NORTHWEST:	// W
-					y1 = cy - 2; //Width of E/W ship as it moves E/W
-					y2 = cy + 3; //Width of E/W ship as it moves E/W
-					switch( type )
-					{
-						case 1: x1 = cx - 6; x2 = cx + 6; break; //Length of E/W ship as it moves E/W
-						case 2: x1 = cx - 7; x2 = cx + 7; break; //Length of E/W ship as it moves E/W
-						case 3: x1 = cx - 8; x2 = cx + 8; break; //Length of E/W ship as it moves E/W
-						default:	Console.Error( " Fallout of East/West switch() statement in cBoats::BlockBoat()" );	break;
-					}
-					break;
-				case NORTHEAST:	// U
-				case SOUTHWEST:	// D
-				case NORTH:	// N
-				case SOUTH:	// S
-					x1 = cx - 2; //Width of N/S ship as it moves E/W
-					x2 = cx + 3; //Width of N/S ship as it moves E/W
-					switch( type )
-					{
-						case 1: y1 = cy - 6; y2 = cy + 6; break; //Length of N/S ship as it moves E/W
-						case 2: y1 = cy - 7; y2 = cy + 7; break; //Length of N/S ship as it moves E/W
-						case 3: y1 = cy - 8; y2 = cy + 8; break; //Length of N/S ship as it moves E/W
-						default:	Console.Error( " Fallout of North/South switch() statement in cBoats::BlockBoat()" );	break;
-					}
-					break;
-				default:	Console.Error( " Fallout of boatDir.switch() statement in cBoats::BlockBoat()" );	break;
-			}
-			break;
-		default: return true;
+		//small = 5,11
+		//medium = 5, 13
+		//large = 5, 15
+		switch( checkDir )
+		{
+			case NORTHEAST:	// U
+			case SOUTHWEST:	// D
+			case NORTH:		// N
+			case SOUTH:		// S
+				switch( boatDir & 0x0F )
+				{
+					case NORTHEAST:	// U
+					case SOUTHWEST:	// D
+					case NORTH:		// N
+					case SOUTH:		// S
+						x1 = cx - 2; //Width of N/S ship as it moves N/S
+						x2 = cx + 3; //Width of N/S ship as it moves N/S
+						switch( type )
+						{
+							case 1: y1 = cy - 6; y2 = cy + 6; break; //Length of N/S ship as it moves N/S
+							case 2: y1 = cy - 7; y2 = cy + 7; break; //Length of N/S ship as it moves N/S
+							case 3: y1 = cy - 8; y2 = cy + 8; break; //Length of N/S ship as it moves N/S
+							default: Console.Error( " Fallout of North/South switch() statement in cBoats::BlockBoat()" ); break;
+						}
+						break;
+
+					case EAST:		// E
+					case WEST:		// W
+					case SOUTHEAST:	// E
+					case NORTHWEST:	// W
+						y1 = cy - 2; //Width of E/W ship as it moves N/S
+						y2 = cy + 3; //Width of E/W ship as it moves N/S
+						switch( type )
+						{
+							case 1: x1 = cx - 6; x2 = cx + 6; break; //Length of E/W ship as it moves N/S
+							case 2: x1 = cx - 7; x2 = cx + 7; break;
+							case 3: x1 = cx - 8; x2 = cx + 8; break;
+							default: Console.Error( " Fallout of East/West switch() statement in cBoats::BlockBoat()" ); break;
+						}
+						break;
+
+					default:
+						Console.Error( " Fallout of boatDir.switch() statement in cBoats::BlockBoat()" );
+						break;
+				}
+				break;
+
+			case EAST:		// E
+			case WEST:		// W
+			case SOUTHEAST:	// E
+			case NORTHWEST:	// W
+				switch( boatDir & 0x0F )
+				{
+					case EAST:		// E
+					case WEST:		// W
+					case SOUTHEAST:	// E
+					case NORTHWEST:	// W
+						y1 = cy - 2; //Width of E/W ship as it moves E/W
+						y2 = cy + 3; //Width of E/W ship as it moves E/W
+						switch( type )
+						{
+							case 1: x1 = cx - 6; x2 = cx + 6; break; //Length of E/W ship as it moves E/W
+							case 2: x1 = cx - 7; x2 = cx + 7; break;
+							case 3: x1 = cx - 8; x2 = cx + 8; break;
+							default: Console.Error( " Fallout of East/West switch() statement in cBoats::BlockBoat()" ); break;
+						}
+						break;
+
+					case NORTHEAST:	// U
+					case SOUTHWEST:	// D
+					case NORTH:		// N
+					case SOUTH:		// S
+						x1 = cx - 2; //Width of N/S ship as it moves E/W
+						x2 = cx + 3; //Width of N/S ship as it moves E/W
+						switch( type )
+						{
+							case 1: y1 = cy - 6; y2 = cy + 6; break; //Length of N/S ship as it moves E/W
+							case 2: y1 = cy - 7; y2 = cy + 7; break;
+							case 3: y1 = cy - 8; y2 = cy + 8; break;
+							default: Console.Error( " Fallout of North/South switch() statement in cBoats::BlockBoat()" ); break;
+						}
+						break;
+
+					default:
+						Console.Error( " Fallout of boatDir.switch() statement in cBoats::BlockBoat()" );
+						break;
+				}
+				break;
+
+			default:
+				return true;
+		}
 	}
 
 	UI08 worldNumber = b->WorldNumber();
 	UI16 instanceId = b->GetInstanceId();
 	SI08 boatZ = b->GetZ();
+
 	for( SI16 x = x1; x < x2; ++x )
 	{
 		for( SI16 y = y1; y < y2; ++y )
@@ -386,7 +604,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 			if( ValidateObject( tempItem ))
 			{
 				auto multiSerial = tempItem->GetMulti();
-				//auto boatSerial = b->GetSerial();
+
 				if( multiSerial != INVALIDSERIAL && multiSerial != b->GetSerial() )
 				{
 					CTile& tile = Map->SeekTile( tempItem->GetId() );
@@ -400,7 +618,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 			if( sz == ILLEGAL_Z ) //map tile
 			{
 				auto map = Map->SeekMap( x, y, worldNumber );
-				if( map.terrainInfo == nullptr || ( map.altitude >= cz && !map.CheckFlag( TF_WET ) && map.name() != "water" ))//only tiles on/above the water
+				if( map.terrainInfo == nullptr || ( map.altitude >= cz && !map.CheckFlag( TF_WET ) && map.name() != "water" ))
 					return true;
 			}
 			else
@@ -433,22 +651,43 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 		}
 		return false;
 	}
-	switch( id2 )
+	BoatMetaCfg meta{};
+	const bool hasMeta = GetBoatMetaConfig( b->GetId(), meta );
+
+	if( hasMeta && meta.hasId2Range )
 	{
-		case 0x00:
-		case 0x04:
-		case 0x08:
-		case 0x0C:
-		case 0x10:
-		case 0x14:
-		case 0x18:
-			break;
-		default:
+		// Validate id2 is within the per-boat configured turning range
+		if( id2 < meta.id2Min || id2 > meta.id2Max )
+		{
 			if( s != nullptr )
-			{
 				s->SysMessage( 6 ); // The deed is broken, please contact a Game Master
-			}
 			return false;
+		}
+
+		// Optional sanity warning (expect 4 consecutive ids)
+		if( ( meta.id2Max - meta.id2Min ) != 3 )
+		{
+			Console.Warning( oldstrutil::format( "Boat multi 0x%X has odd BOAT_ID2 range (%u..%u)", b->GetId(), meta.id2Min, meta.id2Max ) );
+		}
+	}
+	else
+	{
+		// Backward compatible fallback for legacy boats if DFN meta not present
+		switch( id2 )
+		{
+			case 0x00:
+			case 0x04:
+			case 0x08:
+			case 0x0C:
+			case 0x10:
+			case 0x14:
+			case 0x18:
+				break;
+			default:
+				if( s != nullptr )
+					s->SysMessage( 6 );
+				return false;
+		}
 	}
 
 	const SERIAL serial = b->GetSerial();
@@ -482,7 +721,19 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 		}
 	}
 	b->SetZ( z ); // Z in water
-	b->SetTempVar( CITV_MOREZ, CalcSerial( id2, id2+3, b->GetTempVar( CITV_MOREZ, 3 ), b->GetTempVar( CITV_MOREZ, 4 )));
+
+	if( hasMeta && meta.hasId2Range )
+	{
+		// Store min/max ID2 range for turning logic
+		b->SetTempVar( CITV_MOREZ, meta.id2Min, 1 ); // min
+		b->SetTempVar( CITV_MOREZ, meta.id2Max, 2 ); // max
+	}
+	else
+	{
+		// Legacy behavior
+		b->SetTempVar( CITV_MOREZ, CalcSerial( id2, id2 + 3, b->GetTempVar( CITV_MOREZ, 3 ), b->GetTempVar( CITV_MOREZ, 4 ) ) );
+	}
+
 	b->SetMoveType( BOAT_ANCHORED );
 
 	CChar *mChar = nullptr;
@@ -491,7 +742,14 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 		mChar = s->CurrcharObj();
 	}
 
-	CItem *tiller = Items->CreateItem( nullptr, mChar, 0x3E4E, 1, 0, OT_ITEM, false, true, worldNumber, instanceId, x, y, z );
+	BoatPartsCfg cfg;
+	const bool hasCfg = GetBoatPartsConfig( b->GetId(), cfg );
+
+	UI16 tillerItemId = 0x3E4E; // default
+	if( hasCfg && cfg.tiller.hasItemId && cfg.tiller.itemId > 0 )
+		tillerItemId = cfg.tiller.itemId;
+
+	CItem *tiller = Items->CreateItem( nullptr, mChar, tillerItemId, 1, 0, OT_ITEM, false, true, worldNumber, instanceId, x, y, z );
 	if( tiller == nullptr )
 		return false;
 
@@ -510,7 +768,16 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 	tiller->SetTempVar( CITV_MOREX, boattype );
 	tiller->SetDecayable( false );
 
-	CItem *p2 = Items->CreateItem( nullptr, mChar, 0x3EB2, 1, 0, OT_ITEM, false, true, worldNumber, instanceId, x, y, z ); // Plank2 is on the RIGHT side of the boat
+	UI16 portPlankItemId  = 0x3EB1; // default
+	UI16 starbPlankItemId = 0x3EB2; // default
+
+	if( hasCfg && cfg.portPlank.hasItemId && cfg.portPlank.itemId > 0 )
+		portPlankItemId = cfg.portPlank.itemId;
+
+	if( hasCfg && cfg.starbPlank.hasItemId && cfg.starbPlank.itemId > 0 )
+		starbPlankItemId = cfg.starbPlank.itemId;
+
+	CItem *p2 = Items->CreateItem( nullptr, mChar, starbPlankItemId, 1, 0, OT_ITEM, false, true, worldNumber, instanceId, x, y, z ); // Plank2 is on the RIGHT side of the boat
 	if( p2 == nullptr )
 		return false;
 
@@ -525,7 +792,7 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 	tagvalObject.m_StringValue	= "";
 	p2->SetTag( "plankLocked", tagvalObject );
 
-	CItem *p1 = Items->CreateItem( nullptr, mChar, 0x3EB1, 1, 0, OT_ITEM, false, true, worldNumber, instanceId, x, y, z ); // Plank1 is on the LEFT side of the boat
+	CItem *p1 = Items->CreateItem( nullptr, mChar, portPlankItemId, 1, 0, OT_ITEM, false, true, worldNumber, instanceId, x, y, z ); // Plank1 is on the LEFT side of the boat
 	if( p1 == nullptr )
 		return false;
 
@@ -539,7 +806,11 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 	tagvalObject.m_StringValue	= "";
 	p1->SetTag( "plankLocked", tagvalObject );
 
-	CItem *hold = Items->CreateItem( nullptr, mChar, 0x3EAE, 1, 0, OT_ITEM, false, true, worldNumber, instanceId, x, y, z );
+	UI16 holdItemId = 0x3EAE; // default
+	if( hasCfg && cfg.hold.hasItemId && cfg.hold.itemId > 0 )
+		holdItemId = cfg.hold.itemId;
+
+	CItem *hold = Items->CreateItem( nullptr, mChar, holdItemId, 1, 0, OT_ITEM, false, true, worldNumber, instanceId, x, y, z );
 	if( hold == nullptr )
 		return false;
 
@@ -556,28 +827,121 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 	b->SetPlank( 1, p2->GetSerial() );
 	b->SetHold( hold->GetSerial() );
 
-	switch( id2 ) // Give everything the right Z for it size boat
+	// CreateBoat: initial dir index should come from id2, not b->GetDir()
+	int dirIndex = 0; // 0=N,1=E,2=S,3=W
+
+	if( hasMeta && meta.hasId2Range )
+		dirIndex = static_cast< int >( ( id2 - meta.id2Min ) & 0x03 );
+	else
+		dirIndex = static_cast< int >( id2 & 0x03 );
+
+	auto TryPlaceTillerUsingCfgOffsets = [ & ]() -> bool
+		{
+			BoatPartsCfg cfgLocal;
+			if( !GetBoatPartsConfig( b->GetId(), cfgLocal ) || !cfgLocal.tiller.hasOffset )
+				return false;
+
+			const SI16 tOffX = cfgLocal.tiller.offX[ dirIndex ];
+			const SI16 tOffY = cfgLocal.tiller.offY[ dirIndex ];
+
+			tiller->SetLocation( x + tOffX, y + tOffY, z );
+			return true;
+		};
+	auto TryPlaceHoldUsingCfgOffsets = [ & ]() -> bool
+		{
+			if( !hasCfg || !cfg.hold.hasOffset )
+				return false;
+
+			const SI16 hOffX = cfg.hold.offX[ dirIndex ];
+			const SI16 hOffY = cfg.hold.offY[ dirIndex ];
+
+			hold->SetLocation( x + hOffX, y + hOffY, z );
+			return true;
+		};
+
+	auto TryPlacePortPlankUsingCfgOffsets = [ & ]() -> bool
+		{
+			if( !hasCfg || !cfg.portPlank.hasOffset )
+				return false;
+
+			p1->SetLocation( x + cfg.portPlank.offX[ dirIndex ], y + cfg.portPlank.offY[ dirIndex ], z );
+			return true;
+		};
+
+	auto TryPlaceStarbPlankUsingCfgOffsets = [ & ]() -> bool
+		{
+			if( !hasCfg || !cfg.starbPlank.hasOffset )
+				return false;
+
+			p2->SetLocation( x + cfg.starbPlank.offX[ dirIndex ], y + cfg.starbPlank.offY[ dirIndex ], z );
+			return true;
+		};
+
+	if( hasCfg && cfg.tiller.hasId2 )
 	{
-		case 0x00:
-		case 0x04:
-			tiller->SetLocation( x + 1, y + 4, z );
-			p1->SetLocation( x - 2, y, z );
-			p2->SetLocation( x + 2, y, z );
-			hold->SetLocation( x, y - 4, z );
+		tiller->SetId( cfg.tiller.id2[ dirIndex ], 2 );
+	}
+
+	if( hasCfg && cfg.hold.hasId2 )
+	{
+		hold->SetId( cfg.hold.id2[ dirIndex ], 2 );
+	}
+
+	if( hasCfg && cfg.portPlank.hasId2 )
+		p1->SetId( cfg.portPlank.id2[ dirIndex ], 2 );
+
+	if( hasCfg && cfg.starbPlank.hasId2 )
+		p2->SetId( cfg.starbPlank.id2[ dirIndex ], 2 );
+
+	UI08 sizeType = 0;
+	if( hasMeta && meta.hasSizeType )
+	{
+		sizeType = meta.sizeType;
+	}
+	else
+	{
+		// Legacy inference (keeps old boats working when BOAT_SIZE isn't defined)
+		switch( id2 )
+		{
+			case 0x00:
+			case 0x04: sizeType = 1; break;
+			case 0x08:
+			case 0x0C: sizeType = 2; break;
+			case 0x10:
+			case 0x14: sizeType = 3; break;
+			default: sizeType = 1; break;
+		}
+	}
+
+	switch( sizeType )
+	{
+		case 1: // small
+			if( !TryPlaceTillerUsingCfgOffsets() ) tiller->SetLocation( x + 1, y + 4, z );
+			if( !TryPlacePortPlankUsingCfgOffsets() ) p1->SetLocation( x - 2, y, z );
+			if( !TryPlaceStarbPlankUsingCfgOffsets() ) p2->SetLocation( x + 2, y, z );
+			if( !TryPlaceHoldUsingCfgOffsets() ) hold->SetLocation( x, y - 4, z );
 			break;
-		case 0x08:
-		case 0x0C:
-			tiller->SetLocation( x + 1, y + 5, z );
-			p1->SetLocation( x - 2, y, z );
-			p2->SetLocation( x + 2, y, z );
-			hold->SetLocation( x, y - 4, z );
+
+		case 2: // medium
+			if( !TryPlaceTillerUsingCfgOffsets() ) tiller->SetLocation( x + 1, y + 5, z );
+			if( !TryPlacePortPlankUsingCfgOffsets() ) p1->SetLocation( x - 2, y, z );
+			if( !TryPlaceStarbPlankUsingCfgOffsets() ) p2->SetLocation( x + 2, y, z );
+			if( !TryPlaceHoldUsingCfgOffsets() ) hold->SetLocation( x, y - 4, z );
 			break;
-		case 0x10:
-		case 0x14:
-			tiller->SetLocation( x + 1, y + 5, z );
-			p1->SetLocation( x - 2, y - 1, z );
-			p2->SetLocation( x + 2, y - 1, z );
-			hold->SetLocation( x, y - 5, z );
+
+		case 3: // large
+			if( !TryPlaceTillerUsingCfgOffsets() ) tiller->SetLocation( x + 1, y + 5, z );
+			if( !TryPlacePortPlankUsingCfgOffsets() ) p1->SetLocation( x - 2, y - 1, z );
+			if( !TryPlaceStarbPlankUsingCfgOffsets() ) p2->SetLocation( x + 2, y - 1, z );
+			if( !TryPlaceHoldUsingCfgOffsets() ) hold->SetLocation( x, y - 5, z );
+			break;
+
+		default:
+			// Safe default
+			if( !TryPlaceTillerUsingCfgOffsets() ) tiller->SetLocation( x + 1, y + 4, z );
+			if( !TryPlacePortPlankUsingCfgOffsets() ) p1->SetLocation( x - 2, y, z );
+			if( !TryPlaceStarbPlankUsingCfgOffsets() ) p2->SetLocation( x + 2, y, z );
+			if( !TryPlaceHoldUsingCfgOffsets() ) hold->SetLocation( x, y - 4, z );
 			break;
 	}
 	return true;
@@ -785,41 +1149,53 @@ void TurnBoat( CBoatObj *b, bool rightTurn, bool disableChecks )
 	if( !ValidateObject( tiller ) || !ValidateObject( p1 ) || !ValidateObject( p2 ) || !ValidateObject( hold ))
 		return;
 
-	if( rightTurn )
+	// --- compute boat facing index from current id2, then rotate it ---
+	// 0=N,1=E,2=S,3=W (your canonical order)
+	BoatMetaCfg meta{};
+	const bool hasMeta = GetBoatMetaConfig( b->GetId(), meta );
+	// 0=N,1=E,2=S,3=W (canonical)
+	UI08 face = 0;
+
+	// Determine facing from current id2
+	if( hasMeta && meta.hasId2Range )
 	{
-		b->SetDir( olddir + 2 );
-		++id2;
+		face = ( UI08 ) ( ( ( UI08 ) id2 - meta.id2Min ) & 0x03 );
 	}
 	else
 	{
-		b->SetDir( olddir - 2 );
-		--id2;
-	}
-	if( b->GetDir() > 250 )
-	{
-		b->SetDir( b->GetDir() + 4 );
-	}
-	if( b->GetDir() > NORTHWEST )
-	{
-		b->SetDir( b->GetDir() - 4 );//Make sure we dont have any DIR errors
+		// legacy fallback (classic UO boats: id2 low bits encode facing)
+		face = ( UI08 ) ( ( UI08 ) id2 & 0x03 );
 	}
 
-	if( id2 < b->GetTempVar( CITV_MOREZ, 1 ))
+	// Rotate facing
+	face = rightTurn ? ( UI08 ) ( ( face + 1 ) & 3 ) : ( UI08 ) ( ( face + 3 ) & 3 );
+
+	// Set movement direction from face (cardinals only)
+	static const UI08 kDirFromFace[ 4 ] = { NORTH, EAST, SOUTH, WEST };
+	b->SetDir( kDirFromFace[ face ] );
+
+	// Compute new id2 from face
+	if( hasMeta && meta.hasId2Range )
 	{
-		id2 += 4;//make sure we don't have any id errors either
+		id2 = ( SI16 ) ( meta.id2Min + face );
 	}
-	if( id2 > b->GetTempVar( CITV_MOREZ, 2 ))
+	else
 	{
-		id2 -= 4;//Now you know what the min/max id is for :-)
+		// legacy fallback: preserve higher bits, update only low 2 bits
+		id2 = ( SI16 ) ( ( ( UI08 ) id2 & 0xFC ) | face );
 	}
 
 	prSend.Mode( 0 );
 	if( !disableChecks )
-	{
-		if( BlockBoat( b, 0, 0, b->GetDir(), olddir, true ))
+	{ 
+		const SI16 oldId2 = id2;
+
+		if( BlockBoat( b, 0, 0, b->GetDir(), olddir, true ) )
 		{
 			b->SetDir( olddir );
-			for( auto &tSock :nearbyChars )
+			b->SetId( static_cast< UI08 >( oldId2 ), 2 );
+
+			for( auto& tSock : nearbyChars )
 			{
 				tSock->Send( &prSend );
 				tiller->TextMessage( tSock, 1410, 0, 0x0481 );
@@ -830,16 +1206,6 @@ void TurnBoat( CBoatObj *b, bool rightTurn, bool disableChecks )
 
 	b->SetId( static_cast<UI08>( id2 ), 2 );//set the id
 
-	if( b->GetId( 2 ) == b->GetTempVar( CITV_MOREZ, 1 ))
-	{
-		b->SetDir( NORTH );//extra DIR error checking
-	}
-	if( b->GetId( 2 ) == b->GetTempVar( CITV_MOREZ, 2 ))
-	{
-		b->SetDir( WEST );
-	}
-
-
 	auto itemList = b->GetItemsInMultiList();
 	for( const auto &bItem : itemList->collection() )
 	{
@@ -848,6 +1214,7 @@ void TurnBoat( CBoatObj *b, bool rightTurn, bool disableChecks )
 			TurnStuff( b, bItem, rightTurn );
 		}
 	}
+
 	auto charList = b->GetCharsInMultiList();
 	for( const auto &bChar : charList->collection() )
 	{
@@ -857,44 +1224,100 @@ void TurnBoat( CBoatObj *b, bool rightTurn, bool disableChecks )
 		}
 	}
 
-	UI08 dir = ( b->GetDir() & 0x0F ) / 2;
+	// 0=N, 1=E, 2=S, 3=W
+	//UI08 dir = ( b->GetDir() & 0x0F ) / 2;
+	UI08 dir = face;
 
 	p1->SetLocation( b );
-	p1->SetId( cShipItems[dir][PORT_P_C], 2 );//change the ID
-
 	p2->SetLocation( b );
-	p2->SetId( cShipItems[dir][STAR_P_C], 2 );
-
 	tiller->SetLocation( b );
-	tiller->SetId( cShipItems[dir][TILLERID], 2 );
-
 	hold->SetLocation( b );
-	hold->SetId( cShipItems[dir][HOLDID], 2 );
 
-	switch( b->GetTempVar( CITV_MOREZ, 1 )) // Now set what size boat it is and move the specail items
+	BoatPartsCfg partsCfg{};
+	const bool hasPartsCfg = GetBoatPartsConfig( b->GetId(), partsCfg );
+
+	// Apply base graphics (DFN override if present)
+	if( hasPartsCfg && partsCfg.portPlank.hasId2 )
+		p1->SetId( partsCfg.portPlank.id2[ dir ], 2 );
+	else
+		p1->SetId( cShipItems[ dir ][ PORT_P_C ], 2 );
+
+	if( hasPartsCfg && partsCfg.starbPlank.hasId2 )
+		p2->SetId( partsCfg.starbPlank.id2[ dir ], 2 );
+	else
+		p2->SetId( cShipItems[ dir ][ STAR_P_C ], 2 );
+
+	if( hasPartsCfg && partsCfg.tiller.hasId2 )
+		tiller->SetId( partsCfg.tiller.id2[ dir ], 2 );
+	else
+		tiller->SetId( cShipItems[ dir ][ TILLERID ], 2 );
+
+	if( hasPartsCfg && partsCfg.hold.hasId2 )
+		hold->SetId( partsCfg.hold.id2[ dir ], 2 );
+	else
+		hold->SetId( cShipItems[ dir ][ HOLDID ], 2 );
+
+	// Apply per-part DFN offsets (optional), fallback to the hardcoded tables
+	auto ApplyPartOffsetOrFallback = [ & ]( CItem* part, const BoatPartCfg& cfg, SI16 fallbackX, SI16 fallbackY )
+		{
+			if( hasPartsCfg && cfg.hasOffset )
+				part->IncLocation( cfg.offX[ dir ], cfg.offY[ dir ] );
+			else
+				part->IncLocation( fallbackX, fallbackY );
+		};
+
+	UI08 sizeType = 0;
+	if( hasMeta && meta.hasSizeType )
 	{
-		case 0x00:
-		case 0x04:
-			p1->IncLocation( iSmallShipOffsets[dir][PORT_PLANK][XP], iSmallShipOffsets[dir][PORT_PLANK][YP] );
-			p2->IncLocation( iSmallShipOffsets[dir][STARB_PLANK][XP], iSmallShipOffsets[dir][STARB_PLANK][YP] );
-			tiller->IncLocation( iSmallShipOffsets[dir][TILLER][XP], iSmallShipOffsets[dir][TILLER][YP] );
-			hold->IncLocation( iSmallShipOffsets[dir][HOLD][XP], iSmallShipOffsets[dir][HOLD][YP] );
+		sizeType = meta.sizeType;
+	}
+	else
+	{
+		// Legacy inference: use the stored min-id2 (what old code used)
+		const UI08 legacyMin = static_cast< UI08 >( b->GetTempVar( CITV_MOREZ, 1 ) );
+		switch( legacyMin )
+		{
+			case 0x00:
+			case 0x04: sizeType = 1; break;
+			case 0x08:
+			case 0x0C: sizeType = 2; break;
+			case 0x10:
+			case 0x14: sizeType = 3; break;
+			default: sizeType = 1; break;
+		}
+	}
+
+	switch( sizeType )
+	{
+		case 1: // small
+			ApplyPartOffsetOrFallback( p1, partsCfg.portPlank, iSmallShipOffsets[ dir ][ PORT_PLANK ][ XP ], iSmallShipOffsets[ dir ][ PORT_PLANK ][ YP ] );
+			ApplyPartOffsetOrFallback( p2, partsCfg.starbPlank, iSmallShipOffsets[ dir ][ STARB_PLANK ][ XP ], iSmallShipOffsets[ dir ][ STARB_PLANK ][ YP ] );
+			ApplyPartOffsetOrFallback( hold, partsCfg.hold, iSmallShipOffsets[ dir ][ HOLD ][ XP ], iSmallShipOffsets[ dir ][ HOLD ][ YP ] );
+			ApplyPartOffsetOrFallback( tiller, partsCfg.tiller, iSmallShipOffsets[ dir ][ TILLER ][ XP ], iSmallShipOffsets[ dir ][ TILLER ][ YP ] );
 			break;
-		case 0x08:
-		case 0x0C:
-			p1->IncLocation( iMediumShipOffsets[dir][PORT_PLANK][XP], iMediumShipOffsets[dir][PORT_PLANK][YP] );
-			p2->IncLocation( iMediumShipOffsets[dir][STARB_PLANK][XP], iMediumShipOffsets[dir][STARB_PLANK][YP] );
-			tiller->IncLocation( iMediumShipOffsets[dir][TILLER][XP], iMediumShipOffsets[dir][TILLER][YP] );
-			hold->IncLocation( iMediumShipOffsets[dir][HOLD][XP], iMediumShipOffsets[dir][HOLD][YP] );
+
+		case 2: // medium
+			ApplyPartOffsetOrFallback( p1, partsCfg.portPlank, iMediumShipOffsets[ dir ][ PORT_PLANK ][ XP ], iMediumShipOffsets[ dir ][ PORT_PLANK ][ YP ] );
+			ApplyPartOffsetOrFallback( p2, partsCfg.starbPlank, iMediumShipOffsets[ dir ][ STARB_PLANK ][ XP ], iMediumShipOffsets[ dir ][ STARB_PLANK ][ YP ] );
+			ApplyPartOffsetOrFallback( hold, partsCfg.hold, iMediumShipOffsets[ dir ][ HOLD ][ XP ], iMediumShipOffsets[ dir ][ HOLD ][ YP ] );
+			ApplyPartOffsetOrFallback( tiller, partsCfg.tiller, iMediumShipOffsets[ dir ][ TILLER ][ XP ], iMediumShipOffsets[ dir ][ TILLER ][ YP ] );
 			break;
-		case 0x10:
-		case 0x14:
-			p1->IncLocation( iLargeShipOffsets[dir][PORT_PLANK][XP], iLargeShipOffsets[dir][PORT_PLANK][YP] );
-			p2->IncLocation( iLargeShipOffsets[dir][STARB_PLANK][XP], iLargeShipOffsets[dir][STARB_PLANK][YP] );
-			tiller->IncLocation( iLargeShipOffsets[dir][TILLER][XP], iLargeShipOffsets[dir][TILLER][YP] );
-			hold->IncLocation( iLargeShipOffsets[dir][HOLD][XP], iLargeShipOffsets[dir][HOLD][YP] );
+
+		case 3: // large
+			ApplyPartOffsetOrFallback( p1, partsCfg.portPlank, iLargeShipOffsets[ dir ][ PORT_PLANK ][ XP ], iLargeShipOffsets[ dir ][ PORT_PLANK ][ YP ] );
+			ApplyPartOffsetOrFallback( p2, partsCfg.starbPlank, iLargeShipOffsets[ dir ][ STARB_PLANK ][ XP ], iLargeShipOffsets[ dir ][ STARB_PLANK ][ YP ] );
+			ApplyPartOffsetOrFallback( hold, partsCfg.hold, iLargeShipOffsets[ dir ][ HOLD ][ XP ], iLargeShipOffsets[ dir ][ HOLD ][ YP ] );
+			ApplyPartOffsetOrFallback( tiller, partsCfg.tiller, iLargeShipOffsets[ dir ][ TILLER ][ XP ], iLargeShipOffsets[ dir ][ TILLER ][ YP ] );
 			break;
-		default: Console.Error( oldstrutil::format( "TurnBoat() more1 error! more1 = %c not found!", b->GetTempVar( CITV_MOREZ, 1 )));
+
+		default:
+			Console.Warning( oldstrutil::format( "TurnBoat(): boat multi 0x%X missing BOAT_SIZE; defaulting small", b->GetId() ) );
+			// do small
+			ApplyPartOffsetOrFallback( p1, partsCfg.portPlank, iSmallShipOffsets[ dir ][ PORT_PLANK ][ XP ], iSmallShipOffsets[ dir ][ PORT_PLANK ][ YP ] );
+			ApplyPartOffsetOrFallback( p2, partsCfg.starbPlank, iSmallShipOffsets[ dir ][ STARB_PLANK ][ XP ], iSmallShipOffsets[ dir ][ STARB_PLANK ][ YP ] );
+			ApplyPartOffsetOrFallback( hold, partsCfg.hold, iSmallShipOffsets[ dir ][ HOLD ][ XP ], iSmallShipOffsets[ dir ][ HOLD ][ YP ] );
+			ApplyPartOffsetOrFallback( tiller, partsCfg.tiller, iSmallShipOffsets[ dir ][ TILLER ][ XP ], iSmallShipOffsets[ dir ][ TILLER ][ YP ] );
+			break;
 	}
 
 	for( auto &tSock :nearbyChars )
@@ -922,7 +1345,7 @@ void TurnBoat( CSocket *mSock, CBoatObj *myBoat, CItem *tiller, UI08 dir, bool r
 	SI16 tx = 0, ty = 0;
 	CheckDirection( dir & 0x0F, tx, ty );
 
-	if( !BlockBoat( myBoat, tx, ty, dir, myBoat->GetDir(), true ))
+	if( !BlockBoat( myBoat, 0, 0, dir, myBoat->GetDir(), true ))
 	{
 		tiller->TextMessage( mSock, 10 );
 		TurnBoat( myBoat, rightTurn, false );
@@ -1161,5 +1584,4 @@ void ModelBoat( CSocket *s, CBoatObj *i )
 		KillKeys( serial );
 	}
 }
-
 

@@ -17,6 +17,33 @@
 using namespace std::string_literals;
 
 bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype );
+void RegisterBoatPartsConfig(
+	UI16 multiId,
+
+	// Port plank (left)
+	bool portHasItemId, UI16 portItemId,
+	bool portHasId2, const UI08 portId2[4],
+	bool portHasOffset, const SI16 portOffX[4], const SI16 portOffY[4],
+
+	// Starboard plank (right)
+	bool starbHasItemId, UI16 starbItemId,
+	bool starbHasId2, const UI08 starbId2[4],
+	bool starbHasOffset, const SI16 starbOffX[4], const SI16 starbOffY[4],
+
+	// Hold
+	bool holdHasItemId, UI16 holdItemId,
+	bool holdHasId2, const UI08 holdId2[4],
+	bool holdHasOffset, const SI16 holdOffX[4], const SI16 holdOffY[4],
+
+	// Tiller
+	bool tillerHasItemId, UI16 tillerItemId,
+	bool tillerHasId2, const UI08 tillerId2[4],
+	bool tillerHasOffset, const SI16 tillerOffX[4], const SI16 tillerOffY[4]
+);
+
+void RegisterBoatBlockConfig( UI16 multiId, bool hasNS, SI16 nsXMin, SI16 nsXMax, SI16 nsYMin, SI16 nsYMax, bool hasEW, SI16 ewXMin, SI16 ewXMax, SI16 ewYMin, SI16 ewYMax );
+void RegisterBoatMetaConfig( UI16 multiId, bool hasRange, UI08 id2Min, UI08 id2Max, bool hasSize, UI08 sizeType );
+
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	DoHouseTarget()
@@ -590,6 +617,53 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 	std::string customTagStringValue;
 	TAGMAPOBJECT customTag;
 	std::map<std::string, TAGMAPOBJECT> customTagMap;
+	// Defaults (optional)
+	UI16 boatTillerItemId = 0;
+	UI08 boatTillerId2[ 4 ] = { 0, 0, 0, 0 };
+	SI16 boatTillerOffX[ 4 ] = { 0, 0, 0, 0 };
+	SI16 boatTillerOffY[ 4 ] = { 0, 0, 0, 0 };
+	bool boatTillerItemIdSet = false;
+	bool boatTillerId2Set = false;
+	bool boatTillerOffsetSet = false;
+	// Defaults (optional) - hold
+	UI16 boatHoldItemId = 0;
+	UI08 boatHoldId2[ 4 ] = { 0, 0, 0, 0 };
+	SI16 boatHoldOffX[ 4 ] = { 0, 0, 0, 0 };
+	SI16 boatHoldOffY[ 4 ] = { 0, 0, 0, 0 };
+	bool boatHoldItemIdSet = false;
+	bool boatHoldId2Set = false;
+	bool boatHoldOffsetSet = false;
+	// Defaults (optional) - port plank
+	UI16 boatPortPlankItemId = 0;
+	UI08 boatPortPlankId2[ 4 ] = { 0, 0, 0, 0 };
+	SI16 boatPortPlankOffX[ 4 ] = { 0, 0, 0, 0 };
+	SI16 boatPortPlankOffY[ 4 ] = { 0, 0, 0, 0 };
+	bool boatPortPlankItemIdSet = false;
+	bool boatPortPlankId2Set = false;
+	bool boatPortPlankOffsetSet = false;
+
+	// Defaults (optional) - starboard plank
+	UI16 boatStarbPlankItemId = 0;
+	UI08 boatStarbPlankId2[ 4 ] = { 0, 0, 0, 0 };
+	SI16 boatStarbPlankOffX[ 4 ] = { 0, 0, 0, 0 };
+	SI16 boatStarbPlankOffY[ 4 ] = { 0, 0, 0, 0 };
+	bool boatStarbPlankItemIdSet = false;
+	bool boatStarbPlankId2Set = false;
+	bool boatStarbPlankOffsetSet = false;
+
+	// Defaults (optional) - boat movement blocking rects
+	bool boatBlockNSSet = false;
+	bool boatBlockEWSet = false;
+
+	SI16 boatNS_XMin = 0, boatNS_XMax = 0, boatNS_YMin = 0, boatNS_YMax = 0;
+	SI16 boatEW_XMin = 0, boatEW_XMax = 0, boatEW_YMin = 0, boatEW_YMax = 0;
+
+	bool boatId2RangeSet = false;
+	UI08 boatId2Min = 0;
+	UI08 boatId2Max = 0;
+
+	bool boatSizeSet = false;
+	UI08 boatSizeType = 0; // 1/2/3
 
 	std::string sect = "HOUSE " + oldstrutil::number( houseEntry );
 	CScriptSection *House = FileLookup->FindEntry( sect, house_def );
@@ -655,6 +729,289 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 		else if( UTag == "BOAT" )
 		{
 			isBoat = true;	//Boats
+		}
+		else if( UTag == "TILLERID" )
+		{
+			boatTillerItemId = static_cast< UI16 >( std::stoul( data, nullptr, 0 ) );
+			boatTillerItemIdSet = true;
+		}
+		else if( UTag == "TILLERID2" )
+		{
+			auto parts = oldstrutil::sections( data, " " );
+			if( parts.size() >= 4 )
+			{
+				for( size_t i = 0; i < 4; ++i )
+				{
+					boatTillerId2[ i ] = static_cast< UI08 >( std::stoul( parts[ i ], nullptr, 0 ) );
+				}
+				boatTillerId2Set = true;
+			}
+			else
+			{
+				Console.Warning( oldstrutil::format( "HOUSE %u: TILLERID2 needs 4 values (N E S W)", houseEntry ) );
+			}
+		}
+		else if( UTag == "TILLEROFFSET" )
+		{
+			// Split and remove empty tokens
+			auto raw = oldstrutil::sections( data, " " );
+			std::vector<std::string> parts;
+			parts.reserve( raw.size() );
+
+			for( auto& p : raw )
+			{
+				auto t = oldstrutil::trim( p );
+				if( !t.empty() )
+					parts.push_back( t );
+			}
+
+			if( parts.size() >= 8 )
+			{
+				try
+				{
+					boatTillerOffX[ 0 ] = static_cast< SI16 >( std::stoi( parts[ 0 ], nullptr, 0 ) );
+					boatTillerOffY[ 0 ] = static_cast< SI16 >( std::stoi( parts[ 1 ], nullptr, 0 ) );
+					boatTillerOffX[ 1 ] = static_cast< SI16 >( std::stoi( parts[ 2 ], nullptr, 0 ) );
+					boatTillerOffY[ 1 ] = static_cast< SI16 >( std::stoi( parts[ 3 ], nullptr, 0 ) );
+					boatTillerOffX[ 2 ] = static_cast< SI16 >( std::stoi( parts[ 4 ], nullptr, 0 ) );
+					boatTillerOffY[ 2 ] = static_cast< SI16 >( std::stoi( parts[ 5 ], nullptr, 0 ) );
+					boatTillerOffX[ 3 ] = static_cast< SI16 >( std::stoi( parts[ 6 ], nullptr, 0 ) );
+					boatTillerOffY[ 3 ] = static_cast< SI16 >( std::stoi( parts[ 7 ], nullptr, 0 ) );
+					boatTillerOffsetSet = true;
+				}
+				catch( ... )
+				{
+					boatTillerOffsetSet = false;
+					Console.Warning( oldstrutil::format( "HOUSE %u: BOAT_TILLER_OFFSET has invalid numeric data: '%s'", houseEntry, data.c_str() ) );
+				}
+			}
+			else
+			{
+				Console.Warning( oldstrutil::format( "HOUSE %u: BOAT_TILLER_OFFSET needs 8 values (x y for N E S W). Got %u: '%s'", houseEntry, static_cast< unsigned >( parts.size() ), data.c_str() ) );
+			}
+		}
+		else if( UTag == "HOLDID" )
+		{
+			boatHoldItemId = static_cast< UI16 >( std::stoul( data, nullptr, 0 ) );
+			boatHoldItemIdSet = true;
+		}
+		else if( UTag == "HOLDID2" )
+		{
+			auto parts = oldstrutil::sections( data, " " );
+			if( parts.size() >= 4 )
+			{
+				for( size_t i = 0; i < 4; ++i )
+				{
+					boatHoldId2[ i ] = static_cast< UI08 >( std::stoul( parts[ i ], nullptr, 0 ) );
+				}
+				boatHoldId2Set = true;
+			}
+			else
+			{
+				Console.Warning( oldstrutil::format( "HOUSE %u: BOAT_HOLD_ID2 needs 4 values (N E S W)", houseEntry ) );
+			}
+		}
+		else if( UTag == "HOLDOFFSET" )
+		{
+			// Split and remove empty tokens
+			auto raw = oldstrutil::sections( data, " " );
+			std::vector<std::string> parts;
+			parts.reserve( raw.size() );
+
+			for( auto& p : raw )
+			{
+				auto t = oldstrutil::trim( p );
+				if( !t.empty() )
+					parts.push_back( t );
+			}
+
+			if( parts.size() >= 8 )
+			{
+				try
+				{
+					boatHoldOffX[ 0 ] = static_cast< SI16 >( std::stoi( parts[ 0 ], nullptr, 0 ) );
+					boatHoldOffY[ 0 ] = static_cast< SI16 >( std::stoi( parts[ 1 ], nullptr, 0 ) );
+					boatHoldOffX[ 1 ] = static_cast< SI16 >( std::stoi( parts[ 2 ], nullptr, 0 ) );
+					boatHoldOffY[ 1 ] = static_cast< SI16 >( std::stoi( parts[ 3 ], nullptr, 0 ) );
+					boatHoldOffX[ 2 ] = static_cast< SI16 >( std::stoi( parts[ 4 ], nullptr, 0 ) );
+					boatHoldOffY[ 2 ] = static_cast< SI16 >( std::stoi( parts[ 5 ], nullptr, 0 ) );
+					boatHoldOffX[ 3 ] = static_cast< SI16 >( std::stoi( parts[ 6 ], nullptr, 0 ) );
+					boatHoldOffY[ 3 ] = static_cast< SI16 >( std::stoi( parts[ 7 ], nullptr, 0 ) );
+					boatHoldOffsetSet = true;
+				}
+				catch( ... )
+				{
+					boatHoldOffsetSet = false;
+					Console.Warning( oldstrutil::format( "HOUSE %u: HOLDOFFSET has invalid numeric data: '%s'", houseEntry, data.c_str() ) );
+				}
+			}
+			else
+			{
+				Console.Warning( oldstrutil::format( "HOUSE %u: HOLDOFFSET needs 8 values (x y for N E S W). Got %u: '%s'", houseEntry, static_cast< unsigned >( parts.size() ), data.c_str() ) );
+			}
+		}
+		else if( UTag == "PORTPLANKID" )
+		{
+			boatPortPlankItemId = static_cast< UI16 >( std::stoul( data, nullptr, 0 ) );
+			boatPortPlankItemIdSet = true;
+		}
+		else if( UTag == "PORTPLANKID2" )
+		{
+			auto parts = oldstrutil::sections( data, " " );
+			if( parts.size() >= 4 )
+			{
+				for( size_t i = 0; i < 4; ++i )
+				{
+					boatPortPlankId2[ i ] = static_cast< UI08 >( std::stoul( parts[ i ], nullptr, 0 ) );
+				}
+				boatPortPlankId2Set = true;
+			}
+			else
+			{
+				Console.Warning( oldstrutil::format( "HOUSE %u: PORTPLANKID2 needs 4 values (N E S W)", houseEntry ) );
+			}
+		}
+		else if( UTag == "PORTPLANKOFFSET" )
+		{
+			auto raw = oldstrutil::sections( data, " " );
+			std::vector<std::string> parts;
+			parts.reserve( raw.size() );
+			for( auto& p : raw )
+			{
+				auto t = oldstrutil::trim( p );
+				if( !t.empty() )
+					parts.push_back( t );
+			}
+
+			if( parts.size() >= 8 )
+			{
+				try
+				{
+					boatPortPlankOffX[ 0 ] = static_cast< SI16 >( std::stoi( parts[ 0 ], nullptr, 0 ) );
+					boatPortPlankOffY[ 0 ] = static_cast< SI16 >( std::stoi( parts[ 1 ], nullptr, 0 ) );
+					boatPortPlankOffX[ 1 ] = static_cast< SI16 >( std::stoi( parts[ 2 ], nullptr, 0 ) );
+					boatPortPlankOffY[ 1 ] = static_cast< SI16 >( std::stoi( parts[ 3 ], nullptr, 0 ) );
+					boatPortPlankOffX[ 2 ] = static_cast< SI16 >( std::stoi( parts[ 4 ], nullptr, 0 ) );
+					boatPortPlankOffY[ 2 ] = static_cast< SI16 >( std::stoi( parts[ 5 ], nullptr, 0 ) );
+					boatPortPlankOffX[ 3 ] = static_cast< SI16 >( std::stoi( parts[ 6 ], nullptr, 0 ) );
+					boatPortPlankOffY[ 3 ] = static_cast< SI16 >( std::stoi( parts[ 7 ], nullptr, 0 ) );
+					boatPortPlankOffsetSet = true;
+				}
+				catch( ... )
+				{
+					boatPortPlankOffsetSet = false;
+					Console.Warning( oldstrutil::format( "HOUSE %u: PORTPLANKOFFSET has invalid numeric data: '%s'", houseEntry, data.c_str() ) );
+				}
+			}
+			else
+			{
+				Console.Warning( oldstrutil::format( "HOUSE %u: PORTPLANKOFFSET needs 8 values (x y for N E S W). Got %u: '%s'", houseEntry, static_cast< unsigned >( parts.size() ), data.c_str() ) );
+			}
+		}
+		else if( UTag == "STARBPLANKID" )
+		{
+			boatStarbPlankItemId = static_cast< UI16 >( std::stoul( data, nullptr, 0 ) );
+			boatStarbPlankItemIdSet = true;
+		}
+		else if( UTag == "STARBPLANKID2" )
+		{
+			auto parts = oldstrutil::sections( data, " " );
+			if( parts.size() >= 4 )
+			{
+				for( size_t i = 0; i < 4; ++i )
+				{
+					boatStarbPlankId2[ i ] = static_cast< UI08 >( std::stoul( parts[ i ], nullptr, 0 ) );
+				}
+				boatStarbPlankId2Set = true;
+			}
+			else
+			{
+				Console.Warning( oldstrutil::format( "HOUSE %u: STARBPLANKID2 needs 4 values (N E S W)", houseEntry ) );
+			}
+		}
+		else if( UTag == "STARBPLANKOFFSET" )
+		{
+			auto raw = oldstrutil::sections( data, " " );
+			std::vector<std::string> parts;
+			parts.reserve( raw.size() );
+			for( auto& p : raw )
+			{
+				auto t = oldstrutil::trim( p );
+				if( !t.empty() )
+					parts.push_back( t );
+			}
+
+			if( parts.size() >= 8 )
+			{
+				try
+				{
+					boatStarbPlankOffX[ 0 ] = static_cast< SI16 >( std::stoi( parts[ 0 ], nullptr, 0 ) );
+					boatStarbPlankOffY[ 0 ] = static_cast< SI16 >( std::stoi( parts[ 1 ], nullptr, 0 ) );
+					boatStarbPlankOffX[ 1 ] = static_cast< SI16 >( std::stoi( parts[ 2 ], nullptr, 0 ) );
+					boatStarbPlankOffY[ 1 ] = static_cast< SI16 >( std::stoi( parts[ 3 ], nullptr, 0 ) );
+					boatStarbPlankOffX[ 2 ] = static_cast< SI16 >( std::stoi( parts[ 4 ], nullptr, 0 ) );
+					boatStarbPlankOffY[ 2 ] = static_cast< SI16 >( std::stoi( parts[ 5 ], nullptr, 0 ) );
+					boatStarbPlankOffX[ 3 ] = static_cast< SI16 >( std::stoi( parts[ 6 ], nullptr, 0 ) );
+					boatStarbPlankOffY[ 3 ] = static_cast< SI16 >( std::stoi( parts[ 7 ], nullptr, 0 ) );
+					boatStarbPlankOffsetSet = true;
+				}
+				catch( ... )
+				{
+					boatStarbPlankOffsetSet = false;
+					Console.Warning( oldstrutil::format( "HOUSE %u: STARBPLANKOFFSET has invalid numeric data: '%s'", houseEntry, data.c_str() ) );
+				}
+			}
+			else
+			{
+				Console.Warning( oldstrutil::format( "HOUSE %u: STARBPLANKOFFSET needs 8 values (x y for N E S W). Got %u: '%s'", houseEntry, static_cast< unsigned >( parts.size() ), data.c_str() ) );
+			}
+		}
+		else if( UTag == "BLOCKNS" )
+		{
+			auto parts = oldstrutil::sections( data, " " );
+			if( parts.size() >= 4 )
+			{
+				boatNS_XMin = static_cast< SI16 >( std::stoi( parts[ 0 ], nullptr, 0 ) );
+				boatNS_XMax = static_cast< SI16 >( std::stoi( parts[ 1 ], nullptr, 0 ) );
+				boatNS_YMin = static_cast< SI16 >( std::stoi( parts[ 2 ], nullptr, 0 ) );
+				boatNS_YMax = static_cast< SI16 >( std::stoi( parts[ 3 ], nullptr, 0 ) );
+				boatBlockNSSet = true;
+			}
+			else
+			{
+				Console.Warning( oldstrutil::format( "HOUSE %u: BLOCKNS needs 4 values (xmin xmax ymin ymax)", houseEntry ) );
+			}
+		}
+		else if( UTag == "BLOCKEW" )
+		{
+			auto parts = oldstrutil::sections( data, " " );
+			if( parts.size() >= 4 )
+			{
+				boatEW_XMin = static_cast< SI16 >( std::stoi( parts[ 0 ], nullptr, 0 ) );
+				boatEW_XMax = static_cast< SI16 >( std::stoi( parts[ 1 ], nullptr, 0 ) );
+				boatEW_YMin = static_cast< SI16 >( std::stoi( parts[ 2 ], nullptr, 0 ) );
+				boatEW_YMax = static_cast< SI16 >( std::stoi( parts[ 3 ], nullptr, 0 ) );
+				boatBlockEWSet = true;
+			}
+			else
+			{
+				Console.Warning( oldstrutil::format( "HOUSE %u: BLOCKEW needs 4 values (xmin xmax ymin ymax)", houseEntry ) );
+			}
+		}
+		else if( UTag == "BOATID2MIN" )
+		{
+			boatId2Min = static_cast< UI08 >( std::stoul( data, nullptr, 0 ) );
+			boatId2RangeSet = true;
+		}
+		else if( UTag == "BOATID2MAX" )
+		{
+			boatId2Max = static_cast< UI08 >( std::stoul( data, nullptr, 0 ) );
+			boatId2RangeSet = true;
+		}
+		else if( UTag == "BOATSIZE" )
+		{
+			boatSizeType = static_cast< UI08 >( std::stoul( data, nullptr, 0 ) ); // 1/2/3
+			boatSizeSet = true;
 		}
 		else if( UTag == "DAMAGEABLE" )
 		{
@@ -993,7 +1350,32 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 
 	if( isBoat ) // Boats
 	{
-		CBoatObj *bObj = static_cast<CBoatObj *>( house );
+		// Register DFN-based boat config in memory (NOT on the boat object)
+		RegisterBoatPartsConfig( houseId,
+			// port plank
+			boatPortPlankItemIdSet, boatPortPlankItemId,
+			boatPortPlankId2Set, boatPortPlankId2,
+			boatPortPlankOffsetSet, boatPortPlankOffX, boatPortPlankOffY,
+
+			// starboard plank
+			boatStarbPlankItemIdSet, boatStarbPlankItemId,
+			boatStarbPlankId2Set, boatStarbPlankId2,
+			boatStarbPlankOffsetSet, boatStarbPlankOffX, boatStarbPlankOffY,
+
+			// hold
+			boatHoldItemIdSet, boatHoldItemId,
+			boatHoldId2Set, boatHoldId2,
+			boatHoldOffsetSet, boatHoldOffX, boatHoldOffY,
+
+			// tiller
+			boatTillerItemIdSet, boatTillerItemId,
+			boatTillerId2Set, boatTillerId2,
+			boatTillerOffsetSet, boatTillerOffX, boatTillerOffY );
+
+		RegisterBoatBlockConfig( houseId, boatBlockNSSet, boatNS_XMin, boatNS_XMax, boatNS_YMin, boatNS_YMax, boatBlockEWSet, boatEW_XMin, boatEW_XMax, boatEW_YMin, boatEW_YMax );
+		RegisterBoatMetaConfig( houseId, boatId2RangeSet, boatId2Min, boatId2Max, boatSizeSet, boatSizeType );
+
+		CBoatObj* bObj = static_cast< CBoatObj* >( house );
 		if( bObj == nullptr || !CreateBoat( mSock, bObj, ( houseId % 256 ), houseEntry ))
 		{
 			house->Delete();
@@ -1271,4 +1653,3 @@ void KillKeys( SERIAL targSerial, SERIAL charSerial = INVALIDSERIAL )
 		ObjectFactory::GetSingleton().IterateOver( OT_ITEM, b, toPass, &KillKeysFunctor );
 	}
 }
-

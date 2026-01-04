@@ -15,6 +15,132 @@
 //* [HOUSE 1]...                                                  *
 //*                                                               *
 //*****************************************************************
+/// *********************************************************************
+/// *                         UOX3 DFNs                                 *
+/// *                     Boat Part Overrides                            *
+/// *                                                                     *
+/// * Purpose:                                                           *
+/// *   These tags allow a boat multi definition to override the default  *
+/// *   hardcoded boat-part graphics and placement offsets used by the    *
+/// *   server.                									           *
+/// *                                                                     *
+/// * Direction Order (IMPORTANT):                                       *
+/// *   All *ID2 and *OFFSET lists use the canonical 4-facing order:      *
+/// *     0 = NORTH, 1 = EAST, 2 = SOUTH, 3 = WEST                        *
+/// *                                                                     *
+/// * Behavior:                                                          *
+/// *   - If a tag is present, it overrides the default cShipItems[]      *
+/// *     graphics and/or size-based offset tables (small/medium/large).  *
+/// *   - If a tag is missing, TurnBoat() falls back to the hardcoded     *
+/// *     defaults for that part/size.                                    *
+/// *                                                                     *
+/// * Notes on "ID" vs "ID2":                                             *
+/// *   - *ID  : Full multi/static graphic (0x????). Primarily for         *
+/// *           readability/reference; the engine typically uses ID2.     *
+/// *   - *ID2 : The 4 directional "id2" bytes (hex or decimal) that      *
+/// *           are written into item->SetId(..., 2).                      *
+/// *                                                                     *
+/// * Offset Format:                                                     *
+/// *   *OFFSET provides 8 signed integers:                               *
+/// *     xN yN  xE yE  xS yS  xW yW                                      *
+/// *   Each pair is applied as an IncLocation(offX, offY) relative to    *
+/// *   the boat multi origin AFTER the part is SetLocation(b).           *
+/// *********************************************************************
+///
+/// =======================
+/// Boat part override tags
+/// =======================
+///
+/// TILLERID=0x????
+///   Reference only. Full graphic id for the tillerman.
+///   (Engine uses TILLERID2 for actual id2 assignment.)
+///
+/// TILLERID2=<N> <E> <S> <W>
+///   Directional id2 values for the tillerman.
+///   Example: TILLERID2=0x4E 0x53 0x4B 0x50
+///
+/// TILLEROFFSET=<xN> <yN> <xE> <yE> <xS> <yS> <xW> <yW>
+///   Directional placement offsets for tillerman.
+///   Example: TILLEROFFSET=1 4  -4 0  0 -4  0 4
+///
+/// HOLDID=0x????
+///   Reference only. Full graphic id for the hold/hatch.
+///
+/// HOLDID2=<N> <E> <S> <W>
+///   Directional id2 values for the hold/hatch.
+///   Example: HOLDID2=0xAE 0x65 0xB9 0x93
+///
+/// HOLDOFFSET=<xN> <yN> <xE> <yE> <xS> <yS> <xW> <yW>
+///   Directional placement offsets for the hold.
+///   Example: HOLDOFFSET=0 -4  4 0  0 4  -4 0
+///
+/// PORTPLANKID=0x????
+///   Reference only. Full graphic id for the PORT (left) plank.
+///
+/// PORTPLANKID2=<N> <E> <S> <W>
+///   Directional id2 values for the PORT (left) plank.
+///   Example: PORTPLANKID2=0xB1 0x8A 0xB2 0x85
+///
+/// PORTPLANKOFFSET=<xN> <yN> <xE> <yE> <xS> <yS> <xW> <yW>
+///   Directional placement offsets for the PORT (left) plank.
+///   Example: PORTPLANKOFFSET=-2 0  0 -2  2 0  0 2
+///
+/// STARBPLANKID=0x????
+///   Reference only. Full graphic id for the STARBOARD (right) plank.
+///
+/// STARBPLANKID2=<N> <E> <S> <W>
+///   Directional id2 values for the STARBOARD (right) plank.
+///   Example: STARBPLANKID2=0xB2 0x85 0xB1 0x8A
+///
+/// STARBPLANKOFFSET=<xN> <yN> <xE> <yE> <xS> <yS> <xW> <yW>
+///   Directional placement offsets for the STARBOARD (right) plank.
+///   Example: STARBPLANKOFFSET=2 0  0 2  -2 0  0 -2
+///
+/// =======================
+/// Boat blocking rectangles
+/// =======================
+///
+/// Blocking rectangles are used by BlockBoat() to validate turns/movement.
+/// Values are relative to the boat multi origin (boat x,y).
+///
+/// BLOCKNS=<minX> <maxX> <minY> <maxY>
+///   Rectangle used when the boat is oriented North/South.
+///   Example: BLOCKNS=-2 3 -6 6
+///
+/// BLOCKEW=<minX> <maxX> <minY> <maxY>
+///   Rectangle used when the boat is oriented East/West.
+///   Example: BLOCKEW=-6 6 -2 3
+///
+/// =======================
+/// Boat meta (turning id2 model + fallback size table)
+/// =======================
+///
+/// These values feed RegisterBoatMetaConfig() and control how TurnBoat()
+/// maps boat id2 values to facing (0..3).
+///
+/// BOATID2MIN=0x??
+///   Inclusive minimum id2 value for the boat multi facing set.
+///   Typically 0x00 for standard small boats.
+///
+/// BOATID2MAX=0x??
+///   Inclusive maximum id2 value for the boat multi facing set.
+///   Typically BOATID2MIN+3 (4 facings total).
+///
+/// BOATSIZE=<1|2|3>
+///   Size type used ONLY for fallback offset tables if no *OFFSET tags
+///   exist for a given part.
+///     1 = small
+///     2 = medium
+///     3 = large
+///
+/// Example meta:
+///   BOATID2MIN=0x00
+///   BOATID2MAX=0x03
+///   BOATSIZE=1
+///
+/// *********************************************************************
+/// End Boat Part Overrides Header
+/// *********************************************************************
 
 // Small Brick
 [HOUSE 1]
@@ -479,6 +605,28 @@ CHARX=1
 CHARZ=3
 MAXITEMS=125
 WEIGHTMAX=40000
+TILLERID=0x3E4E
+TILLERID2=0x4E 0x53 0x4B 0x50
+TILLEROFFSET=1 4 -4 0 0 -4 0 4
+HOLDID=0x3EAE
+HOLDID2=0xAE 0x65 0xB9 0x93
+HOLDOFFSET=0 -4 4 0 0 4 -4 0
+// Port plank (left)
+PORTPLANKID=0x3EB1
+PORTPLANKID2=0xB1 0x8A 0xB2 0x85
+PORTPLANKOFFSET=-2 0 0 -2 2 0 0 2
+// Starboard plank (right)
+STARBPLANKID=0x3EB2
+STARBPLANKID2=0xB2 0x85 0xB1 0x8A
+STARBPLANKOFFSET=2 0 0 2 -2 0 0 -2
+// Blocking rectangles relative to boat's (x,y):
+// Small: width -2..+3, length -6..+6 (NS); length -6..+6 (EW) with width -2..+3
+BLOCKNS=-2 3 -6 6
+BLOCKEW=-6 6 -2 3
+// meta for RegisterBoatMetaConfig
+BOATID2MIN=0x00
+BOATID2MAX=0x03
+BOATSIZE=1
 }
 
 [HOUSE 21]
@@ -489,6 +637,28 @@ CHARX=1
 CHARZ=3
 MAXITEMS=125
 WEIGHTMAX=40000
+TILLERID=0x3E4E
+TILLERID2=0x4E 0x53 0x4B 0x50
+TILLEROFFSET=1 4 -4 0 0 -4 0 4
+HOLDID=0x3EAE
+HOLDID2=0xAE 0x65 0xB9 0x93
+HOLDOFFSET=0 -4 4 0 0 4 -4 0
+// Port plank (left)
+PORTPLANKID=0x3EB1
+PORTPLANKID2=0xB1 0x8A 0xB2 0x85
+PORTPLANKOFFSET=-2 0 0 -2 2 0 0 2
+// Starboard plank (right)
+STARBPLANKID=0x3EB2
+STARBPLANKID2=0xB2 0x85 0xB1 0x8A
+STARBPLANKOFFSET=2 0 0 2 -2 0 0 -2
+// Blocking rectangles relative to boat's (x,y):
+// Small: width -2..+3, length -6..+6 (NS); length -6..+6 (EW) with width -2..+3
+BLOCKNS=-2 3 -6 6
+BLOCKEW=-6 6 -2 3
+// meta for RegisterBoatMetaConfig
+BOATID2MIN=0x04
+BOATID2MAX=0x07
+BOATSIZE=1
 }
 
 [HOUSE 22]
