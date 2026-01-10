@@ -332,6 +332,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				}
 				break;
 			}
+			case DFNTAG_GUMPTYPE:        applyTo->SetGumpType( static_cast< UI16 >( ndata ) );      break;
 			case DFNTAG_HP:
 				if( ndata > 0 )
 				{

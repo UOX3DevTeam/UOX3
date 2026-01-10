@@ -99,6 +99,7 @@ const UI16			DEFITEM_POISONCHARGES = 0;
 const SI16			DEFITEM_DURABLITITYHPBONUS = 0;
 
 const SI16			DEFITEM_LOWERSTATREQ	= 0;
+const UI16          DEFBASE_GUMPTYPE    = 0;
 
 
 //o------------------------------------------------------------------------------------------------o
@@ -107,7 +108,7 @@ const SI16			DEFITEM_LOWERSTATREQ	= 0;
 //|	Purpose		-	Constructor
 //o------------------------------------------------------------------------------------------------o
 CItem::CItem() : CBaseObject(),
-contObj( nullptr ), glowEffect( DEFITEM_GLOWEFFECT ), glow( DEFITEM_GLOW ), glowColour( DEFITEM_GLOWCOLOUR ),
+contObj( nullptr ), glowEffect( DEFITEM_GLOWEFFECT ), glow( DEFITEM_GLOW ), glowColour( DEFITEM_GLOWCOLOUR ), gumpType( DEFBASE_GUMPTYPE ),
 madeWith( DEFITEM_MADEWITH ), rndValueRate( DEFITEM_RANDVALUE ), good( DEFITEM_GOOD ), rank( DEFITEM_RANK ), armorClass( DEFITEM_ARMORCLASS ),
 restock( DEFITEM_RESTOCK ), movable( DEFITEM_MOVEABLE ), tempTimer( DEFITEM_TEMPTIMER ), decayTime( DEFITEM_DECAYTIME ),
 spd( DEFITEM_SPEED ), maxHp( DEFITEM_MAXHP ), amount( DEFITEM_AMOUNT ),
@@ -1232,6 +1233,22 @@ auto CItem::SetGood( SI16 newValue ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function  -  CBaseObject::GetGumpType()
+//|             CBaseObject::SetGumpType()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose   -  Gets/Sets container gump type override (0 = use default)
+//o------------------------------------------------------------------------------------------------o
+UI16 CItem::GetGumpType( void ) const
+{
+    return gumpType;
+}
+void CItem::SetGumpType( UI16 newValue )
+{
+    gumpType = newValue;
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem::GetRndValueRate()
 //|					CItem::SetRndValueRate()
 //o------------------------------------------------------------------------------------------------o
@@ -1687,6 +1704,7 @@ auto CItem::CopyData( CItem *target ) -> void
 	target->SetAmmoFXHue( GetAmmoFXHue() );
 	target->SetAmmoFXRender( GetAmmoFXRender() );
 	target->SetGood( GetGood() );
+	target->SetGumpType( GetGumpType() );
 	target->SetHiDamage( GetHiDamage() );
 	target->SetHP( GetHP() );
 	target->SetId( GetId() );
@@ -1817,6 +1835,7 @@ bool CItem::DumpBody( std::ostream &outStream ) const
 	outStream << "MoreXYZ=0x" << GetTempVar( CITV_MOREX ) << ",0x" << GetTempVar( CITV_MOREY ) << ",0x" << GetTempVar( CITV_MOREZ ) << newLine;
 	outStream << "Glow=0x" << GetGlow() << newLine;
 	outStream << "GlowBC=0x" << GetGlowColour() << newLine;
+	outStream << "GumpType=0x" << GetGumpType() << newLine;
 	outStream << "Ammo=0x" << GetAmmoId() << ",0x" << GetAmmoHue() << newLine;
 	outStream << "AmmoFX=0x" << GetAmmoFX() << ",0x" << GetAmmoFXHue() << ",0x" << GetAmmoFXRender() << newLine;
 	outStream << "Spells=0x" << GetSpell( 0 ) << ",0x" << GetSpell( 1 ) << ",0x" << GetSpell( 2 ) << newLine;
@@ -2048,6 +2067,11 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				else if( UTag == "GOOD" )
 				{
 					SetGood( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					rValue = true;
+				}
+				if( UTag == "GUMPTYPE" )
+				{
+					SetGumpType( static_cast< UI16 >( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ) ), nullptr, 0 )));
 					rValue = true;
 				}
 				break;

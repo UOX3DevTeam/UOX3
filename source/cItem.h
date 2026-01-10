@@ -39,6 +39,7 @@ protected:
 	SI08			movable;		// 0=Default as stored in client, 1=Always movable, 2=Never movable, 3=Owner movable.
 	TIMERVAL		tempTimer;
 	TIMERVAL		decayTime;
+	UI16            gumpType;
 	UI08			spd;			// The speed of the weapon
 	UI16			maxHp;			// Max number of hit points an item can have.
 	UI16			amount;			// Amount of items in pile
@@ -131,6 +132,10 @@ public:
 
 	auto			GetPoisonCharges() const -> UI16;
 	auto			SetPoisonCharges( UI16 newValue ) -> void;
+
+
+	UI16			GetGumpType( void ) const;
+	void			SetGumpType( UI16 newValue );
 
 	auto			IsDoorOpen() const -> bool;
 	auto			IsPileable() const -> bool;
