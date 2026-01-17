@@ -962,6 +962,50 @@ void CTownRegion::SetWeather( WEATHID newValue )
 	weather = newValue;
 }
 
+UI16 CTownRegion::GetParentRegion( void ) const
+{
+    return parentRegion;
+}
+
+WEATHID CTownRegion::GetEffectiveWeather( void ) const
+{
+    // If set on this region, use it.
+    // Pick the "unset" sentinel you use. Usually 0xFF for UOX3-style.
+    if( weather != 0xFF )
+        return weather;
+
+    // Walk up parentRegion chain.
+    UI16 parent = parentRegion;
+
+    // Safety: avoid infinite loops
+    for( int i = 0; i < 32; ++i )
+    {
+        if( parent == 0xFFFF || parent == regionNum )
+            break;
+
+        if( cwmWorldState->townRegions.find( parent ) == cwmWorldState->townRegions.end() )
+            break;
+
+        CTownRegion *p = cwmWorldState->townRegions[parent];
+        if( p == nullptr )
+            break;
+
+        WEATHID w = p->GetWeather();
+        if( w != 0xFF )
+            return w;
+
+        parent = p->GetParentRegion();
+    }
+
+    // Final fallback: use your default region 0xFF's weather if it has one,
+    // otherwise just return 0.
+    CTownRegion *defR = cwmWorldState->townRegions[0xFF];
+    if( defR != nullptr && defR->GetWeather() != 0xFF )
+        return defR->GetWeather();
+
+    return 0;
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::GetGoodSell()
 //o------------------------------------------------------------------------------------------------o
