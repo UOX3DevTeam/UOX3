@@ -1762,7 +1762,7 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 	}
 	else if( brewStorm )
 	{
-		SendJSWeather( p, STORMBREW, temp )
+		SendJSWeather( p, STORMBREW, temp );
 		//DoPlayerWeather( s, 4, temp, currval );
 	}
 	else if( isSnowing && SnowThreshold( currval ) > Temp( currval ))
