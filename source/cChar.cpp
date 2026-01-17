@@ -1666,6 +1666,12 @@ void CChar::SetWeathDamage( TIMERVAL newValue, UI08 part )
 	weathDamage[part] = newValue;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::GetLastWeathId()
+//|					CChar::SetLastWeathId()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the last effective weather system ID sent to the client for this character
+//o------------------------------------------------------------------------------------------------o
 UI16 CChar::GetLastWeathId( void ) const
 {
     return lastWeathId;
@@ -1675,6 +1681,12 @@ void CChar::SetLastWeathId( UI16 newValue )
     lastWeathId = newValue;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::GetLastWeathPkt()
+//|					CChar::SetLastWeathPkt()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the last weather packet type sent to the client for this character
+//o------------------------------------------------------------------------------------------------o
 UI08 CChar::GetLastWeathPkt( void ) const
 {
     return lastWeathPkt;
@@ -1684,6 +1696,12 @@ void CChar::SetLastWeathPkt( UI08 newValue )
     lastWeathPkt = newValue;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::GetLastWeathParts()
+//|					CChar::SetLastWeathParts()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the last weather particle count sent to the client for this character
+//o------------------------------------------------------------------------------------------------o
 UI08 CChar::GetLastWeathParts( void ) const
 {
     return lastWeathParts;

@@ -962,11 +962,24 @@ void CTownRegion::SetWeather( WEATHID newValue )
 	weather = newValue;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CTownRegion::GetParentRegion()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the parent town region ID for this region
+//o------------------------------------------------------------------------------------------------o
 UI16 CTownRegion::GetParentRegion( void ) const
 {
     return parentRegion;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CTownRegion::GetEffectiveWeather()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the effective weather for the town region.
+//|					If this region has no weather assigned (0xFF), the parent
+//|					region chain is searched until a valid weather is found.
+//|					Falls back to the default region if necessary.
+//o------------------------------------------------------------------------------------------------o
 WEATHID CTownRegion::GetEffectiveWeather( void ) const
 {
     // If set on this region, use it.
