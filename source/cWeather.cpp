@@ -1702,22 +1702,22 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 	if( isStorm )
 	{
 		pktType = 5;
-		pktParts = static_cast<UI08>( StormIntensity( currVal ));
+		pktParts = static_cast< UI08 >( StormIntensity( currVal ) );
 	}
 	else if( brewStorm )
 	{
 		pktType = 4;
-		pktParts = ( UI08 ) ( StormIntensity( currVal ) / 2 );
+		pktParts = static_cast< UI08 >( StormIntensity( currVal ) / 2 );
 	}
 	else if( isSnowing && Temp( currVal ) <= SnowThreshold( currVal ) )
 	{
 		pktType = 2;
-		pktParts = ( UI08 ) SnowIntensity( currVal );
+		pktParts = static_cast< UI08 >( SnowIntensity( currVal ) );
 	}
 	else if( isRaining )
 	{
 		pktType = 1;
-		pktParts = ( UI08 ) RainIntensity( currVal );
+		pktParts = static_cast< UI08 >( RainIntensity( currVal ) );
 	}
 	else
 	{
@@ -1726,7 +1726,7 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 	}
 
 	// Only send if changed (this is what stops town vs outside spam when same)
-	if( p->GetLastWeathId() != ( UI16 ) currVal || p->GetLastWeathPkt() != pktType || p->GetLastWeathParts() != pktParts )
+	if( p->GetLastWeathId() != static_cast<UI16>( currVal ) || p->GetLastWeathPkt() != pktType || p->GetLastWeathParts() != pktParts )
 	{
 		p->SetLastWeathId( ( UI16 ) currVal );
 		p->SetLastWeathPkt( pktType );
