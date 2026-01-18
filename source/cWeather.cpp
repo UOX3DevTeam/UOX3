@@ -1709,7 +1709,7 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 		pktType = 4;
 		pktParts = ( UI08 ) ( StormIntensity( currVal ) / 2 );
 	}
-	else if( isSnowing && SnowThreshold( currVal ) > Temp( currVal ) )
+	else if( isSnowing && Temp( currVal ) <= SnowThreshold( currVal ) )
 	{
 		pktType = 2;
 		pktParts = ( UI08 ) SnowIntensity( currVal );
@@ -1757,7 +1757,7 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 		SendJSWeather( p, STORMBREW, temp );
 		//DoPlayerWeather( s, 4, temp, currVal );
 	}
-	else if( isSnowing && SnowThreshold( currVal ) > Temp( currVal ))
+	else if( isSnowing && Temp( currVal ) <= SnowThreshold( currVal ) )
 	{
 		//DoPlayerWeather( s, 2, temp, currVal );
 		if( p->GetWeathDamage( SNOW ) == 0 )
@@ -1772,7 +1772,7 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 		{
 			p->SetWeathDamage( 0, RAIN );
 		}
-		SendJSWeather( p, STORM, temp );
+		SendJSWeather( p, SNOW, temp );
 	}
 	else if( isRaining )
 	{
@@ -1789,7 +1789,7 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 		{
 			p->SetWeathDamage( 0, STORM );
 		}
-		SendJSWeather( p, STORM, temp );
+		SendJSWeather( p, RAIN, temp );
 	}
 	else
 	{
@@ -1806,7 +1806,7 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 		{
 			p->SetWeathDamage( 0, RAIN );
 		}
-		SendJSWeather( p, STORM, temp );
+		SendJSWeather( p, LIGHT, temp );
 	}
 
 	if(( Races->Affect( p->GetRace(), HEAT )) && p->GetWeathDamage( HEAT ) == 0 )
@@ -1861,7 +1861,7 @@ bool cWeatherAb::DoNPCStuff( CChar *p )
 			p->SetWeathDamage( 0, RAIN );
 		}
 	}
-	else if( isSnowing && SnowThreshold( currVal ) > Temp( currVal ))
+	else if( isSnowing && Temp( currVal ) <= SnowThreshold( currVal ) )
 	{
 		SendJSWeather( p, SNOW, temp );
 		if( p->GetWeathDamage( SNOW ) == 0 )
