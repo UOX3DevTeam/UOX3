@@ -1709,7 +1709,7 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 		pktType = 4;
 		pktParts = static_cast< UI08 >( StormIntensity( currVal ) / 2 );
 	}
-	else if( isSnowing && Temp( currVal ) <= SnowThreshold( currVal ) )
+	else if( isSnowing && SnowThreshold( currVal ) > Temp( currVal ))
 	{
 		pktType = 2;
 		pktParts = static_cast< UI08 >( SnowIntensity( currVal ) );
@@ -1757,7 +1757,7 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 		SendJSWeather( p, STORMBREW, temp );
 		//DoPlayerWeather( s, 4, temp, currVal );
 	}
-	else if( isSnowing && Temp( currVal ) <= SnowThreshold( currVal ) )
+	else if( isSnowing && SnowThreshold( currVal ) > Temp( currVal ))
 	{
 		//DoPlayerWeather( s, 2, temp, currVal );
 		if( p->GetWeathDamage( SNOW ) == 0 )
@@ -1861,7 +1861,7 @@ bool cWeatherAb::DoNPCStuff( CChar *p )
 			p->SetWeathDamage( 0, RAIN );
 		}
 	}
-	else if( isSnowing && Temp( currVal ) <= SnowThreshold( currVal ) )
+	else if( isSnowing && SnowThreshold( currVal ) > Temp( currVal ))
 	{
 		SendJSWeather( p, SNOW, temp );
 		if( p->GetWeathDamage( SNOW ) == 0 )
