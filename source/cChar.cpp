@@ -3432,10 +3432,6 @@ bool CChar::DumpBody( std::ostream &outStream ) const
 	outStream << "PoisonStrength=" + std::to_string( GetPoisonStrength() ) + newLine;
 	outStream << "WillHunger=" + std::to_string(( WillHunger() ? 1 : 0 )) + newLine;
 
-	outStream << "LastWeathId=0x" << GetLastWeathId() << newLine;
-	outStream << "LastWeathPkt=0x" << (UI16)GetLastWeathPkt() << newLine;
-	outStream << "LastWeathParts=0x" << (UI16)GetLastWeathParts() << newLine;
-
 	TIMERVAL mTime = GetTimer( tCHAR_MURDERRATE );
 	outStream << "MurderTimer=";
 	if( mTime == 0 || mTime < cwmWorldState->GetUICurrentTime() )
@@ -4835,21 +4831,6 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				else if( UTag == "LOYALTY" )
 				{
 					SetLoyalty( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
-					rValue = true;
-				}
-				else if( UTag == "LASTWEATHID" )
-				{
-					SetLastWeathId( static_cast< UI16 >( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ) ), nullptr, 0 ) ) );
-					rValue = true;
-				}
-				else if( UTag == "LASTWEATHPKT" )
-				{
-					SetLastWeathPkt( static_cast< UI08 >( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ) ), nullptr, 0 ) ) );
-					rValue = true;
-				}
-				else if( UTag == "LASTWEATHPARTS" )
-				{
-					SetLastWeathParts( static_cast< UI08 >( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ) ), nullptr, 0 ) ) );
 					rValue = true;
 				}
 				break;
