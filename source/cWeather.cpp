@@ -1737,7 +1737,6 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 
 	if( isStorm )
 	{
-		//DoPlayerWeather( s, 5, temp, currVal );
 		if( p->GetWeathDamage( STORM ) == 0 )
 		{
 			p->SetWeathDamage( BuildTimeValue( static_cast<R64>( Races->Secs( p->GetRace(), STORM ))), STORM );
@@ -1755,11 +1754,9 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 	else if( brewStorm )
 	{
 		SendJSWeather( p, STORMBREW, temp );
-		//DoPlayerWeather( s, 4, temp, currVal );
 	}
 	else if( isSnowing && SnowThreshold( currVal ) > Temp( currVal ))
 	{
-		//DoPlayerWeather( s, 2, temp, currVal );
 		if( p->GetWeathDamage( SNOW ) == 0 )
 		{
 			p->SetWeathDamage( BuildTimeValue( static_cast<R64>( Races->Secs( p->GetRace(), SNOW ))), SNOW );
@@ -1776,7 +1773,6 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 	}
 	else if( isRaining )
 	{
-		//DoPlayerWeather( s, 1, temp, currVal );
 		if( p->GetWeathDamage( RAIN ) == 0 )
 		{
 			p->SetWeathDamage( BuildTimeValue( static_cast<R64>( Races->Secs( p->GetRace(), RAIN ))), RAIN );
@@ -1793,7 +1789,6 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 	}
 	else
 	{
-		//DoPlayerWeather( s, 0, temp, currVal );
 		if( p->GetWeathDamage( SNOW ) != 0 )
 		{
 			p->SetWeathDamage( 0, SNOW );

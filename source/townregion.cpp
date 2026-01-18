@@ -983,7 +983,6 @@ UI16 CTownRegion::GetParentRegion( void ) const
 WEATHID CTownRegion::GetEffectiveWeather( void ) const
 {
     // If set on this region, use it.
-    // Pick the "unset" sentinel you use. Usually 0xFF for UOX3-style.
     if( weather != 0xFF )
         return weather;
 
