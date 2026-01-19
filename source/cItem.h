@@ -80,6 +80,12 @@ protected:
 	UI32			value[3];		// Price a shopkeep buys and sells items for, with price on player vendor as optional third value
 	UI16			ammo[2];		// Ammo ID and Hue
 	UI16			ammoFX[3];		// Ammo-effect ID, Hue and rendermode
+	// container random placement bounds for PlaceInPack (custom gump containers)
+	SI16			packXMin;
+	SI16			packXMax;
+	SI16			packYMin;
+	SI16			packYMax;
+	SI08			packZ;
 
 	std::bitset<WEATHNUM>	weatherBools;	// For elemental weaponry.  So a Heat weapon would be a fire weapon, and does elemental damage to Heat weak races
 
@@ -290,6 +296,17 @@ public:
 
 	auto			GetMaxItems() const -> UI16;
 	auto			SetMaxItems( UI16 newValue ) -> void;
+
+	bool			HasCustomPackBounds( void ) const;
+
+	SI16			GetPackXMin( void ) const;
+	SI16			GetPackXMax( void ) const;
+	SI16			GetPackYMin( void ) const;
+	SI16			GetPackYMax( void ) const;
+	SI08			GetPackZ( void ) const;
+
+	void			SetPackBounds( SI16 xMin, SI16 xMax, SI16 yMin, SI16 yMax, SI08 zVal = 9 );
+	void			ClearPackBounds( void );
 
 	// Note: Value range to -ALLSKILLS-1 to ALLSKILLS+1
 	// To calculate skill used to made this item:

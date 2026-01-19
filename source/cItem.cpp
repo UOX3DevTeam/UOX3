@@ -100,6 +100,11 @@ const SI16			DEFITEM_DURABLITITYHPBONUS = 0;
 
 const SI16			DEFITEM_LOWERSTATREQ	= 0;
 const UI16          DEFBASE_GUMPTYPE    = 0;
+const SI16          DEFBASE_PACKXMIN    = -1;
+const SI16          DEFBASE_PACKXMAX    = -1;
+const SI16          DEFBASE_PACKYMIN    = -1;
+const SI16          DEFBASE_PACKYMAX    = -1;
+const SI08          DEFBASE_PACKZ	    = 9;
 
 
 //o------------------------------------------------------------------------------------------------o
@@ -116,7 +121,7 @@ layer( DEFITEM_LAYER ), type( DEFITEM_TYPE ), offspell( DEFITEM_OFFSPELL ), entr
 creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC ), weightMax( DEFITEM_WEIGHTMAX ), baseWeight( DEFITEM_BASEWEIGHT ), maxItems( DEFITEM_MAXITEMS ),
 maxRange( DEFITEM_MAXRANGE ), baseRange( DEFITEM_BASERANGE ), maxUses( DEFITEM_MAXUSES ), usesLeft( DEFITEM_USESLEFT ), regionNum( DEFITEM_REGIONNUM ), 
 tempLastTraded( DEFITEM_TEMPLASTTRADED ), stealable( DEFITEM_STEALABLE ), artifactRarity( DEFITEM_ARTIFACTRARITY ), lowerStatReq( DEFITEM_LOWERSTATREQ ), 
-durabilityHpBonus( DEFITEM_DURABLITITYHPBONUS ), poisonCharges( DEFITEM_POISONCHARGES )
+durabilityHpBonus( DEFITEM_DURABLITITYHPBONUS ), poisonCharges( DEFITEM_POISONCHARGES ), packXMin( DEFBASE_PACKXMIN ), packXMax( DEFBASE_PACKXMAX ), packYMin( DEFBASE_PACKYMIN ), packYMax( DEFBASE_PACKYMAX ), packZ( DEFBASE_PACKZ )
 {
 	spells[0]	= spells[1] = spells[2] = 0;
 	value[0]	= value[1] = value[2] = 0;
@@ -131,6 +136,11 @@ durabilityHpBonus( DEFITEM_DURABLITITYHPBONUS ), poisonCharges( DEFITEM_POISONCH
 	desc.reserve( MAX_NAME );
 	eventName.reserve( MAX_NAME );
 	id			= 0x0000;
+	packXMin	= -1;
+	packXMax	= -1;
+	packYMin	= -1;
+	packYMax	= -1;
+	packZ		= 9;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -179,6 +189,50 @@ auto CItem::GetGridLocation( void ) const -> SI08
 auto CItem::SetGridLocation( SI08 newLoc ) -> void
 {
 	gridLoc = newLoc;
+	UpdateRegion();
+}
+
+bool CItem::HasCustomPackBounds( void ) const
+{
+	return ( packXMin >= 0 && packXMax > packXMin && packYMin >= 0 && packYMax > packYMin );
+}
+
+SI16 CItem::GetPackXMin( void ) const
+{ 
+	return packXMin;
+}
+SI16 CItem::GetPackXMax( void ) const 
+{ 
+	return packXMax; 
+}
+
+SI16 CItem::GetPackYMin( void ) const 
+{ 
+	return packYMin; 
+}
+SI16 CItem::GetPackYMax( void ) const 
+{ 
+	return packYMax; 
+}
+SI08 CItem::GetPackZ( void ) const 
+{ 
+	return packZ; 
+}
+
+void CItem::SetPackBounds( SI16 xMin, SI16 xMax, SI16 yMin, SI16 yMax, SI08 zVal )
+{
+	packXMin = xMin; packXMax = xMax;
+	packYMin = yMin; packYMax = yMax;
+	packZ = zVal;
+	Dirty( UT_UPDATE );
+	UpdateRegion();
+}
+
+void CItem::ClearPackBounds( void )
+{
+	packXMin = packXMax = packYMin = packYMax = -1;
+	packZ = 9;
+	Dirty( UT_UPDATE );
 	UpdateRegion();
 }
 
@@ -1835,7 +1889,7 @@ bool CItem::DumpBody( std::ostream &outStream ) const
 	outStream << "MoreXYZ=0x" << GetTempVar( CITV_MOREX ) << ",0x" << GetTempVar( CITV_MOREY ) << ",0x" << GetTempVar( CITV_MOREZ ) << newLine;
 	outStream << "Glow=0x" << GetGlow() << newLine;
 	outStream << "GlowBC=0x" << GetGlowColour() << newLine;
-	outStream << "GumpType=0x" << GetGumpType() << newLine;
+	outStream << "GumpType=0x" << std::hex << GetGumpType() << std::dec<< "," << GetPackXMin()<< "," << GetPackXMax()<< "," << GetPackYMin()<< "," << GetPackYMax()<< "," << (SI08)GetPackZ()<< newLine;
 	outStream << "Ammo=0x" << GetAmmoId() << ",0x" << GetAmmoHue() << newLine;
 	outStream << "AmmoFX=0x" << GetAmmoFX() << ",0x" << GetAmmoFXHue() << ",0x" << GetAmmoFXRender() << newLine;
 	outStream << "Spells=0x" << GetSpell( 0 ) << ",0x" << GetSpell( 1 ) << ",0x" << GetSpell( 2 ) << newLine;
@@ -2071,10 +2125,35 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				}
 				if( UTag == "GUMPTYPE" )
 				{
-					SetGumpType( static_cast< UI16 >( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ) ), nullptr, 0 )));
-					rValue = true;
+					if( data.find( "," ) != std::string::npos )
+					{
+						auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ) ), "," );
+						if( csecs.size() >= 5 )
+						{
+							SetGumpType( static_cast< UI16 >( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 0 ], "//" ) ), nullptr, 0 ) ) );
+
+							SI16 xMin = static_cast< SI16 >( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 1 ], "//" ) ), nullptr, 0 ) );
+							SI16 xMax = static_cast< SI16 >( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 2 ], "//" ) ), nullptr, 0 ) );
+							SI16 yMin = static_cast< SI16 >( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 3 ], "//" ) ), nullptr, 0 ) );
+							SI16 yMax = static_cast< SI16 >( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 4 ], "//" ) ), nullptr, 0 ) );
+
+							SI08 zVal = 9;
+							if( csecs.size() >= 6 )
+							{
+								zVal = static_cast< SI08 >( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 5 ], "//" ) ), nullptr, 0 ) );
+							}
+
+							SetPackBounds( xMin, xMax, yMin, yMax, zVal );
+						}
+						rValue = true;
+					}
+					else
+					{
+						SetGumpType( static_cast< UI16 >( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ) ), nullptr, 0 ) ) );
+						// do not change bounds unless you want old saves to wipe them
+						rValue = true;
+					}
 				}
-				break;
 			case 'H':
 				if( UTag == "HEAT" )
 				{
@@ -3111,6 +3190,16 @@ auto CItem::PlaceInPack() -> void
 	auto itemCont = this->GetCont();
 	if( !ValidateObject( itemCont ))
 		return;
+
+	CItem* contItem = static_cast< CItem* >( itemCont );
+	if( ValidateObject( contItem ) && contItem->HasCustomPackBounds() )
+	{
+		SetX( RandomNum( contItem->GetPackXMin(), contItem->GetPackXMax() ) );
+		SetY( RandomNum( contItem->GetPackYMin(), contItem->GetPackYMax() ) );
+		SetZ( contItem->GetPackZ() );
+		UpdateRegion();
+		return;
+	}
 
 	PackTypes packType = Items->GetPackType( static_cast<CItem *>( itemCont ));
 	switch( packType )
