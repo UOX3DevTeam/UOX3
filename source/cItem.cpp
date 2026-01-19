@@ -192,33 +192,77 @@ auto CItem::SetGridLocation( SI08 newLoc ) -> void
 	UpdateRegion();
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Function  -  CItem::HasCustomPackBounds()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose   -  Returns true if the container has valid custom pack placement bounds defined.
+//|             Used by PlaceInPack() to decide whether to use custom bounds instead of PackTypes.
+//o------------------------------------------------------------------------------------------------o
 bool CItem::HasCustomPackBounds( void ) const
 {
 	return ( packXMin >= 0 && packXMax > packXMin && packYMin >= 0 && packYMax > packYMin );
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Function  -  CItem::GetPackXMin()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose   -  Gets the minimum X coordinate used for random placement within a container gump.
+//o------------------------------------------------------------------------------------------------o
 SI16 CItem::GetPackXMin( void ) const
 { 
 	return packXMin;
 }
+
+//o------------------------------------------------------------------------------------------------o
+//| Function  -  CItem::GetPackXMax()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose   -  Gets the maximum X coordinate used for random placement within a container gump.
+//o------------------------------------------------------------------------------------------------o
 SI16 CItem::GetPackXMax( void ) const 
 { 
 	return packXMax; 
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Function  -  CItem::GetPackYMin()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose   -  Gets the minimum Y coordinate used for random placement within a container gump.
+//o------------------------------------------------------------------------------------------------o
 SI16 CItem::GetPackYMin( void ) const 
 { 
 	return packYMin; 
 }
+
+//o------------------------------------------------------------------------------------------------o
+//| Function  -  CItem::GetPackYMax()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose   -  Gets the maximum Y coordinate used for random placement within a container gump.
+//o------------------------------------------------------------------------------------------------o
 SI16 CItem::GetPackYMax( void ) const 
 { 
 	return packYMax; 
 }
+
+//o------------------------------------------------------------------------------------------------o
+//| Function  -  CItem::GetPackZ()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose   -  Gets the Z layer used for items placed into a container (default is 9).
+//o------------------------------------------------------------------------------------------------o
 SI08 CItem::GetPackZ( void ) const 
 { 
 	return packZ; 
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Function  -  CItem::SetPackBounds()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose   -  Sets custom random placement bounds for items placed into this container.
+//|             Used for scriptable/custom gump containers where default PackTypes ranges are wrong.
+//|
+//| Notes     -  Intended to be set via DFN/worldfile GumpType data:
+//|               GumpType=0x04a9,xMin,xMax,yMin,yMax[,z]
+//|             Marks item dirty and updates region.
+//o------------------------------------------------------------------------------------------------o
 void CItem::SetPackBounds( SI16 xMin, SI16 xMax, SI16 yMin, SI16 yMax, SI08 zVal )
 {
 	packXMin = xMin; packXMax = xMax;
@@ -228,6 +272,12 @@ void CItem::SetPackBounds( SI16 xMin, SI16 xMax, SI16 yMin, SI16 yMax, SI08 zVal
 	UpdateRegion();
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Function  -  CItem::ClearPackBounds()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose   -  Clears any custom pack placement bounds and restores defaults.
+//|             Bounds become invalid (-1) and Z resets to 9.
+//o------------------------------------------------------------------------------------------------o
 void CItem::ClearPackBounds( void )
 {
 	packXMin = packXMax = packYMin = packYMax = -1;
