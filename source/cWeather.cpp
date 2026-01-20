@@ -1655,13 +1655,16 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 		return true;
 
 	SI08 defaultTemp = 20;
-	WEATHID currval = p->GetRegion()->GetWeather();
-	if( currval > weather.size() || weather.empty() || p->InBuilding() )
+	WEATHID currVal = p->GetRegion()->GetEffectiveWeather();
+	if( weather.empty() || currVal >= weather.size() || p->InBuilding() )
 	{
 		if( s != nullptr )
 		{
 			CPWeather dry( 0xFF, 0x00, defaultTemp );
 			s->Send( &dry );
+			p->SetLastWeathId( 0xFFFF );
+			p->SetLastWeathPkt( 0 );
+			p->SetLastWeathParts( 0 );
 			if( p->GetWeathDamage( SNOW ) != 0 )
 			{
 				p->SetWeathDamage( 0, SNOW );
@@ -1687,15 +1690,53 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 		return false;
 	}
 
-	bool isStorm = StormActive( currval );
-	bool brewStorm = StormBrewing( currval );
-	bool isSnowing = SnowActive( currval );
-	bool isRaining = RainActive( currval );
-	SI08 temp	   = static_cast<SI08>( Temp( currval ));
+	bool isStorm = StormActive( currVal );
+	bool brewStorm = StormBrewing( currVal );
+	bool isSnowing = SnowActive( currVal );
+	bool isRaining = RainActive( currVal );
+	SI08 temp	   = static_cast<SI08>( Temp( currVal ));
+	UI08 pktType = 0;
+	UI08 pktParts = 0;
+
+	// Calculating weather particle intensity
+	if( isStorm )
+	{
+		pktType = 5;
+		pktParts = static_cast<UI08>( StormIntensity( currVal ));
+	}
+	else if( brewStorm )
+	{
+		pktType = 4;
+		pktParts = static_cast<UI08>( StormIntensity( currVal ) / 2 );
+	}
+	else if( isSnowing && SnowThreshold( currVal ) > Temp( currVal ))
+	{
+		pktType = 2;
+		pktParts = static_cast<UI08>( SnowIntensity( currVal ));
+	}
+	else if( isRaining )
+	{
+		pktType = 1;
+		pktParts = static_cast<UI08>( RainIntensity( currVal ));
+	}
+	else
+	{
+		pktType = 0;
+		pktParts = 0;
+	}
+
+	// Only send if changed (this is what stops town vs outside spam when same)
+	if( p->GetLastWeathId() != static_cast<UI16>( currVal ) || p->GetLastWeathPkt() != pktType || p->GetLastWeathParts() != pktParts )
+	{
+		p->SetLastWeathId( static_cast<UI16>( currVal ) );
+		p->SetLastWeathPkt( pktType );
+		p->SetLastWeathParts( pktParts );
+
+		DoPlayerWeather( s, pktType, temp, currVal );
+	}
 
 	if( isStorm )
 	{
-		DoPlayerWeather( s, 5, temp, currval );
 		if( p->GetWeathDamage( STORM ) == 0 )
 		{
 			p->SetWeathDamage( BuildTimeValue( static_cast<R64>( Races->Secs( p->GetRace(), STORM ))), STORM );
@@ -1712,11 +1753,10 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 	}
 	else if( brewStorm )
 	{
-		DoPlayerWeather( s, 4, temp, currval );
+		SendJSWeather( p, STORMBREW, temp );
 	}
-	else if( isSnowing && SnowThreshold( currval ) > Temp( currval ))
+	else if( isSnowing && SnowThreshold( currVal ) > Temp( currVal ))
 	{
-		DoPlayerWeather( s, 2, temp, currval );
 		if( p->GetWeathDamage( SNOW ) == 0 )
 		{
 			p->SetWeathDamage( BuildTimeValue( static_cast<R64>( Races->Secs( p->GetRace(), SNOW ))), SNOW );
@@ -1729,11 +1769,10 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 		{
 			p->SetWeathDamage( 0, RAIN );
 		}
-		SendJSWeather( p, STORM, temp );
+		SendJSWeather( p, SNOW, temp );
 	}
 	else if( isRaining )
 	{
-		DoPlayerWeather( s, 1, temp, currval );
 		if( p->GetWeathDamage( RAIN ) == 0 )
 		{
 			p->SetWeathDamage( BuildTimeValue( static_cast<R64>( Races->Secs( p->GetRace(), RAIN ))), RAIN );
@@ -1746,11 +1785,10 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 		{
 			p->SetWeathDamage( 0, STORM );
 		}
-		SendJSWeather( p, STORM, temp );
+		SendJSWeather( p, RAIN, temp );
 	}
 	else
 	{
-		DoPlayerWeather( s, 0, temp, currval );
 		if( p->GetWeathDamage( SNOW ) != 0 )
 		{
 			p->SetWeathDamage( 0, SNOW );
@@ -1763,7 +1801,7 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 		{
 			p->SetWeathDamage( 0, RAIN );
 		}
-		SendJSWeather( p, STORM, temp );
+		SendJSWeather( p, LIGHT, temp );
 	}
 
 	if(( Races->Affect( p->GetRace(), HEAT )) && p->GetWeathDamage( HEAT ) == 0 )
@@ -1790,17 +1828,17 @@ bool cWeatherAb::DoNPCStuff( CChar *p )
 	if( !ValidateObject( p ))
 		return true;
 
-	WEATHID currval = p->GetRegion()->GetWeather();
-	if( currval > weather.size() || weather.empty() || p->InBuilding() )
+	WEATHID currVal = p->GetRegion()->GetEffectiveWeather();
+	if( currVal > weather.size() || weather.empty() || p->InBuilding() )
 	{
 		SendJSWeather( p, LIGHT, 0 );
 		return false;
 	}
 
-	bool isStorm = StormActive( currval );
-	bool isSnowing = SnowActive( currval );
-	bool isRaining = RainActive( currval );
-	SI08 temp = static_cast<SI08>( Temp( currval ));
+	bool isStorm = StormActive( currVal );
+	bool isSnowing = SnowActive( currVal );
+	bool isRaining = RainActive( currVal );
+	SI08 temp = static_cast<SI08>( Temp( currVal ));
 
 	if( isStorm )
 	{
@@ -1818,7 +1856,7 @@ bool cWeatherAb::DoNPCStuff( CChar *p )
 			p->SetWeathDamage( 0, RAIN );
 		}
 	}
-	else if( isSnowing && SnowThreshold( currval ) > Temp( currval ))
+	else if( isSnowing && SnowThreshold( currVal ) > Temp( currVal ))
 	{
 		SendJSWeather( p, SNOW, temp );
 		if( p->GetWeathDamage( SNOW ) == 0 )
@@ -1890,24 +1928,24 @@ bool cWeatherAb::DoItemStuff( CItem *mItem )
 	if( !ValidateObject( mItem ))
 		return true;
 
-	WEATHID currval = mItem->GetRegion()->GetWeather();
-	if( currval > weather.size() || weather.empty() )
+	WEATHID currVal = mItem->GetRegion()->GetWeather();
+	if( currVal > weather.size() || weather.empty() )
 	{
 		SendJSWeather( mItem, LIGHT, 0 );
 		return true;
 	}
 
-	bool isStorm = StormActive( currval );
-	//bool brewStorm = StormBrewing( currval );
-	bool isSnowing = SnowActive( currval );
-	bool isRaining = RainActive( currval );
-	SI08 temp	   = static_cast<SI08>( Temp( currval ));
+	bool isStorm = StormActive( currVal );
+	//bool brewStorm = StormBrewing( currVal );
+	bool isSnowing = SnowActive( currVal );
+	bool isRaining = RainActive( currVal );
+	SI08 temp	   = static_cast<SI08>( Temp( currVal ));
 
 	if( isStorm )
 	{
 		SendJSWeather( mItem, STORM, temp );
 	}
-	else if( isSnowing && SnowThreshold( currval ) > Temp( currval ))
+	else if( isSnowing && SnowThreshold( currVal ) > Temp( currVal ))
 	{
 		SendJSWeather( mItem, SNOW, temp );
 	}
@@ -1956,7 +1994,7 @@ void cWeatherAb::SendJSWeather( CBaseObject *mObj, WeatherType weathType, SI08 c
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends weather effects to player's client
 //o------------------------------------------------------------------------------------------------o
-void cWeatherAb::DoPlayerWeather( CSocket *s, UI08 weathType, SI08 currentTemp, WEATHID currval )
+void cWeatherAb::DoPlayerWeather( CSocket *s, UI08 weathType, SI08 currentTemp, WEATHID currVal )
 // Weather Types
 // 0 - dry
 // 1 - rain
@@ -1974,17 +2012,17 @@ void cWeatherAb::DoPlayerWeather( CSocket *s, UI08 weathType, SI08 currentTemp, 
 		return;
 
 	CPWeather dry( 0xFF, 0x00, currentTemp );
-	CPWeather rain( 0x00, static_cast<UI08>( RainIntensity( currval )), currentTemp );
-	CPWeather storm( 0x01, static_cast<UI08>( StormIntensity( currval )), currentTemp );
-	CPWeather snow( 0x02, static_cast<UI08>( SnowIntensity( currval )), currentTemp );
-	CPWeather strmbrw( 0x03, static_cast<UI08>(( StormIntensity( currval ) / 2 )), currentTemp );
+	CPWeather rain( 0x00, static_cast<UI08>( RainIntensity( currVal )), currentTemp );
+	CPWeather storm( 0x01, static_cast<UI08>( StormIntensity( currVal )), currentTemp );
+	CPWeather snow( 0x02, static_cast<UI08>( SnowIntensity( currVal )), currentTemp );
+	CPWeather strmbrw( 0x03, static_cast<UI08>(( StormIntensity( currVal ) / 2 )), currentTemp );
 
 	CChar *mChar = s->CurrcharObj();
-	s->Send( &dry );
+	//s->Send( &dry );
 
 	switch( weathType )
 	{
-		case 0:								break;
+		case 0:		s->Send( &dry );		break;
 		case 1:		s->Send( &rain );		break;
 		case 2:
 			Effects->PlaySound( mChar, 0x14 + RandomNum( 0, 1 ));
