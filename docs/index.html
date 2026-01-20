@@ -8469,6 +8469,18 @@ script=5021
 							Inherit properties from Item defined by itemSectionID in Item DFNs, based on selected era in expansion settings of uox.ini</p>
 						</div>
 						<div class="settingsDiv">
+							<p>
+								<span class="hl">gumptype</span>=<strong>[gumpID]</strong>,<strong>[xMin]</strong>,<strong>[xMax]</strong>,<strong>[yMin]</strong>,<strong>[yMax]</strong>[,<strong>z</strong>]<br>
+								Overrides the container gump used when opening this container, and (optionally) defines custom random placement bounds for items placed inside it via PlaceInPack().<br>
+								This is required for scriptable/custom gump containers that are much smaller or larger than the default PackTypes placement ranges, to prevent items overflowing the gump or being placed in unreachable areas.<br><br>
+
+								<strong>Examples:</strong><br>
+								<span class="hl">GUMPTYPE</span>=0x04A9<br>
+								<span class="hl">GUMPTYPE</span>=0x04A9,44,142,65,127<br>
+								<span class="hl">GUMPTYPE</span>=0x04A9,44,142,65,127,9
+							</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">glow</span>=<strong>[0/1]</strong><br>
 							Attaches a hidden lightsource to the item to make it appear to glow</p>
 						</div>
