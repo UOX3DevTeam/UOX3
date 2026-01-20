@@ -579,3 +579,52 @@ GETSA=revenant_lion_se
 GETHS=revenant_lion_se
 GETTOL=revenant_lion_se
 }
+
+[base_shadowknight]
+{
+GET=base_undead
+NAME=#//a shadowknight
+NAMELIST=17
+TITLE=5018//the Shadow Knight
+ID=0x137
+SPATTACK=8
+SPADELAY=5
+RUNS
+FLAG=NEUTRAL
+ORIGIN=aos
+}
+
+[shadowknight]
+{
+GETUO=shadowknight_lbr
+GETT2A=shadowknight_lbr
+GETUOR=shadowknight_lbr
+GETTD=shadowknight_lbr
+GETLBR=shadowknight_lbr
+GETAOS=shadowknight_lbr
+GETSE=shadowknight_lbr
+GETML=shadowknight_lbr
+GETSA=shadowknight_lbr
+GETHS=shadowknight_lbr
+GETTOL=shadowknight_lbr
+}
+
+[shadowknight_lbr]
+{
+GET=base_shadowknight
+GOLD=1600 2000
+STR=250
+DEX=100
+INT=100
+HPMAX=2000
+KARMA=-25000
+FAME=25000
+MAGICRESISTANCE=1200
+TACTICS=1000
+WRESTLING=1000
+MAGERY=1000
+EVALUATINGINTEL=1000
+MEDITATION=1000
+DAMAGE=41 65
+DEF=20
+}

@@ -6,377 +6,403 @@ BACKPACK
 NPCWANDER=4
 FX2=20
 NPCAI=2
+RACE=10
 FLAG=NEUTRAL
 }
 
 //------------------------------------------------------------------------------------------------//
 
-[balron]
+[base_abyssmalhorror]
 {
+GET=base_daemons
+NAME=#//an abyssmal horror
+ID=0x0138
+SPATTACK=8
+SPADELAY=5
+RACE=18
+ORIGIN=aos
+}
+
+[abyssmalhorror]
+{
+GETUO=abyssmalhorror_lbr
+GETT2A=abyssmalhorror_lbr
+GETUOR=abyssmalhorror_lbr
+GETTD=abyssmalhorror_lbr
+GETLBR=abyssmalhorror_lbr
+GETAOS=abyssmalhorror_aos
+GETSE=abyssmalhorror_aos
+GETML=abyssmalhorror_aos
+GETSA=abyssmalhorror_aos
+GETHS=abyssmalhorror_aos
+GETTOL=abyssmalhorror_aos
+}
+
+[base_balron]
+{
+GET=base_daemons
 NAME=#//a balron
 NAMELIST=7
 ID=0x0028
 SKIN=0x096c
-DIRECTION=RND
-BACKPACK
-GOLD=800 1200
-LOOT=midlevelscrolls,5
-LOOT=highlevelscrolls,3
-LOOT=reagents,20
-LOOT=TreasureMapLvl5Loot
-STR=1000 1200
-DEX=175 255
-INT=151 250
-KARMA=-13000
-FAME=13000
-ANATOMY=250 500
-EVALUATINGINTEL=700 1000
-MAGERY=960 1000
-MEDITATION=250 500
-MAGICRESISTANCE=1010 1500
-PARRYING=900 1000
-TACTICS=900 1000
-WRESTLING=900 1000
-DAMAGE=18 33
-DEF=32 50
 SPATTACK=8
 SPADELAY=4
-NPCAI=2
-NPCWANDER=4
-FX2=20
 FLEEAT=-1
-TOPROV=1145
-TOPEACE=1145 5
 CARVE=52
 RUNS
-RACE=10
-FLAG=NEUTRAL
 CONTROLSLOTS=4
 SCRIPT=3300
 }
 
-[daemon]
+[balron]
 {
+GETUO=balron_lbr
+GETT2A=balron_lbr
+GETUOR=balron_lbr
+GETTD=balron_lbr
+GETLBR=balron_lbr
+GETAOS=balron_aos
+GETSE=balron_aos
+GETML=balron_aos
+GETSA=balron_aos
+GETHS=balron_aos
+GETTOL=balron_aos
+}
+
+[base_daemon]
+{
+GET=base_daemons
 NAME=#//a daemon
 NAMELIST=5
 ID=0x0009
 SKIN=0000
-DIRECTION=RND
-BACKPACK
-GOLD=400 800
-PACKITEM=0x13ba
-LOOT=midlevelscrolls,2
-LOOT=highlevelscrolls
-LOOT=randomgems,5
-LOOT=TreasureMapLvl4Loot
-STR=476 505
-DEX=76 95
-INT=301 325
-KARMA=-9000
-FAME=9000
-MAGERY=700 800
-MAGICRESISTANCE=850 950
-PARRYING=650 750
-TACTICS=600 800
-WRESTLING=700 800
-SPATTACK=7
-SPADELAY=5
-DAMAGE=3 18
-DEF=25 30
-NPCWANDER=4
-FX2=20
 FLEEAT=-1
 NPCAI=2
 TOPROV=898
 TOPEACE=898 5
 CARVE=55
 RUNS
-RACE=10
-FLAG=NEUTRAL
+SCRIPT=3300
+}
+
+[daemon]
+{
+GETUO=daemon_lbr
+GETT2A=daemon_lbr
+GETUOR=daemon_lbr
+GETTD=daemon_lbr
+GETLBR=daemon_lbr
+GETAOS=daemon_aos
+GETSE=daemon_aos
+GETML=daemon_aos
+GETSA=daemon_aos
+GETHS=daemon_aos
+GETTOL=daemon_aos
+}
+
+[base_armeddaemon]
+{
+GET=base_daemons
+NAMELIST=5
+ID=0x000a
+SKIN=0000
+FLEEAT=-1
+NPCAI=2
+TOPROV=898
+TOPEACE=898 5
+CARVE=55
+RUNS
 SCRIPT=3300
 }
 
 [armeddaemon]
 {
-GET=daemon
-NAMELIST=5
-ID=0x000a
+GETUO=armeddaemon_lbr
+GETT2A=armeddaemon_lbr
+GETUOR=armeddaemon_lbr
+GETTD=armeddaemon_lbr
+GETLBR=armeddaemon_lbr
+GETAOS=armeddaemon_aos
+GETSE=armeddaemon_aos
+GETML=armeddaemon_aos
+GETSA=armeddaemon_aos
+GETHS=armeddaemon_aos
+GETTOL=armeddaemon_aos
+}
+
+[base_bonedaemon]
+{
+GET=base_daemons
+NAME=#//a bone daemon
+ID=0x0134
+SPATTACK=6
+SPADELAY=5
+RACE=18
+RUNS
+ORIGIN=aos
+}
+
+[bonedaemon]
+{
+GETUO=bonedaemon_lbr
+GETT2A=bonedaemon_lbr
+GETUOR=bonedaemon_lbr
+GETTD=bonedaemon_lbr
+GETLBR=bonedaemon_lbr
+GETAOS=bonedaemon_aos
+GETSE=bonedaemon_aos
+GETML=bonedaemon_aos
+GETSA=bonedaemon_aos
+GETHS=bonedaemon_aos
+GETTOL=bonedaemon_aos
+}
+
+[base_exodus]
+{
+GET=base_daemons
+NAME=#//Exodus
+ID=0x0066
+SKIN=0x096c
+SPATTACK=8
+SPADELAY=4
+FLEEAT=-1
+CARVE=52
+RUNS
+CONTROLSLOTS=4
+SCRIPT=3300
 }
 
 [exodus]
 {
-GET=balron
-NAME=#//Exodus
-ID=0x0066
-SKIN=0x096c
+GETUO=exodus_lbr
+GETT2A=exodus_lbr
+GETUOR=exodus_lbr
+GETTD=exodus_lbr
+GETLBR=exodus_lbr
+GETAOS=exodus_aos
+GETSE=exodus_aos
+GETML=exodus_aos
+GETSA=exodus_aos
+GETHS=exodus_aos
+GETTOL=exodus_aos
+}
+
+[base_icefiend]
+{
+GET=base_daemons
+NAME=#//an ice fiend
+ID=0x002b
+//SKIN=0x0480 Newer OSI client doesnt need this color
+SPATTACK=6
+SPADELAY=6
+FLEEAT=-1
+RUNS
+ORIGIN=t2a
 }
 
 [icefiend]
 {
-NAME=#//an ice fiend
-ID=0x002b
-SKIN=0x0480
-DIRECTION=RND
-BACKPACK
-GOLD=700 900
-LOOT=midlevelscrolls,4
-LOOT=TreasureMapLvl4Loot
-STR=376 405
-DEX=176 195
-INT=201 225
-KARMA=-7000
-FAME=7000
-EVALUATINGINTEL=160 400
-MAGERY=800 900
-MAGICRESISTANCE=750 850
-PARRYING=750 850
-TACTICS=800 900
-WRESTLING=800 1000
-DAMAGE=3 24
-DEF=30
-SPATTACK=6
-SPADELAY=6
-NPCWANDER=4
-FX2=20
-FLEEAT=-1
-NPCAI=2
-TOPROV=893
-TOPEACE=893 5
+GETUO=icefiend_lbr
+GETT2A=icefiend_lbr
+GETUOR=icefiend_lbr
+GETTD=icefiend_lbr
+GETLBR=icefiend_lbr
+GETAOS=icefiend_aos
+GETSE=icefiend_aos
+GETML=icefiend_aos
+GETSA=icefiend_aos
+GETHS=icefiend_aos
+GETTOL=icefiend_aos
+}
+
+[base_imp]
+{
+GET=base_daemons
+NAME=#//an imp
+NAMELIST=5
+ID=0x004a
+SKIN=0x0676
+SPATTACK=7
+SPADELAY=7
+NPCAI=11
+TAMEDHUNGER=600 30
+FOOD=meat
+CARVE=68
 RUNS
-RACE=10
-FLAG=NEUTRAL
+CONTROLSLOTS=2
 ORIGIN=t2a
 }
 
 [imp]
 {
-NAME=#//an imp
-NAMELIST=5
-ID=0x004a
-SKIN=0x0676
-DIRECTION=RND
-BACKPACK
-GOLD=0 50
-LOOT=lowlevelscrolls
-LOOT=random_useless_junk
-STR=76 100
-DEX=61 80
-INT=86 110
-KARMA=-1500
-FAME=1500
-ANATOMY=900
-MAGERY=400 600
-MAGICRESISTANCE=350 500
-PARRYING=500 600
-TACTICS=550 700
-WRESTLING=600 750
-DAMAGE=3 18
-DEF=15
-SPATTACK=7
-SPADELAY=7
-NPCWANDER=4
-FX2=20
-NPCAI=11
-TOPROV=700
-TOPEACE=700 5
-TOTAME=831
-TAMEDHUNGER=600 30
-FOOD=meat
-CARVE=68
-RUNS
-RACE=10
-FLAG=NEUTRAL
-CONTROLSLOTS=2
-ORIGIN=t2a
+GETUO=imp_lbr
+GETT2A=imp_lbr
+GETUOR=imp_lbr
+GETTD=imp_lbr
+GETLBR=imp_lbr
+GETAOS=imp_aos
+GETSE=imp_aos
+GETML=imp_aos
+GETSA=imp_aos
+GETHS=imp_aos
+GETTOL=imp_aos
 }
 
-[mongbat]
+[base_mongbat]
 {
+GET=base_daemons
 NAME=#//a mongbat
 ID=0x0027
-DIRECTION=RND
-BACKPACK
-LOOT=random_useless_junk
-STR=6 10
-DEX=26 38
-INT=6 14
-HPMAX=4 6
-MAXMANA=0
-KARMA=-150
-FAME=150
-MAGICRESISTANCE=50 140
-PARRYING=250 380
-TACTICS=50 100
-WRESTLING=50 100
-DAMAGE=1 2
-DEF=5
-NPCWANDER=4
-FX2=20
-NPCAI=2
-TOPROV=99
-TOPEACE=99 5
-TOTAME=0
 TAMEDHUNGER=600 30
 FOOD=meat
 CARVE=2
 RUNS
-RACE=10
-FLAG=NEUTRAL
 CONTROLSLOTS=1
 }
 
-[greatermongbat]
+[mongbat]
 {
-GET=mongbat
-NAME=5011//a greater mongbat
-ID=0x0027
-GOLD=0 50
-STR=56 80
-DEX=61 80
-INT=26 50
-HPMAX=34 48
-WRESTLING=201 350
-TACTICS=351 500
-MAGICRESISTANCE=151 300
-DAMAGE=3 9
-DEF=10
-TOPROV=313
-TOPEACE=313 5
-TOTAME=711
+GETUO=mongbat_lbr
+GETT2A=mongbat_lbr
+GETUOR=mongbat_lbr
+GETTD=mongbat_lbr
+GETLBR=mongbat_lbr
+GETAOS=mongbat_aos
+GETSE=mongbat_aos
+GETML=mongbat_aos
+GETSA=mongbat_aos
+GETHS=mongbat_aos
+GETTOL=mongbat_aos
 }
 
-//AoS Daemons
+[base_greatermongbat]
+{
+GET=base_daemons
+NAME=5011//a greater mongbat
+ID=0x0027
+TAMEDHUNGER=600 30
+FOOD=meat
+CARVE=2
+RUNS
+CONTROLSLOTS=1
+}
 
 [arcanedaemon]
 {
+GETUO=greatermongbat_lbr
+GETT2A=greatermongbat_lbr
+GETUOR=greatermongbat_lbr
+GETTD=greatermongbat_lbr
+GETLBR=greatermongbat_lbr
+GETAOS=greatermongbat_aos
+GETSE=greatermongbat_aos
+GETML=greatermongbat_aos
+GETSA=greatermongbat_aos
+GETHS=greatermongbat_aos
+GETTOL=greatermongbat_aos
+}
+
+[base_arcanedaemon]
+{
+GET=base_daemons
 NAME=#//an arcane daemon
 ID=0x0310
-DIRECTION=RND
-BACKPACK
-GOLD=250 300
-LOOT=randompotions,3
-LOOT=lowlevelscrolls,3
-LOOT=midlevelscrolls,3
-KARMA=-10000
-FAME=7000
-STR=131 150
-DEX=126 145
-INT=301 350
-EVALUATINGINTEL=701 800
-MAGERY=801 900
-MAGICRESISTANCE=851 950
-MEDITATION=701 800
-TACTICS=701 800
-WRESTLING=601 800
-DAMAGE=4 22
-DEF=20
 SPATTACK=6
 SPADELAY=6
-NPCWANDER=4
-FX2=20
-NPCAI=2
-TOPROV=880
-TOPEACE=880 5
 CARVE=52
 RUNS
-RACE=10
-FLAG=NEUTRAL
+ORIGIN=aos
+}
+
+[arcanedaemon]
+{
+GETUO=arcanedaemon_lbr
+GETT2A=arcanedaemon_lbr
+GETUOR=arcanedaemon_lbr
+GETTD=arcanedaemon_lbr
+GETLBR=arcanedaemon_lbr
+GETAOS=arcanedaemon_aos
+GETSE=arcanedaemon_aos
+GETML=arcanedaemon_aos
+GETSA=arcanedaemon_aos
+GETHS=arcanedaemon_aos
+GETTOL=arcanedaemon_aos
+}
+
+[base_moloch]
+{
+GET=base_daemons
+NAME=#//a moloch
+ID=0x0311
+CARVE=52
+RUNS
 ORIGIN=aos
 }
 
 [moloch]
 {
-NAME=#//a moloch
-ID=0x0311
-DIRECTION=RND
-BACKPACK
-GOLD=300 350
-LOOT=randompotions,3
-LOOT=lowlevelscrolls,2
-LOOT=midlevelscrolls,2
-KARMA=-7500
-FAME=7500
-STR=331 360
-DEX=66 85
-INT=41 65
-MAGICRESISTANCE=650 700
-TACTICS=750 900
-WRESTLING=700 900
-DAMAGE=7 13
-DEF=20
-NPCWANDER=4
-FX2=20
-NPCAI=2
-TOPROV=725
-TOPEACE=725 5
+GETUO=moloch_lbr
+GETT2A=moloch_lbr
+GETUOR=moloch_lbr
+GETTD=moloch_lbr
+GETLBR=moloch_lbr
+GETAOS=moloch_aos
+GETSE=moloch_aos
+GETML=moloch_aos
+GETSA=moloch_aos
+GETHS=moloch_aos
+GETTOL=moloch_aos
+}
+
+[base_chaosdaemon]
+{
+GET=base_daemons
+NAME=#//a chaos daemon
+ID=0x0318
 CARVE=52
 RUNS
-RACE=10
-FLAG=NEUTRAL
 ORIGIN=aos
 }
 
 [chaosdaemon]
 {
-NAME=#//a chaos daemon
-ID=0x0318
-DIRECTION=RND
-BACKPACK
-LOOT=randompotions,2
-LOOT=lowlevelscrolls
-LOOT=midlevelscrolls
-GOLD=175 225
-KARMA=-4000
-FAME=3000
-STR=106 130
-DEX=171 200
-INT=56 80
-HPMAX=91 110
-MAGICRESISTANCE=851 950
-TACTICS=701 800
-WRESTLING=951 1000
-DAMAGE=7 13
-DEF=15
-NPCWANDER=4
-FX2=20
-NPCAI=2
-TOPROV=715
-TOPEACE=715 5
-CARVE=52
-RUNS
-RACE=10
-FLAG=NEUTRAL
-ORIGIN=aos
+GETUO=chaosdaemon_lbr
+GETT2A=chaosdaemon_lbr
+GETUOR=chaosdaemon_lbr
+GETTD=chaosdaemon_lbr
+GETLBR=chaosdaemon_lbr
+GETAOS=chaosdaemon_aos
+GETSE=chaosdaemon_aos
+GETML=chaosdaemon_aos
+GETSA=chaosdaemon_aos
+GETHS=chaosdaemon_aos
+GETTOL=chaosdaemon_aos
 }
 
-[shadowfiend]
+[base_shadowfiend]
 {
 GET=base_daemons
 NAME=#//a shadow fiend
 ID=0x00a8
-DIRECTION=RND
-GOLD=0 50
-STR=46 55
-DEX=121 130
-INT=46 55
-KARMA=-1000
-FAME=1000
-MAGICRESISTANCE=200 300
-TACTICS=200 300
-WRESTLING=200 300
-DAMAGE=3 12
-DEF=10
-NPCWANDER=4
-FX2=20
-NPCAI=2
-TOPROV=221
-TOPEACE=221 5
 CARVE=2
 RUNS
-RACE=10
-FLAG=NEUTRAL
 ORIGIN=uor
 SCRIPT=3228//shadowfiend.js
+}
+
+[shadowfiend]
+{
+GETUO=shadowfiend_lbr
+GETT2A=shadowfiend_lbr
+GETUOR=shadowfiend_lbr
+GETTD=shadowfiend_lbr
+GETLBR=shadowfiend_lbr
+GETAOS=shadowfiend_aos
+GETSE=shadowfiend_aos
+GETML=shadowfiend_aos
+GETSA=shadowfiend_aos
+GETHS=shadowfiend_aos
+GETTOL=shadowfiend_aos
 }
 
 //oni - Base NPC with shared DFN tags
@@ -390,11 +416,11 @@ ORIGIN=se
 
 [oni]
 {
-GETUO=oni_se
-GETT2A=oni_se
-GETUOR=oni_se
-GETTD=oni_se
-GETLBR=oni_se
+GETUO=oni_lbr
+GETT2A=oni_lbr
+GETUOR=oni_lbr
+GETTD=oni_lbr
+GETLBR=oni_lbr
 GETAOS=oni_se
 GETSE=oni_se
 GETML=oni_se
