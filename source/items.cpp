@@ -334,7 +334,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			}
 			case DFNTAG_GUMPTYPE:
 			{
-				auto trimmed = oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" ) );
+				auto trimmed = oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" ));
 				if( trimmed.find( "," ) != std::string::npos )
 				{
 					auto csecs = oldstrutil::sections( trimmed, "," );
@@ -342,16 +342,16 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					// Minimum valid: 5 parts (gump,xMin,xMax,yMin,yMax)
 					if( csecs.size() >= 5 )
 					{
-						UI16 gumpId = static_cast< UI16 >( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 0 ], "//" ) ), nullptr, 0 ) );
-						SI16 xMin = static_cast< SI16 >( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 1 ], "//" ) ), nullptr, 0 ) );
-						SI16 xMax = static_cast< SI16 >( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 2 ], "//" ) ), nullptr, 0 ) );
-						SI16 yMin = static_cast< SI16 >( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 3 ], "//" ) ), nullptr, 0 ) );
-						SI16 yMax = static_cast< SI16 >( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 4 ], "//" ) ), nullptr, 0 ) );
+						UI16 gumpId = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 0 ], "//" )), nullptr, 0 ));
+						SI16 xMin = static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 1 ], "//" )), nullptr, 0 ));
+						SI16 xMax = static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 2 ], "//" )), nullptr, 0 ));
+						SI16 yMin = static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 3 ], "//" )), nullptr, 0 ));
+						SI16 yMax = static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 4 ], "//" )), nullptr, 0 ));
 
 						SI08 zVal = 9;
 						if( csecs.size() >= 6 )
 						{
-							zVal = static_cast< SI08 >( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 5 ], "//" ) ), nullptr, 0 ) );
+							zVal = static_cast<SI08>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 5 ], "//" )), nullptr, 0 ));
 						}
 
 						applyTo->SetGumpType( gumpId );
@@ -359,13 +359,13 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					}
 					else
 					{
-						Console.Warning( oldstrutil::format( "Invalid data found in GUMPTYPE tag inside item script [%s] - expected: gump,xMin,xMax,yMin,yMax[,z]", sectionId.c_str() ) );
+						Console.Warning( oldstrutil::format( "Invalid data found in GUMPTYPE tag inside item script [%s] - expected: gump,xMin,xMax,yMin,yMax[,z]", sectionId.c_str() ));
 					}
 				}
 				else
 				{
 					// Old style numeric still works
-					applyTo->SetGumpType( static_cast< UI16 >( ndata ) );
+					applyTo->SetGumpType( static_cast<UI16>( ndata ));
 					// Do not force-clear bounds here; let DFN decide if it wants bounds or not
 				}
 				break;

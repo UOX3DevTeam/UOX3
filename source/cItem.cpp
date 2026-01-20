@@ -1939,7 +1939,7 @@ bool CItem::DumpBody( std::ostream &outStream ) const
 	outStream << "MoreXYZ=0x" << GetTempVar( CITV_MOREX ) << ",0x" << GetTempVar( CITV_MOREY ) << ",0x" << GetTempVar( CITV_MOREZ ) << newLine;
 	outStream << "Glow=0x" << GetGlow() << newLine;
 	outStream << "GlowBC=0x" << GetGlowColour() << newLine;
-	outStream << "GumpType=0x" << std::hex << GetGumpType() << std::dec<< "," << GetPackXMin()<< "," << GetPackXMax()<< "," << GetPackYMin()<< "," << GetPackYMax()<< "," << (SI08)GetPackZ()<< newLine;
+	outStream << "GumpType=0x" << std::hex <<GetGumpType() << std::dec << "," << GetPackXMin()<< "," << GetPackXMax()<< "," << GetPackYMin()<< "," << GetPackYMax()<< "," << static_cast<SI08>( GetPackZ() )<< newLine;
 	outStream << "Ammo=0x" << GetAmmoId() << ",0x" << GetAmmoHue() << newLine;
 	outStream << "AmmoFX=0x" << GetAmmoFX() << ",0x" << GetAmmoFXHue() << ",0x" << GetAmmoFXRender() << newLine;
 	outStream << "Spells=0x" << GetSpell( 0 ) << ",0x" << GetSpell( 1 ) << ",0x" << GetSpell( 2 ) << newLine;
@@ -2113,9 +2113,9 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				{
 					if( data.find( "," ) != std::string::npos )
 					{
-						SetHealthLeech( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
-						SetStaminaLeech( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
-						SetManaLeech( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
+						SetHealthLeech( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
+						SetStaminaLeech( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
+						SetManaLeech( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
 					}
 					rValue = true;
 				}
@@ -2123,7 +2123,7 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				{
 					if( data.find( "," ) != std::string::npos )
 					{
-						SetDurabilityHpBonus( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[8], "//" )), nullptr, 0 )));
+						SetDurabilityHpBonus( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[8], "//" )), nullptr, 0 )));
 					}
 					rValue = true;
 				}
@@ -2131,9 +2131,9 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				{
 					if( data.find( "," ) != std::string::npos )
 					{
-						SetHealthBonus( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[4], "//" )), nullptr, 0 )));
-						SetStaminaBonus( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[5], "//" )), nullptr, 0 )));
-						SetManaBonus( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[6], "//" )), nullptr, 0 )));
+						SetHealthBonus( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[4], "//" )), nullptr, 0 )));
+						SetStaminaBonus( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[5], "//" )), nullptr, 0 )));
+						SetManaBonus( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[6], "//" )), nullptr, 0 )));
 					}
 					rValue = true;
 				}
@@ -2141,8 +2141,8 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				{
 					if( data.find( "," ) != std::string::npos )
 					{
-						SetLowerStatReq( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
-						SetArtifactRarity( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[21], "//" )), nullptr, 0 )));
+						SetLowerStatReq( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
+						SetArtifactRarity( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[21], "//" )), nullptr, 0 )));
 					}
 					rValue = true;
 				}
@@ -2173,24 +2173,24 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 					SetGood( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
-				if( UTag == "GUMPTYPE" )
+				else if( UTag == "GUMPTYPE" )
 				{
 					if( data.find( "," ) != std::string::npos )
 					{
-						auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ) ), "," );
+						auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), "," );
 						if( csecs.size() >= 5 )
 						{
-							SetGumpType( static_cast< UI16 >( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 0 ], "//" ) ), nullptr, 0 ) ) );
+							SetGumpType( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 0 ], "//" ) ), nullptr, 0 )) );
 
-							SI16 xMin = static_cast< SI16 >( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 1 ], "//" ) ), nullptr, 0 ) );
-							SI16 xMax = static_cast< SI16 >( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 2 ], "//" ) ), nullptr, 0 ) );
-							SI16 yMin = static_cast< SI16 >( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 3 ], "//" ) ), nullptr, 0 ) );
-							SI16 yMax = static_cast< SI16 >( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 4 ], "//" ) ), nullptr, 0 ) );
+							SI16 xMin = static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 1 ], "//" )), nullptr, 0 ));
+							SI16 xMax = static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 2 ], "//" )), nullptr, 0 ));
+							SI16 yMin = static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 3 ], "//" )), nullptr, 0 ) );
+							SI16 yMax = static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 4 ], "//" )), nullptr, 0 ) );
 
 							SI08 zVal = 9;
 							if( csecs.size() >= 6 )
 							{
-								zVal = static_cast< SI08 >( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 5 ], "//" ) ), nullptr, 0 ) );
+								zVal = static_cast<SI08>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 5 ], "//" )), nullptr, 0 ));
 							}
 
 							SetPackBounds( xMin, xMax, yMin, yMax, zVal );
@@ -2199,7 +2199,7 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 					}
 					else
 					{
-						SetGumpType( static_cast< UI16 >( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ) ), nullptr, 0 ) ) );
+						SetGumpType( static_cast< UI16 >( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 						// do not change bounds unless you want old saves to wipe them
 						rValue = true;
 					}
