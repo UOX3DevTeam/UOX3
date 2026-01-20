@@ -1938,7 +1938,7 @@ bool CItem::DumpBody( std::ostream &outStream ) const
 	outStream << "MoreXYZ=0x" << GetTempVar( CITV_MOREX ) << ",0x" << GetTempVar( CITV_MOREY ) << ",0x" << GetTempVar( CITV_MOREZ ) << newLine;
 	outStream << "Glow=0x" << GetGlow() << newLine;
 	outStream << "GlowBC=0x" << GetGlowColour() << newLine;
-	outStream << "GumpType=0x" << std::hex <<GetGumpType() << std::dec << "," << GetPackXMin() << "," << GetPackXMax() << "," << GetPackYMin() << "," << GetPackYMax() << "," << GetPackZ() <<  newLine;
+	outStream << "GumpType=0x" << std::hex << GetGumpType() << std::dec << "," << GetPackXMin() << "," << GetPackXMax() << "," << GetPackYMin() << "," << GetPackYMax() << "," << GetPackZ() << newLine;
 	outStream << "Ammo=0x" << GetAmmoId() << ",0x" << GetAmmoHue() << newLine;
 	outStream << "AmmoFX=0x" << GetAmmoFX() << ",0x" << GetAmmoFXHue() << ",0x" << GetAmmoFXRender() << newLine;
 	outStream << "Spells=0x" << GetSpell( 0 ) << ",0x" << GetSpell( 1 ) << ",0x" << GetSpell( 2 ) << newLine;
