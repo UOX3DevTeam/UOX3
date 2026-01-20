@@ -268,6 +268,9 @@ const TIMERVAL		DEFCHAR_LASTCOMBATTIME		= 0;
 const UI08			DEFCHAR_POISONSTRENGTH 		= 0;
 const BodyType		DEFCHAR_BODYTYPE			= BT_OTHER;
 const UI16			DEFCHAR_NPCGUILD			= 0;
+const UI16			DEFCHAR_LASTWEATHID			= 0xFFFF;
+const UI08			DEFCHAR_LASTWEATHPKT		= 0xFF;
+const UI08			DEFCHAR_LASTWEATHPARTS		= 0;
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar::CChar() constructor
@@ -284,7 +287,7 @@ targ( DEFCHAR_TARG ), attacker( DEFCHAR_ATTACKER ), hunger( DEFCHAR_HUNGER ), th
 advObj( DEFCHAR_ADVOBJ ), guildFealty( DEFCHAR_GUILDFEALTY ), guildNumber( DEFCHAR_GUILDNUMBER ), flag( DEFCHAR_FLAG ),
 spellCast( DEFCHAR_SPELLCAST ), nextAct( DEFCHAR_NEXTACTION ), stealth( DEFCHAR_STEALTH ), running( DEFCHAR_RUNNING ),
 raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), PoisonStrength( DEFCHAR_POISONSTRENGTH ), bodyType( DEFCHAR_BODYTYPE ), lastMoveTime( DEFCHAR_LASTMOVETIME ),
-lastCombatTime( DEFCHAR_LASTCOMBATTIME ), npcGuild( DEFCHAR_NPCGUILD )
+lastCombatTime( DEFCHAR_LASTCOMBATTIME ), npcGuild( DEFCHAR_NPCGUILD ), lastWeathId( DEFCHAR_LASTWEATHID ), lastWeathPkt( DEFCHAR_LASTWEATHPKT ), lastWeathParts( DEFCHAR_LASTWEATHPARTS )
 {
 	ownedItems.clear();
 	itemLayers.clear();
@@ -1661,6 +1664,51 @@ TIMERVAL CChar::GetWeathDamage( UI08 part ) const
 void CChar::SetWeathDamage( TIMERVAL newValue, UI08 part )
 {
 	weathDamage[part] = newValue;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::GetLastWeathId()
+//|					CChar::SetLastWeathId()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the last effective weather system ID sent to the client for this character
+//o------------------------------------------------------------------------------------------------o
+UI16 CChar::GetLastWeathId( void ) const
+{
+    return lastWeathId;
+}
+void CChar::SetLastWeathId( UI16 newValue )
+{
+    lastWeathId = newValue;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::GetLastWeathPkt()
+//|					CChar::SetLastWeathPkt()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the last weather packet type sent to the client for this character
+//o------------------------------------------------------------------------------------------------o
+UI08 CChar::GetLastWeathPkt( void ) const
+{
+    return lastWeathPkt;
+}
+void CChar::SetLastWeathPkt( UI08 newValue )
+{
+    lastWeathPkt = newValue;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::GetLastWeathParts()
+//|					CChar::SetLastWeathParts()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the last weather particle count sent to the client for this character
+//o------------------------------------------------------------------------------------------------o
+UI08 CChar::GetLastWeathParts( void ) const
+{
+    return lastWeathParts;
+}
+void CChar::SetLastWeathParts( UI08 newValue )
+{
+    lastWeathParts = newValue;
 }
 
 //o------------------------------------------------------------------------------------------------o
