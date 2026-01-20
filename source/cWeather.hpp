@@ -227,7 +227,7 @@ public:
 	void	ColdActive( WEATHID toCheck, bool value );
 	bool	DoStuff( void );
 	bool	DoPlayerStuff( CSocket *mSock, CChar *p );
-	void	DoPlayerWeather( CSocket *s, UI08 weathType, SI08 currentTemp, WEATHID currval );
+	void	DoPlayerWeather( CSocket *s, UI08 weathType, SI08 currentTemp, WEATHID currVal );
 	bool	doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType element );
 	bool	DoLightEffect( CSocket *mSock, CChar& mChar );
 	bool	DoNPCStuff( CChar *p );
