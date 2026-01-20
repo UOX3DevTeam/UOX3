@@ -1,3 +1,7 @@
+20/01/2026 - DragonSlayer62 (#480)
+    [ADD] Added new Item DFN Tag to allow definition of custom container gumps. If tag is not present on an item, or set to 0, it will use hardcoded defaults. Syntax:
+        gumptype=[gumpid],[xMin],[xMax],[yMin],[yMax],[z] // custom bounds for random placement optional
+
 19/01/2026 - DragonSlayer62 (#481)
     [UPD] Updated weather system to support smooth transitions between regions with same weather ID, resulting in weather updates only being sent when weather actually changes
 
