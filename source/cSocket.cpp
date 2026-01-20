@@ -2719,10 +2719,17 @@ void CSocket::OpenPack( CItem *i, bool isPlayerVendor )
 		Console.Warning( "OpenPack() was passed an invalid item" );
 		return;
 	}
+
 	CPDrawContainer contSend = ( *i );
 	contSend.Model( 0x3C );
 
-	if( i->GetId( 1 ) == 0x3E )            // boats
+	// Allow containers to override gump model via DFN-driven value
+	UI16 gumpType = i->GetGumpType();
+	if( gumpType != 0 )
+	{
+		contSend.Model( gumpType );
+	}
+	else if( i->GetId( 1 ) == 0x3E )            // boats
 	{
 		contSend.Model( 0x4C );
 	}
