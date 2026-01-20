@@ -236,6 +236,11 @@ protected:
 	TIMERVAL	regen[3];
 	TIMERVAL	weathDamage[WEATHNUM];	// Light Damage timer
 
+	// Weather packet cache (persisted)
+	UI16		lastWeathId;     // 0xFFFF = none/uninitialized
+	UI08		lastWeathPkt;    // 0xFF = none/uninitialized, otherwise 0..6
+	UI08		lastWeathParts;  // last particle count sent
+
 	UI08		PoisonStrength;
 	BodyType	bodyType;
 	TIMERVAL	lastMoveTime;		// Timestamp for when character moved last
@@ -452,6 +457,15 @@ public:
 	TIMERVAL	GetRegen( UI08 part ) const;
 	TIMERVAL	GetWeathDamage( UI08 part ) const;
 	UI08		GetNextAct( void ) const;
+
+	UI16		GetLastWeathId( void ) const;
+	void		SetLastWeathId( UI16 newValue );
+
+	UI08		GetLastWeathPkt( void ) const;
+	void		SetLastWeathPkt( UI08 newValue );
+
+	UI08		GetLastWeathParts( void ) const;
+	void		SetLastWeathParts( UI08 newValue );
 
 	void		SetTimer( cC_TID timerId, TIMERVAL value );
 	void		SetRegen( TIMERVAL newValue, UI08 part );
