@@ -1,3 +1,38 @@
+20/01/2026 - DragonSlayer62 (#480)
+    [ADD] Added new Item DFN Tag to allow definition of custom container gumps. If tag is not present on an item, or set to 0, it will use hardcoded defaults. Syntax:
+        gumptype=[gumpid],[xMin],[xMax],[yMin],[yMax],[z] // custom bounds for random placement optional
+
+19/01/2026 - DragonSlayer62 (#481)
+    [UPD] Updated weather system to support smooth transitions between regions with same weather ID, resulting in weather updates only being sent when weather actually changes
+
+17/12/2025 - Xoduz (#471)
+    [ADD] Introduction of speedhack anti-cheat system which can detect when players are moving faster than intended and throttle them (default) while also allowing custom reactions via JS events. This system is governed by the following new settings in [anticheat] section of uox.ini:
+        SPEEDHACKDETECTION=1 // Enables/disables speedhack detection system
+        SPEEDHACKTHROTTLEPENALTY=2000 // Movement throttle penalty (in ms) applied when speedhack is detected
+        SPEEDHACKMAXDEBT=350 // Max movement debt (in ms) player can accumulate before throttling occurs
+        SPEEDHACKMAXDEBTAVG=0.5 // Max (moving) average debt as a factor of SPEEDHACKMAXDEBT player can accumulate before triggering logging for suspicious activity
+        SPEEDHACKMAXCREDIT=-75 // Movement credit (in ms) that acts as buffer for regular players against jitter, lag, etc
+        SPEEDHACKGRACETHRESHOLD=2000 // Grace threshold to handle large server/network lag spikes.
+    [ADD] Added new JS Events that allow reactions to detection/suspicion of speedhacking:
+        onSpeedHackDetection( pChar, deltaTime ) // Triggers when a player has crossed max threshold for speedhack detection
+        onSpeedHackSuspicion( pChar, rawMoveDebt, deltaTime ) // Triggers when a player has consistently crossed threshold for speedhack suspicion
+    [ADD] New JS Socket Properties:
+        .moveDebt // Accumulated time debt in ms indicating whether player's movement packets arrive early (potential speeding) or late (lag)
+        .moveDebtAvg // Accumulated time debt in ms, on average over at least 100 samples
+        .moveBurstAllowance // Number of upcoming movement steps that will be processed without incurring debt or penalty
+        .nextMoveTime // Timestamp in ms for when next valid movement packet is expected to arrive
+    [ADD] Added new system timers for Sockets and exposed to JS:
+        TIMER.SPEEDHACKPENALTY // Time until next time player is allowed to move after getting throttled by anti-cheat
+        TIMER.SPEEDHACKLOGGED // Time until next time suspicious speed-hack related behavior is logged
+    [FIX] Fixed a 20+ year old movement desynch bug that would cause players to start rubberbanding after taking ~255 steps
+    [UPD] Updated UOX3 and JS documentation with entries related to the new anti-cheat system,
+    [UPD] Updated dictionary files with new system message for anticheat, and addressed some duplicate ID issues
+
+17/12/2025 - Xoduz (#473)
+    [ADD] Added build/run support for Visual Studio Code editor through some dedicated workspace files:
+        make\VSCode\uox3_cmake.code-workspace // Relies on cmake and make\CMakeLists.txt for project configuration
+        make\VSCode\uox3_msbuild.code-workspace // Relies on msbuild and make\VS2022\uox3.sln for project configuration
+
 12/11/2025 - strattond (#460)
 	[FIX] TypeScript definitions need to support 2 flavours of onSpellCast
 	[UPD] Update existing scripts with revised scripts

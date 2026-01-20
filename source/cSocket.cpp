@@ -533,6 +533,90 @@ void CSocket::WalkSequence( SI16 newValue )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CSocket::NextMovementTime()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the next movement time for socket
+//o------------------------------------------------------------------------------------------------o
+TIMERVAL CSocket::NextMovementTime( void ) const
+{
+	return nextMovementTime;
+}
+void CSocket::NextMovementTime( TIMERVAL newValue )
+{
+	nextMovementTime = newValue;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CSocket::MovementDebt()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the movement debt for socket
+//o------------------------------------------------------------------------------------------------o
+SI32 CSocket::MovementDebt( void ) const
+{
+	return movementDebt;
+}
+void CSocket::MovementDebt( SI32 newValue )
+{
+	movementDebt = newValue;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CSocket::MovementDebtAverage()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the movement debt running average for socket
+//o------------------------------------------------------------------------------------------------o
+SI32 CSocket::MovementDebtAverage( void ) const
+{
+	return movementDebtAverage;
+}
+void CSocket::MovementDebtAverage( SI32 newValue )
+{
+	movementDebtAverage = newValue;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CSocket::MovementBurstAllowance()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the movement burst allowance count for socket
+//o------------------------------------------------------------------------------------------------o
+UI08 CSocket::MovementBurstAllowance( void ) const
+{
+	return movementBurstAllowance;
+}
+void CSocket::MovementBurstAllowance( UI08 newValue )
+{
+	movementBurstAllowance = newValue;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CSocket::MovementDebtSampleCount()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the movement debt sample count for socket
+//o------------------------------------------------------------------------------------------------o
+UI08 CSocket::MovementDebtSampleCount( void ) const
+{
+	return movementDebtSampleCount;
+}
+void CSocket::MovementDebtSampleCount( UI08 newValue )
+{
+	movementDebtSampleCount = newValue;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CSocket::MovementSpeedHackStrikes()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the speedhack anticheat strikes against the player
+//o------------------------------------------------------------------------------------------------o
+UI08 CSocket::MovementSpeedHackStrikes( void ) const
+{
+	return movementSpeedHackStrikes;
+}
+void CSocket::MovementSpeedHackStrikes( UI08 newValue )
+{
+	movementSpeedHackStrikes = newValue;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSocket::AddTrigWord()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds trigger word to list of trigger words detected in player's speech
@@ -691,6 +775,14 @@ void CSocket::InternalReset( void )
 	largeBuffer.resize( 0 );
 	largePackBuffer.resize( 0 );
 	NegotiateTimeout( -1 );
+
+	// Initialize speedhack anti-cheat properties
+	nextMovementTime = 0;
+	movementDebt = 0;
+	movementDebtAverage = 0;
+	movementDebtSampleCount = 0;
+	movementBurstAllowance = 0;
+	movementSpeedHackStrikes = 0;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2627,10 +2719,17 @@ void CSocket::OpenPack( CItem *i, bool isPlayerVendor )
 		Console.Warning( "OpenPack() was passed an invalid item" );
 		return;
 	}
+
 	CPDrawContainer contSend = ( *i );
 	contSend.Model( 0x3C );
 
-	if( i->GetId( 1 ) == 0x3E )            // boats
+	// Allow containers to override gump model via DFN-driven value
+	UI16 gumpType = i->GetGumpType();
+	if( gumpType != 0 )
+	{
+		contSend.Model( gumpType );
+	}
+	else if( i->GetId( 1 ) == 0x3E )            // boats
 	{
 		contSend.Model( 0x4C );
 	}
