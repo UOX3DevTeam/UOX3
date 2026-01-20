@@ -176,6 +176,10 @@ public:
 	UI32				GetTaxes( void ) const;
 	WEATHID				GetWeather( void ) const;
 	void				SetWeather( WEATHID newValue );
+
+	WEATHID				GetEffectiveWeather( void ) const;
+	UI16				GetParentRegion( void ) const;
+
 	UI16				NumGuards( void ) const;
 	void				SetNumGuards( UI16 newValue );
 	UI16				TaxedAmount( void ) const;
