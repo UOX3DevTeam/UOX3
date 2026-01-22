@@ -105,7 +105,7 @@ function onCombatStart( pAttacker, pDefender )
 		var pAttackSock = pAttacker.socket;
 		if( pAttackSock )
 		{
-			pAttackSock.SysMessage( GetDictionaryEntry( 19323, pDropper.socket.language )); // You can not perform beneficial acts on your target.
+			pAttackSock.SysMessage( GetDictionaryEntry( 19323, pAttackSock.language )); // You can not perform beneficial acts on your target.
 
 		}
 
@@ -133,7 +133,7 @@ function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 		var pAttackSock = pAttacker.socket;
 		if( pAttackSock )
 		{
-			pAttackSock.SysMessage( GetDictionaryEntry( 19323, pDropper.socket.language )); // You can not perform beneficial acts on your target.
+			pAttackSock.SysMessage( GetDictionaryEntry( 19323, pAttackSock.language )); // You can not perform beneficial acts on your target.
 		}
 
 		pAttacker.target = null;
@@ -158,7 +158,7 @@ function onSpellTarget( myTarget, pCaster, spellID )
 		var pSock = pCaster.socket;
 		if( pSock != null )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 19323, pDropper.socket.language )); // You can not perform beneficial acts on your target.
+			pSock.SysMessage( GetDictionaryEntry( 19323, pSock.language )); // You can not perform beneficial acts on your target.
 			return 2;
 		}
 
@@ -193,7 +193,7 @@ function onDamage( damaged, pAttacker, damageValue, damageType )
 		var atkSock = ValidateObject( pAttacker ) ? pAttacker.socket : null;
 		if( atkSock )
 		{
-			atkSock.SysMessage( GetDictionaryEntry( 19323, pDropper.socket.language ));// You can not perform beneficial acts on your target.
+			atkSock.SysMessage( GetDictionaryEntry( 19323, atkSock.language ));// You can not perform beneficial acts on your target.
 		}
 
 		pAttacker.target = null;
