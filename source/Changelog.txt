@@ -1,3 +1,12 @@
+23/01/2026 - DragonSlayer62 (#484)
+    [FIX] Changed few words to match up with there function name and method.
+    [FIX] Fixed Socket Errors in Bonding Script.
+
+23/01/2026 - Xoduz (#485)
+    [FIX] Fixed an issue with how custom gump type properties were saved to worldfiles, which would lead to a crash on next world load
+    [UPD] Disabled logging of unknown JS object properties for now, as log message would also trigger for usage of JS object methods
+    [UPD] Wrapped CustomTarget console warning in a debug define so it doesn't spam console/log file in release mode
+
 20/01/2026 - DragonSlayer62 (#480)
     [ADD] Added new Item DFN Tag to allow definition of custom container gumps. If tag is not present on an item, or set to 0, it will use hardcoded defaults. Syntax:
         gumptype=[gumpid],[xMin],[xMax],[yMin],[yMax],[z] // custom bounds for random placement optional
