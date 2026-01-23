@@ -1,3 +1,6 @@
+23/01/2026 - uox3-changelog-bot[bot] (#486)
+Automated changelog update from #485. This PR will be auto-merged.
+
 23/01/2026 - Xoduz (#485)
     [FIX] Fixed an issue with how custom gump type properties were saved to worldfiles, which would lead to a crash on next world load
     [UPD] Disabled logging of unknown JS object properties for now, as log message would also trigger for usage of JS object methods
