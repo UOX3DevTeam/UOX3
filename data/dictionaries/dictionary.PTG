@@ -5599,5 +5599,12 @@
 19341=Já conhece esta receita.
 19342=Aprendeu uma nova receita: %i
 19343=Deve aprender esta receita num pergaminho.
+// [ 30000 - 30010 ] Sistema de Campeões
+30000=O Campeão desceu para %i!
+30001=Causaste o maior dano ao Campeão!
+30002=Estavas entre os 5 maiores causadores de dano! (%i de dano)
+30003=O Campeão caiu!
+30004=Foste recompensado com um Pergaminho de Poder!
+30005=A energia do santuário diminui sem desafiantes presentes...
 }
 EOF

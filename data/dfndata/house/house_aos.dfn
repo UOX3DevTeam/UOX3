@@ -339,8 +339,8 @@ HOUSE_ITEM=5034
 { Steps
 ITEM=plateformsteps
 NODECAY
-X=0//west is - east is +
-Y=18//south is + north is -
+X=0
+Y=18
 Z=0
 }
 
@@ -348,8 +348,8 @@ Z=0
 { Steps
 ITEM=plateformsteps
 NODECAY
-X=1//west is - east is +
-Y=18//south is + north is -
+X=1
+Y=18
 Z=0
 }
 
@@ -357,8 +357,8 @@ Z=0
 { Steps
 ITEM=plateformsteps
 NODECAY
-X=-1//west is - east is +
-Y=18//south is + north is -
+X=-1
+Y=18
 Z=0
 }
 
@@ -366,32 +366,32 @@ Z=0
 { 
 ITEM=plateformsteps1
 NODECAY
-X=-2//west is - east is +
-Y=-2//south is + north is -
+X=-2
+Y=-2
 Z=0
 }
 [HOUSE ITEM 5001]
 { 
 ITEM=plateformsteps2
 NODECAY
-X=2//west is - east is +
-Y=2//south is + north is -
+X=2
+Y=2
 Z=0
 }
 [HOUSE ITEM 5002]
 { 
 ITEM=plateformsteps3
 NODECAY
-X=-2//west is - east is +
-Y=2//south is + north is -
+X=-2
+Y=2
 Z=0
 }
 [HOUSE ITEM 5003]
 { 
 ITEM=plateformsteps4
 NODECAY
-X=2//west is - east is +
-Y=-2//south is + north is -
+X=2
+Y=-2
 Z=0
 }
 
@@ -399,8 +399,8 @@ Z=0
 { 
 ITEM=plateformsteps5
 NODECAY
-X=0//west is - east is +
-Y=0//south is + north is -
+X=0
+Y=0
 Z=0
 }
 
@@ -408,8 +408,8 @@ Z=0
 { 
 ITEM=plateformsteps5
 NODECAY
-X=1//west is - east is +
-Y=0//south is + north is -
+X=1
+Y=0
 Z=0
 }
 
@@ -417,8 +417,8 @@ Z=0
 { 
 ITEM=plateformsteps5
 NODECAY
-X=-1//west is - east is +
-Y=0//south is + north is -
+X=-1
+Y=0
 Z=0
 }
 
@@ -426,8 +426,8 @@ Z=0
 { 
 ITEM=plateformsteps5
 NODECAY
-X=0//west is - east is +
-Y=1//south is + north is -
+X=0
+Y=1
 Z=0
 }
 
@@ -435,8 +435,8 @@ Z=0
 { 
 ITEM=plateformsteps5
 NODECAY
-X=0//west is - east is +
-Y=-1//south is + north is -
+X=0
+Y=-1
 Z=0
 }
 
@@ -444,8 +444,8 @@ Z=0
 { 
 ITEM=plateformsteps5
 NODECAY
-X=1//west is - east is +
-Y=1//south is + north is -
+X=1
+Y=1
 Z=0
 }
 
@@ -453,8 +453,8 @@ Z=0
 { 
 ITEM=plateformsteps5
 NODECAY
-X=-1//west is - east is +
-Y=-1//south is + north is -
+X=-1
+Y=-1
 Z=0
 }
 
@@ -462,8 +462,8 @@ Z=0
 { 
 ITEM=plateformsteps5
 NODECAY
-X=-1//west is - east is +
-Y=1//south is + north is -
+X=-1
+Y=1
 Z=0
 }
 
@@ -471,8 +471,8 @@ Z=0
 { 
 ITEM=plateformsteps5
 NODECAY
-X=1//west is - east is +
-Y=-1//south is + north is -
+X=1
+Y=-1
 Z=0
 }
 
@@ -480,8 +480,8 @@ Z=0
 { 
 ITEM=plateformsteps6
 NODECAY
-X=0//west is - east is +
-Y=2//south is + north is -
+X=0
+Y=2
 Z=0
 }
 
@@ -489,8 +489,8 @@ Z=0
 { 
 ITEM=plateformsteps6
 NODECAY
-X=1//west is - east is +
-Y=2//south is + north is -
+X=1
+Y=2
 Z=0
 }
 
@@ -498,8 +498,8 @@ Z=0
 { 
 ITEM=plateformsteps6
 NODECAY
-X=-1//west is - east is +
-Y=2//south is + north is -
+X=-1
+Y=2
 Z=0
 }
 
@@ -507,8 +507,8 @@ Z=0
 { 
 ITEM=plateformsteps7
 NODECAY
-X=2//west is - east is +
-Y=0//south is + north is -
+X=2
+Y=0
 Z=0
 }
 
@@ -516,8 +516,8 @@ Z=0
 { 
 ITEM=plateformsteps7
 NODECAY
-X=2//west is - east is +
-Y=1//south is + north is -
+X=2
+Y=1
 Z=0
 }
 
@@ -525,8 +525,8 @@ Z=0
 { 
 ITEM=plateformsteps7
 NODECAY
-X=2//west is - east is +
-Y=-1//south is + north is -
+X=2
+Y=-1
 Z=0
 }
 
@@ -534,8 +534,8 @@ Z=0
 {
 ITEM=plateformsteps8
 NODECAY
-X=0//west is - east is +
-Y=-2//south is + north is -
+X=0
+Y=-2
 Z=0
 }
 
@@ -543,8 +543,8 @@ Z=0
 {
 ITEM=plateformsteps8
 NODECAY
-X=1//west is - east is +
-Y=-2//south is + north is -
+X=1
+Y=-2
 Z=0
 }
 
@@ -552,8 +552,8 @@ Z=0
 {
 ITEM=plateformsteps8
 NODECAY
-X=-1//west is - east is +
-Y=-2//south is + north is -
+X=-1
+Y=-2
 Z=0
 }
 
@@ -561,8 +561,8 @@ Z=0
 {
 ITEM=plateformsteps9
 NODECAY
-X=-2//west is - east is +
-Y=0//south is + north is -
+X=-2
+Y=0
 Z=0
 }
 
@@ -570,8 +570,8 @@ Z=0
 {
 ITEM=plateformsteps9
 NODECAY
-X=-2//west is - east is +
-Y=1//south is + north is -
+X=-2
+Y=1
 Z=0
 }
 
@@ -579,8 +579,8 @@ Z=0
 {
 ITEM=plateformsteps9
 NODECAY
-X=-2//west is - east is +
-Y=-1//south is + north is -
+X=-2
+Y=-1
 Z=0
 }
 
@@ -588,8 +588,8 @@ Z=0
 {
 ITEM=plateformsteps9
 NODECAY
-X=-2//west is - east is +
-Y=-1//south is + north is -
+X=-2
+Y=-1
 Z=0
 }
 
@@ -672,7 +672,7 @@ Z=5
 {
 ITEM=championsystem
 NODECAY
-X=0//west is - east is +
-Y=0//south is + north is -
+X=0
+Y=0
 Z=15
 }

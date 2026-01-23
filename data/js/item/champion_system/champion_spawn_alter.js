@@ -5,8 +5,8 @@ const maxKillsByRank = [256, 128, 64, 32]; // Max kills per rank
 const radiusMods = [1.0, 0.75, 0.5, 0.25]; // Radius scaling per rank
 const baseSpawnRadius = 30; // Max radius at rank 0
 //Gold shower settings
-const piles = 50; // Number of gold piles to spawn
-const range = 25; // Range around the altar to spawn gold piles
+const championGoldPiles = 50; // Number of gold piles to spawn
+const championGoldPilesRange  = 25; // Range around the altar to spawn gold piles
 const ChampionIDToName = {
 	1: "Abyss",
 	2: "Arachnid",
@@ -34,14 +34,17 @@ function onCreateDFN( objMade, objType )
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, altar )
 {
-	var pSocket = pUser.socket;
-	if( !ValidateObject( pSocket ))
+	if( !ValidateObject( pUser ))
 		return false;
 
-	pSocket.tempObj = altar;
+	var pSocket = pUser.socket;
+	if( pSocket == null)
+		return false;
 
 	if( !ValidateObject( altar ) || !ValidateObject( pUser ))
 		return false;
+
+	pSocket.tempObj = altar;
 
 	ChampionMenu( pUser, altar )
 }
@@ -61,25 +64,36 @@ function StartChampionWave( altar, stage )
 
 	for( let i = 0; i < spawnAmount; ++i )
 	{
-		let validSpotFound = false;
-		let x = 0, y = 0, z = 0;
+		var validSpotFound = false;
+		var x = 0, y = 0, z = 0;
 
-		for( let t = 0; t < triesPerSpawn && !validSpotFound; ++t )
+		var worldNum = altar.worldNumber;
+		var instanceId = altar.instanceID;
+
+		for (var t = 0; t < triesPerSpawn && !validSpotFound; ++t)
 		{
-			x = altar.x + RandomNumber( -radius, radius );
-			y = altar.y + RandomNumber( -radius, radius);
-			z = GetMapElevation( x, y, altar.worldNumber ); // Use actual terrain Z
+			x = altar.x + RandomNumber(-radius, radius);
+			y = altar.y + RandomNumber(-radius, radius);
+			z = GetMapElevation(x, y, worldNum); // Use actual terrain Z
 
-			let mapBlocked    = DoesMapBlock( x, y, z, altar.worldNumber, false, false, true, false );
-			let staticBlocked = DoesStaticBlock( x, y, z, altar.worldNumber, false );
-			let dynBlocked    = DoesDynamicBlock( x, y, z, altar.worldNumber, altar.instanceID, false, false, false, false );
-			let isWet         = CheckStaticFlag(x, y, z, altar.worldNumber, 7 ); // TF_WET
-			let staticStand   = CheckStaticFlag( x, y, z, altar.worldNumber, 20 );  // TF_MAP
+			// Cheapest / fastest checks first (short-circuit on failure)
+			if (CheckStaticFlag(x, y, z, worldNum, 7))      // TF_WET
+				continue;
 
-			if (!mapBlocked && !staticBlocked && !dynBlocked && !isWet && !staticStand)
-			{
-				validSpotFound = true;
-			}
+			if (CheckStaticFlag(x, y, z, worldNum, 20))     // TF_MAP (your "staticStand")
+				continue;
+
+			if (DoesMapBlock(x, y, z, worldNum, false, false, true, false))
+				continue;
+
+			if (DoesStaticBlock(x, y, z, worldNum, false))
+				continue;
+
+			if (DoesDynamicBlock(x, y, z, worldNum, instanceId, false, false, false, false))
+				continue;
+
+			// If we got here, nothing blocked the spot
+			validSpotFound = true;
 		}
 
 		if( !validSpotFound )
@@ -319,7 +333,7 @@ function DecayChampionProgressIfEmpty( altar )
 		altar.SetTag( "whiteSkullCount", skullCount );
 		TriggerEvent( 7500, "PlaceWhiteSkulls", altar, kills, stage );
 
-		altar.TextMessage( "The shrine's energy wanes with no challengers present..." );
+		altar.TextMessage( GetDictionaryEntry( 30005 )); // The shrine's energy wanes with no challengers present...
 		changed = true;
 	}
 
@@ -466,12 +480,12 @@ function PlaceWhiteSkulls( altar, killCount, stage )
 	altar.Refresh();
 }
 
-function DelayedGoldExplosion(altar)
+function DelayedGoldExplosion( altar )
 {
 	if( !ValidateObject( altar ))
 		return;
 
-	altar.StartTimer(1000, 2, 7500); //1 second delay, timerID 2
+	altar.StartTimer( 1000, 2, 7500 ); //1 second delay, timerID 2
 }
 
 function ChampionGoldExplosion( altar )
@@ -482,46 +496,112 @@ function ChampionGoldExplosion( altar )
 	var minAmount = altar.morey;
 	var maxAmount = altar.morez;
 
-	const world = altar.worldNumber;
-	const instance = altar.instanceID;
+	var world    = altar.worldNumber;
+	var instance = altar.instanceID;
 
-	let centerX = altar.x;
-	let centerY = altar.y;
-	let centerZ = altar.z;
+	var centerX = altar.x;
+	var centerY = altar.y;
 
-	for( let i = 0; i < piles; ++i )
+	for( var i = 0; i < championGoldPiles; ++i )
 	{
-		let offsetX = RandomNumber( -range, range );
-		let offsetY = RandomNumber( -range, range );
-		let x = centerX + offsetX;
-		let y = centerY + offsetY;
-		let z = GetMapElevation( x, y, world );
+		var x = centerX + RandomNumber( -championGoldPilesRange, championGoldPilesRange );
+		var y = centerY + RandomNumber( -championGoldPilesRange, championGoldPilesRange );
 
-		let amount = RandomNumber( minAmount, maxAmount );
-		let gold = CreateDFNItem( null, null, "0x0eed", amount, "ITEM", false, 0, world, instance );
-		gold.x = x;
-		gold.y = y;
-		gold.z = z;
+		var z = PickSurfaceZForGold( altar, x, y );
+		if( z === null )
+			continue;
+
+		var amount = RandomNumber( minAmount, maxAmount );
+		var gold = CreateDFNItem( null, null, "0x0eed", amount, "ITEM", false, 0, world, instance );
 		if( !ValidateObject( gold ))
 			continue;
 
-		// Effects
-		let fx = RandomNumber( 0, 2 );
+		gold.x = x;
+		gold.y = y;
+		gold.z = z;
+
+		// Effects (unchanged)
+		var fx = RandomNumber( 0, 2 );
 		switch( fx )
 		{
-			case 0: // Fire column
+			case 0:
 				DoStaticEffect( x, y, z, 0x3709, 0x3, 0x10, false );
 				altar.SoundEffect( 0x208, true );
 				break;
-			case 1: // Explosion
+			case 1:
 				DoStaticEffect( x, y, z, 0x3709, 0x3, 0x10, false );
 				altar.SoundEffect( 0x307, true );
 				break;
-			case 2: // Ball of fire
+			case 2:
 				DoStaticEffect( x, y, z, 0x36FE, 0x3, 0x10, false );
 				break;
 		}
 	}
+}
+
+// Returns a Z to place on, or null if no valid spot at this XY.
+function PickSurfaceZForGold( altar, x, y )
+{
+	var world    = altar.worldNumber;
+	var instance = altar.instanceID;
+
+	// Candidate Zs (try altar level first)
+	var zA = altar.z;
+	var zM = GetMapElevation( x, y, world );
+
+	// Helper: validate spot at z (short-circuit order)
+	function IsValidZ( z )
+	{
+		// Reject water / weird map-flagged tiles early (your existing rules)
+		if( CheckStaticFlag( x, y, z, world, 7 ))   // TF_WET
+			return false;
+		if( CheckStaticFlag( x, y, z, world, 20 ))  // TF_MAP (as you used it)
+			return false;
+
+		// Hard blocks
+		if( DoesMapBlock( x, y, z, world, false, false, true, false ))
+			return false;
+		if( DoesStaticBlock( x, y, z, world, false ))
+			return false;
+		if( DoesDynamicBlock( x, y, z, world, instance, false, false, false, false ))
+			return false;
+
+		return true;
+	}
+
+	// Helper: do we have a standable surface at this z?
+	// TF_SURFACE = 9
+	function HasSurfaceAtZ( z )
+	{
+		// Statics that are standable (floors, platforms)
+		if( CheckStaticFlag( x, y, z, world, 9 ))
+			return true;
+
+		// Dynamics/multis that are standable (house floors, dungeon add-ons, etc.)
+		if( CheckDynamicFlag( x, y, z, world, instance, 9 ))
+			return true;
+
+		return false;
+	}
+
+	// 1) Prefer altar level IF there is a standable surface there and it is valid
+	if( HasSurfaceAtZ( zA ) && IsValidZ( zA ))
+		return zA;
+
+	// 2) If altar level does not have a surface at exact z, try a small Z window around it.
+	// This helps when the surface is zA +/- 1..2 due to tile heights/rounding.
+	for( var dz = -2; dz <= 2; ++dz )
+	{
+		var zTry = zA + dz;
+		if( HasSurfaceAtZ( zTry ) && IsValidZ( zTry ))
+			return zTry;
+	}
+
+	// 3) Fall back to terrain Z (map elevation) if valid
+	if( IsValidZ( zM ))
+		return zM;
+
+	return null;
 }
 
 function ChampionMenu( socket, altar )

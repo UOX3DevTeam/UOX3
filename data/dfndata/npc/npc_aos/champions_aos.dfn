@@ -71,11 +71,10 @@ RESISTPOISON=80 90
 RESISTLIGHTNING=80 90
 TOPROV=1600
 TOPEACE=1600 5
-SCRIPT=3231//lord_oaks.js
 }
 
 // rikktor - aos stats
-[rikktor_lbr]
+[rikktor_aos]
 {
 GET=base_rikktor
 GOLD=4000 5000
@@ -104,7 +103,6 @@ RESISTPOISON=80 90
 RESISTLIGHTNING=80 90
 TOPROV=1600
 TOPEACE=1600 5
-SCRIPT=3233//rikktor.js
 }
 
 // semidar - aos stats

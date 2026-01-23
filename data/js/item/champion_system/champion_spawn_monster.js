@@ -1,6 +1,5 @@
 const disableTopDamager = true; // Set to true to disable top damager logic and if so then all loot is free for players to fight over.
-// Who can get scrolls at most?
-const POWER_SCROLL_MAX_RECEIVERS = 6;
+const POWER_SCROLL_MAX_RECEIVERS = 6; // Who can get scrolls at most?
 
 // Rarity weights (higher bonus = rarer; total should sum up to something sensible)
 const POWER_SCROLL_RARITY_TABLE = [
@@ -19,8 +18,6 @@ const CHAMPION_REWARD_CATEGORY_TABLE = [
 
 var coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 
-// Minimum era per skill. If not listed here, skill is assumed pre-AoS and
-// always allowed.
 var SKILL_MIN_ERA = {
 	// AoS-era skills
 	necromancy: "aos",
@@ -37,7 +34,7 @@ var SKILL_MIN_ERA = {
 	throwing: "sa"
 };
 
-function isSkillAllowedByEra( skillProp )
+function IsSkillAllowedByEra( skillProp )
 {
 	var minEraName = SKILL_MIN_ERA[skillProp];
 	if( !minEraName )
@@ -133,8 +130,7 @@ function onDamage( damaged, attacker, damageValue, damageType )
 	let mapRaw = damaged.GetTag( "damageMap" ) || "";
 	let damageMap = {};
 
-	// Parse the existing tag into a map
-	let entries = mapRaw.split(";");
+	let entries = mapRaw.split( ";" );
 	for( let i = 0; i < entries.length; ++i )
 	{
 		let parts = entries[i].split( ":" );
@@ -147,20 +143,17 @@ function onDamage( damaged, attacker, damageValue, damageType )
 		}
 	}
 
-	// Add or update attacker damage
 	if( !damageMap.hasOwnProperty( attackerSerial ))
 		damageMap[attackerSerial] = 0;
 
 	damageMap[attackerSerial] += damageValue;
 
-	// Manually build top 5 without using sort
 	let topList = [];
 
 	for( let ser in damageMap )
 	{
 		let dmg = damageMap[ser];
 
-		// Insert into topList in descending order
 		let inserted = false;
 		for( let j = 0; j < topList.length; ++j )
 		{
@@ -175,7 +168,6 @@ function onDamage( damaged, attacker, damageValue, damageType )
 		if( !inserted && topList.length < 5 )
 			topList.push([ser, dmg]);
 
-		// Trim if too long
 		if( topList.length > 5 )
 			topList.length = 5;
 	}
@@ -192,6 +184,11 @@ function onDamage( damaged, attacker, damageValue, damageType )
 
 function RewardTopDamagers( pKilled, altar )
 {
+	if( !ValidateObject( pKilled ))
+	{
+		return;
+	}
+
 	let damageMapRaw = pKilled.GetTag( "damageMap" ) || "";
 	let entries = damageMapRaw.split( ";" );
 	let top5 = [];
@@ -234,29 +231,36 @@ function RewardTopDamagers( pKilled, altar )
 	// Announce and reward
 	if( top5.length > 0 )
 	{
-		let topSerial = top5[0][0];
-		let topChar = CalcCharFromSer( topSerial );
-		if( ValidateObject( topChar ))
+		let topDamgerSerial = top5[0][0];
+		let topDamagerChar = CalcCharFromSer( topDamgerSerial );
+		if( ValidateObject( topDamagerChar ))
 		{
-			altar.TextMessage( "The Champion has fallen to " + topChar.name + "!" );
-			topChar.SysMessage( "You dealt the most damage to the Champion!" );
+			altar.TextMessage( GetDictionaryEntry( 30000 ), topDamagerChar.name ); // The Champion has fallen to %i !
+
+			if( topDamagerChar.socket != null )
+			{
+				topDamagerChar.socket.SysMessage( GetDictionaryEntry( 30001, topDamagerChar.socket.language )); // You dealt the most damage to the Champion!
+			}
 		}
 
 		for( let i = 0; i < top5.length; ++i )
 		{
-			let serial = top5[i][0];
-			let damage = top5[i][1];
-			let player = CalcCharFromSer( serial );
+			let topSerial = top5[i][0];
+			let topDamages = top5[i][1];
+			let topPlayer = CalcCharFromSer( topSerial );
 
-			if( ValidateObject( player ))
+			if( ValidateObject( topPlayer ))
 			{
-				player.SysMessage( "You were among the top 5 damagers! (" + damage + " damage)" );
-				// Give reward item
-				if( rewards.length > 0 )
+				if( topPlayer.socket != null)
 				{
-					let randIndex = RandomNumber( 0, rewards.length - 1 );
-					let rewardSection = rewards[randIndex];
-					CreateDFNItem( player.socket, player, rewardSection, 1, "ITEM", true );
+					topPlayer.socket.SysMessage( GetDictionaryEntry( 30002, topPlayer.socket.language ), topDamages ); // You were among the top 5 damagers! (%i damage)
+					// Give reward item
+					if (rewards.length > 0)
+					{
+						let randIndex = RandomNumber(0, rewards.length - 1);
+						let rewardSection = rewards[randIndex];
+						CreateDFNItem( topPlayer.socket, topPlayer, rewardSection, 1, "ITEM", true );
+					}
 				}
 			}
 		}
@@ -266,16 +270,19 @@ function RewardTopDamagers( pKilled, altar )
 
 		for (var k = 0; k < top5.length; ++k)
 		{
-			var serial = top5[k][0];
-			var damage = top5[k][1];
-			var player = CalcCharFromSer(serial);
+			var topSerial = top5[k][0];
+			var topDamages = top5[k][1];
+			var topPlayer = CalcCharFromSer( topSerial );
 
-			if (ValidateObject(player))
+			if( ValidateObject( topPlayer ))
 			{
-				player.SysMessage("You were among the top 5 damagers! (" + damage + " damage)");
+				if (topPlayer.socket != null)
+				{
+					topPlayer.socket.SysMessage( GetDictionaryEntry( 30002, topPlayer.socket.language ), topDamages ); // You were among the top 5 damagers! (%i damage)
+				}
 
 				// Weighted category rewards
-				uniqueGiven = giveChampionStandardReward(player, spawnData, uniqueGiven);
+				uniqueGiven = GiveChampionStandardReward( topPlayer, spawnData, uniqueGiven );
 			}
 		}
 
@@ -285,20 +292,20 @@ function RewardTopDamagers( pKilled, altar )
 			var maxPS = Math.min( POWER_SCROLL_MAX_RECEIVERS, top5.length );
 			for( var idx = 0; idx < maxPS; ++idx )
 			{
-				var psSerial = top5[idx][0];
-				var psPlayer = CalcCharFromSer( psSerial );
-				if( ValidateObject( psPlayer ))
-					giveChampionPowerScroll( psPlayer, spawnData, altar );
+				var powerScrollSerial = top5[idx][0];
+				var powerScrolPlayer = CalcCharFromSer( powerScrollSerial );
+				if( ValidateObject( powerScrolPlayer ))
+					GiveChampionPowerScroll( powerScrolPlayer, spawnData, altar );
 			}
 		}
 	}
 	else
 	{
-		altar.TextMessage( "The Champion has fallen!" );
+		altar.TextMessage( GetDictionaryEntry( 30003 )); // The Champion has fallen!
 	}
 }
 
-function rollPowerScrollBonus()
+function RollPowerScrollBonus()
 {
 	var total = 0;
 	for( var i = 0; i < POWER_SCROLL_RARITY_TABLE.length; ++i )
@@ -316,7 +323,7 @@ function rollPowerScrollBonus()
 	return 5;
 }
 
-function rollPowerScrollSkill( spawnData )
+function RollPowerScrollSkill( spawnData )
 {
 	if( !spawnData || !spawnData.powerScrollSkills || spawnData.powerScrollSkills.length === 0 )
 		return null;
@@ -328,11 +335,10 @@ function rollPowerScrollSkill( spawnData )
 	for( var i = 0; i < list.length; ++i )
 	{
 		var skillProp = list[i];
-		if( isSkillAllowedByEra( skillProp ))
+		if( IsSkillAllowedByEra( skillProp ))
 			allowed.push( skillProp );
 	}
 
-	// If nothing is allowed for this era, no scroll will be generated
 	if( allowed.length === 0 )
 		return null;
 
@@ -341,18 +347,18 @@ function rollPowerScrollSkill( spawnData )
 }
 
 // DFN section name: powerscroll_<skill>_<bonus>
-function rollPowerScrollSection( spawnData )
+function RollPowerScrollSection( spawnData )
 {
-	var skillProp = rollPowerScrollSkill( spawnData );
+	var skillProp = RollPowerScrollSkill( spawnData );
 	if( !skillProp )
 		return null;
 
-	var bonus = rollPowerScrollBonus();
+	var bonus = RollPowerScrollBonus();
 	return "powerscroll_" + skillProp + "_" + bonus;
 }
 
 // Give one power scroll to player (Fel-only)
-function giveChampionPowerScroll( player, spawnData, altar )
+function GiveChampionPowerScroll( player, spawnData, altar )
 {
 	if( !ValidateObject( player ) || !spawnData || !ValidateObject( altar ))
 		return;
@@ -361,15 +367,18 @@ function giveChampionPowerScroll( player, spawnData, altar )
 	if( facet !== 0 )
 		return;
 
-	var sectionID = rollPowerScrollSection( spawnData );
+	var sectionID = RollPowerScrollSection( spawnData );
 	if( !sectionID )
 		return;
 
-	var scroll = CreateDFNItem( player.socket, player, sectionID, 1, "ITEM", true) ;
-	if( ValidateObject( scroll ))
+	if (player.socket != null)
 	{
-		scroll.Refresh();
-		player.SysMessage( "You have been rewarded with a Scroll of Power!" );
+		var scroll = CreateDFNItem( player.socket, player, sectionID, 1, "ITEM", true );
+		if( ValidateObject( scroll ))
+		{
+			scroll.Refresh();
+			player.socket.SysMessage( GetDictionaryEntry( 30002, player.socket.language ));// "You have been rewarded with a Scroll of Power!" 
+		}
 	}
 }
 
@@ -383,11 +392,7 @@ function RewardListForCategory( spawnData, key )
 	return list;
 }
 
-// Roll a category, respecting:
-// - weights above
-// - only categories that actually have items
-// - UniqueList only once per champ kill (via uniqueAlreadyGiven flag)
-function rollChampionRewardCategory( spawnData, uniqueAlreadyGiven )
+function RollChampionRewardCategory( spawnData, uniqueAlreadyGiven )
 {
 	var candidates = [];
 	for( var i = 0; i < CHAMPION_REWARD_CATEGORY_TABLE.length; ++i )
@@ -422,13 +427,11 @@ function rollChampionRewardCategory( spawnData, uniqueAlreadyGiven )
 	return null;
 }
 
-// Roll a concrete DFN section for a reward (using the category logic)
-function rollChampionRewardSection( spawnData, uniqueAlreadyGiven )
+function RollChampionRewardSection( spawnData, uniqueAlreadyGiven )
 {
-	var category = rollChampionRewardCategory( spawnData, uniqueAlreadyGiven );
+	var category = RollChampionRewardCategory( spawnData, uniqueAlreadyGiven );
 	if( !category )
 	{
-		// fallback to legacy rewards list if all new lists are empty
 		if( spawnData && spawnData.rewards && spawnData.rewards.length > 0 )
 		{
 			var idxLegacy = RandomNumber( 0, spawnData.rewards.length - 1 );
@@ -445,20 +448,18 @@ function rollChampionRewardSection( spawnData, uniqueAlreadyGiven )
 	return { section: pool[idx], category: category };
 }
 
-// Give a normal champion reward to player, returns updated unique flag
-function giveChampionStandardReward( player, spawnData, uniqueAlreadyGiven )
+function GiveChampionStandardReward( player, spawnData, uniqueAlreadyGiven )
 {
 	if( !ValidateObject(player) || !spawnData )
 		return uniqueAlreadyGiven;
 
-	var result = rollChampionRewardSection( spawnData, uniqueAlreadyGiven );
+	var result = RollChampionRewardSection( spawnData, uniqueAlreadyGiven );
 	if( !result)
 		return uniqueAlreadyGiven;
 
 	var sectionID, category;
 	if( typeof result === "string" )
 	{
-		// fallback legacy result
 		sectionID = result;
 		category = "Legacy";
 	}
@@ -472,13 +473,10 @@ function giveChampionStandardReward( player, spawnData, uniqueAlreadyGiven )
 	if( ValidateObject( item ))
 	{
 		item.Refresh();
-
-		// Optional debug / flavor:
-		player.SysMessage("You receive a " + category + " champion reward.");
 	}
 
 	if( category === "UniqueList" )
-		return true; // mark unique as given
+		return true;
 
 	return uniqueAlreadyGiven;
 }

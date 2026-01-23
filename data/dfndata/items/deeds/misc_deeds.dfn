@@ -66,6 +66,7 @@ CUSTOMINTTAG=bodType 2
 
 [ChampionAltarDeed]
 {
+get=base_item
 NAME=Champion Altar Deed
 ID=0x14F0
 script=7502

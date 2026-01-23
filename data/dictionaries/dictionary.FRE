@@ -5753,5 +5753,12 @@
 19341=Vous connaissez déjà cette recette.
 19342=Vous avez appris une nouvelle recette : %i
 19343=Vous devez apprendre cette recette à partir d'un parchemin.
+// [30000 - 30010] Système du Champion
+30000=Le Champion a été vaincu par %i !
+30001=Vous avez infligé le plus de dégâts au Champion !
+30002=Vous faites partie des 5 joueurs ayant infligé le plus de dégâts ! (%i dégâts)
+30003=Le Champion est tombé !
+30004=Vous avez reçu un Parchemin de Puissance !
+30005=L'énergie du sanctuaire s'affaiblit en l'absence de challengers...
 }
 EOF

@@ -62,6 +62,7 @@ RUNS
 FLEEAT=0
 REATTACKAT=1
 ORIGIN=lbr
+SCRIPT=3231//lord_oaks.js
 }
 
 [lordoaks]
@@ -90,6 +91,7 @@ FLEEAT=0
 REATTACKAT=1
 ORIGIN=lbr
 CARVE=101
+SCRIPT=3233//rikktor.js
 }
 
 [silvani]

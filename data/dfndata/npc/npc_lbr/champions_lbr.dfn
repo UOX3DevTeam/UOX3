@@ -61,7 +61,6 @@ DAMAGE=9 45
 DEF=50 50
 TOPROV=1600
 TOPEACE=1600 5
-SCRIPT=3231//lord_oaks.js
 }
 
 // rikktor - lbr stats
@@ -91,7 +90,6 @@ DAMAGE=13 70
 DEF=65 65
 TOPROV=1600
 TOPEACE=1600 5
-SCRIPT=3233//rikktor.js
 }
 
 // semidar - lbr stats

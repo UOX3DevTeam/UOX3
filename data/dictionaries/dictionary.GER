@@ -5599,5 +5599,12 @@
 19341=Du kennst dieses Rezept bereits.
 19342=Du hast ein neues Rezept gelernt: %i
 19343=Du musst dieses Rezept von einer Schriftrolle lernen.
+// [30000 - 30010] Champion-System
+30000=Der Champion wurde von %i besiegt!
+30001=Du hast dem Champion den meisten Schaden zugefügt!
+30002=Du gehörtest zu den Top 5 der Schadensverursacher! (%i Schaden)
+30003=Der Champion ist besiegt!
+30004=Du wurdest mit einer Schriftrolle der Macht belohnt!
+30005=Die Energie des Schreins schwindet, da keine Herausforderer anwesend sind...
 }
 EOF
