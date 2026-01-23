@@ -20,10 +20,14 @@ function onDeathBlow( killedPet, petKiller )
 		petCorpse.decaytime = 300;
 		petCorpse.decayable = true;
 		petCorpse.maxItems = 150;
-		petCorpse.wipable = true;
+		petCorpse.isWipeable = true;
 		petCorpse.weightMax = 50000
 
-		TriggerEvent( 3108, "SendNpcGhostMode", petOwner.socket, 0, killedPet.serial, 1  );
+		if( ValidateObject( petOwner ) && petOwner.socket != null )
+		{
+			TriggerEvent( 3108, "SendNpcGhostMode", petOwner.socket, 0, killedPet.serial, 1  );}
+		}
+
 		killedPet.SetTag( "PetAI", killedPet.aitype.toString() );
 		killedPet.SetTag( "PetHue", killedPet.colour.toString() );
 		killedPet.SetTag( "isPetDead", true );
