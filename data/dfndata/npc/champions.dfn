@@ -94,7 +94,7 @@ CARVE=101
 SCRIPT=3233//rikktor.js
 }
 
-[silvani]
+[rikktor]
 {
 GETUO=rikktor_lbr
 GETT2A=rikktor_lbr

@@ -67,7 +67,7 @@ function StartChampionWave( altar, stage )
 		var validSpotFound = false;
 		var x = 0, y = 0, z = 0;
 
-		var worldNum = altar.worldNumber;
+		var worldNum = altar.worldnumber;
 		var instanceId = altar.instanceID;
 
 		for (var t = 0; t < triesPerSpawn && !validSpotFound; ++t)
@@ -112,7 +112,7 @@ function StartChampionWave( altar, stage )
 		let npcList = spawnData.levels[stage - 1];
 		let chosenType = npcList[RandomNumber( 0, npcList.length - 1 )];
 
-		let npc = SpawnNPC( chosenType, x, y, z, altar.worldNumber, altar.instanceID, false );
+		let npc = SpawnNPC( chosenType, x, y, z, altar.worldnumber, altar.instanceID, false );
 
 		if( ValidateObject( npc ))
 		{
@@ -136,19 +136,23 @@ function SummonBoss( altar )
 	if( !ValidateObject( altar ))
 		return;
 
-	let champID = altar.GetTag( "championType" ) || 0;
-	if( isNaN( champID ))
+	let champID = parseInt( altar.GetTag( "championType" )) || 0;
+	if( !champID )
+		return;
+
+	let spawnData = TriggerEvent( 7503, "ChampionSpawnData", champID );
+	if( !spawnData || !spawnData.boss )
 	{
+		altar.TextMessage( "ChampionSpawnData missing/invalid for champID " + champID );
 		return;
 	}
-	let spawnData = TriggerEvent( 7502, "ChampionSpawnData", champID );
 	let bossID = spawnData.boss;
 
 	// Spawn boss in the center of the platform
 	let x = altar.x;
 	let y = altar.y;
 	let z = altar.z;
-	let worldNum = altar.worldNumber;
+	let worldNum = altar.worldnumber;
 	let instID = altar.instanceID;
 
 	let boss = SpawnNPC( bossID, x, y, z, worldNum, instID, false );
@@ -264,7 +268,7 @@ function onTimer( altar, timerID )
 				{
 					altar.SetTag( "championType", 6 ); //Vermin
 				}
-				else if( altar.x == 5259 && altar.y == 837 )
+				else if( altar.x == 5258 && altar.y == 829 )
 				{
 					altar.SetTag( "championType", 3 );//Cold
 				}
@@ -396,7 +400,7 @@ function GetRedSkullPosition(altar, index)
 	const positions = [[-2, -2], [-1, -2], [0, -2], [1, -2], [2, -2], [2, -1], [2, 0], [2, 1],
 		[2, 2], [1, 2], [0, 2], [-1, 2], [-2, 2], [-2, 1], [-2, 0], [-2, -1]];
 	let offset = positions[index] || [0, 0];
-	let z = GetMapElevation(altar.x + offset[0], altar.y + offset[1], altar.worldNumber );
+	let z = GetMapElevation(altar.x + offset[0], altar.y + offset[1], altar.worldnumber );
 	return { x: altar.x + offset[0], y: altar.y + offset[1], z: z + 5 };
 }
 
@@ -404,7 +408,7 @@ function GetWhiteSkullPosition(altar, index)
 {
 	const offsets = [[-1, -1], [1, -1], [1, 1], [-1, 1]];
 	let offset = offsets[index % offsets.length];
-	let z = GetMapElevation(altar.x + offset[0], altar.y + offset[1], altar.worldNumber );
+	let z = GetMapElevation(altar.x + offset[0], altar.y + offset[1], altar.worldnumber );
 	return { x: altar.x + offset[0], y: altar.y + offset[1], z: z + 5 };
 }
 
@@ -496,7 +500,7 @@ function ChampionGoldExplosion( altar )
 	var minAmount = altar.morey;
 	var maxAmount = altar.morez;
 
-	var world    = altar.worldNumber;
+	var world    = altar.worldnumber;
 	var instance = altar.instanceID;
 
 	var centerX = altar.x;
@@ -542,7 +546,7 @@ function ChampionGoldExplosion( altar )
 // Returns a Z to place on, or null if no valid spot at this XY.
 function PickSurfaceZForGold( altar, x, y )
 {
-	var world    = altar.worldNumber;
+	var world    = altar.worldnumber;
 	var instance = altar.instanceID;
 
 	// Candidate Zs (try altar level first)

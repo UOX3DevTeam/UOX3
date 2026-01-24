@@ -89,9 +89,9 @@ const ChampionSpawnTable = {
 		stageNames: ["bane", "killer", "vanquisher"],
 		levels: [
 			["scorpion", "giantspider"],
-			["terathdrone", "terathanwarrior"],
-			["dreadspider", "terathanmatriarch"],
-			["poisonelemental", "terathanavenger"]
+			["teradrone", "terawarrior"],
+			["dreadspider", "teramatriarch"],
+			["poisonelemental", "teraavenger"]
 		],
 		powerScrollSkills: [
 			"swordsmanship", "fencing", "macefighting", "archery", "wrestling",
@@ -106,7 +106,7 @@ const ChampionSpawnTable = {
 	},
 	3: { // Cold
 		name: "Cold Blood Champion",
-		boss: "Rikktor",
+		boss: "rikktor",
 		rewards: ["0x0F0E", "0x0F0F", "0x0F10"],
 		UniqueList:      [ "artifact_crown_of_talkeesh" ],
 		SharedList:      [ "artifact_most_knowledge_person_5", "artifact_most_knowledge_person_4", "artifact_most_knowledge_person_2", 
@@ -115,9 +115,9 @@ const ChampionSpawnTable = {
 		stageNames: ["Blight", "Slayer", "Destroyer"],
 		levels: [
 			["lizardman", "snake"],
-			["lavalizard", "ophidianwarrior", "ophidianenforcer"],
-			["drake", "ophidianjusticar", "ophidianenzealot"],
-			["dragon", "ophidianavenger", "ophidianknighterrant"]
+			["lavalizard", "ophwarrior", "ophenforcer"],
+			["drake", "ophjusticar", "ophzealot"],
+			["dragon", "ophavenger", "ophapprentice"]
 		],
 		powerScrollSkills: [
 			"swordsmanship", "fencing", "macefighting", "archery", "wrestling",
@@ -168,7 +168,7 @@ const ChampionSpawnTable = {
 		stageNames: ["Scourge", "Punisher", "Nemesis"],
 		levels: [
 			["ghoul", "shade", "spectre", "wraith"],
-			["bonemagi", "mummie", "skeletalmage"],
+			["bonemage", "mummy", "skeletalmage"],
 			["boneknight", "skeletalknight", "liche"],
 			["lichlord", "rottingcorpse"]
 		],
