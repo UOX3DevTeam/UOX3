@@ -4,6 +4,7 @@ function CommandRegistration()
     RegisterCommand( "champenable", 8, true );
     RegisterCommand( "champdisable", 8, true );
     RegisterCommand( "champremove", 8, true );
+	RegisterCommand( "champmenu", 8, true );
 }
 
 /** @type { ( socket: Socket, cmdString: string ) => void } */
@@ -574,4 +575,310 @@ function RemoveSpawn( srcChar, trgChar, pSock )
         trgChar.Delete();
     }
     return true;
+}
+
+// Title-case list for display, and numeric IDs matching your champion system
+var ChampMenuTypes = [
+	{ name: "Abyss",    id: 1 },
+	{ name: "Arachnid", id: 2 },
+	{ name: "Cold",     id: 3 },
+	{ name: "Forest",   id: 4 },
+	{ name: "Unholy",   id: 5 },
+	{ name: "Vermin",   id: 6 }
+];
+
+// command handler
+function command_CHAMPMENU( socket, cmdString )
+{
+	var pUser = socket.currentChar;
+	if( !ValidateObject( pUser ))
+		return;
+
+	if( socket._champMenuTypeID == null )
+		socket._champMenuTypeID = 5; // Unholy default
+
+	socket._champMenuX = pUser.x;
+	socket._champMenuY = pUser.y;
+	socket._champMenuZ = pUser.z;
+	socket._champMenuWorld = pUser.worldnumber;
+	socket._champMenuInst = pUser.instanceID;
+
+	ChampMenu_Open( socket );
+}
+
+function ChampMenu_Open( socket )
+{
+	var pUser = socket.currentChar;
+	var champMenu = new Gump;
+
+	champMenu.AddPage( 0 );
+	champMenu.AddBackground( 0, 0, 360, 240, 5054 );
+	champMenu.AddCheckerTrans( 0, 0, 360, 240 );
+
+	champMenu.AddHTMLGump( 15, 10, 330, 20, 0, 0, "<basefont color=#EECD8B><center><big>Champion Spawn Setup</big></center></basefont>" );
+	champMenu.AddButton( 330, 8, 4017, 4018, 1, 0, 0 ); // close
+
+	// Location display
+	var locStr = "X=" + socket._champMenuX + " Y=" + socket._champMenuY + " Z=" + socket._champMenuZ;
+	champMenu.AddHTMLGump( 20, 40, 320, 18, false, false, "<basefont color=#ffffff>Location: " + locStr + "</basefont>" );
+
+	// Set Location button
+	champMenu.AddButton( 20, 62, 4005, 4007, 1, 0, 2 );
+	champMenu.AddHTMLGump( 55, 64, 200, 18, false, false, "<basefont color=#ffffff>Set Location (target)</basefont>" );
+
+	// Type header
+	champMenu.AddHTMLGump( 20, 95, 320, 18, false, false, "<basefont color=#ffffff>Champion Type:</basefont>" );
+
+	// Type radios
+	champMenu.AddGroup( 9 );
+
+	var startX = 20;
+	var startY = 118;
+	var colW = 110;
+
+	for( var i = 0; i < ChampMenuTypes.length; ++i )
+	{
+		var t = ChampMenuTypes[i];
+		var col = ( i % 3 );
+		var row = Math.floor( i / 3 );
+
+		var x = startX + ( col * colW );
+		var y = startY + ( row * 24 );
+
+		var selected = ( socket._champMenuTypeID == t.id ) ? 1 : 0;
+
+		champMenu.AddRadio( x, y, 2472, 2153, selected, t.id );
+		champMenu.AddHTMLGump( x + 30, y, 90, 18, false, false, "<basefont color=#00ff00>" + t.name + "</basefont>" );
+	}
+
+	champMenu.EndGroup();
+
+	// Create + Enable
+	champMenu.AddButton( 20, 190, 2122, 2124, 1, 0, 3 );
+	champMenu.AddHTMLGump( 80, 192, 220, 18, false, false, "<basefont color=#ffffff>Create + Enable</basefont>" );
+
+	champMenu.AddButton( 190, 62, 4005, 4007, 1, 0, 4 );
+	champMenu.AddHTMLGump( 220, 64, 220, 18, false, false, "<basefont color=#ffffff>X:</basefont>" );
+	champMenu.AddHTMLGump( 270, 64, 220, 18, false, false, "<basefont color=#ffffff>Y:</basefont>" );
+	champMenu.AddHTMLGump( 310, 64, 220, 18, false, false, "<basefont color=#ffffff>Z:</basefont>" );
+	champMenu.AddTextEntryLimited( 233, 64, 120, 25, 10, 0, 14, pUser.x.toString(), 4 ); //TextID 11
+	champMenu.AddTextEntryLimited( 283, 64, 120, 25, 10, 0, 15, pUser.y.toString(), 4 ); //TextID 12
+	champMenu.AddTextEntryLimited( 323, 64, 120, 25, 10, 0, 16, pUser.z.toString(), 2 ); //TextID 13
+
+	champMenu.Send( socket );
+	champMenu.Free();
+}
+
+function onGumpPress( socket, buttonID, gumpData )
+{
+	var pUser = socket.currentChar;
+	if( !ValidateObject( pUser ))
+		return;
+
+	if( buttonID == 0 )
+		return;
+
+	var selectedTypeID = parseInt( gumpData.getButton( 0 ));
+	if( selectedTypeID > 0 )
+		socket._champMenuTypeID = selectedTypeID;
+
+	switch( buttonID )
+	{
+		case 2:
+		{
+			socket.CustomTarget( 0, "Target the location for the champion altar." );
+			break;
+		}
+		case 3:
+		{
+			ChampMenu_CreateAndEnable( socket );
+			break;
+		}
+		case 4:
+			var TextX = parseInt( gumpData.getEdit(0), 10 );
+			var TextY = parseInt( gumpData.getEdit(1), 10 );
+			var TextZ = parseInt( gumpData.getEdit(2), 10 );
+
+			if( isNaN( TextX ) || isNaN( TextY ) || isNaN( TextZ ))
+			{
+				socket.SysMessage( "Invalid coordinates. Please enter numeric values only." );
+				ChampMenu_Open( socket );
+				return;
+			}
+			socket.SysMessage( "You set the Champion Alter Spawn at X:" + TextX + " Y:" + TextY + " Z:" + TextZ);
+			socket._champMenuX = TextX;
+			socket._champMenuY = TextY;
+			socket._champMenuZ = TextZ;
+			socket._champMenuWorld = pUser.worldnumber;
+			socket._champMenuInst  = pUser.instanceID;
+			ChampMenu_Open( socket );
+			break;
+		default:
+			break;
+	}
+}
+
+function onCallback0( socket, myTarget )
+{
+	var pUser = socket.currentChar;
+	if( !ValidateObject( pUser ))
+		return;
+
+	var targX = socket.GetWord( 11 );
+	var targY = socket.GetWord( 13 );
+	var targZ = socket.GetSByte( 16 );
+
+	if( targX <= 0 || targY <= 0 )
+	{
+		socket.SysMessage( "No valid location selected." );
+		ChampMenu_Open( socket );
+		return;
+	}
+
+	socket._champMenuX = targX;
+	socket._champMenuY = targY;
+	socket._champMenuZ = targZ;
+
+	socket._champMenuWorld = pUser.worldnumber;
+	socket._champMenuInst  = pUser.instanceID;
+
+	ChampMenu_Open( socket );
+}
+
+function ChampMenu_CreateAndEnable( socket )
+{
+	var pUser = socket.currentChar;
+	if( !ValidateObject( pUser ))
+		return;
+
+	var x = socket._champMenuX;
+	var y = socket._champMenuY;
+	var z = socket._champMenuZ;
+	var worldNum = socket._champMenuWorld;
+	var instID = socket._champMenuInst;
+
+	var champID = parseInt( socket._champMenuTypeID, 10 ) || 0;
+	if( champID <= 0 )
+	{
+		socket.SysMessage( "Invalid champion type selected." );
+		return;
+	}
+
+	// Resolve typeName
+	var typeName = "Unknown";
+	for( var i = 0; i < ChampMenuTypes.length; ++i )
+	{
+		if( ChampMenuTypes[i].id == champID )
+		{
+			typeName = ChampMenuTypes[i].name;
+			break;
+		}
+	}
+
+	CreateHouse( 1000, x, y, z, worldNum, instID, 0, false );
+
+	var cx = x + 0;
+	var cy = y + 0;
+	var cz = z + 15;
+
+	var ctrl = FindItem( cx, cy, cz, worldNum, 0x0BD1, instID );
+
+	if( !ValidateObject( ctrl ))
+	{
+		// store pending data and retry shortly
+		socket._champMenuPending = 1;
+		socket._champMenuPendingCX = cx;
+		socket._champMenuPendingCY = cy;
+		socket._champMenuPendingCZ = cz;
+		socket._champMenuPendingTypeName = typeName;
+
+		pUser.StartTimer( 1000, 9102, true );
+		socket.SysMessage( "Placed altar. Finalizing controller setup..." );
+		return;
+	}
+
+	ChampMenu_ConfigureController( socket, ctrl, champID, typeName );
+	socket.SysMessage( "Champion altar created and enabled: " + typeName + " at " + x + "," + y + "," + z + "." );
+}
+
+function onTimer( pUser, timerID )
+{
+	if( timerID != 9102 )
+		return;
+
+	if( !ValidateObject( pUser ) || pUser.socket == null )
+		return;
+
+	var socket = pUser.socket;
+
+	if( socket._champMenuPending != 1 )
+		return;
+
+	socket._champMenuPending = 0;
+
+	var worldNum = socket._champMenuWorld;
+	var instID = socket._champMenuInst;
+
+	var cx = socket._champMenuPendingCX;
+	var cy = socket._champMenuPendingCY;
+	var cz = socket._champMenuPendingCZ;
+
+	var typeName = socket._champMenuPendingTypeName;
+	var champID = parseInt( socket._champMenuTypeID, 10 ) || 0;
+
+	var ctrl = FindItem( cx, cy, cz, worldNum, 0x0BD1, instID );
+
+	if( !ValidateObject( ctrl ))
+	{
+		socket.SysMessage( "Could not locate controller sign at " + cx + "," + cy + "," + cz + " (id 0x0BD1)." );
+		socket.SysMessage( "Check DFN offsets or controller item id." );
+		return;
+	}
+
+	ChampMenu_ConfigureController( socket, ctrl, champID, typeName );
+
+	socket.SysMessage( "Champion altar created and enabled: " + typeName + " at " +
+		socket._champMenuX + "," + socket._champMenuY + "," + socket._champMenuZ + "." );
+}
+
+function ChampMenu_ConfigureController( socket, ctrl, champID, typeName )
+{
+	if( !ValidateObject( ctrl ))
+		return;
+
+	ctrl.SetTag( "ChampAltarMarker", 1 );
+	ctrl.SetTag( "ChampAltarType", typeName );
+	ctrl.SetTag( "championType", champID );
+
+	ctrl.movable = 2;
+	ctrl.decayable = false;
+	if( ctrl.visible != null ) ctrl.visible = 3;
+
+	ctrl.AddScriptTrigger( 7500 );
+
+	socket._tagPlatformTypeStr = ( "" + typeName ).toLowerCase();
+	AreaItemFunction( "TagChampPlatformAround", ctrl, 30, socket );
+
+	ChampMenu_EnableController( ctrl );
+}
+
+function ChampMenu_EnableController( altarSign )
+{
+	if( !ValidateObject( altarSign ))
+		return;
+
+	// Core state
+	altarSign.SetTag( "spawnActive", 1 );
+	altarSign.SetTag( "killCount", 0 );
+	altarSign.SetTag( "spawnStage", 1 );
+	altarSign.SetTag( "redSkullCount", 1 );
+	altarSign.SetTag( "whiteSkullCount", 0 );
+
+	altarSign.StartTimer( 30000, 1, 7500 );     // wave/spawn tick
+	altarSign.StartTimer( 600000, 10, 7500 );   // long tick / decay / progress
+
+	// Update skull visuals (if your altar script supports these events)
+	TriggerEvent( 7500, "PlaceRedSkulls", altarSign, 1 );
+	TriggerEvent( 7500, "PlaceWhiteSkulls", altarSign, 0, 1 );
+	TriggerEvent( 7500, "StartChampionWave", altarSign, 1 );
 }
