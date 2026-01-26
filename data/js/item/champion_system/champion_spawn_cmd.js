@@ -1,3 +1,6 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
+
 function CommandRegistration()
 {
     RegisterCommand( "champspawn", 8, true );
@@ -588,6 +591,7 @@ var ChampMenuTypes = [
 ];
 
 // command handler
+/** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_CHAMPMENU( socket, cmdString )
 {
 	var pUser = socket.currentChar;
@@ -669,6 +673,7 @@ function ChampMenu_Open( socket )
 	champMenu.Free();
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( socket, buttonID, gumpData )
 {
 	var pUser = socket.currentChar;
@@ -718,6 +723,7 @@ function onGumpPress( socket, buttonID, gumpData )
 	}
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, myTarget )
 {
 	var pUser = socket.currentChar;
@@ -801,6 +807,7 @@ function ChampMenu_CreateAndEnable( socket )
 	socket.SysMessage( "Champion altar created and enabled: " + typeName + " at " + x + "," + y + "," + z + "." );
 }
 
+/** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( pUser, timerID )
 {
 	if( timerID != 9102 )

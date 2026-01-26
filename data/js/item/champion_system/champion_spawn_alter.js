@@ -1,3 +1,6 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
+
 // Champion spawn difficulty scaling
 var spawnEditorTooltipClilocID = 1042971; // Cliloc ID to use for tooltips. 1042971 should work with clients from ~v3.0.x to modern day
 const rankBreaks = [2, 3, 4]; // Level Rank mapping breakpoints
@@ -76,7 +79,6 @@ function StartChampionWave( altar, stage )
 			y = altar.y + RandomNumber(-radius, radius);
 			z = GetMapElevation(x, y, worldNum); // Use actual terrain Z
 
-			// Cheapest / fastest checks first (short-circuit on failure)
 			if (CheckStaticFlag(x, y, z, worldNum, 7))      // TF_WET
 				continue;
 
@@ -395,16 +397,16 @@ function RemoveSpawn( srcChar, trgChar, pSock )
 	return true;
 }
 
-function GetRedSkullPosition(altar, index)
+function GetRedSkullPosition( altar, index )
 {
 	const positions = [[-2, -2], [-1, -2], [0, -2], [1, -2], [2, -2], [2, -1], [2, 0], [2, 1],
 		[2, 2], [1, 2], [0, 2], [-1, 2], [-2, 2], [-2, 1], [-2, 0], [-2, -1]];
 	let offset = positions[index] || [0, 0];
-	let z = GetMapElevation(altar.x + offset[0], altar.y + offset[1], altar.worldnumber );
+	let z = GetMapElevation( altar.x + offset[0], altar.y + offset[1], altar.worldnumber );
 	return { x: altar.x + offset[0], y: altar.y + offset[1], z: z + 5 };
 }
 
-function GetWhiteSkullPosition(altar, index)
+function GetWhiteSkullPosition( altar, index )
 {
 	const offsets = [[-1, -1], [1, -1], [1, 1], [-1, 1]];
 	let offset = offsets[index % offsets.length];
@@ -691,27 +693,27 @@ function onGumpPress( socket, pButton, gumpData )
 {
 	var pUser = socket.currentChar;
 	var altar = socket.tempObj;
-
-	// Fetch data from text-fields
 	var spawnerName = gumpData.getEdit( 0 );
 	var spawnAmount = parseInt( gumpData.getEdit( 1 ));
 	var minGold = parseInt( gumpData.getEdit( 2 ));
 	var maxGold = parseInt( gumpData.getEdit( 3 ));
-
-	// Fetch data from radio/checkbox-buttons
 	var radiobtnGroup1 = gumpData.getButton( 0 );
+
+	if( !ValidateObject( altar ))
+	{
+		return;
+	}
+
 	switch( pButton )
 	{
 		case 0: // Close gump, no changes
 			break;
 		case 1:
-			// This assumes radiobtnGroup1 now returns the actual numeric ID (1�6)
 			if (ChampionIDToName.hasOwnProperty(radiobtnGroup1))
 			{
 				altar.SetTag("championType", radiobtnGroup1);
 			}
 
-			// Update spawner properties
 			if( minGold != altar.morey )
 			{
 				altar.morey = minGold;
@@ -731,7 +733,6 @@ function onGumpPress( socket, pButton, gumpData )
 				altar.TextMessage( tmpMsg.replace( /%i/gi, spawnAmount.toString()), false, 0x3b2, 0, pUser.serial );
 			}
 
-			// Update spawner name
 			if( spawnerName == null || spawnerName == "" )
 			{
 				socket.SysMessage( GetDictionaryEntry( 9270, socket.language )); // That name is too short, or no name was entered.
@@ -754,13 +755,15 @@ function onGumpPress( socket, pButton, gumpData )
 		{
 			if( altar.GetTag( "spawnActive" )) 
 			{
-				pUser.SysMessage( "This spawn is already active!" );
+				if( socket != null )
+					socket.SysMessage( "This spawn is already active!" );
 				break;
 			}
 			let type = altar.GetTag( "championType" ) || 0;
 			if( type == 0 )
 			{
-				pUser.SysMessage( "Please set the champion type first." );
+				if( socket != null )
+					socket.SysMessage( "Please set the champion type first." );
 				return;
 			}
 			altar.SetTag( "spawnActive", 1 );
@@ -779,9 +782,10 @@ function onGumpPress( socket, pButton, gumpData )
 		}
 		case 3:// Turn Off
 		{
-			if( altar.GetTag( "spawnActive") != 1 )
+			if( altar.GetTag( "spawnActive" ) != 1 )
 			{
-				pUser.SysMessage( "The spawn is already inactive." );
+				if( socket != null )
+					socket.SysMessage( "The spawn is already inactive." );
 				break;
 			}
 			altar.SetTag( "spawnActive", 0 );

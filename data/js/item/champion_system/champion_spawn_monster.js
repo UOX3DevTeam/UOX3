@@ -1,3 +1,6 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
+
 const disableTopDamager = true; // Set to true to disable top damager logic and if so then all loot is free for players to fight over.
 const POWER_SCROLL_MAX_RECEIVERS = 6; // Who can get scrolls at most?
 
