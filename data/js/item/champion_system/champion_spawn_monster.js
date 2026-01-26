@@ -14,9 +14,9 @@ const powerScrollRarityTable = [
 ];
 
 const championRewardTable = [
-	{ key: "UniqueList",     weight: 5 },   // rare
-	{ key: "SharedList",     weight: 25 },  // common
-	{ key: "DecorativeList", weight: 10 }   // uncommon
+	{ key: "uniqueList",     weight: 5 },   // rare
+	{ key: "sharedList",     weight: 25 },  // common
+	{ key: "decorativeList", weight: 10 }   // uncommon
 ];
 
 var skillMinERA = {
@@ -399,7 +399,7 @@ function RollChampionRewardCategory( spawnData, uniqueAlreadyGiven )
 	for( var i = 0; i < championRewardTable.length; ++i )
 	{
 		var entry = championRewardTable[i];
-		if( entry.key === "UniqueList" && uniqueAlreadyGiven )
+		if( entry.key === "uniqueList" && uniqueAlreadyGiven )
 			continue;
 
 		var list = RewardListForCategory( spawnData, entry.key );
@@ -476,7 +476,7 @@ function GiveChampionStandardReward( player, spawnData, uniqueAlreadyGiven )
 		item.Refresh();
 	}
 
-	if( category === "UniqueList" )
+	if( category === "uniqueList" )
 		return true;
 
 	return uniqueAlreadyGiven;

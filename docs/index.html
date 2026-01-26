@@ -5682,6 +5682,78 @@ packitem=0x0f8d,30
 				</div> <!-- cd-faq__content -->
 			</li>
 
+					<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#championSpawns" id="championSpawns"><span>Champion Spawns</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<h4>About Champion Spawns</h4>
+						<p>This system adds <span class="hl">multi-stage champion spawn altars</span> that progressively spawn tougher waves of monsters, culminating in a <span class="hl">champion boss</span>. Players who contribute most to the kill receive <span class="hl">reward rolls</span>, including <span class="hl">shared loot</span>, <span class="hl">decoratives</span>, <span class="hl">unique items</span>, and optional <span class="hl">power scrolls</span> (if enabled in your reward logic).</p>
+
+						<h4>How it Works</h4>
+						<ul>
+							<li><strong>Spawn type selection:</strong> Each altar stores a numeric <span class="hl">championType</span> (ex: 1, 2, 3...) that maps into <span class="hl">ChampionSpawnTable</span>.</li>
+							<li><strong>Stages and waves:</strong> Each champion type defines <span class="hl">stageNames</span> (titles shown as the spawn advances) and <span class="hl">levels</span> (the creature pools per wave).</li>
+							<li><strong>Progression:</strong> Killing spawned monsters advances the altar through its levels until the final stage triggers the <span class="hl">boss</span> spawn.</li>
+							<li><strong>Final encounter:</strong> When the final stage is reached, the champion <span class="hl">boss</span> is spawned. If configured, an optional <span class="hl">mini-boss</span> is spawned at the same time, creating a multi-target finale encounter.</li>
+						</ul>
+
+						<h4>Rewards</h4>
+						<p>Reward pools are defined per champion type in <span class="hl">ChampionSpawnTable</span>:</p>
+						<ul>
+							<li><span class="hl">uniqueList</span> - rare, unique-style rewards (typically at most one per champion kill)</li>
+							<li><span class="hl">sharedList</span> - common/core rewards that can drop for multiple top damagers</li>
+							<li><span class="hl">decorativeList</span> - decorative/vanity rewards (uncommon)</li>
+						</ul>
+						<p>If your implementation uses power scroll rewards, each champion type can define eligible skills via <span class="hl">powerScrollSkills</span> (ex: "swordsmanship", "magery"). Your scroll logic can then build DFN sectionIDs like <span class="hl">powerscroll_&lt;skill&gt;_&lt;bonus&gt;</span>.</p>
+
+						<h4>ChampionSpawnTable (configuration)</h4>
+						<p>Each entry in the table is keyed by a numeric ID used as the altar's <span class="hl">championType</span>. Per-entry properties:</p>
+						<ul>
+							<li><span class="hl">name</span> - display name for messages and UI</li>
+							<li><span class="hl">boss</span> - DFN sectionID (name) for the champion boss NPC</li>
+							<li><span class="hl">miniBoss</span> - optional DFN sectionID (name) for a mini-boss NPC that spawns at the same time as the final boss</li>
+							<li><span class="hl">stageNames</span> - 3 title steps shown as the spawn advances</li>
+							<li><span class="hl">levels</span> - arrays of creature DFN sectionIDs used per wave</li>
+							<li><span class="hl">uniqueList</span>, <span class="hl">sharedList</span>, <span class="hl">decorativeList</span> - reward pools</li>
+							<li><span class="hl">powerScrollSkills</span> - skills eligible for power scroll rolls (optional)</li>
+						</ul>
+
+						<h4>GM Commands (admin workflow)</h4>
+						<p>All champion commands accept a required argument of either <span class="hl">all</span> or a specific champion type:</p>
+						<p><span class="hl">Types:</span> abyss, arachnid, cold, forest, unholy, vermin</p>
+						<ul>
+							<li>
+								<span class="hl">[champspawn all]</span> or <span class="hl">[champspawn &lt;type&gt;]</span><br>
+								Spawns the pre-defined champion altar locations for the chosen type(s). This command places the altar multi and a hidden controller marker used for later enable, disable, and removal operations.
+							</li>
+							<li>
+								<span class="hl">[champenable all]</span> or <span class="hl">[champenable &lt;type&gt;]</span><br>
+								Activates the altar controller(s), initializes progression tags, and begins the champion spawn cycle starting at the first wave.
+							</li>
+							<li>
+								<span class="hl">[champdisable all]</span> or <span class="hl">[champdisable &lt;type&gt;]</span><br>
+								Pauses the champion spawn by disabling the altar controller(s), stopping timers, and removing any active spawn creatures tied to the altar.
+							</li>
+							<li>
+								<span class="hl">[champremove all]</span> or <span class="hl">[champremove &lt;type&gt;]</span><br>
+								Completely removes the champion altar setup for the chosen type(s), including the altar multi, controller, and any tagged platform components.
+							</li>
+							<li>
+								<span class="hl">[champmenu]</span><br>
+								Opens a GM gump allowing manual placement of a champion altar at a custom location, selection of champion type, and immediate activation.
+							</li>
+						</ul>
+
+						<h4>Setup Details</h4>
+						<p>Relevant scripts:</p>
+						<ul>
+							<li><span class="hl">js/item/champion_system/champion_spawn_altar.js</span> // Altar and controller logic (type, stages, enable/disable, boss and mini-boss spawning)</li>
+							<li><span class="hl">js/item/champion_system/champion_spawn_monster.js</span> // Spawned monster hooks (kill tracking, stage progression, reward distribution)</li>
+						</ul>
+					</div>
+				</div>
+			</li>
+
 			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#uox3Crafting" id="uox3Crafting"><span>Crafting System</span></a>
 				<div class="cd-faq__content">

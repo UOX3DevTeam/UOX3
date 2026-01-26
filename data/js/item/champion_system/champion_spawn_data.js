@@ -16,16 +16,20 @@
 //  boss              - DFN sectionID (name) of the champion boss NPC that
 //                      will be summoned at the final stage. This must match
 //                      the NPC definition in your DFNs.
+//	miniBoss          - Optional DFN sectionID (name) of a mini-boss NPC.
+//                      If set, this NPC is spawned at the same time the final boss spawns.
+//                      Use this for "boss + lieutenant" style finales.
+//                      (Leave blank/undefined to disable mini-boss for that champion type.)
 // 
 //  rewards           - Array of DFN sectionIDs (items) that can be rolled as
 //                      normal rewards for the top damagers when the champion
 //                      dies. RewardTopDamagers() picks one random entry from
 //                      this list per rewarded player.
-//   UniqueList		  - Rare, unique style reward items. At most one per champ
+//   uniqueList		  - Rare, unique style reward items. At most one per champ
 //                      kill. Weighted as rare in logic script.
-//   SharedList       - Common / standard reward items. Can drop for multiple
+//   sharedList       - Common / standard reward items. Can drop for multiple
 //                      top damagers. Weighted as the main pool.
-//   DecorativeList   - Decorative / vanity items (statues, banners, hue cloth,
+//   decorativeList   - Decorative / vanity items (statues, banners, hue cloth,
 //                      etc). Weighted as uncommon.
 // 
 //  stageNames        - Array of strings for the 3 title steps shown on the
@@ -61,9 +65,9 @@ const ChampionSpawnTable = {
 		name: "Abyss Champion",
 		boss: "semidar",
 		rewards: ["0x0F0E", "0x0F0F", "0x0F10"],
-		UniqueList:      [ "artifact_gladiators_collar" ],
-		SharedList:      [ "artifact_lieutenant_of_the_britannian_royal_guard" ],
-		DecorativeList:  [ "artifact_demon_skull" ],
+		uniqueList:      [ "artifact_gladiators_collar" ],
+		sharedList:      [ "artifact_lieutenant_of_the_britannian_royal_guard" ],
+		decorativeList:  [ "artifact_demon_skull" ],
 		stageNames: ["Foe", "Assassin", "Conqueror"],
 		levels: [
 			["greatermongbat", "imp"],
@@ -86,9 +90,9 @@ const ChampionSpawnTable = {
 		name: "Arachnid Champion",
 		boss: "mephitis",
 		rewards: ["0x0F0E", "0x0F0F", "0x0F10"],
-		UniqueList:      [ "artifact_calm" ],
-		SharedList:      [ "artifact_oblivions_needle", "artifact_necromancer_shroud" ],
-		DecorativeList:  [ "artifact_web" ],
+		uniqueList:      [ "artifact_calm" ],
+		sharedList:      [ "artifact_oblivions_needle", "artifact_necromancer_shroud" ],
+		decorativeList:  [ "artifact_web" ],
 		stageNames: ["bane", "killer", "vanquisher"],
 		levels: [
 			["scorpion", "giantspider"],
@@ -111,10 +115,10 @@ const ChampionSpawnTable = {
 		name: "Cold Blood Champion",
 		boss: "rikktor",
 		rewards: ["0x0F0E", "0x0F0F", "0x0F10"],
-		UniqueList:      [ "artifact_crown_of_talkeesh" ],
-		SharedList:      [ "artifact_most_knowledge_person_5", "artifact_most_knowledge_person_4", "artifact_most_knowledge_person_2", 
+		uniqueList:      [ "artifact_crown_of_talkeesh" ],
+		sharedList:      [ "artifact_most_knowledge_person_5", "artifact_most_knowledge_person_4", "artifact_most_knowledge_person_2", 
 		"artifact_lieutenant_of_the_britannian_royal_guard", "artifact_brave_knight_of_the_britannia" ],
-		DecorativeList:  [ "artifact_lava_tile" ],
+		decorativeList:  [ "artifact_lava_tile" ],
 		stageNames: ["Blight", "Slayer", "Destroyer"],
 		levels: [
 			["lizardman", "snake"],
@@ -138,11 +142,11 @@ const ChampionSpawnTable = {
 		boss: "lordoaks",
 		//miniBoss: "silvani",
 		rewards: ["0x0F0E", "0x0F0F", "0x0F10"],
-		UniqueList:      [ "artifact_orc_chieftain_helm", ],
-		SharedList:      [ "artifact_royal_guard_survival_knife", "artifact_djinnis_ring", "artifact_lieutenant_of_the_britannian_royal_guard", 
+		uniqueList:      [ "artifact_orc_chieftain_helm", ],
+		sharedList:      [ "artifact_royal_guard_survival_knife", "artifact_djinnis_ring", "artifact_lieutenant_of_the_britannian_royal_guard", 
 		"artifact_good_samaritan_of_britannia", "artifact_legendary_detective_boots", "artifact_elder_detective_boots", "artifact_mythical_detective_boots", 
 		"artifact_most_knowledge_person_5", "artifact_most_knowledge_person_4", "artifact_most_knowledge_person_3"  ],
-		DecorativeList:  [ "artifact_water_tile", "artifact_wind_spirit", "artifact_pier" ],
+		decorativeList:  [ "artifact_water_tile", "artifact_wind_spirit", "artifact_pier" ],
 		stageNames: ["Enemy", "Curse", "Slaughter"],
 		levels: [
 			["pixie", "shadowwisp"],
@@ -165,9 +169,9 @@ const ChampionSpawnTable = {
 		name: "Unholy Terror Champion",
 		boss: "neira",
 		rewards: ["0x0F0E", "0x0F0F", "0x0F10"],
-		UniqueList:      [ "artifact_shroud_of_deceit" ],
-		SharedList:      [ "artifact_captain_johns_hat", "artifact_legendary_detective_boots", "artifact_elder_detective_boots", "artifact_mythical_detective_boots", "artifact_necromancer_shroud" ],
-		DecorativeList:  [ "artifact_tattered_mummy_wrapping", "artifact_wall_blood" ],
+		uniqueList:      [ "artifact_shroud_of_deceit" ],
+		sharedList:      [ "artifact_captain_johns_hat", "artifact_legendary_detective_boots", "artifact_elder_detective_boots", "artifact_mythical_detective_boots", "artifact_necromancer_shroud" ],
+		decorativeList:  [ "artifact_tattered_mummy_wrapping", "artifact_wall_blood" ],
 		stageNames: ["Scourge", "Punisher", "Nemesis"],
 		levels: [
 			["ghoul", "shade", "spectre", "wraith"],
@@ -190,9 +194,9 @@ const ChampionSpawnTable = {
 		name: "Vermin Horde Champion",
 		boss: "barracoon",
 		rewards: ["0x0F0E", "0x0F0F", "0x0F10"],
-		UniqueList:      [ "artifact_fang_of_ractus" ],
-		SharedList:      [ "artifact_gauntlets_of_anger", "artifact_embroidered_oak_leaf_cloak", "artifact_djinnis_ring", "artifact_legendary_detective_boots", "artifact_elder_detective_boots", "artifact_mythical_detective_boots" ],
-		DecorativeList:  [ "artifact_swamp_tile", "0x20E8" ],
+		uniqueList:      [ "artifact_fang_of_ractus" ],
+		sharedList:      [ "artifact_gauntlets_of_anger", "artifact_embroidered_oak_leaf_cloak", "artifact_djinnis_ring", "artifact_legendary_detective_boots", "artifact_elder_detective_boots", "artifact_mythical_detective_boots" ],
+		decorativeList:  [ "artifact_swamp_tile", "0x20E8" ],
 		stageNames: ["adversary", "subjugator", "eradictor"],
 		levels: [
 			["giantrat", "slime"],
