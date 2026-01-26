@@ -7,10 +7,12 @@ const rankBreaks = [2, 3, 4]; // Level Rank mapping breakpoints
 const maxKillsByRank = [256, 128, 64, 32]; // Max kills per rank
 const radiusMods = [1.0, 0.75, 0.5, 0.25]; // Radius scaling per rank
 const baseSpawnRadius = 30; // Max radius at rank 0
+
 //Gold shower settings
 const championGoldPiles = 50; // Number of gold piles to spawn
 const championGoldPilesRange  = 25; // Range around the altar to spawn gold piles
-const ChampionIDToName = {
+
+const championIDToName = {
 	1: "Abyss",
 	2: "Arachnid",
 	3: "Cold",
@@ -19,7 +21,7 @@ const ChampionIDToName = {
 	6: "Vermin"
 };
 
-const ChampionNameToID = {
+const championNameToID = {
 	"Abyss": 1,
 	"Arachnid": 2,
 	"Cold": 3,
@@ -73,25 +75,25 @@ function StartChampionWave( altar, stage )
 		var worldNum = altar.worldnumber;
 		var instanceId = altar.instanceID;
 
-		for (var t = 0; t < triesPerSpawn && !validSpotFound; ++t)
+		for( var t = 0; t < triesPerSpawn && !validSpotFound; ++t )
 		{
-			x = altar.x + RandomNumber(-radius, radius);
-			y = altar.y + RandomNumber(-radius, radius);
-			z = GetMapElevation(x, y, worldNum); // Use actual terrain Z
+			x = altar.x + RandomNumber( -radius, radius );
+			y = altar.y + RandomNumber( -radius, radius );
+			z = GetMapElevation( x, y, worldNum ); // Use actual terrain Z
 
-			if (CheckStaticFlag(x, y, z, worldNum, 7))      // TF_WET
+			if( CheckStaticFlag( x, y, z, worldNum, 7 ))      // TF_WET
 				continue;
 
-			if (CheckStaticFlag(x, y, z, worldNum, 20))     // TF_MAP (your "staticStand")
+			if( CheckStaticFlag( x, y, z, worldNum, 20 ))     // TF_MAP (your "staticStand")
 				continue;
 
-			if (DoesMapBlock(x, y, z, worldNum, false, false, true, false))
+			if( DoesMapBlock( x, y, z, worldNum, false, false, true, false ))
 				continue;
 
-			if (DoesStaticBlock(x, y, z, worldNum, false))
+			if( DoesStaticBlock( x, y, z, worldNum, false ))
 				continue;
 
-			if (DoesDynamicBlock(x, y, z, worldNum, instanceId, false, false, false, false))
+			if( DoesDynamicBlock( x, y, z, worldNum, instanceId, false, false, false, false ))
 				continue;
 
 			// If we got here, nothing blocked the spot
@@ -635,11 +637,11 @@ function ChampionMenu( socket, altar )
 	let champY = 100;
 	const columnsPerRow = 3;
 
-	champalter.AddGroup(2); // Radio group 2 (avoid clashing)
+	champalter.AddGroup( 2 ); // Radio group 2 (avoid clashing)
 	for( let i = 0; i < championTypes.length; ++i )
 	{
 		let name = championTypes[i];
-		let id = ChampionNameToID[name];
+		let id = championNameToID[name];
 		let label = "<basefont color=#00ff00><big>" + name + "</big></basefont>";
 		let isSelected = ( currentID == id ) ? 1 : 0;
 
@@ -709,9 +711,9 @@ function onGumpPress( socket, pButton, gumpData )
 		case 0: // Close gump, no changes
 			break;
 		case 1:
-			if (ChampionIDToName.hasOwnProperty(radiobtnGroup1))
+			if( championIDToName.hasOwnProperty( radiobtnGroup1 ))
 			{
-				altar.SetTag("championType", radiobtnGroup1);
+				altar.SetTag( "championType", radiobtnGroup1 );
 			}
 
 			if( minGold != altar.morey )

@@ -1,11 +1,11 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
-
+var coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 const disableTopDamager = true; // Set to true to disable top damager logic and if so then all loot is free for players to fight over.
-const POWER_SCROLL_MAX_RECEIVERS = 6; // Who can get scrolls at most?
+const powerScrollMaxReceivers = 6; // Who can get scrolls at most?
 
 // Rarity weights (higher bonus = rarer; total should sum up to something sensible)
-const POWER_SCROLL_RARITY_TABLE = [
+const powerScrollRarityTable = [
 	{ bonus: 5,  weight: 60 },  // Wonderous (+5)
 	{ bonus: 10, weight: 25 },  // Exalted (+10)
 	{ bonus: 15, weight: 10 },  // Mythical (+15)
@@ -13,15 +13,13 @@ const POWER_SCROLL_RARITY_TABLE = [
 	//{ bonus: 25, weight: 1 }    // Ultima (+25)
 ];
 
-const CHAMPION_REWARD_CATEGORY_TABLE = [
+const championRewardTable = [
 	{ key: "UniqueList",     weight: 5 },   // rare
 	{ key: "SharedList",     weight: 25 },  // common
 	{ key: "DecorativeList", weight: 10 }   // uncommon
 ];
 
-var coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
-
-var SKILL_MIN_ERA = {
+var skillMinERA = {
 	// AoS-era skills
 	necromancy: "aos",
 	chivalry: "aos",
@@ -39,7 +37,7 @@ var SKILL_MIN_ERA = {
 
 function IsSkillAllowedByEra( skillProp )
 {
-	var minEraName = SKILL_MIN_ERA[skillProp];
+	var minEraName = skillMinERA[skillProp];
 	if( !minEraName )
 	{
 		// No min era defined -> treat as classic skill, always allowed
@@ -292,7 +290,7 @@ function RewardTopDamagers( pKilled, altar )
 		// Power scrolls to top N (Fel only)
 		if( spawnData && spawnData.powerScrollSkills && spawnData.powerScrollSkills.length > 0 )
 		{
-			var maxPS = Math.min( POWER_SCROLL_MAX_RECEIVERS, top5.length );
+			var maxPS = Math.min( powerScrollMaxReceivers, top5.length );
 			for( var idx = 0; idx < maxPS; ++idx )
 			{
 				var powerScrollSerial = top5[idx][0];
@@ -311,17 +309,17 @@ function RewardTopDamagers( pKilled, altar )
 function RollPowerScrollBonus()
 {
 	var total = 0;
-	for( var i = 0; i < POWER_SCROLL_RARITY_TABLE.length; ++i )
-		total += POWER_SCROLL_RARITY_TABLE[i].weight;
+	for( var i = 0; i < powerScrollRarityTable.length; ++i )
+		total += powerScrollRarityTable[i].weight;
 
 	var roll = RandomNumber( 0, total - 1 );
 	var accum = 0;
 
-	for( var j = 0; j < POWER_SCROLL_RARITY_TABLE.length; ++j )
+	for( var j = 0; j < powerScrollRarityTable.length; ++j )
 	{
-		accum += POWER_SCROLL_RARITY_TABLE[j].weight;
+		accum += powerScrollRarityTable[j].weight;
 		if( roll < accum )
-			return POWER_SCROLL_RARITY_TABLE[j].bonus;
+			return powerScrollRarityTable[j].bonus;
 	}
 	return 5;
 }
@@ -398,9 +396,9 @@ function RewardListForCategory( spawnData, key )
 function RollChampionRewardCategory( spawnData, uniqueAlreadyGiven )
 {
 	var candidates = [];
-	for( var i = 0; i < CHAMPION_REWARD_CATEGORY_TABLE.length; ++i )
+	for( var i = 0; i < championRewardTable.length; ++i )
 	{
-		var entry = CHAMPION_REWARD_CATEGORY_TABLE[i];
+		var entry = championRewardTable[i];
 		if( entry.key === "UniqueList" && uniqueAlreadyGiven )
 			continue;
 
