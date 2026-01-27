@@ -214,6 +214,31 @@ const ChampionSpawnTable = {
 			"chivalry", "focus", "necromancy", "bushido", "ninjitsu",
 			"spellweaving", "spiritspeak", "mysticism"
 		]
+	},
+	7: { // Dragon Turtle
+		name: "Dragon Turtle Champion",
+		boss: "dragonturtle",
+		rewards: ["0x0F0E", "0x0F0F", "0x0F10"],
+		uniqueList:      [ "artifact_fang_of_ractus" ],
+		sharedList:      [ "artifact_gauntlets_of_anger", "artifact_embroidered_oak_leaf_cloak", "artifact_djinnis_ring", "artifact_legendary_detective_boots", "artifact_elder_detective_boots", "artifact_mythical_detective_boots" ],
+		decorativeList:  [ "artifact_swamp_tile", "0x20E8" ],
+		stageNames: ["Explorer", "Huntsman", "Msafiri"],
+		levels: [
+			["lizardman", "snake"],
+			["lavalizard", "ophwarrior", "ophenforcer"],
+			["drake", "ophjusticar", "ophzealot"],
+			["dragon", "ophavenger", "ophapprentice"]
+		],
+		powerScrollSkills: [
+			"swordsmanship", "fencing", "macefighting", "archery", "wrestling",
+			"parrying", "tactics", "anatomy", "healing",
+			"magery", "meditation", "evaluatingintel", "magicresistance",
+			"stealing", "throwing", "stealth",
+			"taming", "animallore", "veterinary",
+			"musicianship", "provocation", "discordance", "peacemaking",
+			"chivalry", "focus", "necromancy", "bushido", "ninjitsu",
+			"spellweaving", "spiritspeak", "mysticism"
+		]
 	}
 };
 

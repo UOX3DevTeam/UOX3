@@ -11,14 +11,15 @@ const baseSpawnRadius = 30; // Max radius at rank 0
 //Gold shower settings
 const championGoldPiles = 50; // Number of gold piles to spawn
 const championGoldPilesRange  = 25; // Range around the altar to spawn gold piles
-
+var textEntry = 14; // Gump text entry index start if you add new championIDToName up + 1 so 14 comes 15
 const championIDToName = {
 	1: "Abyss",
 	2: "Arachnid",
 	3: "Cold",
 	4: "Forest",
 	5: "Unholy",
-	6: "Vermin"
+	6: "Vermin",
+	7: "Habitat"
 };
 
 const championNameToID = {
@@ -27,7 +28,8 @@ const championNameToID = {
 	"Cold": 3,
 	"Forest": 4,
 	"Unholy": 5,
-	"Vermin": 6
+	"Vermin": 6,
+	"Habitat": 7
 };
 
 /** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
@@ -51,7 +53,7 @@ function onUseChecked( pUser, altar )
 
 	pSocket.tempObj = altar;
 
-	ChampionMenu( pUser, altar )
+	ChampionMenu( pSocket, altar )
 }
 
 function StartChampionWave( altar, stage )
@@ -287,6 +289,10 @@ function onTimer( altar, timerID )
 				else if( altar.x == 5559 && altar.y == 3757 )
 				{
 					altar.SetTag( "championType", 4 );//Forest
+				}
+				else if( altar.x == 7042 && altar.y == 1889 )
+				{
+					altar.SetTag( "championType", 7 );//habitat
 				}
 				else
 				{
@@ -615,7 +621,10 @@ function PickSurfaceZForGold( altar, x, y )
 function ChampionMenu( socket, altar )
 {
 	var champalter = new Gump;
-
+	function NextText()
+	{
+		return textEntry++;
+	}
 	champalter.AddPage( 0 );
 
 	// Main Background and Header
@@ -631,7 +640,12 @@ function ChampionMenu( socket, altar )
 
 	// Champion Type
 	champalter.AddHTMLGump( 20, 68, 140, 22, false, false, "<basefont color=#ffffff>Champion Type:</basefont>" );
-	const championTypes = ["Abyss", "Arachnid", "Cold", "Forest", "Unholy", "Vermin"];
+	var championTypes = [];
+	for( var id in championIDToName )
+	{
+		if( championIDToName.hasOwnProperty( id ))
+			championTypes.push( championIDToName[id] );
+	}
 	let currentID = parseInt( altar.GetTag( "championType" ));
 
 	let champY = 100;
@@ -681,10 +695,10 @@ function ChampionMenu( socket, altar )
 	}
 
 	// Text Entry fields
-	champalter.AddTextEntryLimited( 125, 35, 200, 25, 1153, 0, 13, altar.name, 30 );
-	champalter.AddTextEntryLimited( 45, 235, 115, 20, 1153, 0, 14, altar.morex, 2 );
-	champalter.AddTextEntryLimited( 115, 235, 40, 20, 1153, 0, 15, altar.morey, 4 );
-	champalter.AddTextEntryLimited( 195, 235, 40, 20, 1153, 0, 16, altar.morez, 4 );
+	champalter.AddTextEntryLimited( 125, 35, 200, 25, 1153, 0, NextText(), altar.name, 30 );
+	champalter.AddTextEntryLimited( 45, 235, 115, 20, 1153, 0, NextText(), altar.morex, 2 );
+	champalter.AddTextEntryLimited( 115, 235, 40, 20, 1153, 0, NextText(), altar.morey, 4 );
+	champalter.AddTextEntryLimited( 195, 235, 40, 20, 1153, 0, NextText(), altar.morez, 4 );
 
 	champalter.Send( socket );
 	champalter.Free();

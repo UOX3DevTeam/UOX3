@@ -79,7 +79,8 @@ function SetupChampionAltars( pUser, spawnFilter )
         { type: "Cold",     x: 5258, y: 829,  z: 42 },
         { type: "Abyss",    x: 5814, y: 1350, z: -19 },
         { type: "Arachnid", x: 5190, y: 1605, z: 0  },
-        { type: "Forest",   x: 5559, y: 3757, z: 1  }
+        { type: "Forest",   x: 5559, y: 3757, z: 1  },
+		{ type: "Habitat",  x: 7042, y: 1889, z: 40  }
     ];
 
     var created = 0;
@@ -174,7 +175,8 @@ var ChampionNameToID = {
     "cold": 3,
     "forest": 4,
     "unholy": 5,
-    "vermin": 6
+    "vermin": 6,
+	"habitat": 7
 };
 
 function NormalizeTypeString( s )
@@ -193,7 +195,8 @@ function GetAltarDataList()
         { type: "Cold",     x: 5258, y: 829,  z: 42 },
         { type: "Abyss",    x: 5814, y: 1350, z: -19 },
         { type: "Arachnid", x: 5190, y: 1605, z: 0  },
-        { type: "Forest",   x: 5559, y: 3757, z: 1  }
+        { type: "Forest",   x: 5559, y: 3757, z: 1  },
+		{ type: "Habitat",  x: 7042, y: 1889, z: 40  }
     ];
 }
 
@@ -391,7 +394,7 @@ function command_CHAMPREMOVE( socket, cmdString )
     if (parts.length < 1)
     {
         socket.SysMessage("Usage: [champremove all] or [champremove <type>]");
-        socket.SysMessage("Types: abyss, arachnid, cold, forest, unholy, vermin");
+        socket.SysMessage("Types: abyss, arachnid, cold, forest, unholy, vermin, habitat");
         return;
     }
 
@@ -401,7 +404,7 @@ function command_CHAMPREMOVE( socket, cmdString )
     if( !all && !ChampionNameToID.hasOwnProperty( arg ))
     {
         socket.SysMessage( "Unknown type: " + parts[0] );
-        socket.SysMessage( "Types: abyss, arachnid, cold, forest, unholy, vermin or all" );
+        socket.SysMessage( "Types: abyss, arachnid, cold, forest, unholy, vermin, habitat or all" );
         return;
     }
 
@@ -587,7 +590,8 @@ var ChampMenuTypes = [
 	{ name: "Cold",     id: 3 },
 	{ name: "Forest",   id: 4 },
 	{ name: "Unholy",   id: 5 },
-	{ name: "Vermin",   id: 6 }
+	{ name: "Vermin",   id: 6 },
+	{ name: "Habitat",   id: 7 }
 ];
 
 // command handler

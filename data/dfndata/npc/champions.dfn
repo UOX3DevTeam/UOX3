@@ -716,3 +716,30 @@ RUNS
 FLAG=NEUTRAL
 ORIGI=ml
 }
+
+//dragon turtle - Base NPC with shared DFN tags
+[base_dragonturtle]
+{
+GET=base_champions
+NAME=a dragon turtle
+ID=0x508
+NPCAI=2
+FLEEAT=0
+REATTACKAT=1
+ORIGIN=hs
+}
+
+[dragonturtle]
+{
+GETUO=dragonturtle_lbr
+GETT2A=dragonturtle_lbr
+GETUOR=dragonturtle_lbr
+GETTD=dragonturtle_lbr
+GETLBR=dragonturtle_lbr
+GETAOS=dragonturtle_aos
+GETSE=dragonturtle_aos
+GETML=dragonturtle_aos
+GETSA=dragonturtle_aos
+GETHS=dragonturtle_aos
+GETTOL=dragonturtle_aos
+}
