@@ -11,7 +11,6 @@ const baseSpawnRadius = 30; // Max radius at rank 0
 //Gold shower settings
 const championGoldPiles = 50; // Number of gold piles to spawn
 const championGoldPilesRange  = 25; // Range around the altar to spawn gold piles
-var textEntry = 14; // Gump text entry index start if you add new championIDToName up + 1 so 14 comes 15
 const championIDToName = {
 	1: "Abyss",
 	2: "Arachnid",
@@ -67,7 +66,7 @@ function StartChampionWave( altar, stage )
 		return;
 
 	let spawnAmount = maxSpawn - spawnCount;
-	let triesPerSpawn = 50; // How many times to retry finding valid ground
+	let triesPerSpawn = 100; // How many times to retry finding valid ground
 
 	for( let i = 0; i < spawnAmount; ++i )
 	{
@@ -89,13 +88,17 @@ function StartChampionWave( altar, stage )
 			if( CheckStaticFlag( x, y, z, worldNum, 20 ))     // TF_MAP (your "staticStand")
 				continue;
 
-			if( DoesMapBlock( x, y, z, worldNum, false, false, true, false ))
+			if( DoesMapBlock( x, y, z, worldNum, true, false, false, false ))
+				continue;
+
+			var mapTileID = GetTileIDAtMapCoord( x, y, z );
+			if(( mapTileID >= 0x024a && mapTileID <= 0x026d ) || mapTileID == 0x0244 )
 				continue;
 
 			if( DoesStaticBlock( x, y, z, worldNum, false ))
 				continue;
 
-			if( DoesDynamicBlock( x, y, z, worldNum, instanceId, false, false, false, false ))
+			if( DoesDynamicBlock( x, y, z, worldNum, instanceId, true, false, false, false ))
 				continue;
 
 			// If we got here, nothing blocked the spot
@@ -573,7 +576,7 @@ function PickSurfaceZForGold( altar, x, y )
 			return false;
 
 		// Hard blocks
-		if( DoesMapBlock( x, y, z, world, false, false, true, false ))
+		if( DoesMapBlock( x, y, z, world, true, false, true, false ))
 			return false;
 		if( DoesStaticBlock( x, y, z, world, false ))
 			return false;
@@ -621,10 +624,6 @@ function PickSurfaceZForGold( altar, x, y )
 function ChampionMenu( socket, altar )
 {
 	var champalter = new Gump;
-	function NextText()
-	{
-		return textEntry++;
-	}
 	champalter.AddPage( 0 );
 
 	// Main Background and Header
@@ -695,10 +694,10 @@ function ChampionMenu( socket, altar )
 	}
 
 	// Text Entry fields
-	champalter.AddTextEntryLimited( 125, 35, 200, 25, 1153, 0, NextText(), altar.name, 30 );
-	champalter.AddTextEntryLimited( 45, 235, 115, 20, 1153, 0, NextText(), altar.morex, 2 );
-	champalter.AddTextEntryLimited( 115, 235, 40, 20, 1153, 0, NextText(), altar.morey, 4 );
-	champalter.AddTextEntryLimited( 195, 235, 40, 20, 1153, 0, NextText(), altar.morez, 4 );
+	champalter.AddTextEntryLimited( 125, 35, 200, 25, 1153, 0, 14, altar.name, 30 );
+	champalter.AddTextEntryLimited( 45, 235, 115, 20, 1153, 0, 15, altar.morex, 2 );
+	champalter.AddTextEntryLimited( 115, 235, 40, 20, 1153, 0, 16, altar.morey, 4 );
+	champalter.AddTextEntryLimited( 195, 235, 40, 20, 1153, 0, 17, altar.morez, 4 );
 
 	champalter.Send( socket );
 	champalter.Free();
