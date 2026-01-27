@@ -77,7 +77,7 @@ function SetupChampionAltars( pUser, spawnFilter )
         { type: "Unholy",   x: 5178, y: 708,  z: 0  },
         { type: "Vermin",   x: 5557, y: 824,  z: 45 },
         { type: "Cold",     x: 5258, y: 829,  z: 42 },
-        { type: "Abyss",    x: 5814, y: 1350, z: -23 },
+        { type: "Abyss",    x: 5814, y: 1350, z: -19 },
         { type: "Arachnid", x: 5190, y: 1605, z: 0  },
         { type: "Forest",   x: 5559, y: 3757, z: 1  }
     ];
@@ -191,7 +191,7 @@ function GetAltarDataList()
         { type: "Unholy",   x: 5178, y: 708,  z: 0  },
         { type: "Vermin",   x: 5557, y: 824,  z: 45 },
         { type: "Cold",     x: 5258, y: 829,  z: 42 },
-        { type: "Abyss",    x: 5814, y: 1350, z: -23 },
+        { type: "Abyss",    x: 5814, y: 1350, z: -19 },
         { type: "Arachnid", x: 5190, y: 1605, z: 0  },
         { type: "Forest",   x: 5559, y: 3757, z: 1  }
     ];
