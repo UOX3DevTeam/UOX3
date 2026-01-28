@@ -118,6 +118,7 @@ function SetupChampionAltars( pUser, spawnFilter )
         {
             failed++;
             socket.SysMessage( "FAIL " + d.type + " (marker creation failed)" );
+			Console.Log( "FAIL " + d.type + " (marker creation failed)" );
             continue;
         }
 
@@ -271,11 +272,7 @@ function RunChampToggleCommand( socket, cmdString, enabling )
         }
     }
 
-    socket.SysMessage(
-        ( enabling ? "Enabled" : "Disabled" ) +
-        " champion spawns: " + socket._champToggleCount +
-        " (skipped: " + socket._champToggleSkipped + ")"
-    );
+    socket.SysMessage(( enabling ? "Enabled" : "Disabled" ) + " champion spawns: " + socket._champToggleCount + " (skipped: " + socket._champToggleSkipped + ")" );
 }
 
 // AreaItemFunction callback: find altar items by presence of championType tag
@@ -329,6 +326,7 @@ function EnableOneChampionAltar( altar, socket )
     if( parseInt( type, 10 ) == 0 )
     {
         socket.SysMessage( "Cannot enable: championType is not set on altar at " + altar.x + "," + altar.y + "." );
+		Console.Log( "Cannot enable: championType is not set on altar at " + altar.x + "," + altar.y + "." )
         return false;
     }
 
@@ -711,6 +709,7 @@ function onGumpPress( socket, buttonID, gumpData )
 			if( isNaN( TextX ) || isNaN( TextY ) || isNaN( TextZ ))
 			{
 				socket.SysMessage( "Invalid coordinates. Please enter numeric values only." );
+				Console.Log( "Invalid coordinates entered in champ menu by " + pUser.name );
 				ChampMenu_Open( socket );
 				return;
 			}
@@ -741,6 +740,7 @@ function onCallback0( socket, myTarget )
 	if( targX <= 0 || targY <= 0 )
 	{
 		socket.SysMessage( "No valid location selected." );
+		Console.Log( "No valid location selected in champ menu by " + pUser.name );
 		ChampMenu_Open( socket );
 		return;
 	}
@@ -771,6 +771,7 @@ function ChampMenu_CreateAndEnable( socket )
 	if( champID <= 0 )
 	{
 		socket.SysMessage( "Invalid champion type selected." );
+		Console.Log( "Invalid champion type selected in champ menu by " + pUser.name );
 		return;
 	}
 
@@ -849,7 +850,7 @@ function onTimer( pUser, timerID )
 	ChampMenu_ConfigureController( socket, ctrl, champID, typeName );
 
 	socket.SysMessage( "Champion altar created and enabled: " + typeName + " at " +
-		socket._champMenuX + "," + socket._champMenuY + "," + socket._champMenuZ + "." );
+	socket._champMenuX + "," + socket._champMenuY + "," + socket._champMenuZ + "." );
 }
 
 function ChampMenu_ConfigureController( socket, ctrl, champID, typeName )

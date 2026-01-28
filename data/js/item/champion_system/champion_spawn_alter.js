@@ -152,7 +152,7 @@ function SummonBoss( altar )
 	let spawnData = TriggerEvent( 7503, "ChampionSpawnData", champID );
 	if( !spawnData || !spawnData.boss )
 	{
-		altar.TextMessage( "ChampionSpawnData missing/invalid for champID " + champID );
+		Console.Log( "ChampionSpawnData missing/invalid for champID " + champID );
 		return;
 	}
 	let bossID = spawnData.boss;
@@ -168,7 +168,7 @@ function SummonBoss( altar )
 
 	if( !ValidateObject( boss ))
 	{
-		altar.TextMessage( "Failed to summon the Champion Boss: " + bossID );
+		Console.Log( "Failed to summon the Champion Boss: " + bossID );
 		return;
 	}
 
@@ -195,7 +195,7 @@ function SummonBoss( altar )
 		}
 		else
 		{
-			altar.TextMessage( "Mini-boss failed to appear: " + miniID );
+			Console.Log( "Mini-boss failed to appear: " + miniID );
 		}
 	}
 }
