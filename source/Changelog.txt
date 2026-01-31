@@ -1,3 +1,9 @@
+31/01/2026 - Xoduz (#489)
+    [FIX] Fixed missing/duplicate/inconsistent entries in dictionary files
+    [FIX] Fixed a socket validation in js/item/magic_armor_equipeffects.js
+    [FIX] Fixed some incorrect dictionary IDs in js/server/resource/pitchers.js
+    [UPD] Minor cosmetic cleanup of a couple of script and source files
+
 23/01/2026 - DragonSlayer62 (#484)
     [FIX] Changed few words to match up with there function name and method.
     [FIX] Fixed Socket Errors in Bonding Script.
