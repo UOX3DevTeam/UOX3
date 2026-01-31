@@ -80,6 +80,7 @@ morex=209
 
 [mannequindeed]
 {
+get=base_item
 NAME=Mannequin Deed
 ID=0x14F0
 WEIGHT=100
