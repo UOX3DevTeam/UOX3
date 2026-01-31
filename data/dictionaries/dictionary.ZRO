@@ -2449,7 +2449,6 @@
 2576=You resist the urge to empty the %s over the head of your target.
 2577=That is already full! You cannot pour anything into that until it's been emptied.
 2578=You pour the %s into the empty pitcher.
-2578=You pour the %s into the empty bottle.
 2579=You pour out the contents of the jug, and you're left with an empty jug.
 2580=You pour out the contents of the bottle, and you're left with an empty bottle.
 2581=You pour out the contents of the pitcher, leaving you with an empty pitcher.
@@ -2512,6 +2511,8 @@
 2637=Filter for NPC Spawners
 2638=Filter for Item Spawners
 2639=Sort by Spawn Count (%s)
+2650=You pour the %s into the empty bottle.
+2651=You pour the %s into the empty jug.
 // [2700-2799] Misc scripts
 2700=Only the house owner can rotate furniture.
 2701=That does not appear to work.
@@ -3801,6 +3802,7 @@
 8257=You must target an NPC!
 8258=You bind the wound and stop the bleeding
 8259=The bleeding wounds have healed, you are no longer bleeding!
+8260=Amount of poison charges on item
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Account number associated with player. Controlled by server (Read-Only)
 8301=NPC AI Type
@@ -5411,7 +5413,7 @@
 18767=A wand of fireworks has been placed in your backpack.
 18768=A spyglass has been placed in your backpack.
 18769=The dyes and dye tub have been placed in your backpack.
-18770=This is half a prize ticket! Double-click this ticket and target any other ticket marked NEW PLAYER and get a prize! This ticket will only work for YOU, so don’t give it away!
+18770=This is half a prize ticket! Double-click this ticket and target any other ticket marked NEW PLAYER and get a prize! This ticket will only work for YOU, so don't give it away!
 18771=A full set of ranger armor.
 // [18800-19000] AOS properties
 18800=%i% Bandage Healing Bonus
@@ -5566,8 +5568,6 @@
 19308=Your pet has bonded with you!
 19309=Your pet is dead and will not respond to that command.
 19310=You break the bond with your pet.
-19311=Are you sure you want to break the bond with your pet?
-19311=Releasing a ghost pet will destroy it, with no chance of recovery. Do you wish to continue?
 19312=The pet's owner must be nearby to attempt resurrection.
 19313=Your pet cannot form a bond with you until your animal taming ability has risen.
 19314=Your pet cannot form a bond with you until your bushido ability has risen.
@@ -5596,6 +5596,7 @@
 19337=(invulnerable)
 19338=(frozen)
 19339=(guarded)
+19340=That creature's spirit lacks cohesion. Try again in a few minutes.
 19341=You already know this recipe.
 19342=You have learned a new recipe: %i
 19343=You must learn that recipe from a scroll.

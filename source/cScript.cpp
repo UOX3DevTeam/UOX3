@@ -232,13 +232,13 @@ void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *repor
 		Console.Error( oldstrutil::format( "Filename: %s", report->filename ));
 		Console.Error( oldstrutil::format( "Line Number: %i", report->lineno ));
 		if( report->linebuf != nullptr )
-	{
+		{
 			Console.Error( oldstrutil::format( "Erroneous Line: %s", oldstrutil::trim( report->linebuf ).c_str() ));
-	}
+		}
 		if( report->tokenptr != nullptr )
 		{
 			Console.Error( oldstrutil::format( "Token Ptr: %s", report->tokenptr ));
-}
+		}
 	}
 }
 
@@ -364,7 +364,7 @@ cScript::cScript( std::string targFile, UI08 rT, UI16 scrID ) : isFiring( false 
 			errorLine = errorDetails.lineNum;
 			errorLineStr = errorDetails.lineSource;
 			tokenPtrLine = errorDetails.tokenPointer;
-	}
+		}
 		else
 		{
 			// Triggered when reloading individual scripts at runtime
