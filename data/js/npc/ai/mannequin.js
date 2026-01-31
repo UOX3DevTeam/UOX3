@@ -1,6 +1,6 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
-var Era_Type = EraStringToNum(GetServerSetting("CoreShardEra"));
+var Era_Type = EraStringToNum( GetServerSetting("CoreShardEra" ));
 let ARMOR_LAYERS = [0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x0A, 0x0D, 0x11, 0x13, 0x14, 0x16, 0x17, 0x18];
 let RESIST_LAYERS = [ 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0C, 0x0D, 0x0E, 0x11, 0x12, 0x13, 0x14, 0x16, 0x17, 0x18];
 // Wearable layers (skip hair/facial/backpack/mount/vendor/bank)
@@ -9,7 +9,12 @@ let EQUIP_LAYERS = [0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0C,0x0D,
 /** @type { ( tSock: Socket, baseObj: BaseObject ) => boolean } */
 function onContextMenuRequest( socket, targObj )
 {
+	if( socket == null )
+		return false;
+
 	var pUser = socket.currentChar;
+	if( !ValidateObject( pUser ))
+		return false;
 
 	if( pUser.InRange( targObj, 2 ) && targObj.owner == pUser)
 	{
@@ -43,7 +48,13 @@ function onContextMenuRequest( socket, targObj )
 /** @type { ( tSock: Socket, baseObj: BaseObject, popupEntry: number ) => boolean } */
 function onContextMenuSelect( socket, targObj, popupEntry )
 {
+	if( socket == null )
+		return false;
+
 	var pUser = socket.currentChar;
+	if( !ValidateObject( pUser ))
+		return false;
+
 	switch( popupEntry )
 	{
 		case 0x000A: // paperdoll
@@ -86,6 +97,12 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 /** @type { ( currChar: Character, targChar: Character ) => boolean } */
 function onCharDoubleClick( pUser, targChar )
 {
+	if( !ValidateObject( pUser ) || !ValidateObject( targChar ))
+		return false;
+
+	if( pUser.socket == null )
+		return false;
+
 	OpenPaperdoll( pUser.socket, targChar );
 	return false;
 }
@@ -95,7 +112,7 @@ function onTooltip( myObj, pSocket )
 {
 	var tooltipText = "";
 	var desc = myObj.GetTag("Description");
-	if(desc != "" && desc != 0)
+	if( desc != "" && desc != 0 )
 	{
 		tooltipText = "Description: " + desc;
 	}
@@ -112,19 +129,22 @@ function onSpeech( strSaid, pTalking, pTalkingTo )
 
 function DescriptionGump( socket )
 {
+	if( socket == null )
+		return false;
+
 	var gump = new Gump;
-	gump.AddBackground(50, 50, 400, 300, 0xA28);
-	gump.AddPage(0);
-	gump.AddXMFHTMLTok(50, 70, 400, 20, false, false,  0x7FFF ,1159409, "", "", "" ); // <CENTER>Mannequin</CENTER>
-	gump.AddXMFHTMLTok(75, 95, 350, 145, true, true, 0x7FFF, 1159408, "", "", ""); // Enter the description to add to the mannequin. Leave the text area blank to remove any existing text.
-	gump.AddButton(125, 300, 0x81A, 0x81B, 1, 0, 8);
-	gump.AddButton(320, 300, 0x819, 0x818, 1, 0, 0);
-	gump.AddTiledGump(75, 245, 350, 40, 0xDB0);
-	gump.AddTiledGump(76, 245, 350, 2, 0x23C5);
-	gump.AddTiledGump(75, 245, 2, 40, 0x23C3);
-	gump.AddTiledGump(75, 285, 350, 2, 0x23C5);
-	gump.AddTiledGump(425, 245, 2, 42, 0x23C3);
-	gump.AddTextEntryLimited(78, 246, 343, 37, 0x4FF, 0, 2, " ", 44);
+	gump.AddBackground( 50, 50, 400, 300, 0xA28 );
+	gump.AddPage( 0 );
+	gump.AddXMFHTMLGumpColor( 50, 70, 400, 20, 1159409, false, false, 0x7FFF ); // <CENTER>Mannequin</CENTER>
+	gump.AddXMFHTMLGumpColor( 75, 95, 350, 145, 1159408, true, true, 0x7FFF ); // Enter the description to add to the mannequin. Leave the text area blank to remove any existing text.
+	gump.AddButton( 125, 300, 0x81A, 0x81B, 1, 0, 8 );
+	gump.AddButton( 320, 300, 0x819, 0x818, 1, 0, 0 );
+	gump.AddTiledGump( 75, 245, 350, 40, 0xDB0 );
+	gump.AddTiledGump( 76, 245, 350, 2, 0x23C5 );
+	gump.AddTiledGump( 75, 245, 2, 40, 0x23C3 );
+	gump.AddTiledGump( 75, 285, 350, 2, 0x23C5 );
+	gump.AddTiledGump( 425, 245, 2, 42, 0x23C3 );
+	gump.AddTextEntryLimited( 78, 246, 343, 37, 0x4FF, 0, 2, " ", 44 );
 
 	gump.Send( socket );
 	gump.Free();
@@ -132,66 +152,73 @@ function DescriptionGump( socket )
 
 function CustomizeMannequinBody( socket )
 {
+	if( socket == null )
+		return false;
+
 	var gump = new Gump;
 	gump.AddPage( 0 );
 	gump.AddBackground( 0, 0, 300, 130, 0x13BE );
 	gump.AddTiledGump( 10, 10, 280, 20, 0xA40 );
 	gump.AddTiledGump( 10, 40, 280, 80, 0xA40 );
 	gump.AddCheckerTrans( 10, 10, 280, 110);
-	gump.AddXMFHTMLTok( 10, 12, 280, 18, false, false, 0x7FFF, 1151582, "", "", "" );// <center>CUSTOMIZE BODY</center>
+	gump.AddXMFHTMLGumpColor( 10, 10, 200, 300, 1151582, false, false, 0x7FFF );// <center>CUSTOMIZE BODY</center>
 
 	if( Era_Type >= EraStringToNum( "lbr" ))
 	{
-		gump.AddXMFHTMLTok( 45, 52, 180, 18, false, false, 0x7FFF, 1072255, "", "", "" );// Human
+		gump.AddXMFHTMLGumpColor( 45, 52, 180, 18, 1072255, false, false, 0x7FFF );// Human
 		gump.AddButton( 10, 50, 0xFA5, 1, 0, 1 );
 	}
 
 	if( Era_Type >= EraStringToNum( "ml" ))
 	{
-		gump.AddXMFHTMLTok(45, 72, 180, 18, false, false, 0x7FFF, 1072256, "", "", "" );// Elf
+		gump.AddXMFHTMLGumpColor( 45, 72, 180, 18, 1072256, false, false, 0x7FFF );// Elf
 		gump.AddButton(10, 70, 0xFA5, 1, 0, 2 );
 
-		gump.AddXMFHTMLTok(45, 92, 180, 18, false, false, 0x7FFF, 1029613, "", "", "" );// Gargoyle
+		gump.AddXMFHTMLGumpColor( 45, 92, 180, 18, 1029613, false, false, 0x7FFF );// Gargoyle
 		gump.AddButton(10, 90, 0xFA5,  1, 0, 3 );
 	}
 
-	gump.AddXMFHTMLTok( 205, 52, 180, 18, false, false, 0x7FFF, 1015327, "", "", "" );// Male
+	gump.AddXMFHTMLGumpColor( 205, 52, 180, 18, 1015327, false, false, 0x7FFF);// Male
 	gump.AddButton( 170, 50, 0xFA5, 1, 0, 4 );
 
-	gump.AddXMFHTMLTok( 205, 72, 180, 18, false, false, 0x7FFF, 1015328, "", "", "" );// Female
+	gump.AddXMFHTMLGumpColor( 205, 72, 180, 18, 1015328, false, false, 0x7FFF );// Female
     gump.AddButton( 170, 70, 0xFA5, 1, 0, 5 );
 
 	gump.Send( socket );
 	gump.Free();
 }
 
+function ABS( sx, sy, w, h )
+{
+	return { sx: sx | 0, sy: sy | 0, w: ( w || 30 ) | 0, h: ( h || 30 ) | 0 };
+}
+
 var Icons = {
-	StrengthBonus:	ABS( 120, 30 ), DexterityBonus:	ABS( 90, 0),		IntelligenceBonus:	ABS( 240, 0 ),
-	HitPointsInc:	ABS( 180, 0 ),	StaminaInc:		ABS( 90,30),
+	StrengthBonus:   ABS( 120, 30 ), DexterityBonus:  ABS(  90,  0 ), IntelligenceBonus: ABS( 240,  0 ),
+	HitPointsInc:    ABS( 180,  0 ), StaminaInc:      ABS(  90, 30 ),
 
-	ManaInc:		ABS( 0, 30 ),	HPRegen:		ABS( 30, 60 ),		StaminaRegen:		ABS( 210, 60 ), 
-	ManaRegen:		ABS( 120, 60 ),
+	ManaInc:         ABS(   0, 30 ), HPRegen:         ABS(  30, 60 ), StaminaRegen:     ABS( 210, 60 ),
+	ManaRegen:       ABS( 120, 60 ),
 
-	PhysResist:		ABS( 30, 30),	FireResist:		ABS( 150, 0 ),		ColdResist:			ABS( 0, 0 ),
-	PoisonResist:	ABS( 60, 30),	EnergyResist:	ABS( 120, 0 ),
+	PhysResist:      ABS(  30, 30 ), FireResist:      ABS( 150,  0 ), ColdResist:       ABS(   0,  0 ),
+	PoisonResist:    ABS(  60, 30 ), EnergyResist:    ABS( 120,  0 ),
 
-	DamageEater:	ABS( 270, 60 ), KineticEater:	ABS(  0,90 ),		FireEater:			ABS( 30, 90 ),
-	ColdEater:		ABS( 60, 90 ),	PoisonEater:	ABS( 90, 90 ),		EnergyEater:		ABS( 120, 90 ),
+	DamageEater:     ABS( 270, 60 ), KineticEater:    ABS(   0, 90 ), FireEater:        ABS(  30, 90 ),
+	ColdEater:       ABS(  60, 90 ), PoisonEater:     ABS(  90, 90 ), EnergyEater:      ABS( 120, 90 ),
 
-	DamageIncrease:	ABS( 60, 0 ),	DCI:			ABS( 210, 30 ),		HCI:				ABS( 210, 0 ),
-	SSI:			ABS( 150, 30 ),	LMC:			ABS( 60, 60 ),		Medable:			ABS( 0, 150 ),
-	ReflectPhys:	ABS( 150, 60 ), EnhancePotions:	ABS( 240, 30 ),
+	DamageIncrease:  ABS(  60,  0 ), DCI:             ABS( 210, 30 ), HCI:              ABS( 210,  0 ),
+	SSI:             ABS( 150, 30 ), LMC:             ABS(  60, 60 ), Medable:          ABS(   0,150 ),
+	ReflectPhys:     ABS( 150, 60 ), EnhancePotions:  ABS( 240, 30 ),
 
-	Luck:			ABS( 270, 0 ),
+	Luck:            ABS( 270,  0 ),
 
-	PhysicalDamage:	ABS( 270,210 ),	ColdDamage:		ABS( 210, 210 ),	FireDamage:			ABS(180,210),
-	PoisonDamage:	ABS( 0,240 ),	EnergyDamage:	ABS( 240, 210 ),	ChaosDamage:		ABS( 30,240),
+	PhysicalDamage:  ABS( 270,210 ), ColdDamage:      ABS( 210,210 ), FireDamage:       ABS( 180,210 ),
+	PoisonDamage:    ABS(   0,240 ), EnergyDamage:    ABS( 240,210 ), ChaosDamage:      ABS(  30,240 ),
 
-	FasterCasting:	ABS( 270, 30 ),	fasterRecovery:	ABS( 0,60 ),		LowerRegentCost:	ABS(180,60),
-	SpellDamage:	ABS( 90, 600 )
+	FasterCasting:   ABS( 270, 30 ), fasterRecovery:  ABS(   0, 60 ), LowerRegentCost:  ABS( 180, 60 ),
+	SpellDamage:     ABS(  90,600 )
 };
 
-// ---- UI model --------------------------------------------------------------
 var PAGE1 = [
 	{
 		header: 1049593, rowsLeft: [
@@ -263,359 +290,269 @@ var PAGE2 = [
 	}
 ];
 
-function getItemLo( item )
-{
-	return ( !item || !ValidateObject( item )) ? 0 : ( parseInt( item.lodamage, 10 ) || 0 );
-}
-
-function getItemHi( item )
-{
-	return ( !item || !ValidateObject( item )) ? 0 : ( parseInt( item.hidamage, 10 ) || 0 );
-}
-
-function getWeaponDamage( mannequin )
+function bestWeaponDamage( mannequin )
 {
 	var best = { lo: 0, hi: 0 };
-	if(!ValidateObject( mannequin ))
+	if( !( mannequin && ValidateObject( mannequin )))
 		return best;
 
-	var cand = [];
-	var right = mannequin.FindItemLayer( 0x01 );
-	var left = mannequin.FindItemLayer( 0x02 );
+	var it, lo, hi;
 
-	if( ValidateObject( right ))
-		cand.push( right );
-
-	if( ValidateObject( left ))
-		cand.push( left );
-
-	for( var i = 0; i < cand.length; i++ )
+	it = mannequin.FindItemLayer( 0x01 );
+	if( it && ValidateObject( it ))
 	{
-		var item = cand[i];
-		var lo = getItemLo( item );
-		var hi = getItemHi( item );
-		if( hi >= lo && hi > 0 )
-		{
-			if( hi > best.hi ) 
-			{
-				best.lo = lo; best.hi = hi;
-			}
-		}
+		lo = parseInt( it.lodamage, 10 ); lo = isNaN( lo ) ? 0 : (lo | 0);
+		hi = parseInt( it.hidamage, 10 ); hi = isNaN( hi ) ? 0 : (hi | 0);
+		if( hi >= lo && hi > 0 && hi > best.hi ) { best.lo = lo; best.hi = hi; }
 	}
+
+	it = mannequin.FindItemLayer( 0x02 );
+	if( it && ValidateObject( it ))
+	{
+		lo = parseInt( it.lodamage, 10 ); lo = isNaN( lo ) ? 0 : (lo | 0);
+		hi = parseInt( it.hidamage, 10 ); hi = isNaN( hi ) ? 0 : (hi | 0);
+		if( hi >= lo && hi > 0 && hi > best.hi ) { best.lo = lo; best.hi = hi; }
+	}
+
 	return best;
 }
 
-function getItemDef( item )
+function sumLayersProp( mannequin, layers, prop )
 {
-	if( !ValidateObject( item ))
-		return 0;
-	var value = parseInt( item.def, 10 );
-	return isNaN( value ) ? 0 : value;
-}
-
-function sumPhysResistFromLayers( mannequin )
-{
-	if( !ValidateObject( mannequin ))
+	if( !( mannequin && ValidateObject( mannequin )))
 		return 0;
 
-	var total = 0, item;
-	for( var idx = 0; idx < ARMOR_LAYERS.length; idx++ )
+	var total = 0, it, v;
+	for( var i = 0; i < layers.length; i++ )
 	{
-		item = mannequin.FindItemLayer( ARMOR_LAYERS[idx] );
-		total += getItemDef( item );
+		it = mannequin.FindItemLayer( layers[i] );
+		if( it && ValidateObject( it ))
+		{
+			v = parseInt( it[prop], 10 );
+			total += isNaN( v ) ? 0 : (v | 0);
+		}
 	}
-	return total;
+	return total | 0;
 }
 
-function safeInt( value )
-{ 
-	value = parseInt( value, 10 );
-	return isNaN( value ) ? 0 : value;
-}
-
-function sumProp( mannequin, propName, raw )
+function sumPhysResistFromArmor( mannequin )
 {
-	if( !ValidateObject( mannequin )) 
+	if( !( mannequin && ValidateObject( mannequin )))
 		return 0;
 
-	var total = 0;
-	for( var k = 0; k < RESIST_LAYERS.length; k++)
+	var total = 0, it, v;
+	for( var i = 0; i < ARMOR_LAYERS.length; i++ )
 	{
-		var it = mannequin.FindItemLayer( RESIST_LAYERS[k] );
-		total += ( !ValidateObject( it )) ? 0 : safeInt( it[propName] );
+		it = mannequin.FindItemLayer( ARMOR_LAYERS[i] );
+		if( it && ValidateObject( it ))
+		{
+			v = parseInt( it.def, 10 );
+			total += isNaN( v ) ? 0 : (v | 0);
+		}
 	}
-	return raw === true ? total : (total | 0);
+	return total | 0;
 }
 
 function buildContext( mannequin )
 {
-	var ctx = { physResist: sumPhysResistFromLayers( mannequin ) | 0 };
+	var ctx = {};
 
-	var coldRaw = sumProp( mannequin, "resistCold", true );
-	var fireRaw = sumProp( mannequin, "resistHeat", true );
-	var energyRaw = sumProp( mannequin, "resistLightning", true );
-	var poisonRaw = sumProp( mannequin, "resistPoison", true );
+	ctx.physResist   = sumPhysResistFromArmor( mannequin );
 
-	ctx.coldResist   = coldRaw   | 0;
-	ctx.fireResist   = fireRaw   | 0;
-	ctx.energyResist = energyRaw | 0;
-	ctx.poisonResist = poisonRaw | 0;
+	ctx.coldResist   = sumLayersProp( mannequin, RESIST_LAYERS, "resistCold" );
+	ctx.fireResist   = sumLayersProp( mannequin, RESIST_LAYERS, "resistHeat" );
+	ctx.energyResist = sumLayersProp( mannequin, RESIST_LAYERS, "resistLightning" );
+	ctx.poisonResist = sumLayersProp( mannequin, RESIST_LAYERS, "resistPoison" );
 
-	ctx.hpRegenBonus = sumProp( mannequin, "healthRegenBonus" );
-	ctx.staminaRegenBonus = sumProp( mannequin, "staminaRegenBonus" );
-	ctx.manaRegenBonus = sumProp( mannequin, "manaRegenBonus" );
+	ctx.hpRegenBonus      = sumLayersProp( mannequin, RESIST_LAYERS, "healthRegenBonus" );
+	ctx.staminaRegenBonus = sumLayersProp( mannequin, RESIST_LAYERS, "staminaRegenBonus" );
+	ctx.manaRegenBonus    = sumLayersProp( mannequin, RESIST_LAYERS, "manaRegenBonus" );
 
-	ctx.hpInc = sumProp( mannequin, "healthBonus" );
-	ctx.stamInc = sumProp( mannequin, "staminaBonus" );
-	ctx.manaInc = sumProp( mannequin, "manaBonus" );
+	ctx.hpInc   = sumLayersProp( mannequin, RESIST_LAYERS, "healthBonus" );
+	ctx.stamInc = sumLayersProp( mannequin, RESIST_LAYERS, "staminaBonus" );
+	ctx.manaInc = sumLayersProp( mannequin, RESIST_LAYERS, "manaBonus" );
 
-	ctx.hci = sumProp( mannequin, "hitChance" );
-	ctx.dci = sumProp( mannequin, "defenseChance" );
-	ctx.di = sumProp( mannequin, "damageIncrease" );
-	ctx.luck = sumProp( mannequin, "luck");
-	ctx.ssi = sumProp( mannequin, "swingSpeedIncrease" );
+	ctx.hci  = sumLayersProp( mannequin, RESIST_LAYERS, "hitChance" );
+	ctx.dci  = sumLayersProp( mannequin, RESIST_LAYERS, "defenseChance" );
+	ctx.di   = sumLayersProp( mannequin, RESIST_LAYERS, "damageIncrease" );
+	ctx.luck = sumLayersProp( mannequin, RESIST_LAYERS, "luck" );
+	ctx.ssi  = sumLayersProp( mannequin, RESIST_LAYERS, "swingSpeedIncrease" );
 
-	var wd = getWeaponDamage( mannequin );
+	var wd = bestWeaponDamage( mannequin );
 	ctx.physDmgLo = wd.lo | 0;
 	ctx.physDmgHi = wd.hi | 0;
 
-	ctx._raw = { cold: coldRaw, fire: fireRaw, energy: energyRaw, poison: poisonRaw };
 	return ctx;
 }
 
 function filterSectionsForEra( sections )
 {
-    var out = [];
-    var eraLBR = EraStringToNum( "lbr" );
-    var eraAOS = EraStringToNum( "aos" );
-    var eraML  = EraStringToNum( "ml" );
+	var out = [];
 
-    var isLBRonly = ( Era_Type >= eraLBR && Era_Type < eraAOS );
-    var isAOSonly = ( Era_Type >= eraAOS && Era_Type < eraML );
-    var isMLplus  = ( Era_Type >= eraML );
+	var eraLBR = EraStringToNum( "lbr" );
+	var eraAOS = EraStringToNum( "aos" );
+	var eraML  = EraStringToNum( "ml" );
 
-    function cloneRow( row )
+	var isLBRonly = ( Era_Type >= eraLBR && Era_Type < eraAOS );
+	var isAOSonly = ( Era_Type >= eraAOS && Era_Type < eraML );
+	var isMLplus  = ( Era_Type >= eraML );
+
+	function cloneRow( row )
 	{
-        var r = {};
-        for( var k in row )
-			if( row.hasOwnProperty( k ))
-				r[k] = row[k];
-        return r;
-    }
-
-    if( isMLplus )
-    {
-        for( var s = 0; s < sections.length; s++ )
-        {
-            var src = sections[s] || {};
-            var sec = { header: src.header, rowsLeft: [], rowsRight: [] };
-
-            var leftHand = src.rowsLeft  || [];
-            var rightHand = src.rowsRight || [];
-
-            for( var i = 0; i < leftHand.length; i++ )
-				sec.rowsLeft.push( cloneRow( leftHand[i]||{} ) );
-
-            for(var j = 0; j < rightHand.length; j++ )
-				sec.rowsRight.push( cloneRow( rightHand[j]||{} ) );
-
-            if( sec.rowsLeft.length || sec.rowsRight.length )
-				out.push(sec);
-        }
-        return out;
-    }
-
-    function includeByEraKey(k)
-	{
-        k = k || "";
-        if( isLBRonly )
-        {
-            // LBR: only these
-            return ( k === "StrengthBonus" || k === "DexterityBonus" || k === "IntelligenceBonus" ||
-                    k === "PhysResist"    || k === "PhysDamage" );
-        }
-        if( isAOSonly )
-        {
-            // AoS: everything except eaters
-            return !( k === "DamageEater" || k === "KineticEater" || k === "FireEater" ||
-                     k === "ColdEater"   || k === "PoisonEater"  || k === "EnergyEater" );
-        }
-        // pre-LBR fallback
-        return true;
-    }
-
-    for( var s2 = 0; s2 < sections.length; s2++ )
-    {
-        var src2 = sections[s2] || {};
-        var sec2 = { header: src2.header, rowsLeft: [], rowsRight: [] };
-
-        var L2 = src2.rowsLeft  || [];
-        var R2 = src2.rowsRight || [];
-
-        for( var i2 = 0; i2 < L2.length; i2++ )
-        {
-            var rightHand = L2[i2] || {};
-            if( includeByEraKey( rightHand.key ))
-				sec2.rowsLeft.push( cloneRow( rightHand ));
-        }
-        for( var j2 = 0; j2 < R2.length; j2++ )
-        {
-            var r2 = R2[j2] || {};
-            if( includeByEraKey( r2.key ))
-				sec2.rowsRight.push( cloneRow(r2 ));
-        }
-
-        if( sec2.rowsLeft.length || sec2.rowsRight.length ) out.push( sec2 );
-    }
-    return out;
-}
-
-var MANN_CTX = null;
-
-function fmtVal( row )
-{
-	var base = 0;
-
-	if( MANN_CTX && row && row.key )
-	{
-		switch( row.key )
-		{
-			case "PhysResist": base = MANN_CTX.physResist | 0; break;
-			case "ColdResist": base = MANN_CTX.coldResist | 0; break;
-			case "FireResist": base = MANN_CTX.fireResist | 0; break;
-			case "EnergyResist": base = MANN_CTX.energyResist | 0; break;
-			case "PoisonResist": base = MANN_CTX.poisonResist | 0; break;
-
-			case "HPRegen": base = MANN_CTX.hpRegenBonus | 0; break;
-			case "StaminaRegen": base = MANN_CTX.staminaRegenBonus | 0; break;
-			case "ManaRegen": base = MANN_CTX.manaRegenBonus | 0; break;
-
-			case "HitPointsInc": base = MANN_CTX.hpInc | 0; break;
-			case "StaminaInc": base = MANN_CTX.stamInc | 0; break;
-			case "ManaInc": base = MANN_CTX.manaInc | 0; break;
-
-			case "HCI": base = MANN_CTX.hci | 0; break;
-			case "DCI": base = MANN_CTX.dci | 0; break;
-			case "DamageIncrease": base = MANN_CTX.di | 0; break;
-			case "Luck": base = MANN_CTX.luck | 0; break;
-			case "SSI": base = MANN_CTX.ssi | 0; break;
-
-			case "PhysDamage":
-				var lo = MANN_CTX.physDmgLo | 0, hi = MANN_CTX.physDmgHi | 0;
-				return "<BASEFONT COLOR=#80BFFF>" + lo + "-" + hi + "</BASEFONT>";
-		}
+		var r = {}, k;
+		row = row || {};
+		for( k in row ) if( row.hasOwnProperty( k )) r[k] = row[k];
+		return r;
 	}
 
-	var cap = ( row && row.cap ) ? row.cap : "";
-	return "<BASEFONT COLOR=#80BFFF>" + base + cap + "</BASEFONT>";
-}
-
-function ABS( sx, sy, w, h )
-{
-	return { sx: sx | 0, sy: sy | 0, w: w || 30, h: h || 30 };
-}
-
-function addHeader( gump, y, header )
-{
-	if( typeof header === "number" )
-		gump.AddXMFHTMLTok( 10, y, 200, 18, false, false, 0x560A, header, "", "", "" );
-	else
-		gump.AddHTMLGump( 10, y, 200, 18, false, false, header );
-}
-
-function addRowLabel( gump, left, top, label )
-{
-	if( typeof label === "number" )
-		gump.AddXMFHTMLTok( left, top, 220, 18, false, false, 0x560A, label, "", "", "" );
-	else
-		gump.AddHTMLGump( left, top, 220, 18, false, false, label );
-}
-
-function drawRowLeft( gump, y, row )
-{
-	gump.AddPicInPic( 10, y - 5, 0x09D3B, row.icon.sx | 0, row.icon.sy | 0, 30 || 30, 30 || 30 );
-	addRowLabel( gump, 45, y, row.text );
-	gump.AddHTMLGump(235, y, 110, 18, false, false, fmtVal( row ));
-	return y + 30;
-}
-
-function drawRowRight( gump, y, row )
-{
-	gump.AddPicInPic( 307, y - 5, 0x09D3B, row.icon.sx | 0, row.icon.sy | 0, 30 || 30, 30 || 30 );
-	addRowLabel( gump, 342, y, row.text );
-	gump.AddHTMLGump( 532, y, 110, 18, false, false, fmtVal( row ));
-	return y + 30;
-}
-
-function drawSection( gump, y, section )
-{
-	addHeader( gump, y, section.header );
-	gump.AddTiledGump( 10, y + 18, 584, 5, 0x06DC );
-	y += 32;
-
-	var L = section.rowsLeft || [];
-	var R = section.rowsRight || [];
-	var max = ( L.length > R.length ? L.length : R.length );
-
-	var baseY = y;
-	for( var i = 0; i < max; i++ )
+	function includeByEraKey( k )
 	{
-		if( i < L.length )
+		k = k || "";
+
+		if( isMLplus )
+			return true;
+
+		if( isLBRonly )
 		{
-			y = drawRowLeft( gump, y, L[i] );
-		}
-		else
-		{
-			y += 30;
+			return ( k === "StrengthBonus" || k === "DexterityBonus" || k === "IntelligenceBonus" ||
+			         k === "PhysResist"    || k === "PhysDamage" );
 		}
 
-		var ry = baseY + ( i * 30 );
-		if( i < R.length )
-			drawRowRight( gump, ry, R[i] );
+		if( isAOSonly )
+		{
+			return !( k === "DamageEater" || k === "KineticEater" || k === "FireEater" ||
+			          k === "ColdEater"   || k === "PoisonEater"  || k === "EnergyEater" );
+		}
+
+		return true;
 	}
-	return y + 3;
+
+	for( var s = 0; s < sections.length; s++ )
+	{
+		var src = sections[s] || {};
+		var sec = { header: src.header, rowsLeft: [], rowsRight: [] };
+
+		var L = src.rowsLeft  || [];
+		var R = src.rowsRight || [];
+
+		for( var i = 0; i < L.length; i++ )
+			if( isMLplus || includeByEraKey( L[i] && L[i].key ))
+				sec.rowsLeft.push( cloneRow( L[i] ));
+
+		for( var j = 0; j < R.length; j++ )
+			if( isMLplus || includeByEraKey( R[j] && R[j].key ))
+				sec.rowsRight.push( cloneRow( R[j] ));
+
+		if( sec.rowsLeft.length || sec.rowsRight.length )
+			out.push( sec );
+	}
+
+	return out;
 }
 
 function OpenMannequinStatsGump( socket, mannequin, page )
 {
 	page = page | 0;
 
-	MANN_CTX = buildContext( mannequin );
+	var ctx = buildContext( mannequin );
+
+	// key -> ctx field mapping (kills the giant switch)
+	var MAP = {
+		PhysResist:     "physResist",
+		ColdResist:     "coldResist",
+		FireResist:     "fireResist",
+		EnergyResist:   "energyResist",
+		PoisonResist:   "poisonResist",
+
+		HPRegen:        "hpRegenBonus",
+		StaminaRegen:   "staminaRegenBonus",
+		ManaRegen:      "manaRegenBonus",
+
+		HitPointsInc:   "hpInc",
+		StaminaInc:     "stamInc",
+		ManaInc:        "manaInc",
+
+		HCI:            "hci",
+		DCI:            "dci",
+		DamageIncrease: "di",
+		Luck:           "luck",
+		SSI:            "ssi"
+	};
+
+	// local helpers (not global noise)
+	function text( g, x, y, w, h, v )
+	{
+		if( typeof v === "number" )
+			g.AddXMFHTMLTok( x, y, w, h, false, false, 0x560A, v);
+		else
+			g.AddHTMLGump( x, y, w, h, false, false, v );
+	}
+
+	function valHtml( row )
+	{
+		var cap = ( row && row.cap ) ? row.cap : "";
+		if( row && row.key === "PhysDamage" )
+			return "<BASEFONT COLOR=#80BFFF>" + ( ctx.physDmgLo|0) + "-" + ( ctx.physDmgHi|0 ) + "</BASEFONT>";
+
+		if( row && row.key && MAP[row.key] )
+			return "<BASEFONT COLOR=#80BFFF>" + (( ctx[ MAP[row.key] ]|0 )) + cap + "</BASEFONT>";
+
+		return "<BASEFONT COLOR=#80BFFF>0" + cap + "</BASEFONT>";
+	}
+
+	function row( gump, side, y, r )
+	{
+		var xIcon  = side ? 307 : 10;
+		var xLabel = side ? 342 : 45;
+		var xVal   = side ? 532 : 235;
+
+		gump.AddPicInPic( xIcon, y - 5, 0x09D3B, r.icon.sx|0, r.icon.sy|0, r.icon.w|0, r.icon.h|0 );
+		text( gump, xLabel, y, 220, 18, r.text );
+		gump.AddHTMLGump( xVal, y, 110, 18, false, false, valHtml( r ) );
+	}
+
+	function section( gump, y, sec )
+	{
+		text( gump, 10, y, 200, 18, sec.header );
+		gump.AddTiledGump( 10, y + 18, 584, 5, 0x06DC );
+		y += 32;
+
+		var L = sec.rowsLeft  || [];
+		var R = sec.rowsRight || [];
+		var max = ( L.length > R.length ? L.length : R.length );
+		var baseY = y;
+
+		for( var i = 0; i < max; i++ )
+		{
+			if( i < L.length ) row( gump, 0, baseY + (i * 30), L[i] );
+			if( i < R.length ) row( g, 1, baseY + (i * 30), R[i] );
+		}
+
+		return baseY + (max * 30) + 3;
+	}
 
 	var gump = new Gump;
 	gump.AddPage( 0 );
 	gump.AddBackground( 0, 0, 604, 820, 0x06DB );
 	gump.AddCheckerTrans( 0, 0, 604, 820 );
-	gump.AddXMFHTMLTok( 10, 10, 584, 18, false, false, 0x43F7, 1114513, "#1159279", "#1159279", "#1159279" );
+	gump.AddXMFHTMLTok( 10, 10, 584, 18, false, false, 0x43F7, 1114513, "#1159279" );
 
 	// pager
-	if( page > 0 )
-	{
-		gump.AddButton( 554, 10, 0x15E3, 1, 0, 7 );
-	}
-	else
-	{
-		gump.AddButton( 554, 10, 0x15E1, 1, 0, 6 );
-	}
+	gump.AddButton( 554, 10, ( page > 0 ) ? 0x15E3 : 0x15E1, 1, 0, ( page > 0 ) ? 7 : 6 );
 
-	var sections = ( page > 0 ? PAGE2 : PAGE1 );
-	sections = filterSectionsForEra( sections );
+	var sections = filterSectionsForEra( (page > 0) ? PAGE2 : PAGE1 );
 
 	var y = 28;
 	for( var s = 0; s < sections.length; s++ )
-	{
-		y = drawSection( gump, y, sections[s] );
-	}
+		y = section( gump, y, sections[s] );
 
 	gump.Send( socket );
 	gump.Free();
-
-	MANN_CTX = null;
 }
 
 function moveMannequinGearToPlayerPack( mannequin, pUser )
 {
-    if(!ValidateObject( mannequin ) || !ValidateObject( pUser ))
+    if( !ValidateObject( mannequin ) || !ValidateObject( pUser ))
 		return 0;
 
 	var pSocket = pUser.socket;
@@ -891,7 +828,7 @@ function setRaceGender(  mannequin, race, gender, pUser )
 function onGumpPress( pSock, iButton, gumpData )
 {
 	var pUser = pSock.currentChar;
-	var mannequinSer = pUser.GetTempTag( "MANN_STATS_MANN" );
+	var mannequinSer = parseInt( pUser.GetTempTag( "MANN_STATS_MANN" ));
 	var mannequin = CalcCharFromSer( mannequinSer );
 	if( !ValidateObject( pUser )) 
 	{
@@ -901,11 +838,26 @@ function onGumpPress( pSock, iButton, gumpData )
 	switch( iButton )
 	{
 		case 0: break;
-		case 1: setRaceGender( mannequin, 0, mannequin.gender, pUser ); break; // Human
-		case 2: setRaceGender( mannequin, 1, mannequin.gender, pUser ); break; // Elf
-		case 3: setRaceGender( mannequin, 2, mannequin.gender, pUser ); break; // Gargoyle
-		case 4: setRaceGender( mannequin, null, 0, pUser ); break;   // Male
-		case 5: setRaceGender( mannequin, null, 1, pUser ); break;   // Female
+		case 1:
+			setRaceGender( mannequin, 0, mannequin.gender, pUser );
+			CustomizeMannequinBody( pSock );
+			break; // Human
+		case 2:
+			setRaceGender( mannequin, 1, mannequin.gender, pUser );
+			CustomizeMannequinBody( pSock );
+			break; // Elf
+		case 3:
+			setRaceGender( mannequin, 2, mannequin.gender, pUser );
+			CustomizeMannequinBody( pSock );
+			break; // Gargoyle
+		case 4:
+			setRaceGender( mannequin, null, 0, pUser );
+			CustomizeMannequinBody( pSock );
+			break;   // Male
+		case 5:
+			setRaceGender( mannequin, null, 1, pUser );
+			CustomizeMannequinBody( pSock );
+			break;   // Female
 		case 6:
 		case 7:
 			if( ValidateObject( mannequin ))
@@ -918,7 +870,7 @@ function onGumpPress( pSock, iButton, gumpData )
 
 				if( res.cleared )
 				{
-					mannequin.SetTag( "Description", "" );   // or mann.DelTag("Description") if you prefer removing it
+					mannequin.SetTag( "Description", "" );
 					mannequin.Refresh();
 					if( pUser && pUser.socket )
 						pSock.SysMessage( "Description cleared." );
@@ -954,29 +906,16 @@ function OpenPaperdoll( socket, targChar )
     pStream.Free();
 }
 
-			var DISALLOWED_PATTERNS = [
-	/(https?:\/\/|www\.)/i,   // links
-	/\bdiscord\.gg\b/i,       // invites
-	/<[^>]+>/,                // html-ish tags
-	/[\x00-\x1F\x7F]/         // control chars
-];
-
-// Optional: tighten/loosen as needed
-function hasOnlyNormalChars( s )
-{
-	// Allow common punctuation. Reject weird symbols.
-	// Note: keep it simple for ES5.
-	return /^[A-Za-z0-9 \t\r\n.,'"\-_:;!?()#&\/\[\]]+$/.test( s );
-}
-
-function trimSpaces( s )
-{
-	return ( "" + s ).replace(/\s+/g," ").replace(/^\s+|\s+$/g,"");
-}
-
 function validateDescription( raw, allowEmpty )
 {
-	var text = ( raw == null ) ? "" : "" + raw;
+	var DISALLOWED_PATTERNS = [
+		/(https?:\/\/|http\b|www\.|\.[a-z]{2,})/i,   // links
+		/\bdiscord\.gg\b/i,       // invites
+		/<[^>]+>/,                // html-ish tags
+		/[\x00-\x1F\x7F]/         // control chars
+	];
+
+	var text = ( raw == null ) ? "" : ("" + raw);
 
 	// allow clearing
 	if( allowEmpty && !text.replace(/\s/g,"") )
@@ -991,19 +930,22 @@ function validateDescription( raw, allowEmpty )
 		return { ok:false, reason:"too long" };
 
 	// policy patterns
-	for( var i=0; i<DISALLOWED_PATTERNS.length; i++ )
+	for( var i = 0; i < DISALLOWED_PATTERNS.length; i++ )
 	{
 		if( DISALLOWED_PATTERNS[i].test( text ) )
 			return { ok:false, reason:"disallowed content" };
 	}
 
-	// character sanity
-	if( !hasOnlyNormalChars( text ) )
+	// character sanity (inlined hasOnlyNormalChars)
+	if( !/^[A-Za-z0-9 \t\r\n.,'"\-_:;!?()#&\/\[\]]+$/.test( text ) )
 		return { ok:false, reason:"contains unusual characters" };
 
 	// require at least one letter
 	if( !/[A-Za-z]/.test( text ) )
 		return { ok:false, reason:"needs letters" };
 
-	return { ok:true, value: trimSpaces( text ) };
+	// normalize whitespace (inlined trimSpaces)
+	text = text.replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "");
+
+	return { ok:true, value:text };
 }
