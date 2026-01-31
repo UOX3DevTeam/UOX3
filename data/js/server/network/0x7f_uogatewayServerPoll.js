@@ -16,6 +16,7 @@ function onPacketReceive( pSocket, packetNum )
 	var cmd = pSocket.GetByte( 0 );
 	if( cmd != packetNum )
 		return;
+
 	pSocket.ReadBytes( 8 );
 	var len = pSocket.GetWord( 1 );
 	var subCmd = pSocket.GetByte( 3 );

@@ -2449,7 +2449,6 @@
 2576=Odoláš nutkání vyprázdnit %s nad hlavou svého cíle.
 2577=Ten už je plný! Nemůžeš do toho nic nalít, dokud to nebude vyprázdněné.
 2578=Naléváš %s do prázdného džbánu.
-2578=Naléváš %s do prázdné láhve.
 2579=Vyliješ obsah džbánu a zůstane ti prázdný džbán.
 2580=Vyliješ obsah láhve a zůstane ti prázdná láhev.
 2581=Vyliješ obsah džbánu a zůstane ti prázdný džbán.
@@ -2485,7 +2484,8 @@
 2610=Všechny
 2611=Online
 2612=Offline
-2613=Správa postavy:<br>seriál: %s<br>Poslední zap: 2614=Teleport k postavě
+2613=Správa postavy:<br>seriál: %s<br>Poslední zap:
+2614=Teleport k postavě
 2615=Získat postavu
 2616=Prohlédnout postavu
 2617=Uvěznit/propustit postavu
@@ -2504,12 +2504,15 @@
 2630=Nalezeno %i NPC za %u milisekund.
 2631=Nalezeno %i spawnerů založených na předmětech za %u milisekund.
 2632=Správa spawnovacích objektů
-2633=Spravování spawnovacích objektů:<br>seriál: %s<br>spawn-sekce: %w<br>Množství: 2634=Teleport do Spawn Object
+2633=Spravování spawnovacích objektů:<br>seriál: %s<br>spawn-sekce: %w<br>Množství:
+2634=Teleport do Spawn Object
 2635=Otevřít editor Spawn Object
 2636=Odstranit Spawn Object
 2637=Filtr pro NPC Spawnery
 2638=Filtr pro Item Spawnery
 2639=Sortovat podle počtu Spawnů (%s)
+2650=Naléváš %s do prázdné láhve.
+2651=Naléváš %s do prázdného džbánu.
 // [2700-2799] Misc scripts
 2700=Nábytek může otáčet pouze majitel domu.
 2701=Toto zřejmě nefunguje.
@@ -2631,10 +2634,10 @@
 2817=EXIT
 2818=Počet uzamčených položek:
 2819=Počet zabezpečených kontejnerů:
-2820=Počet barelů na odpadky: 2820=Počet barelů na odpadky: 2820=Počet barelů na odpadky:
+2820=Počet barelů na odpadky:
 2821=Počet prodejců hráčů:
 2822=Vestavěno na:
-2823=Poslední obchodováno: 2823=Poslední obchodováno: 2823=Poslední obchodováno:
+2823=Poslední obchodováno:
 2824=Seznam spolumajitelů
 2825=Přidat spoluvlastníka
 2826=Odstranit spoluvlastníka
@@ -3799,6 +3802,7 @@
 8257=Musíte vybrat NPC!
 8258=Ošetřil jsi ránu a zastavil krvácení
 8259=Krvácející rány se zahojily, už nekrvácíš!
+8260=Počet dávek jedu na předmětu.
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Číslo účtu přidružené k hráči. Řízeno serverem (pouze pro čtení)
 8301=Typ umělé inteligence NPC
@@ -4444,21 +4448,21 @@
 9800=Editor objektů Spawner
 9801=Jméno spouštěče
 9802=Typ spawner
-9803 = Položka
-9804 = Npc
-9805 = Oblast
-9806 = Doprovod
+9803=Položka
+9804=Npc
+9805=Oblast
+9806=Doprovod
 9807=Založit sekci/seznam
 9808=ID sekce nebo seznam NPC k vytvoření z DFN
-9809 = Seznam
+9809=Seznam
 9810=Je-li zaškrtnuto, spawner použije spawnlist místo spawn sekce
-9811 = Částka
+9811=Částka
 9812=Maximální množství pro znovuzrození
-9813 = Min. čas
+9813=Min. čas
 9814=Minimální doba v minutách do znovuzrození
-9815 = Maximální čas
+9815=Maximální čas
 9816=Maximální čas v minutách do znovuzrození
-9817 = Rádius (plocha)
+9817=Rádius (plocha)
 9818=Poloměr pro spawnování NPC v (pouze oblastní spawner!)
 9819=Použít změny
 9820=Typ spawnera byl změněn na položku (61), částka byla resetována na 1.
@@ -4919,7 +4923,7 @@
 11862=Díly hodin
 11863=Převody
 11864=Závěs
-11865=Díly pro šestihran 11865=Díly pro šestihran 11865=Díly pro šestihran
+11865=Díly pro šestihran
 11866=Pružiny
 // Strana 4 - Nádobí
 11880=Řeznický nůž
@@ -5008,16 +5012,16 @@
 13501=Nabídka foukání skla
 13502=Různé
 13503=Skleněné zbraně
-13504 = PÍSEK
+13504=PÍSEK
 13600=prázdná láhev
-13601 = baňka (malá)
-13602 = baňka (střední)
-13603 = baňka (zakřivená)
-13604 = baňka (velká #1)
-13605 = baňka (velká #2)
-13606 = baňka (bublá modře)
-13607 = baňka (bublající fialová)
-13608 = baňka (bublá červeně)
+13601=baňka (malá)
+13602=baňka (střední)
+13603=baňka (zakřivená)
+13604=baňka (velká #1)
+13605=baňka (velká #2)
+13606=baňka (bublá modře)
+13607=baňka (bublající fialová)
+13608=baňka (bublá červeně)
 13609=prázdné lahvičky
 13610=plné lahvičky
 13611=točící se přesýpací hodiny
@@ -5444,8 +5448,8 @@
 19028=Nic nezbylo, vůbec nic, nic, nic.
 19029=Nejlepší je ti to neříkat.
 19030=Říkám, že UOX3 je nejlepší emulátor v historii.
-19031 = Ano.
-19032 = Ne.
+19031=Ano.
+19032=Ne.
 19033=Velmi pochybné.
 19034=Důlní zdroje říkají ne.
 // [19050-19065] Crystal Pet Summoning Ball
@@ -5563,8 +5567,6 @@
 19308=Váš mazlíček se s vámi poutal!
 19309=Váš mazlíček je mrtvý a na tento příkaz nereaguje.
 19310=Přerušíte pouto se svým mazlíčkem.
-19311=Jste si jisti, že chcete přerušit pouto se svým mazlíčkem?
-19311=Vypuštění ducha mazlíčka ho zničí bez šance na uzdravení. Chcete pokračovat?
 19312=Majitel mazlíčka musí být poblíž, aby se mohl pokusit o vzkříšení.
 19313=Váš mazlíček si s vámi nemůže vytvořit pouto, dokud se nezvýší vaše schopnost ochočování zvířat.
 19314=Váš mazlíček si s vámi nemůže vytvořit pouto, dokud se nezvýší vaše schopnost bushido.
