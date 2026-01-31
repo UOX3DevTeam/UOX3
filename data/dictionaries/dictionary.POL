@@ -2449,7 +2449,6 @@
 2576=Opierasz się chęci opróżnienia %s nad głową celu.
 2577=To jest już pełne! Nie możesz wlać niczego do tego, dopóki nie zostanie opróżnione.
 2578=Wlewasz %s do pustego dzbanka.
-2578=Wlewasz %s do pustej butelki.
 2579=Wylewasz zawartość dzbanka, i zostajesz z pustym dzbankiem.
 2580=Wylewasz zawartość butelki, i zostajesz z pustą butelką.
 2581=Wylewasz zawartość dzbanka i zostajesz z pustym dzbankiem.
@@ -2512,6 +2511,8 @@
 2637=Filtruj generatorów NPC
 2638=Filtruj generatorów przedmiotów
 2639=Sortuj według liczby pojawień (%s)
+2650=Wlewasz %s do pustej butelki.
+2651=Wlewasz %s do pustego dzbana.
 // [2700-2799] Różne skrypty
 2700=Tylko właściciel domu może obracać meble.
 2701=To chyba nie działa.
@@ -3801,6 +3802,7 @@
 8257=Musisz wybrać postać niezależną!
 8258=Opatrujesz ranę i zatrzymujesz krwawienie
 8259=Krwawiące rany zostały wyleczone, nie krwawisz już!
+8260=Ilość ładunków trucizny na przedmiocie.
 // [8300-8499] Menu ustawień - opisy właściwości znaków
 8300=Numer konta powiązanego z graczem. Kontrolowany przez serwer (tylko do odczytu)
 8301=Typ SI NPC
@@ -4473,7 +4475,8 @@
 9827=Ilość zaktualizowana do %i
 9828=Promień odradzania zaktualizowany do %i
 9829=Nazwa odradzacza zaktualizowana do %s
-9830=Nie używa się już listy odradzania — zakładając, że sekcja odradzania odnosi się teraz do indywidualnej definicji NPC. 9831=Teraz używana jest lista odrodzeń - zakładając, że sekcja odrodzeń odnosi się teraz do listy NPC.
+9830=Nie używa się już listy odradzania — zakładając, że sekcja odradzania odnosi się teraz do indywidualnej definicji NPC.
+9831=Teraz używana jest lista odrodzeń - zakładając, że sekcja odrodzeń odnosi się teraz do listy NPC.
 // [9900 - 10000] Polecenia dotyczące drzwi i znaków
 9916=Strona
 9917=Następny
@@ -4588,7 +4591,7 @@
 10268=Menu Wyboru Kowalstwa Miedzi
 10269=Menu Wyboru Kowalstwa Agapitowego
 10270=Moduł Wyboru Kowalstwa Miedź Tępa
-10271=Menu Wyboru Kowalstwa Miedzi 10271=Menu Wyboru Kowalstwa Złota
+10271=Menu Wyboru Kowalstwa Miedzi
 10272=Menu Wyboru Kowalstwa Żelaza Cienia
 10273=Waloryt Menu Wyboru Kowalstwa
 10274=Menu Wyboru Kowalstwa Werytowego
@@ -4983,7 +4986,7 @@
 11995=Biżuteria
 11996=Różne
 11997=Przedmioty wieloskładnikowe
-11996=Świece
+11998=Świece
 11999=pułapki
 12000=Wosk pszczeli
 12001=Pocisk do kuszy
@@ -5564,8 +5567,6 @@
 19308=Twój zwierzak nawiązał z tobą więź!
 19309=Twój zwierzak nie żyje i nie zareaguje na to polecenie.
 19310=Zrywasz więź ze swoim zwierzakiem.
-19311=Czy na pewno chcesz zerwać więź ze swoim zwierzakiem?
-19311=Uwolnienie ducha zwierzaka zniszczy go, bez szansy na odzyskanie. Czy chcesz kontynuować?
 19312=Właściciel zwierzaka musi być w pobliżu, aby podjąć próbę wskrzeszenia.
 19313=Twój zwierzak nie może nawiązać z tobą więzi, dopóki nie wzrośnie twoja zdolność oswajania zwierząt.
 19314=Twój zwierzak nie może nawiązać z tobą więzi, dopóki nie wzrośnie twoja zdolność bushido.
@@ -5575,7 +5576,8 @@
 19318=Wybierz zwierzaka, z którym chcesz się związać. Naciśnij ESC, aby anulować. Ten przedmiot zostanie zużyty po pomyślnym użyciu, więc wybieraj mądrze!
 19319=Anulowano wiązanie ze zwierzakiem.
 19320=Ten zwierzak jest już związany z tobą.
-19321=To nie jest twój zwierzak! 19322=Czy na pewno chcesz uwolnić swojego zwierzaka? Przywołane zwierzaki znikną na stałe!
+19321=To nie jest twój zwierzak!
+19322=Czy na pewno chcesz uwolnić swojego zwierzaka? Przywołane zwierzaki znikną na stałe!
 19323=Nie możesz wykonywać korzystnych działań na swoim celu.
 19324=Wybierz zwierzaka, aby natychmiast się z nim związać.
 19325=Nieprawidłowy cel.

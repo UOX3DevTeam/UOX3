@@ -2449,7 +2449,6 @@
 2576=Resisti all'impulso di svuotare il %s sulla testa del tuo bersaglio.
 2577=Quella è già piena! Non puoi versarci nulla finché non è stato svuotato.
 2578=Si versa il %s nella brocca vuota.
-2578=Si versa il %s nella bottiglia vuota.
 2579=Si versa il contenuto della brocca, e si rimane con una brocca vuota.
 2580=Si versa il contenuto della bottiglia, e si rimane con una bottiglia vuota.
 2581=Versate il contenuto della brocca, lasciandovi con una brocca vuota.
@@ -2512,6 +2511,8 @@
 2637=Filtra per generatori NPC
 2638=Filtra per generatori oggetti
 2639=Ordina per numero di spawn (%s)
+2650=Si versa il %s nella bottiglia vuota.
+2651=Si versa il %s nella brocca vuota.
 // [2700-2799] Misc Scripts
 2700=Solo il proprietario della casa può ruotare i mobili.
 2701=Questo non sembra funzionare.
@@ -3801,6 +3802,7 @@
 8257=Devi selezionare un NPC!
 8258=Hai bendato la ferita e fermato l'emorragia
 8259=Le ferite sanguinanti sono guarite, non stai più sanguinando!
+8260=Numero di cariche di veleno sull'oggetto.
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Numero di account associato al giocatore. Controllato dal server (Solo lettura)
 8301=Tipo di IA del PNG
@@ -5565,8 +5567,6 @@
 19308=Il tuo animale domestico si è legato a te!
 19309=Il tuo animale domestico è morto e non risponderà a quel comando.
 19310=Hai interrotto il legame con il tuo animale domestico.
-19311=Sei sicuro di voler interrompere il legame con il tuo animale domestico?
-19311=Liberare un animale domestico fantasma lo distruggerà, senza possibilità di recupero. Vuoi continuare?
 19312=Il proprietario dell'animale domestico deve essere nelle vicinanze per tentare la resurrezione.
 19313=Il tuo animale domestico non può creare un legame con te finché la tua capacità di addomesticamento non è aumentata.
 19314=Il tuo animale domestico non può creare un legame con te finché la tua capacità di bushido non è aumentata.
@@ -5575,7 +5575,8 @@
 19317=Il proprietario dell'animale domestico deve essere all'interno di questa casa prima di poter rianimare questa creatura.
 19318=Scegli l'animale domestico con cui desideri creare un legame. Premi ESC per annullare. Questo oggetto si consuma con l'uso riuscito, quindi scegli con saggezza!
 19319=Legame con l'animale domestico annullato.
-19320=Quell'animale domestico è già legato a te. 19321=Questo non è il tuo animale domestico!
+19320=Quell'animale domestico è già legato a te.
+19321=Questo non è il tuo animale domestico!
 19322=Sei sicuro di voler liberare il tuo animale domestico? Gli animali domestici evocati spariranno definitivamente!
 19323=Non puoi compiere azioni benefiche sul tuo bersaglio.
 19324=Seleziona un animale domestico per creare un legame immediato.

@@ -11,7 +11,7 @@ function onEquip( pEquipper, iEquipped )
 	if( iEquipped.type != 15 )
 		return false;
 
-	if( !ValidateObject( pSocket ))
+	if( pSocket == null )
 	{
 		 return false;
 	}

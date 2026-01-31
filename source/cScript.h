@@ -161,7 +161,7 @@ private:
 	JSContext *			targContext;
 	JSObject *			targObject;
 	JSObject *			scriptObj;
-	UI16						scriptID;
+	UI16				scriptID;
 
 	bool				isFiring;
 	UI08				runTime;
@@ -177,7 +177,7 @@ private:
 	std::vector<SEGump_st *>		gumpDisplays;
 
 	void		Cleanup( void );
-	JSBool	InvokeEvent( const char* name, uintN argc, jsval* argv, jsval* rval );
+	JSBool		InvokeEvent( const char* name, uintN argc, jsval* argv, jsval* rval );
 
 public:
 	void		CollectGarbage( void );
