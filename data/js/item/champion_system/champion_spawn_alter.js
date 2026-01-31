@@ -40,14 +40,11 @@ function onCreateDFN( objMade, objType )
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, altar )
 {
-	if( !ValidateObject( pUser ))
+	if( !ValidateObject( altar ) || !ValidateObject( pUser ))
 		return false;
 
 	var pSocket = pUser.socket;
 	if( pSocket == null)
-		return false;
-
-	if( !ValidateObject( altar ) || !ValidateObject( pUser ))
 		return false;
 
 	pSocket.tempObj = altar;
@@ -145,7 +142,7 @@ function SummonBoss( altar )
 	if( !ValidateObject( altar ))
 		return;
 
-	let champID = parseInt( altar.GetTag( "championType" )) || 0;
+	let champID = parseInt( altar.GetTag( "championType" ));
 	if( !champID )
 		return;
 
@@ -556,7 +553,6 @@ function ChampionGoldExplosion( altar )
 	}
 }
 
-// Returns a Z to place on, or null if no valid spot at this XY.
 function PickSurfaceZForGold( altar, x, y )
 {
 	var world    = altar.worldnumber;
@@ -566,7 +562,6 @@ function PickSurfaceZForGold( altar, x, y )
 	var zA = altar.z;
 	var zM = GetMapElevation( x, y, world );
 
-	// Helper: validate spot at z (short-circuit order)
 	function IsValidZ( z )
 	{
 		// Reject water / weird map-flagged tiles early (your existing rules)
@@ -586,7 +581,6 @@ function PickSurfaceZForGold( altar, x, y )
 		return true;
 	}
 
-	// Helper: do we have a standable surface at this z?
 	// TF_SURFACE = 9
 	function HasSurfaceAtZ( z )
 	{
@@ -606,7 +600,6 @@ function PickSurfaceZForGold( altar, x, y )
 		return zA;
 
 	// 2) If altar level does not have a surface at exact z, try a small Z window around it.
-	// This helps when the surface is zA +/- 1..2 due to tile heights/rounding.
 	for( var dz = -2; dz <= 2; ++dz )
 	{
 		var zTry = zA + dz;
@@ -623,6 +616,11 @@ function PickSurfaceZForGold( altar, x, y )
 
 function ChampionMenu( socket, altar )
 {
+	if( socket == null )
+	{
+		return;
+	}
+
 	var champalter = new Gump;
 	champalter.AddPage( 0 );
 
@@ -643,7 +641,9 @@ function ChampionMenu( socket, altar )
 	for( var id in championIDToName )
 	{
 		if( championIDToName.hasOwnProperty( id ))
+		{
 			championTypes.push( championIDToName[id] );
+		}
 	}
 	let currentID = parseInt( altar.GetTag( "championType" ));
 
@@ -714,7 +714,7 @@ function onGumpPress( socket, pButton, gumpData )
 	var maxGold = parseInt( gumpData.getEdit( 3 ));
 	var radiobtnGroup1 = gumpData.getButton( 0 );
 
-	if( !ValidateObject( altar ))
+	if( !ValidateObject( altar ) && !ValidateObject( pUser ))
 	{
 		return;
 	}

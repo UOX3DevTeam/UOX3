@@ -310,7 +310,9 @@ function RollPowerScrollBonus()
 {
 	var total = 0;
 	for( var i = 0; i < powerScrollRarityTable.length; ++i )
+	{
 		total += powerScrollRarityTable[i].weight;
+	}
 
 	var roll = RandomNumber( 0, total - 1 );
 	var accum = 0;
@@ -414,7 +416,9 @@ function RollChampionRewardCategory( spawnData, uniqueAlreadyGiven )
 
 	var total = 0;
 	for( var j = 0; j < candidates.length; ++j )
+	{
 		total += candidates[j].weight;
+	}
 
 	var roll = RandomNumber( 0, total - 1 );
 	var accum = 0;
@@ -451,7 +455,7 @@ function RollChampionRewardSection( spawnData, uniqueAlreadyGiven )
 
 function GiveChampionStandardReward( player, spawnData, uniqueAlreadyGiven )
 {
-	if( !ValidateObject(player) || !spawnData )
+	if( !ValidateObject( player ) || !spawnData )
 		return uniqueAlreadyGiven;
 
 	var result = RollChampionRewardSection( spawnData, uniqueAlreadyGiven );
