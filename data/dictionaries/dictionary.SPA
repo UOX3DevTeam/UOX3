@@ -2449,7 +2449,6 @@
 2576=Resistes el impulso de vaciar el %s sobre la cabeza de tu objetivo.
 2577=¡Eso ya está lleno! No puedes verter nada en eso hasta que se haya vaciado.
 2578=Se vierte el %s en la jarra vacía.
-2578=Se vierte el %s en la botella vacía.
 2579=Viertes el contenido de la jarra y te quedas con una jarra vacía.
 2580=Se vierte el contenido de la botella y se deja una botella vacía.
 2581=Se vierte el contenido de la jarra, quedando una jarra vacía.
@@ -2512,6 +2511,8 @@
 2637=Filtrar generadores de NPC
 2638=Filtrar generadores de objetos
 2639=Ordenar por número de apariciones (%s)
+2650=Se vierte el %s en la botella vacía.
+2651=Se vierte el %s en la jarra vacía.
 // [2700-2799] Guiones varios
 2700=Sólo el propietario de la casa puede rotar los muebles.
 2701=Eso no parece funcionar.
@@ -3801,6 +3802,7 @@
 8257=¡Debes seleccionar un NPC!
 8258=Vendas la herida y detienes la hemorragia.
 8259=Las heridas sangrantes se han curado, ¡ya no sangras!
+8260=Cantidad de cargas de veneno en el objeto.
 // [8300-8499] Menú de ajustes - Descripciones de las propiedades de los personajes
 8300=Número de cuenta asociado al jugador. Controlado por el servidor (sólo lectura)
 8301=Tipo de IA del PNJ
@@ -5565,8 +5567,6 @@
 19308=¡Tu mascota se ha vinculado contigo!
 19309=Tu mascota está muerta y no responderá a esa orden.
 19310=Rompiste el vínculo con tu mascota.
-19311=¿Estás seguro de que quieres romper el vínculo con tu mascota?
-19311=Liberar una mascota fantasma la destruirá, sin posibilidad de recuperación. ¿Deseas continuar?
 19312=El dueño de la mascota debe estar cerca para intentar la resurrección.
 19313=Tu mascota no puede formar un vínculo contigo hasta que tu habilidad de domesticación de animales haya aumentado.
 19314=Tu mascota no puede formar un vínculo contigo hasta que tu habilidad de bushido haya aumentado.
@@ -5575,7 +5575,8 @@
 19317=El dueño de la mascota debe estar dentro de esta casa para que puedas revivir a esta criatura.
 19318=Selecciona la mascota con la que deseas vincularte. Pulsa ESC para cancelar. Este objeto se consume al usarlo con éxito, ¡así que elige con cuidado!
 19319=Vínculo con la mascota cancelado.
-19320=Esa mascota ya está vinculada contigo. 19321=¡Esta no es tu mascota!
+19320=Esa mascota ya está vinculada contigo.
+19321=¡Esta no es tu mascota!
 19322=¿Seguro que quieres liberar a tu mascota? ¡Las mascotas invocadas desaparecerán permanentemente!
 19323=No puedes realizar acciones beneficiosas en tu objetivo.
 19324=Selecciona una mascota para vincularla instantáneamente.

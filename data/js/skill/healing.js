@@ -672,7 +672,7 @@ function onTimer( mChar, timerID )
 
 								if(( now - deathTime ) < waitTime)
 								{
-									socket.SysMessage( GetDictionaryEntry( 19340, pSock.language )); // That creature�s spirit lacks cohesion. Try again in a few minutes.
+									socket.SysMessage( GetDictionaryEntry( 19340, pSock.language )); // That creature's spirit lacks cohesion. Try again in a few minutes.
 									return;
 								}
 

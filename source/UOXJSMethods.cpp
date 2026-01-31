@@ -4855,7 +4855,10 @@ JSBool CMisc_CustomTarget( JSContext *cx, uintN argc, jsval *vp )
 	mySock->scriptForCallBack = JSMapping->currentActive();
 	UI08 tNum = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
 
+#if defined UOX_DEBUG_MODE
 	Console.Warning( oldstrutil::format( "CustomTarget script ID: %d", mySock->scriptForCallBack->GetScriptID() ) );
+#endif
+
 	constexpr auto maxsize = 512; // Could become long (make sure it's nullptr )
 	std::string toSay;
 	if( argc >= 2 )
