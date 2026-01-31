@@ -184,7 +184,7 @@ function onUseChecked( pUser, iUsed )
 		return false;
 
 	var pSocket = pUser.socket;
-	if( !pSocket )
+	if( pSocket == null)
 		return false;
 
 	var isBox  = iUsed.GetTag( "dawns_box" );
@@ -296,7 +296,7 @@ function DawnsOpenBoxGump( pUser, iBox, page )
 		return;
 
 	var socket = pUser.socket;
-	if( !socket )
+	if( socket == null )
 		return;
 
 	var tracks = DawnsGetTrackList( iBox );
@@ -450,7 +450,7 @@ function onGumpPress( pSock, pButton, gumpData )
 function DawnsPlayTrack( pUser, trackID )
 {
 	var socket = pUser.socket;
-	if( !socket )
+	if( socket == null)
 		return;
 
 	var allowed = pUser.GetTempTag( "dawns_box_tracks" );
@@ -500,7 +500,7 @@ function DawnsPlayTrack( pUser, trackID )
 function DawnsStopMusic( pUser )
 {
 	var socket = pUser.socket;
-	if( !socket )
+	if( socket == null )
 		return;
 
 	var boxSerial = pUser.GetTempTag( "dawns_box_serial" );
@@ -525,6 +525,9 @@ function DawnsStopMusic( pUser )
 
 function DawnsSendPlayMusicPacket( pSocket, trackID )
 {
+	if( pSocket == null )
+		return;
+
 	var myPacket = new Packet();
 	myPacket.ReserveSize( 3 );
 	myPacket.WriteByte( 0, 0x6D );
@@ -535,6 +538,9 @@ function DawnsSendPlayMusicPacket( pSocket, trackID )
 
 function DawnsSendStopMusicPacket( pSocket )
 {
+	if( pSocket == null )
+		return;
+	
 	var myPacket = new Packet();
 	myPacket.ReserveSize( 3 );
 	myPacket.WriteByte( 0, 0x6D );
@@ -552,7 +558,7 @@ function onTimer( timerObj, timerID )
 	if( !ValidateObject( timerObj ))
 		return;
 
-	if( (timerObj.GetTag( "dawns_box" )) !== 1 )
+	if(( timerObj.GetTag( "dawns_box" )) !== 1 )
 		return;
 
 	var count  = timerObj.GetTag( "dawns_animCount" );
@@ -584,6 +590,9 @@ function onTimer( timerObj, timerID )
 /** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, targetObj )
 {
+	if( socket == null )
+		return;
+
 	var pUser = socket.currentChar;
 	if( !ValidateObject( pUser ))
 		return;
