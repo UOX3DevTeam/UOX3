@@ -7688,9 +7688,9 @@
           { "name": "hasScrollbar", "type": "boolean", "required": true },
           { "name": "rgbColor",     "type": "number",  "required": true },
           { "name": "nmbr",         "type": "number",  "required": true },
-          { "name": "cliloc1",      "type": "string",  "required": true },
-          { "name": "cliloc2",      "type": "string",  "required": true },
-          { "name": "cliloc3",      "type": "string",  "required": true }
+          { "name": "cliloc1",      "type": "string",  "required": false },
+          { "name": "cliloc2",      "type": "string",  "required": false },
+          { "name": "cliloc3",      "type": "string",  "required": false }
         ] }, "returns": "void" },
         { "name": "MasterGump",          "cppName": "CGump_MasterGump",          "params": { "num":  1, "list": [{ "name": "gumpId", "type": "number", "required": true }] }, "returns": "void" },
         { "name": "NoClose",             "cppName": "CGump_NoClose",             "params": { "num":  0, "list": [] }, "returns": "void" },
