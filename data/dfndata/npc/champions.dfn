@@ -727,7 +727,6 @@ NPCAI=2
 FLEEAT=0
 REATTACKAT=1
 ORIGIN=tol
-SCRIPT=3515
 }
 
 [dragonturtle]
