@@ -12711,17 +12711,18 @@ myGump.AddPicInPic( 10, 10, 0x03de, 0, 0, 30, 30 );</code></pre>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>void AddXMFHTMLTok( left, top, width, height, hasBorder, hasScrollbar, rgbColour, clilocNum, clilocArg1, clilocArg2, clilocArg3 )</em></p>
+									<p><em>void AddXMFHTMLTok( left, top, width, height, hasBorder, hasScrollbar, rgbColour, clilocNum[, clilocArg1, clilocArg2, clilocArg3] )</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>The purpose of this is to load a HTML like gump using the cliloc "number". Its to do with Localisation settings etc. (Any of) the three cliloc-arguments are optional, but there must minimum be however many the cliloc requires.</p>
+									<p>The purpose of this is to load a HTML like gump using the cliloc "number". It's to do with Localisation settings etc. (Any of) the three cliloc-arguments are optional, but there must be exactly however many the cliloc requires. Other clilocs can be referenced as a cliloc argument by sending the clilocID as a string prefixed by #.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 	<pre><code class="language-javascript">myGump.AddXMFHTMLTok( 10, 10, 200, 300, true, true, 1, 1060656, 99 );
 	myGump.AddXMFHTMLTok( 10, 10, 200, 300, true, true, 1, 1060658, 99, "BottlesOfBeer" );
-	myGump.AddXMFHTMLTok( 10, 10, 200, 300, true, true, 1, 1041522, 99, "BottlesOfBeer", "onTheWall" );</code></pre>
+	myGump.AddXMFHTMLTok( 10, 10, 200, 300, true, true, 1, 1041522, 99, "BottlesOfBeer", "onTheWall" );
+	myGump.AddXMFHTMLTok( 10, 10, 200, 300, false, false, 0x43F7, 1114513, "#1159279" ); // passes cliloc #1159279 as a cliloc argument for cliloc 1114513</code></pre>
 								</div>
 							</div>
 						</div>
