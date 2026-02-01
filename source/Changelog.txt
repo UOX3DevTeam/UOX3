@@ -1,3 +1,6 @@
+01/02/2026 - Xoduz (#491)
+    [FIX] Fixed a client crash related to AddXMFHTMLTok Gump Method not sending correct number of non-empty cliloc arguments with gump command
+
 31/01/2026 - Xoduz (#489)
     [FIX] Fixed missing/duplicate/inconsistent entries in dictionary files
     [FIX] Fixed a socket validation in js/item/magic_armor_equipeffects.js
