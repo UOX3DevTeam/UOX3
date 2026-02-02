@@ -1,3 +1,6 @@
+02/02/2026 - Xoduz (#493)
+    [FIX] Fixed server crash related to runebooks (js/item/runebook.js) and incorrect handling of negative Z values.
+
 01/02/2026 - Xoduz (#491)
     [FIX] Fixed a client crash related to AddXMFHTMLTok Gump Method not sending correct number of non-empty cliloc arguments with gump command
 
