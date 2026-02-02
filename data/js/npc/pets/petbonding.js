@@ -25,7 +25,7 @@ function onDeathBlow( killedPet, petKiller )
 
 		if( ValidateObject( petOwner ) && petOwner.socket != null )
 		{
-			TriggerEvent( 3108, "SendNpcGhostMode", petOwner.socket, 0, killedPet.serial, 1  );}
+			TriggerEvent( 3108, "SendNpcGhostMode", petOwner.socket, 0, killedPet.serial, 1  );
 		}
 
 		killedPet.SetTag( "PetAI", killedPet.aitype.toString() );

@@ -55,6 +55,12 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>February 2nd, 2026</h4>
+						<ul>
+							<li>Added details for new JS Functions: GetSpawnRegions</li>
+							<li>Updated details for JS Functions: GetSpawnRegion, DoMovingEffect, IterateOverSpawnRegions</li>
+							<li>Updated details for JS : GetSpawnRegion</li>
+						</ul>
 						<h4>December 12th, 2025</h4>
 						<ul>
 							<li>Added details for new JS Events: onSpeedHackDetect, onSpeedHackSuspicion</li>
@@ -5938,9 +5944,9 @@ function shutdown()
 						<div class="spoiler">
 							<div class="settingsDiv">
 								<p><span class="hl">Prototype</span></p>
-								<p><em>DoMovingEffect( srcObject, trgObject, effect, speed, loop, explode, [hue], [renderMode] );<br>
-								DoMovingEffect( srcObject, targX, targY, targZ, effect, speed, loop, explode, [hue], [renderMode] );<br>
-								DoMovingEffect( srcX, srcY, srcZ, targX, targY, targZ, effect, speed, loop, explode, [hue], [renderMode] );</em></p>
+								<p><em>DoMovingEffect( srcObject, trgObject, effect, speed, loop, explode, [hue], [renderMode], [stationaryFX] );<br>
+								DoMovingEffect( srcObject, targX, targY, targZ, effect, speed, loop, explode, [hue], [renderMode], [stationaryFX] );<br>
+								DoMovingEffect( srcX, srcY, srcZ, targX, targY, targZ, effect, speed, loop, explode, [hue], [renderMode], [stationaryFX] );</em></p>
 							</div>
 							<div class="settingsDiv">
 								<p><span class="hl">Purpose</span></p>
@@ -5953,8 +5959,9 @@ function shutdown()
 									<strong>loop</strong> = ???<br>
 									<strong>explode</strong> = 0 no explosion, 1 explodes<br>
 									<strong>hue</strong> = the colour of the effect<br>
-									<strong>rendermode</strong> = how to render the effect. Available options: 0 - normal, 1 - transparent, 2 - additive, 3 - dark colors transparent, 4 - bright colors transparent, 5 - semi transparent, 6 - subtractive/negative colors, 7 - inverted colors?</p><br>
-									<p><em>hue and renderMode are OPTIONAL, none, one or both can be left out, but if setting renderMode, hue MUST be specified. Hue for effects also seems to be offset by 1 compared to hues for items; if you have a staff with hue 0x0480 and you want an effect with same hue, try 0x047f for the effect (in some cases combined with a different renderMode - like 0xa for 0x047f)</em></p>
+									<strong>rendermode</strong> = how to render the effect. Available options: 0 - normal, 1 - transparent, 2 - additive, 3 - dark colors transparent, 4 - bright colors transparent, 5 - semi transparent, 6 - subtractive/negative colors, 7 - inverted colors?<br>
+									<strong>stationaryFX</strong> = 0 moving FX (default), 1 stationary FX (for playing non-moving FX at fixed location (source))</p><br>
+									<p><em>hue, renderMode and stationaryFX are OPTIONAL, and may be left out, but stationaryFX requires renderMode to be set, which itself requires hue to be defined. Hue for effects also seems to be offset by 1 compared to hues for items; if you have a staff with hue 0x0480 and you want an effect with same hue, try 0x047f for the effect (in some cases combined with a different renderMode - like 0xa for 0x047f)</em></p>
 							</div>
 							<div class="settingsDiv">
 								<p><span class="hl">Example of usage</span></p>
@@ -6295,8 +6302,8 @@ function onUseChecked( pUser, iUsed )
 									<p><span class="hl">Notes</span></p>
 									<p>Parameters:
 										<ul>
-											<li>socket - socket to refresh to (and ensure weight is added)</li>
-											<li>character - required to know the pack/character to spawn it to</li>
+											<li>socket - socket to refresh to (and ensure weight is added). Can be null, to manually control this.</li>
+											<li>character - required to know the pack/character to spawn it to. Can be null if combined with manual item positioning.</li>
 											<li>amount - The amount of items to spawn</li>
 											<li>itemName - the name to give to the newly spawned item</li>
 											<li>itemID - itemID(hex) to spawn item from</li>
@@ -8171,21 +8178,46 @@ if( GetRaceSkillAdjustment( myRace.id, 32 ) > 10 )
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
 									<p><em>SpawnRegion GetSpawnRegion( spawnRegionNum );</em></p>
-									<p><em>SpawnRegion GetSpawnRegion( x, y, worldNum, instanceID );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Returns SpawnRegion object for specified spawnRegionNum, or for specified set of coordinates</p>
+									<p>Returns SpawnRegion object for specified spawnRegionNum</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">// Returns SpawnRegion object for spawn region #1 from spawns.dfn
 var spawnRegion = GetSpawnRegion( 1 );
 pUser.TextMessage( "The name of this SpawnRegion is: " + spawnRegion.name );
+</code></pre>
+								</div>
+							</div>
+						</div>
 
-// Returns SpawnRegion object for spawn region at specified coordinates:
-var spawnRegion = GetSpawnRegion( pUser.x, pUser.y, pUser.worldnumber, pUser.instanceID );
-pUser.TextMessage( "The name of this SpawnRegion is: " + spawnRegion.name );</code></pre>
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_SpawnRegion_GetSpawnRegions"/>
+							<label for="spoiler_function_SpawnRegion_GetSpawnRegions">GetSpawnRegions <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>SpawnRegion GetSpawnRegions( x, y, worldNum, instanceID );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns array of SpawnRegion objects for all spawn regions found at specified set of coordinates (they can overlap)</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Returns array of SpawnRegion objects for all spawn regions at specified coordinates:
+var spawnRegs = [];
+spawnRegs = GetSpawnRegions( pUser.x, pUser.y, pUser.worldnumber, pUser.instanceID );
+if( spawnRegs.length > 0 )
+{
+	// Iterate over each spawnregion found
+	for( var i = 0; i < spawnRegs.length; i++ )
+	{
+		pUser.TextMessage( "Found spawn region: " + spawnRegs[i].name + " (ID " + spawnRegs[i].regionNum + ")" );
+	}
+}</code></pre>
 								</div>
 							</div>
 						</div>
@@ -8249,7 +8281,7 @@ var feluccaSpawnStatus = GetSpawnRegionFacetStatus( 0 );</code></pre>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>void IterateOverSpawnRegions();</em></p>
+									<p><em>void IterateOverSpawnRegions( [socket] );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -8257,13 +8289,13 @@ var feluccaSpawnStatus = GetSpawnRegionFacetStatus( 0 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>For every object it comes across, the iterator will call onIterateSpawnRegions( SpawnRegionObject ) in the calling script.</p>
+									<p>The IterateOverSpawnRegions() function will return a count of all objects that onIterateSpawnRegions() returned true for. It also supports an optional socket parameter, which can be passed in via the IterateOverSpawnRegions function.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">var count = IterateOverSpawnRegions();
+									<pre><code class="language-javascript">var count = IterateOverSpawnRegions( socket );
 ..
-function onIterateSpawnRegions( toCheck )
+function onIterateSpawnRegions( toCheck, socket )
 {
 	Console.Print( "Spawn Region Number: " + toCheck.regionNum + "\n" );
 	Console.Print( "Spawn Region Name: " + toCheck.name + "\n" );
@@ -15218,100 +15250,6 @@ socket.SysMessage( 0x42, "This message has a different color!" );</code></pre>
 					</div>
 				</div> <!-- cd-faq__content -->
 			</li>
-
-			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#methodsSpawnRegion" id="methodsSpawnRegion"><span>SpawnRegion Methods</span></a>
-				<div class="cd-faq__content">
-					<div class="text-component">
-
-					<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_method_spawnregion_getspawnregion"/>
-						<label for="spoiler_method_spawnregion_getspawnregion">GetSpawnRegion <i class="fas fa-angle-down"></i></label>
-						<div class="spoiler">
-							<div class="settingsDiv">
-								<p><span class="hl">Prototype</span></p>
-								<p><em>void GetSpawnRegion( spawnRegionNum )</em></p>
-							</div>
-							<div class="settingsDiv">
-								<p><span class="hl">Purpose</span></p>
-								<p>Returns SpawnRegion object for specified spawnRegionNum</p>
-							</div>
-							<div class="settingsDiv">
-								<p><span class="hl">Example of usage</span></p>
-	<pre><code class="language-javascript">// Return SpawnRegion object for spawn region #1 from spawns.dfn
-var spawnRegion = GetSpawnRegion( i );
-
-// Have character object pUser say the name of the spawnRegion
-pUser.TextMessage( "The name of this SpawnRegion is: " + spawnRegion.name );</code></pre>
-							</div>
-							</div>
-					</div>
-
-					<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_method_spawnregion_getspawnregioncount"/>
-						<label for="spoiler_method_spawnregion_getspawnregioncount">GetSpawnRegionCount <i class="fas fa-angle-down"></i></label>
-						<div class="spoiler">
-							<div class="settingsDiv">
-								<p><span class="hl">Prototype</span></p>
-								<p><em>void GetSpawnRegionCount()</em></p>
-							</div>
-							<div class="settingsDiv">
-								<p><span class="hl">Purpose</span></p>
-								<p>Returns amount of SpawnRegions that exist</p>
-							</div>
-							<div class="settingsDiv">
-								<p><span class="hl">Example of usage</span></p>
-	<pre><code class="language-javascript">// Get total number of spawn regions
-var spawnRegionCount = GetSpawnRegionCount();
-pUser.TextMessage( "There are " + spawnRegionCount + " SpawnRegions on this server!" );
-
-// Loop through all the spawn regions and print name of each one in UOX3 console
-var spawnRegion;
-for( var i = 0; i < spawnRegionCount; i++ )
-{
-	spawnRegion = GetSpawnRegion( i );
-	Console.Print( "SpawnRegion Name: " + spawnRegion.name + "\n" );
-}</code></pre>
-							</div>
-							</div>
-					</div>
-
-					<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_method_spawnregion_iterateoverspawnregions"/>
-						<label for="spoiler_method_spawnregion_iterateoverspawnregions">IterateOverSpawnRegions <i class="fas fa-angle-down"></i></label>
-						<div class="spoiler">
-							<div class="settingsDiv">
-								<p><span class="hl">Prototype</span></p>
-								<p><em>void IterateOverSpawnRegions()</em></p>
-							</div>
-							<div class="settingsDiv">
-								<p><span class="hl">Purpose</span></p>
-								<p>Iterates over all SpawnRegions on the server.</p>
-							</div>
-							<div class="settingsDiv">
-								<p><span class="hl">Notes</span></p>
-								<p>For every object it comes across, the iterator will call onIterateSpawnRegions( SpawnRegionObject ) in the calling script.</p>
-							</div>
-							<div class="settingsDiv">
-								<p><span class="hl">Example of usage</span></p>
-	<pre><code class="language-javascript">// Iterate over all spawn regions and count how many times the iterate function returned true
-var count = IterateOverSpawnRegions();
-
-// This function runs once per spawn region
-function onIterateSpawnRegions( toCheck )
-{
-	Console.Print( "Spawn Region Number: " + toCheck.regionNum + "\n" );
-	Console.Print( "Spawn Region Name: " + toCheck.name + "\n" );
-	Console.Print( "Spawn Region World: " + toCheck.world + "\n" );
-	return true;
-}</code></pre>
-							</div>
-							</div>
-					</div>
-
-					</div>
-				</div> <!-- cd-faq__content -->
-			</li>
 		</ul> <!-- cd-faq__group -->
 
 		<ul id="properties" class="cd-faq__group">
@@ -17970,18 +17908,26 @@ myObject.propertyName = newValue;
 </code></pre></p>
 						<h3>Flag/Boolean Types</h3>
 						<div class="settingsDiv">
-							<p><span class="hl">.onlyOutside</span> <strong>(bool, <em>true/false</em>)</strong><br>
-							Get/Set whether NPCs should only spawn outside buildings</p>
+							<p><span class="hl">.forceSpawn</span> <strong>(bool, <em>true/false</em>)</strong><br>
+							Gets/Sets whether spawn region should force spawn NPCs, without validating location</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.isSpawner</span> <strong>(bool, <em>true/false</em>)</strong><br>
 							Get/Set whether items spawned from Spawn Region is of object type Spawner</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.onlyOutside</span> <strong>(bool, <em>true/false</em>)</strong><br>
+							Get/Set whether NPCs should only spawn outside buildings</p>
 						</div>
 
 						<h3>Integer Types</h3>
 						<div class="settingsDiv">
 							<p><span class="hl">.call</span> <strong>(int)</strong><br>
 							Get/Set number of objects that should be spawned in each respawn call for Spawn Region</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.defZ</span> <strong>(int)</strong><br>
+							Gets/Sets definitive Z Level of the Spawn Region at which to attempt spawning objects</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.instanceID</span> <strong>(int)</strong><br>

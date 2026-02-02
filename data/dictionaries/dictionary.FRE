@@ -2677,6 +2677,9 @@
 2639=Tri par nombre de spawn (%s)
 2650=Vous versez les %s dans la bouteille vide.
 2651=Vous versez les %s dans la cruche vide.
+2660=Trouvé %i générateurs basés sur la région en %u millisecondes.
+2661=Gérer les régions de génération
+2662=Téléporter vers la région de génération
 // [2700-2799] Misc scripts
 2700=Seul le propriétaire de la maison peut faire pivoter les meubles.
 2701=Cela ne semble pas fonctionner.
@@ -4198,6 +4201,29 @@
 8724=L'emplacement 7 de ce compte est-il bloqué ?
 8725=Pour combien de temps l'utilisateur est-il banni, en minutes ?
 8726=Quand le compte a-t-il été connecté pour la première fois ? (Lecture seule)
+// [8750-8799] Tweak Menu - Spawn Region property descriptions
+8750=Nombre de caractères/éléments générés par cycle de génération
+8751=ID d'instance où la région de génération est active
+8752=Les éléments générés sont-ils des objets générateurs ?
+8753=ID de la section d'éléments à générer à partir des DFN
+8754=Nombre d'éléments actuellement générés (en lecture seule)
+8755=Référence à la liste ITEMLIST à partir de laquelle générer
+8756=Nombre maximal d'éléments à générer
+8757=Nombre maximal de PNJ à générer
+8758=Intervalle maximal jusqu'au prochain cycle de génération
+8759=Intervalle de temps minimum jusqu'au prochain cycle de génération
+8760=Nom interne de la région de génération
+8761=ID de la section NPC à générer à partir des DFN
+8762=Nombre de PNJ actuellement générés (en lecture seule)
+8763=Référence à la liste NPCLIST à partir de laquelle générer
+8764=Générer uniquement à l'extérieur des bâtiments ?
+8765=Valeur Z maximale que les objets du monde peuvent avoir sur l'apparition
+8766=ID de la région d'apparition
+8767=Numéro du monde dans lequel la région d'apparition est active
+8768=Limite ouest de la région d'apparition
+8769=Limite est de la région d'apparition
+8770=Limite nord de la région d'apparition
+8771=Limite sud de la région d'apparition
 // [8800-8849] General Tweak Menu
 8800=Entrer une nouvelle valeur
 8801=Les modifications apportées aux valeurs effectives des compétences ne sont pas sauvegardées, et disparaîtront si le serveur redémarre. Pour des changements permanents de compétences, ajustez plutôt la propriété baseskills !

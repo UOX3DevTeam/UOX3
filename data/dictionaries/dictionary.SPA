@@ -2513,6 +2513,9 @@
 2639=Ordenar por número de apariciones (%s)
 2650=Se vierte el %s en la botella vacía.
 2651=Se vierte el %s en la jarra vacía.
+2660=Se han encontrado %i generadores basados en regiones en %u milisegundos.
+2661=Gestionar regiones de generación
+2662=Teletransportarse a la región de generación
 // [2700-2799] Guiones varios
 2700=Sólo el propietario de la casa puede rotar los muebles.
 2701=Eso no parece funcionar.
@@ -4034,6 +4037,29 @@
 8724=¿Está bloqueada la ranura 7 de esta Cuenta?
 8725=¿Cuánto tiempo lleva el usuario baneado, en minutos?
 8726=¿Cuándo se conectó la cuenta por primera vez? (Sólo lectura)
+// [8750-8799] Tweak Menu - Spawn Region property descriptions
+8750=Número de caracteres/elementos generados por ciclo de generación
+8751=ID de instancia donde la región de generación está activa
+8752=¿Son los elementos generados objetos generadores?
+8753=ID de la sección de elementos de DFN para generar
+8754=Recuento de elementos generados actualmente (solo lectura)
+8755=Referencia a ITEMLIST desde donde generar
+8756=Cantidad máxima de elementos para generar
+8757=Cantidad máxima de NPC para generar
+8758=Intervalo de tiempo máximo hasta el siguiente ciclo de generación
+8759=Intervalo de tiempo mínimo hasta el siguiente ciclo de aparición
+8760=Nombre interno de la región de aparición
+8761=ID de la sección NPC de DFNs para aparecer
+8762=Recuento de NPC actualmente aparecidos (solo lectura)
+8763=Referencia a NPCLIST desde la que aparecer
+8764=¿Aparecer solo fuera de los edificios?
+8765=Valor Z máximo que los objetos del mundo pueden influir en la aparición
+8766=ID de la región de aparición
+8767=Número del mundo en el que está activa la región de aparición
+8768=Límite occidental de la región de aparición
+8769=Límite oriental de la región de aparición
+8770=Límite norte de la región de aparición
+8771=Límite sur de la región de aparición
 // [8800-8849] Menú de ajustes generales
 8800=Introducir nuevo valor
 8801=Los cambios realizados en los valores efectivos de las habilidades no se guardan, y desaparecerán si se reinicia el servidor. Para cambios permanentes en las habilidades, ajusta la propiedad basekills en su lugar.
