@@ -14,6 +14,10 @@ const scriptID = 5029;		// Script ID assigned to this script in jse_fileassociat
 const useDelay = 7000; 		// 7 seconds between each time a runebook can be used
 const tooltipClilocID = 1042971; // Cliloc ID to use for tooltips. 1042971 should work with clients from ~v3.0.x to modern day
 
+// Define some constants for 32-bit Integer Limits to help us convert some numbers later
+const MAX_INT32 = 0x7FFFFFFF; // 2147483647
+const MAX_UINT32 = 0xFFFFFFFF; // 4294967295
+
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, runeBook )
 {
@@ -661,10 +665,10 @@ function SplitAndValidateRuneData( runeBook, runeIndex, runeData )
 	let zLoc = parseInt( splitData[4] );
 
 	// If z is abnormally large, was probably a negative Z before stored in morez
-	if( zLoc > 2147483647 )
+	if( zLoc > MAX_INT32 )
 	{
 		// Convert Z back to negative
-		let fixedZ = zLoc - 4294967296;
+		let fixedZ = zLoc - ( MAX_UINT32 + 1 );
 		splitData[4] = fixedZ.toString();
 
 		// Rebuild rune tag
@@ -1008,9 +1012,9 @@ function onDropItemOnItem( iDropped, pUser, runeBook )
 				// stored as a positive in .morez (unsigned int only),
 				// convert it back to the proper value here
 				var zLoc = iDropped.morez;
-				if( zLoc > 2147483647 )
+				if( zLoc > MAX_INT32 )
 				{
-					zLoc = zLoc - 4294967296;
+					zLoc = zLoc - ( MAX_UINT32 + 1 );
 				}
 
 				var worldNum = iDropped.more;
