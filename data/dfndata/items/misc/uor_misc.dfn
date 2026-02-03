@@ -37,7 +37,7 @@ custominttag=dawns_box 1
 [base_music_gear]
 {
 get=base_item
-name=Dawns Music Gear
+name=Dawn's Music Gear
 id=0x1053
 weight=100
 decay=1

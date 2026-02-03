@@ -107,27 +107,16 @@ function DawnsGetTrackList( box )
 	return result;
 }
 
-function DawnsSetTrackList( msuicbox, tracks )
+function DawnsSetTrackList( musicbox, tracks )
 {
-	var serial = "";
-	for( var i = 0; i < tracks.length; i++ )
-	{
-		if( i > 0 )
-			serial += ",";
-		serial += tracks[i];
-	}
-	msuicbox.SetTag( "dawns_tracks", serial );
-	msuicbox.Refresh();
+	var serial = tracks.join( "," );
+	musicbox.SetTag( "dawns_tracks", serial );
+	musicbox.Refresh();
 }
 
 function DawnsTrackExists( tracks, trackID )
 {
-	for( var i = 0; i < tracks.length; i++ )
-	{
-		if( tracks[i] === trackID )
-			return true;
-	}
-	return false;
+	return tracks.indexOf( trackID ) !== -1;
 }
 
 /** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
@@ -523,6 +512,7 @@ function DawnsStopMusic( pUser )
 	DawnsSendStopMusicPacket( socket );
 }
 
+/** @type { ( pSocket: Socket, trackID: number ) => void } */
 function DawnsSendPlayMusicPacket( pSocket, trackID )
 {
 	if( pSocket == null )
@@ -536,6 +526,7 @@ function DawnsSendPlayMusicPacket( pSocket, trackID )
 	myPacket.Free();
 }
 
+/** @type { ( pSocket: Socket ) => void } */
 function DawnsSendStopMusicPacket( pSocket )
 {
 	if( pSocket == null )
@@ -618,14 +609,14 @@ function onCallback1( socket, targetObj )
 
 	// Find the gear we were using
 	var gearSer = pUser.GetTempTag( "dawns_pendingGear" );
-	if( gearSer === 0 )
+	if( gearSer == null || gearSer === 0 )
 	{
 		socket.SysMessage( GetDictionaryEntry( 6544, socket.language )); // No music gear is pending.
 		return;
 	}
 
 	var gear = CalcItemFromSer( gearSer );
-	if( !ValidateObject( gear ) || (gear.GetTag( "dawns_gear" )) !== 1 )
+	if( !ValidateObject( gear ) || ( gear.GetTag( "dawns_gear" )) !== 1 )
 	{
 		socket.SysMessage( GetDictionaryEntry( 6545, socket.language )); // The music gear could not be found.
 		return;
