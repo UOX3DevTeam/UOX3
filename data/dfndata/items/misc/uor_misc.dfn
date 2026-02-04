@@ -26,6 +26,7 @@ origin=uor
 [dawnsmusicbox]
 {
 get=base_item
+name=Dawn's Music Box
 id=0x2AF9
 weight=100
 decay=1
