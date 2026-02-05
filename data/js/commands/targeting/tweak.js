@@ -483,6 +483,11 @@ function CommandRegistration()
 /** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_TWEAK( pSocket, cmdString )
 {
+	if( pSocket == null || !ValidateObject( pSocket.currentChar ))
+		return;
+
+	let pUser = pSocket.currentChar;
+
 	if( GetServerSetting( "ServerLanguage" ) == 7 || GetServerSetting( "ServerLanguage" ) == 0 && pSocket.language == 24 )
 	{
 		// Disable tooltips in this menu for Czech language until we can figure out why it crashes client!
@@ -493,12 +498,14 @@ function command_TWEAK( pSocket, cmdString )
 	// tweak command via the hard-coded wholist gump
 
 	// First, handle tweaking of potential spawn region object
-	if( pSocket.xText2 )
+	let tweakSpawnReg = pUser.GetTempTag( "tweakSpawnReg" );
+	if( tweakSpawnReg === true )
 	{
-		let spawnReg = GetSpawnRegion( parseInt( pSocket.xText2 ));
+		pUser.SetTempTag( "tweakSpawnReg", null );
+		let spawnReg = GetSpawnRegion( pUser.GetTempTag( "tweakSpawnRegID" ));
 		if( spawnReg != null && "regionNum" in spawnReg )
 		{
-			pSocket.xText2 = "";
+			pUser.SetTempTag( "tweakSpawnRegID", null );
 			onCallback0( pSocket, spawnReg );
 			return;
 		}
@@ -975,6 +982,7 @@ function RenderOtherPages( pSocket, gumpObj, gumpPage, totalPages )
 }
 
 // Handle properties of item targets
+/** @type { ( pSocket: Socket, myTarget: Item ) => void } */
 function HandleItemTarget( pSocket, myTarget )
 {
 	var itemGump = new Gump;
@@ -1529,6 +1537,7 @@ function HandleItemTarget( pSocket, myTarget )
 }
 
 // Handle properties of character targets
+/** @type { ( pSocket: Socket, myTarget: Character ) => void } */
 function HandleCharTarget( pSocket, myTarget )
 {
 	var charGump = new Gump;
@@ -2553,6 +2562,7 @@ function HandleCharTarget( pSocket, myTarget )
 }
 
 // Handle properties of character skills
+/** @type { ( pSocket: Socket, myTarget: Character, baseSkills: BaseSkills ) => void } */
 function HandleSkillGump( pSocket, myTarget, baseSkills )
 {
 	var skillGump = new Gump;
@@ -2967,6 +2977,7 @@ function HandleSkillGump( pSocket, myTarget, baseSkills )
 }
 
 // Handle properties of Multis
+/** @type { ( pSocket: Socket, myTarget: Item ) => void } */
 function HandleMultiTarget( pSocket, myTarget )
 {
 	var multiGump = new Gump;
@@ -3287,6 +3298,7 @@ function HandleMultiTarget( pSocket, myTarget )
 }
 
 // Handle properties of region targets
+/** @type { ( pSocket: Socket, myTarget: TownRegion ) => void } */
 function HandleRegionTarget( pSocket, myTarget )
 {
 	var regionGump = new Gump;
@@ -3572,6 +3584,7 @@ function HandleRegionTarget( pSocket, myTarget )
 }
 
 // Handle properties of user account
+/** @type { ( pSocket: Socket, myTarget: Account ) => void } */
 function HandleAccountTarget( pSocket, myTarget )
 {
 	var accountGump = new Gump;
@@ -3888,6 +3901,7 @@ function HandleAccountTarget( pSocket, myTarget )
 }
 
 // Handle properties of spawn region targets
+/** @type { ( pSocket: Socket, myTarget: SpawnRegion ) => void } */
 function HandleSpawnRegionTarget( pSocket, myTarget )
 {
 	var srGump = new Gump;

@@ -51,11 +51,14 @@ function onCallback0( socket, ourObj )
 	            {
 	                let checkSpawnReg = tempSpawnRegs[r];
 
-	                // Use regionNum as a unique key to avoid duplicates
-	                if( !foundRegs[checkSpawnReg.regionNum] )
+	                if( checkSpawnReg != null )
 	                {
-	                    foundRegs[checkSpawnReg.regionNum] = true;
-	                    spawnRegs.push( checkSpawnReg );
+		                // Use regionNum as a unique key to avoid duplicates
+		                if( !foundRegs[checkSpawnReg.regionNum] )
+		                {
+		                    foundRegs[checkSpawnReg.regionNum] = true;
+		                    spawnRegs.push( checkSpawnReg );
+		                }
 	                }
 	            }
 	        }
@@ -70,55 +73,52 @@ function onCallback0( socket, ourObj )
 
 	for( let i = 0; i < spawnRegs.length; i++ )
 	{
-		if( spawnRegs[i] )
+		let hue = RandomNumber( 0x30, 0x3F );
+		let spawnReg = spawnRegs[i];
+		let spawnRegName = spawnReg.name;
+		let spawnX1 = spawnReg.x1;
+		let spawnY1 = spawnReg.y1;
+		let spawnX2 = spawnReg.x2;
+		let spawnY2 = spawnReg.y2;
+		let spawnZ = 0;
+		socket.SysMessage( "SpawnRegion #" + spawnReg.regionNum + ": " + spawnRegName + " (" + spawnX1 + "," + spawnY1 + " -> " + spawnX2 + "," + spawnY2 + ")" );
+		for( let x = spawnX1; x <= spawnX2; x++ )
 		{
-			let hue = RandomNumber( 0x30, 0x3F );
-			let spawnReg = spawnRegs[i];
-			let spawnRegName = spawnReg.name;
-			let spawnX1 = spawnReg.x1;
-			let spawnY1 = spawnReg.y1;
-			let spawnX2 = spawnReg.x2;
-			let spawnY2 = spawnReg.y2;
-			let spawnZ = 0;
-			socket.SysMessage( "SpawnRegion #" + spawnReg.regionNum + ": " + spawnRegName + " (" + spawnX1 + "," + spawnY1 + " -> " + spawnX2 + "," + spawnY2 + ")" );
-			for( let x = spawnX1; x <= spawnX2; x++ )
+			if( DistanceBetween( curX, curY, x, spawnY1 - 1 ) <= 30 )
 			{
-				if( DistanceBetween( curX, curY, x, spawnY1 - 1 ) <= 30 )
-				{
-					spawnZ = GetMapElevation( x, spawnY1 - 1, curWorldNum );
-					DoMovingEffect( x, spawnY1 - 1, spawnZ, x, spawnY1 - 1, spawnZ, 0x7, 0, 0xFF, false, hue, 0x2, true );
-				}
-				if( DistanceBetween( curX, curY, x, spawnY2 ) <= 30 )
-				{
-					spawnZ = GetMapElevation( x, spawnY2, curWorldNum );
-					DoMovingEffect( x, spawnY2, spawnZ, x, spawnY2, spawnZ, 0x7, 0, 0xFF, false, hue, 0x2, true );
-				}
+				spawnZ = GetMapElevation( x, spawnY1 - 1, curWorldNum );
+				DoMovingEffect( x, spawnY1 - 1, spawnZ, x, spawnY1 - 1, spawnZ, 0x7, 0, 0xFF, false, hue, 0x2, true );
 			}
-			for( let y = spawnY1; y <= spawnY2; y++ )
+			if( DistanceBetween( curX, curY, x, spawnY2 ) <= 30 )
 			{
-				if( DistanceBetween( curX, curY, spawnX1 - 1, y ) <= 30 )
-				{
-					spawnZ = GetMapElevation( spawnX1 - 1, y, curWorldNum );
-					DoMovingEffect( spawnX1 - 1, y, spawnZ, spawnX1 - 1, y, spawnZ, 0x8, 0, 0xFF, false, hue, 0x2, true );
-				}
-				if( DistanceBetween( curX, curY, spawnX2, y ) <= 30 )
-				{
-					spawnZ = GetMapElevation( spawnX2, y, curWorldNum );
-					DoMovingEffect( spawnX2, y, spawnZ, spawnX2, y, spawnZ, 0x8, 0, 0xFF, false, hue, 0x2, true );
-				}
+				spawnZ = GetMapElevation( x, spawnY2, curWorldNum );
+				DoMovingEffect( x, spawnY2, spawnZ, x, spawnY2, spawnZ, 0x7, 0, 0xFF, false, hue, 0x2, true );
 			}
-
-			// For each spawn region, create a short-lived dummy item in the center that can be used to show name and ID of spawn region
-			let tempItem = CreateBlankItem( null, null, 1, spawnReg.name, 0x1771, 0x0, "ITEM", false );
-			tempItem.shouldSave = false;
-			tempItem.x = Math.round(( spawnX2 + spawnX1 ) / 2 );
-			tempItem.y = Math.round(( spawnY2 + spawnY1 ) / 2 );
-			tempItem.z = GetMapElevation( Math.round(( spawnX2 + spawnX1 ) / 2 ), Math.round(( spawnY2 + spawnY1 ) / 2 ), curWorldNum );
-			tempItem.decayable = true;
-			tempItem.decaytime = 12;
-			tempItem.color = 50;
-			tempItem.Refresh();
-			tempItem.TextMessage( "#" + spawnReg.regionNum, false, 0x095, 0, socket.currentChar.serial );
 		}
+		for( let y = spawnY1; y <= spawnY2; y++ )
+		{
+			if( DistanceBetween( curX, curY, spawnX1 - 1, y ) <= 30 )
+			{
+				spawnZ = GetMapElevation( spawnX1 - 1, y, curWorldNum );
+				DoMovingEffect( spawnX1 - 1, y, spawnZ, spawnX1 - 1, y, spawnZ, 0x8, 0, 0xFF, false, hue, 0x2, true );
+			}
+			if( DistanceBetween( curX, curY, spawnX2, y ) <= 30 )
+			{
+				spawnZ = GetMapElevation( spawnX2, y, curWorldNum );
+				DoMovingEffect( spawnX2, y, spawnZ, spawnX2, y, spawnZ, 0x8, 0, 0xFF, false, hue, 0x2, true );
+			}
+		}
+
+		// For each spawn region, create a short-lived dummy item in the center that can be used to show name and ID of spawn region
+		let tempItem = CreateBlankItem( null, null, 1, spawnReg.name, 0x1771, 0x0, "ITEM", false );
+		tempItem.shouldSave = false;
+		tempItem.x = Math.round(( spawnX2 + spawnX1 ) / 2 );
+		tempItem.y = Math.round(( spawnY2 + spawnY1 ) / 2 );
+		tempItem.z = GetMapElevation( Math.round(( spawnX2 + spawnX1 ) / 2 ), Math.round(( spawnY2 + spawnY1 ) / 2 ), curWorldNum );
+		tempItem.decayable = true;
+		tempItem.decaytime = 12;
+		tempItem.color = 50;
+		tempItem.Refresh();
+		tempItem.TextMessage( "#" + spawnReg.regionNum, false, 0x095, 0, socket.currentChar.serial );
 	}
 }

@@ -17,10 +17,10 @@ var spawnRegionListForceUpdate = false;
 function command_SPAWNREGIONADMIN( socket, cmdString )
 {
 	socket.currentChar.SetTempTag( "spawnRegionAdminWorldFilter", -1 );
-	ShowSpawnRegionList( socket, cmdString, null, null );
+	ShowSpawnRegionList( socket, cmdString );
 }
 
-function ShowSpawnRegionList( socket, cmdString, filteredList, filterString )
+function ShowSpawnRegionList( socket, cmdString )
 {
 	var gumpID = 1064 + 0xffff;
 	socket.CloseGump( gumpID, 0 );
@@ -40,7 +40,7 @@ function ShowSpawnRegionList( socket, cmdString, filteredList, filterString )
 		let foundMsg = GetDictionaryEntry( 2660, socket.language ).replace( /%i/gi, spawnRegionList.length );
 		socket.SysMessage( foundMsg.replace( /%u/gi, totalTime )); // Found %i region-based spawners in %u milliseconds.
 	}
-	DisplaySpawnRegionListGump( socket, filteredList, filterString, 0 );
+	DisplaySpawnRegionListGump( socket, null, null, 0 );
 }
 
 /** @type { ( obj: SpawnRegion, mSock: Socket ) => boolean } */
@@ -55,7 +55,6 @@ function onIterateSpawnRegions( toCheck, socket )
 		//spawnRegionListButtonID++;
 		return true;
 	}
-	Console.Print( "Invalid spawn region!\n" );
 	return false;
 }
 
@@ -72,7 +71,7 @@ function DisplaySpawnRegionListGump( socket, filteredList, incFilterString, spaw
 	}
 
 	var pageSize = 20;
-	var currentPage = parseInt( socket.currentChar.GetTempTag( "spawnRegionAdminCurrentPage" ));
+	var currentPage = socket.currentChar.GetTempTag( "spawnRegionAdminCurrentPage" );
 	if( !currentPage || currentPage < 1 )
 	{
 		currentPage = 1;
@@ -264,7 +263,7 @@ function onGumpPress( socket, pButton, gumpData )
 		// Buttons 0-10, reserved for core gump functionality
 		case 1: // Next page
 		{
-			var pageNum = parseInt( pUser.GetTempTag( "spawnRegionAdminCurrentPage" ));
+			var pageNum = pUser.GetTempTag( "spawnRegionAdminCurrentPage" );
 			if( !pageNum )
 			{
 				pageNum = 1;
@@ -281,7 +280,7 @@ function onGumpPress( socket, pButton, gumpData )
 		}
 		case 2: // Prev page
 		{
-			var pageNum = parseInt( pUser.GetTempTag( "spawnRegionAdminCurrentPage" ) );
+			var pageNum = pUser.GetTempTag( "spawnRegionAdminCurrentPage" );
 			if( !pageNum )
 			{
 				pageNum = 1;
@@ -444,7 +443,8 @@ function onGumpPress( socket, pButton, gumpData )
 					socket.SysMessage( chosenSpawnRegion.name );
 
 					// Bring up Tweak menu for spawn regions
-					socket.xText2 = ( chosenSpawnRegion.regionNum ).toString();
+					pUser.SetTempTag( "tweakSpawnReg", true );
+					pUser.SetTempTag( "tweakSpawnRegID", chosenSpawnRegion.regionNum );
 					pUser.ExecuteCommand( "tweak" );
 				}
 			}
@@ -509,8 +509,6 @@ function FilterListByWorld( listToFilter, worldNum )
 		// Filter by facet
 		return ( worldNum === -1 || spawnObj.spawnRegion.world == worldNum );
 	});
-
-	Console.Print( "List length: " + filteredList.length + "\n" );
 
 	return filteredList;
 }
