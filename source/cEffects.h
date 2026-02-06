@@ -18,8 +18,8 @@ public:
 	void	PlayStaticAnimation( CBaseObject *target, UI16 effect, UI08 speed, UI08 loop, bool explode = false );
 	void	PlayStaticAnimation( SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode );
 	void	PlayMovingAnimation( CBaseObject *source, CBaseObject *dest, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 dwHue = 0, UI32 dwRenderMode = 0, bool playLocalMoveFX = false );
-	void	PlayMovingAnimation( SI16 srcX, SI16 srcY, SI08 srcZ, SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 dwHue = 0, UI32 dwRenderMode = 0 );
-	void	PlayMovingAnimation( CBaseObject *source, SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 dwHue = 0, UI32 dwRenderMode = 0 );
+	void	PlayMovingAnimation( SI16 srcX, SI16 srcY, SI08 srcZ, SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 dwHue = 0, UI32 dwRenderMode = 0, bool playLocalMoveFX = false );
+	void	PlayMovingAnimation( CBaseObject *source, SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 dwHue = 0, UI32 dwRenderMode = 0, bool playLocalMoveFX = false );
 	void	PlayCharacterAnimation( CChar *mChar, UI16 actionId, UI08 frameDelay = 0, UI08 frameCount = 7, bool playBackwards = false );
 	void	PlayNewCharacterAnimation( CChar *mChar, UI16 actionId, UI16 subActionId = 0, UI08 subSubActionId = 0 );
 	void	PlaySpellCastingAnimation( CChar *mChar, UI16 actionId, bool monsterCast, bool areaCastAnim );
