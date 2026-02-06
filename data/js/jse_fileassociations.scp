@@ -463,6 +463,8 @@
 1064=commands/spawnadmin.js
 1065=commands/targeting/xwalk.js
 1066=commands/custom/instabond.js
+1067=commands/targeting/showspawnregions.js
+1068=commands/spawnregionadmin.js
 }
 
 //-------------------------------------------
