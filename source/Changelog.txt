@@ -1,3 +1,18 @@
+06/02/2026 - Xoduz (#495)
+    [ADD] Added new GM command 'showspawnregions (js/commands/targeting/showspawnregions.js) which will visualize all spawn regions within range of targeted location for a short duration
+    [ADD] Added new GM command 'spawnregionadmin (js/commands/spawnregionadmin.js) which shows a filterable list of all spawn regions in the game. Clicking the name of the spawn region in the menu will open up the tweak menu for said spawn region. Note that all changes done to spawn regions are temporary in nature, and only last until the next server restart (where it again reads from spawn region DFN files)
+    [UPD] Updated 'tweak command to support modifying (temporary) of Spawn Regions. Can be accessed via spawnregionadmin command
+    [UPD] Extended JS Function DoMovingEffect to support another optional parameter, a flag to specify if effect is stationary (true) at source location or not (false, default). Updated syntax:
+        DoMovingEffect( srcObject, trgObject, effect, speed, loop, explode, [hue], [renderMode], [stationaryFX] )
+        DoMovingEffect( srcObject, targX, targY, targZ, effect, speed, loop, explode, [hue], [renderMode], [stationaryFX] )
+        DoMovingEffect( srcX, srcY, srcZ, targX, targY, targZ, effect, speed, loop, explode, [hue], [renderMode], [stationaryFX] )
+    [UPD] JS Function GetSpawnRegion has been split into two, one that accepts a singular spawn region ID param, and one that accepts coordinates for a location and returns all spawn regions found there:
+        GetSpawnRegion( spawnRegionID ) // Returns reference to specificed spawn region
+        GetSpawnRegions( x, y, worldnumber, instanceID ) // Returns list of references to all spawn regions at specified area
+    [UPD] IterateOverSpawnRegions JS function now supports an optional socket parameter, which becomes available as a parameter in OnIterateSpawnRegion event if included
+    [FIX] Fixed an issue with Spawn Region JS Objects where the .y1 property would return the same value as .x2
+    [FIX] Fixed an issue with js/npc/pets/petbonding.js that prevented successful script compilation
+
 02/02/2026 - Xoduz (#493)
     [FIX] Fixed server crash related to runebooks (js/item/runebook.js) and incorrect handling of negative Z values.
 
