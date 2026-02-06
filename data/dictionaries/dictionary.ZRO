@@ -4034,6 +4034,29 @@
 8724=Is slot 7 on this Account blocked?
 8725=How long is user banned for, in minutes?
 8726=When was the account logged into the first time? (Read-Only)
+// [8750-8799] Tweak Menu - Spawn Region property descriptions
+8750=Number of chars/items spawned per spawn cycle
+8751=Instance ID where spawn region is active
+8752=Are spawned items Spawners Objects?
+8753=Item Section ID from DFNs to spawn
+8754=Count of items currently spawned (Read-Only)
+8755=Reference to ITEMLIST from which to spawn
+8756=Max amount of items to spawn
+8757=Max amount of NPCs to spawn
+8758=Max time interval until next spawn cycle
+8759=Min time interval until next spawn cycle
+8760=Internal name of Spawn Region
+8761=NPC Section ID from DFNs to spawn
+8762=Count of NPCs currently spawned (Read-Only)
+8763=Reference to NPCLIST from which to spawn
+8764=Spawn only outside buildings?
+8765=Max Z value influence items in the world can have on spawning
+8766=Spawn Region ID
+8767=World Number that Spawn Region is active in
+8768=Western boundary for Spawn Region
+8769=Eastern boundary for Spawn Region
+8770=Northern boundary for Spawn Region
+8771=Southern boundary for Spawn Region
 // [8800-8849] General Tweak Menu
 8800=Enter new value
 8801=Changes made to effective skill values are not saved, and will be gone if server restarts. For permanent skill changes, adjust baseskills property instead!

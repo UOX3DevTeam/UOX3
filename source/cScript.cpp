@@ -138,7 +138,8 @@ static JSFunctionSpec my_functions[] =
 
 	{ "GetTownRegion",				SE_GetTownRegion,			1, 0 },
 	{ "GetTownRegionFromXY",		SE_GetTownRegionFromXY,		4, 0 },
-	{ "GetSpawnRegion",				SE_GetSpawnRegion,			4, 0 },
+	{ "GetSpawnRegion",				SE_GetSpawnRegion,			1, 0 },
+	{ "GetSpawnRegions",			SE_GetSpawnRegions,			4, 0 },
 	{ "GetSpawnRegionCount",		SE_GetSpawnRegionCount,		0, 0 },
 
 
@@ -3888,7 +3889,7 @@ bool cScript::OnIterate( CBaseObject *a, UI32 &b, CSocket *mSock )
 //|	Purpose		-	Called after IterateOverSpawnRegions JS function is used, and iterates over
 //|					all spawn regions in game
 //o------------------------------------------------------------------------------------------------o
-bool cScript::OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b )
+bool cScript::OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b, CSocket *mSock  )
 {
 	if( a == nullptr )
 		return true;
@@ -3896,14 +3897,21 @@ bool cScript::OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b )
 	if( !ExistAndVerify( seOnIterateSpawnRegions, "onIterateSpawnRegions" ))
 		return false;
 
-	jsval params[1], rval;
+	jsval params[2], rval;
 
 	JSObject *myObj = nullptr;
 	myObj = JSEngine->AcquireObject( IUE_SPAWNREGION, a, runTime );
 
-	params[0] = OBJECT_TO_JSVAL( myObj );
+	JSObject *sockObj = nullptr;
+	if( mSock )
+	{
+		sockObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
+	}
 
-	JSBool retVal = InvokeEvent( "onIterateSpawnRegions", 1, params, &rval );
+	params[0] = OBJECT_TO_JSVAL( myObj );
+	params[1] = OBJECT_TO_JSVAL( sockObj );
+
+	JSBool retVal = InvokeEvent( "onIterateSpawnRegions", 2, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{

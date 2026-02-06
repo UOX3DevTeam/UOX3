@@ -2513,6 +2513,9 @@
 2639=Sortovat podle počtu Spawnů (%s)
 2650=Naléváš %s do prázdné láhve.
 2651=Naléváš %s do prázdného džbánu.
+2660=Nalezeno %i regionových spawnerů za %u milisekund.
+2661=Správa spawn regionů
+2662=Teleportovat se do spawn regionu
 // [2700-2799] Misc scripts
 2700=Nábytek může otáčet pouze majitel domu.
 2701=Toto zřejmě nefunguje.
@@ -4034,6 +4037,29 @@
 8724=Je slot 7 na tomto účtu zablokován?
 8725=Na jak dlouho je uživatel zablokován, v minutách?
 8726=Kdy byl účet poprvé přihlášen? (Pouze pro čtení)
+// [8750-8799] Tweak Menu - Spawn Region property descriptions
+8750=Počet znaků/položek vytvořených za jeden cyklus
+8751=ID instance, kde je oblast spawn aktivní
+8752=Jsou vytvořené položky objekty Spawners?
+8753=ID sekce položek z DFN, které se mají spawnout
+8754=Počet aktuálně spawnoutých položek (jen pro čtení)
+8755=Odkaz na ITEMLIST, ze kterého se mají spawnout
+8756=Maximální počet položek, které se mají spawnout
+8757=Maximální počet NPC, které se mají spawnout
+8758=Maximální časový interval do dalšího spawn cyklu
+8759=Minimální časový interval do dalšího cyklu spawnování
+8760=Interní název oblasti spawnování
+8761=ID sekce NPC z DFN pro spawnování
+8762=Počet aktuálně spawnovaných NPC (jen pro čtení)
+8763=Odkaz na NPCLIST, ze kterého se má spawnovat
+8764=Spawnovat pouze mimo budovy?
+8765=Maximální hodnota Z, kterou mohou mít položky ve světě na spawnování
+8766=ID spawn regionu
+8767=Číslo světa, ve kterém je spawn region aktivní
+8768=Západní hranice spawn regionu
+8769=Východní hranice spawn regionu
+8770=Severní hranice spawn regionu
+8771=Jižní hranice spawn regionu
 // [8800-8849] General Tweak Menu
 8800=Zadejte novou hodnotu
 8801=Změny provedené v efektivních hodnotách dovedností se neukládají a po restartu serveru zmizí. Pro trvalé změny dovedností upravte raději vlastnost baseskills!

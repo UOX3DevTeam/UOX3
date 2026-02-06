@@ -2513,6 +2513,9 @@
 2639=Sortieren nach Spawn-Anzahl (%s)
 2650=Sie schütten die %s in die leere Flasche.
 2651=Sie schütten die %s in den leeren Krug.
+2660=%i regionenbasierte Spawner in %u Millisekunden gefunden.
+2661=Spawn-Regionen verwalten
+2662=Zur Spawn-Region teleportieren
 // [2700-2799] Misc scripts
 2700=Nur der Hausbesitzer kann die Möbel drehen.
 2701=Das scheint nicht zu funktionieren.
@@ -4034,6 +4037,29 @@
 8724=Ist Slot 7 für dieses Konto gesperrt?
 8725=Wie lange ist der Benutzer gesperrt, in Minuten?
 8726=Wann wurde das Konto das erste Mal angemeldet? (Schreibgeschützt)
+// [8750-8799] Tweak Menu - Spawn Region property descriptions
+8750=Anzahl der pro Spawn-Zyklus erzeugten Zeichen/Objekte
+8751=Instanz-ID, in der die Spawn-Region aktiv ist
+8752=Sind die erzeugten Objekte Spawner-Objekte?
+8753=Gegenstandsabschnitt-ID aus DFNs zum Spawnen
+8754=Anzahl der derzeit gespawnten Gegenstände (schreibgeschützt)
+8755=Verweis auf ITEMLIST, aus der gespawnt werden soll
+8756=Maximale Anzahl der zu spawnden Gegenstände
+8757=Maximale Anzahl der zu spawnden NPCs
+8758=Maximales Zeitintervall bis zum nächsten Spawn-Zyklus
+8759=Minimales Zeitintervall bis zum nächsten Spawn-Zyklus
+8760=Interner Name der Spawn-Region
+8761=NPC-Abschnitt-ID aus DFNs zum Spawnen
+8762=Anzahl der aktuell gespawnten NPCs (schreibgeschützt)
+8763=Verweis auf NPCLIST, aus der gespawnt werden soll
+8764=Nur außerhalb von Gebäuden spawnen?
+8765=Maximaler Z-Wert, den Gegenstände in der Welt auf das Spawnen haben können
+8766=Spawn-Region-ID
+8767=Weltnummer, in der die Spawn-Region aktiv ist
+8768=Westliche Grenze der Spawn-Region
+8769=Östliche Grenze der Spawn-Region
+8770=Nördliche Grenze der Spawn-Region
+8771=Südliche Grenze der Spawn-Region
 // [8800-8849] General Tweak Menu
 8800=Eingabe eines neuen Wertes
 8801=Änderungen an effektiven Skill-Werten werden nicht gespeichert und sind nach einem Server-Neustart nicht mehr vorhanden. Für permanente Skill-Änderungen, passen Sie stattdessen die Eigenschaft baseskills an!

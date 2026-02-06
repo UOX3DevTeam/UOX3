@@ -203,7 +203,7 @@ public:
 	//
 	bool		OnPacketReceive( CSocket *mSock, UI16 packetNum );
 	bool		OnIterate( CBaseObject *a, UI32 &b, CSocket *mSock );
-	bool		OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b );
+	bool		OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b, CSocket *mSock );
 	bool		OnCreate( CBaseObject *thingCreated, bool dfnCreated, bool isPlayer );
 	bool		DoesEventExist( const char *eventToFind );
 	SI08		OnCommand( CSocket *mSock, std::string command );

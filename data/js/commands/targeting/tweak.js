@@ -435,10 +435,34 @@ var accountProp = {
 	firstLogin:826
 };
 
+var spawnRegionProp = {
+	call:900,
+	instanceID:901,
+	isSpawner:902,
+	item:903,
+	itemCount:904,
+	itemList:905,
+	maxItems:906,
+	maxNpcs:907,
+	maxTime:908,
+	minTime:909,
+	npc:910,
+	npcCount:911,
+	npcList:912,
+	onlyOutside:913,
+	prefZ:914,
+	regionNum:915,
+	world:916,
+	x1:917,
+	x2:918,
+	y1:919,
+	y2:920
+};
+
 /*var regionProp2 = {
-  appearance : {value: 700, dictionary: 154},
-  canCastAggressive: {value: 701, dictionary: 155},
-  canGate : {value: 702, dictionary: 156}
+	appearance : {value: 700, dictionary: 154},
+	canCastAggressive: {value: 701, dictionary: 155},
+	canGate : {value: 702, dictionary: 156}
 };*/
 
 // Remember to update the itemPropCount if adding/removing properties to itemProp!
@@ -448,6 +472,7 @@ const charSkillCount = 58;
 const multiPropCount = 32;
 const regionPropCount = 27;
 const accountPropCount = 26;
+const spawnRegionPropCount = 21;
 
 function CommandRegistration()
 {
@@ -458,6 +483,11 @@ function CommandRegistration()
 /** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_TWEAK( pSocket, cmdString )
 {
+	if( pSocket == null || !ValidateObject( pSocket.currentChar ))
+		return;
+
+	let pUser = pSocket.currentChar;
+
 	if( GetServerSetting( "ServerLanguage" ) == 7 || GetServerSetting( "ServerLanguage" ) == 0 && pSocket.language == 24 )
 	{
 		// Disable tooltips in this menu for Czech language until we can figure out why it crashes client!
@@ -466,6 +496,22 @@ function command_TWEAK( pSocket, cmdString )
 
 	// First check if a valid target serial has been set by code, for instance when calling
 	// tweak command via the hard-coded wholist gump
+
+	// First, handle tweaking of potential spawn region object
+	let tweakSpawnReg = pUser.GetTempTag( "tweakSpawnReg" );
+	if( tweakSpawnReg === true )
+	{
+		pUser.SetTempTag( "tweakSpawnReg", null );
+		let spawnReg = GetSpawnRegion( pUser.GetTempTag( "tweakSpawnRegID" ));
+		if( spawnReg != null && "regionNum" in spawnReg )
+		{
+			pUser.SetTempTag( "tweakSpawnRegID", null );
+			onCallback0( pSocket, spawnReg );
+			return;
+		}
+	}
+
+	// Next, character/item
 	var target = CalcCharFromSer( pSocket.GetDWord( 7 ));
 	if( ValidateObject( target ))
 	{
@@ -498,6 +544,7 @@ function command_PROPS( pSocket, cmdString )
 function onCallback0( pSocket, myTarget )
 {
 	pSocket.currentChar.SetTag( "tweakRegion", null );
+	pSocket.currentChar.SetTag( "tweakSpawnRegion", null );
 	pSocket.currentChar.SetTag( "tweakAccount", null );
 	pSocket.tempObj2 = null;
 	var socketLang = pSocket.language;
@@ -510,6 +557,15 @@ function onCallback0( pSocket, myTarget )
 		return;
 	}
 
+	// Are we looking at a Spawn Region?
+	if( myTarget != null && "regionNum" in myTarget )
+	{
+		pSocket.currentChar.SetTag( "tweakSpawnRegion", myTarget.regionNum );
+		HandleSpawnRegionTarget( pSocket, myTarget );
+		return;
+	}
+
+	// If not, it could be user targeted ground beneath a multi, or just empty ground (region)
 	if( !ValidateObject( myTarget ) && pSocket.GetWord( 1 ))
 	{
 		var targX = pSocket.GetWord( 11 );
@@ -697,6 +753,10 @@ function RenderZeroethPage( pSocket, gumpObj, targetObj, tweakSkills, baseSkills
 	{
 		objType = "Account"; // Account
 	}
+	else if( "regionNum" in targetObj )
+	{
+		objType = "Spawn region"; // Spawn Region
+	}
 	else
 	{
 		objType = GetDictionaryEntry( 2009, socketLang ); // Region
@@ -757,7 +817,7 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 
 	// Main Object Properties
 	// Labels
-	if( objType != "Region" && objType != "Account" )
+	if( objType != "Region" && objType != "Account" && objType != "Spawn Region" )
 	{
 		gumpObj.AddHTMLGump( 15, 59, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Serial</BASEFONT>" );
 		if( enableTooltips )
@@ -780,6 +840,15 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 		}
 		gumpObj.AddHTMLGump( 15, 79, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Name</BASEFONT>" );
 	}
+	else if( objType == "Spawn Region" )
+	{
+		gumpObj.AddHTMLGump( 15, 59, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Region Num</BASEFONT>" );
+		if( enableTooltips )
+		{
+			gumpObj.AddToolTip( tooltipClilocID, pSocket, "Unique ID of Spawn Region" );
+		}
+		gumpObj.AddHTMLGump( 15, 79, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Name</BASEFONT>" );
+	}
 	else
 	{
 		// Account
@@ -798,7 +867,7 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 	}
 
 	// Buttons
-	if( objType != "Region" && objType != "Account" )
+	if( objType != "Region" && objType != "Account" && objType != "Spawn Region" )
 	{
 		gumpObj.AddButton( 120, 80, gumpMainButtonOff, gumpMainButtonOn, 1, 0, 2); // ID
 		if( enableTooltips )
@@ -818,6 +887,10 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 	{
 		gumpObj.AddButton( 120, 80, gumpMainButtonOff, gumpMainButtonOn, 1, 0, 12); // Name
 	}
+	else if( objType == "Spawn Region" )
+	{
+		gumpObj.AddButton( 120, 80, gumpMainButtonOff, gumpMainButtonOn, 1, 0, 910); // Name
+	}
 	//else // Account
 	//{
 		//gumpObj.AddButton( 120, 80, gumpMainButtonOff, gumpMainButtonOn, 1, 0, 13); // Username
@@ -834,7 +907,7 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 	}
 
 	// Values
-	if( objType != "Region" && objType != "Account" )
+	if( objType != "Region" && objType != "Account" && objType != "Spawn Region" )
 	{
 		gumpObj.AddHTMLGump( 125, 59, 105, 20, 0, 0, "<BASEFONT color=#EECD8B>" + propertyValueStart + (targetObj.serial).toString() + propertyValueEnd + "</BASEFONT>" );
 		if( enableTooltips )
@@ -843,6 +916,11 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 		}
 		gumpObj.AddHTMLGump( 125, 79, 105, 20, 0, 0, propertyValueStart + "0x" + (targetObj.id).toString( 16 ) + " ( " + (targetObj.id).toString() + " )" + propertyValueEnd );
 		gumpObj.AddHTMLGump( 125, 99, 105, 20, 0, 0, propertyValueStart + objName + propertyValueEnd );
+	}
+	else if( objType == "Spawn Region" )
+	{
+		gumpObj.AddHTMLGump( 125, 59, 105, 20, 0, 0, "<BASEFONT color=#EECD8B>" + propertyValueStart + (targetObj.regionNum).toString() + propertyValueEnd + "</BASEFONT> (Read-Only)" );
+		gumpObj.AddHTMLGump( 125, 79, 105, 20, 0, 0, propertyValueStart + objName + propertyValueEnd );
 	}
 	else
 	{
@@ -904,6 +982,7 @@ function RenderOtherPages( pSocket, gumpObj, gumpPage, totalPages )
 }
 
 // Handle properties of item targets
+/** @type { ( pSocket: Socket, myTarget: Item ) => void } */
 function HandleItemTarget( pSocket, myTarget )
 {
 	var itemGump = new Gump;
@@ -983,13 +1062,13 @@ function HandleItemTarget( pSocket, myTarget )
 		var index = 20;
 		for( var k in itemProp )
 		{
-		    if( itemProp.hasOwnProperty( k ) && index == i + 20 )
-		    {
-		        // k is key
+			if( itemProp.hasOwnProperty( k ) && index == i + 20 )
+			{
+				// k is key
 				propertyName = k.charAt( 0 ).toUpperCase() + k.slice( 1 );
-		        break;
-		    }
-		    index++;
+				break;
+			}
+			index++;
 		}
 
 		var itemLabelTooltip = "";
@@ -1395,7 +1474,7 @@ function HandleItemTarget( pSocket, myTarget )
 			default:
 				errorFound = true;
 				Console.PrintSectionBegin();
-  				Console.Print( "Unhandled itemProperty in tweak command script!" );
+				Console.Print( "Unhandled itemProperty in tweak command script!" );
 				Console.PrintDone();
 				break;
 		}
@@ -1458,6 +1537,7 @@ function HandleItemTarget( pSocket, myTarget )
 }
 
 // Handle properties of character targets
+/** @type { ( pSocket: Socket, myTarget: Character ) => void } */
 function HandleCharTarget( pSocket, myTarget )
 {
 	var charGump = new Gump;
@@ -1547,13 +1627,13 @@ function HandleCharTarget( pSocket, myTarget )
 		var index = 20;
 		for( var k in charProp )
 		{
-		    if( charProp.hasOwnProperty( k ) && index == i + 20 )
-		    {
-		        // k is key
+			if( charProp.hasOwnProperty( k ) && index == i + 20 )
+			{
+				// k is key
 				propertyName = k.charAt( 0 ).toUpperCase() + k.slice( 1 );
-		        break;
-		    }
-		    index++;
+				break;
+			}
+			index++;
 		}
 
 		var charLabelTooltip = "";
@@ -2331,7 +2411,7 @@ function HandleCharTarget( pSocket, myTarget )
 			default:
 				errorFound = true;
 				Console.PrintSectionBegin();
-  			Console.Print( "Unhandled charProperty in tweak command script!" );
+				Console.Print( "Unhandled charProperty in tweak command script!" );
 				Console.PrintDone();
 				break;
 		}
@@ -2482,6 +2562,7 @@ function HandleCharTarget( pSocket, myTarget )
 }
 
 // Handle properties of character skills
+/** @type { ( pSocket: Socket, myTarget: Character, baseSkills: BaseSkills ) => void } */
 function HandleSkillGump( pSocket, myTarget, baseSkills )
 {
 	var skillGump = new Gump;
@@ -2591,13 +2672,13 @@ function HandleSkillGump( pSocket, myTarget, baseSkills )
 		var index = 20;
 		for( var k in charSkills )
 		{
-		    if( charSkills.hasOwnProperty( k ) && index == i + 20 )
-		    {
-		        // k is key
+			if( charSkills.hasOwnProperty( k ) && index == i + 20 )
+			{
+				// k is key
 				propertyName = k.charAt( 0 ).toUpperCase() + k.slice( 1 );
-		        break;
-		    }
-		    index++;
+				break;
+			}
+			index++;
 		}
 
 		var errorFound = false;
@@ -2850,7 +2931,7 @@ function HandleSkillGump( pSocket, myTarget, baseSkills )
 			default:
 				errorFound = true;
 				Console.PrintSectionBegin();
-  				Console.Print( "Unhandled character skill in tweak command script!" );
+				Console.Print( "Unhandled character skill in tweak command script!" );
 				Console.PrintDone();
 				break;
 		}
@@ -2896,6 +2977,7 @@ function HandleSkillGump( pSocket, myTarget, baseSkills )
 }
 
 // Handle properties of Multis
+/** @type { ( pSocket: Socket, myTarget: Item ) => void } */
 function HandleMultiTarget( pSocket, myTarget )
 {
 	var multiGump = new Gump;
@@ -2968,13 +3050,13 @@ function HandleMultiTarget( pSocket, myTarget )
 		var index = 20;
 		for( var k in multiProp )
 		{
-		    if( multiProp.hasOwnProperty( k ) && index == i + 20 )
-		    {
-		        // k is key
+			if( multiProp.hasOwnProperty( k ) && index == i + 20 )
+			{
+				// k is key
 				propertyName = k.charAt( 0 ).toUpperCase() + k.slice( 1 );
-		        break;
-		    }
-		    index++;
+				break;
+			}
+			index++;
 		}
 
 		var multiLabelTooltip = "";
@@ -3116,7 +3198,7 @@ function HandleMultiTarget( pSocket, myTarget )
 			default:
 				errorFound = true;
 				Console.PrintSectionBegin();
-  				Console.Print( "Unhandled multi property in tweak command script!" );
+				Console.Print( "Unhandled multi property in tweak command script!" );
 				Console.PrintDone();
 				break;
 		}
@@ -3216,6 +3298,7 @@ function HandleMultiTarget( pSocket, myTarget )
 }
 
 // Handle properties of region targets
+/** @type { ( pSocket: Socket, myTarget: TownRegion ) => void } */
 function HandleRegionTarget( pSocket, myTarget )
 {
 	var regionGump = new Gump;
@@ -3286,13 +3369,13 @@ function HandleRegionTarget( pSocket, myTarget )
 		var index = 20;
 		for( var k in regionProp )
 		{
-		    if( regionProp.hasOwnProperty( k ) && index == i + 20 )
-		    {
-		        // k is key
+			if( regionProp.hasOwnProperty( k ) && index == i + 20 )
+			{
+				// k is key
 				propertyName = k.charAt( 0 ).toUpperCase() + k.slice( 1 );
-		        break;
-		    }
-		    index++;
+				break;
+			}
+			index++;
 		}
 
 		var regionLabel = propertyName;
@@ -3429,7 +3512,7 @@ function HandleRegionTarget( pSocket, myTarget )
 			default:
 				errorFound = true;
 				Console.PrintSectionBegin();
-  				Console.Print( "Unhandled region property in tweak command script!" );
+				Console.Print( "Unhandled region property in tweak command script!" );
 				Console.PrintDone();
 				break;
 		}
@@ -3501,6 +3584,7 @@ function HandleRegionTarget( pSocket, myTarget )
 }
 
 // Handle properties of user account
+/** @type { ( pSocket: Socket, myTarget: Account ) => void } */
 function HandleAccountTarget( pSocket, myTarget )
 {
 	var accountGump = new Gump;
@@ -3571,13 +3655,13 @@ function HandleAccountTarget( pSocket, myTarget )
 		var index = 20;
 		for( var k in accountProp )
 		{
-		    if( accountProp.hasOwnProperty( k ) && index == i + 20 )
-		    {
-		        // k is key
+			if( accountProp.hasOwnProperty( k ) && index == i + 20 )
+			{
+				// k is key
 				propertyName = k.charAt( 0 ).toUpperCase() + k.slice( 1 );
-		        break;
-		    }
-		    index++;
+				break;
+			}
+			index++;
 		}
 
 		var accountLabel = propertyName;
@@ -3725,7 +3809,7 @@ function HandleAccountTarget( pSocket, myTarget )
 			default:
 				errorFound = true;
 				Console.PrintSectionBegin();
-  				Console.Print( "Unhandled account property in tweak command script!" );
+				Console.Print( "Unhandled account property in tweak command script!" );
 				Console.PrintDone();
 				break;
 		}
@@ -3816,6 +3900,204 @@ function HandleAccountTarget( pSocket, myTarget )
 	accountGump.Free();
 }
 
+// Handle properties of spawn region targets
+/** @type { ( pSocket: Socket, myTarget: SpawnRegion ) => void } */
+function HandleSpawnRegionTarget( pSocket, myTarget )
+{
+	var srGump = new Gump;
+	srGump = RenderZeroethPage( pSocket, srGump, myTarget, false, false );
+
+	var propertyName;
+	var buttonID = 900;
+	var gumpPage = 1;
+	var totalPages = Math.ceil( 1 + ( spawnRegionPropCount - 13 ) / 17 );
+
+	// First page settings
+	var pageOneLabelStartY = 139;
+	var pageOneButtonStartY = 140;
+	var pageOneValueStartY = 139;
+	// Subsequent pages settings
+	var pageXlabelStartY = 59;
+	var pageXbuttonStartY = 60;
+	var pageXvalueStartY = 59;
+
+	let pSockLang = pSocket.language;
+
+	// Loop over all properties
+	var i = 0;
+	for( i = 0; i < spawnRegionPropCount; i++ )
+	{
+		if( i == 0 )
+		{
+			srGump = RenderFirstPage( pSocket, srGump, myTarget, "Spawn Region", spawnRegionPropCount, totalPages );
+		}
+		else
+		{
+			// Paging logic (13 on first page, 17 on subsequent)
+			switch( i )
+			{
+				case 13: gumpPage = 2; break;
+				case 30: gumpPage = 3; break;
+			}
+
+			if( i == 13 || i == 30 )
+			{
+				pageXlabelStartY = 59;
+				pageXbuttonStartY = 60;
+				pageXvalueStartY = 59;
+				srGump = RenderOtherPages( pSocket, srGump, gumpPage, totalPages );
+			}
+		}
+
+		var labelStartY = ( gumpPage == 1 ) ? pageOneLabelStartY : pageXlabelStartY;
+		var buttonStartY = ( gumpPage == 1 ) ? pageOneButtonStartY : pageXbuttonStartY;
+		var valueStartY = ( gumpPage == 1 ) ? pageOneValueStartY : pageXvalueStartY;
+
+		// Get Property Name from dictionary
+		var index = 900;
+		for( var k in spawnRegionProp )
+		{
+			if( spawnRegionProp.hasOwnProperty( k ) && index == i + 900 )
+			{
+				propertyName = k; // Property names in SR are lowercase (e.g. maxNpcs)
+				break;
+			}
+			index++;
+		}
+
+		var propLabelTooltip = "";
+		var propValue = "";
+		var propValueTooltip = "";
+
+		// Logic to display value
+		switch( i + 900 )
+		{
+			case spawnRegionProp.name:
+				break;
+			case spawnRegionProp.call:
+				propLabelTooltip = GetDictionaryEntry( 8750, pSockLang ); // Number of chars/items spawned per spawn cycle
+				propValue 			= ( myTarget.call ).toString();
+				break;
+			case spawnRegionProp.instanceID:
+				propLabelTooltip = GetDictionaryEntry( 8751, pSockLang ); // Instance ID where spawn region is active
+				propValue 			= ( myTarget.instanceID ).toString();
+				break;
+			case spawnRegionProp.isSpawner:
+				propLabelTooltip = GetDictionaryEntry( 8752, pSockLang ); // Are spawned items Spawners Objects?
+				propValue 			= ( myTarget.isSpawner ? "true" : "false" );
+				break;
+			case spawnRegionProp.item:
+				propLabelTooltip = GetDictionaryEntry( 8753, pSockLang ); // Item Section ID from DFNs to spawn
+				propValue 			= ( myTarget.item ).toString();
+				break;
+			case spawnRegionProp.itemCount:
+				propLabelTooltip = GetDictionaryEntry( 8754, pSockLang ); // Count of items currently spawned (Read-Only)
+				propValue 			= "<BASEFONT color=#EECD8B>" + ( myTarget.itemCount ).toString() + "</BASEFONT>";
+				break;
+			case spawnRegionProp.itemList:
+				propLabelTooltip = GetDictionaryEntry( 8755, pSockLang ); // Reference to ITEMLIST from which to spawn items
+				propValue 			= ( myTarget.itemList ).toString();
+				break;
+			case spawnRegionProp.maxItems:
+				propLabelTooltip = GetDictionaryEntry( 8756, pSockLang ); // Max amount of items to spawn
+				propValue 			= ( myTarget.maxItems ).toString();
+				break;
+			case spawnRegionProp.maxNpcs:
+				propLabelTooltip = GetDictionaryEntry( 8757, pSockLang ); // Max amount of NPCs to spawn
+				propValue 			= ( myTarget.maxNpcs ).toString();
+				break;
+			case spawnRegionProp.maxTime:
+				propLabelTooltip = GetDictionaryEntry( 8758, pSockLang ); // Max time interval until next spawn cycle
+				propValue 			= ( myTarget.maxTime ).toString();
+				break;
+			case spawnRegionProp.minTime:
+				propLabelTooltip = GetDictionaryEntry( 8759, pSockLang ); // Min time interval until next spawn cycle
+				propValue 			= ( myTarget.minTime ).toString();
+				break;
+			case spawnRegionProp.npc:
+				propLabelTooltip = GetDictionaryEntry( 8761, pSockLang ); // NPC Section ID from DFNs to spawn
+				propValue 			= ( myTarget.npc ).toString();
+				break;
+			case spawnRegionProp.npcCount:
+				propLabelTooltip = GetDictionaryEntry( 8762, pSockLang ); // Count of NPCs currently spawned (Read-Only)
+				propValue 			= "<BASEFONT color=#EECD8B>" + ( myTarget.npcCount ).toString() + "</BASEFONT>";
+				break;
+			case spawnRegionProp.npcList:
+				propLabelTooltip = GetDictionaryEntry( 8763, pSockLang ); // Reference to NPCLIST from which to spawn NPCs
+				propValue 			= ( myTarget.npcList ).toString();
+				break;
+			case spawnRegionProp.onlyOutside:
+				propLabelTooltip = GetDictionaryEntry( 8764, pSockLang ); // Spawn only outside buildings?
+				propValue 			= ( myTarget.onlyOutside ? "true" : "false" );
+				break;
+			case spawnRegionProp.prefZ:
+				propLabelTooltip = GetDictionaryEntry( 8765, pSockLang ); // Max Z value influece items in the world can have on spawning
+				propValue 			= ( myTarget.prefZ ).toString();
+				break;
+			case spawnRegionProp.regionNum:
+				propLabelTooltip = GetDictionaryEntry( 8766, pSockLang ); // Spawn Region ID
+				propValue 			= ( myTarget.regionNum ).toString();
+				break;
+			case spawnRegionProp.world:
+				propLabelTooltip = GetDictionaryEntry( 8767, pSockLang ); // World Number that Spawn Region is active in
+				propValue 			= ( myTarget.world ).toString();
+				break;
+			case spawnRegionProp.x1:
+				propLabelTooltip = GetDictionaryEntry( 8768, pSockLang ); // Western boundary for Spawn Region
+				propValue 			= ( myTarget.x1 ).toString();
+				break;
+			case spawnRegionProp.x2:
+				propLabelTooltip = GetDictionaryEntry( 8769, pSockLang ); // Eastern boundary for Spawn Region
+				propValue 			= ( myTarget.x2 ).toString();
+				break;
+			case spawnRegionProp.y1:
+				propLabelTooltip = GetDictionaryEntry( 8770, pSockLang ); // Northern boundary for Spawn Region
+				propValue 			= ( myTarget.y1 ).toString();
+				break;
+			case spawnRegionProp.y2:
+				propLabelTooltip = GetDictionaryEntry( 8771, pSockLang ); // Southern boundary for Spawn Region
+				propValue 			= ( myTarget.y2 ).toString();
+				break;
+		}
+
+		// Labels
+		srGump.AddHTMLGump( 15, labelStartY, 100, 20, 0, 0, propertyLabelStart + propertyName + propertyLabelEnd );
+		if( enableTooltips )
+		{
+			srGump.AddToolTip( tooltipClilocID, pSocket, propLabelTooltip );
+		}
+
+		if( propValue == "" )
+		{
+			propValue = "-"; propValueTooltip = "Value not set";
+		}
+
+		// Buttons (Exclude Read-Only properties)
+		if( i + 900 != spawnRegionProp.regionNum && i + 900 != spawnRegionProp.npcCount && i + 900 != spawnRegionProp.itemCount )
+		{
+			srGump.AddButton( 120, buttonStartY, gumpMainButtonOff, gumpMainButtonOn, 1, 0, buttonID );
+			if( enableTooltips ) srGump.AddToolTip( tooltipClilocID, pSocket, ( propValueTooltip != "" ? propValueTooltip : propValue ));
+		}
+
+		// Values
+		srGump.AddHTMLGump( 125, valueStartY, 105, 20, 0, 0, propertyValueStart + propValue + propertyValueEnd );
+
+		// Adjust coordinates for next loop
+		if( gumpPage == 1 )
+		{
+			pageOneLabelStartY += 20; pageOneButtonStartY += 20; pageOneValueStartY += 20;
+		}
+		else
+		{
+			pageXlabelStartY += 20; pageXbuttonStartY += 20; pageXvalueStartY += 20;
+		}
+
+		buttonID++;
+	}
+
+	srGump.Send( pSocket );
+	srGump.Free();
+}
 
 // Show input gump for chosen property
 function ShowInputGump( pUser, targetObj, propertyName, propertyType, maxLength, maxVal, propertyHint )
@@ -4014,7 +4296,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 	var maxLength = 0;
 	var maxVal = 0;
 	var baseSkills = ( pSocket.xText != null && pSocket.xText == "true" ? true : false );
-	pSocket.xText = null;
+	pSocket.xText = "";
 
 	if( pSocket.currentChar.GetTag( "tweakRegion" ))
 	{
@@ -4027,6 +4309,11 @@ function onGumpPress( pSocket, pButton, gumpData )
 		{
 			targetObj = targetObj.account;
 		}
+	}
+
+	if( pSocket.currentChar.GetTag( "tweakSpawnRegion" ))
+	{
+		targetObj = GetSpawnRegion( parseInt( pSocket.currentChar.GetTag( "tweakSpawnRegion" )));
 	}
 
 	if( targetObj == null )
@@ -4081,6 +4368,10 @@ function onGumpPress( pSocket, pButton, gumpData )
 			else if( targetObj != null && "username" in targetObj )
 			{
 				HandleAccountTarget( pSocket, targetObj );
+			}
+			else if( targetObj != null && "regionNum" in targetObj )
+			{
+				HandleSpawnRegionTarget( pSocket, targetObj );
 			}
 			else // Region
 			{
@@ -4285,6 +4576,12 @@ function onGumpPress( pSocket, pButton, gumpData )
 			propertyName = "name";
 			propertyType = "Text";
 			propertyHint = GetDictionaryEntry( 8809, pSocket.language ); // Name of Region, capped at 50 characters
+			maxLength = 50;
+			break;
+		case 13: // Spawn Region Name
+			propertyName = "name";
+			propertyType = "Text";
+			propertyHint = "Name of Spawn Region, capped at 50 characters."; // GetDictionaryEntry( ???, pSocket.language ); // Name of Spawn Region, capped at 50 characters
 			maxLength = 50;
 			break;
 		case itemProp.desc:
@@ -6124,6 +6421,47 @@ function onGumpPress( pSocket, pButton, gumpData )
 			propertyType = "Boolean";
 			break;
 
+		// Spawn Region Properties
+		case spawnRegionProp.call:
+		case spawnRegionProp.instanceID:
+		case spawnRegionProp.maxItems:
+		case spawnRegionProp.maxNpcs:
+		case spawnRegionProp.maxTime:
+		case spawnRegionProp.minTime:
+		case spawnRegionProp.prefZ:
+		case spawnRegionProp.regionNum:
+		case spawnRegionProp.world:
+		case spawnRegionProp.x1:
+		case spawnRegionProp.x2:
+		case spawnRegionProp.y1:
+		case spawnRegionProp.y2:
+			// Identify property name dynamically based on ID
+			for( var k in spawnRegionProp ) { if( spawnRegionProp[k] == pButton ) propertyName = k; }
+			propertyType = "Integer";
+			propertyHint = propertyName + " (Integer)";
+			maxVal = 2147483647; // Max Int
+			break;
+
+		// Booleans
+		case spawnRegionProp.isSpawner:
+		case spawnRegionProp.onlyOutside:
+			for( var k in spawnRegionProp ) { if( spawnRegionProp[k] == pButton ) propertyName = k; }
+			propertyType = "Boolean";
+			propertyHint = propertyName + " (True/False)";
+			break;
+
+		// Text
+		case spawnRegionProp.item:
+		case spawnRegionProp.itemList:
+		case spawnRegionProp.name:
+		case spawnRegionProp.npc:
+		case spawnRegionProp.npcList:
+			for( var k in spawnRegionProp ) { if( spawnRegionProp[k] == pButton ) propertyName = k; }
+			propertyType = "Text";
+			propertyHint = propertyName + " (Text)";
+			maxLength = 255;
+			break;
+
 		// Timer ------------------------------------------------------
 		case itemProp.decaytime:
 			propertyName = "decaytime";
@@ -6229,6 +6567,10 @@ function onGumpPress( pSocket, pButton, gumpData )
 				{
 					HandleAccountTarget( pSocket, targetObj );
 				}
+				else if( targetObj != null && "regionNum" in targetObj )
+				{
+					HandleSpawnRegionTarget( pSocket, targetObj );
+				}
 				else
 				{
 					HandleRegionTarget( pSocket, targetObj );
@@ -6320,6 +6662,10 @@ function onGumpPress( pSocket, pButton, gumpData )
 						else if( targetObj != null && "username" in targetObj )
 						{
 							HandleAccountTarget( pSocket, targetObj );
+						}
+						else if( targetObj != null && "regionNum" in targetObj )
+						{
+							HandleSpawnRegionTarget( pSocket, targetObj );
 						}
 						else
 						{
@@ -6415,6 +6761,10 @@ function onGumpPress( pSocket, pButton, gumpData )
 				{
 					HandleAccountTarget( pSocket, targetObj );
 				}
+				else if( targetObj != null && "regionNum" in targetObj )
+				{
+					HandleSpawnRegionTarget( pSocket, targetObj );
+				}
 				else
 				{
 					HandleRegionTarget( pSocket, targetObj );
@@ -6465,6 +6815,10 @@ function onGumpPress( pSocket, pButton, gumpData )
 				{
 					HandleAccountTarget( pSocket, targetObj );
 				}
+				else if( targetObj != null && "regionNum" in targetObj )
+				{
+					HandleSpawnRegionTarget( pSocket, targetObj );
+				}
 				else
 				{
 					HandleRegionTarget( pSocket, targetObj );
@@ -6502,6 +6856,10 @@ function onGumpPress( pSocket, pButton, gumpData )
 				else if( targetObj != null && "username" in targetObj )
 				{
 					HandleAccountTarget( pSocket, targetObj );
+				}
+				else if( targetObj != null && "regionNum" in targetObj )
+				{
+					HandleSpawnRegionTarget( pSocket, targetObj );
 				}
 				else
 				{
@@ -6550,6 +6908,10 @@ function onGumpPress( pSocket, pButton, gumpData )
 				else if( targetObj != null && "username" in targetObj )
 				{
 					HandleAccountTarget( pSocket, targetObj );
+				}
+				else if( targetObj != null && "regionNum" in targetObj )
+				{
+					HandleSpawnRegionTarget( pSocket, targetObj );
 				}
 				else
 				{

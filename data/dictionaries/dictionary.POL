@@ -2513,6 +2513,9 @@
 2639=Sortuj według liczby pojawień (%s)
 2650=Wlewasz %s do pustej butelki.
 2651=Wlewasz %s do pustego dzbana.
+2660=Znaleziono %i spawnerów opartych na regionach w %u milisekund.
+2661=Zarządzaj regionami spawnowania
+2662=Teleportuj się do regionu spawnowania
 // [2700-2799] Różne skrypty
 2700=Tylko właściciel domu może obracać meble.
 2701=To chyba nie działa.
@@ -4034,6 +4037,29 @@
 8724=Czy Slot 7 na tym Koncie jest zablokowany?
 8725=Jak długo użytkownik jest zbanowany, w minutach?
 8726=Kiedy konto było zalogowane po raz pierwszy? (Tylko do odczytu)
+// [8750-8799] Tweak Menu - Spawn Region property descriptions
+8750=Liczba znaków/elementów generowanych w każdym cyklu generowania
+8751=Identyfikator instancji, w której region generowania jest aktywny
+8752=Czy generowane elementy są obiektami generującymi?
+8753=Identyfikator sekcji elementów z DFN do wygenerowania
+8754=Liczba obecnie wygenerowanych elementów (tylko do odczytu)
+8755=Odwołanie do ITEMLIST, z którego należy wygenerować elementy
+8756=Maksymalna liczba elementów do wygenerowania
+8757=Maksymalna liczba NPC do wygenerowania
+8758=Maksymalny odstęp czasu do następnego cyklu generowania
+8759=Minimalny odstęp czasu do następnego cyklu spawnowania
+8760=Wewnętrzna nazwa regionu spawnowania
+8761=Identyfikator sekcji NPC z DFN do spawnowania
+8762=Liczba obecnie spawnowanych NPC (tylko do odczytu)
+8763=Odwołanie do NPCLIST, z którego należy spawnowac
+8764=Spawnowac tylko poza budynkami?
+8765=Maksymalna wartość Z wpływająca na spawnowanie elementów w świecie
+8766=Identyfikator regionu spawnowania
+8767=Numer świata, w którym region spawnowania jest aktywny
+8768=Zachodnia granica regionu spawnowania
+8769=Wschodnia granica regionu spawnowania
+8770=Północna granica regionu spawnowania
+8771=Południowa granica regionu spawnowania
 // [8800-8849] Ogólne menu ustawień
 8800=Wprowadź nową wartość
 8801=Zmiany dokonane w efektywnych wartościach umiejętności nie są zapisywane i znikną po ponownym uruchomieniu serwera. Aby na stałe zmienić umiejętności, dostosuj właściwość baseskills zamiast tego!

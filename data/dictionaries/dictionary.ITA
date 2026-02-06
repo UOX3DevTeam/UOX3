@@ -2513,6 +2513,9 @@
 2639=Ordina per numero di spawn (%s)
 2650=Si versa il %s nella bottiglia vuota.
 2651=Si versa il %s nella brocca vuota.
+2660=Trovati %i spawn basati sulla regione in %u millisecondi.
+2661=Gestisci regioni di spawn
+2662=Teletrasportati alla regione di spawn
 // [2700-2799] Misc Scripts
 2700=Solo il proprietario della casa può ruotare i mobili.
 2701=Questo non sembra funzionare.
@@ -4034,6 +4037,29 @@
 8724=Lo slot 7 di questo account è bloccato?
 8725=Per quanto tempo l'utente è stato bandito, in minuti?
 8726=Quando è stato effettuato il primo accesso all'account? (Solo lettura)
+// [8750-8799] Tweak Menu - Spawn Region property descriptions
+8750=Numero di caratteri/oggetti generati per ciclo di generazione
+8751=ID istanza in cui la regione di generazione è attiva
+8752=Gli oggetti generati sono oggetti generatori?
+8753=ID sezione oggetto da DFN da generare
+8754=Numero di oggetti attualmente generati (sola lettura)
+8755=Riferimento a ITEMLIST da cui generare
+8756=Quantità massima di oggetti da generare
+8757=Quantità massima di NPC da generare
+8758=Intervallo di tempo massimo fino al prossimo ciclo di generazione
+8759=Intervallo di tempo minimo fino al prossimo ciclo di generazione
+8760=Nome interno della regione di generazione
+8761=ID sezione NPC da DFN da generare
+8762=Numero di NPC attualmente generati (sola lettura)
+8763=Riferimento a NPCLIST da cui generare
+8764=Generare solo all'esterno degli edifici?
+8765=Valore Z massimo che gli oggetti nel mondo possono avere sullo spawn
+8766=ID della regione di spawn
+8767=Numero del mondo in cui la regione di spawn è attiva
+8768=Confine occidentale della regione di spawn
+8769=Confine orientale della regione di spawn
+8770=Confine settentrionale della regione di spawn
+8771=Confine meridionale della regione di spawn
 // [8800-8849] General Tweak Menu
 8800=Inserire il nuovo valore
 8801=Le modifiche apportate ai valori effettivi delle abilità non vengono salvate, e spariranno se il server si riavvia. Per modifiche permanenti alle abilità, regola invece la proprietà baseskills!
