@@ -1,3 +1,6 @@
+07/02/2026 - DragonSlayer62 (#464)
+    [ADD] Added Dawns Music Box and Music Gears.
+
 07/02/2026 - DragonSlayer62 (#497)
     [FIX] Fixed House decay timers to kill on door refresh, and on grandfathered enabled properly.
     [FIX] Raced.dfn had the wrong ID in Gargoyle Armor/Weapons and also removed an extra comma at the end.
