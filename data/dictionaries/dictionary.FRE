@@ -3707,6 +3707,16 @@
 6321=On dirait que cette lame est recouverte d'une substance acide.
 6322=On dirait que cette lame contient un élément corrosif.
 6323=On dirait que cette lame contient un élément légèrement corrosif.
+// [6540-6550] Boîte à musique de l'Aube
+6540=Vous devez avoir cet objet dans votre inventaire ou le verrouiller pour l'utiliser.
+6541=Ciblez une boîte à musique de l'Aube pour ajouter ce morceau.
+6542=Vous devez cibler une boîte à musique de l'Aube.
+6543=Ceci n'est pas une boîte à musique de l'Aube.
+6544=Aucun équipement musical n'est en attente.
+6545=L'équipement musical est introuvable.
+6546=Aucun morceau n'est associé à cet équipement.
+6547=Ce morceau est déjà présent dans la boîte à musique.
+6548=Ce morceau a été ajouté à la boîte à musique.
 // [7000-7499] AI Scripts
 7000=Tu es un criminel et tu ne peux pas accéder à ton coffre de banque.
 7001=Quel objet souhaitez-vous déposer dans votre coffret bancaire ?

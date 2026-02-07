@@ -3542,6 +3542,16 @@
 6321=It looks as if this blade is covered with an acidic substance.
 6322=It looks like this blade has a corrosive element on it.
 6323=It looks like this blade has a light corrosive element on it.
+// [6540-6550] Dawn's Music Box
+6540=You must have the item in your backpack or locked down in order to use it.
+6541=Target a Dawn's Music Box to add this song.
+6542=You must target a Dawn's Music Box.
+6543=That is not a Dawn's Music Box.
+6544=No music gear is pending.
+6545=The music gear could not be found.
+6546=This gear has no song assigned.
+6547=This song track is already in the music box.
+6548=This song has been added to the music box.
 // [7000-7499] AI Scripts
 7000=Thou art a criminal and cannot access thy bank box.
 7001=Which item do you wish to deposit in your bank box?

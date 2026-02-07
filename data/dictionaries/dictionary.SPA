@@ -3543,6 +3543,16 @@
 6321=Parece que esta hoja está cubierta de una sustancia ácida.
 6322=Parece que esta hoja tiene un elemento corrosivo.
 6323=Parece que esta hoja tiene un ligero elemento corrosivo.
+// [6540-6550] Caja de música del Amanecer
+6540=Debes tener el objeto en tu mochila o bloqueado para poder usarlo.
+6541=Selecciona una Caja de música del Amanecer para añadir esta música.
+6542=Debes seleccionar la Caja de música del Amanecer.
+6543=Esto no es una Caja de música del Amanecer.
+6544=No hay ningún objeto musical pendiente.
+6545=No se ha encontrado el objeto musical.
+6546=Este objeto no tiene música asignada.
+6547=Esta pista musical ya está en la caja de música.
+6548=Esta música se ha añadido a la caja de música.
 // [7000-7499] Guiones de IA
 7000=Eres un delincuente y no puedes acceder a tu caja bancaria.
 7001=¿Qué artículo desea depositar en su caja?
