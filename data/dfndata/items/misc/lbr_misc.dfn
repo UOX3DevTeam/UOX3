@@ -1,0 +1,43 @@
+[dawnsmusicbox]
+{
+get=base_item
+name=Dawn's Music Box
+id=0x2AF9
+weight=100
+decay=1
+script=5070
+origin=lbr
+custominttag=dawns_box 1
+}
+
+[base_music_gear]
+{
+get=base_item
+name=Dawn's Music Gear
+id=0x1053
+weight=100
+decay=1
+script=5070
+origin=lbr
+}
+
+[dawns_music_gear_common]
+{
+get=base_music_gear
+custominttag=dawns_gear 1
+custominttag=dawns_rarity 0
+}
+
+[dawns_music_gear_uncommon]
+{
+get=base_music_gear
+custominttag=dawns_gear 1
+custominttag=dawns_rarity 1
+}
+
+[dawns_music_gear_rare]
+{
+get=base_music_gear
+custominttag=dawns_gear 1
+custominttag=dawns_rarity 2
+}
