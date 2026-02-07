@@ -3543,6 +3543,16 @@
 6321=Sembra che questa lama sia ricoperta da una sostanza acida.
 6322=Sembra che questa lama contenga un elemento corrosivo.
 6323=Sembra che questa lama contenga un leggero elemento corrosivo.
+// [6540-6550] Carillon dell'Alba
+6540=Devi avere l'oggetto nello zaino o sotto chiave per poterlo usare.
+6541=Seleziona un Carillon dell'Alba per aggiungere questa canzone.
+6542=Devi selezionare un Carillon dell'Alba.
+6543=Questo non è un Carillon dell'Alba.
+6544=Nessun equipaggiamento musicale in sospeso.
+6545=Impossibile trovare l'equipaggiamento musicale.
+6546=A questo equipaggiamento non è assegnata alcuna canzone.
+6547=Questa traccia è già nel carillon.
+6548=Questa canzone è stata aggiunta al carillon.
 // [7000-7499] AI Scripts
 7000=Tu sei un criminale e non puoi accedere alla tua cassaforte.
 7001=Quale oggetto desidera depositare nella sua cassetta di sicurezza?

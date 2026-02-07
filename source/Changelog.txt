@@ -1,3 +1,10 @@
+07/02/2026 - DragonSlayer62 (#464)
+    [ADD] Added Dawns Music Box and Music Gears.
+
+07/02/2026 - DragonSlayer62 (#497)
+    [FIX] Fixed House decay timers to kill on door refresh, and on grandfathered enabled properly.
+    [FIX] Raced.dfn had the wrong ID in Gargoyle Armor/Weapons and also removed an extra comma at the end.
+
 06/02/2026 - Xoduz (#495)
     [ADD] Added new GM command 'showspawnregions (js/commands/targeting/showspawnregions.js) which will visualize all spawn regions within range of targeted location for a short duration
     [ADD] Added new GM command 'spawnregionadmin (js/commands/spawnregionadmin.js) which shows a filterable list of all spawn regions in the game. Clicking the name of the spawn region in the menu will open up the tweak menu for said spawn region. Note that all changes done to spawn regions are temporary in nature, and only last until the next server restart (where it again reads from spawn region DFN files)
