@@ -591,6 +591,43 @@ CItem *FindItemNearXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id, UI16 
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	FindItemBySectionNearXYZ()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Find items near specified location
+//o------------------------------------------------------------------------------------------------o
+CItem *FindItemBySectionNearXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, const std::string &sectionId, UI16 instanceId )
+{
+	UI16 oldDist		= DIST_OUTOFRANGE;
+	UI16 currDist;
+	CItem *currItem		= nullptr;
+	Point3_st targLocation = Point3_st( x, y, z );
+	for( auto &toCheck : MapRegion->PopulateList( x, y, worldNumber ))
+	{
+		if( toCheck == nullptr ) // no valid region
+			continue;
+
+		auto regItems = toCheck->GetItemList();
+		for( const auto &itemCheck: regItems->collection() )
+		{
+			if( !ValidateObject( itemCheck ) || itemCheck->GetInstanceId() != instanceId )
+				continue;
+
+			if( itemCheck->GetSectionId() == sectionId && itemCheck->GetZ() == z )
+			{
+				Point3_st difference	= itemCheck->GetLocation() - targLocation;
+				currDist = static_cast<UI16>( difference.Mag() );
+				if( currDist < oldDist )
+				{
+					oldDist = currDist;
+					currItem = itemCheck;
+				}
+			}
+		}
+	}
+	return currItem;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	FindNearbyItems( CBaseObject *mObj, distLocs distance )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a list of Items that are within a certain distance of a given object

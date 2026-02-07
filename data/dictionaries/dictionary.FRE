@@ -3707,16 +3707,30 @@
 6321=On dirait que cette lame est recouverte d'une substance acide.
 6322=On dirait que cette lame contient un élément corrosif.
 6323=On dirait que cette lame contient un élément légèrement corrosif.
-// [6540-6550] Boîte à musique de l'Aube
-6540=Vous devez avoir cet objet dans votre inventaire ou le verrouiller pour l'utiliser.
-6541=Ciblez une boîte à musique de l'Aube pour ajouter ce morceau.
-6542=Vous devez cibler une boîte à musique de l'Aube.
-6543=Ceci n'est pas une boîte à musique de l'Aube.
-6544=Aucun équipement musical n'est en attente.
-6545=L'équipement musical est introuvable.
-6546=Aucun morceau n'est associé à cet équipement.
-6547=Ce morceau est déjà présent dans la boîte à musique.
-6548=Ce morceau a été ajouté à la boîte à musique.
+// [6500-6549] Event Manager
+6500=Gestionnaire d'événements : démarrage du battement de cœur
+6501=Gestionnaire d'événements : réutilisation de l'objet Gestionnaire d'événements existant.
+6502=Gestionnaire d'événements : l'ancien objet Gestionnaire d'événements n'existe plus, un nouvel objet sera créé.
+6503=Gestionnaire d'événements : échec de la création de %s
+6504=Gestionnaire d'événements : initialisation terminée. Événements chargés : %i
+6505=Gestionnaire d'événements : initialisation terminée. Aucun événement chargé, passage en mode veille.
+6506=Gestionnaire d'événements : Tous les événements sont terminés. Passage en mode veille.
+6507=Gestionnaire d'événements : AVERTISSEMENT - Événement ignoré, fonction de rappel %s manquante dans le script %i
+6508=Le gestionnaire d'événements est actuellement désactivé. Activez-le via uox.ini
+6509=Événements actifs : %i
+6510=Utilisation : 'em %s <numéro d'index de la liste des événements>
+6511=Gestionnaire d'événements : l'événement %i est désormais %s
+6512=Gestionnaire d'événements : %s a modifié l'événement %i en %s
+6513=Index d'événement non valide. Pour afficher la liste complète des événements : 'em list
+6514=Forcer la réinitialisation du gestionnaire d'événements...
+6515=Commandes prises en charge par le gestionnaire d'événements : list, enable <#>, disable <#>, remove <#>, reset
+6516=Gestionnaire d'événements : échec de RegisterEvent car le gestionnaire d'événements est désactivé.
+6517=Gestionnaire d'événements : échec de RegisterEvent car les données de configuration callbackScriptID et/ou callbackFuncStart sont manquantes.
+6518=Gestionnaire d'événements : nouvel événement enregistré - %s (ID : %i)
+6519=Événement interrompu et désactivé.
+6520=Événement activé et reprogrammé pour la prochaine fenêtre d'activation valide.
+6521=Utilisation : 'em remove <index from event list>
+6522=Événement interrompu et supprimé.
 // [7000-7499] AI Scripts
 7000=Tu es un criminel et tu ne peux pas accéder à ton coffre de banque.
 7001=Quel objet souhaitez-vous déposer dans votre coffret bancaire ?

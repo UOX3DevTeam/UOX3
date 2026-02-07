@@ -423,6 +423,23 @@
       "returns": "ItemOrNull"
     },
     {
+      "name": "FindItemBySection",
+      "cppName": "SE_FindItemBySection",
+      "params": {
+        "num": 5,
+        "max": 6,
+            "list": [
+              { "name": "x",          "type": "number", "required": true },
+              { "name": "y",          "type": "number", "required": true },
+              { "name": "z",          "type": "number", "required": true },
+              { "name": "worldNum",   "type": "number", "required": true },
+              { "name": "sectionId",  "type": "string", "required": true },
+              { "name": "instanceId", "type": "number", "required": false }
+            ]
+      },
+      "returns": "ItemOrNull"
+    },
+    {
       "name": "PossessTown",
       "cppName": "SE_PossessTown",
       "params": {
@@ -8647,6 +8664,11 @@
       "returns": "boolean"
     },
     {
+      "name": "onScriptLoad",
+      "cppName": "OnScriptLoad",
+      "returns": "void"
+    },
+    {
       "name": "onScrollCast",
       "cppName": "OnScrollCast",
       "params": {
@@ -8946,8 +8968,12 @@
     {
       "name": "onStart",
       "cppName": "OnStart",
-      "returns": "void",
-      "comments": "Never invoked"
+      "params": {
+        "list": [
+          { "name": "myObj", "type": "Character | Item | TownRegion", "required": true }
+        ]
+      },
+      "returns": "void"
     },
     {
       "name": "onStat",

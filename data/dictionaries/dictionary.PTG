@@ -3543,16 +3543,30 @@
 6321=Parece que esta lâmina está coberta por uma substância ácida.
 6322=Parece que esta lâmina tem um elemento corrosivo.
 6323=Parece que esta lâmina tem um elemento corrosivo leve.
-// [6540-6550] Caixa de Música da Aurora
-6540=Necessita de ter o item na mochila ou bloqueado para o utilizar.
-6541=Selecione uma Caixa de Música da Aurora para adicionar esta música.
-6542=Necessita de selecionar uma Caixa de Música da Aurora.
-6543=Isto não é uma Caixa de Música da Aurora.
-6544=Não está pendente qualquer equipamento musical.
-6545=O equipamento musical não foi encontrado.
-6546=Este equipamento não tem qualquer música atribuída.
-6547=Esta música já está na caixa de música.
-6548=Esta música foi adicionada à caixa de música.
+// [6500-6549] Event Manager
+6500=Gestor de Eventos: Heartbeat iniciado
+6501=Gestor de Eventos: Reutilizando objeto Gestor de Eventos existente.
+6502=Gestor de Eventos: Objeto Gestor de Eventos antigo não existe mais, um novo será criado.
+6503=Gestor de Eventos: Falha ao gerar %s
+6504=Gestor de Eventos: Inicialização concluída. Eventos carregados: %i
+6505=Gestor de Eventos: Inicialização concluída. Nenhum evento carregado, entrando em modo de espera.
+6506=Gestor de Eventos: Todos os eventos concluídos. Entrando em modo de espera.
+6507=Gestor de Eventos: AVISO - Evento ignorado, função de retorno de chamada %s ausente no script %i
+6508=O Gestor de Eventos está atualmente desativado. Ative-o através do uox.ini
+6509=Eventos ativos: %i
+6510=Utilização: 'em %s <número de índice da lista de eventos>
+6511=Gestor de Eventos: O evento %i está agora %s
+6512=Gestor de Eventos: %s alterou o evento %i para %s
+6513=Índice de evento inválido. Para ver a lista completa de eventos: 'em list
+6514=A forçar a reinicialização do Gestor de Eventos...
+6515=Comandos suportados do Gestor de Eventos: list, enable <#>, disable <#>, remove <#>, reset
+6516=Gestor de Eventos: Falha no RegisterEvent porque o Gestor de Eventos está desativado.
+6517=Gestor de Eventos: Falha no RegisterEvent devido à falta dos dados de configuração callbackScriptID e/ou callbackFuncStart.
+6518=Gestor de Eventos: Novo evento registado - %s (ID: %i)
+6519=Evento interrompido e desativado.
+6520=Evento ativado e reprogramado para a próxima janela de ativação válida.
+6521=Utilização: 'em remove <índice da lista de eventos>
+6522=Evento interrompido e removido.
 // [7000-7499] AI Scripts
 7000=Tu és um criminoso e não podes aceder à tua caixa bancária.
 7001=Que artigo deseja depositar na sua caixa bancária?

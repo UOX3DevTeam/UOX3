@@ -3543,16 +3543,30 @@
 6321=Sembra che questa lama sia ricoperta da una sostanza acida.
 6322=Sembra che questa lama contenga un elemento corrosivo.
 6323=Sembra che questa lama contenga un leggero elemento corrosivo.
-// [6540-6550] Carillon dell'Alba
-6540=Devi avere l'oggetto nello zaino o sotto chiave per poterlo usare.
-6541=Seleziona un Carillon dell'Alba per aggiungere questa canzone.
-6542=Devi selezionare un Carillon dell'Alba.
-6543=Questo non è un Carillon dell'Alba.
-6544=Nessun equipaggiamento musicale in sospeso.
-6545=Impossibile trovare l'equipaggiamento musicale.
-6546=A questo equipaggiamento non è assegnata alcuna canzone.
-6547=Questa traccia è già nel carillon.
-6548=Questa canzone è stata aggiunta al carillon.
+// [6500-6549] Event Manager
+6500=Gestione eventi: avvio heartbeat
+6501=Gestione eventi: riutilizzo oggetto Gestione eventi esistente.
+6502=Gestione eventi: il vecchio oggetto Gestione eventi non esiste più, ne verrà creato uno nuovo.
+6503=Gestione eventi: impossibile generare %s
+6504=Gestione eventi: inizializzazione completata. Eventi caricati: %i
+6505=Gestione eventi: inizializzazione completata. Nessun evento caricato, entrando in modalità standby.
+6506=Gestione eventi: Tutti gli eventi terminati. Entrando in modalità standby.
+6507=Gestione eventi: AVVISO - Evento saltato, funzione di callback %s mancante nello script %i
+6508=La Gestione eventi è attualmente disabilitata. Abilitala tramite uox.ini
+6509=Eventi attivi: %i
+6510=Utilizzo: 'em %s <numero indice dall'elenco eventi>
+6511=Gestione eventi: l'evento %i è ora %s
+6512=Gestione eventi: %s ha modificato l'evento %i in %s
+6513=Indice evento non valido. Per visualizzare l'elenco completo degli eventi: 'em list
+6514=Forzatura del ripristino della Gestione eventi...
+6515=Comandi Gestione eventi supportati: list, enable <#>, disable <#>, remove <#>, reset
+6516=Gestione eventi: RegisterEvent non riuscito perché Gestione eventi è disabilitato.
+6517=Gestione eventi: RegisterEvent non riuscito a causa di dati di configurazione mancanti callbackScriptID e/o callbackFuncStart.
+6518=Gestione eventi: nuovo evento registrato - %s (ID: %i)
+6519=Evento interrotto e disabilitato.
+6520=Evento abilitato e riprogrammato per la prossima finestra di attivazione valida.
+6521=Utilizzo: 'em remove <indice dall'elenco eventi>
+6522=Evento interrotto e rimosso.
 // [7000-7499] AI Scripts
 7000=Tu sei un criminale e non puoi accedere alla tua cassaforte.
 7001=Quale oggetto desidera depositare nella sua cassetta di sicurezza?

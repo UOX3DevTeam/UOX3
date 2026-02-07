@@ -3543,16 +3543,30 @@
 6321=Wygląda, jakby ostrze było pokryte kwaśną substancją.
 6322=Wygląda, jakby ostrze zawierało substancję żrącą.
 6323=Wygląda, jakby ostrze zawierało niewielką ilość substancji żrącej.
-// [6540-6550] Pozytywka Dawns
-6540=Aby użyć przedmiotu, musisz mieć go w plecaku lub zablokować.
-6541=Aby dodać tę piosenkę, wybierz pozytywkę Dawns.
-6542=Aby dodać tę piosenkę, wybierz pozytywkę Dawns.
-6543=To nie jest pozytywka Dawns.
-6544=Brak oczekującego sprzętu muzycznego.
-6545=Nie znaleziono sprzętu muzycznego.
-6546=Ten sprzęt nie ma przypisanej piosenki.
-6547=Ten utwór znajduje się już w pozytywce.
-6548=Ten utwór został dodany do pozytywki.
+// [6500-6549] Event Manager
+6500=Menedżer zdarzeń: Rozpoczęto pulsowanie
+6501=Menedżer zdarzeń: Ponowne użycie istniejącego obiektu menedżera zdarzeń.
+6502=Menedżer zdarzeń: Stary obiekt menedżera zdarzeń już nie istnieje, zostanie utworzony nowy.
+6503=Menedżer zdarzeń: Nie udało się utworzyć %s
+6504=Menedżer zdarzeń: Inicjalizacja zakończona. Załadowano zdarzenia: %i
+6505=Menedżer zdarzeń: Inicjalizacja zakończona. Nie załadowano żadnych zdarzeń, przechodzę w tryb gotowości.
+6506=Menedżer zdarzeń: Wszystkie zdarzenia zakończone. Przechodzę w tryb gotowości.
+6507=Menedżer zdarzeń: OSTRZEŻENIE — pominięto zdarzenie, brakuje funkcji wywołania zwrotnego %s w skrypcie %i
+6508=Menedżer zdarzeń jest obecnie wyłączony. Włącz go za pomocą pliku uox.ini
+6509=Aktywne zdarzenia: %i
+6510=Sposób użycia: 'em %s <numer indeksu z listy zdarzeń>
+6511=Menedżer zdarzeń: Zdarzenie %i ma teraz wartość %s
+6512=Menedżer zdarzeń: %s zmienił zdarzenie %i na %s
+6513=Nieprawidłowy indeks zdarzenia. Aby wyświetlić pełną listę zdarzeń: 'em list
+6514=Wymuszanie resetowania menedżera zdarzeń...
+6515=Obsługiwane polecenia menedżera zdarzeń: list, enable <#>, disable <#>, remove <#>, reset
+6516=Menedżer zdarzeń: Rejestracja zdarzenia nie powiodła się, ponieważ menedżer zdarzeń jest wyłączony.
+6517=Menedżer zdarzeń: Rejestracja zdarzenia nie powiodła się z powodu braku danych konfiguracyjnych callbackScriptID i/lub callbackFuncStart.
+6518=Menedżer zdarzeń: zarejestrowano nowe zdarzenie — %s (ID: %i)
+6519=Zdarzenie zatrzymane i wyłączone.
+6520=Zdarzenie włączone i przeplanowane na następne ważne okno aktywacji.
+6521=Zastosowanie: 'em remove <indeks z listy zdarzeń>
+6522=Zdarzenie zatrzymane i usunięte.
 // [7000-7499] AI Scripts
 7000=Jesteś przestępcą i nie masz dostępu do swojej skrytki bankowej.
 7001=Którą pozycję chcesz umieścić w swojej skrytce bankowej?

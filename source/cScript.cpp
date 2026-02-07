@@ -74,6 +74,7 @@ static JSFunctionSpec my_functions[] =
 	{ "FindMulti",					SE_FindMulti,				4, 0 },
 	{ "GetItem",					SE_GetItem,					4, 0 },
 	{ "FindItem",					SE_FindItem,				5, 0 },
+	{ "FindItemBySection",			SE_FindItemBySection,		5, 0 },
 	{ "PossessTown",				SE_PossessTown,				2, 0 },
 	{ "IsRaceWeakToWeather",		SE_IsRaceWeakToWeather,		2, 0 },
 	{ "GetRaceSkillAdjustment",		SE_GetRaceSkillAdjustment,	2, 0 },
@@ -340,6 +341,13 @@ cScript::cScript( std::string targFile, UI08 rT, UI16 scrID ) : isFiring( false 
 	JS_DefineFunctions( targContext, targObject, my_functions );
 	JS_SetPrivate( targContext, targObject, this );
 
+	// Define some global constants that can be used in any scripts
+#if defined( UOX_DEBUG_MODE )
+	JS_DefineProperty( targContext, targObject, "UOX_DEBUG_MODE", BOOLEAN_TO_JSVAL( JS_TRUE ), nullptr, nullptr, JSPROP_PERMANENT | JSPROP_READONLY );
+#else
+	JS_DefineProperty( targContext, targObject, "UOX_DEBUG_MODE", BOOLEAN_TO_JSVAL( JS_FALSE ), nullptr, nullptr, JSPROP_PERMANENT | JSPROP_READONLY );
+#endif
+
 	auto proto = JSEngine->GetPrototype( rT, JSP_SCRIPT );
 	scriptObj = JS_DefineObject( targContext, targObject, "SCRIPT", &uox_class, proto, 0 );
 	JS_LockGCThing( targContext, scriptObj );
@@ -476,7 +484,7 @@ JSBool cScript::InvokeEvent( const char* name, uintN argc, jsval* argv, jsval* r
 {
 	JSMapping->pushActive( this );
 #if defined UOX_DEBUG_MODE
-	Console.Warning( oldstrutil::format( "Triggering event '%s' from script %d", name, GetScriptID() ) );
+	Console.Log( oldstrutil::format( "Triggering event '%s' from script %d", name, GetScriptID() ) );
 #endif
 	JSBool rVal = JS_CallFunctionName( targContext, targObject, name, argc, argv, rval );
 	JSMapping->popActive();
@@ -485,17 +493,53 @@ JSBool cScript::InvokeEvent( const char* name, uintN argc, jsval* argv, jsval* r
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::OnStart()
-//|	Date		-	8/16/2003 3:44:50 AM
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	The OnStart event is provided to allow a script to process
-//|					and read in any state information that has been saved from
-//|					a previous server shut down. If a a script come with an
-//|					OnStart event the code that is provided will be executed
-//|					just following the loading of the script.
+//|	Purpose		-	Executes for any instance of a script with onEvent that is attached to an
+//|					object, as soon as shard has completed startup and world has fully loaded.
+//|					Provides object context via the included parameter.
 //o------------------------------------------------------------------------------------------------o
-bool cScript::OnStart( void )
+bool cScript::OnStart( void *myObj, SI32 objType )
 {
-	return false;
+	if( !ExistAndVerify( seOnStart, "onStart" ))
+		return false;
+
+	jsval rval;
+	jsval params[1];
+
+	if( myObj != nullptr && objType != -1 )
+	{
+		JSObject *jsObj = JSEngine->AcquireObject( static_cast<IUEEntries>( objType ), myObj, runTime );
+		params[0] = OBJECT_TO_JSVAL( jsObj );
+	}
+
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onStart", 1, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnStart, false );
+	}
+
+	return ( retVal == JS_TRUE );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnScriptLoad()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Executes once for any script with onScriptLoad event as soon as shard has
+//|					completed startup and world has fully loaded. No object context.
+//o------------------------------------------------------------------------------------------------o
+bool cScript::OnScriptLoad( void )
+{
+	if( !ExistAndVerify( seOnScriptLoad, "onScriptLoad" ))
+		return false;
+
+	jsval rval;
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onScriptLoad", 0, nullptr, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnScriptLoad, false );
+	}
+
+	return ( retVal == JS_TRUE );
 }
 
 //o------------------------------------------------------------------------------------------------o

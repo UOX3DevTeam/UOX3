@@ -1,0 +1,7 @@
+[eventmanagerobj]
+{
+get=base_item
+id=0x04a9
+movable=2
+visible=3
+}
