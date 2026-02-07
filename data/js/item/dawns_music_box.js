@@ -145,7 +145,7 @@ function onCreateDFN( objMade, objType  )
 	else if( isGear === 1 )
 	{
 		var musicID = objMade.GetTag( "dawns_music" );
-		if( musicID <= 0 )
+		if( musicID < 0 )
 		{
 			var rarityTag = objMade.GetTag( "dawns_rarity" );
 			var rarity = DawnsMusicRarity.Common;
@@ -623,7 +623,7 @@ function onCallback1( socket, targetObj )
 	}
 
 	var musicID = gear.GetTag( "dawns_music" );
-	if( musicID <= 0 )
+	if( musicID < 0 )
 	{
 		socket.SysMessage( GetDictionaryEntry( 6546, socket.language )); // This gear has no song assigned.
 		return;
