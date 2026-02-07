@@ -201,8 +201,7 @@ function onUseChecked( pUser, iUsed )
 			const decayLikeNewMS = decayStageLikeNewMins * 60 * 1000;
 
 			// Kill all possible decay timers for this house script
-			var houseTimerID;
-			for( houseTimerID = 1; houseTimerID <= 7; ++houseTimerID )
+			for( var houseTimerID = 1; houseTimerID <= 7; ++houseTimerID )
 			{
 				iUsed.multi.KillJSTimer( houseTimerID, 15000 );
 			}

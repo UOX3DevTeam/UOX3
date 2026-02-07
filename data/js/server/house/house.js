@@ -236,7 +236,9 @@ function onTimer( iMulti, timerID )
 	{
 		// Ensure NO house-decay timers are running (script 15000, timer 1..7)
 		for( var houseTimerID = 1; houseTimerID <= 7; ++houseTimerID )
+		{
 			iMulti.KillJSTimer( houseTimerID, 15000 );
+		}
 		return;
 	}
 
@@ -245,7 +247,9 @@ function onTimer( iMulti, timerID )
 	{
 		// Ensure NO house-decay timers are running (script 15000, timer 1..7)
 		for( var houseTimerID = 1; houseTimerID <= 7; ++houseTimerID )
+		{
 			iMulti.KillJSTimer( houseTimerID, 15000 );
+		}
 		return;
 	}
 

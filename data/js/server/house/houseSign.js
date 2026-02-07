@@ -478,9 +478,10 @@ function onGumpPress( pSocket, pButton, gumpData )
 				iMulti.SetTag("Grandfathered", false);
 
 				// Start / resume decay
-				var houseTimerID;
-				for( houseTimerID = 1; houseTimerID <= 7; ++houseTimerID )
+				for( var houseTimerID = 1; houseTimerID <= 7; ++houseTimerID )
+				{
 					iMulti.KillJSTimer( houseTimerID, 15000 );
+				}
 
 				var decayStageLikeNewMins = GetServerSetting( "DecayStageLikeNewMins" );
 				var decayLikeNewMS = decayStageLikeNewMins * 60 * 1000;
@@ -490,7 +491,9 @@ function onGumpPress( pSocket, pButton, gumpData )
 				iMulti.SetTag( "houseDecayInit", true );
 
 				if( pUser.socket != null )
+				{
 					pUser.socket.SysMessage( "Grandfathered status disabled (decay enabled)" );
+				}
 
 				HouseOwnerGump( pUser );
 			}
@@ -502,12 +505,15 @@ function onGumpPress( pSocket, pButton, gumpData )
 				iMulti.SetTag("Grandfathered", true);
 
 				// Stop decay completely
-				var houseTimerID2;
-				for( houseTimerID2 = 1; houseTimerID2 <= 7; ++houseTimerID2 )
+				for( var houseTimerID2 = 1; houseTimerID2 <= 7; ++houseTimerID2 )
+				{
 					iMulti.KillJSTimer( houseTimerID2, 15000 );
+				}
 
 				if( pUser.socket != null )
+				{
 					pUser.socket.SysMessage( "Grandfathered status enabled (no decay)" );
+				}
 
 				HouseOwnerGump( pUser );
 			}
@@ -718,9 +724,13 @@ function HouseOwnerGump( pUser )
 	{
 		var stage = parseInt( iSign.multi.GetTag( "decayStage" ), 10 );
 		if( iSign.multi.GetTag( "Grandfathered" ))
+		{
 			decayStageText = "<BASEFONT COLOR=#FF0000>Grandfathered - No Decay</BASEFONT>";
+		}
 		else if( stage > 0 && decayStages[stage] )
+		{
 			decayStageText = "Condition: <BASEFONT COLOR=#FF0000>" + decayStages[stage] + "</BASEFONT>";
+		}
 	}
 
 	var pLanguage = pUser.socket.language;
