@@ -90,7 +90,7 @@ function SetupChampionAltars( pUser, spawnFilter )
     var worldNum = pUser.worldnumber;
     var instID   = pUser.instanceID;
 
-    var MARKER_ID = 0x1F14;
+    var markerID = 0x1F14;
 
     for( var i = 0; i < altarData.length; ++i )
     {
@@ -102,7 +102,7 @@ function SetupChampionAltars( pUser, spawnFilter )
             continue;
 
         // Already spawned?
-        var existingMarker = FindItem( d.x, d.y, d.z, worldNum, MARKER_ID, instID );
+        var existingMarker = FindItem( d.x, d.y, d.z, worldNum, markerID, instID );
         if( ValidateObject( existingMarker ) && existingMarker.GetTag( "ChampAltarMarker" ) == 1 )
         {
             skipped++;
@@ -113,7 +113,7 @@ function SetupChampionAltars( pUser, spawnFilter )
         CreateHouse( 1000, d.x, d.y, d.z, worldNum, instID, 0, false );
 
         // Marker = proof of success + anchor for scans/removal
-        var marker = CreateBlankItem( null, null, 1, "champ altar marker", MARKER_ID, 0, "ITEM", false );
+        var marker = CreateBlankItem( null, null, 1, "champ altar marker", markerID, 0, "ITEM", false );
         if( !ValidateObject( marker ))
         {
             failed++;
@@ -133,7 +133,7 @@ function SetupChampionAltars( pUser, spawnFilter )
         marker.SetTag( "ChampAltarType", d.type );
 
         // Tag platform step items around marker so champremove can delete safely
-        socket._tagPlatformTypeStr = dType;
+        socket.tagPlatformTypeStr = dType;
 
         // If your environment needs it, keep the refresh guard:
         marker.Refresh();
@@ -239,14 +239,14 @@ function RunChampToggleCommand( socket, cmdString, enabling )
         return;
     }
 
-    socket._champToggleAll = all ? 1 : 0;
-    socket._champToggleID  = all ? 0 : ChampionNameToID[arg];
-    socket._champToggleEnable = enabling ? 1 : 0;
-    socket._champToggleCount = 0;
-    socket._champToggleSkipped = 0;
+    socket.champToggleAll = all ? 1 : 0;
+    socket.champToggleID  = all ? 0 : ChampionNameToID[arg];
+    socket.champToggleEnable = enabling ? 1 : 0;
+    socket.champToggleCount = 0;
+    socket.champToggleSkipped = 0;
 
     var altarData = GetAltarDataList();
-    var MARKER_ID = 0x1F14;
+    var markerID = 0x1F14;
 
     var worldNum = pUser.worldnumber;
     var instID   = pUser.instanceID;
@@ -261,7 +261,7 @@ function RunChampToggleCommand( socket, cmdString, enabling )
                 continue;
         }
 
-        var marker = FindItem( d.x, d.y, d.z, worldNum, MARKER_ID, instID );
+        var marker = FindItem( d.x, d.y, d.z, worldNum, markerID, instID );
         if( ValidateObject( marker ) && marker.GetTag( "ChampAltarMarker" ) == 1 )
         {
             AreaItemFunction( "ChampToggleAltarsAround", marker, 12, socket );
@@ -272,7 +272,7 @@ function RunChampToggleCommand( socket, cmdString, enabling )
         }
     }
 
-    socket.SysMessage(( enabling ? "Enabled" : "Disabled" ) + " champion spawns: " + socket._champToggleCount + " (skipped: " + socket._champToggleSkipped + ")" );
+    socket.SysMessage(( enabling ? "Enabled" : "Disabled" ) + " champion spawns: " + socket.champToggleCount + " (skipped: " + socket.champToggleSkipped + ")" );
 }
 
 // AreaItemFunction callback: find altar items by presence of championType tag
@@ -289,25 +289,25 @@ function ChampToggleAltarsAround( src, item, pSock )
     if( champID <= 0 )
         return false;
 
-    if( pSock._champToggleAll != 1 )
+    if( pSock.champToggleAll != 1 )
     {
-        if( champID != pSock._champToggleID )
+        if( champID != pSock.champToggleID )
             return false;
     }
 
-    if( pSock._champToggleEnable == 1 )
+    if( pSock.champToggleEnable == 1 )
     {
         if( EnableOneChampionAltar( item, pSock ))
-            pSock._champToggleCount++;
+            pSock.champToggleCount++;
         else
-            pSock._champToggleSkipped++;
+            pSock.champToggleSkipped++;
     }
     else
     {
         if( DisableOneChampionAltar( item, pSock ))
-            pSock._champToggleCount++;
+            pSock.champToggleCount++;
         else
-            pSock._champToggleSkipped++;
+            pSock.champToggleSkipped++;
     }
 
     return true;
@@ -406,17 +406,17 @@ function command_CHAMPREMOVE( socket, cmdString )
         return;
     }
 
-    socket._champRemoveAll = all ? 1 : 0;
-    socket._champRemoveTypeStr = arg; // string filter for marker/platform
-    socket._champRemoveCount = 0;
-    socket._champRemoveSkipped = 0;
-	socket._champRemoveNoMarker = 0;
-	socket._champRemoveNoAltar = 0;
-	socket._champRemoveFound = 0;
-	socket._champRemoveRemoved = 0;
+    socket.champRemoveAll = all ? 1 : 0;
+    socket.champRemoveTypeStr = arg; // string filter for marker/platform
+    socket.champRemoveCount = 0;
+    socket.champRemoveSkipped = 0;
+	socket.champRemoveNoMarker = 0;
+	socket.champRemoveNoAltar = 0;
+	socket.champRemoveFound = 0;
+	socket.champRemoveRemoved = 0;
 
     var altarData = GetAltarDataList();
-    var MARKER_ID = 0x1F14;
+    var markerID = 0x1F14;
 
     var worldNum = pUser.worldnumber;
     var instID   = pUser.instanceID;
@@ -431,22 +431,22 @@ function command_CHAMPREMOVE( socket, cmdString )
                 continue;
         }
 
-		var marker = FindItem(d.x, d.y, d.z, worldNum, MARKER_ID, instID);
+		var marker = FindItem(d.x, d.y, d.z, worldNum, markerID, instID);
 		if (ValidateObject(marker) && marker.GetTag("ChampAltarMarker") == 1)
 		{
-			socket._champRemoveFound++;
+			socket.champRemoveFound++;
 
 			if (ChampRemove_DoAtMarker(marker, socket))
-				socket._champRemoveRemoved++;
+				socket.champRemoveRemoved++;
 		}
 		else
 		{
-			socket._champRemoveNoMarker++;
+			socket.champRemoveNoMarker++;
 		}
     }
 
-	socket.SysMessage( "Removed champ altars: " + socket._champRemoveRemoved + " | FoundMarkers: " + socket._champRemoveFound +
-	" | NoMarker: " + socket._champRemoveNoMarker + " | NoAltarFound: " + socket._champRemoveNoAltar );
+	socket.SysMessage( "Removed champ altars: " + socket.champRemoveRemoved + " | FoundMarkers: " + socket.champRemoveFound +
+	" | NoMarker: " + socket.champRemoveNoMarker + " | NoAltarFound: " + socket.champRemoveNoAltar );
 }
 
 function ChampRemove_DoAtMarker( marker, pSock )
@@ -458,7 +458,7 @@ function ChampRemove_DoAtMarker( marker, pSock )
         return;
 
     var t = NormalizeTypeString( marker.GetTag( "ChampAltarType" ));
-    if( pSock._champRemoveAll != 1 && t != pSock._champRemoveTypeStr )
+    if( pSock.champRemoveAll != 1 && t != pSock.champRemoveTypeStr )
         return;
 
     // Ensure anchor is valid before scans
@@ -467,7 +467,7 @@ function ChampRemove_DoAtMarker( marker, pSock )
         return;
 
     // Count how many controller altars we actually touched
-    pSock._champRemoveFoundControllers = 0;
+    pSock.champRemoveFoundControllers = 0;
 
 	// 1) Platform first (uses marker anchor while it is still stable)
 	AreaItemFunction( "ChampRemovePlatformAround", marker, 12, pSock );
@@ -479,10 +479,10 @@ function ChampRemove_DoAtMarker( marker, pSock )
     SafeDeleteItem( marker );
 
     // If no altar controller was found, track it (marker/platform removed, but no altar item existed)
-    if( pSock._champRemoveFoundControllers <= 0 )
-        pSock._champRemoveNoAltar++;
+    if( pSock.champRemoveFoundControllers <= 0 )
+        pSock.champRemoveNoAltar++;
 
-    pSock._champRemoveCount++;
+    pSock.champRemoveCount++;
 }
 
 function ChampRemove_CleanupControllersAround( src, item, pSock )
@@ -494,7 +494,7 @@ function ChampRemove_CleanupControllersAround( src, item, pSock )
         return false;
 
     // Count controller found for this marker
-    pSock._champRemoveFoundControllers = ( pSock._champRemoveFoundControllers || 0 ) + 1;
+    pSock.champRemoveFoundControllers = ( pSock.champRemoveFoundControllers || 0 ) + 1;
 
     ChampRemove_CleanupAltar( item, pSock );
     return true;
@@ -521,7 +521,7 @@ function ChampRemovePlatformAround( src, item, pSock )
         return false;
 
     var t = NormalizeTypeString( item.GetTag( "ChampAltarType" ));
-    if( pSock._champRemoveAll != 1 && t != pSock._champRemoveTypeStr )
+    if( pSock.champRemoveAll != 1 && t != pSock.champRemoveTypeStr )
         return false;
 
     SafeDeleteItem( item );
@@ -600,14 +600,14 @@ function command_CHAMPMENU( socket, cmdString )
 	if( !ValidateObject( pUser ))
 		return;
 
-	if( socket._champMenuTypeID == null )
-		socket._champMenuTypeID = 5; // Unholy default
+	if( socket.champMenuTypeID == null )
+		socket.champMenuTypeID = 5; // Unholy default
 
-	socket._champMenuX = pUser.x;
-	socket._champMenuY = pUser.y;
-	socket._champMenuZ = pUser.z;
-	socket._champMenuWorld = pUser.worldnumber;
-	socket._champMenuInst = pUser.instanceID;
+	socket.champMenuX = pUser.x;
+	socket.champMenuY = pUser.y;
+	socket.champMenuZ = pUser.z;
+	socket.champMenuWorld = pUser.worldnumber;
+	socket.champMenuInst = pUser.instanceID;
 
 	ChampMenu_Open( socket );
 }
@@ -625,7 +625,7 @@ function ChampMenu_Open( socket )
 	champMenu.AddButton( 330, 8, 4017, 4018, 1, 0, 0 ); // close
 
 	// Location display
-	var locStr = "X=" + socket._champMenuX + " Y=" + socket._champMenuY + " Z=" + socket._champMenuZ;
+	var locStr = "X=" + socket.champMenuX + " Y=" + socket.champMenuY + " Z=" + socket.champMenuZ;
 	champMenu.AddHTMLGump( 20, 40, 320, 18, false, false, "<basefont color=#ffffff>Location: " + locStr + "</basefont>" );
 
 	// Set Location button
@@ -651,7 +651,7 @@ function ChampMenu_Open( socket )
 		var x = startX + ( col * colW );
 		var y = startY + ( row * 24 );
 
-		var selected = ( socket._champMenuTypeID == t.id ) ? 1 : 0;
+		var selected = ( socket.champMenuTypeID == t.id ) ? 1 : 0;
 
 		champMenu.AddRadio( x, y, 2472, 2153, selected, t.id );
 		champMenu.AddHTMLGump( x + 30, y, 90, 18, false, false, "<basefont color=#00ff00>" + t.name + "</basefont>" );
@@ -687,7 +687,7 @@ function onGumpPress( socket, buttonID, gumpData )
 
 	var selectedTypeID = parseInt( gumpData.getButton( 0 ));
 	if( selectedTypeID > 0 )
-		socket._champMenuTypeID = selectedTypeID;
+		socket.champMenuTypeID = selectedTypeID;
 
 	switch( buttonID )
 	{
@@ -714,11 +714,11 @@ function onGumpPress( socket, buttonID, gumpData )
 				return;
 			}
 			socket.SysMessage( "You set the Champion Alter Spawn at X:" + TextX + " Y:" + TextY + " Z:" + TextZ);
-			socket._champMenuX = TextX;
-			socket._champMenuY = TextY;
-			socket._champMenuZ = TextZ;
-			socket._champMenuWorld = pUser.worldnumber;
-			socket._champMenuInst  = pUser.instanceID;
+			socket.champMenuX = TextX;
+			socket.champMenuY = TextY;
+			socket.champMenuZ = TextZ;
+			socket.champMenuWorld = pUser.worldnumber;
+			socket.champMenuInst  = pUser.instanceID;
 			ChampMenu_Open( socket );
 			break;
 		default:
@@ -745,12 +745,12 @@ function onCallback0( socket, myTarget )
 		return;
 	}
 
-	socket._champMenuX = targX;
-	socket._champMenuY = targY;
-	socket._champMenuZ = targZ;
+	socket.champMenuX = targX;
+	socket.champMenuY = targY;
+	socket.champMenuZ = targZ;
 
-	socket._champMenuWorld = pUser.worldnumber;
-	socket._champMenuInst  = pUser.instanceID;
+	socket.champMenuWorld = pUser.worldnumber;
+	socket.champMenuInst  = pUser.instanceID;
 
 	ChampMenu_Open( socket );
 }
@@ -761,13 +761,13 @@ function ChampMenu_CreateAndEnable( socket )
 	if( !ValidateObject( pUser ))
 		return;
 
-	var x = socket._champMenuX;
-	var y = socket._champMenuY;
-	var z = socket._champMenuZ;
-	var worldNum = socket._champMenuWorld;
-	var instID = socket._champMenuInst;
+	var x = socket.champMenuX;
+	var y = socket.champMenuY;
+	var z = socket.champMenuZ;
+	var worldNum = socket.champMenuWorld;
+	var instID = socket.champMenuInst;
 
-	var champID = parseInt( socket._champMenuTypeID, 10 ) || 0;
+	var champID = parseInt( socket.champMenuTypeID, 10 ) || 0;
 	if( champID <= 0 )
 	{
 		socket.SysMessage( "Invalid champion type selected." );
@@ -797,11 +797,11 @@ function ChampMenu_CreateAndEnable( socket )
 	if( !ValidateObject( ctrl ))
 	{
 		// store pending data and retry shortly
-		socket._champMenuPending = 1;
-		socket._champMenuPendingCX = cx;
-		socket._champMenuPendingCY = cy;
-		socket._champMenuPendingCZ = cz;
-		socket._champMenuPendingTypeName = typeName;
+		socket.champMenuPending = 1;
+		socket.champMenuPendingCX = cx;
+		socket.champMenuPendingCY = cy;
+		socket.champMenuPendingCZ = cz;
+		socket.champMenuPendingTypeName = typeName;
 
 		pUser.StartTimer( 1000, 9102, true );
 		socket.SysMessage( "Placed altar. Finalizing controller setup..." );
@@ -823,20 +823,20 @@ function onTimer( pUser, timerID )
 
 	var socket = pUser.socket;
 
-	if( socket._champMenuPending != 1 )
+	if( socket.champMenuPending != 1 )
 		return;
 
-	socket._champMenuPending = 0;
+	socket.champMenuPending = 0;
 
-	var worldNum = socket._champMenuWorld;
-	var instID = socket._champMenuInst;
+	var worldNum = socket.champMenuWorld;
+	var instID = socket.champMenuInst;
 
-	var cx = socket._champMenuPendingCX;
-	var cy = socket._champMenuPendingCY;
-	var cz = socket._champMenuPendingCZ;
+	var cx = socket.champMenuPendingCX;
+	var cy = socket.champMenuPendingCY;
+	var cz = socket.champMenuPendingCZ;
 
-	var typeName = socket._champMenuPendingTypeName;
-	var champID = parseInt( socket._champMenuTypeID, 10 ) || 0;
+	var typeName = socket.champMenuPendingTypeName;
+	var champID = parseInt( socket.champMenuTypeID, 10 ) || 0;
 
 	var ctrl = FindItem( cx, cy, cz, worldNum, 0x0BD1, instID );
 
@@ -850,7 +850,7 @@ function onTimer( pUser, timerID )
 	ChampMenu_ConfigureController( socket, ctrl, champID, typeName );
 
 	socket.SysMessage( "Champion altar created and enabled: " + typeName + " at " +
-	socket._champMenuX + "," + socket._champMenuY + "," + socket._champMenuZ + "." );
+	socket.champMenuX + "," + socket.champMenuY + "," + socket.champMenuZ + "." );
 }
 
 function ChampMenu_ConfigureController( socket, ctrl, champID, typeName )
@@ -868,7 +868,7 @@ function ChampMenu_ConfigureController( socket, ctrl, champID, typeName )
 
 	ctrl.AddScriptTrigger( 7500 );
 
-	socket._tagPlatformTypeStr = ( "" + typeName ).toLowerCase();
+	socket.tagPlatformTypeStr = ( "" + typeName ).toLowerCase();
 	AreaItemFunction( "TagChampPlatformAround", ctrl, 30, socket );
 
 	ChampMenu_EnableController( ctrl );
