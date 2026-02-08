@@ -1,0 +1,23 @@
+[houseteleporter]
+{
+get=base_item
+name=a house teleporter
+id=0x40BB
+weight=100
+decay=1
+script=5080
+origin=hs
+movable=1
+}
+
+[chargedhouseteleporter]
+{
+get=base_item
+name=a house teleporter
+id=0x574A
+weight=100
+decay=1
+script=5080
+origin=hs
+movable=1
+}
