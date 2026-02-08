@@ -642,7 +642,7 @@ function onTimer( mChar, timerID )
 				timerID = 2;
 			}
 
-			switch ( timerID )
+			switch( timerID )
 			{
 				case 0:	// Resurrect
 					if( !ourObj.dead && !ourObj.GetTag( "isPetDead" ) )
@@ -685,7 +685,7 @@ function onTimer( mChar, timerID )
 								var deathTime = parseInt( ourObj.GetTempTag( "bondedPetDeathTime" )) || 0;
 								var waitTime = 10 * 60 * 1000; // 10 minutes in ms
 
-								if(( now - deathTime ) < waitTime)
+								if(( now - deathTime ) < waitTime )
 								{
 									socket.SysMessage( GetDictionaryEntry( 19340, socket.language )); // That creature's spirit lacks cohesion. Try again in a few minutes.
 									return;
@@ -945,7 +945,7 @@ function onTimer( mChar, timerID )
 
 							if( ourObj == mChar && coreShardEra >= EraStringToNum( "hs" ))
 							{
-								let poisonLvlCured = mChar.GetTempTag( "bonusCureLevel" );
+								let poisonLvlCured = parseInt( mChar.GetTempTag( "bonusCureLevel" ));
 								if( poisonLvlCured > 0 )
 								{
 									// Reduce healing amount proportional to level of poison cured since we did a combined curing/healing action
