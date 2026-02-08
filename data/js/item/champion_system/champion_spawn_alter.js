@@ -88,14 +88,14 @@ function StartChampionWave( altar, stage )
 			if( DoesMapBlock( x, y, z, worldNum, true, false, false, false ))
 				continue;
 
-			var mapTileID = GetTileIDAtMapCoord( x, y, z );
+			var mapTileID = GetTileIDAtMapCoord( x, y, worldNum );
 			if(( mapTileID >= 0x024a && mapTileID <= 0x026d ) || mapTileID == 0x0244 )
 				continue;
 
 			if( DoesStaticBlock( x, y, z, worldNum, false ))
 				continue;
 
-			if( DoesDynamicBlock( x, y, z, worldNum, instanceId, true, false, false, false ))
+			if( DoesDynamicBlock( x, y, z, worldNum, instanceId, true, false, true, false ))
 				continue;
 
 			// If we got here, nothing blocked the spot
@@ -575,7 +575,7 @@ function PickSurfaceZForGold( altar, x, y )
 			return false;
 		if( DoesStaticBlock( x, y, z, world, false ))
 			return false;
-		if( DoesDynamicBlock( x, y, z, world, instance, false, false, false, false ))
+		if( DoesDynamicBlock( x, y, z, world, instance, true, false, true, false ))
 			return false;
 
 		return true;
