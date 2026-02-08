@@ -1,5 +1,7 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
+// Champion Spawn System
+// v61 - Updated 7th Feb, 2026
 
 function CommandRegistration()
 {
@@ -621,7 +623,7 @@ function ChampMenu_Open( socket )
 	champMenu.AddBackground( 0, 0, 360, 240, 5054 );
 	champMenu.AddCheckerTrans( 0, 0, 360, 240 );
 
-	champMenu.AddHTMLGump( 15, 10, 330, 20, 0, 0, "<basefont color=#EECD8B><center><big>Champion Spawn Setup</big></center></basefont>" );
+	champMenu.AddHTMLGump( 15, 10, 330, 20, 0, 0, "<basefont color=#EECD8B><center><big>Champion Spawn Setup - v61</big></center></basefont>" );
 	champMenu.AddButton( 330, 8, 4017, 4018, 1, 0, 0 ); // close
 
 	// Location display

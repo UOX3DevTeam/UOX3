@@ -1,5 +1,7 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
+// Champion Spawn System
+// v61 - Updated 7th Feb, 2026
 
 // ============================================================================
 // ChampionSpawnTable

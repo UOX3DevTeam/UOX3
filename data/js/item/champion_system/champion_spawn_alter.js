@@ -1,5 +1,7 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
+// Champion Spawn System
+// v61 - Updated 7th Feb, 2026
 
 // Champion spawn difficulty scaling
 var spawnEditorTooltipClilocID = 1042971; // Cliloc ID to use for tooltips. 1042971 should work with clients from ~v3.0.x to modern day
@@ -627,7 +629,7 @@ function ChampionMenu( socket, altar )
 	// Main Background and Header
 	champalter.AddBackground( 0, 0, 360, 295, 5054 );
 	champalter.AddCheckerTrans( 0, 0, 360, 295 );
-	champalter.AddHTMLGump(15, 7, 320, 60, 0, 0, "<CENTER><BIG><BASEFONT color=#EECD8B>Champion Spawn Menu</BASEFONT></BIG></CENTER>" );// Champion Spawn Menu
+	champalter.AddHTMLGump(15, 7, 320, 60, 0, 0, "<CENTER><BIG><BASEFONT color=#EECD8B>Champion Spawn Menu v61</BASEFONT></BIG></CENTER>" );// Champion Spawn Menu
 	champalter.AddButton( 320, 1, 4017, 4018, 1, 0, 0 ); // Close Menu Button
 	champalter.AddPicture( 50, 10, 7956 ); // Image of a "spawn rune"
 

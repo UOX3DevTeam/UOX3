@@ -1,5 +1,7 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
+// Champion Spawn System
+// v61 - Updated 7th Feb, 2026
 const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 const disableTopDamager = true; // Set to true to disable top damager logic and if so then all loot is free for players to fight over.
 const powerScrollMaxReceivers = 6; // Who can get scrolls at most?
