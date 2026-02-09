@@ -20,5 +20,5 @@ id=0x40BB
 {
 get=base_house_teleporter
 id=0x574A
-custominttag=rechargeFuel 1
+custominttag=chargeable 1
 }
