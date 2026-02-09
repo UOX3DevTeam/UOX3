@@ -641,43 +641,6 @@ function onCollide( trgSock, pColliding, objCollidedWith )
 	return false;
 }
 
-/** @type { ( item: Item, dropper: Character, dest: Item ) => number } */
-function onDropItemOnItem( pUser, iDropped, iOn )
-{
-	var pSocket = pUser.socket;
-	if( !pSocket )
-		return 1;
-
-	if( !ValidateObject( iDropped ) || !ValidateObject( iOn ) )
-		return 1;
-
-	if( !iOn.isItem || iOn.GetTag( "rechargeFuel" ) != 1 )
-		return 1;
-
-	if( !iDropped.isItem || !( iDropped.id == chargeItemIDReq || iDropped.sectionID == chargeItemSectionIDReq ))
-		return 1;
-
-	var cur = ReadIntTag( iOn, "Charges", 0 );
-	if( cur < 0 )
-		cur = 0;
-
-	if( cur >= chargeMax )
-	{
-		pSocket.SysMessage( GetDictionaryEntry( 30627, pSocket.language )); // This teleporter is fully charged.
-		return 0;
-	}
-
-	iDropped.Delete();
-
-	cur += chargeAmount;
-	if( cur > chargeMax ) 
-		cur = chargeMax;
-
-	iOn.SetTag( "Charges", cur );
-	pSocket.SysMessage( "Charges: " + cur + " / " + chargeMax );
-	return 0;
-}
-
 /** @type { ( myChar: Character, myItem: Item, mySpeech: string, mySpeechId: number ) => void } */
 function onSpeechInput( pUser, targObj, pSpeech, pSpeechID )
 {
