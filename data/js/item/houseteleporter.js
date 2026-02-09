@@ -5,22 +5,36 @@ const chargeItemIDReq = 0x1f60;
 const chargeItemSectionIDReq = "0x1f60";
 const chargeAmount = 5;
 const chargeMax = 1000;
-
+const teleporterIDReq = [0x40BB, 0x574A];
+const teleporterSectionIDReq = "house_teleporter";
 const coOwnHousesOnSameAccount = GetServerSetting("CoOwnHousesOnSameAccount");
 
 function IsTeleporterItem( item )
 {
-	return ( ValidateObject( item ) && item.isItem && (item.id == 0x40BB || item.id == 0x574A));
+	if( !ValidateObject( item ) || !item.isItem )
+		return false;
+
+	// allow by sectionid
+	if( item.sectionID == teleporterSectionIDReq )
+		return true;
+
+	// allow by id list
+	for( var i = 0; i < teleporterIDReq.length; i++ )
+	{
+		if( item.id == teleporterIDReq[i] )
+			return true;
+	}
+	return false;
 }
 
-function IsScrollItem( item )
+function IsItemReq( item )
 {
 	return( ValidateObject(item) && item.isItem && ( item.id == chargeItemIDReq || item.sectionID == chargeItemSectionIDReq ));
 }
 
 function IsInPlayersPack( pUser, item )
 {
-	if( !ValidateObject( pUser ) || !ValidateObject( pUser.pack ) || !IsTeleporterItem( item ) && !IsScrollItem( item ))
+	if( !ValidateObject( pUser ) || !ValidateObject( pUser.pack ) || !IsTeleporterItem( item ) && !IsItemReq( item ))
 		return false;
 
 	var root = FindRootContainer( item, 0 );
@@ -29,7 +43,7 @@ function IsInPlayersPack( pUser, item )
 
 function ReadIntTag( obj, tagName, defVal )
 {
-	var value = parseInt(obj.GetTag(tagName), 10);
+	var value = parseInt( obj.GetTag( tagName ), 10 );
 	if( !isFinite( value ))
 		value = defVal;
 	return value;
@@ -383,12 +397,12 @@ function onUseChecked( pUser, iUsed )
 	if( !IsInPlayersPack(pUser, iUsed) )
 	{
 		pSocket.SysMessage( "To link, both teleporters must be in your backpack." );
-		return true;
+		return false;
 	}
 
 	pUser.SetTempTag( "HT_LinkSrcSer", iUsed.serial );
 	pSocket.CustomTarget( 0, "Target the other teleporter in your backpack to link." );
-	return true;
+	return false;
 }
 
 /** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
@@ -402,43 +416,44 @@ function onCallback0( socket, target )
 		return;
 
 	var srcSer = parseInt( pUser.GetTempTag( "HT_LinkSrcSer" ), 10 );
-	if( !isFinite(srcSer) || srcSer <= 0 ) return;
+	if( !isFinite( srcSer ) || srcSer <= 0 )
+		return;
 
-	var telporterA = CalcItemFromSer( srcSer );
-	var telporterB = target;
+	var teleporterA = CalcItemFromSer( srcSer );
+	var teleporterB = target;
 
-	if( !IsTeleporterItem( telporterA ))
+	if( !IsTeleporterItem( teleporterA ))
 	{
 		socket.SysMessage( "Source teleporter not found." );
 		return;
 	}
-	if( !IsTeleporterItem( telporterB ))
+	if( !IsTeleporterItem( teleporterB ))
 	{
 		socket.SysMessage( "That is not a house teleporter." );
 		return;
 	}
-	if( telporterA.serial == telporterB.serial )
+	if( teleporterA.serial == teleporterB.serial )
 	{
 		socket.SysMessage( "You must target the other teleporter." );
 		return;
 	}
-	if( telporterA.id != telporterB.id )
+	if( teleporterA.id != teleporterB.id )
 	{
 		socket.SysMessage( "These teleporters are different types and cannot be linked." );
 		return;
 	}
 
-	if( !IsInPlayersPack( pUser, telporterA ) || !IsInPlayersPack( pUser, telporterB ))
+	if( !IsInPlayersPack( pUser, teleporterA ) || !IsInPlayersPack( pUser, teleporterB ))
 	{
 		socket.SysMessage( "Both teleporters must be in your backpack to link." );
 		return;
 	}
 
-	UnlinkOther( telporterA, telporterB.serial );
-	UnlinkOther( telporterB, telporterA.serial );
+	UnlinkOther( teleporterA, teleporterB.serial );
+	UnlinkOther( teleporterB, teleporterA.serial );
 
-	telporterA.SetTag( "HT_LinkSer", telporterB.serial );
-	telporterB.SetTag( "HT_LinkSer", telporterA.serial );
+	teleporterA.SetTag( "HT_LinkSer", teleporterB.serial );
+	teleporterB.SetTag( "HT_LinkSer", teleporterA.serial );
 
 	socket.SysMessage( "Teleporters linked." );
 }
@@ -462,9 +477,9 @@ function onCallback1( socket, target )
 		return;
 
 	var scroll = target;
-	if( !IsScrollItem( scroll ))
+	if( !IsItemReq( scroll ))
 	{
-		socket.SysMessage("Target gate travel scrolls to recharge the teleporter." );
+		socket.SysMessage( "Target gate travel scrolls to recharge the teleporter." );
 		return;
 	}
 
@@ -541,11 +556,11 @@ function onCollide( trgSock, pColliding, objCollidedWith )
 		return false;
 	}
 
-		// SECURITY: Owner + Co-Owners only
+	// SECURITY: Owner + Co-Owners only
 	if(!CanUseHouseTeleporter(pColliding, objCollidedWith))
 	{
 		if( trgSock )
-			trgSock.SysMessage("Only the house owner and co-owners may use this teleporter.");
+			trgSock.SysMessage( "Only the house owner and co-owners may use this teleporter." );
 		return false;
 	}
 
@@ -553,7 +568,7 @@ function onCollide( trgSock, pColliding, objCollidedWith )
 	{
 		if( pColliding.dead || pColliding.criminal )
 		{
-			trgSock.SysMessage("You cannot use that right now.");
+			trgSock.SysMessage( "You cannot use that right now." );
 			return false;
 		}
 	}
@@ -613,16 +628,16 @@ function onDropItemOnItem( pUser, iDropped, iOn )
 {
 	var pSocket = pUser.socket;
 	if( !pSocket )
-		return true;
+		return 1;
 
 	if( !ValidateObject( iDropped ) || !ValidateObject( iOn ) )
-		return true;
+		return 1;
 
 	if( !iOn.isItem || iOn.id != 0x574A )
-		return true;
+		return 1;
 
 	if( !iDropped.isItem || !( iDropped.id == chargeItemIDReq || iDropped.sectionID == chargeItemSectionIDReq ))
-		return true;
+		return 1;
 
 	var cur = ReadIntTag( iOn, "HT_Charges", 0 );
 	if( cur < 0 )
@@ -631,7 +646,7 @@ function onDropItemOnItem( pUser, iDropped, iOn )
 	if( cur >= chargeMax )
 	{
 		pSocket.SysMessage( "This teleporter is fully charged." );
-		return false;
+		return 0;
 	}
 
 	iDropped.Delete();
@@ -642,7 +657,7 @@ function onDropItemOnItem( pUser, iDropped, iOn )
 
 	iOn.SetTag( "HT_Charges", cur );
 	pSocket.SysMessage( "Charges: " + cur + " / " + chargeMax );
-	return false;
+	return 0;
 }
 
 /** @type { ( myChar: Character, myItem: Item, mySpeech: string, mySpeechId: number ) => void } */
