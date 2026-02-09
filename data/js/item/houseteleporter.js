@@ -1,6 +1,11 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
 
+const chargeItemIDReq = 0x1f60;
+const chargeItemSectionIDReq = "0x1f60";
+const chargeAmount = 5;
+const chargeMax = 1000;
+
 const coOwnHousesOnSameAccount = GetServerSetting("CoOwnHousesOnSameAccount");
 
 function IsTeleporterItem( item )
@@ -10,7 +15,7 @@ function IsTeleporterItem( item )
 
 function IsScrollItem( item )
 {
-	return( ValidateObject(item) && item.isItem && item.id == 0x1F60 );
+	return( ValidateObject(item) && item.isItem && ( item.id == chargeItemIDReq || item.sectionID == chargeItemSectionIDReq ));
 }
 
 function IsInPlayersPack( pUser, item )
@@ -94,6 +99,7 @@ function CanUseHouseTeleporter( pChar, teleItem )
 	// Owner/coowner always allowed in all modes
 	if( m.IsOwner( pChar ))
 		return true;
+
 	if( m.IsOnOwnerList( pChar ))
 		return true;
 
@@ -121,6 +127,7 @@ function CanUseHouseTeleporter( pChar, teleItem )
 	return false;
 }
 
+/** @type { ( tSock: Socket, baseObj: BaseObject ) => boolean } */
 function onContextMenuRequest( socket, targObj )
 {
 	var pUser = socket.currentChar;
@@ -232,6 +239,7 @@ function onContextMenuRequest( socket, targObj )
 	return false;
 }
 
+/** @type { ( tSock: Socket, baseObj: BaseObject, popupEntry: number ) => boolean } */
 function onContextMenuSelect( socket, targObj, popupEntry )
 {
 	var pUser = socket.currentChar;
@@ -255,14 +263,14 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 
 		if( targObj.id == 0x574A )
 		{
-			var charge = ReadIntTag(targObj, "HT_Charges", 0);
+			var charge = ReadIntTag( targObj, "HT_Charges", 0 );
 			if( charge < 0 )
 				charge = 0;
 
-			if( charge > 1000 )
-				charge = 1000;
+			if( charge > chargeMax )
+				charge = chargeMax;
 
-			socket.SysMessage( "Teleporter: " + ( linked ? "Linked" : "Unlinked" ) + " | Charges: " + charge + "/" + 1000 );
+			socket.SysMessage( "Teleporter: " + ( linked ? "Linked" : "Unlinked" ) + " | Charges: " + charge + "/" + chargeMax );
 		}
 		else
 		{
@@ -294,7 +302,7 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 		if( cur < 0 )
 			cur = 0;
 
-		if( cur >= 1000 )
+		if( cur >= chargeMax )
 		{
 			socket.SysMessage( "This teleporter is fully charged." );
 			return false;
@@ -362,6 +370,7 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 	return false;
 }
 
+/** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	var pSocket = pUser.socket;
@@ -382,6 +391,7 @@ function onUseChecked( pUser, iUsed )
 	return true;
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, target )
 {
 	var pUser = socket.currentChar;
@@ -433,6 +443,7 @@ function onCallback0( socket, target )
 	socket.SysMessage( "Teleporters linked." );
 }
 
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, target )
 {
 	var pUser = socket.currentChar;
@@ -467,7 +478,7 @@ function onCallback1( socket, target )
 	if( cur < 0 )
 		cur = 0;
 
-	if( cur >= 1000 )
+	if( cur >= chargeMax )
 	{
 		socket.SysMessage( "The House Teleporter cannot be charged any further." );
 		return;
@@ -482,12 +493,13 @@ function onCallback1( socket, target )
 		scroll.Delete();
 	}
 
-	cur += 5;
-	if( cur > 1000 )
-		cur = 1000;
+	cur += chargeAmount;
+	if( cur > chargeMax )
+		cur = chargeMax;
 
 	teleporter.SetTag( "HT_Charges", cur );
 	socket.SysMessage( "The Gate Travel scroll crumbles to dust as it strengthens the House Teleporter." );
+	teleporter.Refresh();
 }
 
 function UnlinkOther( tile, keepSer )
@@ -503,6 +515,7 @@ function UnlinkOther( tile, keepSer )
 	}
 }
 
+/** @type { ( targSock: Socket, objColliding: Character, objCollideWith: BaseObject ) => boolean } */
 function onCollide( trgSock, pColliding, objCollidedWith )
 {
 	if( !ValidateObject( pColliding ) || !pColliding.isChar )
@@ -595,6 +608,7 @@ function onCollide( trgSock, pColliding, objCollidedWith )
 	return false;
 }
 
+/** @type { ( item: Item, dropper: Character, dest: Item ) => number } */
 function onDropItemOnItem( pUser, iDropped, iOn )
 {
 	var pSocket = pUser.socket;
@@ -607,14 +621,14 @@ function onDropItemOnItem( pUser, iDropped, iOn )
 	if( !iOn.isItem || iOn.id != 0x574A )
 		return true;
 
-	if( !iDropped.isItem || iDropped.id != 0x1F60 )
+	if( !iDropped.isItem || !( iDropped.id == chargeItemIDReq || iDropped.sectionID == chargeItemSectionIDReq ))
 		return true;
 
 	var cur = ReadIntTag( iOn, "HT_Charges", 0 );
 	if( cur < 0 )
 		cur = 0;
 
-	if( cur >= 1000 )
+	if( cur >= chargeMax )
 	{
 		pSocket.SysMessage( "This teleporter is fully charged." );
 		return false;
@@ -622,16 +636,16 @@ function onDropItemOnItem( pUser, iDropped, iOn )
 
 	iDropped.Delete();
 
-	cur += 5;
-	if( cur > 1000 ) 
-		cur = 1000;
+	cur += chargeAmount;
+	if( cur > chargeMax ) 
+		cur = chargeMax;
 
 	iOn.SetTag( "HT_Charges", cur );
-	pSocket.SysMessage( "Charges: " + cur + " / " + 1000 );
+	pSocket.SysMessage( "Charges: " + cur + " / " + chargeMax );
 	return false;
 }
 
-/** @type { ( pUser: Character, targObj: BaseObject, pSpeech: string, pSpeechID: number ) => void } */
+/** @type { ( myChar: Character, myItem: Item, mySpeech: string, mySpeechId: number ) => void } */
 function onSpeechInput( pUser, targObj, pSpeech, pSpeechID )
 {
 	var sock = pUser.socket;
@@ -714,8 +728,8 @@ function onTooltip( myObj, pSocket )
 	{
 		var charge = ReadIntTag( myObj, "HT_Charges", 0 );
 		if( charge < 0 ) charge = 0;
-		if( charge > 1000 ) charge = 1000;
-		parts.push( "Charges: " + charge + "/1000" );
+		if( charge > chargeMax ) charge = chargeMax;
+		parts.push( "Charges: " + charge + "/" + chargeMax );
 	}
 
 	var linkSer = ReadIntTag( myObj, "HT_LinkSer", 0 );
