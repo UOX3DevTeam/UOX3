@@ -51,7 +51,7 @@ function ReadIntTag( obj, tagName, defVal )
 
 function GetSecurityMode( teleItem )
 {
-	var m = ReadIntTag( teleItem, "HT_Security", 0 );
+	var m = ReadIntTag( teleItem, "Security", 0 );
 	if( m != 0 && m != 1 && m != 2 )
 		m = 0;
 	return m;
@@ -162,7 +162,7 @@ function onContextMenuRequest( socket, targObj )
 	var canShowRename = false;
 	if( targObj.movable == 3 && ValidateObject( targObj.multi ) && CanManageTeleporter( pUser, targObj ))
 	{
-		var linkSerTmp = ReadIntTag( targObj, "HT_LinkSer", 0 );
+		var linkSerTmp = ReadIntTag( targObj, "LinkSer", 0 );
 		if( linkSerTmp > 0 )
 		{
 			var otherTmp = CalcItemFromSer( linkSerTmp );
@@ -265,7 +265,7 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 
 	if( popupEntry == 0x0101 )
 	{
-		var linkSer = ReadIntTag( targObj, "HT_LinkSer", 0 );
+		var linkSer = ReadIntTag( targObj, "LinkSer", 0 );
 
 		var linked = false;
 		if( linkSer > 0 )
@@ -277,7 +277,7 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 
 		if( targObj.id == 0x574A )
 		{
-			var charge = ReadIntTag( targObj, "HT_Charges", 0 );
+			var charge = ReadIntTag( targObj, "Charges", 0 );
 			if( charge < 0 )
 				charge = 0;
 
@@ -302,7 +302,7 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 			return false;
 		}
 
-		pUser.SetTempTag( "HT_LinkSrcSer", targObj.serial );
+		pUser.SetTempTag( "LinkSrcSer", targObj.serial );
 		if( socket != null )
 			socket.CustomTarget( 0, GetDictionaryEntry( 30601, socket.language )); // Target the other teleporter in your backpack to link.
 		targObj.Refresh();
@@ -311,10 +311,10 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 
 	if( popupEntry == 0x0103 )
 	{
-		if( targObj.GetTag( "HT_rechargeFuel" ) != 1 )
+		if( targObj.GetTag( "rechargeFuel" ) != 1 )
 			return false;
 
-		var cur = ReadIntTag( targObj, "HT_Charges", 0 );
+		var cur = ReadIntTag( targObj, "Charges", 0 );
 		if( cur < 0 )
 			cur = 0;
 
@@ -325,7 +325,7 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 			return false;
 		}
 
-		pUser.SetTempTag( "HT_RechargeSer", targObj.serial );
+		pUser.SetTempTag( "RechargeSer", targObj.serial );
 		if( socket != null )
 			socket.CustomTarget( 1, GetDictionaryEntry( 30603, socket.language )); // Target recharge item in your backpack to recharge.
 		targObj.Refresh();
@@ -348,7 +348,7 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 		if( nextMode > 2 )
 			nextMode = 0;
 
-		targObj.SetTag( "HT_Security", nextMode );
+		targObj.SetTag( "Security", nextMode );
 		if( socket != null )
 			socket.SysMessage( "Teleporter security set to: " + SecurityName( nextMode )); // Teleporter security set to: %s
 		targObj.Refresh();
@@ -366,7 +366,7 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 		}
 
 		// Must be linked
-		var linkSer = ReadIntTag( targObj, "HT_LinkSer", 0 );
+		var linkSer = ReadIntTag( targObj, "LinkSer", 0 );
 		if( linkSer <= 0 )
 		{
 			if( socket != null )
@@ -383,7 +383,7 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 		}
 
 		// Store the serial so onSpeechInput knows what to rename
-		pUser.SetTempTag( "HT_RenameSer", targObj.serial );
+		pUser.SetTempTag( "RenameSer", targObj.serial );
 
 		// Prompt for name
 		pUser.SpeechInput( 1, targObj );
@@ -409,7 +409,7 @@ function onUseChecked( pUser, iUsed )
 		return false;
 	}
 
-	pUser.SetTempTag( "HT_LinkSrcSer", iUsed.serial );
+	pUser.SetTempTag( "LinkSrcSer", iUsed.serial );
 	pSocket.CustomTarget( 0, GetDictionaryEntry( 30609, pSocket.language )); // Target the other teleporter in your backpack to link.
 	return false;
 }
@@ -424,7 +424,7 @@ function onCallback0( socket, target )
 	if( socket.GetWord( 1 ))
 		return;
 
-	var srcSer = parseInt( pUser.GetTempTag( "HT_LinkSrcSer" ), 10 );
+	var srcSer = parseInt( pUser.GetTempTag( "LinkSrcSer" ), 10 );
 	if( !isFinite( srcSer ) || srcSer <= 0 )
 		return;
 
@@ -466,8 +466,8 @@ function onCallback0( socket, target )
 	UnlinkOther( teleporterA, teleporterB.serial );
 	UnlinkOther( teleporterB, teleporterA.serial );
 
-	teleporterA.SetTag( "HT_LinkSer", teleporterB.serial );
-	teleporterB.SetTag( "HT_LinkSer", teleporterA.serial );
+	teleporterA.SetTag( "LinkSer", teleporterB.serial );
+	teleporterB.SetTag( "LinkSer", teleporterA.serial );
 	if( socket != null )
 		socket.SysMessage( GetDictionaryEntry( 30615, socket.language )); // Teleporters linked.
 }
@@ -482,12 +482,12 @@ function onCallback1( socket, target )
 	if( socket.GetWord( 1 ))
 		return;
 
-	var teleporterSerial = parseInt( pUser.GetTempTag( "HT_RechargeSer" ), 10 );
+	var teleporterSerial = parseInt( pUser.GetTempTag( "RechargeSer" ), 10 );
 	if( !isFinite( teleporterSerial ) || teleporterSerial <= 0 )
 		return;
 
 	var teleporter = CalcItemFromSer( teleporterSerial );
-	if( !ValidateObject( teleporter ) || !teleporter.isItem || teleporter.GetTag( "HT_rechargeFuel" ) != 1 )
+	if( !ValidateObject( teleporter ) || !teleporter.isItem || teleporter.GetTag( "rechargeFuel" ) != 1 )
 		return;
 
 	var scroll = target;
@@ -505,7 +505,7 @@ function onCallback1( socket, target )
 		return;
 	}
 
-	var cur = ReadIntTag( teleporter, "HT_Charges", 0 );
+	var cur = ReadIntTag( teleporter, "Charges", 0 );
 	if( cur < 0 )
 		cur = 0;
 
@@ -529,7 +529,7 @@ function onCallback1( socket, target )
 	if( cur > chargeMax )
 		cur = chargeMax;
 
-	teleporter.SetTag( "HT_Charges", cur );
+	teleporter.SetTag( "Charges", cur );
 	if( socket != null )
 		socket.SysMessage( GetDictionaryEntry( 30619, socket.language )); // The recharge item crumbles to dust as it strengthens the House Teleporter.
 	teleporter.Refresh();
@@ -537,14 +537,14 @@ function onCallback1( socket, target )
 
 function UnlinkOther( tile, keepSer )
 {
-	var old = ReadIntTag( tile, "HT_LinkSer", 0 );
-	tile.SetTag( "HT_LinkSer", null );
+	var old = ReadIntTag( tile, "LinkSer", 0 );
+	tile.SetTag( "LinkSer", null );
 
 	if( old > 0 && old != keepSer )
 	{
 		var oldtele = CalcItemFromSer( old );
 		if( IsTeleporterItem( oldtele ))
-			oldtele.SetTag( "HT_LinkSer", null );
+			oldtele.SetTag( "LinkSer", null );
 	}
 }
 
@@ -591,7 +591,7 @@ function onCollide( trgSock, pColliding, objCollidedWith )
 		}
 	}
 	
-	var linkSer = ReadIntTag( objCollidedWith, "HT_LinkSer", 0 );
+	var linkSer = ReadIntTag( objCollidedWith, "LinkSer", 0 );
 	if( linkSer <= 0 )
 	{
 		if( trgSock ) 
@@ -623,7 +623,7 @@ function onCollide( trgSock, pColliding, objCollidedWith )
 
 	if( objCollidedWith.id == 0x574A )
 	{
-		var charge = ReadIntTag( objCollidedWith, "HT_Charges", 0 );
+		var charge = ReadIntTag( objCollidedWith, "Charges", 0 );
 		if( charge < 0 )
 			charge = 0;
 
@@ -634,7 +634,7 @@ function onCollide( trgSock, pColliding, objCollidedWith )
 			return false;
 		}
 
-		objCollidedWith.SetTag( "HT_Charges", charge - 1 );
+		objCollidedWith.SetTag( "Charges", charge - 1 );
 	}
 
 	pColliding.Teleport( other.x, other.y, other.z, other.worldnumber );
@@ -651,13 +651,13 @@ function onDropItemOnItem( pUser, iDropped, iOn )
 	if( !ValidateObject( iDropped ) || !ValidateObject( iOn ) )
 		return 1;
 
-	if( !iOn.isItem || iOn.GetTag( "HT_rechargeFuel" ) != 1 )
+	if( !iOn.isItem || iOn.GetTag( "rechargeFuel" ) != 1 )
 		return 1;
 
 	if( !iDropped.isItem || !( iDropped.id == chargeItemIDReq || iDropped.sectionID == chargeItemSectionIDReq ))
 		return 1;
 
-	var cur = ReadIntTag( iOn, "HT_Charges", 0 );
+	var cur = ReadIntTag( iOn, "Charges", 0 );
 	if( cur < 0 )
 		cur = 0;
 
@@ -673,7 +673,7 @@ function onDropItemOnItem( pUser, iDropped, iOn )
 	if( cur > chargeMax ) 
 		cur = chargeMax;
 
-	iOn.SetTag( "HT_Charges", cur );
+	iOn.SetTag( "Charges", cur );
 	pSocket.SysMessage( "Charges: " + cur + " / " + chargeMax );
 	return 0;
 }
@@ -708,7 +708,7 @@ function onSpeechInput( pUser, targObj, pSpeech, pSpeechID )
 	}
 
 	// Resolve which teleporter we are renaming
-	var srcSer = parseInt( pUser.GetTempTag( "HT_RenameSer" ), 10 );
+	var srcSer = parseInt( pUser.GetTempTag( "RenameSer" ), 10 );
 	if( !isFinite( srcSer ) || srcSer <= 0 )
 		return;
 
@@ -720,7 +720,7 @@ function onSpeechInput( pUser, targObj, pSpeech, pSpeechID )
 	}
 
 	// Must still be linked
-	var linkSer = ReadIntTag( teleA, "HT_LinkSer", 0 );
+	var linkSer = ReadIntTag( teleA, "LinkSer", 0 );
 	if( linkSer <= 0 )
 	{
 		pSocket.SysMessage( GetDictionaryEntry( 30629, pSocket.language )); // This teleporter must be linked before it can be renamed.
@@ -759,13 +759,13 @@ function onTooltip( myObj, pSocket )
 
 	if( myObj.id == 0x574A )
 	{
-		var charge = ReadIntTag( myObj, "HT_Charges", 0 );
+		var charge = ReadIntTag( myObj, "Charges", 0 );
 		if( charge < 0 ) charge = 0;
 		if( charge > chargeMax ) charge = chargeMax;
 		parts.push( "Charges: " + charge + "/" + chargeMax );
 	}
 
-	var linkSer = ReadIntTag( myObj, "HT_LinkSer", 0 );
+	var linkSer = ReadIntTag( myObj, "LinkSer", 0 );
 	var linked = false;
 	if( linkSer > 0 )
 	{
