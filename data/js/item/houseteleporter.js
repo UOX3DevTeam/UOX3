@@ -27,28 +27,6 @@ function IsTeleporterItem( item )
 	return false;
 }
 
-function IsItemReq( item )
-{
-	return( ValidateObject(item) && item.isItem && ( item.id == chargeItemIDReq || item.sectionID == chargeItemSectionIDReq ));
-}
-
-function IsInPlayersPack( pUser, item )
-{
-	if( !ValidateObject( pUser ) || !ValidateObject( pUser.pack ) || !IsTeleporterItem( item ) && !IsItemReq( item ))
-		return false;
-
-	var root = FindRootContainer( item, 0 );
-	return( ValidateObject( root ) && root.isItem && root.serial == pUser.pack.serial );
-}
-
-function GetSecurityMode( teleItem )
-{
-	var m = teleItem.GetTag( "Security" );
-	if( m != 0 && m != 1 && m != 2 )
-		m = 0;
-	return m;
-}
-
 function SecurityName( mode )
 {
 	if( mode == 1 )
@@ -68,19 +46,19 @@ function CanManageTeleporter( pChar, teleItem )
 	if( pChar.isGM )
 		return true;
 
-	var m = teleItem.multi;
-	if( !ValidateObject( m ))
+	var multiHouse = teleItem.multi;
+	if( !ValidateObject( multiHouse ))
 		return false;
 
-	if( m.IsOwner( pChar ))
+	if( multiHouse.IsOwner( pChar ))
 		return true;
 
-	if( m.IsOnOwnerList( pChar ))
+	if( multiHouse.IsOnOwnerList( pChar ))
 		return true;
 
-	if( coOwnHousesOnSameAccount && ValidateObject( m.owner ))
+	if( coOwnHousesOnSameAccount && ValidateObject( multiHouse.owner ))
 	{
-		if( m.owner.accountNum == pChar.accountNum )
+		if( multiHouse.owner.accountNum == pChar.accountNum )
 			return true;
 	}
 
@@ -96,29 +74,31 @@ function CanUseHouseTeleporter( pChar, teleItem )
 	if( pChar.isGM )
 		return true;
 
-	var m = teleItem.multi;
-	if( !ValidateObject( m ))
+	var multiHouse = teleItem.multi;
+	if( !ValidateObject( multiHouse ))
 		return false;
 
-	var mode = GetSecurityMode( teleItem );
+	var mode = teleItem.GetTag( "Security" );
+	if( mode != 0 && mode != 1 && mode != 2 )
+		mode = 0;
 
 	// Owner/coowner always allowed in all modes
-	if( m.IsOwner( pChar ))
+	if( multiHouse.IsOwner( pChar ))
 		return true;
 
-	if( m.IsOnOwnerList( pChar ))
+	if( multiHouse.IsOnOwnerList( pChar ))
 		return true;
 
-	if( coOwnHousesOnSameAccount && ValidateObject(m.owner ))
+	if( coOwnHousesOnSameAccount && ValidateObject(multiHouse.owner ))
 	{
-		if( m.owner.accountNum == pChar.accountNum )
+		if( multiHouse.owner.accountNum == pChar.accountNum )
 			return true;
 	}
 
 	// Friends mode
 	if( mode == 1 )
 	{
-		if(m.IsOnFriendList( pChar ))
+		if( multiHouse.IsOnFriendList( pChar ))
 			return true;
 		return false;
 	}
@@ -143,7 +123,12 @@ function onContextMenuRequest( socket, targObj )
 	if( !IsTeleporterItem( targObj ))
 		return true;
 
-	var inPack = IsInPlayersPack( pUser, targObj );
+	var inPack = false;
+	if( ValidateObject( pUser ) && ValidateObject( pUser.pack ))
+	{
+		var root0 = FindRootContainer( targObj, 0 );
+		inPack = ( ValidateObject( root0 ) && root0.isItem && root0.serial == pUser.pack.serial );
+	}
 
 	// Show "Set Security" only when it's a house-placed (locked down) teleporter
 	var canShowSecurity = false;
@@ -287,10 +272,17 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 
 	if( popupEntry == 0x0102 )
 	{
-		if( !IsInPlayersPack( pUser, targObj ))
+		var inPackLink = false;
+		if( ValidateObject( pUser.pack ))
 		{
-			if( socket != null )
-				socket.SysMessage( GetDictionaryEntry( 30600, socket.language )); // This must be in your backpack to link it.
+			var root1 = FindRootContainer( targObj, 0 );
+			inPackLink = ( ValidateObject( root1 ) && root1.isItem && root1.serial == pUser.pack.serial );
+		}
+
+		if( !inPackLink )
+		{
+			if (socket != null)
+				socket.SysMessage( GetDictionaryEntry( 30600, socket.language ));
 			return false;
 		}
 
@@ -335,7 +327,9 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 			return false;
 		}
 
-		var curMode = GetSecurityMode( targObj );
+		var curMode = targObj.GetTag( "Security" );
+		if( curMode != 0 && curMode != 1 && curMode != 2 )
+			curMode = 0;
 		var nextMode = curMode + 1;
 		if( nextMode > 2 )
 			nextMode = 0;
@@ -395,7 +389,14 @@ function onUseChecked( pUser, iUsed )
 	if( !IsTeleporterItem( iUsed ))
 		return false;
 
-	if( !IsInPlayersPack( pUser, iUsed ))
+	var inPackUse = false;
+	if( ValidateObject( pUser ) && ValidateObject( pUser.pack ))
+	{
+		var root2 = FindRootContainer( iUsed, 0 );
+		inPackUse = ( ValidateObject( root2 ) && root2.isItem && root2.serial == pUser.pack.serial );
+	}
+
+	if( !inPackUse )
 	{
 		pSocket.SysMessage( GetDictionaryEntry( 30608, pSocket.language )); // To link, both teleporters must be in your backpack.
 		return false;
@@ -445,7 +446,19 @@ function onCallback0( socket, target )
 		return;
 	}
 
-	if( !IsInPlayersPack( pUser, teleporterA ) || !IsInPlayersPack( pUser, teleporterB ))
+	var aInPack = false;
+	var bInPack = false;
+
+	if( ValidateObject( pUser ) && ValidateObject( pUser.pack ))
+	{
+		var rootA = FindRootContainer( teleporterA, 0 );
+		var rootB = FindRootContainer( teleporterB, 0 );
+
+		aInPack = ( ValidateObject( rootA ) && rootA.isItem && rootA.serial == pUser.pack.serial );
+		bInPack = ( ValidateObject( rootB ) && rootB.isItem && rootB.serial == pUser.pack.serial );
+	}
+
+	if( !aInPack || !bInPack )
 	{
 		if( socket != null )
 			socket.SysMessage( GetDictionaryEntry( 30614, socket.language )); // Both teleporters must be in your backpack to link.
@@ -471,23 +484,27 @@ function onCallback1( socket, target )
 	if( socket.GetWord( 1 ))
 		return;
 
-	var teleporterSerial = parseInt( pUser.GetTempTag( "RechargeSer" ), 10 );
-	if( !isFinite( teleporterSerial ) || teleporterSerial <= 0 )
-		return;
-
+	var teleporterSerial = pUser.GetTempTag( "RechargeSer" );
 	var teleporter = CalcItemFromSer( teleporterSerial );
 	if( !ValidateObject( teleporter ) || !teleporter.isItem || teleporter.GetTag( "chargeable" ) != 1 )
 		return;
 
 	var scroll = target;
-	if( !IsItemReq( scroll ))
+	if( !( ValidateObject( scroll ) && scroll.isItem && ( scroll.id == chargeItemIDReq || scroll.sectionID == chargeItemSectionIDReq )))
 	{
 		if( socket != null )
-			socket.SysMessage( GetDictionaryEntry( 30616, socket.language )); // Target recharge item to recharge the teleporter.
+			socket.SysMessage(GetDictionaryEntry( 30616, socket.language ));
 		return;
 	}
 
-	if( !IsInPlayersPack( pUser, scroll ))
+	var scrollInPack = false;
+	if( ValidateObject( pUser ) && ValidateObject( pUser.pack ))
+	{
+		var root3 = FindRootContainer( scroll, 0 );
+		scrollInPack = ( ValidateObject( root3 ) && root3.isItem && root3.serial == pUser.pack.serial );
+	}
+
+	if( !scrollInPack )
 	{
 		if( socket != null )
 			socket.SysMessage( GetDictionaryEntry( 30617, socket.language )); // This item must be in your backpack.
@@ -703,7 +720,10 @@ function onTooltip( myObj, pSocket )
 		return "";
 
 	var parts = [];
-	var secMode = GetSecurityMode( myObj );
+	var secMode = myObj.GetTag( "Security" );
+	if( secMode != 0 && secMode != 1 && secMode != 2 )
+		secMode = 0;
+
 	parts.push( "Security: " + SecurityName( secMode ));
 
 	if( myObj.id == 0x574A )
