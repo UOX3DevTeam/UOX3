@@ -5635,5 +5635,37 @@
 19341=Tento recept už znáte.
 19342=Naučili jste se nový recept: %i
 19343=Musíte se ho naučit ze svitku.
+// [30600-30650] Teleport domu
+30600=Pro propojení musí být tento objekt ve vašem batohu.
+30601=Pro propojení zaměřte druhý teleport v batohu.
+30602=Tento teleport je plně nabitý.
+30603=Pro dobití zaměřte předmět pro dobíjení v batohu.
+30604=Zabezpečení tohoto teleportu nelze změnit.
+30605=Zabezpečení teleportu nastaveno na: %s.
+30606=Tento teleport nelze přejmenovat.
+30607=Tento teleport musí být propojen, než bude možné jej přejmenovat.
+30608=Pro propojení musí být oba teleporty ve vašem batohu.
+30609=Pro propojení zaměřte druhý teleport v batohu.
+30610=Zdrojový teleport nenalezen.
+30611=Toto není teleport domu.
+30612=Musíte zaměřit druhý teleport.
+30613=Tyto teleporty jsou různých typů a nelze je propojit.
+30614=Oba teleporty musí být ve vašem batohu, aby se propojily.
+30615=Teleporty propojené.
+30616=Zaměřte se na dobíjecí předmět pro dobití teleportu.
+30617=Tento předmět musí být ve vašem batohu.
+30618=Teleport domu nelze dále nabíjet.
+30619=Dobíjecí předmět se rozpadne na prach, když posiluje Teleport domu.
+30620=Aby fungoval, musí být uzamčen v domě.
+30621=Musí být umístěn uvnitř domu.
+30622=Tento teleport může používat pouze majitel domu a spolumajitelé.
+30623=Toto nyní nemůžete použít.
+30624=Tento teleport není propojen.
+30625=Cílový teleport není správně umístěn.
+30626=V tomto teleportu nezbývají žádné náboje.
+30627=Tento teleport je plně nabitý.
+30628=Teleport nebyl nalezen.
+30629=Tento teleport musí být propojen, než bude možné jej přejmenovat.
+30630=Název teleportu nastaven na: %s
 }
 EOF

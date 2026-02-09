@@ -7,7 +7,7 @@ const chargeAmount = 5;
 const chargeMax = 1000;
 const teleporterIDReq = [0x40BB, 0x574A];
 const teleporterSectionIDReq = "house_teleporter";
-const coOwnHousesOnSameAccount = GetServerSetting("CoOwnHousesOnSameAccount");
+const coOwnHousesOnSameAccount = GetServerSetting( "CoOwnHousesOnSameAccount" );
 
 function IsTeleporterItem( item )
 {
@@ -297,19 +297,21 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 	{
 		if( !IsInPlayersPack( pUser, targObj ))
 		{
-			socket.SysMessage( "This must be in your backpack to link it." );
+			if( socket != null )
+				socket.SysMessage( GetDictionaryEntry( 30600, socket.language )); // This must be in your backpack to link it.
 			return false;
 		}
 
 		pUser.SetTempTag( "HT_LinkSrcSer", targObj.serial );
-		socket.CustomTarget( 0, "Target the other teleporter in your backpack to link." );
+		if( socket != null )
+			socket.CustomTarget( 0, GetDictionaryEntry( 30601, socket.language )); // Target the other teleporter in your backpack to link.
 		targObj.Refresh();
 		return false;
 	}
 
 	if( popupEntry == 0x0103 )
 	{
-		if( targObj.id != 0x574A )
+		if( targObj.GetTag( "HT_rechargeFuel" ) != 1 )
 			return false;
 
 		var cur = ReadIntTag( targObj, "HT_Charges", 0 );
@@ -318,12 +320,14 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 
 		if( cur >= chargeMax )
 		{
-			socket.SysMessage( "This teleporter is fully charged." );
+			if( socket != null )
+				socket.SysMessage( GetDictionaryEntry( 30602, socket.language ));
 			return false;
 		}
 
 		pUser.SetTempTag( "HT_RechargeSer", targObj.serial );
-		socket.CustomTarget( 1, "Target gate travel scrolls in your backpack to recharge." );
+		if( socket != null )
+			socket.CustomTarget( 1, GetDictionaryEntry( 30603, socket.language )); // Target recharge item in your backpack to recharge.
 		targObj.Refresh();
 		return false;
 	}
@@ -334,7 +338,8 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 		// Must be allowed to manage
 		if( !( targObj.movable == 3 && ValidateObject( targObj.multi ) && CanManageTeleporter( pUser, targObj )))
 		{
-			socket.SysMessage( "You cannot change this teleporter's security." );
+			if( socket != null )
+				socket.SysMessage( GetDictionaryEntry( 30604, socket.language )); // You cannot change this teleporter's security.
 			return false;
 		}
 
@@ -344,7 +349,8 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 			nextMode = 0;
 
 		targObj.SetTag( "HT_Security", nextMode );
-		socket.SysMessage( "Teleporter security set to: " + SecurityName( nextMode ));
+		if( socket != null )
+			socket.SysMessage( "Teleporter security set to: " + SecurityName( nextMode )); // Teleporter security set to: %s
 		targObj.Refresh();
 		return false;
 	}
@@ -352,24 +358,27 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 	if( popupEntry == 0x0105 )
 	{
 		// Must be placed + manageable
-		if (!(targObj.movable == 3 && ValidateObject(targObj.multi) && CanManageTeleporter(pUser, targObj)))
+		if(!( targObj.movable == 3 && ValidateObject( targObj.multi ) && CanManageTeleporter( pUser, targObj )))
 		{
-			socket.SysMessage("You cannot rename this teleporter.");
+			if( socket != null )
+				socket.SysMessage( GetDictionaryEntry( 30606, socket.language )); // You cannot rename this teleporter.
 			return false;
 		}
 
 		// Must be linked
-		var linkSer = ReadIntTag(targObj, "HT_LinkSer", 0);
-		if (linkSer <= 0)
+		var linkSer = ReadIntTag( targObj, "HT_LinkSer", 0 );
+		if( linkSer <= 0 )
 		{
-			socket.SysMessage("This teleporter must be linked before it can be renamed.");
+			if( socket != null )
+				socket.SysMessage( GetDictionaryEntry( 30607, socket.language )); // This teleporter must be linked before it can be renamed.
 			return false;
 		}
 
-		var other = CalcItemFromSer(linkSer);
-		if (!IsTeleporterItem(other))
+		var other = CalcItemFromSer( linkSer );
+		if( !IsTeleporterItem( other ))
 		{
-			socket.SysMessage("This teleporter must be linked before it can be renamed.");
+			if( socket != null )
+				socket.SysMessage( GetDictionaryEntry( 30607, socket.language )); // This teleporter must be linked before it can be renamed.
 			return false;
 		}
 
@@ -394,14 +403,14 @@ function onUseChecked( pUser, iUsed )
 	if( !IsTeleporterItem( iUsed ))
 		return false;
 
-	if( !IsInPlayersPack(pUser, iUsed) )
+	if( !IsInPlayersPack( pUser, iUsed ))
 	{
-		pSocket.SysMessage( "To link, both teleporters must be in your backpack." );
+		pSocket.SysMessage( GetDictionaryEntry( 30608, pSocket.language )); // To link, both teleporters must be in your backpack.
 		return false;
 	}
 
 	pUser.SetTempTag( "HT_LinkSrcSer", iUsed.serial );
-	pSocket.CustomTarget( 0, "Target the other teleporter in your backpack to link." );
+	pSocket.CustomTarget( 0, GetDictionaryEntry( 30609, pSocket.language )); // Target the other teleporter in your backpack to link.
 	return false;
 }
 
@@ -424,28 +433,33 @@ function onCallback0( socket, target )
 
 	if( !IsTeleporterItem( teleporterA ))
 	{
-		socket.SysMessage( "Source teleporter not found." );
+		if( socket != null )
+			socket.SysMessage( GetDictionaryEntry( 30610, socket.language )); // Source teleporter not found.
 		return;
 	}
 	if( !IsTeleporterItem( teleporterB ))
 	{
-		socket.SysMessage( "That is not a house teleporter." );
+		if( socket != null )
+			socket.SysMessage( GetDictionaryEntry( 30611, socket.language )); // That is not a house teleporter.
 		return;
 	}
 	if( teleporterA.serial == teleporterB.serial )
 	{
-		socket.SysMessage( "You must target the other teleporter." );
+		if( socket != null )
+		socket.SysMessage( GetDictionaryEntry( 30612, socket.language )); // You must target the other teleporter.
 		return;
 	}
 	if( teleporterA.id != teleporterB.id )
 	{
-		socket.SysMessage( "These teleporters are different types and cannot be linked." );
+		if( socket != null )
+			socket.SysMessage( GetDictionaryEntry( 30613, socket.language )); // These teleporters are different types and cannot be linked.
 		return;
 	}
 
 	if( !IsInPlayersPack( pUser, teleporterA ) || !IsInPlayersPack( pUser, teleporterB ))
 	{
-		socket.SysMessage( "Both teleporters must be in your backpack to link." );
+		if( socket != null )
+			socket.SysMessage( GetDictionaryEntry( 30614, socket.language )); // Both teleporters must be in your backpack to link.
 		return;
 	}
 
@@ -454,8 +468,8 @@ function onCallback0( socket, target )
 
 	teleporterA.SetTag( "HT_LinkSer", teleporterB.serial );
 	teleporterB.SetTag( "HT_LinkSer", teleporterA.serial );
-
-	socket.SysMessage( "Teleporters linked." );
+	if( socket != null )
+		socket.SysMessage( GetDictionaryEntry( 30615, socket.language )); // Teleporters linked.
 }
 
 /** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
@@ -473,19 +487,21 @@ function onCallback1( socket, target )
 		return;
 
 	var teleporter = CalcItemFromSer( teleporterSerial );
-	if( !ValidateObject( teleporter ) || !teleporter.isItem || teleporter.id != 0x574A )
+	if( !ValidateObject( teleporter ) || !teleporter.isItem || teleporter.GetTag( "HT_rechargeFuel" ) != 1 )
 		return;
 
 	var scroll = target;
 	if( !IsItemReq( scroll ))
 	{
-		socket.SysMessage( "Target gate travel scrolls to recharge the teleporter." );
+		if( socket != null )
+			socket.SysMessage( GetDictionaryEntry( 30616, socket.language )); // Target recharge item to recharge the teleporter.
 		return;
 	}
 
 	if( !IsInPlayersPack( pUser, scroll ))
 	{
-		socket.SysMessage( "This item must be in your backpack." );
+		if( socket != null )
+			socket.SysMessage( GetDictionaryEntry( 30617, socket.language )); // This item must be in your backpack.
 		return;
 	}
 
@@ -495,7 +511,8 @@ function onCallback1( socket, target )
 
 	if( cur >= chargeMax )
 	{
-		socket.SysMessage( "The House Teleporter cannot be charged any further." );
+		if( socket != null )
+			socket.SysMessage( GetDictionaryEntry( 30618, socket.language )); // The House Teleporter cannot be charged any further.
 		return;
 	}
 
@@ -513,7 +530,8 @@ function onCallback1( socket, target )
 		cur = chargeMax;
 
 	teleporter.SetTag( "HT_Charges", cur );
-	socket.SysMessage( "The Gate Travel scroll crumbles to dust as it strengthens the House Teleporter." );
+	if( socket != null )
+		socket.SysMessage( GetDictionaryEntry( 30619, socket.language )); // The recharge item crumbles to dust as it strengthens the House Teleporter.
 	teleporter.Refresh();
 }
 
@@ -545,14 +563,14 @@ function onCollide( trgSock, pColliding, objCollidedWith )
 	if( objCollidedWith.movable != 3 )
 	{
 		if( trgSock )
-			trgSock.SysMessage( "This must be locked down in a house to function." );
+			trgSock.SysMessage( GetDictionaryEntry( 30620, trgSock.language )); // This must be locked down in a house to function.
 		return false;
 	}
 
 	if( !IsInBuilding( objCollidedWith.x, objCollidedWith.y, objCollidedWith.z, objCollidedWith.worldnumber, objCollidedWith.instanceID, true ))
 	{
 		if( trgSock )
-			trgSock.SysMessage( "This must be placed inside a house." );
+			trgSock.SysMessage( GetDictionaryEntry( 30621, trgSock.language )); // This must be placed inside a house.
 		return false;
 	}
 
@@ -560,7 +578,7 @@ function onCollide( trgSock, pColliding, objCollidedWith )
 	if(!CanUseHouseTeleporter(pColliding, objCollidedWith))
 	{
 		if( trgSock )
-			trgSock.SysMessage( "Only the house owner and co-owners may use this teleporter." );
+			trgSock.SysMessage( GetDictionaryEntry( 30622, trgSock.language )); // Only the house owner and co-owners may use this teleporter.
 		return false;
 	}
 
@@ -568,7 +586,7 @@ function onCollide( trgSock, pColliding, objCollidedWith )
 	{
 		if( pColliding.dead || pColliding.criminal )
 		{
-			trgSock.SysMessage( "You cannot use that right now." );
+			trgSock.SysMessage( GetDictionaryEntry( 30623, trgSock.language )); // You cannot use that right now.
 			return false;
 		}
 	}
@@ -577,7 +595,7 @@ function onCollide( trgSock, pColliding, objCollidedWith )
 	if( linkSer <= 0 )
 	{
 		if( trgSock ) 
-			trgSock.SysMessage( "This teleporter is not linked." );
+			trgSock.SysMessage( GetDictionaryEntry( 30624, trgSock.language )); // This teleporter is not linked.
 		return false;
 	}
 
@@ -585,21 +603,21 @@ function onCollide( trgSock, pColliding, objCollidedWith )
 	if( !IsTeleporterItem( other ))
 	{
 		if( trgSock )
-			trgSock.SysMessage( "This teleporter is not linked." );
+			trgSock.SysMessage( GetDictionaryEntry( 30624, trgSock.language )); // This teleporter is not linked.
 		return false;
 	}
 
 	if( other.movable != 3 )
 	{
 		if( trgSock )
-			trgSock.SysMessage( "The destination teleporter is not properly placed." );
+			trgSock.SysMessage( GetDictionaryEntry( 30625, trgSock.language )); // The destination teleporter is not properly placed.
 		return false;
 	}
 
 	if( !IsInBuilding( other.x, other.y, other.z, other.worldnumber, other.instanceID, true ))
 	{
 		if( trgSock )
-			trgSock.SysMessage( "The destination teleporter is not properly placed." );
+			trgSock.SysMessage( GetDictionaryEntry( 30625, trgSock.language )); // The destination teleporter is not properly placed.
 		return false;
 	}
 
@@ -612,7 +630,7 @@ function onCollide( trgSock, pColliding, objCollidedWith )
 		if( charge <= 0 )
 		{
 			if( trgSock )
-				trgSock.SysMessage( "There are no charges left in this teleporter." );
+				trgSock.SysMessage( GetDictionaryEntry( 30626, trgSock.language )); // There are no charges left in this teleporter.
 			return false;
 		}
 
@@ -633,7 +651,7 @@ function onDropItemOnItem( pUser, iDropped, iOn )
 	if( !ValidateObject( iDropped ) || !ValidateObject( iOn ) )
 		return 1;
 
-	if( !iOn.isItem || iOn.id != 0x574A )
+	if( !iOn.isItem || iOn.GetTag( "HT_rechargeFuel" ) != 1 )
 		return 1;
 
 	if( !iDropped.isItem || !( iDropped.id == chargeItemIDReq || iDropped.sectionID == chargeItemSectionIDReq ))
@@ -645,7 +663,7 @@ function onDropItemOnItem( pUser, iDropped, iOn )
 
 	if( cur >= chargeMax )
 	{
-		pSocket.SysMessage( "This teleporter is fully charged." );
+		pSocket.SysMessage( GetDictionaryEntry( 30627, pSocket.language )); // This teleporter is fully charged.
 		return 0;
 	}
 
@@ -663,8 +681,8 @@ function onDropItemOnItem( pUser, iDropped, iOn )
 /** @type { ( myChar: Character, myItem: Item, mySpeech: string, mySpeechId: number ) => void } */
 function onSpeechInput( pUser, targObj, pSpeech, pSpeechID )
 {
-	var sock = pUser.socket;
-	if( !sock )
+	var pSocket = pUser.socket;
+	if( !pSocket )
 		return;
 
 	if( pSpeechID != 1 )
@@ -680,12 +698,12 @@ function onSpeechInput( pUser, targObj, pSpeech, pSpeechID )
 	pSpeech = pSpeech.replace(/^\s+|\s+$/g, "");
 	if( pSpeech.length <= 0 )
 	{
-		sock.SysMessage( GetDictionaryEntry( 9270, sock.language )); // too short / none entered
+		pSocket.SysMessage( GetDictionaryEntry( 9270, pSocket.language )); // too short / none entered
 		return;
 	}
 	if( pSpeech.length > 60 )
 	{
-		sock.SysMessage( GetDictionaryEntry( 9271, sock.language )); // too long (we'll reuse)
+		pSocket.SysMessage( GetDictionaryEntry( 9271, pSocket.language )); // too long (we'll reuse)
 		return;
 	}
 
@@ -697,7 +715,7 @@ function onSpeechInput( pUser, targObj, pSpeech, pSpeechID )
 	var teleA = CalcItemFromSer( srcSer );
 	if( !IsTeleporterItem( teleA ))
 	{
-		sock.SysMessage( "Teleporter not found." );
+		pSocket.SysMessage( GetDictionaryEntry( 30628, pSocket.language )); // Teleporter not found.
 		return;
 	}
 
@@ -705,14 +723,14 @@ function onSpeechInput( pUser, targObj, pSpeech, pSpeechID )
 	var linkSer = ReadIntTag( teleA, "HT_LinkSer", 0 );
 	if( linkSer <= 0 )
 	{
-		sock.SysMessage( "This teleporter must be linked before it can be renamed." );
+		pSocket.SysMessage( GetDictionaryEntry( 30629, pSocket.language )); // This teleporter must be linked before it can be renamed.
 		return;
 	}
 
 	var teleB = CalcItemFromSer( linkSer );
 	if( !IsTeleporterItem( teleB ))
 	{
-		sock.SysMessage( "This teleporter must be linked before it can be renamed." );
+		pSocket.SysMessage( GetDictionaryEntry( 30629, pSocket.language )); // This teleporter must be linked before it can be renamed.
 		return;
 	}
 
@@ -723,7 +741,7 @@ function onSpeechInput( pUser, targObj, pSpeech, pSpeechID )
 	teleA.Refresh();
 	teleB.Refresh();
 
-	sock.SysMessage( "Teleporter name set to: " + pSpeech );
+	pSocket.SysMessage( "Teleporter name set to: " + pSpeech ); // Teleporter name set to: %s
 }
 
 /** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */

@@ -5635,5 +5635,36 @@
 19341=Znasz już ten przepis.
 19342=Nauczyłeś się nowego przepisu: %i
 19343=Musisz nauczyć się tego przepisu ze zwoju.
+// [30600-30650] Teleporter domowy
+30600=Aby połączyć teleportery, oba muszą znajdować się w twoim plecaku.
+30601=Wybierz drugi teleporter w swoim plecaku, aby go połączyć.
+30602=Ten teleporter jest w pełni naładowany.
+30603=Wybierz przedmiot do ładowania w swoim plecaku, aby naładować teleporter.
+30604=Nie możesz zmienić zabezpieczeń tego teleportera.
+30605=Zabezpieczenia teleportera ustawione na: %s
+30606=Nie możesz zmienić nazwy tego teleportera.
+30607=Ten teleporter musi być połączony, zanim będzie można zmienić jego nazwę.
+30608=Aby połączyć teleportery, oba muszą znajdować się w twoim plecaku.
+30609=Wybierz drugi teleporter w swoim plecaku, aby go połączyć.
+30610=Nie znaleziono teleportera źródłowego.
+30611=To nie jest teleporter domowy.
+30612=Musisz wybrać drugi teleporter.
+30613=Te teleportery są różnych typów i nie można ich połączyć.
+30614=Oba teleportery muszą znajdować się w twoim plecaku, aby je połączyć.
+30615=Teleportery połączone.
+30616=Wybierz przedmiot do ładowania, aby naładować teleporter.
+30617=Ten przedmiot musi znajdować się w twoim plecaku.
+30618=Teleportera domowego nie można już bardziej naładować.
+30619=Przedmiot do ładowania rozpada się w pył, wzmacniając teleporter domowy.
+30620=Aby działał, musi być umieszczony w domu.
+30621=Musi być umieszczony wewnątrz domu.
+30622=Tylko właściciel domu i współwłaściciele mogą korzystać z tego teleportera.
+30623=Nie możesz tego teraz użyć.
+30624=Ten teleporter nie jest połączony.
+30625=Teleporter docelowy nie jest prawidłowo umieszczony.
+30626=W tym teleporterze nie pozostały żadne ładunki.
+30627=Ten teleporter jest w pełni naładowany.
+30628=Nie znaleziono teleportera. 30629=Ten teleport musi zostać połączony, zanim będzie można zmienić jego nazwę.
+30630=Nazwa teleportera została zmieniona na: %s
 }
 EOF
