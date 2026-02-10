@@ -561,7 +561,7 @@ function SetSkillInUse( socket, mChar, ourObj, skillNum, healingTime, setVal )
 		ourObj.SetTempTag( "healingSkillTimer", GetCurrentClock() + healingTime );
 		if( setVal )
 		{
-			mChar.SetTempTag( "healingSkillTarget", ourObj.serial.toString() );
+			mChar.SetTempTag( "healingSkillTarget", ourObj.serial );
 		}
 	}
 }
@@ -573,16 +573,8 @@ function onTimer( mChar, timerID )
 		return;
 
 	let socket = mChar.socket;
-	let skillNum = parseInt( mChar.GetTempTag( "healingSkillNum" ));
-	let targSer = parseInt( mChar.GetTempTag("healingSkillTarget" ), 10 );
-	if( !isFinite( targSer ) || targSer <= 0)
-	{
-		if( socket != null )
-			SetSkillInUse( socket, mChar, null, skillNum, 0, false );
-		return;
-	}
-
-	let ourObj = CalcCharFromSer(targSer);
+	let skillNum = mChar.GetTempTag( "healingSkillNum" );
+	let ourObj = CalcCharFromSer( mChar.GetTempTag( "healingSkillTarget" ));
 	if( !ValidateObject( ourObj ))
 	{
 		if( socket != null )
@@ -629,12 +621,7 @@ function onTimer( mChar, timerID )
 		else if( mChar.InRange( ourObj, maxRange ) && mChar.CanSee( ourObj ))
 		{
 			// Retrieve amount of times character's hands slipped during healing
-			let slipCount = parseInt( mChar.GetTempTag("slipCount"), 10 );
-			if( !isFinite( slipCount ) || slipCount < 0 )
-			{
-				slipCount = 0;
-			}
-
+			let slipCount = mChar.GetTempTag( "slipCount" );
 			if( mChar.GetTempTag( "bonusCureLevel" ))
 			{
 				// Poison/Bleed was cured with bonus attempt already!
@@ -700,7 +687,7 @@ function onTimer( mChar, timerID )
 							else if( coreShardEra >= EraStringToNum( "aos" ))
 							{
 								ourObj.frozen = true;
-								ourObj.SetTempTag( "ResurrectingHealer", mChar.serial.toString() );
+								ourObj.SetTempTag( "ResurrectingHealer", mChar.serial );
 								let resGump = new Gump; // create a new gump
 								resGump.AddPage( 0 );
 
@@ -1009,14 +996,16 @@ function ResurrectBondedPet( socket, deadPet )
 function onGumpPress( socket, pButton, gumpData )
 {
 	var resurrectTarg = socket.currentChar;
-	var healer = CalcCharFromSer( resurrectTarg.GetTempTag( "ResurrectingHealer" ));
-	resurrectTarg.SetTempTag( "ResurrectingHealer", null );
+	if( !ValidateObject( resurrectTarg ))
+		return;
 
+	var healer = CalcCharFromSer( resurrectTarg.GetTempTag( "ResurrectingHealer" ));
 	switch( pButton )
 	{
 		case 0: // Cancel button pressed
-			socket.SysMessage( "You have chosen to remain a ghost for now."); // You have chosen to remain a ghost for now.
+			socket.SysMessage( "You have chosen to remain a ghost for now." ); // You have chosen to remain a ghost for now.
 			resurrectTarg.frozen = false;
+			resurrectTarg.SetTempTag( "ResurrectingHealer", null );
 			break;
 		case 1: // Continue button pressed
 			resurrectTarg.Resurrect();
@@ -1034,6 +1023,7 @@ function onGumpPress( socket, pButton, gumpData )
 				healer.CheckSkill( 17, 800, healer.skillCaps.healing, false, true );
 				healer.CheckSkill( 1, 800, healer.skillCaps.anatomy, false, true );
 			}
+			resurrectTarg.SetTempTag( "ResurrectingHealer", null );
 			break;
 	}
 }
