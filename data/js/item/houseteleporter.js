@@ -515,23 +515,37 @@ function onCallback1( socket, target )
 	if( cur < 0 )
 		cur = 0;
 
-	if( cur >= chargeMax )
+	var stackAmt = ( scroll.amount );
+	if( stackAmt < 1 )
+		stackAmt = 1;
+
+	var remaining = chargeMax - cur;
+	if( remaining <= 0 )
 	{
 		if( socket != null )
 			socket.SysMessage( GetDictionaryEntry( 30618, socket.language )); // The House Teleporter cannot be charged any further.
 		return;
 	}
 
-	if(( scroll.amount|0 ) > 1 )
+	var needScrolls = Math.ceil( remaining / chargeAmount );
+	var useScrolls = needScrolls;
+
+	if( useScrolls > stackAmt )
+		useScrolls = stackAmt;
+	if( useScrolls < 1 )
+		useScrolls = 1;
+
+	// consume that many from the stack
+	if( stackAmt > useScrolls )
 	{
-		scroll.amount = ( scroll.amount|0 ) - 1;
+		scroll.amount = stackAmt - useScrolls;
 	}
 	else
 	{
 		scroll.Delete();
 	}
 
-	cur += chargeAmount;
+	cur += ( useScrolls * chargeAmount );
 	if( cur > chargeMax )
 		cur = chargeMax;
 
