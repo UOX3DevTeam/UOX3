@@ -12,6 +12,7 @@ function onDamage( damaged, attacker, damageValue, damageType )
 		// Player shouldn't have this script attached if they're not actively healing. Remove!
 		damaged.SetTempTag( "slipCount", null );
 		damaged.RemoveScriptTrigger( healSlipScriptID );
+		return true;
 	}
 
 	if( damageType != 7 ) // poison
