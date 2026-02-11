@@ -322,11 +322,12 @@ function onCallback0( pSock, ourObj )
 				animalLoreGump.AddGump( 28, glocation, 0x826 );
 				animalLoreGump.AddHTMLGump( 47, wlocation, 160, 18, false, false, "<basefont color=#0000C8>" + GetDictionaryEntry( 2178, pSock.language ) + "</basefont>" );				 // Preferred Foods
 
-				var validFruitsAndVegetables = [ "fruit", "vegetables", "horse", "boar", "cow", "goat", "gorilla", "deer", "bird", "rabbit", "sheep", "ostard", "parrot", "bear", "rat", "omnivore" ];
+				var validFruitsAndVegetables = [ "fruit", "vegetables", "horse", "boar", "cow", "goat", "gorilla", "deer", "bird", "rabbit", "sheep", "ostard", "bear", "rat", "omnivore" ];
 				var validGrainsandHay = [ "crops", "hay", "horse", "ostard", "sheep", "rat", "bird", "deer", "gorilla", "cow", "goat", "boar" ];
 				var validFish = [ "fish", "bear", "rat", "toad", "carnivore", "omnivore" ];
 				var validMeat = [ "meat", "toad", "ostard", "rat", "carnivore", "omnivore" ];
-				var validEggs = [ "eggs"];
+				var validEggs = [ "snake"];
+				var validMetal = [ "metal"];
 
 				var ourFoodList = ourObj.foodList.toLowerCase();
 				var aFoodList = "";
@@ -337,14 +338,17 @@ function onCallback0( pSock, ourObj )
 				if( validGrainsandHay.indexOf( ourFoodList ) !== -1 )
 					aFoodList += ( aFoodList ? ", " : "") + "<basefont color=#CFF507>" + GetDictionaryEntry( 2180, pSock.language ) + "</basefont>"; // Grains and Hay
 
-				if( validFish.indexOf(ourFoodList) !== -1 )
+				if( validFish.indexOf( ourFoodList ) !== -1 )
 					aFoodList += ( aFoodList ? ", " : "") + "<basefont color=#F57607>" + GetDictionaryEntry( 2181, pSock.language ) + "</basefont>"; // Fish
 
-				if( validMeat.indexOf(ourFoodList) !== -1 )
+				if( validMeat.indexOf( ourFoodList ) !== -1 )
 					aFoodList += ( aFoodList ? ", " : "") + "<basefont color=#F50707>" + GetDictionaryEntry( 2182, pSock.language ) + "</basefont>"; // Meat
 
-				if( validEggs.indexOf(ourFoodList) !== -1 )
+				if( validEggs.indexOf( ourFoodList ) !== -1 )
 					aFoodList += ( aFoodList ? ", " : "" ) + "<basefont color=#507070>" + GetDictionaryEntry( 2183, pSock.language ) + "</basefont>"; // Eggs
+
+				if( validMetal.indexOf( ourFoodList ) !== -1 )
+					aFoodList += ( aFoodList ? ", " : "" ) + "<basefont color=#507070>" + GetDictionaryEntry( 2189, pSock.language ) + "</basefont>"; // Metal
 
 				if( !ourFoodList )
 					aFoodList = "<basefont color=#0000B8>" + GetDictionaryEntry( 2200, pSock.language ) + "</basefont>"; // None
