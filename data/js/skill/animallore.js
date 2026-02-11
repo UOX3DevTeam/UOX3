@@ -5,7 +5,7 @@ function SkillRegistration()
 	RegisterSkill( 2, true );	// Animal Lore
 }
 
-const coreShardEra = EraStringToNum(GetServerSetting("CoreShardEra"));
+const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 
 // If disabled, a custom UOX3-specific, old school "stone"-themed gump shows instead of the scroll-based style for Animal Lore results
 const osiGumpEnabled = 1;
@@ -322,34 +322,34 @@ function onCallback0( pSock, ourObj )
 				animalLoreGump.AddGump( 28, glocation, 0x826 );
 				animalLoreGump.AddHTMLGump( 47, wlocation, 160, 18, false, false, "<basefont color=#0000C8>" + GetDictionaryEntry( 2178, pSock.language ) + "</basefont>" );				 // Preferred Foods
 
-				var validFruitsAndVegetables = [ "fruit", "vegetables", "horse", "boar", "cow", "goat", "gorilla", "deer", "bird", "rabbit", "sheep", "ostard", "parrot", "bear", "rat" ];
+				var validFruitsAndVegetables = [ "fruit", "vegetables", "horse", "boar", "cow", "goat", "gorilla", "deer", "bird", "rabbit", "sheep", "ostard", "parrot", "bear", "rat", "omnivore" ];
 				var validGrainsandHay = [ "crops", "hay", "horse", "ostard", "sheep", "rat", "bird", "deer", "gorilla", "cow", "goat", "boar" ];
-				var validFish = [ "fish", "bear", "rat", "toad" ];
-				var validMeat = [ "meat", "toad", "ostard", "rat" ];
+				var validFish = [ "fish", "bear", "rat", "toad", "carnivore", "omnivore" ];
+				var validMeat = [ "meat", "toad", "ostard", "rat", "carnivore", "omnivore" ];
 				var validEggs = [ "eggs"];
 
 				var ourFoodList = ourObj.foodList.toLowerCase();
-				var afoodlist = "";
+				var aFoodList = "";
 
 				if( validFruitsAndVegetables.indexOf( ourFoodList ) !== -1 )
-					afoodlist += "<basefont color=#279053>" + GetDictionaryEntry( 2179, pSock.language ) + "</basefont>"; // Fruits and Vegetables
+					aFoodList += "<basefont color=#279053>" + GetDictionaryEntry( 2179, pSock.language ) + "</basefont>"; // Fruits and Vegetables
 
 				if( validGrainsandHay.indexOf( ourFoodList ) !== -1 )
-					afoodlist += ( afoodlist ? ", " : "") + "<basefont color=#CFF507>" + GetDictionaryEntry( 2180, pSock.language ) + "</basefont>"; // Grains and Hay
+					aFoodList += ( aFoodList ? ", " : "") + "<basefont color=#CFF507>" + GetDictionaryEntry( 2180, pSock.language ) + "</basefont>"; // Grains and Hay
 
 				if( validFish.indexOf(ourFoodList) !== -1 )
-					afoodlist += ( afoodlist ? ", " : "") + "<basefont color=#F57607>" + GetDictionaryEntry( 2181, pSock.language ) + "</basefont>"; // Fish
+					aFoodList += ( aFoodList ? ", " : "") + "<basefont color=#F57607>" + GetDictionaryEntry( 2181, pSock.language ) + "</basefont>"; // Fish
 
 				if( validMeat.indexOf(ourFoodList) !== -1 )
-					afoodlist += ( afoodlist ? ", " : "") + "<basefont color=#F50707>" + GetDictionaryEntry( 2182, pSock.language ) + "</basefont>"; // Meat
+					aFoodList += ( aFoodList ? ", " : "") + "<basefont color=#F50707>" + GetDictionaryEntry( 2182, pSock.language ) + "</basefont>"; // Meat
 
 				if( validEggs.indexOf(ourFoodList) !== -1 )
-					afoodlist += ( afoodlist ? ", " : "" ) + "<basefont color=#507070>" + GetDictionaryEntry( 2183, pSock.language ) + "</basefont>"; // Eggs
+					aFoodList += ( aFoodList ? ", " : "" ) + "<basefont color=#507070>" + GetDictionaryEntry( 2183, pSock.language ) + "</basefont>"; // Eggs
 
 				if( !ourFoodList )
-					afoodlist = "<basefont color=#0000B8>" + GetDictionaryEntry( 2200, pSock.language ) + "</basefont>"; // None
+					aFoodList = "<basefont color=#0000B8>" + GetDictionaryEntry( 2200, pSock.language ) + "</basefont>"; // None
 
-				animalLoreGump.AddHTMLGump( 53, flocation, 160, 80, false, false, afoodlist );
+				animalLoreGump.AddHTMLGump( 53, flocation, 160, 80, false, false, aFoodList );
 
 				animalLoreGump.AddGump( 28, 182, 0x826 );
 				animalLoreGump.AddHTMLGump( 53, 182, 160, 18, false, false, "<basefont color=#0000C8>" + GetDictionaryEntry(2165, pSock.language) + "</basefont>" );				 // Lore & Knowledge
