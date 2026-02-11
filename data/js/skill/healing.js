@@ -1000,12 +1000,12 @@ function onGumpPress( socket, pButton, gumpData )
 		return;
 
 	var healer = CalcCharFromSer( resurrectTarg.GetTempTag( "ResurrectingHealer" ));
+	resurrectTarg.SetTempTag( "ResurrectingHealer", null );
 	switch( pButton )
 	{
 		case 0: // Cancel button pressed
 			socket.SysMessage( "You have chosen to remain a ghost for now." ); // You have chosen to remain a ghost for now.
 			resurrectTarg.frozen = false;
-			resurrectTarg.SetTempTag( "ResurrectingHealer", null );
 			break;
 		case 1: // Continue button pressed
 			resurrectTarg.Resurrect();
@@ -1023,7 +1023,6 @@ function onGumpPress( socket, pButton, gumpData )
 				healer.CheckSkill( 17, 800, healer.skillCaps.healing, false, true );
 				healer.CheckSkill( 1, 800, healer.skillCaps.anatomy, false, true );
 			}
-			resurrectTarg.SetTempTag( "ResurrectingHealer", null );
 			break;
 	}
 }
