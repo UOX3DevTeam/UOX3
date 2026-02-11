@@ -1806,7 +1806,7 @@ JSBool SE_FindItem( JSContext *cx, uintN argc, jsval *vp )
 		instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[5] ));
 	}
 
-	CItem *item = FindItemNearXYZ( xLoc, yLoc, zLoc, worldNumber, id, instanceId );
+	CItem *item = FindNearestItemNearXYZ( xLoc, yLoc, zLoc, worldNumber, id, instanceId );
 	if( ValidateObject( item ))
 	{
 		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, item, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
@@ -1849,7 +1849,7 @@ JSBool SE_FindItemBySection( JSContext *cx, uintN argc, jsval *vp )
 		instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[5] ));
 	}
 
-	CItem *item = FindItemBySectionNearXYZ( xLoc, yLoc, zLoc, worldNumber, sectionId, instanceId );
+	CItem *item = FindNearestItemBySectionNearXYZ( xLoc, yLoc, zLoc, worldNumber, sectionId, instanceId );
 	if( ValidateObject( item ))
 	{
 		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, item, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));

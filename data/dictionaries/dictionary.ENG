@@ -3542,7 +3542,7 @@
 6321=It looks as if this blade is covered with an acidic substance.
 6322=It looks like this blade has a corrosive element on it.
 6323=It looks like this blade has a light corrosive element on it.
-// [6500-6549] Event Manager
+// [6500-6539] Event Manager
 6500=Event Manager: Heartbeat started
 6501=Event Manager: Reusing existing Event Manager object.
 6502=Event Manager: Old Event Manager object no longer exists, a new one will be created.
@@ -3566,6 +3566,16 @@
 6520=Event reenabled and rescheduled for next valid activation window.
 6521=Usage: 'em remove <index from event list>
 6522=Event halted and removed.
+// [6540-6550] Dawn's Music Box
+6540=You must have the item in your backpack or locked down in order to use it.
+6541=Target a Dawn's Music Box to add this song.
+6542=You must target a Dawn's Music Box.
+6543=That is not a Dawn's Music Box.
+6544=No music gear is pending.
+6545=The music gear could not be found.
+6546=This gear has no song assigned.
+6547=This song track is already in the music box.
+6548=This song has been added to the music box.
 // [7000-7499] AI Scripts
 7000=Thou art a criminal and cannot access thy bank box.
 7001=Which item do you wish to deposit in your bank box?
@@ -4076,7 +4086,7 @@
 8762=Count of NPCs currently spawned (Read-Only)
 8763=Reference to NPCLIST from which to spawn
 8764=Spawn only outside buildings?
-8765=Max Z value influece items in the world can have on spawning
+8765=Max Z value influence items in the world can have on spawning
 8766=Spawn Region ID
 8767=World Number that Spawn Region is active in
 8768=Western boundary for Spawn Region

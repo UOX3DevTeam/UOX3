@@ -13,8 +13,11 @@ const eventManagerDef	= "eventmanagerobj";
 const eventManagerTimer	= 1000;
 
 // Global variables
+/** @type { Item | null } */
 var gEventManagerObj	= null;
 var gEventManagerSerial	= 0;
+
+/** @type { any[] } */
 var gEventList			= [];
 
 // Loads on server startup after everything else has loaded
@@ -71,13 +74,8 @@ function InitEventManager()
 		let newObj = CreateDFNItem( null, null, eventManagerDef, 1, "ITEM", false );
 		if( ValidateObject( newObj ))
 		{
-			// Let's name it, and hide it away from players' eyes
-			newObj.name = "Event Manager";
-			newObj.visible = 3;
-			newObj.isWipeable = false;
-			newObj.decayable = false;
-			newObj.movable = 2;
-			newObj.shouldSave = true;
+			// Let's stuff it somewhere safe, away from players' eyes
+			// It will get hidden and non-decayable/wipeable via the DFN tags
 			newObj.Teleport( 1000, 1000, -50 );
 
 			// Keep reference to it
@@ -231,6 +229,7 @@ function onTimer( eventManager, timerID )
 }
 
 // Trigger the event via callback function
+/** @type { ( callbackScriptID: number, callbackFunc: any, argsStart: any[]  ) => void } */
 function ExecuteCallback( callbackScriptID, callbackFunc, argsStart )
 {
 	// Make sure callback function exists in callback script
@@ -247,6 +246,7 @@ function ExecuteCallback( callbackScriptID, callbackFunc, argsStart )
 }
 
 // Validate conditions for event to run
+/** @type { ( event: any  ) => boolean } */
 function CheckConditions( event )
 {
 	// Does event only trigger on specific days of the week?
@@ -272,6 +272,7 @@ function CheckConditions( event )
 }
 
 // Calculate when event should run next (for ones that run multiple times)
+/** @type { ( event: any  ) => void } */
 function CalculateNextRun( event )
 {
 	let now = new Date().getTime();
@@ -310,6 +311,7 @@ function CalculateNextRun( event )
 
 // Commands triggered via commands/em.js
 // Example usage: 'em list
+/** @type { ( socket: Socket, command: string ) => boolean } */
 function EventManagerCommands( socket, command )
 {
 	if( socket == null )
@@ -322,7 +324,7 @@ function EventManagerCommands( socket, command )
 	}
 
 	let args = command.split( " " );
-	subCmd = args[0].toLowerCase();
+	let subCmd = args[0].toLowerCase();
 	let param = ( args.length > 1 ) ? args[1] : null;
 
 	switch( subCmd )
@@ -397,7 +399,7 @@ function EventManagerCommands( socket, command )
 		{
 			if( param == null || isNaN( parseInt( param )))
 			{
-				socket.SysMessage( GetDictionary( 6521, socket.language )); // Usage: 'em remove <index from event list>
+				socket.SysMessage( GetDictionaryEntry( 6521, socket.language )); // Usage: 'em remove <index from event list>
 			}
 			else
 			{
@@ -448,6 +450,7 @@ function EventManagerCommands( socket, command )
 
 // Register a new Event
 // Usage from other scripts: TriggerEvent( [ManagerID], "RegisterEvent", { callbackScriptID: script_id, callbackFuncStart: "MyFunc", type: "INTERVAL", ... }, { argsStart }, { argsEnd } )
+/** @type { ( config: any, argsStart: any, argsEnd: any  ) => null | string } */
 function RegisterEvent( config, argsStart, argsEnd )
 {
 	if( !eventManagerEnabled )

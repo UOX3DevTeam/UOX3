@@ -1958,7 +1958,7 @@
           { "name": "itemColour", "type": "number", "required": false },
           { "name": "moreVal",    "type": "number", "required": false },
           { "name": "sectionId",  "type": "string", "required": false }
-        ] }, "returns": "void" },
+        ] }, "returns": "number" },
         { "name": "ResumeJSTimer",       "cppName": "CBase_ResumeJSTimer",        "params": { "num": 2, "list": [ { "name": "timerId",  "type": "number",     "required": true }, { "name": "scriptId",  "type": "number",     "required": true } ] }, "returns": "number" },
         { "name": "ResumeTempEffect",    "cppName": "CBase_ResumeTempEffect",     "params": { "num": 1, "list": [ { "name": "effectID", "type": "number",     "required": true } ] }, "returns": "number" },
         { "name": "ReverseTempEffect",   "cppName": "CBase_ReverseTempEffect",    "params": { "num": 1, "list": [ { "name": "effectID", "type": "number",     "required": true } ] }, "returns": "number" },
@@ -9304,7 +9304,16 @@
     },
     {
       "name": "SCRIPT",
-      "type": "uox_class"
+      "type": "uox_class",
+      "properties": [
+        {
+          "name": "script_id",
+          "cppID": "CSCRIPT_SCRIPTID",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number",
+          "readOnly": true
+        }
+      ]
     }
   ]
 }

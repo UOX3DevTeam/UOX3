@@ -3543,7 +3543,7 @@
 6321=Es sieht so aus, als wäre diese Klinge mit einer säurehaltigen Substanz bedeckt.
 6322=Es sieht so aus, als wäre diese Klinge mit einer ätzenden Substanz bedeckt.
 6323=Es sieht so aus, als wäre diese Klinge mit einer leicht ätzenden Substanz bedeckt.
-// [6500-6549] Event Manager
+// [6500-6539] Event Manager
 6500=Ereignismanager: Heartbeat gestartet
 6501=Ereignismanager: Wiederverwendung eines vorhandenen Ereignismanager-Objekts.
 6502=Ereignismanager: Altes Ereignismanager-Objekt existiert nicht mehr, ein neues wird erstellt.
@@ -3567,6 +3567,16 @@
 6520=Ereignis aktiviert und für das nächste gültige Aktivierungsfenster neu geplant.
 6521=Verwendung: 'em remove <Index aus Ereignisliste>
 6522=Ereignis angehalten und entfernt
+// [6540-6550] Dawns Musikbox
+6540=Du musst den Gegenstand in deinem Rucksack haben oder ihn gesichert haben, um ihn zu benutzen.
+6541=Wähle eine Dawns Musikbox als Ziel aus, um dieses Lied hinzuzufügen.
+6542=Du musst eine Dawns Musikbox als Ziel auswählen.
+6543=Das ist keine Dawns Musikbox.
+6544=Kein Musikgerät ist in der Warteschlange.
+6545=Das Musikgerät konnte nicht gefunden werden.
+6546=Diesem Gerät ist kein Lied zugewiesen.
+6547=Dieser Liedtitel befindet sich bereits in der Musikbox.
+6548=Dieses Lied wurde der Musikbox hinzugefügt.
 // [7000-7499] AI Scripts
 7000=Du bist ein Verbrecher und kannst nicht auf dein Bankschließfach zugreifen.
 7001=Welchen Gegenstand möchten Sie in Ihr Bankschließfach einzahlen?
@@ -5607,7 +5617,7 @@
 19234=Ihre Verwirrung ist vorüber, Sie können jetzt eine Waffe bewaffnen!
 19235=Sie sind nicht mehr tödlich verwundet.
 19236=Die blutenden Wunden sind verheilt, Sie bluten nicht mehr!
-// [19301-19330] Verbundenes und totes Haustier
+// [19301-19340] Verbundenes und totes Haustier
 19301=Du kannst ein totes Haustier nicht tauschen.
 19302=Das tote Haustier kann nicht angreifen.
 19303=Du bist nicht geschickt genug, um dieses Haustier wiederzubeleben.

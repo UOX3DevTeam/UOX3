@@ -1410,7 +1410,6 @@
 1405=Location Info
 1406=Stats
 1407=Tweak
-
 // from here on misc, found on second loop
 // boats.cpp
 1408=a mast
@@ -2513,6 +2512,9 @@
 2639=Sort by Spawn Count (%s)
 2650=You pour the %s into the empty bottle.
 2651=You pour the %s into the empty jug.
+2660=Found %i region-based spawners in %u milliseconds.
+2661=Manage Spawn Regions
+2662=Teleport to Spawn Region
 // [2700-2799] Misc scripts
 2700=Only the house owner can rotate furniture.
 2701=That does not appear to work.
@@ -3540,7 +3542,7 @@
 6321=It looks as if this blade is covered with an acidic substance.
 6322=It looks like this blade has a corrosive element on it.
 6323=It looks like this blade has a light corrosive element on it.
-// [6500-6549] Event Manager
+// [6500-6539] Event Manager
 6500=Event Manager: Heartbeat started
 6501=Event Manager: Reusing existing Event Manager object.
 6502=Event Manager: Old Event Manager object no longer exists, a new one will be created.
@@ -3564,6 +3566,16 @@
 6520=Event reenabled and rescheduled for next valid activation window.
 6521=Usage: 'em remove <index from event list>
 6522=Event halted and removed.
+// [6540-6550] Dawn's Music Box
+6540=You must have the item in your backpack or locked down in order to use it.
+6541=Target a Dawn's Music Box to add this song.
+6542=You must target a Dawn's Music Box.
+6543=That is not a Dawn's Music Box.
+6544=No music gear is pending.
+6545=The music gear could not be found.
+6546=This gear has no song assigned.
+6547=This song track is already in the music box.
+6548=This song has been added to the music box.
 // [7000-7499] AI Scripts
 7000=Thou art a criminal and cannot access thy bank box.
 7001=Which item do you wish to deposit in your bank box?
@@ -5605,7 +5617,7 @@
 19234=Your confusion has passed, you may now arm a weapon!
 19235=You are no longer mortally wounded.
 19236=The bleeding wounds have healed, you are no longer bleeding!
-// [19301-19330] Bonded and Dead pet
+// [19301-19340] Bonded and Dead pet
 19301=You may not trade a dead pet.
 19302=The dead pet cannot attack.
 19303=You are not skilled enough to resurrect that pet.
