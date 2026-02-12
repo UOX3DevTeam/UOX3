@@ -965,7 +965,7 @@ declare global {
   type ResourceAmount = [number, number, number[]];
   type ResourceSkill = [number, number, number];
   interface SCRIPT {
-    readonly  id: number;
+    readonly  script_id: number;
   }
   type uox_class = SCRIPT;
   enum ServerFeature {
@@ -1800,6 +1800,7 @@ declare global {
   const Console: UOXConsole;
   const CreateEntries: UOXCreateEntries;
   const SCRIPT: uox_class;
+  const UOX_DEBUG_MODE: boolean;
 }
 
 // Ensure the file is treated as a module

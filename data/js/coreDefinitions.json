@@ -3157,7 +3157,7 @@
       "aka": "uox_class",
       "properties": [
         {
-          "name": "id",
+          "name": "script_id",
           "cppID": "CSCRIPT_SCRIPTID",
           "cppType": "JSPROP_ENUMANDPERM",
           "type": "number",
@@ -9340,16 +9340,11 @@
     },
     {
       "name": "SCRIPT",
-      "type": "uox_class",
-      "properties": [
-        {
-          "name": "script_id",
-          "cppID": "CSCRIPT_SCRIPTID",
-          "cppType": "JSPROP_ENUMANDPERM",
-          "type": "number",
-          "readOnly": true
-        }
-      ]
+      "type": "uox_class"
+    },
+    {
+      "name": "UOX_DEBUG_MODE",
+      "type": "boolean"
     }
   ]
 }
