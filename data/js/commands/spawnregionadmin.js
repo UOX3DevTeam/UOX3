@@ -43,7 +43,7 @@ function ShowSpawnRegionList( socket, cmdString )
 	DisplaySpawnRegionListGump( socket, null, null, 0 );
 }
 
-/** @type { ( toCheck: SpawnRegion, socket: Socket ) => boolean } */
+/** @type { ( toCheck: SpawnRegion, socket: SocketOrNull ) => boolean } */
 function onIterateSpawnRegions( toCheck, socket )
 {
 	if( toCheck != null )

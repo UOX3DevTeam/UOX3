@@ -8523,8 +8523,8 @@
       "cppName": "OnIterateSpawnRegions",
       "params": {
         "list": [
-          { "name": "a", "type": "SpawnRegion", "required": true },
-          { "name": "b", "type": "number", "required": true }
+          { "name": "toCheck", "type": "SpawnRegion", "required": true },
+          { "name": "socket", "type": "SocketOrNull", "required": true }
         ]
       },
       "returns": "boolean"

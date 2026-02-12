@@ -1722,7 +1722,7 @@ declare global {
   function onHouseCommand( targSock: Socket, multiObj: Multi, targId: number ): boolean;
   function onHungerChange( pChanging: Character, newStatus: number ): boolean;
   function onIterate( obj: Character | Item, mSock: Socket ): boolean;
-  function onIterateSpawnRegions( a: SpawnRegion, b: number ): boolean;
+  function onIterateSpawnRegions( toCheck: SpawnRegion, socket: SocketOrNull ): boolean;
   function onLeaveRegion( entering: Character, region: number ): void;
   function onLeaving( left: Multi, leaving: BaseObject ): boolean;
   function onLightChange( tObject: BaseObject, lightLevel: number ): boolean;
