@@ -1,3 +1,7 @@
+12/02/2026 - DragonSlayer62 (#504)
+    [UPD] Updated camelCase with afoodlist
+    [ADD] Added carnivore and omnivore to validFish, validMeat. omnivore to validFruitsAndVegetables.
+
 11/02/2026 - DragonSlayer62 (#501)
     [FIX} Fixed some areas where skill would get stuck in use and not return false.
 
