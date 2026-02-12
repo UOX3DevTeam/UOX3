@@ -42,7 +42,17 @@ function onSkill( pUser, skillUsed, objType )
 /** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( pSock, ourObj )
 {
+	if( pSock == null )
+	{
+		return;
+	}
+
 	var pUser = pSock.currentChar;
+	if( !ValidateObject( pUser ))
+	{
+		return;
+	}
+
 	if( ourObj && ourObj.isChar && pUser )
 	{
 		if( !ourObj.InRange( pUser, 3 ))
@@ -115,7 +125,7 @@ function onCallback0( pSock, ourObj )
 				animalLoreGump.AddHTMLGump( position, 200, 75, 18, false, false, ourObj.skillToPeace );
 				animalLoreGump.AddGump( 28, 220, 0x826 );
 
-				var aloyalty = GetDictionaryEntry( 2188, pSock.language ); // Wild;
+				var aLoyalty = GetDictionaryEntry( 2188, pSock.language ); // Wild;
 				var petLoyalty = ourObj.loyalty;
 
 				/* Pet Loyalty Levels
@@ -136,24 +146,24 @@ function onCallback0( pSock, ourObj )
 				{
 					if( petLoyalty < 90 )
 					{
-						aloyalty = GetDictionaryEntry( 2250 + Math.floor( petLoyalty / 10 ), pSock.language ); // Confused > Very Happy
+						aLoyalty = GetDictionaryEntry( 2250 + Math.floor( petLoyalty / 10 ), pSock.language ); // Confused > Very Happy
 					}
 					else if( petLoyalty >= 90 && petLoyalty <= 95 )
 					{
-						aloyalty = GetDictionaryEntry( 2259, pSock.language );  // Extremely Happy
+						aLoyalty = GetDictionaryEntry( 2259, pSock.language );  // Extremely Happy
 					}
 					else if( petLoyalty >= 96 && petLoyalty <= 99 )
 					{
-						aloyalty = GetDictionaryEntry( 2260, pSock.language );  // Wonderfully happy
+						aLoyalty = GetDictionaryEntry( 2260, pSock.language );  // Wonderfully happy
 					}
 					else // Euphoric
 					{
-						aloyalty = GetDictionaryEntry( 2261, pSock.language );  // Euphoric
+						aLoyalty = GetDictionaryEntry( 2261, pSock.language );  // Euphoric
 					}
 				}
 
 				animalLoreGump.AddHTMLGump( 47, 220, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry(2143, pSock.language ) + "</basefont>" );			// Loyalty Rating
-				animalLoreGump.AddHTMLGump( 53, 236, 160, 18, false, false, aloyalty );
+				animalLoreGump.AddHTMLGump( 53, 236, 160, 18, false, false, aLoyalty );
 
 				if( aosEnabled || coreShardEra >= EraStringToNum( "aos" ))
 				{
@@ -445,14 +455,16 @@ function onGumpPress( socket, button, uoxAnimalLoreGump )
 	}
 }
 
+/** @type { ( uoxAnimalLoreGump: any, stringToAdd: number, dataToAdd: GumpData, uoxPosition: any ) => void } */
 function addEntry( uoxAnimalLoreGump, stringToAdd, dataToAdd, uoxPosition )
 {
 	uoxAnimalLoreGump.AddText( 50, uoxPosition, 0, stringToAdd );
 	uoxAnimalLoreGump.AddText( 225, uoxPosition, 0, dataToAdd.toString() );
 	uoxPosition += 20;
-	return UOXposition;
+	return uoxPosition;
 }
 
+/** @type { ( uoxAnimalLoreGump: any, stringToAdd: number, dataToAdd: GumpData, moreDataToAdd: any, uoxPosition: any ) => void } */
 function addDualEntry( uoxAnimalLoreGump, stringToAdd, dataToAdd, moreDataToAdd, uoxPosition )
 {
 	uoxAnimalLoreGump.AddText( 50, uoxPosition, 0, stringToAdd );
@@ -461,6 +473,7 @@ function addDualEntry( uoxAnimalLoreGump, stringToAdd, dataToAdd, moreDataToAdd,
 	return uoxPosition;
 }
 
+/** @type { ( uoxAnimalLoreGump: any, stringToAdd: number, uoxPosition: any ) => void } */
 function addStringEntry( uoxAnimalLoreGump, stringToAdd, uoxPosition )
 {
 	uoxPosition += 20;
