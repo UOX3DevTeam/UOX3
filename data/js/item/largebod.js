@@ -170,6 +170,11 @@ function GetMaterialNameFromHue( hue )
 /** @type {( socket: Socket, pButton: number, gumpData: GumpData ) => void} */
 function onGumpPress( socket, pButton, gumpData )
 {
+	if( socket == null )
+	{
+		return;
+	}
+
 	const pUser = socket.currentChar;
 	if( !ValidateObject( pUser ))
 		return;
@@ -230,6 +235,9 @@ function IsLargeBODComplete( largeBOD )
 /** @type {( socket: Socket, target: BaseObject | null ) => void} */
 function onCallback0( socket, myTarget )
 {
+	if( socket == null )
+		return;
+
 	const pUser = socket.currentChar;
 	const largeBOD = /** @type {Item} */ ( pUser.largeBOD );
 	const gumpID = LargeBODID + 0xffff;
@@ -281,6 +289,9 @@ function onCallback0( socket, myTarget )
 /** @param {Character} pUser @param {Socket} socket @param {Item} largeBOD @param {Item} smallBOD */
 function CombineSmallIntoLarge( pUser, socket, largeBOD, smallBOD )
 {
+	if( socket == null )
+		return;
+
 	const amountMaxLarge      = parseInt( largeBOD.GetTag( "amountMax" ));
 	const reqExceptionalLarge = !!largeBOD.GetTag( "reqExceptional" );
 	const materialColorLarge  = largeBOD.GetTag( "materialColor" );
@@ -327,9 +338,6 @@ function CombineSmallIntoLarge( pUser, socket, largeBOD, smallBOD )
 		return;
 	}
 
-	// ---------------------------------------------------------------------
-	// Check if the *entire* large deed is already full
-	// ---------------------------------------------------------------------
 	const entryCount = parseInt( largeBOD.GetTag( "entryCount" ));
 	let allFull = true;
 	for( let i = 0; i < entryCount; i++ )
@@ -398,9 +406,6 @@ function CombineSmallIntoLarge( pUser, socket, largeBOD, smallBOD )
 	largeBOD.SetTag( "qualityValue", qualityLarge + qualitySmall );
 	largeBOD.SetTag( "amountCur",    amtCurLarge  + amountCurSmall );
 
-	// ---------------------------------------------------------------------
-	// After combining, check if the whole large BOD is now complete
-	// ---------------------------------------------------------------------
 	let nowAllFull = true;
 	for( let i = 0; i < entryCount; i++ )
 	{
@@ -418,10 +423,7 @@ function CombineSmallIntoLarge( pUser, socket, largeBOD, smallBOD )
 	}
 
 	largeBOD.Refresh();
-
-	// Delete the small BOD
 	smallBOD.Delete();
-
 	socket.SysMessage( GetDictionaryEntry( 17284, socket.language )); // The orders have been combined.
 }
 
