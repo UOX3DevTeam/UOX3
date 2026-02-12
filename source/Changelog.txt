@@ -1,16 +1,16 @@
 12/02/2026 - DragonSlayer62 (#504)
-    [UPD] Updated camelCase with afoodlist
-    [ADD] Added carnivore and omnivore to validFish, validMeat. omnivore to validFruitsAndVegetables.
+    [UPD] Updated js/skill/animallore.js to use camelCase for various variables
+    [ADD] Added carnivore and omnivore to validFish and validMeat, and omnivore to validFruitsAndVegetables, in js/skill/animallore.js
 
 11/02/2026 - DragonSlayer62 (#501)
-    [FIX} Fixed some areas where skill would get stuck in use and not return false.
+    [FIX] Fixed some areas in js/skill/healing.js and healingSlip.js where healing skill would get stuck in use and not return correctly.
 
 07/02/2026 - DragonSlayer62 (#464)
-    [ADD] Added Dawns Music Box and Music Gears.
+    [ADD] Added DFN entries (dfndata/items/misc/lbr_misc.dfn) and JS script (js/item/dawns_music_box.js) for Dawn's Music Box and Music Gears.
 
 07/02/2026 - DragonSlayer62 (#497)
-    [FIX] Fixed House decay timers to kill on door refresh, and on grandfathered enabled properly.
-    [FIX] Raced.dfn had the wrong ID in Gargoyle Armor/Weapons and also removed an extra comma at the end.
+    [FIX] Fixed house decay timers not getting reset properly upon door usage (js/item/doors.js), and when grandfathered state is enabled for house (js/server/house/house.js and houseSign.js)
+    [FIX] Races.dfn had the wrong ID in Gargoyle Armor/Weapons and also removed an extra comma at the end.
 
 06/02/2026 - Xoduz (#495)
     [ADD] Added new GM command 'showspawnregions (js/commands/targeting/showspawnregions.js) which will visualize all spawn regions within range of targeted location for a short duration
@@ -40,7 +40,7 @@
     [UPD] Minor cosmetic cleanup of a couple of script and source files
 
 23/01/2026 - DragonSlayer62 (#484)
-    [FIX] Changed few words to match up with there function name and method.
+    [FIX] Changed few words in JS Docs to match up with there function name (onLogout) and method (Gump .Free() Method)
     [FIX] Fixed Socket Errors in Bonding Script.
 
 23/01/2026 - Xoduz (#485)
@@ -13865,4 +13865,5 @@ Changed:
 
 	* readme.txt:
 	creation
+
 
