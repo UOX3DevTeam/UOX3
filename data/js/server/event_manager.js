@@ -358,13 +358,13 @@ function EventManagerCommands( socket, command )
 				if( index >= 0 && index < gEventList.length )
 				{
 					let newState = ( subCmd == "enable" );
-					let curEvent = gEventList[index];
-					curEvent.enabled = newState;
+					let event = gEventList[index];
+					event.enabled = newState;
 
 					// Reschedule event to next valid window if it missed previous cycle
 					if( newState === true && event.nextRun < new Date().getTime() )
 					{
-						if( !curEvent.isRunning )
+						if( !event.isRunning )
 						{
 							socket.SysMessage( GetDictionaryEntry( 6520, socket.language )); // Event reenabled and rescheduled for next valid activation window.
 							CalculateNextRun( event );
@@ -406,7 +406,7 @@ function EventManagerCommands( socket, command )
 				let index = parseInt( param );
 				if( index >= 0 && index < gEventList.length )
 				{
-					let curEvent = gEventList[index];
+					let event = gEventList[index];
 					if( event.isRunning )
 					{
 						if( event.callbackFuncEnd != "" )
@@ -420,7 +420,7 @@ function EventManagerCommands( socket, command )
 					let consoleMsg = "Event Manager: %s removed event %i (%s)";
 					consoleMsg = consoleMsg.replace( /%s/gi, socket.currentChar.name );
 					consoleMsg = consoleMsg.replace( /%i/gi, index );
-					consoleMsg = consoleMsg.replace( /%s/gi, curEvent.name );
+					consoleMsg = consoleMsg.replace( /%s/gi, event.name );
 					Console.Print( consoleMsg + "\n" );
 
 					// Remove event from list and save
@@ -580,8 +580,8 @@ function LoadEvents()
 function SaveEvents()
 {
 	let mFile = new UOXCFile();
-
-	if( mFile.Open( eventDataFile, "w", eventDataFolder ))
+	mFile.Open( eventDataFile, "w", eventDataFolder );
+	if( mFile != null )
 	{
 		if( gEventList.length > 0 )
 		{
