@@ -2194,6 +2194,7 @@
 2186=Du bist nicht erfahren genug, um diese Kreatur zu verstehen
 2187=Das sieht nicht gerade wie ein Tier aus.
 2188=Wild
+2189=Metall
 2199=Verwirrt
 2200=Keine
 2201=Besitzeranzahl
@@ -2449,7 +2450,6 @@
 2576=Du widerstehst dem Drang, die %s über dem Kopf deines Ziels zu entleeren.
 2577=Das ist schon voll! Sie können da nichts hineinschütten, bevor es nicht geleert wurde.
 2578=Sie schütten das %s in den leeren Krug.
-2578=Sie schütten die %s in die leere Flasche.
 2579=Sie schütten den Inhalt des Kruges aus, und es bleibt ein leerer Krug übrig.
 2580=Sie schütten den Inhalt der Flasche aus, und es bleibt eine leere Flasche übrig.
 2581=Sie schütten den Inhalt des Kruges aus, und es bleibt ein leerer Krug zurück.
@@ -2512,6 +2512,11 @@
 2637=Filter für NPC-Spawns
 2638=Filter für Item-Spawns
 2639=Sortieren nach Spawn-Anzahl (%s)
+2650=Sie schütten die %s in die leere Flasche.
+2651=Sie schütten die %s in den leeren Krug.
+2660=%i regionenbasierte Spawner in %u Millisekunden gefunden.
+2661=Spawn-Regionen verwalten
+2662=Zur Spawn-Region teleportieren
 // [2700-2799] Misc scripts
 2700=Nur der Hausbesitzer kann die Möbel drehen.
 2701=Das scheint nicht zu funktionieren.
@@ -2633,7 +2638,7 @@
 2817=BEENDEN
 2818=Anzahl der gesperrten Artikel:
 2819=Anzahl der gesicherten Behälter:
-2820=Anzahl der Mülltonnen: 2820=Anzahl der Mülltonnen:
+2820=Anzahl der Mülltonnen:
 2821=Anzahl der Spieler-Verkäufer:
 2822=Gebaut am:
 2823=Zuletzt gehandelt:
@@ -3539,6 +3544,16 @@
 6321=Es sieht so aus, als wäre diese Klinge mit einer säurehaltigen Substanz bedeckt.
 6322=Es sieht so aus, als wäre diese Klinge mit einer ätzenden Substanz bedeckt.
 6323=Es sieht so aus, als wäre diese Klinge mit einer leicht ätzenden Substanz bedeckt.
+// [6540-6550] Dawns Musikbox
+6540=Du musst den Gegenstand in deinem Rucksack haben oder ihn gesichert haben, um ihn zu benutzen.
+6541=Wähle eine Dawns Musikbox als Ziel aus, um dieses Lied hinzuzufügen.
+6542=Du musst eine Dawns Musikbox als Ziel auswählen.
+6543=Das ist keine Dawns Musikbox.
+6544=Kein Musikgerät ist in der Warteschlange.
+6545=Das Musikgerät konnte nicht gefunden werden.
+6546=Diesem Gerät ist kein Lied zugewiesen.
+6547=Dieser Liedtitel befindet sich bereits in der Musikbox.
+6548=Dieses Lied wurde der Musikbox hinzugefügt.
 // [7000-7499] AI Scripts
 7000=Du bist ein Verbrecher und kannst nicht auf dein Bankschließfach zugreifen.
 7001=Welchen Gegenstand möchten Sie in Ihr Bankschließfach einzahlen?
@@ -3801,6 +3816,7 @@
 8257=Du musst einen NPC als Ziel auswählen!
 8258=Du verbindest die Wunde und stillst die Blutung
 8259=Die blutenden Wunden sind verheilt, du blutest nicht mehr!
+8260=Anzahl der Giftladungen auf dem Gegenstand.
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Kontonummer, die dem Spieler zugeordnet ist. Wird vom Server gesteuert (Read-Only)
 8301=NPC-KI-Typ
@@ -4032,6 +4048,29 @@
 8724=Ist Slot 7 für dieses Konto gesperrt?
 8725=Wie lange ist der Benutzer gesperrt, in Minuten?
 8726=Wann wurde das Konto das erste Mal angemeldet? (Schreibgeschützt)
+// [8750-8799] Tweak Menu - Spawn Region property descriptions
+8750=Anzahl der pro Spawn-Zyklus erzeugten Zeichen/Objekte
+8751=Instanz-ID, in der die Spawn-Region aktiv ist
+8752=Sind die erzeugten Objekte Spawner-Objekte?
+8753=Gegenstandsabschnitt-ID aus DFNs zum Spawnen
+8754=Anzahl der derzeit gespawnten Gegenstände (schreibgeschützt)
+8755=Verweis auf ITEMLIST, aus der gespawnt werden soll
+8756=Maximale Anzahl der zu spawnden Gegenstände
+8757=Maximale Anzahl der zu spawnden NPCs
+8758=Maximales Zeitintervall bis zum nächsten Spawn-Zyklus
+8759=Minimales Zeitintervall bis zum nächsten Spawn-Zyklus
+8760=Interner Name der Spawn-Region
+8761=NPC-Abschnitt-ID aus DFNs zum Spawnen
+8762=Anzahl der aktuell gespawnten NPCs (schreibgeschützt)
+8763=Verweis auf NPCLIST, aus der gespawnt werden soll
+8764=Nur außerhalb von Gebäuden spawnen?
+8765=Maximaler Z-Wert, den Gegenstände in der Welt auf das Spawnen haben können
+8766=Spawn-Region-ID
+8767=Weltnummer, in der die Spawn-Region aktiv ist
+8768=Westliche Grenze der Spawn-Region
+8769=Östliche Grenze der Spawn-Region
+8770=Nördliche Grenze der Spawn-Region
+8771=Südliche Grenze der Spawn-Region
 // [8800-8849] General Tweak Menu
 8800=Eingabe eines neuen Wertes
 8801=Änderungen an effektiven Skill-Werten werden nicht gespeichert und sind nach einem Server-Neustart nicht mehr vorhanden. Für permanente Skill-Änderungen, passen Sie stattdessen die Eigenschaft baseskills an!
@@ -5565,8 +5604,6 @@
 19308=Dein Haustier hat eine Bindung zu dir aufgebaut!
 19309=Dein Haustier ist tot und reagiert nicht auf diesen Befehl.
 19310=Du löst die Bindung zu deinem Haustier.
-19311=Möchtest du die Bindung zu deinem Haustier wirklich lösen?
-19311=Das Freilassen eines Geister-Haustiers zerstört es und kann nicht wiederhergestellt werden. Möchten Sie fortfahren?
 19312=Der Besitzer des Haustiers muss in der Nähe sein, um die Wiederbelebung zu versuchen.
 19313=Ihr Haustier kann keine Bindung zu Ihnen aufbauen, bis Ihre Fähigkeit zur Tierzähmung gestiegen ist.
 19314=Ihr Haustier kann keine Bindung zu Ihnen aufbauen, bis Ihre Bushido-Fähigkeit gestiegen ist.

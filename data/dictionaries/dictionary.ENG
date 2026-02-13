@@ -2193,6 +2193,7 @@
 2186=You are not skilled enough to understand that creature
 2187=That doesn't look much like an animal.
 2188=Wild
+2189=Metal
 2199=Confused
 2200=None
 2201=Owner Count
@@ -2448,7 +2449,6 @@
 2576=You resist the urge to empty the %s over the head of your target.
 2577=That is already full! You cannot pour anything into that until it's been emptied.
 2578=You pour the %s into the empty pitcher.
-2578=You pour the %s into the empty bottle.
 2579=You pour out the contents of the jug, and you're left with an empty jug.
 2580=You pour out the contents of the bottle, and you're left with an empty bottle.
 2581=You pour out the contents of the pitcher, leaving you with an empty pitcher.
@@ -2511,6 +2511,11 @@
 2637=Filter for NPC Spawners
 2638=Filter for Item Spawners
 2639=Sort by Spawn Count (%s)
+2650=You pour the %s into the empty bottle.
+2651=You pour the %s into the empty jug.
+2660=Found %i region-based spawners in %u milliseconds.
+2661=Manage Spawn Regions
+2662=Teleport to Spawn Region
 // [2700-2799] Misc scripts
 2700=Only the house owner can rotate furniture.
 2701=That does not appear to work.
@@ -3538,6 +3543,16 @@
 6321=It looks as if this blade is covered with an acidic substance.
 6322=It looks like this blade has a corrosive element on it.
 6323=It looks like this blade has a light corrosive element on it.
+// [6540-6550] Dawn's Music Box
+6540=You must have the item in your backpack or locked down in order to use it.
+6541=Target a Dawn's Music Box to add this song.
+6542=You must target a Dawn's Music Box.
+6543=That is not a Dawn's Music Box.
+6544=No music gear is pending.
+6545=The music gear could not be found.
+6546=This gear has no song assigned.
+6547=This song track is already in the music box.
+6548=This song has been added to the music box.
 // [7000-7499] AI Scripts
 7000=Thou art a criminal and cannot access thy bank box.
 7001=Which item do you wish to deposit in your bank box?
@@ -4032,6 +4047,29 @@
 8724=Is slot 7 on this Account blocked?
 8725=How long is user banned for, in minutes?
 8726=When was the account logged into the first time? (Read-Only)
+// [8750-8799] Tweak Menu - Spawn Region property descriptions
+8750=Number of chars/items spawned per spawn cycle
+8751=Instance ID where spawn region is active
+8752=Are spawned items Spawners Objects?
+8753=Item Section ID from DFNs to spawn
+8754=Count of items currently spawned (Read-Only)
+8755=Reference to ITEMLIST from which to spawn
+8756=Max amount of items to spawn
+8757=Max amount of NPCs to spawn
+8758=Max time interval until next spawn cycle
+8759=Min time interval until next spawn cycle
+8760=Internal name of Spawn Region
+8761=NPC Section ID from DFNs to spawn
+8762=Count of NPCs currently spawned (Read-Only)
+8763=Reference to NPCLIST from which to spawn
+8764=Spawn only outside buildings?
+8765=Max Z value influece items in the world can have on spawning
+8766=Spawn Region ID
+8767=World Number that Spawn Region is active in
+8768=Western boundary for Spawn Region
+8769=Eastern boundary for Spawn Region
+8770=Northern boundary for Spawn Region
+8771=Southern boundary for Spawn Region
 // [8800-8849] General Tweak Menu
 8800=Enter new value
 8801=Changes made to effective skill values are not saved, and will be gone if server restarts. For permanent skill changes, adjust baseskills property instead!
@@ -5411,7 +5449,7 @@
 18767=A wand of fireworks has been placed in your backpack.
 18768=A spyglass has been placed in your backpack.
 18769=The dyes and dye tub have been placed in your backpack.
-18770=This is half a prize ticket! Double-click this ticket and target any other ticket marked NEW PLAYER and get a prize! This ticket will only work for YOU, so don’t give it away!
+18770=This is half a prize ticket! Double-click this ticket and target any other ticket marked NEW PLAYER and get a prize! This ticket will only work for YOU, so don't give it away!
 18771=A full set of ranger armor.
 // [18800-19000] AOS properties
 18800=%i% Bandage Healing Bonus
@@ -5566,8 +5604,6 @@
 19308=Your pet has bonded with you!
 19309=Your pet is dead and will not respond to that command.
 19310=You break the bond with your pet.
-19311=Are you sure you want to break the bond with your pet?
-19311=Releasing a ghost pet will destroy it, with no chance of recovery. Do you wish to continue?
 19312=The pet's owner must be nearby to attempt resurrection.
 19313=Your pet cannot form a bond with you until your animal taming ability has risen.
 19314=Your pet cannot form a bond with you until your bushido ability has risen.
@@ -5596,7 +5632,7 @@
 19337=(invulnerable)
 19338=(frozen)
 19339=(guarded)
-19340=That creature’s spirit lacks cohesion. Try again in a few minutes.
+19340=That creature's spirit lacks cohesion. Try again in a few minutes.
 19341=You already know this recipe.
 19342=You have learned a new recipe: %i
 19343=You must learn that recipe from a scroll.

@@ -2194,6 +2194,7 @@
 2186=Non sei abbastanza abile per capire quella creatura
 2187=Non assomiglia molto ad un animale.
 2188=Selvaggio
+2189=Metallo
 2199=Confuso
 2200=Nessuno
 2201=Conteggio dei proprietari
@@ -2449,7 +2450,6 @@
 2576=Resisti all'impulso di svuotare il %s sulla testa del tuo bersaglio.
 2577=Quella è già piena! Non puoi versarci nulla finché non è stato svuotato.
 2578=Si versa il %s nella brocca vuota.
-2578=Si versa il %s nella bottiglia vuota.
 2579=Si versa il contenuto della brocca, e si rimane con una brocca vuota.
 2580=Si versa il contenuto della bottiglia, e si rimane con una bottiglia vuota.
 2581=Versate il contenuto della brocca, lasciandovi con una brocca vuota.
@@ -2512,6 +2512,11 @@
 2637=Filtra per generatori NPC
 2638=Filtra per generatori oggetti
 2639=Ordina per numero di spawn (%s)
+2650=Si versa il %s nella bottiglia vuota.
+2651=Si versa il %s nella brocca vuota.
+2660=Trovati %i spawn basati sulla regione in %u millisecondi.
+2661=Gestisci regioni di spawn
+2662=Teletrasportati alla regione di spawn
 // [2700-2799] Misc Scripts
 2700=Solo il proprietario della casa può ruotare i mobili.
 2701=Questo non sembra funzionare.
@@ -3539,6 +3544,16 @@
 6321=Sembra che questa lama sia ricoperta da una sostanza acida.
 6322=Sembra che questa lama contenga un elemento corrosivo.
 6323=Sembra che questa lama contenga un leggero elemento corrosivo.
+// [6540-6550] Carillon dell'Alba
+6540=Devi avere l'oggetto nello zaino o sotto chiave per poterlo usare.
+6541=Seleziona un Carillon dell'Alba per aggiungere questa canzone.
+6542=Devi selezionare un Carillon dell'Alba.
+6543=Questo non è un Carillon dell'Alba.
+6544=Nessun equipaggiamento musicale in sospeso.
+6545=Impossibile trovare l'equipaggiamento musicale.
+6546=A questo equipaggiamento non è assegnata alcuna canzone.
+6547=Questa traccia è già nel carillon.
+6548=Questa canzone è stata aggiunta al carillon.
 // [7000-7499] AI Scripts
 7000=Tu sei un criminale e non puoi accedere alla tua cassaforte.
 7001=Quale oggetto desidera depositare nella sua cassetta di sicurezza?
@@ -3801,6 +3816,7 @@
 8257=Devi selezionare un NPC!
 8258=Hai bendato la ferita e fermato l'emorragia
 8259=Le ferite sanguinanti sono guarite, non stai più sanguinando!
+8260=Numero di cariche di veleno sull'oggetto.
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Numero di account associato al giocatore. Controllato dal server (Solo lettura)
 8301=Tipo di IA del PNG
@@ -4032,6 +4048,29 @@
 8724=Lo slot 7 di questo account è bloccato?
 8725=Per quanto tempo l'utente è stato bandito, in minuti?
 8726=Quando è stato effettuato il primo accesso all'account? (Solo lettura)
+// [8750-8799] Tweak Menu - Spawn Region property descriptions
+8750=Numero di caratteri/oggetti generati per ciclo di generazione
+8751=ID istanza in cui la regione di generazione è attiva
+8752=Gli oggetti generati sono oggetti generatori?
+8753=ID sezione oggetto da DFN da generare
+8754=Numero di oggetti attualmente generati (sola lettura)
+8755=Riferimento a ITEMLIST da cui generare
+8756=Quantità massima di oggetti da generare
+8757=Quantità massima di NPC da generare
+8758=Intervallo di tempo massimo fino al prossimo ciclo di generazione
+8759=Intervallo di tempo minimo fino al prossimo ciclo di generazione
+8760=Nome interno della regione di generazione
+8761=ID sezione NPC da DFN da generare
+8762=Numero di NPC attualmente generati (sola lettura)
+8763=Riferimento a NPCLIST da cui generare
+8764=Generare solo all'esterno degli edifici?
+8765=Valore Z massimo che gli oggetti nel mondo possono avere sullo spawn
+8766=ID della regione di spawn
+8767=Numero del mondo in cui la regione di spawn è attiva
+8768=Confine occidentale della regione di spawn
+8769=Confine orientale della regione di spawn
+8770=Confine settentrionale della regione di spawn
+8771=Confine meridionale della regione di spawn
 // [8800-8849] General Tweak Menu
 8800=Inserire il nuovo valore
 8801=Le modifiche apportate ai valori effettivi delle abilità non vengono salvate, e spariranno se il server si riavvia. Per modifiche permanenti alle abilità, regola invece la proprietà baseskills!
@@ -5565,8 +5604,6 @@
 19308=Il tuo animale domestico si è legato a te!
 19309=Il tuo animale domestico è morto e non risponderà a quel comando.
 19310=Hai interrotto il legame con il tuo animale domestico.
-19311=Sei sicuro di voler interrompere il legame con il tuo animale domestico?
-19311=Liberare un animale domestico fantasma lo distruggerà, senza possibilità di recupero. Vuoi continuare?
 19312=Il proprietario dell'animale domestico deve essere nelle vicinanze per tentare la resurrezione.
 19313=Il tuo animale domestico non può creare un legame con te finché la tua capacità di addomesticamento non è aumentata.
 19314=Il tuo animale domestico non può creare un legame con te finché la tua capacità di bushido non è aumentata.
@@ -5575,7 +5612,8 @@
 19317=Il proprietario dell'animale domestico deve essere all'interno di questa casa prima di poter rianimare questa creatura.
 19318=Scegli l'animale domestico con cui desideri creare un legame. Premi ESC per annullare. Questo oggetto si consuma con l'uso riuscito, quindi scegli con saggezza!
 19319=Legame con l'animale domestico annullato.
-19320=Quell'animale domestico è già legato a te. 19321=Questo non è il tuo animale domestico!
+19320=Quell'animale domestico è già legato a te.
+19321=Questo non è il tuo animale domestico!
 19322=Sei sicuro di voler liberare il tuo animale domestico? Gli animali domestici evocati spariranno definitivamente!
 19323=Non puoi compiere azioni benefiche sul tuo bersaglio.
 19324=Seleziona un animale domestico per creare un legame immediato.

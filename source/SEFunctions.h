@@ -145,6 +145,7 @@ JSBool SE_Moon( JSContext *cx, uintN argc, jsval *vp );
 JSBool SE_GetTownRegion( JSContext *cx, uintN argc, jsval *vp );
 JSBool SE_GetTownRegionFromXY( JSContext *cx, uintN argc, jsval *vp );
 JSBool SE_GetSpawnRegion( JSContext *cx, uintN argc, jsval *vp );
+JSBool SE_GetSpawnRegions( JSContext *cx, uintN argc, jsval *vp );
 JSBool SE_GetSpawnRegionCount( JSContext *cx, uintN argc, jsval *vp );
 
 JSBool SE_ReloadJSFile( JSContext *cx, uintN argc, jsval *vp );

@@ -41,7 +41,7 @@
         "sets": [
           {
             "num": 6,
-            "max": 8,
+            "max": 9,
             "list": [
               { "name": "src", "type": "CharOrItem", "required": true },
               { "name": "trg", "type": "CharOrItem", "required": true },
@@ -50,12 +50,13 @@
               { "name": "loop", "type": "number", "required": true },
               { "name": "explode", "type": "boolean", "required": true },
               { "name": "hue", "type": "number", "required": false },
-              { "name": "renderMode", "type": "number", "required": false }
+              { "name": "renderMode", "type": "number", "required": false },
+              { "name": "stationaryFX", "type": "boolean", "required": false }
             ]
           },
           {
             "num": 8,
-            "max": 10,
+            "max": 11,
             "list": [
               { "name": "src", "type": "CharOrItem", "required": true },
               { "name": "trgX", "type": "number", "required": true },
@@ -66,12 +67,13 @@
               { "name": "loop", "type": "number", "required": true },
               { "name": "explode", "type": "boolean", "required": true },
               { "name": "hue", "type": "number", "required": false },
-              { "name": "renderMode", "type": "number", "required": false }
+              { "name": "renderMode", "type": "number", "required": false },
+              { "name": "stationaryFX", "type": "boolean", "required": false }
             ]
           },
           {
             "num": 10,
-            "max": 12,
+            "max": 13,
             "list": [
               { "name": "srcX", "type": "number", "required": true },
               { "name": "srcY", "type": "number", "required": true },
@@ -84,7 +86,8 @@
               { "name": "loop", "type": "number", "required": true },
               { "name": "explode", "type": "boolean", "required": true },
               { "name": "hue", "type": "number", "required": false },
-              { "name": "renderMode", "type": "number", "required": false }
+              { "name": "renderMode", "type": "number", "required": false },
+              { "name": "stationaryFX", "type": "boolean", "required": false }
             ]
           }
         ]
@@ -912,7 +915,10 @@
       "name": "IterateOverSpawnRegions",
       "cppName": "SE_IterateOverSpawnRegions",
       "params": {
-        "num": 1
+        "num": 1,
+        "list": [
+          { "name": "mSock", "type": "Socket", "required": false }
+        ]
       },
       "returns": "number",
       "broken": true
@@ -1229,15 +1235,27 @@
       "cppName": "SE_GetSpawnRegion",
       "params": {
         "num": 1,
+        "max": 1,
+        "list": [
+          { "name": "Index", "type": "number", "required": true }
+        ]
+      },
+      "returns": "SpawnRegion"
+    },
+    {
+      "name": "GetSpawnRegions",
+      "cppName": "SE_GetSpawnRegions",
+      "params": {
+        "num": 4,
         "max": 4,
         "list": [
-          { "name": "xOrIndex", "type": "number", "required": true },
+          { "name": "x", "type": "number", "required": true },
           { "name": "y", "type": "number", "required": true },
           { "name": "world", "type": "number", "required": true },
           { "name": "instance", "type": "number", "required": true }
         ]
       },
-      "returns": "SpawnRegion"
+      "returns": "SpawnRegion[]"
     },
     {
       "name": "GetSpawnRegionCount",
@@ -6450,7 +6468,155 @@
     },
     {
       "name": "SpawnRegion",
-      "aka": "UOXSpawnRegion"
+      "aka": "UOXSpawnRegion",
+      "properties": [
+        {
+          "name": "name",
+          "cppID": "CSPAWNREGP_NAME",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "item",
+          "cppID": "CSPAWNREGP_ITEM",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "itemList",
+          "cppID": "CSPAWNREGP_ITEMLIST",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "npc",
+          "cppID": "CSPAWNREGP_NPC",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "npcList",
+          "cppID": "CSPAWNREGP_NPCLIST",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "call",
+          "cppID": "CSPAWNREGP_CALL",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "instanceID",
+          "cppID": "CSPAWNREGP_INSTANCEID",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "itemCount",
+          "cppID": "CSPAWNREGP_ITEMCOUNT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number",
+          "readOnly": true
+        },
+        {
+          "name": "maxItems",
+          "cppID": "CSPAWNREGP_MAXITEMS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "maxTime",
+          "cppID": "CSPAWNREGP_MAXTIME",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "maxNpcs",
+          "cppID": "CSPAWNREGP_MAXNPCS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "minTime",
+          "cppID": "CSPAWNREGP_MINTIME",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "npcCount",
+          "cppID": "CSPAWNREGP_NPCCOUNT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number",
+          "readOnly": true
+        },
+        {
+          "name": "defZ",
+          "cppID": "CSPAWNREGP_DEFZ",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "prefZ",
+          "cppID": "CSPAWNREGP_PREFZ",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "regionNum",
+          "cppID": "CSPAWNREGP_REGIONNUM",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "x1",
+          "cppID": "CSPAWNREGP_X1",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "x2",
+          "cppID": "CSPAWNREGP_X2",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "y1",
+          "cppID": "CSPAWNREGP_Y1",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "y2",
+          "cppID": "CSPAWNREGP_Y2",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "world",
+          "cppID": "CSPAWNREGP_WORLD",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "onlyOutside",
+          "cppID": "CSPAWNREGP_ONLYOUTSIDE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isSpawner",
+          "cppID": "CSPAWNREGP_ISSPAWNER",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "forceSpawn",
+          "cppID": "CSPAWNREGP_FORCESPAWN",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        }
+      ]
     },
     {
       "name": "TileFlags",
@@ -7688,9 +7854,9 @@
           { "name": "hasScrollbar", "type": "boolean", "required": true },
           { "name": "rgbColor",     "type": "number",  "required": true },
           { "name": "nmbr",         "type": "number",  "required": true },
-          { "name": "cliloc1",      "type": "string",  "required": true },
-          { "name": "cliloc2",      "type": "string",  "required": true },
-          { "name": "cliloc3",      "type": "string",  "required": true }
+          { "name": "cliloc1",      "type": "string",  "required": false },
+          { "name": "cliloc2",      "type": "string",  "required": false },
+          { "name": "cliloc3",      "type": "string",  "required": false }
         ] }, "returns": "void" },
         { "name": "MasterGump",          "cppName": "CGump_MasterGump",          "params": { "num":  1, "list": [{ "name": "gumpId", "type": "number", "required": true }] }, "returns": "void" },
         { "name": "NoClose",             "cppName": "CGump_NoClose",             "params": { "num":  0, "list": [] }, "returns": "void" },
