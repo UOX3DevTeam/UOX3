@@ -244,6 +244,7 @@ const ChampionSpawnTable = {
 	}
 };
 
+/** @type { ( spawnType: number | string ) => (ChampionSpawnData | null) } */
 function ChampionSpawnData( spawnType )
 {
 	if( ChampionSpawnTable.hasOwnProperty( spawnType ))

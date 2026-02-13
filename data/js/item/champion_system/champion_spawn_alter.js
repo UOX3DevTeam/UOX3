@@ -52,8 +52,10 @@ function onUseChecked( pUser, altar )
 	pSocket.tempObj = altar;
 
 	ChampionMenu( pSocket, altar )
+	return false;
 }
 
+/** @type { ( altar: Item, stage: number ) => void } */
 function StartChampionWave( altar, stage )
 {
 	let spawnCount = AreaCharacterFunction( "ChampionSpawnNpc", altar, 60, null );
@@ -131,6 +133,7 @@ function StartChampionWave( altar, stage )
 	}
 }
 
+/** @type { ( src: Item | Character, trg: Character, sock: Socket | null ) => boolean } */
 function ChampionSpawnNpc( alter, spawn, socket )
 {
 	if( spawn.GetTag( "championSpawnID" ) == alter.serial.toString() )
@@ -139,6 +142,7 @@ function ChampionSpawnNpc( alter, spawn, socket )
 	}
 }
 
+/** @type { ( altar: Item ) => void } */
 function SummonBoss( altar )
 {
 	if( !ValidateObject( altar ))
@@ -199,11 +203,13 @@ function SummonBoss( altar )
 	}
 }
 
+/** @type { ( altar: Item ) => number } */
 function CheckForNearbyPlayers( altar )
 {
 	return AreaCharacterFunction( "IsPlayerNearby", altar, 20, null );
 }
 
+/** @type { ( src: Item | Character, trg: Character, sock: Socket | null ) => boolean } */
 function IsPlayerNearby( src, player, sock )
 {
 	if( !ValidateObject( player ))
@@ -321,6 +327,7 @@ function onTimer( altar, timerID )
 	}
 }
 
+/** @type { ( altar: Item ) => void } */
 function DecayChampionProgressIfEmpty( altar )
 {
 	if( !ValidateObject( altar ))
@@ -377,6 +384,7 @@ function DecayChampionProgressIfEmpty( altar )
 		altar.SetTag( "killCount", 0 );
 }
 
+/** @type { ( level: number ) => number } */
 function RankForLevel( level )
 {
 	for( var i = 0; i < rankBreaks.length; ++i )
@@ -387,6 +395,7 @@ function RankForLevel( level )
 	return rankBreaks.length;
 }
 
+/** @type { ( level: number ) => { rank: number, maxKills: number, spawnRadius: number } } */
 function GetSpawnRankData( level )
 {
 	var ranks = RankForLevel( level );
@@ -397,8 +406,12 @@ function GetSpawnRankData( level )
 	};
 }
 
+/** @type { ( src: Item | Character, trg: Character, sock: Socket | null ) => boolean } */
 function RemoveSpawn( srcChar, trgChar, pSock )
 {
+	if( pSock == null )
+		return false;
+
 	var altar = pSock.tempObj;
 	if( trgChar.GetTag( "championSpawnID" ) == altar.serial )
 	{
@@ -407,6 +420,7 @@ function RemoveSpawn( srcChar, trgChar, pSock )
 	return true;
 }
 
+/** @type { ( altar: Item, index: number ) => { x: number, y: number, z: number } } */
 function GetRedSkullPosition( altar, index )
 {
 	const positions = [[-2, -2], [-1, -2], [0, -2], [1, -2], [2, -2], [2, -1], [2, 0], [2, 1],
@@ -416,6 +430,7 @@ function GetRedSkullPosition( altar, index )
 	return { x: altar.x + offset[0], y: altar.y + offset[1], z: z + 5 };
 }
 
+/** @type { ( altar: Item, index: number ) => { x: number, y: number, z: number } } */
 function GetWhiteSkullPosition( altar, index )
 {
 	const offsets = [[-1, -1], [1, -1], [1, 1], [-1, 1]];
@@ -424,6 +439,7 @@ function GetWhiteSkullPosition( altar, index )
 	return { x: altar.x + offset[0], y: altar.y + offset[1], z: z + 5 };
 }
 
+/** @type { ( src: Item | Character, item: Item, sock: Socket | null ) => boolean } */
 function RemoveRedSkullsFunc( src, item )
 {
 	if( item.GetTag( "redSkull" ) == true )
@@ -434,11 +450,13 @@ function RemoveRedSkullsFunc( src, item )
 	return false;
 }
 
+/** @type { ( srcAltar: Item ) => number } */
 function RemoveRedSkulls( srcAltar )
 {
 	return AreaItemFunction( "RemoveRedSkullsFunc", srcAltar, 10, null );
 }
 
+/** @type { ( src: Item | Character, item: Item, sock: Socket | null ) => boolean } */
 function RemoveWhiteSkullsFunc( src, item, pSock )
 {
 	if( item.GetTag( "whiteSkull" ) == true )
@@ -449,11 +467,13 @@ function RemoveWhiteSkullsFunc( src, item, pSock )
 	return false;
 }
 
+/** @type { ( srcAltar: Item ) => number } */
 function RemoveWhiteSkulls( srcAltar )
 {
 	return AreaItemFunction( "RemoveWhiteSkullsFunc", srcAltar, 10, null );
 }
 
+/** @type { ( altar: Item, stage: number ) => void } */
 function PlaceRedSkulls( altar, stage )
 {
 	RemoveRedSkulls( altar );
@@ -472,6 +492,7 @@ function PlaceRedSkulls( altar, stage )
 	altar.Refresh();
 }
 
+/** @type { ( altar: Item, killCount: number, stage: number ) => void } */
 function PlaceWhiteSkulls( altar, killCount, stage )
 {
 	RemoveWhiteSkulls( altar );
@@ -496,6 +517,7 @@ function PlaceWhiteSkulls( altar, killCount, stage )
 	altar.Refresh();
 }
 
+/** @type { ( altar: Item ) => void } */
 function DelayedGoldExplosion( altar )
 {
 	if( !ValidateObject( altar ))
@@ -504,6 +526,7 @@ function DelayedGoldExplosion( altar )
 	altar.StartTimer( 1000, 2, 7500 ); //1 second delay, timerID 2
 }
 
+/** @type { ( altar: Item ) => void } */
 function ChampionGoldExplosion( altar )
 {
 	if( !ValidateObject( altar ))
@@ -555,6 +578,7 @@ function ChampionGoldExplosion( altar )
 	}
 }
 
+/** @type { ( altar: Item, x: number, y: number ) => (number | null) } */
 function PickSurfaceZForGold( altar, x, y )
 {
 	var world    = altar.worldnumber;
@@ -616,6 +640,7 @@ function PickSurfaceZForGold( altar, x, y )
 	return null;
 }
 
+/** @type { ( socket: Socket, altar: Item ) => void } */
 function ChampionMenu( socket, altar )
 {
 	if( socket == null )
@@ -705,7 +730,7 @@ function ChampionMenu( socket, altar )
 	champalter.Free();
 }
 
-/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
+/** @type { ( pSock: Socket, pButton: number, gumpData: GumpData ) => void } */
 function onGumpPress( socket, pButton, gumpData )
 {
 	var pUser = socket.currentChar;
@@ -716,7 +741,12 @@ function onGumpPress( socket, pButton, gumpData )
 	var maxGold = parseInt( gumpData.getEdit( 3 ));
 	var radiobtnGroup1 = gumpData.getButton( 0 );
 
-	if( !ValidateObject( altar ) && !ValidateObject( pUser ))
+	if( !ValidateObject( pUser ))
+	{
+		return;
+	}
+
+	if( !altar )
 	{
 		return;
 	}
@@ -827,7 +857,7 @@ function onGumpPress( socket, pButton, gumpData )
 /** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( altar, pSocket )
 {
-	if( !ValidateObject( altar ))
+	if( !altar )
 		return "";
 
 	let type = altar.GetTag( "championType" );

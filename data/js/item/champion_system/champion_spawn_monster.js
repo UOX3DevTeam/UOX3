@@ -21,6 +21,7 @@ const championRewardTable = [
 	{ key: "decorativeList", weight: 10 }   // uncommon
 ];
 
+/** @type {Record<string, "aos"|"se"|"sa">} */
 var skillMinERA = {
 	// AoS-era skills
 	necromancy: "aos",
@@ -37,6 +38,7 @@ var skillMinERA = {
 	throwing: "sa"
 };
 
+/** @type { ( skillProp: string ) => boolean } */
 function IsSkillAllowedByEra( skillProp )
 {
 	var minEraName = skillMinERA[skillProp];
@@ -50,7 +52,7 @@ function IsSkillAllowedByEra( skillProp )
 	return ( coreShardEra >= minEra );
 }
 
-/** @type { ( mKilled: Character, mKiller: Character ) => boolean } */
+/** @type { ( pKilled: Character, pKiller: CharOrNull ) => boolean } */
 function onDeathBlow( pKilled, pKiller )
 {
 	let altar = CalcItemFromSer( parseInt( pKilled.GetTag( "championSpawnID" )));
@@ -123,7 +125,7 @@ function onDeathBlow( pKilled, pKiller )
 	return true;
 }
 
-/** @type { ( damaged: Character, attacker: Character, damageValue: number, damageType: WeatherType ) => boolean } */
+/** @type { ( damaged: Character, attacker: CharOrNull, damageValue: number, damageType: WeatherType ) => boolean } */
 function onDamage( damaged, attacker, damageValue, damageType )
 {
 	if( !disableTopDamager || !ValidateObject( attacker ) || !ValidateObject( damaged ))
@@ -184,7 +186,7 @@ function onDamage( damaged, attacker, damageValue, damageType )
 	return true;
 }
 
-
+/** @type { ( pKilled: Character, altar: Item ) => void } */
 function RewardTopDamagers( pKilled, altar )
 {
 	if( !ValidateObject( pKilled ))
@@ -279,7 +281,7 @@ function RewardTopDamagers( pKilled, altar )
 
 			if( ValidateObject( topPlayer ))
 			{
-				if (topPlayer.socket != null)
+				if( topPlayer.socket != null )
 				{
 					topPlayer.socket.SysMessage( GetDictionaryEntry( 30002, topPlayer.socket.language ), topDamages ); // You were among the top 5 damagers! (%i damage)
 				}
@@ -308,6 +310,7 @@ function RewardTopDamagers( pKilled, altar )
 	}
 }
 
+/** @type { () => number } */
 function RollPowerScrollBonus()
 {
 	var total = 0;
@@ -328,6 +331,7 @@ function RollPowerScrollBonus()
 	return 5;
 }
 
+/** @type { ( spawnData: any ) => string | null } */
 function RollPowerScrollSkill( spawnData )
 {
 	if( !spawnData || !spawnData.powerScrollSkills || spawnData.powerScrollSkills.length === 0 )
@@ -352,6 +356,7 @@ function RollPowerScrollSkill( spawnData )
 }
 
 // DFN section name: powerscroll_<skill>_<bonus>
+/** @type { ( spawnData: any ) => string | null } */
 function RollPowerScrollSection( spawnData )
 {
 	var skillProp = RollPowerScrollSkill( spawnData );
@@ -363,6 +368,7 @@ function RollPowerScrollSection( spawnData )
 }
 
 // Give one power scroll to player (Fel-only)
+/** @type { ( player: Character, spawnData: any, altar: Item ) => void } */
 function GiveChampionPowerScroll( player, spawnData, altar )
 {
 	if( !ValidateObject( player ) || !spawnData || !ValidateObject( altar ))
@@ -387,16 +393,23 @@ function GiveChampionPowerScroll( player, spawnData, altar )
 	}
 }
 
+/** @type { ( spawnData: any, key: string ) => string[] } */
 function RewardListForCategory( spawnData, key )
 {
 	if( !spawnData )
+	{
 		return [];
+	}
+
 	var list = spawnData[key];
 	if( !list || !list.length )
+	{
 		return [];
+	}
 	return list;
 }
 
+/** @type { ( spawnData: any, uniqueAlreadyGiven: boolean ) => ("uniqueList"|"sharedList"|"decorativeList") | null } */
 function RollChampionRewardCategory( spawnData, uniqueAlreadyGiven )
 {
 	var candidates = [];
@@ -434,6 +447,8 @@ function RollChampionRewardCategory( spawnData, uniqueAlreadyGiven )
 	return null;
 }
 
+/** @typedef {{ section: string, category: "uniqueList"|"sharedList"|"decorativeList" }} ChampionRewardPick */
+/** @type { ( spawnData: any, uniqueAlreadyGiven: boolean ) => (string | ChampionRewardPick | null) } */
 function RollChampionRewardSection( spawnData, uniqueAlreadyGiven )
 {
 	var category = RollChampionRewardCategory( spawnData, uniqueAlreadyGiven );
@@ -455,6 +470,7 @@ function RollChampionRewardSection( spawnData, uniqueAlreadyGiven )
 	return { section: pool[idx], category: category };
 }
 
+/** @type { ( player: Character, spawnData: any, uniqueAlreadyGiven: boolean ) => boolean } */
 function GiveChampionStandardReward( player, spawnData, uniqueAlreadyGiven )
 {
 	if( !ValidateObject( player ) || !spawnData )
