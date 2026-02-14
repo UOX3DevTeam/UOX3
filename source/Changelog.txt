@@ -1,3 +1,14 @@
+14/02/2026 - DragonSlayer62 (#511)
+    [FIX] Resolved socket-related errors in petbonding.js that could cause script failures during bonding interactions
+    [ADD] Added missing JavaScript API documentation entries for Console Functions: RegisterConsoleFunc, DisableConsoleFunc, and EnableConsoleFunc
+    [ADD] Added missing JavaScript API documentation entries for Town Functions: GetTownRegionFromXY
+    [ADD] Added missing JavaScript API documentation entries for Misc Functions: GetMoongateFacetStatus, SetMoongateFacetStatus, GetCharacterCount, GetItemCount, GetMultiCount, GetServerVersionString, and EraStringToNum
+    [ADD] Added missing onReleasePet JavaScript event prototype to TypeScript definitions for improved script autocompletion and type checking
+    [FIX] Fixed misspelled spawn section from "bank" to "banker" in Minoc Bank Spawn Regions
+    [ADD] Added Shepherd's crook and Sledgehammers to the blacksmith and weaponsmith shoplist
+    [FIX] Fixed long sword had wrong id on blacksmith and weaponsmith shoplist
+    [UPD] Updated the generated magic weapons in magic_items.js to include a bonus for buy and sell value based on how powerful the magic item is
+
 14/02/2026 - Xoduz (#500)
     [ADD] Added new JS Event that runs once for all scripts after shard has fully started up:
         onScriptLoad()
