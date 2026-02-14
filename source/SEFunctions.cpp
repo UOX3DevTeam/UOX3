@@ -1806,7 +1806,50 @@ JSBool SE_FindItem( JSContext *cx, uintN argc, jsval *vp )
 		instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[5] ));
 	}
 
-	CItem *item = FindItemNearXYZ( xLoc, yLoc, zLoc, worldNumber, id, instanceId );
+	CItem *item = FindNearestItemNearXYZ( xLoc, yLoc, zLoc, worldNumber, id, instanceId );
+	if( ValidateObject( item ))
+	{
+		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, item, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+	}
+	else
+	{
+		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+	}
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	SE_FindItemBySection()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns item of given sectionID that is closest to specified coordinates
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_FindItemBySection( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval* argv = JS_ARGV( cx, vp );
+
+	if( argc != 5 && argc != 6 )
+	{
+		ScriptError( cx, "SE_FindItemBySection: Invalid number of parameters (5 or 6)" );
+		return JS_FALSE;
+	}
+	SI16 xLoc = 0, yLoc = 0;
+	SI08 zLoc = 0;
+	UI08 worldNumber = 0;
+	std::string sectionId = "";
+	UI16 instanceId = 0;
+
+	xLoc		= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
+	yLoc		= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+	zLoc		= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
+	worldNumber = static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
+	sectionId	= JS_GetStringBytes( cx, argv[4]);
+	if( argc == 6 )
+	{
+		instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[5] ));
+	}
+
+	CItem *item = FindNearestItemBySectionNearXYZ( xLoc, yLoc, zLoc, worldNumber, sectionId, instanceId );
 	if( ValidateObject( item ))
 	{
 		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, item, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
@@ -5724,6 +5767,9 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 				break;
 			case 405:	 // SPEEDHACKTHROTTLEPENALTY
 				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SpeedHackThrottlePenalty() )));
+				break;
+			case 406:	// EVENTMANAGERSYSTEM
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->EventManagerSystem() ));
 				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );

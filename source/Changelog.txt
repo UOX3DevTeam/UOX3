@@ -1,3 +1,27 @@
+14/02/2026 - Xoduz (#500)
+    [ADD] Added new JS Event that runs once for all scripts after shard has fully started up:
+        onScriptLoad()
+    [ADD] Added new JS Event that runs for all instances of scripts attached to objects after shard has fully started up:
+        onStart( myObj ) // myObj can be a Character, Item or TownRegion
+    [ADD] Added new JS Function to find nearest item with a specific section ID at a given location:
+        FindItemBySection( x, y, z, world, sectionId, [instanceId] )
+    [ADD] Added new Event Manager system that initializes on shard startup, which listens to event registrations from other scripts and schedules these events to be run once, a number of times with an interval, or recurring on specific day(s)/time of the week. See UOX3 documentation for full details. System can be enabled or disabled via a new setting in uox.ini:
+        EVENTMANAGERSYSTEM=0/1 // Defaults to enabled
+    [ADD] Added a global JS constant to detect in scripts whether UOX3 runs in debug mode:
+        UOX_DEBUG_MODE // Ex: if( UOX_DEBUG_MODE )
+    [FIX] Fixed an incorrectly named socket variable in js/item/potion.js
+
+14/02/2026 - Xoduz (#509)
+    [FIX] Fixed an error that appears when client sends 'IVL' as an invalid language code. Now defaults to English language for such clients
+
+14/02/2026 - DragonSlayer62 (#448)
+    [ADD] Added Runic Atlas Book in DFNs (dfndata/items/magic/misc_magic.dfn) and script (js/item/runicatlas.js)
+    [ADD] Runic Atlas added to AddMenu (dfndata/items/ItemMenu.bulk.dfn)
+
+13/02/2026 - DragonSlayer62 (#478)
+    [ADD] Added IDs for more weapons, armors and clothing to material/weapon-type helper functions (weapontypes.js, material_types.js, combat.cpp)
+    [UPD] Updated all the material type ids to be lower case to match (material_types.js)
+
 12/02/2026 - DragonSlayer62 (#504)
     [UPD] Updated js/skill/animallore.js to use camelCase for various variables
     [ADD] Added carnivore and omnivore to validFish and validMeat, and omnivore to validFruitsAndVegetables, in js/skill/animallore.js
@@ -13865,5 +13889,6 @@ Changed:
 
 	* readme.txt:
 	creation
+
 
 
