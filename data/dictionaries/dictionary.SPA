@@ -3544,6 +3544,30 @@
 6321=Parece que esta hoja está cubierta de una sustancia ácida.
 6322=Parece que esta hoja tiene un elemento corrosivo.
 6323=Parece que esta hoja tiene un ligero elemento corrosivo.
+// [6500-6539] Event Manager
+6500=Administrador de eventos: Se ha iniciado el latido
+6501=Administrador de eventos: Se está reutilizando el objeto Administrador de eventos existente.
+6502=Administrador de eventos: El objeto Administrador de eventos antiguo ya no existe, se creará uno nuevo.
+6503=Administrador de eventos: Error al generar %s
+6504=Administrador de eventos: Inicialización completada. Eventos cargados: %i
+6505=Administrador de eventos: Inicialización completada. No se han cargado eventos, entrando en modo de espera.
+6506=Gestor de eventos: Todos los eventos han finalizado. Entrando en modo de espera.
+6507=Gestor de eventos: ADVERTENCIA: evento omitido, falta la función de devolución de llamada %s en el script %i
+6508=El gestor de eventos está desactivado actualmente. Actívelo a través de uox.ini
+6509=Eventos activos: %i
+6510=Uso: 'em %s <número de índice de la lista de eventos>
+6511=Administrador de eventos: El evento %i ahora es %s
+6512=Administrador de eventos: %s cambió el evento %i a %s
+6513=Índice de evento no válido. Para ver la lista completa de eventos: 'em list
+6514=Forzando el restablecimiento del administrador de eventos...
+6515=Comandos compatibles con el Administrador de eventos: list, enable <#>, disable <#>, remove <#>, reset
+6516=Administrador de eventos: RegisterEvent ha fallado porque el Administrador de eventos está desactivado.
+6517=Administrador de eventos: RegisterEvent ha fallado debido a que faltan los datos de configuración callbackScriptID y/o callbackFuncStart.
+6518=Administrador de eventos: nuevo evento registrado: %s (ID: %i)
+6519=Evento detenido y desactivado.
+6520=Evento activado y reprogramado para la próxima ventana de activación válida.
+6521=Uso: 'em remove <índice de la lista de eventos>
+6522=Evento detenido y eliminado.
 // [6540-6550] Caja de música del Amanecer
 6540=Debes tener el objeto en tu mochila o bloqueado para poder usarlo.
 6541=Selecciona una Caja de música del Amanecer para añadir esta música.
@@ -4412,6 +4436,14 @@
 9283=No nota nada inusual.
 9284=¡Este individuo es un ladrón!
 9285=No puede robar de un contenedor seguro.
+9286=Cargas:
+9287=Renombrar libro
+9288=Establecer predeterminado
+9289=Soltar runa
+9290=Recuperar (Hechizo)
+9291=Recuperar (Carga)
+9292=Viaje por el portal
+9293=Viaje sagrado
 // [9301-9310] Pez Mágico
 9301=Ya estás bajo un efecto similar.
 9302=¡Te tragas el pez entero!
@@ -5594,7 +5626,7 @@
 19234=¡Tu confusión ha pasado, ahora puedes armar un arma!
 19235=Ya no estás herido de muerte.
 19236=Las heridas sangrantes han sanado, ¡ya no sangras!
-// [19301-19330] Mascota vinculada y muerta
+// [19301-19340] Mascota vinculada y muerta
 19301=No puedes intercambiar una mascota muerta.
 19302=La mascota muerta no puede atacar.
 19303=No tienes la habilidad suficiente para resucitar a esa mascota.

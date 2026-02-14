@@ -174,6 +174,14 @@ UnicodeTypes FindLanguage( CSocket *s, UI16 offset )
 	langCode[3] = 0;
 
 	std::string ulangCode = langCode;
+	
+	// Handle special case language code sometimes sent by some clients
+	if( ulangCode == "IVL" )
+	{
+		// Default to treat it as English
+		return UT_ENU;
+	}
+
 	ulangCode = oldstrutil::upper( ulangCode );
 
 	UnicodeTypes cLang = s->Language();
