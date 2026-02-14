@@ -4373,6 +4373,14 @@
 9283=You notice nothing unusual.
 9284=This individual is a thief!
 9285=You cannot steal from a secure container.
+9286=Charges:
+9287=rename book
+9288=Set default
+9289=Drop rune
+9290=Recall ( Spell )
+9291=Recall ( Charge )
+9292=Gate Travel
+9293=Sacred Journey
 // [9301-9310] Magic Fish
 9301=You are already under a similar effect.
 9302=You swallow the fish whole!

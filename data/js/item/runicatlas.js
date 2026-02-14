@@ -50,76 +50,6 @@ function mapHue( worldNumber )
 	}
 }
 
-/** @type { ( xCoord: number, yCoord: number, worldNumber: number ) => any[] } */
-function GetMapCoordinates( xCoord, yCoord, worldNumber )
-{
-	var resultArray = [], xCenter = 0, yCenter = 0, xWidth = 5120, yHeight = 4096;
-
-	switch( worldNumber )
-	{
-		case 0:
-		case 1:
-			if( xCoord >= 0 && yCoord >= 0 && xCoord < 5120 && yCoord < 4096 )
-			{
-				xCenter = 1323; yCenter = 1624;
-			}
-			else if( xCoord >= 5120 && yCoord >= 0 && xCoord < 7168 && yCoord < 4096 )
-			{
-				xCenter = 5936; yCenter = 3112;
-			}
-			else
-			{
-				resultArray[0] = "-1"; resultArray[1] = "-1"; resultArray[2] = true; resultArray[3] = "-1"; resultArray[4] = "-1"; resultArray[5] = true;
-				return resultArray;
-			}
-			break;
-
-		case 2:
-		case 3:
-		case 4:
-		case 5:
-			if( xCoord >= 0 && yCoord >= 0 && xCoord < 7168 && yCoord < 4096 )
-			{
-				xCenter = 1323; yCenter = 1624;
-			}
-			else
-			{
-				resultArray[0] = "-1"; resultArray[1] = "-1"; resultArray[2] = true; resultArray[3] = "-1"; resultArray[4] = "-1"; resultArray[5] = true;
-				return resultArray;
-			}
-			break;
-
-		default:
-			break;
-	}
-
-	var absLong = (( xCoord - xCenter ) * 360 ) / xWidth;
-	if( absLong > 180 )
-		absLong = -180 + ( absLong % 180 );
-
-	var xEast = ( absLong >= 0 );
-	if( absLong < 0 )
-		absLong = -absLong;
-
-	var xLongDeg = Math.round( absLong );
-	var xLongMin = Math.round(( absLong % 1 ) * 60 );
-
-	var absLat = (( yCoord - yCenter ) * 360 ) / yHeight;
-	if( absLat > 180 )
-		absLat = -180 + ( absLat % 180 );
-
-	var ySouth = ( absLat >= 0 );
-	if( absLat < 0 )
-		absLat = -absLat;
-
-	var yLatDeg = Math.round( absLat );
-	var yLatMin = Math.round(( absLat % 1 ) * 60 );
-
-	resultArray[0] = xLongDeg; resultArray[1] = xLongMin; resultArray[2] = xEast;
-	resultArray[3] = yLatDeg;  resultArray[4] = yLatMin;  resultArray[5] = ySouth;
-	return resultArray;
-}
-
 /** @type { ( socket: Socket, pUser: Character, atlas: Item ) => boolean } */
 function CheckAccessRights( socket, pUser, atlas )
 {
@@ -128,14 +58,14 @@ function CheckAccessRights( socket, pUser, atlas )
 	{
 		if( ValidateObject( root.owner ) && root.owner != pUser )
 		{
-			socket.SysMessage( GetDictionaryEntry( 9268, socket.language ));
+			socket.SysMessage( GetDictionaryEntry( 9268, socket.language )); // That is inaccessible.
 			return false;
 		}
 	}
 
 	if( atlas.movable == 3 )
 	{
-		socket.SysMessage( GetDictionaryEntry( 9269, socket.language ));
+		socket.SysMessage( GetDictionaryEntry( 9269, socket.language )); // That cannot be done while the book is locked down.
 		return false;
 	}
 	return true;
@@ -152,7 +82,7 @@ function onUseChecked( pUser, atlas )
 	var nextUse = atlas.GetTempTag( "useDelayed" );
 	if(( now - nextUse ) < atlasCoolDownMS )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 9250, pSocket.language ));
+		pSocket.SysMessage( GetDictionaryEntry( 9250, pSocket.language )); // This book needs time to recharge.
 		return false;
 	}
 
@@ -161,7 +91,7 @@ function onUseChecked( pUser, atlas )
 	{
 		if( !atlas.InRange( pUser, 3 ))
 		{
-			pSocket.SysMessage( GetDictionaryEntry( 393, pSocket.language ));
+			pSocket.SysMessage( GetDictionaryEntry( 393, pSocket.language )); // That is too far away.
 			return false;
 		}
 	}
@@ -172,12 +102,12 @@ function onUseChecked( pUser, atlas )
 			var owner = GetPackOwner( root, 0 );
 			if( ValidateObject( owner ))
 			{
-				pSocket.SysMessage( GetDictionaryEntry( 9251, pSocket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9251, pSocket.language )); // You cannot use a Runebook from someone else's backpack!
 				return false;
 			}
 			else if( !root.InRange( pUser, 3 ))
 			{
-				pSocket.SysMessage( GetDictionaryEntry( 393, pSocket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 393, pSocket.language )); // That is too far away.
 				return false;
 			}
 		}
@@ -195,7 +125,7 @@ function onUseChecked( pUser, atlas )
 			{
 				if( other.online && other.InRange( atlas, 3 ))
 				{
-					pSocket.SysMessage( GetDictionaryEntry( 2450, pSocket.language ));
+					pSocket.SysMessage( GetDictionaryEntry( 2450, pSocket.language )); // Someone else is using this right now.
 					return false;
 				}
 			}
@@ -234,7 +164,7 @@ function DisplayAtlasGump( socket, pUser, atlas, pageIndex )
 	runicGump.AddHTMLGump( 60, 9, 147, 22, false, false, "<BASEFONT size=4>Charges:</BASEFONT>" );
 	runicGump.AddHTMLGump( 110, 9, 97, 22, false, false, "<BASEFONT size=4>" + charges + " / " + cap + "</BASEFONT>" );
 
-	runicGump.AddHTMLGump( 264, 9, 144, 18, false, false, "<BASEFONT size=3>rename book</BASEFONT>" );
+	runicGump.AddHTMLGump( 264, 9, 144, 18, false, false, "<BASEFONT size=3>" + GetDictionaryEntry( 9287, socket.language ) + "</BASEFONT>" ); // rename book
 	runicGump.AddButton( 248, 14, 2103, 2103, 1, 0, 1 ); // Rename
 
 	// Grid of 16 entries, two columns of 8, starting at slot S = pageIndex*16 + 1
@@ -289,8 +219,8 @@ function DisplayAtlasGump( socket, pUser, atlas, pageIndex )
 			// var ez = parseInt( e[4], 10 ) | 0;
 			var ew = parseInt( e[5], 10 ) | 0;
 
-			var mc = GetMapCoordinates( ex, ey, ew );
-			if( mc[0] != "-1" )
+			var mc = TriggerEvent( 2503, "GetMapCoordinates", ex | 0, ey | 0, ew | 0 );
+			if( mc && mc.length >= 6 && mc[0] != "-1" && mc[0] != -1 )
 			{
 				coordsText = mc[3] + "o " + mc[4] + "'" + ( mc[5] ? "S" : "N" ) + ", " + mc[0] + "o " + mc[1] + "'" + ( mc[2] ? "E" : "W" );
 			}
@@ -302,11 +232,11 @@ function DisplayAtlasGump( socket, pUser, atlas, pageIndex )
 	runicGump.AddHTMLGump( 25, 254, 182, 18, false, false, "<CENTER><BASEFONT size=3>" + coordsText + "</BASEFONT></CENTER>" );
 
 	// Set Default
-	runicGump.AddHTMLGump( 62, 290, 144, 18, false, false, "<BASEFONT size=3>Set default</BASEFONT>" );
+	runicGump.AddHTMLGump( 62, 290, 144, 18, false, false, "<BASEFONT size=3>" + GetDictionaryEntry( 9286, socket.language ) + "</BASEFONT>" ); // Charges:
 	runicGump.AddButton( 46, 295, 2103, 2103, 1, 0, 2 );
 
 	// Drop Rune
-	runicGump.AddHTMLGump( 62, 310, 144, 18, false, false, "<BASEFONT size=3>Drop rune</BASEFONT>" );
+	runicGump.AddHTMLGump( 62, 310, 144, 18, false, false, "<BASEFONT size=3>" + GetDictionaryEntry( 9288, socket.language ) + "</BASEFONT>" ); // Drop rune
 	runicGump.AddButton( 46, 315, 2103, 2103, 1, 0, 3 );
 
 	// Entry name centered near bottom
@@ -316,24 +246,24 @@ function DisplayAtlasGump( socket, pUser, atlas, pageIndex )
 	var hy = 284;
 	var by2 = 289;
 
-	runicGump.AddHTMLGump( 280, hy, 128, 18, false, false, "<BASEFONT size=3>Recall ( Spell )</BASEFONT>" );
+	runicGump.AddHTMLGump( 280, hy, 128, 18, false, false, "<BASEFONT size=3>" + GetDictionaryEntry( 9289, socket.language ) + "</BASEFONT>" ); // Recall ( Spell )
 	runicGump.AddButton( 264, by2, 2103, 2103, 1, 0, 4 );
 	hy += 18; by2 += 18;
 
 	if( charges > 0 )
 	{
-		runicGump.AddHTMLGump( 280, hy, 128, 18, false, false, "<BASEFONT size=3>Recall ( Charge )</BASEFONT>" );
+		runicGump.AddHTMLGump( 280, hy, 128, 18, false, false, "<BASEFONT size=3>" + GetDictionaryEntry( 9290, socket.language ) + "</BASEFONT>" ); // Recall ( Charge )
 		runicGump.AddButton( 264, by2, 2103, 2103, 1, 0, 5 );
 		hy += 18; by2 += 18;
 	}
 
-	runicGump.AddHTMLGump( 280, hy, 128, 18, false, false, "<BASEFONT size=3>Gate Travel</BASEFONT>" );
+	runicGump.AddHTMLGump( 280, hy, 128, 18, false, false, "<BASEFONT size=3>" + GetDictionaryEntry( 9291, socket.language ) + "</BASEFONT>" ); // Gate Travel
 	runicGump.AddButton( 264, by2, 2103, 2103, 1, 0, 6 );
 	hy += 18; by2 += 18;
 
 	if( pUser.HasSpell && pUser.HasSpell( atlasSacredJourney ))
 	{
-		runicGump.AddHTMLGump( 280, hy, 128, 18, false, false, "<BASEFONT size=3>Sacred Journey</BASEFONT>" );
+		runicGump.AddHTMLGump( 280, hy, 128, 18, false, false, "<BASEFONT size=3>" + GetDictionaryEntry( 9292, socket.language ) + "</BASEFONT>" ); // Sacred Journey
 		runicGump.AddButton( 264, by2, 2103, 2103, 1, 0, 7 );
 	}
 
@@ -361,7 +291,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 
 	if( !ValidateObject( atlas ))
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 9258, pSocket.language ));
+		pSocket.SysMessage( GetDictionaryEntry( 9258, pSocket.language )); // Unable to detect Runebook. Does it still exist?
 		return;
 	}
 
@@ -377,7 +307,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 		{
 			if( !pUser.InRange( root, 3 ))
 			{
-				pSocket.SysMessage( GetDictionaryEntry( 393, pSocket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 393, pSocket.language )); // That is too far away.
 				atlas.SetTag( "inUse", null );
 				atlas.SetTag( "userSerial", null );
 				return;
@@ -385,7 +315,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 		}
 		else
 		{
-			pSocket.SysMessage( GetDictionaryEntry( 393, pSocket.language ));
+			pSocket.SysMessage( GetDictionaryEntry( 393, pSocket.language )); // That is too far away.
 			atlas.SetTag( "inUse", null );
 			atlas.SetTag( "userSerial", null );
 			return;
@@ -421,7 +351,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 	{
 		if( !CheckAccessRights( pSocket, pUser, atlas ))
 			return;
-		pSocket.SysMessage( GetDictionaryEntry( 9261, pSocket.language ));
+		pSocket.SysMessage( GetDictionaryEntry( 9261, pSocket.language )); // Please enter a title for the runebook:
 		pUser.SpeechInput( 1, atlas );
 		return;
 	}
@@ -444,7 +374,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case 2: // Set Default
 			if( !hasSelected )
 			{
-				pSocket.SysMessage( GetDictionaryEntry( 9260, pSocket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9260, pSocket.language )); // This place in the book is empty.
 				break;
 			}
 
@@ -463,23 +393,23 @@ function onGumpPress( pSocket, pButton, gumpData )
 					if( sDef[6] ) atlas.more0 = sDef[6] | 0;
 
 					atlas.SetTag( "defaultRuneLoc", selected );
-					pSocket.SysMessage( GetDictionaryEntry( 9259, pSocket.language ));
+					pSocket.SysMessage( GetDictionaryEntry( 9259, pSocket.language )); // New default location set.
 				}
 				else
 				{
-					pSocket.SysMessage( GetDictionaryEntry( 9260, pSocket.language ));
+					pSocket.SysMessage( GetDictionaryEntry( 9260, pSocket.language )); // This place in the book is empty.
 				}
 			}
 			else
 			{
-				pSocket.SysMessage( GetDictionaryEntry( 9260, pSocket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9260, pSocket.language )); // This place in the book is empty.
 			}
 			break;
 
 		case 3: // Drop Rune
 			if( !hasSelected )
 			{
-				pSocket.SysMessage( GetDictionaryEntry( 9260, pSocket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9260, pSocket.language )); // This place in the book is empty.
 				break;
 			}
 
@@ -489,7 +419,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 			var pack = pUser.pack;
 			if( pack.totalItemCount >= pack.maxItems || pack.weight >= pack.weightMax )
 			{
-				pSocket.SysMessage( GetDictionaryEntry( 9263, pSocket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9263, pSocket.language )); // You have no room for a rune in your backpack.
 				break;
 			}
 
@@ -498,7 +428,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 				var sDrop = SplitAndValidateAtlasRuneData( atlas, selected, entryTag );
 				if( sDrop == 0 )
 				{
-					pSocket.SysMessage( GetDictionaryEntry( 9265, pSocket.language ));
+					pSocket.SysMessage( GetDictionaryEntry( 9265, pSocket.language )); // There is no rune to be dropped.
 					break;
 				}
 
@@ -523,18 +453,18 @@ function onGumpPress( pSocket, pButton, gumpData )
 				atlas.SetTag( "rune" + selected + "Data", null );
 				var cnt = atlas.GetTag( "runeCount" );
 				atlas.SetTag( "runeCount", Math.max( 0, cnt - 1 ));
-				pSocket.SysMessage( GetDictionaryEntry( 9264, pSocket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9264, pSocket.language )); // You have removed the rune.
 			}
 			else
 			{
-				pSocket.SysMessage( GetDictionaryEntry( 9265, pSocket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9265, pSocket.language )); // There is no rune to be dropped.
 			}
 			break;
 
 		case 4: // Recall ( Spell )
 			if( !hasSelected || entryTag == 0 )
 			{
-				pSocket.SysMessage( GetDictionaryEntry( 9260, pSocket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9260, pSocket.language )); // This place in the book is empty.
 				break;
 			}
 			pSocket.tempObj2 = atlas;
@@ -548,13 +478,13 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case 5: // Recall ( Charge )
 			if( !hasSelected || entryTag == 0 )
 			{
-				pSocket.SysMessage( GetDictionaryEntry( 9260, pSocket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9260, pSocket.language )); // This place in the book is empty.
 				break;
 			}
 
 			if(( atlas.health | 0 ) <= 0 )
 			{
-				pSocket.SysMessage( GetDictionaryEntry( 9262, pSocket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9262, pSocket.language )); // This has no more charges.
 				atlas.health = 0;
 				break;
 			}
@@ -571,7 +501,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case 6: // Gate Travel
 			if( !hasSelected || entryTag == 0 )
 			{
-				pSocket.SysMessage( GetDictionaryEntry( 9260, pSocket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9260, pSocket.language )); // This place in the book is empty.
 				break;
 			}
 			pSocket.tempObj2 = atlas;
@@ -585,12 +515,12 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case 7: // Sacred Journey
 			if( !hasSelected || entryTag == 0 )
 			{
-				pSocket.SysMessage( GetDictionaryEntry( 9260, pSocket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9260, pSocket.language )); // This place in the book is empty.
 				break;
 			}
 			if( !( pUser.HasSpell && pUser.HasSpell( atlasSacredJourney )))
 			{
-				pSocket.SysMessage( GetDictionaryEntry( 9266, pSocket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9266, pSocket.language )); // You don't have that spell.
 				break;
 			}
 			pSocket.tempObj2 = atlas;
@@ -637,19 +567,19 @@ function CastAtlasSpell( socket, pUser, spellNum, checkReagents )
 	{
 		if( pUser.isCasting )
 		{
-			socket.SysMessage( GetDictionaryEntry( 762, socket.language ));
+			socket.SysMessage( GetDictionaryEntry( 762, socket.language )); // You are already casting a spell.
 			return;
 		}
 		else if( pUser.GetTimer( Timer.SPELLTIME ) > GetCurrentClock() )
 		{
-			socket.SysMessage( GetDictionaryEntry( 1638, socket.language ));
+			socket.SysMessage( GetDictionaryEntry( 1638, socket.language )); // You must wait a little while before casting
 			return;
 		}
 	}
 
 	if( pUser.isJailed )
 	{
-		socket.SysMessage( GetDictionaryEntry( 704, socket.language ));
+		socket.SysMessage( GetDictionaryEntry( 704, socket.language )); // You are in jail and cannot cast spells!
 		return;
 	}
 
@@ -659,18 +589,18 @@ function CastAtlasSpell( socket, pUser, spellNum, checkReagents )
 	var mSpell = Spells[spellNum];
 	if( !mSpell || !mSpell.enabled )
 	{
-		socket.SysMessage( GetDictionaryEntry( 707, socket.language ));
+		socket.SysMessage( GetDictionaryEntry( 707, socket.language )); // That spell is currently not enabled.
 		return;
 	}
 	if( checkReagents && !pUser.HasSpell( spellNum ))
 	{
-		socket.SysMessage( GetDictionaryEntry( 9266, socket.language ));
+		socket.SysMessage( GetDictionaryEntry( 9266, socket.language )); // You don't have that spell.
 		return;
 	}
 
 	if( !GetServerSetting( "TravelSpellsWhileAggressor" ) && ( pUser.IsAggressor() || pUser.criminal ))
 	{
-		socket.SysMessage( GetDictionaryEntry( 2066, socket.language ));
+		socket.SysMessage( GetDictionaryEntry( 2066, socket.language )); // You are not allowed to use Recall or Gate spells while being the aggressor in a fight!
 		return;
 	}
 
@@ -678,7 +608,7 @@ function CastAtlasSpell( socket, pUser, spellNum, checkReagents )
 	var l = pUser.FindItemLayer( 0x02 );
 	if(( ValidateObject( l ) && l.type != 119 ) || ( ValidateObject( r ) && ( r.type != 9 && r.type != 119 )) )
 	{
-		socket.SysMessage( GetDictionaryEntry( 708, socket.language ));
+		socket.SysMessage( GetDictionaryEntry( 708, socket.language )); // You cannot cast with a weapon equipped.
 		return;
 	}
 
@@ -687,17 +617,17 @@ function CastAtlasSpell( socket, pUser, spellNum, checkReagents )
 
 	if( mSpell.mana > pUser.mana )
 	{
-		socket.SysMessage( GetDictionaryEntry( 696, socket.language ));
+		socket.SysMessage( GetDictionaryEntry( 696, socket.language )); // You have insufficient mana to cast that spell.
 		return;
 	}
 	if( mSpell.stamina > pUser.stamina )
 	{
-		socket.SysMessage( GetDictionaryEntry( 697, socket.language ));
+		socket.SysMessage( GetDictionaryEntry( 697, socket.language )); // You have insufficient stamina to cast that spell.
 		return;
 	}
 	if( mSpell.health >= pUser.health )
 	{
-		socket.SysMessage( GetDictionaryEntry( 698, socket.language ));
+		socket.SysMessage( GetDictionaryEntry( 698, socket.language )); // You have insufficient health to cast that spell.
 		return;
 	}
 
@@ -763,7 +693,7 @@ function onTimer( timerObj, timerID )
 
 	if( !ValidateObject( atlas ))
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 9267, pSocket.language ));
+		pSocket.SysMessage( GetDictionaryEntry( 9267, pSocket.language )); // That does not seem to be a valid Runebook.
 		return;
 	}
 
@@ -772,7 +702,7 @@ function onTimer( timerObj, timerID )
 
 	if( slot < 1 || slot > atlasMaxRunes )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 9267, pSocket.language ));
+		pSocket.SysMessage( GetDictionaryEntry( 9267, pSocket.language )); // That does not seem to be a valid Runebook.
 		return;
 	}
 
@@ -780,7 +710,7 @@ function onTimer( timerObj, timerID )
 	var s = SplitAndValidateAtlasRuneData( atlas, slot, rd );
 	if( s == 0 )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 9267, pSocket.language ));
+		pSocket.SysMessage( GetDictionaryEntry( 9267, pSocket.language )); // That does not seem to be a valid Runebook.
 		return;
 	}
 
@@ -821,14 +751,14 @@ function onDropItemOnItem( iDropped, pUser, atlas )
 
 		if( iDropped.morex == 0 && iDropped.morey == 0 && iDropped.morez == 0 )
 		{
-			pSocket.SysMessage( GetDictionaryEntry( 431, pSocket.language ));
+			pSocket.SysMessage( GetDictionaryEntry( 431, pSocket.language )); // That rune is not yet marked!
 			return 0;
 		}
 
 		var count = atlas.GetTag( "runeCount" );
 		if( count >= atlasMaxRunes )
 		{
-			pSocket.SysMessage( GetDictionaryEntry( 9273, pSocket.language ));
+			pSocket.SysMessage( GetDictionaryEntry( 9273, pSocket.language )); // This runebook is full.
 			return 0;
 		}
 
@@ -849,7 +779,7 @@ function onDropItemOnItem( iDropped, pUser, atlas )
 				atlas.SetTag( "runeCount", count + 1 );
 				iDropped.Delete();
 
-				var msg = GetDictionaryEntry( 9274, pSocket.language );
+				var msg = GetDictionaryEntry( 9274, pSocket.language ); // You've added a rune named %s to your Runebook.
 				pSocket.SysMessage( msg.replace( /%s/gi, nm ));
 
 				// select the newly added and jump to correct page
@@ -870,7 +800,7 @@ function onDropItemOnItem( iDropped, pUser, atlas )
 
 		if( c >= cap )
 		{
-			pSocket.SysMessage( GetDictionaryEntry( 9275, pSocket.language ));
+			pSocket.SysMessage( GetDictionaryEntry( 9275, pSocket.language )); // This book already has the maximum amount of charges.
 			return 0;
 		}
 
@@ -886,13 +816,13 @@ function onDropItemOnItem( iDropped, pUser, atlas )
 				atlas.health = cap;
 				iDropped.amount -= ( cap - c );
 			}
-			pSocket.SysMessage( GetDictionaryEntry( 9276, pSocket.language ));
+			pSocket.SysMessage( GetDictionaryEntry( 9276, pSocket.language )); // You charge the Runebook with a stack of recall scroll.
 		}
 		else
 		{
 			atlas.health = c + 1;
 			iDropped.Delete();
-			pSocket.SysMessage( GetDictionaryEntry( 9277, pSocket.language ));
+			pSocket.SysMessage( GetDictionaryEntry( 9277, pSocket.language )); // You charge the Runebook with a recall scroll.
 		}
 
 		pSocket.CloseGump( 0xffff + atlasScriptID, 0 );
@@ -912,7 +842,7 @@ function onSpeechInput( pUser, atlas, text, id )
 
 	if( text == null || text == " " )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 9270, pSocket.language ));
+		pSocket.SysMessage( GetDictionaryEntry( 9270, pSocket.language )); // That name is too short, or no name was entered.
 		return;
 	}
 
@@ -921,7 +851,7 @@ function onSpeechInput( pUser, atlas, text, id )
 		case 1:
 			if( text.length > 50 )
 			{
-				pSocket.SysMessage( GetDictionaryEntry( 9271, pSocket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9271, pSocket.language )); // That name is too long. Maximum 50 chars.
 				return;
 			}
 			if( ValidateObject( atlas ))
@@ -932,7 +862,7 @@ function onSpeechInput( pUser, atlas, text, id )
 			}
 			else
 			{
-				pSocket.SysMessage( GetDictionaryEntry( 9267, pSocket.language ));
+				pSocket.SysMessage( GetDictionaryEntry( 9267, pSocket.language )); // That does not seem to be a valid Runebook.
 			}
 			break;
 
