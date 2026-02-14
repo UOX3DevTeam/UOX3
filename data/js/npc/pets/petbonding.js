@@ -223,6 +223,7 @@ function onCharDoubleClick( pUser, pet )
 	return true;
 }
 
+/** @type { ( mChar: Character, mPet: Character ) => boolean } */
 function onReleasePet( pUser, pet )
 {
 	if( pet.GetTag( "isPetDead" ) == true )

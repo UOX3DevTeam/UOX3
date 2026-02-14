@@ -8637,6 +8637,17 @@
       "returns": "boolean"
     },
     {
+      "name": "onReleasePet",
+      "cppName": "OnReleasePet",
+      "params": {
+        "list": [
+          { "name": "mChar", "type": "Character", "required": true },
+          { "name": "mPet",    "type": "Character", "required": true }
+        ]
+      },
+      "returns": "boolean"
+    },
+    {
       "name": "onResurrect",
       "cppName": "OnResurrect",
       "params": {
