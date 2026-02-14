@@ -179,7 +179,7 @@ UnicodeTypes FindLanguage( CSocket *s, UI16 offset )
 	if( ulangCode == "IVL" )
 	{
 		// Default to treat it as English
-		return UT_ENG;
+		return UT_ENU;
 	}
 
 	ulangCode = oldstrutil::upper( ulangCode );
