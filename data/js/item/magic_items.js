@@ -396,6 +396,7 @@ function CreateMagicWeapon( tierNum, placeHolderItem )
 	var addAccBonus = false;
 	var addDmgBonus = false;
 	var addSilverBonus = false;
+	var valueBonus = 0;
 
 	if( rndBonus >= 0 && rndBonus < 70 )
 	{
@@ -417,6 +418,7 @@ function CreateMagicWeapon( tierNum, placeHolderItem )
 		{
 			addSilverBonus = true;
 		}
+		valueBonus = 2.0;
 	}
 	else if( rndBonus >= 70 && rndBonus < 99 )
 	{
@@ -452,6 +454,7 @@ function CreateMagicWeapon( tierNum, placeHolderItem )
 			addDmgBonus = true;
 			addSilverBonus = true;
 		}
+		valueBonus = 3.0;
 	}
 	else if( rndBonus >= 99 && rndBonus < 110 )
 	{
@@ -481,6 +484,7 @@ function CreateMagicWeapon( tierNum, placeHolderItem )
 			addDmgBonus = true;
 			addSilverBonus = true;
 		}
+		valueBonus = 4.0;
 	}
 	else if( rndBonus >= 110 )
 	{
@@ -489,7 +493,12 @@ function CreateMagicWeapon( tierNum, placeHolderItem )
 		addAccBonus = true;
 		addDmgBonus = true;
 		addSilverBonus = true;
+		valueBonus = 5.0;
 	}
+
+	// Add value bonus
+	rndWeapon.buyvalue *= valueBonus;
+	rndWeapon.sellvalue *= valueBonus;
 
 	// Grab a copy of the original name of the item, so we have it for later
 	var tempName = rndWeapon.name;

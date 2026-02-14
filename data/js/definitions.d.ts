@@ -1739,6 +1739,7 @@ declare global {
   function onProfileRequest( myObj: Socket, profileOwner: Character ): string;
   function onProfileUpdate( myObj: Socket, profileText: string ): void;
   function onQuestGump( mChar: Character ): boolean;
+  function onReleasePet( mChar: Character, mPet: Character ): boolean;
   function onResurrect( pAlive: Character ): boolean;
   function onScriptLoad(): void;
   function onScrollCast( tChar: Character, SpellId: number ): number;
