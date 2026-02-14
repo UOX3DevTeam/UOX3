@@ -388,6 +388,7 @@
 7502=item/champion_system/champion_spawn_deed.js
 7503=item/champion_system/champion_spawn_data.js
 7504=item/power_scroll.js
+7505=item/champion_system/champ_rotation.js
 
 //-------------------------------------------
 // Misc Player Scripts [8000-8499]

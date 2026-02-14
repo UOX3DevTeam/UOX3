@@ -282,7 +282,7 @@ function onTimer( altar, timerID )
 				{
 					altar.SetTag( "championType", 6 ); //Vermin
 				}
-				else if( altar.x == 5258 && altar.y == 829 )
+				else if( altar.x == 5259 && altar.y == 803 )
 				{
 					altar.SetTag( "championType", 3 );//Cold
 				}
