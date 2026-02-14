@@ -1,3 +1,6 @@
+14/02/2026 - Xoduz (#509)
+    [FIX] Fixed an error that appears when client sends 'IVL' as an invalid language code. Now defaults to English language for such clients
+
 14/02/2026 - DragonSlayer62 (#448)
     [ADD] Added Runic Atlas Book in DFNs (dfndata/items/magic/misc_magic.dfn) and script (js/item/runicatlas.js)
     [ADD] Runic Atlas added to AddMenu (dfndata/items/ItemMenu.bulk.dfn)
