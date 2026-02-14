@@ -1,13 +1,13 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
 
-let atlasMaxRunes = 48;       // 3 pages * 16 rows
-let atlasMaxCharges = 100;    // default cap; override via .maxhp on the item
-let atlasCoolDownMS = 7000;   // 7s, like Runebook
-let atlasScriptID = 5063;     // jse_fileassociations.scp
-let atlasSpellRecall = 32;
-let atlasSpellGate = 52;
-let atlasSacredJourney = 209; // optional button shown only if user has spell
+const atlasMaxRunes = 48;       // 3 pages * 16 rows
+const atlasMaxCharges = 100;    // default cap; override via .maxhp on the item
+const atlasCoolDownMS = 7000;   // 7s, like Runebook
+const atlasScriptID = 5063;     // jse_fileassociations.scp
+const atlasSpellRecall = 32;
+const atlasSpellGate = 52;
+const atlasSacredJourney = 209; // optional button shown only if user has spell
 
 /** @type { ( atlas: Item, runeIndex: number, runeData: string | number | null ) => (string[] | number) } */
 function SplitAndValidateAtlasRuneData( atlas, runeIndex, runeData )
