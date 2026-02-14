@@ -5919,7 +5919,7 @@ while( !FinishedCommandList() )
 					<div class="text-component">
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_console_DisableKey" />
+							<input type="checkbox" id="spoiler_function_console_DisableKey"/>
 							<label for="spoiler_function_console_DisableKey">DisableKey <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -5938,7 +5938,7 @@ while( !FinishedCommandList() )
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_console_EnableKey" />
+							<input type="checkbox" id="spoiler_function_console_EnableKey"/>
 							<label for="spoiler_function_console_EnableKey">EnableKey <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -5957,7 +5957,7 @@ while( !FinishedCommandList() )
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_console_RegisterKey" />
+							<input type="checkbox" id="spoiler_function_console_RegisterKey"/>
 							<label for="spoiler_function_console_RegisterKey">RegisterKey <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -5991,7 +5991,7 @@ function shutdown()
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_console_RegisterConsoleFunc" />
+							<input type="checkbox" id="spoiler_function_console_RegisterConsoleFunc"/>
 							<label for="spoiler_function_console_RegisterConsoleFunc">RegisterConsoleFunc <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -6028,7 +6028,7 @@ function ConsoleAnnounce()
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_console_DisableConsoleFunc" />
+							<input type="checkbox" id="spoiler_function_console_DisableConsoleFunc"/>
 							<label for="spoiler_function_console_DisableConsoleFunc">DisableConsoleFunc <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -6061,7 +6061,7 @@ function ConsoleRegistration()
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_console_EnableConsoleFunc" />
+							<input type="checkbox" id="spoiler_function_console_EnableConsoleFunc"/>
 							<label for="spoiler_function_console_EnableConsoleFunc">EnableConsoleFunc <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7202,7 +7202,7 @@ var staticFound = StaticInRange( pUser.x, pUser.y, pUser.worldnumber, 3, 0x04a9 
 					<div class="text-component">
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_CodeConstants" />
+							<input type="checkbox" id="spoiler_function_misc_CodeConstants"/>
 							<label for="spoiler_function_misc_CodeConstants">Code Constants <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7214,12 +7214,10 @@ var staticFound = StaticInRange( pUser.x, pUser.y, pUser.worldnumber, 3, 0x04a9 
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>
-										<strong>BASEITEMSERIAL()</strong> - Gets the constant that defines the base value used as starting point for item serials. If an object serial is lower than this, it probably belongs to a character. If it's higher, it belongs to an item.<br>
-										<strong>INVALIDSERIAL()</strong> - Gets the constant defining an invalid serial. If an object serial matches this, it's invalid!<br>
-										<strong>INVALIDID()</strong> - Gets the constant defining an invalid ID. If an object's ID matches this, it's probably not a valid ID!<br>
-										<strong>INVALIDCOLOUR()</strong> - Gets the constant defining an invalid colour. If an object's colour is equal or higher than this, it's probably not a valid colour!
-									</p>
+									<p><strong>BASEITEMSERIAL()</strong> - Gets the constant that defines the base value used as starting point for item serials. If an object serial is lower than this, it probably belongs to a character. If it's higher, it belongs to an item.<br>
+									<strong>INVALIDSERIAL()</strong> - Gets the constant defining an invalid serial. If an object serial matches this, it's invalid!<br>
+									<strong>INVALIDID()</strong> - Gets the constant defining an invalid ID. If an object's ID matches this, it's probably not a valid ID!<br>
+									<strong>INVALIDCOLOUR()</strong> - Gets the constant defining an invalid colour. If an object's colour is equal or higher than this, it's probably not a valid colour!</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -7233,7 +7231,7 @@ var invalidColour = INVALIDCOLOUR();
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_CreateParty" />
+							<input type="checkbox" id="spoiler_function_misc_CreateParty"/>
 							<label for="spoiler_function_misc_CreateParty">CreateParty <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7253,7 +7251,7 @@ var myParty = CreateParty( pUser );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_DistanceBetween" />
+							<input type="checkbox" id="spoiler_function_misc_DistanceBetween"/>
 							<label for="spoiler_function_misc_DistanceBetween">DistanceBetween <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7269,10 +7267,8 @@ var myParty = CreateParty( pUser );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>
-										Parameters: x1, y1, z1, x2, y2, z2 = coordinates<br>
-										checkZ = true if distance between two objects should take into account Z axis
-									</p>
+									<p>Parameters: x1, y1, z1, x2, y2, z2 = coordinates<br>
+									checkZ = true if distance between two objects should take into account Z axis</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -7292,7 +7288,7 @@ var distance2 = DistanceBetween( pUser, iUsed, true );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_DoesEventExist" />
+							<input type="checkbox" id="spoiler_function_misc_DoesEventExist"/>
 							<label for="spoiler_function_misc_DoesEventExist">DoesEventExist <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7305,10 +7301,8 @@ var distance2 = DistanceBetween( pUser, iUsed, true );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>
-										Parameters: scriptID = ID of the script to check<br>
-										eventToCheck = name of event/function to look for
-									</p>
+									<p>Parameters: scriptID = ID of the script to check<br>
+									eventToCheck = name of event/function to look for</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -7322,7 +7316,7 @@ if( DoesEventExist( 0, "MyCustomFunction" ))
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_EraStringToNum" />
+							<input type="checkbox" id="spoiler_function_misc_EraStringToNum"/>
 							<label for="spoiler_function_misc_EraStringToNum">EraStringToNum <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7365,7 +7359,7 @@ var eraNum = EraStringToNum( "aos" );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_GetClientFeature" />
+							<input type="checkbox" id="spoiler_function_misc_GetClientFeature"/>
 							<label for="spoiler_function_misc_GetClientFeature">GetClientFeature <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7385,7 +7379,7 @@ var aosFeaturesEnabled = GetClientFeature( 0x10 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_GetDictionaryEntry" />
+							<input type="checkbox" id="spoiler_function_misc_GetDictionaryEntry"/>
 							<label for="spoiler_function_misc_GetDictionaryEntry">GetDictionaryEntry <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7404,7 +7398,7 @@ var aosFeaturesEnabled = GetClientFeature( 0x10 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_GetMurderThreshold" />
+							<input type="checkbox" id="spoiler_function_misc_GetMurderThreshold"/>
 							<label for="spoiler_function_misc_GetMurderThreshold">GetMurderThreshold <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7431,7 +7425,7 @@ var aosFeaturesEnabled = GetClientFeature( 0x10 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_GetPlayerCount" />
+							<input type="checkbox" id="spoiler_function_misc_GetPlayerCount"/>
 							<label for="spoiler_function_misc_GetPlayerCount">GetPlayerCount <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7450,7 +7444,7 @@ var aosFeaturesEnabled = GetClientFeature( 0x10 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_GetCharacterCount" />
+							<input type="checkbox" id="spoiler_function_misc_GetCharacterCount"/>
 							<label for="spoiler_function_misc_GetCharacterCount">GetCharacterCount <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7470,7 +7464,7 @@ var totalChars = GetCharacterCount();</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_GetItemCount" />
+							<input type="checkbox" id="spoiler_function_misc_GetItemCount"/>
 							<label for="spoiler_function_misc_GetItemCount">GetItemCount <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7490,7 +7484,7 @@ var totalItems = GetItemCount();</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_GetMultiCount" />
+							<input type="checkbox" id="spoiler_function_misc_GetMultiCount"/>
 							<label for="spoiler_function_misc_GetMultiCount">GetMultiCount <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7510,7 +7504,7 @@ var totalMultis = GetMultiCount();</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_GetRandomSOSArea" />
+							<input type="checkbox" id="spoiler_function_misc_GetRandomSOSArea"/>
 							<label for="spoiler_function_misc_GetRandomSOSArea">GetRandomSOSArea <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7542,7 +7536,7 @@ sosMsg.more = sosMsg.instanceID;
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_GetServerVersionString" />
+							<input type="checkbox" id="spoiler_function_misc_GetServerVersionString"/>
 							<label for="spoiler_function_misc_GetServerVersionString">GetServerVersionString <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7562,7 +7556,7 @@ var ver = GetServerVersionString();</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_GetServerFeature" />
+							<input type="checkbox" id="spoiler_function_misc_GetServerFeature"/>
 							<label for="spoiler_function_misc_GetServerFeature">GetServerFeature <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7582,7 +7576,7 @@ var contextMenusEnabled = GetServerFeature( 0x08 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_GetServerSetting" />
+							<input type="checkbox" id="spoiler_function_misc_GetServerSetting"/>
 							<label for="spoiler_function_misc_GetServerSetting">GetServerSetting <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7602,7 +7596,7 @@ var guardsActive = GetServerSetting( "GUARDSACTIVE" );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_GetSocketFromIndex" />
+							<input type="checkbox" id="spoiler_function_misc_GetSocketFromIndex"/>
 							<label for="spoiler_function_misc_GetSocketFromIndex">GetSocketFromIndex <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7622,7 +7616,7 @@ var socket = GetSocketFromIndex( 0 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_IsInBuilding" />
+							<input type="checkbox" id="spoiler_function_misc_IsInBuilding"/>
 							<label for="spoiler_function_misc_IsInBuilding">IsInBuilding <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7645,7 +7639,7 @@ var socket = GetSocketFromIndex( 0 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_IterateOver" />
+							<input type="checkbox" id="spoiler_function_misc_IterateOver"/>
 							<label for="spoiler_function_misc_IterateOver">IterateOver <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7676,7 +7670,7 @@ function onIterate( myObject )
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_Moon" />
+							<input type="checkbox" id="spoiler_function_misc_Moon"/>
 							<label for="spoiler_function_misc_Moon">Moon <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7699,7 +7693,7 @@ Moon( 1, 3 ); //Set the moon Trammel to moonphase 3</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_GetMoongateFacetStatus" />
+							<input type="checkbox" id="spoiler_function_misc_GetMoongateFacetStatus"/>
 							<label for="spoiler_function_misc_GetMoongateFacetStatus">GetMoongateFacetStatus <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7733,7 +7727,7 @@ else
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_SetMoongateFacetStatus" />
+							<input type="checkbox" id="spoiler_function_misc_SetMoongateFacetStatus"/>
 							<label for="spoiler_function_misc_SetMoongateFacetStatus">SetMoongateFacetStatus <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7767,7 +7761,7 @@ var felEnabled = GetMoongateFacetStatus( 1 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_RandomNumber" />
+							<input type="checkbox" id="spoiler_function_misc_RandomNumber"/>
 							<label for="spoiler_function_misc_RandomNumber">RandomNumber <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7786,7 +7780,7 @@ var felEnabled = GetMoongateFacetStatus( 1 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_Reload" />
+							<input type="checkbox" id="spoiler_function_misc_Reload"/>
 							<label for="spoiler_function_misc_Reload">Reload <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7799,8 +7793,7 @@ var felEnabled = GetMoongateFacetStatus( 1 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>
-										Supported subSystemIDs:
+									<p>Supported subSystemIDs:
 										<ul>
 											<li>0 - Regions/TeleportLocations</li>
 											<li>1 - Spawn Regions</li>
@@ -7813,8 +7806,7 @@ var felEnabled = GetMoongateFacetStatus( 1 );</code></pre>
 											<li>8 - Everything</li>
 											<li>9 - Accounts</li>
 											<li>10 - Dictionaries</li>
-										</ul>
-									</p>
+										</ul></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -7828,7 +7820,7 @@ Reload( 7 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_ReloadJSFile" />
+							<input type="checkbox" id="spoiler_function_misc_ReloadJSFile"/>
 							<label for="spoiler_function_misc_ReloadJSFile">ReloadJSFile <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7863,7 +7855,7 @@ function command_RELOADJSFILE( socket, cmdString )
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_RollDice" />
+							<input type="checkbox" id="spoiler_function_misc_RollDice"/>
 							<label for="spoiler_function_misc_RollDice">RollDice <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7883,7 +7875,7 @@ var mDie = RollDice( 2, 3, 1 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_TriggerEvent" />
+							<input type="checkbox" id="spoiler_function_misc_TriggerEvent"/>
 							<label for="spoiler_function_misc_TriggerEvent">TriggerEvent <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7904,7 +7896,7 @@ var returnVal = TriggerEvent( 8000, "onUseChecked", pUser, iUsed );
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_TriggerTrap" />
+							<input type="checkbox" id="spoiler_function_misc_TriggerTrap"/>
 							<label for="spoiler_function_misc_TriggerTrap">TriggerTrap <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7935,7 +7927,7 @@ TriggerTrap( pChar, iTrap );
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_UseItem" />
+							<input type="checkbox" id="spoiler_function_misc_UseItem"/>
 							<label for="spoiler_function_misc_UseItem">UseItem <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7964,7 +7956,7 @@ if( myItem.type == 12 )
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_ValidateObject" />
+							<input type="checkbox" id="spoiler_function_misc_ValidateObject"/>
 							<label for="spoiler_function_misc_ValidateObject">ValidateObject <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7988,7 +7980,7 @@ if( myItem.type == 12 )
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_WorldBrightLevel" />
+							<input type="checkbox" id="spoiler_function_misc_WorldBrightLevel"/>
 							<label for="spoiler_function_misc_WorldBrightLevel">WorldBrightLevel <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -8016,7 +8008,7 @@ var lightLevel = WorldBrightLevel();
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_WorldDarkLevel" />
+							<input type="checkbox" id="spoiler_function_misc_WorldDarkLevel"/>
 							<label for="spoiler_function_misc_WorldDarkLevel">WorldDarkLevel <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -8044,7 +8036,7 @@ var lightLevel = WorldDarkLevel();
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_WorldDungeonLevel" />
+							<input type="checkbox" id="spoiler_function_misc_WorldDungeonLevel"/>
 							<label for="spoiler_function_misc_WorldDungeonLevel">WorldDungeonLevel <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
