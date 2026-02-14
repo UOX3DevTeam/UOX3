@@ -1,3 +1,7 @@
+14/02/2026 - DragonSlayer62 (#448)
+    [ADD] Added Runic Atlas Book in DFNs (dfndata/items/magic/misc_magic.dfn) and script (js/item/runicatlas.js)
+    [ADD] Runic Atlas added to AddMenu (dfndata/items/ItemMenu.bulk.dfn)
+
 13/02/2026 - DragonSlayer62 (#478)
     [ADD] Added IDs for more weapons, armors and clothing to material/weapon-type helper functions (weapontypes.js, material_types.js, combat.cpp)
     [UPD] Updated all the material type ids to be lower case to match (material_types.js)
@@ -13869,5 +13873,6 @@ Changed:
 
 	* readme.txt:
 	creation
+
 
 
