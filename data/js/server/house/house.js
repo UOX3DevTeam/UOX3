@@ -234,18 +234,22 @@ function onTimer( iMulti, timerID )
 	// Central decay toggle check
 	if( houseDecay != 1)
 	{
-		var GetStage = parseInt(iMulti.GetTag("decayStage"));
-		iMulti.KillJSTimer( GetStage, 15000 ); // timerID, scriptID
-		//iMulti.KillTimers(); // Cancel decay loop if disabled
+		// Ensure NO house-decay timers are running (script 15000, timer 1..7)
+		for( var houseTimerID = 1; houseTimerID <= 7; ++houseTimerID )
+		{
+			iMulti.KillJSTimer( houseTimerID, 15000 );
+		}
 		return;
 	}
 
 	//Skip decay if this house is marked Grandfathered and its turned on
 	if( houseGrandFatheredSystem == 1 && iMulti.GetTag( "Grandfathered" ))
 	{
-		var GetStage = parseInt(iMulti.GetTag("decayStage"));
-		iMulti.KillJSTimer( GetStage, 15000 ); // timerID, scriptID
-		//iMulti.KillTimers();
+		// Ensure NO house-decay timers are running (script 15000, timer 1..7)
+		for( var houseTimerID = 1; houseTimerID <= 7; ++houseTimerID )
+		{
+			iMulti.KillJSTimer( houseTimerID, 15000 );
+		}
 		return;
 	}
 
