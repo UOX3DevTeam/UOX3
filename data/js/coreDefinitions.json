@@ -8885,6 +8885,17 @@
       "returns": "boolean"
     },
     {
+      "name": "onSpawn",
+      "cppName": "OnSpawn",
+      "params": {
+        "list": [
+          { "name": "objSpawned", "type": "BaseObject", "required": true },
+          { "name": "spawnRegion", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
       "name": "onSpecialMove",
       "cppName": "OnSpecialMove",
       "params": {
