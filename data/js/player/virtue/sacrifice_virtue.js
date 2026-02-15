@@ -23,13 +23,14 @@ var Sacrifice_GainDelayMs = 24 * 60 * 60 * 1000;      // 1 day
 var Sacrifice_LossDelayMs = 7 * Sacrifice_GainDelayMs; // 7 days
 var Sacrifice_LossAmount  = 500;                      // Atrophy amount when decay kicks in
 
+/** @type { ( pUser: Character ) => void } */
 function Sacrifice_OnVirtueUsed( pUser )
 {
 	if( !ValidateObject( pUser ))
 		return;
 
 	var pSocket = pUser.socket;
-	if( !pSocket )
+	if( pSocket == null )
 		return;
 
 	// visible: 0 = visible, 1 = hidden, 2 = magically invisible, 3 = GM only
@@ -51,13 +52,14 @@ function Sacrifice_OnVirtueUsed( pUser )
 	}
 }
 
+/** @type { ( pUser: Character ) => void } */
 function Sacrifice_Resurrect( pUser )
 {
 	if( !ValidateObject( pUser ))
 		return;
 
 	var pSocket = pUser.socket;
-	if( !pSocket )
+	if( pSocket == null)
 		return;
 
 	if( !pUser.dead )
@@ -97,13 +99,14 @@ function Sacrifice_Resurrect( pUser )
 	pSocket.SysMessage( GetDictionaryEntry( 30026, pSocket.language )); // You use the power of Sacrifice to return to life.
 }
 
+/** @type { ( pUser: Character ) => void } */
 function Sacrifice_StartTarget( pUser )
 {
 	if( !ValidateObject( pUser ))
 		return;
 
 	var pSocket = pUser.socket;
-	if( !pSocket )
+	if( pSocket == null )
 		return;
 
 	var level = TriggerEvent( 8003, "Virtue_GetLevel", pUser, VirtueName.Sacrifice );
@@ -145,6 +148,7 @@ var Sacrifice_ValidSectionMap = {
 	// add more here as needed
 };
 
+/** @type { ( targ: Character ) => boolean } */
 function Sacrifice_ValidateCreature( targ )
 {
 	if( !ValidateObject( targ ) || !targ.isChar )
@@ -163,13 +167,14 @@ function Sacrifice_ValidateCreature( targ )
 	return Sacrifice_ValidSectionMap[sec] === 1;
 }
 
+/** @type { ( pUser: Character, targ: Character ) => void } */
 function Sacrifice_HandleTarget( pUser, targ )
 {
 	if( !ValidateObject( pUser ) || !ValidateObject( targ ))
 		return;
 
 	var pSocket = pUser.socket;
-	if( !pSocket )
+	if( pSocket == null )
 		return;
 
 	// Alive check
@@ -276,13 +281,14 @@ function Sacrifice_HandleTarget( pUser, targ )
 	pSocket.SysMessage( GetDictionaryEntry( 30029, pSocket.language )); // You must wait approximately one day before sacrificing again.
 }
 
+/** @type { ( pUser: Character ) => void } */
 function Sacrifice_CheckAtrophy( pUser )
 {
 	if( !ValidateObject( pUser ))
 		return;
 
 	var pSocket = pUser.socket;
-	if( !pSocket )
+	if( pSocket == null )
 		return;
 
 	var now  = GetCurrentClock();
@@ -336,6 +342,7 @@ function onCallback1( socket, ourObj )
 	Sacrifice_HandleTarget( pUser, ourObj );
 }
 
+/** @type { ( pUser: Character ) => { lastGain: number, resCount: number, lastLoss: number } } */
 function Sacrifice_ReadData( pUser )
 {
 	var data = { lastGain: 0, resCount: 0, lastLoss: 0 };
@@ -380,6 +387,7 @@ function Sacrifice_ReadData( pUser )
 	return data;
 }
 
+/** @type { ( pUser: Character, lastGain: number, resCount: number, lastLoss: number ) => void } */
 function Sacrifice_WriteData( pUser, lastGain, resCount, lastLoss )
 {
 	if( !ValidateObject( pUser ))

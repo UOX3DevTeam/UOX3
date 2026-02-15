@@ -21,6 +21,6 @@ function onDropItemOnItem( iDropped, cDropper, iDroppedOn )
 		return 1;
 	}
 
-	TriggerEvent( 8010, "Honesty_TurnInLostItem", cDropper, iDropped, boxTown.toString() );
+	TriggerEvent( 8010, "HonestyTurnInLostItem", cDropper, iDropped, boxTown.toString() );
 	return 2;
 }

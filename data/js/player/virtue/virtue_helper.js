@@ -23,14 +23,19 @@ var VirtueLevel = {
 	Knight:   3
 };
 
+/** @type { ( idx: number ) => number } */
 function Virtue_ClampIndex( idx )
 {
-	if( idx < 0 ) return 0;
-	if( idx > 7 ) return 7;
+	if( idx < 0 )
+		return 0;
+
+	if( idx > 7 )
+		return 7;
+
 	return idx;
 }
 
-// Storage: virtue0..virtue7 tags on the character
+/** @type { ( pChar: Character, virtueIndex: number ) => number } */
 function Virtue_GetValue( pChar, virtueIndex )
 {
 	if( !ValidateObject( pChar ))
@@ -42,6 +47,7 @@ function Virtue_GetValue( pChar, virtueIndex )
 	return all[virtueIndex] || 0;
 }
 
+/** @type { ( pChar: Character, virtueIndex: number, value: number ) => void } */
 function Virtue_SetValue( pChar, virtueIndex, value )
 {
 	if( !ValidateObject( pChar ))
@@ -57,6 +63,7 @@ function Virtue_SetValue( pChar, virtueIndex, value )
 	Virtue_WriteAll( pChar, all );
 }
 
+/** @type { ( pChar: Character ) => number[] } */
 function Virtue_ReadAll( pChar )
 {
 	var vals = [];
@@ -103,6 +110,7 @@ function Virtue_ReadAll( pChar )
 	return vals;
 }
 
+/** @type { ( pChar: Character, vals: number[] ) => void } */
 function Virtue_WriteAll( pChar, vals )
 {
 	if( !ValidateObject( pChar ))
@@ -132,6 +140,7 @@ function Virtue_WriteAll( pChar, vals )
 	}
 }
 
+/** @type { ( virtueIndex: number ) => number } */
 function Virtue_GetMaxAmount( virtueIndex )
 {
 	virtueIndex = Virtue_ClampIndex( virtueIndex );
@@ -145,6 +154,7 @@ function Virtue_GetMaxAmount( virtueIndex )
 	return 21000;
 }
 
+/** @type { ( pChar: Character, virtueIndex: number ) => number } */
 function Virtue_GetLevel( pChar, virtueIndex )
 {
 	var v    = Virtue_GetValue( pChar, virtueIndex );
@@ -171,31 +181,37 @@ function Virtue_GetLevel( pChar, virtueIndex )
 	return vl;
 }
 
+/** @type { ( pChar: Character, virtueIndex: number ) => boolean } */
 function Virtue_HasAny( pChar, virtueIndex )
 {
 	return Virtue_GetValue( pChar, virtueIndex ) > 0;
 }
 
+/** @type { ( pChar: Character, virtueIndex: number ) => boolean } */
 function Virtue_IsHighestPath( pChar, virtueIndex )
 {
 	return Virtue_GetValue( pChar, virtueIndex ) >= Virtue_GetMaxAmount( virtueIndex );
 }
 
+/** @type { ( pChar: Character, virtueIndex: number ) => boolean } */
 function Virtue_IsSeeker( pChar, virtueIndex )
 {
 	return Virtue_GetLevel( pChar, virtueIndex ) >= VirtueLevel.Seeker;
 }
 
+/** @type { ( pChar: Character, virtueIndex: number ) => boolean } */
 function Virtue_IsFollower( pChar, virtueIndex )
 {
 	return Virtue_GetLevel( pChar, virtueIndex ) >= VirtueLevel.Follower;
 }
 
+/** @type { ( pChar: Character, virtueIndex: number ) => boolean } */
 function Virtue_IsKnight( pChar, virtueIndex )
 {
 	return Virtue_GetLevel( pChar, virtueIndex ) >= VirtueLevel.Knight;
 }
 
+/** @type { ( pChar: Character, virtueIndex: number ) => number } */
 function Virtue_GetHue( pChar, virtueIndex )
 {
 	var virtueHueTable = [
@@ -248,6 +264,16 @@ function Virtue_GetHue( pChar, virtueIndex )
 	return virtueHueTable[tableIndex] || 2402;
 }
 
+/**
+ * @type { ( pChar: Character, virtueIndex: number, amount: number ) => {
+ *   success: boolean,
+ *   gainedPath: boolean,
+ *   oldLevel: number,
+ *   newLevel: number,
+ *   oldValue: number,
+ *   newValue: number
+ * } }
+ */
 function Virtue_Award( pChar, virtueIndex, amount )
 {
 	var result = {
@@ -296,7 +322,7 @@ function Virtue_Award( pChar, virtueIndex, amount )
 	return result;
 }
 
-// Atrophy
+/** @type { ( pChar: Character, virtueIndex: number, amount: number ) => boolean } */
 function Virtue_Atrophy( pChar, virtueIndex, amount )
 {
 	if( !ValidateObject( pChar ))

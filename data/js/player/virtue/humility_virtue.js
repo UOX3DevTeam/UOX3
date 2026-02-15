@@ -19,13 +19,14 @@ var VirtueLevel = VirtueLevel || {
 	Knight:   3
 };
 
+/** @type { ( pUser: Character ) => void } */
 function Humility_StartPetTarget( pUser )
 {
 	if( !ValidateObject( pUser ))
 		return;
 
 	var pSocket = pUser.socket;
-	if( !pSocket )
+	if( pSocket == null)
 		return;
 
 	var level = TriggerEvent( 8003, "Virtue_GetLevel", pUser, VirtueName.Humility );
@@ -38,13 +39,14 @@ function Humility_StartPetTarget( pUser )
 	pSocket.CustomTarget( 0, msg );
 }
 
+/** @type { ( pUser: Character, pet: Character ) => void } */
 function Humility_OnVirtueUsed( pUser, pet )
 {
 	if( !ValidateObject( pUser ) || !ValidateObject( pet ))
 		return;
 
 	var pSocket = pUser.socket;
-	if( !pSocket )
+	if( pSocket == null )
 		return;
 
 	// Check virtue level (cheap double-check)
@@ -100,13 +102,14 @@ function Humility_OnVirtueUsed( pUser, pet )
 	pet.StartTimer( 1200000, 5002, 8005 );
 }
 
+/** @type { ( pUser: Character ) => void } */
 function Humility_ToggleHunt( pUser )
 {
 	if( !ValidateObject( pUser ))
 		return;
 
 	var pSocket = pUser.socket;
-	if( !pSocket )
+	if( pSocket == null )
 		return;
 
 	// Check alive state if you have a way; for now just proceed.
@@ -155,13 +158,14 @@ function Humility_ToggleHunt( pUser )
 	}
 }
 
+/** @type { ( pUser: Character ) => void } */
 function Humility_StartHunt( pUser )
 {
 	if( !ValidateObject( pUser ))
 		return;
 
 	var pSocket = pUser.socket;
-	if( !pSocket )
+	if( pSocket == null )
 		return;
 
 	// state=1 (active), expiring=0, cooldownUntil=0
@@ -179,13 +183,14 @@ function Humility_StartHunt( pUser )
 	pUser.TextMessage( "*You feel your defenses weaken as you follow the path of Humility.*" ); // *You feel your defenses weaken as you follow the path of Humility.*
 }
 
+/** @type { ( pUser: Character ) => void } */
 function Humility_OnHuntExpired( pUser )
 {
 	if( !ValidateObject( pUser ))
 		return;
 
 	var pSocket = pUser.socket;
-	if( !pSocket )
+	if( pSocket == null )
 		return;
 
 	Humility_ClearResistDebuff( pUser );
@@ -203,7 +208,7 @@ function Humility_OnHuntExpired( pUser )
 /** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
-	if( !ValidateObject( timerObj ))
+	if( !timerObj )
 		return;
 
 	// 5001: Humility Hunt expire
@@ -287,7 +292,7 @@ function onCallback0( socket, ourObj )
 // Based on your snippet: 1=armor, 4=cold, 5=fire, 6=energy, 7=poison
 var HUMILITY_RESIST_INDICES = [ 1 ];
 var HUMILITY_DEBUFF_AMOUNT  = 70;
-
+/** @type { ( pChar: Character ) => void } */
 function Humility_ApplyResistDebuff( pChar )
 {
 	if( !ValidateObject( pChar ))
@@ -321,6 +326,7 @@ function Humility_ApplyResistDebuff( pChar )
 	pChar.TextMessage( "*Your defenses are weakened by your Humility Hunt.*" ); // *Your defenses are weakened by your Humility Hunt.*
 }
 
+/** @type { ( pChar: Character ) => void } */
 function Humility_ClearResistDebuff( pChar )
 {
 	if( !ValidateObject( pChar ))
@@ -351,8 +357,7 @@ function Humility_ClearResistDebuff( pChar )
 	pChar.TextMessage( "*Your defenses return to normal.*" ); // *Your defenses return to normal.*
 }
 
-// Humility pet data stored on the pet:
-// HumilityPet = "ownerSerial,baseHpr"
+/** @type { ( pet: Character ) => { ownerSerial: number, baseHpr: number } } */
 function Humility_ReadPetData( pet )
 {
 	var data = { ownerSerial: 0, baseHpr: 0 };
@@ -397,6 +402,7 @@ function Humility_ReadPetData( pet )
 	return data;
 }
 
+/** @type { ( pet: Character, ownerSerial: number, baseHpr: number ) => void } */
 function Humility_WritePetData( pet, ownerSerial, baseHpr )
 {
 	if( !ValidateObject( pet ))
@@ -416,6 +422,7 @@ function Humility_WritePetData( pet, ownerSerial, baseHpr )
 //   state: 0=none, 1=active, 2=expiring
 //   expiring: 0/1
 //   cooldownUntil: ms timestamp, 0 if none
+/** @type { ( pUser: Character ) => { state: number, expiring: number, cooldownUntil: number } } */
 function Humility_ReadHuntData( pUser )
 {
 	var data = { state: 0, expiring: 0, cooldownUntil: 0 };
@@ -463,6 +470,7 @@ function Humility_ReadHuntData( pUser )
 	return data;
 }
 
+/** @type { ( pUser: Character, state: number, expiring: number, cooldownUntil: number ) => void } */
 function Humility_WriteHuntData( pUser, state, expiring, cooldownUntil )
 {
 	if( !ValidateObject( pUser ))

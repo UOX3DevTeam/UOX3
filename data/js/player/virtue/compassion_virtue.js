@@ -56,6 +56,7 @@ var VirtueLevel = VirtueLevel || {
 // You can tweak this to feel right.
 var Compassion_UseCost = 400;
 
+/** @type { ( pChar: Character ) => boolean } */
 function Compassion_IsYoung( pChar )
 {
 	if( !ValidateObject( pChar ))
@@ -71,6 +72,7 @@ function Compassion_IsYoung( pChar )
 	return false;
 }
 
+/** @type { ( pChar: Character ) => number } */
 function Compassion_GetLevel( pChar )
 {
 	if( !ValidateObject( pChar ))
@@ -79,6 +81,7 @@ function Compassion_GetLevel( pChar )
 	return TriggerEvent( 8003, "Virtue_GetLevel", pChar, VirtueName.Compassion ) | 0;
 }
 
+/** @type { ( healer: Character, target: Character ) => void } */
 function Compassion_OnPlayerResurrect( healer, target )
 {
 	if( !ValidateObject( healer ) || !ValidateObject( target ))
@@ -121,6 +124,7 @@ function Compassion_OnPlayerResurrect( healer, target )
 	TriggerEvent( 8003, "Virtue_Atrophy", healer, VirtueName.Compassion, Compassion_UseCost );
 }
 
+/** @type { ( healer: Character, pet: Character ) => void } */
 function Compassion_OnPetResurrect( healer, pet )
 {
 	if( !ValidateObject( healer ) || !ValidateObject( pet ))
@@ -179,6 +183,7 @@ function Compassion_OnPetResurrect( healer, pet )
 	TriggerEvent( 8003, "Virtue_Atrophy", healer, VirtueName.Compassion, Compassion_UseCost );
 }
 
+/** @type { ( pChar: Character ) => { canGain: boolean, reason: string } } */
 function Compassion_CanGain( pChar )
 {
 	var result = { canGain: true, reason: "" };
@@ -191,8 +196,11 @@ function Compassion_CanGain( pChar )
 	}
 
 	var pSocket = pChar.socket;
-	if( !pSocket )
-		return;
+	if( pSocket == null)
+	{
+		result.reason = "No socket.";
+		return result;
+	}
 
 	// Young players cannot earn Compassion
 	if( Compassion_IsYoung( pChar ))
@@ -260,13 +268,14 @@ function Compassion_CanGain( pChar )
 	return result;
 }
 
+/** @type { ( pChar: Character, isPrisonerQuest: boolean, isNewHavenEscort: boolean ) => void } */
 function Compassion_AwardEscort( pChar, isPrisonerQuest, isNewHavenEscort )
 {
 	if( !ValidateObject( pChar ))
 		return;
 
 	var pSocket = pChar.socket;
-	if( !pSocket )
+	if( pSocket == null )
 		return;
 
 	if( isNewHavenEscort )

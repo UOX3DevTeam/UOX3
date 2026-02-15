@@ -4,7 +4,7 @@
 
 const honestyVirtueEnabled = GetServerSetting( "HonestyVirtueEnabled" );
 
-var VirtueName = VirtueName || {
+const VirtueName = VirtueName || {
 	Humility:     0,
 	Sacrifice:    1,
 	Compassion:   2,
@@ -15,10 +15,10 @@ var VirtueName = VirtueName || {
 	Honesty:      7
 };
 
-var HONESTY_ITEM_LIFETIME_MS = 3 * 60 * 60 * 1000;
-var HONESTY_GAIN_ANY_TOWN = 30;
-var HONESTY_GAIN_CORRECT_TOWN = 60;
-var HonestyTownRegions = {
+const honestyItemLifeTimeMS = 3 * 60 * 60 * 1000;
+const honestyGainAnyTown = 30;
+const honestyGainCorrectTown = 60;
+const HonestyTownRegions = {
 	"Britain":   3,
 	"Yew":       4,
 	"Moonglow":  5,
@@ -29,6 +29,7 @@ var HonestyTownRegions = {
 	"Minoc":     10
 };
 
+/** @type { ( item: Item, townName: string, ownerName: string ) => void } */
 function Honesty_OnLostItemCreated( item, townName, ownerName )
 {
 	if( !ValidateObject( item ))
@@ -39,7 +40,7 @@ function Honesty_OnLostItemCreated( item, townName, ownerName )
 	item.SetTag( "HonestyQuest", 1 );
 	item.SetTag( "HonestyTown", townName ? townName : "" );
 	item.SetTag( "HonestyOwner", ownerName ? ownerName : "" );
-	item.SetTag( "HonestyExpire", ( now + HONESTY_ITEM_LIFETIME_MS ).toString() );
+	item.SetTag( "HonestyExpire", ( now + honestyItemLifeTimeMS ).toString() );
 
 	// Add hint to name if you want:
 	// In OSI it says "Lost Item (Return To Gain Honesty)" in the name/tooltip.
@@ -50,6 +51,7 @@ function Honesty_OnLostItemCreated( item, townName, ownerName )
 	item.name = baseName + " (return to gain Honesty)";
 }
 
+/** @type { ( item: Item ) => { valid: boolean, expired: boolean, reason: string } } */
 function Honesty_CheckLostItem( item )
 {
 	var r = { valid: false, expired: false, reason: "" };
@@ -88,7 +90,8 @@ function Honesty_CheckLostItem( item )
 	return r;
 }
 
-function Honesty_TurnInLostItem( pUser, item, boxTown )
+/** @type { ( pUser: Character, item: Item, boxTown: string ) => void } */
+function HonestyTurnInLostItem( pUser, item, boxTown )
 {
 	if( !ValidateObject( pUser ) || !ValidateObject( item ))
 		return;
@@ -116,13 +119,13 @@ function Honesty_TurnInLostItem( pUser, item, boxTown )
 	var ownerName = item.GetTag( "HonestyOwner" ) || "";
 
 	// Determine base gain
-	var gain = HONESTY_GAIN_ANY_TOWN;
+	var gain = honestyGainAnyTown;
 
 	// Double credit if the item town matches the box town (case insensitive)
 	if( boxTown && itemTown &&
-		boxTown.toLowerCase() === itemTown.toLowerCase() )
+		boxTown.toLowerCase() == itemTown.toLowerCase() )
 	{
-		gain = HONESTY_GAIN_CORRECT_TOWN;
+		gain = honestyGainCorrectTown;
 	}
 
 	// In OSI, turning in to the exact owner yields even more (x4).
@@ -196,6 +199,7 @@ function onCreateDFN( objMade, objType )
 	Honesty_OnLostItemCreated( objMade, town.toString(), owner ? owner.toString() : "" );
 }
 
+/** @type { ( objMade: BaseObject, spawnRegion: any ) => void } */
 function onSpawn( objMade, spawnRegion  )
 {
 	if( !honestyVirtueEnabled )
@@ -251,7 +255,7 @@ function onSpawn( objMade, spawnRegion  )
 // Internal search state for vendor lookup
 var Honesty_FindVendorTargetRegionID = -1;
 var Honesty_FoundVendors = [];
-
+/** @type { ( ch: Character ) => boolean } */
 function Honesty_IsVendor( ch )
 {
 	if( !ValidateObject( ch ) || !ch.npc )
@@ -264,6 +268,7 @@ function Honesty_IsVendor( ch )
 	return false;
 }
 
+/** @type { ( townName: string ) => Character | null } */
 function Honesty_FindVendorForTown( townName )
 {
 	var regionID = HonestyTownRegions[townName];

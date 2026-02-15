@@ -8,13 +8,14 @@ function onKill( pkiller, pkilled )
 	return false;
 }
 
+/** @type { ( pkiller: Character, pkilled: Character ) => void } */
 function Humility_RegisterKill( pkiller, pkilled )
 {
 	if( !ValidateObject( pkiller ) || !ValidateObject( pkilled ))
 		return;
 
 	var pSocket = pkiller.socket;
-	if( !pSocket )
+	if( pSocket == null )
 		return;
 
 	// Only gain if attacker is on a Humility Hunt
@@ -23,7 +24,7 @@ function Humility_RegisterKill( pkiller, pkilled )
 
 	var fame = pkilled.fame;
 
-	if( fame !== 0 )
+	if( fame < 0 )
 		fame = 0;
 
 	// var points = Math.Min(60, Math.Max(1, (pkilled.Fame / 5000) * 10)) / 1;
@@ -54,6 +55,7 @@ function Humility_RegisterKill( pkiller, pkilled )
 	}
 }
 
+/** @type { ( pkiller: Character ) => boolean } */
 function Humility_IsInHunt( pkiller )
 {
 	if( !ValidateObject( pkiller ))
