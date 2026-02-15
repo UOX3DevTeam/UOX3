@@ -1,10 +1,11 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
-var Era_Type = EraStringToNum( GetServerSetting("CoreShardEra" ));
-let ARMOR_LAYERS = [0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x0A, 0x0D, 0x11, 0x13, 0x14, 0x16, 0x17, 0x18];
-let RESIST_LAYERS = [ 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0C, 0x0D, 0x0E, 0x11, 0x12, 0x13, 0x14, 0x16, 0x17, 0x18];
+
+const eraType = EraStringToNum( GetServerSetting( "CoreShardEra" ));
+const armorLayers = [0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x0A, 0x0D, 0x11, 0x13, 0x14, 0x16, 0x17, 0x18];
+const resistLayers = [ 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0C, 0x0D, 0x0E, 0x11, 0x12, 0x13, 0x14, 0x16, 0x17, 0x18];
 // Wearable layers (skip hair/facial/backpack/mount/vendor/bank)
-let EQUIP_LAYERS = [0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0C,0x0D,0x0E,0x0F,0x11,0x12,0x13,0x14,0x16,0x17,0x18];
+const equipLayers = [0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0C,0x0D,0x0E,0x0F,0x11,0x12,0x13,0x14,0x16,0x17,0x18];
 
 /** @type { ( tSock: Socket, baseObj: BaseObject ) => boolean } */
 function onContextMenuRequest( socket, targObj )
@@ -58,7 +59,7 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 	switch( popupEntry )
 	{
 		case 0x000A: // paperdoll
-			OpenPaperdoll( pUser.socket, targObj );
+			OpenPaperdoll( socket, targObj );
 			break;
 		case 0x000B: // rotate
 			var dir = ( targObj.direction | 0 ) + 1;
@@ -68,26 +69,26 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 			socket.SysMessage( "You rotate the mannequin a little bit." );
 			break;
 		case 0x000C: // stats gump
-			OpenMannequinStatsGump( pUser.socket, targObj, 0 );
+			OpenMannequinStatsGump( socket, targObj, 0 );
 			break;
 		case 0x000D: // Customize Body
-			CustomizeMannequinBody( pUser.socket );
-			pUser.SetTempTag( "MANN_STATS_MANN", "" + targObj.serial );
+			CustomizeMannequinBody( socket );
+			pUser.SetTempTag( "mannequinStats", targObj.serial );
 			break;
 		case 0x000E: // Switch Clothes
-			pUser.SetTempTag( "MANN_STATS_MANN", "" + targObj.serial );
-			switchMannequinClothing( pUser, targObj );
+			pUser.SetTempTag( "mannequinStats", targObj.serial );
+			SwitchMannequinClothing( pUser, targObj );
 			break;
 		//case 0x000F: // CompareWithItemInSlot
-		//	pUser.SetTempTag("MANN_STATS_MANN", "" + targObj.serial);
+		//	pUser.SetTempTag("mannequinStats", targObj.serial);
 		//	break;
 		case 0x0001: // Add Description
-			pUser.SetTempTag( "MANN_STATS_MANN", "" + targObj.serial );
+			pUser.SetTempTag( "mannequinStats", targObj.serial );
 			DescriptionGump( socket );
 			break;
 		case 0x0002: // Redeed
-			moveMannequinGearToPlayerPack( targObj, pUser );
-			CreateDFNItem( pUser.socket, pUser, "mannequindeed", 1, "ITEM", true );
+			MannequinGearToPlayerPack( targObj, pUser );
+			CreateDFNItem( socket, pUser, "mannequindeed", 1, "ITEM", true );
 			targObj.Delete();
 			break;
 	}
@@ -127,73 +128,78 @@ function onSpeech( strSaid, pTalking, pTalkingTo )
 	return 1;
 }
 
+/** @type { ( socket: Socket ) => boolean } */
 function DescriptionGump( socket )
 {
 	if( socket == null )
 		return false;
 
-	var gump = new Gump;
-	gump.AddBackground( 50, 50, 400, 300, 0xA28 );
-	gump.AddPage( 0 );
-	gump.AddXMFHTMLGumpColor( 50, 70, 400, 20, 1159409, false, false, 0x7FFF ); // <CENTER>Mannequin</CENTER>
-	gump.AddXMFHTMLGumpColor( 75, 95, 350, 145, 1159408, true, true, 0x7FFF ); // Enter the description to add to the mannequin. Leave the text area blank to remove any existing text.
-	gump.AddButton( 125, 300, 0x81A, 0x81B, 1, 0, 8 );
-	gump.AddButton( 320, 300, 0x819, 0x818, 1, 0, 0 );
-	gump.AddTiledGump( 75, 245, 350, 40, 0xDB0 );
-	gump.AddTiledGump( 76, 245, 350, 2, 0x23C5 );
-	gump.AddTiledGump( 75, 245, 2, 40, 0x23C3 );
-	gump.AddTiledGump( 75, 285, 350, 2, 0x23C5 );
-	gump.AddTiledGump( 425, 245, 2, 42, 0x23C3 );
-	gump.AddTextEntryLimited( 78, 246, 343, 37, 0x4FF, 0, 2, " ", 44 );
+	var descriptionGump = new Gump;
+	descriptionGump.AddBackground( 50, 50, 400, 300, 0xA28 );
+	descriptionGump.AddPage( 0 );
+	descriptionGump.AddXMFHTMLGumpColor( 50, 70, 400, 20, 1159409, false, false, 0x7FFF ); // <CENTER>Mannequin</CENTER>
+	descriptionGump.AddXMFHTMLGumpColor( 75, 95, 350, 145, 1159408, true, true, 0x7FFF ); // Enter the description to add to the mannequin. Leave the text area blank to remove any existing text.
+	descriptionGump.AddButton( 125, 300, 0x81A, 0x81B, 1, 0, 8 );
+	descriptionGump.AddButton( 320, 300, 0x819, 0x818, 1, 0, 0 );
+	descriptionGump.AddTiledGump( 75, 245, 350, 40, 0xDB0 );
+	descriptionGump.AddTiledGump( 76, 245, 350, 2, 0x23C5 );
+	descriptionGump.AddTiledGump( 75, 245, 2, 40, 0x23C3 );
+	descriptionGump.AddTiledGump( 75, 285, 350, 2, 0x23C5 );
+	descriptionGump.AddTiledGump( 425, 245, 2, 42, 0x23C3 );
+	descriptionGump.AddTextEntryLimited( 78, 246, 343, 37, 0x4FF, 0, 2, " ", 44 );
 
-	gump.Send( socket );
-	gump.Free();
+	descriptionGump.Send( socket );
+	descriptionGump.Free();
+	return true;
 }
 
+/** @type { ( socket: Socket ) => boolean } */
 function CustomizeMannequinBody( socket )
 {
 	if( socket == null )
 		return false;
 
-	var gump = new Gump;
-	gump.AddPage( 0 );
-	gump.AddBackground( 0, 0, 300, 130, 0x13BE );
-	gump.AddTiledGump( 10, 10, 280, 20, 0xA40 );
-	gump.AddTiledGump( 10, 40, 280, 80, 0xA40 );
-	gump.AddCheckerTrans( 10, 10, 280, 110);
-	gump.AddXMFHTMLGumpColor( 10, 10, 200, 300, 1151582, false, false, 0x7FFF );// <center>CUSTOMIZE BODY</center>
+	var customizeMannyBodyGump = new Gump;
+	customizeMannyBodyGump.AddPage( 0 );
+	customizeMannyBodyGump.AddBackground( 0, 0, 300, 130, 0x13BE );
+	customizeMannyBodyGump.AddTiledGump( 10, 10, 280, 20, 0xA40 );
+	customizeMannyBodyGump.AddTiledGump( 10, 40, 280, 80, 0xA40 );
+	customizeMannyBodyGump.AddCheckerTrans( 10, 10, 280, 110);
+	customizeMannyBodyGump.AddXMFHTMLGumpColor( 10, 10, 200, 300, 1151582, false, false, 0x7FFF );// <center>CUSTOMIZE BODY</center>
 
-	if( Era_Type >= EraStringToNum( "lbr" ))
+	if( eraType >= EraStringToNum( "lbr" ))
 	{
-		gump.AddXMFHTMLGumpColor( 45, 52, 180, 18, 1072255, false, false, 0x7FFF );// Human
-		gump.AddButton( 10, 50, 0xFA5, 1, 0, 1 );
+		customizeMannyBodyGump.AddXMFHTMLGumpColor( 45, 52, 180, 18, 1072255, false, false, 0x7FFF );// Human
+		customizeMannyBodyGump.AddButton( 10, 50, 0xFA5, 1, 0, 1 );
 	}
 
-	if( Era_Type >= EraStringToNum( "ml" ))
+	if( eraType >= EraStringToNum( "ml" ))
 	{
-		gump.AddXMFHTMLGumpColor( 45, 72, 180, 18, 1072256, false, false, 0x7FFF );// Elf
-		gump.AddButton(10, 70, 0xFA5, 1, 0, 2 );
+		customizeMannyBodyGump.AddXMFHTMLGumpColor( 45, 72, 180, 18, 1072256, false, false, 0x7FFF );// Elf
+		customizeMannyBodyGump.AddButton(10, 70, 0xFA5, 1, 0, 2 );
 
-		gump.AddXMFHTMLGumpColor( 45, 92, 180, 18, 1029613, false, false, 0x7FFF );// Gargoyle
-		gump.AddButton(10, 90, 0xFA5,  1, 0, 3 );
+		customizeMannyBodyGump.AddXMFHTMLGumpColor( 45, 92, 180, 18, 1029613, false, false, 0x7FFF );// Gargoyle
+		customizeMannyBodyGump.AddButton(10, 90, 0xFA5,  1, 0, 3 );
 	}
 
-	gump.AddXMFHTMLGumpColor( 205, 52, 180, 18, 1015327, false, false, 0x7FFF);// Male
-	gump.AddButton( 170, 50, 0xFA5, 1, 0, 4 );
+	customizeMannyBodyGump.AddXMFHTMLGumpColor( 205, 52, 180, 18, 1015327, false, false, 0x7FFF);// Male
+	customizeMannyBodyGump.AddButton( 170, 50, 0xFA5, 1, 0, 4 );
 
-	gump.AddXMFHTMLGumpColor( 205, 72, 180, 18, 1015328, false, false, 0x7FFF );// Female
-    gump.AddButton( 170, 70, 0xFA5, 1, 0, 5 );
+	customizeMannyBodyGump.AddXMFHTMLGumpColor( 205, 72, 180, 18, 1015328, false, false, 0x7FFF );// Female
+    customizeMannyBodyGump.AddButton( 170, 70, 0xFA5, 1, 0, 5 );
 
-	gump.Send( socket );
-	gump.Free();
+	customizeMannyBodyGump.Send( socket );
+	customizeMannyBodyGump.Free();
+	return true;
 }
 
+/** @type { ( sx: number, sy: number, w?: number, h?: number ) => { sx: number, sy: number, w: number, h: number } } */
 function ABS( sx, sy, w, h )
 {
 	return { sx: sx | 0, sy: sy | 0, w: ( w || 30 ) | 0, h: ( h || 30 ) | 0 };
 }
 
-var Icons = {
+const Icons = {
 	StrengthBonus:   ABS( 120, 30 ), DexterityBonus:  ABS(  90,  0 ), IntelligenceBonus: ABS( 240,  0 ),
 	HitPointsInc:    ABS( 180,  0 ), StaminaInc:      ABS(  90, 30 ),
 
@@ -219,7 +225,7 @@ var Icons = {
 	SpellDamage:     ABS(  90,600 )
 };
 
-var PAGE1 = [
+const mannequinPage1 = [
 	{
 		header: 1049593, rowsLeft: [
 			{ key: "StrengthBonus", text: 1079767, icon: Icons.StrengthBonus },
@@ -267,7 +273,7 @@ var PAGE1 = [
 	}
 ];
 
-var PAGE2 = [
+const mannequinPage2 = [
 	{
 		header: 1077417, rowsLeft: [
 			{ key: "PhysDamage", text: 1151800, icon: Icons.PhysicalDamage },
@@ -290,7 +296,8 @@ var PAGE2 = [
 	}
 ];
 
-function bestWeaponDamage( mannequin )
+/** @type { ( mannequin: Character ) => { lo: number, hi: number } } */
+function BestWeaponDamage( mannequin )
 {
 	var best = { lo: 0, hi: 0 };
 	if( !( mannequin && ValidateObject( mannequin )))
@@ -317,7 +324,8 @@ function bestWeaponDamage( mannequin )
 	return best;
 }
 
-function sumLayersProp( mannequin, layers, prop )
+/** @type { ( mannequin: Character, layers: number[], prop: string ) => number } */
+function SumLayersProp( mannequin, layers, prop )
 {
 	if( !( mannequin && ValidateObject( mannequin )))
 		return 0;
@@ -335,15 +343,16 @@ function sumLayersProp( mannequin, layers, prop )
 	return total | 0;
 }
 
-function sumPhysResistFromArmor( mannequin )
+/** @type { ( mannequin: Character ) => number } */
+function SumPhysResistFromArmor( mannequin )
 {
 	if( !( mannequin && ValidateObject( mannequin )))
 		return 0;
 
 	var total = 0, it, v;
-	for( var i = 0; i < ARMOR_LAYERS.length; i++ )
+	for( var i = 0; i < armorLayers.length; i++ )
 	{
-		it = mannequin.FindItemLayer( ARMOR_LAYERS[i] );
+		it = mannequin.FindItemLayer( armorLayers[i] );
 		if( it && ValidateObject( it ))
 		{
 			v = parseInt( it.def, 10 );
@@ -353,39 +362,60 @@ function sumPhysResistFromArmor( mannequin )
 	return total | 0;
 }
 
-function buildContext( mannequin )
+/** @type { ( mannequin: Character ) => {
+	physResist: number,
+	coldResist: number,
+	fireResist: number,
+	energyResist: number,
+	poisonResist: number,
+	hpRegenBonus: number,
+	staminaRegenBonus: number,
+	manaRegenBonus: number,
+	hpInc: number,
+	stamInc: number,
+	manaInc: number,
+	hci: number,
+	dci: number,
+	di: number,
+	luck: number,
+	ssi: number,
+	physDmgLo: number,
+	physDmgHi: number
+} } */
+function BuildGumpContext( mannequin )
 {
 	var ctx = {};
 
-	ctx.physResist   = sumPhysResistFromArmor( mannequin );
+	ctx.physResist   = SumPhysResistFromArmor( mannequin );
 
-	ctx.coldResist   = sumLayersProp( mannequin, RESIST_LAYERS, "resistCold" );
-	ctx.fireResist   = sumLayersProp( mannequin, RESIST_LAYERS, "resistHeat" );
-	ctx.energyResist = sumLayersProp( mannequin, RESIST_LAYERS, "resistLightning" );
-	ctx.poisonResist = sumLayersProp( mannequin, RESIST_LAYERS, "resistPoison" );
+	ctx.coldResist   = SumLayersProp( mannequin, resistLayers, "resistCold" );
+	ctx.fireResist   = SumLayersProp( mannequin, resistLayers, "resistHeat" );
+	ctx.energyResist = SumLayersProp( mannequin, resistLayers, "resistLightning" );
+	ctx.poisonResist = SumLayersProp( mannequin, resistLayers, "resistPoison" );
 
-	ctx.hpRegenBonus      = sumLayersProp( mannequin, RESIST_LAYERS, "healthRegenBonus" );
-	ctx.staminaRegenBonus = sumLayersProp( mannequin, RESIST_LAYERS, "staminaRegenBonus" );
-	ctx.manaRegenBonus    = sumLayersProp( mannequin, RESIST_LAYERS, "manaRegenBonus" );
+	ctx.hpRegenBonus      = SumLayersProp( mannequin, resistLayers, "healthRegenBonus" );
+	ctx.staminaRegenBonus = SumLayersProp( mannequin, resistLayers, "staminaRegenBonus" );
+	ctx.manaRegenBonus    = SumLayersProp( mannequin, resistLayers, "manaRegenBonus" );
 
-	ctx.hpInc   = sumLayersProp( mannequin, RESIST_LAYERS, "healthBonus" );
-	ctx.stamInc = sumLayersProp( mannequin, RESIST_LAYERS, "staminaBonus" );
-	ctx.manaInc = sumLayersProp( mannequin, RESIST_LAYERS, "manaBonus" );
+	ctx.hpInc   = SumLayersProp( mannequin, resistLayers, "healthBonus" );
+	ctx.stamInc = SumLayersProp( mannequin, resistLayers, "staminaBonus" );
+	ctx.manaInc = SumLayersProp( mannequin, resistLayers, "manaBonus" );
 
-	ctx.hci  = sumLayersProp( mannequin, RESIST_LAYERS, "hitChance" );
-	ctx.dci  = sumLayersProp( mannequin, RESIST_LAYERS, "defenseChance" );
-	ctx.di   = sumLayersProp( mannequin, RESIST_LAYERS, "damageIncrease" );
-	ctx.luck = sumLayersProp( mannequin, RESIST_LAYERS, "luck" );
-	ctx.ssi  = sumLayersProp( mannequin, RESIST_LAYERS, "swingSpeedIncrease" );
+	ctx.hci  = SumLayersProp( mannequin, resistLayers, "hitChance" );
+	ctx.dci  = SumLayersProp( mannequin, resistLayers, "defenseChance" );
+	ctx.di   = SumLayersProp( mannequin, resistLayers, "damageIncrease" );
+	ctx.luck = SumLayersProp( mannequin, resistLayers, "luck" );
+	ctx.ssi  = SumLayersProp( mannequin, resistLayers, "swingSpeedIncrease" );
 
-	var wd = bestWeaponDamage( mannequin );
+	var wd = BestWeaponDamage( mannequin );
 	ctx.physDmgLo = wd.lo | 0;
 	ctx.physDmgHi = wd.hi | 0;
 
 	return ctx;
 }
 
-function filterSectionsForEra( sections )
+/** @type { ( sections: any[] ) => any[] } */
+function FilterSectionsForEra( sections )
 {
 	var out = [];
 
@@ -393,15 +423,19 @@ function filterSectionsForEra( sections )
 	var eraAOS = EraStringToNum( "aos" );
 	var eraML  = EraStringToNum( "ml" );
 
-	var isLBRonly = ( Era_Type >= eraLBR && Era_Type < eraAOS );
-	var isAOSonly = ( Era_Type >= eraAOS && Era_Type < eraML );
-	var isMLplus  = ( Era_Type >= eraML );
+	var isLBRonly = ( eraType >= eraLBR && eraType < eraAOS );
+	var isAOSonly = ( eraType >= eraAOS && eraType < eraML );
+	var isMLplus  = ( eraType >= eraML );
 
 	function cloneRow( row )
 	{
 		var r = {}, k;
 		row = row || {};
-		for( k in row ) if( row.hasOwnProperty( k )) r[k] = row[k];
+		for( k in row )
+		{
+			if( row.hasOwnProperty( k ))
+				r[k] = row[k];
+		}
 		return r;
 	}
 
@@ -436,12 +470,16 @@ function filterSectionsForEra( sections )
 		var R = src.rowsRight || [];
 
 		for( var i = 0; i < L.length; i++ )
+		{
 			if( isMLplus || includeByEraKey( L[i] && L[i].key ))
 				sec.rowsLeft.push( cloneRow( L[i] ));
+		}
 
 		for( var j = 0; j < R.length; j++ )
+		{
 			if( isMLplus || includeByEraKey( R[j] && R[j].key ))
 				sec.rowsRight.push( cloneRow( R[j] ));
+		}
 
 		if( sec.rowsLeft.length || sec.rowsRight.length )
 			out.push( sec );
@@ -450,11 +488,12 @@ function filterSectionsForEra( sections )
 	return out;
 }
 
+/** @type { ( socket: Socket, mannequin: Character, page: number ) => void } */
 function OpenMannequinStatsGump( socket, mannequin, page )
 {
 	page = page | 0;
 
-	var ctx = buildContext( mannequin );
+	var ctx = BuildGumpContext( mannequin );
 
 	// key -> ctx field mapping (kills the giant switch)
 	var MAP = {
@@ -540,17 +579,20 @@ function OpenMannequinStatsGump( socket, mannequin, page )
 	// pager
 	gump.AddButton( 554, 10, ( page > 0 ) ? 0x15E3 : 0x15E1, 1, 0, ( page > 0 ) ? 7 : 6 );
 
-	var sections = filterSectionsForEra( (page > 0) ? PAGE2 : PAGE1 );
+	var sections = FilterSectionsForEra(( page > 0 ) ? mannequinPage2 : mannequinPage1 );
 
 	var y = 28;
 	for( var s = 0; s < sections.length; s++ )
+	{
 		y = section( gump, y, sections[s] );
+	}
 
 	gump.Send( socket );
 	gump.Free();
 }
 
-function moveMannequinGearToPlayerPack( mannequin, pUser )
+/** @type { ( mannequin: Character, pUser: Character ) => number } */
+function MannequinGearToPlayerPack( mannequin, pUser )
 {
     if( !ValidateObject( mannequin ) || !ValidateObject( pUser ))
 		return 0;
@@ -567,9 +609,9 @@ function moveMannequinGearToPlayerPack( mannequin, pUser )
     }
 
     var moved = 0;
-    for( var i = 0; i < RESIST_LAYERS.length; i++ )
+    for( var i = 0; i < resistLayers.length; i++ )
     {
-        var layer = RESIST_LAYERS[i];
+        var layer = resistLayers[i];
         var item = mannequin.FindItemLayer( layer );
         if( !ValidateObject( item ))
 			continue;
@@ -587,7 +629,8 @@ function moveMannequinGearToPlayerPack( mannequin, pUser )
     return moved;
 }
 
-function packCanFit( pUser, item )
+/** @type { ( pUser: Character, item: Item ) => boolean } */
+function CheckPack( pUser, item )
 {
 	if( !ValidateObject( pUser ) || !ValidateObject( item ))
 		return false;
@@ -608,7 +651,8 @@ function packCanFit( pUser, item )
 	return true;
 }
 
-function dropAtFeet( pUser, item )
+/** @type { ( pUser: Character, item: Item ) => void } */
+function DropAtFeet( pUser, item )
 {
 	if( !ValidateObject( pUser ) || !ValidateObject( item ))
 		return;
@@ -622,25 +666,27 @@ function dropAtFeet( pUser, item )
 	item.Refresh();
 }
 
-function placeInPackOrDrop( pUser, item )
+/** @type { ( pUser: Character, item: Item ) => { equipped: boolean, packed: boolean, dropped: boolean } } */
+function PlaceInPackOrDrop( pUser, item )
 {
 	if( !ValidateObject( pUser ) || !ValidateObject( item ))
-		return {packed:false, dropped:false};
+		return {equipped:false, packed:false, dropped:false};
 
 	var isPack = pUser.pack;
-	if( ValidateObject( isPack ) && packCanFit( pUser, item ))
+	if( ValidateObject( isPack ) && CheckPack( pUser, item ))
 	{
 		item.container = isPack;
 		item.PlaceInPack();
 		item.Refresh();
-		return {packed:true, dropped:false};
+		return {equipped:false, packed:true, dropped:false};
 	}
 
-	dropAtFeet( pUser, item );
-	return {packed:false, dropped:true};
+	DropAtFeet( pUser, item );
+	return {equipped:false, packed:false, dropped:true};
 }
 
-function equipOn( char, item, ownerForFallback )
+/** @type { ( char: Character, item: Item, ownerForFallback: Character ) => { equipped: boolean, packed: boolean, dropped: boolean } } */
+function EquipOn( char, item, ownerForFallback )
 {
 	if( !ValidateObject( char ) || !ValidateObject( item ))
 		return {equipped:false, packed:false, dropped:false};
@@ -654,21 +700,24 @@ function equipOn( char, item, ownerForFallback )
 		var onThatLayer = char.FindItemLayer( item.layer|0 );
 		ok = ( onThatLayer === item );
 	}
+
 	if( ok )
 		return {equipped:true, packed:false, dropped:false};
 
 	if( ValidateObject( ownerForFallback ))
-		return placeInPackOrDrop( ownerForFallback, item );
+		return PlaceInPackOrDrop( ownerForFallback, item );
 
 	return {equipped:false, packed:false, dropped:false};
 }
 
-function isSwapFail( res )
+/** @type { ( res: { equipped: boolean, packed: boolean, dropped: boolean } ) => number } */
+function SwapFail( res )
 {
 	return ( res && !res.equipped && ( res.packed || res.dropped )) ? 1 : 0;
 }
 
-function swapLayer( pUser, mannequin, layer )
+/** @type { ( pUser: Character, mannequin: Character, layer: number ) => { moved: number, failed: number } } */
+function SwapLayer( pUser, mannequin, layer )
 {
 	var u = pUser.FindItemLayer( layer );
 	var m = mannequin.FindItemLayer( layer );
@@ -680,14 +729,14 @@ function swapLayer( pUser, mannequin, layer )
 
 	if( ValidateObject( u ) && ValidateObject( m ))
 	{
-		placeInPackOrDrop( pUser, u );
+		PlaceInPackOrDrop( pUser, u );
 
-		var r1 = equipOn( pUser, m, pUser );
-		failed += isSwapFail( r1 );
+		var r1 = EquipOn( pUser, m, pUser );
+		failed += SwapFail( r1 );
 		moved++;
 
-		var r2 = equipOn( mannequin, u, pUser );
-		failed += isSwapFail( r2 );
+		var r2 = EquipOn( mannequin, u, pUser );
+		failed += SwapFail( r2 );
 		moved++;
 
 		return {moved:moved, failed:failed};
@@ -695,22 +744,23 @@ function swapLayer( pUser, mannequin, layer )
 
 	if( !ValidateObject( u ) && ValidateObject( m ))
 	{
-		var r3 = equipOn( pUser, m, pUser );
-		failed += isSwapFail( r3 ); moved++;
+		var r3 = EquipOn( pUser, m, pUser );
+		failed += SwapFail( r3 ); moved++;
 		return {moved:moved, failed:failed};
 	}
 
 	if( ValidateObject( u ) && !ValidateObject( m ))
 	{
-		var r4 = equipOn( mannequin, u, pUser );
-		failed += isSwapFail( r4 ); moved++;
+		var r4 = EquipOn( mannequin, u, pUser );
+		failed += SwapFail( r4 ); moved++;
 		return {moved:moved, failed:failed};
 	}
 
 	return {moved:0, failed:failed};
 }
 
-function swapHands( pUser, mannequin )
+/** @type { ( pUser: Character, mannequin: Character ) => { moved: number, failed: number } } */
+function SwapHands( pUser, mannequin )
 {
 	var moved = 0, failed = 0;
 
@@ -721,46 +771,47 @@ function swapHands( pUser, mannequin )
 
 	if( ValidateObject( userRight ))
 	{
-		placeInPackOrDrop( pUser, userRight );
+		PlaceInPackOrDrop( pUser, userRight );
 		moved++;
 	}
 
 	if( ValidateObject( userLeft ))
 	{ 
-		placeInPackOrDrop( pUser, userLeft );
+		PlaceInPackOrDrop( pUser, userLeft );
 		moved++;
 	}
 
 	if( ValidateObject( mannequinRight ))
 	{ 
-		var a = equipOn( pUser, mannequinRight, pUser );
-		failed += isSwapFail( a );
+		var a = EquipOn( pUser, mannequinRight, pUser );
+		failed += SwapFail( a );
 		moved++;
 	}
 
 	if( ValidateObject( mannequinLeft ))
 	{
-		var b = equipOn( pUser, mannequinLeft, pUser );
-		failed += isSwapFail( b );
+		var b = EquipOn( pUser, mannequinLeft, pUser );
+		failed += SwapFail( b );
 		moved++;
 	}
 
 	if( ValidateObject( userRight ))
 	{
-		var c = equipOn( mannequin, userRight, pUser );
-		failed += isSwapFail( c );
+		var c = EquipOn( mannequin, userRight, pUser );
+		failed += SwapFail( c );
 	}
 
 	if( ValidateObject( userLeft ))
 	{
-		var d = equipOn( mannequin, userLeft, pUser );
-		failed += isSwapFail( d );
+		var d = EquipOn( mannequin, userLeft, pUser );
+		failed += SwapFail( d );
 	}
 
 	return {moved:moved, failed:failed};
 }
 
-function switchMannequinClothing( pUser, mannequin )
+/** @type { ( pUser: Character, mannequin: Character ) => number } */
+function SwitchMannequinClothing( pUser, mannequin )
 {
 	if( !ValidateObject( pUser ) || !ValidateObject( mannequin ))
 		return 0;
@@ -776,16 +827,16 @@ function switchMannequinClothing( pUser, mannequin )
 	}
 
 	var totalMoved = 0, totalFailed = 0;
-	for( var i = 0; i < EQUIP_LAYERS.length; i++ )
+	for( var i = 0; i < equipLayers.length; i++ )
 	{
-		var isLayer = EQUIP_LAYERS[i];
+		var isLayer = equipLayers[i];
 		if( isLayer === 0x01 || isLayer === 0x02 ) continue;
-		var r = swapLayer( pUser, mannequin, isLayer );
+		var r = SwapLayer( pUser, mannequin, isLayer );
 		totalMoved += r.moved;
 		totalFailed += r.failed;
 	}
 
-	var hr = swapHands( pUser, mannequin );
+	var hr = SwapHands( pUser, mannequin );
 	totalMoved += hr.moved;
 	totalFailed += hr.failed;
 
@@ -802,20 +853,21 @@ function switchMannequinClothing( pUser, mannequin )
 	return totalMoved;
 }
 
-function setRaceGender(  mannequin, race, gender, pUser )
+/** @type { ( mannequin: Character, race: number | null, gender: number | boolean | null, pUser: Character ) => void } */
+function SeRaceGender(  mannequin, race, gender, pUser )
 {
     race = ( race == null
         ? ( isFinite( mannequin.race ) ? ( mannequin.race - 0 )
-            : ( mannequin.id===0x0190||mannequin.id===0x0191 )?0
-            : ( mannequin.id===0x025D||mannequin.id===0x025E )?1
-            : ( mannequin.id===0x029A||mannequin.id===0x029B )?2
+            : ( mannequin.id==0x0190||mannequin.id==0x0191 )?0
+            : ( mannequin.id==0x025D||mannequin.id==0x025E )?1
+            : ( mannequin.id==0x029A||mannequin.id==0x029B )?2
             : 0 )
         : ( race - 0 ));
 
     gender = gender ? 1 : 0;
 
-    if(( mannequin.race === 2 ) || ( race === 2 ))
-        moveMannequinGearToPlayerPack( mannequin, pUser );
+    if(( mannequin.race == 2 ) || ( race == 2 ))
+        MannequinGearToPlayerPack( mannequin, pUser );
 
     mannequin.race = race;
     mannequin.gender = gender;
@@ -828,7 +880,7 @@ function setRaceGender(  mannequin, race, gender, pUser )
 function onGumpPress( pSock, iButton, gumpData )
 {
 	var pUser = pSock.currentChar;
-	var mannequinSer = parseInt( pUser.GetTempTag( "MANN_STATS_MANN" ));
+	var mannequinSer = pUser.GetTempTag( "mannequinStats" );
 	var mannequin = CalcCharFromSer( mannequinSer );
 	if( !ValidateObject( pUser )) 
 	{
@@ -839,23 +891,23 @@ function onGumpPress( pSock, iButton, gumpData )
 	{
 		case 0: break;
 		case 1:
-			setRaceGender( mannequin, 0, mannequin.gender, pUser );
+			SeRaceGender( mannequin, 0, mannequin.gender, pUser );
 			CustomizeMannequinBody( pSock );
 			break; // Human
 		case 2:
-			setRaceGender( mannequin, 1, mannequin.gender, pUser );
+			SeRaceGender( mannequin, 1, mannequin.gender, pUser );
 			CustomizeMannequinBody( pSock );
 			break; // Elf
 		case 3:
-			setRaceGender( mannequin, 2, mannequin.gender, pUser );
+			SeRaceGender( mannequin, 2, mannequin.gender, pUser );
 			CustomizeMannequinBody( pSock );
 			break; // Gargoyle
 		case 4:
-			setRaceGender( mannequin, null, 0, pUser );
+			SeRaceGender( mannequin, null, 0, pUser );
 			CustomizeMannequinBody( pSock );
 			break;   // Male
 		case 5:
-			setRaceGender( mannequin, null, 1, pUser );
+			SeRaceGender( mannequin, null, 1, pUser );
 			CustomizeMannequinBody( pSock );
 			break;   // Female
 		case 6:
@@ -866,7 +918,7 @@ function onGumpPress( pSock, iButton, gumpData )
 		case 8:
 			{
 				var raw = gumpData.getEdit( 0 );
-				var res = validateDescription( raw, true );
+				var res = CheckDescription( raw, true );
 
 				if( res.cleared )
 				{
@@ -893,6 +945,7 @@ function onGumpPress( pSock, iButton, gumpData )
 	}
 }
 
+/** @type { ( socket: Socket, targChar: Character ) => void } */
 function OpenPaperdoll( socket, targChar )
 {
     // Create packet to open a paperdoll
@@ -906,7 +959,8 @@ function OpenPaperdoll( socket, targChar )
     pStream.Free();
 }
 
-function validateDescription( raw, allowEmpty )
+/** @type { ( raw: string, allowEmpty: boolean ) => { ok: boolean, value?: string, cleared?: boolean, reason?: string } } */
+function CheckDescription( raw, allowEmpty )
 {
 	var DISALLOWED_PATTERNS = [
 		/(https?:\/\/|http\b|www\.|\.[a-z]{2,})/i,   // links
