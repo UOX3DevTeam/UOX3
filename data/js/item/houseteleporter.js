@@ -9,9 +9,10 @@ const teleporterIDReq = [0x40BB, 0x574A];
 const teleporterSectionIDReq = "house_teleporter";
 const coOwnHousesOnSameAccount = GetServerSetting( "CoOwnHousesOnSameAccount" );
 
+/** @type { ( item: Item | BaseObject ) => boolean } */
 function IsTeleporterItem( item )
 {
-	if( !ValidateObject( item ) || !item.isItem )
+	if( !item  || !item.isItem )
 		return false;
 
 	// allow by sectionid
@@ -27,6 +28,7 @@ function IsTeleporterItem( item )
 	return false;
 }
 
+/** @type { ( mode: number ) => string } */
 function SecurityName( mode )
 {
 	if( mode == 1 )
@@ -36,6 +38,7 @@ function SecurityName( mode )
 	return "Owner/Co-Owners";
 }
 
+/** @type { ( pChar: Character, teleItem: Item ) => boolean } */
 function CanManageTeleporter( pChar, teleItem )
 {
 	// Who can change security setting?
@@ -65,6 +68,7 @@ function CanManageTeleporter( pChar, teleItem )
 	return false;
 }
 
+/** @type { ( pChar: Character, teleItem: Item ) => boolean } */
 function CanUseHouseTeleporter( pChar, teleItem )
 {
 	// Enforces configured security
@@ -383,7 +387,7 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 function onUseChecked( pUser, iUsed )
 {
 	var pSocket = pUser.socket;
-	if( !pSocket ) 
+	if( pSocket == null ) 
 		return false;
 
 	if( !IsTeleporterItem( iUsed ))
@@ -555,6 +559,7 @@ function onCallback1( socket, target )
 	teleporter.Refresh();
 }
 
+/** @type { ( tile: Item, keepSer: number ) => void } */
 function UnlinkOther( tile, keepSer )
 {
 	var old = tile.GetTag( "LinkSer");
@@ -587,10 +592,13 @@ function onCollide( trgSock, pColliding, objCollidedWith )
 		return false;
 	}
 
-	if( !IsInBuilding( objCollidedWith.x, objCollidedWith.y, objCollidedWith.z, objCollidedWith.worldnumber, objCollidedWith.instanceID, true ))
+	var iMulti = FindMulti( objCollidedWith.x, objCollidedWith.y, objCollidedWith.z, objCollidedWith.worldnumber, objCollidedWith.instanceID );
+	var insideHouse = ( ValidateObject( iMulti ) && iMulti.IsInMulti( objCollidedWith ) );
+
+	if( !insideHouse )
 	{
 		if( trgSock )
-			trgSock.SysMessage( GetDictionaryEntry( 30621, trgSock.language )); // This must be placed inside a house.
+			trgSock.SysMessage( GetDictionaryEntry( 30621, trgSock.language ) ); // This must be placed inside a house.
 		return false;
 	}
 
