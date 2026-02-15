@@ -1,4 +1,4 @@
-let POWER_RARITY_BY_BONUS = {
+const powerRarityByBonus = {
 	5:  "wonderous",
 	10: "exalted",
 	15: "mythical",
@@ -6,7 +6,7 @@ let POWER_RARITY_BY_BONUS = {
 	25: "ultimate"
 };
 
-let POWER_SKILL_DISPLAY = {
+const powerSkillDisplay = {
 	swordsmanship:    "Swordsmanship",
 	fencing:          "Fencing",
 	macefighting:     "Mace Fighting",
@@ -49,20 +49,22 @@ let POWER_SKILL_DISPLAY = {
 	return cap;
 }*/
 
-function globalSingleSkillCap(  )
+/** @type { () => number } */
+function GlobalSingleSkillCap()
 {
 	// Always allow up to 120.0 with power scrolls
 	return 1200;
 }
 
-function skillValue( capValue )
+/** @type { ( capValue: number ) => string } */
+function SkillValue( capValue )
 {
 	var numValue = capValue / 10;
 	return numValue.toFixed( 1 );
 }
 
-// Read scroll info from tags
-function scrollDataFromTags( iScroll )
+/** @type { ( iScroll: Item ) => { isValid: boolean, skillProp: string, bonus: number } } */
+function ScrollDataFromTags( iScroll )
 {
 	var result = {
 		isValid: false,
@@ -89,9 +91,10 @@ function scrollDataFromTags( iScroll )
 	return result;
 }
 
-function buildPowerScrollName( iScroll )
+/** @type { ( iScroll: Item ) => string } */
+function BuildPowerScrollName( iScroll )
 {
-	var data = scrollDataFromTags( iScroll );
+	var data = ScrollDataFromTags( iScroll );
 
 	if( !data.isValid )
 		return iScroll.name;
@@ -99,12 +102,12 @@ function buildPowerScrollName( iScroll )
 	var skillProp = data.skillProp;
 	var bonus = data.bonus;
 
-	var rarity = POWER_RARITY_BY_BONUS[bonus];
+	var rarity = powerRarityByBonus[bonus];
 	if( rarity === "" )
 		return iScroll.name;
 
 	// Pretty skill name
-	var skillPretty = POWER_SKILL_DISPLAY[skillProp] || skillProp;
+	var skillPretty = powerSkillDisplay[skillProp] || skillProp;
 
 	// 100 + bonus -> [105], [110], [115], [120]
 	var maxValue = 100 + bonus;
@@ -116,16 +119,17 @@ function buildPowerScrollName( iScroll )
 	return newName;
 }
 
-function applyPowerScroll( pUser, iScroll )
+/** @type { ( pUser: Character, iScroll: Item ) => number } */
+function ApplyPowerScroll( pUser, iScroll )
 {
 	if( !ValidateObject( pUser ) || !ValidateObject( iScroll ))
 		return 0;
 
 	var pSocket = pUser.socket;
-	if( !pSocket )
+	if( pSocket == null )
 		return 0;
 
-	var data = scrollDataFromTags( iScroll );
+	var data = ScrollDataFromTags( iScroll );
 	if( !data.isValid )
 	{
 		pSocket.SysMessage( "This Scroll of Power is not configured correctly." );
@@ -148,7 +152,7 @@ function applyPowerScroll( pUser, iScroll )
 		return 0;
 	}
 
-	var globalSingleCap = globalSingleSkillCap();
+	var globalSingleCap = GlobalSingleSkillCap();
 
 	var currentCap = caps[skillProp] | 0;
 	if( currentCap <= 0 )
@@ -163,7 +167,7 @@ function applyPowerScroll( pUser, iScroll )
 	// OSI behavior: cannot use equal or lesser scroll if you already have one
 	if( currentCap >= desiredCap )
 	{
-		var skillNamePretty = POWER_SKILL_DISPLAY[skillProp] || skillProp;
+		var skillNamePretty = powerSkillDisplay[skillProp] || skillProp;
 		pSocket.SysMessage( "Your " + skillNamePretty + " is too high for this power scroll." );
 		return 0;
 	}
@@ -177,8 +181,8 @@ function applyPowerScroll( pUser, iScroll )
 		skillNamePretty = skillProp.charAt( 0 ).toUpperCase(  ) + skillProp.substr( 1 );
 	}
 
-	var oldCapStr = skillValue( currentCap );
-	var newCapStr = skillValue( desiredCap );
+	var oldCapStr = SkillValue( currentCap );
+	var newCapStr = SkillValue( desiredCap );
 
 	pSocket.SysMessage( "You feel a surge of magic as the scroll enhances your " + skillNamePretty );
 	pSocket.SysMessage( "Maximum " + skillNamePretty + " skill raised from " + oldCapStr + " to " + newCapStr + "." );
@@ -193,18 +197,18 @@ function applyPowerScroll( pUser, iScroll )
 }
 
 /** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
-function onCreateDFN( iCreated )
+function onCreateDFN( iCreated, objType )
 {
 	if( !ValidateObject( iCreated ))
 		return;
 
 	// Check if this item actually has powerSkill/powerBonus
-	var data = scrollDataFromTags( iCreated );
+	var data = ScrollDataFromTags( iCreated );
 	if( !data.isValid )
 		return;
 
 	// Set the OSI-style name
-	iCreated.name = buildPowerScrollName( iCreated );
+	iCreated.name = BuildPowerScrollName( iCreated );
 }
 
 
@@ -220,11 +224,12 @@ function onUseChecked( pUser, iUsed )
 		return false;
 
 	pSocket.tempObj = iUsed;
-	powerScrollGump( pSocket, iUsed );
+	PowerScrollGump( pSocket, iUsed );
 	return false;
 }
 
-function powerScrollGump( pSocket, iScroll )
+/** @type { ( pSocket: Socket, iScroll: Item ) => void } */
+function PowerScrollGump( pSocket, iScroll )
 {
 	var powerScrollGump = new Gump;
 	powerScrollGump.AddPage( 0 );
@@ -267,7 +272,7 @@ function powerScrollGump( pSocket, iScroll )
 
 	// get skill name from tag
 	var skillProp = iScroll.GetTag( "powerSkill" );
-	var skillPretty = POWER_SKILL_DISPLAY[skillProp] || skillProp;
+	var skillPretty = powerSkillDisplay[skillProp] || skillProp;
 
 	// This is the important line:
 	// Use AddXMFHTMLTok ( NOT AddXMFHTMLGumpColor ) to pass the skill name
@@ -289,6 +294,6 @@ function onGumpPress( pSocket, myButton, gumpData )
 	switch( myButton )
 	{
 		case 0: break;
-		case 1:	applyPowerScroll( pUser, iUsed );
+		case 1:	ApplyPowerScroll( pUser, iUsed );
 	}
 }
