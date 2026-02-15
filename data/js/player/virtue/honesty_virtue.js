@@ -4,16 +4,9 @@
 
 const honestyVirtueEnabled = GetServerSetting( "HonestyVirtueEnabled" );
 
-const VirtueName = VirtueName || {
-	Humility:     0,
-	Sacrifice:    1,
-	Compassion:   2,
-	Spirituality: 3,
-	Valor:        4,
-	Honor:        5,
-	Justice:      6,
-	Honesty:      7
-};
+var virtueEnums = TriggerEvent( 8003, "Virtue_GetEnums" );
+var VirtueName  = virtueEnums ? virtueEnums.VirtueName  : null;
+var VirtueLevel = virtueEnums ? virtueEnums.VirtueLevel : null;
 
 const honestyItemLifeTimeMS = 3 * 60 * 60 * 1000;
 const honestyGainAnyTown = 30;

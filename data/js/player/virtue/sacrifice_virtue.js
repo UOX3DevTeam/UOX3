@@ -1,27 +1,13 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
 
-var VirtueName = VirtueName || {
-	Humility:     0,
-	Sacrifice:    1,
-	Compassion:   2,
-	Spirituality: 3,
-	Valor:        4,
-	Honor:        5,
-	Justice:      6,
-	Honesty:      7
-};
+var virtueEnums = TriggerEvent( 8003, "Virtue_GetEnums" );
+var VirtueName  = virtueEnums ? virtueEnums.VirtueName  : null;
+var VirtueLevel = virtueEnums ? virtueEnums.VirtueLevel : null;
 
-var VirtueLevel = VirtueLevel || {
-	None:     0,
-	Seeker:   1,
-	Follower: 2,
-	Knight:   3
-};
-
-var Sacrifice_GainDelayMs = 24 * 60 * 60 * 1000;      // 1 day
-var Sacrifice_LossDelayMs = 7 * Sacrifice_GainDelayMs; // 7 days
-var Sacrifice_LossAmount  = 500;                      // Atrophy amount when decay kicks in
+const Sacrifice_GainDelayMs = 24 * 60 * 60 * 1000;      // 1 day
+const Sacrifice_LossDelayMs = 7 * Sacrifice_GainDelayMs; // 7 days
+const Sacrifice_LossAmount  = 500;                      // Atrophy amount when decay kicks in
 
 /** @type { ( pUser: Character ) => void } */
 function Sacrifice_OnVirtueUsed( pUser )

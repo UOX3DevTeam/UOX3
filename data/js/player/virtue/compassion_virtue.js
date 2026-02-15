@@ -32,38 +32,24 @@
 //   TriggerEvent( 8009, "Compassion_AwardEscort", pChar, isPrisonerQuest, isNewHavenEscort );
 //
 
-
-// Reuse shared enums if already defined
-var VirtueName = VirtueName || {
-	Humility:     0,
-	Sacrifice:    1,
-	Compassion:   2,
-	Spirituality: 3,
-	Valor:        4,
-	Honor:        5,
-	Justice:      6,
-	Honesty:      7
-};
-
-var VirtueLevel = VirtueLevel || {
-	None:     0,
-	Seeker:   1,
-	Follower: 2,
-	Knight:   3
-};
+var virtueEnums = TriggerEvent( 8003, "Virtue_GetEnums" );
+var VirtueName  = virtueEnums ? virtueEnums.VirtueName  : null;
+var VirtueLevel = virtueEnums ? virtueEnums.VirtueLevel : null;
 
 // How much Compassion we consume per resurrection use.
 // You can tweak this to feel right.
-var Compassion_UseCost = 400;
+const Compassion_UseCost = 400;
 
 /** @type { ( pChar: Character ) => boolean } */
 function Compassion_IsYoung( pChar )
 {
+	const youngPlayerSystem = GetServerSetting( "YoungPlayerSystem" );
+
 	if( !ValidateObject( pChar ))
 		return false;
 
 	// If the Young system is disabled, just return false
-	if( typeof youngPlayerSystem !== "undefined" && !youngPlayerSystem )
+	if( !youngPlayerSystem )
 		return false;
 
 	if( pChar.account && pChar.account.isYoung )

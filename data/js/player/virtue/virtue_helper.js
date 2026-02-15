@@ -4,7 +4,6 @@
 // Virtue helper for UOX3
 // Centralizes virtue storage and logic so all scripts use the same code.
 
-// Enum-ish indices for virtues
 var VirtueName = {
 	Humility:     0,
 	Sacrifice:    1,
@@ -22,6 +21,12 @@ var VirtueLevel = {
 	Follower: 2,
 	Knight:   3
 };
+
+/** @returns {{ VirtueName: any, VirtueLevel: any }} */
+function Virtue_GetEnums()
+{
+	return { VirtueName: VirtueName, VirtueLevel: VirtueLevel };
+}
 
 /** @type { ( idx: number ) => number } */
 function Virtue_ClampIndex( idx )
@@ -67,44 +72,27 @@ function Virtue_SetValue( pChar, virtueIndex, value )
 function Virtue_ReadAll( pChar )
 {
 	var vals = [];
+	for( var i = 0; i < 8; i++ )
+		vals[i] = 0;
+
 	if( !ValidateObject( pChar ))
-	{
-		for( var i = 0; i < 8; i++ )
-			vals[i] = 0;
 		return vals;
-	}
 
-	// New unified storage: "v0,v1,v2,v3,v4,v5,v6,v7"
+	// Unified storage: "v0,v1,v2,v3,v4,v5,v6,v7"
 	var raw = pChar.GetTag( "VirtuePoints" );
+	if( !raw || raw.length <= 0 )
+		return vals;
 
-	if( raw && raw.length > 0 )
-	{
-		var parts = raw.split( "," );
+	var parts = raw.split( "," );
 
-		for( var i = 0; i < 8; i++ )
-		{
-			var v = 0;
-			if( i < parts.length )
-			{
-				var n = Number( parts[i] );
-				if( !isNaN( n ) && n > 0 )
-					v = n;
-			}
-			vals[i] = v;
-		}
-	}
-	else
+	for( var i = 0; i < 8; i++ )
 	{
-		// Backwards compat: read old virtue0..virtue7 tags if present
-		for( var i = 0; i < 8; i++ )
-		{
-			var tagName = "virtue" + i;
-			var r = pChar.GetTag( tagName );
-			var n = Number( r );
-			if( isNaN( n ) || n < 0 )
-				n = 0;
+		if( i >= parts.length )
+			break;
+
+		var n = Number( parts[i] );
+		if( !isNaN( n ) && n > 0 )
 			vals[i] = n;
-		}
 	}
 
 	return vals;
@@ -131,13 +119,7 @@ function Virtue_WriteAll( pChar, vals )
 	}
 
 	// Single tag with comma separated list
-	pChar.SetTag( "VirtuePoints", parts.join( "," ) );
-
-	// Optional: keep old per-virtue tags in sync while you migrate
-	for( var j = 0; j < 8; j++ )
-	{
-		pChar.SetTag( "virtue" + j, Number( parts[j] ) || 0 );
-	}
+	pChar.SetTag( "VirtuePoints", parts.join( "," ));
 }
 
 /** @type { ( virtueIndex: number ) => number } */
@@ -298,7 +280,7 @@ function Virtue_Award( pChar, virtueIndex, amount )
 
 	// If you add a VirtueShield later, modify amount here.
 
-	if( (current + amount) >= maxAmount )
+	if(( current + amount ) >= maxAmount )
 		amount = maxAmount - current;
 
 	var oldLevel = Virtue_GetLevel( pChar, virtueIndex );
@@ -307,7 +289,7 @@ function Virtue_Award( pChar, virtueIndex, amount )
 	Virtue_SetValue( pChar, virtueIndex, newValue );
 
 	var newLevel = Virtue_GetLevel( pChar, virtueIndex );
-	var gained   = (newLevel !== oldLevel);
+	var gained   = ( newLevel !== oldLevel );
 
 	result.success    = true;
 	result.gainedPath = gained;
@@ -331,7 +313,7 @@ function Virtue_Atrophy( pChar, virtueIndex, amount )
 	virtueIndex = Virtue_ClampIndex( virtueIndex );
 
 	var current = Virtue_GetValue( pChar, virtueIndex );
-	var hadAny  = (current > 0);
+	var hadAny  = ( current > 0 );
 	var newVal  = current - amount;
 
 	if( newVal < 0 )

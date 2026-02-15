@@ -1,23 +1,9 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
 
-var VirtueName = VirtueName || {
-	Humility:     0,
-	Sacrifice:    1,
-	Compassion:   2,
-	Spirituality: 3,
-	Valor:        4,
-	Honor:        5,
-	Justice:      6,
-	Honesty:      7
-};
-
-var VirtueLevel = VirtueLevel || {
-	None:     0,
-	Seeker:   1,
-	Follower: 2,
-	Knight:   3
-};
+var virtueEnums = TriggerEvent( 8003, "Virtue_GetEnums" );
+var VirtueName  = virtueEnums ? virtueEnums.VirtueName  : null;
+var VirtueLevel = virtueEnums ? virtueEnums.VirtueLevel : null;
 
 /** @type { ( pUser: Character ) => void } */
 function Humility_StartPetTarget( pUser )
