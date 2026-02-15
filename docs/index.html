@@ -27,7 +27,7 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 12. December, 2025</small></p>
+	<p style="margin:0"><small>Last Updated: 7. February, 2026</small></p>
 	<p style="margin:0"><small>Written for UOX3 Version: v0.99.7c</small></p>
 </div>
 
@@ -345,6 +345,7 @@ packitem=0x0f8d,30
 							<li><strong>Advancement Gates</strong> - Shard admins can setup "advancement gates" which sets up players who step through them with specific skills, stats and equipment, and can be used to give players a head start or to setup predefined "classes" beyond what the UO client's character creation options allow for.</li>
 							<li><strong>Persecution</strong> - Getting killed on an UOX3 shard is not the end. Ghosts can fight back! By entering combat mode, ghosts can cause trouble for their killers by draining their mana at opportune moments!</li>
 							<li><strong>Ambient Footstep Sounds</strong> - Ever noticed how in regular UO, the footsteps of your character always sound the same, no matter what kind of surface you walk on? Enable ambient footstep sounds in UOX3, and you'll be walking on wood, gravel, stone and swamp in no time!</li>
+							<li><strong>Event Manager</strong> - System that allows scripts to register and schedule timed events, whether one-time, interval or recurring ones. Can be used for things like scheduled holiday events or bonus skill-gain weekends.</li>
 						</ul>
 					</div>
 					<!--<h4>UO-Specific Gameplay Features</h4>-->
@@ -4151,6 +4152,14 @@ packitem=0x0f8d,30
 							Parameters: <span class="hl"><em>(d)</em></span></p>
 						</div>
 
+						<input type="checkbox" id="spoiler_cmd_showspawnregions">
+						<label for="spoiler_cmd_showspawnregions">showspawnregions <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>Visualizes (for a short time) the boundaries of all spawn regions nearby (~20 tiles) the targeted location.</p>
+							<p>Command: <span class="hl">'showspawnregions</span><br>
+							Parameters: <span class="hl"><em>(nothing)</em></span></p>
+						</div>
+
 						<input type="checkbox" id="spoiler_cmd_showtime">
 						<label for="spoiler_cmd_showtime">showTime <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
@@ -4183,12 +4192,28 @@ packitem=0x0f8d,30
 							Parameters: <span class="hl"><em>(nothing)</em></span></p>
 						</div>
 
+						<input type="checkbox" id="spoiler_cmd_spawnadmin">
+						<label for="spoiler_cmd_spawnadmin">spawnadmin <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>Displays a gump of all item-based spawners on your shard.</p>
+							<p>Command: <span class="hl">'spawnadmin</span><br>
+							Parameters: <span class="hl"><em>(nothing)</em></span></p>
+						</div>
+
 						<input type="checkbox" id="spoiler_cmd_spawnkill">
 						<label for="spoiler_cmd_spawnkill">spawnKill <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
 							<p>Kills all characters spawned by specified spawnregion.</p>
 							<p>Command: <span class="hl">'spawnKill</span><br>
 							Parameters: <span class="hl"><em>(d)</em></span></p>
+						</div>
+
+						<input type="checkbox" id="spoiler_cmd_spawnregionadmin">
+						<label for="spoiler_cmd_spawnregionadmin">spawnregionadmin <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>Displays a gump that lists all spawn regions on your shard in a filterable list.</p>
+							<p>Command: <span class="hl">'spawnregionadmin</span><br>
+							Parameters: <span class="hl"><em>(nothing)</em></span></p>
 						</div>
 
 						<input type="checkbox" id="spoiler_cmd_squelch">
@@ -5845,6 +5870,232 @@ packitem=0x0f8d,30
 					<label for="spoiler_language_list">Socket Language List <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<span class="hl">0</span> - ZERO<br>					    <span class="hl">1</span> - UT_ARA<br>					    <span class="hl">2</span> - UT_ARI<br>					    <span class="hl">3</span> - UT_ARE<br>					    <span class="hl">4</span> - UT_ARL<br>					    <span class="hl">5</span> - UT_ARG<br>					    <span class="hl">6</span> - UT_ARM<br>					    <span class="hl">7</span> - UT_ART<br>					    <span class="hl">8</span> - UT_ARO<br>					    <span class="hl">9</span> - UT_ARY<br>					    <span class="hl">10</span> - UT_ARS<br>					    <span class="hl">11</span> - UT_ARJ<br>					    <span class="hl">12</span> - UT_ARB<br>					    <span class="hl">13</span> - UT_ARK<br>					    <span class="hl">14</span> - UT_ARU<br>					    <span class="hl">15</span> - UT_ARH<br>					    <span class="hl">16</span> - UT_ARQ<br>					    <span class="hl">17</span> - UT_BGR<br>					    <span class="hl">18</span> - UT_CAT<br>					    <span class="hl">19</span> - UT_CHT<br>					    <span class="hl">20</span> - UT_CHS<br>					    <span class="hl">21</span> - UT_ZHH<br>					    <span class="hl">22</span> - UT_ZHI<br>					    <span class="hl">23</span> - UT_ZHM<br>					    <span class="hl">24</span> - UT_CSY<br>					    <span class="hl">25</span> - UT_DAN<br>					    <span class="hl">26</span> - UT_DEU<br>					    <span class="hl">27</span> - UT_DES<br>					    <span class="hl">28</span> - UT_DEA<br>					    <span class="hl">29</span> - UT_DEL<br>					    <span class="hl">30</span> - UT_DEC<br>					    <span class="hl">31</span> - UT_ELL<br>					    <span class="hl">32</span> - UT_ENU<br>					    <span class="hl">33</span> - UT_ENG<br>					    <span class="hl">34</span> - UT_ENA<br>					    <span class="hl">35</span> - UT_ENC<br>					    <span class="hl">36</span> - UT_ENZ<br>					    <span class="hl">37</span> - UT_ENI<br>					    <span class="hl">38</span> - UT_ENS<br>					    <span class="hl">39</span> - UT_ENJ<br>					    <span class="hl">40</span> - UT_ENB<br>					    <span class="hl">41</span> - UT_ENL<br>					    <span class="hl">42</span> - UT_ENT<br>					    <span class="hl">43</span> - UT_ENW<br>					    <span class="hl">44</span> - UT_ENP<br>					    <span class="hl">45</span> - UT_ESP<br>					    <span class="hl">46</span> - UT_ESM<br>					    <span class="hl">47</span> - UT_ESN<br>					    <span class="hl">48</span> - UT_ESG<br>					    <span class="hl">49</span> - UT_ESC<br>					    <span class="hl">50</span> - UT_ESA<br>					    <span class="hl">51</span> - UT_ESD<br>					    <span class="hl">52</span> - UT_ESV<br>					    <span class="hl">53</span> - UT_ESO<br>					    <span class="hl">54</span> - UT_ESR<br>					    <span class="hl">55</span> - UT_ESS<br>					    <span class="hl">56</span> - UT_ESF<br>					    <span class="hl">57</span> - UT_ESL<br>					    <span class="hl">58</span> - UT_ESY<br>					    <span class="hl">59</span> - UT_ESZ<br>					    <span class="hl">60</span> - UT_ESB<br>					    <span class="hl">61</span> - UT_ESE<br>					    <span class="hl">62</span> - UT_ESH<br>					    <span class="hl">63</span> - UT_ESI<br>					    <span class="hl">64</span> - UT_ESU<br>					    <span class="hl">65</span> - UT_FIN<br>					    <span class="hl">66</span> - UT_FRA<br>					    <span class="hl">67</span> - UT_FRB<br>					    <span class="hl">68</span> - UT_FRC<br>					    <span class="hl">69</span> - UT_FRS<br>					    <span class="hl">70</span> - UT_FRL<br>					    <span class="hl">71</span> - UT_FRM<br>					    <span class="hl">72</span> - UT_HEB<br>					    <span class="hl">73</span> - UT_HUN<br>					    <span class="hl">74</span> - UT_ISL<br>					    <span class="hl">75</span> - UT_ITA<br>					    <span class="hl">76</span> - UT_ITS<br>					    <span class="hl">77</span> - UT_JPN<br>					    <span class="hl">78</span> - UT_KOR<br>					    <span class="hl">79</span> - UT_NLD<br>					    <span class="hl">80</span> - UT_NLB<br>					    <span class="hl">81</span> - UT_NOR<br>					    <span class="hl">82</span> - UT_NON<br>					    <span class="hl">83</span> - UT_PLK<br>					    <span class="hl">84</span> - UT_PTB<br>					    <span class="hl">85</span> - UT_PTG<br>					    <span class="hl">86</span> - UT_ROM<br>					    <span class="hl">87</span> - UT_RUS<br>					    <span class="hl">88</span> - UT_HRV<br>					    <span class="hl">89</span> - UT_SRL<br>					    <span class="hl">90</span> - UT_SRB<br>					    <span class="hl">91</span> - UT_SKY<br>					    <span class="hl">92</span> - UT_SQI<br>					    <span class="hl">93</span> - UT_SVE<br>					    <span class="hl">94</span> - UT_SVF<br>					    <span class="hl">95</span> - UT_THA<br>					    <span class="hl">96</span> - UT_TRK<br>					    <span class="hl">97</span> - UT_URP<br>					    <span class="hl">98</span> - UT_IND<br>					    <span class="hl">99</span> - UT_UKR<br>					    <span class="hl">100</span> - UT_BEL<br>					    <span class="hl">101</span> - UT_SLV<br>					    <span class="hl">102</span> - UT_ETI<br>					    <span class="hl">103</span> - UT_LVI<br>					    <span class="hl">104</span> - UT_LTH<br>					    <span class="hl">105</span> - UT_LTC<br>					    <span class="hl">106</span> - UT_FAR<br>					    <span class="hl">107</span> - UT_VIT<br>					    <span class="hl">108</span> - UT_HYE<br>					    <span class="hl">109</span> - UT_AZE<br>					    <span class="hl">110</span> - UT_EUQ<br>					    <span class="hl">111</span> - UT_MKI<br>					    <span class="hl">112</span> - UT_AFK<br>					    <span class="hl">113</span> - UT_KAT<br>					    <span class="hl">114</span> - UT_FOS<br>					    <span class="hl">115</span> - UT_HIN<br>					    <span class="hl">116</span> - UT_MSL<br>					    <span class="hl">117</span> - UT_MSB<br>					    <span class="hl">118</span> - UT_KAZ<br>					    <span class="hl">119</span> - UT_SWK<br>					    <span class="hl">120</span> - UT_UZB<br>					    <span class="hl">121</span> - UT_TAT<br>					    <span class="hl">122</span> - UT_BEN<br>					    <span class="hl">123</span> - UT_PAN<br>					    <span class="hl">124</span> - UT_GUJ<br>					    <span class="hl">125</span> - UT_ORI<br>					    <span class="hl">126</span> - UT_TAM<br>					    <span class="hl">127</span> - UT_TEL<br>					    <span class="hl">128</span> - UT_KAN<br>					    <span class="hl">129</span> - UT_MAL<br>					    <span class="hl">130</span> - UT_ASM<br>					    <span class="hl">131</span> - UT_MAR<br>					    <span class="hl">132</span> - UT_SAN<br>					    <span class="hl">133</span> - UT_KOK<br>					</div>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#uox3EventManager" id="uox3EventManager"><span>Event Manager</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<p>The <strong>Event Manager</strong> system can be enabled/disabled via the <span class="hl">EVENTMANAGERSYSTEM=0/1</span> setting under <strong>[settings]</strong> in uox.ini, and when enabled will <strong>listen for registration of timed events</strong> from other scripts and then <strong>trigger them</strong> at the appropriate time.</p>
+					<p>This is a fully scripted system that can be found in <em>js/server/event_manager.js</em>, which <strong>automatically initializes on shard startup</strong> via the onScriptLoad() JS Event. During initialization it spawns an <strong>event manager object</strong> (or reuses existing object if it exists) which acts as a container for the system's "heartbeat", a timer that regularly checks the list of registered events and makes sure they are triggered when they're supposed to.</p>
+					<p>If no events have been registered, the Event Manager <strong>pauses its heartbeat timer and enters standby mode</strong>, in which it remains until another event is registered.</p>
+					<h3>Registering an Event</h3>
+					<p>Other scripts can register events by using the <span class="hl">TriggerEvent</span> function to call the <strong>RegisterEvent</strong> function in the Event Manager script (script ID 5). An <strong>event config object</strong> must be provided as a parameter in TriggerEvent, containing all the required event details such as an event ID (unique per script), script ID/callback functions for starting/ending the events, scheduling details, etc.</p>
+					<input type="checkbox" id="spoiler_event_manager_options">
+					<label for="spoiler_event_manager_options">Full Event Configuration options: <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<ul>
+							<li><span class="hl">uniqueEventID</span> - <strong>(Required)</strong> Unique event ID (per script)</li>
+							<li><span class="hl">callbackScriptID</span> - <strong>(Required)</strong> Script to callback when event starts/ends</li>
+							<li><span class="hl">callbackFuncStart</span> - <strong>(Required)</strong> Function to call when event starts</li>
+							<li><span class="hl">callbackFuncEnd</span> - Function to call when event ends</li>
+							<li><span class="hl">name</span> - Event name</li>
+							<li><span class="hl">desc</span> - Brief event description</li>
+							<li><span class="hl">category</span> - Event category for allowing filtering of events</li>
+							<li><span class="hl">argsStart</span> - Optional object with arguments passed to callback function on event start</li>
+							<li><span class="hl">argsEnd</span> - Optional object with arguments passed to callback function on event end</li>
+							<li><span class="hl">type</span> - <strong>(Required)</strong> Scheduling type for event</li>
+							<ul>
+								<li><span class="hl">"ONCE"</span> - Runs a single time at specified date and time</li>
+								<li><span class="hl">"INTERVAL"</span> - Runs repeatedly every X ms as defined in <strong>interval</strong> setting. Optionally uses <strong>maxTriggerCount</strong> to limit amount of times to fire.</li>
+								<li><span class="hl">"RECURRING"</span> - Runs at a specific time on specific day(s) of the week.</li>
+							</ul>
+							<li><span class="hl">duration</span> - Optional argument used to determine how long event lasts, and ultimately when to call callbackFuncEnd</li>
+							<li><span class="hl">date</span> - (For ONCE) Timestamp (in ms) for when to trigger event</li>
+							<li><span class="hl">interval</span> - (For INTERVAL) Time in ms between intervals</li>
+							<li><span class="hl">maxTriggerCount</span> - (For INTERVAL) Maximum amount of times to trigger event</li>
+							<li><span class="hl">days</span> - (For RECURRING) Array of days [0-6] where 0 is Sunday, 6 is Monday. Example: <code>[0, 6]</code> for weekends.</li>
+							<li><span class="hl">hour</span> - (For RECURRING) Hour of the day (0-23) to trigger event.</li>
+							<li><span class="hl">minute</span> - (For RECURRING) Minute of the hour (0-59) to trigger event.</li>
+						</ul>
+					</div>
+					<input type="checkbox" id="spoiler_event_examples">
+					<label for="spoiler_event_examples">Event Registration Examples: <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+<pre><code class="language-javascript">
+// Event Registration Examples. Assign an ID to this script, attach it to an item, and double-click to run through the test suite
+const eventManagerScriptID = 5;
+
+function onUseChecked( pUser, iUsed )
+{
+    var now = new Date().getTime();
+
+    Console.Print( "--- [TEST SUITE] Registering Events --- \n" );
+    pUser.SysMessage( "Sending test events to Manager..." );
+
+    // TEST 1: One-Time Event
+    TriggerEvent( eventManagerScriptID, "RegisterEvent",
+        // config
+        {
+            uniqueEventID: "test_one_time",
+            callbackScriptID: SCRIPT.script_id,
+            callbackFuncStart: "TestOneTime",
+            type: "ONCE", // Trigger event once only
+            date: now + 3000, // Start in 3 seconds
+            name: "Test: One Time Event",
+            desc: "Event triggers after 3s"
+        },
+        // argsStart
+        { msg: "One-time event worked!", pUserSerial: pUser.serial },
+        null
+    );
+
+    // TEST 2: Interval Event
+    TriggerEvent( eventManagerScriptID, "RegisterEvent",
+        // config
+        {
+            uniqueEventID: "test_interval",
+            callbackScriptID: SCRIPT.script_id,
+            callbackFuncStart: "TestInterval",
+            type: "INTERVAL", // Trigger event every X seconds
+            interval: 2000, // Start in 2 seconds
+            maxTriggerCount: 5, // Stop after triggering 5 times
+            name: "Test: Interval",
+            desc: "Event triggers every 2s for 5 times"
+        },
+        // argsStart
+        { msg: "Interval event triggering!", pUserSerial: pUser.serial },
+        null
+    );
+
+    // TEST 3: Duration Event
+    TriggerEvent( eventManagerScriptID, "RegisterEvent",
+        // config
+        {
+            uniqueEventID: "test_duration_event",
+            callbackScriptID: SCRIPT.script_id,
+            callbackFuncStart: "TestDurationStart",
+            callbackFuncEnd: "TestDurationEnd",
+            type: "ONCE", // Trigger event once, run for duration, then stop
+            date: now + 1000, // Start in one second
+            duration: 10000, // 10 Seconds duration
+            name: "Test: Duration Event",
+            desc: "Event starts in 1 second, then ends 10 seconds later"
+        },
+        // argsStart
+        { msg: "Duration event start!!", pUserSerial: pUser.serial },
+        // argsEnd
+        { msg: "Duration event end!", pUserSerial: pUser.serial }
+    );
+
+    // TEST 4: Weekly Event
+    TriggerEvent( eventManagerScriptID, "RegisterEvent",
+        // config
+        {
+            uniqueEventID: "test_weekly",
+            callbackScriptID: SCRIPT.script_id,
+            callbackFuncStart: "TestWeekly",
+            type: "RECURRING",
+            days: [5],      // 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
+            hour: 8,        // 24-hour format (0-23)
+            minute: 37,     // 0-59
+            name: "Test: Weekly Event",
+            desc: "Runs every Friday at 8:35 AM"
+        },
+        // argsStart
+        { msg: "Weekly event works! It is Friday 8:35 AM!", pUserSerial: pUser.serial },
+        null
+    );
+
+    return false;
+}
+
+// CALLBACKS (Event Manager calls these on a schedule)
+
+function TestOneTime( args )
+{
+    Console.TurnRed();
+    Console.Print( "[TEST 1] " + args.msg + "\n" );
+    Console.TurnNormal();
+    let pUserSer = args.pUserSerial;
+    if( !isNaN( pUserSer ) && pUserSer > 0 )
+    {
+        let pUser = CalcCharFromSer( pUserSer );
+        if( ValidateObject( pUser ))
+        {
+            pUser.TextMessage( "Test 1 complete!" );
+        }
+    }
+}
+
+function TestInterval( args )
+{
+    Console.TurnYellow();
+    Console.Print( "[TEST 2] " + args.msg + "\n" );
+    Console.TurnNormal();
+    let pUserSer = args.pUserSerial;
+    if( !isNaN( pUserSer ) && pUserSer > 0 )
+    {
+        let pUser = CalcCharFromSer( pUserSer );
+        if( ValidateObject( pUser ))
+        {
+            pUser.TextMessage( "Test 2 triggered!" );
+        }
+    }
+}
+
+function TestDurationStart( args )
+{
+    Console.TurnGreen();
+    Console.Print( "[TEST 3 START] " + args.msg + "\n" );
+    Console.TurnNormal();
+    let pUserSer = args.pUserSerial;
+    if( !isNaN( pUserSer ) && pUserSer > 0 )
+    {
+        let pUser = CalcCharFromSer( pUserSer );
+        if( ValidateObject( pUser ))
+        {
+            pUser.TextMessage( "Test 3 started!" );
+        }
+    }
+}
+
+function TestDurationEnd( args )
+{
+    Console.TurnGreen();
+    Console.Print( "[TEST 3 END] " + args.msg + "\n" );
+    Console.TurnNormal();
+    let pUserSer = args.pUserSerial;
+    if( !isNaN( pUserSer ) && pUserSer > 0 )
+    {
+        let pUser = CalcCharFromSer( pUserSer );
+        if( ValidateObject( pUser ))
+        {
+            pUser.TextMessage( "Test 3 ended!" );
+        }
+    }
+}
+
+function TestWeekly( args )
+{
+    Console.TurnGreen();
+    Console.Print( "[TEST 4] " + args.msg + "\n" );
+    Console.TurnNormal();
+    let pUserSer = args.pUserSerial;
+    if( !isNaN( pUserSer ) && pUserSer > 0 )
+    {
+        let pUser = CalcCharFromSer( pUserSer );
+        if( ValidateObject( pUser ))
+        {
+            pUser.TextMessage( "TGIF! The weekly event fired." );
+        }
+    }
+}
+</code></pre>
+					</div>
+					<h3>Event Persistence</h3>
+					<p>All events registered with the Event Manager are stored in <em>shared/events/event_list.json</em>, and are <strong>loaded upon server startup</strong>, during the Event Manager initialization. While manual editing of this file is technically possible, any such changes won't take effect until the next time the server is restarted, or the Event Manager's script is <strong>reloaded</strong>.</p>
+					<h3>GM Commands</h3>
+					<p>Shard Admins/GMs can manage the Event Manager (pun intended) in-game using the <span class="hl">'em</span> command, allowing for real-time monitoring, debugging and control over events without needing to restart the server:</p>
+					<ul>
+						<li><span class="highlight">'em list</span> - Displays list of all currently registered events, their index numbers, status (Enabled/Disabled), and time remaining until next activation.</li>
+						<li><span class="highlight">'em disable &lt;index&gt;</span> - Disables the event at the specified index.</li>
+						<li><span class="highlight">'em enable &lt;index&gt;</span> - Re-enables a disabled event. If the event missed its scheduled time while disabled, it will be rescheduled for the next valid window. If it was already running when disabled, will pick back up where it left off.</li>
+						<li><span class="highlight">'em remove &lt;index&gt;</span> - Halts and removes specified event. If running, callback function for event end is called before removal.</li>
+						<li><span class="highlight">'em reset</span> - Forces a complete re-initialization of the Event Manager. Useful if you have manually edited the <em>events/event_list.json</em> file and want to reload changes without restarting the server.</li>
+					</ul>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>

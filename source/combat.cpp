@@ -822,6 +822,8 @@ UI08 CHandleCombat::GetWeaponType( CItem *i )
 		case 0x0DF3: // Wand
 		case 0x0DF4: // Wand
 		case 0x0DF5: // Wand
+		case 0xA767: // Wand - ToL
+		case 0xA768: // Wand - ToL
 		case 0x13E3: //smith's hammer
 		case 0x13E4: //smith's hammer
 		case 0x13B3: //club
@@ -854,6 +856,11 @@ UI08 CHandleCombat::GetWeaponType( CItem *i )
 		case 0x48C3: //gargish maul - SA
 		case 0xA289: //barbed whip - ToL
 		case 0xA291: //barbed whip - ToL
+		case 0xAF2D: //Bottle - ToL
+		case 0xAEA4: //Air Paladin Hammer - ToL
+		case 0xAEB3: //Water Paladin Hammer - ToL
+		case 0xAEC2: //Earth Paladin Hammer - ToL
+		case 0xAED1: //Fire Paladin Hammer - ToL
 			return DEF_MACES;
 		// Large Maces
 		case 0x13F4: //crook
@@ -899,6 +906,8 @@ UI08 CHandleCombat::GetWeaponType( CItem *i )
 		case 0xA344: //skull staff east
 		case 0xA347: //gargoyle skull staff south
 		case 0xA348: //gargoyle skull staff east
+		case 0xA7C3: //candycane staff
+		case 0xA7C4: //candycane staff
 			return LG_MACES;
 		// Bows
 		case 0x13B1: //bow
@@ -950,6 +959,10 @@ UI08 CHandleCombat::GetWeaponType( CItem *i )
 		case 0x48BD: //gargish kryss - SA
 		case 0xA28A: //spiked whip - ToL
 		case 0xA292: //spiked whip - ToL
+		case 0xAEA5: //Air Paladin fork - ToL
+		case 0xAEB4: //Water Paladin fork - ToL
+		case 0xAEC3: //Earth Paladin fork - ToL
+		case 0xAED2: //Fire Paladin fork - ToL
 			return DEF_FENCING;
 		// Stabbing Fencing Weapons
 		case 0x0E87: //pitchfork
@@ -2934,7 +2947,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			UI16 ammoFXHue = mWeapon->GetAmmoFXHue();
 			UI16 ammoFXRender = mWeapon->GetAmmoFXRender();
 
-			if( mChar.IsNpc() || ( ammoId != 0 && DeleteItemAmount( &mChar, 1, ammoId,  ammoHue ) == 1 ))
+			if( mChar.IsNpc() || ( ammoId != 0 && DeleteItemAmount( &mChar, 1, ammoId,  ammoHue, 0, true ) == 1 ))
 			{
 				PlaySwingAnimations( &mChar );
 				Effects->PlayMovingAnimation( mChar.GetX(), mChar.GetY(), mChar.GetZ() + 5, ourTarg->GetX(), ourTarg->GetY(), ourTarg->GetZ(), ammoFX, 0x15, 0x1, 0x00, static_cast<UI32>( ammoFXHue ), static_cast<UI32>( ammoFXRender ));

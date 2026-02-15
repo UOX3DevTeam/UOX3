@@ -200,9 +200,14 @@ function onUseChecked( pUser, iUsed )
 			const decayStageLikeNewMins = GetServerSetting( "DecayStageLikeNewMins" );
 			const decayLikeNewMS = decayStageLikeNewMins * 60 * 1000;
 
-			//iUsed.multi.KillTimers();
-			var GetStage = parseInt(iUsed.multi.GetTag("decayStage"));
-			iUsed.multi.KillJSTimer( GetStage, 15000 ); // timerID, scriptID
+			// Kill all possible decay timers for this house script
+			for( var houseTimerID = 1; houseTimerID <= 7; ++houseTimerID )
+			{
+				iUsed.multi.KillJSTimer( houseTimerID, 15000 );
+			}
+
+			// Reset to Like New
+			iUsed.multi.SetTag( "decayStage", 1 );
 			iUsed.multi.StartTimer( decayLikeNewMS, 1, 15000 );
 		}
 	}

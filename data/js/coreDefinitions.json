@@ -41,7 +41,7 @@
         "sets": [
           {
             "num": 6,
-            "max": 8,
+            "max": 9,
             "list": [
               { "name": "src", "type": "CharOrItem", "required": true },
               { "name": "trg", "type": "CharOrItem", "required": true },
@@ -50,12 +50,13 @@
               { "name": "loop", "type": "number", "required": true },
               { "name": "explode", "type": "boolean", "required": true },
               { "name": "hue", "type": "number", "required": false },
-              { "name": "renderMode", "type": "number", "required": false }
+              { "name": "renderMode", "type": "number", "required": false },
+              { "name": "stationaryFX", "type": "boolean", "required": false }
             ]
           },
           {
             "num": 8,
-            "max": 10,
+            "max": 11,
             "list": [
               { "name": "src", "type": "CharOrItem", "required": true },
               { "name": "trgX", "type": "number", "required": true },
@@ -66,12 +67,13 @@
               { "name": "loop", "type": "number", "required": true },
               { "name": "explode", "type": "boolean", "required": true },
               { "name": "hue", "type": "number", "required": false },
-              { "name": "renderMode", "type": "number", "required": false }
+              { "name": "renderMode", "type": "number", "required": false },
+              { "name": "stationaryFX", "type": "boolean", "required": false }
             ]
           },
           {
             "num": 10,
-            "max": 12,
+            "max": 13,
             "list": [
               { "name": "srcX", "type": "number", "required": true },
               { "name": "srcY", "type": "number", "required": true },
@@ -84,7 +86,8 @@
               { "name": "loop", "type": "number", "required": true },
               { "name": "explode", "type": "boolean", "required": true },
               { "name": "hue", "type": "number", "required": false },
-              { "name": "renderMode", "type": "number", "required": false }
+              { "name": "renderMode", "type": "number", "required": false },
+              { "name": "stationaryFX", "type": "boolean", "required": false }
             ]
           }
         ]
@@ -414,6 +417,23 @@
               { "name": "z",          "type": "number", "required": true },
               { "name": "worldNum",   "type": "number", "required": true },
               { "name": "id",         "type": "number", "required": true },
+              { "name": "instanceId", "type": "number", "required": false }
+            ]
+      },
+      "returns": "ItemOrNull"
+    },
+    {
+      "name": "FindItemBySection",
+      "cppName": "SE_FindItemBySection",
+      "params": {
+        "num": 5,
+        "max": 6,
+            "list": [
+              { "name": "x",          "type": "number", "required": true },
+              { "name": "y",          "type": "number", "required": true },
+              { "name": "z",          "type": "number", "required": true },
+              { "name": "worldNum",   "type": "number", "required": true },
+              { "name": "sectionId",  "type": "string", "required": true },
               { "name": "instanceId", "type": "number", "required": false }
             ]
       },
@@ -912,7 +932,10 @@
       "name": "IterateOverSpawnRegions",
       "cppName": "SE_IterateOverSpawnRegions",
       "params": {
-        "num": 1
+        "num": 1,
+        "list": [
+          { "name": "mSock", "type": "Socket", "required": false }
+        ]
       },
       "returns": "number",
       "broken": true
@@ -1229,15 +1252,27 @@
       "cppName": "SE_GetSpawnRegion",
       "params": {
         "num": 1,
+        "max": 1,
+        "list": [
+          { "name": "Index", "type": "number", "required": true }
+        ]
+      },
+      "returns": "SpawnRegion"
+    },
+    {
+      "name": "GetSpawnRegions",
+      "cppName": "SE_GetSpawnRegions",
+      "params": {
+        "num": 4,
         "max": 4,
         "list": [
-          { "name": "xOrIndex", "type": "number", "required": true },
+          { "name": "x", "type": "number", "required": true },
           { "name": "y", "type": "number", "required": true },
           { "name": "world", "type": "number", "required": true },
           { "name": "instance", "type": "number", "required": true }
         ]
       },
-      "returns": "SpawnRegion"
+      "returns": "SpawnRegion[]"
     },
     {
       "name": "GetSpawnRegionCount",
@@ -1923,7 +1958,7 @@
           { "name": "itemColour", "type": "number", "required": false },
           { "name": "moreVal",    "type": "number", "required": false },
           { "name": "sectionId",  "type": "string", "required": false }
-        ] }, "returns": "void" },
+        ] }, "returns": "number" },
         { "name": "ResumeJSTimer",       "cppName": "CBase_ResumeJSTimer",        "params": { "num": 2, "list": [ { "name": "timerId",  "type": "number",     "required": true }, { "name": "scriptId",  "type": "number",     "required": true } ] }, "returns": "number" },
         { "name": "ResumeTempEffect",    "cppName": "CBase_ResumeTempEffect",     "params": { "num": 1, "list": [ { "name": "effectID", "type": "number",     "required": true } ] }, "returns": "number" },
         { "name": "ReverseTempEffect",   "cppName": "CBase_ReverseTempEffect",    "params": { "num": 1, "list": [ { "name": "effectID", "type": "number",     "required": true } ] }, "returns": "number" },
@@ -3078,50 +3113,57 @@
       "name": "Timer",
       "aka": "UOXTimer",
       "values": [
-        { "label": "TIMEOUT",              "value":  0, "comment": "Character timer" },
-        { "label": "INVIS",                "value":  1, "comment": "Character timer" },
-        { "label": "HUNGER",               "value":  2, "comment": "Character timer" },
-        { "label": "THIRST",               "value":  3, "comment": "Character timer" },
-        { "label": "POISONTIME",           "value":  4, "comment": "Character timer" },
-        { "label": "POISONTEXT",           "value":  5, "comment": "Character timer" },
-        { "label": "POISONWEAROFF",        "value":  6, "comment": "Character timer" },
-        { "label": "SPELLTIME",            "value":  7, "comment": "Character timer" },
-        { "label": "SPELLRECOVERYTIME",    "value":  8, "comment": "Character timer" },
-        { "label": "CRIMFLAG",             "value":  9, "comment": "Character timer" },
-        { "label": "ANTISPAM",             "value": 10, "comment": "Character timer" },
-        { "label": "MURDERRATE",           "value": 11, "comment": "Character timer" },
-        { "label": "PEACETIMER",           "value": 12, "comment": "Character timer" },
-        { "label": "FLYINGTOGGLE",         "value": 13, "comment": "Character timer" },
-        { "label": "FIREFIELDTICK",        "value": 14, "comment": "Character timer" },
-        { "label": "POISONFIELDTICK",      "value": 15, "comment": "Character timer" },
-        { "label": "PARAFIELDTICK",        "value": 16, "comment": "Character timer" },
-        { "label": "YOUNGHEAL",            "value": 17, "comment": "Character timer" },
-        { "label": "YOUNGMESSAGE",         "value": 18, "comment": "Character timer" },
-        { "label": "MOVETIME",             "value": 19, "comment": "Character timer" },
-        { "label": "SPATIMER",             "value": 20, "comment": "Character timer" },
-        { "label": "SUMMONTIME",           "value": 21, "comment": "Character timer" },
-        { "label": "EVADETIME",            "value": 22, "comment": "Character timer" },
-        { "label": "LOYALTYTIME",          "value": 23, "comment": "Character timer" },
-        { "label": "IDLEANIMTIME",         "value": 24, "comment": "Character timer" },
-        { "label": "LOGOUT",               "value": 25, "comment": "Character timer" },
-        { "label": "YOUNGHEAL",            "value": 26, "comment": "Character timer" },
-        { "label": "YOUNGMESSAGE",         "value": 27, "comment": "Character timer" },
-        { "label": "SOCK_SKILLDELAY",      "value": 28, "comment": "Socket timer" },
-        { "label": "SOCK_OBJDELAY",        "value": 29, "comment": "Socket timer" },
-        { "label": "SOCK_SPIRITSPEAK",     "value": 30, "comment": "Socket timer" },
-        { "label": "SOCK_TRACKING",        "value": 31, "comment": "Socket timer" },
-        { "label": "SOCK_FISHING",         "value": 32, "comment": "Socket timer" },
-        { "label": "SOCK_MUTETIME",        "value": 33, "comment": "Socket timer" },
-        { "label": "SOCK_TRACKINGDISPLAY", "value": 34, "comment": "Socket timer" },
-        { "label": "SOCK_TRAFFICWARDEN",   "value": 35, "comment": "Socket timer" },
-        { "label": "SOCK_SPEEDHACKPENALTY",   "value": 36, "comment": "Socket timer" },
-        { "label": "SOCK_SPEEDHACKLOGGED",   "value": 37, "comment": "Socket timer" },
-        { "label": "COUNT",                "value": 38, "comment": "Socket timer" }
+        { "label": "TIMEOUT",               "value":  0, "comment": "Character timer" },
+        { "label": "INVIS",                 "value":  1, "comment": "Character timer" },
+        { "label": "HUNGER",                "value":  2, "comment": "Character timer" },
+        { "label": "THIRST",                "value":  3, "comment": "Character timer" },
+        { "label": "POISONTIME",            "value":  4, "comment": "Character timer" },
+        { "label": "POISONTEXT",            "value":  5, "comment": "Character timer" },
+        { "label": "POISONWEAROFF",         "value":  6, "comment": "Character timer" },
+        { "label": "SPELLTIME",             "value":  7, "comment": "Character timer" },
+        { "label": "SPELLRECOVERYTIME",     "value":  8, "comment": "Character timer" },
+        { "label": "CRIMFLAG",              "value":  9, "comment": "Character timer" },
+        { "label": "ANTISPAM",              "value": 10, "comment": "Character timer" },
+        { "label": "MURDERRATE",            "value": 11, "comment": "Character timer" },
+        { "label": "PEACETIMER",            "value": 12, "comment": "Character timer" },
+        { "label": "FLYINGTOGGLE",          "value": 13, "comment": "Character timer" },
+        { "label": "FIREFIELDTICK",         "value": 14, "comment": "Character timer" },
+        { "label": "POISONFIELDTICK",       "value": 15, "comment": "Character timer" },
+        { "label": "PARAFIELDTICK",         "value": 16, "comment": "Character timer" },
+        { "label": "YOUNGHEAL",             "value": 17, "comment": "Character timer" },
+        { "label": "YOUNGMESSAGE",          "value": 18, "comment": "Character timer" },
+        { "label": "MOVETIME",              "value": 19, "comment": "Character timer" },
+        { "label": "SPATIMER",              "value": 20, "comment": "Character timer" },
+        { "label": "SUMMONTIME",            "value": 21, "comment": "Character timer" },
+        { "label": "EVADETIME",             "value": 22, "comment": "Character timer" },
+        { "label": "LOYALTYTIME",           "value": 23, "comment": "Character timer" },
+        { "label": "IDLEANIMTIME",          "value": 24, "comment": "Character timer" },
+        { "label": "LOGOUT",                "value": 25, "comment": "Character timer" },
+        { "label": "SOCK_SKILLDELAY",       "value": 26, "comment": "Socket timer" },
+        { "label": "SOCK_OBJDELAY",         "value": 27, "comment": "Socket timer" },
+        { "label": "SOCK_SPIRITSPEAK",      "value": 28, "comment": "Socket timer" },
+        { "label": "SOCK_TRACKING",         "value": 29, "comment": "Socket timer" },
+        { "label": "SOCK_FISHING",          "value": 30, "comment": "Socket timer" },
+        { "label": "SOCK_MUTETIME",         "value": 31, "comment": "Socket timer" },
+        { "label": "SOCK_TRACKINGDISPLAY",  "value": 32, "comment": "Socket timer" },
+        { "label": "SOCK_TRAFFICWARDEN",    "value": 33, "comment": "Socket timer" },
+        { "label": "SOCK_SPEEDHACKPENALTY", "value": 34, "comment": "Socket timer" },
+        { "label": "SOCK_SPEEDHACKLOGGED",  "value": 35, "comment": "Socket timer" },
+        { "label": "COUNT",                 "value": 36, "comment": "Socket timer" }
       ]
     },
     {
       "name": "SCRIPT",
-      "aka": "uox_class"
+      "aka": "uox_class",
+      "properties": [
+        {
+          "name": "script_id",
+          "cppID": "CSCRIPT_SCRIPTID",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number",
+          "readOnly": true
+        }
+      ]
     },
     {
       "name": "Race",
@@ -6450,7 +6492,155 @@
     },
     {
       "name": "SpawnRegion",
-      "aka": "UOXSpawnRegion"
+      "aka": "UOXSpawnRegion",
+      "properties": [
+        {
+          "name": "name",
+          "cppID": "CSPAWNREGP_NAME",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "item",
+          "cppID": "CSPAWNREGP_ITEM",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "itemList",
+          "cppID": "CSPAWNREGP_ITEMLIST",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "npc",
+          "cppID": "CSPAWNREGP_NPC",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "npcList",
+          "cppID": "CSPAWNREGP_NPCLIST",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "call",
+          "cppID": "CSPAWNREGP_CALL",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "instanceID",
+          "cppID": "CSPAWNREGP_INSTANCEID",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "itemCount",
+          "cppID": "CSPAWNREGP_ITEMCOUNT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number",
+          "readOnly": true
+        },
+        {
+          "name": "maxItems",
+          "cppID": "CSPAWNREGP_MAXITEMS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "maxTime",
+          "cppID": "CSPAWNREGP_MAXTIME",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "maxNpcs",
+          "cppID": "CSPAWNREGP_MAXNPCS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "minTime",
+          "cppID": "CSPAWNREGP_MINTIME",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "npcCount",
+          "cppID": "CSPAWNREGP_NPCCOUNT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number",
+          "readOnly": true
+        },
+        {
+          "name": "defZ",
+          "cppID": "CSPAWNREGP_DEFZ",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "prefZ",
+          "cppID": "CSPAWNREGP_PREFZ",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "regionNum",
+          "cppID": "CSPAWNREGP_REGIONNUM",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "x1",
+          "cppID": "CSPAWNREGP_X1",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "x2",
+          "cppID": "CSPAWNREGP_X2",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "y1",
+          "cppID": "CSPAWNREGP_Y1",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "y2",
+          "cppID": "CSPAWNREGP_Y2",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "world",
+          "cppID": "CSPAWNREGP_WORLD",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "onlyOutside",
+          "cppID": "CSPAWNREGP_ONLYOUTSIDE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isSpawner",
+          "cppID": "CSPAWNREGP_ISSPAWNER",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "forceSpawn",
+          "cppID": "CSPAWNREGP_FORCESPAWN",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        }
+      ]
     },
     {
       "name": "TileFlags",
@@ -7437,6 +7627,35 @@
       ]
     },
     {
+      "name": "UOXCFile",
+      "type": "class",
+      "properties": [],
+      "methods": [
+        { "name": "Free",      "cppName": "CFile_Free",       "params": { "num":  0, "list": [] }, "returns": "void" },
+        { "name": "Open",      "cppName": "CFile_Open",       "params": { "num":  2, "list": [
+          { "name": "filename",         "type": "string",  "required": true  },
+          { "name": "mode",             "type": "string",  "required": true  },
+          { "name": "folder",           "type": "string",  "required": false },
+          { "name": "useScriptDataDir", "type": "boolean", "required": false }
+        ] }, "returns": "void" },
+        { "name": "Close",     "cppName": "CFile_Close",      "params": { "num":  0, "list": [] }, "returns": "void" },
+        { "name": "Write",     "cppName": "CFile_Write",      "params": { "num":  1, "list": [
+          { "name": "value",     "type": "string", "required": true }
+        ] }, "returns": "void" },
+        { "name": "Read",      "cppName": "CFile_Read",       "params": { "num":  1, "list": [
+          { "name": "bytes",      "type": "number", "required": true }
+        ] }, "returns": "string" },
+        { "name": "ReadUntil", "cppName": "CFile_ReadUntil",  "params": { "num":  1, "list": [
+          { "name": "until",     "type": "string", "required": true }
+        ] }, "returns": "string" },
+        { "name": "EOF",       "cppName": "CFile_EOF",        "params": { "num":  0, "list": [] }, "returns": "boolean" },
+        { "name": "Length",    "cppName": "CFile_Length",     "params": { "num":  0, "list": [] }, "returns": "number" },
+        { "name": "Pos",       "cppName": "CFile_Pos",        "params": { "num":  1, "list": [
+          { "name": "pos",     "type": "number", "required": false }
+        ] }, "returns": "number" }
+      ]
+    },
+    {
       "name": "Gump",
       "type": "class",
       "properties": [],
@@ -7688,9 +7907,9 @@
           { "name": "hasScrollbar", "type": "boolean", "required": true },
           { "name": "rgbColor",     "type": "number",  "required": true },
           { "name": "nmbr",         "type": "number",  "required": true },
-          { "name": "cliloc1",      "type": "string",  "required": true },
-          { "name": "cliloc2",      "type": "string",  "required": true },
-          { "name": "cliloc3",      "type": "string",  "required": true }
+          { "name": "cliloc1",      "type": "string",  "required": false },
+          { "name": "cliloc2",      "type": "string",  "required": false },
+          { "name": "cliloc3",      "type": "string",  "required": false }
         ] }, "returns": "void" },
         { "name": "MasterGump",          "cppName": "CGump_MasterGump",          "params": { "num":  1, "list": [{ "name": "gumpId", "type": "number", "required": true }] }, "returns": "void" },
         { "name": "NoClose",             "cppName": "CGump_NoClose",             "params": { "num":  0, "list": [] }, "returns": "void" },
@@ -8304,8 +8523,8 @@
       "cppName": "OnIterateSpawnRegions",
       "params": {
         "list": [
-          { "name": "a", "type": "SpawnRegion", "required": true },
-          { "name": "b", "type": "number", "required": true }
+          { "name": "toCheck", "type": "SpawnRegion", "required": true },
+          { "name": "socket", "type": "SocketOrNull", "required": true }
         ]
       },
       "returns": "boolean"
@@ -8483,6 +8702,17 @@
       "returns": "boolean"
     },
     {
+      "name": "onReleasePet",
+      "cppName": "OnReleasePet",
+      "params": {
+        "list": [
+          { "name": "mChar", "type": "Character", "required": true },
+          { "name": "mPet",    "type": "Character", "required": true }
+        ]
+      },
+      "returns": "boolean"
+    },
+    {
       "name": "onResurrect",
       "cppName": "OnResurrect",
       "params": {
@@ -8491,6 +8721,11 @@
         ]
       },
       "returns": "boolean"
+    },
+    {
+      "name": "onScriptLoad",
+      "cppName": "OnScriptLoad",
+      "returns": "void"
     },
     {
       "name": "onScrollCast",
@@ -8792,8 +9027,12 @@
     {
       "name": "onStart",
       "cppName": "OnStart",
-      "returns": "void",
-      "comments": "Never invoked"
+      "params": {
+        "list": [
+          { "name": "myObj", "type": "Character | Item | TownRegion", "required": true }
+        ]
+      },
+      "returns": "void"
     },
     {
       "name": "onStat",
@@ -9125,6 +9364,10 @@
     {
       "name": "SCRIPT",
       "type": "uox_class"
+    },
+    {
+      "name": "UOX_DEBUG_MODE",
+      "type": "boolean"
     }
   ]
 }
