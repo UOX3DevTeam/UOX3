@@ -9,22 +9,12 @@ const enableNPCGuildDiscounts = GetServerSetting( "EnableNPCGuildDiscounts" );
 // If enabled, guild members get a +10% premium price offered for items they sell to shopkeepers in the guild
 const enableNPCGuildPremiums = GetServerSetting( "EnableNPCGuildPremiums" );
 
-const youngPlayerSystem = GetServerSetting("YoungPlayerSystem");
+const youngPlayerSystem = GetServerSetting( "YoungPlayerSystem" );
 
 const coreShardEra = GetServerSetting( "CoreShardEra" );
 const honestyVirtueEnabled = GetServerSetting( "HonestyVirtueEnabled" );
-
-// Virtue indices (shared with virtue_helper.js)
-var VirtueName = VirtueName || {
-	Humility:     0,
-	Sacrifice:    1,
-	Compassion:   2,
-	Spirituality: 3,
-	Valor:        4,
-	Honor:        5,
-	Justice:      6,
-	Honesty:      7
-};
+var virtueEnums = TriggerEvent( 8003, "Virtue_GetEnums" );
+var VirtueName  = virtueEnums ? virtueEnums.VirtueName  : null;
 
 /** @type { ( targSock: Socket, objVendor: Character, objItemBought: BaseObject, numItemsBought: number ) => boolean } */
 function onBoughtFromVendor( pSock, npcShopkeep, iBought, iAmount )
