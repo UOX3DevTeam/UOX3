@@ -235,3 +235,30 @@ newbie
 origin=t2a
 script=5029
 }
+
+[0x9C16]
+{
+get=base_item
+name=a runic atlas
+id=0x9C16
+weight=0
+value=100 50
+restock=15
+good=28
+health=80
+maxhp=80
+newbie
+origin=ml
+script=5064
+}
+
+[0x9C17]
+{
+get=0x9C16
+id=0x9C17
+}
+
+[runicatlas]
+{
+get=0x9C16 0x9C17
+}

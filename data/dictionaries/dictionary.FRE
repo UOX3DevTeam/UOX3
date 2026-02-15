@@ -2358,6 +2358,7 @@
 2186=Vous n'êtes pas assez compétent pour comprendre cette créature.
 2187=Ceci ne ressemble pas beaucoup à un animal.
 2188=Sauvage
+2189=Métal
 2199=Confusé
 2200=Non
 2201=Compte des propriétaires
@@ -2677,6 +2678,9 @@
 2639=Tri par nombre de spawn (%s)
 2650=Vous versez les %s dans la bouteille vide.
 2651=Vous versez les %s dans la cruche vide.
+2660=Trouvé %i générateurs basés sur la région en %u millisecondes.
+2661=Gérer les régions de génération
+2662=Téléporter vers la région de génération
 // [2700-2799] Misc scripts
 2700=Seul le propriétaire de la maison peut faire pivoter les meubles.
 2701=Cela ne semble pas fonctionner.
@@ -3704,6 +3708,40 @@
 6321=On dirait que cette lame est recouverte d'une substance acide.
 6322=On dirait que cette lame contient un élément corrosif.
 6323=On dirait que cette lame contient un élément légèrement corrosif.
+// [6500-6539] Event Manager
+6500=Gestionnaire d'événements : démarrage du battement de cœur
+6501=Gestionnaire d'événements : réutilisation de l'objet Gestionnaire d'événements existant.
+6502=Gestionnaire d'événements : l'ancien objet Gestionnaire d'événements n'existe plus, un nouvel objet sera créé.
+6503=Gestionnaire d'événements : échec de la création de %s
+6504=Gestionnaire d'événements : initialisation terminée. Événements chargés : %i
+6505=Gestionnaire d'événements : initialisation terminée. Aucun événement chargé, passage en mode veille.
+6506=Gestionnaire d'événements : Tous les événements sont terminés. Passage en mode veille.
+6507=Gestionnaire d'événements : AVERTISSEMENT - Événement ignoré, fonction de rappel %s manquante dans le script %i
+6508=Le gestionnaire d'événements est actuellement désactivé. Activez-le via uox.ini
+6509=Événements actifs : %i
+6510=Utilisation : 'em %s <numéro d'index de la liste des événements>
+6511=Gestionnaire d'événements : l'événement %i est désormais %s
+6512=Gestionnaire d'événements : %s a modifié l'événement %i en %s
+6513=Index d'événement non valide. Pour afficher la liste complète des événements : 'em list
+6514=Forcer la réinitialisation du gestionnaire d'événements...
+6515=Commandes prises en charge par le gestionnaire d'événements : list, enable <#>, disable <#>, remove <#>, reset
+6516=Gestionnaire d'événements : échec de RegisterEvent car le gestionnaire d'événements est désactivé.
+6517=Gestionnaire d'événements : échec de RegisterEvent car les données de configuration callbackScriptID et/ou callbackFuncStart sont manquantes.
+6518=Gestionnaire d'événements : nouvel événement enregistré - %s (ID : %i)
+6519=Événement interrompu et désactivé.
+6520=Événement activé et reprogrammé pour la prochaine fenêtre d'activation valide.
+6521=Utilisation : 'em remove <index from event list>
+6522=Événement interrompu et supprimé.
+// [6540-6550] Boîte à musique de l'Aube
+6540=Vous devez avoir cet objet dans votre inventaire ou le verrouiller pour l'utiliser.
+6541=Ciblez une boîte à musique de l'Aube pour ajouter ce morceau.
+6542=Vous devez cibler une boîte à musique de l'Aube.
+6543=Ceci n'est pas une boîte à musique de l'Aube.
+6544=Aucun équipement musical n'est en attente.
+6545=L'équipement musical est introuvable.
+6546=Aucun morceau n'est associé à cet équipement.
+6547=Ce morceau est déjà présent dans la boîte à musique.
+6548=Ce morceau a été ajouté à la boîte à musique.
 // [7000-7499] AI Scripts
 7000=Tu es un criminel et tu ne peux pas accéder à ton coffre de banque.
 7001=Quel objet souhaitez-vous déposer dans votre coffret bancaire ?
@@ -4198,6 +4236,29 @@
 8724=L'emplacement 7 de ce compte est-il bloqué ?
 8725=Pour combien de temps l'utilisateur est-il banni, en minutes ?
 8726=Quand le compte a-t-il été connecté pour la première fois ? (Lecture seule)
+// [8750-8799] Tweak Menu - Spawn Region property descriptions
+8750=Nombre de caractères/éléments générés par cycle de génération
+8751=ID d'instance où la région de génération est active
+8752=Les éléments générés sont-ils des objets générateurs ?
+8753=ID de la section d'éléments à générer à partir des DFN
+8754=Nombre d'éléments actuellement générés (en lecture seule)
+8755=Référence à la liste ITEMLIST à partir de laquelle générer
+8756=Nombre maximal d'éléments à générer
+8757=Nombre maximal de PNJ à générer
+8758=Intervalle maximal jusqu'au prochain cycle de génération
+8759=Intervalle de temps minimum jusqu'au prochain cycle de génération
+8760=Nom interne de la région de génération
+8761=ID de la section NPC à générer à partir des DFN
+8762=Nombre de PNJ actuellement générés (en lecture seule)
+8763=Référence à la liste NPCLIST à partir de laquelle générer
+8764=Générer uniquement à l'extérieur des bâtiments ?
+8765=Valeur Z maximale que les objets du monde peuvent avoir sur l'apparition
+8766=ID de la région d'apparition
+8767=Numéro du monde dans lequel la région d'apparition est active
+8768=Limite ouest de la région d'apparition
+8769=Limite est de la région d'apparition
+8770=Limite nord de la région d'apparition
+8771=Limite sud de la région d'apparition
 // [8800-8849] General Tweak Menu
 8800=Entrer une nouvelle valeur
 8801=Les modifications apportées aux valeurs effectives des compétences ne sont pas sauvegardées, et disparaîtront si le serveur redémarre. Pour des changements permanents de compétences, ajustez plutôt la propriété baseskills !
@@ -4539,6 +4600,14 @@
 9283=Vous ne remarquez rien d'inhabituel.
 9284=Cet individu est un voleur !
 9285=Vous ne pouvez pas voler dans un conteneur sécurisé.
+9286=Charges :
+9287=Renommer le livre
+9288=Définir par défaut
+9289=Déposer la rune
+9290=Rappel (Sort)
+9291=Rappel (Charge)
+9292=Voyage par portail
+9293=Voyage sacré
 // [9301-9310] Poisson magique
 9301=Vous êtes déjà sous un effet similaire.
 9302=Vous avalez le poisson tout entier !
@@ -5721,7 +5790,7 @@
 19234=Votre confusion est passée, vous pouvez maintenant armer une arme !
 19235=Vous n'êtes plus mortellement blessé.
 19236=Les plaies saignantes ont guéri, vous ne saignez plus !
-// [19301-19330] Animal lié et mort
+// [19301-19340] Animal lié et mort
 19301=Vous ne pouvez pas échanger un animal mort.
 19302=L'animal mort ne peut pas attaquer.
 19303=Vous n'êtes pas assez compétent pour ressusciter cet animal.

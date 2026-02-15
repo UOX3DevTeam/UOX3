@@ -25,7 +25,7 @@ function onDeathBlow( killedPet, petKiller )
 
 		if( ValidateObject( petOwner ) && petOwner.socket != null )
 		{
-			TriggerEvent( 3108, "SendNpcGhostMode", petOwner.socket, 0, killedPet.serial, 1  );}
+			TriggerEvent( 3108, "SendNpcGhostMode", petOwner.socket, 0, killedPet.serial, 1  );
 		}
 
 		killedPet.SetTag( "PetAI", killedPet.aitype.toString() );
@@ -135,7 +135,7 @@ function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 	{
 		// Notify attacker if player
 		var pAttackSock = pAttacker.socket;
-		if( pAttackSock )
+		if( pAttackSock != null)
 		{
 			pAttackSock.SysMessage( GetDictionaryEntry( 19323, pAttackSock.language )); // You can not perform beneficial acts on your target.
 		}
@@ -195,7 +195,7 @@ function onDamage( damaged, pAttacker, damageValue, damageType )
 	if( damaged.GetTag( "isPetDead" ))
 	{
 		var atkSock = ValidateObject( pAttacker ) ? pAttacker.socket : null;
-		if( atkSock )
+		if( atkSock != null)
 		{
 			atkSock.SysMessage( GetDictionaryEntry( 19323, atkSock.language ));// You can not perform beneficial acts on your target.
 		}
@@ -223,6 +223,7 @@ function onCharDoubleClick( pUser, pet )
 	return true;
 }
 
+/** @type { ( mChar: Character, mPet: Character ) => boolean } */
 function onReleasePet( pUser, pet )
 {
 	if( pet.GetTag( "isPetDead" ) == true )
@@ -345,9 +346,7 @@ function onTimer( timerObj, timerID )
 			petOwner.controlSlotsUsed = Math.max( 0, petOwner.controlSlotsUsed - timerObj.controlSlots );
 		}
 
-		Console.Log(
-			"Pet [" + timerObj.name + "] (Serial: " + timerObj.serial.toString() +
-			") was force-deleted after 7 days of inactivity." );
+		Console.Log( "Pet [" + timerObj.name + "] (Serial: " + timerObj.serial.toString() + ") was force-deleted after 7 days of inactivity." );
 
 		timerObj.Delete();
 	}
@@ -360,9 +359,10 @@ function onTimer( timerObj, timerID )
 		if( ownerSerial )
 		{
 			var owner = CalcCharFromSer( ownerSerial );
-			if (ValidateObject( owner ))
+			if( ValidateObject( owner ))
 			{
-				owner.socket.SysMessage( GetDictionaryEntry( 19308, owner.socket.language )); // Your pet has bonded with you!
+				if( owner.socket != null )
+					owner.socket.SysMessage( GetDictionaryEntry( 19308, owner.socket.language )); // Your pet has bonded with you!
 			}
 		}
 		timerObj.SetTag( "bondingStarted", null );

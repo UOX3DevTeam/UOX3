@@ -2194,6 +2194,7 @@
 2186=Nejsi dostatečně zkušený, abys tomu tvorovi rozuměl.
 2187=To nevypadá moc jako zvíře.
 2188=Divoký
+2189=Kov
 2199=Zmatený
 2200=Žádný
 2201=Počet majitelů
@@ -2513,6 +2514,9 @@
 2639=Sortovat podle počtu Spawnů (%s)
 2650=Naléváš %s do prázdné láhve.
 2651=Naléváš %s do prázdného džbánu.
+2660=Nalezeno %i regionových spawnerů za %u milisekund.
+2661=Správa spawn regionů
+2662=Teleportovat se do spawn regionu
 // [2700-2799] Misc scripts
 2700=Nábytek může otáčet pouze majitel domu.
 2701=Toto zřejmě nefunguje.
@@ -3540,6 +3544,40 @@
 6321=Vypadá to, jako by byla čepel pokryta kyselou látkou.
 6322=Vypadá to, jako by na čepeli byla korozivní látka.
 6323=Vypadá to, jako by na čepeli byla slabě korozivní látka.
+// [6500-6539] Event Manager
+6500=Správce událostí: Spuštěn heartbeat
+6501=Správce událostí: Opětovné použití existujícího objektu správce událostí.
+6502=Správce událostí: Starý objekt správce událostí již neexistuje, bude vytvořen nový.
+6503=Správce událostí: Selhání spuštění %s
+6504=Správce událostí: Inicializace dokončena. Načtené události: %i
+6505=Správce událostí: Inicializace dokončena. Žádné události načteny, přechod do pohotovostního režimu.
+6506=Správce událostí: Všechny události dokončeny. Přechod do pohotovostního režimu.
+6507=Správce událostí: VAROVÁNÍ – Přeskočená událost, chybí funkce zpětného volání %s ve skriptu %i
+6508=Správce událostí je momentálně deaktivován. Aktivujte jej pomocí uox.ini
+6509=Aktivní události: %i
+6510=Použití: 'em %s <indexové číslo ze seznamu událostí>
+6511=Správce událostí: Událost %i je nyní %s
+6512=Správce událostí: %s změnil událost %i na %s
+6513=Neplatný index události. Chcete-li zobrazit úplný seznam událostí: 'em list
+6514=Vynucené resetování správce událostí...
+6515=Podporované příkazy Správce událostí: list, enable <#>, disable <#>, remove <#>, reset
+6516=Správce událostí: RegisterEvent selhal, protože Správce událostí je deaktivován.
+6517=Správce událostí: RegisterEvent selhal kvůli chybějícím konfiguračním datům callbackScriptID a/nebo callbackFuncStart.
+6518=Správce událostí: Zaregistrována nová událost – %s (ID: %i)
+6519=Událost zastavena a deaktivována.
+6520=Událost aktivována a přeplánována na další platné aktivační okno.
+6521=Použití: 'em remove <index ze seznamu událostí>
+6522=Událost zastavena a odstraněna.
+// [6540-6550] Hudební skříňka Dawns
+6540=Abyste mohli předmět použít, musíte ho mít v batohu nebo uzamčený.
+6541=Pro přidání této skladby si vyberte hudební skříňku Dawns.
+6542=Musíte si vybrat hudební skříňku Dawn's.
+6543=Toto není hudební skříňka Dawn's.
+6544=Žádné hudební vybavení nečeká na vyřízení.
+6545=Hudební vybavení se nepodařilo najít.
+6546=Toto vybavení nemá přiřazenou žádnou skladbu.
+6547=Tato skladba se již v hudební skříňce nachází.
+6548=Tato skladba byla do hudební skříňky přidána.
 // [7000-7499] AI Scripts
 7000=Jsi zločinec a nemáš přístup ke své bankovní schránce.
 7001=Který předmět si přeješ uložit do své bankovní schránky?
@@ -4034,6 +4072,29 @@
 8724=Je slot 7 na tomto účtu zablokován?
 8725=Na jak dlouho je uživatel zablokován, v minutách?
 8726=Kdy byl účet poprvé přihlášen? (Pouze pro čtení)
+// [8750-8799] Tweak Menu - Spawn Region property descriptions
+8750=Počet znaků/položek vytvořených za jeden cyklus
+8751=ID instance, kde je oblast spawn aktivní
+8752=Jsou vytvořené položky objekty Spawners?
+8753=ID sekce položek z DFN, které se mají spawnout
+8754=Počet aktuálně spawnoutých položek (jen pro čtení)
+8755=Odkaz na ITEMLIST, ze kterého se mají spawnout
+8756=Maximální počet položek, které se mají spawnout
+8757=Maximální počet NPC, které se mají spawnout
+8758=Maximální časový interval do dalšího spawn cyklu
+8759=Minimální časový interval do dalšího cyklu spawnování
+8760=Interní název oblasti spawnování
+8761=ID sekce NPC z DFN pro spawnování
+8762=Počet aktuálně spawnovaných NPC (jen pro čtení)
+8763=Odkaz na NPCLIST, ze kterého se má spawnovat
+8764=Spawnovat pouze mimo budovy?
+8765=Maximální hodnota Z, kterou mohou mít položky ve světě na spawnování
+8766=ID spawn regionu
+8767=Číslo světa, ve kterém je spawn region aktivní
+8768=Západní hranice spawn regionu
+8769=Východní hranice spawn regionu
+8770=Severní hranice spawn regionu
+8771=Jižní hranice spawn regionu
 // [8800-8849] General Tweak Menu
 8800=Zadejte novou hodnotu
 8801=Změny provedené v efektivních hodnotách dovedností se neukládají a po restartu serveru zmizí. Pro trvalé změny dovedností upravte raději vlastnost baseskills!
@@ -4375,6 +4436,14 @@
 9283=Nezaznamenali jste nic neobvyklého.
 9284=Tento jedinec je zloděj!
 9285=Nemůžete krást ze zabezpečené schránky.
+9286=Nabití:
+9287=přejmenovat knihu
+9288=Nastavit na výchozí
+9289=Uhodit runu
+9290=Vzpomínka (kouzlo)
+9291=Vzpomínka (nabití)
+9292=Cesta branou
+9293=Posvátná cesta
 // [9301-9310] Kouzelná ryba
 9301=Jste již pod podobným účinkem.
 9302=Rybu spolkneš celou!
@@ -5557,7 +5626,7 @@
 19234=Váš zmatek pominul, nyní můžete vyzbrojit zbraň!
 19235=Už nejsi smrtelně zraněný.
 19236=Krvácející rány se zahojily, už nekrvácíte!
-// [19301-19330] Poutaný a mrtvý mazlíček
+// [19301-19340] Poutaný a mrtvý mazlíček
 19301=Mrtvého mazlíčka nelze vyměnit.
 19302=Mrtvý mazlíček nemůže útočit.
 19303=Nejste dostatečně zkušení, abyste tohoto mazlíčka vzkřísili.

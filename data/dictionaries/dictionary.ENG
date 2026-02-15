@@ -2193,6 +2193,7 @@
 2186=You are not skilled enough to understand that creature
 2187=That doesn't look much like an animal.
 2188=Wild
+2189=Metal
 2199=Confused
 2200=None
 2201=Owner Count
@@ -2512,6 +2513,9 @@
 2639=Sort by Spawn Count (%s)
 2650=You pour the %s into the empty bottle.
 2651=You pour the %s into the empty jug.
+2660=Found %i region-based spawners in %u milliseconds.
+2661=Manage Spawn Regions
+2662=Teleport to Spawn Region
 // [2700-2799] Misc scripts
 2700=Only the house owner can rotate furniture.
 2701=That does not appear to work.
@@ -3539,6 +3543,40 @@
 6321=It looks as if this blade is covered with an acidic substance.
 6322=It looks like this blade has a corrosive element on it.
 6323=It looks like this blade has a light corrosive element on it.
+// [6500-6539] Event Manager
+6500=Event Manager: Heartbeat started
+6501=Event Manager: Reusing existing Event Manager object.
+6502=Event Manager: Old Event Manager object no longer exists, a new one will be created.
+6503=Event Manager: Failed to spawn %s
+6504=Event Manager: Initialization complete. Events loaded: %i
+6505=Event Manager: Initialization complete. No Events loaded, entering standby mode.
+6506=Event Manager: All events finished. Entering standby mode.
+6507=Event Manager: WARNING - Skipped event, callback function %s missing in script %i
+6508=Event Manager is currently disabled. Enable it via uox.ini
+6509=Active Events: %i
+6510=Usage: 'em %s <index number from Event list>
+6511=Event Manager: Event %i is now %s
+6512=Event Manager: %s changed Event %i to %s
+6513=Invalid Event index. To see full Event list: 'em list
+6514=Forcing reset of Event Manager...
+6515=Supported Event Manager commands: list, enable <#>, disable <#>, remove <#>, reset
+6516=Event Manager: RegisterEvent failed because Event Manager is disabled.
+6517=Event Manager: RegisterEvent failed due to config data missing callbackScriptID and/or callbackFuncStart.
+6518=Event Manager: New Event registered - %s (ID: %i)
+6519=Event halted and disabled.
+6520=Event reenabled and rescheduled for next valid activation window.
+6521=Usage: 'em remove <index from event list>
+6522=Event halted and removed.
+// [6540-6550] Dawn's Music Box
+6540=You must have the item in your backpack or locked down in order to use it.
+6541=Target a Dawn's Music Box to add this song.
+6542=You must target a Dawn's Music Box.
+6543=That is not a Dawn's Music Box.
+6544=No music gear is pending.
+6545=The music gear could not be found.
+6546=This gear has no song assigned.
+6547=This song track is already in the music box.
+6548=This song has been added to the music box.
 // [7000-7499] AI Scripts
 7000=Thou art a criminal and cannot access thy bank box.
 7001=Which item do you wish to deposit in your bank box?
@@ -4033,6 +4071,29 @@
 8724=Is slot 7 on this Account blocked?
 8725=How long is user banned for, in minutes?
 8726=When was the account logged into the first time? (Read-Only)
+// [8750-8799] Tweak Menu - Spawn Region property descriptions
+8750=Number of chars/items spawned per spawn cycle
+8751=Instance ID where spawn region is active
+8752=Are spawned items Spawners Objects?
+8753=Item Section ID from DFNs to spawn
+8754=Count of items currently spawned (Read-Only)
+8755=Reference to ITEMLIST from which to spawn
+8756=Max amount of items to spawn
+8757=Max amount of NPCs to spawn
+8758=Max time interval until next spawn cycle
+8759=Min time interval until next spawn cycle
+8760=Internal name of Spawn Region
+8761=NPC Section ID from DFNs to spawn
+8762=Count of NPCs currently spawned (Read-Only)
+8763=Reference to NPCLIST from which to spawn
+8764=Spawn only outside buildings?
+8765=Max Z value influence items in the world can have on spawning
+8766=Spawn Region ID
+8767=World Number that Spawn Region is active in
+8768=Western boundary for Spawn Region
+8769=Eastern boundary for Spawn Region
+8770=Northern boundary for Spawn Region
+8771=Southern boundary for Spawn Region
 // [8800-8849] General Tweak Menu
 8800=Enter new value
 8801=Changes made to effective skill values are not saved, and will be gone if server restarts. For permanent skill changes, adjust baseskills property instead!
@@ -4374,6 +4435,14 @@
 9283=You notice nothing unusual.
 9284=This individual is a thief!
 9285=You cannot steal from a secure container.
+9286=Charges:
+9287=rename book
+9288=Set default
+9289=Drop rune
+9290=Recall ( Spell )
+9291=Recall ( Charge )
+9292=Gate Travel
+9293=Sacred Journey
 // [9301-9310] Magic Fish
 9301=You are already under a similar effect.
 9302=You swallow the fish whole!
