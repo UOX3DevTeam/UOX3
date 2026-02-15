@@ -518,6 +518,7 @@ get=0x0e42 0x0E43
 
 [base_lost_and_Found]
 {
+get=base_item
 name=lost and found box
 id=0x9A9
 weight=3000
