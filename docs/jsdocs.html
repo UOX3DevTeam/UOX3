@@ -28,7 +28,7 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 12. December, 2025</small></p>
+	<p style="margin:0"><small>Last Updated: 7. February, 2026</small></p>
 	<p style="margin:0"><small>Written for UOX3 Version: v0.99.7c</small></p>
 </div>
 
@@ -55,6 +55,11 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>February 7th, 2026</h4>
+						<ul>
+							<li>Added details for new JS Events: onScriptLoad, onStart</li>
+							<li>Added details for new JS Function: FindItemBySection</li>
+						</ul>
 						<h4>February 2nd, 2026</h4>
 						<ul>
 							<li>Added details for new JS Functions: GetSpawnRegions</li>
@@ -316,7 +321,7 @@ function onPacketReceive( pSocket, packetNum )</code></pre>
 		<ul id="events" class="cd-faq__group">
 			<li id="eventsHeader" class="cd-faq__title title-jsdoc"><h1>JS Events</h1><div id="filterInputEvents" contenteditable="true" placeholder="(Filter)" style="float:right; margin-top: -40px; margin-right: 10px; background-color: #fff; padding: 5px; width: 200px"></div></li>
 
-<li class="cd-faq__item">
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventScriptRegistration" id="eventScriptRegistration"><span>[Script]Registration</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">
@@ -3525,6 +3530,34 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 			</li>
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnScriptLoad" id="eventOnScriptLoad"><span>onScriptLoad</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onScriptLoad()</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To run custom actions per script on shard startup</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When server has completed startup, and when scripts are reloaded while server is running</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onScriptLoad()
+{
+	// Do something on shard startup
+	// See js/server/event_manager.js for one example of how it can be used
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnScrollCast" id="eventOnScrollCast"><span>onScrollCast</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">
@@ -4591,6 +4624,34 @@ function onSpellTargetSelect( myTarget, pCaster, spellID )
 	if( socket != null )
 		pCaster.SysMessage( GetDictionaryEntry( 9056, socket.language )); // That target is immune to magic!
 	return 2;
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnStart" id="eventOnStart"><span>onStart</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onStart( myObj )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To run custom actions per instanced script attached to objects</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When server has completed startup, will trigger per script attached to any given object, with this event inside.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onStart( myObj )
+{
+	// Do something on shard startup per instanced script per object with script and event
+	// ...
 }</code></pre></p>
 						</div>
 					</div>
@@ -5929,6 +5990,110 @@ function shutdown()
 							</div>
 						</div>
 
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_console_RegisterConsoleFunc"/>
+							<label for="spoiler_function_console_RegisterConsoleFunc">RegisterConsoleFunc <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool RegisterConsoleFunc( commandName, callbackScriptID, callbackFunctionName );</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Registers a console command that triggers a function in a specific script when the command is entered in the UOX3 console.</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Returns true if the command was registered successfully, otherwise false.</p>
+									<p>Like RegisterKey, the script must be enabled for console usage (see notes under RegisterKey / CONSOLE_SCRIPTS).</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Example: register a console command "announce"
+function ConsoleRegistration()
+{
+	// RegisterConsoleFunc( "commandName", scriptID, "functionName" )
+	RegisterConsoleFunc( "announce", SCRIPT.script_id, "ConsoleAnnounce" );
+}
+
+function ConsoleAnnounce()
+{
+	Console.Print( "Hello from a scripted console command!" );
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_console_DisableConsoleFunc"/>
+							<label for="spoiler_function_console_DisableConsoleFunc">DisableConsoleFunc <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool DisableConsoleFunc( commandName );</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Disables a previously registered scripted console command.</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Returns true if the command was found and disabled, otherwise false.</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Disable a command you registered earlier
+function ConsoleRegistration()
+{
+	RegisterConsoleFunc( "announce", SCRIPT.script_id, "ConsoleAnnounce" );
+
+	// Later you can disable it
+	DisableConsoleFunc( "announce" );
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_console_EnableConsoleFunc"/>
+							<label for="spoiler_function_console_EnableConsoleFunc">EnableConsoleFunc <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool EnableConsoleFunc( commandName );</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Enables a previously registered scripted console command that was disabled.</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Returns true if the command was found and enabled, otherwise false.</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Enable a disabled command again
+function ConsoleRegistration()
+{
+	RegisterConsoleFunc( "announce", SCRIPT.script_id, "ConsoleAnnounce" );
+	DisableConsoleFunc( "announce" );
+
+	// Re-enable it
+	EnableConsoleFunc( "announce" );
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
 					</div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -6418,7 +6583,7 @@ function onUseChecked( pUser, iUsed )
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>ITEM FindItem( xLoc, yLoc, zLoc, world, idToCheck[, instanceID] );</em></p>
+									<p><em>ITEM FindItem( xLoc, yLoc, zLoc, world, itemId[, instanceID] );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -6428,6 +6593,26 @@ function onUseChecked( pUser, iUsed )
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">// Fetch item reference for item with id 0x04a9 closest to player's location
 var closestItem = FindItem( pUser.x, pUser.y, pUser.z, pUser.worldnumber, 0x04a9 );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_item_FindItemBySection"/>
+							<label for="spoiler_function_item_FindItemBySection">FindItemBySection <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>ITEM FindItemBySection( xLoc, yLoc, zLoc, world, sectionId[, instanceID] );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns item reference to item with given sectionId that is closest (within immediate nearby internal map regions) to specified coordinates</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Fetch item reference for item with section ID "katana" closest to player's location
+var closestItem = FindItemBySection( pUser.x, pUser.y, pUser.z, pUser.worldnumber, "katana" );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -7131,7 +7316,31 @@ if( DoesEventExist( 0, "MyCustomFunction" ))
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_GetAccountCount"/>
+							<input type="checkbox" id="spoiler_function_misc_EraStringToNum"/>
+							<label for="spoiler_function_misc_EraStringToNum">EraStringToNum <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int EraStringToNum( eraName );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Converts an era name string into the numeric era value used by the server.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Parameters: eraName = era name string (example: "t2a", "aos", etc.).</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Convert a server era string to the numeric era value
+var eraNum = EraStringToNum( "aos" );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_misc_GetAccountCount" />
 							<label for="spoiler_function_misc_GetAccountCount">GetAccountCount <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7235,6 +7444,66 @@ var aosFeaturesEnabled = GetClientFeature( 0x10 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_misc_GetCharacterCount"/>
+							<label for="spoiler_function_misc_GetCharacterCount">GetCharacterCount <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int GetCharacterCount();</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns the total number of characters currently in the world.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Get total number of characters in the world
+var totalChars = GetCharacterCount();</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_misc_GetItemCount"/>
+							<label for="spoiler_function_misc_GetItemCount">GetItemCount <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int GetItemCount();</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns the total number of items currently in the world.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Get total number of items in the world
+var totalItems = GetItemCount();</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_misc_GetMultiCount"/>
+							<label for="spoiler_function_misc_GetMultiCount">GetMultiCount <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int GetMultiCount();</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns the total number of multis currently in the world.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Get total number of multis in the world
+var totalMultis = GetMultiCount();</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_function_misc_GetRandomSOSArea"/>
 							<label for="spoiler_function_misc_GetRandomSOSArea">GetRandomSOSArea <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -7262,6 +7531,26 @@ sosMsg.morez = worldNum;
 sosMsg.more = sosMsg.instanceID;
 
 // See UOX3/js/item/waterstainedsos.js for full example, including validation for whether the chosen location is suitable, and not blocked by dynamic items, static items or map tiles</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_misc_GetServerVersionString"/>
+							<label for="spoiler_function_misc_GetServerVersionString">GetServerVersionString <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>string GetServerVersionString();</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns the server version as a string.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Print server version to the console/log
+var ver = GetServerVersionString();</code></pre>
 								</div>
 							</div>
 						</div>
@@ -7399,6 +7688,74 @@ function onIterate( myObject )
 var TrammelMoonphase = Moon( 1 );
 Moon( 0, 7 ); //Set the moon Felucca to moonphase 7
 Moon( 1, 3 ); //Set the moon Trammel to moonphase 3</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_misc_GetMoongateFacetStatus"/>
+							<label for="spoiler_function_misc_GetMoongateFacetStatus">GetMoongateFacetStatus <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int GetMoongateFacetStatus( facetNumber );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Checks whether moongate travel is enabled for a specific facet.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>
+										Parameters: facetNumber = facet/world number to check<br>
+										Return value is typically 0 (disabled) or 1 (enabled).
+									</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Check if moongates are enabled on Trammel (0)
+if( GetMoongateFacetStatus( 0 ))
+{
+	// enabled
+}
+else
+{
+	// disabled
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_misc_SetMoongateFacetStatus"/>
+							<label for="spoiler_function_misc_SetMoongateFacetStatus">SetMoongateFacetStatus <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void SetMoongateFacetStatus( facetNumber );</em></p>
+									<p><em>void SetMoongateFacetStatus( facetNumber, enabled );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Enables or disables moongate travel for a specific facet.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>
+										Parameters: facetNumber = facet/world number to set<br>
+										enabled = true to enable, false to disable
+									</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Disable moongates on Felucca (1)
+SetMoongateFacetStatus( 1, false );
+
+// Enable moongates on Felucca (1)
+SetMoongateFacetStatus( 1, true );
+
+// Verify
+var felEnabled = GetMoongateFacetStatus( 1 );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -8477,7 +8834,7 @@ SetSpawnRegionFacetStatus( 13 );</code></pre>
 					<div class="text-component">
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_town_GetTownRegion"/>
+							<input type="checkbox" id="spoiler_function_town_GetTownRegion" />
 							<label for="spoiler_function_town_GetTownRegion">GetTownRegion <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -8492,6 +8849,45 @@ SetSpawnRegionFacetStatus( 13 );</code></pre>
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">// Fetch reference to a region (region ID from regions.dfn)
 var townRegion = GetTownRegion( regionID );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_town_GetTownRegionFromXY" />
+							<label for="spoiler_function_town_GetTownRegionFromXY">GetTownRegionFromXY <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>REGION GetTownRegionFromXY( x, y, worldNumber, instanceID );</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns a Region JS Object reference for the town region at the specified map coordinates.</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>
+										Parameters: x, y = map coordinates<br>
+										worldNumber = facet/world number<br>
+										instanceID = instance ID to check
+									</p>
+									<p>Returns null (0) if no town region is found at the location.</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Get town region at player's current location
+var townRegion = GetTownRegionFromXY( pUser.x, pUser.y, pUser.worldnumber, pUser.instanceID );
+
+if( townRegion )
+{
+	// Do something with region object
+	// Example: print the region name if your Region object supports it
+	// pUser.socket.SysMessage( townRegion.name );
+}</code></pre>
 								</div>
 							</div>
 						</div>
@@ -18183,6 +18579,36 @@ var createFoodSpellSFX = createFoodSpell.soundEffect; // Get the sound effect de
 				</div> <!-- cd-faq__content -->
 			</li>
 		</ul> <!-- cd-faq__group -->
+
+		<ul id="events" class="cd-faq__group">
+			<li id="eventsHeader" class="cd-faq__title title-jsdoc"><h1>Global JS Constants</h1><div id="filterGlobalConstants" contenteditable="true" placeholder="(Filter)" style="float:right; margin-top: -40px; margin-right: 10px; background-color: #fff; padding: 5px; width: 200px"></div></li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventScriptRegistration" id="eventScriptRegistration"><span>UOX_DEBUG_MODE</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>UOX_DEBUG_MODE</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>Used to check if UOX3 is running in debug mode (true) or not (false)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">// Display a debug message if running in debug mode
+if( UOX_DEBUG_MODE )
+{
+	Console.Print( "This is a debug message that only shows up in the UOX3 console if UOX3 is run in debug mode." );
+}
+</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+		</ul>
 
 		<ul id="tips" class="cd-faq__group">
 			<li class="cd-faq__title title-jsdoc"><h1>Tips and Tutorials</h1></li>

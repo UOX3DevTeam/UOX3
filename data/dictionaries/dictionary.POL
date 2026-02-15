@@ -2194,6 +2194,7 @@
 2186=Nie jesteś wystarczająco uzdolniony, by zrozumieć to stworzenie
 2187=To nie wygląda zbytnio jak zwierzę.
 2188=Dziki
+2189=Metal
 2199=Zorientowany
 2200=Nie ma
 2201=Liczba właścicieli
@@ -3543,6 +3544,30 @@
 6321=Wygląda, jakby ostrze było pokryte kwaśną substancją.
 6322=Wygląda, jakby ostrze zawierało substancję żrącą.
 6323=Wygląda, jakby ostrze zawierało niewielką ilość substancji żrącej.
+// [6500-6539] Event Manager
+6500=Menedżer zdarzeń: Rozpoczęto pulsowanie
+6501=Menedżer zdarzeń: Ponowne użycie istniejącego obiektu menedżera zdarzeń.
+6502=Menedżer zdarzeń: Stary obiekt menedżera zdarzeń już nie istnieje, zostanie utworzony nowy.
+6503=Menedżer zdarzeń: Nie udało się utworzyć %s
+6504=Menedżer zdarzeń: Inicjalizacja zakończona. Załadowano zdarzenia: %i
+6505=Menedżer zdarzeń: Inicjalizacja zakończona. Nie załadowano żadnych zdarzeń, przechodzę w tryb gotowości.
+6506=Menedżer zdarzeń: Wszystkie zdarzenia zakończone. Przechodzę w tryb gotowości.
+6507=Menedżer zdarzeń: OSTRZEŻENIE — pominięto zdarzenie, brakuje funkcji wywołania zwrotnego %s w skrypcie %i
+6508=Menedżer zdarzeń jest obecnie wyłączony. Włącz go za pomocą pliku uox.ini
+6509=Aktywne zdarzenia: %i
+6510=Sposób użycia: 'em %s <numer indeksu z listy zdarzeń>
+6511=Menedżer zdarzeń: Zdarzenie %i ma teraz wartość %s
+6512=Menedżer zdarzeń: %s zmienił zdarzenie %i na %s
+6513=Nieprawidłowy indeks zdarzenia. Aby wyświetlić pełną listę zdarzeń: 'em list
+6514=Wymuszanie resetowania menedżera zdarzeń...
+6515=Obsługiwane polecenia menedżera zdarzeń: list, enable <#>, disable <#>, remove <#>, reset
+6516=Menedżer zdarzeń: Rejestracja zdarzenia nie powiodła się, ponieważ menedżer zdarzeń jest wyłączony.
+6517=Menedżer zdarzeń: Rejestracja zdarzenia nie powiodła się z powodu braku danych konfiguracyjnych callbackScriptID i/lub callbackFuncStart.
+6518=Menedżer zdarzeń: zarejestrowano nowe zdarzenie — %s (ID: %i)
+6519=Zdarzenie zatrzymane i wyłączone.
+6520=Zdarzenie włączone i przeplanowane na następne ważne okno aktywacji.
+6521=Zastosowanie: 'em remove <indeks z listy zdarzeń>
+6522=Zdarzenie zatrzymane i usunięte.
 // [6540-6550] Pozytywka Dawns
 6540=Aby użyć przedmiotu, musisz mieć go w plecaku lub zablokować.
 6541=Aby dodać tę piosenkę, wybierz pozytywkę Dawns.
@@ -4411,6 +4436,14 @@
 9283=Nie zauważyłeś nic niezwykłego.
 9284=Ta osoba jest złodziejem!
 9285=Nie możesz okraść zabezpieczonego pojemnika.
+9286=Opłaty:
+9287=Zmień nazwę książki
+9288=Ustaw domyślną
+9289=Upuść runę
+9290=Przywołanie (Zaklęcie)
+9291=Przywołanie (Opłata)
+9292=Podróż przez Bramę
+9293=Święta Podróż
 // [9301-9310] Magiczna Ryba
 9301=Jesteś już pod wpływem podobnego efektu.
 9302=Połykasz rybę w całości!
@@ -5593,7 +5626,7 @@
 19234=Twoje zamieszanie minęło, możesz teraz uzbroić broń!
 19235=Nie jesteś już śmiertelnie ranny.
 19236=Krwawiące rany się zagoiły, już nie krwawisz!
-// [19301-19330] Związany i martwy zwierzak
+// [19301-19340] Związany i martwy zwierzak
 19301=Nie możesz handlować martwym zwierzakiem.
 19302=Martwy zwierzak nie może atakować.
 19303=Nie masz wystarczających umiejętności, aby wskrzesić tego zwierzaka.

@@ -2358,6 +2358,7 @@
 2186=Vous n'êtes pas assez compétent pour comprendre cette créature.
 2187=Ceci ne ressemble pas beaucoup à un animal.
 2188=Sauvage
+2189=Métal
 2199=Confusé
 2200=Non
 2201=Compte des propriétaires
@@ -3707,6 +3708,30 @@
 6321=On dirait que cette lame est recouverte d'une substance acide.
 6322=On dirait que cette lame contient un élément corrosif.
 6323=On dirait que cette lame contient un élément légèrement corrosif.
+// [6500-6539] Event Manager
+6500=Gestionnaire d'événements : démarrage du battement de cœur
+6501=Gestionnaire d'événements : réutilisation de l'objet Gestionnaire d'événements existant.
+6502=Gestionnaire d'événements : l'ancien objet Gestionnaire d'événements n'existe plus, un nouvel objet sera créé.
+6503=Gestionnaire d'événements : échec de la création de %s
+6504=Gestionnaire d'événements : initialisation terminée. Événements chargés : %i
+6505=Gestionnaire d'événements : initialisation terminée. Aucun événement chargé, passage en mode veille.
+6506=Gestionnaire d'événements : Tous les événements sont terminés. Passage en mode veille.
+6507=Gestionnaire d'événements : AVERTISSEMENT - Événement ignoré, fonction de rappel %s manquante dans le script %i
+6508=Le gestionnaire d'événements est actuellement désactivé. Activez-le via uox.ini
+6509=Événements actifs : %i
+6510=Utilisation : 'em %s <numéro d'index de la liste des événements>
+6511=Gestionnaire d'événements : l'événement %i est désormais %s
+6512=Gestionnaire d'événements : %s a modifié l'événement %i en %s
+6513=Index d'événement non valide. Pour afficher la liste complète des événements : 'em list
+6514=Forcer la réinitialisation du gestionnaire d'événements...
+6515=Commandes prises en charge par le gestionnaire d'événements : list, enable <#>, disable <#>, remove <#>, reset
+6516=Gestionnaire d'événements : échec de RegisterEvent car le gestionnaire d'événements est désactivé.
+6517=Gestionnaire d'événements : échec de RegisterEvent car les données de configuration callbackScriptID et/ou callbackFuncStart sont manquantes.
+6518=Gestionnaire d'événements : nouvel événement enregistré - %s (ID : %i)
+6519=Événement interrompu et désactivé.
+6520=Événement activé et reprogrammé pour la prochaine fenêtre d'activation valide.
+6521=Utilisation : 'em remove <index from event list>
+6522=Événement interrompu et supprimé.
 // [6540-6550] Boîte à musique de l'Aube
 6540=Vous devez avoir cet objet dans votre inventaire ou le verrouiller pour l'utiliser.
 6541=Ciblez une boîte à musique de l'Aube pour ajouter ce morceau.
@@ -4575,6 +4600,14 @@
 9283=Vous ne remarquez rien d'inhabituel.
 9284=Cet individu est un voleur !
 9285=Vous ne pouvez pas voler dans un conteneur sécurisé.
+9286=Charges :
+9287=Renommer le livre
+9288=Définir par défaut
+9289=Déposer la rune
+9290=Rappel (Sort)
+9291=Rappel (Charge)
+9292=Voyage par portail
+9293=Voyage sacré
 // [9301-9310] Poisson magique
 9301=Vous êtes déjà sous un effet similaire.
 9302=Vous avalez le poisson tout entier !
@@ -5757,7 +5790,7 @@
 19234=Votre confusion est passée, vous pouvez maintenant armer une arme !
 19235=Vous n'êtes plus mortellement blessé.
 19236=Les plaies saignantes ont guéri, vous ne saignez plus !
-// [19301-19330] Animal lié et mort
+// [19301-19340] Animal lié et mort
 19301=Vous ne pouvez pas échanger un animal mort.
 19302=L'animal mort ne peut pas attaquer.
 19303=Vous n'êtes pas assez compétent pour ressusciter cet animal.

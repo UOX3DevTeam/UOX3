@@ -554,11 +554,11 @@ auto GetItemAtXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceId ) -
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	FindItemNearXYZ()
+//|	Function	-	FindNearestItemNearXYZ()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Find items near specified location
+//|	Purpose		-	Find nearest item of specific Item ID near specified location
 //o------------------------------------------------------------------------------------------------o
-CItem *FindItemNearXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id, UI16 instanceId )
+CItem *FindNearestItemNearXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id, UI16 instanceId )
 {
 	UI16 oldDist		= DIST_OUTOFRANGE;
 	UI16 currDist;
@@ -575,10 +575,47 @@ CItem *FindItemNearXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id, UI16 
 			if( !ValidateObject( itemCheck ) || itemCheck->GetInstanceId() != instanceId )
 				continue;
 
-			if( itemCheck->GetId() == id && itemCheck->GetZ() == z )
+			if( itemCheck->GetId() == id && abs( itemCheck->GetZ() - z ) <= 5 )
 			{
 				Point3_st difference	= itemCheck->GetLocation() - targLocation;
-				currDist = static_cast<UI16>( difference.Mag() );
+				currDist = static_cast<UI16>( difference.MagSquared3D() );
+				if( currDist < oldDist )
+				{
+					oldDist = currDist;
+					currItem = itemCheck;
+				}
+			}
+		}
+	}
+	return currItem;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	FindNearestItemBySectionNearXYZ()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Find nearest item of specific Section ID near specified location
+//o------------------------------------------------------------------------------------------------o
+CItem *FindNearestItemBySectionNearXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, const std::string &sectionId, UI16 instanceId )
+{
+	UI16 oldDist		= DIST_OUTOFRANGE;
+	UI16 currDist;
+	CItem *currItem		= nullptr;
+	Point3_st targLocation = Point3_st( x, y, z );
+	for( auto &toCheck : MapRegion->PopulateList( x, y, worldNumber ))
+	{
+		if( toCheck == nullptr ) // no valid region
+			continue;
+
+		auto regItems = toCheck->GetItemList();
+		for( const auto &itemCheck: regItems->collection() )
+		{
+			if( !ValidateObject( itemCheck ) || itemCheck->GetInstanceId() != instanceId )
+				continue;
+
+			if( itemCheck->GetSectionId() == sectionId && abs( itemCheck->GetZ() - z ) <= 5 )
+			{
+				Point3_st difference	= itemCheck->GetLocation() - targLocation;
+				currDist = static_cast<UI16>( difference.MagSquared3D() );
 				if( currDist < oldDist )
 				{
 					oldDist = currDist;

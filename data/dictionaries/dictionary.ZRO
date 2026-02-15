@@ -1410,7 +1410,6 @@
 1405=Location Info
 1406=Stats
 1407=Tweak
-
 // from here on misc, found on second loop
 // boats.cpp
 1408=a mast
@@ -2194,6 +2193,7 @@
 2186=You are not skilled enough to understand that creature
 2187=That doesn't look much like an animal.
 2188=Wild
+2189=Metal
 2199=Confused
 2200=None
 2201=Owner Count
@@ -2513,6 +2513,9 @@
 2639=Sort by Spawn Count (%s)
 2650=You pour the %s into the empty bottle.
 2651=You pour the %s into the empty jug.
+2660=Found %i region-based spawners in %u milliseconds.
+2661=Manage Spawn Regions
+2662=Teleport to Spawn Region
 // [2700-2799] Misc scripts
 2700=Only the house owner can rotate furniture.
 2701=That does not appear to work.
@@ -3540,11 +3543,35 @@
 6321=It looks as if this blade is covered with an acidic substance.
 6322=It looks like this blade has a corrosive element on it.
 6323=It looks like this blade has a light corrosive element on it.
-// [6540-6550] Dawns Music Box
+// [6500-6539] Event Manager
+6500=Event Manager: Heartbeat started
+6501=Event Manager: Reusing existing Event Manager object.
+6502=Event Manager: Old Event Manager object no longer exists, a new one will be created.
+6503=Event Manager: Failed to spawn %s
+6504=Event Manager: Initialization complete. Events loaded: %i
+6505=Event Manager: Initialization complete. No Events loaded, entering standby mode.
+6506=Event Manager: All events finished. Entering standby mode.
+6507=Event Manager: WARNING - Skipped event, callback function %s missing in script %i
+6508=Event Manager is currently disabled. Enable it via uox.ini
+6509=Active Events: %i
+6510=Usage: 'em %s <index number from Event list>
+6511=Event Manager: Event %i is now %s
+6512=Event Manager: %s changed Event %i to %s
+6513=Invalid Event index. To see full Event list: 'em list
+6514=Forcing reset of Event Manager...
+6515=Supported Event Manager commands: list, enable <#>, disable <#>, remove <#>, reset
+6516=Event Manager: RegisterEvent failed because Event Manager is disabled.
+6517=Event Manager: RegisterEvent failed due to config data missing callbackScriptID and/or callbackFuncStart.
+6518=Event Manager: New Event registered - %s (ID: %i)
+6519=Event halted and disabled.
+6520=Event reenabled and rescheduled for next valid activation window.
+6521=Usage: 'em remove <index from event list>
+6522=Event halted and removed.
+// [6540-6550] Dawn's Music Box
 6540=You must have the item in your backpack or locked down in order to use it.
-6541=Target a Dawns Music Box to add this song.
-6542=You must target a Dawns Music Box.
-6543=That is not a Dawns Music Box.
+6541=Target a Dawn's Music Box to add this song.
+6542=You must target a Dawn's Music Box.
+6543=That is not a Dawn's Music Box.
 6544=No music gear is pending.
 6545=The music gear could not be found.
 6546=This gear has no song assigned.
@@ -4408,6 +4435,14 @@
 9283=You notice nothing unusual.
 9284=This individual is a thief!
 9285=You cannot steal from a secure container.
+9286=Charges:
+9287=rename book
+9288=Set default
+9289=Drop rune
+9290=Recall ( Spell )
+9291=Recall ( Charge )
+9292=Gate Travel
+9293=Sacred Journey
 // [9301-9310] Magic Fish
 9301=You are already under a similar effect.
 9302=You swallow the fish whole!
@@ -5591,7 +5626,7 @@
 19234=Your confusion has passed, you may now arm a weapon!
 19235=You are no longer mortally wounded.
 19236=The bleeding wounds have healed, you are no longer bleeding!
-// [19301-19330] Bonded and Dead pet
+// [19301-19340] Bonded and Dead pet
 19301=You may not trade a dead pet.
 19302=The dead pet cannot attack.
 19303=You are not skilled enough to resurrect that pet.
