@@ -420,7 +420,8 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"SPEEDHACKMAXDEBTAVG", 402},
 	{"SPEEDHACKMAXCREDIT", 403},
 	{"SPEEDHACKGRACETHRESHOLD", 404},
-	{"SPEEDHACKTHROTTLEPENALTY", 405}
+	{"SPEEDHACKTHROTTLEPENALTY", 405},
+	{"EVENTMANAGERSYSTEM", 406}
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -546,6 +547,7 @@ constexpr auto BIT_HONESTYVIRTUEENABLED				= UI32( 116 );
 constexpr auto BIT_HUMILITYVIRTUEENABLED			= UI32( 117 );
 constexpr auto BIT_SACRIFICEVIRTUEENABLED			= UI32( 118 );
 constexpr auto BIT_SPEEDHACKDETECTION				= UI32( 119 );
+constexpr auto BIT_EVENTMANAGERSYSTEM				= UI32( 120 );
 
 
 // New uox3.ini format lookup
@@ -685,6 +687,9 @@ auto CServerData::ResetDefaults() -> void
 	ServerTimeMinutes( 0 );
 	ServerTimeSeconds( 0 );
 	ServerTimeAMPM( 0 );
+
+	// Event Manager
+	EventManagerSystem( true );
 
 	InternalAccountStatus( true );
 	YoungPlayerSystem( true );
@@ -5454,6 +5459,20 @@ auto CServerData::UseUnicodeMessages( bool nVal ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::EventManagerSystem()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether event manager system (in event_manager.js script) is enabled
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::EventManagerSystem() const -> bool
+{
+	return boolVals.test( BIT_EVENTMANAGERSYSTEM );
+}
+auto CServerData::EventManagerSystem( bool nVal ) -> void
+{
+	boolVals.set( BIT_EVENTMANAGERSYSTEM, nVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::GetDisabledAssistantFeature()
 //|					CServerData::SetDisabledAssistantFeature()
 //o------------------------------------------------------------------------------------------------o
@@ -5680,6 +5699,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "APSINTERVAL=" << static_cast<UI16>( APSInterval() ) << '\n';
 		ofsOutput << "APSDELAYSTEP=" << static_cast<UI16>( APSDelayStep() ) << '\n';
 		ofsOutput << "APSDELAYMAXCAP=" << static_cast<UI16>( APSDelayMaxCap() ) << '\n';
+		ofsOutput << "EVENTMANAGERSYSTEM=" << ( EventManagerSystem() ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n' << '\n';
 
 		ofsOutput << "[clientsupport]" << '\n' << "{" << '\n';
@@ -7629,6 +7649,9 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 405:	// SPEEDHACKTHROTTLEPENALTY
 			SpeedHackThrottlePenalty( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 406:	 // EVENTMANAGERSYSTEM
+			EventManagerSystem(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) == 1 ? true : false ));
 			break;
 		default:
 			rValue = false;
