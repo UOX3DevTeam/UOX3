@@ -2194,6 +2194,7 @@
 2186=Non sei abbastanza abile per capire quella creatura
 2187=Non assomiglia molto ad un animale.
 2188=Selvaggio
+2189=Metallo
 2199=Confuso
 2200=Nessuno
 2201=Conteggio dei proprietari
@@ -2513,6 +2514,9 @@
 2639=Ordina per numero di spawn (%s)
 2650=Si versa il %s nella bottiglia vuota.
 2651=Si versa il %s nella brocca vuota.
+2660=Trovati %i spawn basati sulla regione in %u millisecondi.
+2661=Gestisci regioni di spawn
+2662=Teletrasportati alla regione di spawn
 // [2700-2799] Misc Scripts
 2700=Solo il proprietario della casa può ruotare i mobili.
 2701=Questo non sembra funzionare.
@@ -3540,6 +3544,40 @@
 6321=Sembra che questa lama sia ricoperta da una sostanza acida.
 6322=Sembra che questa lama contenga un elemento corrosivo.
 6323=Sembra che questa lama contenga un leggero elemento corrosivo.
+// [6500-6539] Event Manager
+6500=Gestione eventi: avvio heartbeat
+6501=Gestione eventi: riutilizzo oggetto Gestione eventi esistente.
+6502=Gestione eventi: il vecchio oggetto Gestione eventi non esiste più, ne verrà creato uno nuovo.
+6503=Gestione eventi: impossibile generare %s
+6504=Gestione eventi: inizializzazione completata. Eventi caricati: %i
+6505=Gestione eventi: inizializzazione completata. Nessun evento caricato, entrando in modalità standby.
+6506=Gestione eventi: Tutti gli eventi terminati. Entrando in modalità standby.
+6507=Gestione eventi: AVVISO - Evento saltato, funzione di callback %s mancante nello script %i
+6508=La Gestione eventi è attualmente disabilitata. Abilitala tramite uox.ini
+6509=Eventi attivi: %i
+6510=Utilizzo: 'em %s <numero indice dall'elenco eventi>
+6511=Gestione eventi: l'evento %i è ora %s
+6512=Gestione eventi: %s ha modificato l'evento %i in %s
+6513=Indice evento non valido. Per visualizzare l'elenco completo degli eventi: 'em list
+6514=Forzatura del ripristino della Gestione eventi...
+6515=Comandi Gestione eventi supportati: list, enable <#>, disable <#>, remove <#>, reset
+6516=Gestione eventi: RegisterEvent non riuscito perché Gestione eventi è disabilitato.
+6517=Gestione eventi: RegisterEvent non riuscito a causa di dati di configurazione mancanti callbackScriptID e/o callbackFuncStart.
+6518=Gestione eventi: nuovo evento registrato - %s (ID: %i)
+6519=Evento interrotto e disabilitato.
+6520=Evento abilitato e riprogrammato per la prossima finestra di attivazione valida.
+6521=Utilizzo: 'em remove <indice dall'elenco eventi>
+6522=Evento interrotto e rimosso.
+// [6540-6550] Carillon dell'Alba
+6540=Devi avere l'oggetto nello zaino o sotto chiave per poterlo usare.
+6541=Seleziona un Carillon dell'Alba per aggiungere questa canzone.
+6542=Devi selezionare un Carillon dell'Alba.
+6543=Questo non è un Carillon dell'Alba.
+6544=Nessun equipaggiamento musicale in sospeso.
+6545=Impossibile trovare l'equipaggiamento musicale.
+6546=A questo equipaggiamento non è assegnata alcuna canzone.
+6547=Questa traccia è già nel carillon.
+6548=Questa canzone è stata aggiunta al carillon.
 // [7000-7499] AI Scripts
 7000=Tu sei un criminale e non puoi accedere alla tua cassaforte.
 7001=Quale oggetto desidera depositare nella sua cassetta di sicurezza?
@@ -4034,6 +4072,29 @@
 8724=Lo slot 7 di questo account è bloccato?
 8725=Per quanto tempo l'utente è stato bandito, in minuti?
 8726=Quando è stato effettuato il primo accesso all'account? (Solo lettura)
+// [8750-8799] Tweak Menu - Spawn Region property descriptions
+8750=Numero di caratteri/oggetti generati per ciclo di generazione
+8751=ID istanza in cui la regione di generazione è attiva
+8752=Gli oggetti generati sono oggetti generatori?
+8753=ID sezione oggetto da DFN da generare
+8754=Numero di oggetti attualmente generati (sola lettura)
+8755=Riferimento a ITEMLIST da cui generare
+8756=Quantità massima di oggetti da generare
+8757=Quantità massima di NPC da generare
+8758=Intervallo di tempo massimo fino al prossimo ciclo di generazione
+8759=Intervallo di tempo minimo fino al prossimo ciclo di generazione
+8760=Nome interno della regione di generazione
+8761=ID sezione NPC da DFN da generare
+8762=Numero di NPC attualmente generati (sola lettura)
+8763=Riferimento a NPCLIST da cui generare
+8764=Generare solo all'esterno degli edifici?
+8765=Valore Z massimo che gli oggetti nel mondo possono avere sullo spawn
+8766=ID della regione di spawn
+8767=Numero del mondo in cui la regione di spawn è attiva
+8768=Confine occidentale della regione di spawn
+8769=Confine orientale della regione di spawn
+8770=Confine settentrionale della regione di spawn
+8771=Confine meridionale della regione di spawn
 // [8800-8849] General Tweak Menu
 8800=Inserire il nuovo valore
 8801=Le modifiche apportate ai valori effettivi delle abilità non vengono salvate, e spariranno se il server si riavvia. Per modifiche permanenti alle abilità, regola invece la proprietà baseskills!
@@ -4375,6 +4436,14 @@
 9283=Non si nota nulla di insolito.
 9284=Questo individuo è un ladro!
 9285=Non si può rubare da un contenitore sicuro.
+9286=Cariche:
+9287=Rinomina libro
+9288=Imposta predefinito
+9289=Rilascia runa
+9290=Richiamo (Incantesimo)
+9291=Richiamo (Carica)
+9292=Viaggio attraverso il portale
+9293=Viaggio Sacro
 // [9301-9310] Pesce Magico
 9301=Sei già sotto un effetto simile.
 9302=Ingoi il pesce intero!
@@ -5557,7 +5626,7 @@
 19234=La tua confusione è passata, ora puoi armare un'arma!
 19235=Non sei più ferito a morte.
 19236=Le ferite sanguinanti sono guarite, non stai più sanguinando!
-// [19301-19330] Animale domestico legato e morto
+// [19301-19340] Animale domestico legato e morto
 19301=Non puoi scambiare un animale domestico morto.
 19302=L'animale domestico morto non può attaccare.
 19303=Non sei abbastanza abile da resuscitare quell'animale.

@@ -2194,6 +2194,7 @@
 2186=Du bist nicht erfahren genug, um diese Kreatur zu verstehen
 2187=Das sieht nicht gerade wie ein Tier aus.
 2188=Wild
+2189=Metall
 2199=Verwirrt
 2200=Keine
 2201=Besitzeranzahl
@@ -2513,6 +2514,9 @@
 2639=Sortieren nach Spawn-Anzahl (%s)
 2650=Sie schütten die %s in die leere Flasche.
 2651=Sie schütten die %s in den leeren Krug.
+2660=%i regionenbasierte Spawner in %u Millisekunden gefunden.
+2661=Spawn-Regionen verwalten
+2662=Zur Spawn-Region teleportieren
 // [2700-2799] Misc scripts
 2700=Nur der Hausbesitzer kann die Möbel drehen.
 2701=Das scheint nicht zu funktionieren.
@@ -3540,6 +3544,40 @@
 6321=Es sieht so aus, als wäre diese Klinge mit einer säurehaltigen Substanz bedeckt.
 6322=Es sieht so aus, als wäre diese Klinge mit einer ätzenden Substanz bedeckt.
 6323=Es sieht so aus, als wäre diese Klinge mit einer leicht ätzenden Substanz bedeckt.
+// [6500-6539] Event Manager
+6500=Ereignismanager: Heartbeat gestartet
+6501=Ereignismanager: Wiederverwendung eines vorhandenen Ereignismanager-Objekts.
+6502=Ereignismanager: Altes Ereignismanager-Objekt existiert nicht mehr, ein neues wird erstellt.
+6503=Ereignismanager: %s konnte nicht erstellt werden
+6504=Ereignismanager: Initialisierung abgeschlossen. Ereignisse geladen: %i
+6505=Ereignismanager: Initialisierung abgeschlossen. Keine Ereignisse geladen, Standby-Modus wird aktiviert.
+6506=Event Manager: Alle Ereignisse abgeschlossen. Standby-Modus wird aktiviert.
+6507=Event Manager: WARNUNG – Ereignis übersprungen, Callback-Funktion %s fehlt in Skript %i
+6508=Event Manager ist derzeit deaktiviert. Aktivieren Sie ihn über uox.ini
+6509=Aktive Ereignisse: %i
+6510=Verwendung: 'em %s <Indexnummer aus der Ereignisliste>
+6511=Ereignis-Manager: Ereignis %i ist jetzt %s
+6512=Ereignis-Manager: %s hat Ereignis %i in %s geändert
+6513=Ungültiger Ereignisindex. Um die vollständige Ereignisliste anzuzeigen: 'em list
+6514=Ereignis-Manager wird zwangsweise zurückgesetzt...
+6515=Unterstützte Ereignis-Manager-Befehle: list, enable <#>, disable <#>, remove <#>, reset
+6516=Ereignis-Manager: RegisterEvent fehlgeschlagen, da der Ereignis-Manager deaktiviert ist.
+6517=Ereignis-Manager: RegisterEvent fehlgeschlagen, da in den Konfigurationsdaten callbackScriptID und/oder callbackFuncStart fehlen.
+6518=Ereignis-Manager: Neues Ereignis registriert – %s (ID: %i)
+6519=Ereignis angehalten und deaktiviert.
+6520=Ereignis aktiviert und für das nächste gültige Aktivierungsfenster neu geplant.
+6521=Verwendung: 'em remove <Index aus Ereignisliste>
+6522=Ereignis angehalten und entfernt
+// [6540-6550] Dawns Musikbox
+6540=Du musst den Gegenstand in deinem Rucksack haben oder ihn gesichert haben, um ihn zu benutzen.
+6541=Wähle eine Dawns Musikbox als Ziel aus, um dieses Lied hinzuzufügen.
+6542=Du musst eine Dawns Musikbox als Ziel auswählen.
+6543=Das ist keine Dawns Musikbox.
+6544=Kein Musikgerät ist in der Warteschlange.
+6545=Das Musikgerät konnte nicht gefunden werden.
+6546=Diesem Gerät ist kein Lied zugewiesen.
+6547=Dieser Liedtitel befindet sich bereits in der Musikbox.
+6548=Dieses Lied wurde der Musikbox hinzugefügt.
 // [7000-7499] AI Scripts
 7000=Du bist ein Verbrecher und kannst nicht auf dein Bankschließfach zugreifen.
 7001=Welchen Gegenstand möchten Sie in Ihr Bankschließfach einzahlen?
@@ -4034,6 +4072,29 @@
 8724=Ist Slot 7 für dieses Konto gesperrt?
 8725=Wie lange ist der Benutzer gesperrt, in Minuten?
 8726=Wann wurde das Konto das erste Mal angemeldet? (Schreibgeschützt)
+// [8750-8799] Tweak Menu - Spawn Region property descriptions
+8750=Anzahl der pro Spawn-Zyklus erzeugten Zeichen/Objekte
+8751=Instanz-ID, in der die Spawn-Region aktiv ist
+8752=Sind die erzeugten Objekte Spawner-Objekte?
+8753=Gegenstandsabschnitt-ID aus DFNs zum Spawnen
+8754=Anzahl der derzeit gespawnten Gegenstände (schreibgeschützt)
+8755=Verweis auf ITEMLIST, aus der gespawnt werden soll
+8756=Maximale Anzahl der zu spawnden Gegenstände
+8757=Maximale Anzahl der zu spawnden NPCs
+8758=Maximales Zeitintervall bis zum nächsten Spawn-Zyklus
+8759=Minimales Zeitintervall bis zum nächsten Spawn-Zyklus
+8760=Interner Name der Spawn-Region
+8761=NPC-Abschnitt-ID aus DFNs zum Spawnen
+8762=Anzahl der aktuell gespawnten NPCs (schreibgeschützt)
+8763=Verweis auf NPCLIST, aus der gespawnt werden soll
+8764=Nur außerhalb von Gebäuden spawnen?
+8765=Maximaler Z-Wert, den Gegenstände in der Welt auf das Spawnen haben können
+8766=Spawn-Region-ID
+8767=Weltnummer, in der die Spawn-Region aktiv ist
+8768=Westliche Grenze der Spawn-Region
+8769=Östliche Grenze der Spawn-Region
+8770=Nördliche Grenze der Spawn-Region
+8771=Südliche Grenze der Spawn-Region
 // [8800-8849] General Tweak Menu
 8800=Eingabe eines neuen Wertes
 8801=Änderungen an effektiven Skill-Werten werden nicht gespeichert und sind nach einem Server-Neustart nicht mehr vorhanden. Für permanente Skill-Änderungen, passen Sie stattdessen die Eigenschaft baseskills an!
@@ -4375,6 +4436,14 @@
 9283=Du hast nichts Ungewöhnliches bemerkt.
 9284=Dieser Mensch ist ein Dieb!
 9285=Sie können nicht aus einem sicheren Behälter stehlen.
+9286=Ladungen:
+9287=Buch umbenennen
+9288=Standard festlegen
+9289=Rune fallen lassen
+9290=Zauber zurückrufen
+9291=Ladung zurückrufen
+9292=Portalreise
+9293=Heilige Reise
 // [9301-9310] Zauberfisch
 9301=Du stehst bereits unter einem ähnlichen Effekt.
 9302=Du verschluckst den Fisch ganz!
@@ -5557,7 +5626,7 @@
 19234=Ihre Verwirrung ist vorüber, Sie können jetzt eine Waffe bewaffnen!
 19235=Sie sind nicht mehr tödlich verwundet.
 19236=Die blutenden Wunden sind verheilt, Sie bluten nicht mehr!
-// [19301-19330] Verbundenes und totes Haustier
+// [19301-19340] Verbundenes und totes Haustier
 19301=Du kannst ein totes Haustier nicht tauschen.
 19302=Das tote Haustier kann nicht angreifen.
 19303=Du bist nicht geschickt genug, um dieses Haustier wiederzubeleben.

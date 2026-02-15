@@ -2194,6 +2194,7 @@
 2186=Nie jesteś wystarczająco uzdolniony, by zrozumieć to stworzenie
 2187=To nie wygląda zbytnio jak zwierzę.
 2188=Dziki
+2189=Metal
 2199=Zorientowany
 2200=Nie ma
 2201=Liczba właścicieli
@@ -2513,6 +2514,9 @@
 2639=Sortuj według liczby pojawień (%s)
 2650=Wlewasz %s do pustej butelki.
 2651=Wlewasz %s do pustego dzbana.
+2660=Znaleziono %i spawnerów opartych na regionach w %u milisekund.
+2661=Zarządzaj regionami spawnowania
+2662=Teleportuj się do regionu spawnowania
 // [2700-2799] Różne skrypty
 2700=Tylko właściciel domu może obracać meble.
 2701=To chyba nie działa.
@@ -3540,6 +3544,40 @@
 6321=Wygląda, jakby ostrze było pokryte kwaśną substancją.
 6322=Wygląda, jakby ostrze zawierało substancję żrącą.
 6323=Wygląda, jakby ostrze zawierało niewielką ilość substancji żrącej.
+// [6500-6539] Event Manager
+6500=Menedżer zdarzeń: Rozpoczęto pulsowanie
+6501=Menedżer zdarzeń: Ponowne użycie istniejącego obiektu menedżera zdarzeń.
+6502=Menedżer zdarzeń: Stary obiekt menedżera zdarzeń już nie istnieje, zostanie utworzony nowy.
+6503=Menedżer zdarzeń: Nie udało się utworzyć %s
+6504=Menedżer zdarzeń: Inicjalizacja zakończona. Załadowano zdarzenia: %i
+6505=Menedżer zdarzeń: Inicjalizacja zakończona. Nie załadowano żadnych zdarzeń, przechodzę w tryb gotowości.
+6506=Menedżer zdarzeń: Wszystkie zdarzenia zakończone. Przechodzę w tryb gotowości.
+6507=Menedżer zdarzeń: OSTRZEŻENIE — pominięto zdarzenie, brakuje funkcji wywołania zwrotnego %s w skrypcie %i
+6508=Menedżer zdarzeń jest obecnie wyłączony. Włącz go za pomocą pliku uox.ini
+6509=Aktywne zdarzenia: %i
+6510=Sposób użycia: 'em %s <numer indeksu z listy zdarzeń>
+6511=Menedżer zdarzeń: Zdarzenie %i ma teraz wartość %s
+6512=Menedżer zdarzeń: %s zmienił zdarzenie %i na %s
+6513=Nieprawidłowy indeks zdarzenia. Aby wyświetlić pełną listę zdarzeń: 'em list
+6514=Wymuszanie resetowania menedżera zdarzeń...
+6515=Obsługiwane polecenia menedżera zdarzeń: list, enable <#>, disable <#>, remove <#>, reset
+6516=Menedżer zdarzeń: Rejestracja zdarzenia nie powiodła się, ponieważ menedżer zdarzeń jest wyłączony.
+6517=Menedżer zdarzeń: Rejestracja zdarzenia nie powiodła się z powodu braku danych konfiguracyjnych callbackScriptID i/lub callbackFuncStart.
+6518=Menedżer zdarzeń: zarejestrowano nowe zdarzenie — %s (ID: %i)
+6519=Zdarzenie zatrzymane i wyłączone.
+6520=Zdarzenie włączone i przeplanowane na następne ważne okno aktywacji.
+6521=Zastosowanie: 'em remove <indeks z listy zdarzeń>
+6522=Zdarzenie zatrzymane i usunięte.
+// [6540-6550] Pozytywka Dawns
+6540=Aby użyć przedmiotu, musisz mieć go w plecaku lub zablokować.
+6541=Aby dodać tę piosenkę, wybierz pozytywkę Dawns.
+6542=Aby dodać tę piosenkę, wybierz pozytywkę Dawns.
+6543=To nie jest pozytywka Dawns.
+6544=Brak oczekującego sprzętu muzycznego.
+6545=Nie znaleziono sprzętu muzycznego.
+6546=Ten sprzęt nie ma przypisanej piosenki.
+6547=Ten utwór znajduje się już w pozytywce.
+6548=Ten utwór został dodany do pozytywki.
 // [7000-7499] AI Scripts
 7000=Jesteś przestępcą i nie masz dostępu do swojej skrytki bankowej.
 7001=Którą pozycję chcesz umieścić w swojej skrytce bankowej?
@@ -4034,6 +4072,29 @@
 8724=Czy Slot 7 na tym Koncie jest zablokowany?
 8725=Jak długo użytkownik jest zbanowany, w minutach?
 8726=Kiedy konto było zalogowane po raz pierwszy? (Tylko do odczytu)
+// [8750-8799] Tweak Menu - Spawn Region property descriptions
+8750=Liczba znaków/elementów generowanych w każdym cyklu generowania
+8751=Identyfikator instancji, w której region generowania jest aktywny
+8752=Czy generowane elementy są obiektami generującymi?
+8753=Identyfikator sekcji elementów z DFN do wygenerowania
+8754=Liczba obecnie wygenerowanych elementów (tylko do odczytu)
+8755=Odwołanie do ITEMLIST, z którego należy wygenerować elementy
+8756=Maksymalna liczba elementów do wygenerowania
+8757=Maksymalna liczba NPC do wygenerowania
+8758=Maksymalny odstęp czasu do następnego cyklu generowania
+8759=Minimalny odstęp czasu do następnego cyklu spawnowania
+8760=Wewnętrzna nazwa regionu spawnowania
+8761=Identyfikator sekcji NPC z DFN do spawnowania
+8762=Liczba obecnie spawnowanych NPC (tylko do odczytu)
+8763=Odwołanie do NPCLIST, z którego należy spawnowac
+8764=Spawnowac tylko poza budynkami?
+8765=Maksymalna wartość Z wpływająca na spawnowanie elementów w świecie
+8766=Identyfikator regionu spawnowania
+8767=Numer świata, w którym region spawnowania jest aktywny
+8768=Zachodnia granica regionu spawnowania
+8769=Wschodnia granica regionu spawnowania
+8770=Północna granica regionu spawnowania
+8771=Południowa granica regionu spawnowania
 // [8800-8849] Ogólne menu ustawień
 8800=Wprowadź nową wartość
 8801=Zmiany dokonane w efektywnych wartościach umiejętności nie są zapisywane i znikną po ponownym uruchomieniu serwera. Aby na stałe zmienić umiejętności, dostosuj właściwość baseskills zamiast tego!
@@ -4375,6 +4436,14 @@
 9283=Nie zauważyłeś nic niezwykłego.
 9284=Ta osoba jest złodziejem!
 9285=Nie możesz okraść zabezpieczonego pojemnika.
+9286=Opłaty:
+9287=Zmień nazwę książki
+9288=Ustaw domyślną
+9289=Upuść runę
+9290=Przywołanie (Zaklęcie)
+9291=Przywołanie (Opłata)
+9292=Podróż przez Bramę
+9293=Święta Podróż
 // [9301-9310] Magiczna Ryba
 9301=Jesteś już pod wpływem podobnego efektu.
 9302=Połykasz rybę w całości!
@@ -5557,7 +5626,7 @@
 19234=Twoje zamieszanie minęło, możesz teraz uzbroić broń!
 19235=Nie jesteś już śmiertelnie ranny.
 19236=Krwawiące rany się zagoiły, już nie krwawisz!
-// [19301-19330] Związany i martwy zwierzak
+// [19301-19340] Związany i martwy zwierzak
 19301=Nie możesz handlować martwym zwierzakiem.
 19302=Martwy zwierzak nie może atakować.
 19303=Nie masz wystarczających umiejętności, aby wskrzesić tego zwierzaka.

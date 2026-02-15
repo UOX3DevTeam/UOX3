@@ -720,6 +720,68 @@ auto StartInitialize( CServerData &serverdata ) -> void
 	// we've really finished loading here
 	cwmWorldState->SetLoaded( true );
 
+	// Trigger onScriptLoad in ALL scripts
+	for( size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i )
+	{
+		CJSMappingSection* section = JSMapping->GetSection( static_cast<SCRIPTTYPE>( i ));
+		if( section )
+		{
+			for( cScript* toExecute = section->First(); !section->Finished(); toExecute = section->Next() )
+			{
+				if( toExecute )
+				{
+					toExecute->OnScriptLoad();
+				}
+			}
+		}
+	}
+
+	// Trigger onStart event for all baseobjects
+	auto runOnStartFunctor = []( CBaseObject *a, UI32 &b, void *extraData ) -> bool
+	{
+		// Trigger onStart event in global script attached to object
+		cScript *toExecuteGlobal = JSMapping->GetScript( static_cast<UI16>( 0 ));
+		if( toExecuteGlobal != nullptr )
+		{
+			SI32 objType = ( a->GetObjType() == OT_CHAR ) ? IUE_CHAR : IUE_ITEM;
+			toExecuteGlobal->OnStart( a, objType );
+		}
+
+		// Trigger onStart event in scripts attached to object
+		std::vector<UI16> triggers = a->GetScriptTriggers();
+		for( auto id : triggers )
+		{
+			cScript* toExecute = JSMapping->GetScript( id );
+			if( toExecute != nullptr )
+			{
+				SI32 objType = ( a->GetObjType() == OT_CHAR ) ? IUE_CHAR : IUE_ITEM;
+				toExecute->OnStart( a, objType );
+			}
+		}
+		return true;
+	};
+	UI32 count = 0;
+	ObjectFactory::GetSingleton().IterateOver( OT_CHAR, count, nullptr, runOnStartFunctor );
+	ObjectFactory::GetSingleton().IterateOver( OT_ITEM, count, nullptr, runOnStartFunctor );
+	ObjectFactory::GetSingleton().IterateOver( OT_MULTI, count, nullptr, runOnStartFunctor );
+
+	// Trigger onStart event in all scripts attached to regions
+	for( auto & regionPair : cwmWorldState->townRegions )
+	{
+		if( regionPair.second )
+		{
+			std::vector<UI16> triggers = regionPair.second->GetScriptTriggers();
+			for( auto id : triggers )
+			{
+				cScript* script = JSMapping->GetScript( id );
+				if( script )
+				{
+					script->OnStart( regionPair.second, IUE_REGION );
+				}
+			}
+		}
+	}
+
 	// Get a second timestamp for startup time
 	auto startupEndTime = std::chrono::high_resolution_clock::now();
 

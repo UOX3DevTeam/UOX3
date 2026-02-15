@@ -558,10 +558,10 @@ function SetSkillInUse( socket, mChar, ourObj, skillNum, healingTime, setVal )
 	if( ValidateObject( ourObj ))
 	{
 		ourObj.SetTempTag( "isBeingHealed", setVal );
-		ourObj.SetTempTag( "healingSkillTimer", healingTime );
+		ourObj.SetTempTag( "healingSkillTimer", GetCurrentClock() + healingTime );
 		if( setVal )
 		{
-			mChar.SetTempTag( "healingSkillTarget", ourObj.serial.toString() );
+			mChar.SetTempTag( "healingSkillTarget", ourObj.serial );
 		}
 	}
 }
@@ -572,11 +572,13 @@ function onTimer( mChar, timerID )
 	if( !ValidateObject( mChar ))
 		return;
 
+	let socket = mChar.socket;
 	let skillNum = mChar.GetTempTag( "healingSkillNum" );
-	let ourObj = CalcCharFromSer( parseInt( mChar.GetTempTag( "healingSkillTarget" )));
+	let ourObj = CalcCharFromSer( mChar.GetTempTag( "healingSkillTarget" ));
 	if( !ValidateObject( ourObj ))
 	{
-		SetSkillInUse( socket, mChar, null, skillNum, 0, false );
+		if( socket != null )
+			SetSkillInUse( socket, mChar, null, skillNum, 0, false );
 		return;
 	}
 
@@ -600,7 +602,6 @@ function onTimer( mChar, timerID )
 			break;
 	}
 
-	let socket = mChar.socket;
 	if( socket != null )
 	{
 		if( mChar.dead )
@@ -614,12 +615,13 @@ function onTimer( mChar, timerID )
 		if( ourObj.dead && timerID != 0 )
 		{
 			socket.SysMessage( GetDictionaryEntry( 9086, socket.language )); // You cannot heal that which is not alive.
+			SetSkillInUse( socket, mChar, ourObj, skillNum, 0, false );
+			return;
 		}
 		else if( mChar.InRange( ourObj, maxRange ) && mChar.CanSee( ourObj ))
 		{
 			// Retrieve amount of times character's hands slipped during healing
 			let slipCount = mChar.GetTempTag( "slipCount" );
-
 			if( mChar.GetTempTag( "bonusCureLevel" ))
 			{
 				// Poison/Bleed was cured with bonus attempt already!
@@ -627,7 +629,7 @@ function onTimer( mChar, timerID )
 				timerID = 2;
 			}
 
-			switch ( timerID )
+			switch( timerID )
 			{
 				case 0:	// Resurrect
 					if( !ourObj.dead && !ourObj.GetTag( "isPetDead" ) )
@@ -670,9 +672,9 @@ function onTimer( mChar, timerID )
 								var deathTime = parseInt( ourObj.GetTempTag( "bondedPetDeathTime" )) || 0;
 								var waitTime = 10 * 60 * 1000; // 10 minutes in ms
 
-								if(( now - deathTime ) < waitTime)
+								if(( now - deathTime ) < waitTime )
 								{
-									socket.SysMessage( GetDictionaryEntry( 19340, pSock.language )); // That creature's spirit lacks cohesion. Try again in a few minutes.
+									socket.SysMessage( GetDictionaryEntry( 19340, socket.language )); // That creature's spirit lacks cohesion. Try again in a few minutes.
 									return;
 								}
 
@@ -685,7 +687,7 @@ function onTimer( mChar, timerID )
 							else if( coreShardEra >= EraStringToNum( "aos" ))
 							{
 								ourObj.frozen = true;
-								ourObj.SetTempTag( "ResurrectingHealer", mChar.serial.toString() );
+								ourObj.SetTempTag( "ResurrectingHealer", mChar.serial );
 								let resGump = new Gump; // create a new gump
 								resGump.AddPage( 0 );
 
@@ -930,7 +932,7 @@ function onTimer( mChar, timerID )
 
 							if( ourObj == mChar && coreShardEra >= EraStringToNum( "hs" ))
 							{
-								let poisonLvlCured = mChar.GetTempTag( "bonusCureLevel" );
+								let poisonLvlCured = parseInt( mChar.GetTempTag( "bonusCureLevel" ));
 								if( poisonLvlCured > 0 )
 								{
 									// Reduce healing amount proportional to level of poison cured since we did a combined curing/healing action
@@ -994,13 +996,15 @@ function ResurrectBondedPet( socket, deadPet )
 function onGumpPress( socket, pButton, gumpData )
 {
 	var resurrectTarg = socket.currentChar;
+	if( !ValidateObject( resurrectTarg ))
+		return;
+
 	var healer = CalcCharFromSer( resurrectTarg.GetTempTag( "ResurrectingHealer" ));
 	resurrectTarg.SetTempTag( "ResurrectingHealer", null );
-
 	switch( pButton )
 	{
 		case 0: // Cancel button pressed
-			socket.SysMessage( "You have chosen to remain a ghost for now."); // You have chosen to remain a ghost for now.
+			socket.SysMessage( "You have chosen to remain a ghost for now." ); // You have chosen to remain a ghost for now.
 			resurrectTarg.frozen = false;
 			break;
 		case 1: // Continue button pressed
