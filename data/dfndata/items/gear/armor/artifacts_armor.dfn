@@ -1,0 +1,69 @@
+// ----------------------------------------------------------------------
+// Shared Artifact Rewards
+// ----------------------------------------------------------------------
+
+[artifact_gauntlets_of_anger]
+{
+get=base_plate_gloves
+name=gauntlets of anger [replica]
+hp=150 150
+hue=0x0557
+healthbonus=8
+healthregenbonus=2
+defensechance=10
+resistfire=4
+resistcold=5
+resistpoison=6
+resistlighting=5
+}
+
+// ----------------------------------------------------------------------
+// Unique Artifact Rewards
+// ----------------------------------------------------------------------
+
+[artifact_gladiators_collar]
+{
+get=base_plate_gorget
+name=Gladiator's Collar [Replica]
+colour=0x1D9
+hp=150 150
+healthbonus=10
+hitchance=10
+resistfire=18
+resistcold=17
+resistpoison=18
+resistlighting=16
+MORE=0x0 0x1 0x0 0x0 // Mage Armor
+}
+
+[artifact_orc_chieftain_helm]
+{
+get=base_orc_helm
+name=Orc Chieftain Helm [Replica]
+colour=0x3f
+hp=150 150
+luck=100
+healthregenbonus=3
+hitchance=30
+resistfire=1
+resistcold=23
+resistpoison=3
+resistlighting=5
+}
+
+[artifact_shroud_of_deceit]
+{
+get=base_bone_armor
+name=Shroud of Deceit [Replica]
+hp=150 150
+colour=0x3d5
+healthregenbonus=3
+resistfire=6
+resistcold=18
+resistpoison=15
+resistlighting=13
+MORE=0x0 0x1 0x0 0x0 // Mage Armor
+custominttag=skillBonusID 26
+custominttag=skillBonusVal 100
+script=5043// Skill_boosting_equipment.js
+}
