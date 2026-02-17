@@ -9,6 +9,7 @@ name=a necromancer shroud [replica]
 hp=150 150
 colour=0x455
 resistcold=5
+origin=aos
 }
 
 [artifact_captain_johns_hat]
@@ -22,6 +23,7 @@ hitchance=15
 custominttag=skillBonusID 40
 custominttag=skillBonusVal 200
 script=5043// Skill_boosting_equipment.js
+origin=aos
 }
 
 [artifact_legendary_detective_boots]
@@ -31,6 +33,7 @@ name=Legendary Detective of the Royal Guard [Replica]
 hp=150 150
 colour=0x455
 intadd=4
+origin=aos
 }
 
 [artifact_elder_detective_boots]
@@ -40,6 +43,7 @@ name=Elder Detective of the Royal Guard [Replica]
 hp=150 150
 colour=0x455
 intadd=3
+origin=aos
 }
 
 [artifact_mythical_detective_boots]
@@ -49,6 +53,7 @@ name=Mythical Detective of the Royal Guard [Replica]
 hp=150 150
 colour=0x455
 intadd=2
+origin=aos
 }
 
 [artifact_djinnis_ring]
@@ -57,6 +62,7 @@ get=0x108A
 name=djinnis ring [replica]
 hp=150 150
 intadd=5
+origin=aos
 }
 
 [artifact_embroidered_oak_leaf_cloak]
@@ -69,6 +75,7 @@ str=0
 custominttag=skillBonusID 47
 custominttag=skillBonusVal 50
 script=5043// Skill_boosting_equipment.js
+origin=aos
 }
 
 [artifact_lieutenant_of_the_britannian_royal_guard]
@@ -79,6 +86,7 @@ hp=150 150
 colour=0x00e8
 intadd=5
 manaregenbonus=2
+origin=aos
 }
 
 [artifact_good_samaritan_of_britannia]
@@ -87,6 +95,7 @@ get=robe
 name=Good Samaritan of Britannia [Replica]
 colour=0x558
 hp=150 150
+origin=aos
 }
 
 [artifact_most_knowledge_person_5]
@@ -97,18 +106,21 @@ colour=0x242
 str=0
 hp=150 150
 healthbonus=5
+origin=aos
 }
 
 [artifact_most_knowledge_person_4]
 {
 get=artifact_most_knowledge_person
 healthbonus=4
+origin=aos
 }
 
 [artifact_most_knowledge_person_3]
 {
 get=artifact_most_knowledge_person
 healthbonus=3
+origin=aos
 }
 
 [artifact_robe_of_britannia_ari]
@@ -118,6 +130,7 @@ name=The Robe of Britannia "Ari" [Replica]
 colour=0x486
 str=0
 hp=150 150
+origin=aos
 }
 
 // ----------------------------------------------------------------------
@@ -132,6 +145,7 @@ colour=0x1
 hp=150 150
 resistfire=4
 newbie
+origin=aos
 }
 
 [artifact_crown_of_talkeesh]
@@ -146,4 +160,5 @@ resistfire=5
 resistcold=9
 resistpoison=20
 resistlighting=20
+origin=aos
 }

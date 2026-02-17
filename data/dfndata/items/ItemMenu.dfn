@@ -576,6 +576,8 @@ misc=Menu
 ITEMMENU=138
 <=Music Intruments
 ITEMMENU=137
+<=Power Scrolls
+ITEMMENU=300
 <=Previous Menu
 ITEMMENU=10
 }
