@@ -1,4 +1,13 @@
-const powerRarityByBonus = {
+/// <reference path="../definitions.d.ts" />
+// @ts-check
+//
+// powerscrolls.js (script id 7504)
+//
+// New DFN storage style only (no tags):
+//   morex = skills.dfn [SKILL X] index (example: 40 = Swordsmanship)
+//   morey = bonus (5/10/15/20/25)
+
+var powerRarityByBonus = {
 	5:  "wonderous",
 	10: "exalted",
 	15: "mythical",
@@ -6,7 +15,7 @@ const powerRarityByBonus = {
 	25: "ultimate"
 };
 
-const powerSkillDisplay = {
+var powerSkillDisplay = {
 	swordsmanship:    "Swordsmanship",
 	fencing:          "Fencing",
 	macefighting:     "Mace Fighting",
@@ -38,16 +47,101 @@ const powerSkillDisplay = {
 	spellweaving:     "Spellweaving",
 	spiritspeak:      "Spirit Speak",
 	mysticism:        "Mysticism",
-	allskills:        "All Skills"
+	imbuing:          "Imbuing",
+	alchemy:          "Alchemy",
+	armslore:         "Arms Lore",
+	itemid:           "Item Identification",
+	blacksmithing:    "Blacksmithing",
+	bowcraft:         "Bowcraft/Fletching",
+	camping:          "Camping",
+	carpentry:        "Carpentry",
+	cartography:      "Cartography",
+	cooking:          "Cooking",
+	detectinghidden:  "Detecting Hidden",
+	enticement:       "Enticement",
+	forensics:        "Forensic Evaluation",
+	herding:          "Herding",
+	hiding:           "Hiding",
+	inscription:      "Inscription",
+	lockpicking:      "Lockpicking",
+	mining:           "Mining",
+	lumberjacking:    "Lumberjacking",
+	poisoning:        "Poisoning",
+	removetrap:       "Remove Trap",
+	snooping:         "Snooping",
+	tailoring:        "Tailoring",
+	tasteid:          "Taste Identification",
+	tinkering:        "Tinkering",
+	tracking:         "Tracking",
+	fishing:          "Fishing",
+	begging:          "Begging"
 };
 
-/*function globalSingleSkillCap(  )
-{
-	var cap = Number( GetServerSetting( "SKILLCAPSINGLE" ));
-	if( cap <= 0 )
-		cap = 1200; // default hard cap 120.0
-	return cap;
-}*/
+var powerSkillById = {
+	0:  "alchemy",
+	1:  "anatomy",
+	2:  "animallore",
+	3:  "itemid",
+	4:  "armslore",
+	5:  "parrying",
+	6:  "begging",
+	7:  "blacksmithing",
+	8:  "bowcraft",
+	9:  "peacemaking",
+	10: "camping",
+	11: "carpentry",
+	12: "cartography",
+	13: "cooking",
+	14: "detectinghidden",
+	15: "enticement",
+	16: "evaluatingintel",
+	17: "healing",
+	18: "fishing",
+	19: "forensics",
+	20: "herding",
+	21: "hiding",
+	22: "provocation",
+	23: "inscription",
+	24: "lockpicking",
+	25: "magery",
+	26: "magicresistance",
+	27: "tactics",
+	28: "snooping",
+	29: "musicianship",
+	30: "poisoning",
+	31: "archery",
+	32: "spiritspeak",
+	33: "stealing",
+	34: "tailoring",
+	35: "taming",
+	36: "tasteid",
+	37: "tinkering",
+	38: "tracking",
+	39: "veterinary",
+	40: "swordsmanship",
+	41: "macefighting",
+	42: "fencing",
+	43: "wrestling",
+	44: "lumberjacking",
+	45: "mining",
+	46: "meditation",
+	47: "stealth",
+	48: "removetrap",
+	49: "necromancy",
+	50: "focus",
+	51: "chivalry",
+	52: "bushido",
+	53: "ninjitsu",
+	54: "spellweaving",
+	55: "mysticism",
+	56: "imbuing",
+	57: "throwing"
+};
+
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
 
 /** @type { () => number } */
 function GlobalSingleSkillCap()
@@ -63,30 +157,43 @@ function SkillValue( capValue )
 	return numValue.toFixed( 1 );
 }
 
-/** @type { ( iScroll: Item ) => { isValid: boolean, skillProp: string, bonus: number } } */
-function ScrollDataFromTags( iScroll )
+/** @type { ( skillProp: string ) => string } */
+function PrettySkillName( skillProp )
 {
-	var result = {
-		isValid: false,
-		skillProp: "",
-		bonus: 0
-	};
+	var s = powerSkillDisplay[skillProp];
+	if( s )
+		return s;
+
+	if( !skillProp || skillProp.length <= 0 )
+		return "";
+
+	return skillProp.charAt( 0 ).toUpperCase() + skillProp.substr( 1 );
+}
+
+/** @type { ( iScroll: Item ) => { isValid: boolean, skillProp: string, bonus: number } } */
+function ScrollDataFromMore( iScroll )
+{
+	var result = { isValid:false, skillProp:"", bonus:0 };
 
 	if( !ValidateObject( iScroll ))
 		return result;
 
-	var skillProp = iScroll.GetTag( "powerSkill" );
-	var bonusTag = iScroll.GetTag( "powerBonus" );
+	var skillId = iScroll.morex | 0;
+	var bonus   = iScroll.morey | 0;
 
-	if( !skillProp || skillProp === "" )
+	if( skillId < 0 || bonus <= 0 )
 		return result;
 
-	var bonus = Number( bonusTag );
-	if( bonus <= 0 )
+	var prop = powerSkillById[skillId];
+	if( !prop )
+		return result;
+
+	// only allow known bonuses
+	if( !powerRarityByBonus[bonus] )
 		return result;
 
 	result.isValid = true;
-	result.skillProp = String( skillProp );
+	result.skillProp = prop;
 	result.bonus = bonus;
 	return result;
 }
@@ -94,29 +201,15 @@ function ScrollDataFromTags( iScroll )
 /** @type { ( iScroll: Item ) => string } */
 function BuildPowerScrollName( iScroll )
 {
-	var data = ScrollDataFromTags( iScroll );
-
+	var data = ScrollDataFromMore( iScroll );
 	if( !data.isValid )
 		return iScroll.name;
 
-	var skillProp = data.skillProp;
-	var bonus = data.bonus;
+	var rarity = powerRarityByBonus[data.bonus];
+	var skillPretty = PrettySkillName( data.skillProp );
+	var maxValue = 100 + data.bonus;
 
-	var rarity = powerRarityByBonus[bonus];
-	if( rarity === "" )
-		return iScroll.name;
-
-	// Pretty skill name
-	var skillPretty = powerSkillDisplay[skillProp] || skillProp;
-
-	// 100 + bonus -> [105], [110], [115], [120]
-	var maxValue = 100 + bonus;
-
-	// Example:
-	// "a legendary scroll of Wrestling [120]"
-	var newName = "a " + rarity + " scroll of " + skillPretty + " [" + maxValue + "]";
-
-	return newName;
+	return "a " + rarity + " scroll of " + skillPretty + " [" + maxValue + "]";
 }
 
 /** @type { ( pUser: Character, iScroll: Item ) => number } */
@@ -129,15 +222,15 @@ function ApplyPowerScroll( pUser, iScroll )
 	if( pSocket == null )
 		return 0;
 
-	var data = ScrollDataFromTags( iScroll );
+	var data = ScrollDataFromMore( iScroll );
 	if( !data.isValid )
 	{
 		pSocket.SysMessage( "This Scroll of Power is not configured correctly." );
 		return 0;
 	}
 
-	var skillProp = data.skillProp; // e.g. "magery"
-	var bonus = data.bonus;         // 5, 10, 15, 20
+	var skillProp = data.skillProp;
+	var bonus = data.bonus;
 
 	var caps = pUser.skillCaps;
 	if( !caps )
@@ -158,43 +251,40 @@ function ApplyPowerScroll( pUser, iScroll )
 	if( currentCap <= 0 )
 		currentCap = 1000; // default 100.0
 
-	// Desired cap: 100.0 + bonus
 	var desiredCap = 1000 + ( bonus * 10 );
-
 	if( desiredCap > globalSingleCap )
 		desiredCap = globalSingleCap;
 
-	// OSI behavior: cannot use equal or lesser scroll if you already have one
 	if( currentCap >= desiredCap )
 	{
-		var skillNamePretty = powerSkillDisplay[skillProp] || skillProp;
-		pSocket.SysMessage( "Your " + skillNamePretty + " is too high for this power scroll." );
+		var skillNamePrettyFail = PrettySkillName( skillProp );
+		pSocket.SysMessage( "Your " + skillNamePrettyFail + " is too high for this power scroll." );
 		return 0;
 	}
 
 	caps[skillProp] = desiredCap;
 
-	// Pretty name, basic capitalization
-	var skillNamePretty = skillProp;
-	if( skillProp.length > 0 )
-	{
-		skillNamePretty = skillProp.charAt( 0 ).toUpperCase(  ) + skillProp.substr( 1 );
-	}
-
+	var skillNamePretty = PrettySkillName( skillProp );
 	var oldCapStr = SkillValue( currentCap );
 	var newCapStr = SkillValue( desiredCap );
 
 	pSocket.SysMessage( "You feel a surge of magic as the scroll enhances your " + skillNamePretty );
 	pSocket.SysMessage( "Maximum " + skillNamePretty + " skill raised from " + oldCapStr + " to " + newCapStr + "." );
+
 	pUser.SoundEffect( 0x243, true );
 	DoMovingEffect( pUser, pUser.x - 6, pUser.y - 6, pUser.z + 15, 0x36D4, 0x07, 0x00, true, 0x497, 9502 );
 	DoMovingEffect( pUser, pUser.x - 4, pUser.y - 6, pUser.z + 15, 0x36D4, 0x07, 0x00, true, 0x497, 9502 );
 	DoMovingEffect( pUser, pUser.x - 6, pUser.y - 4, pUser.z + 15, 0x36D4, 0x07, 0x00, true, 0x497, 9502 );
-	pUser.StaticEffect(  0x375A, 3, 19  );
-	iScroll.Delete();
+	pUser.StaticEffect( 0x375A, 3, 19 );
 
+	iScroll.Delete();
 	return 1;
 }
+
+
+// ---------------------------------------------------------------------------
+// DFN Create hook
+// ---------------------------------------------------------------------------
 
 /** @type { ( thingCreated: BaseObject, thingType: 0 | 1 ) => void } */
 function onCreateDFN( iCreated, objType )
@@ -202,17 +292,18 @@ function onCreateDFN( iCreated, objType )
 	if( !ValidateObject( iCreated ))
 		return;
 
-	// Check if this item actually has powerSkill/powerBonus
-	var data = ScrollDataFromTags( iCreated );
+	var data = ScrollDataFromMore( /** @type {Item} */( iCreated ) );
 	if( !data.isValid )
 		return;
 
-	// Set the OSI-style name
-	iCreated.name = BuildPowerScrollName( iCreated );
+	iCreated.name = BuildPowerScrollName( /** @type {Item} */( iCreated ) );
 }
 
 
-// Event handlers -------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Use + Gump
+// ---------------------------------------------------------------------------
+
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
@@ -240,7 +331,6 @@ function PowerScrollGump( pSocket, iScroll )
 	powerScrollGump.AddCheckerTrans( 33, 20, 401, 181 );
 
 	powerScrollGump.AddXMFHTMLGump( 40, 48, 387, 100, 1049469, true, true );
-
 	powerScrollGump.AddXMFHTMLGumpColor( 125, 148, 200, 20, 1049478, false, false, 0xFFFFFF ); // Do you wish to use this scroll?
 
 	powerScrollGump.AddButton( 100, 172, 4005, 4007, 1, 0, 1 );
@@ -248,6 +338,19 @@ function PowerScrollGump( pSocket, iScroll )
 
 	powerScrollGump.AddButton( 275, 172, 4005, 4007, 1, 0, 0 );
 	powerScrollGump.AddXMFHTMLGumpColor( 310, 172, 120, 20, 1046363, false, false, 0xFFFFFF ); // No
+
+	var data = ScrollDataFromMore( iScroll );
+	if( !data.isValid )
+	{
+		// still show gump, but generic header
+		powerScrollGump.AddXMFHTMLGumpColor( 40, 20, 350, 20, 1049463, false, false, 0xFFFFFF );
+		powerScrollGump.Send( pSocket );
+		powerScrollGump.Free();
+		return;
+	}
+
+	var bonus = data.bonus;
+	var skillProp = data.skillProp;
 
 	// -----------------------------------------------------------------
 	// Header: rarity + skill, using cliloc + ~1_type~ replacement
@@ -257,26 +360,21 @@ function PowerScrollGump( pSocket, iScroll )
 	// 1049466 Legendary Scroll ( 120 Skill ):
 	// 1049467 Ultimate Scroll ( 125 Skill ):
 	// -----------------------------------------------------------------
-	var bonus = Number( iScroll.GetTag( "powerBonus" ));
 	var headerCliloc = 1049463;
-
-	switch ( bonus )
+	switch( bonus )
 	{
 		case 5:  headerCliloc = 1049463; break;
 		case 10: headerCliloc = 1049464; break;
 		case 15: headerCliloc = 1049465; break;
 		case 20: headerCliloc = 1049466; break;
-		case 25: headerCliloc = 1049467; break; // if you ever add 125 skill
+		case 25: headerCliloc = 1049467; break;
 		default: headerCliloc = 1049463; break;
 	}
 
-	// get skill name from tag
-	var skillProp = iScroll.GetTag( "powerSkill" );
-	var skillPretty = powerSkillDisplay[skillProp] || skillProp;
+	var skillPretty = PrettySkillName( skillProp );
 
-	// This is the important line:
-	// Use AddXMFHTMLTok ( NOT AddXMFHTMLGumpColor ) to pass the skill name
-	powerScrollGump.AddXMFHTMLTok( 40, 20, 350, 20, false, false, 0xFFFFFF, headerCliloc,skillPretty, " ", " "  );// clilocArg1 -> ~1_type~ or similar in the cliloc text
+	// Use AddXMFHTMLTok to pass token arg (skill name)
+	powerScrollGump.AddXMFHTMLTok( 40, 20, 350, 20, false, false, 0xFFFFFF, headerCliloc, skillPretty, " ", " " );
 
 	powerScrollGump.Send( pSocket );
 	powerScrollGump.Free();
@@ -293,7 +391,11 @@ function onGumpPress( pSocket, myButton, gumpData )
 
 	switch( myButton )
 	{
-		case 0: break;
-		case 1:	ApplyPowerScroll( pUser, iUsed );
+		case 0:
+			break;
+
+		case 1:
+			ApplyPowerScroll( pUser, /** @type {Item} */( iUsed ) );
+			break;
 	}
 }
