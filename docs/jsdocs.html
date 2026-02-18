@@ -2790,6 +2790,92 @@ function onIterate( charCheck, socket )
 				</div> <!-- cd-faq__content -->
 			</li>
 
+					<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnKill" id="eventOnKill"><span>onKill</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onKill( killer, killed )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To perform actions on the attacker when they successfully kill another character.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>Called on scripts attached to the killer after the victim has died in combat, and only if the victim's onDeathBlow event (if any) allowed death to proceed.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li>Return values from onKill are currently ignored by the core.</li>
+								<li>For future compatibility, scripts may still return true or false, but this does not affect hard coded death handling.</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<ul>
+								<li>onKill is an attacker side event. Attach the script to the character that should react to kills (for example, players or special killer NPCs).</li>
+								<li>onKill runs after onDeathBlow has been processed on the victim. If onDeathBlow returns false and cancels death, onKill will not be triggered.</li>
+								<li>onKill is not called for suicides or cases where there is no valid attacker.</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p>
+								<span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">// Simple kill tracker for a player or NPC with this script attached
+
+function onKill( killer, killed )
+{
+	// Safety checks
+	if( !ValidateObject( killer ) || !ValidateObject( killed ) )
+		return;
+
+	// Optional: ignore kills where killer and killed are the same
+	if( killer.serial === killed.serial )
+		return;
+
+	// Example 1: basic message to the killer
+	if( killer.socket )
+	{
+		killer.socket.SysMessage( "You have slain " + killed.name + "." );
+	}
+
+	// Example 2: track total kills in a custom tag
+	var totalKills = killer.GetTag( "totalKills" ) | 0;
+	killer.SetTag( "totalKills", totalKills + 1 );
+
+	// Example 3: track separate PvM and PvP kills
+	if( killed.npc )
+	{
+		var pvmKills = killer.GetTag( "pvmKills" ) | 0;
+		killer.SetTag( "pvmKills", pvmKills + 1 );
+	}
+	else
+	{
+		var pvpKills = killer.GetTag( "pvpKills" ) | 0;
+		killer.SetTag( "pvpKills", pvpKills + 1 );
+	}
+
+	// Example 4: reward tokens for PvM kills only
+	if( killed.npc )
+	{
+		var tokens = killer.GetTag( "killTokens" ) | 0;
+		killer.SetTag( "killTokens", tokens + 5 );
+		if( killer.socket )
+		{
+			killer.socket.SysMessage( "You earn 5 kill tokens for defeating " + killed.name + "." );
+		}
+	}
+}
+</code></pre>
+							</p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
 			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnLeaveRegion" id="eventOnLeaveRegion"><span>onLeaveRegion</span></a>
 				<div class="cd-faq__content">
@@ -4102,6 +4188,61 @@ function onSoldToVendor( pSock, Vendor, iSold, iAmount )
 	pSnooping.SysMessage( "The target is protected and cannot be snooped!" );
 	return true;
 }</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnSpawn" id="eventOnSpawn"><span>onSpawn</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onSpawn( objSpawned, spawnRegion )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>Used for reacting to items/NPCs spawned from spawn regions</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<ul>
+								<li>When an item or non-player character is spawned from a REGIONSPAWN entry, event will trigger in any script attached to that object (including via ADDSCRIPT)</li>
+							</ul>
+							<p>Usable in Global script (scriptID 0)? For NPCs/Items, <span class="hl">No</span>.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<ul>
+								<li>objSpawned is the spawned object (item or character)</li>
+								<li>spawnRegion is the REGIONSPAWN ID (the number used in [REGIONSPAWN N])</li>
+								<li>The spawned object also receives a "spawnRegion" tag with the same value</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p>
+								<span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">// Script attached via ADDSCRIPT on REGIONSPAWN 100
+// Makes all spawned creatures from that region slightly stronger
+function onSpawn( objSpawned, spawnRegion )
+{
+	// Only care about REGIONSPAWN 100
+	if( spawnRegion != 100 )
+		return;
+
+	// Only affect characters
+	if( objSpawned.isChar )
+	{
+		// Mark where it came from
+		objSpawned.SetTag( "graveyardSpawnRegion", spawnRegion );
+
+		// Small stat boost
+		objSpawned.str = objSpawned.str + 5;
+		objSpawned.dex = objSpawned.dex + 5;
+	}
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->

@@ -9513,10 +9513,15 @@ WORLD=0
 MINTIME=480
 MAXTIME=600
 CALL=1
+ADDSCRIPT=8000,8001
 }</pre></p>
 						<h4>List of supported tags:</h4>
 						<div class="settingsDiv">
-							<p><span class="hl">call</span>=<strong>[amount]</strong></strong><br>
+						<p><span class="hl">addscript</span>=<strong>[scriptID,scriptID,...]</strong><br>
+							Comma separated list of script IDs to add as script triggers to every item/NPC spawned from this spawn region. Scripts added this way will receive the <strong>onSpawn</strong> event when the object is spawned.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">call</span>=<strong>[amount]</strong><br>
 							Max amount of objects to spawn in one batch during respawns</p>
 						</div>
 						<div class="settingsDiv">
