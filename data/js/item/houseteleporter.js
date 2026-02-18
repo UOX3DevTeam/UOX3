@@ -593,7 +593,7 @@ function onCollide( trgSock, pColliding, objCollidedWith )
 	}
 
 	var iMulti = FindMulti( objCollidedWith.x, objCollidedWith.y, objCollidedWith.z, objCollidedWith.worldnumber, objCollidedWith.instanceID );
-	var insideHouse = ( ValidateObject( iMulti ) && iMulti.IsInMulti( objCollidedWith ) );
+	var insideHouse = ( ValidateObject( iMulti ) && iMulti.IsInMulti( objCollidedWith ));
 
 	if( !insideHouse )
 	{
@@ -603,7 +603,7 @@ function onCollide( trgSock, pColliding, objCollidedWith )
 	}
 
 	// SECURITY: Owner + Co-Owners only
-	if(!CanUseHouseTeleporter(pColliding, objCollidedWith))
+	if( !CanUseHouseTeleporter( pColliding, objCollidedWith ))
 	{
 		if( trgSock )
 			trgSock.SysMessage( GetDictionaryEntry( 30622, trgSock.language )); // Only the house owner and co-owners may use this teleporter.
@@ -649,7 +649,7 @@ function onCollide( trgSock, pColliding, objCollidedWith )
 		return false;
 	}
 
-	if( objCollidedWith.id == 0x574A )
+	if( objCollidedWith.GetTag( "chargeable" ) == 1 )
 	{
 		var charge = objCollidedWith.GetTag( "Charges" );
 		if( charge < 0 )
