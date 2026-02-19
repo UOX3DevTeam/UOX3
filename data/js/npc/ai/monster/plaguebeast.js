@@ -94,15 +94,16 @@ function onDefense( pAttacker, pDefender )
 		return true;
 
 	// 20% chance to spawn during defense
-	if( Math.random() < 0.2 )
+	if( RandomNumber( 1, 5 ) == 1 )
 	{
 		pDefender.TextMessage( "* The plague beast creates another beast from its flesh! *" );
 
 		var spawnTypes = [ "earthele", "headless", "pirate", "gorilla", "giantserpent", "slime" ];
 		var spawnType = spawnTypes[Math.floor( Math.random() * spawnTypes.length )];
 
-		var ox = Math.floor( Math.random() * 5 ) - 2;
-		var oy = Math.floor( Math.random() * 5 ) - 2;
+		// Offsets: -2..+2
+		var ox = RandomNumber( -2, 2 );
+		var oy = RandomNumber( -2, 2 );
 
 		var plagueSpawn = SpawnNPC( spawnType, pDefender.x + ox, pDefender.y + oy, pDefender.z, pDefender.worldnumber, pDefender.instanceID );
 
