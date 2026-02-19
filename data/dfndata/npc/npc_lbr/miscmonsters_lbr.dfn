@@ -17,6 +17,4 @@ DEF=26
 TOPROV=815
 TOPEACE=815 5
 TOTAME=1200
-SCRIPT=3229// plaguebeast.js
-SCRIPT=3300// magic_items.js
 }

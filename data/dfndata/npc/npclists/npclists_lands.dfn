@@ -752,7 +752,7 @@ snake
 8|sewerrat
 7|plaguebeast
 6|swamptentacle
-4|plaguebeastlord
+//4|plaguebeastlord
 }
 
 EOF

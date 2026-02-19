@@ -760,7 +760,10 @@ GET=base_miscmonsters
 NAME=#//Plague Beast
 ID=0x0307
 RACE=24
+FLAG=EVIL
 ORIGIN=lbr
+SCRIPT=3229// plaguebeast.js
+SCRIPT=3300// magic_items.js
 }
 
 [plaguebeast]
