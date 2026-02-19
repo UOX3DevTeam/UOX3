@@ -55,7 +55,6 @@ private:
 		SI16 y2 = 0;
 	};
 	std::vector<SpawnRegionExclusionAreas_st>    exclusionAreas;
-	std::vector<UI16> spawnRegionScripts;   // Extra scripts for anything spawned from this spawn region
 
 
 public:
@@ -125,10 +124,6 @@ public:
 
 	GenericList<CItem *> *	GetSpawnedItemsList( void );
 	GenericList<CChar *> *	GetSpawnedCharsList( void );
-
-    const		std::vector<UI16> &SpawnRegionScripts( void ) const;
-    void		ClearSpawnRegionScripts( void );
-    void		AddSpawnRegionScripts( UI16 scriptId );
 private:
 	auto		RegionSpawnChar() -> CChar *;
 	auto		RegionSpawnItem() -> CItem *;

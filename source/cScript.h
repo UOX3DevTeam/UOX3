@@ -10,7 +10,6 @@ enum ScriptEvent
 	seOnCreateDFN = 0,
 	seOnCreateTile,
 	seOnCreatePlayer,		//	*	Done for PCs on global script
-	seOnSpawn,
 	seOnCommand,
 	seOnProfileRequest,		//	**
 	seOnProfileUpdate,		//	**
@@ -105,7 +104,6 @@ enum ScriptEvent
 	seOnAICombatTarget,		//	**	allows overriding target selection taking place for regular AI behaviours
 	seOnCombatEnd,			//	**	allows overriding what happens when combat ends
 	seOnDeathBlow,
-	seOnKill,
 	seOnCombatDamageCalc,
 	seOnDamage,
 	seOnDamageDeal,
@@ -209,7 +207,6 @@ public:
 	bool		OnIterate( CBaseObject *a, UI32 &b, CSocket *mSock );
 	bool		OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b, CSocket *mSock );
 	bool		OnCreate( CBaseObject *thingCreated, bool dfnCreated, bool isPlayer );
-	bool		OnSpawn( CBaseObject *objectSpawned, UI16 spawnRegionNum );
 	bool		DoesEventExist( const char *eventToFind );
 	SI08		OnCommand( CSocket *mSock, std::string command );
 	bool		OnDelete( CBaseObject *thingDestroyed );
@@ -318,7 +315,6 @@ public:
 	SI08		OnCombatEnd( CChar *attacker, CChar *defender );
 
 	SI08		OnDeathBlow( CChar *mKilled, CChar *mKiller );
-	SI08		OnKill( CChar *mKiller, CChar *mKilled );
 	SI16		OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill, UI08 hitLoc );
 	SI08		OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue, WeatherType damageType );
 	SI08		OnDamageDeal( CChar *attacker, CChar *damaged, SI16 damageValue, WeatherType damageType );

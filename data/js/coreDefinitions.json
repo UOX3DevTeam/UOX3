@@ -8530,18 +8530,6 @@
       "returns": "boolean"
     },
     {
-      "name": "onKill",
-      "cppName": "OnKill",
-      "params": {
-        "num": 2,
-        "list": [
-          { "name": "killer", "type": "Character", "required": true },
-          { "name": "killed", "type": "Character", "required": true }
-        ]
-      },
-      "returns": "boolean"
-    },
-    {
       "name": "onLeaveRegion",
       "cppName": "OnLeaveRegion",
       "params": {
@@ -8883,17 +8871,6 @@
         ]
       },
       "returns": "boolean"
-    },
-    {
-      "name": "onSpawn",
-      "cppName": "OnSpawn",
-      "params": {
-        "list": [
-          { "name": "objSpawned", "type": "BaseObject", "required": true },
-          { "name": "spawnRegion", "type": "number", "required": true }
-        ]
-      },
-      "returns": "void"
     },
     {
       "name": "onSpecialMove",

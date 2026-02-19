@@ -641,45 +641,6 @@ bool cScript::OnCreate( CBaseObject *thingCreated, bool dfnCreated, bool isPlaye
 }
 
 //o------------------------------------------------------------------------------------------------o
-//| Function    -   cScript::OnSpawn()
-//o------------------------------------------------------------------------------------------------o
-//| Purpose     -   Triggers for object with event attached when spawned from a spawn region
-//| Notes       -   Calls JS onSpawn( objSpawned, spawnRegion )
-//|                 spawnRegion is the REGIONSPAWN ID (UI32), or 0 if unknown
-//o------------------------------------------------------------------------------------------------o
-bool cScript::OnSpawn( CBaseObject *objectSpawned, UI16 spawnRegion )
-{
-	if( !ValidateObject( objectSpawned ))
-		return false;
-
-	if( !ExistAndVerify( seOnSpawn, "onSpawn" ))
-		return false;
-
-	jsval params[2], rval;
-	JSObject *jsObj = nullptr;
-
-	if( objectSpawned->GetObjType() == OT_CHAR )
-	{
-		jsObj = JSEngine->AcquireObject( IUE_CHAR, static_cast<CChar *>( objectSpawned ), runTime );
-	}
-	else
-	{
-		jsObj = JSEngine->AcquireObject( IUE_ITEM, static_cast<CItem *>( objectSpawned ), runTime );
-	}
-
-	params[0] = OBJECT_TO_JSVAL( jsObj );
-	params[1] = INT_TO_JSVAL( spawnRegion );
-
-	JSBool retVal = InvokeEvent( "onSpawn", 2, params, &rval );
-	if( retVal == JS_FALSE )
-	{
-		SetEventExists( seOnSpawn, false );
-	}
-
-	return ( retVal == JS_TRUE );
-}
-
-//o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::OnDelete()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Runs when an object is deleted
@@ -4288,40 +4249,6 @@ SI08 cScript::OnDeathBlow( CChar *mKilled, CChar *mKiller )
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnDeathBlow, false );
-		return RV_NOFUNC;
-	}
-
-	return TryParseJSVal( rval );
-}
-
-//o------------------------------------------------------------------------------------------------o
-//| Function    -   cScript::OnKill()
-//| Date        -   30th November, 2025
-//o------------------------------------------------------------------------------------------------o
-//| Purpose     -   Triggers for characters with event attached when they kill another character
-//| Notes       -   This is called after onDeathBlow on the victim has allowed death to proceed
-//|                 Return value is currently ignored by the core, but kept for consistency
-//o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnKill( CChar *mKiller, CChar *mKilled )
-{
-	if( !ValidateObject( mKiller )) // || !ValidateObject( mKilled ))
-		return RV_NOFUNC;
-
-	if( !ExistAndVerify( seOnKill, "onKill" ))
-		return RV_NOFUNC;
-
-	jsval rval, params[2];
-	JSObject *killerObj = JSEngine->AcquireObject( IUE_CHAR, mKiller, runTime );
-	JSObject *killedObj = JSEngine->AcquireObject( IUE_CHAR, mKilled, runTime );
-
-	// JS: function onKill( killer, killed )
-	params[0] = OBJECT_TO_JSVAL( killerObj );
-	params[1] = OBJECT_TO_JSVAL( killedObj );
-
-	JSBool retVal = InvokeEvent( "onKill", 2, params, &rval );
-	if( retVal == JS_FALSE )
-	{
-		SetEventExists( seOnKill, false );
 		return RV_NOFUNC;
 	}
 
