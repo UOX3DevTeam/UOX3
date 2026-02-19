@@ -1,3 +1,6 @@
+19/02/2026 - DragonSlayer62 (#516)
+    [FIX] Fixed GetMultiCorner returning incorrect coordinates due to a bug in multi bounding box min/max calculations
+
 14/02/2026 - DragonSlayer62 (#511)
     [FIX] Resolved socket-related errors in petbonding.js that could cause script failures during bonding interactions
     [ADD] Added missing JavaScript API documentation entries for Console Functions: RegisterConsoleFunc, DisableConsoleFunc, and EnableConsoleFunc
