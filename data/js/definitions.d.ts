@@ -116,7 +116,7 @@ declare global {
     RemoveScriptTrigger( scriptId: number ): void;
     Resist( resistType: WeatherType ): number | boolean;
     Resist( resistType: WeatherType, newValue: number ): number | boolean;
-    ResourceCount( realId: number, itemColour?: number, moreVal?: number, sectionId?: string ): void;
+    ResourceCount( realId: number, itemColour?: number, moreVal?: number, sectionId?: string ): number;
     ResumeJSTimer( timerId: number, scriptId: number ): number;
     ResumeTempEffect( effectID: number ): number;
     ReverseTempEffect( effectID: number ): number;
@@ -609,7 +609,7 @@ declare global {
     AddToolTip( tooltip: number, value1?: string, value2?: string, value3?: string, value4?: string, value5?: string, value6?: string, value7?: string, value8?: string, value9?: string, value10?: string ): void;
     AddXMFHTMLGump( x: number, y: number, width: number, height: number, nmbr: number, hasBorder: boolean, hasScrollbar: boolean ): void;
     AddXMFHTMLGumpColor( x: number, y: number, width: number, height: number, nmbr: number, hasBorder: boolean, hasScrollbar: boolean, rgbColor: number ): void;
-    AddXMFHTMLTok( x: number, y: number, width: number, height: number, hasBorder: boolean, hasScrollbar: boolean, rgbColor: number, nmbr: number, cliloc1: string, cliloc2: string, cliloc3: string ): void;
+    AddXMFHTMLTok( x: number, y: number, width: number, height: number, hasBorder: boolean, hasScrollbar: boolean, rgbColor: number, nmbr: number, cliloc1?: string, cliloc2?: string, cliloc3?: string ): void;
     EndGroup(): void;
     Free(): void;
     MasterGump( gumpId: number ): void;
@@ -965,6 +965,7 @@ declare global {
   type ResourceAmount = [number, number, number[]];
   type ResourceSkill = [number, number, number];
   interface SCRIPT {
+    readonly  script_id: number;
   }
   type uox_class = SCRIPT;
   enum ServerFeature {
@@ -1125,6 +1126,30 @@ declare global {
               spawnsection: string;
   }
   interface SpawnRegion {
+              call:        number;
+              defZ:        number;
+              forceSpawn:  boolean;
+              instanceID:  number;
+              isSpawner:   boolean;
+              item:        string;
+    readonly  itemCount:   number;
+              itemList:    string;
+              maxItems:    number;
+              maxNpcs:     number;
+              maxTime:     number;
+              minTime:     number;
+              name:        string;
+              npc:         string;
+    readonly  npcCount:    number;
+              npcList:     string;
+              onlyOutside: boolean;
+              prefZ:       number;
+              regionNum:   number;
+              world:       number;
+              x1:          number;
+              x2:          number;
+              y1:          number;
+              y2:          number;
   }
   type UOXSpawnRegion = SpawnRegion;
   enum SpeechTarget {
@@ -1276,19 +1301,17 @@ declare global {
     LOYALTYTIME = 23,         // Character timer
     IDLEANIMTIME = 24,        // Character timer
     LOGOUT = 25,              // Character timer
-    YOUNGHEAL = 26,           // Character timer
-    YOUNGMESSAGE = 27,        // Character timer
-    SOCK_SKILLDELAY = 28,     // Socket timer
-    SOCK_OBJDELAY = 29,       // Socket timer
-    SOCK_SPIRITSPEAK = 30,    // Socket timer
-    SOCK_TRACKING = 31,       // Socket timer
-    SOCK_FISHING = 32,        // Socket timer
-    SOCK_MUTETIME = 33,       // Socket timer
-    SOCK_TRACKINGDISPLAY = 34, // Socket timer
-    SOCK_TRAFFICWARDEN = 35,  // Socket timer
-    SOCK_SPEEDHACKPENALTY = 36, // Socket timer
-    SOCK_SPEEDHACKLOGGED = 37, // Socket timer
-    COUNT = 38,               // Socket timer
+    SOCK_SKILLDELAY = 26,     // Socket timer
+    SOCK_OBJDELAY = 27,       // Socket timer
+    SOCK_SPIRITSPEAK = 28,    // Socket timer
+    SOCK_TRACKING = 29,       // Socket timer
+    SOCK_FISHING = 30,        // Socket timer
+    SOCK_MUTETIME = 31,       // Socket timer
+    SOCK_TRACKINGDISPLAY = 32, // Socket timer
+    SOCK_TRAFFICWARDEN = 33,  // Socket timer
+    SOCK_SPEEDHACKPENALTY = 34, // Socket timer
+    SOCK_SPEEDHACKLOGGED = 35, // Socket timer
+    COUNT = 36,               // Socket timer
   }
   interface TownRegion {
               appearance:        number;
@@ -1467,6 +1490,18 @@ declare global {
     UT_KOK = 133,      
     TOTAL_LANGUAGES = 134,
   }
+  class UOXCFile {
+    Close(): void;
+    EOF(): boolean;
+    Free(): void;
+    Length(): number;
+    Open( filename: string, mode: string, folder?: string, useScriptDataDir?: boolean ): void;
+    Pos( pos?: number ): number;
+    Read( bytes: number ): string;
+    ReadUntil( until: string ): string;
+    Write( value: string ): void;
+    constructor();
+  }
   interface UOXResource {
               fishAmount: number;
               fishTime:   number;
@@ -1540,9 +1575,9 @@ declare global {
   function DoesEventExist( scriptId: number, eventToFire: string ): boolean;
   function DoesMapBlock( x: number, y: number, z: number, world: number, checkWater: boolean, waterWalk: boolean, checkMultiPlacement: boolean, checkForRoad: boolean ): boolean;
   function DoesStaticBlock( x: number, y: number, z: number, world: number, checkWater: boolean ): boolean;
-  function DoMovingEffect( src: CharOrItem, trg: CharOrItem, effectId: number, speed: number, loop: number, explode: boolean, hue?: number, renderMode?: number ): void;
-  function DoMovingEffect( src: CharOrItem, trgX: number, trgY: number, trgZ: number, effectId: number, speed: number, loop: number, explode: boolean, hue?: number, renderMode?: number ): void;
-  function DoMovingEffect( srcX: number, srcY: number, srcZ: number, trgX: number, trgY: number, trgZ: number, effectId: number, speed: number, loop: number, explode: boolean, hue?: number, renderMode?: number ): void;
+  function DoMovingEffect( src: CharOrItem, trg: CharOrItem, effectId: number, speed: number, loop: number, explode: boolean, hue?: number, renderMode?: number, stationaryFX?: boolean ): void;
+  function DoMovingEffect( src: CharOrItem, trgX: number, trgY: number, trgZ: number, effectId: number, speed: number, loop: number, explode: boolean, hue?: number, renderMode?: number, stationaryFX?: boolean ): void;
+  function DoMovingEffect( srcX: number, srcY: number, srcZ: number, trgX: number, trgY: number, trgZ: number, effectId: number, speed: number, loop: number, explode: boolean, hue?: number, renderMode?: number, stationaryFX?: boolean ): void;
   function DoStaticEffect( x: number, y: number, z: number, effectId: number, speed: number, loop: number, explode: boolean ): void;
   function DoTempEffect( iType: number, src: CharOrNull, dst: CharOrItem, targNum: number, more1: number, more2: number, more3: number, item?: Item ): void;
   function EnableCommand( command: string ): void;
@@ -1551,6 +1586,7 @@ declare global {
   function EnableSpell( spellNumber: number ): void;
   function EraStringToNum( era: string ): number;
   function FindItem( x: number, y: number, z: number, worldNum: number, id: number, instanceId?: number ): ItemOrNull;
+  function FindItemBySection( x: number, y: number, z: number, worldNum: number, sectionId: string, instanceId?: number ): ItemOrNull;
   function FindMulti( src: CharOrItem ): void;
   function FindMulti( x: number, y: number, z: number, worldNum: number, instanceId?: number ): void;
   function FindRootContainer( src: ItemOrSerial, type: number ): Item;
@@ -1579,9 +1615,10 @@ declare global {
   function GetServerSetting( setting: string ): boolean | string | number;
   function GetServerVersionString(): string;
   function GetSocketFromIndex( index: number ): Socket;
-  function GetSpawnRegion( xOrIndex: number, y: number, world: number, instance: number ): SpawnRegion;
+  function GetSpawnRegion( Index: number ): SpawnRegion;
   function GetSpawnRegionCount(): number;
   function GetSpawnRegionFacetStatus( spawnRegionFacet: number ): number;
+  function GetSpawnRegions( x: number, y: number, world: number, instance: number ): SpawnRegion[];
   function GetStartTime(): number;
   function GetTileHeight( tileID: number ): number;
   function GetTileIDAtMapCoord( x: number, y: number, worldNum: number ): number;
@@ -1593,7 +1630,7 @@ declare global {
   function IsInBuilding( x: number, y: number, z: number, world: number, instanceId: number, checkHeight: boolean ): boolean;
   function IsRaceWeakToWeather( raceID: number, weathType: number ): boolean;
   function IterateOver( objType: string ): number;
-  function IterateOverSpawnRegions(): number;
+  function IterateOverSpawnRegions( mSock?: Socket ): number;
   function MakeItem( mSock: Socket, player: Character, itemMenu: number, resourceColour?: number ): void;
   function Moon( slot: number, newVal?: number ): number;
   function NextCommand(): string;
@@ -1685,7 +1722,7 @@ declare global {
   function onHouseCommand( targSock: Socket, multiObj: Multi, targId: number ): boolean;
   function onHungerChange( pChanging: Character, newStatus: number ): boolean;
   function onIterate( obj: Character | Item, mSock: Socket ): boolean;
-  function onIterateSpawnRegions( a: SpawnRegion, b: number ): boolean;
+  function onIterateSpawnRegions( toCheck: SpawnRegion, socket: SocketOrNull ): boolean;
   function onLeaveRegion( entering: Character, region: number ): void;
   function onLeaving( left: Multi, leaving: BaseObject ): boolean;
   function onLightChange( tObject: BaseObject, lightLevel: number ): boolean;
@@ -1702,7 +1739,9 @@ declare global {
   function onProfileRequest( myObj: Socket, profileOwner: Character ): string;
   function onProfileUpdate( myObj: Socket, profileText: string ): void;
   function onQuestGump( mChar: Character ): boolean;
+  function onReleasePet( mChar: Character, mPet: Character ): boolean;
   function onResurrect( pAlive: Character ): boolean;
+  function onScriptLoad(): void;
   function onScrollCast( tChar: Character, SpellId: number ): number;
   function onScrollingGumpPress( tSock: Socket, gumpId: number, buttonId: number ): boolean;
   function onSell( targSock: Socket, objVendor: Character ): boolean;
@@ -1721,14 +1760,14 @@ declare global {
   function onSpeechInput( myChar: Character, myItem: Item, mySpeech: string, mySpeechId: number ): void;
   function onSpeedHackDetect( pChar: Character, deltaTime: number ): boolean;
   function onSpeedHackSuspicion( pChar: Character, grossDebt: number, deltaTime: number ): boolean;
-  function onSpellCast( sock: Socket, tChar: Character, direct: boolean, SpellId: number ): boolean;
   function onSpellCast( tChar: Character, SpellId: number ): number;
+  function onSpellCast( sock: Socket, tChar: Character, direct: boolean, SpellId: number ): boolean;
   function onSpellGain( book: Item, spellNum: number ): boolean;
   function onSpellLoss( book: Item, spellNum: number ): boolean;
   function onSpellSuccess( tChar: Character, SpellId: number ): boolean;
   function onSpellTarget( target: BaseObject, caster: Character, spellNum: number ): number;
   function onSpellTargetSelect( caster: Character, target: BaseObject, spellNum: number ): number;
-  function onStart(): void;
+  function onStart( myObj: Character | Item | TownRegion ): void;
   function onStat(): void;
   function onStatChange( player: Character, stat: number, statChangeAmount: number ): void;
   function onStatGain( player: Character, stat: number, skill: number, statGainAmount: number ): void;
@@ -1762,6 +1801,7 @@ declare global {
   const Console: UOXConsole;
   const CreateEntries: UOXCreateEntries;
   const SCRIPT: uox_class;
+  const UOX_DEBUG_MODE: boolean;
 }
 
 // Ensure the file is treated as a module

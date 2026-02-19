@@ -40,6 +40,7 @@
 1=server/misc/admin_welcome.js
 2=server/misc/helpgump.js
 3=server/timer/long_term_timers.js
+5=server/event_manager.js
 
 // turn furniture start[50-54]
 50=server/misc/furniture_smartturn.js
@@ -318,6 +319,8 @@
 5061=item/puzzlechest.js
 5062=item/shrines.js
 5063=item/recipescroll.js
+5064=item/runicatlas.js
+5070=item/dawns_music_box.js
 
 19100=item/plant_growing/plantsystem.js
 19101=item/plant_growing/plantbowl.js
@@ -462,6 +465,9 @@
 1064=commands/spawnadmin.js
 1065=commands/targeting/xwalk.js
 1066=commands/custom/instabond.js
+1067=commands/targeting/showspawnregions.js
+1068=commands/spawnregionadmin.js
+1069=commands/em.js
 }
 
 //-------------------------------------------

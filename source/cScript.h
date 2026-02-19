@@ -93,6 +93,7 @@ enum ScriptEvent
 	seOnDropItemOnNpc,
 	seOnStart,
 	seOnStop,
+	seOnScriptLoad,
 	seOnIterate,
 	seOnIterateSpawnRegions,
 	seOnPacketReceive,
@@ -161,7 +162,7 @@ private:
 	JSContext *			targContext;
 	JSObject *			targObject;
 	JSObject *			scriptObj;
-	UI16						scriptID;
+	UI16				scriptID;
 
 	bool				isFiring;
 	UI08				runTime;
@@ -177,7 +178,7 @@ private:
 	std::vector<SEGump_st *>		gumpDisplays;
 
 	void		Cleanup( void );
-	JSBool	InvokeEvent( const char* name, uintN argc, jsval* argv, jsval* rval );
+	JSBool		InvokeEvent( const char* name, uintN argc, jsval* argv, jsval* rval );
 
 public:
 	void		CollectGarbage( void );
@@ -198,12 +199,13 @@ public:
 
 
 	//|	Modification	-	08162003 - Added these event to handle any script initialization and clean up as the server starts, and is shut down
-	bool		OnStart( void );
+	bool		OnStart( void *myObj = nullptr, SI32 type = -1 );
 	bool		OnStop( void );
+	bool		OnScriptLoad( void );
 	//
 	bool		OnPacketReceive( CSocket *mSock, UI16 packetNum );
 	bool		OnIterate( CBaseObject *a, UI32 &b, CSocket *mSock );
-	bool		OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b );
+	bool		OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b, CSocket *mSock );
 	bool		OnCreate( CBaseObject *thingCreated, bool dfnCreated, bool isPlayer );
 	bool		DoesEventExist( const char *eventToFind );
 	SI08		OnCommand( CSocket *mSock, std::string command );

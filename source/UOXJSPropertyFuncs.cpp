@@ -108,10 +108,10 @@ UI16 getScriptID( JSContext *cx, jsid id, JSPrototypes section )
 		auto str = JSID_TO_STRING( id );
 		char* chars = JS_EncodeString( cx, str );
 		propID = GetPropByName( section, chars );
-		if( propID == 0xFFFF )
+		/*if( propID == 0xFFFF )
 		{
 			Console.Log( oldstrutil::format( "String property '%s' found on object type %d in script %d", chars, section, JSMapping->currentActive()->GetScriptID() ), "warning.log");
-		}
+		}*/
 		js_free( chars );
 	}
 	else if( JSID_IS_INT( id ) )
