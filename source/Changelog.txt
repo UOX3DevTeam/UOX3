@@ -1,3 +1,6 @@
+19/02/2026 - DragonSlayer62 (#514)
+    [ADD] Added plague beast NPC definition (dfndata/npc/miscmonsters.dfn) and associated script (js/npc/ai/monster/plaguebeast.js), and uncommented its entry in various NPCLISTS
+
 19/02/2026 - DragonSlayer62 (#516)
     [FIX] Fixed GetMultiCorner returning incorrect coordinates due to a bug in multi bounding box min/max calculations
 
