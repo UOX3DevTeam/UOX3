@@ -1,3 +1,13 @@
+[base_miscmonsters]
+{
+DIRECTION=RND
+BACKPACK
+NPCWANDER=4
+FX2=20
+NPCAI=2
+FLAG=NEUTRAL
+}
+
 [succubus]
 {
 NAME=#//a succubus
@@ -744,34 +754,25 @@ SCRIPT=3300// Random Magic Items
 SCRIPT=3508// Life Drain
 }
 
+[base_plaguebeast]
+{
+GET=base_miscmonsters
+NAME=#//Plague Beast
+ID=0x0307
+RACE=24
+}
+
 [plaguebeast]
 {
-NAME=#//Plague Beast
-ID=0x307
-DIRECTION=RND
-BACKPACK
-GOLD=450 600
-LOOT=randomgems,3
-LOOT=highlevelarmor,2
-STR=302 500
-DEX=70 80
-INT=16 20
-KARMA=-13000
-FAME=13000
-MAGICRESISTANCE=300 350
-TACTICS=900 1000
-WRESTLING=800 900
-PARRYING=950 1000
-DAMAGE=20 25
-DEF=19
-NPCWANDER=4
-FX2=20
-NPCAI=2
-TOPROV=815
-TOPEACE=815 5
-TOTAME=1200
-RACE=24
-FLAG=NEUTRAL
-SCRIPT=3229// plaguebeast.js
-SCRIPT=3300// magic_items.js
+GETUO=plaguebeast_lbr
+GETT2A=plaguebeast_lbr
+GETUOR=plaguebeast_lbr
+GETTD=plaguebeast_lbr
+GETLBR=plaguebeast_lbr
+GETAOS=plaguebeast_aos
+GETSE=plaguebeast_aos
+GETML=plaguebeast_aos
+GETSA=plaguebeast_aos
+GETHS=plaguebeast_aos
+GETTOL=plaguebeast_aos
 }

@@ -27,11 +27,9 @@ function DevourCorpse( creature, corpseItem, socket )
 	if( !ValidateObject( creature ) || !ValidateObject( corpseItem ))
 		return false;
 
-	// only corpses, only once
 	if( !corpseItem.corpse )
 		return false;
 
-	// UOX3: GetTag returns 0 if missing
 	if( corpseItem.GetTag( "devoured" ))
 		return false;
 
@@ -39,13 +37,9 @@ function DevourCorpse( creature, corpseItem, socket )
 	if( devouredCount >= 25 )
 		return false;
 
-	// mark as devoured (store numeric for consistency)
 	corpseItem.SetTag( "devoured", 1 );
-
-	// heal (cap to 2000 like your original intent)
 	creature.health = Math.min( creature.health + 100, 2000 );
 
-	// player corpse -> reset decay + bones
 	var corpseOwner = corpseItem.owner;
 	if( ValidateObject( corpseOwner ) && !corpseOwner.npc )
 	{
@@ -85,7 +79,7 @@ function transformToBones( corpseItem )
 		case 2:
 		case 134: corpseItem.id = 0x0ECC; break; // West
 		case 3:
-		case 135: corpseItem.id = 0x0ECE; break; // NW (kept as your original mapping)
+		case 135: corpseItem.id = 0x0ECE; break; // NW
 		default: break;
 	}
 }
@@ -107,9 +101,8 @@ function onDefense( pAttacker, pDefender )
 		var spawnTypes = [ "earthele", "headless", "pirate", "gorilla", "giantserpent", "slime" ];
 		var spawnType = spawnTypes[Math.floor( Math.random() * spawnTypes.length )];
 
-		// integer offsets, avoid floats
-		var ox = Math.floor( Math.random() * 5 ) - 2; // -2..2
-		var oy = Math.floor( Math.random() * 5 ) - 2; // -2..2
+		var ox = Math.floor( Math.random() * 5 ) - 2;
+		var oy = Math.floor( Math.random() * 5 ) - 2;
 
 		var plagueSpawn = SpawnNPC( spawnType, pDefender.x + ox, pDefender.y + oy, pDefender.z, pDefender.worldnumber, pDefender.instanceID );
 
@@ -122,7 +115,7 @@ function onDefense( pAttacker, pDefender )
 
 	// poison spit, 30s cooldown
 	var iTime = GetCurrentClock();
-	var NextUse = pDefender.GetTempTag( "poisonDelayed" ); // 0 if missing
+	var NextUse = pDefender.GetTempTag( "poisonDelayed" );
 	var Delay = 30000;
 
 	if( (iTime - NextUse) >= Delay )
