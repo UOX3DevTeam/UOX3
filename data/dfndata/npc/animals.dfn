@@ -19,6 +19,7 @@ RUNS
 RACE=8
 NPCAI=6
 CONTROLSLOTS=1
+ORIGIN=uo
 }
 
 [brownbear]
@@ -48,6 +49,7 @@ RUNS
 RACE=8
 NPCAI=6
 CONTROLSLOTS=1
+ORIGIN=uo
 }
 
 [blackbear]
@@ -75,6 +77,7 @@ FOOD=boar
 CARVE=4
 RACE=9
 CONTROLSLOTS=1
+ORIGIN=uo
 }
 
 [boar]
@@ -103,6 +106,7 @@ FOOD=hay
 CARVE=5
 RACE=9
 CONTROLSLOTS=1
+ORIGIN=uo
 }
 
 [bull]
@@ -162,6 +166,7 @@ CARVE=7
 RACE=8
 NPCAI=6
 CONTROLSLOTS=1
+ORIGIN=uo
 }
 
 [cat]
@@ -191,6 +196,7 @@ CARVE=9
 RACE=8
 NPCAI=6
 CONTROLSLOTS=1
+ORIGIN=uo
 }
 
 [cougar]
@@ -219,6 +225,7 @@ CARVE=10
 RACE=9
 SCRIPT=3200
 CONTROLSLOTS=1
+ORIGIN=uo
 }
 
 [cow]
@@ -249,6 +256,7 @@ CARVE=13
 RACE=8
 NPCAI=6
 CONTROLSLOTS=1
+ORIGIN=uo
 }
 
 [dog]
@@ -276,6 +284,7 @@ FOOD=goat
 CARVE=20
 RACE=9
 CONTROLSLOTS=1
+ORIGIN=uo
 }
 
 [goat]
@@ -304,6 +313,7 @@ CARVE=21
 RUNS
 RACE=9
 CONTROLSLOTS=1
+ORIGIN=uo
 }
 
 [gorilla]
@@ -334,6 +344,7 @@ CARVE=23
 RACE=8
 NPCAI=6
 CONTROLSLOTS=1
+ORIGIN=uo
 }
 
 [greywolf]
@@ -368,6 +379,7 @@ RUNS
 RACE=8
 NPCAI=6
 CONTROLSLOTS=1
+ORIGIN=uo
 }
 
 [grizbear]
@@ -401,6 +413,7 @@ RUNS
 CARVE=22
 RACE=9
 CONTROLSLOTS=1
+ORIGIN=uo
 }
 
 [hart]
@@ -441,6 +454,7 @@ CARVE=25
 RACE=9
 NPCAI=12
 CONTROLSLOTS=1
+ORIGIN=uo
 }
 
 [hind]
@@ -462,6 +476,7 @@ GETTOL=hind_aos
 {
 GET=base_animals
 NAME=5004//a jack rabbit
+ORIGIN=uo
 }
 
 [jackrabbit]
@@ -484,6 +499,7 @@ GETTOL=jackrabbit_aos
 GET=base_animals
 NAME=#//a mountain goat
 ID=0x0058
+ORIGIN=uo
 }
 
 [mountaingoat]
@@ -512,6 +528,7 @@ RUNS
 CARVE=32
 RACE=9
 CONTROLSLOTS=1
+ORIGIN=uo
 }
 
 [packhorse]
@@ -540,6 +557,7 @@ RUNS
 CARVE=33
 RACE=9
 CONTROLSLOTS=1
+ORIGIN=uo
 }
 
 [packllama]
@@ -569,6 +587,7 @@ CARVE=34
 RACE=8
 NPCAI=6
 CONTROLSLOTS=1
+ORIGIN=uo
 }
 
 [panther]
@@ -596,6 +615,7 @@ FOOD=boar
 CARVE=35
 RACE=9
 CONTROLSLOTS=1
+ORIGIN=uo
 }
 
 [pig]
@@ -625,6 +645,7 @@ RUNS
 RACE=8
 NPCAI=6
 CONTROLSLOTS=1
+ORIGIN=uo
 }
 
 [polarbear]
@@ -654,6 +675,7 @@ CARVE=37
 RACE=9
 CONTROLSLOTS=1
 NPCAI=12
+ORIGIN=uo
 }
 
 [rabbit]
@@ -687,6 +709,7 @@ FOOD=rat
 CARVE=44
 RACE=23
 CONTROLSLOTS=1
+ORIGIN=uo
 }
 
 [rat]
@@ -721,6 +744,7 @@ CARVE=42
 RUNS
 RACE=9
 CONTROLSLOTS=1
+ORIGIN=uo
 }
 
 [sheep]
@@ -751,6 +775,7 @@ CARVE=46
 RACE=8
 NPCAI=6
 CONTROLSLOTS=1
+ORIGIN=uo
 }
 
 [snowleopard]
@@ -780,6 +805,7 @@ CARVE=23
 RACE=8
 NPCAI=6
 CONTROLSLOTS=1
+ORIGIN=uo
 }
 
 [timberwolf]
@@ -810,6 +836,7 @@ CARVE=50
 RACE=8
 NPCAI=6
 CONTROLSLOTS=1
+ORIGIN=uo
 }
 
 [whitewolf]
@@ -839,6 +866,7 @@ CARVE=12
 RACE=8
 NPCAI=5
 CONTROLSLOTS=1
+ORIGIN=uo
 }
 
 [silverwolf]
@@ -975,6 +1003,7 @@ RACE=9
 RUNS
 CONTROLSLOTS=1
 NPCAI=12
+ORIGIN=se
 }
 
 [vorpalbunny]
@@ -1004,6 +1033,7 @@ CARVE=12
 RACE=8
 NPCAI=5
 CONTROLSLOTS=1
+ORIGIN=uo
 }
 
 [whitewolf]
@@ -1033,6 +1063,7 @@ CARVE=12
 RACE=8
 NPCAI=5
 CONTROLSLOTS=1
+ORIGIN=aos
 }
 
 [skitteringhopper]
