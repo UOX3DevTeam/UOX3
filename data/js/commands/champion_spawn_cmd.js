@@ -25,7 +25,10 @@ function command_CHAMPSPAWN( socket, cmdString )
     if( parts.length < 1 )
     {
         socket.SysMessage( "Usage: [champspawn all] or [champspawn <type>]" );
-        socket.SysMessage( "Types: abyss, arachnid, cold, forest, unholy, vermin" );
+        var typesLine = "Types: abyss, arachnid, cold, forest, unholy, vermin";
+		if( AllowHabitatInWorld( pChar.worldnumber ) )
+			typesLine += ", habitat";
+		socket.SysMessage( typesLine );
         return;
     }
 
@@ -75,22 +78,20 @@ function SetupChampionAltars( pUser, spawnFilter )
     if( filter == "" )
         filter = "all";
 
-    var altarData = [
-        { type: "Unholy",   x: 5178, y: 708,  z: 0  },
-        { type: "Vermin",   x: 5557, y: 824,  z: 45 },
-        { type: "Cold",     x: 5259, y: 803,  z: 0 },
-        { type: "Abyss",    x: 5814, y: 1350, z: -19 },
-        { type: "Arachnid", x: 5190, y: 1605, z: 0  },
-        { type: "Forest",   x: 5559, y: 3757, z: 1  },
-		{ type: "Habitat",  x: 7042, y: 1889, z: 40  }
-    ];
-
     var created = 0;
     var skipped = 0;
     var failed  = 0;
 
     var worldNum = pUser.worldnumber;
     var instID   = pUser.instanceID;
+
+	var altarData = GetAltarDataList( worldNum );
+
+	if( filter == "habitat" && !AllowHabitatInWorld( worldNum ) )
+	{
+		socket.SysMessage( "Habitat champion is not available on Trammel." );
+		return;
+	}
 
     var markerID = 0x1F14;
 
@@ -190,17 +191,39 @@ function NormalizeTypeString( s )
     return s;
 }
 
-function GetAltarDataList()
+function GetAltarDataList( worldNum )
 {
-    return [
-        { type: "Unholy",   x: 5178, y: 708,  z: 0  },
-        { type: "Vermin",   x: 5557, y: 824,  z: 45 },
-        { type: "Cold",     x: 5259, y: 803,  z: 0 },
-        { type: "Abyss",    x: 5814, y: 1350, z: -19 },
-        { type: "Arachnid", x: 5190, y: 1605, z: 0  },
-        { type: "Forest",   x: 5559, y: 3757, z: 1  },
-		{ type: "Habitat",  x: 7042, y: 1889, z: 40  }
-    ];
+	var list = [
+		{ type: "Unholy",   x: 5178, y: 708,  z: 0  },
+		{ type: "Vermin",   x: 5557, y: 824,  z: 45 },
+		{ type: "Cold",     x: 5259, y: 803,  z: 0  },
+		{ type: "Abyss",    x: 5814, y: 1350, z: -19 },
+		{ type: "Arachnid", x: 5190, y: 1605, z: 0  },
+		{ type: "Forest",   x: 5559, y: 3757, z: 1  }
+	];
+
+	// Only include Habitat if not Trammel
+	if( AllowHabitatInWorld( worldNum ))
+		list.push( { type: "Habitat", x: 7042, y: 1889, z: 40 } );
+
+	return list;
+}
+
+function GetChampMenuTypesForWorld( worldNum )
+{
+	var list = [
+		{ name: "Abyss",    id: 1 },
+		{ name: "Arachnid", id: 2 },
+		{ name: "Cold",     id: 3 },
+		{ name: "Forest",   id: 4 },
+		{ name: "Unholy",   id: 5 },
+		{ name: "Vermin",   id: 6 }
+	];
+
+	if( AllowHabitatInWorld( worldNum ) )
+		list.push( { name: "Habitat", id: 7 } );
+
+	return list;
 }
 
 /** @type { ( socket: Socket, cmdString: string ) => void } */
@@ -227,7 +250,10 @@ function RunChampToggleCommand( socket, cmdString, enabling )
     if (parts.length < 1)
     {
         socket.SysMessage("Usage: [" + (enabling ? "champenable" : "champdisable") + " all] or [" + (enabling ? "champenable" : "champdisable") + " <type>]");
-        socket.SysMessage("Types: abyss, arachnid, cold, forest, unholy, vermin");
+        var typesLine = "Types: abyss, arachnid, cold, forest, unholy, vermin";
+		if( AllowHabitatInWorld( pUser.worldnumber ) )
+			typesLine += ", habitat";
+		socket.SysMessage( typesLine );
         return;
     }
 
@@ -247,11 +273,11 @@ function RunChampToggleCommand( socket, cmdString, enabling )
     socket.champToggleCount = 0;
     socket.champToggleSkipped = 0;
 
-    var altarData = GetAltarDataList();
-    var markerID = 0x1F14;
-
     var worldNum = pUser.worldnumber;
     var instID   = pUser.instanceID;
+
+    var altarData = GetAltarDataList( worldNum );
+    var markerID = 0x1F14;
 
     for( var i = 0; i < altarData.length; ++i )
     {
@@ -394,7 +420,10 @@ function command_CHAMPREMOVE( socket, cmdString )
     if (parts.length < 1)
     {
         socket.SysMessage("Usage: [champremove all] or [champremove <type>]");
-        socket.SysMessage("Types: abyss, arachnid, cold, forest, unholy, vermin, habitat");
+        var typesLine = "Types: abyss, arachnid, cold, forest, unholy, vermin";
+		if( AllowHabitatInWorld( pChar.worldnumber ) )
+			typesLine += ", habitat";
+		socket.SysMessage( typesLine );
         return;
     }
 
@@ -417,11 +446,11 @@ function command_CHAMPREMOVE( socket, cmdString )
 	socket.champRemoveFound = 0;
 	socket.champRemoveRemoved = 0;
 
-    var altarData = GetAltarDataList();
-    var markerID = 0x1F14;
-
-    var worldNum = pUser.worldnumber;
+	var worldNum = pUser.worldnumber;
     var instID   = pUser.instanceID;
+
+    var altarData = GetAltarDataList( worldNum );
+    var markerID = 0x1F14;
 
     for( var i = 0; i < altarData.length; ++i )
     {
@@ -583,17 +612,6 @@ function RemoveSpawn( srcChar, trgChar, pSock )
     return true;
 }
 
-// Title-case list for display, and numeric IDs matching your champion system
-var ChampMenuTypes = [
-	{ name: "Abyss",    id: 1 },
-	{ name: "Arachnid", id: 2 },
-	{ name: "Cold",     id: 3 },
-	{ name: "Forest",   id: 4 },
-	{ name: "Unholy",   id: 5 },
-	{ name: "Vermin",   id: 6 },
-	{ name: "Habitat",   id: 7 }
-];
-
 // command handler
 /** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_CHAMPMENU( socket, cmdString )
@@ -644,9 +662,10 @@ function ChampMenu_Open( socket )
 	var startY = 118;
 	var colW = 110;
 
-	for( var i = 0; i < ChampMenuTypes.length; ++i )
+	var menuTypes = GetChampMenuTypesForWorld( pUser.worldnumber );
+	for( var i = 0; i < menuTypes.length; ++i )
 	{
-		var t = ChampMenuTypes[i];
+		var t = menuTypes[i];
 		var col = ( i % 3 );
 		var row = Math.floor( i / 3 );
 
@@ -779,11 +798,12 @@ function ChampMenu_CreateAndEnable( socket )
 
 	// Resolve typeName
 	var typeName = "Unknown";
-	for( var i = 0; i < ChampMenuTypes.length; ++i )
+	var menuTypes = GetChampMenuTypesForWorld( worldNum );
+	for( var i = 0; i < menuTypes.length; ++i )
 	{
-		if( ChampMenuTypes[i].id == champID )
+		if( menuTypes[i].id == champID )
 		{
-			typeName = ChampMenuTypes[i].name;
+			typeName = menuTypes[i].name;
 			break;
 		}
 	}
@@ -895,4 +915,16 @@ function ChampMenu_EnableController( altarSign )
 	TriggerEvent( 7500, "PlaceRedSkulls", altarSign, 1 );
 	TriggerEvent( 7500, "PlaceWhiteSkulls", altarSign, 0, 1 );
 	TriggerEvent( 7500, "StartChampionWave", altarSign, 1 );
+}
+
+function IsTrammelWorld( worldNum )
+{
+	// UOX3 default: 1 = Trammel
+	return ( worldNum == 1 );
+}
+
+function AllowHabitatInWorld( worldNum )
+{
+	// Block Habitat on Trammel
+	return !IsTrammelWorld( worldNum );
 }
