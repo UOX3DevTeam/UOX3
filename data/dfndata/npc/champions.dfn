@@ -122,7 +122,7 @@ REATTACKAT=1
 ORIGIN=lbr
 SPATTACK=8
 SPADELAY=4
-SCRIPT=3229// semidar reflect attack
+SCRIPT=3234// semidar reflect attack
 SCRIPT=3508// life_drain_aura
 }
 
