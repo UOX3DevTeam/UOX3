@@ -178,6 +178,7 @@
 3226=npc/ai/monster/ancient_lich.js
 3227=npc/ai/monster/zealot_of_khaldun.js
 3228=npc/ai/monster/shadowfiend.js
+3229=npc/ai/monster/plaguebeast.js
 
 // Magic Items
 3300=item/magic_items.js
