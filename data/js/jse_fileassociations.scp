@@ -384,7 +384,7 @@
 //-------------------------------------------
 // Champion System [7500-7600]
 //-------------------------------------------
-7500=item/champion_system/champion_spawn_alter.js
+7500=item/champion_system/champion_spawn_altar.js
 7501=item/champion_system/champion_spawn_monster.js
 7502=item/champion_system/champion_spawn_deed.js
 7503=item/champion_system/champion_spawn_data.js

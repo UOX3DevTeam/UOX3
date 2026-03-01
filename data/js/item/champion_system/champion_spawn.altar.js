@@ -134,9 +134,9 @@ function StartChampionWave( altar, stage )
 }
 
 /** @type { ( src: Item | Character, trg: Character, sock: Socket | null ) => boolean } */
-function ChampionSpawnNpc( alter, spawn, socket )
+function ChampionSpawnNpc( altar, spawn, socket )
 {
-	if( spawn.GetTag( "championSpawnID" ) == alter.serial.toString() )
+	if( spawn.GetTag( "championSpawnID" ) == altar.serial.toString() )
 	{
 		return true;
 	}
@@ -648,22 +648,22 @@ function ChampionMenu( socket, altar )
 		return;
 	}
 
-	var champalter = new Gump;
-	champalter.AddPage( 0 );
+	var champaltar = new Gump;
+	champaltar.AddPage( 0 );
 
 	// Main Background and Header
-	champalter.AddBackground( 0, 0, 360, 295, 5054 );
-	champalter.AddCheckerTrans( 0, 0, 360, 295 );
-	champalter.AddHTMLGump(15, 7, 320, 60, 0, 0, "<CENTER><BIG><BASEFONT color=#EECD8B>Champion Spawn Menu v61</BASEFONT></BIG></CENTER>" );// Champion Spawn Menu
-	champalter.AddButton( 320, 1, 4017, 4018, 1, 0, 0 ); // Close Menu Button
-	champalter.AddPicture( 50, 10, 7956 ); // Image of a "spawn rune"
+	champaltar.AddBackground( 0, 0, 360, 295, 5054 );
+	champaltar.AddCheckerTrans( 0, 0, 360, 295 );
+	champaltar.AddHTMLGump(15, 7, 320, 60, 0, 0, "<CENTER><BIG><BASEFONT color=#EECD8B>Champion Spawn Menu v61</BASEFONT></BIG></CENTER>" );// Champion Spawn Menu
+	champaltar.AddButton( 320, 1, 4017, 4018, 1, 0, 0 ); // Close Menu Button
+	champaltar.AddPicture( 50, 10, 7956 ); // Image of a "spawn rune"
 
-	// Champion Alter Name Name
-	champalter.AddHTMLGump( 20, 35, 140, 22, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 9801, socket.language ) + ":</basefont >" );// Spawner Name
-	champalter.AddBackground( 115, 30, 235, 28, 5120 ); // Spawner Name Background
+	// Champion altar Name Name
+	champaltar.AddHTMLGump( 20, 35, 140, 22, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 9801, socket.language ) + ":</basefont >" );// Spawner Name
+	champaltar.AddBackground( 115, 30, 235, 28, 5120 ); // Spawner Name Background
 
 	// Champion Type
-	champalter.AddHTMLGump( 20, 68, 140, 22, false, false, "<basefont color=#ffffff>Champion Type:</basefont>" );
+	champaltar.AddHTMLGump( 20, 68, 140, 22, false, false, "<basefont color=#ffffff>Champion Type:</basefont>" );
 	var championTypes = [];
 	for( var id in championIDToName )
 	{
@@ -677,7 +677,7 @@ function ChampionMenu( socket, altar )
 	let champY = 100;
 	const columnsPerRow = 3;
 
-	champalter.AddGroup( 2 ); // Radio group 2 (avoid clashing)
+	champaltar.AddGroup( 2 ); // Radio group 2 (avoid clashing)
 	for( let i = 0; i < championTypes.length; ++i )
 	{
 		let name = championTypes[i];
@@ -688,46 +688,46 @@ function ChampionMenu( socket, altar )
 		let x = 20 + ( i % columnsPerRow ) * 100;
 		let y = champY + Math.floor( i / columnsPerRow ) * 30;
 
-		champalter.AddHTMLGump( x + 35, y, 100, 22, false, false, label );
-		champalter.AddRadio( x, y, 2472, 2153, isSelected, id );
+		champaltar.AddHTMLGump( x + 35, y, 100, 22, false, false, label );
+		champaltar.AddRadio( x, y, 2472, 2153, isSelected, id );
 	}
-	champalter.EndGroup();
+	champaltar.EndGroup();
 
 	// Amount
-	champalter.AddHTMLGump( 35, 205, 120, 22, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 9811, socket.language ) + ":</basefont>" );// Amount
-	champalter.AddToolTip( spawnEditorTooltipClilocID, socket, GetDictionaryEntry( 9812, socket.language ));// Maximum amount to respawn
-	champalter.AddBackground( 30, 230, 50, 28, 5120 );
+	champaltar.AddHTMLGump( 35, 205, 120, 22, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 9811, socket.language ) + ":</basefont>" );// Amount
+	champaltar.AddToolTip( spawnEditorTooltipClilocID, socket, GetDictionaryEntry( 9812, socket.language ));// Maximum amount to respawn
+	champaltar.AddBackground( 30, 230, 50, 28, 5120 );
 
 	// Min / Max Time
-	champalter.AddHTMLGump( 105, 205, 140, 22, false, false, "<basefont color=#ffffff>Min Gold:</basefont>" );
-	champalter.AddToolTip( spawnEditorTooltipClilocID, socket, GetDictionaryEntry( 9814, socket.language ));// Minimum Gold Shower to Spawn
-	champalter.AddHTMLGump( 180, 205, 140, 22, false, false, "<basefont color=#ffffff>Max Gold:</basefont>" );
-	champalter.AddToolTip( spawnEditorTooltipClilocID, socket, GetDictionaryEntry( 9816, socket.language ));// Maximum Gold Shower to Spawn
-	champalter.AddBackground( 105, 230, 50, 28, 5120 );
-	champalter.AddBackground( 185, 230, 50, 28, 5120 );
+	champaltar.AddHTMLGump( 105, 205, 140, 22, false, false, "<basefont color=#ffffff>Min Gold:</basefont>" );
+	champaltar.AddToolTip( spawnEditorTooltipClilocID, socket, GetDictionaryEntry( 9814, socket.language ));// Minimum Gold Shower to Spawn
+	champaltar.AddHTMLGump( 180, 205, 140, 22, false, false, "<basefont color=#ffffff>Max Gold:</basefont>" );
+	champaltar.AddToolTip( spawnEditorTooltipClilocID, socket, GetDictionaryEntry( 9816, socket.language ));// Maximum Gold Shower to Spawn
+	champaltar.AddBackground( 105, 230, 50, 28, 5120 );
+	champaltar.AddBackground( 185, 230, 50, 28, 5120 );
 
 	// Apply Changes!
-	champalter.AddButton( 300, 230, 2122, 2124, 1, 0, 1 );
+	champaltar.AddButton( 300, 230, 2122, 2124, 1, 0, 1 );
 	// Enable  and Disable Champion Spawn
 	if( altar.GetTag( "spawnActive" ) == 1 )
 	{
-		champalter.AddButton( 230, 265, 4005, 4007, 1, 0, 3 );
-		champalter.AddHTMLGump( 265, 267, 140, 22, false, false, "<basefont color=#ffffff>Disable Champion</basefont>" );
+		champaltar.AddButton( 230, 265, 4005, 4007, 1, 0, 3 );
+		champaltar.AddHTMLGump( 265, 267, 140, 22, false, false, "<basefont color=#ffffff>Disable Champion</basefont>" );
 	}
 	else
 	{
-		champalter.AddButton( 230, 265, 4005, 4007, 1, 0, 2 );
-		champalter.AddHTMLGump( 265, 267, 140, 22, false, false, "<basefont color=#ffffff>Enable Champion</basefont>" );
+		champaltar.AddButton( 230, 265, 4005, 4007, 1, 0, 2 );
+		champaltar.AddHTMLGump( 265, 267, 140, 22, false, false, "<basefont color=#ffffff>Enable Champion</basefont>" );
 	}
 
 	// Text Entry fields
-	champalter.AddTextEntryLimited( 125, 35, 200, 25, 1153, 0, 14, altar.name, 30 );
-	champalter.AddTextEntryLimited( 45, 235, 115, 20, 1153, 0, 15, altar.morex, 2 );
-	champalter.AddTextEntryLimited( 115, 235, 40, 20, 1153, 0, 16, altar.morey, 4 );
-	champalter.AddTextEntryLimited( 195, 235, 40, 20, 1153, 0, 17, altar.morez, 4 );
+	champaltar.AddTextEntryLimited( 125, 35, 200, 25, 1153, 0, 14, altar.name, 30 );
+	champaltar.AddTextEntryLimited( 45, 235, 115, 20, 1153, 0, 15, altar.morex, 2 );
+	champaltar.AddTextEntryLimited( 115, 235, 40, 20, 1153, 0, 16, altar.morey, 4 );
+	champaltar.AddTextEntryLimited( 195, 235, 40, 20, 1153, 0, 17, altar.morez, 4 );
 
-	champalter.Send( socket );
-	champalter.Free();
+	champaltar.Send( socket );
+	champaltar.Free();
 }
 
 /** @type { ( pSock: Socket, pButton: number, gumpData: GumpData ) => void } */
