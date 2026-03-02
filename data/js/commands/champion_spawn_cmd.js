@@ -10,6 +10,7 @@ function CommandRegistration()
     RegisterCommand( "champdisable", 8, true );
     RegisterCommand( "champremove", 8, true );
 	RegisterCommand( "champmenu", 8, true );
+	RegisterCommand( "champaltars", 8, true );
 }
 
 /** @type { ( socket: Socket, cmdString: string ) => void } */
@@ -65,6 +66,7 @@ var ChampPlatformIDs = {
 	0x0FEE: 1
 };
 
+/** @type { ( pUser: Character, spawnFilter: string ) => void } */
 function SetupChampionAltars( pUser, spawnFilter )
 {
     if( !ValidateObject( pUser ))
@@ -135,6 +137,9 @@ function SetupChampionAltars( pUser, spawnFilter )
         marker.SetTag( "ChampAltarMarker", 1 );
         marker.SetTag( "ChampAltarType", d.type );
 
+		// Register predefined altar marker so it appears in [champaltars
+		ChampReg_AddIfMissing( marker, d.type, socket );
+
         // Tag platform step items around marker so champremove can delete safely
         socket.tagPlatformTypeStr = dType;
 
@@ -152,26 +157,26 @@ function SetupChampionAltars( pUser, spawnFilter )
         socket.SysMessage( "All requested champion altars spawned successfully." );
 }
 
+/** @type { ( src: Item | Character, item: Item, pSock: Socket ) => boolean } */
 function TagChampPlatformAround( src, item, pSock )
 {
-    if( !ValidateObject( item ))
-        return false;
+	if( !ValidateObject( item ))
+		return false;
 
-    if( ChampPlatformIDs[item.id] != 1 )
-        return false;
+	if( ChampPlatformIDs[item.id] != 1 )
+		return false;
 
-    // Safety: only tag your platform hue (COLOUR=0x455)
-    if( item.colour != 0x0455 )
-        return false;
+	// Safety: only tag your platform hue (COLOUR=0x455)
+	if( item.colour != 0x0455 )
+		return false;
 
-    item.SetTag( "ChampAltarPlatform", 1 );
-    item.SetTag( "ChampAltarType", pSock._tagPlatformTypeStr );
-    return true;
+	item.SetTag( "ChampAltarPlatform", 1 );
+
+	// FIX: use the field you actually set on the socket
+	item.SetTag( "ChampAltarType", pSock.tagPlatformTypeStr );
+
+	return true;
 }
-
-// ------------------------------------------------------------
-// Enable / Disable commands (mirror the gump behavior)
-// ------------------------------------------------------------
 
 var ChampionNameToID = {
     "abyss": 1,
@@ -183,6 +188,7 @@ var ChampionNameToID = {
 	"habitat": 7
 };
 
+/** @type { ( s: string ) => string } */
 function NormalizeTypeString( s )
 {
     if( s == null )
@@ -191,6 +197,7 @@ function NormalizeTypeString( s )
     return s;
 }
 
+/** @type { ( worldNum: number ) => any[] } */
 function GetAltarDataList( worldNum )
 {
 	var list = [
@@ -209,6 +216,7 @@ function GetAltarDataList( worldNum )
 	return list;
 }
 
+/** @type { ( worldNum: number ) => any[] } */
 function GetChampMenuTypesForWorld( worldNum )
 {
 	var list = [
@@ -238,6 +246,7 @@ function command_CHAMPDISABLE( socket, cmdString )
     RunChampToggleCommand( socket, cmdString, false );
 }
 
+/** @type { ( socket: Socket, cmdString: string, enabling: boolean ) => void } */
 function RunChampToggleCommand( socket, cmdString, enabling )
 {
     var pUser = socket.currentChar;
@@ -303,7 +312,7 @@ function RunChampToggleCommand( socket, cmdString, enabling )
     socket.SysMessage(( enabling ? "Enabled" : "Disabled" ) + " champion spawns: " + socket.champToggleCount + " (skipped: " + socket.champToggleSkipped + ")" );
 }
 
-// AreaItemFunction callback: find altar items by presence of championType tag
+/** @type { ( src: Item | Character, item: Item, pSock: Socket ) => boolean } */
 function ChampToggleAltarsAround( src, item, pSock )
 {
     if( !ValidateObject( item ))
@@ -341,7 +350,7 @@ function ChampToggleAltarsAround( src, item, pSock )
     return true;
 }
 
-// Mirrors champion_spawn_alter.js gump button 2
+/** @type { ( altar: Item, socket: Socket ) => boolean } */
 function EnableOneChampionAltar( altar, socket )
 {
     if( !ValidateObject( altar ))
@@ -375,7 +384,7 @@ function EnableOneChampionAltar( altar, socket )
     return true;
 }
 
-// Mirrors champion_spawn_alter.js gump button 3
+/** @type { ( altar: Item, socket: Socket ) => boolean } */
 function DisableOneChampionAltar( altar, socket )
 {
     if( !ValidateObject( altar ))
@@ -404,9 +413,6 @@ function DisableOneChampionAltar( altar, socket )
     return true;
 }
 
-// ------------------------------------------------------------
-// champremove (marker-driven): remove controller + platform, marker last
-// ------------------------------------------------------------
 /** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_CHAMPREMOVE( socket, cmdString )
 {
@@ -421,7 +427,7 @@ function command_CHAMPREMOVE( socket, cmdString )
     {
         socket.SysMessage("Usage: [champremove all] or [champremove <type>]");
         var typesLine = "Types: abyss, arachnid, cold, forest, unholy, vermin";
-		if( AllowHabitatInWorld( pChar.worldnumber ) )
+		if( AllowHabitatInWorld( pUser.worldnumber ) )
 			typesLine += ", habitat";
 		socket.SysMessage( typesLine );
         return;
@@ -480,42 +486,39 @@ function command_CHAMPREMOVE( socket, cmdString )
 	" | NoMarker: " + socket.champRemoveNoMarker + " | NoAltarFound: " + socket.champRemoveNoAltar );
 }
 
+/** @type { ( marker: Item, pSock: Socket ) => boolean } */
 function ChampRemove_DoAtMarker( marker, pSock )
 {
-    if( !ValidateObject( marker ) || pSock == null )
-        return;
+	if( !ValidateObject( marker ) || pSock == null )
+		return false;
 
-    if( marker.id != 0x1F14 || marker.GetTag( "ChampAltarMarker" ) != 1 )
-        return;
+	if( marker.GetTag( "ChampAltarMarker" ) != 1 )
+		return false;
 
-    var t = NormalizeTypeString( marker.GetTag( "ChampAltarType" ));
-    if( pSock.champRemoveAll != 1 && t != pSock.champRemoveTypeStr )
-        return;
+	var t = NormalizeTypeString( marker.GetTag( "ChampAltarType" ));
+	if( pSock.champRemoveAll != 1 && t != pSock.champRemoveTypeStr )
+		return false;
 
-    // Ensure anchor is valid before scans
-    marker.Refresh();
-    if( !ValidateObject( marker ))
-        return;
+	marker.Refresh();
+	if( !ValidateObject( marker ))
+		return false;
 
-    // Count how many controller altars we actually touched
-    pSock.champRemoveFoundControllers = 0;
+	pSock.champRemoveFoundControllers = 0;
 
-	// 1) Platform first (uses marker anchor while it is still stable)
 	AreaItemFunction( "ChampRemovePlatformAround", marker, 12, pSock );
+	AreaItemFunction( "ChampRemove_CleanupControllersAround", marker, 12, pSock );
+	AreaItemFunction( "ChampRemove_DeleteControllersAround", marker, 12, pSock );
 
-    AreaItemFunction( "ChampRemove_CleanupControllersAround", marker, 12, pSock );
+	SafeDeleteItem( marker );
 
-    AreaItemFunction( "ChampRemove_DeleteControllersAround", marker, 12, pSock );
+	if( pSock.champRemoveFoundControllers <= 0 )
+		pSock.champRemoveNoAltar++;
 
-    SafeDeleteItem( marker );
-
-    // If no altar controller was found, track it (marker/platform removed, but no altar item existed)
-    if( pSock.champRemoveFoundControllers <= 0 )
-        pSock.champRemoveNoAltar++;
-
-    pSock.champRemoveCount++;
+	pSock.champRemoveCount++;
+	return true;
 }
 
+/** @type { ( src: Item | Character, item: Item, pSock: Socket ) => boolean } */
 function ChampRemove_CleanupControllersAround( src, item, pSock )
 {
     if( !ValidateObject( item ))
@@ -531,6 +534,7 @@ function ChampRemove_CleanupControllersAround( src, item, pSock )
     return true;
 }
 
+/** @type { ( src: Item | Character, item: Item, pSock: Socket ) => boolean } */
 function ChampRemove_DeleteControllersAround( src, item, pSock )
 {
     if( !ValidateObject( item ))
@@ -543,6 +547,7 @@ function ChampRemove_DeleteControllersAround( src, item, pSock )
     return true;
 }
 
+/** @type { ( src: Item | Character, item: Item, pSock: Socket ) => boolean } */
 function ChampRemovePlatformAround( src, item, pSock )
 {
     if( !ValidateObject( item ))
@@ -559,6 +564,7 @@ function ChampRemovePlatformAround( src, item, pSock )
     return true;
 }
 
+/** @type { ( altar: Item, socket: Socket ) => void } */
 function ChampRemove_CleanupAltar( altar, socket )
 {
     if( !ValidateObject( altar ))
@@ -584,6 +590,7 @@ function ChampRemove_CleanupAltar( altar, socket )
     altar.Refresh();
 }
 
+/** @type { ( item: Item ) => void } */
 function SafeDeleteItem( item )
 {
     if( !ValidateObject( item ))
@@ -596,6 +603,7 @@ function SafeDeleteItem( item )
     }
 }
 
+/** @type { ( srcChar: Character, trgChar: Character, pSock: Socket ) => boolean } */
 function RemoveSpawn( srcChar, trgChar, pSock )
 {
     if( !ValidateObject( trgChar ) || pSock == null )
@@ -632,6 +640,7 @@ function command_CHAMPMENU( socket, cmdString )
 	ChampMenu_Open( socket );
 }
 
+/** @type { ( socket: Socket ) => void } */
 function ChampMenu_Open( socket )
 {
 	var pUser = socket.currentChar;
@@ -688,9 +697,9 @@ function ChampMenu_Open( socket )
 	champMenu.AddHTMLGump( 220, 64, 220, 18, false, false, "<basefont color=#ffffff>X:</basefont>" );
 	champMenu.AddHTMLGump( 270, 64, 220, 18, false, false, "<basefont color=#ffffff>Y:</basefont>" );
 	champMenu.AddHTMLGump( 310, 64, 220, 18, false, false, "<basefont color=#ffffff>Z:</basefont>" );
-	champMenu.AddTextEntryLimited( 233, 64, 120, 25, 10, 0, 14, pUser.x.toString(), 4 ); //TextID 11
-	champMenu.AddTextEntryLimited( 283, 64, 120, 25, 10, 0, 15, pUser.y.toString(), 4 ); //TextID 12
-	champMenu.AddTextEntryLimited( 323, 64, 120, 25, 10, 0, 16, pUser.z.toString(), 2 ); //TextID 13
+	champMenu.AddTextEntryLimited( 233, 64, 120, 25, 10, 0, 15, pUser.x.toString(), 4 ); //TextID 11
+	champMenu.AddTextEntryLimited( 283, 64, 120, 25, 10, 0, 16, pUser.y.toString(), 4 ); //TextID 12
+	champMenu.AddTextEntryLimited( 323, 64, 120, 25, 10, 0, 17, pUser.z.toString(), 2 ); //TextID 13
 
 	champMenu.Send( socket );
 	champMenu.Free();
@@ -742,7 +751,23 @@ function onGumpPress( socket, buttonID, gumpData )
 			socket.champMenuInst  = pUser.instanceID;
 			ChampMenu_Open( socket );
 			break;
+		case 1001: // prev page
+			socket.champAltarsPage = (parseInt(socket.champAltarsPage, 10) || 0) - 1;
+			ChampAltarsMenu(socket);
+			break;
+
+		case 1002: // next page
+			socket.champAltarsPage = (parseInt(socket.champAltarsPage, 10) || 0) + 1;
+			ChampAltarsMenu(socket);
+			break;
+
 		default:
+			// Remove buttons: 2000 + index
+			if (buttonID >= 2000 && buttonID < 3000)
+			{
+				ChampAltars_RemoveIndex(socket, buttonID - 2000);
+				return;
+			}
 			break;
 	}
 }
@@ -776,6 +801,7 @@ function onCallback0( socket, myTarget )
 	ChampMenu_Open( socket );
 }
 
+/** @type { ( socket: Socket ) => void } */
 function ChampMenu_CreateAndEnable( socket )
 {
 	var pUser = socket.currentChar;
@@ -875,6 +901,7 @@ function onTimer( pUser, timerID )
 	socket.champMenuX + "," + socket.champMenuY + "," + socket.champMenuZ + "." );
 }
 
+/** @type { ( socket: Socket, ctrl: Item, champID: number, typeName: string ) => void } */
 function ChampMenu_ConfigureController( socket, ctrl, champID, typeName )
 {
 	if( !ValidateObject( ctrl ))
@@ -883,6 +910,9 @@ function ChampMenu_ConfigureController( socket, ctrl, champID, typeName )
 	ctrl.SetTag( "ChampAltarMarker", 1 );
 	ctrl.SetTag( "ChampAltarType", typeName );
 	ctrl.SetTag( "championType", champID );
+
+	// Register custom placed controller so it appears in [champaltars
+	ChampReg_AddIfMissing( ctrl, typeName, socket );
 
 	ctrl.movable = 2;
 	ctrl.decayable = false;
@@ -896,6 +926,7 @@ function ChampMenu_ConfigureController( socket, ctrl, champID, typeName )
 	ChampMenu_EnableController( ctrl );
 }
 
+/** @type { ( altarSign: Item ) => void } */
 function ChampMenu_EnableController( altarSign )
 {
 	if( !ValidateObject( altarSign ))
@@ -917,14 +948,342 @@ function ChampMenu_EnableController( altarSign )
 	TriggerEvent( 7500, "StartChampionWave", altarSign, 1 );
 }
 
+/** @type { ( worldNum: number ) => boolean } */
 function IsTrammelWorld( worldNum )
 {
 	// UOX3 default: 1 = Trammel
 	return ( worldNum == 1 );
 }
 
+/** @type { ( worldNum: number ) => boolean } */
 function AllowHabitatInWorld( worldNum )
 {
 	// Block Habitat on Trammel
 	return !IsTrammelWorld( worldNum );
+}
+
+/** @type { ( socket: Socket, cmdString: string ) => void } */
+function command_CHAMPALTARS( socket, cmdString )
+{
+	var pUser = socket.currentChar;
+	if( !ValidateObject( pUser ))
+		return;
+
+	// keep registry tidy (drops dead entries)
+	var list = ChampReg_CleanupMissing();
+
+	socket.champAltarsPage = 0;
+	socket.champAltarsList = list;
+
+	ChampAltarsMenu( socket );
+}
+
+/** @type { ( socket: Socket ) => void } */
+function ChampAltarsMenu( socket )
+{
+	var pUser = socket.currentChar;
+	if( !ValidateObject( pUser ))
+		return;
+
+	var list = socket.champAltarsList || [];
+	var page = parseInt( socket.champAltarsPage, 10 ) || 0;
+
+	var perPage = 10;
+	var maxPage = Math.floor( ( list.length - 1 ) / perPage );
+	if( maxPage < 0 ) maxPage = 0;
+	if( page < 0 ) page = 0;
+	if( page > maxPage ) page = maxPage;
+
+	socket.champAltarsPage = page;
+
+	var cleanupMenu = new Gump;
+	cleanupMenu.AddPage( 0 );
+	cleanupMenu.AddBackground( 0, 0, 520, 360, 5054 );
+	cleanupMenu.AddCheckerTrans( 0, 0, 520, 360 );
+
+	cleanupMenu.AddHTMLGump( 15, 10, 490, 20, 0, 0, "<basefont color=#EECD8B><center><big>Champion Altars</big></center></basefont>" );
+	cleanupMenu.AddButton( 480, 8, 4017, 4018, 1, 0, 0 ); // close
+
+	cleanupMenu.AddHTMLGump( 20, 40, 480, 18, false, false,
+		"<basefont color=#ffffff>Total: " + list.length + " (page " + ( page+1 ) + " / " + ( maxPage+1 ) + ")</basefont>" );
+
+	// Prev/Next
+	if( page > 0 )
+		cleanupMenu.AddButton( 20, 66, 4014, 4016, 1, 0, 1001 ); // prev
+	if( page < maxPage )
+		cleanupMenu.AddButton( 60, 66, 4005, 4007, 1, 0, 1002 ); // next
+
+	cleanupMenu.AddHTMLGump( 20, 90, 480, 18, false, false, "<basefont color=#00ff00>Remove deletes the altar/controller, platform tiles, and active spawn mobs.</basefont>" );
+
+	var start = page * perPage;
+	var end = start + perPage;
+	if( end > list.length ) end = list.length;
+
+	var y = 120;
+
+	for( var i = start; i < end; i++ )
+	{
+		var altar = list[i];
+		if( !altar )
+			continue;
+
+		var label = ( "" + altar.type ) + " - " + altar.x + "," + altar.y + "," + altar.z;
+
+		// remove button id range: 2000 + index
+		cleanupMenu.AddButton( 20, y, 4020, 4022, 1, 0, 2000 + i );
+		cleanupMenu.AddHTMLGump( 55, y, 430, 18, false, false, "<basefont color=#ffffff>" + label + "</basefont>" );
+
+		y += 22;
+	}
+
+	cleanupMenu.Send( socket );
+	cleanupMenu.Free();
+}
+
+/** @type { ( socket: Socket, index: number ) => void } */
+function ChampAltars_RemoveIndex( socket, index )
+{
+	var pUser = socket.currentChar;
+	if( !ValidateObject( pUser ))
+		return;
+
+	var list = socket.champAltarsList || [];
+	if( index < 0 || index >= list.length )
+	{
+		socket.SysMessage( "Invalid selection." );
+		return;
+	}
+
+	var e = list[index];
+	if( !e || !e.serial )
+	{
+		socket.SysMessage( "Entry missing data." );
+		return;
+	}
+
+	var item = CalcItemFromSer( e.serial );
+	if( !ValidateObject( item ))
+	{
+		socket.SysMessage( "That altar no longer exists. Cleaning registry entry." );
+		ChampReg_RemoveSerial( e.serial );
+		socket.champAltarsList = ChampReg_CleanupMissing();
+		ChampAltars_Open( socket );
+		return;
+	}
+
+	socket.champRemoveAll = 1;
+	socket.champRemoveTypeStr = "all";
+
+	ChampRemove_DoAtMarker( item, socket );
+	ChampReg_RemoveSerial( e.serial );
+
+	socket.SysMessage( "Removed champion altar: " + e.type + " at " + e.x + "," + e.y + "." );
+
+	socket.champAltarsList = ChampReg_CleanupMissing();
+	ChampAltars_Open( socket );
+}
+
+/** @type { ( str: string ) => string } */
+function manualTrim( str )
+{
+	return ("" + str).replace( /^\s+|\s+$/g, "" );
+}
+
+/** @type { ( entry: any ) => boolean } */
+function ChampReg_AppendEntry( entry )
+{
+	var mFile = new UOXCFile();
+	mFile.Open( "ChampAltars.jsdata", "a", "Champion" );
+	if( !mFile )
+		return false;
+
+	var out =
+		"Serial="   + ( entry.serial   || 0 ) + "\n" +
+		"Type="     + ( entry.type     || "Unknown" ) + "\n" +
+		"X="        + ( entry.x        || 0 ) + "\n" +
+		"Y="        + ( entry.y        || 0 ) + "\n" +
+		"Z="        + ( entry.z        || 0 ) + "\n" +
+		"World="    + ( entry.world    || 0 ) + "\n" +
+		"Instance=" + ( entry.instance || 0 ) + "\n" +
+		"CreatedBy="+ ( entry.createdBy|| "" ) + "\n" +
+		"CreatedAt="+ ( entry.createdAt|| 0 ) + "\n\n";
+
+	mFile.Write( out );
+	mFile.Close();
+	mFile.Free();
+	return true;
+}
+
+/** @type { ( list: any[] ) => boolean } */
+function ChampReg_WriteAll( list )
+{
+	var mFile = new UOXCFile();
+	mFile.Open( "ChampAltars.jsdata", "w", "Champion" );
+	if( !mFile )
+		return false;
+
+	for( var i = 0; i < list.length; i++ )
+	{
+		var e = list[i];
+		if( !e ) continue;
+
+		var out =
+			"Serial="   + ( e.serial   || 0 ) + "\n" +
+			"Type="     + ( e.type     || "Unknown" ) + "\n" +
+			"X="        + ( e.x        || 0 ) + "\n" +
+			"Y="        + ( e.y        || 0 ) + "\n" +
+			"Z="        + ( e.z        || 0 ) + "\n" +
+			"World="    + ( e.world    || 0 ) + "\n" +
+			"Instance=" + ( e.instance || 0 ) + "\n" +
+			"CreatedBy="+ ( e.createdBy|| "" ) + "\n" +
+			"CreatedAt="+ ( e.createdAt|| 0 ) + "\n\n";
+
+		mFile.Write( out );
+	}
+
+	mFile.Close();
+	mFile.Free();
+	return true;
+}
+
+/** @type { () => any[] } */
+function ChampReg_ReadAll()
+{
+	var mFile = new UOXCFile();
+	var list = [];
+
+	mFile.Open( "ChampAltars.jsdata", "r", "Champion" );
+
+	if( !mFile || mFile.Length() < 0 )
+	{
+		if( mFile ) mFile.Free();
+		return list;
+	}
+
+	var cur = null;
+
+	while( !mFile.EOF() )
+	{
+		var line = mFile.ReadUntil( "\n" );
+		line = manualTrim( line.replace( /[^\x20-\x7E]/g, "" ));
+
+		if( line == "" )
+		{
+			if( cur )
+			{
+				ChampReg_FinalizeEntry( cur );
+				list.push( cur );
+				cur = null;
+			}
+			continue;
+		}
+
+		var parts = line.split( "=" );
+		if( parts.length == 2 )
+		{
+			if( !cur ) cur = {};
+			var k = manualTrim( parts[0] ).toLowerCase();
+			var v = manualTrim( parts[1] );
+			cur[k] = v;
+		}
+	}
+
+	if( cur )
+	{
+		ChampReg_FinalizeEntry( cur );
+		list.push( cur );
+	}
+
+	mFile.Close();
+	mFile.Free();
+	return list;
+}
+
+/** @type { ( e: any ) => void } */
+function ChampReg_FinalizeEntry( e )
+{
+	e.serial   = parseInt( e.serial || "0", 10 ) || 0;
+	e.type     = "" + ( e.type || e.champaltype || "Unknown" );
+	e.x        = parseInt( e.x || "0", 10 ) || 0;
+	e.y        = parseInt( e.y || "0", 10 ) || 0;
+	e.z        = parseInt( e.z || "0", 10 ) || 0;
+	e.world    = parseInt( e.world || "0", 10 ) || 0;
+	e.instance = parseInt( e.instance || "0", 10 ) || 0;
+	e.createdBy= "" + ( e.createdby || "" );
+	e.createdAt= parseInt( e.createdat || "0", 10 ) || 0;
+}
+
+/** @type { ( objItem: Item, typeName: string, socket: Socket ) => void } */
+function ChampReg_AddIfMissing( objItem, typeName, socket )
+{
+	if( !ValidateObject( objItem ))
+		return;
+
+	var serial = objItem.serial;
+	if( serial <= 0 )
+		return;
+
+	var list = ChampReg_ReadAll();
+	for( var i = 0; i < list.length; i++ )
+	{
+		if( list[i] && list[i].serial == serial )
+			return; // already tracked
+	}
+
+	var createdBy = "";
+	if( socket && socket.currentChar )
+		createdBy = "" + socket.currentChar.name;
+
+	ChampReg_AppendEntry({
+		serial: serial,
+		type: ( typeName != null ? ("" + typeName) : "Unknown" ),
+		x: objItem.x,
+		y: objItem.y,
+		z: objItem.z,
+		world: objItem.worldnumber,
+		instance: objItem.instanceID,
+		createdBy: createdBy,
+		createdAt: Date.now()
+	});
+}
+
+/** @type { ( serial: number ) => void } */
+function ChampReg_RemoveSerial( serial )
+{
+	serial = parseInt( serial, 10 ) || 0;
+	if( serial <= 0 )
+		return;
+
+	var list = ChampReg_ReadAll();
+	var out = [];
+
+	for( var i = 0; i < list.length; i++ )
+	{
+		if( list[i] && list[i].serial != serial )
+			out.push( list[i] );
+	}
+
+	ChampReg_WriteAll( out );
+}
+
+/** @type { () => any[] } */
+function ChampReg_CleanupMissing()
+{
+	var list = ChampReg_ReadAll();
+	var out = [];
+
+	for( var i = 0; i < list.length; i++ )
+	{
+		var e = list[i];
+		if( !e || !e.serial ) continue;
+
+		var it = CalcItemFromSer( e.serial );
+		if( ValidateObject( it ))
+			out.push( e );
+	}
+
+	if( out.length != list.length )
+		ChampReg_WriteAll( out );
+
+	return out;
 }

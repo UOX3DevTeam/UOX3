@@ -5712,111 +5712,158 @@ packitem=0x0f8d,30
 				<div class="cd-faq__content">
 					<div class="text-component">
 
-						<h4>About Champion Spawns</h4>
-						<p>Champion Spawns are <span class="hl">multi-stage PvM encounters</span> built around altar locations. Each altar spawns increasingly difficult waves of monsters, culminating in a <span class="hl">champion boss</span>. Players who contribute to defeating the champion are eligible for rewards.</p>
+						<h4>Champion Spawns</h4>
+						<p>
+							Champion Spawns are <span class="hl">multi-stage PvM events</span> that take place at special altar locations.
+							Players fight through escalating waves of monsters until a <span class="hl">Champion Boss</span> appears.
+							After the boss is defeated, rewards are distributed to top contributing players.
+						</p>
 
-						<hr>
+						<h4>Quick Setup (Shard Admin / GM)</h4>
+						<p>
+							To create and start a champion spawn at its <span class="hl">predefined location</span>, use:
+						</p>
 
-						<h4>Quick Start (GM Usage)</h4>
-						<p>Champion spawns are controlled using <span class="hl">GM commands</span>. No scripting or DFN editing is required for basic operation.</p>
-						<ol>
-							<li><strong>Create and start the spawn</strong> using <span class="hl">'champspawn</span></li>
-							<li>The champion spawn will <span class="hl">activate immediately</span> and begin wave progression</li>
-						</ol>
-						<p>The <span class="hl">champenable</span> command is only needed if a spawn has previously been disabled.</p>
+						<ul>
+							<li><span class="hl">'champspawn abyss</span> - creates the Abyss altar and starts it immediately</li>
+							<li><span class="hl">'champspawn all</span> - creates all predefined altars and starts them immediately</li>
+						</ul>
 
-						<hr>
+						<p>
+							<span class="hl">Note:</span> You do not need to run <span class="hl">'champenable</span> after <span class="hl">'champspawn</span>.
+							The spawn is enabled automatically when created.
+						</p>
 
-						<h4>Example: Creating a Champion Spawn</h4>
+						<h4>GM Controls (Common Operations)</h4>
+
 						<ul>
 							<li>
-								<span class="hl">'champspawn abyss</span><br>
-								Places all predefined Abyss champion altars into the world and immediately activates them.
+								<span class="hl">'champdisable abyss</span><br>
+								Stops the spawn, resets progress, and removes active spawn monsters.
+							</li>
+							<li>
+								<span class="hl">'champenable abyss</span><br>
+								Re-enables a previously disabled spawn and restarts progression from Stage 1.
+							</li>
+							<li>
+								<span class="hl">'champremove abyss</span><br>
+								Removes the predefined altar/controller and platform tiles (and cleans up active spawn mobs).
 							</li>
 						</ul>
-						<p>Once created, monsters will begin spawning automatically in waves. Killing monsters advances the spawn until the final boss encounter is triggered.</p>
 
-						<hr>
-
-						<h4>Managing Active Champion Spawns</h4>
-						<p>All champion commands accept either a specific champion type or <span class="hl">all</span>.</p>
-						<p><span class="hl">Types:</span> abyss, arachnid, cold, forest, unholy, vermin</p>
+						<h4>Custom Placement + Removing Custom Altars</h4>
 						<ul>
-							<li>
-								<span class="hl">'champspawn &lt;type|all&gt;</span><br>
-								Creates and immediately enables champion spawns of the selected type(s). Existing spawns of the same type are skipped.
-							</li>
-							<li>
-								<span class="hl">'champenable &lt;type|all&gt;</span><br>
-								Re-enables a previously disabled champion spawn and restarts progression from the beginning.
-							</li>
-							<li>
-								<span class="hl">'champdisable &lt;type|all&gt;</span><br>
-								Disables the selected spawn(s), stops progression, and removes active spawn monsters.
-							</li>
-							<li>
-								<span class="hl">'champremove &lt;type|all&gt;</span><br>
-								Completely removes the altar, controller, and all tagged platform objects for the selected spawn(s).
-							</li>
 							<li>
 								<span class="hl">'champmenu</span><br>
-								Opens a GM gump allowing manual placement of a champion altar at a custom location, selection of champion type, and immediate activation.
+								Opens a GM gump to place a champion altar at a custom location (Create + Enable).
+							</li>
+							<li>
+								<span class="hl">'champaltars</span><br>
+								Opens a list of all tracked altars (predefined + custom) and lets you click Remove.
+								This is the recommended way to remove custom placed altars.
 							</li>
 						</ul>
 
-						<hr>
+						<input type="checkbox" id="spoiler_champ_custom_world">
+						<label for="spoiler_champ_custom_world">Where do I change the predefined altar locations? <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>
+								The built-in altar coordinates used by <span class="hl">'champspawn</span> come from the server script that defines the predefined altar list.
+								If your shard uses a custom map, you will need to update those coordinates.
+							</p>
 
-						<h4>How Champion Spawns Progress</h4>
-						<ul>
-							<li>Each altar progresses through multiple <span class="hl">waves</span></li>
-							<li>Each wave spawns monsters from its configured level pool</li>
-							<li>Killing monsters advances the stage automatically</li>
-							<li>The final stage spawns the <span class="hl">champion boss</span></li>
-						</ul>
-						<p>No GM interaction is required once the spawn is enabled.</p>
+							<p>
+								Edit the function <span class="hl">GetAltarDataList(worldNum)</span> in:
+							</p>
+
+							<p><span class="hl">js/commands/champion_spawn_cmd.js</span></p>
+
+							<p>
+								Each entry in the list is one predefined altar location:
+							</p>
+
+							<ul>
+								<li><span class="hl">type</span> - champion theme (Abyss, Unholy, etc.)</li>
+								<li><span class="hl">x, y, z</span> - altar coordinates</li>
+							</ul>
+
+							<p>
+								After updating the coordinates, restart the server or reload scripts, then run <span class="hl">'champspawn all</span> (or a single type) again.
+							</p>
+
+							<p>
+								<span class="hl">Tip:</span> If you do not want to maintain predefined locations at all, you can ignore <span class="hl">'champspawn</span>
+								and place everything manually using <span class="hl">'champmenu</span>. Custom placed altars can be managed using <span class="hl">'champaltars</span>.
+							</p>
+						</div>
+
+						<input type="checkbox" id="spoiler_champ_types">
+						<label for="spoiler_champ_types">Champion Types (what "abyss" means) <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>
+								The word after the command is the <span class="hl">spawn theme</span>.
+								It controls what monsters spawn and what boss appears.
+							</p>
+							<ul>
+								<li><span class="hl">abyss</span> - demon / underworld theme</li>
+								<li><span class="hl">arachnid</span> - spiders and poison theme</li>
+								<li><span class="hl">cold</span> - ice and snow theme</li>
+								<li><span class="hl">forest</span> - nature theme</li>
+								<li><span class="hl">unholy</span> - undead / corrupted theme</li>
+								<li><span class="hl">vermin</span> - infestation theme</li>
+								<li><span class="hl">habitat</span> - special theme (not available on Trammel)</li>
+							</ul>
+						</div>
+
+						<input type="checkbox" id="spoiler_champ_progression">
+						<label for="spoiler_champ_progression">How Progression Works <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<ul>
+								<li>Each altar progresses through multiple <span class="hl">stages</span></li>
+								<li>Each stage spawns monsters from its configured pool</li>
+								<li>Killing monsters advances the stage automatically</li>
+								<li>The final stage spawns the <span class="hl">Champion Boss</span></li>
+							</ul>
+						</div>
 
 						<input type="checkbox" id="spoiler_champ_miniboss">
-						<label for="spoiler_champ_miniboss">Mini-Boss Support <i class="fas fa-angle-down"></i></label>
+						<label for="spoiler_champ_miniboss">Mini Boss Support <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p>Champion spawns optionally support a <span class="hl">mini-boss</span>. When configured, the mini-boss spawns <strong>at the same time as the champion boss</strong>, creating a more complex final encounter.</p>
-							<p>The mini-boss is defined per champion type using the <span class="hl">miniBoss</span> property in the champion configuration table.</p>
+							<p>
+								Champion spawns can optionally include a <span class="hl">mini boss</span>.
+								When configured, the mini boss spawns <strong>at the same time as the Champion Boss</strong>.
+							</p>
+							<p>
+								Mini boss configuration is stored in <span class="hl">champion_spawn_data.js</span> using the <span class="hl">miniBoss</span> property.
+							</p>
 						</div>
 
 						<input type="checkbox" id="spoiler_champ_rewards">
-						<label for="spoiler_champ_rewards">Champion Rewards <i class="fas fa-angle-down"></i></label>
+						<label for="spoiler_champ_rewards">Rewards <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p>When the champion boss is defeated, rewards are distributed to top contributing players. Reward pools are defined per champion type:</p>
+							<p>Reward pools are defined per champion type:</p>
 							<ul>
-								<li><span class="hl">uniqueList</span> – rare, unique-style rewards (usually limited to one per champion kill)</li>
-								<li><span class="hl">sharedList</span> – common rewards that can be granted to multiple players</li>
-								<li><span class="hl">decorativeList</span> – decorative or vanity rewards</li>
+								<li><span class="hl">uniqueList</span> - rare rewards (rare drop/single person)</li>
+								<li><span class="hl">sharedList</span> - common rewards (can go to multiple players)</li>
+								<li><span class="hl">decorativeList</span> - decorative or vanity rewards</li>
 							</ul>
-							<p>Some champion types may also award <span class="hl">power scrolls</span>, if enabled.</p>
+							<p>Some champion types may also award <span class="hl">power scrolls</span> if enabled.</p>
 						</div>
 
-						<hr>
-
-						<h4>Advanced Configuration (ChampionSpawnTable)</h4>
-						<p>This section is only required for customization. Default champion spawns work without modification.</p>
-						<p>Each champion type is defined by a numeric key stored on the altar as <span class="hl">championType</span>.</p>
-						<ul>
-							<li><span class="hl">name</span> – display name used in messages and UI</li>
-							<li><span class="hl">boss</span> – DFN sectionID for the final boss NPC</li>
-							<li><span class="hl">miniBoss</span> – optional DFN sectionID for a secondary boss NPC</li>
-							<li><span class="hl">stageNames</span> – titles shown as the spawn advances</li>
-							<li><span class="hl">levels</span> – arrays of creature DFN sectionIDs per wave</li>
-							<li><span class="hl">uniqueList</span>, <span class="hl">sharedList</span>, <span class="hl">decorativeList</span> – reward pools</li>
-							<li><span class="hl">powerScrollSkills</span> – skills eligible for power scroll rewards (optional)</li>
-						</ul>
-
-						<hr>
-
-						<h4>Setup Details</h4>
-						<p>Relevant scripts:</p>
-						<ul>
-							<li><span class="hl">js/item/champion_system/champion_spawn_altar.js</span> – altar and controller logic</li>
-							<li><span class="hl">js/item/champion_system/champion_spawn_monster.js</span> – spawn tracking, progression, and rewards</li>
-						</ul>
+						<input type="checkbox" id="spoiler_champ_config">
+						<label for="spoiler_champ_config">Advanced Configuration (files + tables) <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>Default champion spawns work without editing anything.</p>
+							<p>Advanced configuration is defined in:</p>
+							<ul>
+								<li><span class="hl">champion_spawn_data.js</span> - ChampionSpawnTable (boss, miniBoss, waves, rewards)</li>
+							</ul>
+							<p>Supporting scripts:</p>
+							<ul>
+								<li><span class="hl">js/item/champion_system/champion_spawn_altar.js</span> - altar/controller logic</li>
+								<li><span class="hl">js/item/champion_system/champion_spawn_monster.js</span> - tracking, progression, rewards</li>
+							</ul>
+						</div>
 
 					</div>
 				</div>
