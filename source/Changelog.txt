@@ -1,3 +1,11 @@
+02/03/2026 - DragonSlayer62 (#515)
+    [ADD] Added new DFN tag for spawn regions:
+        ADDSCRIPT // Allows scripts to be attached to spawned objects
+    [ADD] Added new script events:
+        onSpawn( objSpawned, spawnRegion ) // triggered when an object or character is spawned via a spawn region script 
+        onKill( killer, killed ) // triggered when a character kills another character 
+    [UPD] Updated documentation to include the new script events and DFN tags
+
 02/03/2026 - DragonSlayer62 (#406)
     [ADD] Added full Champion Spawn system, featuring multi-stage monster waves, skull progression, altar-based boss summoning, and support for configurable spawn tables and rewards. Champion altars can be manually created, enabled, disabled, or removed via staff commands (champspawn, champenable, champdisable, champremove)
     [ADD] Added automated Champion Rotation system, allowing a configurable number of champion spawns to activate daily at a scheduled time (configurable via champ_rotation.js)
