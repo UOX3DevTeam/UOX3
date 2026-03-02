@@ -3578,6 +3578,24 @@
 6546=Ten sprzęt nie ma przypisanej piosenki.
 6547=Ten utwór znajduje się już w pozytywce.
 6548=Ten utwór został dodany do pozytywki.
+// [6580-6599] Skrypty Niebiańskiego Rumaka
+6580=Nie możesz zejść z niebiańskiego rumaka, ponieważ twój ekwipunek nie może tego pomieścić.
+6581=Aby go użyć, musi znajdować się w górnej warstwie twojego ekwipunku.
+6582=Musisz zakończyć rzucanie czaru, zanim użyjesz kolejnego.
+6583=Gargulce nie mogą jeździć na zwierzętach.
+6584=Proszę najpierw zejść z rumaka.
+6585=Nie możesz tego zrobić, będąc przemienionym.
+6586=Nie możesz teraz przywołać rumaka.
+6587=Twoja próba przywołania niebiańskiego rumaka została przerwana!
+6588=Przywołujesz swojego niebiańskiego konia.
+6589=Musisz mieć przedmiot w plecaku, aby go użyć.
+6590=Wybierz niebiańskiego rumaka, którego chcesz odnowić.
+6591=To musi znajdować się w twoim plecaku, abyś mógł tego użyć.
+6592=To nie jest prawidłowy cel.
+6593=Musisz mieć przedmiot w plecaku, aby na niego wskazać.
+6594=Nie możesz użyć tego przedmiotu w tym celu.
+6595=Ciało twojego niebiańskiego rumaka zostało upostaciowione.
+6596=Przezroczystość twojego niebiańskiego rumaka została przywrócona.
 // [7000-7499] AI Scripts
 7000=Jesteś przestępcą i nie masz dostępu do swojej skrytki bankowej.
 7001=Którą pozycję chcesz umieścić w swojej skrytce bankowej?

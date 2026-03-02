@@ -3578,6 +3578,24 @@
 6546=A questo equipaggiamento non è assegnata alcuna canzone.
 6547=Questa traccia è già nel carillon.
 6548=Questa canzone è stata aggiunta al carillon.
+// [6580-6599] Script per la Cavalcatura Eterea
+6580=Non puoi scendere dalla tua cavalcatura eterea perché il tuo inventario non può contenerla.
+6581=Deve trovarsi nello strato superiore del tuo inventario per poterla utilizzare.
+6582=Devi terminare l'incantesimo in corso prima di usarne un altro.
+6583=I gargoyle non possono cavalcare animali.
+6584=Per favore, scendi prima.
+6585=Non puoi farlo mentre sei polimorfato.
+6586=Non puoi evocare una cavalcatura in questo momento.
+6587=Sei stato interrotto mentre tentavi di evocare la tua cavalcatura eterea!
+6588=Evocchi il tuo destriero etereo.
+6589=Devi avere l'oggetto nel tuo zaino per poterlo usare.
+6590=Seleziona la cavalcatura eterea che vuoi ritoccare.
+6591=Deve trovarsi nel tuo inventario per poterlo usare.
+6592=Non è un obiettivo valido.
+6593=Devi avere l'oggetto nel tuo zaino per poterlo selezionare.
+6594=Non puoi usare questo oggetto per questo.
+6595=Il corpo della tua cavalcatura eterea è stato solidificato.
+6596=La trasparenza della tua cavalcatura eterea è stata ripristinata.
 // [7000-7499] AI Scripts
 7000=Tu sei un criminale e non puoi accedere alla tua cassaforte.
 7001=Quale oggetto desidera depositare nella sua cassetta di sicurezza?
