@@ -3578,6 +3578,24 @@
 6546=Este equipamento não tem qualquer música atribuída.
 6547=Esta música já está na caixa de música.
 6548=Esta música foi adicionada à caixa de música.
+// [6580-6599] Scripts de Montaria Etérea
+6580=Não pode desmontar o seu etéreo porque a sua mochila não consegue segurá-lo
+6581=Isto deve estar na camada superior da sua mochila para o usar.
+6582=Deve terminar de conjurar antes de usar outro.
+6583=As gárgulas não conseguem montar animais.
+6584=Por favor, desmonte primeiro.
+6585=Não pode fazer isso enquanto estiver transformado.
+6586=Não pode invocar uma montaria neste momento.
+6587=Foi interrompido ao tentar invocar o seu montaria etérea!
+6588=Convoca o seu corcel etéreo.
+6589=Deve ter o objeto na sua mochila para o usar.
+6590=Selecione a montaria etérea que deseja voltar a tocar.
+6591=Isso deve estar na sua mochila para poder usá-lo.
+6592=Esse não é um alvo válido.
+6593=Deve ter o item na sua mochila para o selecionar.
+6594=Não pode usar este item para isso.
+6595=O corpo da sua montaria etérea foi solidificado.
+6596=A transparência da sua montaria etérea foi restaurada.
 // [7000-7499] AI Scripts
 7000=Tu és um criminoso e não podes aceder à tua caixa bancária.
 7001=Que artigo deseja depositar na sua caixa bancária?
@@ -5668,5 +5686,12 @@
 19341=Já conhece esta receita.
 19342=Aprendeu uma nova receita: %i
 19343=Deve aprender esta receita num pergaminho.
+// [ 30000 - 30010 ] Sistema de Campeões
+30000=O Campeão desceu para %i!
+30001=Causaste o maior dano ao Campeão!
+30002=Estavas entre os 5 maiores causadores de dano! (%i de dano)
+30003=O Campeão caiu!
+30004=Foste recompensado com um Pergaminho de Poder!
+30005=A energia do santuário diminui sem desafiantes presentes...
 }
 EOF

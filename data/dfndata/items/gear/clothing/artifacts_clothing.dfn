@@ -1,0 +1,164 @@
+// ----------------------------------------------------------------------
+// Shared Artifact Rewards
+// ----------------------------------------------------------------------
+
+[artifact_necromancer_shroud]
+{
+get=robe
+name=a necromancer shroud [replica]
+hp=150 150
+colour=0x455
+resistcold=5
+origin=aos
+}
+
+[artifact_captain_johns_hat]
+{
+get=tricornehat
+name=captain johns hat [replica]
+hp=255 255
+colour=0x455
+dexadd=8
+hitchance=15
+custominttag=skillBonusID 40
+custominttag=skillBonusVal 200
+script=5043// Skill_boosting_equipment.js
+origin=aos
+}
+
+[artifact_legendary_detective_boots]
+{
+get=boots
+name=Legendary Detective of the Royal Guard [Replica]
+hp=150 150
+colour=0x455
+intadd=4
+origin=aos
+}
+
+[artifact_elder_detective_boots]
+{
+get=boots
+name=Elder Detective of the Royal Guard [Replica]
+hp=150 150
+colour=0x455
+intadd=3
+origin=aos
+}
+
+[artifact_mythical_detective_boots]
+{
+get=boots
+name=Mythical Detective of the Royal Guard [Replica]
+hp=150 150
+colour=0x455
+intadd=2
+origin=aos
+}
+
+[artifact_djinnis_ring]
+{
+get=0x108A
+name=djinnis ring [replica]
+hp=150 150
+intadd=5
+origin=aos
+}
+
+[artifact_embroidered_oak_leaf_cloak]
+{
+get=cloak
+name=embroidered oak leaf cloak [replica]
+color=0x0483
+hp=150 150
+str=0
+custominttag=skillBonusID 47
+custominttag=skillBonusVal 50
+script=5043// Skill_boosting_equipment.js
+origin=aos
+}
+
+[artifact_lieutenant_of_the_britannian_royal_guard]
+{
+get=bodysash
+name=lieutenant of the britannian royal guard [replica]
+hp=150 150
+colour=0x00e8
+intadd=5
+manaregenbonus=2
+origin=aos
+}
+
+[artifact_good_samaritan_of_britannia]
+{
+get=robe
+name=Good Samaritan of Britannia [Replica]
+colour=0x558
+hp=150 150
+origin=aos
+}
+
+[artifact_most_knowledge_person_5]
+{
+get=hoodedshroudofshadows
+name=The Most Knowledge Person [Replica]
+colour=0x242
+str=0
+hp=150 150
+healthbonus=5
+origin=aos
+}
+
+[artifact_most_knowledge_person_4]
+{
+get=artifact_most_knowledge_person
+healthbonus=4
+origin=aos
+}
+
+[artifact_most_knowledge_person_3]
+{
+get=artifact_most_knowledge_person
+healthbonus=3
+origin=aos
+}
+
+[artifact_robe_of_britannia_ari]
+{
+get=robe
+name=The Robe of Britannia "Ari" [Replica]
+colour=0x486
+str=0
+hp=150 150
+origin=aos
+}
+
+// ----------------------------------------------------------------------
+// Unique Artifact Rewards
+// ----------------------------------------------------------------------
+
+[artifact_acid_proof_robe]
+{
+get=robe
+name=Acid-Proof Robe [Replica]
+colour=0x1
+hp=150 150
+resistfire=4
+newbie
+origin=aos
+}
+
+[artifact_crown_of_talkeesh]
+{
+get=bandana
+name=Crown of Tal'Keesh [Replica]
+colour=0x4f2
+hp=150 150
+manabonus=8
+manaregenbonus=4
+resistfire=5
+resistcold=9
+resistpoison=20
+resistlighting=20
+origin=aos
+}

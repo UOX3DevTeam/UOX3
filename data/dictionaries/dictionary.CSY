@@ -3578,6 +3578,24 @@
 6546=Toto vybavení nemá přiřazenou žádnou skladbu.
 6547=Tato skladba se již v hudební skříňce nachází.
 6548=Tato skladba byla do hudební skříňky přidána.
+// [6580-6599] Skripty pro éterická jezdectví  
+6580=Nemůžete sesednout ze svého éterického zvířete, protože váš batoh nemůže pojmout předmět  
+6581=Toto musí být v horní vrstvě vašeho batohu, abyste jej mohli použít.  
+6582=Musíte dokončit sesílání kouzla, než použijete další.  
+6583=Gargoylové nemohou jezdit na zvířatech.  
+6584=Nejprve, prosím, sesedněte.  
+6585=To nemůžete udělat, když jste polymorfováni.  
+6586=Právě nyní nemůžete povolat jezdce.  
+6587=Při pokusu o povolání vašeho éterického jezdce jste byli přerušeni!  
+6588=Povoláváte svého éterického oře.  
+6589=Abyste jej mohli použít, musíte mít předmět ve svém batohu.  
+6590=Cílujte éterického jezdce, kterého chcete znovu upravit.  
+6591=Mělo by to být ve vašem batohu, abyste to mohli použít.  
+6592=To není platný cíl.  
+6593=Abyste mohli cílit, musíte mít předmět ve svém batohu.  
+6594=Nemůžete tento předmět použít k tomuto účelu.  
+6595=Tělo vašeho éterického jezdce bylo ztuhlé.  
+6596=Průhlednost vašeho éterického jezdce byla obnovena.
 // [7000-7499] AI Scripts
 7000=Jsi zločinec a nemáš přístup ke své bankovní schránce.
 7001=Který předmět si přeješ uložit do své bankovní schránky?
@@ -5668,5 +5686,12 @@
 19341=Tento recept už znáte.
 19342=Naučili jste se nový recept: %i
 19343=Musíte se ho naučit ze svitku.
+// [ 30000 - 30010 ] Systém šampionů
+30000=Šampion padl na %i!
+30001=Způsobil jsi šampionovi největší poškození!
+30002=Byl jsi mezi 5 nejlepšími útočníky! (%i poškození)
+30003=Šampion padl!
+30004=Byl jsi odměněn Svitkem moci!
+30005=Energie svatyně ubývá, protože nejsou přítomni žádní vyzyvatelé...
 }
 EOF
