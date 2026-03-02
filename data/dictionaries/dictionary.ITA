@@ -5668,5 +5668,12 @@
 19341=Conosci già questa ricetta.
 19342=Hai imparato una nuova ricetta: %i
 19343=Devi imparare quella ricetta da una pergamena.
+// [ 30000 - 30010 ] Sistema del Campione
+30000=Il Campione è stato sconfitto da %i!
+30001=Hai inflitto il maggior danno al Campione!
+30002=Sei tra i 5 giocatori che hanno inflitto più danni! (%i danni)
+30003=Il Campione è stato sconfitto!
+30004=Hai ricevuto in ricompensa una Pergamena del Potere!
+30005=L'energia del santuario si affievolisce in assenza di sfidanti...
 }
 EOF
