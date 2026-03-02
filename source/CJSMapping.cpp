@@ -118,6 +118,22 @@ void CJSMapping::Reload( UI16 scriptId )
 		ResetDefaults();
 		envokeById->Parse();
 		envokeByType->Parse();
+
+		// Trigger onScriptLoad in ALL scripts
+		for( size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i )
+		{
+			CJSMappingSection* section = JSMapping->GetSection( static_cast<SCRIPTTYPE>( i ));
+			if( section )
+			{
+				for( cScript* toExecute = section->First(); !section->Finished(); toExecute = section->Next() )
+				{
+					if( toExecute )
+					{
+						toExecute->OnScriptLoad();
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -448,6 +464,7 @@ auto CJSMappingSection::Reload( UI16 toLoad ) -> void
 								scriptIdMap[scriptId]			= toAdd;
 								scriptJSMap[toAdd->Object()]	= scriptId;
 								Console.Print( oldstrutil::format( "Reload of JavaScript (ScriptId %u) Successful\n", toLoad ));
+								toAdd->OnScriptLoad();
 							}
 						}
 						catch( std::runtime_error &e )

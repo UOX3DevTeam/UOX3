@@ -1,0 +1,319 @@
+[dawnsmusicbox]
+{
+get=base_item
+name=Dawn's Music Box
+id=0x2AF9
+weight=100
+decay=1
+script=5070
+origin=lbr
+custominttag=dawns_box 1
+}
+
+[base_music_gear]
+{
+get=base_item
+name=Dawn's Music Gear
+id=0x1053
+weight=100
+decay=1
+script=5070
+origin=lbr
+}
+
+[dawns_music_gear_common]
+{
+get=base_music_gear
+custominttag=dawns_gear 1
+custominttag=dawns_rarity 0
+}
+
+[dawns_music_gear_uncommon]
+{
+get=base_music_gear
+custominttag=dawns_gear 1
+custominttag=dawns_rarity 1
+}
+
+[dawns_music_gear_rare]
+{
+get=base_music_gear
+custominttag=dawns_gear 1
+custominttag=dawns_rarity 2
+}
+
+// ------------------ COMMON ------------------
+[dawns_music_gear_OldUlt01_0]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 0
+}
+[dawns_music_gear_Stones2_8]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 8
+}
+[dawns_music_gear_Britain1_9]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 9
+}
+[dawns_music_gear_Britain2_10]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 10
+}
+[dawns_music_gear_Bucsden_11]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 11
+}
+[dawns_music_gear_Jhelom_12]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 12
+}
+[dawns_music_gear_LBCastle_13]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 13
+}
+[dawns_music_gear_Linelle_14]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 14
+}
+[dawns_music_gear_Magincia_15]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 15
+}
+[dawns_music_gear_Minoc_16]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 16
+}
+[dawns_music_gear_Ocllo_17]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 17
+}
+[dawns_music_gear_Samlethe_18]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 18
+}
+[dawns_music_gear_Serpents_19]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 19
+}
+[dawns_music_gear_Skarabra_20]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 20
+}
+[dawns_music_gear_Trinsic_21]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 21
+}
+[dawns_music_gear_Vesper_22]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 22
+}
+[dawns_music_gear_Wind_23]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 23
+}
+[dawns_music_gear_Yew_24]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 24
+}
+[dawns_music_gear_Cave01_25]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 25
+}
+[dawns_music_gear_Dungeon9_26]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 26
+}
+[dawns_music_gear_Forest_a_27]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 27
+}
+[dawns_music_gear_Mountn_a_30]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 30
+}
+[dawns_music_gear_Sailing_32]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 32
+}
+[dawns_music_gear_Tavern01_34]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 34
+}
+[dawns_music_gear_Tavern02_35]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 35
+}
+[dawns_music_gear_Tavern03_36]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 36
+}
+[dawns_music_gear_Tavern04_37]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 37
+}
+[dawns_music_gear_Combat1_38]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 38
+}
+[dawns_music_gear_Combat2_39]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 39
+}
+[dawns_music_gear_Combat3_40]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 40
+}
+[dawns_music_gear_Death_42]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 42
+}
+[dawns_music_gear_Victory_43]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 43
+}
+[dawns_music_gear_BTCastle_44]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 44
+}
+[dawns_music_gear_Nujelm_45]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 45
+}
+[dawns_music_gear_Cove_47]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 47
+}
+[dawns_music_gear_Moonglow_48]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 48
+}
+[dawns_music_gear_Zento_49]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 49
+}
+[dawns_music_gear_TokunoDungeon_50]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 50
+}
+[dawns_music_gear_Taiko_51]
+{
+get=dawns_music_gear_common
+custominttag=dawns_music 51
+}
+
+// ------------------ UNCOMMON ------------------
+[dawns_music_gear_DreadHornArea_52]
+{
+get=dawns_music_gear_uncommon
+custominttag=dawns_music 52
+}
+[dawns_music_gear_ElfCity_53]
+{
+get=dawns_music_gear_uncommon
+custominttag=dawns_music 53
+}
+[dawns_music_gear_GrizzleDungeon_54]
+{
+get=dawns_music_gear_uncommon
+custominttag=dawns_music 54
+}
+[dawns_music_gear_MelisandesLair_55]
+{
+get=dawns_music_gear_uncommon
+custominttag=dawns_music 55
+}
+[dawns_music_gear_ParoxysmusLair_56]
+{
+get=dawns_music_gear_uncommon
+custominttag=dawns_music 56
+}
+[dawns_music_gear_GwennoConversation_57]
+{
+get=dawns_music_gear_uncommon
+custominttag=dawns_music 57
+}
+[dawns_music_gear_GoodEndGame_58]
+{
+get=dawns_music_gear_uncommon
+custominttag=dawns_music 58
+}
+[dawns_music_gear_GoodVsEvil_59]
+{
+get=dawns_music_gear_uncommon
+custominttag=dawns_music 59
+}
+[dawns_music_gear_GreatEarthSerpents_60]
+{
+get=dawns_music_gear_uncommon
+custominttag=dawns_music 60
+}
+[dawns_music_gear_Humanoids_U9_61]
+{
+get=dawns_music_gear_uncommon
+custominttag=dawns_music 61
+}
+[dawns_music_gear_MinocNegative_62]
+{
+get=dawns_music_gear_uncommon
+custominttag=dawns_music 62
+}
+[dawns_music_gear_Paws_63]
+{
+get=dawns_music_gear_uncommon
+custominttag=dawns_music 63
+}
+
+// ------------------ RARE ------------------
+[dawns_music_gear_SelimsBar_64]
+{
+get=dawns_music_gear_rare
+custominttag=dawns_music 64
+}
+[dawns_music_gear_SerpentIsleCombat_U7_65]
+{
+get=dawns_music_gear_rare
+custominttag=dawns_music 65
+}
+[dawns_music_gear_ValoriaShips_66]
+{
+get=dawns_music_gear_rare
+custominttag=dawns_music 66
+}

@@ -2,6 +2,7 @@
 #include "cSpawnRegion.h"
 #include "cServerDefinitions.h"
 #include "ssection.h"
+#include "cScript.h"
 #include "mapstuff.h"
 #include "classes.h"
 #include "Dictionary.h"
@@ -9,6 +10,7 @@
 #include <sstream>
 #include <iostream>
 #include <regex>
+#include <CJSMapping.h>
 
 using namespace std::string_literals;
 
@@ -565,6 +567,28 @@ void CSpawnRegion::LoadItemList( const std::string &itemList )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function     -   CSpawnRegion::SpawnRegionScripts()
+//|                 CSpawnRegion::ClearSpawnRegionScripts()
+//|                 CSpawnRegion::AddSpawnRegionScripts()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose      -   Manage extra scripts applied to objects spawned from this spawn region
+//o------------------------------------------------------------------------------------------------o
+const std::vector<UI16> &CSpawnRegion::SpawnRegionScripts( void ) const
+{
+    return spawnRegionScripts;
+}
+
+void CSpawnRegion::ClearSpawnRegionScripts( void )
+{
+    spawnRegionScripts.clear();
+}
+
+void CSpawnRegion::AddSpawnRegionScripts( UI16 scriptId )
+{
+    spawnRegionScripts.push_back( scriptId );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnRegion::Load()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads the spawnregion from spawn.dfn script entry
@@ -590,6 +614,27 @@ bool CSpawnRegion::Load( CScriptSection *toScan, bool isParentSpawnRegion )
 
 			switch(( UTag.data()[0] ))
 			{
+				case 'A':
+				{
+					if( UTag == "ADDSCRIPT" )
+					{
+						// Example: ADDSCRIPT=7500,7501,7502
+						data = oldstrutil::simplify( data );
+						auto csecs = oldstrutil::sections( data, "," );
+
+						for( auto& sect : csecs )
+						{
+							auto value = oldstrutil::trim( oldstrutil::removeTrailing( sect, "//" ) );
+							if( value.empty() )
+								continue;
+
+							// Script IDs are always decimal
+							UI16 scriptId = static_cast< UI16 >( std::stoul( value, nullptr, 10 ) );
+							AddSpawnRegionScripts( scriptId );
+						}
+					}
+					break;
+				}
 				case 'C':
 				{
 					if( UTag == "CALL" )
@@ -990,6 +1035,23 @@ auto CSpawnRegion::RegionSpawnChar() -> CChar *
 			tagvalObject.m_StringValue	= "";
 			CSpawn->SetTag( "spawnRegion", tagvalObject );
 
+			// Extra scripts applied from REGIONSPAWN ADDSCRIPT tag
+			for( auto scriptId : spawnRegionScripts )
+			{
+				CSpawn->AddScriptTrigger( scriptId );
+			}
+
+			// Get all script triggers and run onSpawn on each
+			std::vector<UI16> scriptTriggers = CSpawn->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript* toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					toExecute->OnSpawn( CSpawn, regionNum );
+				}
+			}
+
 			return CSpawn;
 		}
 	}
@@ -1027,6 +1089,23 @@ auto CSpawnRegion::RegionSpawnItem() -> CItem *
 			ISpawn->SetSpawned( true );
 			ISpawn->ShouldSave( false );
 			IncCurrentItemAmt();
+			// Extra scripts applied from REGIONSPAWN ADDSCRIPT tag
+			for( auto scriptId : spawnRegionScripts )
+			{
+				ISpawn->AddScriptTrigger( scriptId );
+			}
+
+			// Get all script triggers and run onSpawn on each
+			std::vector<UI16> scriptTriggers = ISpawn->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript* toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					// Assumes cScript has OnSpawn( CBaseObject* ), mirroring your OnCreate usage
+					toExecute->OnSpawn( ISpawn, regionNum );
+				}
+			}
 		}
 	}
 	return ISpawn;
