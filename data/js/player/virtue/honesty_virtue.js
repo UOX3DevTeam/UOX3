@@ -98,12 +98,12 @@ function HonestyTurnInLostItem( pUser, item, boxTown )
 	{
 		if( check.expired )
 		{
-			pSocket.SysMessage( GetDictionaryEntry( 30043, pSocket.language )); // This item is no longer a Honesty quest item.
+			pSocket.SysMessage( GetDictionaryEntry( 30143, pSocket.language )); // This item is no longer a Honesty quest item.
 
 		}
 		else
 		{
-			pSocket.SysMessage( GetDictionaryEntry( 30044, pSocket.language )); // This is not a lost item.
+			pSocket.SysMessage( GetDictionaryEntry( 30144, pSocket.language )); // This is not a lost item.
 		}
 		return;
 	}
@@ -128,11 +128,11 @@ function HonestyTurnInLostItem( pUser, item, boxTown )
 	var result = TriggerEvent( 8003, "Virtue_Award", pUser, VirtueName.Honesty, gain );
 
 	// "You place the item in the lost and found. You have gained some Honesty!"
-	pSocket.SysMessage( GetDictionaryEntry( 30045, pSocket.language ));
+	pSocket.SysMessage( GetDictionaryEntry( 30145, pSocket.language ));
 
 	if( result && result.success && result.gainedPath )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 30046, pSocket.language )); // You have gained a path in Honesty!
+		pSocket.SysMessage( GetDictionaryEntry( 30146, pSocket.language )); // You have gained a path in Honesty!
 	}
 
 	// Consume the item

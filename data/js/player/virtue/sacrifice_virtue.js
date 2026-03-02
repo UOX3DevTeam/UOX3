@@ -22,7 +22,7 @@ function Sacrifice_OnVirtueUsed( pUser )
 	// visible: 0 = visible, 1 = hidden, 2 = magically invisible, 3 = GM only
 	if( pUser.visible !== 0 )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 30022, pSocket.language )); // You cannot do that while hidden.
+		pSocket.SysMessage( GetDictionaryEntry( 30122, pSocket.language )); // You cannot do that while hidden.
 		return;
 	}
 
@@ -54,7 +54,7 @@ function Sacrifice_Resurrect( pUser )
 	// Criminals cannot use this ability
 	if( pUser.criminal )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 30023, pSocket.language )); // You cannot use this ability while flagged as a criminal.
+		pSocket.SysMessage( GetDictionaryEntry( 30123, pSocket.language )); // You cannot use this ability while flagged as a criminal.
 		return;
 	}
 
@@ -62,7 +62,7 @@ function Sacrifice_Resurrect( pUser )
 	var level = TriggerEvent( 8003, "Virtue_GetLevel", pUser, VirtueName.Sacrifice );
 	if( level < VirtueLevel.Seeker )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 30024, pSocket.language )); // You cannot use this ability.
+		pSocket.SysMessage( GetDictionaryEntry( 30124, pSocket.language )); // You cannot use this ability.
 		return;
 	}
 
@@ -70,7 +70,7 @@ function Sacrifice_Resurrect( pUser )
 	var data = Sacrifice_ReadData( pUser );
 	if( data.resCount <= 0 )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 30025, pSocket.language )); // You do not have any resurrections left.
+		pSocket.SysMessage( GetDictionaryEntry( 30125, pSocket.language )); // You do not have any resurrections left.
 		return;
 	}
 
@@ -82,7 +82,7 @@ function Sacrifice_Resurrect( pUser )
 
 	Sacrifice_WriteData( pUser, data.lastGain, data.resCount, data.lastLoss );
 
-	pSocket.SysMessage( GetDictionaryEntry( 30026, pSocket.language )); // You use the power of Sacrifice to return to life.
+	pSocket.SysMessage( GetDictionaryEntry( 30126, pSocket.language )); // You use the power of Sacrifice to return to life.
 }
 
 /** @type { ( pUser: Character ) => void } */
@@ -98,14 +98,14 @@ function Sacrifice_StartTarget( pUser )
 	var level = TriggerEvent( 8003, "Virtue_GetLevel", pUser, VirtueName.Sacrifice );
 	if( level >= VirtueLevel.Knight )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 30027, pSocket.language )); // You have already attained the highest path in this virtue.
+		pSocket.SysMessage( GetDictionaryEntry( 30127, pSocket.language )); // You have already attained the highest path in this virtue.
 		return;
 	}
 
 	// Too little fame
 	if( pUser.fame < 2500 )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 30028, pSocket.language )); // You do not have enough fame to sacrifice.
+		pSocket.SysMessage( GetDictionaryEntry( 30128, pSocket.language )); // You do not have enough fame to sacrifice.
 		return;
 	}
 
@@ -116,11 +116,11 @@ function Sacrifice_StartTarget( pUser )
 
 	if( now < ( lastGain + Sacrifice_GainDelayMs ))
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 30029, pSocket.language )); // You must wait approximately one day before sacrificing again.
+		pSocket.SysMessage( GetDictionaryEntry( 30129, pSocket.language )); // You must wait approximately one day before sacrificing again.
 		return;
 	}
 
-	var msg = GetDictionaryEntry( 30030, pSocket.language ); // Target the creature you wish to set free so that you may sacrifice your fame.
+	var msg = GetDictionaryEntry( 30130, pSocket.language ); // Target the creature you wish to set free so that you may sacrifice your fame.
 	pSocket.CustomTarget( 1, msg );
 }
 
@@ -170,7 +170,7 @@ function Sacrifice_HandleTarget( pUser, targ )
 	// Hidden check
 	if( pUser.visible !== 0 )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 30022, pSocket.language )); // You cannot do that while hidden.
+		pSocket.SysMessage( GetDictionaryEntry( 30122, pSocket.language )); // You cannot do that while hidden.
 		return;
 	}
 
@@ -178,14 +178,14 @@ function Sacrifice_HandleTarget( pUser, targ )
 	var level = TriggerEvent( 8003, "Virtue_GetLevel", pUser, VirtueName.Sacrifice );
 	if( level >= VirtueLevel.Knight )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 30027, pSocket.language )); //You have already attained the highest path in this virtue.
+		pSocket.SysMessage( GetDictionaryEntry( 30127, pSocket.language )); //You have already attained the highest path in this virtue.
 		return;
 	}
 
 	// Fame check
 	if( pUser.fame < 2500 )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 30028, pSocket.language )); // You do not have enough fame to sacrifice.
+		pSocket.SysMessage( GetDictionaryEntry( 30128, pSocket.language )); // You do not have enough fame to sacrifice.
 		return;
 	}
 
@@ -197,14 +197,14 @@ function Sacrifice_HandleTarget( pUser, targ )
 
 	if( now < ( lastGain + Sacrifice_GainDelayMs ))
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 30029, pSocket.language )); // You must wait approximately one day before sacrificing again.
+		pSocket.SysMessage( GetDictionaryEntry( 30129, pSocket.language )); // You must wait approximately one day before sacrificing again.
 		return;
 	}
 
 	// Validate appropriate creature
 	if( !Sacrifice_ValidateCreature( targ ))
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 30031, pSocket.language )); // You cannot sacrifice your fame for that creature.
+		pSocket.SysMessage( GetDictionaryEntry( 30131, pSocket.language )); // You cannot sacrifice your fame for that creature.
 		return;
 	}
 
@@ -215,7 +215,7 @@ function Sacrifice_HandleTarget( pUser, targ )
 
 	if( hpPercent < 90 )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 30032, pSocket.language )); // You cannot sacrifice for this monster because it is too damaged.
+		pSocket.SysMessage( GetDictionaryEntry( 30132, pSocket.language )); // You cannot sacrifice for this monster because it is too damaged.
 		return;
 	}
 
@@ -233,7 +233,7 @@ function Sacrifice_HandleTarget( pUser, targ )
 
 	// Flavor messages
 	targ.TextMessage( "I have seen the error of my ways!" );
-	pSocket.SysMessage( GetDictionaryEntry( 30033, pSocket.language )); // You have set the creature free.
+	pSocket.SysMessage( GetDictionaryEntry( 30133, pSocket.language )); // You have set the creature free.
 
 	// Remove the creature
 	targ.Delete();
@@ -248,14 +248,14 @@ function Sacrifice_HandleTarget( pUser, targ )
 	{
 		if( result.gainedPath )
 		{
-			pSocket.SysMessage( GetDictionaryEntry( 30034, pSocket.language )); // You have gained a path in Sacrifice!
+			pSocket.SysMessage( GetDictionaryEntry( 30134, pSocket.language )); // You have gained a path in Sacrifice!
 
 			if( resCount < 3 )
 				resCount += 1;
 		}
 		else
 		{
-			pSocket.SysMessage( GetDictionaryEntry( 30035, pSocket.language )); // You have gained in Sacrifice.
+			pSocket.SysMessage( GetDictionaryEntry( 30135, pSocket.language )); // You have gained in Sacrifice.
 		}
 	}
 
@@ -264,7 +264,7 @@ function Sacrifice_HandleTarget( pUser, targ )
 	Sacrifice_WriteData( pUser, data.lastGain, data.resCount, data.lastLoss );
 
 	// Same message as OSI after a successful sacrifice
-	pSocket.SysMessage( GetDictionaryEntry( 30029, pSocket.language )); // You must wait approximately one day before sacrificing again.
+	pSocket.SysMessage( GetDictionaryEntry( 30129, pSocket.language )); // You must wait approximately one day before sacrificing again.
 }
 
 /** @type { ( pUser: Character ) => void } */
@@ -288,7 +288,7 @@ function Sacrifice_CheckAtrophy( pUser )
 	var lost = TriggerEvent( 8003, "Virtue_Atrophy", pUser, VirtueName.Sacrifice, Sacrifice_LossAmount );
 	if( lost )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 30036, pSocket.language )); // You have lost some Sacrifice.
+		pSocket.SysMessage( GetDictionaryEntry( 30136, pSocket.language )); // You have lost some Sacrifice.
 	}
 
 	// Update available resurrects to match current path (max 3)
@@ -321,7 +321,7 @@ function onCallback1( socket, ourObj )
 
 	if( !ValidateObject( ourObj ) || !ourObj.isChar )
 	{
-		socket.SysMessage( GetDictionaryEntry( 30037, socket.language )); // You cannot sacrifice your fame for that.
+		socket.SysMessage( GetDictionaryEntry( 30137, socket.language )); // You cannot sacrifice your fame for that.
 		return;
 	}
 

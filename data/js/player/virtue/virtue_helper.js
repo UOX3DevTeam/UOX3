@@ -215,7 +215,6 @@ function Virtue_GetHue( pChar, virtueIndex )
 	if( value < 4000 )
 		return 2402;
 
-	// sanity cap like RunUO
 	if( value >= 30000 )
 		value = 30000;
 

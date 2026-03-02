@@ -45,13 +45,13 @@ function Humility_RegisterKill( pkiller, pkilled )
 	if( result && result.success )
 	{
 		if( result.gainedPath )
-			pSocket.SysMessage( GetDictionaryEntry( 30000, pSocket.language )); // You have gained a path in Humility!
+			pSocket.SysMessage( GetDictionaryEntry( 30100, pSocket.language )); // You have gained a path in Humility!
 		else
-			pSocket.SysMessage( GetDictionaryEntry( 30001, pSocket.language )); // You have gained in Humility!
+			pSocket.SysMessage( GetDictionaryEntry( 30101, pSocket.language )); // You have gained in Humility!
 	}
 	else
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 30002, pSocket.language )); // You cannot gain more Humility.
+		pSocket.SysMessage( GetDictionaryEntry( 30102, pSocket.language )); // You cannot gain more Humility.
 	}
 }
 

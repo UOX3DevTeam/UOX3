@@ -192,7 +192,7 @@ function Compassion_CanGain( pChar )
 	if( Compassion_IsYoung( pChar ))
 	{
 		result.canGain = false;
-		result.reason = GetDictionaryEntry( 30038, pSocket.language ); // Young players cannot gain Compassion.
+		result.reason = GetDictionaryEntry( 30138, pSocket.language ); // Young players cannot gain Compassion.
 		return result;
 	}
 
@@ -235,7 +235,7 @@ function Compassion_CanGain( pChar )
 	if( gainsToday >= 5 )
 	{
 		result.canGain = false;
-		result.reason = GetDictionaryEntry( 30039, pSocket.language );// You have already gained Compassion too many times today.
+		result.reason = GetDictionaryEntry( 30139, pSocket.language );// You have already gained Compassion too many times today.
 		return result;
 	}
 
@@ -244,7 +244,7 @@ function Compassion_CanGain( pChar )
 	if( now < ( lastGainTime + delayMs ))
 	{
 		result.canGain = false;
-		result.reason = GetDictionaryEntry( 30040, pSocket.language ); // You must wait a few minutes before gaining more Compassion.
+		result.reason = GetDictionaryEntry( 30140, pSocket.language ); // You must wait a few minutes before gaining more Compassion.
 		return result;
 	}
 
@@ -295,9 +295,9 @@ function Compassion_AwardEscort( pChar, isPrisonerQuest, isNewHavenEscort )
 		var msg = "";
 
 		if( result.gainedPath )
-			msg = GetDictionaryEntry( 30041, pSocket.language ); // You have gained a path in Compassion!
+			msg = GetDictionaryEntry( 30141, pSocket.language ); // You have gained a path in Compassion!
 		else
-			msg = GetDictionaryEntry( 30042, pSocket.language ); // You have gained in Compassion!
+			msg = GetDictionaryEntry( 30142, pSocket.language ); // You have gained in Compassion!
 
 		pChar.SysMessage( msg );
 
