@@ -3578,6 +3578,24 @@
 6546=Diesem Gerät ist kein Lied zugewiesen.
 6547=Dieser Liedtitel befindet sich bereits in der Musikbox.
 6548=Dieses Lied wurde der Musikbox hinzugefügt.
+// [6580-6599] Skripte für Ätherische Reittiere
+6580=Du kannst dein Ätherisches Reittier nicht absteigen, weil dein Rucksack es nicht aufnehmen kann.
+6581=Dies muss in der obersten Schicht deines Rucksacks sein, um es zu benutzen.
+6582=Du musst den Zauber beenden, bevor du einen anderen benutzt.
+6583=Gargoyles können keine Tiere reiten.
+6584=Bitte steige zuerst ab.
+6585=Das kannst du nicht tun, während du verwandelt bist.
+6586=Du kannst gerade kein Reittier herbeirufen.
+6587=Dein Versuch, dein Ätherisches Reittier zu beschwören, wurde unterbrochen!
+6588=Du beschwörst dein Ätherisches Reittier.
+6589=Du musst den Gegenstand in deinem Rucksack haben, um ihn zu benutzen.
+6590=Ziele das Ätherische Reittier, das du erneut berühren möchtest.
+6591=Das muss in deinem Rucksack sein, damit du es verwenden kannst.
+6592=Das ist kein gültiges Ziel.
+6593=Du musst den Gegenstand in deinem Rucksack haben, um ihn anzvisieren.
+6594=Du kannst diesen Gegenstand dafür nicht verwenden.
+6595=Der Körper deines Ätherischen Reittiers wurde verfestigt.
+6596=Die Transparenz deines Ätherischen Reittiers wurde wiederhergestellt.
 // [7000-7499] AI Scripts
 7000=Du bist ein Verbrecher und kannst nicht auf dein Bankschließfach zugreifen.
 7001=Welchen Gegenstand möchten Sie in Ihr Bankschließfach einzahlen?
