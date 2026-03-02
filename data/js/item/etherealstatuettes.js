@@ -21,13 +21,13 @@ function onUseChecked( pUser, iUsed )
 
 	if( packOwner == null && packOwner.serial != pUser.serial )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 6501, pSocket.language ));// This must be in the top layer of your pack to use it.
+		pSocket.SysMessage( GetDictionaryEntry( 6581, pSocket.language ));// This must be in the top layer of your pack to use it.
 		return false;
 	}
 
 	if( delayed )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 6502, pSocket.language ));// You must finish casting before using another one.
+		pSocket.SysMessage( GetDictionaryEntry( 6582, pSocket.language ));// You must finish casting before using another one.
 		return false;
 	}
 
@@ -35,31 +35,31 @@ function onUseChecked( pUser, iUsed )
 
 	if(( iTime - NextUse ) < Delay )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 6502, pSocket.language ));// You must finish casting before using another one.
+		pSocket.SysMessage( GetDictionaryEntry( 6582, pSocket.language ));// You must finish casting before using another one.
 		return false;
 	}
 
 	if( pUser.race == 2 )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 6503, pSocket.language ));// Gargoyles are unable to ride animals.
+		pSocket.SysMessage( GetDictionaryEntry( 6583, pSocket.language ));// Gargoyles are unable to ride animals.
 		return false;
 	}
 
 	if( etherealMount != null )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 6504, pSocket.language ));// Please dismount first.
+		pSocket.SysMessage( GetDictionaryEntry( 6584, pSocket.language ));// Please dismount first.
 		return false;
 	}
 
 	if( pUser.isPolymorphed )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 6505, pSocket.language ));// You can't do that while polymorphed.
+		pSocket.SysMessage( GetDictionaryEntry( 6585, pSocket.language ));// You can't do that while polymorphed.
 		return false;
 	}
 
 	if( pUser.frozen || pUser.dead )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 6506, pSocket.language ));// You cannot summon a mount right now.
+		pSocket.SysMessage( GetDictionaryEntry( 6586, pSocket.language ));// You cannot summon a mount right now.
 		return false;
 	}
 
@@ -67,13 +67,13 @@ function onUseChecked( pUser, iUsed )
 	{
 		if( pUser.controlSlotsUsed + 1 > maxControlSlots )
 		{
-			pSocket.SysMessage( GetDictionaryEntry( 2390, socket.language )); // That would exceed your maximum pet control slots.
+			pSocket.SysMessage( GetDictionaryEntry( 2390, pSocket.language )); // That would exceed your maximum pet control slots.
 			return false;
 		}
 	}
 	else if( maxFollowers > 0 && ( pUser.followerCount + 1 > maxFollowers ))
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 2400, socket.language )); // You have too many followers already!
+		pSocket.SysMessage( GetDictionaryEntry( 2400, pSocket.language )); // You have too many followers already!
 		return false;
 	}
 
@@ -106,7 +106,7 @@ function onTimer( pUser, timerID )
 
 	if( pUser.atWar || pUser.attacker != null)
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 6507, pSocket.language )); // You have been disrupted while attempting to summon your ethereal mount!
+		pSocket.SysMessage( GetDictionaryEntry( 6587, pSocket.language )); // You have been disrupted while attempting to summon your ethereal mount!
 		pUser.SetTag( "EtherealMountStatueSerial", null );
 		pUser.SetTag( "EtherealMountSectionID", null );
 		pUser.frozen = false;
@@ -115,7 +115,7 @@ function onTimer( pUser, timerID )
 
 	if( pUser.dead )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 6507, pSocket.language )); // You have been disrupted while attempting to summon your ethereal mount!
+		pSocket.SysMessage( GetDictionaryEntry( 6587, pSocket.language )); // You have been disrupted while attempting to summon your ethereal mount!
 		pUser.SetTag( "EtherealMountStatueSerial", null );
 		pUser.SetTag( "EtherealMountSectionID", null );
 		pUser.frozen = false;
@@ -187,7 +187,7 @@ function onTimer( pUser, timerID )
 		var retouchingStyle = etherealStatuette.GetTag( "retouching" );
 		var savedHue = parseInt( etherealStatuette.GetTag( "saveColor" ));
 		var customHue = etherealStatuette.color;
-		var itemMade = CreateDFNItem( socket, pUser, statueData.section, 1, "ITEM", true );
+		var itemMade = CreateDFNItem( pSocket, pUser, statueData.section, 1, "ITEM", true );
 		if( itemMade )
 		{
 			itemMade.container = pUser;
@@ -227,7 +227,7 @@ function onTimer( pUser, timerID )
 		pUser.SetTag( "EtherealMountSectionID", null );
 		pUser.frozen = false;
 		pUser.AddScriptTrigger( 5301 );
-		pSocket.SysMessage( GetDictionaryEntry( 6508, pSocket.language )); // You summon your ethereal steed.
+		pSocket.SysMessage( GetDictionaryEntry( 6588, pSocket.language )); // You summon your ethereal steed.
 		etherealStatuette.Delete();
 	}
 }

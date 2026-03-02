@@ -1,4 +1,4 @@
-const coreShardEra = EraStringToNum(GetServerSetting("CoreShardEra"));
+const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 const VetRewardEnabled = false;
 
 /** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */

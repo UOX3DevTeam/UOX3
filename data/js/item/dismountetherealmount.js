@@ -8,7 +8,7 @@ function onCharDoubleClick( pUser, targChar )
 
 	if( pPack.totalItemCount >= pPack.maxItems || pPack.weight >= pPack.weightMax )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 6500, pSocket.language )); // You cannot dismount your ethereal because your pack cannot hold it
+		pSocket.SysMessage( GetDictionaryEntry( 6580, pSocket.language )); // You cannot dismount your ethereal because your pack cannot hold it
 	}
 	else
 	{

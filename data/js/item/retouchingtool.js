@@ -21,13 +21,13 @@ function onUseChecked( pUser, iUsed )
 		var itemOwner = GetPackOwner( iUsed, 0 );
 		if( itemOwner == null || itemOwner.serial != pUser.serial ) 
 		{
-			pSocket.SysMessage( GetDictionaryEntry( 6509, pSocket.language )); // You must have the object in your backpack to use it.
+			pSocket.SysMessage( GetDictionaryEntry( 6589, pSocket.language )); // You must have the object in your backpack to use it.
 			return false;
 		}
 		else
 		{
 			pSocket.tempObj = iUsed;
-			pSocket.CustomTarget( 0, GetDictionaryEntry( 6510, pSocket.language )); // Target the ethereal mount you wish to retouch.
+			pSocket.CustomTarget( 0, GetDictionaryEntry( 6590, pSocket.language )); // Target the ethereal mount you wish to retouch.
 			iUsed.Refresh();
 		}
 	}
@@ -48,27 +48,27 @@ function onCallback0( socket, myTarget )
 	var toolOwner = GetPackOwner( iUsed, 0 );
 	if( toolOwner == null || toolOwner.serial != pUser.serial )
 	{
-		socket.SysMessage( GetDictionaryEntry( 6511, socket.language )); // That must be in your pack for you to use it.
+		socket.SysMessage( GetDictionaryEntry( 6591, socket.language )); // That must be in your pack for you to use it.
 		return;
 	}
 
 	if( !ValidateObject( myTarget ) || !myTarget.isItem )
 	{
-		socket.SysMessage( GetDictionaryEntry( 6512, socket.language )); // That is not a valid target.
+		socket.SysMessage( GetDictionaryEntry( 6592, socket.language )); // That is not a valid target.
 		return;
 	}
 
 	var targetOwner = GetPackOwner( myTarget, 0 );
 	if( targetOwner == null || targetOwner.serial != pUser.serial )
 	{
-		socket.SysMessage( GetDictionaryEntry( 6513, socket.language )); // You must have the item in your backpack to target it.
+		socket.SysMessage( GetDictionaryEntry( 6593, socket.language )); // You must have the item in your backpack to target it.
 		return;
 	}
 
 	var sectionID = myTarget.sectionID;
 	if( disallowedMountsRetouch[sectionID] )
 	{
-		socket.SysMessage( GetDictionaryEntry( 6514, socket.language )); // You cannot use this item for it.
+		socket.SysMessage( GetDictionaryEntry( 6594, socket.language )); // You cannot use this item for it.
 		return;
 	}
 
@@ -76,7 +76,7 @@ function onCallback0( socket, myTarget )
 	var savedHue = parseInt( myTarget.GetTag( "saveColor" ));
 	if( currentState == "transparent" )
 	{
-		socket.SysMessage( GetDictionaryEntry( 6515, socket.language )); // Your ethereal mount's body has been solidified.
+		socket.SysMessage( GetDictionaryEntry( 6595, socket.language )); // Your ethereal mount's body has been solidified.
 		myTarget.SetTag( "retouching", "normal" );
 
 		// Restore custom hue if one was saved
@@ -91,7 +91,7 @@ function onCallback0( socket, myTarget )
 	}
 	else
 	{
-		socket.SysMessage( GetDictionaryEntry( 6516, socket.language )); // Your ethereal mount's transparency has been restored.
+		socket.SysMessage( GetDictionaryEntry( 6596, socket.language )); // Your ethereal mount's transparency has been restored.
 		myTarget.SetTag( "retouching", "transparent" );
 		myTarget.color = 0;
 	}
