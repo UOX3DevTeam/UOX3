@@ -2194,6 +2194,7 @@
 2186=Nejsi dostatečně zkušený, abys tomu tvorovi rozuměl.
 2187=To nevypadá moc jako zvíře.
 2188=Divoký
+2189=Kov
 2199=Zmatený
 2200=Žádný
 2201=Počet majitelů
@@ -2449,7 +2450,6 @@
 2576=Odoláš nutkání vyprázdnit %s nad hlavou svého cíle.
 2577=Ten už je plný! Nemůžeš do toho nic nalít, dokud to nebude vyprázdněné.
 2578=Naléváš %s do prázdného džbánu.
-2578=Naléváš %s do prázdné láhve.
 2579=Vyliješ obsah džbánu a zůstane ti prázdný džbán.
 2580=Vyliješ obsah láhve a zůstane ti prázdná láhev.
 2581=Vyliješ obsah džbánu a zůstane ti prázdný džbán.
@@ -2485,7 +2485,8 @@
 2610=Všechny
 2611=Online
 2612=Offline
-2613=Správa postavy:<br>seriál: %s<br>Poslední zap: 2614=Teleport k postavě
+2613=Správa postavy:<br>seriál: %s<br>Poslední zap:
+2614=Teleport k postavě
 2615=Získat postavu
 2616=Prohlédnout postavu
 2617=Uvěznit/propustit postavu
@@ -2504,12 +2505,18 @@
 2630=Nalezeno %i NPC za %u milisekund.
 2631=Nalezeno %i spawnerů založených na předmětech za %u milisekund.
 2632=Správa spawnovacích objektů
-2633=Spravování spawnovacích objektů:<br>seriál: %s<br>spawn-sekce: %w<br>Množství: 2634=Teleport do Spawn Object
+2633=Spravování spawnovacích objektů:<br>seriál: %s<br>spawn-sekce: %w<br>Množství:
+2634=Teleport do Spawn Object
 2635=Otevřít editor Spawn Object
 2636=Odstranit Spawn Object
 2637=Filtr pro NPC Spawnery
 2638=Filtr pro Item Spawnery
 2639=Sortovat podle počtu Spawnů (%s)
+2650=Naléváš %s do prázdné láhve.
+2651=Naléváš %s do prázdného džbánu.
+2660=Nalezeno %i regionových spawnerů za %u milisekund.
+2661=Správa spawn regionů
+2662=Teleportovat se do spawn regionu
 // [2700-2799] Misc scripts
 2700=Nábytek může otáčet pouze majitel domu.
 2701=Toto zřejmě nefunguje.
@@ -2631,10 +2638,10 @@
 2817=EXIT
 2818=Počet uzamčených položek:
 2819=Počet zabezpečených kontejnerů:
-2820=Počet barelů na odpadky: 2820=Počet barelů na odpadky: 2820=Počet barelů na odpadky:
+2820=Počet barelů na odpadky:
 2821=Počet prodejců hráčů:
 2822=Vestavěno na:
-2823=Poslední obchodováno: 2823=Poslední obchodováno: 2823=Poslední obchodováno:
+2823=Poslední obchodováno:
 2824=Seznam spolumajitelů
 2825=Přidat spoluvlastníka
 2826=Odstranit spoluvlastníka
@@ -3537,45 +3544,58 @@
 6321=Vypadá to, jako by byla čepel pokryta kyselou látkou.
 6322=Vypadá to, jako by na čepeli byla korozivní látka.
 6323=Vypadá to, jako by na čepeli byla slabě korozivní látka.
-// [6551-6600] Kuchařka
-6551=Kuchařka musí být ve vašem balíčku, uzamčená lícem dolů nebo u prodejce, abyste ji mohli použít.
-6552=Tato kniha je určena pouze k uchovávání svitků s recepty.
-6553=Tato kuchařka už nemůže obsahovat žádné další unikátní recepty.
-6554=Do knihy vložíte %s.
-6555=Kniha receptů
-6556=Předmět
-6557=Rozšíření
-6558=Výroba
-6559=Množství
-6560=Nastavit filtr
-6561=Dávknout
-6562=Cena
-6563=Koupit
-6564=Sada
-6565=Předchozí stránka
-6566=Další stránka
-6567=Předvolba filtru
-6568=Vymazat filtr
-6569=Souhlasíte s nákupem:
-6570=v množství:
-6571=Rozhodli jste se tento recept nekoupit.
-6572=Informace o nákupu jsou neplatné.
-6573=Vybraný recept není k dispozici.
-6574=Potřebujete %s zlata ve svém inventáři nebo bance.
-6575=Recept %s kupujete za %s zlata.
-6576=Nemáte k tomu přístup.
-6577=Vybraný recept není k dispozici.
-6578=Ve vašem batohu není dostatek místa pro recept.
-6579=Recept byl umístěn do vašeho batohu.
-6580=Zadejte cenu receptu ve zlatě: %s
-6581=Tento recept není na prodej.
-6582=Pro stanovení ceny nebyl vybrán žádný recept.
-6583=Nenastavili jste cenu.
-6584=Toto není platná cena. Zadejte prosím číslo.
-6585=V této knize nebyly nalezeny žádné odpovídající svitky pro daný recept.
-6586=Nastavili jste cenu na %s za %i zlata.
-6587=Z vašeho batohu bylo zaplaceno %s zlata.
-6588=Z vašeho bankovního účtu bylo zaplaceno %s zlata.
+// [6500-6539] Event Manager
+6500=Správce událostí: Spuštěn heartbeat
+6501=Správce událostí: Opětovné použití existujícího objektu správce událostí.
+6502=Správce událostí: Starý objekt správce událostí již neexistuje, bude vytvořen nový.
+6503=Správce událostí: Selhání spuštění %s
+6504=Správce událostí: Inicializace dokončena. Načtené události: %i
+6505=Správce událostí: Inicializace dokončena. Žádné události načteny, přechod do pohotovostního režimu.
+6506=Správce událostí: Všechny události dokončeny. Přechod do pohotovostního režimu.
+6507=Správce událostí: VAROVÁNÍ – Přeskočená událost, chybí funkce zpětného volání %s ve skriptu %i
+6508=Správce událostí je momentálně deaktivován. Aktivujte jej pomocí uox.ini
+6509=Aktivní události: %i
+6510=Použití: 'em %s <indexové číslo ze seznamu událostí>
+6511=Správce událostí: Událost %i je nyní %s
+6512=Správce událostí: %s změnil událost %i na %s
+6513=Neplatný index události. Chcete-li zobrazit úplný seznam událostí: 'em list
+6514=Vynucené resetování správce událostí...
+6515=Podporované příkazy Správce událostí: list, enable <#>, disable <#>, remove <#>, reset
+6516=Správce událostí: RegisterEvent selhal, protože Správce událostí je deaktivován.
+6517=Správce událostí: RegisterEvent selhal kvůli chybějícím konfiguračním datům callbackScriptID a/nebo callbackFuncStart.
+6518=Správce událostí: Zaregistrována nová událost – %s (ID: %i)
+6519=Událost zastavena a deaktivována.
+6520=Událost aktivována a přeplánována na další platné aktivační okno.
+6521=Použití: 'em remove <index ze seznamu událostí>
+6522=Událost zastavena a odstraněna.
+// [6540-6550] Hudební skříňka Dawns
+6540=Abyste mohli předmět použít, musíte ho mít v batohu nebo uzamčený.
+6541=Pro přidání této skladby si vyberte hudební skříňku Dawns.
+6542=Musíte si vybrat hudební skříňku Dawn's.
+6543=Toto není hudební skříňka Dawn's.
+6544=Žádné hudební vybavení nečeká na vyřízení.
+6545=Hudební vybavení se nepodařilo najít.
+6546=Toto vybavení nemá přiřazenou žádnou skladbu.
+6547=Tato skladba se již v hudební skříňce nachází.
+6548=Tato skladba byla do hudební skříňky přidána.
+// [6580-6599] Skripty pro éterická jezdectví  
+6580=Nemůžete sesednout ze svého éterického zvířete, protože váš batoh nemůže pojmout předmět  
+6581=Toto musí být v horní vrstvě vašeho batohu, abyste jej mohli použít.  
+6582=Musíte dokončit sesílání kouzla, než použijete další.  
+6583=Gargoylové nemohou jezdit na zvířatech.  
+6584=Nejprve, prosím, sesedněte.  
+6585=To nemůžete udělat, když jste polymorfováni.  
+6586=Právě nyní nemůžete povolat jezdce.  
+6587=Při pokusu o povolání vašeho éterického jezdce jste byli přerušeni!  
+6588=Povoláváte svého éterického oře.  
+6589=Abyste jej mohli použít, musíte mít předmět ve svém batohu.  
+6590=Cílujte éterického jezdce, kterého chcete znovu upravit.  
+6591=Mělo by to být ve vašem batohu, abyste to mohli použít.  
+6592=To není platný cíl.  
+6593=Abyste mohli cílit, musíte mít předmět ve svém batohu.  
+6594=Nemůžete tento předmět použít k tomuto účelu.  
+6595=Tělo vašeho éterického jezdce bylo ztuhlé.  
+6596=Průhlednost vašeho éterického jezdce byla obnovena.
 // [7000-7499] AI Scripts
 7000=Jsi zločinec a nemáš přístup ke své bankovní schránce.
 7001=Který předmět si přeješ uložit do své bankovní schránky?
@@ -3838,6 +3858,7 @@
 8257=Musíte vybrat NPC!
 8258=Ošetřil jsi ránu a zastavil krvácení
 8259=Krvácející rány se zahojily, už nekrvácíš!
+8260=Počet dávek jedu na předmětu.
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Číslo účtu přidružené k hráči. Řízeno serverem (pouze pro čtení)
 8301=Typ umělé inteligence NPC
@@ -4069,6 +4090,29 @@
 8724=Je slot 7 na tomto účtu zablokován?
 8725=Na jak dlouho je uživatel zablokován, v minutách?
 8726=Kdy byl účet poprvé přihlášen? (Pouze pro čtení)
+// [8750-8799] Tweak Menu - Spawn Region property descriptions
+8750=Počet znaků/položek vytvořených za jeden cyklus
+8751=ID instance, kde je oblast spawn aktivní
+8752=Jsou vytvořené položky objekty Spawners?
+8753=ID sekce položek z DFN, které se mají spawnout
+8754=Počet aktuálně spawnoutých položek (jen pro čtení)
+8755=Odkaz na ITEMLIST, ze kterého se mají spawnout
+8756=Maximální počet položek, které se mají spawnout
+8757=Maximální počet NPC, které se mají spawnout
+8758=Maximální časový interval do dalšího spawn cyklu
+8759=Minimální časový interval do dalšího cyklu spawnování
+8760=Interní název oblasti spawnování
+8761=ID sekce NPC z DFN pro spawnování
+8762=Počet aktuálně spawnovaných NPC (jen pro čtení)
+8763=Odkaz na NPCLIST, ze kterého se má spawnovat
+8764=Spawnovat pouze mimo budovy?
+8765=Maximální hodnota Z, kterou mohou mít položky ve světě na spawnování
+8766=ID spawn regionu
+8767=Číslo světa, ve kterém je spawn region aktivní
+8768=Západní hranice spawn regionu
+8769=Východní hranice spawn regionu
+8770=Severní hranice spawn regionu
+8771=Jižní hranice spawn regionu
 // [8800-8849] General Tweak Menu
 8800=Zadejte novou hodnotu
 8801=Změny provedené v efektivních hodnotách dovedností se neukládají a po restartu serveru zmizí. Pro trvalé změny dovedností upravte raději vlastnost baseskills!
@@ -4410,6 +4454,14 @@
 9283=Nezaznamenali jste nic neobvyklého.
 9284=Tento jedinec je zloděj!
 9285=Nemůžete krást ze zabezpečené schránky.
+9286=Nabití:
+9287=přejmenovat knihu
+9288=Nastavit na výchozí
+9289=Uhodit runu
+9290=Vzpomínka (kouzlo)
+9291=Vzpomínka (nabití)
+9292=Cesta branou
+9293=Posvátná cesta
 // [9301-9310] Kouzelná ryba
 9301=Jste již pod podobným účinkem.
 9302=Rybu spolkneš celou!
@@ -4483,21 +4535,21 @@
 9800=Editor objektů Spawner
 9801=Jméno spouštěče
 9802=Typ spawner
-9803 = Položka
-9804 = Npc
-9805 = Oblast
-9806 = Doprovod
+9803=Položka
+9804=Npc
+9805=Oblast
+9806=Doprovod
 9807=Založit sekci/seznam
 9808=ID sekce nebo seznam NPC k vytvoření z DFN
-9809 = Seznam
+9809=Seznam
 9810=Je-li zaškrtnuto, spawner použije spawnlist místo spawn sekce
-9811 = Částka
+9811=Částka
 9812=Maximální množství pro znovuzrození
-9813 = Min. čas
+9813=Min. čas
 9814=Minimální doba v minutách do znovuzrození
-9815 = Maximální čas
+9815=Maximální čas
 9816=Maximální čas v minutách do znovuzrození
-9817 = Rádius (plocha)
+9817=Rádius (plocha)
 9818=Poloměr pro spawnování NPC v (pouze oblastní spawner!)
 9819=Použít změny
 9820=Typ spawnera byl změněn na položku (61), částka byla resetována na 1.
@@ -4958,7 +5010,7 @@
 11862=Díly hodin
 11863=Převody
 11864=Závěs
-11865=Díly pro šestihran 11865=Díly pro šestihran 11865=Díly pro šestihran
+11865=Díly pro šestihran
 11866=Pružiny
 // Strana 4 - Nádobí
 11880=Řeznický nůž
@@ -5047,16 +5099,16 @@
 13501=Nabídka foukání skla
 13502=Různé
 13503=Skleněné zbraně
-13504 = PÍSEK
+13504=PÍSEK
 13600=prázdná láhev
-13601 = baňka (malá)
-13602 = baňka (střední)
-13603 = baňka (zakřivená)
-13604 = baňka (velká #1)
-13605 = baňka (velká #2)
-13606 = baňka (bublá modře)
-13607 = baňka (bublající fialová)
-13608 = baňka (bublá červeně)
+13601=baňka (malá)
+13602=baňka (střední)
+13603=baňka (zakřivená)
+13604=baňka (velká #1)
+13605=baňka (velká #2)
+13606=baňka (bublá modře)
+13607=baňka (bublající fialová)
+13608=baňka (bublá červeně)
 13609=prázdné lahvičky
 13610=plné lahvičky
 13611=točící se přesýpací hodiny
@@ -5483,8 +5535,8 @@
 19028=Nic nezbylo, vůbec nic, nic, nic.
 19029=Nejlepší je ti to neříkat.
 19030=Říkám, že UOX3 je nejlepší emulátor v historii.
-19031 = Ano.
-19032 = Ne.
+19031=Ano.
+19032=Ne.
 19033=Velmi pochybné.
 19034=Důlní zdroje říkají ne.
 // [19050-19065] Crystal Pet Summoning Ball
@@ -5592,7 +5644,7 @@
 19234=Váš zmatek pominul, nyní můžete vyzbrojit zbraň!
 19235=Už nejsi smrtelně zraněný.
 19236=Krvácející rány se zahojily, už nekrvácíte!
-// [19301-19330] Poutaný a mrtvý mazlíček
+// [19301-19340] Poutaný a mrtvý mazlíček
 19301=Mrtvého mazlíčka nelze vyměnit.
 19302=Mrtvý mazlíček nemůže útočit.
 19303=Nejste dostatečně zkušení, abyste tohoto mazlíčka vzkřísili.
@@ -5602,8 +5654,6 @@
 19308=Váš mazlíček se s vámi poutal!
 19309=Váš mazlíček je mrtvý a na tento příkaz nereaguje.
 19310=Přerušíte pouto se svým mazlíčkem.
-19311=Jste si jisti, že chcete přerušit pouto se svým mazlíčkem?
-19311=Vypuštění ducha mazlíčka ho zničí bez šance na uzdravení. Chcete pokračovat?
 19312=Majitel mazlíčka musí být poblíž, aby se mohl pokusit o vzkříšení.
 19313=Váš mazlíček si s vámi nemůže vytvořit pouto, dokud se nezvýší vaše schopnost ochočování zvířat.
 19314=Váš mazlíček si s vámi nemůže vytvořit pouto, dokud se nezvýší vaše schopnost bushido.
@@ -5636,5 +5686,51 @@
 19341=Tento recept už znáte.
 19342=Naučili jste se nový recept: %i
 19343=Musíte se ho naučit ze svitku.
+// [6551-6600] Kuchařka
+6551=Kuchařka musí být ve vašem balíčku, uzamčená lícem dolů nebo u prodejce, abyste ji mohli použít.
+6552=Tato kniha je určena pouze k uchovávání svitků s recepty.
+6553=Tato kuchařka už nemůže obsahovat žádné další unikátní recepty.
+6554=Do knihy vložíte %s.
+6555=Kniha receptů
+6556=Předmět
+6557=Rozšíření
+6558=Výroba
+6559=Množství
+6560=Nastavit filtr
+6561=Dávknout
+6562=Cena
+6563=Koupit
+6564=Sada
+6565=Předchozí stránka
+6566=Další stránka
+6567=Předvolba filtru
+6568=Vymazat filtr
+6569=Souhlasíte s nákupem:
+6570=v množství:
+6571=Rozhodli jste se tento recept nekoupit.
+6572=Informace o nákupu jsou neplatné.
+6573=Vybraný recept není k dispozici.
+6574=Potřebujete %s zlata ve svém inventáři nebo bance.
+6575=Recept %s kupujete za %s zlata.
+6576=Nemáte k tomu přístup.
+6577=Vybraný recept není k dispozici.
+6578=Ve vašem batohu není dostatek místa pro recept.
+6579=Recept byl umístěn do vašeho batohu.
+6580=Zadejte cenu receptu ve zlatě: %s
+6581=Tento recept není na prodej.
+6582=Pro stanovení ceny nebyl vybrán žádný recept.
+6583=Nenastavili jste cenu.
+6584=Toto není platná cena. Zadejte prosím číslo.
+6585=V této knize nebyly nalezeny žádné odpovídající svitky pro daný recept.
+6586=Nastavili jste cenu na %s za %i zlata.
+6587=Z vašeho batohu bylo zaplaceno %s zlata.
+6588=Z vašeho bankovního účtu bylo zaplaceno %s zlata.
+// [ 30000 - 30010 ] Systém šampionů
+30000=Šampion padl na %i!
+30001=Způsobil jsi šampionovi největší poškození!
+30002=Byl jsi mezi 5 nejlepšími útočníky! (%i poškození)
+30003=Šampion padl!
+30004=Byl jsi odměněn Svitkem moci!
+30005=Energie svatyně ubývá, protože nejsou přítomni žádní vyzyvatelé...
 }
 EOF

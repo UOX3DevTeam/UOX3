@@ -404,7 +404,7 @@ JSBool SE_DoMovingEffect( JSContext *cx, uintN argc, jsval *vp )
 
 	if( argc < 6 )
 	{
-		ScriptError( cx, "DoMovingEffect: Invalid number of arguments (takes 6->8 or 8->10, or 10->12)" );
+		ScriptError( cx, "DoMovingEffect: Invalid number of arguments (takes 6->9 or 8->11, or 10->13)" );
 		return JS_FALSE;
 	}
 
@@ -424,6 +424,7 @@ JSBool SE_DoMovingEffect( JSContext *cx, uintN argc, jsval *vp )
 	bool explode		= 0;
 	UI32 hue			= 0;
 	UI32 renderMode		= 0;
+	bool stationaryFX	= false;
 
 	if( JSVAL_IS_INT( argv[0] ))
 	{
@@ -449,6 +450,10 @@ JSBool SE_DoMovingEffect( JSContext *cx, uintN argc, jsval *vp )
 		if( argc >= 12 )
 		{
 			renderMode = static_cast<UI32>( JSVAL_TO_INT( argv[11] ));
+		}
+		if( argc >= 13 )
+		{
+			stationaryFX = ( JSVAL_TO_BOOLEAN( argv[12] ) == JS_TRUE );
 		}
 	}
 	else
@@ -481,6 +486,10 @@ JSBool SE_DoMovingEffect( JSContext *cx, uintN argc, jsval *vp )
 			{
 				renderMode = static_cast<UI32>( JSVAL_TO_INT( argv[9] ));
 			}
+			if( argc >= 11 )
+			{
+				stationaryFX = ( JSVAL_TO_BOOLEAN( argv[11] ) == JS_TRUE );
+			}
 		}
 		else
 		{
@@ -512,20 +521,24 @@ JSBool SE_DoMovingEffect( JSContext *cx, uintN argc, jsval *vp )
 			{
 				renderMode = static_cast<UI32>( JSVAL_TO_INT( argv[7] ));
 			}
+			if( argc >= 9 )
+			{
+				stationaryFX = ( JSVAL_TO_BOOLEAN( argv[8] ) == JS_TRUE );
+			}
 		}
 	}
 
 	if( srcLocation && targLocation )
 	{
-		Effects->PlayMovingAnimation( srcX, srcY, srcZ, targX, targY, targZ, effect, speed, loop, explode, hue, renderMode );
+		Effects->PlayMovingAnimation( srcX, srcY, srcZ, targX, targY, targZ, effect, speed, loop, explode, hue, renderMode, stationaryFX );
 	}
 	else if( !srcLocation && targLocation )
 	{
-		Effects->PlayMovingAnimation( src, targX, targY, targZ, effect, speed, loop, explode, hue, renderMode );
+		Effects->PlayMovingAnimation( src, targX, targY, targZ, effect, speed, loop, explode, hue, renderMode, stationaryFX );
 	}
 	else
 	{
-		Effects->PlayMovingAnimation( src, trg, effect, speed, loop, explode, hue, renderMode );
+		Effects->PlayMovingAnimation( src, trg, effect, speed, loop, explode, hue, renderMode, stationaryFX );
 	}
 	return JS_TRUE;
 }
@@ -1793,7 +1806,50 @@ JSBool SE_FindItem( JSContext *cx, uintN argc, jsval *vp )
 		instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[5] ));
 	}
 
-	CItem *item = FindItemNearXYZ( xLoc, yLoc, zLoc, worldNumber, id, instanceId );
+	CItem *item = FindNearestItemNearXYZ( xLoc, yLoc, zLoc, worldNumber, id, instanceId );
+	if( ValidateObject( item ))
+	{
+		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, item, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+	}
+	else
+	{
+		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+	}
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	SE_FindItemBySection()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns item of given sectionID that is closest to specified coordinates
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_FindItemBySection( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval* argv = JS_ARGV( cx, vp );
+
+	if( argc != 5 && argc != 6 )
+	{
+		ScriptError( cx, "SE_FindItemBySection: Invalid number of parameters (5 or 6)" );
+		return JS_FALSE;
+	}
+	SI16 xLoc = 0, yLoc = 0;
+	SI08 zLoc = 0;
+	UI08 worldNumber = 0;
+	std::string sectionId = "";
+	UI16 instanceId = 0;
+
+	xLoc		= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
+	yLoc		= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+	zLoc		= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
+	worldNumber = static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
+	sectionId	= JS_GetStringBytes( cx, argv[4]);
+	if( argc == 6 )
+	{
+		instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[5] ));
+	}
+
+	CItem *item = FindNearestItemBySectionNearXYZ( xLoc, yLoc, zLoc, worldNumber, sectionId, instanceId );
 	if( ValidateObject( item ))
 	{
 		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, item, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
@@ -3074,8 +3130,11 @@ JSBool SE_IterateOver( JSContext *cx, uintN argc, jsval *vp )
 
 bool SE_IterateSpawnRegionsFunctor( CSpawnRegion *a, UI32 &b, void *extraData )
 {
-	cScript *myScript = static_cast<cScript *>( extraData );
-	return myScript->OnIterateSpawnRegions( a, b );
+	auto* iterData = static_cast<IterateExtraData*>( extraData );
+	if( !iterData || !iterData->script )
+		return true;
+
+	return iterData->script->OnIterateSpawnRegions( a, b, iterData->socket );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3086,20 +3145,40 @@ bool SE_IterateSpawnRegionsFunctor( CSpawnRegion *a, UI32 &b, void *extraData )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_IterateOverSpawnRegions( JSContext *cx, uintN argc, jsval *vp )
 {
-	UI32 b = 0;
-	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
+	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );
+	jsval* argv = JS_ARGV( cx, vp );
 	cScript *myScript = JSMapping->GetScript( scriptEnv );
 
-	if( myScript != nullptr )
+	auto* iterData = new IterateExtraData;
+	iterData->script = myScript;
+	iterData->socket = nullptr;
+
+	// Check if a socket was passed as an argument in JS
+	if( argc >= 1 && JSVAL_IS_OBJECT( argv[0] ) )
 	{
-		std::for_each( cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&myScript, &b]( std::pair<UI16, CSpawnRegion*> entry )
+		JSObject* sockObj = JSVAL_TO_OBJECT( argv[0] );
+		if( sockObj )
 		{
-			if( entry.second )
+			CSocket* pSock = static_cast<CSocket*>( JS_GetPrivate( cx, sockObj ) );
+			if( pSock )
 			{
-				SE_IterateSpawnRegionsFunctor( entry.second, b, myScript );
+				iterData->socket = pSock;
 			}
-		});
+		}
 	}
+
+	UI32 b = 0;
+	std::for_each( cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [iterData, &b]( std::pair<UI16, CSpawnRegion*> entry )
+	{
+		if( entry.second )
+		{
+			SE_IterateSpawnRegionsFunctor( entry.second, b, iterData );
+		}
+	});
+
+	// Cleanup
+	delete iterData;
+	iterData = nullptr;
 
 	JS_MaybeGC( cx );
 
@@ -3890,6 +3969,25 @@ JSBool SE_GetTownRegionFromXY( JSContext *cx, uintN argc, jsval *vp )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	FindSpawnRegionsAt()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Helper function to find spawn regions at a given location
+//o------------------------------------------------------------------------------------------------o
+static auto FindSpawnRegionsAt( UI16 x, UI16 y, UI08 worldNum, UI16 instanceID ) -> std::vector<CSpawnRegion *>
+{
+	std::vector<CSpawnRegion *> foundRegions;
+	for( auto const& [key, spawnReg] : cwmWorldState->spawnRegions )
+	{
+		if( spawnReg && x >= spawnReg->GetX1() && x <= spawnReg->GetX2() && y >= spawnReg->GetY1()
+			&& y <= spawnReg->GetY2() && spawnReg->GetInstanceId() == instanceID && spawnReg->WorldNumber() == worldNum )
+		{
+			foundRegions.push_back( spawnReg );
+		}
+	}
+	return foundRegions;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	SE_GetSpawnRegion()
 //|	Date		-	June 22, 2020
 //o------------------------------------------------------------------------------------------------o
@@ -3927,31 +4025,52 @@ JSBool SE_GetSpawnRegion( JSContext *cx, uintN argc, jsval *vp )
 			JS_SET_RVAL( cx, vp, JSVAL_NULL );
 		}
 	}
+
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	SE_GetSpawnRegions()
+//|	Date		-	January 3, 2026
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns all spawn region objects at specified coordinates in an array
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_GetSpawnRegions( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval* argv = JS_ARGV( cx, vp );
+	if( argc != 4 )
+	{
+		ScriptError( cx, "GetSpawnRegions: Invalid number of parameters (4 required - x, y, world and instanceID)" );
+		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		return JS_FALSE;
+	}
+
+	// Assume coordinates were provided
+	UI16 x = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 y = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	UI08 worldNum = static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+	UI16 instanceID = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+
+	auto regions = FindSpawnRegionsAt( x, y, worldNum, instanceID );
+	if( !regions.empty() )
+	{
+		// Create a new JS array to store spawn regions
+		JSObject *spawnRegs = JS_NewArrayObject( cx, 0, nullptr );
+		int regionCount = 0;
+
+		// Iterate over each spawn region to find all matching regions
+		for( auto const& spawnReg : regions )
+		{
+			JSObject *myObj = JSEngine->AcquireObject( IUE_SPAWNREGION, spawnReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+			jsval spawnRegVal = OBJECT_TO_JSVAL( myObj );
+			JS_SetElement( cx, spawnRegs, regionCount, &spawnRegVal );
+			++regionCount;
+		}
+		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( spawnRegs ) );
+	}
 	else
 	{
-		// Assume coordinates were provided
-		UI16 x = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-		UI16 y = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
-		UI08 worldNum = static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
-		UI16 instanceID = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
-
-		// Iterate over each spawn region to find the right one
-		auto iter = std::find_if( cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&x, &y, &worldNum, &instanceID, &cx, &vp, &rval]( std::pair<UI16, CSpawnRegion*> entry )
-		{
-			if( entry.second && x >= entry.second->GetX1() && x <= entry.second->GetX2() && y >= entry.second->GetY1()
-				&& y <= entry.second->GetY2() && entry.second->GetInstanceId() == instanceID && entry.second->WorldNumber() == worldNum )
-			{
-				JSObject *myObj = JSEngine->AcquireObject( IUE_SPAWNREGION, entry.second, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-				JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
-				return true;
-			}
-			return false;
-		});
-
-		if( iter == cwmWorldState->spawnRegions.end() )
-		{
-			JS_SET_RVAL( cx, vp, JSVAL_NULL );
-		}
+		JS_SET_RVAL( cx, vp, JSVAL_NULL );
 	}
 
 	return JS_TRUE;
@@ -5648,6 +5767,9 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 				break;
 			case 405:	 // SPEEDHACKTHROTTLEPENALTY
 				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SpeedHackThrottlePenalty() )));
+				break;
+			case 406:	// EVENTMANAGERSYSTEM
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->EventManagerSystem() ));
 				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );

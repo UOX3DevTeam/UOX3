@@ -816,7 +816,7 @@ public:
 	CPSkillsValues( CChar &toCopy );
 	virtual void	NumSkills( UI08 numSkills );
 	virtual void	SetCharacter( CChar &toCopy );
-	virtual void	SkillEntry( SI16 skillId, SI16 skillVal, SI16 baseSkillVal, SkillLock skillLock );
+	virtual void	SkillEntry( SI16 skillId, SI16 skillVal, SI16 baseSkillVal, SkillLock skillLock, SI16 skillCap  );
 	CPSkillsValues &operator = ( CChar &toCopy );
 };
 
