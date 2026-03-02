@@ -1750,9 +1750,29 @@ JSBool CGump_AddXMFHTMLTok( JSContext *cx, uintN argc, jsval *vp )
 	SI32 rgbColour		= static_cast<SI32>( JSVAL_TO_INT( argv[6] ));	// colour
 	SI32 number			= static_cast<SI32>( JSVAL_TO_INT( argv[7] )); // number
 
-	std::string TextString1	= JS_GetStringBytes( cx, argv[8]); // ClilocArgument1
-	std::string TextString2	= JS_GetStringBytes( cx, argv[9]); // ClilocArgument2
-	std::string TextString3	= JS_GetStringBytes( cx, argv[10]); // ClilocArgument3
+	// Iterate through potential cliloc arguments (8-10)
+	std::string fullArgs = "";
+	for( int i = 8; i <= 10; ++i )
+	{
+		if( argc > i )
+		{
+			std::string currentArg = JS_GetStringBytes( cx, argv[i] );
+
+			// Add delimiter between each argument
+			if( !fullArgs.empty() )
+			{
+				fullArgs += "\t";
+			}
+
+			fullArgs += currentArg;
+		}
+	}
+
+	// Prevent crash in case user provided an empty first argument
+	if( fullArgs.length() > 0 && fullArgs[0] == '\t' )
+	{
+		fullArgs = " " + fullArgs;
+	}
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
@@ -1765,7 +1785,7 @@ JSBool CGump_AddXMFHTMLTok( JSContext *cx, uintN argc, jsval *vp )
 	SI32 iBrd	= ( hasBorder ? 1 : 0 );
 	SI32 iScrl	= ( hasScrollbar ? 1 : 0 );
 
-	gList->one->push_back( oldstrutil::format( "xmfhtmltok %i %i %i %i %i %i %i %i @%s\t%s\t%s@", x, y, width, height, iBrd, iScrl, rgbColour, number, TextString1, TextString2, TextString3 ));
+	gList->one->push_back( oldstrutil::format( "xmfhtmltok %i %i %i %i %i %i %i %i @%s@", x, y, width, height, iBrd, iScrl, rgbColour, number, fullArgs ));
 
 	return JS_TRUE;
 }
@@ -4855,7 +4875,10 @@ JSBool CMisc_CustomTarget( JSContext *cx, uintN argc, jsval *vp )
 	mySock->scriptForCallBack = JSMapping->currentActive();
 	UI08 tNum = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
 
+#if defined UOX_DEBUG_MODE
 	Console.Warning( oldstrutil::format( "CustomTarget script ID: %d", mySock->scriptForCallBack->GetScriptID() ) );
+#endif
+
 	constexpr auto maxsize = 512; // Could become long (make sure it's nullptr )
 	std::string toSay;
 	if( argc >= 2 )
