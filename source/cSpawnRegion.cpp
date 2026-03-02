@@ -1048,7 +1048,6 @@ auto CSpawnRegion::RegionSpawnChar() -> CChar *
 				cScript* toExecute = JSMapping->GetScript( scriptTrig );
 				if( toExecute != nullptr )
 				{
-					// Assumes cScript has OnSpawn( CBaseObject* ), mirroring your OnCreate usage
 					toExecute->OnSpawn( CSpawn, regionNum );
 				}
 			}

@@ -2807,13 +2807,6 @@ function onIterate( charCheck, socket )
 							<p>Called on scripts attached to the killer after the victim has died in combat, and only if the victim's onDeathBlow event (if any) allowed death to proceed.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Return Values</span></p>
-							<ul>
-								<li>Return values from onKill are currently ignored by the core.</li>
-								<li>For future compatibility, scripts may still return true or false, but this does not affect hard coded death handling.</li>
-							</ul>
-						</div>
-						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
 							<ul>
 								<li>onKill is an attacker side event. Attach the script to the character that should react to kills (for example, players or special killer NPCs).</li>
