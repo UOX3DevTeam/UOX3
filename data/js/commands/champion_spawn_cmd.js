@@ -166,13 +166,11 @@ function TagChampPlatformAround( src, item, pSock )
 	if( ChampPlatformIDs[item.id] != 1 )
 		return false;
 
-	// Safety: only tag your platform hue (COLOUR=0x455)
 	if( item.colour != 0x0455 )
 		return false;
 
 	item.SetTag( "ChampAltarPlatform", 1 );
 
-	// FIX: use the field you actually set on the socket
 	item.SetTag( "ChampAltarType", pSock.tagPlatformTypeStr );
 
 	return true;
