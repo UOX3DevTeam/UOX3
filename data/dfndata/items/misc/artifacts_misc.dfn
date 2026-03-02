@@ -1,0 +1,124 @@
+[base_artifact]
+{
+get=base_item
+decay=1
+movable=1
+pileable=0
+}
+
+// ----------------------------------------------------------------------
+// Decorative Artifact Rewards
+// ----------------------------------------------------------------------
+[artifact_tattered_mummy_wrapping]
+{
+get=base_artifact
+name=tattered ancient mummy wrapping [replica]
+id=0x0E21
+colour=0x0909
+origin=aos
+}
+
+[artifact_large_vase]
+{
+get=base_artifact
+name=large artifact vase
+id=0x0B47
+origin=aos
+}
+
+[artifact_vase]
+{
+get=base_artifact
+name=artifact vase
+id=0x0B48
+origin=aos
+}
+
+[artifact_demon_skull]
+{
+get=base_artifact
+name=demon skull
+id=0x2250
+origin=aos
+}
+
+[artifact_evil_idol_skull]
+{
+get=base_artifact
+name=evil idol skull
+id=0x1F18
+origin=aos
+}
+
+[artifact_futon]
+{
+get=base_artifact
+name=futon
+id=0x295C
+origin=aos
+}
+
+[artifact_lava_tile]
+{
+get=base_artifact
+name=lava tile
+id=0x12EE
+origin=aos
+}
+
+[artifact_pier]
+{
+get=base_artifact
+name=pier
+id=0x03AE
+origin=aos
+}
+
+[artifact_skull_pole]
+{
+get=base_artifact
+name=skull pole
+id=0x2204
+weight=500
+origin=aos
+}
+
+[artifact_swamp_tile]
+{
+get=base_artifact
+name=swamp tile
+id=0x320D
+origin=aos
+}
+
+[artifact_wall_blood]
+{
+get=base_artifact
+name=wall blood
+id=0x1D95
+origin=aos
+}
+
+[artifact_water_tile]
+{
+get=base_artifact
+name=water tile
+id=0x346E
+origin=aos
+}
+
+[artifact_web]
+{
+get=base_artifact
+name=web
+id=0x10DD
+origin=aos
+}
+
+[artifact_wind_spirit]
+{
+get=base_artifact
+name=wind spirit [replica]
+id=0x1F1F
+origin=aos
+}

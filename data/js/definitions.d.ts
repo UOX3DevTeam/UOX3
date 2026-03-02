@@ -1723,6 +1723,7 @@ declare global {
   function onHungerChange( pChanging: Character, newStatus: number ): boolean;
   function onIterate( obj: Character | Item, mSock: Socket ): boolean;
   function onIterateSpawnRegions( toCheck: SpawnRegion, socket: SocketOrNull ): boolean;
+  function onKill( killer: Character, killed: Character ): boolean;
   function onLeaveRegion( entering: Character, region: number ): void;
   function onLeaving( left: Multi, leaving: BaseObject ): boolean;
   function onLightChange( tObject: BaseObject, lightLevel: number ): boolean;
@@ -1754,6 +1755,7 @@ declare global {
   function onSkillLoss( player: Character, skill: number, skillAmtLost: number ): boolean;
   function onSnoopAttempt( snooped: Character, pack: Item, snooper: Character ): boolean;
   function onSnooped( snooped: Character, snooper: Character, success: boolean ): void;
+  function onSpawn( objSpawned: Character | Item, spawnRegion: number ): void;
   function onSoldToVendor( targSock: Socket, objVendor: Character, objItemSold: BaseObject, numItemsSold: number ): boolean;
   function onSpecialMove( mChar: Character, abilityId: number ): boolean;
   function onSpeech( speech: string, personTalking: Character, talkingTo: BaseObject ): null | undefined | number | boolean;

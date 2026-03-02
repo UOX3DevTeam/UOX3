@@ -336,6 +336,12 @@ PLAYERRACE=1
 RACIALENEMY=31
 }
 
+[RACE 33]
+{
+NAME=summon
+PLAYERRACE=1
+}
+
 // Equipment Lists ----------------------------------------------------
 
 // Common Equipment, usable by all
@@ -417,4 +423,3 @@ ITEMS=0xA1C9,0xA1CA
 }
 
 EOF
-

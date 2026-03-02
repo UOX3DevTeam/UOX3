@@ -5668,6 +5668,13 @@
 19341=Tento recept už znáte.
 19342=Naučili jste se nový recept: %i
 19343=Musíte se ho naučit ze svitku.
+// [ 30000 - 30010 ] Systém šampionů
+30000=Šampion padl na %i!
+30001=Způsobil jsi šampionovi největší poškození!
+30002=Byl jsi mezi 5 nejlepšími útočníky! (%i poškození)
+30003=Šampion padl!
+30004=Byl jsi odměněn Svitkem moci!
+30005=Energie svatyně ubývá, protože nejsou přítomni žádní vyzyvatelé...
 // [30000-35000] Systém ctností
 30000=Získali jste cestu v Pokoře!
 30001=Získali jste v Pokoře!
@@ -5684,7 +5691,6 @@
 30012=Začali jste svou cestu na Cestě Pokory. Vaše odolnosti byly oslabeny o 70.
 30013=Nyní jste na Lovci Pokory. Za každé zabití, během kterého se vzdáte ochrany odolností, budete pokračovat na své cestě k Pokoře. Svůj Lov můžete kdykoli ukončit slovy „Lum Lum Lum“.
 30014=*Cítíte, jak vaše obrana slábne, jak kráčíte po cestě Pokory.*
-
 30015=Váš čas na Cestě Pokory skončil.
 30016=Síla vašeho mazlíčka se vrací do normálu.
 30017=*Vaše energie posílená pokorou slábne.*

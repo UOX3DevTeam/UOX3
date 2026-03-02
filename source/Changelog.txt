@@ -1,3 +1,15 @@
+02/03/2026 - DragonSlayer62 (#406)
+    [ADD] Added full Champion Spawn system, featuring multi-stage monster waves, skull progression, altar-based boss summoning, and support for configurable spawn tables and rewards. Champion altars can be manually created, enabled, disabled, or removed via staff commands (champspawn, champenable, champdisable, champremove)
+    [ADD] Added automated Champion Rotation system, allowing a configurable number of champion spawns to activate daily at a scheduled time (configurable via champ_rotation.js)
+    [ADD] Added Race 33 for summons in race.dfn and then assigned this race to all summoned NPCs in dfndata/npc/magicsummon.dfn to fix an issue where summoned creatures would not attack certain types of NPCs
+    [FIX] Fixed an issue where skillcap displayed in skill gump did not account for potential individual skillcap increases
+
+19/02/2026 - DragonSlayer62 (#514)
+    [ADD] Added plague beast NPC definition (dfndata/npc/miscmonsters.dfn) and associated script (js/npc/ai/monster/plaguebeast.js), and uncommented its entry in various NPCLISTS
+
+19/02/2026 - DragonSlayer62 (#516)
+    [FIX] Fixed GetMultiCorner returning incorrect coordinates due to a bug in multi bounding box min/max calculations
+
 14/02/2026 - DragonSlayer62 (#511)
     [FIX] Resolved socket-related errors in petbonding.js that could cause script failures during bonding interactions
     [ADD] Added missing JavaScript API documentation entries for Console Functions: RegisterConsoleFunc, DisableConsoleFunc, and EnableConsoleFunc

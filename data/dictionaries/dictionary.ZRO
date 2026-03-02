@@ -5668,6 +5668,13 @@
 19341=You already know this recipe.
 19342=You have learned a new recipe: %i
 19343=You must learn that recipe from a scroll.
+// [ 30000 - 30010 ] Champion System
+30000=The Champion has fallen to %i !
+30001=You dealt the most damage to the Champion!
+30002=You were among the top 5 damagers! (%i damage)
+30003=The Champion has fallen!
+30004=You have been rewarded with a Scroll of Power!
+30005=The shrine's energy wanes with no challengers present...
 // [30000-35000 ] Virtue System
 30000=You have gained a path in Humility!
 30001=You have gained in Humility!

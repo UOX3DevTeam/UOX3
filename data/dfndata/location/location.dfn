@@ -3347,7 +3347,66 @@ Z=39
 WORLD=5
 }
 
+//*****************************************************************
+//* Champion Spawns - Britannia (Felucca/Trammel)
+//*
+//* Added for quick GM travel via /goplace # and /go <name>
+//*****************************************************************
+
+[LOCATION 1200]
+{
+// Champion Spawn - Unholy
+X=5178
+Y=708
+Z=0
+}
+
+[LOCATION 1201]
+{
+// Champion Spawn - Vermin
+X=5557
+Y=824
+Z=45
+}
+
+[LOCATION 1202]
+{
+// Champion Spawn - Cold
+X=5259
+Y=803
+Z=0
+}
+
+[LOCATION 1203]
+{
+// Champion Spawn - Abyss
+X=5814
+Y=1350
+Z=-19
+}
+
+[LOCATION 1204]
+{
+// Champion Spawn - Arachnid
+X=5190
+Y=1605
+Z=0
+}
+
+[LOCATION 1205]
+{
+// Champion Spawn - Forest
+X=5559
+Y=3757
+Z=1
+}
+
+[LOCATION 1206]
+{
+// Champion Spawn - Habitat
+X=7042
+Y=1889
+Z=40
+}
 
 EOF
-
-

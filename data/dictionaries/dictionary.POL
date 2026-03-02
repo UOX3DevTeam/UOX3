@@ -5668,6 +5668,13 @@
 19341=Znasz już ten przepis.
 19342=Nauczyłeś się nowego przepisu: %i
 19343=Musisz nauczyć się tego przepisu ze zwoju.
+// [30000 - 30010] System Mistrza
+30000=Mistrz został pokonany przez %i!
+30001=Zadałeś najwięcej obrażeń Mistrzowi!
+30002=Byłeś w pierwszej piątce graczy, którzy zadali najwięcej obrażeń! (%i obrażeń)
+30003=Mistrz został pokonany!
+30004=Otrzymałeś Zwoj mocy!
+30005=Energia kapliczki słabnie z powodu braku pretendentów...
 // [30000-35000] System Cnót
 30000=Zdobyłeś ścieżkę Pokory!
 30001=Zdobyłeś ścieżkę Pokory!

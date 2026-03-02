@@ -1,3 +1,13 @@
+[base_miscmonsters]
+{
+DIRECTION=RND
+BACKPACK
+NPCWANDER=4
+FX2=20
+NPCAI=2
+FLAG=NEUTRAL
+}
+
 [succubus]
 {
 NAME=#//a succubus
@@ -742,4 +752,31 @@ TOPEACE=1500 5
 FLAG=EVIL
 SCRIPT=3300// Random Magic Items
 SCRIPT=3508// Life Drain
+}
+
+[base_plaguebeast]
+{
+GET=base_miscmonsters
+NAME=#//Plague Beast
+ID=0x0307
+RACE=24
+FLAG=EVIL
+ORIGIN=lbr
+SCRIPT=3229// plaguebeast.js
+SCRIPT=3300// magic_items.js
+}
+
+[plaguebeast]
+{
+GETUO=plaguebeast_lbr
+GETT2A=plaguebeast_lbr
+GETUOR=plaguebeast_lbr
+GETTD=plaguebeast_lbr
+GETLBR=plaguebeast_lbr
+GETAOS=plaguebeast_aos
+GETSE=plaguebeast_aos
+GETML=plaguebeast_aos
+GETSA=plaguebeast_aos
+GETHS=plaguebeast_aos
+GETTOL=plaguebeast_aos
 }
