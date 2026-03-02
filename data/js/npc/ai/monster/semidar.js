@@ -56,4 +56,40 @@ function ReflectSpellToCaster( pCaster, pTarget, spellID )
 	return 0;
 }
 
-function _restorecontext_() {}
+function onDamage( damaged, attacker, damageValue, damageType )
+{
+	if( damageType == 1 ) // Physical damage
+	{
+		if( !ValidateObject( attacker ) )
+			return true;
+
+		if( attacker == damaged )
+			return true;
+
+		if( damageValue <= 0 )
+			return true;
+
+		if( attacker.gender == 1 || attacker.gender == 255 )
+			return false;
+
+		var body = attacker.id;
+		var isPoly = attacker.isPolymorphed;
+		var isFemaleForm = (body == 0x0191 || body == 0x025E);
+		var isWraithForm = (body == 0x03CA);
+
+		if( isPoly && ( isFemaleForm || isWraithForm ))
+			return false;
+
+		var reflectDmg = damageValue * 2;
+
+		attacker.Damage( reflectDmg, 1, damaged );
+		let hpGain = Math.min( damaged.health + reflectDmg, damaged.maxhp );
+		damaged.health = hpGain;
+		DoMovingEffect(damaged, attacker, 0x374A, 0x10, 0x15, false, 0x496, 0);
+
+		damaged.SoundEffect(0x231, true);
+
+		return true;
+
+	}
+}
