@@ -25,12 +25,13 @@ function DealAreaDamage( srcObj, trgChar )
 
 		switch( srcObj.sectionID )
 		{
+			case "semidar": // semidar, fallthrough to succubus
 			case "succubus": // Succubus
 				hpDrain = RandomNumber( 5, 10 );
 
 				// Double drain from male characters
-				//if( trgChar.gender == 0 || trgChar.gender == 2 || trgChar.gender == 4 )
-					//hpDrain *= 2;
+				if( trgChar.gender == 0 || trgChar.gender == 2 || trgChar.gender == 4 )
+					hpDrain *= 2;
 				drainFX = 0x374a;
 				drianFXLength = 0x0f;
 				drainFXHue = 0x496;

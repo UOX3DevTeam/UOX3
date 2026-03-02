@@ -5826,6 +5826,35 @@ packitem=0x0f8d,30
 							</ul>
 						</div>
 
+						<input type="checkbox" id="spoiler_champ_rotation">
+						<label for="spoiler_champ_rotation">Daily Champion Rotation (automatic activation) <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>
+								This shard uses the Event System to run an automatic <span class="hl">daily champion rotation</span>.
+							</p>
+
+							<ul>
+								<li>
+									<span class="hl">First 24 hours after a rotation:</span><br>
+									Only <span class="hl">2 random champion spawns</span> are kept active.
+								</li>
+								<li>
+									<span class="hl">Every day at 3:00 AM server time:</span><br>
+									2 new random champion spawns are activated, and the previous 2 are deactivated.
+								</li>
+							</ul>
+
+							<p>
+								<span class="hl">Result:</span> At any time, there are always <span class="hl">2 active champion spawns</span> on the shard,
+								and the active pair rotates daily.
+							</p>
+
+							<p>
+								<span class="hl">Note:</span> If you manually create or enable additional altars, the rotation may disable them on the next scheduled run,
+								depending on how the rotation script is configured.
+							</p>
+						</div>
+
 						<input type="checkbox" id="spoiler_champ_miniboss">
 						<label for="spoiler_champ_miniboss">Mini Boss Support <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
