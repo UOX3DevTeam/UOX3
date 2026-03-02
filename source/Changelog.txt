@@ -1,3 +1,7 @@
+02/03/2026 - DragonSlayer62 (#407)
+    [ADD] Added Ethereal Mounts to misc category in "add" menu; these are bound, invulnerable versions of standard mounts with a ghostly appearance.
+    [ADD] Added retouch tool that allows changing the appearance of ethereal mounts.
+
 02/03/2026 - DragonSlayer62 (#515)
     [ADD] Added new DFN tag for spawn regions:
         ADDSCRIPT // Allows scripts to be attached to spawned objects
