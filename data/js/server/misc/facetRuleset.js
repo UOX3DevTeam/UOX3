@@ -183,7 +183,10 @@ function onSteal( pThief, iStolen, pVictim )
 	var worldNum = pThief.worldnumber;
 	if( regionStealOverride.indexOf( pThief.region.id ) == -1 && facetStealRestrict.indexOf( pThief.worldnumber ) != -1 && !pVictim.npc )
 	{
-		socket.SysMessage( GetDictionaryEntry( 9230, socket.language )); // You cannot perform negative acts on your target.
+		if( socket != null )
+		{
+			socket.SysMessage( GetDictionaryEntry( 9230, socket.language )); // You cannot perform negative acts on your target.
+		}
 		return 1;
 	}
 	return 0;
@@ -203,7 +206,10 @@ function onSnoopAttempt( pSnooped, targPack, pSnooping )
 	var worldNum = pSnooping.worldnumber;
 	if(( regionSnoopOverride.indexOf( pSnooping.region.id ) == -1 && facetSnoopRestrict.indexOf( pSnooping.worldnumber ) != -1 ) && !pSnooped.npc )
 	{
-		socket.SysMessage( GetDictionaryEntry( 9230, socket.language )); // You cannot perform negative acts on your target.
+		if( socket != null )
+		{
+			socket.SysMessage( GetDictionaryEntry( 9230, socket.language )); // You cannot perform negative acts on your target.
+		}
 		return false;
 	}
 
@@ -252,6 +258,9 @@ function onFlagChange( pChanging, newStatus, oldStatus )
 function onPickup( iPickedUp, pGrabber )
 {
 	var pSock = pGrabber.socket;
+	if( pSock == null)
+		return false;
+
 	var worldNum = pGrabber.worldnumber;
 	if( regionLootingOverride.indexOf( pGrabber.region.id ) == -1 && facetLootingRestrict.indexOf( pGrabber.worldnumber ) != -1 )
 	{
