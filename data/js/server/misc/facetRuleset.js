@@ -37,6 +37,9 @@ const regionBardProvokeOverride = [];
 function onCombatStart( pAttacker, pDefender )
 {
 	var socket = pAttacker.socket;
+	if( socket == null )
+		return true;
+
 	var worldNum = pAttacker.worldnumber;
 
 	if( regionCombatOverride.indexOf( pAttacker.region.id ) == -1 && facetCombatRestrict.indexOf( pAttacker.worldnumber ) != -1 )

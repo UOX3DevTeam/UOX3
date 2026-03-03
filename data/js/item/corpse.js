@@ -6,6 +6,9 @@ const youngPlayerSystem = GetServerSetting( "YoungPlayerSystem" );
 /** @type { ( player: Character, corpse: Item ) => boolean } */
 function onCarveCorpse( pChar, iCorpse )
 {
+	if( !ValidateObject( pChar ))
+		return false;
+
 	var corpseOwner = iCorpse.owner;
 	if( ValidateObject( corpseOwner ))
 	{
@@ -14,7 +17,10 @@ function onCarveCorpse( pChar, iCorpse )
 			// Disallow young players from carving player corpses
 			if( pChar.account.isYoung )
 			{
-				pChar.socket.SysMessage( GetDictionaryEntry( 18746, pChar.socket.language )); // As a Young player, you cannot carve up player corpses.
+				if( pChar.socket != null )
+				{
+					pChar.socket.SysMessage( GetDictionaryEntry( 18746, pChar.socket.language )); // As a Young player, you cannot carve up player corpses.
+				}
 				return false;
 			}
 
@@ -31,7 +37,7 @@ function onCarveCorpse( pChar, iCorpse )
 /** @type { ( item: Item, pickerUpper: Character, objCont: BaseObject ) => boolean } */
 function onPickup( iPickedUp, pGrabber, containerObj )
 {
-	if( !ValidateObject( iPickedUp) || !ValidateObject( pGrabber ) || !ValidateObject( containerObj ))
+	if( !ValidateObject( iPickedUp ) || !ValidateObject( pGrabber ) || !ValidateObject( containerObj ))
 		return false;
 
 	if( pGrabber.npc )
@@ -58,7 +64,7 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 				if( pGrabber.account.isYoung )
 				{
 					// Disallow - Young players cannot loot corpses of other players
-					if( pSock )
+					if( pSock != null  )
 					{
 						pSock.SysMessage( GetDictionaryEntry( 18740, pSock.language )); // You may not take items from the corpses of the more established players.
 					}
@@ -67,7 +73,7 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 				else if( corpseOwner.account.isYoung ) // Or is the corpse-owner Young?
 				{
 					// Disallow - "elder" players cannot loot corpses of Young players
-					if( pSock )
+					if( pSock != null )
 					{
 						pSock.SysMessage( GetDictionaryEntry( 18741, pSock.language )); // You cannot steal from the Young.
 					}
@@ -85,7 +91,7 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 		{
 			if( !corpseKiller.npc && youngPlayerSystem && corpseKiller.account.isYoung )
 			{
-				if( pSock )
+				if( pSock != null )
 				{
 					pSock.SysMessage( GetDictionaryEntry( 18742, pSock.language )); // Some young warrior felled this, and you cannot bring yourself to take any items from the corpse.
 				}
@@ -94,10 +100,13 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 			else if( !pGrabber.npc && youngPlayerSystem && pGrabber.account.isYoung )
 			{
 				// Young players cannot loot a monster they did not kill themselves for 2 minutes after the creature died
-				var timeSinceDeath = parseInt( GetCurrentClock() / 1000 ) - parseInt( ourObj.tempTimer / 1000 );
+				var timeSinceDeath = parseInt( GetCurrentClock() / 1000 ) - parseInt( corpseKiller.tempTimer / 1000 );
 				if( timeSinceDeath < 120 )
 				{
-					pSock.SysMessage( GetDictionaryEntry( 18743, pSock.language )); // You cannot loot this corpse yet. Try again in a few minutes!
+					if( pSock != null )
+					{
+						pSock.SysMessage( GetDictionaryEntry( 18743, pSock.language )); // You cannot loot this corpse yet. Try again in a few minutes!
+					}
 					return false;
 				}
 			}
