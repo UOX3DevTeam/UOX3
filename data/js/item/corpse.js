@@ -100,7 +100,7 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 			else if( !pGrabber.npc && youngPlayerSystem && pGrabber.account.isYoung )
 			{
 				// Young players cannot loot a monster they did not kill themselves for 2 minutes after the creature died
-				var timeSinceDeath = parseInt( GetCurrentClock() / 1000 ) - parseInt( corpseKiller.tempTimer / 1000 );
+				var timeSinceDeath = parseInt( GetCurrentClock() / 1000 ) - parseInt( containerObj.tempTimer / 1000 );
 				if( timeSinceDeath < 120 )
 				{
 					if( pSock != null )
