@@ -225,16 +225,6 @@ id=0x232C
 get=0x232D 0x232C
 }
 
-[wreathdeed2]
-{
-get=base_item
-name=a holiday wreath deed
-id=0x14F0
-script=5608
-decay=1
-custominttag=addondeed 2
-}
-
 [0x2328]
 {
 get=base_item
