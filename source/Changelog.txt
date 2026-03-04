@@ -1,3 +1,10 @@
+04/03/2026 - DragonSlayer62 (#522)
+    [FIX] Removed RACE=33 tag from all creature definitions in npc/magicsummons.dfn with duplicate race tags, except for blade spirits, which need it in order to be allowed to attack humans
+    [FIX] Fixed an issue where looting rules for Young Players would check for 2-minute death-timer on a non-existent object instead of corpse in js/item/corpse.js
+    [FIX] Fixed an issue in js/item/teleporter.js where pChar was incorrectly being referenced instead of pUser
+    [FIX] Fixed an issue where the wrong script ID was provided for CheckGuildRelationShip TriggerEvent calls in js/skill/stealing.js
+    [FIX] Added null checks for socket in various scripts to prevent potential edge case connection issues
+
 02/03/2026 - DragonSlayer62 (#407)
     [ADD] Added Ethereal Mounts to misc category in "add" menu; these are bound, invulnerable versions of standard mounts with a ghostly appearance.
     [ADD] Added retouch tool that allows changing the appearance of ethereal mounts.
