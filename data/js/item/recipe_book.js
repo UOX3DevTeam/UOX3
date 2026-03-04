@@ -36,35 +36,38 @@ let Amount_Filter = [
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
-	if( !pUser || !iUsed )
+	if( !ValidateObject( pUser ) || !ValidateObject( iUsed ))
 		return false;
 
 	var pSocket = pUser.socket;
-	if( !pSocket )
+	if( pSocket == null )
 		return false;
 
 	// Require in pack or locked down
 	var inPack     = ( iUsed.container === pUser.pack );
 	var lockedDown = ( iUsed.movable === 3 || iUsed.movable === 2 );
-	var vendor     = checkPlayerVendor( iUsed );
+	var vendor     = CheckPlayerVendor( iUsed );
 	var onVendor   = !!vendor;
 
 	if( !inPack && !lockedDown && !onVendor )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 6551, pSocket.language )); // The recipe book must be in your pack, locked down, or on a vendor to use it.
+		pSocket.SysMessage( GetDictionaryEntry( 26551, pSocket.language )); // The recipe book must be in your pack, locked down, or on a vendor to use it.
 		return false;
 	}
 
 	pUser.SetTempTag( "RecipeBookSer", iUsed.serial );
-	iUsed.SetTag( "rb_last_page", 0 );
+	iUsed.SetTag( "recipeBookLastPage", 0 );
 
-	recipeBookGump( pUser, iUsed );
+	RecipeBookGump( pUser, iUsed );
 	return false;
 }
 
 /** @type { ( item: Item, dropper: Character, dest: Item ) => number } */
 function onDropItemOnItem( iDropped, pUser, recipeBook )
 {
+	if( !ValidateObject( pUser ))
+		return 0;
+
 	var pSocket = pUser.socket;
 	if( pSocket == null )
 		return 0;
@@ -78,7 +81,7 @@ function onDropItemOnItem( iDropped, pUser, recipeBook )
 	var recipeID = iDropped.GetTag( "recipeID" );
 	if( recipeID <= 0 )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 6552, pSocket.language )); // This book is only designed to hold recipe scrolls.
+		pSocket.SysMessage( GetDictionaryEntry( 26552, pSocket.language )); // This book is only designed to hold recipe scrolls.
 		return 0;
 	}
 
@@ -100,30 +103,34 @@ function onDropItemOnItem( iDropped, pUser, recipeBook )
 
 	if( !existingIDs[recipeID] && uniqueCount >= 250 )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 6553, pSocket.language )); // This recipe book cannot hold any more unique recipes.
+		pSocket.SysMessage( GetDictionaryEntry( 26553, pSocket.language )); // This recipe book cannot hold any more unique recipes.
 		return 0;
 	}
 
 	iDropped.SetCont( recipeBook );
 
 	var rName = iDropped.GetTag( "recipeName" );
-	var recipeAddMsg = GetDictionaryEntry( 6554, pSocket.language ); // You place the %s in the book.
+	var recipeAddMsg = GetDictionaryEntry( 26554, pSocket.language ); // You place the %s in the book.
 	pSocket.SysMessage( recipeAddMsg.replace( /%s/gi, rName.toString() ));
-	recipeBookGump( pUser, recipeBook );
+	RecipeBookGump( pUser, recipeBook );
 	recipeBook.Refresh();
 
 	return 2;
 }
 
-function recipeBookGump( pUser, book )
+/** @type { ( pUser: Character, book: Item ) => void } */
+function RecipeBookGump( pUser, book )
 {
+	if( !ValidateObject( pUser ))
+		return;
+
 	var pSocket = pUser.socket;
 	if( pSocket == null )
 		return;
 
-	var rows = buildRecipeRows( book );
+	var rows = BuildRecipeRows( book );
 
-	var page = book.GetTag( "rb_last_page" );
+	var page = book.GetTag( "recipeBookLastPage" );
 	if( page < 0 )
 		page = 0;
 
@@ -144,7 +151,7 @@ function recipeBookGump( pUser, book )
 	if( page > maxPage )
 	{
 		page = maxPage;
-		book.SetTag( "rb_last_page", page );
+		book.SetTag( "recipeBookLastPage", page );
 		index = page * perPage;
 		if( index < 0 )
 			index = 0;
@@ -156,90 +163,90 @@ function recipeBookGump( pUser, book )
 
 	var canLocked = ( book.movable === 3 );
 	var canDrop = ( book.container === pUser.pack );
-	var vendor = checkPlayerVendor( book );
+	var vendor = CheckPlayerVendor( book );
 	var canBuy = !!vendor;
 	var canPrice = ( canDrop || canBuy || canLocked );
 	var width = canPrice ? 600 : 516;
 	var xOffset = (( 624 - width ) / 2) | 0;
 	var yOffset = 24;
 
-	var recipeBookGump = new Gump();
+	var recipeBookMenu = new Gump();
 
-	recipeBookGump.AddPage( 0 );
-	recipeBookGump.AddBackground( xOffset + 10, yOffset + 10, width, 439, 5054 );
-	recipeBookGump.AddTiledGump( xOffset + 18, yOffset + 20, width - 17, 420, 2624 );
+	recipeBookMenu.AddPage( 0 );
+	recipeBookMenu.AddBackground( xOffset + 10, yOffset + 10, width, 439, 5054 );
+	recipeBookMenu.AddTiledGump( xOffset + 18, yOffset + 20, width - 17, 420, 2624 );
 
 	if( canPrice )
 	{
-		recipeBookGump.AddTiledGump( xOffset + 573, yOffset + 64, 24, 352, 200 );
-		recipeBookGump.AddTiledGump( xOffset + 493, yOffset + 64, 78, 352, 1416 );
+		recipeBookMenu.AddTiledGump( xOffset + 573, yOffset + 64, 24, 352, 200 );
+		recipeBookMenu.AddTiledGump( xOffset + 493, yOffset + 64, 78, 352, 1416 );
 	}
 
 	if( canDrop )
-		recipeBookGump.AddTiledGump( xOffset + 24, yOffset + 64, 32, 352, 1416 );
+		recipeBookMenu.AddTiledGump( xOffset + 24, yOffset + 64, 32, 352, 1416 );
 
-	recipeBookGump.AddTiledGump( xOffset + 58,  yOffset + 64, 36,  352, 200 );   // icon
-	recipeBookGump.AddTiledGump( xOffset + 96,  yOffset + 64, 133, 352, 1416 );  // item
-	recipeBookGump.AddTiledGump( xOffset + 231, yOffset + 64, 80,  352, 200 );   // expansion
-	recipeBookGump.AddTiledGump( xOffset + 313, yOffset + 64, 100, 352, 1416 );  // crafting
-	recipeBookGump.AddTiledGump( xOffset + 415, yOffset + 64, 76,  352, 200 );   // amount
+	recipeBookMenu.AddTiledGump( xOffset + 58,  yOffset + 64, 36,  352, 200 );   // icon
+	recipeBookMenu.AddTiledGump( xOffset + 96,  yOffset + 64, 133, 352, 1416 );  // item
+	recipeBookMenu.AddTiledGump( xOffset + 231, yOffset + 64, 80,  352, 200 );   // expansion
+	recipeBookMenu.AddTiledGump( xOffset + 313, yOffset + 64, 100, 352, 1416 );  // crafting
+	recipeBookMenu.AddTiledGump( xOffset + 415, yOffset + 64, 76,  352, 200 );   // amount
 
 	var tableIndex = 0;
 	for( var i = index; i < index + count && i < rows.length; i++ )
 	{
-		recipeBookGump.AddTiledGump( xOffset + 24, yOffset + 94 + (tableIndex * 32), canPrice ? 573 : 489, 2, 2624 );
+		recipeBookMenu.AddTiledGump( xOffset + 24, yOffset + 94 + (tableIndex * 32), canPrice ? 573 : 489, 2, 2624 );
 		tableIndex++;
 	}
 
-	recipeBookGump.AddCheckerTrans( xOffset + 18, yOffset + 20, width - 17, 420 );
-	recipeBookGump.AddGump( xOffset + 0,          yOffset + 0,   10460 );
-	recipeBookGump.AddGump( xOffset + width - 15, yOffset + 5,   10460 );
-	recipeBookGump.AddGump( xOffset + 0,          yOffset + 429, 10460 );
-	recipeBookGump.AddGump( xOffset + width - 15, yOffset + 429, 10460 );
-	recipeBookGump.AddText( xOffset + 266, yOffset + 32, 0x480, GetDictionaryEntry( 6555, pSocket.language )); // Recipe Book
-	recipeBookGump.AddText( xOffset + 147, yOffset + 64, 0x480, GetDictionaryEntry( 6556, pSocket.language )); // Item
-	recipeBookGump.AddText( xOffset + 246, yOffset + 64, 0x480, GetDictionaryEntry( 6557, pSocket.language )); // Expansion
-	recipeBookGump.AddText( xOffset + 336, yOffset + 64, 0x480, GetDictionaryEntry( 6558, pSocket.language )); // Crafting
-	recipeBookGump.AddText( xOffset + 429, yOffset + 64, 0x480, GetDictionaryEntry( 6559, pSocket.language )); // Amount
+	recipeBookMenu.AddCheckerTrans( xOffset + 18, yOffset + 20, width - 17, 420 );
+	recipeBookMenu.AddGump( xOffset + 0,          yOffset + 0,   10460 );
+	recipeBookMenu.AddGump( xOffset + width - 15, yOffset + 5,   10460 );
+	recipeBookMenu.AddGump( xOffset + 0,          yOffset + 429, 10460 );
+	recipeBookMenu.AddGump( xOffset + width - 15, yOffset + 429, 10460 );
+	recipeBookMenu.AddText( xOffset + 266, yOffset + 32, 0x480, GetDictionaryEntry( 26555, pSocket.language )); // Recipe Book
+	recipeBookMenu.AddText( xOffset + 147, yOffset + 64, 0x480, GetDictionaryEntry( 26556, pSocket.language )); // Item
+	recipeBookMenu.AddText( xOffset + 246, yOffset + 64, 0x480, GetDictionaryEntry( 26557, pSocket.language )); // Expansion
+	recipeBookMenu.AddText( xOffset + 336, yOffset + 64, 0x480, GetDictionaryEntry( 26558, pSocket.language )); // Crafting
+	recipeBookMenu.AddText( xOffset + 429, yOffset + 64, 0x480, GetDictionaryEntry( 26559, pSocket.language )); // Amount
 
 	// "Set Filter"
-	recipeBookGump.AddText( xOffset + 70, yOffset + 32, 0x480, GetDictionaryEntry( 6560, pSocket.language )); // Set Filter
-	recipeBookGump.AddButton( xOffset + 35, yOffset + 32, 4005, 1, 0, 1 );
+	recipeBookMenu.AddText( xOffset + 70, yOffset + 32, 0x480, GetDictionaryEntry( 26560, pSocket.language )); // Set Filter
+	recipeBookMenu.AddButton( xOffset + 35, yOffset + 32, 4005, 1, 0, 1 );
 
 	// Filter status
-	var filterText = getFilterStatusText( book );
+	var filterText = FilterStatusText( book );
 	var filterX = canPrice ? ( xOffset + 380 ) : ( xOffset + 386 );
-	recipeBookGump.AddText( filterX, yOffset + 32, 0x0063, filterText );
+	recipeBookMenu.AddText( filterX, yOffset + 32, 0x0063, filterText );
 
-	recipeBookGump.AddButton( xOffset + 375, yOffset + 416, 4017, 4018, 1, 0, 0 );
-	recipeBookGump.AddText( xOffset + 410, yOffset + 416, 0x480, GetDictionaryEntry( 10290, pSocket.language )); //EXIT
+	recipeBookMenu.AddButton( xOffset + 375, yOffset + 416, 4017, 4018, 1, 0, 0 );
+	recipeBookMenu.AddText( xOffset + 410, yOffset + 416, 0x480, GetDictionaryEntry( 10290, pSocket.language )); //EXIT
 
 	// "Drop" header if canDrop
 	if( canDrop )
-		recipeBookGump.AddText( xOffset + 26, yOffset + 64, 0x480, GetDictionaryEntry( 6561, pSocket.language )); // Drop
+		recipeBookMenu.AddText( xOffset + 26, yOffset + 64, 0x480, GetDictionaryEntry( 26561, pSocket.language )); // Drop
 
 	// Price / Buy|Set headers if canPrice
 	if( canPrice )
 	{
-		recipeBookGump.AddText( xOffset + 516, yOffset + 64, 0x480, GetDictionaryEntry( 6562, pSocket.language )); // Price
+		recipeBookMenu.AddText( xOffset + 516, yOffset + 64, 0x480, GetDictionaryEntry( 26562, pSocket.language )); // Price
 
 		if( canBuy )
-			recipeBookGump.AddText( xOffset + 576, yOffset + 64, 0x480, GetDictionaryEntry( 6563, pSocket.language )); // Buy
+			recipeBookMenu.AddText( xOffset + 576, yOffset + 64, 0x480, GetDictionaryEntry( 26563, pSocket.language )); // Buy
 		else
-			recipeBookGump.AddText( xOffset + 576, yOffset + 64, 0x480, GetDictionaryEntry( 6564, pSocket.language )); // Set
+			recipeBookMenu.AddText( xOffset + 576, yOffset + 64, 0x480, GetDictionaryEntry( 26564, pSocket.language )); // Set
 	}
 
 	// Prev / Next page buttons
 	if( page > 0 )
 	{
-		recipeBookGump.AddButton( xOffset + 75, yOffset + 416, 4014, 4016, 1, 0, 2 );
-		recipeBookGump.AddText( xOffset + 110, yOffset + 416, 0x480, GetDictionaryEntry( 6565, pSocket.language )); // Previous page
+		recipeBookMenu.AddButton( xOffset + 75, yOffset + 416, 4014, 4016, 1, 0, 2 );
+		recipeBookMenu.AddText( xOffset + 110, yOffset + 416, 0x480, GetDictionaryEntry( 26565, pSocket.language )); // Previous page
 	}
 
 	if(( page + 1 ) * perPage < rows.length )
 	{
-		recipeBookGump.AddButton( xOffset + 225, yOffset + 416, 4005, 1, 0, 3 );
-		recipeBookGump.AddText( xOffset + 260, yOffset + 416, 0x480, GetDictionaryEntry( 6566, pSocket.language )); // Next page
+		recipeBookMenu.AddButton( xOffset + 225, yOffset + 416, 4005, 1, 0, 3 );
+		recipeBookMenu.AddText( xOffset + 260, yOffset + 416, 0x480, GetDictionaryEntry( 26566, pSocket.language )); // Next page
 	}
 
 	// Row contents
@@ -254,23 +261,23 @@ function recipeBookGump( pUser, book )
 		// Drop button: 4 + (i * 2)
 		if( r.amount > 0 && ( canDrop || canLocked ))
 		{
-			recipeBookGump.AddButton( xOffset + 35, y + 2, 5602, 1, 0, 4 + ( i * 2 ));
+			recipeBookMenu.AddButton( xOffset + 35, y + 2, 5602, 1, 0, 4 + ( i * 2 ));
 		}
 
 		// Item ID label (like AddLabel(61,y,..., recipe.ID))
-		recipeBookGump.AddText( xOffset + 61, y, 0x480, "" + r.id );
+		recipeBookMenu.AddText( xOffset + 61, y, 0x480, "" + r.id );
 
 		// Item name
-		recipeBookGump.AddText( xOffset + 103, y, 0x480, r.name );
+		recipeBookMenu.AddText( xOffset + 103, y, 0x480, r.name );
 
 		// Expansion
-		recipeBookGump.AddText( xOffset + 235, y, 0x480, r.expansion );
+		recipeBookMenu.AddText( xOffset + 235, y, 0x480, r.expansion );
 
 		// Crafting (skill)
-		recipeBookGump.AddText( xOffset + 316, y, 0x480, r.craft );
+		recipeBookMenu.AddText( xOffset + 316, y, 0x480, r.craft );
 
 		// Amount
-		recipeBookGump.AddText( xOffset + 421, y, 0x480, "" + r.amount );
+		recipeBookMenu.AddText( xOffset + 421, y, 0x480, "" + r.amount );
 
 		// Price column / button
 		if( canPrice )
@@ -278,35 +285,39 @@ function recipeBookGump( pUser, book )
 			// Price button: 5 + (i * 2)
 			if( canDrop || ( canBuy && r.price > 0 ))
 			{
-				recipeBookGump.AddButton( xOffset + 579, y + 2, 2117, 1, 0, 5 + ( i * 2 ));
+				recipeBookMenu.AddButton( xOffset + 579, y + 2, 2117, 1, 0, 5 + ( i * 2 ));
 			}
 
 			var priceStr = "" + ( r.price );
-			recipeBookGump.AddText( xOffset + 495, y, 1152, priceStr );
+			recipeBookMenu.AddText( xOffset + 495, y, 1152, priceStr );
 		}
 	}
 
-	recipeBookGump.Send( pSocket );
-	recipeBookGump.Free();
+	recipeBookMenu.Send( pSocket );
+	recipeBookMenu.Free();
 }
 
-function recipeFilterGump( pUser, book )
+/** @type { ( pUser: Character, book: Item ) => void } */
+function RecipeFilterGump( pUser, book )
 {
+	if( !ValidateObject( pUser ))
+		return;
+
 	var pSocket = pUser.socket;
 	if( pSocket == null)
 		return;
 
-	var filterValue = getBookFilterValues( book );
+	var filterValue = BookFilterValues( book );
 
 	var filterGump = new Gump();
 	filterGump.AddPage(0);
 	filterGump.AddBackground(22, 34, 600, 375, 0x13BE);
 	filterGump.AddTiledGump(30, 44, 583, 356, 0xA40);
 	filterGump.AddCheckerTrans(30, 44, 583, 356);
-	filterGump.AddText( 270, 48, 0x480, GetDictionaryEntry( 6567, pSocket.language )); // Filter Preference
+	filterGump.AddText( 270, 48, 0x480, GetDictionaryEntry( 26567, pSocket.language )); // Filter Preference
 
 	// --- Skill Filters ---
-	filterGump.AddText( 36, 80, 0x480, GetDictionaryEntry( 6558, pSocket.language )); // Crafting
+	filterGump.AddText( 36, 80, 0x480, GetDictionaryEntry( 26558, pSocket.language )); // Crafting
 	for( var i = 0; i < Skill_Filter.length; i++ )
 	{
 		var row = Skill_Filter[i];
@@ -323,7 +334,7 @@ function recipeFilterGump( pUser, book )
 	}
 
 	// --- Expansion Filters ---
-	filterGump.AddText( 36, 200, 0x480, GetDictionaryEntry( 6557, pSocket.language )); // Expansion
+	filterGump.AddText( 36, 200, 0x480, GetDictionaryEntry( 26557, pSocket.language )); // Expansion
 	for( var j = 0; j < Expansion_Filter.length; j++ )
 	{
 		var erow = Expansion_Filter[j];
@@ -342,7 +353,7 @@ function recipeFilterGump( pUser, book )
 	}
 
 	// --- Amount Filters ---
-	filterGump.AddText( 36, 280, 0x480, GetDictionaryEntry( 6559, pSocket.language )); // Amount
+	filterGump.AddText( 36, 280, 0x480, GetDictionaryEntry( 26559, pSocket.language )); // Amount
 	for( var k = 0; k < Amount_Filter.length; k++ )
 	{
 		var arow = Amount_Filter[k];
@@ -360,7 +371,7 @@ function recipeFilterGump( pUser, book )
 
 	// Clear + Apply at bottom
 	filterGump.AddButton( 370, 352, 4005, 1, 0, 1301 );
-	filterGump.AddText( 405, 352, 0x480, GetDictionaryEntry( 6568, pSocket.language )); // Clear Filter
+	filterGump.AddText( 405, 352, 0x480, GetDictionaryEntry( 26568, pSocket.language )); // Clear Filter
 
 	filterGump.AddButton( 505, 352, 4017, 1, 0, 1300 );
 	filterGump.AddText( 540, 352, 0x480, GetDictionaryEntry( 18014, pSocket.language )); // APPLY
@@ -369,8 +380,12 @@ function recipeFilterGump( pUser, book )
 	filterGump.Free();
 }
 
-function recipeBuyGump( pUser, book, recipeID, price, name )
+/** @type { ( pUser: Character, book: Item, recipeID: number, price: number, name: string ) => void } */
+function RecipeBuyGump( pUser, book, recipeID, price, name )
 {
+	if( !ValidateObject( pUser ))
+		return;
+
 	var pSocket = pUser.socket;
 	if( pSocket == null )
 		return;
@@ -380,35 +395,38 @@ function recipeBuyGump( pUser, book, recipeID, price, name )
 	pUser.SetTempTag( "RecipeBookBuyPrice", price );
 	pUser.SetTempTag( "RecipeBookSer", book.serial );
 
-	var g = new Gump();
-	g.AddPage( 0 );
+	var recipeBuyMenu = new Gump();
+	recipeBuyMenu.AddPage( 0 );
 
 	// Background
-	g.AddBackground( 100, 10, 300, 150, 5054 );
+	recipeBuyMenu.AddBackground( 100, 10, 300, 150, 5054 );
 
 	// Text
-	g.AddText( 125, 25, 0x480, GetDictionaryEntry( 6569, pSocket.language )); // You have agreed to purchase:
-	g.AddText( 125, 45, 0x480, name );
-	g.AddText( 125, 70, 0x480, GetDictionaryEntry( 6570, pSocket.language )); // for the amount of:
-	g.AddText( 125, 90, 0x480, "" + price + " gold" );
+	recipeBuyMenu.AddText( 125, 25, 0x480, GetDictionaryEntry( 26569, pSocket.language )); // You have agreed to purchase:
+	recipeBuyMenu.AddText( 125, 45, 0x480, name );
+	recipeBuyMenu.AddText( 125, 70, 0x480, GetDictionaryEntry( 26570, pSocket.language )); // for the amount of:
+	recipeBuyMenu.AddText( 125, 90, 0x480, "" + price + " gold" );
 
 	// CANCEL button (501)
-	g.AddButton( 250, 130, 4005, 4007, 1, 0, 501 );
-	g.AddText( 282, 130, 0x480, GetDictionaryEntry( 18721, pSocket.language )); // CANCEL
+	recipeBuyMenu.AddButton( 250, 130, 4005, 4007, 1, 0, 501 );
+	recipeBuyMenu.AddText( 282, 130, 0x480, GetDictionaryEntry( 18721, pSocket.language )); // CANCEL
 
 	// OK button (500)
-	g.AddButton( 120, 130, 4005, 4007, 1, 0, 500 );
-	g.AddText( 152, 130, 0x480, GetDictionaryEntry( 18718, pSocket.language )); // OKAY
+	recipeBuyMenu.AddButton( 120, 130, 4005, 4007, 1, 0, 500 );
+	recipeBuyMenu.AddText( 152, 130, 0x480, GetDictionaryEntry( 18718, pSocket.language )); // OKAY
 
-	g.Send( pSocket );
-	g.Free();
+	recipeBuyMenu.Send( pSocket );
+	recipeBuyMenu.Free();
 }
 
 /** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( pSocket, buttonID, gumpData )
 {
 	var pUser = pSocket.currentChar;
-	if( !pUser )
+	if( !ValidateObject( pUser ))
+		return;
+
+	if( pSocket == null )
 		return;
 
 	if( buttonID === 500 || buttonID === 501 )
@@ -424,8 +442,8 @@ function onGumpPress( pSocket, buttonID, gumpData )
 		if( buttonID === 501 )
 		{
 			// Cancel
-			pUser.SysMessage( GetDictionaryEntry( 6571, pSocket.language )); // You decide not to buy that recipe.
-			recipeBookGump( pUser, book );
+			pUser.SysMessage( GetDictionaryEntry( 26571, pSocket.language )); // You decide not to buy that recipe.
+			RecipeBookGump( pUser, book );
 			// Clear pending buy tags
 			pUser.SetTempTag( "RecipeBookBuyRID", null );
 			pUser.SetTempTag( "RecipeBookBuyPrice", null );
@@ -438,13 +456,13 @@ function onGumpPress( pSocket, buttonID, gumpData )
 
 		if( rid <= 0 || price < 0 )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 6572, pSocket.language )); // Purchase information is invalid.
-			recipeBookGump( pUser, book );
+			pUser.SysMessage( GetDictionaryEntry( 26572, pSocket.language )); // Purchase information is invalid.
+			RecipeBookGump( pUser, book );
 			return;
 		}
 
 		// Check still available
-		var rows = buildRecipeRows( book );
+		var rows = BuildRecipeRows( book );
 		var foundRow = null;
 		for( var i = 0; i < rows.length; i++ )
 		{
@@ -457,37 +475,37 @@ function onGumpPress( pSocket, buttonID, gumpData )
 
 		if( !foundRow || foundRow.amount <= 0 )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 6573, pSocket.language )); // The recipe selected is not available.
-			recipeBookGump( pUser, book );
+			pUser.SysMessage( GetDictionaryEntry( 26573, pSocket.language )); // The recipe selected is not available.
+			RecipeBookGump( pUser, book );
 			return;
 		}
 
-		if( !payFromBackpackOrBank( pUser, price ))
+		if( !PayFromBackpackOrBank( pUser, price ))
 		{
-			var goldMsg = GetDictionaryEntry( 6574, pSocket.language ); // You need %s gold in your backpack or bank.
+			var goldMsg = GetDictionaryEntry( 26574, pSocket.language ); // You need %s gold in your backpack or bank.
 			pSocket.SysMessage( goldMsg.replace( /%s/gi, price.toString() ));
-			recipeBookGump( pUser, book );
+			RecipeBookGump( pUser, book );
 			return;
 		}
 
-		if( fromBookToChar( book, rid, pUser ))
+		if( FromBookToChar( book, rid, pUser ))
 		{
 			book.Refresh();
-			var msg = GetDictionaryEntry( 6575, pSocket.language ); // "You buy the recipe '%s' for %s gold."
+			var msg = GetDictionaryEntry( 26575, pSocket.language ); // "You buy the recipe '%s' for %s gold."
 			msg = msg.replace( "%s", foundRow.name );
 			msg = msg.replace( "%s", price.toString() );
 			pSocket.SysMessage( msg );
 		}
 		else
 		{
-			pSocket.SysMessage( GetDictionaryEntry( 6573, pSocket.language ));  // The recipe selected is not available.
+			pSocket.SysMessage( GetDictionaryEntry( 26573, pSocket.language ));  // The recipe selected is not available.
 		}
 
 		// Clear pending buy tags
 		pUser.SetTempTag( "RecipeBookBuyRID", null );
 		pUser.SetTempTag( "RecipeBookBuyPrice", null );
 
-		recipeBookGump( pUser, book );
+		RecipeBookGump( pUser, book );
 		return;
 	}
 
@@ -504,16 +522,16 @@ function onGumpPress( pSocket, buttonID, gumpData )
 	if( buttonID === 1300 )
 	{
 		// APPLY: just reopen the main book gump
-		recipeBookGump( pUser, book );
+		RecipeBookGump( pUser, book );
 		return;
 	}
 	if( buttonID === 1301 )
 	{
 		// CLEAR: reset all filters to 0
-		book.SetTag( "rb_f_skill", 0 );
-		book.SetTag( "rb_f_exp", 0 );
-		book.SetTag( "rb_f_amt", 0 );
-		recipeFilterGump( pUser, book );
+		book.SetTag( "recipeBookFilterSkill", 0 );
+		book.SetTag( "recipeBookFilterExp", 0 );
+		book.SetTag( "recipeBookFilterAmount", 0 );
+		RecipeFilterGump( pUser, book );
 		return;
 	}
 
@@ -523,9 +541,9 @@ function onGumpPress( pSocket, buttonID, gumpData )
 		var idx = buttonID - 1000;
 		if( idx >= 0 && idx < Skill_Filter.length )
 		{
-			book.SetTag( "rb_f_skill", Skill_Filter[idx].code );
+			book.SetTag( "recipeBookFilterSkill", Skill_Filter[idx].code );
 		}
-		recipeFilterGump( pUser, book );
+		RecipeFilterGump( pUser, book );
 		return;
 	}
 
@@ -535,9 +553,9 @@ function onGumpPress( pSocket, buttonID, gumpData )
 		var idxE = buttonID - 1100;
 		if( idxE >= 0 && idxE < Expansion_Filter.length )
 		{
-			book.SetTag("rb_f_exp", Expansion_Filter[idxE].code );
+			book.SetTag("recipeBookFilterExp", Expansion_Filter[idxE].code );
 		}
-		recipeFilterGump( pUser, book );
+		RecipeFilterGump( pUser, book );
 		return;
 	}
 
@@ -547,22 +565,22 @@ function onGumpPress( pSocket, buttonID, gumpData )
 		var idxA = buttonID - 1200;
 		if( idxA >= 0 && idxA < Amount_Filter.length )
 		{
-			book.SetTag( "rb_f_amt", Amount_Filter[idxA].code );
+			book.SetTag( "recipeBookFilterAmount", Amount_Filter[idxA].code );
 		}
-		recipeFilterGump( pUser, book );
+		RecipeFilterGump( pUser, book );
 		return;
 	}
 
-	var page = book.GetTag( "rb_last_page" );
+	var page = book.GetTag( "recipeBookLastPage" );
 	if( page < 0 )
 		page = 0;
 
-	var rows = buildRecipeRows( book );
+	var rows = BuildRecipeRows( book );
 	var perPage = 10;
 
 	var canLocked = ( book.movable === 3 );             // locked down
 	var canDrop = ( book.container === pUser.pack );    // in backpack
-	var vendor = checkPlayerVendor( book );
+	var vendor = CheckPlayerVendor( book );
 	var canBuy = !!vendor;
 	var canPrice = ( canDrop || canBuy || canLocked );
 
@@ -575,7 +593,7 @@ function onGumpPress( pSocket, buttonID, gumpData )
 
 		case 1: // Set Filter
 		{
-			recipeFilterGump(pUser, book);
+			RecipeFilterGump(pUser, book);
 			return;
 		}
 
@@ -584,8 +602,8 @@ function onGumpPress( pSocket, buttonID, gumpData )
 			if( page > 0 )
 				page--;
 
-			book.SetTag( "rb_last_page", page );
-			recipeBookGump( pUser, book );
+			book.SetTag( "recipeBookLastPage", page );
+			RecipeBookGump( pUser, book );
 			return;
 		}
 
@@ -594,8 +612,8 @@ function onGumpPress( pSocket, buttonID, gumpData )
 			if( (page + 1) * perPage < rows.length )
 				page++;
 
-			book.SetTag( "rb_last_page", page );
-			recipeBookGump( pUser, book );
+			book.SetTag( "recipeBookLastPage", page );
+			RecipeBookGump( pUser, book );
 			return;
 		}
 	}
@@ -609,7 +627,7 @@ function onGumpPress( pSocket, buttonID, gumpData )
 
 	if( index < 0 || index >= rows.length )
 	{
-		recipeBookGump( pUser, book );
+		RecipeBookGump( pUser, book );
 		return;
 	}
 
@@ -619,14 +637,14 @@ function onGumpPress( pSocket, buttonID, gumpData )
 	{
 		if( !( canDrop || canLocked ))
 		{
-			pSocket.SysMessage( GetDictionaryEntry( 6576, pSocket.language )); // You are not allowed to access this.
+			pSocket.SysMessage( GetDictionaryEntry( 26576, pSocket.language )); // You are not allowed to access this.
 			return;
 		}
 
 		if( r.amount <= 0 )
 		{
-			pSocket.SysMessage( GetDictionaryEntry( 6577, pSocket.language )); // The recipe selected is not available.
-			recipeBookGump( pUser, book );
+			pSocket.SysMessage( GetDictionaryEntry( 26577, pSocket.language )); // The recipe selected is not available.
+			RecipeBookGump( pUser, book );
 			return;
 		}
 
@@ -639,21 +657,21 @@ function onGumpPress( pSocket, buttonID, gumpData )
 
 		if(( pack.totalItemCount >= pack.maxItems ) || ( pack.weight >= pack.weightMax ))
 		{
-			pSocket.SysMessage( GetDictionaryEntry( 6578, pSocket.language )); // There is not enough room in your backpack for the recipe.
+			pSocket.SysMessage( GetDictionaryEntry( 26578, pSocket.language )); // There is not enough room in your backpack for the recipe.
 			return;
 		}
 
-		if( fromBookToChar( book, r.id, pUser ))
+		if( FromBookToChar( book, r.id, pUser ))
 		{
-			pSocket.SysMessage( GetDictionaryEntry( 6579, pSocket.language )); // The recipe has been placed in your backpack.
+			pSocket.SysMessage( GetDictionaryEntry( 26579, pSocket.language )); // The recipe has been placed in your backpack.
 			book.Refresh();
 		}
 		else
 		{
-			pSocket.SysMessage( GetDictionaryEntry( 6577, pSocket.language )); // The recipe selected is not available.
+			pSocket.SysMessage( GetDictionaryEntry( 26577, pSocket.language )); // The recipe selected is not available.
 		}
 
-		recipeBookGump( pUser, book );
+		RecipeBookGump( pUser, book );
 		return;
 	}
 
@@ -663,7 +681,7 @@ function onGumpPress( pSocket, buttonID, gumpData )
 		{
 			pUser.SetTempTag( "RecipeBookPriceRID", r.id );
 			pUser.SetTempTag( "RecipeBookSer", book.serial );
-			var priceMsgs = GetDictionaryEntry( 6580, pSocket.language ); // Type the price in gold for recipe: %s
+			var priceMsgs = GetDictionaryEntry( 26580, pSocket.language ); // Type the price in gold for recipe: %s
 			pSocket.SysMessage( priceMsgs.replace( /%s/gi, r.name ));
 			pUser.SpeechInput( 100, book );
 		}
@@ -671,17 +689,17 @@ function onGumpPress( pSocket, buttonID, gumpData )
 		{
 			if( r.amount <= 0 )
 			{
-				pUser.SysMessage( GetDictionaryEntry( 6577, pSocket.language ));// The recipe selected is not available.
+				pUser.SysMessage( GetDictionaryEntry( 26577, pSocket.language ));// The recipe selected is not available.
 				return;
 			}
 
 			if( r.price <= 0 )
 			{
-				pUser.SysMessage( GetDictionaryEntry( 6581, pSocket.language )); // This recipe is not for sale.
+				pUser.SysMessage( GetDictionaryEntry( 26581, pSocket.language )); // This recipe is not for sale.
 				return;
 			}
 
-			recipeBuyGump( pUser, book, r.id, r.price, r.name );
+			RecipeBuyGump( pUser, book, r.id, r.price, r.name );
 
 			return;
 		}
@@ -700,21 +718,24 @@ function onSpeechInput( pUser, pItem, pSpeech, pSpeechID )
 	if( !ValidateObject( pItem ) || pItem.GetTag( "isRecipeBook" ) != 1 )
 		return;
 
+	if( !ValidateObject( pUser ))
+		return;
+
 	var pSocket = pUser.socket;
-	if( !pSocket )
+	if( pSocket == null)
 		return;
 
 	// Find which recipe we are editing (TEMP tag)
 	var recipeid = pUser.GetTempTag( "RecipeBookPriceRID" );
 	if( recipeid <= 0 )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 6581, pSocket.language )); // No recipe selected for pricing.
+		pSocket.SysMessage( GetDictionaryEntry( 26581, pSocket.language )); // No recipe selected for pricing.
 		return;
 	}
 
 	if( pSpeech == null || pSpeech === " " || pSpeech === "" )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 6582, pSocket.language )); // You did not type a price.
+		pSocket.SysMessage( GetDictionaryEntry( 26582, pSocket.language )); // You did not type a price.
 		return;
 	}
 
@@ -722,7 +743,7 @@ function onSpeechInput( pUser, pItem, pSpeech, pSpeechID )
 	var price = parseInt( pSpeech, 10 );
 	if( isNaN( price ) || price < 0 )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 6583, pSocket.language )); //That is not a valid price. Please enter a number.
+		pSocket.SysMessage( GetDictionaryEntry( 26583, pSocket.language )); //That is not a valid price. Please enter a number.
 		return;
 	}
 
@@ -743,7 +764,7 @@ function onSpeechInput( pUser, pItem, pSpeech, pSpeechID )
 
 	if( !updated )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 6584, pSocket.language )); // No matching scrolls were found in this book for that recipe.
+		pSocket.SysMessage( GetDictionaryEntry( 26584, pSocket.language )); // No matching scrolls were found in this book for that recipe.
 		return;
 	}
 
@@ -769,14 +790,15 @@ function onSpeechInput( pUser, pItem, pSpeech, pSpeechID )
 		}
 	}
 
-	var setPriceMsg = GetDictionaryEntry( 6586, pSocket.language ); // "You set the price for %s to %i gold."
+	var setPriceMsg = GetDictionaryEntry( 26586, pSocket.language ); // "You set the price for %s to %i gold."
 	setPriceMsg = setPriceMsg.replace( "%s", name );
 	setPriceMsg = setPriceMsg.replace( "%i", price.toString() );
 	pSocket.SysMessage( setPriceMsg );
-	recipeBookGump( pUser, pItem );
+	RecipeBookGump( pUser, pItem );
 }
 
-function fromBookToChar( book, recipeID, pUser )
+/** @type { ( book: Item, recipeID: number, pUser: Character ) => boolean } */
+function FromBookToChar( book, recipeID, pUser )
 {
 	if( !ValidateObject( book ) || !ValidateObject( pUser ))
 		return false;
@@ -805,7 +827,8 @@ function fromBookToChar( book, recipeID, pUser )
 	return false;
 }
 
-function checkPlayerVendor( book )
+/** @type { ( book: Item ) => ( Character | null ) } */
+function CheckPlayerVendor( book )
 {
 	if( !ValidateObject( book ) || !book.isItem )
 		return null;
@@ -824,20 +847,24 @@ function checkPlayerVendor( book )
 	return null;
 }
 
-function payFromBackpackOrBank( pUser, amount )
+/** @type { ( pUser: Character, amount: number ) => boolean } */
+function PayFromBackpackOrBank( pUser, amount )
 {
 	amount |= 0;
 	if( amount <= 0 )
 		return true;
 
+	if( !ValidateObject( pUser ))
+		return false;
+
 	var pSocket = pUser.socket;
-	if( !pSocket )
-		return;
+	if( pSocket == null )
+		return false;
 
 	if( pUser.ResourceCount( 0x0EED, 0 ) >= amount )
 	{
 		pUser.UseResource( amount, 0x0EED );
-		var payGold = GetDictionaryEntry( 6587, pSocket.language ); // %s gold has been paid from your backpack.
+		var payGold = GetDictionaryEntry( 26587, pSocket.language ); // %s gold has been paid from your backpack.
 		pSocket.SysMessage( payGold.replace( /%s/gi, amount ));
 		return true;
 	}
@@ -858,7 +885,7 @@ function payFromBackpackOrBank( pUser, amount )
 		}
 		if( foundGold )
 		{
-			var payBank = GetDictionaryEntry( 6588, pSocket.language ); // %s gold has been paid from your bank account.
+			var payBank = GetDictionaryEntry( 26588, pSocket.language ); // %s gold has been paid from your bank account.
 			pSocket.SysMessage( payBank.replace( /%s/gi, amount ));
 			return true;
 		}
@@ -866,7 +893,8 @@ function payFromBackpackOrBank( pUser, amount )
 	return false;
 }
 
-function getSkillName( skillID )
+/** @type { ( skillID: number ) => string } */
+function GetSkillName( skillID )
 {
 	switch( skillID )
 	{
@@ -883,16 +911,18 @@ function getSkillName( skillID )
 	return "Unknown";
 }
 
-function getBookFilterValues( book )
+/** @type { ( book: Item ) => { skill: number, exp: number, amt: number } } */
+function BookFilterValues( book )
 {
 	return {
-		skill: book.GetTag( "rb_f_skill" ),
-		exp:   book.GetTag( "rb_f_exp" ),
-		amt:   book.GetTag( "rb_f_amt" )
+		skill: book.GetTag( "recipeBookFilterSkill" ),
+		exp:   book.GetTag( "recipeBookFilterExp" ),
+		amt:   book.GetTag( "recipeBookFilterAmount" )
 	};
 }
 
-function matchesSkillFilter( row, skillFilter )
+/** @type { ( row: { skillID: number }, skillFilter: number ) => boolean } */
+function MatchesSkillFilter( row, skillFilter )
 {
 	if( skillFilter === 0 )
 		return true;
@@ -912,7 +942,8 @@ function matchesSkillFilter( row, skillFilter )
 	return true;
 }
 
-function matchesExpansionFilter( row, expFilter )
+/** @type { ( row: { expansion: string }, expFilter: number ) => boolean } */
+function MatchesExpansionFilter( row, expFilter )
 {
 	if( expFilter === 0 )
 		return true;
@@ -943,7 +974,8 @@ function matchesExpansionFilter( row, expFilter )
 	return true;
 }
 
-function matchesAmountFilter( row, amtFilter )
+/** @type { ( row: { amount: number }, amtFilter: number ) => boolean } */
+function MatchesAmountFilter( row, amtFilter )
 {
 	switch( amtFilter )
 	{
@@ -954,9 +986,10 @@ function matchesAmountFilter( row, amtFilter )
 	return true;
 }
 
-function getFilterStatusText( book )
+/** @type { ( book: Item ) => string } */
+function FilterStatusText( book )
 {
-	var filter = getBookFilterValues( book );
+	var filter = BookFilterValues( book );
 
 	if( filter.skill === 0 && filter.exp === 0 && filter.amt === 0 )
 		return " ";
@@ -999,13 +1032,14 @@ function getFilterStatusText( book )
 	return "Filter: " + parts.join( " / " );
 }
 
-function buildRecipeRows( book )
+/** @type { ( book: Item ) => Array<{   id: number,   name: string,   expansion: string,   craft: string,   skillID: number,   amount: number,   price: number }> } */
+function BuildRecipeRows( book )
 {
 	var rows = [];
 	if( !ValidateObject( book ) || !book.isItem )
 		return rows;
 
-	var filterVals = getBookFilterValues( book );
+	var filterVals = BookFilterValues( book );
 	var skillFilter = filterVals.skill;
 	var expFilter   = filterVals.exp;
 	var amtFilter   = filterVals.amt;
@@ -1039,7 +1073,7 @@ function buildRecipeRows( book )
 				id: recipeId,
 				name: rName,
 				expansion: exp,
-				craft: getSkillName(sID),
+				craft: GetSkillName(sID),
 				skillID: sID,
 				amount: 0,
 				price: price
@@ -1062,11 +1096,11 @@ function buildRecipeRows( book )
 	// Apply filters
 	rows = rows.filter( function( r )
 	{
-		if( !matchesSkillFilter( r, skillFilter ))
+		if( !MatchesSkillFilter( r, skillFilter ))
 			return false;
-		if( !matchesExpansionFilter( r, expFilter ))
+		if( !MatchesExpansionFilter( r, expFilter ))
 			return false;
-		if( !matchesAmountFilter( r, amtFilter ))
+		if( !MatchesAmountFilter( r, amtFilter ))
 			return false;
 		return true;
 	});
