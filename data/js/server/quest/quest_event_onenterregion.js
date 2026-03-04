@@ -4,7 +4,7 @@
 function onEnterRegion( pEntering, regionEntered )
 {
 	var pSock = pEntering.socket;
-	if( !pSock )
+	if( pSock == null)
 	{
 		return;
 	}

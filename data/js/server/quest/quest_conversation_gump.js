@@ -1,9 +1,16 @@
 /// <reference path="../../../definitions.d.ts" />
 // @ts-check
 
+/** @type { ( pUser: Character, npcTarget: Character, questID: number ) => void } */
 function QuestConversationGump( pUser, npcTarget, questID )
 {
+	if( !ValidateObject( pUser ) || !ValidateObject( npcTarget ))
+		return;
+
 	var socket = pUser.socket;
+	if( socket == null )
+		return;
+
 	var playerSerial = pUser.serial; // Use player serial to filter quests
 
 	// Fetch quest details using the provided quest ID
@@ -53,50 +60,43 @@ function QuestConversationGump( pUser, npcTarget, questID )
 		}
 	}
 
-	// Create the gump
-	var gump = new Gump();
-	gump.AddPage( 0 );
-	gump.NoClose();
-	gump.AddBackground( 30, 120, 296, 520, 1579 ); // Background
-	gump.AddGump( 70, 130, 1577 ); // Decorative gump
+	var questConvoMenu = new Gump();
+	questConvoMenu.AddPage( 0 );
+	questConvoMenu.NoClose();
+	questConvoMenu.AddBackground( 30, 120, 296, 520, 1579 ); // Background
+	questConvoMenu.AddGump( 70, 130, 1577 ); // Decorative gump
 
 	// Quest title
 	var title = "<center>" + quest.title + "</center>";
-	gump.AddHTMLGump( 75, 205, 200, 30, true, false, title ); // Title
+	questConvoMenu.AddHTMLGump( 75, 205, 200, 30, true, false, title ); // Title
+	questConvoMenu.AddHTMLGump( 50, 230, 264, 100, true, true, description ); // Description
 
-	// Description
-	gump.AddHTMLGump( 50, 230, 264, 100, true, true, description ); // Description
-
-	// Get objectives with progress and add to the gump
 	if( !currentQuestProgress || !currentQuestProgress.completed )
 	{
 		var objectives = GetQuestObjectives( quest, currentQuestProgress );
-		gump.AddHTMLGump( 50, 350, 264, 100, true, true, objectives ); // Objectives
+		questConvoMenu.AddHTMLGump( 50, 350, 264, 100, true, true, objectives ); // Objectives
 	}
 
-	// Get rewards and add to the gump
 	var rewards = GetQuestRewards( quest );
-	gump.AddHTMLGump( 50, 470, 264, 100, true, true, rewards ); // Rewards
+	questConvoMenu.AddHTMLGump( 50, 470, 264, 100, true, true, rewards ); // Rewards
 
-	// Add buttons based on quest status
 	if( !currentQuestProgress )
 	{
-		gump.AddButton( 60, 600, 0x2EE0, 0x2EE2, 1, 0, 1 ); // Start quest button
-		gump.AddButton( 220, 600, 0x2EF2, 0x2EF4, 1, 0, 2 ); // refuse button
+		questConvoMenu.AddButton( 60, 600, 0x2EE0, 0x2EE2, 1, 0, 1 ); // Start quest button
+		questConvoMenu.AddButton( 220, 600, 0x2EF2, 0x2EF4, 1, 0, 2 ); // refuse button
 	}
 	else if( currentQuestProgress.completed )
 	{
-		gump.AddButton( 60, 600, 0x2EE0, 0x2EE2, 1, 0, 3 ); // Turn in quest button
+		questConvoMenu.AddButton( 60, 600, 0x2EE0, 0x2EE2, 1, 0, 3 ); // Turn in quest button
 	}
 	else 
 	{
-		gump.AddButton( 50, 600, 0x2EF5, 0x2EF7, 1, 0, 4 ); // resign quest button
-		gump.AddButton( 220, 600, 0x2EEC, 0x2EEE, 1, 0, 0 ); // close button
+		questConvoMenu.AddButton( 50, 600, 0x2EF5, 0x2EF7, 1, 0, 4 ); // resign quest button
+		questConvoMenu.AddButton( 220, 600, 0x2EEC, 0x2EEE, 1, 0, 0 ); // close button
 	}
 
-	// Send the gump to the player
-	gump.Send( socket );
-	gump.Free();
+	questConvoMenu.Send( socket );
+	questConvoMenu.Free();
 }
 
 /** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
@@ -126,7 +126,9 @@ function onGumpPress( pSock, pButton, gumpData )
 		questNpc = CalcCharFromSer( npcSer );
 
 		if( !ValidateObject( questNpc ))
-			return; // normal NPC-based gump; no NPC means we can't proceed safely
+		{
+			return;
+		}
 
 		var initialQuestID = parseInt( questNpc.GetTag( "QuestID" ), 10 );
 		playerQuestID = ResolvePlayerQuestID( pUser, initialQuestID );
@@ -138,25 +140,33 @@ function onGumpPress( pSock, pButton, gumpData )
 		case 0: // Close gump
 			// Important: clear the login temp tag so later NPC gumps don't mis-detect
 			if( hasLoginQuest )
+			{
 				pUser.SetTempTag( "questConversationID", null );
+			}
 			break;
-
 		case 1: // Accept quest
 			TriggerEvent( 5800, "StartQuest", pUser, playerQuestID );
 			if( hasLoginQuest )
+			{
 				pUser.SetTempTag( "questConversationID", null );
+			}
 			break;
-
 		case 2: // Refuse quest
 			if( quest && quest.refuse )
 			{
 				if( ValidateObject( questNpc ))
+				{
 					questNpc.TextMessage( quest.refuse );
+				}
 				else
+				{
 					pSock.SysMessage( quest.refuse ); // login flow has no NPC
+				}
 			}
 			if( hasLoginQuest )
+			{
 				pUser.SetTempTag( "questConversationID", null );
+			}
 			break;
 		case 3: // Turn in quest
 			if( playerQuestID )
@@ -189,9 +199,16 @@ function onGumpPress( pSock, pButton, gumpData )
 	}
 }
 
+/** @type { ( player: Character, questID: number ) => boolean } */
 function ResignQuest( player, questID )
 {
+	if( !ValidateObject( player ))
+		return false;
+
 	var socket = player.socket;
+	if( socket == null )
+		return false;
+
 	var questProgressArray = TriggerEvent( 5800, "ReadQuestProgress", player );
 	var newQuestProgressArray = [];
 	var questFound = false;
@@ -236,9 +253,16 @@ function ResignQuest( player, questID )
 	return true;
 }
 
+/** @type { ( player: Character, questID: number, mark: boolean ) => void } */
 function ManageQuestItems( player, questID, mark )
 {
+	if( !ValidateObject( player ))
+		return;
+
 	var socket = player.socket;
+	if( socket == null )
+		return;
+
 	var pack = player.pack;
 
 	if( !ValidateObject( pack ))
@@ -261,13 +285,18 @@ function ManageQuestItems( player, questID, mark )
 		}
 	}
 
-	function unmarkItem( item )
+	/** @type { ( item: Item ) => void } */
+	function UnMarkItem( item )
 	{
 		var saved = item.GetTag( "saveColor" );
 		if( saved != null && !isNaN(parseInt( saved )))
+		{
 			item.color = parseInt( saved );
+		}
 		else
-			item.color = 0; // default
+		{
+			item.color = 0;
+		}
 
 		item.isNewbie  = false;
 		item.isDyeable = true;
@@ -281,22 +310,24 @@ function ManageQuestItems( player, questID, mark )
 	}
 
 	// Optional: handle items inside nested containers
-	function forEachItemIn( container, fn )
+	/** @type { ( container: Item, fn: ( item: Item ) => void ) => void } */
+	function ForEachItemIn( container, fn )
 	{
 		for (var containerItem = container.FirstItem(); !container.FinishedItems(); containerItem = container.NextItem())
 		{
 			if( !ValidateObject( containerItem ))
 				continue;
+
 			fn( containerItem );
 			// If this item is itself a container, walk it too (API mirrors backpacks)
 			if( typeof containerItem.FirstItem === "function" && typeof containerItem.FinishedItems === "function" )
 			{
-				forEachItemIn( containerItem, fn );
+				ForEachItemIn( containerItem, fn );
 			}
 		}
 	}
 
-	forEachItemIn( pack, function( currentItem )
+	ForEachItemIn( pack, function( currentItem )
 	{
 		if( mark )
 		{
@@ -339,7 +370,7 @@ function ManageQuestItems( player, questID, mark )
 
 			if( belongsToThisQuest )
 			{
-				unmarkItem( currentItem );
+				UnMarkItem( currentItem );
 				// socket.SysMessage("Unmarked quest item.");
 			}
 		}
@@ -360,6 +391,7 @@ function ManageQuestItems( player, questID, mark )
 	});
 }
 
+/** @type { ( quest: any, questProgress: any ) => string } */
 function GetQuestObjectives( quest, questProgress ) 
 {
 	var objectives = "";
@@ -472,6 +504,7 @@ function GetQuestObjectives( quest, questProgress )
 	return objectives;
 }
 
+/** @type { ( skillID: number ) => string } */
 function GetSkillName( skillID )
 {
 	var skillNames = [
@@ -489,6 +522,7 @@ function GetSkillName( skillID )
 	return skillNames[skillID] || "unknown skill";
 }
 
+/** @type { ( quest: any ) => string } */
 function GetQuestRewards( quest )
 {
 	// List rewards
@@ -512,9 +546,16 @@ function GetQuestRewards( quest )
 	return rewards;
 }
 
+/** @type { ( player: Character, questID: number ) => boolean } */
 function ProcessQuestTurnIn( player, questID )
 {
+	if( !ValidateObject( player ))
+		return false;
+
 	var socket = player.socket;
+	if( socket == null )
+		return false;
+
 	// Fetch the quest details
 	var quest = TriggerEvent( 5801, "QuestList", questID );
 	if( !quest )
@@ -676,9 +717,16 @@ function ProcessQuestTurnIn( player, questID )
 	return false;
 }
 
+/** @type { ( player: Character, questID: number ) => Item[] } */
 function FindQuestItems( player, questID )
 {
+	if( !ValidateObject( player ))
+		return [];
+
 	var socket = player.socket;
+	if( socket == null )
+		return [];
+
 	var questItems = [];
 	var pack = player.pack; // Get the player's backpack
 
@@ -733,14 +781,24 @@ function FindQuestItems( player, questID )
 /** @type { ( currChar: Character, targChar: Character ) => boolean } */
 function onCharDoubleClick( pUser, questNpc ) 
 {
+	if( !ValidateObject( pUser ))
+		return false;
+
 	QuestNpcInterAction( pUser, questNpc );
 	return true;
 }
 
+/** @type { ( pUser: Character, questNpc: Character ) => boolean } */
 function QuestNpcInterAction( pUser, questNpc )
 {
 	var gumpID = 5822 + 0xffff;
+	if( !ValidateObject( pUser ))
+		return false;
+
 	var socket = pUser.socket;
+	if( socket == null )
+		return false;
+
 	pUser.SetTag( "questNpcSerial", questNpc.serial );
 
 	// Validate the targeted object and player
@@ -824,12 +882,18 @@ function QuestNpcInterAction( pUser, questNpc )
 	questNpc.TurnToward( pUser );
 	socket.CloseGump( gumpID, 0 );
 	QuestConversationGump( pUser, questNpc, playerQuestID );
-	return;
+	return true;
 }
 
+/** @type { ( player: Character, questNpc: Character, deliveryQuestID: number ) => boolean } */
 function ProcessDeliveryQuest( player, questNpc, deliveryQuestID )
 {
+	if( !ValidateObject( player ))
+		return false;
+
 	var socket = player.socket;
+	if( socket == null )
+		return false;
 
 	// Fetch the quest details
 	var quest = TriggerEvent( 5801, "QuestList", deliveryQuestID );
@@ -907,8 +971,12 @@ function ProcessDeliveryQuest( player, questNpc, deliveryQuestID )
 	return true;
 }
 
+/** @type { ( player: Character, initialQuestID: number ) => ( number | null ) } */
 function ResolvePlayerQuestID( player, initialQuestID )
 {
+	if( !ValidateObject( player ))
+		return null;
+
 	var archivedQuests = TriggerEvent( 5800, "ReadArchivedQuests", player );
 
 	if( !archivedQuests || !isArray( archivedQuests ))
@@ -928,9 +996,9 @@ function ResolvePlayerQuestID( player, initialQuestID )
 		}
 
 		// Skip daily quests that haven't reset
-		if (quest.dailyQuest == 1) 
+		if( quest.dailyQuest == 1 ) 
 		{
-			for (var i = 0; i < archivedQuests.length; i++) 
+			for( var i = 0; i < archivedQuests.length; i++ ) 
 			{
 				if( archivedQuests[i].questID == questID )
 				{
@@ -957,7 +1025,7 @@ function ResolvePlayerQuestID( player, initialQuestID )
 	return null; // All quests completed
 }
 
-// Helper function to check if a value exists in an array
+/** @type { ( array: any[], value: number ) => boolean } */
 function isQuestArchived( array, value )
 {
 	value = parseInt( value, 10 ); // Ensure value is a number
@@ -971,7 +1039,7 @@ function isQuestArchived( array, value )
 	return false;
 }
 
-// Helper function to check if a value is an array
+/** @type { ( value: any ) => boolean } */
 function isArray( value ) 
 {
 	return Object.prototype.toString.call( value ) == "[object Array]";
@@ -1020,7 +1088,6 @@ function onContextMenuSelect( socket, questNpc, popupEntry )
 {
 	var pUser = socket.currentChar;
 
-	// Validate the targeted object and player
 	if( !ValidateObject( pUser ) || !ValidateObject( questNpc ))
 	{
 		return false;
@@ -1030,13 +1097,11 @@ function onContextMenuSelect( socket, questNpc, popupEntry )
 	{
 		case 0x000A: // Quest Conversation
 			{
-				// Validate the targeted object and player
 				if( !ValidateObject( pUser ) || !ValidateObject( questNpc ))
 				{
 					return false;
 				}
 
-				// Check if the player is within range
 				if( !questNpc.InRange( pUser, 2 ))
 				{
 					pUser.SysMessage( "You are too far away." );
@@ -1048,13 +1113,11 @@ function onContextMenuSelect( socket, questNpc, popupEntry )
 			break;
 		case 0x000C: // Cancel Quest (Optional)
 			{
-				// Validate the targeted object and player
 				if( !ValidateObject( pUser ) || !ValidateObject( questNpc ))
 				{
 					return false;
 				}
 
-				// Check if the player is within range
 				if( !questNpc.InRange( pUser, 2 ))
 				{
 					pUser.SysMessage( "You are too far away." );
@@ -1069,8 +1132,8 @@ function onContextMenuSelect( socket, questNpc, popupEntry )
 			}
 			break;
 		default:
-			return true; // Let the default context menu handling proceed
+			return true;
 	}
 
-	return false; // Prevent default context menu handling for handled entries
+	return false;
 }

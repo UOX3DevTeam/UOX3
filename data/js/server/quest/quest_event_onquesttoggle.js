@@ -10,6 +10,11 @@ function onQuestToggle( pUser, iUsed )
 		return false;
 	}
 
+	if( socket == null )
+	{
+		return false;
+	}
+
 	socket.CustomTarget( 1, GetDictionaryEntry( 19600, socket.language ));//Target the item you wish to toggle Quest Item status on <ESC> to cancel
 	return true;
 }
@@ -17,7 +22,16 @@ function onQuestToggle( pUser, iUsed )
 /** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, iTarget )
 {
+	if( socket == null )
+	{
+		return;
+	}
+
 	var pUser = socket.currentChar;
+	if( !ValidateObject( pUser ))
+	{
+		return;
+	}
 
 	if( !ValidateObject( iTarget ) || !iTarget.isItem )
 	{

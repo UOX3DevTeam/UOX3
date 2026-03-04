@@ -6,6 +6,5 @@
 function onKill( player ,victim )
 {
 	TriggerEvent( 5800, "CreatureKilled", victim, player );
-
 	return true;
 }

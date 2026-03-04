@@ -1,6 +1,7 @@
 /// <reference path="../../../definitions.d.ts" />
 // @ts-check
 
+/** @type { ( pChar: Character ) => void } */
 function LoginQuest( pChar )
 {
 	var autoQuestID = 20000; // Insert Starting Quest ID here
