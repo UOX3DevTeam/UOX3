@@ -291,11 +291,8 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 			switchPitcherID( pSock, Pitcher );
 		}
 	}
-	else if( !StrangeByte && myTarget.isChar )
+	else if( !StrangeByte && ValidateObject( myTarget ) && myTarget.isChar )
 	{ //If target is a character
-		if( !ValidateObject( myTarget ))
-			return;
-
 		if(( pUser.x > targX + 3 ) || ( pUser.x < targX - 3 ) || ( pUser.y > targY + 3 ) || ( pUser.y < targY - 3 ) || ( pUser.z > targZ + 15 ) || ( pUser.z < targZ - 15 ))
 		{
 			pSock.SysMessage( GetDictionaryEntry( 2555, pSock.language )); // You are too far away from the target!
@@ -511,7 +508,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 				switchPitcherID( pSock, Pitcher );
 				break;
 			case 0x099b:case 0x099f:case 0x09c7:
-				var tmpMsg = GetDictionaryEntry( 2579, pSock.language ); // You pour the %s into the empty bottle.
+				var tmpMsg = GetDictionaryEntry( 2650, pSock.language ); // You pour the %s into the empty bottle.
 				pSock.SysMessage( tmpMsg.replace(/%s/gi, Liquid ));
 				myTarget.name = "bottle of " + Liquid;
 				if( Pitcher.usesLeft > 5 )
@@ -522,7 +519,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 				switchPitcherID( pSock, Pitcher );
 				break;
 			case 0x09c8:
-				var tmpMsg = GetDictionaryEntry( 2580, pSock.language ); // You pour the %s into the empty jug.
+				var tmpMsg = GetDictionaryEntry( 2651, pSock.language ); // You pour the %s into the empty jug.
 				pSock.SysMessage( tmpMsg.replace(/%s/gi, Liquid ));
 				myTarget.name = "jug of " + Liquid;
 				myTarget.usesLeft = Pitcher.usesLeft;
@@ -818,7 +815,7 @@ function switchPitcherID( pSock, Pitcher )
 			//Pitcher.name = "empty glass pitcher";
 			break;
 		case 0x0ff9:case 0x09f0: case 0x1f95:case 0x1f97:case 0x1f99:case 0x1f9b:case 0x1f9d:
-			Pitcher.id = 0x0ff6; //left facing�
+			Pitcher.id = 0x0ff6; //left facing
 			//Pitcher.name = "empty glass pitcher";
 			break;
 		case 0x099b:case 0x099f:case 0x09c7:

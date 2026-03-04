@@ -625,6 +625,15 @@ const locationMap = {
 	"WalledCircus": 1122,
 	"WaterfallPoint": 1123,
 
+	// Champion Spawns - Britannia (Felucca/Trammel)
+	"ChampUnholy": 1200,
+	"ChampVermin": 1201,
+	"ChampCold": 1202,
+	"ChampAbyss": 1203,
+	"ChampArachnid": 1204,
+	"ChampForest": 1205,
+	"ChampHabitat": 1206,
+
 	// Define a custom method - hasOwnPropertyCI - on the object, which can
 	// be used to do case-insensitive property comparisons
 	hasOwnPropertyCI: function( prop ) {

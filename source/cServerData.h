@@ -510,6 +510,9 @@ public:
 	auto		UseUnicodeMessages( bool value ) -> void;
 	auto		UseUnicodeMessages() const -> bool;
 
+	auto		EventManagerSystem( bool value ) -> void;
+	auto		EventManagerSystem() const -> bool;
+
 	SI16		ServerMoon( SI16 slot ) const;
 	LIGHTLEVEL	WorldLightDarkLevel() const;
 	LIGHTLEVEL	WorldLightBrightLevel() const;

@@ -3653,7 +3653,7 @@ void CPSkillsValues::SetCharacter( CChar &toCopy )
 	UI08 numSkills = NumSkills();
 	for( SI08 i = 0; i < numSkills; ++i )
 	{
-		SkillEntry( i, toCopy.GetSkill( i ), toCopy.GetBaseSkill( i ), toCopy.GetSkillLock( i ));
+		SkillEntry( i, toCopy.GetSkill( i ), toCopy.GetBaseSkill( i ), toCopy.GetSkillLock( i ), toCopy.GetSkillCap( i ));
 	}
 }
 
@@ -3689,14 +3689,14 @@ CPSkillsValues::CPSkillsValues( CChar &toCopy )
 	CopyData( toCopy );
 }
 
-void CPSkillsValues::SkillEntry( SI16 skillId, SI16 skillVal, SI16 baseSkillVal, SkillLock skillLock )
+void CPSkillsValues::SkillEntry( SI16 skillId, SI16 skillVal, SI16 baseSkillVal, SkillLock skillLock, SI16 skillCap )
 {
 	SI32 offset = ( skillId * 9 ) + 4;
 	pStream.WriteShort( offset, skillId + 1 );
 	pStream.WriteShort( static_cast<size_t>( offset ) + 2, skillVal );
 	pStream.WriteShort( static_cast<size_t>( offset ) + 4, baseSkillVal );
 	pStream.WriteByte(  static_cast<size_t>( offset ) + 6, skillLock );
-	pStream.WriteShort( static_cast<size_t>( offset ) + 7, static_cast<UI16>( cwmWorldState->ServerData()->ServerSkillCapStatus() ));
+	pStream.WriteShort( static_cast<size_t>( offset ) + 7, skillCap );
 }
 CPSkillsValues &CPSkillsValues::operator = ( CChar &toCopy )
 {

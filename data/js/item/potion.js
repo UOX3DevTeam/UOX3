@@ -135,7 +135,7 @@ function onUseChecked( pUser, iUsed )
 					if( iUsed.amount > 1 )
 					{
 						// Stack of potions
-						var explosionPotion = iUsed.Dupe( socket );
+						var explosionPotion = iUsed.Dupe( pSocket );
 						explosionPotion.amount = 1;
 						if( ValidateObject( explosionPotion ))
 						{
