@@ -512,6 +512,8 @@ ITEMMENU=122
 ITEMMENU=250
 <=Holidays
 ITEMMENU=251
+<=Ethereal Mounts
+ITEMMENU=264
 <=Previous Menu
 ITEMMENU=1
 }
@@ -578,6 +580,8 @@ misc=Menu
 ITEMMENU=138
 <=Music Intruments
 ITEMMENU=137
+<=Power Scrolls
+ITEMMENU=300
 <=Previous Menu
 ITEMMENU=10
 }

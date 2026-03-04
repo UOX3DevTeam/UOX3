@@ -3578,6 +3578,24 @@
 6546=Este objeto no tiene música asignada.
 6547=Esta pista musical ya está en la caja de música.
 6548=Esta música se ha añadido a la caja de música.
+// [6580-6599] Scripts de Montura Etérea
+6580=No puedes desmontar tu montura etérea porque tu mochila no puede contenerla.
+6581=Debe estar en la capa superior de tu mochila para usarla.
+6582=Debes terminar de lanzar un hechizo antes de usar otro.
+6583=Los gargolas no pueden montar animales.
+6584=Por favor, desmonta primero.
+6585=No puedes hacer eso mientras estás polimorfado.
+6586=No puedes invocar una montura en este momento.
+6587=¡Has sido interrumpido mientras intentabas invocar tu montura etérea!
+6588=Invocas tu corcel etéreo.
+6589=Debes tener el objeto en tu mochila para usarlo.
+6590=Apunta a la montura etérea que deseas retocar.
+6591=Deben estar en tu mochila para poder usarlos.
+6592=Eso no es un objetivo válido.
+6593=Debes tener el objeto en tu mochila para apuntarlo.
+6594=No puedes usar este objeto para eso.
+6595=El cuerpo de tu montura etérea se ha solidificado.
+6596=Se ha restaurado la transparencia de tu montura etérea.
 // [7000-7499] Guiones de IA
 7000=Eres un delincuente y no puedes acceder a tu caja bancaria.
 7001=¿Qué artículo desea depositar en su caja?
@@ -5668,5 +5686,12 @@
 19341=Ya conoces esta receta.
 19342=Has aprendido una nueva receta: %i
 19343=Debes aprender esa receta de un pergamino.
+// [30000 - 30010] Sistema de Campeones
+30000=¡El Campeón ha caído a manos de %i!
+30001=¡Infligiste el mayor daño al Campeón!
+30002=¡Estuviste entre los 5 jugadores que más daño infligieron! (%i de daño)
+30003=¡El Campeón ha caído!
+30004=¡Has sido recompensado con un Pergamino de Poder!
+30005=La energía del santuario disminuye al no haber desafiantes presentes...
 }
 EOF

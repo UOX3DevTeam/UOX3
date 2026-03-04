@@ -3577,6 +3577,24 @@
 6546=This gear has no song assigned.
 6547=This song track is already in the music box.
 6548=This song has been added to the music box.
+// [6580-6599] Ethereal Mount Scripts
+6580=You cannot dismount your ethereal because your pack cannot hold i
+6581=This must be in the top layer of your pack to use it.
+6582=You must finish casting before using another one.
+6583=Gargoyles are unable to ride animals.
+6584=Please dismount first.
+6585=You can't do that while polymorphed.
+6586=You cannot summon a mount right now.
+6587=You have been disrupted while attempting to summon your ethereal mount!
+6588=You summon your ethereal steed.
+6589=You must have the object in your backpack to use it.
+6590=Target the ethereal mount you wish to retouch.
+6591=That must be in your pack for you to use it.
+6592=That is not a valid target.
+6593=You must have the item in your backpack to target it.
+6594=You cannot use this item for it.
+6595=Your ethereal mount's body has been solidified.
+6596=Your ethereal mount's transparency has been restored.
 // [7000-7499] AI Scripts
 7000=Thou art a criminal and cannot access thy bank box.
 7001=Which item do you wish to deposit in your bank box?
@@ -5668,5 +5686,12 @@
 19341=You already know this recipe.
 19342=You have learned a new recipe: %i
 19343=You must learn that recipe from a scroll.
+// [ 30000 - 30010 ] Champion System
+30000=The Champion has fallen to %i !
+30001=You dealt the most damage to the Champion!
+30002=You were among the top 5 damagers! (%i damage)
+30003=The Champion has fallen!
+30004=You have been rewarded with a Scroll of Power!
+30005=The shrine's energy wanes with no challengers present...
 }
 EOF
