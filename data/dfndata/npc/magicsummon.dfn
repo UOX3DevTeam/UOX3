@@ -43,7 +43,6 @@ SPADELAY=7
 NPCWANDER=2
 RACE=16
 CONTROLSLOTS=2
-RACE=33
 }
 
 [earthele-summon]
@@ -63,7 +62,6 @@ DEF=20
 NPCWANDER=2
 RACE=17
 CONTROLSLOTS=2
-RACE=33
 }
 
 [firele-summon]
@@ -88,7 +86,6 @@ SPADELAY=7
 NPCWANDER=2
 RACE=14
 CONTROLSLOTS=4
-RACE=33
 }
 
 [waterele-summon]
@@ -111,7 +108,6 @@ SPADELAY=6
 NPCWANDER=2
 RACE=15
 CONTROLSLOTS=3
-RACE=33
 }
 
 [bladespirit-summon]
@@ -159,7 +155,6 @@ NPCWANDER=2
 RUNS
 RACE=10
 CONTROLSLOTS=4
-RACE=33
 }
 
 [dupre-summon]
