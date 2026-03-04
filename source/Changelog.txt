@@ -1,3 +1,8 @@
+04/03/2026 - DragonSlayer62 (#474)
+    [ADD] Added multis for houses from Ultima Online’s 2018–2020 House Design Contest, placed in the house folder and defined in three new files: house_contest_winners.dfn, house_contest_winners2.dfn, and house_contest_winners3.dfn
+    [ADD] Added corresponding Contest Winner House Deeds in items/deeds/contest_winner_deeds.dfn
+    [ADD] Contest Winner House Deeds are now available through the Add Menu
+
 04/03/2026 - DragonSlayer62 (#522)
     [FIX] Removed RACE=33 tag from all creature definitions in npc/magicsummons.dfn with duplicate race tags, except for blade spirits, which need it in order to be allowed to attack humans
     [FIX] Fixed an issue where looting rules for Young Players would check for 2-minute death-timer on a non-existent object instead of corpse in js/item/corpse.js
