@@ -90,7 +90,7 @@ function onUseChecked( pUser, iUsed )
 
 	pUser.DoAction( 230 );
 	pUser.SetTag( "EtherealMountStatueSerial", iUsed.serial.toString() );
-	pUser.SetTag( "EtherealMountSectionID", iUsed.sectionID );
+	pUser.SetTag( "EtherealMountSectionID", iUsed.sectionID.toString().toLowerCase() );
 	iUsed.SetTempTag( "castDelayed", iTime.toString() );
 	pUser.SetTempTag( "statueDelayed", true );
 	pUser.StartTimer( 1300, 1, 5300 );
@@ -136,7 +136,7 @@ function onTimer( pUser, timerID )
 
 	if( timerID == timeId )
 	{
-		var etherealSerial = parseInt(pUser.GetTag( "EtherealMountStatueSerial" ));
+		var etherealSerial = parseInt( pUser.GetTag( "EtherealMountStatueSerial" ));
 		var etherealSectionID = pUser.GetTag( "EtherealMountSectionID" );
 		var etherealStatuette = CalcItemFromSer( etherealSerial );
 
@@ -179,6 +179,7 @@ function onTimer( pUser, timerID )
 		{
 			pUser.SetTag( "EtherealMountStatueSerial", null );
 			pUser.SetTag( "EtherealMountSectionID", null );
+			pUser.SetTempTag( "statueDelayed", null );
 			pUser.frozen = false;
 			return;
 		}
