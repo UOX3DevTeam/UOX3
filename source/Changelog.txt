@@ -1,3 +1,9 @@
+05/03/2026 - DragonSlayer62 (#525)
+    [FIX] Fixed a tag-lookup issue in Ethereal Mount Statuette script that caused the incorrect mount to spawn on use (js/item/etherealstatuettes.js) 
+    [FIX] Fixed an issue with Champion Spawns Menu where the removal buttons would call a non-existent function when trying to reopen the menu after removal of an altar (js/command/champion_spawn_cmd.js)
+    [UPD] Updated .isonhorse Character JS property to allow setting it from scripts. This property is no longer read-only.
+
+
 04/03/2026 - DragonSlayer62 (#474)
     [ADD] Added multis for houses from Ultima Online’s 2018–2020 House Design Contest, placed in the house folder and defined in three new files: house_contest_winners.dfn, house_contest_winners2.dfn, and house_contest_winners3.dfn
     [ADD] Added corresponding Contest Winner House Deeds in items/deeds/contest_winner_deeds.dfn
