@@ -51,12 +51,18 @@ function QuestConversationGump( pUser, npcTarget, questID )
 	}
 
 	// Handle chain quests: If this is a chain quest and there is a nextQuestID
-	if( quest.nextQuestID && currentQuestProgress && currentQuestProgress.completed ) 
+	// Chain preview: show what would unlock next (branching-aware)
+	if (currentQuestProgress && currentQuestProgress.completed)
 	{
-		var nextQuest = TriggerEvent( 5801, "QuestList", quest.nextQuestID );
-		if( nextQuest )
+		var nextQuestID = ResolveNextQuestID_Any(pUser, quest);
+		if (nextQuestID > 0)
 		{
-			description += "<br><br><b>Next Quest Available:</b> " + nextQuest.title + "<br>" + nextQuest.description;
+			var nextQuest = TriggerEvent(5801, "QuestList", nextQuestID);
+			if (nextQuest)
+			{
+				description += "<br><br><b>Next Quest Available:</b> " +
+					nextQuest.title + "<br>" + nextQuest.description;
+			}
 		}
 	}
 
@@ -95,6 +101,9 @@ function QuestConversationGump( pUser, npcTarget, questID )
 		questConvoMenu.AddButton( 220, 600, 0x2EEC, 0x2EEE, 1, 0, 0 ); // close button
 	}
 
+	// Lock the questID this gump represents (so onGumpPress doesn't re-resolve)
+	pUser.SetTempTag( "QuestConversationQuestID", questID );
+
 	questConvoMenu.Send( socket );
 	questConvoMenu.Free();
 }
@@ -130,9 +139,15 @@ function onGumpPress( pSock, pButton, gumpData )
 			return;
 		}
 
-		var initialQuestID = parseInt( questNpc.GetTag( "QuestID" ), 10 );
-		playerQuestID = ResolvePlayerQuestID( pUser, initialQuestID );
-		quest = TriggerEvent( 5801, "QuestList", playerQuestID );
+		// Use the questID the gump was opened for (prevents re-resolving chain on click)
+		playerQuestID = parseInt(pUser.GetTempTag("QuestConversationQuestID"), 10);
+		if (isNaN(playerQuestID) || playerQuestID <= 0)
+		{
+			// Fallback if temp tag missing (shouldn't happen)
+			var initialQuestID = parseInt(questNpc.GetTag("QuestID"), 10);
+			playerQuestID = ResolvePlayerQuestID(pUser, initialQuestID);
+		}
+		quest = TriggerEvent(5801, "QuestList", playerQuestID);
 	}
 
 	switch( pButton )
@@ -143,6 +158,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			{
 				pUser.SetTempTag( "questConversationID", null );
 			}
+			pUser.SetTempTag( "QuestConversationQuestID", null );
 			break;
 		case 1: // Accept quest
 			TriggerEvent( 5800, "StartQuest", pUser, playerQuestID );
@@ -150,6 +166,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			{
 				pUser.SetTempTag( "questConversationID", null );
 			}
+			pUser.SetTempTag( "QuestConversationQuestID", null );
 			break;
 		case 2: // Refuse quest
 			if( quest && quest.refuse )
@@ -167,6 +184,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			{
 				pUser.SetTempTag( "questConversationID", null );
 			}
+			pUser.SetTempTag( "QuestConversationQuestID", null );
 			break;
 		case 3: // Turn in quest
 			if( playerQuestID )
@@ -189,11 +207,13 @@ function onGumpPress( pSock, pButton, gumpData )
 					pSock.SysMessage( GetDictionaryEntry( 19603, pSock.language ));// You need to have all required quest items to turn in this quest.
 				}
 			}
+			pUser.SetTempTag( "QuestConversationQuestID", null );
 			break;
 		case 4: // Resign Quest
 			ResignQuest( pUser, playerQuestID );
 			ManageQuestItems( pUser, playerQuestID, false );
 			pUser.SoundEffect( 0x5B3, true );
+			pUser.SetTempTag( "QuestConversationQuestID", null );
 			break;
 			default:break
 	}
@@ -570,7 +590,7 @@ function ProcessQuestTurnIn( player, questID )
 	// Find the quest progress entry
 	for( var i = 0; i < questProgressArray.length; i++ )
 	{
-		if( questProgressArray[i].questID == questID )
+		if( questProgressArray[i].questID == questID && questProgressArray[i].serial == player.serial )
 		{
 			questProgress = questProgressArray[i];
 			break;
@@ -792,7 +812,8 @@ function onCharDoubleClick( pUser, questNpc )
 function QuestNpcInterAction( pUser, questNpc )
 {
 	var gumpID = 5822 + 0xffff;
-	if( !ValidateObject( pUser ))
+
+	if( !ValidateObject( pUser ) || !ValidateObject( questNpc ) )
 		return false;
 
 	var socket = pUser.socket;
@@ -801,84 +822,43 @@ function QuestNpcInterAction( pUser, questNpc )
 
 	pUser.SetTag( "questNpcSerial", questNpc.serial );
 
-	// Validate the targeted object and player
-	if( !ValidateObject( pUser ) || !ValidateObject( questNpc ))
-		return false;
-
-	// Check if the player is within range
-	if( !questNpc.InRange( pUser, 2 ))
+	if( !questNpc.InRange( pUser, 2 ) )
 	{
 		socket.SysMessage( "You are too far away." );
 		return false;
 	}
 
-	// Get both delivery and normal quest IDs from the NPC
-	var deliveryQuestID = parseInt( questNpc.GetTag( "DeliveryQuestID" ));
-	var initialQuestID = parseInt( questNpc.GetTag( "QuestID" ), 10 );
-
-	// Read archived quest IDs
-	var archivedQuests = TriggerEvent( 5800, "ReadArchivedQuests", pUser );
-
-	// Check if delivery quest has already been completed
-	var deliveryAlreadyCompleted = false;
-	for( var i = 0; i < archivedQuests.length; i++ )
+	// -----------------------------
+	// Delivery quest (leave your existing logic if you want)
+	// -----------------------------
+	var deliveryQuestID = parseInt( questNpc.GetTag( "DeliveryQuestID" ), 10 );
+	if( !isNaN( deliveryQuestID ) && deliveryQuestID > 0 )
 	{
-		var archivedID = parseInt(archivedQuests[i], 10 );
-		if( archivedID == deliveryQuestID )
+		if( !IsQuestArchivedForPlayer( pUser, deliveryQuestID ) )
 		{
-			deliveryAlreadyCompleted = true;
-			break;
+			if( TriggerEvent( 5800, "CheckQuest", pUser, deliveryQuestID, "check" ) )
+			{
+				ProcessDeliveryQuest( pUser, questNpc, deliveryQuestID );
+				return true;
+			}
 		}
 	}
 
-	// Only process delivery if not completed
-	if( deliveryQuestID && !deliveryAlreadyCompleted )
-	{
-		if( TriggerEvent( 5800, "CheckQuest", pUser, deliveryQuestID, "check" ))
-		{
-			ProcessDeliveryQuest( pUser, questNpc, deliveryQuestID );
-			return true; // exit after handling delivery
-		}
-	}
-
-	// Continue normal quest interaction
-	if( !initialQuestID )
+	// -----------------------------
+	// Normal quest chain (FIXED: branching-aware)
+	// -----------------------------
+	var npcRootQuestID = GetNpcQuestRootID( questNpc );
+	if( npcRootQuestID <= 0 )
 		return false;
 
-	var playerQuestID = ResolvePlayerQuestID( pUser, initialQuestID );
+	var playerQuestID = ResolvePlayerQuestID( pUser, npcRootQuestID );
 	if( !playerQuestID )
 	{
 		questNpc.TurnToward( pUser );
-		questNpc.TextMessage( GetDictionaryEntry( 19612, socket.language )); // You have completed all quests
+		questNpc.TextMessage( GetDictionaryEntry( 19612, socket.language ) ); // You have completed all quests
 		return false;
 	}
 
-	// Check if the player's current quest is archived (completed)
-	for( var i = 0; i < archivedQuests.length; i++ )
-	{
-		var archivedQuestID = parseInt( archivedQuests[i], 10 );
-		if( archivedQuestID == playerQuestID )
-		{
-			questNpc.TurnToward( pUser );
-			questNpc.TextMessage( "I'm sorry, I have nothing for you at this time." );
-			return false;
-		}
-	}
-
-		// Fetch player's progress for the current quest
-	var questProgressArray = TriggerEvent( 5800, "ReadQuestProgress", pUser );
-	var currentQuestProgress = null;
-
-	for( var i = 0; i < questProgressArray.length; i++ ) 
-	{
-		if( questProgressArray[i].questID == playerQuestID ) 
-		{
-			currentQuestProgress = questProgressArray[i];
-			break;
-		}
-	}
-
-	// Show the quest conversation gump
 	questNpc.TurnToward( pUser );
 	socket.CloseGump( gumpID, 0 );
 	QuestConversationGump( pUser, questNpc, playerQuestID );
@@ -971,58 +951,102 @@ function ProcessDeliveryQuest( player, questNpc, deliveryQuestID )
 	return true;
 }
 
-/** @type { ( player: Character, initialQuestID: number ) => ( number | null ) } */
-function ResolvePlayerQuestID( player, initialQuestID )
+/** @type { ( questNpc: Character ) => number } */
+function GetNpcQuestRootID( questNpc )
 {
-	if( !ValidateObject( player ))
+	// Preferred going forward
+	var rootQuestID = parseInt( questNpc.GetTag( "QuestRootID" ), 10 );
+	if( !isNaN( rootQuestID ) && rootQuestID > 0 )
+		return rootQuestID;
+
+	// Backward compatible
+	var legacyQuestID = parseInt( questNpc.GetTag( "QuestID" ), 10 );
+	if( !isNaN( legacyQuestID ) && legacyQuestID > 0 )
+		return legacyQuestID;
+
+	return 0;
+}
+
+/** @type { ( player: Character, questID: number ) => boolean } */
+function IsQuestArchivedForPlayer( player, questID )
+{
+	var archivedQuestIDs = TriggerEvent( 5800, "ReadArchivedQuests", player ) || [];
+	var questIDInt = parseInt( questID, 10 );
+
+	for( var index = 0; index < archivedQuestIDs.length; index++ )
+	{
+		if( parseInt( archivedQuestIDs[index], 10 ) == questIDInt )
+			return true;
+	}
+	return false;
+}
+
+/** @type { ( player: Character, questID: number ) => boolean } */
+function IsQuestActiveForPlayer( player, questID )
+{
+	var activeQuestEntries = TriggerEvent( 5800, "ReadQuestProgress", player ) || [];
+	var questIDInt = parseInt( questID, 10 );
+
+	for( var index = 0; index < activeQuestEntries.length; index++ )
+	{
+		var entry = activeQuestEntries[index];
+		if( entry && entry.serial == player.serial && parseInt( entry.questID, 10 ) == questIDInt )
+			return true;
+	}
+	return false;
+}
+
+/** @type { ( player: Character, questData: any ) => number } */
+function ResolveNextQuestID_Any( player, questData )
+{
+	// Prefer the real branching resolver in script 5800
+	var resolved = TriggerEvent( 5800, "ResolveNextQuestID", player, questData );
+	resolved = parseInt( resolved, 10 );
+	if( !isNaN( resolved ) && resolved > 0 )
+		return resolved;
+
+	// Fallback: old linear field
+	var fallback = parseInt( questData && questData.nextQuestID, 10 );
+	if( !isNaN( fallback ) && fallback > 0 )
+		return fallback;
+
+	return 0;
+}
+
+/** @type { ( player: Character, npcRootQuestID: number ) => ( number | null ) } */
+function ResolvePlayerQuestID( player, npcRootQuestID )
+{
+	if( !ValidateObject( player ) )
 		return null;
 
-	var archivedQuests = TriggerEvent( 5800, "ReadArchivedQuests", player );
+	var currentQuestID = parseInt( npcRootQuestID, 10 );
+	if( isNaN( currentQuestID ) || currentQuestID <= 0 )
+		return null;
 
-	if( !archivedQuests || !isArray( archivedQuests ))
+	// Loop guard in case of bad data / circular chains
+	for( var hopCount = 0; hopCount < 50; hopCount++ )
 	{
-		//player.SysMessage( "Archived Quests: Invalid data format." );
-		return initialQuestID;
+		var questData = TriggerEvent( 5801, "QuestList", currentQuestID );
+		if( !questData )
+			return null;
+
+		// If active, keep showing it
+		if( IsQuestActiveForPlayer( player, currentQuestID ) )
+			return currentQuestID;
+
+		// If not archived, this is the next offerable quest
+		if( !IsQuestArchivedForPlayer( player, currentQuestID ) )
+			return currentQuestID;
+
+		// Archived: advance using branching/linear
+		var nextQuestID = ResolveNextQuestID_Any( player, questData );
+		if( nextQuestID <= 0 )
+			return null;
+
+		currentQuestID = nextQuestID;
 	}
 
-	var currentQuestID = parseInt( initialQuestID, 10 );
-
-	for( var questID = currentQuestID; questID; )
-	{
-		var quest = TriggerEvent( 5801, "QuestList", questID );
-		if( !quest ) 
-		{
-			break; // No further quests in the chain
-		}
-
-		// Skip daily quests that haven't reset
-		if( quest.dailyQuest == 1 ) 
-		{
-			for( var i = 0; i < archivedQuests.length; i++ ) 
-			{
-				if( archivedQuests[i].questID == questID )
-				{
-					var lastCompleted = archivedQuests[i].lastCompleted || 0;
-					var resetTime = quest.resetDailyTime || 24; // Default reset time is 24 hours
-					if(( Date.now() - lastCompleted) < resetTime * 3600 * 1000 )
-					{
-						questID = parseInt( quest.nextQuestID, 10 ); // Move to the next quest
-						continue;
-					}
-				}
-			}
-		}
-
-
-		if( !isQuestArchived( archivedQuests, questID ))
-		{
-			return questID; // Return the first uncompleted quest
-		}
-
-		questID = parseInt( quest.nextQuestID, 10 );
-	}
-
-	return null; // All quests completed
+	return null;
 }
 
 /** @type { ( array: any[], value: number ) => boolean } */

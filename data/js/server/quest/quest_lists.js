@@ -2,131 +2,170 @@
  * =============================================================================
  *                              QUEST LIST MODULE
  * =============================================================================
- * 
+ *
  *  File: QuestList.js
  *  Purpose:
  *    Centralized registry of all quest definitions for the game.
  *    Provides a consistent structure for quest data, enabling retrieval
  *    by ID or iteration over all available quests.
- * 
+ *
  *  Usage:
  *    - QuestList() -> Returns an array of all quest definitions.
  *    - QuestList(questID) -> Returns the quest with the given ID, or null if not found.
- * 
+ *
  * =============================================================================
- *  QUEST OBJECT STRUCTURE
+ *  QUEST OBJECT STRUCTURE (DL/UOX3)
  * =============================================================================
- * 
+ *
  *  Core Details:
  *  -------------
  *   title           - Display name of the quest.
- *   description     - Narrative/backstory shown in quest log.
+ *   description     - Narrative/backstory shown in quest conversation/log.
  *   uncomplete      - NPC text when quest is not yet complete.
  *   complete        - NPC text when quest is completed.
+ *   oncomplete      - Optional completion message (commonly used by skillgain).
  *   refuse          - NPC text when player declines the quest.
  *   npcPhrases      - Optional NPC idle chatter.
- * 
+ *
  *  Quest Classification:
  *  ----------------------
- *   type            - Quest type (collect, kill, collectTime, killTime, multi, skillGain, delivery, skill, skillpoints).
- *   category        - Quest grouping (e.g., "Side Quests", "Daily").
- * 
+ *   type            - Quest type:
+ *                     collect, timecollect, kill, timekills, multi, delivery, skillgain
+ *                     (reward types are defined under "rewards", not in "type")
+ *   category        - Quest grouping (e.g., "Side Quests", "Daily", "Main Story").
+ *
  *  Flags & Control:
  *  ----------------
- *   oneTimeQuest        - If true, quest can only be completed once.
- *   questTurnIn     - 1 = Requires NPC turn-in, 0 = Auto-complete.
- *   bankgold        - 1 = Gold to bank, 0 = Gold to player's pack.
- *   requiresQuestID - questID - must be completed before this quest can be accepted
- * 
+ *   oneTimeQuest        - 1/true = quest can only be completed once.
+ *   dailyQuest          - 1/true = quest can be repeated after reset window.
+ *   resetDailyTime      - Hours until daily quest becomes available again (default 24).
+ *   timeLimit           - Timed quest limit in seconds (converted to ms internally).
+ *   questTurnIn         - 1 = Requires NPC turn-in, 0 = Auto-complete when objectives met.
+ *   bankgold            - (reward-level flag typically) 1 = gold to bank, 0 = to pack.
+ *   requiresQuestID     - Prerequisite questID that must be archived before accepting.
+ *
  *  Objectives:
  *  -----------
- *   targetItems     - Items to collect: itemID, name, amount.
- *   targetKills     - Monsters to defeat: monsterID, name, amount.
- * 
- *  Rewards:
- *  --------
- *   rewards         - Karama, Fame, Gold, items support color, or skill rewards. virtue points are supported
- *   virtue          - { type: "virtue", virtueIndex: 1, amount: 500, name: "Sacrifice" }
- *                    0 Humility, 1 Sacrifice, 2 Compassion, 3 Spirituality, 4 Valor,
- *                    5 Honor, 6 Justice, 7 Honesty
- * 
- *  Regions & Location:
- *  -------------------
- *   targetRegion    - Region ID where quest is active.
- *   regionName      - Friendly name for quest region.
- * 
- *  Skill Quests:
- *  -------------
- *   targetSkill     - Required skill ID.
- *   maxSkillPoints  - Max points needed.
- *   minPoint        - Minimum skill points gained.
- *   maxPoint        - Maximum skill points gained.
- * 
- *  Quest Chains:
- *  -------------
- *   nextQuestID     - Next quest in chain, or null.
- * 
+ *   targetItems     - Items to collect:
+ *                    [{ sectionID, name, amount }]
+ *   targetKills     - Creatures to defeat:
+ *                    [{ npcID, name, amount }]
+ *
  *  Delivery Quests:
  *  ----------------
- *   deliveryItem    - Item details: itemID, name, amount.
- *   targetDelivery  - NPC target: sectionID, name, location (x, y, z, world).
- * 
- *  Add/Removing Tags on quests:
- *  ----------------------------
- *   setTags         - Apply or remove persistent character tags when quest completes.
- *                    Example:
- *                      setTags: { "starterTier": 2, "needsTutorial": null }
- *                    (null/undefined removes the tag)
- * 
- *   setTempTags     - Apply or remove temporary character tags when quest completes.
- *                    Example:
- *                      setTempTags: { "starterTier": 2, "needsTutorial": null }
- *                    (null/undefined removes the temp tag)
- * 
- *  Tag Delta Updates (Generic / Optional):
- *  --------------------------------------
- *   setTagDeltas    - Adds (or subtracts) integer deltas to existing persistent tags.
- *                    Missing/non-numeric tags are treated as 0.
- *                    Example:
- *                      setTagDeltas: { "FF_GuardStanding": 2, "WinterEventPoints": 5 }
- * 
- *   deltaRules      - Optional per-tag clamping rules for setTagDeltas.
+ *   deliveryItem    - Item details:
+ *                    { sectionID, name, amount }
+ *   targetDelivery  - NPC recipient target:
+ *                    { npcID?, sectionID?, name?, location?: { x, y, z, world } }
+ *
+ *  Skillgain Quests:
+ *  -----------------
+ *   targetSkill     - Skill ID to train (numeric).
+ *   targetRegion    - Region ID required for accelerated gain (numeric).
+ *   regionName      - Friendly region label for UI.
+ *   maxSkillPoints  - Goal in tenths (e.g. 50.0 = 500 tenths if you store in tenths).
+ *   minPoint        - Min accelerated gain per proc (tenths).
+ *   maxPoint        - Max accelerated gain per proc (tenths).
+ *
+ * =============================================================================
+ *  REWARDS
+ * =============================================================================
+ *
+ *   rewards         - Array of reward objects. Supported reward types:
+ *                    - { type:"gold", amount, bankgold?: 1|0 }
+ *                    - { type:"item", sectionID, amount, name?, color?|hue? }
+ *                    - { type:"karma", amount }
+ *                    - { type:"fame", amount }
+ *                    - { type:"skill", skill:<string|number>, amount:<number> }   // respects skillCaps
+ *                    - { type:"skillpoints", amount:<number> }                   // pooled points
+ *                    - { type:"virtue", virtueIndex:<0..7>, amount:<number>, name? }
+ *
+ *   virtueIndex mapping:
+ *     0 Humility, 1 Sacrifice, 2 Compassion, 3 Spirituality,
+ *     4 Valor, 5 Honor, 6 Justice, 7 Honesty
+ *
+ *   Pooled skill points:
+ *     - Stored under tag "UnspentSkillPoints" in tenths.
+ *     - Spend via:
+ *         SpendSkillPoints( player, socket, "Magery", 3.0 );  // +3.0 Magery (respects caps)
+ *         SpendSkillPoints( player, socket, 27, 2.5 );        // +2.5 skill ID 27 (e.g., Tactics)
+ *
+ * =============================================================================
+ *  QUEST CHAINS (LINEAR + BRANCHING)
+ * =============================================================================
+ *
+ *   Linear chain:
+ *     nextQuestID      - Next questID in chain (legacy/simple).
+ *
+ *   Branching chain:
+ *     nextQuest        - Array of candidate next quests resolved in order:
+ *       [
+ *         { questID: 20011, cond: { completedQuest: 20010 } },
+ *         { questID: 20012, cond: { tagMin: { tag:"dl_rep", value: 10 } } },
+ *         { questID: 20013, cond: { always: true } }
+ *       ]
+ *
+ *     Supported cond keys:
+ *       - tagEquals:      { tag:"X", value: 1 }
+ *       - tagMin:         { tag:"X", value: 10 }
+ *       - completedQuest: <questID>
+ *       - notCompletedQuest: <questID>
+ *       - hasQuest:       <questID>      // active
+ *       - notHasQuest:    <questID>
+ *       - worldStateEquals: { key:"ws_key", value: 1 }
+ *       - worldStateMin:    { key:"ws_key", value: 10 }
+ *       - always: true
+ *
+ * =============================================================================
+ *  QUEST COMPLETION EFFECTS (TAGS + WORLD STATE)
+ * =============================================================================
+ *
+ *  Persistent Tag Updates:
+ *  -----------------------
+ *   setTags         - Apply/remove persistent character tags on completion.
+ *                    Example: setTags: { "starterTier": 2, "needsTutorial": null }
+ *
+ *   setTagDeltas    - Add/subtract integer deltas to persistent tags.
+ *                    Missing/non-numeric treated as 0.
+ *                    Example: setTagDeltas: { "FF_GuardStanding": 2, "WinterEventPoints": 5 }
+ *
+ *   deltaRules      - Optional per-tag clamping for setTagDeltas.
  *                    Example:
  *                      deltaRules: {
  *                        "FF_GuardStanding": { min: -100, max: 100 },
  *                        "WinterEventPoints": { min: 0, max: 999 }
  *                      }
- *                    Notes:
- *                      - If a rule omits min or max, only the provided bound is enforced.
- *                      - If a rule is {} or has no min/max, no clamp is applied for that tag.
- * 
+ *
  *   deltaRulesDefault
- *                  - Optional default clamp rule applied to any setTagDeltas key that does not
- *                    have an explicit entry in deltaRules.
- *                    Example:
- *                      deltaRulesDefault: { min: 0, max: 100 }
- * 
- *   setTempTagDeltas
- *                  - Adds (or subtracts) integer deltas to existing temporary tags.
- *                    Example:
- *                      setTempTagDeltas: { "FF_Suspicion": -1 }
- * 
- *   tempDeltaRules  - Optional per-tag clamping rules for setTempTagDeltas (same structure as deltaRules).
- * 
+ *                  - Optional default clamp rule for setTagDeltas keys without an entry.
+ *                    Example: deltaRulesDefault: { min: 0, max: 100 }
+ *
+ *  Temporary Tag Updates:
+ *  ----------------------
+ *   setTempTags       - Apply/remove temp tags on completion.
+ *   setTempTagDeltas  - Add/subtract integer deltas to temp tags.
+ *   tempDeltaRules    - Optional per-key clamping for setTempTagDeltas.
  *   tempDeltaRulesDefault
- *                  - Optional default clamp rule for setTempTagDeltas (same structure as deltaRulesDefault).
- * 
+ *                    - Optional default clamp for setTempTagDeltas.
+ *
+ *  World State (file-backed, per-character-keyed):
+ *  -----------------------------------------------
+ *   setWorldState       - Set/remove integer world-state keys on completion.
+ *                        Example: setWorldState: { "dl_ws_joinedthieves": 1, "dl_ws_oldkey": null }
+ *
+ *   worldStateDeltas    - Add/subtract integer deltas to existing world-state keys.
+ *                        Example: worldStateDeltas: { "dl_ws_ironreachrep": 5 }
+ *
+ *   worldStateDeltaRules / worldStateDeltaRulesDefault
+ *                        - Optional clamp rules for worldStateDeltas (same min/max schema).
+ *
  * =============================================================================
  *  FUNCTION SIGNATURE
  * =============================================================================
  *   QuestList(questID?)
  *     questID - Optional quest ID. If omitted, returns all quests.
  *     Returns - Quest object, array of quests, or null if ID not found.
- * 
- *   How to spend skillpoints pooled.
- *     SpendSkillPoints( player, socket, "Magery", 3.0 );   // +3.0 Magery ( respects skillCaps )
- *     SpendSkillPoints( player, socket, 27, 2.5 );         // +2.5 to skill ID 27 ( e.g., Tactics )
- * 
+ *
  * =============================================================================
  */
 
@@ -1304,6 +1343,185 @@ function QuestList( questID )
 			],
 			oneTimeQuest: 1
 		},
+		"1200": {
+			title: "Fork in the Road",
+			description:
+				"Your first real choice begins here. Prove your intent, and the right people will find you.\n\n" +
+				"Bring me a simple token to show you can follow instructions: 10 apples.\n\n" +
+				"Depending on the life you’ve chosen, this will open different opportunities.",
+			uncomplete: "You still haven’t brought the 10 apples. Come back when you have them.",
+			complete:
+				"Good. You can follow directions. Now… let’s see where your choices have placed you.",
+			refuse: "Not ready? That’s fine. Return when you want to choose your path.",
+			type: "collect",
+			category: "Side Quests",
+			oneTimeQuest: 1,
+			questTurnIn: 1,
+			bankgold: 0,
+
+			targetItems: [
+				{ sectionID: "0x09D0", amount: 10, name: "Apple" } // Apple
+			],
+
+			rewards: [
+				{ type: "gold", amount: 250, name: "Gold" }
+			],
+
+			// Branching next quest rules - MATCHES your resolver:
+			// nextQuest: [ { questID, cond }, ... ]
+			nextQuest: [
+				// Thief route (tag set somewhere else in your shard logic)
+				{ questID: 1201, cond: { tagEquals: { tag: "DL_ThiefPath", value: 1 } } },
+
+				// Guard/Law route
+				{ questID: 1202, cond: { tagMin: { tag: "DL_GuardPath", value: 1 } } },
+
+				// Default fallback route (cond omitted => passes)
+				{ questID: 1203 }
+			],
+
+			// Optional: legacy single-step fallback (only used if nextQuest[] missing)
+			nextQuestID: 1203
+		},
+
+		"1201": {
+			title: "A Quiet Hand",
+			description:
+				"Word travels fast in the shadows.\n\n" +
+				"Bring me 5 bandages. No questions. No explanations.",
+			uncomplete: "Still waiting. 5 bandages.",
+			complete: "Good. You understand discretion.",
+			refuse: "Then you’re not ready for the shadows.",
+			type: "collect",
+			category: "Side Quests",
+			oneTimeQuest: 1,
+			questTurnIn: 1,
+			bankgold: 0,
+
+			targetItems: [
+				{ sectionID: "0x0E21", amount: 5, name: "Bandage" }
+			],
+
+			rewards: [
+				{ type: "item", sectionID: "bag", amount: 1, name: "A small pouch" },
+				{ type: "gold", amount: 300, name: "Gold" }
+			],
+
+			// Chain example: after thief quest, open a follow-up only if not already completed
+			nextQuest: [
+				{ questID: 1210, cond: { notCompletedQuest: 1210 } }
+			]
+		},
+
+		"1202": {
+			title: "Citizen’s Duty",
+			description:
+				"The watch needs reliable hands.\n\n" +
+				"Bring 5 clean bandages for the infirmary. This is honest work.",
+			uncomplete: "Return with 5 clean bandages for the infirmary.",
+			complete: "Well done. Duty is built from small acts.",
+			refuse: "The watch won’t beg. Return if you reconsider.",
+			type: "collect",
+			category: "Side Quests",
+			oneTimeQuest: 1,
+			questTurnIn: 1,
+			bankgold: 0,
+
+			targetItems: [
+				{ sectionID: "0x0E21", amount: 5, name: "Bandage" }
+			],
+
+			rewards: [
+				{ type: "gold", amount: 300, name: "Gold" }
+			],
+
+			nextQuest: [
+				// Only unlock the next duty quest if the player hasn't done it already
+				{ questID: 1203, cond: { notCompletedQuest: 1204 } }
+			]
+		},
+
+		"1203": {
+			title: "Simple Work, Simple Pay",
+			description:
+				"No drama. No factions.\n\n" +
+				"Bring me 20 logs and I’ll pay you fairly.",
+			uncomplete: "Still need 20 logs.",
+			complete: "Fair work, fair pay. Good job.",
+			refuse: "Suit yourself.",
+			type: "collect",
+			category: "Side Quests",
+			oneTimeQuest: 1,
+			questTurnIn: 1,
+			bankgold: 0,
+
+			targetItems: [
+				{ sectionID: "0x1BE0", amount: 20, name: "Log" }
+			],
+
+			rewards: [
+				{ type: "gold", amount: 400, name: "Gold" }
+			]
+		},
+		"1204": {
+			title: "Gather Apples",
+			description:
+				"No drama. No factions.\n\n" +
+				"Bring me 20 logs and I’ll pay you fairly.",
+			type: "collect",
+			questTurnIn: 1,
+			targetItems: [{ sectionID: "0x0E21", amount: 10, name: "Apple" }],
+			rewards: [{ type: "gold", name: "gold", amount: 500 }],
+
+			// NEW: world-state consequences (no player tags)
+			setWorldState: {
+				"dl_ws_orchard_helped": 1,
+				"dl_ws_orchard_lasthelp": 0  // you can overwrite counters too
+			},
+
+			worldStateDeltas: {
+				"dl_ws_ironreach_rep": 5,
+				"dl_ws_compassion": 10
+			},
+
+			worldStateDeltaRulesDefault: { min: 0, max: 1000 },   // clamp default
+			worldStateDeltaRules: {
+				"dl_ws_ironreach_rep": { min: -100, max: 100 }
+			},
+
+			nextQuest: [
+				{ questID: 1203, cond: { worldStateEquals: { key: "dl_ws_joinedthieves", value: 1 } } },
+				{ questID: 1202, cond: { always: true } }
+			]
+		},
+		"14000": {
+			title: "A Candle in the Dark",
+			description: "Mortis needs wards lit before the night turns hungry.",
+			uncomplete: "Bring me 10 candles. The wind is rising.",
+			complete: "Good. The first ward holds.",
+			refuse: "Then keep your lantern close.",
+			type: "collect",
+			category: "Seasonal: Halloween",
+			oneTimeQuest: 1,
+			questTurnIn: 1,
+			targetItems: [{ sectionID: "0x0A28", amount: 10, name: "Candle" }],
+			rewards: [{ type: "gold", amount: 500, name: "Gold" }],
+			nextQuest: [
+				{ questID: 14001, cond: { always: true } }
+			]
+		},
+		"14001": {
+			title: "The Pumpkin Debt",
+			description: "Bring 5 pumpkins for the offering circle.",
+			uncomplete: "I still need 5 pumpkins.",
+			complete: "The circle is fed.",
+			type: "collect",
+			category: "Seasonal: Halloween",
+			oneTimeQuest: 1,
+			questTurnIn: 1,
+			targetItems: [{ sectionID: "0x0C6A", amount: 5, name: "Pumpkin" }],
+			rewards: [{ type: "item", sectionID: "0x1F09", amount: 1, name: "Halloween Token" }]
+		}
 	};
 
 	// Return the full quest list if no questID is provided

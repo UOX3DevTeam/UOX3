@@ -250,3 +250,91 @@ SCRIPT=5802//conversation gump
 CUSTOMINTTAG=QuestID 1//collect fruit quest
 CUSTOMINTTAG=DeliveryQuestID 10//waiting for package
 }
+
+[nail2]
+{//example quest npc 2
+GET=basehuman
+NAME=Nail
+TITLE=the reciever
+ID=0x0190
+PRIV=4
+SKIN=0x840A
+EQUIPITEM=0x2047//afro
+EQUIPITEM=pickaxe
+EQUIPITEM=boots
+COLOR=0x901
+EQUIPITEM=shortpants
+COLOR=0x3B2
+EQUIPITEM=shirt
+COLOR=0x22B
+EQUIPITEM=skullcap
+COLOR=0x177
+EQUIPITEM=halfapron
+COLOR=0x5F1
+EQUIPITEM=0x1414//plategloves
+STR=100 100
+DEX=100 100
+INT=25 25
+SCRIPT=5802//conversation gump
+CUSTOMINTTAG=QuestRootID 1204
+}
+
+[dl_halloween_questgiver]
+{
+GET=basehuman
+NAME=Mortis
+TITLE=the Pumpkin Herald
+ID=0x0190
+PRIV=4
+SKIN=0x83EA
+SCRIPT=5802 // quest_conversation_gump.js (your system)
+CUSTOMINTTAG=QuestRootID 14000
+}
+
+[dl_christmas_questgiver]
+{
+GET=basehuman
+NAME=Hearthwarden
+TITLE=of Yuletide
+ID=0x0190
+PRIV=4
+SKIN=0x83EA
+SCRIPT=5802
+CUSTOMINTTAG=QuestRootID 15000
+}
+
+[dl_july4_questgiver]
+{
+GET=basehuman
+NAME=Captain Bray
+TITLE=of the Founders’ Watch
+ID=0x0190
+PRIV=4
+SKIN=0x83EA
+SCRIPT=5802
+CUSTOMINTTAG=QuestRootID 16000
+}
+
+[dl_easter_questgiver]
+{
+GET=basehuman
+NAME=Meadow-Singer
+TITLE=of Spring
+ID=0x0190
+PRIV=4
+SKIN=0x83EA
+SCRIPT=5802
+CUSTOMINTTAG=QuestRootID 17000
+}
+
+[dl_newyears_questgiver]
+{
+GET=basehuman
+NAME=Timekeeper
+TITLE=of the Turning Year
+ID=0x0190
+PRIV=4
+SKIN=0x83EA
+SCRIPT=5802
+CUSTOMINTTAG=QuestRootID 18000
+}

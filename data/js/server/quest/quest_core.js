@@ -1,9 +1,16 @@
 /// <reference path="../../../definitions.d.ts" />
 // @ts-check
-//const DebugMessages = false;
+
+/** @type { ( player: Character, questID: number ) => void } */
 function StartQuest( player, questID )
 {
+	if( !ValidateObject( player ))
+		return;	
+
 	var socket = player.socket;
+	if( socket == null )
+		return;
+
 	var questProgressArray = ReadQuestProgress( player );
 
 	if( !CheckQuest( player, questID ))
@@ -110,10 +117,17 @@ function StartQuest( player, questID )
 	}
 }
 
+/** @type { ( player: Character, questID: number, mode?: string ) => boolean } */
 function CheckQuest( player, questID, mode)
 {
 	mode = mode || "start"; // default
+	if( !ValidateObject( player ))
+		return false;	
+
 	var socket = player.socket;
+	if( socket == null )
+		return false;
+
 	var playerSerial = player.serial; // Use player serial to identify the quest owner
 	// Fetch quest details using the QuestList trigger
 	var quest = TriggerEvent( 5801, "QuestList", questID );
@@ -155,7 +169,7 @@ function CheckQuest( player, questID, mode)
 			if( questProgressArray[i].questID == questID && questProgressArray[i].serial == playerSerial ) 
 			{
 				socket.SysMessage( GetDictionaryEntry( 19618, socket.language )); // You are already working on this quest.
-				return;
+				return false;
 			}
 		}
 	}
@@ -165,7 +179,7 @@ function CheckQuest( player, questID, mode)
 	{
 		for( var i = 0; i < archivedQuests.length; i++ )
 		{
-			if( archivedQuests[i].questID == questID ) 
+			if( parseInt( archivedQuests[i], 10 ) == questID )
 			{
 				socket.SysMessage( GetDictionaryEntry( 19619, socket.language )); // This quest can only be completed once, and you have already completed it.
 				return false; // Indicate that the quest cannot proceed
@@ -178,7 +192,7 @@ function CheckQuest( player, questID, mode)
 	{
 		for( var i = 0; i < archivedQuests.length; i++ )
 		{
-			if( archivedQuests[i].questID == questID )
+			if( parseInt( archivedQuests[i], 10 ) == questID )
 			{
 				var lastCompleted = archivedQuests[i].lastCompleted || 0;
 				var resetTime = quest.resetDailyTime || 24; // Default reset time is 24 hours
@@ -233,9 +247,16 @@ function onTimer( timerObj, timerID )
 	}
 }
 
+/** @type { ( player: Character, questID: number, identifier: number | string, progressValue: number, type: string ) => any[] } */
 function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 {
+	if( !ValidateObject( player ))
+		return;	
+
 	var socket = player.socket;
+	if( socket == null )
+		return;
+
 	var questProgressArray = ReadQuestProgress( player );
 	var questUpdated = false;
 
@@ -330,7 +351,7 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 						}
 
 						// Check if the item matches the delivery item and has the correct tag
-						var questSectionID = deliveryItem.GetTag( "QuestSectionID" ) || deliveryItem.sectionID;
+						/*var questSectionID = deliveryItem.GetTag( "QuestSectionID" ) || deliveryItem.sectionID;
 						if( currentItem.GetTag( "QuestItem" ) && String( currentItem.sectionID ) == String( quest.deliveryItem.sectionID || currentItem.sectionID == questSectionID  ) && currentItem.amount >= quest.deliveryItem.amount )
 						{
 							hasItem = true;
@@ -344,6 +365,18 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 							{
 								currentItem.Delete(); // Remove the item completely
 							}
+							break;
+						}*/
+						var questSectionID = currentItem.GetTag("QuestSectionID") || currentItem.sectionID;
+						if ( currentItem.GetTag("QuestItem") && String(questSectionID) == String(quest.deliveryItem.sectionID) && currentItem.amount >= quest.deliveryItem.amount )
+						{
+							hasItem = true;
+
+							if (currentItem.amount > quest.deliveryItem.amount)
+								currentItem.amount -= quest.deliveryItem.amount;
+							else
+								currentItem.Delete();
+
 							break;
 						}
 					}
@@ -441,9 +474,16 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 	return questProgressArray;
 }
 
+/** @type { ( player: Character, questID: number ) => void } */
 function CompleteQuest( player, questID )
 {
+	if( !ValidateObject( player ))
+		return;	
+
 	var socket = player.socket;
+	if( socket == null )
+		return;
+
 	var questProgressArray = ReadQuestProgress( player );
 	var newQuestProgressArray = [];
 	var questCompleted = false;
@@ -491,8 +531,11 @@ function CompleteQuest( player, questID )
 		ApplyQuestSetTempTags( player, quest );
 		ApplyQuestSetTempTagDeltas( player, quest );
 
+		ApplyQuestSetWorldState( player, quest );
+		ApplyQuestWorldStateDeltas( player, quest );
+
 		// Cancel any active quest timer for this questID
-		player.KillJSTimer( questID, 5820 );
+		player.KillJSTimer( questID, 5800 );
 
 		// Mark the quest as completed
 		questCompleted = true;
@@ -508,8 +551,12 @@ function CompleteQuest( player, questID )
 	}
 }
 
+/** @type { ( player: Character, quest: any, socket: Socket ) => void } */
 function QuestRewards( player, quest, socket )
 {
+	if( !ValidateObject( player ))
+		return;
+
 	var bankBox = player.FindItemLayer( 29 );
 
 	quest.rewards.forEach( function( reward )
@@ -584,6 +631,7 @@ function QuestRewards( player, quest, socket )
 	});
 }
 
+/** @type { ( player: Character, quest: any ) => void } */
 function ApplyQuestSetTags( player, quest )
 {
 	if( !quest || !quest.setTags )
@@ -604,6 +652,7 @@ function ApplyQuestSetTags( player, quest )
 	}
 }
 
+/** @type { ( player: Character, quest: any ) => void } */
 function ApplyQuestSetTempTags( player, quest )
 {
 	if( !quest || !quest.setTempTags )
@@ -624,6 +673,74 @@ function ApplyQuestSetTempTags( player, quest )
 	}
 }
 
+/** @type { ( player: Character, quest: any ) => void } */
+function ApplyQuestSetWorldState( player, quest )
+{
+	if( !quest || !quest.setWorldState )
+		return;
+
+	for( var worldStateKey in quest.setWorldState )
+	{
+		if( !quest.setWorldState.hasOwnProperty( worldStateKey ) )
+			continue;
+
+		var worldStateValue = quest.setWorldState[worldStateKey];
+
+		// null/undefined => remove the world-state key
+		if( worldStateValue == null )
+		{
+			SetWorldStateInt( player, worldStateKey, null );
+		}
+		else
+		{
+			SetWorldStateInt( player, worldStateKey, ToIntOrZero( worldStateValue ) );
+		}
+	}
+}
+
+/** @type { ( player: Character, quest: any ) => void } */
+function ApplyQuestWorldStateDeltas( player, quest )
+{
+	if( !quest || !quest.worldStateDeltas )
+		return;
+
+	for( var worldStateKey in quest.worldStateDeltas )
+	{
+		if( !quest.worldStateDeltas.hasOwnProperty( worldStateKey ) )
+			continue;
+
+		var deltaAmount = ToIntOrZero( quest.worldStateDeltas[worldStateKey] );
+		var currentWorldStateValue = GetWorldStateInt( player, worldStateKey, 0 );
+		var nextWorldStateValue = currentWorldStateValue + deltaAmount;
+
+		// Optional clamp rules:
+		// - quest.worldStateDeltaRules[worldStateKey] overrides
+		// - else quest.worldStateDeltaRulesDefault
+		var clampRule = ResolveDeltaRule( quest, worldStateKey, "worldStateDeltaRules", "worldStateDeltaRulesDefault" );
+
+		if( clampRule )
+		{
+			var hasMin = clampRule.hasOwnProperty( "min" );
+			var hasMax = clampRule.hasOwnProperty( "max" );
+
+			var minAllowedValue = ( hasMin ? ToIntOrZero( clampRule.min ) : null );
+			var maxAllowedValue = ( hasMax ? ToIntOrZero( clampRule.max ) : null );
+
+			if( hasMin || hasMax )
+			{
+				nextWorldStateValue = ClampInt(
+					nextWorldStateValue,
+					hasMin ? minAllowedValue : null,
+					hasMax ? maxAllowedValue : null
+				);
+			}
+		}
+
+		SetWorldStateInt( player, worldStateKey, nextWorldStateValue );
+	}
+}
+
+/** @type { ( player: Character, quest: any ) => void } */
 function ApplyQuestSetTagDeltas( player, quest )
 {
 	if( !quest || !quest.setTagDeltas )
@@ -656,7 +773,7 @@ function ApplyQuestSetTagDeltas( player, quest )
 	}
 }
 
-// Apply temp tag deltas with optional clamping
+/** @type { ( player: Character, quest: any ) => void } */
 function ApplyQuestSetTempTagDeltas( player, quest )
 {
 	if( !quest || !quest.setTempTagDeltas )
@@ -688,6 +805,7 @@ function ApplyQuestSetTempTagDeltas( player, quest )
 	}
 }
 
+/** @type { ( v: any ) => number } */
 function ToIntOrZero( v )
 {
 	if( v == null || v === "" )
@@ -700,6 +818,7 @@ function ToIntOrZero( v )
 	return n;
 }
 
+/** @type { ( v: number, minVal: number | null, maxVal: number | null ) => number } */
 function ClampInt( v, minVal, maxVal )
 {
 	if( minVal != null && v < minVal ) v = minVal;
@@ -707,13 +826,13 @@ function ClampInt( v, minVal, maxVal )
 	return v;
 }
 
-// Read tag as int; treat missing/non-numeric as 0
+/** @type { ( obj: BaseObject, tagName: string ) => number } */
 function GetIntTagOrZero( obj, tagName )
 {
 	return ToIntOrZero( obj.GetTag( tagName ));
 }
 
-// Safely read a temp tag as int; treat missing/non-numeric as 0
+/** @type { ( obj: BaseObject, tagName: string ) => number } */
 function GetIntTempTagOrZero( obj, tagName )
 {
 	if( !obj.GetTempTag )
@@ -725,6 +844,7 @@ function GetIntTempTagOrZero( obj, tagName )
 // - if quest.deltaRules has a rule for this key, use it
 // - else if quest.deltaRulesDefault exists, use that
 // - else return null (no clamping)
+/** @type { ( quest: any, key: string, rulesObjName: string, defaultRuleName: string ) => any } */
 function ResolveDeltaRule( quest, key, rulesObjName, defaultRuleName )
 {
 	if( !quest )
@@ -741,6 +861,7 @@ function ResolveDeltaRule( quest, key, rulesObjName, defaultRuleName )
 	return null;
 }
 
+/** @type { ( player: Character, reward: any, bankBox: Item, socket: Socket ) => void } */
 function GoldReward( player, reward, bankBox, socket )
 {
 	if( reward.bankgold == 1 )
@@ -764,20 +885,176 @@ function GoldReward( player, reward, bankBox, socket )
 	socket.SysMessage( "You receive a reward: " + reward.amount + " gold!" );
 }
 
+/** @type { ( player: Character, questID: number, socket: Socket ) => void } */
 function StartNextQuestInChain( player, questID, socket )
 {
-	var quest = TriggerEvent( 5801, "QuestList", questID );
-	if( quest && quest.nextQuestID != null && quest.nextQuestID != 0 )
+	if( !ValidateObject( player ))
+		return;
+
+	var completedQuest = TriggerEvent( 5801, "QuestList", questID );
+	if( !completedQuest )
+		return;
+
+	// Dynamic (branching) resolution
+	var nextQuestID = ResolveNextQuestID( player, completedQuest );
+	if( nextQuestID <= 0 )
+		return;
+
+	// Safety: do not auto-start if already active or archived
+	if( HasActiveQuestID( player, nextQuestID ))
+		return;
+
+	if( HasArchivedQuestID( player, nextQuestID ))
+		return;
+
+	var nextQuest = TriggerEvent( 5801, "QuestList", nextQuestID );
+	if( nextQuest )
 	{
-		var nextQuest = TriggerEvent( 5801, "QuestList", quest.nextQuestID );
-		if( nextQuest )
-		{
+		if( socket )
 			socket.SysMessage( "A new quest has been unlocked: " + nextQuest.title );
-			StartQuest( player, parseInt( quest.nextQuestID ));
-		}
+
+		StartQuest( player, nextQuestID );
 	}
 }
 
+/** @type { ( player: Character, questID: number ) => boolean } */
+function HasArchivedQuestID( player, questID )
+{
+	var archivedQuestIDs = ReadArchivedQuests( player ) || [];
+	var questIDInt = parseInt( questID, 10 );
+
+	for( var i = 0; i < archivedQuestIDs.length; i++ )
+	{
+		if( parseInt( archivedQuestIDs[i], 10 ) == questIDInt )
+			return true;
+	}
+	return false;
+}
+
+/** @type { ( player: Character, questID: number ) => boolean } */
+function HasActiveQuestID( player, questID )
+{
+	var activeQuestEntries = ReadQuestProgress( player ) || [];
+	var questIDInt = parseInt( questID, 10 );
+
+	for( var i = 0; i < activeQuestEntries.length; i++ )
+	{
+		var entry = activeQuestEntries[i];
+		if( entry.serial == player.serial && parseInt( entry.questID, 10 ) == questIDInt )
+			return true;
+	}
+	return false;
+}
+
+/** @type { ( player: Character, condition: any ) => boolean } */
+function QuestCondPasses( player, condition )
+{
+	if( !condition )
+		return true;
+
+	// tagEquals: { tag:"X", value: 1 }
+	if( condition.tagEquals )
+	{
+		var tagName = condition.tagEquals.tag;
+		var expectedValue = condition.tagEquals.value;
+
+		var currentValue = player.GetTag( tagName ); // UOX3 returns 0 if missing
+		return ( String( currentValue ) == String( expectedValue ));
+	}
+
+	// tagMin: { tag:"X", value: 10 }
+	if( condition.tagMin )
+	{
+		var minTagName = condition.tagMin.tag;
+
+		var minRequiredValue = parseInt( condition.tagMin.value, 10 );
+		if( isNaN( minRequiredValue )) minRequiredValue = 0;
+
+		var currentTagValue = parseInt( player.GetTag( minTagName ), 10 );
+		if( isNaN( currentTagValue )) currentTagValue = 0;
+
+		return ( currentTagValue >= minRequiredValue );
+	}
+
+	// completedQuest: 123
+	if( condition.completedQuest != null )
+		return HasArchivedQuestID( player, condition.completedQuest );
+
+	// notCompletedQuest: 123
+	if( condition.notCompletedQuest != null )
+		return !HasArchivedQuestID( player, condition.notCompletedQuest );
+
+	// hasQuest: 123
+	if( condition.hasQuest != null )
+		return HasActiveQuestID( player, condition.hasQuest );
+
+	// notHasQuest: 123
+	if( condition.notHasQuest != null )
+		return !HasActiveQuestID( player, condition.notHasQuest );
+
+	// worldStateEquals: { key:"dl_ws_joinedthieves", value: 1 }
+	if( condition.worldStateEquals )
+	{
+		var worldStateKey = condition.worldStateEquals.key;
+		var expectedWSValue = condition.worldStateEquals.value;
+
+		return ( GetWorldStateInt( player, worldStateKey, 0 ) == ToIntOrZero( expectedWSValue ));
+	}
+
+	// worldStateMin: { key:"dl_ws_ironreachrep", value: 10 }
+	if( condition.worldStateMin )
+	{
+		var worldStateKeyMin = condition.worldStateMin.key;
+		var minWorldStateValue = ToIntOrZero( condition.worldStateMin.value );
+
+		return ( GetWorldStateInt( player, worldStateKeyMin, 0 ) >= minWorldStateValue );
+	}
+
+	// always: true (optional convenience)
+	if( condition.always )
+		return true;
+
+	return true;
+}
+
+/** @type { ( player: Character, quest: any ) => number } */
+function ResolveNextQuestID( player, quest )
+{
+	if( !quest )
+		return 0;
+
+	// Branching chain: nextQuest: [ { questID, cond }, ... ]
+	if( quest.nextQuest && quest.nextQuest.length )
+	{
+		for( var i = 0; i < quest.nextQuest.length; i++ )
+		{
+			var nextQuestRule = quest.nextQuest[i];
+			if( !nextQuestRule )
+				continue;
+
+			if( QuestCondPasses( player, nextQuestRule.cond ))
+			{
+				var resolvedQuestID = parseInt( nextQuestRule.questID, 10 );
+				if( !isNaN( resolvedQuestID ) && resolvedQuestID > 0 )
+					return resolvedQuestID;
+			}
+		}
+		// No rule matched
+		return 0;
+	}
+
+	// Old single-field fallback
+	if( quest.nextQuestID != null && quest.nextQuestID != 0 )
+	{
+		var fallbackQuestID = parseInt( quest.nextQuestID, 10 );
+		if( !isNaN( fallbackQuestID ) && fallbackQuestID > 0 )
+			return fallbackQuestID;
+	}
+
+	return 0;
+}
+
+/** @type { ( creature: Character, player: Character ) => boolean } */
 function CreatureKilled( creature, player )
 {
 	var questProgressArray = ReadQuestProgress( player );
@@ -812,9 +1089,16 @@ function CreatureKilled( creature, player )
 	}
 }
 
+/** @type { ( player: Character, item: Item, isToggledOff?: boolean ) => void } */
 function ItemCollected( player, item, isToggledOff )
 {
+	if( !ValidateObject( player ))
+		return;
+
 	var socket = player.socket;
+	if( socket == null)
+		return;
+
 	// Default the isToggledOff value
 	if( typeof isToggledOff == "undefined" ) 
 	{
@@ -912,9 +1196,15 @@ function ItemCollected( player, item, isToggledOff )
 	socket.SysMessage( "Item does not match any quest requirements." );
 }
 
+/** @type { ( pEquipper: Character, iEquipped: Item ) => boolean } */
 function EquipAttempt( pEquipper, iEquipped )
 {
+	if( !ValidateObject( pEquipper ))
+		return false;
+
 	var socket = pEquipper.socket;
+	if( socket == null)
+		return false;
 
 	if( iEquipped.GetTag( "QuestItem" ))
 	{
@@ -982,6 +1272,7 @@ function EquipAttempt( pEquipper, iEquipped )
 	return true;
 }
 
+/** @type { ( pPlayer: Character, skill: number, skillGainAmount: number ) => boolean } */
 function AccelerateSkillGain( pPlayer, skill, skillGainAmount )
 {
 	var activeQuests = ReadQuestProgress( pPlayer );
@@ -1024,8 +1315,8 @@ function AccelerateSkillGain( pPlayer, skill, skillGainAmount )
 	return true;
 }
 
-//Helper Function for skillnames
-function GetSkillName(skillID)
+/** @type { ( skillID: number ) => string } */
+function GetSkillName( skillID )
 {
 	var skillNames = [
 		"alchemy", "anatomy", "animallore", "itemid", "armslore", "parrying", "begging",
@@ -1062,12 +1353,13 @@ var skillAliasMap = {
 	"chivalry": "chivalry", "bushido": "bushido", "ninjitsu": "ninjitsu", "spellweaving": "spellweaving"
 };
 
+/** @type { ( skill: string | number ) => string } */
 function NormalizeKey( skill )
 {
 	return String( skill || "" ).replace( /\s+/g, "" ).toLowerCase();
 }
 
-// Accepts numeric ID or name; returns canonical baseskills key, or null
+/** @type { ( skillNameOrId: string | number ) => string | null } */
 function resolveSkillKey( skillNameOrId )
 {
 	var skillNumber = parseInt( skillNameOrId, 10 );
@@ -1085,6 +1377,7 @@ function resolveSkillKey( skillNameOrId )
 	return key || null;
 }
 
+/** @type { ( player: Character, key: string ) => number } */
 function GetBaseSkillTenths( player, key )
 {
 	// baseskills.* is 0..1000
@@ -1092,11 +1385,13 @@ function GetBaseSkillTenths( player, key )
 	return ( typeof value === "number" ) ? ( value | 0 ) : 0;
 }
 
+/** @type { ( player: Character, key: string, valTenths: number ) => void } */
 function SetBaseSkillTenths( player, key, valTenths )
 {
 	player.baseskills[key] = ( valTenths | 0 );
 }
 
+/** @type { ( player: Character, key: string ) => number } */
 function GetSkillCapTenths( player, key )
 {
 	var cap = player.skillCaps[key];
@@ -1104,7 +1399,7 @@ function GetSkillCapTenths( player, key )
 	return ( typeof cap === "number" && cap > 0 ) ? ( cap | 0 ) : 1000;
 }
 
-// Add to a specific skill (amount = decimal points, e.g. 2.5 -> +2.5)
+/** @type { ( player: Character, reward: any, socket: Socket ) => void } */
 function SkillReward( player, reward, socket )
 {
 	var key = resolveSkillKey( reward.skill );
@@ -1135,6 +1430,7 @@ function SkillReward( player, reward, socket )
 }
 
 // Optional pooled points (stored in tenths under 'UnspentSkillPoints' tag)
+/** @type { ( player: Character, reward: any, socket: Socket ) => void } */
 function SkillPointsPoolReward( player, reward, socket )
 {
 	var addTenths = Math.round(( +reward.amount || 0 ) * 10 );
@@ -1150,6 +1446,7 @@ function SkillPointsPoolReward( player, reward, socket )
 }
 
 // Spend pooled points into a specific skill
+/** @type { ( player: Character, socket: Socket, skillNameOrId: string | number, amount: number ) => void } */
 function SpendSkillPoints( player, socket, skillNameOrId, amount ) 
 {
 	var key = resolveSkillKey( skillNameOrId );
@@ -1183,11 +1480,10 @@ function SpendSkillPoints( player, socket, skillNameOrId, amount )
 }
 
 //////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
 //							Save/Read Functions									//
 //////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
 
+/** @type { ( player: Character ) => any } */
 function ReadPlayerSettings( player )
 {
 	var mFile = new UOXCFile();
@@ -1248,6 +1544,7 @@ function ReadPlayerSettings( player )
 	return settings; // Return parsed settings
 }
 
+/** @type { ( player: Character, settings: any ) => boolean } */
 function SavePlayerSettings( player, settings ) 
 {
 	var mFile = new UOXCFile();
@@ -1291,6 +1588,7 @@ function SavePlayerSettings( player, settings )
 	return false; // Failed to save settings
 }
 
+/** @type { ( player: Character, failedQuest: any ) => void } */
 function LogFailedQuest( player, failedQuest )
 {
 	var mFile = new UOXCFile();
@@ -1345,6 +1643,7 @@ function LogFailedQuest( player, failedQuest )
 			"TimeLimit=" + ( failedQuest.timeLimit || 0 ) + "\n" +
 			"Completed=0\n" +
 			"QuestTurnIn=0\n\n";
+			"Failed=1\n" +
 
 		mFile.Write( failedEntry );
 		mFile.Close();
@@ -1352,6 +1651,7 @@ function LogFailedQuest( player, failedQuest )
 	}
 }
 
+/** @type { ( player: Character ) => number[] } */
 function ReadFailedQuests( player )
 {
 	var mFile = new UOXCFile();
@@ -1412,6 +1712,7 @@ function ReadFailedQuests( player )
 	return failedQuests;
 }
 
+/** @type { ( player: Character, completedQuest: any ) => void } */
 function ArchiveCompletedQuest( player, completedQuest )
 {
 	var mFile = new UOXCFile();
@@ -1498,6 +1799,7 @@ function ArchiveCompletedQuest( player, completedQuest )
 	}
 }
 
+/** @type { ( player: Character ) => number[] } */
 function ReadArchivedQuests( player ) 
 {
 	var mFile = new UOXCFile();
@@ -1560,6 +1862,7 @@ function ReadArchivedQuests( player )
 	return archivedQuests; // Return array of quest IDs
 }
 
+/** @type { ( player: Character, questProgressArray: any[] ) => boolean } */
 function WriteQuestProgress( player, questProgressArray )
 {
 	var mFile = new UOXCFile();
@@ -1572,27 +1875,6 @@ function WriteQuestProgress( player, questProgressArray )
 		for( var i = 0; i < questProgressArray.length; i++ )
 		{
 			var progressEntry = questProgressArray[i];
-
-			/*if( DebugMessages ) 
-			{
-				var debugStr = "Serial=" + progressEntry.serial +
-					", QuestID=" + progressEntry.questID +
-					", QuestProgress=" + progressEntry.questProgress +
-					", Completed=" + progressEntry.completed +
-					", harvestKills=";
-				if( progressEntry.harvestKills )
-				{
-					for( var key in progressEntry.harvestKills )
-					{
-						if( progressEntry.harvestKills.hasOwnProperty( key )) 
-						{
-							debugStr += key + ":" + progressEntry.harvestKills[key] + " ";
-						}
-					}
-				}
-
-				player.SysMessage( "Saving progressEntry: " + debugStr );
-			}*/
 
 			// Serialize kills
 			var killsStr = "";
@@ -1628,12 +1910,6 @@ function WriteQuestProgress( player, questProgressArray )
 				}
 			}
 
-			/*if( DebugMessages )
-			{
-				// Debug: Print serialized kills
-				player.SysMessage( "Writing harvestKills: " + killsStr );
-			}*/
-
 			// Write all required fields
 			var formattedEntry =
 				"Serial=" + ( progressEntry.serial || "undefined" ) + "\n" +
@@ -1660,6 +1936,7 @@ function WriteQuestProgress( player, questProgressArray )
 	return false;
 }
 
+/** @type { ( player: Character ) => any[] } */
 function ReadQuestProgress( player )
 {
 	var mFile = new UOXCFile();
@@ -1678,12 +1955,6 @@ function ReadQuestProgress( player )
 
 			// Normalize line: Remove unexpected characters
 			line = manualTrim( line.replace( /[^\x20-\x7E]/g, "" ));
-
-			/*if( DebugMessages ) 
-			{
-				// Debug: Print normalized line
-				player.SysMessage( "Normalized line: " + line );
-			}*/
 
 			if( line == "" )
 			{
@@ -1705,12 +1976,6 @@ function ReadQuestProgress( player )
 				var key = manualTrim( parts[0] ).toLowerCase(); // Convert key to lowercase
 				var value = manualTrim( parts[1] );
 
-				/*if( DebugMessages )
-				{
-					// Debug: Log parsed key-value pairs
-					player.SysMessage( "Parsed key: " + key + ", value: " + value );
-				}*/
-
 				currentEntry[key] = value;
 			}
 		}
@@ -1725,19 +1990,15 @@ function ReadQuestProgress( player )
 		mFile.Close();
 		mFile.Free();
 	}
-	/*else
-	{
-		if( DebugMessages )
-		{
-			player.SysMessage( "Failed to open or read quest progress file." );
-		}
-	}*/
 	return questProgressArray;
 }
 
-// Helper function to finalize and normalize quest entry
+/** @type { ( entry: any, player: Character ) => void } */
 function finalizeQuestEntry( entry, player )
 {
+	entry.serial = parseInt( entry.serial || "0", 10 );
+	if( isNaN( entry.serial ) )
+		entry.serial = 0;
 	entry.questID = parseInt( entry.questid || "0", 10 );
 	entry.completed = entry.completed == "1";
 	entry.questTurnIn = entry.questturnin == "1";
@@ -1753,24 +2014,14 @@ function finalizeQuestEntry( entry, player )
 	processKills(entry, player);
 }
 
-// Helper function to process collectedItems
+/** @type { ( entry: any, player: Character ) => void } */
 function processCollectedItems( entry, player )
 {
 	entry.collectedItems = {};
 	var collectedItemsStr = entry.collecteditems || ""; // Use consistent key
 
-	/*if( DebugMessages )
-	{
-		// Debug: Log the raw collected items string
-		player.SysMessage( "Processing collected items: " + collectedItemsStr );
-	}*/
-
 	if( collectedItemsStr == "" ) 
 	{
-		/*if( DebugMessages ) 
-		{
-			player.SysMessage( "No collected items to process." );
-		}*/
 		return;
 	}
 
@@ -1783,22 +2034,11 @@ function processCollectedItems( entry, player )
 			var key = manualTrim( pair[0] );
 			var value = parseInt( manualTrim( pair[1] ), 10 );
 			entry.collectedItems[key] = value;
-
-			/*if( DebugMessages )
-			{
-				// Debug: Log each parsed collected item entry
-				player.SysMessage( "Parsed collected item - ID: " + key + ", Count: " + value );
-			}*/
 		}
 	}
-
-	/*if( DebugMessages )
-	{
-		// Debug: Log the final processed collected items object
-		player.SysMessage( "Final collectedItems object: " + objectToString( entry.collectedItems ));
-	}*/
 }
 
+/** @type { ( entry: any, player: Character ) => void } */
 function processKills( entry, player )
 {
 	// Initialize harvestKills as an object if not already
@@ -1807,19 +2047,9 @@ function processKills( entry, player )
 	// Use the correct key to extract the raw kills string
 	var killsStr = entry.harvestkills || ""; // Note: lowercase to match file format
 
-	/*if( DebugMessages )
-	{
-		// Debug: Log the raw kills string
-		player.SysMessage( "Processing kills: " + killsStr );
-	}*/
-
 	// If killsStr is empty, there�s nothing to process
 	if( killsStr == "" )
 	{
-		/*if( DebugMessages )
-		{
-			player.SysMessage( "No kills to process." );
-		}*/
 		return;
 	}
 
@@ -1832,48 +2062,165 @@ function processKills( entry, player )
 			var key = manualTrim( pair[0] );
 			var value = parseInt( manualTrim( pair[1] ), 10 );
 			entry.harvestKills[key] = value;
-
-			/*if( DebugMessages )
-			{
-				// Debug: Log each parsed kill entry
-				player.SysMessage( "Parsed kill - NPC: " + key + ", Count: " + value );
-			}*/
 		}
 	}
-
-	/*if( DebugMessages ) 
-	{
-		// Debug: Log the reconstructed harvestKills object
-		player.SysMessage( "Final harvestKills object: " + objectToString( entry.harvestKills ));
-	}*/
 }
 
-//////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
-//					Utility Functions											//
-//////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
-
-// Utility function to trim whitespace
+/** @type { ( str: string ) => string } */
 function manualTrim( str )
 {
 	return str.replace( /^\s+|\s+$/g, "" );
 }
 
-//Custom Object-to-String Formatter
-function objectToString( obj )
+//////////////////////////////////////////////////////////////////////////////////
+//                          World State (file-backed)                           //
+//////////////////////////////////////////////////////////////////////////////////
+
+// PlayerSettings key used for world state blob (PER-CHAR by serial)
+/** @type { ( player: Character ) => string } */
+function GetWorldStateKey( player )
 {
-	var result = "";
-	for( var key in obj )
+	// Stored inside the account-based PlayerSettings file, but keyed per character.
+	return "WorldState_" + player.serial;
+}
+
+/** @type { ( player: Character ) => Record<string, number> } */
+function ReadWorldState( player )
+{
+	var playerSettings = ReadPlayerSettings( player ) || {};
+	var worldStateKey = GetWorldStateKey( player );
+	var rawBlob = playerSettings[worldStateKey];
+
+	// PlayerSettings parses quoted strings, so rawBlob is either string or undefined
+	if( typeof rawBlob != "string" || rawBlob == "" )
+		return {};
+
+	return ParseWorldStateBlob( rawBlob );
+}
+
+/** @type { ( player: Character, worldState: Record<string, number> ) => boolean } */
+function SaveWorldState( player, worldState )
+{
+	var playerSettings = ReadPlayerSettings( player ) || {};
+	var worldStateKey = GetWorldStateKey( player );
+
+	playerSettings[worldStateKey] = SerializeWorldStateBlob( worldState );
+	return SavePlayerSettings( player, playerSettings );
+}
+
+/** @type { ( player: Character, stateKey: string, defaultValue?: number ) => number } */
+function GetWorldStateInt( player, stateKey, defaultValue )
+{
+	var worldState = ReadWorldState( player );
+	var normalizedKey = NormalizeWSKey( stateKey );
+
+	if( worldState.hasOwnProperty( normalizedKey ) )
+		return ToIntOrZero( worldState[normalizedKey] );
+
+	return ToIntOrZero( defaultValue );
+}
+
+/** @type { ( player: Character, stateKey: string, value: number | null | undefined ) => boolean } */
+function SetWorldStateInt( player, stateKey, value )
+{
+	var worldState = ReadWorldState( player );
+	var normalizedKey = NormalizeWSKey( stateKey );
+
+	// null/undefined => remove key
+	if( value === null || value === undefined )
 	{
-		if( obj.hasOwnProperty( key ))
+		if( worldState.hasOwnProperty( normalizedKey ) )
+			delete worldState[normalizedKey];
+
+		return SaveWorldState( player, worldState );
+	}
+
+	worldState[normalizedKey] = ToIntOrZero( value );
+	return SaveWorldState( player, worldState );
+}
+
+/** @type { ( player: Character, stateKey: string, delta: number, min?: number | null, max?: number | null ) => number } */
+function AddWorldStateDelta( player, stateKey, delta, min, max )
+{
+	var currentValue = GetWorldStateInt( player, stateKey, 0 );
+	var nextValue = currentValue + ToIntOrZero( delta );
+
+	if( min != null && nextValue < min ) nextValue = min;
+	if( max != null && nextValue > max ) nextValue = max;
+
+	SetWorldStateInt( player, stateKey, nextValue );
+	return nextValue;
+}
+
+/** @type { ( stateKey: string ) => string } */
+function NormalizeWSKey( stateKey )
+{
+	// Keep it simple + stable. Lowercase prevents duplicates.
+	return String( stateKey || "" ).replace( /^\s+|\s+$/g, "" ).toLowerCase();
+}
+
+/** @type { ( rawBlob: string ) => Record<string, number> } */
+function ParseWorldStateBlob( rawBlob )
+{
+	var worldState = {};
+	rawBlob = String( rawBlob || "" );
+
+	if( rawBlob == "" )
+		return worldState;
+
+	var pairs = rawBlob.split( "," );
+	for( var i = 0; i < pairs.length; i++ )
+	{
+		var pairText = manualTrim( pairs[i] );
+		if( pairText == "" )
+			continue;
+
+		var keyValuePair = pairText.split( ":" );
+		if( keyValuePair.length != 2 )
+			continue;
+
+		var normalizedKey = NormalizeWSKey( keyValuePair[0] );
+		if( normalizedKey == "" )
+			continue;
+
+		var valueInt = parseInt( manualTrim( keyValuePair[1] ), 10 );
+		if( isNaN( valueInt ) )
+			valueInt = 0;
+
+		worldState[normalizedKey] = valueInt;
+	}
+
+	return worldState;
+}
+
+/** @type { ( worldState: Record<string, number> ) => string } */
+function SerializeWorldStateBlob( worldState )
+{
+	if( !worldState )
+		return "";
+
+	// stable order (so diffs are clean)
+	var normalizedKeys = [];
+	for( var key in worldState )
+	{
+		if( worldState.hasOwnProperty( key ) )
 		{
-			if( result.length > 0 )
-			{
-				result += ", ";
-			}
-			result += key + ": " + obj[key];
+			var normalizedKey = NormalizeWSKey( key );
+			if( normalizedKey != "" )
+				normalizedKeys.push( normalizedKey );
 		}
 	}
-	return "{" + result + "}";
+	normalizedKeys.sort();
+
+	var outBlob = "";
+	for( var i = 0; i < normalizedKeys.length; i++ )
+	{
+		var normalizedKey = normalizedKeys[i];
+		var valueInt = ToIntOrZero( worldState[normalizedKey] );
+
+		if( outBlob.length > 0 ) outBlob += ",";
+		outBlob += normalizedKey + ":" + valueInt;
+	}
+
+	return outBlob;
 }
