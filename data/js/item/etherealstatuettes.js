@@ -90,7 +90,7 @@ function onUseChecked( pUser, iUsed )
 
 	pUser.DoAction( 230 );
 	pUser.SetTag( "EtherealMountStatueSerial", iUsed.serial.toString() );
-	pUser.SetTag( "EtherealMountSectionID", iUsed.sectionID.toString().toLowerCase() );
+	pUser.SetTag( "EtherealMountSectionID", iUsed.sectionID );
 	iUsed.SetTempTag( "castDelayed", iTime.toString() );
 	pUser.SetTempTag( "statueDelayed", true );
 	pUser.StartTimer( 1300, 1, 5300 );
@@ -109,6 +109,7 @@ function onTimer( pUser, timerID )
 		pSocket.SysMessage( GetDictionaryEntry( 6587, pSocket.language )); // You have been disrupted while attempting to summon your ethereal mount!
 		pUser.SetTag( "EtherealMountStatueSerial", null );
 		pUser.SetTag( "EtherealMountSectionID", null );
+		pUser.SetTempTag( "statueDelayed", null );
 		pUser.frozen = false;
 		return;
 	}
@@ -118,6 +119,7 @@ function onTimer( pUser, timerID )
 		pSocket.SysMessage( GetDictionaryEntry( 6587, pSocket.language )); // You have been disrupted while attempting to summon your ethereal mount!
 		pUser.SetTag( "EtherealMountStatueSerial", null );
 		pUser.SetTag( "EtherealMountSectionID", null );
+		pUser.SetTempTag( "statueDelayed", null );
 		pUser.frozen = false;
 		return;
 	}
@@ -138,82 +140,87 @@ function onTimer( pUser, timerID )
 	{
 		var etherealSerial = parseInt( pUser.GetTag( "EtherealMountStatueSerial" ));
 		var etherealSectionID = pUser.GetTag( "EtherealMountSectionID" );
-		var etherealStatuette = CalcItemFromSer( etherealSerial );
 
-		if( !ValidateObject( pUser ) || pUser.mounted || pUser.dead || pUser.npc )
-			return;
-
-		var statueMap = {
-			"etherealhorsestatuette": { section: "etherealhorse", color: 0x4001 },
-			"etherealllamastatuette": { section: "ethereal_llama", color: 0x4001 },
-			"etherealostardstatuette": { section: "etherealostard", color: 0x4001 },
-			"etherealridgebackstatuette": { section: "etherealridgeback", color: 0x4001 },
-			"etherealswampdragonstatuette": { section: "etherealswampdragon", color: 0x4001 },
-			"etherealbeetlestatuette": { section: "etherealbeetle", color: 0x4001 },
-			"etherealkirinstatuette": { section: "etherealkirin", color: 0x4001 },
-			"etherealunicornstatuette": { section: "etherealunicorn", color: 0x4001 },
-			"etherealcusidhestatuette": { section: "cusidhe", color: 0x4001  },
-			"etherealreptalonstatuette": { section: "hiryu", color: 0x4001  },
-			"etherealhiryustatuette": { section: "reptalon", color: 0x4001  },
-			"etherealancienthellhoundstatuette": { section: "ancienthellhound", color: 0x4001   },
-			"chargerofthefallenstatuette": { section: "chargerofthefallen" },
-			"rideablebourastatuette": { section: "boura" },
-			"lasherstatuette": { section: "lasher" },
-			"etherealdragonstatuette": { section: "serpentinedragin", color: 0x4001  },
-			"etherealwarboarstatuette": { section: "warboar", color: 0x4001 },
-			"tarantulastatuette": { section: "tarantula" },
-			"etherealtigerstatuette": { section: "etherealtiger", color: 0x4001 },
-			"rideablepolarbearstatuette": { section: "polarbear" },
-			"windrunnerstatuette": { section: "windrunner" },
-			"eowmustatuette": { section: "eowmu" },
-			"coconutcrabstatuette": { section: "coconutcrab" },
-			"capybarastatuette": { section: "capybara" },
-			"skeletalcatstatuette": { section: "skeletalcat" },
-			"manticorestatuette": { section: "manticore" },
-			"molderingursinestatuette": { section: "molderingursine" }
-		};
-
-		var statueData = statueMap[etherealSectionID];
-
-		if( !statueData )
+		if( etherealSectionID != 0 )
 		{
-			pUser.SetTag( "EtherealMountStatueSerial", null );
-			pUser.SetTag( "EtherealMountSectionID", null );
-			pUser.SetTempTag( "statueDelayed", null );
-			pUser.frozen = false;
-			return;
-		}
+			etherealSectionID = etherealSectionID.toLowerCase();
+			var etherealStatuette = CalcItemFromSer( etherealSerial );
 
-		// Check retouching style: transparent or normal
-		var retouchingStyle = etherealStatuette.GetTag( "retouching" );
-		var savedHue = parseInt( etherealStatuette.GetTag( "saveColor" ));
-		var customHue = etherealStatuette.color;
-		var itemMade = CreateDFNItem( pSocket, pUser, statueData.section, 1, "ITEM", true );
-		if( itemMade )
-		{
-			itemMade.container = pUser;
-			itemMade.layer = 0x19;
+			if( !ValidateObject( pUser ) || pUser.mounted || pUser.dead || pUser.npc )
+				return;
 
-			if( retouchingStyle == "transparent" )
+			var statueMap = {
+				"etherealhorsestatuette": { section: "etherealhorse", color: 0x4001 },
+				"etherealllamastatuette": { section: "ethereal_llama", color: 0x4001 },
+				"etherealostardstatuette": { section: "etherealostard", color: 0x4001 },
+				"etherealridgebackstatuette": { section: "etherealridgeback", color: 0x4001 },
+				"etherealswampdragonstatuette": { section: "etherealswampdragon", color: 0x4001 },
+				"etherealbeetlestatuette": { section: "etherealbeetle", color: 0x4001 },
+				"etherealkirinstatuette": { section: "etherealkirin", color: 0x4001 },
+				"etherealunicornstatuette": { section: "etherealunicorn", color: 0x4001 },
+				"etherealcusidhestatuette": { section: "cusidhe", color: 0x4001  },
+				"etherealreptalonstatuette": { section: "hiryu", color: 0x4001  },
+				"etherealhiryustatuette": { section: "reptalon", color: 0x4001  },
+				"etherealancienthellhoundstatuette": { section: "ancienthellhound", color: 0x4001   },
+				"chargerofthefallenstatuette": { section: "chargerofthefallen" },
+				"rideablebourastatuette": { section: "boura" },
+				"lasherstatuette": { section: "lasher" },
+				"etherealdragonstatuette": { section: "serpentinedragin", color: 0x4001  },
+				"etherealwarboarstatuette": { section: "warboar", color: 0x4001 },
+				"tarantulastatuette": { section: "tarantula" },
+				"etherealtigerstatuette": { section: "etherealtiger", color: 0x4001 },
+				"rideablepolarbearstatuette": { section: "polarbear" },
+				"windrunnerstatuette": { section: "windrunner" },
+				"eowmustatuette": { section: "eowmu" },
+				"coconutcrabstatuette": { section: "coconutcrab" },
+				"capybarastatuette": { section: "capybara" },
+				"skeletalcatstatuette": { section: "skeletalcat" },
+				"manticorestatuette": { section: "manticore" },
+				"molderingursinestatuette": { section: "molderingursine" }
+			};
+
+			var statueData = statueMap[etherealSectionID];
+
+			if( !statueData )
 			{
-				itemMade.SetTag( "saveColor", customHue );
-				itemMade.color = 0x4001;
-				pUser.SetTag( "retouching", "transparent" );
+				pUser.SetTag( "EtherealMountStatueSerial", null );
+				pUser.SetTag( "EtherealMountSectionID", null );
+				pUser.SetTempTag( "statueDelayed", null );
+				pUser.frozen = false;
+				return;
 			}
-			else
+
+			// Check retouching style: transparent or normal
+			var retouchingStyle = etherealStatuette.GetTag( "retouching" );
+			var savedHue = parseInt( etherealStatuette.GetTag( "saveColor" ));
+			var customHue = etherealStatuette.color;
+			var itemMade = CreateDFNItem( pSocket, pUser, statueData.section, 1, "ITEM", true );
+			if( itemMade )
 			{
-				// Use custom dyed hue if present, else fallback to default
-				if( customHue != null && customHue != 0 || savedHue != 0)
+				itemMade.container = pUser;
+				itemMade.layer = 0x19;
+
+				if( retouchingStyle == "transparent" )
 				{
-					itemMade.color = customHue;
-					pUser.SetTag( "customhue", customHue );
 					itemMade.SetTag( "saveColor", customHue );
+					itemMade.color = 0x4001;
+					pUser.SetTag( "retouching", "transparent" );
 				}
-				else if( statueData.color != undefined )
+				else
 				{
-					itemMade.color = statueData.color;
+					// Use custom dyed hue if present, else fallback to default
+					if( customHue != null && customHue != 0 || savedHue != 0)
+					{
+						itemMade.color = customHue;
+						pUser.SetTag( "customhue", customHue );
+						itemMade.SetTag( "saveColor", customHue );
+					}
+					else if( statueData.color != undefined )
+					{
+						itemMade.color = statueData.color;
+					}
+					pUser.SetTag( "retouching", "normal" );
 				}
-				pUser.SetTag( "retouching", "normal" );
 			}
 		}
 
