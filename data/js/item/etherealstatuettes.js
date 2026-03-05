@@ -136,6 +136,7 @@ function onTimer( pUser, timerID )
 		pUser.StartTimer( 1300, timerID + 1, 5300 );
 	}
 
+	let mountSpawned = false;
 	if( timerID == timeId )
 	{
 		var etherealSerial = parseInt( pUser.GetTag( "EtherealMountStatueSerial" ));
@@ -199,6 +200,8 @@ function onTimer( pUser, timerID )
 			{
 				itemMade.container = pUser;
 				itemMade.layer = 0x19;
+				pUser.isonhorse = true;
+				mountSpawned = true;
 
 				if( retouchingStyle == "transparent" )
 				{
@@ -222,6 +225,16 @@ function onTimer( pUser, timerID )
 					pUser.SetTag( "retouching", "normal" );
 				}
 			}
+		}
+
+		if( mountSpawned == false )
+		{
+			pSocket.SysMessage( GetDictionaryEntry( 6587, pSocket.language )); // You have been disrupted while attempting to summon your ethereal mount!
+			pUser.SetTag( "EtherealMountStatueSerial", null );
+			pUser.SetTag( "EtherealMountSectionID", null );
+			pUser.SetTempTag( "statueDelayed", null );
+			pUser.frozen = false;
+			return;
 		}
 
 		// Increase pet control slots in use for owner, if feature is enabled
