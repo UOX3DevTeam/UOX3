@@ -77,7 +77,7 @@ function DismountEtherealMount( pUser )
 				{
 					iMountStatue.SetTag( "retouching", "normal" );
 					iMountStatue.SetTag( "saveColor", customHue );
-					if (customHue != null && customHue != 0)
+					if( customHue != null && customHue != 0 )
 					{
 						iMountStatue.color = customHue;
 					}
@@ -87,9 +87,9 @@ function DismountEtherealMount( pUser )
 						iMountStatue.color = customHue2; // Default color for ethereal mounts
 					}
 				}
-
+				pUser.isonhorse = false;
 				pUser.SetTag( "retouching", null );
-				pUser.RemoveScriptTrigger(5301);
+				pUser.RemoveScriptTrigger( 5301 );
 				pUser.controlSlotsUsed = Math.max( 0, pUser.controlSlotsUsed - 1 );
 				etherealMount.Delete();
 			}

@@ -1065,7 +1065,7 @@ function ChampAltars_RemoveIndex( socket, index )
 		socket.SysMessage( "That altar no longer exists. Cleaning registry entry." );
 		ChampReg_RemoveSerial( e.serial );
 		socket.champAltarsList = ChampReg_CleanupMissing();
-		ChampAltars_Open( socket );
+		ChampAltarsMenu( socket );
 		return;
 	}
 
@@ -1078,7 +1078,7 @@ function ChampAltars_RemoveIndex( socket, index )
 	socket.SysMessage( "Removed champion altar: " + e.type + " at " + e.x + "," + e.y + "." );
 
 	socket.champAltarsList = ChampReg_CleanupMissing();
-	ChampAltars_Open( socket );
+	ChampAltarsMenu( socket );
 }
 
 /** @type { ( str: string ) => string } */
