@@ -49,7 +49,7 @@
  * =============================================================================
  *
  *  {
- *      questID: 20000,
+ *      questID: 1,
  *      title: "A Simple Task",
  *      description: "Bring me 10 bandages.",
  *      type: "collect",
@@ -366,3 +366,32 @@
  *
  * =============================================================================
  */
+
+Example of a quest npc that will call quest 1
+[mugg]
+{
+GET=basehuman
+NAME=Mugg the Miner
+TITLE=Quest Giver
+ID=0x0190
+PRIV=4
+SKIN=0x840A
+EQUIPITEM=0x2047//afro
+EQUIPITEM=pickaxe
+EQUIPITEM=boots
+COLOR=0x901
+EQUIPITEM=shortpants
+COLOR=0x3B2
+EQUIPITEM=shirt
+COLOR=0x22B
+EQUIPITEM=skullcap
+COLOR=0x177
+EQUIPITEM=halfapron
+COLOR=0x5F1
+EQUIPITEM=0x1414//plategloves
+STR=100 100
+DEX=100 100
+INT=25 25
+SCRIPT=5802//questconversation.js
+CUSTOMINTTAG=QuestID 1
+}
