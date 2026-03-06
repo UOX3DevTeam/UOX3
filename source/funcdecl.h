@@ -63,7 +63,8 @@ CMultiObj *	FindMulti( CBaseObject *i );
 // Item functions
 //o------------------------------------------------------------------------------------------------o
 CItem *GetItemAtXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceId );
-CItem *FindItemNearXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id, UI16 instanceId );
+CItem *FindNearestItemNearXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id, UI16 instanceId );
+CItem *FindNearestItemBySectionNearXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, const std::string &sectionId, UI16 instanceId );
 
 //o------------------------------------------------------------------------------------------------o
 // Calculation functions (socket, char, item and so forth)

@@ -683,6 +683,13 @@ ADDITEM=0x09f1,1// cut of raw ribs
 ADDITEM=0x1078,20// Pile of hides
 }
 
+//rikktor
+[CARVE 101]
+{
+ADDITEM=0x0f82,78
+ADDITEM=0xC006,20
+}
+
 [CARVE HUMAN]
 {
 ADDITEM=0x1DAE,1058

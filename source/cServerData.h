@@ -212,7 +212,7 @@ private:
 
 	// Once over 62, bitsets are costly.  std::vector<bool> has a special exception in the c++ specificaiton, to minimize wasted space for bools
 	// These should be updated
-	std::bitset<120>	boolVals;			// Many values stored this way, rather than using bools.
+	std::bitset<121>	boolVals;			// Many values stored this way, rather than using bools.
 	std::bitset<64>		spawnRegionsFacets;	// Used to determine which facets to enable spawn regions for, set in UOX>INI
 	std::bitset<64>		moongateFacets;		// Used to determine which facets to enable moongates for, set in UOX>INI
 
@@ -509,6 +509,9 @@ public:
 
 	auto		UseUnicodeMessages( bool value ) -> void;
 	auto		UseUnicodeMessages() const -> bool;
+
+	auto		EventManagerSystem( bool value ) -> void;
+	auto		EventManagerSystem() const -> bool;
 
 	SI16		ServerMoon( SI16 slot ) const;
 	LIGHTLEVEL	WorldLightDarkLevel() const;

@@ -74,6 +74,7 @@ static JSFunctionSpec my_functions[] =
 	{ "FindMulti",					SE_FindMulti,				4, 0 },
 	{ "GetItem",					SE_GetItem,					4, 0 },
 	{ "FindItem",					SE_FindItem,				5, 0 },
+	{ "FindItemBySection",			SE_FindItemBySection,		5, 0 },
 	{ "PossessTown",				SE_PossessTown,				2, 0 },
 	{ "IsRaceWeakToWeather",		SE_IsRaceWeakToWeather,		2, 0 },
 	{ "GetRaceSkillAdjustment",		SE_GetRaceSkillAdjustment,	2, 0 },
@@ -138,7 +139,8 @@ static JSFunctionSpec my_functions[] =
 
 	{ "GetTownRegion",				SE_GetTownRegion,			1, 0 },
 	{ "GetTownRegionFromXY",		SE_GetTownRegionFromXY,		4, 0 },
-	{ "GetSpawnRegion",				SE_GetSpawnRegion,			4, 0 },
+	{ "GetSpawnRegion",				SE_GetSpawnRegion,			1, 0 },
+	{ "GetSpawnRegions",			SE_GetSpawnRegions,			4, 0 },
 	{ "GetSpawnRegionCount",		SE_GetSpawnRegionCount,		0, 0 },
 
 
@@ -339,6 +341,13 @@ cScript::cScript( std::string targFile, UI08 rT, UI16 scrID ) : isFiring( false 
 	JS_DefineFunctions( targContext, targObject, my_functions );
 	JS_SetPrivate( targContext, targObject, this );
 
+	// Define some global constants that can be used in any scripts
+#if defined( UOX_DEBUG_MODE )
+	JS_DefineProperty( targContext, targObject, "UOX_DEBUG_MODE", BOOLEAN_TO_JSVAL( JS_TRUE ), nullptr, nullptr, JSPROP_PERMANENT | JSPROP_READONLY );
+#else
+	JS_DefineProperty( targContext, targObject, "UOX_DEBUG_MODE", BOOLEAN_TO_JSVAL( JS_FALSE ), nullptr, nullptr, JSPROP_PERMANENT | JSPROP_READONLY );
+#endif
+
 	auto proto = JSEngine->GetPrototype( rT, JSP_SCRIPT );
 	scriptObj = JS_DefineObject( targContext, targObject, "SCRIPT", &uox_class, proto, 0 );
 	JS_LockGCThing( targContext, scriptObj );
@@ -475,7 +484,7 @@ JSBool cScript::InvokeEvent( const char* name, uintN argc, jsval* argv, jsval* r
 {
 	JSMapping->pushActive( this );
 #if defined UOX_DEBUG_MODE
-	Console.Warning( oldstrutil::format( "Triggering event '%s' from script %d", name, GetScriptID() ) );
+	Console.Log( oldstrutil::format( "Triggering event '%s' from script %d", name, GetScriptID() ) );
 #endif
 	JSBool rVal = JS_CallFunctionName( targContext, targObject, name, argc, argv, rval );
 	JSMapping->popActive();
@@ -484,17 +493,53 @@ JSBool cScript::InvokeEvent( const char* name, uintN argc, jsval* argv, jsval* r
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::OnStart()
-//|	Date		-	8/16/2003 3:44:50 AM
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	The OnStart event is provided to allow a script to process
-//|					and read in any state information that has been saved from
-//|					a previous server shut down. If a a script come with an
-//|					OnStart event the code that is provided will be executed
-//|					just following the loading of the script.
+//|	Purpose		-	Executes for any instance of a script with onEvent that is attached to an
+//|					object, as soon as shard has completed startup and world has fully loaded.
+//|					Provides object context via the included parameter.
 //o------------------------------------------------------------------------------------------------o
-bool cScript::OnStart( void )
+bool cScript::OnStart( void *myObj, SI32 objType )
 {
-	return false;
+	if( !ExistAndVerify( seOnStart, "onStart" ))
+		return false;
+
+	jsval rval;
+	jsval params[1];
+
+	if( myObj != nullptr && objType != -1 )
+	{
+		JSObject *jsObj = JSEngine->AcquireObject( static_cast<IUEEntries>( objType ), myObj, runTime );
+		params[0] = OBJECT_TO_JSVAL( jsObj );
+	}
+
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onStart", 1, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnStart, false );
+	}
+
+	return ( retVal == JS_TRUE );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnScriptLoad()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Executes once for any script with onScriptLoad event as soon as shard has
+//|					completed startup and world has fully loaded. No object context.
+//o------------------------------------------------------------------------------------------------o
+bool cScript::OnScriptLoad( void )
+{
+	if( !ExistAndVerify( seOnScriptLoad, "onScriptLoad" ))
+		return false;
+
+	jsval rval;
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onScriptLoad", 0, nullptr, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnScriptLoad, false );
+	}
+
+	return ( retVal == JS_TRUE );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -590,6 +635,45 @@ bool cScript::OnCreate( CBaseObject *thingCreated, bool dfnCreated, bool isPlaye
 		{
 			SetEventExists( seOnCreateDFN, false );
 		}
+	}
+
+	return ( retVal == JS_TRUE );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -   cScript::OnSpawn()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -   Triggers for object with event attached when spawned from a spawn region
+//| Notes       -   Calls JS onSpawn( objSpawned, spawnRegion )
+//|                 spawnRegion is the REGIONSPAWN ID (UI32), or 0 if unknown
+//o------------------------------------------------------------------------------------------------o
+bool cScript::OnSpawn( CBaseObject *objectSpawned, UI16 spawnRegion )
+{
+	if( !ValidateObject( objectSpawned ))
+		return false;
+
+	if( !ExistAndVerify( seOnSpawn, "onSpawn" ))
+		return false;
+
+	jsval params[2], rval;
+	JSObject *jsObj = nullptr;
+
+	if( objectSpawned->GetObjType() == OT_CHAR )
+	{
+		jsObj = JSEngine->AcquireObject( IUE_CHAR, static_cast<CChar *>( objectSpawned ), runTime );
+	}
+	else
+	{
+		jsObj = JSEngine->AcquireObject( IUE_ITEM, static_cast<CItem *>( objectSpawned ), runTime );
+	}
+
+	params[0] = OBJECT_TO_JSVAL( jsObj );
+	params[1] = INT_TO_JSVAL( spawnRegion );
+
+	JSBool retVal = InvokeEvent( "onSpawn", 2, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnSpawn, false );
 	}
 
 	return ( retVal == JS_TRUE );
@@ -3888,7 +3972,7 @@ bool cScript::OnIterate( CBaseObject *a, UI32 &b, CSocket *mSock )
 //|	Purpose		-	Called after IterateOverSpawnRegions JS function is used, and iterates over
 //|					all spawn regions in game
 //o------------------------------------------------------------------------------------------------o
-bool cScript::OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b )
+bool cScript::OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b, CSocket *mSock  )
 {
 	if( a == nullptr )
 		return true;
@@ -3896,14 +3980,21 @@ bool cScript::OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b )
 	if( !ExistAndVerify( seOnIterateSpawnRegions, "onIterateSpawnRegions" ))
 		return false;
 
-	jsval params[1], rval;
+	jsval params[2], rval;
 
 	JSObject *myObj = nullptr;
 	myObj = JSEngine->AcquireObject( IUE_SPAWNREGION, a, runTime );
 
-	params[0] = OBJECT_TO_JSVAL( myObj );
+	JSObject *sockObj = nullptr;
+	if( mSock )
+	{
+		sockObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
+	}
 
-	JSBool retVal = InvokeEvent( "onIterateSpawnRegions", 1, params, &rval );
+	params[0] = OBJECT_TO_JSVAL( myObj );
+	params[1] = OBJECT_TO_JSVAL( sockObj );
+
+	JSBool retVal = InvokeEvent( "onIterateSpawnRegions", 2, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -4197,6 +4288,40 @@ SI08 cScript::OnDeathBlow( CChar *mKilled, CChar *mKiller )
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnDeathBlow, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -   cScript::OnKill()
+//| Date        -   30th November, 2025
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -   Triggers for characters with event attached when they kill another character
+//| Notes       -   This is called after onDeathBlow on the victim has allowed death to proceed
+//|                 Return value is currently ignored by the core, but kept for consistency
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnKill( CChar *mKiller, CChar *mKilled )
+{
+	if( !ValidateObject( mKiller )) // || !ValidateObject( mKilled ))
+		return RV_NOFUNC;
+
+	if( !ExistAndVerify( seOnKill, "onKill" ))
+		return RV_NOFUNC;
+
+	jsval rval, params[2];
+	JSObject *killerObj = JSEngine->AcquireObject( IUE_CHAR, mKiller, runTime );
+	JSObject *killedObj = JSEngine->AcquireObject( IUE_CHAR, mKilled, runTime );
+
+	// JS: function onKill( killer, killed )
+	params[0] = OBJECT_TO_JSVAL( killerObj );
+	params[1] = OBJECT_TO_JSVAL( killedObj );
+
+	JSBool retVal = InvokeEvent( "onKill", 2, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnKill, false );
 		return RV_NOFUNC;
 	}
 
