@@ -12,20 +12,109 @@ const coOwnHousesOnSameAccount = GetServerSetting( "CoOwnHousesOnSameAccount" );
 /** @type { ( item: Item | BaseObject ) => boolean } */
 function IsTeleporterItem( item )
 {
-	if( !item  || !item.isItem )
+	if( !item || !item.isItem )
 		return false;
 
-	// allow by sectionid
 	if( item.sectionID == teleporterSectionIDReq )
 		return true;
 
-	// allow by id list
 	for( var i = 0; i < teleporterIDReq.length; i++ )
 	{
 		if( item.id == teleporterIDReq[i] )
 			return true;
 	}
 	return false;
+}
+
+/** @type { ( teleItem: Item ) => Item | null } */
+function GetLinkedTeleporter( teleItem )
+{
+	if( !IsTeleporterItem( teleItem ))
+		return null;
+
+	var linkSer = teleItem.GetTag( "LinkSer" );
+	if( linkSer <= 0 )
+		return null;
+
+	var other = CalcItemFromSer( linkSer );
+	if( !IsTeleporterItem( other ))
+		return null;
+
+	return other;
+}
+
+/** @type { ( teleItem: Item ) => number } */
+function GetSharedCharges( teleItem )
+{
+	if( !IsTeleporterItem( teleItem ))
+		return 0;
+
+	var cur = teleItem.GetTag( "Charges" );
+	if( cur < 0 )
+		cur = 0;
+
+	var other = GetLinkedTeleporter( teleItem );
+	if( IsTeleporterItem( other ))
+	{
+		var otherCur = other.GetTag( "Charges" );
+		if( otherCur < 0 )
+			otherCur = 0;
+
+		if( otherCur > cur )
+			cur = otherCur;
+	}
+
+	if( cur > chargeMax )
+		cur = chargeMax;
+
+	return cur;
+}
+
+/** @type { ( teleItem: Item, newValue: number ) => void } */
+function SetSharedCharges( teleItem, newValue )
+{
+	if( !IsTeleporterItem( teleItem ))
+		return;
+
+	if( newValue < 0 )
+		newValue = 0;
+
+	if( newValue > chargeMax )
+		newValue = chargeMax;
+
+	teleItem.SetTag( "Charges", newValue );
+	teleItem.Refresh();
+
+	var other = GetLinkedTeleporter( teleItem );
+	if( IsTeleporterItem( other ))
+	{
+		other.SetTag( "Charges", newValue );
+		other.Refresh();
+	}
+}
+
+/** @type { ( teleporterA: Item, teleporterB: Item ) => void } */
+function SyncLinkedChargesOnLink( teleporterA, teleporterB )
+{
+	if( !IsTeleporterItem( teleporterA ) || !IsTeleporterItem( teleporterB ))
+		return;
+
+	var aCharge = teleporterA.GetTag( "Charges" );
+	var bCharge = teleporterB.GetTag( "Charges" );
+
+	if( aCharge < 0 )
+		aCharge = 0;
+	if( bCharge < 0 )
+		bCharge = 0;
+
+	var shared = aCharge + bCharge;
+	if( shared > chargeMax )
+		shared = chargeMax;
+
+	teleporterA.SetTag( "Charges", shared );
+	teleporterB.SetTag( "Charges", shared );
+	teleporterA.Refresh();
+	teleporterB.Refresh();
 }
 
 /** @type { ( mode: number ) => string } */
@@ -41,8 +130,6 @@ function SecurityName( mode )
 /** @type { ( pChar: Character, teleItem: Item ) => boolean } */
 function CanManageTeleporter( pChar, teleItem )
 {
-	// Who can change security setting?
-	// (GM OR owner OR co-owner OR same-account-as-owner if enabled)
 	if( !ValidateObject( pChar ) || !ValidateObject( teleItem ))
 		return false;
 
@@ -71,7 +158,6 @@ function CanManageTeleporter( pChar, teleItem )
 /** @type { ( pChar: Character, teleItem: Item ) => boolean } */
 function CanUseHouseTeleporter( pChar, teleItem )
 {
-	// Enforces configured security
 	if( !ValidateObject( pChar ) || !ValidateObject( teleItem ))
 		return false;
 
@@ -86,20 +172,18 @@ function CanUseHouseTeleporter( pChar, teleItem )
 	if( mode != 0 && mode != 1 && mode != 2 )
 		mode = 0;
 
-	// Owner/coowner always allowed in all modes
 	if( multiHouse.IsOwner( pChar ))
 		return true;
 
 	if( multiHouse.IsOnOwnerList( pChar ))
 		return true;
 
-	if( coOwnHousesOnSameAccount && ValidateObject(multiHouse.owner ))
+	if( coOwnHousesOnSameAccount && ValidateObject( multiHouse.owner ))
 	{
 		if( multiHouse.owner.accountNum == pChar.accountNum )
 			return true;
 	}
 
-	// Friends mode
 	if( mode == 1 )
 	{
 		if( multiHouse.IsOnFriendList( pChar ))
@@ -107,13 +191,9 @@ function CanUseHouseTeleporter( pChar, teleItem )
 		return false;
 	}
 
-	// Anyone mode
 	if( mode == 2 )
-	{
 		return true;
-	}
 
-	// Owner/Co-Owners only
 	return false;
 }
 
@@ -128,18 +208,16 @@ function onContextMenuRequest( socket, targObj )
 		return true;
 
 	var inPack = false;
-	if( ValidateObject( pUser ) && ValidateObject( pUser.pack ))
+	if( ValidateObject( pUser.pack ))
 	{
 		var root0 = FindRootContainer( targObj, 0 );
 		inPack = ( ValidateObject( root0 ) && root0.isItem && root0.serial == pUser.pack.serial );
 	}
 
-	// Show "Set Security" only when it's a house-placed (locked down) teleporter
 	var canShowSecurity = false;
 	if( targObj.movable == 3 && ValidateObject( targObj.multi ) && CanManageTeleporter( pUser, targObj ))
 		canShowSecurity = true;
 
-	// Show "Rename" only when locked down, in house, manageable, AND linked
 	var canShowRename = false;
 	if( targObj.movable == 3 && ValidateObject( targObj.multi ) && CanManageTeleporter( pUser, targObj ))
 	{
@@ -152,22 +230,18 @@ function onContextMenuRequest( socket, targObj )
 		}
 	}
 
-	var numEntries = 1; // Status
+	var numEntries = 1;
 	if( inPack )
-	{
 		numEntries++;
-	}
 
-	if( targObj.id == 0x574A )
-	{
+	if( targObj.id == 0x574A && targObj.GetTag( "chargeable" ) == 1 )
 		numEntries++;
-	}
 
 	if( canShowSecurity )
 		numEntries++;
 
 	if( canShowRename )
-	numEntries++;
+		numEntries++;
 
 	var offset = 12;
 	var toSend = new Packet();
@@ -176,19 +250,17 @@ function onContextMenuRequest( socket, targObj )
 	toSend.ReserveSize( packetLen );
 	toSend.WriteByte( 0, 0xBF );
 	toSend.WriteShort( 1, packetLen );
-	toSend.WriteShort( 3, 0x14 );   // subCmd
-	toSend.WriteShort( 5, 0x0001 ); // 2D client
+	toSend.WriteShort( 3, 0x14 );
+	toSend.WriteShort( 5, 0x0001 );
 	toSend.WriteLong( 7, targObj.serial );
 	toSend.WriteByte( 11, numEntries );
 
-	// Entry: Status
 	toSend.WriteShort( offset, 0x0101 );
 	toSend.WriteShort( offset += 2, 2140 );
 	toSend.WriteShort( offset += 2, 0x0020 );
 	toSend.WriteShort( offset += 2, 0x03E0 );
 	offset += 2;
 
-	// Entry: Link (only if in backpack)
 	if( inPack )
 	{
 		toSend.WriteShort( offset, 0x0102 );
@@ -198,8 +270,7 @@ function onContextMenuRequest( socket, targObj )
 		offset += 2;
 	}
 
-	// Entry: Recharge (pink only)
-	if( targObj.id == 0x574A )
+	if( targObj.id == 0x574A && targObj.GetTag( "chargeable" ) == 1 )
 	{
 		toSend.WriteShort( offset, 0x0103 );
 		toSend.WriteShort( offset += 2, 5042 );
@@ -208,7 +279,6 @@ function onContextMenuRequest( socket, targObj )
 		offset += 2;
 	}
 
-	// Set Security
 	if( canShowSecurity )
 	{
 		toSend.WriteShort( offset, 0x0104 );
@@ -218,11 +288,10 @@ function onContextMenuRequest( socket, targObj )
 		offset += 2;
 	}
 
-	// Rename (linked + placed only)
 	if( canShowRename )
 	{
 		toSend.WriteShort( offset, 0x0105 );
-		toSend.WriteShort( offset += 2, 404 );     // cliloc for name
+		toSend.WriteShort( offset += 2, 404 );
 		toSend.WriteShort( offset += 2, 0x0020 );
 		toSend.WriteShort( offset += 2, 0x03E0 );
 		offset += 2;
@@ -247,7 +316,6 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 	if( popupEntry == 0x0101 )
 	{
 		var linkSer = targObj.GetTag( "LinkSer" );
-
 		var linked = false;
 		if( linkSer > 0 )
 		{
@@ -256,15 +324,9 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 				linked = true;
 		}
 
-		if( targObj.id == 0x574A )
+		if( targObj.id == 0x574A && targObj.GetTag( "chargeable" ) == 1 )
 		{
-			var charge = targObj.GetTag( "Charges" );
-			if( charge < 0 )
-				charge = 0;
-
-			if( charge > chargeMax )
-				charge = chargeMax;
-
+			var charge = GetSharedCharges( targObj );
 			socket.SysMessage( "Teleporter: " + ( linked ? "Linked" : "Unlinked" ) + " | Charges: " + charge + "/" + chargeMax );
 		}
 		else
@@ -285,14 +347,12 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 
 		if( !inPackLink )
 		{
-			if (socket != null)
-				socket.SysMessage( GetDictionaryEntry( 30600, socket.language ));
+			socket.SysMessage( GetDictionaryEntry( 30600, socket.language ));
 			return false;
 		}
 
 		pUser.SetTempTag( "LinkSrcSer", targObj.serial );
-		if( socket != null )
-			socket.CustomTarget( 0, GetDictionaryEntry( 30601, socket.language )); // Target the other teleporter in your backpack to link.
+		socket.CustomTarget( 0, GetDictionaryEntry( 30601, socket.language )); // Target the other teleporter in your backpack to link.
 		targObj.Refresh();
 		return false;
 	}
@@ -302,80 +362,64 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 		if( targObj.GetTag( "chargeable" ) != 1 )
 			return false;
 
-		var cur = targObj.GetTag( "Charges" );
-		if( cur < 0 )
-			cur = 0;
-
+		var cur = GetSharedCharges( targObj );
 		if( cur >= chargeMax )
 		{
-			if( socket != null )
-				socket.SysMessage( GetDictionaryEntry( 30602, socket.language ));
+			socket.SysMessage( GetDictionaryEntry( 30602, socket.language ));
 			return false;
 		}
 
 		pUser.SetTempTag( "RechargeSer", targObj.serial );
-		if( socket != null )
-			socket.CustomTarget( 1, GetDictionaryEntry( 30603, socket.language )); // Target recharge item in your backpack to recharge.
+		socket.CustomTarget( 1, GetDictionaryEntry( 30603, socket.language )); // Target recharge item in your backpack to recharge.
 		targObj.Refresh();
 		return false;
 	}
 
-	
 	if( popupEntry == 0x0104 )
 	{
-		// Must be allowed to manage
 		if( !( targObj.movable == 3 && ValidateObject( targObj.multi ) && CanManageTeleporter( pUser, targObj )))
 		{
-			if( socket != null )
-				socket.SysMessage( GetDictionaryEntry( 30604, socket.language )); // You cannot change this teleporter's security.
+			socket.SysMessage( GetDictionaryEntry( 30604, socket.language )); // You cannot change this teleporter's security
 			return false;
 		}
 
 		var curMode = targObj.GetTag( "Security" );
 		if( curMode != 0 && curMode != 1 && curMode != 2 )
 			curMode = 0;
+
 		var nextMode = curMode + 1;
 		if( nextMode > 2 )
 			nextMode = 0;
 
 		targObj.SetTag( "Security", nextMode );
-		if( socket != null )
-			socket.SysMessage( "Teleporter security set to: " + SecurityName( nextMode )); // Teleporter security set to: %s
+		socket.SysMessage( "Teleporter security set to: " + SecurityName( nextMode )); // Teleporter security set to: %s
 		targObj.Refresh();
 		return false;
 	}
 
 	if( popupEntry == 0x0105 )
 	{
-		// Must be placed + manageable
-		if(!( targObj.movable == 3 && ValidateObject( targObj.multi ) && CanManageTeleporter( pUser, targObj )))
+		if( !( targObj.movable == 3 && ValidateObject( targObj.multi ) && CanManageTeleporter( pUser, targObj )))
 		{
-			if( socket != null )
-				socket.SysMessage( GetDictionaryEntry( 30606, socket.language )); // You cannot rename this teleporter.
+			socket.SysMessage( GetDictionaryEntry( 30606, socket.language )); // You cannot rename this teleporter.
 			return false;
 		}
 
-		// Must be linked
-		var linkSer = targObj.GetTag( "LinkSer" );
-		if( linkSer <= 0 )
+		var linkSer2 = targObj.GetTag( "LinkSer" );
+		if( linkSer2 <= 0 )
 		{
-			if( socket != null )
-				socket.SysMessage( GetDictionaryEntry( 30607, socket.language )); // This teleporter must be linked before it can be renamed.
+			socket.SysMessage( GetDictionaryEntry( 30607, socket.language )); // This teleporter must be linked before it can be renamed.
 			return false;
 		}
 
-		var other = CalcItemFromSer( linkSer );
-		if( !IsTeleporterItem( other ))
+		var other2 = CalcItemFromSer( linkSer2 );
+		if( !IsTeleporterItem( other2 ))
 		{
-			if( socket != null )
-				socket.SysMessage( GetDictionaryEntry( 30607, socket.language )); // This teleporter must be linked before it can be renamed.
+			socket.SysMessage( GetDictionaryEntry( 30607, socket.language )); // This teleporter must be linked before it can be renamed.
 			return false;
 		}
 
-		// Store the serial so onSpeechInput knows what to rename
 		pUser.SetTempTag( "RenameSer", targObj.serial );
-
-		// Prompt for name
 		pUser.SpeechInput( 1, targObj );
 		return false;
 	}
@@ -387,14 +431,14 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 function onUseChecked( pUser, iUsed )
 {
 	var pSocket = pUser.socket;
-	if( pSocket == null ) 
+	if( pSocket == null )
 		return false;
 
 	if( !IsTeleporterItem( iUsed ))
 		return false;
 
 	var inPackUse = false;
-	if( ValidateObject( pUser ) && ValidateObject( pUser.pack ))
+	if( ValidateObject( pUser.pack ))
 	{
 		var root2 = FindRootContainer( iUsed, 0 );
 		inPackUse = ( ValidateObject( root2 ) && root2.isItem && root2.serial == pUser.pack.serial );
@@ -427,33 +471,29 @@ function onCallback0( socket, target )
 
 	if( !IsTeleporterItem( teleporterA ))
 	{
-		if( socket != null )
-			socket.SysMessage( GetDictionaryEntry( 30610, socket.language )); // Source teleporter not found.
+		socket.SysMessage( GetDictionaryEntry( 30610, socket.language )); // Source teleporter not found.
 		return;
 	}
 	if( !IsTeleporterItem( teleporterB ))
 	{
-		if( socket != null )
-			socket.SysMessage( GetDictionaryEntry( 30611, socket.language )); // That is not a house teleporter.
+		socket.SysMessage( GetDictionaryEntry( 30611, socket.language )); // That is not a house teleporter.
 		return;
 	}
 	if( teleporterA.serial == teleporterB.serial )
 	{
-		if( socket != null )
 		socket.SysMessage( GetDictionaryEntry( 30612, socket.language )); // You must target the other teleporter.
 		return;
 	}
 	if( teleporterA.id != teleporterB.id )
 	{
-		if( socket != null )
-			socket.SysMessage( GetDictionaryEntry( 30613, socket.language )); // These teleporters are different types and cannot be linked.
+		socket.SysMessage( GetDictionaryEntry( 30613, socket.language )); // These teleporters are different types and cannot be linked.
 		return;
 	}
 
 	var aInPack = false;
 	var bInPack = false;
 
-	if( ValidateObject( pUser ) && ValidateObject( pUser.pack ))
+	if( ValidateObject( pUser.pack ))
 	{
 		var rootA = FindRootContainer( teleporterA, 0 );
 		var rootB = FindRootContainer( teleporterB, 0 );
@@ -464,8 +504,7 @@ function onCallback0( socket, target )
 
 	if( !aInPack || !bInPack )
 	{
-		if( socket != null )
-			socket.SysMessage( GetDictionaryEntry( 30614, socket.language )); // Both teleporters must be in your backpack to link.
+		socket.SysMessage( GetDictionaryEntry( 30614, socket.language )); // Both teleporters must be in your backpack to link.
 		return;
 	}
 
@@ -474,8 +513,12 @@ function onCallback0( socket, target )
 
 	teleporterA.SetTag( "LinkSer", teleporterB.serial );
 	teleporterB.SetTag( "LinkSer", teleporterA.serial );
-	if( socket != null )
-		socket.SysMessage( GetDictionaryEntry( 30615, socket.language )); // Teleporters linked.
+
+	// Make both share the same charge pool immediately
+	if( teleporterA.GetTag( "chargeable" ) == 1 && teleporterB.GetTag( "chargeable" ) == 1 )
+		SyncLinkedChargesOnLink( teleporterA, teleporterB );
+
+	socket.SysMessage( GetDictionaryEntry( 30615, socket.language )); // Teleporters linked.
 }
 
 /** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
@@ -496,13 +539,12 @@ function onCallback1( socket, target )
 	var scroll = target;
 	if( !( ValidateObject( scroll ) && scroll.isItem && ( scroll.id == chargeItemIDReq || scroll.sectionID == chargeItemSectionIDReq )))
 	{
-		if( socket != null )
-			socket.SysMessage(GetDictionaryEntry( 30616, socket.language ));
+		socket.SysMessage( GetDictionaryEntry( 30616, socket.language ));
 		return;
 	}
 
 	var scrollInPack = false;
-	if( ValidateObject( pUser ) && ValidateObject( pUser.pack ))
+	if( ValidateObject( pUser.pack ))
 	{
 		var root3 = FindRootContainer( scroll, 0 );
 		scrollInPack = ( ValidateObject( root3 ) && root3.isItem && root3.serial == pUser.pack.serial );
@@ -510,24 +552,19 @@ function onCallback1( socket, target )
 
 	if( !scrollInPack )
 	{
-		if( socket != null )
-			socket.SysMessage( GetDictionaryEntry( 30617, socket.language )); // This item must be in your backpack.
+		socket.SysMessage( GetDictionaryEntry( 30617, socket.language ));// This item must be in your backpack.
 		return;
 	}
 
-	var cur = teleporter.GetTag( "Charges");
-	if( cur < 0 )
-		cur = 0;
-
-	var stackAmt = ( scroll.amount );
+	var cur = GetSharedCharges( teleporter );
+	var stackAmt = scroll.amount;
 	if( stackAmt < 1 )
 		stackAmt = 1;
 
 	var remaining = chargeMax - cur;
 	if( remaining <= 0 )
 	{
-		if( socket != null )
-			socket.SysMessage( GetDictionaryEntry( 30618, socket.language )); // The House Teleporter cannot be charged any further.
+		socket.SysMessage( GetDictionaryEntry( 30618, socket.language ));// The House Teleporter cannot be charged any further.
 		return;
 	}
 
@@ -539,37 +576,39 @@ function onCallback1( socket, target )
 	if( useScrolls < 1 )
 		useScrolls = 1;
 
-	// consume that many from the stack
 	if( stackAmt > useScrolls )
-	{
 		scroll.amount = stackAmt - useScrolls;
-	}
 	else
-	{
 		scroll.Delete();
-	}
 
 	cur += ( useScrolls * chargeAmount );
 	if( cur > chargeMax )
 		cur = chargeMax;
 
-	teleporter.SetTag( "Charges", cur );
-	if( socket != null )
-		socket.SysMessage( GetDictionaryEntry( 30619, socket.language )); // The recharge item crumbles to dust as it strengthens the House Teleporter.
-	teleporter.Refresh();
+	SetSharedCharges( teleporter, cur );
+
+	socket.SysMessage( GetDictionaryEntry( 30619, socket.language ));// The recharge item crumbles to dust as it strengthens the House Teleporter.
 }
 
 /** @type { ( tile: Item, keepSer: number ) => void } */
 function UnlinkOther( tile, keepSer )
 {
-	var old = tile.GetTag( "LinkSer");
+	var old = tile.GetTag( "LinkSer" );
 	tile.SetTag( "LinkSer", null );
 
 	if( old > 0 && old != keepSer )
 	{
 		var oldtele = CalcItemFromSer( old );
 		if( IsTeleporterItem( oldtele ))
+		{
 			oldtele.SetTag( "LinkSer", null );
+
+			if( oldtele.GetTag( "chargeable" ) == 1 )
+			{
+				oldtele.SetTag( "Charges", 0 );
+				oldtele.Refresh();
+			}
+		}
 	}
 }
 
@@ -587,8 +626,7 @@ function onCollide( trgSock, pColliding, objCollidedWith )
 
 	if( objCollidedWith.movable != 3 )
 	{
-		if( trgSock )
-			trgSock.SysMessage( GetDictionaryEntry( 30620, trgSock.language )); // This must be locked down in a house to function.
+		trgSock.SysMessage( GetDictionaryEntry( 30620, trgSock.language )); // This must be locked down in a house to function.
 		return false;
 	}
 
@@ -597,75 +635,83 @@ function onCollide( trgSock, pColliding, objCollidedWith )
 
 	if( !insideHouse )
 	{
-		if( trgSock )
-			trgSock.SysMessage( GetDictionaryEntry( 30621, trgSock.language ) ); // This must be placed inside a house.
+		trgSock.SysMessage( GetDictionaryEntry( 30621, trgSock.language )); // This must be placed inside a house.
 		return false;
 	}
 
-	// SECURITY: Owner + Co-Owners only
 	if( !CanUseHouseTeleporter( pColliding, objCollidedWith ))
 	{
-		if( trgSock )
-			trgSock.SysMessage( GetDictionaryEntry( 30622, trgSock.language )); // Only the house owner and co-owners may use this teleporter.
+		trgSock.SysMessage( GetDictionaryEntry( 30622, trgSock.language )); // Only the house owner and co-owners may use this teleporter.
 		return false;
 	}
 
-	if( trgSock )
+	if( pColliding.dead || pColliding.criminal )
 	{
-		if( pColliding.dead || pColliding.criminal )
-		{
-			trgSock.SysMessage( GetDictionaryEntry( 30623, trgSock.language )); // You cannot use that right now.
-			return false;
-		}
+		trgSock.SysMessage( GetDictionaryEntry( 30623, trgSock.language )); // You cannot use that right now.
+		return false;
 	}
-	
+
 	var linkSer = objCollidedWith.GetTag( "LinkSer" );
 	if( linkSer <= 0 )
 	{
-		if( trgSock ) 
-			trgSock.SysMessage( GetDictionaryEntry( 30624, trgSock.language )); // This teleporter is not linked.
+		trgSock.SysMessage( GetDictionaryEntry( 30624, trgSock.language )); // This teleporter is not linked.
 		return false;
 	}
 
 	var other = CalcItemFromSer( linkSer );
 	if( !IsTeleporterItem( other ))
 	{
-		if( trgSock )
-			trgSock.SysMessage( GetDictionaryEntry( 30624, trgSock.language )); // This teleporter is not linked.
+		trgSock.SysMessage( GetDictionaryEntry( 30624, trgSock.language )); // This teleporter is not linked.
 		return false;
 	}
 
 	if( other.movable != 3 )
 	{
-		if( trgSock )
-			trgSock.SysMessage( GetDictionaryEntry( 30625, trgSock.language )); // The destination teleporter is not properly placed.
+		trgSock.SysMessage( GetDictionaryEntry( 30625, trgSock.language )); // The destination teleporter is not properly placed.
 		return false;
 	}
 
-	if( !IsInBuilding( other.x, other.y, other.z, other.worldnumber, other.instanceID, true ))
+	var destMulti = FindMulti( other.x, other.y, other.z, other.worldnumber, other.instanceID );
+	var destInsideHouse = ( ValidateObject( destMulti ) && destMulti.IsInMulti( other ));
+	if( !destInsideHouse )
 	{
-		if( trgSock )
-			trgSock.SysMessage( GetDictionaryEntry( 30625, trgSock.language )); // The destination teleporter is not properly placed.
+		trgSock.SysMessage( GetDictionaryEntry( 30625, trgSock.language ));// The destination teleporter is not properly placed.
 		return false;
 	}
 
 	if( objCollidedWith.GetTag( "chargeable" ) == 1 )
 	{
-		var charge = objCollidedWith.GetTag( "Charges" );
-		if( charge < 0 )
-			charge = 0;
-
+		var charge = GetSharedCharges( objCollidedWith );
 		if( charge <= 0 )
 		{
-			if( trgSock )
-				trgSock.SysMessage( GetDictionaryEntry( 30626, trgSock.language )); // There are no charges left in this teleporter.
+			trgSock.SysMessage( GetDictionaryEntry( 30626, trgSock.language )); // There are no charges left in this teleporter.
 			return false;
 		}
 
-		objCollidedWith.SetTag( "Charges", charge - 1 );
+		SetSharedCharges( objCollidedWith, charge - 1 );
 	}
 
-	pColliding.Teleport( other.x, other.y, other.z, other.worldnumber );
+	// Collect nearby following pets before teleporting player
+	var petsToMove = [];
+	var followerList = pColliding.GetFollowerList();
+	for( var i = 0; i < followerList.length; i++ )
+	{
+		var tempFollower = followerList[i];
+		if( ValidateObject( tempFollower ) && tempFollower.wandertype == 1 && tempFollower.InRange( pColliding, 24 ))
+			petsToMove.push( tempFollower );
+	}
+
+	pColliding.Teleport( other.x, other.y, other.z, other.worldnumber, other.instanceID );
+
+	for( var j = 0; j < petsToMove.length; j++ )
+	{
+		if( ValidateObject( petsToMove[j] ))
+		{
+			petsToMove[j].Teleport( other.x, other.y, other.z, other.worldnumber, other.instanceID );
+			petsToMove[j].Follow( pColliding );
+		}
+	}
+
 	return false;
 }
 
@@ -679,26 +725,21 @@ function onSpeechInput( pUser, targObj, pSpeech, pSpeechID )
 	if( pSpeechID != 1 )
 		return;
 
-	// Basic validation
 	if( pSpeech == null )
 		return;
 
-	pSpeech = ("" + pSpeech);
-
-	// trim (simple ES5)
-	pSpeech = pSpeech.replace(/^\s+|\s+$/g, "");
+	pSpeech = ( "" + pSpeech ).replace(/^\s+|\s+$/g, "" );
 	if( pSpeech.length <= 0 )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 9270, pSocket.language )); // too short / none entered
+		pSocket.SysMessage( GetDictionaryEntry( 9270, pSocket.language ));// too short / none entered
 		return;
 	}
 	if( pSpeech.length > 60 )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 9271, pSocket.language )); // too long (we'll reuse)
+		pSocket.SysMessage( GetDictionaryEntry( 9271, pSocket.language ));// too long (we'll reuse)
 		return;
 	}
 
-	// Resolve which teleporter we are renaming
 	var srcSer = pUser.GetTempTag( "RenameSer" );
 	var teleA = CalcItemFromSer( srcSer );
 	if( !IsTeleporterItem( teleA ))
@@ -707,29 +748,27 @@ function onSpeechInput( pUser, targObj, pSpeech, pSpeechID )
 		return;
 	}
 
-	// Must still be linked
 	var linkSer = teleA.GetTag( "LinkSer" );
 	if( linkSer <= 0 )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 30629, pSocket.language )); // This teleporter must be linked before it can be renamed.
+		pSocket.SysMessage( GetDictionaryEntry( 30629, pSocket.language ));// This teleporter must be linked before it can be renamed.
 		return;
 	}
 
 	var teleB = CalcItemFromSer( linkSer );
 	if( !IsTeleporterItem( teleB ))
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 30629, pSocket.language )); // This teleporter must be linked before it can be renamed.
+		pSocket.SysMessage( GetDictionaryEntry( 30629, pSocket.language ));// This teleporter must be linked before it can be renamed.
 		return;
 	}
 
-	// Apply name to BOTH
 	teleA.name = pSpeech;
 	teleB.name = pSpeech;
 
 	teleA.Refresh();
 	teleB.Refresh();
 
-	pSocket.SysMessage( "Teleporter name set to: " + pSpeech ); // Teleporter name set to: %s
+	pSocket.SysMessage( "Teleporter name set to: " + pSpeech );
 }
 
 /** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
@@ -748,15 +787,9 @@ function onTooltip( myObj, pSocket )
 
 	parts.push( "Security: " + SecurityName( secMode ));
 
-	if( myObj.id == 0x574A )
+	if( myObj.id == 0x574A && myObj.GetTag( "chargeable" ) == 1 )
 	{
-		var charge = myObj.GetTag( "Charges" );
-		if( charge < 0 )
-			charge = 0;
-
-		if( charge > chargeMax )
-			charge = chargeMax;
-
+		var charge = GetSharedCharges( myObj );
 		parts.push( "Charges: " + charge + "/" + chargeMax );
 	}
 
