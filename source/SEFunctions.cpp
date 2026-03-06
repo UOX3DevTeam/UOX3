@@ -5750,6 +5750,9 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 			case 389:	// HOUSEDECAY
 				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HouseDecay() ) );
 				break;
+			case 395:	// QUESTSENABLED
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->QuestsEnabled() ) );
+				break;
 			case 400:	// SPEEDHACKDETECTTION
 				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->SpeedHackDetection() ));
 				break;
