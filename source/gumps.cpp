@@ -1089,7 +1089,7 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 	CChar *mChar = s->CurrcharObj();
 
 	cmd		= oldstrutil::upper( cmd );
-	data	= oldstrutil::upper( data );
+	//data	= oldstrutil::upper( data );
 	std::string builtString;
 
 	switch( cmd.data()[0] )

@@ -3742,6 +3742,24 @@
 6546=Aucun morceau n'est associé à cet équipement.
 6547=Ce morceau est déjà présent dans la boîte à musique.
 6548=Ce morceau a été ajouté à la boîte à musique.
+// [6580-6599] Scripts de monture éthérée
+6580=Vous ne pouvez pas descendre de votre éthérée car votre sac ne peut pas la contenir
+6581=Cet objet doit être dans la couche supérieure de votre sac pour être utilisé.
+6582=Vous devez terminer votre incantation avant d'en utiliser une autre.
+6583=Les gargouilles ne peuvent pas monter d'animaux.
+6584=Veuillez descendre d'abord.
+6585=Vous ne pouvez pas faire cela tout en étant polymorphé.
+6586=Vous ne pouvez pas invoquer une monture pour le moment.
+6587=Vous avez été interrompu en tentant d'invoquer votre monture éthérée !
+6588=Vous invoquez votre monture éthérée.
+6589=Vous devez avoir l'objet dans votre sac pour l'utiliser.
+6590=Visez la monture éthérée que vous souhaitez retoucher.
+6591=Cela doit être dans votre sac pour que vous puissiez l'utiliser.
+6592=Ce n'est pas une cible valide.
+6593=Vous devez avoir l'objet dans votre sac pour le cibler.
+6594=Vous ne pouvez pas utiliser cet objet pour cela.
+6595=Le corps de votre monture éthérée a été solidifié.
+6596=La transparence de votre monture éthérée a été restaurée.
 // [7000-7499] AI Scripts
 7000=Tu es un criminel et tu ne peux pas accéder à ton coffre de banque.
 7001=Quel objet souhaitez-vous déposer dans votre coffret bancaire ?
@@ -5832,6 +5850,13 @@
 19341=Vous connaissez déjà cette recette.
 19342=Vous avez appris une nouvelle recette : %i
 19343=Vous devez apprendre cette recette à partir d'un parchemin.
+// [30000 - 30010] Système du Champion
+30000=Le Champion a été vaincu par %i !
+30001=Vous avez infligé le plus de dégâts au Champion !
+30002=Vous faites partie des 5 joueurs ayant infligé le plus de dégâts ! (%i dégâts)
+30003=Le Champion est tombé !
+30004=Vous avez reçu un Parchemin de Puissance !
+30005=L'énergie du sanctuaire s'affaiblit en l'absence de challengers...
 // [30600-30650] Téléporteur de maison
 30600=Cet objet doit être dans votre sac à dos pour pouvoir le lier.
 30601=Ciblez l'autre téléporteur dans votre sac à dos pour le lier.

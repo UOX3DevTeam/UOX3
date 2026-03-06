@@ -1,3 +1,45 @@
+05/03/2026 - DragonSlayer62 (#525)
+    [FIX] Fixed a tag-lookup issue in Ethereal Mount Statuette script that caused the incorrect mount to spawn on use (js/item/etherealstatuettes.js) 
+    [FIX] Fixed an issue with Champion Spawns Menu where the removal buttons would call a non-existent function when trying to reopen the menu after removal of an altar (js/command/champion_spawn_cmd.js)
+    [UPD] Updated .isonhorse Character JS property to allow setting it from scripts. This property is no longer read-only.
+
+
+04/03/2026 - DragonSlayer62 (#474)
+    [ADD] Added multis for houses from Ultima Online’s 2018–2020 House Design Contest, placed in the house folder and defined in three new files: house_contest_winners.dfn, house_contest_winners2.dfn, and house_contest_winners3.dfn
+    [ADD] Added corresponding Contest Winner House Deeds in items/deeds/contest_winner_deeds.dfn
+    [ADD] Contest Winner House Deeds are now available through the Add Menu
+
+04/03/2026 - DragonSlayer62 (#522)
+    [FIX] Removed RACE=33 tag from all creature definitions in npc/magicsummons.dfn with duplicate race tags, except for blade spirits, which need it in order to be allowed to attack humans
+    [FIX] Fixed an issue where looting rules for Young Players would check for 2-minute death-timer on a non-existent object instead of corpse in js/item/corpse.js
+    [FIX] Fixed an issue in js/item/teleporter.js where pChar was incorrectly being referenced instead of pUser
+    [FIX] Fixed an issue where the wrong script ID was provided for CheckGuildRelationShip TriggerEvent calls in js/skill/stealing.js
+    [FIX] Added null checks for socket in various scripts to prevent potential edge case connection issues
+
+02/03/2026 - DragonSlayer62 (#407)
+    [ADD] Added Ethereal Mounts to misc category in "add" menu; these are bound, invulnerable versions of standard mounts with a ghostly appearance.
+    [ADD] Added retouch tool that allows changing the appearance of ethereal mounts.
+
+02/03/2026 - DragonSlayer62 (#515)
+    [ADD] Added new DFN tag for spawn regions:
+        ADDSCRIPT // Allows scripts to be attached to spawned objects
+    [ADD] Added new script events:
+        onSpawn( objSpawned, spawnRegion ) // triggered when an object or character is spawned via a spawn region script 
+        onKill( killer, killed ) // triggered when a character kills another character 
+    [UPD] Updated documentation to include the new script events and DFN tags
+
+02/03/2026 - DragonSlayer62 (#406)
+    [ADD] Added full Champion Spawn system, featuring multi-stage monster waves, skull progression, altar-based boss summoning, and support for configurable spawn tables and rewards. Champion altars can be manually created, enabled, disabled, or removed via staff commands (champspawn, champenable, champdisable, champremove)
+    [ADD] Added automated Champion Rotation system, allowing a configurable number of champion spawns to activate daily at a scheduled time (configurable via champ_rotation.js)
+    [ADD] Added Race 33 for summons in race.dfn and then assigned this race to all summoned NPCs in dfndata/npc/magicsummon.dfn to fix an issue where summoned creatures would not attack certain types of NPCs
+    [FIX] Fixed an issue where skillcap displayed in skill gump did not account for potential individual skillcap increases
+
+19/02/2026 - DragonSlayer62 (#514)
+    [ADD] Added plague beast NPC definition (dfndata/npc/miscmonsters.dfn) and associated script (js/npc/ai/monster/plaguebeast.js), and uncommented its entry in various NPCLISTS
+
+19/02/2026 - DragonSlayer62 (#516)
+    [FIX] Fixed GetMultiCorner returning incorrect coordinates due to a bug in multi bounding box min/max calculations
+
 14/02/2026 - DragonSlayer62 (#511)
     [FIX] Resolved socket-related errors in petbonding.js that could cause script failures during bonding interactions
     [ADD] Added missing JavaScript API documentation entries for Console Functions: RegisterConsoleFunc, DisableConsoleFunc, and EnableConsoleFunc

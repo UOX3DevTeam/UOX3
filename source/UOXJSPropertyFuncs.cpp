@@ -2610,6 +2610,7 @@ JSBool CCharacterProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBoo
 			case CCP_FZ:			gPriv->SetFz( static_cast<SI08>( encaps.toInt() ));		break;
 			case CCP_PATHTARGX:		gPriv->SetPathTargX( static_cast<UI16>( encaps.toInt() ));		break;
 			case CCP_PATHTARGY:		gPriv->SetPathTargY( static_cast<UI16>( encaps.toInt() ));		break;
+			case CCP_ISONHORSE:		gPriv->SetOnHorse( encaps.toBool() );					break;
 			case CCP_TDEXTERITY:	gPriv->SetDexterity2( encaps.toInt() );					break;
 			case CCP_TINTELLIGENCE:	gPriv->SetIntelligence2( encaps.toInt() );				break;
 			case CCP_TSTRENGTH:		gPriv->SetStrength2( encaps.toInt() );					break;

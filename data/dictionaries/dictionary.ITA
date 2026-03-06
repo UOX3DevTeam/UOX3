@@ -3578,6 +3578,24 @@
 6546=A questo equipaggiamento non è assegnata alcuna canzone.
 6547=Questa traccia è già nel carillon.
 6548=Questa canzone è stata aggiunta al carillon.
+// [6580-6599] Script per la Cavalcatura Eterea
+6580=Non puoi scendere dalla tua cavalcatura eterea perché il tuo inventario non può contenerla.
+6581=Deve trovarsi nello strato superiore del tuo inventario per poterla utilizzare.
+6582=Devi terminare l'incantesimo in corso prima di usarne un altro.
+6583=I gargoyle non possono cavalcare animali.
+6584=Per favore, scendi prima.
+6585=Non puoi farlo mentre sei polimorfato.
+6586=Non puoi evocare una cavalcatura in questo momento.
+6587=Sei stato interrotto mentre tentavi di evocare la tua cavalcatura eterea!
+6588=Evocchi il tuo destriero etereo.
+6589=Devi avere l'oggetto nel tuo zaino per poterlo usare.
+6590=Seleziona la cavalcatura eterea che vuoi ritoccare.
+6591=Deve trovarsi nel tuo inventario per poterlo usare.
+6592=Non è un obiettivo valido.
+6593=Devi avere l'oggetto nel tuo zaino per poterlo selezionare.
+6594=Non puoi usare questo oggetto per questo.
+6595=Il corpo della tua cavalcatura eterea è stato solidificato.
+6596=La trasparenza della tua cavalcatura eterea è stata ripristinata.
 // [7000-7499] AI Scripts
 7000=Tu sei un criminale e non puoi accedere alla tua cassaforte.
 7001=Quale oggetto desidera depositare nella sua cassetta di sicurezza?
@@ -5668,6 +5686,13 @@
 19341=Conosci già questa ricetta.
 19342=Hai imparato una nuova ricetta: %i
 19343=Devi imparare quella ricetta da una pergamena.
+// [ 30000 - 30010 ] Sistema del Campione
+30000=Il Campione è stato sconfitto da %i!
+30001=Hai inflitto il maggior danno al Campione!
+30002=Sei tra i 5 giocatori che hanno inflitto più danni! (%i danni)
+30003=Il Campione è stato sconfitto!
+30004=Hai ricevuto in ricompensa una Pergamena del Potere!
+30005=L'energia del santuario si affievolisce in assenza di sfidanti...
 // [30600-30650] Teletrasporto per casa
 30600=Questo oggetto deve essere nel tuo zaino per poterlo collegare.
 30601=Seleziona l'altro teletrasporto nel tuo zaino per collegarli.
@@ -5697,7 +5722,8 @@
 30625=Il teletrasporto di destinazione non è posizionato correttamente.
 30626=Non ci sono più cariche in questo teletrasporto.
 30627=Questo teletrasporto è completamente carico.
-30628=Teletrasporto non trovato. 30629=Questo teletrasporto deve essere collegato prima di poter essere rinominato.
+30628=Teletrasporto non trovato. 
+30629=Questo teletrasporto deve essere collegato prima di poter essere rinominato.
 30630=Nome del teletrasporto impostato su: %s
 }
 EOF
