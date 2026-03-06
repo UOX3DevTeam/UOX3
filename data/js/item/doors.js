@@ -40,6 +40,14 @@ function onUseChecked( pUser, iUsed )
 		}
 	}
 
+	// Optional quest/item gating (non-house doors)
+	if( iUsed.GetTag( "reqQuestID" ) || iUsed.GetTag( "reqItemSection" ))
+	{
+		if( !DoorGateAllowsOpen( pUser, iUsed ))
+			return false;
+	}
+
+
 	if( iUsed.isDoorOpen )
 	{
 		if( !CloseDoor( iUsed ))
@@ -486,6 +494,82 @@ function FindKeyInPack( pUser, pPack, iUsed )
 				{
 					return true;
 				}
+			}
+		}
+	}
+	return false;
+}
+
+function DoorGateAllowsOpen( pUser, iDoor )
+{
+	var socket = pUser.socket;
+	// 1) Quest completion gate (uses archived/completed quest list)
+	var reqQuestID = parseInt( iDoor.GetTag( "reqQuestID" ), 10 );
+	if( !isNaN( reqQuestID ) && reqQuestID > 0 )
+	{
+		var archived = TriggerEvent( 5800, "ReadArchivedQuests", pUser );// from your quest system
+		if( !archived || archived.indexOf( reqQuestID ) == -1 )
+		{
+			SendDoorGateMsg( socket, iDoor, "You must complete the required quest first." );
+			return false;
+		}
+	}
+
+	// 2) Item section gate (checks pack for item.sectionID match)
+	var reqSection = iDoor.GetTag( "reqItemSection" );
+	if( reqSection )
+	{
+		var needAmt = parseInt( iDoor.GetTag( "reqItemAmount" ), 10 );
+		if( isNaN( needAmt ) || needAmt <= 0 ) needAmt = 1;
+
+		if( !HasSectionInPack( pUser.pack, "" + reqSection, needAmt ))
+		{
+			SendDoorGateMsg( socket, iDoor, "You lack the required item to open this." );
+			return false;
+		}
+	}
+
+	// If no gates exist, return false here so normal key logic runs
+	// But since we use this only when tags exist, returning true means "allowed".
+	return ( ( !isNaN( reqQuestID ) && reqQuestID > 0 ) || reqSection ) ? true : false;
+}
+
+function SendDoorGateMsg( socket, iDoor, fallbackMsg )
+{
+	if( !socket )
+		return;
+
+	var msg = iDoor.GetTag( "reqGateMsg" );
+	if( msg )
+		socket.SysMessage( msg );
+	else
+		socket.SysMessage( fallbackMsg );
+}
+
+function HasSectionInPack( cont, sectionID, needAmt )
+{
+	if( !cont )
+		return false;
+
+	var want = ( "" + sectionID ).toString().toLowerCase().trim();
+	var count = 0;
+
+	for( var it = cont.FirstItem(); !cont.FinishedItems(); it = cont.NextItem() )
+	{
+		if( it.isContType )
+		{
+			if( HasSectionInPack( it, want, needAmt ))
+				return true;
+		}
+		else
+		{
+			var itSection = ( "" + it.sectionID ).toString().toLowerCase().trim();
+
+			if( itSection == want )
+			{
+				count += ( it.amount > 0 ? it.amount : 1 );
+				if( count >= needAmt )
+					return true;
 			}
 		}
 	}

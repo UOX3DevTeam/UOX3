@@ -2,11 +2,14 @@
 // @ts-check
 // Global Script
 // Supported Events trigger for every character/item, use with care
+const questSystemEnabled = GetServerSetting( "QuestsEnabled" );
+
 /** @type { ( sockPlayer: Socket, pPlayer: Character ) => boolean } */
 function onLogin( socket, pChar )
 {
 	const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 	const youngPlayerSystem = GetServerSetting( "YoungPlayerSystem" );
+	const loginQuest = false;
 
 	// Display Admin Welcome Gump for characters on admin account, until a choice has been made
 	if( pChar.accountNum == 0 )
@@ -73,6 +76,18 @@ function onLogin( socket, pChar )
 		var timeLeft = Math.round(( disguiseKitTime - currentTime ) / 1000 );
 		TriggerEvent( 2204, "RemoveBuff", pChar, 1033 );
 		TriggerEvent( 2204, "AddBuff", pChar, 1033, 1075821, 1075820, timeLeft, "" );
+	}
+
+	// Attach OnQuest Toggle
+	if(!pChar.HasScriptTrigger( 5805 ) && questSystemEnabled )
+	{
+		pChar.AddScriptTrigger( 5805 );
+	}
+
+	if( loginQuest && questSystemEnabled )
+	{
+		// Show the login quest gump
+		TriggerEvent( 5813, "LoginQuest", pChar );
 	}
 }
 
@@ -257,4 +272,17 @@ function onUseBandageMacro( pSock, targChar, bandageItem )
 		}
 	}
 	return true;
+}
+
+/** @type { ( mChar: Character ) => boolean } */
+function onQuestGump( pUser ) 
+{
+	if( ValidateObject( pUser ) && !pUser.dead && questSystemEnabled )
+	{
+		TriggerEvent( 5803, "QuestMenu", pUser );
+	}
+	else
+	{
+		pUser.SysMessage( "Something is wrong, pUser is not valid or is dead." );
+	}
 }
