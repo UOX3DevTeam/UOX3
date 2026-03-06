@@ -6892,17 +6892,18 @@ function onTooltip( myItem, pSocket )
 
 						<p>
 							Newer features include <span class="hl">branching quest chains</span> (conditional next steps),
-							<span class="hl">QuestRootID</span>-based NPC chains (NPCs don’t need to be edited per step),
-							and <span class="hl">Event Manager</span>-powered <span class="hl">Seasonal Quest Windows</span> (holiday quests that automatically start/end).
+							<span class="hl">QuestRootID</span>-based NPC chains (NPCs do not need to be edited per step),
+							<span class="hl">persistent world state</span> for file-backed story flags and counters,
+							and <span class="hl">Event Manager</span>-powered <span class="hl">Seasonal Quest Windows</span> for holiday and festival quests that automatically start and end.
 						</p>
 
 						<p>The system is modular and implemented through several scripts:</p>
 
 						<ul>
-							<li><span class="hl">js/server/quests/quest_core.js</span> – Core engine (validation, start/complete, progress storage)</li>
+							<li><span class="hl">js/server/quests/quest_core.js</span> – Core engine (validation, start/complete, rewards, progress storage, world state support)</li>
 							<li><span class="hl">js/server/quests/quest_lists.js</span> – Registry of all quest definitions</li>
 							<li><span class="hl">js/server/quests/quest_menu.js</span> – Player quest log interface</li>
-							<li><span class="hl">js/server/quests/quest_conversation_gump.js</span> – NPC dialog and accept/decline interface (supports branching preview)</li>
+							<li><span class="hl">js/server/quests/quest_conversation_gump.js</span> – NPC dialog and accept/decline interface (supports branching preview and QuestRootID chain resolution)</li>
 							<li><span class="hl">js/server/quests/quest_item.js</span> – Quest item tracking and marking</li>
 
 							<li><span class="hl">js/server/quests/events/quest_event_ondeathblow.js</span> – Kill progress tracking</li>
@@ -6912,10 +6913,8 @@ function onTooltip( myItem, pSocket )
 
 							<li><span class="hl">js/server/quests/quest_login.js</span> – Optional login quest offer</li>
 
-							<li><span class="hl">js/server/quests/seasonal/seasonal_event_quests.js</span> – Seasonal quests using the Event Manager (holiday start/end + spawns)</li>
+							<li><span class="hl">js/server/quests/seasonal/seasonal_event_quests.js</span> – Seasonal quests using the Event Manager (holiday scheduling, pack support, questgiver spawns, custom event dates)</li>
 						</ul>
-
-						---
 
 						<h3>Server Settings</h3>
 
@@ -6940,19 +6939,15 @@ UOX3/uox.ini
 EVENTMANAGERSYSTEM=1
 </code></pre>
 
-						---
-
 						<h3>Quick Setup</h3>
 
 						<ol>
 							<li><strong>Enable quests</strong> – Set <span class="hl">QuestsEnabled=1</span>.</li>
-							<li><strong>Place a quest NPC</strong> – Use an NPC from <span class="hl">dfndata/npc/questgivers.dfn</span> (or your own DFN).</li>
-							<li><strong>Assign a chain root</strong> – Tag the NPC with <span class="hl">QuestRootID</span> (preferred) or <span class="hl">QuestID</span> (legacy).</li>
+							<li><strong>Place a quest NPC</strong> – Use an NPC from <span class="hl">dfndata/npc/questgivers.dfn</span> or your own DFN.</li>
+							<li><strong>Assign a chain root</strong> – Tag the NPC with <span class="hl">QuestRootID</span> (preferred) or <span class="hl">QuestID</span> (legacy fallback).</li>
 							<li><strong>Create quests</strong> – Add definitions in <span class="hl">quest_lists.js</span>.</li>
 							<li><strong>Players can now accept quests</strong>.</li>
 						</ol>
-
-						---
 
 						<h3>Login Quest Offer</h3>
 
@@ -6966,20 +6961,23 @@ EVENTMANAGERSYSTEM=1
 								<li>Set <span class="hl">autoQuestID</span> in <span class="hl">quest_login.js</span>.</li>
 								<li>Player settings track:</li>
 								<ul>
-									<li>SeenQuests</li>
-									<li>ShowLoginQuestOffers</li>
+									<li><span class="hl">SeenQuests</span></li>
+									<li><span class="hl">ShowLoginQuestOffers</span></li>
 								</ul>
 								<li>The system prevents repeat offers once accepted or declined.</li>
 							</ul>
 						</div>
 
-						---
-
 						<h3>Seasonal Quest Windows (Holiday Events)</h3>
 
 						<p>
-							Seasonal quests can be automatically enabled/disabled on a schedule using the <span class="hl">Event Manager</span>.
-							When a seasonal window starts, the system can spawn seasonal questgivers; when it ends, the NPCs are removed and the event is rescheduled.
+							Seasonal quests can be automatically enabled and disabled on a schedule using the <span class="hl">Event Manager</span>.
+							When a seasonal window starts, the system can spawn seasonal questgivers; when it ends, the NPCs are removed and the event is rescheduled for the next valid occurrence.
+						</p>
+
+						<p>
+							The seasonal system supports a broader set of <span class="hl">built-in holidays</span> from multiple traditions,
+							and shard owners can choose which <span class="hl">holiday packs</span> they want enabled instead of loading every event at once.
 						</p>
 
 						<input type="checkbox" id="spoiler_quest_seasonal">
@@ -6988,28 +6986,96 @@ EVENTMANAGERSYSTEM=1
 						<div class="spoiler">
 							<ul>
 								<li>Implemented in: <span class="hl">js/server/quests/seasonal/seasonal_event_quests.js</span></li>
-								<li>Uses Event Manager script ID <span class="hl">5</span> to register <span class="hl">ONCE</span> events with <span class="hl">duration</span>.</li>
-								<li>Built-in holidays: <span class="hl">New Year’s</span>, <span class="hl">Easter</span>, <span class="hl">July 4th</span>, <span class="hl">Halloween</span>, <span class="hl">Christmas</span>.</li>
-								<li>Easter date is computed automatically per year; fixed holidays use month/day scheduling.</li>
-								<li>Admin can add custom seasonal events (month/day/time/duration + NPC spawn point).</li>
+								<li>Uses Event Manager script ID <span class="hl">5</span> to register <span class="hl">ONCE</span> events with <span class="hl">duration</span>, then re-register the next yearly occurrence when they end.</li>
+								<li>Built-in holidays are grouped into <span class="hl">packs</span> so shard owners can enable only the cultures or themes they want.</li>
+								<li>Admin can also add <span class="hl">custom seasonal events</span> with their own date, duration, NPC section, and spawn location.</li>
+								<li>Active seasonal questgiver spawns are persisted so script reloads can recover active seasonal windows.</li>
+							</ul>
+
+							<p><strong>Built-in Holiday Packs</strong></p>
+							<ul>
+								<li><span class="hl">western</span></li>
+								<li><span class="hl">celtic_pagan</span></li>
+								<li><span class="hl">east_asian</span></li>
+								<li><span class="hl">south_asian</span></li>
+								<li><span class="hl">jewish</span></li>
+								<li><span class="hl">islamic</span></li>
+								<li><span class="hl">latin_american</span></li>
+								<li><span class="hl">irish</span></li>
+								<li><span class="hl">american</span></li>
+								<li><span class="hl">shard_fun</span></li>
+								<li><span class="hl">all</span></li>
+							</ul>
+
+							<p><strong>Built-in Holiday Support</strong></p>
+							<ul>
+								<li><span class="hl">New Year’s Day</span></li>
+								<li><span class="hl">New Year’s Eve</span></li>
+								<li><span class="hl">Lunar New Year</span></li>
+								<li><span class="hl">Valentine’s Day</span></li>
+								<li><span class="hl">St. Patrick’s Day</span></li>
+								<li><span class="hl">Holi</span></li>
+								<li><span class="hl">Easter</span> (computed automatically)</li>
+								<li><span class="hl">Ramadan</span></li>
+								<li><span class="hl">Eid al-Fitr</span></li>
+								<li><span class="hl">Vesak</span></li>
+								<li><span class="hl">Beltane / May Day</span></li>
+								<li><span class="hl">Dragon Boat Festival</span></li>
+								<li><span class="hl">Midsummer Festival</span></li>
+								<li><span class="hl">July 4th / Founders’ Day</span></li>
+								<li><span class="hl">Obon</span></li>
+								<li><span class="hl">Mid-Autumn Festival</span></li>
+								<li><span class="hl">Talk Like a Pirate Day</span></li>
+								<li><span class="hl">Harvest Festival</span></li>
+								<li><span class="hl">Halloween</span></li>
+								<li><span class="hl">Día de los Muertos / Day of the Dead</span></li>
+								<li><span class="hl">Bonfire Night</span></li>
+								<li><span class="hl">Diwali</span></li>
+								<li><span class="hl">Hanukkah</span></li>
+								<li><span class="hl">Winter Solstice</span></li>
+								<li><span class="hl">Christmas / Yuletide</span></li>
+							</ul>
+
+							<p><strong>Scheduling Notes</strong></p>
+							<ul>
+								<li><span class="hl">Fixed-date holidays</span> use month/day scheduling.</li>
+								<li><span class="hl">Easter</span> is calculated automatically per year.</li>
+								<li><span class="hl">Lunar New Year</span>, <span class="hl">Holi</span>, <span class="hl">Ramadan</span>, <span class="hl">Eid al-Fitr</span>, <span class="hl">Vesak</span>, <span class="hl">Dragon Boat Festival</span>, <span class="hl">Mid-Autumn Festival</span>, <span class="hl">Diwali</span>, and <span class="hl">Hanukkah</span> use built-in yearly lookup tables.</li>
+								<li>All seasonal event times are based on <span class="hl">server-local time</span>.</li>
+							</ul>
+
+							<p><strong>Files Used</strong></p>
+							<ul>
+								<li><span class="hl">shared/seasonal_config.json</span> – enabled holiday packs</li>
+								<li><span class="hl">shared/seasonal_custom_events.json</span> – custom admin-added seasonal events</li>
+								<li><span class="hl">shared/seasonal_active.json</span> – active seasonal state and spawned NPC serials</li>
 							</ul>
 
 							<p><strong>GM Commands</strong></p>
 							<ul>
-								<li><span class="hl">[season list</span> – list built-in + custom seasonal configs</li>
+								<li><span class="hl">[season list</span> – list enabled built-in seasonal events plus custom seasonal events</li>
+								<li><span class="hl">[season catalog</span> – list all available built-in holidays in the catalog</li>
+								<li><span class="hl">[season packs</span> – list all holiday packs and whether they are enabled</li>
 								<li><span class="hl">[season active</span> – list currently active seasonal windows</li>
+								<li><span class="hl">[season enablepack &lt;packName&gt;</span> – enable a built-in holiday pack</li>
+								<li><span class="hl">[season disablepack &lt;packName&gt;</span> – disable a built-in holiday pack</li>
+								<li><span class="hl">[season reload</span> – re-register seasonal events from the current config</li>
 								<li><span class="hl">[season add &lt;key&gt; &lt;month&gt; &lt;day&gt; &lt;hour&gt; &lt;minute&gt; &lt;durationHours&gt; &lt;npcSectionID&gt; &lt;x&gt; &lt;y&gt; &lt;z&gt; &lt;world&gt; &lt;instance&gt;</span></li>
-								<li><span class="hl">[season remove &lt;key&gt;</span> – removes the custom config entry (Event Manager removal can be done via <span class="hl">[em remove</span>)</li>
+								<li><span class="hl">[season remove &lt;key&gt;</span> – removes a custom seasonal config entry</li>
+							</ul>
+
+							<p><strong>Event Manager Notes</strong></p>
+							<ul>
+								<li>Changing enabled packs updates the seasonal config, but if events are already loaded you may still want to use <span class="hl">[season reload</span> or <span class="hl">[em reset</span> so Event Manager refreshes the schedule immediately.</li>
+								<li>If a custom event is already registered in Event Manager, removal can also be handled with <span class="hl">[em remove</span>.</li>
 							</ul>
 
 							<p><strong>NPC Setup</strong></p>
 							<ul>
 								<li>Seasonal questgivers are normal quest NPCs that use the conversation script and a <span class="hl">QuestRootID</span> tag.</li>
-								<li>Recommended: put seasonal questgivers in a dedicated DFN, e.g. <span class="hl">dfndata/npc/seasonal_questgivers.dfn</span>.</li>
+								<li>Recommended: put seasonal questgivers in a dedicated DFN, such as <span class="hl">dfndata/npc/seasonal_questgivers.dfn</span>.</li>
 							</ul>
 						</div>
-
-						---
 
 						<h3>Quest Parameters</h3>
 
@@ -7030,8 +7096,6 @@ EVENTMANAGERSYSTEM=1
 								</ul>
 							</div>
 
-							---
-
 							<div class="settingsDiv">
 								<p><span class="hl">Quest Types</span></p>
 								<ul>
@@ -7044,8 +7108,6 @@ EVENTMANAGERSYSTEM=1
 									<li><strong>skillgain</strong></li>
 								</ul>
 							</div>
-
-							---
 
 							<div class="settingsDiv">
 								<p><span class="hl">Flags & Control</span></p>
@@ -7060,8 +7122,6 @@ EVENTMANAGERSYSTEM=1
 								</ul>
 							</div>
 
-							---
-
 							<div class="settingsDiv">
 								<p><span class="hl">Objectives</span></p>
 								<ul>
@@ -7074,8 +7134,6 @@ EVENTMANAGERSYSTEM=1
 								</ul>
 							</div>
 
-							---
-
 							<div class="settingsDiv">
 								<p><span class="hl">Rewards</span></p>
 								<ul>
@@ -7084,12 +7142,10 @@ EVENTMANAGERSYSTEM=1
 									<li><strong>fame</strong></li>
 									<li><strong>karma</strong></li>
 									<li><strong>skill rewards</strong></li>
-									<li><strong>skillpoints</strong> (pooled skill upgrades)</li>
+									<li><strong>skillpoints</strong> – pooled skill upgrades</li>
 									<li><strong>virtue rewards</strong></li>
 								</ul>
 							</div>
-
-							---
 
 							<div class="settingsDiv">
 								<p><span class="hl">Quest Chains</span></p>
@@ -7099,23 +7155,22 @@ EVENTMANAGERSYSTEM=1
 								</ul>
 							</div>
 
-							---
-
 							<div class="settingsDiv">
 								<p><span class="hl">Character Tags & World State</span></p>
 								<ul>
 									<li><strong>setTags</strong> – Set or remove character tags</li>
-									<li><strong>setTagDeltas</strong> – Increment or decrement tag values</li>
+									<li><strong>setTagDeltas</strong> – Increment or decrement persistent tag values</li>
+									<li><strong>deltaRules</strong> / <strong>deltaRulesDefault</strong> – Clamp rules for persistent tag deltas</li>
 									<li><strong>setTempTags</strong> – Temporary character tags</li>
 									<li><strong>setTempTagDeltas</strong> – Modify temporary tags</li>
-									<li><strong>setWorldState</strong> – Modify persistent world-state flags</li>
-									<li><strong>worldStateDeltas</strong> – Increment world-state counters</li>
+									<li><strong>tempDeltaRules</strong> / <strong>tempDeltaRulesDefault</strong> – Clamp rules for temporary tag deltas</li>
+									<li><strong>setWorldState</strong> – Set or remove persistent file-backed world-state values</li>
+									<li><strong>worldStateDeltas</strong> – Increment or decrement world-state counters</li>
+									<li><strong>worldStateDeltaRules</strong> / <strong>worldStateDeltaRulesDefault</strong> – Clamp rules for world-state deltas</li>
 								</ul>
 							</div>
 
 						</div>
-
-						---
 
 						<h3>Questgiver NPC Example</h3>
 
@@ -7130,7 +7185,18 @@ CUSTOMINTTAG=QuestRootID 1001
 }
 </code></pre>
 
-						---
+						<h3>Seasonal Questgiver Example</h3>
+
+<pre><code>
+[dl_halloween_questgiver]
+{
+GET=basehuman
+NAME=Mora
+TITLE=the Harvest Warden
+SCRIPT=5802 // quest conversation
+CUSTOMINTTAG=QuestRootID 9000
+}
+</code></pre>
 
 						<h3>Quest Examples</h3>
 
@@ -7158,8 +7224,6 @@ oneTimeQuest:true
 }
 </code></pre>
 
-							---
-
 <pre><code class="language-javascript">
 {
 questID:2000,
@@ -7185,8 +7249,6 @@ deltaRules:{
 }
 </code></pre>
 
-							---
-
 <pre><code class="language-javascript">
 {
 questID:3000,
@@ -7199,9 +7261,54 @@ nextQuest:[
 }
 </code></pre>
 
-						</div>
+<pre><code class="language-javascript">
+{
+questID:4000,
+title:"Aid the Orchard",
+type:"collect",
 
-						---
+targetItems:[
+ { sectionID:"0x13e3", name:"Apple", amount:10 }
+],
+
+rewards:[
+ { type:"gold", amount:500 }
+],
+
+setWorldState:{
+ "dl_ws_orchard_helped":1
+},
+
+worldStateDeltas:{
+ "dl_ws_ironreach_rep":5,
+ "dl_ws_compassion":10
+},
+
+worldStateDeltaRulesDefault:{ min:0, max:1000 }
+}
+</code></pre>
+
+<pre><code class="language-javascript">
+{
+questID:9000,
+title:"Night of Lanterns",
+type:"collect",
+category:"Seasonal",
+
+targetItems:[
+ { sectionID:"0x0E2D", name:"Candle", amount:10 }
+],
+
+rewards:[
+ { type:"gold", amount:750 },
+ { type:"item", sectionID:"dl_holiday_token", name:"Holiday Token", amount:5 }
+],
+
+oneTimeQuest:true
+}
+</code></pre>
+
+						</div>
 
 						<h3>Tips</h3>
 
@@ -7209,9 +7316,12 @@ nextQuest:[
 							<li>Prefer <span class="hl">QuestRootID</span> on NPCs so the same NPC can serve an entire chain without DFN edits per step.</li>
 							<li>Use <span class="hl">oneTimeQuest</span> for story content.</li>
 							<li>Use <span class="hl">dailyQuest</span> for repeatable quests.</li>
-							<li>Branching quests allow story decisions based on player reputation or world state.</li>
+							<li>Branching quests allow story decisions based on player reputation, completed quests, or world state.</li>
 							<li>Delivery quests automatically create a parcel item in the player's pack.</li>
+							<li>Use <span class="hl">world state</span> when you want persistent per-character story consequences without relying on normal player tags.</li>
 							<li>Seasonal quest windows pair well with Event Manager: spawn limited-time questgivers and reschedule yearly automatically.</li>
+							<li>Holiday packs let shard owners keep only the cultural or thematic holidays that fit their shard.</li>
+							<li>Custom seasonal dates are useful for shard anniversaries, lore celebrations, staff-run events, or local community festivals.</li>
 						</ul>
 
 					</div>
