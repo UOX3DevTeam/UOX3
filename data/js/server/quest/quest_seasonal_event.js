@@ -2,13 +2,14 @@
 // @ts-check
 
 // =========================================================
-// Seasonal Event Quests (Full Replacement)
+// Seasonal Event Quests (Full Replacement + Decorations)
 // =========================================================
 // - Registers yearly holiday events with Event Manager (script 5)
 // - Uses holiday packs so shard owners can enable only the cultures/themes they want
 // - Supports built-in holidays + custom holidays
 // - Spawns seasonal questgiver NPCs when an event starts
 // - Removes them when the event ends
+// - Loads/unloads seasonal decoration events through decorate.js
 // - Supports GM commands to list/enable/disable packs and add/remove custom events
 //
 // Recommended folder:
@@ -23,10 +24,12 @@
 // - Custom events are independent and always loaded unless removed
 // - Built-in movable holidays like Easter are computed automatically
 // - Other movable holidays such as Ramadan, Eid, Diwali, Hanukkah, Lunar New Year, etc.
-//   are supported through optional per-year override tables in this script
+//   are supported through optional per-year lookup tables in this script
+// - Decorations are loaded/unloaded by calling helper functions in decorate.js
 // =========================================================
 
 const EVENT_MANAGER_SCRIPT_ID = 5;
+const DECORATE_SCRIPT_ID = 1059; // decorate.js script ID
 
 // Shared files
 const SEASONAL_CONFIG_FILE = "seasonal_config.json";
@@ -83,7 +86,9 @@ function LoadSeasonalConfig()
 	{
 		var rawText = "";
 		while( !file.EOF() )
+		{
 			rawText += String( file.ReadUntil( "\n" ) );
+		}
 
 		file.Close();
 		file.Free();
@@ -92,14 +97,18 @@ function LoadSeasonalConfig()
 		if( parsedConfig )
 		{
 			if( !parsedConfig.enabledPacks || !IsArray( parsedConfig.enabledPacks ) )
+			{
 				parsedConfig.enabledPacks = defaultConfig.enabledPacks.slice( 0 );
+			}
 
 			return parsedConfig;
 		}
 	}
 
 	if( file )
+	{
 		file.Free();
+	}
 
 	SaveSeasonalConfig( defaultConfig );
 	return defaultConfig;
@@ -135,6 +144,7 @@ function GetBuiltInHolidayCatalog()
 			hour: 0,
 			minute: 5,
 			durationHours: 48,
+			decorationEventName: "new_years_day",
 			spawns: [
 				{ npcSectionID: "dl_newyears_questgiver", x: 1455, y: 1220, z: 0, world: 0, instance: 0 }
 			]
@@ -147,6 +157,7 @@ function GetBuiltInHolidayCatalog()
 			hour: 12,
 			minute: 0,
 			durationHours: 120,
+			decorationEventName: "lunar_new_year",
 			spawns: [
 				{ npcSectionID: "dl_lunarnewyear_questgiver", x: 1456, y: 1221, z: 0, world: 0, instance: 0 }
 			]
@@ -161,6 +172,7 @@ function GetBuiltInHolidayCatalog()
 			hour: 12,
 			minute: 0,
 			durationHours: 72,
+			decorationEventName: "valentines_day",
 			spawns: [
 				{ npcSectionID: "dl_valentines_questgiver", x: 1457, y: 1222, z: 0, world: 0, instance: 0 }
 			]
@@ -175,6 +187,7 @@ function GetBuiltInHolidayCatalog()
 			hour: 12,
 			minute: 0,
 			durationHours: 72,
+			decorationEventName: "st_patricks_day",
 			spawns: [
 				{ npcSectionID: "dl_stpatricks_questgiver", x: 1458, y: 1222, z: 0, world: 0, instance: 0 }
 			]
@@ -187,6 +200,7 @@ function GetBuiltInHolidayCatalog()
 			hour: 12,
 			minute: 0,
 			durationHours: 72,
+			decorationEventName: "holi",
 			spawns: [
 				{ npcSectionID: "dl_holi_questgiver", x: 1458, y: 1223, z: 0, world: 0, instance: 0 }
 			]
@@ -199,6 +213,7 @@ function GetBuiltInHolidayCatalog()
 			hour: 10,
 			minute: 0,
 			durationHours: 96,
+			decorationEventName: "easter",
 			spawns: [
 				{ npcSectionID: "dl_easter_questgiver", x: 1458, y: 1224, z: 0, world: 0, instance: 0 }
 			]
@@ -211,6 +226,7 @@ function GetBuiltInHolidayCatalog()
 			hour: 12,
 			minute: 0,
 			durationHours: 240,
+			decorationEventName: "ramadan",
 			spawns: [
 				{ npcSectionID: "dl_ramadan_questgiver", x: 1459, y: 1224, z: 0, world: 0, instance: 0 }
 			]
@@ -223,6 +239,7 @@ function GetBuiltInHolidayCatalog()
 			hour: 12,
 			minute: 0,
 			durationHours: 72,
+			decorationEventName: "eid_al_fitr",
 			spawns: [
 				{ npcSectionID: "dl_eidfitr_questgiver", x: 1460, y: 1224, z: 0, world: 0, instance: 0 }
 			]
@@ -235,6 +252,7 @@ function GetBuiltInHolidayCatalog()
 			hour: 12,
 			minute: 0,
 			durationHours: 72,
+			decorationEventName: "vesak",
 			spawns: [
 				{ npcSectionID: "dl_vesak_questgiver", x: 1461, y: 1224, z: 0, world: 0, instance: 0 }
 			]
@@ -249,6 +267,7 @@ function GetBuiltInHolidayCatalog()
 			hour: 12,
 			minute: 0,
 			durationHours: 72,
+			decorationEventName: "beltane",
 			spawns: [
 				{ npcSectionID: "dl_beltane_questgiver", x: 1459, y: 1223, z: 0, world: 0, instance: 0 }
 			]
@@ -261,6 +280,7 @@ function GetBuiltInHolidayCatalog()
 			hour: 12,
 			minute: 0,
 			durationHours: 72,
+			decorationEventName: "dragon_boat_festival",
 			spawns: [
 				{ npcSectionID: "dl_dragonboat_questgiver", x: 1460, y: 1223, z: 0, world: 0, instance: 0 }
 			]
@@ -275,6 +295,7 @@ function GetBuiltInHolidayCatalog()
 			hour: 12,
 			minute: 0,
 			durationHours: 96,
+			decorationEventName: "midsummer",
 			spawns: [
 				{ npcSectionID: "dl_midsummer_questgiver", x: 1460, y: 1224, z: 0, world: 0, instance: 0 }
 			]
@@ -289,6 +310,7 @@ function GetBuiltInHolidayCatalog()
 			hour: 12,
 			minute: 0,
 			durationHours: 72,
+			decorationEventName: "july4",
 			spawns: [
 				{ npcSectionID: "dl_july4_questgiver", x: 1462, y: 1218, z: 0, world: 0, instance: 0 }
 			]
@@ -303,6 +325,7 @@ function GetBuiltInHolidayCatalog()
 			hour: 12,
 			minute: 0,
 			durationHours: 96,
+			decorationEventName: "obon",
 			spawns: [
 				{ npcSectionID: "dl_obon_questgiver", x: 1461, y: 1220, z: 0, world: 0, instance: 0 }
 			]
@@ -315,6 +338,7 @@ function GetBuiltInHolidayCatalog()
 			hour: 12,
 			minute: 0,
 			durationHours: 96,
+			decorationEventName: "mid_autumn_festival",
 			spawns: [
 				{ npcSectionID: "dl_midautumn_questgiver", x: 1462, y: 1220, z: 0, world: 0, instance: 0 }
 			]
@@ -329,6 +353,7 @@ function GetBuiltInHolidayCatalog()
 			hour: 12,
 			minute: 0,
 			durationHours: 48,
+			decorationEventName: "pirates_day",
 			spawns: [
 				{ npcSectionID: "dl_piratesday_questgiver", x: 1463, y: 1220, z: 0, world: 0, instance: 0 }
 			]
@@ -343,6 +368,7 @@ function GetBuiltInHolidayCatalog()
 			hour: 12,
 			minute: 0,
 			durationHours: 96,
+			decorationEventName: "harvest_festival",
 			spawns: [
 				{ npcSectionID: "dl_harvest_questgiver", x: 1464, y: 1220, z: 0, world: 0, instance: 0 }
 			]
@@ -357,6 +383,7 @@ function GetBuiltInHolidayCatalog()
 			hour: 12,
 			minute: 0,
 			durationHours: 168,
+			decorationEventName: "halloween",
 			spawns: [
 				{ npcSectionID: "dl_halloween_questgiver", x: 1460, y: 1225, z: 0, world: 0, instance: 0 }
 			]
@@ -371,6 +398,7 @@ function GetBuiltInHolidayCatalog()
 			hour: 12,
 			minute: 0,
 			durationHours: 96,
+			decorationEventName: "day_of_the_dead",
 			spawns: [
 				{ npcSectionID: "dl_dayofthedead_questgiver", x: 1461, y: 1226, z: 0, world: 0, instance: 0 }
 			]
@@ -385,6 +413,7 @@ function GetBuiltInHolidayCatalog()
 			hour: 12,
 			minute: 0,
 			durationHours: 48,
+			decorationEventName: "bonfire_night",
 			spawns: [
 				{ npcSectionID: "dl_bonfire_questgiver", x: 1462, y: 1226, z: 0, world: 0, instance: 0 }
 			]
@@ -397,6 +426,7 @@ function GetBuiltInHolidayCatalog()
 			hour: 12,
 			minute: 0,
 			durationHours: 120,
+			decorationEventName: "diwali",
 			spawns: [
 				{ npcSectionID: "dl_diwali_questgiver", x: 1453, y: 1219, z: 0, world: 0, instance: 0 }
 			]
@@ -409,6 +439,7 @@ function GetBuiltInHolidayCatalog()
 			hour: 12,
 			minute: 0,
 			durationHours: 192,
+			decorationEventName: "hanukkah",
 			spawns: [
 				{ npcSectionID: "dl_hanukkah_questgiver", x: 1454, y: 1217, z: 0, world: 0, instance: 0 }
 			]
@@ -423,6 +454,7 @@ function GetBuiltInHolidayCatalog()
 			hour: 12,
 			minute: 0,
 			durationHours: 120,
+			decorationEventName: "winter_solstice",
 			spawns: [
 				{ npcSectionID: "dl_wintersolstice_questgiver", x: 1455, y: 1217, z: 0, world: 0, instance: 0 }
 			]
@@ -437,6 +469,7 @@ function GetBuiltInHolidayCatalog()
 			hour: 12,
 			minute: 0,
 			durationHours: 216,
+			decorationEventName: "christmas",
 			spawns: [
 				{ npcSectionID: "dl_christmas_questgiver", x: 1452, y: 1216, z: 0, world: 0, instance: 0 }
 			]
@@ -451,6 +484,7 @@ function GetBuiltInHolidayCatalog()
 			hour: 18,
 			minute: 0,
 			durationHours: 18,
+			decorationEventName: "new_years_eve",
 			spawns: [
 				{ npcSectionID: "dl_newyearseve_questgiver", x: 1458, y: 1222, z: 0, world: 0, instance: 0 }
 			]
@@ -512,7 +546,10 @@ function GetBuiltInHolidayPacks()
 		],
 
 		american: [
-			"july4",
+			"july4"
+		],
+
+		british: [
 			"bonfire_night"
 		],
 
@@ -569,14 +606,18 @@ function GetEnabledBuiltInHolidayDefinitions()
 		var holidayKeyList = holidayPacks[packName];
 
 		if( !holidayKeyList || !holidayKeyList.length )
+		{
 			continue;
+		}
 
 		for( var holidayIndex = 0; holidayIndex < holidayKeyList.length; holidayIndex++ )
 		{
 			var holidayKey = String( holidayKeyList[holidayIndex] || "" ).toLowerCase();
 
 			if( seenHolidayKeys[holidayKey] )
+			{
 				continue;
+			}
 
 			if( holidayCatalog[holidayKey] )
 			{
@@ -604,18 +645,24 @@ function LoadCustomSeasonalEvents()
 	{
 		var rawText = "";
 		while( !file.EOF() )
+		{
 			rawText += String( file.ReadUntil( "\n" ) );
+		}
 
 		file.Close();
 		file.Free();
 
 		var parsedData = SafeParseJson( rawText );
 		if( parsedData && parsedData.events && IsArray( parsedData.events ) )
+		{
 			return parsedData.events;
+		}
 	}
 
 	if( file )
+	{
 		file.Free();
+	}
 
 	return customEvents;
 }
@@ -651,7 +698,9 @@ function UpsertCustomSeasonalEvent( eventDefinition )
 	}
 
 	if( !foundExisting )
+	{
 		data.events.push( eventDefinition );
+	}
 
 	SaveCustomSeasonalEvents( data );
 }
@@ -677,7 +726,9 @@ function RemoveCustomSeasonalEvent( eventKey )
 	}
 
 	if( removed )
+	{
 		SaveCustomSeasonalEvents( { events: filteredEvents } );
+	}
 
 	return removed;
 }
@@ -697,18 +748,24 @@ function LoadActiveSeasonalState()
 	{
 		var rawText = "";
 		while( !file.EOF() )
+		{
 			rawText += String( file.ReadUntil( "\n" ) );
+		}
 
 		file.Close();
 		file.Free();
 
 		var parsedState = SafeParseJson( rawText );
 		if( parsedState )
+		{
 			return parsedState;
+		}
 	}
 
 	if( file )
+	{
 		file.Free();
+	}
 
 	return defaultState;
 }
@@ -733,7 +790,9 @@ function MarkSeasonalActive( holidayKey, isActive )
 	var normalizedHolidayKey = String( holidayKey || "" ).toLowerCase();
 
 	if( !activeState.active )
+	{
 		activeState.active = {};
+	}
 
 	activeState.active[normalizedHolidayKey] = ( isActive ? 1 : 0 );
 	SaveActiveSeasonalState( activeState );
@@ -762,12 +821,16 @@ function RegisterConfiguredSeasonalEvents()
 function RegisterOrRescheduleHoliday( holidayDefinition )
 {
 	if( !holidayDefinition || !holidayDefinition.key )
+	{
 		return;
+	}
 
 	var nowMs = Date.now();
 	var nextStartMs = ComputeNextHolidayStartMs( holidayDefinition, nowMs );
 	if( nextStartMs <= 0 )
+	{
 		return;
+	}
 
 	var durationMs = Math.max( 0, ToIntSafe( holidayDefinition.durationHours ) * 3600 * 1000 );
 	var uniqueEventID = BuildUniqueSeasonalEventID( holidayDefinition.key, nextStartMs );
@@ -812,7 +875,9 @@ function BuildUniqueSeasonalEventID( holidayKey, startMs )
 function SeasonalEventStart( args )
 {
 	if( !args || !args.holidayDefinition )
+	{
 		return;
+	}
 
 	var holidayKey = String( args.holidayKey || "" ).toLowerCase();
 	var holidayName = String( args.holidayName || holidayKey );
@@ -821,12 +886,15 @@ function SeasonalEventStart( args )
 	BroadcastMessage( "[Seasonal] " + holidayName + " is now active!" );
 
 	SpawnSeasonalQuestGivers( args.holidayDefinition );
+	ActivateSeasonalDecorations( args.holidayDefinition );
 }
 
 function SeasonalEventEnd( args )
 {
 	if( !args || !args.holidayDefinition )
+	{
 		return;
+	}
 
 	var holidayKey = String( args.holidayKey || "" ).toLowerCase();
 	var holidayName = String( args.holidayName || holidayKey );
@@ -834,9 +902,90 @@ function SeasonalEventEnd( args )
 	BroadcastMessage( "[Seasonal] " + holidayName + " has ended." );
 
 	DespawnSeasonalQuestGivers( args.holidayDefinition );
+	DeactivateSeasonalDecorations( args.holidayDefinition );
 	MarkSeasonalActive( holidayKey, false );
 
 	RegisterOrRescheduleHoliday( args.holidayDefinition );
+}
+
+// =========================================================
+// DECORATION EVENT SUPPORT
+// =========================================================
+
+/** @type { ( holidayDefinition: any ) => void } */
+function ActivateSeasonalDecorations( holidayDefinition )
+{
+	var decorationEventNames = GetDecorationEventNamesFromHoliday( holidayDefinition );
+	if( decorationEventNames.length < 1 )
+	{
+		return;
+	}
+
+	for( var eventIndex = 0; eventIndex < decorationEventNames.length; eventIndex++ )
+	{
+		var decorationEventName = decorationEventNames[eventIndex];
+		if( decorationEventName == "" )
+		{
+			continue;
+		}
+
+		TriggerEvent( DECORATE_SCRIPT_ID, "SeasonalLoadEventDecorations", decorationEventName );
+	}
+}
+
+/** @type { ( holidayDefinition: any ) => void } */
+function DeactivateSeasonalDecorations( holidayDefinition )
+{
+	var decorationEventNames = GetDecorationEventNamesFromHoliday( holidayDefinition );
+	if( decorationEventNames.length < 1 )
+	{
+		return;
+	}
+
+	for( var eventIndex = 0; eventIndex < decorationEventNames.length; eventIndex++ )
+	{
+		var decorationEventName = decorationEventNames[eventIndex];
+		if( decorationEventName == "" )
+		{
+			continue;
+		}
+
+		TriggerEvent( DECORATE_SCRIPT_ID, "SeasonalUnloadEventDecorations", decorationEventName );
+	}
+}
+
+/** @type { ( holidayDefinition: any ) => string[] } */
+function GetDecorationEventNamesFromHoliday( holidayDefinition )
+{
+	var decorationEventNames = [];
+
+	if( !holidayDefinition )
+	{
+		return decorationEventNames;
+	}
+
+	if( holidayDefinition.decorationEventNames && IsArray( holidayDefinition.decorationEventNames ) )
+	{
+		for( var index = 0; index < holidayDefinition.decorationEventNames.length; index++ )
+		{
+			var decorationEventName = String( holidayDefinition.decorationEventNames[index] || "" ).toLowerCase();
+			if( decorationEventName != "" )
+			{
+				decorationEventNames.push( decorationEventName );
+			}
+		}
+	}
+
+	if( decorationEventNames.length < 1 && holidayDefinition.decorationEventName )
+	{
+		var singleDecorationEventName = String( holidayDefinition.decorationEventName || "" ).toLowerCase();
+		if( singleDecorationEventName != "" )
+		{
+			decorationEventNames.push( singleDecorationEventName );
+		}
+	}
+
+	return decorationEventNames;
 }
 
 // =========================================================
@@ -847,22 +996,30 @@ function SeasonalEventEnd( args )
 function SpawnSeasonalQuestGivers( holidayDefinition )
 {
 	if( !holidayDefinition || !holidayDefinition.spawns || !holidayDefinition.spawns.length )
+	{
 		return;
+	}
 
 	var holidayKey = String( holidayDefinition.key || "" ).toLowerCase();
 	var activeState = LoadActiveSeasonalState();
 
 	if( !activeState.spawns )
+	{
 		activeState.spawns = {};
+	}
 
 	if( !activeState.spawns[holidayKey] )
+	{
 		activeState.spawns[holidayKey] = [];
+	}
 
 	for( var spawnIndex = 0; spawnIndex < holidayDefinition.spawns.length; spawnIndex++ )
 	{
 		var spawnInfo = holidayDefinition.spawns[spawnIndex];
 		if( !spawnInfo || !spawnInfo.npcSectionID )
+		{
 			continue;
+		}
 
 		var spawnedNpc = SpawnNPC(
 			String( spawnInfo.npcSectionID ),
@@ -889,13 +1046,17 @@ function SpawnSeasonalQuestGivers( holidayDefinition )
 function DespawnSeasonalQuestGivers( holidayDefinition )
 {
 	if( !holidayDefinition )
+	{
 		return;
+	}
 
 	var holidayKey = String( holidayDefinition.key || "" ).toLowerCase();
 	var activeState = LoadActiveSeasonalState();
 
 	if( !activeState.spawns || !activeState.spawns[holidayKey] )
+	{
 		return;
+	}
 
 	var spawnedSerials = activeState.spawns[holidayKey];
 	for( var serialIndex = 0; serialIndex < spawnedSerials.length; serialIndex++ )
@@ -904,7 +1065,9 @@ function DespawnSeasonalQuestGivers( holidayDefinition )
 		if( ValidateObject( spawnedNpc ) )
 		{
 			if( spawnedNpc.GetTag( "SeasonalQuestGiver" ) )
+			{
 				spawnedNpc.Delete();
+			}
 		}
 	}
 
@@ -916,7 +1079,9 @@ function RestoreActiveSeasonalSpawns()
 {
 	var activeState = LoadActiveSeasonalState();
 	if( !activeState || !activeState.active )
+	{
 		return;
+	}
 
 	var allHolidayDefinitions = GetEnabledBuiltInHolidayDefinitions().concat( LoadCustomSeasonalEvents() );
 
@@ -924,14 +1089,18 @@ function RestoreActiveSeasonalSpawns()
 	{
 		var holidayDefinition = allHolidayDefinitions[holidayIndex];
 		if( !holidayDefinition || !holidayDefinition.key )
+		{
 			continue;
+		}
 
 		var holidayKey = String( holidayDefinition.key || "" ).toLowerCase();
 
 		if( activeState.active[holidayKey] == 1 )
 		{
 			if( !activeState.spawns || !activeState.spawns[holidayKey] || !activeState.spawns[holidayKey].length )
+			{
 				SpawnSeasonalQuestGivers( holidayDefinition );
+			}
 		}
 	}
 }
@@ -945,7 +1114,9 @@ function command_SEASON( socket, cmdString )
 {
 	var gmChar = socket.currentChar;
 	if( !ValidateObject( gmChar ) )
+	{
 		return;
+	}
 
 	cmdString = String( cmdString || "" ).replace( /^\s+|\s+$/g, "" );
 	var parts = ( cmdString.length > 0 ? cmdString.split( /\s+/ ) : [] );
@@ -1013,12 +1184,12 @@ function command_SEASON( socket, cmdString )
 		return;
 	}
 
-	// [season add <key> <month> <day> <hour> <minute> <durationHours> <npcSectionID> <x> <y> <z> <world> <instance>
+	// [season add <key> <month> <day> <hour> <minute> <durationHours> <npcSectionID> <x> <y> <z> <world> <instance> [decorationEventName]
 	if( subCommand == "add" )
 	{
 		if( parts.length < 13 )
 		{
-			socket.SysMessage( "Usage: [season add <key> <month> <day> <hour> <minute> <durationHours> <npcSectionID> <x> <y> <z> <world> <instance>" );
+			socket.SysMessage( "Usage: [season add <key> <month> <day> <hour> <minute> <durationHours> <npcSectionID> <x> <y> <z> <world> <instance> [decorationEventName]" );
 			return;
 		}
 
@@ -1034,6 +1205,12 @@ function command_SEASON( socket, cmdString )
 		var z = parseInt( parts[10], 10 );
 		var world = parseInt( parts[11], 10 );
 		var instance = parseInt( parts[12], 10 );
+		var decorationEventName = "";
+
+		if( parts.length >= 14 )
+		{
+			decorationEventName = String( parts[13] || "" ).toLowerCase();
+		}
 
 		if(
 			isNaN( month ) || isNaN( day ) || isNaN( hour ) || isNaN( minute ) ||
@@ -1065,6 +1242,11 @@ function command_SEASON( socket, cmdString )
 				}
 			]
 		};
+
+		if( decorationEventName != "" )
+		{
+			customEventDefinition.decorationEventName = decorationEventName;
+		}
 
 		UpsertCustomSeasonalEvent( customEventDefinition );
 		RegisterOrRescheduleHoliday( customEventDefinition );
@@ -1107,7 +1289,7 @@ function PrintSeasonHelp( socket )
 	socket.SysMessage( "  [season enablepack <packName>" );
 	socket.SysMessage( "  [season disablepack <packName>" );
 	socket.SysMessage( "  [season reload" );
-	socket.SysMessage( "  [season add <key> <month> <day> <hour> <minute> <durationHours> <npcSectionID> <x> <y> <z> <world> <instance>" );
+	socket.SysMessage( "  [season add <key> <month> <day> <hour> <minute> <durationHours> <npcSectionID> <x> <y> <z> <world> <instance> [decorationEventName]" );
 	socket.SysMessage( "  [season remove <key>" );
 }
 
@@ -1121,7 +1303,19 @@ function ListHolidayCatalog( socket )
 	{
 		if( holidayCatalog.hasOwnProperty( holidayKey ) )
 		{
-			socket.SysMessage( holidayKey + " (" + holidayCatalog[holidayKey].name + ")" );
+			var holidayDefinition = holidayCatalog[holidayKey];
+			var decorationInfo = "";
+
+			if( holidayDefinition.decorationEventName )
+			{
+				decorationInfo = " | decor=" + holidayDefinition.decorationEventName;
+			}
+			else if( holidayDefinition.decorationEventNames && holidayDefinition.decorationEventNames.length )
+			{
+				decorationInfo = " | decor=" + holidayDefinition.decorationEventNames.join( "," );
+			}
+
+			socket.SysMessage( holidayKey + " (" + holidayDefinition.name + ")" + decorationInfo );
 		}
 	}
 }
@@ -1167,7 +1361,12 @@ function ListEnabledSeasonalEvents( socket )
 	{
 		for( var builtInIndex = 0; builtInIndex < builtInEvents.length; builtInIndex++ )
 		{
-			socket.SysMessage( builtInEvents[builtInIndex].key + " (" + builtInEvents[builtInIndex].name + ")" );
+			var builtInDecorationInfo = "";
+			if( builtInEvents[builtInIndex].decorationEventName )
+			{
+				builtInDecorationInfo = " | decor=" + builtInEvents[builtInIndex].decorationEventName;
+			}
+			socket.SysMessage( builtInEvents[builtInIndex].key + " (" + builtInEvents[builtInIndex].name + ")" + builtInDecorationInfo );
 		}
 	}
 
@@ -1180,7 +1379,12 @@ function ListEnabledSeasonalEvents( socket )
 	{
 		for( var customIndex = 0; customIndex < customEvents.length; customIndex++ )
 		{
-			socket.SysMessage( customEvents[customIndex].key + " (" + ( customEvents[customIndex].name || "custom" ) + ")" );
+			var customDecorationInfo = "";
+			if( customEvents[customIndex].decorationEventName )
+			{
+				customDecorationInfo = " | decor=" + customEvents[customIndex].decorationEventName;
+			}
+			socket.SysMessage( customEvents[customIndex].key + " (" + ( customEvents[customIndex].name || "custom" ) + ")" + customDecorationInfo );
 		}
 	}
 }
@@ -1208,7 +1412,9 @@ function ListActiveSeasonalEvents( socket )
 	}
 
 	if( !foundAny )
+	{
 		socket.SysMessage( "(none)" );
+	}
 }
 
 /** @type { ( socket: Socket, packName: string ) => void } */
@@ -1293,7 +1499,9 @@ function ComputeNextHolidayStartMs( holidayDefinition, nowMs )
 	var holidayStartDate = ResolveHolidayDateForYear( holidayDefinition, targetYear );
 
 	if( !holidayStartDate )
+	{
 		return 0;
+	}
 
 	if( holidayStartDate.getTime() <= nowMs )
 	{
@@ -1302,7 +1510,9 @@ function ComputeNextHolidayStartMs( holidayDefinition, nowMs )
 	}
 
 	if( !holidayStartDate )
+	{
 		return 0;
+	}
 
 	return holidayStartDate.getTime();
 }
@@ -1311,7 +1521,9 @@ function ComputeNextHolidayStartMs( holidayDefinition, nowMs )
 function ResolveHolidayDateForYear( holidayDefinition, year )
 {
 	if( !holidayDefinition )
+	{
 		return null;
+	}
 
 	var holidayType = String( holidayDefinition.type || "FIXED" ).toUpperCase();
 	var hour = ToIntSafe( holidayDefinition.hour );
@@ -1391,17 +1603,14 @@ function ResolveMappedHolidayDate( holidayKey, year, hour, minute )
 	var holidayMap = holidayDateTable[String( holidayKey || "" ).toLowerCase()];
 
 	if( !holidayMap || !holidayMap[year] )
+	{
 		return null;
+	}
 
 	var dateInfo = holidayMap[year];
 	return new Date( year, dateInfo.month - 1, dateInfo.day, hour, minute, 0, 0 );
 }
 
-// ---------------------------------------------------------
-// Movable holiday lookup table
-// Add more years whenever you want.
-// month is 1-12
-// ---------------------------------------------------------
 function GetHolidayDateTable()
 {
 	return {
@@ -1488,7 +1697,6 @@ function GetHolidayDateTable()
 	};
 }
 
-// Meeus/Jones/Butcher algorithm
 /** @type { ( year: number ) => any } */
 function ComputeWesternEasterDate( year )
 {
@@ -1543,9 +1751,8 @@ function IsArray( value )
 	return Object.prototype.toString.call( value ) == "[object Array]";
 }
 
-/** @type { ( msg: string ) => void } */
-function BroadcastMessage( msg )
+/** @type { ( messageText: string ) => void } */
+function BroadcastMessage( messageText )
 {
-	// Replace or remove if you have your own shard-wide broadcast method.
-	Console.Print( String( msg || "" ) + "\n" );
+	Console.Print( String( messageText || "" ) + "\n" );
 }
