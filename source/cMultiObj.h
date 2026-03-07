@@ -7,6 +7,15 @@ class CMultiObj : public CItem
 protected:
 	std::string				deed;
 
+	// Temporary serial vectors for deferred loading
+	std::vector<UI32>		pendingBans;
+	std::vector<UI32>		pendingOwners;
+	std::vector<UI32>		pendingFriends;
+	std::vector<UI32>		pendingGuests;
+	std::vector<UI32>		pendingLockedItems;
+	std::vector<UI32>		pendingSecureContainers;
+	std::vector<UI32>		pendingVendors;
+
 	std::map<CChar *, UI08>	housePrivList;
 
 	std::vector<CItem *>	lockedList;
@@ -146,6 +155,8 @@ public:
 	virtual void		Cleanup( void ) override;
 
 	virtual bool		CanBeObjType( ObjectType toCompare ) const override;
+
+	virtual void		PostLoadProcessing( void ) override;
 
 	GenericList<CChar *> *	GetOwnersOfMultiList( bool clearList = false );
 	GenericList<CChar *> *	GetFriendsOfMultiList( bool clearList = false );
