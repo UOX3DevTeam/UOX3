@@ -8079,14 +8079,16 @@
       "name": "onCharDoubleClick",
       "cppName": "OnCharDoubleClick",
       "params": {
-        "num": 2,
+        "num": 3,
         "list": [
           { "name": "currChar", "type": "Character", "required": true },
-          { "name": "targChar", "type": "Character", "required": true }
+          { "name": "targChar", "type": "Character", "required": true },
+          { "name": "nonMouseClickEvent", "type": "boolean", "required": true }
         ]
       },
       "returns": "boolean"
     },
+
     {
       "name": "onClick",
       "cppName": "OnClick",
@@ -8664,6 +8666,18 @@
         "list": [
           { "name": "mSock", "type": "Socket", "required": true },
           { "name": "packetNum", "type": "number", "required": true }
+        ]
+      },
+      "returns": "boolean"
+    },
+    {
+      "name": "onPaperDoll",
+      "cppName": "OnPaperDoll",
+      "params": {
+       "num": 2,
+        "list": [
+          { "name": "currChar", "type": "Character", "required": true },
+          { "name": "targChar", "type": "Character", "required": true }
         ]
       },
       "returns": "boolean"
