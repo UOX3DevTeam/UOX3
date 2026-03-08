@@ -906,15 +906,6 @@ function onCallback0( socket, ourObj )
 						</div>
 
 						<div class="settingsDiv">
-							<p><span class="hl">Notes</span></p>
-							<ul>
-								<li><strong>pUser</strong> – Character performing the double-click.</li>
-								<li><strong>targChar</strong> – Character being double-clicked.</li>
-								<li><strong>nonMouseClickEvent</strong> – Boolean indicating that the event was not triggered by a direct mouse double-click. This may occur when the client generates the event internally (for example on login or via keyboard input).</li>
-							</ul>
-						</div>
-
-						<div class="settingsDiv">
 							<p>
 								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onCharDoubleClick( pUser, targChar, nonMouseClickEvent )
@@ -3342,15 +3333,6 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 								<li><strong>return true</strong> (or <strong>1</strong>) – Allow the default hardcoded paperdoll behaviour to continue, and allow other scripts with the same event to run.</li>
 							</ul>
 						</div>
-
-						<div class="settingsDiv">
-							<p><span class="hl">Notes</span></p>
-							<ul>
-								<li><strong>pUser</strong> – Character attempting to open the paperdoll.</li>
-								<li><strong>targChar</strong> – Character whose paperdoll is being opened.</li>
-							</ul>
-						</div>
-
 
 						<div class="settingsDiv">
 							<p>
