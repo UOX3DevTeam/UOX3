@@ -321,7 +321,7 @@ function PetResurrect( socket, deadPet )
 	deadPet.target = null;
 	deadPet.atWar = false;
 	deadPet.attacker = null;
-	deadPet.isGM = false;
+	deadPet.noCharCollide = false;
 	deadPet.SetTag( "isPetDead", false );
 	deadPet.SetTempTag( "bondedPetDeathTime", null ); // Optional cleanup
 }

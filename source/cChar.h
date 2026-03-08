@@ -533,6 +533,7 @@ public:
 	bool		IsPermReflected( void ) const;
 	bool		NoNeedReags( void ) const;
 	bool		HideFameKarmaTitle( void ) const;
+	bool		NoCharCollide( void ) const;
 
 	void		SetGM( bool newValue );
 	void		SetBroadcast( bool newValue );
@@ -551,6 +552,7 @@ public:
 	void		SetPermReflected( bool newValue );
 	void		SetNoNeedReags( bool newValue );
 	void		HideFameKarmaTitle( bool newValue );
+	void		NoCharCollide( bool newValue );
 
 	void		SetPriv( UI32 newValue );
 	void		SetTownpriv( SI08 newValue );

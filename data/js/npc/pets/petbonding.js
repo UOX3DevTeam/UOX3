@@ -39,7 +39,7 @@ function onDeathBlow( killedPet, petKiller )
 		killedPet.target = null;
 		killedPet.atWar = false;
 		killedPet.attacker = null;
-		killedPet.isGM = true;
+		killedPet.noCharCollide = true;
 
 		// Start immediate, repeating timer (30 mins) to monitor playtime
 		killedPet.StartTimer( 30 * 60 * 1000, 32, 3107 );
