@@ -1,29 +1,31 @@
 function onCharDoubleClick( pUser, targChar, nonMouseClickEvent )
 {
-    var pSocket = pUser.socket;
+	var pSocket = pUser.socket;
 
-    if( pSocket != null && pUser == targChar && !nonMouseClickEvent )
-    {
-        var etherealMount = pUser.FindItemLayer( 0x19 );
-        if( ValidateObject( etherealMount ))
-        {
-            var pPack = pUser.pack;
-            if( ValidateObject( pPack ))
-            {
-                if( pPack.totalItemCount < pPack.maxItems && pPack.weight < pPack.weightMax )
-                {
-                    DismountEtherealMount( pUser );
-                    return 0;
-                }
-                else
-                {
-                    pSocket.SysMessage( GetDictionaryEntry( 6580, pSocket.language )); // You cannot dismount your ethereal because your pack cannot hold it
-                }
-            }
-        }
-    }
+	// Invalid socket = stop
+	if( pSocket == null )
+		return 0;
 
-    return 1;
+	// Not my character or triggered by non-mouse event = continue with hardcode
+	if( pUser != targChar || nonMouseClickEvent )
+		return 1;
+
+	var etherealMount = pUser.FindItemLayer( 0x19 );
+	var pPack = pUser.pack;
+
+	// Invalid mount or pack = stop
+	if( !ValidateObject( etherealMount ) || !ValidateObject( pPack ))
+		return 0;
+
+	// Full pack = stop
+	if( pPack.totalItemCount >= pPack.maxItems || pPack.weight >= pPack.weightMax )
+	{
+		pSocket.SysMessage( GetDictionaryEntry( 6580, pSocket.language )); // You cannot dismount your ethereal because your pack cannot hold it
+		return 0;
+	}
+
+	// Dismounting = stop
+	DismountEtherealMount( pUser );
 }
 
 function onDeathBlow( pDead, pKiller )
