@@ -2,7 +2,7 @@ function onCharDoubleClick( pUser, targChar, nonMouseClickEvent )
 {
     var pSocket = pUser.socket;
 
-    if( pSocket != null && pUser == targChar && !nonMouseClickedEvent )
+    if( pSocket != null && pUser == targChar && !nonMouseClickEvent )
     {
         var etherealMount = pUser.FindItemLayer( 0x19 );
         if( ValidateObject( etherealMount ))
