@@ -3439,6 +3439,55 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 				</div> <!-- cd-faq__content -->
 			</li>
 
+					<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnPaperDoll" id="eventOnPaperDoll"><span>onPaperDoll</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onPaperDoll( pUser, targChar )</em></p>
+						</div>
+
+						<div class="settingsDiv">
+							<p><span class="hl">Parameters</span></p>
+							<ul>
+								<li><strong>pUser</strong> – Character attempting to open the paperdoll.</li>
+								<li><strong>targChar</strong> – Character whose paperdoll is being opened.</li>
+							</ul>
+						</div>
+
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>Allows scripts to override or customize what happens when a character's paperdoll is opened.</p>
+						</div>
+
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>Triggered when <strong>pUser</strong> opens the paperdoll of <strong>targChar</strong>. The script attached to <strong>targChar</strong> is executed.</p>
+						</div>
+
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return false</strong> (or <strong>0</strong>) – Prevent the default hardcoded paperdoll behaviour and stop other scripts with the same event from running.</li>
+								<li><strong>return true</strong> (or <strong>1</strong>) – Allow the default hardcoded paperdoll behaviour to continue, and allow other scripts with the same event to run.</li>
+							</ul>
+						</div>
+
+						<div class="settingsDiv">
+							<p>
+								<span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onPaperDoll( pUser, targChar )
+{
+	targChar.TextMessage( "My paperdoll is private." );
+	return false;
+}</code></pre>
+							</p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
 			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnPaperDoll" id="eventOnPaperDoll"><span>onPaperDoll</span></a>
 				<div class="cd-faq__content">
