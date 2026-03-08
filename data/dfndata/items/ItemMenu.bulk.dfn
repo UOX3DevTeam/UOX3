@@ -11986,6 +11986,8 @@ ADDITEM=0x0F0C-b
 ADDITEM=0x0F0C-c
 0x0F04=pet bonding potion
 ADDITEM=petbondingpotion
+0x24E2=elixir of rebirth
+ADDITEM=elixirofrebirthpotion
 <=Previous Menu
 ITEMMENU=8
 }
