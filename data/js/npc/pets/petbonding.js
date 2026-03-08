@@ -213,8 +213,8 @@ function onDamage( damaged, pAttacker, damageValue, damageType )
 	return true;
 }
 
-/** @type { ( currChar: Character, targChar: Character ) => boolean } */
-function onCharDoubleClick( pUser, pet )
+/** @type { ( currChar: Character, targChar: Character, nonMouseClickEvent: boolean ) => boolean } */
+function onCharDoubleClick( pUser, pet, nonMouseClickEvent )
 {
 	if( pet.GetTag( "isPetDead" ) == true )
 	{

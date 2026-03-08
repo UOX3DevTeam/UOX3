@@ -1,20 +1,33 @@
-function onCharDoubleClick( pUser, targChar )
+function onCharDoubleClick( pUser, targChar, nonMouseClickEvent )
 {
-	var pPack = pUser.pack;
 	var pSocket = pUser.socket;
 
 	if( pSocket == null )
-		return false;
+		return 0;
+
+	if( pUser != targChar )
+		return 1;
+
+	// Ignore client/keyboard-generated self double-clicks on login
+	if( nonMouseClickEvent )
+		return 1;
+
+	var etherealMount = pUser.FindItemLayer( 0x19 );
+	if( !ValidateObject( etherealMount ) )
+		return 1;
+
+	var pPack = pUser.pack;
+	if( !ValidateObject( pPack ) )
+		return 0;
 
 	if( pPack.totalItemCount >= pPack.maxItems || pPack.weight >= pPack.weightMax )
 	{
 		pSocket.SysMessage( GetDictionaryEntry( 6580, pSocket.language )); // You cannot dismount your ethereal because your pack cannot hold it
+		return 0;
 	}
-	else
-	{
-		DismountEtherealMount( pUser );
-	}
-	return true;
+
+	DismountEtherealMount( pUser );
+	return 0;
 }
 
 function onDeathBlow( pDead, pKiller )

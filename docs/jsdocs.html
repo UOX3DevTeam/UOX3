@@ -339,7 +339,8 @@ function onPacketReceive( pSocket, packetNum )</code></pre>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
-							<p>The name of the event depends on the type of script being registered. Supported types:
+							<p>
+								The name of the event depends on the type of script being registered. Supported types:
 								<ul>
 									<li>Command scripts - <strong>CommandRegistration()</strong></li>
 									<li>Console scripts - <strong>ConsoleRegistration()</strong></li>
@@ -348,7 +349,8 @@ function onPacketReceive( pSocket, packetNum )</code></pre>
 									<li>Spell scripts - <strong>SpellRegistration()</strong></li>
 								</ul>
 							</p>
-							<p>Scripts from each type need to be assigned scriptIDs in specific sections of jse_fileassociations.scp:
+							<p>
+								Scripts from each type need to be assigned scriptIDs in specific sections of jse_fileassociations.scp:
 								<ul>
 									<li>Command scripts - <strong>[COMMAND_SCRIPTS]</strong></li>
 									<li>Console scripts - <strong>[CONSOLE_SCRIPTS]</strong></li>
@@ -358,7 +360,8 @@ function onPacketReceive( pSocket, packetNum )</code></pre>
 									<li>All other scripts - <strong>[SCRIPT_LIST]</strong></li>
 								</ul>
 							</p>
-							<p>Access levels (or command levels) are specified in <strong>dfndata/command/commands.dfn</strong>, and the default setup goes like this:
+							<p>
+								Access levels (or command levels) are specified in <strong>dfndata/command/commands.dfn</strong>, and the default setup goes like this:
 								<ul>
 									<li>Admin - <strong>5</strong></li>
 									<li>GM - <strong>2</strong></li>
@@ -368,7 +371,8 @@ function onPacketReceive( pSocket, packetNum )</code></pre>
 							</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">// --------COMMAND SCRIPTS----------- //
 function CommandRegistration()
 {
@@ -431,7 +435,8 @@ function onSpellCast( socket, character, directCast, spellNum )
 {
 	// ...handle spell functionality here
 }
-</code></pre></p>
+</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -459,7 +464,8 @@ function onSpellCast( socket, character, directCast, spellNum )
 							<p>Only triggers once per object that comes within range, and will not trigger for that object again unless it goes out of range and then comes in range again. The range is dependent on pChar's update range, which for players is partially controlled by the client and can be up to 24 tiles away depending on the client version (before 7.0.55.27 max range is 18, after it's 24).</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function inRange( pChar, objInRange )
 {
 	if( objInRange.isItem )	// An item came into range
@@ -470,7 +476,8 @@ function onSpellCast( socket, character, directCast, spellNum )
 			pChar.EmoteMessage( "*ooooooooooooo*" );
 		}
 	}
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -497,7 +504,8 @@ function onSpellCast( socket, character, directCast, spellNum )
 							<p>Only triggers once per object that goes out of range, and will not trigger for that object again unless it comes back into range and then goes out of range again. The range is dependent on pChar's update range, which for players is partially controlled by the client and can be up to 24 tiles away depending on the client version (before 7.0.55.27 max range is 18, after it's 24).</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function outOfRange( pChar, objVanish )
 {
 	if( objVanish.isChar ) // A character went out of range
@@ -508,7 +516,8 @@ function onSpellCast( socket, character, directCast, spellNum )
 			pChar.TextMessage( "Phew, I escaped the wolf!" );
 		}
 	}
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -538,7 +547,8 @@ function onSpellCast( socket, character, directCast, spellNum )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">// This example would probably be better handled using the onStatChange event, but is included here to show how it'd work with the onAISliver event
 function onAISliver( aiChar )
 {
@@ -578,7 +588,8 @@ function onAISliver( aiChar )
 		}
 	}
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -605,7 +616,8 @@ function onAISliver( aiChar )
 							<p>After pAttacker's script has been triggered, pDefender's onDefense event also triggers. Note that these events run <em>in addition</em> to hard-coded combat (and/or other combat events), after everything else is done, and do not replace these. hitStatus will be false if attack missed.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 {
     if( hitStatus )
@@ -616,7 +628,8 @@ function onAISliver( aiChar )
     {
 	    pDefender.TextMessage( "Help! Help! I'm being repressed!" );
     }
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -650,7 +663,8 @@ function onAISliver( aiChar )
 							<p>Can be used to completely block access to a vendor based on criteria of one's choosing!</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onBuy( pSock, Vendor )
 {
 	// If player does not belong to the undead race, vendor wants nothing to do with him!
@@ -660,7 +674,8 @@ function onAISliver( aiChar )
 		return false;
 	}
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -690,14 +705,16 @@ function onAISliver( aiChar )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onBuyFromVendor( pSock, npcVendor, iBought, iAmount )
 {
 	var pUser = pSock.currentChar;
 	pUser.TextMessage( "I am buying " + iAmount + " item(s) ("+iBought.name+") from a vendor!" );
 	npcVendor.TextMessage( "I am selling an item!" );
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -731,12 +748,14 @@ function onAISliver( aiChar )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onBoatTurn( iBoat, oldDir, newDir, iTiller )
 {
 	iTiller.TextMessage( "Yarr, capt'n! She's come about!")
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -804,7 +823,8 @@ function onAISliver( aiChar )
 							<p># behind onCallback function-name in prototype is linked to the ID used in the CustomTarget method that initiated the targeting cursor, and should use the same value</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">// The following example includes the registration and handling of a 'disconnect GM command, which then prompts the GM to select a target, but note that CustomTarget + onCallback event combination an also be used in any other scripts/events.
 function CommandRegistration()
 {
@@ -836,7 +856,8 @@ function onCallback0( socket, ourObj )
 			targSock.Disconnect();
 		}
 	}
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -866,13 +887,15 @@ function onCallback0( socket, ourObj )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onCarveCorpse( pChar, iCorpse )
 {
 	pChar.TextMessage( "I'll just carve this corpse..." );
 	iCorpse.TextMessage( "But I'm not dead yet!" );
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -884,30 +907,49 @@ function onCallback0( socket, ourObj )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onCharDoubleClick( pUser, targChar )</em></p>
+							<p><em>function onCharDoubleClick( pUser, targChar, nonMouseClickEvent )</em></p>
 						</div>
+
+						<div class="settingsDiv">
+							<p><span class="hl">Parameters</span></p>
+							<ul>
+								<li><strong>pUser</strong> – Character performing the double-click.</li>
+								<li><strong>targChar</strong> – Character being double-clicked.</li>
+								<li><strong>nonMouseClickEvent</strong> – Boolean indicating that the event was not triggered by a direct mouse double-click. This may occur when the client generates the event internally (for example on login or via keyboard input).</li>
+							</ul>
+						</div>
+
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
-							<p>To allow greater customization of double-clicking on characters.</p>
+							<p>Allows scripts to customize behaviour when a character is double-clicked, such as preventing paperdoll opening, handling mounts, or triggering custom interactions.</p>
 						</div>
+
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
-							<p>When pUser double-clicks targChar, targChar's script is activated</p>
+							<p>Triggered when <strong>pUser</strong> double-clicks <strong>targChar</strong>. The script attached to <strong>targChar</strong> is executed.</p>
 						</div>
+
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
 							<ul>
-								<li><strong>return false</strong> or nothing to prevent opening of paperdoll, and prevent other scripts with same event from running</li>
-								<li><strong>return true</strong> to allow opening of paperdoll. Other scripts with same event can also run</li>
+								<li><strong>return false</strong> (or <strong>0</strong>) – Prevent the default hardcoded behaviour (such as opening the paperdoll) and stop other scripts from running.</li>
+								<li><strong>return true</strong> (or <strong>1</strong>) – Allow the default hardcoded behaviour to continue and allow other scripts with this event to run.</li>
 							</ul>
 						</div>
+
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function onCharDoubleClick( pUser, targChar )
+							<p>
+								<span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onCharDoubleClick( pUser, targChar, nonMouseClickEvent )
 {
+	// Ignore client-generated events such as login self-clicks
+	if( nonMouseClickEvent )
+		return true;
+
 	targChar.TextMessage( "If you think you'll be allowed to see my paperdoll, think again!" );
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -941,13 +983,15 @@ function onCallback0( socket, ourObj )
 							<p>This event will also trigger for characters with script attached if AllNames client macro is used, and for incoming character names showing at edge of screen. Note that depending on client version, this event might not trigger when clicking certain types of objects, because clients more recent than X (?) won't send requests on click, but will instead send requests for details (including names) for all objects in range ahead of time, with name being displayed client-side on hover/click.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onClick( pSock, objClicked )
 {
 	pSock.SysMessage( "You have clicked on: "+objClicked.name );
 	objClicked.TextMessage( "Zug, zug!" );
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -982,13 +1026,15 @@ function onCallback0( socket, ourObj )
 							<p>targSock is -1 if pColliding is an NPC</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onCollide( trgSock, srcChar, trgItem )
 {
 	srcChar.Teleport( srcChar.x + 5, srcChar.y +5, srcChar.z, 0 );
 	srcChar.EmoteMessage( "*Eegads, I am teleported!*" );
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -1019,7 +1065,8 @@ function onCallback0( socket, ourObj )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onAICombatTarget( pAttacker, pTarget )
 {
 	// Don't attack NPCs with ai AI_HEALER_G (good aligned healers)
@@ -1029,7 +1076,8 @@ function onCallback0( socket, ourObj )
 		return true;
 }
 
-// See js/npc/ai/orcs.js for a more elaborate example</code></pre></p>
+// See js/npc/ai/orcs.js for a more elaborate example</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -1060,13 +1108,15 @@ function onCallback0( socket, ourObj )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onCombatStart( pAttacker, pDefender )
 {
 	pAttacker.TextMessage( "I'm attacking!" );
 	pDefender.TextMessage( "I'm being attacked!" );
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -1097,7 +1147,8 @@ function onCallback0( socket, ourObj )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onCombatEnd( currChar, targChar )
 {
 	if( currChar.health != 0 )
@@ -1105,7 +1156,8 @@ function onCallback0( socket, ourObj )
 	if( targChar.health != 0 )
 		targChar.TextMessage( "Yay! I survived combat!" );
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -1136,7 +1188,8 @@ function onCallback0( socket, ourObj )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onCombatDamageCalc( pAttacker, pDefender, fightSkill, hitLoc )
 {
 	// Get attacker's base damage
@@ -1166,7 +1219,8 @@ function onCallback0( socket, ourObj )
 		damage /= GetServerSetting( "NPCDAMAGERATE" );
 
 	return damage;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -1197,7 +1251,8 @@ function onCallback0( socket, ourObj )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">//Example 1
 function onCommand( mySock, cmdString )
 {
@@ -1210,7 +1265,8 @@ function onCommand( mySock, cmdString )
 {
 	mySock.SysMessage( "Unknown command (" + cmdString + "). Try 'validcmd for a list of commands available to you, or 'howto for more info on specific commands." );
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -1241,7 +1297,8 @@ function onCommand( mySock, cmdString )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onContextMenuRequest( socket, targObj )
 {
     // handle your own packet with context menu here
@@ -1279,7 +1336,8 @@ function onCommand( mySock, cmdString )
     toSend.Free();
 
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -1310,7 +1368,8 @@ function onCommand( mySock, cmdString )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onContextMenuSelect( socket, targObj, popupEntry )
 {
     switch( popupEntry )
@@ -1326,7 +1385,8 @@ function onCommand( mySock, cmdString )
     }
 
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -1354,14 +1414,16 @@ function onCommand( mySock, cmdString )
 							<p>No return values supported</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onContRemoveItem( iCont, objRemoved, pChar )
 {
 	// ... do something when an item has been removed from container
 }
 
 // For additional examples of how to use this event, check the following scripts in your UOX3 folder:
-// js/server/misc/dungeon_treasure_decay.js</code></pre></p>
+// js/server/misc/dungeon_treasure_decay.js</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -1394,7 +1456,8 @@ function onCommand( mySock, cmdString )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">// When this script is setup as "global id" (0) in JSE_FILEASSOCIATIONS.SCP,
 // it will send a textmessage for all new NPC characters that enters the world.
 function onCreateDFN( objMade, objType )
@@ -1403,7 +1466,8 @@ function onCreateDFN( objMade, objType )
 	{
 		objMade.TextMessage( "I have SPAWNED! Tremble before me, world!" );
 	}
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -1429,13 +1493,15 @@ function onCreateDFN( objMade, objType )
 							<p>Usable in Global script (scriptID 0)? For Players, <span style="color:green">Yes</span></p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">// When this script is setup as "global id" (0) in JSE_FILEASSOCIATIONS.SCP,
 // it will send the sysmessage to all new PLAYER characters that enters the world.
 function onCreatePlayer( pChar )
 {
 	pChar.SysMessage( "Welcome to Our Unique World(TM)!" );
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -1466,12 +1532,14 @@ function onCreatePlayer( pChar )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">// Only scripts using script-id 0 or ones assigned through harditems.dfn will work with this event.
 function onCreate( objMade, objType )/
 {
 	objMade.name = "A renamed item";
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -1506,8 +1574,9 @@ function onCreate( objMade, objType )/
 							<p>The attacker can be a char or NULL, damageType is the type of damage being dealt. Supported damageTypes: 1 (Physical), 2 (Light), 3 (Rain), 4 (Cold/Ice), 5 (Heat/Fire), 6 (Lightning/Magic/Energy), 7 (Poison), 8 (Snow)</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
-	<pre><code class="language-javascript">function onDamage( damaged, attacker, damageValue, damageType )
+							<p>
+								<span class="hl">Example of usage</span><br>
+								<pre><code class="language-javascript">function onDamage( damaged, attacker, damageValue, damageType )
 	{
 		var dmgTypeString = "";
 		switch( damageType )
@@ -1539,7 +1608,8 @@ function onCreate( objMade, objType )/
 		}
 		damaged.TextMessage( "Ouch, those "+damageValue+" points of " + dmgTypeString + " damage really hurt." );
 		return true;
-	}</code></pre></p>
+	}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -1574,8 +1644,9 @@ function onCreate( objMade, objType )/
 							<p>Unlike the onDamage event, neither attacker nor damaged can be NULL in this one. damageType is the type of damage being dealt. Supported damageTypes: 1 (Physical), 2 (Light), 3 (Rain), 4 (Cold/Ice), 5 (Heat/Fire), 6 (Lightning/Magic/Energy), 7 (Poison), 8 (Snow)</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
-	<pre><code class="language-javascript">function onDamageDeal( attacker, damaged, damageValue, damageType )
+							<p>
+								<span class="hl">Example of usage</span><br>
+								<pre><code class="language-javascript">function onDamageDeal( attacker, damaged, damageValue, damageType )
 	{
 		var dmgTypeString = "";
 		switch( damageType )
@@ -1607,7 +1678,8 @@ function onCreate( objMade, objType )/
 		}
 		attacker.TextMessage( "Look at me, I'm dealing " + damageValue + " points of " + dmgTypeString + " damage to a target! *manic laughter*" );
 		return true;
-	}</code></pre></p>
+	}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -1642,7 +1714,8 @@ function onCreate( objMade, objType )/
 							<p>iCorpse is the newly created corpse of pDead (the character who died)</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onDeath( pDead, iCorpse )
 {
 	// If pDead is a player, teleport them to a specific location after dying
@@ -1651,7 +1724,8 @@ function onCreate( objMade, objType )/
 
 	// Prevent other scripts with onDeath event from running
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -1682,13 +1756,15 @@ function onCreate( objMade, objType )/
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onDeathBlow( pDead, pKiller )
 {
 	pDead.health = pDead.health + 10;
 	pDead.TextMessage( "But I'm not dead!" );
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -1722,7 +1798,8 @@ function onCreate( objMade, objType )/
 							<p>Note that if event returns false, yet never disabled decay for item, the event will keep triggering <em>every time</em> UOX3 checks item decay</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onDecay( iDecaying )
 {
 	// Disable decay for the item so the event doesn't trigger again on next check!
@@ -1741,7 +1818,8 @@ function onTimer( timerObj, timerID )
 {
 	// Timer is up, go through with deletion of the item
 	timerObj.Delete();
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -1765,10 +1843,11 @@ function onTimer( timerObj, timerID )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
-                            <p>The event runs at the end of each hard-coded combat "round". hitStatus will be false if attack missed.</p>
+							<p>The event runs at the end of each hard-coded combat "round". hitStatus will be false if attack missed.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onDefense( pAttacker, pDefender, hitStatus, hitLoc, damageReceived  )
 {
     if( hitStatus )
@@ -1779,7 +1858,8 @@ function onTimer( timerObj, timerID )
     {
 	    pDefender.TextMessage( "Help! Help! I'm being repressed!" );
     }
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -1809,12 +1889,14 @@ function onTimer( timerObj, timerID )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onDelete( objDestroyed, objType )
 {
 	if( objType == 0 )
 		Console.Print( objDestroyed.name + " has been deleted from the world.\n" );
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -1841,7 +1923,8 @@ function onTimer( timerObj, timerID )
 							<p>This runs after a successful dismount. No return values supported.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">// Randomly change color of mount while riding it, stop the show when dismounting
 function onCharDoubleClick( pUser, targChar )
 {
@@ -1878,7 +1961,8 @@ function onTimer( npcMount, timerID )
 
 	 // Restart timer
 	npcMount.StartTimer( 1000, 1, 19701 );
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -1915,7 +1999,8 @@ function onTimer( npcMount, timerID )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">// Example 1
 function onDispel( objDispelled, objType )
 {
@@ -1935,7 +2020,8 @@ function onDispel( objDispelled, objType )
 		}
 	}
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -2038,7 +2124,8 @@ function onDispel( objDispelled, objType )
 							<p>iDroppedOn can only be items that are recognized by the client as containers, via the tiledata "container" flag in the client data. The client will not register attempts to drop items on non-container items, and it's not enough to set a container type on an item in UOX3 to overcome this. Modifications to client tiledata is required in order to make client recognize items as potential containers.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onDropItemOnItem( iDropped, cDropper, iDroppedOn )
 {
 	if( iDropped.id == 0x1f14 ) //If the item being dropped is a recall rune
@@ -2071,7 +2158,8 @@ function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
 
     // Default to allow dropping, let code handle it!
     return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -2102,7 +2190,8 @@ function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onDropItemOnNpc( pDropper, pDroppedOn, iDropped )
 {
 	pDropper.TextMessage( "Here, I offer you my this object as a gift of friendship." );
@@ -2118,7 +2207,8 @@ function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
 
 	// Otherwise, reject the item drop and bounce it back where it came from
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -2148,7 +2238,8 @@ function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onDyeTarget( pUser, dyeTub, targItem )
 {
 	if( targItem.type == 11 )
@@ -2157,7 +2248,8 @@ function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
 		return false;
 	}
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -2191,13 +2283,15 @@ function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
 							<p>As part of entering evasion state, the NPC's health will automatically be reset to maximum</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onEnterEvadeState( mNPC, enemyChar )
 {
 	mChar.TextMessage( "I've entered the Evade state! My HP will be replenished..." );
 	enemyChar.TextMessage( "Oops, I caused the NPC to enter Evade state!" );
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -2224,7 +2318,8 @@ function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
 							<p>Region-scripts can be attached to regions through regions.dfn, using one or more script=# tags</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">
 function onEnterRegion( pEntering, regionEntered )
 {
@@ -2233,7 +2328,8 @@ function onEnterRegion( pEntering, regionEntered )
 		//sound the alarm! non-undead intruder to region
 		//spawn undead guards
 	}
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -2270,13 +2366,15 @@ function onEnterRegion( pEntering, regionEntered )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onEntrance( iEntered, objEntering, objType )
 {
 	if( objType == 0 && !objEntering.npc )
 		objEntering.SysMessage("You have entered "+iEntered.name);
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -2310,12 +2408,14 @@ function onEnterRegion( pEntering, regionEntered )
 							<p>Event will only ever trigger for items that can actually be equipped!</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onEquip( pEquipper, iEquipped )
 {
 	pEquipper.StaticEffect( 0x376A, 9, 6 );
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -2349,7 +2449,8 @@ function onEnterRegion( pEntering, regionEntered )
 							<p>This event runs before the onEquip event, and if script returns false, onEquip event will never run</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onEquipAttempt( pEquipper, iEquipped )
 {
 	if( pEquipper.race == 0 )
@@ -2358,7 +2459,8 @@ function onEnterRegion( pEntering, regionEntered )
 		return false;
 	}
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -2392,7 +2494,8 @@ function onEnterRegion( pEntering, regionEntered )
 							<p>This event only runs for characters, and using the event in the global script is not supported.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onFacetChange( mChar, oldFacet, newFacet )
 {
 	// Add a specific script to all characters that switch to the Trammel facet,
@@ -2410,7 +2513,8 @@ function onEnterRegion( pEntering, regionEntered )
 
 	// Return true allows the facet change to happen like normal
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -2437,12 +2541,14 @@ function onEnterRegion( pEntering, regionEntered )
 							<p>pFall can be either an NPC or PC, will only trigger (by the client) if fallDistance is over 20, so it does not trigger whenever a character walks down steps/off small ledges/down hills, etc.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onFall( pFall, fallDistance )
 {
 	if( fallDistance > 20 )
 		pFall.SysMessage("Yikes! That was a long fall! I fell " + fallDistance + " meters!" );
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -2476,7 +2582,8 @@ function onEnterRegion( pEntering, regionEntered )
 							<p>Might take a few seconds to trigger for NPCs after a flag update has taken place, based on what NPCFLAGUPDATETIMER in UOX.INI is set to.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onFlagChange( pChanging, newStatus, oldStatus )
 {
 	if( newStatus == 0x01 ) // Murderer
@@ -2488,7 +2595,8 @@ function onEnterRegion( pEntering, regionEntered )
 	else if( newStatus == 0x08 ) // Neutral
 		BroadcastMessage( "Filthy neutrals like " + pChanging.name + "... you never know where you stand with them. It sickens me!" );
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -2515,13 +2623,15 @@ function onEnterRegion( pEntering, regionEntered )
 							<p>Gump text entry dialogue sent from server via packet 0xAB, response sent from client via packet 0xAC. Primarily used for stuff like entering gold donation amount in townstone menus, entering guild-name when creating/renaming guild, guild-abbreviation, guild master's title, guild-charter</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onGumpInput( pSock, pButtonID, gumpText )
 {
 	var pUser = pSock.currentChar;
 	pUser.TextMessage( "I pressed a button with ID " + pButtonID );
 	pUser.TextMessage( "The text entry gump contained this text: " + gumpText );
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -2548,7 +2658,8 @@ function onEnterRegion( pEntering, regionEntered )
 							<p>pButton is the button-ids for normal gump-buttons, while gumpData handles radiobutton-ids, checkbox-ids, and text-entry-ids(and the text-entries).</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onGumpPress( pSock, pButton, gumpData )
 {
 	var pUser = pSock.currentChar;
@@ -2581,7 +2692,8 @@ function onEnterRegion( pEntering, regionEntered )
 			}
 			break;
 	}
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -2611,7 +2723,8 @@ function onEnterRegion( pEntering, regionEntered )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onHelpButton( pChar )
 {
 	pChar.TextMessage( "I pressed the Help button! Let's override the menu." );
@@ -2620,7 +2733,8 @@ function onEnterRegion( pEntering, regionEntered )
 	// ...
 
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -2654,7 +2768,8 @@ function onEnterRegion( pEntering, regionEntered )
 							<p>cmdID is the ID of a triggerword uttered by the player. These triggerwords are defined client-side, and depending on the client version range from 0 to 255. See Speech tab in UOFiddler for a complete list!</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onHouseCommand( pSocket, iMulti, cmdID )
 {
 	if( ValidateObject( iMulti ) && iMulti.IsInMulti( pSocket.currentChar ))
@@ -2671,7 +2786,8 @@ function onEnterRegion( pEntering, regionEntered )
 	}
 
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -2705,7 +2821,8 @@ function onEnterRegion( pEntering, regionEntered )
 							<p>If overridden, the normal hunger messages are not displayed.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onHungerChange( pChanging, newStatus )
 {
 	pChanging.TextMessage( "ooooo, I feel more hungry" );
@@ -2714,7 +2831,8 @@ function onEnterRegion( pEntering, regionEntered )
 		TextMessage( pChanging, "I'm melting, I'm melting!" );
 	}
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -2748,7 +2866,8 @@ function onEnterRegion( pEntering, regionEntered )
 							<p>The IterateOver() function will return a count of all objects that onIterate returned true for. It also supports an optional socket parameter, which can be passed in via the IterateOver Function.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">// Example without socket parameter
 function KillNPCs( socket, pUser )
 {
@@ -2784,13 +2903,14 @@ function onIterate( charCheck, socket )
 	}
 	return false;
 }
-</code></pre></p>
+</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
 			</li>
 
-					<li class="cd-faq__item">
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnKill" id="eventOnKill"><span>onKill</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">
@@ -2890,12 +3010,14 @@ function onKill( killer, killed )
 							<p>Region-scripts can be attached to regions through on or more script=# tags in regions.dfn</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onLeaveRegion( pLeaver, regionLeft )
 {
 	// if pLeaver is not allowed to leave the region
 	// turn him into a criminal and spawn guards to go after him!
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -2932,13 +3054,15 @@ function onKill( killer, killed )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onLeaving( iLeft, objLeaving, objType )
 {
 	if( objType == 0 && !objType.npc )
 		objLeaving.SysMessage( "You have left " + iLeft.name );
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -2972,7 +3096,8 @@ function onKill( killer, killed )
 							<p>Can also be put in global script (scriptID 0) to trigger for all objects</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onLightChange( myObject, lightLevel )
 {
 	// (pseudo-code)
@@ -2996,7 +3121,8 @@ function onKill( killer, killed )
 		}
 	}
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -3023,11 +3149,13 @@ function onKill( killer, killed )
 							<p>sockPlayer is never -1</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onLogin( sockPlayer, pChar )
 {
 	pChar.Teleport( 1000, 1000, 0, 0 );
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -3054,11 +3182,13 @@ function onKill( killer, killed )
 							<p>sockPlayer is never -1</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onLogout( sockPlayer, pChar )
 {
 	sockPlayer.SysMessage( "Farewell! Come back soon." );
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -3085,7 +3215,8 @@ function onKill( killer, killed )
 							<p>If character failed to create an item, the event still triggers, but craftedItem be null</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onMakeItem( socket, crafter, craftedItem, createEntryID )
 {
 	// Have crafter say a message
@@ -3105,7 +3236,8 @@ function onKill( killer, killed )
 	{
 		// ... Do something with craftedItem
 	}
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -3132,7 +3264,8 @@ function onKill( killer, killed )
 							<p>Use long ranges with care!</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onMoveDetect( srcObj, pChar, rangeToChar, oldCharX, oldCharY )
 {
 	// .. do something when character is in range of object
@@ -3140,7 +3273,8 @@ function onKill( killer, killed )
 
 // For examples of how this can be used, check out the following scripts in your UOX3 folder:
 //   js/server/misc/warning_trigger.js
-//   js/server/misc/dungeon_trap.js</code></pre></p>
+//   js/server/misc/dungeon_trap.js</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -3174,7 +3308,8 @@ function onKill( killer, killed )
 							<p>When a safe logout attempt (by just logging out normally while inside multi) is allowed, script informs code that a safe/instant logout can be attempted. Code then performs other hard-coded checks before allowing this (checking for criminal status, aggressor status, etc). When safe logout attempt is disallowed, server rejects the instant log out, and character remains behind in the world for the normal logout timer, and additionally gets booted out of the multi they're in.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onMultiLogout( iMulti, cPlayer )
 {
 	if( ValidateObject( iMulti.owner ) && iMulti.owner == cPlayer )
@@ -3183,7 +3318,8 @@ function onKill( killer, killed )
 		return true;
 	}
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -3217,7 +3353,8 @@ function onKill( killer, killed )
 							<ul>
 								<li>requestedBy is a reference to the character (if any) that requested the name, for instance via dragging myObj's health-bar, using all-names macro, opening of paperdoll or just from general client requests for info about myObj</li>
 								<li>If an attempt to retrieve myObj's name is done from within the onNameRequest event, it will return the real name of the object (to avoid infinite loop situations)</li>
-								<li>requestSource is a value that indicates where the name request originated, to allow scripts to tailor the response accordingly
+								<li>
+									requestSource is a value that indicates where the name request originated, to allow scripts to tailor the response accordingly
 									<pre><code class="language-javascript">0 - Speech/System Messages
 1 - Guild Menus
 2 - Stat Window (self)
@@ -3227,11 +3364,13 @@ function onKill( killer, killed )
 6 - Paperdoll
 7 - Single Click / All-Names
 8 - System
-9 - Secure Trade Window</code></pre></li>
+9 - Secure Trade Window</code></pre>
+								</li>
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onNameRequest( myObj, requestedBy, requestSource )
 {
 	if( myObj.isChar )
@@ -3248,7 +3387,8 @@ function onKill( killer, killed )
 		// Return an empty string (or true/false) to have UOX3 use/send the object's default name
 		return "";
 	}
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -3277,7 +3417,8 @@ function onKill( killer, killed )
 						</div>
 
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function PacketRegistration()
 {
 	RegisterPacket( [packetID], [subCommand] );
@@ -3291,7 +3432,57 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 
 	... // Read packet data here, using ReadBytes, GetByte, GetWord, GetDWord, GetSByte, GetSWord, GetSDWord and GetString socket methods
 	return;
-}</code></pre></p>
+}</code></pre>
+							</p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnPaperDoll" id="eventOnPaperDoll"><span>onPaperDoll</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onPaperDoll( pUser, targChar )</em></p>
+						</div>
+
+						<div class="settingsDiv">
+							<p><span class="hl">Parameters</span></p>
+							<ul>
+								<li><strong>pUser</strong> – Character attempting to open the paperdoll.</li>
+								<li><strong>targChar</strong> – Character whose paperdoll is being opened.</li>
+							</ul>
+						</div>
+
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>Allows scripts to override or customize what happens when a character's paperdoll is opened.</p>
+						</div>
+
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>Triggered when <strong>pUser</strong> opens the paperdoll of <strong>targChar</strong>. The script attached to <strong>targChar</strong> is executed.</p>
+						</div>
+
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return false</strong> (or <strong>0</strong>) – Prevent the default hardcoded paperdoll behaviour and stop other scripts with the same event from running.</li>
+								<li><strong>return true</strong> (or <strong>1</strong>) – Allow the default hardcoded paperdoll behaviour to continue, and allow other scripts with the same event to run.</li>
+							</ul>
+						</div>
+
+						<div class="settingsDiv">
+							<p>
+								<span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onPaperDoll( pUser, targChar )
+{
+	targChar.TextMessage( "My paperdoll is private." );
+	return false;
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -3330,7 +3521,8 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onPathfindEnd( tChar, pathfindResult )
 {
 	if( ValidateObject( tChar ))
@@ -3353,7 +3545,8 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 		}
 	}
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -3383,7 +3576,8 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onPickup( iPickedUp, pGrabber, containerObj )
 {
 	var pSock = pGrabber.socket;
@@ -3417,7 +3611,8 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 
 	//Use return false to disallow the pickup and bounce item
 	//return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -3447,11 +3642,13 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onProfileRequest( socket, profileOwnerChar )
 {
 	return "This is an example of some text displayed in a paperdoll profile";
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -3478,11 +3675,13 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 							<p>No return values supported</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onProfileUpdate( socket, updatedProfileText )
 {
 	socket.currentChar.TextMessage( "Updated Profile Text:" + updatedProfileText );
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -3512,18 +3711,20 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onQuestGump( pUser )
 {
 	pUser.TextMessage( "I pressed the Quest button in paperdoll!" );
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
 			</li>
 
-					<li class="cd-faq__item">
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnReleasePet" id="eventOnReleasePet"><span>onReleasePet</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">
@@ -3545,7 +3746,8 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 						</div>
 
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onReleasePet( player, pet )
 {
 	if( pet.GetTag("isBondedPet") == 1 )
@@ -3554,7 +3756,8 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 		return false;
 	}
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -3588,7 +3791,8 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 							<p>Only applies to PCs, since NPCs cannot currently be in a state of "death" (they're either alive, or don't exist)</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onResurrect( pAlive )
 {
 	var ResAmount = pAlive.GetTag( "ResAmount" );
@@ -3602,7 +3806,8 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 		pAlive.SysMessage( "You've resurrected too many times already! Have fun in the gray world... FOREVER!" );
 		return false;
 	}
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -3625,12 +3830,14 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 							<p>When server has completed startup, and when scripts are reloaded while server is running</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onScriptLoad()
 {
 	// Do something on shard startup
 	// See js/server/event_manager.js for one example of how it can be used
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -3661,7 +3868,8 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onScrollCast( pUser, spellID )
 {
 	if( spellID == 18 )
@@ -3669,7 +3877,8 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 		pUser.TextMessage( "I'm casting a fireball from a fireball-scroll!" );
 		return -2;
 	}
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -3692,7 +3901,8 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 							<p>When player clicks an entry in the old-school horizontally scrolling T2A gump displayed in client via packet 0x76, as long as said gump uses a gumpID between 0x4000 and 0xFFFF, and the event itself is present in the global script (script ID 0)</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">// The below example sends instructions to the client to open
 // a horizontally scrolling gump with 4 options - one for Repair, one to craft Shields, one to craft
 // Armor, and one to craft Weapons. Note that this example does not handle submenus sent after player press an
@@ -3757,7 +3967,8 @@ function onScrollingGumpPress( pSock, gumpID, buttonID )
 	pSock.SysMessage( "I pressed button: " + buttonID + " in gump with ID " + gumpID );
 	// ... craft additional packets with submenu content etc. based on which button player clicked
 }
-</code></pre></p>
+</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -3787,7 +3998,8 @@ function onScrollingGumpPress( pSock, gumpID, buttonID )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onSell( pSock, Vendor )
 {
 	// If player does not belong to the undead race, vendor wants nothing to do with him!
@@ -3798,7 +4010,8 @@ function onScrollingGumpPress( pSock, gumpID, buttonID )
 	}
 	else
 		return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -3828,14 +4041,16 @@ function onScrollingGumpPress( pSock, gumpID, buttonID )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onSellToVendor( pSock, Vendor, iSold, iAmount )
 {
 	var pUser = pSock.currentChar;
 	pUser.TextMessage( "I am selling " + iAmount + " item(s) (" + iSold.name + ") to a vendor!" );
 	Vendor.TextMessage( "I am buying an item!" );
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -3869,7 +4084,8 @@ function onScrollingGumpPress( pSock, gumpID, buttonID )
 							<p>If the item sold to the vendor stacks with items already there, the script will run on the entire stack, not just the one item specifically sold!</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">
 function onSoldToVendor( pSock, Vendor, iSold, iAmount )
 {
@@ -3877,7 +4093,8 @@ function onSoldToVendor( pSock, Vendor, iSold, iAmount )
 	pUser.TextMessage( "I sold " + iAmount + " item(s) (" + iSold.name + ") to a vendor!" );
 	Vendor.TextMessage( "I just bought an item from some random dude!" );
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -3893,7 +4110,7 @@ function onSoldToVendor( pSock, Vendor, iSold, iAmount )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
-								<p>Complements the use of current skill code</p>
+							<p>Complements the use of current skill code</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
@@ -3908,7 +4125,8 @@ function onSoldToVendor( pSock, Vendor, iSold, iAmount )
 							<p>If used with RegisterSkill() in a script listed under SKILLUSE_SCRIPTS in jse_fileassociations.scp, event will trigger for only the registered skill. If used in a stand-alone script listed under SCRIPT_LIST section instead, event will be a global listener for all skills used.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onSkill( objUsing, skillUsed, objType )
 {
 	switch( skillUsed )
@@ -3924,7 +4142,8 @@ function onSoldToVendor( pSock, Vendor, iSold, iAmount )
 			break;
 		//case etc.:
 	}
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -3947,14 +4166,16 @@ function onSoldToVendor( pSock, Vendor, iSold, iAmount )
 							<p>This event is fired if onSkillLoss or onSkillGain return true, or if those events are not defined. If the events returned false, onSkillChange will not trigger</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onSkillChange( pPlayer, skill, skillChangeAmount )
 {
 	if( skillChangeAmount > 0 )
 		pPlayer.TextMessage( "Oh wow, I've gained some points in skill number " + skill + "!" );
 	else
 		pPlayer.TextMessage( "Oh noes, I've lost some points in skill number " + skill + "!" );
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -3988,12 +4209,14 @@ function onSoldToVendor( pSock, Vendor, iSold, iAmount )
 							<p>Runs just prior to skillcheck. lowSkill is minimum skill requirement for successful use of the skill (as passed into the skill check), while highSkill is the maximum skill the player can reach (as passed into the skill check). forceResult will one of three values: -1 if result of skill check was forced to fail, 0 if a normal skillcheck was performed, and 1 if result of skill check was forced to succeed.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onSkillCheck( pUser, skillID, lowSkill, highSkill, forceResult )
 {
 	pUser.TextMessage( "A skillcheck is being done for skill with ID " + skillID + "!" );
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -4023,12 +4246,14 @@ function onSoldToVendor( pSock, Vendor, iSold, iAmount )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onSkillGain( pPlayer, skill, skillGainAmount )
 {
 	pPlayer.TextMessage( "Aww, I was about to gain " + ( skillGainAmount / 10 ) + " points in skill number " + skill + ", but got denied!" );
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -4058,12 +4283,14 @@ function onSoldToVendor( pSock, Vendor, iSold, iAmount )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onSkillLoss( pPlayer, skill, skillLossAmount )
 {
 	pPlayer.TextMessage( "Phew, I was about to lose " + ( skillLossAmount / 10 ) + " points in skill number " + skill + ", but it didn't happen!" );
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -4093,13 +4320,15 @@ function onSoldToVendor( pSock, Vendor, iSold, iAmount )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onSkillGump( pUser )
 {
 	pUser.SysMessage( "Overriding default skillgump, opening custom one instead..." );
 	// Insert custom skillgump here!
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -4133,7 +4362,8 @@ function onSoldToVendor( pSock, Vendor, iSold, iAmount )
 							<p>bSuccess is true if snooping succeeded, false if it failed. If false, the script must handle things that would otherwise be handled by hard code, like turning snooper criminal, handling loss of karma, calling for guards, sending messages snooper/snooped, etc.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onSnooped( pSnooped, pSnooping, bSuccess )
 {
 	if( !bSuccess && !pSnooping.criminal )
@@ -4145,7 +4375,8 @@ function onSoldToVendor( pSock, Vendor, iSold, iAmount )
 	{
 		pSnooped.TextMessage( "That's it, you've crossed the line! GUARDS!" );
 	}
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -4175,12 +4406,14 @@ function onSoldToVendor( pSock, Vendor, iSold, iAmount )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onSnoopAttempt( pSnooped, iCont, pSnooping )
 {
 	pSnooping.SysMessage( "The target is protected and cannot be snooped!" );
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -4267,44 +4500,47 @@ function onSpawn( objSpawned, spawnRegion )
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
 							<p>Can be used in global scripts, or individual scripts attached to player characters. Lookup packet 0xD7, subCmd 0x19 in packet guides for updated details on special moves that are available, whose IDs range from 0x00 to 0x1D, or see list below (might be out of date):</p>
-							<input type="checkbox" id="spoiler_special_moves"/>
+							<input type="checkbox" id="spoiler_special_moves" />
 							<label for="spoiler_special_moves">List of Special Moves sent from Client <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p>0x00 = Cancel Ability Attempt<br>
-								0x01 = Armor Ignore<br>
-								0x02 = Bleed Attack<br>
-								0x03 = Concusion Blow<br>
-								0x04 = Crushing Blow<br>
-								0x05 = Disarm<br>
-								0x06 = Dismount<br>
-								0x07 = Double Strike<br>
-								0x08 = Infecting<br>
-								0x09 = Mortal Strike<br>
-								0x0A = Moving Shot<br>
-								0x0B = Paralyzing Blow<br>
-								0x0C = Shadow Strike<br>
-								0x0D = Whirlwind Attack<br>
-								0x0E = Riding Swipe<br>
-								0x0F = Frenzied Whirlwind<br>
-								0x10 = Block<br>
-								0x11 = Defense Mastery<br>
-								0x12 = Nerve Strike<br>
-								0x13 = Talon Strike<br>
-								0x14 = Feint<br>
-								0x15 = Dual Wield<br>
-								0x16 = Double shot<br>
-								0x17 = Armor Peirce<br>
-								0x18 = Bladeweave<br>
-								0x19 = Force Arrow<br>
-								0x1A = Lightning Arrow<br>
-								0x1B = Psychic Attack<br>
-								0x1C = Serpent Arrow<br>
-								0x1D = Force of Nature</p>
+								<p>
+									0x00 = Cancel Ability Attempt<br>
+									0x01 = Armor Ignore<br>
+									0x02 = Bleed Attack<br>
+									0x03 = Concusion Blow<br>
+									0x04 = Crushing Blow<br>
+									0x05 = Disarm<br>
+									0x06 = Dismount<br>
+									0x07 = Double Strike<br>
+									0x08 = Infecting<br>
+									0x09 = Mortal Strike<br>
+									0x0A = Moving Shot<br>
+									0x0B = Paralyzing Blow<br>
+									0x0C = Shadow Strike<br>
+									0x0D = Whirlwind Attack<br>
+									0x0E = Riding Swipe<br>
+									0x0F = Frenzied Whirlwind<br>
+									0x10 = Block<br>
+									0x11 = Defense Mastery<br>
+									0x12 = Nerve Strike<br>
+									0x13 = Talon Strike<br>
+									0x14 = Feint<br>
+									0x15 = Dual Wield<br>
+									0x16 = Double shot<br>
+									0x17 = Armor Peirce<br>
+									0x18 = Bladeweave<br>
+									0x19 = Force Arrow<br>
+									0x1A = Lightning Arrow<br>
+									0x1B = Psychic Attack<br>
+									0x1C = Serpent Arrow<br>
+									0x1D = Force of Nature
+								</p>
 							</div>
 							<p>Server can send packet 0xBF, subCommand 0x21 to cancel the red highlighted state of the ability icon in the client, and reset the status of them.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">// Example where a timer is used to disable special move after two seconds
 function onSpecialMove( pUser, abilityID )
 {
@@ -4325,7 +4561,8 @@ function onTimer( timerObj, timerID )
 		toSend.WriteByte( 6, 0 ); // On/off
 		timerObj.socket.Send( toSend );
 		toSend.Free();
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -4357,7 +4594,8 @@ function onTimer( timerObj, timerID )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onSpeech( strSaid, pTalking, pTalkingTo )
 {
 	// This is a simple mimic NPC.  Everything that someone says to it is quoted back verbatim<
@@ -4365,7 +4603,8 @@ function onTimer( timerObj, timerID )
 
 	// Return value of 1 means NPC "absorbs" strSaid and doesn't allow other NPCs to see and react to it - though other PCs can still see it
 	return 1;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -4388,7 +4627,8 @@ function onTimer( timerObj, timerID )
 							<p>When the SpeechInput method is executed</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onUseChecked( pUser, iUsed )
 {
 	pUser.SysMessage( "What do you want to rename this item to:" );
@@ -4409,7 +4649,8 @@ function onSpeechInput( pUser, iUsed, pSpeech, pSpeechID )
 			iUsed.name = pSpeech;
 			break;
 	}
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -4445,7 +4686,8 @@ function onSpeechInput( pUser, iUsed, pSpeech, pSpeechID )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onSpeedHackDetect( pChar, deltaTime )
 {
 	// Other parameters to play with:
@@ -4463,7 +4705,8 @@ function onSpeechInput( pUser, iUsed, pSpeech, pSpeechID )
 
 	// Return false, as we applied our own penalty instead of relying on hard-coded movement throttling
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -4500,7 +4743,8 @@ function onSpeechInput( pUser, iUsed, pSpeech, pSpeechID )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onSpeedHackSuspicion( pChar, grossDebt, deltaTime )
 {
 	var pSock = pChar.socket;
@@ -4531,7 +4775,8 @@ function onSpeechInput( pUser, iUsed, pSpeech, pSpeechID )
 	Console.Log( logMsg );
 
 	return 1;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -4562,7 +4807,8 @@ function onSpeechInput( pUser, iUsed, pSpeech, pSpeechID )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">
 function onSpellCast( pUser, spellID )
 {
@@ -4571,7 +4817,8 @@ function onSpellCast( pUser, spellID )
 		pUser.CustomTarget( 0, "What do you want to target with your fireball?" );
 		return -1;
 	}
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -4598,11 +4845,13 @@ function onSpellCast( pUser, spellID )
 							<p>This event runs <strong>before</strong> the spell is actually added to the spellBook, and won't have any effect on whether this succeeds</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onSpellGain( spellBook, spellNum )
 {
 	Console.Log( "Spell number " + spellNum + " was added to spellBook with serial " + spellBook.serial, "server.log" );
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -4629,11 +4878,13 @@ function onSpellCast( pUser, spellID )
 							<p>This event runs <strong>before</strong> the spell is actually removed from the spellBook, and won't have any effect on whether this succeeds</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onSpellLoss( spellBook, spellNum )
 {
 	Console.Log( "Spell number " + spellNum + " was removed from spellBook with serial " + spellBook.serial, "server.log" );
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -4663,7 +4914,8 @@ function onSpellCast( pUser, spellID )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">
 function onSpellSuccess( pCaster, spellID )
 {
@@ -4672,7 +4924,8 @@ function onSpellSuccess( pCaster, spellID )
 		pCaster.TextMessage( "Yes! I managed to cast a fireball!" );
 	}
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -4707,7 +4960,8 @@ function onSpellSuccess( pCaster, spellID )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">// Script attached to an NPC that's immune to magic, where event returns 2 to reject spell being cast
 function onSpellTarget( myTarget, pCaster, spellID )
 {
@@ -4715,7 +4969,8 @@ function onSpellTarget( myTarget, pCaster, spellID )
 	if( socket != null )
 		pCaster.SysMessage( GetDictionaryEntry( 9056, socket.language )); // That target is immune to magic!
 	return 2;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -4750,7 +5005,8 @@ function onSpellTarget( myTarget, pCaster, spellID )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">// Script attached to an NPC that's immune to magic, where event returns 2 to reject spell being cast
 function onSpellTargetSelect( myTarget, pCaster, spellID )
 {
@@ -4758,7 +5014,8 @@ function onSpellTargetSelect( myTarget, pCaster, spellID )
 	if( socket != null )
 		pCaster.SysMessage( GetDictionaryEntry( 9056, socket.language )); // That target is immune to magic!
 	return 2;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -4781,12 +5038,14 @@ function onSpellTargetSelect( myTarget, pCaster, spellID )
 							<p>When server has completed startup, will trigger per script attached to any given object, with this event inside.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onStart( myObj )
 {
 	// Do something on shard startup per instanced script per object with script and event
 	// ...
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -4809,14 +5068,16 @@ function onSpellTargetSelect( myTarget, pCaster, spellID )
 							<p>This event is fired if onStatLoss or onStatGained return true, or if those events are not defined. If the events returned false, onStatChange will not trigger. Stat numbers: Strength - 59, Dexterity - 60, Intelligence - 61</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onStatChange( pPlayer, stat, statChangeAmount )
 {
 	if( statChangeAmount > 0 )
 		pPlayer.TextMessage( "Oh wow, I've gained some points in stat number " + stat + "!" );
 	else
 		pPlayer.TextMessage( "Oh noes, I've lost some points in stat number " + stat + "!" );
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -4846,12 +5107,14 @@ function onSpellTargetSelect( myTarget, pCaster, spellID )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onStatGained( pPlayer, stat, statGainedAmount )
 {
 	pPlayer.TextMessage( "Aww, I was about to gain " + statGainedAmount + " points in stat number " + tat + ", but got denied!" );
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -4881,12 +5144,14 @@ function onSpellTargetSelect( myTarget, pCaster, spellID )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onStatLoss( pPlayer, stat, statLossAmount )
 {
 	pPlayer.TextMessage( "Phew, I was about to lose " + statLossAmount + " points in stat number " + stat + ", but it didn't happen!" );
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -4921,14 +5186,16 @@ function onSpellTargetSelect( myTarget, pCaster, spellID )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onSteal( pThief, iStolen, pVictim )
 {
 	pThief.SysMessage( "You attempt to steal the "+iStolen.name );
 	pVictim.TextMessage( "Who does this hand in my pocket belong to???" );
 	ConsoleMessage( iStolen.name+" has been attempted stolen!" );
 	return false; // allow stealing code to run like normal
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -4958,7 +5225,8 @@ function onSpellTargetSelect( myTarget, pCaster, spellID )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onStolenFrom( pThief, pVictim, iStolen )
 {
 	pVictim.TextMessage( "Hey you, get your hands off my banana!" );
@@ -4972,7 +5240,8 @@ function onSpellTargetSelect( myTarget, pCaster, spellID )
 
 	// Prevent other scripts with event and/or hard-code from running
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -5006,12 +5275,14 @@ function onSpellTargetSelect( myTarget, pCaster, spellID )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onSwing( iSwung, pSwinging, pSwingAt )
 {
 	pSwinging.TextMessage( "Have at thee, knave!" );
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -5041,7 +5312,8 @@ function onSpellTargetSelect( myTarget, pCaster, spellID )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onTalk( myChar, mySpeech )
 {
 	// This is a simple script that will make the character talking perform the digging animation upon saying "'dig".
@@ -5051,7 +5323,8 @@ function onSpellTargetSelect( myTarget, pCaster, spellID )
 		myChar.DoAction(11);
 	else
 		return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -5078,11 +5351,13 @@ function onSpellTargetSelect( myTarget, pCaster, spellID )
 							<p>Can also be put in a global script (script ID 0) to run for all objects</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onTempChange( myObject, temperature )
 {
 	myObject.TextMessage( "I detected a temperature change! The temperature is now " + temperature + " degrees." );
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -5116,7 +5391,8 @@ function onSpellTargetSelect( myTarget, pCaster, spellID )
 							<p>If overridden, the normal thirst messages are not displayed.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onThirstChange( pChanging, newStatus )
 {
 	pChanging.TextMessage( "ooooo, I feel more thirsty" );
@@ -5125,7 +5401,8 @@ function onSpellTargetSelect( myTarget, pCaster, spellID )
 		TextMessage( pChanging, "I'm melting, I'm melting!" );
 	}
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -5148,14 +5425,16 @@ function onSpellTargetSelect( myTarget, pCaster, spellID )
 							<p>When tempeffect 40 (StartTimer) duration has elapsed for timer timerID</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onTimer( timerObj, timerID )
 {
 	if( timerID == 0 )
 	{
 		timerObj.StaticEffect( 0x376A, 9, 6 ); // Make some sparkles!
 	}
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -5178,7 +5457,8 @@ function onSpellTargetSelect( myTarget, pCaster, spellID )
 							<p>Triggers for object (char/item) when server is about to send tooltip data to client</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">// Display remaining uses left in a tooltip, based on item's UsesLeft tag
 function onTooltip( myObj, pSocket )
 {
@@ -5193,42 +5473,44 @@ function onTooltip( myObj, pSocket )
 		myObj.SetTempTag( "clilocTooltip", 1042971 ); // ~1_NOTHING~
 	}
 	return tooltipText;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
 			</li>
 
 			<!-- <li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#eventOnTransfer" id="eventOnTransfer"><span>onTransfer</span></a>
-				<div class="cd-faq__content">
-					<div class="text-component">
-					<div class="settingsDiv">
-						<p><span class="hl">Prototype</span></p>
-								<p><em>function onTransfer( iTransferred, pSrc, pTrg )</em></p>
-					</div>
-					<div class="settingsDiv">
-						<p><span class="hl">When Triggered</span></p>
-								<p>When pSrc transfers iTransferred to pTrg, iTransferred's script is activated</p>
-					</div>
-					<div class="settingsDiv">
-						<p><span class="hl">Notes</span></p>
-								<p>NOT IMPLEMENTED YET</p>
-					</div>
-					<div class="settingsDiv">
-						<p><span class="hl">Purpose</span></p>
-								<p>To allow custom behaviour to run after a player has transferred an item to another player using a secure trade window</p>
-					</div>
-					<div class="settingsDiv">
-						<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function onTransfer( iTransferred, pSrc, pTrg )
-{
-	pSrc.TextMessage( "Whee I'm transferring this item to you, " + pTrg.name + "!" );
-	pTrg.TextMessage( "Thank you, " + pSrc.name + "!" );
-}</code></pre></p>
-					</div>
-					</div>
-				</div> --> <!-- cd-faq__content -->
+					<a class="cd-faq__trigger" href="#eventOnTransfer" id="eventOnTransfer"><span>onTransfer</span></a>
+					<div class="cd-faq__content">
+						<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+									<p><em>function onTransfer( iTransferred, pSrc, pTrg )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+									<p>When pSrc transfers iTransferred to pTrg, iTransferred's script is activated</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+									<p>NOT IMPLEMENTED YET</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+									<p>To allow custom behaviour to run after a player has transferred an item to another player using a secure trade window</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+	<pre><code class="language-javascript">function onTransfer( iTransferred, pSrc, pTrg )
+	{
+		pSrc.TextMessage( "Whee I'm transferring this item to you, " + pTrg.name + "!" );
+		pTrg.TextMessage( "Thank you, " + pSrc.name + "!" );
+	}</code></pre></p>
+						</div>
+						</div>
+					</div> -->
+			<!-- cd-faq__content -->
 			<!-- </li> -->
 
 			<li class="cd-faq__item">
@@ -5255,7 +5537,8 @@ function onTooltip( myObj, pSocket )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">// Make Tillerman respond after boat has turned
 function onTurnBoat( iBoat, oldDir, newDir, iTiller )
 {
@@ -5268,7 +5551,8 @@ function onTurnBoat( iBoat, oldDir, newDir, iTiller )
 		iTiller.TextMessage( "Nothing ever changes." );
 	}
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -5298,12 +5582,14 @@ function onTurnBoat( iBoat, oldDir, newDir, iTiller )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onUnequip( pUnequipper, iUnequipped )
 {
 	pUnequipper.StaticEffect( 0x376A, 9, 6 );
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -5333,7 +5619,8 @@ function onTurnBoat( iBoat, oldDir, newDir, iTiller )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onUnequipAttempt( pUnequipper, iUnequipped )
 {
 	if( /* check if item is cursed */ )
@@ -5342,7 +5629,8 @@ function onTurnBoat( iBoat, oldDir, newDir, iTiller )
 		return false;
 	}
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -5376,7 +5664,8 @@ function onTurnBoat( iBoat, oldDir, newDir, iTiller )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onUseBandageMacro( pSock, targChar, bandageItem )
 {
 	if( pSock && bandageItem && bandageItem.amount >= 1 )
@@ -5412,7 +5701,8 @@ function onUseCheckedTriggered( pUser, targChar, iUsed )
 		}
 	}
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -5442,7 +5732,8 @@ function onUseCheckedTriggered( pUser, targChar, iUsed )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onUseChecked( pUser, iUsed )
 {
 	// Open player's bank box, if they're within range of the item being used
@@ -5452,7 +5743,8 @@ function onUseCheckedTriggered( pUser, targChar, iUsed )
 
 	// Prevent hard-code from running
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -5486,7 +5778,8 @@ function onUseCheckedTriggered( pUser, targChar, iUsed )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onUseUnChecked( pUser, iUsed )
 {
 	// Open player's bank box, if they're within range of the item being used
@@ -5496,7 +5789,8 @@ function onUseCheckedTriggered( pUser, targChar, iUsed )
 
 	// Prevent hard-code from running
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -5530,12 +5824,14 @@ function onUseCheckedTriggered( pUser, targChar, iUsed )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onVirtueGumpPress( mChar, tChar, buttonID )
 {
 	// .. open custom gump here
 	return true;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -5569,12 +5865,14 @@ function onUseCheckedTriggered( pUser, targChar, iUsed )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onWarModeToggle( pChar )
 {
 	pChar.TextMessage( "I tried toggling my war mode via the button in paperdoll, but was denied!" );
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -5601,11 +5899,13 @@ function onUseCheckedTriggered( pUser, targChar, iUsed )
 							<p>Can also be put in global script (scriptID 0) to trigger for all objects. Weather types: 0 = NONE, 1 = Physical (used for weapons/armor only), 2 = Light, 3 = Rain, 4 = Cold, 5 = Heat/Fire, 6 = Lightning/Energy, 7 = Poison, 8 = Snow, 9 = Storm, 10 = Storm Brewing</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onWeatherChange( myObject, weatherType )
 {
 	myObject.TextMessage( "I detected a weather change! New weather-type: " + weatherType );
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
