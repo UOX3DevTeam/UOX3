@@ -888,15 +888,6 @@ function onCallback0( socket, ourObj )
 						</div>
 
 						<div class="settingsDiv">
-							<p><span class="hl">Notes</span></p>
-							<ul>
-								<li><strong>pUser</strong> – Character performing the double-click.</li>
-								<li><strong>targChar</strong> – Character being double-clicked.</li>
-								<li><strong>nonMouseClickEvent</strong> – Boolean indicating that the event was not triggered by a direct mouse double-click. This may occur when the client generates the event internally (for example on login or via keyboard input).</li>
-							</ul>
-						</div>
-
-						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
 							<p>Allows scripts to customize behaviour when a character is double-clicked, such as preventing paperdoll opening, handling mounts, or triggering custom interactions.</p>
 						</div>
@@ -911,6 +902,15 @@ function onCallback0( socket, ourObj )
 							<ul>
 								<li><strong>return false</strong> (or <strong>0</strong>) – Prevent the default hardcoded behaviour (such as opening the paperdoll) and stop other scripts from running.</li>
 								<li><strong>return true</strong> (or <strong>1</strong>) – Allow the default hardcoded behaviour to continue and allow other scripts with this event to run.</li>
+							</ul>
+						</div>
+
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<ul>
+								<li><strong>pUser</strong> – Character performing the double-click.</li>
+								<li><strong>targChar</strong> – Character being double-clicked.</li>
+								<li><strong>nonMouseClickEvent</strong> – Boolean indicating that the event was not triggered by a direct mouse double-click. This may occur when the client generates the event internally (for example on login or via keyboard input).</li>
 							</ul>
 						</div>
 
@@ -3326,14 +3326,6 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 						</div>
 
 						<div class="settingsDiv">
-							<p><span class="hl">Notes</span></p>
-							<ul>
-								<li><strong>pUser</strong> – Character attempting to open the paperdoll.</li>
-								<li><strong>targChar</strong> – Character whose paperdoll is being opened.</li>
-							</ul>
-						</div>
-
-						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
 							<p>Allows scripts to override or customize what happens when a character's paperdoll is opened.</p>
 						</div>
@@ -3350,6 +3342,15 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 								<li><strong>return true</strong> (or <strong>1</strong>) – Allow the default hardcoded paperdoll behaviour to continue, and allow other scripts with the same event to run.</li>
 							</ul>
 						</div>
+
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<ul>
+								<li><strong>pUser</strong> – Character attempting to open the paperdoll.</li>
+								<li><strong>targChar</strong> – Character whose paperdoll is being opened.</li>
+							</ul>
+						</div>
+
 
 						<div class="settingsDiv">
 							<p>
