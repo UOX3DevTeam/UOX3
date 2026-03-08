@@ -1,33 +1,29 @@
 function onCharDoubleClick( pUser, targChar, nonMouseClickEvent )
 {
-	var pSocket = pUser.socket;
+    var pSocket = pUser.socket;
 
-	if( pSocket == null )
-		return 0;
+    if( pSocket != null && pUser == targChar && !nonMouseClickedEvent )
+    {
+        var etherealMount = pUser.FindItemLayer( 0x19 );
+        if( ValidateObject( etherealMount ))
+        {
+            var pPack = pUser.pack;
+            if( ValidateObject( pPack ))
+            {
+                if( pPack.totalItemCount < pPack.maxItems && pPack.weight < pPack.weightMax )
+                {
+                    DismountEtherealMount( pUser );
+                    return 0;
+                }
+                else
+                {
+                    pSocket.SysMessage( GetDictionaryEntry( 6580, pSocket.language )); // You cannot dismount your ethereal because your pack cannot hold it
+                }
+            }
+        }
+    }
 
-	if( pUser != targChar )
-		return 1;
-
-	// Ignore client/keyboard-generated self double-clicks on login
-	if( nonMouseClickEvent )
-		return 1;
-
-	var etherealMount = pUser.FindItemLayer( 0x19 );
-	if( !ValidateObject( etherealMount ) )
-		return 1;
-
-	var pPack = pUser.pack;
-	if( !ValidateObject( pPack ) )
-		return 0;
-
-	if( pPack.totalItemCount >= pPack.maxItems || pPack.weight >= pPack.weightMax )
-	{
-		pSocket.SysMessage( GetDictionaryEntry( 6580, pSocket.language )); // You cannot dismount your ethereal because your pack cannot hold it
-		return 0;
-	}
-
-	DismountEtherealMount( pUser );
-	return 0;
+    return 1;
 }
 
 function onDeathBlow( pDead, pKiller )
