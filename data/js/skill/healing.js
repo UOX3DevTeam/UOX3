@@ -675,7 +675,7 @@ function onTimer( mChar, timerID )
 								if(( now - deathTime ) < waitTime )
 								{
 									socket.SysMessage( GetDictionaryEntry( 19340, socket.language )); // That creature's spirit lacks cohesion. Try again in a few minutes.
-									return;
+									break;
 								}
 
 								ResurrectBondedPet( socket, ourObj );
@@ -989,6 +989,7 @@ function ResurrectBondedPet( socket, deadPet )
 	deadPet.target = null;
 	deadPet.atWar = false;
 	deadPet.attacker = null;
+	deadPet.isGM = false;
 	deadPet.SetTag( "isPetDead", false );
 }
 

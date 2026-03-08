@@ -295,10 +295,6 @@ function onUseChecked( pUser, iUsed )
 					default:
 						break;
 				}
-				pUser.StaticEffect( 0x376A, 0x09, 0x06 );
-				pUser.SoundEffect( 0x01E7, true );
-				pUser.isUsingPotion = true;
-				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion
 				break;
 			default:
 				break;
@@ -409,14 +405,17 @@ function onCallback1( socket, ourObj )
 	if( ourObj.GetTag( "isBondedPet" ))
 	{
 		socket.SysMessage( GetDictionaryEntry( 19320, socket.language )); // That pet is already bonded to you.
+		return;
 	}
-	else if( ourObj.owner != mChar )
+	else if( ourObj.owner != pUser )
 	{
 		socket.SysMessage( GetDictionaryEntry( 19321, socket.language )); // This is not your pet!
+		return;
 	}
 	else
 	{
 		ourObj.SetTag( "isBondedPet", true );
+		ourObj.Refresh();
 		socket.SysMessage( GetDictionaryEntry( 19308, socket.language )); // Your pet has bonded with you!
 		if( iUsed && iUsed.isItem )
 		{
@@ -429,6 +428,10 @@ function onCallback1( socket, ourObj )
 				iUsed.Delete();
 			}
 		}
+		ourObj.StaticEffect( 0x376A, 0x09, 0x06 );
+		pUser.SoundEffect( 0x01E7, true );
+		pUser.isUsingPotion = true;
+		DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion
 
 		// Create empty bottle
 		var eBottle = CreateDFNItem( socket, pUser, "0x0F0E", 1, "ITEM", true );
