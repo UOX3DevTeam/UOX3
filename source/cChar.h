@@ -227,7 +227,7 @@ protected:
   	RACEID  	raceGate;		// Race gate that has been used
   	UI08    	step;			// 1 if step 1 0 if step 2 3 if step 1 skip 2 if step 2 skip
 
-	std::bitset<17>		priv;
+	std::bitset<19>		priv;
 
 	std::string	guildTitle;		// Title Guildmaster granted player						(DasRaetsel)
 
