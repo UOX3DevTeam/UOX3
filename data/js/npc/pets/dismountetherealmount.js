@@ -1,20 +1,31 @@
-function onCharDoubleClick( pUser, targChar )
+function onCharDoubleClick( pUser, targChar, nonMouseClickEvent )
 {
-	var pPack = pUser.pack;
 	var pSocket = pUser.socket;
 
+	// Invalid socket = stop
 	if( pSocket == null )
-		return false;
+		return 0;
 
+	// Not my character or triggered by non-mouse event = continue with hardcode
+	if( pUser != targChar || nonMouseClickEvent )
+		return 1;
+
+	var etherealMount = pUser.FindItemLayer( 0x19 );
+	var pPack = pUser.pack;
+
+	// Invalid mount or pack = stop
+	if( !ValidateObject( etherealMount ) || !ValidateObject( pPack ))
+		return 0;
+
+	// Full pack = stop
 	if( pPack.totalItemCount >= pPack.maxItems || pPack.weight >= pPack.weightMax )
 	{
 		pSocket.SysMessage( GetDictionaryEntry( 6580, pSocket.language )); // You cannot dismount your ethereal because your pack cannot hold it
+		return 0;
 	}
-	else
-	{
-		DismountEtherealMount( pUser );
-	}
-	return true;
+
+	// Dismounting = stop
+	DismountEtherealMount( pUser );
 }
 
 function onDeathBlow( pDead, pKiller )

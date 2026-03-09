@@ -1683,7 +1683,7 @@ declare global {
   function onBuyFromVendor( targSock: Socket, objVendor: Character, objItemBought: BaseObject, numItemsBuying: number ): boolean;
   function onCallback( tSock: Socket, target: Character | Item | null ): void;
   function onCarveCorpse( player: Character, corpse: Item ): boolean;
-  function onCharDoubleClick( currChar: Character, targChar: Character ): boolean;
+  function onCharDoubleClick( currChar: Character, targChar: Character, nonMouseClickEvent: boolean ): boolean;
   function onClick( sockPlayer: Socket, objClicked: BaseObject ): boolean;
   function onCollide( targSock: Socket, objColliding: Character, objCollideWith: BaseObject ): boolean;
   function onCombatDamageCalc( attacker: Character, defender: Character, getFightSkill: number, hitLoc: number ): number;
@@ -1735,6 +1735,7 @@ declare global {
   function onMultiLogout( iMulti: Multi, cPlayer: Character ): boolean;
   function onNameRequest( myObj: BaseObject, nameRequester: Character, requestSource: number ): string;
   function onPacketReceive( mSock: Socket, packetNum: number ): boolean;
+  function onPaperDoll( currChar: Character, targChar: Character ): boolean;
   function onPathfindEnd( npc: Character, pathfindResult: number ): boolean;
   function onPickup( item: Item, pickerUpper: Character, objCont: BaseObject ): boolean;
   function onProfileRequest( myObj: Socket, profileOwner: Character ): string;

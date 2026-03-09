@@ -1,3 +1,9 @@
+08/03/2026 - DragonSlayer62 (#530)
+    [ADD] Added nonMouseClickEvent boolean parameter to onCharDoubleClick() so scripts can detect non mouse/client generated character double-click events
+    [ADD] Added new onPaperDoll() JavaScript event for handling paperdoll opening separately from onCharDoubleClick()
+    [UPD] Updated dismountetherealmount.js, petbonding.js, cow_tipping.js, and mount_restrictions.js for the new onCharDoubleClick() event signature nonMouseClickEvent
+    [UPD] Updated scripting docs, definitions.d.ts, and event metadata for onCharDoubleClick() and onPaperDoll()
+
 05/03/2026 - DragonSlayer62 (#525)
     [FIX] Fixed a tag-lookup issue in Ethereal Mount Statuette script that caused the incorrect mount to spawn on use (js/item/etherealstatuettes.js) 
     [FIX] Fixed an issue with Champion Spawns Menu where the removal buttons would call a non-existent function when trying to reopen the menu after removal of an altar (js/command/champion_spawn_cmd.js)
