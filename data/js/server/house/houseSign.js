@@ -106,6 +106,8 @@ function onUseUnChecked( pUser, iUsed )
 				maxOwners = iMulti.maxOwners;
 				friends = iMulti.friends;
 				maxFriends = iMulti.maxFriends;
+				guests = iMulti.guests;
+				maxGuests = iMulti.maxGuests;
 				bans = iMulti.bans;
 				maxBans = iMulti.maxBans;
 				houseBuildTime = iMulti.buildTimestamp;
@@ -115,6 +117,7 @@ function onUseUnChecked( pUser, iUsed )
 				// Reset lists
 				houseCoOwnerList.length = 0;
 				houseFriendList.length = 0;
+				houseGuestList.length = 0;
 				houseBanList.length = 0;
 
 				// Open house menu gump
