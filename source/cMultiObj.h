@@ -8,13 +8,13 @@ protected:
 	std::string				deed;
 
 	// Temporary serial vectors for deferred loading
-	std::vector<UI32>		pendingBans;
-	std::vector<UI32>		pendingOwners;
-	std::vector<UI32>		pendingFriends;
-	std::vector<UI32>		pendingGuests;
-	std::vector<UI32>		pendingLockedItems;
-	std::vector<UI32>		pendingSecureContainers;
-	std::vector<UI32>		pendingVendors;
+	std::vector<SERIAL>		pendingBans;
+	std::vector<SERIAL>		pendingOwners;
+	std::vector<SERIAL>		pendingFriends;
+	std::vector<SERIAL>		pendingGuests;
+	std::vector<SERIAL>		pendingLockedItems;
+	std::vector<SERIAL>		pendingSecureContainers;
+	std::vector<SERIAL>		pendingVendors;
 
 	std::map<CChar *, UI08>	housePrivList;
 

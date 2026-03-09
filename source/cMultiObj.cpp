@@ -1233,61 +1233,30 @@ void CMultiObj::PostLoadProcessing( void )
 	// Ensure base class processing fires first
 	CItem::PostLoadProcessing();
 
-	// BAN list
-	for( UI32 ser : pendingBans )
+	// Helper lambda for resolving deferred Character/Item-lists
+	auto ResolveObjects = [this]( std::vector<SERIAL>& pendingList, auto lookupFunc, auto action ) 
 	{
-		CChar *bList = CalcCharObjFromSer( ser );
-		if( ValidateObject( bList ) ) AddToBanList( bList );
-	}
-	pendingBans.clear();
+		for( SERIAL ser : pendingList ) 
+		{
+			auto ptr = lookupFunc( ser );
+			if( ValidateObject( ptr )) 
+			{
+				( this->*action )( ptr );
+			}
+		}
+		pendingList.clear();
+	};
 
-	// OWNER list
-	for( UI32 ser : pendingOwners )
-	{
-		CChar *cList = CalcCharObjFromSer( ser );
-		if( ValidateObject( cList ) ) AddAsOwner( cList );
-	}
-	pendingOwners.clear();
+	// Process deferred character-based lists
+	ResolveObjects( pendingBans, CalcCharObjFromSer, &CMultiObj::AddToBanList );
+	ResolveObjects( pendingOwners, CalcCharObjFromSer, &CMultiObj::AddAsOwner );
+	ResolveObjects( pendingFriends, CalcCharObjFromSer, &CMultiObj::AddAsFriend );
+	ResolveObjects( pendingGuests, CalcCharObjFromSer, &CMultiObj::AddAsGuest );
+	ResolveObjects( pendingVendors, CalcCharObjFromSer, &CMultiObj::AddVendor );
 
-	// FRIEND list
-	for( UI32 ser : pendingFriends )
-	{
-		CChar *cList = CalcCharObjFromSer( ser );
-		if( ValidateObject( cList ) ) AddAsFriend( cList );
-	}
-	pendingFriends.clear();
-
-	// GUEST list
-	for( UI32 ser : pendingGuests )
-	{
-		CChar *cList = CalcCharObjFromSer( ser );
-		if( ValidateObject( cList ) ) AddAsGuest( cList );
-	}
-	pendingGuests.clear();
-
-	// VENDOR list
-	for( UI32 ser : pendingVendors )
-	{
-		CChar *cList = CalcCharObjFromSer( ser );
-		if( ValidateObject( cList ) ) AddVendor( cList );
-	}
-	pendingVendors.clear();
-
-	// LOCKDOWN list
-	for( UI32 ser : pendingLockedItems )
-	{
-		CItem *iList = CalcItemObjFromSer( ser );
-		if( ValidateObject( iList ) ) LockDownItem( iList );
-	}
-	pendingLockedItems.clear();
-
-	// SECURE CONTAINERS list
-	for( UI32 ser : pendingSecureContainers )
-	{
-		CItem *iList = CalcItemObjFromSer( ser );
-		if( ValidateObject( iList ) ) SecureContainer( iList );
-	}
-	pendingSecureContainers.clear();
+	// Process deferred item-based lists
+	ResolveObjects( pendingLockedItems, CalcItemObjFromSer, &CMultiObj::LockDownItem );
+	ResolveObjects( pendingSecureContainers, CalcItemObjFromSer, &CMultiObj::SecureContainer );
 }
 
 //o------------------------------------------------------------------------------------------------o
