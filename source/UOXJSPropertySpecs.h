@@ -389,6 +389,7 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "magicReflect",	CCP_MAGICREFLECT,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "permanentMagicReflect",	CCP_PERMMAGICREFLECT,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "hideFameKarmaTitle",	CCP_HIDEFAMEKARMATITLE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "noCharCollide",	CCP_NOCHARCOLLIDE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "tamed",			CCP_TAMED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "tamedHungerRate",CCP_TAMEDHUNGERRATE,JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "tamedThirstRate",CCP_TAMEDTHIRSTRATE,JSPROP_ENUMANDPERM, nullptr, nullptr },
