@@ -1,3 +1,8 @@
+09/03/2026 - Xoduz (#529)
+    [UPD] Bumped version number to 0.99.7c
+    [FIX] Fixed issue where characters could go missing from co-owner lists, friends lists, guest lists or ban lists in player houses, if those characters were loaded after the house itself
+    [FIX] Fixed an issue that prevented locking down of stacked items in player houses when those items were directly beneath a door on the next floor up
+
 08/03/2026 - DragonSlayer62 (#530)
     [ADD] Added nonMouseClickEvent boolean parameter to onCharDoubleClick() so scripts can detect non mouse/client generated character double-click events
     [ADD] Added new onPaperDoll() JavaScript event for handling paperdoll opening separately from onCharDoubleClick()
