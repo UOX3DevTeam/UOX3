@@ -8,10 +8,10 @@ function onUseChecked( pUser, iUsed )
 	var pSocket = pUser.socket;
 	if( pSocket != null && ValidateObject( iUsed ) && iUsed.isItem )
 	{
-		var itemOwner = GetPackOwner( iUsed, 0 );
-		if( itemOwner == null || itemOwner.serial != pUser.serial )
+		// Item must be in player's backpack, not just owned by player
+		if( !IsItemInPlayerBackpack( iUsed, pUser ))
 		{
-			pUser.SysMessage( GetDictionaryEntry( 1763, pSocket.language )); // That item must be in your backpack before it can be used.
+			pSocket.SysMessage( GetDictionaryEntry( 1763, pSocket.language )); // That item must be in your backpack before it can be used.
 			return false;
 		}
 
@@ -20,7 +20,7 @@ function onUseChecked( pUser, iUsed )
 		if( !ValidateObject( iMulti ) || !iMulti.IsInMulti( pUser ))
 		{
 			// Player vendors can only be placed in houses!
-			pUser.SysMessage( GetDictionaryEntry( 2857, pSocket.language )); // Player vendors can only be placed in houses!
+			pSocket.SysMessage( GetDictionaryEntry( 2857, pSocket.language )); // Player vendors can only be placed in houses!
 			return false;
 		}
 
@@ -28,7 +28,7 @@ function onUseChecked( pUser, iUsed )
 		if( !iMulti.IsOwner( pUser ))
 		{
 			// Only the house owner can place player vendors in a house!
-			pUser.SysMessage( GetDictionaryEntry( 2858, pSocket.language )); // Only the house owner can place player vendors in a house!
+			pSocket.SysMessage( GetDictionaryEntry( 2858, pSocket.language )); // Only the house owner can place player vendors in a house!
 			return false;
 		}
 
@@ -36,7 +36,7 @@ function onUseChecked( pUser, iUsed )
 		if( iMulti.vendors >= iMulti.maxVendors )
 		{
 			// You cannot place any more player vendors in this house!
-			pUser.SysMessage( GetDictionaryEntry( 2859, pSocket.language )); // You cannot place any more player vendors in this house!
+			pSocket.SysMessage( GetDictionaryEntry( 2859, pSocket.language )); // You cannot place any more player vendors in this house!
 			return false;
 		}
 
@@ -72,6 +72,13 @@ function onUseChecked( pUser, iUsed )
 
 			// Add the player vendor to the house's list of vendors
 			iMulti.AddVendor( npcVendor );
+			npcVendor.SetTag( "VendorBankAccount",1000 );
+			npcVendor.AddScriptTrigger( 3110 );
+			var vendorName = iUsed.GetTag( "vendorName" );
+			if( vendorName )
+			{
+				npcVendor.name = vendorName;
+			}
 
 			// Delete the player vendor deed!
 			iUsed.Delete();
@@ -83,6 +90,27 @@ function onUseChecked( pUser, iUsed )
 	}
 
 	return false;
+}
+
+/** @param {Item} iUsed @param {Character} pUser @returns {boolean} */
+function IsItemInPlayerBackpack( iUsed, pUser )
+{
+	if( !ValidateObject( iUsed ) || !ValidateObject( pUser ))
+		return false;
+
+	var pPack = pUser.pack;
+	if( !ValidateObject( pPack ))
+		return false;
+
+	var itemOwner = GetPackOwner( iUsed, 0 );
+	if( !ValidateObject( itemOwner ) || itemOwner.serial != pUser.serial )
+		return false;
+
+	var rootContainer = iUsed;
+	while( ValidateObject( rootContainer.container ) && rootContainer.container.isItem )
+		rootContainer = rootContainer.container;
+
+	return rootContainer.serial == pPack.serial;
 }
 
 function CheckForNearbyDoors( pUser, itemToCheck, pSocket )
@@ -107,7 +135,7 @@ function CheckForNearbyDoors( pUser, itemToCheck, pSocket )
 				// Make sure to check against the distance from the door in it's closed state, rather than it's open state!
 				var origX = itemToCheck.x  - itemToCheck.GetTag( "DOOR_X" );
 				var origY = itemToCheck.y  - itemToCheck.GetTag( "DOOR_Y" );
-				if( pUser.x - origX < 2 || origX - pUser.x < 2 || pUser.y - origY < 2 || origY - pUser.y < 2 )
+				if( Math.abs( pUser.x - origX ) < 2 && Math.abs( pUser.y - origY ) < 2 )
 					return true;
 			}
 

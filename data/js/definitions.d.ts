@@ -357,6 +357,7 @@ declare global {
               trainer:               boolean;
               vulnerable:            boolean;
               wandertype:            number;
+              vendorGoldHeld:        number;
               willhunger:            boolean;
               willthirst:            boolean;
     AddAggressorFlag( target: Character ): void;

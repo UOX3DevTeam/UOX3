@@ -4249,6 +4249,12 @@
           "type": "number"
         },
         {
+          "name": "vendorGoldHeld",
+          "cppName": "CCP_VENDORGOLDHELD",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
           "name": "willhunger",
           "cppName": "CCP_HUNGERSTATUS",
           "cppType": "JSPROP_ENUMANDPERM",
