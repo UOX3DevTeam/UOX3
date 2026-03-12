@@ -314,6 +314,7 @@ function HouseDecay(iMulti )
 
 		if( charInHouse.aitype == 17 ) // player vendor AI
 		{
+			iMulti.RemoveVendor( charInHouse );
 			charInHouse.Delete();
 		}
 		else 

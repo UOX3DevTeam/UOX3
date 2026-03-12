@@ -1,11 +1,14 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
-/** @type { ( currChar: Character, targChar: Character ) => boolean } */
-function onCharDoubleClick( pUser, targChar )
+/** @type { ( currChar: Character, targChar: Character, nonMouseClickEvent: boolean ) => boolean } */
+function onCharDoubleClick( pUser, targChar, nonMouseClickEvent )
 {
 	// Override restrictions for GMs and Admins
 	if( pUser.isGM || pUser.isAdmin )
 		return true;
+
+	if( pUser.socket == null )
+		return false;
 
 	switch( targChar.id )
 	{
