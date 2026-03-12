@@ -25,7 +25,7 @@ function onDeathBlow( killedPet, petKiller )
 
 		if( ValidateObject( petOwner ) && petOwner.socket != null )
 		{
-			TriggerEvent( 3108, "SendNpcGhostMode", petOwner.socket, 0, killedPet.serial, 1  );
+			TriggerEvent( 3108, "SendNpcGhostMode", petOwner.socket, 0, killedPet.serial, 1 );
 		}
 
 		killedPet.SetTag( "PetAI", killedPet.aitype.toString() );
@@ -39,6 +39,7 @@ function onDeathBlow( killedPet, petKiller )
 		killedPet.target = null;
 		killedPet.atWar = false;
 		killedPet.attacker = null;
+		killedPet.noCharCollide = true;
 
 		// Start immediate, repeating timer (30 mins) to monitor playtime
 		killedPet.StartTimer( 30 * 60 * 1000, 32, 3107 );

@@ -480,12 +480,13 @@ void CPExtMove::SetFlags( CChar &toCopy )
 		const UI08 BIT__FEMALE = 1;	//	0x02, female flag
 		const UI08 BIT__FLYING = 2;	//	0x04, flying (post 7.0.0.0)
 		const UI08 BIT__GOLDEN = 3;	//	0x08, yellow healthbar
-		//const UI08 BIT__IGNOREMOBILES = 4;	// 0x10, ignore other mobiles?
+		const UI08 BIT__IGNOREMOBILES = 4;	// 0x10, ignore other mobiles?
 
 		flag.set( BIT__FROZEN, toCopy.IsFrozen() );
 		flag.set( BIT__FEMALE, ( toCopy.GetId() == 0x0191 || toCopy.GetId() == 0x025E || toCopy.GetId() == 0x029B || toCopy.GetId() == 0xb8 || toCopy.GetId() == 0xba ));
 		flag.set( BIT__FLYING, ( toCopy.IsFlying() ));
 		flag.set( BIT__GOLDEN, ( toCopy.IsInvulnerable() ));
+		flag.set( BIT__IGNOREMOBILES, toCopy.NoCharCollide() );
 	}
 	else
 	{
@@ -494,12 +495,13 @@ void CPExtMove::SetFlags( CChar &toCopy )
 		const UI08 BIT__DEAD = 1;	//	0x02
 		const UI08 BIT__POISON = 2;	//	0x04, poison
 		const UI08 BIT__GOLDEN	= 3;	//	0x08, yellow healthbar
-		//const UI08 BIT__IGNOREMOBILES = 4;	// 0x10, ignore other mobiles?
+		const UI08 BIT__IGNOREMOBILES = 4;	// 0x10, ignore other mobiles?
 
 		flag.set( BIT__INVUL, toCopy.IsInvulnerable() );
 		flag.set( BIT__DEAD, toCopy.IsDead() );
 		flag.set( BIT__POISON, ( toCopy.GetPoisoned() != 0 ));
 		flag.set( BIT__GOLDEN, ( toCopy.IsInvulnerable() ));
+		flag.set( BIT__IGNOREMOBILES, toCopy.NoCharCollide() );
 	}
 
 	const UI08 BIT__ATWAR = 6;	// 0x40
@@ -1187,12 +1189,13 @@ void CPDrawGamePlayer::CopyData( CChar &toCopy )
 		const UI08 BIT__FEMALE	= 1;	//	0x02, should be female flag
 		const UI08 BIT__FLYING	= 2;	//	0x04, flying (post 7.0.0.0)
 		const UI08 BIT__GOLDEN	= 3;	//	0x08, yellow healthbar
-		//const UI08 BIT__IGNOREMOBILES = 5;	// 0x10, ignore other mobiles?
+		const UI08 BIT__IGNOREMOBILES = 5;	// 0x10, ignore other mobiles?
 
 		flag.set( BIT__FROZEN, toCopy.IsFrozen() );
 		flag.set( BIT__FEMALE, ( toCopy.GetId() == 0x0191 || toCopy.GetId() == 0x025E || toCopy.GetId() == 0x029B || toCopy.GetId() == 0xb8 || toCopy.GetId() == 0xba ));
 		flag.set( BIT__FLYING, toCopy.IsFlying() );
 		flag.set( BIT__GOLDEN, toCopy.IsInvulnerable() );
+		flag.set( BIT__IGNOREMOBILES, toCopy.NoCharCollide() );
 	}
 	else
 	{
@@ -1201,12 +1204,13 @@ void CPDrawGamePlayer::CopyData( CChar &toCopy )
 		const UI08 BIT__DEAD	= 1;	//	0x02
 		const UI08 BIT__POISON	= 2;	//	0x04, poison
 		const UI08 BIT__GOLDEN	= 3;	//	0x08, yellow healthbar
-		//const UI08 BIT__IGNOREMOBILES = 5;	// 0x10, ignore other mobiles?
+		const UI08 BIT__IGNOREMOBILES = 5;	// 0x10, ignore other mobiles?
 
 		flag.set( BIT__INVUL, toCopy.IsInvulnerable() );
 		flag.set( BIT__DEAD, toCopy.IsDead() );
 		flag.set( BIT__POISON, ( toCopy.GetPoisoned() != 0 ));
 		flag.set( BIT__GOLDEN, toCopy.IsInvulnerable() );
+		flag.set( BIT__IGNOREMOBILES, toCopy.NoCharCollide() );
 	}
 
 	const UI08 BIT__ATWAR	= 6;	//	0x40
@@ -5764,12 +5768,13 @@ void CPDrawObject::CopyData( CChar& mChar )
 		const UI08 BIT__FEMALE = 1;	//	0x02, female
 		const UI08 BIT__FLYING = 2;	//	0x04, flying (post 7.0.0.0)
 		const UI08 BIT__GOLDEN = 3;	//	0x08, yellow healthbar
-		//const UI08 BIT__IGNOREMOBILES = 4;	// 0x10, ignore other mobiles?
+		const UI08 BIT__IGNOREMOBILES = 4;	// 0x10, ignore other mobiles?
 
 		flag.set( BIT__FROZEN, mChar.IsFrozen() );
 		flag.set( BIT__FEMALE, ( mChar.GetId() == 0x0191 || mChar.GetId() == 0x025E ));
 		flag.set( BIT__FLYING, mChar.IsFlying() );
 		flag.set( BIT__GOLDEN, mChar.IsInvulnerable() );
+		flag.set( BIT__IGNOREMOBILES, mChar.NoCharCollide() );
 	}
 	else
 	{
@@ -5778,12 +5783,13 @@ void CPDrawObject::CopyData( CChar& mChar )
 		const UI08 BIT__DEAD = 1;	//	0x02, dead
 		const UI08 BIT__POISON = 2;	//	0x04, poison
 		const UI08 BIT__GOLDEN = 3;	//	0x08, yellow healthbar
-		//const UI08 BIT__IGNOREMOBILES = 4;	// 0x10, ignore other mobiles?
+		const UI08 BIT__IGNOREMOBILES = 4;	// 0x10, ignore other mobiles?
 
 		flag.set( BIT__INVUL, mChar.IsInvulnerable() );
 		flag.set( BIT__DEAD, mChar.IsDead() );
 		flag.set( BIT__POISON, ( mChar.GetPoisoned() != 0 ));
 		flag.set( BIT__GOLDEN, mChar.IsInvulnerable() );
+		flag.set( BIT__IGNOREMOBILES, mChar.NoCharCollide() );
 	}
 
 	const UI08 BIT__ATWAR = 6;	//	0x40
