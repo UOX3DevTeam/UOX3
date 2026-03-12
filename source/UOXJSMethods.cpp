@@ -10307,6 +10307,92 @@ JSBool CMulti_RemoveTrashCont( JSContext *cx, uintN argc, jsval *vp )
 	return JS_TRUE;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|  Function    -   CMulti_AddVendor()
+//|  Prototype   -   void AddVendor( vendorToAdd )
+//o------------------------------------------------------------------------------------------------o
+//|  Purpose     -   Adds a player vendor to a multi
+//o------------------------------------------------------------------------------------------------o
+JSBool CMulti_AddVendor( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	if( argc != 1 )
+	{
+		ScriptError( cx, "AddVendor: Invalid number of arguments (1 required)" );
+		return JS_FALSE;
+	}
+
+	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+	CMultiObj *multiObject = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
+	{
+		ScriptError( cx, "(AddVendor) Invalid multi object referenced" );
+		return JS_FALSE;
+	}
+
+	if( !JSVAL_IS_OBJECT( argv[0] ))
+	{
+		ScriptError( cx, "(AddVendor) Invalid character object passed" );
+		return JS_FALSE;
+	}
+
+	CChar *vendorToAdd = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	if( !ValidateObject( vendorToAdd ))
+	{
+		ScriptError( cx, "(AddVendor) Invalid character object passed" );
+		return JS_FALSE;
+	}
+
+	multiObject->AddVendor( vendorToAdd );
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|  Function    -   CMulti_RemoveVendor()
+//|  Prototype   -   void RemoveVendor( vendorToRemove )
+//o------------------------------------------------------------------------------------------------o
+//|  Purpose     -   Removes a player vendor from a multi
+//o------------------------------------------------------------------------------------------------o
+JSBool CMulti_RemoveVendor( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	if( argc != 1 )
+	{
+		ScriptError( cx, "RemoveVendor: Invalid number of arguments (1 required)" );
+		return JS_FALSE;
+	}
+
+	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+	CMultiObj *multiObject = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
+	{
+		ScriptError( cx, "(RemoveVendor) Invalid multi object referenced" );
+		return JS_FALSE;
+	}
+
+	if( !JSVAL_IS_OBJECT( argv[0] ))
+	{
+		ScriptError( cx, "(RemoveVendor) Invalid character object passed" );
+		return JS_FALSE;
+	}
+
+	CChar *vendorToRemove = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	if( !ValidateObject( vendorToRemove ))
+	{
+		ScriptError( cx, "(RemoveVendor) Invalid character object passed" );
+		return JS_FALSE;
+	}
+
+	multiObject->RemoveVendor( vendorToRemove );
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	return JS_TRUE;
+}
+
 void KillKeys( SERIAL targSerial, SERIAL charSerial = INVALIDSERIAL );
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMulti_KillKeys()

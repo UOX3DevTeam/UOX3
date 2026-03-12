@@ -208,6 +208,8 @@ JSBool CMulti_LockDownItem( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMulti_ReleaseItem( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMulti_AddTrashCont( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMulti_RemoveTrashCont( JSContext *cx, uintN argc, jsval *vp );
+JSBool CMulti_AddVendor( JSContext *cx, uintN argc, jsval *vp );
+JSBool CMulti_RemoveVendor( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMulti_KillKeys( JSContext *cx, uintN argc, jsval *vp );
 JSBool CItem_IsMulti( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMulti_IsInMulti( JSContext *cx, uintN argc, jsval *vp );
@@ -585,6 +587,8 @@ inline JSFunctionSpec CItem_Methods[] =
 	{ "ReleaseItem",		CMulti_ReleaseItem,			1, 0 },
 	{ "AddTrashCont",		CMulti_AddTrashCont,		1, 0 },
 	{ "RemoveTrashCont",	CMulti_RemoveTrashCont,		1, 0 },
+	{ "AddVendor",			CMulti_AddVendor,			1, 0 },
+	{ "RemoveVendor",		CMulti_RemoveVendor,		1, 0 },
 
 	{ "KillKeys",			CMulti_KillKeys,			1, 0 },
 

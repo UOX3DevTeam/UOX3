@@ -1503,6 +1503,7 @@ function DemolishHouse( pSocket, iMulti )
 						pvDeed.type = 217; // Player Vendor Deed
 						pvDeed.buyValue = 2000;
 						pSocket.SysMessage( GetDictionaryEntry( 581, pSocket.language ), pvDeed.name ); // Packed up vendor %s.
+						iMulti.RemoveVendor( charInHouse );
 						charInHouse.Delete();
 					}
 				}

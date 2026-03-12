@@ -893,6 +893,7 @@ declare global {
     AddToGuestList( newGuest: Character ): void;
     AddToOwnerList( newOwner: Character ): void;
     AddTrashCont( trash: Item ): void;
+	AddVendor( vendorToAdd: Character ): boolean;
     ClearBanList(): void;
     ClearFriendList(): void;
     ClearGuestList(): void;
@@ -917,6 +918,7 @@ declare global {
     RemoveFromGuestList( toRemove: Character ): boolean;
     RemoveFromOwnerList( toRemove: Character ): boolean;
     RemoveTrashCont( toRemove: Item ): boolean;
+	RemoveVendor( vendorToRemove: Character ): boolean;
     SecureContainer( toSecure: Item ): boolean;
     TurnBoat( direction: number ): void;
     UnsecureContainer( toUnsecure: Item ): boolean;
