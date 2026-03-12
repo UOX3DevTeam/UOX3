@@ -1,3 +1,13 @@
+12/03/2026 - DragonSlayer62 (#531)
+    [ADD] Added new character priv flag .noCharCollide which gets/sets whether character can collide with other characters
+    [UPD] Dead bonded pets are now flagged with .noCharCollide = true, allowing players to walk through them without stamina loss or movement blocking, similar to ghost characters (js/npc/pets/petbonding.js)
+    [ADD] Added 'respet command that resurrects dead bonded pets (js/commands/custom/misc-cmd.js
+    [FIX] Pet Bonding Potion effects now trigger when the potion is used on the target pet rather than when the potion is consumed. Also corrected variable usage from mChar to pUser (js/item/potion.js)
+    [FIX] Corrected an incorrect temp tag being cleared in js/npc/ai/veterinarian.js and ensured the .noCharCollide flag is properly reset to false when the pet is revived
+    [FIX] Fixed a logic issue in js/skill/healing.js where the timer could break during bonded pet resurrection attempts due to an early return. The timer now clears correctly. Also ensured the resurrected pet has .noCharCollide reset to false
+    [FIX] Veterinarian vendors were using HealerShopping List, when they have their own VetShopping list
+    [ADD] Added Elixir of Rebirth Potion that is used to resurrect dead bonded pets in js/item/potions.js and dfndata/items/magic/potions.dfn
+
 09/03/2026 - Xoduz (#529)
     [UPD] Bumped version number to 0.99.7c
     [FIX] Fixed issue where characters could go missing from co-owner lists, friends lists, guest lists or ban lists in player houses, if those characters were loaded after the house itself
