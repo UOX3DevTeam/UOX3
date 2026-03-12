@@ -59,14 +59,14 @@ function GetVendorHueCategoryName( entry, socket )
 }
 
 var vendorHairHueCategories = [
-	new VendorHueCategory( null, [ 0x044E, 0x044F, 0x0450, 0x0451, 0x0452, 0x0453, 0x0454 ], 40092 ), // Black
-	new VendorHueCategory( null, [ 0x0455, 0x0456, 0x0457, 0x0458, 0x0459, 0x045A, 0x045B, 0x045C ], 40093 ), // Beige
-	new VendorHueCategory( null, [ 0x045D, 0x045E, 0x045F, 0x0460, 0x0461, 0x0462, 0x0463, 0x0464, 0x0465, 0x0466, 0x0467, 0x0468, 0x0469, 0x046A, 0x046B, 0x046C ], 40094 ), // Golden
-	new VendorHueCategory( null, [ 0x046D, 0x046E, 0x046F, 0x0470, 0x0471, 0x0472, 0x0473, 0x0474, 0x0475, 0x0476, 0x0477, 0x0478, 0x0479, 0x047A, 0x047B, 0x047C ], 40095 ), // Dark Brown
-	new VendorHueCategory( null, [ 0x04B1, 0x04B2, 0x04B3, 0x04B4, 0x04B5, 0x04B6, 0x04B7, 0x04B8, 0x04B9, 0x04BA, 0x04BB, 0x04BC, 0x04BD, 0x04BE, 0x04BF, 0x04C0 ], 40096 ), // Red
-	new VendorHueCategory( null, [ 0x05DD, 0x05DE, 0x05DF, 0x05E0, 0x05E1, 0x05E2, 0x05E3, 0x05E4, 0x05E5, 0x05E6, 0x05E7, 0x05E8, 0x05E9, 0x05EA, 0x05EB, 0x05EC ], 40097 ), // Auburn
-	new VendorHueCategory( null, [ 0x0641, 0x0642, 0x0643, 0x0644, 0x0645, 0x0646, 0x0647, 0x0648, 0x0649, 0x064A, 0x064B, 0x064C, 0x064D, 0x064E, 0x064F, 0x0650, 0x0651, 0x0652, 0x0653, 0x0654, 0x0655, 0x0656, 0x0657, 0x0658, 0x0659, 0x065A, 0x065B, 0x065C, 0x065D, 0x065E, 0x065F, 0x0660 ], 40098 ), // Brown
-	new VendorHueCategory( null, [ 0x08A5, 0x08A6, 0x08A7, 0x08A8, 0x08A9, 0x0961, 0x0962, 0x0963, 0x0964, 0x0965, 0x0966, 0x0967, 0x0968 ], 40099 ), // Blonde
+	new VendorHueCategory( null, [ 0x044E, 0x044F, 0x0450, 0x0451, 0x0452, 0x0453, 0x0454 ], 17111 ), // Black
+	new VendorHueCategory( null, [ 0x0455, 0x0456, 0x0457, 0x0458, 0x0459, 0x045A, 0x045B, 0x045C ], 17112 ), // Beige
+	new VendorHueCategory( null, [ 0x045D, 0x045E, 0x045F, 0x0460, 0x0461, 0x0462, 0x0463, 0x0464, 0x0465, 0x0466, 0x0467, 0x0468, 0x0469, 0x046A, 0x046B, 0x046C ], 17113 ), // Golden
+	new VendorHueCategory( null, [ 0x046D, 0x046E, 0x046F, 0x0470, 0x0471, 0x0472, 0x0473, 0x0474, 0x0475, 0x0476, 0x0477, 0x0478, 0x0479, 0x047A, 0x047B, 0x047C ], 17114 ), // Dark Brown
+	new VendorHueCategory( null, [ 0x04B1, 0x04B2, 0x04B3, 0x04B4, 0x04B5, 0x04B6, 0x04B7, 0x04B8, 0x04B9, 0x04BA, 0x04BB, 0x04BC, 0x04BD, 0x04BE, 0x04BF, 0x04C0 ], 17108 ), // Red
+	new VendorHueCategory( null, [ 0x05DD, 0x05DE, 0x05DF, 0x05E0, 0x05E1, 0x05E2, 0x05E3, 0x05E4, 0x05E5, 0x05E6, 0x05E7, 0x05E8, 0x05E9, 0x05EA, 0x05EB, 0x05EC ], 17105 ), // Auburn
+	new VendorHueCategory( null, [ 0x0641, 0x0642, 0x0643, 0x0644, 0x0645, 0x0646, 0x0647, 0x0648, 0x0649, 0x064A, 0x064B, 0x064C, 0x064D, 0x064E, 0x064F, 0x0650, 0x0651, 0x0652, 0x0653, 0x0654, 0x0655, 0x0656, 0x0657, 0x0658, 0x0659, 0x065A, 0x065B, 0x065C, 0x065D, 0x065E, 0x065F, 0x0660 ], 17103 ), // Brown
+	new VendorHueCategory( null, [ 0x08A5, 0x08A6, 0x08A7, 0x08A8, 0x08A9, 0x0961, 0x0962, 0x0963, 0x0964, 0x0965, 0x0966, 0x0967, 0x0968 ], 17110 ), // Blonde
 	new VendorHueCategory( null, [ 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22 ], 40100 ), // Special Purple
 	new VendorHueCategory( null, [ 32, 33, 34, 35, 36, 37 ], 40101 ), // Special Red
 	new VendorHueCategory( null, [ 38, 39, 40, 41, 42, 43, 44, 45, 46 ], 40102 ), // Special Orange
@@ -95,47 +95,47 @@ function GetHairOrBeardName( entry, socket )
 }
 
 var femaleElfHairStyles = [
-	new HairOrBeard( 0x2FCC, null, 40060 ), // Flower
-	new HairOrBeard( 0x2FC0, null, 40061 ), // Long Feather
-	new HairOrBeard( 0x2FC1, null, 40048 ), // Short
-	new HairOrBeard( 0x2FC2, null, 40062 ), // Mullet
-	new HairOrBeard( 0x2FCE, null, 40063 ), // Topknot
-	new HairOrBeard( 0x2FCF, null, 40064 ), // Long Braid
-	new HairOrBeard( 0x2FD0, null, 40065 ), // Buns
-	new HairOrBeard( 0x2FD1, null, 40066 )  // Spiked
+	new HairOrBeard( 0x2FCC, null, 18035 ), // Flower
+	new HairOrBeard( 0x2FC0, null, 18028 ), // Long Feather
+	new HairOrBeard( 0x2FC1, null, 18029 ), // Short
+	new HairOrBeard( 0x2FC2, null, 18030 ), // Mullet
+	new HairOrBeard( 0x2FCE, null, 18032 ), // Topknot
+	new HairOrBeard( 0x2FCF, null, 18033 ), // Long Braid
+	new HairOrBeard( 0x2FD0, null, 18036 ), // Buns
+	new HairOrBeard( 0x2FD1, null, 18034 )  // Spiked
 ];
 
 var maleElfHairStyles = [
-	new HairOrBeard( 0x2FBF, null, 40067 ), // Mid Long
-	new HairOrBeard( 0x2FC0, null, 40061 ), // Long Feather
-	new HairOrBeard( 0x2FC1, null, 40048 ), // Short
-	new HairOrBeard( 0x2FC2, null, 40062 ), // Mullet
-	new HairOrBeard( 0x2FCE, null, 40063 ), // Topknot
-	new HairOrBeard( 0x2FCF, null, 40064 ), // Long Braid
-	new HairOrBeard( 0x2FCD, null, 40049 ), // Long
-	new HairOrBeard( 0x2FD1, null, 40066 )  // Spiked
+	new HairOrBeard( 0x2FBF, null, 18027 ), // Mid Long
+	new HairOrBeard( 0x2FC0, null, 18028 ), // Long Feather
+	new HairOrBeard( 0x2FC1, null, 18029 ), // Short
+	new HairOrBeard( 0x2FC2, null, 18030 ), // Mullet
+	new HairOrBeard( 0x2FCE, null, 18032 ), // Topknot
+	new HairOrBeard( 0x2FCF, null, 18033 ), // Long Braid
+	new HairOrBeard( 0x2FCD, null, 18031 ), // Long
+	new HairOrBeard( 0x2FD1, null, 18034 )  // Spiked
 ];
 
 var humanHairStyles = [
-	new HairOrBeard( 0x203B, null, 40048 ), // Short
-	new HairOrBeard( 0x203C, null, 40049 ), // Long
-	new HairOrBeard( 0x203D, null, 40050 ), // Ponytail
-	new HairOrBeard( 0x2044, null, 40051 ), // Mohawk
-	new HairOrBeard( 0x2045, null, 40052 ), // Pageboy
-	new HairOrBeard( 0x204A, null, 40063 ), // Topknot
-	new HairOrBeard( 0x2047, null, 40053 ), // Curly
-	new HairOrBeard( 0x2048, null, 40054 ), // Receding
-	new HairOrBeard( 0x2049, null, 40055 )  // 2-Tails
+	new HairOrBeard( 0x203B, null, 18029 ), // Short
+	new HairOrBeard( 0x203C, null, 18031 ), // Long
+	new HairOrBeard( 0x203D, null, 2086 ), // Ponytail
+	new HairOrBeard( 0x2044, null, 2087 ), // Mohawk
+	new HairOrBeard( 0x2045, null, 2080 ), // Pageboy
+	new HairOrBeard( 0x204A, null, 18032 ), // Topknot
+	new HairOrBeard( 0x2047, null, 2088 ), // Curly
+	new HairOrBeard( 0x2048, null, 2081 ), // Receding
+	new HairOrBeard( 0x2049, null, 2082 )  // 2-Tails
 ];
 
 var humanBeardStyles = [
-	new HairOrBeard( 0x2041, null, 40056 ), // Mustache
-	new HairOrBeard( 0x203F, null, 40057 ), // Short Beard
+	new HairOrBeard( 0x2041, null, 18001 ), // Mustache
+	new HairOrBeard( 0x203F, null, 18002 ), // Short Beard
 	new HairOrBeard( 0x204B, null, 40058 ), // Short Beard and Mustache
-	new HairOrBeard( 0x203E, null, 40059 ), // Long Beard
+	new HairOrBeard( 0x203E, null, 18005 ), // Long Beard
 	new HairOrBeard( 0x204C, null, 40068 ), // Long Beard and Mustache
 	new HairOrBeard( 0x2040, null, 40069 ), // Goatee
-	new HairOrBeard( 0x204D, null, 40070 )  // Vandyke
+	new HairOrBeard( 0x204D, null, 18000 )  // Vandyke
 ];
 
 /** @constructor @param {number} itemID @param {string} name */
@@ -560,24 +560,24 @@ function PlaceItemForOwnerOrDrop( itemObj, pUser, vendor )
 	if( !ValidateObject( itemObj ) || !ValidateObject( pUser ) || !ValidateObject( vendor ))
 		return 0;
 
-	var bankBox;
-	var pPack;
+	var bankBox = GetBankBox( pUser );
+	var pPack = pUser.pack;
 
 	if( onlyReturnToBank )
 	{
-		bankBox = GetBankBox( pUser );
 		if( ValidateObject( bankBox ) && TryMoveItemToContainer( itemObj, bankBox ))
 			return 2;
+
+		if( ValidateObject( pPack ) && TryMoveItemToContainer( itemObj, pPack ))
+			return 1;
 
 		DropItemAtVendorLocation( itemObj, vendor );
 		return 3;
 	}
 
-	pPack = pUser.pack;
 	if( ValidateObject( pPack ) && TryMoveItemToContainer( itemObj, pPack ))
 		return 1;
 
-	bankBox = GetBankBox( pUser );
 	if( ValidateObject( bankBox ) && TryMoveItemToContainer( itemObj, bankBox ))
 		return 2;
 
