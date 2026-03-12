@@ -8,8 +8,8 @@ function onUseChecked( pUser, iUsed )
 	var pSocket = pUser.socket;
 	if( pSocket != null && ValidateObject( iUsed ) && iUsed.isItem )
 	{
-		// Item must be in player's backpack, not just owned by player
-		if( !IsItemInPlayerBackpack( iUsed, pUser ))
+		var itemOwner = GetPackOwner( iUsed, 0 );
+		if( itemOwner == null || itemOwner.serial != pUser.serial || !ValidateObject( iUsed.container) || iUsed.container.layer == 0x1D )		
 		{
 			pSocket.SysMessage( GetDictionaryEntry( 1763, pSocket.language )); // That item must be in your backpack before it can be used.
 			return false;
@@ -56,6 +56,14 @@ function onUseChecked( pUser, iUsed )
 			return false;
 		}
 
+		// Make sure there is not already an NPC on the exact tile
+		var foundNPC = AreaCharacterFunction( "CheckForNPCAtVendorSpot", pUser, 0, pSocket );
+		if( foundNPC )
+		{
+			pSocket.SysMessage( "You cannot place a player vendor on top of another NPC." );
+			return false;
+		}
+
 		// Create player vendor at player's current location
 		var npcVendor = SpawnNPC( "playervendor", pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );
 		if( ValidateObject( npcVendor ))
@@ -92,25 +100,21 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
-/** @param {Item} iUsed @param {Character} pUser @returns {boolean} */
-function IsItemInPlayerBackpack( iUsed, pUser )
+/** @type { ( srcChar: Character, trgChar: Character, pSocket: Socket ) => boolean } */
+function CheckForNPCAtVendorSpot( srcChar, trgChar, pSocket )
 {
-	if( !ValidateObject( iUsed ) || !ValidateObject( pUser ))
+	if( !ValidateObject( srcChar ) || !ValidateObject( trgChar ))
 		return false;
 
-	var pPack = pUser.pack;
-	if( !ValidateObject( pPack ))
+	// Ignore the player placing the vendor
+	if( trgChar.serial == srcChar.serial )
 		return false;
 
-	var itemOwner = GetPackOwner( iUsed, 0 );
-	if( !ValidateObject( itemOwner ) || itemOwner.serial != pUser.serial )
-		return false;
+	// Only block NPCs already standing on the exact placement tile
+	if( trgChar.npc && trgChar.x == srcChar.x && trgChar.y == srcChar.y && trgChar.z == srcChar.z )
+		return true;
 
-	var rootContainer = iUsed;
-	while( ValidateObject( rootContainer.container ) && rootContainer.container.isItem )
-		rootContainer = rootContainer.container;
-
-	return rootContainer.serial == pPack.serial;
+	return false;
 }
 
 function CheckForNearbyDoors( pUser, itemToCheck, pSocket )
@@ -135,11 +139,11 @@ function CheckForNearbyDoors( pUser, itemToCheck, pSocket )
 				// Make sure to check against the distance from the door in it's closed state, rather than it's open state!
 				var origX = itemToCheck.x  - itemToCheck.GetTag( "DOOR_X" );
 				var origY = itemToCheck.y  - itemToCheck.GetTag( "DOOR_Y" );
-				if( Math.abs( pUser.x - origX ) < 2 && Math.abs( pUser.y - origY ) < 2 )
-					return true;
+				if( Math.abs( pUser.x - origX ) < 1 && Math.abs( pUser.y - origY ) < 1 )
+				return true;
 			}
 
-			if( pUser.DistanceTo( itemToCheck ) <= 2 )
+			if( pUser.DistanceTo( itemToCheck ) <= 1 )
 				return true;
 		}
 	}
