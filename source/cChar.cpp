@@ -9511,20 +9511,20 @@ void CChar::Die( CChar *attacker, bool doRepsys )
 		}
 	}
 
-	std::vector<UI16> attScriptTriggers = attacker->GetScriptTriggers();
-	for( auto sid : attScriptTriggers )
-	{
-		cScript *toExecute = JSMapping->GetScript( sid );
-		if( toExecute != nullptr )
-		{
-			// OnKill: attacker side notification that a kill is happening.
-			// Death is guaranteed at this point; return value is ignored.
-			toExecute->OnKill( attacker, this );
-		}
-	}
-
 	if( ValidateObject( attacker ))
 	{
+		std::vector<UI16> attScriptTriggers = attacker->GetScriptTriggers();
+		for( auto sid : attScriptTriggers )
+		{
+			cScript* toExecute = JSMapping->GetScript( sid );
+			if( toExecute != nullptr )
+			{
+				// OnKill: attacker side notification that a kill is happening.
+				// Death is guaranteed at this point; return value is ignored.
+				toExecute->OnKill( attacker, this );
+			}
+		}
+
 		if( this != attacker && doRepsys )	// can't gain fame and karma for suicide :>
 		{
 			CSocket *attSock = attacker->GetSocket();
