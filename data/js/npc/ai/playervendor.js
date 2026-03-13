@@ -1357,6 +1357,18 @@ function DismissVendor( pUser, vendor )
 	FinalizeVendorRemoval( vendor );
 }
 
+/** @param {Character} pUser @param {Character} vendor */
+function CycleVendorDirection( pUser, vendor )
+{
+	if( !ValidateObject( pUser ) || !IsPlayerVendor( vendor ))
+		return;
+
+	if( !IsVendorOwner( vendor, pUser ))
+		return;
+
+	vendor.direction = ( vendor.direction + 1 ) % 8;
+}
+
 /** @param {string} speech @returns {string} */
 function NormalizeSpeech( speech )
 {
@@ -1410,6 +1422,9 @@ function MatchVendorCommand( pUser, vendor, speech )
 		return true;
 
 	if( cmd == "dismiss" || cmd == "replace" )
+		return true;
+
+	if( cmd == "vendor cycle" || cmd == "cycle" )
 		return true;
 
 	return false;
@@ -1500,6 +1515,18 @@ function HandleVendorSpeechCommand( pUser, vendor, speech )
 		}
 
 		DismissVendor( pUser, vendor );
+		return 2;
+	}
+
+	if( cmd == "vendor cycle" || cmd == "cycle" )
+	{
+		if( !IsVendorOwner( vendor, pUser ))
+		{
+			vendor.TextMessage( GetDictionaryEntry( 40028 )); // I don't work for you!
+			return 2;
+		}
+
+		CycleVendorDirection( pUser, vendor );
 		return 2;
 	}
 
