@@ -5726,7 +5726,7 @@
 40029=Waren ansehen
 40030=Anpassen
 40031=Gold sammeln
-40032=1000 einzahlen
+40032=Gold einzahlen
 40033=Bank leeren
 40034=Schließen
 40035=Anzahl der Tage, an denen ich arbeiten kann:
@@ -5742,7 +5742,18 @@
 40045=HAUPT
 40046=HÄNDLERANPASSUNG MENÜ
 40047=HAAR
+40048=Händler umbenennen
+40049=Laden umbenennen
+40050=Geben Sie einen neuen Händlernamen ein.
+40051=Geben Sie einen neuen Ladennamen ein.
+40052=Geben Sie die Menge an Gold ein, die Sie einzahlen möchten.
+40053=Dies ist kein gültiger Spielerhändler.
+40054=Ihr Händler heißt nun: %s
+40055=Dieser Ladenname ist zu lang. Maximal 40 Zeichen.
+40056=Ihr Ladentitel lautet nun: %s
+40057=Sie müssen einen gültigen Goldbetrag eingeben.
 40058=Kurzer Bart und Schnurrbart
+40059=Sie können in diesem Heim keine Einkäufe tätigen, da Sie von dieser Einrichtung ausgeschlossen wurden.
 40068=Langer Bart und Schnurrbart Schnurrbart
 40069=Ziegenbart
 40071=Haare entfernen

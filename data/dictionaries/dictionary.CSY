@@ -5726,7 +5726,7 @@
 40029=Zobrazit zboží
 40030=Přizpůsobit
 40031=Sbírat zlato
-40032=Vložit 1000
+40032=Vložit zlato
 40033=Vyprázdnit účet
 40034=Zavřít
 40035=Počet dnů, které mohu pracovat:
@@ -5741,7 +5741,19 @@
 40044=Zakázáno
 40045=HLAVNÍ
 40046=PŘIZPŮSOBENÍ DODAVATELEM MENU
-40047=VLASY40058=Krátké vousy a knír
+40047=VLASY
+40048=Přejmenovat prodejce
+40049=Přejmenovat obchod
+40050=Zadejte nový název prodejce.
+40051=Zadejte nový název obchodu.
+40052=Zadejte množství zlata, které chcete vložit.
+40053=Toto není platný hráčský prodejce.
+40054=Váš prodejce je nyní pojmenován: %s
+40055=Název obchodu je příliš dlouhý. Maximálně 40 znaků.
+40056=Název vašeho obchodu je nyní: %s
+40057=Musíte zadat platné množství zlata.
+40058=Krátké vousy a knír
+40059=Z tohoto domu nemůžete nakupovat, protože vám byl do tohoto podniku zakázán vstup.
 40068=Dlouhé vousy a Knír
 40069=Kozí bradka
 40071=Odstranit ochlupení

@@ -5887,7 +5887,7 @@
 40028=Je ne travaille pas pour vous ! 40029=Voir les articles
 40030=Personnaliser
 40031=Collecter de l'or
-40032=Déposer 1000
+40032=Déposer de l'or
 40033=Vider la banque
 40034=Annuler
 40035=Nombre de jours ouvrables :
@@ -5903,7 +5903,18 @@
 40045=PRINCIPAL
 40046=PERSONNALISATION DU VENDEUR MENU
 40047=CHEVEUX
-40058=Barbe et moustache courtes
+40048=Renommer le vendeur
+40049=Renommer la boutique
+40050=Saisissez un nouveau nom de vendeur.
+40051=Saisissez un nouveau nom de boutique.
+40052=Saisissez le montant d'or que vous souhaitez déposer.
+40053=Ce n'est pas un vendeur de joueur valide.
+40054=Votre vendeur s'appelle désormais : %s
+40055=Ce nom de boutique est trop long. Maximum 40 caractères.
+40056=Le titre de votre boutique est désormais : %s
+40057=Vous devez saisir un montant d'or valide.
+40058=Barbe courte et moustache
+40059=Vous ne pouvez pas faire d'achats dans cette demeure, car vous avez été banni de cet établissement.
 40068=Barbe et Moustache
 40069=Bouquet
 40071=Enlever les cheveux

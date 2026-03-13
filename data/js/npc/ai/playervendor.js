@@ -952,8 +952,8 @@ function ShowPlayerVendorOwnerGump( socket, vendor )
 
 	var myGump = new Gump;
 	myGump.AddPage( 0 );
-	myGump.AddBackground( 25, 10, 555, 190, 5054 );
-	myGump.AddCheckerTrans( 32, 20, 537, 170 );
+	myGump.AddBackground( 25, 10, 555, 240, 5054 );
+	myGump.AddCheckerTrans( 32, 20, 537, 220 );
 	myGump.NoResize();
 
 	myGump.AddButton( 390, 25, 4005, 4007, 1, 0, 1 );
@@ -962,20 +962,26 @@ function ShowPlayerVendorOwnerGump( socket, vendor )
 	myGump.AddButton( 390, 48, 4005, 4007, 1, 0, 2 );
 	myGump.AddHTMLGump( 425, 48, 120, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 40030, socket.language ) + "</basefont>" ); // Customize
 
-	myGump.AddButton( 390, 71, 4005, 4007, 1, 0, 3 );
-	myGump.AddHTMLGump( 425, 72, 120, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 40031, socket.language ) + "</basefont>" ); // Collect Gold
+	myGump.AddButton( 390, 71, 4005, 4007, 1, 0, 7 );
+	myGump.AddHTMLGump( 425, 72, 120, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 40048, socket.language ) + "</basefont>" ); // Rename Vendor
 
-	myGump.AddButton( 390, 94, 4005, 4007, 1, 0, 4 );
-	myGump.AddHTMLGump( 425, 95, 120, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 40032, socket.language ) + "</basefont>" ); // Deposit 1000
+	myGump.AddButton( 390, 94, 4005, 4007, 1, 0, 8 );
+	myGump.AddHTMLGump( 425, 95, 120, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 40049, socket.language ) + "</basefont>" ); // Rename Shop
 
-	myGump.AddButton( 390, 117, 4005, 4007, 1, 0, 5 );
-	myGump.AddHTMLGump( 425, 118, 120, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 40033, socket.language ) + "</basefont>" ); // Flush Bank
+	myGump.AddButton( 390, 117, 4005, 4007, 1, 0, 3 );
+	myGump.AddHTMLGump( 425, 118, 120, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 40031, socket.language ) + "</basefont>" ); // Collect Gold
 
-	myGump.AddButton( 390, 140, 4005, 4007, 1, 0, 6 );
-	myGump.AddHTMLGump( 425, 141, 120, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 40034, socket.language ) + "</basefont>" ); // Dismiss
+	myGump.AddButton( 390, 140, 4005, 4007, 1, 0, 4 );
+	myGump.AddHTMLGump( 425, 141, 120, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 40032, socket.language ) + "</basefont>" ); // Deposit 1000
 
-	myGump.AddButton( 390, 163, 4005, 4007, 1, 0, 0 );
-	myGump.AddHTMLGump( 425, 164, 120, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 18762, socket.language ) + "</basefont>" ); // CANCEL
+	myGump.AddButton( 390, 163, 4005, 4007, 1, 0, 5 );
+	myGump.AddHTMLGump( 425, 164, 120, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 40033, socket.language ) + "</basefont>" ); // Flush Bank
+
+	myGump.AddButton( 390, 186, 4005, 4007, 1, 0, 6 );
+	myGump.AddHTMLGump( 425, 187, 120, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 40034, socket.language ) + "</basefont>" ); // Dismiss
+
+	myGump.AddButton( 390, 209, 4005, 4007, 1, 0, 0 );
+	myGump.AddHTMLGump( 425, 210, 120, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 18762, socket.language ) + "</basefont>" ); // CANCEL
 
 	if( !vendorChargesEnabled )
 	{
@@ -1421,6 +1427,13 @@ function HandleVendorSpeechCommand( pUser, vendor, speech )
 
 	if( cmd == "view" || cmd == "browse" || cmd == "look" )
 	{
+		if( ValidateObject( vendor.multi ) && vendor.multi.IsOnBanList( pUser ))
+		{
+			if( pUser.socket )
+				pUser.socket.SysMessage( GetDictionaryEntry( 40059, pUser.socket.language )); // You can't shop from this home as you have been banned from this establishment.
+			return 2;
+		}
+
 		if( !CheckVendorUpkeep( vendor, pUser ))
 			return 2;
 
@@ -1430,6 +1443,13 @@ function HandleVendorSpeechCommand( pUser, vendor, speech )
 
 	if( cmd == "buy" || cmd == "purchase" )
 	{
+		if( ValidateObject( vendor.multi ) && vendor.multi.IsOnBanList( pUser ))
+		{
+			if( pUser.socket )
+				pUser.socket.SysMessage( GetDictionaryEntry( 40059, pUser.socket.language )); // You can't shop from this home as you have been banned from this establishment.
+			return 2;
+		}
+
 		if( !CheckVendorUpkeep( vendor, pUser ))
 			return 2;
 
@@ -1508,6 +1528,13 @@ function onCharDoubleClick( pUser, targChar, nonMouseClickEvent )
 			StoreVendorForGump( pUser, targChar );
 			ShowPlayerVendorOwnerGump( pUser.socket, targChar );
 		}
+		return false;
+	}
+
+	if( ValidateObject( targChar.multi ) && targChar.multi.IsOnBanList( pUser ))
+	{
+		if( pUser.socket )
+			pUser.socket.SysMessage( GetDictionaryEntry( 40059, pUser.socket.language )); // You can't shop from this home as you have been banned from this establishment.
 		return false;
 	}
 
@@ -1640,8 +1667,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			ShowPlayerVendorOwnerGump( pSock, vendor );
 			break;
 		case 4:
-			DepositToVendorBank( pUser, vendor, 1000 );
-			ShowPlayerVendorOwnerGump( pSock, vendor );
+			BeginDepositVendorGold( pUser, vendor );
 			break;
 		case 5:
 			FlushBankToHeld( pUser, vendor );
@@ -1651,7 +1677,10 @@ function onGumpPress( pSock, pButton, gumpData )
 			DismissVendor( pUser, vendor );
 			break;
 		case 7:
-			ShowVendorClothingGump( pUser, vendor );
+			BeginRenameVendor( pUser, vendor );
+			break;
+		case 8:
+			BeginRenameVendorShop( pUser, vendor );
 			break;
 		default:
 			break;
@@ -1752,7 +1781,7 @@ function ShowVendorCustomizeGump( pUser, vendor )
 		for( i = 0; i < humanBeardStyles.length; ++i )
 		{
 			myGump.AddButton( 160, 70 + ( i * 20 ), 0xFA5, 0xFA7, 1, 1, 0x2000 + i );
-			myGump.AddHTMLGump( 195, 72 + ( i * 20 ), 160, 18, false, false, "<basefont color=#ffffff>" + GetHairOrBeardName( hairStyles[i], socket ) + "</basefont>" );
+			myGump.AddHTMLGump( 195, 72 + ( i * 20 ), 160, 18, false, false, "<basefont color=#ffffff>" + GetHairOrBeardName( humanBeardStyles[i], socket ) + "</basefont>" );
 		}
 
 		myGump.AddButton( 160, 70 + ( humanBeardStyles.length * 20 ), 0xFB1, 0xFB3, 1, 1, 5004 );
@@ -2314,5 +2343,164 @@ function HandleVendorClothingButton( pUser, vendor, pButton )
 
 		ShowVendorClothingDyeGump( pUser, vendor );
 		return;
+	}
+}
+
+/** @param {string} text @returns {string} */
+function TrimString( text )
+{
+	if( text == null || text == undefined )
+		return "";
+
+	return ( "" + text ).replace( /^\s+|\s+$/g, "" );
+}
+
+/** @param {Character} vendor @returns {string} */
+function GetVendorShopTitle( vendor )
+{
+	if( !IsPlayerVendor( vendor ))
+		return "";
+
+	if( vendor.title == null || vendor.title == undefined )
+		return "";
+
+	return "" + vendor.title;
+}
+
+/** @param {Character} pUser @param {Character} vendor */
+function BeginRenameVendor( pUser, vendor )
+{
+	if( !ValidateObject( pUser ) || !IsPlayerVendor( vendor ))
+		return;
+
+	if( !IsVendorOwner( vendor, pUser ))
+		return;
+
+	var socket = pUser.socket;
+	if( !socket )
+		return;
+
+	StoreVendorForGump( pUser, vendor );
+	pUser.SpeechInput( 20, vendor );
+	socket.SysMessage( GetDictionaryEntry( 40050, socket.language )); // Enter a new vendor name.
+}
+
+/** @param {Character} pUser @param {Character} vendor */
+function BeginRenameVendorShop( pUser, vendor )
+{
+	if( !ValidateObject( pUser ) || !IsPlayerVendor( vendor ))
+		return;
+
+	if( !IsVendorOwner( vendor, pUser ))
+		return;
+
+	var socket = pUser.socket;
+	if( !socket )
+		return;
+
+	StoreVendorForGump( pUser, vendor );
+	pUser.SpeechInput( 21, vendor );
+	socket.SysMessage( GetDictionaryEntry( 40051, socket.language )); // Enter a new shop name.
+}
+
+/** @param {Character} pUser @param {Character} vendor */
+function BeginDepositVendorGold( pUser, vendor )
+{
+	if( !ValidateObject( pUser ) || !IsPlayerVendor( vendor ))
+		return;
+
+	if( !IsVendorOwner( vendor, pUser ))
+		return;
+
+	var socket = pUser.socket;
+	if( !socket )
+		return;
+
+	StoreVendorForGump( pUser, vendor );
+	pUser.SpeechInput( 22, vendor );
+	socket.SysMessage( GetDictionaryEntry( 40052, socket.language )); // Enter the amount of gold you wish to deposit.
+}
+
+/** @type { ( myChar: Character, targObj: BaseObject, mySpeech: string, mySpeechId: number ) => void } */
+function onSpeechInput( pUser, targObj, pSpeech, pSpeechID )
+{
+	if( !ValidateObject( pUser ))
+		return;
+
+	var socket = pUser.socket;
+	if( !socket )
+		return;
+
+	var vendor = GetStoredVendorForGump( pUser );
+	if( !IsPlayerVendor( vendor ))
+	{
+		socket.SysMessage( GetDictionaryEntry( 40053, socket.language )); // That is not a valid player vendor.
+		return;
+	}
+
+	if( !IsVendorOwner( vendor, pUser ))
+	{
+		socket.SysMessage( GetDictionaryEntry( 40028, socket.language )); // I don't work for you!
+		return;
+	}
+
+	if( !CheckVendorUpkeep( vendor, pUser ))
+		return;
+
+	var newText = TrimString( pSpeech );
+	if( newText == "" )
+	{
+		socket.SysMessage( GetDictionaryEntry( 9270, socket.language )); // That name is too short, or no name was entered.
+		return;
+	}
+
+	switch( pSpeechID )
+	{
+		case 20: // Rename vendor
+			if( newText.length > 50 )
+			{
+				socket.SysMessage( GetDictionaryEntry( 9271, socket.language )); // That name is too long. Maximum 50 chars.
+				return;
+			}
+
+			vendor.name = newText;
+			vendor.Refresh();
+
+			socket.SysMessage( GetDictionaryEntry( 40054, socket.language ), vendor.name ); // Your vendor is now named: %s
+			ShowPlayerVendorOwnerGump( socket, vendor );
+			break;
+
+		case 21: // Rename shop title
+			if( newText.length > 40 )
+			{
+				socket.SysMessage( GetDictionaryEntry( 40055, socket.language )); // That shop name is too long. Maximum 40 chars.
+				return;
+			}
+
+			vendor.title = "Shop Name: " + newText;
+			vendor.Refresh();
+			socket.SysMessage( GetDictionaryEntry( 40056, socket.language ), vendor.title ); // Your shop title is now: %s
+			ShowPlayerVendorOwnerGump( socket, vendor );
+			break;
+		case 22: // Deposit vendor gold
+			if( !/^\d+$/.test( newText ))
+			{
+				socket.SysMessage( GetDictionaryEntry( 40057, socket.language )); // You must enter a valid gold amount.
+				return;
+			}
+
+			var depositAmount = parseInt( newText, 10 );
+			if( isNaN( depositAmount ) || depositAmount <= 0 )
+			{
+				socket.SysMessage( GetDictionaryEntry( 40018, socket.language )); // Invalid deposit amount.
+				return;
+			}
+
+			DepositToVendorBank( pUser, vendor, depositAmount );
+			ShowPlayerVendorOwnerGump( socket, vendor );
+			break;
+
+		default:
+			break;
 	}
 }

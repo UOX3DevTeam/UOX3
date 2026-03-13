@@ -5724,7 +5724,7 @@
 40028=¡No trabajo para ti! 40029=Ver artículos
 40030=Personalizar
 40031=Recoger oro
-40032=Depositar 1000
+40032=Depositar oro
 40033=Fluir banco
 40034=Descartar
 40035=Días que puedo trabajar:
@@ -5740,7 +5740,18 @@
 40045=PRINCIPAL
 40046=PERSONALIZACIÓN DEL VENDEDOR MENÚ
 40047=CABELLO
-40058=Barba corta y bigote
+40048=Cambiar nombre de vendedor
+40049=Cambiar nombre de tienda
+40050=Introduce un nuevo nombre de vendedor.
+40051=Introduce un nuevo nombre de tienda.
+40052=Introduce la cantidad de oro que deseas depositar.
+40053=Ese vendedor no es válido para el jugador.
+40054=Tu vendedor ahora se llama: %s
+40055=El nombre de la tienda es demasiado largo. Máximo 40 caracteres.
+40056=El nombre de tu tienda ahora es: %s
+40057=Debes introducir una cantidad válida de oro.
+40058=Barba y bigote cortos
+40059=No puedes comprar en esta casa porque has sido expulsado del establecimiento.
 40068=Barba larga y bigote Bigote
 40069=Perilla
 40071=Quitar pelo

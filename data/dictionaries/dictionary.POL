@@ -5726,7 +5726,7 @@
 40029=Zobacz towary
 40030=Dostosuj
 40031=Odbierz złoto
-40032=Wpłać 1000
+40032=Wpłać złoto
 40033=Opróżnij bank
 40034=Odrzuć
 40035=Liczba dni, w których mogę pracować:
@@ -5742,7 +5742,18 @@
 40045=GŁÓWNY
 40046=DOSTOSOWANIE PRZEZ SPRZEDAWCĘ MENU
 40047=WŁOSY
+40048=Zmień nazwę handlarza
+40049=Zmień nazwę sklepu
+40050=Wpisz nową nazwę handlarza.
+40051=Wpisz nową nazwę sklepu.
+40052=Wpisz ilość złota, którą chcesz wpłacić.
+40053=To nie jest poprawny handlarz gracza.
+40054=Twój handlarz nazywa się teraz: %s
+40055=Ta nazwa sklepu jest zbyt długa. Maksymalnie 40 znaków.
+40056=Tytuł twojego sklepu brzmi teraz: %s
+40057=Musisz wpisać poprawną ilość złota.
 40058=Krótka broda i wąsy
+40059=Nie możesz robić zakupów w tym domu, ponieważ otrzymałeś zakaz wstępu do tego lokalu.
 40068=Długa broda i Wąsy
 40069=Kozia bródka
 40071=Usuń włosy

@@ -5726,7 +5726,7 @@
 40029=See goods
 40030=Customize
 40031=Collect Gold
-40032=Deposit 1000
+40032=Deposit Gold
 40033=Flush Bank
 40034=Dismiss
 40035=Amount of days I can work:
@@ -5742,7 +5742,18 @@
 40045=MAIN
 40046=VENDOR CUSTOMIZATION MENU
 40047=HAIR
+40048=Rename Vendor
+40049=Rename Shop
+40050=Enter a new vendor name.
+40051=Enter a new shop name.
+40052=Enter the amount of gold you wish to deposit.
+40053=That is not a valid player vendor.
+40054=Your vendor is now named: %s
+40055=That shop name is too long. Maximum 40 chars.
+40056=Your shop title is now: %s
+40057=You must enter a valid gold amount.
 40058=Short Beard and Mustache
+40059=You can't shop from this home as you have been banned from this establishment.
 40068=Long Beard and Mustache
 40069=Goatee
 40071=Remove Hair
