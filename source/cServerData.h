@@ -591,6 +591,19 @@ public:
 	SI16		MaxStaminaMovement() const;
 	auto		PetBondingEnabled( bool setting ) -> void;
 	auto		PetBondingEnabled() const -> bool;
+
+
+	auto		VirtueSystemEnabled( bool setting ) -> void;
+	auto		VirtueSystemEnabled() const -> bool;
+	auto		CompassionVirtueEnabled( bool setting ) -> void;
+	auto		CompassionVirtueEnabled() const -> bool;
+	auto		HonestyVirtueEnabled( bool setting ) -> void;
+	auto		HonestyVirtueEnabled() const -> bool;
+	auto		HumilityVirtueEnabled( bool setting ) -> void;
+	auto		HumilityVirtueEnabled() const -> bool;
+	auto		SacrificeVirtueEnabled( bool setting ) -> void;
+	auto		SacrificeVirtueEnabled() const -> bool;
+
 	auto		SystemTimer( cSD_TID timerId, UI16 value ) -> void;
 	auto		SystemTimer( cSD_TID timerId ) const -> UI16;
 	TIMERVAL	BuildSystemTimeValue( cSD_TID timerId ) const;

@@ -52,6 +52,7 @@ const useDifficultyScalingForHealing = 1;
 
 // This script's ID
 const healingScriptID = 4000;
+const compassionVirtueEnabled = GetServerSetting( "CompassionVirtueEnabled" );
 
 // This is called by onUseBandageMacro event from global script, and skips manual target selection
 function onUseCheckedTriggered( pUser, targChar, iUsed )
@@ -717,6 +718,10 @@ function onTimer( mChar, timerID )
 							{
 								resResult = 1;
 								ourObj.Resurrect();
+								if( compassionVirtueEnabled)
+								{
+									TriggerEvent( 8009, "Compassion_OnPlayerResurrect", mChar, ourObj );
+								}
 								ourObj.StaticEffect( 0x376A, 10, 16 );
 								ourObj.SoundEffect( 0x214, true );
 								socket.SysMessage( GetDictionaryEntry( 1272, socket.language )); // You successfully resurrected the patient!
@@ -994,6 +999,12 @@ function ResurrectBondedPet( socket, deadPet )
 	deadPet.attacker = null;
 	deadPet.noCharCollide = false;
 	deadPet.SetTag( "isPetDead", false );
+	// Compassion pet resurrection HP bonus
+	if( socket && socket.currentChar && compassionVirtueEnabled )
+	{
+		var healer = socket.currentChar;
+		TriggerEvent( 8009, "Compassion_OnPetResurrect", healer, deadPet );
+	}
 }
 
 /** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
@@ -1013,6 +1024,10 @@ function onGumpPress( socket, pButton, gumpData )
 			break;
 		case 1: // Continue button pressed
 			resurrectTarg.Resurrect();
+			if( ValidateObject( healer ) && compassionVirtueEnabled )
+			{
+				 TriggerEvent( 8009, "Compassion_OnPlayerResurrect", healer, resurrectTarg );
+			}
 			resurrectTarg.StaticEffect( 0x376A, 10, 16 );
 			resurrectTarg.SoundEffect( 0x214, true );
 			resurrectTarg.frozen = false;

@@ -516,3 +516,67 @@ maxitems=125
 get=0x0e42 0x0E43
 }
 
+[base_lost_and_Found]
+{
+get=base_item
+name=lost and found box
+id=0x9A9
+weight=3000
+weightmax=40000
+movable=2
+type=1
+decay=0
+maxitems=125
+script=8010
+script=8011
+custominttag=LostTownBox 1
+}
+
+[Britain_lost_and_found]
+{ 
+get=base_lost_and_Found
+customstringtag=HonestyTownBox Britain
+}
+
+[Yew_lost_and_found]
+{ 
+get=base_lost_and_Found
+customstringtag=HonestyTownBox Yew
+}
+
+[Moonglow_lost_and_found]
+{ 
+get=base_lost_and_Found
+customstringtag=HonestyTownBox Moonglow
+}
+
+[Trinsic_lost_and_found]
+{ 
+get=base_lost_and_Found
+customstringtag=HonestyTownBox Trinsic
+}
+
+[Skara_Brae_lost_and_found]
+{ 
+get=base_lost_and_Found
+name=lost and found box
+customstringtag=HonestyTownBox Skara Brae
+}
+
+[New_Magincia_lost_and_found]
+{ 
+get=base_lost_and_Found
+customstringtag=HonestyTownBox New Magincia
+}
+
+[Jhelom_lost_and_found]
+{ 
+get=base_lost_and_Found
+customstringtag=HonestyTownBox Jhelom
+}
+
+[Minoc_lost_and_found]
+{ 
+get=base_lost_and_Found
+customstringtag=HonestyTownBox Minoc
+}

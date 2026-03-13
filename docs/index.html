@@ -7709,6 +7709,294 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 			</li>
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#virtueSystem" id="virtueSystem"><span>Virtue System</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+
+						<h4>Overview</h4>
+						<p>The <span class="hl">Virtue System</span> in UOX3 recreates the eight classical Ultima virtues, complete with <strong>virtue points</strong>, <strong>ranks</strong>, and <strong>virtue-specific gameplay mechanics</strong>. Each character tracks their progress in all virtues simultaneously, and scripts can award, reduce, or check virtue values at any time.</p>
+
+						<p>The eight virtues implemented are:</p>
+						<ul>
+							<li><strong>Humility</strong> (0)</li>
+							<li><strong>Sacrifice</strong> (1)</li>
+							<li><strong>Compassion</strong> (2)</li>
+							<li><strong>Spirituality</strong> (3)</li>
+							<li><strong>Valor</strong> (4)</li>
+							<li><strong>Honor</strong> (5)</li>
+							<li><strong>Justice</strong> (6)</li>
+							<li><strong>Honesty</strong> (7)</li>
+						</ul>
+
+						<p>Each virtue tracks progress from <strong>0 up to its max</strong> (typically 20,000–22,000) and categorizes players into the following tiers:</p>
+
+						<ul>
+							<li><strong>0 – 3,999</strong> : None</li>
+							<li><strong>4,000 – 9,999</strong> : Seeker</li>
+							<li><strong>10,000 – 19,999</strong> : Follower</li>
+							<li><strong>20,000+</strong> : Knight</li>
+						</ul>
+
+						<input type="checkbox" id="spoiler_virtue_ranks">
+						<label for="spoiler_virtue_ranks">Virtue Ranks and Thresholds <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>Exact thresholds and max caps can be tuned in the virtue helper script. The default progression is:</p>
+							<ul>
+								<li><span class="hl">None</span> – Player has not meaningfully acted in this virtue yet.</li>
+								<li><span class="hl">Seeker</span> – Player has started down the path and will see mild benefits or recognition.</li>
+								<li><span class="hl">Follower</span> – Player consistently acts in accordance with the virtue.</li>
+								<li><span class="hl">Knight</span> – Highest tier; reserved for heavy dedication to that virtue.</li>
+							</ul>
+							<p>All virtues share the same tier thresholds, but scripts can choose to check either <strong>raw points</strong> or <strong>decoded tier</strong> when gating rewards or abilities.</p>
+						</div>
+
+						<hr>
+
+						<h3>How Virtue Points Are Stored</h3>
+						<p>The Virtue System uses a single compact storage tag to track all virtue values for a player:</p>
+
+						<div class="settingsDiv"><p><span class="hl">VirtuePoints=val0,val1,val2,val3,val4,val5,val6,val7</span></p></div>
+
+						<p>Scripts access them by index (0–7).</p>
+
+						<p>Example:</p>
+						<pre><code>VirtuePoints=22000,11000,4500,0,22000,22000,8000,6000</code></pre>
+
+						<p>Index <strong>0</strong> = Humility, <strong>7</strong> = Honesty, etc.</p>
+
+						<input type="checkbox" id="spoiler_virtue_storage">
+						<label for="spoiler_virtue_storage">Virtue Helper Script API <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>A shared helper script (TriggerEvent ID <span class="hl">8003</span>) exposes a small API:</p>
+							<ul>
+								<li>
+									<span class="hl">TriggerEvent(8003, "Virtue_Get", pChar, virtueIndex)</span><br>
+									Returns the current point value for a given virtue.
+								</li>
+
+								<li>
+									<span class="hl">TriggerEvent(8003, "Virtue_Set", pChar, virtueIndex, newValue)</span><br>
+									Clamps and stores a virtue value. Generally only used internally.
+								</li>
+
+								<li>
+									<span class="hl">TriggerEvent(8003, "Virtue_Award", pChar, virtueIndex, amount)</span><br>
+									Adds (or subtracts) virtue points, handles caps, and returns an object:<br>
+									<code>{ success:true/false, gainedPath:true/false, oldValue, newValue, oldLevel, newLevel }</code>
+								</li>
+
+								<li>
+									<span class="hl">TriggerEvent(8003, "Virtue_GetLevel", pChar, virtueIndex)</span><br>
+									Returns the tier (0–3):<br>
+									0 = None, 1 = Seeker, 2 = Follower, 3 = Knight.
+								</li>
+
+								<li>
+									<span class="hl">TriggerEvent(8003, "Virtue_GetHue", pChar, virtueIndex)</span><br>
+									Returns the correct hue for the virtue gump gem (based on OSI rules).
+								</li>
+
+								<li>
+									<span class="hl">TriggerEvent(8003, "Virtue_DecodeRank", virtueValue)</span><br>
+									Converts raw virtue points into rank tier (0–3).
+								</li>
+							</ul>
+							<p>All virtue-related systems (Honesty, Compassion, future Valor/Justice/etc.) call through this helper to keep behavior consistent across the shard.</p>
+						</div>
+
+						<hr>
+
+						<h3>Virtue Gump</h3>
+						<p>A fully functional virtue gump allows players to view their current progress in each virtue. Each virtue displays:</p>
+						<ul>
+							<li>Current points (0–max)</li>
+							<li>Rank (None, Seeker, Follower, Knight)</li>
+							<li>Visual color highlighting based on level</li>
+						</ul>
+
+						<p>The gump supports:</p>
+						<ul>
+							<li>Viewing your own virtues</li>
+							<li><strong>Viewing other players’ virtues</strong> (GM / admin / custom access)</li>
+							<li>Multiple gumps open at once by using unique gump IDs (g, g1, etc.)</li>
+						</ul>
+
+						<input type="checkbox" id="spoiler_virtue_gump">
+						<label for="spoiler_virtue_gump">Virtue Gump Integration <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>The virtue gump is built via a dedicated JS script, which:</p>
+							<ul>
+								<li>Reads <span class="hl">VirtuePoints</span> from the character.</li>
+								<li>Calls <span class="hl">Virtue_DecodeRank</span> for each entry.</li>
+								<li>Shows rank names and color-coded bars/labels per virtue.</li>
+								<li>Supports being called from commands, NPCs, or context menus.</li>
+							</ul>
+							<p>Because it uses TriggerEvent and a stable scriptID, other systems (NPCs, shrines, items) can open the same virtue gump without duplicating the UI logic.</p>
+						</div>
+
+						<hr>
+
+						<h3>Implemented Virtue Mechanics</h3>
+						<p>The core system supports any virtue reward logic. Fully scripted virtue behaviors currently include:</p>
+
+						<h4>Humility</h4>
+						<ul>
+							<li>Humility is (index <strong>0</strong> in VirtuePoints).</li>
+							<li>Planned hooks include interactions with <strong>titles, bragging, public rewards, and fame displays</strong>.</li>
+							<li>By default, no automated gain/loss is wired yet, leaving behavior up to shard-specific design.</li>
+						</ul>
+
+						<h4>Sacrifice</h4>
+						<ul>
+							<li>System tracks <strong>resurrection sacrifices</strong> using a combined tag:</li>
+							<div class="settingsDiv"><p><span class="hl">SacrificeData=lastGain,lastLoss,resCount</span></p></div>
+							<li>Used to prevent abuse and track cooldowns between Sacrifice gains.</li>
+						</ul>
+
+						<h4>Compassion</h4>
+						<ul>
+							<li>Healing others grants Compassion based on <strong>effective healing done</strong>.</li>
+							<li>Built-in throttling to prevent spam-gains on the same target within a short time window.</li>
+							<li>Bonus rewards for healing in events, etc.</li>
+						</ul>
+
+						<h4>Honesty</h4>
+						<p>The most fully implemented virtue so far. Includes:</p>
+						<ul>
+							<li><strong>Lost Item System</strong> – Lost items spawn with tags for owner, town, and expiration.</li>
+							<li><strong>Lost &amp; Found Boxes</strong> – Dropping a lost item into a town box awards Honesty.</li>
+							<li><strong>Double gain</strong> for returning to the correct town.</li>
+							<li><strong>Quadruple gain</strong> (optional/future) for returning to the correct NPC.</li>
+							<li><strong>Vendor discount integration</strong> through shopkeeper scripts based on Honesty rank.</li>
+							<li><strong>Tooltip integration</strong> that labels items as “Lost Item (Return to gain Honesty)”.</li>
+							<li><strong>Forensics skill support</strong> for identifying the owner/town of lost items.</li>
+							<li>NPC vendor assignment via region scan + <span class="hl">HonestyVendor</span> tag.</li>
+						</ul>
+
+						<input type="checkbox" id="spoiler_virtue_honesty">
+						<label for="spoiler_virtue_honesty">Honesty System Details <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<h4>Lost Items</h4>
+							<p>Lost items are regular items with extra virtue tags, for example:</p>
+<pre><code>custominttag=LostItemOwner &lt;serial&gt;
+customstringtag=LostItemTown Britain
+custominttag=LostItemExpire 202512010000
+</code></pre>
+							<p>These tags are used by:</p>
+							<ul>
+								<li>Tooltip script – to show that the item is “lost” and hint that it should be returned.</li>
+								<li>Honesty drop handler – to verify that the item is being returned to a valid town box.</li>
+								<li>Cleanup logic – to remove or recycle expired lost items.</li>
+							</ul>
+
+							<h4>Lost &amp; Found Boxes</h4>
+							<p>Town boxes are set up with:</p>
+<pre><code>custominttag=LostTownBox 1
+customstringtag=HonestyTownBox Britain
+</code></pre>
+							<p>When a player drops an item on the box, the box script:</p>
+							<ul>
+								<li>Checks that the item is a valid lost item.</li>
+								<li>Checks that the town matches (for bonus gain if correct).</li>
+								<li>Calls the virtue helper to award Honesty.</li>
+							</ul>
+
+							<h4>Vendor Discounts</h4>
+							<p>Shopkeeper scripts can call into the Virtue helper before calculating prices:</p>
+<pre><code>var honestyVal   = TriggerEvent(8003, "Virtue_Get",  pBuyer, VirtueName.Honesty);
+var honestyRank  = TriggerEvent(8003, "Virtue_DecodeRank", honestyVal);
+// Apply a small discount based on honestyRank
+</code></pre>
+							<p>This allows Honesty to <strong>directly impact economy gameplay</strong> across the shard.</p>
+						</div>
+
+						<hr>
+
+						<h3>How to Award Virtue Points in Scripts</h3>
+						<p>Any script can modify virtues using:</p>
+
+<pre><code>TriggerEvent(8003, "Virtue_Award", pChar, virtueIndex, amount);</code></pre>
+
+						<p>This safely updates virtue data and returns:</p>
+						<ul>
+							<li><strong>success</strong> – was the award applied?</li>
+							<li><strong>gainedPath</strong> – did the player reach a new rank tier?</li>
+						</ul>
+
+						<input type="checkbox" id="spoiler_virtue_examples">
+						<label for="spoiler_virtue_examples">Example Script Usage <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>Example gain from healing (Compassion):</p>
+<pre><code>// healer: Character who did the heal
+// VirtueName.Compassion is the index for Compassion in your enum/table
+TriggerEvent(8003, "Virtue_Award", healer, VirtueName.Compassion, 25);
+</code></pre>
+
+							<p>Example gain from returning a lost item (Honesty):</p>
+<pre><code>// cDropper: Character who dropped the item into the town box
+// boxTown: Name of town this box belongs to
+// amountToGrant: decided by your honesty logic
+TriggerEvent(8003, "Virtue_Award", cDropper, VirtueName.Honesty, amountToGrant);
+</code></pre>
+
+							<p>Checking a player’s rank before granting a benefit:</p>
+<pre><code>var val     = TriggerEvent(8003, "Virtue_Get", pChar, VirtueName.Sacrifice);
+var tier    = TriggerEvent(8003, "Virtue_DecodeRank", val);
+
+if (tier &gt;= 3) // Knight of Sacrifice
+{
+	// Allow special Sacrifice-related power or self-res
+}
+</code></pre>
+						</div>
+
+						<hr>
+
+						<h3>DFN Setup</h3>
+						<p>Items, NPCs, and objects that interact with virtues simply attach their virtue script.</p>
+
+						<h4>Lost Item Example</h4>
+<pre><code>[lost_ring]
+{
+	get=base_item
+	name=lost ring
+	id=0x108A
+	script=8010    // Honesty script
+}
+</code></pre>
+
+						<h4>Lost &amp; Found Box Example</h4>
+<pre><code>[Britain_lost_and_found]
+{
+	get=base_item
+	name=lost and found box
+	id=0x09A9
+	script=8010
+	script=8011
+	custominttag=LostTownBox 1
+	customstringtag=HonestyTownBox Britain
+}
+</code></pre>
+
+						<hr>
+
+						<h3>Future Expansion</h3>
+						<ul>
+							<li>Valor via killing monsters in dungeons.</li>
+							<li>Honor via honorable duels and non-griefy PvP behavior.</li>
+							<li>Justice via punishing criminals and defending innocents.</li>
+							<li>Spirituality via shrine meditation or shrine-related quests.</li>
+							<li>Humility via avoiding prideful actions and opting out of “show-off” options.</li>
+							<li>Full OSI-style virtue abilities (e.g., Sacrifice self-res, Compassion escort revival, etc.).</li>
+						</ul>
+
+						<p>The system is fully modular and can support all OSI virtue behaviors as desired.</p>
+
+					</div>
+				</div>
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#weatherSystem" id="weatherSystem"><span>Weather System</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">

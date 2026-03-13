@@ -402,6 +402,15 @@
 8000=player/death/return_stolen_items.js
 8001=player/young_player.js
 8002=player/death/resurrectpenalty.js
+8003=player/virtue/virtue_helper.js
+8004=player/virtue/virtue_gumps.js
+8005=player/virtue/humility_virtue.js
+8006=player/virtue/humility_registerkill.js
+8007=player/virtue/virtue_ontalk.js
+8008=player/virtue/sacrifice_virtue.js
+8009=player/virtue/compassion_virtue.js
+8010=player/virtue/honesty_virtue.js
+8011=player/virtue/honesty_virtue_container.js
 
 // House Scripts [15000-15500]
 15000=server/house/house.js

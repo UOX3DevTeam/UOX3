@@ -5750,6 +5750,21 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 			case 389:	// HOUSEDECAY
 				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HouseDecay() ) );
 				break;
+			case 390:	// VIRTUESYSTEMENABLED
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->VirtueSystemEnabled() ) );
+				break;
+			case 391:	// COMPASSIONVIRTUEENABLED
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CompassionVirtueEnabled() ) );
+				break;
+			case 392:	// HONESTYVIRTUEENABLED
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HonestyVirtueEnabled() ) );
+				break;
+			case 393:	// HUMILITYVIRTUEENABLED
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HumilityVirtueEnabled() ) );
+				break;
+			case 394:	// SACRIFICEVIRTUEENABLED
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->SacrificeVirtueEnabled() ) );
+        break;
 			case 400:	// SPEEDHACKDETECTTION
 				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->SpeedHackDetection() ));
 				break;

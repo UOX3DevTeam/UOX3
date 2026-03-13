@@ -2,6 +2,11 @@
 // @ts-check
 // Global Script
 // Supported Events trigger for every character/item, use with care
+
+const virtueSystemEnabled = GetServerSetting( "VirtueSystemEnabled" );
+const sacrificeVirtueEnabled = GetServerSetting( "SacrificeVirtueEnabled" );
+const humilityVirtueEnabled = GetServerSetting( "HumilityVirtueEnabled" );
+
 /** @type { ( sockPlayer: Socket, pPlayer: Character ) => boolean } */
 function onLogin( socket, pChar )
 {
@@ -73,6 +78,18 @@ function onLogin( socket, pChar )
 		var timeLeft = Math.round(( disguiseKitTime - currentTime ) / 1000 );
 		TriggerEvent( 2204, "RemoveBuff", pChar, 1033 );
 		TriggerEvent( 2204, "AddBuff", pChar, 1033, 1075821, 1075820, timeLeft, "" );
+	}
+
+	//Attach Virtue ontalk script
+	if(( virtueSystemEnabled && humilityVirtueEnabled ) && !pChar.HasScriptTrigger( 8007 ))
+	{
+		pChar.AddScriptTrigger( 8007 );
+	}
+
+	if( virtueSystemEnabled && sacrificeVirtueEnabled )
+	{
+		//Atrophy check: from login.
+		TriggerEvent( 8008, "Sacrifice_CheckAtrophy", pChar );
 	}
 }
 
@@ -257,4 +274,14 @@ function onUseBandageMacro( pSock, targChar, bandageItem )
 		}
 	}
 	return true;
+}
+
+/** @type { ( mChar: Character, tChar: Character, buttonId: number ) => boolean } */
+function onVirtueGumpPress( pUser, tChar, buttonID )
+{
+	if( virtueSystemEnabled )
+	{
+		TriggerEvent( 8004, "virtueGump", pUser, tChar );
+		return true;
+	}
 }

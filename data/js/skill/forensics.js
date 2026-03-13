@@ -1,5 +1,7 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
+const honestyVirtueEnabled = GetServerSetting( "HonestyVirtueEnabled" );
+
 function SkillRegistration()
 {
 	RegisterSkill( 19, true );	// Forensics
@@ -28,7 +30,60 @@ function onCallback0( pSock, ourObj )
 		{
 			pSock.SysMessage( GetDictionaryEntry( 393, pLanguage )); // That is too far away.
 		}
-		else if( ourObj.corpse && pUser.CheckSkill( 19, 0, 550 )) // Skill gain from corpses only possible until 55.0
+
+		var honestyFlag = ourObj.GetTag( "HonestyQuest" );
+		if( honestyFlag === 1 || honestyFlag === "1" && honestyVirtueEnabled)
+		{
+			// Skill value (0..1000), so 40.0 = 400, 65.0 = 650
+			var forensicSkill = pUser.skills.forensics | 0;
+
+			// Try a skill check so they can gain skill from this, too
+			pUser.CheckSkill( 19, 0, 1000 );
+
+			var town  = ourObj.GetTag( "HonestyTown" )  || "";
+			var owner = ourObj.GetTag( "HonestyOwner" ) || "";
+
+			if( forensicSkill < 400 )
+			{
+				// Under 40.0 Forensics: basically nothing useful
+				pSock.SysMessage( GetDictionaryEntry( 30047, pLanguage )); // You notice nothing unusual about this item.
+			}
+			else if( forensicSkill < 650 )
+			{
+				// 40.0+ Forensics: can identify town only
+				if( town && town.length > 0 )
+				{
+					var tempName = GetDictionaryEntry( 30048, pLanguage ); // You determine that this item should be returned to %s
+					tempName = ( tempName.replace( /%s/gi, town.toString() ));
+					pSock.SysMessage( tempName );
+				}
+				else
+					pSock.SysMessage( GetDictionaryEntry( 30049, pLanguage )); // You determine that this item should be returned to a virtue town, but cannot say which.
+			}
+			else
+			{
+				// 65.0+ Forensics: can identify town and possibly owner
+				if( town && town.length > 0 )
+				{
+					var tempName = GetDictionaryEntry( 30048, pLanguage ); // You determine that this item should be returned to %s
+					tempName = ( tempName.replace( /%s/gi, town.toString() ));
+					pSock.SysMessage( tempName );
+				}
+
+				if( owner && owner.length > 0 )
+								{
+					var tempName = GetDictionaryEntry( 30050, pLanguage ); // You determine that this item belongs to %s
+					tempName = ( tempName.replace( /%s/gi, owner.toString() ));
+					pSock.SysMessage( tempName );
+				}
+				else
+					pSock.SysMessage( GetDictionaryEntry( 30051, pLanguage )); // You cannot determine the exact owner, only the town.
+			}
+
+			return;
+		}
+
+		if( ourObj.corpse && pUser.CheckSkill( 19, 0, 550 )) // Skill gain from corpses only possible until 55.0
 		{
 			pSock.SysMessage( GetDictionaryEntry( 6007, pLanguage )); // You examine the body..."
 

@@ -9,9 +9,12 @@ const enableNPCGuildDiscounts = GetServerSetting( "EnableNPCGuildDiscounts" );
 // If enabled, guild members get a +10% premium price offered for items they sell to shopkeepers in the guild
 const enableNPCGuildPremiums = GetServerSetting( "EnableNPCGuildPremiums" );
 
-const youngPlayerSystem = GetServerSetting("YoungPlayerSystem");
+const youngPlayerSystem = GetServerSetting( "YoungPlayerSystem" );
 
 const coreShardEra = GetServerSetting( "CoreShardEra" );
+const honestyVirtueEnabled = GetServerSetting( "HonestyVirtueEnabled" );
+var virtueEnums = TriggerEvent( 8003, "Virtue_GetEnums" );
+var VirtueName  = virtueEnums ? virtueEnums.VirtueName  : null;
 
 /** @type { ( targSock: Socket, objVendor: Character, objItemBought: BaseObject, numItemsBought: number ) => boolean } */
 function onBoughtFromVendor( pSock, npcShopkeep, iBought, iAmount )
@@ -46,6 +49,58 @@ function onBoughtFromVendor( pSock, npcShopkeep, iBought, iAmount )
 				pChar.SoundEffect( 0x0037, false );
 			}
 			goldReturned.PlaceInPack();
+		}
+	}
+
+	// Honesty virtue discount (stacks with guild discount)
+	// Uses Virtue helper script 8003 and VirtueName.Honesty (index 7)
+	var honestyLevel = 0;
+	if( honestyVirtueEnabled )
+	{
+		honestyLevel = TriggerEvent( 8003, "Virtue_GetLevel", pChar, VirtueName.Honesty );
+	}
+
+	if( honestyLevel > 0 && honestyVirtueEnabled )
+	{
+		// Base cost of this purchase
+		var itemCostHon = iBought.buyvalue * iAmount;
+
+		// % discount based on Honesty path
+		// tweak these if you want different values
+		var honestyPct = 0.0;
+		if( honestyLevel >= 3 )          // Knight
+			honestyPct = 0.15;           // 15%
+		else if( honestyLevel >= 2 )     // Follower
+			honestyPct = 0.10;           // 10%
+		else                             // Seeker
+			honestyPct = 0.05;           // 5%
+
+		var honestyDiscount = Math.round( itemCostHon * honestyPct );
+		if( honestyDiscount > 0 )
+		{
+			var honestyGold = CreateDFNItem( pSock, pChar, "0x0eed", honestyDiscount, "ITEM", true );
+			if( ValidateObject( honestyGold ))
+			{
+				// Play gold coins SFX (reuse same pattern as guild discount)
+				if( honestyDiscount == 1 )
+				{
+					pChar.SoundEffect( 0x0035, false );
+				}
+				else if( honestyDiscount < 6 )
+				{
+					pChar.SoundEffect( 0x0036, false );
+				}
+				else
+				{
+					pChar.SoundEffect( 0x0037, false );
+				}
+
+				honestyGold.PlaceInPack();
+
+				var msg = "Tales of your honesty has reached my ears and you earned a discount of " + honestyDiscount + " gold.";
+				// Only the buyer sees this message
+				npcShopkeep.TextMessage( msg, false, 0x3B2, 0, pChar.serial );
+			}
 		}
 	}
 

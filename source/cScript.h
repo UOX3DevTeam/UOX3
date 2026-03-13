@@ -320,6 +320,7 @@ public:
 	SI08		OnCombatEnd( CChar *attacker, CChar *defender );
 
 	SI08		OnDeathBlow( CChar *mKilled, CChar *mKiller );
+
 	SI08		OnKill( CChar *mKiller, CChar *mKilled );
 	SI16		OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill, UI08 hitLoc );
 	SI08		OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue, WeatherType damageType );
