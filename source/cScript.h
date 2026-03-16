@@ -130,7 +130,8 @@ enum ScriptEvent
 	seOnWarModeToggle,
 	seOnSpecialMove,
 	seOnFacetChange,
-	seOnReleasePet
+	seOnReleasePet,
+	seOnPaperDoll
 };
 
 struct SEGump_st
@@ -311,7 +312,8 @@ public:
 	bool		executeCommand( CSocket *s, std::string funcName, std::string executedString );
 
 	bool		MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, SI32 spellNum );
-	SI08		OnCharDoubleClick( CChar *currChar, CChar *targChar );
+	SI08		OnPaperDoll( CChar *currChar, CChar *targChar );
+	SI08		OnCharDoubleClick( CChar *currChar, CChar *targChar, bool nonMouseClickEvent );
 	SI08		OnDismount( CChar *currChar, CChar *npcMount );
 	SI08		OnSkillGump( CChar *mChar );
 	SI08		OnUseBandageMacro( CSocket *mSock, CChar *targChar, CItem *bandageItem );

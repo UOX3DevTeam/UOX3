@@ -884,30 +884,40 @@ function onCallback0( socket, ourObj )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onCharDoubleClick( pUser, targChar )</em></p>
+							<p><em>function onCharDoubleClick( pUser, targChar, nonMouseClickEvent )</em></p>
 						</div>
+
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
-							<p>To allow greater customization of double-clicking on characters.</p>
+							<p>Allows scripts to customize behaviour when a character is double-clicked, such as preventing paperdoll opening, handling mounts, or triggering custom interactions.</p>
 						</div>
+
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
-							<p>When pUser double-clicks targChar, targChar's script is activated</p>
+							<p>Triggered when <strong>pUser</strong> double-clicks <strong>targChar</strong>. The script attached to <strong>targChar</strong> is executed.</p>
 						</div>
+
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
 							<ul>
-								<li><strong>return false</strong> or nothing to prevent opening of paperdoll, and prevent other scripts with same event from running</li>
-								<li><strong>return true</strong> to allow opening of paperdoll. Other scripts with same event can also run</li>
+								<li><strong>return false</strong> (or <strong>0</strong>) – Prevent the default hardcoded behaviour (such as opening the paperdoll) and stop other scripts from running.</li>
+								<li><strong>return true</strong> (or <strong>1</strong>) – Allow the default hardcoded behaviour to continue and allow other scripts with this event to run.</li>
 							</ul>
 						</div>
+
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function onCharDoubleClick( pUser, targChar )
+							<p>
+								<span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onCharDoubleClick( pUser, targChar, nonMouseClickEvent )
 {
+	// Ignore client-generated events such as login self-clicks
+	if( nonMouseClickEvent )
+		return true;
+
 	targChar.TextMessage( "If you think you'll be allowed to see my paperdoll, think again!" );
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -3292,6 +3302,47 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 	... // Read packet data here, using ReadBytes, GetByte, GetWord, GetDWord, GetSByte, GetSWord, GetSDWord and GetString socket methods
 	return;
 }</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnPaperDoll" id="eventOnPaperDoll"><span>onPaperDoll</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onPaperDoll( pUser, targChar )</em></p>
+						</div>
+
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>Allows scripts to override or customize what happens when a character's paperdoll is opened.</p>
+						</div>
+
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>Triggered when <strong>pUser</strong> opens the paperdoll of <strong>targChar</strong>. The script attached to <strong>targChar</strong> is executed.</p>
+						</div>
+
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return false</strong> (or <strong>0</strong>) – Prevent the default hardcoded paperdoll behaviour and stop other scripts with the same event from running.</li>
+								<li><strong>return true</strong> (or <strong>1</strong>) – Allow the default hardcoded paperdoll behaviour to continue, and allow other scripts with the same event to run.</li>
+							</ul>
+						</div>
+
+						<div class="settingsDiv">
+							<p>
+								<span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onPaperDoll( pUser, targChar )
+{
+	targChar.TextMessage( "My paperdoll is private." );
+	return false;
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -14018,6 +14069,25 @@ iMulti.AddTrashCont( trashContObj );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_addVendor"/>
+							<label for="spoiler_method_multi_addVendor">AddVendor <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool AddVendor( vendorToAdd )</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Adds a player vendor character to the specified multi.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">myMulti.AddVendor( npcVendor ); // adds npcVendor as a player vendor to the multi</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_multi_ClearBanList"/>
 							<label for="spoiler_method_multi_ClearBanList">ClearBanList <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -14630,6 +14700,25 @@ iMulti.RemoveFromOwnerList( pChar );</code></pre>
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">var iMulti = FindMulti( trashContObj.x, trashContObj.y, trashContObj.z, trashContObj.worldnumber );
 iMulti.RemoveTrashCont( trashContObj );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_removeVendor"/>
+							<label for="spoiler_method_multi_removeVendor">RemoveVendor <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool RemoveVendor( vendorToRemove )</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Removes a player vendor character from the specified multi.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">myMulti.RemoveVendor( npcVendor ); // removes npcVendor as a player vendor from the multi</code></pre>
 								</div>
 							</div>
 						</div>
@@ -16133,6 +16222,10 @@ myObject.propertyName = newValue;
 							Get/Set whether character needs magical reagents to cast spells</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.noCharCollide</span> <strong>(bool, <em>true/false</em>)</strong><br>
+							Checks/Sets whether character can collide with other characters</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.noSkillTitles</span> <strong>(bool, <em>true/false</em>)</strong><br>
 							Get/Set whether skill titles show for the character</p>
 						</div>
@@ -16244,6 +16337,7 @@ myObject.propertyName = newValue;
 								<li>0x8000 - PermReflected (Character has a permanent magic reflection spell active)</li>
 								<li>0x10000 - HideFameKarmaTitle (No fame/karma titles shown for character)</li>
 								<li>0x20000 - Seer (Character is a Seer)</li>
+								<li>0x40000 - noCharCollide (Character can collide with other characters</li>
 							</ul></p>
 						</div>
 						<div class="settingsDiv">

@@ -4071,18 +4071,16 @@ bool cScript::OnPacketReceive( CSocket *mSock, UI16 packetNum )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	cScript::OnCharDoubleClick()
-//|	Date		-	23rd January, 2006
+//|	Function	-	cScript::OnPaperDoll()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Allows overriding events that happen when doubleclicking characters, such as
-//|					open paperdoll, mounting horses, etc
+//|	Purpose		-	Allows overriding events that happen when open paperdoll on characters.
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnCharDoubleClick( CChar *currChar, CChar *targChar )
+SI08 cScript::OnPaperDoll( CChar *currChar, CChar *targChar )
 {
 	if( !ValidateObject( currChar ) || !ValidateObject( targChar ))
 		return RV_NOFUNC;
 
-	if( !ExistAndVerify( seOnCharDoubleClick, "onCharDoubleClick" ))
+	if( !ExistAndVerify( seOnPaperDoll, "onPaperDoll" ))
 		return RV_NOFUNC;
 
 	jsval params[2], rval;
@@ -4091,7 +4089,42 @@ SI08 cScript::OnCharDoubleClick( CChar *currChar, CChar *targChar )
 
 	params[0] = OBJECT_TO_JSVAL( srcObj );
 	params[1] = OBJECT_TO_JSVAL( trgObj );
-	JSBool retVal = InvokeEvent( "onCharDoubleClick", 2, params, &rval );
+
+	JSBool retVal = InvokeEvent( "onPaperDoll", 2, params, &rval );
+
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnPaperDoll, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnCharDoubleClick()
+//|	Date		-	23rd January, 2006
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Allows overriding events that happen when doubleclicking characters, such as
+//|					open paperdoll, mounting horses, etc
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnCharDoubleClick( CChar *currChar, CChar *targChar, bool nonMouseClickEvent )
+{
+	if( !ValidateObject( currChar ) || !ValidateObject( targChar ))
+		return RV_NOFUNC;
+
+	if( !ExistAndVerify( seOnCharDoubleClick, "onCharDoubleClick" ))
+		return RV_NOFUNC;
+
+	jsval params[3], rval;
+	JSObject *srcObj = JSEngine->AcquireObject( IUE_CHAR, currChar, runTime );
+	JSObject *trgObj = JSEngine->AcquireObject( IUE_CHAR, targChar, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( srcObj );
+	params[1] = OBJECT_TO_JSVAL( trgObj );
+	params[2] = BOOLEAN_TO_JSVAL( nonMouseClickEvent );
+
+	JSBool retVal = InvokeEvent( "onCharDoubleClick", 3, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{

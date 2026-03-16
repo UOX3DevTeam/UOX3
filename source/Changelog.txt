@@ -1,3 +1,30 @@
+12/03/2026 - DragonSlayer62 (#534)
+    [FIX] Fixed an issue where guests count was not showing correctly on the house sign
+    [ADD] Added new Multi JS Methods for adding and removing vendors in player houses, and updated relevant scripts (js/commands/targeting/remove.js, js/server/house/house.js, houseCommands.js and playerVendorDeed.js) to make use of these to fix issue where player vendors were not properly registered with houses:
+        .AddVendor( playerVendor ) // Register player vendor with multi
+        .RemoveVendor( playerVendor ) // Unregister player vendor from multi
+
+12/03/2026 - DragonSlayer62 (#531)
+    [ADD] Added new character priv flag .noCharCollide which gets/sets whether character can collide with other characters
+    [UPD] Dead bonded pets are now flagged with .noCharCollide = true, allowing players to walk through them without stamina loss or movement blocking, similar to ghost characters (js/npc/pets/petbonding.js)
+    [ADD] Added 'respet command that resurrects dead bonded pets (js/commands/custom/misc-cmd.js
+    [FIX] Pet Bonding Potion effects now trigger when the potion is used on the target pet rather than when the potion is consumed. Also corrected variable usage from mChar to pUser (js/item/potion.js)
+    [FIX] Corrected an incorrect temp tag being cleared in js/npc/ai/veterinarian.js and ensured the .noCharCollide flag is properly reset to false when the pet is revived
+    [FIX] Fixed a logic issue in js/skill/healing.js where the timer could break during bonded pet resurrection attempts due to an early return. The timer now clears correctly. Also ensured the resurrected pet has .noCharCollide reset to false
+    [FIX] Veterinarian vendors were using HealerShopping List, when they have their own VetShopping list
+    [ADD] Added Elixir of Rebirth Potion that is used to resurrect dead bonded pets in js/item/potions.js and dfndata/items/magic/potions.dfn
+
+09/03/2026 - Xoduz (#529)
+    [UPD] Bumped version number to 0.99.7c
+    [FIX] Fixed issue where characters could go missing from co-owner lists, friends lists, guest lists or ban lists in player houses, if those characters were loaded after the house itself
+    [FIX] Fixed an issue that prevented locking down of stacked items in player houses when those items were directly beneath a door on the next floor up
+
+08/03/2026 - DragonSlayer62 (#530)
+    [ADD] Added nonMouseClickEvent boolean parameter to onCharDoubleClick() so scripts can detect non mouse/client generated character double-click events
+    [ADD] Added new onPaperDoll() JavaScript event for handling paperdoll opening separately from onCharDoubleClick()
+    [UPD] Updated dismountetherealmount.js, petbonding.js, cow_tipping.js, and mount_restrictions.js for the new onCharDoubleClick() event signature nonMouseClickEvent
+    [UPD] Updated scripting docs, definitions.d.ts, and event metadata for onCharDoubleClick() and onPaperDoll()
+
 05/03/2026 - DragonSlayer62 (#525)
     [FIX] Fixed a tag-lookup issue in Ethereal Mount Statuette script that caused the incorrect mount to spawn on use (js/item/etherealstatuettes.js) 
     [FIX] Fixed an issue with Champion Spawns Menu where the removal buttons would call a non-existent function when trying to reopen the menu after removal of an altar (js/command/champion_spawn_cmd.js)
