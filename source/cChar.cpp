@@ -81,6 +81,7 @@ const UI32 BIT_NONEEDREAGS		=	14; // 0x4000
 const UI32 BIT_PERMREFLECTED	=	15; // 0x8000
 const UI32 BIT_HIDEFAMEKARMATITLE	=	16; // 0x10000
 const UI32 BIT_SEER				= 17; // 0x20000
+const UI32 BIT_NOCHARCOLLIDE    = 18; // 0x40000
 
 // Character Bools
 const UI32 BIT_UNICODE			=	1;
@@ -2473,6 +2474,21 @@ bool CChar::HideFameKarmaTitle( void ) const
 void CChar::HideFameKarmaTitle( bool newValue )
 {
 	priv.set( BIT_HIDEFAMEKARMATITLE, newValue );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -    CChar::NoCharCollide()
+//|                    CChar::NoCharCollide()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose        -    Checks/Sets whether character can collide with other characters
+//o------------------------------------------------------------------------------------------------o
+bool CChar::NoCharCollide( void ) const
+{
+    return priv.test( BIT_NOCHARCOLLIDE );
+}
+void CChar::NoCharCollide( bool newValue )
+{
+    priv.set( BIT_NOCHARCOLLIDE, newValue );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -9497,6 +9513,18 @@ void CChar::Die( CChar *attacker, bool doRepsys )
 
 	if( ValidateObject( attacker ))
 	{
+		std::vector<UI16> attScriptTriggers = attacker->GetScriptTriggers();
+		for( auto sid : attScriptTriggers )
+		{
+			cScript* toExecute = JSMapping->GetScript( sid );
+			if( toExecute != nullptr )
+			{
+				// OnKill: attacker side notification that a kill is happening.
+				// Death is guaranteed at this point; return value is ignored.
+				toExecute->OnKill( attacker, this );
+			}
+		}
+
 		if( this != attacker && doRepsys )	// can't gain fame and karma for suicide :>
 		{
 			CSocket *attSock = attacker->GetSocket();

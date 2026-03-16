@@ -406,3 +406,15 @@ type=19
 morey=10
 morez=1
 }
+
+[elixirofrebirthpotion]
+{
+get=base_potion
+name=elixir of rebirth
+id=0x24E2
+colour=0x48E
+value=80 40
+type=19
+morey=11
+morez=1
+}

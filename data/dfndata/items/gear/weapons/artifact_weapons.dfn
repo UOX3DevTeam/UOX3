@@ -1,0 +1,113 @@
+// ----------------------------------------------------------------------
+// Shared Artifact Rewards
+// ----------------------------------------------------------------------
+
+[artifact_royal_guard_survival_knife]
+{
+get=skinningknife
+name=royal guard survival knife [replica]
+hp=150 150
+type=119// spellchannneling
+luck=140
+lowerstatreq=50
+origin=aos
+}
+
+[artifact_brave_knight_of_the_britannia]
+{
+get=katana
+name=brave knight of the britannia [replica]
+colour=0x47e
+hp=150 150
+staminaleech=48
+healthleech=22
+script=7003// leachstats.js
+origin=aos
+}
+
+[artifact_oblivions_needle]
+{
+get=dagger
+name=oblivion's needle [replica]
+hp=150 150
+staminabonus=20
+hitchance=20
+defensechance=-20
+damageIncrease=40
+healthleech=50
+script=7003// leachstats.js
+origin=aos
+}
+
+// ----------------------------------------------------------------------
+// Unique Artifact Rewards
+// ----------------------------------------------------------------------
+
+[artifact_calm]
+{
+get=halberd
+name=Calm [Replica]
+hp=150 150
+type=119// spellchannneling
+damageIncrease=50
+swingspeedincrease=20
+manaleech=100
+script=7003// leachstats.js
+origin=aos
+}
+
+[artifact_fang_of_ractus]
+{
+get=kryss
+name=Fang of Ractus [Replica]
+colour=0x1D9
+hp=150 150
+type=119// spellchannneling
+hitchance=5
+defensechance=5
+damageIncrease=35
+erbonus=0 0 0 15
+origin=aos
+}
+
+[artifact_pacify]
+{
+get=pike
+name=Pacify [Replica]
+hp=150 150
+type=119// spellchannneling
+hitchance=10
+swingspeedincrease=20
+damageIncrease=50
+manaleech=100
+script=7003// leachstats.js
+origin=aos
+}
+
+[artifact_quell]
+{
+get=bardiche
+name=Quell [Replica]
+hp=150 150
+type=119// spellchannneling
+hitchance=10
+swingspeedincrease=20
+damageIncrease=50
+manaleech=100
+script=7003// leachstats.js
+origin=aos
+}
+
+[artifact_subdue]
+{
+get=scythe
+name=Subdue [Replica]
+hp=150 150
+type=119// spellchannneling
+hitchance=10
+swingspeedincrease=20
+damageIncrease=50
+manaleech=100
+script=7003// leachstats.js
+origin=aos
+}

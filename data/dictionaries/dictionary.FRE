@@ -2358,6 +2358,7 @@
 2186=Vous n'êtes pas assez compétent pour comprendre cette créature.
 2187=Ceci ne ressemble pas beaucoup à un animal.
 2188=Sauvage
+2189=Métal
 2199=Confusé
 2200=Non
 2201=Compte des propriétaires
@@ -2613,7 +2614,6 @@
 2576=Vous résistez à l'envie de vider les %s sur la tête de votre cible.
 2577=C'est déjà plein ! Vous ne pouvez rien y verser tant qu'il n'a pas été vidé.
 2578=Vous versez le %s dans le pichet vide.
-2578=Vous versez les %s dans la bouteille vide.
 2579=Vous versez le contenu de la cruche et il vous reste une cruche vide.
 2580=Verse le contenu de la bouteille, il ne reste plus qu'une bouteille vide.
 2581=Tu vides le contenu du pichet, il ne reste qu'un pichet vide.
@@ -2676,6 +2676,11 @@
 2637=Filtre pour les spawners PNJ
 2638=Filtre pour les spawners d'objets
 2639=Tri par nombre de spawn (%s)
+2650=Vous versez les %s dans la bouteille vide.
+2651=Vous versez les %s dans la cruche vide.
+2660=Trouvé %i générateurs basés sur la région en %u millisecondes.
+2661=Gérer les régions de génération
+2662=Téléporter vers la région de génération
 // [2700-2799] Misc scripts
 2700=Seul le propriétaire de la maison peut faire pivoter les meubles.
 2701=Cela ne semble pas fonctionner.
@@ -3199,7 +3204,7 @@
 3745=un vampire féminin
 3746=une bête horrible
 3747=une banshee gémissante
-3748 = forme wraith
+3748=forme wraith
 3749=une forme de liche
 3750=un mâle sauvage
 3751=une femme sauvage
@@ -3703,6 +3708,58 @@
 6321=On dirait que cette lame est recouverte d'une substance acide.
 6322=On dirait que cette lame contient un élément corrosif.
 6323=On dirait que cette lame contient un élément légèrement corrosif.
+// [6500-6539] Event Manager
+6500=Gestionnaire d'événements : démarrage du battement de cœur
+6501=Gestionnaire d'événements : réutilisation de l'objet Gestionnaire d'événements existant.
+6502=Gestionnaire d'événements : l'ancien objet Gestionnaire d'événements n'existe plus, un nouvel objet sera créé.
+6503=Gestionnaire d'événements : échec de la création de %s
+6504=Gestionnaire d'événements : initialisation terminée. Événements chargés : %i
+6505=Gestionnaire d'événements : initialisation terminée. Aucun événement chargé, passage en mode veille.
+6506=Gestionnaire d'événements : Tous les événements sont terminés. Passage en mode veille.
+6507=Gestionnaire d'événements : AVERTISSEMENT - Événement ignoré, fonction de rappel %s manquante dans le script %i
+6508=Le gestionnaire d'événements est actuellement désactivé. Activez-le via uox.ini
+6509=Événements actifs : %i
+6510=Utilisation : 'em %s <numéro d'index de la liste des événements>
+6511=Gestionnaire d'événements : l'événement %i est désormais %s
+6512=Gestionnaire d'événements : %s a modifié l'événement %i en %s
+6513=Index d'événement non valide. Pour afficher la liste complète des événements : 'em list
+6514=Forcer la réinitialisation du gestionnaire d'événements...
+6515=Commandes prises en charge par le gestionnaire d'événements : list, enable <#>, disable <#>, remove <#>, reset
+6516=Gestionnaire d'événements : échec de RegisterEvent car le gestionnaire d'événements est désactivé.
+6517=Gestionnaire d'événements : échec de RegisterEvent car les données de configuration callbackScriptID et/ou callbackFuncStart sont manquantes.
+6518=Gestionnaire d'événements : nouvel événement enregistré - %s (ID : %i)
+6519=Événement interrompu et désactivé.
+6520=Événement activé et reprogrammé pour la prochaine fenêtre d'activation valide.
+6521=Utilisation : 'em remove <index from event list>
+6522=Événement interrompu et supprimé.
+// [6540-6550] Boîte à musique de l'Aube
+6540=Vous devez avoir cet objet dans votre inventaire ou le verrouiller pour l'utiliser.
+6541=Ciblez une boîte à musique de l'Aube pour ajouter ce morceau.
+6542=Vous devez cibler une boîte à musique de l'Aube.
+6543=Ceci n'est pas une boîte à musique de l'Aube.
+6544=Aucun équipement musical n'est en attente.
+6545=L'équipement musical est introuvable.
+6546=Aucun morceau n'est associé à cet équipement.
+6547=Ce morceau est déjà présent dans la boîte à musique.
+6548=Ce morceau a été ajouté à la boîte à musique.
+// [6580-6599] Scripts de monture éthérée
+6580=Vous ne pouvez pas descendre de votre éthérée car votre sac ne peut pas la contenir
+6581=Cet objet doit être dans la couche supérieure de votre sac pour être utilisé.
+6582=Vous devez terminer votre incantation avant d'en utiliser une autre.
+6583=Les gargouilles ne peuvent pas monter d'animaux.
+6584=Veuillez descendre d'abord.
+6585=Vous ne pouvez pas faire cela tout en étant polymorphé.
+6586=Vous ne pouvez pas invoquer une monture pour le moment.
+6587=Vous avez été interrompu en tentant d'invoquer votre monture éthérée !
+6588=Vous invoquez votre monture éthérée.
+6589=Vous devez avoir l'objet dans votre sac pour l'utiliser.
+6590=Visez la monture éthérée que vous souhaitez retoucher.
+6591=Cela doit être dans votre sac pour que vous puissiez l'utiliser.
+6592=Ce n'est pas une cible valide.
+6593=Vous devez avoir l'objet dans votre sac pour le cibler.
+6594=Vous ne pouvez pas utiliser cet objet pour cela.
+6595=Le corps de votre monture éthérée a été solidifié.
+6596=La transparence de votre monture éthérée a été restaurée.
 // [7000-7499] AI Scripts
 7000=Tu es un criminel et tu ne peux pas accéder à ton coffre de banque.
 7001=Quel objet souhaitez-vous déposer dans votre coffret bancaire ?
@@ -3965,6 +4022,7 @@
 8257=Vous devez cibler un PNJ !
 8258=Vous pansez la blessure et arrêtez l'hémorragie
 8259=Les blessures hémorragiques sont guéries, vous ne saignez plus !
+8260=Nombre de charges de poison sur l'objet.
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Numéro de compte associé au joueur. Contrôlé par le serveur (en lecture seule).
 8301=Type d'IA du PNJ
@@ -4095,7 +4153,7 @@
 8426=Active (vrai) ou désactive (faux) le mode soif
 8427=Monde dans lequel le personnage existe
 8428=Coordonnée X du personnage dans le monde
-84429=Coordonnée Y du personnage dans le monde
+8429=Coordonnée Y du personnage dans le monde
 8430=Coordonnée Z du personnage dans le monde
 8431=Coordonnée X supérieure gauche de la limite du type d'errance du personnage
 8432=Coordon Y supérieur gauche de la limite du type d'errance du personnage
@@ -4196,6 +4254,29 @@
 8724=L'emplacement 7 de ce compte est-il bloqué ?
 8725=Pour combien de temps l'utilisateur est-il banni, en minutes ?
 8726=Quand le compte a-t-il été connecté pour la première fois ? (Lecture seule)
+// [8750-8799] Tweak Menu - Spawn Region property descriptions
+8750=Nombre de caractères/éléments générés par cycle de génération
+8751=ID d'instance où la région de génération est active
+8752=Les éléments générés sont-ils des objets générateurs ?
+8753=ID de la section d'éléments à générer à partir des DFN
+8754=Nombre d'éléments actuellement générés (en lecture seule)
+8755=Référence à la liste ITEMLIST à partir de laquelle générer
+8756=Nombre maximal d'éléments à générer
+8757=Nombre maximal de PNJ à générer
+8758=Intervalle maximal jusqu'au prochain cycle de génération
+8759=Intervalle de temps minimum jusqu'au prochain cycle de génération
+8760=Nom interne de la région de génération
+8761=ID de la section NPC à générer à partir des DFN
+8762=Nombre de PNJ actuellement générés (en lecture seule)
+8763=Référence à la liste NPCLIST à partir de laquelle générer
+8764=Générer uniquement à l'extérieur des bâtiments ?
+8765=Valeur Z maximale que les objets du monde peuvent avoir sur l'apparition
+8766=ID de la région d'apparition
+8767=Numéro du monde dans lequel la région d'apparition est active
+8768=Limite ouest de la région d'apparition
+8769=Limite est de la région d'apparition
+8770=Limite nord de la région d'apparition
+8771=Limite sud de la région d'apparition
 // [8800-8849] General Tweak Menu
 8800=Entrer une nouvelle valeur
 8801=Les modifications apportées aux valeurs effectives des compétences ne sont pas sauvegardées, et disparaîtront si le serveur redémarre. Pour des changements permanents de compétences, ajustez plutôt la propriété baseskills !
@@ -4529,6 +4610,22 @@
 9275=Ce livre a déjà le nombre maximum de charges.
 9276=Tu charges le Runebook avec une pile de parchemin de rappel.
 9277=Vous chargez le Livre des Runes avec un parchemin de rappel.
+9278=Vous ne pouvez pas utiliser de sorts de Rappel ou de Portail avec un statut criminel actif, ou si vous avez volé récemment !
+9279=Sélectionnez ce que vous voulez examiner.
+9280=Le cadavre a été pillé pour la dernière fois par %s.
+9281=Le cadavre n'a pas été profané.
+9282=Cette serrure a été crochetée pour la dernière fois par %s.
+9283=Vous ne remarquez rien d'inhabituel.
+9284=Cet individu est un voleur !
+9285=Vous ne pouvez pas voler dans un conteneur sécurisé.
+9286=Charges :
+9287=Renommer le livre
+9288=Définir par défaut
+9289=Déposer la rune
+9290=Rappel (Sort)
+9291=Rappel (Charge)
+9292=Voyage par portail
+9293=Voyage sacré
 // [9301-9310] Poisson magique
 9301=Vous êtes déjà sous un effet similaire.
 9302=Vous avalez le poisson tout entier !
@@ -4618,19 +4715,19 @@
 9816=Durée maximale en minutes pour réapparaître
 9817=Rayon (Zone)
 9818=Rayon dans lequel générer des PNJ (Générateur de zone uniquement !)
-9819 = Appliquer les modifications
-9820 = Type de générateur modifié : Objet (61), quantité réinitialisée à 1.
-9821 = Type de générateur modifié : PNJ (62).
-9822 = Type de générateur modifié : Zone (69), rayon d'apparition mis à jour (par défaut : 1).
-9823 = Type de générateur modifié : Escorte (125).
+9819=Appliquer les modifications
+9820=Type de générateur modifié : Objet (61), quantité réinitialisée à 1.
+9821=Type de générateur modifié : PNJ (62).
+9822=Type de générateur modifié : Zone (69), rayon d'apparition mis à jour (par défaut : 1).
+9823=Type de générateur modifié : Escorte (125).
 9824=Section d'apparition mise à jour à %s
 9825=Durée minimale mise à jour à %i
 9826=Durée maximale mise à jour à %i
 9827=Montant mis à jour à %i
 9828=Rayon d'apparition mis à jour à %i
 9829=Nom du générateur mis à jour à %s
-9830 = N'utilisez plus la liste d'apparition : nous supposons que la section d'apparition fait désormais référence à la définition individuelle du PNJ.
-9831 = Nous utilisons désormais la liste d'apparition - en supposant que la section d'apparition fait désormais référence à une liste de PNJ.
+9830=N'utilisez plus la liste d'apparition : nous supposons que la section d'apparition fait désormais référence à la définition individuelle du PNJ.
+9831=Nous utilisons désormais la liste d'apparition - en supposant que la section d'apparition fait désormais référence à une liste de PNJ.
 // [9900 - 10000] Commandes pour les portes et les enseignes
 9916=Page
 9917=Suivant
@@ -5790,7 +5887,7 @@
 19234=Votre confusion est passée, vous pouvez maintenant armer une arme !
 19235=Vous n'êtes plus mortellement blessé.
 19236=Les plaies saignantes ont guéri, vous ne saignez plus !
-// [19301-19330] Animal lié et mort
+// [19301-19340] Animal lié et mort
 19301=Vous ne pouvez pas échanger un animal mort.
 19302=L'animal mort ne peut pas attaquer.
 19303=Vous n'êtes pas assez compétent pour ressusciter cet animal.
@@ -5800,8 +5897,7 @@
 19308=Votre animal s'est lié à vous !
 19309=Votre animal est mort et ne répondra pas à cet ordre.
 19310=Vous avez rompu le lien avec votre animal.
-19311=Êtes-vous sûr de vouloir rompre le lien avec votre animal ?
-19311=Libérer un animal fantôme le détruira, sans aucune chance de récupération. Souhaitez-vous continuer ? 19312=Le propriétaire de l'animal doit être à proximité pour tenter la résurrection.
+19312=Le propriétaire de l'animal doit être à proximité pour tenter la résurrection.
 19313=Votre animal ne peut pas se lier à vous tant que votre compétence d'apprivoisement n'est pas activée.
 19314=Votre animal ne peut pas se lier à vous tant que votre compétence de bushido n'est pas activée.
 19315=Seuls les animaux liés à leur propriétaire peuvent être ressuscités.
@@ -5810,7 +5906,8 @@
 19318=Ciblez l'animal avec lequel vous souhaitez vous lier. Appuyez sur ÉCHAP pour annuler. Cet objet est consommé en cas d'utilisation réussie, alors choisissez judicieusement !
 19319=Lien avec l'animal annulé.
 19320=Cet animal est déjà lié à vous.
-19321=Ce n'est pas votre animal ! 19322=Êtes-vous sûr de vouloir libérer votre familier ? Les familiers invoqués disparaîtront définitivement !
+19321=Ce n'est pas votre animal !
+19322=Êtes-vous sûr de vouloir libérer votre familier ? Les familiers invoqués disparaîtront définitivement !
 19323=Vous ne pouvez pas effectuer d'actions bénéfiques sur votre cible.
 19324=Sélectionnez un familier pour créer un lien instantané.
 19325=Cible invalide.
@@ -5832,5 +5929,12 @@
 19341=Vous connaissez déjà cette recette.
 19342=Vous avez appris une nouvelle recette : %i
 19343=Vous devez apprendre cette recette à partir d'un parchemin.
+// [30000 - 30010] Système du Champion
+30000=Le Champion a été vaincu par %i !
+30001=Vous avez infligé le plus de dégâts au Champion !
+30002=Vous faites partie des 5 joueurs ayant infligé le plus de dégâts ! (%i dégâts)
+30003=Le Champion est tombé !
+30004=Vous avez reçu un Parchemin de Puissance !
+30005=L'énergie du sanctuaire s'affaiblit en l'absence de challengers...
 }
 EOF

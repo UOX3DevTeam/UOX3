@@ -1213,8 +1213,8 @@ function CheckForNearbyDoors( myTarget, itemToCheck, pSocket )
 	{
 		if(( itemToCheck.type == 12 || itemToCheck.type == 13 ))
 		{
-			//if( itemToCheck.z > myTarget.z && itemToCheck.z - myTarget.z > GetTileHeight( myTarget ))
-			if( itemToCheck.z > myTarget.z && itemToCheck.z - myTarget.z >= 20 )
+			//if( itemToCheck.z > myTarget.z && itemToCheck.z - myTarget.z >= 20 )
+			if( itemToCheck.z > myTarget.z && itemToCheck.z - myTarget.z > GetTileHeight( myTarget ))
 			{
 				// Ignore doors on floors above
 				return false;
@@ -1505,6 +1505,7 @@ function DemolishHouse( pSocket, iMulti )
 						pvDeed.type = 217; // Player Vendor Deed
 						pvDeed.buyValue = 2000;
 						pSocket.SysMessage( GetDictionaryEntry( 581, pSocket.language ), pvDeed.name ); // Packed up vendor %s.
+						iMulti.RemoveVendor( charInHouse );
 						charInHouse.Delete();
 					}
 				}

@@ -1086,11 +1086,8 @@ bool CMultiObj::HandleLine( std::string &UTag, std::string &data )
 			case 'B':
 				if( UTag == "BANNED" )
 				{
-					CChar *bList = CalcCharObjFromSer( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
-					if( ValidateObject( bList ))
-					{
-						AddToBanList( bList );
-					}
+					// Store serial in a temporary vector until all objects have been loaded
+					pendingBans.push_back( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				else if( UTag == "BUILDTIME" )
@@ -1106,11 +1103,8 @@ bool CMultiObj::HandleLine( std::string &UTag, std::string &data )
 			case 'C':
 				if( UTag == "COOWNER" ) // Legacy tag for loading older data
 				{
-					CChar *cList = CalcCharObjFromSer( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
-					if( ValidateObject( cList ))
-					{
-						AddAsOwner( cList );
-					}
+					// Store serial in a temporary vector until all objects have been loaded
+					pendingOwners.push_back( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				break;
@@ -1124,22 +1118,16 @@ bool CMultiObj::HandleLine( std::string &UTag, std::string &data )
 			case 'F':
 				if( UTag == "FRIEND" )
 				{
-					CChar *cList = CalcCharObjFromSer( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
-					if( ValidateObject( cList ))
-					{
-						AddAsFriend( cList );
-					}
+					// Store serial in a temporary vector until all objects have been loaded
+					pendingFriends.push_back( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				break;
 			case 'G':
 				if( UTag == "GUEST" )
 				{
-					CChar *cList = CalcCharObjFromSer( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
-					if( ValidateObject( cList ))
-					{
-						AddAsGuest( cList );
-					}
+					// Store serial in a temporary vector until all objects have been loaded
+					pendingGuests.push_back( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				break;
@@ -1153,11 +1141,8 @@ bool CMultiObj::HandleLine( std::string &UTag, std::string &data )
 			case 'L':
 				if( UTag == "LOCKEDITEM" )
 				{
-					CItem *iList = CalcItemObjFromSer( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
-					if( ValidateObject( iList ))
-					{
-						LockDownItem( iList );
-					}
+					// Store serial in a temporary vector until all objects have been loaded
+					pendingLockedItems.push_back( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				break;
@@ -1201,22 +1186,16 @@ bool CMultiObj::HandleLine( std::string &UTag, std::string &data )
 			case 'O':
 				if( UTag == "OWNER" )
 				{
-					CChar *cList = CalcCharObjFromSer( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
-					if( ValidateObject( cList ))
-					{
-						AddAsOwner( cList );
-					}
+					// Store serial in a temporary vector until all objects have been loaded
+					pendingOwners.push_back( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				break;
 			case 'S':
 				if( UTag == "SECURECONTAINER" )
 				{
-					CItem *iList = CalcItemObjFromSer( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
-					if( ValidateObject( iList ))
-					{
-						SecureContainer( iList );
-					}
+					// Store serial in a temporary vector until all objects have been loaded
+					pendingSecureContainers.push_back( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				break;
@@ -1234,17 +1213,50 @@ bool CMultiObj::HandleLine( std::string &UTag, std::string &data )
 			case 'V':
 				if( UTag == "VENDOR" )
 				{
-					CChar *cList = CalcCharObjFromSer( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
-					if( ValidateObject( cList ))
-					{
-						AddVendor( cList );
-					}
+					// Store serial in a temporary vector until all objects have been loaded
+					pendingVendors.push_back( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				break;
 		}
 	}
 	return rValue;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CMultiObj::PostLoadProcessing()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Used to setup any pointers that may need adjustment following the loading of the world
+//o------------------------------------------------------------------------------------------------o
+void CMultiObj::PostLoadProcessing( void )
+{
+	// Ensure base class processing fires first
+	CItem::PostLoadProcessing();
+
+	// Helper lambda for resolving deferred Character/Item-lists
+	auto ResolveObjects = [this]( std::vector<SERIAL>& pendingList, auto lookupFunc, auto action ) 
+	{
+		for( SERIAL ser : pendingList ) 
+		{
+			auto ptr = lookupFunc( ser );
+			if( ValidateObject( ptr )) 
+			{
+				( this->*action )( ptr );
+			}
+		}
+		pendingList.clear();
+	};
+
+	// Process deferred character-based lists
+	ResolveObjects( pendingBans, CalcCharObjFromSer, &CMultiObj::AddToBanList );
+	ResolveObjects( pendingOwners, CalcCharObjFromSer, &CMultiObj::AddAsOwner );
+	ResolveObjects( pendingFriends, CalcCharObjFromSer, &CMultiObj::AddAsFriend );
+	ResolveObjects( pendingGuests, CalcCharObjFromSer, &CMultiObj::AddAsGuest );
+	ResolveObjects( pendingVendors, CalcCharObjFromSer, &CMultiObj::AddVendor );
+
+	// Process deferred item-based lists
+	ResolveObjects( pendingLockedItems, CalcItemObjFromSer, &CMultiObj::LockDownItem );
+	ResolveObjects( pendingSecureContainers, CalcItemObjFromSer, &CMultiObj::SecureContainer );
 }
 
 //o------------------------------------------------------------------------------------------------o
