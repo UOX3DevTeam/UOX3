@@ -420,11 +420,11 @@ auto MultiCollection::ProcessEntry( [[maybe_unused]] std::size_t entry, std::siz
 				else
 				{
 					multi.maxY = std::max( item.offsetY, multi.maxY );
-					multi.minY = std::max( item.offsetY, multi.minY );
+					multi.minY = std::min( item.offsetY, multi.minY );
 					multi.maxX = std::max( item.offsetX, multi.maxX );
-					multi.minX = std::max( item.offsetX, multi.minX );
+					multi.minX = std::min( item.offsetX, multi.minX );
 					multi.maxAlt = std::max( item.altitude, multi.maxAlt );
-					multi.minAlt = std::max( item.altitude, multi.minAlt );
+					multi.minAlt = std::min( item.altitude, multi.minAlt );
 				}
 			}
 			// we now have some clilocs to read past, have to find out how many
@@ -493,11 +493,11 @@ auto MultiCollection::ProcessData( bool isHS, int index, std::vector<std::uint8_
 		else
 		{
 			multi.maxY = std::max( item.offsetY, multi.maxY );
-			multi.minY = std::max( item.offsetY, multi.minY );
+			multi.minY = std::min( item.offsetY, multi.minY );
 			multi.maxX = std::max( item.offsetX, multi.maxX );
-			multi.minX = std::max( item.offsetX, multi.minX );
+			multi.minX = std::min( item.offsetX, multi.minX );
 			multi.maxAlt = std::max( item.altitude, multi.maxAlt );
-			multi.minAlt = std::max( item.altitude, multi.minAlt );
+			multi.minAlt = std::min( item.altitude, multi.minAlt );
 		}
 
 		multi.items.push_back( item );

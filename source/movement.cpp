@@ -1306,8 +1306,8 @@ auto CMovement::OutputShoveMessage( CChar *c, CSocket *mSock ) -> void
 		return;
 
 	// GMs, counselors, and ghosts don't shove things
-	if( c->GetCommandLevel() >= CL_CNS || IsGMBody( c ))
-		return;
+    if( c->GetCommandLevel() >= CL_CNS || IsGMBody( c ) || c->NoCharCollide() )
+        return;
 
 	// lets cache these vars in advance
 	auto grid = MapRegion->GetMapRegion( c );

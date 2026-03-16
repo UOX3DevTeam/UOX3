@@ -2194,6 +2194,7 @@
 2186=No tienes la suficiente habilidad para entender a esa criatura
 2187=Eso no se parece mucho a un animal
 2188=Salvaje
+2189=Metal
 2199=Confuso
 2200=Nada
 2201=Cuenta de propietarios
@@ -2449,7 +2450,6 @@
 2576=Resistes el impulso de vaciar el %s sobre la cabeza de tu objetivo.
 2577=¡Eso ya está lleno! No puedes verter nada en eso hasta que se haya vaciado.
 2578=Se vierte el %s en la jarra vacía.
-2578=Se vierte el %s en la botella vacía.
 2579=Viertes el contenido de la jarra y te quedas con una jarra vacía.
 2580=Se vierte el contenido de la botella y se deja una botella vacía.
 2581=Se vierte el contenido de la jarra, quedando una jarra vacía.
@@ -2512,6 +2512,11 @@
 2637=Filtrar generadores de NPC
 2638=Filtrar generadores de objetos
 2639=Ordenar por número de apariciones (%s)
+2650=Se vierte el %s en la botella vacía.
+2651=Se vierte el %s en la jarra vacía.
+2660=Se han encontrado %i generadores basados en regiones en %u milisegundos.
+2661=Gestionar regiones de generación
+2662=Teletransportarse a la región de generación
 // [2700-2799] Guiones varios
 2700=Sólo el propietario de la casa puede rotar los muebles.
 2701=Eso no parece funcionar.
@@ -3539,6 +3544,58 @@
 6321=Parece que esta hoja está cubierta de una sustancia ácida.
 6322=Parece que esta hoja tiene un elemento corrosivo.
 6323=Parece que esta hoja tiene un ligero elemento corrosivo.
+// [6500-6539] Event Manager
+6500=Administrador de eventos: Se ha iniciado el latido
+6501=Administrador de eventos: Se está reutilizando el objeto Administrador de eventos existente.
+6502=Administrador de eventos: El objeto Administrador de eventos antiguo ya no existe, se creará uno nuevo.
+6503=Administrador de eventos: Error al generar %s
+6504=Administrador de eventos: Inicialización completada. Eventos cargados: %i
+6505=Administrador de eventos: Inicialización completada. No se han cargado eventos, entrando en modo de espera.
+6506=Gestor de eventos: Todos los eventos han finalizado. Entrando en modo de espera.
+6507=Gestor de eventos: ADVERTENCIA: evento omitido, falta la función de devolución de llamada %s en el script %i
+6508=El gestor de eventos está desactivado actualmente. Actívelo a través de uox.ini
+6509=Eventos activos: %i
+6510=Uso: 'em %s <número de índice de la lista de eventos>
+6511=Administrador de eventos: El evento %i ahora es %s
+6512=Administrador de eventos: %s cambió el evento %i a %s
+6513=Índice de evento no válido. Para ver la lista completa de eventos: 'em list
+6514=Forzando el restablecimiento del administrador de eventos...
+6515=Comandos compatibles con el Administrador de eventos: list, enable <#>, disable <#>, remove <#>, reset
+6516=Administrador de eventos: RegisterEvent ha fallado porque el Administrador de eventos está desactivado.
+6517=Administrador de eventos: RegisterEvent ha fallado debido a que faltan los datos de configuración callbackScriptID y/o callbackFuncStart.
+6518=Administrador de eventos: nuevo evento registrado: %s (ID: %i)
+6519=Evento detenido y desactivado.
+6520=Evento activado y reprogramado para la próxima ventana de activación válida.
+6521=Uso: 'em remove <índice de la lista de eventos>
+6522=Evento detenido y eliminado.
+// [6540-6550] Caja de música del Amanecer
+6540=Debes tener el objeto en tu mochila o bloqueado para poder usarlo.
+6541=Selecciona una Caja de música del Amanecer para añadir esta música.
+6542=Debes seleccionar la Caja de música del Amanecer.
+6543=Esto no es una Caja de música del Amanecer.
+6544=No hay ningún objeto musical pendiente.
+6545=No se ha encontrado el objeto musical.
+6546=Este objeto no tiene música asignada.
+6547=Esta pista musical ya está en la caja de música.
+6548=Esta música se ha añadido a la caja de música.
+// [6580-6599] Scripts de Montura Etérea
+6580=No puedes desmontar tu montura etérea porque tu mochila no puede contenerla.
+6581=Debe estar en la capa superior de tu mochila para usarla.
+6582=Debes terminar de lanzar un hechizo antes de usar otro.
+6583=Los gargolas no pueden montar animales.
+6584=Por favor, desmonta primero.
+6585=No puedes hacer eso mientras estás polimorfado.
+6586=No puedes invocar una montura en este momento.
+6587=¡Has sido interrumpido mientras intentabas invocar tu montura etérea!
+6588=Invocas tu corcel etéreo.
+6589=Debes tener el objeto en tu mochila para usarlo.
+6590=Apunta a la montura etérea que deseas retocar.
+6591=Deben estar en tu mochila para poder usarlos.
+6592=Eso no es un objetivo válido.
+6593=Debes tener el objeto en tu mochila para apuntarlo.
+6594=No puedes usar este objeto para eso.
+6595=El cuerpo de tu montura etérea se ha solidificado.
+6596=Se ha restaurado la transparencia de tu montura etérea.
 // [7000-7499] Guiones de IA
 7000=Eres un delincuente y no puedes acceder a tu caja bancaria.
 7001=¿Qué artículo desea depositar en su caja?
@@ -3801,6 +3858,7 @@
 8257=¡Debes seleccionar un NPC!
 8258=Vendas la herida y detienes la hemorragia.
 8259=Las heridas sangrantes se han curado, ¡ya no sangras!
+8260=Cantidad de cargas de veneno en el objeto.
 // [8300-8499] Menú de ajustes - Descripciones de las propiedades de los personajes
 8300=Número de cuenta asociado al jugador. Controlado por el servidor (sólo lectura)
 8301=Tipo de IA del PNJ
@@ -4032,6 +4090,29 @@
 8724=¿Está bloqueada la ranura 7 de esta Cuenta?
 8725=¿Cuánto tiempo lleva el usuario baneado, en minutos?
 8726=¿Cuándo se conectó la cuenta por primera vez? (Sólo lectura)
+// [8750-8799] Tweak Menu - Spawn Region property descriptions
+8750=Número de caracteres/elementos generados por ciclo de generación
+8751=ID de instancia donde la región de generación está activa
+8752=¿Son los elementos generados objetos generadores?
+8753=ID de la sección de elementos de DFN para generar
+8754=Recuento de elementos generados actualmente (solo lectura)
+8755=Referencia a ITEMLIST desde donde generar
+8756=Cantidad máxima de elementos para generar
+8757=Cantidad máxima de NPC para generar
+8758=Intervalo de tiempo máximo hasta el siguiente ciclo de generación
+8759=Intervalo de tiempo mínimo hasta el siguiente ciclo de aparición
+8760=Nombre interno de la región de aparición
+8761=ID de la sección NPC de DFNs para aparecer
+8762=Recuento de NPC actualmente aparecidos (solo lectura)
+8763=Referencia a NPCLIST desde la que aparecer
+8764=¿Aparecer solo fuera de los edificios?
+8765=Valor Z máximo que los objetos del mundo pueden influir en la aparición
+8766=ID de la región de aparición
+8767=Número del mundo en el que está activa la región de aparición
+8768=Límite occidental de la región de aparición
+8769=Límite oriental de la región de aparición
+8770=Límite norte de la región de aparición
+8771=Límite sur de la región de aparición
 // [8800-8849] Menú de ajustes generales
 8800=Introducir nuevo valor
 8801=Los cambios realizados en los valores efectivos de las habilidades no se guardan, y desaparecerán si se reinicia el servidor. Para cambios permanentes en las habilidades, ajusta la propiedad basekills en su lugar.
@@ -4373,6 +4454,14 @@
 9283=No nota nada inusual.
 9284=¡Este individuo es un ladrón!
 9285=No puede robar de un contenedor seguro.
+9286=Cargas:
+9287=Renombrar libro
+9288=Establecer predeterminado
+9289=Soltar runa
+9290=Recuperar (Hechizo)
+9291=Recuperar (Carga)
+9292=Viaje por el portal
+9293=Viaje sagrado
 // [9301-9310] Pez Mágico
 9301=Ya estás bajo un efecto similar.
 9302=¡Te tragas el pez entero!
@@ -5565,7 +5654,7 @@
 19234=¡Tu confusión ha pasado, ahora puedes armar un arma!
 19235=Ya no estás herido de muerte.
 19236=Las heridas sangrantes han sanado, ¡ya no sangras!
-// [19301-19330] Mascota vinculada y muerta
+// [19301-19340] Mascota vinculada y muerta
 19301=No puedes intercambiar una mascota muerta.
 19302=La mascota muerta no puede atacar.
 19303=No tienes la habilidad suficiente para resucitar a esa mascota.
@@ -5575,8 +5664,6 @@
 19308=¡Tu mascota se ha vinculado contigo!
 19309=Tu mascota está muerta y no responderá a esa orden.
 19310=Rompiste el vínculo con tu mascota.
-19311=¿Estás seguro de que quieres romper el vínculo con tu mascota?
-19311=Liberar una mascota fantasma la destruirá, sin posibilidad de recuperación. ¿Deseas continuar?
 19312=El dueño de la mascota debe estar cerca para intentar la resurrección.
 19313=Tu mascota no puede formar un vínculo contigo hasta que tu habilidad de domesticación de animales haya aumentado.
 19314=Tu mascota no puede formar un vínculo contigo hasta que tu habilidad de bushido haya aumentado.
@@ -5585,7 +5672,8 @@
 19317=El dueño de la mascota debe estar dentro de esta casa para que puedas revivir a esta criatura.
 19318=Selecciona la mascota con la que deseas vincularte. Pulsa ESC para cancelar. Este objeto se consume al usarlo con éxito, ¡así que elige con cuidado!
 19319=Vínculo con la mascota cancelado.
-19320=Esa mascota ya está vinculada contigo. 19321=¡Esta no es tu mascota!
+19320=Esa mascota ya está vinculada contigo.
+19321=¡Esta no es tu mascota!
 19322=¿Seguro que quieres liberar a tu mascota? ¡Las mascotas invocadas desaparecerán permanentemente!
 19323=No puedes realizar acciones beneficiosas en tu objetivo.
 19324=Selecciona una mascota para vincularla instantáneamente.
@@ -5608,5 +5696,12 @@
 19341=Ya conoces esta receta.
 19342=Has aprendido una nueva receta: %i
 19343=Debes aprender esa receta de un pergamino.
+// [30000 - 30010] Sistema de Campeones
+30000=¡El Campeón ha caído a manos de %i!
+30001=¡Infligiste el mayor daño al Campeón!
+30002=¡Estuviste entre los 5 jugadores que más daño infligieron! (%i de daño)
+30003=¡El Campeón ha caído!
+30004=¡Has sido recompensado con un Pergamino de Poder!
+30005=La energía del santuario disminuye al no haber desafiantes presentes...
 }
 EOF

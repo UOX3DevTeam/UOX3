@@ -6,6 +6,9 @@ const youngPlayerSystem = GetServerSetting( "YoungPlayerSystem" );
 /** @type { ( player: Character, corpse: Item ) => boolean } */
 function onCarveCorpse( pChar, iCorpse )
 {
+	if( !ValidateObject( pChar ))
+		return false;
+
 	var corpseOwner = iCorpse.owner;
 	if( ValidateObject( corpseOwner ))
 	{
@@ -14,7 +17,10 @@ function onCarveCorpse( pChar, iCorpse )
 			// Disallow young players from carving player corpses
 			if( pChar.account.isYoung )
 			{
-				pChar.socket.SysMessage( GetDictionaryEntry( 18746, pChar.socket.language )); // As a Young player, you cannot carve up player corpses.
+				if( pChar.socket != null )
+				{
+					pChar.socket.SysMessage( GetDictionaryEntry( 18746, pChar.socket.language )); // As a Young player, you cannot carve up player corpses.
+				}
 				return false;
 			}
 
@@ -31,7 +37,7 @@ function onCarveCorpse( pChar, iCorpse )
 /** @type { ( item: Item, pickerUpper: Character, objCont: BaseObject ) => boolean } */
 function onPickup( iPickedUp, pGrabber, containerObj )
 {
-	if( !ValidateObject( iPickedUp) || !ValidateObject( pGrabber ) || !ValidateObject( containerObj ))
+	if( !ValidateObject( iPickedUp ) || !ValidateObject( pGrabber ) || !ValidateObject( containerObj ))
 		return false;
 
 	if( pGrabber.npc )
@@ -94,10 +100,13 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 			else if( !pGrabber.npc && youngPlayerSystem && pGrabber.account.isYoung )
 			{
 				// Young players cannot loot a monster they did not kill themselves for 2 minutes after the creature died
-				var timeSinceDeath = parseInt( GetCurrentClock() / 1000 ) - parseInt( ourObj.tempTimer / 1000 );
+				var timeSinceDeath = parseInt( GetCurrentClock() / 1000 ) - parseInt( containerObj.tempTimer / 1000 );
 				if( timeSinceDeath < 120 )
 				{
-					pSock.SysMessage( GetDictionaryEntry( 18743, pSock.language )); // You cannot loot this corpse yet. Try again in a few minutes!
+					if( pSock )
+					{
+						pSock.SysMessage( GetDictionaryEntry( 18743, pSock.language )); // You cannot loot this corpse yet. Try again in a few minutes!
+					}
 					return false;
 				}
 			}

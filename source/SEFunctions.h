@@ -89,7 +89,8 @@ JSBool SE_GetRandomSOSArea( JSContext *cx, uintN argc, jsval *vp );		//									
 
 JSBool SE_FindMulti( JSContext *cx, uintN argc, jsval *vp );				//										***
 JSBool SE_GetItem( JSContext *cx, uintN argc, jsval *vp );					//										***
-JSBool SE_FindItem( JSContext *cx, uintN argc, jsval *vp );				//										***
+JSBool SE_FindItem( JSContext *cx, uintN argc, jsval *vp );					//										***
+JSBool SE_FindItemBySection( JSContext *cx, uintN argc, jsval *vp );		//										***
 
 JSBool SE_CompareGuildByGuild( JSContext *cx, uintN argc, jsval *vp );		//										**
 JSBool SE_CreateNewGuild( JSContext *cx, uintN argc, jsval *vp );		//										**
@@ -145,6 +146,7 @@ JSBool SE_Moon( JSContext *cx, uintN argc, jsval *vp );
 JSBool SE_GetTownRegion( JSContext *cx, uintN argc, jsval *vp );
 JSBool SE_GetTownRegionFromXY( JSContext *cx, uintN argc, jsval *vp );
 JSBool SE_GetSpawnRegion( JSContext *cx, uintN argc, jsval *vp );
+JSBool SE_GetSpawnRegions( JSContext *cx, uintN argc, jsval *vp );
 JSBool SE_GetSpawnRegionCount( JSContext *cx, uintN argc, jsval *vp );
 
 JSBool SE_ReloadJSFile( JSContext *cx, uintN argc, jsval *vp );
