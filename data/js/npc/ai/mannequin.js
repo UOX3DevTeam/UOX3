@@ -122,12 +122,6 @@ function onTooltip( myObj, pSocket )
 	return tooltipText;
 }
 
-/** @type { ( speech: string, personTalking: Character, talkingTo: BaseObject ) => null | undefined | number | boolean } */
-function onSpeech( strSaid, pTalking, pTalkingTo )
-{
-	return 1;
-}
-
 /** @type { ( socket: Socket ) => boolean } */
 function DescriptionGump( socket )
 {
@@ -235,7 +229,6 @@ const mannequinPage1 = [
 			{ key: "StaminaInc", text: 1079405, icon: Icons.StaminaInc, cap: "/25" }
 		], rowsRight: [
 			{ key: "ManaInc", text: 1079406, icon: Icons.ManaInc, cap: "/25" },
-			{ key: "ManaInc", text: 1079406, icon: Icons.ManaInc },
 			{ key: "HPRegen", text: 1075627, icon: Icons.HPRegen, cap: "/18" },
 			{ key: "StaminaRegen", text: 1079411, icon: Icons.StaminaRegen, cap: "/24" },
 			{ key: "ManaRegen", text: 1079410, icon: Icons.ManaRegen, cap: "/30" }
@@ -519,12 +512,12 @@ function OpenMannequinStatsGump( socket, mannequin, page )
 	};
 
 	// local helpers (not global noise)
-	function text( g, x, y, w, h, v )
+	function text( gump, x, y, w, h, v )
 	{
 		if( typeof v === "number" )
-			g.AddXMFHTMLTok( x, y, w, h, false, false, 0x560A, v);
+			gump.AddXMFHTMLTok( x, y, w, h, false, false, 0x560A, v);
 		else
-			g.AddHTMLGump( x, y, w, h, false, false, v );
+			gump.AddHTMLGump( x, y, w, h, false, false, v );
 	}
 
 	function valHtml( row )
@@ -564,7 +557,7 @@ function OpenMannequinStatsGump( socket, mannequin, page )
 		for( var i = 0; i < max; i++ )
 		{
 			if( i < L.length ) row( gump, 0, baseY + (i * 30), L[i] );
-			if( i < R.length ) row( g, 1, baseY + (i * 30), R[i] );
+			if( i < R.length ) row( gump, 1, baseY + (i * 30), R[i] );
 		}
 
 		return baseY + (max * 30) + 3;

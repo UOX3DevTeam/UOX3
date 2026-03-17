@@ -2037,7 +2037,8 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 
 bool CCharStuff::CanControlPet( CChar *mChar, CChar *Npc, bool isRestricted, bool checkDifficulty, bool ignoreOwnerCheck, bool ignoreLoyaltyChanges )
 {
-	if( ValidateObject( Npc->GetOwnerObj() ) && Npc->GetNpcAiType() != AI_PLAYERVENDOR && Npc->GetQuestType() == 0 )
+	TAGMAPOBJECT tMann = Npc->GetTag( "Mannequin" );
+	if( ValidateObject( Npc->GetOwnerObj() ) && Npc->GetNpcAiType() != AI_PLAYERVENDOR && Npc->GetQuestType() == 0  && ( tMann.m_IntValue == 0 ))
 	{
 		if( !ignoreOwnerCheck && Npc->GetOwnerObj() != mChar && ( isRestricted || !Npcs->CheckPetFriend( mChar, Npc )))
 			return false;
