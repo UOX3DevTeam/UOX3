@@ -252,12 +252,12 @@ function onGuildButton( pChar )
 
 	if( pChar.guild )
 	{
-       TriggerEvent( 8003, "GuildMenu", pChar );
+       TriggerEvent( 8020, "GuildMenu", pChar );
 	   return true;
 	}
     else
 	{
-        TriggerEvent( 8003, "GuildCreation", pChar );
+        TriggerEvent( 8020, "GuildCreation", pChar );
 		return true;
 	}
 
