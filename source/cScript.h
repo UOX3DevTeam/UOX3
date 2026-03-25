@@ -10,6 +10,7 @@ enum ScriptEvent
 	seOnCreateDFN = 0,
 	seOnCreateTile,
 	seOnCreatePlayer,		//	*	Done for PCs on global script
+	seOnSpawn,
 	seOnCommand,
 	seOnProfileRequest,		//	**
 	seOnProfileUpdate,		//	**
@@ -93,6 +94,7 @@ enum ScriptEvent
 	seOnDropItemOnNpc,
 	seOnStart,
 	seOnStop,
+	seOnScriptLoad,
 	seOnIterate,
 	seOnIterateSpawnRegions,
 	seOnPacketReceive,
@@ -103,6 +105,7 @@ enum ScriptEvent
 	seOnAICombatTarget,		//	**	allows overriding target selection taking place for regular AI behaviours
 	seOnCombatEnd,			//	**	allows overriding what happens when combat ends
 	seOnDeathBlow,
+	seOnKill,
 	seOnCombatDamageCalc,
 	seOnDamage,
 	seOnDamageDeal,
@@ -126,7 +129,8 @@ enum ScriptEvent
 	seOnWarModeToggle,
 	seOnSpecialMove,
 	seOnFacetChange,
-	seOnReleasePet
+	seOnReleasePet,
+	seOnPaperDoll
 };
 
 struct SEGump_st
@@ -161,7 +165,7 @@ private:
 	JSContext *			targContext;
 	JSObject *			targObject;
 	JSObject *			scriptObj;
-	UI16						scriptID;
+	UI16				scriptID;
 
 	bool				isFiring;
 	UI08				runTime;
@@ -177,7 +181,7 @@ private:
 	std::vector<SEGump_st *>		gumpDisplays;
 
 	void		Cleanup( void );
-	JSBool	InvokeEvent( const char* name, uintN argc, jsval* argv, jsval* rval );
+	JSBool		InvokeEvent( const char* name, uintN argc, jsval* argv, jsval* rval );
 
 public:
 	void		CollectGarbage( void );
@@ -198,13 +202,15 @@ public:
 
 
 	//|	Modification	-	08162003 - Added these event to handle any script initialization and clean up as the server starts, and is shut down
-	bool		OnStart( void );
+	bool		OnStart( void *myObj = nullptr, SI32 type = -1 );
 	bool		OnStop( void );
+	bool		OnScriptLoad( void );
 	//
 	bool		OnPacketReceive( CSocket *mSock, UI16 packetNum );
 	bool		OnIterate( CBaseObject *a, UI32 &b, CSocket *mSock );
-	bool		OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b );
+	bool		OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b, CSocket *mSock );
 	bool		OnCreate( CBaseObject *thingCreated, bool dfnCreated, bool isPlayer );
+	bool		OnSpawn( CBaseObject *objectSpawned, UI16 spawnRegionNum );
 	bool		DoesEventExist( const char *eventToFind );
 	SI08		OnCommand( CSocket *mSock, std::string command );
 	bool		OnDelete( CBaseObject *thingDestroyed );
@@ -304,7 +310,8 @@ public:
 	bool		executeCommand( CSocket *s, std::string funcName, std::string executedString );
 
 	bool		MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, SI32 spellNum );
-	SI08		OnCharDoubleClick( CChar *currChar, CChar *targChar );
+	SI08		OnPaperDoll( CChar *currChar, CChar *targChar );
+	SI08		OnCharDoubleClick( CChar *currChar, CChar *targChar, bool nonMouseClickEvent );
 	SI08		OnDismount( CChar *currChar, CChar *npcMount );
 	SI08		OnSkillGump( CChar *mChar );
 	SI08		OnUseBandageMacro( CSocket *mSock, CChar *targChar, CItem *bandageItem );
@@ -313,7 +320,7 @@ public:
 	SI08		OnCombatEnd( CChar *attacker, CChar *defender );
 
 	SI08		OnDeathBlow( CChar *mKilled, CChar *mKiller );
-
+	SI08		OnKill( CChar *mKiller, CChar *mKilled );
 	SI16		OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill, UI08 hitLoc );
 	SI08		OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue, WeatherType damageType );
 	SI08		OnDamageDeal( CChar *attacker, CChar *damaged, SI16 damageValue, WeatherType damageType );

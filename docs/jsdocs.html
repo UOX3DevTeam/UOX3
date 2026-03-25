@@ -28,7 +28,7 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 12. December, 2025</small></p>
+	<p style="margin:0"><small>Last Updated: 7. February, 2026</small></p>
 	<p style="margin:0"><small>Written for UOX3 Version: v0.99.7c</small></p>
 </div>
 
@@ -55,6 +55,17 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>February 7th, 2026</h4>
+						<ul>
+							<li>Added details for new JS Events: onScriptLoad, onStart</li>
+							<li>Added details for new JS Function: FindItemBySection</li>
+						</ul>
+						<h4>February 2nd, 2026</h4>
+						<ul>
+							<li>Added details for new JS Functions: GetSpawnRegions</li>
+							<li>Updated details for JS Functions: GetSpawnRegion, DoMovingEffect, IterateOverSpawnRegions</li>
+							<li>Updated details for JS : GetSpawnRegion</li>
+						</ul>
 						<h4>December 12th, 2025</h4>
 						<ul>
 							<li>Added details for new JS Events: onSpeedHackDetect, onSpeedHackSuspicion</li>
@@ -310,7 +321,7 @@ function onPacketReceive( pSocket, packetNum )</code></pre>
 		<ul id="events" class="cd-faq__group">
 			<li id="eventsHeader" class="cd-faq__title title-jsdoc"><h1>JS Events</h1><div id="filterInputEvents" contenteditable="true" placeholder="(Filter)" style="float:right; margin-top: -40px; margin-right: 10px; background-color: #fff; padding: 5px; width: 200px"></div></li>
 
-<li class="cd-faq__item">
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventScriptRegistration" id="eventScriptRegistration"><span>[Script]Registration</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">
@@ -873,30 +884,40 @@ function onCallback0( socket, ourObj )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onCharDoubleClick( pUser, targChar )</em></p>
+							<p><em>function onCharDoubleClick( pUser, targChar, nonMouseClickEvent )</em></p>
 						</div>
+
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
-							<p>To allow greater customization of double-clicking on characters.</p>
+							<p>Allows scripts to customize behaviour when a character is double-clicked, such as preventing paperdoll opening, handling mounts, or triggering custom interactions.</p>
 						</div>
+
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
-							<p>When pUser double-clicks targChar, targChar's script is activated</p>
+							<p>Triggered when <strong>pUser</strong> double-clicks <strong>targChar</strong>. The script attached to <strong>targChar</strong> is executed.</p>
 						</div>
+
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
 							<ul>
-								<li><strong>return false</strong> or nothing to prevent opening of paperdoll, and prevent other scripts with same event from running</li>
-								<li><strong>return true</strong> to allow opening of paperdoll. Other scripts with same event can also run</li>
+								<li><strong>return false</strong> (or <strong>0</strong>) – Prevent the default hardcoded behaviour (such as opening the paperdoll) and stop other scripts from running.</li>
+								<li><strong>return true</strong> (or <strong>1</strong>) – Allow the default hardcoded behaviour to continue and allow other scripts with this event to run.</li>
 							</ul>
 						</div>
+
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function onCharDoubleClick( pUser, targChar )
+							<p>
+								<span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onCharDoubleClick( pUser, targChar, nonMouseClickEvent )
 {
+	// Ignore client-generated events such as login self-clicks
+	if( nonMouseClickEvent )
+		return true;
+
 	targChar.TextMessage( "If you think you'll be allowed to see my paperdoll, think again!" );
 	return false;
-}</code></pre></p>
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -2779,6 +2800,85 @@ function onIterate( charCheck, socket )
 				</div> <!-- cd-faq__content -->
 			</li>
 
+					<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnKill" id="eventOnKill"><span>onKill</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onKill( killer, killed )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To perform actions on the attacker when they successfully kill another character.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>Called on scripts attached to the killer after the victim has died in combat, and only if the victim's onDeathBlow event (if any) allowed death to proceed.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<ul>
+								<li>onKill is an attacker side event. Attach the script to the character that should react to kills (for example, players or special killer NPCs).</li>
+								<li>onKill runs after onDeathBlow has been processed on the victim. If onDeathBlow returns false and cancels death, onKill will not be triggered.</li>
+								<li>onKill is not called for suicides or cases where there is no valid attacker.</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p>
+								<span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">// Simple kill tracker for a player or NPC with this script attached
+
+function onKill( killer, killed )
+{
+	// Safety checks
+	if( !ValidateObject( killer ) || !ValidateObject( killed ) )
+		return;
+
+	// Optional: ignore kills where killer and killed are the same
+	if( killer.serial === killed.serial )
+		return;
+
+	// Example 1: basic message to the killer
+	if( killer.socket )
+	{
+		killer.socket.SysMessage( "You have slain " + killed.name + "." );
+	}
+
+	// Example 2: track total kills in a custom tag
+	var totalKills = killer.GetTag( "totalKills" ) | 0;
+	killer.SetTag( "totalKills", totalKills + 1 );
+
+	// Example 3: track separate PvM and PvP kills
+	if( killed.npc )
+	{
+		var pvmKills = killer.GetTag( "pvmKills" ) | 0;
+		killer.SetTag( "pvmKills", pvmKills + 1 );
+	}
+	else
+	{
+		var pvpKills = killer.GetTag( "pvpKills" ) | 0;
+		killer.SetTag( "pvpKills", pvpKills + 1 );
+	}
+
+	// Example 4: reward tokens for PvM kills only
+	if( killed.npc )
+	{
+		var tokens = killer.GetTag( "killTokens" ) | 0;
+		killer.SetTag( "killTokens", tokens + 5 );
+		if( killer.socket )
+		{
+			killer.socket.SysMessage( "You earn 5 kill tokens for defeating " + killed.name + "." );
+		}
+	}
+}
+</code></pre>
+							</p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
 			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnLeaveRegion" id="eventOnLeaveRegion"><span>onLeaveRegion</span></a>
 				<div class="cd-faq__content">
@@ -2965,7 +3065,7 @@ function onIterate( charCheck, socket )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function onLogin( sockPlayer, pChar )
+<pre><code class="language-javascript">function onLogout( sockPlayer, pChar )
 {
 	sockPlayer.SysMessage( "Farewell! Come back soon." );
 }</code></pre></p>
@@ -3202,6 +3302,47 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 	... // Read packet data here, using ReadBytes, GetByte, GetWord, GetDWord, GetSByte, GetSWord, GetSDWord and GetString socket methods
 	return;
 }</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnPaperDoll" id="eventOnPaperDoll"><span>onPaperDoll</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onPaperDoll( pUser, targChar )</em></p>
+						</div>
+
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>Allows scripts to override or customize what happens when a character's paperdoll is opened.</p>
+						</div>
+
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>Triggered when <strong>pUser</strong> opens the paperdoll of <strong>targChar</strong>. The script attached to <strong>targChar</strong> is executed.</p>
+						</div>
+
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return false</strong> (or <strong>0</strong>) – Prevent the default hardcoded paperdoll behaviour and stop other scripts with the same event from running.</li>
+								<li><strong>return true</strong> (or <strong>1</strong>) – Allow the default hardcoded paperdoll behaviour to continue, and allow other scripts with the same event to run.</li>
+							</ul>
+						</div>
+
+						<div class="settingsDiv">
+							<p>
+								<span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onPaperDoll( pUser, targChar )
+{
+	targChar.TextMessage( "My paperdoll is private." );
+	return false;
+}</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -3512,6 +3653,34 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 		pAlive.SysMessage( "You've resurrected too many times already! Have fun in the gray world... FOREVER!" );
 		return false;
 	}
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnScriptLoad" id="eventOnScriptLoad"><span>onScriptLoad</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onScriptLoad()</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To run custom actions per script on shard startup</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When server has completed startup, and when scripts are reloaded while server is running</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onScriptLoad()
+{
+	// Do something on shard startup
+	// See js/server/event_manager.js for one example of how it can be used
 }</code></pre></p>
 						</div>
 					</div>
@@ -4069,6 +4238,61 @@ function onSoldToVendor( pSock, Vendor, iSold, iAmount )
 			</li>
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnSpawn" id="eventOnSpawn"><span>onSpawn</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onSpawn( objSpawned, spawnRegion )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>Used for reacting to items/NPCs spawned from spawn regions</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<ul>
+								<li>When an item or non-player character is spawned from a REGIONSPAWN entry, event will trigger in any script attached to that object (including via ADDSCRIPT)</li>
+							</ul>
+							<p>Usable in Global script (scriptID 0)? For NPCs/Items, <span class="hl">No</span>.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<ul>
+								<li>objSpawned is the spawned object (item or character)</li>
+								<li>spawnRegion is the REGIONSPAWN ID (the number used in [REGIONSPAWN N])</li>
+								<li>The spawned object also receives a "spawnRegion" tag with the same value</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p>
+								<span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">// Script attached via ADDSCRIPT on REGIONSPAWN 100
+// Makes all spawned creatures from that region slightly stronger
+function onSpawn( objSpawned, spawnRegion )
+{
+	// Only care about REGIONSPAWN 100
+	if( spawnRegion != 100 )
+		return;
+
+	// Only affect characters
+	if( objSpawned.isChar )
+	{
+		// Mark where it came from
+		objSpawned.SetTag( "graveyardSpawnRegion", spawnRegion );
+
+		// Small stat boost
+		objSpawned.str = objSpawned.str + 5;
+		objSpawned.dex = objSpawned.dex + 5;
+	}
+}</code></pre>
+							</p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnSpecialMove" id="eventOnSpecialMove"><span>onSpecialMove</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">
@@ -4585,6 +4809,34 @@ function onSpellTargetSelect( myTarget, pCaster, spellID )
 	if( socket != null )
 		pCaster.SysMessage( GetDictionaryEntry( 9056, socket.language )); // That target is immune to magic!
 	return 2;
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnStart" id="eventOnStart"><span>onStart</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onStart( myObj )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To run custom actions per instanced script attached to objects</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When server has completed startup, will trigger per script attached to any given object, with this event inside.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onStart( myObj )
+{
+	// Do something on shard startup per instanced script per object with script and event
+	// ...
 }</code></pre></p>
 						</div>
 					</div>
@@ -5923,6 +6175,110 @@ function shutdown()
 							</div>
 						</div>
 
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_console_RegisterConsoleFunc"/>
+							<label for="spoiler_function_console_RegisterConsoleFunc">RegisterConsoleFunc <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool RegisterConsoleFunc( commandName, callbackScriptID, callbackFunctionName );</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Registers a console command that triggers a function in a specific script when the command is entered in the UOX3 console.</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Returns true if the command was registered successfully, otherwise false.</p>
+									<p>Like RegisterKey, the script must be enabled for console usage (see notes under RegisterKey / CONSOLE_SCRIPTS).</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Example: register a console command "announce"
+function ConsoleRegistration()
+{
+	// RegisterConsoleFunc( "commandName", scriptID, "functionName" )
+	RegisterConsoleFunc( "announce", SCRIPT.script_id, "ConsoleAnnounce" );
+}
+
+function ConsoleAnnounce()
+{
+	Console.Print( "Hello from a scripted console command!" );
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_console_DisableConsoleFunc"/>
+							<label for="spoiler_function_console_DisableConsoleFunc">DisableConsoleFunc <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool DisableConsoleFunc( commandName );</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Disables a previously registered scripted console command.</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Returns true if the command was found and disabled, otherwise false.</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Disable a command you registered earlier
+function ConsoleRegistration()
+{
+	RegisterConsoleFunc( "announce", SCRIPT.script_id, "ConsoleAnnounce" );
+
+	// Later you can disable it
+	DisableConsoleFunc( "announce" );
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_console_EnableConsoleFunc"/>
+							<label for="spoiler_function_console_EnableConsoleFunc">EnableConsoleFunc <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool EnableConsoleFunc( commandName );</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Enables a previously registered scripted console command that was disabled.</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Returns true if the command was found and enabled, otherwise false.</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Enable a disabled command again
+function ConsoleRegistration()
+{
+	RegisterConsoleFunc( "announce", SCRIPT.script_id, "ConsoleAnnounce" );
+	DisableConsoleFunc( "announce" );
+
+	// Re-enable it
+	EnableConsoleFunc( "announce" );
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
 					</div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -5938,9 +6294,9 @@ function shutdown()
 						<div class="spoiler">
 							<div class="settingsDiv">
 								<p><span class="hl">Prototype</span></p>
-								<p><em>DoMovingEffect( srcObject, trgObject, effect, speed, loop, explode, [hue], [renderMode] );<br>
-								DoMovingEffect( srcObject, targX, targY, targZ, effect, speed, loop, explode, [hue], [renderMode] );<br>
-								DoMovingEffect( srcX, srcY, srcZ, targX, targY, targZ, effect, speed, loop, explode, [hue], [renderMode] );</em></p>
+								<p><em>DoMovingEffect( srcObject, trgObject, effect, speed, loop, explode, [hue], [renderMode], [stationaryFX] );<br>
+								DoMovingEffect( srcObject, targX, targY, targZ, effect, speed, loop, explode, [hue], [renderMode], [stationaryFX] );<br>
+								DoMovingEffect( srcX, srcY, srcZ, targX, targY, targZ, effect, speed, loop, explode, [hue], [renderMode], [stationaryFX] );</em></p>
 							</div>
 							<div class="settingsDiv">
 								<p><span class="hl">Purpose</span></p>
@@ -5953,8 +6309,9 @@ function shutdown()
 									<strong>loop</strong> = ???<br>
 									<strong>explode</strong> = 0 no explosion, 1 explodes<br>
 									<strong>hue</strong> = the colour of the effect<br>
-									<strong>rendermode</strong> = how to render the effect. Available options: 0 - normal, 1 - transparent, 2 - additive, 3 - dark colors transparent, 4 - bright colors transparent, 5 - semi transparent, 6 - subtractive/negative colors, 7 - inverted colors?</p><br>
-									<p><em>hue and renderMode are OPTIONAL, none, one or both can be left out, but if setting renderMode, hue MUST be specified. Hue for effects also seems to be offset by 1 compared to hues for items; if you have a staff with hue 0x0480 and you want an effect with same hue, try 0x047f for the effect (in some cases combined with a different renderMode - like 0xa for 0x047f)</em></p>
+									<strong>rendermode</strong> = how to render the effect. Available options: 0 - normal, 1 - transparent, 2 - additive, 3 - dark colors transparent, 4 - bright colors transparent, 5 - semi transparent, 6 - subtractive/negative colors, 7 - inverted colors?<br>
+									<strong>stationaryFX</strong> = 0 moving FX (default), 1 stationary FX (for playing non-moving FX at fixed location (source))</p><br>
+									<p><em>hue, renderMode and stationaryFX are OPTIONAL, and may be left out, but stationaryFX requires renderMode to be set, which itself requires hue to be defined. Hue for effects also seems to be offset by 1 compared to hues for items; if you have a staff with hue 0x0480 and you want an effect with same hue, try 0x047f for the effect (in some cases combined with a different renderMode - like 0xa for 0x047f)</em></p>
 							</div>
 							<div class="settingsDiv">
 								<p><span class="hl">Example of usage</span></p>
@@ -6292,8 +6649,8 @@ function onUseChecked( pUser, iUsed )
 									<p><span class="hl">Notes</span></p>
 									<p>Parameters:
 										<ul>
-											<li>socket - socket to refresh to (and ensure weight is added)</li>
-											<li>character - required to know the pack/character to spawn it to</li>
+											<li>socket - socket to refresh to (and ensure weight is added). Can be null, to manually control this.</li>
+											<li>character - required to know the pack/character to spawn it to. Can be null if combined with manual item positioning.</li>
 											<li>amount - The amount of items to spawn</li>
 											<li>itemName - the name to give to the newly spawned item</li>
 											<li>itemID - itemID(hex) to spawn item from</li>
@@ -6408,7 +6765,7 @@ function onUseChecked( pUser, iUsed )
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>ITEM FindItem( xLoc, yLoc, zLoc, world, idToCheck[, instanceID] );</em></p>
+									<p><em>ITEM FindItem( xLoc, yLoc, zLoc, world, itemId[, instanceID] );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -6418,6 +6775,26 @@ function onUseChecked( pUser, iUsed )
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">// Fetch item reference for item with id 0x04a9 closest to player's location
 var closestItem = FindItem( pUser.x, pUser.y, pUser.z, pUser.worldnumber, 0x04a9 );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_item_FindItemBySection"/>
+							<label for="spoiler_function_item_FindItemBySection">FindItemBySection <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>ITEM FindItemBySection( xLoc, yLoc, zLoc, world, sectionId[, instanceID] );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns item reference to item with given sectionId that is closest (within immediate nearby internal map regions) to specified coordinates</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Fetch item reference for item with section ID "katana" closest to player's location
+var closestItem = FindItemBySection( pUser.x, pUser.y, pUser.z, pUser.worldnumber, "katana" );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -7121,7 +7498,31 @@ if( DoesEventExist( 0, "MyCustomFunction" ))
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_GetAccountCount"/>
+							<input type="checkbox" id="spoiler_function_misc_EraStringToNum"/>
+							<label for="spoiler_function_misc_EraStringToNum">EraStringToNum <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int EraStringToNum( eraName );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Converts an era name string into the numeric era value used by the server.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Parameters: eraName = era name string (example: "t2a", "aos", etc.).</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Convert a server era string to the numeric era value
+var eraNum = EraStringToNum( "aos" );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_misc_GetAccountCount" />
 							<label for="spoiler_function_misc_GetAccountCount">GetAccountCount <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -7225,6 +7626,66 @@ var aosFeaturesEnabled = GetClientFeature( 0x10 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_misc_GetCharacterCount"/>
+							<label for="spoiler_function_misc_GetCharacterCount">GetCharacterCount <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int GetCharacterCount();</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns the total number of characters currently in the world.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Get total number of characters in the world
+var totalChars = GetCharacterCount();</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_misc_GetItemCount"/>
+							<label for="spoiler_function_misc_GetItemCount">GetItemCount <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int GetItemCount();</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns the total number of items currently in the world.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Get total number of items in the world
+var totalItems = GetItemCount();</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_misc_GetMultiCount"/>
+							<label for="spoiler_function_misc_GetMultiCount">GetMultiCount <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int GetMultiCount();</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns the total number of multis currently in the world.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Get total number of multis in the world
+var totalMultis = GetMultiCount();</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_function_misc_GetRandomSOSArea"/>
 							<label for="spoiler_function_misc_GetRandomSOSArea">GetRandomSOSArea <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -7252,6 +7713,26 @@ sosMsg.morez = worldNum;
 sosMsg.more = sosMsg.instanceID;
 
 // See UOX3/js/item/waterstainedsos.js for full example, including validation for whether the chosen location is suitable, and not blocked by dynamic items, static items or map tiles</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_misc_GetServerVersionString"/>
+							<label for="spoiler_function_misc_GetServerVersionString">GetServerVersionString <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>string GetServerVersionString();</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns the server version as a string.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Print server version to the console/log
+var ver = GetServerVersionString();</code></pre>
 								</div>
 							</div>
 						</div>
@@ -7389,6 +7870,74 @@ function onIterate( myObject )
 var TrammelMoonphase = Moon( 1 );
 Moon( 0, 7 ); //Set the moon Felucca to moonphase 7
 Moon( 1, 3 ); //Set the moon Trammel to moonphase 3</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_misc_GetMoongateFacetStatus"/>
+							<label for="spoiler_function_misc_GetMoongateFacetStatus">GetMoongateFacetStatus <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int GetMoongateFacetStatus( facetNumber );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Checks whether moongate travel is enabled for a specific facet.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>
+										Parameters: facetNumber = facet/world number to check<br>
+										Return value is typically 0 (disabled) or 1 (enabled).
+									</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Check if moongates are enabled on Trammel (0)
+if( GetMoongateFacetStatus( 0 ))
+{
+	// enabled
+}
+else
+{
+	// disabled
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_misc_SetMoongateFacetStatus"/>
+							<label for="spoiler_function_misc_SetMoongateFacetStatus">SetMoongateFacetStatus <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void SetMoongateFacetStatus( facetNumber );</em></p>
+									<p><em>void SetMoongateFacetStatus( facetNumber, enabled );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Enables or disables moongate travel for a specific facet.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>
+										Parameters: facetNumber = facet/world number to set<br>
+										enabled = true to enable, false to disable
+									</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Disable moongates on Felucca (1)
+SetMoongateFacetStatus( 1, false );
+
+// Enable moongates on Felucca (1)
+SetMoongateFacetStatus( 1, true );
+
+// Verify
+var felEnabled = GetMoongateFacetStatus( 1 );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -8168,21 +8717,46 @@ if( GetRaceSkillAdjustment( myRace.id, 32 ) > 10 )
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
 									<p><em>SpawnRegion GetSpawnRegion( spawnRegionNum );</em></p>
-									<p><em>SpawnRegion GetSpawnRegion( x, y, worldNum, instanceID );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Returns SpawnRegion object for specified spawnRegionNum, or for specified set of coordinates</p>
+									<p>Returns SpawnRegion object for specified spawnRegionNum</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">// Returns SpawnRegion object for spawn region #1 from spawns.dfn
 var spawnRegion = GetSpawnRegion( 1 );
 pUser.TextMessage( "The name of this SpawnRegion is: " + spawnRegion.name );
+</code></pre>
+								</div>
+							</div>
+						</div>
 
-// Returns SpawnRegion object for spawn region at specified coordinates:
-var spawnRegion = GetSpawnRegion( pUser.x, pUser.y, pUser.worldnumber, pUser.instanceID );
-pUser.TextMessage( "The name of this SpawnRegion is: " + spawnRegion.name );</code></pre>
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_SpawnRegion_GetSpawnRegions"/>
+							<label for="spoiler_function_SpawnRegion_GetSpawnRegions">GetSpawnRegions <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>SpawnRegion GetSpawnRegions( x, y, worldNum, instanceID );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns array of SpawnRegion objects for all spawn regions found at specified set of coordinates (they can overlap)</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Returns array of SpawnRegion objects for all spawn regions at specified coordinates:
+var spawnRegs = [];
+spawnRegs = GetSpawnRegions( pUser.x, pUser.y, pUser.worldnumber, pUser.instanceID );
+if( spawnRegs.length > 0 )
+{
+	// Iterate over each spawnregion found
+	for( var i = 0; i < spawnRegs.length; i++ )
+	{
+		pUser.TextMessage( "Found spawn region: " + spawnRegs[i].name + " (ID " + spawnRegs[i].regionNum + ")" );
+	}
+}</code></pre>
 								</div>
 							</div>
 						</div>
@@ -8246,7 +8820,7 @@ var feluccaSpawnStatus = GetSpawnRegionFacetStatus( 0 );</code></pre>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>void IterateOverSpawnRegions();</em></p>
+									<p><em>void IterateOverSpawnRegions( [socket] );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -8254,13 +8828,13 @@ var feluccaSpawnStatus = GetSpawnRegionFacetStatus( 0 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>For every object it comes across, the iterator will call onIterateSpawnRegions( SpawnRegionObject ) in the calling script.</p>
+									<p>The IterateOverSpawnRegions() function will return a count of all objects that onIterateSpawnRegions() returned true for. It also supports an optional socket parameter, which can be passed in via the IterateOverSpawnRegions function.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">var count = IterateOverSpawnRegions();
+									<pre><code class="language-javascript">var count = IterateOverSpawnRegions( socket );
 ..
-function onIterateSpawnRegions( toCheck )
+function onIterateSpawnRegions( toCheck, socket )
 {
 	Console.Print( "Spawn Region Number: " + toCheck.regionNum + "\n" );
 	Console.Print( "Spawn Region Name: " + toCheck.name + "\n" );
@@ -8442,7 +9016,7 @@ SetSpawnRegionFacetStatus( 13 );</code></pre>
 					<div class="text-component">
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_town_GetTownRegion"/>
+							<input type="checkbox" id="spoiler_function_town_GetTownRegion" />
 							<label for="spoiler_function_town_GetTownRegion">GetTownRegion <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
@@ -8457,6 +9031,45 @@ SetSpawnRegionFacetStatus( 13 );</code></pre>
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">// Fetch reference to a region (region ID from regions.dfn)
 var townRegion = GetTownRegion( regionID );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_town_GetTownRegionFromXY" />
+							<label for="spoiler_function_town_GetTownRegionFromXY">GetTownRegionFromXY <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>REGION GetTownRegionFromXY( x, y, worldNumber, instanceID );</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns a Region JS Object reference for the town region at the specified map coordinates.</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>
+										Parameters: x, y = map coordinates<br>
+										worldNumber = facet/world number<br>
+										instanceID = instance ID to check
+									</p>
+									<p>Returns null (0) if no town region is found at the location.</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Get town region at player's current location
+var townRegion = GetTownRegionFromXY( pUser.x, pUser.y, pUser.worldnumber, pUser.instanceID );
+
+if( townRegion )
+{
+	// Do something with region object
+	// Example: print the region name if your Region object supports it
+	// pUser.socket.SysMessage( townRegion.name );
+}</code></pre>
 								</div>
 							</div>
 						</div>
@@ -13322,17 +13935,18 @@ myGump.AddPicInPic( 10, 10, 0x03de, 0, 0, 30, 30 );</code></pre>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>void AddXMFHTMLTok( left, top, width, height, hasBorder, hasScrollbar, rgbColour, clilocNum, clilocArg1, clilocArg2, clilocArg3 )</em></p>
+									<p><em>void AddXMFHTMLTok( left, top, width, height, hasBorder, hasScrollbar, rgbColour, clilocNum[, clilocArg1, clilocArg2, clilocArg3] )</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>The purpose of this is to load a HTML like gump using the cliloc "number". Its to do with Localisation settings etc. (Any of) the three cliloc-arguments are optional, but there must minimum be however many the cliloc requires.</p>
+									<p>The purpose of this is to load a HTML like gump using the cliloc "number". It's to do with Localisation settings etc. (Any of) the three cliloc-arguments are optional, but there must be exactly however many the cliloc requires. Other clilocs can be referenced as a cliloc argument by sending the clilocID as a string prefixed by #.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 	<pre><code class="language-javascript">myGump.AddXMFHTMLTok( 10, 10, 200, 300, true, true, 1, 1060656, 99 );
 	myGump.AddXMFHTMLTok( 10, 10, 200, 300, true, true, 1, 1060658, 99, "BottlesOfBeer" );
-	myGump.AddXMFHTMLTok( 10, 10, 200, 300, true, true, 1, 1041522, 99, "BottlesOfBeer", "onTheWall" );</code></pre>
+	myGump.AddXMFHTMLTok( 10, 10, 200, 300, true, true, 1, 1041522, 99, "BottlesOfBeer", "onTheWall" );
+	myGump.AddXMFHTMLTok( 10, 10, 200, 300, false, false, 0x43F7, 1114513, "#1159279" ); // passes cliloc #1159279 as a cliloc argument for cliloc 1114513</code></pre>
 								</div>
 							</div>
 						</div>
@@ -13590,7 +14204,7 @@ function onGumpPress( pSock, pButton, gumpData )
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">myItem.ApplyRank( 5, 10 );</code></pre>
+									<pre><code class="language-javascript">myGump.Free();</code></pre>
 								</div>
 							</div>
 						</div>
@@ -14061,6 +14675,25 @@ iMulti.AddToOwnerList( pChar );</code></pre>
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">var iMulti = FindMulti( trashContObj.x, trashContObj.y, trashContObj.z, trashContObj.worldnumber );
 iMulti.AddTrashCont( trashContObj );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_addVendor"/>
+							<label for="spoiler_method_multi_addVendor">AddVendor <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool AddVendor( vendorToAdd )</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Adds a player vendor character to the specified multi.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">myMulti.AddVendor( npcVendor ); // adds npcVendor as a player vendor to the multi</code></pre>
 								</div>
 							</div>
 						</div>
@@ -14678,6 +15311,25 @@ iMulti.RemoveFromOwnerList( pChar );</code></pre>
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">var iMulti = FindMulti( trashContObj.x, trashContObj.y, trashContObj.z, trashContObj.worldnumber );
 iMulti.RemoveTrashCont( trashContObj );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_removeVendor"/>
+							<label for="spoiler_method_multi_removeVendor">RemoveVendor <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool RemoveVendor( vendorToRemove )</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Removes a player vendor character from the specified multi.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">myMulti.RemoveVendor( npcVendor ); // removes npcVendor as a player vendor from the multi</code></pre>
 								</div>
 							</div>
 						</div>
@@ -15828,100 +16480,6 @@ socket.SysMessage( 0x42, "This message has a different color!" );</code></pre>
 					</div>
 				</div> <!-- cd-faq__content -->
 			</li>
-
-			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#methodsSpawnRegion" id="methodsSpawnRegion"><span>SpawnRegion Methods</span></a>
-				<div class="cd-faq__content">
-					<div class="text-component">
-
-					<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_method_spawnregion_getspawnregion"/>
-						<label for="spoiler_method_spawnregion_getspawnregion">GetSpawnRegion <i class="fas fa-angle-down"></i></label>
-						<div class="spoiler">
-							<div class="settingsDiv">
-								<p><span class="hl">Prototype</span></p>
-								<p><em>void GetSpawnRegion( spawnRegionNum )</em></p>
-							</div>
-							<div class="settingsDiv">
-								<p><span class="hl">Purpose</span></p>
-								<p>Returns SpawnRegion object for specified spawnRegionNum</p>
-							</div>
-							<div class="settingsDiv">
-								<p><span class="hl">Example of usage</span></p>
-	<pre><code class="language-javascript">// Return SpawnRegion object for spawn region #1 from spawns.dfn
-var spawnRegion = GetSpawnRegion( i );
-
-// Have character object pUser say the name of the spawnRegion
-pUser.TextMessage( "The name of this SpawnRegion is: " + spawnRegion.name );</code></pre>
-							</div>
-							</div>
-					</div>
-
-					<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_method_spawnregion_getspawnregioncount"/>
-						<label for="spoiler_method_spawnregion_getspawnregioncount">GetSpawnRegionCount <i class="fas fa-angle-down"></i></label>
-						<div class="spoiler">
-							<div class="settingsDiv">
-								<p><span class="hl">Prototype</span></p>
-								<p><em>void GetSpawnRegionCount()</em></p>
-							</div>
-							<div class="settingsDiv">
-								<p><span class="hl">Purpose</span></p>
-								<p>Returns amount of SpawnRegions that exist</p>
-							</div>
-							<div class="settingsDiv">
-								<p><span class="hl">Example of usage</span></p>
-	<pre><code class="language-javascript">// Get total number of spawn regions
-var spawnRegionCount = GetSpawnRegionCount();
-pUser.TextMessage( "There are " + spawnRegionCount + " SpawnRegions on this server!" );
-
-// Loop through all the spawn regions and print name of each one in UOX3 console
-var spawnRegion;
-for( var i = 0; i < spawnRegionCount; i++ )
-{
-	spawnRegion = GetSpawnRegion( i );
-	Console.Print( "SpawnRegion Name: " + spawnRegion.name + "\n" );
-}</code></pre>
-							</div>
-							</div>
-					</div>
-
-					<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_method_spawnregion_iterateoverspawnregions"/>
-						<label for="spoiler_method_spawnregion_iterateoverspawnregions">IterateOverSpawnRegions <i class="fas fa-angle-down"></i></label>
-						<div class="spoiler">
-							<div class="settingsDiv">
-								<p><span class="hl">Prototype</span></p>
-								<p><em>void IterateOverSpawnRegions()</em></p>
-							</div>
-							<div class="settingsDiv">
-								<p><span class="hl">Purpose</span></p>
-								<p>Iterates over all SpawnRegions on the server.</p>
-							</div>
-							<div class="settingsDiv">
-								<p><span class="hl">Notes</span></p>
-								<p>For every object it comes across, the iterator will call onIterateSpawnRegions( SpawnRegionObject ) in the calling script.</p>
-							</div>
-							<div class="settingsDiv">
-								<p><span class="hl">Example of usage</span></p>
-	<pre><code class="language-javascript">// Iterate over all spawn regions and count how many times the iterate function returned true
-var count = IterateOverSpawnRegions();
-
-// This function runs once per spawn region
-function onIterateSpawnRegions( toCheck )
-{
-	Console.Print( "Spawn Region Number: " + toCheck.regionNum + "\n" );
-	Console.Print( "Spawn Region Name: " + toCheck.name + "\n" );
-	Console.Print( "Spawn Region World: " + toCheck.world + "\n" );
-	return true;
-}</code></pre>
-							</div>
-							</div>
-					</div>
-
-					</div>
-				</div> <!-- cd-faq__content -->
-			</li>
 		</ul> <!-- cd-faq__group -->
 
 		<ul id="properties" class="cd-faq__group">
@@ -16224,7 +16782,7 @@ myObject.propertyName = newValue;
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.isonhorse</span> <strong>(bool, <em>true/false</em>)</strong><br>
-							Get whether character is mounted (Read-Only)</p>
+							Get whether character is mounted</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.isPackAnimal</span> <strong>(bool, <em>true/false</em>)</strong><br>
@@ -16256,7 +16814,7 @@ myObject.propertyName = newValue;
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.mounted</span> <strong>(bool, <em>true/false</em>)</strong><br>
-							Get/Set whether character is mounted</p>
+							Get/Set whether mount NPC is mounted by any rider</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.murderer</span> <strong>(bool, <em>true/false</em>)</strong><br>
@@ -16273,6 +16831,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.noNeedReags</span> <strong>(bool, <em>true/false</em>)</strong><br>
 							Get/Set whether character needs magical reagents to cast spells</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.noCharCollide</span> <strong>(bool, <em>true/false</em>)</strong><br>
+							Checks/Sets whether character can collide with other characters</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.noSkillTitles</span> <strong>(bool, <em>true/false</em>)</strong><br>
@@ -16386,6 +16948,7 @@ myObject.propertyName = newValue;
 								<li>0x8000 - PermReflected (Character has a permanent magic reflection spell active)</li>
 								<li>0x10000 - HideFameKarmaTitle (No fame/karma titles shown for character)</li>
 								<li>0x20000 - Seer (Character is a Seer)</li>
+								<li>0x40000 - noCharCollide (Character can collide with other characters</li>
 							</ul></p>
 						</div>
 						<div class="settingsDiv">
@@ -18647,18 +19210,26 @@ myObject.propertyName = newValue;
 </code></pre></p>
 						<h3>Flag/Boolean Types</h3>
 						<div class="settingsDiv">
-							<p><span class="hl">.onlyOutside</span> <strong>(bool, <em>true/false</em>)</strong><br>
-							Get/Set whether NPCs should only spawn outside buildings</p>
+							<p><span class="hl">.forceSpawn</span> <strong>(bool, <em>true/false</em>)</strong><br>
+							Gets/Sets whether spawn region should force spawn NPCs, without validating location</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.isSpawner</span> <strong>(bool, <em>true/false</em>)</strong><br>
 							Get/Set whether items spawned from Spawn Region is of object type Spawner</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.onlyOutside</span> <strong>(bool, <em>true/false</em>)</strong><br>
+							Get/Set whether NPCs should only spawn outside buildings</p>
 						</div>
 
 						<h3>Integer Types</h3>
 						<div class="settingsDiv">
 							<p><span class="hl">.call</span> <strong>(int)</strong><br>
 							Get/Set number of objects that should be spawned in each respawn call for Spawn Region</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.defZ</span> <strong>(int)</strong><br>
+							Gets/Sets definitive Z Level of the Spawn Region at which to attempt spawning objects</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.instanceID</span> <strong>(int)</strong><br>
@@ -18914,6 +19485,36 @@ var createFoodSpellSFX = createFoodSpell.soundEffect; // Get the sound effect de
 				</div> <!-- cd-faq__content -->
 			</li>
 		</ul> <!-- cd-faq__group -->
+
+		<ul id="events" class="cd-faq__group">
+			<li id="eventsHeader" class="cd-faq__title title-jsdoc"><h1>Global JS Constants</h1><div id="filterGlobalConstants" contenteditable="true" placeholder="(Filter)" style="float:right; margin-top: -40px; margin-right: 10px; background-color: #fff; padding: 5px; width: 200px"></div></li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventScriptRegistration" id="eventScriptRegistration"><span>UOX_DEBUG_MODE</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>UOX_DEBUG_MODE</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>Used to check if UOX3 is running in debug mode (true) or not (false)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">// Display a debug message if running in debug mode
+if( UOX_DEBUG_MODE )
+{
+	Console.Print( "This is a debug message that only shows up in the UOX3 console if UOX3 is run in debug mode." );
+}
+</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+		</ul>
 
 		<ul id="tips" class="cd-faq__group">
 			<li class="cd-faq__title title-jsdoc"><h1>Tips and Tutorials</h1></li>

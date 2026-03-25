@@ -2428,7 +2428,7 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 			// -1 == script doesn't exist, or returned -1
 			// 0 == script returned false, 0, or nothing - don't execute hard code
 			// 1 == script returned true or 1
-			if( toExecute->OnCharDoubleClick( myChar, pdoll ) == 0 )
+			if( toExecute->OnPaperDoll( myChar, pdoll ) == 0 )
 			{
 				// if it exists and we don't want hard code, return
 				return;
@@ -2440,7 +2440,7 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 	toExecute = JSMapping->GetScript( static_cast<UI16>( 0 ));
 	if( toExecute != nullptr )
 	{
-		if( toExecute->OnCharDoubleClick( myChar, pdoll ) == 0 )
+		if( toExecute->OnPaperDoll( myChar, pdoll ) == 0 )
 		{
 			// if it exists and we don't want hard code, return
 			return;
@@ -2619,7 +2619,7 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 			// -1 == script doesn't exist, or returned -1
 			// 0 == script returned false, 0, or nothing - don't execute hard code
 			// 1 == script returned true or 1
-			if( toExecute->OnCharDoubleClick( mChar, c ) == 0 )	// if it exists and we don't want hard code, return
+			if( toExecute->OnCharDoubleClick( mChar, c, keyboard) == 0 )	// if it exists and we don't want hard code, return
 				return;
 		}
 	}

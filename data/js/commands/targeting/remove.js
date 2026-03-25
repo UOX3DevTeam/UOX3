@@ -54,6 +54,11 @@ function onCallback0( socket, ourObj )
 						// Reduce controlSlotsUsed for owner
 						ourObj.owner.controlSlotsUsed -= ourObj.controlSlots;
 					}
+					var iMulti = ourObj.multi;
+					if( ValidateObject( iMulti ))
+					{
+						iMulti.RemoveVendor( ourObj );
+					}
 					ourObj.Delete();
 				}
 			}
@@ -204,6 +209,7 @@ function onCallback2( socket, ourObj )
 
 				if( charInHouse.aitype == 17 ) // player vendor AI
 				{
+					iMulti.RemoveVendor( charInHouse );
 					charInHouse.Delete();
 				}
 				else
