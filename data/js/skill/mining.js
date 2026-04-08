@@ -129,8 +129,16 @@ function onCallback1( socket, ourObj )
 	{
 		if( mChar.skillsused.mining )
 		{
-			socket.SysMessage( GetDictionaryEntry( 1971, socket.language )); // You are too busy to do that.
-			return;
+			var curTime = GetCurrentClock();
+			if( !mChar.miningStartTime || ( curTime - mChar.miningStartTime ) > 3000 )
+			{
+				mChar.skillsused.mining = false;
+			}
+			else
+			{
+				socket.SysMessage( GetDictionaryEntry( 1971, socket.language )); // You are too busy to do that.
+				return;
+			}
 		}
 
 		// Add a 1 second delay before player can use another skill
@@ -290,6 +298,7 @@ function Mining( socket, mChar, targX, targY )
 	mChar.SoundEffect( 0x0125, true );
 
 	mChar.skillsused.mining = true;
+	mChar.miningStartTime = GetCurrentClock();
 	mChar.miningType = 1; // Regular Mining
 	mChar.StartTimer( 1500, 1, true );
 }
@@ -353,6 +362,7 @@ function GraveDigging( socket, mChar, targX, targY )
 	mChar.SoundEffect( 0x0125, true );
 
 	mChar.skillsused.mining = true;
+	mChar.miningStartTime = GetCurrentClock();
 	mChar.miningType = 2; // Grave Digging
 	mChar.StartTimer( 1500, 0, true );
 }
@@ -392,6 +402,7 @@ function SandMining( socket, mChar, targX, targY )
 	mChar.SoundEffect( value, true );
 
 	mChar.skillsused.mining = true;
+	mChar.miningStartTime = GetCurrentClock();
 	mChar.miningType = 3; // Sand Mining
 	mChar.StartTimer( 1500, 1, true );
 }
@@ -643,7 +654,7 @@ function MakeOre( socket, mChar )
 		if( getSkill >= 850 )
 		{
 			var randomGem = CreateDFNItem( socket, mChar, "digginggems", 1, "ITEM", true );
-			if( Validateobject( randomGem ) && ValidateObject( randomGem.container ))
+			if( ValidateObject( randomGem ) && ValidateObject( randomGem.container ))
 			{
 				mChar.TextMessage( GetDictionaryEntry( 983, socket.language ), false, 0x3b2, 0, mChar.serial ); // You place a gem in your pack.
 			}
