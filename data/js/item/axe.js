@@ -266,8 +266,16 @@ function ChopTree( socket, mChar )
 {
 	if( mChar.skillsused.lumberjacking )
 	{
-		socket.SysMessage( GetDictionaryEntry( 1971, socket.language )); // You are too busy to do that.
-		return;
+		var curTime = GetCurrentClock();
+		if( !mChar.lumberStartTime || ( curTime - mChar.lumberStartTime ) > 3000 )
+		{
+			mChar.skillsused.lumberjacking = false;
+		}
+		else
+		{
+			socket.SysMessage( GetDictionaryEntry( 1971, socket.language )); // You are too busy to do that.
+			return;
+		}
 	}
 	if( !CheckDistance( socket, mChar ))
 	{
@@ -295,6 +303,7 @@ function ChopTree( socket, mChar )
 	socket.clickX = targX;
 	socket.clickY = targY;
 	mChar.skillsused.lumberjacking = true;
+	mChar.lumberStartTime = GetCurrentClock();
 	mChar.StartTimer( 200, 2, true );
 }
 
