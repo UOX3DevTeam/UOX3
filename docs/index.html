@@ -6882,6 +6882,391 @@ function onTooltip( myItem, pSocket )
 			</li>
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#questSystem" id="questSystem"><span>Quest System</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+
+						<p>
+							The <span class="hl">Quest System</span> is a modular, data-driven quest framework written in JavaScript.
+							It supports structured quests, branching quest chains, persistent quest progress, file-backed world state,
+							quest items, login quest offers, and a built-in quest journal.
+						</p>
+
+						<p>
+							Quests can be offered by NPCs, shown on login, and progressed through actions such as item collection,
+							creature kills, delivery objectives, entering training regions, and skill gain.
+						</p>
+
+						<p>The system is implemented through several scripts:</p>
+
+						<ul>
+							<li><span class="hl">js/server/quests/quest_core.js</span> - Core engine for quest validation, start, completion, rewards, save/load, tag updates, and world state</li>
+							<li><span class="hl">js/server/quests/quest_lists.js</span> - Registry of all quest definitions</li>
+							<li><span class="hl">js/server/quests/quest_menu.js</span> - Player quest journal and completed quest pages</li>
+							<li><span class="hl">js/server/quests/quest_conversation_gump.js</span> - NPC quest dialog, accept/decline, resign, and turn-in handling</li>
+							<li><span class="hl">js/server/quests/quest_item.js</span> - Quest item restrictions and tooltip handling</li>
+							<li><span class="hl">js/server/quests/events/quest_event_onkill.js</span> - Kill progress tracking</li>
+							<li><span class="hl">js/server/quests/events/quest_event_onenterregion.js</span> - Region entry support for training quests</li>
+							<li><span class="hl">js/server/quests/events/quest_event_onskillgain.js</span> - Skill gain progress tracking</li>
+							<li><span class="hl">js/server/quests/events/quest_event_onquesttoggle.js</span> - Manual quest item toggle support</li>
+							<li><span class="hl">js/server/quests/quest_login.js</span> - Optional login quest offer</li>
+						</ul>
+
+						<h3>Server Settings</h3>
+
+						<p>Enable quests in the server configuration:</p>
+
+<pre><code>
+UOX3/uox.ini
+QuestSystemEnabled=1
+</code></pre>
+
+						<p>Optional login quest offers:</p>
+
+<pre><code>
+UOX3/uox.ini
+LoginQuestEnabled=1
+</code></pre>
+
+						<h3>Quick Setup</h3>
+
+						<ol>
+							<li><strong>Enable quests</strong> - Set <span class="hl">QuestSystemEnabled=1</span>.</li>
+							<li><strong>Create quests</strong> - Add your quest definitions in <span class="hl">quest_lists.js</span>.</li>
+							<li><strong>Place a quest NPC</strong> - Use a quest giver NPC or add your own.</li>
+							<li><strong>Assign a quest root</strong> - Tag the NPC with <span class="hl">QuestRootID</span> or <span class="hl">QuestID</span>.</li>
+							<li><strong>Players can now accept quests</strong> through the conversation gump.</li>
+						</ol>
+
+						<h3>Login Quest Offer</h3>
+
+						<p>
+							If <span class="hl">LoginQuestEnabled</span> is enabled, a quest can be offered to players automatically on login.
+							This uses player settings to track whether the quest has already been seen and whether login quest prompts are enabled.
+						</p>
+
+						<input type="checkbox" id="spoiler_quest_login">
+						<label for="spoiler_quest_login">Login Quest Details <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+							<ul>
+								<li>Set <span class="hl">autoQuestID</span> in <span class="hl">quest_login.js</span>.</li>
+								<li>
+									Player settings track:
+									<ul>
+										<li><span class="hl">SeenQuests</span></li>
+										<li><span class="hl">ShowLoginQuestOffers</span></li>
+									</ul>
+								</li>
+								<li>The offer is skipped if the player already has or has completed that quest.</li>
+							</ul>
+						</div>
+
+						<h3>Quest Types</h3>
+
+						<ul>
+							<li><strong>collect</strong> - Gather items</li>
+							<li><strong>timecollect</strong> - Gather items within a time limit</li>
+							<li><strong>kill</strong> - Kill specific creatures</li>
+							<li><strong>timekills</strong> - Kill creatures within a time limit</li>
+							<li><strong>multi</strong> - Combination of item and kill objectives</li>
+							<li><strong>delivery</strong> - Deliver an item to another NPC</li>
+							<li><strong>skillgain</strong> - Train a skill in a target region</li>
+						</ul>
+
+						<h3>Quest Parameters</h3>
+
+						<input type="checkbox" id="spoiler_quest_params">
+						<label for="spoiler_quest_params">Available Parameters <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+
+							<div class="settingsDiv">
+								<p><span class="hl">Core Details</span></p>
+								<ul>
+									<li><strong>questID</strong> - Unique quest ID</li>
+									<li><strong>title</strong> - Quest display name</li>
+									<li><strong>description</strong> - Story text shown to player</li>
+									<li><strong>uncomplete</strong> - NPC text while quest is incomplete</li>
+									<li><strong>complete</strong> - NPC text when quest is completed</li>
+									<li><strong>oncomplete</strong> - Optional completion message</li>
+									<li><strong>refuse</strong> - NPC text on decline</li>
+									<li><strong>npcPhrases</strong> - Optional NPC chatter</li>
+									<li><strong>category</strong> - Journal category</li>
+								</ul>
+							</div>
+
+							<div class="settingsDiv">
+								<p><span class="hl">Quest Control</span></p>
+								<ul>
+									<li><strong>oneTimeQuest</strong> - Can only be completed once</li>
+									<li><strong>dailyQuest</strong> - Repeatable daily quest</li>
+									<li><strong>resetDailyTime</strong> - Hours before daily reset</li>
+									<li><strong>timeLimit</strong> - Timer in seconds for timed quests</li>
+									<li><strong>questTurnIn</strong> - Requires player to turn quest in</li>
+									<li><strong>requiresQuestID</strong> - Required completed quest before starting</li>
+								</ul>
+							</div>
+
+							<div class="settingsDiv">
+								<p><span class="hl">Objectives</span></p>
+								<ul>
+									<li><strong>targetItems</strong> - Items to collect</li>
+									<li><strong>targetKills</strong> - Creatures to kill</li>
+									<li><strong>deliveryItem</strong> - Item created for delivery quests</li>
+									<li><strong>targetDelivery</strong> - Delivery NPC data</li>
+									<li><strong>targetSkill</strong> - Skill ID for skillgain quests</li>
+									<li><strong>targetRegion</strong> - Required region for skillgain quests</li>
+									<li><strong>regionName</strong> - Friendly region name shown in UI</li>
+									<li><strong>minPoint</strong> - Minimum accelerated skill gain</li>
+									<li><strong>maxPoint</strong> - Maximum accelerated skill gain</li>
+									<li><strong>maxSkillPoints</strong> - Skill target cap for quest</li>
+								</ul>
+							</div>
+
+							<div class="settingsDiv">
+								<p><span class="hl">Rewards</span></p>
+								<ul>
+									<li><strong>gold</strong></li>
+									<li><strong>item</strong></li>
+									<li><strong>fame</strong></li>
+									<li><strong>karma</strong></li>
+									<li><strong>skill</strong></li>
+									<li><strong>skillpoints</strong> - pooled skill points</li>
+									<li><strong>virtue</strong></li>
+								</ul>
+							</div>
+
+							<div class="settingsDiv">
+								<p><span class="hl">Quest Chains</span></p>
+								<ul>
+									<li><strong>nextQuestID</strong> - Linear next quest</li>
+									<li><strong>nextQuest</strong> - Branching next quest rules</li>
+								</ul>
+							</div>
+
+							<div class="settingsDiv">
+								<p><span class="hl">Completion Effects</span></p>
+								<ul>
+									<li><strong>setTags</strong> - Set or remove persistent player tags</li>
+									<li><strong>setTagDeltas</strong> - Add or subtract persistent player tag values</li>
+									<li><strong>deltaRules</strong> / <strong>deltaRulesDefault</strong> - Clamp rules for tag deltas</li>
+									<li><strong>setTempTags</strong> - Set or remove temporary player tags</li>
+									<li><strong>setTempTagDeltas</strong> - Add or subtract temporary tag values</li>
+									<li><strong>tempDeltaRules</strong> / <strong>tempDeltaRulesDefault</strong> - Clamp rules for temp tag deltas</li>
+									<li><strong>setWorldState</strong> - Set or remove file-backed world state values</li>
+									<li><strong>worldStateDeltas</strong> - Add or subtract file-backed world state values</li>
+									<li><strong>worldStateDeltaRules</strong> / <strong>worldStateDeltaRulesDefault</strong> - Clamp rules for world state deltas</li>
+								</ul>
+							</div>
+
+						</div>
+
+						<h3>Quest Progress and Persistence</h3>
+
+						<p>
+							The quest system stores active progress, archived quests, failed quests, player settings, and world state in file-backed data.
+							This allows quests to persist across logout and server restart.
+						</p>
+
+						<ul>
+							<li><span class="hl">QuestProgress_#.jsdata</span> - Active quest progress</li>
+							<li><span class="hl">QuestArchive_#.jsdata</span> - Completed quest history</li>
+							<li><span class="hl">FailedQuests_#.jsdata</span> - Failed timed quests</li>
+							<li><span class="hl">PlayerSettings_#.jsdata</span> - Journal and login quest settings</li>
+						</ul>
+
+						<h3>Quest Journal</h3>
+
+						<p>The quest journal supports:</p>
+
+						<ul>
+							<li>Active quests view</li>
+							<li>Completed quests view</li>
+							<li>Category filtering</li>
+							<li>Quest details pages</li>
+							<li>Transparency toggle</li>
+							<li>Login quest prompt toggle</li>
+						</ul>
+
+						<h3>Questgiver NPC Example</h3>
+
+<pre><code>
+[mugg]
+{
+GET=basehuman
+NAME=Mugg the Miner
+TITLE=Quest Giver
+SCRIPT=5802 // quest conversation
+CUSTOMINTTAG=QuestRootID 1001
+}
+</code></pre>
+
+						<p>Legacy support using <span class="hl">QuestID</span> still works, but <span class="hl">QuestRootID</span> is preferred for quest chains.</p>
+
+						<h3>Quest Examples</h3>
+
+						<input type="checkbox" id="spoiler_quest_examples">
+						<label for="spoiler_quest_examples">Quest Examples <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+
+<pre><code class="language-javascript">
+{
+	questID:1001,
+	title:"More Ore Please",
+	description:"Bring me some iron ore.",
+	type:"collect",
+	category:"Side Quests",
+
+	uncomplete:"You still need to bring me more ore.",
+	complete:"Good work. This will do nicely.",
+	refuse:"Very well.",
+
+	targetItems:[
+		{ sectionID:"ironore", name:"Iron Ore", amount:20 }
+	],
+
+	rewards:[
+		{ type:"gold", amount:500 },
+		{ type:"fame", amount:10 }
+	],
+
+	oneTimeQuest:true,
+	questTurnIn:1
+}
+</code></pre>
+
+<pre><code class="language-javascript">
+{
+	questID:2000,
+	title:"Bandit Problem",
+	description:"Clear out the bandits on the road.",
+	type:"kill",
+	category:"City Quests",
+
+	uncomplete:"There are still bandits out there.",
+	complete:"The roads are safer now.",
+	refuse:"Then we will find someone else.",
+
+	targetKills:[
+		{ npcID:"bandit", name:"Bandit", amount:5 }
+	],
+
+	rewards:[
+		{ type:"gold", amount:600 },
+		{ type:"virtue", virtueIndex:6, amount:50 }
+	],
+
+	setTagDeltas:{
+		"IronreachGuardStanding":5
+	},
+
+	deltaRules:{
+		"IronreachGuardStanding":{ min:0, max:100 }
+	}
+}
+</code></pre>
+
+<pre><code class="language-javascript">
+{
+	questID:3000,
+	title:"Choose Your Path",
+	description:"Your next task depends on what you have done before.",
+	type:"collect",
+	category:"Main Story Quest",
+
+	targetItems:[
+		{ sectionID:"bandages", name:"Bandages", amount:5 }
+	],
+
+	rewards:[
+		{ type:"gold", amount:250 }
+	],
+
+	nextQuest:[
+		{ questID:3001, cond:{ tagMin:{ tag:"IronreachGuardStanding", value:10 } } },
+		{ questID:3002, cond:{ always:true } }
+	]
+}
+</code></pre>
+
+<pre><code class="language-javascript">
+{
+	questID:4000,
+	title:"Aid the Orchard",
+	description:"Bring apples to help the orchard workers.",
+	type:"collect",
+	category:"World Quests",
+
+	targetItems:[
+		{ sectionID:"0x13e3", name:"Apple", amount:10 }
+	],
+
+	rewards:[
+		{ type:"gold", amount:500 }
+	],
+
+	setWorldState:{
+		"dl_ws_orchard_helped":1
+	},
+
+	worldStateDeltas:{
+		"dl_ws_ironreach_rep":5,
+		"dl_ws_compassion":10
+	},
+
+	worldStateDeltaRulesDefault:{ min:0, max:1000 }
+}
+</code></pre>
+
+<pre><code class="language-javascript">
+{
+	questID:5000,
+	title:"Train the Blade",
+	description:"Practice your swordsmanship in the training yard.",
+	type:"skillgain",
+	category:"Main Story Quest",
+
+	uncomplete:"Keep training.",
+	complete:"Your training is complete.",
+	oncomplete:"You have completed your training.",
+
+	targetSkill:40,
+	targetRegion:12,
+	regionName:"Britain Training Yard",
+	minPoint:1,
+	maxPoint:3,
+	maxSkillPoints:600,
+
+	rewards:[
+		{ type:"gold", amount:300 },
+		{ type:"skillpoints", amount:5 }
+	]
+}
+</code></pre>
+
+						</div>
+
+						<h3>Tips</h3>
+
+						<ul>
+							<li>Prefer <span class="hl">QuestRootID</span> on NPCs so one NPC can handle an entire quest chain.</li>
+							<li>Use <span class="hl">oneTimeQuest</span> for story quests.</li>
+							<li>Use <span class="hl">dailyQuest</span> for repeatable quests.</li>
+							<li>Use <span class="hl">nextQuest</span> for branching quest progression.</li>
+							<li>Use <span class="hl">setTags</span> and <span class="hl">setTagDeltas</span> for character progression and reputation.</li>
+							<li>Use <span class="hl">setWorldState</span> and <span class="hl">worldStateDeltas</span> for persistent world or story state.</li>
+							<li>Delivery quests automatically create the delivery item in the player's backpack.</li>
+							<li>Quest items are protected against dropping, equipping, unstacking, or misuse while marked.</li>
+							<li>Login quest prompts can be enabled or disabled per player through the quest journal options.</li>
+						</ul>
+
+					</div>
+				</div>
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#raceSystem" id="raceSystem"><span>Race System</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
