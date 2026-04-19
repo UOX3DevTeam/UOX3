@@ -2,7 +2,8 @@
 // @ts-check
 // Global Script
 // Supported Events trigger for every character/item, use with care
-const questSystemEnabled = GetServerSetting( "QuestsEnabled" );
+const questSystemEnabled = GetServerSetting( "QuestSystemEnabled" );
+const loginQuestEnabled = GetServerSetting( "LoginQuestEnabled" );
 
 /** @type { ( sockPlayer: Socket, pPlayer: Character ) => boolean } */
 function onLogin( socket, pChar )
@@ -79,12 +80,12 @@ function onLogin( socket, pChar )
 	}
 
 	// Attach OnQuest Toggle
-	if(!pChar.HasScriptTrigger( 5805 ) && questSystemEnabled )
+	if( questSystemEnabled && !pChar.HasScriptTrigger( 5805 ) )
 	{
 		pChar.AddScriptTrigger( 5805 );
 	}
 
-	if( loginQuest && questSystemEnabled )
+	if( questSystemEnabled && loginQuestEnabled )
 	{
 		// Show the login quest gump
 		TriggerEvent( 5813, "LoginQuest", pChar );
@@ -277,12 +278,15 @@ function onUseBandageMacro( pSock, targChar, bandageItem )
 /** @type { ( mChar: Character ) => boolean } */
 function onQuestGump( pUser ) 
 {
-	if( ValidateObject( pUser ) && !pUser.dead && questSystemEnabled )
+	if( questSystemEnabled )
 	{
-		TriggerEvent( 5803, "QuestMenu", pUser );
-	}
-	else
-	{
-		pUser.SysMessage( "Something is wrong, pUser is not valid or is dead." );
+		if( ValidateObject( pUser ) && !pUser.dead )
+		{
+			TriggerEvent( 5803, "QuestMenu", pUser );
+		}
+		else
+		{
+			pUser.SysMessage( "Something is wrong, pUser is not valid or is dead." );
+		}
 	}
 }

@@ -410,14 +410,15 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"DECAYSTAGEHIHRS"s, 387},
 	{"DECAYSTAGEDANGERHRS"s, 388},
 	{"HOUSEDECAY"s, 389},
-	{"QUESTSENABLED"s, 395},
+	{"QUESTSYSTEMENABLED"s, 395},
 	{"SPEEDHACKDETECTION", 400},
 	{"SPEEDHACKMAXDEBT", 401},
 	{"SPEEDHACKMAXDEBTAVG", 402},
 	{"SPEEDHACKMAXCREDIT", 403},
 	{"SPEEDHACKGRACETHRESHOLD", 404},
 	{"SPEEDHACKTHROTTLEPENALTY", 405},
-	{"EVENTMANAGERSYSTEM", 406}
+	{"EVENTMANAGERSYSTEM", 406},
+	{"LOGINQUESTENABLED"s, 407},
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -539,7 +540,8 @@ constexpr auto BIT_HOUSEITEMSDELETEONDECAY			= UI32( 112 );
 constexpr auto BIT_HOUSEGRANDFATHERED				= UI32( 113 );
 constexpr auto BIT_SPEEDHACKDETECTION				= UI32( 119 );
 constexpr auto BIT_EVENTMANAGERSYSTEM				= UI32( 120 );
-constexpr auto BIT_QUESTSENABLED					= UI32( 121 );
+constexpr auto BIT_QUESTSYSTEMENABLED					= UI32( 121 );
+constexpr auto BIT_LOGINQUESTENABLED					= UI32( 122 );
 
 
 // New uox3.ini format lookup
@@ -686,7 +688,8 @@ auto CServerData::ResetDefaults() -> void
 	InternalAccountStatus( true );
 	YoungPlayerSystem( true );
 	KarmaLocking( true );
-	QuestsEnabled( true );
+	QuestSystemEnabled( true );
+	LoginQuestEnabled( false );
 	CombatMaxRange( 10 );
 	CombatMaxSpellRange( 10 );
 	CombatMaxNpcAggroRange( 10 );
@@ -2412,17 +2415,31 @@ auto CServerData::KarmaLocking( bool newVal ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::QuestsEnabled()
+//|	Function	-	CServerData::QuestSystemEnabled()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether the QuestsEnabled system is enabled
+//|	Purpose		-	"Gets/Sets whether the Quests System is enabled"
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::QuestsEnabled() const -> bool
+auto CServerData::QuestSystemEnabled() const -> bool
 {
-	return boolVals.test( BIT_QUESTSENABLED );
+	return boolVals.test( BIT_QUESTSYSTEMENABLED );
 }
-auto CServerData::QuestsEnabled( bool newVal ) -> void
+auto CServerData::QuestSystemEnabled( bool newVal ) -> void
 {
-	boolVals.set( BIT_QUESTSENABLED, newVal );
+	boolVals.set( BIT_QUESTSYSTEMENABLED, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::LoginQuestEnabled()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	"Gets/Sets whether the Quest Gump on login is enabled"
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::LoginQuestEnabled() const -> bool
+{
+	return boolVals.test( BIT_LOGINQUESTENABLED );
+}
+auto CServerData::LoginQuestEnabled( bool newVal ) -> void
+{
+	boolVals.set( BIT_LOGINQUESTENABLED, newVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5807,7 +5824,11 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "ENABLENPCGUILDPREMIUMS=" << ( EnableNPCGuildPremiums() ? 1 : 0 ) << '\n';
 		ofsOutput << "YOUNGPLAYERSYSTEM=" << ( YoungPlayerSystem() ? 1 : 0 ) << '\n';
 		ofsOutput << "KARMALOCKING=" << ( KarmaLocking() ? 1 : 0 ) << '\n';
-		ofsOutput << "QUESTSENABLED=" << ( QuestsEnabled() ? 1 : 0 ) << '\n';
+		ofsOutput << "}" << '\n';
+
+		ofsOutput << '\n' << "[quests]" << '\n' << "{" << '\n';
+		ofsOutput << "QUESTSYSTEMENABLED=" << ( QuestSystemEnabled() ? 1 : 0 ) << '\n';
+		ofsOutput << "LOGINQUESTENABLED=" << ( LoginQuestEnabled() ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[pets and followers]" << '\n' << "{" << '\n';
@@ -7540,8 +7561,8 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 389:	// HOUSEDECAY
 			HouseDecay( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
 			break;
-		case 395:	 // QUESTSENABLED
-			QuestsEnabled( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+		case 395:	 // QUESTSYSTEMENABLED
+			QuestSystemEnabled( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
 			break;  
 		case 400:	// SPEEDHACKDETECTION
 			SpeedHackDetection(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
@@ -7564,6 +7585,8 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 406:	 // EVENTMANAGERSYSTEM
 			EventManagerSystem(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) == 1 ? true : false ));
 			break;
+		case 407:	 // LOGINQUESTENABLED
+			LoginQuestEnabled( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
 		default:
 			rValue = false;
 			break;

@@ -1,3 +1,4 @@
+// This file contains functions to retrieve quest lists and specific quests based on their IDs. as pointed out in readme and documentation.
 function QuestList( questID )
 {
 	var questList = { };

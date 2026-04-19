@@ -12,7 +12,7 @@ function LoginQuest( pChar )
 	var seenQuests = playerSettings["SeenQuests"] || {};
 	var progress = TriggerEvent( 5800, "ReadQuestProgress", pChar );
 	var archived = TriggerEvent( 5800, "ReadArchivedQuests", pChar );
-
+	// Check if the player already has or had the quest
 	var alreadyHas = false;
 	for( var i = 0; i < progress.length; i++ )
 	{
@@ -22,7 +22,7 @@ function LoginQuest( pChar )
 			break;
 		}
 	}
-
+	// Check archived quests as well
 	for( var i = 0; i < archived.length; i++ )
 	{
 		if( parseInt( archived[i], 10 ) == autoQuestID )

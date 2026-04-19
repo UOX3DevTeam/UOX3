@@ -1220,7 +1220,7 @@ std::string cScript::OnNameRequest( CBaseObject *myObj, CChar *nameRequester, UI
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::onQuestToggle()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Triggers for character with event attached and he click the contest
+//|	Purpose		-	Triggers for character with event attached and player click's the context
 //|					option toggle quest item.
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::onQuestToggle( CChar* toggler, CItem *iUsing )

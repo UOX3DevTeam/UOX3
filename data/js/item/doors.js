@@ -500,6 +500,7 @@ function FindKeyInPack( pUser, pPack, iUsed )
 	return false;
 }
 
+// Checks if the player is allowed to open the door or gate.
 function DoorGateAllowsOpen( pUser, iDoor )
 {
 	var socket = pUser.socket;
@@ -507,7 +508,7 @@ function DoorGateAllowsOpen( pUser, iDoor )
 	var reqQuestID = parseInt( iDoor.GetTag( "reqQuestID" ), 10 );
 	if( !isNaN( reqQuestID ) && reqQuestID > 0 )
 	{
-		var archived = TriggerEvent( 5800, "ReadArchivedQuests", pUser );// from your quest system
+		var archived = TriggerEvent( 5800, "ReadArchivedQuests", pUser );
 		if( !archived || archived.indexOf( reqQuestID ) == -1 )
 		{
 			SendDoorGateMsg( socket, iDoor, "You must complete the required quest first." );
@@ -534,6 +535,7 @@ function DoorGateAllowsOpen( pUser, iDoor )
 	return ( ( !isNaN( reqQuestID ) && reqQuestID > 0 ) || reqSection ) ? true : false;
 }
 
+// Sends the player a door or gate message.
 function SendDoorGateMsg( socket, iDoor, fallbackMsg )
 {
 	if( !socket )
@@ -546,6 +548,7 @@ function SendDoorGateMsg( socket, iDoor, fallbackMsg )
 		socket.SysMessage( fallbackMsg );
 }
 
+// Checks if the users container has enough of an item by sectionID.
 function HasSectionInPack( cont, sectionID, needAmt )
 {
 	if( !cont )
