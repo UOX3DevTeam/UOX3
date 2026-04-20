@@ -6935,6 +6935,8 @@ function onTooltip( myItem, pSocket )
 							quest details, and journal options such as transparency and login quest prompts.
 						</p>
 
+						<hr>
+
 						<h3>Quick Start</h3>
 
 						<p>
@@ -7043,6 +7045,8 @@ CUSTOMINTTAG=QuestID 1
 							For quest chains, <span class="hl">QuestRootID</span> is preferred over <span class="hl">QuestID</span>,
 							because one NPC can then manage the full chain instead of only one single quest.
 						</p>
+
+						<hr>
 
 						<h3>Quest Types, Fields, Objectives and Rewards</h3>
 
@@ -7185,6 +7189,26 @@ rewards: [
 </code></pre>
 						</div>
 
+						<h4>Quest Items</h4>
+
+						<p>
+							Quest items are protected by the system so players cannot abuse them.
+						</p>
+
+						<ul>
+							<li>They cannot be dropped on the ground</li>
+							<li>They cannot be partially unstacked</li>
+							<li>They cannot be equipped normally</li>
+							<li>They cannot be used like normal items</li>
+							<li>They show a special tooltip</li>
+						</ul>
+
+						<p>
+							This is especially important for collect and delivery quests.
+						</p>
+
+						<hr>
+
 						<h3>Advanced Features</h3>
 
 						<p>
@@ -7298,24 +7322,6 @@ worldStateDeltas: {
 
 						<p>
 							The system remembers whether the player has already seen or completed that login quest.
-						</p>
-
-						<h3>Quest Items</h3>
-
-						<p>
-							Quest items are protected by the system so players cannot abuse them.
-						</p>
-
-						<ul>
-							<li>They cannot be dropped on the ground</li>
-							<li>They cannot be partially unstacked</li>
-							<li>They cannot be equipped normally</li>
-							<li>They cannot be used like normal items</li>
-							<li>They show a special tooltip</li>
-						</ul>
-
-						<p>
-							This is especially important for collect and delivery quests.
 						</p>
 
 						<h3>Example Quest Entries</h3>
