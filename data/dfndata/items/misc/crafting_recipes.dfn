@@ -1,3 +1,17 @@
+[recipe_book]
+{
+get=base_item
+name=recipe book
+id=0xA266
+weight=100
+pileable=0
+amount=1
+decay=0
+script=5069 // recipe_book.js
+custominttag=isRecipeBook 1
+origin=tol
+}
+
 [base_recipe_scroll]
 { 
 get=base_item
@@ -16,4 +30,6 @@ origin=ml
 get=base_recipe_scroll
 custominttag=recipeID 18
 customstringtag=recipeName skullcap
+custominttag=skillID 34// tailoring
+customstringtag=expansion UO// optional, shows in Expansion column
 }
