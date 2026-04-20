@@ -6911,31 +6911,7 @@ function onTooltip( myItem, pSocket )
 							branching outcomes, tag changes, world-state tracking, skill point rewards, and automatic quest offers on login.
 						</p>
 
-						<hr>
-
-						<h3>Server Settings</h3>
-
-						<p>Enable the quest system in <span class="hl">uox.ini</span>:</p>
-
-<pre><code>
-[quests]
-{
-QuestSystemEnabled=1
-}
-</code></pre>
-
-						<p>Optional: enable automatic quest offers on login:</p>
-
-<pre><code>
-[quests]
-{
-LoginQuestEnabled=1
-}
-</code></pre>
-
-						<hr>
-
-						<h3>How the System Is Organized</h3>
+						<h3>System Overview</h3>
 
 						<p>
 							The quest system is split into several scripts, each with a different job:
@@ -6954,9 +6930,16 @@ LoginQuestEnabled=1
 							<li><span class="hl">quest_event_onquesttoggle.js</span> - Lets players toggle item quest status manually</li>
 						</ul>
 
-						<hr>
+						<p>
+							Players can also open a built-in quest journal that shows active quests, completed quests, categories,
+							quest details, and journal options such as transparency and login quest prompts.
+						</p>
 
 						<h3>Quick Start</h3>
+
+						<p>
+							If you just want to make your first working quest, do this:
+						</p>
 
 						<ol>
 							<li>Enable the quest system in <span class="hl">uox.ini</span></li>
@@ -6966,7 +6949,20 @@ LoginQuestEnabled=1
 							<li>Talk to the NPC in game and test the quest</li>
 						</ol>
 
-						<hr>
+						<p>Use this <span class="hl">uox.ini</span> example:</p>
+
+<pre><code>
+[quests]
+{
+QuestSystemEnabled=1
+LoginQuestEnabled=1
+}
+</code></pre>
+
+						<p>
+							<span class="hl">LoginQuestEnabled</span> is optional. Leave it enabled only if you want the system
+							to automatically offer a quest when a player logs in.
+						</p>
 
 						<h3>Creating a Quest</h3>
 
@@ -6979,6 +6975,10 @@ LoginQuestEnabled=1
 							Each quest is added inside the <span class="hl">questList</span> object using a unique string ID.
 						</p>
 
+						<input type="checkbox" id="spoiler_quest_create">
+						<label for="spoiler_quest_create">Show basic QuestList example <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
 <pre><code class="language-javascript">
 function QuestList( questID )
 {
@@ -7011,12 +7011,11 @@ function QuestList( questID )
 	return questList[questID] || null;
 }
 </code></pre>
+						</div>
 
 						<p>
 							The quest key, such as <span class="hl">"1"</span>, is the quest ID. Every quest ID must be unique.
 						</p>
-
-						<hr>
 
 						<h3>Creating a Quest NPC</h3>
 
@@ -7045,62 +7044,78 @@ CUSTOMINTTAG=QuestID 1
 							because one NPC can then manage the full chain instead of only one single quest.
 						</p>
 
-						<hr>
+						<h3>Quest Types, Fields, Objectives and Rewards</h3>
 
-						<h3>Quest Types</h3>
+						<p>
+							These are the parts you will use most often when building quests.
+						</p>
 
-						<ul>
-							<li><strong>collect</strong> - gather items</li>
-							<li><strong>kill</strong> - kill creatures</li>
-							<li><strong>multi</strong> - combine item collection and kill targets in one quest</li>
-							<li><strong>delivery</strong> - deliver an item to another NPC</li>
-							<li><strong>skillgain</strong> - train a skill to a target value</li>
-							<li><strong>timecollect</strong> - collect items within a time limit</li>
-							<li><strong>timekills</strong> - kill targets within a time limit</li>
-						</ul>
+						<input type="checkbox" id="spoiler_quest_types">
+						<label for="spoiler_quest_types">Show quest types <i class="fas fa-angle-down"></i></label>
 
-						<hr>
+						<div class="spoiler">
+							<ul>
+								<li><strong>collect</strong> - gather items</li>
+								<li><strong>kill</strong> - kill creatures</li>
+								<li><strong>multi</strong> - combine item collection and kill targets in one quest</li>
+								<li><strong>delivery</strong> - deliver an item to another NPC</li>
+								<li><strong>skillgain</strong> - train a skill to a target value</li>
+								<li><strong>timecollect</strong> - collect items within a time limit</li>
+								<li><strong>timekills</strong> - kill targets within a time limit</li>
+							</ul>
+						</div>
 
-						<h3>Common Quest Fields</h3>
+						<input type="checkbox" id="spoiler_quest_fields">
+						<label for="spoiler_quest_fields">Show common quest fields <i class="fas fa-angle-down"></i></label>
 
-						<ul>
-							<li><span class="hl">title</span> - quest name shown to the player</li>
-							<li><span class="hl">description</span> - main quest text</li>
-							<li><span class="hl">uncomplete</span> - NPC text while the quest is still in progress</li>
-							<li><span class="hl">complete</span> - NPC text when the quest is ready to turn in</li>
-							<li><span class="hl">refuse</span> - NPC text if the player declines the quest</li>
-							<li><span class="hl">npcPhrases</span> - optional flavor lines</li>
-							<li><span class="hl">category</span> - used by the quest journal</li>
-							<li><span class="hl">oneTimeQuest</span> - quest can only be completed once</li>
-							<li><span class="hl">dailyQuest</span> - quest can repeat on a timer</li>
-							<li><span class="hl">resetDailyTime</span> - daily quest reset time in hours</li>
-							<li><span class="hl">questTurnIn</span> - if 1, player must return to turn in the quest; if 0, it auto-completes</li>
-							<li><span class="hl">requiresQuestID</span> - requires another quest to be completed first</li>
-							<li><span class="hl">timeLimit</span> - timer in seconds for timed quests</li>
-						</ul>
+						<div class="spoiler">
+							<ul>
+								<li><span class="hl">title</span> - quest name shown to the player</li>
+								<li><span class="hl">description</span> - main quest text</li>
+								<li><span class="hl">uncomplete</span> - NPC text while the quest is still in progress</li>
+								<li><span class="hl">complete</span> - NPC text when the quest is ready to turn in</li>
+								<li><span class="hl">refuse</span> - NPC text if the player declines the quest</li>
+								<li><span class="hl">npcPhrases</span> - optional flavor lines</li>
+								<li><span class="hl">category</span> - used by the quest journal</li>
+								<li><span class="hl">oneTimeQuest</span> - quest can only be completed once</li>
+								<li><span class="hl">dailyQuest</span> - quest can repeat on a timer</li>
+								<li><span class="hl">resetDailyTime</span> - daily quest reset time in hours</li>
+								<li><span class="hl">questTurnIn</span> - if 1, player must return to turn in the quest; if 0, it auto-completes</li>
+								<li><span class="hl">requiresQuestID</span> - requires another quest to be completed first</li>
+								<li><span class="hl">timeLimit</span> - timer in seconds for timed quests</li>
+							</ul>
+						</div>
 
-						<hr>
+						<p>
+							Objectives depend on the quest type you choose.
+						</p>
 
-						<h3>Objectives</h3>
+						<input type="checkbox" id="spoiler_collect_objective">
+						<label for="spoiler_collect_objective">Show collect quest example <i class="fas fa-angle-down"></i></label>
 
-						<h4>Collect Quests</h4>
-
+						<div class="spoiler">
 <pre><code class="language-javascript">
 targetItems: [
 	{ sectionID: "ore", amount: 5, name: "Iron Ore" }
 ]
 </code></pre>
+						</div>
 
-						<h4>Kill Quests</h4>
+						<input type="checkbox" id="spoiler_kill_objective">
+						<label for="spoiler_kill_objective">Show kill quest example <i class="fas fa-angle-down"></i></label>
 
+						<div class="spoiler">
 <pre><code class="language-javascript">
 targetKills: [
 	{ npcID: "rat", amount: 10, name: "Rat" }
 ]
 </code></pre>
+						</div>
 
-						<h4>Multi Quests</h4>
+						<input type="checkbox" id="spoiler_multi_objective">
+						<label for="spoiler_multi_objective">Show multi quest example <i class="fas fa-angle-down"></i></label>
 
+						<div class="spoiler">
 <pre><code class="language-javascript">
 targetItems: [
 	{ sectionID: "apple", amount: 5, name: "Apple" }
@@ -7109,9 +7124,12 @@ targetKills: [
 	{ npcID: "dog", amount: 2, name: "Dog" }
 ]
 </code></pre>
+						</div>
 
-						<h4>Delivery Quests</h4>
+						<input type="checkbox" id="spoiler_delivery_objective">
+						<label for="spoiler_delivery_objective">Show delivery quest example <i class="fas fa-angle-down"></i></label>
 
+						<div class="spoiler">
 <pre><code class="language-javascript">
 deliveryItem: {
 	sectionID: "0x0E21",
@@ -7124,9 +7142,12 @@ targetDelivery: {
 	location: { x: 1068, y: 1608, z: 0, world: 0 }
 }
 </code></pre>
+						</div>
 
-						<h4>Skillgain Quests</h4>
+						<input type="checkbox" id="spoiler_skillgain_objective">
+						<label for="spoiler_skillgain_objective">Show skillgain quest example <i class="fas fa-angle-down"></i></label>
 
+						<div class="spoiler">
 <pre><code class="language-javascript">
 targetSkill: 45,
 targetRegion: 194,
@@ -7135,24 +7156,26 @@ maxSkillPoints: 500,
 minPoint: 2,
 maxPoint: 5
 </code></pre>
+						</div>
 
-						<hr>
+						<p>
+							Rewards are also built from fields in the quest entry.
+						</p>
 
-						<h3>Rewards</h3>
+						<input type="checkbox" id="spoiler_reward_types">
+						<label for="spoiler_reward_types">Show reward types and example <i class="fas fa-angle-down"></i></label>
 
-						<p>Supported reward types include:</p>
-
-						<ul>
-							<li><span class="hl">gold</span></li>
-							<li><span class="hl">item</span></li>
-							<li><span class="hl">fame</span></li>
-							<li><span class="hl">karma</span></li>
-							<li><span class="hl">skill</span></li>
-							<li><span class="hl">skillpoints</span></li>
-							<li><span class="hl">virtue</span></li>
-						</ul>
-
-						<p>Example:</p>
+						<div class="spoiler">
+							<p>Supported reward types include:</p>
+							<ul>
+								<li><span class="hl">gold</span></li>
+								<li><span class="hl">item</span></li>
+								<li><span class="hl">fame</span></li>
+								<li><span class="hl">karma</span></li>
+								<li><span class="hl">skill</span></li>
+								<li><span class="hl">skillpoints</span></li>
+								<li><span class="hl">virtue</span></li>
+							</ul>
 
 <pre><code class="language-javascript">
 rewards: [
@@ -7160,22 +7183,31 @@ rewards: [
 	{ type: "item", sectionID: "minerssatchel", amount: 1, name: "Miner's Satchel" }
 ]
 </code></pre>
+						</div>
 
-						<hr>
+						<h3>Advanced Features</h3>
 
-						<h3>Quest Chains</h3>
+						<p>
+							Once you are comfortable making normal quests, these features let you build more advanced systems.
+						</p>
+
+						<h4>Quest Chains</h4>
 
 						<p>
 							You can make quests unlock other quests.
 						</p>
 
-						<h4>Simple Chain</h4>
+						<input type="checkbox" id="spoiler_quest_chains">
+						<label for="spoiler_quest_chains">Show quest chain examples <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+							<p><strong>Simple chain</strong></p>
 
 <pre><code class="language-javascript">
 nextQuestID: 2
 </code></pre>
 
-						<h4>Branching Chain</h4>
+							<p><strong>Branching chain</strong></p>
 
 <pre><code class="language-javascript">
 nextQuest: [
@@ -7184,21 +7216,24 @@ nextQuest: [
 	{ questID: 1203, cond: { always: true } }
 ]
 </code></pre>
+						</div>
 
 						<p>
 							This lets you branch quests based on completed quests, player tags, active quests, or world state.
 						</p>
 
-						<hr>
-
-						<h3>Player Tags and World State</h3>
+						<h4>Player Tags and World State</h4>
 
 						<p>
 							The system can update player tags and world-state values when a quest completes.
 							This is useful for faction systems, reputation systems, story progression, unlocks, and branching quest logic.
 						</p>
 
-						<h4>Set Tags</h4>
+						<input type="checkbox" id="spoiler_tags_worldstate">
+						<label for="spoiler_tags_worldstate">Show tag and world-state examples <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+							<p><strong>Set tags</strong></p>
 
 <pre><code class="language-javascript">
 setTags: {
@@ -7206,7 +7241,7 @@ setTags: {
 }
 </code></pre>
 
-						<h4>Tag Deltas</h4>
+							<p><strong>Tag deltas</strong></p>
 
 <pre><code class="language-javascript">
 setTagDeltas: {
@@ -7214,7 +7249,7 @@ setTagDeltas: {
 }
 </code></pre>
 
-						<h4>World State</h4>
+							<p><strong>World state</strong></p>
 
 <pre><code class="language-javascript">
 setWorldState: {
@@ -7224,8 +7259,46 @@ worldStateDeltas: {
 	"dl_ws_ironreach_rep": 5
 }
 </code></pre>
+						</div>
 
-						<hr>
+						<h4>Timed Quests</h4>
+
+						<p>
+							Timed quests use <span class="hl">timeLimit</span>. When time runs out, the quest fails automatically.
+						</p>
+
+						<ul>
+							<li>The quest is removed from progress</li>
+							<li>The failure is logged</li>
+							<li>Any marked quest items are cleaned up</li>
+						</ul>
+
+						<h4>Skill Training Quests</h4>
+
+						<p>
+							Skillgain quests are special. They can boost skill gain while the player is training the correct skill
+							in the correct region.
+						</p>
+
+						<p>
+							This is useful for starter training quests, profession training areas, or guided progression systems.
+						</p>
+
+						<h4>Login Quest Offers</h4>
+
+						<p>
+							If enabled, the system can automatically offer a quest to players when they log in.
+						</p>
+
+						<ul>
+							<li>Good for starter quests</li>
+							<li>Good for story introductions</li>
+							<li>Good for important seasonal or shard-wide quests</li>
+						</ul>
+
+						<p>
+							The system remembers whether the player has already seen or completed that login quest.
+						</p>
 
 						<h3>Quest Items</h3>
 
@@ -7245,87 +7318,10 @@ worldStateDeltas: {
 							This is especially important for collect and delivery quests.
 						</p>
 
-						<hr>
-
-						<h3>Timed Quests</h3>
-
-						<p>
-							Timed quests use <span class="hl">timeLimit</span>. When time runs out, the quest fails automatically.
-						</p>
-
-						<ul>
-							<li>The quest is removed from progress</li>
-							<li>The failure is logged</li>
-							<li>Any marked quest items are cleaned up</li>
-						</ul>
-
-						<hr>
-
-						<h3>Skill Training Quests</h3>
-
-						<p>
-							Skillgain quests are special. They can boost skill gain while the player is training the correct skill
-							in the correct region.
-						</p>
-
-						<p>
-							This is useful for starter training quests, profession training areas, or guided progression systems.
-						</p>
-
-						<hr>
-
-						<h3>Quest Journal</h3>
-
-						<p>
-							Players can open a quest journal that shows:
-						</p>
-
-						<ul>
-							<li>Active quests</li>
-							<li>Completed quests</li>
-							<li>Quest categories</li>
-							<li>Detailed quest info</li>
-							<li>Quest journal options</li>
-						</ul>
-
-						<p>
-							The journal also supports:
-						</p>
-
-						<ul>
-							<li>Category filtering</li>
-							<li>Transparent background toggle</li>
-							<li>Login quest prompt toggle</li>
-						</ul>
-
-						<hr>
-
-						<h3>Login Quest Offers</h3>
-
-						<p>
-							If enabled, the system can automatically offer a quest to players when they log in.
-						</p>
-
-						<p>
-							This is good for:
-						</p>
-
-						<ul>
-							<li>Starter quests</li>
-							<li>Story introductions</li>
-							<li>Important seasonal or shard-wide quests</li>
-						</ul>
-
-						<p>
-							The system remembers whether the player has already seen or completed that login quest.
-						</p>
-
-						<hr>
-
 						<h3>Example Quest Entries</h3>
 
 						<input type="checkbox" id="spoiler_quest_examples">
-						<label for="spoiler_quest_examples">Show Quest Examples <i class="fas fa-angle-down"></i></label>
+						<label for="spoiler_quest_examples">Show full quest examples <i class="fas fa-angle-down"></i></label>
 
 						<div class="spoiler">
 
@@ -7419,8 +7415,6 @@ worldStateDeltas: {
 </code></pre>
 
 						</div>
-
-						<hr>
 
 						<h3>Tips</h3>
 
