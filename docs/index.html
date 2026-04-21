@@ -2039,6 +2039,23 @@ packitem=0x0f8d,30
 						</div>
 					</div>
 
+					<input type="checkbox" id="spoiler_ini_quests">
+					<label for="spoiler_ini_quests">[quests] <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<div class="settingsDiv">
+							<p>
+								<span class="hl">QUESTSYSTEMENABLED</span><strong>=1</strong><br>
+								Enables or disables the JavaScript quest system. If set to 1, players can receive and progress quests defined in <span class="hl">js/server/quests/quest_lists.js</span>. If set to 0, the quest system is disabled.
+							</p>
+						</div>
+						<div class="settingsDiv">
+							<p>
+								<span class="hl">LOGINQUESTENABLED</span><strong>=1</strong><br>
+								Enables or disables automatic quest offers on login. If enabled, the system can offer a configured quest to players when they log in, as long as they have not already accepted or completed it.
+							</p>
+						</div>
+					</div>
+
 					<input type="checkbox" id="spoiler_ini_worldlight">
 					<label for="spoiler_ini_worldlight">[worldlight] <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -6992,7 +7009,7 @@ function QuestList( questID )
 	var questList = {
 		"1": {
 			title: "More Ore Please",
-			description: "Bring me some iron ore.",
+			description: "Bring me some small iron ore.",
 			uncomplete: "You still need more ore.",
 			complete: "Good work!",
 			refuse: "Maybe next time.",
@@ -7037,6 +7054,19 @@ GET=basehuman
 NAME=Mugg the Miner
 TITLE=Quest Giver
 ID=0x0190
+EQUIPITEM=listobject13
+HAIRCOLOR=15
+EQUIPITEM=listobject14
+COLORMATCHHAIR
+EQUIPITEM=listobject20
+COLORLIST=11
+EQUIPITEM=listobject21
+COLORLIST=11
+EQUIPITEM=listobject22
+COLORLIST=11
+EQUIPITEM=listobject23
+EQUIPITEM=listobject25
+COLORLIST=11
 SCRIPT=5802
 CUSTOMINTTAG=QuestID 1
 }
