@@ -572,6 +572,23 @@ function onTimer( mChar, timerID )
 	}
 }
 
+function GetOreSizeName( oreId )
+{
+	switch( oreId )
+	{
+		case 0x19B7:
+			return "small";
+		case 0x19B8:
+			return "medium";
+		case 0x19B9:
+			return "large";
+		case 0x19BA:
+			return "medium_small";
+		default:
+			return "";
+	}
+}
+
 function MakeOre( socket, mChar )
 {
 	var mRegion = mChar.region;
@@ -615,7 +632,12 @@ function MakeOre( socket, mChar )
 		sumChance += orePref[1]; // default chance of finding ore type;
 		if( sumChance > findOreChance )
 		{
-			if( getSkill >= oreData[2] ) // oreData[2] is minSkill to mine ore )
+			var oreColor = oreData[1];
+			var minSkill = oreData[2];
+			var ingotName = oreData[3];
+			var scriptID = oreData[6];
+
+			if( getSkill >= minSkill ) // oreData[2] is minSkill to mine ore )
 			{
 				var amtToMake = 1;
 				if( mRegion.chanceBigOre >= RandomNumber( 1, 100 ))
@@ -625,22 +647,33 @@ function MakeOre( socket, mChar )
 
 				// Randomize the size of ore oreData
 				var oreId = RandomNumber( 0x19B7, 0x19BA );
+				var oreSizeName = GetOreSizeName( oreId );
+				var oreColorName = ingotName.toLowerCase();
+				var oreName = oreColorName + " ore";
 
-				var oreName = oreData[3].toLowerCase() + " ore"; // oreData[3] is name of actual ore dug up & ingot created from it
-				var oreItem = CreateBlankItem( socket, mChar, amtToMake, oreName, oreId, oreData[1], "ITEM", true ); // oreData[1] is oreColor
+				var oreItem = CreateBlankItem( socket, mChar, amtToMake, oreName, oreId, oreColor, "ITEM", true );
 				if( ValidateObject( oreItem ))
 				{
 					oreItem.name = oreName;
-					oreItem.sectionID = "ore";
-					if( oreData[6] != 0 )
+					if( oreSizeName != "" )
 					{
-						oreItem.AddScriptTrigger( oreData[6] ); // oreData[6] is scriptID
+						oreItem.sectionID = oreSizeName + "_" + oreColorName + "_ore";
 					}
+					else
+					{
+						oreItem.sectionID = "ore";
+					}
+
+					if( scriptID != 0 )
+					{
+						oreItem.AddScriptTrigger( scriptID ); // oreData[6] is scriptID
+					}
+
 					if( oreItem.container != null )
 					{
 						var dictmsg = GetDictionaryEntry( 982, socket.language ); // You place some %s in your pack
 						//socket.SysMessage( dictmsg.replace( /%s/gi, oreName ));
-						mChar.TextMessage( dictmsg.replace( /%s/gi, oreName ), false, 0x3b2, 0, mChar.serial ); // You place some %s in your pack
+						mChar.TextMessage( dictmsg.replace( /%s/gi, oreName ), false, 0x3b2, 0, mChar.serial );// You place some %s in your pack
 					}
 				}
 				oreFound = true;
