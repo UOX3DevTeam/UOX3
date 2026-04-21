@@ -49,6 +49,10 @@ function QuestMenu( pUser )
 
 	var questsPerPage = 10; // Quests displayed per page
 	var totalPages = Math.ceil( filteredQuests.length / questsPerPage );
+	if( totalPages == 0 )
+	{
+		totalPages = 1;
+	}
 
 	var mainQuestMenu = new Gump();
 	mainQuestMenu.AddPage( 0 );
@@ -74,6 +78,11 @@ function QuestMenu( pUser )
 	for( var page = 0; page < totalPages; page++ )
 	{
 		mainQuestMenu.AddPage( page + 1 );
+
+		if( filteredQuests.length == 0 && page == 0 )
+		{
+			mainQuestMenu.AddText( 50, 250, 0, "No quests match the selected category." );
+		}
 
 		var startIndex = page * questsPerPage;
 		var endIndex = Math.min( startIndex + questsPerPage, filteredQuests.length );
@@ -172,37 +181,31 @@ function QuestMenu( pUser )
 	mainQuestMenu.AddText(420, 130, titleHue, "Options Menu" );
 	mainQuestMenu.AddBackground(365, 150, 280, 22, 9350);
 	mainQuestMenu.AddText( 370, 150, 0, "Misc Options" );
-	// Transparency toggle
-	var transparencyToggleText = useTransparentBackground ? "Disable Transparency" : "Enable Transparency";
-	//mainQuestMenu.AddButton( 370, 280, 1141, 1143, 1, 0, 2001 ); // Toggle transparency
-	mainQuestMenu.AddCheckbox(370, 180, 210, 0, 2001); //CheckBox
-	mainQuestMenu.AddText(400, 180, wordHue, transparencyToggleText);
-	mainQuestMenu.AddBackground(365, 205, 280, 22, 9350);
-	mainQuestMenu.AddText(370, 205, 0, "Sort by Quest Category");
-	// Add category selection buttons
-	for( var l = 0; l < categories.length; l++ ) 
+
+	// Transparency option
+	mainQuestMenu.AddCheckbox( 370, 180, 210, useTransparentBackground ? 1 : 0, 2001 );
+	mainQuestMenu.AddText( 400, 180, wordHue, "Use Transparent Background" );
+
+	mainQuestMenu.AddBackground( 365, 205, 280, 22, 9350 );
+	mainQuestMenu.AddText( 370, 205, 0, "Sort by Quest Category" );
+
+	// Category selection buttons
+	for( var l = 0; l < categories.length; l++ )
 	{
-		var categoryStartY = 230; // Adjusted start position for categories
-		var yPosition = categoryStartY + l * 25; // Spacing between categories
-		var isSelected = categories[l] == currentCategory;
-		mainQuestMenu.AddCheckbox( 370, yPosition, 210, 0, l + 1000 ); //CheckBox
-		//mainQuestMenu.AddButton( 370, yPosition, isSelected ? 1141 : 1143, isSelected ? 1141 : 1143, 1, 0, i + 1000 ); // Category buttons
+		var categoryStartY = 230;
+		var yPosition = categoryStartY + l * 25;
+		var isSelected = ( categories[l] == currentCategory );
+
+		mainQuestMenu.AddButton( 370, yPosition, isSelected ? 211 : 210, isSelected ? 211 : 210, 1, 0, l + 1000 );
 		mainQuestMenu.AddText( 400, yPosition, isSelected ? 500 : wordHue, categories[l] );
 	}
 
-	var showLoginQuests = playerSettings["ShowLoginQuestOffers"] != false;
-	var loginQuestToggleText = showLoginQuests ? "Disable Quest Prompt" : "Enable Quest Prompt";
-	mainQuestMenu.AddCheckbox( 370, 450, 210, 0, 2002 ); // CheckBox for login quest toggle
-	mainQuestMenu.AddText( 400, 450, wordHue, loginQuestToggleText );
+	var showLoginQuests = ( playerSettings["ShowLoginQuestOffers"] != false );
+	mainQuestMenu.AddCheckbox( 370, 450, 210, showLoginQuests ? 1 : 0, 2002 );
+	mainQuestMenu.AddText( 400, 450, wordHue, "Show Login Quest Prompts" );
 
 	mainQuestMenu.AddButton( 380, 480, 238, 240, 1, 0, 2000 );//apple button
 	mainQuestMenu.AddButton( 550, 480, 247, 249, 1, 0, 1 );//okay button
-
-	// Add a fallback for when no quests are found
-	if( filteredQuests.length == 0 )
-	{
-		mainQuestMenu.AddText( 50, 250, 0, "No quests match the selected category." );
-	}
 
 	mainQuestMenu.Send( socket );
 	mainQuestMenu.Free();
@@ -236,6 +239,10 @@ function CompletedQuestsMenu( pUser )
 
 	var questsPerPage = 10; // Number of quests per page
 	var totalPages = Math.ceil( uniqueQuests.length / questsPerPage );
+	if( totalPages == 0 )
+	{
+		totalPages = 1;
+	}
 
 	var completedQuestMenu = new Gump();
 	completedQuestMenu.AddBackground( 30, 120, 296, 447, 1579 ); // Main background
@@ -257,6 +264,11 @@ function CompletedQuestsMenu( pUser )
 	for( var page = 0; page < totalPages; page++ ) 
 	{
 		completedQuestMenu.AddPage( page + 1 );
+
+		if( uniqueQuests.length == 0 && page == 0 )
+		{
+			completedQuestMenu.AddText( 50, 250, 0, "No completed quests found." );
+		}
 
 		var startIndex = page * questsPerPage;
 		var endIndex = Math.min( startIndex + questsPerPage, uniqueQuests.length );
@@ -336,74 +348,75 @@ function onGumpPress( pSock, pButton, gumpData )
 	var gumpID = 5823 + 0xffff;
 
 	// Handle button presses for navigating between active and completed quests
-	if( pButton == 1 ) 
+	if( pButton == 1 )
 	{
 		pSock.CloseGump( gumpID, 0 );
 		QuestMenu( pUser );
+		return;
 	}
 	else if( pButton == 20 )
 	{
 		pSock.CloseGump( gumpID, 0 );
 		QuestMenu( pUser );
-	} 
+		return;
+	}
 	else if( pButton == 21 )
 	{
 		pSock.CloseGump( gumpID, 0 );
 		CompletedQuestsMenu( pUser );
+		return;
 	}
-	if( pButton == 2000 ) 
+
+	if( pButton >= 1000 && pButton <= 1006 )
 	{
-		var OtherButton = gumpData.getButton( 0 );
-		// Handle category selection
-		if ( OtherButton >= 1000 && OtherButton <= 1006 ) 
-		{ // Assuming 1000-1003 are category buttons
-			var categories = ["All Quests", "Main Story Quest", "Side Quests", "Event Quests", "Daily Quests", "World Quests", "City Quests"];
-			var selectedCategory = categories[OtherButton - 1000]; // Map button ID to category
+		var categories = ["All Quests", "Main Story Quest", "Side Quests", "Event Quests", "Daily Quests", "World Quests", "City Quests"];
+		var playerSettings = TriggerEvent( 5800, "ReadPlayerSettings", pUser ) || {};
 
-			// Load existing settings
-			var playerSettings = TriggerEvent( 5800, "ReadPlayerSettings", pUser ) || {};
+		playerSettings["QuestLogCategory"] = categories[pButton - 1000];
+		TriggerEvent( 5800, "SavePlayerSettings", pUser, playerSettings );
 
-			// Update the "QuestLogCategory" setting
-			playerSettings["QuestLogCategory"] = selectedCategory;
+		pSock.CloseGump( gumpID, 0 );
+		QuestMenu( pUser );
+		return;
+	}
 
-			// Save the updated settings object
-			TriggerEvent( 5800, "SavePlayerSettings", pUser, playerSettings );
+	// Apply button
+	if( pButton == 2000 )
+	{
+		var categories = ["All Quests", "Main Story Quest", "Side Quests", "Event Quests", "Daily Quests", "World Quests", "City Quests"];
+		var playerSettings = TriggerEvent( 5800, "ReadPlayerSettings", pUser ) || {};
+		var currentCategory = playerSettings["QuestLogCategory"] || "All Quests";
 
-			pSock.SysMessage( "Quest log category set to: " + selectedCategory );
+		var checkedButtons = {};
+		var tempButton = 0;
 
-			// Refresh the quest menu with the new category
-			pSock.CloseGump( gumpID, 0 );
-			QuestMenu( pUser );
-		}
-		else if( OtherButton == 2001 ) 
-		{ // Transparency toggle button
-			// Load existing settings
-			var playerSettings = TriggerEvent( 5800, "ReadPlayerSettings", pUser ) || {};
-
-			// Toggle the transparency setting
-			var useTransparentBackground = playerSettings["UseTransparentBackground"] || false;
-			playerSettings["UseTransparentBackground"] = !useTransparentBackground;
-
-			// Save the updated settings
-			TriggerEvent( 5800, "SavePlayerSettings", pUser, playerSettings );
-
-			pSock.SysMessage( "Transparency " + ( playerSettings["UseTransparentBackground"] ? "enabled" : "disabled" ) + "." );
-
-			// Refresh the options menu
-			pSock.CloseGump( gumpID, 0 );
-			QuestMenu( pUser );
-		}
-		else if( OtherButton == 2002 ) 
+		// Collect all checked checkbox IDs from gumpData
+		for( var i = 0; i < 16; i++ )
 		{
-			var playerSettings = TriggerEvent( 5800, "ReadPlayerSettings", pUser ) || {};
-			var current = playerSettings["ShowLoginQuestOffers"] !== false;
-			playerSettings["ShowLoginQuestOffers"] = !current;
-			TriggerEvent( 5800, "SavePlayerSettings", pUser, playerSettings );
-	
-			pSock.SysMessage( "Login Quest Prompts " + ( playerSettings["ShowLoginQuestOffers"] ? "enabled" : "disabled" ) + "." );
+			tempButton = gumpData.getButton( i );
 
-			pSock.CloseGump( gumpID, 0 );
-			QuestMenu( pUser );
+			if( tempButton === null || typeof tempButton == "undefined" )
+			{
+				break;
+			}
+
+			if( tempButton >= 0 )
+			{
+				checkedButtons[tempButton] = true;
+			}
 		}
+
+		// Save transparency as absolute state
+		playerSettings["UseTransparentBackground"] = ( checkedButtons[2001] ? true : false );
+
+		// Save login quest prompt as absolute state
+		playerSettings["ShowLoginQuestOffers"] = ( checkedButtons[2002] ? true : false );
+
+		TriggerEvent( 5800, "SavePlayerSettings", pUser, playerSettings );
+
+		pSock.SysMessage( "Quest journal options updated." );
+		pSock.CloseGump( gumpID, 0 );
+		QuestMenu( pUser );
+		return;
 	}
 }
