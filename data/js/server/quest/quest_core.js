@@ -333,51 +333,65 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 				}
 			}
 
-			if( quest.type == "delivery" )
+			// Check delivery objectives
+			if( quest.type == "delivery" && quest.targetDelivery.npcID == identifier )
 			{
-				// Check if the player delivered the item to the correct NPC
-				if( identifier == quest.targetDelivery.npcID ) 
+				if( String( identifier ) == String( quest.targetDelivery.npcID ))
 				{
-					// Fetch the delivery item from the player's backpack
-					var pack = player.pack; // Get the player's backpack
+					var pack = player.pack;
 					var hasItem = false;
+					var totalDeliveryAmount = 0;
+					var questItemsToProcess = [];
 
-					// Iterate through all items in the player's backpack
-					for( currentItem = pack.FirstItem(); !pack.FinishedItems(); currentItem = pack.NextItem())
+					if( !ValidateObject( pack ))
 					{
-						if( !ValidateObject( currentItem )) 
+						socket.SysMessage( GetDictionaryEntry( 19621, socket.language )); // You don't have the required item to deliver.
+						allObjectivesCompleted = false;
+					}
+					else
+					{
+						// Pass 1: gather matching quest items and total amount across all stacks
+						for( var currentItem = pack.FirstItem(); !pack.FinishedItems(); currentItem = pack.NextItem())
 						{
-							continue;
+							if( !ValidateObject( currentItem ))
+							{
+								continue;
+							}
+
+							var questSectionID = currentItem.GetTag( "QuestSectionID" ) || currentItem.sectionID;
+
+							if( currentItem.GetTag( "QuestItem" ) && String( questSectionID ) == String( quest.deliveryItem.sectionID ))
+							{
+								questItemsToProcess.push( currentItem );
+								totalDeliveryAmount += currentItem.amount;
+							}
 						}
 
-						// Check if the item matches the delivery item and has the correct tag
-						/*var questSectionID = deliveryItem.GetTag( "QuestSectionID" ) || deliveryItem.sectionID;
-						if( currentItem.GetTag( "QuestItem" ) && String( currentItem.sectionID ) == String( quest.deliveryItem.sectionID || currentItem.sectionID == questSectionID  ) && currentItem.amount >= quest.deliveryItem.amount )
+						if( totalDeliveryAmount >= quest.deliveryItem.amount )
 						{
 							hasItem = true;
 
-							// Remove the required quantity from the player's backpack
-							if( currentItem.amount > quest.deliveryItem.amount )
-							{
-								currentItem.amount -= quest.deliveryItem.amount; // Reduce item stack
-							}
-							else
-							{
-								currentItem.Delete(); // Remove the item completely
-							}
-							break;
-						}*/
-						var questSectionID = currentItem.GetTag("QuestSectionID") || currentItem.sectionID;
-						if ( currentItem.GetTag("QuestItem") && String(questSectionID) == String(quest.deliveryItem.sectionID) && currentItem.amount >= quest.deliveryItem.amount )
-						{
-							hasItem = true;
+							// Pass 2: deduct the required amount across as many stacks as needed
+							var remainingAmountToDeduct = quest.deliveryItem.amount;
 
-							if (currentItem.amount > quest.deliveryItem.amount)
-								currentItem.amount -= quest.deliveryItem.amount;
-							else
-								currentItem.Delete();
+							for( var itemIndex = 0; itemIndex < questItemsToProcess.length && remainingAmountToDeduct > 0; itemIndex++ )
+							{
+								var deliveryItem = questItemsToProcess[itemIndex];
 
-							break;
+								if( !ValidateObject( deliveryItem ))
+								{
+									continue;
+								}
+
+								var amountToDeduct = Math.min( deliveryItem.amount, remainingAmountToDeduct );
+								deliveryItem.amount -= amountToDeduct;
+								remainingAmountToDeduct -= amountToDeduct;
+
+								if( deliveryItem.amount <= 0 )
+								{
+									deliveryItem.Delete();
+								}
+							}
 						}
 					}
 
@@ -389,11 +403,13 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 					else
 					{
 						socket.SysMessage( GetDictionaryEntry( 19621, socket.language )); // You don't have the required item to deliver.
+						allObjectivesCompleted = false;
 					}
 				}
 				else
 				{
 					socket.SysMessage( GetDictionaryEntry( 19622, socket.language )); // This is not the correct NPC to deliver the item.
+					allObjectivesCompleted = false;
 				}
 			}
 
@@ -1057,9 +1073,14 @@ function ResolveNextQuestID( player, quest )
 /** @type { ( creature: Character, player: Character ) => boolean } */
 function CreatureKilled( creature, player )
 {
+	if( !ValidateObject( player ) || !ValidateObject( creature ))
+	{
+		return false;
+	}
+
 	var questProgressArray = ReadQuestProgress( player );
 
-	for( var i = 0; i < questProgressArray.length; i++ ) 
+	for( var i = 0; i < questProgressArray.length; i++ )
 	{
 		var questEntry = questProgressArray[i];
 
@@ -1077,16 +1098,15 @@ function CreatureKilled( creature, player )
 			{
 				var target = quest.targetKills[j];
 
-				if( target.npcID == creature.sectionID ) 
+				if( target.npcID == creature.sectionID )
 				{
 					UpdateQuestProgress( player, questEntry.questID, creature.sectionID, 1, "kill" );
-					return true;
 				}
 			}
-
-			return true;
 		}
 	}
+
+	return true;
 }
 
 /** @type { ( player: Character, item: Item, isToggledOff?: boolean ) => void } */
@@ -1096,11 +1116,11 @@ function ItemCollected( player, item, isToggledOff )
 		return;
 
 	var socket = player.socket;
-	if( socket == null)
+	if( socket == null )
 		return;
 
 	// Default the isToggledOff value
-	if( typeof isToggledOff == "undefined" ) 
+	if( typeof isToggledOff == "undefined" )
 	{
 		isToggledOff = false;
 	}
@@ -1126,74 +1146,62 @@ function ItemCollected( player, item, isToggledOff )
 			{
 				var target = quest.targetItems[j];
 
-
 				var questSectionID = item.GetTag( "QuestSectionID" ) || item.sectionID;
-				if( String( target.sectionID ) == String( item.sectionID ) || ( target.sectionID == questSectionID ))
+				if( String( target.sectionID ) == String( item.sectionID ) || String( target.sectionID ) == String( questSectionID ) )
 				{
 					var currentCount = questEntry.collectedItems[item.sectionID] || 0;
 					var remaining = target.amount - currentCount;
 
 					if( isToggledOff )
 					{
-						// Decrease the count when untoggled, ensuring it doesn't go below 0
+						// Decrease the count when untoggled, ensuring it does not go below 0
 						if( currentCount > 0 )
 						{
 							var amountToRemove = Math.min( item.amount, currentCount );
 							UpdateQuestProgress( player, questEntry.questID, item.sectionID, -amountToRemove, "collect" );
 
 							var questItemColor = item.GetTag( "saveColor" );
-							if( questItemColor != null && !isNaN(parseInt(questItemColor)) )
+							if( questItemColor != null && !isNaN( parseInt( questItemColor, 10 )))
 							{
-								item.color = parseInt( questItemColor );
+								item.color = parseInt( questItemColor, 10 );
 							}
 							else
 							{
-								item.color = 0; // fallback to default color (non-dyed)
+								item.color = 0;
 							}
+
 							item.isNewbie = false;
 							item.isDyeable = true;
 							item.SetTag( "QuestItem", null );
 							item.SetTag( "QuestSectionID", null );
-							item.RemoveScriptTrigger( 5806 ); // Quest Item script trigger
-
-							socket.SysMessage( "You removed " + amountToRemove + " Quest Item(s)." );
-						}
-						else
-						{
-							socket.SysMessage( GetDictionaryEntry( 19629, socket.language ));// Cannot decrease further. Current count is 0.
+							item.SetTag( "saveColor", null );
+							item.RemoveScriptTrigger( 5806 );
 						}
 					}
 					else
 					{
-						// Increase the count when toggled on
 						if( remaining > 0 )
 						{
 							var amountToAdd = Math.min( item.amount, remaining );
 							UpdateQuestProgress( player, questEntry.questID, item.sectionID, amountToAdd, "collect" );
 
 							item.SetTag( "saveColor", item.color );
-							item.SetTag( "saveType", item.type );
-							item.color = 0x04ea; // orange hue
+							item.color = 0x04ea;
 							item.isDyeable = false;
 							item.isNewbie = true;
 							item.SetTag( "QuestItem", true );
-							item.SetTag( "QuestSectionID", target.sectionID );
-							item.AddScriptTrigger( 5806 ); // Quest Item script trigger
-
-							socket.SysMessage( "You set " + amountToAdd + " item(s) to Quest Item status." );
+							item.SetTag( "QuestSectionID", questSectionID );
+							item.AddScriptTrigger( 5806 );
 						}
 						else
 						{
 							socket.SysMessage( "Cannot collect more. Target amount reached: " + target.amount );
 						}
 					}
-					return; // Exit after updating progress
 				}
 			}
 		}
 	}
-
-	socket.SysMessage( "Item does not match any quest requirements." );
 }
 
 /** @type { ( pEquipper: Character, iEquipped: Item ) => boolean } */
@@ -1642,8 +1650,8 @@ function LogFailedQuest( player, failedQuest )
 			"StartTime=" + ( failedQuest.startTime || 0 ) + "\n" +
 			"TimeLimit=" + ( failedQuest.timeLimit || 0 ) + "\n" +
 			"Completed=0\n" +
-			"QuestTurnIn=0\n\n";
-			"Failed=1\n" +
+			"QuestTurnIn=0\n" +
+			"Failed=1\n\n";
 
 		mFile.Write( failedEntry );
 		mFile.Close();

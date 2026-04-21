@@ -580,7 +580,7 @@ function ProcessQuestTurnIn( player, questID )
 	var quest = TriggerEvent( 5801, "QuestList", questID );
 	if( !quest )
 	{
-		player.SysMessage( GetDictionaryEntry(19602, socket.language ));//This quest does not exist.
+		player.SysMessage( GetDictionaryEntry( 19602, socket.language )); // This quest does not exist.
 		return false;
 	}
 
@@ -588,31 +588,36 @@ function ProcessQuestTurnIn( player, questID )
 	var questProgress = null;
 
 	// Find the quest progress entry
-	for( var i = 0; i < questProgressArray.length; i++ )
+	for( var progressIndex = 0; progressIndex < questProgressArray.length; progressIndex++ )
 	{
-		if( questProgressArray[i].questID == questID && questProgressArray[i].serial == player.serial )
+		if( questProgressArray[progressIndex].questID == questID && questProgressArray[progressIndex].serial == player.serial )
 		{
-			questProgress = questProgressArray[i];
+			questProgress = questProgressArray[progressIndex];
 			break;
 		}
 	}
 
 	// Handle skill gain quests
-	if( quest.type == "skillgain" ) 
+	if( quest.type == "skillgain" )
 	{
+		if( !questProgress )
+			return false;
+
 		if( questProgress.skillProgress >= quest.maxSkillPoints )
 		{
-			socket.SysMessage(GetDictionaryEntry( 19607, socket.language ));//You have completed the skill training for this quest!
+			socket.SysMessage( GetDictionaryEntry( 19607, socket.language )); // You have completed the skill training for this quest!
 			return true;
-		} 
-		else
-		{
-			socket.SysMessage( "You still need to improve your skill. Current progress: " + ( questProgress.skillProgress / 10 ).toFixed( 1 ) + "/" + ( quest.maxSkillPoints / 10 ).toFixed( 1 ) );
-			return false;
 		}
+
+		socket.SysMessage(
+			"You still need to improve your skill. Current progress: " +
+			( questProgress.skillProgress / 10 ).toFixed( 1 ) + "/" +
+			( quest.maxSkillPoints / 10 ).toFixed( 1 )
+		);
+		return false;
 	}
 
-	// Check if the quest is a "kill" type and validate completion
+	// Validate kill objectives for quests that include kill requirements
 	if( quest.type == "kill" || quest.type == "timekills" || quest.type == "multi" )
 	{
 		if( !questProgress || !questProgress.harvestKills )
@@ -620,21 +625,18 @@ function ProcessQuestTurnIn( player, questID )
 			return false;
 		}
 
-		// Validate kill objectives
-		for( var i = 0; i < quest.targetKills.length; i++ )
+		for( var killIndex = 0; killIndex < quest.targetKills.length; killIndex++ )
 		{
-			var targetKill = quest.targetKills[i];
+			var targetKill = quest.targetKills[killIndex];
 			if(( questProgress.harvestKills[targetKill.npcID] || 0 ) < targetKill.amount )
 			{
 				socket.SysMessage( "You have not killed enough " + targetKill.npcID + "s." );
 				return false;
 			}
 		}
-
-		return true;
 	}
 
-	// If the quest is not a kill quest, check for item turn-in
+	// Validate and remove item objectives for quests that include item requirements
 	if( quest.type == "collect" || quest.type == "timecollect" || quest.type == "multi" )
 	{
 		if( !quest.targetItems || quest.targetItems.length == 0 )
@@ -642,95 +644,81 @@ function ProcessQuestTurnIn( player, questID )
 			return false;
 		}
 
-		// Fetch quest items from the player's backpack
-		var questItems = FindQuestItems(player, questID);
-		var requiredItems = []; // Clone target items manually
+		var questItems = FindQuestItems( player, questID );
+		var requiredItems = [];
 
-		for( var i = 0; i < quest.targetItems.length; i++ )
+		for( var targetIndex = 0; targetIndex < quest.targetItems.length; targetIndex++ )
 		{
-			var targetItem = quest.targetItems[i];
-			requiredItems.push({ sectionID: targetItem.sectionID, amount: targetItem.amount });
+			requiredItems.push({
+				sectionID: String( quest.targetItems[targetIndex].sectionID ),
+				amount: quest.targetItems[targetIndex].amount
+			});
 		}
 
-		// Validate collected items against required objectives
-		for( var i = 0; i < questItems.length; i++ )
+		// Pass 1: verify total amounts across all stacks before touching anything
+		for( var requiredIndex = 0; requiredIndex < requiredItems.length; requiredIndex++ )
 		{
-			var item = questItems[i];
-			for( var j = 0; j < requiredItems.length; j++ )
+			var totalFound = 0;
+
+			for( var itemIndex = 0; itemIndex < questItems.length; itemIndex++ )
 			{
-				if( String( item.sectionID) == String( requiredItems[j].sectionID ))
+				if( String( questItems[itemIndex].sectionID ) == requiredItems[requiredIndex].sectionID )
 				{
-					var toDeduct = Math.min( item.amount, requiredItems[j].amount );
-					requiredItems[j].amount -= toDeduct; // Deduct the required amount
-					item.amount -= toDeduct; // Deduct from the item's stack
-
-					if( item.amount == 0 )
-					{
-						item.Delete(); // Remove the item if the stack is empty
-					}
-
-					if( requiredItems[j].amount == 0 )
-					{
-						break;
-					}
+					totalFound += questItems[itemIndex].amount;
 				}
 			}
-		}
 
-		// Check if all required items are collected
-		for( var k = 0; k < requiredItems.length; k++ )
-		{
-			if( requiredItems[k].amount > 0 )
+			if( totalFound < requiredItems[requiredIndex].amount )
 			{
-				socket.SysMessage( GetDictionaryEntry( 19608, socket.language ));// You are still missing some items for this quest.
+				socket.SysMessage( GetDictionaryEntry( 19608, socket.language )); // You are still missing some items for this quest.
 				return false;
 			}
 		}
 
-		socket.SysMessage( GetDictionaryEntry( 19609, socket.language ));// All quest items have been turned in successfully.
-		return true;
-	}
-
-	// Handle delivery quests
-	if( quest.type == "delivery" )
-	{
-		// Validate NPC
-		if( quest.targetDelivery.npcID != questNpc.serial )
+		// Pass 2: remove only after validation succeeded
+		for( var deductIndex = 0; deductIndex < requiredItems.length; deductIndex++ )
 		{
-			return false;
-		}
+			var remainingAmountToDeduct = requiredItems[deductIndex].amount;
 
-		// Find the delivery item in the backpack
-		var deliveryItems = FindQuestItems( player, questID );
-		var foundItem = false;
-
-		for( var i = 0; i < deliveryItems.length; i++ )
-		{
-			var item = deliveryItems[i];
-			if( String( item.sectionID ) == String( quest.deliveryItem.sectionID ) && item.amount >= quest.deliveryItem.amount )
+			for( var questItemIndex = 0; questItemIndex < questItems.length && remainingAmountToDeduct > 0; questItemIndex++ )
 			{
-				foundItem = true;
+				var questItem = questItems[questItemIndex];
 
-				// Remove the item from the player's backpack
-				if( item.amount > quest.deliveryItem.amount ) 
+				if( !ValidateObject( questItem ))
 				{
-					item.amount -= quest.deliveryItem.amount;
+					continue;
 				}
-				else 
+
+				if( String( questItem.sectionID ) != requiredItems[deductIndex].sectionID )
 				{
-					item.Delete();
+					continue;
 				}
-				break;
+
+				var amountToDeduct = Math.min( questItem.amount, remainingAmountToDeduct );
+				questItem.amount -= amountToDeduct;
+				remainingAmountToDeduct -= amountToDeduct;
+
+				if( questItem.amount <= 0 )
+				{
+					questItem.Delete();
+				}
 			}
 		}
 
-		if( !foundItem )
-		{
-			socket.SysMessage( GetDictionaryEntry( 19610, socket.language ));// You don't have the required item to deliver.
-			return false;
-		}
+		socket.SysMessage( GetDictionaryEntry( 19609, socket.language )); // All quest items have been turned in successfully.
+		return true;
+	}
 
-		socket.SysMessage( GetDictionaryEntry( 19611, socket.language ));//You have delivered the required item!
+	// Delivery quests are handled through ProcessDeliveryQuest when talking to the target NPC
+	if( quest.type == "delivery" )
+	{
+		socket.SysMessage( GetDictionaryEntry( 19610, socket.language )); // You don't have the required item to deliver.
+		return false;
+	}
+
+	// Kill-only quests that made it this far are valid turn-ins
+	if( quest.type == "kill" || quest.type == "timekills" )
+	{
 		return true;
 	}
 
@@ -878,69 +866,78 @@ function ProcessDeliveryQuest( player, questNpc, deliveryQuestID )
 	}
 
 	// Ensure the NPC matches the quest's recipient
-	if( questNpc.sectionID != quest.targetDelivery.sectionID )
+	if( !quest.targetDelivery || questNpc.sectionID != quest.targetDelivery.sectionID )
 	{
 		questNpc.TextMessage( "I am not the intended recipient of this delivery." );
 		return false;
 	}
 
-	// Check if the player has the required item
 	var requiredItem = quest.deliveryItem;
-	var questItems = FindQuestItems( player, deliveryQuestID );
-	var itemDelivered = false;
-	for( var i = 0; i < questItems.length; i++ )
+	if( !requiredItem )
 	{
-		if( String( questItems[i].sectionID ) == String( requiredItem.sectionID ))
-		{
-			// Check if enough items are delivered
-			if( questItems[i].amount >= requiredItem.amount )
-			{
-				itemDelivered = true;
-			}
-			break;
-		}
-	}
-
-	if( !itemDelivered )
-	{
-		socket.SysMessage( GetDictionaryEntry( 19613, socket.language ));//You do not have the required item to deliver.
 		return false;
 	}
 
-	// Remove the item from the player's inventory
-	for( var j = 0; j < questItems.length; j++ )
+	var questItems = FindQuestItems( player, deliveryQuestID );
+	var totalDeliveryAmount = 0;
+
+	// Pass 1: verify total amount across all matching stacks
+	for( var itemIndex = 0; itemIndex < questItems.length; itemIndex++ )
 	{
-		if( String( questItems[j].sectionID ) == String( requiredItem.sectionID )) 
+		if( String( questItems[itemIndex].sectionID ) == String( requiredItem.sectionID ) )
 		{
-			if( questItems[j].amount > requiredItem.amount )
-			{
-				socket.SysMessage( "2");
-				questItems[j].amount -= requiredItem.amount;
-			}
-			else
-			{
-				questItems[j].Delete();
-			}
-			break;
+			totalDeliveryAmount += questItems[itemIndex].amount;
 		}
 	}
 
-	// Update the player's quest progress and notify
-	var questProgressArray = TriggerEvent( 5800, "ReadQuestProgress", player );
-	for( var i = 0; i < questProgressArray.length; i++ )
+	if( totalDeliveryAmount < requiredItem.amount )
 	{
-		if( questProgressArray[i].questID == deliveryQuestID )
+		socket.SysMessage( GetDictionaryEntry( 19613, socket.language )); // You do not have the required item to deliver.
+		return false;
+	}
+
+	// Pass 2: deduct across as many stacks as needed
+	var remainingAmountToDeduct = requiredItem.amount;
+
+	for( var deductIndex = 0; deductIndex < questItems.length && remainingAmountToDeduct > 0; deductIndex++ )
+	{
+		var questItem = questItems[deductIndex];
+
+		if( !ValidateObject( questItem ))
 		{
-			socket.SysMessage( "3");
-			questProgressArray[i].completed = true;
+			continue;
 		}
-		break;
+
+		if( String( questItem.sectionID ) != String( requiredItem.sectionID ) )
+		{
+			continue;
+		}
+
+		var amountToDeduct = Math.min( questItem.amount, remainingAmountToDeduct );
+		questItem.amount -= amountToDeduct;
+		remainingAmountToDeduct -= amountToDeduct;
+
+		if( questItem.amount <= 0 )
+		{
+			questItem.Delete();
+		}
+	}
+
+	// Update the player's quest progress
+	var questProgressArray = TriggerEvent( 5800, "ReadQuestProgress", player );
+	for( var progressIndex = 0; progressIndex < questProgressArray.length; progressIndex++ )
+	{
+		if( questProgressArray[progressIndex].questID == deliveryQuestID && questProgressArray[progressIndex].serial == player.serial )
+		{
+			questProgressArray[progressIndex].completed = true;
+			break;
+		}
 	}
 
 	TriggerEvent( 5800, "WriteQuestProgress", player, questProgressArray );
 
 	// Notify the player and complete the quest
-	socket.SysMessage( GetDictionaryEntry( 19614, socket.language ));//You have delivered the required item!
+	socket.SysMessage( GetDictionaryEntry( 19614, socket.language )); // You have delivered the required item!
 	TriggerEvent( 5800, "CompleteQuest", player, deliveryQuestID );
 	return true;
 }
