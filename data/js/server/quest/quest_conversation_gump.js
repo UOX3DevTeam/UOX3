@@ -837,6 +837,14 @@ function QuestNpcInterAction( pUser, questNpc )
 	if( !playerQuestID )
 	{
 		questNpc.TurnToward( pUser );
+
+		var rootQuest = TriggerEvent( 5801, "QuestList", npcRootQuestID );
+		if( !rootQuest )
+		{
+			socket.SysMessage( "Quest data could not be loaded." );
+			return false;
+		}
+
 		questNpc.TextMessage( GetDictionaryEntry( 19612, socket.language ) ); // You have completed all quests
 		return false;
 	}

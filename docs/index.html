@@ -6936,12 +6936,17 @@ function onTooltip( myItem, pSocket )
 						</p>
 
 						<p>
+							All quest data is stored as JSON files in:
+							<span class="hl">js/server/quests/quest_lists/</span>
+						</p>
+
+						<p>
 							The quest system is split into several scripts, each with a different job:
 						</p>
 
 						<ul>
-							<li><span class="hl">quest_core.js</span> - Starts quests, tracks progress, completes quests, saves data, gives rewards, and handles chains</li>
-							<li><span class="hl">quest_lists.js</span> - Stores the actual quest definitions</li>
+							<li><span class="hl">quest_core.js</span> - Starts quests, tracks progress, completes quests, saves data, gives rewards, and handles quest chains</li>
+							<li><span class="hl">quest_lists.js</span> - Loads and registers all quest JSON files</li>
 							<li><span class="hl">quest_conversation_gump.js</span> - Shows the quest conversation gump and handles accept, refuse, turn-in, and resign</li>
 							<li><span class="hl">quest_menu.js</span> - Quest journal, completed quest list, and options</li>
 							<li><span class="hl">quest_item.js</span> - Restricts quest items so they cannot be abused</li>
@@ -6957,6 +6962,11 @@ function onTooltip( myItem, pSocket )
 							quest details, and journal options such as transparency and login quest prompts.
 						</p>
 
+						<p>
+							Quest data is now separated from the quest logic. This means you can add, remove, or edit quests by working with JSON files
+							without needing to rewrite the quest scripts themselves.
+						</p>
+
 						<hr>
 
 						<h3>Quick Start</h3>
@@ -6967,7 +6977,7 @@ function onTooltip( myItem, pSocket )
 
 						<ol>
 							<li>Enable the quest system in <span class="hl">uox.ini</span></li>
-							<li>Create a quest in <span class="hl">quest_lists.js</span></li>
+							<li>Create a quest JSON file in <span class="hl">js/server/quests/quest_lists/</span></li>
 							<li>Create or edit an NPC that points to that quest</li>
 							<li>Reload scripts</li>
 							<li>Talk to the NPC in game and test the quest</li>
@@ -6991,54 +7001,82 @@ LoginQuestEnabled=1
 						<h3>Creating a Quest</h3>
 
 						<p>
-							All quest definitions are stored in:
-							<span class="hl">js/server/quests/quest_lists.js</span>
+							All quest definitions are stored as JSON files in:
+							<span class="hl">js/server/quests/quest_lists/</span>
 						</p>
 
 						<p>
-							Each quest is added inside the <span class="hl">questList</span> object using a unique string ID.
+							The quest system automatically loads all valid JSON quest files in that folder.
+							You do not need to add new quest entries directly inside <span class="hl">quest_lists.js</span>.
+						</p>
+
+						<p>
+							Each quest is defined as a JSON object. In the current setup, each quest is typically stored in its own file,
+							and the filename usually matches the quest ID, such as <span class="hl">2000.json</span>.
+						</p>
+
+						<p>
+							Every quest must use a unique <span class="hl">questID</span>.
 						</p>
 
 						<input type="checkbox" id="spoiler_quest_create">
-						<label for="spoiler_quest_create">Show basic QuestList example <i class="fas fa-angle-down"></i></label>
+						<label for="spoiler_quest_create">Show basic JSON quest example <i class="fas fa-angle-down"></i></label>
 
 						<div class="spoiler">
 <pre><code class="language-javascript">
-function QuestList( questID )
 {
-	var questList = {
-		"1": {
-			title: "More Ore Please",
-			description: "Bring me some small iron ore.",
-			uncomplete: "You still need more ore.",
-			complete: "Good work!",
-			refuse: "Maybe next time.",
-			type: "collect",
-			category: "Side Quests",
-			oneTimeQuest: 1,
-			questTurnIn: 1,
-			bankgold: 0,
-			targetItems: [
-				{ sectionID: "small_iron_ore", amount: 5, name: "Small Iron Ore" }
-			],
-			rewards: [
-				{ type: "gold", amount: 500, name: "Gold" }
-			]
-		}
-	};
-
-	if( !questID )
-	{
-		return questList;
-	}
-
-	return questList[questID] || null;
+	"questID": 2000,
+	"title": "More Ore Please",
+	"description": "Bring me some small iron ore.",
+	"uncomplete": "You still need more ore.",
+	"complete": "Good work!",
+	"refuse": "Maybe next time.",
+	"type": "collect",
+	"category": "Side Quests",
+	"oneTimeQuest": 1,
+	"questTurnIn": 1,
+	"targetItems": [
+		{ "sectionID": "small_iron_ore", "amount": 5, "name": "Small Iron Ore" }
+	],
+	"rewards": [
+		{ "type": "gold", "amount": 500, "name": "Gold" }
+	]
 }
 </code></pre>
 						</div>
 
 						<p>
-							The quest key, such as <span class="hl">"1"</span>, is the quest ID. Every quest ID must be unique.
+							If a quest JSON file is invalid, the system will skip that quest and print a warning in the console.
+						</p>
+
+						<h3>Quest Index File</h3>
+
+						<p>
+							The quest registry is built from the quest index file:
+							<span class="hl">js/server/quests/quest_lists/quest_index.json</span>
+						</p>
+
+						<p>
+							This file lists which quest IDs should be loaded. The system reads the quest IDs from the keys in the JSON object.
+							The text values are only there for readability and can be anything you want.
+						</p>
+
+						<input type="checkbox" id="spoiler_quest_index">
+						<label for="spoiler_quest_index">Show quest_index.json example <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+<pre><code class="language-javascript">
+{
+	"2000": "More Ore Please",
+	"2001": "Rat Trouble",
+	"2002": "Special Delivery"
+}
+</code></pre>
+						</div>
+
+						<p>
+							In the example above, the system will attempt to load:
+							<span class="hl">2000.json</span>, <span class="hl">2001.json</span>, and <span class="hl">2002.json</span>.
 						</p>
 
 						<h3>Creating a Quest NPC</h3>
@@ -7068,12 +7106,12 @@ EQUIPITEM=listobject23
 EQUIPITEM=listobject25
 COLORLIST=11
 SCRIPT=5802
-CUSTOMINTTAG=QuestID 1
+CUSTOMINTTAG=QuestID 2000
 }
 </code></pre>
 
 						<p>
-							This tells the NPC to open the quest conversation for quest <span class="hl">1</span>.
+							This tells the NPC to open the quest conversation for quest <span class="hl">2000</span>.
 						</p>
 
 						<p>
@@ -7109,10 +7147,12 @@ CUSTOMINTTAG=QuestID 1
 
 						<div class="spoiler">
 							<ul>
+								<li><span class="hl">questID</span> - unique quest identifier</li>
 								<li><span class="hl">title</span> - quest name shown to the player</li>
 								<li><span class="hl">description</span> - main quest text</li>
 								<li><span class="hl">uncomplete</span> - NPC text while the quest is still in progress</li>
 								<li><span class="hl">complete</span> - NPC text when the quest is ready to turn in</li>
+								<li><span class="hl">oncomplete</span> - optional message used when the quest completes</li>
 								<li><span class="hl">refuse</span> - NPC text if the player declines the quest</li>
 								<li><span class="hl">npcPhrases</span> - optional flavor lines</li>
 								<li><span class="hl">category</span> - used by the quest journal</li>
@@ -7121,6 +7161,8 @@ CUSTOMINTTAG=QuestID 1
 								<li><span class="hl">resetDailyTime</span> - daily quest reset time in hours</li>
 								<li><span class="hl">questTurnIn</span> - if 1, player must return to turn in the quest; if 0, it auto-completes</li>
 								<li><span class="hl">requiresQuestID</span> - requires another quest to be completed first</li>
+								<li><span class="hl">nextQuestID</span> - simple next quest in a chain</li>
+								<li><span class="hl">nextQuest</span> - branching chain definitions</li>
 								<li><span class="hl">timeLimit</span> - timer in seconds for timed quests</li>
 							</ul>
 						</div>
@@ -7140,9 +7182,9 @@ CUSTOMINTTAG=QuestID 1
 
 						<div class="spoiler">
 <pre><code class="language-javascript">
-targetItems: [
-	{ sectionID: "small_iron_ore", amount: 5, name: "Small Iron Ore" },
-	{ sectionID: "coal", amount: 3, name: "Coal" }
+"targetItems": [
+	{ "sectionID": "small_iron_ore", "amount": 5, "name": "Small Iron Ore" },
+	{ "sectionID": "coal", "amount": 3, "name": "Coal" }
 ]
 </code></pre>
 						</div>
@@ -7152,9 +7194,9 @@ targetItems: [
 
 						<div class="spoiler">
 <pre><code class="language-javascript">
-targetKills: [
-	{ npcID: "rat", amount: 10, name: "Rat" },
-	{ npcID: "mongbat", amount: 5, name: "Mongbat" }
+"targetKills": [
+	{ "npcID": "rat", "amount": 10, "name": "Rat" },
+	{ "npcID": "mongbat", "amount": 5, "name": "Mongbat" }
 ]
 </code></pre>
 						</div>
@@ -7164,11 +7206,11 @@ targetKills: [
 
 						<div class="spoiler">
 <pre><code class="language-javascript">
-targetItems: [
-	{ sectionID: "apple", amount: 5, name: "Apple" }
+"targetItems": [
+	{ "sectionID": "apple", "amount": 5, "name": "Apple" }
 ],
-targetKills: [
-	{ npcID: "dog", amount: 2, name: "Dog" }
+"targetKills": [
+	{ "npcID": "dog", "amount": 2, "name": "Dog" }
 ]
 </code></pre>
 						</div>
@@ -7178,15 +7220,15 @@ targetKills: [
 
 						<div class="spoiler">
 <pre><code class="language-javascript">
-deliveryItem: {
-	sectionID: "0x0E21",
-	name: "Sealed Package",
-	amount: 1
+"deliveryItem": {
+	"sectionID": "0x0E21",
+	"name": "Sealed Package",
+	"amount": 1
 },
-targetDelivery: {
-	sectionID: "nail",
-	name: "Nail the Receiver",
-	location: { x: 1068, y: 1608, z: 0, world: 0 }
+"targetDelivery": {
+	"sectionID": "nail",
+	"name": "Nail the Receiver",
+	"location": { "x": 1068, "y": 1608, "z": 0, "world": 0 }
 }
 </code></pre>
 						</div>
@@ -7196,12 +7238,12 @@ targetDelivery: {
 
 						<div class="spoiler">
 <pre><code class="language-javascript">
-targetSkill: 45,
-targetRegion: 194,
-regionName: "Haven Mountains",
-maxSkillPoints: 500,
-minPoint: 2,
-maxPoint: 5
+"targetSkill": 45,
+"targetRegion": 194,
+"regionName": "Haven Mountains",
+"maxSkillPoints": 500,
+"minPoint": 2,
+"maxPoint": 5
 </code></pre>
 						</div>
 
@@ -7225,9 +7267,9 @@ maxPoint: 5
 							</ul>
 
 <pre><code class="language-javascript">
-rewards: [
-	{ type: "gold", amount: 500, name: "Gold" },
-	{ type: "item", sectionID: "minerssatchel", amount: 1, name: "Miner's Satchel" }
+"rewards": [
+	{ "type": "gold", "amount": 500, "name": "Gold" },
+	{ "type": "item", "sectionID": "minerssatchel", "amount": 1, "name": "Miner's Satchel" }
 ]
 </code></pre>
 						</div>
@@ -7271,16 +7313,16 @@ rewards: [
 							<p><strong>Simple chain</strong></p>
 
 <pre><code class="language-javascript">
-nextQuestID: 2
+"nextQuestID": 2001
 </code></pre>
 
 							<p><strong>Branching chain</strong></p>
 
 <pre><code class="language-javascript">
-nextQuest: [
-	{ questID: 1201, cond: { tagEquals: { tag: "DL_ThiefPath", value: 1 } } },
-	{ questID: 1202, cond: { tagMin: { tag: "DL_GuardPath", value: 1 } } },
-	{ questID: 1203, cond: { always: true } }
+"nextQuest": [
+	{ "questID": 1201, "cond": { "tagEquals": { "tag": "DL_ThiefPath", "value": 1 } } },
+	{ "questID": 1202, "cond": { "tagMin": { "tag": "DL_GuardPath", "value": 1 } } },
+	{ "questID": 1203, "cond": { "always": true } }
 ]
 </code></pre>
 						</div>
@@ -7303,7 +7345,7 @@ nextQuest: [
 							<p><strong>Set tags</strong></p>
 
 <pre><code class="language-javascript">
-setTags: {
+"setTags": {
 	"starterTier": 2
 }
 </code></pre>
@@ -7311,7 +7353,7 @@ setTags: {
 							<p><strong>Tag deltas</strong></p>
 
 <pre><code class="language-javascript">
-setTagDeltas: {
+"setTagDeltas": {
 	"GuardStanding": 5
 }
 </code></pre>
@@ -7319,10 +7361,10 @@ setTagDeltas: {
 							<p><strong>World state</strong></p>
 
 <pre><code class="language-javascript">
-setWorldState: {
+"setWorldState": {
 	"dl_ws_orchard_helped": 1
 },
-worldStateDeltas: {
+"worldStateDeltas": {
 	"dl_ws_ironreach_rep": 5
 }
 </code></pre>
@@ -7377,21 +7419,22 @@ worldStateDeltas: {
 							<p><strong>Collect Quest</strong></p>
 
 <pre><code class="language-javascript">
-"1": {
-	title: "More Ore Please",
-	description: "Bring me some iron ore.",
-	uncomplete: "You still need more ore.",
-	complete: "Good work!",
-	refuse: "Maybe next time.",
-	type: "collect",
-	category: "Side Quests",
-	oneTimeQuest: 1,
-	questTurnIn: 1,
-	targetItems: [
-		{ sectionID: "small_iron_ore", amount: 5, name: "Small Iron Ore" }
+{
+	"questID": 2000,
+	"title": "More Ore Please",
+	"description": "Bring me some iron ore.",
+	"uncomplete": "You still need more ore.",
+	"complete": "Good work!",
+	"refuse": "Maybe next time.",
+	"type": "collect",
+	"category": "Side Quests",
+	"oneTimeQuest": 1,
+	"questTurnIn": 1,
+	"targetItems": [
+		{ "sectionID": "small_iron_ore", "amount": 5, "name": "Small Iron Ore" }
 	],
-	rewards: [
-		{ type: "gold", amount: 500, name: "Gold" }
+	"rewards": [
+		{ "type": "gold", "amount": 500, "name": "Gold" }
 	]
 }
 </code></pre>
@@ -7399,18 +7442,19 @@ worldStateDeltas: {
 							<p><strong>Kill Quest</strong></p>
 
 <pre><code class="language-javascript">
-"2": {
-	title: "Rat Trouble",
-	description: "Kill 10 rats in the cellar.",
-	type: "kill",
-	category: "Side Quests",
-	oneTimeQuest: 1,
-	questTurnIn: 1,
-	targetKills: [
-		{ npcID: "rat", amount: 10, name: "Rat" }
+{
+	"questID": 2001,
+	"title": "Rat Trouble",
+	"description": "Kill 10 rats in the cellar.",
+	"type": "kill",
+	"category": "Side Quests",
+	"oneTimeQuest": 1,
+	"questTurnIn": 1,
+	"targetKills": [
+		{ "npcID": "rat", "amount": 10, "name": "Rat" }
 	],
-	rewards: [
-		{ type: "gold", amount: 250, name: "Gold" }
+	"rewards": [
+		{ "type": "gold", "amount": 250, "name": "Gold" }
 	]
 }
 </code></pre>
@@ -7418,25 +7462,26 @@ worldStateDeltas: {
 							<p><strong>Delivery Quest</strong></p>
 
 <pre><code class="language-javascript">
-"3": {
-	title: "Special Delivery",
-	description: "Take this package to Nail.",
-	type: "delivery",
-	category: "Side Quests",
-	oneTimeQuest: 1,
-	questTurnIn: 1,
-	deliveryItem: {
-		sectionID: "0x0E21",
-		name: "Sealed Package",
-		amount: 1
+{
+	"questID": 2002,
+	"title": "Special Delivery",
+	"description": "Take this package to Nail.",
+	"type": "delivery",
+	"category": "Side Quests",
+	"oneTimeQuest": 1,
+	"questTurnIn": 1,
+	"deliveryItem": {
+		"sectionID": "0x0E21",
+		"name": "Sealed Package",
+		"amount": 1
 	},
-	targetDelivery: {
-		sectionID: "nail",
-		name: "Nail the Receiver",
-		location: { x: 1068, y: 1608, z: 0, world: 0 }
+	"targetDelivery": {
+		"sectionID": "nail",
+		"name": "Nail the Receiver",
+		"location": { "x": 1068, "y": 1608, "z": 0, "world": 0 }
 	},
-	rewards: [
-		{ type: "gold", amount: 500, name: "Gold" }
+	"rewards": [
+		{ "type": "gold", "amount": 500, "name": "Gold" }
 	]
 }
 </code></pre>
@@ -7444,21 +7489,22 @@ worldStateDeltas: {
 							<p><strong>Skillgain Quest</strong></p>
 
 <pre><code class="language-javascript">
-"7": {
-	title: "The Delucian's Lost Mine",
-	description: "Train Mining in the Haven Mountains.",
-	type: "skillgain",
-	category: "Side Quests",
-	oneTimeQuest: 1,
-	questTurnIn: 1,
-	targetRegion: 194,
-	regionName: "Haven Mountains",
-	targetSkill: 45,
-	maxSkillPoints: 500,
-	minPoint: 2,
-	maxPoint: 5,
-	rewards: [
-		{ type: "item", sectionID: "jacobspickaxe", amount: 1, name: "Jacob's Pickaxe" }
+{
+	"questID": 2007,
+	"title": "The Delucian's Lost Mine",
+	"description": "Train Mining in the Haven Mountains.",
+	"type": "skillgain",
+	"category": "Side Quests",
+	"oneTimeQuest": 1,
+	"questTurnIn": 1,
+	"targetRegion": 194,
+	"regionName": "Haven Mountains",
+	"targetSkill": 45,
+	"maxSkillPoints": 500,
+	"minPoint": 2,
+	"maxPoint": 5,
+	"rewards": [
+		{ "type": "item", "sectionID": "jacobspickaxe", "amount": 1, "name": "Jacob's Pickaxe" }
 	]
 }
 </code></pre>
@@ -7477,7 +7523,8 @@ worldStateDeltas: {
 							<li>Use <span class="hl">setWorldState</span> and <span class="hl">worldStateDeltas</span> for story or world progression</li>
 							<li>Only include fields that apply to the quest type you are building</li>
 							<li>Always use unique quest IDs</li>
-							<li>Reload scripts after editing <span class="hl">quest_lists.js</span></li>
+							<li>Reload scripts after editing quest JSON files</li>
+							<li>Keep JSON valid: no comments, no trailing commas, and use double quotes around keys and string values</li>
 						</ul>
 
 					</div>
