@@ -828,9 +828,6 @@ function QuestNpcInterAction( pUser, questNpc )
 		return false;
 	}
 
-	// -----------------------------
-	// Delivery quest (leave your existing logic if you want)
-	// -----------------------------
 	var deliveryQuestID = parseInt( questNpc.GetTag( "DeliveryQuestID" ), 10 );
 	if( !isNaN( deliveryQuestID ) && deliveryQuestID > 0 )
 	{
@@ -844,9 +841,6 @@ function QuestNpcInterAction( pUser, questNpc )
 		}
 	}
 
-	// -----------------------------
-	// Normal quest chain (FIXED: branching-aware)
-	// -----------------------------
 	var npcRootQuestID = GetNpcQuestRootID( questNpc );
 	if( npcRootQuestID <= 0 )
 		return false;
