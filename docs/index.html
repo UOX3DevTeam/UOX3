@@ -6914,6 +6914,11 @@ function onTooltip( myItem, pSocket )
 						<h3>System Overview</h3>
 
 						<p>
+							All quest system scripts are found in:
+							<span class="hl">js/server/quests/</span>
+						</p>
+
+						<p>
 							The quest system is split into several scripts, each with a different job:
 						</p>
 
@@ -6969,7 +6974,7 @@ LoginQuestEnabled=1
 						<h3>Creating a Quest</h3>
 
 						<p>
-							All quests are stored in:
+							All quest definitions are stored in:
 							<span class="hl">js/server/quests/quest_lists.js</span>
 						</p>
 
@@ -6997,7 +7002,7 @@ function QuestList( questID )
 			questTurnIn: 1,
 			bankgold: 0,
 			targetItems: [
-				{ sectionID: "ore", amount: 5, name: "Iron Ore" }
+				{ sectionID: "small_iron_ore", amount: 5, name: "Small Iron Ore" }
 			],
 			rewards: [
 				{ type: "gold", amount: 500, name: "Gold" }
@@ -7091,6 +7096,12 @@ CUSTOMINTTAG=QuestID 1
 						</div>
 
 						<p>
+							A quest can require more than one item, more than one creature kill, and more than one reward.
+							This means you are not limited to a single <span class="hl">targetItems</span> entry, a single
+							<span class="hl">targetKills</span> entry, or a single reward entry. You can list as many as the quest needs.
+						</p>
+
+						<p>
 							Objectives depend on the quest type you choose.
 						</p>
 
@@ -7100,7 +7111,8 @@ CUSTOMINTTAG=QuestID 1
 						<div class="spoiler">
 <pre><code class="language-javascript">
 targetItems: [
-	{ sectionID: "ore", amount: 5, name: "Iron Ore" }
+	{ sectionID: "small_iron_ore", amount: 5, name: "Small Iron Ore" },
+	{ sectionID: "coal", amount: 3, name: "Coal" }
 ]
 </code></pre>
 						</div>
@@ -7111,7 +7123,8 @@ targetItems: [
 						<div class="spoiler">
 <pre><code class="language-javascript">
 targetKills: [
-	{ npcID: "rat", amount: 10, name: "Rat" }
+	{ npcID: "rat", amount: 10, name: "Rat" },
+	{ npcID: "mongbat", amount: 5, name: "Mongbat" }
 ]
 </code></pre>
 						</div>
@@ -7345,7 +7358,7 @@ worldStateDeltas: {
 	oneTimeQuest: 1,
 	questTurnIn: 1,
 	targetItems: [
-		{ sectionID: "ore", amount: 5, name: "Iron Ore" }
+		{ sectionID: "small_iron_ore", amount: 5, name: "Small Iron Ore" }
 	],
 	rewards: [
 		{ type: "gold", amount: 500, name: "Gold" }
