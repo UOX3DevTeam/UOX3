@@ -648,8 +648,8 @@ function MakeOre( socket, mChar )
 				// Randomize the size of ore oreData
 				var oreId = RandomNumber( 0x19B7, 0x19BA );
 				var oreSizeName = GetOreSizeName( oreId );
-				var oreColorName = ingotName.toLowerCase();
-				var oreName = oreColorName + " ore";
+				var oreColorName = ingotName.toLowerCase().replace( /\s+/g, "_" );
+				var oreName = ingotName.toLowerCase() + " ore";
 
 				var oreItem = CreateBlankItem( socket, mChar, amtToMake, oreName, oreId, oreColor, "ITEM", true );
 				if( ValidateObject( oreItem ))

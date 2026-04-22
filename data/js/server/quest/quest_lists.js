@@ -123,25 +123,13 @@ function LoadQuestRegistry()
 
 		if( actualQuestID != listedQuestID )
 		{
-			Console.Warning(
-				"Quest system: QUESTID mismatch. File " +
-				fileName +
-				" expected " +
-				listedQuestID +
-				" but found " +
-				actualQuestID
-			);
+			Console.Warning( "Quest system: QUESTID mismatch. File " + fileName + " expected " + listedQuestID + " but found " + actualQuestID );
 			continue;
 		}
 
 		if( questRegistry[actualQuestID] )
 		{
-			Console.Warning(
-				"Quest system: Duplicate questID detected: " +
-				actualQuestID +
-				". Existing file: " + questRegistry[actualQuestID].sourceFile +
-				", duplicate file: " + fileName
-			);
+			Console.Warning( "Quest system: Duplicate questID detected: " + actualQuestID + ". Existing file: " + questRegistry[actualQuestID].sourceFile + ", duplicate file: " + fileName );
 			continue;
 		}
 
@@ -149,11 +137,7 @@ function LoadQuestRegistry()
 		questRegistry[actualQuestID] = questData;
 	}
 
-	Console.Print(
-		"Quest system: Loaded " +
-		Object.keys( questRegistry ).length +
-		" quests."
-	);
+	Console.Print( "Quest system: Loaded " + Object.keys( questRegistry ).length + " quests.\n" );
 
 	questRegistryLoaded = true;
 }
@@ -215,20 +199,13 @@ function ParseQuestJsonFile( fileText, fileName )
 	}
 	catch( error )
 	{
-		Console.Warning(
-			"Quest system: JSON parse failed for file " +
-			fileName +
-			". " +
-			error
-		);
+		Console.Warning( "Quest system: JSON parse failed for file " + fileName + ". " + error );
 		return null;
 	}
 
-	if( !quest || typeof quest != "object" || IsArrayValue( quest ) )
+	if( !quest || typeof quest != "object" || IsArrayValue( quest ))
 	{
-		Console.Warning(
-			"Quest system: Quest file must contain one JSON object: " + fileName
-		);
+		Console.Warning( "Quest system: Quest file must contain one JSON object: " + fileName );
 		return null;
 	}
 
@@ -469,50 +446,30 @@ function ValidateQuestObjectives( quest, fileName )
 
 function ValidateKillTargets( quest, fileName )
 {
-	if( quest.targetKills && IsArrayValue( quest.targetKills ) )
+	if( quest.targetKills && IsArrayValue( quest.targetKills ))
 	{
 		for( var targetKillIndex = 0; targetKillIndex < quest.targetKills.length; targetKillIndex++ )
 		{
 			var targetKill = quest.targetKills[targetKillIndex];
 			if( !targetKill || typeof targetKill != "object" )
 			{
-				Console.Warning(
-					"Quest system: targetKills entry at index " +
-					targetKillIndex +
-					" is not a valid object in file " +
-					fileName
-				);
+				Console.Warning( "Quest system: targetKills entry at index " + targetKillIndex + " is not a valid object in file " + fileName );
 				continue;
 			}
 
 			if( typeof targetKill.npcID == "undefined" )
 			{
-				Console.Warning(
-					"Quest system: targetKills entry at index " +
-					targetKillIndex +
-					" is missing npcID in file " +
-					fileName
-				);
+				Console.Warning( "Quest system: targetKills entry at index " + targetKillIndex + " is missing npcID in file " + fileName );
 			}
 
 			if( typeof targetKill.amount == "undefined" )
 			{
-				Console.Warning(
-					"Quest system: targetKills entry at index " +
-					targetKillIndex +
-					" is missing amount in file " +
-					fileName
-				);
+				Console.Warning( "Quest system: targetKills entry at index " + targetKillIndex + " is missing amount in file " + fileName );
 			}
 
 			if( typeof targetKill.regionName != "undefined" && typeof targetKill.regionName != "string" )
 			{
-				Console.Warning(
-					"Quest system: targetKills entry at index " +
-					targetKillIndex +
-					" has invalid regionName in file " +
-					fileName
-				);
+				Console.Warning( "Quest system: targetKills entry at index " + targetKillIndex + " has invalid regionName in file " + fileName );
 			}
 		}
 	}
@@ -524,68 +481,38 @@ function ValidateKillTargets( quest, fileName )
 			var targetKillGroup = quest.targetKillGroups[targetKillGroupIndex];
 			if( !targetKillGroup || typeof targetKillGroup != "object" )
 			{
-				Console.Warning(
-					"Quest system: targetKillGroups entry at index " +
-					targetKillGroupIndex +
-					" is not a valid object in file " +
-					fileName
-				);
+				Console.Warning( "Quest system: targetKillGroups entry at index " + targetKillGroupIndex + " is not a valid object in file " + fileName );
 				continue;
 			}
 
 			if( typeof targetKillGroup.groupID == "undefined" )
 			{
-				Console.Warning(
-					"Quest system: targetKillGroups entry at index " +
-					targetKillGroupIndex +
-					" is missing groupID in file " +
-					fileName
-				);
+				Console.Warning( "Quest system: targetKillGroups entry at index " + targetKillGroupIndex + " is missing groupID in file " + fileName );
 			}
 
 			if( typeof targetKillGroup.amount == "undefined" )
 			{
-				Console.Warning(
-					"Quest system: targetKillGroups entry at index " +
-					targetKillGroupIndex +
-					" is missing amount in file " +
-					fileName
-				);
+				Console.Warning( "Quest system: targetKillGroups entry at index " + targetKillGroupIndex + " is missing amount in file " + fileName );
 			}
 
-			var hasNpcList =
-				( targetKillGroup.npcs && IsArrayValue( targetKillGroup.npcs ) && targetKillGroup.npcs.length > 0 );
+			var hasNpcList = ( targetKillGroup.npcs && IsArrayValue( targetKillGroup.npcs ) && targetKillGroup.npcs.length > 0 );
 
-			var hasRaceID =
-				( typeof targetKillGroup.raceID != "undefined" );
+			var hasRaceID = ( typeof targetKillGroup.raceID != "undefined" );
 
-			var hasRaceName =
-				( typeof targetKillGroup.raceName != "undefined" && targetKillGroup.raceName != "" );
+			var hasRaceName = ( typeof targetKillGroup.raceName != "undefined" && targetKillGroup.raceName != "" );
 
-			var hasRaceIDs =
-				( targetKillGroup.raceIDs && IsArrayValue( targetKillGroup.raceIDs ) && targetKillGroup.raceIDs.length > 0 );
+			var hasRaceIDs = ( targetKillGroup.raceIDs && IsArrayValue( targetKillGroup.raceIDs ) && targetKillGroup.raceIDs.length > 0 );
 
-			var hasRaceNames =
-				( targetKillGroup.raceNames && IsArrayValue( targetKillGroup.raceNames ) && targetKillGroup.raceNames.length > 0 );
+			var hasRaceNames = ( targetKillGroup.raceNames && IsArrayValue( targetKillGroup.raceNames ) && targetKillGroup.raceNames.length > 0 );
 
 			if( !hasNpcList && !hasRaceID && !hasRaceName && !hasRaceIDs && !hasRaceNames )
 			{
-				Console.Warning(
-					"Quest system: targetKillGroups entry at index " +
-					targetKillGroupIndex +
-					" must define npcs, raceID, raceName, raceIDs or raceNames in file " +
-					fileName
-				);
+				Console.Warning( "Quest system: targetKillGroups entry at index " + targetKillGroupIndex + " must define npcs, raceID, raceName, raceIDs or raceNames in file " + fileName );
 			}
 
 			if( typeof targetKillGroup.regionName != "undefined" && typeof targetKillGroup.regionName != "string" )
 			{
-				Console.Warning(
-					"Quest system: targetKillGroups entry at index " +
-					targetKillGroupIndex +
-					" has invalid regionName in file " +
-					fileName
-				);
+				Console.Warning( "Quest system: targetKillGroups entry at index " + targetKillGroupIndex + " has invalid regionName in file " + fileName );
 			}
 		}
 	}
@@ -603,23 +530,13 @@ function ValidateQuestRewards( quest, fileName )
 		var reward = quest.rewards[i];
 		if( !reward || typeof reward != "object" )
 		{
-			Console.Warning(
-				"Quest system: Reward entry at index " +
-				i +
-				" is not a valid object in file " +
-				fileName
-			);
+			Console.Warning( "Quest system: Reward entry at index " + i + " is not a valid object in file " + fileName );
 			continue;
 		}
 
 		if( !reward.type )
 		{
-			Console.Warning(
-				"Quest system: Reward entry at index " +
-				i +
-				" is missing type in file " +
-				fileName
-			);
+			Console.Warning( "Quest system: Reward entry at index " + i + " is missing type in file " + fileName );
 			continue;
 		}
 
@@ -631,71 +548,37 @@ function ValidateQuestRewards( quest, fileName )
 			case "skillpoints":
 				if( typeof reward.amount == "undefined" )
 				{
-					Console.Warning(
-						"Quest system: Reward type '" +
-						reward.type +
-						"' missing amount at index " +
-						i +
-						" in file " +
-						fileName
-					);
+					Console.Warning( "Quest system: Reward type '" + reward.type + "' missing amount at index " + i + " in file " + fileName );
 				}
 				break;
 
 			case "item":
 				if( !reward.sectionID )
 				{
-					Console.Warning(
-						"Quest system: Item reward missing sectionID at index " +
-						i +
-						" in file " +
-						fileName
-					);
+					Console.Warning( "Quest system: Item reward missing sectionID at index " + i + " in file " + fileName );
 				}
 				if( typeof reward.amount == "undefined" )
 				{
-					Console.Warning(
-						"Quest system: Item reward missing amount at index " +
-						i +
-						" in file " +
-						fileName
-					);
+					Console.Warning( "Quest system: Item reward missing amount at index " + i + " in file " + fileName );
 				}
 				break;
 
 			case "skill":
 				if( typeof reward.skill == "undefined" || typeof reward.amount == "undefined" )
 				{
-					Console.Warning(
-						"Quest system: Skill reward missing skill or amount at index " +
-						i +
-						" in file " +
-						fileName
-					);
+					Console.Warning( "Quest system: Skill reward missing skill or amount at index " + i + " in file " + fileName );
 				}
 				break;
 
 			case "virtue":
 				if( typeof reward.virtueIndex == "undefined" || typeof reward.amount == "undefined" )
 				{
-					Console.Warning(
-						"Quest system: Virtue reward missing virtueIndex or amount at index " +
-						i +
-						" in file " +
-						fileName
-					);
+					Console.Warning( "Quest system: Virtue reward missing virtueIndex or amount at index " + i + " in file " + fileName );
 				}
 				break;
 
 			default:
-				Console.Warning(
-					"Quest system: Unknown reward type '" +
-					reward.type +
-					"' at index " +
-					i +
-					" in file " +
-					fileName
-				);
+				Console.Warning( "Quest system: Unknown reward type '" + reward.type + "' at index " + i + " in file " + fileName );
 				break;
 		}
 	}
@@ -717,7 +600,7 @@ function ValidateQuestTagsAndState( quest, fileName )
 
 function ValidateQuestNextQuest( quest, fileName )
 {
-	if( !quest.nextQuest || !IsArrayValue( quest.nextQuest ) )
+	if( !quest.nextQuest || !IsArrayValue( quest.nextQuest ))
 	{
 		return;
 	}
@@ -727,23 +610,13 @@ function ValidateQuestNextQuest( quest, fileName )
 		var nextEntry = quest.nextQuest[i];
 		if( !nextEntry || typeof nextEntry != "object" )
 		{
-			Console.Warning(
-				"Quest system: nextQuest entry at index " +
-				i +
-				" is not a valid object in file " +
-				fileName
-			);
+			Console.Warning( "Quest system: nextQuest entry at index " + i + " is not a valid object in file " + fileName );
 			continue;
 		}
 
 		if( typeof nextEntry.questID == "undefined" )
 		{
-			Console.Warning(
-				"Quest system: nextQuest entry at index " +
-				i +
-				" is missing questID in file " +
-				fileName
-			);
+			Console.Warning( "Quest system: nextQuest entry at index " + i + " is missing questID in file " + fileName );
 		}
 
 		if( typeof nextEntry.cond != "undefined" )
@@ -757,12 +630,7 @@ function ValidateNextQuestConditionObject( cond, fileName, index )
 {
 	if( !cond || typeof cond != "object" )
 	{
-		Console.Warning(
-			"Quest system: nextQuest cond at index " +
-			index +
-			" is not a valid object in file " +
-			fileName
-		);
+		Console.Warning( "Quest system: nextQuest cond at index " + index + " is not a valid object in file " + fileName );
 		return;
 	}
 
@@ -782,14 +650,7 @@ function ValidateNextQuestConditionObject( cond, fileName, index )
 	{
 		if( cond.hasOwnProperty( key ) && !validCondKeys[key] )
 		{
-			Console.Warning(
-				"Quest system: Unknown nextQuest condition property '" +
-				key +
-				"' in file " +
-				fileName +
-				" at nextQuest index " +
-				index
-			);
+			Console.Warning( "Quest system: Unknown nextQuest condition property '" + key + "' in file " + fileName + " at nextQuest index " + index );
 		}
 	}
 }
@@ -801,14 +662,9 @@ function ValidatePlainObjectMap( value, objectName, fileName )
 		return;
 	}
 
-	if( !value || typeof value != "object" || IsArrayValue( value ) )
+	if( !value || typeof value != "object" || IsArrayValue( value ))
 	{
-		Console.Warning(
-			"Quest system: " +
-			objectName +
-			" must be a plain object in file " +
-			fileName
-		);
+		Console.Warning( "Quest system: " + objectName + " must be a plain object in file " + fileName );
 	}
 }
 
@@ -819,14 +675,9 @@ function ValidateRuleMap( value, objectName, fileName )
 		return;
 	}
 
-	if( !value || typeof value != "object" || IsArrayValue( value ) )
+	if( !value || typeof value != "object" || IsArrayValue( value ))
 	{
-		Console.Warning(
-			"Quest system: " +
-			objectName +
-			" must be a plain object in file " +
-			fileName
-		);
+		Console.Warning( "Quest system: " + objectName + " must be a plain object in file " + fileName );
 		return;
 	}
 
@@ -838,16 +689,9 @@ function ValidateRuleMap( value, objectName, fileName )
 		}
 
 		var rule = value[key];
-		if( !rule || typeof rule != "object" || IsArrayValue( rule ) )
+		if( !rule || typeof rule != "object" || IsArrayValue( rule ))
 		{
-			Console.Warning(
-				"Quest system: Rule '" +
-				key +
-				"' in " +
-				objectName +
-				" must be an object in file " +
-				fileName
-			);
+			Console.Warning( "Quest system: Rule '" + key + "' in " + objectName + " must be an object in file " + fileName );
 		}
 	}
 }
