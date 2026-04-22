@@ -7037,8 +7037,17 @@ LoginQuestEnabled=1
 	"category": "Side Quests",
 	"oneTimeQuest": 1,
 	"questTurnIn": 1,
-	"targetItems": [
-		{ "sectionID": "small_iron_ore", "amount": 5, "name": "Small Iron Ore" }
+	"targetItemGroups": [
+		{
+			"amount": 5,
+			"name": "Iron Ore",
+			"items": [
+				{ "sectionID": "small_iron_ore", "name": "Iron Ore" },
+				{ "sectionID": "medium_iron_ore", "name": "Iron Ore" },
+				{ "sectionID": "large_iron_ore", "name": "Iron Ore" },
+				{ "sectionID": "medium_small_iron_ore", "name": "Iron Ore" }
+			]
+		}
 	],
 	"rewards": [
 		{ "type": "gold", "amount": 500, "name": "Gold" }
