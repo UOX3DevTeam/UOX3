@@ -6907,8 +6907,9 @@ function onTooltip( myItem, pSocket )
 
 						<p>
 							The <span class="hl">Quest System</span> lets you build everything from simple starter tasks to full story arcs.
-							You can use it for item collection quests, kill quests, delivery quests, skill training quests, daily quests,
-							timed quests, branching quest lines, and reputation or world-state based progression.
+							You can use it for item collection quests, grouped item collection quests, kill quests, grouped kill quests,
+							delivery quests, skill training quests, daily quests, timed quests, branching quest lines, and reputation
+							or world-state based progression.
 						</p>
 
 						<p>
@@ -6925,7 +6926,8 @@ function onTooltip( myItem, pSocket )
 
 						<p>
 							If you already know what you are doing, this system also supports more advanced features such as chained quests,
-							branching outcomes, tag changes, world-state tracking, skill point rewards, and automatic quest offers on login.
+							branching outcomes, item groups, kill groups, race-based kill tracking, region-based kill objectives, tag changes,
+							world-state tracking, skill point rewards, and automatic quest offers on login.
 						</p>
 
 						<h3>System Overview</h3>
@@ -6937,7 +6939,7 @@ function onTooltip( myItem, pSocket )
 
 						<p>
 							All quest data is stored as JSON files in:
-							<span class="hl">js/server/quests/quest_lists/</span>
+							<span class="hl">js/jsdata/quests/</span>
 						</p>
 
 						<p>
@@ -6977,7 +6979,7 @@ function onTooltip( myItem, pSocket )
 
 						<ol>
 							<li>Enable the quest system in <span class="hl">uox.ini</span></li>
-							<li>Create a quest JSON file in <span class="hl">js/server/quests/quest_lists/</span></li>
+							<li>Create a quest JSON file in <span class="hl">js/jsdata/quests/</span></li>
 							<li>Create or edit an NPC that points to that quest</li>
 							<li>Reload scripts</li>
 							<li>Talk to the NPC in game and test the quest</li>
@@ -7002,7 +7004,7 @@ LoginQuestEnabled=1
 
 						<p>
 							All quest definitions are stored as JSON files in:
-							<span class="hl">js/server/quests/quest_lists/</span>
+							<span class="hl">js/jsdata/quests/</span>
 						</p>
 
 						<p>
@@ -7053,7 +7055,7 @@ LoginQuestEnabled=1
 
 						<p>
 							The quest registry is built from the quest index file:
-							<span class="hl">js/server/quests/quest_lists/quest_index.json</span>
+							<span class="hl">js/jsdata/quests/quest_index.json</span>
 						</p>
 
 						<p>
@@ -7164,6 +7166,8 @@ CUSTOMINTTAG=QuestID 2000
 								<li><span class="hl">nextQuestID</span> - simple next quest in a chain</li>
 								<li><span class="hl">nextQuest</span> - branching chain definitions</li>
 								<li><span class="hl">timeLimit</span> - timer in seconds for timed quests</li>
+								<li><span class="hl">targetRegion</span> - optional region restriction for skill training quests and kill objectives</li>
+								<li><span class="hl">regionName</span> - optional display name for the region shown in the journal</li>
 							</ul>
 						</div>
 
@@ -7171,6 +7175,11 @@ CUSTOMINTTAG=QuestID 2000
 							A quest can require more than one item, more than one creature kill, and more than one reward.
 							This means you are not limited to a single <span class="hl">targetItems</span> entry, a single
 							<span class="hl">targetKills</span> entry, or a single reward entry. You can list as many as the quest needs.
+						</p>
+
+						<p>
+							The system also supports grouped objectives. This means a quest can ask for any items from a group or any kills from a group,
+							instead of requiring exact one-by-one matches.
 						</p>
 
 						<p>
@@ -7189,6 +7198,40 @@ CUSTOMINTTAG=QuestID 2000
 </code></pre>
 						</div>
 
+						<input type="checkbox" id="spoiler_item_groups">
+						<label for="spoiler_item_groups">Show item group examples <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+
+							<p><strong>Grouped item collection</strong></p>
+
+<pre><code class="language-javascript">
+"targetItemGroups": [
+	{
+		"groupID": "magic_reagents_any",
+		"name": "Magic Reagents",
+		"amount": 7,
+		"items": [
+			{ "sectionID": "black_pearl", "name": "Black Pearl" },
+			{ "sectionID": "blood_moss", "name": "Blood Moss" },
+			{ "sectionID": "garlic", "name": "Garlic" },
+			{ "sectionID": "ginseng", "name": "Ginseng" },
+			{ "sectionID": "mandrake_root", "name": "Mandrake Root" },
+			{ "sectionID": "nightshade", "name": "Nightshade" },
+			{ "sectionID": "spiders_silk", "name": "Spider's Silk" },
+			{ "sectionID": "sulfurous_ash", "name": "Sulfurous Ash" }
+		]
+	}
+]
+</code></pre>
+
+						</div>
+
+						<p>
+							Item groups let you track progress across multiple valid items. This is useful for quests such as
+							"Bring me any 7 magic reagents" where the player can combine different items to reach the required total.
+						</p>
+
 						<input type="checkbox" id="spoiler_kill_objective">
 						<label for="spoiler_kill_objective">Show kill quest example <i class="fas fa-angle-down"></i></label>
 
@@ -7200,6 +7243,128 @@ CUSTOMINTTAG=QuestID 2000
 ]
 </code></pre>
 						</div>
+
+						<input type="checkbox" id="spoiler_kill_groups">
+						<label for="spoiler_kill_groups">Show kill group examples <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+
+							<p><strong>Kill Group using exact NPC IDs</strong></p>
+
+<pre><code class="language-javascript">
+"targetKillGroups": [
+	{
+		"groupID": "forest_creatures",
+		"name": "Forest Creatures",
+		"amount": 10,
+		"npcs": [
+			{ "npcID": "wolf" },
+			{ "npcID": "bear" },
+			{ "npcID": "cougar" }
+		]
+	}
+]
+</code></pre>
+
+							<p><strong>Kill Group using raceName</strong></p>
+
+<pre><code class="language-javascript">
+"targetKillGroups": [
+	{
+		"groupID": "undead_any",
+		"name": "Undead Creatures",
+		"amount": 10,
+		"raceName": "Undead"
+	}
+]
+</code></pre>
+
+							<p><strong>Kill Group using multiple race names</strong></p>
+
+<pre><code class="language-javascript">
+"targetKillGroups": [
+	{
+		"groupID": "evil_humanoids",
+		"name": "Evil Humanoids",
+		"amount": 15,
+		"raceNames": [ "Orc", "Ratman" ]
+	}
+]
+</code></pre>
+
+						</div>
+
+						<p>
+							Kill groups allow you to track progress across multiple creatures instead of requiring exact NPC matches.
+							You can define groups using individual NPC IDs or by using <span class="hl">raceName</span>,
+							<span class="hl">raceNames</span>, <span class="hl">raceID</span>, or <span class="hl">raceIDs</span>.
+						</p>
+
+						<p>
+							Using <span class="hl">raceName</span> is the recommended approach, because it automatically includes all creatures
+							belonging to that race without needing to list them manually.
+						</p>
+
+						<input type="checkbox" id="spoiler_region_kills">
+						<label for="spoiler_region_kills">Show region-based kill examples <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+
+							<p><strong>Exact kill in a region</strong></p>
+
+<pre><code class="language-javascript">
+"targetKills": [
+	{
+		"npcID": "orc",
+		"amount": 10,
+		"name": "Orc",
+		"targetRegion": 42,
+		"regionName": "the mountain pass"
+	}
+]
+</code></pre>
+
+							<p><strong>Kill group in a region</strong></p>
+
+<pre><code class="language-javascript">
+"targetKillGroups": [
+	{
+		"groupID": "undead_graveyard",
+		"name": "Undead Creatures",
+		"amount": 10,
+		"raceName": "Undead",
+		"targetRegion": 55,
+		"regionName": "the graveyard"
+	}
+]
+</code></pre>
+
+							<p><strong>Quest-wide region fallback</strong></p>
+
+<pre><code class="language-javascript">
+"targetRegion": 77,
+"regionName": "the deep forest",
+"targetKills": [
+	{ "npcID": "wolf", "amount": 5, "name": "Wolf" }
+],
+"targetKillGroups": [
+	{
+		"groupID": "forest_beasts",
+		"name": "Forest Beasts",
+		"amount": 5,
+		"raceNames": [ "Animal", "Predator" ]
+	}
+]
+</code></pre>
+
+						</div>
+
+						<p>
+							Region restrictions for kill quests are optional.
+							If no region is defined, kills count anywhere.
+							If a region is defined on an individual kill target or kill group, that objective must be completed in that region.
+							If only the quest itself defines <span class="hl">targetRegion</span>, that value is used as the fallback for all kill objectives in that quest.
+						</p>
 
 						<input type="checkbox" id="spoiler_multi_objective">
 						<label for="spoiler_multi_objective">Show multi quest example <i class="fas fa-angle-down"></i></label>
@@ -7422,7 +7587,7 @@ CUSTOMINTTAG=QuestID 2000
 {
 	"questID": 2000,
 	"title": "More Ore Please",
-	"description": "Bring me some iron ore.",
+	"description": "Bring me some small iron ore.",
 	"uncomplete": "You still need more ore.",
 	"complete": "Good work!",
 	"refuse": "Maybe next time.",
@@ -7435,6 +7600,42 @@ CUSTOMINTTAG=QuestID 2000
 	],
 	"rewards": [
 		{ "type": "gold", "amount": 500, "name": "Gold" }
+	]
+}
+</code></pre>
+
+							<p><strong>Grouped Collect Quest</strong></p>
+
+<pre><code class="language-javascript">
+{
+	"questID": 2005,
+	"title": "Reagents for Research",
+	"description": "Bring me any 7 magic reagents.",
+	"uncomplete": "Any 7 reagents from the mage reagent set will do.",
+	"complete": "Excellent. These will work nicely.",
+	"type": "collect",
+	"category": "Side Quests",
+	"oneTimeQuest": 1,
+	"questTurnIn": 1,
+	"targetItemGroups": [
+		{
+			"groupID": "magic_reagents_any",
+			"name": "Magic Reagents",
+			"amount": 7,
+			"items": [
+				{ "sectionID": "black_pearl", "name": "Black Pearl" },
+				{ "sectionID": "blood_moss", "name": "Blood Moss" },
+				{ "sectionID": "garlic", "name": "Garlic" },
+				{ "sectionID": "ginseng", "name": "Ginseng" },
+				{ "sectionID": "mandrake_root", "name": "Mandrake Root" },
+				{ "sectionID": "nightshade", "name": "Nightshade" },
+				{ "sectionID": "spiders_silk", "name": "Spider's Silk" },
+				{ "sectionID": "sulfurous_ash", "name": "Sulfurous Ash" }
+			]
+		}
+	],
+	"rewards": [
+		{ "type": "gold", "amount": 250, "name": "Gold" }
 	]
 }
 </code></pre>
@@ -7455,6 +7656,31 @@ CUSTOMINTTAG=QuestID 2000
 	],
 	"rewards": [
 		{ "type": "gold", "amount": 250, "name": "Gold" }
+	]
+}
+</code></pre>
+
+							<p><strong>Kill by Race Example</strong></p>
+
+<pre><code class="language-javascript">
+{
+	"questID": 2010,
+	"title": "Cleanse the Dead",
+	"description": "Destroy 10 undead in the graveyard.",
+	"type": "kill",
+	"questTurnIn": 1,
+	"targetKillGroups": [
+		{
+			"groupID": "undead_graveyard",
+			"name": "Undead Creatures",
+			"amount": 10,
+			"raceName": "Undead",
+			"targetRegion": 55,
+			"regionName": "the graveyard"
+		}
+	],
+	"rewards": [
+		{ "type": "gold", "amount": 400, "name": "Gold" }
 	]
 }
 </code></pre>
@@ -7519,6 +7745,10 @@ CUSTOMINTTAG=QuestID 2000
 							<li>Use <span class="hl">dailyQuest</span> for repeatable quests</li>
 							<li>Use <span class="hl">nextQuestID</span> for simple linear chains</li>
 							<li>Use <span class="hl">nextQuest</span> for branching chains</li>
+							<li>Use <span class="hl">targetItemGroups</span> when a quest should accept any valid items from a list</li>
+							<li>Use <span class="hl">targetKillGroups</span> when a quest should accept kills from a group instead of exact NPCs only</li>
+							<li>Use <span class="hl">raceName</span> inside <span class="hl">targetKillGroups</span> to avoid listing every NPC individually</li>
+							<li>Use <span class="hl">targetRegion</span> and <span class="hl">regionName</span> when kills or training should happen in a specific area</li>
 							<li>Use <span class="hl">setTags</span> and <span class="hl">setTagDeltas</span> for reputation, alignment, or character progression</li>
 							<li>Use <span class="hl">setWorldState</span> and <span class="hl">worldStateDeltas</span> for story or world progression</li>
 							<li>Only include fields that apply to the quest type you are building</li>

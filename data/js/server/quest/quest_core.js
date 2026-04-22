@@ -2,10 +2,11 @@
 // @ts-check
 
 /** @type { ( player: Character, questID: number ) => void } */
+/** @type { ( player: Character, questID: number ) => void } */
 function StartQuest( player, questID )
 {
 	if( !ValidateObject( player ))
-		return;	
+		return;
 
 	var socket = player.socket;
 	if( socket == null )
@@ -15,58 +16,79 @@ function StartQuest( player, questID )
 
 	if( !CheckQuest( player, questID ))
 	{
-		return; // Stop execution if the quest cannot proceed
+		return;
 	}
 
-	// Initialize objectives
 	var collectedItems = {};
+	var collectedItemGroups = {};
 	var harvestKills = {};
+	var harvestKillGroups = {};
 
 	var quest = TriggerEvent( 5801, "QuestList", questID );
 
 	if( quest.targetItems )
 	{
-		for( var i = 0; i < quest.targetItems.length; i++ )
+		for( var targetItemIndex = 0; targetItemIndex < quest.targetItems.length; targetItemIndex++ )
 		{
-			var targetItem = quest.targetItems[i];
-			collectedItems[targetItem.sectionID] = 0; // Start with 0 collected
+			var targetItem = quest.targetItems[targetItemIndex];
+			collectedItems[targetItem.sectionID] = 0;
+		}
+	}
+
+	if( quest.targetItemGroups )
+	{
+		for( var targetGroupIndex = 0; targetGroupIndex < quest.targetItemGroups.length; targetGroupIndex++ )
+		{
+			var targetGroup = quest.targetItemGroups[targetGroupIndex];
+			if( targetGroup && targetGroup.groupID )
+			{
+				collectedItemGroups[String( targetGroup.groupID )] = 0;
+			}
 		}
 	}
 
 	if( quest.targetKills )
 	{
-		for( var i = 0; i < quest.targetKills.length; i++ )
+		for( var targetKillIndex = 0; targetKillIndex < quest.targetKills.length; targetKillIndex++ )
 		{
-			var targetKill = quest.targetKills[i];
-			harvestKills[targetKill.npcID] = 0; // Start with 0 kills
+			var targetKill = quest.targetKills[targetKillIndex];
+			harvestKills[targetKill.npcID] = 0;
 		}
-		player.AddScriptTrigger( 5810 );// onKill quest trigger
+		player.AddScriptTrigger( 5810 );
 	}
 
-	// Add the delivery item to the player's backpack if it's a delivery quest
+	if( quest.targetKillGroups )
+	{
+		for( var targetKillGroupIndex = 0; targetKillGroupIndex < quest.targetKillGroups.length; targetKillGroupIndex++ )
+		{
+			var targetKillGroup = quest.targetKillGroups[targetKillGroupIndex];
+			if( targetKillGroup && targetKillGroup.groupID )
+			{
+				harvestKillGroups[String( targetKillGroup.groupID )] = 0;
+			}
+		}
+	}
+
 	if( quest.type == "delivery" && quest.deliveryItem )
 	{
-			var package = CreateDFNItem( player.socket, player, quest.deliveryItem.sectionID, quest.deliveryItem.amount, "ITEM", true )
-			if( ValidateObject( package )) 
-			{
-				// Set the item's name to the delivery item name from the quest
-				package.name = quest.deliveryItem.name || "Unknown Package";
-
-				// Mark it as a quest item
-				package.SetTag( "saveColor", package.color );
-				package.color = 0x04ea; // orange hue
-				package.isDyeable = false;
-				package.isNewbie = true;
-				package.SetTag( "QuestItem", true );
-				package.SetTag( "delivery", true );
-				package.SetTag( "QuestSectionID", package.sectionID );
-				package.AddScriptTrigger( 5806 );// Quest Item script trigger
-				player.SysMessage( "You have received a " + quest.deliveryItem.name + " for delivery." );
-			} 
-			else
-			{
-				socket.SysMessage( GetDictionaryEntry( 19615, socket.language )); // Failed to create the delivery item.
-			}
+		var packageItem = CreateDFNItem( player.socket, player, quest.deliveryItem.sectionID, quest.deliveryItem.amount, "ITEM", true );
+		if( ValidateObject( packageItem ))
+		{
+			packageItem.name = quest.deliveryItem.name || "Unknown Package";
+			packageItem.SetTag( "saveColor", packageItem.color );
+			packageItem.color = 0x04ea;
+			packageItem.isDyeable = false;
+			packageItem.isNewbie = true;
+			packageItem.SetTag( "QuestItem", true );
+			packageItem.SetTag( "delivery", true );
+			packageItem.SetTag( "QuestSectionID", packageItem.sectionID );
+			packageItem.AddScriptTrigger( 5806 );
+			player.SysMessage( "You have received a " + quest.deliveryItem.name + " for delivery." );
+		}
+		else
+		{
+			socket.SysMessage( GetDictionaryEntry( 19615, socket.language ));
+		}
 	}
 
 	var initialSkillLevel = 0;
@@ -74,30 +96,31 @@ function StartQuest( player, questID )
 	{
 		if( !player.GetTag( "AcceleratedSkillGain" ))
 		{
-			initialSkillLevel = player.baseskills[quest.targetSkill]; // Get current skill level
+			initialSkillLevel = player.baseskills[quest.targetSkill];
 			player.SetTag( "AcceleratedSkillGain", quest.targetSkill );
-			player.AddScriptTrigger( 5811 ); // Quest skill gain script trigger
+			player.AddScriptTrigger( 5811 );
 		}
 		else
 		{
-			socket.SysMessage( GetDictionaryEntry( 19616, socket.language )); // You are already under the effect of an accelerated skillgain scroll.
+			socket.SysMessage( GetDictionaryEntry( 19616, socket.language ));
 		}
 	}
 
-	// Add new quest to progress
 	questProgressArray.push({
 		serial: player.serial,
 		questID: questID,
-		questProgress: 0, // General progress
-		harvestKills: harvestKills, // Kill objectives
-		collectedItems: collectedItems, // Item objectives
-		skillProgress: initialSkillLevel, // Initialize skill progress
-		targetSkill: quest.targetSkill || -1, // Target skill for "skillgain"
-		targetRegion: quest.targetRegion || 0, // Target region for "skillgain"
-		maxSkillPoints: quest.maxSkillPoints || 50.0, // Max skill points for "skillgain"
-		startTime: quest.timeLimit ? Date.now() : 0, // Timed quests
+		questProgress: 0,
+		harvestKills: harvestKills,
+		harvestKillGroups: harvestKillGroups,
+		collectedItems: collectedItems,
+		collectedItemGroups: collectedItemGroups,
+		skillProgress: initialSkillLevel,
+		targetSkill: quest.targetSkill || -1,
+		targetRegion: quest.targetRegion || 0,
+		maxSkillPoints: quest.maxSkillPoints || 50.0,
+		startTime: quest.timeLimit ? Date.now() : 0,
 		timeLimit: quest.timeLimit ? quest.timeLimit * 1000 : 0,
-		lastAccepted: Date.now(), // Record the time the quest was accepted
+		lastAccepted: Date.now(),
 		completed: false,
 		questTurnIn: false,
 		nextQuestID: quest.nextQuestID || null
@@ -105,14 +128,13 @@ function StartQuest( player, questID )
 
 	WriteQuestProgress( player, questProgressArray );
 
-	socket.SysMessage( GetDictionaryEntry( 19617, socket.language )); // You have accepted the Quest.
+	socket.SysMessage( GetDictionaryEntry( 19617, socket.language ));
 
-	// Start the timer if the quest is timed
 	if( quest.timeLimit )
 	{
-		player.StartTimer( quest.timeLimit * 1000, questID, 5800 ); // Timer in milliseconds
-		var minutes = Math.floor( quest.timeLimit / 60 ); // Convert total seconds to minutes
-		var seconds = quest.timeLimit % 60; // Get remaining seconds
+		player.StartTimer( quest.timeLimit * 1000, questID, 5800 );
+		var minutes = Math.floor( quest.timeLimit / 60 );
+		var seconds = quest.timeLimit % 60;
 		socket.SysMessage( "You have " + minutes + " minute( s ) and " + seconds + " second( s ) to complete this quest." );
 	}
 }
@@ -247,11 +269,270 @@ function onTimer( timerObj, timerID )
 	}
 }
 
+/** @type { ( itemSectionID: string, itemQuestSectionID: string, targetGroup: any ) => boolean } */
+function DoesItemMatchTargetGroup( itemSectionID, itemQuestSectionID, targetGroup )
+{
+	if( !targetGroup || !targetGroup.items || !targetGroup.items.length )
+	{
+		return false;
+	}
+
+	var normalizedItemSectionID = String( itemSectionID );
+	var normalizedQuestSectionID = String( itemQuestSectionID );
+
+	for( var groupItemIndex = 0; groupItemIndex < targetGroup.items.length; groupItemIndex++ )
+	{
+		var groupItem = targetGroup.items[groupItemIndex];
+		if( !groupItem || !groupItem.sectionID )
+		{
+			continue;
+		}
+
+		var groupSectionID = String( groupItem.sectionID );
+		if( groupSectionID == normalizedItemSectionID || groupSectionID == normalizedQuestSectionID )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/** @type { ( creature: Character, targetKillGroup: any ) => boolean } */
+function DoesNpcMatchTargetKillGroup( creature, targetKillGroup )
+{
+	if( !ValidateObject( creature ) || !targetKillGroup )
+	{
+		return false;
+	}
+
+	var creatureSectionID = String( creature.sectionID );
+	var creatureRaceID = GetCreatureRaceID( creature );
+	var creatureRaceName = GetCreatureRaceName( creature );
+
+	if( targetKillGroup.npcs && targetKillGroup.npcs.length )
+	{
+		for( var groupNpcIndex = 0; groupNpcIndex < targetKillGroup.npcs.length; groupNpcIndex++ )
+		{
+			var groupNpc = targetKillGroup.npcs[groupNpcIndex];
+			if( !groupNpc || !groupNpc.npcID )
+			{
+				continue;
+			}
+
+			if( String( groupNpc.npcID ) == creatureSectionID )
+			{
+				return true;
+			}
+		}
+	}
+
+	if( typeof targetKillGroup.raceID != "undefined" )
+	{
+		var targetRaceID = parseInt( targetKillGroup.raceID, 10 );
+		if( !isNaN( targetRaceID ) && targetRaceID > 0 && creatureRaceID == targetRaceID )
+		{
+			return true;
+		}
+	}
+
+	if( targetKillGroup.raceName )
+	{
+		if( creatureRaceName != "" && creatureRaceName == String( targetKillGroup.raceName ).toLowerCase() )
+		{
+			return true;
+		}
+	}
+
+	if( targetKillGroup.raceIDs && targetKillGroup.raceIDs.length )
+	{
+		for( var raceIDIndex = 0; raceIDIndex < targetKillGroup.raceIDs.length; raceIDIndex++ )
+		{
+			var raceIDEntry = parseInt( targetKillGroup.raceIDs[raceIDIndex], 10 );
+			if( !isNaN( raceIDEntry ) && raceIDEntry > 0 && creatureRaceID == raceIDEntry )
+			{
+				return true;
+			}
+		}
+	}
+
+	if( targetKillGroup.raceNames && targetKillGroup.raceNames.length )
+	{
+		for( var raceNameIndex = 0; raceNameIndex < targetKillGroup.raceNames.length; raceNameIndex++ )
+		{
+			var raceNameEntry = String( targetKillGroup.raceNames[raceNameIndex] ).toLowerCase();
+			if( creatureRaceName != "" && creatureRaceName == raceNameEntry )
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+/** @type { ( creature: Character ) => number } */
+function GetCreatureRaceID( creature )
+{
+	if( !ValidateObject( creature ) || !creature.race )
+	{
+		return 0;
+	}
+
+	var raceID = parseInt( creature.race.id, 10 );
+	if( isNaN( raceID ))
+	{
+		return 0;
+	}
+
+	return raceID;
+}
+
+/** @type { ( creature: Character ) => string } */
+function GetCreatureRaceName( creature )
+{
+	if( !ValidateObject( creature ) || !creature.race || !creature.race.name )
+	{
+		return "";
+	}
+
+	return String( creature.race.name ).toLowerCase();
+}
+
+/** @type { ( quest: any, targetEntry: any ) => number } */
+function ResolveKillTargetRegion( quest, targetEntry )
+{
+	if( targetEntry && typeof targetEntry.targetRegion != "undefined" )
+	{
+		var targetRegion = parseInt( targetEntry.targetRegion, 10 );
+		if( !isNaN( targetRegion ) && targetRegion > 0 )
+		{
+			return targetRegion;
+		}
+	}
+
+	if( quest && typeof quest.targetRegion != "undefined" )
+	{
+		var questRegion = parseInt( quest.targetRegion, 10 );
+		if( !isNaN( questRegion ) && questRegion > 0 )
+		{
+			return questRegion;
+		}
+	}
+
+	return 0;
+}
+
+/** @type { ( player: Character, creature: Character, requiredRegion: number ) => boolean } */
+function IsKillInRequiredRegion( player, creature, requiredRegion )
+{
+	requiredRegion = parseInt( requiredRegion, 10 );
+	if( isNaN( requiredRegion ) || requiredRegion <= 0 )
+	{
+		return true;
+	}
+
+	var playerRegionId = 0;
+	var creatureRegionId = 0;
+
+	if( player && player.region )
+	{
+		playerRegionId = parseInt( player.region.id, 10 );
+		if( isNaN( playerRegionId ))
+		{
+			playerRegionId = 0;
+		}
+	}
+
+	if( creature && creature.region )
+	{
+		creatureRegionId = parseInt( creature.region.id, 10 );
+		if( isNaN( creatureRegionId ))
+		{
+			creatureRegionId = 0;
+		}
+	}
+
+	return ( playerRegionId == requiredRegion || creatureRegionId == requiredRegion );
+}
+
+/** @type { ( quest: any, questEntry: any ) => boolean } */
+function AreAllQuestObjectivesComplete( quest, questEntry )
+{
+	var allObjectivesCompleted = true;
+
+	if( quest.type == "collect" || quest.type == "timecollect" || quest.type == "multi" )
+	{
+		if( quest.targetItems )
+		{
+			for( var targetItemIndex = 0; targetItemIndex < quest.targetItems.length; targetItemIndex++ )
+			{
+				var exactTarget = quest.targetItems[targetItemIndex];
+				if( !questEntry.collectedItems || ( questEntry.collectedItems[exactTarget.sectionID] || 0 ) < exactTarget.amount )
+				{
+					allObjectivesCompleted = false;
+				}
+			}
+		}
+
+		if( quest.targetItemGroups )
+		{
+			for( var targetGroupIndex = 0; targetGroupIndex < quest.targetItemGroups.length; targetGroupIndex++ )
+			{
+				var targetGroup = quest.targetItemGroups[targetGroupIndex];
+				if( !targetGroup || !targetGroup.groupID )
+				{
+					continue;
+				}
+
+				if( !questEntry.collectedItemGroups || ( questEntry.collectedItemGroups[String( targetGroup.groupID )] || 0 ) < targetGroup.amount )
+				{
+					allObjectivesCompleted = false;
+				}
+			}
+		}
+	}
+
+	if( quest.type == "kill" || quest.type == "timekills" || quest.type == "multi" )
+	{
+		if( quest.targetKills )
+		{
+			for( var targetKillIndex = 0; targetKillIndex < quest.targetKills.length; targetKillIndex++ )
+			{
+				var targetKill = quest.targetKills[targetKillIndex];
+				if( !questEntry.harvestKills || ( questEntry.harvestKills[targetKill.npcID] || 0 ) < targetKill.amount )
+				{
+					allObjectivesCompleted = false;
+				}
+			}
+		}
+
+		if( quest.targetKillGroups )
+		{
+			for( var targetKillGroupIndex = 0; targetKillGroupIndex < quest.targetKillGroups.length; targetKillGroupIndex++ )
+			{
+				var targetKillGroup = quest.targetKillGroups[targetKillGroupIndex];
+				if( !targetKillGroup || !targetKillGroup.groupID )
+				{
+					continue;
+				}
+
+				if( !questEntry.harvestKillGroups || ( questEntry.harvestKillGroups[String( targetKillGroup.groupID )] || 0 ) < targetKillGroup.amount )
+				{
+					allObjectivesCompleted = false;
+				}
+			}
+		}
+	}
+
+	return allObjectivesCompleted;
+}
+
 /** @type { ( player: Character, questID: number, identifier: number | string, progressValue: number, type: string ) => any[] } */
 function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 {
 	if( !ValidateObject( player ))
-		return;	
+		return;
 
 	var socket = player.socket;
 	if( socket == null )
@@ -260,222 +541,257 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 	var questProgressArray = ReadQuestProgress( player );
 	var questUpdated = false;
 
-	for( var i = 0; i < questProgressArray.length; i++ )
+	for( var questEntryIndex = 0; questEntryIndex < questProgressArray.length; questEntryIndex++ )
 	{
-		var questEntry = questProgressArray[i];
+		var questEntry = questProgressArray[questEntryIndex];
 
-		// Ensure the quest belongs to the current player
-		if( questEntry.serial != player.serial || questEntry.questID != questID ) 
+		if( questEntry.serial != player.serial || questEntry.questID != questID )
 		{
 			continue;
 		}
 
-		if( questEntry.questID == questID ) 
+		var quest = TriggerEvent( 5801, "QuestList", questID );
+		if( !quest )
 		{
-			var quest = TriggerEvent( 5801, "QuestList", questID ); // Fetch quest data
-			var allObjectivesCompleted = true;
+			continue;
+		}
 
-			// Check item collection objectives
-			if( quest.type == "collect" || quest.type == "timecollect" || quest.type == "multi" )
+		if( !questEntry.collectedItems )
+		{
+			questEntry.collectedItems = {};
+		}
+		if( !questEntry.collectedItemGroups )
+		{
+			questEntry.collectedItemGroups = {};
+		}
+		if( !questEntry.harvestKills )
+		{
+			questEntry.harvestKills = {};
+		}
+
+		if( !questEntry.harvestKillGroups )
+		{
+			questEntry.harvestKillGroups = {};
+		}
+
+		if( type == "collect" || type == "collectgroup" )
+		{
+			if( quest.targetItems )
 			{
-				if( quest.targetItems )
+				for( var targetItemIndex = 0; targetItemIndex < quest.targetItems.length; targetItemIndex++ )
 				{
-					for( var j = 0; j < quest.targetItems.length; j++ )
+					var targetItem = quest.targetItems[targetItemIndex];
+
+					if( String( targetItem.sectionID ) == String( identifier ))
 					{
-						var target = quest.targetItems[j];
-
-						if( String( target.sectionID ) == String( identifier ))
+						questEntry.collectedItems[String( identifier )] = Math.max( 0, ( questEntry.collectedItems[String( identifier )] || 0 ) + progressValue );
+						if( questEntry.collectedItems[String( identifier )] > targetItem.amount )
 						{
-							questEntry.collectedItems[identifier] = Math.max( 0, questEntry.collectedItems[identifier] + progressValue );
-
-							// Cap the collected amount to the target amount
-							if( questEntry.collectedItems[identifier] > target.amount )
-							{
-								questEntry.collectedItems[identifier] = target.amount;
-							}
-						}
-
-						// Check if all items are collected
-						if( !questEntry.collectedItems || ( questEntry.collectedItems[target.sectionID] ) < target.amount )
-						{
-							allObjectivesCompleted = false;
+							questEntry.collectedItems[String( identifier )] = targetItem.amount;
 						}
 					}
 				}
 			}
 
-			// Check kill objectives
-			if( quest.type == "kill" || quest.type == "timekills" || quest.type == "multi" )
+			if( type == "collectgroup" && quest.targetItemGroups )
 			{
-				if( quest.targetKills )
+				for( var targetGroupIndex = 0; targetGroupIndex < quest.targetItemGroups.length; targetGroupIndex++ )
 				{
-					for( var k = 0; k < quest.targetKills.length; k++ )
+					var targetGroup = quest.targetItemGroups[targetGroupIndex];
+					if( !targetGroup || !targetGroup.groupID )
 					{
-						var target = quest.targetKills[k];
+						continue;
+					}
 
-						if( String( target.npcID ) == String( identifier ))
+					var groupID = String( targetGroup.groupID );
+					questEntry.collectedItemGroups[groupID] = Math.max( 0, ( questEntry.collectedItemGroups[groupID] || 0 ) + progressValue );
+
+					if( questEntry.collectedItemGroups[groupID] > targetGroup.amount )
+					{
+						questEntry.collectedItemGroups[groupID] = targetGroup.amount;
+					}
+
+					break;
+				}
+			}
+		}
+
+		if( type == "kill" || type == "killgroup" )
+		{
+			if( type == "kill" && quest.targetKills )
+			{
+				for( var targetKillIndex = 0; targetKillIndex < quest.targetKills.length; targetKillIndex++ )
+				{
+					var targetKill = quest.targetKills[targetKillIndex];
+
+					if( String( targetKill.npcID ) == String( identifier ) )
+					{
+						questEntry.harvestKills[String( identifier )] = ( questEntry.harvestKills[String( identifier )] || 0 ) + progressValue;
+						if( questEntry.harvestKills[String( identifier )] > targetKill.amount )
 						{
-							questEntry.harvestKills[identifier] = ( questEntry.harvestKills[identifier] || 0 ) + progressValue;
-
-							// Cap the kill count to the target amount
-							if( questEntry.harvestKills[identifier] > target.amount )
-							{
-								questEntry.harvestKills[identifier] = target.amount;
-							}
-						}
-
-						// Check if all kills are completed
-						if( !questEntry.harvestKills || ( questEntry.harvestKills[target.npcID] || 0 ) < target.amount )
-						{
-							allObjectivesCompleted = false;
+							questEntry.harvestKills[String( identifier )] = targetKill.amount;
 						}
 					}
 				}
 			}
 
-			// Check delivery objectives
-			if( quest.type == "delivery" && quest.targetDelivery.npcID == identifier )
+			if( type == "killgroup" && quest.targetKillGroups )
 			{
-				if( String( identifier ) == String( quest.targetDelivery.npcID ))
+				for( var targetKillGroupIndex = 0; targetKillGroupIndex < quest.targetKillGroups.length; targetKillGroupIndex++ )
 				{
-					var pack = player.pack;
-					var hasItem = false;
-					var totalDeliveryAmount = 0;
-					var questItemsToProcess = [];
-
-					if( !ValidateObject( pack ))
+					var targetKillGroup = quest.targetKillGroups[targetKillGroupIndex];
+					if( !targetKillGroup || !targetKillGroup.groupID )
 					{
-						socket.SysMessage( GetDictionaryEntry( 19621, socket.language )); // You don't have the required item to deliver.
-						allObjectivesCompleted = false;
+						continue;
 					}
-					else
+
+					var killGroupID = String( targetKillGroup.groupID );
+					questEntry.harvestKillGroups[killGroupID] = ( questEntry.harvestKillGroups[killGroupID] || 0 ) + progressValue;
+
+					if( questEntry.harvestKillGroups[killGroupID] > targetKillGroup.amount )
 					{
-						// Pass 1: gather matching quest items and total amount across all stacks
-						for( var currentItem = pack.FirstItem(); !pack.FinishedItems(); currentItem = pack.NextItem())
+						questEntry.harvestKillGroups[killGroupID] = targetKillGroup.amount;
+					}
+
+					break;
+				}
+			}
+		}
+
+		if( quest.type == "delivery" && quest.targetDelivery.npcID == identifier )
+		{
+			if( String( identifier ) == String( quest.targetDelivery.npcID ))
+			{
+				var pack = player.pack;
+				var hasItem = false;
+				var totalDeliveryAmount = 0;
+				var questItemsToProcess = [];
+
+				if( !ValidateObject( pack ))
+				{
+					socket.SysMessage( GetDictionaryEntry( 19621, socket.language ));
+				}
+				else
+				{
+					for( var currentItem = pack.FirstItem(); !pack.FinishedItems(); currentItem = pack.NextItem())
+					{
+						if( !ValidateObject( currentItem ))
 						{
-							if( !ValidateObject( currentItem ))
+							continue;
+						}
+
+						var questSectionID = currentItem.GetTag( "QuestSectionID" ) || currentItem.sectionID;
+
+						if( currentItem.GetTag( "QuestItem" ) && String( questSectionID ) == String( quest.deliveryItem.sectionID ))
+						{
+							questItemsToProcess.push( currentItem );
+							totalDeliveryAmount += currentItem.amount;
+						}
+					}
+
+					if( totalDeliveryAmount >= quest.deliveryItem.amount )
+					{
+						hasItem = true;
+						var remainingAmountToDeduct = quest.deliveryItem.amount;
+
+						for( var deliveryIndex = 0; deliveryIndex < questItemsToProcess.length && remainingAmountToDeduct > 0; deliveryIndex++ )
+						{
+							var deliveryItem = questItemsToProcess[deliveryIndex];
+
+							if( !ValidateObject( deliveryItem ))
 							{
 								continue;
 							}
 
-							var questSectionID = currentItem.GetTag( "QuestSectionID" ) || currentItem.sectionID;
+							var amountToDeduct = Math.min( deliveryItem.amount, remainingAmountToDeduct );
+							deliveryItem.amount -= amountToDeduct;
+							remainingAmountToDeduct -= amountToDeduct;
 
-							if( currentItem.GetTag( "QuestItem" ) && String( questSectionID ) == String( quest.deliveryItem.sectionID ))
+							if( deliveryItem.amount <= 0 )
 							{
-								questItemsToProcess.push( currentItem );
-								totalDeliveryAmount += currentItem.amount;
-							}
-						}
-
-						if( totalDeliveryAmount >= quest.deliveryItem.amount )
-						{
-							hasItem = true;
-
-							// Pass 2: deduct the required amount across as many stacks as needed
-							var remainingAmountToDeduct = quest.deliveryItem.amount;
-
-							for( var itemIndex = 0; itemIndex < questItemsToProcess.length && remainingAmountToDeduct > 0; itemIndex++ )
-							{
-								var deliveryItem = questItemsToProcess[itemIndex];
-
-								if( !ValidateObject( deliveryItem ))
-								{
-									continue;
-								}
-
-								var amountToDeduct = Math.min( deliveryItem.amount, remainingAmountToDeduct );
-								deliveryItem.amount -= amountToDeduct;
-								remainingAmountToDeduct -= amountToDeduct;
-
-								if( deliveryItem.amount <= 0 )
-								{
-									deliveryItem.Delete();
-								}
+								deliveryItem.Delete();
 							}
 						}
 					}
-
-					if( hasItem )
-					{
-						questEntry.completed = true;
-						socket.SysMessage( GetDictionaryEntry( 19620, socket.language )); // You have successfully delivered the item!
-					}
-					else
-					{
-						socket.SysMessage( GetDictionaryEntry( 19621, socket.language )); // You don't have the required item to deliver.
-						allObjectivesCompleted = false;
-					}
 				}
-				else
-				{
-					socket.SysMessage( GetDictionaryEntry( 19622, socket.language )); // This is not the correct NPC to deliver the item.
-					allObjectivesCompleted = false;
-				}
-			}
 
-			// Check skill gain objectives
-			if( quest.type == "skillgain" && quest.targetSkill == identifier )
-			{
-				// Update skill progress, initializing if undefined
-				questEntry.skillProgress = ( questEntry.skillProgress || 0 ) + progressValue;
-
-				// Cap the skill progress to max skill points
-				if( questEntry.skillProgress >= quest.maxSkillPoints ) 
-				{
-					// Complete the skill gain objective
-					player.SetTag( "AcceleratedSkillGain", null ); // Remove the tag
-					player.RemoveScriptTrigger( 5811 ); // Remove quest skill gain script trigger
-					questEntry.completed = true; // Mark the quest as completed
-				}
-				else
-				{
-					// Notify player of ongoing progress
-					socket.SysMessage( "Skill progress: " + ( questEntry.skillProgress / 10 ).toFixed(1) + "/" + ( quest.maxSkillPoints / 10 ).toFixed(1) );
-					allObjectivesCompleted = false;
-				}
-			}
-
-			// Mark quest as completed if all objectives are met
-			if( allObjectivesCompleted )
-			{
-				if( quest.questTurnIn == 1 )
+				if( hasItem )
 				{
 					questEntry.completed = true;
-					if( quest.type == "skillgain" && quest.oncomplete )
-					{
-						socket.SysMessage( quest.oncomplete );
-					}
-					else 
-					{
-						socket.SysMessage( GetDictionaryEntry( 19623, socket.language ));
-					}
-					WriteQuestProgress( player, questProgressArray );
+					socket.SysMessage( GetDictionaryEntry( 19620, socket.language ));
 				}
 				else
 				{
-					questEntry.completed = true;
-					if (quest.type == "skillgain" && quest.oncomplete )
-					{
-						socket.SysMessage( quest.oncomplete );
-					}
-					else
-					{
-						socket.SysMessage( GetDictionaryEntry( 19623, socket.language )); // You've completed the quest! Don't forget to collect your reward.
-					}
-					WriteQuestProgress( player, questProgressArray );
-					CompleteQuest( player, questID );
+					socket.SysMessage( GetDictionaryEntry( 19621, socket.language ));
 				}
-				return;
 			}
 			else
 			{
-				// If any objectives are now missing, make sure it's not marked as completed
-				questEntry.completed = false;
+				socket.SysMessage( GetDictionaryEntry( 19622, socket.language ));
 			}
-
-			questUpdated = true;
-			break;
 		}
+
+		if( quest.type == "skillgain" && quest.targetSkill == identifier )
+		{
+			questEntry.skillProgress = ( questEntry.skillProgress || 0 ) + progressValue;
+
+			if( questEntry.skillProgress >= quest.maxSkillPoints )
+			{
+				player.SetTag( "AcceleratedSkillGain", null );
+				player.RemoveScriptTrigger( 5811 );
+				questEntry.completed = true;
+			}
+			else
+			{
+				socket.SysMessage( "Skill progress: " + ( questEntry.skillProgress / 10 ).toFixed( 1 ) + "/" + ( quest.maxSkillPoints / 10 ).toFixed( 1 ) );
+			}
+		}
+
+		var allObjectivesCompleted = AreAllQuestObjectivesComplete( quest, questEntry );
+
+		if( quest.type == "skillgain" )
+		{
+			allObjectivesCompleted = questEntry.completed === true;
+		}
+
+		if( allObjectivesCompleted )
+		{
+			if( quest.questTurnIn == 1 )
+			{
+				questEntry.completed = true;
+				if( quest.type == "skillgain" && quest.oncomplete )
+				{
+					socket.SysMessage( quest.oncomplete );
+				}
+				else
+				{
+					socket.SysMessage( GetDictionaryEntry( 19623, socket.language ));
+				}
+				WriteQuestProgress( player, questProgressArray );
+			}
+			else
+			{
+				questEntry.completed = true;
+				if( quest.type == "skillgain" && quest.oncomplete )
+				{
+					socket.SysMessage( quest.oncomplete );
+				}
+				else
+				{
+					socket.SysMessage( GetDictionaryEntry( 19623, socket.language ));
+				}
+				WriteQuestProgress( player, questProgressArray );
+				CompleteQuest( player, questID );
+			}
+			return;
+		}
+		else
+		{
+			questEntry.completed = false;
+		}
+
+		questUpdated = true;
+		break;
 	}
 
 	if( questUpdated )
@@ -484,7 +800,7 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 	}
 	else
 	{
-		socket.SysMessage( GetDictionaryEntry( 19624, socket.language )); // No progress updated for the quest.
+		socket.SysMessage( GetDictionaryEntry( 19624, socket.language ));
 	}
 
 	return questProgressArray;
@@ -1073,18 +1389,17 @@ function ResolveNextQuestID( player, quest )
 /** @type { ( creature: Character, player: Character ) => boolean } */
 function CreatureKilled( creature, player )
 {
-	if( !ValidateObject( player ) || !ValidateObject( creature ))
+	if( !ValidateObject( player ) || !ValidateObject( creature ) )
 	{
 		return false;
 	}
 
 	var questProgressArray = ReadQuestProgress( player );
 
-	for( var i = 0; i < questProgressArray.length; i++ )
+	for( var questEntryIndex = 0; questEntryIndex < questProgressArray.length; questEntryIndex++ )
 	{
-		var questEntry = questProgressArray[i];
+		var questEntry = questProgressArray[questEntryIndex];
 
-		// Ensure the quest belongs to the current player
 		if( questEntry.serial != player.serial )
 		{
 			continue;
@@ -1094,13 +1409,48 @@ function CreatureKilled( creature, player )
 
 		if( quest && ( quest.type == "kill" || quest.type == "timekills" || quest.type == "multi" ) && !questEntry.completed )
 		{
-			for( var j = 0; j < quest.targetKills.length; j++ )
+			if( quest.targetKills )
 			{
-				var target = quest.targetKills[j];
-
-				if( target.npcID == creature.sectionID )
+				for( var targetKillIndex = 0; targetKillIndex < quest.targetKills.length; targetKillIndex++ )
 				{
-					UpdateQuestProgress( player, questEntry.questID, creature.sectionID, 1, "kill" );
+					var targetKill = quest.targetKills[targetKillIndex];
+
+					if( String( targetKill.npcID ) == String( creature.sectionID ))
+					{
+						var requiredRegion = ResolveKillTargetRegion( quest, targetKill );
+						if( !IsKillInRequiredRegion( player, creature, requiredRegion ))
+						{
+							continue;
+						}
+
+						UpdateQuestProgress( player, questEntry.questID, creature.sectionID, 1, "kill" );
+					}
+				}
+			}
+
+			if( quest.targetKillGroups )
+			{
+				for( var targetKillGroupIndex = 0; targetKillGroupIndex < quest.targetKillGroups.length; targetKillGroupIndex++ )
+				{
+					var targetKillGroup = quest.targetKillGroups[targetKillGroupIndex];
+					if( !targetKillGroup || !targetKillGroup.groupID )
+					{
+						continue;
+					}
+
+					if( !DoesNpcMatchTargetKillGroup( creature, targetKillGroup ))
+					{
+						continue;
+					}
+
+					var requiredGroupRegion = ResolveKillTargetRegion( quest, targetKillGroup );
+					if( !IsKillInRequiredRegion( player, creature, requiredGroupRegion ))
+					{
+						continue;
+					}
+
+					UpdateQuestProgress( player, questEntry.questID, String( targetKillGroup.groupID ), 1, "killgroup" );
+					break;
 				}
 			}
 		}
@@ -1119,7 +1469,6 @@ function ItemCollected( player, item, isToggledOff )
 	if( socket == null )
 		return;
 
-	// Default the isToggledOff value
 	if( typeof isToggledOff == "undefined" )
 	{
 		isToggledOff = false;
@@ -1127,11 +1476,10 @@ function ItemCollected( player, item, isToggledOff )
 
 	var questProgressArray = ReadQuestProgress( player );
 
-	for( var i = 0; i < questProgressArray.length; i++ )
+	for( var questEntryIndex = 0; questEntryIndex < questProgressArray.length; questEntryIndex++ )
 	{
-		var questEntry = questProgressArray[i];
+		var questEntry = questProgressArray[questEntryIndex];
 
-		// Ensure the quest belongs to the current player
 		if( questEntry.serial != player.serial )
 		{
 			continue;
@@ -1140,30 +1488,45 @@ function ItemCollected( player, item, isToggledOff )
 		var quest = TriggerEvent( 5801, "QuestList", questEntry.questID );
 		var isValidType = ( quest && ( quest.type == "collect" || quest.type == "timecollect" || quest.type == "multi" ));
 
-		if( isValidType && ( isToggledOff || !questEntry.completed ))
+		if( !isValidType || ( !isToggledOff && questEntry.completed ))
 		{
-			for( var j = 0; j < quest.targetItems.length; j++ )
-			{
-				var target = quest.targetItems[j];
+			continue;
+		}
 
-				var questSectionID = item.GetTag( "QuestSectionID" ) || item.sectionID;
-				if( String( target.sectionID ) == String( item.sectionID ) || String( target.sectionID ) == String( questSectionID ) )
+		if( !questEntry.collectedItems )
+		{
+			questEntry.collectedItems = {};
+		}
+		if( !questEntry.collectedItemGroups )
+		{
+			questEntry.collectedItemGroups = {};
+		}
+
+		var itemSectionID = String( item.sectionID );
+		var questSectionID = String( item.GetTag( "QuestSectionID" ) || item.sectionID );
+		var handledItem = false;
+
+		if( quest.targetItems )
+		{
+			for( var targetItemIndex = 0; targetItemIndex < quest.targetItems.length; targetItemIndex++ )
+			{
+				var targetItem = quest.targetItems[targetItemIndex];
+				if( String( targetItem.sectionID ) == itemSectionID || String( targetItem.sectionID ) == questSectionID )
 				{
-					var currentCount = questEntry.collectedItems[item.sectionID] || 0;
-					var remaining = target.amount - currentCount;
+					var currentCount = questEntry.collectedItems[itemSectionID] || 0;
+					var remaining = targetItem.amount - currentCount;
 
 					if( isToggledOff )
 					{
-						// Decrease the count when untoggled, ensuring it does not go below 0
 						if( currentCount > 0 )
 						{
 							var amountToRemove = Math.min( item.amount, currentCount );
-							UpdateQuestProgress( player, questEntry.questID, item.sectionID, -amountToRemove, "collect" );
+							UpdateQuestProgress( player, questEntry.questID, itemSectionID, -amountToRemove, "collect" );
 
-							var questItemColor = item.GetTag( "saveColor" );
-							if( questItemColor != null && !isNaN( parseInt( questItemColor, 10 )))
+							var savedExactColor = item.GetTag( "saveColor" );
+							if( savedExactColor != null && !isNaN( parseInt( savedExactColor, 10 )))
 							{
-								item.color = parseInt( questItemColor, 10 );
+								item.color = parseInt( savedExactColor, 10 );
 							}
 							else
 							{
@@ -1174,6 +1537,7 @@ function ItemCollected( player, item, isToggledOff )
 							item.isDyeable = true;
 							item.SetTag( "QuestItem", null );
 							item.SetTag( "QuestSectionID", null );
+							item.SetTag( "QuestGroupID", null );
 							item.SetTag( "saveColor", null );
 							item.RemoveScriptTrigger( 5806 );
 						}
@@ -1183,7 +1547,7 @@ function ItemCollected( player, item, isToggledOff )
 						if( remaining > 0 )
 						{
 							var amountToAdd = Math.min( item.amount, remaining );
-							UpdateQuestProgress( player, questEntry.questID, item.sectionID, amountToAdd, "collect" );
+							UpdateQuestProgress( player, questEntry.questID, itemSectionID, amountToAdd, "collect" );
 
 							item.SetTag( "saveColor", item.color );
 							item.color = 0x04ea;
@@ -1191,14 +1555,94 @@ function ItemCollected( player, item, isToggledOff )
 							item.isNewbie = true;
 							item.SetTag( "QuestItem", true );
 							item.SetTag( "QuestSectionID", questSectionID );
+							item.SetTag( "QuestGroupID", null );
 							item.AddScriptTrigger( 5806 );
 						}
 						else
 						{
-							socket.SysMessage( "Cannot collect more. Target amount reached: " + target.amount );
+							socket.SysMessage( "Cannot collect more. Target amount reached: " + targetItem.amount );
 						}
 					}
+
+					handledItem = true;
+					break;
 				}
+			}
+		}
+
+		if( handledItem )
+		{
+			continue;
+		}
+
+		if( quest.targetItemGroups )
+		{
+			for( var targetGroupIndex = 0; targetGroupIndex < quest.targetItemGroups.length; targetGroupIndex++ )
+			{
+				var targetGroup = quest.targetItemGroups[targetGroupIndex];
+				if( !targetGroup || !targetGroup.groupID )
+				{
+					continue;
+				}
+
+				if( !DoesItemMatchTargetGroup( itemSectionID, questSectionID, targetGroup ))
+				{
+					continue;
+				}
+
+				var groupID = String( targetGroup.groupID );
+				var currentGroupCount = questEntry.collectedItemGroups[groupID] || 0;
+				var remainingGroupAmount = targetGroup.amount - currentGroupCount;
+
+				if( isToggledOff )
+				{
+					if( currentGroupCount > 0 )
+					{
+						var amountToRemoveFromGroup = Math.min( item.amount, currentGroupCount );
+						UpdateQuestProgress( player, questEntry.questID, groupID, -amountToRemoveFromGroup, "collectgroup" );
+
+						var savedGroupColor = item.GetTag( "saveColor" );
+						if( savedGroupColor != null && !isNaN( parseInt( savedGroupColor, 10 )))
+						{
+							item.color = parseInt( savedGroupColor, 10 );
+						}
+						else
+						{
+							item.color = 0;
+						}
+
+						item.isNewbie = false;
+						item.isDyeable = true;
+						item.SetTag( "QuestItem", null );
+						item.SetTag( "QuestSectionID", null );
+						item.SetTag( "QuestGroupID", null );
+						item.SetTag( "saveColor", null );
+						item.RemoveScriptTrigger( 5806 );
+					}
+				}
+				else
+				{
+					if( remainingGroupAmount > 0 )
+					{
+						var amountToAddToGroup = Math.min( item.amount, remainingGroupAmount );
+						UpdateQuestProgress( player, questEntry.questID, groupID, amountToAddToGroup, "collectgroup" );
+
+						item.SetTag( "saveColor", item.color );
+						item.color = 0x04ea;
+						item.isDyeable = false;
+						item.isNewbie = true;
+						item.SetTag( "QuestItem", true );
+						item.SetTag( "QuestSectionID", questSectionID );
+						item.SetTag( "QuestGroupID", groupID );
+						item.AddScriptTrigger( 5806 );
+					}
+					else
+					{
+						socket.SysMessage( "Cannot collect more. Target amount reached: " + targetGroup.amount );
+					}
+				}
+
+				break;
 			}
 		}
 	}
@@ -1211,36 +1655,50 @@ function EquipAttempt( pEquipper, iEquipped )
 		return false;
 
 	var socket = pEquipper.socket;
-	if( socket == null)
+	if( socket == null )
 		return false;
 
-	if( iEquipped.GetTag( "QuestItem" ))
+	if( !iEquipped.GetTag( "QuestItem" ))
 	{
-		socket.SysMessage( GetDictionaryEntry( 19630, socket.language )); // This item cannot be equipped as it is a quest item.
+		return true;
+	}
 
-		var questProgressArray = ReadQuestProgress( pEquipper );
-		var itemSectionID = iEquipped.sectionID;
-		var questSectionID = iEquipped.GetTag("QuestSectionID") || itemSectionID;
+	socket.SysMessage( GetDictionaryEntry( 19630, socket.language )); // This item cannot be equipped as it is a quest item.
 
-		for( var i = 0; i < questProgressArray.length; i++ )
+	var questProgressArray = ReadQuestProgress( pEquipper );
+	var itemSectionID = String( iEquipped.sectionID );
+	var questSectionID = String( iEquipped.GetTag( "QuestSectionID" ) || iEquipped.sectionID );
+
+	for( var questEntryIndex = 0; questEntryIndex < questProgressArray.length; questEntryIndex++ )
+	{
+		var questEntry = questProgressArray[questEntryIndex];
+
+		if( questEntry.serial != pEquipper.serial )
+			continue;
+
+		var quest = TriggerEvent( 5801, "QuestList", questEntry.questID );
+		var isValidType = ( quest && ( quest.type == "collect" || quest.type == "timecollect" || quest.type == "multi" ) );
+
+		if( !isValidType )
+			continue;
+
+		if( !questEntry.collectedItems )
 		{
-			var questEntry = questProgressArray[i];
+			questEntry.collectedItems = {};
+		}
+		if( !questEntry.collectedItemGroups )
+		{
+			questEntry.collectedItemGroups = {};
+		}
 
-			if( questEntry.serial != pEquipper.serial )
-				continue;
-
-			var quest = TriggerEvent( 5801, "QuestList", questEntry.questID );
-			var isValidType = ( quest && ( quest.type == "collect" || quest.type == "timecollect" || quest.type == "multi" ));
-
-			if( !isValidType )
-				continue;
-
-			for( var j = 0; j < quest.targetItems.length; j++ )
+		// Exact item targets
+		if( quest.targetItems && quest.targetItems.length )
+		{
+			for( var targetItemIndex = 0; targetItemIndex < quest.targetItems.length; targetItemIndex++ )
 			{
-				var target = quest.targetItems[j];
+				var targetItem = quest.targetItems[targetItemIndex];
 
-				// Match by tag or item.sectionID
-				if( target.sectionID == questSectionID || target.sectionID == itemSectionID )
+				if( String( targetItem.sectionID ) == itemSectionID || String( targetItem.sectionID ) == questSectionID )
 				{
 					var currentCount = questEntry.collectedItems[itemSectionID] || 0;
 
@@ -1249,20 +1707,22 @@ function EquipAttempt( pEquipper, iEquipped )
 						var amountToRemove = Math.min( iEquipped.amount, currentCount );
 						UpdateQuestProgress( pEquipper, questEntry.questID, itemSectionID, -amountToRemove, "collect" );
 
-						var questItemColor = iEquipped.GetTag( "saveColor" );
-						if( questItemColor != null && !isNaN(parseInt(questItemColor)) )
+						var savedExactColor = iEquipped.GetTag( "saveColor" );
+						if( savedExactColor != null && !isNaN( parseInt( savedExactColor, 10 )))
 						{
-							iEquipped.color = parseInt( questItemColor );
+							iEquipped.color = parseInt( savedExactColor, 10 );
 						}
 						else
 						{
-							iEquipped.color = 0; // fallback to default color (non-dyed)
+							iEquipped.color = 0;
 						}
-	
+
 						iEquipped.isNewbie = false;
 						iEquipped.isDyeable = true;
 						iEquipped.SetTag( "QuestItem", null );
 						iEquipped.SetTag( "QuestSectionID", null );
+						iEquipped.SetTag( "QuestGroupID", null );
+						iEquipped.SetTag( "saveColor", null );
 						iEquipped.RemoveScriptTrigger( 5806 );
 						iEquipped.Refresh();
 
@@ -1272,12 +1732,68 @@ function EquipAttempt( pEquipper, iEquipped )
 					{
 						socket.SysMessage( GetDictionaryEntry( 19629, socket.language )); // Cannot decrease further. Current count is 0.
 					}
+
+					return false;
 				}
 			}
 		}
-		return false;
+
+		// Grouped item targets
+		if( quest.targetItemGroups && quest.targetItemGroups.length )
+		{
+			for( var targetGroupIndex = 0; targetGroupIndex < quest.targetItemGroups.length; targetGroupIndex++ )
+			{
+				var targetGroup = quest.targetItemGroups[targetGroupIndex];
+				if( !targetGroup || !targetGroup.groupID )
+				{
+					continue;
+				}
+
+				if( !DoesItemMatchTargetGroup( itemSectionID, questSectionID, targetGroup ))
+				{
+					continue;
+				}
+
+				var groupID = String( targetGroup.groupID );
+				var currentGroupCount = questEntry.collectedItemGroups[groupID] || 0;
+
+				if( currentGroupCount > 0 )
+				{
+					var amountToRemoveFromGroup = Math.min( iEquipped.amount, currentGroupCount );
+					UpdateQuestProgress( pEquipper, questEntry.questID, groupID, -amountToRemoveFromGroup, "collectgroup" );
+
+					var savedGroupColor = iEquipped.GetTag( "saveColor" );
+					if( savedGroupColor != null && !isNaN( parseInt( savedGroupColor, 10 )))
+					{
+						iEquipped.color = parseInt( savedGroupColor, 10 );
+					}
+					else
+					{
+						iEquipped.color = 0;
+					}
+
+					iEquipped.isNewbie = false;
+					iEquipped.isDyeable = true;
+					iEquipped.SetTag( "QuestItem", null );
+					iEquipped.SetTag( "QuestSectionID", null );
+					iEquipped.SetTag( "QuestGroupID", null );
+					iEquipped.SetTag( "saveColor", null );
+					iEquipped.RemoveScriptTrigger( 5806 );
+					iEquipped.Refresh();
+
+					socket.SysMessage( "You removed Quest Item status from the item." );
+				}
+				else
+				{
+					socket.SysMessage( GetDictionaryEntry( 19629, socket.language ));
+				}
+
+				return false;
+			}
+		}
 	}
-	return true;
+
+	return false;
 }
 
 /** @type { ( pPlayer: Character, skill: number, skillGainAmount: number ) => boolean } */
@@ -1727,77 +2243,108 @@ function ArchiveCompletedQuest( player, completedQuest )
 	var userAccount = player.account;
 	var archiveFileName = "QuestArchive_" + userAccount.id + ".jsdata";
 
-	var quest = TriggerEvent( 5801, "QuestList", completedQuest.questID ); // Fetch the quest details
-	var nextQuestID = quest ? quest.nextQuestID || "null" : "null"; // Safely resolve nextQuestID
+	var quest = TriggerEvent( 5801, "QuestList", completedQuest.questID );
+	var nextQuestID = quest ? quest.nextQuestID || "null" : "null";
 
-	mFile.Open( archiveFileName, "a", "Quests" ); // Append mode
+	mFile.Open( archiveFileName, "a", "Quests" );
 	if( mFile )
 	{
-		// Serialize collectedItems
 		var collectedItemsStr = "";
 		if( completedQuest.collectedItems )
 		{
-			for( var key in completedQuest.collectedItems )
+			for( var collectedItemKey in completedQuest.collectedItems )
 			{
-				if( completedQuest.collectedItems.hasOwnProperty( key ))
+				if( completedQuest.collectedItems.hasOwnProperty( collectedItemKey ) )
 				{
 					if( collectedItemsStr.length > 0 )
 					{
 						collectedItemsStr += ",";
 					}
-					collectedItemsStr += key + ":" + completedQuest.collectedItems[key];
+					collectedItemsStr += collectedItemKey + ":" + completedQuest.collectedItems[collectedItemKey];
 				}
 			}
 		}
 
-		// Serialize harvestKills
+		var collectedItemGroupsStr = "";
+		if( completedQuest.collectedItemGroups )
+		{
+			for( var collectedGroupKey in completedQuest.collectedItemGroups )
+			{
+				if( completedQuest.collectedItemGroups.hasOwnProperty( collectedGroupKey ) )
+				{
+					if( collectedItemGroupsStr.length > 0 )
+					{
+						collectedItemGroupsStr += ",";
+					}
+					collectedItemGroupsStr += collectedGroupKey + ":" + completedQuest.collectedItemGroups[collectedGroupKey];
+				}
+			}
+		}
+
 		var harvestKillsStr = "";
 		if( completedQuest.harvestKills )
 		{
-			for( var key in completedQuest.harvestKills )
+			for( var killKey in completedQuest.harvestKills )
 			{
-				if( completedQuest.harvestKills.hasOwnProperty( key ))
+				if( completedQuest.harvestKills.hasOwnProperty( killKey ) )
 				{
 					if( harvestKillsStr.length > 0 )
 					{
 						harvestKillsStr += ",";
 					}
-					harvestKillsStr += key + ":" + completedQuest.harvestKills[key];
+					harvestKillsStr += killKey + ":" + completedQuest.harvestKills[killKey];
 				}
 			}
 		}
 
-		// Add skill progress
+		var harvestKillGroupsStr = "";
+		if( completedQuest.harvestKillGroups )
+		{
+			for( var harvestKillGroupKey in completedQuest.harvestKillGroups )
+			{
+				if( completedQuest.harvestKillGroups.hasOwnProperty( harvestKillGroupKey ) )
+				{
+					if( harvestKillGroupsStr.length > 0 )
+					{
+						harvestKillGroupsStr += ",";
+					}
+					harvestKillGroupsStr += harvestKillGroupKey + ":" + completedQuest.harvestKillGroups[harvestKillGroupKey];
+				}
+			}
+		}
+
 		var skillProgressStr = "";
 		if( quest && quest.type == "skillgain" )
 		{
-			skillProgressStr = "SkillProgress=" + ( completedQuest.skillProgress || 0 ) + "\n" +
+			skillProgressStr =
+				"SkillProgress=" + ( completedQuest.skillProgress || 0 ) + "\n" +
 				"MaxSkillPoints=" + ( quest.maxSkillPoints || 0 ) + "\n" +
 				"TargetSkill=" + ( quest.targetSkill || "null" ) + "\n";
 		}
 
-		// Add delivery progress
 		var deliveryProgressStr = "";
 		if( quest && quest.type == "delivery" )
 		{
-			deliveryProgressStr = "DeliveryProgress=" + (completedQuest.deliveryProgress || 0 ) + "\n" +
+			deliveryProgressStr =
+				"DeliveryProgress=" + ( completedQuest.deliveryProgress || 0 ) + "\n" +
 				"DeliveryItem=" + ( completedQuest.deliveryItem || "null" ) + "\n" +
 				"TargetDeliveryNPC=" + ( completedQuest.targetDeliveryNPC || "null" ) + "\n";
 		}
 
-		// Write the serialized data to the archive file
 		var archiveEntry =
 			"Serial=" + ( completedQuest.serial || "undefined" ) + "\n" +
 			"QuestID=" + ( completedQuest.questID || "undefined" ) + "\n" +
-			"NextQuestID=" + nextQuestID + "\n" + // Save the next quest in the chain
-			"LastCompleted=" + Date.now() + "\n" + // Record completion time
+			"NextQuestID=" + nextQuestID + "\n" +
+			"LastCompleted=" + Date.now() + "\n" +
 			"QuestProgress=" + ( completedQuest.questProgress || 0 ) + "\n" +
 			"CollectedItems=" + collectedItemsStr + "\n" +
+			"CollectedItemGroups=" + collectedItemGroupsStr + "\n" +
 			"HarvestKills=" + harvestKillsStr + "\n" +
-			skillProgressStr + // Add skill progress
-			deliveryProgressStr + // Add delivery progress
-			"StartTime=" + ( completedQuest.startTime || 0 ) + "\n" + // Save startTime
-			"TimeLimit=" + ( completedQuest.timeLimit || 0 ) + "\n" + // Save timeLimit
+			"HarvestKillGroups=" + harvestKillGroupsStr + "\n" +
+			skillProgressStr +
+			deliveryProgressStr +
+			"StartTime=" + ( completedQuest.startTime || 0 ) + "\n" +
+			"TimeLimit=" + ( completedQuest.timeLimit || 0 ) + "\n" +
 			"Completed=1\n" +
 			"QuestTurnIn=1\n\n";
 
@@ -1880,11 +2427,10 @@ function WriteQuestProgress( player, questProgressArray )
 	mFile.Open( fileName, "w", "Quests" );
 	if( mFile )
 	{
-		for( var i = 0; i < questProgressArray.length; i++ )
+		for( var progressIndex = 0; progressIndex < questProgressArray.length; progressIndex++ )
 		{
-			var progressEntry = questProgressArray[i];
+			var progressEntry = questProgressArray[progressIndex];
 
-			// Serialize kills
 			var killsStr = "";
 			if( progressEntry.harvestKills )
 			{
@@ -1892,7 +2438,7 @@ function WriteQuestProgress( player, questProgressArray )
 				{
 					if( progressEntry.harvestKills.hasOwnProperty( killKey ))
 					{
-						if( killsStr.length > 0 ) 
+						if( killsStr.length > 0 )
 						{
 							killsStr += ",";
 						}
@@ -1901,13 +2447,28 @@ function WriteQuestProgress( player, questProgressArray )
 				}
 			}
 
-			// Serialize items
+			var killGroupsStr = "";
+			if( progressEntry.harvestKillGroups )
+			{
+				for( var killGroupKey in progressEntry.harvestKillGroups )
+				{
+					if( progressEntry.harvestKillGroups.hasOwnProperty( killGroupKey ) )
+					{
+						if( killGroupsStr.length > 0 )
+						{
+							killGroupsStr += ",";
+						}
+						killGroupsStr += killGroupKey + ":" + progressEntry.harvestKillGroups[killGroupKey];
+					}
+				}
+			}
+
 			var collectedItemsStr = "";
 			if( progressEntry.collectedItems )
 			{
 				for( var itemKey in progressEntry.collectedItems )
 				{
-					if( progressEntry.collectedItems.hasOwnProperty( itemKey )) 
+					if( progressEntry.collectedItems.hasOwnProperty( itemKey ))
 					{
 						if( collectedItemsStr.length > 0 )
 						{
@@ -1918,23 +2479,41 @@ function WriteQuestProgress( player, questProgressArray )
 				}
 			}
 
-			// Write all required fields
+			var collectedItemGroupsStr = "";
+			if( progressEntry.collectedItemGroups )
+			{
+				for( var groupKey in progressEntry.collectedItemGroups )
+				{
+					if( progressEntry.collectedItemGroups.hasOwnProperty( groupKey ))
+					{
+						if( collectedItemGroupsStr.length > 0 )
+						{
+							collectedItemGroupsStr += ",";
+						}
+						collectedItemGroupsStr += groupKey + ":" + progressEntry.collectedItemGroups[groupKey];
+					}
+				}
+			}
+
 			var formattedEntry =
 				"Serial=" + ( progressEntry.serial || "undefined" ) + "\n" +
 				"QuestID=" + ( progressEntry.questID || "undefined" ) + "\n" +
 				"QuestProgress=" + ( progressEntry.questProgress || 0 ) + "\n" +
 				"HarvestKills=" + killsStr + "\n" +
+				"HarvestKillGroups=" + killGroupsStr + "\n" +
 				"CollectedItems=" + collectedItemsStr + "\n" +
-				"SkillProgress=" + ( progressEntry.skillProgress || 0 ) + "\n" + // Skill progress
-				"TargetSkill=" + ( progressEntry.targetSkill || -1 ) + "\n" +   // Target skill ID
-				"TargetRegion=" + ( progressEntry.targetRegion || 0 ) + "\n" + // Target region ID
-				"MaxSkillPoints=" + ( progressEntry.maxSkillPoints || 50.0 ) + "\n" + // Max skill points
-				"StartTime=" + ( progressEntry.startTime || 0 ) + "\n" + // Start time
-				"TimeLimit=" + ( progressEntry.timeLimit || 0 ) + "\n" + // Time limit
-				"LastAccepted=" + ( progressEntry.lastAccepted || 0 ) + "\n" + // Save the lastAccepted timestamp
+				"CollectedItemGroups=" + collectedItemGroupsStr + "\n" +
+				"SkillProgress=" + ( progressEntry.skillProgress || 0 ) + "\n" +
+				"TargetSkill=" + ( progressEntry.targetSkill || -1 ) + "\n" +
+				"TargetRegion=" + ( progressEntry.targetRegion || 0 ) + "\n" +
+				"MaxSkillPoints=" + ( progressEntry.maxSkillPoints || 50.0 ) + "\n" +
+				"StartTime=" + ( progressEntry.startTime || 0 ) + "\n" +
+				"TimeLimit=" + ( progressEntry.timeLimit || 0 ) + "\n" +
+				"LastAccepted=" + ( progressEntry.lastAccepted || 0 ) + "\n" +
 				"Completed=" + ( progressEntry.completed ? "1" : "0" ) + "\n" +
 				"QuestTurnIn=" + ( progressEntry.questTurnIn ? "1" : "0" ) + "\n" +
-				"NextQuestID=" + ( progressEntry.nextQuestID || "undefined" ) + "\n\n";
+				"NextQuestID=" + ( progressEntry.nextQuestID != null ? progressEntry.nextQuestID : "null" ) + "\n\n";
+
 			mFile.Write( formattedEntry );
 		}
 		mFile.Close();
@@ -2005,8 +2584,9 @@ function ReadQuestProgress( player )
 function finalizeQuestEntry( entry, player )
 {
 	entry.serial = parseInt( entry.serial || "0", 10 );
-	if( isNaN( entry.serial ) )
+	if( isNaN( entry.serial ))
 		entry.serial = 0;
+
 	entry.questID = parseInt( entry.questid || "0", 10 );
 	entry.completed = entry.completed == "1";
 	entry.questTurnIn = entry.questturnin == "1";
@@ -2016,10 +2596,12 @@ function finalizeQuestEntry( entry, player )
 	entry.targetSkill = parseInt( entry.targetskill || "-1", 10 );
 	entry.targetRegion = parseInt( entry.targetregion || "0", 10 );
 	entry.maxSkillPoints = parseFloat( entry.maxskillpoints || "50.0" );
-	entry.lastAccepted = parseInt( entry.lastaccepted || "0", 10 ); // Add lastAccepted timestamp
+	entry.lastAccepted = parseInt( entry.lastaccepted || "0", 10 );
 
-	processCollectedItems(entry, player);
-	processKills(entry, player);
+	processCollectedItems( entry, player );
+	processCollectedItemGroups( entry, player );
+	processKills( entry, player );
+	processKillGroups( entry, player );
 }
 
 /** @type { ( entry: any, player: Character ) => void } */
@@ -2042,6 +2624,30 @@ function processCollectedItems( entry, player )
 			var key = manualTrim( pair[0] );
 			var value = parseInt( manualTrim( pair[1] ), 10 );
 			entry.collectedItems[key] = value;
+		}
+	}
+}
+
+/** @type { ( entry: any, player: Character ) => void } */
+function processCollectedItemGroups( entry, player )
+{
+	entry.collectedItemGroups = {};
+	var collectedItemGroupsStr = entry.collecteditemgroups || "";
+
+	if( collectedItemGroupsStr == "" )
+	{
+		return;
+	}
+
+	var collectedItemGroups = collectedItemGroupsStr.split( "," );
+	for( var groupIndex = 0; groupIndex < collectedItemGroups.length; groupIndex++ )
+	{
+		var pair = collectedItemGroups[groupIndex].split( ":" );
+		if( pair.length == 2 )
+		{
+			var key = manualTrim( pair[0] );
+			var value = parseInt( manualTrim( pair[1] ), 10 );
+			entry.collectedItemGroups[key] = value;
 		}
 	}
 }
@@ -2070,6 +2676,30 @@ function processKills( entry, player )
 			var key = manualTrim( pair[0] );
 			var value = parseInt( manualTrim( pair[1] ), 10 );
 			entry.harvestKills[key] = value;
+		}
+	}
+}
+
+/** @type { ( entry: any, player: Character ) => void } */
+function processKillGroups( entry, player )
+{
+	entry.harvestKillGroups = {};
+	var killGroupsStr = entry.harvestkillgroups || "";
+
+	if( killGroupsStr == "" )
+	{
+		return;
+	}
+
+	var harvestKillGroups = killGroupsStr.split( "," );
+	for( var groupIndex = 0; groupIndex < harvestKillGroups.length; groupIndex++ )
+	{
+		var pair = harvestKillGroups[groupIndex].split( ":" );
+		if( pair.length == 2 )
+		{
+			var key = manualTrim( pair[0] );
+			var value = parseInt( manualTrim( pair[1] ), 10 );
+			entry.harvestKillGroups[key] = value;
 		}
 	}
 }

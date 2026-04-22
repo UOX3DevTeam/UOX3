@@ -244,9 +244,17 @@ function NormalizeQuestDefaults( quest )
 	{
 		quest.targetItems = [];
 	}
+	if( !quest.targetItemGroups )
+	{
+		quest.targetItemGroups = [];
+	}
 	if( !quest.targetKills )
 	{
 		quest.targetKills = [];
+	}
+	if( !quest.targetKillGroups )
+	{
+		quest.targetKillGroups = [];
 	}
 	if( !quest.rewards )
 	{
@@ -268,6 +276,7 @@ function ValidateQuestObject( quest, fileName )
 	ValidateRequiredQuestFields( quest, fileName );
 	ValidateQuestFlags( quest, fileName );
 	ValidateQuestObjectives( quest, fileName );
+	ValidateKillTargets( quest, fileName );
 	ValidateQuestRewards( quest, fileName );
 	ValidateQuestTagsAndState( quest, fileName );
 	ValidateQuestNextQuest( quest, fileName );
@@ -304,7 +313,9 @@ function WarnUnknownTopLevelKeys( quest, fileName )
 		"deliveryItem": true,
 		"targetDelivery": true,
 		"targetItems": true,
+		"targetItemGroups": true,
 		"targetKills": true,
+		"targetKillGroups": true,
 		"rewards": true,
 		"nextQuest": true,
 		"setTags": true,
@@ -382,9 +393,18 @@ function ValidateQuestObjectives( quest, fileName )
 	{
 		Console.Warning( "Quest system: targetItems must be an array in file " + fileName );
 	}
+
+	if( quest.targetItemGroups && !IsArrayValue( quest.targetItemGroups ) )
+	{
+		Console.Warning( "Quest system: targetItemGroups must be an array in file " + fileName );
+	}
 	if( quest.targetKills && !IsArrayValue( quest.targetKills ) )
 	{
 		Console.Warning( "Quest system: targetKills must be an array in file " + fileName );
+	}
+	if( quest.targetKillGroups && !IsArrayValue( quest.targetKillGroups ) )
+	{
+		Console.Warning( "Quest system: targetKillGroups must be an array in file " + fileName );
 	}
 	if( quest.rewards && !IsArrayValue( quest.rewards ) )
 	{
@@ -399,14 +419,26 @@ function ValidateQuestObjectives( quest, fileName )
 		Console.Warning( "Quest system: nextQuest must be an array in file " + fileName );
 	}
 
-	if(( questType == "collect" || questType == "timecollect" || questType == "multi" ) && ( !quest.targetItems || quest.targetItems.length == 0 ))
+	if( questType == "collect" || questType == "timecollect" || questType == "multi" )
 	{
-		Console.Warning( "Quest system: Quest type '" + questType + "' needs targetItems in file " + fileName );
+		var hasTargetItems = ( quest.targetItems && quest.targetItems.length > 0 );
+		var hasTargetItemGroups = ( quest.targetItemGroups && quest.targetItemGroups.length > 0 );
+
+		if( !hasTargetItems && !hasTargetItemGroups )
+		{
+			Console.Warning( "Quest system: Quest type '" + questType + "' needs targetItems or targetItemGroups in file " + fileName );
+		}
 	}
 
-	if(( questType == "kill" || questType == "timekills" || questType == "multi" ) && ( !quest.targetKills || quest.targetKills.length == 0 ))
+	if( questType == "kill" || questType == "timekills" || questType == "multi" )
 	{
-		Console.Warning( "Quest system: Quest type '" + questType + "' needs targetKills in file " + fileName );
+		var hasTargetKills = ( quest.targetKills && quest.targetKills.length > 0 );
+		var hasTargetKillGroups = ( quest.targetKillGroups && quest.targetKillGroups.length > 0 );
+
+		if( !hasTargetKills && !hasTargetKillGroups )
+		{
+			Console.Warning( "Quest system: Quest type '" + questType + "' needs targetKills or targetKillGroups in file " + fileName );
+		}
 	}
 
 	if( questType == "delivery" )
@@ -431,6 +463,130 @@ function ValidateQuestObjectives( quest, fileName )
 		if( typeof quest.maxSkillPoints == "undefined" )
 		{
 			Console.Warning( "Quest system: Skillgain quest missing maxSkillPoints in file " + fileName );
+		}
+	}
+}
+
+function ValidateKillTargets( quest, fileName )
+{
+	if( quest.targetKills && IsArrayValue( quest.targetKills ) )
+	{
+		for( var targetKillIndex = 0; targetKillIndex < quest.targetKills.length; targetKillIndex++ )
+		{
+			var targetKill = quest.targetKills[targetKillIndex];
+			if( !targetKill || typeof targetKill != "object" )
+			{
+				Console.Warning(
+					"Quest system: targetKills entry at index " +
+					targetKillIndex +
+					" is not a valid object in file " +
+					fileName
+				);
+				continue;
+			}
+
+			if( typeof targetKill.npcID == "undefined" )
+			{
+				Console.Warning(
+					"Quest system: targetKills entry at index " +
+					targetKillIndex +
+					" is missing npcID in file " +
+					fileName
+				);
+			}
+
+			if( typeof targetKill.amount == "undefined" )
+			{
+				Console.Warning(
+					"Quest system: targetKills entry at index " +
+					targetKillIndex +
+					" is missing amount in file " +
+					fileName
+				);
+			}
+
+			if( typeof targetKill.regionName != "undefined" && typeof targetKill.regionName != "string" )
+			{
+				Console.Warning(
+					"Quest system: targetKills entry at index " +
+					targetKillIndex +
+					" has invalid regionName in file " +
+					fileName
+				);
+			}
+		}
+	}
+
+	if( quest.targetKillGroups && IsArrayValue( quest.targetKillGroups ) )
+	{
+		for( var targetKillGroupIndex = 0; targetKillGroupIndex < quest.targetKillGroups.length; targetKillGroupIndex++ )
+		{
+			var targetKillGroup = quest.targetKillGroups[targetKillGroupIndex];
+			if( !targetKillGroup || typeof targetKillGroup != "object" )
+			{
+				Console.Warning(
+					"Quest system: targetKillGroups entry at index " +
+					targetKillGroupIndex +
+					" is not a valid object in file " +
+					fileName
+				);
+				continue;
+			}
+
+			if( typeof targetKillGroup.groupID == "undefined" )
+			{
+				Console.Warning(
+					"Quest system: targetKillGroups entry at index " +
+					targetKillGroupIndex +
+					" is missing groupID in file " +
+					fileName
+				);
+			}
+
+			if( typeof targetKillGroup.amount == "undefined" )
+			{
+				Console.Warning(
+					"Quest system: targetKillGroups entry at index " +
+					targetKillGroupIndex +
+					" is missing amount in file " +
+					fileName
+				);
+			}
+
+			var hasNpcList =
+				( targetKillGroup.npcs && IsArrayValue( targetKillGroup.npcs ) && targetKillGroup.npcs.length > 0 );
+
+			var hasRaceID =
+				( typeof targetKillGroup.raceID != "undefined" );
+
+			var hasRaceName =
+				( typeof targetKillGroup.raceName != "undefined" && targetKillGroup.raceName != "" );
+
+			var hasRaceIDs =
+				( targetKillGroup.raceIDs && IsArrayValue( targetKillGroup.raceIDs ) && targetKillGroup.raceIDs.length > 0 );
+
+			var hasRaceNames =
+				( targetKillGroup.raceNames && IsArrayValue( targetKillGroup.raceNames ) && targetKillGroup.raceNames.length > 0 );
+
+			if( !hasNpcList && !hasRaceID && !hasRaceName && !hasRaceIDs && !hasRaceNames )
+			{
+				Console.Warning(
+					"Quest system: targetKillGroups entry at index " +
+					targetKillGroupIndex +
+					" must define npcs, raceID, raceName, raceIDs or raceNames in file " +
+					fileName
+				);
+			}
+
+			if( typeof targetKillGroup.regionName != "undefined" && typeof targetKillGroup.regionName != "string" )
+			{
+				Console.Warning(
+					"Quest system: targetKillGroups entry at index " +
+					targetKillGroupIndex +
+					" has invalid regionName in file " +
+					fileName
+				);
+			}
 		}
 	}
 }
