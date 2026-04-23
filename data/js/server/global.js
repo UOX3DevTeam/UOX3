@@ -84,6 +84,14 @@ function onLogin( socket, pChar )
 		pChar.AddScriptTrigger( 5805 );
 	}
 
+	// Repair and validate active quests on login
+	if( questSystemEnabled )
+	{
+		TriggerEvent( 5800, "ValidateTimedQuestsOnLogin", pChar );
+		TriggerEvent( 5800, "RestoreQuestPlayerTriggersOnLogin", pChar );
+		TriggerEvent( 5800, "ValidateEscortQuestsOnLogin", pChar );
+	}
+
 	if( questSystemEnabled && loginQuestEnabled )
 	{
 		// Show the login quest gump

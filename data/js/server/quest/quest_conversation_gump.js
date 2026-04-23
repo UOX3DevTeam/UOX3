@@ -161,7 +161,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			pUser.SetTempTag( "QuestConversationQuestID", null );
 			break;
 		case 1: // Accept quest
-			TriggerEvent( 5800, "StartQuest", pUser, playerQuestID );
+			TriggerEvent( 5800, "StartQuest", pUser, playerQuestID, questNpc );
 			if( hasLoginQuest )
 			{
 				pUser.SetTempTag( "questConversationID", null );
@@ -243,6 +243,11 @@ function ResignQuest( player, questID )
 		if( questEntry.questID == questID && questEntry.serial == player.serial )
 		{
 			questFound = true;
+
+			if( quest.type == "escort" )
+			{
+				TriggerEvent( 5800, "CleanupEscortQuestNPC", player, questID );
+			}
 
 			// Handle skill training quest resignation
 			if( quest.type == "skillgain" )
@@ -582,6 +587,53 @@ function GetQuestObjectives( quest, questProgress )
 		else
 		{
 			objectives += "- Quest is ready to reset!<br>";
+		}
+	}
+
+	if( quest.type == "escort" )
+	{
+		var activeWaypoints = [];
+
+		if( questProgress && questProgress.selectedWaypoints && questProgress.selectedWaypoints.length > 0 )
+		{
+			activeWaypoints = questProgress.selectedWaypoints;
+		}
+		else if( quest.waypoints && quest.waypoints.length > 0 )
+		{
+			activeWaypoints = quest.waypoints;
+		}
+
+		if( activeWaypoints.length > 0 )
+		{
+			objectives += "<b>Escort Route:</b><br>";
+
+			var escortStage = 0;
+			if( questProgress && typeof questProgress.escortStage != "undefined" )
+			{
+				escortStage = parseInt( questProgress.escortStage, 10 );
+				if( isNaN( escortStage ) || escortStage < 0 )
+				{
+					escortStage = 0;
+				}
+			}
+
+			for( var waypointIndex = 0; waypointIndex < activeWaypoints.length; waypointIndex++ )
+			{
+				var waypoint = activeWaypoints[waypointIndex];
+				var waypointName = waypoint.regionName || ( "Region " + waypoint.regionID ) || ( "Waypoint " + ( waypointIndex + 1 ) );
+				var statusText = "Pending";
+
+				if( waypointIndex < escortStage )
+				{
+					statusText = "Done";
+				}
+				else if( waypointIndex == escortStage )
+				{
+					statusText = "Current";
+				}
+
+				objectives += "- " + waypointName + ": " + statusText + "<br>";
+			}
 		}
 	}
 

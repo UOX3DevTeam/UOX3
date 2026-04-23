@@ -6908,7 +6908,7 @@ function onTooltip( myItem, pSocket )
 						<p>
 							The <span class="hl">Quest System</span> lets you build everything from simple starter tasks to full story arcs.
 							You can use it for item collection quests, grouped item collection quests, kill quests, grouped kill quests,
-							delivery quests, skill training quests, daily quests, timed quests, branching quest lines, and reputation
+							delivery quests, skill training quests, daily quests, timed quests, escort quests, branching quest lines, and reputation
 							or world-state based progression.
 						</p>
 
@@ -6926,8 +6926,9 @@ function onTooltip( myItem, pSocket )
 
 						<p>
 							If you already know what you are doing, this system also supports more advanced features such as chained quests,
-							branching outcomes, item groups, kill groups, race-based kill tracking, region-based kill objectives, tag changes,
-							world-state tracking, skill point rewards, and automatic quest offers on login.
+							branching outcomes, item groups, kill groups, race-based kill tracking, region-based kill objectives, escort routes,
+							random escort destinations, waypoint ambushes, travel ambushes, tag changes, world-state tracking, skill point rewards,
+							and automatic quest offers on login.
 						</p>
 
 						<h3>System Overview</h3>
@@ -6947,8 +6948,8 @@ function onTooltip( myItem, pSocket )
 						</p>
 
 						<ul>
-							<li><span class="hl">quest_core.js</span> - Starts quests, tracks progress, completes quests, saves data, gives rewards, and handles quest chains</li>
-							<li><span class="hl">quest_lists.js</span> - Loads and registers all quest JSON files</li>
+							<li><span class="hl">quest_core.js</span> - Starts quests, tracks progress, completes quests, saves data, gives rewards, handles quest chains, escort logic, timed quest restore, and login validation</li>
+							<li><span class="hl">quest_lists.js</span> - Loads and registers all quest JSON files and validates quest data</li>
 							<li><span class="hl">quest_conversation_gump.js</span> - Shows the quest conversation gump and handles accept, refuse, turn-in, and resign</li>
 							<li><span class="hl">quest_menu.js</span> - Quest journal, completed quest list, and options</li>
 							<li><span class="hl">quest_item.js</span> - Restricts quest items so they cannot be abused</li>
@@ -6957,6 +6958,8 @@ function onTooltip( myItem, pSocket )
 							<li><span class="hl">quest_event_onskillgain.js</span> - Updates skillgain quests</li>
 							<li><span class="hl">quest_event_onenterregion.js</span> - Handles training region entry messages</li>
 							<li><span class="hl">quest_event_onquesttoggle.js</span> - Lets players toggle item quest status manually</li>
+							<li><span class="hl">quest_escort_npc.js</span> - Handles escort waypoint progress, leash checks, death fail, and travel ambush checks</li>
+							<li><span class="hl">quest_escort_ambush_cleanup.js</span> - Cleans up spawned escort ambush NPCs after their despawn timer expires</li>
 						</ul>
 
 						<p>
@@ -7039,6 +7042,7 @@ LoginQuestEnabled=1
 	"questTurnIn": 1,
 	"targetItemGroups": [
 		{
+			"groupID": "iron_ore_any",
 			"amount": 5,
 			"name": "Iron Ore",
 			"items": [
@@ -7150,6 +7154,7 @@ CUSTOMINTTAG=QuestID 2000
 								<li><strong>skillgain</strong> - train a skill to a target value</li>
 								<li><strong>timecollect</strong> - collect items within a time limit</li>
 								<li><strong>timekills</strong> - kill targets within a time limit</li>
+								<li><strong>escort</strong> - escort an NPC through one or more destinations</li>
 							</ul>
 						</div>
 
@@ -7175,8 +7180,13 @@ CUSTOMINTTAG=QuestID 2000
 								<li><span class="hl">nextQuestID</span> - simple next quest in a chain</li>
 								<li><span class="hl">nextQuest</span> - branching chain definitions</li>
 								<li><span class="hl">timeLimit</span> - timer in seconds for timed quests</li>
+								<li><span class="hl">escortTimeLimit</span> - optional escort alias for timeLimit</li>
 								<li><span class="hl">targetRegion</span> - optional region restriction for skill training quests and kill objectives</li>
 								<li><span class="hl">regionName</span> - optional display name for the region shown in the journal</li>
+								<li><span class="hl">escortTarget</span> - defines the escort NPC or uses the quest giver as escort target</li>
+								<li><span class="hl">waypoints</span> - ordered escort destinations using region IDs</li>
+								<li><span class="hl">travelAmbush</span> - optional random ambushes while traveling</li>
+								<li><span class="hl">randomDestinationPool</span> - optional random destination selection at quest start</li>
 							</ul>
 						</div>
 
@@ -7421,6 +7431,147 @@ CUSTOMINTTAG=QuestID 2000
 </code></pre>
 						</div>
 
+						<h4>Escort Quests</h4>
+
+						<p>
+							Escort quests let players guide an NPC to one or more destinations using region IDs.
+							Escorts may use the quest giver as the escorted NPC, or may spawn a separate escort NPC when the quest begins.
+						</p>
+
+						<ul>
+							<li>Single destination escorts</li>
+							<li>Multi-stop escort routes</li>
+							<li>Timed escorts</li>
+							<li>Random destination escorts</li>
+							<li>Waypoint ambushes</li>
+							<li>Travel ambushes</li>
+							<li>Fail if escort dies</li>
+							<li>Fail if escort is lost</li>
+						</ul>
+
+						<p>
+							Escort quests track progress automatically by waypoint stage.
+							Each destination uses a <span class="hl">regionID</span>.
+						</p>
+
+						<input type="checkbox" id="spoiler_escort_basic">
+						<label for="spoiler_escort_basic">Show escort quest example <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+<pre><code class="language-javascript">
+{
+	"questID": 5000,
+	"title": "Escort the Merchant",
+	"description": "Guide the merchant safely to Minoc.",
+	"uncomplete": "We have not arrived yet.",
+	"complete": "Thank you for the safe escort.",
+	"refuse": "Then I will wait for someone else.",
+	"type": "escort",
+	"category": "Side Quests",
+	"questTurnIn": 0,
+
+	"escortTarget":
+	{
+		"useQuestGiver": 1,
+		"failIfDead": 1,
+		"maxDistance": 24,
+		"returnDistance": 48
+	},
+
+	"waypoints":
+	[
+		{ "regionID": 12, "regionName": "Minoc", "order": 1 }
+	],
+
+	"rewards":
+	[
+		{ "type": "gold", "amount": 1000, "name": "Gold" }
+	]
+}
+</code></pre>
+						</div>
+
+						<input type="checkbox" id="spoiler_escort_multistop">
+						<label for="spoiler_escort_multistop">Show multi-stop escort example <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+<pre><code class="language-javascript">
+"waypoints":
+[
+	{ "regionID": 3, "regionName": "Britain", "order": 1 },
+	{ "regionID": 12, "regionName": "Minoc", "order": 2 },
+	{ "regionID": 11, "regionName": "Vesper", "order": 3 }
+]
+</code></pre>
+						</div>
+
+						<input type="checkbox" id="spoiler_escort_ambush">
+						<label for="spoiler_escort_ambush">Show escort ambush examples <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+
+							<p><strong>Waypoint Ambush</strong></p>
+
+<pre><code class="language-javascript">
+"ambush":
+{
+	"spawnOnce": 1,
+	"allowInGuardedRegion": 0,
+	"despawnSeconds": 90,
+	"npcIDs":
+	[
+		"brigand",
+		"brigand_archer"
+	]
+}
+</code></pre>
+
+							<p><strong>Travel Ambush</strong></p>
+
+<pre><code class="language-javascript">
+"travelAmbush":
+{
+	"enabled": 1,
+	"checkInterval": 30,
+	"chance": 25,
+	"allowInGuardedRegion": 0,
+	"despawnSeconds": 120,
+	"npcIDs":
+	[
+		"wolf",
+		"wolf"
+	]
+}
+</code></pre>
+
+						</div>
+
+						<p>
+							Waypoint ambushes trigger on arrival at specific destinations.
+							Travel ambushes are random periodic checks while moving.
+							By default ambushes do not spawn in guarded regions unless explicitly allowed.
+							Spawned ambushers can also auto-despawn after a timer.
+						</p>
+
+						<input type="checkbox" id="spoiler_escort_random">
+						<label for="spoiler_escort_random">Show random destination escort example <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+<pre><code class="language-javascript">
+"randomDestinationPool":
+[
+	{ "regionID": 3, "regionName": "Britain", "weight": 3 },
+	{ "regionID": 11, "regionName": "Vesper", "weight": 2 },
+	{ "regionID": 12, "regionName": "Minoc", "weight": 1 }
+]
+</code></pre>
+						</div>
+
+						<p>
+							Random destination escorts select one destination when the quest is accepted and save that route in quest progress.
+							The destination is not rerolled after relog.
+						</p>
+
 						<p>
 							Rewards are also built from fields in the quest entry.
 						</p>
@@ -7547,13 +7698,17 @@ CUSTOMINTTAG=QuestID 2000
 						<h4>Timed Quests</h4>
 
 						<p>
-							Timed quests use <span class="hl">timeLimit</span>. When time runs out, the quest fails automatically.
+							Timed quests use <span class="hl">timeLimit</span>.
+							Escort quests may also use <span class="hl">escortTimeLimit</span>, which acts as an alias.
+							When time runs out, the quest fails automatically.
 						</p>
 
 						<ul>
 							<li>The quest is removed from progress</li>
 							<li>The failure is logged</li>
 							<li>Any marked quest items are cleaned up</li>
+							<li>Escort NPCs are cleaned up if applicable</li>
+							<li>On login, remaining timed quests have their timers restored automatically</li>
 						</ul>
 
 						<h4>Skill Training Quests</h4>
@@ -7582,6 +7737,20 @@ CUSTOMINTTAG=QuestID 2000
 						<p>
 							The system remembers whether the player has already seen or completed that login quest.
 						</p>
+
+						<h4>Quest Login Validation</h4>
+
+						<p>
+							Active quests are validated when players log in.
+							This includes:
+						</p>
+
+						<ul>
+							<li>Restoring active timed quest timers</li>
+							<li>Restoring kill quest and skillgain triggers</li>
+							<li>Repairing active escort quests if the escort NPC still exists</li>
+							<li>Failing broken escort quests cleanly if the escort NPC is gone</li>
+						</ul>
 
 						<h3>Example Quest Entries</h3>
 
@@ -7744,6 +7913,83 @@ CUSTOMINTTAG=QuestID 2000
 }
 </code></pre>
 
+							<p><strong>Escort Quest</strong></p>
+
+<pre><code class="language-javascript">
+{
+	"questID": 5000,
+	"title": "Escort the Merchant",
+	"description": "Guide the merchant safely to Minoc.",
+	"uncomplete": "We have not arrived yet.",
+	"complete": "Thank you for the safe escort.",
+	"refuse": "Then I will wait for someone else.",
+	"type": "escort",
+	"category": "Side Quests",
+	"questTurnIn": 0,
+	"escortTimeLimit": 900,
+	"escortTarget": {
+		"useQuestGiver": 1,
+		"failIfDead": 1,
+		"maxDistance": 24,
+		"returnDistance": 48
+	},
+	"waypoints": [
+		{
+			"regionID": 12,
+			"regionName": "Minoc",
+			"order": 1,
+			"ambush": {
+				"spawnOnce": 1,
+				"allowInGuardedRegion": 0,
+				"despawnSeconds": 90,
+				"npcIDs": [ "brigand", "brigand_archer" ]
+			}
+		}
+	],
+	"travelAmbush": {
+		"enabled": 1,
+		"checkInterval": 30,
+		"chance": 20,
+		"allowInGuardedRegion": 0,
+		"despawnSeconds": 120,
+		"npcIDs": [ "wolf", "wolf" ]
+	},
+	"rewards": [
+		{ "type": "gold", "amount": 1000, "name": "Gold" }
+	]
+}
+</code></pre>
+
+							<p><strong>Random Destination Escort Quest</strong></p>
+
+<pre><code class="language-javascript">
+{
+	"questID": 5001,
+	"title": "Escort to a Nearby Town",
+	"description": "Take me somewhere safe.",
+	"uncomplete": "We have not arrived yet.",
+	"complete": "Thank you for the escort.",
+	"type": "escort",
+	"category": "Side Quests",
+	"questTurnIn": 0,
+	"escortTimeLimit": 1200,
+	"escortTarget": {
+		"useQuestGiver": 1,
+		"failIfDead": 1,
+		"maxDistance": 24,
+		"returnDistance": 48
+	},
+	"randomDestinationPool": [
+		{ "regionID": 3, "regionName": "Britain", "weight": 3 },
+		{ "regionID": 11, "regionName": "Vesper", "weight": 2 },
+		{ "regionID": 12, "regionName": "Minoc", "weight": 1 }
+	],
+	"rewards": [
+		{ "type": "gold", "amount": 950, "name": "Gold" }
+	]
+}
+</code></pre>
+
 						</div>
 
 						<h3>Tips</h3>
@@ -7758,6 +8004,10 @@ CUSTOMINTTAG=QuestID 2000
 							<li>Use <span class="hl">targetKillGroups</span> when a quest should accept kills from a group instead of exact NPCs only</li>
 							<li>Use <span class="hl">raceName</span> inside <span class="hl">targetKillGroups</span> to avoid listing every NPC individually</li>
 							<li>Use <span class="hl">targetRegion</span> and <span class="hl">regionName</span> when kills or training should happen in a specific area</li>
+							<li>Use <span class="hl">regionID</span> for escort destinations, not region names</li>
+							<li>Use <span class="hl">randomDestinationPool</span> for reusable escort routes</li>
+							<li>Use waypoint <span class="hl">ambush</span> and <span class="hl">travelAmbush</span> for dangerous road encounters</li>
+							<li>Use <span class="hl">despawnSeconds</span> to prevent abandoned ambush attackers from remaining in the world</li>
 							<li>Use <span class="hl">setTags</span> and <span class="hl">setTagDeltas</span> for reputation, alignment, or character progression</li>
 							<li>Use <span class="hl">setWorldState</span> and <span class="hl">worldStateDeltas</span> for story or world progression</li>
 							<li>Only include fields that apply to the quest type you are building</li>

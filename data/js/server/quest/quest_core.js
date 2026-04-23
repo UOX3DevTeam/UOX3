@@ -1,11 +1,10 @@
 /// <reference path="../../../definitions.d.ts" />
 // @ts-check
 
-/** @type { ( player: Character, questID: number ) => void } */
-/** @type { ( player: Character, questID: number ) => void } */
-function StartQuest( player, questID )
+/** @type { ( player: Character, questID: number, questGiver?: Character | null ) => void } */
+function StartQuest( player, questID, questGiver )
 {
-	if( !ValidateObject( player ))
+	if( !ValidateObject( player ) )
 		return;
 
 	var socket = player.socket;
@@ -14,7 +13,7 @@ function StartQuest( player, questID )
 
 	var questProgressArray = ReadQuestProgress( player );
 
-	if( !CheckQuest( player, questID ))
+	if( !CheckQuest( player, questID ) )
 	{
 		return;
 	}
@@ -23,8 +22,11 @@ function StartQuest( player, questID )
 	var collectedItemGroups = {};
 	var harvestKills = {};
 	var harvestKillGroups = {};
+	var escortNPCSerial = 0;
+	var escortUsesQuestGiver = false;
 
 	var quest = TriggerEvent( 5801, "QuestList", questID );
+	var selectedWaypoints = [];
 
 	if( quest.targetItems )
 	{
@@ -72,7 +74,7 @@ function StartQuest( player, questID )
 	if( quest.type == "delivery" && quest.deliveryItem )
 	{
 		var packageItem = CreateDFNItem( player.socket, player, quest.deliveryItem.sectionID, quest.deliveryItem.amount, "ITEM", true );
-		if( ValidateObject( packageItem ))
+		if( ValidateObject( packageItem ) )
 		{
 			packageItem.name = quest.deliveryItem.name || "Unknown Package";
 			packageItem.SetTag( "saveColor", packageItem.color );
@@ -87,14 +89,14 @@ function StartQuest( player, questID )
 		}
 		else
 		{
-			socket.SysMessage( GetDictionaryEntry( 19615, socket.language ));
+			socket.SysMessage( GetDictionaryEntry( 19615, socket.language ) );
 		}
 	}
 
 	var initialSkillLevel = 0;
 	if( quest.type == "skillgain" )
 	{
-		if( !player.GetTag( "AcceleratedSkillGain" ))
+		if( !player.GetTag( "AcceleratedSkillGain" ) )
 		{
 			initialSkillLevel = player.baseskills[quest.targetSkill];
 			player.SetTag( "AcceleratedSkillGain", quest.targetSkill );
@@ -102,8 +104,29 @@ function StartQuest( player, questID )
 		}
 		else
 		{
-			socket.SysMessage( GetDictionaryEntry( 19616, socket.language ));
+			socket.SysMessage( GetDictionaryEntry( 19616, socket.language ) );
 		}
+	}
+
+	if( quest.type == "escort" && quest.escortTarget )
+	{
+		selectedWaypoints = BuildEscortSelectedWaypoints( quest );
+
+		if( !selectedWaypoints.length )
+		{
+			socket.SysMessage( "Unable to determine escort destination." );
+			return;
+		}
+
+		var escortNPC = ResolveQuestEscortNPC( player, questID, quest, questGiver );
+		if( !ValidateObject( escortNPC ) )
+		{
+			socket.SysMessage( "Unable to start escort quest." );
+			return;
+		}
+
+		escortNPCSerial = escortNPC.serial;
+		escortUsesQuestGiver = ( quest.escortTarget.useQuestGiver ? true : false );
 	}
 
 	questProgressArray.push({
@@ -112,6 +135,15 @@ function StartQuest( player, questID )
 		questProgress: 0,
 		harvestKills: harvestKills,
 		harvestKillGroups: harvestKillGroups,
+		escortNPCSerial: escortNPCSerial,
+		escortUsesQuestGiver: escortUsesQuestGiver,
+		escortStage: 0,
+		escortLastRegion: "",
+		escortFailed: false,
+		lastTravelAmbushCheck: 0,
+		selectedWaypoints: selectedWaypoints,
+		selectedDestinationRegionID: ( selectedWaypoints.length > 0 ? parseInt( selectedWaypoints[selectedWaypoints.length - 1].regionID, 10 ) : 0 ),
+		selectedDestinationRegionName: ( selectedWaypoints.length > 0 ? ( selectedWaypoints[selectedWaypoints.length - 1].regionName || "" ) : "" ),
 		collectedItems: collectedItems,
 		collectedItemGroups: collectedItemGroups,
 		skillProgress: initialSkillLevel,
@@ -128,7 +160,7 @@ function StartQuest( player, questID )
 
 	WriteQuestProgress( player, questProgressArray );
 
-	socket.SysMessage( GetDictionaryEntry( 19617, socket.language ));
+	socket.SysMessage( GetDictionaryEntry( 19617, socket.language ) );
 
 	if( quest.timeLimit )
 	{
@@ -261,6 +293,11 @@ function onTimer( timerObj, timerID )
 
 			// Log the failed quest
 			LogFailedQuest( player, questEntry );
+
+			if( quest.type == "escort" )
+			{
+				CleanupEscortQuestNPC( player, questEntry.questID );
+			}
 
 			questProgressArray.splice( i, 1 ); // Remove the failed quest
 			WriteQuestProgress( player, questProgressArray );
@@ -844,6 +881,11 @@ function CompleteQuest( player, questID )
 			return;
 		}
 
+		if( quest.type == "escort" )
+		{
+			CleanupEscortQuestNPC( player, questID );
+		}
+
 		// Notify the player and play a visual effect
 		socket.SysMessage( "Congratulations! You have completed the quest: " + quest.title );
 		DoStaticEffect( player.x, player.y, player.z, 0x376A, 0x40, 0x16, false );
@@ -1215,6 +1257,976 @@ function GoldReward( player, reward, bankBox, socket )
 		CreateDFNItem( player.socket, player, "0x0eed", reward.amount, "ITEM", true );
 	}
 	socket.SysMessage( "You receive a reward: " + reward.amount + " gold!" );
+}
+
+/** @type { ( escortNPC: Character, player: Character, questID: number, quest: any ) => Character | null } */
+function SetupQuestEscortNPC( escortNPC, player, questID, quest )
+{
+	if( !ValidateObject( escortNPC ) || !ValidateObject( player ) || !quest || !quest.escortTarget )
+	{
+		return null;
+	}
+
+	escortNPC.owner = player;
+	escortNPC.Follow( player );
+	escortNPC.SetTag( "QuestEscort", 1 );
+	escortNPC.SetTag( "QuestID", questID );
+	escortNPC.SetTag( "QuestPlayerSerial", player.serial );
+	escortNPC.SetTag( "EscortStage", 0 );
+	escortNPC.SetTag( "EscortFailIfDead", quest.escortTarget.failIfDead ? 1 : 0 );
+	escortNPC.SetTag( "EscortMaxDistance", quest.escortTarget.maxDistance || 24 );
+	escortNPC.SetTag( "EscortReturnDistance", quest.escortTarget.returnDistance || 48 );
+	escortNPC.SetTag( "EscortWaypointCount", quest.waypoints ? quest.waypoints.length : 0 );
+	escortNPC.SetTag( "EscortUsesQuestGiver", quest.escortTarget.useQuestGiver ? 1 : 0 );
+
+	if( quest.escortTarget.name )
+	{
+		escortNPC.name = String( quest.escortTarget.name );
+	}
+
+	if( !escortNPC.HasScriptTrigger( 5814 ))
+	{
+		escortNPC.AddScriptTrigger( 5814 );
+	}
+
+	escortNPC.StartTimer( 10000, 1, true );
+	return escortNPC;
+}
+
+/** @type { ( player: Character, questID: number, quest: any, questGiver?: Character | null ) => Character | null } */
+function ResolveQuestEscortNPC( player, questID, quest, questGiver )
+{
+	if( !quest || !quest.escortTarget )
+	{
+		return null;
+	}
+
+	if( quest.escortTarget.useQuestGiver )
+	{
+		if( !ValidateObject( questGiver ))
+		{
+			return null;
+		}
+
+		return SetupQuestEscortNPC( questGiver, player, questID, quest );
+	}
+
+	if( !quest.escortTarget.npcID )
+	{
+		return null;
+	}
+
+	var escortNPC = SpawnNPC( String( quest.escortTarget.npcID ), player.x + 1, player.y, player.z, player.worldnumber, player.instanceID, false );
+	if( !ValidateObject( escortNPC ) )
+	{
+		return null;
+	}
+
+	return SetupQuestEscortNPC( escortNPC, player, questID, quest );
+}
+
+/** @type { ( player: Character, questID: number ) => void } */
+function CleanupEscortQuestNPC( player, questID )
+{
+	if( !ValidateObject( player ))
+	{
+		return;
+	}
+
+	var questProgressArray = ReadQuestProgress( player );
+	for( var i = 0; i < questProgressArray.length; i++ )
+	{
+		var questEntry = questProgressArray[i];
+		if( questEntry.serial != player.serial || questEntry.questID != questID )
+		{
+			continue;
+		}
+
+		var escortNPCSerial = parseInt( questEntry.escortNPCSerial, 10 );
+		if( isNaN( escortNPCSerial ) || escortNPCSerial <= 0 )
+		{
+			return;
+		}
+
+		var escortNPC = CalcCharFromSer( escortNPCSerial );
+		if( !ValidateObject( escortNPC ))
+		{
+			return;
+		}
+
+		if( questEntry && questEntry.escortStage >= 0 )
+		{
+			for( var ambushStageIndex = 0; ambushStageIndex <= questEntry.escortStage; ambushStageIndex++ )
+			{
+				escortNPC.SetTag( "EscortAmbush_" + questID + "_" + ambushStageIndex, null );
+			}
+		}
+
+		escortNPC.Follow( null );
+		escortNPC.SetTag( "QuestEscort", null );
+		escortNPC.SetTag( "QuestID", null );
+		escortNPC.SetTag( "QuestPlayerSerial", null );
+		escortNPC.SetTag( "EscortStage", null );
+		escortNPC.SetTag( "EscortFailIfDead", null );
+		escortNPC.SetTag( "EscortMaxDistance", null );
+		escortNPC.SetTag( "EscortReturnDistance", null );
+		escortNPC.SetTag( "EscortWaypointCount", null );
+		escortNPC.SetTag( "EscortUsesQuestGiver", null );
+		escortNPC.owner = null;
+
+		if( questEntry.escortUsesQuestGiver )
+		{
+			if( escortNPC.HasScriptTrigger( 5814 ))
+			{
+				escortNPC.RemoveScriptTrigger( 5814 );
+			}
+		}
+		else
+		{
+			escortNPC.Delete();
+		}
+		return;
+	}
+}
+
+/** @type { ( player: Character, questID: number, regionID: number ) => void } */
+function EscortReachedRegion( player, questID, regionID )
+{
+	if( !ValidateObject( player ) )
+	{
+		return;
+	}
+
+	var socket = player.socket;
+	if( socket == null )
+	{
+		return;
+	}
+
+	var enteredRegionID = regionID;
+
+	var questProgressArray = ReadQuestProgress( player );
+	for( var i = 0; i < questProgressArray.length; i++ )
+	{
+		var questEntry = questProgressArray[i];
+		if( questEntry.serial != player.serial || questEntry.questID != questID )
+		{
+			continue;
+		}
+
+		var quest = TriggerEvent( 5801, "QuestList", questID );
+		if( !quest || quest.type != "escort" )
+		{
+			return;
+		}
+
+		var activeWaypoints = GetEscortActiveWaypoints( questEntry, quest );
+		if( !activeWaypoints || !activeWaypoints.length )
+		{
+			return;
+		}
+
+		var escortStage = parseInt( questEntry.escortStage, 10 );
+		if( isNaN( escortStage ) || escortStage < 0 )
+		{
+			escortStage = 0;
+		}
+
+		var nextWaypoint = activeWaypoints[escortStage];
+		if( !nextWaypoint )
+		{
+			return;
+		}
+
+		var requiredRegionID = parseInt( nextWaypoint.regionID, 10 );
+		if( isNaN( requiredRegionID ) || requiredRegionID <= 0 )
+		{
+			return;
+		}
+
+		if( requiredRegionID != enteredRegionID )
+		{
+			return;
+		}
+
+		questEntry.escortStage = escortStage + 1;
+		questEntry.escortLastRegion = String( enteredRegionID );
+		socket.SysMessage( "Escort progress updated: region " + enteredRegionID );
+
+		var escortNPC = null;
+		var escortNPCSerial = parseInt( questEntry.escortNPCSerial, 10 );
+		if( !isNaN( escortNPCSerial ) && escortNPCSerial > 0 )
+		{
+			escortNPC = CalcCharFromSer( escortNPCSerial );
+		}
+
+		if( nextWaypoint.ambush && typeof nextWaypoint.ambush == "object" )
+		{
+			var ambushAlreadyTriggered = false;
+			var ambushTagName = "EscortAmbush_" + questID + "_" + escortStage;
+
+			if( ValidateObject( escortNPC ) )
+			{
+				ambushAlreadyTriggered = ( parseInt( escortNPC.GetTag( ambushTagName ), 10 ) > 0 );
+			}
+
+			if( !ambushAlreadyTriggered )
+			{
+				var allowInGuardedRegion = parseInt( nextWaypoint.ambush.allowInGuardedRegion, 10 );
+				if( isNaN( allowInGuardedRegion ) )
+				{
+					allowInGuardedRegion = 0;
+				}
+
+				var currentRegionObj = null;
+				if( ValidateObject( escortNPC ) && escortNPC.region )
+				{
+					currentRegionObj = escortNPC.region;
+				}
+				else if( player.region )
+				{
+					currentRegionObj = player.region;
+				}
+
+				var regionIsGuarded = IsRegionGuarded( currentRegionObj );
+
+				if( !regionIsGuarded || allowInGuardedRegion )
+				{
+					if( SpawnEscortAmbush( player, escortNPC, nextWaypoint.ambush ) )
+					{
+						socket.SysMessage( "Ambush!" );
+
+						if( ValidateObject( escortNPC ) )
+						{
+							escortNPC.SetTag( ambushTagName, 1 );
+						}
+					}
+				}
+			}
+		}
+
+		WriteQuestProgress( player, questProgressArray );
+
+		if( questEntry.escortStage >= activeWaypoints.length )
+		{
+			questEntry.completed = true;
+			WriteQuestProgress( player, questProgressArray );
+
+			if( quest.questTurnIn == 1 )
+			{
+				socket.SysMessage( GetDictionaryEntry( 19623, socket.language ) );
+			}
+			else
+			{
+				CompleteQuest( player, questID );
+			}
+			return;
+		}
+
+		return;
+	}
+}
+
+/** @type { ( player: Character, questID: number, failMessage: string ) => void } */
+function FailEscortQuest( player, questID, failMessage )
+{
+	if( !ValidateObject( player ) )
+	{
+		return;
+	}
+
+	var socket = player.socket;
+	if( socket == null )
+	{
+		return;
+	}
+
+	var questProgressArray = ReadQuestProgress( player );
+	var newQuestProgressArray = [];
+	var removedQuest = false;
+
+	for( var i = 0; i < questProgressArray.length; i++ )
+	{
+		var questEntry = questProgressArray[i];
+		if( questEntry.serial == player.serial && questEntry.questID == questID )
+		{
+			questEntry.escortFailed = true;
+			LogFailedQuest( player, questEntry );
+			removedQuest = true;
+			continue;
+		}
+
+		newQuestProgressArray.push( questEntry );
+	}
+
+	if( removedQuest )
+	{
+		CleanupEscortQuestNPC( player, questID );
+		WriteQuestProgress( player, newQuestProgressArray );
+		socket.SysMessage( failMessage || "You have failed the escort quest." );
+	}
+}
+
+/** @type { ( player: Character, escortNPC: Character | null, ambushData: any ) => boolean } */
+function SpawnEscortAmbush( player, escortNPC, ambushData )
+{
+	if( !ValidateObject( player ) || !ambushData || !ambushData.npcIDs || !ambushData.npcIDs.length )
+	{
+		return false;
+	}
+
+	var spawnX = player.x;
+	var spawnY = player.y;
+	var spawnZ = player.z;
+	var spawnWorld = player.worldnumber;
+	var spawnInstance = player.instanceID;
+
+	if( ValidateObject( escortNPC ) )
+	{
+		spawnX = escortNPC.x;
+		spawnY = escortNPC.y;
+		spawnZ = escortNPC.z;
+		spawnWorld = escortNPC.worldnumber;
+		spawnInstance = escortNPC.instanceID;
+	}
+
+	var despawnSeconds = parseInt( ambushData.despawnSeconds, 10 );
+	if( isNaN( despawnSeconds ) || despawnSeconds <= 0 )
+	{
+		despawnSeconds = 120;
+	}
+
+	var spawnedAny = false;
+
+	for( var ambushNpcIndex = 0; ambushNpcIndex < ambushData.npcIDs.length; ambushNpcIndex++ )
+	{
+		var ambushNpcID = String( ambushData.npcIDs[ambushNpcIndex] );
+		if( ambushNpcID == "" )
+		{
+			continue;
+		}
+
+		var offsetX = RandomNumber( -4, 4 );
+		var offsetY = RandomNumber( -4, 4 );
+
+		var ambushNpc = SpawnNPC( ambushNpcID, spawnX + offsetX, spawnY + offsetY, spawnZ, spawnWorld, spawnInstance, false );
+
+		if( ValidateObject( ambushNpc ) )
+		{
+			spawnedAny = true;
+
+			ambushNpc.SetTag( "EscortAmbushSpawned", 1 );
+			ambushNpc.SetTag( "EscortAmbushDespawnSeconds", despawnSeconds );
+			ambushNpc.shouldSave = false;
+
+			if( !ambushNpc.HasScriptTrigger( 5815 ) )
+			{
+				ambushNpc.AddScriptTrigger( 5815 );
+			}
+
+			ambushNpc.StartTimer( despawnSeconds * 1000, 1, true );
+		}
+	}
+
+	return spawnedAny;
+}
+
+/** @type { ( escortNPC: Character, player: Character, questID: number, quest: any, questEntry: any ) => boolean } */
+function RepairEscortNPCFromProgress( escortNPC, player, questID, quest, questEntry )
+{
+	if( !ValidateObject( escortNPC ) || !ValidateObject( player ) || !quest || quest.type != "escort" )
+	{
+		return false;
+	}
+
+	var activeWaypoints = GetEscortActiveWaypoints( questEntry, quest );
+	var waypointCount = ( activeWaypoints && activeWaypoints.length ) ? activeWaypoints.length : 0;
+
+	escortNPC.owner = player;
+	escortNPC.Follow( player );
+	escortNPC.SetTag( "QuestEscort", 1 );
+	escortNPC.SetTag( "QuestID", questID );
+	escortNPC.SetTag( "QuestPlayerSerial", player.serial );
+	escortNPC.SetTag( "EscortStage", questEntry.escortStage || 0 );
+	escortNPC.SetTag( "EscortFailIfDead", quest.escortTarget && quest.escortTarget.failIfDead ? 1 : 0 );
+	escortNPC.SetTag( "EscortMaxDistance", ( quest.escortTarget && quest.escortTarget.maxDistance ) ? quest.escortTarget.maxDistance : 24 );
+	escortNPC.SetTag( "EscortReturnDistance", ( quest.escortTarget && quest.escortTarget.returnDistance ) ? quest.escortTarget.returnDistance : 48 );
+	escortNPC.SetTag( "EscortWaypointCount", waypointCount );
+	escortNPC.SetTag( "EscortUsesQuestGiver", questEntry.escortUsesQuestGiver ? 1 : 0 );
+
+	if( !escortNPC.HasScriptTrigger( 5814 ) )
+	{
+		escortNPC.AddScriptTrigger( 5814 );
+	}
+
+	escortNPC.StartTimer( 10000, 1, true );
+	return true;
+}
+
+/** @type { ( player: Character ) => void } */
+function ValidateTimedQuestsOnLogin( player )
+{
+	if( !ValidateObject( player ) )
+	{
+		return;
+	}
+
+	var socket = player.socket;
+	if( socket == null )
+	{
+		return;
+	}
+
+	var questProgressArray = ReadQuestProgress( player );
+	if( !questProgressArray || !questProgressArray.length )
+	{
+		return;
+	}
+
+	var updatedQuestProgressArray = [];
+	var progressChanged = false;
+	var currentTime = Date.now();
+
+	for( var i = 0; i < questProgressArray.length; i++ )
+	{
+		var questEntry = questProgressArray[i];
+		if( !questEntry || questEntry.serial != player.serial )
+		{
+			updatedQuestProgressArray.push( questEntry );
+			continue;
+		}
+
+		var quest = TriggerEvent( 5801, "QuestList", questEntry.questID );
+		if( !quest )
+		{
+			updatedQuestProgressArray.push( questEntry );
+			continue;
+		}
+
+		var timeLimitMilliseconds = parseInt( questEntry.timeLimit, 10 );
+		var startTimeMilliseconds = parseInt( questEntry.startTime, 10 );
+
+		if( isNaN( timeLimitMilliseconds ) || timeLimitMilliseconds <= 0 || isNaN( startTimeMilliseconds ) || startTimeMilliseconds <= 0 )
+		{
+			updatedQuestProgressArray.push( questEntry );
+			continue;
+		}
+
+		var expirationTime = startTimeMilliseconds + timeLimitMilliseconds;
+		var remainingMilliseconds = expirationTime - currentTime;
+
+		if( remainingMilliseconds <= 0 )
+		{
+			TriggerEvent( 5802, "ManageQuestItems", player, questEntry.questID, false );
+
+			if( quest.type == "skillgain" )
+			{
+				player.SetTag( "AcceleratedSkillGain", null );
+				player.RemoveScriptTrigger( 5811 );
+			}
+
+			if( quest.type == "escort" )
+			{
+				CleanupEscortQuestNPC( player, questEntry.questID );
+			}
+
+			questEntry.escortFailed = ( quest.type == "escort" );
+			LogFailedQuest( player, questEntry );
+
+			socket.SysMessage( "You have failed the timed quest: " + quest.title );
+			progressChanged = true;
+			continue;
+		}
+
+		player.KillJSTimer( questEntry.questID, 5800 );
+		player.StartTimer( remainingMilliseconds, questEntry.questID, 5800 );
+		updatedQuestProgressArray.push( questEntry );
+	}
+
+	if( progressChanged )
+	{
+		WriteQuestProgress( player, updatedQuestProgressArray );
+	}
+}
+
+/** @type { ( player: Character ) => void } */
+function RestoreQuestPlayerTriggersOnLogin( player )
+{
+	if( !ValidateObject( player ) )
+	{
+		return;
+	}
+
+	var questProgressArray = ReadQuestProgress( player );
+	if( !questProgressArray || !questProgressArray.length )
+	{
+		return;
+	}
+
+	var needsKillTrigger = false;
+	var needsSkillGainTrigger = false;
+	var restoredSkillID = -1;
+
+	for( var i = 0; i < questProgressArray.length; i++ )
+	{
+		var questEntry = questProgressArray[i];
+		if( !questEntry || questEntry.serial != player.serial || questEntry.completed )
+		{
+			continue;
+		}
+
+		var quest = TriggerEvent( 5801, "QuestList", questEntry.questID );
+		if( !quest )
+		{
+			continue;
+		}
+
+		var hasKillTargets =
+			( quest.targetKills && quest.targetKills.length > 0 ) ||
+			( quest.targetKillGroups && quest.targetKillGroups.length > 0 );
+
+		if(( quest.type == "kill" || quest.type == "timekills" || quest.type == "multi" ) && hasKillTargets )
+		{
+			needsKillTrigger = true;
+		}
+
+		if( quest.type == "skillgain" )
+		{
+			needsSkillGainTrigger = true;
+			restoredSkillID = quest.targetSkill;
+		}
+	}
+
+	if( needsKillTrigger && !player.HasScriptTrigger( 5810 ) )
+	{
+		player.AddScriptTrigger( 5810 );
+	}
+
+	if( needsSkillGainTrigger )
+	{
+		if( !player.HasScriptTrigger( 5811 ) )
+		{
+			player.AddScriptTrigger( 5811 );
+		}
+
+		if( restoredSkillID >= 0 )
+		{
+			player.SetTag( "AcceleratedSkillGain", restoredSkillID );
+		}
+	}
+}
+
+/** @type { ( player: Character ) => void } */
+function ValidateEscortQuestsOnLogin( player )
+{
+	if( !ValidateObject( player ) )
+	{
+		return;
+	}
+
+	var socket = player.socket;
+	if( socket == null )
+	{
+		return;
+	}
+
+	var questProgressArray = ReadQuestProgress( player );
+	if( !questProgressArray || !questProgressArray.length )
+	{
+		return;
+	}
+
+	for( var i = 0; i < questProgressArray.length; i++ )
+	{
+		var questEntry = questProgressArray[i];
+		if( !questEntry || questEntry.serial != player.serial )
+		{
+			continue;
+		}
+
+		var quest = TriggerEvent( 5801, "QuestList", questEntry.questID );
+		if( !quest || quest.type != "escort" )
+		{
+			continue;
+		}
+
+		var escortNPCSerial = parseInt( questEntry.escortNPCSerial, 10 );
+		if( isNaN( escortNPCSerial ) || escortNPCSerial <= 0 )
+		{
+			FailEscortQuest( player, questEntry.questID, "Your escort quest could not be restored." );
+			return;
+		}
+
+		var escortNPC = CalcCharFromSer( escortNPCSerial );
+		if( !ValidateObject( escortNPC ) )
+		{
+			FailEscortQuest( player, questEntry.questID, "Your escort is no longer present. The escort quest has failed." );
+			return;
+		}
+
+		RepairEscortNPCFromProgress( escortNPC, player, questEntry.questID, quest, questEntry );
+	}
+}
+
+/** @type { ( regionObj: any ) => boolean } */
+function IsRegionGuarded( regionObj )
+{
+	if( !regionObj )
+	{
+		return false;
+	}
+
+	if( typeof regionObj.guarded != "undefined" )
+	{
+		var guardedValue = parseInt( regionObj.guarded, 10 );
+		if( !isNaN( guardedValue ) && guardedValue > 0 )
+		{
+			return true;
+		}
+	}
+
+	if( typeof regionObj.isGuarded != "undefined" )
+	{
+		return !!regionObj.isGuarded;
+	}
+
+	return false;
+}
+
+/** @type { ( player: Character, questID: number, escortNPC: Character ) => void } */
+function CheckEscortTravelAmbush( player, questID, escortNPC )
+{
+	if( !ValidateObject( player ) || !ValidateObject( escortNPC ) )
+	{
+		return;
+	}
+
+	var socket = player.socket;
+	if( socket == null )
+	{
+		return;
+	}
+
+	var quest = TriggerEvent( 5801, "QuestList", questID );
+	if( !quest || quest.type != "escort" || !quest.travelAmbush || !quest.travelAmbush.enabled )
+	{
+		return;
+	}
+
+	var travelAmbush = quest.travelAmbush;
+
+	var allowInGuardedRegion = parseInt( travelAmbush.allowInGuardedRegion, 10 );
+	if( isNaN( allowInGuardedRegion ) )
+	{
+		allowInGuardedRegion = 0;
+	}
+
+	var currentRegionObj = escortNPC.region || player.region;
+	if( IsRegionGuarded( currentRegionObj ) && !allowInGuardedRegion )
+	{
+		return;
+	}
+
+	var questProgressArray = ReadQuestProgress( player );
+	for( var i = 0; i < questProgressArray.length; i++ )
+	{
+		var questEntry = questProgressArray[i];
+		if( questEntry.serial != player.serial || questEntry.questID != questID )
+		{
+			continue;
+		}
+
+		var checkInterval = parseInt( travelAmbush.checkInterval, 10 );
+		if( isNaN( checkInterval ) || checkInterval <= 0 )
+		{
+			checkInterval = 30;
+		}
+
+		var now = Date.now();
+		var lastCheck = parseInt( questEntry.lastTravelAmbushCheck, 10 );
+		if( isNaN( lastCheck ) )
+		{
+			lastCheck = 0;
+		}
+
+		if( lastCheck > 0 && ( now - lastCheck ) < ( checkInterval * 1000 ) )
+		{
+			return;
+		}
+
+		questEntry.lastTravelAmbushCheck = now;
+
+		var escortStage = parseInt( questEntry.escortStage, 10 );
+		if( isNaN( escortStage ) )
+		{
+			escortStage = 0;
+		}
+
+		var minStage = parseInt( travelAmbush.minStage, 10 );
+		if( isNaN( minStage ) )
+		{
+			minStage = 0;
+		}
+
+		var maxStage = parseInt( travelAmbush.maxStage, 10 );
+		if( isNaN( maxStage ) )
+		{
+			maxStage = -1;
+		}
+
+		if( escortStage < minStage )
+		{
+			WriteQuestProgress( player, questProgressArray );
+			return;
+		}
+
+		if( maxStage >= 0 && escortStage > maxStage )
+		{
+			WriteQuestProgress( player, questProgressArray );
+			return;
+		}
+
+		var chance = parseInt( travelAmbush.chance, 10 );
+		if( isNaN( chance ) || chance <= 0 )
+		{
+			chance = 25;
+		}
+
+		if( RandomNumber( 1, 100 ) <= chance )
+		{
+			if( SpawnEscortAmbush( player, escortNPC, travelAmbush ) )
+			{
+				socket.SysMessage( "You are ambushed on the road!" );
+			}
+		}
+
+		WriteQuestProgress( player, questProgressArray );
+		return;
+	}
+}
+
+/** @type { ( waypoints: any[] ) => any[] } */
+function CloneEscortWaypoints( waypoints )
+{
+	var clonedWaypoints = [];
+
+	if( !waypoints || !waypoints.length )
+	{
+		return clonedWaypoints;
+	}
+
+	for( var waypointIndex = 0; waypointIndex < waypoints.length; waypointIndex++ )
+	{
+		var waypoint = waypoints[waypointIndex];
+		if( !waypoint || typeof waypoint != "object" )
+		{
+			continue;
+		}
+
+		var clonedWaypoint = {};
+		for( var key in waypoint )
+		{
+			if( waypoint.hasOwnProperty( key ) )
+			{
+				clonedWaypoint[key] = waypoint[key];
+			}
+		}
+
+		if( typeof clonedWaypoint.order == "undefined" )
+		{
+			clonedWaypoint.order = waypointIndex + 1;
+		}
+
+		clonedWaypoints.push( clonedWaypoint );
+	}
+
+	return clonedWaypoints;
+}
+
+/** @type { ( destinationPool: any[] ) => any | null } */
+function PickRandomEscortDestination( destinationPool )
+{
+	if( !destinationPool || !destinationPool.length )
+	{
+		return null;
+	}
+
+	var totalWeight = 0;
+	for( var destinationIndex = 0; destinationIndex < destinationPool.length; destinationIndex++ )
+	{
+		var destinationEntry = destinationPool[destinationIndex];
+		if( !destinationEntry || typeof destinationEntry != "object" )
+		{
+			continue;
+		}
+
+		var entryWeight = parseInt( destinationEntry.weight, 10 );
+		if( isNaN( entryWeight ) || entryWeight <= 0 )
+		{
+			entryWeight = 1;
+		}
+
+		totalWeight += entryWeight;
+	}
+
+	if( totalWeight <= 0 )
+	{
+		return null;
+	}
+
+	var roll = RandomNumber( 1, totalWeight );
+	var runningTotal = 0;
+
+	for( var pickIndex = 0; pickIndex < destinationPool.length; pickIndex++ )
+	{
+		var poolEntry = destinationPool[pickIndex];
+		if( !poolEntry || typeof poolEntry != "object" )
+		{
+			continue;
+		}
+
+		var poolWeight = parseInt( poolEntry.weight, 10 );
+		if( isNaN( poolWeight ) || poolWeight <= 0 )
+		{
+			poolWeight = 1;
+		}
+
+		runningTotal += poolWeight;
+		if( roll <= runningTotal )
+		{
+			return poolEntry;
+		}
+	}
+
+	return destinationPool[0] || null;
+}
+
+/** @type { ( quest: any ) => any[] } */
+function BuildEscortSelectedWaypoints( quest )
+{
+	if( !quest || quest.type != "escort" )
+	{
+		return [];
+	}
+
+	if( quest.waypoints && quest.waypoints.length > 0 )
+	{
+		return CloneEscortWaypoints( quest.waypoints );
+	}
+
+	if( quest.randomDestinationPool && quest.randomDestinationPool.length > 0 )
+	{
+		var chosenDestination = PickRandomEscortDestination( quest.randomDestinationPool );
+		if( chosenDestination )
+		{
+			return [{
+				regionID: parseInt( chosenDestination.regionID, 10 ),
+				regionName: chosenDestination.regionName || "",
+				order: 1
+			}];
+		}
+	}
+
+	return [];
+}
+
+/** @type { ( questEntry: any, quest: any ) => any[] } */
+function GetEscortActiveWaypoints( questEntry, quest )
+{
+	if( questEntry && questEntry.selectedWaypoints && questEntry.selectedWaypoints.length > 0 )
+	{
+		return questEntry.selectedWaypoints;
+	}
+
+	if( quest && quest.waypoints && quest.waypoints.length > 0 )
+	{
+		return quest.waypoints;
+	}
+
+	return [];
+}
+
+/** @type { ( selectedWaypoints: any[] ) => string } */
+function SerializeSelectedWaypoints( selectedWaypoints )
+{
+	if( !selectedWaypoints || !selectedWaypoints.length )
+	{
+		return "";
+	}
+
+	var serializedParts = [];
+
+	for( var waypointIndex = 0; waypointIndex < selectedWaypoints.length; waypointIndex++ )
+	{
+		var waypoint = selectedWaypoints[waypointIndex];
+		if( !waypoint )
+		{
+			continue;
+		}
+
+		var regionID = parseInt( waypoint.regionID, 10 );
+		if( isNaN( regionID ) || regionID <= 0 )
+		{
+			continue;
+		}
+
+		var regionName = "";
+		if( waypoint.regionName )
+		{
+			regionName = String( waypoint.regionName ).replace( /\|/g, "" ).replace( /:/g, "" );
+		}
+
+		serializedParts.push( regionID + ":" + regionName );
+	}
+
+	return serializedParts.join( "|" );
+}
+
+/** @type { ( rawText: string ) => any[] } */
+function ParseSelectedWaypoints( rawText )
+{
+	var parsedWaypoints = [];
+
+	if( !rawText || rawText == "" )
+	{
+		return parsedWaypoints;
+	}
+
+	var waypointParts = String( rawText ).split( "|" );
+	for( var waypointIndex = 0; waypointIndex < waypointParts.length; waypointIndex++ )
+	{
+		var waypointText = manualTrim( waypointParts[waypointIndex] );
+		if( waypointText == "" )
+		{
+			continue;
+		}
+
+		var pieces = waypointText.split( ":" );
+		if( pieces.length < 1 )
+		{
+			continue;
+		}
+
+		var regionID = parseInt( manualTrim( pieces[0] ), 10 );
+		if( isNaN( regionID ) || regionID <= 0 )
+		{
+			continue;
+		}
+
+		var regionName = "";
+		if( pieces.length > 1 )
+		{
+			regionName = manualTrim( pieces.slice( 1 ).join( ":" ) );
+		}
+
+		parsedWaypoints.push({
+			regionID: regionID,
+			regionName: regionName,
+			order: parsedWaypoints.length + 1
+		});
+	}
+
+	return parsedWaypoints;
 }
 
 /** @type { ( player: Character, questID: number, socket: Socket ) => void } */
@@ -2156,6 +3168,38 @@ function LogFailedQuest( player, failedQuest )
 			}
 		}
 
+		var collectedItemGroupsStr = "";
+		if( failedQuest.collectedItemGroups )
+		{
+			for( var key in failedQuest.collectedItemGroups )
+			{
+				if( failedQuest.collectedItemGroups.hasOwnProperty( key ) )
+				{
+					if( collectedItemGroupsStr.length > 0 )
+					{
+						collectedItemGroupsStr += ",";
+					}
+					collectedItemGroupsStr += key + ":" + failedQuest.collectedItemGroups[key];
+				}
+			}
+		}
+
+		var harvestKillGroupsStr = "";
+		if( failedQuest.harvestKillGroups )
+		{
+			for( var key in failedQuest.harvestKillGroups )
+			{
+				if( failedQuest.harvestKillGroups.hasOwnProperty( key ) )
+				{
+					if( harvestKillGroupsStr.length > 0 )
+					{
+						harvestKillGroupsStr += ",";
+					}
+					harvestKillGroupsStr += key + ":" + failedQuest.harvestKillGroups[key];
+				}
+			}
+		}
+
 		// Write the failed quest details
 		var failedEntry =
 			"Serial=" + ( failedQuest.serial || "undefined" ) + "\n" +
@@ -2165,6 +3209,17 @@ function LogFailedQuest( player, failedQuest )
 			"CollectedItems=" + collectedItemsStr + "\n" +
 			"StartTime=" + ( failedQuest.startTime || 0 ) + "\n" +
 			"TimeLimit=" + ( failedQuest.timeLimit || 0 ) + "\n" +
+			"HarvestKillGroups=" + harvestKillGroupsStr + "\n" +
+			"CollectedItemGroups=" + collectedItemGroupsStr + "\n" +
+			"EscortNPCSerial=" + ( failedQuest.escortNPCSerial || 0 ) + "\n" +
+			"EscortUsesQuestGiver=" + ( failedQuest.escortUsesQuestGiver ? "1" : "0" ) + "\n" +
+			"EscortStage=" + ( failedQuest.escortStage || 0 ) + "\n" +
+			"EscortLastRegion=" + ( failedQuest.escortLastRegion || "" ) + "\n" +
+			"EscortFailed=1\n" +
+			"LastTravelAmbushCheck=" + ( failedQuest.lastTravelAmbushCheck || 0 ) + "\n" +
+			"SelectedWaypoints=" + SerializeSelectedWaypoints( failedQuest.selectedWaypoints ) + "\n" +
+			"SelectedDestinationRegionID=" + ( failedQuest.selectedDestinationRegionID || 0 ) + "\n" +
+			"SelectedDestinationRegionName=" + ( failedQuest.selectedDestinationRegionName || "" ) + "\n" +
 			"Completed=0\n" +
 			"QuestTurnIn=0\n" +
 			"Failed=1\n\n";
@@ -2341,6 +3396,14 @@ function ArchiveCompletedQuest( player, completedQuest )
 			"CollectedItemGroups=" + collectedItemGroupsStr + "\n" +
 			"HarvestKills=" + harvestKillsStr + "\n" +
 			"HarvestKillGroups=" + harvestKillGroupsStr + "\n" +
+			"EscortNPCSerial=" + ( completedQuest.escortNPCSerial || 0 ) + "\n" +
+			"EscortUsesQuestGiver=" + ( completedQuest.escortUsesQuestGiver ? "1" : "0" ) + "\n" +
+			"EscortStage=" + ( completedQuest.escortStage || 0 ) + "\n" +
+			"EscortLastRegion=" + ( completedQuest.escortLastRegion || "" ) + "\n" +
+			"LastTravelAmbushCheck=" + ( completedQuest.lastTravelAmbushCheck || 0 ) + "\n" +
+			"SelectedWaypoints=" + SerializeSelectedWaypoints( completedQuest.selectedWaypoints ) + "\n" +
+			"SelectedDestinationRegionID=" + ( completedQuest.selectedDestinationRegionID || 0 ) + "\n" +
+			"SelectedDestinationRegionName=" + ( completedQuest.selectedDestinationRegionName || "" ) + "\n" +
 			skillProgressStr +
 			deliveryProgressStr +
 			"StartTime=" + ( completedQuest.startTime || 0 ) + "\n" +
@@ -2503,6 +3566,15 @@ function WriteQuestProgress( player, questProgressArray )
 				"HarvestKillGroups=" + killGroupsStr + "\n" +
 				"CollectedItems=" + collectedItemsStr + "\n" +
 				"CollectedItemGroups=" + collectedItemGroupsStr + "\n" +
+				"EscortNPCSerial=" + ( progressEntry.escortNPCSerial || 0 ) + "\n" +
+				"EscortUsesQuestGiver=" + ( progressEntry.escortUsesQuestGiver ? "1" : "0" ) + "\n" +
+				"EscortStage=" + ( progressEntry.escortStage || 0 ) + "\n" +
+				"EscortLastRegion=" + ( progressEntry.escortLastRegion || "" ) + "\n" +
+				"EscortFailed=" + ( progressEntry.escortFailed ? "1" : "0" ) + "\n" +
+				"LastTravelAmbushCheck=" + ( progressEntry.lastTravelAmbushCheck || 0 ) + "\n" +
+				"SelectedWaypoints=" + SerializeSelectedWaypoints( progressEntry.selectedWaypoints ) + "\n" +
+				"SelectedDestinationRegionID=" + ( progressEntry.selectedDestinationRegionID || 0 ) + "\n" +
+				"SelectedDestinationRegionName=" + ( progressEntry.selectedDestinationRegionName || "" ) + "\n" +
 				"SkillProgress=" + ( progressEntry.skillProgress || 0 ) + "\n" +
 				"TargetSkill=" + ( progressEntry.targetSkill || -1 ) + "\n" +
 				"TargetRegion=" + ( progressEntry.targetRegion || 0 ) + "\n" +
@@ -2597,6 +3669,29 @@ function finalizeQuestEntry( entry, player )
 	entry.targetRegion = parseInt( entry.targetregion || "0", 10 );
 	entry.maxSkillPoints = parseFloat( entry.maxskillpoints || "50.0" );
 	entry.lastAccepted = parseInt( entry.lastaccepted || "0", 10 );
+	entry.escortNPCSerial = parseInt( entry.escortnpcserial || "0", 10 );
+	if( isNaN( entry.escortNPCSerial ) )
+		entry.escortNPCSerial = 0;
+
+	entry.escortUsesQuestGiver = ( entry.escortusesquestgiver == "1" );
+	entry.escortStage = parseInt( entry.escortstage || "0", 10 );
+	if( isNaN( entry.escortStage ) )
+		entry.escortStage = 0;
+
+	entry.escortLastRegion = entry.escortlastregion || "";
+	entry.escortFailed = ( entry.escortfailed == "1" );
+
+	entry.lastTravelAmbushCheck = parseInt( entry.lasttravelambushcheck || "0", 10 );
+	if( isNaN( entry.lastTravelAmbushCheck ) )
+		entry.lastTravelAmbushCheck = 0;
+
+	entry.selectedWaypoints = ParseSelectedWaypoints( entry.selectedwaypoints || "" );
+
+	entry.selectedDestinationRegionID = parseInt( entry.selecteddestinationregionid || "0", 10 );
+	if( isNaN( entry.selectedDestinationRegionID ) )
+		entry.selectedDestinationRegionID = 0;
+
+	entry.selectedDestinationRegionName = entry.selecteddestinationregionname || "";
 
 	processCollectedItems( entry, player );
 	processCollectedItemGroups( entry, player );

@@ -245,6 +245,24 @@ function NormalizeQuestDefaults( quest )
 	{
 		quest.nextQuest = [];
 	}
+	if( !quest.escortTarget )
+	{
+		quest.escortTarget = null;
+	}
+	if( !quest.waypoints )
+	{
+		quest.waypoints = [];
+	}
+	if( !quest.randomDestinationPool )
+	{
+		quest.randomDestinationPool = [];
+	}
+
+	// Escort alias: lets quest writers use escortTimeLimit, but runtime still uses timeLimit
+	if( typeof quest.timeLimit == "undefined" && typeof quest.escortTimeLimit != "undefined" )
+	{
+		quest.timeLimit = quest.escortTimeLimit;
+	}
 }
 
 function ValidateQuestObject( quest, fileName )
@@ -257,6 +275,7 @@ function ValidateQuestObject( quest, fileName )
 	ValidateQuestRewards( quest, fileName );
 	ValidateQuestTagsAndState( quest, fileName );
 	ValidateQuestNextQuest( quest, fileName );
+	ValidateEscortQuest( quest, fileName );
 }
 
 function WarnUnknownTopLevelKeys( quest, fileName )
@@ -304,6 +323,11 @@ function WarnUnknownTopLevelKeys( quest, fileName )
 		"deltaRules": true,
 		"tempDeltaRules": true,
 		"worldStateDeltaRules": true,
+		"escortTarget": true,
+		"waypoints": true,
+		"travelAmbush": true,
+		"escortTimeLimit": true,
+		"randomDestinationPool": true,
 		"sourceFile": true
 	};
 
@@ -513,6 +537,128 @@ function ValidateKillTargets( quest, fileName )
 			if( typeof targetKillGroup.regionName != "undefined" && typeof targetKillGroup.regionName != "string" )
 			{
 				Console.Warning( "Quest system: targetKillGroups entry at index " + targetKillGroupIndex + " has invalid regionName in file " + fileName );
+			}
+		}
+	}
+}
+
+function ValidateEscortQuest( quest, fileName )
+{
+	if( quest.type != "escort" )
+	{
+		return;
+	}
+
+	if( !quest.escortTarget || typeof quest.escortTarget != "object" )
+	{
+		Console.Warning( "Quest system: Escort quest missing escortTarget in file: " + fileName );
+		return;
+	}
+
+	if( !quest.escortTarget.npcID && !quest.escortTarget.useQuestGiver )
+	{
+		Console.Warning( "Quest system: Escort quest needs escortTarget.npcID or escortTarget.useQuestGiver in file: " + fileName );
+	}
+
+	var hasWaypoints = ( quest.waypoints && quest.waypoints.length > 0 );
+	var hasRandomDestinationPool = ( quest.randomDestinationPool && quest.randomDestinationPool.length > 0 );
+
+	if( !hasWaypoints && !hasRandomDestinationPool )
+	{
+		Console.Warning( "Quest system: Escort quest needs waypoints or randomDestinationPool in file: " + fileName );
+		return;
+	}
+
+	if( typeof quest.travelAmbush != "undefined" )
+	{
+		if( !quest.travelAmbush || typeof quest.travelAmbush != "object" || IsArrayValue( quest.travelAmbush ) )
+		{
+			Console.Warning( "Quest system: Escort quest travelAmbush must be an object in file: " + fileName );
+		}
+		else
+		{
+			if( !quest.travelAmbush.npcIDs || !IsArrayValue( quest.travelAmbush.npcIDs ) || quest.travelAmbush.npcIDs.length == 0 )
+			{
+				Console.Warning( "Quest system: Escort quest travelAmbush missing npcIDs in file: " + fileName );
+			}
+
+			if( typeof quest.travelAmbush.despawnSeconds != "undefined" )
+			{
+				var travelDespawnSeconds = parseInt( quest.travelAmbush.despawnSeconds, 10 );
+				if( isNaN( travelDespawnSeconds ) || travelDespawnSeconds <= 0 )
+				{
+					Console.Warning( "Quest system: Escort quest travelAmbush.despawnSeconds must be a positive number in file: " + fileName );
+				}
+			}
+		}
+	}
+
+	if( hasWaypoints )
+	{
+		for( var waypointIndex = 0; waypointIndex < quest.waypoints.length; waypointIndex++ )
+		{
+			var waypoint = quest.waypoints[waypointIndex];
+			if( !waypoint || typeof waypoint != "object" )
+			{
+				Console.Warning( "Quest system: Escort quest has invalid waypoint at index " + waypointIndex + " in file: " + fileName );
+				continue;
+			}
+
+			if( typeof waypoint.regionID == "undefined" || isNaN( parseInt( waypoint.regionID, 10 ) ) )
+			{
+				Console.Warning( "Quest system: Escort waypoint missing regionID at index " + waypointIndex + " in file: " + fileName );
+			}
+
+			if( typeof waypoint.ambush != "undefined" )
+			{
+				if( !waypoint.ambush || typeof waypoint.ambush != "object" || IsArrayValue( waypoint.ambush ) )
+				{
+					Console.Warning( "Quest system: Escort waypoint ambush must be an object at index " + waypointIndex + " in file: " + fileName );
+				}
+				else
+				{
+					if( !waypoint.ambush.npcIDs || !IsArrayValue( waypoint.ambush.npcIDs ) || waypoint.ambush.npcIDs.length == 0 )
+					{
+						Console.Warning( "Quest system: Escort waypoint ambush missing npcIDs at index " + waypointIndex + " in file: " + fileName );
+					}
+
+					if( typeof waypoint.ambush.despawnSeconds != "undefined" )
+					{
+						var waypointDespawnSeconds = parseInt( waypoint.ambush.despawnSeconds, 10 );
+						if( isNaN( waypointDespawnSeconds ) || waypointDespawnSeconds <= 0 )
+						{
+							Console.Warning( "Quest system: Escort waypoint ambush.despawnSeconds must be a positive number at index " + waypointIndex + " in file: " + fileName );
+						}
+					}
+				}
+			}
+
+			if( typeof waypoint.order == "undefined" )
+			{
+				waypoint.order = waypointIndex + 1;
+			}
+		}
+	}
+
+	if( hasRandomDestinationPool )
+	{
+		for( var destinationIndex = 0; destinationIndex < quest.randomDestinationPool.length; destinationIndex++ )
+		{
+			var destinationEntry = quest.randomDestinationPool[destinationIndex];
+			if( !destinationEntry || typeof destinationEntry != "object" )
+			{
+				Console.Warning( "Quest system: randomDestinationPool entry is invalid at index " + destinationIndex + " in file: " + fileName );
+				continue;
+			}
+
+			if( typeof destinationEntry.regionID == "undefined" || isNaN( parseInt( destinationEntry.regionID, 10 ) ) )
+			{
+				Console.Warning( "Quest system: randomDestinationPool entry missing regionID at index " + destinationIndex + " in file: " + fileName );
+			}
+
+			if( typeof destinationEntry.weight == "undefined" )
+			{
+				destinationEntry.weight = 1;
 			}
 		}
 	}
