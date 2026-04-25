@@ -2334,6 +2334,7 @@ function StartRaceQuestNPC( player, questID, quest, questGiver )
 	questGiver.SetTag( "QuestRaceOriginalCanRun", questGiver.canRun ? 1 : 0 );
 	questGiver.SetTag( "QuestRaceReturnText", quest.race.returnText || "" );
 	questGiver.SetTag( "QuestRaceReturnMovement", quest.race.returnMovement || "walk" );
+	questGiver.isAwake =true;
 
 	if( quest.race.npcCanRun != 0 )
 	{
