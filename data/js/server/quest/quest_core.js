@@ -28,6 +28,8 @@ function StartQuest( player, questID, questGiver )
 	var guidedWalkUsesQuestGiver = false;
 	var raceNPCSerial = 0;
 	var raceUsesQuestGiver = false;
+	var tamedCreatures = {};
+	var tamedCreatureSerials = {};
 
 	var quest = TriggerEvent( 5801, "QuestList", questID );
 	var selectedWaypoints = [];
@@ -54,6 +56,15 @@ function StartQuest( player, questID, questGiver )
 
 		raceNPCSerial = questGiver.serial;
 		raceUsesQuestGiver = true;
+	}
+
+	if( quest.targetTames )
+	{
+		for( var targetTameIndex = 0; targetTameIndex < quest.targetTames.length; targetTameIndex++ )
+		{
+			var targetTame = quest.targetTames[targetTameIndex];
+			tamedCreatures[targetTame.npcID] = 0;
+		}
 	}
 
 	if( quest.targetItems )
@@ -138,18 +149,19 @@ function StartQuest( player, questID, questGiver )
 
 	if( quest.type == "escort" && quest.escortTarget )
 	{
-		selectedWaypoints = BuildEscortSelectedWaypoints( quest );
-
-		if( !selectedWaypoints.length )
-		{
-			socket.SysMessage( "Unable to determine escort destination." );
-			return;
-		}
-
 		var escortNPC = ResolveQuestEscortNPC( player, questID, quest, questGiver );
 		if( !ValidateObject( escortNPC ) )
 		{
 			socket.SysMessage( "Unable to start escort quest." );
+			return;
+		}
+
+		selectedWaypoints = BuildEscortSelectedWaypoints( quest, escortNPC, player );
+
+		if( !selectedWaypoints.length )
+		{
+			CleanupEscortQuestNPC( player, questID );
+			socket.SysMessage( "Unable to determine escort destination." );
 			return;
 		}
 
@@ -188,6 +200,8 @@ function StartQuest( player, questID, questGiver )
 		raceCompleted: false,
 		raceWinner: "",
 		lastAccepted: Date.now(),
+		tamedCreatures: tamedCreatures,
+		tamedCreatureSerials: tamedCreatureSerials,
 		completed: false,
 		questTurnIn: false,
 		nextQuestID: quest.nextQuestID || null
@@ -604,6 +618,22 @@ function AreAllQuestObjectivesComplete( quest, questEntry )
 		}
 	}
 
+	if (quest.type == "tame" || quest.type == "multi")
+	{
+		if (quest.targetTames)
+		{
+			for (var targetTameIndex = 0; targetTameIndex < quest.targetTames.length; targetTameIndex++)
+			{
+				var targetTame = quest.targetTames[targetTameIndex];
+
+				if (!questEntry.tamedCreatures || (questEntry.tamedCreatures[targetTame.npcID] || 0) < targetTame.amount)
+				{
+					allObjectivesCompleted = false;
+				}
+			}
+		}
+	}
+
 	if( quest.race && quest.race.enabled )
 	{
 		if( !questEntry.raceCompleted )
@@ -659,6 +689,11 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 		if( !questEntry.harvestKillGroups )
 		{
 			questEntry.harvestKillGroups = {};
+		}
+
+		if( !questEntry.tamedCreatures )
+		{
+			questEntry.tamedCreatures = {};
 		}
 
 		if( type == "collect" || type == "collectgroup" )
@@ -741,6 +776,27 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 					}
 
 					break;
+				}
+			}
+		}
+
+		if( type == "tame" )
+		{
+			if( quest.targetTames )
+			{
+				for( var targetTameIndex = 0; targetTameIndex < quest.targetTames.length; targetTameIndex++ )
+				{
+					var targetTame = quest.targetTames[targetTameIndex];
+
+					if( String(targetTame.npcID) == String(identifier) )
+					{
+						questEntry.tamedCreatures[String(identifier)] = ( questEntry.tamedCreatures[String(identifier)] || 0) + progressValue;
+
+						if( questEntry.tamedCreatures[String(identifier)] > targetTame.amount )
+						{
+							questEntry.tamedCreatures[String(identifier)] = targetTame.amount;
+						}
+					}
 				}
 			}
 		}
@@ -2113,15 +2169,22 @@ function CloneEscortWaypoints( waypoints )
 	return clonedWaypoints;
 }
 
-/** @type { ( destinationPool: any[] ) => any | null } */
-function PickRandomEscortDestination( destinationPool )
+/** @type { ( destinationPool: any[], currentRegionID?: number ) => any | null } */
+function PickRandomEscortDestination( destinationPool, currentRegionID )
 {
 	if( !destinationPool || !destinationPool.length )
 	{
 		return null;
 	}
 
-	var totalWeight = 0;
+	currentRegionID = parseInt( currentRegionID, 10 );
+	if( isNaN( currentRegionID ) )
+	{
+		currentRegionID = 0;
+	}
+
+	var validDestinationPool = [];
+
 	for( var destinationIndex = 0; destinationIndex < destinationPool.length; destinationIndex++ )
 	{
 		var destinationEntry = destinationPool[destinationIndex];
@@ -2130,7 +2193,31 @@ function PickRandomEscortDestination( destinationPool )
 			continue;
 		}
 
-		var entryWeight = parseInt( destinationEntry.weight, 10 );
+		var destinationRegionID = parseInt( destinationEntry.regionID, 10 );
+		if( isNaN( destinationRegionID ) || destinationRegionID <= 0 )
+		{
+			continue;
+		}
+
+		if( currentRegionID > 0 && destinationRegionID == currentRegionID )
+		{
+			continue;
+		}
+
+		validDestinationPool.push( destinationEntry );
+	}
+
+	if( !validDestinationPool.length )
+	{
+		return null;
+	}
+
+	var totalWeight = 0;
+	for( var validIndex = 0; validIndex < validDestinationPool.length; validIndex++ )
+	{
+		var validDestinationEntry = validDestinationPool[validIndex];
+		var entryWeight = parseInt( validDestinationEntry.weight, 10 );
+
 		if( isNaN( entryWeight ) || entryWeight <= 0 )
 		{
 			entryWeight = 1;
@@ -2147,15 +2234,11 @@ function PickRandomEscortDestination( destinationPool )
 	var roll = RandomNumber( 1, totalWeight );
 	var runningTotal = 0;
 
-	for( var pickIndex = 0; pickIndex < destinationPool.length; pickIndex++ )
+	for( var pickIndex = 0; pickIndex < validDestinationPool.length; pickIndex++ )
 	{
-		var poolEntry = destinationPool[pickIndex];
-		if( !poolEntry || typeof poolEntry != "object" )
-		{
-			continue;
-		}
-
+		var poolEntry = validDestinationPool[pickIndex];
 		var poolWeight = parseInt( poolEntry.weight, 10 );
+
 		if( isNaN( poolWeight ) || poolWeight <= 0 )
 		{
 			poolWeight = 1;
@@ -2168,11 +2251,11 @@ function PickRandomEscortDestination( destinationPool )
 		}
 	}
 
-	return destinationPool[0] || null;
+	return validDestinationPool[0] || null;
 }
 
-/** @type { ( quest: any ) => any[] } */
-function BuildEscortSelectedWaypoints( quest )
+/** @type { ( quest: any, escortNPC?: Character | null, player?: Character | null ) => any[] } */
+function BuildEscortSelectedWaypoints( quest, escortNPC, player )
 {
 	if( !quest || quest.type != "escort" )
 	{
@@ -2186,7 +2269,24 @@ function BuildEscortSelectedWaypoints( quest )
 
 	if( quest.randomDestinationPool && quest.randomDestinationPool.length > 0 )
 	{
-		var chosenDestination = PickRandomEscortDestination( quest.randomDestinationPool );
+		var currentRegionID = 0;
+
+		if( ValidateObject( escortNPC ) && escortNPC.region )
+		{
+			currentRegionID = parseInt( escortNPC.region.id, 10 );
+		}
+
+		if(( isNaN( currentRegionID ) || currentRegionID <= 0 ) && ValidateObject( player ) && player.region )
+		{
+			currentRegionID = parseInt( player.region.id, 10 );
+		}
+
+		if( isNaN( currentRegionID ) )
+		{
+			currentRegionID = 0;
+		}
+
+		var chosenDestination = PickRandomEscortDestination( quest.randomDestinationPool, currentRegionID );
 		if( chosenDestination )
 		{
 			return [{
@@ -2214,6 +2314,61 @@ function GetEscortActiveWaypoints( questEntry, quest )
 	}
 
 	return [];
+}
+
+/** @type { ( progressMap: any ) => string } */
+function SerializeProgressMap( progressMap )
+{
+	var progressString = "";
+
+	if( progressMap )
+	{
+		for( var key in progressMap )
+		{
+			if( progressMap.hasOwnProperty( key ))
+			{
+				if( progressString.length > 0 )
+				{
+					progressString += ",";
+				}
+
+				progressString += key + ":" + progressMap[key];
+			}
+		}
+	}
+
+	return progressString;
+}
+
+/** @type { ( entry: any, outputKey: string, inputKey: string ) => void } */
+function processProgressMap( entry, outputKey, inputKey )
+{
+	entry[outputKey] = {};
+
+	var progressString = entry[inputKey] || "";
+
+	if( progressString == "" )
+	{
+		return;
+	}
+
+	var progressEntries = progressString.split( "," );
+	for( var progressIndex = 0; progressIndex < progressEntries.length; progressIndex++ )
+	{
+		var pair = progressEntries[progressIndex].split( ":" );
+		if( pair.length == 2 )
+		{
+			var key = manualTrim( pair[0] );
+			var value = parseInt( manualTrim( pair[1] ), 10 );
+
+			if( isNaN( value ) )
+			{
+				value = 0;
+			}
+
+			entry[outputKey][key] = value;
+		}
+	}
 }
 
 /** @type { ( selectedWaypoints: any[] ) => string } */
@@ -3107,6 +3262,78 @@ function CreatureKilled( creature, player )
 	return true;
 }
 
+/** @type { ( player: Character, creature: Character ) => boolean } */
+function CreatureTamed( player, creature )
+{
+	if( !ValidateObject( player ) || !ValidateObject( creature ) )
+	{
+		return false;
+	}
+
+	var socket = player.socket;
+	var questProgressArray = ReadQuestProgress( player );
+
+	for( var questEntryIndex = 0; questEntryIndex < questProgressArray.length; questEntryIndex++ )
+	{
+		var questEntry = questProgressArray[questEntryIndex];
+
+		if( questEntry.serial != player.serial || questEntry.completed )
+		{
+			continue;
+		}
+
+		var quest = TriggerEvent( 5801, "QuestList", questEntry.questID );
+		if( !quest )
+		{
+			continue;
+		}
+
+		if( quest.type != "tame" && quest.type != "multi" )
+		{
+			continue;
+		}
+
+		if( !quest.targetTames )
+		{
+			continue;
+		}
+
+		if( !questEntry.tamedCreatureSerials )
+		{
+			questEntry.tamedCreatureSerials = {};
+		}
+
+		for( var targetTameIndex = 0; targetTameIndex < quest.targetTames.length; targetTameIndex++ )
+		{
+			var targetTame = quest.targetTames[targetTameIndex];
+
+			if( String( targetTame.npcID ) != String( creature.sectionID ))
+			{
+				continue;
+			}
+
+			var tameSerialKey = String( creature.serial );
+
+			if( questEntry.tamedCreatureSerials[tameSerialKey] )
+			{
+				if( socket )
+				{
+					socket.SysMessage( "You have already counted this creature for that quest." );
+				}
+				continue;
+			}
+
+			questEntry.tamedCreatureSerials[tameSerialKey] = 1;
+			WriteQuestProgress( player, questProgressArray );
+
+			UpdateQuestProgress( player, questEntry.questID, creature.sectionID, 1, "tame" );
+			break;
+		}
+	}
+
+	return true;
+}
+
 /** @type { ( player: Character, item: Item, isToggledOff?: boolean ) => void } */
 function ItemCollected( player, item, isToggledOff )
 {
@@ -3836,6 +4063,9 @@ function LogFailedQuest( player, failedQuest )
 			}
 		}
 
+		var tamedCreaturesStr = SerializeProgressMap( failedQuest.tamedCreatures );
+		var tamedCreatureSerialsStr = SerializeProgressMap( failedQuest.tamedCreatureSerials );
+
 		// Write the failed quest details
 		var failedEntry =
 			"Serial=" + ( failedQuest.serial || "undefined" ) + "\n" +
@@ -3847,6 +4077,8 @@ function LogFailedQuest( player, failedQuest )
 			"TimeLimit=" + ( failedQuest.timeLimit || 0 ) + "\n" +
 			"HarvestKillGroups=" + harvestKillGroupsStr + "\n" +
 			"CollectedItemGroups=" + collectedItemGroupsStr + "\n" +
+			"TamedCreatures=" + tamedCreaturesStr + "\n" +
+			"TamedCreatureSerials=" + tamedCreatureSerialsStr + "\n" +
 			"EscortNPCSerial=" + ( failedQuest.escortNPCSerial || 0 ) + "\n" +
 			"EscortUsesQuestGiver=" + ( failedQuest.escortUsesQuestGiver ? "1" : "0" ) + "\n" +
 			"EscortStage=" + ( failedQuest.escortStage || 0 ) + "\n" +
@@ -4011,6 +4243,9 @@ function ArchiveCompletedQuest( player, completedQuest )
 			}
 		}
 
+		var tamedCreaturesStr = SerializeProgressMap( completedQuest.tamedCreatures );
+		var tamedCreatureSerialsStr = SerializeProgressMap( completedQuest.tamedCreatureSerials );
+
 		var skillProgressStr = "";
 		if( quest && quest.type == "skillgain" )
 		{
@@ -4039,6 +4274,8 @@ function ArchiveCompletedQuest( player, completedQuest )
 			"CollectedItemGroups=" + collectedItemGroupsStr + "\n" +
 			"HarvestKills=" + harvestKillsStr + "\n" +
 			"HarvestKillGroups=" + harvestKillGroupsStr + "\n" +
+			"TamedCreatures=" + tamedCreaturesStr + "\n" +
+			"TamedCreatureSerials=" + tamedCreatureSerialsStr + "\n" +
 			"EscortNPCSerial=" + ( completedQuest.escortNPCSerial || 0 ) + "\n" +
 			"EscortUsesQuestGiver=" + ( completedQuest.escortUsesQuestGiver ? "1" : "0" ) + "\n" +
 			"EscortStage=" + ( completedQuest.escortStage || 0 ) + "\n" +
@@ -4201,6 +4438,9 @@ function WriteQuestProgress( player, questProgressArray )
 				}
 			}
 
+			var tamedCreaturesStr = SerializeProgressMap( progressEntry.tamedCreatures );
+			var tamedCreatureSerialsStr = SerializeProgressMap( progressEntry.tamedCreatureSerials );
+
 			var formattedEntry =
 				"Serial=" + ( progressEntry.serial || "undefined" ) + "\n" +
 				"QuestID=" + ( progressEntry.questID || "undefined" ) + "\n" +
@@ -4209,6 +4449,8 @@ function WriteQuestProgress( player, questProgressArray )
 				"HarvestKillGroups=" + killGroupsStr + "\n" +
 				"CollectedItems=" + collectedItemsStr + "\n" +
 				"CollectedItemGroups=" + collectedItemGroupsStr + "\n" +
+				"TamedCreatures=" + tamedCreaturesStr + "\n" +
+				"TamedCreatureSerials=" + tamedCreatureSerialsStr + "\n" +
 				"EscortNPCSerial=" + ( progressEntry.escortNPCSerial || 0 ) + "\n" +
 				"EscortUsesQuestGiver=" + ( progressEntry.escortUsesQuestGiver ? "1" : "0" ) + "\n" +
 				"EscortStage=" + ( progressEntry.escortStage || 0 ) + "\n" +
@@ -4372,6 +4614,8 @@ function finalizeQuestEntry( entry, player )
 	processCollectedItemGroups( entry, player );
 	processKills( entry, player );
 	processKillGroups( entry, player );
+	processProgressMap( entry, "tamedCreatures", "tamedcreatures" );
+	processProgressMap( entry, "tamedCreatureSerials", "tamedcreatureserials" );
 }
 
 /** @type { ( entry: any, player: Character ) => void } */
@@ -4470,6 +4714,30 @@ function processKillGroups( entry, player )
 			var key = manualTrim( pair[0] );
 			var value = parseInt( manualTrim( pair[1] ), 10 );
 			entry.harvestKillGroups[key] = value;
+		}
+	}
+}
+
+/** @type { ( entry: any, player: Character ) => void } */
+function processTamedCreatures( entry, player )
+{
+	entry.tamedCreatures = {};
+	var tamedCreaturesStr = entry.tamedcreatures || "";
+
+	if( tamedCreaturesStr == "" )
+	{
+		return;
+	}
+
+	var tamedCreatures = tamedCreaturesStr.split( "," );
+	for( var tameIndex = 0; tameIndex < tamedCreatures.length; tameIndex++ )
+	{
+		var pair = tamedCreatures[tameIndex].split( ":" );
+		if( pair.length == 2 )
+		{
+			var key = manualTrim( pair[0] );
+			var value = parseInt( manualTrim( pair[1] ), 10 );
+			entry.tamedCreatures[key] = value;
 		}
 	}
 }

@@ -6908,8 +6908,8 @@ function onTooltip( myItem, pSocket )
 						<p>
 							The <span class="hl">Quest System</span> lets you build everything from simple starter tasks to full story arcs.
 							You can use it for item collection quests, grouped item collection quests, kill quests, grouped kill quests,
-							delivery quests, skill training quests, daily quests, timed quests, escort quests, guided walk quests,
-							race quests, branching quest lines, and reputation or world-state based progression.
+							delivery quests, skill training quests, taming quests, daily quests, timed quests, escort quests, guided walk quests,
+							race quests, item-started quests, branching quest lines, and reputation or world-state based progression.
 						</p>
 
 						<p>
@@ -6927,8 +6927,9 @@ function onTooltip( myItem, pSocket )
 						<p>
 							If you already know what you are doing, this system also supports more advanced features such as chained quests,
 							branching outcomes, item groups, kill groups, race-based kill tracking, region-based kill objectives, escort routes,
-							random escort destinations, waypoint ambushes, travel ambushes, guided story walks, NPC races, tag changes,
-							world-state tracking, skill point rewards, and automatic quest offers on login.
+							random escort destinations, waypoint ambushes, travel ambushes, guided story walks, NPC races,
+							taming objectives, item quest starters, tag changes, world-state tracking, skill point rewards,
+							and automatic quest offers on login.
 						</p>
 
 						<h3>System Overview</h3>
@@ -6953,6 +6954,7 @@ function onTooltip( myItem, pSocket )
 							<li><span class="hl">quest_conversation_gump.js</span> - Shows the quest conversation gump and handles accept, refuse, turn-in, and resign</li>
 							<li><span class="hl">quest_menu.js</span> - Quest journal, completed quest list, and options</li>
 							<li><span class="hl">quest_item.js</span> - Restricts quest items so they cannot be abused</li>
+							<li><span class="hl">quest_giver_item.js</span> - Allows items such as signs, books, boards, or notes to start normal quests</li>
 							<li><span class="hl">quest_login.js</span> - Optional login quest offer system</li>
 							<li><span class="hl">quest_event_onkill.js</span> - Updates kill progress</li>
 							<li><span class="hl">quest_event_onskillgain.js</span> - Updates skillgain quests</li>
@@ -6985,7 +6987,7 @@ function onTooltip( myItem, pSocket )
 						<ol>
 							<li>Enable the quest system in <span class="hl">uox.ini</span></li>
 							<li>Create a quest JSON file in <span class="hl">js/jsdata/quests/</span></li>
-							<li>Create or edit an NPC that points to that quest</li>
+							<li>Create or edit an NPC or item that points to that quest</li>
 							<li>Reload scripts</li>
 							<li>Talk to the NPC in game and test the quest</li>
 						</ol>
@@ -7131,6 +7133,40 @@ CUSTOMINTTAG=QuestID 2000
 							This tells the NPC to open the quest conversation for quest <span class="hl">2000</span>.
 						</p>
 
+						<h3>Creating a Quest Starter Item</h3>
+
+						<p>
+							Quests can also be started from items, such as notice boards, books, scrolls, signs, stones, or other usable objects.
+							The item only starts the quest. If the quest uses <span class="hl">questTurnIn</span>, the player can still return to an NPC for turn-in.
+						</p>
+
+<pre><code>
+[quest_notice_board]
+{
+GET=base_item
+NAME=quest notice board
+ID=0x1e5e
+WEIGHT=255
+DECAY=0
+SCRIPT=5807
+CUSTOMINTTAG=QuestRootID 2000
+}
+</code></pre>
+
+						<p>
+							For quest chains, use <span class="hl">QuestRootID</span> instead of <span class="hl">QuestID</span>.
+						</p>
+
+<pre><code>
+CUSTOMINTTAG=QuestRootID 2000
+</code></pre>
+
+						<p>
+							Item quest starters are intended for normal quest types such as collect, kill, tame, delivery, skillgain, timecollect,
+							timekills, and multi quests. Escort quests, guided walk quests, and race quests should still be started by NPCs because
+							those systems need a real character to move, follow, return home, or race.
+						</p>
+
 						<p>
 							For quest chains, <span class="hl">QuestRootID</span> is preferred over <span class="hl">QuestID</span>,
 							because one NPC can then manage the full chain instead of only one single quest.
@@ -7154,6 +7190,7 @@ CUSTOMINTTAG=QuestID 2000
 								<li><strong>multi</strong> - combine item collection and kill targets in one quest</li>
 								<li><strong>delivery</strong> - deliver an item to another NPC</li>
 								<li><strong>skillgain</strong> - train a skill to a target value</li>
+								<li><strong>tame</strong> - tame specific creatures</li>
 								<li><strong>timecollect</strong> - collect items within a time limit</li>
 								<li><strong>timekills</strong> - kill targets within a time limit</li>
 								<li><strong>escort</strong> - escort an NPC through one or more destinations</li>
@@ -7186,6 +7223,7 @@ CUSTOMINTTAG=QuestID 2000
 								<li><span class="hl">timeLimit</span> - timer in seconds for timed quests</li>
 								<li><span class="hl">escortTimeLimit</span> - optional escort alias for timeLimit</li>
 								<li><span class="hl">targetRegion</span> - optional region restriction for skill training quests and kill objectives</li>
+								<li><span class="hl">targetTames</span> - creatures that must be tamed for tame quests</li>
 								<li><span class="hl">regionName</span> - optional display name for the region shown in the journal</li>
 								<li><span class="hl">escortTarget</span> - defines the escort NPC or uses the quest giver as escort target</li>
 								<li><span class="hl">waypoints</span> - ordered escort destinations using region IDs</li>
@@ -7200,7 +7238,7 @@ CUSTOMINTTAG=QuestID 2000
 						</div>
 
 						<p>
-							A quest can require more than one item, more than one creature kill, and more than one reward.
+							A quest can require more than one item, more than one creature kill, more than one creature tame, and more than one reward.
 							This means you are not limited to a single <span class="hl">targetItems</span> entry, a single
 							<span class="hl">targetKills</span> entry, or a single reward entry. You can list as many as the quest needs.
 						</p>
@@ -7439,6 +7477,22 @@ CUSTOMINTTAG=QuestID 2000
 "maxPoint": 5
 </code></pre>
 						</div>
+
+						<input type="checkbox" id="spoiler_tame_objective">
+						<label for="spoiler_tame_objective">Show tame quest example <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+<pre><code class="language-javascript">
+"targetTames": [
+	{ "npcID": "cat", "amount": 1, "name": "Small Cat" }
+]
+</code></pre>
+						</div>
+
+						<p>
+							Tame quests track successful animal taming. Each creature only counts once for that quest, so a player cannot release and retame
+							the same creature repeatedly to gain extra progress.
+						</p>
 
 						<h4>Escort Quests</h4>
 
@@ -7918,6 +7972,36 @@ CUSTOMINTTAG=QuestID 2000
 							This is useful for starter training quests, profession training areas, or guided progression systems.
 						</p>
 
+						<h4>Taming Quests</h4>
+
+						<p>
+							Taming quests use <span class="hl">type</span> set to <span class="hl">tame</span> and track successful animal taming through
+							<span class="hl">targetTames</span>.
+						</p>
+
+						<ul>
+							<li>Progress is saved in the quest progress file</li>
+							<li>Completed and failed tame progress is logged with the quest data</li>
+							<li>Each counted creature serial is saved so the same creature cannot be released and retamed repeatedly for extra progress</li>
+							<li>Tame quests can auto-complete with <span class="hl">questTurnIn</span> set to 0</li>
+							<li>Tame quests can require NPC turn-in with <span class="hl">questTurnIn</span> set to 1</li>
+						</ul>
+
+						<h4>Item Quest Starters</h4>
+
+						<p>
+							Item quest starters allow usable items to offer normal quests. This is useful for notice boards, job boards, books,
+							scrolls, signs, bounty boards, bulletin boards, or discovery items.
+						</p>
+
+						<ul>
+							<li>Use script <span class="hl">5818</span> on the item</li>
+							<li>Use <span class="hl">QuestID</span> for a single quest</li>
+							<li>Use <span class="hl">QuestRootID</span> for a quest chain</li>
+							<li>The item can start the quest while an NPC handles later turn-in</li>
+							<li>Do not use item starters for escort, guided walk, or race quests</li>
+						</ul>
+
 						<h4>Login Quest Offers</h4>
 
 						<p>
@@ -8110,6 +8194,65 @@ CUSTOMINTTAG=QuestID 2000
 }
 </code></pre>
 
+							<p><strong>Tame Quest</strong></p>
+
+<pre><code class="language-javascript">
+{
+	"questID": 2100,
+	"title": "A Gentle First Tame",
+	"description": "The animal trainer wants you to prove you can handle a harmless animal. Tame a small cat.",
+	"uncomplete": "You still need to tame a small cat.",
+	"complete": "Well done. A gentle hand is the first lesson of animal taming.",
+	"refuse": "Come back when you are ready to work with animals.",
+	"type": "tame",
+	"category": "Side Quests",
+	"oneTimeQuest": 0,
+	"questTurnIn": 1,
+	"targetTames": [
+		{ "npcID": "cat", "amount": 1, "name": "Small Cat" }
+	],
+	"rewards": [
+		{ "type": "gold", "amount": 100, "name": "Gold" }
+	]
+}
+</code></pre>
+
+							<p><strong>Item-Started Quest</strong></p>
+
+<pre><code>
+[rat_problem_notice]
+{
+GET=base_item
+NAME=rat problem notice
+ID=0x1e5e
+WEIGHT=255
+DECAY=0
+SCRIPT=5818
+TAG=QuestID 2200
+}
+</code></pre>
+
+<pre><code class="language-javascript">
+{
+	"questID": 2200,
+	"title": "Rat Problem",
+	"description": "A notice asks someone to clear rats from the storehouse.",
+	"uncomplete": "The rats are still causing trouble.",
+	"complete": "The storehouse is safe again.",
+	"refuse": "Maybe another adventurer will help.",
+	"type": "kill",
+	"category": "Side Quests",
+	"oneTimeQuest": 0,
+	"questTurnIn": 0,
+	"targetKills": [
+		{ "npcID": "rat", "amount": 5, "name": "Rat" }
+	],
+	"rewards": [
+		{ "type": "gold", "amount": 250, "name": "Gold" }
+	]
+}
+</code></pre>
+
 							<p><strong>Escort Quest</strong></p>
 
 <pre><code class="language-javascript">
@@ -8291,6 +8434,11 @@ CUSTOMINTTAG=QuestID 2000
 							<li>Use <span class="hl">nextQuest</span> for branching chains</li>
 							<li>Use <span class="hl">targetItemGroups</span> when a quest should accept any valid items from a list</li>
 							<li>Use <span class="hl">targetKillGroups</span> when a quest should accept kills from a group instead of exact NPCs only</li>
+							<li>Use <span class="hl">targetTames</span> for animal taming quests</li>
+							<li>Use item quest starters for notice boards, books, scrolls, signs, and bounty boards</li>
+							<li>Use <span class="hl">QuestID</span> on an item for a single item-started quest</li>
+							<li>Use <span class="hl">QuestRootID</span> on an item for an item-started quest chain</li>
+							<li>Do not use item starters for escort, guided walk, or race quests</li>
 							<li>Use <span class="hl">raceName</span> inside <span class="hl">targetKillGroups</span> to avoid listing every NPC individually</li>
 							<li>Use <span class="hl">targetRegion</span> and <span class="hl">regionName</span> when kills or training should happen in a specific area</li>
 							<li>Use <span class="hl">regionID</span> for escort destinations, not region names</li>

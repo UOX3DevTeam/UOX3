@@ -378,6 +378,7 @@
 5803=server/quest/quest_menu.js
 5805=server/quest/quest_event_onquesttoggle.js
 5806=server/quest/quest_item.js
+5807=server/quest/quest_giver_item.js
 5810=server/quest/quest_event_onkill.js
 5811=server/quest/quest_event_onskillgain.js
 5812=server/quest/quest_event_onenterregion.js

@@ -261,6 +261,10 @@ function NormalizeQuestDefaults( quest )
 	{
 		quest.race = null;
 	}
+	if( !quest.targetTames )
+	{
+		quest.targetTames = [];
+	}
 
 	// Escort alias: lets quest writers use escortTimeLimit, but runtime still uses timeLimit
 	if( typeof quest.timeLimit == "undefined" && typeof quest.escortTimeLimit != "undefined" )
@@ -336,6 +340,7 @@ function WarnUnknownTopLevelKeys( quest, fileName )
 		"randomDestinationPool": true,
 		"guidedWalk": true,
 		"race": true,
+		"targetTames": true,
 		"sourceFile": true
 	};
 
@@ -472,6 +477,19 @@ function ValidateQuestObjectives( quest, fileName )
 		if( typeof quest.maxSkillPoints == "undefined" )
 		{
 			Console.Warning( "Quest system: Skillgain quest missing maxSkillPoints in file " + fileName );
+		}
+	}
+
+	if( quest.targetTames && !IsArrayValue( quest.targetTames ) )
+	{
+		Console.Warning( "Quest system: targetTames must be an array in file " + fileName );
+	}
+
+	if( questType == "tame" )
+	{
+		if( !quest.targetTames || quest.targetTames.length == 0 )
+		{
+			Console.Warning( "Quest system: Quest type 'tame' needs targetTames in file " + fileName );
 		}
 	}
 }

@@ -578,6 +578,20 @@ function GetQuestObjectives( quest, questProgress )
 		}
 	}
 
+	if( quest.targetTames && quest.targetTames.length > 0 )
+	{
+		objectives += "<b>Creatures to Tame:</b><br>";
+
+		for( var targetTameIndex = 0; targetTameIndex < quest.targetTames.length; targetTameIndex++ )
+		{
+			var targetTame = quest.targetTames[targetTameIndex];
+			var tameName = targetTame.name || "Unknown Creature";
+			var tamed = ( questProgress && questProgress.tamedCreatures && questProgress.tamedCreatures[targetTame.npcID] ) || 0;
+
+			objectives += "- " + tameName + ": " + tamed + "/" + targetTame.amount + "<br>";
+		}
+	}
+
 	if( quest.type == "escort" )
 	{
 		var activeWaypoints = [];
@@ -803,6 +817,27 @@ function ProcessQuestTurnIn( player, questID )
 				}
 			}
 		}
+	}
+
+	if( quest.type == "tame" )
+	{
+		if( !questProgress || !questProgress.tamedCreatures )
+		{
+			return false;
+		}
+
+		for( var tameIndex = 0; tameIndex < quest.targetTames.length; tameIndex++ )
+		{
+			var targetTame = quest.targetTames[tameIndex];
+
+			if(( questProgress.tamedCreatures[targetTame.npcID] || 0 ) < targetTame.amount )
+			{
+				socket.SysMessage( "You have not tamed enough " + targetTame.name + "." );
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	if( quest.type == "collect" || quest.type == "timecollect" || quest.type == "multi" )
@@ -1070,6 +1105,17 @@ function onCharDoubleClick( pUser, questNpc )
 {
 	if( !ValidateObject( pUser ))
 		return false;
+
+	if( questNpc.GetTag( "QuestTurnInOnly" ) )
+	{
+		var questEntry = TriggerEvent( 5800, "GetQuestProgressEntry", pUser, questID );
+
+		if( !questEntry )
+		{
+			pSock.SysMessage( "I am not offering that quest right now." );
+			return false;
+		}
+	}
 
 	QuestNpcInterAction( pUser, questNpc );
 	return true;
@@ -1526,6 +1572,17 @@ function onContextMenuSelect( socket, questNpc, popupEntry )
 				{
 					pUser.SysMessage( "You are too far away." );
 					return false;
+				}
+
+				if( questNpc.GetTag( "QuestTurnInOnly" ) )
+				{
+					var questEntry = TriggerEvent( 5800, "GetQuestProgressEntry", pUser, questID );
+
+					if( !questEntry )
+					{
+						pSock.SysMessage( "I am not offering that quest right now." );
+						return false;
+					}
 				}
 
 				QuestNpcInterAction( pUser, questNpc );
