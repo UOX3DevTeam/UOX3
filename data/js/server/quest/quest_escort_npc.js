@@ -145,5 +145,5 @@ function onTimer( escortNPC, timerID )
 		TriggerEvent( 5800, "CheckEscortTravelAmbush", player, questID, escortNPC );
 	}
 
-	escortNPC.StartTimer( 10000, 1, true );
+	escortNPC.StartTimer( 10000, 1, 5814 );
 }

@@ -249,6 +249,16 @@ function ResignQuest( player, questID )
 				TriggerEvent( 5800, "CleanupEscortQuestNPC", player, questID );
 			}
 
+			if( quest.guidedWalk && quest.guidedWalk.enabled )
+			{
+				TriggerEvent( 5800, "CleanupGuidedWalkQuestNPC", player, questID );
+			}
+
+			if( quest.race && quest.race.enabled )
+			{
+				TriggerEvent( 5800, "CleanupRaceQuestNPC", player, questID );
+			}
+
 			// Handle skill training quest resignation
 			if( quest.type == "skillgain" )
 			{
@@ -435,28 +445,6 @@ function ManageQuestItems( player, questID, mark )
 			}
 		}
 	});
-}
-
-/** @type { ( quest: any, targetEntry: any ) => string } */
-function GetKillRegionText( quest, targetEntry )
-{
-	var requiredRegion = ResolveKillTargetRegionDisplay( quest, targetEntry );
-	if( requiredRegion <= 0 )
-	{
-		return "";
-	}
-
-	if( targetEntry && targetEntry.regionName )
-	{
-		return " in " + targetEntry.regionName;
-	}
-
-	if( quest && quest.regionName )
-	{
-		return " in " + quest.regionName;
-	}
-
-	return " in region " + requiredRegion;
 }
 
 /** @type { ( quest: any, questProgress: any ) => string } */
@@ -976,6 +964,17 @@ function ProcessQuestTurnIn( player, questID )
 		return false;
 	}
 
+	if( quest.type == "race" || ( quest.race && quest.race.enabled ) )
+	{
+		if( questProgress && questProgress.raceCompleted )
+		{
+			return true;
+		}
+
+		socket.SysMessage( "You have not finished the race yet." );
+		return false;
+	}
+
 	if( quest.type == "kill" || quest.type == "timekills" )
 	{
 		return true;
@@ -1351,35 +1350,153 @@ function isArray( value )
 /** @type { ( tSock: Socket, baseObj: BaseObject ) => boolean } */
 function onContextMenuRequest( socket, targObj )
 {
-	// handle your own packet with context menu here
 	var pUser = socket.currentChar;
+	if( !ValidateObject( pUser ) || !ValidateObject( targObj ))
+	{
+		return false;
+	}
+
+	var initialQuestID = parseInt( targObj.GetTag( "QuestID" ), 10 );
+	if( isNaN( initialQuestID ) || initialQuestID <= 0 )
+	{
+		return false;
+	}
+
+	var playerQuestID = ResolvePlayerQuestID( pUser, initialQuestID );
+	if( isNaN( playerQuestID ) || playerQuestID <= 0 )
+	{
+		return false;
+	}
+
+	var quest = TriggerEvent( 5801, "QuestList", playerQuestID );
+	if( !quest )
+	{
+		return false;
+	}
+
+	var activeQuests = TriggerEvent( 5800, "ReadQuestProgress", pUser ) || [];
+	var archivedQuests = TriggerEvent( 5800, "ReadArchivedQuests", pUser ) || [];
+
+	var hasActiveQuest = false;
+	var activeQuestComplete = false;
+
+	for( var activeIndex = 0; activeIndex < activeQuests.length; activeIndex++ )
+	{
+		var questEntry = activeQuests[activeIndex];
+		if( questEntry.serial == pUser.serial && parseInt( questEntry.questID, 10 ) == playerQuestID )
+		{
+			hasActiveQuest = true;
+			activeQuestComplete = ( questEntry.completed == true );
+			break;
+		}
+	}
+
+	var canShowQuestConversation = hasActiveQuest;
+
+	if( !canShowQuestConversation )
+	{
+		canShowQuestConversation = true;
+
+		if( quest.oneTimeQuest == 1 )
+		{
+			for( var archivedIndex = 0; archivedIndex < archivedQuests.length; archivedIndex++ )
+			{
+				var archivedQuestID = archivedQuests[archivedIndex];
+
+				if( typeof archivedQuestID == "object" )
+				{
+					archivedQuestID = archivedQuestID.questID;
+				}
+
+				if( parseInt( archivedQuestID, 10 ) == playerQuestID )
+				{
+					canShowQuestConversation = false;
+					break;
+				}
+			}
+		}
+
+		if( canShowQuestConversation && quest.requiresQuestID != null && quest.requiresQuestID != 0 )
+		{
+			var requiredQuestID = parseInt( quest.requiresQuestID, 10 );
+			var hasRequiredQuest = false;
+
+			if( !isNaN( requiredQuestID ) && requiredQuestID > 0 )
+			{
+				for( var requiredIndex = 0; requiredIndex < archivedQuests.length; requiredIndex++ )
+				{
+					var requiredArchivedID = archivedQuests[requiredIndex];
+
+					if( typeof requiredArchivedID == "object" )
+					{
+						requiredArchivedID = requiredArchivedID.questID;
+					}
+
+					if( parseInt( requiredArchivedID, 10 ) == requiredQuestID )
+					{
+						hasRequiredQuest = true;
+						break;
+					}
+				}
+
+				if( !hasRequiredQuest )
+				{
+					canShowQuestConversation = false;
+				}
+			}
+		}
+	}
+
+	var showQuestConversation = canShowQuestConversation;
+	var showCancelQuest = ( hasActiveQuest && !activeQuestComplete );
+
+	var numEntries = 0;
+	if( showQuestConversation )
+	{
+		numEntries++;
+	}
+	if( showCancelQuest )
+	{
+		numEntries++;
+	}
+
+	if( numEntries <= 0 )
+	{
+		return false;
+	}
+
 	var offset = 12;
-	var numEntries = 2;
-
-	// Prepare packet
-	var toSend = new Packet();
 	var packetLen = ( 12 + ( numEntries * 8 ));
-	toSend.ReserveSize(  packetLen );
-	toSend.WriteByte(  0, 0xBF );
-	toSend.WriteShort(  1, packetLen );
-	toSend.WriteShort(  3, 0x14 ); // subCmd
-	toSend.WriteShort(  5, 0x0001 ); // 0x0001 for 2D client, 0x0002 for KR (  maybe this needs to be 0x0002?  )
-	toSend.WriteLong(  7, targObj.serial  );
-	toSend.WriteByte(  11, numEntries ); // Number of entries
 
-	toSend.WriteShort(  offset, 0x000A );    // Unique ID
-	toSend.WriteShort(  offset += 2, 6156 ); // Quest Conversation
-	toSend.WriteShort(  offset += 2, 0x0020 ); // Flag, color enabled
-	toSend.WriteShort(  offset += 2, 0x03E0 ); // Hue of text
+	var toSend = new Packet();
+	toSend.ReserveSize( packetLen );
+	toSend.WriteByte( 0, 0xBF );
+	toSend.WriteShort( 1, packetLen );
+	toSend.WriteShort( 3, 0x14 );
+	toSend.WriteShort( 5, 0x0001 );
+	toSend.WriteLong( 7, targObj.serial );
+	toSend.WriteByte( 11, numEntries );
 
-	offset += 2; // for each additional entry
+	if( showQuestConversation )
+	{
+		toSend.WriteShort( offset, 0x000A );
+		toSend.WriteShort( offset += 2, 6156 );
+		toSend.WriteShort( offset += 2, 0x0020 );
+		toSend.WriteShort( offset += 2, 0x03E0 );
 
-	toSend.WriteShort(  offset, 0x000C );    // Unique ID
-	toSend.WriteShort(  offset += 2, 6155 ); // Cancel Quest
-	toSend.WriteShort(  offset += 2, 0x0020 ); // Flag, color enabled
-	toSend.WriteShort(  offset += 2, 0x03E0 ); // Hue of text
+		offset += 2;
+	}
 
-	//Send packet
+	if( showCancelQuest )
+	{
+		toSend.WriteShort( offset, 0x000C );
+		toSend.WriteShort( offset += 2, 6155 );
+		toSend.WriteShort( offset += 2, 0x0020 );
+		toSend.WriteShort( offset += 2, 0x03E0 );
+
+		offset += 2;
+	}
+
 	socket.Send( toSend );
 	toSend.Free();
 
@@ -1427,8 +1544,27 @@ function onContextMenuSelect( socket, questNpc, popupEntry )
 					return false;
 				}
 
+				var activeQuests = TriggerEvent( 5800, "ReadQuestProgress", pUser ) || [];
+				var canCancelQuest = false;
 				var initialQuestID = parseInt( questNpc.GetTag( "QuestID" ), 10 );
 				var playerQuestID = ResolvePlayerQuestID( pUser, initialQuestID );
+
+				for( var activeIndex = 0; activeIndex < activeQuests.length; activeIndex++ )
+				{
+					var questEntry = activeQuests[activeIndex];
+					if( questEntry.serial == pUser.serial && parseInt( questEntry.questID, 10 ) == playerQuestID && questEntry.completed != true )
+					{
+						canCancelQuest = true;
+						break;
+					}
+				}
+
+				if( !canCancelQuest )
+				{
+					pUser.SysMessage( "You are not currently working on this quest.");
+					return false;
+				}
+
 				ResignQuest( pUser, playerQuestID );
 				ManageQuestItems( pUser, playerQuestID, false );
 				pUser.SoundEffect( 0x5B3, true );

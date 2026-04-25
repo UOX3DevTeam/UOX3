@@ -257,6 +257,10 @@ function NormalizeQuestDefaults( quest )
 	{
 		quest.randomDestinationPool = [];
 	}
+	if( !quest.race )
+	{
+		quest.race = null;
+	}
 
 	// Escort alias: lets quest writers use escortTimeLimit, but runtime still uses timeLimit
 	if( typeof quest.timeLimit == "undefined" && typeof quest.escortTimeLimit != "undefined" )
@@ -276,6 +280,8 @@ function ValidateQuestObject( quest, fileName )
 	ValidateQuestTagsAndState( quest, fileName );
 	ValidateQuestNextQuest( quest, fileName );
 	ValidateEscortQuest( quest, fileName );
+	ValidateGuidedWalkQuest( quest, fileName );
+	ValidateRaceQuest( quest, fileName );
 }
 
 function WarnUnknownTopLevelKeys( quest, fileName )
@@ -328,6 +334,8 @@ function WarnUnknownTopLevelKeys( quest, fileName )
 		"travelAmbush": true,
 		"escortTimeLimit": true,
 		"randomDestinationPool": true,
+		"guidedWalk": true,
+		"race": true,
 		"sourceFile": true
 	};
 
@@ -660,6 +668,100 @@ function ValidateEscortQuest( quest, fileName )
 			{
 				destinationEntry.weight = 1;
 			}
+		}
+	}
+}
+
+function ValidateRaceQuest( quest, fileName )
+{
+	if( typeof quest.race == "undefined" || quest.race == null )
+	{
+		return;
+	}
+
+	if( !quest.race || typeof quest.race != "object" || IsArrayValue( quest.race ) )
+	{
+		Console.Warning( "Quest system: race must be an object in file: " + fileName );
+		return;
+	}
+
+	if( typeof quest.race.enabled != "undefined" && !IsSimpleValue( quest.race.enabled ) )
+	{
+		Console.Warning( "Quest system: race.enabled must be a simple value in file: " + fileName );
+	}
+
+	if( typeof quest.race.finishRegion == "undefined" || isNaN( parseInt( quest.race.finishRegion, 10 ) ) )
+	{
+		Console.Warning( "Quest system: race.finishRegion must be set in file: " + fileName );
+	}
+
+	if( !quest.race.checkpoints || !IsArrayValue( quest.race.checkpoints ) || quest.race.checkpoints.length == 0 )
+	{
+		Console.Warning( "Quest system: race needs a non-empty checkpoints array in file: " + fileName );
+		return;
+	}
+
+	for( var checkpointIndex = 0; checkpointIndex < quest.race.checkpoints.length; checkpointIndex++ )
+	{
+		var checkpoint = quest.race.checkpoints[checkpointIndex];
+		if( !checkpoint || typeof checkpoint != "object" || IsArrayValue( checkpoint ) )
+		{
+			Console.Warning( "Quest system: race checkpoint at index " + checkpointIndex + " is invalid in file: " + fileName );
+			continue;
+		}
+
+		if( typeof checkpoint.x == "undefined" || typeof checkpoint.y == "undefined" )
+		{
+			Console.Warning( "Quest system: race checkpoint at index " + checkpointIndex + " must define x and y in file: " + fileName );
+		}
+	}
+
+	if( typeof quest.race.npcWinMode != "undefined" )
+	{
+		var npcWinMode = String( quest.race.npcWinMode ).toLowerCase();
+		if( npcWinMode != "continue" && npcWinMode != "turnin" && npcWinMode != "fail" )
+		{
+			Console.Warning( "Quest system: race.npcWinMode must be continue, turnin or fail in file: " + fileName );
+		}
+	}
+}
+
+function ValidateGuidedWalkQuest( quest, fileName )
+{
+	if( typeof quest.guidedWalk == "undefined" )
+	{
+		return;
+	}
+
+	if( !quest.guidedWalk || typeof quest.guidedWalk != "object" || IsArrayValue( quest.guidedWalk ) )
+	{
+		Console.Warning( "Quest system: guidedWalk must be an object in file: " + fileName );
+		return;
+	}
+
+	if( typeof quest.guidedWalk.enabled != "undefined" && !IsSimpleValue( quest.guidedWalk.enabled ) )
+	{
+		Console.Warning( "Quest system: guidedWalk.enabled must be a simple value in file: " + fileName );
+	}
+
+	if( !quest.guidedWalk.steps || !IsArrayValue( quest.guidedWalk.steps ) || quest.guidedWalk.steps.length == 0 )
+	{
+		Console.Warning( "Quest system: guidedWalk needs a non-empty steps array in file: " + fileName );
+		return;
+	}
+
+	for( var stepIndex = 0; stepIndex < quest.guidedWalk.steps.length; stepIndex++ )
+	{
+		var step = quest.guidedWalk.steps[stepIndex];
+		if( !step || typeof step != "object" || IsArrayValue( step ) )
+		{
+			Console.Warning( "Quest system: guidedWalk step at index " + stepIndex + " is invalid in file: " + fileName );
+			continue;
+		}
+
+		if( typeof step.x == "undefined" || typeof step.y == "undefined" )
+		{
+			Console.Warning( "Quest system: guidedWalk step at index " + stepIndex + " must define x and y in file: " + fileName );
 		}
 	}
 }

@@ -24,9 +24,37 @@ function StartQuest( player, questID, questGiver )
 	var harvestKillGroups = {};
 	var escortNPCSerial = 0;
 	var escortUsesQuestGiver = false;
+	var guidedWalkNPCSerial = 0;
+	var guidedWalkUsesQuestGiver = false;
+	var raceNPCSerial = 0;
+	var raceUsesQuestGiver = false;
 
 	var quest = TriggerEvent( 5801, "QuestList", questID );
 	var selectedWaypoints = [];
+
+	if( quest && quest.guidedWalk && quest.guidedWalk.enabled && ValidateObject( questGiver ) )
+	{
+		guidedWalkNPCSerial = questGiver.serial;
+		guidedWalkUsesQuestGiver = true;
+	}
+
+	if( quest && quest.race && quest.race.enabled )
+	{
+		if( !ValidateObject( questGiver ) )
+		{
+			socket.SysMessage( "Unable to start race quest." );
+			return;
+		}
+
+		if( questGiver.GetTag( "QuestRace" ) )
+		{
+			socket.SysMessage( "This racer is already racing someone else." );
+			return;
+		}
+
+		raceNPCSerial = questGiver.serial;
+		raceUsesQuestGiver = true;
+	}
 
 	if( quest.targetItems )
 	{
@@ -152,6 +180,13 @@ function StartQuest( player, questID, questGiver )
 		maxSkillPoints: quest.maxSkillPoints || 50.0,
 		startTime: quest.timeLimit ? Date.now() : 0,
 		timeLimit: quest.timeLimit ? quest.timeLimit * 1000 : 0,
+		guidedWalkNPCSerial: guidedWalkNPCSerial,
+		guidedWalkUsesQuestGiver: guidedWalkUsesQuestGiver,
+		raceNPCSerial: raceNPCSerial,
+		raceUsesQuestGiver: raceUsesQuestGiver,
+		raceCheckpoint: 0,
+		raceCompleted: false,
+		raceWinner: "",
 		lastAccepted: Date.now(),
 		completed: false,
 		questTurnIn: false,
@@ -159,6 +194,8 @@ function StartQuest( player, questID, questGiver )
 	});
 
 	WriteQuestProgress( player, questProgressArray );
+	StartGuidedWalkQuestNPC( player, questID, quest, questGiver );
+	StartRaceQuestNPC( player, questID, quest, questGiver );
 
 	socket.SysMessage( GetDictionaryEntry( 19617, socket.language ) );
 
@@ -297,6 +334,11 @@ function onTimer( timerObj, timerID )
 			if( quest.type == "escort" )
 			{
 				CleanupEscortQuestNPC( player, questEntry.questID );
+			}
+
+			if( quest.race && quest.race.enabled )
+			{
+				CleanupRaceQuestNPC( player, questEntry.questID );
 			}
 
 			questProgressArray.splice( i, 1 ); // Remove the failed quest
@@ -559,6 +601,14 @@ function AreAllQuestObjectivesComplete( quest, questEntry )
 					allObjectivesCompleted = false;
 				}
 			}
+		}
+	}
+
+	if( quest.race && quest.race.enabled )
+	{
+		if( !questEntry.raceCompleted )
+		{
+			allObjectivesCompleted = false;
 		}
 	}
 
@@ -884,6 +934,16 @@ function CompleteQuest( player, questID )
 		if( quest.type == "escort" )
 		{
 			CleanupEscortQuestNPC( player, questID );
+		}
+
+		if( quest.guidedWalk && quest.guidedWalk.enabled )
+		{
+			CleanupGuidedWalkQuestNPC( player, questID );
+		}
+
+		if( quest.race && quest.race.enabled )
+		{
+			CleanupRaceQuestNPC( player, questID );
 		}
 
 		// Notify the player and play a visual effect
@@ -1289,7 +1349,7 @@ function SetupQuestEscortNPC( escortNPC, player, questID, quest )
 		escortNPC.AddScriptTrigger( 5814 );
 	}
 
-	escortNPC.StartTimer( 10000, 1, true );
+	escortNPC.StartTimer( 10000, 1, 5814 );
 	return escortNPC;
 }
 
@@ -1624,7 +1684,7 @@ function SpawnEscortAmbush( player, escortNPC, ambushData )
 				ambushNpc.AddScriptTrigger( 5815 );
 			}
 
-			ambushNpc.StartTimer( despawnSeconds * 1000, 1, true );
+			ambushNpc.StartTimer( despawnSeconds * 1000, 1, 5815  );
 		}
 	}
 
@@ -1659,7 +1719,7 @@ function RepairEscortNPCFromProgress( escortNPC, player, questID, quest, questEn
 		escortNPC.AddScriptTrigger( 5814 );
 	}
 
-	escortNPC.StartTimer( 10000, 1, true );
+	escortNPC.StartTimer( 10000, 1, 5814 );
 	return true;
 }
 
@@ -1728,6 +1788,11 @@ function ValidateTimedQuestsOnLogin( player )
 			if( quest.type == "escort" )
 			{
 				CleanupEscortQuestNPC( player, questEntry.questID );
+			}
+
+			if( quest.race && quest.race.enabled )
+			{
+				CleanupRaceQuestNPC( player, questEntry.questID );
 			}
 
 			questEntry.escortFailed = ( quest.type == "escort" );
@@ -2227,6 +2292,553 @@ function ParseSelectedWaypoints( rawText )
 	}
 
 	return parsedWaypoints;
+}
+
+/** @type { ( player: Character, questID: number, quest: any, questGiver?: Character | null ) => boolean } */
+function StartRaceQuestNPC( player, questID, quest, questGiver )
+{
+	if( !ValidateObject( player ) || !quest || !quest.race || !quest.race.enabled )
+	{
+		return false;
+	}
+
+	if( !ValidateObject( questGiver ) )
+	{
+		return false;
+	}
+
+	if( !quest.race.checkpoints || !quest.race.checkpoints.length )
+	{
+		return false;
+	}
+
+	if( questGiver.GetTag( "QuestRace" ) )
+	{
+		return false;
+	}
+
+	questGiver.owner = player;
+	questGiver.Follow( null );
+
+	questGiver.SetTag( "QuestRace", 1 );
+	questGiver.SetTag( "QuestRaceQuestID", questID );
+	questGiver.SetTag( "QuestRacePlayerSerial", player.serial );
+	questGiver.SetTag( "QuestRaceCheckpoint", 0 );
+	questGiver.SetTag( "QuestRaceReturning", 0 );
+
+	questGiver.SetTag( "QuestRaceHomeX", questGiver.x );
+	questGiver.SetTag( "QuestRaceHomeY", questGiver.y );
+	questGiver.SetTag( "QuestRaceHomeZ", questGiver.z );
+	questGiver.SetTag( "QuestRaceHomeWorld", questGiver.worldnumber );
+	questGiver.SetTag( "QuestRaceHomeInstance", questGiver.instanceID );
+	questGiver.SetTag( "QuestRaceOriginalCanRun", questGiver.canRun ? 1 : 0 );
+	questGiver.SetTag( "QuestRaceReturnText", quest.race.returnText || "" );
+	questGiver.SetTag( "QuestRaceReturnMovement", quest.race.returnMovement || "walk" );
+
+	if( quest.race.npcCanRun != 0 )
+	{
+		questGiver.canRun = true;
+	}
+
+	if( quest.race.startText )
+	{
+		questGiver.TurnToward( player );
+		questGiver.TextMessage( String( quest.race.startText ) );
+	}
+
+	if( !questGiver.HasScriptTrigger( 5817 ) )
+	{
+		questGiver.AddScriptTrigger( 5817 );
+	}
+
+	questGiver.StartTimer( 1000, 1, 5817 );
+	return true;
+}
+
+/** @type { ( player: Character, questID: number ) => void } */
+function CleanupRaceQuestNPC( player, questID )
+{
+	if( !ValidateObject( player ) )
+	{
+		return;
+	}
+
+	var questProgressArray = ReadQuestProgress( player );
+	for( var i = 0; i < questProgressArray.length; i++ )
+	{
+		var questEntry = questProgressArray[i];
+		if( questEntry.serial != player.serial || questEntry.questID != questID )
+		{
+			continue;
+		}
+
+		var raceNPCSerial = parseInt( questEntry.raceNPCSerial, 10 );
+		if( isNaN( raceNPCSerial ) || raceNPCSerial <= 0 )
+		{
+			return;
+		}
+
+		var raceNpc = CalcCharFromSer( raceNPCSerial );
+		if( !ValidateObject( raceNpc ) )
+		{
+			return;
+		}
+
+		raceNpc.Follow( null );
+		raceNpc.owner = null;
+
+		var homeX = parseInt( raceNpc.GetTag( "QuestRaceHomeX" ), 10 );
+		var homeY = parseInt( raceNpc.GetTag( "QuestRaceHomeY" ), 10 );
+		var homeZ = parseInt( raceNpc.GetTag( "QuestRaceHomeZ" ), 10 );
+		var homeWorld = parseInt( raceNpc.GetTag( "QuestRaceHomeWorld" ), 10 );
+		var homeInstance = parseInt( raceNpc.GetTag( "QuestRaceHomeInstance" ), 10 );
+		var originalCanRun = parseInt( raceNpc.GetTag( "QuestRaceOriginalCanRun" ), 10 );
+
+		if( !isNaN( originalCanRun ) )
+		{
+			raceNpc.canRun = ( originalCanRun == 1 );
+		}
+
+		raceNpc.SetTag( "QuestRace", null );
+		raceNpc.SetTag( "QuestRaceQuestID", null );
+		raceNpc.SetTag( "QuestRacePlayerSerial", null );
+		raceNpc.SetTag( "QuestRaceCheckpoint", null );
+		raceNpc.SetTag( "QuestRaceReturning", null );
+		raceNpc.SetTag( "QuestRaceHomeX", null );
+		raceNpc.SetTag( "QuestRaceHomeY", null );
+		raceNpc.SetTag( "QuestRaceHomeZ", null );
+		raceNpc.SetTag( "QuestRaceHomeWorld", null );
+		raceNpc.SetTag( "QuestRaceHomeInstance", null );
+		raceNpc.SetTag( "QuestRaceOriginalCanRun", null );
+		raceNpc.SetTag( "QuestRaceReturnText", null );
+		raceNpc.SetTag( "QuestRaceReturnMovement", null );
+
+		if( raceNpc.HasScriptTrigger( 5817 ) )
+		{
+			raceNpc.RemoveScriptTrigger( 5817 );
+		}
+
+		if( !isNaN( homeX ) && !isNaN( homeY ) )
+		{
+			if( isNaN( homeZ ) )
+			{
+				homeZ = raceNpc.z;
+			}
+			if( isNaN( homeWorld ) || homeWorld < 0 )
+			{
+				homeWorld = raceNpc.worldnumber;
+			}
+			if( isNaN( homeInstance ) || homeInstance < 0 )
+			{
+				homeInstance = raceNpc.instanceID;
+			}
+
+			raceNpc.SetLocation( homeX, homeY, homeZ, homeWorld, homeInstance );
+		}
+
+		return;
+	}
+}
+
+/** @type { ( player: Character, regionID: number ) => void } */
+function RacePlayerReachedFinish( player, questID )
+{
+	if( !ValidateObject( player ) )
+	{
+		return;
+	}
+
+	var socket = player.socket;
+	if( socket == null )
+	{
+		return;
+	}
+
+	questID = parseInt( questID, 10 );
+	if( isNaN( questID ) || questID <= 0 )
+	{
+		return;
+	}
+
+	var questProgressArray = ReadQuestProgress( player );
+	for( var i = 0; i < questProgressArray.length; i++ )
+	{
+		var questEntry = questProgressArray[i];
+		if( !questEntry || questEntry.serial != player.serial || questEntry.completed || questEntry.questID != questID )
+		{
+			continue;
+		}
+
+		var quest = TriggerEvent( 5801, "QuestList", questID );
+		if( !quest || !quest.race || !quest.race.enabled )
+		{
+			continue;
+		}
+
+		if( questEntry.raceCompleted )
+		{
+			continue;
+		}
+
+		questEntry.raceCompleted = true;
+		questEntry.raceWinner = "player";
+
+		if( quest.race.playerWinText )
+		{
+			socket.SysMessage( String( quest.race.playerWinText ) );
+		}
+		else
+		{
+			socket.SysMessage( "You won the race." );
+		}
+
+		var raceNPCSerial = parseInt( questEntry.raceNPCSerial, 10 );
+		if( !isNaN( raceNPCSerial ) && raceNPCSerial > 0 )
+		{
+			var raceNpc = CalcCharFromSer( raceNPCSerial );
+			if( ValidateObject( raceNpc ) )
+			{
+				raceNpc.SetTag( "QuestRaceReturning", 1 );
+			}
+		}
+
+		if( AreAllQuestObjectivesComplete( quest, questEntry ) )
+		{
+			questEntry.completed = true;
+
+			if( quest.questTurnIn == 1 )
+			{
+				socket.SysMessage( GetDictionaryEntry( 19623, socket.language ) );
+				WriteQuestProgress( player, questProgressArray );
+			}
+			else
+			{
+				WriteQuestProgress( player, questProgressArray );
+				CompleteQuest( player, questID );
+			}
+		}
+		else
+		{
+			WriteQuestProgress( player, questProgressArray );
+		}
+
+		return;
+	}
+}
+
+/** @type { ( player: Character, regionID: number ) => void } */
+function RacePlayerReachedRegion( player, regionID )
+{
+	if( !ValidateObject( player ) )
+	{
+		return;
+	}
+
+	var questProgressArray = ReadQuestProgress( player );
+	for( var i = 0; i < questProgressArray.length; i++ )
+	{
+		var questEntry = questProgressArray[i];
+		if( !questEntry || questEntry.serial != player.serial || questEntry.completed )
+		{
+			continue;
+		}
+
+		var quest = TriggerEvent( 5801, "QuestList", questEntry.questID );
+		if( !quest || !quest.race || !quest.race.enabled )
+		{
+			continue;
+		}
+
+		var finishRegion = parseInt( quest.race.finishRegion, 10 );
+		if( !isNaN( finishRegion ) && finishRegion > 0 && finishRegion == regionID )
+		{
+			RacePlayerReachedFinish( player, questEntry.questID );
+			return;
+		}
+	}
+}
+
+/** @type { ( player: Character, questID: number, raceNpc: Character ) => void } */
+function RaceNPCReachedFinish( player, questID, raceNpc )
+{
+	if( !ValidateObject( player ) )
+	{
+		return;
+	}
+
+	var socket = player.socket;
+	if( socket == null )
+	{
+		return;
+	}
+
+	var quest = TriggerEvent( 5801, "QuestList", questID );
+	if( !quest || !quest.race || !quest.race.enabled )
+	{
+		return;
+	}
+
+	var questProgressArray = ReadQuestProgress( player );
+	var newQuestProgressArray = [];
+
+	for( var i = 0; i < questProgressArray.length; i++ )
+	{
+		var questEntry = questProgressArray[i];
+
+		if( !questEntry || questEntry.serial != player.serial || questEntry.questID != questID )
+		{
+			newQuestProgressArray.push( questEntry );
+			continue;
+		}
+
+		if( questEntry.raceCompleted )
+		{
+			newQuestProgressArray.push( questEntry );
+			continue;
+		}
+
+		var npcWinMode = String( quest.race.npcWinMode || "continue" ).toLowerCase();
+
+		if( npcWinMode == "fail" )
+		{
+			questEntry.raceWinner = "npc";
+			LogFailedQuest( player, questEntry );
+			socket.SysMessage( quest.race.npcWinText || "You lost the race." );
+			CleanupRaceQuestNPC( player, questID );
+			continue;
+		}
+
+		questEntry.raceCompleted = true;
+		questEntry.raceWinner = "npc";
+
+		if( quest.race.npcWinText )
+		{
+			socket.SysMessage( String( quest.race.npcWinText ) );
+		}
+		else
+		{
+			socket.SysMessage( "The racer beat you, but the quest continues." );
+		}
+
+		var allObjectivesCompleted = AreAllQuestObjectivesComplete( quest, questEntry );
+		if( allObjectivesCompleted )
+		{
+			if( quest.questTurnIn == 1 || npcWinMode == "turnin" )
+			{
+				questEntry.completed = true;
+				socket.SysMessage( GetDictionaryEntry( 19623, socket.language ) );
+				newQuestProgressArray.push( questEntry );
+			}
+			else
+			{
+				questEntry.completed = true;
+				newQuestProgressArray.push( questEntry );
+				WriteQuestProgress( player, newQuestProgressArray );
+				CompleteQuest( player, questID );
+				return;
+			}
+		}
+		else
+		{
+			newQuestProgressArray.push( questEntry );
+		}
+	}
+
+	WriteQuestProgress( player, newQuestProgressArray );
+}
+
+/** @type { ( player: Character, questID: number ) => void } */
+function RacePlayerReachedFinishCheckpoint( player, questID )
+{
+	if( !ValidateObject( player ) )
+	{
+		return;
+	}
+
+	var quest = TriggerEvent( 5801, "QuestList", questID );
+	if( !quest || !quest.race || !quest.race.enabled || !quest.race.checkpoints || !quest.race.checkpoints.length )
+	{
+		return;
+	}
+
+	var finalCheckpoint = quest.race.checkpoints[quest.race.checkpoints.length - 1];
+	if( !finalCheckpoint )
+	{
+		return;
+	}
+
+	var targetX = parseInt( finalCheckpoint.x, 10 );
+	var targetY = parseInt( finalCheckpoint.y, 10 );
+	var targetWorld = parseInt( finalCheckpoint.world, 10 );
+	var finishRange = parseInt( finalCheckpoint.playerRange, 10 );
+
+	if( isNaN( targetX ) || isNaN( targetY ) )
+	{
+		return;
+	}
+
+	if( isNaN( finishRange ) || finishRange <= 0 )
+	{
+		finishRange = parseInt( finalCheckpoint.range, 10 );
+		if( isNaN( finishRange ) || finishRange <= 0 )
+		{
+			finishRange = 3;
+		}
+	}
+
+	if( !isNaN( targetWorld ) && targetWorld >= 0 && player.worldnumber != targetWorld )
+	{
+		return;
+	}
+
+	if( DistanceBetween( player.x, player.y, targetX, targetY ) <= finishRange )
+	{
+		RacePlayerReachedFinish( player, questID );
+	}
+}
+
+/** @type { ( player: Character, questID: number, quest: any, questGiver?: Character | null ) => boolean } */
+function StartGuidedWalkQuestNPC( player, questID, quest, questGiver )
+{
+	if( !ValidateObject( player ) || !quest || !quest.guidedWalk || !quest.guidedWalk.enabled )
+	{
+		return false;
+	}
+
+	if( !ValidateObject( questGiver ) )
+	{
+		return false;
+	}
+
+	if( !quest.guidedWalk.steps || !quest.guidedWalk.steps.length )
+	{
+		return false;
+	}
+
+	if( questGiver.GetTag( "QuestGuidedWalk" ) )
+	{
+		return false;
+	}
+
+	questGiver.owner = player;
+	questGiver.Follow( null );
+
+	questGiver.SetTag( "QuestGuidedWalk", 1 );
+	questGiver.SetTag( "QuestGuidedWalkQuestID", questID );
+	questGiver.SetTag( "QuestGuidedWalkPlayerSerial", player.serial );
+	questGiver.SetTag( "QuestGuidedWalkStep", 0 );
+	questGiver.SetTag( "QuestGuidedWalkComplete", 0 );
+	questGiver.SetTag( "QuestGuidedWalkReturning", 0 );
+	questGiver.SetTag( "QuestGuidedWalkMaxDistance", quest.guidedWalk.maxDistance || 24 );
+	questGiver.SetTag( "QuestGuidedWalkReturnText", quest.guidedWalk.returnText || "" );
+
+	questGiver.SetTag( "QuestGuidedWalkHomeX", questGiver.x );
+	questGiver.SetTag( "QuestGuidedWalkHomeY", questGiver.y );
+	questGiver.SetTag( "QuestGuidedWalkHomeZ", questGiver.z );
+	questGiver.SetTag( "QuestGuidedWalkHomeWorld", questGiver.worldnumber );
+	questGiver.SetTag( "QuestGuidedWalkHomeInstance", questGiver.instanceID );
+	questGiver.SetTag( "QuestGuidedWalkReturnMovement", quest.guidedWalk.returnMovement || "walk" );
+
+	if( quest.guidedWalk.startText )
+	{
+		questGiver.TurnToward( player );
+		questGiver.TextMessage( String( quest.guidedWalk.startText ) );
+	}
+
+	if( !questGiver.HasScriptTrigger( 5816 ) )
+	{
+		questGiver.AddScriptTrigger( 5816 );
+	}
+
+	questGiver.StartTimer( 1000, 1, 5816 );
+	return true;
+}
+
+/** @type { ( player: Character, questID: number ) => void } */
+function CleanupGuidedWalkQuestNPC( player, questID )
+{
+	if( !ValidateObject( player ) )
+	{
+		return;
+	}
+
+	var questProgressArray = ReadQuestProgress( player );
+	for( var i = 0; i < questProgressArray.length; i++ )
+	{
+		var questEntry = questProgressArray[i];
+		if( questEntry.serial != player.serial || questEntry.questID != questID )
+		{
+			continue;
+		}
+
+		var guidedWalkNPCSerial = parseInt( questEntry.guidedWalkNPCSerial, 10 );
+		if( isNaN( guidedWalkNPCSerial ) || guidedWalkNPCSerial <= 0 )
+		{
+			return;
+		}
+
+		var guideNpc = CalcCharFromSer( guidedWalkNPCSerial );
+		if( !ValidateObject( guideNpc ) )
+		{
+			return;
+		}
+
+		guideNpc.Follow( null );
+		guideNpc.owner = null;
+
+		var homeX = parseInt( guideNpc.GetTag( "QuestGuidedWalkHomeX" ), 10 );
+		var homeY = parseInt( guideNpc.GetTag( "QuestGuidedWalkHomeY" ), 10 );
+		var homeZ = parseInt( guideNpc.GetTag( "QuestGuidedWalkHomeZ" ), 10 );
+		var homeWorld = parseInt( guideNpc.GetTag( "QuestGuidedWalkHomeWorld" ), 10 );
+		var homeInstance = parseInt( guideNpc.GetTag( "QuestGuidedWalkHomeInstance" ), 10 );
+
+		guideNpc.SetTag( "QuestGuidedWalk", null );
+		guideNpc.SetTag( "QuestGuidedWalkQuestID", null );
+		guideNpc.SetTag( "QuestGuidedWalkPlayerSerial", null );
+		guideNpc.SetTag( "QuestGuidedWalkStep", null );
+		guideNpc.SetTag( "QuestGuidedWalkComplete", null );
+		guideNpc.SetTag( "QuestGuidedWalkReturning", null );
+		guideNpc.SetTag( "QuestGuidedWalkMaxDistance", null );
+		guideNpc.SetTag( "QuestGuidedWalkReturnText", null );
+		guideNpc.SetTag( "QuestGuidedWalkTooFarWarned", null );
+		guideNpc.SetTag( "QuestGuidedWalkHomeX", null );
+		guideNpc.SetTag( "QuestGuidedWalkHomeY", null );
+		guideNpc.SetTag( "QuestGuidedWalkHomeZ", null );
+		guideNpc.SetTag( "QuestGuidedWalkHomeWorld", null );
+		guideNpc.SetTag( "QuestGuidedWalkHomeInstance", null );
+		guideNpc.SetTag( "QuestGuidedWalkReturnMovement", null );
+
+		var guideStepIndex = 0;
+		for( guideStepIndex = 0; guideStepIndex < 50; guideStepIndex++ )
+		{
+			guideNpc.SetTag( "QuestGuidedWalkLegStarted_" + guideStepIndex, null );
+		}
+
+		if( guideNpc.HasScriptTrigger( 5816 ) )
+		{
+			guideNpc.RemoveScriptTrigger( 5816 );
+		}
+
+		if( !isNaN( homeX ) && !isNaN( homeY ) )
+		{
+			if( isNaN( homeZ ) )
+			{
+				homeZ = guideNpc.z;
+			}
+			if( isNaN( homeWorld ) || homeWorld < 0 )
+			{
+				homeWorld = guideNpc.worldnumber;
+			}
+			if( isNaN( homeInstance ) || homeInstance < 0 )
+			{
+				homeInstance = guideNpc.instanceID;
+			}
+
+			guideNpc.SetLocation( homeX, homeY, homeZ, homeWorld, homeInstance );
+		}
+
+		return;
+	}
 }
 
 /** @type { ( player: Character, questID: number, socket: Socket ) => void } */
@@ -2830,7 +3442,7 @@ function AccelerateSkillGain( pPlayer, skill, skillGainAmount )
 			if( pPlayer.region.id == quest.targetRegion && skill == quest.targetSkill ) 
 			{
 				var currentSkillPoints = pPlayer.baseskills[skill];
-				var acceleratedGain = RandomNumber( quest.minPoint, quest.MaxPoint );
+				var acceleratedGain = RandomNumber( quest.minPoint, quest.maxPoint );
 
 				if(( currentSkillPoints + acceleratedGain ) >= quest.maxSkillPoints )
 				{
@@ -3581,6 +4193,11 @@ function WriteQuestProgress( player, questProgressArray )
 				"MaxSkillPoints=" + ( progressEntry.maxSkillPoints || 50.0 ) + "\n" +
 				"StartTime=" + ( progressEntry.startTime || 0 ) + "\n" +
 				"TimeLimit=" + ( progressEntry.timeLimit || 0 ) + "\n" +
+				"RaceNPCSerial=" + ( progressEntry.raceNPCSerial || 0 ) + "\n" +
+				"RaceUsesQuestGiver=" + ( progressEntry.raceUsesQuestGiver ? "1" : "0" ) + "\n" +
+				"RaceCheckpoint=" + ( progressEntry.raceCheckpoint || 0 ) + "\n" +
+				"RaceCompleted=" + ( progressEntry.raceCompleted ? "1" : "0" ) + "\n" +
+				"RaceWinner=" + ( progressEntry.raceWinner || "" ) + "\n" +
 				"LastAccepted=" + ( progressEntry.lastAccepted || 0 ) + "\n" +
 				"Completed=" + ( progressEntry.completed ? "1" : "0" ) + "\n" +
 				"QuestTurnIn=" + ( progressEntry.questTurnIn ? "1" : "0" ) + "\n" +
@@ -3669,6 +4286,23 @@ function finalizeQuestEntry( entry, player )
 	entry.targetRegion = parseInt( entry.targetregion || "0", 10 );
 	entry.maxSkillPoints = parseFloat( entry.maxskillpoints || "50.0" );
 	entry.lastAccepted = parseInt( entry.lastaccepted || "0", 10 );
+	entry.raceNPCSerial = parseInt( entry.racenpcserial || "0", 10 );
+	if( isNaN( entry.raceNPCSerial ) )
+	{
+		entry.raceNPCSerial = 0;
+	}
+
+	entry.raceUsesQuestGiver = ( entry.raceusesquestgiver == "1" );
+
+	entry.raceCheckpoint = parseInt( entry.racecheckpoint || "0", 10 );
+	if( isNaN( entry.raceCheckpoint ) )
+	{
+		entry.raceCheckpoint = 0;
+	}
+
+	entry.raceCompleted = ( entry.racecompleted == "1" );
+	entry.raceWinner = entry.racewinner || "";
+
 	entry.escortNPCSerial = parseInt( entry.escortnpcserial || "0", 10 );
 	if( isNaN( entry.escortNPCSerial ) )
 		entry.escortNPCSerial = 0;

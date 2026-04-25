@@ -384,6 +384,8 @@
 5813=server/quest/quest_login.js
 5814=server/quest/quest_escort_npc.js
 5815=server/quest/quest_escort_ambush_cleanup.js
+5816=server/quest/quest_guided_npc.js
+5817=server/quest/quest_race_npc.js
 
 //-------------------------------------------
 // Magic Related Scripts [6000-6500]

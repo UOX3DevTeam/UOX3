@@ -6908,8 +6908,8 @@ function onTooltip( myItem, pSocket )
 						<p>
 							The <span class="hl">Quest System</span> lets you build everything from simple starter tasks to full story arcs.
 							You can use it for item collection quests, grouped item collection quests, kill quests, grouped kill quests,
-							delivery quests, skill training quests, daily quests, timed quests, escort quests, branching quest lines, and reputation
-							or world-state based progression.
+							delivery quests, skill training quests, daily quests, timed quests, escort quests, guided walk quests,
+							race quests, branching quest lines, and reputation or world-state based progression.
 						</p>
 
 						<p>
@@ -6927,8 +6927,8 @@ function onTooltip( myItem, pSocket )
 						<p>
 							If you already know what you are doing, this system also supports more advanced features such as chained quests,
 							branching outcomes, item groups, kill groups, race-based kill tracking, region-based kill objectives, escort routes,
-							random escort destinations, waypoint ambushes, travel ambushes, tag changes, world-state tracking, skill point rewards,
-							and automatic quest offers on login.
+							random escort destinations, waypoint ambushes, travel ambushes, guided story walks, NPC races, tag changes,
+							world-state tracking, skill point rewards, and automatic quest offers on login.
 						</p>
 
 						<h3>System Overview</h3>
@@ -6948,7 +6948,7 @@ function onTooltip( myItem, pSocket )
 						</p>
 
 						<ul>
-							<li><span class="hl">quest_core.js</span> - Starts quests, tracks progress, completes quests, saves data, gives rewards, handles quest chains, escort logic, timed quest restore, and login validation</li>
+							<li><span class="hl">quest_core.js</span> - Starts quests, tracks progress, completes quests, saves data, gives rewards, handles quest chains, escort logic, guided walk logic, race logic, timed quest restore, and login validation</li>
 							<li><span class="hl">quest_lists.js</span> - Loads and registers all quest JSON files and validates quest data</li>
 							<li><span class="hl">quest_conversation_gump.js</span> - Shows the quest conversation gump and handles accept, refuse, turn-in, and resign</li>
 							<li><span class="hl">quest_menu.js</span> - Quest journal, completed quest list, and options</li>
@@ -6956,10 +6956,12 @@ function onTooltip( myItem, pSocket )
 							<li><span class="hl">quest_login.js</span> - Optional login quest offer system</li>
 							<li><span class="hl">quest_event_onkill.js</span> - Updates kill progress</li>
 							<li><span class="hl">quest_event_onskillgain.js</span> - Updates skillgain quests</li>
-							<li><span class="hl">quest_event_onenterregion.js</span> - Handles training region entry messages</li>
+							<li><span class="hl">quest_event_onenterregion.js</span> - Handles training region entry messages, escort region progress, and race finish regions</li>
 							<li><span class="hl">quest_event_onquesttoggle.js</span> - Lets players toggle item quest status manually</li>
 							<li><span class="hl">quest_escort_npc.js</span> - Handles escort waypoint progress, leash checks, death fail, and travel ambush checks</li>
 							<li><span class="hl">quest_escort_ambush_cleanup.js</span> - Cleans up spawned escort ambush NPCs after their despawn timer expires</li>
+							<li><span class="hl">quest_guided_npc.js</span> - Handles guided walk story movement, speech steps, distance checks, and NPC return-home behavior</li>
+							<li><span class="hl">quest_race_npc.js</span> - Handles race checkpoint movement, player finish checks, NPC finish logic, and race return-home behavior</li>
 						</ul>
 
 						<p>
@@ -7155,6 +7157,8 @@ CUSTOMINTTAG=QuestID 2000
 								<li><strong>timecollect</strong> - collect items within a time limit</li>
 								<li><strong>timekills</strong> - kill targets within a time limit</li>
 								<li><strong>escort</strong> - escort an NPC through one or more destinations</li>
+								<li><strong>guided</strong> - use a guided walk intro before the real objective</li>
+								<li><strong>race</strong> - race an NPC to a final checkpoint or finish region</li>
 							</ul>
 						</div>
 
@@ -7187,6 +7191,11 @@ CUSTOMINTTAG=QuestID 2000
 								<li><span class="hl">waypoints</span> - ordered escort destinations using region IDs</li>
 								<li><span class="hl">travelAmbush</span> - optional random ambushes while traveling</li>
 								<li><span class="hl">randomDestinationPool</span> - optional random destination selection at quest start</li>
+								<li><span class="hl">guidedWalk</span> - optional guided walk configuration object</li>
+								<li><span class="hl">race</span> - optional race quest configuration object</li>
+								<li><span class="hl">finishRegion</span> - optional race finish region</li>
+								<li><span class="hl">npcWinMode</span> - controls what happens if the race NPC reaches the finish first</li>
+								<li><span class="hl">npcCanRun</span> - allows a race NPC to run during the race</li>
 							</ul>
 						</div>
 
@@ -7572,6 +7581,193 @@ CUSTOMINTTAG=QuestID 2000
 							The destination is not rerolled after relog.
 						</p>
 
+
+
+						<h4>Guided Walk Quests</h4>
+
+						<p>
+							Guided walk quests let an NPC walk with the player and speak during the route before the normal quest objective continues.
+							This is useful for story introductions, town flavor, dynamic world encounters, and quests where the NPC explains the situation while moving.
+						</p>
+
+						<p>
+							A guided walk is not an escort. The player is not trying to protect or deliver the NPC.
+							The NPC simply walks to one or more coordinates, speaks along the way, then returns home after the walk is done or after the player leaves range.
+						</p>
+
+						<ul>
+							<li>Uses coordinate steps instead of region IDs</li>
+							<li>Supports walking or running movement</li>
+							<li>Supports speech at the start of the walk, at each step, and at the end</li>
+							<li>Can use the quest giver as the walking NPC</li>
+							<li>Player can ignore the story and still continue the quest</li>
+							<li>NPC returns home when the guided walk is complete or when the player leaves range</li>
+						</ul>
+
+						<p>
+							Use <span class="hl">guidedWalk</span> when you want the NPC to walk and talk, but the real quest objective is still something else,
+							such as collect, kill, delivery, or multi.
+						</p>
+
+						<input type="checkbox" id="spoiler_guided_walk_basic">
+						<label for="spoiler_guided_walk_basic">Show guided walk example <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+<pre><code class="language-javascript">
+{
+	"questID": 5100,
+	"title": "A Walk by the Mill",
+	"description": "The miller wants to speak with you while walking nearby.",
+	"uncomplete": "You still need to bring me 5 sacks of flour.",
+	"complete": "Good. This will help keep the mill running.",
+	"refuse": "Another time, then.",
+	"type": "collect",
+	"category": "Side Quests",
+	"oneTimeQuest": 0,
+	"questTurnIn": 1,
+
+	"guidedWalk": {
+		"enabled": 1,
+		"maxDistance": 24,
+		"movement": "walk",
+		"returnMovement": "walk",
+		"startText": "Come with me a moment. I will explain what happened.",
+		"tooFarText": "Stay close. I am still telling the story.",
+		"returnText": "I should return to my post.",
+		"finalText": "That is why I need 5 sacks of flour. Bring them back when you have them.",
+		"steps": [
+			{
+				"x": 1450,
+				"y": 1622,
+				"z": 20,
+				"world": 0,
+				"range": 1,
+				"startText": "This mill used to feed half the town.",
+				"arrivalText": "Every morning, wagons would line this road."
+			},
+			{
+				"x": 1455,
+				"y": 1627,
+				"z": 20,
+				"world": 0,
+				"range": 1,
+				"startText": "Then the shipments started disappearing.",
+				"arrivalText": "At first I thought it was just bad luck."
+			},
+			{
+				"x": 1460,
+				"y": 1632,
+				"z": 20,
+				"world": 0,
+				"range": 1,
+				"startText": "But three missing deliveries is no accident.",
+				"arrivalText": "Now the storehouse is almost empty."
+			}
+		]
+	},
+
+	"targetItems": [
+		{ "sectionID": "flour_sack", "amount": 5, "name": "Flour Sack" }
+	],
+
+	"rewards": [
+		{ "type": "gold", "amount": 250, "name": "Gold" }
+	]
+}
+</code></pre>
+						</div>
+
+						<p>
+							Guided walk step coordinates should be close enough that the NPC can path to them reliably.
+							For long story walks, use several short steps instead of one very long step.
+						</p>
+
+						<h4>Race Quests</h4>
+
+						<p>
+							Race quests let a player race an NPC to a final checkpoint or finish region.
+							The race NPC moves through checkpoint coordinates, and the player can win by reaching the final checkpoint area first.
+							A finish region can also be used as a backup or alternate finish trigger.
+						</p>
+
+						<ul>
+							<li>NPC can walk or run through checkpoints</li>
+							<li>NPC running requires <span class="hl">npcCanRun</span></li>
+							<li>Player finish can be checked by final checkpoint location</li>
+							<li>Optional <span class="hl">finishRegion</span> can also complete the race</li>
+							<li>Admin controls what happens if the NPC wins</li>
+							<li>Race NPC returns home after the race ends</li>
+						</ul>
+
+						<p>
+							Use <span class="hl">npcWinMode</span> to control what happens if the NPC reaches the finish first.
+						</p>
+
+						<ul>
+							<li><span class="hl">continue</span> - NPC wins, but the race still counts as complete</li>
+							<li><span class="hl">turnin</span> - NPC wins, and the quest becomes ready to turn in</li>
+							<li><span class="hl">fail</span> - NPC wins, and the player fails the quest</li>
+						</ul>
+
+						<p>
+							For casual or story races, <span class="hl">continue</span> is recommended so the race feels fun instead of punishing.
+							Use <span class="hl">fail</span> only for challenge quests where losing should matter.
+						</p>
+
+						<input type="checkbox" id="spoiler_race_basic">
+						<label for="spoiler_race_basic">Show race quest example <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+<pre><code class="language-javascript">
+{
+	"questID": 5200,
+	"title": "Race to the Old Bridge",
+	"description": "A mounted traveler wants to race you to the old bridge.",
+	"uncomplete": "The race is not finished yet.",
+	"complete": "That was a fine race.",
+	"refuse": "Maybe another time.",
+	"type": "race",
+	"category": "Side Quests",
+	"oneTimeQuest": 0,
+	"questTurnIn": 0,
+
+	"race": {
+		"enabled": 1,
+		"useQuestGiver": 1,
+		"movement": "run",
+		"returnMovement": "walk",
+		"npcCanRun": 1,
+		"finishRegion": 120,
+		"npcWinMode": "continue",
+		"startText": "Think you can beat me to the old bridge?",
+		"npcWinText": "Ha! I beat you there, but you kept up well enough. Good luck.",
+		"playerWinText": "Well run! You beat me fair.",
+		"returnText": "I should ride back now.",
+		"checkpoints": [
+			{ "x": 1450, "y": 1620, "z": 20, "world": 0, "range": 1 },
+			{ "x": 1470, "y": 1640, "z": 20, "world": 0, "range": 1 },
+			{ "x": 1500, "y": 1660, "z": 20, "world": 0, "range": 2, "playerRange": 5 }
+		]
+	},
+
+	"rewards": [
+		{ "type": "gold", "amount": 250, "name": "Gold" }
+	]
+}
+</code></pre>
+						</div>
+
+						<p>
+							The final checkpoint in the <span class="hl">checkpoints</span> array is treated as the player finish point.
+							Use <span class="hl">playerRange</span> on the final checkpoint to control how close the player must be to finish the race.
+							If <span class="hl">playerRange</span> is not set, the system falls back to the checkpoint <span class="hl">range</span> value,
+							then finally to a small default range.
+						</p>
+
+						<p>
+							<span class="hl">finishRegion</span> is optional. You can keep it as a backup finish method, or rely only on the final checkpoint position.
+						</p>
+
 						<p>
 							Rewards are also built from fields in the quest entry.
 						</p>
@@ -7707,7 +7903,7 @@ CUSTOMINTTAG=QuestID 2000
 							<li>The quest is removed from progress</li>
 							<li>The failure is logged</li>
 							<li>Any marked quest items are cleaned up</li>
-							<li>Escort NPCs are cleaned up if applicable</li>
+							<li>Escort, guided walk, and race NPCs are cleaned up if applicable</li>
 							<li>On login, remaining timed quests have their timers restored automatically</li>
 						</ul>
 
@@ -7750,6 +7946,7 @@ CUSTOMINTTAG=QuestID 2000
 							<li>Restoring kill quest and skillgain triggers</li>
 							<li>Repairing active escort quests if the escort NPC still exists</li>
 							<li>Failing broken escort quests cleanly if the escort NPC is gone</li>
+							<li>Cleaning up guided walk or race NPC state when a quest ends</li>
 						</ul>
 
 						<h3>Example Quest Entries</h3>
@@ -7990,6 +8187,98 @@ CUSTOMINTTAG=QuestID 2000
 }
 </code></pre>
 
+
+							<p><strong>Guided Walk Quest</strong></p>
+
+<pre><code class="language-javascript">
+{
+	"questID": 5100,
+	"title": "A Walk by the Mill",
+	"description": "The miller wants to speak with you while walking nearby.",
+	"uncomplete": "You still need to bring me 5 sacks of flour.",
+	"complete": "Good. This will help keep the mill running.",
+	"refuse": "Another time, then.",
+	"type": "collect",
+	"category": "Side Quests",
+	"oneTimeQuest": 0,
+	"questTurnIn": 1,
+	"guidedWalk": {
+		"enabled": 1,
+		"maxDistance": 24,
+		"movement": "walk",
+		"returnMovement": "walk",
+		"startText": "Come with me a moment. I will explain what happened.",
+		"tooFarText": "Stay close. I am still telling the story.",
+		"returnText": "I should return to my post.",
+		"finalText": "That is why I need 5 sacks of flour. Bring them back when you have them.",
+		"steps": [
+			{
+				"x": 1450,
+				"y": 1622,
+				"z": 20,
+				"world": 0,
+				"range": 1,
+				"startText": "This mill used to feed half the town.",
+				"arrivalText": "Every morning, wagons would line this road."
+			},
+			{
+				"x": 1455,
+				"y": 1627,
+				"z": 20,
+				"world": 0,
+				"range": 1,
+				"startText": "Then the shipments started disappearing.",
+				"arrivalText": "At first I thought it was just bad luck."
+			}
+		]
+	},
+	"targetItems": [
+		{ "sectionID": "flour_sack", "amount": 5, "name": "Flour Sack" }
+	],
+	"rewards": [
+		{ "type": "gold", "amount": 250, "name": "Gold" }
+	]
+}
+</code></pre>
+
+							<p><strong>Race Quest</strong></p>
+
+<pre><code class="language-javascript">
+{
+	"questID": 5200,
+	"title": "Race to the Old Bridge",
+	"description": "A mounted traveler wants to race you to the old bridge.",
+	"uncomplete": "The race is not finished yet.",
+	"complete": "That was a fine race.",
+	"refuse": "Maybe another time.",
+	"type": "race",
+	"category": "Side Quests",
+	"oneTimeQuest": 0,
+	"questTurnIn": 0,
+	"race": {
+		"enabled": 1,
+		"useQuestGiver": 1,
+		"movement": "run",
+		"returnMovement": "walk",
+		"npcCanRun": 1,
+		"finishRegion": 120,
+		"npcWinMode": "continue",
+		"startText": "Think you can beat me to the old bridge?",
+		"npcWinText": "Ha! I beat you there, but you kept up well enough. Good luck.",
+		"playerWinText": "Well run! You beat me fair.",
+		"returnText": "I should ride back now.",
+		"checkpoints": [
+			{ "x": 1450, "y": 1620, "z": 20, "world": 0, "range": 1 },
+			{ "x": 1470, "y": 1640, "z": 20, "world": 0, "range": 1 },
+			{ "x": 1500, "y": 1660, "z": 20, "world": 0, "range": 2, "playerRange": 5 }
+		]
+	},
+	"rewards": [
+		{ "type": "gold", "amount": 250, "name": "Gold" }
+	]
+}
+</code></pre>
+
 						</div>
 
 						<h3>Tips</h3>
@@ -8007,6 +8296,14 @@ CUSTOMINTTAG=QuestID 2000
 							<li>Use <span class="hl">regionID</span> for escort destinations, not region names</li>
 							<li>Use <span class="hl">randomDestinationPool</span> for reusable escort routes</li>
 							<li>Use waypoint <span class="hl">ambush</span> and <span class="hl">travelAmbush</span> for dangerous road encounters</li>
+							<li>Use <span class="hl">guidedWalk</span> for story walks where the NPC talks before the real objective continues</li>
+							<li>Use short guided walk steps so NPC speech feels natural while moving</li>
+							<li>Use <span class="hl">race</span> for optional fun races, mounted NPC challenges, or timed travel flavor</li>
+							<li>Use <span class="hl">npcWinMode</span> set to <span class="hl">continue</span> for friendly races that should not punish players</li>
+							<li>Use <span class="hl">npcWinMode</span> set to <span class="hl">fail</span> only for hard challenge races</li>
+							<li>Use <span class="hl">playerRange</span> on the final race checkpoint to control how close the player must be to finish</li>
+							<li>Use <span class="hl">finishRegion</span> as an optional backup for race completion</li>
+							<li>Use <span class="hl">npcCanRun</span> if the race NPC should use run movement</li>
 							<li>Use <span class="hl">despawnSeconds</span> to prevent abandoned ambush attackers from remaining in the world</li>
 							<li>Use <span class="hl">setTags</span> and <span class="hl">setTagDeltas</span> for reputation, alignment, or character progression</li>
 							<li>Use <span class="hl">setWorldState</span> and <span class="hl">worldStateDeltas</span> for story or world progression</li>
