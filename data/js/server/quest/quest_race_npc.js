@@ -233,6 +233,7 @@ function ClearRaceState( raceNpc, keepAtCurrentLocation )
 	var homeWorld = parseInt( raceNpc.GetTag( "QuestRaceHomeWorld" ), 10 );
 	var homeInstance = parseInt( raceNpc.GetTag( "QuestRaceHomeInstance" ), 10 );
 	var originalCanRun = parseInt( raceNpc.GetTag( "QuestRaceOriginalCanRun" ), 10 );
+	var originalFrozen = parseInt( raceNpc.GetTag( "QuestRaceOriginalFrozen" ), 10 );
 
 	raceNpc.Follow( null );
 	raceNpc.owner = null;
@@ -240,6 +241,11 @@ function ClearRaceState( raceNpc, keepAtCurrentLocation )
 	if( !isNaN( originalCanRun ) )
 	{
 		raceNpc.canRun = ( originalCanRun == 1 );
+	}
+
+	if( !isNaN( originalFrozen ) )
+	{
+		raceNpc.frozen = ( originalFrozen == 1 );
 	}
 
 	raceNpc.SetTag( "QuestRace", null );
@@ -253,6 +259,7 @@ function ClearRaceState( raceNpc, keepAtCurrentLocation )
 	raceNpc.SetTag( "QuestRaceHomeWorld", null );
 	raceNpc.SetTag( "QuestRaceHomeInstance", null );
 	raceNpc.SetTag( "QuestRaceOriginalCanRun", null );
+	raceNpc.SetTag( "QuestRaceOriginalFrozen", null );
 	raceNpc.SetTag( "QuestRaceReturnText", null );
 	raceNpc.SetTag( "QuestRaceReturnMovement", null );
 

@@ -1790,6 +1790,11 @@ function ValidateTimedQuestsOnLogin( player )
 				CleanupEscortQuestNPC( player, questEntry.questID );
 			}
 
+			if( quest.guidedWalk && quest.guidedWalk.enabled )
+			{
+				CleanupGuidedWalkQuestNPC( player, questEntry.questID );
+			}
+
 			if( quest.race && quest.race.enabled )
 			{
 				CleanupRaceQuestNPC( player, questEntry.questID );
@@ -2332,6 +2337,8 @@ function StartRaceQuestNPC( player, questID, quest, questGiver )
 	questGiver.SetTag( "QuestRaceHomeWorld", questGiver.worldnumber );
 	questGiver.SetTag( "QuestRaceHomeInstance", questGiver.instanceID );
 	questGiver.SetTag( "QuestRaceOriginalCanRun", questGiver.canRun ? 1 : 0 );
+	questGiver.SetTag( "QuestRaceOriginalFrozen", questGiver.frozen ? 1 : 0 );
+	questGiver.frozen = false;
 	questGiver.SetTag( "QuestRaceReturnText", quest.race.returnText || "" );
 	questGiver.SetTag( "QuestRaceReturnMovement", quest.race.returnMovement || "walk" );
 	questGiver.isAwake =true;
@@ -2394,10 +2401,16 @@ function CleanupRaceQuestNPC( player, questID )
 		var homeWorld = parseInt( raceNpc.GetTag( "QuestRaceHomeWorld" ), 10 );
 		var homeInstance = parseInt( raceNpc.GetTag( "QuestRaceHomeInstance" ), 10 );
 		var originalCanRun = parseInt( raceNpc.GetTag( "QuestRaceOriginalCanRun" ), 10 );
+		var originalFrozen = parseInt( raceNpc.GetTag( "QuestRaceOriginalFrozen" ), 10 );
 
 		if( !isNaN( originalCanRun ) )
 		{
 			raceNpc.canRun = ( originalCanRun == 1 );
+		}
+
+		if( !isNaN( originalFrozen ) )
+		{
+			raceNpc.frozen = ( originalFrozen == 1 );
 		}
 
 		raceNpc.SetTag( "QuestRace", null );
@@ -2411,6 +2424,7 @@ function CleanupRaceQuestNPC( player, questID )
 		raceNpc.SetTag( "QuestRaceHomeWorld", null );
 		raceNpc.SetTag( "QuestRaceHomeInstance", null );
 		raceNpc.SetTag( "QuestRaceOriginalCanRun", null );
+		raceNpc.SetTag( "QuestRaceOriginalFrozen", null );
 		raceNpc.SetTag( "QuestRaceReturnText", null );
 		raceNpc.SetTag( "QuestRaceReturnMovement", null );
 
@@ -2739,6 +2753,8 @@ function StartGuidedWalkQuestNPC( player, questID, quest, questGiver )
 	questGiver.SetTag( "QuestGuidedWalkHomeWorld", questGiver.worldnumber );
 	questGiver.SetTag( "QuestGuidedWalkHomeInstance", questGiver.instanceID );
 	questGiver.SetTag( "QuestGuidedWalkReturnMovement", quest.guidedWalk.returnMovement || "walk" );
+	questGiver.SetTag( "QuestGuidedWalkOriginalFrozen", questGiver.frozen ? 1 : 0 );
+	questGiver.frozen = false;
 
 	if( quest.guidedWalk.startText )
 	{
@@ -2792,6 +2808,12 @@ function CleanupGuidedWalkQuestNPC( player, questID )
 		var homeZ = parseInt( guideNpc.GetTag( "QuestGuidedWalkHomeZ" ), 10 );
 		var homeWorld = parseInt( guideNpc.GetTag( "QuestGuidedWalkHomeWorld" ), 10 );
 		var homeInstance = parseInt( guideNpc.GetTag( "QuestGuidedWalkHomeInstance" ), 10 );
+		var originalFrozen = parseInt( guideNpc.GetTag( "QuestGuidedWalkOriginalFrozen" ), 10 );
+
+		if( !isNaN( originalFrozen ) )
+		{
+			guideNpc.frozen = ( originalFrozen == 1 );
+		}
 
 		guideNpc.SetTag( "QuestGuidedWalk", null );
 		guideNpc.SetTag( "QuestGuidedWalkQuestID", null );
@@ -2808,6 +2830,7 @@ function CleanupGuidedWalkQuestNPC( player, questID )
 		guideNpc.SetTag( "QuestGuidedWalkHomeWorld", null );
 		guideNpc.SetTag( "QuestGuidedWalkHomeInstance", null );
 		guideNpc.SetTag( "QuestGuidedWalkReturnMovement", null );
+		guideNpc.SetTag( "QuestGuidedWalkOriginalFrozen", null );
 
 		var guideStepIndex = 0;
 		for( guideStepIndex = 0; guideStepIndex < 50; guideStepIndex++ )
@@ -3833,6 +3856,13 @@ function LogFailedQuest( player, failedQuest )
 			"SelectedWaypoints=" + SerializeSelectedWaypoints( failedQuest.selectedWaypoints ) + "\n" +
 			"SelectedDestinationRegionID=" + ( failedQuest.selectedDestinationRegionID || 0 ) + "\n" +
 			"SelectedDestinationRegionName=" + ( failedQuest.selectedDestinationRegionName || "" ) + "\n" +
+			"GuidedWalkNPCSerial=" + ( failedQuest.guidedWalkNPCSerial || 0 ) + "\n" +
+			"GuidedWalkUsesQuestGiver=" + ( failedQuest.guidedWalkUsesQuestGiver ? "1" : "0" ) + "\n" +
+			"RaceNPCSerial=" + ( failedQuest.raceNPCSerial || 0 ) + "\n" +
+			"RaceUsesQuestGiver=" + ( failedQuest.raceUsesQuestGiver ? "1" : "0" ) + "\n" +
+			"RaceCheckpoint=" + ( failedQuest.raceCheckpoint || 0 ) + "\n" +
+			"RaceCompleted=" + ( failedQuest.raceCompleted ? "1" : "0" ) + "\n" +
+			"RaceWinner=" + ( failedQuest.raceWinner || "" ) + "\n" +
 			"Completed=0\n" +
 			"QuestTurnIn=0\n" +
 			"Failed=1\n\n";
@@ -4194,6 +4224,8 @@ function WriteQuestProgress( player, questProgressArray )
 				"MaxSkillPoints=" + ( progressEntry.maxSkillPoints || 50.0 ) + "\n" +
 				"StartTime=" + ( progressEntry.startTime || 0 ) + "\n" +
 				"TimeLimit=" + ( progressEntry.timeLimit || 0 ) + "\n" +
+				"GuidedWalkNPCSerial=" + ( progressEntry.guidedWalkNPCSerial || 0 ) + "\n" +
+				"GuidedWalkUsesQuestGiver=" + ( progressEntry.guidedWalkUsesQuestGiver ? "1" : "0" ) + "\n" +
 				"RaceNPCSerial=" + ( progressEntry.raceNPCSerial || 0 ) + "\n" +
 				"RaceUsesQuestGiver=" + ( progressEntry.raceUsesQuestGiver ? "1" : "0" ) + "\n" +
 				"RaceCheckpoint=" + ( progressEntry.raceCheckpoint || 0 ) + "\n" +
@@ -4327,6 +4359,14 @@ function finalizeQuestEntry( entry, player )
 		entry.selectedDestinationRegionID = 0;
 
 	entry.selectedDestinationRegionName = entry.selecteddestinationregionname || "";
+
+	entry.guidedWalkNPCSerial = parseInt( entry.guidedwalknpcserial || "0", 10 );
+	if( isNaN( entry.guidedWalkNPCSerial ) )
+	{
+		entry.guidedWalkNPCSerial = 0;
+	}
+
+	entry.guidedWalkUsesQuestGiver = ( entry.guidedwalkusesquestgiver == "1" );
 
 	processCollectedItems( entry, player );
 	processCollectedItemGroups( entry, player );

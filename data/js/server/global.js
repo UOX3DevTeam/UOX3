@@ -90,6 +90,8 @@ function onLogin( socket, pChar )
 		TriggerEvent( 5800, "ValidateTimedQuestsOnLogin", pChar );
 		TriggerEvent( 5800, "RestoreQuestPlayerTriggersOnLogin", pChar );
 		TriggerEvent( 5800, "ValidateEscortQuestsOnLogin", pChar );
+		TriggerEvent( 5800, "ValidateGuidedWalkQuestsOnLogin", pChar );
+		TriggerEvent( 5800, "ValidateRaceQuestsOnLogin", pChar );
 	}
 
 	if( questSystemEnabled && loginQuestEnabled )

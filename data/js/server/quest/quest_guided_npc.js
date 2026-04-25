@@ -298,9 +298,14 @@ function ClearGuidedWalkState( guideNpc, keepAtCurrentLocation )
 	var homeZ = parseInt( guideNpc.GetTag( "QuestGuidedWalkHomeZ" ), 10 );
 	var homeWorld = parseInt( guideNpc.GetTag( "QuestGuidedWalkHomeWorld" ), 10 );
 	var homeInstance = parseInt( guideNpc.GetTag( "QuestGuidedWalkHomeInstance" ), 10 );
+	var originalFrozen = parseInt( guideNpc.GetTag( "QuestGuidedWalkOriginalFrozen" ), 10 );
 
 	guideNpc.Follow( null );
 	guideNpc.owner = null;
+	if( !isNaN( originalFrozen ) )
+	{
+		guideNpc.frozen = ( originalFrozen == 1 );
+	}
 
 	guideNpc.SetTag( "QuestGuidedWalk", null );
 	guideNpc.SetTag( "QuestGuidedWalkQuestID", null );
@@ -316,6 +321,7 @@ function ClearGuidedWalkState( guideNpc, keepAtCurrentLocation )
 	guideNpc.SetTag( "QuestGuidedWalkHomeZ", null );
 	guideNpc.SetTag( "QuestGuidedWalkHomeWorld", null );
 	guideNpc.SetTag( "QuestGuidedWalkHomeInstance", null );
+	guideNpc.SetTag( "QuestGuidedWalkOriginalFrozen", null );
 
 	var guideStepIndex = 0;
 	for( guideStepIndex = 0; guideStepIndex < 50; guideStepIndex++ )
@@ -344,8 +350,8 @@ function ClearGuidedWalkState( guideNpc, keepAtCurrentLocation )
 		}
 	}
 
-	if( guideNpc.HasScriptTrigger( 5815 ) )
+	if( guideNpc.HasScriptTrigger( 5816 ) )
 	{
-		guideNpc.RemoveScriptTrigger( 5815 );
+		guideNpc.RemoveScriptTrigger( 5816 );
 	}
 }
