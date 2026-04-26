@@ -372,7 +372,7 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 				{
 					bool newPath = false;
 					bool allowPartial = true; // Allow partial pathfinding, if it gets us closer
-					newPath = AdvancedPathfinding( c, c->GetPathTargX(), c->GetPathTargY(), ( c->GetRunning() > 0 ), allowPartial );
+					newPath = AdvancedPathfinding( c, c->GetPathTargX(), c->GetPathTargY(), ILLEGAL_Z, ( c->GetRunning() > 0 ), allowPartial );
 					if( !newPath )
 					{
 						c->SetPathResult( 0 ); // partial success
@@ -1959,7 +1959,7 @@ void CMovement::NpcWalk( CChar *i, UI08 j, SI08 getWander )
 				if( cwmWorldState->ServerData()->AdvancedPathfinding() )
 				{
 					bool allowPartial = false; // Don't allow partial pathfinding here - we need the NPC back in the box!
-					pathFound = AdvancedPathfinding( i, fx1, fy1, true, allowPartial );
+					pathFound = AdvancedPathfinding( i, fx1, fy1, fz1, true, allowPartial );
 				}
 				else
 				{
@@ -1996,7 +1996,7 @@ void CMovement::NpcWalk( CChar *i, UI08 j, SI08 getWander )
 				if( cwmWorldState->ServerData()->AdvancedPathfinding() )
 				{
 					bool allowPartial = false; // Don't allow partial pathfinding here, we need the NPC back in the circle!
-					pathFound = AdvancedPathfinding( i, fx1, fy1, true, false );
+					pathFound = AdvancedPathfinding( i, fx1, fy1, fz1, true, allowPartial );
 				}
 				else
 				{
@@ -2349,9 +2349,14 @@ bool CMovement::HandleNPCWander( CChar& mChar )
 					// Determine urgency to recalculate path to target location
 					pathRecalcUrgency += static_cast<R64>( targMoveDist * targMoveWeight );
 					pathRecalcUrgency += static_cast<R64>( isHeadingTowardsPlayer ? 0 : wrongHeadingPenalty );
+					
+					// Apply full time penalty if the target is moving, or a reduced penalty if they're stationary
 					R64 timeSinceLastPath = ( cwmWorldState->GetUICurrentTime() - mChar.GetLastPathCalc() ) / 1000.0;
-					pathRecalcUrgency += static_cast<R64>( timeSinceLastPath * timeSincePathCalcWeight );
-					pathRecalcUrgency *= static_cast<R64>( RandomNum( 8, 12 ) / 10.0 ); // Random jitter to add variation around edge cases
+					R64 timeScale = ( targMoveDist > 0.0 ) ? 1.0 : 0.25;
+					pathRecalcUrgency += static_cast<R64>( timeSinceLastPath * timeSincePathCalcWeight * timeScale );
+
+					// Random jitter to add variation around edge cases
+					pathRecalcUrgency *= static_cast<R64>( RandomNum( 8, 12 ) / 10.0 );
 
 					// Only recalculate path if out of steps to follow, or if urgency to recalculate has suprassed the threshold
 					if( !mChar.StillGotDirs() || pathRecalcUrgency > pathRecalcThreshold )
@@ -2361,7 +2366,7 @@ bool CMovement::HandleNPCWander( CChar& mChar )
 							mChar.FlushPath();
 
 							bool allowPartial = false; // Don't allow partial pathfinding; if follower cannot keep up, teleport them!
-							if( !AdvancedPathfinding( &mChar, kChar->GetX(), kChar->GetY(), canRun, allowPartial ))
+							if( !AdvancedPathfinding( &mChar, kChar->GetX(), kChar->GetY(), kChar->GetZ(), canRun, allowPartial ))
 							{
 								// If NPC is unable to follow owner, teleport to owner
 								if( mChar.GetOwnerObj() == kChar )
@@ -2508,7 +2513,7 @@ bool CMovement::HandleNPCWander( CChar& mChar )
 							if( cwmWorldState->ServerData()->AdvancedPathfinding() )
 							{
 								bool allowPartial = true; // Allow partial pathfinding, anything that helps NPC flee further!
-								if( AdvancedPathfinding( &mChar, myx, myy, canRun, allowPartial ))
+								if( AdvancedPathfinding( &mChar, myx, myy, ILLEGAL_Z, canRun, allowPartial ))
 								{
 									// As long as pathfinding succeeds, avoid random wandering
 									wanderAimlessly = false;
@@ -2785,9 +2790,15 @@ void CMovement::NpcMovement( CChar& mChar )
 					// Determine urgency to recalculate path to target location
 					pathRecalcUrgency += static_cast<R64>( targMoveDist * targMoveWeight );
 					pathRecalcUrgency += static_cast<R64>( isHeadingTowardsPlayer ? 0 : wrongHeadingPenalty );
+					
+
+					// Apply full time penalty if the target is moving, or a reduced penalty if they're stationary
 					R64 timeSinceLastPath = ( cwmWorldState->GetUICurrentTime() - mChar.GetLastPathCalc() ) / 1000.0;
-					pathRecalcUrgency += static_cast<R64>( timeSinceLastPath * timeSincePathCalcWeight );
-					pathRecalcUrgency *= static_cast<R64>( RandomNum( 8, 12 ) / 10.0 ); // Random jitter to add variation around edge cases
+					R64 timeScale = ( targMoveDist > 0.0 ) ? 1.0 : 0.25;
+					pathRecalcUrgency += static_cast<R64>( timeSinceLastPath * timeSincePathCalcWeight * timeScale );
+
+					// Random jitter to add variation around edge cases
+					pathRecalcUrgency *= static_cast<R64>( RandomNum( 8, 12 ) / 10.0 );
 
 					// Only recalculate path if out of steps to follow, or if urgency to recalculate has suprassed the threshold
 					if( !mChar.StillGotDirs() || pathRecalcUrgency > pathRecalcThreshold )
@@ -2796,7 +2807,7 @@ void CMovement::NpcMovement( CChar& mChar )
 
 						bool waterWalk = cwmWorldState->creatures[mChar.GetId()].IsWater();
 						bool allowPartial = waterWalk ? true : false; // Allow partial here, since we try a "pseudo partial" further down anyway!
-						if( !AdvancedPathfinding( &mChar, l->GetX(), l->GetY(), canRun, allowPartial ))
+						if( !AdvancedPathfinding( &mChar, l->GetX(), l->GetY(), l->GetZ(), canRun, allowPartial ))
 						{
 							mChar.SetPathFail( mChar.GetPathFail() + 1 );
 
@@ -2808,7 +2819,7 @@ void CMovement::NpcMovement( CChar& mChar )
 								SI16 rndTargX = l->GetX() + rndNum1;
 								SI16 rndTargY = l->GetY() + rndNum2;
 
-								if( AdvancedPathfinding( &mChar, rndTargX, rndTargY, canRun, allowPartial ))
+								if( AdvancedPathfinding( &mChar, rndTargX, rndTargY, l->GetZ(), canRun, allowPartial ))
 								{
 									mChar.SetPathFail( 0 );
 									mChar.SetOldTargLocX( rndTargX );
@@ -3412,7 +3423,7 @@ SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 o
 				}
 				else
 				{
-					SI08 cmp = std::abs( potentialNewZ - c->GetZ() ) - std::abs( newz - c->GetZ() );
+					SI08 cmp = std::abs( potentialNewZ - oldz ) - std::abs( newz - oldz );
 					if( cmp > 0 || ( cmp == 0 && potentialNewZ > newz ))
 						continue;
 				}
@@ -3478,7 +3489,7 @@ SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 o
 
 		if( moveIsOk )
 		{
-			SI08 cmp = abs( potentialNewZ - c->GetZ() ) - abs( newz - c->GetZ() );
+			SI08 cmp = abs( potentialNewZ - oldz ) - abs( newz - oldz );
 			if( cmp > 0 || ( cmp == 0 && potentialNewZ > newz ))
 			{
 				shouldCheck = false;
@@ -3601,11 +3612,11 @@ bool operator > ( const NodeFCost_st& x, const NodeFCost_st& y )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate nodes from source to target location for advanced pathfinding
 //o------------------------------------------------------------------------------------------------o
-bool CMovement::PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI16 curY, SI08 curZ,
-							UI32 parentSer, std::map<UI32, PfNode_st>& openList, 
-							std::map<UI32, UI32>& closedList, std::deque<NodeFCost_st>& fCostList, bool ignoreDoors )
+bool CMovement::PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, SI08 targZ, UI16 curX, UI16 curY, SI08 curZ,
+							UI64 parentSer, UI16 parentGCost, std::map<UI64, PfNode_st>& openList, 
+							std::map<UI64, UI64>& closedList, std::deque<NodeFCost_st>& fCostList, bool ignoreDoors )
 {
-	std::map<UI32, bool> blockList;
+	std::map<UI64, bool> blockList;
 	blockList.clear();
 
 	bool waterWalk = cwmWorldState->creatures[mChar->GetId()].IsWater();
@@ -3621,8 +3632,6 @@ bool CMovement::PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI
 				continue;
 
 			SI16 checkY = curY + yOff;
-			UI32 locSer = (checkY + ( checkX << 16 ));
-
 			if( amphibianWalk || !waterWalk )
 			{
 				newZ = CalcWalk( mChar, checkX, checkY, curX, curY, curZ, false, false, ignoreDoors );
@@ -3631,7 +3640,13 @@ bool CMovement::PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI
 			{
 				newZ = CalcWalk( mChar, checkX, checkY, curX, curY, curZ, false, true, ignoreDoors );
 			}
-			if( ILLEGAL_Z == newZ )
+
+			// Serialize location after newZ has been updated
+			UI64 locSer = ( static_cast<UI64>( checkY ) | ( static_cast<UI64>( checkX ) << 16 ) | ( static_cast<UI64>( static_cast<UI08>( newZ ) ) << 32 ) );
+
+			// Prevent pathfinding off tall ledges
+			// Note that some ladder setups can produce quite drastic Z changes
+			if( ILLEGAL_Z == newZ || ( curZ - newZ > 13 ) )
 			{
 				blockList[locSer] = true;
 				continue;
@@ -3640,84 +3655,85 @@ bool CMovement::PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI
 			//if( blockList.find( locSer ) != blockList.end() )
 			//	continue;
 
-			// Let's make this more expensive by checking for potential blocking characters as well!
+			// Make this more expensive by checking for potential blocking characters as well
 			if(( checkX != targX || checkY != targY ) && CheckForCharacterAtXYZ( mChar, checkX, checkY, curZ ))
 			{
 				blockList[locSer] = true;
 				continue;
 			}
 
-			// Don't Cut Corners
+			// Don't cut corners
 			bool cornerBlocked = false;
 			if( xOff != 0 && yOff != 0 )
 			{
-				UI32 check1Ser = ( checkY + ( curX << 16 ));
-				UI32 check2Ser = ( curY + ( checkX << 16 ));
-				if( blockList.find( check1Ser ) != blockList.end() || blockList.find( check2Ser ) != blockList.end() )
+				SI08 corner1Z = CalcWalk( mChar, curX, checkY, curX, curY, curZ, true );
+				SI08 corner2Z = CalcWalk( mChar, checkX, curY, curX, curY, curZ, true );
+
+				if( corner1Z == ILLEGAL_Z )
 				{
 					cornerBlocked = true;
 				}
-				else
+				else if( corner2Z == ILLEGAL_Z )
 				{
-					if( CalcWalk( mChar, curX, checkY, curX, curY, curZ, true ) == ILLEGAL_Z )
-					{
-						cornerBlocked = true;
-						blockList[check1Ser] = true;
-					}
-					else if( CalcWalk( mChar, checkX, curY, curX, curY, curZ, true ) == ILLEGAL_Z )
-					{
-						cornerBlocked = true;
-						blockList[check2Ser] = true;
-					}
+					cornerBlocked = true;
 				}
 			}
 			if( cornerBlocked )
 				continue;
 
-			if( checkX == targX && checkY == targY )
+			// Z margin of error to allow for minor terrain/stair disparities
+			if( checkX == targX && checkY == targY && ( targZ == ILLEGAL_Z || std::abs( newZ - targZ ) <= 4 ) )
 				return true;
 
-			UI08 gCost = 10;
+			// Accumulate path cost based on parent node
+			UI16 gCost = parentGCost + 10;
 			if( xOff && yOff )
 			{
-				gCost = 14;
+				gCost = parentGCost + 14;
 			}
 
-			std::map<UI32, PfNode_st>::const_iterator olIter;
+			std::map<UI64, PfNode_st>::iterator olIter;
 			olIter = openList.find( locSer );
 			if( olIter != openList.end() )
 			{
-				PfNode_st mNode = olIter->second;
-				if( mNode.gCost > gCost )
+				// Ensure modifications are written directly to the active node in the map
+				if( olIter->second.gCost > gCost )
 				{
 					for( std::deque< NodeFCost_st >::iterator fcIter = fCostList.begin(); fcIter != fCostList.end(); ++fcIter )
 					{
 						if(( *fcIter ).xySer == locSer )
 						{
-							( *fcIter ).fCost = mNode.hCost + gCost;
+							( *fcIter ).fCost = olIter->second.hCost + gCost;
 							break;
 						}
 					}
-					mNode.z			= newZ;
-					mNode.parent	= parentSer;
-					mNode.gCost		= gCost;
+					olIter->second.z		= newZ;
+					olIter->second.parent	= parentSer;
+					olIter->second.gCost	= gCost;
 					std::sort( fCostList.begin(), fCostList.end() );
 				}
 			}
 			else if( closedList.find( locSer ) == closedList.end() )
 			{
-				// (Old) Manhattan Distance Heuristic
-				// UI16 hCost = 10 * ( abs( checkX - targX) + abs( checkY - targY ));
-
 				// (New) Octile Distance Heuristic
 				uint16_t dx = std::abs( checkX - targX );
 				uint16_t dy = std::abs( checkY - targY );
+				uint16_t dz = ( targZ == ILLEGAL_Z ) ? 0 : std::abs( newZ - targZ );
 
 				// Let D=10 (orth cost), D2=14 (diag cost)
 				uint16_t D  = 10;
 				uint16_t D2 = 14;
 
+				// Calculate baseline Octile distance
 				UI16 hCost = D*( dx + dy ) + ( D2 - 2 * D ) * std::min( dx, dy );
+
+				// Baseline Z-Penalty to gently "pull" the pathfinder toward stairs in cases where
+				// target Z is different than starting Z
+				hCost += ( dz * 2 );
+
+				// Inflate by at least ~1% to break symmetry and prevent flood-filling on open areas
+				hCost += ( hCost / 100 ) + 1;
+
 				UI16 fCost = gCost + hCost;
 
 				openList[locSer] = PfNode_st( hCost, gCost, parentSer, newZ );
@@ -3735,7 +3751,7 @@ bool CMovement::PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI
 //|	Purpose		-	Handle the advanced variant of NPC pathfinding
 //|					Enabled/Disabled throuugh UOX.INI setting - ADVANCEDPATHFINDING=0/1
 //o------------------------------------------------------------------------------------------------o
-bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool willRun, bool allowPartial, UI16 maxSteps, bool ignoreDoors )
+bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, SI08 targZ, bool willRun, bool allowPartial, UI16 maxSteps, bool ignoreDoors )
 {
 	UI16 startX			= mChar->GetX();
 	UI16 startY			= mChar->GetY();
@@ -3745,6 +3761,7 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 	UI08 oldDir			= mChar->GetDir();
 	UI16 loopCtr		= 0;
 	EVENT_TIMER( mytimer, EVENT_TIMER_OFF );
+
 	// Set target location in NPC's mind
 	mChar->SetPathTargX( targX );
 	mChar->SetPathTargY( targY );
@@ -3793,32 +3810,49 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 		}
 	}
 
-	std::map<UI32, PfNode_st>	openList;
-	std::map<UI32, UI32>	closedList;
+	// Boost maxSteps dynamically if the target is on a different floor.
+	// Navigating away from the target to find stairs requires a significantly larger search space.
+	if( targZ != ILLEGAL_Z && std::abs( targZ - mChar->GetZ() ) > 10 )
+	{
+		maxSteps *= 3; 
+	}
+
+	std::map<UI64, PfNode_st>	openList;
+	std::map<UI64, UI64>	closedList;
 	std::deque<NodeFCost_st>	fCostList;
 
 	openList.clear();
 	closedList.clear();
 	fCostList.resize( 0 );
 
-	UI32 parentSer			= ( curY + ( curX << 16 ));
+	// Bit-pack X, Y and Z coords into a single 64-bit node ID
+	UI64 parentSer = ( static_cast<UI64>( curY ) | ( static_cast<UI64>( curX ) << 16 ) | ( static_cast<UI64>( static_cast<UI08>( curZ ) ) << 32 ) );
 	openList[parentSer]		= PfNode_st();
 	openList[parentSer].z	= curZ;
 	fCostList.push_back( NodeFCost_st( 0, parentSer ));
 
-	while(( curX != targX || curY != targY ) && loopCtr < maxSteps )
+	bool bPathFound = false;
+
+	// Include Z in the condition so it does not stop searching when directly under the target
+	while(( curX != targX || curY != targY || ( targZ != ILLEGAL_Z && std::abs( curZ - targZ ) > 4 )) && loopCtr < maxSteps )
 	{
 		parentSer = fCostList[0].xySer;
-		curX = static_cast<UI16>( parentSer >> 16 );
-		curY = static_cast<UI16>( parentSer % 65536 );
-		curZ = openList[parentSer].z;
+		
+		// Grab the fCost before popping it
+		UI32 currentFCost = fCostList[0].fCost;
 
-		closedList[parentSer] = static_cast<UI32>( openList[parentSer].parent );
+		curX = static_cast<UI16>( ( parentSer >> 16 ) & 0xFFFF );
+		curY = static_cast<UI16>( parentSer & 0xFFFF );
+		curZ = openList[parentSer].z;
+		UI16 parentGCost = openList[parentSer].gCost;
+
+		closedList[parentSer] = openList[parentSer].parent;
 		openList.erase( openList.find( parentSer ));
 		fCostList.pop_front();
 
-		if( PFGrabNodes( mChar, targX, targY, curX, curY, curZ, parentSer, openList, closedList, fCostList, ignoreDoors ))
+		if( PFGrabNodes( mChar, targX, targY, targZ, curX, curY, curZ, parentSer, parentGCost, openList, closedList, fCostList, ignoreDoors ))
 		{
+			bPathFound = true;
 			std::vector<UI08> dirsToPush;
 			while( parentSer != 0 )
 			{
@@ -3835,8 +3869,10 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 				targX		= curX;
 				targY		= curY;
 				parentSer 	= closedList[parentSer];
-				curX		= static_cast<UI16>( parentSer >> 16 );
-				curY		= static_cast<UI16>( parentSer % 65536 );
+
+				// Unpack X and Y from parentSer
+				curX		= static_cast<UI16>( ( parentSer >> 16 ) & 0xFFFF );
+				curY		= static_cast<UI16>( parentSer & 0xFFFF );
 			}
 
 			UI08 origDir = mChar->GetDir();
@@ -3860,7 +3896,8 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 		}
 		++loopCtr;
 	}
-	if( loopCtr == maxSteps || ( loopCtr > 0 && closedList.size() > 0 && mChar->GetX() != targX && mChar->GetY() != targY ))
+	// Only trigger partial pathfinding if we did not already find the perfect path
+	if( !bPathFound && ( loopCtr == maxSteps || ( loopCtr > 0 && closedList.size() > 0 && mChar->GetX() != targX && mChar->GetY() != targY )))
 	{
 		// Failed to find full path to target location, max step limit reached
 #if defined( UOX_DEBUG_MODE )
@@ -3872,28 +3909,31 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 		// Try to find partial path that takes NPC within 1 tile of target location
 		if( allowPartial )
 		{
-			UI32 startKey = startY + ( startX << 16 );
-			UI32 bestCandidate = 0;
+			UI64 startKey = ( static_cast<UI64>( startY ) | ( static_cast<UI64>( startX ) << 16 ) | ( static_cast<UI64>( static_cast<UI08>( mChar->GetZ() ) ) << 32 ) );
+			UI64 bestCandidate = 0;
 			UI16 bestCandidateDist = 0xFFFF;
 
 			// Iterate through ist of fully evaluated tiles to find reachable tile near target
 			for( auto it = closedList.begin(); it != closedList.end(); ++it )
 			{
-				UI32 candidateKey = it->first;
+				UI64 candidateKey = it->first;
 
 				// Skip the starting node, doesn't contribute to movement
 				if( candidateKey == startKey )
 					continue;
 
-				UI16 candX = static_cast<UI16>( candidateKey >> 16 );
-				UI16 candY = static_cast<UI16>( candidateKey % 65536 );
+				UI16 candX = static_cast<UI16>( ( candidateKey >> 16 ) & 0xFFFF );
+				UI16 candY = static_cast<UI16>( candidateKey & 0xFFFF );
+				SI08 candZ = static_cast<SI08>( candidateKey >> 32 );
 
 				UI16 dx = std::abs( static_cast<SI16>( candX ) - static_cast<SI16>( targX ));
 				UI16 dy = std::abs( static_cast<SI16>( candY ) - static_cast<SI16>( targY ));
+				UI16 dz = ( targZ == ILLEGAL_Z ) ? 0 : std::abs( candZ - targZ );
 
-				// Manhattan + Step Cost Weight
-				UI16 stepCost = closedList.size() % 5; // Slight weight to favor lower steps
-				UI16 d = ( dx + dy ) + stepCost;
+				// Manhattan + Step Cost Weight + Z Weight
+				UI16 stepCost = closedList.size() % 5; 
+				// Multiply dz by a factor to prioritize finding the correct floor over strict X/Y proximity
+				UI16 d = ( dx + dy ) + ( dz * 3 ) + stepCost;
 
 				if( d < bestCandidateDist )
 				{
@@ -3904,8 +3944,8 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 
 			if( bestCandidate != 0 )
 			{
-				std::vector<UI32> pathChain;
-				UI32 curCandidate = bestCandidate;
+				std::vector<UI64> pathChain;
+				UI64 curCandidate = bestCandidate;
 
 				while( curCandidate != 0 && closedList.find(curCandidate) != closedList.end() )
 				{
@@ -3932,13 +3972,13 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 				UI08 oldDir = UNKNOWNDIR;
 				for( size_t i = 0; i < pathChain.size() - 1; i++ )
 				{
-					UI32 fromKey = pathChain[i];
-					UI32 toKey = pathChain[i+1];
+					UI64 fromKey = pathChain[i];
+					UI64 toKey = pathChain[i+1];
 
-					UI16 fromX = static_cast<UI16>( fromKey >> 16 );
-					UI16 fromY = static_cast<UI16>( fromKey % 65536 );
-					UI16 toX = static_cast<UI16>( toKey >> 16 );
-					UI16 toY = static_cast<UI16>( toKey % 65536 );
+					UI16 fromX = static_cast<UI16>( ( fromKey >> 16 ) & 0xFFFF );
+					UI16 fromY = static_cast<UI16>( fromKey & 0xFFFF );
+					UI16 toX = static_cast<UI16>( ( toKey >> 16 ) & 0xFFFF );
+					UI16 toY = static_cast<UI16>( toKey & 0xFFFF );
 					//Console.Warning( oldstrutil::format( "AdvancedPathfinding: Going to %u, %u.\n", toX, toY ));
 
 					UI08 newDir = Direction( fromX, fromY, toX, toY );
@@ -3951,8 +3991,9 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 					mChar->PushDirection( newDir );
 					oldDir = newDir;
 
-					// **NEW: Stop if we're adjacent to the blocked target**
-					if( std::abs(( int )toX - ( int )targX ) <= 1 && std::abs(( int )toY - ( int )targY ) <= 1 )
+					SI08 toZ = static_cast<SI08>( toKey >> 32 );
+					// Stop if we're adjacent to the blocked target, ensuring we are on the same floor
+					if( std::abs(( int )toX - ( int )targX ) <= 1 && std::abs(( int )toY - ( int )targY ) <= 1 && ( targZ == ILLEGAL_Z || std::abs( toZ - targZ ) <= 4 ) )
 					{
 						break;
 					}
@@ -4113,7 +4154,7 @@ auto CMovement::IgnoreAndEvadeTarget( CChar *mChar ) -> void
 			}
 			mChar->SetNpcWander( WT_PATHFIND );
 			bool allowPartial = true; // Sure, let's allow partial here
-			[[maybe_unused]] bool retVal = AdvancedPathfinding( mChar, evadeTargX, evadeTargY, true, allowPartial, 20 );
+			[[maybe_unused]] bool retVal = AdvancedPathfinding( mChar, evadeTargX, evadeTargY, ILLEGAL_Z, true, allowPartial, 20 );
 		}
 
 		if( mChar->GetAttacker() == mTarget )

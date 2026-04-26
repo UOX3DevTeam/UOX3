@@ -11379,7 +11379,7 @@ var coldResist = pUser.Resist( 4 );</code></pre>
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
 									<p><em>void RunTo( object, maxSteps[, allowPartial, ignoreDoors] );</em></p>
-									<p><em>void RunTo( x, y, maxSteps[, allowPartial, ignoreDoors] );</em></p>
+									<p><em>void RunTo( x, y, z, maxSteps[, allowPartial, ignoreDoors] );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -11390,7 +11390,7 @@ var coldResist = pUser.Resist( 4 );</code></pre>
 									<p>Supported parameters:</p>
 									<ul>
 										<li><strong>object</strong> - Dynamic object to pathfind to</li>
-										<li><strong>x, y</strong> - Alternative to object, location to pathfind to</li>
+										<li><strong>x, y, z</strong> - Alternative to object, location to pathfind to</li>
 										<li><strong>maxSteps</strong> - Max steps to use in pathfinding calculation to find a valid path</li>
 										<li><strong>allowPartial</strong> - Optional, if true will allow partial pathfinding that will calculate a path near to desired location, if actual location is blocked</li>
 										<li><strong>ignoreDoors</strong> - Pathfinding will calculate a path as if doors are not there. Up to script/custom NPC AIs to open the doors to get them through and continue on their way (using onPathFindEnd, for instance)</li>
@@ -11741,7 +11741,7 @@ myNPC.TurnToward( myObject.x, myObject.y );</code></pre>
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
 									<p><em>void WalkTo( object, maxSteps[, allowPartial, ignoreDoors] );</em></p>
-									<p><em>void WalkTo( x, y, maxSteps[, allowPartial, ignoreDoors] );</em></p>
+									<p><em>void WalkTo( x, y, z, maxSteps[, allowPartial, ignoreDoors] );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -11752,7 +11752,7 @@ myNPC.TurnToward( myObject.x, myObject.y );</code></pre>
 									<p>Supported parameters:</p>
 									<ul>
 										<li><strong>object</strong> - Dynamic object to pathfind to</li>
-										<li><strong>x, y</strong> - Alternative to object, location to pathfind to</li>
+										<li><strong>x, y, z</strong> - Alternative to object, location to pathfind to</li>
 										<li><strong>maxSteps</strong> - Max steps to use in pathfinding calculation to find a valid path</li>
 										<li><strong>allowPartial</strong> - Optional, if true will allow partial pathfinding that will calculate a path near to desired location, if actual location is blocked</li>
 										<li><strong>ignoreDoors</strong> - Pathfinding will calculate a path as if doors are not there. Up to script/custom NPC AIs to open the doors to get them through and continue on their way (using onPathFindEnd, for instance)</li>
