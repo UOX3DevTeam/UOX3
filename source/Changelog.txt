@@ -1,3 +1,9 @@
+26/04/2026 - Xoduz (#540)
+    [UPD] UOX3 now supports Z as a third dimension for NPC pathfinding; automatically used in most places in code, it can also be triggered via .WalkTo() and .RunTo() JS Methods, which have been updated to support target Z coordinate. This means NPCs can now navigate up and down stairs, move between floors of buildings, etc.
+    [UPD] NPCs will recalculate their path less often now in situations with little-to-no change since last they got a valid path, if they still have remaining steps in their previously calculated path. However, the more time passes from the original pathfind calculation, the more likely it is to retrigger.
+    [UPD] Updated 'xwalk and 'xrun GM commands (js/commands/targeting/xwalk.js), hireling AI (js/npc/ai/hireling.js) and Herding skill (js/skill/herding.js) to make use of "3D pathfinding"
+    [FIX] Fixed some issues with pathfinding code that could result in invalid results for what should be valid paths
+
 09/04/2026 - Xoduz (#538)
     [FIX] Fixed an issue where players could get stuck in a "too busy to do that" state while mining (js/skill/mining.js)
     [UPD] Updated mining (js/skill/mining.js) and lumberjacking (js/item/axe.js) skills with some fallback code that should prevent players from ever again getting stuck in "already mining/chopping" states due to script-crashes
