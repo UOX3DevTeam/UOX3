@@ -1,6 +1,9 @@
 /// <reference path="../../../definitions.d.ts" />
 // @ts-check
 
+var questVersion = 1;
+var playerSettingsVersion = 1;
+
 /** @type { ( player: Character, questID: number, questGiver?: Character | null ) => void } */
 function StartQuest( player, questID, questGiver )
 {
@@ -295,19 +298,35 @@ function CheckQuest( player, questID, mode)
 	// Check if the quest is a daily quest and ensure it has reset
 	if( quest.dailyQuest == 1 )
 	{
-		for( var i = 0; i < archivedQuests.length; i++ )
+		var archivedQuestEntries = ReadArchivedQuestEntries( player );
+
+		for( var dailyArchiveIndex = 0; dailyArchiveIndex < archivedQuestEntries.length; dailyArchiveIndex++ )
 		{
-			if( parseInt( archivedQuests[i], 10 ) == questID )
+			var archivedQuestEntry = archivedQuestEntries[dailyArchiveIndex];
+			if( !archivedQuestEntry )
 			{
-				var lastCompleted = archivedQuests[i].lastCompleted || 0;
-				var resetTime = quest.resetDailyTime || 24; // Default reset time is 24 hours
+				continue;
+			}
+
+			if( parseInt( archivedQuestEntry.questID, 10 ) == questID )
+			{
+				var lastCompleted = parseInt( archivedQuestEntry.lastCompleted, 10 );
+				if( isNaN( lastCompleted))
+				{
+					lastCompleted = 0;
+				}
+
+				var resetTime = quest.resetDailyTime || 24;
 				var currentTime = Date.now();
 
-				if(( currentTime - lastCompleted ) < resetTime * 3600 * 1000)
+				if(( currentTime - lastCompleted ) < resetTime * 3600 * 1000 )
 				{
 					var hoursLeft = Math.ceil(( resetTime * 3600 * 1000 - ( currentTime - lastCompleted )) / ( 3600 * 1000 ));
-					socket.SysMessage( "This is a daily quest, and you must wait " + hoursLeft + " more hour(s) to attempt it again." );
-					return false; // Indicate that the quest cannot proceed
+					if (socket != null)
+					{
+						socket.SysMessage( "This is a daily quest, and you must wait " + hoursLeft + " more hour(s) to attempt it again." );
+					}
+					return false;
 				}
 			}
 		}
@@ -319,46 +338,76 @@ function CheckQuest( player, questID, mode)
 /** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( timerObj, timerID )
 {
-	var player = timerObj; // Assuming timerObj is the player object
+	if( !ValidateObject( timerObj ) || !timerObj.isChar )
+	{
+		return;
+	}
+
+	var player = timerObj;
 	var socket = player.socket;
 	var questProgressArray = ReadQuestProgress( player );
+
+	if( !questProgressArray || !questProgressArray.length )
+	{
+		return;
+	}
 
 	for( var i = 0; i < questProgressArray.length; i++ )
 	{
 		var questEntry = questProgressArray[i];
-		if( questEntry.questID == timerID && !questEntry.completed )
+
+		if( !questEntry || questEntry.questID != timerID || questEntry.completed )
 		{
-			var quest = TriggerEvent( 5801, "QuestList", questEntry.questID );
+			continue;
+		}
 
-			TriggerEvent( 5802, "ManageQuestItems", player, questEntry.questID, false );
-
-			if( quest.type == "skillgain" ) 
-			{
-				player.SetTag( "AcceleratedSkillGain", null ); // Remove the tag
-				player.RemoveScriptTrigger( 5811 ); // Remove the quest skill gain script trigger
-				socket.SysMessage( "You have stopped accelerated training for " + GetSkillName( quest.targetSkill ) + "." );
-			}
-
-			// Time has expired
-			socket.SysMessage( "You have failed the timed quest: " + quest.title );
-
-			// Log the failed quest
+		var quest = TriggerEvent( 5801, "QuestList", questEntry.questID );
+		if( !quest )
+		{
 			LogFailedQuest( player, questEntry );
-
-			if( quest.type == "escort" )
-			{
-				CleanupEscortQuestNPC( player, questEntry.questID );
-			}
-
-			if( quest.race && quest.race.enabled )
-			{
-				CleanupRaceQuestNPC( player, questEntry.questID );
-			}
-
-			questProgressArray.splice( i, 1 ); // Remove the failed quest
+			questProgressArray.splice( i, 1 );
 			WriteQuestProgress( player, questProgressArray );
 			return;
 		}
+
+		TriggerEvent( 5802, "ManageQuestItems", player, questEntry.questID, false );
+
+		if( quest.type == "skillgain" )
+		{
+			player.SetTag( "AcceleratedSkillGain", null );
+			player.RemoveScriptTrigger( 5811 );
+
+			if( socket != null )
+			{
+				socket.SysMessage( "You have stopped accelerated training for " + GetSkillName( quest.targetSkill ) + "." );
+			}
+		}
+
+		if( socket != null )
+		{
+			socket.SysMessage( "You have failed the timed quest: " + quest.title );
+		}
+
+		LogFailedQuest( player, questEntry );
+
+		if( quest.type == "escort" )
+		{
+			CleanupEscortQuestNPC( player, questEntry.questID );
+		}
+
+		if( quest.guidedWalk && quest.guidedWalk.enabled )
+		{
+			CleanupGuidedWalkQuestNPC( player, questEntry.questID );
+		}
+
+		if( quest.race && quest.race.enabled )
+		{
+			CleanupRaceQuestNPC( player, questEntry.questID );
+		}
+
+		questProgressArray.splice( i, 1 );
+		WriteQuestProgress( player, questProgressArray );
+		return;
 	}
 }
 
@@ -552,7 +601,12 @@ function IsKillInRequiredRegion( player, creature, requiredRegion )
 /** @type { ( quest: any, questEntry: any ) => boolean } */
 function AreAllQuestObjectivesComplete( quest, questEntry )
 {
-	var allObjectivesCompleted = true;
+	if( !quest || !questEntry )
+	{
+		return false;
+	}
+
+	var hasObjectives = false;
 
 	if( quest.type == "collect" || quest.type == "timecollect" || quest.type == "multi" )
 	{
@@ -561,9 +615,16 @@ function AreAllQuestObjectivesComplete( quest, questEntry )
 			for( var targetItemIndex = 0; targetItemIndex < quest.targetItems.length; targetItemIndex++ )
 			{
 				var exactTarget = quest.targetItems[targetItemIndex];
+				if( !exactTarget || !exactTarget.sectionID || exactTarget.amount == null )
+				{
+					return false;
+				}
+
+				hasObjectives = true;
+
 				if( !questEntry.collectedItems || ( questEntry.collectedItems[exactTarget.sectionID] || 0 ) < exactTarget.amount )
 				{
-					allObjectivesCompleted = false;
+					return false;
 				}
 			}
 		}
@@ -573,14 +634,16 @@ function AreAllQuestObjectivesComplete( quest, questEntry )
 			for( var targetGroupIndex = 0; targetGroupIndex < quest.targetItemGroups.length; targetGroupIndex++ )
 			{
 				var targetGroup = quest.targetItemGroups[targetGroupIndex];
-				if( !targetGroup || !targetGroup.groupID )
+				if( !targetGroup || !targetGroup.groupID || targetGroup.amount == null )
 				{
-					continue;
+					return false;
 				}
+
+				hasObjectives = true;
 
 				if( !questEntry.collectedItemGroups || ( questEntry.collectedItemGroups[String( targetGroup.groupID )] || 0 ) < targetGroup.amount )
 				{
-					allObjectivesCompleted = false;
+					return false;
 				}
 			}
 		}
@@ -593,9 +656,16 @@ function AreAllQuestObjectivesComplete( quest, questEntry )
 			for( var targetKillIndex = 0; targetKillIndex < quest.targetKills.length; targetKillIndex++ )
 			{
 				var targetKill = quest.targetKills[targetKillIndex];
+				if( !targetKill || !targetKill.npcID || targetKill.amount == null )
+				{
+					return false;
+				}
+
+				hasObjectives = true;
+
 				if( !questEntry.harvestKills || ( questEntry.harvestKills[targetKill.npcID] || 0 ) < targetKill.amount )
 				{
-					allObjectivesCompleted = false;
+					return false;
 				}
 			}
 		}
@@ -605,30 +675,38 @@ function AreAllQuestObjectivesComplete( quest, questEntry )
 			for( var targetKillGroupIndex = 0; targetKillGroupIndex < quest.targetKillGroups.length; targetKillGroupIndex++ )
 			{
 				var targetKillGroup = quest.targetKillGroups[targetKillGroupIndex];
-				if( !targetKillGroup || !targetKillGroup.groupID )
+				if( !targetKillGroup || !targetKillGroup.groupID || targetKillGroup.amount == null )
 				{
-					continue;
+					return false;
 				}
+
+				hasObjectives = true;
 
 				if( !questEntry.harvestKillGroups || ( questEntry.harvestKillGroups[String( targetKillGroup.groupID )] || 0 ) < targetKillGroup.amount )
 				{
-					allObjectivesCompleted = false;
+					return false;
 				}
 			}
 		}
 	}
 
-	if (quest.type == "tame" || quest.type == "multi")
+	if( quest.type == "tame" || quest.type == "multi" )
 	{
-		if (quest.targetTames)
+		if( quest.targetTames )
 		{
-			for (var targetTameIndex = 0; targetTameIndex < quest.targetTames.length; targetTameIndex++)
+			for( var targetTameIndex = 0; targetTameIndex < quest.targetTames.length; targetTameIndex++ )
 			{
 				var targetTame = quest.targetTames[targetTameIndex];
-
-				if (!questEntry.tamedCreatures || (questEntry.tamedCreatures[targetTame.npcID] || 0) < targetTame.amount)
+				if( !targetTame || !targetTame.npcID || targetTame.amount == null )
 				{
-					allObjectivesCompleted = false;
+					return false;
+				}
+
+				hasObjectives = true;
+
+				if( !questEntry.tamedCreatures || ( questEntry.tamedCreatures[targetTame.npcID] || 0 ) < targetTame.amount )
+				{
+					return false;
 				}
 			}
 		}
@@ -636,13 +714,20 @@ function AreAllQuestObjectivesComplete( quest, questEntry )
 
 	if( quest.race && quest.race.enabled )
 	{
+		hasObjectives = true;
+
 		if( !questEntry.raceCompleted )
 		{
-			allObjectivesCompleted = false;
+			return false;
 		}
 	}
 
-	return allObjectivesCompleted;
+	if( !hasObjectives )
+	{
+		return false;
+	}
+
+	return true;
 }
 
 /** @type { ( player: Character, questID: number, identifier: number | string, progressValue: number, type: string ) => any[] } */
@@ -652,9 +737,6 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 		return;
 
 	var socket = player.socket;
-	if( socket == null )
-		return;
-
 	var questProgressArray = ReadQuestProgress( player );
 	var questUpdated = false;
 
@@ -801,7 +883,7 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 			}
 		}
 
-		if( quest.type == "delivery" && quest.targetDelivery.npcID == identifier )
+		if( quest.type == "delivery" && quest.targetDelivery && quest.deliveryItem && String( quest.targetDelivery.npcID ) == String( identifier ))
 		{
 			if( String( identifier ) == String( quest.targetDelivery.npcID ))
 			{
@@ -812,7 +894,10 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 
 				if( !ValidateObject( pack ))
 				{
-					socket.SysMessage( GetDictionaryEntry( 19621, socket.language ));
+					if( socket != null )
+					{
+						socket.SysMessage( GetDictionaryEntry( 19621, socket.language ));
+					}
 				}
 				else
 				{
@@ -861,16 +946,25 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 				if( hasItem )
 				{
 					questEntry.completed = true;
-					socket.SysMessage( GetDictionaryEntry( 19620, socket.language ));
+					if( socket != null )
+					{
+						socket.SysMessage( GetDictionaryEntry( 19620, socket.language ));
+					}
 				}
 				else
 				{
-					socket.SysMessage( GetDictionaryEntry( 19621, socket.language ));
+					if( socket != null )
+					{
+						socket.SysMessage( GetDictionaryEntry( 19621, socket.language ));
+					}
 				}
 			}
 			else
 			{
-				socket.SysMessage( GetDictionaryEntry( 19622, socket.language ));
+				if( socket != null )
+				{
+					socket.SysMessage( GetDictionaryEntry( 19622, socket.language ));
+				}
 			}
 		}
 
@@ -886,7 +980,10 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 			}
 			else
 			{
-				socket.SysMessage( "Skill progress: " + ( questEntry.skillProgress / 10 ).toFixed( 1 ) + "/" + ( quest.maxSkillPoints / 10 ).toFixed( 1 ) );
+				if( socket != null )
+				{
+					socket.SysMessage( "Skill progress: " + ( questEntry.skillProgress / 10 ).toFixed( 1 ) + "/" + ( quest.maxSkillPoints / 10 ).toFixed( 1 ));
+				}
 			}
 		}
 
@@ -904,11 +1001,17 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 				questEntry.completed = true;
 				if( quest.type == "skillgain" && quest.oncomplete )
 				{
-					socket.SysMessage( quest.oncomplete );
+					if( socket != null )
+					{
+						socket.SysMessage( quest.oncomplete );
+					}
 				}
 				else
 				{
-					socket.SysMessage( GetDictionaryEntry( 19623, socket.language ));
+					if( socket != null )
+					{
+						socket.SysMessage( GetDictionaryEntry( 19623, socket.language ));
+					}
 				}
 				WriteQuestProgress( player, questProgressArray );
 			}
@@ -917,11 +1020,17 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 				questEntry.completed = true;
 				if( quest.type == "skillgain" && quest.oncomplete )
 				{
-					socket.SysMessage( quest.oncomplete );
+					if( socket != null )
+					{
+						socket.SysMessage( quest.oncomplete );
+					}
 				}
 				else
 				{
-					socket.SysMessage( GetDictionaryEntry( 19623, socket.language ));
+					if( socket != null )
+					{
+						socket.SysMessage( GetDictionaryEntry( 19623, socket.language ));
+					}
 				}
 				WriteQuestProgress( player, questProgressArray );
 				CompleteQuest( player, questID );
@@ -943,7 +1052,10 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 	}
 	else
 	{
-		socket.SysMessage( GetDictionaryEntry( 19624, socket.language ));
+		if( socket != null )
+		{
+			socket.SysMessage( GetDictionaryEntry( 19624, socket.language ));
+		}
 	}
 
 	return questProgressArray;
@@ -956,9 +1068,6 @@ function CompleteQuest( player, questID )
 		return;	
 
 	var socket = player.socket;
-	if( socket == null )
-		return;
-
 	var questProgressArray = ReadQuestProgress( player );
 	var newQuestProgressArray = [];
 	var questCompleted = false;
@@ -976,14 +1085,20 @@ function CompleteQuest( player, questID )
 		// Ensure the quest is completed
 		if( !questEntry.completed )
 		{
-			socket.SysMessage( GetDictionaryEntry( 19625, socket.language ));//You haven't completed the quest yet.
+			if( socket != null )
+			{
+				socket.SysMessage( GetDictionaryEntry( 19625, socket.language ));//You haven't completed the quest yet.
+			}
 			return;
 		}
 
 		var quest = TriggerEvent( 5801, "QuestList", questID );
 		if( !quest )
 		{
-			socket.SysMessage( GetDictionaryEntry( 19626, socket.language )); //Quest data could not be retrieved.
+			if( socket != null )
+			{
+				socket.SysMessage( GetDictionaryEntry( 19626, socket.language )); //Quest data could not be retrieved.
+			}
 			return;
 		}
 
@@ -1003,11 +1118,15 @@ function CompleteQuest( player, questID )
 		}
 
 		// Notify the player and play a visual effect
-		socket.SysMessage( "Congratulations! You have completed the quest: " + quest.title );
+		if( socket != null )
+		{
+				
+			socket.SysMessage( "Congratulations! You have completed the quest: " + quest.title );
+		}
 		DoStaticEffect( player.x, player.y, player.z, 0x376A, 0x40, 0x16, false );
 
 		// Handle rewards
-		if( quest.rewards )
+		if( quest.rewards && socket != null )
 		{
 			QuestRewards( player, quest, socket );
 		}
@@ -1015,14 +1134,7 @@ function CompleteQuest( player, questID )
 		// Archive the completed quest
 		ArchiveCompletedQuest( player, questEntry );
 
-		ApplyQuestSetTags( player, quest );
-		ApplyQuestSetTagDeltas( player, quest );
-
-		ApplyQuestSetTempTags( player, quest );
-		ApplyQuestSetTempTagDeltas( player, quest );
-
-		ApplyQuestSetWorldState( player, quest );
-		ApplyQuestWorldStateDeltas( player, quest );
+		ApplyQuestModifiers( player, quest );
 
 		// Cancel any active quest timer for this questID
 		player.KillJSTimer( questID, 5800 );
@@ -1122,233 +1234,193 @@ function QuestRewards( player, quest, socket )
 }
 
 /** @type { ( player: Character, quest: any ) => void } */
-function ApplyQuestSetTags( player, quest )
+function ApplyQuestModifiers( player, quest )
 {
-	if( !quest || !quest.setTags )
-		return;
-
-	for( var key in quest.setTags )
+	if( !ValidateObject( player ) || !quest )
 	{
-		if( !quest.setTags.hasOwnProperty( key ))
-			continue;
-
-		var val = quest.setTags[key];
-
-		// null/undefined => remove tag
-		if( val == null )
-			player.SetTag( key, null );
-		else
-			player.SetTag( key, val );
+		return;
 	}
+
+	ApplyModifierSet( player, quest.setTags, "tag" );
+	ApplyModifierDelta( player, quest.setTagDeltas, quest.deltaRules, quest.deltaRulesDefault, "tag" );
+
+	ApplyModifierSet( player, quest.setTempTags, "temptag" );
+	ApplyModifierDelta( player, quest.setTempTagDeltas, quest.tempDeltaRules, quest.tempDeltaRulesDefault, "temptag" );
+
+	ApplyModifierSet( player, quest.setWorldState, "worldstate" );
+	ApplyModifierDelta( player, quest.worldStateDeltas, quest.worldStateDeltaRules, quest.worldStateDeltaRulesDefault, "worldstate" );
 }
 
-/** @type { ( player: Character, quest: any ) => void } */
-function ApplyQuestSetTempTags( player, quest )
+/** @type { ( player: Character, modifierData: any, modifierType: string ) => void } */
+function ApplyModifierSet( player, modifierData, modifierType )
 {
-	if( !quest || !quest.setTempTags )
-		return;
-
-	for( var key in quest.setTempTags )
+	if( !ValidateObject( player ) || !modifierData )
 	{
-		if( !quest.setTempTags.hasOwnProperty( key ))
-			continue;
-
-		var val = quest.setTempTags[key];
-
-		// null/undefined => remove
-		if( val == null )
-			player.SetTempTag( key, null );
-		else
-			player.SetTempTag( key, val );
+		return;
 	}
-}
 
-/** @type { ( player: Character, quest: any ) => void } */
-function ApplyQuestSetWorldState( player, quest )
-{
-	if( !quest || !quest.setWorldState )
-		return;
-
-	for( var worldStateKey in quest.setWorldState )
+	for( var key in modifierData )
 	{
-		if( !quest.setWorldState.hasOwnProperty( worldStateKey ) )
-			continue;
-
-		var worldStateValue = quest.setWorldState[worldStateKey];
-
-		// null/undefined => remove the world-state key
-		if( worldStateValue == null )
+		if( !modifierData.hasOwnProperty( key ) )
 		{
-			SetWorldStateInt( player, worldStateKey, null );
+			continue;
 		}
-		else
-		{
-			SetWorldStateInt( player, worldStateKey, ToIntOrZero( worldStateValue ) );
-		}
+
+		SetModifierValue( player, key, modifierData[key], modifierType );
 	}
 }
 
-/** @type { ( player: Character, quest: any ) => void } */
-function ApplyQuestWorldStateDeltas( player, quest )
+/** @type { ( player: Character, modifierData: any, modifierRules: any, defaultRule: any, modifierType: string ) => void } */
+function ApplyModifierDelta( player, modifierData, modifierRules, defaultRule, modifierType )
 {
-	if( !quest || !quest.worldStateDeltas )
-		return;
-
-	for( var worldStateKey in quest.worldStateDeltas )
+	if( !ValidateObject( player ) || !modifierData )
 	{
-		if( !quest.worldStateDeltas.hasOwnProperty( worldStateKey ) )
-			continue;
+		return;
+	}
 
-		var deltaAmount = ToIntOrZero( quest.worldStateDeltas[worldStateKey] );
-		var currentWorldStateValue = GetWorldStateInt( player, worldStateKey, 0 );
-		var nextWorldStateValue = currentWorldStateValue + deltaAmount;
-
-		// Optional clamp rules:
-		// - quest.worldStateDeltaRules[worldStateKey] overrides
-		// - else quest.worldStateDeltaRulesDefault
-		var clampRule = ResolveDeltaRule( quest, worldStateKey, "worldStateDeltaRules", "worldStateDeltaRulesDefault" );
-
-		if( clampRule )
+	for( var key in modifierData )
+	{
+		if( !modifierData.hasOwnProperty( key ))
 		{
-			var hasMin = clampRule.hasOwnProperty( "min" );
-			var hasMax = clampRule.hasOwnProperty( "max" );
+			continue;
+		}
 
-			var minAllowedValue = ( hasMin ? ToIntOrZero( clampRule.min ) : null );
-			var maxAllowedValue = ( hasMax ? ToIntOrZero( clampRule.max ) : null );
+		var deltaAmount = modifierData[key];
 
-			if( hasMin || hasMax )
+		if( typeof deltaAmount == "string" )
+		{
+			deltaAmount = parseInt( deltaAmount, 10 );
+			if( isNaN( deltaAmount ))
 			{
-				nextWorldStateValue = ClampInt(
-					nextWorldStateValue,
-					hasMin ? minAllowedValue : null,
-					hasMax ? maxAllowedValue : null
-				);
+				deltaAmount = 0;
 			}
 		}
 
-		SetWorldStateInt( player, worldStateKey, nextWorldStateValue );
-	}
-}
+		var currentValue = GetModifierInt( player, key, modifierType );
+		var nextValue = currentValue + deltaAmount;
 
-/** @type { ( player: Character, quest: any ) => void } */
-function ApplyQuestSetTagDeltas( player, quest )
-{
-	if( !quest || !quest.setTagDeltas )
-		return;
+		var clampRule = ResolveModifierRule( key, modifierRules, defaultRule );
 
-	for( var key in quest.setTagDeltas )
-	{
-		if( !quest.setTagDeltas.hasOwnProperty( key ))
-			continue;
-
-		var deltaVal = quest.setTagDeltas[key];
-		var delta = ToIntOrZero( deltaVal );
-
-		var cur = GetIntTagOrZero( player, key );
-		var next = cur + delta;
-
-		// Optional clamp
-		var rule = ResolveDeltaRule( quest, key, "deltaRules", "deltaRulesDefault" );
-		if( rule )
+		if( clampRule )
 		{
-			var minVal = ( rule.hasOwnProperty( "min" ) ? ToIntOrZero( rule.min ) : null );
-			var maxVal = ( rule.hasOwnProperty( "max" ) ? ToIntOrZero( rule.max ) : null );
+			if( clampRule.hasOwnProperty( "min" ))
+			{
+				var minValue = clampRule.min;
 
-			// If they specify only min or only max, we still clamp correctly
-			if( rule.hasOwnProperty( "min" ) || rule.hasOwnProperty( "max" ))
-				next = ClampInt( next, rule.hasOwnProperty( "min" ) ? minVal : null, rule.hasOwnProperty( "max" ) ? maxVal : null );
+				if( typeof minValue == "string" )
+				{
+					minValue = parseInt( minValue, 10 );
+				}
+
+				if( !isNaN( minValue ) && nextValue < minValue )
+				{
+					nextValue = minValue;
+				}
+			}
+
+			if( clampRule.hasOwnProperty( "max" ))
+			{
+				var maxValue = clampRule.max;
+
+				if( typeof maxValue == "string" )
+				{
+					maxValue = parseInt( maxValue, 10 );
+				}
+
+				if( !isNaN( maxValue ) && nextValue > maxValue )
+				{
+					nextValue = maxValue;
+				}
+			}
 		}
 
-		player.SetTag( key, next );
+		SetModifierValue( player, key, nextValue, modifierType );
 	}
 }
 
-/** @type { ( player: Character, quest: any ) => void } */
-function ApplyQuestSetTempTagDeltas( player, quest )
+/** @type { ( player: Character, key: string, modifierType: string ) => number } */
+function GetModifierInt( player, key, modifierType )
 {
-	if( !quest || !quest.setTempTagDeltas )
-		return;
+	var currentValue = 0;
 
-	for( var key in quest.setTempTagDeltas )
+	if( modifierType == "tag" )
 	{
-		if( !quest.setTempTagDeltas.hasOwnProperty( key ))
-			continue;
+		currentValue = player.GetTag( key );
+	}
+	else if( modifierType == "temptag" )
+	{
+		currentValue = player.GetTempTag( key );
+	}
+	else if( modifierType == "worldstate" )
+	{
+		currentValue = GetWorldStateInt( player, key, 0 );
+	}
 
-		var deltaVal = quest.setTempTagDeltas[key];
-		var delta = ToIntOrZero( deltaVal );
-
-		var cur = GetIntTempTagOrZero( player, key );
-		var next = cur + delta;
-
-		// Optional clamp
-		var rule = ResolveDeltaRule( quest, key, "tempDeltaRules", "tempDeltaRulesDefault" );
-		if( rule )
+	if( typeof currentValue == "string" )
+	{
+		currentValue = parseInt( currentValue, 10 );
+		if( isNaN( currentValue ))
 		{
-			var minVal = ( rule.hasOwnProperty( "min" ) ? ToIntOrZero( rule.min ) : null );
-			var maxVal = ( rule.hasOwnProperty( "max" ) ? ToIntOrZero( rule.max ) : null );
-
-			if( rule.hasOwnProperty( "min" ) || rule.hasOwnProperty( "max" ))
-				next = ClampInt( next, rule.hasOwnProperty( "min" ) ? minVal : null, rule.hasOwnProperty( "max" ) ? maxVal : null );
+			currentValue = 0;
 		}
+	}
 
-		player.SetTempTag( key, next );
+	return currentValue || 0;
+}
+
+/** @type { ( player: Character, key: string, value: any, modifierType: string ) => void } */
+function SetModifierValue( player, key, value, modifierType )
+{
+	if( modifierType == "tag" )
+	{
+		player.SetTag( key, value == null ? null : value );
+	}
+	else if( modifierType == "temptag" )
+	{
+		player.SetTempTag( key, value == null ? null : value );
+	}
+	else if( modifierType == "worldstate" )
+	{
+		SetWorldStateInt( player, key, value == null ? null : ToIntOrZero( value ) );
 	}
 }
 
-/** @type { ( v: any ) => number } */
-function ToIntOrZero( v )
+/** @type { ( key: string, modifierRules: any, defaultRule: any ) => any } */
+function ResolveModifierRule( key, modifierRules, defaultRule )
 {
-	if( v == null || v === "" )
-		return 0;
+	if( modifierRules && modifierRules.hasOwnProperty( key ) && modifierRules[key] )
+	{
+		return modifierRules[key];
+	}
 
-	var n = parseInt( v, 10 );
-	if( isNaN( n ))
-		return 0;
-
-	return n;
-}
-
-/** @type { ( v: number, minVal: number | null, maxVal: number | null ) => number } */
-function ClampInt( v, minVal, maxVal )
-{
-	if( minVal != null && v < minVal ) v = minVal;
-	if( maxVal != null && v > maxVal ) v = maxVal;
-	return v;
-}
-
-/** @type { ( obj: BaseObject, tagName: string ) => number } */
-function GetIntTagOrZero( obj, tagName )
-{
-	return ToIntOrZero( obj.GetTag( tagName ));
-}
-
-/** @type { ( obj: BaseObject, tagName: string ) => number } */
-function GetIntTempTagOrZero( obj, tagName )
-{
-	if( !obj.GetTempTag )
-		return 0;
-	return ToIntOrZero( obj.GetTempTag( tagName ));
-}
-
-// Resolve the clamp rule for a given key:
-// - if quest.deltaRules has a rule for this key, use it
-// - else if quest.deltaRulesDefault exists, use that
-// - else return null (no clamping)
-/** @type { ( quest: any, key: string, rulesObjName: string, defaultRuleName: string ) => any } */
-function ResolveDeltaRule( quest, key, rulesObjName, defaultRuleName )
-{
-	if( !quest )
-		return null;
-
-	var rules = quest[rulesObjName];
-	if( rules && rules.hasOwnProperty( key ) && rules[key] )
-		return rules[key];
-
-	var defRule = quest[defaultRuleName];
-	if( defRule )
-		return defRule;
+	if( defaultRule )
+	{
+		return defaultRule;
+	}
 
 	return null;
+}
+
+/** @type { ( value: any ) => number } */
+function ToIntOrZero( value )
+{
+	if( value == null || value === "" )
+	{
+		return 0;
+	}
+
+	if( typeof value == "number" )
+	{
+		return isNaN( value ) ? 0 : value;
+	}
+
+	var parsedValue = parseInt( value, 10 );
+	if( isNaN( parsedValue ) )
+	{
+		return 0;
+	}
+
+	return parsedValue;
 }
 
 /** @type { ( player: Character, reward: any, bankBox: Item, socket: Socket ) => void } */
@@ -1514,11 +1586,6 @@ function EscortReachedRegion( player, questID, regionID )
 	}
 
 	var socket = player.socket;
-	if( socket == null )
-	{
-		return;
-	}
-
 	var enteredRegionID = regionID;
 
 	var questProgressArray = ReadQuestProgress( player );
@@ -1567,7 +1634,10 @@ function EscortReachedRegion( player, questID, regionID )
 
 		questEntry.escortStage = escortStage + 1;
 		questEntry.escortLastRegion = String( enteredRegionID );
-		socket.SysMessage( "Escort progress updated: region " + enteredRegionID );
+		if( socket != null )
+		{
+			socket.SysMessage( "Escort progress updated: region " + enteredRegionID );
+		}
 
 		var escortNPC = null;
 		var escortNPCSerial = parseInt( questEntry.escortNPCSerial, 10 );
@@ -1610,7 +1680,10 @@ function EscortReachedRegion( player, questID, regionID )
 				{
 					if( SpawnEscortAmbush( player, escortNPC, nextWaypoint.ambush ) )
 					{
-						socket.SysMessage( "Ambush!" );
+						if( socket != null )
+						{
+							socket.SysMessage( "Ambush!" );
+						}
 
 						if( ValidateObject( escortNPC ) )
 						{
@@ -1630,7 +1703,10 @@ function EscortReachedRegion( player, questID, regionID )
 
 			if( quest.questTurnIn == 1 )
 			{
-				socket.SysMessage( GetDictionaryEntry( 19623, socket.language ) );
+				if( socket != null )
+				{
+					socket.SysMessage( GetDictionaryEntry( 19623, socket.language ));
+				}
 			}
 			else
 			{
@@ -1652,11 +1728,6 @@ function FailEscortQuest( player, questID, failMessage )
 	}
 
 	var socket = player.socket;
-	if( socket == null )
-	{
-		return;
-	}
-
 	var questProgressArray = ReadQuestProgress( player );
 	var newQuestProgressArray = [];
 	var removedQuest = false;
@@ -1679,7 +1750,10 @@ function FailEscortQuest( player, questID, failMessage )
 	{
 		CleanupEscortQuestNPC( player, questID );
 		WriteQuestProgress( player, newQuestProgressArray );
-		socket.SysMessage( failMessage || "You have failed the escort quest." );
+		if( socket != null )
+		{
+			socket.SysMessage( failMessage || "You have failed the escort quest." );
+		}
 	}
 }
 
@@ -1788,11 +1862,6 @@ function ValidateTimedQuestsOnLogin( player )
 	}
 
 	var socket = player.socket;
-	if( socket == null )
-	{
-		return;
-	}
-
 	var questProgressArray = ReadQuestProgress( player );
 	if( !questProgressArray || !questProgressArray.length )
 	{
@@ -1859,7 +1928,11 @@ function ValidateTimedQuestsOnLogin( player )
 			questEntry.escortFailed = ( quest.type == "escort" );
 			LogFailedQuest( player, questEntry );
 
-			socket.SysMessage( "You have failed the timed quest: " + quest.title );
+			if( socket != null )
+			{
+				socket.SysMessage( "You have failed the timed quest: " + quest.title );
+			}
+
 			progressChanged = true;
 			continue;
 		}
@@ -1951,11 +2024,6 @@ function ValidateEscortQuestsOnLogin( player )
 	}
 
 	var socket = player.socket;
-	if( socket == null )
-	{
-		return;
-	}
-
 	var questProgressArray = ReadQuestProgress( player );
 	if( !questProgressArray || !questProgressArray.length )
 	{
@@ -1991,6 +2059,104 @@ function ValidateEscortQuestsOnLogin( player )
 		}
 
 		RepairEscortNPCFromProgress( escortNPC, player, questEntry.questID, quest, questEntry );
+	}
+}
+
+/** @type { ( player: Character ) => void } */
+function ValidateGuidedWalkQuestsOnLogin( player )
+{
+	if( !ValidateObject( player ) )
+	{
+		return;
+	}
+
+	var questProgressArray = ReadQuestProgress( player );
+	if( !questProgressArray || !questProgressArray.length )
+	{
+		return;
+	}
+
+	for( var i = 0; i < questProgressArray.length; i++ )
+	{
+		var questEntry = questProgressArray[i];
+		if( !questEntry || questEntry.serial != player.serial )
+		{
+			continue;
+		}
+
+		var quest = TriggerEvent( 5801, "QuestList", questEntry.questID );
+		if( !quest || !quest.guidedWalk || !quest.guidedWalk.enabled )
+		{
+			continue;
+		}
+
+		var guidedWalkNPCSerial = parseInt( questEntry.guidedWalkNPCSerial, 10 );
+		if( isNaN( guidedWalkNPCSerial ) || guidedWalkNPCSerial <= 0 )
+		{
+			continue;
+		}
+
+		var guideNpc = CalcCharFromSer( guidedWalkNPCSerial );
+		if( !ValidateObject( guideNpc ) )
+		{
+			continue;
+		}
+
+		if( !guideNpc.HasScriptTrigger( 5816 ) )
+		{
+			guideNpc.AddScriptTrigger( 5816 );
+		}
+
+		guideNpc.StartTimer( 1000, 1, 5816 );
+	}
+}
+
+/** @type { ( player: Character ) => void } */
+function ValidateRaceQuestsOnLogin( player )
+{
+	if( !ValidateObject( player ) )
+	{
+		return;
+	}
+
+	var questProgressArray = ReadQuestProgress( player );
+	if( !questProgressArray || !questProgressArray.length )
+	{
+		return;
+	}
+
+	for( var i = 0; i < questProgressArray.length; i++ )
+	{
+		var questEntry = questProgressArray[i];
+		if( !questEntry || questEntry.serial != player.serial )
+		{
+			continue;
+		}
+
+		var quest = TriggerEvent( 5801, "QuestList", questEntry.questID );
+		if( !quest || !quest.race || !quest.race.enabled )
+		{
+			continue;
+		}
+
+		var raceNPCSerial = parseInt( questEntry.raceNPCSerial, 10 );
+		if( isNaN( raceNPCSerial ) || raceNPCSerial <= 0 )
+		{
+			continue;
+		}
+
+		var raceNpc = CalcCharFromSer( raceNPCSerial );
+		if( !ValidateObject( raceNpc ) )
+		{
+			continue;
+		}
+
+		if( !raceNpc.HasScriptTrigger( 5817 ) )
+		{
+			raceNpc.AddScriptTrigger( 5817 );
+		}
+
+		raceNpc.StartTimer( 1000, 1, 5817 );
 	}
 }
 
@@ -2316,144 +2482,6 @@ function GetEscortActiveWaypoints( questEntry, quest )
 	return [];
 }
 
-/** @type { ( progressMap: any ) => string } */
-function SerializeProgressMap( progressMap )
-{
-	var progressString = "";
-
-	if( progressMap )
-	{
-		for( var key in progressMap )
-		{
-			if( progressMap.hasOwnProperty( key ))
-			{
-				if( progressString.length > 0 )
-				{
-					progressString += ",";
-				}
-
-				progressString += key + ":" + progressMap[key];
-			}
-		}
-	}
-
-	return progressString;
-}
-
-/** @type { ( entry: any, outputKey: string, inputKey: string ) => void } */
-function processProgressMap( entry, outputKey, inputKey )
-{
-	entry[outputKey] = {};
-
-	var progressString = entry[inputKey] || "";
-
-	if( progressString == "" )
-	{
-		return;
-	}
-
-	var progressEntries = progressString.split( "," );
-	for( var progressIndex = 0; progressIndex < progressEntries.length; progressIndex++ )
-	{
-		var pair = progressEntries[progressIndex].split( ":" );
-		if( pair.length == 2 )
-		{
-			var key = manualTrim( pair[0] );
-			var value = parseInt( manualTrim( pair[1] ), 10 );
-
-			if( isNaN( value ) )
-			{
-				value = 0;
-			}
-
-			entry[outputKey][key] = value;
-		}
-	}
-}
-
-/** @type { ( selectedWaypoints: any[] ) => string } */
-function SerializeSelectedWaypoints( selectedWaypoints )
-{
-	if( !selectedWaypoints || !selectedWaypoints.length )
-	{
-		return "";
-	}
-
-	var serializedParts = [];
-
-	for( var waypointIndex = 0; waypointIndex < selectedWaypoints.length; waypointIndex++ )
-	{
-		var waypoint = selectedWaypoints[waypointIndex];
-		if( !waypoint )
-		{
-			continue;
-		}
-
-		var regionID = parseInt( waypoint.regionID, 10 );
-		if( isNaN( regionID ) || regionID <= 0 )
-		{
-			continue;
-		}
-
-		var regionName = "";
-		if( waypoint.regionName )
-		{
-			regionName = String( waypoint.regionName ).replace( /\|/g, "" ).replace( /:/g, "" );
-		}
-
-		serializedParts.push( regionID + ":" + regionName );
-	}
-
-	return serializedParts.join( "|" );
-}
-
-/** @type { ( rawText: string ) => any[] } */
-function ParseSelectedWaypoints( rawText )
-{
-	var parsedWaypoints = [];
-
-	if( !rawText || rawText == "" )
-	{
-		return parsedWaypoints;
-	}
-
-	var waypointParts = String( rawText ).split( "|" );
-	for( var waypointIndex = 0; waypointIndex < waypointParts.length; waypointIndex++ )
-	{
-		var waypointText = manualTrim( waypointParts[waypointIndex] );
-		if( waypointText == "" )
-		{
-			continue;
-		}
-
-		var pieces = waypointText.split( ":" );
-		if( pieces.length < 1 )
-		{
-			continue;
-		}
-
-		var regionID = parseInt( manualTrim( pieces[0] ), 10 );
-		if( isNaN( regionID ) || regionID <= 0 )
-		{
-			continue;
-		}
-
-		var regionName = "";
-		if( pieces.length > 1 )
-		{
-			regionName = manualTrim( pieces.slice( 1 ).join( ":" ) );
-		}
-
-		parsedWaypoints.push({
-			regionID: regionID,
-			regionName: regionName,
-			order: parsedWaypoints.length + 1
-		});
-	}
-
-	return parsedWaypoints;
-}
-
 /** @type { ( player: Character, questID: number, quest: any, questGiver?: Character | null ) => boolean } */
 function StartRaceQuestNPC( player, questID, quest, questGiver )
 {
@@ -2737,11 +2765,6 @@ function RaceNPCReachedFinish( player, questID, raceNpc )
 	}
 
 	var socket = player.socket;
-	if( socket == null )
-	{
-		return;
-	}
-
 	var quest = TriggerEvent( 5801, "QuestList", questID );
 	if( !quest || !quest.race || !quest.race.enabled )
 	{
@@ -2773,7 +2796,10 @@ function RaceNPCReachedFinish( player, questID, raceNpc )
 		{
 			questEntry.raceWinner = "npc";
 			LogFailedQuest( player, questEntry );
-			socket.SysMessage( quest.race.npcWinText || "You lost the race." );
+			if( socket )
+			{
+				socket.SysMessage( quest.race.npcWinText || "You lost the race." );
+			}
 			CleanupRaceQuestNPC( player, questID );
 			continue;
 		}
@@ -2783,11 +2809,17 @@ function RaceNPCReachedFinish( player, questID, raceNpc )
 
 		if( quest.race.npcWinText )
 		{
-			socket.SysMessage( String( quest.race.npcWinText ) );
+			if( socket )
+			{
+				socket.SysMessage( String( quest.race.npcWinText ) );
+			}
 		}
 		else
 		{
-			socket.SysMessage( "The racer beat you, but the quest continues." );
+			if( socket )
+			{
+				socket.SysMessage( "The racer beat you, but the quest continues." );
+			}
 		}
 
 		var allObjectivesCompleted = AreAllQuestObjectivesComplete( quest, questEntry );
@@ -2796,7 +2828,10 @@ function RaceNPCReachedFinish( player, questID, raceNpc )
 			if( quest.questTurnIn == 1 || npcWinMode == "turnin" )
 			{
 				questEntry.completed = true;
-				socket.SysMessage( GetDictionaryEntry( 19623, socket.language ) );
+				if( socket )
+				{
+					socket.SysMessage( GetDictionaryEntry( 19623, socket.language ));
+				}
 				newQuestProgressArray.push( questEntry );
 			}
 			else
@@ -3885,282 +3920,399 @@ function SpendSkillPoints( player, socket, skillNameOrId, amount )
 /** @type { ( player: Character ) => any } */
 function ReadPlayerSettings( player )
 {
+	if( !ValidateObject( player ) || !player.account )
+	{
+		return {};
+	}
+
 	var mFile = new UOXCFile();
 	var userAccount = player.account;
-	var fileName = "PlayerSettings_" + userAccount.id + ".jsdata";
-
-	var settings = {};
+	var fileName = "PlayerSettings_" + userAccount.id + ".json";
+	var playerKey = String( player.serial );
 
 	mFile.Open( fileName, "r", "Settings" );
-	if( mFile && mFile.Length() > 0 )
-	{
-		while( !mFile.EOF() )
-		{
-			var line = manualTrim( mFile.ReadUntil( "\n" )); // Use manualTrim instead of trim
-			if( line == "" )
-				continue; // Skip empty lines
-
-			var parts = line.split("=");
-			if( parts.length == 2 )
-			{
-				var key = manualTrim( parts[0] ); // Use manualTrim on the key
-				var value = manualTrim( parts[1] ); // Use manualTrim on the value
-
-				// Check if the value is a quoted string
-				if( value.charAt( 0 ) == '"' && value.charAt( value.length - 1 ) == '"' )
-				{
-					// Remove quotes and unescape internal quotes
-					settings[key] = value.substring( 1, value.length - 1 ).replace( /\\"/g, '"' );
-				} 
-				else if( value == "1" || value == "0" )
-				{
-					// Convert "1"/"0" to boolean true/false
-					settings[key] = value == "1";
-				}
-				else if( !isNaN( value ))
-				{
-					// Convert numeric strings to numbers
-					settings[key] = parseFloat( value );
-				}
-				else
-				{
-					// Keep as string for other cases
-					settings[key] = value;
-				}
-			}
-		}
-		mFile.Close();
-		mFile.Free();
-	}
-	else
+	if( !mFile || mFile.Length() <= 0 )
 	{
 		if( mFile )
 		{
 			mFile.Free();
 		}
+		return {};
 	}
 
-	return settings; // Return parsed settings
+	var fileText = "";
+	while( !mFile.EOF() )
+	{
+		var rawLine = mFile.ReadUntil( "\n" );
+		if( rawLine != null && typeof rawLine != "undefined" )
+		{
+			fileText += rawLine;
+			if( !mFile.EOF() )
+			{
+				fileText += "\n";
+			}
+		}
+	}
+
+	mFile.Close();
+	mFile.Free();
+
+	fileText = fileText.replace( /[^\x20-\x7E\r\n\t]/g, "" ).trim();
+	if( fileText == "" )
+	{
+		return {};
+	}
+
+	try
+	{
+		var parsedSettings = JSON.parse( fileText );
+		if( parsedSettings && parsedSettings.characters && parsedSettings.characters[playerKey] )
+		{
+			return parsedSettings.characters[playerKey];
+		}
+	}
+	catch( error )
+	{
+		Console.Warning( "Quest system: Failed to parse " + fileName + ": " + error );
+	}
+
+	return {};
 }
 
 /** @type { ( player: Character, settings: any ) => boolean } */
-function SavePlayerSettings( player, settings ) 
+function SavePlayerSettings( player, settings )
 {
+	if( !ValidateObject( player ) || !player.account )
+	{
+		return false;
+	}
+
+	if( !settings || typeof settings != "object" )
+	{
+		settings = {};
+	}
+
 	var mFile = new UOXCFile();
 	var userAccount = player.account;
-	var fileName = "PlayerSettings_" + userAccount.id + ".jsdata";
+	var fileName = "PlayerSettings_" + userAccount.id + ".json";
+	var playerKey = String( player.serial );
 
-	mFile.Open( fileName, "w", "Settings" );
-	if( mFile )
+	var saveObject = {
+		version: playerSettingsVersion,
+		characters: {}
+	};
+
+	mFile.Open( fileName, "r", "Settings" );
+	if( mFile && mFile.Length() > 0 )
 	{
-		for( var key in settings )
+		var existingText = "";
+		while( !mFile.EOF() )
 		{
-			if( settings.hasOwnProperty( key ))
+			var rawLine = mFile.ReadUntil( "\n" );
+			if( rawLine != null && typeof rawLine != "undefined" )
 			{
-				var value = settings[key];
-
-				// Serialize based on data type
-				if( typeof value == "string" ) 
+				existingText += rawLine;
+				if( !mFile.EOF() )
 				{
-					mFile.Write( key + "=" + '"' + value.replace( /"/g, '\\"' ) + '"' + "\n" ); // Escape quotes for strings
-				} 
-				else if( typeof value == "boolean" )
-				{
-					mFile.Write( key + "=" + ( value ? "1" : "0" ) + "\n" ); // Boolean as 1/0
-				} 
-				else if( !isNaN(value ))
-				{
-					mFile.Write( key + "=" + value + "\n" ); // Numbers directly
-				}
-				else
-				{
-					// Fallback for unsupported data types
-					mFile.Write( key + "=" + ( value || "undefined" ) + "\n" );
+					existingText += "\n";
 				}
 			}
 		}
+
 		mFile.Close();
 		mFile.Free();
-		return true; // Save succeeded
+
+		existingText = existingText.replace( /[^\x20-\x7E\r\n\t]/g, "" ).trim();
+		if( existingText != "" )
+		{
+			try
+			{
+				var parsedSettings = JSON.parse( existingText );
+				if( parsedSettings && typeof parsedSettings == "object" )
+				{
+					saveObject = parsedSettings;
+				}
+
+				if( !saveObject.characters )
+				{
+					saveObject.characters = {};
+				}
+			}
+			catch( error )
+			{
+				Console.Warning( "Quest system: Failed to parse existing " + fileName + ": " + error );
+			}
+		}
+	}
+	else if( mFile )
+	{
+		mFile.Free();
 	}
 
-	return false; // Failed to save settings
+	saveObject.version = playerSettingsVersion;
+	saveObject.characters[playerKey] = settings;
+
+	var fileText = "";
+	try
+	{
+		fileText = JSON.stringify( saveObject, null, "\t" );
+	}
+	catch( error )
+	{
+		Console.Warning( "Quest system: Failed to serialize " + fileName + ": " + error );
+		return false;
+	}
+
+	mFile = new UOXCFile();
+	mFile.Open( fileName, "w", "Settings" );
+	if( !mFile )
+	{
+		return false;
+	}
+
+	mFile.Write( fileText + "\n" );
+	mFile.Close();
+	mFile.Free();
+
+	return true;
 }
 
 /** @type { ( player: Character, failedQuest: any ) => void } */
 function LogFailedQuest( player, failedQuest )
 {
+	if( !ValidateObject( player ) || !player.account || !failedQuest )
+	{
+		return;
+	}
+
 	var mFile = new UOXCFile();
 	var userAccount = player.account;
-	var failedLogFileName = "FailedQuests_" + userAccount.id + ".jsdata";
+	var fileName = "FailedQuests_" + userAccount.id + ".json";
+	var playerKey = String( player.serial );
 
-	mFile.Open( failedLogFileName, "a", "Quests" ); // Append mode
-	if( mFile )
+	var failedQuestData = {
+		version: questVersion,
+		characters: {}
+	};
+
+	mFile.Open( fileName, "r", "Quests" );
+	if( mFile && mFile.Length() > 0 )
 	{
-		// Serialize collectedItems
-		var collectedItemsStr = "";
-		if( failedQuest.collectedItems )
+		var existingText = "";
+		while( !mFile.EOF() )
 		{
-			for( var key in failedQuest.collectedItems )
+			var rawLine = mFile.ReadUntil( "\n" );
+			if( rawLine != null && typeof rawLine != "undefined" )
 			{
-				if( failedQuest.collectedItems.hasOwnProperty( key ))
+				existingText += rawLine;
+				if( !mFile.EOF() )
 				{
-					if( collectedItemsStr.length > 0 )
-					{
-						collectedItemsStr += ",";
-					}
-					collectedItemsStr += key + ":" + failedQuest.collectedItems[key];
+					existingText += "\n";
 				}
 			}
 		}
 
-		// Serialize harvestKills
-		var harvestKillsStr = "";
-		if( failedQuest.harvestKills )
-		{
-			for( var key in failedQuest.harvestKills )
-			{
-				if( failedQuest.harvestKills.hasOwnProperty( key ))
-				{
-					if( harvestKillsStr.length > 0 )
-					{
-						harvestKillsStr += ",";
-					}
-					harvestKillsStr += key + ":" + failedQuest.harvestKills[key];
-				}
-			}
-		}
-
-		var collectedItemGroupsStr = "";
-		if( failedQuest.collectedItemGroups )
-		{
-			for( var key in failedQuest.collectedItemGroups )
-			{
-				if( failedQuest.collectedItemGroups.hasOwnProperty( key ) )
-				{
-					if( collectedItemGroupsStr.length > 0 )
-					{
-						collectedItemGroupsStr += ",";
-					}
-					collectedItemGroupsStr += key + ":" + failedQuest.collectedItemGroups[key];
-				}
-			}
-		}
-
-		var harvestKillGroupsStr = "";
-		if( failedQuest.harvestKillGroups )
-		{
-			for( var key in failedQuest.harvestKillGroups )
-			{
-				if( failedQuest.harvestKillGroups.hasOwnProperty( key ) )
-				{
-					if( harvestKillGroupsStr.length > 0 )
-					{
-						harvestKillGroupsStr += ",";
-					}
-					harvestKillGroupsStr += key + ":" + failedQuest.harvestKillGroups[key];
-				}
-			}
-		}
-
-		var tamedCreaturesStr = SerializeProgressMap( failedQuest.tamedCreatures );
-		var tamedCreatureSerialsStr = SerializeProgressMap( failedQuest.tamedCreatureSerials );
-
-		// Write the failed quest details
-		var failedEntry =
-			"Serial=" + ( failedQuest.serial || "undefined" ) + "\n" +
-			"QuestID=" + ( failedQuest.questID || "undefined" ) + "\n" +
-			"QuestProgress=" + ( failedQuest.questProgress || 0 ) + "\n" +
-			"HarvestKills=" + harvestKillsStr + "\n" +
-			"CollectedItems=" + collectedItemsStr + "\n" +
-			"StartTime=" + ( failedQuest.startTime || 0 ) + "\n" +
-			"TimeLimit=" + ( failedQuest.timeLimit || 0 ) + "\n" +
-			"HarvestKillGroups=" + harvestKillGroupsStr + "\n" +
-			"CollectedItemGroups=" + collectedItemGroupsStr + "\n" +
-			"TamedCreatures=" + tamedCreaturesStr + "\n" +
-			"TamedCreatureSerials=" + tamedCreatureSerialsStr + "\n" +
-			"EscortNPCSerial=" + ( failedQuest.escortNPCSerial || 0 ) + "\n" +
-			"EscortUsesQuestGiver=" + ( failedQuest.escortUsesQuestGiver ? "1" : "0" ) + "\n" +
-			"EscortStage=" + ( failedQuest.escortStage || 0 ) + "\n" +
-			"EscortLastRegion=" + ( failedQuest.escortLastRegion || "" ) + "\n" +
-			"EscortFailed=1\n" +
-			"LastTravelAmbushCheck=" + ( failedQuest.lastTravelAmbushCheck || 0 ) + "\n" +
-			"SelectedWaypoints=" + SerializeSelectedWaypoints( failedQuest.selectedWaypoints ) + "\n" +
-			"SelectedDestinationRegionID=" + ( failedQuest.selectedDestinationRegionID || 0 ) + "\n" +
-			"SelectedDestinationRegionName=" + ( failedQuest.selectedDestinationRegionName || "" ) + "\n" +
-			"GuidedWalkNPCSerial=" + ( failedQuest.guidedWalkNPCSerial || 0 ) + "\n" +
-			"GuidedWalkUsesQuestGiver=" + ( failedQuest.guidedWalkUsesQuestGiver ? "1" : "0" ) + "\n" +
-			"RaceNPCSerial=" + ( failedQuest.raceNPCSerial || 0 ) + "\n" +
-			"RaceUsesQuestGiver=" + ( failedQuest.raceUsesQuestGiver ? "1" : "0" ) + "\n" +
-			"RaceCheckpoint=" + ( failedQuest.raceCheckpoint || 0 ) + "\n" +
-			"RaceCompleted=" + ( failedQuest.raceCompleted ? "1" : "0" ) + "\n" +
-			"RaceWinner=" + ( failedQuest.raceWinner || "" ) + "\n" +
-			"Completed=0\n" +
-			"QuestTurnIn=0\n" +
-			"Failed=1\n\n";
-
-		mFile.Write( failedEntry );
 		mFile.Close();
 		mFile.Free();
+
+		existingText = existingText.replace( /[^\x20-\x7E\r\n\t]/g, "" ).trim();
+		if( existingText != "" )
+		{
+			try
+			{
+				var parsedData = JSON.parse( existingText );
+				if( parsedData && typeof parsedData == "object" )
+				{
+					failedQuestData = parsedData;
+				}
+			}
+			catch( error )
+			{
+				Console.Warning( "Quest system: Failed to parse existing " + fileName + ": " + error );
+			}
+		}
 	}
+	else if( mFile )
+	{
+		mFile.Free();
+	}
+
+	if( !failedQuestData.characters )
+	{
+		failedQuestData.characters = {};
+	}
+
+	if( !failedQuestData.characters[playerKey] )
+	{
+		failedQuestData.characters[playerKey] = [];
+	}
+
+	failedQuestData.version = questVersion;
+
+	var failedQuestList = failedQuestData.characters[playerKey];
+	var failedQuestID = parseInt( failedQuest.questID, 10 );
+	if( isNaN( failedQuestID ) )
+	{
+		failedQuestID = 0;
+	}
+
+	var existingFailedIndex = -1;
+	for( var failedIndex = 0; failedIndex < failedQuestList.length; failedIndex++ )
+	{
+		if( parseInt( failedQuestList[failedIndex].questID, 10 ) == failedQuestID )
+		{
+			existingFailedIndex = failedIndex;
+			break;
+		}
+	}
+
+	var failedQuestEntry = {
+		serial: player.serial,
+		questID: failedQuestID,
+		failedAt: Date.now(),
+		failed: true,
+		questProgress: failedQuest.questProgress || 0,
+		harvestKills: failedQuest.harvestKills || {},
+		harvestKillGroups: failedQuest.harvestKillGroups || {},
+		collectedItems: failedQuest.collectedItems || {},
+		collectedItemGroups: failedQuest.collectedItemGroups || {},
+		tamedCreatures: failedQuest.tamedCreatures || {},
+		tamedCreatureSerials: failedQuest.tamedCreatureSerials || {},
+		startTime: failedQuest.startTime || 0,
+		timeLimit: failedQuest.timeLimit || 0,
+		escortNPCSerial: failedQuest.escortNPCSerial || 0,
+		escortUsesQuestGiver: failedQuest.escortUsesQuestGiver ? true : false,
+		escortStage: failedQuest.escortStage || 0,
+		escortLastRegion: failedQuest.escortLastRegion || "",
+		escortFailed: true,
+		lastTravelAmbushCheck: failedQuest.lastTravelAmbushCheck || 0,
+		selectedWaypoints: failedQuest.selectedWaypoints || [],
+		selectedDestinationRegionID: failedQuest.selectedDestinationRegionID || 0,
+		selectedDestinationRegionName: failedQuest.selectedDestinationRegionName || "",
+		guidedWalkNPCSerial: failedQuest.guidedWalkNPCSerial || 0,
+		guidedWalkUsesQuestGiver: failedQuest.guidedWalkUsesQuestGiver ? true : false,
+		raceNPCSerial: failedQuest.raceNPCSerial || 0,
+		raceUsesQuestGiver: failedQuest.raceUsesQuestGiver ? true : false,
+		raceCheckpoint: failedQuest.raceCheckpoint || 0,
+		raceCompleted: failedQuest.raceCompleted ? true : false,
+		raceWinner: failedQuest.raceWinner || "",
+		completed: false,
+		questTurnIn: false
+	};
+
+	if( existingFailedIndex >= 0 )
+	{
+		failedQuestList[existingFailedIndex] = failedQuestEntry;
+	}
+	else
+	{
+		failedQuestList.push( failedQuestEntry );
+	}
+
+	var fileText = "";
+	try
+	{
+		fileText = JSON.stringify( failedQuestData, null, "\t" );
+	}
+	catch( error )
+	{
+		Console.Warning( "Quest system: Failed to serialize " + fileName + ": " + error );
+		return;
+	}
+
+	mFile = new UOXCFile();
+	mFile.Open( fileName, "w", "Quests" );
+	if( !mFile )
+	{
+		return;
+	}
+
+	mFile.Write( fileText + "\n" );
+	mFile.Close();
+	mFile.Free();
 }
 
 /** @type { ( player: Character ) => number[] } */
 function ReadFailedQuests( player )
 {
+	if( !ValidateObject( player ) || !player.account )
+	{
+		return [];
+	}
+
 	var mFile = new UOXCFile();
 	var userAccount = player.account;
-	var failedFileName = "FailedQuests_" + userAccount.id + ".jsdata";
+	var fileName = "FailedQuests_" + userAccount.id + ".json";
+	var playerKey = String( player.serial );
 
 	var failedQuests = [];
-	mFile.Open( failedFileName, "r", "Quests" );
-	if( mFile && mFile.Length() >= 0 )
+
+	mFile.Open( fileName, "r", "Quests" );
+	if( !mFile || mFile.Length() <= 0 )
 	{
-		var currentQuestID = null;
-		var currentSerial = null;
-
-		while( !mFile.EOF() )
+		if( mFile )
 		{
-			var line = mFile.ReadUntil( "\n" );
-			line = manualTrim( line ); // Remove leading/trailing spaces
+			mFile.Free();
+		}
+		return failedQuests;
+	}
 
-			// Skip empty lines
-			if( line == "" )
+	var fileText = "";
+	while( !mFile.EOF() )
+	{
+		var rawLine = mFile.ReadUntil( "\n" );
+		if( rawLine != null && typeof rawLine != "undefined" )
+		{
+			fileText += rawLine;
+			if( !mFile.EOF() )
+			{
+				fileText += "\n";
+			}
+		}
+	}
+
+	mFile.Close();
+	mFile.Free();
+
+	fileText = fileText.replace( /[^\x20-\x7E\r\n\t]/g, "" ).trim();
+	if( fileText == "" )
+	{
+		return failedQuests;
+	}
+
+	try
+	{
+		var failedQuestData = JSON.parse( fileText );
+		if( !failedQuestData || !failedQuestData.characters || !failedQuestData.characters[playerKey] )
+		{
+			return failedQuests;
+		}
+
+		var characterFailedQuests = failedQuestData.characters[playerKey];
+		if( !characterFailedQuests || !characterFailedQuests.length )
+		{
+			return failedQuests;
+		}
+
+		for( var i = 0; i < characterFailedQuests.length; i++ )
+		{
+			var failedEntry = characterFailedQuests[i];
+			if( !failedEntry )
 			{
 				continue;
 			}
 
-			// Split the line into key and value
-			var parts = line.split( "=" );
-			if( parts.length == 2 )
+			var questID = parseInt( failedEntry.questID, 10 );
+			if( !isNaN( questID ) && questID > 0 )
 			{
-				var key = manualTrim( parts[0] ).toLowerCase();
-				var value = manualTrim( parts[1] );
-
-				if( key == "questid" )
-				{
-					currentQuestID = parseInt( value, 10 ); // Parse the QuestID
-				} 
-				else if( key == "serial" )
-				{
-					currentSerial = parseInt( value, 10 ); // Parse the Serial
-				}
-
-				// If we reach the end of an entry and Serial matches the player, save the QuestID
-				if( key == "failed" && value == "1" && currentQuestID != null && currentSerial == player.serial )
-				{
-					failedQuests.push( currentQuestID );
-					currentQuestID = null; // Reset for next entry
-					currentSerial = null; // Reset for next entry
-				}
+				failedQuests.push( questID );
 			}
 		}
-		mFile.Close();
-		mFile.Free();
-	} 
-	else
+	}
+	catch( error )
 	{
-		player.SysMessage( "No failed quests found." );
+		Console.Warning( "Quest system: Failed to parse " + fileName + ": " + error );
+		return [];
 	}
 
 	return failedQuests;
@@ -4169,618 +4321,671 @@ function ReadFailedQuests( player )
 /** @type { ( player: Character, completedQuest: any ) => void } */
 function ArchiveCompletedQuest( player, completedQuest )
 {
+	if( !ValidateObject( player ) || !player.account || !completedQuest )
+	{
+		return;
+	}
+
 	var mFile = new UOXCFile();
 	var userAccount = player.account;
-	var archiveFileName = "QuestArchive_" + userAccount.id + ".jsdata";
+	var fileName = "QuestArchive_" + userAccount.id + ".json";
+	var playerKey = String( player.serial );
 
-	var quest = TriggerEvent( 5801, "QuestList", completedQuest.questID );
-	var nextQuestID = quest ? quest.nextQuestID || "null" : "null";
+	var archiveData = {
+		version: questVersion,
+		characters: {}
+	};
 
-	mFile.Open( archiveFileName, "a", "Quests" );
-	if( mFile )
+	mFile.Open( fileName, "r", "Quests" );
+	if( mFile && mFile.Length() > 0 )
 	{
-		var collectedItemsStr = "";
-		if( completedQuest.collectedItems )
+		var existingText = "";
+		while( !mFile.EOF() )
 		{
-			for( var collectedItemKey in completedQuest.collectedItems )
+			var rawLine = mFile.ReadUntil( "\n" );
+			if( rawLine != null && typeof rawLine != "undefined" )
 			{
-				if( completedQuest.collectedItems.hasOwnProperty( collectedItemKey ) )
+				existingText += rawLine;
+				if( !mFile.EOF() )
 				{
-					if( collectedItemsStr.length > 0 )
-					{
-						collectedItemsStr += ",";
-					}
-					collectedItemsStr += collectedItemKey + ":" + completedQuest.collectedItems[collectedItemKey];
+					existingText += "\n";
 				}
 			}
 		}
 
-		var collectedItemGroupsStr = "";
-		if( completedQuest.collectedItemGroups )
-		{
-			for( var collectedGroupKey in completedQuest.collectedItemGroups )
-			{
-				if( completedQuest.collectedItemGroups.hasOwnProperty( collectedGroupKey ) )
-				{
-					if( collectedItemGroupsStr.length > 0 )
-					{
-						collectedItemGroupsStr += ",";
-					}
-					collectedItemGroupsStr += collectedGroupKey + ":" + completedQuest.collectedItemGroups[collectedGroupKey];
-				}
-			}
-		}
-
-		var harvestKillsStr = "";
-		if( completedQuest.harvestKills )
-		{
-			for( var killKey in completedQuest.harvestKills )
-			{
-				if( completedQuest.harvestKills.hasOwnProperty( killKey ) )
-				{
-					if( harvestKillsStr.length > 0 )
-					{
-						harvestKillsStr += ",";
-					}
-					harvestKillsStr += killKey + ":" + completedQuest.harvestKills[killKey];
-				}
-			}
-		}
-
-		var harvestKillGroupsStr = "";
-		if( completedQuest.harvestKillGroups )
-		{
-			for( var harvestKillGroupKey in completedQuest.harvestKillGroups )
-			{
-				if( completedQuest.harvestKillGroups.hasOwnProperty( harvestKillGroupKey ) )
-				{
-					if( harvestKillGroupsStr.length > 0 )
-					{
-						harvestKillGroupsStr += ",";
-					}
-					harvestKillGroupsStr += harvestKillGroupKey + ":" + completedQuest.harvestKillGroups[harvestKillGroupKey];
-				}
-			}
-		}
-
-		var tamedCreaturesStr = SerializeProgressMap( completedQuest.tamedCreatures );
-		var tamedCreatureSerialsStr = SerializeProgressMap( completedQuest.tamedCreatureSerials );
-
-		var skillProgressStr = "";
-		if( quest && quest.type == "skillgain" )
-		{
-			skillProgressStr =
-				"SkillProgress=" + ( completedQuest.skillProgress || 0 ) + "\n" +
-				"MaxSkillPoints=" + ( quest.maxSkillPoints || 0 ) + "\n" +
-				"TargetSkill=" + ( quest.targetSkill || "null" ) + "\n";
-		}
-
-		var deliveryProgressStr = "";
-		if( quest && quest.type == "delivery" )
-		{
-			deliveryProgressStr =
-				"DeliveryProgress=" + ( completedQuest.deliveryProgress || 0 ) + "\n" +
-				"DeliveryItem=" + ( completedQuest.deliveryItem || "null" ) + "\n" +
-				"TargetDeliveryNPC=" + ( completedQuest.targetDeliveryNPC || "null" ) + "\n";
-		}
-
-		var archiveEntry =
-			"Serial=" + ( completedQuest.serial || "undefined" ) + "\n" +
-			"QuestID=" + ( completedQuest.questID || "undefined" ) + "\n" +
-			"NextQuestID=" + nextQuestID + "\n" +
-			"LastCompleted=" + Date.now() + "\n" +
-			"QuestProgress=" + ( completedQuest.questProgress || 0 ) + "\n" +
-			"CollectedItems=" + collectedItemsStr + "\n" +
-			"CollectedItemGroups=" + collectedItemGroupsStr + "\n" +
-			"HarvestKills=" + harvestKillsStr + "\n" +
-			"HarvestKillGroups=" + harvestKillGroupsStr + "\n" +
-			"TamedCreatures=" + tamedCreaturesStr + "\n" +
-			"TamedCreatureSerials=" + tamedCreatureSerialsStr + "\n" +
-			"EscortNPCSerial=" + ( completedQuest.escortNPCSerial || 0 ) + "\n" +
-			"EscortUsesQuestGiver=" + ( completedQuest.escortUsesQuestGiver ? "1" : "0" ) + "\n" +
-			"EscortStage=" + ( completedQuest.escortStage || 0 ) + "\n" +
-			"EscortLastRegion=" + ( completedQuest.escortLastRegion || "" ) + "\n" +
-			"LastTravelAmbushCheck=" + ( completedQuest.lastTravelAmbushCheck || 0 ) + "\n" +
-			"SelectedWaypoints=" + SerializeSelectedWaypoints( completedQuest.selectedWaypoints ) + "\n" +
-			"SelectedDestinationRegionID=" + ( completedQuest.selectedDestinationRegionID || 0 ) + "\n" +
-			"SelectedDestinationRegionName=" + ( completedQuest.selectedDestinationRegionName || "" ) + "\n" +
-			skillProgressStr +
-			deliveryProgressStr +
-			"StartTime=" + ( completedQuest.startTime || 0 ) + "\n" +
-			"TimeLimit=" + ( completedQuest.timeLimit || 0 ) + "\n" +
-			"Completed=1\n" +
-			"QuestTurnIn=1\n\n";
-
-		mFile.Write( archiveEntry );
 		mFile.Close();
 		mFile.Free();
+
+		existingText = existingText.replace( /[^\x20-\x7E\r\n\t]/g, "" ).trim();
+		if( existingText != "" )
+		{
+			try
+			{
+				var parsedData = JSON.parse( existingText );
+				if( parsedData && typeof parsedData == "object" )
+				{
+					archiveData = parsedData;
+				}
+			}
+			catch( error )
+			{
+				Console.Warning( "Quest system: Failed to parse existing " + fileName + ": " + error );
+			}
+		}
 	}
+	else if( mFile )
+	{
+		mFile.Free();
+	}
+
+	if( !archiveData.characters )
+	{
+		archiveData.characters = {};
+	}
+
+	if( !archiveData.characters[playerKey] )
+	{
+		archiveData.characters[playerKey] = [];
+	}
+
+	archiveData.version = questVersion;
+
+	var quest = TriggerEvent( 5801, "QuestList", completedQuest.questID );
+	var nextQuestID = quest ? quest.nextQuestID || null : null;
+	var completedQuestID = parseInt( completedQuest.questID, 10 );
+	if( isNaN( completedQuestID ) )
+	{
+		completedQuestID = 0;
+	}
+
+	var archivedQuestList = archiveData.characters[playerKey];
+	var existingArchiveIndex = -1;
+
+	for( var archiveIndex = 0; archiveIndex < archivedQuestList.length; archiveIndex++ )
+	{
+		if( parseInt( archivedQuestList[archiveIndex].questID, 10 ) == completedQuestID )
+		{
+			existingArchiveIndex = archiveIndex;
+			break;
+		}
+	}
+
+	var archivedQuestEntry = {
+		serial: player.serial,
+		questID: completedQuestID,
+		nextQuestID: nextQuestID,
+		lastCompleted: Date.now(),
+		questProgress: completedQuest.questProgress || 0,
+		collectedItems: completedQuest.collectedItems || {},
+		collectedItemGroups: completedQuest.collectedItemGroups || {},
+		harvestKills: completedQuest.harvestKills || {},
+		harvestKillGroups: completedQuest.harvestKillGroups || {},
+		tamedCreatures: completedQuest.tamedCreatures || {},
+		tamedCreatureSerials: completedQuest.tamedCreatureSerials || {},
+		escortNPCSerial: completedQuest.escortNPCSerial || 0,
+		escortUsesQuestGiver: completedQuest.escortUsesQuestGiver ? true : false,
+		escortStage: completedQuest.escortStage || 0,
+		escortLastRegion: completedQuest.escortLastRegion || "",
+		lastTravelAmbushCheck: completedQuest.lastTravelAmbushCheck || 0,
+		selectedWaypoints: completedQuest.selectedWaypoints || [],
+		selectedDestinationRegionID: completedQuest.selectedDestinationRegionID || 0,
+		selectedDestinationRegionName: completedQuest.selectedDestinationRegionName || "",
+		skillProgress: completedQuest.skillProgress || 0,
+		targetSkill: completedQuest.targetSkill || -1,
+		targetRegion: completedQuest.targetRegion || 0,
+		maxSkillPoints: completedQuest.maxSkillPoints || 0,
+		startTime: completedQuest.startTime || 0,
+		timeLimit: completedQuest.timeLimit || 0,
+		guidedWalkNPCSerial: completedQuest.guidedWalkNPCSerial || 0,
+		guidedWalkUsesQuestGiver: completedQuest.guidedWalkUsesQuestGiver ? true : false,
+		raceNPCSerial: completedQuest.raceNPCSerial || 0,
+		raceUsesQuestGiver: completedQuest.raceUsesQuestGiver ? true : false,
+		raceCheckpoint: completedQuest.raceCheckpoint || 0,
+		raceCompleted: completedQuest.raceCompleted ? true : false,
+		raceWinner: completedQuest.raceWinner || "",
+		completed: true,
+		questTurnIn: true
+	};
+
+	if( existingArchiveIndex >= 0 )
+	{
+		archivedQuestList[existingArchiveIndex] = archivedQuestEntry;
+	}
+	else
+	{
+		archivedQuestList.push( archivedQuestEntry );
+	}
+
+	var fileText = "";
+	try
+	{
+		fileText = JSON.stringify( archiveData, null, "\t" );
+	}
+	catch( error )
+	{
+		Console.Warning( "Quest system: Failed to serialize " + fileName + ": " + error );
+		return;
+	}
+
+	mFile = new UOXCFile();
+	mFile.Open( fileName, "w", "Quests" );
+	if( !mFile )
+	{
+		return;
+	}
+
+	mFile.Write( fileText + "\n" );
+	mFile.Close();
+	mFile.Free();
 }
 
 /** @type { ( player: Character ) => number[] } */
-function ReadArchivedQuests( player ) 
+function ReadArchivedQuests( player )
 {
+	if( !ValidateObject( player ) || !player.account )
+	{
+		return [];
+	}
+
 	var mFile = new UOXCFile();
 	var userAccount = player.account;
-	var archiveFileName = "QuestArchive_" + userAccount.id + ".jsdata";
+	var fileName = "QuestArchive_" + userAccount.id + ".json";
+	var playerKey = String( player.serial );
 
 	var archivedQuests = [];
-	mFile.Open( archiveFileName, "r", "Quests" );
-	if( mFile && mFile.Length() >= 0 )
+
+	mFile.Open( fileName, "r", "Quests" );
+	if( !mFile || mFile.Length() <= 0 )
 	{
-		var currentQuestID = null;
-		var currentSerial = null;
-
-		while( !mFile.EOF() )
+		if( mFile )
 		{
-			var line = mFile.ReadUntil( "\n" );
-			line = manualTrim( line ); // Remove leading/trailing spaces
+			mFile.Free();
+		}
+		return archivedQuests;
+	}
 
-			// Skip empty lines
-			if( line == "" ) 
+	var fileText = "";
+	while( !mFile.EOF() )
+	{
+		var rawLine = mFile.ReadUntil( "\n" );
+		if( rawLine != null && typeof rawLine != "undefined" )
+		{
+			fileText += rawLine;
+			if( !mFile.EOF() )
 			{
-				// Check if we reached the end of an entry
-				if( currentQuestID != null && currentSerial == player.serial ) 
-				{
-					archivedQuests.push( currentQuestID ); // Add the quest ID
-				}
-				currentQuestID = null; // Reset for the next entry
-				currentSerial = null; // Reset for the next entry
+				fileText += "\n";
+			}
+		}
+	}
+
+	mFile.Close();
+	mFile.Free();
+
+	fileText = fileText.replace( /[^\x20-\x7E\r\n\t]/g, "" ).trim();
+	if( fileText == "" )
+	{
+		return archivedQuests;
+	}
+
+	try
+	{
+		var archiveData = JSON.parse( fileText );
+		if( !archiveData || !archiveData.characters || !archiveData.characters[playerKey] )
+		{
+			return archivedQuests;
+		}
+
+		var characterArchivedQuests = archiveData.characters[playerKey];
+		if( !characterArchivedQuests || !characterArchivedQuests.length )
+		{
+			return archivedQuests;
+		}
+
+		for( var i = 0; i < characterArchivedQuests.length; i++ )
+		{
+			var archiveEntry = characterArchivedQuests[i];
+			if( !archiveEntry )
+			{
 				continue;
 			}
 
-			// Split the line into key and value
-			var parts = line.split( "=" );
-			if( parts.length == 2 ) 
+			var questID = parseInt( archiveEntry.questID, 10 );
+			if( !isNaN( questID ) && questID > 0 )
 			{
-				var key = manualTrim( parts[0] ).toLowerCase();
-				var value = manualTrim( parts[1] );
-
-				if( key == "questid" ) 
-				{
-					currentQuestID = parseInt( value, 10 ); // Parse quest ID
-				}
-				else if( key == "serial" )
-				{
-					currentSerial = parseInt( value, 10 ); // Parse player serial
-				}
-
-				// Add quest ID if marked as completed
-				if( key == "completed" && value == "1" && currentQuestID != null && currentSerial == player.serial ) 
-				{
-					archivedQuests.push( currentQuestID );
-				}
+				archivedQuests.push( questID );
 			}
 		}
+	}
+	catch( error )
+	{
+		Console.Warning( "Quest system: Failed to parse " + fileName + ": " + error );
+		return [];
+	}
 
-		mFile.Close();
-		mFile.Free();
-	} 
+	return archivedQuests;
+}
 
-	return archivedQuests; // Return array of quest IDs
+/** @type { ( player: Character ) => any[] } */
+function ReadArchivedQuestEntries( player )
+{
+	if( !ValidateObject( player ) || !player.account )
+	{
+		return [];
+	}
+
+	var mFile = new UOXCFile();
+	var userAccount = player.account;
+	var fileName = "QuestArchive_" + userAccount.id + ".json";
+	var playerKey = String( player.serial );
+
+	var archivedQuestEntries = [];
+
+	mFile.Open( fileName, "r", "Quests" );
+	if( !mFile || mFile.Length() <= 0 )
+	{
+		if( mFile )
+		{
+			mFile.Free();
+		}
+		return archivedQuestEntries;
+	}
+
+	var fileText = "";
+	while( !mFile.EOF() )
+	{
+		var rawLine = mFile.ReadUntil( "\n" );
+		if( rawLine != null && typeof rawLine != "undefined" )
+		{
+			fileText += rawLine;
+			if( !mFile.EOF() )
+			{
+				fileText += "\n";
+			}
+		}
+	}
+
+	mFile.Close();
+	mFile.Free();
+
+	fileText = fileText.replace( /[^\x20-\x7E\r\n\t]/g, "" ).trim();
+	if( fileText == "" )
+	{
+		return archivedQuestEntries;
+	}
+
+	try
+	{
+		var archiveData = JSON.parse( fileText );
+		if( !archiveData || !archiveData.characters || !archiveData.characters[playerKey] )
+		{
+			return archivedQuestEntries;
+		}
+
+		var characterArchivedQuests = archiveData.characters[playerKey];
+		if( !characterArchivedQuests || !characterArchivedQuests.length )
+		{
+			return archivedQuestEntries;
+		}
+
+		for( var i = 0; i < characterArchivedQuests.length; i++ )
+		{
+			var archiveEntry = characterArchivedQuests[i];
+			if( !archiveEntry )
+			{
+				continue;
+			}
+
+			var questID = parseInt( archiveEntry.questID, 10 );
+			if( isNaN( questID ) || questID <= 0 )
+			{
+				continue;
+			}
+
+			archivedQuestEntries.push( archiveEntry );
+		}
+	}
+	catch( error )
+	{
+		Console.Warning( "Quest system: Failed to parse " + fileName + ": " + error );
+		return [];
+	}
+
+	return archivedQuestEntries;
 }
 
 /** @type { ( player: Character, questProgressArray: any[] ) => boolean } */
 function WriteQuestProgress( player, questProgressArray )
 {
+	if( !ValidateObject( player ) || !player.account )
+	{
+		return false;
+	}
+
+	if( !questProgressArray || !questProgressArray.length )
+	{
+		questProgressArray = [];
+	}
+
 	var mFile = new UOXCFile();
 	var userAccount = player.account;
-	var fileName = "QuestProgress_" + userAccount.id + ".jsdata";
+	var fileName = "QuestProgress_" + userAccount.id + ".json";
+	var playerKey = String( player.serial );
 
-	mFile.Open( fileName, "w", "Quests" );
-	if( mFile )
+	var progressData = {
+		version: questVersion,
+		characters: {}
+	};
+
+	mFile.Open( fileName, "r", "Quests" );
+	if( mFile && mFile.Length() > 0 )
 	{
-		for( var progressIndex = 0; progressIndex < questProgressArray.length; progressIndex++ )
+		var existingText = "";
+		while( !mFile.EOF() )
 		{
-			var progressEntry = questProgressArray[progressIndex];
-
-			var killsStr = "";
-			if( progressEntry.harvestKills )
+			var rawLine = mFile.ReadUntil( "\n" );
+			if( rawLine != null && typeof rawLine != "undefined" )
 			{
-				for( var killKey in progressEntry.harvestKills )
+				existingText += rawLine;
+				if( !mFile.EOF() )
 				{
-					if( progressEntry.harvestKills.hasOwnProperty( killKey ))
-					{
-						if( killsStr.length > 0 )
-						{
-							killsStr += ",";
-						}
-						killsStr += killKey + ":" + progressEntry.harvestKills[killKey];
-					}
+					existingText += "\n";
 				}
 			}
-
-			var killGroupsStr = "";
-			if( progressEntry.harvestKillGroups )
-			{
-				for( var killGroupKey in progressEntry.harvestKillGroups )
-				{
-					if( progressEntry.harvestKillGroups.hasOwnProperty( killGroupKey ) )
-					{
-						if( killGroupsStr.length > 0 )
-						{
-							killGroupsStr += ",";
-						}
-						killGroupsStr += killGroupKey + ":" + progressEntry.harvestKillGroups[killGroupKey];
-					}
-				}
-			}
-
-			var collectedItemsStr = "";
-			if( progressEntry.collectedItems )
-			{
-				for( var itemKey in progressEntry.collectedItems )
-				{
-					if( progressEntry.collectedItems.hasOwnProperty( itemKey ))
-					{
-						if( collectedItemsStr.length > 0 )
-						{
-							collectedItemsStr += ",";
-						}
-						collectedItemsStr += itemKey + ":" + progressEntry.collectedItems[itemKey];
-					}
-				}
-			}
-
-			var collectedItemGroupsStr = "";
-			if( progressEntry.collectedItemGroups )
-			{
-				for( var groupKey in progressEntry.collectedItemGroups )
-				{
-					if( progressEntry.collectedItemGroups.hasOwnProperty( groupKey ))
-					{
-						if( collectedItemGroupsStr.length > 0 )
-						{
-							collectedItemGroupsStr += ",";
-						}
-						collectedItemGroupsStr += groupKey + ":" + progressEntry.collectedItemGroups[groupKey];
-					}
-				}
-			}
-
-			var tamedCreaturesStr = SerializeProgressMap( progressEntry.tamedCreatures );
-			var tamedCreatureSerialsStr = SerializeProgressMap( progressEntry.tamedCreatureSerials );
-
-			var formattedEntry =
-				"Serial=" + ( progressEntry.serial || "undefined" ) + "\n" +
-				"QuestID=" + ( progressEntry.questID || "undefined" ) + "\n" +
-				"QuestProgress=" + ( progressEntry.questProgress || 0 ) + "\n" +
-				"HarvestKills=" + killsStr + "\n" +
-				"HarvestKillGroups=" + killGroupsStr + "\n" +
-				"CollectedItems=" + collectedItemsStr + "\n" +
-				"CollectedItemGroups=" + collectedItemGroupsStr + "\n" +
-				"TamedCreatures=" + tamedCreaturesStr + "\n" +
-				"TamedCreatureSerials=" + tamedCreatureSerialsStr + "\n" +
-				"EscortNPCSerial=" + ( progressEntry.escortNPCSerial || 0 ) + "\n" +
-				"EscortUsesQuestGiver=" + ( progressEntry.escortUsesQuestGiver ? "1" : "0" ) + "\n" +
-				"EscortStage=" + ( progressEntry.escortStage || 0 ) + "\n" +
-				"EscortLastRegion=" + ( progressEntry.escortLastRegion || "" ) + "\n" +
-				"EscortFailed=" + ( progressEntry.escortFailed ? "1" : "0" ) + "\n" +
-				"LastTravelAmbushCheck=" + ( progressEntry.lastTravelAmbushCheck || 0 ) + "\n" +
-				"SelectedWaypoints=" + SerializeSelectedWaypoints( progressEntry.selectedWaypoints ) + "\n" +
-				"SelectedDestinationRegionID=" + ( progressEntry.selectedDestinationRegionID || 0 ) + "\n" +
-				"SelectedDestinationRegionName=" + ( progressEntry.selectedDestinationRegionName || "" ) + "\n" +
-				"SkillProgress=" + ( progressEntry.skillProgress || 0 ) + "\n" +
-				"TargetSkill=" + ( progressEntry.targetSkill || -1 ) + "\n" +
-				"TargetRegion=" + ( progressEntry.targetRegion || 0 ) + "\n" +
-				"MaxSkillPoints=" + ( progressEntry.maxSkillPoints || 50.0 ) + "\n" +
-				"StartTime=" + ( progressEntry.startTime || 0 ) + "\n" +
-				"TimeLimit=" + ( progressEntry.timeLimit || 0 ) + "\n" +
-				"GuidedWalkNPCSerial=" + ( progressEntry.guidedWalkNPCSerial || 0 ) + "\n" +
-				"GuidedWalkUsesQuestGiver=" + ( progressEntry.guidedWalkUsesQuestGiver ? "1" : "0" ) + "\n" +
-				"RaceNPCSerial=" + ( progressEntry.raceNPCSerial || 0 ) + "\n" +
-				"RaceUsesQuestGiver=" + ( progressEntry.raceUsesQuestGiver ? "1" : "0" ) + "\n" +
-				"RaceCheckpoint=" + ( progressEntry.raceCheckpoint || 0 ) + "\n" +
-				"RaceCompleted=" + ( progressEntry.raceCompleted ? "1" : "0" ) + "\n" +
-				"RaceWinner=" + ( progressEntry.raceWinner || "" ) + "\n" +
-				"LastAccepted=" + ( progressEntry.lastAccepted || 0 ) + "\n" +
-				"Completed=" + ( progressEntry.completed ? "1" : "0" ) + "\n" +
-				"QuestTurnIn=" + ( progressEntry.questTurnIn ? "1" : "0" ) + "\n" +
-				"NextQuestID=" + ( progressEntry.nextQuestID != null ? progressEntry.nextQuestID : "null" ) + "\n\n";
-
-			mFile.Write( formattedEntry );
 		}
+
 		mFile.Close();
 		mFile.Free();
-		return true;
+
+		existingText = existingText.replace( /[^\x20-\x7E\r\n\t]/g, "" ).trim();
+		if( existingText != "" )
+		{
+			try
+			{
+				var parsedData = JSON.parse( existingText );
+				if( parsedData && typeof parsedData == "object" )
+				{
+					progressData = parsedData;
+				}
+			}
+			catch( error )
+			{
+				Console.Warning( "Quest system: Failed to parse existing " + fileName + ": " + error );
+			}
+		}
 	}
-	return false;
+	else if( mFile )
+	{
+		mFile.Free();
+	}
+
+	if( !progressData.characters )
+	{
+		progressData.characters = {};
+	}
+
+	progressData.version = questVersion;
+	progressData.characters[playerKey] = [];
+
+	for( var progressIndex = 0; progressIndex < questProgressArray.length; progressIndex++ )
+	{
+		var progressEntry = questProgressArray[progressIndex];
+		if( !progressEntry )
+		{
+			continue;
+		}
+
+		if( progressEntry.serial != player.serial )
+		{
+			continue;
+		}
+
+		progressData.characters[playerKey].push({
+			serial: player.serial,
+			questID: parseInt( progressEntry.questID, 10 ) || 0,
+			questProgress: progressEntry.questProgress || 0,
+
+			harvestKills: progressEntry.harvestKills || {},
+			harvestKillGroups: progressEntry.harvestKillGroups || {},
+			collectedItems: progressEntry.collectedItems || {},
+			collectedItemGroups: progressEntry.collectedItemGroups || {},
+			tamedCreatures: progressEntry.tamedCreatures || {},
+			tamedCreatureSerials: progressEntry.tamedCreatureSerials || {},
+
+			escortNPCSerial: progressEntry.escortNPCSerial || 0,
+			escortUsesQuestGiver: progressEntry.escortUsesQuestGiver ? true : false,
+			escortStage: progressEntry.escortStage || 0,
+			escortLastRegion: progressEntry.escortLastRegion || "",
+			escortFailed: progressEntry.escortFailed ? true : false,
+			lastTravelAmbushCheck: progressEntry.lastTravelAmbushCheck || 0,
+			selectedWaypoints: progressEntry.selectedWaypoints || [],
+			selectedDestinationRegionID: progressEntry.selectedDestinationRegionID || 0,
+			selectedDestinationRegionName: progressEntry.selectedDestinationRegionName || "",
+
+			skillProgress: progressEntry.skillProgress || 0,
+			targetSkill: progressEntry.targetSkill || -1,
+			targetRegion: progressEntry.targetRegion || 0,
+			maxSkillPoints: progressEntry.maxSkillPoints || 50.0,
+			startTime: progressEntry.startTime || 0,
+			timeLimit: progressEntry.timeLimit || 0,
+
+			guidedWalkNPCSerial: progressEntry.guidedWalkNPCSerial || 0,
+			guidedWalkUsesQuestGiver: progressEntry.guidedWalkUsesQuestGiver ? true : false,
+
+			raceNPCSerial: progressEntry.raceNPCSerial || 0,
+			raceUsesQuestGiver: progressEntry.raceUsesQuestGiver ? true : false,
+			raceCheckpoint: progressEntry.raceCheckpoint || 0,
+			raceCompleted: progressEntry.raceCompleted ? true : false,
+			raceWinner: progressEntry.raceWinner || "",
+
+			lastAccepted: progressEntry.lastAccepted || 0,
+			completed: progressEntry.completed ? true : false,
+			questTurnIn: progressEntry.questTurnIn ? true : false,
+			nextQuestID: progressEntry.nextQuestID != null ? progressEntry.nextQuestID : null
+		});
+	}
+
+	var fileText = "";
+	try
+	{
+		fileText = JSON.stringify( progressData, null, "\t" );
+	}
+	catch( error )
+	{
+		Console.Warning( "Quest system: Failed to serialize " + fileName + ": " + error );
+		return false;
+	}
+
+	mFile = new UOXCFile();
+	mFile.Open( fileName, "w", "Quests" );
+	if( !mFile )
+	{
+		return false;
+	}
+
+	mFile.Write( fileText + "\n" );
+	mFile.Close();
+	mFile.Free();
+
+	return true;
 }
 
 /** @type { ( player: Character ) => any[] } */
 function ReadQuestProgress( player )
 {
+	if( !ValidateObject( player ) || !player.account )
+	{
+		return [];
+	}
+
 	var mFile = new UOXCFile();
 	var userAccount = player.account;
-	var fileName = "QuestProgress_" + userAccount.id + ".jsdata";
+	var fileName = "QuestProgress_" + userAccount.id + ".json";
+	var playerKey = String( player.serial );
 
 	var questProgressArray = [];
+
 	mFile.Open( fileName, "r", "Quests" );
-
-	if( mFile && mFile.Length() >= 0 )
+	if( !mFile || mFile.Length() <= 0 )
 	{
-		var currentEntry = null;
-		while( !mFile.EOF() )
+		if( mFile )
 		{
-			var line = mFile.ReadUntil( "\n" );
+			mFile.Free();
+		}
+		return questProgressArray;
+	}
 
-			// Normalize line: Remove unexpected characters
-			line = manualTrim( line.replace( /[^\x20-\x7E]/g, "" ));
-
-			if( line == "" )
+	var fileText = "";
+	while( !mFile.EOF() )
+	{
+		var rawLine = mFile.ReadUntil( "\n" );
+		if( rawLine != null && typeof rawLine != "undefined" )
+		{
+			fileText += rawLine;
+			if( !mFile.EOF() )
 			{
-				if( currentEntry )
-				{
-					finalizeQuestEntry( currentEntry, player );
-					questProgressArray.push( currentEntry );
-					currentEntry = null;
-				}
+				fileText += "\n";
+			}
+		}
+	}
+
+	mFile.Close();
+	mFile.Free();
+
+	fileText = fileText.replace( /[^\x20-\x7E\r\n\t]/g, "" ).trim();
+	if( fileText == "" )
+	{
+		return questProgressArray;
+	}
+
+	try
+	{
+		var progressData = JSON.parse( fileText );
+		if( !progressData || !progressData.characters || !progressData.characters[playerKey] )
+		{
+			return questProgressArray;
+		}
+
+		var characterProgress = progressData.characters[playerKey];
+		if( !characterProgress || !characterProgress.length )
+		{
+			return questProgressArray;
+		}
+
+		for( var progressIndex = 0; progressIndex < characterProgress.length; progressIndex++ )
+		{
+			var savedEntry = characterProgress[progressIndex];
+			if( !savedEntry )
+			{
 				continue;
 			}
 
-			var parts = line.split( "=" );
-			if( parts.length == 2 )
+			var questID = parseInt( savedEntry.questID, 10 );
+			if( isNaN( questID ) || questID <= 0 )
 			{
-				if( !currentEntry )
-					currentEntry = {};
-
-				var key = manualTrim( parts[0] ).toLowerCase(); // Convert key to lowercase
-				var value = manualTrim( parts[1] );
-
-				currentEntry[key] = value;
+				continue;
 			}
-		}
 
-		// Handle the last entry
-		if( currentEntry )
-		{
-			finalizeQuestEntry( currentEntry, player );
-			questProgressArray.push( currentEntry );
-		}
+			questProgressArray.push({
+				serial: parseInt( savedEntry.serial, 10 ) || player.serial,
+				questID: questID,
+				questProgress: savedEntry.questProgress || 0,
 
-		mFile.Close();
-		mFile.Free();
+				harvestKills: savedEntry.harvestKills || {},
+				harvestKillGroups: savedEntry.harvestKillGroups || {},
+				collectedItems: savedEntry.collectedItems || {},
+				collectedItemGroups: savedEntry.collectedItemGroups || {},
+				tamedCreatures: savedEntry.tamedCreatures || {},
+				tamedCreatureSerials: savedEntry.tamedCreatureSerials || {},
+
+				escortNPCSerial: parseInt( savedEntry.escortNPCSerial, 10 ) || 0,
+				escortUsesQuestGiver: savedEntry.escortUsesQuestGiver ? true : false,
+				escortStage: parseInt( savedEntry.escortStage, 10 ) || 0,
+				escortLastRegion: savedEntry.escortLastRegion || "",
+				escortFailed: savedEntry.escortFailed ? true : false,
+				lastTravelAmbushCheck: parseInt( savedEntry.lastTravelAmbushCheck, 10 ) || 0,
+				selectedWaypoints: savedEntry.selectedWaypoints || [],
+				selectedDestinationRegionID: parseInt( savedEntry.selectedDestinationRegionID, 10 ) || 0,
+				selectedDestinationRegionName: savedEntry.selectedDestinationRegionName || "",
+
+				skillProgress: parseFloat( savedEntry.skillProgress ) || 0,
+				targetSkill: parseInt( savedEntry.targetSkill, 10 ) || -1,
+				targetRegion: parseInt( savedEntry.targetRegion, 10 ) || 0,
+				maxSkillPoints: parseFloat( savedEntry.maxSkillPoints ) || 50.0,
+				startTime: parseInt( savedEntry.startTime, 10 ) || 0,
+				timeLimit: parseInt( savedEntry.timeLimit, 10 ) || 0,
+
+				guidedWalkNPCSerial: parseInt( savedEntry.guidedWalkNPCSerial, 10 ) || 0,
+				guidedWalkUsesQuestGiver: savedEntry.guidedWalkUsesQuestGiver ? true : false,
+
+				raceNPCSerial: parseInt( savedEntry.raceNPCSerial, 10 ) || 0,
+				raceUsesQuestGiver: savedEntry.raceUsesQuestGiver ? true : false,
+				raceCheckpoint: parseInt( savedEntry.raceCheckpoint, 10 ) || 0,
+				raceCompleted: savedEntry.raceCompleted ? true : false,
+				raceWinner: savedEntry.raceWinner || "",
+
+				lastAccepted: parseInt( savedEntry.lastAccepted, 10 ) || 0,
+				completed: savedEntry.completed ? true : false,
+				questTurnIn: savedEntry.questTurnIn ? true : false,
+				nextQuestID: savedEntry.nextQuestID != null ? savedEntry.nextQuestID : null
+			});
+		}
 	}
+	catch( error )
+	{
+		Console.Warning( "Quest system: Failed to parse " + fileName + ": " + error );
+		return [];
+	}
+
 	return questProgressArray;
 }
 
-/** @type { ( entry: any, player: Character ) => void } */
-function finalizeQuestEntry( entry, player )
-{
-	entry.serial = parseInt( entry.serial || "0", 10 );
-	if( isNaN( entry.serial ))
-		entry.serial = 0;
-
-	entry.questID = parseInt( entry.questid || "0", 10 );
-	entry.completed = entry.completed == "1";
-	entry.questTurnIn = entry.questturnin == "1";
-	entry.startTime = parseInt( entry.starttime || "0", 10 );
-	entry.timeLimit = parseInt( entry.timelimit || "0", 10 );
-	entry.skillProgress = parseFloat( entry.skillprogress || "0.0" );
-	entry.targetSkill = parseInt( entry.targetskill || "-1", 10 );
-	entry.targetRegion = parseInt( entry.targetregion || "0", 10 );
-	entry.maxSkillPoints = parseFloat( entry.maxskillpoints || "50.0" );
-	entry.lastAccepted = parseInt( entry.lastaccepted || "0", 10 );
-	entry.raceNPCSerial = parseInt( entry.racenpcserial || "0", 10 );
-	if( isNaN( entry.raceNPCSerial ) )
-	{
-		entry.raceNPCSerial = 0;
-	}
-
-	entry.raceUsesQuestGiver = ( entry.raceusesquestgiver == "1" );
-
-	entry.raceCheckpoint = parseInt( entry.racecheckpoint || "0", 10 );
-	if( isNaN( entry.raceCheckpoint ) )
-	{
-		entry.raceCheckpoint = 0;
-	}
-
-	entry.raceCompleted = ( entry.racecompleted == "1" );
-	entry.raceWinner = entry.racewinner || "";
-
-	entry.escortNPCSerial = parseInt( entry.escortnpcserial || "0", 10 );
-	if( isNaN( entry.escortNPCSerial ) )
-		entry.escortNPCSerial = 0;
-
-	entry.escortUsesQuestGiver = ( entry.escortusesquestgiver == "1" );
-	entry.escortStage = parseInt( entry.escortstage || "0", 10 );
-	if( isNaN( entry.escortStage ) )
-		entry.escortStage = 0;
-
-	entry.escortLastRegion = entry.escortlastregion || "";
-	entry.escortFailed = ( entry.escortfailed == "1" );
-
-	entry.lastTravelAmbushCheck = parseInt( entry.lasttravelambushcheck || "0", 10 );
-	if( isNaN( entry.lastTravelAmbushCheck ) )
-		entry.lastTravelAmbushCheck = 0;
-
-	entry.selectedWaypoints = ParseSelectedWaypoints( entry.selectedwaypoints || "" );
-
-	entry.selectedDestinationRegionID = parseInt( entry.selecteddestinationregionid || "0", 10 );
-	if( isNaN( entry.selectedDestinationRegionID ) )
-		entry.selectedDestinationRegionID = 0;
-
-	entry.selectedDestinationRegionName = entry.selecteddestinationregionname || "";
-
-	entry.guidedWalkNPCSerial = parseInt( entry.guidedwalknpcserial || "0", 10 );
-	if( isNaN( entry.guidedWalkNPCSerial ) )
-	{
-		entry.guidedWalkNPCSerial = 0;
-	}
-
-	entry.guidedWalkUsesQuestGiver = ( entry.guidedwalkusesquestgiver == "1" );
-
-	processCollectedItems( entry, player );
-	processCollectedItemGroups( entry, player );
-	processKills( entry, player );
-	processKillGroups( entry, player );
-	processProgressMap( entry, "tamedCreatures", "tamedcreatures" );
-	processProgressMap( entry, "tamedCreatureSerials", "tamedcreatureserials" );
-}
-
-/** @type { ( entry: any, player: Character ) => void } */
-function processCollectedItems( entry, player )
-{
-	entry.collectedItems = {};
-	var collectedItemsStr = entry.collecteditems || ""; // Use consistent key
-
-	if( collectedItemsStr == "" ) 
-	{
-		return;
-	}
-
-	var collectedItems = collectedItemsStr.split( "," );
-	for( var i = 0; i < collectedItems.length; i++ )
-	{
-		var pair = collectedItems[i].split( ":" );
-		if( pair.length == 2 )
-		{
-			var key = manualTrim( pair[0] );
-			var value = parseInt( manualTrim( pair[1] ), 10 );
-			entry.collectedItems[key] = value;
-		}
-	}
-}
-
-/** @type { ( entry: any, player: Character ) => void } */
-function processCollectedItemGroups( entry, player )
-{
-	entry.collectedItemGroups = {};
-	var collectedItemGroupsStr = entry.collecteditemgroups || "";
-
-	if( collectedItemGroupsStr == "" )
-	{
-		return;
-	}
-
-	var collectedItemGroups = collectedItemGroupsStr.split( "," );
-	for( var groupIndex = 0; groupIndex < collectedItemGroups.length; groupIndex++ )
-	{
-		var pair = collectedItemGroups[groupIndex].split( ":" );
-		if( pair.length == 2 )
-		{
-			var key = manualTrim( pair[0] );
-			var value = parseInt( manualTrim( pair[1] ), 10 );
-			entry.collectedItemGroups[key] = value;
-		}
-	}
-}
-
-/** @type { ( entry: any, player: Character ) => void } */
-function processKills( entry, player )
-{
-	// Initialize harvestKills as an object if not already
-	entry.harvestKills = {};
-
-	// Use the correct key to extract the raw kills string
-	var killsStr = entry.harvestkills || ""; // Note: lowercase to match file format
-
-	// If killsStr is empty, there�s nothing to process
-	if( killsStr == "" )
-	{
-		return;
-	}
-
-	var harvestKills = killsStr.split( "," );
-	for( var i = 0; i < harvestKills.length; i++ ) 
-	{
-		var pair = harvestKills[i].split( ":" );
-		if( pair.length == 2 )
-		{
-			var key = manualTrim( pair[0] );
-			var value = parseInt( manualTrim( pair[1] ), 10 );
-			entry.harvestKills[key] = value;
-		}
-	}
-}
-
-/** @type { ( entry: any, player: Character ) => void } */
-function processKillGroups( entry, player )
-{
-	entry.harvestKillGroups = {};
-	var killGroupsStr = entry.harvestkillgroups || "";
-
-	if( killGroupsStr == "" )
-	{
-		return;
-	}
-
-	var harvestKillGroups = killGroupsStr.split( "," );
-	for( var groupIndex = 0; groupIndex < harvestKillGroups.length; groupIndex++ )
-	{
-		var pair = harvestKillGroups[groupIndex].split( ":" );
-		if( pair.length == 2 )
-		{
-			var key = manualTrim( pair[0] );
-			var value = parseInt( manualTrim( pair[1] ), 10 );
-			entry.harvestKillGroups[key] = value;
-		}
-	}
-}
-
-/** @type { ( entry: any, player: Character ) => void } */
-function processTamedCreatures( entry, player )
-{
-	entry.tamedCreatures = {};
-	var tamedCreaturesStr = entry.tamedcreatures || "";
-
-	if( tamedCreaturesStr == "" )
-	{
-		return;
-	}
-
-	var tamedCreatures = tamedCreaturesStr.split( "," );
-	for( var tameIndex = 0; tameIndex < tamedCreatures.length; tameIndex++ )
-	{
-		var pair = tamedCreatures[tameIndex].split( ":" );
-		if( pair.length == 2 )
-		{
-			var key = manualTrim( pair[0] );
-			var value = parseInt( manualTrim( pair[1] ), 10 );
-			entry.tamedCreatures[key] = value;
-		}
-	}
-}
-
-/** @type { ( str: string ) => string } */
-function manualTrim( str )
-{
-	return str.replace( /^\s+|\s+$/g, "" );
-}
-
 //////////////////////////////////////////////////////////////////////////////////
-//                          World State (file-backed)                           //
+//                          World State (JSON-backed)                           //
 //////////////////////////////////////////////////////////////////////////////////
 
-// PlayerSettings key used for world state blob (PER-CHAR by serial)
 /** @type { ( player: Character ) => string } */
 function GetWorldStateKey( player )
 {
-	// Stored inside the account-based PlayerSettings file, but keyed per character.
-	return "WorldState_" + player.serial;
+	return "WorldState";
 }
 
-/** @type { ( player: Character ) => Record<string, number> } */
+/** @type { ( player: Character ) => any } */
 function ReadWorldState( player )
 {
+	if( !ValidateObject( player ) )
+	{
+		return {};
+	}
+
 	var playerSettings = ReadPlayerSettings( player ) || {};
 	var worldStateKey = GetWorldStateKey( player );
-	var rawBlob = playerSettings[worldStateKey];
+	var worldState = playerSettings[worldStateKey];
 
-	// PlayerSettings parses quoted strings, so rawBlob is either string or undefined
-	if( typeof rawBlob != "string" || rawBlob == "" )
+	if( !worldState || typeof worldState != "object" )
+	{
 		return {};
+	}
 
-	return ParseWorldStateBlob( rawBlob );
+	return worldState;
 }
 
-/** @type { ( player: Character, worldState: Record<string, number> ) => boolean } */
+/** @type { ( player: Character, worldState: any ) => boolean } */
 function SaveWorldState( player, worldState )
 {
+	if( !ValidateObject( player ) )
+	{
+		return false;
+	}
+
+	if( !worldState || typeof worldState != "object" )
+	{
+		worldState = {};
+	}
+
 	var playerSettings = ReadPlayerSettings( player ) || {};
 	var worldStateKey = GetWorldStateKey( player );
 
-	playerSettings[worldStateKey] = SerializeWorldStateBlob( worldState );
+	playerSettings[worldStateKey] = worldState;
 	return SavePlayerSettings( player, playerSettings );
 }
 
@@ -4790,8 +4995,10 @@ function GetWorldStateInt( player, stateKey, defaultValue )
 	var worldState = ReadWorldState( player );
 	var normalizedKey = NormalizeWSKey( stateKey );
 
-	if( worldState.hasOwnProperty( normalizedKey ) )
+	if( normalizedKey != "" && worldState.hasOwnProperty( normalizedKey ) )
+	{
 		return ToIntOrZero( worldState[normalizedKey] );
+	}
 
 	return ToIntOrZero( defaultValue );
 }
@@ -4802,11 +5009,17 @@ function SetWorldStateInt( player, stateKey, value )
 	var worldState = ReadWorldState( player );
 	var normalizedKey = NormalizeWSKey( stateKey );
 
-	// null/undefined => remove key
+	if( normalizedKey == "" )
+	{
+		return false;
+	}
+
 	if( value === null || value === undefined )
 	{
 		if( worldState.hasOwnProperty( normalizedKey ) )
+		{
 			delete worldState[normalizedKey];
+		}
 
 		return SaveWorldState( player, worldState );
 	}
@@ -4821,8 +5034,15 @@ function AddWorldStateDelta( player, stateKey, delta, min, max )
 	var currentValue = GetWorldStateInt( player, stateKey, 0 );
 	var nextValue = currentValue + ToIntOrZero( delta );
 
-	if( min != null && nextValue < min ) nextValue = min;
-	if( max != null && nextValue > max ) nextValue = max;
+	if( min != null && nextValue < min )
+	{
+		nextValue = min;
+	}
+
+	if( max != null && nextValue > max )
+	{
+		nextValue = max;
+	}
 
 	SetWorldStateInt( player, stateKey, nextValue );
 	return nextValue;
@@ -4831,72 +5051,5 @@ function AddWorldStateDelta( player, stateKey, delta, min, max )
 /** @type { ( stateKey: string ) => string } */
 function NormalizeWSKey( stateKey )
 {
-	// Keep it simple + stable. Lowercase prevents duplicates.
-	return String( stateKey || "" ).replace( /^\s+|\s+$/g, "" ).toLowerCase();
-}
-
-/** @type { ( rawBlob: string ) => Record<string, number> } */
-function ParseWorldStateBlob( rawBlob )
-{
-	var worldState = {};
-	rawBlob = String( rawBlob || "" );
-
-	if( rawBlob == "" )
-		return worldState;
-
-	var pairs = rawBlob.split( "," );
-	for( var i = 0; i < pairs.length; i++ )
-	{
-		var pairText = manualTrim( pairs[i] );
-		if( pairText == "" )
-			continue;
-
-		var keyValuePair = pairText.split( ":" );
-		if( keyValuePair.length != 2 )
-			continue;
-
-		var normalizedKey = NormalizeWSKey( keyValuePair[0] );
-		if( normalizedKey == "" )
-			continue;
-
-		var valueInt = parseInt( manualTrim( keyValuePair[1] ), 10 );
-		if( isNaN( valueInt ) )
-			valueInt = 0;
-
-		worldState[normalizedKey] = valueInt;
-	}
-
-	return worldState;
-}
-
-/** @type { ( worldState: Record<string, number> ) => string } */
-function SerializeWorldStateBlob( worldState )
-{
-	if( !worldState )
-		return "";
-
-	// stable order (so diffs are clean)
-	var normalizedKeys = [];
-	for( var key in worldState )
-	{
-		if( worldState.hasOwnProperty( key ) )
-		{
-			var normalizedKey = NormalizeWSKey( key );
-			if( normalizedKey != "" )
-				normalizedKeys.push( normalizedKey );
-		}
-	}
-	normalizedKeys.sort();
-
-	var outBlob = "";
-	for( var i = 0; i < normalizedKeys.length; i++ )
-	{
-		var normalizedKey = normalizedKeys[i];
-		var valueInt = ToIntOrZero( worldState[normalizedKey] );
-
-		if( outBlob.length > 0 ) outBlob += ",";
-		outBlob += normalizedKey + ":" + valueInt;
-	}
-
-	return outBlob;
+	return String( stateKey || "" ).trim().toLowerCase();
 }
