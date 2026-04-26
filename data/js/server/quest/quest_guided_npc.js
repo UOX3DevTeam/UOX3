@@ -194,11 +194,11 @@ function onTimer( guideNpc, timerID )
 
 	if( String( guidedWalkData.movement || "walk" ).toLowerCase() == "run" )
 	{
-		guideNpc.RunTo( targetX, targetY, 40, true, true );
+		guideNpc.RunTo( targetX, targetY, isNaN( targetZ ) ? guideNpc.z : targetZ, 40, true, true );
 	}
 	else
 	{
-		guideNpc.WalkTo( targetX, targetY, 40, true, true );
+		guideNpc.WalkTo( targetX, targetY, isNaN( targetZ ) ? guideNpc.z : targetZ, 40, true, true );
 	}
 
 	guideNpc.StartTimer( 1500, 1, 5816  );
@@ -232,11 +232,11 @@ function HandleGuidedWalkReturnHome( guideNpc )
 		return;
 	}
 
-	var homeX = parseInt( guideNpc.GetTag( "QuestGuidedWalkHomeX" ), 10 );
-	var homeY = parseInt( guideNpc.GetTag( "QuestGuidedWalkHomeY" ), 10 );
-	var homeZ = parseInt( guideNpc.GetTag( "QuestGuidedWalkHomeZ" ), 10 );
-	var homeWorld = parseInt( guideNpc.GetTag( "QuestGuidedWalkHomeWorld" ), 10 );
-	var homeInstance = parseInt( guideNpc.GetTag( "QuestGuidedWalkHomeInstance" ), 10 );
+	var homeX = guideNpc.spawnX;
+	var homeY = guideNpc.spawnY;
+	var homeZ = guideNpc.spawnZ;
+	var homeWorld = guideNpc.worldnumber;
+	var homeInstance = guideNpc.instanceID;
 
 	if( isNaN( homeX ) || isNaN( homeY ) )
 	{
@@ -247,23 +247,6 @@ function HandleGuidedWalkReturnHome( guideNpc )
 	if( isNaN( homeZ ) )
 	{
 		homeZ = guideNpc.z;
-	}
-
-	if( isNaN( homeWorld ) || homeWorld < 0 )
-	{
-		homeWorld = guideNpc.worldnumber;
-	}
-
-	if( isNaN( homeInstance ) || homeInstance < 0 )
-	{
-		homeInstance = guideNpc.instanceID;
-	}
-
-	if( guideNpc.worldnumber != homeWorld || guideNpc.instanceID != homeInstance )
-	{
-		guideNpc.SetLocation( homeX, homeY, homeZ, homeWorld, homeInstance );
-		ClearGuidedWalkState( guideNpc, false );
-		return;
 	}
 
 	var distanceToHome = DistanceBetween( guideNpc.x, guideNpc.y, homeX, homeY );
@@ -278,11 +261,11 @@ function HandleGuidedWalkReturnHome( guideNpc )
 
 	if( returnMovement == "run" )
 	{
-		guideNpc.RunTo( homeX, homeY, 40, true, true );
+		guideNpc.RunTo( homeX, homeY, homeZ, 40, true, true );
 	}
 	else
 	{
-		guideNpc.WalkTo( homeX, homeY, 40, true, true );
+		guideNpc.WalkTo( homeX, homeY, homeZ, 40, true, true );
 	}
 }
 
@@ -293,11 +276,6 @@ function ClearGuidedWalkState( guideNpc, keepAtCurrentLocation )
 		return;
 	}
 
-	var homeX = parseInt( guideNpc.GetTag( "QuestGuidedWalkHomeX" ), 10 );
-	var homeY = parseInt( guideNpc.GetTag( "QuestGuidedWalkHomeY" ), 10 );
-	var homeZ = parseInt( guideNpc.GetTag( "QuestGuidedWalkHomeZ" ), 10 );
-	var homeWorld = parseInt( guideNpc.GetTag( "QuestGuidedWalkHomeWorld" ), 10 );
-	var homeInstance = parseInt( guideNpc.GetTag( "QuestGuidedWalkHomeInstance" ), 10 );
 	var originalFrozen = parseInt( guideNpc.GetTag( "QuestGuidedWalkOriginalFrozen" ), 10 );
 
 	guideNpc.Follow( null );
@@ -316,11 +294,6 @@ function ClearGuidedWalkState( guideNpc, keepAtCurrentLocation )
 	guideNpc.SetTag( "QuestGuidedWalkMaxDistance", null );
 	guideNpc.SetTag( "QuestGuidedWalkReturnText", null );
 	guideNpc.SetTag( "QuestGuidedWalkTooFarWarned", null );
-	guideNpc.SetTag( "QuestGuidedWalkHomeX", null );
-	guideNpc.SetTag( "QuestGuidedWalkHomeY", null );
-	guideNpc.SetTag( "QuestGuidedWalkHomeZ", null );
-	guideNpc.SetTag( "QuestGuidedWalkHomeWorld", null );
-	guideNpc.SetTag( "QuestGuidedWalkHomeInstance", null );
 	guideNpc.SetTag( "QuestGuidedWalkOriginalFrozen", null );
 
 	var guideStepIndex = 0;
@@ -331,22 +304,18 @@ function ClearGuidedWalkState( guideNpc, keepAtCurrentLocation )
 
 	if( !keepAtCurrentLocation )
 	{
-		if( !isNaN( homeX ) && !isNaN( homeY ) )
+		var homeX = guideNpc.spawnX;
+		var homeY = guideNpc.spawnY;
+		var homeZ = guideNpc.spawnZ;
+
+		if( !isNaN( homeX ) && !isNaN( homeY ))
 		{
-			if( isNaN( homeZ ) )
+			if( isNaN( homeZ ))
 			{
 				homeZ = guideNpc.z;
 			}
-			if( isNaN( homeWorld ) || homeWorld < 0 )
-			{
-				homeWorld = guideNpc.worldnumber;
-			}
-			if( isNaN( homeInstance ) || homeInstance < 0 )
-			{
-				homeInstance = guideNpc.instanceID;
-			}
 
-			guideNpc.SetLocation( homeX, homeY, homeZ, homeWorld, homeInstance );
+			guideNpc.SetLocation( homeX, homeY, homeZ, guideNpc.worldnumber, guideNpc.instanceID);
 		}
 	}
 

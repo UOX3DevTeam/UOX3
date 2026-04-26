@@ -126,12 +126,12 @@ function onTimer( raceNpc, timerID )
 
 	if( movement == "walk" )
 	{
-		raceNpc.WalkTo( targetX, targetY, 40, true, true );
+		raceNpc.WalkTo( targetX, targetY, isNaN(targetZ ) ? raceNpc.z : targetZ, 40, true, true );
 	}
 	else
 	{
 		raceNpc.canRun = true;
-		raceNpc.RunTo( targetX, targetY, 40, true, true );
+		raceNpc.RunTo( targetX, targetY, isNaN( targetZ ) ? raceNpc.z : targetZ, 40, true, true );
 	}
 
 	raceNpc.StartTimer( 1000, 1, 5817 );
@@ -165,11 +165,11 @@ function HandleRaceReturnHome( raceNpc )
 		return;
 	}
 
-	var homeX = parseInt( raceNpc.GetTag( "QuestRaceHomeX" ), 10 );
-	var homeY = parseInt( raceNpc.GetTag( "QuestRaceHomeY" ), 10 );
-	var homeZ = parseInt( raceNpc.GetTag( "QuestRaceHomeZ" ), 10 );
-	var homeWorld = parseInt( raceNpc.GetTag( "QuestRaceHomeWorld" ), 10 );
-	var homeInstance = parseInt( raceNpc.GetTag( "QuestRaceHomeInstance" ), 10 );
+	var homeX = raceNpc.spawnX;
+	var homeY = raceNpc.spawnY;
+	var homeZ = raceNpc.spawnZ;
+	var homeWorld = raceNpc.worldnumber;
+	var homeInstance = raceNpc.instanceID;
 
 	if( isNaN( homeX ) || isNaN( homeY ) )
 	{
@@ -180,23 +180,6 @@ function HandleRaceReturnHome( raceNpc )
 	if( isNaN( homeZ ) )
 	{
 		homeZ = raceNpc.z;
-	}
-
-	if( isNaN( homeWorld ) || homeWorld < 0 )
-	{
-		homeWorld = raceNpc.worldnumber;
-	}
-
-	if( isNaN( homeInstance ) || homeInstance < 0 )
-	{
-		homeInstance = raceNpc.instanceID;
-	}
-
-	if( raceNpc.worldnumber != homeWorld || raceNpc.instanceID != homeInstance )
-	{
-		raceNpc.SetLocation( homeX, homeY, homeZ, homeWorld, homeInstance );
-		ClearRaceState( raceNpc, false );
-		return;
 	}
 
 	var distanceToHome = DistanceBetween( raceNpc.x, raceNpc.y, homeX, homeY );
@@ -212,11 +195,11 @@ function HandleRaceReturnHome( raceNpc )
 	if( returnMovement == "run" )
 	{
 		raceNpc.canRun = true;
-		raceNpc.RunTo( homeX, homeY, 40, true, true );
+		raceNpc.RunTo( homeX, homeY, homeZ, 40, true, true );
 	}
 	else
 	{
-		raceNpc.WalkTo( homeX, homeY, 40, true, true );
+		raceNpc.WalkTo( homeX, homeY, homeZ, 40, true, true );
 	}
 }
 
@@ -226,12 +209,6 @@ function ClearRaceState( raceNpc, keepAtCurrentLocation )
 	{
 		return;
 	}
-
-	var homeX = parseInt( raceNpc.GetTag( "QuestRaceHomeX" ), 10 );
-	var homeY = parseInt( raceNpc.GetTag( "QuestRaceHomeY" ), 10 );
-	var homeZ = parseInt( raceNpc.GetTag( "QuestRaceHomeZ" ), 10 );
-	var homeWorld = parseInt( raceNpc.GetTag( "QuestRaceHomeWorld" ), 10 );
-	var homeInstance = parseInt( raceNpc.GetTag( "QuestRaceHomeInstance" ), 10 );
 	var originalCanRun = parseInt( raceNpc.GetTag( "QuestRaceOriginalCanRun" ), 10 );
 	var originalFrozen = parseInt( raceNpc.GetTag( "QuestRaceOriginalFrozen" ), 10 );
 
@@ -253,11 +230,6 @@ function ClearRaceState( raceNpc, keepAtCurrentLocation )
 	raceNpc.SetTag( "QuestRacePlayerSerial", null );
 	raceNpc.SetTag( "QuestRaceCheckpoint", null );
 	raceNpc.SetTag( "QuestRaceReturning", null );
-	raceNpc.SetTag( "QuestRaceHomeX", null );
-	raceNpc.SetTag( "QuestRaceHomeY", null );
-	raceNpc.SetTag( "QuestRaceHomeZ", null );
-	raceNpc.SetTag( "QuestRaceHomeWorld", null );
-	raceNpc.SetTag( "QuestRaceHomeInstance", null );
 	raceNpc.SetTag( "QuestRaceOriginalCanRun", null );
 	raceNpc.SetTag( "QuestRaceOriginalFrozen", null );
 	raceNpc.SetTag( "QuestRaceReturnText", null );
@@ -268,21 +240,20 @@ function ClearRaceState( raceNpc, keepAtCurrentLocation )
 		raceNpc.RemoveScriptTrigger( 5817 );
 	}
 
-	if( !keepAtCurrentLocation && !isNaN( homeX ) && !isNaN( homeY ) )
+	if (!keepAtCurrentLocation)
 	{
-		if( isNaN( homeZ ) )
-		{
-			homeZ = raceNpc.z;
-		}
-		if( isNaN( homeWorld ) || homeWorld < 0 )
-		{
-			homeWorld = raceNpc.worldnumber;
-		}
-		if( isNaN( homeInstance ) || homeInstance < 0 )
-		{
-			homeInstance = raceNpc.instanceID;
-		}
+		var homeX = raceNpc.spawnX;
+		var homeY = raceNpc.spawnY;
+		var homeZ = raceNpc.spawnZ;
 
-		raceNpc.SetLocation( homeX, homeY, homeZ, homeWorld, homeInstance );
+		if( !isNaN( homeX ) && !isNaN( homeY ))
+		{
+			if( isNaN( homeZ ))
+			{
+				homeZ = raceNpc.z;
+			}
+
+			raceNpc.SetLocation( homeX, homeY, homeZ, raceNpc.worldnumber, raceNpc.instanceID );
+		}
 	}
 }

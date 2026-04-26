@@ -2514,11 +2514,6 @@ function StartRaceQuestNPC( player, questID, quest, questGiver )
 	questGiver.SetTag( "QuestRaceCheckpoint", 0 );
 	questGiver.SetTag( "QuestRaceReturning", 0 );
 
-	questGiver.SetTag( "QuestRaceHomeX", questGiver.x );
-	questGiver.SetTag( "QuestRaceHomeY", questGiver.y );
-	questGiver.SetTag( "QuestRaceHomeZ", questGiver.z );
-	questGiver.SetTag( "QuestRaceHomeWorld", questGiver.worldnumber );
-	questGiver.SetTag( "QuestRaceHomeInstance", questGiver.instanceID );
 	questGiver.SetTag( "QuestRaceOriginalCanRun", questGiver.canRun ? 1 : 0 );
 	questGiver.SetTag( "QuestRaceOriginalFrozen", questGiver.frozen ? 1 : 0 );
 	questGiver.frozen = false;
@@ -2578,11 +2573,6 @@ function CleanupRaceQuestNPC( player, questID )
 		raceNpc.Follow( null );
 		raceNpc.owner = null;
 
-		var homeX = parseInt( raceNpc.GetTag( "QuestRaceHomeX" ), 10 );
-		var homeY = parseInt( raceNpc.GetTag( "QuestRaceHomeY" ), 10 );
-		var homeZ = parseInt( raceNpc.GetTag( "QuestRaceHomeZ" ), 10 );
-		var homeWorld = parseInt( raceNpc.GetTag( "QuestRaceHomeWorld" ), 10 );
-		var homeInstance = parseInt( raceNpc.GetTag( "QuestRaceHomeInstance" ), 10 );
 		var originalCanRun = parseInt( raceNpc.GetTag( "QuestRaceOriginalCanRun" ), 10 );
 		var originalFrozen = parseInt( raceNpc.GetTag( "QuestRaceOriginalFrozen" ), 10 );
 
@@ -2601,11 +2591,6 @@ function CleanupRaceQuestNPC( player, questID )
 		raceNpc.SetTag( "QuestRacePlayerSerial", null );
 		raceNpc.SetTag( "QuestRaceCheckpoint", null );
 		raceNpc.SetTag( "QuestRaceReturning", null );
-		raceNpc.SetTag( "QuestRaceHomeX", null );
-		raceNpc.SetTag( "QuestRaceHomeY", null );
-		raceNpc.SetTag( "QuestRaceHomeZ", null );
-		raceNpc.SetTag( "QuestRaceHomeWorld", null );
-		raceNpc.SetTag( "QuestRaceHomeInstance", null );
 		raceNpc.SetTag( "QuestRaceOriginalCanRun", null );
 		raceNpc.SetTag( "QuestRaceOriginalFrozen", null );
 		raceNpc.SetTag( "QuestRaceReturnText", null );
@@ -2616,23 +2601,7 @@ function CleanupRaceQuestNPC( player, questID )
 			raceNpc.RemoveScriptTrigger( 5817 );
 		}
 
-		if( !isNaN( homeX ) && !isNaN( homeY ) )
-		{
-			if( isNaN( homeZ ) )
-			{
-				homeZ = raceNpc.z;
-			}
-			if( isNaN( homeWorld ) || homeWorld < 0 )
-			{
-				homeWorld = raceNpc.worldnumber;
-			}
-			if( isNaN( homeInstance ) || homeInstance < 0 )
-			{
-				homeInstance = raceNpc.instanceID;
-			}
-
-			raceNpc.SetLocation( homeX, homeY, homeZ, homeWorld, homeInstance );
-		}
+		raceNpc.SetLocation( raceNpc.spawnX, raceNpc.spawnY, raceNpc.spawnZ, raceNpc.worldnumber, raceNpc.instanceID );
 
 		return;
 	}
@@ -2937,11 +2906,6 @@ function StartGuidedWalkQuestNPC( player, questID, quest, questGiver )
 	questGiver.SetTag( "QuestGuidedWalkMaxDistance", quest.guidedWalk.maxDistance || 24 );
 	questGiver.SetTag( "QuestGuidedWalkReturnText", quest.guidedWalk.returnText || "" );
 
-	questGiver.SetTag( "QuestGuidedWalkHomeX", questGiver.x );
-	questGiver.SetTag( "QuestGuidedWalkHomeY", questGiver.y );
-	questGiver.SetTag( "QuestGuidedWalkHomeZ", questGiver.z );
-	questGiver.SetTag( "QuestGuidedWalkHomeWorld", questGiver.worldnumber );
-	questGiver.SetTag( "QuestGuidedWalkHomeInstance", questGiver.instanceID );
 	questGiver.SetTag( "QuestGuidedWalkReturnMovement", quest.guidedWalk.returnMovement || "walk" );
 	questGiver.SetTag( "QuestGuidedWalkOriginalFrozen", questGiver.frozen ? 1 : 0 );
 	questGiver.frozen = false;
