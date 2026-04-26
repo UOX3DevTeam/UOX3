@@ -1959,7 +1959,9 @@ void CMovement::NpcWalk( CChar *i, UI08 j, SI08 getWander )
 				if( cwmWorldState->ServerData()->AdvancedPathfinding() )
 				{
 					bool allowPartial = false; // Don't allow partial pathfinding here - we need the NPC back in the box!
-					pathFound = AdvancedPathfinding( i, fx1, fy1, fz1, true, allowPartial );
+
+					// Pathfind back to original spawn location, which we know was valid originally
+					pathFound = AdvancedPathfinding( i, i->GetSpawnX(), i->GetSpawnY(), i->GetSpawnZ(), true, allowPartial );
 				}
 				else
 				{
@@ -1996,7 +1998,9 @@ void CMovement::NpcWalk( CChar *i, UI08 j, SI08 getWander )
 				if( cwmWorldState->ServerData()->AdvancedPathfinding() )
 				{
 					bool allowPartial = false; // Don't allow partial pathfinding here, we need the NPC back in the circle!
-					pathFound = AdvancedPathfinding( i, fx1, fy1, fz1, true, allowPartial );
+
+					// Pathfind back to original spawn location, which we know was valid originally
+					pathFound = AdvancedPathfinding( i, i->GetSpawnX(), i->GetSpawnY(), i->GetSpawnZ(), true, allowPartial );
 				}
 				else
 				{
@@ -2069,6 +2073,30 @@ void CMovement::BoundingBoxTeleport( CChar *nChar, UI16 fx2Actual, UI16 fy2Actua
 		bool boundingBoxTeleport = false;
 		bool waterWalk = cwmWorldState->creatures[nChar->GetId()].IsWater();
 		bool amphibWalk = cwmWorldState->creatures[nChar->GetId()].IsAmphibian();
+
+		// Attempt original spawn location first
+		if(( !waterWalk || amphibWalk ) && Map->ValidSpawnLocation( nChar->GetSpawnX(), nChar->GetSpawnY(), nChar->GetSpawnZ(), worldNumber, false ))
+		{
+			boundingBoxTeleport = true;
+		}
+		else if( waterWalk && Map->ValidSpawnLocation( nChar->GetSpawnX(), nChar->GetSpawnY(), nChar->GetSpawnZ(), worldNumber, true ))
+		{
+			boundingBoxTeleport = true;
+		}
+
+		if( boundingBoxTeleport )
+		{
+#if defined( UOX_DEBUG_MODE )
+			std::string charName = GetNpcDictName( nChar, nullptr, NRS_SYSTEM );
+			Console.Warning( oldstrutil::format( "NPC: %s with serial 0x%X teleporting to original spawn.\n", charName.c_str(), nChar->GetSerial() ));
+#endif
+			nChar->SetLocation( nChar->GetSpawnX(), nChar->GetSpawnY(), nChar->GetSpawnZ(), nChar->WorldNumber(), nChar->GetInstanceId() );
+			nChar->SetNpcWander( nChar->GetOldNpcWander() );
+			nChar->SetOldNpcWander( WT_NONE );
+			return;
+		}
+
+		// Fallback to picking a new location within bounding box
 		for( UI16 m = fx1; m < fx2Actual; m++ )
 		{
 			for( UI16 n = fy1; n < fy2Actual; n++ )

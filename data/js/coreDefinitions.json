@@ -4105,6 +4105,24 @@
           "type": "SocketOrNull"
         },
         {
+          "name": "spawnX",
+          "cppName": "CCP_SPAWNX",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "spawnY",
+          "cppName": "CCP_SPAWNY",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "spawnZ",
+          "cppName": "CCP_SPAWNZ",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
           "name": "spattack",
           "cppName": "CCP_SPATTACK",
           "cppType": "JSPROP_ENUMANDPERM",
