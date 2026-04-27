@@ -1461,7 +1461,6 @@ function SetupQuestEscortNPC( escortNPC, player, questID, quest )
 	escortNPC.SetTag( "QuestID", questID );
 	escortNPC.SetTag( "QuestPlayerSerial", player.serial );
 	escortNPC.SetTag( "EscortStage", 0 );
-	escortNPC.SetTag( "EscortFailIfDead", quest.escortTarget.failIfDead ? 1 : 0 );
 	escortNPC.SetTag( "EscortMaxDistance", quest.escortTarget.maxDistance || 24 );
 	escortNPC.SetTag( "EscortReturnDistance", quest.escortTarget.returnDistance || 48 );
 	escortNPC.SetTag( "EscortWaypointCount", quest.waypoints ? quest.waypoints.length : 0 );

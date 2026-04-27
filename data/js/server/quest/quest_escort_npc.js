@@ -14,9 +14,10 @@ function onEnterRegion( escortNPC, regionEntered )
 		return;
 	}
 
-	var playerSerial = parseInt( escortNPC.GetTag( "QuestPlayerSerial" ), 10 );
-	var questID = parseInt( escortNPC.GetTag( "QuestID" ), 10 );
-	if( isNaN( playerSerial ) || isNaN( questID ) || playerSerial <= 0 || questID <= 0 )
+	var playerSerial = escortNPC.GetTag( "QuestPlayerSerial" );
+	var questID = escortNPC.GetTag( "QuestID" );
+
+	if( playerSerial == 0 || questID == 0 )
 	{
 		return;
 	}
@@ -38,26 +39,21 @@ function onDeath( escortNPC, iCorpse )
 		return false;
 	}
 
-	if( !escortNPC.GetTag( "QuestEscort" ))
+	if( !escortNPC.GetTag( "QuestEscort" ) )
 	{
 		return false;
 	}
 
-	var failIfDead = parseInt( escortNPC.GetTag( "EscortFailIfDead" ), 10 );
-	if( isNaN( failIfDead ) || failIfDead <= 0 )
-	{
-		return false;
-	}
+	var playerSerial = escortNPC.GetTag( "QuestPlayerSerial" );
+	var questID = escortNPC.GetTag( "QuestID" );
 
-	var playerSerial = parseInt( escortNPC.GetTag( "QuestPlayerSerial" ), 10 );
-	var questID = parseInt( escortNPC.GetTag( "QuestID" ), 10 );
-	if( isNaN( playerSerial ) || isNaN( questID ) || playerSerial <= 0 || questID <= 0 )
+	if( playerSerial == 0 || questID == 0 )
 	{
 		return false;
 	}
 
 	var player = CalcCharFromSer( playerSerial );
-	if( ValidateObject( player ))
+	if( ValidateObject( player ) )
 	{
 		TriggerEvent( 5800, "FailEscortQuest", player, questID, "Your escort has died." );
 	}
@@ -68,12 +64,7 @@ function onDeath( escortNPC, iCorpse )
 /** @type { ( escortNPC: Character, timerID: number ) => void } */
 function onTimer( escortNPC, timerID )
 {
-	if( !ValidateObject( escortNPC ))
-	{
-		return;
-	}
-
-	if( timerID != 1 )
+	if( !ValidateObject( escortNPC ) || timerID != 1 )
 	{
 		return;
 	}
@@ -83,14 +74,11 @@ function onTimer( escortNPC, timerID )
 		return;
 	}
 
-	var usesQuestGiver = parseInt( escortNPC.GetTag( "EscortUsesQuestGiver" ), 10 );
-	if( isNaN( usesQuestGiver ) )
-	{
-		usesQuestGiver = 0;
-	}
+	var usesQuestGiver = escortNPC.GetTag( "EscortUsesQuestGiver" );
+	var playerSerial = escortNPC.GetTag( "QuestPlayerSerial" );
+	var questID = escortNPC.GetTag( "QuestID" );
 
-	var playerSerial = parseInt( escortNPC.GetTag( "QuestPlayerSerial" ), 10 );
-	if( isNaN( playerSerial ) || playerSerial <= 0 )
+	if( playerSerial == 0 )
 	{
 		if( !usesQuestGiver )
 		{
@@ -100,7 +88,7 @@ function onTimer( escortNPC, timerID )
 	}
 
 	var player = CalcCharFromSer( playerSerial );
-	if( !ValidateObject( player ))
+	if( !ValidateObject( player ) )
 	{
 		if( !usesQuestGiver )
 		{
@@ -109,38 +97,33 @@ function onTimer( escortNPC, timerID )
 		return;
 	}
 
-	var maxDistance = parseInt( escortNPC.GetTag( "EscortMaxDistance" ), 10 );
-	if( isNaN( maxDistance ) || maxDistance <= 0 )
+	var maxDistance = escortNPC.GetTag( "EscortMaxDistance" );
+	if( maxDistance == 0 )
 	{
 		maxDistance = 24;
 	}
 
-	var returnDistance = parseInt( escortNPC.GetTag( "EscortReturnDistance" ), 10 );
-	if( isNaN( returnDistance ) || returnDistance <= 0 )
+	var returnDistance = escortNPC.GetTag( "EscortReturnDistance" );
+	if( returnDistance == 0 )
 	{
 		returnDistance = 48;
 	}
 
-	if( !escortNPC.InRange( player, maxDistance ))
+	if( !escortNPC.InRange( player, maxDistance ) )
 	{
 		var actualDistance = DistanceBetween( escortNPC, player );
 		if( actualDistance <= returnDistance )
 		{
 			escortNPC.Follow( player );
 		}
-		else
+		else if( questID != 0 )
 		{
-			var questID = parseInt( escortNPC.GetTag( "QuestID" ), 10 );
-			if( !isNaN( questID ) && questID > 0 )
-			{
-				TriggerEvent( 5800, "FailEscortQuest", player, questID, "You have lost your escort." );
-				return;
-			}
+			TriggerEvent( 5800, "FailEscortQuest", player, questID, "You have lost your escort." );
+			return;
 		}
 	}
 
-	var questID = parseInt( escortNPC.GetTag( "QuestID" ), 10 );
-	if( !isNaN( questID ) && questID > 0 )
+	if( questID != 0 )
 	{
 		TriggerEvent( 5800, "CheckEscortTravelAmbush", player, questID, escortNPC );
 	}

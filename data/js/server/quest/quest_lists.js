@@ -5,6 +5,7 @@ var questRegistry = {};
 var questRegistryLoaded = false;
 var questRegistryLoadError = false;
 
+/** @type { ( questID?: number ) => object|null } */
 function QuestList( questID )
 {
 	if( !questRegistryLoaded && !questRegistryLoadError )
@@ -20,15 +21,7 @@ function QuestList( questID )
 	return questRegistry[questID] || null;
 }
 
-function ReloadQuestRegistry()
-{
-	questRegistry = {};
-	questRegistryLoaded = false;
-	questRegistryLoadError = false;
-	LoadQuestRegistry();
-	return questRegistryLoaded;
-}
-
+/** @type { () => void } */
 function LoadQuestRegistry()
 {
 	questRegistry = {};
@@ -142,6 +135,7 @@ function LoadQuestRegistry()
 	questRegistryLoaded = true;
 }
 
+/** @type { ( fileName: string ) => object|null } */
 function LoadSingleQuestFile( fileName )
 {
 	var questFile = new UOXCFile();
@@ -189,6 +183,7 @@ function LoadSingleQuestFile( fileName )
 	return parsedQuest;
 }
 
+/** @type { ( fileText: string, fileName: string ) => object|null } */
 function ParseQuestJsonFile( fileText, fileName )
 {
 	var quest = null;
@@ -215,6 +210,7 @@ function ParseQuestJsonFile( fileText, fileName )
 	return quest;
 }
 
+/** @type { ( quest: object ) => void } */
 function NormalizeQuestDefaults( quest )
 {
 	if( !quest.targetItems )
@@ -273,6 +269,7 @@ function NormalizeQuestDefaults( quest )
 	}
 }
 
+/** @type { ( quest: object, fileName: string ) => void } */
 function ValidateQuestObject( quest, fileName )
 {
 	WarnUnknownTopLevelKeys( quest, fileName );
@@ -288,6 +285,7 @@ function ValidateQuestObject( quest, fileName )
 	ValidateRaceQuest( quest, fileName );
 }
 
+/** @type { ( quest: object, fileName: string ) => void } */
 function WarnUnknownTopLevelKeys( quest, fileName )
 {
 	var validKeys = {
@@ -363,6 +361,7 @@ function WarnUnknownTopLevelKeys( quest, fileName )
 	}
 }
 
+/** @type { ( quest: object, fileName: string ) => void } */
 function ValidateRequiredQuestFields( quest, fileName )
 {
 	if( typeof quest.questID == "undefined" || isNaN( parseInt( quest.questID, 10 ) ) )
@@ -381,6 +380,7 @@ function ValidateRequiredQuestFields( quest, fileName )
 	}
 }
 
+/** @type { ( quest: object, fileName: string ) => void } */
 function ValidateQuestFlags( quest, fileName )
 {
 	if( typeof quest.oneTimeQuest != "undefined" && !IsSimpleValue( quest.oneTimeQuest ) )
@@ -399,6 +399,7 @@ function ValidateQuestFlags( quest, fileName )
 	}
 }
 
+/** @type { ( quest: object, fileName: string ) => void } */
 function ValidateQuestObjectives( quest, fileName )
 {
 	var questType = String( quest.type || "" ).toLowerCase();
@@ -494,6 +495,7 @@ function ValidateQuestObjectives( quest, fileName )
 	}
 }
 
+/** @type { ( quest: object, fileName: string ) => void } */
 function ValidateKillTargets( quest, fileName )
 {
 	if( quest.targetKills && IsArrayValue( quest.targetKills ))
@@ -568,6 +570,7 @@ function ValidateKillTargets( quest, fileName )
 	}
 }
 
+/** @type { ( quest: object, fileName: string ) => void } */
 function ValidateEscortQuest( quest, fileName )
 {
 	if( quest.type != "escort" )
@@ -690,6 +693,7 @@ function ValidateEscortQuest( quest, fileName )
 	}
 }
 
+/** @type { ( quest: object, fileName: string ) => void } */
 function ValidateRaceQuest( quest, fileName )
 {
 	if( typeof quest.race == "undefined" || quest.race == null )
@@ -744,6 +748,7 @@ function ValidateRaceQuest( quest, fileName )
 	}
 }
 
+/** @type { ( quest: object, fileName: string ) => void } */
 function ValidateGuidedWalkQuest( quest, fileName )
 {
 	if( typeof quest.guidedWalk == "undefined" )
@@ -784,6 +789,7 @@ function ValidateGuidedWalkQuest( quest, fileName )
 	}
 }
 
+/** @type { ( quest: object, fileName: string ) => void } */
 function ValidateQuestRewards( quest, fileName )
 {
 	if( !quest.rewards || !IsArrayValue( quest.rewards ) )
@@ -850,6 +856,7 @@ function ValidateQuestRewards( quest, fileName )
 	}
 }
 
+/** @type { ( quest: object, fileName: string ) => void } */
 function ValidateQuestTagsAndState( quest, fileName )
 {
 	ValidatePlainObjectMap( quest.setTags, "setTags", fileName );
@@ -864,6 +871,7 @@ function ValidateQuestTagsAndState( quest, fileName )
 	ValidateRuleMap( quest.worldStateDeltaRules, "worldStateDeltaRules", fileName );
 }
 
+/** @type { ( quest: object, fileName: string ) => void } */
 function ValidateQuestNextQuest( quest, fileName )
 {
 	if( !quest.nextQuest || !IsArrayValue( quest.nextQuest ))
@@ -892,6 +900,7 @@ function ValidateQuestNextQuest( quest, fileName )
 	}
 }
 
+/** @type { ( cond: object, fileName: string, index: number ) => void } */
 function ValidateNextQuestConditionObject( cond, fileName, index )
 {
 	if( !cond || typeof cond != "object" )
@@ -921,6 +930,7 @@ function ValidateNextQuestConditionObject( cond, fileName, index )
 	}
 }
 
+/** @type { ( value: any, objectName: string, fileName: string ) => void } */
 function ValidatePlainObjectMap( value, objectName, fileName )
 {
 	if( typeof value == "undefined" )
@@ -934,6 +944,7 @@ function ValidatePlainObjectMap( value, objectName, fileName )
 	}
 }
 
+/** @type { ( value: any, objectName: string, fileName: string ) => void } */
 function ValidateRuleMap( value, objectName, fileName )
 {
 	if( typeof value == "undefined" )
@@ -962,17 +973,20 @@ function ValidateRuleMap( value, objectName, fileName )
 	}
 }
 
+/** @type { ( value: any ) => boolean } */
 function IsArrayValue( value )
 {
 	return Object.prototype.toString.call( value ) == "[object Array]";
 }
 
+/** @type { ( value: any ) => boolean } */
 function IsSimpleValue( value )
 {
 	var valueType = typeof value;
 	return valueType == "string" || valueType == "number" || valueType == "boolean";
 }
 
+/** @type { ( text: string ) => string } */
 function TrimString( text )
 {
 	if( text == null || typeof( text ) == "undefined" )
@@ -983,6 +997,7 @@ function TrimString( text )
 	return text.replace( /^\s+|\s+$/g, "" );
 }
 
+/** @type { ( text: string ) => string } */
 function SanitizeJsonText( text )
 {
 	if( text == null || typeof( text ) == "undefined" )

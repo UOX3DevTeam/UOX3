@@ -4,12 +4,7 @@
 /** @type { ( guideNpc: Character, timerID: number ) => void } */
 function onTimer( guideNpc, timerID )
 {
-	if( !ValidateObject( guideNpc ) )
-	{
-		return;
-	}
-
-	if( timerID != 1 )
+	if( !ValidateObject( guideNpc ) || timerID != 1 )
 	{
 		return;
 	}
@@ -19,8 +14,8 @@ function onTimer( guideNpc, timerID )
 		return;
 	}
 
-	var questID = parseInt( guideNpc.GetTag( "QuestGuidedWalkQuestID" ), 10 );
-	if( isNaN( questID ) || questID <= 0 )
+	var questID = guideNpc.GetTag( "QuestGuidedWalkQuestID" );
+	if( questID == 0 )
 	{
 		ClearGuidedWalkState( guideNpc, true );
 		return;
@@ -33,9 +28,10 @@ function onTimer( guideNpc, timerID )
 		return;
 	}
 
-	var playerSerial = parseInt( guideNpc.GetTag( "QuestGuidedWalkPlayerSerial" ), 10 );
+	var playerSerial = guideNpc.GetTag( "QuestGuidedWalkPlayerSerial" );
 	var player = null;
-	if( !isNaN( playerSerial ) && playerSerial > 0 )
+
+	if( playerSerial != 0 )
 	{
 		player = CalcCharFromSer( playerSerial );
 	}
@@ -44,31 +40,22 @@ function onTimer( guideNpc, timerID )
 	{
 		BeginGuidedWalkReturnHome( guideNpc );
 		HandleGuidedWalkReturnHome( guideNpc );
-		guideNpc.StartTimer( 2000, 1, 5816  );
+		guideNpc.StartTimer( 2000, 1, 5816 );
 		return;
 	}
 
 	var guidedWalkData = quest.guidedWalk;
-	var stepIndex = parseInt( guideNpc.GetTag( "QuestGuidedWalkStep" ), 10 );
-	if( isNaN( stepIndex ) || stepIndex < 0 )
+	var stepIndex = guideNpc.GetTag( "QuestGuidedWalkStep" );
+	if( stepIndex < 0 )
 	{
 		stepIndex = 0;
 	}
 
-	var guidedWalkComplete = parseInt( guideNpc.GetTag( "QuestGuidedWalkComplete" ), 10 );
-	if( isNaN( guidedWalkComplete ) )
-	{
-		guidedWalkComplete = 0;
-	}
+	var guidedWalkComplete = guideNpc.GetTag( "QuestGuidedWalkComplete" );
+	var guidedWalkReturning = guideNpc.GetTag( "QuestGuidedWalkReturning" );
 
-	var guidedWalkReturning = parseInt( guideNpc.GetTag( "QuestGuidedWalkReturning" ), 10 );
-	if( isNaN( guidedWalkReturning ) )
-	{
-		guidedWalkReturning = 0;
-	}
-
-	var maxDistance = parseInt( guideNpc.GetTag( "QuestGuidedWalkMaxDistance" ), 10 );
-	if( isNaN( maxDistance ) || maxDistance <= 0 )
+	var maxDistance = guideNpc.GetTag( "QuestGuidedWalkMaxDistance" );
+	if( maxDistance == 0 )
 	{
 		maxDistance = 24;
 	}
@@ -78,7 +65,7 @@ function onTimer( guideNpc, timerID )
 	if( guidedWalkReturning )
 	{
 		HandleGuidedWalkReturnHome( guideNpc );
-		guideNpc.StartTimer( 2000, 1, 5816  );
+		guideNpc.StartTimer( 2000, 1, 5816 );
 		return;
 	}
 
@@ -90,7 +77,7 @@ function onTimer( guideNpc, timerID )
 			HandleGuidedWalkReturnHome( guideNpc );
 		}
 
-		guideNpc.StartTimer( 2000, 1, 5816  );
+		guideNpc.StartTimer( 2000, 1, 5816 );
 		return;
 	}
 
@@ -103,7 +90,7 @@ function onTimer( guideNpc, timerID )
 			guideNpc.SetTag( "QuestGuidedWalkTooFarWarned", 1 );
 		}
 
-		guideNpc.StartTimer( 2000, 1, 5816  );
+		guideNpc.StartTimer( 2000, 1, 5816 );
 		return;
 	}
 
@@ -119,7 +106,7 @@ function onTimer( guideNpc, timerID )
 			guideNpc.TextMessage( String( guidedWalkData.finalText ) );
 		}
 
-		guideNpc.StartTimer( 2000, 1, 5816  );
+		guideNpc.StartTimer( 2000, 1, 5816 );
 		return;
 	}
 
@@ -127,7 +114,7 @@ function onTimer( guideNpc, timerID )
 	if( !currentStep )
 	{
 		guideNpc.SetTag( "QuestGuidedWalkStep", stepIndex + 1 );
-		guideNpc.StartTimer( 500, 1, 5816  );
+		guideNpc.StartTimer( 500, 1, 5816 );
 		return;
 	}
 
@@ -140,7 +127,7 @@ function onTimer( guideNpc, timerID )
 	if( isNaN( targetX ) || isNaN( targetY ) )
 	{
 		guideNpc.SetTag( "QuestGuidedWalkStep", stepIndex + 1 );
-		guideNpc.StartTimer( 500, 1, 5816  );
+		guideNpc.StartTimer( 500, 1, 5816 );
 		return;
 	}
 
@@ -149,7 +136,9 @@ function onTimer( guideNpc, timerID )
 		arrivalRange = 1;
 	}
 
+	var moveZ = isNaN( targetZ ) ? guideNpc.z : targetZ;
 	var legStartedTag = "QuestGuidedWalkLegStarted_" + stepIndex;
+
 	if( !guideNpc.GetTag( legStartedTag ) )
 	{
 		if( currentStep.startText )
@@ -157,12 +146,13 @@ function onTimer( guideNpc, timerID )
 			guideNpc.TurnToward( player );
 			guideNpc.TextMessage( String( currentStep.startText ) );
 		}
+
 		guideNpc.SetTag( legStartedTag, 1 );
 	}
 
 	if( !isNaN( targetWorld ) && targetWorld >= 0 && guideNpc.worldnumber != targetWorld )
 	{
-		guideNpc.SetLocation( targetX, targetY, isNaN( targetZ ) ? guideNpc.z : targetZ, targetWorld, guideNpc.instanceID );
+		guideNpc.SetLocation( targetX, targetY, moveZ, targetWorld, guideNpc.instanceID );
 	}
 
 	var distanceToStep = DistanceBetween( guideNpc.x, guideNpc.y, targetX, targetY );
@@ -188,22 +178,23 @@ function onTimer( guideNpc, timerID )
 			}
 		}
 
-		guideNpc.StartTimer( 2000, 1, 5816  );
+		guideNpc.StartTimer( 2000, 1, 5816 );
 		return;
 	}
 
 	if( String( guidedWalkData.movement || "walk" ).toLowerCase() == "run" )
 	{
-		guideNpc.RunTo( targetX, targetY, isNaN( targetZ ) ? guideNpc.z : targetZ, 40, true, true );
+		guideNpc.RunTo( targetX, targetY, moveZ, 40, true, true );
 	}
 	else
 	{
-		guideNpc.WalkTo( targetX, targetY, isNaN( targetZ ) ? guideNpc.z : targetZ, 40, true, true );
+		guideNpc.WalkTo( targetX, targetY, moveZ, 40, true, true );
 	}
 
-	guideNpc.StartTimer( 1500, 1, 5816  );
+	guideNpc.StartTimer( 1500, 1, 5816 );
 }
 
+/** @type { ( guideNpc: Character ) => void } */
 function BeginGuidedWalkReturnHome( guideNpc )
 {
 	if( !ValidateObject( guideNpc ) )
@@ -225,6 +216,7 @@ function BeginGuidedWalkReturnHome( guideNpc )
 	}
 }
 
+/** @type { ( guideNpc: Character ) => void } */
 function HandleGuidedWalkReturnHome( guideNpc )
 {
 	if( !ValidateObject( guideNpc ) )
@@ -269,6 +261,7 @@ function HandleGuidedWalkReturnHome( guideNpc )
 	}
 }
 
+/** @type { ( guideNpc: Character, keepAtCurrentLocation: boolean ) => void } */
 function ClearGuidedWalkState( guideNpc, keepAtCurrentLocation )
 {
 	if( !ValidateObject( guideNpc ) )
@@ -276,14 +269,11 @@ function ClearGuidedWalkState( guideNpc, keepAtCurrentLocation )
 		return;
 	}
 
-	var originalFrozen = parseInt( guideNpc.GetTag( "QuestGuidedWalkOriginalFrozen" ), 10 );
+	var originalFrozen = guideNpc.GetTag( "QuestGuidedWalkOriginalFrozen" );
 
 	guideNpc.Follow( null );
 	guideNpc.owner = null;
-	if( !isNaN( originalFrozen ) )
-	{
-		guideNpc.frozen = ( originalFrozen == 1 );
-	}
+	guideNpc.frozen = ( originalFrozen == 1 );
 
 	guideNpc.SetTag( "QuestGuidedWalk", null );
 	guideNpc.SetTag( "QuestGuidedWalkQuestID", null );
@@ -307,16 +297,10 @@ function ClearGuidedWalkState( guideNpc, keepAtCurrentLocation )
 		var homeX = guideNpc.spawnX;
 		var homeY = guideNpc.spawnY;
 		var homeZ = guideNpc.spawnZ;
+		var wolrdNumber = guideNpc.worldnumber;
+		var instanceID = guideNpc.instanceID;
 
-		if( !isNaN( homeX ) && !isNaN( homeY ))
-		{
-			if( isNaN( homeZ ))
-			{
-				homeZ = guideNpc.z;
-			}
-
-			guideNpc.SetLocation( homeX, homeY, homeZ, guideNpc.worldnumber, guideNpc.instanceID);
-		}
+		guideNpc.SetLocation( homeX, homeY, homeZ, wolrdNumber, instanceID);
 	}
 
 	if( guideNpc.HasScriptTrigger( 5816 ) )

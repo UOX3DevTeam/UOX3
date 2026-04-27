@@ -137,6 +137,7 @@ function onTimer( raceNpc, timerID )
 	raceNpc.StartTimer( 1000, 1, 5817 );
 }
 
+/** @type { ( raceNpc: Character ) => void } */
 function BeginRaceReturnHome( raceNpc )
 {
 	if( !ValidateObject( raceNpc ) )
@@ -158,6 +159,7 @@ function BeginRaceReturnHome( raceNpc )
 	}
 }
 
+/** @type { ( raceNpc: Character ) => void } */
 function HandleRaceReturnHome( raceNpc )
 {
 	if( !ValidateObject( raceNpc ) )
@@ -203,27 +205,21 @@ function HandleRaceReturnHome( raceNpc )
 	}
 }
 
+/** @type { ( raceNpc: Character, keepAtCurrentLocation: boolean ) => void } */
 function ClearRaceState( raceNpc, keepAtCurrentLocation )
 {
 	if( !ValidateObject( raceNpc ) )
 	{
 		return;
 	}
-	var originalCanRun = parseInt( raceNpc.GetTag( "QuestRaceOriginalCanRun" ), 10 );
-	var originalFrozen = parseInt( raceNpc.GetTag( "QuestRaceOriginalFrozen" ), 10 );
+
+	var originalCanRun = raceNpc.GetTag( "QuestRaceOriginalCanRun" );
+	var originalFrozen = raceNpc.GetTag( "QuestRaceOriginalFrozen" );
 
 	raceNpc.Follow( null );
 	raceNpc.owner = null;
-
-	if( !isNaN( originalCanRun ) )
-	{
-		raceNpc.canRun = ( originalCanRun == 1 );
-	}
-
-	if( !isNaN( originalFrozen ) )
-	{
-		raceNpc.frozen = ( originalFrozen == 1 );
-	}
+	raceNpc.canRun = ( originalCanRun == 1 );
+	raceNpc.frozen = ( originalFrozen == 1 );
 
 	raceNpc.SetTag( "QuestRace", null );
 	raceNpc.SetTag( "QuestRaceQuestID", null );
@@ -246,14 +242,6 @@ function ClearRaceState( raceNpc, keepAtCurrentLocation )
 		var homeY = raceNpc.spawnY;
 		var homeZ = raceNpc.spawnZ;
 
-		if( !isNaN( homeX ) && !isNaN( homeY ))
-		{
-			if( isNaN( homeZ ))
-			{
-				homeZ = raceNpc.z;
-			}
-
-			raceNpc.SetLocation( homeX, homeY, homeZ, raceNpc.worldnumber, raceNpc.instanceID );
-		}
+		raceNpc.SetLocation( homeX, homeY, homeZ, raceNpc.worldnumber, raceNpc.instanceID );
 	}
 }
