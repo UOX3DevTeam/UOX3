@@ -2039,6 +2039,23 @@ packitem=0x0f8d,30
 						</div>
 					</div>
 
+					<input type="checkbox" id="spoiler_ini_quests">
+					<label for="spoiler_ini_quests">[quests] <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<div class="settingsDiv">
+							<p>
+								<span class="hl">QUESTSYSTEMENABLED</span><strong>=1</strong><br>
+								Enables or disables the JavaScript quest system. If set to 1, players can receive and progress quests defined in <span class="hl">js/server/quests/quest_lists.js</span>. If set to 0, the quest system is disabled.
+							</p>
+						</div>
+						<div class="settingsDiv">
+							<p>
+								<span class="hl">LOGINQUESTENABLED</span><strong>=1</strong><br>
+								Enables or disables automatic quest offers on login. If enabled, the system can offer a configured quest to players when they log in, as long as they have not already accepted or completed it.
+							</p>
+						</div>
+					</div>
+
 					<input type="checkbox" id="spoiler_ini_worldlight">
 					<label for="spoiler_ini_worldlight">[worldlight] <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -6879,6 +6896,1636 @@ function onTooltip( myItem, pSocket )
 				  	<p>Example: <strong>const regionStealOverride = [52];</strong> would override the stealing restrictions for a hypothetical region 52 within whatever facet it's in.</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#questSystem" id="questSystem"><span>Quest System</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+
+						<h3>Quest System</h3>
+
+						<p>
+							The <span class="hl">Quest System</span> lets you build everything from simple starter tasks to full story arcs.
+							You can use it for item collection quests, grouped item collection quests, kill quests, grouped kill quests,
+							delivery quests, skill training quests, taming quests, daily quests, timed quests, escort quests, guided walk quests,
+							race quests, item-started quests, branching quest lines, and reputation or world-state based progression.
+						</p>
+
+						<p>
+							If you are new to quest systems, think of it like this:
+						</p>
+
+						<ul>
+							<li>An NPC offers a quest</li>
+							<li>The player accepts it</li>
+							<li>The system tracks progress automatically</li>
+							<li>The player completes the objectives</li>
+							<li>The player gets a reward</li>
+						</ul>
+
+						<p>
+							If you already know what you are doing, this system also supports more advanced features such as chained quests,
+							branching outcomes, item groups, kill groups, race-based kill tracking, region-based kill objectives, escort routes,
+							random escort destinations, waypoint ambushes, travel ambushes, guided story walks, NPC races,
+							taming objectives, item quest starters, tag changes, world-state tracking, skill point rewards,
+							and automatic quest offers on login.
+						</p>
+
+						<h3>System Overview</h3>
+
+						<p>
+							All quest system scripts are found in:
+							<span class="hl">js/server/quests/</span>
+						</p>
+
+						<p>
+							All quest data is stored as JSON files in:
+							<span class="hl">js/jsdata/quests/</span>
+						</p>
+
+						<p>
+							The quest system is split into several scripts, each with a different job:
+						</p>
+
+						<ul>
+							<li><span class="hl">quest_core.js</span> - Starts quests, tracks progress, completes quests, saves data, gives rewards, handles quest chains, escort logic, guided walk logic, race logic, timed quest restore, and login validation</li>
+							<li><span class="hl">quest_lists.js</span> - Loads and registers all quest JSON files and validates quest data</li>
+							<li><span class="hl">quest_conversation_gump.js</span> - Shows the quest conversation gump and handles accept, refuse, turn-in, and resign</li>
+							<li><span class="hl">quest_menu.js</span> - Quest journal, completed quest list, and options</li>
+							<li><span class="hl">quest_item.js</span> - Restricts quest items so they cannot be abused</li>
+							<li><span class="hl">quest_giver_item.js</span> - Allows items such as signs, books, boards, or notes to start normal quests</li>
+							<li><span class="hl">quest_login.js</span> - Optional login quest offer system</li>
+							<li><span class="hl">quest_event_onkill.js</span> - Updates kill progress</li>
+							<li><span class="hl">quest_event_onskillgain.js</span> - Updates skillgain quests</li>
+							<li><span class="hl">quest_event_onenterregion.js</span> - Handles training region entry messages, escort region progress, and race finish regions</li>
+							<li><span class="hl">quest_event_onquesttoggle.js</span> - Lets players toggle item quest status manually</li>
+							<li><span class="hl">quest_escort_npc.js</span> - Handles escort waypoint progress, leash checks, death fail, and travel ambush checks</li>
+							<li><span class="hl">quest_escort_ambush_cleanup.js</span> - Cleans up spawned escort ambush NPCs after their despawn timer expires</li>
+							<li><span class="hl">quest_guided_npc.js</span> - Handles guided walk story movement, speech steps, distance checks, and NPC return-home behavior</li>
+							<li><span class="hl">quest_race_npc.js</span> - Handles race checkpoint movement, player finish checks, NPC finish logic, and race return-home behavior</li>
+						</ul>
+
+						<p>
+							Players can also open a built-in quest journal that shows active quests, completed quests, categories,
+							quest details, and journal options such as transparency and login quest prompts.
+						</p>
+
+						<p>
+							Quest data is now separated from the quest logic. This means you can add, remove, or edit quests by working with JSON files
+							without needing to rewrite the quest scripts themselves.
+						</p>
+
+						<hr>
+
+						<h3>Quick Start</h3>
+
+						<p>
+							If you just want to make your first working quest, do this:
+						</p>
+
+						<ol>
+							<li>Enable the quest system in <span class="hl">uox.ini</span></li>
+							<li>Create a quest JSON file in <span class="hl">js/jsdata/quests/</span></li>
+							<li>Create or edit an NPC or item that points to that quest</li>
+							<li>Reload scripts</li>
+							<li>Talk to the NPC in game and test the quest</li>
+						</ol>
+
+						<p>Use this <span class="hl">uox.ini</span> example:</p>
+
+<pre><code>
+[quests]
+{
+QuestSystemEnabled=1
+LoginQuestEnabled=1
+}
+</code></pre>
+
+						<p>
+							<span class="hl">LoginQuestEnabled</span> is optional. Leave it enabled only if you want the system
+							to automatically offer a quest when a player logs in.
+						</p>
+
+						<h3>Creating a Quest</h3>
+
+						<p>
+							All quest definitions are stored as JSON files in:
+							<span class="hl">js/jsdata/quests/</span>
+						</p>
+
+						<p>
+							The quest system automatically loads all valid JSON quest files in that folder.
+							You do not need to add new quest entries directly inside <span class="hl">quest_lists.js</span>.
+						</p>
+
+						<p>
+							Each quest is defined as a JSON object. In the current setup, each quest is typically stored in its own file,
+							and the filename usually matches the quest ID, such as <span class="hl">2000.json</span>.
+						</p>
+
+						<p>
+							Every quest must use a unique <span class="hl">questID</span>.
+						</p>
+
+						<input type="checkbox" id="spoiler_quest_create">
+						<label for="spoiler_quest_create">Show basic JSON quest example <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+<pre><code class="language-javascript">
+{
+	"questID": 2000,
+	"title": "More Ore Please",
+	"description": "Bring me some small iron ore.",
+	"uncomplete": "You still need more ore.",
+	"complete": "Good work!",
+	"refuse": "Maybe next time.",
+	"type": "collect",
+	"category": "Side Quests",
+	"oneTimeQuest": 1,
+	"questTurnIn": 1,
+	"targetItemGroups": [
+		{
+			"groupID": "iron_ore_any",
+			"amount": 5,
+			"name": "Iron Ore",
+			"items": [
+				{ "sectionID": "small_iron_ore", "name": "Iron Ore" },
+				{ "sectionID": "medium_iron_ore", "name": "Iron Ore" },
+				{ "sectionID": "large_iron_ore", "name": "Iron Ore" },
+				{ "sectionID": "medium_small_iron_ore", "name": "Iron Ore" }
+			]
+		}
+	],
+	"rewards": [
+		{ "type": "gold", "amount": 500, "name": "Gold" }
+	]
+}
+</code></pre>
+						</div>
+
+						<p>
+							If a quest JSON file is invalid, the system will skip that quest and print a warning in the console.
+						</p>
+
+						<h3>Quest Index File</h3>
+
+						<p>
+							The quest registry is built from the quest index file:
+							<span class="hl">js/jsdata/quests/quest_index.json</span>
+						</p>
+
+						<p>
+							This file lists which quest IDs should be loaded. The system reads the quest IDs from the keys in the JSON object.
+							The text values are only there for readability and can be anything you want.
+						</p>
+
+						<input type="checkbox" id="spoiler_quest_index">
+						<label for="spoiler_quest_index">Show quest_index.json example <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+<pre><code class="language-javascript">
+{
+	"2000": "More Ore Please",
+	"2001": "Rat Trouble",
+	"2002": "Special Delivery"
+}
+</code></pre>
+						</div>
+
+						<p>
+							In the example above, the system will attempt to load:
+							<span class="hl">2000.json</span>, <span class="hl">2001.json</span>, and <span class="hl">2002.json</span>.
+						</p>
+
+						<h3>Creating a Quest NPC</h3>
+
+						<p>
+							Once the quest exists, you need an NPC that offers it.
+						</p>
+
+<pre><code>
+[mugg]
+{
+GET=basehuman
+NAME=Mugg the Miner
+TITLE=Quest Giver
+ID=0x0190
+EQUIPITEM=listobject13
+HAIRCOLOR=15
+EQUIPITEM=listobject14
+COLORMATCHHAIR
+EQUIPITEM=listobject20
+COLORLIST=11
+EQUIPITEM=listobject21
+COLORLIST=11
+EQUIPITEM=listobject22
+COLORLIST=11
+EQUIPITEM=listobject23
+EQUIPITEM=listobject25
+COLORLIST=11
+SCRIPT=5802
+CUSTOMINTTAG=QuestID 2000
+}
+</code></pre>
+
+						<p>
+							This tells the NPC to open the quest conversation for quest <span class="hl">2000</span>.
+						</p>
+
+						<h3>Creating a Quest Starter Item</h3>
+
+						<p>
+							Quests can also be started from items, such as notice boards, books, scrolls, signs, stones, or other usable objects.
+							The item only starts the quest. If the quest uses <span class="hl">questTurnIn</span>, the player can still return to an NPC for turn-in.
+						</p>
+
+<pre><code>
+[quest_notice_board]
+{
+GET=base_item
+NAME=quest notice board
+ID=0x1e5e
+WEIGHT=255
+DECAY=0
+SCRIPT=5807
+CUSTOMINTTAG=QuestRootID 2000
+}
+</code></pre>
+
+						<p>
+							For quest chains, use <span class="hl">QuestRootID</span> instead of <span class="hl">QuestID</span>.
+						</p>
+
+<pre><code>
+CUSTOMINTTAG=QuestRootID 2000
+</code></pre>
+
+						<p>
+							Item quest starters are intended for normal quest types such as collect, kill, tame, delivery, skillgain, timecollect,
+							timekills, and multi quests. Escort quests, guided walk quests, and race quests should still be started by NPCs because
+							those systems need a real character to move, follow, return home, or race.
+						</p>
+
+						<p>
+							For quest chains, <span class="hl">QuestRootID</span> is preferred over <span class="hl">QuestID</span>,
+							because one NPC can then manage the full chain instead of only one single quest.
+						</p>
+
+						<hr>
+
+						<h4>Quest NPC and Item Tags</h4>
+
+						<p>
+							Quest NPCs and quest starter items use tags to decide which quest they should offer or resolve.
+						</p>
+
+						<ul>
+							<li><span class="hl">QuestID</span> - offers one specific quest</li>
+							<li><span class="hl">QuestRootID</span> - resolves the correct quest in a quest chain, starting from the root quest</li>
+							<li><span class="hl">QuestTurnInOnly</span> - marks an NPC as only handling quest turn-in instead of starting the quest</li>
+							<li><span class="hl">DeliveryQuestID</span> - marks an NPC as a delivery target for a delivery quest</li>
+						</ul>
+
+						<p>
+							Use <span class="hl">QuestRootID</span> when one NPC or item should manage a whole quest chain.
+							Use <span class="hl">QuestID</span> when it should only point to one quest.
+						</p>
+
+						<h3>Quest Types, Fields, Objectives and Rewards</h3>
+
+						<p>
+							These are the parts you will use most often when building quests.
+						</p>
+
+						<input type="checkbox" id="spoiler_quest_types">
+						<label for="spoiler_quest_types">Show quest types <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+							<ul>
+								<li><strong>collect</strong> - gather items</li>
+								<li><strong>kill</strong> - kill creatures</li>
+								<li><strong>multi</strong> - combine item collection and kill targets in one quest</li>
+								<li><strong>delivery</strong> - deliver an item to another NPC</li>
+								<li><strong>skillgain</strong> - train a skill to a target value</li>
+								<li><strong>tame</strong> - tame specific creatures</li>
+								<li><strong>timecollect</strong> - collect items within a time limit</li>
+								<li><strong>timekills</strong> - kill targets within a time limit</li>
+								<li><strong>escort</strong> - escort an NPC through one or more destinations</li>
+								<li><strong>guided</strong> - use a guided walk intro before the real objective</li>
+								<li><strong>race</strong> - race an NPC to a final checkpoint or finish region</li>
+							</ul>
+						</div>
+
+						<input type="checkbox" id="spoiler_quest_fields">
+						<label for="spoiler_quest_fields">Show common quest fields <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+							<ul>
+								<li><span class="hl">questID</span> - unique quest identifier</li>
+								<li><span class="hl">title</span> - quest name shown to the player</li>
+								<li><span class="hl">description</span> - main quest text</li>
+								<li><span class="hl">uncomplete</span> - NPC text while the quest is still in progress</li>
+								<li><span class="hl">complete</span> - NPC text when the quest is ready to turn in</li>
+								<li><span class="hl">oncomplete</span> - optional message used when the quest completes</li>
+								<li><span class="hl">refuse</span> - NPC text if the player declines the quest</li>
+								<li><span class="hl">npcPhrases</span> - optional flavor lines</li>
+								<li><span class="hl">category</span> - used by the quest journal</li>
+								<li><span class="hl">oneTimeQuest</span> - quest can only be completed once</li>
+								<li><span class="hl">dailyQuest</span> - quest can repeat on a timer</li>
+								<li><span class="hl">resetDailyTime</span> - daily quest reset time in hours</li>
+								<li><span class="hl">questTurnIn</span> - if 1, player must return to turn in the quest; if 0, it auto-completes</li>
+								<li><span class="hl">requiresQuestID</span> - requires another quest to be completed first</li>
+								<li><span class="hl">nextQuestID</span> - simple next quest in a chain</li>
+								<li><span class="hl">nextQuest</span> - branching chain definitions</li>
+								<li><span class="hl">timeLimit</span> - timer in seconds for timed quests</li>
+								<li><span class="hl">escortTimeLimit</span> - optional escort alias for timeLimit</li>
+								<li><span class="hl">targetRegion</span> - optional region restriction for skill training quests and kill objectives</li>
+								<li><span class="hl">targetTames</span> - creatures that must be tamed for tame quests</li>
+								<li><span class="hl">regionName</span> - optional display name for the region shown in the journal</li>
+								<li><span class="hl">escortTarget</span> - defines the escort NPC or uses the quest giver as escort target</li>
+								<li><span class="hl">waypoints</span> - ordered escort destinations using region IDs</li>
+								<li><span class="hl">travelAmbush</span> - optional random ambushes while traveling</li>
+								<li><span class="hl">randomDestinationPool</span> - optional random destination selection at quest start</li>
+								<li><span class="hl">guidedWalk</span> - optional guided walk configuration object</li>
+								<li><span class="hl">race</span> - optional race quest configuration object</li>
+								<li><span class="hl">finishRegion</span> - optional race finish region</li>
+								<li><span class="hl">npcWinMode</span> - controls what happens if the race NPC reaches the finish first</li>
+								<li><span class="hl">npcCanRun</span> - allows a race NPC to run during the race</li>
+								<li><span class="hl">setTempTags</span> - temporary player tags applied when the quest completes</li>
+								<li><span class="hl">setTempTagDeltas</span> - adds or subtracts from temporary player tag values</li>
+								<li><span class="hl">deltaRules</span> - optional min/max clamp rules for setTagDeltas</li>
+								<li><span class="hl">tempDeltaRules</span> - optional min/max clamp rules for setTempTagDeltas</li>
+								<li><span class="hl">worldStateDeltaRules</span> - optional min/max clamp rules for worldStateDeltas</li>
+							</ul>
+						</div>
+
+						<p>
+							A quest can require more than one item, more than one creature kill, more than one creature tame, and more than one reward.
+							This means you are not limited to a single <span class="hl">targetItems</span> entry, a single
+							<span class="hl">targetKills</span> entry, or a single reward entry. You can list as many as the quest needs.
+						</p>
+
+						<p>
+							The system also supports grouped objectives. This means a quest can ask for any items from a group or any kills from a group,
+							instead of requiring exact one-by-one matches.
+						</p>
+
+						<p>
+							Objectives depend on the quest type you choose.
+						</p>
+
+						<input type="checkbox" id="spoiler_collect_objective">
+						<label for="spoiler_collect_objective">Show collect quest example <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+<pre><code class="language-javascript">
+"targetItems": [
+	{ "sectionID": "small_iron_ore", "amount": 5, "name": "Small Iron Ore" },
+	{ "sectionID": "coal", "amount": 3, "name": "Coal" }
+]
+</code></pre>
+						</div>
+
+						<input type="checkbox" id="spoiler_item_groups">
+						<label for="spoiler_item_groups">Show item group examples <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+
+							<p><strong>Grouped item collection</strong></p>
+
+<pre><code class="language-javascript">
+"targetItemGroups": [
+	{
+		"groupID": "magic_reagents_any",
+		"name": "Magic Reagents",
+		"amount": 7,
+		"items": [
+			{ "sectionID": "black_pearl", "name": "Black Pearl" },
+			{ "sectionID": "blood_moss", "name": "Blood Moss" },
+			{ "sectionID": "garlic", "name": "Garlic" },
+			{ "sectionID": "ginseng", "name": "Ginseng" },
+			{ "sectionID": "mandrake_root", "name": "Mandrake Root" },
+			{ "sectionID": "nightshade", "name": "Nightshade" },
+			{ "sectionID": "spiders_silk", "name": "Spider's Silk" },
+			{ "sectionID": "sulfurous_ash", "name": "Sulfurous Ash" }
+		]
+	}
+]
+</code></pre>
+
+						</div>
+
+						<p>
+							Item groups let you track progress across multiple valid items. This is useful for quests such as
+							"Bring me any 7 magic reagents" where the player can combine different items to reach the required total.
+						</p>
+
+						<input type="checkbox" id="spoiler_kill_objective">
+						<label for="spoiler_kill_objective">Show kill quest example <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+<pre><code class="language-javascript">
+"targetKills": [
+	{ "npcID": "rat", "amount": 10, "name": "Rat" },
+	{ "npcID": "mongbat", "amount": 5, "name": "Mongbat" }
+]
+</code></pre>
+						</div>
+
+						<input type="checkbox" id="spoiler_kill_groups">
+						<label for="spoiler_kill_groups">Show kill group examples <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+
+							<p><strong>Kill Group using exact NPC IDs</strong></p>
+
+<pre><code class="language-javascript">
+"targetKillGroups": [
+	{
+		"groupID": "forest_creatures",
+		"name": "Forest Creatures",
+		"amount": 10,
+		"npcs": [
+			{ "npcID": "wolf" },
+			{ "npcID": "bear" },
+			{ "npcID": "cougar" }
+		]
+	}
+]
+</code></pre>
+
+							<p><strong>Kill Group using raceName</strong></p>
+
+<pre><code class="language-javascript">
+"targetKillGroups": [
+	{
+		"groupID": "undead_any",
+		"name": "Undead Creatures",
+		"amount": 10,
+		"raceName": "Undead"
+	}
+]
+</code></pre>
+
+							<p><strong>Kill Group using multiple race names</strong></p>
+
+<pre><code class="language-javascript">
+"targetKillGroups": [
+	{
+		"groupID": "evil_humanoids",
+		"name": "Evil Humanoids",
+		"amount": 15,
+		"raceNames": [ "Orc", "Ratman" ]
+	}
+]
+</code></pre>
+
+						</div>
+
+						<p>
+							Kill groups allow you to track progress across multiple creatures instead of requiring exact NPC matches.
+							You can define groups using individual NPC IDs or by using <span class="hl">raceName</span>,
+							<span class="hl">raceNames</span>, <span class="hl">raceID</span>, or <span class="hl">raceIDs</span>.
+						</p>
+
+						<p>
+							Using <span class="hl">raceName</span> is the recommended approach, because it automatically includes all creatures
+							belonging to that race without needing to list them manually.
+						</p>
+
+						<input type="checkbox" id="spoiler_region_kills">
+						<label for="spoiler_region_kills">Show region-based kill examples <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+
+							<p><strong>Exact kill in a region</strong></p>
+
+<pre><code class="language-javascript">
+"targetKills": [
+	{
+		"npcID": "orc",
+		"amount": 10,
+		"name": "Orc",
+		"targetRegion": 42,
+		"regionName": "the mountain pass"
+	}
+]
+</code></pre>
+
+							<p><strong>Kill group in a region</strong></p>
+
+<pre><code class="language-javascript">
+"targetKillGroups": [
+	{
+		"groupID": "undead_graveyard",
+		"name": "Undead Creatures",
+		"amount": 10,
+		"raceName": "Undead",
+		"targetRegion": 55,
+		"regionName": "the graveyard"
+	}
+]
+</code></pre>
+
+							<p><strong>Quest-wide region fallback</strong></p>
+
+<pre><code class="language-javascript">
+"targetRegion": 77,
+"regionName": "the deep forest",
+"targetKills": [
+	{ "npcID": "wolf", "amount": 5, "name": "Wolf" }
+],
+"targetKillGroups": [
+	{
+		"groupID": "forest_beasts",
+		"name": "Forest Beasts",
+		"amount": 5,
+		"raceNames": [ "Animal", "Predator" ]
+	}
+]
+</code></pre>
+
+						</div>
+
+						<p>
+							Region restrictions for kill quests are optional.
+							If no region is defined, kills count anywhere.
+							If a region is defined on an individual kill target or kill group, that objective must be completed in that region.
+							If only the quest itself defines <span class="hl">targetRegion</span>, that value is used as the fallback for all kill objectives in that quest.
+						</p>
+
+						<input type="checkbox" id="spoiler_multi_objective">
+						<label for="spoiler_multi_objective">Show multi quest example <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+<pre><code class="language-javascript">
+"targetItems": [
+	{ "sectionID": "apple", "amount": 5, "name": "Apple" }
+],
+"targetKills": [
+	{ "npcID": "dog", "amount": 2, "name": "Dog" }
+]
+</code></pre>
+						</div>
+
+						<input type="checkbox" id="spoiler_delivery_objective">
+						<label for="spoiler_delivery_objective">Show delivery quest example <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+<pre><code class="language-javascript">
+"deliveryItem": {
+	"sectionID": "0x0E21",
+	"name": "Sealed Package",
+	"amount": 1
+},
+"targetDelivery": {
+	"sectionID": "nail",
+	"name": "Nail the Receiver",
+	"location": { "x": 1068, "y": 1608, "z": 0, "world": 0 }
+}
+</code></pre>
+						</div>
+
+						<input type="checkbox" id="spoiler_skillgain_objective">
+						<label for="spoiler_skillgain_objective">Show skillgain quest example <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+<pre><code class="language-javascript">
+"targetSkill": 45,
+"targetRegion": 194,
+"regionName": "Haven Mountains",
+"maxSkillPoints": 500,
+"minPoint": 2,
+"maxPoint": 5
+</code></pre>
+						</div>
+
+						<input type="checkbox" id="spoiler_tame_objective">
+						<label for="spoiler_tame_objective">Show tame quest example <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+<pre><code class="language-javascript">
+"targetTames": [
+	{ "npcID": "cat", "amount": 1, "name": "Small Cat" }
+]
+</code></pre>
+						</div>
+
+						<p>
+							Tame quests track successful animal taming. Each creature only counts once for that quest, so a player cannot release and retame
+							the same creature repeatedly to gain extra progress.
+						</p>
+
+						<h4>Escort Quests</h4>
+
+						<p>
+							Escort quests let players guide an NPC to one or more destinations using region IDs.
+							Escorts may use the quest giver as the escorted NPC, or may spawn a separate escort NPC when the quest begins.
+						</p>
+
+						<ul>
+							<li>Single destination escorts</li>
+							<li>Multi-stop escort routes</li>
+							<li>Timed escorts</li>
+							<li>Random destination escorts</li>
+							<li>Waypoint ambushes</li>
+							<li>Travel ambushes</li>
+							<li>Fail if escort dies</li>
+							<li>Fail if escort is lost</li>
+						</ul>
+
+						<p>
+							Escort quests track progress automatically by waypoint stage.
+							Each destination uses a <span class="hl">regionID</span>.
+						</p>
+
+						<input type="checkbox" id="spoiler_escort_basic">
+						<label for="spoiler_escort_basic">Show escort quest example <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+<pre><code class="language-javascript">
+{
+	"questID": 5000,
+	"title": "Escort the Merchant",
+	"description": "Guide the merchant safely to Minoc.",
+	"uncomplete": "We have not arrived yet.",
+	"complete": "Thank you for the safe escort.",
+	"refuse": "Then I will wait for someone else.",
+	"type": "escort",
+	"category": "Side Quests",
+	"questTurnIn": 0,
+
+	"escortTarget":
+	{
+		"useQuestGiver": 1,
+		"failIfDead": 1,
+		"maxDistance": 24,
+		"returnDistance": 48
+	},
+
+	"waypoints":
+	[
+		{ "regionID": 12, "regionName": "Minoc", "order": 1 }
+	],
+
+	"rewards":
+	[
+		{ "type": "gold", "amount": 1000, "name": "Gold" }
+	]
+}
+</code></pre>
+						</div>
+
+						<input type="checkbox" id="spoiler_escort_multistop">
+						<label for="spoiler_escort_multistop">Show multi-stop escort example <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+<pre><code class="language-javascript">
+"waypoints":
+[
+	{ "regionID": 3, "regionName": "Britain", "order": 1 },
+	{ "regionID": 12, "regionName": "Minoc", "order": 2 },
+	{ "regionID": 11, "regionName": "Vesper", "order": 3 }
+]
+</code></pre>
+						</div>
+
+						<input type="checkbox" id="spoiler_escort_ambush">
+						<label for="spoiler_escort_ambush">Show escort ambush examples <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+
+							<p><strong>Waypoint Ambush</strong></p>
+
+<pre><code class="language-javascript">
+"ambush":
+{
+	"spawnOnce": 1,
+	"allowInGuardedRegion": 0,
+	"despawnSeconds": 90,
+	"npcIDs":
+	[
+		"brigand",
+		"brigand_archer"
+	]
+}
+</code></pre>
+
+							<p><strong>Travel Ambush</strong></p>
+
+<pre><code class="language-javascript">
+"travelAmbush":
+{
+	"enabled": 1,
+	"checkInterval": 30,
+	"chance": 25,
+	"allowInGuardedRegion": 0,
+	"despawnSeconds": 120,
+	"npcIDs":
+	[
+		"wolf",
+		"wolf"
+	]
+}
+</code></pre>
+
+						</div>
+
+						<p>
+							Waypoint ambushes trigger on arrival at specific destinations.
+							Travel ambushes are random periodic checks while moving.
+							By default ambushes do not spawn in guarded regions unless explicitly allowed.
+							Spawned ambushers can also auto-despawn after a timer.
+						</p>
+
+						<input type="checkbox" id="spoiler_escort_random">
+						<label for="spoiler_escort_random">Show random destination escort example <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+<pre><code class="language-javascript">
+"randomDestinationPool":
+[
+	{ "regionID": 3, "regionName": "Britain", "weight": 3 },
+	{ "regionID": 11, "regionName": "Vesper", "weight": 2 },
+	{ "regionID": 12, "regionName": "Minoc", "weight": 1 }
+]
+</code></pre>
+						</div>
+
+						<p>
+							Random destination escorts select one destination when the quest is accepted and save that route in quest progress.
+							The destination is not rerolled after relog.
+						</p>
+
+
+
+						<h4>Guided Walk Quests</h4>
+
+						<p>
+							Guided walk quests let an NPC walk with the player and speak during the route before the normal quest objective continues.
+							This is useful for story introductions, town flavor, dynamic world encounters, and quests where the NPC explains the situation while moving.
+						</p>
+
+						<p>
+							A guided walk is not an escort. The player is not trying to protect or deliver the NPC.
+							The NPC simply walks to one or more coordinates, speaks along the way, then returns home after the walk is done or after the player leaves range.
+						</p>
+
+						<ul>
+							<li>Uses coordinate steps instead of region IDs</li>
+							<li>Supports walking or running movement</li>
+							<li>Supports speech at the start of the walk, at each step, and at the end</li>
+							<li>Can use the quest giver as the walking NPC</li>
+							<li>Player can ignore the story and still continue the quest</li>
+							<li>NPC returns home when the guided walk is complete or when the player leaves range</li>
+						</ul>
+
+						<p>
+							Use <span class="hl">guidedWalk</span> when you want the NPC to walk and talk, but the real quest objective is still something else,
+							such as collect, kill, delivery, or multi.
+						</p>
+
+						<input type="checkbox" id="spoiler_guided_walk_basic">
+						<label for="spoiler_guided_walk_basic">Show guided walk example <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+<pre><code class="language-javascript">
+{
+	"questID": 5100,
+	"title": "A Walk by the Mill",
+	"description": "The miller wants to speak with you while walking nearby.",
+	"uncomplete": "You still need to bring me 5 sacks of flour.",
+	"complete": "Good. This will help keep the mill running.",
+	"refuse": "Another time, then.",
+	"type": "collect",
+	"category": "Side Quests",
+	"oneTimeQuest": 0,
+	"questTurnIn": 1,
+
+	"guidedWalk": {
+		"enabled": 1,
+		"maxDistance": 24,
+		"movement": "walk",
+		"returnMovement": "walk",
+		"startText": "Come with me a moment. I will explain what happened.",
+		"tooFarText": "Stay close. I am still telling the story.",
+		"returnText": "I should return to my post.",
+		"finalText": "That is why I need 5 sacks of flour. Bring them back when you have them.",
+		"steps": [
+			{
+				"x": 1450,
+				"y": 1622,
+				"z": 20,
+				"world": 0,
+				"range": 1,
+				"startText": "This mill used to feed half the town.",
+				"arrivalText": "Every morning, wagons would line this road."
+			},
+			{
+				"x": 1455,
+				"y": 1627,
+				"z": 20,
+				"world": 0,
+				"range": 1,
+				"startText": "Then the shipments started disappearing.",
+				"arrivalText": "At first I thought it was just bad luck."
+			},
+			{
+				"x": 1460,
+				"y": 1632,
+				"z": 20,
+				"world": 0,
+				"range": 1,
+				"startText": "But three missing deliveries is no accident.",
+				"arrivalText": "Now the storehouse is almost empty."
+			}
+		]
+	},
+
+	"targetItems": [
+		{ "sectionID": "flour_sack", "amount": 5, "name": "Flour Sack" }
+	],
+
+	"rewards": [
+		{ "type": "gold", "amount": 250, "name": "Gold" }
+	]
+}
+</code></pre>
+						</div>
+
+						<p>
+							Guided walk step coordinates should be close enough that the NPC can path to them reliably.
+							For long story walks, use several short steps instead of one very long step.
+						</p>
+
+						<h4>Race Quests</h4>
+
+						<p>
+							Race quests let a player race an NPC to a final checkpoint or finish region.
+							The race NPC moves through checkpoint coordinates, and the player can win by reaching the final checkpoint area first.
+							A finish region can also be used as a backup or alternate finish trigger.
+						</p>
+
+						<ul>
+							<li>NPC can walk or run through checkpoints</li>
+							<li>NPC running requires <span class="hl">npcCanRun</span></li>
+							<li>Player finish can be checked by final checkpoint location</li>
+							<li>Optional <span class="hl">finishRegion</span> can also complete the race</li>
+							<li>Admin controls what happens if the NPC wins</li>
+							<li>Race NPC returns home after the race ends</li>
+						</ul>
+
+						<p>
+							Use <span class="hl">npcWinMode</span> to control what happens if the NPC reaches the finish first.
+						</p>
+
+						<ul>
+							<li><span class="hl">continue</span> - NPC wins, but the race still counts as complete</li>
+							<li><span class="hl">turnin</span> - NPC wins, and the quest becomes ready to turn in</li>
+							<li><span class="hl">fail</span> - NPC wins, and the player fails the quest</li>
+						</ul>
+
+						<p>
+							For casual or story races, <span class="hl">continue</span> is recommended so the race feels fun instead of punishing.
+							Use <span class="hl">fail</span> only for challenge quests where losing should matter.
+						</p>
+
+						<input type="checkbox" id="spoiler_race_basic">
+						<label for="spoiler_race_basic">Show race quest example <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+<pre><code class="language-javascript">
+{
+	"questID": 5200,
+	"title": "Race to the Old Bridge",
+	"description": "A mounted traveler wants to race you to the old bridge.",
+	"uncomplete": "The race is not finished yet.",
+	"complete": "That was a fine race.",
+	"refuse": "Maybe another time.",
+	"type": "race",
+	"category": "Side Quests",
+	"oneTimeQuest": 0,
+	"questTurnIn": 0,
+
+	"race": {
+		"enabled": 1,
+		"useQuestGiver": 1,
+		"movement": "run",
+		"returnMovement": "walk",
+		"npcCanRun": 1,
+		"finishRegion": 120,
+		"npcWinMode": "continue",
+		"startText": "Think you can beat me to the old bridge?",
+		"npcWinText": "Ha! I beat you there, but you kept up well enough. Good luck.",
+		"playerWinText": "Well run! You beat me fair.",
+		"returnText": "I should ride back now.",
+		"checkpoints": [
+			{ "x": 1450, "y": 1620, "z": 20, "world": 0, "range": 1 },
+			{ "x": 1470, "y": 1640, "z": 20, "world": 0, "range": 1 },
+			{ "x": 1500, "y": 1660, "z": 20, "world": 0, "range": 2, "playerRange": 5 }
+		]
+	},
+
+	"rewards": [
+		{ "type": "gold", "amount": 250, "name": "Gold" }
+	]
+}
+</code></pre>
+						</div>
+
+						<p>
+							The final checkpoint in the <span class="hl">checkpoints</span> array is treated as the player finish point.
+							Use <span class="hl">playerRange</span> on the final checkpoint to control how close the player must be to finish the race.
+							If <span class="hl">playerRange</span> is not set, the system falls back to the checkpoint <span class="hl">range</span> value,
+							then finally to a small default range.
+						</p>
+
+						<p>
+							<span class="hl">finishRegion</span> is optional. You can keep it as a backup finish method, or rely only on the final checkpoint position.
+						</p>
+
+						<p>
+							Rewards are also built from fields in the quest entry.
+						</p>
+
+						<input type="checkbox" id="spoiler_reward_types">
+						<label for="spoiler_reward_types">Show reward types and example <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+							<p>Supported reward types include:</p>
+							<ul>
+								<li><span class="hl">gold</span></li>
+								<li><span class="hl">item</span></li>
+								<li><span class="hl">fame</span></li>
+								<li><span class="hl">karma</span></li>
+								<li><span class="hl">skill</span></li>
+								<li><span class="hl">skillpoints</span></li>
+								<li><span class="hl">virtue</span></li>
+							</ul>
+
+<pre><code class="language-javascript">
+"rewards": [
+	{ "type": "gold", "amount": 500, "name": "Gold" },
+	{ "type": "item", "sectionID": "minerssatchel", "amount": 1, "name": "Miner's Satchel" }
+]
+</code></pre>
+						</div>
+
+						<h4>Quest Items</h4>
+
+						<p>
+							Quest items are protected by the system so players cannot abuse them.
+							When an item is marked as a quest item, it is changed to hue <span class="hl">0x04ea</span> as visual feedback.
+						</p>
+
+						<ul>
+							<li>They cannot be dropped on the ground</li>
+							<li>They cannot be partially unstacked</li>
+							<li>They cannot be placed inside sub-containers while still needed</li>
+							<li>They must remain in the top level of the player's backpack</li>
+							<li>They cannot be equipped normally</li>
+							<li>They cannot be used like normal items</li>
+							<li>They show a special Quest Item tooltip</li>
+						</ul>
+
+						<p>
+							This is especially important for collect and delivery quests.
+						</p>
+
+						<p>
+							Important: equipping a protected quest target item can remove that item from quest tracking and may reduce quest progress.
+							Players should use the quest toggle option instead of trying to equip or use quest items directly.
+						</p>
+
+						<h3>Advanced Features</h3>
+
+						<p>
+							Once you are comfortable making normal quests, these features let you build more advanced systems.
+						</p>
+
+						<h4>Quest Chains</h4>
+
+						<p>
+							You can make quests unlock other quests.
+						</p>
+
+						<input type="checkbox" id="spoiler_quest_chains">
+						<label for="spoiler_quest_chains">Show quest chain examples <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+							<p><strong>Simple chain</strong></p>
+
+<pre><code class="language-javascript">
+"nextQuestID": 2001
+</code></pre>
+
+							<p><strong>Branching chain</strong></p>
+
+<pre><code class="language-javascript">
+"nextQuest": [
+	{ "questID": 1201, "cond": { "tagEquals": { "tag": "DL_ThiefPath", "value": 1 } } },
+	{ "questID": 1202, "cond": { "tagMin": { "tag": "DL_GuardPath", "value": 1 } } },
+	{ "questID": 1203, "cond": { "always": true } }
+]
+</code></pre>
+						</div>
+
+						<p>
+							This lets you branch quests based on completed quests, player tags, active quests, or world state.
+						</p>
+
+						<h4>Player Tags and World State</h4>
+
+						<p>
+							The system can update player tags and world-state values when a quest completes.
+							This is useful for faction systems, reputation systems, story progression, unlocks, and branching quest logic.
+						</p>
+
+						<input type="checkbox" id="spoiler_tags_worldstate">
+						<label for="spoiler_tags_worldstate">Show tag and world-state examples <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+							<p><strong>Set tags</strong></p>
+
+<pre><code class="language-javascript">
+"setTags": {
+	"starterTier": 2
+}
+</code></pre>
+
+							<p><strong>Tag deltas</strong></p>
+
+<pre><code class="language-javascript">
+"setTagDeltas": {
+	"GuardStanding": 5
+}
+</code></pre>
+
+							<p><strong>World state</strong></p>
+
+<pre><code class="language-javascript">
+"setWorldState": {
+	"dl_ws_orchard_helped": 1
+},
+"worldStateDeltas": {
+	"dl_ws_ironreach_rep": 5
+}
+</code></pre>
+						</div>
+
+						<h4>Quest Locks and Doors</h4>
+
+						<p>
+							Doors and other scripted objects can be restricted by quest progress or required items.
+							This is useful for quest-only areas, locked dungeon wings, story gates, and progression checks.
+						</p>
+
+						<ul>
+							<li><span class="hl">reqQuestID</span> - requires the player to have completed or reached the required quest state</li>
+							<li><span class="hl">reqItemSection</span> - requires the player to have a specific item section</li>
+						</ul>
+
+						<p>
+							Use these tags on compatible scripted doors or objects when a quest should unlock access to an area.
+						</p>
+
+						<h4>Quest TriggerEvent API</h4>
+
+						<p>
+							Other scripts can interact with the quest system through <span class="hl">TriggerEvent</span>.
+						</p>
+
+						<ul>
+							<li><span class="hl">5800</span> - core quest functions such as progress updates, saving, completion, failure, world state, rewards, escort logic, guided walk logic, and race logic</li>
+							<li><span class="hl">5801</span> - quest registry access through <span class="hl">QuestList</span></li>
+							<li><span class="hl">5802</span> - quest conversation gump, quest objective display, reward display, and quest chain resolution helpers</li>
+						</ul>
+
+<pre><code class="language-javascript">
+var quest = TriggerEvent( 5801, "QuestList", 2000 );
+TriggerEvent( 5800, "UpdateQuestProgress", player, 2000, "rat", 1, "kill" );
+TriggerEvent( 5802, "QuestConversationGump", player, npc, 2000 );
+</code></pre>
+
+						<h4>Timed Quests</h4>
+
+						<p>
+							Timed quests use <span class="hl">timeLimit</span>.
+							Escort quests may also use <span class="hl">escortTimeLimit</span>, which acts as an alias.
+							When time runs out, the quest fails automatically.
+						</p>
+
+						<ul>
+							<li>The quest is removed from progress</li>
+							<li>The failure is logged</li>
+							<li>Any marked quest items are cleaned up</li>
+							<li>Escort, guided walk, and race NPCs are cleaned up if applicable</li>
+							<li>On login, remaining timed quests have their timers restored automatically</li>
+						</ul>
+
+						<h4>Skill Training Quests</h4>
+
+						<p>
+							Skillgain quests are special. They can boost skill gain while the player is training the correct skill
+							in the correct region.
+						</p>
+
+						<p>
+							This is useful for starter training quests, profession training areas, or guided progression systems.
+						</p>
+
+						<h4>Taming Quests</h4>
+
+						<p>
+							Taming quests use <span class="hl">type</span> set to <span class="hl">tame</span> and track successful animal taming through
+							<span class="hl">targetTames</span>.
+						</p>
+
+						<ul>
+							<li>Progress is saved in the quest progress file</li>
+							<li>Completed and failed tame progress is logged with the quest data</li>
+							<li>Each counted creature serial is saved so the same creature cannot be released and retamed repeatedly for extra progress</li>
+							<li>Tame quests can auto-complete with <span class="hl">questTurnIn</span> set to 0</li>
+							<li>Tame quests can require NPC turn-in with <span class="hl">questTurnIn</span> set to 1</li>
+						</ul>
+
+						<h4>Item Quest Starters</h4>
+
+						<p>
+							Item quest starters allow usable items to offer normal quests. This is useful for notice boards, job boards, books,
+							scrolls, signs, bounty boards, bulletin boards, or discovery items.
+						</p>
+
+						<ul>
+							<li>Use script <span class="hl">5818</span> on the item</li>
+							<li>Use <span class="hl">QuestID</span> for a single quest</li>
+							<li>Use <span class="hl">QuestRootID</span> for a quest chain</li>
+							<li>The item can start the quest while an NPC handles later turn-in</li>
+							<li>Do not use item starters for escort, guided walk, or race quests</li>
+						</ul>
+
+						<h4>Login Quest Offers</h4>
+
+						<p>
+							If enabled, the system can automatically offer a quest to players when they log in.
+						</p>
+
+						<ul>
+							<li>Good for starter quests</li>
+							<li>Good for story introductions</li>
+							<li>Good for important seasonal or shard-wide quests</li>
+						</ul>
+
+						<p>
+							The system remembers whether the player has already seen or completed that login quest.
+						</p>
+
+						<h4>Quest Login Validation</h4>
+
+						<p>
+							Active quests are validated when players log in.
+							This includes:
+						</p>
+
+						<ul>
+							<li>Restoring active timed quest timers</li>
+							<li>Restoring kill quest and skillgain triggers</li>
+							<li>Repairing active escort quests if the escort NPC still exists</li>
+							<li>Failing broken escort quests cleanly if the escort NPC is gone</li>
+							<li>Cleaning up guided walk or race NPC state when a quest ends</li>
+						</ul>
+
+						<h3>Example Quest Entries</h3>
+
+						<input type="checkbox" id="spoiler_quest_examples">
+						<label for="spoiler_quest_examples">Show full quest examples <i class="fas fa-angle-down"></i></label>
+
+						<div class="spoiler">
+
+							<p><strong>Collect Quest</strong></p>
+
+<pre><code class="language-javascript">
+{
+	"questID": 2000,
+	"title": "More Ore Please",
+	"description": "Bring me some small iron ore.",
+	"uncomplete": "You still need more ore.",
+	"complete": "Good work!",
+	"refuse": "Maybe next time.",
+	"type": "collect",
+	"category": "Side Quests",
+	"oneTimeQuest": 1,
+	"questTurnIn": 1,
+	"targetItems": [
+		{ "sectionID": "small_iron_ore", "amount": 5, "name": "Small Iron Ore" }
+	],
+	"rewards": [
+		{ "type": "gold", "amount": 500, "name": "Gold" }
+	]
+}
+</code></pre>
+
+							<p><strong>Grouped Collect Quest</strong></p>
+
+<pre><code class="language-javascript">
+{
+	"questID": 2005,
+	"title": "Reagents for Research",
+	"description": "Bring me any 7 magic reagents.",
+	"uncomplete": "Any 7 reagents from the mage reagent set will do.",
+	"complete": "Excellent. These will work nicely.",
+	"type": "collect",
+	"category": "Side Quests",
+	"oneTimeQuest": 1,
+	"questTurnIn": 1,
+	"targetItemGroups": [
+		{
+			"groupID": "magic_reagents_any",
+			"name": "Magic Reagents",
+			"amount": 7,
+			"items": [
+				{ "sectionID": "black_pearl", "name": "Black Pearl" },
+				{ "sectionID": "blood_moss", "name": "Blood Moss" },
+				{ "sectionID": "garlic", "name": "Garlic" },
+				{ "sectionID": "ginseng", "name": "Ginseng" },
+				{ "sectionID": "mandrake_root", "name": "Mandrake Root" },
+				{ "sectionID": "nightshade", "name": "Nightshade" },
+				{ "sectionID": "spiders_silk", "name": "Spider's Silk" },
+				{ "sectionID": "sulfurous_ash", "name": "Sulfurous Ash" }
+			]
+		}
+	],
+	"rewards": [
+		{ "type": "gold", "amount": 250, "name": "Gold" }
+	]
+}
+</code></pre>
+
+							<p><strong>Kill Quest</strong></p>
+
+<pre><code class="language-javascript">
+{
+	"questID": 2001,
+	"title": "Rat Trouble",
+	"description": "Kill 10 rats in the cellar.",
+	"type": "kill",
+	"category": "Side Quests",
+	"oneTimeQuest": 1,
+	"questTurnIn": 1,
+	"targetKills": [
+		{ "npcID": "rat", "amount": 10, "name": "Rat" }
+	],
+	"rewards": [
+		{ "type": "gold", "amount": 250, "name": "Gold" }
+	]
+}
+</code></pre>
+
+							<p><strong>Kill by Race Example</strong></p>
+
+<pre><code class="language-javascript">
+{
+	"questID": 2010,
+	"title": "Cleanse the Dead",
+	"description": "Destroy 10 undead in the graveyard.",
+	"type": "kill",
+	"questTurnIn": 1,
+	"targetKillGroups": [
+		{
+			"groupID": "undead_graveyard",
+			"name": "Undead Creatures",
+			"amount": 10,
+			"raceName": "Undead",
+			"targetRegion": 55,
+			"regionName": "the graveyard"
+		}
+	],
+	"rewards": [
+		{ "type": "gold", "amount": 400, "name": "Gold" }
+	]
+}
+</code></pre>
+
+							<p><strong>Delivery Quest</strong></p>
+
+<pre><code class="language-javascript">
+{
+	"questID": 2002,
+	"title": "Special Delivery",
+	"description": "Take this package to Nail.",
+	"type": "delivery",
+	"category": "Side Quests",
+	"oneTimeQuest": 1,
+	"questTurnIn": 1,
+	"deliveryItem": {
+		"sectionID": "0x0E21",
+		"name": "Sealed Package",
+		"amount": 1
+	},
+	"targetDelivery": {
+		"sectionID": "nail",
+		"name": "Nail the Receiver",
+		"location": { "x": 1068, "y": 1608, "z": 0, "world": 0 }
+	},
+	"rewards": [
+		{ "type": "gold", "amount": 500, "name": "Gold" }
+	]
+}
+</code></pre>
+
+							<p><strong>Skillgain Quest</strong></p>
+
+<pre><code class="language-javascript">
+{
+	"questID": 2007,
+	"title": "The Delucian's Lost Mine",
+	"description": "Train Mining in the Haven Mountains.",
+	"type": "skillgain",
+	"category": "Side Quests",
+	"oneTimeQuest": 1,
+	"questTurnIn": 1,
+	"targetRegion": 194,
+	"regionName": "Haven Mountains",
+	"targetSkill": 45,
+	"maxSkillPoints": 500,
+	"minPoint": 2,
+	"maxPoint": 5,
+	"rewards": [
+		{ "type": "item", "sectionID": "jacobspickaxe", "amount": 1, "name": "Jacob's Pickaxe" }
+	]
+}
+</code></pre>
+
+							<p><strong>Tame Quest</strong></p>
+
+<pre><code class="language-javascript">
+{
+	"questID": 2100,
+	"title": "A Gentle First Tame",
+	"description": "The animal trainer wants you to prove you can handle a harmless animal. Tame a small cat.",
+	"uncomplete": "You still need to tame a small cat.",
+	"complete": "Well done. A gentle hand is the first lesson of animal taming.",
+	"refuse": "Come back when you are ready to work with animals.",
+	"type": "tame",
+	"category": "Side Quests",
+	"oneTimeQuest": 0,
+	"questTurnIn": 1,
+	"targetTames": [
+		{ "npcID": "cat", "amount": 1, "name": "Small Cat" }
+	],
+	"rewards": [
+		{ "type": "gold", "amount": 100, "name": "Gold" }
+	]
+}
+</code></pre>
+
+							<p><strong>Item-Started Quest</strong></p>
+
+<pre><code>
+[rat_problem_notice]
+{
+GET=base_item
+NAME=rat problem notice
+ID=0x1e5e
+WEIGHT=255
+DECAY=0
+SCRIPT=5818
+TAG=QuestID 2200
+}
+</code></pre>
+
+<pre><code class="language-javascript">
+{
+	"questID": 2200,
+	"title": "Rat Problem",
+	"description": "A notice asks someone to clear rats from the storehouse.",
+	"uncomplete": "The rats are still causing trouble.",
+	"complete": "The storehouse is safe again.",
+	"refuse": "Maybe another adventurer will help.",
+	"type": "kill",
+	"category": "Side Quests",
+	"oneTimeQuest": 0,
+	"questTurnIn": 0,
+	"targetKills": [
+		{ "npcID": "rat", "amount": 5, "name": "Rat" }
+	],
+	"rewards": [
+		{ "type": "gold", "amount": 250, "name": "Gold" }
+	]
+}
+</code></pre>
+
+							<p><strong>Escort Quest</strong></p>
+
+<pre><code class="language-javascript">
+{
+	"questID": 5000,
+	"title": "Escort the Merchant",
+	"description": "Guide the merchant safely to Minoc.",
+	"uncomplete": "We have not arrived yet.",
+	"complete": "Thank you for the safe escort.",
+	"refuse": "Then I will wait for someone else.",
+	"type": "escort",
+	"category": "Side Quests",
+	"questTurnIn": 0,
+	"escortTimeLimit": 900,
+	"escortTarget": {
+		"useQuestGiver": 1,
+		"failIfDead": 1,
+		"maxDistance": 24,
+		"returnDistance": 48
+	},
+	"waypoints": [
+		{
+			"regionID": 12,
+			"regionName": "Minoc",
+			"order": 1,
+			"ambush": {
+				"spawnOnce": 1,
+				"allowInGuardedRegion": 0,
+				"despawnSeconds": 90,
+				"npcIDs": [ "brigand", "brigand_archer" ]
+			}
+		}
+	],
+	"travelAmbush": {
+		"enabled": 1,
+		"checkInterval": 30,
+		"chance": 20,
+		"allowInGuardedRegion": 0,
+		"despawnSeconds": 120,
+		"npcIDs": [ "wolf", "wolf" ]
+	},
+	"rewards": [
+		{ "type": "gold", "amount": 1000, "name": "Gold" }
+	]
+}
+</code></pre>
+
+							<p><strong>Random Destination Escort Quest</strong></p>
+
+<pre><code class="language-javascript">
+{
+	"questID": 5001,
+	"title": "Escort to a Nearby Town",
+	"description": "Take me somewhere safe.",
+	"uncomplete": "We have not arrived yet.",
+	"complete": "Thank you for the escort.",
+	"type": "escort",
+	"category": "Side Quests",
+	"questTurnIn": 0,
+	"escortTimeLimit": 1200,
+	"escortTarget": {
+		"useQuestGiver": 1,
+		"failIfDead": 1,
+		"maxDistance": 24,
+		"returnDistance": 48
+	},
+	"randomDestinationPool": [
+		{ "regionID": 3, "regionName": "Britain", "weight": 3 },
+		{ "regionID": 11, "regionName": "Vesper", "weight": 2 },
+		{ "regionID": 12, "regionName": "Minoc", "weight": 1 }
+	],
+	"rewards": [
+		{ "type": "gold", "amount": 950, "name": "Gold" }
+	]
+}
+</code></pre>
+
+
+							<p><strong>Guided Walk Quest</strong></p>
+
+<pre><code class="language-javascript">
+{
+	"questID": 5100,
+	"title": "A Walk by the Mill",
+	"description": "The miller wants to speak with you while walking nearby.",
+	"uncomplete": "You still need to bring me 5 sacks of flour.",
+	"complete": "Good. This will help keep the mill running.",
+	"refuse": "Another time, then.",
+	"type": "collect",
+	"category": "Side Quests",
+	"oneTimeQuest": 0,
+	"questTurnIn": 1,
+	"guidedWalk": {
+		"enabled": 1,
+		"maxDistance": 24,
+		"movement": "walk",
+		"returnMovement": "walk",
+		"startText": "Come with me a moment. I will explain what happened.",
+		"tooFarText": "Stay close. I am still telling the story.",
+		"returnText": "I should return to my post.",
+		"finalText": "That is why I need 5 sacks of flour. Bring them back when you have them.",
+		"steps": [
+			{
+				"x": 1450,
+				"y": 1622,
+				"z": 20,
+				"world": 0,
+				"range": 1,
+				"startText": "This mill used to feed half the town.",
+				"arrivalText": "Every morning, wagons would line this road."
+			},
+			{
+				"x": 1455,
+				"y": 1627,
+				"z": 20,
+				"world": 0,
+				"range": 1,
+				"startText": "Then the shipments started disappearing.",
+				"arrivalText": "At first I thought it was just bad luck."
+			}
+		]
+	},
+	"targetItems": [
+		{ "sectionID": "flour_sack", "amount": 5, "name": "Flour Sack" }
+	],
+	"rewards": [
+		{ "type": "gold", "amount": 250, "name": "Gold" }
+	]
+}
+</code></pre>
+
+							<p><strong>Race Quest</strong></p>
+
+<pre><code class="language-javascript">
+{
+	"questID": 5200,
+	"title": "Race to the Old Bridge",
+	"description": "A mounted traveler wants to race you to the old bridge.",
+	"uncomplete": "The race is not finished yet.",
+	"complete": "That was a fine race.",
+	"refuse": "Maybe another time.",
+	"type": "race",
+	"category": "Side Quests",
+	"oneTimeQuest": 0,
+	"questTurnIn": 0,
+	"race": {
+		"enabled": 1,
+		"useQuestGiver": 1,
+		"movement": "run",
+		"returnMovement": "walk",
+		"npcCanRun": 1,
+		"finishRegion": 120,
+		"npcWinMode": "continue",
+		"startText": "Think you can beat me to the old bridge?",
+		"npcWinText": "Ha! I beat you there, but you kept up well enough. Good luck.",
+		"playerWinText": "Well run! You beat me fair.",
+		"returnText": "I should ride back now.",
+		"checkpoints": [
+			{ "x": 1450, "y": 1620, "z": 20, "world": 0, "range": 1 },
+			{ "x": 1470, "y": 1640, "z": 20, "world": 0, "range": 1 },
+			{ "x": 1500, "y": 1660, "z": 20, "world": 0, "range": 2, "playerRange": 5 }
+		]
+	},
+	"rewards": [
+		{ "type": "gold", "amount": 250, "name": "Gold" }
+	]
+}
+</code></pre>
+
+						</div>
+
+						<h3>Tips</h3>
+
+						<ul>
+							<li>Use <span class="hl">QuestRootID</span> on NPCs if they should handle a full chain instead of just one quest</li>
+							<li>Use <span class="hl">oneTimeQuest</span> for story quests or anything meant to be done once</li>
+							<li>Use <span class="hl">dailyQuest</span> for repeatable quests</li>
+							<li>Use <span class="hl">nextQuestID</span> for simple linear chains</li>
+							<li>Use <span class="hl">nextQuest</span> for branching chains</li>
+							<li>Use <span class="hl">targetItemGroups</span> when a quest should accept any valid items from a list</li>
+							<li>Use <span class="hl">targetKillGroups</span> when a quest should accept kills from a group instead of exact NPCs only</li>
+							<li>Use <span class="hl">targetTames</span> for animal taming quests</li>
+							<li>Use item quest starters for notice boards, books, scrolls, signs, and bounty boards</li>
+							<li>Use <span class="hl">QuestID</span> on an item for a single item-started quest</li>
+							<li>Use <span class="hl">QuestRootID</span> on an item for an item-started quest chain</li>
+							<li>Do not use item starters for escort, guided walk, or race quests</li>
+							<li>Use <span class="hl">raceName</span> inside <span class="hl">targetKillGroups</span> to avoid listing every NPC individually</li>
+							<li>Use <span class="hl">targetRegion</span> and <span class="hl">regionName</span> when kills or training should happen in a specific area</li>
+							<li>Use <span class="hl">regionID</span> for escort destinations, not region names</li>
+							<li>Use <span class="hl">randomDestinationPool</span> for reusable escort routes</li>
+							<li>Use waypoint <span class="hl">ambush</span> and <span class="hl">travelAmbush</span> for dangerous road encounters</li>
+							<li>Use <span class="hl">guidedWalk</span> for story walks where the NPC talks before the real objective continues</li>
+							<li>Use short guided walk steps so NPC speech feels natural while moving</li>
+							<li>Use <span class="hl">race</span> for optional fun races, mounted NPC challenges, or timed travel flavor</li>
+							<li>Use <span class="hl">npcWinMode</span> set to <span class="hl">continue</span> for friendly races that should not punish players</li>
+							<li>Use <span class="hl">npcWinMode</span> set to <span class="hl">fail</span> only for hard challenge races</li>
+							<li>Use <span class="hl">playerRange</span> on the final race checkpoint to control how close the player must be to finish</li>
+							<li>Use <span class="hl">finishRegion</span> as an optional backup for race completion</li>
+							<li>Use <span class="hl">npcCanRun</span> if the race NPC should use run movement</li>
+							<li>Use <span class="hl">despawnSeconds</span> to prevent abandoned ambush attackers from remaining in the world</li>
+							<li>Use <span class="hl">setTags</span> and <span class="hl">setTagDeltas</span> for reputation, alignment, or character progression</li>
+							<li>Use <span class="hl">setWorldState</span> and <span class="hl">worldStateDeltas</span> for story or world progression</li>
+							<li>Only include fields that apply to the quest type you are building</li>
+							<li>Always use unique quest IDs</li>
+							<li>Reload scripts after editing quest JSON files</li>
+							<li>Keep JSON valid: no comments, no trailing commas, and use double quotes around keys and string values</li>
+						</ul>
+
+					</div>
+				</div>
 			</li>
 
 			<li class="cd-faq__item">
