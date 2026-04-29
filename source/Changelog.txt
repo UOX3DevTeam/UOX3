@@ -1,3 +1,14 @@
+29/04/2026 - DragonSlayer62 (#527)
+    [ADD] Added flexible quest system in JS that can be used to setup a variety of player quests, accessible to players via context menus and conversational gumps on NPCs (scripts in /js/server/quest/)
+    [ADD] Added new settings in new [quests] section of uox.ini:
+        QUESTSYSTEMENABLED=0/1 // Enables/disables the quest system. Defaults to 1
+        LOGINQUESTENABLED=0/1 // Optional setting that can offer player a quest on login. Defaults to 0
+    [ADD] Quest button in paperdoll opens a quest journal that lists all ongoing quests the player has accepted, and details of any progress made in those quests
+    [ADD] Added new JS event used to toggle quest-item status on/off for specific items:
+        onQuestToggle( pUser, iUsed ) // Triggered by Toggle Quest Item context menu option on item
+    [UPD] Updated some existing scripts with additional functionality related to quest system (js/item/doors.js, js/server/global.js, js/skill/mining.js, js/skill/taming.js)
+    [UPD] Updated dictionary files with quest-system specific additions
+
 26/04/2026 - Xoduz (#540)
     [UPD] UOX3 now supports Z as a third dimension for NPC pathfinding; automatically used in most places in code, it can also be triggered via .WalkTo() and .RunTo() JS Methods, which have been updated to support target Z coordinate. This means NPCs can now navigate up and down stairs, move between floors of buildings, etc.
     [UPD] NPCs will recalculate their path less often now in situations with little-to-no change since last they got a valid path, if they still have remaining steps in their previously calculated path. However, the more time passes from the original pathfind calculation, the more likely it is to retrigger.
