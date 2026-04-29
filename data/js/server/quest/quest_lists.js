@@ -8,7 +8,7 @@ var questRegistryLoadError = false;
 /** @type { ( questID?: number ) => object|null } */
 function QuestList( questID )
 {
-	if( !questRegistryLoaded && !questRegistryLoadError )
+	if( !questRegistryLoaded )
 	{
 		LoadQuestRegistry();
 	}
@@ -22,9 +22,20 @@ function QuestList( questID )
 }
 
 /** @type { () => void } */
+function ReloadQuestRegistry()
+{
+	questRegistry = {};
+	questRegistryLoaded = false;
+	questRegistryLoadError = false;
+	LoadQuestRegistry();
+}
+
+/** @type { () => void } */
 function LoadQuestRegistry()
 {
 	questRegistry = {};
+	questRegistryLoaded = false;
+	questRegistryLoadError = false;
 
 	var questIndexFile = new UOXCFile();
 	questIndexFile.Open( "quest_index.json", "r", "quests", true );
@@ -133,6 +144,7 @@ function LoadQuestRegistry()
 	Console.Print( "Quest system: Loaded " + Object.keys( questRegistry ).length + " quests.\n" );
 
 	questRegistryLoaded = true;
+	questRegistryLoadError = false;
 }
 
 /** @type { ( fileName: string ) => object|null } */

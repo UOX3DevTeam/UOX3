@@ -3024,16 +3024,39 @@ function StartNextQuestInChain( player, questID, socket )
 	if( !ValidateObject( player ))
 		return;
 
-	var completedQuest = TriggerEvent( 5801, "QuestList", questID );
+	var completedQuestID = parseInt( questID, 10 );
+	if( isNaN( completedQuestID ) || completedQuestID <= 0 )
+		return;
+
+	var completedQuest = TriggerEvent( 5801, "QuestList", completedQuestID );
 	if( !completedQuest )
 		return;
 
-	// Dynamic (branching) resolution
-	var nextQuestID = ResolveNextQuestID( player, completedQuest );
-	if( nextQuestID <= 0 )
+	var nextQuestID = parseInt( ResolveNextQuestID( player, completedQuest ), 10 );
+	if( isNaN( nextQuestID ) || nextQuestID <= 0 )
 		return;
 
-	// Safety: do not auto-start if already active or archived
+	if( nextQuestID == completedQuestID )
+	{
+		if( socket )
+		{
+			socket.SysMessage( "Quest chain stopped because quest " + completedQuestID + " points to itself." );
+		}
+		return;
+	}
+
+	var visitedTagName = "QuestChainVisited_" + completedQuestID + "_" + nextQuestID;
+	if( player.GetTempTag( visitedTagName ))
+	{
+		if( socket )
+		{
+			socket.SysMessage( "Quest chain stopped because a loop was detected." );
+		}
+		return;
+	}
+
+	player.SetTempTag( visitedTagName, 1 );
+
 	if( HasActiveQuestID( player, nextQuestID ))
 		return;
 
@@ -3044,7 +3067,9 @@ function StartNextQuestInChain( player, questID, socket )
 	if( nextQuest )
 	{
 		if( socket )
+		{
 			socket.SysMessage( "A new quest has been unlocked: " + nextQuest.title );
+		}
 
 		StartQuest( player, nextQuestID );
 	}

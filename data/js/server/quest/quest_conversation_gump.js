@@ -764,11 +764,11 @@ function ProcessQuestTurnIn( player, questID )
 		}
 	}
 
+	if( !questProgress )
+		return false;
+
 	if( quest.type == "skillgain" )
 	{
-		if( !questProgress )
-			return false;
-
 		if( questProgress.skillProgress >= quest.maxSkillPoints )
 		{
 			socket.SysMessage( GetDictionaryEntry( 19607, socket.language ));
@@ -783,73 +783,77 @@ function ProcessQuestTurnIn( player, questID )
 		return false;
 	}
 
-	if( quest.type == "kill" || quest.type == "timekills" || quest.type == "multi" )
+	if( quest.type == "delivery" )
 	{
-		if( !questProgress || !questProgress.harvestKills )
-		{
+		socket.SysMessage( GetDictionaryEntry( 19610, socket.language ));
+		return false;
+	}
+
+	if( quest.type == "race" || ( quest.race && quest.race.enabled ) )
+	{
+		if( questProgress.raceCompleted )
+			return true;
+
+		socket.SysMessage( "You have not finished the race yet." );
+		return false;
+	}
+
+	if( quest.targetKills && quest.targetKills.length )
+	{
+		if( !questProgress.harvestKills )
 			return false;
-		}
 
 		for( var killIndex = 0; killIndex < quest.targetKills.length; killIndex++ )
 		{
 			var targetKill = quest.targetKills[killIndex];
 			if(( questProgress.harvestKills[targetKill.npcID] || 0 ) < targetKill.amount )
 			{
-				socket.SysMessage( "You have not killed enough " + targetKill.npcID + "s." );
+				socket.SysMessage( "You have not killed enough " + ( targetKill.name || targetKill.npcID ) + "." );
 				return false;
-			}
-		}
-
-		if( quest.targetKillGroups )
-		{
-			for( var targetKillGroupIndex = 0; targetKillGroupIndex < quest.targetKillGroups.length; targetKillGroupIndex++ )
-			{
-				var targetKillGroup = quest.targetKillGroups[targetKillGroupIndex];
-				if( !targetKillGroup || !targetKillGroup.groupID )
-				{
-					continue;
-				}
-
-				if( !questProgress.harvestKillGroups || ( questProgress.harvestKillGroups[String( targetKillGroup.groupID )] || 0 ) < targetKillGroup.amount )
-				{
-					socket.SysMessage( "You have not killed enough " + ( targetKillGroup.name || targetKillGroup.groupID ) + "." );
-					return false;
-				}
 			}
 		}
 	}
 
-	if( quest.type == "tame" )
+	if( quest.targetKillGroups && quest.targetKillGroups.length )
 	{
-		if( !questProgress || !questProgress.tamedCreatures )
-		{
+		if( !questProgress.harvestKillGroups )
 			return false;
+
+		for( var targetKillGroupIndex = 0; targetKillGroupIndex < quest.targetKillGroups.length; targetKillGroupIndex++ )
+		{
+			var targetKillGroup = quest.targetKillGroups[targetKillGroupIndex];
+			if( !targetKillGroup || !targetKillGroup.groupID )
+				continue;
+
+			if(( questProgress.harvestKillGroups[String( targetKillGroup.groupID )] || 0 ) < targetKillGroup.amount )
+			{
+				socket.SysMessage( "You have not killed enough " + ( targetKillGroup.name || targetKillGroup.groupID ) + "." );
+				return false;
+			}
 		}
+	}
+
+	if( quest.targetTames && quest.targetTames.length )
+	{
+		if( !questProgress.tamedCreatures )
+			return false;
 
 		for( var tameIndex = 0; tameIndex < quest.targetTames.length; tameIndex++ )
 		{
 			var targetTame = quest.targetTames[tameIndex];
-
 			if(( questProgress.tamedCreatures[targetTame.npcID] || 0 ) < targetTame.amount )
 			{
-				socket.SysMessage( "You have not tamed enough " + targetTame.name + "." );
+				socket.SysMessage( "You have not tamed enough " + ( targetTame.name || targetTame.npcID ) + "." );
 				return false;
 			}
 		}
-
-		return true;
 	}
 
-	if( quest.type == "collect" || quest.type == "timecollect" || quest.type == "multi" )
+	var hasExactTargets = ( quest.targetItems && quest.targetItems.length > 0 );
+	var hasGroupedTargets = ( quest.targetItemGroups && quest.targetItemGroups.length > 0 );
+
+	if( hasExactTargets || hasGroupedTargets )
 	{
-		var hasExactTargets = ( quest.targetItems && quest.targetItems.length > 0 );
-		var hasGroupedTargets = ( quest.targetItemGroups && quest.targetItemGroups.length > 0 );
-
-		if( !hasExactTargets && !hasGroupedTargets )
-		{
-			return false;
-		}
-
 		var questItems = FindQuestItems( player, questID );
 		var requiredItems = [];
 
@@ -889,9 +893,7 @@ function ProcessQuestTurnIn( player, questID )
 			{
 				var targetGroup = quest.targetItemGroups[targetGroupIndex];
 				if( !targetGroup || !targetGroup.groupID )
-				{
 					continue;
-				}
 
 				var totalFoundInGroup = 0;
 
@@ -899,9 +901,7 @@ function ProcessQuestTurnIn( player, questID )
 				{
 					var questItem = questItems[groupItemIndex];
 					if( !ValidateObject( questItem ))
-					{
 						continue;
-					}
 
 					var questSectionID = String( questItem.GetTag( "QuestSectionID" ) || questItem.sectionID );
 					if( TriggerEvent( 5800, "DoesItemMatchTargetGroup", String( questItem.sectionID ), questSectionID, targetGroup ))
@@ -927,16 +927,11 @@ function ProcessQuestTurnIn( player, questID )
 				for( var questItemIndex = 0; questItemIndex < questItems.length && remainingAmountToDeduct > 0; questItemIndex++ )
 				{
 					var exactQuestItem = questItems[questItemIndex];
-
 					if( !ValidateObject( exactQuestItem ))
-					{
 						continue;
-					}
 
 					if( String( exactQuestItem.sectionID ) != requiredItems[deductIndex].sectionID )
-					{
 						continue;
-					}
 
 					var amountToDeduct = Math.min( exactQuestItem.amount, remainingAmountToDeduct );
 					exactQuestItem.amount -= amountToDeduct;
@@ -956,26 +951,19 @@ function ProcessQuestTurnIn( player, questID )
 			{
 				var groupedTarget = quest.targetItemGroups[groupedTargetIndex];
 				if( !groupedTarget || !groupedTarget.groupID )
-				{
 					continue;
-				}
 
 				var remainingGroupAmountToDeduct = groupedTarget.amount;
 
 				for( var groupedQuestItemIndex = 0; groupedQuestItemIndex < questItems.length && remainingGroupAmountToDeduct > 0; groupedQuestItemIndex++ )
 				{
 					var groupedQuestItem = questItems[groupedQuestItemIndex];
-
 					if( !ValidateObject( groupedQuestItem ))
-					{
 						continue;
-					}
 
 					var groupedQuestSectionID = String( groupedQuestItem.GetTag( "QuestSectionID" ) || groupedQuestItem.sectionID );
 					if( !TriggerEvent( 5800, "DoesItemMatchTargetGroup", String( groupedQuestItem.sectionID ), groupedQuestSectionID, groupedTarget ))
-					{
 						continue;
-					}
 
 					var groupedAmountToDeduct = Math.min( groupedQuestItem.amount, remainingGroupAmountToDeduct );
 					groupedQuestItem.amount -= groupedAmountToDeduct;
@@ -993,29 +981,7 @@ function ProcessQuestTurnIn( player, questID )
 		return true;
 	}
 
-	if( quest.type == "delivery" )
-	{
-		socket.SysMessage( GetDictionaryEntry( 19610, socket.language ));
-		return false;
-	}
-
-	if( quest.type == "race" || ( quest.race && quest.race.enabled ) )
-	{
-		if( questProgress && questProgress.raceCompleted )
-		{
-			return true;
-		}
-
-		socket.SysMessage( "You have not finished the race yet." );
-		return false;
-	}
-
-	if( quest.type == "kill" || quest.type == "timekills" )
-	{
-		return true;
-	}
-
-	return false;
+	return true;
 }
 
 /** @type { ( player: Character, questID: number ) => Item[] } */

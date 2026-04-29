@@ -7174,6 +7174,24 @@ CUSTOMINTTAG=QuestRootID 2000
 
 						<hr>
 
+						<h4>Quest NPC and Item Tags</h4>
+
+						<p>
+							Quest NPCs and quest starter items use tags to decide which quest they should offer or resolve.
+						</p>
+
+						<ul>
+							<li><span class="hl">QuestID</span> - offers one specific quest</li>
+							<li><span class="hl">QuestRootID</span> - resolves the correct quest in a quest chain, starting from the root quest</li>
+							<li><span class="hl">QuestTurnInOnly</span> - marks an NPC as only handling quest turn-in instead of starting the quest</li>
+							<li><span class="hl">DeliveryQuestID</span> - marks an NPC as a delivery target for a delivery quest</li>
+						</ul>
+
+						<p>
+							Use <span class="hl">QuestRootID</span> when one NPC or item should manage a whole quest chain.
+							Use <span class="hl">QuestID</span> when it should only point to one quest.
+						</p>
+
 						<h3>Quest Types, Fields, Objectives and Rewards</h3>
 
 						<p>
@@ -7234,6 +7252,11 @@ CUSTOMINTTAG=QuestRootID 2000
 								<li><span class="hl">finishRegion</span> - optional race finish region</li>
 								<li><span class="hl">npcWinMode</span> - controls what happens if the race NPC reaches the finish first</li>
 								<li><span class="hl">npcCanRun</span> - allows a race NPC to run during the race</li>
+								<li><span class="hl">setTempTags</span> - temporary player tags applied when the quest completes</li>
+								<li><span class="hl">setTempTagDeltas</span> - adds or subtracts from temporary player tag values</li>
+								<li><span class="hl">deltaRules</span> - optional min/max clamp rules for setTagDeltas</li>
+								<li><span class="hl">tempDeltaRules</span> - optional min/max clamp rules for setTempTagDeltas</li>
+								<li><span class="hl">worldStateDeltaRules</span> - optional min/max clamp rules for worldStateDeltas</li>
 							</ul>
 						</div>
 
@@ -7853,21 +7876,27 @@ CUSTOMINTTAG=QuestRootID 2000
 
 						<p>
 							Quest items are protected by the system so players cannot abuse them.
+							When an item is marked as a quest item, it is changed to hue <span class="hl">0x04ea</span> as visual feedback.
 						</p>
 
 						<ul>
 							<li>They cannot be dropped on the ground</li>
 							<li>They cannot be partially unstacked</li>
+							<li>They cannot be placed inside sub-containers while still needed</li>
+							<li>They must remain in the top level of the player's backpack</li>
 							<li>They cannot be equipped normally</li>
 							<li>They cannot be used like normal items</li>
-							<li>They show a special tooltip</li>
+							<li>They show a special Quest Item tooltip</li>
 						</ul>
 
 						<p>
 							This is especially important for collect and delivery quests.
 						</p>
 
-						<hr>
+						<p>
+							Important: equipping a protected quest target item can remove that item from quest tracking and may reduce quest progress.
+							Players should use the quest toggle option instead of trying to equip or use quest items directly.
+						</p>
 
 						<h3>Advanced Features</h3>
 
@@ -7944,6 +7973,40 @@ CUSTOMINTTAG=QuestRootID 2000
 }
 </code></pre>
 						</div>
+
+						<h4>Quest Locks and Doors</h4>
+
+						<p>
+							Doors and other scripted objects can be restricted by quest progress or required items.
+							This is useful for quest-only areas, locked dungeon wings, story gates, and progression checks.
+						</p>
+
+						<ul>
+							<li><span class="hl">reqQuestID</span> - requires the player to have completed or reached the required quest state</li>
+							<li><span class="hl">reqItemSection</span> - requires the player to have a specific item section</li>
+						</ul>
+
+						<p>
+							Use these tags on compatible scripted doors or objects when a quest should unlock access to an area.
+						</p>
+
+						<h4>Quest TriggerEvent API</h4>
+
+						<p>
+							Other scripts can interact with the quest system through <span class="hl">TriggerEvent</span>.
+						</p>
+
+						<ul>
+							<li><span class="hl">5800</span> - core quest functions such as progress updates, saving, completion, failure, world state, rewards, escort logic, guided walk logic, and race logic</li>
+							<li><span class="hl">5801</span> - quest registry access through <span class="hl">QuestList</span></li>
+							<li><span class="hl">5802</span> - quest conversation gump, quest objective display, reward display, and quest chain resolution helpers</li>
+						</ul>
+
+<pre><code class="language-javascript">
+var quest = TriggerEvent( 5801, "QuestList", 2000 );
+TriggerEvent( 5800, "UpdateQuestProgress", player, 2000, "rat", 1, "kill" );
+TriggerEvent( 5802, "QuestConversationGump", player, npc, 2000 );
+</code></pre>
 
 						<h4>Timed Quests</h4>
 
