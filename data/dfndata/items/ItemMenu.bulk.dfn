@@ -14344,6 +14344,31 @@ ADDITEM=churchatnightmini
 ITEMMENU=4
 }
 
+[ITEMMENU 262]
+{
+quest_rewards.dfn
+0x0e76=Miners Satchel
+ADDITEM=minerssatchel
+0x0e75=Chefs Stachel
+ADDITEM=chefssatchel
+0x0e75=Lumberjacks Stachel
+ADDITEM=lumberjackssatchel
+0x0e75=Smiths Stachel
+ADDITEM=smithssatchel
+0x0e75=Tinkers Stachel
+ADDITEM=tinkerssatchel
+0x108a=an old ring
+ADDITEM=oldring
+0x1088=an old necklace
+ADDITEM=oldnecklace
+0x0e85=Jacobs Pickaxe
+ADDITEM=jacobspickaxe
+0x1086=Clasp of Concentration
+ADDITEM=claspofconcentration
+<=Previous Menu
+ITEMMENU=4
+}
+
 [ITEMMENU 264]
 {
 ethereal_statues.dfn

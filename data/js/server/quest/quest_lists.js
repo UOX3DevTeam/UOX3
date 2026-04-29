@@ -54,10 +54,6 @@ function LoadQuestRegistry()
 		if( rawLine != null )
 		{
 			fileText += rawLine;
-			if( !questIndexFile.EOF() )
-			{
-				fileText += "\n";
-			}
 		}
 	}
 
@@ -168,10 +164,6 @@ function LoadSingleQuestFile( fileName )
 		}
 
 		fileText += rawLine;
-		if( !questFile.EOF() )
-		{
-			fileText += "\n";
-		}
 	}
 
 	questFile.Close();
@@ -1019,14 +1011,29 @@ function SanitizeJsonText( text )
 
 	text = String( text );
 
-	// Strip UTF-8 BOM if present
-	if( text.length > 0 && text.charCodeAt( 0 ) == 0xFEFF )
+	if( text.length > 0 && text.charCodeAt( 0 ) == 65279 )
 	{
 		text = text.substring( 1 );
 	}
 
-	// Strip other non-printable control characters except tab/newline/carriage return
-	text = text.replace( /[^\x09\x0A\x0D\x20-\x7E]/g, "" );
+	text = text.split( "\r\n" ).join( "\n" );
+	text = text.split( "\r" ).join( "\n" );
+
+	// Remove/fix hidden characters that break SpiderMonkey JSON.parse
+	text = text.split( String.fromCharCode( 160 ) ).join( " " );
+	text = text.split( String.fromCharCode( 255 ) ).join( "" );
+
+	// Important: raw tabs inside JSON strings break JSON.parse.
+	// Replacing tabs with spaces is safe for indentation too.
+	text = text.split( "\t" ).join( " " );
+
+	text = TrimString( text );
+
+	var lastBrace = text.lastIndexOf( "}" );
+	if( lastBrace >= 0 )
+	{
+		text = text.substring( 0, lastBrace + 1 );
+	}
 
 	return TrimString( text );
 }
