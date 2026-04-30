@@ -3,13 +3,6 @@ cmake_minimum_required(VERSION 3.18)
 project(uox3 VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 
-# 1. Fix for SpiderMonkey architecture detection (for AVMPLUS_AMD64)
-#    Use CMake's reliable variable to set the flag SpiderMonkey misses.
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
-    message(STATUS "Forcing AVMPLUS_AMD64 for x86_64 build")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DAVMPLUS_AMD64")
-endif()
-
 # 2. Fix for modern, strict GCC compilers (like on new Ubuntu/WSL)
 #    Adds permissive flags only if using GCC greater than 10.0
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 10.0)
@@ -256,7 +249,7 @@ endif(WIN32)
 target_include_directories(uox3
 	PUBLIC
 		${PROJECT_SOURCE_DIR}/../../source
-		${PROJECT_SOURCE_DIR}/../../spidermonkey
+		${PROJECT_SOURCE_DIR}/../../spidermonkey/include
 		${PROJECT_SOURCE_DIR}/../../utf8cpp
 )
 if (NOT SYSTEM_ZLIB)
@@ -268,8 +261,14 @@ endif (NOT SYSTEM_ZLIB)
 # *************************************************************************
 # The libraries we need
 # *************************************************************************
+target_link_directories(uox3
+    PUBLIC
+		${PROJECT_SOURCE_DIR}/../../spidermonkey
+)
 target_link_libraries(uox3 PRIVATE
-	jscript
+	jsapi
+    jsglue
+    js_static
 	$<$<PLATFORM_ID:Windows>:ws2_32>
 	$<$<PLATFORM_ID:Windows>:Kernel32>
 	$<$<PLATFORM_ID:Linux>:pthread>
@@ -290,7 +289,6 @@ endif(NOT SYSTEM_ZLIB)
 # *************************************************************************
 # The items we need built first
 # *************************************************************************
-add_subdirectory(${PROJECT_SOURCE_DIR}/../../spidermonkey/make/cmake subproject/jscript)
 if (NOT SYSTEM_ZLIB)
 add_subdirectory(${PROJECT_SOURCE_DIR}/../../zlib/make/cmake subproject/zlib)
 endif(NOT SYSTEM_ZLIB)
