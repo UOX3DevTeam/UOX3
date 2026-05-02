@@ -1,3 +1,9 @@
+02/05/2026 - DragonSlayer62 (#543)
+    [ADD] Added the first 8 new player quest givers, including their quest JSON files and NPC definitions.
+    [ADD] Added quest reward items for the new player quests, including crafting satchels, Jacob's Pickaxe, and the Clasp of Concentration.
+    [ADD] Added item and NPC add-menu entries for the new quest givers and quest rewards.
+    [UPD] Updated quest JSON loading to better handle sanitized quest files and quoted quest text.
+
 29/04/2026 - DragonSlayer62 (#527)
     [ADD] Added flexible quest system in JS that can be used to setup a variety of player quests, accessible to players via context menus and conversational gumps on NPCs (scripts in /js/server/quest/)
     [ADD] Added new settings in new [quests] section of uox.ini:
