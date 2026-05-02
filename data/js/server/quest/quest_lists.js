@@ -96,6 +96,11 @@ function LoadQuestRegistry()
 			continue;
 		}
 
+		if( key.indexOf( "comment" ) == 0 )
+		{
+			continue;
+		}
+
 		var listedQuestID = parseInt( key, 10 );
 
 		if( isNaN( listedQuestID ) || listedQuestID <= 0 )
