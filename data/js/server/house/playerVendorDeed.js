@@ -70,6 +70,9 @@ function onUseChecked( pUser, iUsed )
 			// Set player as owner of the player vendor
 			npcVendor.owner = pUser;
 
+			// Add the player vendor to the house's list of vendors
+			iMulti.AddVendor( npcVendor );
+
 			// Delete the player vendor deed!
 			iUsed.Delete();
 

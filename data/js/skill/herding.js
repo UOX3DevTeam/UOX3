@@ -100,6 +100,27 @@ function onCallback1( socket, myTarget )
 		var pUser = socket.currentChar;
 		var targX = socket.GetWord( 11 );
 		var targY = socket.GetWord( 13 );
+		var targZ = socket.GetSByte( 16 );
+		var tileID = socket.GetWord( 17 );
+
+		// If connected with a client lower than v7.0.9, manually add height of targeted tile
+		if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+		{
+			targZ += GetTileHeight( tileID );
+		}
+		else
+		{
+			// Newer clients natively add full height to the target Z, but if
+			// a tile has TF_CLIMBABLE flag set, we follow what server normally does,
+			// i.e. divide the the tile's height by half to get the surface Z
+			if( CheckTileFlag( tileID, 10 ) ) // 10 = TF_CLIMBABLE
+			{
+				// GetTileHeight() returns the halved height for climbable tiles, so
+				// subtract the result from targZ to get correct target Z
+				targZ -= GetTileHeight( tileID );
+			}
+		}
+
 		var skillToHerd = targetChar.skillToTame;
 		var minSkill = 0;
 		var maxSkill = skillToHerd;
@@ -129,8 +150,8 @@ function onCallback1( socket, myTarget )
 					targetChar.Follow( null );
 					targetChar.wandertype = oldWanderType;
 
-					// Have NPC walk to the targeted location, maximum 20 steps away
-					targetChar.WalkTo( targX, targY, 20 );
+					// Have NPC walk to the targeted location, maximum 20 steps away (NOTE: maxSteps in WalkTo is not "actual steps" but pathfinding loops)
+					targetChar.WalkTo( targX, targY, targZ, 20 );
 					socket.SysMessage( GetDictionaryEntry( 9121, socket.language )); // The animal walks where it was instructed to.
 				}
 			}

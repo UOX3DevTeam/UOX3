@@ -424,7 +424,7 @@ NPC=cobbler
 [REGIONSPAWN 7529]
 {
 NAME=Minoc - Bank of Minoc 1
-NPC=bank
+NPC=banker
 MAXNPCS=2
 X1=2496
 Y1=552
@@ -439,7 +439,7 @@ CALL=2
 [REGIONSPAWN 7530]
 {
 NAME=Minoc - Bank of Minoc 2
-NPC=bank
+NPC=banker
 MAXNPCS=1
 X1=2504
 Y1=545

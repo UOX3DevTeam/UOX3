@@ -460,6 +460,9 @@ function CheckGeneralStealingRules( pSock, pThief, thiefTarget )
 	if( !ValidateObject( pThief ) || !ValidateObject( thiefTarget ))
 		return false;
 
+	if( pSock == null )
+		return false;
+
 	if( pThief == thiefTarget )
 	{
 		pSock.SysMessage( GetDictionaryEntry( 873, pSock.language )); // You catch yourself red handed.
@@ -496,7 +499,7 @@ function CheckGeneralStealingRules( pSock, pThief, thiefTarget )
 			if( pThief.npcGuild != 3 ) // Not a member of thieves guild?
 			{
 				// In T2A expansion, players can steal from guild enemies without being in thieves guild
-				if( EraStringToNum( coreShardEra ) == EraStringToNum( "t2a") && TriggerEvent( 2508, "CheckGuildRelationShip", pThief, thiefTarget ) != 1 )
+				if( EraStringToNum( coreShardEra ) == EraStringToNum( "t2a") && TriggerEvent( 2507, "CheckGuildRelationShip", pThief, thiefTarget ) != 1 )
 				{
 					pSock.SysMessage( GetDictionaryEntry( 874, pSock.language )); // You cannot steal that
 					return false;
@@ -564,7 +567,7 @@ function CheckGeneralStealingRules( pSock, pThief, thiefTarget )
 					if( itemToSteal.id != 0x0eed && ( itemToSteal.id < 0x0f0f || itemToSteal.id > 0x0f30 ))
 					{
 						// ...if thief and victim NOT in guilds at war with each other
-						if( TriggerEvent( 2508, "CheckGuildRelationShip", pThief, thiefTarget ) != 1 )
+						if( TriggerEvent( 2507, "CheckGuildRelationShip", pThief, thiefTarget ) != 1 )
 						{
 							pSock.SysMessage( GetDictionaryEntry( 874, pSock.language )); // You cannot steal that
 							return;

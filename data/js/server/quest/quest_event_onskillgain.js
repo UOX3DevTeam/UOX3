@@ -1,0 +1,8 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
+
+function onSkillGain( pPlayer, skill, skillGainAmount )
+{
+	TriggerEvent( 5800, "AccelerateSkillGain", pPlayer, skill, skillGainAmount );
+	return false;
+}

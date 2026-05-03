@@ -1,0 +1,297 @@
+[base_contest_winner_deed]
+{
+get=base_item
+id=0x14F0
+restock=20
+good=9
+script=15003
+origin=tol
+}
+
+[thetrinsickeepdeed]
+{
+get=base_contest_winner_deed
+name=the trinsic keep
+morex=8000
+value=29643750
+}
+
+[thegothicrosecastledeed]
+{
+get=base_contest_winner_deed
+name=the gothic rose castle
+morex=8001
+value=44808750
+}
+
+[theelsacastledeed]
+{
+get=base_contest_winner_deed
+name=the elsa castle
+morex=8002
+value=45450000
+}
+
+[thespiresdeed]
+{
+get=base_contest_winner_deed
+name=the spire
+morex=8003
+value=45450000
+}
+
+[thecastleofoceaniadeed]
+{
+get=base_contest_winner_deed
+name=the castle of oceania
+morex=8004
+value=45450000
+}
+
+[thefeudalcastledeed]
+{
+get=base_contest_winner_deed
+name=the feudal castle
+morex=8005
+value=45450000
+}
+
+[therobinsnestdeed]
+{
+get=base_contest_winner_deed
+name=the robins nest
+morex=8006
+value=45450000
+}
+
+[thetraditionalkeepdeed]
+{
+get=base_contest_winner_deed
+name=the traditional keep
+morex=8007
+value=26685000
+}
+
+[thevillacrowleydeed]
+{
+get=base_contest_winner_deed
+name=the villa crowley
+morex=8008
+value=21813750
+}
+
+[thedarkthornkeepdeed]
+{
+get=base_contest_winner_deed
+name=the darkthorn keep
+morex=8009
+value=27990000
+}
+
+[thesandalwoodkeepdeed]
+{
+get=base_contest_winner_deed
+name=the sandalwood keep
+morex=8010
+value=23456250
+}
+
+[thecasamogadeed]
+{
+get=base_contest_winner_deed
+name=the casa moga
+morex=8011
+value=26313750
+}
+
+[therobinsroostcastledeed]
+{
+get=base_contest_winner_deed
+name=the robins roost castle
+morex=8012
+value=43863750
+}
+
+[thecamelotcastledeed]
+{
+get=base_contest_winner_deed
+name=the camelot castle
+morex=8013
+value=47092500
+}
+
+[thelacrimaeincaelocastledeed]
+{
+get=base_contest_winner_deed
+name=the lacrimae in caelo castle
+morex=8014
+value=45315000
+}
+
+[theokinawacastledeed]
+{
+get=base_contest_winner_deed
+name=the okinawa castle
+morex=8015
+value=40128750
+}
+
+[thesandstonecastledeed]
+{
+get=base_contest_winner_deed
+name=the sandstone castle
+morex=8016
+value=48690000
+}
+
+[thegrimswindsisterscastledeed]
+{
+get=base_contest_winner_deed
+name=the grimswind sisters castle
+morex=8017
+value=42142500
+}
+
+[thekeepfortresslestatdeed]
+{
+get=base_contest_winner_deed
+name=the keep fortress lestat
+morex=8018
+value=27405000
+}
+
+[thekeepcitadeleastdeed]
+{
+get=base_contest_winner_deed
+name=the keep citadel east
+morex=8019
+value=29036250
+}
+
+[thekeepincarcerateddeed]
+{
+get=base_contest_winner_deed
+name=the keep incarcerated
+morex=8020
+value=29036250
+}
+
+[thekeepsallytreesdeed]
+{
+get=base_contest_winner_deed
+name=the keep sally trees
+morex=8021
+value=29036250
+}
+
+[thekeepdesertrosedeed]
+{
+get=base_contest_winner_deed
+name=the keep desert rose
+morex=8022
+value=29036250
+}
+
+[thekeepcloverdeed]
+{
+get=base_contest_winner_deed
+name=the keep clover
+morex=8023
+value=29036250
+}
+
+[thecastlesorcererdeed]
+{
+get=base_contest_winner_deed
+name=the castle sorcerer
+morex=8024
+value=29036250
+}
+
+[thecastlecascadedeed]
+{
+get=base_contest_winner_deed
+name=the castle cascade
+morex=8025
+value=29036250
+}
+
+[thecastlehouseruinsdeed]
+{
+get=base_contest_winner_deed
+name=the castle house ruins
+morex=8026
+value=29036250
+}
+
+[thecastlesandstonefortressdeed]
+{
+get=base_contest_winner_deed
+name=the castles and stone fortress
+morex=8027
+value=29036250
+}
+
+[thecastledragonstonedeed]
+{
+get=base_contest_winner_deed
+name=the castle dragon stone
+morex=8028
+value=29036250
+}
+
+[thecastleterracegardensdeed]
+{
+get=base_contest_winner_deed
+name=the castle terrace gardens
+morex=8029
+value=29036250
+}
+
+[thekeepcalmcarryondeed]
+{
+get=base_contest_winner_deed
+name=the keep calm carryon
+morex=8030
+value=29036250
+}
+
+[thekeepravenloftdeed]
+{
+get=base_contest_winner_deed
+name=the keep raven loft
+morex=8031
+value=29036250
+}
+
+[thequeensretreatdeed]
+{
+get=base_contest_winner_deed
+name=the queens retreat
+morex=8032
+value=29036250
+}
+
+[theheorotdeed]
+{
+get=base_contest_winner_deed
+name=the heorot
+morex=8033
+value=29036250
+}
+
+[thetownshipdeed]
+{
+get=base_contest_winner_deed
+name=the town ship
+morex=8034
+value=29036250
+}
+
+[thecastleoftheresistancedeed]
+{
+get=base_contest_winner_deed
+name=the castle of the resistance
+morex=8035
+value=29036250
+}

@@ -94,6 +94,26 @@ function onCallback1( socket, myTarget )
 			var StrangeByte   = socket.GetWord( 1 );
 			var targX = socket.GetWord( 11 );
 			var targY = socket.GetWord( 13 );
+			var targZ = socket.GetSByte( 16 );
+			var tileID = socket.GetWord( 17 );
+
+			// If connected with a client lower than v7.0.9, manually add height of targeted tile
+			if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+			{
+				targZ += GetTileHeight( tileID );
+			}
+			else
+			{
+				// Newer clients natively add full height to the target Z, but if
+				// a tile has TF_CLIMBABLE flag set, we follow what server normally does,
+				// i.e. divide the the tile's height by half to get the surface Z
+				if( CheckTileFlag( tileID, 10 ) ) // 10 = TF_CLIMBABLE
+				{
+					// GetTileHeight() returns the halved height for climbable tiles, so
+					// subtract the result from targZ to get correct target Z
+					targZ -= GetTileHeight( tileID );
+				}
+			}
 
 			var walkType = socket.xText;
 			if( walkType == "turn" )
@@ -109,11 +129,11 @@ function onCallback1( socket, myTarget )
 
 				if( walkType == "walk" )
 				{
-					targetChar.WalkTo( targX, targY, 600, allowPartial, ignoreDoors );
+					targetChar.WalkTo( targX, targY, targZ, 600, allowPartial, ignoreDoors );
 				}
 				else if( walkType == "run" )
 				{
-					targetChar.RunTo( targX, targY, 600, allowPartial, ignoreDoors );
+					targetChar.RunTo( targX, targY, targZ, 600, allowPartial, ignoreDoors );
 				}
 			}
 
