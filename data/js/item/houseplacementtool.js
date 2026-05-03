@@ -7,30 +7,30 @@ var HousePlacementCategories = [
 		name: "Classic Houses",
 		minEra: "t2a",
 		entries: [
-			{ houseID: 1, name: "Small brick house",  storage: 500, lockdowns: 425, cost: 43800, Era: "t2a" },
-			{ houseID: 2, name: "Stone and plaster house",  storage: 500, lockdowns: 425, cost: 43800, Era: "t2a" },
-			{ houseID: 3, name: "Field stone house",  storage: 500, lockdowns: 425, cost: 43800, Era: "t2a" },
-			{ houseID: 4, name: "Wooden house",  storage: 500, lockdowns: 425, cost: 43800, Era: "t2a" },
-			{ houseID: 5, name: "Wood and plaster house",  storage: 500, lockdowns: 425, cost: 43800, Era: "t2a" },
-			{ houseID: 6, name: "Thatched-roof cottage",  storage: 500, lockdowns: 425, cost: 43800, Era: "t2a" },
-			{ houseID: 7, name: "Blue Tent",  storage: 0, lockdowns: 0, cost: 22800, Era: "t2a" },
-			{ houseID: 8, name: "green tent",  storage: 0, lockdowns: 0, cost: 22800, Era: "t2a" },
-			{ houseID: 9, name: "Brick house",  storage: 500, lockdowns: 1100, cost: 144500, Era: "t2a" },
-			{ houseID: 10, name: "Two-story wood and plaster house",  storage: 500, lockdowns: 1370, cost: 192400, Era: "t2a" },
-			{ houseID: 11, name: "Two-story stone and plaster house",  storage: 500, lockdowns: 1370, cost: 192400, Era: "t2a" },
-			{ houseID: 12, name: "Tower",  storage: 500, lockdowns: 2119, cost: 433200, Era: "t2a" },
-			{ houseID: 13, name: "Keep",  storage: 500, lockdowns: 2625, cost: 665200, Era: "t2a" },
-			{ houseID: 14, name: "Castle",  storage: 500, lockdowns: 4076, cost: 1022800, Era: "t2a" },
-			{ houseID: 15, name: "Large house with patio",  storage: 500, lockdowns: 1100, cost: 152800, Era: "t2a" },
-			{ houseID: 16, name: "Large Smith with patio",  storage: 500, lockdowns: 1100, cost: 152800, Era: "t2a" },
-			{ houseID: 17, name: "Farmers cabin",  storage: 500, lockdowns: 500, cost: 55000, Era: "t2a" },
-			{ houseID: 26, name: "Small stone tower",  storage: 500, lockdowns: 580, cost: 88000, Era: "uor" },
-			{ houseID: 27, name: "Small marble workshop",  storage: 500, lockdowns: 425, cost: 63000, Era: "uor" },
-			{ houseID: 28, name: "Small stone workshop",  storage: 500, lockdowns: 425, cost: 60000, Era: "uor" },
-			{ houseID: 29, name: "Two-story villa",  storage: 500, lockdowns: 1100, cost: 136000, Era: "uor" },
-			{ houseID: 30, name: "Sandstone house with patio",  storage: 500, lockdowns: 850, cost: 90000, Era: "uor" },
-			{ houseID: 31, name: "Two-story log cabin",  storage: 500, lockdowns: 1100, cost: 97000, Era: "uor" },
-			{ houseID: 32, name: "Marble house with patio",  storage: 500, lockdowns: 1370, cost: 192000, Era: "uor" },
+			{ houseID: 1, multiID: 0x4068, name: "Small brick house", storage: 500, lockdowns: 425, cost: 43800, Era: "t2a" },
+			{ houseID: 2, multiID: 0x4064, name: "Stone and plaster house",  storage: 500, lockdowns: 425, cost: 43800, Era: "t2a" },
+			{ houseID: 3, multiID: 0x4066, name: "Field stone house",  storage: 500, lockdowns: 425, cost: 43800, Era: "t2a" },
+			{ houseID: 4, multiID: 0x406A, name: "Wooden house",  storage: 500, lockdowns: 425, cost: 43800, Era: "t2a" },
+			{ houseID: 5, multiID: 0x406C, name: "Wood and plaster house",  storage: 500, lockdowns: 425, cost: 43800, Era: "t2a" },
+			{ houseID: 6, multiID: 0x406D, name: "Thatched-roof cottage",  storage: 500, lockdowns: 425, cost: 43800, Era: "t2a" },
+			{ houseID: 7, multiID: 0x4070, name: "Blue Tent",  storage: 0, lockdowns: 0, cost: 22800, Era: "t2a" },
+			{ houseID: 8, multiID: 0x4072, name: "green tent",  storage: 0, lockdowns: 0, cost: 22800, Era: "t2a" },
+			{ houseID: 9, multiID: 0x4074, name: "Brick house",  storage: 500, lockdowns: 1100, cost: 144500, Era: "t2a" },
+			{ houseID: 10, multiID: 0x4076, name: "Two-story wood and plaster house",  storage: 500, lockdowns: 1370, cost: 192400, Era: "t2a" },
+			{ houseID: 11, multiID: 0x4078, name: "Two-story stone and plaster house",  storage: 500, lockdowns: 1370, cost: 192400, Era: "t2a" },
+			{ houseID: 12, multiID: 0x407A, name: "Tower",  storage: 500, lockdowns: 2119, cost: 433200, Era: "t2a" },
+			{ houseID: 13, multiID: 0x407C, name: "Keep",  storage: 500, lockdowns: 2625, cost: 665200, Era: "t2a" },
+			{ houseID: 14, multiID: 0x407E, name: "Castle",  storage: 500, lockdowns: 4076, cost: 1022800, Era: "t2a" },
+			{ houseID: 15, multiID: 0x408C, name: "Large house with patio",  storage: 500, lockdowns: 1100, cost: 152800, Era: "t2a" },
+			{ houseID: 16, multiID: 0x408C, name: "Large Smith with patio",  storage: 500, lockdowns: 1100, cost: 152800, Era: "t2a" },
+			{ houseID: 17, multiID: 0x4BB8, name: "Farmers cabin",  storage: 500, lockdowns: 500, cost: 55000, Era: "t2a" },
+			{ houseID: 26, multiID: 0x4098, name: "Small stone tower",  storage: 500, lockdowns: 580, cost: 88000, Era: "uor" },
+			{ houseID: 27, multiID: 0x40A2, name: "Small marble workshop",  storage: 500, lockdowns: 425, cost: 63000, Era: "uor" },
+			{ houseID: 28, multiID: 0x40A0, name: "Small stone workshop",  storage: 500, lockdowns: 425, cost: 60000, Era: "uor" },
+			{ houseID: 29, multiID: 0x409E, name: "Two-story villa",  storage: 500, lockdowns: 1100, cost: 136000, Era: "uor" },
+			{ houseID: 30, multiID: 0x409C, name: "Sandstone house with patio",  storage: 500, lockdowns: 850, cost: 90000, Era: "uor" },
+			{ houseID: 31, multiID: 0x409A, name: "Two-story log cabin",  storage: 500, lockdowns: 1100, cost: 97000, Era: "uor" },
+			{ houseID: 32, multiID: 0x4096, name: "Marble house with patio",  storage: 500, lockdowns: 1370, cost: 192000, Era: "uor" },
 		]
 	},
 	{
@@ -71,12 +71,13 @@ var HousePlacementCategories = [
 	}
 ];
 
+/** @type { ( pUser: Character, iUsed: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
 	if( !ValidateObject( pUser ) || !ValidateObject( iUsed ))
 		return false;
 
-	if( !checkToolinPack( pUser, iUsed ))
+	if( !CheckToolinPack( pUser, iUsed ))
 	{
 		pUser.socket.SysMessage( "That must be in your pack for you to use it." );
 		return false;
@@ -85,17 +86,18 @@ function onUseChecked( pUser, iUsed )
 	if( !pUser.socket )
 		return false;
 
-	housePlacementMenu( pUser.socket );
+	HousePlacementMenu( pUser.socket );
 	return false;
 }
 
-function housePlacementMenu( pSocket )
+/** @type { ( pSocket: Socket ) => void } */
+function HousePlacementMenu( pSocket )
 {
 	pSocket.CloseGump( 5090 + 0xFFFF, 0 );
 
 	var plaementMenu = new Gump;
 
-	var cats = visibleCategories();
+	var cats = VisibleCategories();
 	var catCount = cats.length|0;
 
 	// Layout constants
@@ -144,7 +146,8 @@ function housePlacementMenu( pSocket )
 	plaementMenu.Free();
 }
 
-function houseSelectionMenu(pSocket, catID, page)
+/** @type { ( pSocket: Socket, catID: number, page: number ) => void } */
+function HouseSelectionMenu( pSocket, catID, page )
 {
 	pSocket.CloseGump( 5090 + 0xFFFF, 0 );
 
@@ -152,14 +155,14 @@ function houseSelectionMenu(pSocket, catID, page)
 	if( !ValidateObject( pUser ))
 		return;
 
-	var cat = categoryByID( catID );
+	var cat = CategoryByID( catID );
 	if( cat == null )
 	{
-		housePlacementMenu( pSocket );
+		HousePlacementMenu( pSocket );
 		return;
 	}
 
-	var list = visibleEntries( cat );
+	var list = VisibleEntries( cat );
 	var total = list.length;
 
 	if( page < 0 )
@@ -200,8 +203,8 @@ function houseSelectionMenu(pSocket, catID, page)
 	houseSelection.AddCheckerTrans( 10, 370, 500, 20 );
 
 	houseSelection.AddText( 10, 372, 0x0481, "Bank Balance:" );
-	var balance = bankBalance( pUser );
-	houseSelection.AddText( 250, 372, 0x0481, formatCost( balance ));
+	var balance = BankBalance( pUser );
+	houseSelection.AddText( 250, 372, 0x0481, FormatCost( balance ));
 
 	// Bottom bar
 	houseSelection.AddTiledGump( 10, 400, 500, 20, 2624 );
@@ -248,7 +251,7 @@ function houseSelectionMenu(pSocket, catID, page)
 		houseSelection.AddText( 50,  y, 0x0481, nm );
 		houseSelection.AddText( 275, y, 0x0481, "" + storage );
 		houseSelection.AddText( 350, y, 0x0481, "" + lockdowns );
-		houseSelection.AddText( 425, y, 0x0481, formatCost( cost ));
+		houseSelection.AddText( 425, y, 0x0481, FormatCost( cost ));
 
 		row++;
 	}
@@ -257,6 +260,7 @@ function houseSelectionMenu(pSocket, catID, page)
 	houseSelection.Free();
 }
 
+/** @type { ( pSocket: Socket, pButton: number, gumpData: any ) => void } */
 function onGumpPress( pSocket, pButton, gumpData )
 {
 	if( !pSocket )
@@ -285,7 +289,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 			var catID = parseInt( arr[idx], 10 );
 			if( !isNaN( catID ))
 			{
-				houseSelectionMenu( pSocket, catID, 0 );
+				HouseSelectionMenu( pSocket, catID, 0 );
 				return;
 			}
 		}
@@ -294,114 +298,124 @@ function onGumpPress( pSocket, pButton, gumpData )
 	// Back to categories
 	if( pButton == 2 )
 	{
-		housePlacementMenu( pSocket );
+		HousePlacementMenu( pSocket );
 		return;
 	}
 
 	// Paging
 	if( pButton == 3 || pButton == 4 )
 	{
-		var catNow = toInt( pUser.GetTempTag( "HPT_Cat" ));
-		var pageNow = toInt( pUser.GetTempTag( "HPT_Page" ));
+		var catNow = pUser.GetTempTag( "HPT_Cat" );
+		var pageNow = pUser.GetTempTag( "HPT_Page" );
 
 		if( (pButton|0) == 3 ) pageNow--;
 		if( (pButton|0) == 4 ) pageNow++;
 
-		houseSelectionMenu(pSocket, catNow, pageNow);
+		HouseSelectionMenu(pSocket, catNow, pageNow);
 		return;
 	}
 
 	// Selection (1000 + index within category list)
 	if( pButton >= 1000 )
 	{
-		var catID = toInt( pUser.GetTempTag( "HPT_Cat" ));
-		var cat = categoryByID(catID);
+		var catID = pUser.GetTempTag( "HPT_Cat" );
+		var cat = CategoryByID(catID);
 
 		if( cat == null )
 		{
-			housePlacementMenu(pSocket);
+			HousePlacementMenu(pSocket);
 			return;
 		}
-		var list = visibleEntries( cat );
+		var list = VisibleEntries( cat );
 		var idxSel = pButton - 1000;
-		if( idxSel < 0 || idxSel >= cat.entries.length )
+		if( idxSel < 0 || idxSel >= list.length )
 		{
-			houseSelectionMenu( pSocket, catID, toInt( pUser.GetTempTag( "HPT_Page" )));
+			HouseSelectionMenu( pSocket, catID, pUser.GetTempTag( "HPT_Page" ));
 			return;
 		}
 
 		var entry = list[idxSel];
 
-		// Store selected houseID in socket.tempint, like your command does
-		pSocket.tempint = entry.houseID;
-		pSocket.tempint2 = idxSel;     // selected index
-		pSocket.tempint3 = catID;      // selected category
+		// Store selected houseID in socket.tempInt, like your command does
+		pSocket.tempInt = entry.houseID;
+		pUser.SetTempTag( "HPT_SelectedIndex", idxSel );
+		pUser.SetTempTag( "HPT_SelectedCat", catID );
 
 		// Target placement location, using packet coords in callback
 		pSocket.CustomTarget( 0, "Select location for house:" );
+
+		// Show preview of house after CustomTarget
+        SendHousePreview( pSocket, entry.multiID );
 		return;
 	}
 }
 
+/** @type { ( socket: Socket, ourObj: any ) => void } */
 function onCallback0( socket, ourObj )
 {
-	var cancelCheck = parseInt( socket.GetByte( 11 ));
+	var cancelCheck = socket.GetByte( 11 );
 	if( cancelCheck == 255 )
+	{
 		return;
+	}
 
 	var mChar = socket.currentChar;
 	if( !ValidateObject( mChar ))
+	{
 		return;
+	}
+
+	var houseID = socket.tempInt;
+	if( houseID <= 0 )
+	{
+		socket.SysMessage( "House placement failed: no house was selected." );
+		return;
+	}
+
+	var entry = EntryFromSocket( socket );
+	if( entry == null )
+	{
+		socket.SysMessage( "House placement failed: unable to find selected house entry." );
+		return;
+	}
 
 	var x = socket.GetWord( 11 );
 	var y = socket.GetWord( 13 );
 	var z = socket.GetSByte( 16 );
 
 	var strangeByte = socket.GetWord( 1 );
-
-	// If connected with a client lower than v7.0.9, manually add height of targeted tile
-	// Also handle the "strangeByte == 0 && ourObj.isItem" case from your command
-	if(( strangeByte == 0 && ourObj && ourObj.isItem) || (socket.clientMajorVer <= 7 && socket.clientSubVer < 9 ))
+	if(( strangeByte == 0 && ourObj && ourObj.isItem ) || ( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 ))
 	{
 		z += GetTileHeight( socket.GetWord( 17 ));
 	}
 
-	var houseID = socket.tempint;
-	socket.tempint = 0;
-
-	var entry = entryfromSocket( socket ); // however you fetch it (see note below)
-	var cost = entry.cost;
-
+	var cost = entry.cost|0;
 	if( cost > 0 )
 	{
-		if( !payGold( mChar, cost ))
+		if( !mChar.isGM && !PayGold( mChar, cost ))
 		{
-			mChar.socket.SysMessage("But thou hast not the funds in thy bank account!");
-			// reopen list gump
-			var catID = toInt( mChar.GetTempTag( "HPT_Cat" ));
-			var page = toInt( mChar.GetTempTag( "HPT_Page" ));
-			houseSelectionMenu(socket, catID, page);
+			socket.SysMessage( "But thou hast not the funds in thy bank account!" );
+			HouseSelectionMenu( socket, mChar.GetTempTag( "HPT_Cat" ), mChar.GetTempTag( "HPT_Page" ));
 			return;
 		}
 	}
 
 	var newMulti = CreateHouse( houseID, x, y, z, mChar.worldnumber, mChar.instanceID, 0, false );
 
-	if( !newMulti || !newMulti.IsMulti() )
+	if( !ValidateObject( newMulti ))
 	{
-		mChar.socket.SysMessage( "Unable to create house!" );
-		// return to list
-		var catID = toInt( mChar.GetTempTag( "HPT_Cat" ));
-		var page = toInt( mChar.GetTempTag( "HPT_Page" ));
-		houseSelectionMenu( socket, catID, page );
+		socket.SysMessage( "House placement failed: CreateHouse returned no multi." );
+		HouseSelectionMenu( socket, mChar.GetTempTag( "HPT_Cat" ), mChar.GetTempTag( "HPT_Page" ));
 		return;
 	}
 
-	mChar.socket.SysMessage( "House created." );
+	socket.tempInt = 0;
+	socket.SysMessage( "House created." );
 	socket.CloseGump( 5090 + 0xFFFF, 0 );
 }
 
-function payGold( pUser, cost )
+/** @type { ( pUser: Character, cost: number ) => boolean } */
+function PayGold( pUser, cost )
 {
 	var pSock = pUser.socket;
 
@@ -434,7 +448,8 @@ function payGold( pUser, cost )
 	return false;
 }
 
-function formatCost( cost )
+/** @type { ( cost: number ) => string } */
+function FormatCost( cost )
 {
 	var s = "" + ( cost|0 );
 	var out = "";
@@ -453,7 +468,8 @@ function formatCost( cost )
 	return out;
 }
 
-function countGoldInBankBox( bankBox )
+/** @type { ( bankBox: Item ) => number } */
+function CountGoldInBankBox( bankBox )
 {
 	if( !ValidateObject( bankBox ))
 		return 0;
@@ -468,45 +484,60 @@ function countGoldInBankBox( bankBox )
 	return gold|0;
 }
 
-function bankBalance( pUser )
+/** @type { ( pUser: Character ) => number } */
+function BankBalance( pUser )
 {
 	var bankBox = pUser.FindItemLayer( 29 );
-	return countGoldInBankBox( bankBox );
+	return CountGoldInBankBox( bankBox );
 }
 
-function entryfromSocket( socket )
+/** @type { ( socket: Socket ) => any } */
+function EntryFromSocket( socket )
 {
 	var pUser = socket.currentChar;
-	var catID = socket.tempint3|0;
-	var idx = socket.tempint2|0;
+	if( !ValidateObject( pUser ))
+	{
+		return null;
+	}
 
-	var cat = categoryByID( catID );
+	var catID = pUser.GetTempTag( "HPT_SelectedCat" );
+	var idx = pUser.GetTempTag( "HPT_SelectedIndex" );
+
+	var cat = CategoryByID( catID );
 	if( cat == null )
+	{
 		return null;
-	if( idx < 0 || idx >= cat.entries.length )
-		return null;
+	}
 
-	return cat.entries[idx];
+	var list = VisibleEntries( cat );
+	if( idx < 0 || idx >= list.length )
+	{
+		return null;
+	}
+
+	return list[idx];
 }
 
-function visibleCategories()
+/** @type { () => any[] } */
+function VisibleCategories()
 {
 	var out = [];
 	for( var i = 0; i < HousePlacementCategories.length; i++ )
 	{
 		var cat = HousePlacementCategories[i];
-		if( !eraOK( cat ))
+		if( !EraOK( cat ))
 			continue;
 
 		// Only include category if it has at least 1 visible entry
-		var visEntries = visibleEntries( cat );
+		var visEntries = VisibleEntries( cat );
 		if( visEntries.length > 0 )
 			out.push( cat );
 	}
 	return out;
 }
 
-function visibleEntries( cat )
+/** @type { ( cat: any ) => any[] } */
+function VisibleEntries( cat )
 {
 	var out = [];
 	if( !cat || !cat.entries )
@@ -517,21 +548,14 @@ function visibleEntries( cat )
 		var era = cat.entries[i];
 
 		// Entry can be filtered by its own era, AND the category era (already checked)
-		if( eraOK( era ))
+		if( EraOK( era ))
 			out.push( era );
 	}
 	return out;
 }
 
-function toInt( value, def )
-{
-	var number = parseInt( value, 10 );
-	if( isNaN( number ))
-		return ( def || 0 );
-	return number;
-}
-
-function checkToolinPack( pUser, iUsed )
+/** @type { ( pUser: Character, iUsed: Item ) => boolean } */
+function CheckToolinPack( pUser, iUsed )
 {
 	if( !ValidateObject( pUser ) || !ValidateObject( iUsed ))
 		return false;
@@ -541,7 +565,8 @@ function checkToolinPack( pUser, iUsed )
 	return ( iUsed.container == pUser.pack );
 }
 
-function categoryByID( catID )
+/** @type { ( catID: number ) => any } */
+function CategoryByID( catID )
 {
 	for( var i = 0; i < HousePlacementCategories.length; i++ )
 	{
@@ -551,10 +576,10 @@ function categoryByID( catID )
 	return null;
 }
 
-// Entry/category era check (same concept as your crafting)
-function eraOK( obj )
+/** @type { ( obj: any ) => boolean } */
+function EraOK( obj )
 {
-	const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
+	var coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 
 	if( !obj )
 		return true;
@@ -570,4 +595,46 @@ function eraOK( obj )
 		return false;
 
 	return true;
+}
+
+/** @type { ( pSocket: Socket, multiID: number ) => void } */
+function SendHousePreview( pSocket, multiID )
+{
+	if( !pSocket || !multiID )
+	{
+		return;
+	}
+
+	// Calculate serial to send with multi-placement target cursor
+	// [0, 1, targType (0 = hardcoded, 1 = custom target), callbackID]
+	var serToSend = [0, 1, 1, 0].reduce(function(acc, val) { 
+		return (acc << 8) | val; 
+	}) >>> 0;
+	var toSend = new Packet;
+
+	var extendedPacket = ( pSocket.clientType >= 10 && pSocket.clientMajorVer >= 7 && pSocket.clientSubVer >= 9 );
+	toSend.ReserveSize(( extendedPacket ? 30 : 26 ));
+
+	toSend.ReserveSize( 30 );
+	toSend.WriteByte( 0, 0x99 ); // Packet
+	toSend.WriteByte( 1, 0x01 ); // 0x01 = from server, 0x00 = from client
+	toSend.WriteLong( 2, serToSend ); // Serial of "deed"
+	toSend.WriteByte( 6, 0 ); // Cursor flags
+
+	for( var byteIndex = 7; byteIndex < 18; byteIndex++ )
+	{
+		toSend.WriteByte( byteIndex, 0 );
+	}
+
+	toSend.WriteShort( 18, multiID - 0x4000 ); // Multi ID from house.dfn entry minus 0x4000.
+    toSend.WriteShort( 20, 0 ); // xOffset
+	toSend.WriteShort( 22, 0 ); // YOffset
+    toSend.WriteShort( 24, 0 ); // zOffset
+	if( extendedPacket )
+	{
+		toSend.WriteLong( 26, 0 ); // hue
+	}
+
+	pSocket.Send( toSend );
+	toSend.Free();
 }
