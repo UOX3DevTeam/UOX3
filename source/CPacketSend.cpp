@@ -480,12 +480,13 @@ void CPExtMove::SetFlags( CChar &toCopy )
 		const UI08 BIT__FEMALE = 1;	//	0x02, female flag
 		const UI08 BIT__FLYING = 2;	//	0x04, flying (post 7.0.0.0)
 		const UI08 BIT__GOLDEN = 3;	//	0x08, yellow healthbar
-		//const UI08 BIT__IGNOREMOBILES = 4;	// 0x10, ignore other mobiles?
+		const UI08 BIT__IGNOREMOBILES = 4;	// 0x10, ignore other mobiles?
 
 		flag.set( BIT__FROZEN, toCopy.IsFrozen() );
 		flag.set( BIT__FEMALE, ( toCopy.GetId() == 0x0191 || toCopy.GetId() == 0x025E || toCopy.GetId() == 0x029B || toCopy.GetId() == 0xb8 || toCopy.GetId() == 0xba ));
 		flag.set( BIT__FLYING, ( toCopy.IsFlying() ));
 		flag.set( BIT__GOLDEN, ( toCopy.IsInvulnerable() ));
+		flag.set( BIT__IGNOREMOBILES, toCopy.NoCharCollide() );
 	}
 	else
 	{
@@ -494,12 +495,13 @@ void CPExtMove::SetFlags( CChar &toCopy )
 		const UI08 BIT__DEAD = 1;	//	0x02
 		const UI08 BIT__POISON = 2;	//	0x04, poison
 		const UI08 BIT__GOLDEN	= 3;	//	0x08, yellow healthbar
-		//const UI08 BIT__IGNOREMOBILES = 4;	// 0x10, ignore other mobiles?
+		const UI08 BIT__IGNOREMOBILES = 4;	// 0x10, ignore other mobiles?
 
 		flag.set( BIT__INVUL, toCopy.IsInvulnerable() );
 		flag.set( BIT__DEAD, toCopy.IsDead() );
 		flag.set( BIT__POISON, ( toCopy.GetPoisoned() != 0 ));
 		flag.set( BIT__GOLDEN, ( toCopy.IsInvulnerable() ));
+		flag.set( BIT__IGNOREMOBILES, toCopy.NoCharCollide() );
 	}
 
 	const UI08 BIT__ATWAR = 6;	// 0x40
@@ -1187,12 +1189,13 @@ void CPDrawGamePlayer::CopyData( CChar &toCopy )
 		const UI08 BIT__FEMALE	= 1;	//	0x02, should be female flag
 		const UI08 BIT__FLYING	= 2;	//	0x04, flying (post 7.0.0.0)
 		const UI08 BIT__GOLDEN	= 3;	//	0x08, yellow healthbar
-		//const UI08 BIT__IGNOREMOBILES = 5;	// 0x10, ignore other mobiles?
+		const UI08 BIT__IGNOREMOBILES = 5;	// 0x10, ignore other mobiles?
 
 		flag.set( BIT__FROZEN, toCopy.IsFrozen() );
 		flag.set( BIT__FEMALE, ( toCopy.GetId() == 0x0191 || toCopy.GetId() == 0x025E || toCopy.GetId() == 0x029B || toCopy.GetId() == 0xb8 || toCopy.GetId() == 0xba ));
 		flag.set( BIT__FLYING, toCopy.IsFlying() );
 		flag.set( BIT__GOLDEN, toCopy.IsInvulnerable() );
+		flag.set( BIT__IGNOREMOBILES, toCopy.NoCharCollide() );
 	}
 	else
 	{
@@ -1201,12 +1204,13 @@ void CPDrawGamePlayer::CopyData( CChar &toCopy )
 		const UI08 BIT__DEAD	= 1;	//	0x02
 		const UI08 BIT__POISON	= 2;	//	0x04, poison
 		const UI08 BIT__GOLDEN	= 3;	//	0x08, yellow healthbar
-		//const UI08 BIT__IGNOREMOBILES = 5;	// 0x10, ignore other mobiles?
+		const UI08 BIT__IGNOREMOBILES = 5;	// 0x10, ignore other mobiles?
 
 		flag.set( BIT__INVUL, toCopy.IsInvulnerable() );
 		flag.set( BIT__DEAD, toCopy.IsDead() );
 		flag.set( BIT__POISON, ( toCopy.GetPoisoned() != 0 ));
 		flag.set( BIT__GOLDEN, toCopy.IsInvulnerable() );
+		flag.set( BIT__IGNOREMOBILES, toCopy.NoCharCollide() );
 	}
 
 	const UI08 BIT__ATWAR	= 6;	//	0x40
@@ -3653,7 +3657,7 @@ void CPSkillsValues::SetCharacter( CChar &toCopy )
 	UI08 numSkills = NumSkills();
 	for( SI08 i = 0; i < numSkills; ++i )
 	{
-		SkillEntry( i, toCopy.GetSkill( i ), toCopy.GetBaseSkill( i ), toCopy.GetSkillLock( i ));
+		SkillEntry( i, toCopy.GetSkill( i ), toCopy.GetBaseSkill( i ), toCopy.GetSkillLock( i ), toCopy.GetSkillCap( i ));
 	}
 }
 
@@ -3689,14 +3693,14 @@ CPSkillsValues::CPSkillsValues( CChar &toCopy )
 	CopyData( toCopy );
 }
 
-void CPSkillsValues::SkillEntry( SI16 skillId, SI16 skillVal, SI16 baseSkillVal, SkillLock skillLock )
+void CPSkillsValues::SkillEntry( SI16 skillId, SI16 skillVal, SI16 baseSkillVal, SkillLock skillLock, SI16 skillCap )
 {
 	SI32 offset = ( skillId * 9 ) + 4;
 	pStream.WriteShort( offset, skillId + 1 );
 	pStream.WriteShort( static_cast<size_t>( offset ) + 2, skillVal );
 	pStream.WriteShort( static_cast<size_t>( offset ) + 4, baseSkillVal );
 	pStream.WriteByte(  static_cast<size_t>( offset ) + 6, skillLock );
-	pStream.WriteShort( static_cast<size_t>( offset ) + 7, static_cast<UI16>( cwmWorldState->ServerData()->ServerSkillCapStatus() ));
+	pStream.WriteShort( static_cast<size_t>( offset ) + 7, skillCap );
 }
 CPSkillsValues &CPSkillsValues::operator = ( CChar &toCopy )
 {
@@ -5764,12 +5768,13 @@ void CPDrawObject::CopyData( CChar& mChar )
 		const UI08 BIT__FEMALE = 1;	//	0x02, female
 		const UI08 BIT__FLYING = 2;	//	0x04, flying (post 7.0.0.0)
 		const UI08 BIT__GOLDEN = 3;	//	0x08, yellow healthbar
-		//const UI08 BIT__IGNOREMOBILES = 4;	// 0x10, ignore other mobiles?
+		const UI08 BIT__IGNOREMOBILES = 4;	// 0x10, ignore other mobiles?
 
 		flag.set( BIT__FROZEN, mChar.IsFrozen() );
 		flag.set( BIT__FEMALE, ( mChar.GetId() == 0x0191 || mChar.GetId() == 0x025E ));
 		flag.set( BIT__FLYING, mChar.IsFlying() );
 		flag.set( BIT__GOLDEN, mChar.IsInvulnerable() );
+		flag.set( BIT__IGNOREMOBILES, mChar.NoCharCollide() );
 	}
 	else
 	{
@@ -5778,12 +5783,13 @@ void CPDrawObject::CopyData( CChar& mChar )
 		const UI08 BIT__DEAD = 1;	//	0x02, dead
 		const UI08 BIT__POISON = 2;	//	0x04, poison
 		const UI08 BIT__GOLDEN = 3;	//	0x08, yellow healthbar
-		//const UI08 BIT__IGNOREMOBILES = 4;	// 0x10, ignore other mobiles?
+		const UI08 BIT__IGNOREMOBILES = 4;	// 0x10, ignore other mobiles?
 
 		flag.set( BIT__INVUL, mChar.IsInvulnerable() );
 		flag.set( BIT__DEAD, mChar.IsDead() );
 		flag.set( BIT__POISON, ( mChar.GetPoisoned() != 0 ));
 		flag.set( BIT__GOLDEN, mChar.IsInvulnerable() );
+		flag.set( BIT__IGNOREMOBILES, mChar.NoCharCollide() );
 	}
 
 	const UI08 BIT__ATWAR = 6;	//	0x40
@@ -9273,6 +9279,30 @@ void CPPopupMenu::CopyData( CBaseObject& toCopy, CSocket &tSock )
 		numEntries++;
 		pStream.WriteShort( offset, 0x000B );	// Unique ID
 		pStream.WriteShort( offset += 2, 6145 );
+		if( ObjInRange( mChar, &toCopy, 8 ))
+		{
+			pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+			pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+		}
+		else
+		{
+			pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+			pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+		}
+	}
+
+	// Toggle Quest Item On/Off
+	if( toCopyChar->GetQuestType() != QT_ESCORTQUEST && (( toCopy.GetSerial() == tSock.CurrcharObj()->GetSerial() 
+		|| toCopy.GetId() == 0x0123 || toCopy.GetId() == 0x0124 || toCopy.GetId() == 0x0317 ) && ValidateObject( toCopyChar->GetPackItem() )))
+	{
+		if( numEntries > 0 )
+		{
+			offset += 2;
+		}
+
+		numEntries++;
+		pStream.WriteShort( offset, 0x010A );	// Unique ID
+		pStream.WriteShort( offset += 2, 6169 );// Quest Toggle
 		if( ObjInRange( mChar, &toCopy, 8 ))
 		{
 			pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled

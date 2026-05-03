@@ -45,8 +45,8 @@ function getRandomPumpkinName( objMade )
 }
 
 // 2006 Pumpkins
-// Missing: The Shadow Colored Jack O� Lanterns, both big and small, are also useable. When used and targeted anywhere, they explode in a large 5�5 tile field of flames.
-// Missing: The Shadow Colored Jack O� Lanterns, both big and small, are also useable.When used and targeted anywhere, they explode in a large 5�5 tile field of flames.
+// Missing: The Shadow Colored Jack O' Lanterns, both big and small, are also useable. When used and targeted anywhere, they explode in a large 5x5 tile field of flames.
+// Missing: The Shadow Colored Jack O' Lanterns, both big and small, are also useable.When used and targeted anywhere, they explode in a large 5x5 tile field of flames.
 // Using explosion potion effect.
 // Missing: colors as well for the pumpkins
 

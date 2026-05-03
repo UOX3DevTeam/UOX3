@@ -64,6 +64,15 @@ getlbr=smallbod_oldid
 CUSTOMINTTAG=bodType 2
 }
 
+[ChampionAltarDeed]
+{
+get=base_item
+NAME=Champion Altar Deed
+ID=0x14F0
+script=7502
+morex=1000
+}
+
 [solenantholedeed]
 {
 name=a solen ant hole

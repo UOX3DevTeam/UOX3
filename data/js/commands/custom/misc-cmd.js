@@ -66,6 +66,7 @@ function CommandRegistration()
 	RegisterCommand( "rain", 10, true ); // Make it rain in the current region
 	RegisterCommand( "snow", 10, true ); // Make it snow in the current region
 	RegisterCommand( "clearweather", 10, true ); // Clear up weather effect
+	RegisterCommand( "respet", 8, true ); //used to resurrect a pet that has been killed
 }
 
 /** @type { ( socket: Socket, cmdString: string ) => void } */
@@ -1580,4 +1581,24 @@ function command_CLEARWEATHER( pSock, execString )
 	var mRegion = pSock.currentChar.region;
 	mRegion.weather = 0;
 	pSock.SysMessage( "Weather override disabled for current region (" + mRegion.name + ")" );
+}
+
+// Ressurect a Dead Bonded Pet.
+/** @type { ( socket: Socket, cmdString: string ) => void } */
+function command_RESPET( pSock, execString )
+{
+	pSock.CustomTarget( 39, "What pet do you want to ressurect" );
+}
+
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+function onCallback39( pSock, ourObj )
+{
+	var cancelCheck = parseInt( pSock.GetByte( 11 ));
+	if( cancelCheck == 255 )
+		return;
+
+	if( ValidateObject( ourObj ))
+	{
+		TriggerEvent( 4000, "ResurrectBondedPet", pSock, ourObj );
+	}
 }

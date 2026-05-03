@@ -14,6 +14,10 @@ const scriptID = 5029;		// Script ID assigned to this script in jse_fileassociat
 const useDelay = 7000; 		// 7 seconds between each time a runebook can be used
 const tooltipClilocID = 1042971; // Cliloc ID to use for tooltips. 1042971 should work with clients from ~v3.0.x to modern day
 
+// Define some constants for 32-bit Integer Limits to help us convert some numbers later
+const MAX_INT32 = 0x7FFFFFFF; // 2147483647
+const MAX_UINT32 = 0xFFFFFFFF; // 4294967295
+
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, runeBook )
 {
@@ -177,7 +181,7 @@ function RuneBookGump( pSocket, runeBook )
 	{
 		// Fetch rune data from tag on runebook
 		var runeData = runeBook.GetTag( "rune" + i + "Data" );
-		var splitData = isNaN( runeData ) ? runeData.split( "," ) : 0;
+		var splitData = SplitAndValidateRuneData( runeBook, i, runeData );
 
 		if( i <= 8 )
 		{
@@ -212,8 +216,9 @@ function RuneBookGump( pSocket, runeBook )
 	// Add the other pages of the runebook
 	for( i = 0; i <= 7; i++ )
 	{
-		var runeData = runeBook.GetTag( "rune" + (( i * 2 ) + 1 ) + "Data" );
-		var splitData = isNaN( runeData ) ? runeData.split( "," ) : 0;
+		var runeNum = ( i * 2 ) + 1;
+		var runeData = runeBook.GetTag( "rune" + runeNum + "Data" );
+		var splitData = SplitAndValidateRuneData( runeBook, runeNum, runeData );
 
 		runeBookGump.AddPage( i + 2 );
 
@@ -311,8 +316,9 @@ function RuneBookGump( pSocket, runeBook )
 		// -------------------- //
 
 		// Handle opposite page, same approach
-	  	runeData = runeBook.GetTag( "rune" + (( i * 2 ) + 2 ) + "Data" );
-	  	splitData = isNaN( runeData ) ? runeData.split( "," ) : 0;
+	  	var runeNum2 = ( i * 2 ) + 2;
+    	var runeData2 = runeBook.GetTag( "rune" + runeNum2 + "Data" );
+    	splitData = SplitAndValidateRuneData( runeBook, runeNum2, runeData2 );
 
 	  	// Add Set Default button
 		setDefaultBtn = 0x939;
@@ -441,13 +447,13 @@ function onGumpPress( pSocket, myButton, gumpData )
 			if( runeData != 0 )
 			{
 				var splitData = runeData.split( "," );
-				runeBook.morex = splitData[2]; // x
-				runeBook.morey = splitData[3]; // y
-				runeBook.morez = splitData[4]; // z
-				runeBook.more = splitData[5]; // worldNumber
+				runeBook.morex = parseInt( splitData[2] ); // x
+				runeBook.morey = parseInt( splitData[3] ); // y
+				runeBook.morez = parseInt( splitData[4] ); // z
+				runeBook.more = parseInt( splitData[5] ); // worldNumber
 				if( splitData[6] )
 				{
-					runeBook.more0 = splitData[6]; // instanceID
+					runeBook.more0 = parseInt( splitData[6] ); // instanceID
 				}
 				runeBook.SetTag( "defaultRuneLoc", myButton );
 				pSocket.SysMessage( GetDictionaryEntry( 9259, pSocket.language )); // New default location set.
@@ -496,10 +502,10 @@ function onGumpPress( pSocket, myButton, gumpData )
 			if( runeData != 0 )
 			{
 				var splitData = runeData.split( "," );
-				var xLoc = splitData[2];
-				var yLoc = splitData[3];
-				var zLoc = splitData[4];
-				var worldNum = splitData[5];
+				var xLoc = parseInt( splitData[2] );
+				var yLoc = parseInt( splitData[3] );
+				var zLoc = parseInt( splitData[4] );
+				var worldNum = parseInt( splitData[5] );
 
 				// Reduce amount of charges left in runebook
 				runeBook.dir -= 1;
@@ -647,6 +653,32 @@ function onGumpPress( pSocket, myButton, gumpData )
 			}
 			break;
 	}
+}
+
+function SplitAndValidateRuneData( runeBook, runeIndex, runeData )
+{
+	// If no data, return 0
+	if( runeData == 0 || runeData == null )
+		return 0;
+
+	let splitData = runeData.split( "," );
+	let zLoc = parseInt( splitData[4] );
+
+	// If z is abnormally large, was probably a negative Z before stored in morez
+	if( zLoc > MAX_INT32 )
+	{
+		// Convert Z back to negative
+		let fixedZ = zLoc - ( MAX_UINT32 + 1 );
+		splitData[4] = fixedZ.toString();
+
+		// Rebuild rune tag
+		let newTagString = splitData.join( "," );
+
+		runeBook.SetTag( "rune" + runeIndex + "Data", newTagString );
+		Console.Log( "Auto-repaired Z value for Rune " + runeIndex + " in Runebook (" + ( runeBook.serial ).toString() + ")" );
+	}
+
+	return splitData;
 }
 
 function CastSpell( pSocket, pUser, spellNum, checkReagentReq )
@@ -975,7 +1007,16 @@ function onDropItemOnItem( iDropped, pUser, runeBook )
 			{
 				var xLoc = iDropped.morex;
 				var yLoc = iDropped.morey;
+
+				// In case Z was originally a negative value, which would have gotten
+				// stored as a positive in .morez (unsigned int only),
+				// convert it back to the proper value here
 				var zLoc = iDropped.morez;
+				if( zLoc > MAX_INT32 )
+				{
+					zLoc = zLoc - ( MAX_UINT32 + 1 );
+				}
+
 				var worldNum = iDropped.more;
 				var instanceID = iDropped.more0;
 				var iName = iDropped.name;

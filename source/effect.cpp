@@ -149,7 +149,7 @@ void cEffects::PlayMovingAnimation( CBaseObject *source, CBaseObject *dest, UI16
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends a message to client to display a moving animation from source object to target location
 //o------------------------------------------------------------------------------------------------o
-void cEffects::PlayMovingAnimation( CBaseObject *source, SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
+void cEffects::PlayMovingAnimation( CBaseObject *source, SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode, bool playLocalMoveFX  )
 {	//0x0f 0x42 = arrow 0x1b 0xfe=bolt
 	if( !ValidateObject( source ))
 		return;
@@ -165,6 +165,20 @@ void cEffects::PlayMovingAnimation( CBaseObject *source, SI16 x, SI16 y, SI08 z,
 	toSend.Hue( hue );
 	toSend.RenderMode( renderMode );
 
+	// Edge case, in case someone want to play the moving FX locally on source object
+	if( playLocalMoveFX )
+	{
+		toSend.Effect( 0x03 );
+		if( loop == 0 )
+		{
+			// Make sure effect has a fixed duration, or it will stick around for ever!
+			toSend.Duration( 0x05 );
+		}
+		toSend.SourceSerial( 0x0000 );
+		toSend.TargetSerial( 0x0000 );
+		toSend.TargetLocation( 0, 0, 0 );
+	}
+
 	for( auto &mSock : FindNearbyPlayers( source, DIST_SAMESCREEN ))
 	{
 		mSock->Send( &toSend );
@@ -177,7 +191,7 @@ void cEffects::PlayMovingAnimation( CBaseObject *source, SI16 x, SI16 y, SI08 z,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends a message to client to display a moving animation from source object to target location
 //o------------------------------------------------------------------------------------------------o
-void cEffects::PlayMovingAnimation( SI16 srcX, SI16 srcY, SI08 srcZ, SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
+void cEffects::PlayMovingAnimation( SI16 srcX, SI16 srcY, SI08 srcZ, SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode, bool playLocalMoveFX  )
 {	//0x0f 0x42 = arrow 0x1b 0xfe=bolt
 
 	CPGraphicalEffect2 toSend( 0 );
@@ -190,6 +204,20 @@ void cEffects::PlayMovingAnimation( SI16 srcX, SI16 srcY, SI08 srcZ, SI16 x, SI1
 	toSend.ExplodeOnImpact( explode );
 	toSend.Hue( hue );
 	toSend.RenderMode( renderMode );
+
+	// Edge case, in case someone want to play the moving FX locally on source object
+	if( playLocalMoveFX )
+	{
+		toSend.Effect( 0x03 );
+		if( loop == 0 )
+		{
+			// Make sure effect has a fixed duration, or it will stick around for ever!
+			toSend.Duration( 0x05 );
+		}
+		toSend.SourceSerial( 0x0000 );
+		toSend.TargetSerial( 0x0000 );
+		toSend.TargetLocation( 0, 0, 0 );
+	}
 
 	for( auto &mSock : FindNearbyPlayers( srcX, srcY, srcZ, DIST_SAMESCREEN ))
 	{
