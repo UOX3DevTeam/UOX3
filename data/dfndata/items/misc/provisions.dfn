@@ -58,4 +58,5 @@ value=75 37
 restock=20
 decay=1
 script=5090
+origin=aos
 }
