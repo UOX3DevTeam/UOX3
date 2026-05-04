@@ -18,6 +18,7 @@
 #include <locale>
 #include <codecvt>
 #include "osunique.hpp"
+#include <vector>
 #if defined(_WIN32)
 #include <ws2tcpip.h>
 #endif
@@ -10228,4 +10229,236 @@ CPDropItemApproved::CPDropItemApproved()
 {
 	pStream.ReserveSize( 1 );
 	pStream.WriteByte( 0, 0x29 );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CPUltimaLiveStaticsUpdate()
+//o------------------------------------------------------------------------------------------------o
+void CPUltimaLiveStaticsUpdate::InternalReset( void )
+{
+	pStream.ReserveSize( 15 );
+	pStream.WriteByte( 0, 0x3F );
+	pStream.WriteShort( 1, 15 );
+	pStream.WriteLong( 3, 0 );
+	pStream.WriteLong( 7, 0 );
+	pStream.WriteShort( 11, 0x0000 );
+	pStream.WriteByte( 13, 0x00 ); // UltimaLive command: statics update
+	pStream.WriteByte( 14, 0x00 );
+}
+
+CPUltimaLiveStaticsUpdate::CPUltimaLiveStaticsUpdate()
+{
+	InternalReset();
+}
+
+CPUltimaLiveStaticsUpdate::CPUltimaLiveStaticsUpdate( UI32 blockNumber, UI08 mapNumber, const std::vector<UI08>& staticsData )
+{
+	InternalReset();
+
+	UI16 packetSize = static_cast<UI16>( 15 + staticsData.size() );
+	UI32 staticCount = static_cast<UI32>( staticsData.size() / 7 );
+
+	pStream.ReserveSize( packetSize );
+	pStream.WriteShort( 1, packetSize );
+	pStream.WriteLong( 3, blockNumber );
+	pStream.WriteLong( 7, staticCount );
+	pStream.WriteShort( 11, 0x0000 );
+	pStream.WriteByte( 13, 0x00 );
+	pStream.WriteByte( 14, mapNumber );
+
+	for( size_t i = 0; i < staticsData.size(); ++i )
+	{
+		pStream.WriteByte( 15 + static_cast<UI32>( i ), staticsData[i] );
+	}
+}
+
+void CPUltimaLiveStaticsUpdate::Log( std::ostream& outStream, bool fullHeader )
+{
+	if( fullHeader )
+	{
+		outStream << "[SEND]Packet   : CPUltimaLiveStaticsUpdate 0x3F --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
+	}
+
+	outStream << "Block Number   : " << pStream.GetLong( 3 ) << std::endl;
+	outStream << "Static Count   : " << pStream.GetLong( 7 ) << std::endl;
+	outStream << "Map Number     : " << static_cast<SI16>( pStream.GetByte( 14 )) << std::endl;
+	CPUOXBuffer::Log( outStream, false );
+}
+
+void CPUltimaLiveBlockQuery::InternalReset( void )
+{
+	pStream.ReserveSize( 15 );
+	pStream.WriteByte( 0, 0x3F );
+	pStream.WriteShort( 1, 15 );
+	pStream.WriteLong( 3, 0 );
+	pStream.WriteLong( 7, 0 );
+	pStream.WriteShort( 11, 0x0000 );
+	pStream.WriteByte( 13, 0xFF ); // UltimaLive command: block query
+	pStream.WriteByte( 14, 0x00 );
+}
+
+CPUltimaLiveBlockQuery::CPUltimaLiveBlockQuery()
+{
+	InternalReset();
+}
+
+CPUltimaLiveBlockQuery::CPUltimaLiveBlockQuery( UI32 blockNumber, UI08 mapNumber )
+{
+	InternalReset();
+	pStream.WriteLong( 3, blockNumber );
+	pStream.WriteByte( 14, mapNumber );
+}
+
+void CPUltimaLiveBlockQuery::Log( std::ostream& outStream, bool fullHeader )
+{
+	if( fullHeader )
+	{
+		outStream << "[SEND]Packet   : CPUltimaLiveBlockQuery 0x3F --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
+	}
+
+	outStream << "Block Number   : " << pStream.GetLong( 3 ) << std::endl;
+	outStream << "Map Number     : " << static_cast<SI16>( pStream.GetByte( 14 )) << std::endl;
+	CPUOXBuffer::Log( outStream, false );
+}
+
+void CPUltimaLiveHashResponse::InternalReset( void )
+{
+	pStream.ReserveSize( 65 );
+	pStream.WriteByte( 0, 0x3F );
+	pStream.WriteShort( 1, 65 );
+	pStream.WriteLong( 3, 0 );
+	pStream.WriteLong( 7, 7 ); // 50 checksum bytes padded to 7-byte blocks
+	pStream.WriteShort( 11, 0x0000 );
+	pStream.WriteByte( 13, 0xFF );
+	pStream.WriteByte( 14, 0x00 );
+
+	for( UI32 i = 15; i < 65; ++i )
+	{
+		pStream.WriteByte( i, 0x00 );
+	}
+}
+
+CPUltimaLiveHashResponse::CPUltimaLiveHashResponse()
+{
+	InternalReset();
+}
+
+CPUltimaLiveHashResponse::CPUltimaLiveHashResponse( UI32 blockNumber, UI08 mapNumber, const std::vector<UI16>& checkSums )
+{
+	InternalReset();
+
+	pStream.WriteLong( 3, blockNumber );
+	pStream.WriteByte( 14, mapNumber );
+
+	for( UI32 i = 0; i < 25; ++i )
+	{
+		UI16 checkSum = 0;
+
+		if( i < checkSums.size() )
+		{
+			checkSum = checkSums[i];
+		}
+
+		pStream.WriteShort( 15 + ( i * 2 ), checkSum );
+	}
+}
+
+void CPUltimaLiveHashResponse::Log( std::ostream& outStream, bool fullHeader )
+{
+	if( fullHeader )
+	{
+		outStream << "[SEND]Packet   : CPUltimaLiveHashResponse 0x3F --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
+	}
+
+	outStream << "Block Number   : " << pStream.GetLong( 3 ) << std::endl;
+	outStream << "Map Number     : " << static_cast<SI16>( pStream.GetByte( 14 )) << std::endl;
+	CPUOXBuffer::Log( outStream, false );
+}
+
+void CPUltimaLiveLoginConfirm::InternalReset( void )
+{
+	pStream.ReserveSize( 43 );
+	pStream.WriteByte( 0, 0x3F );
+	pStream.WriteShort( 1, 43 );
+	pStream.WriteLong( 3, 0x01 );
+	pStream.WriteLong( 7, 4 );
+	pStream.WriteShort( 11, 0x0000 );
+	pStream.WriteByte( 13, 0x02 ); // UltimaLive command: login confirm
+	pStream.WriteByte( 14, 0x00 );
+}
+
+CPUltimaLiveLoginConfirm::CPUltimaLiveLoginConfirm()
+{
+	InternalReset();
+}
+
+CPUltimaLiveLoginConfirm::CPUltimaLiveLoginConfirm( const std::string& shardIdentifier )
+{
+	InternalReset();
+
+	for( UI32 i = 0; i < 28; ++i )
+	{
+		UI08 value = 0x00;
+
+		if( i < shardIdentifier.length() )
+		{
+			value = static_cast<UI08>( shardIdentifier[i] );
+		}
+
+		pStream.WriteByte( 15 + i, value );
+	}
+}
+
+void CPUltimaLiveLoginConfirm::Log( std::ostream& outStream, bool fullHeader )
+{
+	if( fullHeader )
+	{
+		outStream << "[SEND]Packet   : CPUltimaLiveLoginConfirm 0x3F --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
+	}
+
+	CPUOXBuffer::Log( outStream, false );
+}
+
+void CPUltimaLiveMapDefinitions::InternalReset( void )
+{
+	const UI32 mapDefinitionCount = 1;
+	const UI32 mapDefinitionLength = mapDefinitionCount * 9;
+	const UI32 staticCount = ( ( mapDefinitionLength + 6 ) / 7 );
+	const UI32 paddedDefinitionLength = staticCount * 7;
+	const UI16 packetSize = static_cast< UI16 >( 15 + paddedDefinitionLength );
+
+	pStream.ReserveSize( packetSize );
+	pStream.WriteByte( 0, 0x3F );
+	pStream.WriteShort( 1, packetSize );
+	pStream.WriteLong( 3, 0 );
+	pStream.WriteLong( 7, staticCount );
+	pStream.WriteShort( 11, 0x0000 );
+	pStream.WriteByte( 13, 0x01 );
+	pStream.WriteByte( 14, 0x00 );
+
+	pStream.WriteByte( 15, 0 );
+	pStream.WriteShort( 16, 7168 );
+	pStream.WriteShort( 18, 4096 );
+	pStream.WriteShort( 20, 7168 );
+	pStream.WriteShort( 22, 4096 );
+
+	for( UI32 i = mapDefinitionLength; i < paddedDefinitionLength; ++i )
+	{
+		pStream.WriteByte( 15 + i, 0x00 );
+	}
+}
+
+CPUltimaLiveMapDefinitions::CPUltimaLiveMapDefinitions()
+{
+	InternalReset();
+}
+
+void CPUltimaLiveMapDefinitions::Log( std::ostream& outStream, bool fullHeader )
+{
+	if( fullHeader )
+	{
+		outStream << "[SEND]Packet   : CPUltimaLiveMapDefinitions 0x3F --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
+	}
+
+	CPUOXBuffer::Log( outStream, false );
 }

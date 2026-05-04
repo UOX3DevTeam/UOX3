@@ -21,6 +21,7 @@
 #include <chrono>
 #include "IP4Address.hpp"
 #include "utf8.h"
+#include <mapstuff.h>
 
 //o------------------------------------------------------------------------------------------------o
 //| Function	-	pSplit()
@@ -153,6 +154,7 @@ CPInputBuffer *WhichPacket( UI08 packetId, CSocket *s )
 		case 0xF3:	return nullptr;								// TODO - Object Information (SA)
 		case 0xF5:	return nullptr;								// TODO - New Map Message
 		case 0xF8:	return ( new CPICreateCharacter( s ));		// New Character Create
+		case 0x3F:	return ( new CPIUltimaLive( s ));
 		default:	return nullptr;
 	}
 	return nullptr;
@@ -1228,6 +1230,152 @@ bool CPIUpdateRangeChange::Handle( void )
 	tSock->FlushBuffer();
 	tSock->CurrcharObj()->Teleport(); // TODO - Could this be an Update() instead of Teleport?
 	return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CPIUltimaLive()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming UltimaLive packets from ClassicUO
+//o------------------------------------------------------------------------------------------------o
+//| Notes		-	Packet: 0x3F
+//|
+//|					BYTE cmd
+//|					BYTE[2] packetSize
+//|					BYTE[4] blockNumber / value
+//|					BYTE[4] value / checksum
+//|					BYTE[2] unknown
+//|					BYTE command
+//|					BYTE mapNumber
+//o------------------------------------------------------------------------------------------------o
+CPIUltimaLive::CPIUltimaLive()
+{
+	packetSize = 0;
+	command = 0;
+	mapNumber = 0;
+	blockNumber = 0;
+	value = 0;
+}
+
+CPIUltimaLive::CPIUltimaLive( CSocket *s ) : CPInputBuffer( s )
+{
+	packetSize = 0;
+	command = 0;
+	mapNumber = 0;
+	blockNumber = 0;
+	value = 0;
+
+	Receive();
+}
+
+void CPIUltimaLive::Receive( void )
+{
+	tSock->Receive( 3, false );
+
+	packetSize = tSock->GetWord( 1 );
+
+	if( packetSize < 15 )
+	{
+		return;
+	}
+
+	tSock->Receive( packetSize, false );
+
+	blockNumber = tSock->GetDWord( 3 );
+	value = tSock->GetDWord( 7 );
+	command = tSock->GetByte( 13 );
+	mapNumber = tSock->GetByte( 14 );
+}
+
+bool CPIUltimaLive::Handle( void )
+{
+	switch( command )
+	{
+		case 0xFE:
+		{
+			Console.Print( oldstrutil::format( "Received UltimaLive version packet from client. Map: %u", mapNumber ));
+			return true;
+		}
+
+		case 0xFF:
+		{
+			Console.Print( oldstrutil::format(
+				"UltimaLive hash response received: block %u map %u",
+				blockNumber,
+				mapNumber
+			) );
+
+			if( LiveStatics == nullptr )
+			{
+				return true;
+			}
+
+			const std::uint32_t mapHeightInBlocks = 4096 / 8;
+			const std::int32_t centerBlockX = static_cast< std::int32_t >( blockNumber / mapHeightInBlocks );
+			const std::int32_t centerBlockY = static_cast< std::int32_t >( blockNumber % mapHeightInBlocks );
+
+			for( std::int32_t blockXOffset = -2; blockXOffset <= 2; ++blockXOffset )
+			{
+				for( std::int32_t blockYOffset = -2; blockYOffset <= 2; ++blockYOffset )
+				{
+					const std::int32_t blockX = centerBlockX + blockXOffset;
+					const std::int32_t blockY = centerBlockY + blockYOffset;
+
+					if( blockX < 0 || blockY < 0 )
+					{
+						continue;
+					}
+
+					const std::uint32_t targetBlockNumber = static_cast< std::uint32_t >( blockX ) * mapHeightInBlocks + static_cast< std::uint32_t >( blockY );
+					const std::vector<UI08> staticsData = LiveStatics->BuildStaticsForBlock( mapNumber, targetBlockNumber );
+
+					CPUltimaLiveStaticsUpdate staticsUpdate( targetBlockNumber, mapNumber, staticsData );
+					tSock->Send( &staticsUpdate );
+				}
+			}
+
+			return true;
+		}
+
+		default:
+			Console.Warning( "Unhandled UltimaLive command: " + oldstrutil::number( command ));
+			break;
+	}
+
+	return true;
+}
+
+void CPIUltimaLive::Log( std::ostream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+	{
+		outStream << "[RECV]Packet   : CPIUltimaLive 0x3F --> Length: " << packetSize << TimeStamp() << std::endl;
+	}
+
+	outStream << "Command        : " << static_cast<SI16>( command ) << std::endl;
+	outStream << "Map Number     : " << static_cast<SI16>( mapNumber ) << std::endl;
+	outStream << "Block Number   : " << blockNumber << std::endl;
+	outStream << "Value          : " << value << std::endl;
+	CPInputBuffer::Log( outStream, false );
+}
+
+UI08 CPIUltimaLive::Command( void ) const
+{
+	return command;
+}
+
+UI08 CPIUltimaLive::MapNumber( void ) const
+{
+	return mapNumber;
+}
+
+UI32 CPIUltimaLive::BlockNumber( void ) const
+{
+	return blockNumber;
+}
+
+UI32 CPIUltimaLive::Value( void ) const
+{
+	return value;
 }
 
 //o------------------------------------------------------------------------------------------------o

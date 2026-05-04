@@ -127,6 +127,32 @@ struct MapDfnData_st
 	MapDfnData_st() : width( 0 ), height( 0 ) {}
 };
 
+struct LiveStaticEntry_st
+{
+	std::uint16_t tileId;
+	std::uint8_t xOffset;
+	std::uint8_t yOffset;
+	std::int8_t z;
+	std::uint16_t hue;
+};
+
+class LiveStatic
+{
+private:
+	std::map<std::uint32_t, std::vector<LiveStaticEntry_st>> liveStatics;
+
+	auto GetBlockKey( std::uint8_t worldNumber, std::uint32_t blockNumber ) const -> std::uint32_t;
+	auto GetBlockNumber( std::int16_t x, std::int16_t y ) const -> std::uint32_t;
+	auto SendBlockUpdate( std::uint8_t worldNumber, std::uint32_t blockNumber ) -> void;
+
+public:
+	auto Add( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t tileId, std::uint16_t hue ) -> bool;
+	auto Remove( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t tileId, std::uint16_t hue ) -> bool;
+	auto BuildStaticsForBlock( std::uint8_t worldNumber, std::uint32_t blockNumber ) const -> std::vector<std::uint8_t>;
+};
+
+extern LiveStatic *LiveStatics;
+
 //==========================================================================================
 // until we can replace
 //==========================================================================================

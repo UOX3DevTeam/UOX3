@@ -9,6 +9,8 @@
 #include <algorithm>
 #include <array>
 #include <fstream>
+#include <CPacketSend.h>
+LiveStatic *LiveStatics = new LiveStatic();
 
 using namespace std::string_literals;
 
@@ -2110,4 +2112,168 @@ auto UltimaMap::ArtAt( int x, int y ) -> std::vector<Tile_st>&
 {
 	auto [blocknum, xoffset,yoffset] = BlockAndIndexFor( x, y );
 	return _art[blocknum].ArtTileAt( xoffset, yoffset );
+}
+
+auto LiveStatic::GetBlockKey( std::uint8_t worldNumber, std::uint32_t blockNumber ) const -> std::uint32_t
+{
+	return ( static_cast<std::uint32_t>( worldNumber ) << 24 ) | blockNumber;
+}
+
+auto LiveStatic::GetBlockNumber( std::int16_t x, std::int16_t y ) const -> std::uint32_t
+{
+	const std::uint32_t mapHeightInBlocks = 4096 / 8;
+	const std::uint32_t blockX = static_cast<std::uint32_t>( x / 8 );
+	const std::uint32_t blockY = static_cast<std::uint32_t>( y / 8 );
+
+	return blockX * mapHeightInBlocks + blockY;
+}
+
+auto LiveStatic::Add( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t tileId, std::uint16_t hue ) -> bool
+{
+	if( x < 0 || y < 0 )
+	{
+		return false;
+	}
+
+	const std::uint32_t blockNumber = GetBlockNumber( x, y );
+	const std::uint32_t blockKey = GetBlockKey( worldNumber, blockNumber );
+
+	LiveStaticEntry_st liveStatic;
+	liveStatic.tileId = tileId;
+	liveStatic.xOffset = static_cast<std::uint8_t>( x % 8 );
+	liveStatic.yOffset = static_cast<std::uint8_t>( y % 8 );
+	liveStatic.z = z;
+	liveStatic.hue = hue;
+
+	liveStatics[blockKey].push_back( liveStatic );
+
+	SendBlockUpdate( worldNumber, blockNumber );
+	return true;
+}
+
+auto LiveStatic::Remove( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t tileId, std::uint16_t hue ) -> bool
+{
+	if( x < 0 || y < 0 )
+	{
+		return false;
+	}
+
+	const std::uint32_t blockNumber = GetBlockNumber( x, y );
+	const std::uint32_t blockKey = GetBlockKey( worldNumber, blockNumber );
+
+	auto blockItr = liveStatics.find( blockKey );
+	if( blockItr == liveStatics.end() )
+	{
+		return false;
+	}
+
+	const std::uint8_t xOffset = static_cast<std::uint8_t>( x % 8 );
+	const std::uint8_t yOffset = static_cast<std::uint8_t>( y % 8 );
+
+	auto& blockStatics = blockItr->second;
+
+	for( auto liveStatic = blockStatics.begin(); liveStatic != blockStatics.end(); ++liveStatic )
+	{
+		if( liveStatic->tileId == tileId && liveStatic->xOffset == xOffset && liveStatic->yOffset == yOffset && liveStatic->z == z && liveStatic->hue == hue )
+		{
+			blockStatics.erase( liveStatic );
+
+			if( blockStatics.empty() )
+			{
+				liveStatics.erase( blockItr );
+			}
+
+			SendBlockUpdate( worldNumber, blockNumber );
+			return true;
+		}
+	}
+
+	return false;
+}
+
+auto LiveStatic::BuildStaticsForBlock( std::uint8_t worldNumber, std::uint32_t blockNumber ) const -> std::vector<std::uint8_t>
+{
+	std::vector<std::uint8_t> staticsData;
+
+	if( Map != nullptr )
+	{
+		const std::uint32_t mapHeightInBlocks = 4096 / 8;
+		const std::int16_t blockX = static_cast<std::int16_t>( blockNumber / mapHeightInBlocks );
+		const std::int16_t blockY = static_cast<std::int16_t>( blockNumber % mapHeightInBlocks );
+
+		for( std::uint8_t xOffset = 0; xOffset < 8; ++xOffset )
+		{
+			for( std::uint8_t yOffset = 0; yOffset < 8; ++yOffset )
+			{
+				const std::int16_t x = static_cast<std::int16_t>(( blockX * 8 ) + xOffset );
+				const std::int16_t y = static_cast<std::int16_t>(( blockY * 8 ) + yOffset );
+
+				const auto& baseStatics = Map->ArtAt( x, y, worldNumber );
+
+				for( const auto& baseStatic : baseStatics )
+				{
+					if( baseStatic.type != TileType_t::art )
+					{
+						continue;
+					}
+
+					staticsData.push_back( static_cast<std::uint8_t>( baseStatic.tileId & 0xFF ));
+					staticsData.push_back( static_cast<std::uint8_t>(( baseStatic.tileId >> 8 ) & 0xFF ));
+					staticsData.push_back( xOffset );
+					staticsData.push_back( yOffset );
+					staticsData.push_back( static_cast<std::uint8_t>( baseStatic.altitude ));
+					staticsData.push_back( static_cast<std::uint8_t>( baseStatic.staticHue & 0xFF ));
+					staticsData.push_back( static_cast<std::uint8_t>(( baseStatic.staticHue >> 8 ) & 0xFF ));
+				}
+			}
+		}
+	}
+
+	const std::uint32_t blockKey = GetBlockKey( worldNumber, blockNumber );
+	auto blockItr = liveStatics.find( blockKey );
+
+	if( blockItr == liveStatics.end() )
+	{
+		return staticsData;
+	}
+
+	for( const auto& liveStatic : blockItr->second )
+	{
+		staticsData.push_back( static_cast<std::uint8_t>( liveStatic.tileId & 0xFF ));
+		staticsData.push_back( static_cast<std::uint8_t>(( liveStatic.tileId >> 8 ) & 0xFF ));
+		staticsData.push_back( liveStatic.xOffset );
+		staticsData.push_back( liveStatic.yOffset );
+		staticsData.push_back( static_cast<std::uint8_t>( liveStatic.z ));
+		staticsData.push_back( static_cast<std::uint8_t>( liveStatic.hue & 0xFF ));
+		staticsData.push_back( static_cast<std::uint8_t>(( liveStatic.hue >> 8 ) & 0xFF ));
+	}
+
+	return staticsData;
+}
+
+auto LiveStatic::SendBlockUpdate( std::uint8_t worldNumber, std::uint32_t blockNumber ) -> void
+{
+	const auto staticsData = BuildStaticsForBlock( worldNumber, blockNumber );
+
+	if( staticsData.empty() )
+	{
+		return;
+	}
+
+	CPUltimaLiveStaticsUpdate staticsUpdate( blockNumber, worldNumber, staticsData );
+
+	for( const auto& tSock : Network->connClients )
+	{
+		if( tSock == nullptr || tSock->CurrcharObj() == nullptr )
+		{
+			continue;
+		}
+
+		if( tSock->CurrcharObj()->WorldNumber() != worldNumber )
+		{
+			continue;
+		}
+
+		tSock->Send( &staticsUpdate );
+	}
 }

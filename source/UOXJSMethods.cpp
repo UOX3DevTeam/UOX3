@@ -8537,6 +8537,62 @@ JSBool CChar_RunTo( JSContext *cx, uintN argc, jsval *vp )
 	return JS_TRUE;
 }
 
+JSBool CMisc_AddLiveStatic( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc < 6 )
+	{
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ));
+		return JS_TRUE;
+	}
+
+	jsval *argv = JS_ARGV( cx, vp );
+
+	SI16 x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
+	SI16 y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+	SI08 z = static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
+	UI08 worldNum = static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
+	UI16 tileId = static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
+	UI16 hue = static_cast<UI16>( JSVAL_TO_INT( argv[5] ));
+
+	bool result = false;
+
+	if( LiveStatics != nullptr )
+	{
+		result = LiveStatics->Add( x, y, z, worldNum, tileId, hue );
+	}
+
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( result ));
+	return JS_TRUE;
+}
+
+JSBool CMisc_RemoveLiveStatic( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc < 6 )
+	{
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ));
+		return JS_TRUE;
+	}
+
+	jsval *argv = JS_ARGV( cx, vp );
+
+	SI16 x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
+	SI16 y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+	SI08 z = static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
+	UI08 worldNum = static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
+	UI16 tileId = static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
+	UI16 hue = static_cast<UI16>( JSVAL_TO_INT( argv[5] ));
+
+	bool result = false;
+
+	if( LiveStatics != nullptr )
+	{
+		result = LiveStatics->Remove( x, y, z, worldNum, tileId, hue );
+	}
+
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( result ));
+	return JS_TRUE;
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMisc_GetTimer()
 //|	Prototype	-	int GetTimer( timerId )
