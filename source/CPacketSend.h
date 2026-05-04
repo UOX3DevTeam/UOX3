@@ -1660,6 +1660,18 @@ public:
 	virtual void Log( std::ostream& outStream, bool fullHeader = true ) override;
 };
 
+class CPUltimaLiveTerrainUpdate : public CPUOXBuffer
+{
+protected:
+	virtual void InternalReset( void ) override;
+
+public:
+	CPUltimaLiveTerrainUpdate();
+	CPUltimaLiveTerrainUpdate( UI32 blockNumber, UI08 mapNumber, const std::vector<UI08>& terrainData );
+
+	virtual void Log( std::ostream& outStream, bool fullHeader = true ) override;
+};
+
 class CPUltimaLiveBlockQuery : public CPUOXBuffer
 {
 protected:

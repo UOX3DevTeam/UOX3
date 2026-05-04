@@ -390,19 +390,15 @@ bool CPIPlayCharacter::Handle( void )
 						kChar->SetAccount( actbRec );
 						tSock->CurrcharObj( kChar );
 						StartChar( tSock );
-Console.Print( "Sending UltimaLive startup packets after StartChar\n" );
+						Console.Print( "Sending UltimaLive startup packets after StartChar\n" );
 
-CPUltimaLiveLoginConfirm ultimaLiveLoginConfirm( "TCUltima" );
-tSock->Send( &ultimaLiveLoginConfirm );
+						CPUltimaLiveLoginConfirm ultimaLiveLoginConfirm( "TCUltima" );
+						tSock->Send( &ultimaLiveLoginConfirm );
 
-// Leave this commented out until login confirm works cleanly.
-CPUltimaLiveMapDefinitions ultimaLiveMapDefinitions;
-tSock->Send( &ultimaLiveMapDefinitions );
+						CPUltimaLiveMapDefinitions ultimaLiveMapDefinitions;
+						tSock->Send( &ultimaLiveMapDefinitions );
 
-CPUltimaLiveBlockQuery blockQuery( 0, 0 );
-tSock->Send( &blockQuery );
-
-Console.Print( "Finished sending UltimaLive startup packets\n" );
+						Console.Print( "Finished sending UltimaLive startup packets\n" );
 					}
 					else
 					{

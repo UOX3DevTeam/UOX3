@@ -127,12 +127,12 @@ auto CMulHandler::LoadMapsDFN( const std::string &uodir ) -> std::map<int, MapDf
 auto CMulHandler::Load() -> void
 {
 	auto uodir = cwmWorldState->ServerData()->Directory( CSDDP_DATA );
-	auto mapinfo = LoadMapsDFN( uodir );
+	mapDefinitions = LoadMapsDFN( uodir );
 	Console.PrintSectionBegin();
 	Console << "Loading UO Data..." << myendl << "(If they fail to load, check your DATADIRECTORY path in uox.ini or filenames in maps.dfn)" << myendl;
 	LoadTileData( uodir );
 	LoadDFNOverrides();
-	LoadMapAndStatics( mapinfo );
+	LoadMapAndStatics( mapDefinitions );
 	if( uoWorlds.empty() )
 	{
 		Console.Error( " Fatal Error: No maps found" );
@@ -142,6 +142,54 @@ auto CMulHandler::Load() -> void
 	LoadMultis( uodir );
 	FileLookup->Dispose( maps_def );
 	Console.PrintSectionBegin();
+}
+
+auto CMulHandler::StaticFilesForWorld( std::uint8_t worldNumber ) const -> const MapDfnData_st *
+{
+	auto mapItr = mapDefinitions.find( worldNumber );
+	if( mapItr == mapDefinitions.end() )
+	{
+		return nullptr;
+	}
+
+	return &( mapItr->second );
+}
+
+auto CMulHandler::ReloadStaticBlock( std::uint8_t worldNumber, std::uint32_t blockNumber, const std::vector<std::uint8_t>& staticsData ) -> bool
+{
+	auto worldItr = uoWorlds.find( worldNumber );
+	if( worldItr == uoWorlds.end() )
+	{
+		return false;
+	}
+
+	return worldItr->second.ReloadArtBlock( blockNumber, staticsData );
+}
+
+auto CMulHandler::BuildTerrainDataForBlock( std::uint8_t worldNumber, std::uint32_t blockNumber ) const -> std::vector<std::uint8_t>
+{
+	auto worldItr = uoWorlds.find( worldNumber );
+	if( worldItr == uoWorlds.end() )
+	{
+		return std::vector<std::uint8_t>();
+	}
+
+	return worldItr->second.BuildTerrainDataForBlock( blockNumber );
+}
+
+auto CMulHandler::BlockDimensionsForWorld( std::uint8_t worldNumber ) const -> std::pair<std::uint32_t, std::uint32_t>
+{
+	auto mapSize = SizeOfMap( worldNumber );
+
+	if( mapSize.first <= 0 || mapSize.second <= 0 )
+	{
+		return std::make_pair( 0, 0 );
+	}
+
+	return std::make_pair(
+		static_cast<std::uint32_t>( mapSize.first / 8 ),
+		static_cast<std::uint32_t>( mapSize.second / 8 )
+	);
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2114,18 +2162,189 @@ auto UltimaMap::ArtAt( int x, int y ) -> std::vector<Tile_st>&
 	return _art[blocknum].ArtTileAt( xoffset, yoffset );
 }
 
+auto UltimaMap::BuildTerrainDataForBlock( std::uint32_t blockNumber ) const -> std::vector<std::uint8_t>
+{
+	std::vector<std::uint8_t> terrainData;
+
+	if( blockNumber >= _terrain.size() )
+	{
+		return terrainData;
+	}
+
+	terrainData.reserve( 192 );
+
+	const TerrainBlock& terrainBlock = _terrain[blockNumber];
+
+	for( int yOffset = 0; yOffset < 8; ++yOffset )
+	{
+		for( int xOffset = 0; xOffset < 8; ++xOffset )
+		{
+			const Tile_st& terrainTile = terrainBlock.TerrainTileAt( xOffset, yOffset );
+
+			terrainData.push_back( static_cast<std::uint8_t>( terrainTile.tileId & 0xFF ));
+			terrainData.push_back( static_cast<std::uint8_t>(( terrainTile.tileId >> 8 ) & 0xFF ));
+			terrainData.push_back( static_cast<std::uint8_t>( terrainTile.altitude ));
+		}
+	}
+
+	return terrainData;
+}
+
+auto LiveStatic::QueueBlockRefresh( std::uint8_t worldNumber, std::uint32_t blockNumber ) -> void
+{
+	const std::uint32_t blockKey = GetBlockKey( worldNumber, blockNumber );
+	const UI32 currentTime = cwmWorldState->GetUICurrentTime();
+
+	auto lastUpdateItr = lastBlockQueryTime.find( blockKey );
+	if( lastUpdateItr != lastBlockQueryTime.end() )
+	{
+		if(( lastUpdateItr->second + 500 ) > currentTime )
+		{
+			return;
+		}
+	}
+
+	lastBlockQueryTime[blockKey] = currentTime;
+
+	CPUltimaLiveBlockQuery blockQuery( blockNumber, worldNumber );
+
+	for( const auto& tSock : Network->connClients )
+	{
+		if( tSock == nullptr || tSock->CurrcharObj() == nullptr )
+		{
+			continue;
+		}
+
+		if( tSock->CurrcharObj()->WorldNumber() != worldNumber )
+		{
+			continue;
+		}
+
+		tSock->Send( &blockQuery );
+	}
+}
+
+auto LiveStatic::CalculateChecksum( const std::vector<std::uint8_t>& data ) const -> std::uint16_t
+{
+	std::uint16_t sumOne = 0;
+	std::uint16_t sumTwo = 0;
+
+	for( const auto& value : data )
+	{
+		sumOne = static_cast<std::uint16_t>(( sumOne + value ) % 255 );
+		sumTwo = static_cast<std::uint16_t>(( sumTwo + sumOne ) % 255 );
+	}
+
+	return static_cast<std::uint16_t>(( sumTwo << 8 ) | sumOne );
+}
+
+auto LiveStatic::BuildChecksumDataForBlock( std::uint8_t worldNumber, std::uint32_t blockNumber ) const -> std::vector<std::uint8_t>
+{
+	std::vector<std::uint8_t> checksumData;
+
+	if( Map != nullptr )
+	{
+		std::vector<std::uint8_t> terrainData = Map->BuildTerrainDataForBlock( worldNumber, blockNumber );
+		checksumData.insert( checksumData.end(), terrainData.begin(), terrainData.end() );
+	}
+
+	std::vector<std::uint8_t> staticsData = BuildStaticsForBlock( worldNumber, blockNumber );
+	checksumData.insert( checksumData.end(), staticsData.begin(), staticsData.end() );
+
+	return checksumData;
+}
+
 auto LiveStatic::GetBlockKey( std::uint8_t worldNumber, std::uint32_t blockNumber ) const -> std::uint32_t
 {
 	return ( static_cast<std::uint32_t>( worldNumber ) << 24 ) | blockNumber;
 }
 
-auto LiveStatic::GetBlockNumber( std::int16_t x, std::int16_t y ) const -> std::uint32_t
+auto LiveStatic::GetBlockNumber( std::int16_t x, std::int16_t y, std::uint8_t worldNumber, std::uint32_t& blockNumber ) const -> bool
 {
-	const std::uint32_t mapHeightInBlocks = 4096 / 8;
+	blockNumber = 0;
+
+	if( Map == nullptr || x < 0 || y < 0 )
+	{
+		return false;
+	}
+
+	const auto blockDimensions = Map->BlockDimensionsForWorld( worldNumber );
+	const std::uint32_t mapWidthInBlocks = blockDimensions.first;
+	const std::uint32_t mapHeightInBlocks = blockDimensions.second;
+
+	if( mapWidthInBlocks == 0 || mapHeightInBlocks == 0 )
+	{
+		return false;
+	}
+
+	const std::uint32_t mapWidth = mapWidthInBlocks * 8;
+	const std::uint32_t mapHeight = mapHeightInBlocks * 8;
+
+	if( static_cast<std::uint32_t>( x ) >= mapWidth || static_cast<std::uint32_t>( y ) >= mapHeight )
+	{
+		return false;
+	}
+
 	const std::uint32_t blockX = static_cast<std::uint32_t>( x / 8 );
 	const std::uint32_t blockY = static_cast<std::uint32_t>( y / 8 );
 
-	return blockX * mapHeightInBlocks + blockY;
+	blockNumber = blockX * mapHeightInBlocks + blockY;
+	return true;
+}
+
+auto LiveStatic::WriteBlockToStaticsFile( std::uint8_t worldNumber, std::uint32_t blockNumber, const std::vector<std::uint8_t>& staticsData ) -> bool
+{
+	if( Map == nullptr )
+	{
+		return false;
+	}
+
+	const MapDfnData_st *mapData = Map->StaticFilesForWorld( worldNumber );
+	if( mapData == nullptr )
+	{
+		return false;
+	}
+
+	if( mapData->staMul.empty() || mapData->staIdx.empty() )
+	{
+		return false;
+	}
+
+	std::fstream staticsFile( mapData->staMul, std::ios::in | std::ios::out | std::ios::binary | std::ios::app );
+	if( !staticsFile.is_open() )
+	{
+		Console.Warning( "LiveStatic: Unable to open statics file for writing: " + mapData->staMul.string() );
+		return false;
+	}
+
+	std::fstream indexFile( mapData->staIdx, std::ios::in | std::ios::out | std::ios::binary );
+	if( !indexFile.is_open() )
+	{
+		Console.Warning( "LiveStatic: Unable to open staidx file for writing: " + mapData->staIdx.string() );
+		return false;
+	}
+
+	staticsFile.seekp( 0, std::ios::end );
+	const std::int32_t offset = static_cast<std::int32_t>( staticsFile.tellp() );
+	const std::int32_t length = static_cast<std::int32_t>( staticsData.size() );
+	const std::int32_t extra = 0;
+
+	if( length > 0 )
+	{
+		staticsFile.write( reinterpret_cast<const char *>( staticsData.data() ), staticsData.size() );
+	}
+
+	const std::streamoff indexOffset = static_cast<std::streamoff>( blockNumber ) * 12;
+	indexFile.seekp( indexOffset, std::ios::beg );
+
+	indexFile.write( reinterpret_cast<const char *>( &offset ), 4 );
+	indexFile.write( reinterpret_cast<const char *>( &length ), 4 );
+	indexFile.write( reinterpret_cast<const char *>( &extra ), 4 );
+
+	staticsFile.close();
+	indexFile.close();
+
+	return true;
 }
 
 auto LiveStatic::Add( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t tileId, std::uint16_t hue ) -> bool
@@ -2135,7 +2354,11 @@ auto LiveStatic::Add( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_
 		return false;
 	}
 
-	const std::uint32_t blockNumber = GetBlockNumber( x, y );
+	std::uint32_t blockNumber = 0;
+	if( !GetBlockNumber( x, y, worldNumber, blockNumber ) )
+	{
+		return false;
+	}
 	const std::uint32_t blockKey = GetBlockKey( worldNumber, blockNumber );
 
 	LiveStaticEntry_st liveStatic;
@@ -2146,6 +2369,36 @@ auto LiveStatic::Add( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_
 	liveStatic.hue = hue;
 
 	liveStatics[blockKey].push_back( liveStatic );
+
+	std::vector<std::uint8_t> staticsData = BuildStaticsForBlock( worldNumber, blockNumber );
+
+	if( !WriteBlockToStaticsFile( worldNumber, blockNumber, staticsData ))
+	{
+		liveStatics[blockKey].pop_back();
+
+		if( liveStatics[blockKey].empty() )
+		{
+			liveStatics.erase( blockKey );
+		}
+
+		return false;
+	}
+
+	Console.Print( oldstrutil::format(
+		"LiveStatic write complete: world %u block %u bytes %u",
+		worldNumber,
+		blockNumber,
+		staticsData.size() ));
+
+
+	if( Map != nullptr )
+	{
+		Map->ReloadStaticBlock( worldNumber, blockNumber, staticsData );
+	}
+
+	// Clear overlays BEFORE sending
+	liveStatics.erase( blockKey );
+	removedStatics.erase( blockKey );
 
 	SendBlockUpdate( worldNumber, blockNumber );
 	return true;
@@ -2158,37 +2411,103 @@ auto LiveStatic::Remove( std::int16_t x, std::int16_t y, std::int8_t z, std::uin
 		return false;
 	}
 
-	const std::uint32_t blockNumber = GetBlockNumber( x, y );
+	std::uint32_t blockNumber = 0;
+	if( !GetBlockNumber( x, y, worldNumber, blockNumber ) )
+	{
+		return false;
+	}
 	const std::uint32_t blockKey = GetBlockKey( worldNumber, blockNumber );
+	const std::uint8_t xOffset = static_cast<std::uint8_t>( x % 8 );
+	const std::uint8_t yOffset = static_cast<std::uint8_t>( y % 8 );
 
-	auto blockItr = liveStatics.find( blockKey );
-	if( blockItr == liveStatics.end() )
+	LiveStaticEntry_st removedStatic;
+	removedStatic.tileId = tileId;
+	removedStatic.xOffset = xOffset;
+	removedStatic.yOffset = yOffset;
+	removedStatic.z = z;
+	removedStatic.hue = hue;
+
+	bool removedLiveStatic = false;
+
+	auto liveBlockItr = liveStatics.find( blockKey );
+	if( liveBlockItr != liveStatics.end() )
+	{
+		auto& blockStatics = liveBlockItr->second;
+
+		for( auto liveStatic = blockStatics.begin(); liveStatic != blockStatics.end(); ++liveStatic )
+		{
+			if( liveStatic->tileId == tileId && liveStatic->xOffset == xOffset && liveStatic->yOffset == yOffset && liveStatic->z == z && liveStatic->hue == hue )
+			{
+				blockStatics.erase( liveStatic );
+				removedLiveStatic = true;
+				break;
+			}
+		}
+
+		if( blockStatics.empty() )
+		{
+			liveStatics.erase( liveBlockItr );
+		}
+	}
+
+	removedStatics[blockKey].push_back( removedStatic );
+
+	std::vector<std::uint8_t> staticsData = BuildStaticsForBlock( worldNumber, blockNumber );
+
+	if( !WriteBlockToStaticsFile( worldNumber, blockNumber, staticsData ))
+	{
+		auto removedBlockItr = removedStatics.find( blockKey );
+		if( removedBlockItr != removedStatics.end() && !removedBlockItr->second.empty() )
+		{
+			removedBlockItr->second.pop_back();
+
+			if( removedBlockItr->second.empty() )
+			{
+				removedStatics.erase( removedBlockItr );
+			}
+		}
+
+		if( removedLiveStatic )
+		{
+			liveStatics[blockKey].push_back( removedStatic );
+		}
+
+		return false;
+	}
+
+	if( Map != nullptr )
+	{
+		Map->ReloadStaticBlock( worldNumber, blockNumber, staticsData );
+	}
+
+	liveStatics.erase( blockKey );
+	removedStatics.erase( blockKey );
+
+	SendBlockUpdate( worldNumber, blockNumber );
+
+	return true;
+}
+
+auto UltimaMap::ReloadArtBlock( std::uint32_t blockNumber, const std::vector<std::uint8_t>& staticsData ) -> bool
+{
+	if( blockNumber >= _art.size() )
 	{
 		return false;
 	}
 
-	const std::uint8_t xOffset = static_cast<std::uint8_t>( x % 8 );
-	const std::uint8_t yOffset = static_cast<std::uint8_t>( y % 8 );
-
-	auto& blockStatics = blockItr->second;
-
-	for( auto liveStatic = blockStatics.begin(); liveStatic != blockStatics.end(); ++liveStatic )
+	if( staticsData.empty() )
 	{
-		if( liveStatic->tileId == tileId && liveStatic->xOffset == xOffset && liveStatic->yOffset == yOffset && liveStatic->z == z && liveStatic->hue == hue )
-		{
-			blockStatics.erase( liveStatic );
-
-			if( blockStatics.empty() )
-			{
-				liveStatics.erase( blockItr );
-			}
-
-			SendBlockUpdate( worldNumber, blockNumber );
-			return true;
-		}
+		_art[blockNumber].Clear();
+		return true;
 	}
 
-	return false;
+	_art[blockNumber].LoadArtBlock(
+		static_cast<int>( staticsData.size() ),
+		const_cast<std::uint8_t *>( staticsData.data() ),
+		tileInfo
+	);
+
+	return true;
 }
 
 auto LiveStatic::BuildStaticsForBlock( std::uint8_t worldNumber, std::uint32_t blockNumber ) const -> std::vector<std::uint8_t>
@@ -2197,7 +2516,19 @@ auto LiveStatic::BuildStaticsForBlock( std::uint8_t worldNumber, std::uint32_t b
 
 	if( Map != nullptr )
 	{
-		const std::uint32_t mapHeightInBlocks = 4096 / 8;
+		const auto blockDimensions = Map->BlockDimensionsForWorld( worldNumber );
+		const std::uint32_t mapWidthInBlocks = blockDimensions.first;
+		const std::uint32_t mapHeightInBlocks = blockDimensions.second;
+
+		if( mapWidthInBlocks == 0 || mapHeightInBlocks == 0 )
+		{
+			return staticsData;
+		}
+
+		if( blockNumber >= ( mapWidthInBlocks * mapHeightInBlocks ) )
+		{
+			return staticsData;
+		}
 		const std::int16_t blockX = static_cast<std::int16_t>( blockNumber / mapHeightInBlocks );
 		const std::int16_t blockY = static_cast<std::int16_t>( blockNumber % mapHeightInBlocks );
 
@@ -2217,13 +2548,34 @@ auto LiveStatic::BuildStaticsForBlock( std::uint8_t worldNumber, std::uint32_t b
 						continue;
 					}
 
-					staticsData.push_back( static_cast<std::uint8_t>( baseStatic.tileId & 0xFF ));
-					staticsData.push_back( static_cast<std::uint8_t>(( baseStatic.tileId >> 8 ) & 0xFF ));
+					const std::uint32_t blockKey = GetBlockKey( worldNumber, blockNumber );
+					auto removedBlockItr = removedStatics.find( blockKey );
+					bool skipStatic = false;
+
+					if( removedBlockItr != removedStatics.end() )
+					{
+						for( const auto& removedStatic : removedBlockItr->second )
+						{
+							if( removedStatic.tileId == baseStatic.tileId && removedStatic.xOffset == xOffset && removedStatic.yOffset == yOffset && removedStatic.z == baseStatic.altitude && removedStatic.hue == baseStatic.staticHue )
+							{
+								skipStatic = true;
+								break;
+							}
+						}
+					}
+
+					if( skipStatic )
+					{
+						continue;
+					}
+
+					staticsData.push_back( static_cast< std::uint8_t >( baseStatic.tileId & 0xFF ) );
+					staticsData.push_back( static_cast< std::uint8_t >( ( baseStatic.tileId >> 8 ) & 0xFF ) );
 					staticsData.push_back( xOffset );
 					staticsData.push_back( yOffset );
-					staticsData.push_back( static_cast<std::uint8_t>( baseStatic.altitude ));
-					staticsData.push_back( static_cast<std::uint8_t>( baseStatic.staticHue & 0xFF ));
-					staticsData.push_back( static_cast<std::uint8_t>(( baseStatic.staticHue >> 8 ) & 0xFF ));
+					staticsData.push_back( static_cast< std::uint8_t >( baseStatic.altitude ) );
+					staticsData.push_back( static_cast< std::uint8_t >( baseStatic.staticHue & 0xFF ) );
+					staticsData.push_back( static_cast< std::uint8_t >( ( baseStatic.staticHue >> 8 ) & 0xFF ) );
 				}
 			}
 		}
@@ -2254,11 +2606,6 @@ auto LiveStatic::BuildStaticsForBlock( std::uint8_t worldNumber, std::uint32_t b
 auto LiveStatic::SendBlockUpdate( std::uint8_t worldNumber, std::uint32_t blockNumber ) -> void
 {
 	const auto staticsData = BuildStaticsForBlock( worldNumber, blockNumber );
-
-	if( staticsData.empty() )
-	{
-		return;
-	}
 
 	CPUltimaLiveStaticsUpdate staticsUpdate( blockNumber, worldNumber, staticsData );
 

@@ -98,7 +98,9 @@ public:
 	auto LoadUOPTerrainFile( const std::string &fileName) -> bool;
 	auto LoadMulTerrainFile( const std::string &fileName) -> bool;
 	auto LoadArt( const std::string &mulFile, const std::string &idxFile ) -> bool;
+	auto ReloadArtBlock( std::uint32_t blockNumber, const std::vector<std::uint8_t>& staticsData ) -> bool;
 	auto ApplyDiff( const std::string &difflPath, const std::string &diffiPath, const std::string &diffPath ) -> int;
+	auto BuildTerrainDataForBlock( std::uint32_t blockNumber ) const -> std::vector<std::uint8_t>;
 	auto ApplyTerrainDiff( const std::string &difflPath, const std::string &diffPath ) -> int;
 	
 	auto BlockAndIndexFor( int x, int y ) const -> std::tuple<int, int, int>;
@@ -140,15 +142,20 @@ class LiveStatic
 {
 private:
 	std::map<std::uint32_t, std::vector<LiveStaticEntry_st>> liveStatics;
+	std::map<std::uint32_t, std::vector<LiveStaticEntry_st>> removedStatics;
+	std::map<std::uint32_t, UI32> lastBlockQueryTime;
 
 	auto GetBlockKey( std::uint8_t worldNumber, std::uint32_t blockNumber ) const -> std::uint32_t;
-	auto GetBlockNumber( std::int16_t x, std::int16_t y ) const -> std::uint32_t;
-	auto SendBlockUpdate( std::uint8_t worldNumber, std::uint32_t blockNumber ) -> void;
+	auto GetBlockNumber( std::int16_t x, std::int16_t y, std::uint8_t worldNumber, std::uint32_t& blockNumber ) const -> bool;	auto SendBlockUpdate( std::uint8_t worldNumber, std::uint32_t blockNumber ) -> void;
+	auto WriteBlockToStaticsFile( std::uint8_t worldNumber, std::uint32_t blockNumber, const std::vector<std::uint8_t>& staticsData ) -> bool;
+	auto QueueBlockRefresh( std::uint8_t worldNumber, std::uint32_t blockNumber ) -> void;
 
 public:
 	auto Add( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t tileId, std::uint16_t hue ) -> bool;
 	auto Remove( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t tileId, std::uint16_t hue ) -> bool;
 	auto BuildStaticsForBlock( std::uint8_t worldNumber, std::uint32_t blockNumber ) const -> std::vector<std::uint8_t>;
+	auto BuildChecksumDataForBlock( std::uint8_t worldNumber, std::uint32_t blockNumber ) const -> std::vector<std::uint8_t>;
+	auto CalculateChecksum( const std::vector<std::uint8_t>& data ) const -> std::uint16_t;
 };
 
 extern LiveStatic *LiveStatics;
@@ -169,12 +176,16 @@ private:
 	auto LoadTileData( const std::string &uoDir ) -> void;
 	auto LoadMultis( const std::string &uoDir ) -> void;
 	auto LoadMapAndStatics( const std::map<int, MapDfnData_st> &info ) -> void;
+	std::map<int, MapDfnData_st> mapDefinitions;
 
 public:
 	CMulHandler() = default;
 	auto Load() -> void;
 	auto ArtAt( std::int16_t x, std::int16_t y, std::uint8_t world ) -> std::vector<Tile_st>&;
 	auto ArtAt( std::int16_t x, std::int16_t y, std::uint8_t world ) const -> const std::vector<Tile_st>&;
+	auto ReloadStaticBlock( std::uint8_t worldNumber, std::uint32_t blockNumber, const std::vector<std::uint8_t>& staticsData ) -> bool;
+	auto BuildTerrainDataForBlock( std::uint8_t worldNumber, std::uint32_t blockNumber ) const -> std::vector<std::uint8_t>;
+	auto BlockDimensionsForWorld( std::uint8_t worldNumber ) const -> std::pair<std::uint32_t, std::uint32_t>;
 	auto SizeOfMap( std::uint8_t worldNumber ) const -> std::pair<int, int>;
 	auto DiffCountForMap( std::uint8_t worldNumber ) const -> std::pair<int, int>;
 
@@ -189,6 +200,7 @@ public:
 	auto CheckStaticFlag( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, TileFlags toCheck, UI16 &foundTileId, bool checkSpawnSurface = false ) -> bool;
 	auto CheckDynamicFlag( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, TileFlags toCheck, UI16 &foundTileId ) -> bool;
 	auto CheckTileFlag( std::uint16_t itemId, TileFlags flagToCheck) -> bool;
+	auto StaticFilesForWorld( std::uint8_t worldNumber ) const -> const MapDfnData_st *;
 	
 	// height functions
 	auto StaticTop( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::int8_t maxZ ) -> std::int8_t;

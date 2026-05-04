@@ -1298,36 +1298,69 @@ bool CPIUltimaLive::Handle( void )
 
 		case 0xFF:
 		{
-			Console.Print( oldstrutil::format(
-				"UltimaLive hash response received: block %u map %u",
-				blockNumber,
-				mapNumber
-			) );
-
-			if( LiveStatics == nullptr )
+			if( LiveStatics == nullptr || Map == nullptr )
 			{
 				return true;
 			}
 
-			const std::uint32_t mapHeightInBlocks = 4096 / 8;
+			std::vector<UI16> clientChecksums;
+
+			for( UI32 i = 0; i < 25; ++i )
+			{
+				clientChecksums.push_back( tSock->GetWord( 15 + ( i * 2 ) ) );
+			}
+
+			const auto blockDimensions = Map->BlockDimensionsForWorld( mapNumber );
+			const std::uint32_t mapWidthInBlocks = blockDimensions.first;
+			const std::uint32_t mapHeightInBlocks = blockDimensions.second;
+
+			if( mapWidthInBlocks == 0 || mapHeightInBlocks == 0 )
+			{
+				return true;
+			}
+
 			const std::int32_t centerBlockX = static_cast< std::int32_t >( blockNumber / mapHeightInBlocks );
 			const std::int32_t centerBlockY = static_cast< std::int32_t >( blockNumber % mapHeightInBlocks );
 
+			if( centerBlockX < 0 || centerBlockY < 0 || centerBlockX >= static_cast< std::int32_t >( mapWidthInBlocks ) || centerBlockY >= static_cast< std::int32_t >( mapHeightInBlocks ) )
+			{
+				return true;
+			}
+
 			for( std::int32_t blockXOffset = -2; blockXOffset <= 2; ++blockXOffset )
 			{
+				std::int32_t blockX = ( centerBlockX + blockXOffset ) % static_cast< std::int32_t >( mapWidthInBlocks );
+
+				if( blockX < 0 )
+				{
+					blockX += static_cast< std::int32_t >( mapWidthInBlocks );
+				}
+
 				for( std::int32_t blockYOffset = -2; blockYOffset <= 2; ++blockYOffset )
 				{
-					const std::int32_t blockX = centerBlockX + blockXOffset;
-					const std::int32_t blockY = centerBlockY + blockYOffset;
+					std::int32_t blockY = ( centerBlockY + blockYOffset ) % static_cast< std::int32_t >( mapHeightInBlocks );
 
-					if( blockX < 0 || blockY < 0 )
+					if( blockY < 0 )
+					{
+						blockY += static_cast< std::int32_t >( mapHeightInBlocks );
+					}
+
+					const UI32 checksumIndex = static_cast< UI32 >( ( blockXOffset + 2 ) * 5 + ( blockYOffset + 2 ) );
+					const std::uint32_t targetBlockNumber = static_cast< std::uint32_t >( blockX ) * mapHeightInBlocks + static_cast< std::uint32_t >( blockY );
+
+					const std::vector<UI08> checksumData = LiveStatics->BuildChecksumDataForBlock( mapNumber, targetBlockNumber );
+					const UI16 serverChecksum = LiveStatics->CalculateChecksum( checksumData );
+
+					if( checksumIndex < clientChecksums.size() && clientChecksums[ checksumIndex ] == serverChecksum )
 					{
 						continue;
 					}
 
-					const std::uint32_t targetBlockNumber = static_cast< std::uint32_t >( blockX ) * mapHeightInBlocks + static_cast< std::uint32_t >( blockY );
-					const std::vector<UI08> staticsData = LiveStatics->BuildStaticsForBlock( mapNumber, targetBlockNumber );
+					const std::vector<UI08> terrainData = Map->BuildTerrainDataForBlock( mapNumber, targetBlockNumber );
+					CPUltimaLiveTerrainUpdate terrainUpdate( targetBlockNumber, mapNumber, terrainData );
+					tSock->Send( &terrainUpdate );
 
+					const std::vector<UI08> staticsData = LiveStatics->BuildStaticsForBlock( mapNumber, targetBlockNumber );
 					CPUltimaLiveStaticsUpdate staticsUpdate( targetBlockNumber, mapNumber, staticsData );
 					tSock->Send( &staticsUpdate );
 				}

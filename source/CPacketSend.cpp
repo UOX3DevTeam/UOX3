@@ -10285,6 +10285,63 @@ void CPUltimaLiveStaticsUpdate::Log( std::ostream& outStream, bool fullHeader )
 	CPUOXBuffer::Log( outStream, false );
 }
 
+void CPUltimaLiveTerrainUpdate::InternalReset( void )
+{
+	pStream.ReserveSize( 201 );
+
+	pStream.WriteByte( 0, 0x40 );
+	pStream.WriteLong( 1, 0 );
+
+	for( UI32 i = 0; i < 192; ++i )
+	{
+		pStream.WriteByte( 5 + i, 0x00 );
+	}
+
+	pStream.WriteByte( 197, 0x00 );
+	pStream.WriteByte( 198, 0x00 );
+	pStream.WriteByte( 199, 0x00 );
+	pStream.WriteByte( 200, 0x00 );
+}
+
+CPUltimaLiveTerrainUpdate::CPUltimaLiveTerrainUpdate()
+{
+	InternalReset();
+}
+
+CPUltimaLiveTerrainUpdate::CPUltimaLiveTerrainUpdate( UI32 blockNumber, UI08 mapNumber, const std::vector<UI08>& terrainData )
+{
+	InternalReset();
+
+	pStream.WriteLong( 1, blockNumber );
+
+	for( UI32 i = 0; i < 192; ++i )
+	{
+		UI08 value = 0;
+
+		if( i < terrainData.size() )
+		{
+			value = terrainData[i];
+		}
+
+		pStream.WriteByte( 5 + i, value );
+	}
+
+	pStream.WriteByte( 200, mapNumber );
+}
+
+void CPUltimaLiveTerrainUpdate::Log( std::ostream& outStream, bool fullHeader )
+{
+	if( fullHeader )
+	{
+		outStream << "[SEND]Packet   : CPUltimaLiveTerrainUpdate 0x40 --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
+	}
+
+	outStream << "Block Number   : " << pStream.GetLong( 1 ) << std::endl;
+	outStream << "Map Number     : " << static_cast<SI16>( pStream.GetByte( 200 )) << std::endl;
+
+	CPUOXBuffer::Log( outStream, false );
+}
+
 void CPUltimaLiveBlockQuery::InternalReset( void )
 {
 	pStream.ReserveSize( 15 );
