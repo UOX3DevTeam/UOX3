@@ -3008,6 +3008,10 @@ auto CChar::Teleport() -> void
 	}
 
 	CheckRegion( mSock, ( *this ), forceWeatherupdate );
+	if( mSock != nullptr && LiveStatics != nullptr && !IsNpc() )
+	{
+		LiveStatics->QueueMovementBlockRefresh( mSock );
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o

@@ -1356,10 +1356,6 @@ bool CPIUltimaLive::Handle( void )
 						continue;
 					}
 
-					const std::vector<UI08> terrainData = Map->BuildTerrainDataForBlock( mapNumber, targetBlockNumber );
-					CPUltimaLiveTerrainUpdate terrainUpdate( targetBlockNumber, mapNumber, terrainData );
-					tSock->Send( &terrainUpdate );
-
 					const std::vector<UI08> staticsData = LiveStatics->BuildStaticsForBlock( mapNumber, targetBlockNumber );
 					CPUltimaLiveStaticsUpdate staticsUpdate( targetBlockNumber, mapNumber, staticsData );
 					tSock->Send( &staticsUpdate );

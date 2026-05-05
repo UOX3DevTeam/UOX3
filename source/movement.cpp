@@ -440,6 +440,11 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 		}
 
 		MoveCharForDirection( c, myx, myy, myz );
+		if( mSock != nullptr && LiveStatics != nullptr && !c->IsNpc() )
+		{
+			LiveStatics->QueueMovementBlockRefresh( mSock );
+		}
+
 
 		c->SetPathFail( 0 );
 		if( c->GetNpcWander() == WT_FLEE || c->GetNpcWander() == WT_SCARED )

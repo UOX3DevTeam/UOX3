@@ -144,9 +144,11 @@ private:
 	std::map<std::uint32_t, std::vector<LiveStaticEntry_st>> liveStatics;
 	std::map<std::uint32_t, std::vector<LiveStaticEntry_st>> removedStatics;
 	std::map<std::uint32_t, UI32> lastBlockQueryTime;
+	std::map<SERIAL, std::uint32_t> lastMovementBlock;
 
 	auto GetBlockKey( std::uint8_t worldNumber, std::uint32_t blockNumber ) const -> std::uint32_t;
-	auto GetBlockNumber( std::int16_t x, std::int16_t y, std::uint8_t worldNumber, std::uint32_t& blockNumber ) const -> bool;	auto SendBlockUpdate( std::uint8_t worldNumber, std::uint32_t blockNumber ) -> void;
+	auto GetBlockNumber( std::int16_t x, std::int16_t y, std::uint8_t worldNumber, std::uint32_t& blockNumber ) const -> bool;
+	auto SendBlockUpdate( std::uint8_t worldNumber, std::uint32_t blockNumber ) -> void;
 	auto WriteBlockToStaticsFile( std::uint8_t worldNumber, std::uint32_t blockNumber, const std::vector<std::uint8_t>& staticsData ) -> bool;
 	auto QueueBlockRefresh( std::uint8_t worldNumber, std::uint32_t blockNumber ) -> void;
 
@@ -156,6 +158,8 @@ public:
 	auto BuildStaticsForBlock( std::uint8_t worldNumber, std::uint32_t blockNumber ) const -> std::vector<std::uint8_t>;
 	auto BuildChecksumDataForBlock( std::uint8_t worldNumber, std::uint32_t blockNumber ) const -> std::vector<std::uint8_t>;
 	auto CalculateChecksum( const std::vector<std::uint8_t>& data ) const -> std::uint16_t;
+	auto QueueMovementBlockRefresh( CSocket *socket ) -> void;
+	auto ReplaceTreeStatic( std::int16_t x, std::int16_t y, std::int16_t z, std::uint8_t worldNumber, std::uint16_t oldTileID, std::uint16_t newTileID, std::uint16_t newHue ) -> bool;
 };
 
 extern LiveStatic *LiveStatics;
@@ -186,6 +190,7 @@ public:
 	auto ReloadStaticBlock( std::uint8_t worldNumber, std::uint32_t blockNumber, const std::vector<std::uint8_t>& staticsData ) -> bool;
 	auto BuildTerrainDataForBlock( std::uint8_t worldNumber, std::uint32_t blockNumber ) const -> std::vector<std::uint8_t>;
 	auto BlockDimensionsForWorld( std::uint8_t worldNumber ) const -> std::pair<std::uint32_t, std::uint32_t>;
+	auto GetLoadedMapDefinitions() const -> std::vector<std::pair<UI08, MapDfnData_st>>;
 	auto SizeOfMap( std::uint8_t worldNumber ) const -> std::pair<int, int>;
 	auto DiffCountForMap( std::uint8_t worldNumber ) const -> std::pair<int, int>;
 

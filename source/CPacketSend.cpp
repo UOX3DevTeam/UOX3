@@ -10478,11 +10478,26 @@ void CPUltimaLiveLoginConfirm::Log( std::ostream& outStream, bool fullHeader )
 
 void CPUltimaLiveMapDefinitions::InternalReset( void )
 {
-	const UI32 mapDefinitionCount = 1;
+	std::vector<std::pair<UI08, MapDfnData_st>> mapDefinitions;
+
+	if( Map != nullptr )
+	{
+		mapDefinitions = Map->GetLoadedMapDefinitions();
+	}
+
+	if( mapDefinitions.empty() )
+	{
+		MapDfnData_st defaultMap;
+		defaultMap.width = 7168;
+		defaultMap.height = 4096;
+		mapDefinitions.push_back( std::make_pair( static_cast<UI08>( 0 ), defaultMap ));
+	}
+
+	const UI32 mapDefinitionCount = static_cast<UI32>( mapDefinitions.size() );
 	const UI32 mapDefinitionLength = mapDefinitionCount * 9;
-	const UI32 staticCount = ( ( mapDefinitionLength + 6 ) / 7 );
+	const UI32 staticCount = (( mapDefinitionLength + 6 ) / 7 );
 	const UI32 paddedDefinitionLength = staticCount * 7;
-	const UI16 packetSize = static_cast< UI16 >( 15 + paddedDefinitionLength );
+	const UI16 packetSize = static_cast<UI16>( 15 + paddedDefinitionLength );
 
 	pStream.ReserveSize( packetSize );
 	pStream.WriteByte( 0, 0x3F );
@@ -10493,11 +10508,18 @@ void CPUltimaLiveMapDefinitions::InternalReset( void )
 	pStream.WriteByte( 13, 0x01 );
 	pStream.WriteByte( 14, 0x00 );
 
-	pStream.WriteByte( 15, 0 );
-	pStream.WriteShort( 16, 7168 );
-	pStream.WriteShort( 18, 4096 );
-	pStream.WriteShort( 20, 7168 );
-	pStream.WriteShort( 22, 4096 );
+	for( UI32 mapIndex = 0; mapIndex < mapDefinitionCount; ++mapIndex )
+	{
+		const UI32 packetOffset = 15 + ( mapIndex * 9 );
+		const UI08 mapNumber = mapDefinitions[mapIndex].first;
+		const MapDfnData_st& mapDefinition = mapDefinitions[mapIndex].second;
+
+		pStream.WriteByte( packetOffset, mapNumber );
+		pStream.WriteShort( packetOffset + 1, static_cast<UI16>( mapDefinition.width ));
+		pStream.WriteShort( packetOffset + 3, static_cast<UI16>( mapDefinition.height ));
+		pStream.WriteShort( packetOffset + 5, static_cast<UI16>( mapDefinition.width ));
+		pStream.WriteShort( packetOffset + 7, static_cast<UI16>( mapDefinition.height ));
+	}
 
 	for( UI32 i = mapDefinitionLength; i < paddedDefinitionLength; ++i )
 	{
