@@ -2208,9 +2208,9 @@ auto UltimaMap::BuildTerrainDataForBlock( std::uint32_t blockNumber ) const -> s
 		{
 			const Tile_st& terrainTile = terrainBlock.TerrainTileAt( xOffset, yOffset );
 
-			terrainData.push_back( static_cast<std::uint8_t>( terrainTile.tileId & 0xFF ));
-			terrainData.push_back( static_cast<std::uint8_t>(( terrainTile.tileId >> 8 ) & 0xFF ));
-			terrainData.push_back( static_cast<std::uint8_t>( terrainTile.altitude ));
+			terrainData.push_back( static_cast< std::uint8_t >( terrainTile.tileId & 0xFF ) );
+			terrainData.push_back( static_cast< std::uint8_t >( ( terrainTile.tileId >> 8 ) & 0xFF ) );
+			terrainData.push_back( static_cast< std::uint8_t >( terrainTile.altitude ) );
 		}
 	}
 
@@ -2493,14 +2493,7 @@ auto LiveStatic::Add( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_
 	liveStatics.erase( blockKey );
 	removedStatics.erase( blockKey );
 
-	if( staticsData.empty() )
-	{
-		QueueBlockRefresh( worldNumber, blockNumber );
-	}
-	else
-	{
-		SendBlockUpdate( worldNumber, blockNumber );
-	}
+	SendBlockUpdate( worldNumber, blockNumber );
 	return true;
 }
 
@@ -2583,27 +2576,12 @@ auto LiveStatic::Remove( std::int16_t x, std::int16_t y, std::int8_t z, std::uin
 	liveStatics.erase( blockKey );
 	removedStatics.erase( blockKey );
 
-	//if( staticsData.empty() )
-	//{
-	//	QueueBlockRefresh( worldNumber, blockNumber );
-	//}
-	//else
-	//{
-		SendBlockUpdate( worldNumber, blockNumber );
-	//}
+	SendBlockUpdate( worldNumber, blockNumber );
 
 	return true;
 }
 
-auto LiveStatic::ReplaceTreeStatic(
-	std::int16_t x,
-	std::int16_t y,
-	std::int16_t z,
-	std::uint8_t worldNumber,
-	std::uint16_t oldTileID,
-	std::uint16_t newTileID,
-	std::uint16_t newHue
-) -> bool
+auto LiveStatic::ReplaceTreeStatic( std::int16_t x, std::int16_t y, std::int16_t z, std::uint8_t worldNumber, std::uint16_t oldTileID, std::uint16_t newTileID, std::uint16_t newHue ) -> bool
 {
 	if( Map == nullptr )
 	{
@@ -2739,7 +2717,16 @@ auto UltimaMap::ReloadArtBlock( std::uint32_t blockNumber, const std::vector<std
 
 auto LiveStatic::BuildStaticsForBlock( std::uint8_t worldNumber, std::uint32_t blockNumber ) const -> std::vector<std::uint8_t>
 {
-	std::vector<std::uint8_t> staticsData;
+	struct StaticSortEntry_st
+	{
+		std::uint16_t tileId;
+		std::uint8_t xOffset;
+		std::uint8_t yOffset;
+		std::int8_t z;
+		std::uint16_t hue;
+	};
+
+	std::vector<StaticSortEntry_st> blockStatics;
 
 	if( Map != nullptr )
 	{
@@ -2749,15 +2736,19 @@ auto LiveStatic::BuildStaticsForBlock( std::uint8_t worldNumber, std::uint32_t b
 
 		if( mapWidthInBlocks == 0 || mapHeightInBlocks == 0 )
 		{
-			return staticsData;
+			return std::vector<std::uint8_t>();
 		}
 
 		if( blockNumber >= ( mapWidthInBlocks * mapHeightInBlocks ) )
 		{
-			return staticsData;
+			return std::vector<std::uint8_t>();
 		}
+
 		const std::int16_t blockX = static_cast<std::int16_t>( blockNumber / mapHeightInBlocks );
 		const std::int16_t blockY = static_cast<std::int16_t>( blockNumber % mapHeightInBlocks );
+		const std::uint32_t blockKey = GetBlockKey( worldNumber, blockNumber );
+
+		auto removedBlockItr = removedStatics.find( blockKey );
 
 		for( std::uint8_t xOffset = 0; xOffset < 8; ++xOffset )
 		{
@@ -2775,8 +2766,6 @@ auto LiveStatic::BuildStaticsForBlock( std::uint8_t worldNumber, std::uint32_t b
 						continue;
 					}
 
-					const std::uint32_t blockKey = GetBlockKey( worldNumber, blockNumber );
-					auto removedBlockItr = removedStatics.find( blockKey );
 					bool skipStatic = false;
 
 					if( removedBlockItr != removedStatics.end() )
@@ -2799,13 +2788,14 @@ auto LiveStatic::BuildStaticsForBlock( std::uint8_t worldNumber, std::uint32_t b
 						continue;
 					}
 
-					staticsData.push_back( static_cast< std::uint8_t >( baseStatic.tileId & 0xFF ) );
-					staticsData.push_back( static_cast< std::uint8_t >( ( baseStatic.tileId >> 8 ) & 0xFF ) );
-					staticsData.push_back( xOffset );
-					staticsData.push_back( yOffset );
-					staticsData.push_back( static_cast< std::uint8_t >( baseStatic.altitude ) );
-					staticsData.push_back( static_cast< std::uint8_t >( baseStatic.staticHue & 0xFF ) );
-					staticsData.push_back( static_cast< std::uint8_t >( ( baseStatic.staticHue >> 8 ) & 0xFF ) );
+					StaticSortEntry_st staticEntry;
+					staticEntry.tileId = static_cast<std::uint16_t>( baseStatic.tileId );
+					staticEntry.xOffset = xOffset;
+					staticEntry.yOffset = yOffset;
+					staticEntry.z = static_cast<std::int8_t>( baseStatic.altitude );
+					staticEntry.hue = static_cast<std::uint16_t>( baseStatic.staticHue );
+
+					blockStatics.push_back( staticEntry );
 				}
 			}
 		}
@@ -2814,30 +2804,99 @@ auto LiveStatic::BuildStaticsForBlock( std::uint8_t worldNumber, std::uint32_t b
 	const std::uint32_t blockKey = GetBlockKey( worldNumber, blockNumber );
 	auto blockItr = liveStatics.find( blockKey );
 
-	if( blockItr == liveStatics.end() )
+	if( blockItr != liveStatics.end() )
 	{
-		return staticsData;
+		for( const auto& liveStatic : blockItr->second )
+		{
+			StaticSortEntry_st staticEntry;
+			staticEntry.tileId = liveStatic.tileId;
+			staticEntry.xOffset = liveStatic.xOffset;
+			staticEntry.yOffset = liveStatic.yOffset;
+			staticEntry.z = liveStatic.z;
+			staticEntry.hue = liveStatic.hue;
+
+			blockStatics.push_back( staticEntry );
+		}
 	}
 
-	for( const auto& liveStatic : blockItr->second )
+	std::sort( blockStatics.begin(), blockStatics.end(),
+		[]( const StaticSortEntry_st& leftStatic, const StaticSortEntry_st& rightStatic ) -> bool
+		{
+			if( leftStatic.xOffset != rightStatic.xOffset )
+			{
+				return leftStatic.xOffset < rightStatic.xOffset;
+			}
+
+			if( leftStatic.yOffset != rightStatic.yOffset )
+			{
+				return leftStatic.yOffset < rightStatic.yOffset;
+			}
+
+			if( leftStatic.z != rightStatic.z )
+			{
+				return leftStatic.z < rightStatic.z;
+			}
+
+			if( leftStatic.tileId != rightStatic.tileId )
+			{
+				return leftStatic.tileId < rightStatic.tileId;
+			}
+
+			return leftStatic.hue < rightStatic.hue;
+		}
+	);
+
+	std::vector<std::uint8_t> staticsData;
+	staticsData.reserve( blockStatics.size() * 7 );
+
+	for( const auto& staticEntry : blockStatics )
 	{
-		staticsData.push_back( static_cast<std::uint8_t>( liveStatic.tileId & 0xFF ));
-		staticsData.push_back( static_cast<std::uint8_t>(( liveStatic.tileId >> 8 ) & 0xFF ));
-		staticsData.push_back( liveStatic.xOffset );
-		staticsData.push_back( liveStatic.yOffset );
-		staticsData.push_back( static_cast<std::uint8_t>( liveStatic.z ));
-		staticsData.push_back( static_cast<std::uint8_t>( liveStatic.hue & 0xFF ));
-		staticsData.push_back( static_cast<std::uint8_t>(( liveStatic.hue >> 8 ) & 0xFF ));
+		staticsData.push_back( static_cast<std::uint8_t>( staticEntry.tileId & 0xFF ));
+		staticsData.push_back( static_cast<std::uint8_t>(( staticEntry.tileId >> 8 ) & 0xFF ));
+		staticsData.push_back( staticEntry.xOffset );
+		staticsData.push_back( staticEntry.yOffset );
+		staticsData.push_back( static_cast<std::uint8_t>( staticEntry.z ));
+		staticsData.push_back( static_cast<std::uint8_t>( staticEntry.hue & 0xFF ));
+		staticsData.push_back( static_cast<std::uint8_t>(( staticEntry.hue >> 8 ) & 0xFF ));
 	}
 
 	return staticsData;
 }
 
+auto LiveStatic::HasPendingStaticRefresh( std::uint8_t worldNumber, std::uint32_t blockNumber, SERIAL playerSerial ) const -> bool
+{
+	const std::uint32_t blockKey = GetBlockKey( worldNumber, blockNumber );
+	const auto blockItr = pendingStaticRefreshBlocks.find( blockKey );
+
+	if( blockItr == pendingStaticRefreshBlocks.end() )
+	{
+		return false;
+	}
+
+	return blockItr->second.find( playerSerial ) != blockItr->second.end();
+}
+
+auto LiveStatic::ClearPendingStaticRefresh( std::uint8_t worldNumber, std::uint32_t blockNumber, SERIAL playerSerial ) -> void
+{
+	const std::uint32_t blockKey = GetBlockKey( worldNumber, blockNumber );
+	auto blockItr = pendingStaticRefreshBlocks.find( blockKey );
+
+	if( blockItr == pendingStaticRefreshBlocks.end() )
+	{
+		return;
+	}
+
+	blockItr->second.erase( playerSerial );
+
+	if( blockItr->second.empty() )
+	{
+		pendingStaticRefreshBlocks.erase( blockItr );
+	}
+}
+
 auto LiveStatic::SendBlockUpdate( std::uint8_t worldNumber, std::uint32_t blockNumber ) -> void
 {
-	const auto staticsData = BuildStaticsForBlock( worldNumber, blockNumber );
-
-	CPUltimaLiveStaticsUpdate staticsUpdate( blockNumber, worldNumber, staticsData );
+	const std::uint32_t blockKey = GetBlockKey( worldNumber, blockNumber );
 
 	for( const auto& tSock : Network->connClients )
 	{
@@ -2846,16 +2905,15 @@ auto LiveStatic::SendBlockUpdate( std::uint8_t worldNumber, std::uint32_t blockN
 			continue;
 		}
 
-		if( tSock->CurrcharObj()->WorldNumber() != worldNumber )
+		CChar *pChar = tSock->CurrcharObj();
+
+		if( pChar->WorldNumber() != worldNumber )
 		{
 			continue;
 		}
 
-		tSock->Send( &staticsUpdate );
+		pendingStaticRefreshBlocks[blockKey].insert( pChar->GetSerial() );
 	}
-}
 
-//auto LiveStatic::SendBlockUpdate( std::uint8_t worldNumber, std::uint32_t blockNumber ) -> void
-//{
-//	QueueBlockRefresh( worldNumber, blockNumber );
-//}
+	QueueBlockRefresh( worldNumber, blockNumber );
+}

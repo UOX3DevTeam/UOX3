@@ -145,6 +145,7 @@ private:
 	std::map<std::uint32_t, std::vector<LiveStaticEntry_st>> removedStatics;
 	std::map<std::uint32_t, UI32> lastBlockQueryTime;
 	std::map<SERIAL, std::uint32_t> lastMovementBlock;
+	std::map<std::uint32_t, std::set<SERIAL>> pendingStaticRefreshBlocks;
 
 	auto GetBlockKey( std::uint8_t worldNumber, std::uint32_t blockNumber ) const -> std::uint32_t;
 	auto GetBlockNumber( std::int16_t x, std::int16_t y, std::uint8_t worldNumber, std::uint32_t& blockNumber ) const -> bool;
@@ -160,6 +161,8 @@ public:
 	auto CalculateChecksum( const std::vector<std::uint8_t>& data ) const -> std::uint16_t;
 	auto QueueMovementBlockRefresh( CSocket *socket ) -> void;
 	auto ReplaceTreeStatic( std::int16_t x, std::int16_t y, std::int16_t z, std::uint8_t worldNumber, std::uint16_t oldTileID, std::uint16_t newTileID, std::uint16_t newHue ) -> bool;
+	auto HasPendingStaticRefresh( std::uint8_t worldNumber, std::uint32_t blockNumber, SERIAL playerSerial ) const -> bool;
+	auto ClearPendingStaticRefresh( std::uint8_t worldNumber, std::uint32_t blockNumber, SERIAL playerSerial ) -> void;
 };
 
 extern LiveStatic *LiveStatics;

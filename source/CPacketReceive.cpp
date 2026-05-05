@@ -1290,6 +1290,12 @@ bool CPIUltimaLive::Handle( void )
 {
 	switch( command )
 	{
+		case 0x04:
+		{
+			// Ultima Live client view range reply. UOX3 currently uses the default 5x5 query area.
+			return true;
+		}
+
 		case 0xFE:
 		{
 			Console.Print( oldstrutil::format( "Received UltimaLive version packet from client. Map: %u", mapNumber ));
@@ -1356,9 +1362,31 @@ bool CPIUltimaLive::Handle( void )
 						continue;
 					}
 
+					CChar* pChar = tSock->CurrcharObj();
+
+					if( pChar == nullptr )
+					{
+						continue;
+					}
+
+					if( !LiveStatics->HasPendingStaticRefresh( mapNumber, targetBlockNumber, pChar->GetSerial() ) )
+					{
+						continue;
+					}
+
 					const std::vector<UI08> staticsData = LiveStatics->BuildStaticsForBlock( mapNumber, targetBlockNumber );
+
+					Console.Print( oldstrutil::format(
+						"UltimaLive sending pending static update: map=%u block=%u staticsBytes=%u",
+						mapNumber,
+						targetBlockNumber,
+						static_cast< UI32 >( staticsData.size() )
+					) );
+
 					CPUltimaLiveStaticsUpdate staticsUpdate( targetBlockNumber, mapNumber, staticsData );
 					tSock->Send( &staticsUpdate );
+
+					LiveStatics->ClearPendingStaticRefresh( mapNumber, targetBlockNumber, pChar->GetSerial() );
 				}
 			}
 
