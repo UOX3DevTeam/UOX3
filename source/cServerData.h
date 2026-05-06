@@ -212,7 +212,7 @@ private:
 
 	// Once over 62, bitsets are costly.  std::vector<bool> has a special exception in the c++ specificaiton, to minimize wasted space for bools
 	// These should be updated
-	std::bitset<123>	boolVals;			// Many values stored this way, rather than using bools.
+	std::bitset<125>	boolVals;			// Many values stored this way, rather than using bools.
 	std::bitset<64>		spawnRegionsFacets;	// Used to determine which facets to enable spawn regions for, set in UOX>INI
 	std::bitset<64>		moongateFacets;		// Used to determine which facets to enable moongates for, set in UOX>INI
 
@@ -336,6 +336,13 @@ private:
 	bool		paperdollGuildButton;			//	Enable Guild-button on paperdoll to access guild-menus without going through guildstone
 	UI16		petLoyaltyGainOnSuccess;		//	The default amount of pet loyalty gained on successful use of a pet command
 	UI16		petLoyaltyLossOnFailure;		//	The default amount of pet loyalty lost on a failed attempt to use a pet command
+
+	bool		vendorChargesEnabled;			// Master toggle for player vendor upkeep charges
+	SI16		vendorBaseCharge;				// Flat fee per vendor upkeep charge period
+	SI16		vendorChargeHours;				// Number of real hours between vendor upkeep charges
+	bool		vendorUseItemFees;				// Add item-based upkeep fees from listed item prices
+	SI16		vendorItemFeeDivisor;			// Listed item value divisor used for vendor item fees
+	SI16		vendorItemFeeAmount;			// Fee added per divisor step
 
 	// SpeedUp
 	R64			npcWalkingSpeed;				//	Speed at which walking NPCs move
@@ -1386,6 +1393,24 @@ public:
 	auto		APSDelayStep( UI16 newVal ) -> void;
 	auto		APSDelayMaxCap() const -> UI16;
 	auto		APSDelayMaxCap( UI16 newVal ) -> void;
+
+	auto		VendorChargesEnabled( bool value ) -> void;
+	auto		VendorChargesEnabled() const -> bool;
+
+	auto		VendorBaseCharge( SI16 value ) -> void;
+	SI16		VendorBaseCharge() const;
+
+	auto		VendorChargeHours( SI16 value ) -> void;
+	SI16		VendorChargeHours() const;
+
+	auto		VendorUseItemFees( bool value ) -> void;
+	auto		VendorUseItemFees() const -> bool;
+
+	auto		VendorItemFeeDivisor( SI16 value ) -> void;
+	SI16		VendorItemFeeDivisor() const;
+
+	auto		VendorItemFeeAmount( SI16 value ) -> void;
+	SI16		VendorItemFeeAmount() const;
 
 	SI16		ServerTimeDay() const;
 	UI08		ServerTimeHours() const;

@@ -5777,6 +5777,24 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 			case 407:	// LOGINQUESTENABLED
 				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->LoginQuestEnabled() ) );
 				break;
+			case 408:	// VENDORCHARGESENABLED
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->VendorChargesEnabled() ) );
+				break;
+			case 409:	// VENDORBASECHARGE
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->VendorBaseCharge() ) ) );
+				break;
+			case 410:	// VENDORCHARGEHOURS
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->VendorChargeHours() ) ) );
+				break;
+			case 411:	// VENDORUSEITEMFEES
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->VendorUseItemFees() ) );
+				break;
+			case 412:	// VENDORITEMFEEDIVISOR
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->VendorItemFeeDivisor() ) ) );
+				break;
+			case 413:	// VENDORITEMFEEAMOUNT
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->VendorItemFeeAmount() ) ) );
+				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );
 				return false;
