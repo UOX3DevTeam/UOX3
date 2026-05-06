@@ -1,3 +1,30 @@
+02/05/2026 - DragonSlayer62 (#543)
+    [ADD] Added the first 8 new player quest givers, including their quest JSON files and NPC definitions.
+    [ADD] Added quest reward items for the new player quests, including crafting satchels, Jacob's Pickaxe, and the Clasp of Concentration.
+    [ADD] Added item and NPC add-menu entries for the new quest givers and quest rewards.
+    [UPD] Updated quest JSON loading to better handle sanitized quest files and quoted quest text.
+
+29/04/2026 - DragonSlayer62 (#527)
+    [ADD] Added flexible quest system in JS that can be used to setup a variety of player quests, accessible to players via context menus and conversational gumps on NPCs (scripts in /js/server/quest/)
+    [ADD] Added new settings in new [quests] section of uox.ini:
+        QUESTSYSTEMENABLED=0/1 // Enables/disables the quest system. Defaults to 1
+        LOGINQUESTENABLED=0/1 // Optional setting that can offer player a quest on login. Defaults to 0
+    [ADD] Quest button in paperdoll opens a quest journal that lists all ongoing quests the player has accepted, and details of any progress made in those quests
+    [ADD] Added new JS event used to toggle quest-item status on/off for specific items:
+        onQuestToggle( pUser, iUsed ) // Triggered by Toggle Quest Item context menu option on item
+    [UPD] Updated some existing scripts with additional functionality related to quest system (js/item/doors.js, js/server/global.js, js/skill/mining.js, js/skill/taming.js)
+    [UPD] Updated dictionary files with quest-system specific additions
+
+26/04/2026 - Xoduz (#540)
+    [UPD] UOX3 now supports Z as a third dimension for NPC pathfinding; automatically used in most places in code, it can also be triggered via .WalkTo() and .RunTo() JS Methods, which have been updated to support target Z coordinate. This means NPCs can now navigate up and down stairs, move between floors of buildings, etc.
+    [UPD] NPCs will recalculate their path less often now in situations with little-to-no change since last they got a valid path, if they still have remaining steps in their previously calculated path. However, the more time passes from the original pathfind calculation, the more likely it is to retrigger.
+    [UPD] Updated 'xwalk and 'xrun GM commands (js/commands/targeting/xwalk.js), hireling AI (js/npc/ai/hireling.js) and Herding skill (js/skill/herding.js) to make use of "3D pathfinding"
+    [FIX] Fixed some issues with pathfinding code that could result in invalid results for what should be valid paths
+
+09/04/2026 - Xoduz (#538)
+    [FIX] Fixed an issue where players could get stuck in a "too busy to do that" state while mining (js/skill/mining.js)
+    [UPD] Updated mining (js/skill/mining.js) and lumberjacking (js/item/axe.js) skills with some fallback code that should prevent players from ever again getting stuck in "already mining/chopping" states due to script-crashes
+
 12/03/2026 - DragonSlayer62 (#534)
     [FIX] Fixed an issue where guests count was not showing correctly on the house sign
     [ADD] Added new Multi JS Methods for adding and removing vendors in player houses, and updated relevant scripts (js/commands/targeting/remove.js, js/server/house/house.js, houseCommands.js and playerVendorDeed.js) to make use of these to fix issue where player vendors were not properly registered with houses:

@@ -1,0 +1,27 @@
+{
+  "questID": 3,
+  "title": "Baker's Dozen",
+  "description": "You there! Do you know much about the ways of cooking? If you help me out, I'll show you a thing or two about how it's done. Bring me some cookie mix, about 5 batches will do it, and I will reward you. Although, I don't think you can buy it, you can make some in a snap! First get a rolling pin or frying pan or even a flour sifter. Then you mix one pinch of flour with some water and you've got some dough! Take that dough and add one dollop of honey and you've got sweet dough. add one more drop of honey and you've got cookie mix.See ? Nothing to it! Now get to work",
+  "uncomplete": "You're not quite done yet.  Get back to work!",
+  "complete": "Thank you! I haven't been this excited about food in months!",
+  "refuse": "Argh, I absolutely must have more of these 'cookies!' Come back if you change your mind.",
+  "type": "collect",
+  "category": "Side Quests",
+  "oneTimeQuest": 1,
+  "questTurnIn": 1,
+  "targetItems": [
+    {
+      "sectionID": "0x103F",
+      "amount": 5,
+      "name": "Cookie Mix"
+    }
+  ],
+  "rewards": [
+    {
+      "type": "item",
+      "sectionID": "chefssatchel",
+      "amount": 1,
+      "name": "Craftsman's Satchel"
+    }
+  ]
+}

@@ -1,0 +1,1601 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
+
+/** @type { ( pUser: Character, npcTarget: Character, questID: number ) => void } */
+function QuestConversationGump( pUser, npcTarget, questID )
+{
+	if( !ValidateObject( pUser ))
+		return;
+
+	var socket = pUser.socket;
+	if( socket == null )
+		return;
+
+	var playerSerial = pUser.serial; // Use player serial to filter quests
+
+	// Fetch quest details using the provided quest ID
+	var quest = TriggerEvent( 5801, "QuestList", questID );
+
+	if( !quest ) 
+	{
+		socket.SysMessage( GetDictionaryEntry( 19602, socket.language ));//This quest does not exist.
+		return;
+	}
+
+	// Fetch player's progress for the current quest and filter by player serial
+	var questProgressArray = TriggerEvent( 5800, "ReadQuestProgress", pUser );
+	var currentQuestProgress = null;
+
+	for( var i = 0; i < questProgressArray.length; i++ ) 
+	{
+		var questEntry = questProgressArray[i];
+		if( questEntry.questID == questID && questEntry.serial == playerSerial) 
+		{
+			currentQuestProgress = questEntry;
+			break;
+		}
+	}
+
+	// Determine the description to display
+	var description = quest.description; // Default description
+	if( currentQuestProgress )
+	{
+		if( currentQuestProgress.completed )
+		{
+			description = quest.complete;
+		}
+		else
+		{
+			description = quest.uncomplete;
+		}
+	}
+
+	// Handle chain quests: If this is a chain quest and there is a nextQuestID
+	// Chain preview: show what would unlock next (branching-aware)
+	if (currentQuestProgress && currentQuestProgress.completed)
+	{
+		var nextQuestID = ResolveNextQuestID_Any(pUser, quest);
+		if (nextQuestID > 0)
+		{
+			var nextQuest = TriggerEvent(5801, "QuestList", nextQuestID);
+			if (nextQuest)
+			{
+				description += "<br><br><b>Next Quest Available:</b> " +
+					nextQuest.title + "<br>" + nextQuest.description;
+			}
+		}
+	}
+
+	var questConvoMenu = new Gump();
+	questConvoMenu.AddPage( 0 );
+	questConvoMenu.NoClose();
+	questConvoMenu.AddBackground( 30, 120, 296, 520, 1579 ); // Background
+	questConvoMenu.AddGump( 70, 130, 1577 ); // Decorative gump
+
+	// Quest title
+	var title = "<center>" + quest.title + "</center>";
+	questConvoMenu.AddHTMLGump( 75, 205, 200, 30, true, false, title ); // Title
+	questConvoMenu.AddHTMLGump( 50, 230, 264, 100, true, true, description ); // Description
+
+	if( !currentQuestProgress || !currentQuestProgress.completed )
+	{
+		var objectives = GetQuestObjectives( quest, currentQuestProgress );
+		questConvoMenu.AddHTMLGump( 50, 350, 264, 100, true, true, objectives ); // Objectives
+	}
+
+	var rewards = GetQuestRewards( quest );
+	questConvoMenu.AddHTMLGump( 50, 470, 264, 100, true, true, rewards ); // Rewards
+
+	if( !currentQuestProgress )
+	{
+		questConvoMenu.AddButton( 60, 600, 0x2EE0, 0x2EE2, 1, 0, 1 ); // Start quest button
+		questConvoMenu.AddButton( 220, 600, 0x2EF2, 0x2EF4, 1, 0, 2 ); // refuse button
+	}
+	else if( currentQuestProgress.completed )
+	{
+		questConvoMenu.AddButton( 60, 600, 0x2EE0, 0x2EE2, 1, 0, 3 ); // Turn in quest button
+	}
+	else 
+	{
+		questConvoMenu.AddButton( 50, 600, 0x2EF5, 0x2EF7, 1, 0, 4 ); // resign quest button
+		questConvoMenu.AddButton( 220, 600, 0x2EEC, 0x2EEE, 1, 0, 0 ); // close button
+	}
+
+	// Lock the questID this gump represents (so onGumpPress doesn't re-resolve)
+	pUser.SetTempTag( "QuestConversationQuestID", questID );
+
+	questConvoMenu.Send( socket );
+	questConvoMenu.Free();
+}
+
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
+function onGumpPress( pSock, pButton, gumpData )
+{
+	var pUser = pSock.currentChar;
+
+	if( !ValidateObject( pUser ))
+		return;
+
+	// If this gump was opened from login, we will NOT have an NPC.
+	var loginQuestID = parseInt( pUser.GetTempTag( "questConversationID" ), 10 );
+	var hasLoginQuest = ( loginQuestID !== null && loginQuestID !== undefined && loginQuestID > 0 );
+
+	var questNpc = null;
+	var playerQuestID = null;
+	var quest = null;
+
+	if( hasLoginQuest )
+	{
+		playerQuestID = loginQuestID;
+		quest = TriggerEvent( 5801, "QuestList", playerQuestID );
+	}
+	else
+	{
+		var npcSer = parseInt( pUser.GetTag( "questNpcSerial" ), 10 );
+		questNpc = CalcCharFromSer( npcSer );
+
+		if( !ValidateObject( questNpc ))
+		{
+			return;
+		}
+
+		// Use the questID the gump was opened for (prevents re-resolving chain on click)
+		playerQuestID = parseInt(pUser.GetTempTag("QuestConversationQuestID"), 10);
+		if (isNaN(playerQuestID) || playerQuestID <= 0)
+		{
+			// Fallback if temp tag missing (shouldn't happen)
+			var initialQuestID = parseInt(questNpc.GetTag("QuestID"), 10);
+			playerQuestID = ResolvePlayerQuestID(pUser, initialQuestID);
+		}
+		quest = TriggerEvent(5801, "QuestList", playerQuestID);
+	}
+
+	switch( pButton )
+	{
+		case 0: // Close gump
+			// Important: clear the login temp tag so later NPC gumps don't mis-detect
+			if( hasLoginQuest )
+			{
+				pUser.SetTempTag( "questConversationID", null );
+			}
+			pUser.SetTempTag( "QuestConversationQuestID", null );
+			break;
+		case 1: // Accept quest
+			TriggerEvent( 5800, "StartQuest", pUser, playerQuestID, questNpc );
+			if( hasLoginQuest )
+			{
+				pUser.SetTempTag( "questConversationID", null );
+			}
+			pUser.SetTempTag( "QuestConversationQuestID", null );
+			break;
+		case 2: // Refuse quest
+			if( quest && quest.refuse )
+			{
+				if( ValidateObject( questNpc ))
+				{
+					questNpc.TextMessage( quest.refuse );
+				}
+				else
+				{
+					pSock.SysMessage( quest.refuse ); // login flow has no NPC
+				}
+			}
+			if( hasLoginQuest )
+			{
+				pUser.SetTempTag( "questConversationID", null );
+			}
+			pUser.SetTempTag( "QuestConversationQuestID", null );
+			break;
+		case 3: // Turn in quest
+			if( playerQuestID )
+			{
+				var playerPack = pUser.pack;
+				if( playerPack.totalItemCount >= playerPack.maxItems )
+				{
+					pSock.SysMessage( GetDictionaryEntry( 1819, pSock.language )); // Your backpack cannot hold any more items!
+					return;
+				}
+
+				var turnInSuccess = ProcessQuestTurnIn( pUser, playerQuestID ); // Handle item turn-in
+				if( turnInSuccess )
+				{
+					TriggerEvent( 5800, "CompleteQuest", pUser, playerQuestID ); // Complete the quest
+					pUser.SoundEffect(0x5B5, true);
+				}
+				else
+				{
+					pSock.SysMessage( GetDictionaryEntry( 19603, pSock.language ));// You need to have all required quest items to turn in this quest.
+				}
+			}
+			pUser.SetTempTag( "QuestConversationQuestID", null );
+			break;
+		case 4: // Resign Quest
+			ResignQuest( pUser, playerQuestID );
+			ManageQuestItems( pUser, playerQuestID, false );
+			pUser.SoundEffect( 0x5B3, true );
+			pUser.SetTempTag( "QuestConversationQuestID", null );
+			break;
+			default:break
+	}
+}
+
+/** @type { ( player: Character, questID: number ) => boolean } */
+function ResignQuest( player, questID )
+{
+	if( !ValidateObject( player ))
+		return false;
+
+	var socket = player.socket;
+	if( socket == null )
+		return false;
+
+	var questProgressArray = TriggerEvent( 5800, "ReadQuestProgress", player );
+	var newQuestProgressArray = [];
+	var questFound = false;
+
+	var quest = TriggerEvent( 5801, "QuestList", questID );
+
+	for( var i = 0; i < questProgressArray.length; i++ ) 
+	{
+		var questEntry = questProgressArray[i];
+
+		// Skip the quest that needs to be resigned, effectively removing it
+		if( questEntry.questID == questID && questEntry.serial == player.serial )
+		{
+			questFound = true;
+
+			if( quest.type == "escort" )
+			{
+				TriggerEvent( 5800, "CleanupEscortQuestNPC", player, questID );
+			}
+
+			if( quest.guidedWalk && quest.guidedWalk.enabled )
+			{
+				TriggerEvent( 5800, "CleanupGuidedWalkQuestNPC", player, questID );
+			}
+
+			if( quest.race && quest.race.enabled )
+			{
+				TriggerEvent( 5800, "CleanupRaceQuestNPC", player, questID );
+			}
+
+			// Handle skill training quest resignation
+			if( quest.type == "skillgain" )
+			{
+				player.SetTag( "AcceleratedSkillGain", null ); // Remove the tag
+				player.RemoveScriptTrigger( 5811 ); // Remove the quest skill gain script trigger
+				socket.SysMessage( "You have stopped accelerated training for " + GetSkillName( quest.targetSkill ) + "." );
+			}
+
+			socket.SysMessage( "You have resigned from the quest: " + quest.title );
+		} 
+		else
+		{
+			newQuestProgressArray.push( questEntry );
+		}
+	}
+
+	if( !questFound )
+	{
+		socket.SysMessage( GetDictionaryEntry( 19604, socket.language ));//You are not currently on this quest.
+		return false;
+	}
+
+	// Write back the updated quest progress, excluding the resigned quest
+	TriggerEvent( 5800, "WriteQuestProgress", player, newQuestProgressArray );
+
+	socket.SysMessage( GetDictionaryEntry(19605, socket.language ));//The quest has been completely removed from your progress.
+	return true;
+}
+
+/** @type { ( player: Character, questID: number, mark: boolean ) => void } */
+function ManageQuestItems( player, questID, mark )
+{
+	if( !ValidateObject( player ))
+		return;
+
+	var socket = player.socket;
+	if( socket == null )
+		return;
+
+	var pack = player.pack;
+
+	if( !ValidateObject( pack ))
+	{
+		socket.SysMessage( GetDictionaryEntry( 19606, socket.language )); // You do not have a backpack.
+		return;
+	}
+
+	// Try to fetch quest info, but DO NOT early-return on failure when unmarking
+	var quest = TriggerEvent( 5801, "QuestList", questID ) || {};
+
+	// Build a quick lookup for sectionIDs (for mark path and as a fallback on unmark)
+	var sectionLookup = {};
+	if( quest.targetItems && quest.targetItems.length )
+	{
+		for( var targetItemIndex = 0; targetItemIndex < quest.targetItems.length; targetItemIndex++ )
+		{
+			sectionLookup[String( quest.targetItems[targetItemIndex].sectionID )] = true;
+		}
+	}
+
+	if( quest.targetItemGroups && quest.targetItemGroups.length )
+	{
+		for( var targetGroupIndex = 0; targetGroupIndex < quest.targetItemGroups.length; targetGroupIndex++ )
+		{
+			var targetGroup = quest.targetItemGroups[targetGroupIndex];
+			if( !targetGroup || !targetGroup.items )
+			{
+				continue;
+			}
+
+			for( var groupItemIndex = 0; groupItemIndex < targetGroup.items.length; groupItemIndex++ )
+			{
+				var groupItem = targetGroup.items[groupItemIndex];
+				if( groupItem && groupItem.sectionID )
+				{
+					sectionLookup[String( groupItem.sectionID )] = true;
+				}
+			}
+		}
+	}
+
+	/** @type { ( item: Item ) => void } */
+	function UnMarkItem( item )
+	{
+		var saved = item.GetTag( "saveColor" );
+		if( saved != null && !isNaN(parseInt( saved )))
+		{
+			item.color = parseInt( saved );
+		}
+		else
+		{
+			item.color = 0;
+		}
+
+		item.isNewbie  = false;
+		item.isDyeable = true;
+
+		item.SetTag( "QuestItem", null );
+		item.SetTag( "QuestSectionID", null );
+		item.SetTag( "QuestID", null );
+		item.SetTag( "saveColor", null );
+		item.SetTag( "QuestGroupID", null );
+
+		item.RemoveScriptTrigger( 5806 );
+	}
+
+	// Optional: handle items inside nested containers
+	/** @type { ( container: Item, fn: ( item: Item ) => void ) => void } */
+	function ForEachItemIn( container, fn )
+	{
+		for (var containerItem = container.FirstItem(); !container.FinishedItems(); containerItem = container.NextItem())
+		{
+			if( !ValidateObject( containerItem ))
+				continue;
+
+			fn( containerItem );
+			// If this item is itself a container, walk it too (API mirrors backpacks)
+			if( typeof containerItem.FirstItem === "function" && typeof containerItem.FinishedItems === "function" )
+			{
+				ForEachItemIn( containerItem, fn );
+			}
+		}
+	}
+
+	ForEachItemIn( pack, function( currentItem )
+	{
+		if( mark )
+		{
+			// Collection targets
+			var matchesTarget = sectionLookup[String(currentItem.sectionID)] === true;
+
+			// Delivery target
+			if( !matchesTarget && quest.type == "delivery" && quest.deliveryItem )
+			{
+				matchesTarget = ( String( currentItem.sectionID ) == String( quest.deliveryItem.sectionID ));
+			}
+
+			if( matchesTarget && !currentItem.GetTag( "QuestItem" ))
+			{
+				currentItem.SetTag( "saveColor", currentItem.color );
+				currentItem.color     = 0x04ea; // Orange hue
+				currentItem.isNewbie  = true;
+				currentItem.isDyeable = false;
+
+				currentItem.SetTag( "QuestItem", true );
+				currentItem.SetTag( "QuestSectionID", currentItem.sectionID);
+				currentItem.SetTag( "QuestID", questID );
+
+				currentItem.AddScriptTrigger( 5806 );
+				// socket.SysMessage("Marked item as a quest item.");
+			}
+			return;
+		}
+
+		// UNMARK path (resign). Prefer exact QuestID match; fall back to section match if quest data exists.
+		if( currentItem.GetTag( "QuestItem" ))
+		{
+			var itemQuestID   = currentItem.GetTag( "QuestID" );
+			var itemSectionID = String( currentItem.GetTag( "QuestSectionID" ) || currentItem.sectionID );
+
+			var belongsToThisQuest =
+				( itemQuestID != null && String( itemQuestID ) == String( questID )) ||
+				( sectionLookup[itemSectionID] === true ) ||           // fallback if QuestID wasn�t set earlier
+				( itemQuestID == null && !quest.targetItems );         // last resort if we have no quest data at all
+
+			if( belongsToThisQuest )
+			{
+				UnMarkItem( currentItem );
+				// socket.SysMessage("Unmarked quest item.");
+			}
+		}
+
+		// Delivery items on resign: delete only if they belong to this quest
+		if( quest.type == "delivery" && quest.deliveryItem )
+		{
+			if( String( currentItem.sectionID ) == String( quest.deliveryItem.sectionID ))
+			{
+				// avoid nuking unrelated items: require QuestID match or at least QuestItem tag
+				if( String( currentItem.GetTag( "QuestID" )) == String( questID ) || currentItem.GetTag( "QuestItem" ))
+				{
+					currentItem.Delete();
+					socket.SysMessage( "Deleted delivery item: " + quest.deliveryItem.name );
+				}
+			}
+		}
+	});
+}
+
+/** @type { ( quest: any, questProgress: any ) => string } */
+function GetQuestObjectives( quest, questProgress )
+{
+	var objectives = "";
+
+	if( quest.targetItems && quest.targetItems.length > 0 )
+	{
+		objectives += "<b>Items to Collect:</b><br>";
+		for( var targetItemIndex = 0; targetItemIndex < quest.targetItems.length; targetItemIndex++ )
+		{
+			var targetItem = quest.targetItems[targetItemIndex];
+			var itemName = targetItem.name || "Unknown Item";
+			var collected = ( questProgress && questProgress.collectedItems && questProgress.collectedItems[targetItem.sectionID] ) || 0;
+
+			objectives += "- " + itemName + ": " + collected + "/" + targetItem.amount + "<br>";
+		}
+	}
+
+	if( quest.targetItemGroups && quest.targetItemGroups.length > 0 )
+	{
+		objectives += "<b>Item Groups to Collect:</b><br>";
+		for( var targetGroupIndex = 0; targetGroupIndex < quest.targetItemGroups.length; targetGroupIndex++ )
+		{
+			var targetGroup = quest.targetItemGroups[targetGroupIndex];
+			if( !targetGroup || !targetGroup.groupID )
+			{
+				continue;
+			}
+
+			var groupName = targetGroup.name || targetGroup.groupID || "Unknown Group";
+			var groupedCollected = ( questProgress && questProgress.collectedItemGroups && questProgress.collectedItemGroups[String( targetGroup.groupID )] ) || 0;
+
+			objectives += "- " + groupName + ": " + groupedCollected + "/" + targetGroup.amount + "<br>";
+		}
+	}
+
+	if( quest.targetKills && quest.targetKills.length > 0 )
+	{
+		objectives += "<b>Creatures to Kill:</b><br>";
+		for( var targetKillIndex = 0; targetKillIndex < quest.targetKills.length; targetKillIndex++ )
+		{
+			var targetKill = quest.targetKills[targetKillIndex];
+			var npcName = targetKill.name || "Unknown Npc";
+			var killed = ( questProgress && questProgress.harvestKills && questProgress.harvestKills[targetKill.npcID] ) || 0;
+
+		    objectives += "- " + npcName + GetKillRegionText( quest, targetKill ) + ": " + killed + "/" + targetKill.amount + "<br>";
+		}
+	}
+
+	if( quest.targetKillGroups && quest.targetKillGroups.length > 0 )
+	{
+		objectives += "<b>Creature Groups to Kill:</b><br>";
+		for( var targetKillGroupIndex = 0; targetKillGroupIndex < quest.targetKillGroups.length; targetKillGroupIndex++ )
+		{
+			var targetKillGroup = quest.targetKillGroups[targetKillGroupIndex];
+			if( !targetKillGroup || !targetKillGroup.groupID )
+			{
+				continue;
+			}
+
+			var killGroupName = targetKillGroup.name || targetKillGroup.groupID || "Unknown Group";
+			var groupedKilled = ( questProgress && questProgress.harvestKillGroups && questProgress.harvestKillGroups[String( targetKillGroup.groupID )] ) || 0;
+
+			objectives += "- " + killGroupName + GetKillRegionText( quest, targetKillGroup ) + ": " + groupedKilled + "/" + targetKillGroup.amount + "<br>";
+		}
+	}
+
+	if( quest.timeLimit )
+	{
+		var minutes = Math.floor( quest.timeLimit / 60 );
+		var seconds = quest.timeLimit % 60;
+		objectives += "<b>Time Limit:</b><br>";
+		objectives += "- " + minutes + " minute( s ) and " + seconds + " second( s )<br>";
+	}
+
+	if( quest.type == "delivery" )
+	{
+		objectives += "<b>Delivery Quest:</b><br>";
+
+		if( quest.deliveryItem )
+		{
+			var deliveryItemName = quest.deliveryItem.name || "Unknown Item";
+			objectives += "- Item: " + deliveryItemName + " ( " + quest.deliveryItem.amount + " )<br>";
+		}
+
+		if( quest.targetDelivery && quest.targetDelivery.name )
+		{
+			objectives += "- NPC: " + quest.targetDelivery.name + "<br>";
+		}
+		else if( quest.targetDelivery && quest.targetDelivery.sectionID )
+		{
+			objectives += "- NPC: " + quest.targetDelivery.sectionID + "<br>";
+		}
+
+		if( quest.targetDelivery.location )
+		{
+			var loc = quest.targetDelivery.location;
+			objectives += "- Location: X=" + loc.x + ", Y=" + loc.y + ", Z=" + loc.z + "<br>";
+		}
+	}
+
+	if( quest.type == "skillgain" && quest.targetSkill != undefined && quest.maxSkillPoints != undefined )
+	{
+		objectives += "<b>Skill Training:</b><br>";
+		var skillName = GetSkillName( quest.targetSkill ) || "Unknown Skill";
+		var currentProgress = ( questProgress && questProgress.skillProgress ) || 0;
+		var maxProgress = quest.maxSkillPoints / 10;
+		var regionName = quest.regionName || "Unknown Region";
+
+		objectives += "- Train " + skillName + " in " + regionName + ": " + ( currentProgress / 10 ).toFixed( 1 ) + "/" + maxProgress.toFixed( 1 ) + "<br>";
+	}
+
+	if( quest.dailyQuest == 1 )
+	{
+		objectives += "<b>Daily Quest:</b><br>";
+		var lastAccepted = questProgress && questProgress.lastAccepted ? questProgress.lastAccepted : Date.now();
+		var resetTime = quest.resetDailyTime || 24;
+		var currentTime = Date.now();
+		var timeSinceAccepted = ( currentTime - lastAccepted ) / ( 3600 * 1000 );
+		var hoursLeft = Math.max( 0, Math.ceil( resetTime - timeSinceAccepted ));
+
+		if( hoursLeft > 0 )
+		{
+			objectives += "- Hours until reset: " + hoursLeft + " hour(s)<br>";
+		}
+		else
+		{
+			objectives += "- Quest is ready to reset!<br>";
+		}
+	}
+
+	if( quest.targetTames && quest.targetTames.length > 0 )
+	{
+		objectives += "<b>Creatures to Tame:</b><br>";
+
+		for( var targetTameIndex = 0; targetTameIndex < quest.targetTames.length; targetTameIndex++ )
+		{
+			var targetTame = quest.targetTames[targetTameIndex];
+			var tameName = targetTame.name || "Unknown Creature";
+			var tamed = ( questProgress && questProgress.tamedCreatures && questProgress.tamedCreatures[targetTame.npcID] ) || 0;
+
+			objectives += "- " + tameName + ": " + tamed + "/" + targetTame.amount + "<br>";
+		}
+	}
+
+	if( quest.type == "escort" )
+	{
+		var activeWaypoints = [];
+
+		if( questProgress && questProgress.selectedWaypoints && questProgress.selectedWaypoints.length > 0 )
+		{
+			activeWaypoints = questProgress.selectedWaypoints;
+		}
+		else if( quest.waypoints && quest.waypoints.length > 0 )
+		{
+			activeWaypoints = quest.waypoints;
+		}
+
+		if( activeWaypoints.length > 0 )
+		{
+			objectives += "<b>Escort Route:</b><br>";
+
+			var escortStage = 0;
+			if( questProgress && typeof questProgress.escortStage != "undefined" )
+			{
+				escortStage = parseInt( questProgress.escortStage, 10 );
+				if( isNaN( escortStage ) || escortStage < 0 )
+				{
+					escortStage = 0;
+				}
+			}
+
+			for( var waypointIndex = 0; waypointIndex < activeWaypoints.length; waypointIndex++ )
+			{
+				var waypoint = activeWaypoints[waypointIndex];
+				var waypointName = waypoint.regionName || ( "Region " + waypoint.regionID ) || ( "Waypoint " + ( waypointIndex + 1 ) );
+				var statusText = "Pending";
+
+				if( waypointIndex < escortStage )
+				{
+					statusText = "Done";
+				}
+				else if( waypointIndex == escortStage )
+				{
+					statusText = "Current";
+				}
+
+				objectives += "- " + waypointName + ": " + statusText + "<br>";
+			}
+		}
+	}
+
+	if( objectives == "" )
+	{
+		objectives = "No specific objectives.";
+	}
+
+	return objectives;
+}
+
+/** @type { ( quest: any, targetEntry: any ) => number } */
+function ResolveKillTargetRegionDisplay( quest, targetEntry )
+{
+	if( targetEntry && typeof targetEntry.targetRegion != "undefined" )
+	{
+		var targetRegion = parseInt( targetEntry.targetRegion, 10 );
+		if( !isNaN( targetRegion ) && targetRegion > 0 )
+		{
+			return targetRegion;
+		}
+	}
+
+	if( quest && typeof quest.targetRegion != "undefined" )
+	{
+		var questRegion = parseInt( quest.targetRegion, 10 );
+		if( !isNaN( questRegion ) && questRegion > 0 )
+		{
+			return questRegion;
+		}
+	}
+
+	return 0;
+}
+
+/** @type { ( quest: any, targetEntry: any ) => string } */
+function GetKillRegionText( quest, targetEntry )
+{
+	var requiredRegion = ResolveKillTargetRegionDisplay( quest, targetEntry );
+	if( requiredRegion <= 0 )
+	{
+		return "";
+	}
+
+	if( targetEntry && targetEntry.regionName )
+	{
+		return " in " + targetEntry.regionName;
+	}
+
+	if( quest && quest.regionName )
+	{
+		return " in " + quest.regionName;
+	}
+
+	return " in region " + requiredRegion;
+}
+
+/** @type { ( skillID: number ) => string } */
+function GetSkillName( skillID )
+{
+	var skillNames = [
+		"alchemy", "anatomy", "animallore", "itemid", "armslore", "parrying", "begging",
+		"blacksmith", "bowcraft", "peacemaking", "camping", "carpentry", "cartography",
+		"cooking", "detectinghidden", "enticement", "evaluatingintelligence", "healing",
+		"fishing", "forensics", "herding", "hiding", "provocation", "inscription",
+		"lockpicking", "magery", "magicresistance", "tactics", "snooping", "musicianship", "poisoning",
+		"archery", "spiritSpeak", "stealing", "tailoring", "animaltaming", "tasteID",
+		"tinkering", "tracking", "veterinary", "swordsmanship", "macefighting",
+		"fencing", "wrestling", "lumberjacking", "mining", "meditation", "stealth",
+		"removetrap", "necromancy", "focus", "chivalry", "bushido", "ninjitsu", "spellweaving"
+	];
+
+	return skillNames[skillID] || "unknown skill";
+}
+
+/** @type { ( quest: any ) => string } */
+function GetQuestRewards( quest )
+{
+	// List rewards
+	var rewards = "";
+
+	if( quest.rewards && quest.rewards.length > 0 )
+	{
+		rewards += "<b>Rewards:</b><br>";
+		for( var k = 0; k < quest.rewards.length; k++ )
+		{
+			var reward = quest.rewards[k];
+			var rewardName = reward.name || "Unknown Reward"; // Use `name` if available, fallback to "Unknown Reward"
+			rewards += "- " + reward.amount + " " + rewardName + "<br>";
+		}
+	}
+	else
+	{
+		rewards = "No rewards specified.";
+	}
+
+	return rewards;
+}
+
+/** @type { ( player: Character, questID: number ) => boolean } */
+function ProcessQuestTurnIn( player, questID )
+{
+	if( !ValidateObject( player ))
+		return false;
+
+	var socket = player.socket;
+	if( socket == null )
+		return false;
+
+	var quest = TriggerEvent( 5801, "QuestList", questID );
+	if( !quest )
+	{
+		player.SysMessage( GetDictionaryEntry( 19602, socket.language ));
+		return false;
+	}
+
+	var questProgressArray = TriggerEvent( 5800, "ReadQuestProgress", player );
+	var questProgress = null;
+
+	for( var progressIndex = 0; progressIndex < questProgressArray.length; progressIndex++ )
+	{
+		if( questProgressArray[progressIndex].questID == questID && questProgressArray[progressIndex].serial == player.serial )
+		{
+			questProgress = questProgressArray[progressIndex];
+			break;
+		}
+	}
+
+	if( !questProgress )
+		return false;
+
+	if( quest.type == "skillgain" )
+	{
+		if( questProgress.skillProgress >= quest.maxSkillPoints )
+		{
+			socket.SysMessage( GetDictionaryEntry( 19607, socket.language ));
+			return true;
+		}
+
+		socket.SysMessage(
+			"You still need to improve your skill. Current progress: " +
+			( questProgress.skillProgress / 10 ).toFixed( 1 ) + "/" +
+			( quest.maxSkillPoints / 10 ).toFixed( 1 )
+		);
+		return false;
+	}
+
+	if( quest.type == "delivery" )
+	{
+		socket.SysMessage( GetDictionaryEntry( 19610, socket.language ));
+		return false;
+	}
+
+	if( quest.type == "race" || ( quest.race && quest.race.enabled ) )
+	{
+		if( questProgress.raceCompleted )
+			return true;
+
+		socket.SysMessage( "You have not finished the race yet." );
+		return false;
+	}
+
+	if( quest.targetKills && quest.targetKills.length )
+	{
+		if( !questProgress.harvestKills )
+			return false;
+
+		for( var killIndex = 0; killIndex < quest.targetKills.length; killIndex++ )
+		{
+			var targetKill = quest.targetKills[killIndex];
+			if(( questProgress.harvestKills[targetKill.npcID] || 0 ) < targetKill.amount )
+			{
+				socket.SysMessage( "You have not killed enough " + ( targetKill.name || targetKill.npcID ) + "." );
+				return false;
+			}
+		}
+	}
+
+	if( quest.targetKillGroups && quest.targetKillGroups.length )
+	{
+		if( !questProgress.harvestKillGroups )
+			return false;
+
+		for( var targetKillGroupIndex = 0; targetKillGroupIndex < quest.targetKillGroups.length; targetKillGroupIndex++ )
+		{
+			var targetKillGroup = quest.targetKillGroups[targetKillGroupIndex];
+			if( !targetKillGroup || !targetKillGroup.groupID )
+				continue;
+
+			if(( questProgress.harvestKillGroups[String( targetKillGroup.groupID )] || 0 ) < targetKillGroup.amount )
+			{
+				socket.SysMessage( "You have not killed enough " + ( targetKillGroup.name || targetKillGroup.groupID ) + "." );
+				return false;
+			}
+		}
+	}
+
+	if( quest.targetTames && quest.targetTames.length )
+	{
+		if( !questProgress.tamedCreatures )
+			return false;
+
+		for( var tameIndex = 0; tameIndex < quest.targetTames.length; tameIndex++ )
+		{
+			var targetTame = quest.targetTames[tameIndex];
+			if(( questProgress.tamedCreatures[targetTame.npcID] || 0 ) < targetTame.amount )
+			{
+				socket.SysMessage( "You have not tamed enough " + ( targetTame.name || targetTame.npcID ) + "." );
+				return false;
+			}
+		}
+	}
+
+	var hasExactTargets = ( quest.targetItems && quest.targetItems.length > 0 );
+	var hasGroupedTargets = ( quest.targetItemGroups && quest.targetItemGroups.length > 0 );
+
+	if( hasExactTargets || hasGroupedTargets )
+	{
+		var questItems = FindQuestItems( player, questID );
+		var requiredItems = [];
+
+		if( hasExactTargets )
+		{
+			for( var targetItemIndex = 0; targetItemIndex < quest.targetItems.length; targetItemIndex++ )
+			{
+				requiredItems.push({
+					sectionID: String( quest.targetItems[targetItemIndex].sectionID ),
+					amount: quest.targetItems[targetItemIndex].amount
+				});
+			}
+
+			for( var requiredIndex = 0; requiredIndex < requiredItems.length; requiredIndex++ )
+			{
+				var totalFound = 0;
+
+				for( var itemIndex = 0; itemIndex < questItems.length; itemIndex++ )
+				{
+					if( String( questItems[itemIndex].sectionID ) == requiredItems[requiredIndex].sectionID )
+					{
+						totalFound += questItems[itemIndex].amount;
+					}
+				}
+
+				if( totalFound < requiredItems[requiredIndex].amount )
+				{
+					socket.SysMessage( GetDictionaryEntry( 19608, socket.language ));
+					return false;
+				}
+			}
+		}
+
+		if( hasGroupedTargets )
+		{
+			for( var targetGroupIndex = 0; targetGroupIndex < quest.targetItemGroups.length; targetGroupIndex++ )
+			{
+				var targetGroup = quest.targetItemGroups[targetGroupIndex];
+				if( !targetGroup || !targetGroup.groupID )
+					continue;
+
+				var totalFoundInGroup = 0;
+
+				for( var groupItemIndex = 0; groupItemIndex < questItems.length; groupItemIndex++ )
+				{
+					var questItem = questItems[groupItemIndex];
+					if( !ValidateObject( questItem ))
+						continue;
+
+					var questSectionID = String( questItem.GetTag( "QuestSectionID" ) || questItem.sectionID );
+					if( TriggerEvent( 5800, "DoesItemMatchTargetGroup", String( questItem.sectionID ), questSectionID, targetGroup ))
+					{
+						totalFoundInGroup += questItem.amount;
+					}
+				}
+
+				if( totalFoundInGroup < targetGroup.amount )
+				{
+					socket.SysMessage( GetDictionaryEntry( 19608, socket.language ));
+					return false;
+				}
+			}
+		}
+
+		if( hasExactTargets )
+		{
+			for( var deductIndex = 0; deductIndex < requiredItems.length; deductIndex++ )
+			{
+				var remainingAmountToDeduct = requiredItems[deductIndex].amount;
+
+				for( var questItemIndex = 0; questItemIndex < questItems.length && remainingAmountToDeduct > 0; questItemIndex++ )
+				{
+					var exactQuestItem = questItems[questItemIndex];
+					if( !ValidateObject( exactQuestItem ))
+						continue;
+
+					if( String( exactQuestItem.sectionID ) != requiredItems[deductIndex].sectionID )
+						continue;
+
+					var amountToDeduct = Math.min( exactQuestItem.amount, remainingAmountToDeduct );
+					exactQuestItem.amount -= amountToDeduct;
+					remainingAmountToDeduct -= amountToDeduct;
+
+					if( exactQuestItem.amount <= 0 )
+					{
+						exactQuestItem.Delete();
+					}
+				}
+			}
+		}
+
+		if( hasGroupedTargets )
+		{
+			for( var groupedTargetIndex = 0; groupedTargetIndex < quest.targetItemGroups.length; groupedTargetIndex++ )
+			{
+				var groupedTarget = quest.targetItemGroups[groupedTargetIndex];
+				if( !groupedTarget || !groupedTarget.groupID )
+					continue;
+
+				var remainingGroupAmountToDeduct = groupedTarget.amount;
+
+				for( var groupedQuestItemIndex = 0; groupedQuestItemIndex < questItems.length && remainingGroupAmountToDeduct > 0; groupedQuestItemIndex++ )
+				{
+					var groupedQuestItem = questItems[groupedQuestItemIndex];
+					if( !ValidateObject( groupedQuestItem ))
+						continue;
+
+					var groupedQuestSectionID = String( groupedQuestItem.GetTag( "QuestSectionID" ) || groupedQuestItem.sectionID );
+					if( !TriggerEvent( 5800, "DoesItemMatchTargetGroup", String( groupedQuestItem.sectionID ), groupedQuestSectionID, groupedTarget ))
+						continue;
+
+					var groupedAmountToDeduct = Math.min( groupedQuestItem.amount, remainingGroupAmountToDeduct );
+					groupedQuestItem.amount -= groupedAmountToDeduct;
+					remainingGroupAmountToDeduct -= groupedAmountToDeduct;
+
+					if( groupedQuestItem.amount <= 0 )
+					{
+						groupedQuestItem.Delete();
+					}
+				}
+			}
+		}
+
+		socket.SysMessage( GetDictionaryEntry( 19609, socket.language ));
+		return true;
+	}
+
+	return true;
+}
+
+/** @type { ( player: Character, questID: number ) => Item[] } */
+function FindQuestItems( player, questID )
+{
+	if( !ValidateObject( player ))
+		return [];
+
+	var socket = player.socket;
+	if( socket == null )
+		return [];
+
+	var questItems = [];
+	var pack = player.pack;
+
+	if( !ValidateObject( pack ))
+	{
+		socket.SysMessage( GetDictionaryEntry( 19606, socket.language ));
+		return questItems;
+	}
+
+	var quest = TriggerEvent( 5801, "QuestList", questID );
+	if( !quest || ( !quest.targetItems && !quest.targetItemGroups && !quest.deliveryItem ))
+	{
+		return questItems;
+	}
+
+	var requiredSectionIDs = [];
+
+	if( quest.targetItems )
+	{
+		for( var targetItemIndex = 0; targetItemIndex < quest.targetItems.length; targetItemIndex++ )
+		{
+			requiredSectionIDs.push( String( quest.targetItems[targetItemIndex].sectionID ));
+		}
+	}
+
+	if( quest.targetItemGroups )
+	{
+		for( var targetGroupIndex = 0; targetGroupIndex < quest.targetItemGroups.length; targetGroupIndex++ )
+		{
+			var targetGroup = quest.targetItemGroups[targetGroupIndex];
+			if( !targetGroup || !targetGroup.items )
+			{
+				continue;
+			}
+
+			for( var groupItemIndex = 0; groupItemIndex < targetGroup.items.length; groupItemIndex++ )
+			{
+				var groupItem = targetGroup.items[groupItemIndex];
+				if( groupItem && groupItem.sectionID )
+				{
+					requiredSectionIDs.push( String( groupItem.sectionID ));
+				}
+			}
+		}
+	}
+
+	if( quest.type == "delivery" && quest.deliveryItem )
+	{
+		requiredSectionIDs.push( String( quest.deliveryItem.sectionID ));
+	}
+
+	for( var currentItem = pack.FirstItem(); !pack.FinishedItems(); currentItem = pack.NextItem() )
+	{
+		if( !ValidateObject( currentItem ))
+		{
+			continue;
+		}
+
+		if( currentItem.GetTag( "QuestItem" ))
+		{
+			var questSectionID = String( currentItem.GetTag( "QuestSectionID" ) || currentItem.sectionID );
+
+			if( requiredSectionIDs.indexOf( String( currentItem.sectionID )) != -1 || requiredSectionIDs.indexOf( questSectionID ) != -1 )
+			{
+				questItems.push( currentItem );
+			}
+		}
+	}
+
+	return questItems;
+}
+
+/** @type { ( currChar: Character, targChar: Character ) => boolean } */
+function onCharDoubleClick( pUser, questNpc ) 
+{
+	if( !ValidateObject( pUser ))
+		return false;
+
+	if( questNpc.GetTag( "QuestTurnInOnly" ) )
+	{
+		var questEntry = TriggerEvent( 5800, "GetQuestProgressEntry", pUser, questID );
+
+		if( !questEntry )
+		{
+			pSock.SysMessage( "I am not offering that quest right now." );
+			return false;
+		}
+	}
+
+	QuestNpcInterAction( pUser, questNpc );
+	return true;
+}
+
+/** @type { ( pUser: Character, questNpc: Character ) => boolean } */
+function QuestNpcInterAction( pUser, questNpc )
+{
+	var gumpID = 5822 + 0xffff;
+
+	if( !ValidateObject( pUser ) || !ValidateObject( questNpc ) )
+		return false;
+
+	var socket = pUser.socket;
+	if( socket == null )
+		return false;
+
+	pUser.SetTag( "questNpcSerial", questNpc.serial );
+
+	if( !questNpc.InRange( pUser, 2 ) )
+	{
+		socket.SysMessage( "You are too far away." );
+		return false;
+	}
+
+	var deliveryQuestID = parseInt( questNpc.GetTag( "DeliveryQuestID" ), 10 );
+	if( !isNaN( deliveryQuestID ) && deliveryQuestID > 0 )
+	{
+		if( !IsQuestArchivedForPlayer( pUser, deliveryQuestID ) )
+		{
+			if( TriggerEvent( 5800, "CheckQuest", pUser, deliveryQuestID, "check" ) )
+			{
+				ProcessDeliveryQuest( pUser, questNpc, deliveryQuestID );
+				return true;
+			}
+		}
+	}
+
+	var npcRootQuestID = GetNpcQuestRootID( questNpc );
+	if( npcRootQuestID <= 0 )
+		return false;
+
+	var playerQuestID = ResolvePlayerQuestID( pUser, npcRootQuestID );
+	if( !playerQuestID )
+	{
+		questNpc.TurnToward( pUser );
+
+		var rootQuest = TriggerEvent( 5801, "QuestList", npcRootQuestID );
+		if( !rootQuest )
+		{
+			socket.SysMessage( "Quest data could not be loaded." );
+			return false;
+		}
+
+		questNpc.TextMessage( GetDictionaryEntry( 19612, socket.language ) ); // You have completed all quests
+		return false;
+	}
+
+	questNpc.TurnToward( pUser );
+	socket.CloseGump( gumpID, 0 );
+	QuestConversationGump( pUser, questNpc, playerQuestID );
+	return true;
+}
+
+/** @type { ( player: Character, questNpc: Character, deliveryQuestID: number ) => boolean } */
+function ProcessDeliveryQuest( player, questNpc, deliveryQuestID )
+{
+	if( !ValidateObject( player ))
+		return false;
+
+	var socket = player.socket;
+	if( socket == null )
+		return false;
+
+	// Fetch the quest details
+	var quest = TriggerEvent( 5801, "QuestList", deliveryQuestID );
+	if( !quest || quest.type != "delivery" )
+	{
+		questNpc.TextMessage( "This is not a delivery quest." );
+		return false;
+	}
+
+	// Ensure the NPC matches the quest's recipient
+	if( !quest.targetDelivery || questNpc.sectionID != quest.targetDelivery.sectionID )
+	{
+		questNpc.TextMessage( "I am not the intended recipient of this delivery." );
+		return false;
+	}
+
+	var requiredItem = quest.deliveryItem;
+	if( !requiredItem )
+	{
+		return false;
+	}
+
+	var questItems = FindQuestItems( player, deliveryQuestID );
+	var totalDeliveryAmount = 0;
+
+	// Pass 1: verify total amount across all matching stacks
+	for( var itemIndex = 0; itemIndex < questItems.length; itemIndex++ )
+	{
+		if( String( questItems[itemIndex].sectionID ) == String( requiredItem.sectionID ) )
+		{
+			totalDeliveryAmount += questItems[itemIndex].amount;
+		}
+	}
+
+	if( totalDeliveryAmount < requiredItem.amount )
+	{
+		socket.SysMessage( GetDictionaryEntry( 19613, socket.language )); // You do not have the required item to deliver.
+		return false;
+	}
+
+	// Pass 2: deduct across as many stacks as needed
+	var remainingAmountToDeduct = requiredItem.amount;
+
+	for( var deductIndex = 0; deductIndex < questItems.length && remainingAmountToDeduct > 0; deductIndex++ )
+	{
+		var questItem = questItems[deductIndex];
+
+		if( !ValidateObject( questItem ))
+		{
+			continue;
+		}
+
+		if( String( questItem.sectionID ) != String( requiredItem.sectionID ) )
+		{
+			continue;
+		}
+
+		var amountToDeduct = Math.min( questItem.amount, remainingAmountToDeduct );
+		questItem.amount -= amountToDeduct;
+		remainingAmountToDeduct -= amountToDeduct;
+
+		if( questItem.amount <= 0 )
+		{
+			questItem.Delete();
+		}
+	}
+
+	// Update the player's quest progress
+	var questProgressArray = TriggerEvent( 5800, "ReadQuestProgress", player );
+	for( var progressIndex = 0; progressIndex < questProgressArray.length; progressIndex++ )
+	{
+		if( questProgressArray[progressIndex].questID == deliveryQuestID && questProgressArray[progressIndex].serial == player.serial )
+		{
+			questProgressArray[progressIndex].completed = true;
+			break;
+		}
+	}
+
+	TriggerEvent( 5800, "WriteQuestProgress", player, questProgressArray );
+
+	// Notify the player and complete the quest
+	socket.SysMessage( GetDictionaryEntry( 19614, socket.language )); // You have delivered the required item!
+	TriggerEvent( 5800, "CompleteQuest", player, deliveryQuestID );
+	return true;
+}
+
+/** @type { ( questNpc: Character ) => number } */
+function GetNpcQuestRootID( questNpc )
+{
+	// Preferred going forward
+	var rootQuestID = parseInt( questNpc.GetTag( "QuestRootID" ), 10 );
+	if( !isNaN( rootQuestID ) && rootQuestID > 0 )
+		return rootQuestID;
+
+	// Backward compatible
+	var legacyQuestID = parseInt( questNpc.GetTag( "QuestID" ), 10 );
+	if( !isNaN( legacyQuestID ) && legacyQuestID > 0 )
+		return legacyQuestID;
+
+	return 0;
+}
+
+/** @type { ( player: Character, questID: number ) => boolean } */
+function IsQuestArchivedForPlayer( player, questID )
+{
+	var archivedQuestIDs = TriggerEvent( 5800, "ReadArchivedQuests", player ) || [];
+	var questIDInt = parseInt( questID, 10 );
+
+	for( var index = 0; index < archivedQuestIDs.length; index++ )
+	{
+		if( parseInt( archivedQuestIDs[index], 10 ) == questIDInt )
+			return true;
+	}
+	return false;
+}
+
+/** @type { ( player: Character, questID: number ) => boolean } */
+function IsQuestActiveForPlayer( player, questID )
+{
+	var activeQuestEntries = TriggerEvent( 5800, "ReadQuestProgress", player ) || [];
+	var questIDInt = parseInt( questID, 10 );
+
+	for( var index = 0; index < activeQuestEntries.length; index++ )
+	{
+		var entry = activeQuestEntries[index];
+		if( entry && entry.serial == player.serial && parseInt( entry.questID, 10 ) == questIDInt )
+			return true;
+	}
+	return false;
+}
+
+/** @type { ( player: Character, questData: any ) => number } */
+function ResolveNextQuestID_Any( player, questData )
+{
+	// Prefer the real branching resolver in script 5800
+	var resolved = TriggerEvent( 5800, "ResolveNextQuestID", player, questData );
+	resolved = parseInt( resolved, 10 );
+	if( !isNaN( resolved ) && resolved > 0 )
+		return resolved;
+
+	// Fallback: old linear field
+	var fallback = parseInt( questData && questData.nextQuestID, 10 );
+	if( !isNaN( fallback ) && fallback > 0 )
+		return fallback;
+
+	return 0;
+}
+
+/** @type { ( player: Character, npcRootQuestID: number ) => ( number | null ) } */
+function ResolvePlayerQuestID( player, npcRootQuestID )
+{
+	if( !ValidateObject( player ) )
+		return null;
+
+	var currentQuestID = parseInt( npcRootQuestID, 10 );
+	if( isNaN( currentQuestID ) || currentQuestID <= 0 )
+		return null;
+
+	// Loop guard in case of bad data / circular chains
+	for( var hopCount = 0; hopCount < 50; hopCount++ )
+	{
+		var questData = TriggerEvent( 5801, "QuestList", currentQuestID );
+		if( !questData )
+			return null;
+
+		// If active, keep showing it
+		if( IsQuestActiveForPlayer( player, currentQuestID ) )
+			return currentQuestID;
+
+		// If not archived, this is the next offerable quest
+		if( !IsQuestArchivedForPlayer( player, currentQuestID ) )
+			return currentQuestID;
+
+		// Archived: advance using branching/linear
+		var nextQuestID = ResolveNextQuestID_Any( player, questData );
+		if( nextQuestID <= 0 )
+			return null;
+
+		currentQuestID = nextQuestID;
+	}
+
+	return null;
+}
+
+/** @type { ( array: any[], value: number ) => boolean } */
+function isQuestArchived( array, value )
+{
+	value = parseInt( value, 10 ); // Ensure value is a number
+	for( var i = 0; i < array.length; i++ ) 
+	{
+		if( parseInt( array[i], 10 ) == value )
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+/** @type { ( value: any ) => boolean } */
+function isArray( value ) 
+{
+	return Object.prototype.toString.call( value ) == "[object Array]";
+}
+
+/** @type { ( tSock: Socket, baseObj: BaseObject ) => boolean } */
+function onContextMenuRequest( socket, targObj )
+{
+	var pUser = socket.currentChar;
+	if( !ValidateObject( pUser ) || !ValidateObject( targObj ))
+	{
+		return false;
+	}
+
+	var initialQuestID = parseInt( targObj.GetTag( "QuestID" ), 10 );
+	if( isNaN( initialQuestID ) || initialQuestID <= 0 )
+	{
+		return false;
+	}
+
+	var playerQuestID = ResolvePlayerQuestID( pUser, initialQuestID );
+	if( isNaN( playerQuestID ) || playerQuestID <= 0 )
+	{
+		return false;
+	}
+
+	var quest = TriggerEvent( 5801, "QuestList", playerQuestID );
+	if( !quest )
+	{
+		return false;
+	}
+
+	var activeQuests = TriggerEvent( 5800, "ReadQuestProgress", pUser ) || [];
+	var archivedQuests = TriggerEvent( 5800, "ReadArchivedQuests", pUser ) || [];
+
+	var hasActiveQuest = false;
+	var activeQuestComplete = false;
+
+	for( var activeIndex = 0; activeIndex < activeQuests.length; activeIndex++ )
+	{
+		var questEntry = activeQuests[activeIndex];
+		if( questEntry.serial == pUser.serial && parseInt( questEntry.questID, 10 ) == playerQuestID )
+		{
+			hasActiveQuest = true;
+			activeQuestComplete = ( questEntry.completed == true );
+			break;
+		}
+	}
+
+	var canShowQuestConversation = hasActiveQuest;
+
+	if( !canShowQuestConversation )
+	{
+		canShowQuestConversation = true;
+
+		if( quest.oneTimeQuest == 1 )
+		{
+			for( var archivedIndex = 0; archivedIndex < archivedQuests.length; archivedIndex++ )
+			{
+				var archivedQuestID = archivedQuests[archivedIndex];
+
+				if( typeof archivedQuestID == "object" )
+				{
+					archivedQuestID = archivedQuestID.questID;
+				}
+
+				if( parseInt( archivedQuestID, 10 ) == playerQuestID )
+				{
+					canShowQuestConversation = false;
+					break;
+				}
+			}
+		}
+
+		if( canShowQuestConversation && quest.requiresQuestID != null && quest.requiresQuestID != 0 )
+		{
+			var requiredQuestID = parseInt( quest.requiresQuestID, 10 );
+			var hasRequiredQuest = false;
+
+			if( !isNaN( requiredQuestID ) && requiredQuestID > 0 )
+			{
+				for( var requiredIndex = 0; requiredIndex < archivedQuests.length; requiredIndex++ )
+				{
+					var requiredArchivedID = archivedQuests[requiredIndex];
+
+					if( typeof requiredArchivedID == "object" )
+					{
+						requiredArchivedID = requiredArchivedID.questID;
+					}
+
+					if( parseInt( requiredArchivedID, 10 ) == requiredQuestID )
+					{
+						hasRequiredQuest = true;
+						break;
+					}
+				}
+
+				if( !hasRequiredQuest )
+				{
+					canShowQuestConversation = false;
+				}
+			}
+		}
+	}
+
+	var showQuestConversation = canShowQuestConversation;
+	var showCancelQuest = ( hasActiveQuest && !activeQuestComplete );
+
+	var numEntries = 0;
+	if( showQuestConversation )
+	{
+		numEntries++;
+	}
+	if( showCancelQuest )
+	{
+		numEntries++;
+	}
+
+	if( numEntries <= 0 )
+	{
+		return false;
+	}
+
+	var offset = 12;
+	var packetLen = ( 12 + ( numEntries * 8 ));
+
+	var toSend = new Packet();
+	toSend.ReserveSize( packetLen );
+	toSend.WriteByte( 0, 0xBF );
+	toSend.WriteShort( 1, packetLen );
+	toSend.WriteShort( 3, 0x14 );
+	toSend.WriteShort( 5, 0x0001 );
+	toSend.WriteLong( 7, targObj.serial );
+	toSend.WriteByte( 11, numEntries );
+
+	if( showQuestConversation )
+	{
+		toSend.WriteShort( offset, 0x000A );
+		toSend.WriteShort( offset += 2, 6156 );
+		toSend.WriteShort( offset += 2, 0x0020 );
+		toSend.WriteShort( offset += 2, 0x03E0 );
+
+		offset += 2;
+	}
+
+	if( showCancelQuest )
+	{
+		toSend.WriteShort( offset, 0x000C );
+		toSend.WriteShort( offset += 2, 6155 );
+		toSend.WriteShort( offset += 2, 0x0020 );
+		toSend.WriteShort( offset += 2, 0x03E0 );
+
+		offset += 2;
+	}
+
+	socket.Send( toSend );
+	toSend.Free();
+
+	return false;
+}
+
+/** @type { ( tSock: Socket, baseObj: BaseObject, popupEntry: number ) => boolean } */
+function onContextMenuSelect( socket, questNpc, popupEntry )
+{
+	var pUser = socket.currentChar;
+
+	if( !ValidateObject( pUser ) || !ValidateObject( questNpc ))
+	{
+		return false;
+	}
+
+	switch( popupEntry )
+	{
+		case 0x000A: // Quest Conversation
+			{
+				if( !ValidateObject( pUser ) || !ValidateObject( questNpc ))
+				{
+					return false;
+				}
+
+				if( !questNpc.InRange( pUser, 2 ))
+				{
+					pUser.SysMessage( "You are too far away." );
+					return false;
+				}
+
+				if( questNpc.GetTag( "QuestTurnInOnly" ) )
+				{
+					var questEntry = TriggerEvent( 5800, "GetQuestProgressEntry", pUser, questID );
+
+					if( !questEntry )
+					{
+						pSock.SysMessage( "I am not offering that quest right now." );
+						return false;
+					}
+				}
+
+				QuestNpcInterAction( pUser, questNpc );
+			}
+			break;
+		case 0x000C: // Cancel Quest (Optional)
+			{
+				if( !ValidateObject( pUser ) || !ValidateObject( questNpc ))
+				{
+					return false;
+				}
+
+				if( !questNpc.InRange( pUser, 2 ))
+				{
+					pUser.SysMessage( "You are too far away." );
+					return false;
+				}
+
+				var activeQuests = TriggerEvent( 5800, "ReadQuestProgress", pUser ) || [];
+				var canCancelQuest = false;
+				var initialQuestID = parseInt( questNpc.GetTag( "QuestID" ), 10 );
+				var playerQuestID = ResolvePlayerQuestID( pUser, initialQuestID );
+
+				for( var activeIndex = 0; activeIndex < activeQuests.length; activeIndex++ )
+				{
+					var questEntry = activeQuests[activeIndex];
+					if( questEntry.serial == pUser.serial && parseInt( questEntry.questID, 10 ) == playerQuestID && questEntry.completed != true )
+					{
+						canCancelQuest = true;
+						break;
+					}
+				}
+
+				if( !canCancelQuest )
+				{
+					pUser.SysMessage( "You are not currently working on this quest.");
+					return false;
+				}
+
+				ResignQuest( pUser, playerQuestID );
+				ManageQuestItems( pUser, playerQuestID, false );
+				pUser.SoundEffect( 0x5B3, true );
+			}
+			break;
+		default:
+			return true;
+	}
+
+	return false;
+}

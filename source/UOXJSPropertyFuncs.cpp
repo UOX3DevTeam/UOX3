@@ -2069,6 +2069,9 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval
 			case CCP_FX2:			*vp = INT_TO_JSVAL( gPriv->GetFx( 1 ));				break;
 			case CCP_FY2:			*vp = INT_TO_JSVAL( gPriv->GetFy( 1 ));				break;
 			case CCP_FZ:			*vp = INT_TO_JSVAL( gPriv->GetFz() );				break;
+			case CCP_SPAWNX:		*vp = INT_TO_JSVAL( gPriv->GetSpawnX() );			break;
+			case CCP_SPAWNY:		*vp = INT_TO_JSVAL( gPriv->GetSpawnY() );			break;
+			case CCP_SPAWNZ:		*vp = INT_TO_JSVAL( gPriv->GetSpawnZ() );			break;
 			case CCP_PATHTARGX:		*vp = INT_TO_JSVAL( gPriv->GetPathTargX() );		break;
 			case CCP_PATHTARGY:		*vp = INT_TO_JSVAL( gPriv->GetPathTargY() );		break;
 			case CCP_ISONHORSE:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsOnHorse() );		break;
@@ -2610,6 +2613,9 @@ JSBool CCharacterProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBoo
 			case CCP_FX2:			gPriv->SetFx( static_cast<SI16>( encaps.toInt() ), 1 );	break;
 			case CCP_FY2:			gPriv->SetFy( static_cast<SI16>( encaps.toInt() ), 1 );	break;
 			case CCP_FZ:			gPriv->SetFz( static_cast<SI08>( encaps.toInt() ));		break;
+			case CCP_SPAWNX:		gPriv->SetSpawnX( static_cast<SI16>( encaps.toInt() ));	break;
+			case CCP_SPAWNY:		gPriv->SetSpawnY( static_cast<SI16>( encaps.toInt() ));	break;
+			case CCP_SPAWNZ:		gPriv->SetSpawnZ( static_cast<SI08>( encaps.toInt() ));	break;
 			case CCP_PATHTARGX:		gPriv->SetPathTargX( static_cast<UI16>( encaps.toInt() ));		break;
 			case CCP_PATHTARGY:		gPriv->SetPathTargY( static_cast<UI16>( encaps.toInt() ));		break;
 			case CCP_ISONHORSE:		gPriv->SetOnHorse( encaps.toBool() );					break;

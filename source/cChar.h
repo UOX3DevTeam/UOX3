@@ -82,6 +82,9 @@ private:
 		SI16				fx[2]; //NPC Wander Point x
 		SI16				fy[2]; //NPC Wander Point y
 		SI08				fz;    //NPC Wander Point z
+		SI16				spawnX; // NPC's initial X spawn coordinate
+		SI16				spawnY; // NPC's initial Y spawn coordinate
+		SI08				spawnZ; // NPC's initial Z spawn coordinate
 		SI16				aiType;
 		SI16				spellAttack;
 		SI08				spellDelay; // won't time out for more than 255 seconds!
@@ -781,6 +784,13 @@ public:
 	void		SetFz( SI08 newVal );
 	void		SetNpcWander( SI08 newValue, bool initArea = false );
 	void		SetOldNpcWander( SI08 newValue );
+
+	SI16		GetSpawnX( void ) const;
+	SI16		GetSpawnY( void ) const;
+	SI08		GetSpawnZ( void ) const;
+	void		SetSpawnX( SI16 newVal );
+	void		SetSpawnY( SI16 newVal );
+	void		SetSpawnZ( SI08 newVal );
 
 	CChar *		GetFTarg( void ) const;
 	void		SetFTarg( CChar *newTarg );
