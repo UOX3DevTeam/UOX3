@@ -177,7 +177,7 @@ const itemTileIDList = [
 	]]
 ];
 
-/** @type { ( itemToCheck: Item | null, idToCheck?: number ) => string } */
+/** @type { ( itemToCheck: Item | null, idToCheck?: number ) => string | number | boolean } */
 function GetItemMaterialType( itemToCheck, idToCheck )
 {
 	var itemTileID = 0;
@@ -188,7 +188,7 @@ function GetItemMaterialType( itemToCheck, idToCheck )
 		materialType = itemToCheck.GetTag( "materialType" );
 		if( materialType )
 		{
-			return materialType.toString();
+			return materialType;
 		}
 
 		itemTileID = itemToCheck.id;
