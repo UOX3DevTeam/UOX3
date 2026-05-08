@@ -177,23 +177,25 @@ const itemTileIDList = [
 	]]
 ];
 
+/** @type { ( itemToCheck: Item | null, idToCheck?: number ) => string } */
 function GetItemMaterialType( itemToCheck, idToCheck )
 {
 	var itemTileID = 0;
+	var materialType;
+
 	if( ValidateObject( itemToCheck ))
 	{
-		// Return custom material from item tag, if it exists
-		if( itemToCheck.GetTag( "materialType" ))
+		materialType = itemToCheck.GetTag( "materialType" );
+		if( materialType )
 		{
-			return itemToCheck.GetTag( "materialType" );
+			return materialType.toString();
 		}
 
-		// Otherwise return material based on item's ID
 		itemTileID = itemToCheck.id;
 	}
 	else
 	{
-		itemTileID = idToCheck;
+		itemTileID = idToCheck || 0;
 	}
 
 	for( var i = 0; i < itemTileIDList.length; i++ )
@@ -243,6 +245,7 @@ const resourceTileIDList = [
 	]]*/
 ];
 
+/** @type { ( idToCheck: number ) => string } */
 function GetResourceType( idToCheck )
 {
 	for( var i = 0; i < resourceTileIDList.length; i++ )
@@ -261,13 +264,14 @@ function GetResourceType( idToCheck )
 const mapTileIDList = [
 ];
 
+/** @type { ( mapTileID: number ) => string } */
 function GetGroundMaterialType( mapTileID )
 {
-	for( var i = 0; i < mapTileIDListList.length; i++ )
+	for( var i = 0; i < mapTileIDList.length; i++ )
 	{
 		for( var j = 0; j < mapTileIDListList[i].length; j++ )
 		{
-			if( mapTileIDListList[i][j].indexOf( mapTileID ) > -1 )
+			if( mapTileIDList[i][j].indexOf( mapTileID ) > -1 )
 			{
 				return mapTileIDListList[i][0];
 			}
