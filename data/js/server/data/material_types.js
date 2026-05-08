@@ -181,21 +181,20 @@ const itemTileIDList = [
 function GetItemMaterialType( itemToCheck, idToCheck )
 {
 	var itemTileID = 0;
-	var materialType;
 
 	if( ValidateObject( itemToCheck ))
 	{
-		materialType = itemToCheck.GetTag( "materialType" );
-		if( materialType )
+		// Return custom material from item tag, if it exists
+		if( itemToCheck.GetTag( "materialType" ))
 		{
-			return materialType;
+			return itemToCheck.GetTag( "materialType" );
 		}
-
+		// Otherwise return material based on item's ID
 		itemTileID = itemToCheck.id;
 	}
 	else
 	{
-		itemTileID = idToCheck || 0;
+		itemTileID = idToCheck;
 	}
 
 	for( var i = 0; i < itemTileIDList.length; i++ )
