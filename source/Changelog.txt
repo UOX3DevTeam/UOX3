@@ -1,3 +1,8 @@
+08/05/2026 - DragonSlayer62 (#546)
+    [ADD] Added Publish 123 weapons and armors to GetWeaponType in combat.cpp and js/server/data/weapontypes.js, and to material list in js/server/data/material_types.js
+    [UPD] Added TypeScript validation hints for item material lookup functions (js/server/data/material_types.js)
+    [FIX] Fixed ground material lookup to use the correct map tile list variable (js/server/data/material_types.js)
+
 02/05/2026 - DragonSlayer62 (#543)
     [ADD] Added the first 8 new player quest givers, including their quest JSON files and NPC definitions.
     [ADD] Added quest reward items for the new player quests, including crafting satchels, Jacob's Pickaxe, and the Clasp of Concentration.
