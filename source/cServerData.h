@@ -212,7 +212,7 @@ private:
 
 	// Once over 62, bitsets are costly.  std::vector<bool> has a special exception in the c++ specificaiton, to minimize wasted space for bools
 	// These should be updated
-	std::bitset<125>	boolVals;			// Many values stored this way, rather than using bools.
+	std::bitset<126>	boolVals;			// Many values stored this way, rather than using bools.
 	std::bitset<64>		spawnRegionsFacets;	// Used to determine which facets to enable spawn regions for, set in UOX>INI
 	std::bitset<64>		moongateFacets;		// Used to determine which facets to enable moongates for, set in UOX>INI
 
@@ -343,6 +343,8 @@ private:
 	bool		vendorUseItemFees;				// Add item-based upkeep fees from listed item prices
 	SI16		vendorItemFeeDivisor;			// Listed item value divisor used for vendor item fees
 	SI16		vendorItemFeeAmount;			// Fee added per divisor step
+	bool		onlyReturnToBank;				// returned vendor belongings skip player backpack entirely
+	SI16		vendorMaxFunds;					// Max amount of money the vendor can hold in the bank.
 
 	// SpeedUp
 	R64			npcWalkingSpeed;				//	Speed at which walking NPCs move
@@ -1411,6 +1413,12 @@ public:
 
 	auto		VendorItemFeeAmount( SI16 value ) -> void;
 	SI16		VendorItemFeeAmount() const;
+
+	auto		OnlyReturnToBank( bool value ) -> void;
+	auto		OnlyReturnToBank() const -> bool;
+
+	auto		VendorMaxFunds( SI16 value ) -> void;
+	SI16		VendorMaxFunds() const;
 
 	SI16		ServerTimeDay() const;
 	UI08		ServerTimeHours() const;

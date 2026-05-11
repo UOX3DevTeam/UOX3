@@ -424,7 +424,9 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"VENDORCHARGEHOURS", 410},
 	{"VENDORUSEITEMFEES", 411},
 	{"VENDORITEMFEEDIVISOR", 412},
-	{"VENDORITEMFEEAMOUNT", 413}
+	{"VENDORITEMFEEAMOUNT", 413},
+	{"ONLYRETURNTOBANK", 414},
+	{"VENDORMAXFUNDS", 415},
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -550,6 +552,7 @@ constexpr auto BIT_QUESTSYSTEMENABLED				= UI32( 121 );
 constexpr auto BIT_LOGINQUESTENABLED				= UI32( 122 );
 constexpr auto BIT_VENDORCHARGESENABLED				= UI32( 123 );
 constexpr auto BIT_VENDORUSEITEMFEES				= UI32( 124 );
+constexpr auto BIT_ONLYRETURNTOBANK					= UI32( 125 );
 
 
 // New uox3.ini format lookup
@@ -968,6 +971,8 @@ auto CServerData::ResetDefaults() -> void
 	VendorUseItemFees( true );
 	VendorItemFeeDivisor( 500 );
 	VendorItemFeeAmount( 3 );
+	OnlyReturnToBank( true );
+	VendorMaxFunds( 1000000 );
 
 	// SPEEDUP
 	CheckSpawnRegionSpeed( 30 );
@@ -5576,6 +5581,34 @@ auto CServerData::VendorItemFeeAmount( SI16 value ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::OnlyReturnToBank()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets returned vendor belongings skip player backpack entirely
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::OnlyReturnToBank() const -> bool
+{
+	return boolVals.test( BIT_ONLYRETURNTOBANK );
+}
+auto CServerData::OnlyReturnToBank( bool newVal ) -> void
+{
+	boolVals.set( BIT_ONLYRETURNTOBANK, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::VendorMaxFunds()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Max amount of money the vendor can hold in the bank.
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::VendorMaxFunds() const -> SI16
+{
+	return vendorMaxFunds;
+}
+auto CServerData::VendorMaxFunds( SI16 value ) -> void
+{
+	vendorMaxFunds = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::SaveIni()
 //|	Date		-	02/21/2002
 //o------------------------------------------------------------------------------------------------o
@@ -5949,6 +5982,8 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "VENDORUSEITEMFEES=" << ( VendorUseItemFees() ? 1 : 0 ) << '\n';
 		ofsOutput << "VENDORITEMFEEDIVISOR=" << VendorItemFeeDivisor() << '\n';
 		ofsOutput << "VENDORITEMFEEAMOUNT=" << VendorItemFeeAmount() << '\n';
+		ofsOutput << "ONLYRETURNTOBANK=" << ( OnlyReturnToBank() ? 1 : 0 ) << '\n';
+		ofsOutput << "VENDORMAXFUNDS=" << VendorMaxFunds() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[speedup]" << '\n' << "{" << '\n';
@@ -7714,6 +7749,12 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 413: // VENDORITEMFEEAMOUNT
 			VendorItemFeeAmount( static_cast<SI16>( std::stoi( value )));
+			break;
+		case 414: // ONLYRETURNTOBANK
+			OnlyReturnToBank( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
+			break;
+		case 415: // VENDORMAXFUNDS
+			VendorMaxFunds( static_cast<SI16>( std::stoi( value )));
 			break;
 		default:
 			rValue = false;

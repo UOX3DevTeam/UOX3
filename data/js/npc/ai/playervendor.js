@@ -5,20 +5,20 @@
 // Max amount of money the vendor can hold in the bank.
 // Held gold is not included in this limit, but will
 // be used first to pay upkeep before bank funds are used.
-var vendorMaxFunds = 1000000;
+var vendorMaxFunds = GetServerSetting( "VendorMaxFunds" );
 
 // If true, returned vendor belongings skip player backpack entirely.
 // Items, gold and vendor deed will try bank box first, then drop at vendor location.
 // If false, belongings try backpack first, then bank box, then ground.
-var onlyReturnToBank = true;
+const onlyReturnToBank = GetServerSetting( "onlyReturnToBank" );
 
 // Vendor upkeep settings
-var vendorChargesEnabled = true; // Master toggle for vendor upkeep charges
-var vendorBaseCharge = 60;       // Flat fee per charge period
-var vendorChargeHours = 24;      // Charge every X real hours
-var vendorUseItemFees = true;    // Add item-based fee from listed item prices
-var vendorItemFeeDivisor = 500;  // 3 gold per 500 worth of one item
-var vendorItemFeeAmount = 3;     // Fee added per divisor step
+var vendorChargesEnabled =  GetServerSetting( "VendorChargesEnabled" );; // Master toggle for vendor upkeep charges
+var vendorBaseCharge =  GetServerSetting( "VendorBaseCharge" );       // Flat fee per charge period
+var vendorChargeHours =  GetServerSetting( "VendorChargeHours" );      // Charge every X real hours
+var vendorUseItemFees = GetServerSetting( "VendorUseItemFees" );    // Add item-based fee from listed item prices
+var vendorItemFeeDivisor = GetServerSetting( "VendorItemFeeDivisor" );  // 3 gold per 500 worth of one item
+var vendorItemFeeAmount = GetServerSetting( "VendorItemFeeAmount" );     // Fee added per divisor step
 
 var layerOneHand = 0x01;
 var layerTwoHand = 0x02;
