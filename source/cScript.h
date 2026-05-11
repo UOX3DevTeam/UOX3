@@ -27,6 +27,7 @@ enum ScriptEvent
 	seOnStat,
 	seOnTooltip,
 	seOnNameRequest,
+	seOnQuestToggle,
 	seOnAttack,
 	seOnDefense,
 	seOnSkillGain,			//	**
@@ -232,6 +233,7 @@ public:
 	std::string		OnProfileRequest( CSocket *mSock, CChar *profileOwner );
 	std::string		OnTooltip( CBaseObject *myObj, CSocket *pSocket );
 	std::string		OnNameRequest( CBaseObject *myObj, CChar *nameRequester, UI08 requestSource );
+	SI08		onQuestToggle( CChar *player, CItem *iUsing );
 	bool        OnAttack( CChar *attacker, CChar *defender, bool hitStatus, SI08 hitLoc, UI16 damageDealt );
 	bool        OnDefense( CChar *attacker, CChar *defender, bool hitStatus, SI08 hitLoc, UI16 damageReceived );
 	SI08		OnSkillGain( CChar *player, SI08 skill, UI32 skillAmtGained );

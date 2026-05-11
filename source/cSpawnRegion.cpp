@@ -1022,6 +1022,9 @@ auto CSpawnRegion::RegionSpawnChar() -> CChar *
 			CSpawn->SetFy( y1, 0 );
 			CSpawn->SetFy( y2, 1 );
 			CSpawn->SetLocation( x, y, z, worldNumber, instanceId );
+			CSpawn->SetSpawnX( x );
+			CSpawn->SetSpawnY( y );
+			CSpawn->SetSpawnZ( z );
 			CSpawn->SetSpawned( true );
 			CSpawn->ShouldSave( false );
 			CSpawn->SetSpawn( static_cast<UI32>( regionNum ));

@@ -8,6 +8,7 @@ movable=1
 pileable=1
 decay=1
 good=46
+sectionid=small_iron_ore
 }
 
 [0x19B8]
@@ -20,6 +21,7 @@ movable=1
 pileable=1
 decay=1
 good=46
+sectionid=medium_iron_ore
 }
 
 [0x19B9]
@@ -32,10 +34,11 @@ movable=1
 pileable=1
 decay=1
 good=46
+sectionid=large_iron_ore
 }
 
 [0x19BA]
-{ Medium-small Pile
+{ Medium_small Pile
 get=base_item
 name=iron ore
 id=0x19BA
@@ -44,13 +47,270 @@ movable=1
 pileable=1
 decay=1
 good=46
+sectionid=medium_small_iron_ore
+}
+
+[small_dull_copper_ore]
+{ small
+get=0x19B7
+name=dull copper ore
+colour=0x0973
+sectionid=small_dull_copper_ore
+}
+
+[medium_dull_copper_ore]
+{ Medium Pile
+get=0x19B8
+name=dull copper ore
+colour=0x0973
+sectionid=medium_dull_copper_ore
+}
+
+[large_dull_copper_ore]
+{ Large Pile
+get=0x19B9
+name=dull copper ore
+colour=0x0973
+sectionid=large_dull_copper_ore
+}
+
+[medium_small_dull_copper_ore]
+{ Medium_small Pile
+get=0x19BA
+name=dull copper ore
+colour=0x0973
+sectionid=medium_small_dull_copper_ore
+}
+
+[small_shadow_iron_ore]
+{ small
+get=0x19B7
+name=shadow iron ore
+colour=0x0966
+sectionid=small_shadow_iron_ore
+}
+
+[medium_shadow_iron_ore]
+{ Medium Pile
+get=0x19B8
+name=shadow iron ore
+colour=0x0966
+sectionid=medium_shadow_iron_ore
+}
+
+[large_shadow_iron_ore]
+{ Large Pile
+get=0x19B9
+name=shadow iron ore
+colour=0x0966
+sectionid=large_shadow_iron_ore
+}
+
+[medium_small_shadow_iron_ore]
+{ Medium_small Pile
+get=0x19BA
+name=shadow iron ore
+colour=0x0966
+sectionid=medium_small_shadow_iron_ore
+}
+
+[small_copper_ore]
+{ small
+get=0x19B7
+name=copper ore
+colour=0x07dd
+sectionid=small_copper_ore
+}
+
+[medium_copper_ore]
+{ Medium Pile
+get=0x19B8
+name=copper ore
+colour=0x07dd
+sectionid=medium_copper_ore
+}
+
+[large_copper_ore]
+{ Large Pile
+get=0x19B9
+name=copper ore
+colour=0x07dd
+sectionid=large_copper_ore
+}
+
+[medium_small_copper_ore]
+{ Medium_small Pile
+get=0x19BA
+name=copper ore
+colour=0x07dd
+sectionid=medium_small_copper_ore
+}
+
+[small_bronze_ore]
+{ small
+get=0x19B7
+name=bronze ore
+colour=0x06d6
+sectionid=small_bronze_ore
+}
+
+[medium_bronze_ore]
+{ Medium Pile
+get=0x19B8
+name=bronze ore
+colour=0x06d6
+sectionid=medium_bronze_ore
+}
+
+[large_bronze_ore]
+{ Large Pile
+get=0x19B9
+name=bronze ore
+colour=0x06d6
+sectionid=large_bronze_ore
+}
+
+[medium_small_bronze_ore]
+{ Medium_small Pile
+get=0x19BA
+name=bronze ore
+colour=0x06d6
+sectionid=medium_small_bronze_ore
+}
+
+[small_gold_ore]
+{ small
+get=0x19B7
+name=gold ore
+colour=0x08a5
+sectionid=small_gold_ore
+}
+
+[medium_gold_ore]
+{ Medium Pile
+get=0x19B8
+name=gold ore
+colour=0x08a5
+sectionid=medium_gold_ore
+}
+
+[large_gold_ore]
+{ Large Pile
+get=0x19B9
+name=gold ore
+colour=0x08a5
+sectionid=large_gold_ore
+}
+
+[medium_small_gold_ore]
+{ Medium_small Pile
+get=0x19BA
+name=gold ore
+colour=0x08a5
+sectionid=medium_small_gold_ore
+}
+
+[small_agapite_ore]
+{ small
+get=0x19B7
+name=agapite ore
+colour=0x0979
+sectionid=small_agapite_ore
+}
+
+[medium_agapite_ore]
+{ Medium Pile
+get=0x19B8
+name=agapite ore
+colour=0x0979
+sectionid=medium_agapite_ore
+}
+
+[large_agapite_ore]
+{ Large Pile
+get=0x19B9
+name=agapite ore
+colour=0x0979
+sectionid=large_agapite_ore
+}
+
+[medium_small_agapite_ore]
+{ Medium_small Pile
+get=0x19BA
+name=agapite ore
+colour=0x0979
+sectionid=medium_small_agapite_ore
+}
+
+[small_verite_ore]
+{ small
+get=0x19B7
+name=verite ore
+colour=0x089f
+sectionid=small_verite_ore
+}
+
+[medium_verite_ore]
+{ Medium Pile
+get=0x19B8
+name=verite ore
+colour=0x089f
+sectionid=medium_verite_ore
+}
+
+[large_verite_ore]
+{ Large Pile
+get=0x19B9
+name=verite ore
+colour=0x089f
+sectionid=large_verite_ore
+}
+
+[medium_small_verite_ore]
+{ Medium_small Pile
+get=0x19BA
+name=verite ore
+colour=0x089f
+sectionid=medium_small_verite_ore
+}
+
+[small_valorite_ore]
+{ small
+get=0x19B7
+name=valorite ore
+colour=0x08ab
+sectionid=small_valorite_ore
+}
+
+[medium_valorite_ore]
+{ Medium Pile
+get=0x19B8
+name=valorite ore
+colour=0x08ab
+sectionid=medium_valorite_ore
+}
+
+[large_valorite_ore]
+{ Large Pile
+get=0x19B9
+name=valorite ore
+colour=0x08ab
+sectionid=large_valorite_ore
+}
+
+[medium_small_valorite_ore]
+{ Medium_small Pile
+get=0x19BA
+name=valorite ore
+colour=0x08ab
+sectionid=medium_small_valorite_ore
 }
 
 // Used as NPC loot
 [shadow_iron_ore]
 { Large Pile
 get=base_item
-name=iron ore
+name=shadow iron ore
 id=0x19B9
 colour=0x0966
 weight=1200
@@ -58,6 +318,7 @@ movable=1
 pileable=1
 decay=1
 good=46
+sectionid=large_shadow_iron_ore
 }
 
 [sand]

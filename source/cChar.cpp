@@ -179,6 +179,9 @@ const SI08			DEFNPC_WANDER 				= 0;
 const SI08			DEFNPC_OLDWANDER 			= 0;
 const SERIAL		DEFNPC_FTARG				= INVALIDSERIAL;
 const SI08			DEFNPC_FZ1 					= -1;
+const SI16			DEFNPC_SPAWNX				= -1;
+const SI16			DEFNPC_SPAWNY				= -1;
+const SI08			DEFNPC_SPAWNZ				= -1;
 const SI16			DEFNPC_AITYPE 				= 0;
 const SI16			DEFNPC_SPATTACK				= 0;
 const SI08			DEFNPC_SPADELAY				= 0;
@@ -221,7 +224,7 @@ tamedHungerRate( DEFNPC_TAMEDHUNGERRATE ), tamedThirstRate( DEFNPC_TAMEDTHIRSTRA
 thirstWildChance( DEFNPC_THIRSTWILDCHANCE ), walkingSpeed( DEFNPC_MOVEMENTSPEED ), runningSpeed( DEFNPC_MOVEMENTSPEED ), 
 fleeingSpeed( DEFNPC_MOVEMENTSPEED ), pathFail( DEFNPC_PATHFAIL ), pathResult( DEFNPC_PATHRESULT ), pathTargX( DEFNPC_PATHTARGX ), pathTargY( DEFNPC_PATHTARGY ),
 controlSlots( DEFNPC_CONTROLSLOTS ), maxLoyalty( DEFNPC_MAXLOYALTY ), loyalty( DEFNPC_LOYALTY ), orneriness( DEFNPC_ORNERINESS ), mountedWalkingSpeed( DEFNPC_MOVEMENTSPEED ),
-mountedRunningSpeed( DEFNPC_MOVEMENTSPEED ), mountedFleeingSpeed( DEFNPC_MOVEMENTSPEED )
+mountedRunningSpeed( DEFNPC_MOVEMENTSPEED ), mountedFleeingSpeed( DEFNPC_MOVEMENTSPEED ), spawnX( DEFNPC_SPAWNX ), spawnY( DEFNPC_SPAWNY ), spawnZ( DEFNPC_SPAWNZ )
 {
 	fx[0] = fx[1] = fy[0] = fy[1] = DEFNPC_WANDERAREA;
 	petFriends.resize( 0 );
@@ -2621,6 +2624,9 @@ void CChar::CopyData( CChar *target )
 		target->SetFy( GetFy( 0 ), 0 );
 		target->SetFy( GetFy( 1 ), 1 );
 		target->SetFz( GetFz() );
+		target->SetSpawnX( GetSpawnX() );
+		target->SetSpawnY( GetSpawnY() );
+		target->SetSpawnZ( GetSpawnZ() );
 		target->SetNpcWander( GetNpcWander() );
 		target->SetOldNpcWander( GetOldNpcWander() );
 		target->SetTaming( GetTaming() );
@@ -3497,6 +3503,7 @@ void CChar::NPCValues_st::DumpBody( std::ostream& outStream )
 	outStream << "Split=" + std::to_string( splitNum ) + "," + std::to_string( splitChance ) + newLine;
 	outStream << "WanderArea=" + std::to_string( fx[0] ) + "," + std::to_string( fy[0] ) + "," + std::to_string( fx[1] ) + "," + std::to_string( fy[1] ) + "," + std::to_string( fz ) + newLine;
 	outStream << "NpcWander=" + std::to_string( wanderMode ) + "," + std::to_string( oldWanderMode ) + newLine;
+	outStream << "SpawnLoc=" + std::to_string( spawnX ) + "," + std::to_string( spawnY ) + "," + std::to_string( spawnZ ) + newLine;
 	outStream << "SPAttack=" + std::to_string( spellAttack ) + "," + std::to_string( spellDelay ) + newLine;
 	outStream << "QuestType=" + std::to_string( questType ) + newLine;
 	outStream << "QuestRegions=" + std::to_string( questOrigRegion ) + "," + std::to_string( questDestRegion ) + newLine;
@@ -5091,6 +5098,13 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				else if( UTag == "SAY" )
 				{
 					SetSayColour( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					rValue = true;
+				}
+				else if( UTag == "SPAWNLOC" )
+				{
+					SetSpawnX( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
+					SetSpawnY( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
+					SetSpawnZ( static_cast<SI08>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				else if( UTag == "STEALTH" )
@@ -8225,6 +8239,90 @@ void CChar::SetOldNpcWander( SI08 newValue )
 	if( IsValidNPC() )
 	{
 		mNPC->oldWanderMode = newValue;
+		UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::GetSpawnX()
+//|					CChar::SetSpawnY()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets x1 and x2 boundry of an npc wander area
+//o------------------------------------------------------------------------------------------------o
+SI16 CChar::GetSpawnX( void ) const
+{
+	SI16 rVal = -1;
+	if( IsValidNPC() )
+	{
+		rVal = mNPC->spawnX;
+	}
+	return rVal;
+}
+void CChar::SetSpawnX( SI16 newVal )
+{
+	if( !IsValidNPC() )
+	{
+		CreateNPC();
+	}
+	if( IsValidNPC() )
+	{
+		mNPC->spawnX = newVal;
+		UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::GetSpawnY()
+//|					CChar::SetSpawnY()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets y1 and y2 boundry of an npc wander area
+//o------------------------------------------------------------------------------------------------o
+SI16 CChar::GetSpawnY( void ) const
+{
+	SI16 rVal = -1;
+	if( IsValidNPC() )
+	{
+		rVal = mNPC->spawnY;
+	}
+	return rVal;
+}
+void CChar::SetSpawnY( SI16 newVal )
+{
+	if( !IsValidNPC() )
+	{
+		CreateNPC();
+	}
+	if( IsValidNPC() )
+	{
+		mNPC->spawnY = newVal;
+		UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::GetSpawnZ()
+//|					CChar::SetSpawnZ()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets z of an npc wander area
+//o------------------------------------------------------------------------------------------------o
+SI08 CChar::GetSpawnZ( void ) const
+{
+	SI08 rVal = ILLEGAL_Z;
+	if( IsValidNPC() )
+	{
+		rVal = mNPC->spawnZ;
+	}
+	return rVal;
+}
+void CChar::SetSpawnZ( SI08 newVal )
+{
+	if( !IsValidNPC() )
+	{
+		CreateNPC();
+	}
+	if( IsValidNPC() )
+	{
+		mNPC->spawnZ = newVal;
 		UpdateRegion();
 	}
 }
