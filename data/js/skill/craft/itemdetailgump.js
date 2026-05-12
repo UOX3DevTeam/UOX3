@@ -112,7 +112,7 @@ function ItemDetailGump( pUser )
 	}
 	else
 	{// if all fails fallback to alchemy
-		mainSkill = mainSkill = parseInt( pUser.skills.alchemy );
+		mainSkill = parseInt( pUser.skills.alchemy );
 	}
 
 		// Helper to build harvest entries with both id + optional custom name

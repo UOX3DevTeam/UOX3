@@ -50,7 +50,7 @@ const ScaleTypes = [
 // |   system used by the tailoring script.                                   |
 // |                                                                          |
 // |   All craftable items are defined in tables (myPage, craftItems) and     |
-// |   then mapped into a MasonryMap structure that controls:                 |
+// |   then mapped into a BlacksmithMap structure that controls:                 |
 // |     - Which dictionary entry is shown per row                            |
 // |     - Which "makeID" entry is used for each ore type                     |
 // |     - Which page and timer ID to use when reopening the gump             |
@@ -59,11 +59,11 @@ const ScaleTypes = [
 // |                                                                          |
 // |   The script also handles:                                               |
 // |     - iron selection (iron / colored ores) with skill requirements       |
-// |     - Smelting iron items back into Granite                              |
+// |     - Smelting iron items back into ingots                              |
 // |     - Repairing stone armor and weapons at an anvil                      |
 // |     - Tool wear and runic hammer handling                                |
 // |     - A "Make Last" feature                                              |
-// |     - A "Last Ten Masonry" list (optional)                               |
+// |     - A "Last Ten Blacnksmithing" list (optional)                               |
 // o--------------------------------------------------------------------------o
 // | Data Tables                                                              |
 // o--------------------------------------------------------------------------o
@@ -79,7 +79,7 @@ const ScaleTypes = [
 // |                                                                          |
 // |   Each entry is a dictionary ID that will be used to look up the text    |
 // |   for that row, unless a customName is defined for that button in        |
-// |   MasonryMap.                                                            |
+// |   BlacksmithMap.                                                            |
 // |                                                                          |
 // | craftItems                                                               |
 // |   craftItems[ironIndex][pageIndex][itemIndex] = makeID                   |
@@ -93,7 +93,7 @@ const ScaleTypes = [
 // |     oreIndex 7 = Verite												  |
 // |     oreIndex 8 = Valorite												  |
 // |                                                                          |
-// |   For each granite type and page, this holds the createEntry ID used by  |
+// |   For each ingot type and page, this holds the createEntry ID used by  |
 // |   MakeItem when the player crafts that item. The same index positions    |
 // |   on each page line up with the matching entries in myPage.              |
 // o--------------------------------------------------------------------------o
@@ -133,7 +133,7 @@ const ScaleTypes = [
 // |     3. A fallback "[Unnamed Item: buttonID]"                             |
 // |                                                                          |
 // | Recipes                                                                  |
-// |   If recipeID is set on a MasonryMap entry, onGumpPress will call:       |
+// |   If recipeID is set on a BlacksmithMap entry, onGumpPress will call:       |
 // |       TriggerEvent(4022, "NeedRecipe", pUser, recipeID)                  |
 // |   to check if the player has learned that recipe. If not, the craft      |
 // |   attempt is blocked and a message is shown.                             |

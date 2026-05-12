@@ -1,7 +1,7 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
 const textHue = 0x480;					// Color of the text.
-const masonryID = 4023;					//  Script ID used to identify and close this gump
+const masonryID = 4037;					//  Script ID used to identify and close this gump
 const gumpDelay = 2000;					// Timer for the gump to reappear after crafting.
 const ingotDelay = 200;					// Timer for the gump to reappear after selecting an ingot.
 const repairDelay = 200;				// Timer for the gump to reappear after repairing an item

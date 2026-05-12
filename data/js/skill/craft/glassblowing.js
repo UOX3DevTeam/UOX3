@@ -67,7 +67,7 @@ const GlassBlowingMap = {
 
 // If you ever need a specific item to use 2 or more resources, just override its harvest array:
 // GlassBlowingMap[3017].harvest = [ glassHarvestDict, 10016 ]; // two harvest resources
-
+/** @type { ( socket: Socket, pUser: Character, pageNum: number ) => void } */
 function PageX( socket, pUser, pageNum )
 {
 	if( !socket || !ValidateObject( pUser ))
