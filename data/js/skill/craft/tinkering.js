@@ -26,7 +26,7 @@ const tinkeringSkillID        = 37;                    // Index of "tinkering" i
 // |   requiresGemTarget? - jewelry requiring manual gem selection           |
 // o--------------------------------------------------------------------------o
 
-const TinkeringMap = {
+/*const TinkeringMap = {
 	// Page 1 - Wooden Items
 	274: { dictID: 11801, page: 1, timerID: 1, harvest: [ 10014 ] }, // Axle
 	273: { dictID: 11802, page: 1, timerID: 1, harvest: [ 10014 ] }, // Clock Frame
@@ -125,6 +125,7 @@ const TinkeringMap = {
 	262: { dictID: 11982, page: 9, timerID: 9, harvest: [ 10015, 12002 ] }  // Poison Trap
 };
 
+
 // Fill in defaults (skill, etc)
 (function initTinkeringMap()
 {
@@ -143,6 +144,50 @@ const TinkeringMap = {
 		//   entry.harvestNames = [ "Wood", "Ingots" ];
 	}
 })();
+*/
+const craftMapRegistryID = 4038;
+var TinkeringMap = {};
+
+/** @type { () => boolean } */
+function LoadTinkeringMap()
+{
+	TinkeringMap = {};
+
+	var tinkeringEntries = TriggerEvent( craftMapRegistryID, "CraftMapRegistry", "tinkering" );
+
+	if( !tinkeringEntries )
+	{
+		Console.Warning( "Tinkering: CraftMapRegistry returned null." );
+		return false;
+	}
+
+	if( !IsTinkeringArrayValue( tinkeringEntries ))
+	{
+		Console.Warning( "Tinkering: CraftMapRegistry did not return an array." );
+		return false;
+	}
+
+	for( var i = 0; i < tinkeringEntries.length; i++ )
+	{
+		var entry = tinkeringEntries[i];
+
+		if( !entry || typeof entry.makeID == "undefined" )
+			continue;
+
+		if( entry.skill === undefined )
+			entry.skill = tinkeringSkillID;
+
+		TinkeringMap[entry.makeID] = entry;
+	}
+
+	return true;
+}
+
+/** @type { ( value: any ) => boolean } */
+function IsTinkeringArrayValue( value )
+{
+	return Object.prototype.toString.call( value ) == "[object Array]";
+}
 
 // o--------------------------------------------------------------------------o
 // | PageX() - build a page of tinkering items                                |
@@ -152,6 +197,15 @@ function PageX( socket, pUser, pageNum )
 {
 	if( !socket || !ValidateObject( pUser ))
 		return;
+
+	if( !TinkeringMap || Object.keys( TinkeringMap ).length == 0 )
+	{
+		if( !LoadTinkeringMap() )
+		{
+			socket.SysMessage( "Tinkering craft map failed to load." );
+			return;
+		}
+	}
 
 	var pageItems;
 
