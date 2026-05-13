@@ -6040,6 +6040,456 @@ packitem=0x0f8d,30
 						<p>Calculation of rank takes place as part of the crafting process. First, a <strong>range of potential ranks</strong> is determined based on the values of the MINRANK and MAXRANK tags for an item in the create DFNs. Then, <strong>for each skill</strong> required to craft the item, the system <strong>calculates a temporary rank</strong> based on the player's skill, random chance, and a UOX.INI setting (<span class="hl">SKILLLEVEL=7</span>) which acts as a global modifier to the system to make it <strong>easier</strong> (low SKILLLEVEL value) to get high rank items, or <strong>harder</strong> (high SKILLLEVEL value) to get high rank items. A value of 10 makes the difficulty roughly similar to the difficulty of the official UO shards around the LBR era.</p>
 						<p>When a temporary rank has been calculated for all skills required to craft the item, the average of all these is chosen as the item's final rank, and the modifiers are permanently applied to the item's properties.</p>
 					</div>
+					  <h3>JSON Crafting Data</h3>
+<p>In addition to the older DFN-based create system, UOX3 can use JSON files to control the visible crafting menu data. The JSON files do not replace the actual CreateEntry definitions that decide what item is made, what resources are consumed, and what skills are checked. Instead, they make the crafting menus easier to organize, customize and extend without editing the crafting scripts directly.</p>
+
+<p>The JSON crafting files are stored in:</p>
+<p><span class="hl">js/jsdata/crafting/</span></p>
+
+<input type="checkbox" id="spoiler_json_crafting_files">
+<label for="spoiler_json_crafting_files">Crafting JSON Files <i class="fas fa-angle-down"></i></label>
+<div class="spoiler">
+	<ul>
+		<li><span class="hl">alchemy.json</span> - Alchemy menu entries</li>
+		<li><span class="hl">blacksmithing.json</span> - Blacksmithing menu entries</li>
+		<li><span class="hl">carpentry.json</span> - Carpentry menu entries</li>
+		<li><span class="hl">cartography.json</span> - Cartography menu entries</li>
+		<li><span class="hl">cooking.json</span> - Cooking menu entries</li>
+		<li><span class="hl">fletching.json</span> - Bowcraft/Fletching menu entries</li>
+		<li><span class="hl">glassblowing.json</span> - Glassblowing menu entries</li>
+		<li><span class="hl">masonry.json</span> - Masonry menu entries</li>
+		<li><span class="hl">tailoring.json</span> - Tailoring menu entries</li>
+		<li><span class="hl">tinkering.json</span> - Tinkering menu entries</li>
+		<li><span class="hl">resourcemap.json</span> - Shared resource definitions used by crafting menus</li>
+	</ul>
+</div>
+
+<h3>Why Use JSON Crafting Data?</h3>
+<p>The JSON crafting system makes crafting easier to maintain. Shard admins can move items between pages, rename menu entries, add custom labels, add era limits, add recipe requirements, define item detail resources and configure some special post-crafting behavior without digging through the crafting scripts.</p>
+
+<ul>
+	<li>Move an item to a different crafting page by changing its <span class="hl">page</span> value.</li>
+	<li>Change the order of items by changing their position or button mapping in the JSON file.</li>
+	<li>Use <span class="hl">dictID</span> for dictionary-based names, or <span class="hl">customName</span> for a custom display name.</li>
+	<li>Add recipe locks with <span class="hl">recipeID</span>.</li>
+	<li>Add expansion or era limits with <span class="hl">minEra</span> and <span class="hl">maxEra</span>.</li>
+	<li>Show custom resource names in the item detail gump with <span class="hl">harvest</span> and <span class="hl">harvestNames</span>.</li>
+	<li>Define special post-craft behavior with <span class="hl">craftComplete</span>.</li>
+	<li>Update resource lists, hues, dictionary labels and skill gates through <span class="hl">resourcemap.json</span>.</li>
+</ul>
+
+<input type="checkbox" id="spoiler_json_craft_entry">
+<label for="spoiler_json_craft_entry">Basic Craft Entry Example <i class="fas fa-angle-down"></i></label>
+<div class="spoiler">
+<pre><code class="language-json">{
+	"makeID": 274,
+	"label": "Axle",
+	"dictID": 11801,
+	"page": 1,
+	"timerID": 1,
+	"harvest": [10014]
+}</code></pre>
+
+	<p>This entry adds a craftable item to the menu. The <span class="hl">makeID</span> points to the CreateEntry that actually creates the item. The <span class="hl">dictID</span> is used for the displayed name, <span class="hl">page</span> decides which menu page the item appears on and <span class="hl">timerID</span> decides which page reopens after crafting.</p>
+</div>
+
+<h3>Craft Entry Fields</h3>
+<p>Each crafting JSON file is an array of craft entries. Most entries use only a few fields, but more can be added when needed.</p>
+
+<input type="checkbox" id="spoiler_json_craft_fields">
+<label for="spoiler_json_craft_fields">Craft Entry Fields <i class="fas fa-angle-down"></i></label>
+<div class="spoiler">
+	<div class="settingsDiv">
+		<p><span class="hl">makeID</span><strong>: number</strong><br>
+		The CreateEntry ID used when the player crafts the item. This must match a valid entry from the create system.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">buttonID</span><strong>: number</strong><br>
+		Optional menu button ID used by crafting skills that need one visible row to map to different makeIDs based on the selected resource. Blacksmithing and Masonry commonly use this style.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">dictID</span><strong>: number</strong><br>
+		Dictionary entry used for the menu text. This allows the crafting menu to use UOX3 dictionary files for display names.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">label</span><strong>: text</strong><br>
+		A readable label for admins editing the JSON file. This is useful so the item can be identified without looking up the dictionary ID. It does not have to be the final in-game item name.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">customName</span><strong>: text</strong><br>
+		Overrides the dictionary text shown in the crafting menu. Use this for custom items that do not have a dictionary entry.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">page</span><strong>: number</strong><br>
+		The crafting page the entry appears on. Changing this value moves the item to another page in the crafting menu.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">timerID</span><strong>: number</strong><br>
+		The page/timer value used when the crafting menu reopens after crafting or after a failed attempt.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">skill</span><strong>: number</strong><br>
+		Optional skill ID override used by the item detail gump and menu logic. If omitted, the crafting script uses the default skill for that craft.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">harvest</span><strong>: number array</strong><br>
+		Dictionary IDs used to show resource names in the item detail gump. This does not consume resources by itself; the actual resource requirements still come from the CreateEntry.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">harvestNames</span><strong>: text array</strong><br>
+		Optional custom resource labels for the item detail gump. Use this when a resource name should be clearer than the dictionary entry.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">recipeID</span><strong>: number</strong><br>
+		Optional recipe requirement. If set, the player must know the recipe before crafting the item.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">minEra</span><strong>: text</strong><br>
+		Optional minimum shard era required before the entry appears or can be crafted.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">maxEra</span><strong>: text</strong><br>
+		Optional maximum shard era allowed before the entry is hidden or blocked.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">requiresGemTarget</span><strong>: true/false</strong><br>
+		Used by Tinkering jewelry entries that require the player to target a gem before crafting.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">oreMake</span><strong>: number array</strong><br>
+		Used by Blacksmithing entries where one visible menu row can craft different CreateEntries based on the selected ore type.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">graniteMake</span><strong>: number array</strong><br>
+		Used by Masonry entries where one visible menu row can craft different CreateEntries based on the selected granite type.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">craftComplete</span><strong>: object</strong><br>
+		Optional post-crafting behavior. This lets the JSON entry request special handling after the item is successfully crafted.</p>
+	</div>
+</div>
+
+<h3>Era Restrictions</h3>
+<p>Craft entries can be limited by shard era. This is useful for keeping newer content hidden on older-era shards.</p>
+
+<input type="checkbox" id="spoiler_json_era_example">
+<label for="spoiler_json_era_example">Era Restricted Entry <i class="fas fa-angle-down"></i></label>
+<div class="spoiler">
+<pre><code class="language-json">{
+	"makeID": 3018,
+	"label": "Glass Sword",
+	"customName": "glass sword",
+	"page": 2,
+	"timerID": 2,
+	"minEra": "sa",
+	"harvest": [13504]
+}</code></pre>
+
+	<p>This entry only appears when the shard era is Stygian Abyss or later.</p>
+</div>
+
+<p>Common era values include:</p>
+<p><span class="hl">t2a</span>, <span class="hl">uor</span>, <span class="hl">lbr</span>, <span class="hl">aos</span>, <span class="hl">se</span>, <span class="hl">ml</span>, <span class="hl">sa</span>, <span class="hl">hs</span>, <span class="hl">tol</span></p>
+
+<h3>Recipe Locked Crafting</h3>
+<p>An entry with a <span class="hl">recipeID</span> requires the player to know that recipe before the item can be crafted. This allows custom shards to add rare recipe scrolls or progression-based unlocks without changing the menu script.</p>
+
+<input type="checkbox" id="spoiler_json_recipe_example">
+<label for="spoiler_json_recipe_example">Recipe Locked Entry <i class="fas fa-angle-down"></i></label>
+<div class="spoiler">
+<pre><code class="language-json">{
+	"makeID": 3500,
+	"label": "Tall 18th Anniversary Vase",
+	"dictID": 14057,
+	"page": 1,
+	"timerID": 1,
+	"recipeID": 3500,
+	"minEra": "tol",
+	"harvest": [14011]
+}</code></pre>
+
+	<p>This item requires recipe 3500 and only appears in Time of Legends or later.</p>
+</div>
+
+<h3>Custom Names</h3>
+<p>If an item does not have a dictionary entry, or if a shard wants a different name shown in the menu, use <span class="hl">customName</span>.</p>
+
+<input type="checkbox" id="spoiler_json_custom_name">
+<label for="spoiler_json_custom_name">Custom Name Example <i class="fas fa-angle-down"></i></label>
+<div class="spoiler">
+<pre><code class="language-json">{
+	"makeID": 3012,
+	"label": "Hollow Prism",
+	"customName": "hollow prism",
+	"page": 1,
+	"timerID": 1,
+	"minEra": "ml",
+	"harvest": [13504]
+}</code></pre>
+
+	<p>The menu will display <span class="hl">hollow prism</span> instead of looking up a dictionary entry.</p>
+</div>
+
+<h3>Item Detail Resources</h3>
+<p>The <span class="hl">harvest</span> field controls what resource names are shown in the item detail gump. This is for display only. The real resource amounts and item IDs still come from the CreateEntry in the create system.</p>
+
+<input type="checkbox" id="spoiler_json_harvest_example">
+<label for="spoiler_json_harvest_example">Multiple Resource Display Example <i class="fas fa-angle-down"></i></label>
+<div class="spoiler">
+<pre><code class="language-json">{
+	"makeID": 281,
+	"label": "Potion Keg",
+	"dictID": 11946,
+	"page": 7,
+	"timerID": 7,
+	"harvest": [10642, 11861, 10612, 10928]
+}</code></pre>
+
+	<p>This lets the item detail gump show multiple needed material labels, such as barrel parts and potion-related materials.</p>
+</div>
+
+<input type="checkbox" id="spoiler_json_harvest_names">
+<label for="spoiler_json_harvest_names">Custom Resource Name Example <i class="fas fa-angle-down"></i></label>
+<div class="spoiler">
+<pre><code class="language-json">{
+	"makeID": 308,
+	"label": "Open Keg",
+	"dictID": 10642,
+	"page": 3,
+	"timerID": 3,
+	"harvest": [10611, 10612, 11860],
+	"harvestNames": ["Barrel Staves", "Barrel Lid", "Barrel Hoops"]
+}</code></pre>
+
+	<p>Use <span class="hl">harvestNames</span> when the default dictionary label is not clear enough for players or admins.</p>
+</div>
+
+<h3>Post-Crafting Behavior</h3>
+<p>Some crafted items need special behavior after they are made. The JSON system supports this through the <span class="hl">craftComplete</span> object.</p>
+
+<input type="checkbox" id="spoiler_json_craft_complete">
+<label for="spoiler_json_craft_complete">craftComplete Types <i class="fas fa-angle-down"></i></label>
+<div class="spoiler">
+	<div class="settingsDiv">
+		<p><span class="hl">gemJewelry</span><br>
+		Used for gem-based jewelry. The crafted jewelry is named after the gem used.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">lockableContainer</span><br>
+		Used for crafted containers that can receive a lock and key if the crafter has enough Tinkering skill.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">autoIdentifyPotion</span><br>
+		Used for alchemy potions. Crafted potions are automatically identified for the crafter.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">craftedMap</span><br>
+		Used for crafted maps. The map receives drawn map data based on the crafter's Cartography skill and position.</p>
+	</div>
+</div>
+
+<input type="checkbox" id="spoiler_json_craft_complete_example">
+<label for="spoiler_json_craft_complete_example">craftComplete Example <i class="fas fa-angle-down"></i></label>
+<div class="spoiler">
+<pre><code class="language-json">{
+	"makeID": 243,
+	"label": "Bracelet",
+	"dictID": 11900,
+	"page": 5,
+	"timerID": 5,
+	"requiresGemTarget": true,
+	"harvest": [10015, 12005],
+	"craftComplete": { "type": "gemJewelry" }
+}</code></pre>
+
+	<p>This entry crafts a bracelet, requires a gem target and uses the selected gem name as part of the crafted item's name.</p>
+</div>
+
+<h3>Blacksmithing and Masonry Resource Variants</h3>
+<p>Some crafting menus have one visible menu row, but the final CreateEntry changes depending on the selected resource. Blacksmithing uses <span class="hl">oreMake</span>, while Masonry uses <span class="hl">graniteMake</span>.</p>
+
+<input type="checkbox" id="spoiler_json_variant_make">
+<label for="spoiler_json_variant_make">Resource Variant Example <i class="fas fa-angle-down"></i></label>
+<div class="spoiler">
+<pre><code class="language-json">{
+	"buttonID": 100,
+	"label": "Ringmail Gloves",
+	"dictID": 10289,
+	"page": 1,
+	"timerID": 1,
+	"oreMake": [1, 101, 201, 301, 401, 501, 601, 701, 801],
+	"harvest": [10015]
+}</code></pre>
+
+	<p>The first value is used for iron, the second for dull copper, the third for shadow iron and so on. The resource order comes from <span class="hl">resourcemap.json</span>.</p>
+</div>
+
+<h3>Resource Map</h3>
+<p>The file <span class="hl">resourcemap.json</span> defines resource sets used by the crafting menus. It controls the resource display name, item ID, hue, selected resource index and optional skill requirement for resource selection menus.</p>
+
+<input type="checkbox" id="spoiler_json_resource_map">
+<label for="spoiler_json_resource_map">Resource Map Example <i class="fas fa-angle-down"></i></label>
+<div class="spoiler">
+<pre><code class="language-json">{
+	"resourceSet": "ore",
+	"label": "Ore",
+	"tempTag": "ORE",
+	"defaultIndex": 0,
+	"items": [
+		{ "index": 0, "label": "Iron", "dictID": 10291, "itemID": 7154, "hue": 0, "minSkill": 0 },
+		{ "index": 1, "label": "Dull Copper", "dictID": 10203, "itemID": 7154, "hue": 2419, "minSkill": 650 },
+		{ "index": 2, "label": "Shadow Iron", "dictID": 10204, "itemID": 7154, "hue": 2406, "minSkill": 700 }
+	]
+}</code></pre>
+
+	<p>This defines selectable ore types for crafting menus. The menu can count the player's matching resources by using the item ID and hue from the selected entry.</p>
+</div>
+
+<input type="checkbox" id="spoiler_json_resource_fields">
+<label for="spoiler_json_resource_fields">Resource Map Fields <i class="fas fa-angle-down"></i></label>
+<div class="spoiler">
+	<div class="settingsDiv">
+		<p><span class="hl">resourceSet</span><strong>: text</strong><br>
+		Unique name for this resource group. Examples: <span class="hl">ore</span>, <span class="hl">granite</span>, <span class="hl">dragonScales</span>, <span class="hl">wood</span>, <span class="hl">tailoring</span>.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">label</span><strong>: text</strong><br>
+		Readable label for admins editing the resource map.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">dictID</span><strong>: number</strong><br>
+		Optional default dictionary entry for the resource set.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">tempTag</span><strong>: text</strong><br>
+		Temp tag used to remember the player's selected resource. Examples: <span class="hl">ORE</span>, <span class="hl">Granite</span>, <span class="hl">Scale</span>.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">defaultIndex</span><strong>: number</strong><br>
+		Which resource index is used if the player has not selected anything yet.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">items</span><strong>: array</strong><br>
+		List of resources in the set. Each item can define <span class="hl">index</span>, <span class="hl">label</span>, <span class="hl">dictID</span>, <span class="hl">itemID</span>, <span class="hl">hue</span> and <span class="hl">minSkill</span>.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">itemID</span><strong>: number</strong><br>
+		Item ID used when counting the player's resources.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">hue</span><strong>: number</strong><br>
+		Item hue used when counting the player's resources. Use 0 for normal uncolored resources.</p>
+	</div>
+
+	<div class="settingsDiv">
+		<p><span class="hl">minSkill</span><strong>: number</strong><br>
+		Optional skill requirement for selecting this resource. For ores this is usually Mining skill. For scales this can be Blacksmithing skill or left at 0.</p>
+	</div>
+</div>
+
+<h3>Grouped Resources</h3>
+<p>Some resource sets count more than one item ID. For example, wood can count both logs and boards, and tailoring can count leather and hides. These grouped resources do not need an index for every item because the menu adds them together.</p>
+
+<input type="checkbox" id="spoiler_json_grouped_resources">
+<label for="spoiler_json_grouped_resources">Grouped Resource Example <i class="fas fa-angle-down"></i></label>
+<div class="spoiler">
+<pre><code class="language-json">{
+	"resourceSet": "wood",
+	"label": "Wood",
+	"dictID": 10687,
+	"items": [
+		{ "label": "Logs", "itemID": 7136, "hue": 0 },
+		{ "label": "Boards", "itemID": 7127, "hue": 0 }
+	]
+}</code></pre>
+
+	<p>This lets the crafting menu show one wood count made from both logs and boards.</p>
+</div>
+
+<h3>Adding a New Crafting Entry</h3>
+<p>Most new craftables can be added with the following steps:</p>
+<ol>
+	<li>Add or confirm the item exists in the CreateEntry system.</li>
+	<li>Add a dictionary entry for the menu label, or decide on a <span class="hl">customName</span>.</li>
+	<li>Add a new entry to the correct crafting JSON file.</li>
+	<li>Set <span class="hl">makeID</span>, <span class="hl">page</span> and <span class="hl">timerID</span>.</li>
+	<li>Add <span class="hl">harvest</span> entries so the item detail gump shows useful material names.</li>
+	<li>Add optional fields such as <span class="hl">recipeID</span>, <span class="hl">minEra</span>, <span class="hl">maxEra</span> or <span class="hl">craftComplete</span>.</li>
+	<li>Reload scripts or restart UOX3, then test the crafting menu and item detail gump.</li>
+</ol>
+
+<input type="checkbox" id="spoiler_json_full_custom_item">
+<label for="spoiler_json_full_custom_item">Full Custom Item Example <i class="fas fa-angle-down"></i></label>
+<div class="spoiler">
+<pre><code class="language-json">{
+	"makeID": 5000,
+	"label": "Mythril Gearbox",
+	"customName": "mythril gearbox",
+	"page": 7,
+	"timerID": 7,
+	"recipeID": 5000,
+	"minEra": "ml",
+	"harvest": [10015, 11863],
+	"harvestNames": ["Mythril Ingots", "Gears"]
+}</code></pre>
+
+	<p>This entry adds a custom item to a crafting page, gives it a custom menu name, requires a recipe, limits it to Mondain's Legacy or later and gives clearer resource names in the detail gump.</p>
+</div>
+
+<h3>Adding a New Resource</h3>
+<p>To add a new selectable resource such as a new ore, granite or scale type, add a new item entry to the correct resource set in <span class="hl">resourcemap.json</span>. The new entry should have a unique index, display label, dictionary ID, item ID, hue and skill requirement.</p>
+
+<input type="checkbox" id="spoiler_json_new_resource">
+<label for="spoiler_json_new_resource">New Resource Example <i class="fas fa-angle-down"></i></label>
+<div class="spoiler">
+<pre><code class="language-json">{
+	"index": 9,
+	"label": "Mythril",
+	"dictID": 25000,
+	"itemID": 7154,
+	"hue": 2200,
+	"minSkill": 1000
+}</code></pre>
+
+	<p>After adding this to the <span class="hl">ore</span> resource set, the ore selection menu can show Mythril and count Mythril ingots by item ID and hue.</p>
+</div>
+
+<h3>Important Notes</h3>
+<ul>
+	<li>The JSON files control menu data, not the low-level item creation rules.</li>
+	<li>The actual crafted item, resource consumption, skill checks, sounds and delays still come from the CreateEntry system.</li>
+	<li><span class="hl">makeID</span>, <span class="hl">oreMake</span> and <span class="hl">graniteMake</span> values must point to valid CreateEntries.</li>
+	<li><span class="hl">label</span> is for admin readability. Use <span class="hl">dictID</span> or <span class="hl">customName</span> for menu display text.</li>
+	<li><span class="hl">craftComplete</span> only supports behavior types that the crafting complete script knows how to handle.</li>
+	<li>If an entry does not appear, check its <span class="hl">page</span>, <span class="hl">minEra</span>, <span class="hl">maxEra</span> and recipe requirement.</li>
+	<li>If resource counts look wrong, check the <span class="hl">itemID</span> and <span class="hl">hue</span> in <span class="hl">resourcemap.json</span>.</li>
+</ul>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
