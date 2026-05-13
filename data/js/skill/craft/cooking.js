@@ -49,86 +49,59 @@ function FindNearbyHeatSources( pUser, trgItem, pSock )
 	return ( heatSources.indexOf( trgItem.id ) != -1 );
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// CookingMap
-// Keyed by makeID (create entry ID).
-// Each entry:
-//   dictID      - dictionary entry for the row text (11606..11635)
-//   page        - main category page (1..4)
-//   timerID     - which page timer should reopen
-//   skill       - skill used (default: cookingSkillID)
-//   recipeID?   - optional recipe ID (for recipe system)
-//   minEra/maxEra? - optional era gating
-//   harvest?[]  - optional dictIDs for MATERIALS list in ItemDetailGump
-//   harvestNames?[] - optional custom material names (works with your new custom-name system)
-//
-//////////////////////////////////////////////////////////////////////////////////////////
+const craftMapRegistryID = 4038;
+var CookingMap = {};
 
-const CookingMap = {
-	// Page 1 - Ingredients
-	1500: { dictID: 11606, page: 1, timerID: 1, harvest: [ 11636 ] }, // Sack of Flour
-	1501: { dictID: 11607, page: 1, timerID: 1, harvest: [ 11637, 11638 ] }, // Dough
-	1502: { dictID: 11608, page: 1, timerID: 1, harvest: [ 11607, 11639 ] }, // Sweet Dough
-	1503: { dictID: 11609, page: 1, timerID: 1, harvest: [ 11637, 11608 ] }, // Cake Mix
-	1504: { dictID: 11610, page: 1, timerID: 1, harvest: [ 11639, 11608 ] }, // Cookie Mix
-
-	// Page 2 - Preparations
-	1550: { dictID: 11611, page: 2, timerID: 2, harvest: [ 11607, 11640 ] }, // Unbaked Quiche
-	1551: { dictID: 11612, page: 2, timerID: 2, harvest: [ 11607, 11641 ] }, // Unbaked Meat Pie
-	1552: { dictID: 11613, page: 2, timerID: 2, harvest: [ 11607, 11642 ] }, // Uncooked Sausage Pizza
-	1553: { dictID: 11614, page: 2, timerID: 2, harvest: [ 11607, 11643 ] }, // Uncooked Cheese Pizza
-	1554: { dictID: 11615, page: 2, timerID: 2, harvest: [ 11607, 11644 ] }, // Unbaked Fruit Pie
-	1555: { dictID: 11616, page: 2, timerID: 2, harvest: [ 11607, 11645 ] }, // Unbaked Peach Cobbler
-	1556: { dictID: 11617, page: 2, timerID: 2, harvest: [ 11607, 11646 ] }, // Unbaked Apple Pie
-	1557: { dictID: 11618, page: 2, timerID: 2, harvest: [ 11607, 11647 ] }, // Unbaked Pumpkin Pie
-
-	// Page 3 - Baking
-	1600: { dictID: 11619, page: 3, timerID: 3, harvest: [ 11607 ] }, // Bread Loaf
-	1601: { dictID: 11620, page: 3, timerID: 3, harvest: [ 11610 ] }, // Pan of Cookies
-	1602: { dictID: 11621, page: 3, timerID: 3, harvest: [ 11609 ] }, // Cake
-	1603: { dictID: 11657, page: 3, timerID: 3, harvest: [ 11608 ] }, // Muffins
-	1604: { dictID: 11622, page: 3, timerID: 3, harvest: [ 11611 ] }, // Baked Quiche
-	1605: { dictID: 11623, page: 3, timerID: 3, harvest: [ 11612 ] }, // Baked Meat Pie
-	1606: { dictID: 11624, page: 3, timerID: 3, harvest: [ 11613 ] }, // Sausage Pizza
-	1607: { dictID: 11625, page: 3, timerID: 3, harvest: [ 11614 ] }, // Cheese Pizza
-	1608: { dictID: 11626, page: 3, timerID: 3, harvest: [ 11615 ] }, // Baked Fruit Pie
-	1609: { dictID: 11627, page: 3, timerID: 3, harvest: [ 11616 ] }, // Baked Peach Cobbler
-	1610: { dictID: 11628, page: 3, timerID: 3, harvest: [ 11617 ] }, // Baked Apple Pie
-	1611: { dictID: 11629, page: 3, timerID: 3, harvest: [ 11618 ] }, // Baked Pumpkin Pie
-
-	// Page 4 - Barbecue
-	1650: { dictID: 11630, page: 4, timerID: 4, harvest: [ 11648 ] }, // Cooked Bird
-	1651: { dictID: 11631, page: 4, timerID: 4, harvest: [ 11649 ] }, // Chicken Leg
-	1652: { dictID: 11632, page: 4, timerID: 4, harvest: [ 11650 ] }, // Fish Steak
-	1653: { dictID: 11633, page: 4, timerID: 4, harvest: [ 11651 ] }, // Fried Eggs
-	1654: { dictID: 11634, page: 4, timerID: 4, harvest: [ 11652 ] }, // Leg of Lamb
-	1655: { dictID: 11635, page: 4, timerID: 4, harvest: [ 11653 ] }  // Cut of Ribs
-};
-
-// Fill in defaults (skill, etc)
-(function initCookingMap()
+/** @type { () => boolean } */
+function LoadCookingMap()
 {
-	for( var key in CookingMap )
-	{
-		if( !CookingMap.hasOwnProperty( key ))
-			continue;
+	CookingMap = {};
 
-		var entry = CookingMap[key];
+	var cookingEntries = TriggerEvent( craftMapRegistryID, "CraftMapRegistry", "cooking" );
+
+	if( !cookingEntries || !IsCookingArrayValue( cookingEntries ) )
+	{
+		Console.Warning( "Cooking: Unable to load cooking craft map data." );
+		return false;
+	}
+
+	for( var i = 0; i < cookingEntries.length; i++ )
+	{
+		var entry = cookingEntries[i];
+
+		if( !entry || typeof entry.makeID == "undefined" )
+			continue;
 
 		if( entry.skill === undefined )
 			entry.skill = cookingSkillID;
 
-		// In future you can add:
-		// entry.harvest = [ dictID_for_flour, dictID_for_water ];
-		// entry.harvestNames = [ "Flour", "Water" ];
+		CookingMap[entry.makeID] = entry;
 	}
-})();
+
+	Console.Print( "Cooking: Loaded " + cookingEntries.length + " craft map entries.\n" );
+	return true;
+}
+
+/** @type { ( value: any ) => boolean } */
+function IsCookingArrayValue( value )
+{
+	return Object.prototype.toString.call( value ) == "[object Array]";
+}
 
 /** @type { ( socket: Socket, pUser: Character, pageNum: number ) => void } */
 function PageX( socket, pUser, pageNum )
 {
 	if( !socket || !ValidateObject( pUser ))
 		return;
+
+	if( !CookingMap || Object.keys( CookingMap ).length == 0 )
+	{
+		if( !LoadCookingMap() )
+		{
+			socket.SysMessage( "Cooking craft map failed to load." );
+			return;
+		}
+	}
 
 	var pageItems;
 

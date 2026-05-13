@@ -10,70 +10,42 @@ const displayUnlearnedRecipes = true;                // For future recipe use
 const coreShardEra          = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 const alchemySkillID        = 0;                     // Skill ID: Alchemy
 
-// o--------------------------------------------------------------------------o
-// | AlchemyMap                                                               |
-// o--------------------------------------------------------------------------o
-// | Keyed by makeID (create entry ID).                                      |
-// | Each entry:                                                             |
-// |   dictID  - dictionary entry for row text                               |
-// |   page    - main category page (1..4)                                   |
-// |   timerID - which page timer should reopen                              |
-// |   skill   - skill used (default: alchemySkillID)                        |
-// |   recipeID?, minEra?, maxEra?, harvest?[] harvestNames? ["cloth" ]      |
-// |   can be added later										             |
-// o--------------------------------------------------------------------------o
-// If you want to add multi-reagent potions later 
-// (e.g. harvest: [ garlic_dictNumber, ginseng_dictNumber ] or harvestNames: [ "garlic, "ginseng" ]), 
-// the same pattern will just work with no script changes.
+const craftMapRegistryID = 4038;
+var AlchemyMap = {};
 
-const AlchemyMap = {
-	// Page 1 - Curative / Refresh
-	298: { dictID: 10910, page: 1, timerID: 1, harvest: [ 10022 ] }, // Lesser Heal
-	299: { dictID: 10911, page: 1, timerID: 1, harvest: [ 10022 ] }, // Heal
-	300: { dictID: 10912, page: 1, timerID: 1, harvest: [ 10022 ] }, // Greater Heal
-	305: { dictID: 10908, page: 1, timerID: 1, harvest: [ 10025 ] }, // Refresh
-	306: { dictID: 10909, page: 1, timerID: 1, harvest: [ 10025 ] }, // Total Refresh
-	292: { dictID: 10913, page: 1, timerID: 1, harvest: [ 10020 ] }, // Lesser Cure
-	293: { dictID: 10914, page: 1, timerID: 1, harvest: [ 10020 ] }, // Cure
-	294: { dictID: 10915, page: 1, timerID: 1, harvest: [ 10020 ] }, // Greater Cure
-
-	// Page 2 - Enhancement
-	290: { dictID: 10916, page: 2, timerID: 2, harvest: [ 10019 ] }, // Agility
-	291: { dictID: 10917, page: 2, timerID: 2, harvest: [ 10019 ] }, // Greater Agility
-	295: { dictID: 10918, page: 2, timerID: 2, harvest: [ 10021 ] }, // Strength
-	296: { dictID: 10919, page: 2, timerID: 2, harvest: [ 10021 ] }, // Greater Strength
-	297: { dictID: 10920, page: 2, timerID: 2, harvest: [ 10021 ] }, // Night Sight
-
-	// Page 3 - Poison
-	301: { dictID: 10921, page: 3, timerID: 3, harvest: [ 10024 ] }, // Lesser Poison
-	302: { dictID: 10922, page: 3, timerID: 3, harvest: [ 10024 ] }, // Poison
-	303: { dictID: 10923, page: 3, timerID: 3, harvest: [ 10024 ] }, // Greater Poison
-	304: { dictID: 10924, page: 3, timerID: 3, harvest: [ 10024 ] }, // Deadly Poison
-
-	// Page 4 - Explosive
-	307: { dictID: 10925, page: 4, timerID: 4, harvest: [ 10026 ] }, // Explosion
-	308: { dictID: 10926, page: 4, timerID: 4, harvest: [ 10026 ] }, // Greater Explosion
-	309: { dictID: 10927, page: 4, timerID: 4, harvest: [ 10023 ] }  // Conflagration (or w/e 10927 is)
-};
-
-// Fill in defaults (skill, etc)
-(function initAlchemyMap()
+function LoadAlchemyMap()
 {
-	for( var key in AlchemyMap )
-	{
-		if( !AlchemyMap.hasOwnProperty( key ))
-			continue;
+	AlchemyMap = {};
 
-		var entry = AlchemyMap[key];
+	var alchemyEntries = TriggerEvent( craftMapRegistryID, "CraftMapRegistry", "alchemy" );
+
+	if( !alchemyEntries || !IsAlchemyArrayValue( alchemyEntries ) )
+	{
+		Console.Warning( "Alchemy: Unable to load alchemy craft map data." );
+		return false;
+	}
+
+	for( var i = 0; i < alchemyEntries.length; i++ )
+	{
+		var entry = alchemyEntries[i];
+
+		if( !entry || typeof entry.makeID == "undefined" )
+			continue;
 
 		if( entry.skill === undefined )
 			entry.skill = alchemySkillID;
 
-		// If you ever want to drive item detail resources here:
-		//   entry.harvest = [ <dictID for bottles>, <dictID for reagents>, ... ];
-		// For now, the detail gump will infer resources directly from DFN create entries.
+		AlchemyMap[entry.makeID] = entry;
 	}
-})();
+
+	Console.Print( "Alchemy: Loaded " + alchemyEntries.length + " craft map entries.\n" );
+	return true;
+}
+
+function IsAlchemyArrayValue( value )
+{
+	return Object.prototype.toString.call( value ) == "[object Array]";
+}
 
 // o--------------------------------------------------------------------------o
 // | PageX() - build a page of alchemy items                                  |
@@ -83,6 +55,15 @@ function PageX( socket, pUser, pageNum )
 {
 	if( !socket || !ValidateObject( pUser ))
 		return;
+
+	if( !AlchemyMap || Object.keys( AlchemyMap ).length == 0 )
+	{
+		if( !LoadAlchemyMap() )
+		{
+			socket.SysMessage( "Alchemy craft map failed to load." );
+			return;
+		}
+	}
 
 	var pageItems;
 

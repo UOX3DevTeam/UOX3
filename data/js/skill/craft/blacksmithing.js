@@ -17,403 +17,64 @@ const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 // regular weapons with ore colour applied
 const allowColouredWeapons = GetServerSetting( "CraftColouredWeapons" );
 
-const OreTypes = [
-    { nameDict: 10291, hue: 0x0000, minMining:    0 }, // Iron
-    { nameDict: 10203, hue: 0x0973, minMining:  650 }, // Dull Copper
-    { nameDict: 10204, hue: 0x0966, minMining:  700 }, // Shadow Iron
-    { nameDict: 10205, hue: 0x07dd, minMining:  750 }, // Copper
-    { nameDict: 10206, hue: 0x06d6, minMining:  800 }, // Bronze
-    { nameDict: 10207, hue: 0x08a5, minMining:  850 }, // Gold
-    { nameDict: 10208, hue: 0x0979, minMining:  900 }, // Agapite
-    { nameDict: 10209, hue: 0x089f, minMining:  950 }, // Verite
-    { nameDict: 10210, hue: 0x08ab, minMining:  990 }  // Valorite
-];
+const craftMapRegistryID = 4038;
+var BlacksmithMap = {};
 
-const ScaleTypes = [
-    { nameDict: 20299, hue: 0x0663, minSkill:  0 }, // Red
-    { nameDict: 20300, hue: 0x084d, minSkill:  0 }, // Yellow
-    { nameDict: 20301, hue: 0x0455, minSkill:  0 }, // Black
-	{ nameDict: 20302, hue: 0x0851, minSkill:  0 }, // Green
-	{ nameDict: 20303, hue: 0x02c2, minSkill:  0 }, // White
-	{ nameDict: 20304, hue: 0x0006, minSkill:  0 }  // Blue
-    // add more as required
-];
-
-// Optional: if you later decide to make some blacksmith items recipe-locked, we will use this map:
-// BlacksmithMap[buttonID] = { dictID, page, timerID, oreMake: [makeIDByOre], recipeID?, minEra?, maxEra? }
-// o--------------------------------------------------------------------------o
-// | Script        - blacksmithing.js                                         |
-// | System        - Blacksmith Crafting Gump							      |
-// o--------------------------------------------------------------------------o
-// | Purpose       -                                                          |
-// |   Provides the blacksmith crafting menu using the same data-driven       |
-// |   system used by the tailoring script.                                   |
-// |                                                                          |
-// |   All craftable items are defined in tables (myPage, craftItems) and     |
-// |   then mapped into a BlacksmithMap structure that controls:                 |
-// |     - Which dictionary entry is shown per row                            |
-// |     - Which "makeID" entry is used for each ore type                     |
-// |     - Which page and timer ID to use when reopening the gump             |
-// |     - Optional per-item recipe and era requirements                      |
-// |     - Optional per-item custom names for display                         |
-// |                                                                          |
-// |   The script also handles:                                               |
-// |     - iron selection (iron / colored ores) with skill requirements       |
-// |     - Smelting iron items back into ingots                              |
-// |     - Repairing stone armor and weapons at an anvil                      |
-// |     - Tool wear and runic hammer handling                                |
-// |     - A "Make Last" feature                                              |
-// |     - A "Last Ten Blacnksmithing" list (optional)                               |
-// o--------------------------------------------------------------------------o
-// | Data Tables                                                              |
-// o--------------------------------------------------------------------------o
-// | myPage                                                                   |
-// |   myPage[pageIndex] = [ dictID1, dictID2, ... ]                          |
-// |     pageIndex 0 => Page 1: Metal Armor                                   |
-// |     pageIndex 1 => Page 2: Helmets                                       |
-// |     pageIndex 2 => Page 3: Shields                                       |
-// |     pageIndex 3 => Page 4: Bladed weapons                                |
-// |     pageIndex 4 => Page 5: Axes                                          |
-// |     pageIndex 5 => Page 6: Polearms                                      |
-// |     pageIndex 6 => Page 7: Bashing weapons                               |
-// |                                                                          |
-// |   Each entry is a dictionary ID that will be used to look up the text    |
-// |   for that row, unless a customName is defined for that button in        |
-// |   BlacksmithMap.                                                            |
-// |                                                                          |
-// | craftItems                                                               |
-// |   craftItems[ironIndex][pageIndex][itemIndex] = makeID                   |
-// |     oreIndex 0 = Iron                                                    |
-// |     oreIndex 1 = Dull Copper                                             |
-// |     oreIndex 2 = Shadow Iron                                             |
-// |     oreIndex 3 = Copper                                                  |
-// |     oreIndex 4 = Bronze                                                  |
-// |     oreIndex 5 = Gold                                                    |
-// |     oreIndex 6 = Agapite												  |
-// |     oreIndex 7 = Verite												  |
-// |     oreIndex 8 = Valorite												  |
-// |                                                                          |
-// |   For each ingot type and page, this holds the createEntry ID used by  |
-// |   MakeItem when the player crafts that item. The same index positions    |
-// |   on each page line up with the matching entries in myPage.              |
-// o--------------------------------------------------------------------------o
-// | BlacksmithMap                                                            |
-// o--------------------------------------------------------------------------o
-// | BlacksmithMap is built automatically from myPage and craftItems.         |
-// |                                                                          |
-// |   BlacksmithMap[buttonID] = {                                            |
-// |       dictID    : number,     // Base dictionary entry for the row       |
-// |       page      : number,     // Main page (1..7, or 999 for Last Ten)   |
-// |       timerID   : number,     // Timer ID to reopen same page            |
-// |       oreMake : number[],	   // oreMake[oreIndex] = makeID			  |
-// |       customName: string?,    // Optional override for display text      |
-// |       recipeID  : number?,    // Optional recipe requirement             |
-// |       minEra    : string?,    // Optional minimum shard era              |
-// |       maxEra    : string?     // Optional maximum shard era              |
-// |   };                                                                     |
-// |                                                                          |
-// | Button ID mapping (same as original script):                             |
-// |   Page 1 (Metal Armors) : 100..108                                       |
-// |   Page 2 (Helmets)   : 200..205                                          |
-// |   Page 3 (Shields)     : 300..305                                        |
-// |   Page 4 (Bladed) : 400..407                                             |
-// |   Page 5 (Axes) : 500..506                                               |
-// |   Page 6 (PoleArms) : 600..604											  |
-// |   Page 7 (Bashing): 700..704										      |
-// |                                                                          |
-// | Custom Names                                                             |
-// |   To override the display name for a specific row, set customName after  |
-// |   the BlacksmithMap has been initialized, for example:                   |
-// |                                                                          |
-// |       BlacksmithMap[100].customName = "Hump vase";		                  |
-// |                                                                          |
-// |   PageX() will use this order of preference for text:                    |
-// |     1. entry.customName (if set)                                         |
-// |     2. GetDictionaryEntry(entry.dictID)                                  |
-// |     3. A fallback "[Unnamed Item: buttonID]"                             |
-// |                                                                          |
-// | Recipes                                                                  |
-// |   If recipeID is set on a BlacksmithMap entry, onGumpPress will call:       |
-// |       TriggerEvent(4022, "NeedRecipe", pUser, recipeID)                  |
-// |   to check if the player has learned that recipe. If not, the craft      |
-// |   attempt is blocked and a message is shown.                             |
-// |                                                                          |
-// | Era Gating                                                               |
-// |   The script reads the shard era using:                                  |
-// |   const coreShardEra = EraStringToNum(GetServerSetting("CoreShardEra")); |
-// |                                                                          |
-// |   If an entry defines minEra or maxEra (strings like "lbr","aos","ml",   |
-// |   "sa","hs","tol"), eraOK(entry) will ensure the current server era is   |
-// |   within that range before allowing craft or display.                    |
-// o--------------------------------------------------------------------------o
-// | Notes                                                                    |
-// o--------------------------------------------------------------------------o
-// | - To add new blacksmith items, update myPage and craftItems, then        |
-// |   optionally decorate their BlacksmithMap entries with customName,       |
-// |   recipeID, minEra, and maxEra.                                          |
-// o--------------------------------------------------------------------------o
-
-const myPage = [
-	// Page 1 - Metal Armors
-	[10217, 10218, 10219, 10220, 10221, 10222, 10223, 10224, 10225, 10226, 10227, 10228, 10229, 0, 0, 0, 0 ,0],
-	// Page 2 - Helmets
-	[10230, 10231, 10232, 10233, 10234],
-	// Page 3 - Shields
-	[10235, 10236, 10237, 10238, 10239, 10293],
-	 // Page 4 - Bladed
-	[10240, 10241, 10242, 10243, 10244, 10245, 10246, 10247],
-	// Page 5 - Axes
-	[10248, 10249, 10250, 10251, 10252, 10253, 10254],
-	// Page 6 - PoleArms
-	[10255, 10256, 10257, 10258, 10259],
-	// Page 7 - Bashing
-	[10260, 10261, 10262, 10263, 10264]
-];
-
-const craftItems = [
-	// Iron
-	[
-		// Metal Armors
-		[ 7, 9, 8, 10, 11, 12, 13, 16, 15, 14, 17, 18, 19, 367, 368, 369, 370, 371 ],
-		// Helmets
-		[ 46, 48, 45, 47, 49 ],
-		// Shields
-		[ 1, 2, 6, 3, 5, 4 ],
-		// Bladed
-		[ 25, 21, 20, 22, 23, 26, 24, 27 ],
-		// Axes
-		[ 29, 28, 32, 30, 33, 31, 34 ],
-		// Polearms
-		[ 38, 39, 35, 36, 37 ],
-		// Bashing
-		[ 44, 40, 41, 42, 43 ]
-	],
-
-	// Dull Copper
-	[
-		// Metal Armors
-		[ 506, 508, 507, 509, 510, 511, 512, 515, 514, 513, 516, 517, 518 ],
-		// Helmets
-		[ 520, 522, 519, 521, 523 ],
-		// Shields
-		[ 500, 501, 505, 502, 504, 503 ],
-		// Bladed
-		[ 25, 21, 20, 22, 23, 26, 24, 27 ],
-		// Axes
-		[ 29, 28, 32, 30, 33, 31, 34 ],
-		// Polearms
-		[ 38, 39, 35, 36, 37 ],
-		// Bashing
-		[ 44, 40, 41, 42, 43 ]
-	],
-
-	// Shadow Iron
-	[
-		// Metal Armors
-		[ 606, 608, 607, 609, 610, 611, 612, 615, 614, 613, 616, 617, 618 ],
-		// Helmets
-		[ 620, 622, 619, 621, 623 ],
-		// Shields
-		[ 600, 601, 605, 602, 604, 603 ],
-		// Bladed
-		[ 25, 21, 20, 22, 23, 26, 24, 27 ],
-		// Axes
-		[ 29, 28, 32, 30, 33, 31, 34 ],
-		// Polearms
-		[ 38, 39, 35, 36, 37 ],
-		// Bashing
-		[ 44, 40, 41, 42, 43 ]
-	],
-
-	// Copper
-	[
-		// Metal Armors
-		[ 706, 708, 707, 709, 710, 711, 7012, 715, 714, 713, 716, 717, 718 ],
-		// Helmets
-		[ 720, 722, 719, 721, 723 ],
-		// Shields
-		[ 700, 701, 705, 702, 704, 703 ],
-		// Bladed
-		[ 25, 21, 20, 22, 23, 26, 24, 27 ],
-		// Axes
-		[ 29, 28, 32, 30, 33, 31, 34 ],
-		// Polearms
-		[ 38, 39, 35, 36, 37 ],
-		// Bashing
-		[ 44, 40, 41, 42, 43 ]
-	],
-
-	// Bronze
-	[
-		// Metal Armors
-		[ 806, 808, 807, 809, 810, 811, 812, 815, 814, 813, 816, 817, 818 ],
-		// Helmets
-		[ 820, 822, 819, 821, 823 ],
-		// Shields
-		[ 800, 801, 805, 802, 804, 803 ],
-		// Bladed
-		[ 25, 21, 20, 22, 23, 26, 24, 27 ],
-		// Axes
-		[ 29, 28, 32, 30, 33, 31, 34 ],
-		// Polearms
-		[ 38, 39, 35, 36, 37 ],
-		// Bashing
-		[ 44, 40, 41, 42, 43 ]
-	],
-
-	// Gold
-	[
-		// Metal Armors
-		[ 906, 908, 907, 909, 910, 911, 912, 915, 914, 913, 916, 917, 918 ],
-		// Helmets
-		[ 920, 922, 919, 921, 923 ],
-		// Shields
-		[ 900, 901, 905, 902, 904, 903 ],
-		// Bladed
-		[ 25, 21, 20, 22, 23, 26, 24, 27 ],
-		// Axes
-		[ 29, 28, 32, 30, 33, 31, 34 ],
-		// Polearms
-		[ 38, 39, 35, 36, 37 ],
-		// Bashing
-		[ 44, 40, 41, 42, 43 ]
-	],
-
-	// Agapite
-	[
-		// Metal Armors
-		[ 1206, 1208, 1207, 1209, 1210, 1211, 1212, 1215, 1214, 1213, 1216, 1217, 1218 ],
-		// Helmets
-		[ 1220, 1222, 1219, 1221, 1223 ],
-		// Shields
-		[ 1200, 1201, 1205, 1202, 1204, 1203 ],
-		// Bladed
-		[ 25, 21, 20, 22, 23, 26, 24, 27 ],
-		// Axes
-		[ 29, 28, 32, 30, 33, 31, 34 ],
-		// Polearms
-		[ 38, 39, 35, 36, 37 ],
-		// Bashing
-		[ 44, 40, 41, 42, 43 ]
-	],
-
-	// Verite
-	[
-		// Metal Armors
-		[ 1006, 1008, 1007, 1009, 1010, 1011, 1012, 1015, 1014, 1013, 1016, 1017, 1018 ],
-		// Helmets
-		[ 1020, 1022, 1019, 1021, 1023 ],
-		// Shields
-		[ 1000, 1001, 1005, 1002, 1004, 1003 ],
-		// Bladed
-		[ 25, 21, 20, 22, 23, 26, 24, 27 ],
-		// Axes
-		[ 29, 28, 32, 30, 33, 31, 34 ],
-		// Polearms
-		[ 38, 39, 35, 36, 37 ],
-		// Bashing
-		[ 44, 40, 41, 42, 43 ]
-	],
-
-	// Valorite
-	[
-		// Metal Armors
-		[ 1106, 1108, 1107, 1109, 1110, 1111, 1112, 1115, 1114, 1113, 1116, 1117, 1118 ],
-		// Helmets
-		[ 1120, 1122, 1119, 1121, 1123 ],
-		// Shields
-		[ 1100, 1101, 1105, 1102, 1104, 1103 ],
-		// Bladed
-		[ 25, 21, 20, 22, 23, 26, 24, 27 ],
-		// Axes
-		[ 29, 28, 32, 30, 33, 31, 34 ],
-		// Polearms
-		[ 38, 39, 35, 36, 37 ],
-		// Bashing
-		[ 44, 40, 41, 42, 43 ]
-	]
-];
-
-// BlacksmithMap[buttonID] = {
-//     dictID: <dictionaryID>,
-//     page: <pageNumber>,
-//     timerID: <timerID>,
-//     oreMake: [ makeIDForIron, makeIDForDullCopper, ... ], // index is oreID (0..8)
-//     // Optional later:
-//     // recipeID: <recipeID>,
-//     // minEra: "lbr" / "aos" / "ml" / "sa" / "hs" / "tol",
-//     // maxEra: ...
-// };
-
-const BlacksmithMap = {};
-
-(function initBlacksmithMap()
+function LoadBlacksmithMap()
 {
-	// oreIndex: 0 = iron, 1 = dull copper, ... 8 = valorite
-	for( var oreIndex = 0; oreIndex < craftItems.length; oreIndex++ )
+	BlacksmithMap = {};
+
+	var blacksmithEntries = TriggerEvent( craftMapRegistryID, "CraftMapRegistry", "blacksmithing" );
+
+	if( !blacksmithEntries || !IsBlacksmithArrayValue( blacksmithEntries ) )
 	{
-		var oreRows = craftItems[oreIndex];
-
-		// pageIdx: 0..6 => pages 1..7
-		for( var pageIdx = 0; pageIdx < myPage.length; pageIdx++ )
-		{
-			var dictList = myPage[pageIdx];
-			var makeList = oreRows[pageIdx];
-
-			for( var i = 0; i < dictList.length && i < makeList.length; i++ )
-			{
-				// Old script uses:
-				// page 1 => 100..112
-				// page 2 => 200..204
-				// page 3 => 300..305
-				// etc.
-				var buttonID = ( ( pageIdx + 1 ) * 100 ) + i;
-				var dictID = dictList[i];
-				var makeID = makeList[i];
-
-				if( !BlacksmithMap[buttonID] )
-				{
-					BlacksmithMap[buttonID] = {
-						dictID: dictID,
-						page: pageIdx + 1,
-						timerID: pageIdx + 1,
-						oreMake: [],
-						// recipeID: undefined,
-						// minEra: undefined,
-						// maxEra: undefined
-						skill: 7,                // blacksmithing skill ID
-						harvest: [10015],        // ingots dict
-						harvest2: [],             // optional second resource
-						harvest3: [],             // optional second resource
-						harvest4: []             // optional second resource
-					};
-				}
-
-				BlacksmithMap[buttonID].oreMake[oreIndex] = makeID;
-			}
-		}
+		Console.Warning( "Blacksmithing: Unable to load blacksmithing craft map data." );
+		return false;
 	}
-})();
 
-// 3) AFTER initBlacksmithMap, you can override entries:
-// BlacksmithMap[400].customName = "Elven Broadsword";
-// BlacksmithMap[400].recipeID = 5101;   // if you want it recipe-locked
-// BlacksmithMap[400].minEra = "ml";     // if you want it ML and later only
-BlacksmithMap[113].customName = "Dragon Sleeves";
-BlacksmithMap[113].useScales = true;
-BlacksmithMap[114].customName = "Dragon Breast Plate";
-BlacksmithMap[114].useScales = true;
-BlacksmithMap[115].customName = "Dragon Gloves";
-BlacksmithMap[115].useScales = true;
-BlacksmithMap[116].customName = "Dragon Helmet";
-BlacksmithMap[116].useScales = true;
-BlacksmithMap[117].customName = "Dragon leggings";
-BlacksmithMap[117].useScales = true;
+	for( var i = 0; i < blacksmithEntries.length; i++ )
+	{
+		var entry = blacksmithEntries[i];
+
+		if( !entry || typeof entry.buttonID == "undefined" )
+			continue;
+
+		if( entry.skill === undefined )
+			entry.skill = 7;
+
+		if( !entry.harvest )
+			entry.harvest = [10015];
+
+		BlacksmithMap[entry.buttonID] = entry;
+	}
+
+	Console.Print( "Blacksmithing: Loaded " + blacksmithEntries.length + " craft map entries.\n" );
+	return true;
+}
+
+function IsBlacksmithArrayValue( value )
+{
+	return Object.prototype.toString.call( value ) == "[object Array]";
+}
+
+function GetBlacksmithResourceList( resourceSet )
+{
+	return TriggerEvent( 4038, "GetCraftResourceList", resourceSet );
+}
 
 function PageX( socket, pUser, pageNum )
 {
 	if( !ValidateObject( pUser ))
 		return;
+
+	if( !BlacksmithMap || Object.keys( BlacksmithMap ).length == 0 )
+	{
+		if( !LoadBlacksmithMap() )
+		{
+			socket.SysMessage( "Blacksmithing craft map failed to load." );
+			return;
+		}
+	}
 
 	// Pages 1 - 7: normal crafting pages
 	// Page 999: optional "Last Ten Blacksmith" (if you decide to use it later)
@@ -548,122 +209,88 @@ function PageX( socket, pUser, pageNum )
 
 function Page8( socket, pUser )
 {
-    // Ingot choices page
-    var myGump = new Gump();
-    pUser.SetTempTag( "page", 8 );
+	var oreResourceList = TriggerEvent( craftMapRegistryID, "GetCraftResourceList", "ore" );
+	var oreItems = oreResourceList && oreResourceList.items ? oreResourceList.items : [];
 
-    // Draw standard crafting frame (title, buttons, notices etc.)
-    TriggerEvent( craftGumpID, "CraftingGumpMenu", myGump, socket );
+	var myGump = new Gump();
+	pUser.SetTempTag( "page", 8 );
 
-    // Count ingots by hue
-    var iron       = pUser.ResourceCount( 0x1BF2 );
-    var dullcopper = pUser.ResourceCount( 0x1BF2, 0x0973 );
-    var shadowiron = pUser.ResourceCount( 0x1BF2, 0x0966 );
-    var copper     = pUser.ResourceCount( 0x1BF2, 0x07dd );
-    var bronze     = pUser.ResourceCount( 0x1BF2, 0x06d6 );
-    var gold       = pUser.ResourceCount( 0x1BF2, 0x08a5 );
-    var agapite    = pUser.ResourceCount( 0x1BF2, 0x0979 );
-    var verite     = pUser.ResourceCount( 0x1BF2, 0x089f );
-    var valorite   = pUser.ResourceCount( 0x1BF2, 0x08ab );
+	TriggerEvent( craftGumpID, "CraftingGumpMenu", myGump, socket );
 
-    var counts = [ iron, dullcopper, shadowiron, copper, bronze, gold, agapite, verite, valorite ];
+	for( var i = 0; i < oreItems.length; i++ )
+	{
+		var oreInfo = oreItems[i];
+		var index = i % 10;
 
-    var lines = [];
-    for( var i = 0; i < OreTypes.length; i++ )
-    {
-        var oreInfo = OreTypes[i];
-        var label   = GetDictionaryEntry( oreInfo.nameDict, socket.language );
-        lines.push( label + " (" + counts[i].toString() + ")" );
-    }
+		if( index == 0 )
+		{
+			if( i > 0 )
+			{
+				myGump.AddButton( 370, 260, 4005, 4007, 0, ( i / 10 ) + 1, 0 );
+				myGump.AddHTMLGump( 405, 263, 100, 18, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.language ) + "</basefont>" );
+			}
 
-    for( var j = 0; j < lines.length; j++ )
-    {
-        var index = j % 10;
+			myGump.AddPage(( i / 10 ) + 1 );
 
-        if( index == 0 )
-        {
-            if( j > 0 )
-            {
-                myGump.AddButton( 370, 260, 4005, 4007, 0, ( j / 10 ) + 1, 0 );
-                myGump.AddHTMLGump( 405, 263, 100, 18, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.language ) + "</basefont>" ); // NEXT PAGE
-            }
+			if( i > 0 )
+			{
+				myGump.AddButton( 220, 260, 4014, 4015, 0, i / 10, 0 );
+				myGump.AddHTMLGump( 255, 263, 100, 18, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.language ) + "</basefont>" );
+			}
+		}
 
-            myGump.AddPage(( j / 10 ) + 1 );
+		var count = pUser.ResourceCount( oreInfo.itemID, oreInfo.hue || 0 );
+		var label = GetDictionaryEntry( oreInfo.dictID, socket.language );
 
-            if( j > 0 )
-            {
-                myGump.AddButton( 220, 260, 4014, 4015, 0, j / 10, 0 );
-                myGump.AddHTMLGump( 255, 263, 100, 18, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.language ) + "</basefont>" ); // PREV PAGE
-            }
-        }
+		myGump.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, 1000 + i );
+		myGump.AddText( 255, 60 + ( index * 20 ), textHue, label + " (" + count.toString() + ")" );
+	}
 
-        myGump.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, 1000 + j );
-        myGump.AddText(   255, 60 + ( index * 20 ), textHue, lines[j] );
-    }
-
-    myGump.Send( socket );
-    myGump.Free();
+	myGump.Send( socket );
+	myGump.Free();
 }
 
 function Page30( socket, pUser )
 {
-    var myGump = new Gump();
-    pUser.SetTempTag( "page", 30 ); // page index for scales (use any unused index)
+	var scaleResourceList = TriggerEvent( craftMapRegistryID, "GetCraftResourceList", "dragonScales" );
+	var scaleItems = scaleResourceList && scaleResourceList.items ? scaleResourceList.items : [];
 
-    // Base crafting frame (same as other pages)
-    TriggerEvent( craftGumpID, "CraftingGumpMenu", myGump, socket );
+	var myGump = new Gump();
+	pUser.SetTempTag( "page", 30 );
 
-    // Count scales in backpack by hue (update IDs/hues as needed)
-    // If all scales share the same item ID but different hues, adjust this.
-    var counts = [];
+	TriggerEvent( craftGumpID, "CraftingGumpMenu", myGump, socket );
 
-    for( var i = 0; i < ScaleTypes.length; i++ )
-    {
-        var scaleInfo = ScaleTypes[i];
+	for( var i = 0; i < scaleItems.length; i++ )
+	{
+		var scaleInfo = scaleItems[i];
+		var index = i % 10;
 
-        // Example: if all scales share a single ID (replace 0x26B4 with your scale item ID)
-        // counts[i] = pUser.ResourceCount( 0x26B4, scaleInfo.hue );
+		if( index == 0 )
+		{
+			if( i > 0 )
+			{
+				myGump.AddButton( 370, 260, 4005, 4007, 0, ( i / 10 ) + 1, 0 );
+				myGump.AddHTMLGump( 405, 263, 100, 18, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.language ) + "</basefont>" );
+			}
 
-        // If you have different IDs per scale type, change the above line as needed.
-        counts[i] = pUser.ResourceCount( 0x26b4, scaleInfo.hue );; // placeholder so script parses; you’ll replace with real logic
-    }
+			myGump.AddPage(( i / 10 ) + 1 );
 
-    var lines = [];
-    for( var j = 0; j < ScaleTypes.length; j++ )
-    {
-        var sInfo = ScaleTypes[j];
-        var label = GetDictionaryEntry( sInfo.nameDict, socket.language );
-        lines.push( label + " (" + counts[j].toString() + ")" );
-    }
+			if( i > 0 )
+			{
+				myGump.AddButton( 220, 260, 4014, 4015, 0, i / 10, 0 );
+				myGump.AddHTMLGump( 255, 263, 100, 18, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.language ) + "</basefont>" );
+			}
+		}
 
-    for( var k = 0; k < lines.length; k++ )
-    {
-        var index = k % 10;
+		var count = pUser.ResourceCount( scaleInfo.itemID, scaleInfo.hue || 0 );
+		var label = GetDictionaryEntry( scaleInfo.dictID, socket.language );
 
-        if( index == 0 )
-        {
-            if( k > 0 )
-            {
-                myGump.AddButton( 370, 260, 4005, 4007, 0, ( k / 10 ) + 1, 0 );
-                myGump.AddHTMLGump( 405, 263, 100, 18, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.language ) + "</basefont>" ); // NEXT PAGE
-            }
+		myGump.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, 1100 + i );
+		myGump.AddText( 255, 60 + ( index * 20 ), textHue, label + " (" + count.toString() + ")" );
+	}
 
-            myGump.AddPage(( k / 10 ) + 1 );
-
-            if( k > 0 )
-            {
-                myGump.AddButton( 220, 260, 4014, 4015, 0, k / 10, 0 );
-                myGump.AddHTMLGump( 255, 263, 100, 18, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.language ) + "</basefont>" ); // PREV PAGE
-            }
-        }
-
-        // Use a separate button range from ores to avoid conflicts: 1100+
-        myGump.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, 1100 + k );
-        myGump.AddText(   255, 60 + ( index * 20 ), textHue, lines[k] );
-    }
-
-    myGump.Send( socket );
-    myGump.Free();
+	myGump.Send( socket );
+	myGump.Free();
 }
 
 function FindNearbyAnvils( pUser, trgItem, pSock )
@@ -1149,62 +776,65 @@ function onGumpPress( pSock, pButton, gumpData )
 		return;
 	}
 
-	// Handle ore selection buttons (1000–1008) BEFORE the main switch
-	if( pButton >= 1000 && pButton <= 1008 )
+	// Handle ore selection buttons
+	if( pButton >= 1000 && pButton < 1100 )
 	{
-		var index = pButton - 1000;            // 0..8
-		var oreInfo = OreTypes[index];
-		var miningSkill = pUser.skills.mining; // you are already using skills.mining in smelting logic
+		var oreIndex = pButton - 1000;
 
-		if( miningSkill < oreInfo.minMining )
+		var oreResourceList = TriggerEvent( craftMapRegistryID, "GetCraftResourceList", "ore" );
+		var oreItems = oreResourceList && oreResourceList.items ? oreResourceList.items : [];
+
+		var oreInfo = oreItems[oreIndex];
+
+		if( !oreInfo)
+			return;
+
+		if( pUser.skills.mining < ( oreInfo.minSkill || 0 ))
 		{
-			// Not enough mining skill for this ore
 			pSock.CloseGump( gumpID, 0 );
 			pUser.SetTempTag( "prevActionResult", "FAILED" );
-			// Re-open ore page after a short delay
 			pUser.StartTimer( ingotDelay, 8, true );
 			return;
 		}
 
-		// Set selected ore and hue
-		pUser.SetTempTag( "ORE", index );
-		pUser.SetTempTag( "resourceHue", oreInfo.hue );
+		pUser.SetTempTag( "ORE", oreIndex );
+		pUser.SetTempTag( "resourceHue", oreInfo.hue || 0 );
 		pUser.SetTempTag( "MAKELAST", null );
 		pUser.SetTempTag( "prevActionResult", null );
 
-		// Re-open ore page so they see the new counts/selection
-		pSock.CloseGump( gumpID, 0 );
+		pSock.CloseGump( gumpID, 0);
 		pUser.StartTimer( ingotDelay, 8, true );
 		return;
 	}
 
 	// Handle scale selection buttons (1100–11XX) BEFORE the main switch
-	if (pButton >= 1100 && pButton < 1100 + ScaleTypes.length)
+	if( pButton >= 1100 && pButton < 1200 )
 	{
-		var sIndex = pButton - 1100;        // 0..ScaleTypes.length-1
-		var sInfo = ScaleTypes[sIndex];
-		var smithSkill = pUser.skills.blacksmithing; // or mining / whatever you want to gate on
+		var scaleIndex = pButton - 1100;
 
-		if( smithSkill < sInfo.minSkill )
+		var scaleResourceList = TriggerEvent( craftMapRegistryID, "GetCraftResourceList", "dragonScales" );
+		var scaleItems = scaleResourceList && scaleResourceList.items ? scaleResourceList.items : [];
+
+		var scaleInfo = scaleItems[scaleIndex];
+
+		if( !scaleInfo )
+			return;
+
+		if( pUser.skills.blacksmithing < ( scaleInfo.minSkill || 0 ))
 		{
-			// Not enough skill for this scale type
 			pSock.CloseGump( gumpID, 0 );
 			pUser.SetTempTag( "prevActionResult", "FAILED" );
-			pUser.StartTimer( ingotDelay, 30, true ); // reopen scale page after delay
+			pUser.StartTimer( ingotDelay, 30, true );
 			return;
 		}
 
-		// Store selection
-		pUser.SetTempTag( "Scale", sIndex );
-		pUser.SetTempTag( "resourceHue", sInfo.hue );
+		pUser.SetTempTag( "Scale", scaleIndex );
+		pUser.SetTempTag( "resourceHue", scaleInfo.hue || 0 );
 		pUser.SetTempTag( "MAKELAST", null );
 		pUser.SetTempTag( "prevActionResult", null );
 
-		// If you want a separate "make last" for scales, you could also SetTempTag("SCALEMAKELAST", ...)
-		// For now we just store the current selection.
-
 		pSock.CloseGump( gumpID, 0 );
-		pUser.StartTimer( ingotDelay, 30, true ); // reopen PageScales to show updated selection/notice
+		pUser.StartTimer( ingotDelay, 30, true );
 		return;
 	}
 
@@ -1277,17 +907,24 @@ function onGumpPress( pSock, pButton, gumpData )
 				pUser.SetTempTag( "Harvest4Name", null );
 
 				 // If this entry uses dragon scales, override resource label
-                if( entry.useScales )
-                {
-                    // Use currently selected scale type (from Page30 selection)
-                    var sIndex = pUser.GetTempTag( "Scale" );
-                    if( sIndex < 0 || sIndex >= ScaleTypes.length )
-                        sIndex = 0;
+				if( entry.useScales )
+				{
+					var scaleResourceList = TriggerEvent( craftMapRegistryID, "GetCraftResourceList", "dragonScales" );
+					var scaleItems = scaleResourceList && scaleResourceList.items ? scaleResourceList.items : [];
 
-                    var sInfo  = ScaleTypes[sIndex];
-                    var sLabel = GetDictionaryEntry( sInfo.nameDict, pSock.language );
-                    pUser.SetTempTag( "HarvestName", sLabel );
-                }
+					var sIndex = pUser.GetTempTag( "Scale" );
+
+					if( sIndex < 0 || sIndex >= scaleItems.length )
+						sIndex = 0;
+
+					var sInfo = scaleItems[sIndex];
+
+					if( sInfo )
+					{
+						var sLabel = GetDictionaryEntry( sInfo.dictID, pSock.language );
+						pUser.SetTempTag( "HarvestName", sLabel );
+					}
+				}
                 else
                 {
                     // Normal ingot-based items: use the harvest setup as before
@@ -1346,7 +983,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		var resourceHue = pUser.GetTempTag( "resourceHue" );
 
 		// Ensure oreID within range
-		if( oreID < 0 || oreID >= craftItems.length )
+		if( oreID < 0 || oreID >= entry2.oreMake.length )
 			oreID = 0;
 
 		// Era / recipe gating

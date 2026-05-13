@@ -10,57 +10,57 @@ const displayUnlearnedRecipes = true;                // For future recipe use
 const coreShardEra          = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 const cartographySkillID    = 12;                    // Skill index for "cartography" in ItemDetailGump
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// CartographyMap
-// Keyed by makeID (create entry ID).
-// Each entry:
-//   dictID      - dictionary entry for row text (13100..13103)
-//   page        - main category page (1..N)
-//   timerID     - which page timer should reopen
-//   skill       - skill used (default: cartographySkillID)
-//   recipeID?   - optional recipe ID
-//   minEra/maxEra? - optional era gating
-//   harvest?[]  - optional material dictionary IDs
-//   harvestNames?[] - optional custom material names
-//
-// NOTE: For the World Map row, we use base makeID 2003.
-//       At craft time, we still adjust to 2003..2007 depending on worldnumber,
-//       just like the original script did.
-//
-//////////////////////////////////////////////////////////////////////////////////////////
+const craftMapRegistryID = 4038;
+var CartographyMap = {};
 
-const CartographyMap = {
-	// Page 1 - Maps
-	2000: { dictID: 13100, page: 1, timerID: 1, harvest: [ 13004 ] }, // Local Map
-	2001: { dictID: 13101, page: 1, timerID: 1, harvest: [ 13004 ] }, // City Map
-	2002: { dictID: 13102, page: 1, timerID: 1, harvest: [ 13004 ] }, // Sea Chart
-	2003: { dictID: 13103, page: 1, timerID: 1, harvest: [ 13004 ] }  // World Map (base; world-specific in onGumpPress)
-};
-
-// Fill in defaults (skill, etc)
-(function initCartographyMap()
+function LoadCartographyMap()
 {
-	for( var key in CartographyMap )
-	{
-		if( !CartographyMap.hasOwnProperty( key ))
-			continue;
+	CartographyMap = {};
 
-		var entry = CartographyMap[key];
+	var cartographyEntries = TriggerEvent( craftMapRegistryID, "CraftMapRegistry", "cartography" );
+
+	if( !cartographyEntries || !IsCartographyArrayValue( cartographyEntries ) )
+	{
+		Console.Warning( "Cartography: Unable to load cartography craft map data." );
+		return false;
+	}
+
+	for( var i = 0; i < cartographyEntries.length; i++ )
+	{
+		var entry = cartographyEntries[i];
+
+		if( !entry || typeof entry.makeID == "undefined" )
+			continue;
 
 		if( entry.skill === undefined )
 			entry.skill = cartographySkillID;
 
-		// If you later want harvest info for detail gump, you can do:
-		// CartographyMap[2000].harvest = [ <dict-for-blank-scroll> ];
-		// CartographyMap[2000].harvestNames = [ "Blank scroll" ];
+		CartographyMap[entry.makeID] = entry;
 	}
-})();
+
+	Console.Print( "Cartography: Loaded " + cartographyEntries.length + " craft map entries.\n" );
+	return true;
+}
+
+function IsCartographyArrayValue( value )
+{
+	return Object.prototype.toString.call( value ) == "[object Array]";
+}
 
 /** @type { ( socket: Socket, pUser: Character, pageNum: number ) => void } */
 function PageX( socket, pUser, pageNum )
 {
 	if( !socket || !ValidateObject( pUser ))
 		return;
+
+	if( !CartographyMap || Object.keys( CartographyMap ).length == 0 )
+	{
+		if( !LoadCartographyMap() )
+		{
+			socket.SysMessage( "Cartography craft map failed to load." );
+			return;
+		}
+	}
 
 	var pageItems;
 

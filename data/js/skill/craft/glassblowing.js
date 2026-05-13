@@ -11,59 +11,47 @@ const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ) );
 const glassSkillID = 0;       // alchmey skill
 const glassHarvestDict = 13504; // sand
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// Glassblowing GlassBlowingMap
-//////////////////////////////////////////////////////////////////////////////////////////
+const craftMapRegistryID = 4038;
+var GlassBlowingMap = {};
 
-const GlassBlowingMap = {
-    // Page 1 - Misc Glassware
-    3000: { dictID: 13600, page: 1, timerID: 1 },                // empty bottle
-    3001: { dictID: 13601, page: 1, timerID: 1 },                // flask (small)
-    3002: { dictID: 13602, page: 1, timerID: 1 },                // flask (medium)
-    3003: { dictID: 13603, page: 1, timerID: 1 },                // flask (curved)
-    3004: { dictID: 13604, page: 1, timerID: 1 },                // flask (large #1)
-    3005: { dictID: 13605, page: 1, timerID: 1 },                // flask (large #2)
-    3006: { dictID: 13606, page: 1, timerID: 1 },                // flask (bubbling blue)
-    3007: { dictID: 13607, page: 1, timerID: 1 },                // flask (bubbling purple)
-    3008: { dictID: 13608, page: 1, timerID: 1 },                // flask (bubbling red)
-    3009: { dictID: 13609, page: 1, timerID: 1 },                // empty vials
-    3010: { dictID: 13610, page: 1, timerID: 1 },                // full vials
-    3011: { dictID: 13611, page: 1, timerID: 1 },                // spinning hourglass
-	3012: { customName: "hollow prism", page: 1, timerID: 1, minEra: "ml" },    // hollow prism
-	3013: { customName: "gargoyle floor mirror", page: 1, timerID: 1, minEra: "sa" },    // Gargoyle Floor Mirror
-	3014: { customName: "gargoyle wall mirror", page: 1, timerID: 1, minEra: "sa" },    // Gargoyle Wall Mirror
-	3015: { customName: "empty venom vial", page: 1, timerID: 1, minEra: "sa" },    // Empty Venom Vial
-	3016: { customName: "empty oil flask", page: 1, timerID: 1, minEra: "sa" },    // Empty Oil Flask
-	3017: { customName: "workable glass", page: 1, timerID: 1, minEra: "sa" },    // Workable Glass
-	// Page 2 Glass Weapons
-	3018: { customName: "glass sword", page: 2, timerID: 2, minEra: "sa" },    // Glass sword
-	3019: { customName: "glass staff", page: 2, timerID: 2, minEra: "sa" }    // Glass staff
-};
-
-// After the GlassBlowingMap literal
-(function initGlassBlowingMap()
+/** @type { () => boolean } */
+function LoadGlassBlowingMap()
 {
-    for( var key in GlassBlowingMap )
-    {
-        if( !GlassBlowingMap.hasOwnProperty( key ))
-            continue;
+	GlassBlowingMap = {};
 
-        var entry = GlassBlowingMap[key];
+	var glassEntries = TriggerEvent( craftMapRegistryID, "CraftMapRegistry", "glassblowing" );
 
-        // Default skill (if not already set)
-        if( entry.skill === undefined )
-            entry.skill = glassSkillID;
+	if( !glassEntries || !IsGlassBlowingArrayValue( glassEntries ) )
+	{
+		Console.Warning( "Glassblowing: Unable to load glassblowing craft map data." );
+		return false;
+	}
 
-        // Default harvest list (if not already set)
-        if( !entry.harvest )
-            entry.harvest = [ glassHarvestDict ];
+	for( var i = 0; i < glassEntries.length; i++ )
+	{
+		var entry = glassEntries[i];
 
-        // If you have special cases, you can override here, e.g.:
-        // if( key == "3017" ) { // workable glass
-        //     entry.harvest = [ glassHarvestDict, 10016 ]; // sand + cloth
-        // }
-    }
-})();
+		if( !entry || typeof entry.makeID == "undefined" )
+			continue;
+
+		if( entry.skill === undefined )
+			entry.skill = glassSkillID;
+
+		if( !entry.harvest )
+			entry.harvest = [ glassHarvestDict ];
+
+		GlassBlowingMap[entry.makeID] = entry;
+	}
+
+	Console.Print( "Glassblowing: Loaded " + glassEntries.length + " craft map entries.\n" );
+	return true;
+}
+
+/** @type { ( value: any ) => boolean } */
+function IsGlassBlowingArrayValue( value )
+{
+	return Object.prototype.toString.call( value ) == "[object Array]";
+}
 
 // If you ever need a specific item to use 2 or more resources, just override its harvest array:
 // GlassBlowingMap[3017].harvest = [ glassHarvestDict, 10016 ]; // two harvest resources
@@ -72,6 +60,15 @@ function PageX( socket, pUser, pageNum )
 {
 	if( !socket || !ValidateObject( pUser ))
 		return;
+
+	if( !GlassBlowingMap || Object.keys( GlassBlowingMap ).length == 0 )
+	{
+		if( !LoadGlassBlowingMap() )
+		{
+			socket.SysMessage( "Glassblowing craft map failed to load." );
+			return;
+		}
+	}
 
 	var pageItems;
 
@@ -416,7 +413,7 @@ function onGumpPress( socket, pButton, gumpData )
 	if( pButton >= 20000 && pButton < 30000 )
 	{
 		var detailMakeID = pButton - 20000;
-		var entry = AlchemyMap[detailMakeID];
+		var entry = GlassBlowingMap[detailMakeID];
 
 		if( entry )
 		{

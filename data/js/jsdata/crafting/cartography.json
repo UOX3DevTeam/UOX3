@@ -1,0 +1,6 @@
+[
+	{ "makeID": 2000, "label": "Local Map", "dictID": 13100, "page": 1, "timerID": 1, "harvest": [13004] },
+	{ "makeID": 2001, "label": "City Map", "dictID": 13101, "page": 1, "timerID": 1, "harvest": [13004] },
+	{ "makeID": 2002, "label": "Sea Chart", "dictID": 13102, "page": 1, "timerID": 1, "harvest": [13004] },
+	{ "makeID": 2003, "label": "World Map", "dictID": 13103, "page": 1, "timerID": 1, "harvest": [13004] }
+]

@@ -10,63 +10,44 @@ const displayUnlearnedRecipes = true;                  // For future recipe use
 const coreShardEra            = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 const fletchingSkillID        = 8;                     // Index of "bowcraft" in ItemDetailGump skillNames[]
 
-// o--------------------------------------------------------------------------o
-// | FletchingMap                                                             |
-// o--------------------------------------------------------------------------o
-// | Keyed by makeID (create entry ID).                                      |
-// | Each entry:                                                             |
-// |   dictID      - dictionary entry for row text (11205..11220)           |
-// |   page        - main category page (1..3)                               |
-// |   timerID     - which page timer should reopen                          |
-// |   skill       - skill used (default: fletchingSkillID)                  |
-// |   recipeID?   - optional recipe ID                                      |
-// |   minEra?, maxEra? - optional era gating                                |
-// |   harvest?[]  - optional dictIDs for MATERIALS list                     |
-// |   harvestNames?[] - optional custom material names                      |
-// o--------------------------------------------------------------------------o
+const craftMapRegistryID = 4038;
+var FletchingMap = {};
 
-const FletchingMap = {
-	// Page 1 - Materials
-	190: { dictID: 11205, page: 1, timerID: 1, harvest: [ 10014 ] }, // Kindling
-	194: { dictID: 11206, page: 1, timerID: 1, harvest: [ 10014 ] }, // Shaft
-	195: { dictID: 11207, page: 1, timerID: 1, harvest: [ 10014 ] }, // Five Shafts
-	196: { dictID: 11208, page: 1, timerID: 1, harvest: [ 10014 ] }, // Twenty Shafts
-	197: { dictID: 11209, page: 1, timerID: 1, harvest: [ 10014 ] }, // Fifty Shafts
-
-	// Page 2 - Ammunition
-	198: { dictID: 11210, page: 2, timerID: 2, harvest: [ 10029, 10028 ] }, // Arrow
-	199: { dictID: 11211, page: 2, timerID: 2, harvest: [ 10029, 10028 ] }, // Five Arrows
-	200: { dictID: 11212, page: 2, timerID: 2, harvest: [ 10029, 10028 ] }, // Twenty Arrows
-	201: { dictID: 11213, page: 2, timerID: 2, harvest: [ 10029, 10028 ] }, // Fifty Arrows
-	202: { dictID: 11214, page: 2, timerID: 2, harvest: [ 10029, 10028 ] }, // Bolt
-	203: { dictID: 11215, page: 2, timerID: 2, harvest: [ 10029, 10028 ] }, // Five Bolts
-	204: { dictID: 11216, page: 2, timerID: 2, harvest: [ 10029, 10028 ] }, // Twenty Bolts
-	205: { dictID: 11217, page: 2, timerID: 2, harvest: [ 10029, 10028 ] }, // Fifty Bolts
-
-	// Page 3 - Weapons
-	191: { dictID: 11218, page: 3, timerID: 3, harvest: [ 10014 ] }, // Bow
-	192: { dictID: 11219, page: 3, timerID: 3, harvest: [ 10014 ] }, // Crossbow
-	193: { dictID: 11220, page: 3, timerID: 3, harvest: [ 10014 ] }  // Heavy Crossbow
-};
-
-// Fill in defaults (skill, etc)
-(function initFletchingMap()
+/** @type { () => boolean } */
+function LoadFletchingMap()
 {
-	for( var key in FletchingMap )
-	{
-		if( !FletchingMap.hasOwnProperty( key ))
-			continue;
+	FletchingMap = {};
 
-		var entry = FletchingMap[key];
+	var fletchingEntries = TriggerEvent( craftMapRegistryID, "CraftMapRegistry", "fletching" );
+
+	if( !fletchingEntries || !IsFletchingArrayValue( fletchingEntries ) )
+	{
+		Console.Warning( "Fletching: Unable to load fletching craft map data." );
+		return false;
+	}
+
+	for( var i = 0; i < fletchingEntries.length; i++ )
+	{
+		var entry = fletchingEntries[i];
+
+		if( !entry || typeof entry.makeID == "undefined" )
+			continue;
 
 		if( entry.skill === undefined )
 			entry.skill = fletchingSkillID;
 
-		// In future you can do:
-		// entry.harvest      = [ woodDictID, featherDictID ];
-		// entry.harvestNames = [ "Wood", "Feathers" ];
+		FletchingMap[entry.makeID] = entry;
 	}
-})();
+
+	Console.Print( "Fletching: Loaded " + fletchingEntries.length + " craft map entries.\n" );
+	return true;
+}
+
+/** @type { ( value: any ) => boolean } */
+function IsFletchingArrayValue( value )
+{
+	return Object.prototype.toString.call( value ) == "[object Array]";
+}
 
 // o--------------------------------------------------------------------------o
 // | PageX() - build a page of fletching items                                |
@@ -76,6 +57,15 @@ function PageX( socket, pUser, pageNum )
 {
 	if( !socket || !ValidateObject( pUser ))
 		return;
+
+	if( !FletchingMap || Object.keys( FletchingMap ).length == 0 )
+	{
+		if( !LoadFletchingMap() )
+		{
+			socket.SysMessage( "Fletching craft map failed to load." );
+			return;
+		}
+	}
 
 	var pageItems;
 

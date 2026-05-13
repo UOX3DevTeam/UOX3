@@ -11,107 +11,58 @@ const displayUnlearnedRecipes = true;                  // Show recipes player ha
 const coreShardEra            = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 const tailoringSkillID        = 34;                    // Tailoring skill index
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// Tailoring CraftingMap
-//////////////////////////////////////////////////////////////////////////////////////////
+const craftMapRegistryID = 4038;
+var CraftingMap = {};
 
-// You can later add:
-//   skill, minEra, maxEra, recipeID, harvest, harvestNames, customName
-// per entry, like in Alchemy / Tinkering.
-
-const CraftingMap = {
-	// Hats (Page 1)
-	130: { dictID: 11415, page: 1, timerID: 1, harvest: [ 10016 ] },
-	131: { dictID: 11416, page: 1, timerID: 1, harvest: [ 10016 ] },
-	132: { dictID: 11417, page: 1, timerID: 1, harvest: [ 10016 ] },
-	134: { dictID: 11418, page: 1, timerID: 1, harvest: [ 10016 ] },
-	133: { dictID: 11419, page: 1, timerID: 1, harvest: [ 10016 ] },
-	136: { dictID: 11420, page: 1, timerID: 1, harvest: [ 10016 ] },
-	137: { dictID: 11421, page: 1, timerID: 1, harvest: [ 10016 ] },
-	138: { dictID: 11422, page: 1, timerID: 1, harvest: [ 10016 ] },
-	139: { dictID: 11423, page: 1, timerID: 1, harvest: [ 10016 ] },
-	140: { dictID: 11424, page: 1, timerID: 1, harvest: [ 10016 ] },
-	141: { dictID: 11425, page: 1, timerID: 1, harvest: [ 10016 ] },
-	135: { dictID: 11470, page: 1, timerID: 1, harvest: [ 10016 ] },
-
-	// Shirts & Pants (Page 2)
-	142: { dictID: 11426, page: 2, timerID: 2, harvest: [ 10016 ] },
-	143: { dictID: 11427, page: 2, timerID: 2, harvest: [ 10016 ] },
-	144: { dictID: 11428, page: 2, timerID: 2, harvest: [ 10016 ] },
-	145: { dictID: 11429, page: 2, timerID: 2, harvest: [ 10016 ] },
-	146: { dictID: 11430, page: 2, timerID: 2, harvest: [ 10016 ] },
-	147: { dictID: 11431, page: 2, timerID: 2, harvest: [ 10016 ] },
-	148: { dictID: 11432, page: 2, timerID: 2, harvest: [ 10016 ] },
-	149: { dictID: 11433, page: 2, timerID: 2, harvest: [ 10016 ] },
-	150: { dictID: 11434, page: 2, timerID: 2, harvest: [ 10016 ] },
-	151: { dictID: 11435, page: 2, timerID: 2, harvest: [ 10016 ] },
-	180: { dictID: 11436, page: 2, timerID: 2, harvest: [ 10016 ] },
-	152: { dictID: 11437, page: 2, timerID: 2, harvest: [ 10016 ] },
-	153: { dictID: 11438, page: 2, timerID: 2, harvest: [ 10016 ] },
-	154: { dictID: 11439, page: 2, timerID: 2, harvest: [ 10016 ] },
-
-	// Misc (Page 3)
-	155: { dictID: 11440, page: 3, timerID: 3, harvest: [ 10016 ] },
-	156: { dictID: 11441, page: 3, timerID: 3, harvest: [ 10016 ] },
-	157: { dictID: 11442, page: 3, timerID: 3, harvest: [ 10016 ] },
-	158: { dictID: 11443, page: 3, timerID: 3, harvest: [ 10016 ] },
-
-	// Footwear (Page 4)
-	159: { dictID: 11444, page: 4, timerID: 4, harvest: [ 10007 ] },
-	160: { dictID: 11445, page: 4, timerID: 4, harvest: [ 10007 ] },
-	161: { dictID: 11446, page: 4, timerID: 4, harvest: [ 10007 ] },
-	162: { dictID: 11447, page: 4, timerID: 4, harvest: [ 10007 ] },
-
-	// Leather Armor (Page 5)
-	163: { dictID: 11448, page: 5, timerID: 5, harvest: [ 10007 ] },
-	164: { dictID: 11449, page: 5, timerID: 5, harvest: [ 10007 ] },
-	165: { dictID: 11450, page: 5, timerID: 5, harvest: [ 10007 ] },
-	166: { dictID: 11451, page: 5, timerID: 5, harvest: [ 10007 ] },
-	167: { dictID: 11452, page: 5, timerID: 5, harvest: [ 10007 ] },
-	168: { dictID: 11453, page: 5, timerID: 5, harvest: [ 10007 ] },
-
-	// Studded Armor (Page 6)
-	169: { dictID: 11454, page: 6, timerID: 6, harvest: [ 10007 ] },
-	170: { dictID: 11455, page: 6, timerID: 6, harvest: [ 10007 ] },
-	171: { dictID: 11456, page: 6, timerID: 6, harvest: [ 10007 ] },
-	172: { dictID: 11457, page: 6, timerID: 6, harvest: [ 10007 ] },
-	173: { dictID: 11458, page: 6, timerID: 6, harvest: [ 10007 ] },
-
-	// Female Armor (Page 7)
-	174: { dictID: 11459, page: 7, timerID: 7, harvest: [ 10007 ] },
-	175: { dictID: 11460, page: 7, timerID: 7, harvest: [ 10007 ] },
-	176: { dictID: 11461, page: 7, timerID: 7, harvest: [ 10007 ] },
-	177: { dictID: 11462, page: 7, timerID: 7, harvest: [ 10007 ] },
-	178: { dictID: 11463, page: 7, timerID: 7, harvest: [ 10007 ] },
-	179: { dictID: 11464, page: 7, timerID: 7, harvest: [ 10007 ] },
-
-	// Bone Armor (Page 8)
-	181: { dictID: 11465, page: 8, timerID: 8, harvest: [ 10007, 10008 ] },
-	182: { dictID: 11466, page: 8, timerID: 8, harvest: [ 10007, 10008 ] },
-	183: { dictID: 11467, page: 8, timerID: 8, harvest: [ 10007, 10008 ] },
-	184: { dictID: 11468, page: 8, timerID: 8, harvest: [ 10007, 10008 ] },
-	185: { dictID: 11469, page: 8, timerID: 8, harvest: [ 10007, 10008 ] } // can add recipeID/minEra here later
-};
-
-// Fill defaults (skill, etc.)
-(function initTailoringMap()
+/** @type { () => boolean } */
+function LoadTailoringMap()
 {
-	for( var key in CraftingMap )
+	CraftingMap = {};
+
+	var tailoringEntries = TriggerEvent( craftMapRegistryID, "CraftMapRegistry", "tailoring" );
+
+	if( !tailoringEntries || !IsTailoringArrayValue( tailoringEntries ) )
 	{
-		if( !CraftingMap.hasOwnProperty( key ))
+		Console.Warning( "Tailoring: Unable to load tailoring craft map data." );
+		return false;
+	}
+
+	for( var i = 0; i < tailoringEntries.length; i++ )
+	{
+		var entry = tailoringEntries[i];
+
+		if( !entry || typeof entry.makeID == "undefined" )
 			continue;
 
-		var entry = CraftingMap[key];
 		if( entry.skill === undefined )
 			entry.skill = tailoringSkillID;
+
+		CraftingMap[entry.makeID] = entry;
 	}
-})();
+
+	return true;
+}
+
+/** @type { ( value: any ) => boolean } */
+function IsTailoringArrayValue( value )
+{
+	return Object.prototype.toString.call( value ) == "[object Array]";
+}
 
 /** @type { ( socket: Socket, pUser: Character, pageNum: number ) => void } */
 function PageX( socket, pUser, pageNum )
 {
 	if( !socket || !ValidateObject( pUser ))
 		return;
+
+	if( !CraftingMap || Object.keys( CraftingMap ).length == 0 )
+	{
+		if( !LoadTailoringMap() )
+		{
+			socket.SysMessage( "Tailoring craft map failed to load." );
+			return;
+		}
+	}
 
 	var subPage = pUser.GetTempTag( "subPage" ) || 1;
 	var pageItems;

@@ -25,48 +25,13 @@ const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 function CraftingGumpMenu( myGump, socket )
 {
 	var pUser = socket.currentChar;
-
-	// Get player's resource counts
-	var iron = pUser.ResourceCount( 0x1BF2 );
-	var dullcopper = pUser.ResourceCount( 0x1BF2, 0x0973 );
-	var shadowiron = pUser.ResourceCount( 0x1BF2, 0x0966 );
-	var copper = pUser.ResourceCount( 0x1BF2, 0x07dd );
-	var bronze = pUser.ResourceCount( 0x1BF2, 0x06d6 );
-	var gold = pUser.ResourceCount( 0x1BF2, 0x08a5 );
-	var agapite = pUser.ResourceCount( 0x1BF2, 0x0979 );
-	var verite = pUser.ResourceCount( 0x1BF2, 0x089f );
-	var valorite = pUser.ResourceCount( 0x1BF2, 0x08ab );
-	var logs = pUser.ResourceCount( 0x1BE0 );
-	var boards = pUser.ResourceCount( 0x1bd7 );
-	var leather = pUser.ResourceCount( 0x1067 );
-	var leather1 = pUser.ResourceCount( 0x1068 );
-	var leather2 = pUser.ResourceCount( 0x1081 );
-	var leather3 = pUser.ResourceCount( 0x1082 );
-	var hides = pUser.ResourceCount( 0x1078 );
-	var hides1 = pUser.ResourceCount( 0x1079 );
-
-	var granite = pUser.ResourceCount( 0x1779 );
-	var dullcoppergranite = pUser.ResourceCount( 0x1779, 0x0973 );
-	var shadowirongranite = pUser.ResourceCount( 0x1779, 0x0966 );
-	var coppergranite = pUser.ResourceCount( 0x1779, 0x07dd );
-	var bronzegranite = pUser.ResourceCount( 0x1779, 0x06d6 );
-	var goldgranite = pUser.ResourceCount( 0x1779, 0x08a5 );
-	var agapitegranite = pUser.ResourceCount( 0x1779, 0x0979 );
-	var veritegranite = pUser.ResourceCount( 0x1779, 0x089f );
-	var valoritegranite = pUser.ResourceCount( 0x1779, 0x08ab );
-
-	var redScales = pUser.ResourceCount( 0x26b4, 0x0663 ); // red scales
-	var yellowScales = pUser.ResourceCount( 0x26b4, 0x084d); // yellow scales
-	var blackScales = pUser.ResourceCount( 0x26b4, 0x0455); // Black scales
-	var greenScales = pUser.ResourceCount( 0x26b4, 0x0851); // Green scales
-	var whiteScales = pUser.ResourceCount( 0x26b4, 0x02c2 ); // White scales
-	var blueScales = pUser.ResourceCount( 0x26b4, 0x0006); // Blue scales
-
 	var resourcename = 10291;
 	var resourcename2 = 10291;
-	var resource = iron;
-	var resource2 = whiteScales;
-	var groupList;
+	var resource = 0;
+	var resource2 = 0;
+	var resourceSelection = null;
+	var resourceSelection2 = null;
+	var grouplist = [];
 	var gumpMenuName = "";
 	var repair = 51;
 	var craftingSkillUsed = pUser.GetTempTag( "CRAFT" );
@@ -74,10 +39,11 @@ function CraftingGumpMenu( myGump, socket )
 	switch( craftingSkillUsed )
 	{
 		case 1: // Carpentry
-			grouplist = [10601, 10602, 10603, 10604, 10605, 10606, 10607, 10608, 10609, 10610]; //CATEGORIES
-			resourcename = 10687;
-			resource = ( logs + boards );
-			gumpMenuName = 10600;//Carpentry
+			grouplist = [10601, 10602, 10603, 10604, 10605, 10606, 10607, 10608, 10609, 10610];
+			resourceSelection = TriggerEvent( 4038, "GetCraftResourceSelection", "wood", pUser );
+			resourcename = resourceSelection ? resourceSelection.dictID : 10687;
+			resource = resourceSelection ? resourceSelection.amount : 0;
+			gumpMenuName = 10600;
 			repair = 51;
 			break;
 		case 2: // Alchemy
@@ -85,96 +51,28 @@ function CraftingGumpMenu( myGump, socket )
 			gumpMenuName = 10901;//Alchemy Menu
 			break;
 		case 3: // Bowcraft/Fletching
-			grouplist = [11202, 11203, 11204]; //CATEGORIES
-			gumpMenuName = 11201;//Bowcraft Menu
-			resourcename = 10687;
-			resource = ( logs + boards );
-			//repair = 51;
+			grouplist = [11202, 11203, 11204];
+			resourceSelection = TriggerEvent( 4038, "GetCraftResourceSelection", "wood", pUser );
+			resourcename = resourceSelection ? resourceSelection.dictID : 10687;
+			resource = resourceSelection ? resourceSelection.amount : 0;
+			gumpMenuName = 11201;
 			break;
 		case 4: // Tailoring
-			grouplist = [11404, 11405, 11406, 11407, 11408, 11410, 11411, 11412]; //CATEGORIES
-			gumpMenuName = 11401;//Tailoring Menu
-			resourcename = 11402;
-			resource = ( leather + leather1 + leather2 + leather3 + hides + hides1 );
-			//repair = 51;
+			grouplist = [11404, 11405, 11406, 11407, 11408, 11410, 11411, 11412];
+			resourceSelection = TriggerEvent( 4038, "GetCraftResourceSelection", "tailoring", pUser );
+			resourcename = resourceSelection ? resourceSelection.dictID : 11402;
+			resource = resourceSelection ? resourceSelection.amount : 0;
+			gumpMenuName = 11401;
 			break;
 		case 5: // Blacksmithing
-			grouplist = [10279, 10280, 10281, 10282, 10283, 10284, 10285] //CATEGORIES
-			gumpMenuName = 10188;//Blacksmithing Menu
-			switch( pUser.GetTempTag( "ORE" ))
-			{
-				case 0: // Iron
-					resourcename = 10291;
-					resource = iron;
-					break;
-				case 1: // Dull Copper
-					resourcename = 10203;
-					resource = dullcopper;
-					break;
-				case 2: // Shadow Iron
-					resourcename = 10204;
-					resource = shadowiron;
-					break;
-				case 3: // Copper
-					resourcename = 10205;
-					resource = copper;
-					break;
-				case 4: // Bronze
-					resourcename = 10206;
-					resource = bronze;
-					break;
-				case 5: // Gold
-					resourcename = 10207;
-					resource = gold;
-					break;
-				case 6: // Agapite
-					resourcename = 10208;
-					resource = agapite;
-					break;
-				case 7: // Verite
-					resourcename = 10209;
-					resource = verite;
-					break;
-				case 8: // Valorite
-					resourcename = 10210;
-					resource = valorite;
-					break;
-				default: // Iron
-					resourcename = 10291;
-					resource = iron;
-					break;
-			}
-			switch( pUser.GetTempTag( "Scale" ))
-			{
-				case 0:
-					resourcename2 = 20299;
-					resource2 = redScales;
-					break;
-				case 1:
-					resourcename2 = 20300;
-					resource2 = yellowScales;
-					break;
-				case 2:
-					resourcename2 = 20301;
-					resource2 = blackScales;
-					break;
-				case 3:
-					resourcename2 = 20302;
-					resource2 = greenScales;
-					break;
-				case 4:
-					resourcename2 = 20303;
-					resource2 = whiteScales;
-					break;
-				case 5:
-					resourcename2 = 20304;
-					resource2 = blueScales;
-					break;
-				default:
-					resourcename2 = 20299;
-					resource2 = redScales;
-					break;
-			}
+			grouplist = [10279, 10280, 10281, 10282, 10283, 10284, 10285];
+			resourceSelection = TriggerEvent( 4038, "GetCraftResourceSelection", "ore", pUser );
+			resourceSelection2 = TriggerEvent( 4038, "GetCraftResourceSelection", "dragonScales", pUser );
+			resourcename = resourceSelection ? resourceSelection.dictID : 10291;
+			resource = resourceSelection ? resourceSelection.amount : 0;
+			resourcename2 = resourceSelection2 ? resourceSelection2.dictID : 20299;
+			resource2 = resourceSelection2 ? resourceSelection2.amount : 0;
+			gumpMenuName = 10188;
 			repair = 49;
 			break;
 		case 6: // Cooking
@@ -183,6 +81,9 @@ function CraftingGumpMenu( myGump, socket )
 			break;
 		case 7: // Tinkering
 			grouplist = [11991, 11992, 11993, 11994, 11995, 11996, 11997, 11998, 11999]; // CATEGORIES
+			resourceSelection = TriggerEvent( 4038, "GetCraftResourceSelection", "ore", pUser );
+			resourcename = resourceSelection ? resourceSelection.dictID : 10291;
+			resource = resourceSelection ? resourceSelection.amount : 0;
 			gumpMenuName = 11990; // Tinkering Menu
 			break;
 		case 8: // Cartography
@@ -199,51 +100,11 @@ function CraftingGumpMenu( myGump, socket )
 			gumpMenuName = 13501;//Cartography Menu
 			break;
 		case 10: // Masonry
-			grouplist = [14002, 14003, 14004, 14005, 14006, 14007, 14008, 14009, 14010] //CATEGORIES
-			gumpMenuName = 14001;//Masonry Menu
-			switch( pUser.GetTempTag( "Granite" ))
-			{
-				case 0: // Granite
-					resourcename = 14011;
-					resource = granite;
-					break;
-				case 1: // Dull Copper
-					resourcename = 14012;
-					resource = dullcoppergranite;
-					break;
-				case 2: // Shadow Iron
-					resourcename = 14013;
-					resource = shadowirongranite;
-					break;
-				case 3: // Copper
-					resourcename = 14014;
-					resource = coppergranite;
-					break;
-				case 4: // Bronze
-					resourcename = 14015;
-					resource = bronzegranite;
-					break;
-				case 5: // Gold
-					resourcename = 14016;
-					resource = goldgranite;
-					break;
-				case 6: // Agapite
-					resourcename = 14017;
-					resource = agapitegranite;
-					break;
-				case 7: // Verite
-					resourcename = 14018;
-					resource = veritegranite;
-					break;
-				case 8: // Valorite
-					resourcename = 14019;
-					resource = valoritegranite;
-					break;
-				default: // Iron
-					resourcename = 14011;
-					resource = irongranite;
-					break;
-			}
+			grouplist = [14002, 14003, 14004, 14005, 14006, 14007, 14008, 14009, 14010];
+			resourceSelection = TriggerEvent( 4038, "GetCraftResourceSelection", "granite", pUser );
+			resourcename = resourceSelection ? resourceSelection.dictID : 14011;
+			resource = resourceSelection ? resourceSelection.amount : 0;
+			gumpMenuName = 14001;
 			repair = 49;
 			break;
 	}

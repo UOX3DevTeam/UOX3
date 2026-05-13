@@ -12,172 +12,59 @@ const coreShardEra				= EraStringToNum( GetServerSetting( "CoreShardEra" ) );
 const carpentrySkillID			= 11;		// Carpentry skill ID
 const harvestDict				= 10014;	// Dictionary entry for "wood" (boards/logs)
 
-//======================================================================================
-//  Data tables
-//======================================================================================
+const craftMapRegistryID = 4038;
+var CarpentryMap = {};
 
-const myPage = [
-
-	// Page 1 - Other
-	[10611, 10612, 10613, 10614, 10615, 10616, 10617, 10618, 10619, 10620, 10688],
-
-	// Page 2 - Furniture
-	[10621, 10622, 10623, 10624, 10625, 10626, 10627, 10628, 10629, 10630, 10631, 10632, 10633],
-
-	// Page 3 - Containers
-	[10634, 10635, 10636, 10637, 10638, 10639, 10640, 10641, 10642],
-
-	// Page 4 - Weapons
-	[10643, 10644, 10645, 10646, 10647],
-
-	// Page 5 - Armor
-	[10648],
-
-	// Page 6 - Instruments
-	[10649, 10650, 10651, 10652, 10653, 10654],
-
-	// Page 7 - Misc. Add-Ons
-	[10655, 10656, 10657, 10658, 10659, 10660, 10661, 10662, 10663, 10664, 10665],
-
-	// Page 8 - Tailoring and Cooking
-	[10666, 10667, 10668, 10669, 10670, 10671, 10672, 10673, 10674, 10675, 10676, 10677],
-
-	// Page 9 - Anvil and Forges
-	[10678, 10679, 10680, 10681, 10682],
-
-	// Page 10 - Training
-	[10683, 10684, 10685, 10686]
-];
-
-const craftItems = [
-	// Page 1 (button 100..110)
-	[ 73, 74, 89, 90, 91, 92, 76, 77, 78, 79, 72 ],
-
-	// Page 2 (200..212)
-	[ 50, 51, 52, 53, 57, 58, 54, 55, 56, 59, 60, 61, 62 ],
-
-	// Page 3 (300..308)
-	[ 63, 64, 65, 67, 68, 69, 70, 71, 66 ],
-
-	// Page 4 (400..404)
-	[ 80, 81, 82, 123, 124 ],
-
-	// Page 5 (500)
-	[ 75 ],
-
-	// Page 6 (600..605)
-	[ 83, 84, 85, 86, 87, 88 ],
-
-	// Page 7 (700..710)
-	[ 93, 93, 94, 93, 96, 95, 97, 98, 99, 100, 101 ],
-
-	// Page 8 (800..812)
-	[ 115, 116, 107, 108, 109, 110, 117, 118, 119, 120, 121, 122 ],
-
-	// Page 9 (900..904)
-	[ 102, 103, 104, 105, 106 ],
-
-	// Page 10 (1000..1003)
-	[ 111, 112, 113, 114 ]
-];
-
-// Map: buttonID carpentry entry
-//   buttonID: 100..110, 200..212, ... 1000..1003
-//   CarpentryMap[buttonID] = {
-//       dictID: number,
-//       page:   number,
-//       timerID: number,
-//       makeID: number,
-//       customName?: string,
-//       recipeID?: number,
-//       minEra?: string,
-//       maxEra?: string,
-//       skill: number,
-//       harvest: number[]   // dictionary IDs for resources; labels can be overridden in ItemDetailGump
-//   };
-const CarpentryMap = {};
-
-(function initCarpentryMap()
+function LoadCarpentryMap()
 {
-	for( var pageIdx = 0; pageIdx < myPage.length; pageIdx++ )
+	CarpentryMap = {};
+
+	var carpentryEntries = TriggerEvent( craftMapRegistryID, "CraftMapRegistry", "carpentry" );
+
+	if( !carpentryEntries || !IsCarpentryArrayValue( carpentryEntries ) )
 	{
-		var dictList = myPage[pageIdx];
-		var makeList = craftItems[pageIdx];
-
-		for( var i = 0; i < dictList.length && i < makeList.length; i++ )
-		{
-			// Button layout:
-			// page 1 => 100..110
-			// page 2 => 200..212
-			// page 3 => 300..308
-			// ...
-			var buttonID = ( ( pageIdx + 1 ) * 100 ) + i;
-			var dictID   = dictList[i];
-			var makeID   = makeList[i];
-
-			CarpentryMap[buttonID] = {
-				dictID:   dictID,
-				page:     pageIdx + 1,
-				timerID:  pageIdx + 1,
-				makeID:   makeID,
-				// recipeID: undefined,
-				// minEra:   undefined,
-				// maxEra:   undefined
-				skill:    carpentrySkillID,
-				harvest:  [ harvestDict ] // default: wood
-			};
-		}
+		Console.Warning( "Carpentry: Unable to load carpentry craft map data." );
+		return false;
 	}
 
-	// If you need per-entry overrides in future (recipes, extra resources, era gating),
-	// you can do:
-	// CarpentryMap[704].harvest = [ harvestDict, 11402 ]; // wood + cloth
-	// CarpentryMap[109].harvest = [ harvestDict ];	 // Fishing Pole wood + cloth
-	// CarpentryMap[109].harvestNames = [ "", "Cloth" ];	 // Fishing Pole wood + cloth
-	// CarpentryMap[308].harvest = [ 0 ]; // open keg Barrel Staves Barrel Hoops Barrel Lid
-	// CarpentryMap[308].harvestNames = [ "Barrel Staves", "Barrel Hoops", "Barrel Lid" ]; // open keg Barrel Staves Barrel Hoops Barrel Lid
-	// CarpentryMap[709].minEra  = "ml";
-})();
+	for( var i = 0; i < carpentryEntries.length; i++ )
+	{
+		var entry = carpentryEntries[i];
 
-CarpentryMap[109].harvest = [ harvestDict, 10016 ];	 // Fishing Pole wood + cloth
-CarpentryMap[308].harvest = [ 10611, 10612, 11860 ]; // open keg Barrel Staves Barrel Hoops Barrel Lid
-CarpentryMap[600].harvest = [ harvestDict, 10016 ];	 // lap harp wood + cloth
-CarpentryMap[601].harvest = [ harvestDict, 10016 ];	 // Standing Harp wood + cloth
-CarpentryMap[602].harvest = [ harvestDict, 10016 ];	 // Drum wood + cloth
-CarpentryMap[603].harvest = [ harvestDict, 10016 ];	 // Lute wood + cloth
-CarpentryMap[604].harvest = [ harvestDict, 10016 ];	 // Tambourine wood + cloth
-CarpentryMap[605].harvest = [ harvestDict, 10016 ];	 // Tambourine wood + cloth
-CarpentryMap[700].harvest = [ harvestDict, 10016 ];	 // Small Bed (S) wood + cloth
-CarpentryMap[701].harvest = [ harvestDict, 10016 ];	 // Small Bed (E) wood + cloth
-CarpentryMap[702].harvest = [ harvestDict, 10016 ];	 // Large Bed (S) wood + cloth
-CarpentryMap[703].harvest = [ harvestDict, 10016 ];	 // Large Bed (E) wood + cloth
-CarpentryMap[709].harvest = [ harvestDict, 10015 ];	 // Pentagram wood + ingots
-CarpentryMap[710].harvest = [ harvestDict, 10015 ];	 // Abbatoir wood + ingots
-CarpentryMap[800].harvest = [ harvestDict, 10016 ];	 // Dressform wood + cloth
-CarpentryMap[801].harvest = [ harvestDict, 10016 ];	 // Dressform wood + cloth
-CarpentryMap[802].harvest = [ harvestDict, 10016 ];	 // Spin Wheel (E) wood + cloth
-CarpentryMap[803].harvest = [ harvestDict, 10016 ];	 // Spin Wheel (S) wood + cloth
-CarpentryMap[804].harvest = [ harvestDict, 10016 ];	 // Loom (E) wood + cloth
-CarpentryMap[805].harvest = [ harvestDict, 10016 ];	 // Loom (S) wood + cloth
-CarpentryMap[806].harvest = [ harvestDict, 10015 ];	 // Stone Oven (E) wood + ingots
-CarpentryMap[807].harvest = [ harvestDict, 10015 ];	 // Stone Oven (S) wood + ingots
-CarpentryMap[808].harvest = [ harvestDict, 10015 ];	 // Flour Mill (E) wood + ingots
-CarpentryMap[809].harvest = [ harvestDict, 10015 ];	 // Flour Mill (S) wood + ingots
-CarpentryMap[900].harvest = [ harvestDict, 10015 ];	 // Small Forge wood + ingots
-CarpentryMap[901].harvest = [ harvestDict, 10015 ];	 // Large Forge (E) wood + ingots
-CarpentryMap[902].harvest = [ harvestDict, 10015 ];	 // Large Forge (S) wood + ingots
-CarpentryMap[903].harvest = [ harvestDict, 10015 ];	 // Anvil (E) wood + ingots
-CarpentryMap[904].harvest = [ harvestDict, 10015 ];	 // Anvil (S) wood + ingots
-CarpentryMap[1000].harvest = [ harvestDict, 10016 ]; // Dummy (E) wood + cloth
-CarpentryMap[1001].harvest = [ harvestDict, 10016 ]; // Dummy (S) wood + cloth
-CarpentryMap[1002].harvest = [ harvestDict, 10016 ]; // Pickpocket (E) wood + cloth
-CarpentryMap[1003].harvest = [ harvestDict, 10016 ]; // Pickpocket (S) wood + cloth
+		if( !entry || typeof entry.buttonID == "undefined" )
+			continue;
 
+		if( entry.skill === undefined )
+			entry.skill = carpentrySkillID;
+
+		if( !entry.harvest )
+			entry.harvest = [ harvestDict ];
+
+		CarpentryMap[entry.buttonID] = entry;
+	}
+
+	Console.Print( "Carpentry: Loaded " + carpentryEntries.length + " craft map entries.\n" );
+	return true;
+}
+
+function IsCarpentryArrayValue( value )
+{
+	return Object.prototype.toString.call( value ) == "[object Array]";
+}
 
 function PageX( socket, pUser, pageNum )
 {
 	if( !socket || !ValidateObject( pUser ))
 		return;
+
+	if( !CarpentryMap || Object.keys( CarpentryMap ).length == 0 )
+	{
+		if( !LoadCarpentryMap() )
+		{
+			socket.SysMessage( "Carpentry craft map failed to load." );
+			return;
+		}
+	}
 
 	var pageItems = [];
 

@@ -18,480 +18,60 @@ const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 const allowColouredWeapons = GetServerSetting( "CraftColouredWeapons" );
 const allowColouredBuildings = false; // Set to true if you want coloured stone walls, stairs, floors
 
-// Optional: if you later decide to make some masonry items recipe-locked, we will use this map:
-// MasonryMap[buttonID] = { dictID, page, timerID, graniteMake: [makeIDByOre], recipeID?, minEra?, maxEra? }
-// o--------------------------------------------------------------------------o
-// | Script        - masonry.js                                               |
-// | System        - Masonry Crafting Gump							          |
-// o--------------------------------------------------------------------------o
-// | Purpose       -                                                          |
-// |   Provides the blacksmith crafting menu using the same data-driven       |
-// |   system used by the tailoring script.                                   |
-// |                                                                          |
-// |   All craftable items are defined in tables (myPage, craftItems) and     |
-// |   then mapped into a MasonryMap structure that controls:                 |
-// |     - Which dictionary entry is shown per row                            |
-// |     - Which "makeID" entry is used for each ore type                     |
-// |     - Which page and timer ID to use when reopening the gump             |
-// |     - Optional per-item recipe and era requirements                      |
-// |     - Optional per-item custom names for display                         |
-// |                                                                          |
-// |   The script also handles:                                               |
-// |     - Granite selection (iron / colored ores) with skill requirements    |
-// |     - Smelting stone items back into Granite                             |
-// |     - Repairing stone armor and weapons at an anvil                      |
-// |     - Tool wear and runic hammer handling                                |
-// |     - A "Make Last" feature                                              |
-// |     - A "Last Ten Masonry" list (optional)                               |
-// o--------------------------------------------------------------------------o
-// | Data Tables                                                              |
-// o--------------------------------------------------------------------------o
-// | myPage                                                                   |
-// |   myPage[pageIndex] = [ dictID1, dictID2, ... ]                          |
-// |     pageIndex 0 => Page 1: Metal Armor                                   |
-// |     pageIndex 1 => Page 2: Helmets                                       |
-// |     pageIndex 2 => Page 3: Shields                                       |
-// |     pageIndex 3 => Page 4: Bladed weapons                                |
-// |     pageIndex 4 => Page 5: Axes                                          |
-// |     pageIndex 5 => Page 6: Polearms                                      |
-// |     pageIndex 6 => Page 7: Bashing weapons                               |
-// |                                                                          |
-// |   Each entry is a dictionary ID that will be used to look up the text    |
-// |   for that row, unless a customName is defined for that button in        |
-// |   MasonryMap.                                                            |
-// |                                                                          |
-// | craftItems                                                               |
-// |   craftItems[graniteIndex][pageIndex][itemIndex] = makeID                |
-// |     graniteIndex 0 = Iron                                                |
-// |     graniteIndex 1 = Dull Copper                                         |
-// |     graniteIndex 2 = Shadow Iron                                         |
-// |     graniteIndex 3 = Copper                                              |
-// |     graniteIndex 4 = Bronze                                              |
-// |     graniteIndex 5 = Gold                                                |
-// |     graniteIndex 6 = Agapite                                             |
-// |     graniteIndex 7 = Verite                                              |
-// |     graniteIndex 8 = Valorite                                            |
-// |                                                                          |
-// |   For each granite type and page, this holds the createEntry ID used by  |
-// |   MakeItem when the player crafts that item. The same index positions    |
-// |   on each page line up with the matching entries in myPage.              |
-// o--------------------------------------------------------------------------o
-// | MasonryMap                                                               |
-// o--------------------------------------------------------------------------o
-// | MasonryMap is built automatically from myPage and craftItems.            |
-// |                                                                          |
-// |   MasonryMap[buttonID] = {                                               |
-// |       dictID    : number,     // Base dictionary entry for the row       |
-// |       page      : number,     // Main page (1..7, or 999 for Last Ten)   |
-// |       timerID   : number,     // Timer ID to reopen same page            |
-// |       graniteMake : number[],   // graniteMake[graniteIndex] = makeID    |
-// |       customName: string?,    // Optional override for display text      |
-// |       recipeID  : number?,    // Optional recipe requirement             |
-// |       minEra    : string?,    // Optional minimum shard era              |
-// |       maxEra    : string?     // Optional maximum shard era              |
-// |   };                                                                     |
-// |                                                                          |
-// | Button ID mapping (same as original script):                             |
-// |   Page 1 (Decorations) : 100..108                                        |
-// |   Page 2 (Furniture)   : 200..205                                        |
-// |   Page 3 (Statues)     : 300..305                                        |
-// |   Page 4 (Misc Addons) : 400..407                                        |
-// |   Page 5 (Stone Armor) : 500..506                                        |
-// |   Page 6 (Stone Weapons) : 600..604                                      |
-// |   Page 7 (Stone Walls): 700..704										  |
-// |   Page 8 (Stone Stairs): 800..804										  |
-// |   Page 9 (Stone Floors): 900..904										  |
-// |                                                                          |
-// | Custom Names                                                             |
-// |   To override the display name for a specific row, set customName after  |
-// |   the MasonryMap has been initialized, for example:                      |
-// |                                                                          |
-// |       MasonryMap[100].customName = "Hump vase";		                  |
-// |                                                                          |
-// |   PageX() will use this order of preference for text:                    |
-// |     1. entry.customName (if set)                                         |
-// |     2. GetDictionaryEntry(entry.dictID)                                  |
-// |     3. A fallback "[Unnamed Item: buttonID]"                             |
-// |                                                                          |
-// | Recipes                                                                  |
-// |   If recipeID is set on a MasonryMap entry, onGumpPress will call:       |
-// |       TriggerEvent(4022, "NeedRecipe", pUser, recipeID)                  |
-// |   to check if the player has learned that recipe. If not, the craft      |
-// |   attempt is blocked and a message is shown.                             |
-// |                                                                          |
-// | Era Gating                                                               |
-// |   The script reads the shard era using:                                  |
-// |       const coreShardEra = EraStringToNum(GetServerSetting("CoreShardEra")); |
-// |                                                                          |
-// |   If an entry defines minEra or maxEra (strings like "lbr","aos","ml",   |
-// |   "sa","hs","tol"), eraOK(entry) will ensure the current server era is   |
-// |   within that range before allowing craft or display.                    |
-// o--------------------------------------------------------------------------o
-// | Notes                                                                    |
-// o--------------------------------------------------------------------------o
-// | - To add new Masonry items, update myPage and craftItems, then           |
-// |   optionally decorate their MasonryMap entries with customName,          |
-// |   recipeID, minEra, and maxEra.                                          |
-// o--------------------------------------------------------------------------o
+const craftMapRegistryID = 4038;
+var MasonryMap = {};
+var craftItems = [];
 
-const myPage = [
-	// Page 1 - Decorations
-	[ 14050, 14051, 14052, 14053, 14054, 14055, 14056, 14057, 14058 ],
-	// Page 2 - Furniture
-	[ 14059, 14060, 14061, 14062, 14063, 14064 ],
-	// Page 3 - Statues
-	[ 14065, 14066, 14067, 14068, 14069, 14070 ],
-	// Page 4 - Misc Addons
-	[ 14071, 14072, 14073, 14074, 14075, 14076 ],
-	// Page 5 - Stone Armor
-	[ 14077, 14078, 14079, 14080, 14081, 14082, 14083, 14084, 14085, 14086 ],
-	// Page 6 - Stone Weapons
-	[ 14087 ],
-	// Page 7 - Stone Walls
-	[ 14088, 14089, 14090, 14091, 14092, 14093, 14094, 14095, 14096,14097, 14098, 14099 ],
-	// Page 8 - Stone Stairs
-	[ 14100, 14101, 14102, 14103, 14104, 14105 ],
-	// Page 9 - Stone Floors
-	[ 14106, 14107, 14108 ]
-];
-
-const craftItems = [
-	// Iron
-	[
-		// Decorations
-		[ 3500, 3501, 3502, 3503, 3504, 3505, 3506, 3507, 3508 ],
-		// Furniture
-		[ 3509, 3510, 3511, 3512, 3513, 3514 ],
-		// Statues
-		[ 3515, 3516, 3517, 3518, 3519, 3520 ],
-		// Misc Addons
-		[ 3521, 3522, 3523, 3524, 3525, 3526 ],
-		// Stone Armor
-		[ 3527, 3528, 3529, 3530, 3531, 3532, 3533, 3534, 3535, 3536 ],
-		// Stone Weapons
-		[ 3537 ],
-		// Stone Walls
-		[ 3538, 3539, 3540, 3541, 3542, 3543, 3544, 3545, 3546, 3547, 3548, 3549 ],
-		// Stone Stairs
-		[ 3550, 3551, 3552, 3553, 3554, 3555 ],
-		// Stone Floors
-		[ 3556, 3557, 3558]
-	],
-
-	// Dull Copper
-	[
-		// Decorations
-		[ 3600, 3601, 3602, 3603, 3604, 3605, 3606, 3607, 3608 ],
-		// Furniture
-		[ 3609, 3610, 3611, 3612, 3613, 3614 ],
-		// Statues
-		[ 3615, 3616, 3617, 3618, 3619, 3620 ],
-		// Misc Addons
-		[ 3621, 3622, 3623, 3624, 3625, 3626 ],
-		// Stone Armor
-		[ 3627, 3628, 3629, 3630, 3631, 3632, 3633, 3634, 3635, 3636 ],
-		// Stone Weapons
-		[ 3637 ],
-		// Stone Walls
-		[ 3638, 3639, 3640, 3641, 3642, 3643, 3644, 3645, 3646, 3647, 3648, 3649 ],
-		// Stone Stairs
-		[ 3650, 3651, 3652, 3653, 3654, 3655 ],
-		// Stone Floors
-		[ 3656, 3657, 3658]
-	],
-
-	// Shadow Iron
-	[
-		// Decorations
-		[ 3700, 3701, 3702, 3703, 3704, 3705, 3706, 3707, 3708 ],
-		// Furniture
-		[ 3709, 3710, 3711, 3712, 3713, 3714 ],
-		// Statues
-		[ 3715, 3716, 3717, 3718, 3719, 3720 ],
-		// Misc Addons
-		[ 3721, 3722, 3723, 3724, 3725, 3726 ],
-		// Stone Armor
-		[ 3727, 3728, 3729, 3730, 3731, 3732, 3733, 3734, 3735, 3736 ],
-		// Stone Weapons
-		[ 3737 ],
-		// Stone Walls
-		[ 3738, 3739, 3740, 3741, 3742, 3743, 3744, 3745, 3746, 3747, 3748, 3749 ],
-		// Stone Stairs
-		[ 3750, 3751, 3752, 3753, 3754, 3755 ],
-		// Stone Floors
-		[ 3756, 3757, 3758]
-	],
-
-	// Copper
-	[
-		// Decorations
-		[ 3800, 3801, 3802, 3803, 3804, 3805, 3806, 3807, 3808 ],
-		// Furniture
-		[ 3809, 3810, 3811, 3812, 3813, 3814 ],
-		// Statues
-		[ 3815, 3816, 3817, 3818, 3819, 3820 ],
-		// Misc Addons
-		[ 3821, 3822, 3823, 3824, 3825, 3826 ],
-		// Stone Armor
-		[ 3827, 3828, 3829, 3830, 3831, 3832, 3833, 3834, 3835, 3836 ],
-		// Stone Weapons
-		[ 3837 ],
-		// Stone Walls
-		[ 3838, 3839, 3840, 3841, 3842, 3843, 3844, 3845, 3846, 3847, 3848, 3849 ],
-		// Stone Stairs
-		[ 3850, 3851, 3852, 3853, 3854, 3855 ],
-		// Stone Floors
-		[ 3856, 3857, 3858]
-	],
-
-	// Bronze
-	[
-		// Decorations
-		[ 3900, 3901, 3902, 3903, 3904, 3905, 3906, 3907, 3908 ],
-		// Furniture
-		[ 3909, 3910, 3911, 3912, 3913, 3914 ],
-		// Statues
-		[ 3915, 3916, 3917, 3918, 3919, 3920 ],
-		// Misc Addons
-		[ 3921, 3922, 3923, 3924, 3925, 3926 ],
-		// Stone Armor
-		[ 3927, 3928, 3929, 3930, 3931, 3932, 3933, 3934, 3935, 3936 ],
-		// Stone Weapons
-		[ 3937 ],
-		// Stone Walls
-		[ 3938, 3939, 3940, 3941, 3942, 3943, 3944, 3945, 3946, 3947, 3948, 3949 ],
-		// Stone Stairs
-		[ 3950, 3951, 3952, 3953, 3954, 3955 ],
-		// Stone Floors
-		[ 3956, 3957, 3958]
-	],
-
-	// Gold
-	[
-		// Decorations
-		[ 4000, 4001, 4002, 4003, 4004, 4005, 4006, 4007, 4008 ],
-		// Furniture
-		[ 4009, 4010, 4011, 4012, 4013, 4014 ],
-		// Statues
-		[ 4015, 4016, 4017, 4018, 4019, 4020 ],
-		// Misc Addons
-		[ 4021, 4022, 4023, 4024, 4025, 4026 ],
-		// Stone Armor
-		[ 4027, 4028, 4029, 4030, 4031, 4032, 4033, 4034, 4035, 4036 ],
-		// Stone Weapons
-		[ 4037 ],
-		// Stone Walls
-		[ 4038, 4039, 4040, 4041, 4042, 4043, 4044, 4045, 4046, 4047, 4048, 4049 ],
-		// Stone Stairs
-		[ 4050, 4051, 4052, 4053, 4054, 4055 ],
-		// Stone Floors
-		[ 4056, 4057, 4058]
-	],
-
-	// Agapite
-	[
-		// Decorations
-		[ 4100, 4101, 4102, 4103, 4104, 4105, 4106, 4107, 4108 ],
-		// Furniture
-		[ 4109, 4110, 4111, 4112, 4113, 4114 ],
-		// Statues
-		[ 4115, 4116, 4117, 4118, 4119, 4120 ],
-		// Misc Addons
-		[ 4121, 4122, 4123, 4124, 4125, 4126 ],
-		// Stone Armor
-		[ 4127, 4128, 4129, 4130, 4131, 4132, 4133, 4134, 4135, 4136 ],
-		// Stone Weapons
-		[ 4137 ],
-		// Stone Walls
-		[ 4138, 4139, 4140, 4141, 4142, 4143, 4144, 4145, 4146, 4147, 4148, 4149 ],
-		// Stone Stairs
-		[ 4150, 4151, 4152, 4153, 4154, 4155 ],
-		// Stone Floors
-		[ 4156, 4157, 4158]
-	],
-
-	// Verite
-	[
-		// Decorations
-		[ 4200, 4201, 4202, 4203, 4204, 4205, 4206, 4207, 4208 ],
-		// Furniture
-		[ 4209, 4210, 4211, 4212, 4213, 4214 ],
-		// Statues
-		[ 4215, 4216, 4217, 4218, 4219, 4220 ],
-		// Misc Addons
-		[ 4221, 4222, 4223, 4224, 4225, 4226 ],
-		// Stone Armor
-		[ 4227, 4228, 4229, 4230, 4231, 4232, 4233, 4234, 4235, 4236 ],
-		// Stone Weapons
-		[ 4237 ],
-		// Stone Walls
-		[ 4238, 4239, 4240, 4241, 4242, 4243, 4244, 4245, 4246, 4247, 4248, 4249 ],
-		// Stone Stairs
-		[ 4250, 4251, 4252, 4253, 4254, 4255 ],
-		// Stone Floors
-		[ 4256, 4257, 4258]
-	],
-
-	// Valorite
-	[
-		// Decorations
-		[ 4300, 4301, 4302, 4303, 4304, 4305, 4306, 4307, 4308 ],
-		// Furniture
-		[ 4309, 4310, 4311, 4312, 4313, 4314 ],
-		// Statues
-		[ 4315, 4316, 4317, 4318, 4319, 4320 ],
-		// Misc Addons
-		[ 4321, 4322, 4323, 4324, 4325, 4326 ],
-		// Stone Armor
-		[ 4327, 4328, 4329, 4330, 4331, 4332, 4333, 4334, 4335, 4336 ],
-		// Stone Weapons
-		[ 4337 ],
-		// Stone Walls
-		[ 4338, 4339, 4340, 4341, 4342, 4343, 4344, 4345, 4346, 4347, 4348, 4349 ],
-		// Stone Stairs
-		[ 4350, 4351, 4352, 4353, 4354, 4355 ],
-		// Stone Floors
-		[ 4356, 4357, 4358]
-	]
-];
-
-// MasonryMap[buttonID] = {
-//     dictID: <dictionaryID>,
-//     page: <pageNumber>,
-//     timerID: <timerID>,
-//     graniteMake: [ makeIDForIron, makeIDForDullCopper, ... ], // index is graniteID (0..8)
-//     // Optional later:
-//     // recipeID: <recipeID>,
-//     // minEra: "lbr" / "aos" / "ml" / "sa" / "hs" / "tol",
-//     // maxEra: ...
-// };
-
-const MasonryMap = {};
-
-(function initMasonryMap()
+/** @type { () => boolean } */
+function LoadMasonryMap()
 {
-	// graniteIndex: 0 = iron, 1 = dull copper, ... 8 = valorite
-	for( var graniteIndex = 0; graniteIndex < craftItems.length; graniteIndex++ )
+	MasonryMap = {};
+	craftItems = [];
+
+	var masonryEntries = TriggerEvent( craftMapRegistryID, "CraftMapRegistry", "masonry" );
+
+	if( !masonryEntries || !IsMasonryArrayValue( masonryEntries ) )
 	{
-		var graniteRows = craftItems[graniteIndex];
-
-		// pageIdx: 0..6 => pages 1..9
-		for( var pageIdx = 0; pageIdx < myPage.length; pageIdx++ )
-		{
-			var dictList = myPage[pageIdx];
-			var makeList = graniteRows[pageIdx];
-
-			for( var i = 0; i < dictList.length && i < makeList.length; i++ )
-			{
-				// Old script uses:
-				// page 1 => 100..112
-				// page 2 => 200..204
-				// page 3 => 300..305
-				// etc.
-				var buttonID = ( ( pageIdx + 1 ) * 100 ) + i;
-				var dictID = dictList[i];
-				var makeID = makeList[i];
-
-				if( !MasonryMap[buttonID] )
-				{
-					MasonryMap[buttonID] = {
-						dictID: dictID,
-						page: pageIdx + 1,
-						timerID: pageIdx + 1,
-						graniteMake: [],
-						// recipeID: undefined,
-						// minEra: undefined,
-						// maxEra: undefined
-						skill: 11,               // carpentry / masonry skill ID
-						harvest: [14011],        // granite dict
-						harvest2: [],             // optional second resource
-						harvest3: [],             // optional second resource
-						harvest4: []             // optional second resource
-					};
-				}
-
-				MasonryMap[buttonID].graniteMake[graniteIndex] = makeID;
-			}
-		}
+		Console.Warning( "Masonry: Unable to load masonry craft map data." );
+		return false;
 	}
-})();
 
-// 3) AFTER initMasonryMap, you can override entries:
-// Page 1 Starts buttonID 100 - 107 for map example
-//MasonryMap[100].customName = "Elven Broadsword";
-//MasonryMap[100].recipeID = 5101;   // if you want it recipe-locked
-//MasonryMap[100].minEra = "ml";     // if you want it ML and later only
+	for( var i = 0; i < masonryEntries.length; i++ )
+	{
+		var entry = masonryEntries[i];
 
-//Page 1 starts at 100
-MasonryMap[102].minEra = "se"; // small urn
-MasonryMap[103].minEra = "se"; // Tower Sculpture
-MasonryMap[104].minEra = "sa"; // gargoyle painting
-MasonryMap[105].minEra = "sa"; // gargoyle sculpture
-MasonryMap[106].minEra = "sa"; // gargoyle vase
-MasonryMap[107].minEra = "tol"; // Tall 18th Anniversary Vase
-MasonryMap[107].recipeID = 3500;
-MasonryMap[108].minEra = "tol"; // Short 18th Anniversary Vase
-MasonryMap[108].recipeID = 3501;
-//Page 2 starts at 200
-MasonryMap[205].minEra = "sa"; // ritual table
-//Page 3 starts at 300
-MasonryMap[304].minEra = "sa"; // gargoyle statue
-MasonryMap[305].minEra = "sa"; // gryphon statue
-//Page 4 starts at 400
-MasonryMap[400].minEra = "ml"; // stone anvil (east)
-MasonryMap[400].recipeID = 3520;
-MasonryMap[401].minEra = "ml"; // stone anvil (south)
-MasonryMap[401].recipeID = 3521;
-MasonryMap[402].minEra = "sa"; // large gargish bed (east)
-MasonryMap[402].harvest2 = [10016]; // Cloth
-MasonryMap[403].minEra = "sa"; // large gargish bed (south)
-MasonryMap[403].harvest2 = [10016]; // Cloth
-MasonryMap[404].minEra = "sa"; // gargish cot (east)
-MasonryMap[404].harvest2 = [10016]; // Cloth
-MasonryMap[405].minEra = "sa"; // gargish cot (south)
-MasonryMap[405].harvest2 = [10016]; // Cloth
-//Page 5 starts at 500
-MasonryMap[500].minEra = "sa"; // gargish stone arms
-MasonryMap[501].minEra = "sa"; // gargish stone chest
-MasonryMap[502].minEra = "sa"; // gargish stone leggings
-MasonryMap[503].minEra = "sa"; // gargish stone kilt
-MasonryMap[504].minEra = "sa"; // gargish stone arms
-MasonryMap[505].minEra = "sa"; // gargish stone chest
-MasonryMap[506].minEra = "sa"; // gargish stone leggings
-MasonryMap[507].minEra = "sa"; // gargish stone kilt
-MasonryMap[508].minEra = "sa"; // large stone shield
-MasonryMap[509].minEra = "sa"; // gargish stone amulet
-//Page 6 starts at 600
-MasonryMap[600].minEra = "sa"; // stone war sword
-//Page 7 starts at 700
-MasonryMap[700].minEra = "tol"; // Rough Windowless
-MasonryMap[701].minEra = "tol"; // Rough Window
-MasonryMap[702].minEra = "tol"; // Rough Arch
-MasonryMap[703].minEra = "tol"; // Rough Pillar
-MasonryMap[704].minEra = "tol"; // Rough Rounded Arch
-MasonryMap[705].minEra = "tol"; // Rough Small Arch
-MasonryMap[706].minEra = "tol"; // Rough Angled Pillar
-MasonryMap[707].minEra = "tol"; // Short Rough
-MasonryMap[708].minEra = "tol"; // Stone Door (S In)
-MasonryMap[709].minEra = "tol"; // Stone Door (E Out)
-MasonryMap[710].minEra = "tol"; // Left Metal Door (S In)
-MasonryMap[711].minEra = "tol"; // Right Metal Door (S In)
-//Page 8 starts at 800
-MasonryMap[800].minEra = "tol"; // short rough
-MasonryMap[801].minEra = "tol"; // rough steps
-MasonryMap[802].minEra = "tol"; // rough corner steps
-MasonryMap[803].minEra = "tol"; // rough rounded corner step
-MasonryMap[804].minEra = "tol"; // rough inset steps
-MasonryMap[805].minEra = "tol"; // rough rounded inset steps
-//Page 9 starts at 900
-MasonryMap[900].minEra = "tol"; // light paver
-MasonryMap[901].minEra = "tol"; // medium paver
-MasonryMap[902].minEra = "tol"; // dark paver
+		if( !entry || typeof entry.buttonID == "undefined" )
+			continue;
+
+		if( entry.skill === undefined )
+			entry.skill = 11;
+
+		MasonryMap[entry.buttonID] = entry;
+	}
+
+	Console.Print( "Masonry: Loaded " + masonryEntries.length + " craft map entries.\n" );
+	return true;
+}
+
+/** @type { ( value: any ) => boolean } */
+function IsMasonryArrayValue( value )
+{
+	return Object.prototype.toString.call( value ) == "[object Array]";
+}
 
 function PageX( socket, pUser, pageNum )
 {
 	if( !ValidateObject( pUser ))
 		return;
+
+	if( !MasonryMap || Object.keys( MasonryMap ).length == 0 )
+	{
+		if( !LoadMasonryMap() )
+		{
+			socket.SysMessage( "Masonry craft map failed to load." );
+			return;
+		}
+	}
 
 	// Pages 1 - 9: normal crafting pages
 	// Page 999: optional "Last Ten Blacksmith" (if you decide to use it later)
@@ -1267,7 +847,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		var resourceHue = pUser.GetTempTag( "resourceHue" );
 
 		// Ensure graniteID within range
-		if( graniteID < 0 || graniteID >= craftItems.length )
+		if( graniteID < 0 || graniteID >= entry2.graniteMake.length )
 			graniteID = 0;
 
 		// Era / recipe gating
