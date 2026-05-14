@@ -245,6 +245,7 @@
 4036=skill/craft/glassblowing.js
 4037=skill/craft/masonry.js
 4038=skill/craft/craftmap_registry.js
+4040=skill/craft/customcraft.js
 4050=skill/mining.js
 4055=skill/snooping.js
 

@@ -1,0 +1,18 @@
+[
+  {
+    "makeID": 6000,
+    "label": "Charcoal Sketch",
+    "customName": "charcoal sketch",
+    "page": 1,
+    "timerID": 1,
+    "harvest": [ 10016 ]
+  },
+  {
+    "makeID": 6001,
+    "label": "Canvas Painting",
+    "customName": "canvas painting",
+    "page": 2,
+    "timerID": 2,
+    "harvest": [ 10016, 10015 ]
+  }
+]

@@ -12,6 +12,7 @@ const Cooking = 4034;
 const Cartography = 4035;
 const Glassblowing = 4036;
 const Masonry = 4037;
+const CustomCraft = 4040;
 
 const exceptionalWearablesOnly = true;
 
@@ -101,9 +102,16 @@ function ItemDetailGump( pUser )
 
 	var recipeID = pUser.GetTempTag( "needRecipeID" );
 
-	if( detailTag !== null )
+	if (detailTag !== null)
 	{
-		createEntry = CreateEntries[ detailTag ];
+		try
+		{
+			createEntry = CreateEntries[detailTag];
+		}
+		catch (error)
+		{
+			createEntry = null;
+		}
 	}
 
 	if( skillTag >= 0 && skillTag < skillNames.length )
@@ -158,6 +166,14 @@ function ItemDetailGump( pUser )
 
 	if( createEntry == null )
 	{
+		ItemDetailsGump( itemGump, pUser );
+
+		itemGump.AddHTMLGump( 170, 130, 320, 20, false, false, "<basefont color=#ffffff>Missing CreateEntry</basefont>" );
+		itemGump.AddHTMLGump( 170, 150, 320, 20, false, false, "<basefont color=#ffffff>CreateEntry ID " + detailTag + " was not found.</basefont>" );
+		itemGump.AddHTMLGump( 170, 170, 320, 40, false, false, "<basefont color=#ffffff>Check the makeID in the crafting JSON file. and make sure you add it to create dfn files</basefont>" );
+
+		itemGump.Send( socket );
+		itemGump.Free();
 		return;
 	}
 
@@ -584,6 +600,11 @@ function onGumpPress( pSock, pButton, gumpData )
 						default: TriggerEvent( Masonry, "PageX", pSock, pUser, 1 );
 							break;
 					}
+					break;
+				case 100: // Custom Craft
+					pUser.SetTempTag( "ITEMDETAILS", null );
+					pSock.CloseGump( gumpID, 0 );
+					TriggerEvent( CustomCraft, "PageX", pSock, pUser, pUser.GetTempTag( "page" ) || 1 );
 					break;
 			}
 	}

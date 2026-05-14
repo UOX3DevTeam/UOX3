@@ -1,0 +1,44 @@
+[
+  {
+    "craft": "artcraft",
+    "mapFile": "artcraft",
+    "skillID": 0,
+    "maxPage": 2,
+    "menuName": "Art Craft",
+    "showLastTen": true,
+
+    "allowRepair": true,
+    "repairText": "Restore Artwork",
+    "repairTargetText": "Select the artwork you want to restore.",
+    "repairSuccessText": "You carefully restore the artwork.",
+    "repairFailedText": "You fail to restore the artwork.",
+    "repairFullText": "That artwork does not need restoration.",
+    "repairWrongMaterialText": "That is not artwork you can restore.",
+    "repairSkillName": "itemid",
+    "repairMinSkill": 250,
+    "repairMaterialType": "cloth",
+    "repairSound": 42,
+
+    "allowRecycle": true,
+    "recycleText": "Recover Materials",
+    "recycleTargetText": "Select the artwork you want to recover materials from.",
+    "recycleSuccessText": "You recover usable materials from the artwork.",
+    "recycleWrongMaterialText": "You cannot recover materials from that.",
+    "recycleMaterialType": "cloth",
+    "recycleResourceID": "0x0EED",
+    "recycleResourceHue": 0,
+    "recycleResourceAmount": 1,
+    "recycleResourceName": "reclaimed art supplies",
+
+    "categories": [
+      {
+        "page": 1,
+        "label": "Drawings"
+      },
+      {
+        "page": 2,
+        "label": "Paintings"
+      }
+    ]
+  }
+]

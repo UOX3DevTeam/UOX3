@@ -1,0 +1,103 @@
+[
+  {
+    "craft": "carpentry",
+    "craftIndex": 1,
+    "scriptID": 4025,
+    "legacyScriptID": 4006,
+    "maxPage": 10,
+    "toolIDs": [ 4134, 4135, 4136, 4137, 4140, 4141, 4142, 4143, 4144, 4145, 4146, 4147, 4324, 4325, 4326 ]
+  },
+  {
+    "craft": "alchemy",
+    "craftIndex": 2,
+    "scriptID": 4028,
+    "legacyScriptID": 4007,
+    "maxPage": 4,
+    "toolIDs": [ 3739 ]
+  },
+  {
+    "craft": "fletching",
+    "craftIndex": 3,
+    "scriptID": 4029,
+    "legacyScriptID": 4005,
+    "maxPage": 3,
+    "toolIDs": [ 4130, 7121, 7124 ]
+  },
+  {
+    "craft": "tailoring",
+    "craftIndex": 4,
+    "scriptID": 4030,
+    "legacyScriptID": 4004,
+    "maxPage": 8,
+    "toolIDs": [ 3997 ]
+  },
+  {
+    "craft": "blacksmithing",
+    "craftIndex": 5,
+    "scriptID": 4023,
+    "legacyReturnTrue": true,
+    "maxPage": 7,
+    "specialPages": [
+      {
+        "page": 8,
+        "function": "Page8"
+      }
+    ],
+    "toolIDs": [ 4027, 4028, 5091, 5092 ]
+  },
+  {
+    "craft": "cooking",
+    "craftIndex": 6,
+    "scriptID": 4034,
+    "legacyScriptID": 104,
+    "maxPage": 4,
+    "toolIDs": [ 4163, 2431, 2530, 4158 ]
+  },
+  {
+    "craft": "tinkering",
+    "craftIndex": 7,
+    "scriptID": 4032,
+    "legacyScriptID": 4003,
+    "maxPage": 9,
+    "sectionIDs": [ "tinkerstools" ],
+    "toolIDs": [ 7864, 7865, 7866, 7867, 7868 ]
+  },
+  {
+    "craft": "cartography",
+    "craftIndex": 8,
+    "scriptID": 4035,
+    "maxPage": 1,
+    "sectionIDs": [ "mapmakerspen" ]
+  },
+  {
+    "craft": "glassblowing",
+    "craftIndex": 9,
+    "scriptID": 4036,
+    "maxPage": 1,
+    "sectionIDs": [ "blowpipe" ],
+    "requiredTag": "GlassBlowing",
+    "requiredTagMessage": 6300
+  },
+  {
+    "craft": "masonry",
+    "craftIndex": 10,
+    "scriptID": 4037,
+    "maxPage": 9,
+    "sectionIDs": [ "malletandchisel" ],
+    "requiredTag": "StoneCrafting",
+    "requiredTagMessage": 6297,
+    "specialPages": [
+      {
+        "page": 20,
+        "function": "Page20"
+      }
+    ]
+  },
+  {
+    "craft": "artcraft",
+    "craftIndex": 100,
+    "scriptID": 4040,
+    "maxPage": 2,
+    "sectionIDs": [ "paintbrush" ]
+  }
+]

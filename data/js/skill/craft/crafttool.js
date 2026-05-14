@@ -11,6 +11,178 @@ const CookingID        = 4034;
 const CartographyID    = 4035;
 const GlassblowingID   = 4036;
 const MasonryID        = 4037;
+var craftToolMap = null;
+var craftToolMapLoaded = false;
+var craftToolMapLoadError = false;
+
+/** @type { () => object|null } */
+function LoadCraftToolMap()
+{
+	if( craftToolMapLoaded )
+		return craftToolMap;
+
+	craftToolMap = null;
+	craftToolMapLoaded = false;
+	craftToolMapLoadError = false;
+
+	var craftToolFile = new UOXCFile();
+	craftToolFile.Open( "crafttools.json", "r", "crafting", true );
+
+	if( craftToolFile == null || craftToolFile.Length() < 0 )
+	{
+		Console.Error( "CraftTool system: Unable to open js/jsdata/crafting/crafttools.json" );
+		craftToolMapLoadError = true;
+		return null;
+	}
+
+	var fileText = "";
+	while( !craftToolFile.EOF() )
+	{
+		var rawLine = craftToolFile.ReadUntil( "\n" );
+		if( rawLine != null && typeof( rawLine ) != "undefined" )
+		{
+			fileText += rawLine;
+		}
+	}
+
+	craftToolFile.Close();
+	craftToolFile.Free();
+
+	fileText = SanitizeCraftToolJsonText( fileText );
+
+	try
+	{
+		craftToolMap = JSON.parse( fileText );
+	}
+	catch( error )
+	{
+		Console.Error( "CraftTool system: Failed to parse crafttools.json: " + error );
+		Console.Error( "CraftTool system: crafttools.json length after sanitize: " + fileText.length );
+		Console.Error( "CraftTool system: last char code: " + fileText.charCodeAt( fileText.length - 1 ));
+		craftToolMapLoadError = true;
+		return null;
+	}
+
+	if( !IsCraftToolArrayValue( craftToolMap ))
+	{
+		Console.Error( "CraftTool system: crafttools.json must contain a JSON array." );
+		craftToolMapLoadError = true;
+		return null;
+	}
+
+	craftToolMapLoaded = true;
+	Console.Print( "CraftTool system: Loaded " + craftToolMap.length + " craft tool entries.\n" );
+
+	return craftToolMap;
+}
+
+/** @type { ( pUser: Character, iUsed: Item ) => object|null } */
+function GetCraftToolEntry( pUser, iUsed )
+{
+	var toolMap = LoadCraftToolMap();
+
+	if( !toolMap )
+		return null;
+
+	for( var i = 0; i < toolMap.length; i++ )
+	{
+		var entry = toolMap[i];
+
+		if( CraftToolMatchesEntry( iUsed, entry ))
+			return entry;
+	}
+
+	return null;
+}
+
+/** @type { ( iUsed: Item, entry: object ) => boolean } */
+function CraftToolMatchesEntry( iUsed, entry )
+{
+	if( !entry )
+		return false;
+
+	if( entry.sectionIDs && IsCraftToolArrayValue( entry.sectionIDs ))
+	{
+		for( var i = 0; i < entry.sectionIDs.length; i++ )
+		{
+			if( iUsed.sectionID == entry.sectionIDs[i] )
+				return true;
+		}
+	}
+
+	if( entry.toolIDs && IsCraftToolArrayValue( entry.toolIDs ))
+	{
+		for( var j = 0; j < entry.toolIDs.length; j++ )
+		{
+			if( iUsed.id == entry.toolIDs[j] )
+				return true;
+		}
+	}
+
+	return false;
+}
+
+/** @type { ( value: any ) => boolean } */
+function IsCraftToolArrayValue( value )
+{
+	return Object.prototype.toString.call( value ) == "[object Array]";
+}
+
+/** @type { ( text: string ) => string } */
+function SanitizeCraftToolJsonText( text )
+{
+	if( text == null || typeof( text ) == "undefined" )
+		return "";
+
+	text = String( text );
+
+	if( text.length > 0 && text.charCodeAt( 0 ) == 65279 )
+		text = text.substring( 1 );
+
+	text = text.split( "\r\n" ).join( "\n" );
+	text = text.split( "\r" ).join( "\n" );
+	text = text.split( String.fromCharCode( 160 ) ).join( " " );
+	text = text.split( String.fromCharCode( 255 ) ).join( "" );
+	text = text.split( "\t" ).join( " " );
+
+	text = TrimCraftToolString( text );
+
+	var lastBracket = text.lastIndexOf( "]" );
+	if( lastBracket >= 0 )
+		text = text.substring( 0, lastBracket + 1 );
+
+	return TrimCraftToolString( text );
+}
+
+/** @type { ( text: string ) => string } */
+function TrimCraftToolString( text )
+{
+	if( text == null || typeof( text ) == "undefined" )
+		return "";
+
+	return text.replace( /^\s+|\s+$/g, "" );
+}
+
+/** @type { ( specialPages: object ) => object|null } */
+function BuildSpecialPageMap( specialPages )
+{
+	if( !specialPages || !IsCraftToolArrayValue( specialPages ))
+		return null;
+
+	var pageMap = {};
+
+	for( var i = 0; i < specialPages.length; i++ )
+	{
+		var entry = specialPages[i];
+
+		if( entry && typeof entry.page != "undefined" && entry["function"] )
+		{
+			pageMap[entry.page] = entry["function"];
+		}
+	}
+
+	return pageMap;
+}
 
 /**
  * Ensure the tool is usable: charges > 0, in range, not locked down,
@@ -104,30 +276,6 @@ function openCraftMenu(pUser, socket, scriptID, craftIndex, maxPage, specialPage
 	}
 }
 
-// Tool ID helpers for readability
-function isCarpentryTool( id )
-{
-	return (( id >= 0x1026 && id <= 0x1029 ) ||
-		( id >= 0x102C && id <= 0x102F ) ||
-		( id >= 0x1030 && id <= 0x1035 ) ||
-		( id >= 0x10E4 && id <= 0x10E6 ));
-}
-
-function isFletchingTool( id )
-{
-	return ( id == 0x1022 || id == 0x1BD1 || id == 0x1BD4 );
-}
-
-function isBlacksmithTool( id )
-{
-	return ( id == 0x0FBB || id == 0x0FBC || id == 0x13E3 || id == 0x13E4 );
-}
-
-function isCookingTool( id )
-{
-	return ( id == 0x1043 || id == 0x097F || id == 0x09E2 || id == 0x103E );
-}
-
 // ---------------------------------------------------------------------------
 // Main entry
 // ---------------------------------------------------------------------------
@@ -144,165 +292,43 @@ function onUseChecked( pUser, iUsed )
 
 	// Save tool on socket so skill gumps can reference it
 	socket.tempObj = iUsed;
-	var id = iUsed.id;
 
-	// -------------------------------------------------------------------
-	// Carpentry
-	// -------------------------------------------------------------------
-	if( isCarpentryTool( id ))
+	var craftToolEntry = GetCraftToolEntry( pUser, iUsed );
+
+	if( !craftToolEntry )
+		return false;
+
+	if( craftToolEntry.requiredTag && pUser.GetTag( craftToolEntry.requiredTag ) == 0 )
 	{
-		if( enableUOX3Craft == 1 )
-		{
-			// Old UOX3 carpentry gump
-			TriggerEvent( 4006, "onUseChecked", pUser, iUsed );
-			return false;
-		}
+		if( craftToolEntry.requiredTagMessage )
+			socket.SysMessage( GetDictionaryEntry( craftToolEntry.requiredTagMessage, socket.language ));
 
-		// New carpentry menu – Pages 1–10
-		openCraftMenu( pUser, socket, CarpentryID, 1, 10 );
 		return false;
 	}
 
-	// -------------------------------------------------------------------
-	// Alchemy (mortar and pestle)
-	// -------------------------------------------------------------------
-	if( id == 0x0E9B )
+	if( enableUOX3Craft == 1 )
 	{
-		if( enableUOX3Craft == 1 )
-		{
-			TriggerEvent( 4007, "onUseChecked", pUser, iUsed );
-			return false;
-		}
-
-		// New alchemy menu – Pages 1–4
-		openCraftMenu( pUser, socket, AlchemyID, 2, 4 );
-		return false;
-	}
-
-	// -------------------------------------------------------------------
-	// Bowcraft / Fletching
-	// -------------------------------------------------------------------
-	if( isFletchingTool( id ))
-	{
-		if( enableUOX3Craft == 1 )
-		{
-			TriggerEvent( 4005, "onUseChecked", pUser, iUsed );
-			return false;
-		}
-
-		// New fletching menu – Pages 1–3
-		openCraftMenu( pUser, socket, FletchingID, 3, 3 );
-		return false;
-	}
-
-	// -------------------------------------------------------------------
-	// Tailoring (sewing kit)
-	// -------------------------------------------------------------------
-	if( id == 0x0F9D )
-	{
-		if( enableUOX3Craft == 1 )
-		{
-			TriggerEvent( 4004, "onUseChecked", pUser, iUsed );
-			return false;
-		}
-
-		// New tailoring menu – Pages 1–8
-		openCraftMenu( pUser, socket, TailoringID, 4, 8 );
-		return false;
-	}
-
-	// -------------------------------------------------------------------
-	// Blacksmithing (tongs, smith hammers)
-	// -------------------------------------------------------------------
-	if( isBlacksmithTool( id ))
-	{
-		if( enableUOX3Craft == 1 )
-		{
-			// Fall back to original blacksmith behavior when enabled
+		if( craftToolEntry.legacyReturnTrue )
 			return true;
-		}
 
-		// New blacksmithing menu – Pages 1–7 = PageX, page 8 = Page8
-		openCraftMenu( pUser, socket, BlacksmithingID, 5, 7, { 8: "Page8" } );
-		return false;
-	}
-
-	// -------------------------------------------------------------------
-	// Cooking (skillet, flour sifter, rolling pin, etc.)
-	// -------------------------------------------------------------------
-	if( isCookingTool( id ))
-	{
-		if( enableUOX3Craft == 1 )
+		if( craftToolEntry.legacyScriptID )
 		{
-			// Old-school cooking: use raw food with heat sources, or legacy script
-			TriggerEvent( 104, "onUseChecked", pUser, iUsed );
+			TriggerEvent( craftToolEntry.legacyScriptID, "onUseChecked", pUser, iUsed );
 			return false;
 		}
-
-		// New cooking menu – Pages 1–4
-		openCraftMenu( pUser, socket, CookingID, 6, 4 );
-		return false;
 	}
 
-	// -------------------------------------------------------------------
-	// Tinkering (tinker's tools)
-	// -------------------------------------------------------------------
-	if( iUsed.sectionID == "tinkerstools" || // optional if you use sectionID
-	    id == 0x1EB8 || id == 0x1EB9 || id == 0x1EBA || id == 0x1EBB || id == 0x1EBC )
-	{
-		if( enableUOX3Craft == 1 )
-		{
-			TriggerEvent( 4003, "onUseChecked", pUser, iUsed );
-			return false;
-		}
+	if( craftToolEntry.craft )
+		pUser.SetTempTag( "CUSTOMCRAFT", craftToolEntry.craft );
 
-		// New tinkering menu – Pages 1–9
-		openCraftMenu( pUser, socket, TinkeringID, 7, 9 );
-		return false;
-	}
-
-	// -------------------------------------------------------------------
-	// Cartography (mapmaker's pen)
-	// -------------------------------------------------------------------
-	if( iUsed.sectionID == "mapmakerspen" )
-	{
-		// Only one page currently – PageX with page 1
-		openCraftMenu( pUser, socket, CartographyID, 8, 1 );
-		return false;
-	}
-
-	// -------------------------------------------------------------------
-	// Glassblowing (blow pipe)
-	// -------------------------------------------------------------------
-	if( iUsed.sectionID == "blowpipe" )
-	{
-		if( pUser.GetTag( "GlassBlowing" ) == 0 )
-		{
-			// NOTE: fixed .Language -> .language here
-			socket.SysMessage( GetDictionaryEntry( 6300, socket.language )); // You haven't learned glassblowing.
-			return false;
-		}
-
-		// New glassblowing menu – Page 1 only for now
-		openCraftMenu( pUser, socket, GlassblowingID, 9, 1 );
-		return false;
-	}
-
-	// -------------------------------------------------------------------
-	// Masonry (mallet and chisel)
-	// -------------------------------------------------------------------
-	if( iUsed.sectionID == "malletandchisel" )
-	{
-		if( pUser.GetTag( "StoneCrafting" ) == 0 )
-		{
-			socket.SysMessage( GetDictionaryEntry( 6297, socket.language )); // You haven't learned masonry.
-			return false;
-		}
-
-		// Masonry: Pages 1–9 = PageX, Page 20 = Page20
-		openCraftMenu( pUser, socket, MasonryID, 10, 9, { 20: "Page20" } );
-		return false;
-	}
+	openCraftMenu(
+		pUser,
+		socket,
+		craftToolEntry.scriptID,
+		craftToolEntry.craftIndex,
+		craftToolEntry.maxPage,
+		BuildSpecialPageMap( craftToolEntry.specialPages )
+	);
 
 	return false;
 }
