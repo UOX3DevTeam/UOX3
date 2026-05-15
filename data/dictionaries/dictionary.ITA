@@ -5730,5 +5730,37 @@
 30003=Il Campione è stato sconfitto!
 30004=Hai ricevuto in ricompensa una Pergamena del Potere!
 30005=L'energia del santuario si affievolisce in assenza di sfidanti...
+// [30600-30650] Teletrasporto per casa
+30600=Questo oggetto deve essere nel tuo zaino per poterlo collegare.
+30601=Seleziona l'altro teletrasporto nel tuo zaino per collegarli.
+30602=Questo teletrasporto è completamente carico.
+30603=Seleziona l'oggetto di ricarica nel tuo zaino per ricaricarlo.
+30604=Non puoi modificare la sicurezza di questo teletrasporto.
+30605=Sicurezza del teletrasporto impostata su: %s
+30606=Non puoi rinominare questo teletrasporto.
+30607=Questo teletrasporto deve essere collegato prima di poter essere rinominato.
+30608=Per il collegamento, entrambi i teletrasporti devono essere nel tuo zaino.
+30609=Seleziona l'altro teletrasporto nel tuo zaino per collegarli.
+30610=Teletrasporto di origine non trovato.
+30611=Questo non è un teletrasporto per casa.
+30612=Devi selezionare l'altro teletrasporto.
+30613=Questi teletrasporti sono di tipi diversi e non possono essere collegati.
+30614=Entrambi i teletrasporti devono essere nel tuo zaino per il collegamento.
+30615=Teletrasporti collegati.
+30616=Seleziona l'oggetto di ricarica per ricaricare il teletrasporto.
+30617=Questo oggetto deve essere nel tuo zaino.
+30618=Il teletrasporto per casa non può essere caricato ulteriormente.
+30619=L'oggetto di ricarica si sbriciola in polvere mentre potenzia il teletrasporto per casa.
+30620=Questo deve essere posizionato all'interno di una casa per funzionare.
+30621=Questo deve essere posizionato all'interno di una casa.
+30622=Solo il proprietario e i comproprietari della casa possono usare questo teletrasporto.
+30623=Non puoi usarlo in questo momento.
+30624=Questo teletrasporto non è collegato.
+30625=Il teletrasporto di destinazione non è posizionato correttamente.
+30626=Non ci sono più cariche in questo teletrasporto.
+30627=Questo teletrasporto è completamente carico.
+30628=Teletrasporto non trovato. 
+30629=Questo teletrasporto deve essere collegato prima di poter essere rinominato.
+30630=Nome del teletrasporto impostato su: %s
 }
 EOF

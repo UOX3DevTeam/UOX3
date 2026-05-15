@@ -5731,5 +5731,37 @@
 30003=Der Champion ist besiegt!
 30004=Du wurdest mit einer Schriftrolle der Macht belohnt!
 30005=Die Energie des Schreins schwindet, da keine Herausforderer anwesend sind...
+// [30600-30650] Hausteleporter
+30600=Dieses Objekt muss sich in Ihrem Rucksack befinden, um es zu verknüpfen.
+30601=Wählen Sie den anderen Teleporter in Ihrem Rucksack aus, um ihn zu verknüpfen.
+30602=Dieser Teleporter ist vollständig aufgeladen.
+30603=Wählen Sie ein Aufladeobjekt in Ihrem Rucksack aus, um den Teleporter aufzuladen.
+30604=Sie können die Sicherheitseinstellungen dieses Teleporters nicht ändern.
+30605=Sicherheitseinstellungen des Teleporters: %s
+30606=Sie können diesen Teleporter nicht umbenennen.
+30607=Dieser Teleporter muss verknüpft sein, bevor er umbenannt werden kann.
+30608=Um die Teleporter zu verknüpfen, müssen sich beide in Ihrem Rucksack befinden.
+30609=Wählen Sie den anderen Teleporter in Ihrem Rucksack aus, um ihn zu verknüpfen.
+30610=Quell-Teleporter nicht gefunden.
+30611=Das ist kein Hausteleporter.
+30612=Sie müssen den anderen Teleporter auswählen.
+30613=Diese Teleporter sind unterschiedlichen Typs und können nicht verknüpft werden.
+30614=Beide Teleporter müssen sich in Ihrem Rucksack befinden, um sie zu verknüpfen.
+30615=Teleporter verknüpft.
+30616=Wählen Sie ein Aufladeobjekt aus, um den Teleporter aufzuladen.
+30617=Dieses Objekt muss sich in Ihrem Rucksack befinden.
+30618=Der Hausteleporter kann nicht weiter aufgeladen werden.
+30619=Das Aufladeobjekt zerfällt zu Staub, während es den Hausteleporter verstärkt.
+30620=Dieses Objekt muss in einem Haus platziert und gesichert werden, damit es funktioniert.
+30621=Dieses Objekt muss in einem Haus platziert werden.
+30622=Nur der Hausbesitzer und die Miteigentümer dürfen diesen Teleporter benutzen.
+30623=Sie können das im Moment nicht verwenden.
+30624=Dieser Teleporter ist nicht verknüpft.
+30625=Der Ziel-Teleporter ist nicht richtig platziert.
+30626=Dieser Teleporter hat keine Ladungen mehr.
+30627=Dieser Teleporter ist vollständig aufgeladen.
+30628=Teleporter nicht gefunden.
+30629=Dieser Teleporter muss verknüpft werden, bevor er umbenannt werden kann.
+30630=Teleportername festgelegt auf: %s
 }
 EOF

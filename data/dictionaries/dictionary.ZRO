@@ -5735,5 +5735,37 @@
 30003=The Champion has fallen!
 30004=You have been rewarded with a Scroll of Power!
 30005=The shrine's energy wanes with no challengers present...
+// [30600-30650 ] House Teleporter
+30600=This must be in your backpack to link it.
+30601=Target the other teleporter in your backpack to link.
+30602=This teleporter is fully charged.
+30603=Target recharge item in your backpack to recharge
+30604=You cannot change this teleporter's security.
+30605=Teleporter security set to: %s
+30606=You cannot rename this teleporter.
+30607=This teleporter must be linked before it can be renamed.
+30608=To link, both teleporters must be in your backpack.
+30609=Target the other teleporter in your backpack to link.
+30610=Source teleporter not found.
+30611=That is not a house teleporter.
+30612=You must target the other teleporter.
+30613=These teleporters are different types and cannot be linked.
+30614=Both teleporters must be in your backpack to link.
+30615=Teleporters linked.
+30616=Target recharge item to recharge the teleporter.
+30617=This item must be in your backpack.
+30618=The House Teleporter cannot be charged any further.
+30619=The recharge item crumbles to dust as it strengthens the House Teleporter.
+30620=This must be locked down in a house to function.
+30621=This must be placed inside a house.
+30622=Only the house owner and co-owners may use this teleporter.
+30623=You cannot use that right now.
+30624=This teleporter is not linked.
+30625=The destination teleporter is not properly placed.
+30626=There are no charges left in this teleporter.
+30627=This teleporter is fully charged.
+30628=Teleporter not found.
+30629=This teleporter must be linked before it can be renamed.
+30630=Teleporter name set to: %s
 }
 EOF

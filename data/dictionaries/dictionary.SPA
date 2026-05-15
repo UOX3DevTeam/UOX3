@@ -5730,5 +5730,37 @@
 30003=¡El Campeón ha caído!
 30004=¡Has sido recompensado con un Pergamino de Poder!
 30005=La energía del santuario disminuye al no haber desafiantes presentes...
+// [30600-30650] Teletransportador de casa
+30600=Esto debe estar en tu mochila para poder vincularlo.
+30601=Selecciona el otro teletransportador en tu mochila para vincularlos.
+30602=Este teletransportador está completamente cargado.
+30603=Selecciona el objeto de recarga en tu mochila para recargarlo.
+30604=No puedes cambiar la seguridad de este teletransportador.
+30605=Seguridad del teletransportador establecida en: %s
+30606=No puedes cambiar el nombre de este teletransportador.
+30607=Este teletransportador debe estar vinculado antes de poder cambiarle el nombre.
+30608=Para vincularlos, ambos teletransportadores deben estar en tu mochila.
+30609=Selecciona el otro teletransportador en tu mochila para vincularlos.
+30610=Teletransportador de origen no encontrado.
+30611=Eso no es un teletransportador de casa.
+30612=Debes seleccionar el otro teletransportador.
+30613=Estos teletransportadores son de tipos diferentes y no se pueden vincular.
+30614=Ambos teletransportadores deben estar en tu mochila para vincularlos.
+30615=Teletransportadores vinculados.
+30616=Selecciona el objeto de recarga para recargar el teletransportador.
+30617=Este objeto debe estar en tu mochila.
+30618=El teletransportador de casa no se puede cargar más.
+30619=El objeto de recarga se desintegra al fortalecer el teletransportador de casa.
+30620=Esto debe estar asegurado en una casa para funcionar.
+30621=Esto debe colocarse dentro de una casa.
+30622=Solo el propietario y los copropietarios de la casa pueden usar este teletransportador.
+30623=No puedes usar eso ahora mismo.
+30624=Este teletransportador no está vinculado.
+30625=El teletransportador de destino no está colocado correctamente.
+30626=No quedan cargas en este teletransportador.
+30627=Este teletransportador está completamente cargado.
+30628=Teletransportador no encontrado. 
+30629=Este teletransportador debe estar vinculado antes de poder cambiarle el nombre.
+30630=Nombre del teletransportador establecido a: %s
 }
 EOF

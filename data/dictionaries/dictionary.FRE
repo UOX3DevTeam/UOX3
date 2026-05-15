@@ -5895,5 +5895,36 @@
 30003=Le Champion est tombé !
 30004=Vous avez reçu un Parchemin de Puissance !
 30005=L'énergie du sanctuaire s'affaiblit en l'absence de challengers...
+// [30600-30650] Téléporteur de maison
+30600=Cet objet doit être dans votre sac à dos pour pouvoir le lier.
+30601=Ciblez l'autre téléporteur dans votre sac à dos pour le lier.
+30602=Ce téléporteur est entièrement chargé.
+30603=Ciblez l'objet de recharge dans votre sac à dos pour le recharger.
+30604=Vous ne pouvez pas modifier la sécurité de ce téléporteur.
+30605=Sécurité du téléporteur définie sur : %s
+30606=Vous ne pouvez pas renommer ce téléporteur.
+30607=Ce téléporteur doit être lié avant de pouvoir être renommé.
+30608=Pour les lier, les deux téléporteurs doivent être dans votre sac à dos.
+30609=Ciblez l'autre téléporteur dans votre sac à dos pour le lier.
+30610=Téléporteur source introuvable.
+30611=Ce n'est pas un téléporteur de maison.
+30612=Vous devez cibler l'autre téléporteur.
+30613=Ces téléporteurs sont de types différents et ne peuvent pas être liés.
+30614=Les deux téléporteurs doivent être dans votre sac à dos pour les lier.
+30615=Téléporteurs liés.
+30616=Ciblez l'objet de recharge pour recharger le téléporteur.
+30617=Cet objet doit être dans votre sac à dos.
+30618=Le téléporteur de maison ne peut pas être chargé davantage.
+30619=L'objet de recharge se désintègre en poussière en renforçant le téléporteur de maison.
+30620=Cet objet doit être verrouillé dans une maison pour fonctionner.
+30621=Cet objet doit être placé à l'intérieur d'une maison.
+30622=Seuls le propriétaire et les copropriétaires de la maison peuvent utiliser ce téléporteur.
+30623=Vous ne pouvez pas utiliser cet objet pour le moment.
+30624=Ce téléporteur n'est pas lié.
+30625=Le téléporteur de destination n'est pas correctement placé.
+30626=Il n'y a plus de charges dans ce téléporteur.
+30627=Ce téléporteur est entièrement chargé.
+30628=Téléporteur introuvable. 30629=Ce téléporteur doit être connecté avant de pouvoir être renommé.
+30630=Nom du téléporteur défini sur : %s
 }
 EOF
