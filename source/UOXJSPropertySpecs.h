@@ -1,5 +1,5 @@
 //o------------------------------------------------------------------------------------------------o
-//|  File    -  UOXJSPropertyFuncts.cpp
+//|  File    -  UOXJSPropertyFuncs.cpp
 //|  Date    -  12/14/2001
 //o------------------------------------------------------------------------------------------------o
 //|  Notes    -  1.0    14th December, 2001 Initial implementation
@@ -15,8 +15,8 @@
 #define CLSDECLG( main, attr ) JS##main##_get_##attr
 #define CLSDECLS( main, attr ) JS##main##_set_##attr
 #define PDECLGS( main, attr ) #attr, CLSDECLG( main, attr ), CLSDECLS( main, attr )
-#define FDCLG( main, attr ) bool CLSDECLG ## ( main, attr )##(JSContext *cx, unsigned int argc, JS::Value *vp)
-#define FDCLS( main, attr ) bool CLSDECLS ## ( main, attr )##(JSContext *cx, unsigned int argc, JS::Value *vp)
+#define FDCLG( main, attr ) bool CLSDECLG ## ( main, attr ) ## ( JSContext *cx, unsigned int argc, JS::Value *vp )
+#define FDCLS( main, attr ) bool CLSDECLS ## ( main, attr ) ## ( JSContext *cx, unsigned int argc, JS::Value *vp )
 
 #define DECL_GET( main, attr ) FDCLG( main, attr ) ## ;
 #define DECL_SET( main, attr ) FDCLS( main, attr ) ## ;
@@ -129,12 +129,14 @@ FDCLS( main, attr ) {                                    \
 }
 
 // This is the restore context we need to fix up
-// bool retVal = origScript->CallParticularEvent("_restorecontext_", &id, 0, vp);
-//    if( !retVal ) \
-//    { \
-//      Console.Warning( oldstrutil::format( "Script context lost after setting Race property %u. Add 'function
-// _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID )); \
-//    } \
+/*
+ bool retVal = origScript->CallParticularEvent("_restorecontext_", &id, 0, vp);
+    if( !retVal ) \
+    { \
+      Console.Warning( oldstrutil::format( "Script context lost after setting Race property %u. Add 'function
+ _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID )); \
+    } \
+*/
 
 #define IMPL_SET_NP(main, attr, method, accessor)                                                                \
 FDCLS( main, attr ) {                                                                                            \
@@ -142,818 +144,1624 @@ FDCLS( main, attr ) {                                                           
   accessor(args.get(0).method());                                                                                \
   return true;                                                                                                   \
 }
+
+#define DECL_GET_SET( main, attr ) \
+DECL_GET( main, attr ) \
+DECL_SET( main, attr )
+
+// Forward declares
+DECL_GET( CSpell, action )
+DECL_GET( CSpell, aggressiveSpell )
+DECL_GET( CSpell, ash )
+DECL_GET( CSpell, baseDmg )
+DECL_GET( CSpell, circle )
+DECL_GET( CSpell, damageDelay )
+DECL_GET( CSpell, delay )
+DECL_GET( CSpell, drake )
+DECL_GET( CSpell, enabled )
+DECL_GET( CSpell, fieldSpell )
+DECL_GET( CSpell, garlic )
+DECL_GET( CSpell, batwing )
+DECL_GET( CSpell, daemonBlood )
+DECL_GET( CSpell, graveDust )
+DECL_GET( CSpell, noxCrystal )
+DECL_GET( CSpell, pigIron )
+DECL_GET( CSpell, ginseng )
+DECL_GET( CSpell, health )
+DECL_GET( CSpell, highSkill )
+DECL_GET( CSpell, id )
+DECL_GET( CSpell, lowSkill )
+DECL_GET( CSpell, mana )
+DECL_GET( CSpell, mantra )
+DECL_GET( CSpell, moss )
+DECL_GET( CSpell, name )
+DECL_GET( CSpell, pearl )
+DECL_GET( CSpell, recoveryDelay )
+DECL_GET( CSpell, reflectable )
+DECL_GET( CSpell, requireChar )
+DECL_GET( CSpell, requireItem )
+DECL_GET( CSpell, requireLocation )
+DECL_GET( CSpell, requireTarget )
+DECL_GET( CSpell, resistable )
+DECL_GET( CSpell, scrollHigh )
+DECL_GET( CSpell, scrollLow )
+DECL_GET( CSpell, shade )
+DECL_GET( CSpell, silk )
+DECL_GET( CSpell, soundEffect )
+DECL_GET( CSpell, stamina )
+DECL_GET( CSpell, strToSay )
+DECL_GET( CSpell, tithing )
+DECL_GET( CSpell, travelSpell )
+
+// Global Skills
+DECL_GET_SET( CGlobalSkill, dexterity )
+DECL_GET_SET( CGlobalSkill, intelligence )
+DECL_GET_SET( CGlobalSkill, madeWord )
+DECL_GET_SET( CGlobalSkill, name )
+DECL_GET_SET( CGlobalSkill, scriptID )
+DECL_GET_SET( CGlobalSkill, skillDelay )
+DECL_GET_SET( CGlobalSkill, strength )
+
+// Create Entry
+DECL_GET_SET( CCreateEntry, addItem )
+DECL_GET_SET( CCreateEntry, avgMaxSkill )
+DECL_GET_SET( CCreateEntry, avgMinSkill )
+DECL_GET_SET( CCreateEntry, colour )
+DECL_GET_SET( CCreateEntry, delay )
+DECL_GET_SET( CCreateEntry, id )
+DECL_GET_SET( CCreateEntry, maxRank )
+DECL_GET_SET( CCreateEntry, minRank )
+DECL_GET_SET( CCreateEntry, name )
+DECL_GET_SET( CCreateEntry, resources )
+DECL_GET_SET( CCreateEntry, skills )
+DECL_GET_SET( CCreateEntry, sound )
+DECL_GET_SET( CCreateEntry, spell )
+
+// Timer Properties
+DECL_GET( CTimer, ANTISPAM )
+DECL_GET( CTimer, CRIMFLAG )
+DECL_GET( CTimer, EVADETIME )
+DECL_GET( CTimer, FIREFIELDTICK )
+DECL_GET( CTimer, FLYINGTOGGLE )
+DECL_GET( CTimer, HUNGER )
+DECL_GET( CTimer, IDLEANIMTIME )
+DECL_GET( CTimer, INVIS )
+DECL_GET( CTimer, LOGOUT )
+DECL_GET( CTimer, LOYALTYTIME )
+DECL_GET( CTimer, MOVETIME )
+DECL_GET( CTimer, MURDERRATE )
+DECL_GET( CTimer, PARAFIELDTICK )
+DECL_GET( CTimer, PEACETIMER )
+DECL_GET( CTimer, POISONFIELDTICK )
+DECL_GET( CTimer, POISONTEXT )
+DECL_GET( CTimer, POISONTIME )
+DECL_GET( CTimer, POISONWEAROFF )
+DECL_GET( CTimer, SOCK_FISHING )
+DECL_GET( CTimer, SOCK_MUTETIME )
+DECL_GET( CTimer, SOCK_OBJDELAY )
+DECL_GET( CTimer, SOCK_SKILLDELAY )
+DECL_GET( CTimer, SOCK_SPIRITSPEAK )
+DECL_GET( CTimer, SOCK_TRACKING )
+DECL_GET( CTimer, SOCK_TRACKINGDISPLAY )
+DECL_GET( CTimer, SOCK_TRAFFICWARDEN )
+DECL_GET( CTimer, SOCK_SPEEDHACKPENALTY )
+DECL_GET( CTimer, SOCK_SPEEDHACKLOGGED )
+DECL_GET( CTimer, SPATIMER )
+DECL_GET( CTimer, SPELLRECOVERYTIME )
+DECL_GET( CTimer, SPELLTIME )
+DECL_GET( CTimer, SUMMONTIME )
+DECL_GET( CTimer, THIRST )
+DECL_GET( CTimer, TIMEOUT )
+DECL_GET( CTimer, YOUNGHEAL )
+DECL_GET( CTimer, YOUNGMESSAGE )
+
+// Race Properties
+DECL_GET_SET( CRace, armourClass )
+DECL_GET_SET( CRace, genderRestrict )
+DECL_GET_SET( CRace, id )
+DECL_GET_SET( CRace, isPlayerRace )
+DECL_GET_SET( CRace, languageSkillMin )
+DECL_GET_SET( CRace, magicResistance )
+DECL_GET_SET( CRace, name )
+DECL_GET_SET( CRace, nightVision )
+DECL_GET_SET( CRace, poisonResistance )
+DECL_GET_SET( CRace, requiresBeard )
+DECL_GET_SET( CRace, requiresNoBeard )
+DECL_GET_SET( CRace, skillAdjustment )
+DECL_GET_SET( CRace, visibleDistance )
+DECL_GET_SET( CRace, weakToWeather )
+
+// Region Properties
+DECL_GET_SET( CRegion, appearance )
+DECL_GET_SET( CRegion, canCastAggressive )
+DECL_GET_SET( CRegion, canGate )
+DECL_GET_SET( CRegion, canMark )
+DECL_GET_SET( CRegion, canPlaceHouse )
+DECL_GET_SET( CRegion, canRecall )
+DECL_GET_SET( CRegion, canTeleport )
+DECL_GET_SET( CRegion, chanceBigOre )
+DECL_GET_SET( CRegion, health )
+DECL_GET_SET( CRegion, id )
+DECL_GET_SET( CRegion, instanceID )
+DECL_GET_SET( CRegion, isDungeon )
+DECL_GET_SET( CRegion, isDisabled )
+DECL_GET_SET( CRegion, isGuarded )
+DECL_GET_SET( CRegion, isSafeZone )
+DECL_GET_SET( CRegion, mayor )
+DECL_GET( CRegion, members )
+DECL_GET_SET( CRegion, music )
+DECL_GET_SET( CRegion, name )
+DECL_GET_SET( CRegion, numGuards )
+DECL_GET( CRegion, numOrePrefs )
+DECL_GET_SET( CRegion, owner )
+DECL_GET( CRegion, population )
+DECL_GET_SET( CRegion, race )
+DECL_GET_SET( CRegion, reserves )
+DECL_GET_SET( CRegion, scriptTrigger )
+DECL_GET_SET( CRegion, scriptTriggers )
+DECL_GET_SET( CRegion, tax )
+DECL_GET_SET( CRegion, taxes )
+DECL_GET_SET( CRegion, taxResource )
+DECL_GET_SET( CRegion, weather )
+DECL_GET_SET( CRegion, worldNumber )
+
+// Spawn Region Properties
+DECL_GET_SET( CSpawnRegion, call )
+DECL_GET_SET( CSpawnRegion, defZ )
+DECL_GET_SET( CSpawnRegion, instanceID )
+DECL_GET_SET( CSpawnRegion, isSpawner )
+DECL_GET_SET( CSpawnRegion, forceSpawn )
+DECL_GET_SET( CSpawnRegion, item )
+DECL_GET_SET( CSpawnRegion, itemCount )
+DECL_GET_SET( CSpawnRegion, itemList )
+DECL_GET_SET( CSpawnRegion, maxItems )
+DECL_GET_SET( CSpawnRegion, maxNpcs )
+DECL_GET_SET( CSpawnRegion, maxTime )
+DECL_GET_SET( CSpawnRegion, minTime )
+DECL_GET_SET( CSpawnRegion, name )
+DECL_GET_SET( CSpawnRegion, npc )
+DECL_GET_SET( CSpawnRegion, npcCount )
+DECL_GET_SET( CSpawnRegion, npcList )
+DECL_GET_SET( CSpawnRegion, onlyOutside )
+DECL_GET_SET( CSpawnRegion, prefZ )
+DECL_GET_SET( CSpawnRegion, regionNum )
+DECL_GET_SET( CSpawnRegion, world )
+DECL_GET_SET( CSpawnRegion, x1 )
+DECL_GET_SET( CSpawnRegion, x2 )
+DECL_GET_SET( CSpawnRegion, y1 )
+DECL_GET_SET( CSpawnRegion, y2 )
+
+// Guild Properties
+DECL_GET_SET( CGuild, abbreviation )
+DECL_GET_SET( CGuild, charter )
+DECL_GET( CGuild, id )
+DECL_GET_SET( CGuild, master )
+DECL_GET( CGuild, members )
+DECL_GET_SET( CGuild, name )
+DECL_GET( CGuild, numMembers )
+DECL_GET( CGuild, numRecruits )
+DECL_GET( CGuild, recruits )
+DECL_GET_SET( CGuild, stone )
+DECL_GET_SET( CGuild, type )
+DECL_GET_SET( CGuild, webPage )
+
+// Character Properties
+DECL_GET_SET( CCharacter, account )
+DECL_GET_SET( CCharacter, accountNum )
+DECL_GET_SET( CCharacter, actualDexterity )
+DECL_GET_SET( CCharacter, actualIntelligence )
+DECL_GET_SET( CCharacter, actualStrength )
+DECL_GET_SET( CCharacter, healthRegenBonus )
+DECL_GET_SET( CCharacter, staminaRegenBonus )
+DECL_GET_SET( CCharacter, manaRegenBonus )
+DECL_GET_SET( CCharacter, aitype )
+DECL_GET_SET( CCharacter, allmove )
+DECL_GET_SET( CCharacter, attack )
+DECL_GET_SET( CCharacter, attacker )
+DECL_GET_SET( CCharacter, atWar )
+DECL_GET_SET( CCharacter, baseskills )
+DECL_GET_SET( CCharacter, beardColor )
+DECL_GET_SET( CCharacter, beardColour )
+DECL_GET_SET( CCharacter, beardStyle )
+DECL_GET_SET( CCharacter, brkPeaceChance )
+DECL_GET_SET( CCharacter, canAttack )
+DECL_GET_SET( CCharacter, canBroadcast )
+DECL_GET_SET( CCharacter, canRun )
+DECL_GET_SET( CCharacter, canSnoop )
+DECL_GET_SET( CCharacter, cell )
+DECL_GET_SET( CCharacter, color )
+DECL_GET_SET( CCharacter, colour )
+DECL_GET_SET( CCharacter, commandlevel )
+DECL_GET_SET( CCharacter, controlSlots )
+DECL_GET_SET( CCharacter, controlSlotsUsed )
+DECL_GET_SET( CCharacter, createdOn )
+DECL_GET_SET( CCharacter, criminal )
+DECL_GET_SET( CCharacter, damageIncrease )
+DECL_GET_SET( CCharacter, dead )
+DECL_GET_SET( CCharacter, deaths )
+DECL_GET_SET( CCharacter, defenseChance )
+DECL_GET_SET( CCharacter, dexterity )
+DECL_GET_SET( CCharacter, direction )
+DECL_GET_SET( CCharacter, emoteColour )
+DECL_GET_SET( CCharacter, fame )
+DECL_GET_SET( CCharacter, flag )
+DECL_GET_SET( CCharacter, fleeAt )
+DECL_GET_SET( CCharacter, followerCount )
+DECL_GET_SET( CCharacter, fontType )
+DECL_GET_SET( CCharacter, foodList )
+DECL_GET_SET( CCharacter, frozen )
+DECL_GET_SET( CCharacter, fx1 )
+DECL_GET_SET( CCharacter, fx2 )
+DECL_GET_SET( CCharacter, fy1 )
+DECL_GET_SET( CCharacter, fy2 )
+DECL_GET_SET( CCharacter, fz )
+DECL_GET_SET( CCharacter, gender )
+DECL_GET_SET( CCharacter, guarding )
+DECL_GET_SET( CCharacter, guild )
+DECL_GET_SET( CCharacter, guildNumber )
+DECL_GET_SET( CCharacter, guildTitle )
+DECL_GET_SET( CCharacter, hairColor )
+DECL_GET_SET( CCharacter, hairColour )
+DECL_GET_SET( CCharacter, hairStyle )
+DECL_GET_SET( CCharacter, hasStolen )
+DECL_GET_SET( CCharacter, health )
+DECL_GET_SET( CCharacter, hidamage )
+DECL_GET_SET( CCharacter, hideFameKarmaTitle )
+DECL_GET_SET( CCharacter, hireling )
+DECL_GET_SET( CCharacter, hitChance )
+DECL_GET_SET( CCharacter, houseicons )
+DECL_GET_SET( CCharacter, housesCoOwned )
+DECL_GET_SET( CCharacter, housesOwned )
+DECL_GET_SET( CCharacter, hue )
+DECL_GET_SET( CCharacter, hunger )
+DECL_GET_SET( CCharacter, hungerRate )
+DECL_GET_SET( CCharacter, hungerWildChance )
+DECL_GET_SET( CCharacter, id )
+DECL_GET_SET( CCharacter, innocent )
+DECL_GET_SET( CCharacter, instanceID )
+DECL_GET_SET( CCharacter, intelligence )
+DECL_GET_SET( CCharacter, isAwake )
+DECL_GET_SET( CCharacter, isCasting )
+DECL_GET_SET( CCharacter, isChar )
+DECL_GET_SET( CCharacter, isCounselor )
+DECL_GET_SET( CCharacter, isDisguised )
+DECL_GET_SET( CCharacter, isDispellable )
+DECL_GET_SET( CCharacter, isFlying )
+DECL_GET_SET( CCharacter, isGM )
+DECL_GET_SET( CCharacter, isGMPageable )
+DECL_GET_SET( CCharacter, isGuarded )
+DECL_GET_SET( CCharacter, isIncognito )
+DECL_GET_SET( CCharacter, isItem )
+DECL_GET_SET( CCharacter, isJailed )
+DECL_GET_SET( CCharacter, isMeditating )
+DECL_GET_SET( CCharacter, isonhorse )
+DECL_GET_SET( CCharacter, isPolymorphed )
+DECL_GET_SET( CCharacter, isRunning )
+DECL_GET_SET( CCharacter, isShop )
+DECL_GET_SET( CCharacter, isSpawner )
+DECL_GET_SET( CCharacter, isUsingPotion )
+DECL_GET_SET( CCharacter, karma )
+DECL_GET_SET( CCharacter, karmaLock )
+DECL_GET_SET( CCharacter, lightlevel )
+DECL_GET_SET( CCharacter, lodamage )
+DECL_GET_SET( CCharacter, loyalty )
+DECL_GET_SET( CCharacter, loyaltyRate )
+DECL_GET_SET( CCharacter, luck )
+DECL_GET_SET( CCharacter, magicReflect )
+DECL_GET_SET( CCharacter, mana )
+DECL_GET_SET( CCharacter, maxhp )
+DECL_GET_SET( CCharacter, maxLoyalty )
+DECL_GET_SET( CCharacter, maxmana )
+DECL_GET_SET( CCharacter, maxstamina )
+DECL_GET_SET( CCharacter, mounted )
+DECL_GET_SET( CCharacter, multi )
+DECL_GET_SET( CCharacter, murdercount )
+DECL_GET_SET( CCharacter, murderer )
+DECL_GET_SET( CCharacter, name )
+DECL_GET_SET( CCharacter, neutral )
+DECL_GET_SET( CCharacter, nextAct )
+DECL_GET_SET( CCharacter, noCharCollide )
+DECL_GET_SET( CCharacter, noNeedMana )
+DECL_GET_SET( CCharacter, noNeedReags )
+DECL_GET_SET( CCharacter, noSkillTitles )
+DECL_GET_SET( CCharacter, npc )
+DECL_GET_SET( CCharacter, npCCharacter )
+DECL_GET_SET( CCharacter, npcFlag )
+DECL_GET_SET( CCharacter, npcGuild )
+DECL_GET_SET( CCharacter, oldWandertype )
+DECL_GET_SET( CCharacter, oldX )
+DECL_GET_SET( CCharacter, oldY )
+DECL_GET_SET( CCharacter, oldZ )
+DECL_GET_SET( CCharacter, online )
+DECL_GET_SET( CCharacter, orgID )
+DECL_GET_SET( CCharacter, orgSkin )
+DECL_GET_SET( CCharacter, origin )
+DECL_GET_SET( CCharacter, origName )
+DECL_GET_SET( CCharacter, orneriness )
+DECL_GET_SET( CCharacter, ownedItemsCout )
+DECL_GET_SET( CCharacter, owner )
+DECL_GET_SET( CCharacter, ownerCount )
+DECL_GET_SET( CCharacter, pack )
+DECL_GET_SET( CCharacter, partyLootable )
+DECL_GET_SET( CCharacter, pathTargX )
+DECL_GET_SET( CCharacter, pathTargY )
+DECL_GET_SET( CCharacter, permanentMagicReflect )
+DECL_GET_SET( CCharacter, petCount )
+DECL_GET_SET( CCharacter, playTime )
+DECL_GET_SET( CCharacter, poison )
+DECL_GET_SET( CCharacter, poisonedBy )
+DECL_GET_SET( CCharacter, poisonStrength )
+DECL_GET_SET( CCharacter, priv )
+DECL_GET_SET( CCharacter, race )
+DECL_GET_SET( CCharacter, raceGate )
+DECL_GET_SET( CCharacter, reAttackAt )
+DECL_GET_SET( CCharacter, region )
+DECL_GET_SET( CCharacter, sayColour )
+DECL_GET_SET( CCharacter, scripttrigger )
+DECL_GET_SET( CCharacter, scriptTriggers )
+DECL_GET_SET( CCharacter, sectionID )
+DECL_GET_SET( CCharacter, serial )
+DECL_GET_SET( CCharacter, setPeace )
+DECL_GET_SET( CCharacter, shouldSave )
+DECL_GET_SET( CCharacter, singClickSer )
+DECL_GET_SET( CCharacter, skillCaps )
+DECL_GET_SET( CCharacter, skillLock )
+DECL_GET_SET( CCharacter, skills )
+DECL_GET_SET( CCharacter, skillsused )
+DECL_GET_SET( CCharacter, skillToPeace )
+DECL_GET_SET( CCharacter, skillToProv )
+DECL_GET_SET( CCharacter, skillToTame )
+DECL_GET_SET( CCharacter, skin )
+DECL_GET_SET( CCharacter, socket )
+DECL_GET_SET( CCharacter, spattack )
+DECL_GET_SET( CCharacter, spawnSerial )
+DECL_GET_SET( CCharacter, spawnX )
+DECL_GET_SET( CCharacter, spawnY )
+DECL_GET_SET( CCharacter, spawnZ )
+DECL_GET_SET( CCharacter, spdelay )
+DECL_GET_SET( CCharacter, spellCast )
+DECL_GET_SET( CCharacter, split )
+DECL_GET_SET( CCharacter, splitchance )
+DECL_GET_SET( CCharacter, squelch )
+DECL_GET_SET( CCharacter, stabled )
+DECL_GET_SET( CCharacter, stamina )
+DECL_GET_SET( CCharacter, stealth )
+DECL_GET_SET( CCharacter, strength )
+DECL_GET_SET( CCharacter, tamed )
+DECL_GET_SET( CCharacter, tamedHungerRate )
+DECL_GET_SET( CCharacter, tamedThirstRate )
+DECL_GET_SET( CCharacter, target )
+DECL_GET_SET( CCharacter, tempdex )
+DECL_GET_SET( CCharacter, tempint )
+DECL_GET_SET( CCharacter, tempstr )
+DECL_GET_SET( CCharacter, thirst )
+DECL_GET_SET( CCharacter, thirstRate )
+DECL_GET_SET( CCharacter, thirstWildChance )
+DECL_GET_SET( CCharacter, title )
+DECL_GET_SET( CCharacter, town )
+DECL_GET_SET( CCharacter, townPriv )
+DECL_GET_SET( CCharacter, trainer )
+DECL_GET_SET( CCharacter, visible )
+DECL_GET_SET( CCharacter, vulnerable )
+DECL_GET_SET( CCharacter, wandertype )
+DECL_GET_SET( CCharacter, weight )
+DECL_GET_SET( CCharacter, willhunger )
+DECL_GET_SET( CCharacter, willthirst )
+DECL_GET_SET( CCharacter, worldnumber )
+DECL_GET_SET( CCharacter, x )
+DECL_GET_SET( CCharacter, y )
+DECL_GET_SET( CCharacter, z )
+DECL_GET( CCharacter, attack )
+DECL_GET( CCharacter, flag )
+DECL_GET( CCharacter, followerCount )
+DECL_GET( CCharacter, hungerRate )
+DECL_GET( CCharacter, isAnimal )
+DECL_GET( CCharacter, isChar )
+DECL_GET( CCharacter, isHuman )
+DECL_GET( CCharacter, isItem )
+DECL_GET( CCharacter, isJailed )
+DECL_GET_SET( CCharacter, isPackAnimal )
+DECL_GET( CCharacter, isSpawner )
+DECL_GET( CCharacter, murderer )
+DECL_GET( CCharacter, online )
+DECL_GET_SET( CCharacter, ownedItemsCount )
+DECL_GET( CCharacter, party )
+DECL_GET( CCharacter, petCount )
+DECL_GET( CCharacter, spawnSerial )
+DECL_GET_SET( CCharacter, swingSpeedIncrease )
+DECL_GET( CCharacter, thirstRate )
+DECL_GET_SET( CCharacter, tithing )
+DECL_GET_SET( CCharacter, lastOn )
+DECL_GET_SET( CCharacter, lastOnSecs )
+
+// Item Properties
+DECL_GET_SET( CItem, ac )
+DECL_GET_SET( CItem, ammoFX )
+DECL_GET_SET( CItem, ammoFXHue )
+DECL_GET_SET( CItem, ammoFXRender )
+DECL_GET_SET( CItem, ammoHue )
+DECL_GET_SET( CItem, ammoID )
+DECL_GET_SET( CItem, amount )
+DECL_GET_SET( CItem, artifactRarity )
+DECL_GET_SET( CItem, att )
+DECL_GET_SET( CItem, bans )
+DECL_GET_SET( CItem, banX )
+DECL_GET_SET( CItem, banY )
+DECL_GET_SET( CItem, baseRange )
+DECL_GET_SET( CItem, baseWeight )
+DECL_GET_SET( CItem, buildTimestamp )
+DECL_GET_SET( CItem, buyvalue )
+DECL_GET_SET( CItem, canBeLockedDown )
+DECL_GET_SET( CItem, carveSection )
+DECL_GET_SET( CItem, color )
+DECL_GET_SET( CItem, colour )
+DECL_GET_SET( CItem, container )
+DECL_GET_SET( CItem, corpse )
+DECL_GET_SET( CItem, creator )
+DECL_GET_SET( CItem, damageCold )
+DECL_GET_SET( CItem, damageHeat )
+DECL_GET_SET( CItem, damageIncrease )
+DECL_GET_SET( CItem, damageLight )
+DECL_GET_SET( CItem, damageLightning )
+DECL_GET_SET( CItem, damagePoison )
+DECL_GET_SET( CItem, damageRain )
+DECL_GET_SET( CItem, damageSnow )
+DECL_GET_SET( CItem, decayable )
+DECL_GET_SET( CItem, decaytime )
+DECL_GET_SET( CItem, deed )
+DECL_GET_SET( CItem, def )
+DECL_GET_SET( CItem, defenseChance )
+DECL_GET_SET( CItem, desc )
+DECL_GET_SET( CItem, dexterity )
+DECL_GET_SET( CItem, dir )
+DECL_GET_SET( CItem, divinelock )
+DECL_GET_SET( CItem, durabilityHpBonus )
+DECL_GET_SET( CItem, entryMadeFrom )
+DECL_GET_SET( CItem, event )
+DECL_GET_SET( CItem, friends )
+DECL_GET_SET( CItem, good )
+DECL_GET_SET( CItem, guests )
+DECL_GET_SET( CItem, health )
+DECL_GET_SET( CItem, healthBonus )
+DECL_GET_SET( CItem, healthLeech )
+DECL_GET_SET( CItem, healthRegenBonus )
+DECL_GET_SET( CItem, hitChance )
+DECL_GET_SET( CItem, staminaRegenBonus )
+DECL_GET_SET( CItem, manaRegenBonus )
+DECL_GET_SET( CItem, hidamage )
+DECL_GET_SET( CItem, hue )
+DECL_GET_SET( CItem, id )
+DECL_GET_SET( CItem, instanceID )
+DECL_GET_SET( CItem, intelligence )
+DECL_GET_SET( CItem, isChar )
+DECL_GET_SET( CItem, isContType )
+DECL_GET_SET( CItem, isDamageable )
+DECL_GET_SET( CItem, isDispellable )
+DECL_GET_SET( CItem, isDoorOpen )
+DECL_GET_SET( CItem, isDyeable )
+DECL_GET_SET( CItem, isFieldSpell )
+DECL_GET_SET( CItem, isGuarded )
+DECL_GET_SET( CItem, isItem )
+DECL_GET_SET( CItem, isItemHeld )
+DECL_GET_SET( CItem, isLeatherType )
+DECL_GET_SET( CItem, isLockedDown )
+DECL_GET_SET( CItem, isMarkedByMaker )
+DECL_GET_SET( CItem, isMetalType )
+DECL_GET_SET( CItem, isNewbie )
+DECL_GET_SET( CItem, isPileable )
+DECL_GET_SET( CItem, isPublic )
+DECL_GET_SET( CItem, isShieldType )
+DECL_GET_SET( CItem, isSpawner )
+DECL_GET_SET( CItem, isWipeable )
+DECL_GET_SET( CItem, itemsinside )
+DECL_GET_SET( CItem, layer )
+DECL_GET_SET( CItem, lockdowns )
+DECL_GET_SET( CItem, lodamage )
+DECL_GET_SET( CItem, lowerStateReq )
+DECL_GET_SET( CItem, luck )
+DECL_GET_SET( CItem, madeWith )
+DECL_GET_SET( CItem, manaBonus )
+DECL_GET_SET( CItem, manaLeech )
+DECL_GET_SET( CItem, maxBans )
+DECL_GET_SET( CItem, maxFriends )
+DECL_GET_SET( CItem, maxGuests )
+DECL_GET_SET( CItem, maxhp )
+DECL_GET_SET( CItem, maxinterval )
+DECL_GET_SET( CItem, maxItems )
+DECL_GET_SET( CItem, maxLockdowns )
+DECL_GET_SET( CItem, maxOwners )
+DECL_GET_SET( CItem, maxRange )
+DECL_GET_SET( CItem, maxSecureContainers )
+DECL_GET_SET( CItem, maxTrashContainers )
+DECL_GET_SET( CItem, maxUses )
+DECL_GET_SET( CItem, maxVendors )
+DECL_GET_SET( CItem, mininterval )
+DECL_GET_SET( CItem, more )
+DECL_GET_SET( CItem, more0 )
+DECL_GET_SET( CItem, more1 )
+DECL_GET_SET( CItem, more2 )
+DECL_GET_SET( CItem, morex )
+DECL_GET_SET( CItem, morey )
+DECL_GET_SET( CItem, morez )
+DECL_GET_SET( CItem, movable )
+DECL_GET_SET( CItem, moveType )
+DECL_GET_SET( CItem, multi )
+DECL_GET_SET( CItem, name )
+DECL_GET_SET( CItem, name2 )
+DECL_GET_SET( CItem, oldX )
+DECL_GET_SET( CItem, oldY )
+DECL_GET_SET( CItem, oldZ )
+DECL_GET_SET( CItem, origin )
+DECL_GET_SET( CItem, origName )
+DECL_GET_SET( CItem, owner )
+DECL_GET_SET( CItem, owners )
+DECL_GET_SET( CItem, poison )
+DECL_GET_SET( CItem, poisonedBy )
+DECL_GET_SET( CItem, poisonCharges )
+DECL_GET_SET( CItem, race )
+DECL_GET_SET( CItem, rank )
+DECL_GET_SET( CItem, region )
+DECL_GET_SET( CItem, resistCold )
+DECL_GET_SET( CItem, resistHeat )
+DECL_GET_SET( CItem, resistLight )
+DECL_GET_SET( CItem, resistLightning )
+DECL_GET_SET( CItem, resistPoison )
+DECL_GET_SET( CItem, resistRain )
+DECL_GET_SET( CItem, resistSnow )
+DECL_GET_SET( CItem, restock )
+DECL_GET_SET( CItem, scripttrigger )
+DECL_GET_SET( CItem, scriptTriggers )
+DECL_GET_SET( CItem, sectionalist )
+DECL_GET_SET( CItem, sectionID )
+DECL_GET_SET( CItem, secureContainers )
+DECL_GET_SET( CItem, sellvalue )
+DECL_GET_SET( CItem, serial )
+DECL_GET_SET( CItem, shouldSave )
+DECL_GET_SET( CItem, skin )
+DECL_GET_SET( CItem, spawnsection )
+DECL_GET_SET( CItem, spawnSerial )
+DECL_GET_SET( CItem, speed )
+DECL_GET_SET( CItem, staminaBonus )
+DECL_GET_SET( CItem, staminaLeech )
+DECL_GET_SET( CItem, stealable )
+DECL_GET_SET( CItem, strength )
+DECL_GET_SET( CItem, swingSpeedIncrease )
+DECL_GET_SET( CItem, tempLastTraded )
+DECL_GET_SET( CItem, tempTimer )
+DECL_GET_SET( CItem, tithing )
+DECL_GET_SET( CItem, title )
+DECL_GET_SET( CItem, totalItemCount )
+DECL_GET_SET( CItem, tradeTimestamp )
+DECL_GET_SET( CItem, trashContainers )
+DECL_GET_SET( CItem, type )
+DECL_GET_SET( CItem, usesLeft )
+DECL_GET_SET( CItem, vendorPrice )
+DECL_GET_SET( CItem, vendors )
+DECL_GET_SET( CItem, visible )
+DECL_GET_SET( CItem, weight )
+DECL_GET_SET( CItem, weightMax )
+DECL_GET_SET( CItem, wipable )
+DECL_GET_SET( CItem, worldnumber )
+DECL_GET_SET( CItem, x )
+DECL_GET_SET( CItem, y )
+DECL_GET_SET( CItem, z )
+
+// Socket Properties
+DECL_GET_SET( CSocket, account )
+DECL_GET_SET( CSocket, bytesReceived )
+DECL_GET_SET( CSocket, bytesSent )
+DECL_GET_SET( CSocket, clickX )
+DECL_GET_SET( CSocket, clickY )
+DECL_GET_SET( CSocket, clickZ )
+DECL_GET_SET( CSocket, clientLetterVer )
+DECL_GET_SET( CSocket, clientMajorVer )
+DECL_GET_SET( CSocket, clientMinorVer )
+DECL_GET_SET( CSocket, clientSubVer )
+DECL_GET_SET( CSocket, clientType )
+DECL_GET_SET( CSocket, cryptClient )
+DECL_GET_SET( CSocket, currentChar )
+DECL_GET_SET( CSocket, currentSpellType )
+DECL_GET_SET( CSocket, firstPacket )
+DECL_GET_SET( CSocket, idleTimeout )
+DECL_GET_SET( CSocket, language )
+DECL_GET_SET( CSocket, logging )
+DECL_GET_SET( CSocket, moveBurstAllowance )
+DECL_GET_SET( CSocket, moveDebt )
+DECL_GET_SET( CSocket, moveDebtAvg )
+DECL_GET_SET( CSocket, newClient )
+DECL_GET_SET( CSocket, nextMoveTime )
+DECL_GET_SET( CSocket, pickupSerial )
+DECL_GET_SET( CSocket, pickupSpot )
+DECL_GET_SET( CSocket, pickupX )
+DECL_GET_SET( CSocket, pickupY )
+DECL_GET_SET( CSocket, pickupZ )
+DECL_GET_SET( CSocket, target )
+DECL_GET_SET( CSocket, targetOK )
+DECL_GET_SET( CSocket, tempInt )
+DECL_GET_SET( CSocket, tempInt2 )
+DECL_GET_SET( CSocket, tempObj )
+DECL_GET_SET( CSocket, tempObj2 )
+DECL_GET_SET( CSocket, walkSequence )
+DECL_GET_SET( CSocket, wasIdleWarned )
+DECL_GET_SET( CSocket, xText )
+DECL_GET_SET( CSocket, xText2 )
+DECL_GET( CSocket, addID )
+DECL_GET( CSocket, buffer )
+DECL_GET( CSocket, clientIP )
+DECL_GET( CSocket, xText )
+DECL_GET( CSocket, xText2 )
+
+// Skills Properties
+DECL_GET_SET( CSkills, alchemy )
+DECL_GET_SET( CSkills, allskills )
+DECL_GET_SET( CSkills, anatomy )
+DECL_GET_SET( CSkills, animallore )
+DECL_GET_SET( CSkills, archery )
+DECL_GET_SET( CSkills, armslore )
+DECL_GET_SET( CSkills, begging )
+DECL_GET_SET( CSkills, blacksmithing )
+DECL_GET_SET( CSkills, bowcraft )
+DECL_GET_SET( CSkills, bushido )
+DECL_GET_SET( CSkills, camping )
+DECL_GET_SET( CSkills, carpentry )
+DECL_GET_SET( CSkills, cartography )
+DECL_GET_SET( CSkills, chivalry )
+DECL_GET_SET( CSkills, cooking )
+DECL_GET_SET( CSkills, detectinghidden )
+DECL_GET_SET( CSkills, enticement )
+DECL_GET_SET( CSkills, evaluatingintel )
+DECL_GET_SET( CSkills, fencing )
+DECL_GET_SET( CSkills, fishing )
+DECL_GET_SET( CSkills, focus )
+DECL_GET_SET( CSkills, forensics )
+DECL_GET_SET( CSkills, healing )
+DECL_GET_SET( CSkills, herding )
+DECL_GET_SET( CSkills, hiding )
+DECL_GET_SET( CSkills, imbuing )
+DECL_GET_SET( CSkills, inscription )
+DECL_GET_SET( CSkills, itemid )
+DECL_GET_SET( CSkills, lockpicking )
+DECL_GET_SET( CSkills, lumberjacking )
+DECL_GET_SET( CSkills, macefighting )
+DECL_GET_SET( CSkills, magery )
+DECL_GET_SET( CSkills, magicresistance )
+DECL_GET_SET( CSkills, meditation )
+DECL_GET_SET( CSkills, mining )
+DECL_GET_SET( CSkills, musicianship )
+DECL_GET_SET( CSkills, mysticism )
+DECL_GET_SET( CSkills, necromancy )
+DECL_GET_SET( CSkills, ninjitsu )
+DECL_GET_SET( CSkills, parrying )
+DECL_GET_SET( CSkills, peacemaking )
+DECL_GET_SET( CSkills, poisoning )
+DECL_GET_SET( CSkills, provocation )
+DECL_GET_SET( CSkills, removetrap )
+DECL_GET_SET( CSkills, snooping )
+DECL_GET_SET( CSkills, spellweaving )
+DECL_GET_SET( CSkills, spiritspeak )
+DECL_GET_SET( CSkills, stealing )
+DECL_GET_SET( CSkills, stealth )
+DECL_GET_SET( CSkills, swordsmanship )
+DECL_GET_SET( CSkills, tactics )
+DECL_GET_SET( CSkills, tailoring )
+DECL_GET_SET( CSkills, taming )
+DECL_GET_SET( CSkills, tasteid )
+DECL_GET_SET( CSkills, throwing )
+DECL_GET_SET( CSkills, tinkering )
+DECL_GET_SET( CSkills, tracking )
+DECL_GET_SET( CSkills, veterinary )
+DECL_GET_SET( CSkills, wrestling )
+
+// Gump Properties
+DECL_GET_SET( CGumpData, buttons )
+DECL_GET_SET( CGumpData, IDs )
+
+// Account Properties
+DECL_GET_SET( CAccount, comment )
+DECL_GET_SET( CAccount, firstLogin )
+DECL_GET_SET( CAccount, flags )
+DECL_GET_SET( CAccount, isBanned )
+DECL_GET_SET( CAccount, isCounselor )
+DECL_GET_SET( CAccount, isGM )
+DECL_GET_SET( CAccount, isOnline )
+DECL_GET_SET( CAccount, isPublic )
+DECL_GET_SET( CAccount, isSeer )
+DECL_GET_SET( CAccount, isSlot1Blocked )
+DECL_GET_SET( CAccount, isSlot2Blocked )
+DECL_GET_SET( CAccount, isSlot3Blocked )
+DECL_GET_SET( CAccount, isSlot4Blocked )
+DECL_GET_SET( CAccount, isSlot5Blocked )
+DECL_GET_SET( CAccount, isSlot6Blocked )
+DECL_GET_SET( CAccount, isSlot7Blocked )
+DECL_GET_SET( CAccount, isSuspended )
+DECL_GET_SET( CAccount, isYoung )
+DECL_GET_SET( CAccount, password )
+DECL_GET_SET( CAccount, path )
+DECL_GET_SET( CAccount, timeban )
+DECL_GET_SET( CAccount, totalPlayTime )
+DECL_GET_SET( CAccount, unused10 )
+DECL_GET( CAccount, character1 )
+DECL_GET( CAccount, character2 )
+DECL_GET( CAccount, character3 )
+DECL_GET( CAccount, character4 )
+DECL_GET( CAccount, character5 )
+DECL_GET( CAccount, character6 )
+DECL_GET( CAccount, character7 )
+DECL_GET( CAccount, currentChar )
+DECL_GET( CAccount, firstLogin )
+DECL_GET( CAccount, flags )
+DECL_GET( CAccount, id )
+DECL_GET( CAccount, lastIP )
+DECL_GET( CAccount, username )
+
+// Console Properties
+DECL_GET_SET( CConsole, logEcho )
+DECL_GET_SET( CConsole, mode )
+
+// Script Section Properties
+DECL_GET( CScriptSection, atEnd )
+DECL_GET( CScriptSection, atEndTags )
+DECL_GET( CScriptSection, numTags )
+
+// Resource Properties
+DECL_GET_SET( CResource, fishAmount )
+DECL_GET_SET( CResource, fishTime )
+DECL_GET_SET( CResource, logAmount )
+DECL_GET_SET( CResource, logTime )
+DECL_GET_SET( CResource, oreAmount )
+DECL_GET_SET( CResource, oreTime )
+
+// Party Properties
+DECL_GET_SET( CParty, isNPC )
+DECL_GET_SET( CParty, leader )
+DECL_GET( CParty, memberCount )
+
+// Script Properties
+DECL_GET_SET( CScript, script_id )
+
+// Property table
+
+// clang-format off
 inline JSPropertySpec CSpellProperties[] =
 {
-	{ "id",					CSP_ID,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "action",				CSP_ACTION,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "delay",				CSP_DELAY,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "damageDelay",		CSP_DAMAGEDELAY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "recoveryDelay",		CSP_RECOVERYDELAY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "health",				CSP_HEALTH,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "stamina",			CSP_STAMINA,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "mana",				CSP_MANA,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "mantra",				CSP_MANTRA,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "name",				CSP_NAME,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "strToSay",			CSP_STRTOSAY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "scrollLow",			CSP_SCROLLLOW,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "scrollHigh",			CSP_SCROLLHIGH,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "circle",				CSP_CIRCLE,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "lowSkill",			CSP_LOWSKILL,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "highSkill",			CSP_HIGHSKILL,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "ginseng",			CSP_GINSENG,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "moss",				CSP_MOSS,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "drake",				CSP_DRAKE,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "pearl",				CSP_PEARL,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "silk",				CSP_SILK,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "ash",				CSP_ASH,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "shade",				CSP_SHADE,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "garlic",				CSP_GARLIC,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "batwing",			CSP_BATWING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "daemonBlood",		CSP_DAEMONBLOOD,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "graveDust",			CSP_GRAVEDUST,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "noxCrystal",			CSP_NOXCRYSTAL,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "pigIron",			CSP_PIGIRON,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "requireTarget",		CSP_REQUIRETARGET,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "requireItem",		CSP_REQUIREITEM,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "requireLocation",    CSP_REQUIRELOCATION,    JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "requireChar",		CSP_REQUIRECHAR,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "travelSpell",		CSP_TRAVELSPELL,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "fieldSpell",			CSP_FIELDSPELL,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "reflectable",		CSP_REFLECTABLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "aggressiveSpell",	CSP_AGGRESSIVESPELL,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "resistable",			CSP_RESISTABLE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "soundEffect",		CSP_SOUNDEFFECT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "enabled",			CSP_ENABLED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "tithing",			CSP_TITHING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "baseDmg",			CSP_BASEDMG,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,				static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
+  UX_PSG( CSpell, id,              JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, action,          JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, delay,           JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, damageDelay,     JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, recoveryDelay,   JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, health,          JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, stamina,         JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, mana,            JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, mantra,          JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, name,            JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, strToSay,        JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, scrollLow,       JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, scrollHigh,      JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, circle,          JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, lowSkill,        JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, highSkill,       JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, ginseng,         JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, moss,            JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, drake,           JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, pearl,           JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, silk,            JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, ash,             JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, shade,           JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, garlic,          JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, batwing,         JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, daemonBlood,     JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, graveDust,       JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, noxCrystal,      JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, pigIron,         JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, requireTarget,   JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, requireItem,     JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, requireLocation, JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, requireChar,     JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, travelSpell,     JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, fieldSpell,      JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, reflectable,     JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, aggressiveSpell, JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, resistable,      JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, soundEffect,     JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, enabled,         JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, tithing,         JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, baseDmg,         JSPROP_ENUMANDPERM ),
+  JS_PS_END
 };
+// clang-format on
 
+// clang-format off
 inline JSPropertySpec CGlobalSkillProperties[] =
 {
-	{ "name",				CGSKILL_NAME,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "madeWord",			CGSKILL_MADEWORD,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "strength",			CGSKILL_STRENGTH,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "dexterity",			CGSKILL_DEXTERITY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "intelligence",		CGSKILL_INTELLIGENCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "skillDelay",			CGSKILL_SKILLDELAY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "scriptID",			CGSKILL_SCRIPTID,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,				static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
+  UX_PSG( CGlobalSkill, name,         JSPROP_ENUMANDPERM ),
+  UX_PSG( CGlobalSkill, madeWord,     JSPROP_ENUMANDPERM ),
+  UX_PSG( CGlobalSkill, strength,     JSPROP_ENUMANDPERM ),
+  UX_PSG( CGlobalSkill, dexterity,    JSPROP_ENUMANDPERM ),
+  UX_PSG( CGlobalSkill, intelligence, JSPROP_ENUMANDPERM ),
+  UX_PSG( CGlobalSkill, skillDelay,   JSPROP_ENUMANDPERM ),
+  UX_PSG( CGlobalSkill, scriptID,     JSPROP_ENUMANDPERM ),
+  JS_PS_END
 };
+// clang-format on
 
+// clang-format off
 inline JSPropertySpec CCreateEntryProperties[] =
 {
-	{ "id",					CMAKE_ID,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "name",				CMAKE_NAME,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "addItem",			CMAKE_ADDITEM,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "colour",				CMAKE_COLOUR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "sound",				CMAKE_SOUND,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "minRank",			CMAKE_MINRANK,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "maxRank",			CMAKE_MAXRANK,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "delay",				CMAKE_DELAY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "spell",				CMAKE_SPELL,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "resources",			CMAKE_RESOURCES,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "skills",				CMAKE_SKILLS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "avgMinSkill",		CMAKE_AVGMINSKILL,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "avgMaxSkill",		CMAKE_AVGMAXSKILL,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,				static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
+  UX_PSG( CCreateEntry, id,           JSPROP_ENUMANDPERM ),
+  UX_PSG( CCreateEntry, name,         JSPROP_ENUMANDPERM ),
+  UX_PSG( CCreateEntry, addItem,      JSPROP_ENUMANDPERM ),
+  UX_PSG( CCreateEntry, colour,       JSPROP_ENUMANDPERM ),
+  UX_PSG( CCreateEntry, sound,        JSPROP_ENUMANDPERM ),
+  UX_PSG( CCreateEntry, minRank,      JSPROP_ENUMANDPERM ),
+  UX_PSG( CCreateEntry, maxRank,      JSPROP_ENUMANDPERM ),
+  UX_PSG( CCreateEntry, delay,        JSPROP_ENUMANDPERM ),
+  UX_PSG( CCreateEntry, spell,        JSPROP_ENUMANDPERM ),
+  UX_PSG( CCreateEntry, resources,    JSPROP_ENUMANDPERM ),
+  UX_PSG( CCreateEntry, skills,       JSPROP_ENUMANDPERM ),
+  UX_PSG( CCreateEntry, avgMinSkill,  JSPROP_ENUMANDPERM ),
+  UX_PSG( CCreateEntry, avgMaxSkill,  JSPROP_ENUMANDPERM ),
+  JS_PS_END
 };
+// clang-format on
 
+// clang-format off
 inline JSPropertySpec CTimerProperties[] =
 {
-	// Character Timers
-	{ "TIMEOUT",			TIMER_TIMEOUT,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "INVIS",				TIMER_INVIS,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "HUNGER",				TIMER_HUNGER,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "THIRST",				TIMER_THIRST,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "POISONTIME",			TIMER_POISONTIME,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "POISONTEXT",			TIMER_POISONTEXT,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "POISONWEAROFF",		TIMER_POISONWEAROFF,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "SPELLTIME",			TIMER_SPELLTIME,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "SPELLRECOVERYTIME",	TIMER_SPELLRECOVERYTIME,JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "CRIMFLAG",			TIMER_CRIMFLAG,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "ANTISPAM",			TIMER_ANTISPAM,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "MURDERRATE",			TIMER_MURDERRATE,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "PEACETIMER",			TIMER_PEACETIMER,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "FLYINGTOGGLE",		TIMER_FLYINGTOGGLE,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "FIREFIELDTICK",		TIMER_FIREFIELDTICK,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "POISONFIELDTICK",	TIMER_POISONFIELDTICK,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "PARAFIELDTICK",		TIMER_PARAFIELDTICK,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "MOVETIME",			TIMER_MOVETIME,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "SPATIMER",			TIMER_SPATIMER,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "SUMMONTIME",			TIMER_SUMMONTIME,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "EVADETIME",			TIMER_EVADETIME,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "LOYALTYTIME",		TIMER_LOYALTYTIME,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "IDLEANIMTIME",		TIMER_IDLEANIMTIME,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "LOGOUT",				TIMER_LOGOUT,			JSPROP_ENUMPERMRO, nullptr, nullptr },
+  // Character Timers
+  UX_PSG( CTimer, TIMEOUT,           JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, INVIS,             JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, HUNGER,            JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, THIRST,            JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, POISONTIME,        JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, POISONTEXT,        JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, POISONWEAROFF,     JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, SPELLTIME,         JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, SPELLRECOVERYTIME, JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, CRIMFLAG,          JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, ANTISPAM,          JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, MURDERRATE,        JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, PEACETIMER,        JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, FLYINGTOGGLE,      JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, FIREFIELDTICK,     JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, POISONFIELDTICK,   JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, PARAFIELDTICK,     JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, MOVETIME,          JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, SPATIMER,          JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, SUMMONTIME,        JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, EVADETIME,         JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, LOYALTYTIME,       JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, IDLEANIMTIME,      JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, LOGOUT,            JSPROP_ENUMPERMRO ),
 
-	// Socket Timers
-	{ "SOCK_SKILLDELAY",		TIMER_SOCK_SKILLDELAY,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "SOCK_OBJDELAY",			TIMER_SOCK_OBJDELAY,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "SOCK_SPIRITSPEAK",		TIMER_SOCK_SPIRITSPEAK,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "SOCK_TRACKING",			TIMER_SOCK_TRACKING,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "SOCK_FISHING",			TIMER_SOCK_FISHING,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "SOCK_MUTETIME",			TIMER_SOCK_MUTETIME,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "SOCK_TRACKINGDISPLAY",	TIMER_SOCK_TRACKINGDISPLAY,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "SOCK_TRAFFICWARDEN",		TIMER_SOCK_TRAFFICWARDEN,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "SOCK_SPEEDHACKPENALTY",	TIMER_SOCK_SPEEDHACKPENALTY,JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "SOCK_SPEEDHACKLOGGED",	TIMER_SOCK_SPEEDHACKLOGGED,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ nullptr,					static_cast<SI08>(0),		static_cast<UI08>(0), nullptr, nullptr }
+  // Socket Timers
+  UX_PSG( CTimer, SOCK_SKILLDELAY,        JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, SOCK_OBJDELAY,          JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, SOCK_SPIRITSPEAK,       JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, SOCK_TRACKING,          JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, SOCK_FISHING,           JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, SOCK_MUTETIME,          JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, SOCK_TRACKINGDISPLAY,   JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, SOCK_TRAFFICWARDEN,     JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, SOCK_SPEEDHACKPENALTY,  JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, SOCK_SPEEDHACKLOGGED,   JSPROP_ENUMPERMRO ),
+  JS_PS_END
 };
+// clang-format on
 
+// clang-format off
 inline JSPropertySpec CRaceProperties[] =
 {
-	{ "id",					CRP_ID,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "name",				CRP_NAME,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "requiresBeard",		CRP_REQUIRESBEARD,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "requiresNoBeard",	CRP_REQUIRESNOBEARD,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isPlayerRace",		CRP_ISPLAYERRACE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "genderRestrict",		CRP_GENDERRESTRICT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "armourClass",		CRP_ARMOURCLASS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "languageSkillMin",	CRP_LANGUAGESKILLMIN,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "poisonResistance",	CRP_POISONRESISTANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "magicResistance",	CRP_MAGICRESISTANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "visibleDistance",	CRP_VISIBLEDISTANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "nightVision",		CRP_NIGHTVISION,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,				static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
+  UX_PSGS( CRace, id,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CRace, name,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CRace, requiresBeard,    JSPROP_ENUMANDPERM ),
+  UX_PSGS( CRace, requiresNoBeard,  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CRace, isPlayerRace,     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CRace, genderRestrict,   JSPROP_ENUMANDPERM ),
+  UX_PSGS( CRace, armourClass,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CRace, languageSkillMin, JSPROP_ENUMANDPERM ),
+  UX_PSGS( CRace, poisonResistance, JSPROP_ENUMANDPERM ),
+  UX_PSGS( CRace, magicResistance,  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CRace, visibleDistance,  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CRace, nightVision,      JSPROP_ENUMANDPERM ),
+  JS_PS_END
 };
+// clang-format on
 
-
+// clang-format off
 inline JSPropertySpec CRegionProperties[] =
 {
-	{ "name",				CREGP_NAME,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "mayor",				CREGP_MAYOR,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "race",				CREGP_RACE,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "tax",				CREGP_TAX,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "taxResource",		CREGP_TAXRESOURCE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "canMark",			CREGP_CANMARK,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "canRecall",			CREGP_CANRECALL,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "canGate",			CREGP_CANGATE,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "canTeleport",		CREGP_CANTELEPORT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "canPlaceHouse",		CREGP_CANPLACEHOUSE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isGuarded",			CREGP_ISGUARDED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "canCastAggressive",	CREGP_CANCASTAGGRESSIVE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isSafeZone",			CREGP_ISSAFEZONE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "health",				CREGP_HEALTH,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isDungeon",			CREGP_ISDUNGEON,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isDisabled",			CREGP_ISDISABLED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "worldNumber",		CREGP_WORLDNUMBER,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "instanceID",			CREGP_INSTANCEID,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "chanceBigOre",		CREGP_CHANCEBIGORE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "numOrePrefs",		CREGP_NUMOREPREFERENCES,	JSPROP_ENUMPERMRO, nullptr, nullptr  },
-	{ "population",			CREGP_POPULATION,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "members",			CREGP_MEMBERS,				JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "id",					CREGP_ID,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "scriptTrigger",		CREGP_SCRIPTTRIGGER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "scriptTriggers",		CREGP_SCRIPTTRIGGERS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "numGuards",			CREGP_NUMGUARDS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "taxes",				CREGP_TAXES,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "reserves",			CREGP_RESERVES,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "appearance",			CREGP_APPEARANCE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "music",				CREGP_MUSIC,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "weather",			CREGP_WEATHER,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "owner",				CREGP_OWNER,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,				static_cast<SI08>(0),		static_cast<UI08>(0), nullptr, nullptr }
+  UX_PSG(  CRegion, name,              JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, mayor,             JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, race,              JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, tax,               JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, taxResource,       JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, canMark,           JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, canRecall,         JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, canGate,           JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, canTeleport,       JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, canPlaceHouse,     JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, isGuarded,         JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, canCastAggressive, JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, isSafeZone,        JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, health,            JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, isDungeon,         JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, isDisabled,        JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, worldNumber,       JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, instanceID,        JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, chanceBigOre,      JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, numOrePrefs,       JSPROP_ENUMPERMRO  ),
+  UX_PSG(  CRegion, population,        JSPROP_ENUMPERMRO  ),
+  UX_PSG(  CRegion, members,           JSPROP_ENUMPERMRO  ),
+  UX_PSG(  CRegion, id,                JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, scriptTrigger,     JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, scriptTriggers,    JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, numGuards,         JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, taxes,             JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, reserves,          JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, appearance,        JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, music,             JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, weather,           JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, owner,             JSPROP_ENUMANDPERM ),
+  JS_PS_END
 };
+// clang-format on
 
+// clang-format off
 inline JSPropertySpec CSpawnRegionProperties[] =
 {
-	{ "name",				CSPAWNREGP_NAME,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "regionNum",			CSPAWNREGP_REGIONNUM,				JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "itemList",			CSPAWNREGP_ITEMLIST,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "npcList",			CSPAWNREGP_NPCLIST,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "item",				CSPAWNREGP_ITEM,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "npc",				CSPAWNREGP_NPC,						JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "maxItems",			CSPAWNREGP_MAXITEMS,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "maxNpcs",			CSPAWNREGP_MAXNPCS,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "itemCount",			CSPAWNREGP_ITEMCOUNT,				JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "npcCount",			CSPAWNREGP_NPCCOUNT,				JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "onlyOutside",		CSPAWNREGP_ONLYOUTSIDE,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isSpawner",			CSPAWNREGP_ISSPAWNER,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "forceSpawn",			CSPAWNREGP_FORCESPAWN,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "defZ",				CSPAWNREGP_DEFZ,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "prefZ",				CSPAWNREGP_PREFZ,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "x1",					CSPAWNREGP_X1,						JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "y1",					CSPAWNREGP_Y1,						JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "x2",					CSPAWNREGP_X2,						JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "y2",					CSPAWNREGP_Y2,						JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "world",				CSPAWNREGP_WORLD,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "instanceID",			CSPAWNREGP_INSTANCEID,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "minTime",			CSPAWNREGP_MINTIME,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "maxTime",			CSPAWNREGP_MAXTIME,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "call",				CSPAWNREGP_CALL,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,				static_cast<SI08>(0),				static_cast<UI08>(0), nullptr, nullptr }
+  UX_PSGS( CSpawnRegion, name,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSpawnRegion, regionNum,     JSPROP_ENUMPERMRO ),
+  UX_PSGS( CSpawnRegion, itemList,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSpawnRegion, npcList,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSpawnRegion, item,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSpawnRegion, npc,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSpawnRegion, maxItems,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSpawnRegion, maxNpcs,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSpawnRegion, itemCount,     JSPROP_ENUMPERMRO  ),
+  UX_PSGS( CSpawnRegion, npcCount,      JSPROP_ENUMPERMRO  ),
+  UX_PSGS( CSpawnRegion, onlyOutside,   JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSpawnRegion, isSpawner,     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSpawnRegion, forceSpawn,    JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSpawnRegion, defZ,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSpawnRegion, prefZ,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSpawnRegion, x1,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSpawnRegion, y1,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSpawnRegion, x2,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSpawnRegion, y2,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSpawnRegion, world,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSpawnRegion, instanceID,    JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSpawnRegion, minTime,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSpawnRegion, maxTime,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSpawnRegion, call,          JSPROP_ENUMANDPERM ),
+  JS_PS_END
 };
+// clang-format on
 
+// clang-format off
 inline JSPropertySpec CGuildProperties[] =
 {
-	{ "name",			CGP_NAME,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "id",				CGP_ID,				JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "type",			CGP_TYPE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "master",			CGP_MASTER,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "stone",			CGP_STONE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "numMembers",		CGP_NUMMEMBERS,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "numRecruits",	CGP_NUMRECRUITS,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "charter",		CGP_CHARTER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "abbreviation",	CGP_ABBREVIATION,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "webPage",		CGP_WEBPAGE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,			static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
+  UX_PSGS( CGuild, name,         JSPROP_ENUMANDPERM ),
+  UX_PSG(  CGuild, id,           JSPROP_ENUMPERMRO  ),
+  UX_PSG(  CGuild, type,         JSPROP_ENUMANDPERM ),
+  UX_PSG(  CGuild, master,       JSPROP_ENUMANDPERM ),
+  UX_PSG(  CGuild, stone,        JSPROP_ENUMANDPERM ),
+  UX_PSG(  CGuild, numMembers,   JSPROP_ENUMPERMRO  ),
+  UX_PSG(  CGuild, numRecruits,  JSPROP_ENUMPERMRO  ),
+  UX_PSGS( CGuild, charter,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CGuild, abbreviation, JSPROP_ENUMANDPERM ),
+  UX_PSGS( CGuild, webPage,      JSPROP_ENUMANDPERM ),
+  JS_PS_END
 };
+// clang-format on
 
+// clang-format off
 inline JSPropertySpec CCharacterProps[] =
 {
-	{ "sectionID",		CCP_SECTIONID,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "name",			CCP_NAME,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "origName",		CCP_ORIGNAME,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "title",			CCP_TITLE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "x",				CCP_X,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "y",				CCP_Y,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "z",				CCP_Z,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "oldX",			CCP_OLDX,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "oldY",			CCP_OLDY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "oldZ",			CCP_OLDZ,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "id",				CCP_ID,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "colour",			CCP_COLOUR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "color",			CCP_COLOUR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "skin",			CCP_COLOUR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "hue",			CCP_COLOUR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "controlSlots",	CCP_CONTROLSLOTS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "controlSlotsUsed",	CCP_CONTROLSLOTSUSED,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "orneriness",		CCP_ORNERINESS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "owner",			CCP_OWNER,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "visible",		CCP_VISIBLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "serial",			CCP_SERIAL,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "health",			CCP_HEALTH,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "scripttrigger",	CCP_SCRIPTTRIGGER,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "scriptTriggers",	CCP_SCRIPTTRIGGERS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "worldnumber",	CCP_WORLDNUMBER,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "instanceID",		CCP_INSTANCEID,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "target",			CCP_TARGET,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "dexterity",		CCP_DEXTERITY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "intelligence",	CCP_INTELLIGENCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "strength",		CCP_STRENGTH,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "actualDexterity",	CCP_ACTUALDEXTERITY,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "actualIntelligence",	CCP_ACTUALINTELLIGENCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "actualStrength",		CCP_ACTUALSTRENGTH,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "healthRegenBonus",	CCP_HEALTHREGENBONUS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "staminaRegenBonus",	CCP_STAMINAREGENBONUS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "manaRegenBonus",		CCP_MANAREGENBONUS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "skills",			CCP_SKILLS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "mana",			CCP_MANA,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "stamina",		CCP_STAMINA,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "pack",			CCP_CHARPACK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "fame",			CCP_FAME,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "karma",			CCP_KARMA,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "attack",			CCP_ATTACK,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "canAttack",		CCP_CANATTACK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "karmaLock",		CCP_KARMALOCK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "fleeAt",			CCP_FLEEAT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "reAttackAt",		CCP_REATTACKAT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "brkPeaceChance",	CCP_BRKPEACE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "setPeace",		CCP_SETPEACE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "hunger",			CCP_HUNGER,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "hungerRate",		CCP_HUNGERRATE,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "thirst",			CCP_THIRST,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "thirstRate",		CCP_THIRSTRATE,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "frozen",			CCP_FROZEN,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "commandlevel",	CCP_COMMANDLEVEL,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "race",			CCP_RACE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "hasStolen",		CCP_HASSTOLEN,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "criminal",		CCP_CRIMINAL,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "murderer",		CCP_MURDERER,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "innocent",		CCP_INNOCENT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "murdercount",	CCP_MURDERCOUNT,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "neutral",		CCP_NEUTRAL,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "npcFlag",		CCP_NPCFLAG,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "npcGuild",		CCP_NPCGUILD,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "gender",			CCP_GENDER,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "dead",			CCP_DEAD,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "npc",			CCP_NPC,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isAwake",		CCP_AWAKE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "online",			CCP_ONLINE,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "direction",		CCP_DIRECTION,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isRunning",		CCP_ISRUNNING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "region",			CCP_REGION,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "town",			CCP_TOWN,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "guild",			CCP_GUILD,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "guildNumber",	CCP_GUILDNUMBER,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "baseskills",		CCP_BASESKILLS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "skillsused",		CCP_SKILLUSE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "socket",			CCP_SOCKET,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isChar",			CCP_ISCHAR,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "isItem",			CCP_ISITEM,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "isSpawner",		CCP_ISSPAWNER,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "spawnSerial",	CCP_SPAWNSERIAL,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "maxhp",			CCP_MAXHP,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "maxstamina",		CCP_MAXSTAMINA,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "maxmana",		CCP_MAXMANA,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "oldWandertype",	CCP_OLDWANDERTYPE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "wandertype",		CCP_WANDERTYPE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "fx1",			CCP_FX1,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "fy1",			CCP_FY1,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "fx2",			CCP_FX2,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "fy2",			CCP_FY2,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "fz",				CCP_FZ,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "spawnX",			CCP_SPAWNX,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "spawnY",			CCP_SPAWNY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "spawnZ",			CCP_SPAWNZ,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "pathTargX",		CCP_PATHTARGX,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "pathTargY",		CCP_PATHTARGY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isonhorse",		CCP_ISONHORSE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isFlying",		CCP_ISFLYING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isGuarded",		CCP_ISGUARDED,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "guarding",		CCP_GUARDING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "tempdex",		CCP_TDEXTERITY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "tempint",		CCP_TINTELLIGENCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "tempstr",		CCP_TSTRENGTH,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "poison",			CCP_POISON,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "poisonedBy",		CCP_POISONEDBY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "lightlevel",		CCP_LIGHTLEVEL,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "vulnerable",		CCP_VULNERABLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "willhunger",		CCP_HUNGERSTATUS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "willthirst",		CCP_THIRSTSTATUS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "lodamage",		CCP_LODAMAGE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "hidamage",		CCP_HIDAMAGE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "flag",			CCP_FLAG,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "atWar",			CCP_ATWAR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "spellCast",		CCP_SPELLCAST,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isCasting",		CCP_ISCASTING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "priv",			CCP_PRIV,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "townPriv",		CCP_TOWNPRIV,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "guildTitle",		CCP_GUILDTITLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "hairStyle",		CCP_HAIRSTYLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "hairColour",		CCP_HAIRCOLOUR,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "hairColor",		CCP_HAIRCOLOUR,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "beardStyle",		CCP_BEARDSTYLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "beardColour",	CCP_BEARDCOLOUR,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "beardColor",		CCP_BEARDCOLOUR,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "fontType",		CCP_FONTTYPE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "sayColour",		CCP_SAYCOLOUR,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "emoteColour",	CCP_EMOTECOLOUR,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "attacker",		CCP_ATTACKER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "raceGate",		CCP_RACEGATE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "skillLock",		CCP_SKILLLOCK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "skillCaps",		CCP_SKILLCAP,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "deaths",			CCP_DEATHS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "ownerCount",		CCP_OWNERCOUNT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "nextAct",		CCP_NEXTACT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "petCount",		CCP_PETCOUNT,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "followerCount",	CCP_FOLLOWERCOUNT,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "ownedItemsCount",CCP_OWNEDITEMSCOUNT,JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "cell",			CCP_CELL,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "allmove",		CCP_ALLMOVE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "houseicons",		CCP_HOUSEICONS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "spattack",		CCP_SPATTACK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "spdelay",		CCP_SPDELAY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "swingSpeedIncrease",	CCP_SWINGSPEEDINCREASE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "luck",			CCP_LUCK,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "damageIncrease",	CCP_DAMAGEINCREASE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "hitChance",		CCP_HITCHANCE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "defenseChance",	CCP_DEFENSECHANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "aitype",			CCP_AITYPE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "split",			CCP_SPLIT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "splitchance",	CCP_SPLITCHANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "hireling",		CCP_HIRELING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "trainer",		CCP_TRAINER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "weight",			CCP_WEIGHT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "squelch",		CCP_SQUELCH,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isJailed",		CCP_ISJAILED,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "magicReflect",	CCP_MAGICREFLECT,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "permanentMagicReflect",	CCP_PERMMAGICREFLECT,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "hideFameKarmaTitle",	CCP_HIDEFAMEKARMATITLE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "noCharCollide",	CCP_NOCHARCOLLIDE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "tamed",			CCP_TAMED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "tamedHungerRate",CCP_TAMEDHUNGERRATE,JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "tamedThirstRate",CCP_TAMEDTHIRSTRATE,JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "hungerWildChance",CCP_HUNGERWILDCHANCE,JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "thirstWildChance",CCP_THIRSTWILDCHANCE,JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "foodList",		CCP_FOODLIST,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "mounted",		CCP_MOUNTED,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "stabled",		CCP_STABLED,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isUsingPotion",	CCP_USINGPOTION,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "stealth",		CCP_STEALTH,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "skillToTame",	CCP_SKILLTOTAME,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "skillToProv",	CCP_SKILLTOPROV,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "skillToPeace",	CCP_SKILLTOPEACE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "poisonStrength",	CCP_POISONSTRENGTH,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isPolymorphed",	CCP_ISPOLYMORPHED,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isIncognito",	CCP_ISINCOGNITO,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isDisguised",	CCP_ISDISGUISED,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "canRun",			CCP_CANRUN,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isMeditating",	CCP_ISMEDITATING,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isGM",			CCP_ISGM,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "canBroadcast",	CCP_CANBROADCAST,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "singClickSer",	CCP_SINGCLICKSER,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "noSkillTitles",	CCP_NOSKILLTITLES,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isGMPageable",	CCP_ISGMPAGEABLE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "canSnoop",		CCP_CANSNOOP,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isCounselor",	CCP_ISCOUNSELOR,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "noNeedMana",		CCP_NONEEDMANA,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isDispellable",	CCP_ISDISPELLABLE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "noNeedReags",	CCP_NONEEDREAGS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "orgID",			CCP_ORGID,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "orgSkin",		CCP_ORGSKIN,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isAnimal",		CCP_ISANIMAL,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "isPackAnimal",	CCP_ISPACKANIMAL,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "isHuman",		CCP_ISHUMAN,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "isShop",			CCP_ISSHOP,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "maxLoyalty",		CCP_MAXLOYALTY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "loyalty",		CCP_LOYALTY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "loyaltyRate",	CCP_LOYALTYRATE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "shouldSave",		CCP_SHOULDSAVE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "origin",			CCP_ORIGIN,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "partyLootable",	CCP_PARTYLOOTABLE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "party",			CCP_PARTY,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "multi",			CCP_MULTI,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "accountNum",		CCP_ACCOUNTNUM,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "account",		CCP_ACCOUNT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "createdOn",		CCP_CREATEDON,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "playTime",		CCP_PLAYTIME,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "housesOwned",	CCP_HOUSESOWNED,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "housesCoOwned",	CCP_HOUSESCOOWNED,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "tithing",		CCP_TITHING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "lastOn",			CCP_LASTON,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "lastOnSecs",		CCP_LASTONSECS,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ nullptr,			static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
+  UX_PSGS( CCharacter, sectionID,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, name,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, origName,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, title,                 JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, x,                     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, y,                     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, z,                     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, oldX,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, oldY,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, oldZ,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, id,                    JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, colour,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, color,                 JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, skin,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, hue,                   JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, controlSlots,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, controlSlotsUsed,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, orneriness,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, owner,                 JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, visible,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, serial,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, health,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, scripttrigger,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, scriptTriggers,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, worldnumber,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, instanceID,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, target,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, dexterity,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, intelligence,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, strength,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, actualDexterity,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, actualIntelligence,    JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, actualStrength,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, healthRegenBonus,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, staminaRegenBonus,     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, manaRegenBonus,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, skills,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, mana,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, stamina,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, pack,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, fame,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, karma,                 JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, attack,                JSPROP_ENUMPERMRO ),
+  UX_PSGS( CCharacter, canAttack,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, karmaLock,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, fleeAt,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, reAttackAt,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, brkPeaceChance,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, setPeace,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, hunger,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, hungerRate,            JSPROP_ENUMPERMRO ),
+  UX_PSGS( CCharacter, thirst,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, thirstRate,            JSPROP_ENUMPERMRO ),
+  UX_PSGS( CCharacter, frozen,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, commandlevel,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, race,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, hasStolen,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, criminal,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, murderer,              JSPROP_ENUMPERMRO ),
+  UX_PSGS( CCharacter, innocent,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, murdercount,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, neutral,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, npcFlag,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, npcGuild,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, gender,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, dead,                  JSPROP_ENUMPERMRO ),
+  UX_PSGS( CCharacter, npc,                   JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, isAwake,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, online,                JSPROP_ENUMPERMRO ),
+  UX_PSGS( CCharacter, direction,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, isRunning,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, region,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, town,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, guild,                 JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, guildNumber,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, baseskills,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, skillsused,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, socket,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, isChar,                JSPROP_ENUMPERMRO ),
+  UX_PSGS( CCharacter, isItem,                JSPROP_ENUMPERMRO ),
+  UX_PSGS( CCharacter, isSpawner,             JSPROP_ENUMPERMRO ),
+  UX_PSGS( CCharacter, spawnSerial,           JSPROP_ENUMPERMRO ),
+  UX_PSGS( CCharacter, maxhp,                 JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, maxstamina,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, maxmana,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, oldWandertype,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, wandertype,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, fx1,                   JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, fy1,                   JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, fx2,                   JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, fy2,                   JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, fz,                    JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, spawnX,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, spawnY,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, spawnZ,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, pathTargX,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, pathTargY,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, isonhorse,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, isFlying,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, isGuarded,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, guarding,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, tempdex,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, tempint,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, tempstr,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, poison,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, poisonedBy,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, lightlevel,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, vulnerable,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, willhunger,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, willthirst,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, lodamage,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, hidamage,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, flag,                  JSPROP_ENUMPERMRO ),
+  UX_PSGS( CCharacter, atWar,                 JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, spellCast,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, isCasting,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, priv,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, townPriv,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, guildTitle,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, hairStyle,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, hairColour,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, hairColor,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, beardStyle,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, beardColour,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, beardColor,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, fontType,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, sayColour,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, emoteColour,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, attacker,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, raceGate,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, skillLock,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, skillCaps,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, deaths,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, ownerCount,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, nextAct,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, petCount,              JSPROP_ENUMPERMRO ),
+  UX_PSGS( CCharacter, followerCount,         JSPROP_ENUMPERMRO ),
+  UX_PSGS( CCharacter, ownedItemsCount,       JSPROP_ENUMPERMRO ),
+  UX_PSGS( CCharacter, cell,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, allmove,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, houseicons,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, spattack,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, spdelay,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, swingSpeedIncrease,    JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, luck,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, damageIncrease,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, hitChance,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, defenseChance,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, aitype,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, split,                 JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, splitchance,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, hireling,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, trainer,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, weight,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, squelch,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, isJailed,              JSPROP_ENUMPERMRO ),
+  UX_PSGS( CCharacter, magicReflect,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, permanentMagicReflect, JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, hideFameKarmaTitle,    JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, noCharCollide,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, tamed,                 JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, tamedHungerRate,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, tamedThirstRate,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, hungerWildChance,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, thirstWildChance,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, foodList,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, mounted,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, stabled,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, isUsingPotion,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, stealth,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, skillToTame,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, skillToProv,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, skillToPeace,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, poisonStrength,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, isPolymorphed,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, isIncognito,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, isDisguised,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, canRun,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, isMeditating,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, isGM,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, canBroadcast,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, singClickSer,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, noSkillTitles,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, isGMPageable,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, canSnoop,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, isCounselor,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, noNeedMana,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, isDispellable,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, noNeedReags,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, orgID,                 JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, orgSkin,               JSPROP_ENUMANDPERM ),
+  UX_PSG(  CCharacter, isAnimal,              JSPROP_ENUMPERMRO ),
+  UX_PSGS( CCharacter, isPackAnimal,          JSPROP_ENUMPERMRO ),
+  UX_PSG(  CCharacter, isHuman,               JSPROP_ENUMPERMRO ),
+  UX_PSGS( CCharacter, isShop,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, maxLoyalty,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, loyalty,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, loyaltyRate,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, shouldSave,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, origin,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, partyLootable,         JSPROP_ENUMANDPERM ),
+  UX_PSG(  CCharacter, party,                 JSPROP_ENUMPERMRO ),
+  UX_PSGS( CCharacter, multi,                 JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, accountNum,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, account,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, createdOn,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, playTime,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, housesOwned,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, housesCoOwned,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, tithing,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, lastOn,                JSPROP_ENUMPERMRO ),
+  UX_PSGS( CCharacter, lastOnSecs,            JSPROP_ENUMPERMRO ),
+  JS_PS_END
 };
+// clang-format on
 
+// clang-format off
 inline JSPropertySpec CItemProps[] =
 {
-	{ "sectionID",		CIP_SECTIONID,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "name",			CIP_NAME,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "title",			CIP_TITLE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "x",				CIP_X,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "y",				CIP_Y,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "z",				CIP_Z,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "oldX",			CIP_OLDX,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "oldY",			CIP_OLDY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "oldZ",			CIP_OLDZ,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "id",				CIP_ID,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "colour",			CIP_COLOUR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "color",			CIP_COLOUR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "skin",			CIP_COLOUR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "hue",			CIP_COLOUR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "owner",			CIP_OWNER,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "visible",		CIP_VISIBLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "serial",			CIP_SERIAL,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "health",			CIP_HEALTH,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "scripttrigger",	CIP_SCRIPTTRIGGER,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "scriptTriggers",	CIP_SCRIPTTRIGGERS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "worldnumber",	CIP_WORLDNUMBER,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "instanceID",		CIP_INSTANCEID,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "amount",			CIP_AMOUNT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "container",		CIP_CONTAINER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "type",			CIP_TYPE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "more",			CIP_MORE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "more0",			CIP_MORE0,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "more1",			CIP_MORE1,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "more2",			CIP_MORE2,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "morex",			CIP_MOREX,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "morey",			CIP_MOREY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "morez",			CIP_MOREZ,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "movable",		CIP_MOVABLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "att",			CIP_ATT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "layer",			CIP_LAYER,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "itemsinside",	CIP_ITEMSINSIDE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "totalItemCount",	CIP_TOTALITEMCOUNT,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "decayable",		CIP_DECAYABLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "decaytime",		CIP_DECAYTIME,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "lodamage",		CIP_LODAMAGE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "hidamage",		CIP_HIDAMAGE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "ac",				CIP_AC,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "def",			CIP_DEF,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "resistCold",		CIP_RESISTCOLD,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "resistHeat",		CIP_RESISTHEAT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "resistLight",	CIP_RESISTLIGHT,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "resistLightning",CIP_RESISTLIGHTNING,JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "resistPoison",	CIP_RESISTPOISON,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "resistRain",		CIP_RESISTRAIN,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "resistSnow",		CIP_RESISTSNOW,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "damageHeat",		CIP_DAMAGEHEAT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "damageCold",		CIP_DAMAGECOLD,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "damageLight",	CIP_DAMAGELIGHT,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "damageLightning",CIP_DAMAGELIGHTNING,JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "damagePoison",	CIP_DAMAGEPOISON,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "damageRain",		CIP_DAMAGERAIN,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "damageSnow",		CIP_DAMAGESNOW,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "lowerStateReq",	CIP_LOWERSTATREQ,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "name2",			CIP_NAME2,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isChar",			CIP_ISCHAR,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "isItem",			CIP_ISITEM,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "isSpawner",		CIP_ISSPAWNER,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "race",			CIP_RACE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "maxhp",			CIP_MAXHP,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "maxUses",		CIP_MAXUSES,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "usesLeft",		CIP_USESLEFT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "rank",			CIP_RANK,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "creator",		CIP_CREATOR,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "poison",			CIP_POISON,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "poisonedBy",		CIP_POISONEDBY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "poisonCharges",	CIP_POISONCHARGES,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "dir",			CIP_DIR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "wipable",		CIP_WIPABLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "buyvalue",		CIP_BUYVALUE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "sellvalue",		CIP_SELLVALUE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "vendorPrice",	CIP_VENDORPRICE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "restock",		CIP_RESTOCK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "good",			CIP_GOOD,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "divinelock",		CIP_DIVINELOCK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "baseWeight",		CIP_BASEWEIGHT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "weight",			CIP_WEIGHT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "weightMax",		CIP_WEIGHTMAX,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "maxItems",		CIP_MAXITEMS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "strength",		CIP_STRENGTH,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "dexterity",		CIP_DEXTERITY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "intelligence",	CIP_INTELLIGENCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "healthRegenBonus",	CIP_HEALTHREGENBONUS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "staminaRegenBonus",	CIP_STAMINAREGENBONUS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "manaRegenBonus",		CIP_MANAREGENBONUS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "corpse",			CIP_CORPSE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "desc",			CIP_DESC,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "event",			CIP_EVENT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "tempLastTraded",	CIP_TEMPLASTTRADED,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "tempTimer",		CIP_TEMPTIMER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "shouldSave",		CIP_SHOULDSAVE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-
-	{ "isNewbie",		CIP_ISNEWBIE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isDispellable",	CIP_ISDISPELLABLE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "madeWith",		CIP_MADEWITH,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "entryMadeFrom",	CIP_ENTRYMADEFROM,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isPileable",		CIP_ISPILEABLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isMarkedByMaker",CIP_ISMARKEDBYMAKER,JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isDyeable",		CIP_ISDYEABLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isDamageable",	CIP_ISDAMAGEABLE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isWipeable",		CIP_ISWIPEABLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isGuarded",		CIP_ISGUARDED,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isDoorOpen",		CIP_ISDOOROPEN,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isFieldSpell",	CIP_ISFIELDSPELL,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "isLockedDown",	CIP_ISLOCKEDDOWN,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "isShieldType",	CIP_ISSHIELDTYPE,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "isMetalType",	CIP_ISMETALTYPE,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "isLeatherType",	CIP_ISLEATHERTYPE,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "canBeLockedDown",CIP_CANBELOCKEDDOWN,JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "isContType",		CIP_ISCONTTYPE,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "carveSection",	CIP_CARVESECTION,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "ammoID",			CIP_AMMOID,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "ammoHue",		CIP_AMMOHUE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "ammoFX",			CIP_AMMOFX,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "ammoFXHue",		CIP_AMMOFXHUE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "ammoFXRender",	CIP_AMMOFXRENDER,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "speed",			CIP_SPEED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "swingSpeedIncrease",		CIP_SWINGSPEEDINCREASE ,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "damageIncrease",	CIP_DAMAGEINCREASE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "healthLeech",	CIP_HEALTHLEECH,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "staminaLeech",	CIP_STAMINALEECH,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "manaLeech",		CIP_MANALEECH,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-
-	{ "hitChance",		CIP_HITCHANCE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "defenseChance",	CIP_DEFENSECHANCE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-
-	{ "luck",		CIP_LUCK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-
-	{ "healthBonus",	CIP_HEALTHBONUS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "staminaBonus",	CIP_STAMINABONUS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "manaBonus",		CIP_MANABONUS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "artifactRarity",	CIP_ARTIFACTRARITY,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-
-	{ "durabilityHpBonus",	CIP_DURABILITYHPBONUS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-
-	{ "multi",			CIP_MULTI,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "maxRange",		CIP_MAXRANGE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "baseRange",		CIP_BASERANGE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "region",			CIP_REGION,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "spawnSerial",	CIP_SPAWNSERIAL,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "origin",			CIP_ORIGIN,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isItemHeld",		CIP_ISITEMHELD,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "stealable",		CIP_STEALABLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-
-	// The Following vars are specific to CSpawnItem objects
-	{ "spawnsection",	CIP_SPAWNSECTION,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "sectionalist",	CIP_SECTIONALIST,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "mininterval",	CIP_MININTERVAL,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "maxinterval",	CIP_MAXINTERVAL,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-
-	// The Following vars are specific to cMultiObj objects
-	{ "lockdowns",		CIP_LOCKDDOWNS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "maxLockdowns",	CIP_MAXLOCKDOWNS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "trashContainers",	CIP_TRASHCONTAINERS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "maxTrashContainers",	CIP_MAXTRASHCONTAINERS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "secureContainers",	CIP_SECURECONTAINERS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "maxSecureContainers",CIP_MAXSECURECONTAINERS,JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "friends",		CIP_FRIENDS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "maxFriends",		CIP_MAXFRIENDS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "guests",			CIP_GUESTS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "maxGuests",		CIP_MAXGUESTS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "owners",			CIP_OWNERS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "maxOwners",		CIP_MAXOWNERS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "bans",			CIP_BANS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "maxBans",		CIP_MAXBANS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "vendors",		CIP_VENDORS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "maxVendors",		CIP_MAXVENDORS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "deed",			CIP_DEED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isPublic",		CIP_ISPUBLIC,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "buildTimestamp",	CIP_BUILDTIMESTAMP,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "tradeTimestamp",	CIP_TRADETIMESTAMP,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "banX",			CIP_BANX,			JSPROP_ENUMANDPERM, nullptr, nullptr},
-	{ "banY",			CIP_BANY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "tithing",		CIP_TITHING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "moveType",		CIP_MOVETYPE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,			static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
+  UX_PSGS( CItem, sectionID,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, name,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, title,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, x,                   JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, y,                   JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, z,                   JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, oldX,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, oldY,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, oldZ,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, id,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, colour,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, color,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, skin,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, hue,                 JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, owner,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, visible,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, serial,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, health,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, scripttrigger,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, scriptTriggers,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, worldnumber,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, instanceID,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, amount,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, container,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, type,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, more,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, more0,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, more1,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, more2,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, morex,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, morey,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, morez,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, movable,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, att,                 JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, layer,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, itemsinside,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, totalItemCount,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, decayable,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, decaytime,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, lodamage,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, hidamage,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, ac,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, def,                 JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, resistCold,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, resistHeat,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, resistLight,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, resistLightning,     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, resistPoison,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, resistRain,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, resistSnow,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, damageHeat,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, damageCold,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, damageLight,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, damageLightning,     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, damagePoison,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, damageRain,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, damageSnow,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, lowerStateReq,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, name2,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, isChar,              JSPROP_ENUMPERMRO ),
+  UX_PSGS( CItem, isItem,              JSPROP_ENUMPERMRO ),
+  UX_PSGS( CItem, isSpawner,           JSPROP_ENUMPERMRO ),
+  UX_PSGS( CItem, race,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, maxhp,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, maxUses,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, usesLeft,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, rank,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, creator,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, poison,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, poisonedBy,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, poisonCharges,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, dir,                 JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, wipable,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, buyvalue,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, sellvalue,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, vendorPrice,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, restock,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, good,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, divinelock,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, baseWeight,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, weight,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, weightMax,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, maxItems,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, strength,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, dexterity,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, intelligence,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, healthRegenBonus,    JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, staminaRegenBonus,   JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, manaRegenBonus,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, corpse,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, desc,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, event,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, tempLastTraded,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, tempTimer,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, shouldSave,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, isNewbie,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, isDispellable,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, madeWith,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, entryMadeFrom,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, isPileable,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, isMarkedByMaker,     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, isDyeable,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, isDamageable,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, isWipeable,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, isGuarded,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, isDoorOpen,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, isFieldSpell,        JSPROP_ENUMPERMRO ),
+  UX_PSGS( CItem, isLockedDown,        JSPROP_ENUMPERMRO ),
+  UX_PSGS( CItem, isShieldType,        JSPROP_ENUMPERMRO ),
+  UX_PSGS( CItem, isMetalType,         JSPROP_ENUMPERMRO ),
+  UX_PSGS( CItem, isLeatherType,       JSPROP_ENUMPERMRO ),
+  UX_PSGS( CItem, canBeLockedDown,     JSPROP_ENUMPERMRO ),
+  UX_PSGS( CItem, isContType,          JSPROP_ENUMPERMRO ),
+  UX_PSGS( CItem, carveSection,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, ammoID,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, ammoHue,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, ammoFX,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, ammoFXHue,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, ammoFXRender,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, speed,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, swingSpeedIncrease,  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, damageIncrease,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, healthLeech,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, staminaLeech,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, manaLeech,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, hitChance,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, defenseChance,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, luck,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, healthBonus,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, staminaBonus,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, manaBonus,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, artifactRarity,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, durabilityHpBonus,   JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, multi,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, maxRange,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, baseRange,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, region,              JSPROP_ENUMPERMRO ),
+  UX_PSGS( CItem, spawnSerial,         JSPROP_ENUMPERMRO ),
+  UX_PSGS( CItem, origin,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, isItemHeld,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, stealable,           JSPROP_ENUMANDPERM ),
+  // The Following vars are specific to CSpawnItem objects
+  UX_PSGS( CItem, spawnsection,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, sectionalist,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, mininterval,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, maxinterval,         JSPROP_ENUMANDPERM ),
+  // The Following vars are specific to cMultiObj objects
+  UX_PSGS( CItem, lockdowns,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, maxLockdowns,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, trashContainers,     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, maxTrashContainers,  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, secureContainers,    JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, maxSecureContainers, JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, friends,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, maxFriends,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, guests,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, maxGuests,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, owners,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, maxOwners,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, bans,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, maxBans,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, vendors,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, maxVendors,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, deed,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, isPublic,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, buildTimestamp,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, tradeTimestamp,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, banX,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, banY,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, tithing,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, moveType,            JSPROP_ENUMANDPERM ),
+  JS_PS_END
 };
+// clang-format on
 
+// clang-format off
 inline JSPropertySpec CSocketProps[] =
 {
-	{ "account",			CSOCKP_ACCOUNT,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "currentChar",		CSOCKP_CURRENTCHAR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "idleTimeout",		CSOCKP_IDLETIMEOUT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "wasIdleWarned",		CSOCKP_WASIDLEWARNED,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "tempInt",			CSOCKP_TEMPINT,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "tempInt2",			CSOCKP_TEMPINT2,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "xText",				CSOCKP_XTEXT,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "xText2",				CSOCKP_XTEXT2,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "clickZ",				CSOCKP_CLICKZ,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "newClient",			CSOCKP_NEWCLIENT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "firstPacket",		CSOCKP_FIRSTPACKET,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "cryptClient",		CSOCKP_CRYPTCLIENT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "walkSequence",		CSOCKP_WALKSEQUENCE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "currentSpellType",	CSOCKP_CURRENTSPELLTYPE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "logging",			CSOCKP_LOGGING,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "bytesSent",			CSOCKP_BYTESSENT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "bytesReceived",		CSOCKP_BYTESRECEIVED,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "targetOK",			CSOCKP_TARGETOK,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "clickX",				CSOCKP_CLICKX,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "clickY",				CSOCKP_CLICKY,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "pickupX",			CSOCKP_PICKUPX,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "pickupY",			CSOCKP_PICKUPY,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "pickupZ",			CSOCKP_PICKUPZ,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "pickupSpot",			CSOCKP_PICKUPSPOT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "pickupSerial",		CSOCKP_PICKUPSERIAL,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "language",			CSOCKP_LANGUAGE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "clientMajorVer",		CSOCKP_CLIENTMAJORVER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "clientMinorVer",		CSOCKP_CLIENTMINORVER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "clientSubVer",		CSOCKP_CLIENTSUBVER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "clientLetterVer",	CSOCKP_CLIENTLETTERVER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "clientType",			CSOCKP_CLIENTTYPE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "target",				CSOCKP_TARGET,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "tempObj",			CSOCKP_TEMPOBJ,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "tempObj2",			CSOCKP_TEMPOBJ2,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "nextMoveTime",		CSOCKP_NEXTMOVETIME,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "moveDebt",			CSOCKP_MOVEDEBT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "moveDebtAvg",		CSOCKP_MOVEDEBTAVG,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "moveBurstAllowance",	CSOCKP_MOVEBURSTALLOWANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,				static_cast<SI08>(0),		static_cast<UI08>(0), nullptr, nullptr }
+  UX_PSGS( CSocket, account,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, currentChar,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, idleTimeout,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, wasIdleWarned,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, tempInt,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, tempInt2,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, xText,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, xText2,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, clickZ,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, newClient,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, firstPacket,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, cryptClient,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, walkSequence,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, currentSpellType,   JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, logging,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, bytesSent,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, bytesReceived,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, targetOK,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, clickX,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, clickY,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, pickupX,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, pickupY,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, pickupZ,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, pickupSpot,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, pickupSerial,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, language,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, clientMajorVer,     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, clientMinorVer,     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, clientSubVer,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, clientLetterVer,    JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, clientType,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, target,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, tempObj,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, tempObj2,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, nextMoveTime,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, moveDebt,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, moveDebtAvg,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, moveBurstAllowance, JSPROP_ENUMANDPERM ),
+  JS_PS_END
 };
+// clang-format on
 
+// clang-format off
 inline JSPropertySpec CSkillsProps[] =
 {
-	{ "alchemy",			ALCHEMY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "anatomy",			ANATOMY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "animallore",			ANIMALLORE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "itemid",				ITEMID,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "armslore",			ARMSLORE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "parrying",			PARRYING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "begging",			BEGGING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "blacksmithing",		BLACKSMITHING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "bowcraft",			BOWCRAFT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "peacemaking",		PEACEMAKING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "camping",			CAMPING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "carpentry",			CARPENTRY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "cartography",		CARTOGRAPHY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "cooking",			COOKING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "detectinghidden",	DETECTINGHIDDEN,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "enticement",			ENTICEMENT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "evaluatingintel",	EVALUATINGINTEL,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "healing",			HEALING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "fishing",			FISHING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "forensics",			FORENSICS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "herding",			HERDING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "hiding",				HIDING,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "provocation",		PROVOCATION,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "inscription",		INSCRIPTION,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "lockpicking",		LOCKPICKING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "magery",				MAGERY,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "magicresistance",	MAGICRESISTANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "tactics",			TACTICS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "snooping",			SNOOPING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "musicianship",		MUSICIANSHIP,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "poisoning",			POISONING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "archery",			ARCHERY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "spiritspeak",		SPIRITSPEAK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "stealing",			STEALING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "tailoring",			TAILORING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "taming",				TAMING,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "tasteid",			TASTEID,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "tinkering",			TINKERING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "tracking",			TRACKING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "veterinary",			VETERINARY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "swordsmanship",		SWORDSMANSHIP,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "macefighting",		MACEFIGHTING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "fencing",			FENCING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "wrestling",			WRESTLING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "lumberjacking",		LUMBERJACKING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "mining",				MINING,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "meditation",			MEDITATION,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "stealth",			STEALTH,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "removetrap",			REMOVETRAP,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "necromancy",			NECROMANCY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "focus",				FOCUS,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "chivalry",			CHIVALRY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "bushido",			BUSHIDO,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "ninjitsu",			NINJITSU,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "spellweaving",		SPELLWEAVING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "mysticism",			MYSTICISM,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "imbuing",			IMBUING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "throwing",			THROWING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "allskills",			ALLSKILLS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,				static_cast<SI08>(0),			static_cast<UI08>(0), nullptr, nullptr }
+  UX_PSGS( CSkills, alchemy,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, anatomy,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, animallore,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, itemid,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, armslore,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, parrying,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, begging,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, blacksmithing,   JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, bowcraft,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, peacemaking,     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, camping,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, carpentry,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, cartography,     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, cooking,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, detectinghidden, JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, enticement,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, evaluatingintel, JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, healing,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, fishing,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, forensics,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, herding,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, hiding,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, provocation,     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, inscription,     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, lockpicking,     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, magery,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, magicresistance, JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, tactics,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, snooping,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, musicianship,    JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, poisoning,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, archery,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, spiritspeak,     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, stealing,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, tailoring,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, taming,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, tasteid,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, tinkering,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, tracking,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, veterinary,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, swordsmanship,   JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, macefighting,    JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, fencing,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, wrestling,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, lumberjacking,   JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, mining,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, meditation,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, stealth,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, removetrap,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, necromancy,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, focus,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, chivalry,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, bushido,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, ninjitsu,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, spellweaving,    JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, mysticism,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, imbuing,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, throwing,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, allskills,       JSPROP_ENUMANDPERM ),
+  JS_PS_END
 };
+// clang-format on
 
+// clang-format off
 inline JSPropertySpec CGumpDataProperties[] =
 {
-	{	"buttons",	CGumpData_Button,		JSPROP_ENUMANDPERM, nullptr, nullptr	},
-	{	"IDs",		CGumpData_ID ,			JSPROP_ENUMANDPERM, nullptr, nullptr	},
-	{	nullptr,	static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr	}
+  UX_PSGS( CGumpData, buttons, JSPROP_ENUMANDPERM ),
+  UX_PSGS( CGumpData, IDs,     JSPROP_ENUMANDPERM ),
+  JS_PS_END
 };
+// clang-format on
 
+// clang-format off
 inline JSPropertySpec CAccountProperties[] =
 {
-	{ "id",			CACCOUNT_ID,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "username",	CACCOUNT_USERNAME,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "password",	CACCOUNT_PASSWORD,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "flags",		CACCOUNT_FLAGS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "path",		CACCOUNT_PATH,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "comment",	CACCOUNT_COMMENT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "timeban",	CACCOUNT_TIMEBAN,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "firstLogin",	CACCOUNT_FIRSTLOGIN, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "totalPlayTime",	CACCOUNT_TOTALPLAYTIME,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "character1",	CACCOUNT_CHARACTER1, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "character2",	CACCOUNT_CHARACTER2, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "character3",	CACCOUNT_CHARACTER3, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "character4",	CACCOUNT_CHARACTER4, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "character5",	CACCOUNT_CHARACTER5, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "character6",	CACCOUNT_CHARACTER6, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "character7",	CACCOUNT_CHARACTER7, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "currentChar",	CACCOUNT_CURRENTCHAR,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "lastIP",			CACCOUNT_LASTIP, 		JSPROP_ENUMANDPERM, nullptr, nullptr },
+  UX_PSG(  CAccount, id,             JSPROP_ENUMANDPERM ),
+  UX_PSG(  CAccount, username,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CAccount, password,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CAccount, flags,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CAccount, path,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CAccount, comment,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CAccount, timeban,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CAccount, firstLogin,     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CAccount, totalPlayTime,  JSPROP_ENUMANDPERM ),
+  UX_PSG(  CAccount, character1,     JSPROP_ENUMANDPERM ),
+  UX_PSG(  CAccount, character2,     JSPROP_ENUMANDPERM ),
+  UX_PSG(  CAccount, character3,     JSPROP_ENUMANDPERM ),
+  UX_PSG(  CAccount, character4,     JSPROP_ENUMANDPERM ),
+  UX_PSG(  CAccount, character5,     JSPROP_ENUMANDPERM ),
+  UX_PSG(  CAccount, character6,     JSPROP_ENUMANDPERM ),
+  UX_PSG(  CAccount, character7,     JSPROP_ENUMANDPERM ),
+  UX_PSG(  CAccount, currentChar,    JSPROP_ENUMANDPERM ),
+  UX_PSG(  CAccount, lastIP,         JSPROP_ENUMANDPERM ),
 
-	// Flags
-	{ "isBanned",		CACCOUNT_BANNED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isSuspended",	CACCOUNT_SUSPENDED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isPublic",		CACCOUNT_PUBLIC,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isOnline",		CACCOUNT_ONLINE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isSlot1Blocked",	CACCOUNT_CHARSLOT1BLOCKED, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isSlot2Blocked",	CACCOUNT_CHARSLOT2BLOCKED, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isSlot3Blocked",	CACCOUNT_CHARSLOT3BLOCKED, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isSlot4Blocked",	CACCOUNT_CHARSLOT4BLOCKED, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isSlot5Blocked",	CACCOUNT_CHARSLOT5BLOCKED, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isSlot6Blocked",	CACCOUNT_CHARSLOT6BLOCKED, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isSlot7Blocked",	CACCOUNT_CHARSLOT7BLOCKED, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isYoung",		CACCOUNT_YOUNG,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "unused10",		CACCOUNT_UNUSED10,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isSeer",			CACCOUNT_SEER,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isCounselor",	CACCOUNT_COUNSELOR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "isGM",			CACCOUNT_GM,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{	nullptr,		static_cast<SI08>(0),		static_cast<UI08>(0), nullptr, nullptr	}
+  // Flags
+  UX_PSGS( CAccount, isBanned,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CAccount, isSuspended,    JSPROP_ENUMANDPERM ),
+  UX_PSGS( CAccount, isPublic,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CAccount, isOnline,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CAccount, isSlot1Blocked, JSPROP_ENUMANDPERM ),
+  UX_PSGS( CAccount, isSlot2Blocked, JSPROP_ENUMANDPERM ),
+  UX_PSGS( CAccount, isSlot3Blocked, JSPROP_ENUMANDPERM ),
+  UX_PSGS( CAccount, isSlot4Blocked, JSPROP_ENUMANDPERM ),
+  UX_PSGS( CAccount, isSlot5Blocked, JSPROP_ENUMANDPERM ),
+  UX_PSGS( CAccount, isSlot6Blocked, JSPROP_ENUMANDPERM ),
+  UX_PSGS( CAccount, isSlot7Blocked, JSPROP_ENUMANDPERM ),
+  UX_PSGS( CAccount, isYoung,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CAccount, unused10,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CAccount, isSeer,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CAccount, isCounselor,    JSPROP_ENUMANDPERM ),
+  UX_PSGS( CAccount, isGM,           JSPROP_ENUMANDPERM ),
+  JS_PS_END
 };
+// clang-format on
 
+// clang-format off
 inline JSPropertySpec CConsoleProperties[] =
 {
-	{ "mode",		CCONSOLE_MODE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "logEcho",	CCONSOLE_LOGECHO,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{	nullptr,	static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr	}
+  UX_PSGS( CConsole, mode,    JSPROP_ENUMANDPERM ),
+  UX_PSGS( CConsole, logEcho, JSPROP_ENUMANDPERM ),
+  JS_PS_END
 };
+// clang-format on
 
+// clang-format off
 inline JSPropertySpec CScriptSectionProperties[] =
 {
-	{ "numTags",	CSS_NUMTAGS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "atEnd",		CSS_ATEND,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "atEndTags",	CSS_ATENDTAGS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{	nullptr,	static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr	}
+  UX_PSG( CScriptSection, numTags,   JSPROP_ENUMANDPERM ),
+  UX_PSG( CScriptSection, atEnd,     JSPROP_ENUMANDPERM ),
+  UX_PSG( CScriptSection, atEndTags, JSPROP_ENUMANDPERM ),
+  JS_PS_END
 };
+// clang-format on
 
+// clang-format off
 inline JSPropertySpec CResourceProperties[] =
 {
-	{ "logAmount",	CRESP_LOGAMT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "logTime",	CRESP_LOGTIME,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "oreAmount",	CRESP_OREAMT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "oreTime",	CRESP_ORETIME,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "fishAmount",	CRESP_FISHAMT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "fishTime",	CRESP_FISHTIME,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{	nullptr,	static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr	}
+  UX_PSGS( CResource, logAmount,  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CResource, logTime,    JSPROP_ENUMANDPERM ),
+  UX_PSGS( CResource, oreAmount,  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CResource, oreTime,    JSPROP_ENUMANDPERM ),
+  UX_PSGS( CResource, fishAmount, JSPROP_ENUMANDPERM ),
+  UX_PSGS( CResource, fishTime,   JSPROP_ENUMANDPERM ),
+  JS_PS_END
 };
+// clang-format on
 
+// clang-format off
 inline JSPropertySpec CPartyProperties[] =
 {
-	{ "leader",			CPARTYP_LEADER,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "memberCount",	CPARTYP_MEMBERCOUNT,	JSPROP_ENUMPERMRO, nullptr, nullptr	},
-	{ "isNPC",			CPARTYP_ISNPC,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{	nullptr,		static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr	}
+  UX_PSGS( CParty, leader,      JSPROP_ENUMANDPERM ),
+  UX_PSG(  CParty, memberCount, JSPROP_ENUMPERMRO  ),
+  UX_PSGS( CParty, isNPC,       JSPROP_ENUMANDPERM ),
+  JS_PS_END
 };
+// clang-format on
 
+// clang-format off
 inline JSPropertySpec CScriptProperties[] =
 {
-	{ "script_id",		CSCRIPT_SCRIPTID,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{	nullptr,		static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr	}
+  UX_PSGS( CScript, script_id,    JSPROP_ENUMANDPERM ),
+  JS_PS_END
 };
+// clang-format on
 
 #endif
