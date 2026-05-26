@@ -1,10 +1,10 @@
 //o------------------------------------------------------------------------------------------------o
-//|	File		-	UOXJSPropertyFuncts.cpp
-//|	Date		-	12/14/2001
+//|  File    -  UOXJSPropertyFuncts.cpp
+//|  Date    -  12/14/2001
 //o------------------------------------------------------------------------------------------------o
-//|	Notes		-	1.0		14th December, 2001 Initial implementation
-//|							Defines the property specifications for race, region, guild,
-//|							item and chars
+//|  Notes    -  1.0    14th December, 2001 Initial implementation
+//|              Defines the property specifications for race, region, guild,
+//|              item and chars
 //o------------------------------------------------------------------------------------------------o
 #ifndef __UOXJSPropertySpecs__
 #define __UOXJSPropertySpecs__
@@ -12,7 +12,136 @@
 #include "UOXJSPropertyEnums.h"
 #include "enums.h"
 
+#define CLSDECLG( main, attr ) JS##main##_get_##attr
+#define CLSDECLS( main, attr ) JS##main##_set_##attr
+#define PDECLGS( main, attr ) #attr, CLSDECLG( main, attr ), CLSDECLS( main, attr )
+#define FDCLG( main, attr ) bool CLSDECLG ## ( main, attr )##(JSContext *cx, unsigned int argc, JS::Value *vp)
+#define FDCLS( main, attr ) bool CLSDECLS ## ( main, attr )##(JSContext *cx, unsigned int argc, JS::Value *vp)
 
+#define DECL_GET( main, attr ) FDCLG( main, attr ) ## ;
+#define DECL_SET( main, attr ) FDCLS( main, attr ) ## ;
+
+// Lifted from the Mozilla headers - revisit if these change!  Change UX to JS
+#define UX_PSG( main, attr, attributes )                                \
+JSPropertySpec::nativeAccessors( #attr, CheckAccessorAttrs<attributes>(), CLSDECLG( main, attr ), nullptr )
+#define UX_PSGS( main, attr, attributes )                                 \
+JSPropertySpec::nativeAccessors( #attr, CheckAccessorAttrs<attributes>(), CLSDECLG( main, attr ), nullptr, CLSDECLS( main, attr ), nullptr )
+//
+
+
+#define FNARGS                              \
+  auto args = JS::CallArgsFromVp(argc, vp); \
+  JS::RootedObject thisObj(cx);             \
+  if (!args.computeThis(cx, &thisObj))      \
+    return false;                           \
+
+#define IMPL_GET( main, attr, type, method, accessor ) \
+FDCLG( main, attr ) { \
+  FNARGS \
+  auto priv = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0); \
+  args.rval().method(priv->accessor); \
+  return true; \
+}
+
+#define IMPL_GET_NP(main, attr, method, accessor)                                                          \
+FDCLG( main, attr ) {                                                                                      \
+  FNARGS                                                                                                   \
+  args.rval().method( accessor );                                                                          \
+  return true;                                                                                             \
+}
+
+#define IMPL_GETS(main, attr, type, method, accessor)                         \
+FDCLG( main, attr ) {                                                         \
+  FNARGS                                                                      \
+  auto priv = JS::GetMaybePtrFromReservedSlot< type >(thisObj, 0);            \
+  args.rval().method( JS_NewStringCopyZ( cx, priv->accessor ) );              \
+  return true;                                                                \
+}
+
+#define IMPL_GET_OBJ( main, attr, type, method, accessor ) \
+FDCLG( main, attr ) { \
+  FNARGS \
+  auto priv = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0); \
+  SERIAL TempSerial = INVALIDSERIAL; \
+  if( !ValidateObject( priv )) \
+    return false; \
+  args.rval().method(priv->accessor); \
+  return true; \
+}
+
+#define IMPL_GETS_OBJ(main, attr, type, method, accessor) \
+FDCLG( main, attr ) { \
+  FNARGS \
+  auto priv = JS::GetMaybePtrFromReservedSlot< type >(thisObj, 0); \
+  SERIAL TempSerial = INVALIDSERIAL; \
+  if( !ValidateObject( priv )) \
+    return false; \
+  args.rval().method( JS_NewStringCopyZ( cx, priv->accessor ) ); \
+  return true; \
+}
+
+#define IMPL_SET(main, attr, type, method, accessor)                                                             \
+FDCLS( main, attr ) {                                                                                            \
+  FNARGS                                                                                                         \
+  auto priv         = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0);                                         \
+  auto origScript   = JSMapping->GetScript(JS::CurrentGlobalOrNull(cx));                                         \
+  auto origScriptID = JSMapping->GetScriptId(JS::CurrentGlobalOrNull(cx));                                       \
+  priv->accessor(args.get(0).method());                                                                          \
+  if (origScript != JSMapping->GetScript(JS::CurrentGlobalOrNull(cx))) {                                         \
+  }                                                                                                              \
+  return true;                                                                                                   \
+}
+
+#define IMPL_SET_DIR(main, attr, type, method, accessor)                                                         \
+FDCLS( main, attr ) {                                    \
+  FNARGS                                                                                                         \
+  auto priv         = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0);                                         \
+  auto origScript   = JSMapping->GetScript(JS::CurrentGlobalOrNull(cx));                                         \
+  auto origScriptID = JSMapping->GetScriptId(JS::CurrentGlobalOrNull(cx));                                       \
+  priv->accessor    = args.get(0).method();                                                                      \
+  if (origScript != JSMapping->GetScript(JS::CurrentGlobalOrNull(cx))) {                                         \
+  }                                                                                                              \
+  return true;                                                                                                   \
+}
+
+#define IMPL_SETS(main, attr, type, method, accessor)                                                            \
+FDCLS( main, attr ) {                                    \
+  FNARGS                                                                                                         \
+  auto priv         = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0);                                         \
+  auto origScript   = JSMapping->GetScript(JS::CurrentGlobalOrNull(cx));                                         \
+  auto origScriptID = JSMapping->GetScriptId(JS::CurrentGlobalOrNull(cx));                                       \
+  priv->accessor(convertToString(cx, args.get(0).method()));                                                     \
+  if (origScript != JSMapping->GetScript(JS::CurrentGlobalOrNull(cx))) {                                         \
+  }                                                                                                              \
+  return true;                                                                                                   \
+}
+
+#define IMPL_SETS_DIR(main, attr, type, method, accessor)                                                        \
+FDCLS( main, attr ) {                                    \
+  FNARGS                                                                                                         \
+  auto priv         = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0);                                         \
+  auto origScript   = JSMapping->GetScript(JS::CurrentGlobalOrNull(cx));                                         \
+  auto origScriptID = JSMapping->GetScriptId(JS::CurrentGlobalOrNull(cx));                                       \
+  priv->accessor    = convertToString(cx, args.get(0).method());                                                 \
+  if (origScript != JSMapping->GetScript(JS::CurrentGlobalOrNull(cx))) {                                         \
+  }                                                                                                              \
+  return true;                                                                                                   \
+}
+
+// This is the restore context we need to fix up
+// bool retVal = origScript->CallParticularEvent("_restorecontext_", &id, 0, vp);
+//    if( !retVal ) \
+//    { \
+//      Console.Warning( oldstrutil::format( "Script context lost after setting Race property %u. Add 'function
+// _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID )); \
+//    } \
+
+#define IMPL_SET_NP(main, attr, method, accessor)                                                                \
+FDCLS( main, attr ) {                                                                                            \
+  auto args = JS::CallArgsFromVp(argc, vp);                                                                      \
+  accessor(args.get(0).method());                                                                                \
+  return true;                                                                                                   \
+}
 inline JSPropertySpec CSpellProperties[] =
 {
 	{ "id",					CSP_ID,					JSPROP_ENUMANDPERM, nullptr, nullptr },

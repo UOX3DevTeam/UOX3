@@ -21,175 +21,175 @@
 
 // Character related functions (9)
 
-JSBool SE_SpawnNPC( JSContext *cx, uintN argc, jsval *vp );			// Create NPC								*
+bool SE_SpawnNPC( JSContext *cx, unsigned argc, JS::Value *vp );			// Create NPC								*
 
 // Effect related functions (3)
 
-JSBool SE_DoMovingEffect( JSContext *cx, uintN argc, jsval *vp );		// Does moving effect						***
-JSBool SE_DoTempEffect( JSContext *cx, uintN argc, jsval *vp );		// Does a temp effect						***
-JSBool SE_DoStaticEffect( JSContext *cx, uintN argc, jsval *vp );		// Does a static effect at location			***
+bool SE_DoMovingEffect( JSContext *cx, unsigned argc, JS::Value *vp );		// Does moving effect						***
+bool SE_DoTempEffect( JSContext *cx, unsigned argc, JS::Value *vp );		// Does a temp effect						***
+bool SE_DoStaticEffect( JSContext *cx, unsigned argc, JS::Value *vp );		// Does a static effect at location			***
 
 // Item related functions (2)
 
-JSBool SE_CreateBlankItem( JSContext *cx, uintN argc, jsval *vp );		// Create an item							***
-JSBool SE_CreateDFNItem( JSContext *cx, uintN argc, jsval *vp );		// Create an item							***
-JSBool SE_CreateHouse( JSContext *cx, uintN argc, jsval *vp );			// Create a house from houses.dfn			***
-JSBool SE_CreateBaseMulti( JSContext *cx, uintN argc, jsval *vp );		// Create a raw multi based on multi ID		***
+bool SE_CreateBlankItem( JSContext *cx, unsigned argc, JS::Value *vp );		// Create an item							***
+bool SE_CreateDFNItem( JSContext *cx, unsigned argc, JS::Value *vp );		// Create an item							***
+bool SE_CreateHouse( JSContext *cx, unsigned argc, JS::Value *vp );			// Create a house from houses.dfn			***
+bool SE_CreateBaseMulti( JSContext *cx, unsigned argc, JS::Value *vp );		// Create a raw multi based on multi ID		***
 
 // Speech related functions (7)
-JSBool SE_BroadcastMessage( JSContext *cx, uintN argc, jsval *vp );	//											***
+bool SE_BroadcastMessage( JSContext *cx, unsigned argc, JS::Value *vp );	//											***
 
 // Random functions(5)
-JSBool SE_RandomNumber( JSContext *cx, uintN argc, jsval *vp );		// Calculates a random number				***
-JSBool SE_CalcCharFromSer( JSContext *cx, uintN argc, jsval *vp );		//											***
-JSBool SE_CalcItemFromSer( JSContext *cx, uintN argc, jsval *vp );		//											***
-JSBool SE_CalcMultiFromSer( JSContext *cx, uintN argc, jsval *vp );	//											***
+bool SE_RandomNumber( JSContext *cx, unsigned argc, JS::Value *vp );		// Calculates a random number				***
+bool SE_CalcCharFromSer( JSContext *cx, unsigned argc, JS::Value *vp );		//											***
+bool SE_CalcItemFromSer( JSContext *cx, unsigned argc, JS::Value *vp );		//											***
+bool SE_CalcMultiFromSer( JSContext *cx, unsigned argc, JS::Value *vp );	//											***
 
-JSBool SE_CheckTimeSinceLastCombat( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_CheckInstaLog( JSContext *cx, uintN argc, jsval *vp );
+bool SE_CheckTimeSinceLastCombat( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_CheckInstaLog( JSContext *cx, unsigned argc, JS::Value *vp );
 
-JSBool SE_MakeItem( JSContext *cx, uintN argc, jsval *vp );			//											***
+bool SE_MakeItem( JSContext *cx, unsigned argc, JS::Value *vp );			//											***
 
-JSBool SE_CommandLevelReq( JSContext *cx, uintN argc, jsval *vp );		//											*
-JSBool SE_CommandExists( JSContext *cx, uintN argc, jsval *vp );		//											*
-JSBool SE_FirstCommand( JSContext *cx, uintN argc, jsval *vp );		//											*
-JSBool SE_NextCommand( JSContext *cx, uintN argc, jsval *vp );			//											*
-JSBool SE_FinishedCommandList( JSContext *cx, uintN argc, jsval *vp );	//											*
+bool SE_CommandLevelReq( JSContext *cx, unsigned argc, JS::Value *vp );		//											*
+bool SE_CommandExists( JSContext *cx, unsigned argc, JS::Value *vp );		//											*
+bool SE_FirstCommand( JSContext *cx, unsigned argc, JS::Value *vp );		//											*
+bool SE_NextCommand( JSContext *cx, unsigned argc, JS::Value *vp );			//											*
+bool SE_FinishedCommandList( JSContext *cx, unsigned argc, JS::Value *vp );	//											*
 
-JSBool SE_RegisterCommand( JSContext *cx, uintN argc, jsval *vp );		//											***
-JSBool SE_EnableCommand( JSContext *cx, uintN argc, jsval *vp );		//											***
-JSBool SE_DisableCommand( JSContext *cx, uintN argc, jsval *vp );		//											***
+bool SE_RegisterCommand( JSContext *cx, unsigned argc, JS::Value *vp );		//											***
+bool SE_EnableCommand( JSContext *cx, unsigned argc, JS::Value *vp );		//											***
+bool SE_DisableCommand( JSContext *cx, unsigned argc, JS::Value *vp );		//											***
 
-JSBool SE_RegisterKey( JSContext *cx, uintN argc, jsval *vp );			//											***
-JSBool SE_EnableKey( JSContext *cx, uintN argc, jsval *vp );			//											***
-JSBool SE_DisableKey( JSContext *cx, uintN argc, jsval *vp );			//											***
+bool SE_RegisterKey( JSContext *cx, unsigned argc, JS::Value *vp );			//											***
+bool SE_EnableKey( JSContext *cx, unsigned argc, JS::Value *vp );			//											***
+bool SE_DisableKey( JSContext *cx, unsigned argc, JS::Value *vp );			//											***
 
-JSBool SE_RegisterConsoleFunc( JSContext *cx, uintN argc, jsval *vp );	//											***
-JSBool SE_EnableConsoleFunc( JSContext *cx, uintN argc, jsval *vp );	//											***
-JSBool SE_DisableConsoleFunc( JSContext *cx, uintN argc, jsval *vp );	//											***
+bool SE_RegisterConsoleFunc( JSContext *cx, unsigned argc, JS::Value *vp );	//											***
+bool SE_EnableConsoleFunc( JSContext *cx, unsigned argc, JS::Value *vp );	//											***
+bool SE_DisableConsoleFunc( JSContext *cx, unsigned argc, JS::Value *vp );	//											***
 
-JSBool SE_RegisterSpell( JSContext *cx, uintN argc, jsval *vp );		//											***
-JSBool SE_EnableSpell( JSContext *cx, uintN argc, jsval *vp );			//											***
-JSBool SE_DisableSpell( JSContext *cx, uintN argc, jsval *vp );		//											***
+bool SE_RegisterSpell( JSContext *cx, unsigned argc, JS::Value *vp );		//											***
+bool SE_EnableSpell( JSContext *cx, unsigned argc, JS::Value *vp );			//											***
+bool SE_DisableSpell( JSContext *cx, unsigned argc, JS::Value *vp );		//											***
 
-JSBool SE_RegisterSkill( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_RegisterPacket( JSContext *cx, uintN argc, jsval *vp );
+bool SE_RegisterSkill( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_RegisterPacket( JSContext *cx, unsigned argc, JS::Value *vp );
 
-JSBool SE_GetHour( JSContext *cx, uintN argc, jsval *vp );					//										***
-JSBool SE_GetMinute( JSContext *cx, uintN argc, jsval *vp );				//										***
-JSBool SE_GetDay( JSContext *cx, uintN argc, jsval *vp );					//										***
-JSBool SE_SecondsPerUOMinute( JSContext *cx, uintN argc, jsval *vp );		//										***
+bool SE_GetHour( JSContext *cx, unsigned argc, JS::Value *vp );					//										***
+bool SE_GetMinute( JSContext *cx, unsigned argc, JS::Value *vp );				//										***
+bool SE_GetDay( JSContext *cx, unsigned argc, JS::Value *vp );					//										***
+bool SE_SecondsPerUOMinute( JSContext *cx, unsigned argc, JS::Value *vp );		//										***
 
-JSBool SE_GetCurrentClock( JSContext *cx, uintN argc, jsval *vp );			//										***
-JSBool SE_GetStartTime( JSContext *cx, uintN argc, jsval *vp );			//										***
-JSBool SE_GetMurderThreshold( JSContext *cx, uintN argc, jsval *vp );		//										***
-JSBool SE_RollDice( JSContext *cx, uintN argc, jsval *vp );				//										***
-JSBool SE_RaceCompareByRace( JSContext *cx, uintN argc, jsval *vp );		//										***
-JSBool SE_GetRandomSOSArea( JSContext *cx, uintN argc, jsval *vp );		//										***
+bool SE_GetCurrentClock( JSContext *cx, unsigned argc, JS::Value *vp );			//										***
+bool SE_GetStartTime( JSContext *cx, unsigned argc, JS::Value *vp );			//										***
+bool SE_GetMurderThreshold( JSContext *cx, unsigned argc, JS::Value *vp );		//										***
+bool SE_RollDice( JSContext *cx, unsigned argc, JS::Value *vp );				//										***
+bool SE_RaceCompareByRace( JSContext *cx, unsigned argc, JS::Value *vp );		//										***
+bool SE_GetRandomSOSArea( JSContext *cx, unsigned argc, JS::Value *vp );		//										***
 
-JSBool SE_FindMulti( JSContext *cx, uintN argc, jsval *vp );				//										***
-JSBool SE_GetItem( JSContext *cx, uintN argc, jsval *vp );					//										***
-JSBool SE_FindItem( JSContext *cx, uintN argc, jsval *vp );					//										***
-JSBool SE_FindItemBySection( JSContext *cx, uintN argc, jsval *vp );		//										***
+bool SE_FindMulti( JSContext *cx, unsigned argc, JS::Value *vp );				//										***
+bool SE_GetItem( JSContext *cx, unsigned argc, JS::Value *vp );					//										***
+bool SE_FindItem( JSContext *cx, unsigned argc, JS::Value *vp );					//										***
+bool SE_FindItemBySection( JSContext *cx, unsigned argc, JS::Value *vp );		//										***
 
-JSBool SE_CompareGuildByGuild( JSContext *cx, uintN argc, jsval *vp );		//										**
-JSBool SE_CreateNewGuild( JSContext *cx, uintN argc, jsval *vp );		//										**
+bool SE_CompareGuildByGuild( JSContext *cx, unsigned argc, JS::Value *vp );		//										**
+bool SE_CreateNewGuild( JSContext *cx, unsigned argc, JS::Value *vp );		//										**
 
-JSBool SE_PossessTown( JSContext *cx, uintN argc, jsval *vp );				//										***
+bool SE_PossessTown( JSContext *cx, unsigned argc, JS::Value *vp );				//										***
 
-JSBool SE_IsRaceWeakToWeather( JSContext *cx, uintN argc, jsval *vp );		//										***
-JSBool SE_GetRaceSkillAdjustment( JSContext *cx, uintN argc, jsval *vp );	//										***
+bool SE_IsRaceWeakToWeather( JSContext *cx, unsigned argc, JS::Value *vp );		//										***
+bool SE_GetRaceSkillAdjustment( JSContext *cx, unsigned argc, JS::Value *vp );	//										***
 
-JSBool SE_UseItem( JSContext *cx, uintN argc, jsval *vp );					//										***
-JSBool SE_TriggerTrap( JSContext *cx, uintN argc, jsval *vp );				//										***
+bool SE_UseItem( JSContext *cx, unsigned argc, JS::Value *vp );					//										***
+bool SE_TriggerTrap( JSContext *cx, unsigned argc, JS::Value *vp );				//										***
 
-JSBool SE_TriggerEvent( JSContext *cx, uintN argc, jsval *vp );			//										*
-JSBool SE_DoesEventExist( JSContext *cx, uintN argc, jsval *vp );			//										*
+bool SE_TriggerEvent( JSContext *cx, unsigned argc, JS::Value *vp );			//										*
+bool SE_DoesEventExist( JSContext *cx, unsigned argc, JS::Value *vp );			//										*
 
-JSBool SE_GetPackOwner( JSContext *cx, uintN argc, jsval *vp );			//										***
-JSBool SE_FindRootContainer( JSContext *cx, uintN argc, jsval *vp );		//										***
-JSBool SE_CalcTargetedItem( JSContext *cx, uintN argc, jsval *vp );		//										***
-JSBool SE_CalcTargetedChar( JSContext *cx, uintN argc, jsval *vp );		//										***
-JSBool SE_GetTileIdAtMapCoord( JSContext *cx, uintN argc, jsval *vp );		//										***
+bool SE_GetPackOwner( JSContext *cx, unsigned argc, JS::Value *vp );			//										***
+bool SE_FindRootContainer( JSContext *cx, unsigned argc, JS::Value *vp );		//										***
+bool SE_CalcTargetedItem( JSContext *cx, unsigned argc, JS::Value *vp );		//										***
+bool SE_CalcTargetedChar( JSContext *cx, unsigned argc, JS::Value *vp );		//										***
+bool SE_GetTileIdAtMapCoord( JSContext *cx, unsigned argc, JS::Value *vp );		//										***
 
-JSBool SE_StringToNum( JSContext *cx, uintN argc, jsval *vp );				// Marked for Deletion
-JSBool SE_NumToString( JSContext *cx, uintN argc, jsval *vp );				// Marked for Deletion
-JSBool SE_NumToHexString( JSContext *cx, uintN argc, jsval *vp );			// Marked for Deletion
-JSBool SE_EraStringToNum( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_GetCommandLevelVal( JSContext *cx, uintN argc, jsval *vp );
+bool SE_StringToNum( JSContext *cx, unsigned argc, JS::Value *vp );				// Marked for Deletion
+bool SE_NumToString( JSContext *cx, unsigned argc, JS::Value *vp );				// Marked for Deletion
+bool SE_NumToHexString( JSContext *cx, unsigned argc, JS::Value *vp );			// Marked for Deletion
+bool SE_EraStringToNum( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_GetCommandLevelVal( JSContext *cx, unsigned argc, JS::Value *vp );
 
-JSBool SE_GetRaceCount( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_AreaCharacterFunction( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_AreaItemFunction( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_Reload( JSContext *cx, uintN argc, jsval *vp );
+bool SE_GetRaceCount( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_AreaCharacterFunction( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_AreaItemFunction( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_Reload( JSContext *cx, unsigned argc, JS::Value *vp );
 
-JSBool SE_GetDictionaryEntry( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_Yell( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_SendStaticStats( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_GetTileHeight( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_IterateOver( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_IterateOverSpawnRegions( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_WorldBrightLevel( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_WorldDarkLevel( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_WorldDungeonLevel( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_GetSpawnRegionFacetStatus( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_SetSpawnRegionFacetStatus( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_GetMoongateFacetStatus( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_SetMoongateFacetStatus( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_GetSocketFromIndex( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_ResourceArea( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_ResourceAmount( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_ResourceTime( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_ResourceRegion( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_Moon( JSContext *cx, uintN argc, jsval *vp );
+bool SE_GetDictionaryEntry( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_Yell( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_SendStaticStats( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_GetTileHeight( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_IterateOver( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_IterateOverSpawnRegions( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_WorldBrightLevel( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_WorldDarkLevel( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_WorldDungeonLevel( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_GetSpawnRegionFacetStatus( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_SetSpawnRegionFacetStatus( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_GetMoongateFacetStatus( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_SetMoongateFacetStatus( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_GetSocketFromIndex( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_ResourceArea( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_ResourceAmount( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_ResourceTime( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_ResourceRegion( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_Moon( JSContext *cx, unsigned argc, JS::Value *vp );
 
-JSBool SE_GetTownRegion( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_GetTownRegionFromXY( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_GetSpawnRegion( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_GetSpawnRegions( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_GetSpawnRegionCount( JSContext *cx, uintN argc, jsval *vp );
+bool SE_GetTownRegion( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_GetTownRegionFromXY( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_GetSpawnRegion( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_GetSpawnRegions( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_GetSpawnRegionCount( JSContext *cx, unsigned argc, JS::Value *vp );
 
-JSBool SE_ReloadJSFile( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_StaticInRange( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_StaticAt( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_GetMapElevation( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_IsInBuilding( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_CheckStaticFlag( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_CheckDynamicFlag( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_CheckTileFlag( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_DoesStaticBlock( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_DoesDynamicBlock( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_DoesMapBlock( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_DoesCharacterBlock( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_DistanceBetween( JSContext *cx, uintN argc, jsval *vp );
+bool SE_ReloadJSFile( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_StaticInRange( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_StaticAt( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_GetMapElevation( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_IsInBuilding( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_CheckStaticFlag( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_CheckDynamicFlag( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_CheckTileFlag( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_DoesStaticBlock( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_DoesDynamicBlock( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_DoesMapBlock( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_DoesCharacterBlock( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_DistanceBetween( JSContext *cx, unsigned argc, JS::Value *vp );
 
-JSBool SE_ValidateObject( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_ApplyDamageBonuses( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_ApplyDefenseModifiers( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_WillResultInCriminal( JSContext *cx, uintN argc, jsval *vp );
+bool SE_ValidateObject( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_ApplyDamageBonuses( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_ApplyDefenseModifiers( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_WillResultInCriminal( JSContext *cx, unsigned argc, JS::Value *vp );
 
-JSBool SE_CreateParty( JSContext *cx, uintN argc, jsval *vp );
+bool SE_CreateParty( JSContext *cx, unsigned argc, JS::Value *vp );
 
 // Server settings
-JSBool SE_GetClientFeature( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_GetServerFeature( JSContext *cx, uintN argc, jsval *vp );
-JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp );
+bool SE_GetClientFeature( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_GetServerFeature( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_GetServerSetting( JSContext *cx, unsigned argc, JS::Value *vp );
 
-JSBool SE_DeleteFile( JSContext *cx, uintN argc, jsval *vp );
+bool SE_DeleteFile( JSContext *cx, unsigned argc, JS::Value *vp );
 
 // Account 
-JSBool SE_GetAccountCount( JSContext *cx, uintN argc, jsval *vp );			//										***
-JSBool SE_GetPlayerCount( JSContext *cx, uintN argc, jsval *vp );			//										***
-JSBool SE_GetItemCount( JSContext *cx, uintN argc, jsval *vp );			//										***
-JSBool SE_GetMultiCount( JSContext *cx, uintN argc, jsval *vp );			//										***
-JSBool SE_GetCharacterCount( JSContext *cx, uintN argc, jsval *vp );		//										***
-JSBool SE_GetServerVersionString( JSContext *cx, uintN argc, jsval *vp );	//										***
+bool SE_GetAccountCount( JSContext *cx, unsigned argc, JS::Value *vp );			//										***
+bool SE_GetPlayerCount( JSContext *cx, unsigned argc, JS::Value *vp );			//										***
+bool SE_GetItemCount( JSContext *cx, unsigned argc, JS::Value *vp );			//										***
+bool SE_GetMultiCount( JSContext *cx, unsigned argc, JS::Value *vp );			//										***
+bool SE_GetCharacterCount( JSContext *cx, unsigned argc, JS::Value *vp );		//										***
+bool SE_GetServerVersionString( JSContext *cx, unsigned argc, JS::Value *vp );	//										***
 
 // Server constants
-JSBool SE_BASEITEMSERIAL( JSContext *cx, uintN argc, jsval *vp );			//										***
-JSBool SE_INVALIDSERIAL( JSContext *cx, uintN argc, jsval *vp );			//										***
-JSBool SE_INVALIDID( JSContext *cx, uintN argc, jsval *vp );				//										***
-JSBool SE_INVALIDCOLOUR( JSContext *cx, uintN argc, jsval *vp );			//										***
+bool SE_BASEITEMSERIAL( JSContext *cx, unsigned argc, JS::Value *vp );			//										***
+bool SE_INVALIDSERIAL( JSContext *cx, unsigned argc, JS::Value *vp );			//										***
+bool SE_INVALIDID( JSContext *cx, unsigned argc, JS::Value *vp );				//										***
+bool SE_INVALIDCOLOUR( JSContext *cx, unsigned argc, JS::Value *vp );			//										***
 
 std::string JS_GetStringBytes( JSContext* cx, jsval val );
 

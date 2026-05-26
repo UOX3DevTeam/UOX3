@@ -155,7 +155,7 @@ struct JSErrorInfo
 	std::string filename;
 	std::string lineSource;
 	std::string tokenPointer;
-	uintN lineNum = 0;
+	unsigned int lineNum = 0;
 };
 
 class cScript
@@ -182,7 +182,7 @@ private:
 	std::vector<SEGump_st *>		gumpDisplays;
 
 	void		Cleanup( void );
-	JSBool		InvokeEvent( const char* name, uintN argc, jsval* argv, jsval* rval );
+	bool		InvokeEvent( const char* name, unsigned int argc, JS::Value* argv, JS::Value* rval );
 
 public:
 	void		CollectGarbage( void );
@@ -305,7 +305,7 @@ public:
 	SI08		OnFacetChange( CChar *mChar, const UI08 oldFacet, const UI08 newFacet );
 
 	bool		AreaObjFunc( const char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s );
-	bool		CallParticularEvent( const char *eventToCall, jsval *params, SI32 numParams, jsval *eventRetVal );
+	bool		CallParticularEvent( const char *eventToCall, JS::Value *params, SI32 numParams, JS::Value *eventRetVal );
 
 	bool		ScriptRegistration( std::string scriptType );
 

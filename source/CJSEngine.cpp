@@ -235,7 +235,7 @@ void CJSRuntime::CollectGarbage()
 	JS_GC( jsContext );
 }
 
-void setupMap( std::map< std::string, intN >& lkpMap, const JSPropertySpec lkpProps[], int countOfProps )
+void setupMap( std::map< std::string, int >& lkpMap, const JSPropertySpec lkpProps[], int countOfProps )
 {
 	lkpMap.clear();
 	for( int i = 0; i < countOfProps; ++i )
