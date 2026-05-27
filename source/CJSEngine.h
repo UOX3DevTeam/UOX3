@@ -46,12 +46,12 @@ enum JSPrototypes
 class CJSRuntime
 {
 private:
-	typedef std::map<void *, JSObject *>					JSOBJECTMAP;
-	typedef std::map<void *, JSObject *>::iterator			JSOBJECTMAP_ITERATOR;
-	typedef std::map<void *, JSObject *>::const_iterator	JSOBJECTMAP_CITERATOR;
+	using JSOBJECTMAP           = std::map<void *, JSObject * >;
+	using JSOBJECTMAP_ITERATOR  = JSOBJECTMAP::iterator;
+	using JSOBJECTMAP_CITERATOR = JSOBJECTMAP::const_iterator;
 
 	std::vector<JSOBJECTMAP>								objectList;
-	std::vector<JSObject *>									protoList;
+    JS::RootedObjectVector *   protoList;
 
 	JSObject * spellsObj;
 	JSObject * skillsObj;
@@ -59,6 +59,7 @@ private:
 	JSObject * consoleObj;
 	JSObject * createEntriesObj;
 	JSObject * timerObj;
+	JSObject * scriptObj;
 	JSRuntime * jsRuntime;
 	JSContext * jsContext;
 	JSObject * jsGlobal;
@@ -84,7 +85,6 @@ public:
 
 	JSObject *	AcquireObject( IUEEntries iType, void *index );
 	void		ReleaseObject( IUEEntries IType, void *index );
-
 };
 
 class CJSEngine

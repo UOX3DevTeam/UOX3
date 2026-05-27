@@ -162,9 +162,9 @@ class cScript
 {
 private:
 
-	JSScript *			targScript;
+	JS::RootedScript *			targScript;
 	JSContext *			targContext;
-	JSObject *			targObject;
+	JS::RootedObject *			targObject;
 	JSObject *			scriptObj;
 	UI16				scriptID;
 

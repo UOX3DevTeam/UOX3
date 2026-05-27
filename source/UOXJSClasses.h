@@ -8,7 +8,7 @@
 #ifndef __UOXJSClasses__
 #define __UOXJSClasses__
 #include "UOXJSPropertyFuncs.h"
-#include "CChar.h"  // Ensure you include the header for CChar
+#include "cChar.h"  // Ensure you include the header for CChar
 #include <js/TypeDecls.h>  // Ensure proper definitions for JSFreeOp and JSObject
 #include <jsapi.h>  // Make sure you include this for SpiderMonkey APIs
 

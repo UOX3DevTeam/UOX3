@@ -15,11 +15,11 @@
 #define CLSDECLG( main, attr ) JS##main##_get_##attr
 #define CLSDECLS( main, attr ) JS##main##_set_##attr
 #define PDECLGS( main, attr ) #attr, CLSDECLG( main, attr ), CLSDECLS( main, attr )
-#define FDCLG( main, attr ) bool CLSDECLG ## ( main, attr ) ## ( JSContext *cx, unsigned int argc, JS::Value *vp )
-#define FDCLS( main, attr ) bool CLSDECLS ## ( main, attr ) ## ( JSContext *cx, unsigned int argc, JS::Value *vp )
+#define FDCLG( main, attr ) bool CLSDECLG( main, attr )( JSContext *cx, unsigned int argc, JS::Value *vp )
+#define FDCLS( main, attr ) bool CLSDECLS( main, attr )( JSContext *cx, unsigned int argc, JS::Value *vp )
 
-#define DECL_GET( main, attr ) FDCLG( main, attr ) ## ;
-#define DECL_SET( main, attr ) FDCLS( main, attr ) ## ;
+#define DECL_GET( main, attr ) FDCLG( main, attr );
+#define DECL_SET( main, attr ) FDCLS( main, attr );
 
 // Lifted from the Mozilla headers - revisit if these change!  Change UX to JS
 #define UX_PSG( main, attr, attributes )                                \
@@ -127,16 +127,6 @@ FDCLS( main, attr ) {                                    \
   }                                                                                                              \
   return true;                                                                                                   \
 }
-
-// This is the restore context we need to fix up
-/*
- bool retVal = origScript->CallParticularEvent("_restorecontext_", &id, 0, vp);
-    if( !retVal ) \
-    { \
-      Console.Warning( oldstrutil::format( "Script context lost after setting Race property %u. Add 'function
- _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID )); \
-    } \
-*/
 
 #define IMPL_SET_NP(main, attr, method, accessor)                                                                \
 FDCLS( main, attr ) {                                                                                            \
