@@ -712,39 +712,39 @@ function SwapFail( res )
 /** @type { ( pUser: Character, mannequin: Character, layer: number ) => { moved: number, failed: number } } */
 function SwapLayer( pUser, mannequin, layer )
 {
-	var u = pUser.FindItemLayer( layer );
-	var m = mannequin.FindItemLayer( layer );
+	var pPlayer = pUser.FindItemLayer( layer );
+	var mNpc = mannequin.FindItemLayer( layer );
 
 	var moved = 0, failed = 0;
 
-	if( !ValidateObject( u ) && !ValidateObject( m ))
+	if( !ValidateObject( pPlayer ) && !ValidateObject( mNpc ))
 		return {moved:0, failed:0};
 
-	if( ValidateObject( u ) && ValidateObject( m ))
+	if( ValidateObject( pPlayer ) && ValidateObject( mNpc ))
 	{
-		PlaceInPackOrDrop( pUser, u );
+		PlaceInPackOrDrop( pUser, pPlayer );
 
-		var r1 = EquipOn( pUser, m, pUser );
+		var r1 = EquipOn( pUser, mNpc, pUser );
 		failed += SwapFail( r1 );
 		moved++;
 
-		var r2 = EquipOn( mannequin, u, pUser );
+		var r2 = EquipOn( mannequin, pPlayer, pUser );
 		failed += SwapFail( r2 );
 		moved++;
 
 		return {moved:moved, failed:failed};
 	}
 
-	if( !ValidateObject( u ) && ValidateObject( m ))
+	if( !ValidateObject( pPlayer ) && ValidateObject( mNpc ))
 	{
-		var r3 = EquipOn( pUser, m, pUser );
+		var r3 = EquipOn( pUser, mNpc, pUser );
 		failed += SwapFail( r3 ); moved++;
 		return {moved:moved, failed:failed};
 	}
 
-	if( ValidateObject( u ) && !ValidateObject( m ))
+	if( ValidateObject( pPlayer ) && !ValidateObject( mNpc ))
 	{
-		var r4 = EquipOn( mannequin, u, pUser );
+		var r4 = EquipOn( mannequin, pPlayer, pUser );
 		failed += SwapFail( r4 ); moved++;
 		return {moved:moved, failed:failed};
 	}
@@ -806,7 +806,7 @@ function SwapHands( pUser, mannequin )
 /** @type { ( pUser: Character, mannequin: Character ) => number } */
 function SwitchMannequinClothing( pUser, mannequin )
 {
-	if( !ValidateObject( pUser ) || !ValidateObject( mannequin ))
+	if( !ValidateObject( mannequin ))
 		return 0;
 
 	var pSocket = pUser.socket;
