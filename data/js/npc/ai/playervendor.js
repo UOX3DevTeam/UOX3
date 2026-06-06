@@ -666,14 +666,15 @@ function CheckVendorUpkeep( vendor, notifyChar )
 	if( periodsOwed <= 0 )
 		return true;
 
-	for( var i = 0; i < periodsOwed; ++i )
-	{
-		if( !PayVendorCharge( vendor, GetVendorChargePerPeriod( vendor ) ) )
-		{
-			RemoveVendorForNoFunds( vendor, notifyChar );
-			return false;
-		}
-	}
+	var costPerPeriod = GetVendorChargePerPeriod( vendor );
+    for( var i = 0; i < periodsOwed; ++i )
+    {
+        if( !PayVendorCharge( vendor, costPerPeriod ) )
+        {
+            RemoveVendorForNoFunds( vendor, notifyChar );
+            return false;
+        }
+    }
 
 	vendor.SetTag( "VendorLastChargeTime", lastChargeTime + ( periodsOwed * chargeInterval ) );
 	return true;
@@ -855,22 +856,22 @@ function CollectVendorGold( pUser, vendor )
 
 	if( heldGold <= 0 )
 	{
-		socket.SysMessage( GetDictionaryEntry( 40012, socket.language ) );
+		socket.SysMessage( GetDictionaryEntry( 40012, socket.language ));
 		return;
 	}
 
-	if( !CanBankReceiveVendorPayout( pUser ) )
+	if( !CanBankReceiveVendorPayout( pUser ))
 	{
-		socket.SysMessage( GetDictionaryEntry( 40013, socket.language ) );
+		socket.SysMessage( GetDictionaryEntry( 40013, socket.language ));
 		return;
 	}
 
 	if( heldGold > 2000 )
 	{
 		var vendorCheck = CreateVendorBankCheck( pUser, heldGold );
-		if( !ValidateObject( vendorCheck ) )
+		if( !ValidateObject( vendorCheck ))
 		{
-			socket.SysMessage( GetDictionaryEntry( 40014, socket.language ) );
+			socket.SysMessage( GetDictionaryEntry( 40014, socket.language ));
 			return;
 		}
 
@@ -879,9 +880,9 @@ function CollectVendorGold( pUser, vendor )
 		return;
 	}
 
-	if( !DepositVendorGoldToBankBox( pUser, heldGold ) )
+	if( !DepositVendorGoldToBankBox( pUser, heldGold ))
 	{
-		socket.SysMessage( GetDictionaryEntry( 40016, socket.language ) );
+		socket.SysMessage( GetDictionaryEntry( 40016, socket.language ));
 		return;
 	}
 
@@ -898,40 +899,40 @@ function DepositToVendorBank( pUser, vendor, amount )
 	var socket = pUser.socket;
 	if( amount <= 0 )
 	{
-		socket.SysMessage( GetDictionaryEntry( 40018, socket.language ) );
+		socket.SysMessage( GetDictionaryEntry( 40018, socket.language ));
 		return;
 	}
 
-	if( !ValidateObject( pUser.pack ) )
+	if( !ValidateObject( pUser.pack ))
 	{
-		socket.SysMessage( GetDictionaryEntry( 40019, socket.language ) );
+		socket.SysMessage( GetDictionaryEntry( 40019, socket.language ));
 		return;
 	}
 
 	if( GetPackGoldAmount( pUser ) < amount )
 	{
-		socket.SysMessage( GetDictionaryEntry( 40020, socket.language ) );
+		socket.SysMessage( GetDictionaryEntry( 40020, socket.language ));
 		return;
 	}
 
 	var deposited = DepositVendorBankGold( vendor, amount );
 	if( deposited <= 0 )
 	{
-		socket.SysMessage( GetDictionaryEntry( 40021, socket.language ) );
+		socket.SysMessage( GetDictionaryEntry( 40021, socket.language ));
 		return;
 	}
 
 	if( !RemoveGoldFromPack( pUser, deposited ))
 	{
 		WithdrawVendorBankGold( vendor, deposited );
-		socket.SysMessage( GetDictionaryEntry( 40022, socket.language ) );
+		socket.SysMessage( GetDictionaryEntry( 40022, socket.language ));
 		return;
 	}
 
 	socket.SysMessage( GetDictionaryEntry( 40023, socket.language ), deposited );
 
 	if( deposited < amount )
-		socket.SysMessage( GetDictionaryEntry( 40024, socket.language ) );
+		socket.SysMessage( GetDictionaryEntry( 40024, socket.language ));
 }
 
 /** @param {Character} pUser @param {Character} vendor */
@@ -943,7 +944,7 @@ function FlushBankToHeld( pUser, vendor )
 	var moved = FlushVendorBankToHeldGold( vendor );
 	if( moved <= 0 )
 	{
-		pUser.socket.SysMessage( GetDictionaryEntry( 40025, pUser.socket.language ) );
+		pUser.socket.SysMessage( GetDictionaryEntry( 40025, pUser.socket.language ));
 		return;
 	}
 
@@ -1020,7 +1021,7 @@ function NormalizeVendorSpeech( vendor, speech )
 		return "";
 
 	var cleanedSpeech = ( "" + speech ).toLowerCase().replace( /^\s+|\s+$/g, "" );
-	if( !ValidateObject( vendor ) || vendor.aitype != 17 || !vendor.name )
+	if( vendor.aitype != 17 || !vendor.name )
 		return cleanedSpeech;
 
 	var vendorName = ( "" + vendor.name ).toLowerCase();
@@ -1036,14 +1037,14 @@ function NormalizeVendorSpeech( vendor, speech )
 /** @param {Character} pUser @param {Character} vendor @returns {boolean} */
 function VendorAccessBlocked( pUser, vendor )
 {
-	if( ValidateObject( vendor.multi ) && vendor.multi.IsOnBanList( pUser ) )
+	if( ValidateObject( vendor.multi ) && vendor.multi.IsOnBanList( pUser ))
 	{
 		if( pUser.socket )
-			pUser.socket.SysMessage( GetDictionaryEntry( 40059, pUser.socket.language ) );
+			pUser.socket.SysMessage( GetDictionaryEntry( 40059, pUser.socket.language ));
 		return true;
 	}
 
-	if( !CheckVendorUpkeep( vendor, pUser ) )
+	if( !CheckVendorUpkeep( vendor, pUser ))
 		return true;
 
 	return false;
@@ -1059,7 +1060,7 @@ function HandleVendorSpeechCommand( pUser, vendor, speech )
 
 	if( cmd == "view" || cmd == "browse" || cmd == "look" )
 	{
-		if( VendorAccessBlocked( pUser, vendor ) )
+		if( VendorAccessBlocked( pUser, vendor ))
 			return 2;
 
 		OpenVendorBackpack( pUser, vendor );
@@ -1068,7 +1069,7 @@ function HandleVendorSpeechCommand( pUser, vendor, speech )
 
 	if( cmd == "buy" || cmd == "purchase" )
 	{
-		if( VendorAccessBlocked( pUser, vendor ) )
+		if( VendorAccessBlocked( pUser, vendor ))
 			return 2;
 
 		pUser.BuyFrom( vendor );
@@ -1079,11 +1080,11 @@ function HandleVendorSpeechCommand( pUser, vendor, speech )
 	{
 		if( !ValidateObject( vendor.owner ) || vendor.owner.serial != pUser.serial )
 		{
-			vendor.TextMessage( GetDictionaryEntry( 40028 ) );
+			vendor.TextMessage( GetDictionaryEntry( 40028 ));
 			return 2;
 		}
 
-		if( !CheckVendorUpkeep( vendor, pUser ) )
+		if( !CheckVendorUpkeep( vendor, pUser ))
 			return 2;
 
 		CollectVendorGold( pUser, vendor );
@@ -1094,11 +1095,11 @@ function HandleVendorSpeechCommand( pUser, vendor, speech )
 	{
 		if( !ValidateObject( vendor.owner ) || vendor.owner.serial != pUser.serial )
 		{
-			vendor.TextMessage( GetDictionaryEntry( 40028 ) );
+			vendor.TextMessage( GetDictionaryEntry( 40028 ));
 			return 2;
 		}
 
-		if( !CheckVendorUpkeep( vendor, pUser ) )
+		if( !CheckVendorUpkeep( vendor, pUser ))
 			return 2;
 
 		if( pUser.socket )
@@ -1113,7 +1114,7 @@ function HandleVendorSpeechCommand( pUser, vendor, speech )
 	{
 		if( !ValidateObject( vendor.owner ) || vendor.owner.serial != pUser.serial )
 		{
-			vendor.TextMessage( GetDictionaryEntry( 40028 ) );
+			vendor.TextMessage( GetDictionaryEntry( 40028 ));
 			return 2;
 		}
 
@@ -1125,7 +1126,7 @@ function HandleVendorSpeechCommand( pUser, vendor, speech )
 	{
 		if( !ValidateObject( vendor.owner ) || vendor.owner.serial != pUser.serial )
 		{
-			vendor.TextMessage( GetDictionaryEntry( 40028 ) );
+			vendor.TextMessage( GetDictionaryEntry( 40028 ));
 			return 2;
 		}
 
@@ -1139,29 +1140,23 @@ function HandleVendorSpeechCommand( pUser, vendor, speech )
 /** @param {Character} vendor @param {number} layer */
 function RemoveVendorLayerItem( vendor, layer )
 {
-	if( !ValidateObject( vendor ) )
-		return;
-
 	var layerItem = vendor.FindItemLayer( layer );
-	if( ValidateObject( layerItem ) )
+	if( ValidateObject( layerItem ))
 		layerItem.Delete();
 }
 
 /** @param {Character} vendor @param {number} layer @param {number} itemID @param {number} hue @param {string} itemName */
 function SetVendorLayerItem( vendor, layer, itemID, hue, itemName )
 {
-	if( !ValidateObject( vendor ) )
-		return;
-
 	var oldItem = vendor.FindItemLayer( layer );
-	if( ValidateObject( oldItem ) )
+	if( ValidateObject( oldItem ))
 		oldItem.Delete();
 
 	if( itemID == 0 )
 		return;
 
 	var newItem = CreateBlankItem( vendor.socket ? vendor.socket : null, vendor, 1, itemName, itemID, hue, "ITEM", false );
-	if( !ValidateObject( newItem ) )
+	if( !ValidateObject( newItem ))
 		return;
 
 	newItem.container = vendor;
@@ -1171,11 +1166,8 @@ function SetVendorLayerItem( vendor, layer, itemID, hue, itemName )
 /** @param {Character} vendor @param {number} layer @param {number} hue */
 function SetVendorLayerHue( vendor, layer, hue )
 {
-	if( !ValidateObject( vendor ) )
-		return;
-
 	var layerItem = vendor.FindItemLayer( layer );
-	if( ValidateObject( layerItem ) )
+	if( ValidateObject( layerItem ))
 		layerItem.colour = hue;
 }
 
@@ -1196,16 +1188,12 @@ function SetVendorRaceGenderBody( vendor, isElf, isFemale )
 /** @param {Character} pUser @param {number} categoryIndex */
 function StoreClothingDyeCategory( pUser, categoryIndex )
 {
-	if( ValidateObject( pUser ) )
-		pUser.SetTempTag( "PlayerVendorClothingDyeCategory", categoryIndex );
+	pUser.SetTempTag( "PlayerVendorClothingDyeCategory", categoryIndex );
 }
 
 /** @param {Character} pUser @returns {number} */
 function GetStoredClothingDyeCategory( pUser )
 {
-	if( !ValidateObject( pUser ) )
-		return -1;
-
 	var categoryIndex = pUser.GetTempTag( "PlayerVendorClothingDyeCategory" );
 	return ( categoryIndex === null || categoryIndex === undefined || categoryIndex === "" ) ? -1 : categoryIndex;
 }
@@ -1213,6 +1201,9 @@ function GetStoredClothingDyeCategory( pUser )
 /** @param {Socket} socket @param {Character} vendor */
 function ShowPlayerVendorOwnerGump( socket, vendor )
 {
+	if( socket == null )
+		return;
+
 	if( vendor.aitype != 17 )
 		return;
 
@@ -1365,7 +1356,7 @@ function AddHairHueCategoryPage( socket, myGump, pageNumber, title, hueList, but
 /** @param {Character} pUser @param {Character} vendor */
 function ShowVendorCustomizeGump( pUser, vendor )
 {
-	if( !ValidateObject( pUser ) || !ValidateObject( vendor ) || vendor.aitype != 17 || !pUser.socket )
+	if( vendor.aitype != 17 || !pUser.socket )
 		return;
 
 	if( !ValidateObject( vendor.owner ) || vendor.owner.serial != pUser.serial )
@@ -1450,7 +1441,7 @@ function ShowVendorCustomizeGump( pUser, vendor )
 /** @type { ( pUser: Character, vendor: Character, pButton: number ) => void } */
 function HandleVendorCustomizeButton( pUser, vendor, pButton )
 {
-	if( !ValidateObject( pUser ) || !ValidateObject( vendor ) || vendor.aitype != 17 || !pUser.socket )
+	if( vendor.aitype != 17 || !pUser.socket )
 		return;
 
 	if( !ValidateObject( vendor.owner ) || vendor.owner.serial != pUser.serial )
@@ -1564,7 +1555,7 @@ function HandleVendorCustomizeButton( pUser, vendor, pButton )
 /** @param {Character} pUser @param {Character} vendor */
 function ShowVendorClothingGump( pUser, vendor )
 {
-	if( !ValidateObject( pUser ) || !ValidateObject( vendor ) || vendor.aitype != 17 || !pUser.socket )
+	if( vendor.aitype != 17 || !pUser.socket )
 		return;
 
 	if( !ValidateObject( vendor.owner ) || vendor.owner.serial != pUser.serial )
@@ -1713,7 +1704,7 @@ function ShowVendorClothingDyeGump( pUser, vendor )
 /** @param {Character} pUser @param {Character} vendor @param {number} pButton */
 function HandleVendorClothingButton( pUser, vendor, pButton )
 {
-	if( !ValidateObject( pUser ) || !ValidateObject( vendor ) || vendor.aitype != 17 )
+	if( vendor.aitype != 17 )
 		return;
 
 	if( !ValidateObject( vendor.owner ) || vendor.owner.serial != pUser.serial )
@@ -1801,7 +1792,7 @@ function TrimString( text )
 /** @param {Character} pUser @param {Character} vendor */
 function BeginRenameVendor( pUser, vendor )
 {
-	if( !ValidateObject( pUser ) || !ValidateObject( vendor ) || vendor.aitype != 17 || !pUser.socket )
+	if( vendor.aitype != 17 || !pUser.socket )
 		return;
 
 	if( !ValidateObject( vendor.owner ) || vendor.owner.serial != pUser.serial )
@@ -1815,7 +1806,7 @@ function BeginRenameVendor( pUser, vendor )
 /** @param {Character} pUser @param {Character} vendor */
 function BeginRenameVendorShop( pUser, vendor )
 {
-	if( !ValidateObject( pUser ) || !ValidateObject( vendor ) || vendor.aitype != 17 || !pUser.socket )
+	if( vendor.aitype != 17 || !pUser.socket )
 		return;
 
 	if( !ValidateObject( vendor.owner ) || vendor.owner.serial != pUser.serial )
@@ -1829,7 +1820,7 @@ function BeginRenameVendorShop( pUser, vendor )
 /** @param {Character} pUser @param {Character} vendor */
 function BeginDepositVendorGold( pUser, vendor )
 {
-	if( !ValidateObject( pUser ) || !ValidateObject( vendor ) || vendor.aitype != 17 || !pUser.socket )
+	if( vendor.aitype != 17 || !pUser.socket )
 		return;
 
 	if( !ValidateObject( vendor.owner ) || vendor.owner.serial != pUser.serial )
