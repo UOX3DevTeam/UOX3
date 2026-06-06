@@ -1453,18 +1453,21 @@ function HandleVendorCustomizeButton( pUser, vendor, pButton )
 	if( isElf )
 		hairStyles = isFemale ? femaleElfHairStyles : maleElfHairStyles;
 
+	// Return to vendor owner menu
 	if( pButton == 5000 )
 	{
 		ShowPlayerVendorOwnerGump( pUser.socket, vendor );
 		return;
 	}
 
+	// Refresh vendor customize menu
 	if( pButton == 5007 )
 	{
 		ShowVendorCustomizeGump( pUser, vendor );
 		return;
 	}
 
+	// Toggle vendor gender
 	if( pButton == 5001 )
 	{
 		RemoveVendorLayerItem( vendor, VendorEquipmentLayer.Beard );
@@ -1473,6 +1476,7 @@ function HandleVendorCustomizeButton( pUser, vendor, pButton )
 		return;
 	}
 
+	// Toggle vendor race
 	if( pButton == 5006 )
 	{
 		RemoveVendorLayerItem( vendor, VendorEquipmentLayer.Hair );
@@ -1493,6 +1497,7 @@ function HandleVendorCustomizeButton( pUser, vendor, pButton )
 		return;
 	}
 
+	// Remove vendor hair
 	if( pButton == 5002 )
 	{
 		RemoveVendorLayerItem( vendor, VendorEquipmentLayer.Hair );
@@ -1500,6 +1505,7 @@ function HandleVendorCustomizeButton( pUser, vendor, pButton )
 		return;
 	}
 
+	// Remove vendor beard
 	if( pButton == 5004 )
 	{
 		RemoveVendorLayerItem( vendor, VendorEquipmentLayer.Beard );
@@ -1507,6 +1513,7 @@ function HandleVendorCustomizeButton( pUser, vendor, pButton )
 		return;
 	}
 
+	// Set vendor hair style
 	if( pButton >= 0x1000 && pButton < ( 0x1000 + 256 ) )
 	{
 		var hairIndex = pButton - 0x1000;
@@ -1521,6 +1528,7 @@ function HandleVendorCustomizeButton( pUser, vendor, pButton )
 		return;
 	}
 
+	// Set vendor beard style
 	if( pButton >= 0x2000 && pButton < ( 0x2000 + 256 ) )
 	{
 		var beardIndex = pButton - 0x2000;
@@ -1535,6 +1543,7 @@ function HandleVendorCustomizeButton( pUser, vendor, pButton )
 		return;
 	}
 
+	// Set vendor hair color
 	if( pButton >= 0x3000 && pButton < 0x4000 )
 	{
 		SetVendorLayerHue( vendor, VendorEquipmentLayer.Hair, pButton - 0x3000 );
@@ -1542,6 +1551,7 @@ function HandleVendorCustomizeButton( pUser, vendor, pButton )
 		return;
 	}
 
+	// Set vendor beard color
 	if( pButton >= 0x4000 && pButton < 0x5000 )
 	{
 		if( !isElf && !isFemale )
@@ -1709,18 +1719,21 @@ function HandleVendorClothingButton( pUser, vendor, pButton )
 	if( !ValidateObject( vendor.owner ) || vendor.owner.serial != pUser.serial )
 		return;
 
+	// Return to vendor customize menu
 	if( pButton == 0x8FFF )
 	{
 		ShowVendorCustomizeGump( pUser, vendor );
 		return;
 	}
 
+	// Return to vendor clothing menu
 	if( pButton == 0x8FFE )
 	{
 		ShowVendorClothingGump( pUser, vendor );
 		return;
 	}
 
+	// Remove selected clothing layer
 	if( pButton >= 0x7000 && pButton < ( 0x7000 + 100 ) )
 	{
 		var removeCatIndex = pButton - 0x7000;
@@ -1732,6 +1745,7 @@ function HandleVendorClothingButton( pUser, vendor, pButton )
 		return;
 	}
 
+	// Equip selected clothing item
 	if( pButton >= 0x5000 && pButton < ( 0x5000 + 10000 ) )
 	{
 		var entryValue = pButton - 0x5000;
@@ -1752,6 +1766,7 @@ function HandleVendorClothingButton( pUser, vendor, pButton )
 		return;
 	}
 
+	// Open clothing dye menu
 	if( pButton >= 0x8000 && pButton < ( 0x8000 + vendorClothingCategories.length ) )
 	{
 		var dyeCatIndex = pButton - 0x8000;
@@ -1763,6 +1778,7 @@ function HandleVendorClothingButton( pUser, vendor, pButton )
 		return;
 	}
 
+	// Set selected clothing color
 	if( pButton >= 0x9000 && pButton < ( 0x9000 + 0x1000 ) )
 	{
 		var hueValue = pButton - 0x9000;
@@ -1895,6 +1911,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	if( !CheckVendorUpkeep( vendor, pUser ) )
 		return;
 
+	// Handle vendor customize buttons
 	if( pButton == 5000 || pButton == 5001 || pButton == 5002 || pButton == 5004 || pButton == 5006 || pButton == 5007 ||
 		( pButton >= 0x1000 && pButton < ( 0x1000 + 256 ) ) ||
 		( pButton >= 0x2000 && pButton < ( 0x2000 + 256 ) ) ||
@@ -1905,6 +1922,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		return;
 	}
 
+	// Handle vendor clothing buttons
 	if( pButton == 0x8FFF || pButton == 0x8FFE ||
 		( pButton >= 0x5000 && pButton < ( 0x5000 + 10000 ) ) ||
 		( pButton >= 0x7000 && pButton < ( 0x7000 + 100 ) ) ||
