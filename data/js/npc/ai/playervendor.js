@@ -1,6 +1,6 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
-// Version: 1.1.5
+// Version: 1.1.6
 
 // Max amount of money the vendor can hold in the bank.
 // Held gold is not included in this limit, but will
@@ -13,9 +13,9 @@ var vendorMaxFunds = GetServerSetting( "VendorMaxFunds" );
 var onlyReturnToBank = GetServerSetting( "onlyReturnToBank" );
 
 // Vendor upkeep settings
-var vendorChargesEnabled =  GetServerSetting( "VendorChargesEnabled" );; // Master toggle for vendor upkeep charges
-var vendorBaseCharge =  GetServerSetting( "VendorBaseCharge" );       // Flat fee per charge period
-var vendorChargeHours =  GetServerSetting( "VendorChargeHours" );      // Charge every X real hours
+var vendorChargesEnabled = GetServerSetting( "VendorChargesEnabled" ); // Master toggle for vendor upkeep charges
+var vendorBaseCharge = GetServerSetting( "VendorBaseCharge" );       // Flat fee per charge period
+var vendorChargeHours = GetServerSetting( "VendorChargeHours" );      // Charge every X real hours
 var vendorItemFeesEnabled = GetServerSetting( "VendorUseItemFeesEnabled" );    // Add item-based fee from listed item prices
 var vendorItemFeeDivisor = GetServerSetting( "VendorItemFeeDivisor" );  // 3 gold per 500 worth of one item
 var vendorItemFeeAmount = GetServerSetting( "VendorItemFeeAmount" );     // Fee added per divisor step
@@ -43,38 +43,138 @@ const VendorEquipmentLayer = {
     OuterLegs: 0x17
 };
 
-/** @constructor @param {string|null} name @param {number[]} hues @param {number|null} dictID */
-function VendorHueCategory( name, hues, dictID )
-{
-	this.name = name;
-	this.hues = hues;
-	this.dictID = dictID;
-}
+const vendorHairHueCategories = [
+	{ name: null, hues: [ 0x044E, 0x044F, 0x0450, 0x0451, 0x0452, 0x0453, 0x0454 ], dictID: 17111 }, // Black
+	{ name: null, hues: [ 0x0455, 0x0456, 0x0457, 0x0458, 0x0459, 0x045A, 0x045B, 0x045C ], dictID: 17112 }, // Beige
+	{ name: null, hues: [ 0x045D, 0x045E, 0x045F, 0x0460, 0x0461, 0x0462, 0x0463, 0x0464, 0x0465, 0x0466, 0x0467, 0x0468, 0x0469, 0x046A, 0x046B, 0x046C ], dictID: 17113 }, // Golden
+	{ name: null, hues: [ 0x046D, 0x046E, 0x046F, 0x0470, 0x0471, 0x0472, 0x0473, 0x0474, 0x0475, 0x0476, 0x0477, 0x0478, 0x0479, 0x047A, 0x047B, 0x047C ], dictID: 17114 }, // Dark Brown
+	{ name: null, hues: [ 0x04B1, 0x04B2, 0x04B3, 0x04B4, 0x04B5, 0x04B6, 0x04B7, 0x04B8, 0x04B9, 0x04BA, 0x04BB, 0x04BC, 0x04BD, 0x04BE, 0x04BF, 0x04C0 ], dictID: 17108 }, // Red
+	{ name: null, hues: [ 0x05DD, 0x05DE, 0x05DF, 0x05E0, 0x05E1, 0x05E2, 0x05E3, 0x05E4, 0x05E5, 0x05E6, 0x05E7, 0x05E8, 0x05E9, 0x05EA, 0x05EB, 0x05EC ], dictID: 17105 }, // Auburn
+	{ name: null, hues: [ 0x0641, 0x0642, 0x0643, 0x0644, 0x0645, 0x0646, 0x0647, 0x0648, 0x0649, 0x064A, 0x064B, 0x064C, 0x064D, 0x064E, 0x064F, 0x0650, 0x0651, 0x0652, 0x0653, 0x0654, 0x0655, 0x0656, 0x0657, 0x0658, 0x0659, 0x065A, 0x065B, 0x065C, 0x065D, 0x065E, 0x065F, 0x0660 ], dictID: 17103 }, // Brown
+	{ name: null, hues: [ 0x08A5, 0x08A6, 0x08A7, 0x08A8, 0x08A9, 0x0961, 0x0962, 0x0963, 0x0964, 0x0965, 0x0966, 0x0967, 0x0968 ], dictID: 17110 }, // Blonde
+	{ name: null, hues: [ 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22 ], dictID: 40100 }, // Special Purple
+	{ name: null, hues: [ 32, 33, 34, 35, 36, 37 ], dictID: 40101 }, // Special Red
+	{ name: null, hues: [ 38, 39, 40, 41, 42, 43, 44, 45, 46 ], dictID: 40102 }, // Special Orange
+	{ name: null, hues: [ 54, 55, 56, 57 ], dictID: 40103 }, // Special Yellow
+	{ name: null, hues: [ 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72 ], dictID: 40104 }, // Special Lime
+	{ name: null, hues: [ 81, 82, 83 ], dictID: 40105 }, // Special Dark Lime
+	{ name: null, hues: [ 89, 90, 91 ], dictID: 40106 }, // Special Ice Blue
+	{ name: null, hues: [ 1153, 1154, 1155 ], dictID: 40107 } // Special Ice White
+];
 
-/** @constructor @param {number} itemID @param {string|null} name @param {number=} dictID */
-function HairOrBeard( itemID, name, dictID )
-{
-	this.itemID = itemID;
-	this.name = name;
-	this.dictID = dictID;
-}
+const femaleElfHairStyles = [
+	{ itemID: 0x2FCC, name: null, dictID: 18035 }, // Flower
+	{ itemID: 0x2FC0, name: null, dictID: 18028 }, // Long Feather
+	{ itemID: 0x2FC1, name: null, dictID: 18029 }, // Short
+	{ itemID: 0x2FC2, name: null, dictID: 18030 }, // Mullet
+	{ itemID: 0x2FCE, name: null, dictID: 18032 }, // Topknot
+	{ itemID: 0x2FCF, name: null, dictID: 18033 }, // Long Braid
+	{ itemID: 0x2FD0, name: null, dictID: 18036 }, // Buns
+	{ itemID: 0x2FD1, name: null, dictID: 18034 }  // Spiked
+];
 
-/** @constructor @param {number} itemID @param {string} name */
-function VendorClothingEntry( itemID, name )
-{
-	this.itemID = itemID;
-	this.name = name;
-}
+const maleElfHairStyles = [
+	{ itemID: 0x2FBF, name: null, dictID: 18027 }, // Mid Long
+	{ itemID: 0x2FC0, name: null, dictID: 18028 }, // Long Feather
+	{ itemID: 0x2FC1, name: null, dictID: 18029 }, // Short
+	{ itemID: 0x2FC2, name: null, dictID: 18030 }, // Mullet
+	{ itemID: 0x2FCE, name: null, dictID: 18032 }, // Topknot
+	{ itemID: 0x2FCF, name: null, dictID: 18033 }, // Long Braid
+	{ itemID: 0x2FCD, name: null, dictID: 18031 }, // Long
+	{ itemID: 0x2FD1, name: null, dictID: 18034 }  // Spiked
+];
 
-/** @constructor @param {number} layer @param {string} name @param {boolean} canDye @param {VendorClothingEntry[]} entries @param {boolean=} compactLayout */
-function VendorClothingCategory( layer, name, canDye, entries, compactLayout )
-{
-	this.layer = layer;
-	this.name = name;
-	this.canDye = canDye;
-	this.entries = entries;
-	this.compactLayout = compactLayout ? true : false;
-}
+const humanHairStyles = [
+	{ itemID: 0x203B, name: null, dictID: 18029 }, // Short
+	{ itemID: 0x203C, name: null, dictID: 18031 }, // Long
+	{ itemID: 0x203D, name: null, dictID: 2086 }, // Ponytail
+	{ itemID: 0x2044, name: null, dictID: 2087 }, // Mohawk
+	{ itemID: 0x2045, name: null, dictID: 2080 }, // Pageboy
+	{ itemID: 0x204A, name: null, dictID: 18032 }, // Topknot
+	{ itemID: 0x2047, name: null, dictID: 2088 }, // Curly
+	{ itemID: 0x2048, name: null, dictID: 2081 }, // Receding
+	{ itemID: 0x2049, name: null, dictID: 2082 }  // 2-Tails
+];
+
+const humanBeardStyles = [
+	{ itemID: 0x2041, name: null, dictID: 18001 }, // Mustache
+	{ itemID: 0x203F, name: null, dictID: 18002 }, // Short Beard
+	{ itemID: 0x204B, name: null, dictID: 40058 }, // Short Beard and Mustache
+	{ itemID: 0x203E, name: null, dictID: 18005 }, // Long Beard
+	{ itemID: 0x204C, name: null, dictID: 40068 }, // Long Beard and Mustache
+	{ itemID: 0x2040, name: null, dictID: 40069 }, // Goatee
+	{ itemID: 0x204D, name: null, dictID: 18000 }  // Vandyke
+];
+
+const vendorClothingCategories = [
+	{ layer: VendorEquipmentLayer.InnerTorso, name: "Upper Torso", canDye: true, compactLayout: false, entries: [
+		{ itemID: 0x1517, name: "Shirt" },
+		{ itemID: 0x1EFD, name: "Fancy Shirt" },
+		{ itemID: 0x1F01, name: "Plain Dress" },
+		{ itemID: 0x1EFF, name: "Fancy Dress" },
+		{ itemID: 0x1F03, name: "Robe" }
+	]},
+
+	{ layer: VendorEquipmentLayer.MiddleTorso, name: "Over Chest", canDye: true, compactLayout: false, entries: [
+		{ itemID: 0x1F7B, name: "Doublet" },
+		{ itemID: 0x1FA1, name: "Tunic" },
+		{ itemID: 0x1F9F, name: "Jester Suit" },
+		{ itemID: 0x1541, name: "Body Sash" },
+		{ itemID: 0x1FFD, name: "Surcoat" },
+		{ itemID: 0x153B, name: "Half Apron" },
+		{ itemID: 0x153D, name: "Full Apron" }
+	]},
+
+	{ layer: VendorEquipmentLayer.Shoes, name: "Footwear", canDye: true, compactLayout: false, entries: [
+		{ itemID: 0x170D, name: "Sandals" },
+		{ itemID: 0x1710, name: "Shoes" },
+		{ itemID: 0x170B, name: "Boots" },
+		{ itemID: 0x1711, name: "Thigh Boots" }
+	]},
+
+	{ layer: VendorEquipmentLayer.Helm, name: "Hats", canDye: true, compactLayout: false, entries: [
+		{ itemID: 0x1544, name: "Skull Cap" },
+		{ itemID: 0x1540, name: "Bandana" },
+		{ itemID: 0x1713, name: "Floppy Hat" },
+		{ itemID: 0x1714, name: "Wide Brim Hat" },
+		{ itemID: 0x1715, name: "Cap" },
+		{ itemID: 0x1716, name: "Tall Straw Hat" },
+		{ itemID: 0x1717, name: "Straw Hat" },
+		{ itemID: 0x1718, name: "Wizard Hat" },
+		{ itemID: 0x1719, name: "Bonnet" },
+		{ itemID: 0x171A, name: "Feathered Hat" },
+		{ itemID: 0x171B, name: "Tricorne Hat" },
+		{ itemID: 0x171C, name: "Jester Hat" }
+	]},
+
+	{ layer: VendorEquipmentLayer.Pants, name: "Lower Torso", canDye: true, compactLayout: false, entries: [
+		{ itemID: 0x1539, name: "Long Pants" },
+		{ itemID: 0x1537, name: "Kilt" },
+		{ itemID: 0x1516, name: "Skirt" }
+	]},
+
+	{ layer: VendorEquipmentLayer.Cloak, name: "Back", canDye: true, compactLayout: false, entries: [
+		{ itemID: 0x1515, name: "Cloak" }
+	]},
+
+	{ layer: VendorEquipmentLayer.OneHand, name: "Held Items", canDye: false, compactLayout: true, entries: [
+		{ itemID: 0x0DBF, name: "Fishing Pole" },
+		{ itemID: 0x0E86, name: "Pickaxe" },
+		{ itemID: 0x0E87, name: "Pitchfork" },
+		{ itemID: 0x0EC3, name: "Cleaver" },
+		{ itemID: 0x0F5C, name: "Mace" },
+		{ itemID: 0x0F6B, name: "Torch" },
+		{ itemID: 0x102A, name: "Hammer" },
+		{ itemID: 0x0F61, name: "Longsword" },
+		{ itemID: 0x13F8, name: "Gnarled Staff" },
+		{ itemID: 0x0F4F, name: "Crossbow" },
+		{ itemID: 0x1407, name: "War Mace" },
+		{ itemID: 0x1443, name: "Two-Handed Axe" },
+		{ itemID: 0x0F62, name: "Spear" },
+		{ itemID: 0x13FF, name: "Katana" },
+		{ itemID: 0x0EFA, name: "Spellbook" }
+	]}
+];
 
 /** @param {VendorHueCategory} entry @param {Socket|null} socket @returns {string} */
 function GetVendorHueCategoryName( entry, socket )
@@ -88,175 +188,42 @@ function GetVendorHueCategoryName( entry, socket )
 /** @param {HairOrBeard} entry @param {Socket} socket @returns {string} */
 function GetHairOrBeardName( entry, socket )
 {
-	if( entry.dictID )
+	if( entry.dictID && socket )
 		return GetDictionaryEntry( entry.dictID, socket.language );
 
 	return entry.name || "";
 }
 
-var vendorHairHueCategories = [
-	new VendorHueCategory( null, [ 0x044E, 0x044F, 0x0450, 0x0451, 0x0452, 0x0453, 0x0454 ], 17111 ), // Black
-	new VendorHueCategory( null, [ 0x0455, 0x0456, 0x0457, 0x0458, 0x0459, 0x045A, 0x045B, 0x045C ], 17112 ), // Beige
-	new VendorHueCategory( null, [ 0x045D, 0x045E, 0x045F, 0x0460, 0x0461, 0x0462, 0x0463, 0x0464, 0x0465, 0x0466, 0x0467, 0x0468, 0x0469, 0x046A, 0x046B, 0x046C ], 17113 ), // Golden
-	new VendorHueCategory( null, [ 0x046D, 0x046E, 0x046F, 0x0470, 0x0471, 0x0472, 0x0473, 0x0474, 0x0475, 0x0476, 0x0477, 0x0478, 0x0479, 0x047A, 0x047B, 0x047C ], 17114 ), // Dark Brown
-	new VendorHueCategory( null, [ 0x04B1, 0x04B2, 0x04B3, 0x04B4, 0x04B5, 0x04B6, 0x04B7, 0x04B8, 0x04B9, 0x04BA, 0x04BB, 0x04BC, 0x04BD, 0x04BE, 0x04BF, 0x04C0 ], 17108 ), // Red
-	new VendorHueCategory( null, [ 0x05DD, 0x05DE, 0x05DF, 0x05E0, 0x05E1, 0x05E2, 0x05E3, 0x05E4, 0x05E5, 0x05E6, 0x05E7, 0x05E8, 0x05E9, 0x05EA, 0x05EB, 0x05EC ], 17105 ), // Auburn
-	new VendorHueCategory( null, [ 0x0641, 0x0642, 0x0643, 0x0644, 0x0645, 0x0646, 0x0647, 0x0648, 0x0649, 0x064A, 0x064B, 0x064C, 0x064D, 0x064E, 0x064F, 0x0650, 0x0651, 0x0652, 0x0653, 0x0654, 0x0655, 0x0656, 0x0657, 0x0658, 0x0659, 0x065A, 0x065B, 0x065C, 0x065D, 0x065E, 0x065F, 0x0660 ], 17103 ), // Brown
-	new VendorHueCategory( null, [ 0x08A5, 0x08A6, 0x08A7, 0x08A8, 0x08A9, 0x0961, 0x0962, 0x0963, 0x0964, 0x0965, 0x0966, 0x0967, 0x0968 ], 17110 ), // Blonde
-	new VendorHueCategory( null, [ 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22 ], 40100 ), // Special Purple
-	new VendorHueCategory( null, [ 32, 33, 34, 35, 36, 37 ], 40101 ), // Special Red
-	new VendorHueCategory( null, [ 38, 39, 40, 41, 42, 43, 44, 45, 46 ], 40102 ), // Special Orange
-	new VendorHueCategory( null, [ 54, 55, 56, 57 ], 40103 ), // Special Yellow
-	new VendorHueCategory( null, [ 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72 ], 40104 ), // Special Lime
-	new VendorHueCategory( null, [ 81, 82, 83 ], 40105 ), // Special Dark Lime
-	new VendorHueCategory( null, [ 89, 90, 91 ], 40106 ), // Special Ice Blue
-	new VendorHueCategory( null, [ 1153, 1154, 1155 ], 40107 ) // Special Ice White
-];
-
-var femaleElfHairStyles = [
-	new HairOrBeard( 0x2FCC, null, 18035 ), // Flower
-	new HairOrBeard( 0x2FC0, null, 18028 ), // Long Feather
-	new HairOrBeard( 0x2FC1, null, 18029 ), // Short
-	new HairOrBeard( 0x2FC2, null, 18030 ), // Mullet
-	new HairOrBeard( 0x2FCE, null, 18032 ), // Topknot
-	new HairOrBeard( 0x2FCF, null, 18033 ), // Long Braid
-	new HairOrBeard( 0x2FD0, null, 18036 ), // Buns
-	new HairOrBeard( 0x2FD1, null, 18034 )  // Spiked
-];
-
-var maleElfHairStyles = [
-	new HairOrBeard( 0x2FBF, null, 18027 ), // Mid Long
-	new HairOrBeard( 0x2FC0, null, 18028 ), // Long Feather
-	new HairOrBeard( 0x2FC1, null, 18029 ), // Short
-	new HairOrBeard( 0x2FC2, null, 18030 ), // Mullet
-	new HairOrBeard( 0x2FCE, null, 18032 ), // Topknot
-	new HairOrBeard( 0x2FCF, null, 18033 ), // Long Braid
-	new HairOrBeard( 0x2FCD, null, 18031 ), // Long
-	new HairOrBeard( 0x2FD1, null, 18034 )  // Spiked
-];
-
-var humanHairStyles = [
-	new HairOrBeard( 0x203B, null, 18029 ), // Short
-	new HairOrBeard( 0x203C, null, 18031 ), // Long
-	new HairOrBeard( 0x203D, null, 2086 ), // Ponytail
-	new HairOrBeard( 0x2044, null, 2087 ), // Mohawk
-	new HairOrBeard( 0x2045, null, 2080 ), // Pageboy
-	new HairOrBeard( 0x204A, null, 18032 ), // Topknot
-	new HairOrBeard( 0x2047, null, 2088 ), // Curly
-	new HairOrBeard( 0x2048, null, 2081 ), // Receding
-	new HairOrBeard( 0x2049, null, 2082 )  // 2-Tails
-];
-
-var humanBeardStyles = [
-	new HairOrBeard( 0x2041, null, 18001 ), // Mustache
-	new HairOrBeard( 0x203F, null, 18002 ), // Short Beard
-	new HairOrBeard( 0x204B, null, 40058 ), // Short Beard and Mustache
-	new HairOrBeard( 0x203E, null, 18005 ), // Long Beard
-	new HairOrBeard( 0x204C, null, 40068 ), // Long Beard and Mustache
-	new HairOrBeard( 0x2040, null, 40069 ), // Goatee
-	new HairOrBeard( 0x204D, null, 18000 )  // Vandyke
-];
-
-var vendorClothingCategories = [
-	new VendorClothingCategory( VendorEquipmentLayer.InnerTorso, "Upper Torso", true, [
-		new VendorClothingEntry( 0x1517, "Shirt" ),
-		new VendorClothingEntry( 0x1EFD, "Fancy Shirt" ),
-		new VendorClothingEntry( 0x1F01, "Plain Dress" ),
-		new VendorClothingEntry( 0x1EFF, "Fancy Dress" ),
-		new VendorClothingEntry( 0x1F03, "Robe" )
-	]),
-
-	new VendorClothingCategory( VendorEquipmentLayer.MiddleTorso, "Over Chest", true, [
-		new VendorClothingEntry( 0x1F7B, "Doublet" ),
-		new VendorClothingEntry( 0x1FA1, "Tunic" ),
-		new VendorClothingEntry( 0x1F9F, "Jester Suit" ),
-		new VendorClothingEntry( 0x1541, "Body Sash" ),
-		new VendorClothingEntry( 0x1FFD, "Surcoat" ),
-		new VendorClothingEntry( 0x153B, "Half Apron" ),
-		new VendorClothingEntry( 0x153D, "Full Apron" )
-	]),
-
-	new VendorClothingCategory( VendorEquipmentLayer.Shoes, "Footwear", true, [
-		new VendorClothingEntry( 0x170D, "Sandals" ),
-		new VendorClothingEntry( 0x1710, "Shoes" ),
-		new VendorClothingEntry( 0x170B, "Boots" ),
-		new VendorClothingEntry( 0x1711, "Thigh Boots" )
-	]),
-
-	new VendorClothingCategory( VendorEquipmentLayer.Helm, "Hats", true, [
-		new VendorClothingEntry( 0x1544, "Skull Cap" ),
-		new VendorClothingEntry( 0x1540, "Bandana" ),
-		new VendorClothingEntry( 0x1713, "Floppy Hat" ),
-		new VendorClothingEntry( 0x1714, "Wide Brim Hat" ),
-		new VendorClothingEntry( 0x1715, "Cap" ),
-		new VendorClothingEntry( 0x1716, "Tall Straw Hat" ),
-		new VendorClothingEntry( 0x1717, "Straw Hat" ),
-		new VendorClothingEntry( 0x1718, "Wizard Hat" ),
-		new VendorClothingEntry( 0x1719, "Bonnet" ),
-		new VendorClothingEntry( 0x171A, "Feathered Hat" ),
-		new VendorClothingEntry( 0x171B, "Tricorne Hat" ),
-		new VendorClothingEntry( 0x171C, "Jester Hat" )
-	]),
-
-	new VendorClothingCategory( VendorEquipmentLayer.Pants, "Lower Torso", true, [
-		new VendorClothingEntry( 0x1539, "Long Pants" ),
-		new VendorClothingEntry( 0x1537, "Kilt" ),
-		new VendorClothingEntry( 0x1516, "Skirt" )
-	]),
-
-	new VendorClothingCategory( VendorEquipmentLayer.Cloak, "Back", true, [
-		new VendorClothingEntry( 0x1515, "Cloak" )
-	]),
-
-	new VendorClothingCategory( VendorEquipmentLayer.OneHand, "Held Items", false, [
-		new VendorClothingEntry( 0x0DBF, "Fishing Pole" ),
-		new VendorClothingEntry( 0x0E86, "Pickaxe" ),
-		new VendorClothingEntry( 0x0E87, "Pitchfork" ),
-		new VendorClothingEntry( 0x0EC3, "Cleaver" ),
-		new VendorClothingEntry( 0x0F5C, "Mace" ),
-		new VendorClothingEntry( 0x0F6B, "Torch" ),
-		new VendorClothingEntry( 0x102A, "Hammer" ),
-		new VendorClothingEntry( 0x0F61, "Longsword" ),
-		new VendorClothingEntry( 0x13F8, "Gnarled Staff" ),
-		new VendorClothingEntry( 0x0F4F, "Crossbow" ),
-		new VendorClothingEntry( 0x1407, "War Mace" ),
-		new VendorClothingEntry( 0x1443, "Two-Handed Axe" ),
-		new VendorClothingEntry( 0x0F62, "Spear" ),
-		new VendorClothingEntry( 0x13FF, "Katana" ),
-		new VendorClothingEntry( 0x0EFA, "Spellbook" )
-	], true)
-];
-
 /** @param {Item} itemObj @returns {number} */
 function GetVendorItemPeriodFee( itemObj )
 {
-	if( !ValidateObject( itemObj ) || itemObj.buyValue <= 0 || !vendorItemFeesEnabled || vendorItemFeeDivisor <= 0 || vendorItemFeeAmount <= 0 )
+	if( itemObj.buyValue <= 0 || !vendorItemFeesEnabled || vendorItemFeeDivisor <= 0 || vendorItemFeeAmount <= 0 )
 		return 0;
 
 	return Math.floor( itemObj.buyValue / vendorItemFeeDivisor ) * vendorItemFeeAmount;
 }
 
-/** @param {Character} vendor @returns {number} */
+/** @type { ( vendor: Character ) => number } */
 function GetVendorItemFeeTotal( vendor )
 {
-	if( !ValidateObject( vendor ) || vendor.aitype != 17 || !ValidateObject( vendor.pack ) )
+	if( vendor.aitype != 17 || !ValidateObject( vendor.pack ) )
 		return 0;
 
 	var totalFee = 0;
 	var packItem = vendor.pack.FirstItem();
 	for( ; !vendor.pack.FinishedItems(); packItem = vendor.pack.NextItem() )
 	{
-		if( ValidateObject( packItem ) )
+		if( ValidateObject( packItem ))
 			totalFee += GetVendorItemPeriodFee( packItem );
 	}
 
 	return totalFee;
 }
 
-/** @param {Character} vendor @returns {number} */
+/** @type { ( vendor: Character ) => number } */
 function GetVendorChargePerPeriod( vendor )
 {
-	if( !ValidateObject( vendor ) || vendor.aitype != 17 || !vendorChargesEnabled )
+	if(  vendor.aitype != 17 || !vendorChargesEnabled )
 		return 0;
 
 	var overrideValue = vendor.GetTag( "VendorChargePerPeriod" );
@@ -269,7 +236,7 @@ function GetVendorChargePerPeriod( vendor )
 /** @param {Character} vendor @param {number} amount @returns {number} */
 function DepositVendorBankGold( vendor, amount )
 {
-	if( !ValidateObject( vendor ) || vendor.aitype != 17 || amount <= 0 )
+	if( vendor.aitype != 17 || amount <= 0 )
 		return 0;
 
 	var bankGold = vendor.GetTag( "VendorBankAccount" );
@@ -290,7 +257,7 @@ function DepositVendorBankGold( vendor, amount )
 /** @param {Character} vendor @param {number} amount @returns {number} */
 function WithdrawVendorBankGold( vendor, amount )
 {
-	if( !ValidateObject( vendor ) || vendor.aitype != 17 || amount <= 0 )
+	if( vendor.aitype != 17 || amount <= 0 )
 		return 0;
 
 	var bankGold = vendor.GetTag( "VendorBankAccount" );
@@ -307,7 +274,7 @@ function WithdrawVendorBankGold( vendor, amount )
 /** @param {Character} vendor @param {number} charge @returns {boolean} */
 function PayVendorCharge( vendor, charge )
 {
-	if( !ValidateObject( vendor ) || vendor.aitype != 17 || charge <= 0 )
+	if( vendor.aitype != 17 || charge <= 0 )
 		return false;
 
 	var bankGold = vendor.GetTag( "VendorBankAccount" );
@@ -334,7 +301,7 @@ function PayVendorCharge( vendor, charge )
 /** @param {Character} vendor @returns {number} */
 function FlushVendorBankToHeldGold( vendor )
 {
-	if( !ValidateObject( vendor ) || vendor.aitype != 17 )
+	if( vendor.aitype != 17 )
 		return 0;
 
 	var bankGold = vendor.GetTag( "VendorBankAccount" );
@@ -356,7 +323,7 @@ function GetVendorPeriodsAffordable( vendor )
 	var bankGold = 0;
 	var heldGold = 0;
 
-	if( ValidateObject( vendor ) && vendor.aitype == 17 )
+	if( vendor.aitype == 17 )
 	{
 		bankGold = vendor.GetTag( "VendorBankAccount" );
 		heldGold = vendor.vendorGoldHeld || 0;
@@ -383,9 +350,6 @@ function GetVendorDaysAffordable( vendor )
 /** @param {Item} itemObj @param {Character} vendor */
 function DropItemAtVendorLocation( itemObj, vendor )
 {
-	if( !ValidateObject( itemObj ) || !ValidateObject( vendor ) )
-		return;
-
 	itemObj.container = null;
 	itemObj.x = vendor.x;
 	itemObj.y = vendor.y;
@@ -397,7 +361,7 @@ function DropItemAtVendorLocation( itemObj, vendor )
 /** @param {Item} itemObj @param {Item} container @returns {boolean} */
 function TryMoveItemToContainer( itemObj, container )
 {
-	if( !ValidateObject( itemObj ) || !ValidateObject( container ) )
+	if( !ValidateObject( container ) )
 		return false;
 
 	if( container.totalItemCount >= container.maxItems )
@@ -413,9 +377,6 @@ function TryMoveItemToContainer( itemObj, container )
 /** @param {Item} itemObj @param {Character} pUser @param {Character} vendor @returns {number} */
 function PlaceItemForOwnerOrDrop( itemObj, pUser, vendor )
 {
-	if( !ValidateObject( itemObj ) || !ValidateObject( pUser ) || !ValidateObject( vendor ) )
-		return 0;
-
 	var pack = pUser.pack;
 	var bankBox = pUser.FindItemLayer( 29 );
 
@@ -445,7 +406,7 @@ function ReturnVendorItemsToOwner( vendor, pUser )
 {
 	var results = { pack:0, bank:0, ground:0 };
 
-	if( !ValidateObject( vendor ) || vendor.aitype != 17 || !ValidateObject( pUser ) || !ValidateObject( vendor.pack ) )
+	if( vendor.aitype != 17 || !ValidateObject( vendor.pack ))
 		return results;
 
 	var itemList = [];
@@ -473,19 +434,21 @@ function ReturnVendorItemsToOwner( vendor, pUser )
 /** @param {Character} vendor @returns {number} */
 function DropVendorItemsAtLocation( vendor )
 {
-	if( !ValidateObject( vendor ) || vendor.aitype != 17 || !ValidateObject( vendor.pack ) )
+	if( vendor.aitype != 17 || !ValidateObject( vendor.pack ) )
 		return 0;
 
 	var itemList = [];
 	var packItem = vendor.pack.FirstItem();
 	for( ; !vendor.pack.FinishedItems(); packItem = vendor.pack.NextItem() )
 	{
-		if( ValidateObject( packItem ) )
+		if( ValidateObject( packItem ))
 			itemList.push( packItem );
 	}
 
 	for( var i = 0; i < itemList.length; ++i )
-		DropItemAtVendorLocation( itemList[i], vendor );
+	{
+			DropItemAtVendorLocation( itemList[i], vendor );
+	}
 
 	return itemList.length;
 }
@@ -800,7 +763,7 @@ function RemoveGoldFromPack( pUser, amount )
 	return amount <= 0;
 }
 
-/** @param {Character} pUser @returns {Item|null} */
+/** @type { ( pUser: Character ) => Item|null } */
 function GetBankBox( pUser )
 {
 	if( !ValidateObject( pUser ) )
@@ -887,7 +850,7 @@ function DepositVendorGoldToBankBox( pUser, goldAmount )
 	return true;
 }
 
-/** @param {Character} pUser @param {Character} vendor */
+/** @type { ( pUser: Character, vendor: Character ) => void } */
 function CollectVendorGold( pUser, vendor )
 {
 	if( !ValidateObject( pUser ) || !ValidateObject( vendor ) || vendor.aitype != 17 || !pUser.socket )
@@ -1256,7 +1219,7 @@ function GetStoredClothingDyeCategory( pUser )
 /** @param {Socket} socket @param {Character} vendor */
 function ShowPlayerVendorOwnerGump( socket, vendor )
 {
-	if( !socket || !ValidateObject( vendor ) || vendor.aitype != 17 )
+	if( vendor.aitype != 17 )
 		return;
 
 	var heldGold = vendor.vendorGoldHeld || 0;
@@ -1490,7 +1453,7 @@ function ShowVendorCustomizeGump( pUser, vendor )
 	myGump.Free();
 }
 
-/** @param {Character} pUser @param {Character} vendor @param {number} pButton */
+/** @type { ( pUser: Character, vendor: Character, pButton: number ) => void } */
 function HandleVendorCustomizeButton( pUser, vendor, pButton )
 {
 	if( !ValidateObject( pUser ) || !ValidateObject( vendor ) || vendor.aitype != 17 || !pUser.socket )
