@@ -340,7 +340,7 @@ private:
 	bool		vendorChargesEnabled;			// Master toggle for player vendor upkeep charges
 	SI16		vendorBaseCharge;				// Flat fee per vendor upkeep charge period
 	SI16		vendorChargeHours;				// Number of real hours between vendor upkeep charges
-	bool		vendorUseItemFees;				// Add item-based upkeep fees from listed item prices
+	bool		vendorUseItemFeesEnabled;	    // Add item-based upkeep fees from listed item prices
 	SI16		vendorItemFeeDivisor;			// Listed item value divisor used for vendor item fees
 	SI16		vendorItemFeeAmount;			// Fee added per divisor step
 	bool		onlyReturnToBank;				// returned vendor belongings skip player backpack entirely
@@ -1405,8 +1405,8 @@ public:
 	auto		VendorChargeHours( SI16 value ) -> void;
 	SI16		VendorChargeHours() const;
 
-	auto		VendorUseItemFees( bool value ) -> void;
-	auto		VendorUseItemFees() const -> bool;
+	auto		VendorUseItemFeesEnabled( bool value ) -> void;
+	auto		VendorUseItemFeesEnabled() const -> bool;
 
 	auto		VendorItemFeeDivisor( SI16 value ) -> void;
 	SI16		VendorItemFeeDivisor() const;

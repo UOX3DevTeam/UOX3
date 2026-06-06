@@ -422,7 +422,7 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"VENDORCHARGESENABLED", 408},
 	{"VENDORBASECHARGE", 409},
 	{"VENDORCHARGEHOURS", 410},
-	{"VENDORUSEITEMFEES", 411},
+	{"VENDORUSEITEMFEESENABLED", 411},
 	{"VENDORITEMFEEDIVISOR", 412},
 	{"VENDORITEMFEEAMOUNT", 413},
 	{"ONLYRETURNTOBANK", 414},
@@ -551,7 +551,7 @@ constexpr auto BIT_EVENTMANAGERSYSTEM				= UI32( 120 );
 constexpr auto BIT_QUESTSYSTEMENABLED				= UI32( 121 );
 constexpr auto BIT_LOGINQUESTENABLED				= UI32( 122 );
 constexpr auto BIT_VENDORCHARGESENABLED				= UI32( 123 );
-constexpr auto BIT_VENDORUSEITEMFEES				= UI32( 124 );
+constexpr auto BIT_VENDORUSEITEMFEESENABLED			= UI32( 124 );
 constexpr auto BIT_ONLYRETURNTOBANK					= UI32( 125 );
 
 
@@ -968,7 +968,7 @@ auto CServerData::ResetDefaults() -> void
 	VendorChargesEnabled( true );
 	VendorBaseCharge( 60 );
 	VendorChargeHours( 24 );
-	VendorUseItemFees( true );
+	VendorUseItemFeesEnabled( true );
 	VendorItemFeeDivisor( 500 );
 	VendorItemFeeAmount( 3 );
 	OnlyReturnToBank( true );
@@ -5539,17 +5539,17 @@ auto CServerData::VendorChargeHours( SI16 value ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::VendorUseItemFees()
+//|	Function	-	CServerData::VendorUseItemFeesEnabled()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether listed item values add extra player vendor upkeep fees
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::VendorUseItemFees() const -> bool
+auto CServerData::VendorUseItemFeesEnabled() const -> bool
 {
-	return boolVals.test( BIT_VENDORUSEITEMFEES );
+	return boolVals.test( BIT_VENDORUSEITEMFEESENABLED );
 }
-auto CServerData::VendorUseItemFees( bool newVal ) -> void
+auto CServerData::VendorUseItemFeesEnabled( bool newVal ) -> void
 {
-	boolVals.set( BIT_VENDORUSEITEMFEES, newVal );
+	boolVals.set( BIT_VENDORUSEITEMFEESENABLED, newVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5979,7 +5979,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "VENDORCHARGESENABLED=" << ( VendorChargesEnabled() ? 1 : 0 ) << '\n';
 		ofsOutput << "VENDORBASECHARGE=" << VendorBaseCharge() << '\n';
 		ofsOutput << "VENDORCHARGEHOURS=" << VendorChargeHours() << '\n';
-		ofsOutput << "VENDORUSEITEMFEES=" << ( VendorUseItemFees() ? 1 : 0 ) << '\n';
+		ofsOutput << "VENDORUSEITEMFEESENABLED=" << ( VendorUseItemFeesEnabled() ? 1 : 0 ) << '\n';
 		ofsOutput << "VENDORITEMFEEDIVISOR=" << VendorItemFeeDivisor() << '\n';
 		ofsOutput << "VENDORITEMFEEAMOUNT=" << VendorItemFeeAmount() << '\n';
 		ofsOutput << "ONLYRETURNTOBANK=" << ( OnlyReturnToBank() ? 1 : 0 ) << '\n';
@@ -7741,8 +7741,8 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 410: // VENDORCHARGEHOURS
 			VendorChargeHours( static_cast<SI16>( std::stoi( value )));
 			break;
-		case 411: // VENDORUSEITEMFEES
-			VendorUseItemFees( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
+		case 411: // VENDORUSEITEMFEESENABLED
+			VendorUseItemFeesEnabled( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
 			break;
 		case 412: // VENDORITEMFEEDIVISOR
 			VendorItemFeeDivisor( static_cast<SI16>( std::stoi( value )));

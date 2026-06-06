@@ -10,36 +10,38 @@ var vendorMaxFunds = GetServerSetting( "VendorMaxFunds" );
 // If true, returned vendor belongings skip player backpack entirely.
 // Items, gold and vendor deed will try bank box first, then drop at vendor location.
 // If false, belongings try backpack first, then bank box, then ground.
-const onlyReturnToBank = GetServerSetting( "onlyReturnToBank" );
+var onlyReturnToBank = GetServerSetting( "onlyReturnToBank" );
 
 // Vendor upkeep settings
 var vendorChargesEnabled =  GetServerSetting( "VendorChargesEnabled" );; // Master toggle for vendor upkeep charges
 var vendorBaseCharge =  GetServerSetting( "VendorBaseCharge" );       // Flat fee per charge period
 var vendorChargeHours =  GetServerSetting( "VendorChargeHours" );      // Charge every X real hours
-var vendorUseItemFees = GetServerSetting( "VendorUseItemFees" );    // Add item-based fee from listed item prices
+var vendorItemFeesEnabled = GetServerSetting( "VendorUseItemFeesEnabled" );    // Add item-based fee from listed item prices
 var vendorItemFeeDivisor = GetServerSetting( "VendorItemFeeDivisor" );  // 3 gold per 500 worth of one item
 var vendorItemFeeAmount = GetServerSetting( "VendorItemFeeAmount" );     // Fee added per divisor step
 
-var layerOneHand = 0x01;
-var layerTwoHand = 0x02;
-var layerShoes = 0x03;
-var layerPants = 0x04;
-var layerShirt = 0x05;
-var layerHelm = 0x06;
-var layerGloves = 0x07;
-var layerRing = 0x08;
-var layerNeck = 0x0A;
-var layerHair = 0x0B;
-var layerWaist = 0x0C;
-var layerInnerTorso = 0x0D;
-var layerBracelet = 0x0E;
-var layerBeard = 0x10;
-var layerMiddleTorso = 0x11;
-var layerEarrings = 0x12;
-var layerArms = 0x13;
-var layerCloak = 0x14;
-var layerOuterTorso = 0x16;
-var layerOuterLegs = 0x17;
+const VendorEquipmentLayer = {
+    OneHand: 0x01,
+    TwoHand: 0x02,
+    Shoes: 0x03,
+    Pants: 0x04,
+    Shirt: 0x05,
+    Helm: 0x06,
+    Gloves: 0x07,
+    Ring: 0x08,
+    Neck: 0x0A,
+    Hair: 0x0B,
+    Waist: 0x0C,
+    InnerTorso: 0x0D,
+    Bracelet: 0x0E,
+    Beard: 0x10,
+    MiddleTorso: 0x11,
+    Earrings: 0x12,
+    Arms: 0x13,
+    Cloak: 0x14,
+    OuterTorso: 0x16,
+    OuterLegs: 0x17
+};
 
 /** @constructor @param {string|null} name @param {number[]} hues @param {number|null} dictID */
 function VendorHueCategory( name, hues, dictID )
@@ -156,7 +158,7 @@ var humanBeardStyles = [
 ];
 
 var vendorClothingCategories = [
-	new VendorClothingCategory( layerInnerTorso, "Upper Torso", true, [
+	new VendorClothingCategory( VendorEquipmentLayer.InnerTorso, "Upper Torso", true, [
 		new VendorClothingEntry( 0x1517, "Shirt" ),
 		new VendorClothingEntry( 0x1EFD, "Fancy Shirt" ),
 		new VendorClothingEntry( 0x1F01, "Plain Dress" ),
@@ -164,7 +166,7 @@ var vendorClothingCategories = [
 		new VendorClothingEntry( 0x1F03, "Robe" )
 	]),
 
-	new VendorClothingCategory( layerMiddleTorso, "Over Chest", true, [
+	new VendorClothingCategory( VendorEquipmentLayer.MiddleTorso, "Over Chest", true, [
 		new VendorClothingEntry( 0x1F7B, "Doublet" ),
 		new VendorClothingEntry( 0x1FA1, "Tunic" ),
 		new VendorClothingEntry( 0x1F9F, "Jester Suit" ),
@@ -174,14 +176,14 @@ var vendorClothingCategories = [
 		new VendorClothingEntry( 0x153D, "Full Apron" )
 	]),
 
-	new VendorClothingCategory( layerShoes, "Footwear", true, [
+	new VendorClothingCategory( VendorEquipmentLayer.Shoes, "Footwear", true, [
 		new VendorClothingEntry( 0x170D, "Sandals" ),
 		new VendorClothingEntry( 0x1710, "Shoes" ),
 		new VendorClothingEntry( 0x170B, "Boots" ),
 		new VendorClothingEntry( 0x1711, "Thigh Boots" )
 	]),
 
-	new VendorClothingCategory( layerHelm, "Hats", true, [
+	new VendorClothingCategory( VendorEquipmentLayer.Helm, "Hats", true, [
 		new VendorClothingEntry( 0x1544, "Skull Cap" ),
 		new VendorClothingEntry( 0x1540, "Bandana" ),
 		new VendorClothingEntry( 0x1713, "Floppy Hat" ),
@@ -196,17 +198,17 @@ var vendorClothingCategories = [
 		new VendorClothingEntry( 0x171C, "Jester Hat" )
 	]),
 
-	new VendorClothingCategory( layerPants, "Lower Torso", true, [
+	new VendorClothingCategory( VendorEquipmentLayer.Pants, "Lower Torso", true, [
 		new VendorClothingEntry( 0x1539, "Long Pants" ),
 		new VendorClothingEntry( 0x1537, "Kilt" ),
 		new VendorClothingEntry( 0x1516, "Skirt" )
 	]),
 
-	new VendorClothingCategory( layerCloak, "Back", true, [
+	new VendorClothingCategory( VendorEquipmentLayer.Cloak, "Back", true, [
 		new VendorClothingEntry( 0x1515, "Cloak" )
 	]),
 
-	new VendorClothingCategory( layerOneHand, "Held Items", false, [
+	new VendorClothingCategory( VendorEquipmentLayer.OneHand, "Held Items", false, [
 		new VendorClothingEntry( 0x0DBF, "Fishing Pole" ),
 		new VendorClothingEntry( 0x0E86, "Pickaxe" ),
 		new VendorClothingEntry( 0x0E87, "Pitchfork" ),
@@ -228,7 +230,7 @@ var vendorClothingCategories = [
 /** @param {Item} itemObj @returns {number} */
 function GetVendorItemPeriodFee( itemObj )
 {
-	if( !ValidateObject( itemObj ) || itemObj.buyValue <= 0 || !vendorUseItemFees || vendorItemFeeDivisor <= 0 || vendorItemFeeAmount <= 0 )
+	if( !ValidateObject( itemObj ) || itemObj.buyValue <= 0 || !vendorItemFeesEnabled || vendorItemFeeDivisor <= 0 || vendorItemFeeAmount <= 0 )
 		return 0;
 
 	return Math.floor( itemObj.buyValue / vendorItemFeeDivisor ) * vendorItemFeeAmount;
@@ -261,7 +263,7 @@ function GetVendorChargePerPeriod( vendor )
 	if( overrideValue > 0 )
 		return overrideValue;
 
-	return vendorBaseCharge + ( vendorUseItemFees ? GetVendorItemFeeTotal( vendor ) : 0 );
+	return vendorBaseCharge + ( vendorItemFeesEnabled ? GetVendorItemFeeTotal( vendor ) : 0 );
 }
 
 /** @param {Character} vendor @param {number} amount @returns {number} */
@@ -1229,7 +1231,7 @@ function SetVendorRaceGenderBody( vendor, isElf, isFemale )
 		vendor.id = isFemale ? 0x0191 : 0x0190;
 
 	if( isFemale )
-		RemoveVendorLayerItem( vendor, layerBeard );
+		RemoveVendorLayerItem( vendor, VendorEquipmentLayer.Beard );
 
 	vendor.Teleport();
 }
@@ -1518,7 +1520,7 @@ function HandleVendorCustomizeButton( pUser, vendor, pButton )
 
 	if( pButton == 5001 )
 	{
-		RemoveVendorLayerItem( vendor, layerBeard );
+		RemoveVendorLayerItem( vendor, VendorEquipmentLayer.Beard );
 		SetVendorRaceGenderBody( vendor, isElf, !isFemale );
 		ShowVendorCustomizeGump( pUser, vendor );
 		return;
@@ -1526,8 +1528,8 @@ function HandleVendorCustomizeButton( pUser, vendor, pButton )
 
 	if( pButton == 5006 )
 	{
-		RemoveVendorLayerItem( vendor, layerHair );
-		RemoveVendorLayerItem( vendor, layerBeard );
+		RemoveVendorLayerItem( vendor, VendorEquipmentLayer.Hair );
+		RemoveVendorLayerItem( vendor, VendorEquipmentLayer.Beard );
 		SetVendorRaceGenderBody( vendor, !isElf, isFemale );
 
 		var newHairStyles = humanHairStyles;
@@ -1538,7 +1540,7 @@ function HandleVendorCustomizeButton( pUser, vendor, pButton )
 			newHairStyles = newIsFemale ? femaleElfHairStyles : maleElfHairStyles;
 
 		if( newHairStyles.length > 0 )
-			SetVendorLayerItem( vendor, layerHair, newHairStyles[0].itemID, 0, "vendor hair" );
+			SetVendorLayerItem( vendor, VendorEquipmentLayer.Hair, newHairStyles[0].itemID, 0, "vendor hair" );
 
 		ShowVendorCustomizeGump( pUser, vendor );
 		return;
@@ -1546,14 +1548,14 @@ function HandleVendorCustomizeButton( pUser, vendor, pButton )
 
 	if( pButton == 5002 )
 	{
-		RemoveVendorLayerItem( vendor, layerHair );
+		RemoveVendorLayerItem( vendor, VendorEquipmentLayer.Hair );
 		ShowVendorCustomizeGump( pUser, vendor );
 		return;
 	}
 
 	if( pButton == 5004 )
 	{
-		RemoveVendorLayerItem( vendor, layerBeard );
+		RemoveVendorLayerItem( vendor, VendorEquipmentLayer.Beard );
 		ShowVendorCustomizeGump( pUser, vendor );
 		return;
 	}
@@ -1563,9 +1565,9 @@ function HandleVendorCustomizeButton( pUser, vendor, pButton )
 		var hairIndex = pButton - 0x1000;
 		if( hairIndex >= 0 && hairIndex < hairStyles.length )
 		{
-			var oldHairItem = vendor.FindItemLayer( layerHair );
+			var oldHairItem = vendor.FindItemLayer( VendorEquipmentLayer.Hair );
 			var oldHairHue = ValidateObject( oldHairItem ) ? oldHairItem.colour : 0;
-			SetVendorLayerItem( vendor, layerHair, hairStyles[hairIndex].itemID, oldHairHue, "vendor hair" );
+			SetVendorLayerItem( vendor, VendorEquipmentLayer.Hair, hairStyles[hairIndex].itemID, oldHairHue, "vendor hair" );
 		}
 
 		ShowVendorCustomizeGump( pUser, vendor );
@@ -1577,9 +1579,9 @@ function HandleVendorCustomizeButton( pUser, vendor, pButton )
 		var beardIndex = pButton - 0x2000;
 		if( !isElf && !isFemale && beardIndex >= 0 && beardIndex < humanBeardStyles.length )
 		{
-			var oldBeardItem = vendor.FindItemLayer( layerBeard );
+			var oldBeardItem = vendor.FindItemLayer( VendorEquipmentLayer.Beard );
 			var oldBeardHue = ValidateObject( oldBeardItem ) ? oldBeardItem.colour : 0;
-			SetVendorLayerItem( vendor, layerBeard, humanBeardStyles[beardIndex].itemID, oldBeardHue, "vendor beard" );
+			SetVendorLayerItem( vendor, VendorEquipmentLayer.Beard, humanBeardStyles[beardIndex].itemID, oldBeardHue, "vendor beard" );
 		}
 
 		ShowVendorCustomizeGump( pUser, vendor );
@@ -1588,7 +1590,7 @@ function HandleVendorCustomizeButton( pUser, vendor, pButton )
 
 	if( pButton >= 0x3000 && pButton < 0x4000 )
 	{
-		SetVendorLayerHue( vendor, layerHair, pButton - 0x3000 );
+		SetVendorLayerHue( vendor, VendorEquipmentLayer.Hair, pButton - 0x3000 );
 		ShowVendorCustomizeGump( pUser, vendor );
 		return;
 	}
@@ -1596,7 +1598,7 @@ function HandleVendorCustomizeButton( pUser, vendor, pButton )
 	if( pButton >= 0x4000 && pButton < 0x5000 )
 	{
 		if( !isElf && !isFemale )
-			SetVendorLayerHue( vendor, layerBeard, pButton - 0x4000 );
+			SetVendorLayerHue( vendor, VendorEquipmentLayer.Beard, pButton - 0x4000 );
 
 		ShowVendorCustomizeGump( pUser, vendor );
 	}

@@ -5786,8 +5786,8 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 			case 410:	// VENDORCHARGEHOURS
 				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->VendorChargeHours() )));
 				break;
-			case 411:	// VENDORUSEITEMFEES`
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->VendorUseItemFees() ));
+			case 411:	// VENDORUSEITEMFEESENABLED
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->VendorUseItemFeesEnabled() ));
 				break;
 			case 412:	// VENDORITEMFEEDIVISOR
 				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->VendorItemFeeDivisor() )));
@@ -5795,7 +5795,7 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 			case 413:	// VENDORITEMFEEAMOUNT
 				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->VendorItemFeeAmount() )));
 				break;
-			case 414:	// ONLYRETURNTOBANK`
+			case 414:	// ONLYRETURNTOBANK
 				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->OnlyReturnToBank() ));
 				break;
 			case 415:	// VENDORMAXFUNDS
