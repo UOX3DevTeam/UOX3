@@ -456,7 +456,7 @@ function DropVendorItemsAtLocation( vendor )
 /** @param {Character} vendor @returns {Item|null} */
 function CreateVendorDismissDeedAtLocation( vendor )
 {
-	if( !ValidateObject( vendor ) || vendor.aitype != 17 )
+	if( vendor.aitype != 17 )
 		return null;
 
 	var deed = CreateBlankItem( null, vendor, 1, "A vendor deed for " + vendor.name + ".", 0x14F0, 0x0, "ITEM", false );
@@ -473,7 +473,7 @@ function CreateVendorDismissDeedAtLocation( vendor )
 /** @param {Character} pUser @param {Character} vendor @returns {Item|null} */
 function CreateVendorDismissDeedForOwner( pUser, vendor )
 {
-	if( !ValidateObject( pUser ) || !ValidateObject( vendor ) || vendor.aitype != 17 )
+	if( vendor.aitype != 17 )
 		return null;
 
 	var deedName = "A vendor deed for " + vendor.name + ".";
@@ -496,7 +496,7 @@ function CreateVendorDismissDeedForOwner( pUser, vendor )
 /** @param {Character} vendor @returns {number} */
 function DropVendorGoldAtLocation( vendor )
 {
-	if( !ValidateObject( vendor ) || vendor.aitype != 17 )
+	if( vendor.aitype != 17 )
 		return 0;
 
 	var heldGold = vendor.vendorGoldHeld || 0;
@@ -523,7 +523,7 @@ function ReturnVendorGoldToOwner( pUser, vendor )
 {
 	var result = { amount:0, location:0 };
 
-	if( !ValidateObject( pUser ) || !ValidateObject( vendor ) || vendor.aitype != 17 )
+	if( vendor.aitype != 17 )
 		return result;
 
 	var heldGold = vendor.vendorGoldHeld || 0;
@@ -554,7 +554,7 @@ function ReturnVendorGoldToOwner( pUser, vendor )
 /** @param {Character} vendor */
 function FinalizeVendorRemoval( vendor )
 {
-	if( !ValidateObject( vendor ) || vendor.aitype != 17 )
+	if( vendor.aitype != 17 )
 		return;
 
 	if( ValidateObject( vendor.multi ) )
@@ -566,7 +566,7 @@ function FinalizeVendorRemoval( vendor )
 /** @param {Character} vendor @param {Character|null} notifyChar */
 function RemoveVendorForNoFunds( vendor, notifyChar )
 {
-	if( !ValidateObject( vendor ) || vendor.aitype != 17 )
+	if( vendor.aitype != 17 )
 		return;
 
 	var ownerChar = ValidateObject( vendor.owner ) ? vendor.owner : null;
@@ -576,7 +576,7 @@ function RemoveVendorForNoFunds( vendor, notifyChar )
 		ownerSocket.SysMessage( GetDictionaryEntry( 40000, ownerSocket.language ), vendor.name );
 
 		var deed = CreateVendorDismissDeedForOwner( ownerChar, vendor );
-		if( !ValidateObject( deed ) )
+		if( !ValidateObject( deed ))
 		{
 			ownerSocket.SysMessage( GetDictionaryEntry( 40001, ownerSocket.language ) );
 			return;
@@ -619,7 +619,7 @@ function RemoveVendorForNoFunds( vendor, notifyChar )
 	var totalGold = DropVendorGoldAtLocation( vendor );
 	var offlineDeed = CreateVendorDismissDeedAtLocation( vendor );
 
-	if( ValidateObject( notifyChar ) && notifyChar.socket )
+	if( notifyChar.socket )
 	{
 		var notifySocket = notifyChar.socket;
 		notifySocket.SysMessage( GetDictionaryEntry( 40010, notifySocket.language ), vendor.name );
@@ -630,7 +630,7 @@ function RemoveVendorForNoFunds( vendor, notifyChar )
 		if( totalGold > 0 )
 			notifySocket.SysMessage( GetDictionaryEntry( 40006, notifySocket.language ), totalGold );
 
-		if( ValidateObject( offlineDeed ) )
+		if( ValidateObject( offlineDeed ))
 			notifySocket.SysMessage( GetDictionaryEntry( 40009, notifySocket.language ) );
 	}
 
@@ -640,7 +640,7 @@ function RemoveVendorForNoFunds( vendor, notifyChar )
 /** @param {Character} vendor @param {Character|null} notifyChar @returns {boolean} */
 function CheckVendorUpkeep( vendor, notifyChar )
 {
-	if( !ValidateObject( vendor ) || vendor.aitype != 17 )
+	if( vendor.aitype != 17 )
 		return false;
 
 	if( !vendorChargesEnabled )
@@ -682,16 +682,13 @@ function CheckVendorUpkeep( vendor, notifyChar )
 /** @param {Character} pUser @param {Character} vendor */
 function StoreVendorForGump( pUser, vendor )
 {
-	if( ValidateObject( pUser ) && ValidateObject( vendor ) && vendor.aitype == 17 )
+	if( vendor.aitype == 17 )
 		pUser.SetTempTag( "PlayerVendorGumpSerial", vendor.serial );
 }
 
 /** @param {Character} pUser @returns {Character|null} */
 function GetStoredVendorForGump( pUser )
 {
-	if( !ValidateObject( pUser ) )
-		return null;
-
 	var serial = pUser.GetTempTag( "PlayerVendorGumpSerial" );
 	if( !serial )
 		return null;
@@ -706,7 +703,7 @@ function GetStoredVendorForGump( pUser )
 /** @param {Character} pUser @param {Character} vendor */
 function OpenVendorBackpack( pUser, vendor )
 {
-	if( !ValidateObject( pUser ) || !ValidateObject( vendor ) || vendor.aitype != 17 || !pUser.socket || !ValidateObject( vendor.pack ) )
+	if( vendor.aitype != 17 || !pUser.socket || !ValidateObject( vendor.pack ) )
 		return;
 
 	pUser.socket.OpenContainer( vendor.pack );
@@ -715,7 +712,7 @@ function OpenVendorBackpack( pUser, vendor )
 /** @param {Character} pUser @returns {number} */
 function GetPackGoldAmount( pUser )
 {
-	if( !ValidateObject( pUser ) || !ValidateObject( pUser.pack ) )
+	if( !ValidateObject( pUser.pack ) )
 		return 0;
 
 	var totalGold = 0;
@@ -732,7 +729,7 @@ function GetPackGoldAmount( pUser )
 /** @param {Character} pUser @param {number} amount @returns {boolean} */
 function RemoveGoldFromPack( pUser, amount )
 {
-	if( !ValidateObject( pUser ) || amount <= 0 || !ValidateObject( pUser.pack ) )
+	if( amount <= 0 || !ValidateObject( pUser.pack ) )
 		return false;
 
 	if( GetPackGoldAmount( pUser ) < amount )
@@ -766,9 +763,6 @@ function RemoveGoldFromPack( pUser, amount )
 /** @type { ( pUser: Character ) => Item|null } */
 function GetBankBox( pUser )
 {
-	if( !ValidateObject( pUser ) )
-		return null;
-
 	var bankBox = pUser.FindItemLayer( 29 );
 	return ValidateObject( bankBox ) ? bankBox : null;
 }
@@ -792,15 +786,15 @@ function CanBankReceiveVendorPayout( pUser )
 /** @param {Character} pUser @param {number} checkSize @returns {Item|null} */
 function CreateVendorBankCheck( pUser, checkSize )
 {
-	if( !ValidateObject( pUser ) || checkSize <= 0 )
+	if( checkSize <= 0 )
 		return null;
 
 	var bankBox = GetBankBox( pUser );
-	if( !ValidateObject( bankBox ) )
+	if( !ValidateObject( bankBox ))
 		return null;
 
 	var newCheck = CreateDFNItem( pUser.socket, pUser, "bankcheck", 1, "ITEM", false );
-	if( !ValidateObject( newCheck ) )
+	if( !ValidateObject( newCheck ))
 		return null;
 
 	newCheck.SetTag( "CheckSize", checkSize );
@@ -837,7 +831,7 @@ function DivideDepositedGold( pTalking, bankBox, depositAmt )
 function DepositVendorGoldToBankBox( pUser, goldAmount )
 {
 	var bankBox = GetBankBox( pUser );
-	if( !ValidateObject( pUser ) || !ValidateObject( bankBox ) || goldAmount <= 0 )
+	if( !ValidateObject( bankBox ) || goldAmount <= 0 )
 		return false;
 
 	if( bankBox.totalItemCount >= bankBox.maxItems )
@@ -853,7 +847,7 @@ function DepositVendorGoldToBankBox( pUser, goldAmount )
 /** @type { ( pUser: Character, vendor: Character ) => void } */
 function CollectVendorGold( pUser, vendor )
 {
-	if( !ValidateObject( pUser ) || !ValidateObject( vendor ) || vendor.aitype != 17 || !pUser.socket )
+	if( vendor.aitype != 17 || !pUser.socket )
 		return;
 
 	var socket = pUser.socket;
@@ -898,7 +892,7 @@ function CollectVendorGold( pUser, vendor )
 /** @param {Character} pUser @param {Character} vendor @param {number} amount */
 function DepositToVendorBank( pUser, vendor, amount )
 {
-	if( !ValidateObject( pUser ) || !ValidateObject( vendor ) || vendor.aitype != 17 || !pUser.socket )
+	if( vendor.aitype != 17 || !pUser.socket )
 		return;
 
 	var socket = pUser.socket;
@@ -927,7 +921,7 @@ function DepositToVendorBank( pUser, vendor, amount )
 		return;
 	}
 
-	if( !RemoveGoldFromPack( pUser, deposited ) )
+	if( !RemoveGoldFromPack( pUser, deposited ))
 	{
 		WithdrawVendorBankGold( vendor, deposited );
 		socket.SysMessage( GetDictionaryEntry( 40022, socket.language ) );
@@ -943,7 +937,7 @@ function DepositToVendorBank( pUser, vendor, amount )
 /** @param {Character} pUser @param {Character} vendor */
 function FlushBankToHeld( pUser, vendor )
 {
-	if( !ValidateObject( pUser ) || !ValidateObject( vendor ) || vendor.aitype != 17 || !pUser.socket )
+	if( vendor.aitype != 17 || !pUser.socket )
 		return;
 
 	var moved = FlushVendorBankToHeldGold( vendor );
@@ -959,7 +953,7 @@ function FlushBankToHeld( pUser, vendor )
 /** @param {Character} pUser @param {Character} vendor */
 function DismissVendor( pUser, vendor )
 {
-	if( !ValidateObject( pUser ) || !ValidateObject( vendor ) || vendor.aitype != 17 || !pUser.socket )
+	if( vendor.aitype != 17 || !pUser.socket )
 		return;
 
 	if( !ValidateObject( vendor.owner ) || vendor.owner.serial != pUser.serial )
@@ -967,9 +961,9 @@ function DismissVendor( pUser, vendor )
 
 	var socket = pUser.socket;
 	var deed = CreateVendorDismissDeedForOwner( pUser, vendor );
-	if( !ValidateObject( deed ) )
+	if( !ValidateObject( deed ))
 	{
-		socket.SysMessage( GetDictionaryEntry( 40027, socket.language ) );
+		socket.SysMessage( GetDictionaryEntry( 40027, socket.language ));
 		return;
 	}
 
@@ -1010,7 +1004,7 @@ function DismissVendor( pUser, vendor )
 /** @param {Character} pUser @param {Character} vendor */
 function CycleVendorDirection( pUser, vendor )
 {
-	if( !ValidateObject( pUser ) || !ValidateObject( vendor ) || vendor.aitype != 17 )
+	if( vendor.aitype != 17 )
 		return;
 
 	if( !ValidateObject( vendor.owner ) || vendor.owner.serial != pUser.serial )
@@ -1643,7 +1637,7 @@ function ShowVendorClothingGump( pUser, vendor )
 /** @param {Character} pUser @param {Character} vendor */
 function ShowVendorClothingDyeGump( pUser, vendor )
 {
-	if( !ValidateObject( pUser ) || !ValidateObject( vendor ) || vendor.aitype != 17 || !pUser.socket )
+	if( vendor.aitype != 17 || !pUser.socket )
 		return;
 
 	if( !ValidateObject( vendor.owner ) || vendor.owner.serial != pUser.serial )
