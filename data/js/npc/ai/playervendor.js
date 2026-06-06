@@ -1,24 +1,23 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
-// Version: 1.1.6
+// Version: 1.1.7
 
-// Max amount of money the vendor can hold in the bank.
-// Held gold is not included in this limit, but will
-// be used first to pay upkeep before bank funds are used.
-var vendorMaxFunds = GetServerSetting( "VendorMaxFunds" );
-
-// If true, returned vendor belongings skip player backpack entirely.
-// Items, gold and vendor deed will try bank box first, then drop at vendor location.
-// If false, belongings try backpack first, then bank box, then ground.
-var onlyReturnToBank = GetServerSetting( "onlyReturnToBank" );
-
-// Vendor upkeep settings
-var vendorChargesEnabled = GetServerSetting( "VendorChargesEnabled" ); // Master toggle for vendor upkeep charges
-var vendorBaseCharge = GetServerSetting( "VendorBaseCharge" );       // Flat fee per charge period
-var vendorChargeHours = GetServerSetting( "VendorChargeHours" );      // Charge every X real hours
-var vendorItemFeesEnabled = GetServerSetting( "VendorUseItemFeesEnabled" );    // Add item-based fee from listed item prices
-var vendorItemFeeDivisor = GetServerSetting( "VendorItemFeeDivisor" );  // 3 gold per 500 worth of one item
-var vendorItemFeeAmount = GetServerSetting( "VendorItemFeeAmount" );     // Fee added per divisor step
+const VendorSettings = {
+	// Max amount of money the vendor can hold in the bank.
+	// Held gold is not included in this limit, but will
+	// be used first to pay upkeep before bank funds are used.
+    get MaxFunds() { return GetServerSetting( "VendorMaxFunds" ); },
+	// If true, returned vendor belongings skip player backpack entirely.
+	// Items, gold and vendor deed will try bank box first, then drop at vendor location.
+	// If false, belongings try backpack first, then bank box, then ground.
+    get OnlyReturnToBank() { return GetServerSetting( "onlyReturnToBank" ); },
+    get ChargesEnabled() { return GetServerSetting( "VendorChargesEnabled" ); },// Master toggle for vendor upkeep charges
+    get BaseCharge() { return GetServerSetting( "VendorBaseCharge" ); },// Flat fee per charge period
+    get ChargeHours() { return GetServerSetting( "VendorChargeHours" ); },// Charge every X real hours
+    get ItemFeesEnabled() { return GetServerSetting( "VendorUseItemFeesEnabled" ); },// Add item-based fee from listed item prices
+    get ItemFeeDivisor() { return GetServerSetting( "VendorItemFeeDivisor" ); },// 3 gold per 500 worth of one item
+    get ItemFeeAmount() { return GetServerSetting( "VendorItemFeeAmount" ); }    // Fee added per divisor step
+}
 
 const VendorEquipmentLayer = {
     OneHand: 0x01,
@@ -197,10 +196,10 @@ function GetHairOrBeardName( entry, socket )
 /** @param {Item} itemObj @returns {number} */
 function GetVendorItemPeriodFee( itemObj )
 {
-	if( itemObj.buyValue <= 0 || !vendorItemFeesEnabled || vendorItemFeeDivisor <= 0 || vendorItemFeeAmount <= 0 )
+	if( itemObj.buyValue <= 0 || !VendorSettings.ItemFeesEnabled || VendorSettings.ItemFeeDivisor <= 0 || VendorSettings.ItemFeeAmount <= 0 )
 		return 0;
 
-	return Math.floor( itemObj.buyValue / vendorItemFeeDivisor ) * vendorItemFeeAmount;
+	return Math.floor( itemObj.buyValue / VendorSettings.ItemFeeDivisor ) * VendorSettings.ItemFeeAmount;
 }
 
 /** @type { ( vendor: Character ) => number } */
@@ -223,14 +222,14 @@ function GetVendorItemFeeTotal( vendor )
 /** @type { ( vendor: Character ) => number } */
 function GetVendorChargePerPeriod( vendor )
 {
-	if(  vendor.aitype != 17 || !vendorChargesEnabled )
+	if(  vendor.aitype != 17 || !VendorSettings.ChargesEnabled )
 		return 0;
 
 	var overrideValue = vendor.GetTag( "VendorChargePerPeriod" );
 	if( overrideValue > 0 )
 		return overrideValue;
 
-	return vendorBaseCharge + ( vendorItemFeesEnabled ? GetVendorItemFeeTotal( vendor ) : 0 );
+	return VendorSettings.BaseCharge + ( VendorSettings.ItemFeesEnabled ? GetVendorItemFeeTotal( vendor ) : 0 );
 }
 
 /** @param {Character} vendor @param {number} amount @returns {number} */
@@ -243,7 +242,7 @@ function DepositVendorBankGold( vendor, amount )
 	if( bankGold < 0 )
 		bankGold = 0;
 
-	var roomLeft = vendorMaxFunds - bankGold;
+	var roomLeft = VendorSettings.MaxFunds - bankGold;
 	if( roomLeft <= 0 )
 		return 0;
 
@@ -338,7 +337,7 @@ function GetVendorPeriodsAffordable( vendor )
 /** @param {Character} vendor @returns {number} */
 function GetVendorHoursAffordable( vendor )
 {
-	return GetVendorPeriodsAffordable( vendor ) * vendorChargeHours;
+	return GetVendorPeriodsAffordable( vendor ) * VendorSettings.ChargeHours;
 }
 
 /** @param {Character} vendor @returns {number} */
@@ -380,7 +379,7 @@ function PlaceItemForOwnerOrDrop( itemObj, pUser, vendor )
 	var pack = pUser.pack;
 	var bankBox = pUser.FindItemLayer( 29 );
 
-	if( onlyReturnToBank )
+	if( VendorSettings.OnlyReturnToBank )
 	{
 		if( TryMoveItemToContainer( itemObj, bankBox ) )
 			return 2;
@@ -588,7 +587,7 @@ function RemoveVendorForNoFunds( vendor, notifyChar )
 
 		if(( itemResults.pack + itemResults.bank + itemResults.ground ) > 0 )
 		{
-			if( onlyReturnToBank )
+			if( VendorSettings.OnlyReturnToBank )
 				ownerSocket.SysMessage( GetDictionaryEntry( 40002, ownerSocket.language ), itemResults.bank, itemResults.ground );
 			else
 				ownerSocket.SysMessage( GetDictionaryEntry( 40003, ownerSocket.language ), itemResults.pack, itemResults.bank, itemResults.ground );
@@ -643,10 +642,10 @@ function CheckVendorUpkeep( vendor, notifyChar )
 	if( vendor.aitype != 17 )
 		return false;
 
-	if( !vendorChargesEnabled )
+	if( !VendorSettings.ChargesEnabled )
 		return true;
 
-	var chargeInterval = vendorChargeHours * 60 * 60;
+	var chargeInterval = VendorSettings.ChargeHours * 60 * 60;
 	if( chargeInterval <= 0 )
 		return true;
 
@@ -976,7 +975,7 @@ function DismissVendor( pUser, vendor )
 
 	if(( itemResults.pack + itemResults.bank + itemResults.ground ) > 0 )
 	{
-		if( onlyReturnToBank )
+		if( VendorSettings.OnlyReturnToBank )
 			socket.SysMessage( GetDictionaryEntry( 40002, socket.language ), itemResults.bank, itemResults.ground );
 		else
 			socket.SysMessage( GetDictionaryEntry( 40003, socket.language ), itemResults.pack, itemResults.bank, itemResults.ground );
@@ -1250,7 +1249,7 @@ function ShowPlayerVendorOwnerGump( socket, vendor )
 	myGump.AddButton( 390, 209, 4005, 4007, 1, 0, 0 );
 	myGump.AddHTMLGump( 425, 210, 120, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 18762, socket.language ) + "</basefont>" );
 
-	if( !vendorChargesEnabled )
+	if( !VendorSettings.ChargesEnabled )
 	{
 		myGump.AddHTMLGump( 40, 25, 260, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 40035, socket.language ) + "</basefont>" );
 		myGump.AddText( 300, 25, 2603, GetDictionaryEntry( 40043, socket.language ) );
@@ -1285,7 +1284,7 @@ function ShowPlayerVendorOwnerGump( socket, vendor )
 		myGump.AddText( 300, 120, 1153, "" + perPeriod );
 
 		myGump.AddHTMLGump( 40, 144, 260, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 40041, socket.language ) + "</basefont>" );
-		myGump.AddText( 300, 144, 1153, "" + vendorChargeHours );
+		myGump.AddText( 300, 144, 1153, "" + VendorSettings.ChargeHours );
 
 		myGump.AddHTMLGump( 40, 168, 260, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 40042, socket.language ) + "</basefont>" );
 		myGump.AddText( 300, 168, 1153, "" + itemFeeTotal );
