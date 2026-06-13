@@ -80,7 +80,7 @@ function onUseChecked( pUser, iUsed )
 
 			// Add the player vendor to the house's list of vendors
 			iMulti.AddVendor( npcVendor );
-			npcVendor.SetTag( "VendorBankAccount",1000 );
+			npcVendor.SetTag( "VendorBankAccount",0 );
 			npcVendor.AddScriptTrigger( 3110 );
 			var vendorName = iUsed.GetTag( "vendorName" );
 			if( vendorName )

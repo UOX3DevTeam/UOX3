@@ -6,17 +6,17 @@ const VendorSettings = {
 	// Max amount of money the vendor can hold in the bank.
 	// Held gold is not included in this limit, but will
 	// be used first to pay upkeep before bank funds are used.
-    get MaxFunds() { return GetServerSetting( "VendorMaxFunds" ); },
+    get MaxFunds() { return GetSafeNumber( GetServerSetting( "VendorMaxFunds" ), 1000000 ); },
 	// If true, returned vendor belongings skip player backpack entirely.
 	// Items, gold and vendor deed will try bank box first, then drop at vendor location.
 	// If false, belongings try backpack first, then bank box, then ground.
-    get OnlyReturnToBank() { return GetServerSetting( "onlyReturnToBank" ); },
-    get ChargesEnabled() { return GetServerSetting( "VendorChargesEnabled" ); },// Master toggle for vendor upkeep charges
-    get BaseCharge() { return GetServerSetting( "VendorBaseCharge" ); },// Flat fee per charge period
-    get ChargeHours() { return GetServerSetting( "VendorChargeHours" ); },// Charge every X real hours
-    get ItemFeesEnabled() { return GetServerSetting( "VendorUseItemFeesEnabled" ); },// Add item-based fee from listed item prices
-    get ItemFeeDivisor() { return GetServerSetting( "VendorItemFeeDivisor" ); },// 3 gold per 500 worth of one item
-    get ItemFeeAmount() { return GetServerSetting( "VendorItemFeeAmount" ); }    // Fee added per divisor step
+    get OnlyReturnToBank() { return GetSafeNumber( GetServerSetting( "onlyReturnToBank" ), 0 ) != 0; },
+    get ChargesEnabled() { return GetSafeNumber( GetServerSetting( "VendorChargesEnabled" ), 0 ) != 0; },// Master toggle for vendor upkeep charges
+    get BaseCharge() { return GetSafeNumber( GetServerSetting( "VendorBaseCharge" ), 0 ); },// Flat fee per charge period
+    get ChargeHours() { return GetSafeNumber( GetServerSetting( "VendorChargeHours" ), 24 ); },// Charge every X real hours
+    get ItemFeesEnabled() { return GetSafeNumber( GetServerSetting( "VendorUseItemFeesEnabled" ), 0 ) != 0; },// Add item-based fee from listed item prices
+    get ItemFeeDivisor() { return GetSafeNumber( GetServerSetting( "VendorItemFeeDivisor" ), 500 ); },// 3 gold per 500 worth of one item
+    get ItemFeeAmount() { return GetSafeNumber( GetServerSetting( "VendorItemFeeAmount" ), 3 ); }    // Fee added per divisor step
 }
 
 const VendorEquipmentLayer = {
@@ -174,6 +174,14 @@ const vendorClothingCategories = [
 		{ itemID: 0x0EFA, name: "Spellbook" }
 	]}
 ];
+
+function GetSafeNumber( value, defaultValue )
+{
+	if( value === null || value === undefined || value === "" || isNaN( value ))
+		return defaultValue;
+
+	return Number( value );
+}
 
 /** @param {VendorHueCategory} entry @param {Socket|null} socket @returns {string} */
 function GetVendorHueCategoryName( entry, socket )
