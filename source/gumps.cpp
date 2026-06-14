@@ -669,7 +669,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 			if( tag.data()[0] != '<' && tag.data()[0] != ' ' )	// it actually has a picture, well bugger me! :>
 			{
 				// Draw a frame for the item to make it stand out a touch more.
-				if( s->ClientVerShort() <= CVS_70160 )
+				if( s->ClientVerShort() <= CVS_70300)
 				{
 					// Fallback for older clients that don't support buttontileart
 					toSend.addCommand( oldstrutil::format("resizepic %u %u %u %u %u", xOffset, yOffset, 0x53, 65, 100 ));
@@ -825,25 +825,26 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	toSend.addCommand( oldstrutil::format( "text %u %u %u %u", 255, 175, 94, linenum++ ));
 	toSend.addText( szBuffer );
 
+	bool pre70300Client = s->ClientVerShort() < CVS_70300 ? true : false;
 	// Force-Decayable Off
 	TAGMAPOBJECT forceDecayOff = mChar->GetTag( "forceDecayOff" );
 	if( forceDecayOff.m_IntValue == 1 )
 	{
-		toSend.addCommand( oldstrutil::format( "button %u %u %u %u %u %u %u", 240, 260, 0x16ca, 0x16cb, 1, 0, 50004 ));
+		toSend.addCommand( oldstrutil::format( "button %u %u %u %u %u %u %u", 240, 260, ( pre70300Client ? 0x869 : 0x16ca ), ( pre70300Client ? 0x86a : 0x16cb ), 1, 0, 50004 ));
 	}
 	else
 	{
-		toSend.addCommand( oldstrutil::format( "button %u %u %u %u %u %u %u", 240, 260, 0x16c6, 0x16c7, 1, 0, 50004 ));
+		toSend.addCommand( oldstrutil::format( "button %u %u %u %u %u %u %u", 240, 260, ( pre70300Client ? 0x867 : 0x16c6 ), ( pre70300Client ? 0x868 : 0x16c7 ), 1, 0, 50004 ));
 	}
 	// Force-Decayable On
 	TAGMAPOBJECT forceDecayOn = mChar->GetTag( "forceDecayOn" );
 	if( forceDecayOn.m_IntValue == 1 )
 	{
-		toSend.addCommand( oldstrutil::format( "button %u %u %u %u %u %u %u", 350, 260, 0x16c4, 0x16c5, 1, 0, 50005 ));
+		toSend.addCommand( oldstrutil::format( "button %u %u %u %u %u %u %u", 350, 260, ( pre70300Client ? 0x869 : 0x16c4 ), ( pre70300Client ? 0x86a : 0x16c5 ), 1, 0, 50005 ));
 	}
 	else
 	{
-		toSend.addCommand( oldstrutil::format( "button %u %u %u %u %u %u %u", 350, 260, 0x16c0, 0x16c1, 1, 0, 50005 ));
+		toSend.addCommand( oldstrutil::format( "button %u %u %u %u %u %u %u", 350, 260, ( pre70300Client ? 0x867 : 0x16c0 ), ( pre70300Client ? 0x868 : 0x16c1 ), 1, 0, 50005 ));
 	}
 	szBuffer = "Default Decayable Status of Items";
 	toSend.addCommand( oldstrutil::format( "text %u %u %u %u", 230, 240, 94, linenum++ ));
@@ -859,21 +860,21 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	TAGMAPOBJECT forceMovableOff = mChar->GetTag( "forceMovableOff" );
 	if( forceMovableOff.m_IntValue == 1 )
 	{
-		toSend.addCommand( oldstrutil::format( "button %u %u %u %u %u %u %u", 240, 320, 0x16ca, 0x16cb, 1, 0, 50006 ));
+		toSend.addCommand( oldstrutil::format( "button %u %u %u %u %u %u %u", 240, 320, ( pre70300Client ? 0x869 : 0x16ca ), ( pre70300Client ? 0x86a : 0x16cb ), 1, 0, 50006 ));
 	}
 	else
 	{
-		toSend.addCommand( oldstrutil::format( "button %u %u %u %u %u %u %u", 240, 320, 0x16c6, 0x16c7, 1, 0, 50006 ));
+		toSend.addCommand( oldstrutil::format( "button %u %u %u %u %u %u %u", 240, 320, ( pre70300Client ? 0x867 : 0x16c6 ), ( pre70300Client ? 0x868 : 0x16c7 ), 1, 0, 50006 ));
 	}
 	// Force-Movable On
 	TAGMAPOBJECT forceMovableOn = mChar->GetTag( "forceMovableOn" );
 	if( forceMovableOn.m_IntValue == 1 )
 	{
-		toSend.addCommand( oldstrutil::format( "button %u %u %u %u %u %u %u", 350, 320, 0x16c4, 0x16c5, 1, 0, 50007 ));
+		toSend.addCommand( oldstrutil::format( "button %u %u %u %u %u %u %u", 350, 320, ( pre70300Client ? 0x869 : 0x16c4 ), ( pre70300Client ? 0x86a : 0x16c5 ), 1, 0, 50007 ));
 	}
 	else
 	{
-		toSend.addCommand( oldstrutil::format( "button %u %u %u %u %u %u %u", 350, 320, 0x16c0, 0x16c1, 1, 0, 50007 ));
+		toSend.addCommand( oldstrutil::format( "button %u %u %u %u %u %u %u", 350, 320, ( pre70300Client ? 0x867 : 0x16c0 ), ( pre70300Client ? 0x868 : 0x16c1 ), 1, 0, 50007));
 	}
 	szBuffer = "Default Movable State of Items";
 	toSend.addCommand( oldstrutil::format( "text %u %u %u %u", 230, 300, 94, linenum++ ));
