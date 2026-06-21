@@ -1,3 +1,7 @@
+21/06/2026 - Xoduz (#548)
+    [FIX] Fixed an issue where settings in ADD-menu were not appearing correctly for client versions below 7.0.30.x
+    [FIX] Fixed an issue where images in ADD-menu were not appearing correctly for client versions below 7.0.30.x
+
 08/05/2026 - DragonSlayer62 (#546)
     [ADD] Added Publish 123 weapons and armors to GetWeaponType in combat.cpp and js/server/data/weapontypes.js, and to material list in js/server/data/material_types.js
     [UPD] Added TypeScript validation hints for item material lookup functions (js/server/data/material_types.js)
