@@ -22,9 +22,6 @@ enum TriggerWords
 	TW_HOUSEBAN			= 0x0034,		// I Ban Thee
 	TW_STOP2			= 0x0036,
 	TW_VENDORBUY		= 0x003C,		// Vendor Buy/Purchase
-	TW_VENDORVIEW		= 0x003D,		// Vendor View/Browse/Look
-	TW_VENDORGOLD		= 0x003E,		// Vendor Gold/Collect/Get
-	TW_VENDORSTATUS		= 0x003F,		// Vendor Status/Info
 	TW_VENDORDISMISS	= 0x0040,		// Vendor Dismiss/Replace
 	TW_SETNAME			= 0x0042,		// Set Name
 	TW_BOATFORWARD		= 0x0045,		// Forward
@@ -79,7 +76,6 @@ enum TriggerWords
 	TW_TRAINSMITH		= 0x0076,		// Train Blacksmith/Smith/Blacksmithy/Smithing/Blacksmithing
 
 	TW_FOLLOW2			= 0x00E8,		// Follow
-	TW_GOLD				= 0x0134,		// Gold
 	TW_TRASHBARREL		= 0x013E,		// I wish to place a trash barrel
 	TW_VENDORSELL		= 0x014D,		// Vendor Sell
 	TW_COME				= 0x0155,		// Come
@@ -107,9 +103,6 @@ enum TriggerWords
 	TW_STAY				= 0x016F,		// Stay
 	TW_ALLSTAY			= 0x0170,		// All Stay
 	TW_BUY				= 0x0171,		// Buy
-	TW_VIEW				= 0x0172,		// View
-	TW_COLLECT			= 0x0173,		// Collect
-	TW_STATUS			= 0x0174,		// Status
 	TW_DISMISS			= 0x0175,		// Dismiss
 	TW_SELL				= 0x0177,		// Sell
 
@@ -286,36 +279,6 @@ class CVendorSellResponse : public CBaseVendorResponse
 public:
 	CVendorSellResponse( bool vendVal, const std::string &text );
 	virtual			~CVendorSellResponse()
-	{
-	}
-	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
-};
-
-class CVendorViewResponse : public CBaseVendorResponse
-{
-public:
-	CVendorViewResponse( bool vendVal, const std::string &text );
-	virtual			~CVendorViewResponse()
-	{
-	}
-	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
-};
-
-class CVendorGoldResponse : public CBaseVendorResponse
-{
-public:
-	CVendorGoldResponse( bool vendVal, const std::string &text );
-	virtual			~CVendorGoldResponse()
-	{
-	}
-	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
-};
-
-class CVendorStatusResponse : public CBaseVendorResponse
-{
-public:
-	CVendorStatusResponse( bool vendVal, const std::string &text );
-	virtual			~CVendorStatusResponse()
 	{
 	}
 	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;

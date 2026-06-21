@@ -1059,6 +1059,9 @@ function HandleVendorSpeechCommand( pUser, vendor, speech )
 	if( !ValidateObject( pUser ) || !ValidateObject( vendor ) || vendor.aitype != 17 )
 		return 0;
 
+	if( !pUser.InRange( vendor, 3 ))
+		return 0;
+
 	var cmd = NormalizeVendorSpeech( vendor, speech );
 
 	if( cmd == "view" || cmd == "browse" || cmd == "look" )
@@ -1066,6 +1069,7 @@ function HandleVendorSpeechCommand( pUser, vendor, speech )
 		if( VendorAccessBlocked( pUser, vendor ))
 			return 2;
 
+		vendor.TextMessage( "Take a look at my goods.");
 		OpenVendorBackpack( pUser, vendor );
 		return 2;
 	}
