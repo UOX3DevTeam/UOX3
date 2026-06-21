@@ -7754,7 +7754,7 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			OnlyReturnToBank( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
 			break;
 		case 415: // VENDORMAXFUNDS
-			VendorMaxFunds( static_cast<UI32>( std::stoi( value )));
+			VendorMaxFunds( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
 			break;
 		default:
 			rValue = false;
