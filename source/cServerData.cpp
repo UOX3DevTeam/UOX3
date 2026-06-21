@@ -5599,11 +5599,11 @@ auto CServerData::OnlyReturnToBank( bool newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the Max amount of money the vendor can hold in the bank.
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::VendorMaxFunds() const -> SI16
+auto CServerData::VendorMaxFunds() const -> UI32
 {
 	return vendorMaxFunds;
 }
-auto CServerData::VendorMaxFunds( SI16 value ) -> void
+auto CServerData::VendorMaxFunds( UI32 value ) -> void
 {
 	vendorMaxFunds = value;
 }
@@ -7754,7 +7754,7 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			OnlyReturnToBank( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
 			break;
 		case 415: // VENDORMAXFUNDS
-			VendorMaxFunds( static_cast<SI16>( std::stoi( value )));
+			VendorMaxFunds( static_cast<UI32>( std::stoi( value )));
 			break;
 		default:
 			rValue = false;

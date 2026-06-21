@@ -344,7 +344,7 @@ private:
 	SI16		vendorItemFeeDivisor;			// Listed item value divisor used for vendor item fees
 	SI16		vendorItemFeeAmount;			// Fee added per divisor step
 	bool		onlyReturnToBank;				// returned vendor belongings skip player backpack entirely
-	SI16		vendorMaxFunds;					// Max amount of money the vendor can hold in the bank.
+	UI32		vendorMaxFunds;					// Max amount of money the vendor can hold in the bank.
 
 	// SpeedUp
 	R64			npcWalkingSpeed;				//	Speed at which walking NPCs move
@@ -1417,8 +1417,8 @@ public:
 	auto		OnlyReturnToBank( bool value ) -> void;
 	auto		OnlyReturnToBank() const -> bool;
 
-	auto		VendorMaxFunds( SI16 value ) -> void;
-	SI16		VendorMaxFunds() const;
+	auto		VendorMaxFunds( UI32 value ) -> void;
+	UI32		VendorMaxFunds() const;
 
 	SI16		ServerTimeDay() const;
 	UI08		ServerTimeHours() const;
