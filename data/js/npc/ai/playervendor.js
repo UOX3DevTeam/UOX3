@@ -19,6 +19,10 @@ const VendorSettings = {
     get ItemFeeAmount() { return GetServerSetting( "VendorItemFeeAmount" ); }    // Fee added per divisor step
 }
 
+const VendorTimer = {
+	Upkeep: 90
+};
+
 const VendorEquipmentLayer = {
     OneHand: 0x01,
     TwoHand: 0x02,
@@ -2030,4 +2034,26 @@ function onSpeechInput( pUser, targObj, pSpeech, pSpeechID )
 			ShowPlayerVendorOwnerGump( socket, vendor );
 			break;
 	}
+}
+
+/** @type { ( timerObj: BaseObject, timerID: number ) => void } */
+function onTimer( timerObj, timerID )
+{
+	if( timerID != VendorTimer.Upkeep )
+		return;
+
+	if( !ValidateObject( timerObj ) || !timerObj.isChar || timerObj.aitype != 17 )
+		return;
+
+	if( CheckVendorUpkeep( timerObj, null ) )
+		StartVendorUpkeepTimer( timerObj );
+}
+
+				
+function StartVendorUpkeepTimer( vendor )
+{
+	if( vendor.aitype != 17 )
+		return;
+
+	vendor.StartTimer( 60000, VendorTimer.Upkeep, true );
 }

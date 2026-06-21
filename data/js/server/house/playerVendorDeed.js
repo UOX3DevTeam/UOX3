@@ -82,6 +82,7 @@ function onUseChecked( pUser, iUsed )
 			iMulti.AddVendor( npcVendor );
 			npcVendor.SetTag( "VendorBankAccount",0 );
 			npcVendor.AddScriptTrigger( 3110 );
+			npcVendor.StartTimer( 60000, 90, 3110 );
 			var vendorName = iUsed.GetTag( "vendorName" );
 			if( vendorName )
 			{
