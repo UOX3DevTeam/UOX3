@@ -1,3 +1,12 @@
+21/06/2026 - DragonSlayer62 (#537)
+    [ADD] Extended Player Vendor AI functionality through new js/npc/ai/playervendor.js script
+    [ADD] Added new vendorGoldHeld character property to track gold earned from player vendor sales separately from deposited vendor funds.
+    [ADD] Added Character JS property .vendorGoldHeld to track gold earned from player vendor sales separately from deposited vendor funds
+    [ADD] Added support for player vendor bank accounts, gold collection, gold deposits, and bank flush operations.
+    [ADD] Added automatic upkeep calculations with configurable charge periods and item-based fees.
+    [ADD] Added support for player vendors returning items, gold, and deeds to owners when dismissed or removed due to lack of funds.
+    [ADD] Added player vendor appearance customization, clothing customization, and vendor renaming options.
+
 21/06/2026 - Xoduz (#548)
     [FIX] Fixed an issue where settings in ADD-menu were not appearing correctly for client versions below 7.0.30.x
     [FIX] Fixed an issue where images in ADD-menu were not appearing correctly for client versions below 7.0.30.x
