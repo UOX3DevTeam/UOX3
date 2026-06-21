@@ -196,10 +196,10 @@ function GetHairOrBeardName( entry, socket )
 /** @param {Item} itemObj @returns {number} */
 function GetVendorItemPeriodFee( itemObj )
 {
-	if( itemObj.buyvalue <= 0 || !VendorSettings.ItemFeesEnabled || VendorSettings.ItemFeeDivisor <= 0 || VendorSettings.ItemFeeAmount <= 0 )
+	if( itemObj.vendorPrice <= 0 || !VendorSettings.ItemFeesEnabled || VendorSettings.ItemFeeDivisor <= 0 || VendorSettings.ItemFeeAmount <= 0 )
 		return 0;
 
-	return Math.floor( itemObj.buyvalue / VendorSettings.ItemFeeDivisor ) * VendorSettings.ItemFeeAmount;
+	return Math.floor( itemObj.vendorPrice / VendorSettings.ItemFeeDivisor ) * VendorSettings.ItemFeeAmount;
 }
 
 /** @type { ( vendor: Character ) => number } */
