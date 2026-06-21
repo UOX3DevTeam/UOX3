@@ -291,36 +291,6 @@ public:
 	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
 };
 
-class CVendorViewResponse : public CBaseVendorResponse
-{
-public:
-	CVendorViewResponse( bool vendVal, const std::string &text );
-	virtual			~CVendorViewResponse()
-	{
-	}
-	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
-};
-
-class CVendorGoldResponse : public CBaseVendorResponse
-{
-public:
-	CVendorGoldResponse( bool vendVal, const std::string &text );
-	virtual			~CVendorGoldResponse()
-	{
-	}
-	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
-};
-
-class CVendorStatusResponse : public CBaseVendorResponse
-{
-public:
-	CVendorStatusResponse( bool vendVal, const std::string &text );
-	virtual			~CVendorStatusResponse()
-	{
-	}
-	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
-};
-
 class CVendorDismissResponse : public CBaseVendorResponse
 {
 public:
