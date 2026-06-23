@@ -1,20 +1,31 @@
-function onCharDoubleClick( pUser, targChar )
+function onCharDoubleClick( pUser, targChar, nonMouseClickEvent )
 {
-	var pPack = pUser.pack;
 	var pSocket = pUser.socket;
 
+	// Invalid socket = stop
 	if( pSocket == null )
-		return false;
+		return 0;
 
+	// Not my character or triggered by non-mouse event = continue with hardcode
+	if( pUser != targChar || nonMouseClickEvent )
+		return 1;
+
+	var etherealMount = pUser.FindItemLayer( 0x19 );
+	var pPack = pUser.pack;
+
+	// Invalid mount or pack = stop
+	if( !ValidateObject( etherealMount ) || !ValidateObject( pPack ))
+		return 0;
+
+	// Full pack = stop
 	if( pPack.totalItemCount >= pPack.maxItems || pPack.weight >= pPack.weightMax )
 	{
 		pSocket.SysMessage( GetDictionaryEntry( 6580, pSocket.language )); // You cannot dismount your ethereal because your pack cannot hold it
+		return 0;
 	}
-	else
-	{
-		DismountEtherealMount( pUser );
-	}
-	return true;
+
+	// Dismounting = stop
+	DismountEtherealMount( pUser );
 }
 
 function onDeathBlow( pDead, pKiller )
@@ -77,7 +88,7 @@ function DismountEtherealMount( pUser )
 				{
 					iMountStatue.SetTag( "retouching", "normal" );
 					iMountStatue.SetTag( "saveColor", customHue );
-					if (customHue != null && customHue != 0)
+					if( customHue != null && customHue != 0 )
 					{
 						iMountStatue.color = customHue;
 					}
@@ -87,9 +98,9 @@ function DismountEtherealMount( pUser )
 						iMountStatue.color = customHue2; // Default color for ethereal mounts
 					}
 				}
-
+				pUser.isonhorse = false;
 				pUser.SetTag( "retouching", null );
-				pUser.RemoveScriptTrigger(5301);
+				pUser.RemoveScriptTrigger( 5301 );
 				pUser.controlSlotsUsed = Math.max( 0, pUser.controlSlotsUsed - 1 );
 				etherealMount.Delete();
 			}

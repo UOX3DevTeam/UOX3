@@ -27,6 +27,7 @@ enum ScriptEvent
 	seOnStat,
 	seOnTooltip,
 	seOnNameRequest,
+	seOnQuestToggle,
 	seOnAttack,
 	seOnDefense,
 	seOnSkillGain,			//	**
@@ -129,7 +130,8 @@ enum ScriptEvent
 	seOnWarModeToggle,
 	seOnSpecialMove,
 	seOnFacetChange,
-	seOnReleasePet
+	seOnReleasePet,
+	seOnPaperDoll
 };
 
 struct SEGump_st
@@ -231,6 +233,7 @@ public:
 	std::string		OnProfileRequest( CSocket *mSock, CChar *profileOwner );
 	std::string		OnTooltip( CBaseObject *myObj, CSocket *pSocket );
 	std::string		OnNameRequest( CBaseObject *myObj, CChar *nameRequester, UI08 requestSource );
+	SI08		onQuestToggle( CChar *player, CItem *iUsing );
 	bool        OnAttack( CChar *attacker, CChar *defender, bool hitStatus, SI08 hitLoc, UI16 damageDealt );
 	bool        OnDefense( CChar *attacker, CChar *defender, bool hitStatus, SI08 hitLoc, UI16 damageReceived );
 	SI08		OnSkillGain( CChar *player, SI08 skill, UI32 skillAmtGained );
@@ -309,7 +312,8 @@ public:
 	bool		executeCommand( CSocket *s, std::string funcName, std::string executedString );
 
 	bool		MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, SI32 spellNum );
-	SI08		OnCharDoubleClick( CChar *currChar, CChar *targChar );
+	SI08		OnPaperDoll( CChar *currChar, CChar *targChar );
+	SI08		OnCharDoubleClick( CChar *currChar, CChar *targChar, bool nonMouseClickEvent );
 	SI08		OnDismount( CChar *currChar, CChar *npcMount );
 	SI08		OnSkillGump( CChar *mChar );
 	SI08		OnUseBandageMacro( CSocket *mSock, CChar *targChar, CItem *bandageItem );

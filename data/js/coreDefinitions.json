@@ -3889,6 +3889,12 @@
           "type": "boolean"
         },
         {
+          "name": "noCharCollide",
+          "cppName": "CCP_NOCHARCOLLIDE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
           "name": "noSkillTitles",
           "cppName": "CCP_NOSKILLTITLES",
           "cppType": "JSPROP_ENUMANDPERM",
@@ -4099,6 +4105,24 @@
           "type": "SocketOrNull"
         },
         {
+          "name": "spawnX",
+          "cppName": "CCP_SPAWNX",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "spawnY",
+          "cppName": "CCP_SPAWNY",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "spawnZ",
+          "cppName": "CCP_SPAWNZ",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
           "name": "spattack",
           "cppName": "CCP_SPATTACK",
           "cppType": "JSPROP_ENUMANDPERM",
@@ -4239,6 +4263,12 @@
         {
           "name": "wandertype",
           "cppName": "CCP_WANDERTYPE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "vendorGoldHeld",
+          "cppName": "CCP_VENDORGOLDHELD",
           "cppType": "JSPROP_ENUMANDPERM",
           "type": "number"
         },
@@ -6845,6 +6875,7 @@
         { "name": "AddToGuestList",       "cppName": "CMulti_AddToGuestList",       "params": { "num": 1, "list": [ { "name": "newGuest", "type": "Character", "required": true } ] }, "returns": "void" },
         { "name": "AddToOwnerList",       "cppName": "CMulti_AddToOwnerList",       "params": { "num": 1, "list": [ { "name": "newOwner", "type": "Character", "required": true } ] }, "returns": "void" },
         { "name": "AddTrashCont",         "cppName": "CMulti_AddTrashCont",         "params": { "num": 1, "list": [ { "name": "trash", "type": "Item", "required": true } ] }, "returns": "void" },
+        { "name": "AddVendor",            "cppName": "CMulti_AddVendor",            "params": { "num": 1, "list": [ { "name": "vendorToAdd", "type": "Character", "required": true } ] }, "returns": "boolean" },
         { "name": "ClearBanList",         "cppName": "CMulti_ClearBanList",         "params": { "num": 0, "list": [] }, "returns": "void" },
         { "name": "ClearFriendList",      "cppName": "CMulti_ClearFriendList",      "params": { "num": 0, "list": [] }, "returns": "void" },
         { "name": "ClearGuestList",       "cppName": "CMulti_ClearGuestList",       "params": { "num": 0, "list": [] }, "returns": "void" },
@@ -6869,6 +6900,7 @@
         { "name": "RemoveFromGuestList",  "cppName": "CMulti_RemoveFromGuestList",  "params": { "num": 1, "list": [ { "name": "toRemove", "type": "Character", "required": true } ] }, "returns": "boolean" },
         { "name": "RemoveFromOwnerList",  "cppName": "CMulti_RemoveFromOwnerList",  "params": { "num": 1, "list": [ { "name": "toRemove", "type": "Character", "required": true } ] }, "returns": "boolean" },
         { "name": "RemoveTrashCont",      "cppName": "CMulti_RemoveTrashCont",      "params": { "num": 1, "list": [ { "name": "toRemove", "type": "Item", "required": true } ] }, "returns": "boolean" },
+        { "name": "RemoveVendor",         "cppName": "CMulti_RemoveVendor",         "params": { "num": 1, "list": [ { "name": "vendorToRemove", "type": "Character", "required": true } ] }, "returns": "boolean" },
         { "name": "SecureContainer",      "cppName": "CMulti_SecureContainer",      "params": { "num": 1, "list": [ { "name": "toSecure", "type": "Item", "required": true } ] }, "returns": "boolean" },
         { "name": "TurnBoat",             "cppName": "CMulti_TurnBoat",             "params": { "num": 1, "list": [ { "name": "direction", "type": "number", "required": true } ] }, "returns": "void" },
         { "name": "UnsecureContainer",    "cppName": "CMulti_UnsecureContainer",    "params": { "num": 1, "list": [ { "name": "toUnsecure", "type": "Item", "required": true } ] }, "returns": "boolean" }
@@ -8079,14 +8111,16 @@
       "name": "onCharDoubleClick",
       "cppName": "OnCharDoubleClick",
       "params": {
-        "num": 2,
+        "num": 3,
         "list": [
           { "name": "currChar", "type": "Character", "required": true },
-          { "name": "targChar", "type": "Character", "required": true }
+          { "name": "targChar", "type": "Character", "required": true },
+          { "name": "nonMouseClickEvent", "type": "boolean", "required": true }
         ]
       },
       "returns": "boolean"
     },
+
     {
       "name": "onClick",
       "cppName": "OnClick",
@@ -8664,6 +8698,18 @@
         "list": [
           { "name": "mSock", "type": "Socket", "required": true },
           { "name": "packetNum", "type": "number", "required": true }
+        ]
+      },
+      "returns": "boolean"
+    },
+    {
+      "name": "onPaperDoll",
+      "cppName": "OnPaperDoll",
+      "params": {
+       "num": 2,
+        "list": [
+          { "name": "currChar", "type": "Character", "required": true },
+          { "name": "targChar", "type": "Character", "required": true }
         ]
       },
       "returns": "boolean"

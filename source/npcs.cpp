@@ -416,6 +416,12 @@ CChar *CCharStuff::CreateNPCxyz( const std::string &npc, SI16 x, SI16 y, SI08 z,
 	cCreated->SetLocation( x, y, z, worldNumber, instanceId );
 	// Update "old location" for new NPCs straight away
 	cCreated->SetOldLocation( x, y, z );
+	if( cCreated->GetSpawnX() == -1 || cCreated->GetSpawnY() == -1 )
+	{
+		cCreated->SetSpawnX( x );
+		cCreated->SetSpawnY( y );
+		cCreated->SetSpawnZ( z );
+	}
 	PostSpawnUpdate( cCreated );
 	return cCreated;
 }
@@ -633,6 +639,9 @@ void CCharStuff::FindSpotForNPC( CChar *cCreated, const SI16 originX, const SI16
 	}
 
 	cCreated->SetLocation( xos, yos, targZ, worldNumber, instanceId );
+	cCreated->SetSpawnX( xos );
+	cCreated->SetSpawnY( yos );
+	cCreated->SetSpawnZ( targZ );
 	InitializeWanderArea( cCreated, xAway, yAway );
 }
 

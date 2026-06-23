@@ -175,17 +175,20 @@ function onCallback1( socket, ourObj )
 			}
 
 			let iMulti = FindMulti( ourObj );
-			if( iMulti )
+			if( iMulti && mChar.serial != ourObj.serial )
 			{
 				if( iMulti.IsInMulti( ourObj ))
 				{
-					if( !iMulti.IsOnOwnerList( ourObj ) && !iMulti.IsOnOwnerList( mChar ))
+					let healerAllowed = iMulti.IsOnOwnerList( mChar ) || iMulti.IsOnFriendList( mChar );
+					let targetAllowed = iMulti.IsOnOwnerList( ourObj) || iMulti.IsOnFriendList( ourObj );
+					if( !healerAllowed && !targetAllowed )
 					{
 						socket.SysMessage( GetDictionaryEntry( 6015, socket.language )); // Your target is in another character's house, healing attempt aborted.
 						return;
 					}
 				}
 			}
+
 			let healTimer = 0;
 			let healTimerID = -1;
 			let anatSkill = mChar.skills.anatomy;
@@ -675,7 +678,7 @@ function onTimer( mChar, timerID )
 								if(( now - deathTime ) < waitTime )
 								{
 									socket.SysMessage( GetDictionaryEntry( 19340, socket.language )); // That creature's spirit lacks cohesion. Try again in a few minutes.
-									return;
+									break;
 								}
 
 								ResurrectBondedPet( socket, ourObj );
@@ -989,6 +992,7 @@ function ResurrectBondedPet( socket, deadPet )
 	deadPet.target = null;
 	deadPet.atWar = false;
 	deadPet.attacker = null;
+	deadPet.noCharCollide = false;
 	deadPet.SetTag( "isPetDead", false );
 }
 

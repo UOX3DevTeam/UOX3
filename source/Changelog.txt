@@ -1,3 +1,93 @@
+21/06/2026 - DragonSlayer62 (#537)
+    [ADD] Extended Player Vendor AI functionality through new js/npc/ai/playervendor.js script
+    [ADD] Added new vendorGoldHeld character property to track gold earned from player vendor sales separately from deposited vendor funds.
+    [ADD] Added Character JS property .vendorGoldHeld to track gold earned from player vendor sales separately from deposited vendor funds
+    [ADD] Added support for player vendor bank accounts, gold collection, gold deposits, and bank flush operations.
+    [ADD] Added automatic upkeep calculations with configurable charge periods and item-based fees.
+    [ADD] Added support for player vendors returning items, gold, and deeds to owners when dismissed or removed due to lack of funds.
+    [ADD] Added player vendor appearance customization, clothing customization, and vendor renaming options.
+
+21/06/2026 - Xoduz (#548)
+    [FIX] Fixed an issue where settings in ADD-menu were not appearing correctly for client versions below 7.0.30.x
+    [FIX] Fixed an issue where images in ADD-menu were not appearing correctly for client versions below 7.0.30.x
+
+08/05/2026 - DragonSlayer62 (#546)
+    [ADD] Added Publish 123 weapons and armors to GetWeaponType in combat.cpp and js/server/data/weapontypes.js, and to material list in js/server/data/material_types.js
+    [UPD] Added TypeScript validation hints for item material lookup functions (js/server/data/material_types.js)
+    [FIX] Fixed ground material lookup to use the correct map tile list variable (js/server/data/material_types.js)
+
+02/05/2026 - DragonSlayer62 (#543)
+    [ADD] Added the first 8 new player quest givers, including their quest JSON files and NPC definitions.
+    [ADD] Added quest reward items for the new player quests, including crafting satchels, Jacob's Pickaxe, and the Clasp of Concentration.
+    [ADD] Added item and NPC add-menu entries for the new quest givers and quest rewards.
+    [UPD] Updated quest JSON loading to better handle sanitized quest files and quoted quest text.
+
+29/04/2026 - DragonSlayer62 (#527)
+    [ADD] Added flexible quest system in JS that can be used to setup a variety of player quests, accessible to players via context menus and conversational gumps on NPCs (scripts in /js/server/quest/)
+    [ADD] Added new settings in new [quests] section of uox.ini:
+        QUESTSYSTEMENABLED=0/1 // Enables/disables the quest system. Defaults to 1
+        LOGINQUESTENABLED=0/1 // Optional setting that can offer player a quest on login. Defaults to 0
+    [ADD] Quest button in paperdoll opens a quest journal that lists all ongoing quests the player has accepted, and details of any progress made in those quests
+    [ADD] Added new JS event used to toggle quest-item status on/off for specific items:
+        onQuestToggle( pUser, iUsed ) // Triggered by Toggle Quest Item context menu option on item
+    [UPD] Updated some existing scripts with additional functionality related to quest system (js/item/doors.js, js/server/global.js, js/skill/mining.js, js/skill/taming.js)
+    [UPD] Updated dictionary files with quest-system specific additions
+
+26/04/2026 - Xoduz (#540)
+    [UPD] UOX3 now supports Z as a third dimension for NPC pathfinding; automatically used in most places in code, it can also be triggered via .WalkTo() and .RunTo() JS Methods, which have been updated to support target Z coordinate. This means NPCs can now navigate up and down stairs, move between floors of buildings, etc.
+    [UPD] NPCs will recalculate their path less often now in situations with little-to-no change since last they got a valid path, if they still have remaining steps in their previously calculated path. However, the more time passes from the original pathfind calculation, the more likely it is to retrigger.
+    [UPD] Updated 'xwalk and 'xrun GM commands (js/commands/targeting/xwalk.js), hireling AI (js/npc/ai/hireling.js) and Herding skill (js/skill/herding.js) to make use of "3D pathfinding"
+    [FIX] Fixed some issues with pathfinding code that could result in invalid results for what should be valid paths
+
+09/04/2026 - Xoduz (#538)
+    [FIX] Fixed an issue where players could get stuck in a "too busy to do that" state while mining (js/skill/mining.js)
+    [UPD] Updated mining (js/skill/mining.js) and lumberjacking (js/item/axe.js) skills with some fallback code that should prevent players from ever again getting stuck in "already mining/chopping" states due to script-crashes
+
+12/03/2026 - DragonSlayer62 (#534)
+    [FIX] Fixed an issue where guests count was not showing correctly on the house sign
+    [ADD] Added new Multi JS Methods for adding and removing vendors in player houses, and updated relevant scripts (js/commands/targeting/remove.js, js/server/house/house.js, houseCommands.js and playerVendorDeed.js) to make use of these to fix issue where player vendors were not properly registered with houses:
+        .AddVendor( playerVendor ) // Register player vendor with multi
+        .RemoveVendor( playerVendor ) // Unregister player vendor from multi
+
+12/03/2026 - DragonSlayer62 (#531)
+    [ADD] Added new character priv flag .noCharCollide which gets/sets whether character can collide with other characters
+    [UPD] Dead bonded pets are now flagged with .noCharCollide = true, allowing players to walk through them without stamina loss or movement blocking, similar to ghost characters (js/npc/pets/petbonding.js)
+    [ADD] Added 'respet command that resurrects dead bonded pets (js/commands/custom/misc-cmd.js
+    [FIX] Pet Bonding Potion effects now trigger when the potion is used on the target pet rather than when the potion is consumed. Also corrected variable usage from mChar to pUser (js/item/potion.js)
+    [FIX] Corrected an incorrect temp tag being cleared in js/npc/ai/veterinarian.js and ensured the .noCharCollide flag is properly reset to false when the pet is revived
+    [FIX] Fixed a logic issue in js/skill/healing.js where the timer could break during bonded pet resurrection attempts due to an early return. The timer now clears correctly. Also ensured the resurrected pet has .noCharCollide reset to false
+    [FIX] Veterinarian vendors were using HealerShopping List, when they have their own VetShopping list
+    [ADD] Added Elixir of Rebirth Potion that is used to resurrect dead bonded pets in js/item/potions.js and dfndata/items/magic/potions.dfn
+
+09/03/2026 - Xoduz (#529)
+    [UPD] Bumped version number to 0.99.7c
+    [FIX] Fixed issue where characters could go missing from co-owner lists, friends lists, guest lists or ban lists in player houses, if those characters were loaded after the house itself
+    [FIX] Fixed an issue that prevented locking down of stacked items in player houses when those items were directly beneath a door on the next floor up
+
+08/03/2026 - DragonSlayer62 (#530)
+    [ADD] Added nonMouseClickEvent boolean parameter to onCharDoubleClick() so scripts can detect non mouse/client generated character double-click events
+    [ADD] Added new onPaperDoll() JavaScript event for handling paperdoll opening separately from onCharDoubleClick()
+    [UPD] Updated dismountetherealmount.js, petbonding.js, cow_tipping.js, and mount_restrictions.js for the new onCharDoubleClick() event signature nonMouseClickEvent
+    [UPD] Updated scripting docs, definitions.d.ts, and event metadata for onCharDoubleClick() and onPaperDoll()
+
+05/03/2026 - DragonSlayer62 (#525)
+    [FIX] Fixed a tag-lookup issue in Ethereal Mount Statuette script that caused the incorrect mount to spawn on use (js/item/etherealstatuettes.js) 
+    [FIX] Fixed an issue with Champion Spawns Menu where the removal buttons would call a non-existent function when trying to reopen the menu after removal of an altar (js/command/champion_spawn_cmd.js)
+    [UPD] Updated .isonhorse Character JS property to allow setting it from scripts. This property is no longer read-only.
+
+
+04/03/2026 - DragonSlayer62 (#474)
+    [ADD] Added multis for houses from Ultima Online’s 2018–2020 House Design Contest, placed in the house folder and defined in three new files: house_contest_winners.dfn, house_contest_winners2.dfn, and house_contest_winners3.dfn
+    [ADD] Added corresponding Contest Winner House Deeds in items/deeds/contest_winner_deeds.dfn
+    [ADD] Contest Winner House Deeds are now available through the Add Menu
+
+04/03/2026 - DragonSlayer62 (#522)
+    [FIX] Removed RACE=33 tag from all creature definitions in npc/magicsummons.dfn with duplicate race tags, except for blade spirits, which need it in order to be allowed to attack humans
+    [FIX] Fixed an issue where looting rules for Young Players would check for 2-minute death-timer on a non-existent object instead of corpse in js/item/corpse.js
+    [FIX] Fixed an issue in js/item/teleporter.js where pChar was incorrectly being referenced instead of pUser
+    [FIX] Fixed an issue where the wrong script ID was provided for CheckGuildRelationShip TriggerEvent calls in js/skill/stealing.js
+    [FIX] Added null checks for socket in various scripts to prevent potential edge case connection issues
+
 02/03/2026 - DragonSlayer62 (#407)
     [ADD] Added Ethereal Mounts to misc category in "add" menu; these are bound, invulnerable versions of standard mounts with a ghostly appearance.
     [ADD] Added retouch tool that allows changing the appearance of ethereal mounts.

@@ -309,7 +309,9 @@ ITEMMENU=260
 ITEMMENU=261
 <=Misc Deeds
 ITEMMENU=70
-<=Previous Menu
+<=Reward House Deeds
+ITEMMENU=306
+<=Previous Mene
 ITEMMENU=1
 }
 
@@ -510,6 +512,8 @@ ITEMMENU=122
 ITEMMENU=250
 <=Holidays
 ITEMMENU=251
+<=Quest Rewards
+ITEMMENU=262
 <=Ethereal Mounts
 ITEMMENU=264
 <=Previous Menu

@@ -14,25 +14,25 @@ constexpr auto P_PF_MAXFD = 50;
 struct PfNode_st
 {
 	UI16	hCost;
-	UI08	gCost;
-	size_t	parent;
+	UI16	gCost;
+	UI64	parent;
 	SI08	z;
 	PfNode_st() : hCost( 0 ), gCost( 0 ), parent( 0 ), z( 0 )
 	{
 	}
-	PfNode_st( UI16 nHC, UI08 nGC, UI32 nPS, SI08 nZ ) : hCost( nHC ), gCost( nGC ), parent( nPS ), z( nZ )
+	PfNode_st( UI16 nHC, UI16 nGC, UI64 nPS, SI08 nZ ) : hCost( nHC ), gCost( nGC ), parent( nPS ), z( nZ )
 	{
 	}
 };
 
 struct NodeFCost_st
 {
-	UI32 xySer;
+	UI64 xySer;
 	UI16 fCost;
 	NodeFCost_st() : xySer( 0 ), fCost( 0 )
 	{
 	}
-	NodeFCost_st( UI16 nFC, UI32 nS ) : xySer( nS ), fCost( nFC )
+	NodeFCost_st( UI16 nFC, UI64 nS ) : xySer( nS ), fCost( nFC )
 	{
 	}
 };
@@ -41,7 +41,7 @@ class CMovement
 {
 	// Function declarations
 public:
-	bool	AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool willRun = false, bool allowPartial = false, UI16 maxSteps = 0, bool ignoreDoors = false );
+	bool	AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, SI08 targZ, bool willRun = false, bool allowPartial = false, UI16 maxSteps = 0, bool ignoreDoors = false );
 	auto	IgnoreAndEvadeTarget( CChar *mChar ) -> void;
 	void	Walking( CSocket *mSock, CChar *s, UI08 dir, SI16 sequence );
 	void	CombatWalk( CChar *i );
@@ -55,7 +55,7 @@ public:
 	bool	SpeedHackDetection( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence );
 
 private:
-	bool	PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI16 curY, SI08 curZ, UI32 parentSer, std::map<UI32, PfNode_st>& openList, std::map<UI32, UI32>& closedList, std::deque<NodeFCost_st>& fCostList, bool ignoreDoors = false );
+	bool	PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, SI08 targZ, UI16 curX, UI16 curY, SI08 curZ, UI64 parentSer, UI16 parentGCost, std::map<UI64, PfNode_st>& openList, std::map<UI64, UI64>& closedList, std::deque<NodeFCost_st>& fCostList, bool ignoreDoors = false );
 	bool	CalcMove( CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir );
 
 	bool	HandleNPCWander( CChar& mChar );

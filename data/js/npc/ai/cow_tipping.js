@@ -2,8 +2,8 @@
 // @ts-check
 // Cow-Tipping!
 
-/** @type { ( currChar: Character, targChar: Character ) => boolean } */
-function onCharDoubleClick( pUser, targChar )
+/** @type { ( currChar: Character, targChar: Character, nonMouseClickEvent: boolean ) => boolean } */
+function onCharDoubleClick( pUser, targChar, nonMouseClickEvent )
 {
 	var rndValue = RandomNumber( 0, 100 );
 	if( rndValue < 5 )

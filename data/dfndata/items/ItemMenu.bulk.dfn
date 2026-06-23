@@ -11988,6 +11988,8 @@ ADDITEM=0x0F0C-b
 ADDITEM=0x0F0C-c
 0x0F04=pet bonding potion
 ADDITEM=petbondingpotion
+0x24E2=elixir of rebirth
+ADDITEM=elixirofrebirthpotion
 <=Previous Menu
 ITEMMENU=8
 }
@@ -14344,6 +14346,31 @@ ADDITEM=churchatnightmini
 ITEMMENU=4
 }
 
+[ITEMMENU 262]
+{
+quest_rewards.dfn
+0x0e76=Miners Satchel
+ADDITEM=minerssatchel
+0x0e75=Chefs Stachel
+ADDITEM=chefssatchel
+0x0e75=Lumberjacks Stachel
+ADDITEM=lumberjackssatchel
+0x0e75=Smiths Stachel
+ADDITEM=smithssatchel
+0x0e75=Tinkers Stachel
+ADDITEM=tinkerssatchel
+0x108a=an old ring
+ADDITEM=oldring
+0x1088=an old necklace
+ADDITEM=oldnecklace
+0x0e85=Jacobs Pickaxe
+ADDITEM=jacobspickaxe
+0x1086=Clasp of Concentration
+ADDITEM=claspofconcentration
+<=Previous Menu
+ITEMMENU=4
+}
+
 [ITEMMENU 264]
 {
 ethereal_statues.dfn
@@ -14704,4 +14731,83 @@ ADDITEM=powerscroll_peacemaking_15
 ADDITEM=powerscroll_peacemaking_20
 <=Previous Menu
 ITEMMENU=300
+}
+
+[ITEMMENU 306]
+{
+contest_winner_deeds.dfn
+0x014F0=The Trinsic Keep
+ADDITEM=thetrinsickeepdeed
+0x014F0=The Gothic Rose Castle
+ADDITEM=thegothicrosecastledeed
+0x014F0=The Elsa Castle
+ADDITEM=theelsacastledeed
+0x014F0=The Spire
+ADDITEM=thespiresdeed
+0x014F0=The Castle Of Oceania
+ADDITEM=thecastleofoceaniadeed
+0x014F0=The Feudal Castle
+ADDITEM=thefeudalcastledeed
+0x014F0=The Robins Nest
+ADDITEM=therobinsnestdeed
+0x014F0=The Traditional Keep
+ADDITEM=thetraditionalkeepdeed
+0x014F0=The Villa Crowley
+ADDITEM=thevillacrowleydeed
+0x014F0=The Darkthorn Keep
+ADDITEM=thedarkthornkeepdeed
+0x014F0=The Sandalwood Keep
+ADDITEM=thesandalwoodkeepdeed
+0x014F0=The Casa Moga
+ADDITEM=thecasamogadeed
+0x014F0=The Robins Roost Castle
+ADDITEM=therobinsroostcastledeed
+0x014F0=The Camelot Castle
+ADDITEM=thecamelotcastledeed
+0x014F0=The Lacrimae In Caelo Castle
+ADDITEM=thelacrimaeincaelocastledeed
+0x014F0=The Okinawa Castle
+ADDITEM=theokinawacastledeed
+0x014F0=The Sandstone Castle
+ADDITEM=thesandstonecastledeed
+0x014F0=The Grimswind Sisters Castle
+ADDITEM=thegrimswindsisterscastledeed
+0x014F0=The Keep Fortress Lestat
+ADDITEM=thekeepfortresslestatdeed
+0x014F0=The Keep Citadel East
+ADDITEM=thekeepcitadeleastdeed
+0x014F0=The Keep Incarcerated
+ADDITEM=thekeepincarcerateddeed
+0x014F0=The Keep Sally Trees
+ADDITEM=thekeepsallytreesdeed
+0x014F0=The Keep Desert Rose
+ADDITEM=thekeepdesertrosedeed
+0x014F0=The Keep Clover
+ADDITEM=thekeepcloverdeed
+0x014F0=The Castle Sorcerer
+ADDITEM=thecastlesorcererdeed
+0x014F0=The Castle Cascade
+ADDITEM=thecastlecascadedeed
+0x014F0=The Castle House Ruins
+ADDITEM=thecastlehouseruinsdeed
+0x014F0=The Castles And Stone Fortress
+ADDITEM=thecastlesandstonefortressdeed
+0x014F0=The Castle Dragon Stone
+ADDITEM=thecastledragonstonedeed
+0x014F0=The Castle Terrace Gardens
+ADDITEM=thecastleterracegardensdeed
+0x014F0=The Keep Calm Carryon
+ADDITEM=thekeepcalmcarryondeed
+0x014F0=The Keep Raven Loft
+ADDITEM=thekeepravenloftdeed
+0x014F0=The Queens Retreat
+ADDITEM=thequeensretreatdeed
+0x014F0=The Heorot
+ADDITEM=theheorotdeed
+0x014F0=The Town Ship
+ADDITEM=thetownshipdeed
+0x014F0=The Castle Of Theresistance
+ADDITEM=thecastleoftheresistancedeed
+<=Previous Menu
+ITEMMENU=4
 }

@@ -54,7 +54,7 @@ ITEMMENU=5017
 <=Undead
 ITEMMENU=5018
 <=Holiday Creatures
-ITEMMENU=5018
+ITEMMENU=5024
 <=Previous Menu
 ITEMMENU=5000
 }
@@ -70,6 +70,8 @@ ITEMMENU=5020
 ITEMMENU=5021
 <=Male Vendors
 ITEMMENU=5022
+<=Quest Givers
+ITEMMENU=5027
 <=Previous Menu
 ITEMMENU=5000
 }
