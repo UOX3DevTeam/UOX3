@@ -419,6 +419,14 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"SPEEDHACKTHROTTLEPENALTY", 405},
 	{"EVENTMANAGERSYSTEM", 406},
 	{"LOGINQUESTENABLED"s, 407},
+	{"VENDORCHARGESENABLED", 408},
+	{"VENDORBASECHARGE", 409},
+	{"VENDORCHARGEHOURS", 410},
+	{"VENDORUSEITEMFEESENABLED", 411},
+	{"VENDORITEMFEEDIVISOR", 412},
+	{"VENDORITEMFEEAMOUNT", 413},
+	{"ONLYRETURNTOBANK", 414},
+	{"VENDORMAXFUNDS", 415},
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -540,8 +548,11 @@ constexpr auto BIT_HOUSEITEMSDELETEONDECAY			= UI32( 112 );
 constexpr auto BIT_HOUSEGRANDFATHERED				= UI32( 113 );
 constexpr auto BIT_SPEEDHACKDETECTION				= UI32( 119 );
 constexpr auto BIT_EVENTMANAGERSYSTEM				= UI32( 120 );
-constexpr auto BIT_QUESTSYSTEMENABLED					= UI32( 121 );
-constexpr auto BIT_LOGINQUESTENABLED					= UI32( 122 );
+constexpr auto BIT_QUESTSYSTEMENABLED				= UI32( 121 );
+constexpr auto BIT_LOGINQUESTENABLED				= UI32( 122 );
+constexpr auto BIT_VENDORCHARGESENABLED				= UI32( 123 );
+constexpr auto BIT_VENDORUSEITEMFEESENABLED			= UI32( 124 );
+constexpr auto BIT_ONLYRETURNTOBANK					= UI32( 125 );
 
 
 // New uox3.ini format lookup
@@ -952,6 +963,16 @@ auto CServerData::ResetDefaults() -> void
 	SystemTimer( tSERVER_ESCORTDONE, 600 );
 	AmbientFootsteps( false );
 	ServerCommandPrefix( '\'' );
+
+	// Player vendor upkeep settings
+	VendorChargesEnabled( true );
+	VendorBaseCharge( 60 );
+	VendorChargeHours( 24 );
+	VendorUseItemFeesEnabled( true );
+	VendorItemFeeDivisor( 500 );
+	VendorItemFeeAmount( 3 );
+	OnlyReturnToBank( true );
+	VendorMaxFunds( 1000000 );
 
 	// SPEEDUP
 	CheckSpawnRegionSpeed( 30 );
@@ -5476,6 +5497,118 @@ auto CServerData::KickOnAssistantSilence( bool nVal ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::VendorChargesEnabled()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether player vendors charge upkeep fees
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::VendorChargesEnabled() const -> bool
+{
+	return boolVals.test( BIT_VENDORCHARGESENABLED );
+}
+auto CServerData::VendorChargesEnabled( bool newVal ) -> void
+{
+	boolVals.set( BIT_VENDORCHARGESENABLED, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::VendorBaseCharge()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the flat gold fee charged to player vendors each upkeep period
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::VendorBaseCharge() const -> SI16
+{
+	return vendorBaseCharge;
+}
+auto CServerData::VendorBaseCharge( SI16 value ) -> void
+{
+	vendorBaseCharge = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::VendorChargeHours()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets how often player vendors are charged upkeep fees, in real hours
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::VendorChargeHours() const -> SI16
+{
+	return vendorChargeHours;
+}
+auto CServerData::VendorChargeHours( SI16 value ) -> void
+{
+	vendorChargeHours = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::VendorUseItemFeesEnabled()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether listed item values add extra player vendor upkeep fees
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::VendorUseItemFeesEnabled() const -> bool
+{
+	return boolVals.test( BIT_VENDORUSEITEMFEESENABLED );
+}
+auto CServerData::VendorUseItemFeesEnabled( bool newVal ) -> void
+{
+	boolVals.set( BIT_VENDORUSEITEMFEESENABLED, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::VendorItemFeeDivisor()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the listed item value divisor used for player vendor item fees
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::VendorItemFeeDivisor() const -> SI16
+{
+	return vendorItemFeeDivisor;
+}
+auto CServerData::VendorItemFeeDivisor( SI16 value ) -> void
+{
+	vendorItemFeeDivisor = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::VendorItemFeeAmount()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the gold fee added per player vendor item fee divisor step
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::VendorItemFeeAmount() const -> SI16
+{
+	return vendorItemFeeAmount;
+}
+auto CServerData::VendorItemFeeAmount( SI16 value ) -> void
+{
+	vendorItemFeeAmount = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::OnlyReturnToBank()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets returned vendor belongings skip player backpack entirely
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::OnlyReturnToBank() const -> bool
+{
+	return boolVals.test( BIT_ONLYRETURNTOBANK );
+}
+auto CServerData::OnlyReturnToBank( bool newVal ) -> void
+{
+	boolVals.set( BIT_ONLYRETURNTOBANK, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::VendorMaxFunds()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Max amount of money the vendor can hold in the bank.
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::VendorMaxFunds() const -> UI32
+{
+	return vendorMaxFunds;
+}
+auto CServerData::VendorMaxFunds( UI32 value ) -> void
+{
+	vendorMaxFunds = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::SaveIni()
 //|	Date		-	02/21/2002
 //o------------------------------------------------------------------------------------------------o
@@ -5840,6 +5973,17 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "PETLOYALTYLOSSONFAILURE=" << static_cast<UI16>( GetPetLoyaltyLossOnFailure() ) << '\n';
 		ofsOutput << "PETLOYALTYRATE=" << SystemTimer( tSERVER_LOYALTYRATE ) << '\n';
 		ofsOutput << "PETBONDINGENABLED=" << ( PetBondingEnabled() ? 1 : 0 ) << '\n';
+		ofsOutput << "}" << '\n';
+
+		ofsOutput << '\n' << "[playervendor]" << '\n' << "{" << '\n';
+		ofsOutput << "VENDORCHARGESENABLED=" << ( VendorChargesEnabled() ? 1 : 0 ) << '\n';
+		ofsOutput << "VENDORBASECHARGE=" << VendorBaseCharge() << '\n';
+		ofsOutput << "VENDORCHARGEHOURS=" << VendorChargeHours() << '\n';
+		ofsOutput << "VENDORUSEITEMFEESENABLED=" << ( VendorUseItemFeesEnabled() ? 1 : 0 ) << '\n';
+		ofsOutput << "VENDORITEMFEEDIVISOR=" << VendorItemFeeDivisor() << '\n';
+		ofsOutput << "VENDORITEMFEEAMOUNT=" << VendorItemFeeAmount() << '\n';
+		ofsOutput << "ONLYRETURNTOBANK=" << ( OnlyReturnToBank() ? 1 : 0 ) << '\n';
+		ofsOutput << "VENDORMAXFUNDS=" << VendorMaxFunds() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[speedup]" << '\n' << "{" << '\n';
@@ -7587,6 +7731,31 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 407:	 // LOGINQUESTENABLED
 			LoginQuestEnabled( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
+			break;
+		case 408: // VENDORCHARGESENABLED
+			VendorChargesEnabled( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
+			break;
+		case 409: // VENDORBASECHARGE
+			VendorBaseCharge( static_cast<SI16>( std::stoi( value )));
+			break;
+		case 410: // VENDORCHARGEHOURS
+			VendorChargeHours( static_cast<SI16>( std::stoi( value )));
+			break;
+		case 411: // VENDORUSEITEMFEESENABLED
+			VendorUseItemFeesEnabled( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
+			break;
+		case 412: // VENDORITEMFEEDIVISOR
+			VendorItemFeeDivisor( static_cast<SI16>( std::stoi( value )));
+			break;
+		case 413: // VENDORITEMFEEAMOUNT
+			VendorItemFeeAmount( static_cast<SI16>( std::stoi( value )));
+			break;
+		case 414: // ONLYRETURNTOBANK
+			OnlyReturnToBank( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
+			break;
+		case 415: // VENDORMAXFUNDS
+			VendorMaxFunds( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
 		default:
 			rValue = false;
 			break;

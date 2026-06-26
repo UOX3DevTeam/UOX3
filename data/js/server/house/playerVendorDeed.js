@@ -9,9 +9,9 @@ function onUseChecked( pUser, iUsed )
 	if( pSocket != null && ValidateObject( iUsed ) && iUsed.isItem )
 	{
 		var itemOwner = GetPackOwner( iUsed, 0 );
-		if( itemOwner == null || itemOwner.serial != pUser.serial )
+		if( itemOwner == null || itemOwner.serial != pUser.serial || !ValidateObject( iUsed.container) || iUsed.container.layer == 0x1D )		
 		{
-			pUser.SysMessage( GetDictionaryEntry( 1763, pSocket.language )); // That item must be in your backpack before it can be used.
+			pSocket.SysMessage( GetDictionaryEntry( 1763, pSocket.language )); // That item must be in your backpack before it can be used.
 			return false;
 		}
 
@@ -20,7 +20,7 @@ function onUseChecked( pUser, iUsed )
 		if( !ValidateObject( iMulti ) || !iMulti.IsInMulti( pUser ))
 		{
 			// Player vendors can only be placed in houses!
-			pUser.SysMessage( GetDictionaryEntry( 2857, pSocket.language )); // Player vendors can only be placed in houses!
+			pSocket.SysMessage( GetDictionaryEntry( 2857, pSocket.language )); // Player vendors can only be placed in houses!
 			return false;
 		}
 
@@ -28,7 +28,7 @@ function onUseChecked( pUser, iUsed )
 		if( !iMulti.IsOwner( pUser ))
 		{
 			// Only the house owner can place player vendors in a house!
-			pUser.SysMessage( GetDictionaryEntry( 2858, pSocket.language )); // Only the house owner can place player vendors in a house!
+			pSocket.SysMessage( GetDictionaryEntry( 2858, pSocket.language )); // Only the house owner can place player vendors in a house!
 			return false;
 		}
 
@@ -36,7 +36,7 @@ function onUseChecked( pUser, iUsed )
 		if( iMulti.vendors >= iMulti.maxVendors )
 		{
 			// You cannot place any more player vendors in this house!
-			pUser.SysMessage( GetDictionaryEntry( 2859, pSocket.language )); // You cannot place any more player vendors in this house!
+			pSocket.SysMessage( GetDictionaryEntry( 2859, pSocket.language )); // You cannot place any more player vendors in this house!
 			return false;
 		}
 
@@ -56,6 +56,14 @@ function onUseChecked( pUser, iUsed )
 			return false;
 		}
 
+		// Make sure there is not already an NPC on the exact tile
+		var foundNPC = AreaCharacterFunction( "CheckForNPCAtVendorSpot", pUser, 0, pSocket );
+		if( foundNPC )
+		{
+			pSocket.SysMessage( "You cannot place a player vendor on top of another NPC." );
+			return false;
+		}
+
 		// Create player vendor at player's current location
 		var npcVendor = SpawnNPC( "playervendor", pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );
 		if( ValidateObject( npcVendor ))
@@ -72,6 +80,14 @@ function onUseChecked( pUser, iUsed )
 
 			// Add the player vendor to the house's list of vendors
 			iMulti.AddVendor( npcVendor );
+			npcVendor.SetTag( "VendorBankAccount",0 );
+			npcVendor.AddScriptTrigger( 3110 );
+			npcVendor.StartTimer( 60000, 90, 3110 );
+			var vendorName = iUsed.GetTag( "vendorName" );
+			if( vendorName )
+			{
+				npcVendor.name = vendorName;
+			}
 
 			// Delete the player vendor deed!
 			iUsed.Delete();
@@ -81,6 +97,23 @@ function onUseChecked( pUser, iUsed )
 			npcVendor.TextMessage( npcMsg.replace(/%s/gi, npcVendor.name ));
 		}
 	}
+
+	return false;
+}
+
+/** @type { ( srcChar: Character, trgChar: Character, pSocket: Socket ) => boolean } */
+function CheckForNPCAtVendorSpot( srcChar, trgChar, pSocket )
+{
+	if( !ValidateObject( srcChar ) || !ValidateObject( trgChar ))
+		return false;
+
+	// Ignore the player placing the vendor
+	if( trgChar.serial == srcChar.serial )
+		return false;
+
+	// Only block NPCs already standing on the exact placement tile
+	if( trgChar.npc && trgChar.x == srcChar.x && trgChar.y == srcChar.y && trgChar.z == srcChar.z )
+		return true;
 
 	return false;
 }
@@ -107,11 +140,11 @@ function CheckForNearbyDoors( pUser, itemToCheck, pSocket )
 				// Make sure to check against the distance from the door in it's closed state, rather than it's open state!
 				var origX = itemToCheck.x  - itemToCheck.GetTag( "DOOR_X" );
 				var origY = itemToCheck.y  - itemToCheck.GetTag( "DOOR_Y" );
-				if( pUser.x - origX < 2 || origX - pUser.x < 2 || pUser.y - origY < 2 || origY - pUser.y < 2 )
-					return true;
+				if( Math.abs( pUser.x - origX ) < 1 && Math.abs( pUser.y - origY ) < 1 )
+				return true;
 			}
 
-			if( pUser.DistanceTo( itemToCheck ) <= 2 )
+			if( pUser.DistanceTo( itemToCheck ) <= 1 )
 				return true;
 		}
 	}

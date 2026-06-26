@@ -2176,6 +2176,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval
 			case CCP_AITYPE:		*vp = INT_TO_JSVAL( gPriv->GetNpcAiType() );				break;
 			case CCP_SPLIT:			*vp = INT_TO_JSVAL( gPriv->GetSplit() );					break;
 			case CCP_SPLITCHANCE:	*vp = INT_TO_JSVAL( gPriv->GetSplitChance() );				break;
+			case CCP_VENDORGOLDHELD:*vp = INT_TO_JSVAL( gPriv->GetHoldG() );					break;
 			case CCP_TRAINER:		*vp = BOOLEAN_TO_JSVAL( gPriv->CanTrain() );				break;
 			case CCP_HIRELING:		*vp = BOOLEAN_TO_JSVAL( gPriv->CanBeHired() );				break;
 			case CCP_WEIGHT:		*vp = INT_TO_JSVAL( gPriv->GetWeight() );					break;
@@ -2694,6 +2695,7 @@ JSBool CCharacterProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBoo
 			case CCP_AITYPE:		gPriv->SetNPCAiType( static_cast<SI16>( encaps.toInt() ));	break;
 			case CCP_SPLIT:			gPriv->SetSplit( static_cast<UI08>( encaps.toInt() ));		break;
 			case CCP_SPLITCHANCE:	gPriv->SetSplitChance( static_cast<UI08>( encaps.toInt() ));break;
+			case CCP_VENDORGOLDHELD:gPriv->SetHoldG( static_cast<UI32>( encaps.toInt() ));		break;
 			case CCP_HIRELING:		gPriv->SetCanHire( encaps.toBool() );						break;
 			case CCP_TRAINER:		gPriv->SetCanTrain( encaps.toBool() );						break;
 			case CCP_WEIGHT:		gPriv->SetWeight( static_cast<SI32>( encaps.toInt() ));		break;

@@ -384,6 +384,7 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "aitype",			CCP_AITYPE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "split",			CCP_SPLIT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "splitchance",	CCP_SPLITCHANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "vendorGoldHeld", CCP_VENDORGOLDHELD, JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "hireling",		CCP_HIRELING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "trainer",		CCP_TRAINER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "weight",			CCP_WEIGHT,			JSPROP_ENUMANDPERM, nullptr, nullptr },

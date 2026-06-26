@@ -148,6 +148,7 @@
 3107=npc/pets/petbonding.js
 3108=server/network/0xbf_sendnpcghostmode.js
 3109=npc/ai/veterinarian.js
+3110=npc/ai/playervendor.js
 // ------------------------
 
 // AI-Stuff
