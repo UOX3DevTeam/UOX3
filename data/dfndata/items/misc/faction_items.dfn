@@ -1,0 +1,307 @@
+// =============================================================================
+// faction_items.dfn
+// UOX3 Faction System - item definitions
+// =============================================================================
+
+[FACTION_CONTROLLER]
+{
+NAME=Faction Controller
+ID=0x1363
+COLOUR=0
+WEIGHT=0
+MOVABLE=2
+DECAY=0
+VISIBLE=3
+CUSTOMINTTAG=faction_controller 1
+}
+
+[FACTION_STONE]
+{
+NAME=Faction Stone
+ID=0x0ED4
+COLOUR=0
+WEIGHT=255
+MOVABLE=2
+DECAY=0
+SCRIPT=8505
+CUSTOMINTTAG=faction_stone 1
+}
+
+[JOIN_STONE]
+{
+NAME=Join Stone
+ID=0x0ED5
+COLOUR=0
+WEIGHT=255
+MOVABLE=2
+DECAY=0
+SCRIPT=8505
+CUSTOMINTTAG=join_stone 1
+}
+
+[JOIN_STONE_TB]
+{
+GET=JOIN_STONE
+NAME=True Britannians Join Stone
+CUSTOMSTRINGTAG=stone_faction TB
+}
+
+[JOIN_STONE_COM]
+{
+GET=JOIN_STONE
+NAME=Council of Mages Join Stone
+CUSTOMSTRINGTAG=stone_faction COM
+}
+
+[JOIN_STONE_MIN]
+{
+GET=JOIN_STONE
+NAME=Minax Join Stone
+CUSTOMSTRINGTAG=stone_faction MIN
+}
+
+[JOIN_STONE_SL]
+{
+GET=JOIN_STONE
+NAME=Shadowlords Join Stone
+CUSTOMSTRINGTAG=stone_faction SL
+}
+
+[FACTION_STONE_TB]
+{
+GET=FACTION_STONE
+NAME=True Britannians Faction Stone
+CUSTOMSTRINGTAG=stone_faction TB
+}
+
+[FACTION_STONE_COM]
+{
+GET=FACTION_STONE
+NAME=Council of Mages Faction Stone
+CUSTOMSTRINGTAG=stone_faction COM
+}
+
+[FACTION_STONE_MIN]
+{
+GET=FACTION_STONE
+NAME=Minax Faction Stone
+CUSTOMSTRINGTAG=stone_faction MIN
+}
+
+[FACTION_STONE_SL]
+{
+GET=FACTION_STONE
+NAME=Shadowlords Faction Stone
+CUSTOMSTRINGTAG=stone_faction SL
+}
+
+[FACTION_SIGIL]
+{
+NAME=Faction Sigil
+ID=0x1869
+COLOUR=0x04F1
+WEIGHT=1
+MOVABLE=1
+DECAY=0
+SCRIPT=8502
+CUSTOMINTTAG=sigil 1
+CUSTOMINTTAG=sigil_corrupted 0
+CUSTOMINTTAG=sigil_corrupt_start 0
+}
+
+[FACTION_SIGIL_BRITAIN]
+{
+GET=FACTION_SIGIL
+NAME=Sigil of Britain
+CUSTOMSTRINGTAG=sigil_town Britain
+CUSTOMSTRINGTAG=sigil_owner_faction TB
+}
+
+[FACTION_SIGIL_TRINSIC]
+{
+GET=FACTION_SIGIL
+NAME=Sigil of Trinsic
+CUSTOMSTRINGTAG=sigil_town Trinsic
+CUSTOMSTRINGTAG=sigil_owner_faction TB
+}
+
+[FACTION_SIGIL_MOONGLOW]
+{
+GET=FACTION_SIGIL
+NAME=Sigil of Moonglow
+CUSTOMSTRINGTAG=sigil_town Moonglow
+CUSTOMSTRINGTAG=sigil_owner_faction COM
+}
+
+[FACTION_SIGIL_SKARABRAE]
+{
+GET=FACTION_SIGIL
+NAME=Sigil of Skara Brae
+CUSTOMSTRINGTAG=sigil_town SkaraBrae
+CUSTOMSTRINGTAG=sigil_owner_faction COM
+}
+
+[FACTION_SIGIL_YEW]
+{
+GET=FACTION_SIGIL
+NAME=Sigil of Yew
+CUSTOMSTRINGTAG=sigil_town Yew
+CUSTOMSTRINGTAG=sigil_owner_faction MIN
+}
+
+[FACTION_SIGIL_VESPER]
+{
+GET=FACTION_SIGIL
+NAME=Sigil of Vesper
+CUSTOMSTRINGTAG=sigil_town Vesper
+CUSTOMSTRINGTAG=sigil_owner_faction MIN
+}
+
+[FACTION_SIGIL_MINOC]
+{
+GET=FACTION_SIGIL
+NAME=Sigil of Minoc
+CUSTOMSTRINGTAG=sigil_town Minoc
+CUSTOMSTRINGTAG=sigil_owner_faction SL
+}
+
+[FACTION_SIGIL_COVE]
+{
+GET=FACTION_SIGIL
+NAME=Sigil of Cove
+CUSTOMSTRINGTAG=sigil_town Cove
+CUSTOMSTRINGTAG=sigil_owner_faction SL
+}
+
+[FACTION_ROBE_TB]
+{
+NAME=True Britannians Robe
+ID=0x1F03
+COLOUR=0x0028
+LAYER=22
+WEIGHT=3
+MOVABLE=1
+DECAY=0
+SCRIPT=8507
+CUSTOMINTTAG=faction_item 1
+CUSTOMSTRINGTAG=item_faction TB
+}
+
+[FACTION_ROBE_COM]
+{
+NAME=Council of Mages Robe
+ID=0x1F03
+COLOUR=0x010C
+LAYER=22
+WEIGHT=3
+MOVABLE=1
+DECAY=0
+SCRIPT=8507
+CUSTOMINTTAG=faction_item 1
+CUSTOMSTRINGTAG=item_faction COM
+}
+
+[FACTION_ROBE_MIN]
+{
+NAME=Minax Robe
+ID=0x1F03
+COLOUR=0x0026
+LAYER=22
+WEIGHT=3
+MOVABLE=1
+DECAY=0
+SCRIPT=8507
+CUSTOMINTTAG=faction_item 1
+CUSTOMSTRINGTAG=item_faction MIN
+}
+
+[FACTION_ROBE_SL]
+{
+NAME=Shadowlords Robe
+ID=0x1F03
+COLOUR=0x0455
+LAYER=22
+WEIGHT=3
+MOVABLE=1
+DECAY=0
+SCRIPT=8507
+CUSTOMINTTAG=faction_item 1
+CUSTOMSTRINGTAG=item_faction SL
+}
+
+[FACTION_WAR_HORSE]
+{
+NAME=Faction War Horse Deed
+ID=0x14F0
+COLOUR=0
+WEIGHT=1
+MOVABLE=1
+SCRIPT=8507
+CUSTOMINTTAG=faction_item 1
+CUSTOMINTTAG=faction_horse 1
+}
+
+[FACTION_TRAP_DEED]
+{
+NAME=Faction Trap Deed
+ID=0x14F0
+COLOUR=0
+WEIGHT=1
+MOVABLE=1
+SCRIPT=8506
+CUSTOMINTTAG=trap_deed 1
+}
+
+[FACTION_TRAP_BASE]
+{
+NAME=Faction Trap
+ID=0x1B72
+COLOUR=0
+WEIGHT=255
+MOVABLE=3
+DECAY=0
+SCRIPT=8506
+CUSTOMINTTAG=trap_placed 1
+}
+
+[FACTION_TRAP_EXPLOSION]
+{
+GET=FACTION_TRAP_BASE
+NAME=Faction Explosion Trap
+ID=0x0E76
+CUSTOMSTRINGTAG=trap_type EXPLOSION
+}
+
+[FACTION_TRAP_GAS]
+{
+GET=FACTION_TRAP_BASE
+NAME=Faction Gas Trap
+ID=0x0E24
+COLOUR=0x0488
+CUSTOMSTRINGTAG=trap_type GAS
+}
+
+[FACTION_TRAP_SAW]
+{
+GET=FACTION_TRAP_BASE
+NAME=Faction Saw Trap
+ID=0x1059
+CUSTOMSTRINGTAG=trap_type SAW
+}
+
+[FACTION_TRAP_SPIKE]
+{
+GET=FACTION_TRAP_BASE
+NAME=Faction Spike Trap
+ID=0x1B72
+CUSTOMSTRINGTAG=trap_type SPIKE
+}
+
+[SILVER_COIN]
+{
+NAME=faction silver
+ID=0x0EEF
+COLOUR=0x0481
+WEIGHT=1
+MOVABLE=1
+}
