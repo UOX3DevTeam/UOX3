@@ -171,30 +171,3 @@ function onClick( pSock, iTrap )
 	return true;
 }
 
-function CommandRegistration()
-{
-	RegisterCommand( "spawntrapdeed", 5, true );
-}
-
-function command_SPAWNTRAPDEED( pSock, cmdString )
-{
-	var pUser = pSock.currentChar;
-	if( !ValidateObject( pUser ) )
-		return;
-
-	var trapType = cmdString.toUpperCase();
-	if( !TrapDamage[trapType] )
-	{
-		pSock.SysMessage( "Usage: 'spawntrapdeed <EXPLOSION|GAS|SAW|SPIKE>" );
-		return;
-	}
-
-	var deed = CreateDFNItem( pSock, pUser, "FACTION_TRAP_DEED", 1, "ITEM", true );
-	if( ValidateObject( deed ) )
-	{
-		deed.SetTag( "trap_deed", 1 );
-		deed.SetTag( "trap_deed_type", trapType );
-		deed.name = "Faction " + trapType + " Trap Deed";
-		pSock.SysMessage( "Trap deed created." );
-	}
-}

@@ -259,7 +259,7 @@ function ConcludeElection( fkey )
 		var oldSerial = parseInt( ctrl.GetTag( "cmd_" + fkey ), 10 );
 		if( oldSerial > 0 )
 		{
-			var oldCmd = FindCharBySerial( oldSerial );
+			var oldCmd = CalcCharFromSer( oldSerial );
 			if( ValidateObject( oldCmd ) )
 			{
 				oldCmd.SetTag( "faction_commander", "0" );
@@ -269,7 +269,7 @@ function ConcludeElection( fkey )
 	}
 
 	// Promote winner
-	var winner = FindCharBySerial( parseInt( winnerSerial, 10 ) );
+	var winner = CalcCharFromSer( parseInt( winnerSerial, 10 ) );
 	if( ValidateObject( winner ) )
 	{
 		winner.SetTag( "faction_commander", "1" );
@@ -349,7 +349,7 @@ function ShowElectionGump( pSock, pChar, fkey )
 		for( var i = 0; i < candidates.length; i++ )
 		{
 			var cSerial = parseInt( candidates[i], 10 );
-			var cChar   = FindCharBySerial( cSerial );
+			var cChar   = CalcCharFromSer( cSerial );
 			var cName   = ValidateObject( cChar ) ? cChar.name : "Unknown (" + cSerial + ")";
 			var votes   = _GetVotes( fkey, cSerial );
 
@@ -408,62 +408,33 @@ function _BroadcastFaction( fkey, msg )
 	Console.Print( "[FACTION:" + fkey + "] " + msg );
 }
 
-// ---------------------------------------------------------------------------
-// GM COMMANDS
-// ---------------------------------------------------------------------------
-function CommandRegistration()
-{
-	RegisterCommand( "electionstart",  5, true );
-	RegisterCommand( "electionvote",   5, true );
-	RegisterCommand( "electionend",    5, true );
-	RegisterCommand( "electionstatus", 0, true );
-	RegisterCommand( "electionreset",  5, true );
-}
 
-function command_ELECTIONSTART( socket, cmdString )
+function ShowElectionStatus( pSock, factionKey )
 {
-	var fkey = cmdString.trim().toUpperCase();
-	if( !fkey ) { socket.SysMessage( "Usage: 'electionstart <TB|COM|MIN|SL>" ); return; }
-	StartElection( fkey ) ? socket.SysMessage( "Election started for " + fkey )
-	                      : socket.SysMessage( "Could not start election (already active or no controller)." );
-}
+	if( !pSock )
+		return false;
 
-function command_ELECTIONVOTE( socket, cmdString )
-{
-	BeginVoting( cmdString.trim().toUpperCase() );
-	socket.SysMessage( "Voting phase started." );
-}
-
-function command_ELECTIONEND( socket, cmdString )
-{
-	ConcludeElection( cmdString.trim().toUpperCase() );
-	socket.SysMessage( "Election concluded." );
-}
-
-function command_ELECTIONSTATUS( socket, cmdString )
-{
-	var pChar = socket.currentChar;
-	if( !pChar ) return;
-	var fkey  = pChar.GetTag( "faction" );
-	if( !fkey ) { socket.SysMessage( "You are not in a faction." ); return; }
-	socket.SysMessage( "Election state for " + fkey + ": " + _GetElecState( fkey ) );
-	var candidates = _GetCandidates( fkey );
-	for( var i = 0; i < candidates.length; i++ )
+	pSock.SysMessage( "Election state for " + factionKey + ": " + _GetElecState( factionKey ) );
+	var candidates = _GetCandidates( factionKey );
+	for( var candidateIndex = 0; candidateIndex < candidates.length; candidateIndex++ )
 	{
-		var cSerial = parseInt( candidates[i], 10 );
-		var cChar   = FindCharBySerial( cSerial );
-		var cName   = ValidateObject( cChar ) ? cChar.name : "Serial " + cSerial;
-		socket.SysMessage( "  " + cName + " - " + _GetVotes( fkey, cSerial ) + " vote(s)" );
+		var candidateSerial = Number( candidates[candidateIndex] );
+		var candidate = CalcCharFromSer( candidateSerial );
+		var candidateName = ValidateObject( candidate ) ? candidate.name : "Serial " + candidateSerial;
+		pSock.SysMessage( candidateName + " - " + _GetVotes( factionKey, candidateSerial ) + " vote(s)" );
 	}
+
+	return true;
 }
 
-function command_ELECTIONRESET( socket, cmdString )
+function ResetElection( factionKey )
 {
-	var fkey = cmdString.trim().toUpperCase();
 	var ctrl = _GetCtrl();
-	if( !ctrl ) { socket.SysMessage( "No controller found." ); return; }
-	ctrl.SetTag( "elec_" + fkey + "_state",      ELEC_STATE_NONE );
-	ctrl.SetTag( "elec_" + fkey + "_start",      0 );
-	ctrl.SetTag( "elec_" + fkey + "_candidates", "" );
-	socket.SysMessage( "Election state for " + fkey + " has been reset." );
+	if( !ValidateObject( ctrl ) )
+		return false;
+
+	ctrl.SetTag( "elec_" + factionKey + "_state", ELEC_STATE_NONE );
+	ctrl.SetTag( "elec_" + factionKey + "_start", 0 );
+	ctrl.SetTag( "elec_" + factionKey + "_candidates", "" );
+	return true;
 }
