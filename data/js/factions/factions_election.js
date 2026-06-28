@@ -15,6 +15,10 @@
 //   elec_<fkey>_votes_<serial>: vote count for that candidate
 // =============================================================================
 
+var FactionElectionTimerId = 1;
+var FactionElectionTimerDelay = 3600000; // 1 hour
+var FactionElectionController = null;
+
 var ELECTION_CYCLE_MS  = 604800000; // 7 days
 var CAMPAIGN_MS        = 345600000; // 4 days campaign, then 3 days voting
 var VOTING_MS          = 259200000; // 3 days
@@ -30,9 +34,63 @@ var ELEC_STATE_FINISHED = "finished";
 
 function _GetCtrl()
 {
-	// Locate controller by iterating items with faction_controller tag
-	// In production you'd cache this serial at startup via a console command
-	return FindItemByTag( "faction_controller", "1" );
+	if( ValidateObject( FactionElectionController ) )
+		return FactionElectionController;
+
+	FactionElectionController = null;
+	IterateOver( "ITEM" );
+	return FactionElectionController;
+}
+
+function _EnsureTimer( ctrl )
+{
+	if( !ValidateObject( ctrl ) )
+		return false;
+
+	ctrl.KillJSTimer( FactionElectionTimerId, 8508 );
+	ctrl.StartTimer( FactionElectionTimerDelay, FactionElectionTimerId, 8508 );
+	return true;
+}
+
+function onIterate( toCheck )
+{
+	if( ValidateObject( toCheck ) && toCheck.isItem && toCheck.GetTag( "faction_controller" ) == 1 )
+	{
+		FactionElectionController = toCheck;
+		return true;
+	}
+
+	return false;
+}
+
+function onCreateDFN( objMade, objType )
+{
+	if( ValidateObject( objMade ) && objMade.isItem && objMade.GetTag( "faction_controller" ) == 1 )
+	{
+		FactionElectionController = objMade;
+		_EnsureTimer( objMade );
+	}
+}
+
+function onTimer( timerObj, timerID )
+{
+	if( timerID != FactionElectionTimerId )
+		return;
+	if( !ValidateObject( timerObj ) || timerObj.GetTag( "faction_controller" ) != 1 )
+		return;
+
+	FactionElectionController = timerObj;
+	CheckElectionTimers();
+	_EnsureTimer( timerObj );
+}
+
+function RegisterController( ctrl )
+{
+	if( !ValidateObject( ctrl ) || ctrl.GetTag( "faction_controller" ) != 1 )
+		return false;
+
+	FactionElectionController = ctrl;
+	return _EnsureTimer( ctrl );
 }
 
 function _GetElecState( fkey )
@@ -370,8 +428,12 @@ function ShowElectionGump( pSock, pChar, fkey )
 	myGump.Free();
 }
 
-function onGumpPress( pSock, pChar, buttonID )
+function onGumpPress( pSock, buttonID, gumpData )
 {
+	var pChar = pSock.currentChar;
+	if( !ValidateObject( pChar ) )
+		return;
+
 	var fkey = pChar.GetTag( "faction" );
 	if( !fkey ) return;
 

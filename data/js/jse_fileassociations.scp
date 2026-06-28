@@ -425,7 +425,7 @@
 8002=player/death/resurrectpenalty.js
 
 //-------------------------------------------
-// Faction System [8500-8507]
+// Faction System [8500-8508]
 //-------------------------------------------
 8500=factions/factions_core.js
 8501=factions/factions_combat.js
@@ -435,6 +435,7 @@
 8505=factions/factions_stones.js
 8506=factions/factions_traps.js
 8507=factions/factions_items.js
+8508=factions/factions_election.js
 
 // House Scripts [15000-15500]
 15000=server/house/house.js

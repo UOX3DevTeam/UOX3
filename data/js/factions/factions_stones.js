@@ -26,6 +26,7 @@ var StoneRankNames = [
 
 var StoneRankPoints = [ 0, 5, 10, 20, 40, 80, 160, 320, 640, 1280 ];
 var StoneLeaveDelay = 259200000;
+var StoneElectionScriptId = 8508;
 
 function StoneIsFactionValid( factionKey )
 {
@@ -220,8 +221,10 @@ function ShowFactionStoneGump( pSock, pUser, stoneFaction )
 
 		if( playerFaction === stoneFaction )
 		{
-			myGump.AddButton( 25, 220, 0xFA5, 1, 0, 2 );
-			myGump.AddHTMLGump( 65, 220, 250, 20, 0, 0, "Leave this faction" );
+			myGump.AddButton( 25, 220, 0xFA5, 1, 0, 3 );
+			myGump.AddHTMLGump( 65, 220, 250, 20, 0, 0, "Faction election" );
+			myGump.AddButton( 25, 250, 0xFA5, 1, 0, 2 );
+			myGump.AddHTMLGump( 65, 250, 250, 20, 0, 0, "Leave this faction" );
 		}
 	}
 
@@ -255,6 +258,18 @@ function onGumpPress( pSock, pButton, gumpData )
 	if( pButton == 2 && action === "stone" )
 	{
 		StoneLeaveFaction( pUser );
+		return;
+	}
+
+	if( pButton == 3 && action === "stone" )
+	{
+		if( StoneGetFaction( pUser ) !== factionKey )
+		{
+			pUser.SysMessage( "You may only use your own faction election stone." );
+			return;
+		}
+
+		TriggerEvent( StoneElectionScriptId, "ShowElectionGump", pSock, pUser, factionKey );
 		return;
 	}
 }

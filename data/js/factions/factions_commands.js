@@ -10,6 +10,7 @@ var CommandFactionElectionScriptId = 8508;
 function CommandRegistration()
 {
 	RegisterCommand( "factionsilver", 5, true );
+	RegisterCommand( "factioncontroller", 5, true );
 	RegisterCommand( "spawnfitem", 5, true );
 	RegisterCommand( "spawntrapdeed", 5, true );
 
@@ -33,6 +34,24 @@ function CommandClampSilver( amount )
 		amount = CommandMaxFactionSilver;
 
 	return amount;
+}
+
+function command_FACTIONCONTROLLER( pSock, cmdString )
+{
+	var pUser = pSock.currentChar;
+	if( !ValidateObject( pUser ) )
+		return;
+
+	var controller = CreateDFNItem( pSock, pUser, "FACTION_CONTROLLER", 1, "ITEM", true );
+	if( ValidateObject( controller ) )
+	{
+		pSock.SysMessage( "Faction controller created." );
+		TriggerEvent( CommandFactionElectionScriptId, "RegisterController", controller );
+	}
+	else
+	{
+		pSock.SysMessage( "Unable to create faction controller." );
+	}
 }
 
 function command_FACTIONSILVER( pSock, cmdString )

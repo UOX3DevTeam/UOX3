@@ -118,7 +118,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		iSigil.SetTag( "sigil_owner_faction", playerFaction );
 		iSigil.SetTag( "sigil_corrupt_start", GetCurrentClock() );
 		iSigil.SetTag( "sigil_corrupted", 0 );
-		iSigil.SetJSTimer( 1, 60000, 8502 );
+		iSigil.StartTimer( 60000, 1, 8502 );
 		pUser.SysMessage( "You have begun corrupting this sigil." );
 		BroadcastMessage( playerFaction + " has begun corrupting the sigil of " + iSigil.GetTag( "sigil_town" ) + "." );
 	}
@@ -143,7 +143,7 @@ function onTimer( iSigil, timerID )
 			BroadcastMessage( iSigil.GetTag( "sigil_owner_faction" ) + " has taken control of " + iSigil.GetTag( "sigil_town" ) + "." );
 			return;
 		}
-		iSigil.SetJSTimer( 1, 60000, 8502 );
+		iSigil.StartTimer( 60000, 1, 8502 );
 	}
 }
 
