@@ -4279,6 +4279,38 @@ auto CheckCharInsideBuilding( CChar *c, CSocket *mSock, bool doWeatherStuff ) ->
 //|	Purpose		-	Check flagging, race, and guild info to find if character
 //|					should be flagged criminal (returns true if so)
 //o------------------------------------------------------------------------------------------------o
+static auto IsFactionKey( const std::string& factionKey ) -> bool
+{
+	return ( factionKey == "TB" || factionKey == "COM" || factionKey == "MIN" || factionKey == "SL" );
+}
+
+static auto FactionKeyForChar( CChar *mChar ) -> std::string
+{
+	if( !ValidateObject( mChar ) || mChar->IsNpc() )
+		return "";
+
+	const TAGMAPOBJECT factionTag = mChar->GetTag( "faction" );
+	if( factionTag.m_ObjectType != TAGMAP_TYPE_STRING )
+		return "";
+	if( !IsFactionKey( factionTag.m_StringValue ) )
+		return "";
+
+	return factionTag.m_StringValue;
+}
+
+static auto AreEnemyFactionMembers( CChar *mChar, CChar *targ ) -> bool
+{
+	const std::string attackerFaction = FactionKeyForChar( mChar );
+	if( attackerFaction.empty() )
+		return false;
+
+	const std::string targetFaction = FactionKeyForChar( targ );
+	if( targetFaction.empty() )
+		return false;
+
+	return attackerFaction != targetFaction;
+}
+
 auto WillResultInCriminal( CChar *mChar, CChar *targ ) -> bool
 {
 	auto tOwner = targ->GetOwnerObj();
@@ -4287,6 +4319,9 @@ auto WillResultInCriminal( CChar *mChar, CChar *targ ) -> bool
 	auto rValue = false;
 	if( ValidateObject( mChar ) && ValidateObject( targ ) && mChar != targ )
 	{
+		if( AreEnemyFactionMembers( mChar, targ ) )
+			return false;
+
 		// Make sure they're not racial enemies, or guild members/guild enemies
 		if(( Races->Compare( mChar, targ ) > RACE_ENEMY ) && GuildSys->ResultInCriminal( mChar, targ ))
 		{

@@ -114,6 +114,7 @@ CUSTOMINTTAG=sigil_corrupt_start 0
 {
 GET=FACTION_SIGIL
 NAME=Sigil of Britain
+CUSTOMINTTAG=town_region 3
 CUSTOMSTRINGTAG=sigil_town Britain
 CUSTOMSTRINGTAG=sigil_owner_faction TB
 }
@@ -122,6 +123,7 @@ CUSTOMSTRINGTAG=sigil_owner_faction TB
 {
 GET=FACTION_SIGIL
 NAME=Sigil of Trinsic
+CUSTOMINTTAG=town_region 9
 CUSTOMSTRINGTAG=sigil_town Trinsic
 CUSTOMSTRINGTAG=sigil_owner_faction TB
 }
@@ -130,6 +132,7 @@ CUSTOMSTRINGTAG=sigil_owner_faction TB
 {
 GET=FACTION_SIGIL
 NAME=Sigil of Moonglow
+CUSTOMINTTAG=town_region 13
 CUSTOMSTRINGTAG=sigil_town Moonglow
 CUSTOMSTRINGTAG=sigil_owner_faction COM
 }
@@ -138,6 +141,7 @@ CUSTOMSTRINGTAG=sigil_owner_faction COM
 {
 GET=FACTION_SIGIL
 NAME=Sigil of Skara Brae
+CUSTOMINTTAG=town_region 8
 CUSTOMSTRINGTAG=sigil_town SkaraBrae
 CUSTOMSTRINGTAG=sigil_owner_faction COM
 }
@@ -146,6 +150,7 @@ CUSTOMSTRINGTAG=sigil_owner_faction COM
 {
 GET=FACTION_SIGIL
 NAME=Sigil of Yew
+CUSTOMINTTAG=town_region 7
 CUSTOMSTRINGTAG=sigil_town Yew
 CUSTOMSTRINGTAG=sigil_owner_faction MIN
 }
@@ -154,6 +159,7 @@ CUSTOMSTRINGTAG=sigil_owner_faction MIN
 {
 GET=FACTION_SIGIL
 NAME=Sigil of Vesper
+CUSTOMINTTAG=town_region 11
 CUSTOMSTRINGTAG=sigil_town Vesper
 CUSTOMSTRINGTAG=sigil_owner_faction MIN
 }
@@ -162,6 +168,7 @@ CUSTOMSTRINGTAG=sigil_owner_faction MIN
 {
 GET=FACTION_SIGIL
 NAME=Sigil of Minoc
+CUSTOMINTTAG=town_region 12
 CUSTOMSTRINGTAG=sigil_town Minoc
 CUSTOMSTRINGTAG=sigil_owner_faction SL
 }
@@ -170,6 +177,7 @@ CUSTOMSTRINGTAG=sigil_owner_faction SL
 {
 GET=FACTION_SIGIL
 NAME=Sigil of Cove
+CUSTOMINTTAG=town_region 10
 CUSTOMSTRINGTAG=sigil_town Cove
 CUSTOMSTRINGTAG=sigil_owner_faction SL
 }

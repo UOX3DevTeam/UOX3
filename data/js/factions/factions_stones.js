@@ -26,7 +26,9 @@ var StoneRankNames = [
 
 var StoneRankPoints = [ 0, 5, 10, 20, 40, 80, 160, 320, 640, 1280 ];
 var StoneLeaveDelay = 259200000;
+var StoneSigilScriptId = 8502;
 var StoneElectionScriptId = 8508;
+var StoneTownScriptId = 8509;
 
 function StoneIsFactionValid( factionKey )
 {
@@ -60,6 +62,22 @@ function StoneGetRankName( pChar )
 		rank = 0;
 
 	return StoneRankNames[rank];
+}
+
+function StoneRoleName( pChar )
+{
+	if( !ValidateObject( pChar ) )
+		return "None";
+
+	var roleName = pChar.GetTag( "faction_role" );
+	if( roleName === "commander" || pChar.GetTag( "faction_commander" ) == "1" )
+		return "Commander";
+	if( roleName === "sheriff" )
+		return "Sheriff";
+	if( roleName === "finance" )
+		return "Finance Minister";
+
+	return "None";
 }
 
 function StoneUpdateRank( pChar )
@@ -116,6 +134,9 @@ function StoneJoinFaction( pChar, factionKey )
 	pChar.SetTag( "faction_rank", 0 );
 	pChar.SetTag( "faction_leave_time", 0 );
 	pChar.SetTag( "faction_commander", 0 );
+	pChar.SetTag( "faction_role", "" );
+	pChar.SetTag( "faction_role_faction", "" );
+	pChar.SetTag( "faction_role_set_at", 0 );
 	TriggerEvent( 8501, "FactionCombatAttachTrigger", pChar );
 	pChar.SysMessage( "You have joined the " + StoneFactionName( factionKey ) + "." );
 	return true;
@@ -130,12 +151,18 @@ function StoneLeaveFaction( pChar )
 		return false;
 	}
 
+	var cleanedCount = TriggerEvent( 8507, "CleanupFactionOwnedObjects", pChar );
 	pChar.SetTag( "faction", "" );
 	pChar.SetTag( "faction_kp", 0 );
 	pChar.SetTag( "faction_silver", 0 );
 	pChar.SetTag( "faction_rank", 0 );
 	pChar.SetTag( "faction_commander", 0 );
+	pChar.SetTag( "faction_role", "" );
+	pChar.SetTag( "faction_role_faction", "" );
+	pChar.SetTag( "faction_role_set_at", 0 );
 	pChar.SetTag( "faction_leave_time", GetCurrentClock() );
+	if( cleanedCount > 0 )
+		pChar.SysMessage( cleanedCount + " faction item(s) or mount(s) were removed." );
 	pChar.SysMessage( "You have left the " + StoneFactionName( factionKey ) + "." );
 	return true;
 }
@@ -203,7 +230,7 @@ function ShowFactionStoneGump( pSock, pUser, stoneFaction )
 	var playerFaction = StoneGetFaction( pUser );
 	var myGump = new Gump();
 	myGump.AddPage( 0 );
-	myGump.AddBackground( 0, 0, 440, 360, 9200 );
+	myGump.AddBackground( 0, 0, 440, 400, 9200 );
 	myGump.AddHTMLGump( 20, 15, 400, 25, 0, 0, "<CENTER><b>Faction Stone</b></CENTER>" );
 	myGump.AddHTMLGump( 20, 45, 400, 20, 0, 0, "Stone Faction: " + StoneFactionName( stoneFaction ) );
 
@@ -218,18 +245,22 @@ function ShowFactionStoneGump( pSock, pUser, stoneFaction )
 		myGump.AddHTMLGump( 20, 110, 400, 20, 0, 0, "Rank: " + StoneGetRankName( pUser ) );
 		myGump.AddHTMLGump( 20, 135, 400, 20, 0, 0, "Kill Points: " + pUser.GetTag( "faction_kp" ) );
 		myGump.AddHTMLGump( 20, 160, 400, 20, 0, 0, "Silver: " + pUser.GetTag( "faction_silver" ) );
+		myGump.AddHTMLGump( 20, 185, 400, 20, 0, 0, "Role: " + StoneRoleName( pUser ) );
+		myGump.AddHTMLGump( 20, 210, 400, 20, 0, 0, TriggerEvent( StoneSigilScriptId, "FactionScoreText", stoneFaction ) );
+		myGump.AddHTMLGump( 20, 235, 400, 35, 0, 0, TriggerEvent( StoneSigilScriptId, "FactionNoticeText", stoneFaction ) );
+		myGump.AddHTMLGump( 20, 275, 400, 35, 0, 0, "Controlled Towns: " + TriggerEvent( StoneTownScriptId, "TownControlledByFactionList", stoneFaction ) );
 
 		if( playerFaction === stoneFaction )
 		{
-			myGump.AddButton( 25, 220, 0xFA5, 1, 0, 3 );
-			myGump.AddHTMLGump( 65, 220, 250, 20, 0, 0, "Faction election" );
-			myGump.AddButton( 25, 250, 0xFA5, 1, 0, 2 );
-			myGump.AddHTMLGump( 65, 250, 250, 20, 0, 0, "Leave this faction" );
+			myGump.AddButton( 25, 315, 0xFA5, 1, 0, 3 );
+			myGump.AddHTMLGump( 65, 315, 250, 20, 0, 0, "Faction election" );
+			myGump.AddButton( 25, 345, 0xFA5, 1, 0, 2 );
+			myGump.AddHTMLGump( 65, 345, 250, 20, 0, 0, "Leave this faction" );
 		}
 	}
 
-	myGump.AddButton( 25, 310, 0xFA5, 1, 0, 0 );
-	myGump.AddHTMLGump( 65, 310, 100, 20, 0, 0, "Close" );
+	myGump.AddButton( 25, 370, 0xFA5, 1, 0, 0 );
+	myGump.AddHTMLGump( 65, 370, 100, 20, 0, 0, "Close" );
 	myGump.Send( pSock );
 	myGump.Free();
 

@@ -2921,8 +2921,15 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, false ))
 					return true;
 
-				Items->CreateScriptItem( nullptr, mChar, "townstone", 1, OT_ITEM );
-				iUsed->Delete();
+				CItem *townstone = Items->CreateScriptItem( nullptr, mChar, "townstone", 1, OT_ITEM );
+				if( ValidateObject( townstone ))
+				{
+					iUsed->Delete();
+				}
+				else
+				{
+					mSock->SysMessage( "Unable to create townstone. Check the [townstone] item definition." );
+				}
 			}
 			else	// Display Townstone gump
 			{

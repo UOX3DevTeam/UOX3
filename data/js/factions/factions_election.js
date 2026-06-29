@@ -294,8 +294,10 @@ function ConcludeElection( fkey )
 	if( _GetElecState( fkey ) !== ELEC_STATE_VOTING ) return false;
 
 	var candidates = _GetCandidates( fkey );
+	var ctrl = _GetCtrl();
 	if( candidates.length === 0 )
 	{
+		_ClearCommanderRole( fkey, ctrl );
 		_SetElecState( fkey, ELEC_STATE_FINISHED );
 		_BroadcastFaction( fkey, "The election ended with no candidates. The commander position remains vacant." );
 		return false;
@@ -311,32 +313,48 @@ function ConcludeElection( fkey )
 	}
 
 	// Clear old commander
-	var ctrl = _GetCtrl();
-	if( ctrl )
-	{
-		var oldSerial = parseInt( ctrl.GetTag( "cmd_" + fkey ), 10 );
-		if( oldSerial > 0 )
-		{
-			var oldCmd = CalcCharFromSer( oldSerial );
-			if( ValidateObject( oldCmd ) )
-			{
-				oldCmd.SetTag( "faction_commander", "0" );
-				oldCmd.SetTag( "faction_rank", 8 ); // demote to Legend
-			}
-		}
-	}
+	_ClearCommanderRole( fkey, ctrl );
 
 	// Promote winner
 	var winner = CalcCharFromSer( parseInt( winnerSerial, 10 ) );
 	if( ValidateObject( winner ) )
 	{
 		winner.SetTag( "faction_commander", "1" );
+		winner.SetTag( "faction_role", "commander" );
+		winner.SetTag( "faction_role_faction", fkey );
+		winner.SetTag( "faction_role_set_at", GetCurrentClock() );
 		winner.SetTag( "faction_rank", 9 );
 		if( ctrl ) ctrl.SetTag( "cmd_" + fkey, winnerSerial );
 		_BroadcastFaction( fkey, winner.name + " has been elected as the new Commander of the " + fkey + "!" );
 	}
 
 	_SetElecState( fkey, ELEC_STATE_FINISHED );
+	return true;
+}
+
+function _ClearCommanderRole( fkey, ctrl )
+{
+	if( !ValidateObject( ctrl ) )
+		return false;
+
+	var oldSerial = parseInt( ctrl.GetTag( "cmd_" + fkey ), 10 );
+	if( oldSerial > 0 )
+	{
+		var oldCmd = CalcCharFromSer( oldSerial );
+		if( ValidateObject( oldCmd ) )
+		{
+			oldCmd.SetTag( "faction_commander", "0" );
+			if( oldCmd.GetTag( "faction_role" ) === "commander" && oldCmd.GetTag( "faction_role_faction" ) === fkey )
+			{
+				oldCmd.SetTag( "faction_role", "" );
+				oldCmd.SetTag( "faction_role_faction", "" );
+				oldCmd.SetTag( "faction_role_set_at", 0 );
+			}
+			oldCmd.SetTag( "faction_rank", 8 ); // demote to Legend
+		}
+	}
+
+	ctrl.SetTag( "cmd_" + fkey, 0 );
 	return true;
 }
 

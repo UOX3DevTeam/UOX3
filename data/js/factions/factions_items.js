@@ -17,6 +17,10 @@
 var FactionItemScriptId = 8507;
 var FactionItemBondingScriptId = 3107;
 var FactionItemMountRestrictionsScriptId = 3106;
+var FactionItemCleanupMode = "";
+var FactionItemCleanupTargetSerial = 0;
+var FactionItemCleanupCount = 0;
+var FactionItemCleanupSocket = null;
 
 var FactionItemMaxControlSlots = GetServerSetting( "MaxControlSlots" );
 var FactionItemMaxFollowers = GetServerSetting( "MaxFollowers" );
@@ -55,6 +59,66 @@ function ItemCanUseFactionObject( pChar, factionKey )
 		return true;
 
 	return ItemGetFaction( pChar ) === factionKey;
+}
+
+function ItemOwnerChar( iItem )
+{
+	if( !ValidateObject( iItem ) )
+		return null;
+
+	var packOwner = GetPackOwner( iItem, 0 );
+	if( ValidateObject( packOwner ) && packOwner.isChar )
+		return packOwner;
+
+	if( ValidateObject( iItem.container ) && iItem.container.isChar )
+		return iItem.container;
+
+	return null;
+}
+
+function ItemShouldCleanForOwner( ownerChar, itemFaction )
+{
+	if( !ValidateObject( ownerChar ) || ownerChar.npc )
+		return false;
+	if( !ItemIsFactionValid( itemFaction ) )
+		return false;
+
+	if( FactionItemCleanupTargetSerial != 0 && ownerChar.serial != FactionItemCleanupTargetSerial )
+		return false;
+
+	return ownerChar.GetTag( "faction" ) !== itemFaction;
+}
+
+function ItemCleanFactionHorse( horseChar )
+{
+	if( !ValidateObject( horseChar ) || !horseChar.isChar || !horseChar.npc )
+		return false;
+	if( horseChar.GetTag( "faction_horse" ) != 1 && horseChar.GetTag( "faction_mount" ) != 1 )
+		return false;
+
+	var horseFaction = horseChar.GetTag( "item_faction" );
+	if( !ItemIsFactionValid( horseFaction ) )
+		horseFaction = horseChar.GetTag( "mount_faction" );
+	if( !ItemIsFactionValid( horseFaction ) )
+		return false;
+
+	var ownerChar = horseChar.owner;
+	if( !ValidateObject( ownerChar ) || ownerChar.npc )
+		return false;
+	if( FactionItemCleanupTargetSerial != 0 && ownerChar.serial != FactionItemCleanupTargetSerial )
+		return false;
+	if( ownerChar.GetTag( "faction" ) === horseFaction )
+		return false;
+
+	ownerChar.RemoveFollower( horseChar );
+	if( ownerChar.controlSlotsUsed >= horseChar.controlSlots )
+		ownerChar.controlSlotsUsed = ownerChar.controlSlotsUsed - horseChar.controlSlots;
+	else
+		ownerChar.controlSlotsUsed = 0;
+
+	horseChar.Delete();
+	FactionItemCleanupCount++;
+	return true;
 }
 
 function ItemGetHorseControlSlots( iUsed )
@@ -159,6 +223,11 @@ function onEquip( pChar, iEquipped )
 	return true;
 }
 
+function onEquipAttempt( pChar, iEquipped )
+{
+	return onEquip( pChar, iEquipped );
+}
+
 function onUnEquip( pChar, iUnequipped )
 {
 	return true;
@@ -243,6 +312,117 @@ function onClick( pSock, targetObj )
 	if( factionKey !== "" && factionKey != 0 )
 	{
 		pSock.SysMessage( targetObj.name + " [" + factionKey + "]" );
+		return true;
+	}
+
+	return false;
+}
+
+function CleanupFactionOwnedObjects( pChar )
+{
+	if( !ValidateObject( pChar ) || pChar.npc )
+		return 0;
+
+	FactionItemCleanupMode = "items";
+	FactionItemCleanupTargetSerial = pChar.serial;
+	FactionItemCleanupCount = 0;
+	IterateOver( "ITEM" );
+	FactionItemCleanupMode = "horses";
+	IterateOver( "CHARACTER" );
+	var cleanCount = FactionItemCleanupCount;
+	FactionItemCleanupMode = "";
+	FactionItemCleanupTargetSerial = 0;
+	FactionItemCleanupCount = 0;
+	return cleanCount;
+}
+
+function CleanupInvalidFactionItems()
+{
+	FactionItemCleanupMode = "items";
+	FactionItemCleanupTargetSerial = 0;
+	FactionItemCleanupCount = 0;
+	IterateOver( "ITEM" );
+	FactionItemCleanupMode = "horses";
+	IterateOver( "CHARACTER" );
+	var cleanCount = FactionItemCleanupCount;
+	FactionItemCleanupMode = "";
+	FactionItemCleanupCount = 0;
+	return cleanCount;
+}
+
+function ShowFactionItemCheck( pSock )
+{
+	if( pSock == null )
+		return false;
+
+	FactionItemCleanupSocket = pSock;
+	FactionItemCleanupMode = "checkitems";
+	FactionItemCleanupCount = 0;
+	IterateOver( "ITEM" );
+	FactionItemCleanupMode = "checkhorses";
+	IterateOver( "CHARACTER" );
+	if( FactionItemCleanupCount == 0 )
+		pSock.SysMessage( "No invalid player-owned faction items or mounts found." );
+
+	FactionItemCleanupMode = "";
+	FactionItemCleanupSocket = null;
+	FactionItemCleanupCount = 0;
+	return true;
+}
+
+function onIterate( toCheck )
+{
+	if( FactionItemCleanupMode === "items" || FactionItemCleanupMode === "checkitems" )
+	{
+		if( !ValidateObject( toCheck ) || !toCheck.isItem || toCheck.GetTag( "faction_item" ) != 1 )
+			return false;
+
+		var itemFaction = toCheck.GetTag( "item_faction" );
+		var ownerChar = ItemOwnerChar( toCheck );
+		if( !ItemShouldCleanForOwner( ownerChar, itemFaction ) )
+			return false;
+
+		if( FactionItemCleanupMode === "checkitems" )
+		{
+			if( FactionItemCleanupSocket != null )
+				FactionItemCleanupSocket.SysMessage( ownerChar.name + " has invalid faction item: " + toCheck.name + " [" + itemFaction + "]" );
+		}
+		else
+		{
+			toCheck.Delete();
+		}
+
+		FactionItemCleanupCount++;
+		return true;
+	}
+
+	if( FactionItemCleanupMode === "horses" || FactionItemCleanupMode === "checkhorses" )
+	{
+		if( !ValidateObject( toCheck ) || !toCheck.isChar || !toCheck.npc )
+			return false;
+		if( toCheck.GetTag( "faction_horse" ) != 1 && toCheck.GetTag( "faction_mount" ) != 1 )
+			return false;
+
+		var horseFaction = toCheck.GetTag( "item_faction" );
+		if( !ItemIsFactionValid( horseFaction ) )
+			horseFaction = toCheck.GetTag( "mount_faction" );
+
+		var horseOwner = toCheck.owner;
+		if( !ItemShouldCleanForOwner( horseOwner, horseFaction ) )
+			return false;
+
+		if( FactionItemCleanupMode === "checkhorses" )
+		{
+			if( FactionItemCleanupSocket != null )
+				FactionItemCleanupSocket.SysMessage( horseOwner.name + " has invalid faction mount: " + toCheck.name + " [" + horseFaction + "]" );
+		}
+		else
+		{
+			ItemCleanFactionHorse( toCheck );
+			return true;
+		}
+
+		FactionItemCleanupCount++;
 		return true;
 	}
 

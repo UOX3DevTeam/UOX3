@@ -306,6 +306,7 @@ public:
 
 	bool		AreaObjFunc( const char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s );
 	bool		CallParticularEvent( const char *eventToCall, jsval *params, SI32 numParams, jsval *eventRetVal );
+	bool		OnFactionTownstone( CSocket *mSock, CChar *mChar, UI16 regionId );
 
 	bool		ScriptRegistration( std::string scriptType );
 

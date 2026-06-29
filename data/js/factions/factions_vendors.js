@@ -5,6 +5,7 @@
 // =============================================================================
 
 var VendorMaxSilver = 100000;
+var VendorFactionTownScriptId = 8509;
 
 // Stock fields:
 // [ displayName, createMode, createValue, silverCost, amount, color ]
@@ -152,6 +153,12 @@ function onBuy( pSock, npcVendor )
 		return false;
 
 	var vendorFaction = npcVendor.GetTag( "vendor_faction" );
+	if( !TriggerEvent( VendorFactionTownScriptId, "TownIsObjectInControlledTownForFaction", npcVendor, vendorFaction ) )
+	{
+		npcVendor.TextMessage( "My faction does not control this town." );
+		return false;
+	}
+
 	var playerFaction = VendorGetFaction( pUser );
 	if( playerFaction === "" || playerFaction !== vendorFaction )
 	{
@@ -220,6 +227,27 @@ function onGumpPress( pSock, pButton, gumpData )
 		return;
 	}
 
+	var vendorSerial = pSock.tempInt;
+	var npcVendor = CalcCharFromSer( vendorSerial );
+	if( !ValidateObject( npcVendor ) )
+	{
+		pUser.SysMessage( "That vendor is no longer available." );
+		return;
+	}
+
+	var vendorFaction = npcVendor.GetTag( "vendor_faction" );
+	if( playerFaction !== vendorFaction )
+	{
+		pUser.SysMessage( "You may only buy from your own faction vendors." );
+		return;
+	}
+
+	if( !TriggerEvent( VendorFactionTownScriptId, "TownIsObjectInControlledTownForFaction", npcVendor, vendorFaction ) )
+	{
+		pUser.SysMessage( "That vendor's faction does not control this town." );
+		return;
+	}
+
 	var itemData = stock[stockIndex];
 	var silverCost = itemData[3];
 
@@ -239,8 +267,6 @@ function onGumpPress( pSock, pButton, gumpData )
 
 	pUser.SysMessage( "You bought " + itemData[0] + " for " + silverCost + " silver." );
 
-	var vendorSerial = pSock.tempInt;
-	var npcVendor = CalcCharFromSer( vendorSerial );
 	if( ValidateObject( npcVendor ) )
 		ShowFactionVendorGump( pSock, pUser, npcVendor );
 }

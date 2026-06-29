@@ -2978,6 +2978,7 @@ JSBool CRegionProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool s
 			case CREGP_WEATHER:				gPriv->SetWeather( static_cast<WEATHID>( encaps.toInt() ));	break;
 			case CREGP_WORLDNUMBER:			gPriv->WorldNumber( static_cast<UI08>( encaps.toInt() ));	break;
 			case CREGP_INSTANCEID:			gPriv->SetInstanceId( static_cast<UI16>( encaps.toInt() ));	break;
+			case CREGP_OWNER:				gPriv->SetOwner( encaps.toString() );							break;
 			case CREGP_MEMBERS:
 				break;
 			default:

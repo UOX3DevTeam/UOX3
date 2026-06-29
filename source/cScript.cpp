@@ -3904,6 +3904,27 @@ bool cScript::executeCommand( CSocket *s, std::string funcName, std::string exec
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnFactionTownstone()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Open JS-driven faction controls from the hardcoded townstone gump
+//o------------------------------------------------------------------------------------------------o
+bool cScript::OnFactionTownstone( CSocket *mSock, CChar *mChar, UI16 regionId )
+{
+	if( mSock == nullptr || !ValidateObject( mChar ))
+		return false;
+
+	jsval params[3], rval;
+	JSObject *sockObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
+	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, mChar, runTime );
+	params[0] = OBJECT_TO_JSVAL( sockObj );
+	params[1] = OBJECT_TO_JSVAL( charObj );
+	params[2] = INT_TO_JSVAL( regionId );
+
+	JSBool retVal = InvokeEvent( "OpenFactionTownstone", 3, params, &rval );
+	return ( retVal == JS_TRUE );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::MagicSpellCast()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers before a spellcast attempt for characters with onSpellCast event attached

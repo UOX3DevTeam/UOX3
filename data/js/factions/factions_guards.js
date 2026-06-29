@@ -6,6 +6,7 @@
 
 var GuardScanRange = 10;
 var GuardWarnDelay = 30000;
+var GuardFactionTownScriptId = 8509;
 
 function GuardGetFaction( pChar )
 {
@@ -24,6 +25,9 @@ function onAISliver( npcChar )
 
 	var guardFaction = npcChar.GetTag( "guard_faction" );
 	if( guardFaction === "" || guardFaction == 0 )
+		return false;
+
+	if( !TriggerEvent( GuardFactionTownScriptId, "TownIsObjectInControlledTownForFaction", npcChar, guardFaction ) )
 		return false;
 
 	if( ValidateObject( npcChar.attacker ) )
@@ -70,6 +74,9 @@ function onAICombatTarget( pAttacker, pTarget )
 	if( guardFaction === "" || guardFaction == 0 )
 		return true;
 
+	if( !TriggerEvent( GuardFactionTownScriptId, "TownIsObjectInControlledTownForFaction", pAttacker, guardFaction ) )
+		return false;
+
 	var targetFaction = GuardGetFaction( pTarget );
 	if( targetFaction === "" || targetFaction === guardFaction )
 		return false;
@@ -91,7 +98,11 @@ function onClick( pSock, npcChar )
 	var guardFaction = npcChar.GetTag( "guard_faction" );
 	if( guardFaction !== "" && guardFaction != 0 )
 	{
-		pSock.SysMessage( npcChar.name + " [" + guardFaction + " Guard]" );
+		var townOwner = TriggerEvent( GuardFactionTownScriptId, "TownOwnerForObject", npcChar );
+		if( townOwner !== "" && townOwner !== guardFaction )
+			pSock.SysMessage( npcChar.name + " [" + guardFaction + " Guard - inactive in enemy town]" );
+		else
+			pSock.SysMessage( npcChar.name + " [" + guardFaction + " Guard]" );
 		return true;
 	}
 	return false;

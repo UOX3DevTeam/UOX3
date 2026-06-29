@@ -133,6 +133,7 @@ public:
 	void				IsDisabled( bool value );
 	void				IsSubRegion( bool value );
 	void				SetName( std::string toSet );
+	void				SetOwner( std::string toSet );
 	void				SetRace( RACEID newRace );
 	void				TellMembers( SI32 dictEntry, ... );
 	void				SendAlliedTowns( CSocket *sock );

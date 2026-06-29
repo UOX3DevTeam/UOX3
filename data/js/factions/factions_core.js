@@ -218,6 +218,9 @@ function JoinFaction( pChar, factionKey )
 	pChar.SetTag( "faction_rank", 0 );
 	pChar.SetTag( "faction_leave_time", 0 );
 	pChar.SetTag( "faction_commander", 0 );
+	pChar.SetTag( "faction_role", "" );
+	pChar.SetTag( "faction_role_faction", "" );
+	pChar.SetTag( "faction_role_set_at", 0 );
 	TriggerEvent( 8501, "FactionCombatAttachTrigger", pChar );
 	pChar.SysMessage( "You have joined the " + FactionName( factionKey ) + "." );
 	return true;
@@ -235,12 +238,18 @@ function LeaveFaction( pChar )
 		return false;
 	}
 
+	var cleanedCount = TriggerEvent( 8507, "CleanupFactionOwnedObjects", pChar );
 	pChar.SetTag( "faction", "" );
 	pChar.SetTag( "faction_kp", 0 );
 	pChar.SetTag( "faction_silver", 0 );
 	pChar.SetTag( "faction_rank", 0 );
 	pChar.SetTag( "faction_commander", 0 );
+	pChar.SetTag( "faction_role", "" );
+	pChar.SetTag( "faction_role_faction", "" );
+	pChar.SetTag( "faction_role_set_at", 0 );
 	pChar.SetTag( "faction_leave_time", GetCurrentClock() );
+	if( cleanedCount > 0 )
+		pChar.SysMessage( cleanedCount + " faction item(s) or mount(s) were removed." );
 	pChar.SysMessage( "You have left the " + FactionName( factionKey ) + "." );
 	return true;
 }

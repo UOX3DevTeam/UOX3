@@ -8,6 +8,7 @@
 // =============================================================================
 
 var CombatScriptId = 8501;
+var CombatTownScriptId = 8509;
 var CombatRankPoints = [ 0, 5, 10, 20, 40, 80, 160, 320, 640, 1280 ];
 var CombatRankNames = [
 	"Soldier",
@@ -25,10 +26,47 @@ var CombatMaxSilver = 100000;
 var CombatPlayerKillCooldown = 3600000;
 var CombatKillPointDecayTime = 86400000;
 var CombatBlockSameAccountRewards = false;
+var CombatController = null;
+var CombatIterateMode = "";
 
 function CombatIsValidFaction( factionKey )
 {
 	return ( factionKey === "TB" || factionKey === "COM" || factionKey === "MIN" || factionKey === "SL" );
+}
+
+function CombatFactionName( factionKey )
+{
+	if( factionKey === "TB" )
+		return "True Britannians";
+	if( factionKey === "COM" )
+		return "Council of Mages";
+	if( factionKey === "MIN" )
+		return "Minax";
+	if( factionKey === "SL" )
+		return "Shadowlords";
+
+	return factionKey;
+}
+
+function CombatParseNumber( value, fallback )
+{
+	var parsed = parseInt( value, 10 );
+	if( isNaN( parsed ) )
+		return fallback;
+
+	return parsed;
+}
+
+function CombatGetController()
+{
+	if( ValidateObject( CombatController ) )
+		return CombatController;
+
+	CombatController = null;
+	CombatIterateMode = "controller";
+	IterateOver( "ITEM" );
+	CombatIterateMode = "";
+	return CombatController;
 }
 
 function CombatGetFaction( pChar )
@@ -104,6 +142,37 @@ function CombatSetKillPoints( pChar, amount )
 
 	pChar.SetTag( "faction_kp", amount );
 	CombatUpdateRank( pChar );
+}
+
+function CombatRecordPlayerKill( pKiller, pKilled, gainedKillPoints, silverReward )
+{
+	if( !ValidateObject( pKiller ) || !ValidateObject( pKilled ) )
+		return false;
+
+	var killerFaction = CombatGetFaction( pKiller );
+	var killedFaction = CombatGetFaction( pKilled );
+	if( !CombatIsValidFaction( killerFaction ) || !CombatIsValidFaction( killedFaction ) )
+		return false;
+
+	var ctrl = CombatGetController();
+	if( ValidateObject( ctrl ) )
+	{
+		ctrl.SetTag( "combat_kills_" + killerFaction, CombatParseNumber( ctrl.GetTag( "combat_kills_" + killerFaction ), 0 ) + 1 );
+		ctrl.SetTag( "combat_deaths_" + killedFaction, CombatParseNumber( ctrl.GetTag( "combat_deaths_" + killedFaction ), 0 ) + 1 );
+		ctrl.SetTag( "combat_last_killer_" + killerFaction, pKiller.name );
+		ctrl.SetTag( "combat_last_victim_" + killerFaction, pKilled.name );
+		ctrl.SetTag( "combat_last_reward_kp_" + killerFaction, gainedKillPoints );
+		ctrl.SetTag( "combat_last_reward_silver_" + killerFaction, silverReward );
+		ctrl.SetTag( "combat_last_time_" + killerFaction, GetCurrentClock() );
+	}
+
+	var townName = TriggerEvent( CombatTownScriptId, "TownNameForObject", pKiller );
+	var locationText = "";
+	if( townName !== "" )
+		locationText = " near " + townName;
+
+	BroadcastMessage( CombatFactionName( killerFaction ) + " defeated " + CombatFactionName( killedFaction ) + locationText + "." );
+	return true;
 }
 
 function CombatAddKillPoints( pChar, amount )
@@ -237,6 +306,7 @@ function FactionCombatAwardPlayerKill( pKiller, pKilled )
 
 	var silverReward = 20 + ( CombatGetRank( pKilled ) * 40 );
 	CombatAddSilver( pKiller, silverReward );
+	CombatRecordPlayerKill( pKiller, pKilled, gainedKillPoints, silverReward );
 
 	pKiller.SysMessage( "You earned " + gainedKillPoints + " faction kill point(s) and " + silverReward + " silver." );
 	pKilled.SysMessage( "You lost " + gainedKillPoints + " faction kill point(s)." );
@@ -283,5 +353,83 @@ function onKill( pKiller, pKilled )
 		return false;
 
 	FactionCombatAwardGuardKill( pKiller, pKilled );
+	return false;
+}
+
+function ShowFactionKillStats( pSock )
+{
+	if( pSock == null )
+		return false;
+
+	var ctrl = CombatGetController();
+	if( !ValidateObject( ctrl ) )
+	{
+		pSock.SysMessage( "Faction controller was not found." );
+		return false;
+	}
+
+	var factionKeys = [ "TB", "COM", "MIN", "SL" ];
+	for( var i = 0; i < factionKeys.length; i++ )
+	{
+		var factionKey = factionKeys[i];
+		var kills = CombatParseNumber( ctrl.GetTag( "combat_kills_" + factionKey ), 0 );
+		var deaths = CombatParseNumber( ctrl.GetTag( "combat_deaths_" + factionKey ), 0 );
+		var lastKiller = ctrl.GetTag( "combat_last_killer_" + factionKey );
+		var lastVictim = ctrl.GetTag( "combat_last_victim_" + factionKey );
+		var lastText = "None";
+		if( lastKiller !== "" && lastKiller != 0 )
+			lastText = lastKiller + " defeated " + lastVictim;
+
+		pSock.SysMessage( CombatFactionName( factionKey ) + ": kills " + kills + ", deaths " + deaths + ", last " + lastText );
+	}
+
+	return true;
+}
+
+function FactionKillStatsText( factionKey )
+{
+	if( !CombatIsValidFaction( factionKey ) )
+		return "Kills: 0, Deaths: 0";
+
+	var ctrl = CombatGetController();
+	if( !ValidateObject( ctrl ) )
+		return "Kills: 0, Deaths: 0";
+
+	return "Kills: " + CombatParseNumber( ctrl.GetTag( "combat_kills_" + factionKey ), 0 ) + ", Deaths: " + CombatParseNumber( ctrl.GetTag( "combat_deaths_" + factionKey ), 0 );
+}
+
+function ResetFactionKillStats()
+{
+	var ctrl = CombatGetController();
+	if( !ValidateObject( ctrl ) )
+		return false;
+
+	var factionKeys = [ "TB", "COM", "MIN", "SL" ];
+	for( var i = 0; i < factionKeys.length; i++ )
+	{
+		var factionKey = factionKeys[i];
+		ctrl.SetTag( "combat_kills_" + factionKey, 0 );
+		ctrl.SetTag( "combat_deaths_" + factionKey, 0 );
+		ctrl.SetTag( "combat_last_killer_" + factionKey, "" );
+		ctrl.SetTag( "combat_last_victim_" + factionKey, "" );
+		ctrl.SetTag( "combat_last_reward_kp_" + factionKey, 0 );
+		ctrl.SetTag( "combat_last_reward_silver_" + factionKey, 0 );
+		ctrl.SetTag( "combat_last_time_" + factionKey, 0 );
+	}
+
+	return true;
+}
+
+function onIterate( toCheck )
+{
+	if( CombatIterateMode === "controller" )
+	{
+		if( ValidateObject( toCheck ) && toCheck.isItem && toCheck.GetTag( "faction_controller" ) == 1 )
+		{
+			CombatController = toCheck;
+			return true;
+		}
+	}
+
 	return false;
 }
