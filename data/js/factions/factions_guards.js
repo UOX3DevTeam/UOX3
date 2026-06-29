@@ -18,20 +18,110 @@ function GuardGetFaction( pChar )
 	return "";
 }
 
+function GuardFactionName( factionKey )
+{
+	if( factionKey === "TB" )
+		return "True Britannians";
+	if( factionKey === "COM" )
+		return "Council of Mages";
+	if( factionKey === "MIN" )
+		return "Minax";
+	if( factionKey === "SL" )
+		return "Shadowlords";
+
+	return "Unknown Faction";
+}
+
+function GuardGetGuardFaction( npcChar )
+{
+	if( !ValidateObject( npcChar ) )
+		return "";
+
+	var guardFaction = npcChar.GetTag( "guard_faction" );
+	if( guardFaction === "TB" || guardFaction === "COM" || guardFaction === "MIN" || guardFaction === "SL" )
+		return guardFaction;
+
+	guardFaction = npcChar.GetTag( "faction" );
+	if( guardFaction === "TB" || guardFaction === "COM" || guardFaction === "MIN" || guardFaction === "SL" )
+		return guardFaction;
+
+	return "";
+}
+
+function GuardIsActive( npcChar, guardFaction )
+{
+	if( !ValidateObject( npcChar ) || guardFaction === "" )
+		return false;
+
+	return TriggerEvent( GuardFactionTownScriptId, "TownIsObjectInControlledTownForFaction", npcChar, guardFaction );
+}
+
+function GuardIsEnemyTarget( npcChar, targetChar, guardFaction )
+{
+	if( !ValidateObject( npcChar ) || !ValidateObject( targetChar ) )
+		return false;
+	if( targetChar.serial == npcChar.serial || targetChar.dead || targetChar.npc )
+		return false;
+
+	var targetFaction = GuardGetFaction( targetChar );
+	if( targetFaction === "" || targetFaction === guardFaction )
+		return false;
+
+	return true;
+}
+
+function GuardClearTarget( npcChar )
+{
+	if( !ValidateObject( npcChar ) )
+		return;
+
+	npcChar.target = null;
+	npcChar.attacker = null;
+	npcChar.atWar = false;
+}
+
+function GuardEngageTarget( npcChar, targetChar, guardFaction )
+{
+	if( !GuardIsEnemyTarget( npcChar, targetChar, guardFaction ) )
+		return false;
+
+	var now = GetCurrentClock();
+	var warnedKey = "warned_" + targetChar.serial;
+	var lastWarn = npcChar.GetTag( warnedKey );
+	if( lastWarn == 0 || now - lastWarn > GuardWarnDelay )
+	{
+		npcChar.SetTag( warnedKey, now );
+		npcChar.TextMessage( targetChar.name + " is an enemy of " + GuardFactionName( guardFaction ) + "!" );
+	}
+
+	npcChar.target = targetChar;
+	npcChar.attacker = targetChar;
+	npcChar.atWar = true;
+	return true;
+}
+
 function onAISliver( npcChar )
 {
 	if( !ValidateObject( npcChar ) || npcChar.dead )
 		return false;
 
-	var guardFaction = npcChar.GetTag( "guard_faction" );
-	if( guardFaction === "" || guardFaction == 0 )
+	var guardFaction = GuardGetGuardFaction( npcChar );
+	if( guardFaction === "" )
 		return false;
 
-	if( !TriggerEvent( GuardFactionTownScriptId, "TownIsObjectInControlledTownForFaction", npcChar, guardFaction ) )
+	if( !GuardIsActive( npcChar, guardFaction ) )
+	{
+		GuardClearTarget( npcChar );
 		return false;
+	}
 
-	if( ValidateObject( npcChar.attacker ) )
-		return false;
+	if( ValidateObject( npcChar.target ) )
+	{
+		if( GuardIsEnemyTarget( npcChar, npcChar.target, guardFaction ) )
+			return false;
+
+		GuardClearTarget( npcChar );
+	}
 
 	npcChar.SetTempTag( "scan_guard_faction", guardFaction );
 	AreaCharacterFunction( "GuardScanCharacter", npcChar, GuardScanRange, null );
@@ -46,23 +136,10 @@ function GuardScanCharacter( npcChar, targetChar, pSock )
 		return false;
 
 	var guardFaction = npcChar.GetTempTag( "scan_guard_faction" );
-	var targetFaction = GuardGetFaction( targetChar );
-	if( targetFaction === "" || targetFaction === guardFaction )
+	if( guardFaction === "" )
 		return false;
 
-	var now = GetCurrentClock();
-	var warnedKey = "warned_" + targetChar.serial;
-	var lastWarn = npcChar.GetTag( warnedKey );
-	if( lastWarn == 0 || now - lastWarn > GuardWarnDelay )
-	{
-		npcChar.SetTag( warnedKey, now );
-		npcChar.TextMessage( "Leave this area, " + targetChar.name + "." );
-		return true;
-	}
-
-	npcChar.attacker = targetChar;
-	npcChar.atWar = true;
-	return true;
+	return GuardEngageTarget( npcChar, targetChar, guardFaction );
 }
 
 function onAICombatTarget( pAttacker, pTarget )
@@ -70,15 +147,14 @@ function onAICombatTarget( pAttacker, pTarget )
 	if( !ValidateObject( pAttacker ) || !ValidateObject( pTarget ) )
 		return true;
 
-	var guardFaction = pAttacker.GetTag( "guard_faction" );
-	if( guardFaction === "" || guardFaction == 0 )
+	var guardFaction = GuardGetGuardFaction( pAttacker );
+	if( guardFaction === "" )
 		return true;
 
-	if( !TriggerEvent( GuardFactionTownScriptId, "TownIsObjectInControlledTownForFaction", pAttacker, guardFaction ) )
+	if( !GuardIsActive( pAttacker, guardFaction ) )
 		return false;
 
-	var targetFaction = GuardGetFaction( pTarget );
-	if( targetFaction === "" || targetFaction === guardFaction )
+	if( !GuardIsEnemyTarget( pAttacker, pTarget, guardFaction ) )
 		return false;
 
 	return true;
@@ -95,7 +171,7 @@ function onClick( pSock, npcChar )
 	if( !ValidateObject( npcChar ) )
 		return false;
 
-	var guardFaction = npcChar.GetTag( "guard_faction" );
+	var guardFaction = GuardGetGuardFaction( npcChar );
 	if( guardFaction !== "" && guardFaction != 0 )
 	{
 		var townOwner = TriggerEvent( GuardFactionTownScriptId, "TownOwnerForObject", npcChar );

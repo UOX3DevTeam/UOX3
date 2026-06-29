@@ -26,6 +26,9 @@ var CombatMaxSilver = 100000;
 var CombatPlayerKillCooldown = 3600000;
 var CombatKillPointDecayTime = 86400000;
 var CombatBlockSameAccountRewards = false;
+var CombatFactionNpcDefaultKillPoints = 1;
+var CombatFactionNpcDefaultSilverMin = 5;
+var CombatFactionNpcDefaultSilverMax = 25;
 var CombatController = null;
 var CombatIterateMode = "";
 
@@ -347,12 +350,86 @@ function FactionCombatAwardGuardKill( pKiller, pKilled )
 	return true;
 }
 
+function CombatGetFactionNpcFaction( npcChar )
+{
+	if( !ValidateObject( npcChar ) || !npcChar.npc )
+		return "";
+	if( npcChar.GetTag( "faction_npc" ) != 1 )
+		return "";
+
+	var factionKey = npcChar.GetTag( "npc_faction" );
+	if( CombatIsValidFaction( factionKey ) )
+		return factionKey;
+
+	factionKey = npcChar.GetTag( "faction" );
+	if( CombatIsValidFaction( factionKey ) )
+		return factionKey;
+
+	return "";
+}
+
+function FactionCombatAwardFactionNpcKill( pKiller, pKilled )
+{
+	if( !ValidateObject( pKiller ) || !ValidateObject( pKilled ) )
+		return false;
+	if( !pKiller.isChar || pKiller.npc || !pKilled.npc )
+		return false;
+	if( pKilled.GetTag( "npc_faction_no_reward" ) == 1 )
+		return false;
+
+	var npcFaction = CombatGetFactionNpcFaction( pKilled );
+	if( npcFaction === "" )
+		return false;
+
+	var killerFaction = CombatGetFaction( pKiller );
+	if( killerFaction === "" )
+		return false;
+	if( killerFaction === npcFaction )
+	{
+		pKiller.SysMessage( "You gain no faction reward for killing an allied faction NPC." );
+		return false;
+	}
+
+	var killPoints = CombatParseNumber( pKilled.GetTag( "npc_faction_kp" ), CombatFactionNpcDefaultKillPoints );
+	var silverReward = CombatParseNumber( pKilled.GetTag( "npc_faction_silver" ), -1 );
+	if( killPoints < 0 )
+		killPoints = 0;
+	if( silverReward < 0 )
+		silverReward = RandomNumber( CombatFactionNpcDefaultSilverMin, CombatFactionNpcDefaultSilverMax );
+	if( silverReward < 0 )
+		silverReward = 0;
+
+	if( killPoints <= 0 && silverReward <= 0 )
+		return false;
+
+	var oldRank = CombatGetRank( pKiller );
+	if( killPoints > 0 )
+		CombatAddKillPoints( pKiller, killPoints );
+	if( silverReward > 0 )
+		CombatAddSilver( pKiller, silverReward );
+
+	if( killPoints > 0 && silverReward > 0 )
+		pKiller.SysMessage( "You earned " + killPoints + " faction kill point(s) and " + silverReward + " silver for slaying an enemy faction NPC." );
+	else if( killPoints > 0 )
+		pKiller.SysMessage( "You earned " + killPoints + " faction kill point(s) for slaying an enemy faction NPC." );
+	else
+		pKiller.SysMessage( "You earned " + silverReward + " silver for slaying an enemy faction NPC." );
+
+	if( CombatGetRank( pKiller ) > oldRank )
+		pKiller.SysMessage( "Your faction rank is now " + CombatGetRankName( pKiller ) + "." );
+
+	return true;
+}
+
 function onKill( pKiller, pKilled )
 {
 	if( FactionCombatAwardPlayerKill( pKiller, pKilled ) )
 		return false;
 
-	FactionCombatAwardGuardKill( pKiller, pKilled );
+	if( FactionCombatAwardGuardKill( pKiller, pKilled ) )
+		return false;
+
+	FactionCombatAwardFactionNpcKill( pKiller, pKilled );
 	return false;
 }
 

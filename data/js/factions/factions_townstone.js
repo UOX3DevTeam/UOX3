@@ -87,6 +87,13 @@ function TownstoneSpawnNpc( pSock, pUser, factionKey, npcType, vendorType )
 		return false;
 	}
 
+	var limitError = TriggerEvent( TownstoneTownScriptId, "TownCanPlaceFactionNpc", townName, factionKey, npcType );
+	if( limitError !== "" )
+	{
+		pSock.SysMessage( limitError );
+		return false;
+	}
+
 	var cost = npcType === "guard" ? TownstoneGuardCost : TownstoneVendorCost;
 	if( !TownstoneIsStaff( pUser ) )
 	{
@@ -142,6 +149,7 @@ function OpenFactionTownstone( pSock, pUser, townRegionId )
 
 	var ownerFaction = TriggerEvent( TownstoneTownScriptId, "TownGetOwner", townName );
 	var managedNpcCount = TriggerEvent( TownstoneTownScriptId, "TownCountFactionNpcs", townName, "" );
+	var npcLimitSummary = TriggerEvent( TownstoneTownScriptId, "TownNpcLimitSummary", townName, ownerFaction );
 	var treasury = TriggerEvent( TownstoneTownScriptId, "TownGetTreasury", townName );
 	var taxRate = TriggerEvent( TownstoneTownScriptId, "TownGetTaxRate", townName );
 	var canPlaceGuard = TownstoneCanUseRole( pUser, "sheriff", ownerFaction );
@@ -153,17 +161,18 @@ function OpenFactionTownstone( pSock, pUser, townRegionId )
 
 	var myGump = new Gump();
 	myGump.AddPage( 0 );
-	myGump.AddBackground( 0, 0, 440, 390, 9200 );
+	myGump.AddBackground( 0, 0, 460, 420, 9200 );
 	myGump.AddHTMLGump( 15, 15, 410, 25, 0, 0, "<CENTER><b>Faction Town Control</b></CENTER>" );
 	myGump.AddHTMLGump( 25, 50, 390, 20, 0, 0, "Town: " + displayName );
 	myGump.AddHTMLGump( 25, 75, 390, 20, 0, 0, "Faction Owner: " + TownstoneFactionName( ownerFaction ) );
 	myGump.AddHTMLGump( 25, 100, 390, 20, 0, 0, "Managed NPCs: " + managedNpcCount );
 	myGump.AddHTMLGump( 25, 125, 390, 20, 0, 0, "Town Treasury: " + treasury + " silver, tax " + taxRate );
+	myGump.AddHTMLGump( 25, 150, 410, 20, 0, 0, npcLimitSummary );
 
-	myGump.AddButton( 25, 155, 0xFA5, 1, 0, 900 );
-	myGump.AddHTMLGump( 65, 155, 320, 20, 0, 0, "List Managed Faction NPCs" );
+	myGump.AddButton( 25, 180, 0xFA5, 1, 0, 900 );
+	myGump.AddHTMLGump( 65, 180, 320, 20, 0, 0, "List Managed Faction NPCs" );
 
-	y = 185;
+	y = 210;
 	if( canPlaceGuard )
 	{
 		myGump.AddButton( 25, y, 0xFA5, 1, 0, 101 );
@@ -187,8 +196,8 @@ function OpenFactionTownstone( pSock, pUser, townRegionId )
 		myGump.AddHTMLGump( 65, y, 320, 20, 0, 0, "Clear Managed Faction NPCs" );
 	}
 
-	myGump.AddButton( 25, 350, 0xFA5, 1, 0, 0 );
-	myGump.AddHTMLGump( 65, 350, 100, 20, 0, 0, "Close" );
+	myGump.AddButton( 25, 380, 0xFA5, 1, 0, 0 );
+	myGump.AddHTMLGump( 65, 380, 100, 20, 0, 0, "Close" );
 	myGump.Send( pSock );
 	myGump.Free();
 	return true;

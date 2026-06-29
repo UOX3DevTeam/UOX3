@@ -8196,6 +8196,18 @@ void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 		}
 	}
 
+	if( !mChar.IsIncognito() && !mChar.IsDisguised() )
+	{
+		const std::string factionDisplay = FactionDisplayForChar( &mChar );
+		if( !factionDisplay.empty() )
+		{
+			tempEntry.stringNum = 1042971; // ~1_NOTHING~
+			tempEntry.ourText = factionDisplay;
+			tempEntry.sortOrder = 6;
+			FinalizeData( tempEntry, totalStringLen );
+		}
+	}
+
 	// Show Race in character tooltip?
 	if( cwmWorldState->ServerData()->ShowRaceWithName() )
 	{

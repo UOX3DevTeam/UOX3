@@ -60,6 +60,11 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>June 29th, 2026</h4>
+						<ul>
+							<li>Updated <a href="#uox3Factions">Factions</a> documentation with generic faction NPC setup details, DFN tags and staff commands for assigning existing NPCs to factions.</li>
+							<li>Documented faction NPC kill rewards, reward tuning tags and faction NPC health/admin counts.</li>
+						</ul>
 						<h4>June 28th, 2026</h4>
 						<ul>
 							<li>Added <a href="#uox3Factions">Factions</a> feature info with details on faction setup, town control, sigils, strongholds, faction admin gump and maintenance commands.</li>
@@ -3186,7 +3191,7 @@ packitem=0x0f8d,30
 								<span class="hl">'factionhealth</span> - Opens the faction health-check gump.<br>
 								<span class="hl">'factiondedupe</span> - Removes duplicate setup objects.<br>
 								<span class="hl">'removefactions</span> - Removes faction objects/tags from the shard for a clean reset.</p>
-							<p>Other faction commands include <span class="hl">'factionstatus</span>, <span class="hl">'factiontowns</span>, <span class="hl">'factiontownsync</span>, <span class="hl">'factionstronghold</span>, <span class="hl">'factionsigils</span>, <span class="hl">'factionscore</span>, <span class="hl">'factionkills</span>, <span class="hl">'factionnotice</span>, <span class="hl">'factionalert</span>, <span class="hl">'factionappoint</span>, <span class="hl">'factionguard</span>, <span class="hl">'factionvendor</span>, <span class="hl">'factiontreasury</span>, <span class="hl">'factiontaxrate</span>, <span class="hl">'factiontaxstart</span>, <span class="hl">'factiontaxstop</span>, <span class="hl">'factionitemcheck</span> and <span class="hl">'factionitemcleanup</span>.</p>
+							<p>Other faction commands include <span class="hl">'factionstatus</span>, <span class="hl">'factiontowns</span>, <span class="hl">'factiontownsync</span>, <span class="hl">'factionstronghold</span>, <span class="hl">'factionsigils</span>, <span class="hl">'factionscore</span>, <span class="hl">'factionkills</span>, <span class="hl">'factionnotice</span>, <span class="hl">'factionalert</span>, <span class="hl">'factionappoint</span>, <span class="hl">'factionguard</span>, <span class="hl">'factionvendor</span>, <span class="hl">'factionnpc</span>, <span class="hl">'factionnpcclear</span>, <span class="hl">'factiontreasury</span>, <span class="hl">'factiontaxrate</span>, <span class="hl">'factiontaxstart</span>, <span class="hl">'factiontaxstop</span>, <span class="hl">'factionitemcheck</span> and <span class="hl">'factionitemcleanup</span>.</p>
 						</div>
 						<input type="checkbox" id="spoiler_cmd_finditem">
 						<label for="spoiler_cmd_finditem">findItem <i class="fas fa-angle-down"></i></label>
@@ -9360,6 +9365,24 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 					<h4>Towns, Townstones and Regions</h4>
 					<p>Faction town ownership is stored on the faction controller and synchronized to town regions. When a faction controls a town, that town's region guard owner is updated and faction NPCs can be managed for that town.</p>
 					<p>Townstones include a <span class="hl">Faction Control</span> option that opens the faction townstone panel for the current town. Through this panel, staff and authorized faction roles can view town ownership, managed NPCs, treasury and tax status. Sheriffs can place faction guards, while finance ministers can place faction vendors, provided the town is controlled by their faction and has enough treasury silver.</p>
+					<h4>Faction NPCs</h4>
+					<p>Faction NPC support is split into managed town NPCs and generic faction-aligned NPCs. Managed NPCs are placed through <span class="hl">'factionguard</span>, <span class="hl">'factionvendor</span> or the townstone faction panel, count against town guard/vendor limits and are deleted by <span class="hl">'removefactions</span>. Generic faction NPCs are regular NPCs with faction allegiance tags, can be created in DFNs or assigned in-game and are cleared rather than deleted by <span class="hl">'removefactions</span>.</p>
+					<p>To make a custom DFN NPC belong to a faction, attach the generic faction NPC script and set <span class="hl">npc_faction</span> to one of <span class="hl">TB</span>, <span class="hl">COM</span>, <span class="hl">MIN</span> or <span class="hl">SL</span>:</p>
+					<pre><code class="language-javascript">SCRIPT=8512
+CUSTOMSTRINGTAG=npc_faction TB</code></pre>
+					<p>Add <span class="hl">faction_npc</span> when the NPC should count as a rewardable faction NPC and appear in the faction health/admin counts. By default, a generic faction NPC is aggressive toward enemy faction players and ignores same-faction and non-faction players. Optional tags can set rewards, disable rewards, make it passive or require the NPC to be inside a town controlled by its faction before it fights:</p>
+					<pre><code class="language-javascript">CUSTOMINTTAG=faction_npc 1
+CUSTOMINTTAG=npc_faction_kp 1
+CUSTOMINTTAG=npc_faction_silver 15
+CUSTOMINTTAG=npc_faction_no_reward 1
+CUSTOMINTTAG=npc_faction_passive 1
+CUSTOMINTTAG=npc_faction_require_town_control 1</code></pre>
+					<p>Staff can also assign or clear faction allegiance on existing NPCs in-game:</p>
+					<ul>
+						<li><span class="hl">'factionnpc &lt;npc serial|exact name&gt; &lt;TB|COM|MIN|SL&gt; [aggressive|passive] [town]</span> - Assigns an existing NPC to a faction and adds the generic faction NPC script.</li>
+						<li><span class="hl">'factionnpcclear &lt;npc serial|exact name&gt;</span> - Removes generic faction NPC tags and the generic faction NPC script from an existing NPC.</li>
+					</ul>
+					<p>The default faction NPC templates in <span class="hl">dfndata/npc/faction_npcs.dfn</span> are <span class="hl">FACTION_NPC_TB</span>, <span class="hl">FACTION_NPC_COM</span>, <span class="hl">FACTION_NPC_MIN</span> and <span class="hl">FACTION_NPC_SL</span>.</p>
 					<h4>Strongholds and Sigils</h4>
 					<p>Each faction needs a configured stronghold location for sigil corruption and return logic. Use <span class="hl">'factionstronghold &lt;TB|COM|MIN|SL&gt; [range]</span> while standing at the intended stronghold center, then verify all four strongholds with <span class="hl">'factionstrongholds</span> or <span class="hl">'factionhealth</span>.</p>
 					<p>Sigils are created by <span class="hl">'factionsetup</span> and assigned home locations automatically. If sigils are moved or repaired manually, use <span class="hl">'factionsigilhome all</span> to re-register all sigil homes. Use <span class="hl">'factionsigils</span> to view current sigil status.</p>
@@ -9371,6 +9394,7 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 						<li><span class="hl">'factionnotice</span>, <span class="hl">'factionnoticeclear</span> and <span class="hl">'factionalert</span> - Commander/staff faction communication tools.</li>
 						<li><span class="hl">'factionappoint</span>, <span class="hl">'factionrole</span>, <span class="hl">'factionroleclear</span> and <span class="hl">'factionroles</span> - Faction role management tools.</li>
 						<li><span class="hl">'factionguard</span> and <span class="hl">'factionvendor</span> - Place faction town NPCs where role/town ownership rules allow.</li>
+						<li><span class="hl">'factionnpc</span> and <span class="hl">'factionnpcclear</span> - Assign or remove generic faction allegiance on existing NPCs.</li>
 						<li><span class="hl">'factiontreasury</span>, <span class="hl">'factiontaxrate</span>, <span class="hl">'factiontaxstart</span>, <span class="hl">'factiontaxstop</span> and <span class="hl">'factiontaxstatus</span> - Town treasury and tax tools.</li>
 						<li><span class="hl">'factionitemcheck</span> and <span class="hl">'factionitemcleanup</span> - Find and remove invalid player-owned faction items or mounts.</li>
 					</ul>
@@ -9382,9 +9406,10 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 						<li><span class="hl">js/factions/factions_towns.js</span> - Town ownership, treasury, tax and managed faction NPC logic.</li>
 						<li><span class="hl">js/factions/factions_townstone.js</span> - Townstone faction control panel.</li>
 						<li><span class="hl">js/factions/factions_strongholds.js</span> - Stronghold setup and range checks.</li>
-						<li><span class="hl">js/factions/factions_combat.js</span> - Faction combat rewards and kill stats.</li>
+						<li><span class="hl">js/factions/factions_combat.js</span> - Faction combat rewards, faction NPC kill rewards and kill stats.</li>
 						<li><span class="hl">js/factions/factions_election.js</span> - Faction commander election logic.</li>
-						<li><span class="hl">js/factions/factions_items.js</span>, <span class="hl">factions_guards.js</span>, <span class="hl">factions_vendors.js</span> and <span class="hl">factions_traps.js</span> - Faction items, NPCs, vendors and trap support.</li>
+						<li><span class="hl">js/factions/factions_npcs.js</span> - Generic faction NPC allegiance and enemy targeting.</li>
+						<li><span class="hl">js/factions/factions_items.js</span>, <span class="hl">factions_guards.js</span>, <span class="hl">factions_vendors.js</span> and <span class="hl">factions_traps.js</span> - Faction items, town guards, vendors and trap support.</li>
 						<li><span class="hl">dfndata/items/misc/faction_items.dfn</span> and <span class="hl">dfndata/npc/faction_npcs.dfn</span> - Faction item and NPC definitions.</li>
 					</ul>
 				  </div>

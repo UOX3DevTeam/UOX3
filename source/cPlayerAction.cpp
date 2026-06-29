@@ -2569,6 +2569,15 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 			}
 		}
 	}
+
+	if( !pdoll->IsNpc() && !pdoll->IsIncognito() && !pdoll->IsDisguised() )
+	{
+		const std::string factionKey = FactionKeyForChar( pdoll );
+		if( !factionKey.empty() )
+		{
+			tempstr += oldstrutil::format( " [%s]", factionKey.c_str() );
+		}
+	}
 	pd.Text( tempstr );
 
 	CChar *mChar = s->CurrcharObj();

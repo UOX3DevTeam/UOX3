@@ -4274,31 +4274,130 @@ auto CheckCharInsideBuilding( CChar *c, CSocket *mSock, bool doWeatherStuff ) ->
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	WillResultInCriminal()
+//|	Function	-	IsFactionKey()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Check flagging, race, and guild info to find if character
-//|					should be flagged criminal (returns true if so)
+//|	Purpose		-	Validate a player faction key stored by the JS faction system
 //o------------------------------------------------------------------------------------------------o
-static auto IsFactionKey( const std::string& factionKey ) -> bool
+auto IsFactionKey( const std::string& factionKey ) -> bool
 {
 	return ( factionKey == "TB" || factionKey == "COM" || factionKey == "MIN" || factionKey == "SL" );
 }
 
-static auto FactionKeyForChar( CChar *mChar ) -> std::string
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	FactionKeyForChar()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Get a character's JS faction key, if one is set
+//o------------------------------------------------------------------------------------------------o
+auto FactionKeyForChar( CChar *mChar ) -> std::string
 {
-	if( !ValidateObject( mChar ) || mChar->IsNpc() )
+	if( !ValidateObject( mChar ) )
 		return "";
 
-	const TAGMAPOBJECT factionTag = mChar->GetTag( "faction" );
-	if( factionTag.m_ObjectType != TAGMAP_TYPE_STRING )
-		return "";
-	if( !IsFactionKey( factionTag.m_StringValue ) )
-		return "";
+	const char *factionTags[] = { "faction" };
+	const char *npcFactionTags[] = { "npc_faction", "guard_faction", "vendor_faction", "faction" };
+	const char **tagList = mChar->IsNpc() ? npcFactionTags : factionTags;
+	const size_t tagCount = mChar->IsNpc() ? ( sizeof( npcFactionTags ) / sizeof( npcFactionTags[0] )) : ( sizeof( factionTags ) / sizeof( factionTags[0] ));
 
-	return factionTag.m_StringValue;
+	for( size_t tagIndex = 0; tagIndex < tagCount; ++tagIndex )
+	{
+		const TAGMAPOBJECT factionTag = mChar->GetTag( tagList[tagIndex] );
+		if( factionTag.m_ObjectType == TAGMAP_TYPE_STRING && IsFactionKey( factionTag.m_StringValue ) )
+			return factionTag.m_StringValue;
+	}
+
+	return "";
 }
 
-static auto AreEnemyFactionMembers( CChar *mChar, CChar *targ ) -> bool
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	FactionNameForKey()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Get display name for a JS faction key
+//o------------------------------------------------------------------------------------------------o
+auto FactionNameForKey( const std::string& factionKey ) -> std::string
+{
+	if( factionKey == "TB" )
+		return "True Britannians";
+	if( factionKey == "COM" )
+		return "Council of Mages";
+	if( factionKey == "MIN" )
+		return "Minax";
+	if( factionKey == "SL" )
+		return "Shadowlords";
+	return "";
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	FactionRankNameForRank()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Get display name for a JS faction rank value
+//o------------------------------------------------------------------------------------------------o
+auto FactionRankNameForRank( SI32 rank ) -> std::string
+{
+	switch( rank )
+	{
+		case 1:		return "Scout";
+		case 2:		return "Corporal";
+		case 3:		return "Sergeant";
+		case 4:		return "Lieutenant";
+		case 5:		return "Captain";
+		case 6:		return "Major";
+		case 7:		return "Colonel";
+		case 8:		return "General";
+		case 9:		return "Commander";
+		case 0:
+		default:	return "Soldier";
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	FactionDisplayForChar()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Get tooltip/paperdoll display text for a player's JS faction state
+//o------------------------------------------------------------------------------------------------o
+auto FactionDisplayForChar( CChar *mChar ) -> std::string
+{
+	const std::string factionKey = FactionKeyForChar( mChar );
+	if( factionKey.empty() )
+		return "";
+
+	std::string displayText = FactionNameForKey( factionKey );
+	const TAGMAPOBJECT rankTag = mChar->GetTag( "faction_rank" );
+	if( rankTag.m_ObjectType == TAGMAP_TYPE_INT )
+	{
+		displayText += oldstrutil::format( ", %s", FactionRankNameForRank( rankTag.m_IntValue ).c_str() );
+	}
+
+	const TAGMAPOBJECT commanderTag = mChar->GetTag( "faction_commander" );
+	const TAGMAPOBJECT roleTag = mChar->GetTag( "faction_role" );
+	std::string roleText;
+	if( commanderTag.m_ObjectType == TAGMAP_TYPE_INT && commanderTag.m_IntValue == 1 )
+	{
+		roleText = "Commander";
+	}
+	else if( roleTag.m_ObjectType == TAGMAP_TYPE_STRING && !roleTag.m_StringValue.empty() )
+	{
+		if( roleTag.m_StringValue == "sheriff" )
+			roleText = "Sheriff";
+		else if( roleTag.m_StringValue == "finance" )
+			roleText = "Finance Minister";
+		else if( roleTag.m_StringValue == "commander" )
+			roleText = "Commander";
+		else
+			roleText = roleTag.m_StringValue;
+	}
+
+	if( !roleText.empty() )
+		displayText += oldstrutil::format( " (%s)", roleText.c_str() );
+
+	return displayText;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	AreFactionMembers()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check if both characters are player faction members
+//o------------------------------------------------------------------------------------------------o
+auto AreFactionMembers( CChar *mChar, CChar *targ ) -> bool
 {
 	const std::string attackerFaction = FactionKeyForChar( mChar );
 	if( attackerFaction.empty() )
@@ -4308,9 +4407,30 @@ static auto AreEnemyFactionMembers( CChar *mChar, CChar *targ ) -> bool
 	if( targetFaction.empty() )
 		return false;
 
+	return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	AreEnemyFactionMembers()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check if two player faction members belong to opposing factions
+//o------------------------------------------------------------------------------------------------o
+auto AreEnemyFactionMembers( CChar *mChar, CChar *targ ) -> bool
+{
+	if( !AreFactionMembers( mChar, targ ) )
+		return false;
+
+	const std::string attackerFaction = FactionKeyForChar( mChar );
+	const std::string targetFaction = FactionKeyForChar( targ );
 	return attackerFaction != targetFaction;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	WillResultInCriminal()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check flagging, race, and guild info to find if character
+//|					should be flagged criminal (returns true if so)
+//o------------------------------------------------------------------------------------------------o
 auto WillResultInCriminal( CChar *mChar, CChar *targ ) -> bool
 {
 	auto tOwner = targ->GetOwnerObj();

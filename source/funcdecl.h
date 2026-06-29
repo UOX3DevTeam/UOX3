@@ -130,6 +130,13 @@ CItem *			FindItem( CChar *toFind, UI16 itemId );
 void	Karma( CChar *nCharId, CChar *nKilledId, const SI16 nKarma );
 void	Fame( CChar *nCharId, const SI16 nFame );
 void	UpdateFlag( CChar *mChar );
+bool	IsFactionKey( const std::string& factionKey );
+std::string	FactionKeyForChar( CChar *mChar );
+std::string	FactionNameForKey( const std::string& factionKey );
+std::string	FactionRankNameForRank( SI32 rank );
+std::string	FactionDisplayForChar( CChar *mChar );
+bool	AreFactionMembers( CChar *mChar, CChar *targ );
+bool	AreEnemyFactionMembers( CChar *mChar, CChar *targ );
 
 //o------------------------------------------------------------------------------------------------o
 // Combat Stuff

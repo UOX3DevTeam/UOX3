@@ -62,6 +62,9 @@ var FactionTownTreasuryGrant = 1000;
 var FactionTownDefaultTaxRate = 100;
 var FactionTownTaxTimerId = 2;
 var FactionTownDefaultTaxInterval = 3600000;
+var FactionTownGuardLimit = 10;
+var FactionTownVendorLimit = 10;
+var FactionTownCountType = "";
 
 function TownIsFactionValid( factionKey )
 {
@@ -370,6 +373,9 @@ function onIterate( toCheck )
 		if( !TownFactionNpcMatches( toCheck, FactionTownIterateTown, FactionTownIterateFaction ) )
 			return false;
 
+		if( FactionTownIterateMode === "countnpcs" && FactionTownCountType !== "" && toCheck.GetTag( "faction_npc_type" ) !== FactionTownCountType )
+			return false;
+
 		if( FactionTownIterateMode === "clearnpcs" )
 		{
 			toCheck.Delete();
@@ -415,6 +421,10 @@ function TownFactionForNpc( npcChar )
 	if( TownIsFactionValid( factionKey ) )
 		return factionKey;
 
+	factionKey = npcChar.GetTag( "npc_faction" );
+	if( TownIsFactionValid( factionKey ) )
+		return factionKey;
+
 	return "";
 }
 
@@ -456,6 +466,7 @@ function TownTagFactionNpc( npcChar, factionKey, townName, npcType, vendorType )
 
 	npcChar.SetTag( "faction_spawned", 1 );
 	npcChar.SetTag( "faction", factionKey );
+	npcChar.SetTag( "npc_faction", factionKey );
 	npcChar.SetTag( "faction_town", townName );
 	npcChar.SetTag( "faction_npc_type", npcType );
 	npcChar.SetTag( "faction_vendor_type", vendorType );
@@ -479,6 +490,76 @@ function TownCountFactionNpcs( townName, factionKey )
 	FactionTownIterateFaction = "";
 
 	return npcCount;
+}
+
+function TownCountFactionNpcsByType( townName, factionKey, npcType )
+{
+	townName = TownNormalizeName( townName );
+	if( factionKey !== "" && !TownIsFactionValid( factionKey ) )
+		return 0;
+
+	npcType = String( npcType ).toLowerCase();
+	if( npcType !== "guard" && npcType !== "vendor" )
+		return 0;
+
+	FactionTownIterateMode = "countnpcs";
+	FactionTownIterateTown = townName;
+	FactionTownIterateFaction = factionKey;
+	FactionTownCountType = npcType;
+	var npcCount = IterateOver( "CHARACTER" );
+	FactionTownIterateMode = "";
+	FactionTownIterateTown = "";
+	FactionTownIterateFaction = "";
+	FactionTownCountType = "";
+
+	return npcCount;
+}
+
+function TownNpcLimitForType( npcType )
+{
+	npcType = String( npcType ).toLowerCase();
+	if( npcType === "guard" )
+		return FactionTownGuardLimit;
+	if( npcType === "vendor" )
+		return FactionTownVendorLimit;
+
+	return 0;
+}
+
+function TownCanPlaceFactionNpc( townName, factionKey, npcType )
+{
+	townName = TownNormalizeName( townName );
+	npcType = String( npcType ).toLowerCase();
+	if( townName === "" || TownGetDefault( townName ) == null )
+		return "Unknown faction town.";
+	if( !TownIsFactionValid( factionKey ) )
+		return "Invalid faction.";
+	if( npcType !== "guard" && npcType !== "vendor" )
+		return "Invalid faction NPC type.";
+
+	var owner = TownGetOwner( townName );
+	if( owner !== factionKey )
+		return "Only " + TownFactionName( owner ) + " may place faction NPCs in " + TownDisplayName( townName ) + ".";
+
+	var limit = TownNpcLimitForType( npcType );
+	var currentCount = TownCountFactionNpcsByType( townName, factionKey, npcType );
+	if( limit > 0 && currentCount >= limit )
+		return TownDisplayName( townName ) + " already has " + currentCount + "/" + limit + " faction " + npcType + "(s).";
+
+	return "";
+}
+
+function TownNpcLimitSummary( townName, factionKey )
+{
+	townName = TownNormalizeName( townName );
+	if( factionKey === "" )
+		factionKey = TownGetOwner( townName );
+	if( townName === "" || TownGetDefault( townName ) == null || !TownIsFactionValid( factionKey ) )
+		return "Faction NPC Limits: unknown town.";
+
+	var guards = TownCountFactionNpcsByType( townName, factionKey, "guard" );
+	var vendors = TownCountFactionNpcsByType( townName, factionKey, "vendor" );
+	return "Faction NPC Limits: guards " + guards + "/" + FactionTownGuardLimit + ", vendors " + vendors + "/" + FactionTownVendorLimit + ".";
 }
 
 function TownClearFactionNpcs( townName, factionKey )
@@ -516,8 +597,13 @@ function ShowTownNpcStatus( pSock, townName )
 	if( npcCount == 0 )
 	{
 		pSock.SysMessage( "No managed faction NPCs found." );
+		if( townName !== "" )
+			pSock.SysMessage( TownNpcLimitSummary( townName, "" ) );
 		return true;
 	}
+
+	if( townName !== "" )
+		pSock.SysMessage( TownNpcLimitSummary( townName, "" ) );
 
 	FactionTownIterateMode = "listnpcs";
 	FactionTownIterateTown = townName;

@@ -480,6 +480,7 @@ function SigilAwardCapture( iSigil, factionKey )
 
 		var killPoints = SigilParseNumber( corruptor.GetTag( "faction_kp" ), 0 ) + SigilCaptureKillPointReward;
 		corruptor.SetTag( "faction_kp", killPoints );
+		corruptor.SetTag( "faction_captures", SigilParseNumber( corruptor.GetTag( "faction_captures" ), 0 ) + 1 );
 		SigilUpdateRank( corruptor );
 		if( corruptor.socket != null )
 			corruptor.SysMessage( "You earned " + SigilCaptureSilverReward + " faction silver and " + SigilCaptureKillPointReward + " kill points for capturing " + SigilDisplayTown( iSigil.GetTag( "sigil_town" ) ) + "." );

@@ -1,0 +1,209 @@
+// =============================================================================
+// factions_npcs.js
+// UOX3 Faction System - generic faction NPC allegiance
+// Script ID suggestion: 8512
+// =============================================================================
+
+var FactionNpcScanRange = 10;
+var FactionNpcWarnDelay = 30000;
+var FactionNpcTownScriptId = 8509;
+
+function FactionNpcIsFactionValid( factionKey )
+{
+	return ( factionKey === "TB" || factionKey === "COM" || factionKey === "MIN" || factionKey === "SL" );
+}
+
+function FactionNpcName( factionKey )
+{
+	if( factionKey === "TB" )
+		return "True Britannians";
+	if( factionKey === "COM" )
+		return "Council of Mages";
+	if( factionKey === "MIN" )
+		return "Minax";
+	if( factionKey === "SL" )
+		return "Shadowlords";
+
+	return "Unknown Faction";
+}
+
+function FactionNpcFactionForPlayer( pChar )
+{
+	if( !ValidateObject( pChar ) || pChar.npc )
+		return "";
+
+	var factionKey = pChar.GetTag( "faction" );
+	if( FactionNpcIsFactionValid( factionKey ) )
+		return factionKey;
+
+	return "";
+}
+
+function FactionNpcFactionForNpc( npcChar )
+{
+	if( !ValidateObject( npcChar ) || !npcChar.npc )
+		return "";
+
+	var factionKey = npcChar.GetTag( "npc_faction" );
+	if( FactionNpcIsFactionValid( factionKey ) )
+		return factionKey;
+
+	factionKey = npcChar.GetTag( "guard_faction" );
+	if( FactionNpcIsFactionValid( factionKey ) )
+		return factionKey;
+
+	factionKey = npcChar.GetTag( "vendor_faction" );
+	if( FactionNpcIsFactionValid( factionKey ) )
+		return factionKey;
+
+	factionKey = npcChar.GetTag( "faction" );
+	if( FactionNpcIsFactionValid( factionKey ) )
+		return factionKey;
+
+	return "";
+}
+
+function FactionNpcIsActive( npcChar, npcFaction )
+{
+	if( !ValidateObject( npcChar ) || npcFaction === "" )
+		return false;
+
+	if( npcChar.GetTag( "npc_faction_require_town_control" ) == 1 )
+		return TriggerEvent( FactionNpcTownScriptId, "TownIsObjectInControlledTownForFaction", npcChar, npcFaction );
+
+	return true;
+}
+
+function FactionNpcIsAggressive( npcChar )
+{
+	if( !ValidateObject( npcChar ) )
+		return false;
+
+	return ( npcChar.GetTag( "npc_faction_passive" ) != 1 );
+}
+
+function FactionNpcIsEnemyTarget( npcChar, targetChar, npcFaction )
+{
+	if( !ValidateObject( npcChar ) || !ValidateObject( targetChar ) )
+		return false;
+	if( targetChar.serial == npcChar.serial || targetChar.dead || targetChar.npc )
+		return false;
+
+	var targetFaction = FactionNpcFactionForPlayer( targetChar );
+	if( targetFaction === "" || targetFaction === npcFaction )
+		return false;
+
+	return true;
+}
+
+function FactionNpcClearTarget( npcChar )
+{
+	if( !ValidateObject( npcChar ) )
+		return;
+
+	npcChar.target = null;
+	npcChar.attacker = null;
+	npcChar.atWar = false;
+}
+
+function FactionNpcEngageTarget( npcChar, targetChar, npcFaction )
+{
+	if( !FactionNpcIsEnemyTarget( npcChar, targetChar, npcFaction ) )
+		return false;
+
+	var now = GetCurrentClock();
+	var warnedKey = "warned_" + targetChar.serial;
+	var lastWarn = npcChar.GetTag( warnedKey );
+	if( lastWarn == 0 || now - lastWarn > FactionNpcWarnDelay )
+	{
+		npcChar.SetTag( warnedKey, now );
+		npcChar.TextMessage( targetChar.name + " is an enemy of " + FactionNpcName( npcFaction ) + "!" );
+	}
+
+	npcChar.target = targetChar;
+	npcChar.attacker = targetChar;
+	npcChar.atWar = true;
+	return true;
+}
+
+function onAISliver( npcChar )
+{
+	if( !ValidateObject( npcChar ) || npcChar.dead )
+		return false;
+
+	var npcFaction = FactionNpcFactionForNpc( npcChar );
+	if( npcFaction === "" )
+		return false;
+
+	if( !FactionNpcIsActive( npcChar, npcFaction ) )
+	{
+		FactionNpcClearTarget( npcChar );
+		return false;
+	}
+
+	if( ValidateObject( npcChar.target ) )
+	{
+		if( FactionNpcIsEnemyTarget( npcChar, npcChar.target, npcFaction ) )
+			return false;
+
+		FactionNpcClearTarget( npcChar );
+	}
+
+	if( !FactionNpcIsAggressive( npcChar ) )
+		return false;
+
+	npcChar.SetTempTag( "scan_faction_npc_faction", npcFaction );
+	AreaCharacterFunction( "FactionNpcScanCharacter", npcChar, FactionNpcScanRange, null );
+	return false;
+}
+
+function FactionNpcScanCharacter( npcChar, targetChar, pSock )
+{
+	if( !ValidateObject( npcChar ) || !ValidateObject( targetChar ) )
+		return false;
+	if( targetChar.serial == npcChar.serial || targetChar.dead || targetChar.npc )
+		return false;
+
+	var npcFaction = npcChar.GetTempTag( "scan_faction_npc_faction" );
+	if( npcFaction === "" )
+		return false;
+
+	return FactionNpcEngageTarget( npcChar, targetChar, npcFaction );
+}
+
+function onAICombatTarget( pAttacker, pTarget )
+{
+	if( !ValidateObject( pAttacker ) || !ValidateObject( pTarget ) )
+		return true;
+
+	var npcFaction = FactionNpcFactionForNpc( pAttacker );
+	if( npcFaction === "" )
+		return true;
+
+	if( !FactionNpcIsActive( pAttacker, npcFaction ) )
+		return false;
+
+	if( !FactionNpcIsEnemyTarget( pAttacker, pTarget, npcFaction ) )
+		return false;
+
+	return true;
+}
+
+function onClick( pSock, npcChar )
+{
+	if( !ValidateObject( npcChar ) )
+		return false;
+
+	var npcFaction = FactionNpcFactionForNpc( npcChar );
+	if( npcFaction === "" )
+		return false;
+
+	var suffix = "Faction NPC";
+	if( npcChar.GetTag( "npc_faction_passive" ) == 1 )
+		suffix = "Faction NPC - passive";
+	if( !FactionNpcIsActive( npcChar, npcFaction ) )
+		suffix = "Faction NPC - inactive";
+
+	pSock.SysMessage( npcChar.name + " [" + FactionNpcName( npcFaction ) + " " + suffix + "]" );
+	return true;
+}

@@ -95,6 +95,59 @@ function VendorSpendSilver( pChar, amount )
 	return true;
 }
 
+function VendorFactionName( factionKey )
+{
+	if( factionKey === "TB" )
+		return "True Britannians";
+	if( factionKey === "COM" )
+		return "Council of Mages";
+	if( factionKey === "MIN" )
+		return "Minax";
+	if( factionKey === "SL" )
+		return "Shadowlords";
+
+	return "Unknown Faction";
+}
+
+function VendorTradeAccessError( pSock, npcVendor )
+{
+	if( !pSock || !ValidateObject( npcVendor ) )
+		return "That faction vendor is not available.";
+
+	var pUser = pSock.currentChar;
+	if( !ValidateObject( pUser ) )
+		return "Only players may trade with faction vendors.";
+
+	var vendorFaction = npcVendor.GetTag( "vendor_faction" );
+	if( !VendorIsFactionValid( vendorFaction ) )
+		return "This faction vendor is not configured.";
+
+	if( !TriggerEvent( VendorFactionTownScriptId, "TownIsObjectInControlledTownForFaction", npcVendor, vendorFaction ) )
+		return "My faction does not control this town.";
+
+	var playerFaction = VendorGetFaction( pUser );
+	if( playerFaction === "" )
+		return "Only " + VendorFactionName( vendorFaction ) + " members may trade with me.";
+	if( playerFaction !== vendorFaction )
+		return "I do not trade with enemies of " + VendorFactionName( vendorFaction ) + ".";
+
+	return "";
+}
+
+function VendorCanTrade( pSock, npcVendor )
+{
+	var accessError = VendorTradeAccessError( pSock, npcVendor );
+	if( accessError === "" )
+		return true;
+
+	if( pSock && ValidateObject( pSock.currentChar ) )
+		pSock.currentChar.SysMessage( accessError );
+	if( ValidateObject( npcVendor ) )
+		npcVendor.TextMessage( accessError );
+
+	return false;
+}
+
 function VendorGetStock( vendorType )
 {
 	if( vendorType === "" || vendorType == 0 )
@@ -152,22 +205,26 @@ function onBuy( pSock, npcVendor )
 	if( !ValidateObject( pUser ) )
 		return false;
 
-	var vendorFaction = npcVendor.GetTag( "vendor_faction" );
-	if( !TriggerEvent( VendorFactionTownScriptId, "TownIsObjectInControlledTownForFaction", npcVendor, vendorFaction ) )
-	{
-		npcVendor.TextMessage( "My faction does not control this town." );
+	if( !VendorCanTrade( pSock, npcVendor ) )
 		return false;
-	}
-
-	var playerFaction = VendorGetFaction( pUser );
-	if( playerFaction === "" || playerFaction !== vendorFaction )
-	{
-		npcVendor.TextMessage( "I only trade with my own faction." );
-		return false;
-	}
 
 	ShowFactionVendorGump( pSock, pUser, npcVendor );
 	return false;
+}
+
+function onSell( pSock, npcVendor )
+{
+	return VendorCanTrade( pSock, npcVendor );
+}
+
+function onBuyFromVendor( pSock, npcVendor, itemBought, itemAmount )
+{
+	return VendorCanTrade( pSock, npcVendor );
+}
+
+function onSellToVendor( pSock, npcVendor, itemSold, itemAmount )
+{
+	return VendorCanTrade( pSock, npcVendor );
 }
 
 function ShowFactionVendorGump( pSock, pUser, npcVendor )
@@ -235,16 +292,8 @@ function onGumpPress( pSock, pButton, gumpData )
 		return;
 	}
 
-	var vendorFaction = npcVendor.GetTag( "vendor_faction" );
-	if( playerFaction !== vendorFaction )
+	if( !VendorCanTrade( pSock, npcVendor ) )
 	{
-		pUser.SysMessage( "You may only buy from your own faction vendors." );
-		return;
-	}
-
-	if( !TriggerEvent( VendorFactionTownScriptId, "TownIsObjectInControlledTownForFaction", npcVendor, vendorFaction ) )
-	{
-		pUser.SysMessage( "That vendor's faction does not control this town." );
 		return;
 	}
 
