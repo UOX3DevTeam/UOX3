@@ -18,6 +18,7 @@
 var FactionElectionTimerId = 1;
 var FactionElectionTimerDelay = 3600000; // 1 hour
 var FactionElectionController = null;
+var FactionElectionPlayerDataScriptId = 8513;
 
 var ELECTION_CYCLE_MS  = 604800000; // 7 days
 var CAMPAIGN_MS        = 345600000; // 4 days campaign, then 3 days voting
@@ -159,12 +160,12 @@ function _AddVote( fkey, candidateSerial )
 
 function _HasVoted( pChar, fkey )
 {
-	return pChar.GetTag( "elec_voted_" + fkey ) === "1";
+	return TriggerEvent( FactionElectionPlayerDataScriptId, "GetFactionVote", pChar, fkey );
 }
 
 function _MarkVoted( pChar, fkey )
 {
-	pChar.SetTag( "elec_voted_" + fkey, "1" );
+	TriggerEvent( FactionElectionPlayerDataScriptId, "SetFactionVote", pChar, fkey, true );
 }
 
 function _ClearVotedFlags( fkey )
@@ -203,7 +204,8 @@ function StartElection( fkey )
 function DeclareCandidacy( pChar )
 {
 	if( !ValidateObject( pChar ) ) return false;
-	var fkey = pChar.GetTag( "faction" );
+	var factionData = TriggerEvent( FactionElectionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
+	var fkey = factionData.faction;
 	if( !fkey || fkey.length === 0 )
 	{
 		pChar.SysMessage( "You must be in a faction to run for Commander." );
@@ -218,7 +220,7 @@ function DeclareCandidacy( pChar )
 	}
 
 	// Must have at least 10 kill points
-	var kp = parseInt( pChar.GetTag( "faction_kp" ), 10 ) || 0;
+	var kp = parseInt( factionData.killPoints, 10 ) || 0;
 	if( kp < 10 )
 	{
 		pChar.SysMessage( "You need at least 10 kill points to run for Commander." );
@@ -248,7 +250,7 @@ function BeginVoting( fkey )
 function CastVote( pVoter, candidateSerial )
 {
 	if( !ValidateObject( pVoter ) ) return false;
-	var fkey = pVoter.GetTag( "faction" );
+	var fkey = TriggerEvent( FactionElectionPlayerDataScriptId, "GetFactionValue", pVoter, "faction", pVoter.GetTag( "faction" ) );
 	if( !fkey || fkey.length === 0 )
 	{
 		pVoter.SysMessage( "You must be in a faction to vote." );
@@ -319,11 +321,13 @@ function ConcludeElection( fkey )
 	var winner = CalcCharFromSer( parseInt( winnerSerial, 10 ) );
 	if( ValidateObject( winner ) )
 	{
-		winner.SetTag( "faction_commander", "1" );
-		winner.SetTag( "faction_role", "commander" );
-		winner.SetTag( "faction_role_faction", fkey );
-		winner.SetTag( "faction_role_set_at", GetCurrentClock() );
-		winner.SetTag( "faction_rank", 9 );
+		var winnerData = TriggerEvent( FactionElectionPlayerDataScriptId, "ReadFactionPlayerData", winner );
+		winnerData.commander = true;
+		winnerData.role = "commander";
+		winnerData.roleFaction = fkey;
+		winnerData.roleSetAt = GetCurrentClock();
+		winnerData.rank = 9;
+		TriggerEvent( FactionElectionPlayerDataScriptId, "WriteFactionPlayerData", winner, winnerData );
 		if( ctrl ) ctrl.SetTag( "cmd_" + fkey, winnerSerial );
 		_BroadcastFaction( fkey, winner.name + " has been elected as the new Commander of the " + fkey + "!" );
 	}
@@ -343,14 +347,16 @@ function _ClearCommanderRole( fkey, ctrl )
 		var oldCmd = CalcCharFromSer( oldSerial );
 		if( ValidateObject( oldCmd ) )
 		{
-			oldCmd.SetTag( "faction_commander", "0" );
-			if( oldCmd.GetTag( "faction_role" ) === "commander" && oldCmd.GetTag( "faction_role_faction" ) === fkey )
+			var oldData = TriggerEvent( FactionElectionPlayerDataScriptId, "ReadFactionPlayerData", oldCmd );
+			oldData.commander = false;
+			if( oldData.role === "commander" && oldData.roleFaction === fkey )
 			{
-				oldCmd.SetTag( "faction_role", "" );
-				oldCmd.SetTag( "faction_role_faction", "" );
-				oldCmd.SetTag( "faction_role_set_at", 0 );
+				oldData.role = "";
+				oldData.roleFaction = "";
+				oldData.roleSetAt = 0;
 			}
-			oldCmd.SetTag( "faction_rank", 8 ); // demote to Legend
+			oldData.rank = 8; // demote to Legend
+			TriggerEvent( FactionElectionPlayerDataScriptId, "WriteFactionPlayerData", oldCmd, oldData );
 		}
 	}
 
@@ -452,7 +458,7 @@ function onGumpPress( pSock, buttonID, gumpData )
 	if( !ValidateObject( pChar ) )
 		return;
 
-	var fkey = pChar.GetTag( "faction" );
+	var fkey = TriggerEvent( FactionElectionPlayerDataScriptId, "GetFactionValue", pChar, "faction", pChar.GetTag( "faction" ) );
 	if( !fkey ) return;
 
 	if( buttonID === 0 ) return; // close

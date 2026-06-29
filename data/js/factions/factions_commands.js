@@ -11,6 +11,7 @@ var CommandFactionElectionScriptId = 8508;
 var CommandFactionTownScriptId = 8509;
 var CommandFactionStrongholdScriptId = 8511;
 var CommandFactionNpcScriptId = 8512;
+var CommandFactionPlayerDataScriptId = 8513;
 var CommandFactionGuardCost = 250;
 var CommandFactionVendorCost = 500;
 var CommandFactionAdminHealthButton = 9001;
@@ -104,6 +105,8 @@ var CommandRemoveFactionsPlayers = 0;
 var CommandRemoveFactionsRegions = 0;
 var CommandLeaderboardFaction = "";
 var CommandLeaderboardEntries = [];
+var CommandDataMigrateActive = false;
+var CommandDataMigrateCount = 0;
 
 function CommandRegistration()
 {
@@ -121,6 +124,7 @@ function CommandRegistration()
 	RegisterCommand( "factionadmin", 5, true );
 	RegisterCommand( "factionhealth", 5, true );
 	RegisterCommand( "factiondedupe", 5, true );
+	RegisterCommand( "factiondatamigrate", 5, true );
 	RegisterCommand( "removefactions", 5, true );
 	RegisterCommand( "factiontownsync", 5, true );
 	RegisterCommand( "factiontownnpcs", 5, true );
@@ -287,7 +291,7 @@ function CommandUpdateFactionRank( pChar )
 	if( !ValidateObject( pChar ) )
 		return 0;
 
-	var killPoints = CommandClampNonNegative( pChar.GetTag( "faction_kp" ) );
+	var killPoints = CommandClampNonNegative( TriggerEvent( CommandFactionPlayerDataScriptId, "GetFactionValue", pChar, "killPoints", pChar.GetTag( "faction_kp" ) ) );
 	var rank = 0;
 	for( var rankIndex = 9; rankIndex >= 0; rankIndex-- )
 	{
@@ -298,7 +302,7 @@ function CommandUpdateFactionRank( pChar )
 		}
 	}
 
-	pChar.SetTag( "faction_rank", rank );
+	TriggerEvent( CommandFactionPlayerDataScriptId, "SetFactionValue", pChar, "rank", rank );
 	return rank;
 }
 
@@ -402,11 +406,13 @@ function CommandSetFactionRole( pChar, roleName, factionKey )
 		return false;
 
 	CommandClearFactionRoleHolders( roleName, factionKey, pChar.serial );
-	pChar.SetTag( "faction_role", roleName );
-	pChar.SetTag( "faction_role_faction", factionKey );
-	pChar.SetTag( "faction_role_set_at", GetCurrentClock() );
+	var factionData = TriggerEvent( CommandFactionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
+	factionData.role = roleName;
+	factionData.roleFaction = factionKey;
+	factionData.roleSetAt = GetCurrentClock();
 	if( roleName === "commander" )
-		pChar.SetTag( "faction_commander", "1" );
+		factionData.commander = true;
+	TriggerEvent( CommandFactionPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
 
 	return true;
 }
@@ -416,10 +422,12 @@ function CommandClearFactionRole( pChar )
 	if( !ValidateObject( pChar ) )
 		return false;
 
-	pChar.SetTag( "faction_role", "" );
-	pChar.SetTag( "faction_role_faction", "" );
-	pChar.SetTag( "faction_role_set_at", 0 );
-	pChar.SetTag( "faction_commander", "0" );
+	var factionData = TriggerEvent( CommandFactionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
+	factionData.role = "";
+	factionData.roleFaction = "";
+	factionData.roleSetAt = 0;
+	factionData.commander = false;
+	TriggerEvent( CommandFactionPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
 	return true;
 }
 
@@ -443,14 +451,15 @@ function CommandHasFactionRole( pChar, roleName, factionKey )
 	if( !ValidateObject( pChar ) || !CommandIsRoleValid( roleName ) || !CommandIsFactionValid( factionKey ) )
 		return false;
 
-	if( pChar.GetTag( "faction" ) !== factionKey )
+	var factionData = TriggerEvent( CommandFactionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
+	if( factionData.faction !== factionKey )
 		return false;
-	if( roleName === "commander" && pChar.GetTag( "faction_commander" ) == "1" )
+	if( roleName === "commander" && factionData.commander )
 		return true;
-	if( pChar.GetTag( "faction_role" ) !== roleName )
+	if( factionData.role !== roleName )
 		return false;
 
-	return pChar.GetTag( "faction_role_faction" ) === factionKey;
+	return factionData.roleFaction === factionKey;
 }
 
 function CommandCanAppointFactionRole( pUser, factionKey )
@@ -497,8 +506,9 @@ function onIterate( toCheck )
 	{
 		if( ValidateObject( toCheck ) && toCheck.isChar && !toCheck.npc )
 		{
-			var roleName = toCheck.GetTag( "faction_role" );
-			var roleFaction = toCheck.GetTag( "faction_role_faction" );
+			var roleData = TriggerEvent( CommandFactionPlayerDataScriptId, "ReadFactionPlayerData", toCheck );
+			var roleName = roleData.role;
+			var roleFaction = roleData.roleFaction;
 			if( CommandIsRoleValid( roleName ) && CommandIsFactionValid( roleFaction ) )
 			{
 				CommandRoleListSocket.SysMessage( toCheck.name + ": " + CommandFactionUsageName( roleFaction ) + " " + CommandRoleDisplayName( roleName ) );
@@ -513,13 +523,10 @@ function onIterate( toCheck )
 	{
 		if( ValidateObject( toCheck ) && toCheck.isChar && !toCheck.npc && toCheck.serial != CommandClearRoleExcept )
 		{
-			if( toCheck.GetTag( "faction_role" ) === CommandClearRoleName && toCheck.GetTag( "faction_role_faction" ) === CommandClearRoleFaction )
+			var clearRoleData = TriggerEvent( CommandFactionPlayerDataScriptId, "ReadFactionPlayerData", toCheck );
+			if( clearRoleData.role === CommandClearRoleName && clearRoleData.roleFaction === CommandClearRoleFaction )
 			{
-				toCheck.SetTag( "faction_role", "" );
-				toCheck.SetTag( "faction_role_faction", "" );
-				toCheck.SetTag( "faction_role_set_at", 0 );
-				if( CommandClearRoleName === "commander" )
-					toCheck.SetTag( "faction_commander", "0" );
+				CommandClearFactionRole( toCheck );
 				return true;
 			}
 		}
@@ -545,10 +552,11 @@ function onIterate( toCheck )
 	{
 		if( ValidateObject( toCheck ) && toCheck.isChar && !toCheck.npc && toCheck.GetTag( "faction" ) === CommandLeaderboardFaction )
 		{
-			var killPoints = parseInt( toCheck.GetTag( "faction_kp" ), 10 );
-			var silver = parseInt( toCheck.GetTag( "faction_silver" ), 10 );
-			var rank = parseInt( toCheck.GetTag( "faction_rank" ), 10 );
-			var captures = parseInt( toCheck.GetTag( "faction_captures" ), 10 );
+			var factionData = TriggerEvent( CommandFactionPlayerDataScriptId, "ReadFactionPlayerData", toCheck );
+			var killPoints = parseInt( factionData.killPoints, 10 );
+			var silver = parseInt( factionData.silver, 10 );
+			var rank = parseInt( factionData.rank, 10 );
+			var captures = parseInt( factionData.captures, 10 );
 			if( isNaN( killPoints ) )
 				killPoints = 0;
 			if( isNaN( silver ) )
@@ -566,6 +574,20 @@ function onIterate( toCheck )
 				captures: captures,
 				online: toCheck.online
 			});
+		}
+
+		return false;
+	}
+
+	if( CommandDataMigrateActive )
+	{
+		if( ValidateObject( toCheck ) && toCheck.isChar && !toCheck.npc )
+		{
+			if( TriggerEvent( CommandFactionPlayerDataScriptId, "MigrateFactionTagsToFile", toCheck ) )
+			{
+				CommandDataMigrateCount++;
+				return true;
+			}
 		}
 
 		return false;
@@ -912,14 +934,15 @@ function CommandShowFactionStatusGump( pSock, pUser, factionKey )
 	y = 80;
 	if( isMember )
 	{
+		var playerData = TriggerEvent( CommandFactionPlayerDataScriptId, "ReadFactionPlayerData", pUser );
 		myGump.AddHTMLGump( 25, y, 420, 20, 0, 0, "Your Faction: " + CommandFactionUsageName( playerFaction ) );
 		y += 25;
-		myGump.AddHTMLGump( 25, y, 420, 20, 0, 0, "Rank: " + CommandRankName( pUser.GetTag( "faction_rank" ) ) );
+		myGump.AddHTMLGump( 25, y, 420, 20, 0, 0, "Rank: " + CommandRankName( playerData.rank ) );
 		y += 25;
-		myGump.AddHTMLGump( 25, y, 420, 20, 0, 0, "Kill Points: " + pUser.GetTag( "faction_kp" ) + ", Silver: " + pUser.GetTag( "faction_silver" ) );
+		myGump.AddHTMLGump( 25, y, 420, 20, 0, 0, "Kill Points: " + playerData.killPoints + ", Silver: " + playerData.silver );
 		y += 25;
-		var roleName = pUser.GetTag( "faction_role" );
-		if( roleName === "" && pUser.GetTag( "faction_commander" ) == "1" )
+		var roleName = playerData.role;
+		if( roleName === "" && playerData.commander )
 			roleName = "commander";
 		myGump.AddHTMLGump( 25, y, 420, 20, 0, 0, "Role: " + CommandRoleDisplayName( roleName ) );
 		y += 30;
@@ -957,9 +980,10 @@ function CommandShowFactionRanksGump( pSock, pUser )
 	if( !pSock || !ValidateObject( pUser ) )
 		return false;
 
-	var playerFaction = pUser.GetTag( "faction" );
-	var currentRank = parseInt( pUser.GetTag( "faction_rank" ), 10 );
-	var currentPoints = parseInt( pUser.GetTag( "faction_kp" ), 10 );
+	var rankData = TriggerEvent( CommandFactionPlayerDataScriptId, "ReadFactionPlayerData", pUser );
+	var playerFaction = rankData.faction;
+	var currentRank = parseInt( rankData.rank, 10 );
+	var currentPoints = parseInt( rankData.killPoints, 10 );
 	if( isNaN( currentRank ) )
 		currentRank = -1;
 	if( isNaN( currentPoints ) )
@@ -1220,7 +1244,7 @@ function CommandClearFactionPlayerTags( pChar )
 	if( !ValidateObject( pChar ) || !pChar.isChar || pChar.npc )
 		return false;
 
-	var hadFactionData = false;
+	var hadFactionData = TriggerEvent( CommandFactionPlayerDataScriptId, "ClearFactionPlayerData", pChar );
 	var factionTags = [
 		"faction",
 		"faction_join_time",
@@ -1666,6 +1690,15 @@ function command_FACTIONDEDUPE( pSock, cmdString )
 	var removedCount = CommandDedupeFactionSetup();
 	pSock.SysMessage( "Removed " + removedCount + " duplicate faction setup item(s)." );
 	CommandShowFactionHealthGump( pSock, pUser );
+}
+
+function command_FACTIONDATAMIGRATE( pSock, cmdString )
+{
+	CommandDataMigrateActive = true;
+	CommandDataMigrateCount = 0;
+	IterateOver( "CHARACTER" );
+	CommandDataMigrateActive = false;
+	pSock.SysMessage( "Migrated/synced faction player data for " + CommandDataMigrateCount + " character(s)." );
 }
 
 function command_REMOVEFACTIONS( pSock, cmdString )
@@ -2718,7 +2751,7 @@ function command_FACTIONSILVER( pSock, cmdString )
 		targetChar = parsed.targetChar;
 	}
 
-	var currentSilver = CommandClampNonNegative( targetChar.GetTag( "faction_silver" ) );
+	var currentSilver = CommandClampNonNegative( TriggerEvent( CommandFactionPlayerDataScriptId, "GetFactionValue", targetChar, "silver", targetChar.GetTag( "faction_silver" ) ) );
 	var newSilver = currentSilver;
 
 	if( action === "add" )
@@ -2728,7 +2761,7 @@ function command_FACTIONSILVER( pSock, cmdString )
 
 	newSilver = CommandClampSilver( newSilver );
 
-	targetChar.SetTag( "faction_silver", newSilver );
+	TriggerEvent( CommandFactionPlayerDataScriptId, "SetFactionValue", targetChar, "silver", newSilver );
 	pSock.SysMessage( targetChar.name + " faction silver set to " + newSilver + "." );
 	if( targetChar.socket != null && targetChar.serial != pUser.serial )
 		targetChar.SysMessage( "Your faction silver is now " + newSilver + "." );
@@ -2740,12 +2773,12 @@ function command_FACTIONKP( pSock, cmdString )
 	if( parsed == null )
 		return;
 
-	var currentPoints = CommandClampNonNegative( parsed.targetChar.GetTag( "faction_kp" ) );
+	var currentPoints = CommandClampNonNegative( TriggerEvent( CommandFactionPlayerDataScriptId, "GetFactionValue", parsed.targetChar, "killPoints", parsed.targetChar.GetTag( "faction_kp" ) ) );
 	var newPoints = parsed.action === "add" ? currentPoints + parsed.amount : parsed.amount;
 	newPoints = CommandClampNonNegative( newPoints );
 
-	var oldRank = CommandClampNonNegative( parsed.targetChar.GetTag( "faction_rank" ) );
-	parsed.targetChar.SetTag( "faction_kp", newPoints );
+	var oldRank = CommandClampNonNegative( TriggerEvent( CommandFactionPlayerDataScriptId, "GetFactionValue", parsed.targetChar, "rank", parsed.targetChar.GetTag( "faction_rank" ) ) );
+	TriggerEvent( CommandFactionPlayerDataScriptId, "SetFactionValue", parsed.targetChar, "killPoints", newPoints );
 	var newRank = CommandUpdateFactionRank( parsed.targetChar );
 
 	pSock.SysMessage( parsed.targetChar.name + " faction kill points set to " + newPoints + " (" + CommandRankName( newRank ) + ")." );
@@ -2763,11 +2796,11 @@ function command_FACTIONCAPTURE( pSock, cmdString )
 	if( parsed == null )
 		return;
 
-	var currentCaptures = CommandClampNonNegative( parsed.targetChar.GetTag( "faction_captures" ) );
+	var currentCaptures = CommandClampNonNegative( TriggerEvent( CommandFactionPlayerDataScriptId, "GetFactionValue", parsed.targetChar, "captures", parsed.targetChar.GetTag( "faction_captures" ) ) );
 	var newCaptures = parsed.action === "add" ? currentCaptures + parsed.amount : parsed.amount;
 	newCaptures = CommandClampNonNegative( newCaptures );
 
-	parsed.targetChar.SetTag( "faction_captures", newCaptures );
+	TriggerEvent( CommandFactionPlayerDataScriptId, "SetFactionValue", parsed.targetChar, "captures", newCaptures );
 	pSock.SysMessage( parsed.targetChar.name + " faction captures set to " + newCaptures + "." );
 	if( parsed.targetChar.socket != null )
 		parsed.targetChar.SysMessage( "Your faction capture count is now " + newCaptures + "." );

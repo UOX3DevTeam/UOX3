@@ -25,6 +25,7 @@ var SigilTownDefaults = {
 };
 var SigilTownScriptId = 8509;
 var SigilStrongholdScriptId = 8511;
+var SigilPlayerDataScriptId = 8513;
 var SigilIterateMode = "";
 var SigilIterateTown = "";
 var SigilIterateSocket = null;
@@ -471,17 +472,19 @@ function SigilAwardCapture( iSigil, factionKey )
 
 	var corruptorSerial = SigilParseNumber( iSigil.GetTag( "sigil_corruptor_serial" ), 0 );
 	var corruptor = CalcCharFromSer( corruptorSerial );
-	if( ValidateObject( corruptor ) && corruptor.GetTag( "faction" ) === factionKey )
+	if( ValidateObject( corruptor ) && TriggerEvent( SigilPlayerDataScriptId, "GetFactionValue", corruptor, "faction", corruptor.GetTag( "faction" ) ) === factionKey )
 	{
-		var silver = SigilParseNumber( corruptor.GetTag( "faction_silver" ), 0 ) + SigilCaptureSilverReward;
+		var factionData = TriggerEvent( SigilPlayerDataScriptId, "ReadFactionPlayerData", corruptor );
+		var silver = SigilParseNumber( factionData.silver, 0 ) + SigilCaptureSilverReward;
 		if( silver > 100000 )
 			silver = 100000;
-		corruptor.SetTag( "faction_silver", silver );
+		factionData.silver = silver;
 
-		var killPoints = SigilParseNumber( corruptor.GetTag( "faction_kp" ), 0 ) + SigilCaptureKillPointReward;
-		corruptor.SetTag( "faction_kp", killPoints );
-		corruptor.SetTag( "faction_captures", SigilParseNumber( corruptor.GetTag( "faction_captures" ), 0 ) + 1 );
-		SigilUpdateRank( corruptor );
+		var killPoints = SigilParseNumber( factionData.killPoints, 0 ) + SigilCaptureKillPointReward;
+		factionData.killPoints = killPoints;
+		factionData.captures = SigilParseNumber( factionData.captures, 0 ) + 1;
+		factionData.rank = SigilRankForPoints( killPoints );
+		TriggerEvent( SigilPlayerDataScriptId, "WriteFactionPlayerData", corruptor, factionData );
 		if( corruptor.socket != null )
 			corruptor.SysMessage( "You earned " + SigilCaptureSilverReward + " faction silver and " + SigilCaptureKillPointReward + " kill points for capturing " + SigilDisplayTown( iSigil.GetTag( "sigil_town" ) ) + "." );
 	}
@@ -495,8 +498,15 @@ function SigilUpdateRank( pChar )
 	if( !ValidateObject( pChar ) )
 		return false;
 
+	var factionData = TriggerEvent( SigilPlayerDataScriptId, "ReadFactionPlayerData", pChar );
+	factionData.rank = SigilRankForPoints( factionData.killPoints );
+	return TriggerEvent( SigilPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
+}
+
+function SigilRankForPoints( killPoints )
+{
 	var rankPoints = [ 0, 5, 10, 20, 40, 80, 160, 320, 640, 1280 ];
-	var killPoints = SigilParseNumber( pChar.GetTag( "faction_kp" ), 0 );
+	killPoints = SigilParseNumber( killPoints, 0 );
 	var rank = 0;
 	for( var i = rankPoints.length - 1; i >= 0; i-- )
 	{
@@ -507,8 +517,7 @@ function SigilUpdateRank( pChar )
 		}
 	}
 
-	pChar.SetTag( "faction_rank", rank );
-	return true;
+	return rank;
 }
 
 function SigilCheckDropSettled( iSigil )

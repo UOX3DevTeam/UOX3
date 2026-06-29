@@ -27,8 +27,10 @@ var StoneRankNames = [
 var StoneRankPoints = [ 0, 5, 10, 20, 40, 80, 160, 320, 640, 1280 ];
 var StoneLeaveDelay = 259200000;
 var StoneSigilScriptId = 8502;
+var StoneCoreScriptId = 8500;
 var StoneElectionScriptId = 8508;
 var StoneTownScriptId = 8509;
+var StonePlayerDataScriptId = 8513;
 
 function StoneIsFactionValid( factionKey )
 {
@@ -48,7 +50,7 @@ function StoneGetFaction( pChar )
 	if( !ValidateObject( pChar ) )
 		return "";
 
-	var factionKey = pChar.GetTag( "faction" );
+	var factionKey = TriggerEvent( StonePlayerDataScriptId, "GetFactionValue", pChar, "faction", pChar.GetTag( "faction" ) );
 	if( StoneIsFactionValid( factionKey ) )
 		return factionKey;
 
@@ -57,7 +59,7 @@ function StoneGetFaction( pChar )
 
 function StoneGetRankName( pChar )
 {
-	var rank = pChar.GetTag( "faction_rank" );
+	var rank = TriggerEvent( StonePlayerDataScriptId, "GetFactionValue", pChar, "rank", pChar.GetTag( "faction_rank" ) );
 	if( rank < 0 || rank >= StoneRankNames.length )
 		rank = 0;
 
@@ -69,8 +71,9 @@ function StoneRoleName( pChar )
 	if( !ValidateObject( pChar ) )
 		return "None";
 
-	var roleName = pChar.GetTag( "faction_role" );
-	if( roleName === "commander" || pChar.GetTag( "faction_commander" ) == "1" )
+	var factionData = TriggerEvent( StonePlayerDataScriptId, "ReadFactionPlayerData", pChar );
+	var roleName = factionData.role;
+	if( roleName === "commander" || factionData.commander )
 		return "Commander";
 	if( roleName === "sheriff" )
 		return "Sheriff";
@@ -82,7 +85,8 @@ function StoneRoleName( pChar )
 
 function StoneUpdateRank( pChar )
 {
-	var killPoints = pChar.GetTag( "faction_kp" );
+	var factionData = TriggerEvent( StonePlayerDataScriptId, "ReadFactionPlayerData", pChar );
+	var killPoints = factionData.killPoints;
 	var rank = 0;
 	for( var rankIndex = StoneRankPoints.length - 1; rankIndex >= 0; rankIndex-- )
 	{
@@ -92,79 +96,18 @@ function StoneUpdateRank( pChar )
 			break;
 		}
 	}
-	pChar.SetTag( "faction_rank", rank );
+	factionData.rank = rank;
+	TriggerEvent( StonePlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
 }
 
 function StoneJoinFaction( pChar, factionKey )
 {
-	if( !StoneIsFactionValid( factionKey ) )
-	{
-		pChar.SysMessage( "Invalid faction." );
-		return false;
-	}
-
-	var currentFaction = StoneGetFaction( pChar );
-	if( currentFaction !== "" )
-	{
-		pChar.SysMessage( "You are already in the " + StoneFactionName( currentFaction ) + "." );
-		return false;
-	}
-
-	var leaveTime = pChar.GetTag( "faction_leave_time" );
-	if( leaveTime > 0 )
-	{
-		var remaining = StoneLeaveDelay - ( GetCurrentClock() - leaveTime );
-		if( remaining > 0 )
-		{
-			pChar.SysMessage( "You must wait " + Math.ceil( remaining / 3600000 ) + " more hour(s) before joining a faction." );
-			return false;
-		}
-	}
-
-	if( pChar.murdercount >= GetMurderThreshold() && ( factionKey === "TB" || factionKey === "COM" ) )
-	{
-		pChar.SysMessage( "Murderers may not join the " + StoneFactionName( factionKey ) + "." );
-		return false;
-	}
-
-	pChar.SetTag( "faction", factionKey );
-	pChar.SetTag( "faction_join_time", GetCurrentClock() );
-	pChar.SetTag( "faction_kp", 0 );
-	pChar.SetTag( "faction_silver", 0 );
-	pChar.SetTag( "faction_rank", 0 );
-	pChar.SetTag( "faction_leave_time", 0 );
-	pChar.SetTag( "faction_commander", 0 );
-	pChar.SetTag( "faction_role", "" );
-	pChar.SetTag( "faction_role_faction", "" );
-	pChar.SetTag( "faction_role_set_at", 0 );
-	TriggerEvent( 8501, "FactionCombatAttachTrigger", pChar );
-	pChar.SysMessage( "You have joined the " + StoneFactionName( factionKey ) + "." );
-	return true;
+	return TriggerEvent( StoneCoreScriptId, "JoinFaction", pChar, factionKey );
 }
 
 function StoneLeaveFaction( pChar )
 {
-	var factionKey = StoneGetFaction( pChar );
-	if( factionKey === "" )
-	{
-		pChar.SysMessage( "You are not in a faction." );
-		return false;
-	}
-
-	var cleanedCount = TriggerEvent( 8507, "CleanupFactionOwnedObjects", pChar );
-	pChar.SetTag( "faction", "" );
-	pChar.SetTag( "faction_kp", 0 );
-	pChar.SetTag( "faction_silver", 0 );
-	pChar.SetTag( "faction_rank", 0 );
-	pChar.SetTag( "faction_commander", 0 );
-	pChar.SetTag( "faction_role", "" );
-	pChar.SetTag( "faction_role_faction", "" );
-	pChar.SetTag( "faction_role_set_at", 0 );
-	pChar.SetTag( "faction_leave_time", GetCurrentClock() );
-	if( cleanedCount > 0 )
-		pChar.SysMessage( cleanedCount + " faction item(s) or mount(s) were removed." );
-	pChar.SysMessage( "You have left the " + StoneFactionName( factionKey ) + "." );
-	return true;
+	return TriggerEvent( StoneCoreScriptId, "LeaveFaction", pChar );
 }
 
 function onUseChecked( pUser, iUsed )
@@ -241,10 +184,11 @@ function ShowFactionStoneGump( pSock, pUser, stoneFaction )
 	else
 	{
 		StoneUpdateRank( pUser );
+		var factionData = TriggerEvent( StonePlayerDataScriptId, "ReadFactionPlayerData", pUser );
 		myGump.AddHTMLGump( 20, 85, 400, 20, 0, 0, "Your Faction: " + StoneFactionName( playerFaction ) );
 		myGump.AddHTMLGump( 20, 110, 400, 20, 0, 0, "Rank: " + StoneGetRankName( pUser ) );
-		myGump.AddHTMLGump( 20, 135, 400, 20, 0, 0, "Kill Points: " + pUser.GetTag( "faction_kp" ) );
-		myGump.AddHTMLGump( 20, 160, 400, 20, 0, 0, "Silver: " + pUser.GetTag( "faction_silver" ) );
+		myGump.AddHTMLGump( 20, 135, 400, 20, 0, 0, "Kill Points: " + factionData.killPoints );
+		myGump.AddHTMLGump( 20, 160, 400, 20, 0, 0, "Silver: " + factionData.silver );
 		myGump.AddHTMLGump( 20, 185, 400, 20, 0, 0, "Role: " + StoneRoleName( pUser ) );
 		myGump.AddHTMLGump( 20, 210, 400, 20, 0, 0, TriggerEvent( StoneSigilScriptId, "FactionScoreText", stoneFaction ) );
 		myGump.AddHTMLGump( 20, 235, 400, 35, 0, 0, TriggerEvent( StoneSigilScriptId, "FactionNoticeText", stoneFaction ) );

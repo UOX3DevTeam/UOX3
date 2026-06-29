@@ -9,6 +9,7 @@
 
 var CombatScriptId = 8501;
 var CombatTownScriptId = 8509;
+var CombatPlayerDataScriptId = 8513;
 var CombatRankPoints = [ 0, 5, 10, 20, 40, 80, 160, 320, 640, 1280 ];
 var CombatRankNames = [
 	"Soldier",
@@ -77,7 +78,7 @@ function CombatGetFaction( pChar )
 	if( !ValidateObject( pChar ) )
 		return "";
 
-	var factionKey = pChar.GetTag( "faction" );
+	var factionKey = TriggerEvent( CombatPlayerDataScriptId, "GetFactionValue", pChar, "faction", pChar.GetTag( "faction" ) );
 	if( CombatIsValidFaction( factionKey ) )
 		return factionKey;
 
@@ -89,7 +90,7 @@ function CombatGetKillPoints( pChar )
 	if( !ValidateObject( pChar ) )
 		return 0;
 
-	return pChar.GetTag( "faction_kp" );
+	return TriggerEvent( CombatPlayerDataScriptId, "GetFactionValue", pChar, "killPoints", pChar.GetTag( "faction_kp" ) );
 }
 
 function CombatGetSilver( pChar )
@@ -97,7 +98,7 @@ function CombatGetSilver( pChar )
 	if( !ValidateObject( pChar ) )
 		return 0;
 
-	return pChar.GetTag( "faction_silver" );
+	return TriggerEvent( CombatPlayerDataScriptId, "GetFactionValue", pChar, "silver", pChar.GetTag( "faction_silver" ) );
 }
 
 function CombatGetRank( pChar )
@@ -105,7 +106,7 @@ function CombatGetRank( pChar )
 	if( !ValidateObject( pChar ) )
 		return 0;
 
-	return pChar.GetTag( "faction_rank" );
+	return TriggerEvent( CombatPlayerDataScriptId, "GetFactionValue", pChar, "rank", pChar.GetTag( "faction_rank" ) );
 }
 
 function CombatGetRankName( pChar )
@@ -132,7 +133,7 @@ function CombatUpdateRank( pChar )
 			break;
 		}
 	}
-	pChar.SetTag( "faction_rank", rank );
+	TriggerEvent( CombatPlayerDataScriptId, "SetFactionValue", pChar, "rank", rank );
 }
 
 function CombatSetKillPoints( pChar, amount )
@@ -143,8 +144,25 @@ function CombatSetKillPoints( pChar, amount )
 	if( amount < 0 )
 		amount = 0;
 
-	pChar.SetTag( "faction_kp", amount );
-	CombatUpdateRank( pChar );
+	var factionData = TriggerEvent( CombatPlayerDataScriptId, "ReadFactionPlayerData", pChar );
+	factionData.killPoints = amount;
+	factionData.rank = CombatRankForPoints( amount );
+	TriggerEvent( CombatPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
+}
+
+function CombatRankForPoints( killPoints )
+{
+	var rank = 0;
+	for( var rankIndex = CombatRankPoints.length - 1; rankIndex >= 0; rankIndex-- )
+	{
+		if( killPoints >= CombatRankPoints[rankIndex] )
+		{
+			rank = rankIndex;
+			break;
+		}
+	}
+
+	return rank;
 }
 
 function CombatRecordPlayerKill( pKiller, pKilled, gainedKillPoints, silverReward )
@@ -193,7 +211,7 @@ function CombatSetSilver( pChar, amount )
 	if( amount > CombatMaxSilver )
 		amount = CombatMaxSilver;
 
-	pChar.SetTag( "faction_silver", amount );
+	TriggerEvent( CombatPlayerDataScriptId, "SetFactionValue", pChar, "silver", amount );
 }
 
 function CombatAddSilver( pChar, amount )
@@ -221,7 +239,7 @@ function FactionCombatOnLogin( pSock, pChar )
 		return;
 
 	var now = GetCurrentClock();
-	var lastDecay = pChar.GetTag( "faction_kp_decay_time" );
+	var lastDecay = TriggerEvent( CombatPlayerDataScriptId, "GetFactionValue", pChar, "kpDecayTime", pChar.GetTag( "faction_kp_decay_time" ) );
 	if( lastDecay > 0 )
 	{
 		var daysPassed = Math.floor( ( now - lastDecay ) / CombatKillPointDecayTime );
@@ -239,7 +257,7 @@ function FactionCombatOnLogin( pSock, pChar )
 			}
 		}
 	}
-	pChar.SetTag( "faction_kp_decay_time", now );
+	TriggerEvent( CombatPlayerDataScriptId, "SetFactionValue", pChar, "kpDecayTime", now );
 }
 
 function FactionCombatOnLogout( pSock, pChar )
@@ -248,7 +266,7 @@ function FactionCombatOnLogout( pSock, pChar )
 		return;
 
 	if( CombatGetFaction( pChar ) !== "" )
-		pChar.SetTag( "faction_kp_decay_time", GetCurrentClock() );
+		TriggerEvent( CombatPlayerDataScriptId, "SetFactionValue", pChar, "kpDecayTime", GetCurrentClock() );
 }
 
 function FactionCombatCanRewardPlayerKill( pKiller, pKilled )
@@ -279,15 +297,14 @@ function FactionCombatCanRewardPlayerKill( pKiller, pKilled )
 	}
 
 	var now = GetCurrentClock();
-	var lastKillTag = "faction_lastkill_" + pKilled.serial;
-	var lastKill = pKiller.GetTag( lastKillTag );
+	var lastKill = TriggerEvent( CombatPlayerDataScriptId, "GetRecentKillTime", pKiller, pKilled.serial );
 	if( lastKill > 0 && ( now - lastKill ) < CombatPlayerKillCooldown )
 	{
 		pKiller.SysMessage( "You recently defeated this enemy and gain no faction reward." );
 		return false;
 	}
 
-	pKiller.SetTag( lastKillTag, now );
+	TriggerEvent( CombatPlayerDataScriptId, "SetRecentKillTime", pKiller, pKilled.serial, now );
 	return true;
 }
 

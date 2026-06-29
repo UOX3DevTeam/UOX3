@@ -64,6 +64,8 @@
 						<ul>
 							<li>Updated <a href="#uox3Factions">Factions</a> documentation with generic faction NPC setup details, DFN tags and staff commands for assigning existing NPCs to factions.</li>
 							<li>Documented faction NPC kill rewards, reward tuning tags and faction NPC health/admin counts.</li>
+							<li>Added faction player-data storage details and migration command for moving faction character state into shared JSON files.</li>
+							<li>Updated elections, sigil capture rewards, faction vendors, townstone role checks and faction stones to use shared faction player data.</li>
 						</ul>
 						<h4>June 28th, 2026</h4>
 						<ul>
@@ -3190,6 +3192,7 @@ packitem=0x0f8d,30
 								<span class="hl">'factionsetup force</span> - Creates a full extra setup set intentionally.<br>
 								<span class="hl">'factionhealth</span> - Opens the faction health-check gump.<br>
 								<span class="hl">'factiondedupe</span> - Removes duplicate setup objects.<br>
+								<span class="hl">'factiondatamigrate</span> - Migrates/syncs faction player tags into shared faction player-data files.<br>
 								<span class="hl">'removefactions</span> - Removes faction objects/tags from the shard for a clean reset.</p>
 							<p>Other faction commands include <span class="hl">'factionstatus</span>, <span class="hl">'factiontowns</span>, <span class="hl">'factiontownsync</span>, <span class="hl">'factionstronghold</span>, <span class="hl">'factionsigils</span>, <span class="hl">'factionscore</span>, <span class="hl">'factionkills</span>, <span class="hl">'factionnotice</span>, <span class="hl">'factionalert</span>, <span class="hl">'factionappoint</span>, <span class="hl">'factionguard</span>, <span class="hl">'factionvendor</span>, <span class="hl">'factionnpc</span>, <span class="hl">'factionnpcclear</span>, <span class="hl">'factiontreasury</span>, <span class="hl">'factiontaxrate</span>, <span class="hl">'factiontaxstart</span>, <span class="hl">'factiontaxstop</span>, <span class="hl">'factionitemcheck</span> and <span class="hl">'factionitemcleanup</span>.</p>
 						</div>
@@ -9343,6 +9346,7 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 						<li><span class="hl">'factionhealth</span> - Opens a health-check gump showing setup object counts, town region status, strongholds, sigil homes, tax timer and faction scores.</li>
 						<li><span class="hl">'factionadmin</span> - Opens the staff faction admin gump with buttons for common setup and maintenance actions.</li>
 						<li><span class="hl">'factiondedupe</span> - Removes duplicate setup objects while keeping one controller, one join stone per faction, one faction stone per faction and one sigil per town.</li>
+						<li><span class="hl">'factiondatamigrate</span> - Migrates existing faction player tags into shared faction player-data files and refreshes mirror tags.</li>
 						<li><span class="hl">'removefactions</span> - Removes faction setup objects, faction items, faction NPCs, mounts, traps and player faction tags from the shard. This is intended for resetting a test install.</li>
 					</ul>
 					<p>A clean test setup flow is:</p>
@@ -9350,6 +9354,10 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 'factionsetup
 'factionhealth
 'factionadmin</code></pre>
+					<h4>Faction Player Data</h4>
+					<p>Faction player state is stored in shared JSON files using the same account-based pattern as the quest system. Each account gets a <span class="hl">FactionPlayers_&lt;account id&gt;.json</span> file under the faction JS data folder, with a <span class="hl">characters</span> map keyed by character serial.</p>
+					<p>The shared file stores membership, join/leave time, kill points, silver, rank, captures, commander/role state, election votes, kill-point decay timing and recent-kill reward cooldowns. A small set of mirror tags remains on the character for C++ and fast script checks, including <span class="hl">faction</span>, <span class="hl">faction_rank</span>, <span class="hl">faction_commander</span>, <span class="hl">faction_role</span> and <span class="hl">faction_role_faction</span>.</p>
+					<p>Use <span class="hl">'factiondatamigrate</span> after updating an existing shard. It reads existing faction tags from player characters, writes them into shared faction player-data files and refreshes the mirror tags used by the engine.</p>
 					<h4>Faction Admin Gump</h4>
 					<p>The <span class="hl">'factionadmin</span> command opens a staff gump for common faction administration tasks:</p>
 					<ul>
@@ -9401,6 +9409,7 @@ CUSTOMINTTAG=npc_faction_require_town_control 1</code></pre>
 					<h4>Files and Scripts</h4>
 					<ul>
 						<li><span class="hl">js/factions/factions_core.js</span> - Core join/leave, rank, silver and membership helpers.</li>
+						<li><span class="hl">js/factions/factions_playerdata.js</span> - Shared per-player faction data storage and tag migration helpers.</li>
 						<li><span class="hl">js/factions/factions_commands.js</span> - Staff and player faction commands, including setup, health and admin gumps.</li>
 						<li><span class="hl">js/factions/factions_sigils.js</span> - Sigil capture, corruption, return and faction score logic.</li>
 						<li><span class="hl">js/factions/factions_towns.js</span> - Town ownership, treasury, tax and managed faction NPC logic.</li>

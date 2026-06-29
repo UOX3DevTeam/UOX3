@@ -6,6 +6,7 @@
 
 var VendorMaxSilver = 100000;
 var VendorFactionTownScriptId = 8509;
+var VendorPlayerDataScriptId = 8513;
 
 // Stock fields:
 // [ displayName, createMode, createValue, silverCost, amount, color ]
@@ -51,7 +52,7 @@ function VendorGetFaction( pChar )
 	if( !ValidateObject( pChar ) )
 		return "";
 
-	var factionKey = pChar.GetTag( "faction" );
+	var factionKey = TriggerEvent( VendorPlayerDataScriptId, "GetFactionValue", pChar, "faction", pChar.GetTag( "faction" ) );
 	if( VendorIsFactionValid( factionKey ) )
 		return factionKey;
 
@@ -63,7 +64,7 @@ function VendorGetSilver( pChar )
 	if( !ValidateObject( pChar ) )
 		return 0;
 
-	var silver = pChar.GetTag( "faction_silver" );
+	var silver = TriggerEvent( VendorPlayerDataScriptId, "GetFactionValue", pChar, "silver", pChar.GetTag( "faction_silver" ) );
 	if( silver < 0 )
 		silver = 0;
 	if( silver > VendorMaxSilver )
@@ -82,7 +83,7 @@ function VendorSetSilver( pChar, silver )
 	if( silver > VendorMaxSilver )
 		silver = VendorMaxSilver;
 
-	pChar.SetTag( "faction_silver", silver );
+	TriggerEvent( VendorPlayerDataScriptId, "SetFactionValue", pChar, "silver", silver );
 }
 
 function VendorSpendSilver( pChar, amount )

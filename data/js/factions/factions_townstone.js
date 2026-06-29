@@ -5,6 +5,7 @@
 // =============================================================================
 
 var TownstoneTownScriptId = 8509;
+var TownstonePlayerDataScriptId = 8513;
 var TownstoneGuardCost = 250;
 var TownstoneVendorCost = 500;
 
@@ -48,12 +49,13 @@ function TownstoneHasRole( pUser, roleName, factionKey )
 	if( !ValidateObject( pUser ) || !TownstoneIsFactionValid( factionKey ) )
 		return false;
 
-	if( pUser.GetTag( "faction" ) !== factionKey )
+	var factionData = TriggerEvent( TownstonePlayerDataScriptId, "ReadFactionPlayerData", pUser );
+	if( factionData.faction !== factionKey )
 		return false;
-	if( pUser.GetTag( "faction_role" ) !== roleName )
+	if( factionData.role !== roleName )
 		return false;
 
-	return pUser.GetTag( "faction_role_faction" ) === factionKey;
+	return factionData.roleFaction === factionKey;
 }
 
 function TownstoneCanUseRole( pUser, roleName, factionKey )
