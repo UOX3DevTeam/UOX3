@@ -5801,6 +5801,21 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 			case 415:	// VENDORMAXFUNDS
 				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->VendorMaxFunds() )));
 				break;
+			case 416:	// FACTIONTOWNTAXINTERVAL
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->FactionTownTaxInterval() )));
+				break;
+			case 417:	// FACTIONTOWNDEFAULTTAXRATE
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI32>( cwmWorldState->ServerData()->FactionTownDefaultTaxRate() )));
+				break;
+			case 418:	// FACTIONTOWNTREASURYGRANT
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI32>( cwmWorldState->ServerData()->FactionTownTreasuryGrant() )));
+				break;
+			case 419:	// FACTIONTOWNGUARDLIMIT
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->FactionTownGuardLimit() )));
+				break;
+			case 420:	// FACTIONTOWNVENDORLIMIT
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->FactionTownVendorLimit() )));
+				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );
 				return false;

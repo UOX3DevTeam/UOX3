@@ -66,6 +66,54 @@ var FactionTownGuardLimit = 10;
 var FactionTownVendorLimit = 10;
 var FactionTownCountType = "";
 
+function TownIniNumber( settingName, fallbackValue, minValue )
+{
+	var settingValue = fallbackValue;
+	if( typeof GetServerSetting == "function" )
+	{
+		var rawValue = GetServerSetting( settingName );
+		var parsedValue = parseInt( rawValue, 10 );
+		if( !isNaN( parsedValue ) )
+			settingValue = parsedValue;
+	}
+
+	if( typeof minValue != "undefined" && settingValue < minValue )
+		settingValue = minValue;
+
+	return settingValue;
+}
+
+function TownDefaultTaxIntervalMinutes()
+{
+	return TownIniNumber( "FACTIONTOWNTAXINTERVAL", Math.ceil( FactionTownDefaultTaxInterval / 60000 ), 1 );
+}
+
+function TownDefaultTaxIntervalMs()
+{
+	return TownDefaultTaxIntervalMinutes() * 60000;
+}
+
+function TownDefaultTaxRate()
+{
+	return TownIniNumber( "FACTIONTOWNDEFAULTTAXRATE", FactionTownDefaultTaxRate, 0 );
+}
+
+function TownTreasuryGrantAmount()
+{
+	return TownIniNumber( "FACTIONTOWNTREASURYGRANT", FactionTownTreasuryGrant, 0 );
+}
+
+function TownDefaultNpcLimit( npcType )
+{
+	npcType = String( npcType ).toLowerCase();
+	if( npcType === "guard" )
+		return TownIniNumber( "FACTIONTOWNGUARDLIMIT", FactionTownGuardLimit, 0 );
+	if( npcType === "vendor" )
+		return TownIniNumber( "FACTIONTOWNVENDORLIMIT", FactionTownVendorLimit, 0 );
+
+	return 0;
+}
+
 function TownIsFactionValid( factionKey )
 {
 	return ( factionKey === "TB" || factionKey === "COM" || factionKey === "MIN" || factionKey === "SL" );
@@ -259,9 +307,9 @@ function RegisterController( ctrl )
 function TownTaxInterval( ctrl )
 {
 	if( !ValidateObject( ctrl ) )
-		return FactionTownDefaultTaxInterval;
+		return TownDefaultTaxIntervalMs();
 
-	var interval = TownParseNumber( ctrl.GetTag( "faction_town_tax_interval" ), FactionTownDefaultTaxInterval );
+	var interval = TownParseNumber( ctrl.GetTag( "faction_town_tax_interval" ), TownDefaultTaxIntervalMs() );
 	if( interval < 60000 )
 		interval = 60000;
 
@@ -518,12 +566,50 @@ function TownCountFactionNpcsByType( townName, factionKey, npcType )
 function TownNpcLimitForType( npcType )
 {
 	npcType = String( npcType ).toLowerCase();
-	if( npcType === "guard" )
-		return FactionTownGuardLimit;
-	if( npcType === "vendor" )
-		return FactionTownVendorLimit;
+	if( npcType !== "guard" && npcType !== "vendor" )
+		return 0;
 
-	return 0;
+	var ctrl = TownGetController();
+	if( ValidateObject( ctrl ) )
+	{
+		var tagLimit = TownParseNumber( ctrl.GetTag( "faction_town_" + npcType + "_limit" ), -1 );
+		if( tagLimit >= 0 )
+			return tagLimit;
+	}
+
+	return TownDefaultNpcLimit( npcType );
+}
+
+function TownSetNpcLimit( npcType, amount )
+{
+	npcType = String( npcType ).toLowerCase();
+	if( npcType !== "guard" && npcType !== "vendor" )
+		return false;
+
+	var ctrl = TownGetController();
+	if( !ValidateObject( ctrl ) )
+		return false;
+
+	amount = TownParseNumber( amount, TownDefaultNpcLimit( npcType ) );
+	if( amount < 0 )
+		amount = 0;
+
+	ctrl.SetTag( "faction_town_" + npcType + "_limit", amount );
+	return true;
+}
+
+function TownClearNpcLimit( npcType )
+{
+	npcType = String( npcType ).toLowerCase();
+	if( npcType !== "guard" && npcType !== "vendor" )
+		return false;
+
+	var ctrl = TownGetController();
+	if( !ValidateObject( ctrl ) )
+		return false;
+
+	ctrl.SetTag( "faction_town_" + npcType + "_limit", -1 );
+	return true;
 }
 
 function TownCanPlaceFactionNpc( townName, factionKey, npcType )
@@ -559,7 +645,7 @@ function TownNpcLimitSummary( townName, factionKey )
 
 	var guards = TownCountFactionNpcsByType( townName, factionKey, "guard" );
 	var vendors = TownCountFactionNpcsByType( townName, factionKey, "vendor" );
-	return "Faction NPC Limits: guards " + guards + "/" + FactionTownGuardLimit + ", vendors " + vendors + "/" + FactionTownVendorLimit + ".";
+	return "Faction NPC Limits: guards " + guards + "/" + TownNpcLimitForType( "guard" ) + ", vendors " + vendors + "/" + TownNpcLimitForType( "vendor" ) + ".";
 }
 
 function TownClearFactionNpcs( townName, factionKey )
@@ -710,7 +796,7 @@ function TownSpendTreasury( townName, amount )
 
 function TownGrantTreasury( townName )
 {
-	return TownAddTreasury( townName, FactionTownTreasuryGrant );
+	return TownAddTreasury( townName, TownTreasuryGrantAmount() );
 }
 
 function TownGetTaxRate( townName )
@@ -725,9 +811,9 @@ function TownGetTaxRate( townName )
 
 	var taxRate = ctrl.GetTag( TownTaxRateTag( townName ) );
 	if( taxRate === "" || taxRate == 0 )
-		return FactionTownDefaultTaxRate;
+		return TownDefaultTaxRate();
 
-	return TownParseNumber( taxRate, FactionTownDefaultTaxRate );
+	return TownParseNumber( taxRate, TownDefaultTaxRate() );
 }
 
 function TownSetTaxRate( townName, amount )
@@ -740,7 +826,7 @@ function TownSetTaxRate( townName, amount )
 	if( !ValidateObject( ctrl ) )
 		return false;
 
-	amount = TownParseNumber( amount, FactionTownDefaultTaxRate );
+	amount = TownParseNumber( amount, TownDefaultTaxRate() );
 	if( amount < 0 )
 		amount = 0;
 

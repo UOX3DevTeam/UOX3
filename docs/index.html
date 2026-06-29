@@ -27,7 +27,7 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 28. June, 2026</small></p>
+	<p style="margin:0"><small>Last Updated: 29. June, 2026</small></p>
 	<p style="margin:0"><small>Written for UOX3 Version: v0.99.7c</small></p>
 </div>
 
@@ -62,6 +62,7 @@
 					<div class="spoiler">
 						<h4>June 29th, 2026</h4>
 						<ul>
+							<li>Added data-driven faction setup details, including <span class="hl">js/jsdata/factions/faction_setup.json</span>, setup relocation mode and automatic faction townstone placement.</li>
 							<li>Updated <a href="#uox3Factions">Factions</a> documentation with generic faction NPC setup details, DFN tags and staff commands for assigning existing NPCs to factions.</li>
 							<li>Documented faction NPC kill rewards, reward tuning tags and faction NPC health/admin counts.</li>
 							<li>Added faction player-data storage details and migration command for moving faction character state into shared JSON files.</li>
@@ -3188,7 +3189,9 @@ packitem=0x0f8d,30
 							<p>Commands used to setup, manage and test the JavaScript-based faction system. See <a href="#uox3Factions">Factions</a> for full feature details.</p>
 							<p>Common setup/admin commands:<br>
 								<span class="hl">'factionadmin</span> - Opens the staff faction admin gump.<br>
-								<span class="hl">'factionsetup</span> - Creates only missing faction setup objects.<br>
+								<span class="hl">'factionsetup</span> - Creates missing setup objects from <span class="hl">js/jsdata/factions/faction_setup.json</span>.<br>
+								<span class="hl">'factionsetup relocate</span> - Moves existing setup objects to the configured JSON locations.<br>
+								<span class="hl">'factionsetup local</span> - Creates the old local testing layout around the staff character.<br>
 								<span class="hl">'factionsetup force</span> - Creates a full extra setup set intentionally.<br>
 								<span class="hl">'factionhealth</span> - Opens the faction health-check gump.<br>
 								<span class="hl">'factiondedupe</span> - Removes duplicate setup objects.<br>
@@ -9342,13 +9345,16 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 					<h4>Quick Setup</h4>
 					<p>Shard admins can install and verify the faction system in-game with the following commands:</p>
 					<ul>
-						<li><span class="hl">'factionsetup</span> - Creates only missing faction controller, join stones, faction stones and sigils. Safe to run more than once.</li>
-						<li><span class="hl">'factionhealth</span> - Opens a health-check gump showing setup object counts, town region status, strongholds, sigil homes, tax timer and faction scores.</li>
+						<li><span class="hl">'factionsetup</span> - Creates only missing faction controller, join stones, faction stones, sigils and faction townstones from <span class="hl">js/jsdata/factions/faction_setup.json</span>. Safe to run more than once.</li>
+						<li><span class="hl">'factionsetup relocate</span> - Moves existing setup objects to the configured JSON locations without creating duplicates.</li>
+						<li><span class="hl">'factionsetup local</span> - Uses the old local testing layout around the staff character.</li>
+						<li><span class="hl">'factionhealth</span> - Opens a health-check gump showing setup object counts, townstones, town region status, strongholds, sigil homes, tax timer and faction scores.</li>
 						<li><span class="hl">'factionadmin</span> - Opens the staff faction admin gump with buttons for common setup and maintenance actions.</li>
-						<li><span class="hl">'factiondedupe</span> - Removes duplicate setup objects while keeping one controller, one join stone per faction, one faction stone per faction and one sigil per town.</li>
+						<li><span class="hl">'factiondedupe</span> - Removes duplicate setup objects while keeping one controller, one join stone per faction, one faction stone per faction, one sigil per town and one faction townstone per town.</li>
 						<li><span class="hl">'factiondatamigrate</span> - Migrates existing faction player tags into shared faction player-data files and refreshes mirror tags.</li>
 						<li><span class="hl">'removefactions</span> - Removes faction setup objects, faction items, faction NPCs, mounts, traps and player faction tags from the shard. This is intended for resetting a test install.</li>
 					</ul>
+					<p>The setup JSON is read with the same static <span class="hl">js/jsdata</span> pattern used by the quest system. It stores the default stone, sigil, townstone and stronghold coordinates, so shard admins can adjust faction layout without recompiling or editing the command script.</p>
 					<p>A clean test setup flow is:</p>
 					<pre><code class="language-javascript">'removefactions
 'factionsetup
@@ -9372,7 +9378,7 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 					</ul>
 					<h4>Towns, Townstones and Regions</h4>
 					<p>Faction town ownership is stored on the faction controller and synchronized to town regions. When a faction controls a town, that town's region guard owner is updated and faction NPCs can be managed for that town.</p>
-					<p>Townstones include a <span class="hl">Faction Control</span> option that opens the faction townstone panel for the current town. Through this panel, staff and authorized faction roles can view town ownership, managed NPCs, treasury and tax status. Sheriffs can place faction guards, while finance ministers can place faction vendors, provided the town is controlled by their faction and has enough treasury silver.</p>
+					<p><span class="hl">'factionsetup</span> places faction townstones from the setup JSON and links each one to its configured town region. Double-clicking a faction townstone opens the faction townstone panel for that town. Through this panel, staff and authorized faction roles can view town ownership, managed NPCs, treasury and tax status. Sheriffs can place faction guards, while finance ministers can place faction vendors, provided the town is controlled by their faction and has enough treasury silver.</p>
 					<h4>Faction NPCs</h4>
 					<p>Faction NPC support is split into managed town NPCs and generic faction-aligned NPCs. Managed NPCs are placed through <span class="hl">'factionguard</span>, <span class="hl">'factionvendor</span> or the townstone faction panel, count against town guard/vendor limits and are deleted by <span class="hl">'removefactions</span>. Generic faction NPCs are regular NPCs with faction allegiance tags, can be created in DFNs or assigned in-game and are cleared rather than deleted by <span class="hl">'removefactions</span>.</p>
 					<p>To make a custom DFN NPC belong to a faction, attach the generic faction NPC script and set <span class="hl">npc_faction</span> to one of <span class="hl">TB</span>, <span class="hl">COM</span>, <span class="hl">MIN</span> or <span class="hl">SL</span>:</p>
@@ -9411,6 +9417,7 @@ CUSTOMINTTAG=npc_faction_require_town_control 1</code></pre>
 						<li><span class="hl">js/factions/factions_core.js</span> - Core join/leave, rank, silver and membership helpers.</li>
 						<li><span class="hl">js/factions/factions_playerdata.js</span> - Shared per-player faction data storage and tag migration helpers.</li>
 						<li><span class="hl">js/factions/factions_commands.js</span> - Staff and player faction commands, including setup, health and admin gumps.</li>
+						<li><span class="hl">js/factions/factions_setupdata.js</span> and <span class="hl">js/jsdata/factions/faction_setup.json</span> - Data-driven faction setup loader and default setup coordinates.</li>
 						<li><span class="hl">js/factions/factions_sigils.js</span> - Sigil capture, corruption, return and faction score logic.</li>
 						<li><span class="hl">js/factions/factions_towns.js</span> - Town ownership, treasury, tax and managed faction NPC logic.</li>
 						<li><span class="hl">js/factions/factions_townstone.js</span> - Townstone faction control panel.</li>

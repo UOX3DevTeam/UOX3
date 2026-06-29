@@ -427,6 +427,11 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"VENDORITEMFEEAMOUNT", 413},
 	{"ONLYRETURNTOBANK", 414},
 	{"VENDORMAXFUNDS", 415},
+	{"FACTIONTOWNTAXINTERVAL", 416},
+	{"FACTIONTOWNDEFAULTTAXRATE", 417},
+	{"FACTIONTOWNTREASURYGRANT", 418},
+	{"FACTIONTOWNGUARDLIMIT", 419},
+	{"FACTIONTOWNVENDORLIMIT", 420},
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -1064,6 +1069,11 @@ auto CServerData::ResetDefaults() -> void
 	TownNumSecsAsMayor( 36000 );	// 10 hours as mayor
 	TownTaxPeriod( 1800 );			// taxed every 30 minutes
 	TownGuardPayment( 3600 );		// guards paid every hour
+	FactionTownTaxInterval( 60 );	// faction towns tax every hour
+	FactionTownDefaultTaxRate( 100 );
+	FactionTownTreasuryGrant( 1000 );
+	FactionTownGuardLimit( 10 );
+	FactionTownVendorLimit( 10 );
 
 	SetClientFeature( CF_BIT_CHAT, true );
 	SetClientFeature( CF_BIT_UOR, true );
@@ -5143,6 +5153,76 @@ auto CServerData::TownGuardPayment( UI32 value ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::FactionTownTaxInterval()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default faction town tax interval in minutes
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::FactionTownTaxInterval() const -> UI32
+{
+	return factionTownTaxInterval;
+}
+auto CServerData::FactionTownTaxInterval( UI32 value ) -> void
+{
+	factionTownTaxInterval = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::FactionTownDefaultTaxRate()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default faction town tax income per cycle
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::FactionTownDefaultTaxRate() const -> SI32
+{
+	return factionTownDefaultTaxRate;
+}
+auto CServerData::FactionTownDefaultTaxRate( SI32 value ) -> void
+{
+	factionTownDefaultTaxRate = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::FactionTownTreasuryGrant()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default faction town treasury grant amount
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::FactionTownTreasuryGrant() const -> SI32
+{
+	return factionTownTreasuryGrant;
+}
+auto CServerData::FactionTownTreasuryGrant( SI32 value ) -> void
+{
+	factionTownTreasuryGrant = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::FactionTownGuardLimit()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default managed faction guard limit per town
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::FactionTownGuardLimit() const -> SI16
+{
+	return factionTownGuardLimit;
+}
+auto CServerData::FactionTownGuardLimit( SI16 value ) -> void
+{
+	factionTownGuardLimit = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::FactionTownVendorLimit()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default managed faction vendor limit per town
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::FactionTownVendorLimit() const -> SI16
+{
+	return factionTownVendorLimit;
+}
+auto CServerData::FactionTownVendorLimit( SI16 value ) -> void
+{
+	factionTownVendorLimit = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::RepMaxKills()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the threshold in player kills before a player turns red (murderer)
@@ -6198,6 +6278,11 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "MAYORTIME=" << TownNumSecsAsMayor() << '\n';
 		ofsOutput << "TAXPERIOD=" << TownTaxPeriod() << '\n';
 		ofsOutput << "GUARDSPAID=" << TownGuardPayment() << '\n';
+		ofsOutput << "FACTIONTOWNTAXINTERVAL=" << FactionTownTaxInterval() << '\n';
+		ofsOutput << "FACTIONTOWNDEFAULTTAXRATE=" << FactionTownDefaultTaxRate() << '\n';
+		ofsOutput << "FACTIONTOWNTREASURYGRANT=" << FactionTownTreasuryGrant() << '\n';
+		ofsOutput << "FACTIONTOWNGUARDLIMIT=" << FactionTownGuardLimit() << '\n';
+		ofsOutput << "FACTIONTOWNVENDORLIMIT=" << FactionTownVendorLimit() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[disabled assistant features]" << '\n' << "{" << '\n';
@@ -7755,6 +7840,21 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 415: // VENDORMAXFUNDS
 			VendorMaxFunds( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 416: // FACTIONTOWNTAXINTERVAL
+			FactionTownTaxInterval( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 417: // FACTIONTOWNDEFAULTTAXRATE
+			FactionTownDefaultTaxRate( static_cast<SI32>( std::stoi( value, nullptr, 0 )));
+			break;
+		case 418: // FACTIONTOWNTREASURYGRANT
+			FactionTownTreasuryGrant( static_cast<SI32>( std::stoi( value, nullptr, 0 )));
+			break;
+		case 419: // FACTIONTOWNGUARDLIMIT
+			FactionTownGuardLimit( static_cast<SI16>( std::stoi( value, nullptr, 0 )));
+			break;
+		case 420: // FACTIONTOWNVENDORLIMIT
+			FactionTownVendorLimit( static_cast<SI16>( std::stoi( value, nullptr, 0 )));
 			break;
 		default:
 			rValue = false;

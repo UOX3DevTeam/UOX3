@@ -104,6 +104,39 @@ function StrongholdSet( factionKey, pChar, range )
 	return true;
 }
 
+function StrongholdSetLocation( factionKey, x, y, z, worldNum, instanceId, range )
+{
+	StrongholdLastErrorText = "";
+	factionKey = String( factionKey ).toUpperCase();
+	if( !StrongholdIsFactionValid( factionKey ) )
+		return StrongholdSetLastError( "Invalid faction." );
+
+	var ctrl = StrongholdGetController();
+	if( !ValidateObject( ctrl ) )
+		return StrongholdSetLastError( "Faction controller was not found. Run 'factionsetup or create a faction controller first." );
+
+	x = StrongholdParseNumber( x, 0 );
+	y = StrongholdParseNumber( y, 0 );
+	z = StrongholdParseNumber( z, 0 );
+	worldNum = StrongholdParseNumber( worldNum, 0 );
+	instanceId = StrongholdParseNumber( instanceId, 0 );
+	range = StrongholdParseNumber( range, StrongholdDefaultRange );
+	if( range < 1 )
+		range = 1;
+	if( range > 100 )
+		range = 100;
+
+	ctrl.SetTag( StrongholdTag( factionKey, "x" ), x );
+	ctrl.SetTag( StrongholdTag( factionKey, "y" ), y );
+	ctrl.SetTag( StrongholdTag( factionKey, "z" ), z );
+	ctrl.SetTag( StrongholdTag( factionKey, "world" ), worldNum );
+	ctrl.SetTag( StrongholdTag( factionKey, "instance" ), instanceId );
+	ctrl.SetTag( StrongholdTag( factionKey, "range" ), range );
+	ctrl.SetTag( StrongholdTag( factionKey, "configured" ), 1 );
+	ctrl.SetTag( StrongholdTag( factionKey, "set_at" ), GetCurrentClock() );
+	return true;
+}
+
 function StrongholdIsConfigured( factionKey )
 {
 	factionKey = String( factionKey ).toUpperCase();

@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "source": "faction setup for UOX3.",
+  "world": 0,
+  "instance": 0,
+  "factions": {
+    "TB": {
+      "name": "True Britannians",
+      "joinStone": { "x": 1419, "y": 1622, "z": 20 },
+      "factionStone": { "x": 1330, "y": 1621, "z": 50 },
+      "stronghold": { "center": { "x": 1330, "y": 1621, "z": 50 }, "range": 24 }
+    },
+    "COM": {
+      "name": "Council of Mages",
+      "joinStone": { "x": 4469, "y": 1486, "z": 0 },
+      "factionStone": { "x": 4457, "y": 1544, "z": 0 },
+      "stronghold": { "center": { "x": 4457, "y": 1544, "z": 0 }, "range": 24 }
+    },
+    "MIN": {
+      "name": "Minax",
+      "joinStone": { "x": 1172, "y": 2593, "z": 0 },
+      "factionStone": { "x": 1117, "y": 2587, "z": 18 },
+      "stronghold": { "center": { "x": 1117, "y": 2587, "z": 18 }, "range": 24 }
+    },
+    "SL": {
+      "name": "Shadowlords",
+      "joinStone": { "x": 969, "y": 768, "z": 0 },
+      "factionStone": { "x": 947, "y": 713, "z": 0 },
+      "stronghold": { "center": { "x": 947, "y": 713, "z": 0 }, "range": 24 }
+    }
+  },
+  "towns": {
+    "Britain": {
+      "section": "FACTION_SIGIL_BRITAIN",
+      "region": 3,
+      "owner": "TB",
+      "sigil": { "x": 1592, "y": 1680, "z": 10 },
+      "townStone": { "x": 1588, "y": 1676, "z": 10 }
+    },
+    "Trinsic": {
+      "section": "FACTION_SIGIL_TRINSIC",
+      "region": 9,
+      "owner": "TB",
+      "sigil": { "x": 1914, "y": 2717, "z": 20 },
+      "townStone": { "x": 1909, "y": 2720, "z": 20 }
+    },
+    "Moonglow": {
+      "section": "FACTION_SIGIL_MOONGLOW",
+      "region": 13,
+      "owner": "COM",
+      "sigil": { "x": 4436, "y": 1083, "z": 0 },
+      "townStone": { "x": 4432, "y": 1086, "z": 0 }
+    },
+    "SkaraBrae": {
+      "section": "FACTION_SIGIL_SKARABRAE",
+      "region": 8,
+      "owner": "COM",
+      "sigil": { "x": 576, "y": 2200, "z": 0 },
+      "townStone": { "x": 572, "y": 2196, "z": 0 }
+    },
+    "Yew": {
+      "section": "FACTION_SIGIL_YEW",
+      "region": 7,
+      "owner": "MIN",
+      "sigil": { "x": 548, "y": 979, "z": 0 },
+      "townStone": { "x": 542, "y": 980, "z": 0 }
+    },
+    "Vesper": {
+      "section": "FACTION_SIGIL_VESPER",
+      "region": 11,
+      "owner": "MIN",
+      "sigil": { "x": 2982, "y": 818, "z": 0 },
+      "townStone": { "x": 2985, "y": 821, "z": 0 }
+    },
+    "Minoc": {
+      "section": "FACTION_SIGIL_MINOC",
+      "region": 12,
+      "owner": "SL",
+      "sigil": { "x": 2471, "y": 439, "z": 15 },
+      "townStone": { "x": 2469, "y": 445, "z": 15 }
+    },
+    "Cove": {
+      "section": "FACTION_SIGIL_COVE",
+      "region": 10,
+      "owner": "SL",
+      "sigil": { "x": 2232, "y": 1199, "z": 0 },
+      "townStone": { "x": 2232, "y": 1199, "z": 0 }
+    }
+  }
+}

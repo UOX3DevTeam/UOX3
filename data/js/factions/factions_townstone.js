@@ -78,6 +78,32 @@ function TownstoneCurrentTown( pUser )
 	return townName;
 }
 
+function onUseChecked( pUser, iUsed )
+{
+	if( !ValidateObject( pUser ) || !ValidateObject( iUsed ) )
+		return false;
+
+	var townRegionId = parseInt( iUsed.GetTag( "faction_town_region" ), 10 );
+	if( isNaN( townRegionId ) || townRegionId <= 0 )
+		townRegionId = parseInt( iUsed.GetTag( "town_region" ), 10 );
+	if( isNaN( townRegionId ) || townRegionId <= 0 )
+	{
+		if( iUsed.region != null && typeof iUsed.region.id != "undefined" )
+			townRegionId = iUsed.region.id;
+	}
+
+	if( isNaN( townRegionId ) || townRegionId <= 0 )
+	{
+		pUser.SysMessage( "This faction townstone is not linked to a town region." );
+		return false;
+	}
+
+	if( pUser.socket == null )
+		return false;
+
+	return OpenFactionTownstone( pUser.socket, pUser, townRegionId );
+}
+
 function TownstoneSpawnNpc( pSock, pUser, factionKey, npcType, vendorType )
 {
 	var townName = TownstoneCurrentTown( pUser );

@@ -12,6 +12,7 @@ var CommandFactionTownScriptId = 8509;
 var CommandFactionStrongholdScriptId = 8511;
 var CommandFactionNpcScriptId = 8512;
 var CommandFactionPlayerDataScriptId = 8513;
+var CommandFactionSetupDataScriptId = 8514;
 var CommandFactionGuardCost = 250;
 var CommandFactionVendorCost = 500;
 var CommandFactionAdminHealthButton = 9001;
@@ -90,6 +91,7 @@ var CommandHealthFactionStoneCount = 0;
 var CommandHealthJoinStoneCount = 0;
 var CommandHealthSigilCount = 0;
 var CommandHealthSigilHomeCount = 0;
+var CommandHealthTownstoneCount = 0;
 var CommandHealthFactionNpcCounts = {};
 var CommandSetupScanActive = false;
 var CommandSetupFound = {};
@@ -129,6 +131,7 @@ function CommandRegistration()
 	RegisterCommand( "factiontownsync", 5, true );
 	RegisterCommand( "factiontownnpcs", 5, true );
 	RegisterCommand( "factiontownclear", 5, true );
+	RegisterCommand( "factiontownlimit", 5, true );
 	RegisterCommand( "factiontreasury", 0, true );
 	RegisterCommand( "factiontreasurygrant", 5, true );
 	RegisterCommand( "factiontreasuryset", 5, true );
@@ -609,6 +612,8 @@ function onIterate( toCheck )
 				if( toCheck.GetTag( "sigil_home_set" ) == 1 )
 					CommandHealthSigilHomeCount++;
 			}
+			if( toCheck.GetTag( "faction_townstone" ) == 1 )
+				CommandHealthTownstoneCount++;
 		}
 		else if( ValidateObject( toCheck ) && toCheck.isChar && toCheck.npc && toCheck.GetTag( "faction_npc" ) == 1 )
 		{
@@ -724,6 +729,262 @@ function CommandPlaceFactionItem( pSock, pUser, sectionId, xOffset, yOffset )
 	return newItem;
 }
 
+function CommandPlaceFactionItemAt( pSock, pUser, sectionId, location )
+{
+	var newItem = CreateDFNItem( pSock, pUser, sectionId, 1, "ITEM", false );
+	if( !ValidateObject( newItem ) )
+		return null;
+
+	var worldNum = typeof location.world == "undefined" ? 0 : parseInt( location.world, 10 );
+	var instanceId = typeof location.instance == "undefined" ? 0 : parseInt( location.instance, 10 );
+	if( isNaN( worldNum ) )
+		worldNum = 0;
+	if( isNaN( instanceId ) )
+		instanceId = 0;
+
+	newItem.SetLocation( parseInt( location.x, 10 ), parseInt( location.y, 10 ), parseInt( location.z, 10 ), worldNum, instanceId );
+	return newItem;
+}
+
+function CommandSetupOptions( cmdString )
+{
+	var setupText = String( cmdString ).replace( /^\s+|\s+$/g, "" ).toLowerCase();
+	var parts = setupText.length > 0 ? setupText.split( /\s+/ ) : [];
+	var options = {
+		force: false,
+		local: false,
+		relocate: false
+	};
+
+	for( var partIndex = 0; partIndex < parts.length; partIndex++ )
+	{
+		if( parts[partIndex] === "force" )
+			options.force = true;
+		else if( parts[partIndex] === "local" )
+			options.local = true;
+		else if( parts[partIndex] === "relocate" )
+			options.relocate = true;
+	}
+
+	return options;
+}
+
+function CommandSetupCreateController( pSock, pUser, forceSetup, stats )
+{
+	var controller = null;
+	if( !forceSetup )
+		controller = CommandSetupFoundObject( "controller" );
+
+	if( !ValidateObject( controller ) )
+	{
+		controller = CreateDFNItem( pSock, pUser, "FACTION_CONTROLLER", 1, "ITEM", true );
+		if( ValidateObject( controller ) )
+		{
+			stats.created++;
+			pSock.SysMessage( "Faction controller created in your backpack." );
+		}
+		else
+		{
+			pSock.SysMessage( "Unable to create faction controller." );
+			return null;
+		}
+	}
+	else
+	{
+		stats.skipped++;
+		pSock.SysMessage( "Existing faction controller found; skipping controller creation." );
+	}
+
+	TriggerEvent( CommandFactionElectionScriptId, "RegisterController", controller );
+	TriggerEvent( CommandFactionTownScriptId, "RegisterController", controller );
+	return controller;
+}
+
+function CommandMoveFactionSetupItem( setupItem, location )
+{
+	var worldNum = typeof location.world == "undefined" ? 0 : parseInt( location.world, 10 );
+	var instanceId = typeof location.instance == "undefined" ? 0 : parseInt( location.instance, 10 );
+	if( isNaN( worldNum ) )
+		worldNum = 0;
+	if( isNaN( instanceId ) )
+		instanceId = 0;
+
+	setupItem.SetLocation( parseInt( location.x, 10 ), parseInt( location.y, 10 ), parseInt( location.z, 10 ), worldNum, instanceId );
+	if( setupItem.GetTag( "sigil" ) == 1 )
+		TriggerEvent( CommandFactionSigilScriptId, "SigilSetHome", setupItem );
+}
+
+function CommandTagFactionTownstone( townstone, townName, townData )
+{
+	if( !ValidateObject( townstone ) )
+		return false;
+
+	townstone.name = "Faction Townstone of " + townName;
+	townstone.SetTag( "faction_townstone", 1 );
+	townstone.SetTag( "faction_town", townName );
+	townstone.SetTag( "faction_town_region", townData.region );
+	townstone.SetTag( "faction_town_owner", townData.owner );
+	townstone.AddScriptTrigger( 8510 );
+	return true;
+}
+
+function CommandSetupPlaceSection( pSock, pUser, sectionId, location, forceSetup, relocateSetup, stats )
+{
+	if( location == null || typeof location != "object" )
+	{
+		pSock.SysMessage( "No location configured for " + sectionId + "." );
+		stats.failed++;
+		return null;
+	}
+
+	var setupKey = CommandSetupSectionKey( sectionId );
+	var existingItem = CommandSetupFoundObject( setupKey );
+	if( !forceSetup && ValidateObject( existingItem ) )
+	{
+		if( relocateSetup )
+		{
+			CommandMoveFactionSetupItem( existingItem, location );
+			stats.relocated++;
+		}
+		else
+			stats.skipped++;
+		return existingItem;
+	}
+
+	var newItem = CommandPlaceFactionItemAt( pSock, pUser, sectionId, location );
+	if( ValidateObject( newItem ) )
+	{
+		if( newItem.GetTag( "sigil" ) == 1 )
+			TriggerEvent( CommandFactionSigilScriptId, "SigilSetHome", newItem );
+		stats.created++;
+		return newItem;
+	}
+
+	pSock.SysMessage( "Unable to create " + sectionId + "." );
+	stats.failed++;
+	return null;
+}
+
+function CommandSetupPlaceTownstone( pSock, pUser, townName, townData, forceSetup, relocateSetup, stats )
+{
+	if( townData.townStone == null || typeof townData.townStone != "object" )
+		return null;
+
+	var setupKey = "townstone_" + townName;
+	var existingItem = CommandSetupFoundObject( setupKey );
+	if( !forceSetup && ValidateObject( existingItem ) )
+	{
+		CommandTagFactionTownstone( existingItem, townName, townData );
+		if( relocateSetup )
+		{
+			CommandMoveFactionSetupItem( existingItem, townData.townStone );
+			stats.relocated++;
+		}
+		else
+			stats.skipped++;
+		return existingItem;
+	}
+
+	var newItem = CommandPlaceFactionItemAt( pSock, pUser, "townstone", townData.townStone );
+	if( ValidateObject( newItem ) )
+	{
+		CommandTagFactionTownstone( newItem, townName, townData );
+		stats.created++;
+		return newItem;
+	}
+
+	pSock.SysMessage( "Unable to create faction townstone for " + townName + "." );
+	stats.failed++;
+	return null;
+}
+
+function CommandFactionSectionId( prefix, factionKey )
+{
+	return prefix + "_" + factionKey;
+}
+
+function CommandSetupFromData( pSock, pUser, forceSetup, relocateSetup, stats )
+{
+	var setupData = TriggerEvent( CommandFactionSetupDataScriptId, "ReloadFactionSetupData" );
+	if( setupData == null )
+	{
+		pSock.SysMessage( "Unable to load faction setup data: " + TriggerEvent( CommandFactionSetupDataScriptId, "SetupDataLastError" ) );
+		return false;
+	}
+
+	var factionOrder = [ "TB", "COM", "MIN", "SL" ];
+	for( var factionIndex = 0; factionIndex < factionOrder.length; factionIndex++ )
+	{
+		var factionKey = factionOrder[factionIndex];
+		var factionData = setupData.factions[factionKey];
+		if( factionData == null )
+		{
+			pSock.SysMessage( "No setup data found for faction " + factionKey + "." );
+			stats.failed++;
+			continue;
+		}
+
+		CommandSetupPlaceSection( pSock, pUser, CommandFactionSectionId( "JOIN_STONE", factionKey ), factionData.joinStone, forceSetup, relocateSetup, stats );
+		CommandSetupPlaceSection( pSock, pUser, CommandFactionSectionId( "FACTION_STONE", factionKey ), factionData.factionStone, forceSetup, relocateSetup, stats );
+
+		if( factionData.stronghold && factionData.stronghold.center )
+		{
+			var center = factionData.stronghold.center;
+			if( TriggerEvent( CommandFactionStrongholdScriptId, "StrongholdSetLocation", factionKey, center.x, center.y, center.z, center.world, center.instance, factionData.stronghold.range ) )
+				stats.strongholds++;
+			else
+				pSock.SysMessage( "Unable to configure " + factionKey + " stronghold: " + TriggerEvent( CommandFactionStrongholdScriptId, "StrongholdLastError" ) );
+		}
+	}
+
+	for( var townName in setupData.towns )
+	{
+		if( !setupData.towns.hasOwnProperty( townName ) )
+			continue;
+
+		var townData = setupData.towns[townName];
+		if( townData.enabled === false )
+		{
+			stats.skipped++;
+			continue;
+		}
+
+		CommandSetupPlaceSection( pSock, pUser, townData.section, townData.sigil, forceSetup, relocateSetup, stats );
+		CommandSetupPlaceTownstone( pSock, pUser, townName, townData, forceSetup, relocateSetup, stats );
+	}
+
+	return true;
+}
+
+function CommandSetupLocal( pSock, pUser, forceSetup, stats )
+{
+	for( var itemIndex = 0; itemIndex < CommandFactionSetupItems.length; itemIndex++ )
+	{
+		var setupItem = CommandFactionSetupItems[itemIndex];
+		var setupKey = CommandSetupSectionKey( setupItem[0] );
+		if( !forceSetup && ValidateObject( CommandSetupFoundObject( setupKey ) ) )
+		{
+			stats.skipped++;
+			continue;
+		}
+
+		var newItem = CommandPlaceFactionItem( pSock, pUser, setupItem[0], setupItem[1], setupItem[2] );
+		if( ValidateObject( newItem ) )
+		{
+			if( newItem.GetTag( "sigil" ) == 1 )
+				TriggerEvent( CommandFactionSigilScriptId, "SigilSetHome", newItem );
+			stats.created++;
+		}
+		else
+		{
+			stats.failed++;
+			pSock.SysMessage( "Unable to create " + setupItem[0] + "." );
+		}
+	}
+
+	return true;
+}
+
 function CommandSetupScanItems()
 {
 	CommandSetupFound = {};
@@ -791,66 +1052,44 @@ function command_FACTIONSETUP( pSock, cmdString )
 	if( !ValidateObject( pUser ) )
 		return;
 
-	var setupText = String( cmdString ).replace( /^\s+|\s+$/g, "" ).toLowerCase();
-	var forceSetup = ( setupText === "force" );
-	var createdCount = 0;
-	var skippedCount = 0;
-	var controller = null;
+	var setupOptions = CommandSetupOptions( cmdString );
+	var stats = {
+		created: 0,
+		skipped: 0,
+		failed: 0,
+		relocated: 0,
+		strongholds: 0
+	};
 
-	if( !forceSetup )
+	if( !setupOptions.force )
 		CommandSetupScanItems();
 
-	if( !forceSetup )
-		controller = CommandSetupFoundObject( "controller" );
-
+	var controller = CommandSetupCreateController( pSock, pUser, setupOptions.force, stats );
 	if( !ValidateObject( controller ) )
 	{
-		controller = CreateDFNItem( pSock, pUser, "FACTION_CONTROLLER", 1, "ITEM", true );
-		if( ValidateObject( controller ) )
-		{
-			createdCount++;
-			pSock.SysMessage( "Faction controller created in your backpack." );
-		}
-		else
-		{
-			pSock.SysMessage( "Unable to create faction controller." );
-			return;
-		}
+		CommandSetupFound = {};
+		CommandSetupRanks = {};
+		return;
 	}
-	else
+
+	var setupOk = setupOptions.local ? CommandSetupLocal( pSock, pUser, setupOptions.force, stats ) : CommandSetupFromData( pSock, pUser, setupOptions.force, setupOptions.relocate, stats );
+	if( !setupOk )
 	{
-		skippedCount++;
-		pSock.SysMessage( "Existing faction controller found; skipping controller creation." );
+		CommandSetupFound = {};
+		CommandSetupRanks = {};
+		return;
 	}
 
-	TriggerEvent( CommandFactionElectionScriptId, "RegisterController", controller );
-	TriggerEvent( CommandFactionTownScriptId, "RegisterController", controller );
-
-	for( var itemIndex = 0; itemIndex < CommandFactionSetupItems.length; itemIndex++ )
-	{
-		var setupItem = CommandFactionSetupItems[itemIndex];
-		var setupKey = CommandSetupSectionKey( setupItem[0] );
-		if( !forceSetup && ValidateObject( CommandSetupFoundObject( setupKey ) ) )
-		{
-			skippedCount++;
-			continue;
-		}
-
-		var newItem = CommandPlaceFactionItem( pSock, pUser, setupItem[0], setupItem[1], setupItem[2] );
-		if( ValidateObject( newItem ) )
-		{
-			if( newItem.GetTag( "sigil" ) == 1 )
-				TriggerEvent( CommandFactionSigilScriptId, "SigilSetHome", newItem );
-			createdCount++;
-		}
-		else
-			pSock.SysMessage( "Unable to create " + setupItem[0] + "." );
-	}
-
-	if( forceSetup )
-		pSock.SysMessage( "Faction setup force-placed " + createdCount + " setup item(s) around you." );
+	if( setupOptions.force && setupOptions.local )
+		pSock.SysMessage( "Faction setup force-placed " + stats.created + " setup item(s) around you." );
+	else if( setupOptions.force )
+		pSock.SysMessage( "Faction setup force-placed " + stats.created + " setup item(s) from data." );
+	else if( setupOptions.local )
+		pSock.SysMessage( "Faction local setup created " + stats.created + " missing setup item(s), skipped " + stats.skipped + " existing item(s)." );
 	else
-		pSock.SysMessage( "Faction setup created " + createdCount + " missing setup item(s), skipped " + skippedCount + " existing item(s)." );
+		pSock.SysMessage( "Faction data setup created " + stats.created + " missing setup item(s), moved " + stats.relocated + " existing item(s), skipped " + stats.skipped + " existing item(s), configured " + stats.strongholds + " stronghold(s)." );
+	if( stats.failed > 0 )
+		pSock.SysMessage( "Faction setup had " + stats.failed + " failure(s); check the console and setup data." );
 
 	if( TriggerEvent( CommandFactionTownScriptId, "SyncTownControl" ) )
 		pSock.SysMessage( "Faction town ownership synced." );
@@ -1091,6 +1330,7 @@ function CommandHealthScanItems()
 	CommandHealthJoinStoneCount = 0;
 	CommandHealthSigilCount = 0;
 	CommandHealthSigilHomeCount = 0;
+	CommandHealthTownstoneCount = 0;
 	CommandHealthFactionNpcCounts = { TB: 0, COM: 0, MIN: 0, SL: 0 };
 	CommandHealthScanActive = true;
 	IterateOver( "ITEM" );
@@ -1132,6 +1372,14 @@ function CommandDedupeItemKey( iItem )
 		var sigilTown = iItem.GetTag( "sigil_town" );
 		if( sigilTown !== "" && sigilTown != 0 )
 			return "sigil_" + sigilTown;
+		return "";
+	}
+
+	if( iItem.GetTag( "faction_townstone" ) == 1 )
+	{
+		var factionTownstoneTown = iItem.GetTag( "faction_town" );
+		if( factionTownstoneTown !== "" && factionTownstoneTown != 0 )
+			return "townstone_" + factionTownstoneTown;
 		return "";
 	}
 
@@ -1201,6 +1449,8 @@ function CommandIsFactionSetupItem( iItem )
 	if( iItem.GetTag( "join_stone" ) == 1 )
 		return true;
 	if( iItem.GetTag( "sigil" ) == 1 )
+		return true;
+	if( iItem.GetTag( "faction_townstone" ) == 1 )
 		return true;
 
 	return false;
@@ -1504,6 +1754,8 @@ function CommandShowFactionHealthGump( pSock, pUser )
 	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, CommandHealthLine( CommandHealthSigilCount === 8, "Sigils", CommandHealthSigilCount + " found, expected 8" ) );
 	y += 25;
 	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, CommandHealthLine( CommandHealthSigilHomeCount === 8, "Sigil homes", CommandHealthSigilHomeCount + " set, expected 8" ) );
+	y += 25;
+	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, CommandHealthLine( CommandHealthTownstoneCount === 8, "Townstones", CommandHealthTownstoneCount + " found, expected 8" ) );
 	y += 30;
 
 	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, CommandHealthLine( regionSummary.loaded === regionSummary.total, "Town regions", regionSummary.loaded + "/" + regionSummary.total + " loaded" ) );
@@ -1564,7 +1816,7 @@ function CommandShowFactionAdminGump( pSock, pUser )
 	myGump.AddBackground( 0, 0, 520, 455, 9200 );
 	myGump.AddHTMLGump( 20, 15, 480, 25, 0, 0, "<CENTER><b>Faction Admin</b></CENTER>" );
 	myGump.AddHTMLGump( 25, 50, 470, 20, 0, 0, "Setup: controllers " + CommandHealthControllerCount + "/1, stones " + CommandHealthFactionStoneCount + "/4, join stones " + CommandHealthJoinStoneCount + "/4, sigils " + CommandHealthSigilCount + "/8" );
-	myGump.AddHTMLGump( 25, 75, 470, 20, 0, 0, "Regions: " + regionSummary.loaded + "/" + regionSummary.total + ", Strongholds: " + strongholdSummary.configured + "/" + strongholdSummary.total + ", Sigil homes: " + CommandHealthSigilHomeCount + "/8" );
+	myGump.AddHTMLGump( 25, 75, 470, 20, 0, 0, "Regions: " + regionSummary.loaded + "/" + regionSummary.total + ", Strongholds: " + strongholdSummary.configured + "/" + strongholdSummary.total + ", Sigil homes: " + CommandHealthSigilHomeCount + "/8, townstones " + CommandHealthTownstoneCount + "/8" );
 	myGump.AddHTMLGump( 25, 100, 470, 20, 0, 0, TriggerEvent( CommandFactionTownScriptId, "TownTaxStatusText" ) );
 	myGump.AddHTMLGump( 25, 125, 470, 20, 0, 0, CommandHealthFactionNpcSummary() );
 
@@ -2231,6 +2483,46 @@ function command_FACTIONTOWNCLEAR( pSock, cmdString )
 
 	var removedCount = TriggerEvent( CommandFactionTownScriptId, "TownClearFactionNpcs", townName, "" );
 	pSock.SysMessage( "Removed " + removedCount + " managed faction NPC(s)." );
+}
+
+function command_FACTIONTOWNLIMIT( pSock, cmdString )
+{
+	var cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
+	var parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
+	if( parts.length < 2 )
+	{
+		pSock.SysMessage( "Usage: 'factiontownlimit <guard|vendor> <amount|default>" );
+		return;
+	}
+
+	var npcType = parts[0].toLowerCase();
+	if( npcType !== "guard" && npcType !== "vendor" )
+	{
+		pSock.SysMessage( "Usage: 'factiontownlimit <guard|vendor> <amount|default>" );
+		return;
+	}
+
+	var amountText = parts[1].toLowerCase();
+	if( amountText === "default" || amountText === "ini" || amountText === "clear" )
+	{
+		if( TriggerEvent( CommandFactionTownScriptId, "TownClearNpcLimit", npcType ) )
+			pSock.SysMessage( "Faction town " + npcType + " limit now uses the INI default." );
+		else
+			pSock.SysMessage( "Unable to clear that faction town limit." );
+		return;
+	}
+
+	var amount = parseInt( amountText, 10 );
+	if( isNaN( amount ) || amount < 0 )
+	{
+		pSock.SysMessage( "Usage: 'factiontownlimit <guard|vendor> <amount|default>" );
+		return;
+	}
+
+	if( TriggerEvent( CommandFactionTownScriptId, "TownSetNpcLimit", npcType, amount ) )
+		pSock.SysMessage( "Faction town " + npcType + " limit set to " + amount + "." );
+	else
+		pSock.SysMessage( "Unable to set that faction town limit." );
 }
 
 function command_FACTIONTREASURY( pSock, cmdString )
