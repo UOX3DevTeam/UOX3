@@ -103,6 +103,18 @@ public:
             return;
         relationRequests.erase( relationRequests.begin() + idx );
     }
+    bool ConsumeRelationRequest( GUILDID fromGuild, GUILDRELATION rel )
+    {
+        for( auto iter = relationRequests.begin(); iter != relationRequests.end(); ++iter )
+        {
+            if( iter->fromGuildId == fromGuild && iter->relation == rel )
+            {
+                relationRequests.erase( iter );
+                return true;
+            }
+        }
+        return false;
+    }
 
     void ClearRelationRequests()
     {
@@ -110,6 +122,21 @@ public:
     }
 
     const std::vector<GuildRelationRequest>& RelationRequests() const { return relationRequests; }
+    void RemoveRelationWithGuild( GUILDID guildId )
+    {
+        relationList.erase( guildId );
+    }
+
+    void RemoveRelationRequestsFromGuild( GUILDID guildId )
+    {
+        for( auto iter = relationRequests.begin(); iter != relationRequests.end(); )
+        {
+            if( iter->fromGuildId == guildId )
+                iter = relationRequests.erase( iter );
+            else
+                ++iter;
+        }
+    }
 
 	GUILDID		FirstWar( void );
 	GUILDID		NextWar( void );
@@ -250,7 +277,7 @@ const RankDef* GetRankDef( size_t rankId ) const;
 //|               bool SetRank( SERIAL s, const std::string& rankName )
 //|               bool HasRank( CChar& c, const std::string& rankName ) const
 //|               bool HasRank( SERIAL s, const std::string& rankName ) const
-//| Purpose     -  Assign/check a character’s rank by name.
+//| Purpose     -  Assign/check a characterï¿½s rank by name.
 //o------------------------------------------------------------------------------------------------o
 bool SetRank( CChar& c, const std::string& rankName );
 bool SetRank( SERIAL s, const std::string& rankName );

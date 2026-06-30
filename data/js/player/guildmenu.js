@@ -875,35 +875,34 @@ function GuildMenu(pUser)
 function onGumpPress(pSock, pButton, gumpData)
 {
 	var pUser = pSock.currentChar;
+	if (!pUser)
+		return;
 
 	if (pButton === 0)
 		return; // no button pressed, early out
 
 	if (pButton === 1) // Create Guild
 	{
-		var Text1 = gumpData.getEdit(0);
-		var Text2 = gumpData.getEdit(1);
+		var Text1 = manualTrim(gumpData.getEdit(0) || "");
+		var Text2 = manualTrim(gumpData.getEdit(1) || "");
+		if (!Text1.length)
+		{
+			pSock.SysMessage("Enter a guild name first.");
+			return;
+		}
+
 		if (pUser.guild == null)
 		{
 			pUser.TextMessage("Not currently in a guild... Creating new guild...", false, 0x3b2, 0, pUser.serial);
-			var newGuild = CreateNewGuild();
+			var newGuild = CreateNewGuild(pUser, Text1, Text2);
 			if (newGuild)
 			{
-				newGuild.name = Text1;
-				newGuild.abbreviation = Text2;
-				newGuild.type = 0;
-
-				newGuild.AddMember(pUser);
-				newGuild.master = pUser;
-
-				// Create default ranks *and* assign GM the Guild Master rank
-				SetupDefaultGuildRanks(newGuild, pUser);
-
-				// Cosmetic title on the paperdoll / overhead
-				pUser.guildTitle = "Guild Master";
-
 				pUser.TextMessage("Guild automatically created: " + newGuild.name, false, 0x3b2, 0, pUser.serial);
 				pUser.Refresh();
+			}
+			else
+			{
+				pSock.SysMessage("Could not create guild.");
 			}
 			return;
 		}
@@ -956,12 +955,26 @@ function onGumpPress(pSock, pButton, gumpData)
 	// Accept / Reject ranges
 	if (pButton >= 12000 && pButton < (12000 + 1000))
 	{
+		if (!CanInvite(guildinfo, pUser))
+		{
+			pSock.SysMessage("Your rank does not allow managing recruits.");
+			GuildMenu(pUser);
+			return;
+		}
+
 		var row = pButton - 12000;
 		HandleRecruitAction(pSock, pUser, guildinfo, row, true);
 		return;
 	}
 	if (pButton >= 13000 && pButton < (13000 + 1000))
 	{
+		if (!CanInvite(guildinfo, pUser))
+		{
+			pSock.SysMessage("Your rank does not allow managing recruits.");
+			GuildMenu(pUser);
+			return;
+		}
+
 		var row = pButton - 13000;
 		HandleRecruitAction(pSock, pUser, guildinfo, row, false);
 		return;
@@ -972,8 +985,22 @@ function onGumpPress(pSock, pButton, gumpData)
 	// Only allow guild master (optional rule)
 	if (pButton === 15000)
 	{
+		if (!IsGuildMaster(guildinfo, pUser))
+		{
+			pSock.SysMessage("Only the guild master can add or update ranks.");
+			GuildMenu(pUser);
+			return;
+		}
+
 		// add rank
-		var newName = gumpData.getEdit(0);
+		var newName = manualTrim(gumpData.getEdit(0) || "");
+		if (!newName.length)
+		{
+			pSock.SysMessage("Enter a rank name first.");
+			GuildMenu(pUser);
+			return;
+		}
+
 		var prioStr = gumpData.getEdit(1)
 		var prio = parseInt(prioStr, 10);
 		if (isNaN(prio))
@@ -994,6 +1021,13 @@ function onGumpPress(pSock, pButton, gumpData)
 	// delete rank (button carries *rankId*)
 	else if (pButton >= 15100 && pButton < 15100 + 100)
 	{
+		if (!IsGuildMaster(guildinfo, pUser))
+		{
+			pSock.SysMessage("Only the guild master can remove ranks.");
+			GuildMenu(pUser);
+			return;
+		}
+
 		var rankId = pButton - 15100;
 
 		var ok = false;
@@ -1201,6 +1235,8 @@ function onGumpPress(pSock, pButton, gumpData)
 		if (target.guild === guildinfo)
 			target.guild = null;
 		target.guildTitle = "";
+		if (target.SetGuildFealty)
+			target.SetGuildFealty(0);
 		if (target.Refresh)
 			target.Refresh();
 
@@ -1468,9 +1504,6 @@ function onGumpPress(pSock, pButton, gumpData)
 			return;
 		}
 
-		// Clean up the pending request
-		RemoveGuildRelationRequestByIndex(guildinfo, idx);
-
 		var relText = "Neutral";
 		if (relInt === 1) relText = "War";
 		else if (relInt === 2) relText = "Alliance";
@@ -1637,7 +1670,7 @@ function onCallback1(socket, target)
 		return;
 	}
 
-	pUser.SetGuildFealty(target);
+	pUser.SetGuildFealty(target.serial);
 
 	var tName = target.name || ("0x" + target.serial.toString(16).toUpperCase());
 	socket.SysMessage("You pledge your guild fealty to " + tName + ".");
@@ -1703,19 +1736,6 @@ function HandleRecruitAction(pSock, pUser, guildinfo, row, doAccept)
 	GuildMenu(pUser);
 }
 
-function SetupDefaultGuildRanks(guild, pUser)
-{
-	if (guild.NumRanks() > 0)
-		return; // already set up
-
-	guild.AddRank("Recruit", 0, 0);
-	guild.AddRank("Member", 20, 0);
-	guild.AddRank("Veteran", 30, 0);
-	guild.AddRank("Officer", 40, 0);
-	guild.AddRank("Guild Master", 50, 0);
-	guild.SetRank(pUser, "Guild Master");
-}
-
 function GetRankPriority(guild, pChar)
 {
 	if (!guild || !pChar)
@@ -1765,8 +1785,14 @@ function IsGuildMaster(guild, pChar)
 	if (!guild || !pChar)
 		return false;
 
-	// guild.master is a serial
-	return guild.master === pChar;
+	var master = guild.master;
+	if (!master)
+		return false;
+
+	if (typeof master === "number")
+		return master === pChar.serial;
+
+	return master === pChar || master.serial === pChar.serial;
 }
 
 function CanInvite(guild, pChar)

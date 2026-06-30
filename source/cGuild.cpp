@@ -22,6 +22,16 @@ CGuildCollection *GuildSys;
 #define DEFAULTCHARTER "UOX3 Guildstone"
 #define DEFAULTWEBPAGE "http://www.uox3.org/"
 
+static void ClearCharacterGuildState( CChar *toClear )
+{
+	if( !ValidateObject( toClear ))
+		return;
+
+	toClear->SetGuildNumber( -1 );
+	toClear->SetGuildTitle( "" );
+	toClear->SetGuildFealty( 0 );
+}
+
 CGuild::CGuild() : name( "" ), gType( GT_STANDARD ), charter( "" ), webpage( "" ), stone( INVALIDSERIAL ), master( INVALIDSERIAL )
 {
 	abbreviation[0] = 0;
@@ -431,7 +441,10 @@ void CGuild::NewRecruit( SERIAL newRecruit )
 	{
 		RemoveMember( newRecruit );
 	}
-	recruits.push_back( newRecruit );
+	if( !IsRecruit( newRecruit ))
+	{
+		recruits.push_back( newRecruit );
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -449,7 +462,10 @@ void CGuild::NewMember( SERIAL newMember )
 	{
 		RemoveRecruit( newMember );
 	}
-	members.push_back( newMember );
+	if( !IsMember( newMember ))
+	{
+		members.push_back( newMember );
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -471,6 +487,7 @@ void CGuild::RemoveRecruit( SERIAL newRecruit )
 	{
 		recruits.erase( iter );
 	}
+	rankOf.erase( newRecruit );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -491,6 +508,19 @@ void CGuild::RemoveMember( SERIAL newMember )
 	if( iter != members.end() )
 	{
 		members.erase( iter );
+	}
+	rankOf.erase( newMember );
+	for( SERIAL memberSerial : members )
+	{
+		CChar *member = CalcCharObjFromSer( memberSerial );
+		if( ValidateObject( member ) && member->GetGuildFealty() == newMember )
+		{
+			member->SetGuildFealty( 0 );
+		}
+	}
+	if( master == newMember )
+	{
+		CalcMaster();
 	}
 }
 
@@ -638,6 +668,8 @@ bool CGuild::IsAtPeace() const
 //o------------------------------------------------------------------------------------------------o
 void CGuild::SetGuildRelation( GUILDID otherGuild, GUILDRELATION toSet )
 {
+	if( otherGuild == -1 || toSet < GR_NEUTRAL || toSet >= GR_COUNT )
+		return;
 	relationList[otherGuild] = toSet;
 }
 GUILDREL *CGuild::GuildRelationList( void )
@@ -787,8 +819,12 @@ static bool iequals_ascii( const std::string& a, const std::string& b )
 //o------------------------------------------------------------------------------------------------o
 void CGuild::RebuildRankOrder_()
 {
-    orderByPrio.resize( ranks.size() );
-    std::iota( orderByPrio.begin(), orderByPrio.end(), size_t(0) );
+    orderByPrio.clear();
+    for( size_t i = 0; i < ranks.size(); ++i )
+    {
+        if( ranks[i].prio != std::numeric_limits<SI32>::max() )
+            orderByPrio.push_back( i );
+    }
 
     std::stable_sort( orderByPrio.begin(), orderByPrio.end(),
         [&]( size_t ida, size_t idb )
@@ -796,7 +832,7 @@ void CGuild::RebuildRankOrder_()
             return ranks[ida].prio < ranks[idb].prio;
         } );
 
-    idToOrderIndex.assign( ranks.size(), 0 );
+    idToOrderIndex.assign( ranks.size(), std::numeric_limits<size_t>::max() );
     for( size_t i = 0; i < orderByPrio.size(); ++i )
         idToOrderIndex[ orderByPrio[i] ] = i;
 }
@@ -809,9 +845,13 @@ void CGuild::RebuildRankOrder_()
 //o------------------------------------------------------------------------------------------------o
 size_t CGuild::AddRank( const std::string& name, SI32 prio, UI32 flags )
 {
+    std::string cleanName = oldstrutil::trim( name );
+    if( cleanName.empty() )
+        return std::numeric_limits<size_t>::max();
+
     for( size_t i = 0; i < ranks.size(); ++i )
     {
-        if( iequals_ascii( ranks[i].name, name ) )
+        if( iequals_ascii( ranks[i].name, cleanName ) )
         {
             ranks[i].prio  = prio;
             ranks[i].flags = flags;
@@ -819,7 +859,7 @@ size_t CGuild::AddRank( const std::string& name, SI32 prio, UI32 flags )
             return i;
         }
     }
-    ranks.push_back( { name, prio, flags } );
+    ranks.push_back( { cleanName, prio, flags } );
     RebuildRankOrder_();
     return ranks.size() - 1;
 }
@@ -832,7 +872,10 @@ size_t CGuild::AddRank( const std::string& name, SI32 prio, UI32 flags )
 //o------------------------------------------------------------------------------------------------o
 bool CGuild::RemoveRankByName( const std::string& name )
 {
-    SI32 id = FindRankIdByName( name );
+    std::string cleanName = oldstrutil::trim( name );
+    if( cleanName.empty() ) return false;
+
+    SI32 id = FindRankIdByName( cleanName );
     if( id < 0 ) return false;
     size_t rid = static_cast<size_t>( id );
 
@@ -855,9 +898,13 @@ bool CGuild::RemoveRankByName( const std::string& name )
 //o------------------------------------------------------------------------------------------------o
 bool CGuild::RenameRank( const std::string& oldName, const std::string& newName )
 {
-    SI32 id = FindRankIdByName( oldName );
+    std::string cleanOldName = oldstrutil::trim( oldName );
+    std::string cleanNewName = oldstrutil::trim( newName );
+    if( cleanOldName.empty() || cleanNewName.empty() ) return false;
+
+    SI32 id = FindRankIdByName( cleanOldName );
     if( id < 0 ) return false;
-    ranks[ static_cast<size_t>(id) ].name = newName;
+    ranks[ static_cast<size_t>(id) ].name = cleanNewName;
     return true;
 }
 
@@ -868,8 +915,11 @@ bool CGuild::RenameRank( const std::string& oldName, const std::string& newName 
 //o------------------------------------------------------------------------------------------------o
 SI32 CGuild::FindRankIdByName( const std::string& name ) const
 {
+    std::string cleanName = oldstrutil::trim( name );
+    if( cleanName.empty() ) return -1;
+
     for( size_t i = 0; i < ranks.size(); ++i )
-        if( iequals_ascii( ranks[i].name, name ) )
+        if( ranks[i].prio != std::numeric_limits<SI32>::max() && iequals_ascii( ranks[i].name, cleanName ) )
             return static_cast<SI32>( i );
     return -1;
 }
@@ -886,7 +936,9 @@ SI32 CGuild::GetRankId(SERIAL s) const
     if (it == rankOf.end())
         return -1;
     size_t id = it->second;
-    return (id < ranks.size()) ? static_cast<SI32>(id) : -1;
+    if( id >= ranks.size() || ranks[id].prio == std::numeric_limits<SI32>::max() )
+        return -1;
+    return static_cast<SI32>(id);
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -911,7 +963,7 @@ const CGuild::RankDef* CGuild::GetRankDef( size_t rankId ) const
 //|               bool SetRank( SERIAL s, const std::string& rankName )
 //|               bool HasRank( CChar& c, const std::string& rankName ) const
 //|               bool HasRank( SERIAL s, const std::string& rankName ) const
-//| Purpose     -  Assign/check a character’s rank.
+//| Purpose     -  Assign/check a character's rank.
 //o------------------------------------------------------------------------------------------------o
 bool CGuild::SetRank( CChar& c, const std::string& rankName )
 {
@@ -951,9 +1003,10 @@ const std::string CGuild::GetRankName( SERIAL s ) const
     auto it = rankOf.find( s );
     if( it == rankOf.end() ) return "";
     size_t id = it->second;
-    return ( id < ranks.size() ) ? ranks[id].name : "";
+    if( id >= ranks.size() || ranks[id].prio == std::numeric_limits<SI32>::max() )
+        return "";
+    return ranks[id].name;
 }
-
 //o------------------------------------------------------------------------------------------------o
 //| Function    -  CGuild::Promote() / Demote()
 //| Prototype   -  bool Promote( CChar& c )
@@ -970,6 +1023,7 @@ bool CGuild::Promote( CChar& c )
     if( curId >= idToOrderIndex.size() ) return false;
 
     size_t pos = idToOrderIndex[curId];
+    if( pos == std::numeric_limits<size_t>::max() ) return false;
     if( pos + 1 >= orderByPrio.size() ) return false; // already top
 
     size_t nextId = orderByPrio[pos + 1];
@@ -986,6 +1040,7 @@ bool CGuild::Demote( CChar& c )
     if( curId >= idToOrderIndex.size() ) return false;
 
     size_t pos = idToOrderIndex[curId];
+    if( pos == std::numeric_limits<size_t>::max() ) return false;
     if( pos == 0 ) return false; // already bottom
 
     size_t prevId = orderByPrio[pos - 1];
@@ -1028,6 +1083,7 @@ SI32 CGuild::GetRankPrioById(size_t id) const
 std::string CGuild::GetRankNameById(size_t id) const
 {
     if (id >= ranks.size()) return std::string();
+    if (ranks[id].prio == std::numeric_limits<SI32>::max()) return std::string();
     return ranks[id].name;
 }
 
@@ -1050,6 +1106,7 @@ bool CGuild::RemoveRankById(size_t id)
 bool CGuild::SetRankById(SERIAL s, size_t id)
 {
     if (id >= ranks.size()) return false;
+    if (ranks[id].prio == std::numeric_limits<SI32>::max()) return false;
     rankOf[s] = id;
     return true;
 }
@@ -1073,30 +1130,28 @@ void CGuild::Save( std::ostream& toSave, GUILDID gNum )
 
     // Dynamic ranks
     for( const auto& r : ranks )
-        toSave << "RANKDEF=" << r.name << ',' << r.prio << ',' << r.flags << '\n';
+    {
+        if( r.prio != std::numeric_limits<SI32>::max() )
+            toSave << "RANKDEF=" << r.name << ',' << r.prio << ',' << r.flags << '\n';
+    }
+
+    for( auto s : recruits )
+        toSave << "RECRUIT=" << s << '\n';
+    for( auto s : members )
+        toSave << "MEMBER=" << s << '\n';
 
     for( const auto& kv : rankOf )
     {
         size_t rid = kv.second;
-        if( rid < ranks.size() )
+        if( rid < ranks.size() && ranks[rid].prio != std::numeric_limits<SI32>::max() )
             toSave << "RANKMEM=" << ranks[rid].name << ',' << kv.first << '\n';
     }
 
-    // Optional: legacy lines for backward compatibility
-    auto writeLegacy = [&]( const char* legacyName, const char* key )
-    {
-        SI32 id = FindRankIdByName( legacyName );
-        if( id < 0 ) return;
-        size_t rid = static_cast<size_t>( id );
-        for( const auto& kv : rankOf )
-            if( kv.second == rid )
-                toSave << key << '=' << kv.first << '\n';
-    };
-    writeLegacy( "Recruit", "RECRUIT" );
-    writeLegacy( "Member",  "MEMBER" );
-
     for( auto it = relationList.begin(); it != relationList.end(); ++it )
-        toSave << GRelationNames[it->second] << ' ' << it->first << '\n';
+    {
+        if( it->second >= GR_NEUTRAL && it->second < GR_COUNT )
+            toSave << GRelationNames[it->second] << ' ' << it->first << '\n';
+    }
 
 	// Pending relation requests (RELREQ=guildId,relationInt)
 	for( const auto& r : relationRequests )
@@ -1113,19 +1168,32 @@ void CGuild::Save( std::ostream& toSave, GUILDID gNum )
 //o------------------------------------------------------------------------------------------------o
 void CGuild::Load( CScriptSection* toRead )
 {
-    // clear transient maps; keep ranks unless you want file to dictate them
-    // ranks.clear(); // uncomment if you want file to fully define ranks
     invites.clear();
+    recruits.clear();
+    members.clear();
     rankOf.clear();
+    ranks.clear();
+    orderByPrio.clear();
+    idToOrderIndex.clear();
+    relationList.clear();
+    warPtr = relationList.end();
+    allyPtr = relationList.end();
 	relationRequests.clear(); // <-- important for reloads
 
     bool sawRankDef = false;
+    bool sawMembership = false;
+    bool sawRankMembership = false;
 
     auto setRankLegacy = [&]( const char* rankName, const std::string& data )
     {
         SERIAL s = static_cast<UI32>( std::stoul( data, nullptr, 0 ) );
+        if( std::string( rankName ) == "Recruit" )
+            NewRecruit( s );
+        else
+            NewMember( s );
         AddRank( rankName, /*prio*/ 0 ); // no-op if exists
         SetRank( s, rankName );
+        sawMembership = true;
     };
 
     for( const auto& sec : toRead->collection() )
@@ -1183,8 +1251,10 @@ void CGuild::Load( CScriptSection* toRead )
                     {
                         auto name = data.substr( 0, p );
                         SERIAL s  = static_cast<UI32>( std::stoul( data.substr( p + 1 ) ) );
-                        AddRank( name, (SI32)ranks.size() );
+                        if( FindRankIdByName( name ) < 0 )
+                            AddRank( name, (SI32)ranks.size() );
                         SetRank( s, name );
+                        sawRankMembership = true;
                     }
                 }
 				else if( UTag == "RELREQ" )
@@ -1200,7 +1270,7 @@ void CGuild::Load( CScriptSection* toRead )
 						int  relInt = std::stoi( relStr, nullptr, 0 );
 
 						if( relInt < GR_NEUTRAL ) relInt = GR_NEUTRAL;
-						if( relInt > GR_SAME ) relInt = GR_SAME;
+						if( relInt > GR_ALLY ) relInt = GR_ALLY;
 
 						AddRelationRequest( static_cast< GUILDID >( fromId ),
 							static_cast< GUILDRELATION >( relInt ) );
@@ -1231,13 +1301,35 @@ void CGuild::Load( CScriptSection* toRead )
         }
     }
 
+    if( !sawMembership && sawRankMembership )
+    {
+        for( const auto& kv : rankOf )
+        {
+            if( !IsMember( kv.first ) && !IsRecruit( kv.first ) )
+                NewMember( kv.first );
+        }
+    }
+
     // If file provided no rank defs, ensure defaults for legacy mapping.
     if( !sawRankDef )
     {
         AddRank( "Recruit", 0 );
-        AddRank( "Member",  1 );
-        AddRank( "Veteran", 2 );
-        AddRank( "Officer", 3 );
+        AddRank( "Member",  20 );
+        AddRank( "Veteran", 30 );
+        AddRank( "Officer", 40 );
+        AddRank( "Guild Master", 50 );
+    }
+
+    if( master != INVALIDSERIAL && !IsMember( master ) )
+        master = INVALIDSERIAL;
+
+    if( master == INVALIDSERIAL && !members.empty() )
+        CalcMaster();
+
+    if( master != INVALIDSERIAL && FindRankIdByName( "Guild Master" ) >= 0 )
+    {
+        if( GetRankName( master ) != "Guild Master" )
+            SetRank( master, "Guild Master" );
     }
 }
 
@@ -1561,7 +1653,7 @@ bool CGuildCollection::SendRelationRequest( GUILDID fromGuild, GUILDID toGuild, 
     if( relation > GR_SAME )
         relation = GR_SAME;
 
-    // Do NOT set relation here – just queue a pending request on target guild.
+    // Do NOT set relation here - just queue a pending request on target guild.
     trg->AddRelationRequest( fromGuild, relation );
 
     // Optional: notify online members of trg guild here
@@ -2175,7 +2267,7 @@ void CGuildCollection::GumpChoice( CSocket *s )
 					}
 
 					gList[trgGuild]->RemoveMember(( *tChar ));
-					tChar->SetGuildNumber( -1 );
+					ClearCharacterGuildState( tChar );
 					std::string charName = tChar->GetName();
 					if( tChar->IsIncognito() || tChar->IsDisguised() )
 					{
@@ -2197,7 +2289,16 @@ void CGuildCollection::GumpChoice( CSocket *s )
 			}
 			else
 			{
-				gList[trgGuild]->RemoveRecruit( gList[trgGuild]->RecruitNumber( button - 2 ));
+				tChar = CalcCharObjFromSer( gList[trgGuild]->RecruitNumber( button - 2 ));
+				if( ValidateObject( tChar ))
+				{
+					gList[trgGuild]->RemoveRecruit(( *tChar ));
+					ClearCharacterGuildState( tChar );
+				}
+				else
+				{
+					gList[trgGuild]->RemoveRecruit( gList[trgGuild]->RecruitNumber( button - 2 ));
+				}
 			}
 			break;
 		case BasePage + 10:								// Accept recruit
@@ -2336,13 +2437,12 @@ void CGuildCollection::Resign( CSocket *s )
 	if( nGuild == nullptr )
 		return;
 
+	bool wasGuildMaster = ( nGuild->Master() == mChar->GetSerial() );
 	nGuild->RemoveMember( *( s->CurrcharObj() ));
 	s->SysMessage( 171 ); // You are no longer in that guild.
-	mChar->SetGuildNumber( -1 );
-	mChar->SetGuildTitle( "" );
-	if( nGuild->Master() == mChar->GetSerial() && nGuild->NumMembers() != 0 )
+	ClearCharacterGuildState( mChar );
+	if( wasGuildMaster && nGuild->NumMembers() != 0 )
 	{
-		nGuild->CalcMaster();
 		auto newGuildMaster = CalcCharObjFromSer( nGuild->Master() );
 		if( ValidateObject( newGuildMaster ))
 		{
@@ -2383,6 +2483,15 @@ void CGuildCollection::Erase( GUILDID toErase )
 	if( pFind == gList.end() )	// doesn't exist
 		return;
 
+	for( auto& guildEntry : gList )
+	{
+		if( guildEntry.first == toErase || guildEntry.second == nullptr )
+			continue;
+
+		guildEntry.second->RemoveRelationWithGuild( toErase );
+		guildEntry.second->RemoveRelationRequestsFromGuild( toErase );
+	}
+
 	CGuild *gErase = pFind->second;
 	if( gErase == nullptr )
 	{
@@ -2395,7 +2504,7 @@ void CGuildCollection::Erase( GUILDID toErase )
 		CChar *member	= CalcCharObjFromSer( iMember );
 		if( ValidateObject( member ))
 		{
-			member->SetGuildNumber( -1 );
+			ClearCharacterGuildState( member );
 		}
 	}
 	for( size_t iC = 0; iC < gErase->NumRecruits(); ++iC )
@@ -2404,7 +2513,7 @@ void CGuildCollection::Erase( GUILDID toErase )
 		CChar *recruit	= CalcCharObjFromSer( iRecruit );
 		if( ValidateObject( recruit ))
 		{
-			recruit->SetGuildNumber( -1 );
+			ClearCharacterGuildState( recruit );
 		}
 	}
 	delete pFind->second;

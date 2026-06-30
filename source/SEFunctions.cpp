@@ -1906,12 +1906,11 @@ JSBool SE_SendGuildRelationRequest( JSContext* cx, uintN argc, jsval* vp )
 	GUILDID srcGuildId = static_cast<GUILDID>( JSVAL_TO_INT( argv[0] ) );
 	GUILDID trgGuildId = static_cast<GUILDID>( JSVAL_TO_INT( argv[1] ) );
 	int     relInt     = JSVAL_TO_INT( argv[2] );
-
-	// Clamp relation into valid range [GR_NEUTRAL..GR_SAME]
-	if( relInt < GR_NEUTRAL )
-		relInt = GR_NEUTRAL;
-	if( relInt > GR_SAME )
-		relInt = GR_SAME;
+	if( relInt < GR_NEUTRAL || relInt > GR_ALLY )
+	{
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( JS_FALSE ) );
+		return JS_TRUE;
+	}
 
 	GUILDRELATION relation = static_cast<GUILDRELATION>( relInt );
 
@@ -1924,14 +1923,12 @@ JSBool SE_SendGuildRelationRequest( JSContext* cx, uintN argc, jsval* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	SE_SetGuildRelation()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Directly set the relation between two guilds
+//|	Purpose		-	Accept a pending relation request between two guilds
 //|	Notes		-	JS prototype:
-//|					bool ok = SetGuildRelation( srcGuildID, trgGuildID, relation );
+//|					bool ok = SetGuildRelation( acceptingGuildID, requestingGuildID, relation );
 //|					relation: 0 = Neutral
 //|					          1 = War
 //|					          2 = Ally
-//|					          3 = Unknown
-//|					          4 = Same
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_SetGuildRelation( JSContext* cx, uintN argc, jsval* vp )
 {
@@ -1939,16 +1936,18 @@ JSBool SE_SetGuildRelation( JSContext* cx, uintN argc, jsval* vp )
 
 	if( argc != 3 || GuildSys == nullptr )
 		return JS_FALSE;
+	if( !JSVAL_IS_INT( argv[0] ) || !JSVAL_IS_INT( argv[1] ) || !JSVAL_IS_INT( argv[2] ) )
+		return JS_FALSE;
 
 	GUILDID srcID = static_cast<GUILDID>( JSVAL_TO_INT( argv[0] ));
 	GUILDID trgID = static_cast<GUILDID>( JSVAL_TO_INT( argv[1] ));
 	int relInt   = JSVAL_TO_INT( argv[2] );
 
-	// Clamp to valid range for GUILDRELATION
-	if( relInt < GR_NEUTRAL )
-		relInt = GR_NEUTRAL;
-	if( relInt > GR_SAME )
-		relInt = GR_SAME;
+	if( srcID == trgID || relInt < GR_NEUTRAL || relInt > GR_ALLY )
+	{
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( JS_FALSE ) );
+		return JS_TRUE;
+	}
 
 	CGuild* src = GuildSys->Guild( srcID );
 	CGuild* trg = GuildSys->Guild( trgID );
@@ -1958,9 +1957,12 @@ JSBool SE_SetGuildRelation( JSContext* cx, uintN argc, jsval* vp )
 	if( ok )
 	{
 		GUILDRELATION rel = static_cast<GUILDRELATION>( relInt );
+		ok = src->ConsumeRelationRequest( trgID, rel );
+	}
 
-		// For menu / high-level stuff, SetGuildRelation is explicitly “menu-only”
-		// and just writes into relationList.
+	if( ok )
+	{
+		GUILDRELATION rel = static_cast<GUILDRELATION>( relInt );
 		src->SetGuildRelation( trgID, rel );
 		trg->SetGuildRelation( srcID, rel );
 	}
@@ -2031,12 +2033,12 @@ JSBool SE_RemoveGuildRelationRequest( JSContext* cx, uintN argc, jsval* vp )
 
     GUILDID gId = static_cast<GUILDID>( JSVAL_TO_INT( argv[0] ) );
     int     idx = JSVAL_TO_INT( argv[1] );
-
     CGuild* g = GuildSys->Guild( gId );
-    if( g && idx >= 0 )
+    bool ok = ( g != nullptr && idx >= 0 && static_cast<size_t>( idx ) < g->RelationRequests().size() );
+    if( ok )
         g->RemoveRelationRequestByIndex( static_cast<size_t>( idx ) );
 
-    JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( JS_TRUE ) );
+    JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ok ? JS_TRUE : JS_FALSE ) );
     return JS_TRUE;
 }
 
@@ -2088,28 +2090,63 @@ JSBool SE_GetAllGuilds( JSContext* cx, uintN argc, jsval* vp )
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	SE_CreateNewGuild()
-//|	Prototype	-	object CreateNewGuild()
+//|\tPrototype\t-\tobject CreateNewGuild( founder, guildName, abbreviation )
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Creates a new guild, assigns it to the calling character, and returns the guild object
+//|	Purpose		-	Creates and initializes a new guild for the founding character, then returns the guild object
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_CreateNewGuild( JSContext* cx, uintN argc, jsval* vp )
 {
 	JSObject* jsThis = JS_THIS_OBJECT( cx, vp );
-	if( jsThis == nullptr )
+	if( jsThis == nullptr || GuildSys == nullptr )
 		return JS_FALSE;
+
+	JS_SET_RVAL( cx, vp, JSVAL_NULL );
+	if( argc < 2 || argc > 3 )
+		return JS_TRUE;
+
+	jsval* argv = JS_ARGV( cx, vp );
+	if( !JSVAL_IS_OBJECT( argv[0] ))
+		return JS_TRUE;
+
+	CChar* founder = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	if( !ValidateObject( founder ) || founder->GetGuildNumber() != -1 )
+		return JS_TRUE;
+
+	JSEncapsulate eName( cx, &( argv[1] ) );
+	std::string guildName = oldstrutil::trim( eName.toString() );
+	if( guildName.empty() )
+		return JS_TRUE;
+
+	std::string abbreviation;
+	if( argc == 3 )
+	{
+		JSEncapsulate eAbbr( cx, &( argv[2] ) );
+		abbreviation = oldstrutil::trim( eAbbr.toString() );
+	}
 
 	GUILDID tempGuildId = GuildSys->NewGuild();
 	CGuild* newGuild = GuildSys->Guild( tempGuildId );
+	if( newGuild == nullptr )
+		return JS_TRUE;
 
-	if( newGuild != nullptr )
-	{
-		JSObject* jsGuildObj = JSEngine->AcquireObject( IUE_GUILD, newGuild, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	newGuild->Name( guildName );
+	newGuild->Abbreviation( abbreviation );
+	newGuild->Type( GT_STANDARD );
+	newGuild->NewMember( *founder );
+	newGuild->Master( *founder );
+	founder->SetGuildNumber( tempGuildId );
+
+	newGuild->AddRank( "Recruit", 0, 0 );
+	newGuild->AddRank( "Member", 20, 0 );
+	newGuild->AddRank( "Veteran", 30, 0 );
+	newGuild->AddRank( "Officer", 40, 0 );
+	newGuild->AddRank( "Guild Master", 50, 0 );
+	newGuild->SetRank( *founder, "Guild Master" );
+	founder->SetGuildTitle( "Guild Master" );
+
+	JSObject* jsGuildObj = JSEngine->AcquireObject( IUE_GUILD, newGuild, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	if( jsGuildObj != nullptr )
 		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( jsGuildObj ));
-	}
-	else
-	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
-	}
 
 	return JS_TRUE;
 }

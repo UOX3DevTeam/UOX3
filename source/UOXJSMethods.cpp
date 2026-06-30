@@ -60,6 +60,25 @@ void ReverseEffect( CTEffect *Effect );
 void PauseEffect( CTEffect *Effect );
 void ResumeEffect( CTEffect *Effect );
 
+static GUILDID FindGuildIdForMethod( CGuild *guild )
+{
+	return ( GuildSys != nullptr && guild != nullptr ) ? GuildSys->FindGuildId( guild ) : -1;
+}
+
+static bool CharacterCanJoinGuild( CGuild *guild, CChar *toCheck, GUILDID guildId )
+{
+	if( guild == nullptr || !ValidateObject( toCheck ) || guildId == -1 )
+		return false;
+
+	SI16 currentGuild = toCheck->GetGuildNumber();
+	return currentGuild == -1 || currentGuild == guildId;
+}
+
+static bool CharacterIsOnGuildRoster( CGuild *guild, CChar *toCheck )
+{
+	return guild != nullptr && ValidateObject( toCheck ) && ( guild->IsMember( *toCheck ) || guild->IsRecruit( *toCheck ) );
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	MethodSpeech()
 //o------------------------------------------------------------------------------------------------o
@@ -4349,8 +4368,14 @@ JSBool CGuild_AddMember( JSContext *cx, uintN argc, jsval *vp )
 			return JS_FALSE;
 		}
 
+		GUILDID guildId = FindGuildIdForMethod( myGuild );
+		if( !CharacterCanJoinGuild( myGuild, trgChar, guildId ))
+		{
+			JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ));
+			return JS_TRUE;
+		}
+
 		myGuild->NewMember( *trgChar );
-		GUILDID guildId = GuildSys->FindGuildId( myGuild );
 		trgChar->SetGuildNumber( guildId );
 		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
 	}
@@ -4395,8 +4420,14 @@ JSBool CGuild_AddRecruit( JSContext *cx, uintN argc, jsval *vp )
 			return JS_FALSE;
 		}
 
+		GUILDID guildId = FindGuildIdForMethod( myGuild );
+		if( !CharacterCanJoinGuild( myGuild, trgChar, guildId ))
+		{
+			JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ));
+			return JS_TRUE;
+		}
+
 		myGuild->NewRecruit( *trgChar );
-		GUILDID guildId = GuildSys->FindGuildId( myGuild );
 		trgChar->SetGuildNumber( guildId );
 		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
 	}
@@ -4441,8 +4472,19 @@ JSBool CGuild_RemoveRecruit( JSContext *cx, uintN argc, jsval *vp )
 			return JS_FALSE;
 		}
 
+		if( !myGuild->IsRecruit( *trgChar ))
+		{
+			JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ));
+			return JS_TRUE;
+		}
+
 		myGuild->RemoveRecruit( *trgChar );
-		trgChar->SetGuildNumber( -1 );
+		if( trgChar->GetGuildNumber() == FindGuildIdForMethod( myGuild ))
+		{
+			trgChar->SetGuildNumber( -1 );
+			trgChar->SetGuildTitle( "" );
+			trgChar->SetGuildFealty( 0 );
+		}
 		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
 	}
 	return JS_TRUE;
@@ -4486,8 +4528,19 @@ JSBool CGuild_RemoveMember( JSContext *cx, uintN argc, jsval *vp )
 			return JS_FALSE;
 		}
 
+		if( !myGuild->IsMember( *trgChar ))
+		{
+			JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ));
+			return JS_TRUE;
+		}
+
 		myGuild->RemoveMember( *trgChar );
-		trgChar->SetGuildNumber( -1 );
+		if( trgChar->GetGuildNumber() == FindGuildIdForMethod( myGuild ))
+		{
+			trgChar->SetGuildNumber( -1 );
+			trgChar->SetGuildTitle( "" );
+			trgChar->SetGuildFealty( 0 );
+		}
 		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
 	}
 	return JS_TRUE;
@@ -4531,7 +4584,15 @@ JSBool CGuild_RecruitToMember( JSContext *cx, uintN argc, jsval *vp )
 			return JS_FALSE;
 		}
 
+		GUILDID guildId = FindGuildIdForMethod( myGuild );
+		if( !myGuild->IsRecruit( *trgChar ) || !CharacterCanJoinGuild( myGuild, trgChar, guildId ))
+		{
+			JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ));
+			return JS_TRUE;
+		}
+
 		myGuild->RecruitToMember( *trgChar );
+		trgChar->SetGuildNumber( guildId );
 		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
 	}
 	return JS_TRUE;
@@ -4902,7 +4963,12 @@ JSBool CGuild_AddRank( JSContext *cx, uintN argc, jsval *vp )
     jsval* argv = JS_ARGV( cx, vp );
 
     JSEncapsulate eName( cx, &(argv[0]) );
-    std::string name = eName.toString();
+    std::string name = oldstrutil::trim( eName.toString() );
+    if( name.empty() )
+    {
+        JS_SET_RVAL( cx, vp, INT_TO_JSVAL( -1 ) );
+        return JS_TRUE;
+    }
 
     SI32 prio = JSVAL_TO_INT( argv[1] );
     UI32 flags = (argc == 3) ? (UI32)JSVAL_TO_INT( argv[2] ) : 0;
@@ -4936,7 +5002,12 @@ JSBool CGuild_RemoveRankByName( JSContext *cx, uintN argc, jsval *vp )
 
     jsval* argv = JS_ARGV( cx, vp );
     JSEncapsulate eName( cx, &(argv[0]) );
-    std::string name = eName.toString();
+    std::string name = oldstrutil::trim( eName.toString() );
+    if( name.empty() )
+    {
+        JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+        return JS_TRUE;
+    }
 
     bool ok = myGuild->RemoveRankByName( name );
     JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ok ) );
@@ -4968,8 +5039,13 @@ JSBool CGuild_RenameRank( JSContext *cx, uintN argc, jsval *vp )
     jsval* argv = JS_ARGV( cx, vp );
     JSEncapsulate eOld( cx, &(argv[0]) );
     JSEncapsulate eNew( cx, &(argv[1]) );
-    std::string oldName = eOld.toString();
-    std::string newName = eNew.toString();
+    std::string oldName = oldstrutil::trim( eOld.toString() );
+    std::string newName = oldstrutil::trim( eNew.toString() );
+    if( oldName.empty() || newName.empty() )
+    {
+        JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+        return JS_TRUE;
+    }
 
     bool ok = myGuild->RenameRank( oldName, newName );
     JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ok ) );
@@ -5000,7 +5076,7 @@ JSBool CGuild_GetRankIdByName( JSContext *cx, uintN argc, jsval *vp )
 
     jsval* argv = JS_ARGV( cx, vp );
     JSEncapsulate eName( cx, &(argv[0]) );
-    std::string name = eName.toString();
+    std::string name = oldstrutil::trim( eName.toString() );
 
     SI32 id = myGuild->FindRankIdByName( name );
     JS_SET_RVAL( cx, vp, INT_TO_JSVAL( id ) );
@@ -5039,7 +5115,12 @@ JSBool CGuild_SetRankByName( JSContext *cx, uintN argc, jsval *vp )
     }
 
     JSEncapsulate eName( cx, &(argv[1]) );
-    std::string name = eName.toString();
+    std::string name = oldstrutil::trim( eName.toString() );
+    if( name.empty() || !CharacterIsOnGuildRoster( myGuild, trgChar ))
+    {
+        JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+        return JS_TRUE;
+    }
 
     bool ok = myGuild->SetRank( trgChar->GetSerial(), name );
     JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ok ) );
@@ -5194,6 +5275,12 @@ JSBool CGuild_Promote( JSContext *cx, uintN argc, jsval *vp )
         return JS_FALSE;
     }
 
+    if( !CharacterIsOnGuildRoster( myGuild, trgChar ))
+    {
+        JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+        return JS_TRUE;
+    }
+
     bool ok = myGuild->Promote( *trgChar );
     JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ok ) );
     return JS_TRUE;
@@ -5228,6 +5315,12 @@ JSBool CGuild_Demote( JSContext *cx, uintN argc, jsval *vp )
     {
         ScriptError( cx, "Demote: Invalid character" );
         return JS_FALSE;
+    }
+
+    if( !CharacterIsOnGuildRoster( myGuild, trgChar ))
+    {
+        JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+        return JS_TRUE;
     }
 
     bool ok = myGuild->Demote( *trgChar );
@@ -5378,6 +5471,12 @@ JSBool CGuild_SetRankById( JSContext* cx, uintN argc, jsval* vp )
 	{
 		ScriptError( cx, "SetRankById: invalid char" );
 		return JS_FALSE;
+	}
+
+	if( !CharacterIsOnGuildRoster( g, c ) )
+	{
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+		return JS_TRUE;
 	}
 
 	SI32 id = JSVAL_TO_INT( argv[ 1 ] );

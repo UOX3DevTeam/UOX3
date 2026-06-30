@@ -83,7 +83,7 @@ static JSFunctionSpec my_functions[] =
 
 	{ "CompareGuildByGuild",		SE_CompareGuildByGuild,		2, 0 },
 	{ "GetAllGuilds",				SE_GetAllGuilds,			0, 0 },
-	{ "CreateNewGuild",				SE_CreateNewGuild,			0, 0 },
+	{ "CreateNewGuild",				SE_CreateNewGuild,			2, 0 },
 	{ "SendGuildRelationRequest",	SE_SendGuildRelationRequest,3, 0 },
 	{ "SetGuildRelation",			SE_SetGuildRelation,		3, 0 },
     { "GetGuildRelationRequests",   SE_GetGuildRelationRequests, 1, 0 },
