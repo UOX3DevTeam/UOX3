@@ -63,6 +63,7 @@
 						<h4>June 29th, 2026</h4>
 						<ul>
 							<li>Added data-driven faction setup details, including <span class="hl">js/jsdata/factions/faction_setup.json</span>, setup relocation mode and automatic faction townstone placement.</li>
+							<li>Added faction town INI settings for tax interval, default tax rate, treasury grants and managed guard/vendor limits.</li>
 							<li>Updated <a href="#uox3Factions">Factions</a> documentation with generic faction NPC setup details, DFN tags and staff commands for assigning existing NPCs to factions.</li>
 							<li>Documented faction NPC kill rewards, reward tuning tags and faction NPC health/admin counts.</li>
 							<li>Added faction player-data storage details and migration command for moving faction character state into shared JSON files.</li>
@@ -3196,6 +3197,7 @@ packitem=0x0f8d,30
 								<span class="hl">'factionhealth</span> - Opens the faction health-check gump.<br>
 								<span class="hl">'factiondedupe</span> - Removes duplicate setup objects.<br>
 								<span class="hl">'factiondatamigrate</span> - Migrates/syncs faction player tags into shared faction player-data files.<br>
+								<span class="hl">'factiontownlimit</span> - Sets or clears live managed faction guard/vendor limits.<br>
 								<span class="hl">'removefactions</span> - Removes faction objects/tags from the shard for a clean reset.</p>
 							<p>Other faction commands include <span class="hl">'factionstatus</span>, <span class="hl">'factiontowns</span>, <span class="hl">'factiontownsync</span>, <span class="hl">'factionstronghold</span>, <span class="hl">'factionsigils</span>, <span class="hl">'factionscore</span>, <span class="hl">'factionkills</span>, <span class="hl">'factionnotice</span>, <span class="hl">'factionalert</span>, <span class="hl">'factionappoint</span>, <span class="hl">'factionguard</span>, <span class="hl">'factionvendor</span>, <span class="hl">'factionnpc</span>, <span class="hl">'factionnpcclear</span>, <span class="hl">'factiontreasury</span>, <span class="hl">'factiontaxrate</span>, <span class="hl">'factiontaxstart</span>, <span class="hl">'factiontaxstop</span>, <span class="hl">'factionitemcheck</span> and <span class="hl">'factionitemcleanup</span>.</p>
 						</div>
@@ -9355,6 +9357,7 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 						<li><span class="hl">'removefactions</span> - Removes faction setup objects, faction items, faction NPCs, mounts, traps and player faction tags from the shard. This is intended for resetting a test install.</li>
 					</ul>
 					<p>The setup JSON is read with the same static <span class="hl">js/jsdata</span> pattern used by the quest system. It stores the default stone, sigil, townstone and stronghold coordinates, so shard admins can adjust faction layout without recompiling or editing the command script.</p>
+					<p>Faction town economy defaults are read from the <span class="hl">[towns]</span> section of <span class="hl">uox.ini</span>: <span class="hl">FACTIONTOWNTAXINTERVAL</span> in minutes, <span class="hl">FACTIONTOWNDEFAULTTAXRATE</span>, <span class="hl">FACTIONTOWNTREASURYGRANT</span>, <span class="hl">FACTIONTOWNGUARDLIMIT</span> and <span class="hl">FACTIONTOWNVENDORLIMIT</span>. Reloading the INI updates these defaults. Live controller overrides can still be changed in-game with commands such as <span class="hl">'factiontaxstart [minutes]</span>, <span class="hl">'factiontaxrate &lt;town&gt; &lt;amount&gt;</span> and <span class="hl">'factiontownlimit &lt;guard|vendor&gt; &lt;amount|default&gt;</span>.</p>
 					<p>A clean test setup flow is:</p>
 					<pre><code class="language-javascript">'removefactions
 'factionsetup
@@ -9408,6 +9411,7 @@ CUSTOMINTTAG=npc_faction_require_town_control 1</code></pre>
 						<li><span class="hl">'factionnotice</span>, <span class="hl">'factionnoticeclear</span> and <span class="hl">'factionalert</span> - Commander/staff faction communication tools.</li>
 						<li><span class="hl">'factionappoint</span>, <span class="hl">'factionrole</span>, <span class="hl">'factionroleclear</span> and <span class="hl">'factionroles</span> - Faction role management tools.</li>
 						<li><span class="hl">'factionguard</span> and <span class="hl">'factionvendor</span> - Place faction town NPCs where role/town ownership rules allow.</li>
+						<li><span class="hl">'factiontownlimit &lt;guard|vendor&gt; &lt;amount|default&gt;</span> - Sets a live controller override for managed faction NPC limits, or clears it back to the INI default.</li>
 						<li><span class="hl">'factionnpc</span> and <span class="hl">'factionnpcclear</span> - Assign or remove generic faction allegiance on existing NPCs.</li>
 						<li><span class="hl">'factiontreasury</span>, <span class="hl">'factiontaxrate</span>, <span class="hl">'factiontaxstart</span>, <span class="hl">'factiontaxstop</span> and <span class="hl">'factiontaxstatus</span> - Town treasury and tax tools.</li>
 						<li><span class="hl">'factionitemcheck</span> and <span class="hl">'factionitemcleanup</span> - Find and remove invalid player-owned faction items or mounts.</li>
