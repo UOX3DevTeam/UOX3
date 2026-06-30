@@ -6483,9 +6483,6 @@ if( newGuild )
 								</div>
 							</div>
 						</div>
-
-
-
 					</div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -10858,6 +10855,95 @@ myChar.SetTimer( Timer.CRIMFLAG, 3000 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_char_getGuildFealtySetGuildFealty" />
+							<label for="spoiler_method_char_getGuildFealtySetGuildFealty">GetGuildFealty/SetGuildFealty <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int GetGuildFealty()</em></p>
+									<p><em>void SetGuildFealty( serial )</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Get or set the Character's current guild fealty target – effectively, which guild member they are voting for as the next guild master.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>
+										<ul>
+											<li><code>GetGuildFealty()</code> returns a SERIAL (integer) for the Character they currently have fealty towards.</li>
+											<li><code>SetGuildFealty( serial )</code> stores the given SERIAL as the Character's guild fealty and calls <code>UpdateRegion()</code> internally.</li>
+											<li>Passing <code>0</code> (or an invalid serial) can be used to clear fealty, depending on shard rules.</li>
+											<li>Typically you will set fealty to the serial of another online guild member chosen via a target cursor or a guild menu.</li>
+										</ul>
+									</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">// Example: simple command to show who a player has fealty toward
+function Cmd_ShowFealty( socket, cmdString )
+{
+	var pChar = socket.currentChar;
+	if( !pChar || !pChar.guild )
+	{
+		socket.SysMessage( "You are not in a guild." );
+		return;
+	}
+
+	var fealtySerial = pChar.GetGuildFealty();
+	if( fealtySerial === 0 )
+	{
+		socket.SysMessage( "You have not pledged fealty to anyone." );
+		return;
+	}
+
+	var target = CalcCharFromSer( fealtySerial );
+	if( target && target.name )
+		socket.SysMessage( "You have pledged fealty to " + target.name + "." );
+	else
+		socket.SysMessage( "You have pledged fealty to a guild member (0x" + fealtySerial.toString(16).toUpperCase() + ")." );
+}
+
+// Example: set fealty to another guild member via target
+function Cmd_SetFealty( socket, cmdString )
+{
+	var pChar = socket.currentChar;
+	if( !pChar || !pChar.guild )
+	{
+		socket.SysMessage( "You must be in a guild to set guild fealty." );
+		return;
+	}
+
+	socket.CustomTarget( 0, "Select a guild member to pledge fealty to." );
+}
+
+// Called from onCallback0 or similar callback
+function onCallback0( socket, target )
+{
+	var pChar = socket.currentChar;
+	if( !pChar )
+		return;
+
+	if( !target || !target.isChar )
+	{
+		socket.SysMessage( "That is not a valid character." );
+		return;
+	}
+
+	if( !pChar.guild || pChar.guild !== target.guild )
+	{
+		socket.SysMessage( "You may only pledge fealty to a member of your own guild." );
+		return;
+	}
+
+	pChar.SetGuildFealty( target.serial );
+	socket.SysMessage( "You pledge your fealty to " + ( target.name || "that guild member" ) + "." );
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_char_HasBeenOwner"/>
 							<label for="spoiler_method_char_HasBeenOwner">HasBeenOwner <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -12793,6 +12879,531 @@ if( myGuild != null )
 							</div>
 						</div>
 
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_SendInvite" />
+							<label for="spoiler_method_guild_SendInvite">SendInvite <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool SendInvite( targetChar );</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Records a pending guild invitation for the target Character. Does not immediately add them as a recruit or member.</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>
+										• Returns false if target is already in a guild, already a member/recruit, or has an existing invite.<br>
+										• Invitation must be accepted with <code>AcceptInvite()</code> before the target becomes a recruit.
+									</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Example</span></p>
+<pre><code class="language-javascript">var g = pChar.guild;
+if( g.SendInvite( target ) )
+	pChar.SysMessage( "Invitation sent." );
+else
+	pChar.SysMessage( "Unable to invite that character." );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_AcceptInvite" />
+							<label for="spoiler_method_guild_AcceptInvite">AcceptInvite <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool AcceptInvite();</em></p>
+									<p><em>bool AcceptInvite( targetChar );</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Accepts a pending invite and moves the character into the guild's Recruit list.</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>
+										• Without arguments, applies to the parent Character of the guild object.<br>
+										• Updates the character’s guild number.<br>
+										• Returns false if no valid pending invite exists.
+									</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Example</span></p>
+<pre><code class="language-javascript">if( myGuild.AcceptInvite( pChar ) )
+	pChar.SysMessage( "You are now a guild recruit." );
+</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_DeclineInvite" />
+							<label for="spoiler_method_guild_DeclineInvite">DeclineInvite <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool DeclineInvite();</em></p>
+									<p><em>bool DeclineInvite( targetChar );</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Removes a pending invite without adding the target to the guild.</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Returns false if the target does not have an active pending invite.</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Example</span></p>
+<pre><code class="language-javascript">if( guild.DeclineInvite( pChar ) )
+	pChar.SysMessage( "You decline the invitation." );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_IsInvited" />
+							<label for="spoiler_method_guild_IsInvited">IsInvited <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool IsInvited( targetChar );</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Checks whether a Character currently has a pending invite to this guild.</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Example</span></p>
+<pre><code class="language-javascript">if( guild.IsInvited( target ) )
+	pChar.SysMessage( target.name + " already has an invitation." );</code></pre>
+								</div>
+
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_AddRank" />
+							<label for="spoiler_method_guild_AddRank">AddRank <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int AddRank( name, prio );</em></p>
+									<p><em>int AddRank( name, prio, flags );</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Adds (or updates) a rank definition and returns its stable rankId.</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Example</span></p>
+<pre><code class="language-javascript">var id = guild.AddRank( "Officer", 30 );
+Console.Print( "Officer rank ID = " + id );</code></pre>
+								</div>
+
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_RemoveRankByName" />
+							<label for="spoiler_method_guild_RemoveRankByName">RemoveRankByName <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool RemoveRankByName( rankName );</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Removes a rank by name if no members currently hold it.</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Example</span></p>
+<pre><code class="language-javascript">if( guild.RemoveRankByName( "Veteran" ) )
+	Console.Print( "Removed Veteran rank." );</code></pre>
+								</div>
+
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_RenameRank" />
+							<label for="spoiler_method_guild_RenameRank">RenameRank <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool RenameRank( oldName, newName );</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Renames a rank without altering its ID, priority, or permission flags.</p>
+								</div>
+
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_GetRankIdByName" />
+							<label for="spoiler_method_guild_GetRankIdByName">GetRankIdByName <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int GetRankIdByName( name );</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Fetches the stable rankId for the given rank name, or -1 if not found.</p>
+								</div>
+
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_NumRanks" />
+							<label for="spoiler_method_guild_NumRanks">NumRanks <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int NumRanks();</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns the number of defined ranks (including tombstoned ones depending on implementation).</p>
+								</div>
+
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_GetRankNameById" />
+							<label for="spoiler_method_guild_GetRankNameById">GetRankNameById <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>string GetRankNameById( rankId );</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns the name associated with a stable rankId.</p>
+								</div>
+
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_GetRankPrioById" />
+							<label for="spoiler_method_guild_GetRankPrioById">GetRankPrioById <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int GetRankPrioById( rankId );</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns the priority associated with a rankId. Higher/lower numbers determine promotion order.</p>
+								</div>
+
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_RemoveRankById" />
+							<label for="spoiler_method_guild_RemoveRankById">RemoveRankById <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool RemoveRankById( rankId );</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Removes a rank definition by stable ID. Fails if any member holds that rank.</p>
+								</div>
+
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_SetRankById" />
+							<label for="spoiler_method_guild_SetRankById">SetRankById <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool SetRankById( targetChar, rankId );</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Assigns a rank directly by its stable ID, instead of by name.</p>
+								</div>
+
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_SetRankByName" />
+							<label for="spoiler_method_guild_SetRankByName">SetRank (by name) <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool SetRank( targetChar, rankName );</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Assigns a specific named rank to the target Character.</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>
+										Returns <code>true</code> if the named rank exists and is applied successfully,
+										or <code>false</code> if the rank name is unknown or cannot be assigned.
+									</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">var g = pChar.guild;
+if( g != null )
+{
+	if( g.SetRank( target, "Officer" ) )
+	{
+		target.guildTitle = "Officer";
+		target.Refresh();
+		pChar.SysMessage( "You set " + target.name + " to rank Officer." );
+	}
+	else
+	{
+		pChar.SysMessage( "Could not set rank 'Officer'." );
+	}
+}</code></pre>
+								</div>
+
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_HasRank" />
+							<label for="spoiler_method_guild_HasRank">HasRank <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool HasRank( targetChar, rankName );</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Checks whether the target Character currently holds the given rank name.</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Useful for permission checks (e.g. only Officers or above can do certain actions).</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">var g = pChar.guild;
+if( g != null )
+{
+	if( g.HasRank( pChar, "Officer" ) )
+	{
+		pChar.SysMessage( "You have officer privileges." );
+	}
+}</code></pre>
+								</div>
+
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_GetRankNameOf" />
+							<label for="spoiler_method_guild_GetRankNameOf">GetRankName (of character) <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>string GetRankName( targetChar );</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns the current rank name for the given Character, or an empty string if they have no rank.</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">var g = pChar.guild;
+if( g != null )
+{
+	var rName = g.GetRankName( pChar );
+	if( rName.length &gt; 0 )
+		pChar.SysMessage( "Your guild rank is: " + rName );
+	else
+		pChar.SysMessage( "You currently have no guild rank." );
+}</code></pre>
+								</div>
+
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_GetRankIdOf" />
+							<label for="spoiler_method_guild_GetRankIdOf">GetRankId (of character) <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int GetRankId( targetChar );</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>
+										Returns the stable rankId for the given Character, or <code>-1</code> if they do not
+										currently have a rank in this guild.
+									</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">var g = pChar.guild;
+if( g != null )
+{
+	var id = g.GetRankId( pChar );
+	if( id &gt;= 0 )
+		Console.Print( "Rank ID for " + pChar.name + " is " + id );
+}</code></pre>
+								</div>
+
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_Promote" />
+							<label for="spoiler_method_guild_Promote">Promote <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool Promote( targetChar );</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>
+										Moves the target Character to the next higher rank, based on the rank priority ordering
+										(typically lowest priority = lowest rank).
+									</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>
+										Returns <code>true</code> if the promotion succeeds, or <code>false</code> if the character
+										is already at the highest rank or has no rank.
+									</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">var g = pChar.guild;
+if( g != null )
+{
+	if( g.Promote( target ) )
+	{
+		pChar.SysMessage( "You promote " + target.name + " to a higher rank." );
+	}
+	else
+	{
+		pChar.SysMessage( "Unable to promote that member." );
+	}
+}</code></pre>
+								</div>
+
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_Demote" />
+							<label for="spoiler_method_guild_Demote">Demote <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool Demote( targetChar );</em></p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>
+										Moves the target Character to the next lower rank, based on the rank priority ordering.
+									</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>
+										Returns <code>true</code> if the demotion succeeds, or <code>false</code> if the character
+										is already at the lowest rank or has no rank.
+									</p>
+								</div>
+
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">var g = pChar.guild;
+if( g != null )
+{
+	if( g.Demote( target ) )
+	{
+		pChar.SysMessage( "You demote " + target.name + " to a lower rank." );
+	}
+	else
+	{
+		pChar.SysMessage( "Unable to demote that member." );
+	}
+}</code></pre>
+								</div>
+
+							</div>
+						</div>
 
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -17007,54 +17618,121 @@ myObject.propertyName = newValue;
 				<a class="cd-faq__trigger" href="#propGuilds" id="propGuilds"><span>Guild Properties</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">
-						<p>Object properties are accessed like this:
-						<pre><code class="language-javascript">// Read an object property and store it in a variable
+						<p>
+							Object properties are accessed like this:
+<pre><code class="language-javascript">// Read an object property and store it in a variable
 var myVar = myObject.propertyName;
 
 // Modify a (modifiable) object property. Note that some properties are read-only
 myObject.propertyName = newValue;
-</code></pre></p>
+</code></pre>
+						</p>
 
 						<h3>Integer Types</h3>
+
 						<div class="settingsDiv">
-							<p><span class="hl">.numMembers</span> <strong>(int)</strong><br>
-							Get last IP that was used to login with Account (Read-Only)</p>
+							<p>
+								<span class="hl">.id</span> <strong>(int, <em>read-only</em>)</strong><br>
+								Unique guild ID used internally by the guild system (matches value returned by GuildSys-&gt;FindGuildId).
+							</p>
 						</div>
+
 						<div class="settingsDiv">
-							<p><span class="hl">.numRecruits</span> <strong>(int)</strong><br>
-							Get last IP that was used to login with Account (Read-Only)</p>
+							<p>
+								<span class="hl">.numMembers</span> <strong>(int, <em>read-only</em>)</strong><br>
+								Get current number of members in the guild.
+							</p>
 						</div>
+
 						<div class="settingsDiv">
-							<p><span class="hl">.type</span> <strong>(int)</strong><br>
-							Get/Set type of guild (0 - Standard, 1 - Order, 2 - Chaos, 3 - Unknown)</p>
+							<p>
+								<span class="hl">.numRecruits</span> <strong>(int, <em>read-only</em>)</strong><br>
+								Get current number of recruits in the guild.
+							</p>
+						</div>
+
+						<div class="settingsDiv">
+							<p>
+								<span class="hl">.numInvites</span> <strong>(int, <em>read-only</em>)</strong><br>
+								Get current number of pending invitations for the guild.
+							</p>
+						</div>
+
+						<div class="settingsDiv">
+							<p>
+								<span class="hl">.type</span> <strong>(int)</strong><br>
+								Get/Set type of guild<br>
+								<code>0 = Standard, 1 = Order, 2 = Chaos, 3 = Unknown</code>
+							</p>
 						</div>
 
 						<h3>Object Types</h3>
+
 						<div class="settingsDiv">
-							<p><span class="hl">.master</span> <strong>(object)</strong><br>
-							Get/Set Character JS Object for character that is considered Guild Master of the guild</p>
+							<p>
+								<span class="hl">.master</span> <strong>(Character object)</strong><br>
+								Get/Set Character JS object for the character that is considered Guild Master of the guild.
+							</p>
 						</div>
+
 						<div class="settingsDiv">
-							<p><span class="hl">.stone</span> <strong>(object)</strong><br>
-							Get/Set Item JS Object for Guildstone</p>
+							<p>
+								<span class="hl">.stone</span> <strong>(Item object)</strong><br>
+								Get/Set Item JS object for the guildstone associated with this guild.
+							</p>
+						</div>
+
+						<h3>Array Types</h3>
+
+						<div class="settingsDiv">
+							<p>
+								<span class="hl">.members</span> <strong>(array of Character objects, <em>read-only</em>)</strong><br>
+								Get an array of Character objects that are full members of the guild.
+							</p>
+						</div>
+
+						<div class="settingsDiv">
+							<p>
+								<span class="hl">.recruits</span> <strong>(array of Character objects, <em>read-only</em>)</strong><br>
+								Get an array of Character objects that are currently recruits for the guild.
+							</p>
+						</div>
+
+						<div class="settingsDiv">
+							<p>
+								<span class="hl">.invites</span> <strong>(array of Character objects, <em>read-only</em>)</strong><br>
+								Get an array of Character objects that have pending invitations to join the guild.
+							</p>
 						</div>
 
 						<h3>Text Types</h3>
+
 						<div class="settingsDiv">
-							<p><span class="hl">.abbreviation</span> <strong>(text, <em>max 3 characters</em>)</strong><br>
-							Get/Set guild abbreviation</p>
+							<p>
+								<span class="hl">.abbreviation</span> <strong>(text, <em>max 3 characters</em>)</strong><br>
+								Get/Set guild abbreviation.
+							</p>
 						</div>
+
 						<div class="settingsDiv">
-							<p><span class="hl">.charter</span> <strong>(text, <em>max ??? characters</em>)</strong><br>
-							Get/Set guild charter</p>
+							<p>
+								<span class="hl">.charter</span> <strong>(text, <em>max ??? characters</em>)</strong><br>
+								Get/Set guild charter/description text.
+							</p>
 						</div>
+
 						<div class="settingsDiv">
-							<p><span class="hl">.name</span> <strong>(text, <em>max 127 characters</em>)</strong><br>
-							Get/Set name of guild</p>
+							<p>
+								<span class="hl">.name</span> <strong>(text, <em>max 127 characters</em>)</strong><br>
+								Get/Set name of guild.
+							</p>
 						</div>
+
 						<div class="settingsDiv">
-							<p><span class="hl">.webPage</span> <strong>(text, <em>max ??? characters</em>)</strong><br>
-							Get/Set guild webpage URL</p>
+							<p>
+								<span class="hl">.webPage</span> <strong>(text, <em>max ??? characters</em>)</strong><br>
+								Get/Set guild web page URL.
+							</p>
 						</div>
 
 					</div>

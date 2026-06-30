@@ -1875,13 +1875,7 @@ bool CPIGumpMenuSelect::Handle( void )
 		BuildGumpFromScripts( tSock, static_cast<UI16>( buttonId - 10000 ));
 		return true;
 	}
-	if( gumpId >= 8000 && gumpId <= 8020 )
-	{
-		GuildSys->GumpChoice( tSock );
-		// guild collection call goes here
-		return true;
-	}
-	else if( gumpId >= 0xFFFF )	// script gump
+	if( gumpId >= 0xFFFF )	// script gump
 	{
 		cScript *toExecute = JSMapping->GetScript(( gumpId - 0xFFFF ));
 		if( toExecute != nullptr )
@@ -2020,9 +2014,8 @@ bool CPIGumpInput::Handle( void )
 					}
 				}
 			}
+			break;
 		}
-		[[fallthrough]]; // Indicate to compiler that fallthrough is intentional to suppress warning
-		case 100:	GuildSys->GumpInput( this );			break;
 		default:
 			break;
 	}

@@ -1,6 +1,5 @@
 #include "uox3.h"
 #include "skills.h"
-#include "cGuild.h"
 #include "townregion.h"
 #include "cServerDefinitions.h"
 #include "commands.h"
@@ -93,168 +92,6 @@ void PlayerVendorBuy( CSocket *s )
 }
 
 void TextEntryGump( CSocket *s, SERIAL ser, UI08 type, UI08 index, SI16 maxlength, SI32 dictEntry );
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	HandleGuildTarget()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Handles targeting related to guild actions
-//o------------------------------------------------------------------------------------------------o
-void HandleGuildTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *trgChar	= nullptr;
-	CChar *mChar	= s->CurrcharObj();
-	CGuild *mGuild	= nullptr, *tGuild = nullptr;
-	switch( s->GetByte( 5 ))
-	{
-		case 0:	// recruit character
-			trgChar = CalcCharObjFromSer( s->GetDWord( 7 ));
-			if( ValidateObject( trgChar ))
-			{
-				if( trgChar->GetGuildNumber() == -1 )	// no existing guild
-				{
-					mGuild = GuildSys->Guild( mChar->GetGuildNumber() );
-					if( mGuild != nullptr )
-					{
-						auto trgSock = trgChar->GetSocket();
-						if( mGuild->Master() == mChar->GetSerial() )
-						{
-							// Guild Master can skip the "sponsor a candidate" stage and just recruit people as new members directly
-							mGuild->NewMember(( *trgChar ));
-							trgChar->SetGuildNumber( mChar->GetGuildNumber() );
-							if( mGuild->Type() != GT_STANDARD )
-							{
-								trgChar->SetGuildToggle( true );
-							}
-							s->SysMessage( 1687, trgChar->GetName().c_str() ); // You have recruited %s as a new guild member!
-							if( trgSock )
-							{
-								trgSock->SysMessage( 1688, mGuild->Name().c_str() ); // You have been recruited to join the guild %s!
-							}	
-						}
-						else
-						{
-							mGuild->NewRecruit(( *trgChar ));
-							s->SysMessage( 1985, trgChar->GetName().c_str() ); // You have sponsored %s as a candidate to join the guild!
-							if( trgSock )
-							{
-								trgSock->SysMessage( 1986, mChar->GetName().c_str(), mGuild->Name().c_str() ); // You have been invited by %s to join the guild: %s
-							}							
-						}
-						trgChar->Dirty( UT_UPDATE );
-					}
-				}
-				else
-				{
-					s->SysMessage( 1002 ); // They are already in a guild!
-				}
-			}
-			break;
-		case 1:		// declare fealty
-			trgChar = CalcCharObjFromSer( s->GetDWord( 7 ));
-			if( ValidateObject( trgChar ))
-			{
-				if( trgChar->GetGuildNumber() == mChar->GetGuildNumber() ) // same guild
-				{
-					mChar->SetGuildFealty( trgChar->GetSerial() );
-					s->SysMessage( 1987, trgChar->GetName().c_str() ); // You have declared fealty to %s!
-					auto trgSock = trgChar->GetSocket();
-					if( trgSock != nullptr )
-					{
-						trgSock->SysMessage( 1988, mChar->GetName().c_str() ); // %s has declared fealty to you!
-					}
-				}
-				else
-				{
-					s->SysMessage( 1003 ); // They are not in your guild!
-				}
-			}
-			break;
-		case 2:	// declare war
-			trgChar = CalcCharObjFromSer( s->GetDWord( 7 ));
-			if( ValidateObject( trgChar ))
-			{
-				if( trgChar->GetGuildNumber() != mChar->GetGuildNumber() )
-				{
-					if( trgChar->GetGuildNumber() == -1 )
-					{
-						s->SysMessage( 1004 ); // They're not in a guild!
-					}
-					else
-					{
-						mGuild = GuildSys->Guild( mChar->GetGuildNumber() );
-						if( mGuild != nullptr )
-						{
-							mGuild->SetGuildRelation( trgChar->GetGuildNumber(), GR_WAR );
-							tGuild = GuildSys->Guild( trgChar->GetGuildNumber() );
-							if( tGuild != nullptr )
-							{
-								mGuild->TellMembers( 1989, tGuild->Name().c_str() ); // Your guild has declared war on the guild %s!
-								tGuild->TellMembers( 1005, mGuild->Name().c_str() ); // The guild %s has declared war upon you!
-							}
-						}
-					}
-				}
-				else
-				{
-					s->SysMessage( 1006 ); // They are in your guild!
-				}
-			}
-			break;
-		case 3:	// declare ally
-			trgChar = CalcCharObjFromSer( s->GetDWord( 7 ));
-			if( ValidateObject( trgChar ))
-			{
-				if( trgChar->GetGuildNumber() != mChar->GetGuildNumber() )
-				{
-					if( trgChar->GetGuildNumber() == -1 )
-					{
-						s->SysMessage( 1004 ); // They're not in a guild!
-					}
-					else
-					{
-						mGuild = GuildSys->Guild( mChar->GetGuildNumber() );
-						if( mGuild != nullptr )
-						{
-							mGuild->SetGuildRelation( trgChar->GetGuildNumber(), GR_ALLY );
-							tGuild = GuildSys->Guild( trgChar->GetGuildNumber() );
-							if( tGuild != nullptr )
-							{
-								mGuild->TellMembers( 1990, tGuild->Name().c_str() ); // Your guild has declared the guild %s as an ally!
-								tGuild->TellMembers( 1007, mGuild->Name().c_str() ); // The guild %s has declared you to be an ally!
-							}
-						}
-					}
-				}
-				else
-				{
-					s->SysMessage( 1006 ); // They are in your guild!
-				}
-			}
-			break;
-		case 4: // select member to grant title to
-			trgChar = CalcCharObjFromSer( s->GetDWord( 7 ));
-			if( ValidateObject( trgChar ))
-			{
-				if( trgChar->GetGuildNumber() == mChar->GetGuildNumber()  ) // In same guild
-				{
-					mGuild = GuildSys->Guild( mChar->GetGuildNumber() );
-					if( mGuild != nullptr )
-					{
-						s->TempInt2( trgChar->GetSerial() );
-						TextEntryGump( s, mChar->GetSerial(), 100, 6, 15, 1684 );	break;	// grant title to another member
-					}
-				}
-				else
-				{
-					s->SysMessage( 1003 ); // They are not in your guild!
-				}
-			}
-			break;
-		default:
-			break;
-	}
-}
-
 CMultiObj * BuildHouse( CSocket *s, UI16 houseEntry, bool checkLocation = true, SI16 xLoc = -1, SI16 yLoc = -1, SI08 zLoc = 127, UI08 worldNumber = 0, UI16 instanceId = 0 );
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	BuildHouseTarget()
@@ -2335,12 +2172,7 @@ bool CPITargetCursor::Handle( void )
 		}
 		if( a1 == 0 && a2 == 1 )
 		{
-			if( a3 == 2 )	// Guilds
-			{
-				HandleGuildTarget( tSock );
-				return true;
-			}
-			else if( a3 == 1 )	// CustomTarget
+			if( a3 == 1 )	// CustomTarget
 			{
 				// not a great fix, but better then assuming a ptr size.
 				cScript *tScript = tSock->scriptForCallBack;

@@ -269,6 +269,25 @@ function onDeath( pDead, iCorpse )
 	return TriggerEvent( 5045, "onDeath", pDead, iCorpse );
 }
 
+/** @type { ( presser: Character ) => boolean } */
+function onGuildButton( pChar )
+{
+	if( !ValidateObject( pChar ))
+		return false;
+
+	if( pChar.guild )
+	{
+       TriggerEvent( 8020, "GuildMenu", pChar );
+	   return true;
+	}
+    else
+	{
+        TriggerEvent( 8020, "GuildCreation", pChar );
+		return true;
+	}
+
+}
+
 // Triggers based on bandage macro in client
 /** @type { ( mSock: Socket, targChar: Character, bandageItem: Item ) => boolean } */
 function onUseBandageMacro( pSock, targChar, bandageItem )

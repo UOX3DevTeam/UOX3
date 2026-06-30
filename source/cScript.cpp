@@ -80,8 +80,15 @@ static JSFunctionSpec my_functions[] =
 	{ "GetRaceSkillAdjustment",		SE_GetRaceSkillAdjustment,	2, 0 },
 	{ "UseItem",					SE_UseItem,					2, 0 },
 	{ "TriggerTrap",				SE_TriggerTrap,				2, 0 },
+
 	{ "CompareGuildByGuild",		SE_CompareGuildByGuild,		2, 0 },
-	{ "CreateNewGuild",				SE_CreateNewGuild,			0, 0 },
+	{ "GetAllGuilds",				SE_GetAllGuilds,			0, 0 },
+	{ "CreateNewGuild",				SE_CreateNewGuild,			2, 0 },
+	{ "SendGuildRelationRequest",	SE_SendGuildRelationRequest,3, 0 },
+	{ "SetGuildRelation",			SE_SetGuildRelation,		3, 0 },
+    { "GetGuildRelationRequests",   SE_GetGuildRelationRequests, 1, 0 },
+	{ "RemoveGuildRelationRequest", SE_RemoveGuildRelationRequest, 2, 0 },
+
 	{ "CommandLevelReq",			SE_CommandLevelReq,			1, 0 },
 	{ "CommandExists",				SE_CommandExists,			1, 0 },
 	{ "FirstCommand",				SE_FirstCommand,			0, 0 },

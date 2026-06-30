@@ -139,6 +139,8 @@ JSBool CChar_AddFollower( JSContext *cx, uintN argc, jsval *vp );
 JSBool CChar_RemoveFollower( JSContext *cx, uintN argc, jsval *vp );
 JSBool CChar_HasBeenOwner( JSContext *cx, uintN argc, jsval *vp );
 JSBool CChar_CalculateControlChance( JSContext *cx, uintN argc, jsval *vp );
+JSBool CChar_GetGuildFealty( JSContext* cx, uintN argc, jsval* vp );
+JSBool CChar_SetGuildFealty( JSContext* cx, uintN argc, jsval* vp );
 
 // Item Methods
 JSBool CItem_OpenPlank( JSContext *cx, uintN argc, jsval *vp );
@@ -272,6 +274,35 @@ JSBool CGuild_RecruitToMember( JSContext *cx, uintN argc, jsval *vp );
 JSBool CGuild_IsAtWar( JSContext *cx, uintN argc, jsval *vp );
 JSBool CGuild_IsAlly( JSContext *cx, uintN argc, jsval *vp );
 JSBool CGuild_IsNeutral( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_SendInvite( JSContext* cx, uintN argc, jsval* vp );
+JSBool CGuild_AcceptInvite( JSContext* cx, uintN argc, jsval* vp );
+JSBool CGuild_DeclineInvite( JSContext* cx, uintN argc, jsval* vp );
+JSBool CGuild_IsInvited( JSContext* cx, uintN argc, jsval* vp );
+// ==== Dynamic Rank API (JS) ====
+// Add/update a rank; returns rankId
+JSBool CGuild_AddRank            (JSContext* cx, uintN argc, jsval* vp);
+// Remove rank by name (fails if in use)
+JSBool CGuild_RemoveRankByName   (JSContext* cx, uintN argc, jsval* vp);
+// Rename rank
+JSBool CGuild_RenameRank         (JSContext* cx, uintN argc, jsval* vp);
+// Lookup rank id by name
+JSBool CGuild_GetRankIdByName    (JSContext* cx, uintN argc, jsval* vp);
+// Assign/check rank for a character
+JSBool CGuild_SetRankByName      (JSContext* cx, uintN argc, jsval* vp);
+JSBool CGuild_HasRank            (JSContext* cx, uintN argc, jsval* vp);
+// Get current rank info for a character
+JSBool CGuild_GetRankNameOf      (JSContext* cx, uintN argc, jsval* vp);
+JSBool CGuild_GetRankIdOf        (JSContext* cx, uintN argc, jsval* vp);
+
+// Promote/demote and count
+JSBool CGuild_Promote            (JSContext* cx, uintN argc, jsval* vp);
+JSBool CGuild_Demote             (JSContext* cx, uintN argc, jsval* vp);
+JSBool CGuild_NumRanks           (JSContext* cx, uintN argc, jsval* vp);
+
+JSBool CGuild_GetRankNameById    (JSContext* cx, uintN argc, jsval* vp);
+JSBool CGuild_GetRankPrioById    (JSContext* cx, uintN argc, jsval* vp);
+JSBool CGuild_RemoveRankById    (JSContext* cx, uintN argc, jsval* vp);
+JSBool CGuild_SetRankById    (JSContext* cx, uintN argc, jsval* vp);
 
 // Misc
 JSBool CMisc_SoundEffect( JSContext *cx, uintN argc, jsval *vp );
@@ -500,6 +531,8 @@ inline JSFunctionSpec CChar_Methods[] =
 	{ "RemoveFollower",		CChar_RemoveFollower,		1, 0 },
 	{ "HasBeenOwner",		CChar_HasBeenOwner,			1, 0 },
 	{ "CalculateControlChance",	CChar_CalculateControlChance,	1, 0 },
+	{ "GetGuildFealty",		CChar_GetGuildFealty,			0, 0 },
+	{ "SetGuildFealty",		CChar_SetGuildFealty,			1, 0 },
 	{ "GetTempEffect",		CBase_GetTempEffect,		1, 0 },
 	{ "ReverseTempEffect",	CBase_ReverseTempEffect,		1, 0 },
 	{ "PauseTempEffect",	CBase_PauseTempEffect,		1, 0 },
@@ -674,6 +707,30 @@ inline JSFunctionSpec CGuild_Methods[] =
 	{ "IsAtWar",			CGuild_IsAtWar,				1, 0 },
 	{ "IsAlly",				CGuild_IsAlly,				1, 0 },
 	{ "IsNeutral",			CGuild_IsNeutral,			1, 0 },
+	{ "SendInvite",		    CGuild_SendInvite,			1, 0 },
+	{ "AcceptInvite",		CGuild_AcceptInvite,		0, 0 },
+	{ "DeclineInvite",		CGuild_DeclineInvite,		0, 0 },
+	{ "IsInvited",			CGuild_IsInvited,			1, 0 },
+	// --- dynamic rank APIs ---
+	{ "AddRank",          CGuild_AddRank,          2, 0 }, // (name, prio[, flags])
+	{ "RemoveRankByName", CGuild_RemoveRankByName, 1, 0 },
+	{ "RenameRank",       CGuild_RenameRank,       2, 0 },
+	{ "GetRankIdByName",  CGuild_GetRankIdByName,  1, 0 },
+
+	{ "SetRank",          CGuild_SetRankByName,    2, 0 }, // (char, rankName)
+	{ "HasRank",          CGuild_HasRank,          2, 0 },
+	{ "GetRankName",      CGuild_GetRankNameOf,    1, 0 }, // (char) -> string
+	{ "GetRankId",        CGuild_GetRankIdOf,      1, 0 }, // (char) -> int
+
+	{ "Promote",          CGuild_Promote,          1, 0 },
+	{ "Demote",           CGuild_Demote,           1, 0 },
+	{ "NumRanks",         CGuild_NumRanks,         0, 0 },
+	// ----- Rank system helpers (id-based) -----
+	{ "GetRankNameById", CGuild_GetRankNameById, 1, 0},  // (rankId) -> string
+	{ "GetRankPrioById", CGuild_GetRankPrioById, 1, 0},  // (rankId) -> int
+	{ "RemoveRankById",  CGuild_RemoveRankById,  1, 0},  // (rankId) -> bool
+	{ "SetRankById",     CGuild_SetRankById,     2, 0},  // (char, rankId) -> bool
+
 	JS_FS_END
 };
 
