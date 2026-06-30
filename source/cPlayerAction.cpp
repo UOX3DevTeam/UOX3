@@ -3113,7 +3113,7 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				}
 				else if( mChar->GetGuildNumber() == static_cast<SI16>( iUsed->GetTempVar( CITV_MORE )))
 				{
-					GuildSys->Menu( mSock, BasePage + 1, static_cast<GUILDID>( iUsed->GetTempVar( CITV_MORE ))); // more of the stone is the guild number
+					mSock->SysMessage( "Guild management is handled through the guild menu." );
 				}
 				else
 				{

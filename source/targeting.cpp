@@ -231,25 +231,6 @@ void HandleGuildTarget( CSocket *s )
 				}
 			}
 			break;
-		case 4: // select member to grant title to
-			trgChar = CalcCharObjFromSer( s->GetDWord( 7 ));
-			if( ValidateObject( trgChar ))
-			{
-				if( trgChar->GetGuildNumber() == mChar->GetGuildNumber()  ) // In same guild
-				{
-					mGuild = GuildSys->Guild( mChar->GetGuildNumber() );
-					if( mGuild != nullptr )
-					{
-						s->TempInt2( trgChar->GetSerial() );
-						TextEntryGump( s, mChar->GetSerial(), 100, 6, 15, 1684 );	break;	// grant title to another member
-					}
-				}
-				else
-				{
-					s->SysMessage( 1003 ); // They are not in your guild!
-				}
-			}
-			break;
 		default:
 			break;
 	}

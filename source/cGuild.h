@@ -1,8 +1,6 @@
 #ifndef __CGUILD__
 #define __CGUILD__
 
-class CPIGumpInput;
-
 enum GuildType
 {
 	GT_STANDARD = 0,
@@ -24,8 +22,6 @@ enum GUILDRELATION
 
 const std::string GTypeNames[GT_COUNT] = { "Standard", "Order", "Chaos", "Unknown" };
 const std::string GRelationNames[GR_COUNT] = { "Neutral", "War", "Ally", "Unknown", "Same" };
-const SI16 BasePage = 8000;
-
 typedef std::map<GUILDID, GUILDRELATION>	GUILDREL;
 typedef std::map<GUILDID, GUILDRELATION>::iterator GUILDREL_ITERATOR;
 
@@ -198,8 +194,6 @@ public:
 	void		Save( std::ostream &toSave, GUILDID gNum );
 	void		Load( CScriptSection *toRead );
 
-	GUILDREL *	GuildRelationList();	// NOTE: This is aimed ONLY at menu stuff
-
 	void		CalcMaster();
 
 	void		TellMembers( SI32 dictEntry, ... );
@@ -326,8 +320,6 @@ class CGuildCollection
 private:
 	GUILDLIST		gList;
 
-	void			ToggleAbbreviation( CSocket *s );
-	void			TransportGuildStone( CSocket *s, GUILDID guildId );
 	void			Erase( GUILDID toErase );
 	GUILDID			MaximumGuild( void );
 public:
@@ -350,9 +342,6 @@ public:
 	void			Load();
 	GUILDRELATION	Compare( GUILDID srcGuild, GUILDID trgGuild ) const;
 	GUILDRELATION	Compare( CChar *src, CChar *trg ) const;
-	void			Menu( CSocket *s, SI16 menu, GUILDID trgGuild = -1, SERIAL plID = INVALIDSERIAL );
-	void			GumpInput( CPIGumpInput *gi );
-	void			GumpChoice( CSocket *s );
 	void			PlaceStone( CSocket *s, CItem *deed );
 	bool			ResultInCriminal( GUILDID srcGuild, GUILDID trgGuild ) const;
 	bool			ResultInCriminal( CChar *src, CChar *trg ) const;

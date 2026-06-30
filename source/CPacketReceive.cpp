@@ -6075,15 +6075,7 @@ bool CPIAOSCommand::Handle( void )
 					}
 				}
 
-				// If no event triggered, or no event returned true - display default guild menu if player is in a guild
-				if( tSock->CurrcharObj()->GetGuildNumber() != - 1 )
-				{
-					GuildSys->Menu( tSock, BasePage + 1, static_cast<GUILDID>( tSock->CurrcharObj()->GetGuildNumber() ));
-				}
-				else
-				{
-					tSock->SysMessage( 1793 ); // You are not currently in a guild. Go buy a guildstone!
-				}
+				tSock->SysMessage( 1793 ); // No guild script handled the guild button.
 				return true;
 			}
 			break;
