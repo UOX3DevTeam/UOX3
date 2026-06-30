@@ -248,6 +248,7 @@ declare global {
               guarding:              BaseOrNull;
               guild:                 GuildOrNull;
               guildTitle:            string;
+              guildToggle:           boolean;
               hairColor:             number;
               hairColour:            number;
               hairStyle:             number;

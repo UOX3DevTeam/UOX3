@@ -189,6 +189,7 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"SPAWNREGIONSFACETS"s, 162},
 	{"PAPERDOLLGUILDBUTTON"s, 163},
 	{"ATTACKSPEEDFROMSTAMINA"s, 164},
+	{"CLASSICOSIGUILDMENU"s, 165},
 	{"DISPLAYDAMAGENUMBERS"s, 169},
 	{"CLIENTSUPPORT4000"s, 170},
 	{"CLIENTSUPPORT5000"s, 171},
@@ -459,6 +460,7 @@ constexpr auto BIT_ITEMDECAYINHOUSES	= UI32( 32 );
 constexpr auto BIT_PAPERDOLLGUILDBUTTON = UI32( 33 );
 constexpr auto BIT_ATTSPEEDFROMSTAMINA	= UI32( 34 );
 constexpr auto BIT_SHOWDAMAGENUMBERS	= UI32( 35 );
+constexpr auto BIT_CLASSICOSIGUILDMENU	= UI32( 36 );
 constexpr auto BIT_PETBONDINGENABLED		= UI32( 37 );
 constexpr auto BIT_EXTENDEDSTARTINGSTATS	= UI32( 38 );
 constexpr auto BIT_EXTENDEDSTARTINGSKILLS	= UI32( 39 );
@@ -3935,6 +3937,20 @@ auto CServerData::PaperdollGuildButton( bool newVal ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ClassicOSIGuildMenu()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether guild menu entry points open the classic/OSI JS guild menu
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ClassicOSIGuildMenu() const -> bool
+{
+	return boolVals.test( BIT_CLASSICOSIGUILDMENU );
+}
+auto CServerData::ClassicOSIGuildMenu( bool newVal ) -> void
+{
+	boolVals.set( BIT_CLASSICOSIGUILDMENU, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::CombatMonstersVsAnimals()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether monsters will attack animals or not
@@ -5771,6 +5787,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "SCRIPTITEMSDECAYABLE=" << ( ScriptItemsDecayable() ? 1 : 0 ) << '\n';
 		ofsOutput << "BASEITEMSDECAYABLE=" << ( BaseItemsDecayable() ? 1 : 0 ) << '\n';
 		ofsOutput << "PAPERDOLLGUILDBUTTON=" << ( PaperdollGuildButton() ? 1 : 0 ) << '\n';
+		ofsOutput << "CLASSICOSIGUILDMENU=" << ( ClassicOSIGuildMenu() ? 1 : 0 ) << '\n';
 		ofsOutput << "FISHINGSTAMINALOSS=" << FishingStaminaLoss() << '\n';
 		ofsOutput << "ITEMSDETECTSPEECH=" << ItemsDetectSpeech() << '\n';
 		ofsOutput << "MAXPLAYERPACKITEMS=" << MaxPlayerPackItems() << '\n';
@@ -6880,6 +6897,9 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 164:	// ATTACKSPEEDFROMSTAMINA
 			CombatAttackSpeedFromStamina( static_cast<UI16>( std::stoul( value, nullptr, 0 )) == 1 );
+			break;
+		case 165:	// CLASSICOSIGUILDMENU
+			ClassicOSIGuildMenu( static_cast<SI16>( std::stoi( value, nullptr, 0 )) == 1 );
 			break;
 		case 169:	 // DISPLAYDAMAGENUMBERS
 			CombatDisplayDamageNumbers( static_cast<UI16>( std::stoul( value, nullptr, 0 )) == 1 );

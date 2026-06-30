@@ -252,7 +252,10 @@ function onGuildButton( pChar )
 
 	if( pChar.guild )
 	{
-       TriggerEvent( 8020, "GuildMenu", pChar );
+	   if( GetServerSetting( 165 ))
+		  TriggerEvent( 8020, "ClassicGuildMenu", pChar );
+	   else
+		  TriggerEvent( 8020, "GuildMenu", pChar );
 	   return true;
 	}
     else

@@ -356,6 +356,7 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "priv",			CCP_PRIV,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "townPriv",		CCP_TOWNPRIV,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "guildTitle",		CCP_GUILDTITLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "guildToggle",	CCP_GUILDTOGGLE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "hairStyle",		CCP_HAIRSTYLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "hairColour",		CCP_HAIRCOLOUR,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "hairColor",		CCP_HAIRCOLOUR,		JSPROP_ENUMANDPERM, nullptr, nullptr },

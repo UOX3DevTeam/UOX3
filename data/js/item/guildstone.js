@@ -66,7 +66,10 @@ function onUseChecked( pUser, iUsed )
 				return false;
 			}
 
-			TriggerEvent( 8020, "GuildMenu", pUser );
+			if( GetServerSetting( 165 ))
+				TriggerEvent( 8020, "ClassicGuildMenu", pUser );
+			else
+				TriggerEvent( 8020, "GuildMenu", pUser );
 			return false;
 		}
 	}

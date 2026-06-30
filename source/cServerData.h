@@ -958,6 +958,9 @@ public:
 	auto		PaperdollGuildButton( bool value ) -> void;
 	auto		PaperdollGuildButton() const -> bool;
 
+	auto		ClassicOSIGuildMenu( bool value ) -> void;
+	auto		ClassicOSIGuildMenu() const -> bool;
+
 	auto		CombatMonstersVsAnimals( bool value ) -> void;
 	auto		CombatMonstersVsAnimals() const -> bool;
 

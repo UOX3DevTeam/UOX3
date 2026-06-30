@@ -5272,6 +5272,9 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 			case 164:	// ATTACKSPEEDFROMSTAMINA
 				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CombatAttackSpeedFromStamina() ) );
 				break;
+			case 165:	// CLASSICOSIGUILDMENU
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClassicOSIGuildMenu() ) );
+				break;
 			case 169:	 // DISPLAYDAMAGENUMBERS
 				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CombatDisplayDamageNumbers() ) );
 				break;

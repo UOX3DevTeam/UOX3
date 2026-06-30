@@ -80,6 +80,1092 @@ function SetRosterOffset(pUser, off)
 		pUser.SetTag("recruitOffset", off | 0);
 }
 
+function ClassicGuildText(text)
+{
+	return "<basefont color=#111111>" + String(text || "") + "</basefont>";
+}
+
+var classicGuildRanks = [
+	{ name: "Ronin", prio: 0 },
+	{ name: "Member", prio: 20 },
+	{ name: "Emissary", prio: 40 },
+	{ name: "Warlord", prio: 40 },
+	{ name: "Guild Master", prio: 50 }
+];
+
+function IsClassicGuildMode(guild)
+{
+	var cfg = ReadGuildConfig(guild);
+	return cfg.CLASSIC_MODE === "1";
+}
+
+function SetClassicGuildMode(guild, enabled)
+{
+	var cfg = ReadGuildConfig(guild);
+	cfg.CLASSIC_MODE = enabled ? "1" : "0";
+	return SaveGuildConfig(guild, cfg);
+}
+
+function EnsureClassicGuildRanks(guild, pMaster)
+{
+	if (!guild || !guild.AddRank)
+		return false;
+
+	for (var i = 0; i < classicGuildRanks.length; i++)
+		guild.AddRank(classicGuildRanks[i].name, classicGuildRanks[i].prio);
+
+	if (pMaster && guild.SetRank)
+	{
+		guild.SetRank(pMaster, "Guild Master");
+		pMaster.guildTitle = "Guild Master";
+	}
+
+	SetClassicGuildMode(guild, true);
+	return true;
+}
+
+function GetClassicRankName(guild, pChar)
+{
+	if (!guild || !pChar)
+		return "";
+
+	var rankName = GetRankName(guild, pChar);
+	if (rankName && rankName.length)
+		return rankName;
+
+	return pChar.guildTitle || "";
+}
+
+function HasClassicRank(guild, pChar, rankName)
+{
+	return GetClassicRankName(guild, pChar).toLowerCase() === String(rankName || "").toLowerCase();
+}
+
+function CanClassicInvite(guild, pChar)
+{
+	if (IsGuildMaster(guild, pChar))
+		return true;
+
+	if (!IsClassicGuildMode(guild))
+		return CanInvite(guild, pChar);
+
+	return HasClassicRank(guild, pChar, "Emissary") || HasClassicRank(guild, pChar, "Guild Master");
+}
+
+function CanClassicManageRoster(guild, pChar)
+{
+	if (IsGuildMaster(guild, pChar))
+		return true;
+
+	if (!IsClassicGuildMode(guild))
+		return CanPromoteDemote(guild, pChar);
+
+	return HasClassicRank(guild, pChar, "Emissary") || HasClassicRank(guild, pChar, "Guild Master");
+}
+
+function CanClassicControlWar(guild, pChar)
+{
+	if (IsGuildMaster(guild, pChar))
+		return true;
+
+	if (!IsClassicGuildMode(guild))
+		return CanEditGuildWars(guild, pChar);
+
+	return HasClassicRank(guild, pChar, "Warlord") || HasClassicRank(guild, pChar, "Guild Master");
+}
+
+function AddClassicGuildButton(gump, x, y, buttonId, label)
+{
+	gump.AddButton(x, y, 4005, 4007, 1, 0, buttonId);
+	gump.AddHTMLGump(x + 35, y - 2, 260, 24, false, false, ClassicGuildText(label));
+}
+
+function AddClassicGuildFrame(gump, title)
+{
+	gump.AddBackground(0, 0, 550, 400, 5054);
+	gump.AddBackground(10, 10, 530, 380, 3000);
+	gump.AddPicture(28, 26, 0x0ED4);
+	gump.AddHTMLGump(72, 32, 360, 28, false, false, ClassicGuildText(title));
+	AddClassicGuildButton(gump, 40, 350, 30011, "Return to guild menu");
+	gump.AddButton(455, 350, 4017, 4019, 1, 0, 0);
+	gump.AddHTMLGump(395, 352, 55, 22, false, false, ClassicGuildText("Exit"));
+}
+
+function ClassicGuildMenu(pUser)
+{
+	if (!pUser || !pUser.socket)
+		return;
+
+	var socket = pUser.socket;
+	var guildinfo = pUser.guild;
+	if (!guildinfo)
+	{
+		GuildCreation(pUser);
+		return;
+	}
+
+	var classicMenu = new Gump;
+	var leader = guildinfo.master;
+	var leaderName = leader && leader.name ? leader.name : "None";
+	var fealtyTarget = GetGuildFealtyTarget(guildinfo, pUser);
+	var fealtyName = fealtyTarget && fealtyTarget.name ? fealtyTarget.name : "None";
+	var recruits = guildinfo.recruits || [];
+	var isMaster = IsGuildMaster(guildinfo, pUser);
+	var classicMode = IsClassicGuildMode(guildinfo);
+	var guildName = guildinfo.name || "Guild";
+	var abbr = guildinfo.abbreviation ? " [" + guildinfo.abbreviation + "]" : "";
+	var displayState = pUser.guildToggle ? "shown" : "hidden";
+
+	classicMenu.AddBackground(0, 0, 550, 400, 5054);
+	classicMenu.AddBackground(10, 10, 530, 380, 3000);
+	classicMenu.AddPicture(28, 26, 0x0ED4);
+
+	classicMenu.AddHTMLGump(72, 26, 330, 28, false, false, ClassicGuildText(guildName + abbr));
+	classicMenu.AddHTMLGump(72, 52, 360, 22, false, false, ClassicGuildText("Guildmaster: " + leaderName));
+	classicMenu.AddHTMLGump(72, 76, 360, 22, false, false, ClassicGuildText("Thy fealty is to: " + fealtyName));
+	classicMenu.AddHTMLGump(300, 76, 190, 22, false, false, ClassicGuildText("Title display: " + displayState));
+	if (!classicMode && isMaster)
+		classicMenu.AddHTMLGump(72, 98, 430, 18, false, false, ClassicGuildText("Guildmaster functions can initialize OSI-style ranks for this guild."));
+
+	AddClassicGuildButton(classicMenu, 40, 120, 30001, "Declare fealty");
+	AddClassicGuildButton(classicMenu, 40, 150, 30002, "Toggle display abbreviation");
+	AddClassicGuildButton(classicMenu, 40, 180, 30003, "View roster");
+	AddClassicGuildButton(classicMenu, 40, 210, 30004, "Recruit someone into the guild");
+
+	if (recruits.length)
+		AddClassicGuildButton(classicMenu, 40, 240, 30005, "View candidates");
+	else
+	{
+		classicMenu.AddGump(40, 240, 4020);
+		classicMenu.AddHTMLGump(75, 238, 260, 24, false, false, ClassicGuildText("View candidates"));
+	}
+
+	AddClassicGuildButton(classicMenu, 300, 120, 30006, "View charter");
+	AddClassicGuildButton(classicMenu, 300, 150, 30007, "Resign from guild");
+	AddClassicGuildButton(classicMenu, 300, 180, 30008, "Wars and diplomacy");
+
+	if (isMaster)
+		AddClassicGuildButton(classicMenu, 300, 210, 30009, "Guildmaster functions");
+	else
+	{
+		classicMenu.AddGump(300, 210, 4020);
+		classicMenu.AddHTMLGump(335, 208, 180, 24, false, false, ClassicGuildText("Guildmaster functions"));
+	}
+
+	AddClassicGuildButton(classicMenu, 300, 300, 30010, "Custom guild menu");
+	classicMenu.AddButton(455, 350, 4017, 4019, 1, 0, 0);
+	classicMenu.AddHTMLGump(395, 352, 55, 22, false, false, ClassicGuildText("Exit"));
+
+	classicMenu.Send(socket);
+	classicMenu.Free();
+}
+
+function ClassicGuildRoster(pUser)
+{
+	if (!pUser || !pUser.socket || !pUser.guild)
+		return;
+
+	var guildinfo = pUser.guild;
+	var members = (guildinfo.member || guildinfo.members) || [];
+	var classicMode = IsClassicGuildMode(guildinfo);
+	var canManage = CanClassicManageRoster(guildinfo, pUser);
+	var roster = new Gump;
+
+	AddClassicGuildFrame(roster, "Guild Roster");
+	roster.AddHTMLGump(55, 88, 150, 22, false, false, ClassicGuildText("Name"));
+	roster.AddHTMLGump(220, 88, 120, 22, false, false, ClassicGuildText("Rank"));
+	roster.AddHTMLGump(360, 88, 80, 22, false, false, ClassicGuildText("Status"));
+	if (canManage)
+		roster.AddHTMLGump(435, 88, 80, 22, false, false, ClassicGuildText("Manage"));
+
+	if (!members.length)
+	{
+		roster.AddHTMLGump(55, 125, 360, 22, false, false, ClassicGuildText("No members found."));
+	}
+	else
+	{
+		var maxRows = Math.min(12, members.length);
+		for (var i = 0; i < maxRows; i++)
+		{
+			var m = members[i];
+			if (!m)
+				continue;
+
+			var y = 120 + i * 18;
+			var name = m.name || ("0x" + m.serial.toString(16).toUpperCase());
+			var rank = classicMode ? GetClassicRankName(guildinfo, m) : (GetRankName(guildinfo, m) || m.guildTitle || "Member");
+			var status = GetOnlineStatus(m);
+			roster.AddHTMLGump(55, y, 150, 18, false, false, ClassicGuildText(name));
+			roster.AddHTMLGump(220, y, 120, 18, false, false, ClassicGuildText(rank));
+			roster.AddHTMLGump(360, y, 80, 18, false, false, ClassicGuildText(status));
+			if (canManage && !IsGuildMaster(guildinfo, m))
+			{
+				roster.AddButton(435, y, 4005, 4007, 1, 0, 30800 + i);
+				roster.AddHTMLGump(470, y - 2, 60, 18, false, false, ClassicGuildText("Edit"));
+			}
+		}
+
+		if (members.length > maxRows)
+			roster.AddHTMLGump(55, 340, 360, 18, false, false, ClassicGuildText("Showing first " + maxRows + " of " + members.length + " members."));
+	}
+
+	roster.Send(pUser.socket);
+	roster.Free();
+}
+
+function GetClassicRosterMember(guild, memberIndex)
+{
+	if (!guild)
+		return null;
+
+	var members = (guild.member || guild.members) || [];
+	if (memberIndex < 0 || memberIndex >= members.length)
+		return null;
+
+	return members[memberIndex];
+}
+
+function ClassicGuildMemberMenu(pUser, memberIndex)
+{
+	if (!pUser || !pUser.socket || !pUser.guild)
+		return;
+
+	var guildinfo = pUser.guild;
+	var member = GetClassicRosterMember(guildinfo, memberIndex);
+	if (!member)
+	{
+		pUser.socket.SysMessage("That member is no longer available.");
+		ClassicGuildRoster(pUser);
+		return;
+	}
+
+	var memberName = member.name || ("0x" + member.serial.toString(16).toUpperCase());
+	var rankName = GetClassicRankName(guildinfo, member) || "Member";
+	var memberMenu = new Gump;
+
+	AddClassicGuildFrame(memberMenu, "Manage Guild Member");
+	memberMenu.AddHTMLGump(55, 88, 420, 22, false, false, ClassicGuildText(memberName + " - " + rankName));
+	memberMenu.AddHTMLGump(55, 118, 420, 22, false, false, ClassicGuildText("Set classic rank"));
+
+	memberMenu.AddButton(55, 150, 4005, 4007, 1, 0, 31100 + memberIndex * 10);
+	memberMenu.AddHTMLGump(90, 148, 90, 20, false, false, ClassicGuildText("Ronin"));
+	memberMenu.AddButton(180, 150, 4005, 4007, 1, 0, 31101 + memberIndex * 10);
+	memberMenu.AddHTMLGump(215, 148, 90, 20, false, false, ClassicGuildText("Member"));
+	memberMenu.AddButton(305, 150, 4005, 4007, 1, 0, 31102 + memberIndex * 10);
+	memberMenu.AddHTMLGump(340, 148, 90, 20, false, false, ClassicGuildText("Emissary"));
+	memberMenu.AddButton(55, 180, 4005, 4007, 1, 0, 31103 + memberIndex * 10);
+	memberMenu.AddHTMLGump(90, 178, 90, 20, false, false, ClassicGuildText("Warlord"));
+
+	memberMenu.AddHTMLGump(55, 225, 420, 20, false, false, ClassicGuildText("Set guild title"));
+	memberMenu.AddGump(55, 250, 1803);
+	memberMenu.AddTextEntryLimited(60, 252, 220, 20, 0, 0, 61020, member.guildTitle || "", 32);
+	memberMenu.AddButton(300, 250, 4005, 4007, 1, 0, 31600 + memberIndex);
+	memberMenu.AddHTMLGump(335, 248, 80, 20, false, false, ClassicGuildText("Set title"));
+
+	memberMenu.AddButton(55, 300, 4017, 4019, 1, 0, 30900 + memberIndex);
+	memberMenu.AddHTMLGump(90, 298, 180, 20, false, false, ClassicGuildText("Remove from guild"));
+
+	memberMenu.Send(pUser.socket);
+	memberMenu.Free();
+}
+
+function ClassicGuildRemoveConfirm(pUser, memberIndex)
+{
+	if (!pUser || !pUser.socket || !pUser.guild)
+		return;
+
+	var guildinfo = pUser.guild;
+	var member = GetClassicRosterMember(guildinfo, memberIndex);
+	if (!member)
+	{
+		pUser.socket.SysMessage("That member is no longer available.");
+		ClassicGuildRoster(pUser);
+		return;
+	}
+
+	var memberName = member.name || ("0x" + member.serial.toString(16).toUpperCase());
+	var confirm = new Gump;
+
+	AddClassicGuildFrame(confirm, "Remove Guild Member");
+	confirm.AddHTMLGump(55, 110, 420, 60, true, true, ClassicGuildText("Remove " + memberName + " from the guild?"));
+	AddClassicGuildButton(confirm, 90, 210, 31000 + memberIndex, "Yes, remove");
+	AddClassicGuildButton(confirm, 300, 210, 30003, "No, return");
+
+	confirm.Send(pUser.socket);
+	confirm.Free();
+}
+
+function ClassicGuildCandidates(pUser)
+{
+	if (!pUser || !pUser.socket || !pUser.guild)
+		return;
+
+	var guildinfo = pUser.guild;
+	var recruits = guildinfo.recruits || [];
+	var candidates = new Gump;
+
+	AddClassicGuildFrame(candidates, "Guild Candidates");
+	candidates.AddHTMLGump(55, 88, 170, 22, false, false, ClassicGuildText("Candidate"));
+	candidates.AddHTMLGump(300, 88, 150, 22, false, false, ClassicGuildText("Accept / Decline"));
+
+	if (!recruits.length)
+	{
+		candidates.AddHTMLGump(55, 125, 360, 22, false, false, ClassicGuildText("There are no candidates for membership."));
+	}
+	else
+	{
+		var maxRows = Math.min(10, recruits.length);
+		for (var i = 0; i < maxRows; i++)
+		{
+			var c = recruits[i];
+			if (!c)
+				continue;
+
+			var y = 120 + i * 22;
+			var name = c.name || ("0x" + c.serial.toString(16).toUpperCase());
+			candidates.AddHTMLGump(55, y, 210, 20, false, false, ClassicGuildText(name));
+			candidates.AddButton(300, y, 4005, 4007, 1, 0, 30100 + i);
+			candidates.AddHTMLGump(335, y - 2, 55, 20, false, false, ClassicGuildText("Accept"));
+			candidates.AddButton(400, y, 4017, 4019, 1, 0, 30200 + i);
+			candidates.AddHTMLGump(435, y - 2, 55, 20, false, false, ClassicGuildText("Decline"));
+		}
+
+		if (recruits.length > maxRows)
+			candidates.AddHTMLGump(55, 340, 360, 18, false, false, ClassicGuildText("Showing first " + maxRows + " of " + recruits.length + " candidates."));
+	}
+
+	candidates.Send(pUser.socket);
+	candidates.Free();
+}
+
+function ClassicGuildCharter(pUser)
+{
+	if (!pUser || !pUser.socket || !pUser.guild)
+		return;
+
+	var guildinfo = pUser.guild;
+	var charter = guildinfo.charter && guildinfo.charter.length ? guildinfo.charter : "This guild has not written a charter.";
+	var webpage = guildinfo.webPage && guildinfo.webPage.length ? guildinfo.webPage : "";
+	var charterGump = new Gump;
+
+	AddClassicGuildFrame(charterGump, "Guild Charter");
+	charterGump.AddHTMLGump(55, 90, 430, 210, true, true, ClassicGuildText(charter));
+	if (webpage.length)
+		charterGump.AddHTMLGump(55, 310, 430, 22, false, false, ClassicGuildText("Web page: " + webpage));
+
+	charterGump.Send(pUser.socket);
+	charterGump.Free();
+}
+
+function GetGuildRelationText(rel)
+{
+	if (rel === 1)
+		return "War";
+	if (rel === 2)
+		return "Ally";
+	if (rel === 4)
+		return "Same";
+	return "Peace";
+}
+
+function ClassicGuildDiplomacy(pUser)
+{
+	if (!pUser || !pUser.socket || !pUser.guild)
+		return;
+
+	var guildinfo = pUser.guild;
+	var allGuilds = GetAllGuilds() || [];
+	var diplomacy = new Gump;
+	var rowY = 88;
+	var shown = 0;
+
+	AddClassicGuildFrame(diplomacy, "Guild Diplomacy");
+	diplomacy.AddHTMLGump(55, 68, 210, 20, false, false, ClassicGuildText("Guild"));
+	diplomacy.AddHTMLGump(250, 68, 70, 20, false, false, ClassicGuildText("Status"));
+	diplomacy.AddHTMLGump(325, 68, 170, 20, false, false, ClassicGuildText("Actions"));
+
+	if (!allGuilds.length)
+	{
+		diplomacy.AddHTMLGump(55, rowY, 360, 20, false, false, ClassicGuildText("No guilds found."));
+	}
+	else
+	{
+		for (var i = 0; i < allGuilds.length && shown < 7; i++)
+		{
+			var g = allGuilds[i];
+			if (!g || g.id === guildinfo.id)
+				continue;
+
+			var y = rowY + shown * 24;
+			var rel = (typeof CompareGuildByGuild !== "undefined") ? CompareGuildByGuild(guildinfo.id, g.id) : 3;
+			var name = g.name || ("Guild #" + g.id);
+			if (g.abbreviation && g.abbreviation.length)
+				name += " [" + g.abbreviation + "]";
+
+			diplomacy.AddHTMLGump(55, y, 185, 20, false, false, ClassicGuildText(name));
+			diplomacy.AddHTMLGump(250, y, 65, 20, false, false, ClassicGuildText(GetGuildRelationText(rel)));
+
+			if (rel === 1)
+			{
+				diplomacy.AddButton(325, y, 4005, 4007, 1, 0, 30300 + i);
+				diplomacy.AddHTMLGump(360, y - 2, 110, 20, false, false, ClassicGuildText("Offer peace"));
+			}
+			else
+			{
+				diplomacy.AddButton(325, y, 4005, 4007, 1, 0, 30400 + i);
+				diplomacy.AddHTMLGump(360, y - 2, 55, 20, false, false, ClassicGuildText("Ally"));
+				diplomacy.AddButton(415, y, 4017, 4019, 1, 0, 30500 + i);
+				diplomacy.AddHTMLGump(450, y - 2, 55, 20, false, false, ClassicGuildText("War"));
+			}
+
+			shown++;
+		}
+
+		if (shown === 0)
+			diplomacy.AddHTMLGump(55, rowY, 360, 20, false, false, ClassicGuildText("No other guilds found."));
+	}
+
+	var requestY = 270;
+	var incomingReqs = ReadGuildRelationRequests(guildinfo);
+	diplomacy.AddHTMLGump(55, requestY - 24, 360, 20, false, false, ClassicGuildText("Pending relation requests"));
+
+	if (!incomingReqs || !incomingReqs.length)
+	{
+		diplomacy.AddHTMLGump(55, requestY, 360, 20, false, false, ClassicGuildText("No pending requests."));
+	}
+	else
+	{
+		var maxReqs = Math.min(4, incomingReqs.length);
+		for (var ri = 0; ri < maxReqs; ri++)
+		{
+			var req = incomingReqs[ri];
+			var fromGuild = req ? FindGuildById(req.fromId) : null;
+			var ry = requestY + ri * 22;
+			var fromName = fromGuild ? (fromGuild.name || ("Guild #" + fromGuild.id)) : ("Guild #" + (req ? req.fromId : 0));
+			var relText = req ? GetGuildRelationText(req.relation | 0) : "Unknown";
+
+			diplomacy.AddHTMLGump(55, ry, 250, 20, false, false, ClassicGuildText(fromName + " asks: " + relText));
+			diplomacy.AddButton(325, ry, 4005, 4007, 1, 0, 30600 + ri);
+			diplomacy.AddHTMLGump(360, ry - 2, 55, 20, false, false, ClassicGuildText("Accept"));
+			diplomacy.AddButton(415, ry, 4017, 4019, 1, 0, 30700 + ri);
+			diplomacy.AddHTMLGump(450, ry - 2, 55, 20, false, false, ClassicGuildText("Decline"));
+		}
+	}
+
+	diplomacy.Send(pUser.socket);
+	diplomacy.Free();
+}
+
+function ClassicGuildMasterMenu(pUser)
+{
+	if (!pUser || !pUser.socket || !pUser.guild)
+		return;
+
+	var guildinfo = pUser.guild;
+	var masterMenu = new Gump;
+
+	AddClassicGuildFrame(masterMenu, "Guildmaster Functions");
+	AddClassicGuildButton(masterMenu, 55, 105, 30013, "Pack guildstone");
+	AddClassicGuildButton(masterMenu, 55, 140, 30014, "Initialize classic ranks");
+	AddClassicGuildButton(masterMenu, 55, 175, 30015, "Edit guild information");
+	AddClassicGuildButton(masterMenu, 55, 210, 30016, "Set guild type");
+	AddClassicGuildButton(masterMenu, 55, 245, 30010, "Open custom guild settings");
+	if (IsClassicGuildMode(guildinfo))
+		masterMenu.AddHTMLGump(55, 295, 420, 40, true, true, ClassicGuildText("Classic rank mode is enabled. Emissaries manage members; Warlords control diplomacy."));
+	else
+		masterMenu.AddHTMLGump(55, 295, 420, 40, true, true, ClassicGuildText("Classic rank mode has not been initialized for this guild yet."));
+
+	masterMenu.Send(pUser.socket);
+	masterMenu.Free();
+}
+
+function ClassicGuildInfoEdit(pUser)
+{
+	if (!pUser || !pUser.socket || !pUser.guild)
+		return;
+
+	var guildinfo = pUser.guild;
+	var edit = new Gump;
+
+	AddClassicGuildFrame(edit, "Edit Guild Information");
+	edit.AddHTMLGump(55, 82, 420, 20, false, false, ClassicGuildText("Guild name"));
+	edit.AddGump(55, 105, 1803);
+	edit.AddTextEntryLimited(60, 107, 240, 20, 0, 0, 61030, guildinfo.name || "", 33);
+
+	edit.AddHTMLGump(330, 82, 140, 20, false, false, ClassicGuildText("Abbreviation"));
+	edit.AddGump(330, 105, 1803);
+	edit.AddTextEntryLimited(335, 107, 80, 20, 0, 1, 61031, guildinfo.abbreviation || "", 3);
+
+	edit.AddHTMLGump(55, 140, 420, 20, false, false, ClassicGuildText("Web page"));
+	edit.AddGump(55, 163, 1803);
+	edit.AddTextEntryLimited(60, 165, 360, 20, 0, 2, 61032, guildinfo.webPage || "", 60);
+
+	edit.AddHTMLGump(55, 198, 420, 20, false, false, ClassicGuildText("Charter"));
+	edit.AddTextEntryLimited(55, 225, 420, 70, 0, 3, 61033, guildinfo.charter || "", 168);
+
+	AddClassicGuildButton(edit, 300, 315, 30017, "Save information");
+
+	edit.Send(pUser.socket);
+	edit.Free();
+}
+
+function ClassicGuildTypeMenu(pUser)
+{
+	if (!pUser || !pUser.socket || !pUser.guild)
+		return;
+
+	var guildinfo = pUser.guild;
+	var typeMenu = new Gump;
+	var currentType = guildinfo.type | 0;
+
+	AddClassicGuildFrame(typeMenu, "Set Guild Type");
+	typeMenu.AddHTMLGump(55, 95, 420, 40, true, true, ClassicGuildText("Choose the public guild type shown by the guild system."));
+	AddClassicGuildButton(typeMenu, 90, 160, 30018, currentType === 0 ? "Standard [current]" : "Standard");
+	AddClassicGuildButton(typeMenu, 90, 200, 30019, currentType === 1 ? "Order [current]" : "Order");
+	AddClassicGuildButton(typeMenu, 90, 240, 30020, currentType === 2 ? "Chaos [current]" : "Chaos");
+
+	typeMenu.Send(pUser.socket);
+	typeMenu.Free();
+}
+
+function ClassicGuildResignConfirm(pUser)
+{
+	if (!pUser || !pUser.socket || !pUser.guild)
+		return;
+
+	var resign = new Gump;
+
+	AddClassicGuildFrame(resign, "Resign From Guild");
+	resign.AddHTMLGump(55, 105, 420, 80, true, true, ClassicGuildText("Art thou certain thou wishest to resign from thy guild?"));
+	AddClassicGuildButton(resign, 90, 210, 30070, "Yes, resign");
+	AddClassicGuildButton(resign, 300, 210, 30071, "No, remain");
+
+	resign.Send(pUser.socket);
+	resign.Free();
+}
+
+function HandleClassicGuildButton(pSock, pUser, guildinfo, pButton, gumpData)
+{
+	if (pButton === 30011 || pButton === 30071)
+	{
+		ClassicGuildMenu(pUser);
+		return true;
+	}
+
+	if (pButton === 30001)
+	{
+		pSock.CustomTarget(1, "Select the guild member to whom thou shalt swear fealty.");
+		ClassicGuildMenu(pUser);
+		return true;
+	}
+
+	if (pButton === 30002)
+	{
+		pUser.guildToggle = !pUser.guildToggle;
+		if (pUser.Refresh)
+			pUser.Refresh();
+		pSock.SysMessage(pUser.guildToggle ? "Guild title and abbreviation display enabled." : "Guild title and abbreviation display hidden.");
+		ClassicGuildMenu(pUser);
+		return true;
+	}
+
+	if (pButton === 30003)
+	{
+		ClassicGuildRoster(pUser);
+		return true;
+	}
+
+	if (pButton === 30004)
+	{
+		if (!CanClassicInvite(guildinfo, pUser))
+		{
+			pSock.SysMessage("Your rank does not allow inviting new recruits.");
+			ClassicGuildMenu(pUser);
+			return true;
+		}
+
+		pSock.CustomTarget(0, "Select a player to invite.");
+		ClassicGuildMenu(pUser);
+		return true;
+	}
+
+	if (pButton === 30005)
+	{
+		ClassicGuildCandidates(pUser);
+		return true;
+	}
+
+	if (pButton === 30006)
+	{
+		ClassicGuildCharter(pUser);
+		return true;
+	}
+
+	if (pButton === 30007)
+	{
+		ClassicGuildResignConfirm(pUser);
+		return true;
+	}
+
+	if (pButton === 30008)
+	{
+		ClassicGuildDiplomacy(pUser);
+		return true;
+	}
+
+	if (pButton === 30010)
+	{
+		GuildMenu(pUser);
+		return true;
+	}
+
+	if (pButton === 30009)
+	{
+		if (!IsGuildMaster(guildinfo, pUser))
+		{
+			pSock.SysMessage("Only the guild master may use guildmaster functions.");
+			ClassicGuildMenu(pUser);
+			return true;
+		}
+
+		ClassicGuildMasterMenu(pUser);
+		return true;
+	}
+
+	if (pButton === 30013)
+	{
+		if (!IsGuildMaster(guildinfo, pUser))
+		{
+			pSock.SysMessage("Only the guild master can move the guildstone.");
+			ClassicGuildMenu(pUser);
+			return true;
+		}
+
+		TriggerEvent(5022, "PackGuildstone", pUser, guildinfo);
+		ClassicGuildMenu(pUser);
+		return true;
+	}
+
+	if (pButton === 30014)
+	{
+		if (!IsGuildMaster(guildinfo, pUser))
+		{
+			pSock.SysMessage("Only the guild master can initialize classic ranks.");
+			ClassicGuildMasterMenu(pUser);
+			return true;
+		}
+
+		if (EnsureClassicGuildRanks(guildinfo, pUser))
+			pSock.SysMessage("Classic guild ranks are now initialized.");
+		else
+			pSock.SysMessage("Classic guild ranks could not be initialized.");
+
+		ClassicGuildMasterMenu(pUser);
+		return true;
+	}
+
+	if (pButton === 30015)
+	{
+		if (!IsGuildMaster(guildinfo, pUser))
+		{
+			pSock.SysMessage("Only the guild master can edit guild information.");
+			ClassicGuildMasterMenu(pUser);
+			return true;
+		}
+
+		ClassicGuildInfoEdit(pUser);
+		return true;
+	}
+
+	if (pButton === 30016)
+	{
+		if (!IsGuildMaster(guildinfo, pUser))
+		{
+			pSock.SysMessage("Only the guild master can change the guild type.");
+			ClassicGuildMasterMenu(pUser);
+			return true;
+		}
+
+		ClassicGuildTypeMenu(pUser);
+		return true;
+	}
+
+	if (pButton === 30017)
+	{
+		if (!IsGuildMaster(guildinfo, pUser))
+		{
+			pSock.SysMessage("Only the guild master can edit guild information.");
+			ClassicGuildMasterMenu(pUser);
+			return true;
+		}
+
+		var newName = manualTrim(gumpData.getEdit(0) || "");
+		var newAbbr = manualTrim(gumpData.getEdit(1) || "");
+		var newWeb = manualTrim(gumpData.getEdit(2) || "");
+		var newCharter = manualTrim(gumpData.getEdit(3) || "");
+
+		if (newName.length)
+			guildinfo.name = newName;
+		if (newAbbr.length)
+			guildinfo.abbreviation = newAbbr;
+
+		guildinfo.webPage = newWeb;
+		guildinfo.charter = newCharter;
+
+		pSock.SysMessage("Guild information updated.");
+		ClassicGuildMasterMenu(pUser);
+		return true;
+	}
+
+	if (pButton === 30018 || pButton === 30019 || pButton === 30020)
+	{
+		if (!IsGuildMaster(guildinfo, pUser))
+		{
+			pSock.SysMessage("Only the guild master can change the guild type.");
+			ClassicGuildMasterMenu(pUser);
+			return true;
+		}
+
+		if (pButton === 30018)
+		{
+			guildinfo.type = 0;
+			pSock.SysMessage("Guild type set to Standard.");
+		}
+		else if (pButton === 30019)
+		{
+			guildinfo.type = 1;
+			pSock.SysMessage("Guild type set to Order.");
+		}
+		else
+		{
+			guildinfo.type = 2;
+			pSock.SysMessage("Guild type set to Chaos.");
+		}
+
+		ClassicGuildTypeMenu(pUser);
+		return true;
+	}
+
+	if (pButton === 30070)
+	{
+		if (IsGuildMaster(guildinfo, pUser))
+		{
+			pSock.SysMessage("The guild master cannot resign from this classic confirmation yet. Transfer leadership or use guild management first.");
+			ClassicGuildMenu(pUser);
+			return true;
+		}
+
+		if (guildinfo.RemoveMember)
+			guildinfo.RemoveMember(pUser);
+		else if (guildinfo.RemoveMemberBySerial)
+			guildinfo.RemoveMemberBySerial(pUser.serial);
+
+		pUser.guild = null;
+		pUser.guildTitle = "";
+		if (pUser.SetGuildFealty)
+			pUser.SetGuildFealty(0);
+		if (pUser.Refresh)
+			pUser.Refresh();
+
+		pSock.SysMessage("You have resigned from your guild.");
+		return true;
+	}
+
+	if (pButton >= 30100 && pButton < 30110)
+	{
+		if (!CanClassicManageRoster(guildinfo, pUser))
+		{
+			pSock.SysMessage("Your rank does not allow managing recruits.");
+			ClassicGuildCandidates(pUser);
+			return true;
+		}
+
+		HandleRecruitAction(pSock, pUser, guildinfo, pButton - 30100, true, true);
+		return true;
+	}
+
+	if (pButton >= 30200 && pButton < 30210)
+	{
+		if (!CanClassicManageRoster(guildinfo, pUser))
+		{
+			pSock.SysMessage("Your rank does not allow managing recruits.");
+			ClassicGuildCandidates(pUser);
+			return true;
+		}
+
+		HandleRecruitAction(pSock, pUser, guildinfo, pButton - 30200, false, true);
+		return true;
+	}
+
+	if (pButton >= 30800 && pButton < 30900)
+	{
+		if (!CanClassicManageRoster(guildinfo, pUser))
+		{
+			pSock.SysMessage("Your rank does not allow managing guild members.");
+			ClassicGuildRoster(pUser);
+			return true;
+		}
+
+		ClassicGuildMemberMenu(pUser, pButton - 30800);
+		return true;
+	}
+
+	if (pButton >= 30900 && pButton < 31000)
+	{
+		if (!CanClassicManageRoster(guildinfo, pUser))
+		{
+			pSock.SysMessage("Your rank does not allow removing guild members.");
+			ClassicGuildRoster(pUser);
+			return true;
+		}
+
+		ClassicGuildRemoveConfirm(pUser, pButton - 30900);
+		return true;
+	}
+
+	if (pButton >= 31000 && pButton < 31100)
+	{
+		if (!CanClassicManageRoster(guildinfo, pUser))
+		{
+			pSock.SysMessage("Your rank does not allow removing guild members.");
+			ClassicGuildRoster(pUser);
+			return true;
+		}
+
+		var removeIndex = pButton - 31000;
+		var removeTarget = GetClassicRosterMember(guildinfo, removeIndex);
+		if (!removeTarget)
+		{
+			pSock.SysMessage("That member is no longer available.");
+			ClassicGuildRoster(pUser);
+			return true;
+		}
+
+		if (IsGuildMaster(guildinfo, removeTarget))
+		{
+			pSock.SysMessage("The guild master cannot be removed this way.");
+			ClassicGuildRoster(pUser);
+			return true;
+		}
+
+		if (removeTarget.serial === pUser.serial)
+		{
+			pSock.SysMessage("Use resign if you wish to leave the guild.");
+			ClassicGuildRoster(pUser);
+			return true;
+		}
+
+		if (guildinfo.RemoveMember)
+			guildinfo.RemoveMember(removeTarget);
+		else if (guildinfo.RemoveMemberBySerial)
+			guildinfo.RemoveMemberBySerial(removeTarget.serial);
+
+		if (removeTarget.guild === guildinfo)
+			removeTarget.guild = null;
+		removeTarget.guildTitle = "";
+		if (removeTarget.SetGuildFealty)
+			removeTarget.SetGuildFealty(0);
+		if (removeTarget.Refresh)
+			removeTarget.Refresh();
+
+		pSock.SysMessage("Removed " + (removeTarget.name || "member") + " from the guild.");
+		ClassicGuildRoster(pUser);
+		return true;
+	}
+
+	if (pButton >= 31100 && pButton < 31600)
+	{
+		if (!CanClassicManageRoster(guildinfo, pUser))
+		{
+			pSock.SysMessage("Your rank does not allow changing member ranks.");
+			ClassicGuildRoster(pUser);
+			return true;
+		}
+
+		var rankButton = pButton - 31100;
+		var memberIndex = Math.floor(rankButton / 10);
+		var rankIndex = rankButton % 10;
+		var rankNames = ["Ronin", "Member", "Emissary", "Warlord"];
+		var rankTarget = GetClassicRosterMember(guildinfo, memberIndex);
+		var newRank = rankNames[rankIndex];
+
+		if (!rankTarget || !newRank)
+		{
+			pSock.SysMessage("That member or rank is no longer available.");
+			ClassicGuildRoster(pUser);
+			return true;
+		}
+
+		if (IsGuildMaster(guildinfo, rankTarget))
+		{
+			pSock.SysMessage("The guild master's rank cannot be changed here.");
+			ClassicGuildRoster(pUser);
+			return true;
+		}
+
+		if (guildinfo.SetRank)
+		{
+			if (!guildinfo.SetRank(rankTarget, newRank))
+			{
+				pSock.SysMessage("Could not set that rank. Initialize classic ranks first.");
+				ClassicGuildMemberMenu(pUser, memberIndex);
+				return true;
+			}
+		}
+
+		rankTarget.guildTitle = newRank;
+		if (rankTarget.Refresh)
+			rankTarget.Refresh();
+
+		pSock.SysMessage("Set " + (rankTarget.name || "member") + " to " + newRank + ".");
+		ClassicGuildMemberMenu(pUser, memberIndex);
+		return true;
+	}
+
+	if (pButton >= 31600 && pButton < 31700)
+	{
+		if (!CanClassicManageRoster(guildinfo, pUser))
+		{
+			pSock.SysMessage("Your rank does not allow changing guild titles.");
+			ClassicGuildRoster(pUser);
+			return true;
+		}
+
+		var titleIndex = pButton - 31600;
+		var titleTarget = GetClassicRosterMember(guildinfo, titleIndex);
+		if (!titleTarget)
+		{
+			pSock.SysMessage("That member is no longer available.");
+			ClassicGuildRoster(pUser);
+			return true;
+		}
+
+		var titleText = manualTrim(gumpData.getEdit(0) || "");
+		if (titleText.length > 32)
+			titleText = titleText.substring(0, 32);
+
+		titleTarget.guildTitle = titleText;
+		if (titleTarget.Refresh)
+			titleTarget.Refresh();
+
+		pSock.SysMessage("Updated guild title for " + (titleTarget.name || "member") + ".");
+		ClassicGuildMemberMenu(pUser, titleIndex);
+		return true;
+	}
+
+	if ((pButton >= 30300 && pButton < 30600))
+	{
+		if (!CanClassicControlWar(guildinfo, pUser))
+		{
+			pSock.SysMessage("Your rank does not allow changing guild diplomacy.");
+			ClassicGuildDiplomacy(pUser);
+			return true;
+		}
+
+		var allGuilds = GetAllGuilds() || [];
+		var guildIndex;
+		var relInt;
+		var actionText;
+
+		if (pButton >= 30300 && pButton < 30400)
+		{
+			guildIndex = pButton - 30300;
+			relInt = 0;
+			actionText = "Peace offer";
+		}
+		else if (pButton >= 30400 && pButton < 30500)
+		{
+			guildIndex = pButton - 30400;
+			relInt = 2;
+			actionText = "Alliance request";
+		}
+		else
+		{
+			guildIndex = pButton - 30500;
+			relInt = 1;
+			actionText = "War declaration";
+		}
+
+		if (!allGuilds || guildIndex < 0 || guildIndex >= allGuilds.length)
+		{
+			pSock.SysMessage("That guild is no longer available.");
+			ClassicGuildDiplomacy(pUser);
+			return true;
+		}
+
+		var targetGuild = allGuilds[guildIndex];
+		if (!targetGuild || targetGuild.id === guildinfo.id)
+		{
+			pSock.SysMessage("Invalid guild selection.");
+			ClassicGuildDiplomacy(pUser);
+			return true;
+		}
+
+		var ok = SendAndRecordRelationRequest(guildinfo, targetGuild, relInt);
+		if (ok)
+			pSock.SysMessage(actionText + " sent to " + (targetGuild.name || "that guild") + ".");
+		else
+			pSock.SysMessage("Failed to send relation request.");
+
+		ClassicGuildDiplomacy(pUser);
+		return true;
+	}
+
+	if (pButton >= 30600 && pButton < 30800)
+	{
+		if (!CanClassicControlWar(guildinfo, pUser))
+		{
+			pSock.SysMessage("Your rank does not allow changing guild diplomacy.");
+			ClassicGuildDiplomacy(pUser);
+			return true;
+		}
+
+		var acceptReq = pButton >= 30600 && pButton < 30700;
+		var reqIndex = acceptReq ? (pButton - 30600) : (pButton - 30700);
+		var incomingReqs = ReadGuildRelationRequests(guildinfo);
+		if (!incomingReqs || reqIndex < 0 || reqIndex >= incomingReqs.length)
+		{
+			pSock.SysMessage("That relation request is no longer available.");
+			ClassicGuildDiplomacy(pUser);
+			return true;
+		}
+
+		var req = incomingReqs[reqIndex];
+		var otherGuild = FindGuildById(req.fromId);
+		if (!otherGuild)
+		{
+			pSock.SysMessage("The requesting guild no longer exists.");
+			RemoveGuildRelationRequestByIndex(guildinfo, reqIndex);
+			ClassicGuildDiplomacy(pUser);
+			return true;
+		}
+
+		if (acceptReq)
+		{
+			var okSet = SetGuildRelation(guildinfo.id, otherGuild.id, req.relation | 0);
+			if (okSet)
+			{
+				pSock.SysMessage("Relation with " + (otherGuild.name || "that guild") + " set to " + GetGuildRelationText(req.relation | 0) + ".");
+				RemoveGuildRelationRequestByIndex(guildinfo, reqIndex);
+			}
+			else
+			{
+				pSock.SysMessage("Failed to apply relation.");
+			}
+		}
+		else
+		{
+			RemoveGuildRelationRequestByIndex(guildinfo, reqIndex);
+			pSock.SysMessage("You decline the request from " + (otherGuild.name || "that guild") + ".");
+		}
+
+		ClassicGuildDiplomacy(pUser);
+		return true;
+	}
+
+	return false;
+}
+
 function RenderRecruitList(guildMenu, pUser)
 {
 	var guildinfo = pUser.guild;
@@ -930,6 +2016,12 @@ function onGumpPress(pSock, pButton, gumpData)
 	if (!guildinfo)
 		return;
 
+	if ((pButton >= 30001 && pButton <= 30099) || (pButton >= 30100 && pButton < 31700))
+	{
+		if (HandleClassicGuildButton(pSock, pUser, guildinfo, pButton, gumpData))
+			return;
+	}
+
 	// Paging
 	if (pButton === 14001 || pButton === 14002)
 	{
@@ -1705,7 +2797,7 @@ function onCallback1(socket, target)
 }
 
 
-function HandleRecruitAction(pSock, pUser, guildinfo, row, doAccept)
+function HandleRecruitAction(pSock, pUser, guildinfo, row, doAccept, refreshClassic)
 {
 	var recruits = guildinfo.recruits || [];
 	var offset = GetRosterOffset(pUser);
@@ -1728,7 +2820,7 @@ function HandleRecruitAction(pSock, pUser, guildinfo, row, doAccept)
 		// Decide starting rank:
 		// - Prefer lowest-priority rank (usually "Recruit")
 		// - Fallback to literal "Recruit" if that exists
-		var startRankName = GetLowestRankName(guildinfo);
+		var startRankName = IsClassicGuildMode(guildinfo) ? "Ronin" : GetLowestRankName(guildinfo);
 
 		if (!startRankName || !startRankName.length)
 			startRankName = "Recruit";
@@ -1758,7 +2850,10 @@ function HandleRecruitAction(pSock, pUser, guildinfo, row, doAccept)
 		SetRosterOffset(pUser, offset - 1);
 
 	// Refresh gump so the row list updates immediately
-	GuildMenu(pUser);
+	if (refreshClassic)
+		ClassicGuildCandidates(pUser);
+	else
+		GuildMenu(pUser);
 }
 
 function GetRankPriority(guild, pChar)
@@ -1825,6 +2920,9 @@ function CanInvite(guild, pChar)
 	if (IsGuildMaster(guild, pChar))
 		return true;
 
+	if (IsClassicGuildMode(guild))
+		return HasClassicRank(guild, pChar, "Emissary") || HasClassicRank(guild, pChar, "Guild Master");
+
 	var prio = GetRankPriority(guild, pChar);
 	// Veteran (30) and above can invite
 	return prio >= 30;
@@ -1835,6 +2933,9 @@ function CanPromoteDemote(guild, pChar)
 	if (IsGuildMaster(guild, pChar))
 		return true;
 
+	if (IsClassicGuildMode(guild))
+		return HasClassicRank(guild, pChar, "Emissary") || HasClassicRank(guild, pChar, "Guild Master");
+
 	var prio = GetRankPriority(guild, pChar);
 	// Officer (40) and above can promote/demote / set rank
 	return prio >= 40;
@@ -1844,6 +2945,9 @@ function CanEditGuildWars(guild, pChar)
 {
 	if (IsGuildMaster(guild, pChar))
 		return true; // GM always allowed
+
+	if (IsClassicGuildMode(guild))
+		return HasClassicRank(guild, pChar, "Warlord") || HasClassicRank(guild, pChar, "Guild Master");
 
 	var prio = GetRankPriority(guild, pChar);
 	// Officer (40) and above can change war/ally/peace
@@ -2037,6 +3141,9 @@ function CanEditNewsAndMOTD(guild, pChar)
 {
 	if (IsGuildMaster(guild, pChar))
 		return true; // GM always allowed
+
+	if (IsClassicGuildMode(guild))
+		return HasClassicRank(guild, pChar, "Emissary") || HasClassicRank(guild, pChar, "Guild Master");
 
 	var prio = GetRankPriority(guild, pChar);
 	// Officer (40) and above can edit MOTD / News

@@ -3601,6 +3601,12 @@
           "type": "string"
         },
         {
+          "name": "guildToggle",
+          "cppName": "CCP_GUILDTOGGLE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
           "name": "hairColor",
           "cppName": "CCP_HAIRCOLOUR",
           "cppType": "JSPROP_ENUMANDPERM",

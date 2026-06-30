@@ -2118,6 +2118,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval
 				tString = JS_NewStringCopyZ( cx, gPriv->GetGuildTitle().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
 				break;
+			case CCP_GUILDTOGGLE:	*vp = BOOLEAN_TO_JSVAL( gPriv->GetGuildToggle() );	break;
 			case CCP_HAIRSTYLE:		*vp = INT_TO_JSVAL( gPriv->GetHairStyle() );		break;
 			case CCP_HAIRCOLOUR:	*vp = INT_TO_JSVAL( gPriv->GetHairColour() );		break;
 			case CCP_BEARDSTYLE:	*vp = INT_TO_JSVAL( gPriv->GetBeardStyle() );		break;
@@ -2649,6 +2650,7 @@ JSBool CCharacterProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBoo
 			case CCP_PRIV:			gPriv->SetPriv( static_cast<UI32>( encaps.toInt() ));			break;
 			case CCP_TOWNPRIV:		gPriv->SetTownpriv( static_cast<SI08>( encaps.toInt() ));		break;
 			case CCP_GUILDTITLE:	gPriv->SetGuildTitle( encaps.toString() );						break;
+			case CCP_GUILDTOGGLE:	gPriv->SetGuildToggle( encaps.toBool() );						break;
 			case CCP_HAIRSTYLE:		gPriv->SetHairStyle( static_cast<UI16>( encaps.toInt() ) );		break;
 			case CCP_HAIRCOLOUR:	gPriv->SetHairColour( static_cast<UI16>( encaps.toInt() ) );	break;
 			case CCP_BEARDSTYLE:	gPriv->SetBeardStyle( static_cast<UI16>( encaps.toInt() ) );	break;
