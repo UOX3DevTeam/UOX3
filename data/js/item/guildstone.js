@@ -1,10 +1,14 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
 // Guildstone Deed/Stone
+
+const pendingGuildstoneDeedTag = "pendingGuildstoneDeed";
+const defaultGuildCharter = "UOX3 Guildstone";
+const defaultGuildWebpage = "http://www.uox3.org/";
+
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
-	// Check if object is in player's backpack
 	var pSocket = pUser.socket;
 	if ( pUser.visible == 1 || pUser.visible == 2 )
 	{
@@ -21,61 +25,233 @@ function onUseChecked( pUser, iUsed )
 				return false;
 			}
 
-			// Check if player is actually in a house
-			var iMulti = pUser.multi;
-			if( !ValidateObject( iMulti ) || !iMulti.IsInMulti( pUser ))
+			if( iUsed.id == 0x14F0 )
 			{
-				// Player vendors can only be placed in houses!
-				pSocket.SysMessage( GetDictionaryEntry( 2723, pSocket.language )); // Guildstones can only be placed in houses!
+				if( !ValidateGuildstonePlacement( pUser, iUsed, true ))
+					return false;
+
+				if( pUser.SetTag )
+					pUser.SetTag( pendingGuildstoneDeedTag, iUsed.serial );
+
+				TriggerEvent( 8020, "GuildCreation", pUser );
 				return false;
 			}
 
-			// Make sure player has access to actually placing a guildstone in the house
-			if( !iMulti.IsOwner( pUser ))
+			if( iUsed.id == 0x1869 )
 			{
-				// Only the house owner can guildstones in a house!
-				pSocket.SysMessage( GetDictionaryEntry( 2724, pSocket.language )); // Only the house owner can place a guildstone in a house!
-				return false;
-			}
-
-			// Check that the player is not already in a guild
-			if( iUsed.id == 0x14F0 && pUser.guild != null )
-			{
-				pSocket.SysMessage( GetDictionaryEntry( 173, pSocket.language )); // You are already in a guild!
-				return false;
-			}
-
-			// Check that the house doesn't already have a guildstone in it
-			var tempItem;
-			for( tempItem = iMulti.FirstItem(); !iMulti.FinishedItems(); tempItem = iMulti.NextItem() )
-			{
-				if( !ValidateObject( tempItem ))
-					continue;
-
-				if( tempItem.type == 202 && tempItem.id == 0x0ED5 )
+				if( !pUser.guild )
 				{
-					pSocket.SysMessage( GetDictionaryEntry( 2725, pSocket.language )); // You cannot place any additional guildstones in this house!
+					pSocket.SysMessage( "You don't appear to be in a guild" );
 					return false;
 				}
-			}
 
-			// Make sure player is not trying to place the guildstone too close to a door!
-			// Check for nearby doors
-			var foundDoor = AreaItemFunction( "checkForNearbyDoors", pUser, 3, pSocket );
-			if( foundDoor )
+				var deedGuild = FindGuildById( iUsed.more );
+				if( !deedGuild )
+				{
+					pSocket.SysMessage( GetDictionaryEntry( 174, pSocket.language )); // Critical error adding guildstone, please contact a GM!
+					return false;
+				}
+
+				PlaceGuildStoneFromDeed( pUser, iUsed, deedGuild );
+				return false;
+			}
+		}
+
+		if( iUsed.id == 0x0ED5 )
+		{
+			var stoneGuild = FindGuildById( iUsed.more );
+			if( !stoneGuild || !pUser.guild || pUser.guild.id != stoneGuild.id )
 			{
-				pSocket.SysMessage( GetDictionaryEntry( 2726, pSocket.language )); // You cannot place a guildstone adjacent to a door!
+				pSocket.SysMessage( GetDictionaryEntry( 1984, pSocket.language )); // You are not a member of this guild!
 				return false;
 			}
 
-			// TODO - Move actual creation of guild and guildstone to this script as well.
+			TriggerEvent( 8020, "GuildMenu", pUser );
+			return false;
 		}
-
-		// All good. Handle guild creation/guildstone menu in code for now
-		return true;
 	}
 
 	return false;
+}
+
+function PlacePendingGuildstone( pUser, guild )
+{
+	if( !ValidateObject( pUser ) || !guild || !pUser.GetTag )
+		return false;
+
+	var deedSerial = parseInt( pUser.GetTag( pendingGuildstoneDeedTag ), 10 );
+	pUser.SetTag( pendingGuildstoneDeedTag, null );
+	if( isNaN( deedSerial ) || deedSerial <= 0 )
+		return false;
+
+	var deed = CalcItemFromSer( deedSerial );
+	if( !ValidateObject( deed ) || !deed.isItem )
+		return false;
+
+	return PlaceGuildStoneFromDeed( pUser, deed, guild );
+}
+
+function CanPlacePendingGuildstone( pUser )
+{
+	if( !ValidateObject( pUser ) || !pUser.GetTag )
+		return true;
+
+	var deedSerial = parseInt( pUser.GetTag( pendingGuildstoneDeedTag ), 10 );
+	if( isNaN( deedSerial ) || deedSerial <= 0 )
+		return true;
+
+	var deed = CalcItemFromSer( deedSerial );
+	if( !ValidateObject( deed ) || !deed.isItem )
+	{
+		if( pUser.SetTag )
+			pUser.SetTag( pendingGuildstoneDeedTag, null );
+		return false;
+	}
+
+	return ValidateGuildstonePlacement( pUser, deed, true );
+}
+
+function ValidateGuildstonePlacement( pUser, iUsed, requireNoGuild )
+{
+	var pSocket = pUser.socket;
+	if( pSocket == null || !ValidateObject( iUsed ) || !iUsed.isItem )
+		return false;
+
+	var itemOwner = GetPackOwner( iUsed, 0 );
+	if( itemOwner == null || itemOwner.serial != pUser.serial )
+	{
+		pSocket.SysMessage( GetDictionaryEntry( 1763, pSocket.language )); // That item must be in your backpack before it can be used.
+		return false;
+	}
+
+	var iMulti = pUser.multi;
+	if( !ValidateObject( iMulti ) || !iMulti.IsInMulti( pUser ))
+	{
+		pSocket.SysMessage( GetDictionaryEntry( 2723, pSocket.language )); // Guildstones can only be placed in houses!
+		return false;
+	}
+
+	if( !iMulti.IsOwner( pUser ))
+	{
+		pSocket.SysMessage( GetDictionaryEntry( 2724, pSocket.language )); // Only the house owner can place a guildstone in a house!
+		return false;
+	}
+
+	if( requireNoGuild && pUser.guild != null )
+	{
+		pSocket.SysMessage( GetDictionaryEntry( 173, pSocket.language )); // You are already in a guild!
+		return false;
+	}
+
+	var tempItem;
+	for( tempItem = iMulti.FirstItem(); !iMulti.FinishedItems(); tempItem = iMulti.NextItem() )
+	{
+		if( !ValidateObject( tempItem ))
+			continue;
+
+		if( tempItem.type == 202 && tempItem.id == 0x0ED5 )
+		{
+			pSocket.SysMessage( GetDictionaryEntry( 2725, pSocket.language )); // You cannot place any additional guildstones in this house!
+			return false;
+		}
+	}
+
+	var foundDoor = AreaItemFunction( "checkForNearbyDoors", pUser, 3, pSocket );
+	if( foundDoor )
+	{
+		pSocket.SysMessage( GetDictionaryEntry( 2726, pSocket.language )); // You cannot place a guildstone adjacent to a door!
+		return false;
+	}
+
+	return true;
+}
+
+function PlaceGuildStoneFromDeed( pUser, deed, guild )
+{
+	if( !ValidateGuildstonePlacement( pUser, deed, false ))
+		return false;
+
+	var pSocket = pUser.socket;
+	if( !guild )
+	{
+		pSocket.SysMessage( GetDictionaryEntry( 174, pSocket.language )); // Critical error adding guildstone, please contact a GM!
+		return false;
+	}
+
+	var stoneName = guild.name ? ( "A guildstone for " + guild.name ) : "Guildstone for an unnamed guild";
+	var stone = CreateBlankItem( pSocket, pUser, 1, stoneName, 0x0ED5, 0, "ITEM", false );
+	if( !ValidateObject( stone ))
+	{
+		pSocket.SysMessage( GetDictionaryEntry( 176, pSocket.language )); // Critical error, unable to spawn guildstone, please contact a GM!
+		return false;
+	}
+
+	stone.SetLocation( pUser );
+	stone.type = 202;
+	stone.more = guild.id;
+	stone.wipable = false;
+	stone.decayable = false;
+	guild.charter = defaultGuildCharter;
+	guild.webPage = defaultGuildWebpage;
+	guild.stone = stone;
+	deed.Delete();
+	return true;
+}
+
+function PackGuildstone( pUser, guild )
+{
+	if( !ValidateObject( pUser ) || !guild || !pUser.socket )
+		return false;
+
+	var pSocket = pUser.socket;
+	if( !pUser.guild || pUser.guild.id != guild.id )
+	{
+		pSocket.SysMessage( GetDictionaryEntry( 1984, pSocket.language )); // You are not a member of this guild!
+		return false;
+	}
+
+	if( !guild.master || guild.master.serial != pUser.serial )
+	{
+		pSocket.SysMessage( "Only the guild master can move the guildstone." );
+		return false;
+	}
+
+	var stone = guild.stone;
+	if( !ValidateObject( stone ) || !stone.isItem )
+	{
+		pSocket.SysMessage( "This guild does not have a placed guildstone." );
+		return false;
+	}
+
+	var deed = CreateBlankItem( pSocket, pUser, 1, "guildstone transporter", 0x1869, 0, "ITEM", true );
+	if( !ValidateObject( deed ) || !deed.isItem )
+	{
+		pSocket.SysMessage( "Unable to create a guildstone transporter deed." );
+		return false;
+	}
+
+	deed.type = 202;
+	deed.more = guild.id;
+	deed.decayable = false;
+	guild.stone = null;
+	stone.Delete();
+	pSocket.SysMessage( "The guildstone has been packed into a transporter deed." );
+	return true;
+}
+
+function FindGuildById( guildId )
+{
+	var allGuilds = GetAllGuilds();
+	if( !allGuilds )
+		return null;
+
+	for( var i = 0; i < allGuilds.length; i++ )
+	{
+		if( allGuilds[i] && allGuilds[i].id == guildId )
+			return allGuilds[i];
+	}
+
+	return null;
 }
 
 function checkForNearbyDoors( pUser, itemToCheck, pSocket )

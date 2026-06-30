@@ -296,6 +296,11 @@ function GuildMenu(pUser)
 	guildMenu.AddHTMLGump(280, 160, 300, 35, false, false, "<basefont color=#ffffff>Guild Type: " + type + "</basefont>");
 	guildMenu.AddHTMLGump(280, 180, 300, 35, false, false, "<basefont color=#ffffff>Guild Member Count: " + guildinfo.numMembers.toString() + "</basefont>");
 	guildMenu.AddHTMLGump(280, 200, 300, 35, false, false, "<basefont color=#ffffff>Guild Recruit Count: " + guildinfo.numRecruits.toString() + "</basefont>");
+	if (IsGuildMaster(guildinfo, pUser))
+	{
+		guildMenu.AddButton(280, 240, 0xFA5, 0xFA7, 1, 0, 16002);
+		guildMenu.AddHTMLGump(315, 238, 220, 24, false, false, "<basefont color=#ffffff>Pack guildstone</basefont>");
+	}
 
 	guildMenu.AddPage(4);
 	guildMenu.AddBackground(0, 0, 600, 600, 0x6DB);
@@ -893,10 +898,17 @@ function onGumpPress(pSock, pButton, gumpData)
 
 		if (pUser.guild == null)
 		{
+			if (TriggerEvent(5022, "CanPlacePendingGuildstone", pUser) === false)
+			{
+				pSock.SysMessage("Unable to place the guildstone deed.");
+				return;
+			}
+
 			pUser.TextMessage("Not currently in a guild... Creating new guild...", false, 0x3b2, 0, pUser.serial);
 			var newGuild = CreateNewGuild(pUser, Text1, Text2);
 			if (newGuild)
 			{
+				TriggerEvent(5022, "PlacePendingGuildstone", pUser, newGuild);
 				pUser.TextMessage("Guild automatically created: " + newGuild.name, false, 0x3b2, 0, pUser.serial);
 				pUser.Refresh();
 			}
@@ -1301,6 +1313,19 @@ function onGumpPress(pSock, pButton, gumpData)
 	}
 	if (pButton === 16001) // Cancel
 	{
+		GuildMenu(pUser);
+		return;
+	}
+	if (pButton === 16002)
+	{
+		if (!IsGuildMaster(guildinfo, pUser))
+		{
+			pSock.SysMessage("Only the guild master can move the guildstone.");
+			GuildMenu(pUser);
+			return;
+		}
+
+		TriggerEvent(5022, "PackGuildstone", pUser, guildinfo);
 		GuildMenu(pUser);
 		return;
 	}

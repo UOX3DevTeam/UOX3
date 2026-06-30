@@ -19,9 +19,6 @@ using namespace std::string_literals;
 
 CGuildCollection *GuildSys;
 
-#define DEFAULTCHARTER "UOX3 Guildstone"
-#define DEFAULTWEBPAGE "http://www.uox3.org/"
-
 static void ClearCharacterGuildState( CChar *toClear )
 {
 	if( !ValidateObject( toClear ))
@@ -1810,103 +1807,6 @@ CGuildCollection::~CGuildCollection()
 	}
 
 	gList.clear();
-}
-
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	CGuildCollection::PlaceStone()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Handle placement of guildstone from deed, by player
-//o------------------------------------------------------------------------------------------------o
-void CGuildCollection::PlaceStone( CSocket *s, CItem *deed )
-{
-	if( s == nullptr || !ValidateObject( deed ))
-		return;
-
-	CChar *mChar = s->CurrcharObj();
-	if( !ValidateObject( mChar ))
-		return;
-
-	if( deed->GetId() == 0x14F0 )
-	{
-		if( mChar->GetGuildNumber() != -1 )	// in a guild
-		{
-			s->ObjMessage( 173, deed ); // You are already in a guild.
-			return;
-		}
-		GUILDID gNum = NewGuild();
-		CGuild *nGuild = Guild( gNum );
-		if( nGuild == nullptr )
-		{
-			s->ObjMessage( 174, deed ); // Critical error adding guildstone, please contact a GM!
-			Console.Error( oldstrutil::format( "Critical error adding guildstone, memory allocation failed.  Attempted by player 0x%X", mChar->GetSerial() ));
-			return;
-		}
-		mChar->SetGuildNumber( gNum );
-		s->TempInt( gNum );
-		nGuild->NewMember(( *mChar ));
-		CItem *stone = Items->CreateItem( nullptr, mChar, 0x0ED5, 1, 0, OT_ITEM );
-		if( !ValidateObject( stone ))
-		{
-			s->ObjMessage( 176, deed ); // Critical error, unable to spawn guildstone, please contact a GM!
-			Console.Error( oldstrutil::format( "Critical error spawning guildstone, no stone made.  Attempted by player 0x%X", mChar->GetSerial() ));
-			return;
-		}
-		stone->SetName( Dictionary->GetEntry( 175 )); // Guildstone for an unnamed guild
-		if( mChar->GetId() == 0x0191 || mChar->GetId() == 0x0193 || mChar->GetId() == 0x025E || mChar->GetId() == 0x0260 )
-		{
-			mChar->SetGuildTitle( "Guildmistress" );
-		}
-		else
-		{
-			mChar->SetGuildTitle( "Guildmaster" );
-		}
-		stone->SetLocation( mChar );
-		nGuild->Webpage( DEFAULTWEBPAGE );
-		nGuild->Charter( DEFAULTCHARTER );
-		stone->SetType( IT_GUILDSTONE );
-		stone->SetTempVar( CITV_MORE, gNum );
-		stone->SetWipeable( false );
-		stone->SetDecayable( false );
-		deed->Delete();
-		nGuild->Master(( *mChar ));
-		nGuild->Stone(( *stone ));
-	}
-	else if( deed->GetId() == 0x1869 )
-	{
-		// Transporter stone for guildstone
-		if( mChar->GetGuildNumber() == -1 )	// not in a guild
-		{
-			s->ObjMessage( "You don't appear to be in a guild", deed ); // You don't appear to be in a guild
-			return;
-		}
-		GUILDID gNum = deed->GetTempVar( CITV_MORE );
-		CGuild *nGuild = Guild( gNum );
-		if( nGuild == nullptr )
-		{
-			s->ObjMessage( 174, deed ); // Critical error adding guildstone, please contact a GM!
-			Console.Error( oldstrutil::format( "Critical error adding guildstone, memory allocation failed.  Attempted by player 0x%X", mChar->GetSerial() ));
-			return;
-		}
-		CItem *stone = Items->CreateItem( nullptr, mChar, 0x0ED5, 1, 0, OT_ITEM );
-		if( !ValidateObject( stone ))
-		{
-			s->ObjMessage( 176, deed ); // Critical error, unable to spawn guildstone, please contact a GM!
-			Console.Error( oldstrutil::format( "Critical error spawning guildstone, no stone made.  Attempted by player 0x%X", mChar->GetSerial() ));
-			return;
-		}
-		stone->SetName( oldstrutil::format( Dictionary->GetEntry( 101 ), nGuild->Name().c_str() ));
-		stone->SetLocation( mChar );
-		stone->SetType( IT_GUILDSTONE );
-		stone->SetTempVar( CITV_MORE, gNum );
-		stone->SetWipeable( false );
-		stone->SetDecayable( false );
-		deed->Delete();
-		nGuild->Stone(( *stone ));
-	}
-	else
-	{
-		s->SysMessage( 177 ); // That is not a valid guildstone deed
-	}
 }
 
 //o------------------------------------------------------------------------------------------------o

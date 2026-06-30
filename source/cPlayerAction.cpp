@@ -15,7 +15,6 @@
 #include "magic.h"
 #include "townregion.h"
 #include "CGump.h"
-#include "cGuild.h"
 #include "ssection.h"
 #include "cServerDefinitions.h"
 #include "cSkillClass.h"
@@ -3096,12 +3095,6 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 		case IT_GUILDSTONE:	// Guildstone Deed
 			if( itemId == 0x14F0 || itemId == 0x1869 )	// Check for Deed/Teleporter + Guild Type
 			{
-				// If item is locked down, check if player has access to use it
-				if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, false ))
-					return true;
-
-				mChar->SetSpeechItem( iUsed );		// we're using this as a generic item
-				GuildSys->PlaceStone( mSock, iUsed );
 				return true;
 			}
 			else if( itemId == 0x0ED5 )			// Check for Guildstone + Guild Type

@@ -342,7 +342,6 @@ public:
 	void			Load();
 	GUILDRELATION	Compare( GUILDID srcGuild, GUILDID trgGuild ) const;
 	GUILDRELATION	Compare( CChar *src, CChar *trg ) const;
-	void			PlaceStone( CSocket *s, CItem *deed );
 	bool			ResultInCriminal( GUILDID srcGuild, GUILDID trgGuild ) const;
 	bool			ResultInCriminal( CChar *src, CChar *trg ) const;
 	void			DisplayTitle( CSocket *s, CChar *src ) const;
