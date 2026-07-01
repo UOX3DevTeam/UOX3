@@ -253,10 +253,16 @@ function onGuildButton( pChar )
 
 	if( pChar.guild )
 	{
-	   if( GetServerSetting( "ClassicOSIGuildMenu" ))
-		  TriggerEvent( 8020, "ClassicGuildMenu", pChar );
-	   else
-		  TriggerEvent( 8020, "GuildMenu", pChar );
+		var guildMenuSystem = parseInt( GetServerSetting( "GuildMenuSystem" ), 10 );
+		if( isNaN( guildMenuSystem ))
+			guildMenuSystem = GetServerSetting( "ClassicOSIGuildMenu" ) ? 1 : 0;
+
+		if( guildMenuSystem == 1 )
+			TriggerEvent( 8020, "ClassicGuildMenu", pChar );
+		else if( guildMenuSystem == 2 )
+			TriggerEvent( 8020, "NewGuildMenu", pChar );
+		else
+			TriggerEvent( 8020, "GuildMenu", pChar );
 	   return true;
 	}
     else

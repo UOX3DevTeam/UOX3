@@ -334,6 +334,7 @@ private:
 	SI32		maxPlayerBankWeight;			//	The max weight capacity of a player's bankbox (including subcontainers)
 	R32			weightPerSTR;					//	How much weight per point of STR a character can hold.
 	bool		paperdollGuildButton;			//	Enable Guild-button on paperdoll to access guild-menus without going through guildstone
+	UI08		guildMenuSystem;				//	0 = custom JS guild menu, 1 = classic OSI guild menu, 2 = new OSI guild menu
 	UI16		petLoyaltyGainOnSuccess;		//	The default amount of pet loyalty gained on successful use of a pet command
 	UI16		petLoyaltyLossOnFailure;		//	The default amount of pet loyalty lost on a failed attempt to use a pet command
 
@@ -960,6 +961,9 @@ public:
 
 	auto		ClassicOSIGuildMenu( bool value ) -> void;
 	auto		ClassicOSIGuildMenu() const -> bool;
+
+	auto		GuildMenuSystem( UI08 value ) -> void;
+	auto		GuildMenuSystem() const -> UI08;
 
 	auto		CombatMonstersVsAnimals( bool value ) -> void;
 	auto		CombatMonstersVsAnimals() const -> bool;

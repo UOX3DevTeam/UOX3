@@ -190,6 +190,7 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"PAPERDOLLGUILDBUTTON"s, 163},
 	{"ATTACKSPEEDFROMSTAMINA"s, 164},
 	{"CLASSICOSIGUILDMENU"s, 165},
+	{"GUILDMENUSYSTEM"s, 166},
 	{"DISPLAYDAMAGENUMBERS"s, 169},
 	{"CLIENTSUPPORT4000"s, 170},
 	{"CLIENTSUPPORT5000"s, 171},
@@ -686,6 +687,7 @@ auto CServerData::ResetDefaults() -> void
 	InternalAccountStatus( true );
 	YoungPlayerSystem( true );
 	KarmaLocking( true );
+	GuildMenuSystem( 0 );
 	CombatMaxRange( 10 );
 	CombatMaxSpellRange( 10 );
 	CombatMaxNpcAggroRange( 10 );
@@ -3943,11 +3945,40 @@ auto CServerData::PaperdollGuildButton( bool newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ClassicOSIGuildMenu() const -> bool
 {
-	return boolVals.test( BIT_CLASSICOSIGUILDMENU );
+	return boolVals.test( BIT_CLASSICOSIGUILDMENU ) || GuildMenuSystem() == 1;
 }
 auto CServerData::ClassicOSIGuildMenu( bool newVal ) -> void
 {
 	boolVals.set( BIT_CLASSICOSIGUILDMENU, newVal );
+	if( newVal )
+	{
+		GuildMenuSystem( 1 );
+	}
+	else if( GuildMenuSystem() == 1 )
+	{
+		GuildMenuSystem( 0 );
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::GuildMenuSystem()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets which JS guild menu entry points open
+//|					0 = custom, 1 = classic OSI, 2 = new OSI
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::GuildMenuSystem() const -> UI08
+{
+	return guildMenuSystem;
+}
+auto CServerData::GuildMenuSystem( UI08 newVal ) -> void
+{
+	if( newVal > 2 )
+	{
+		newVal = 2;
+	}
+
+	guildMenuSystem = newVal;
+	boolVals.set( BIT_CLASSICOSIGUILDMENU, newVal == 1 );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5788,6 +5819,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "BASEITEMSDECAYABLE=" << ( BaseItemsDecayable() ? 1 : 0 ) << '\n';
 		ofsOutput << "PAPERDOLLGUILDBUTTON=" << ( PaperdollGuildButton() ? 1 : 0 ) << '\n';
 		ofsOutput << "CLASSICOSIGUILDMENU=" << ( ClassicOSIGuildMenu() ? 1 : 0 ) << '\n';
+		ofsOutput << "GUILDMENUSYSTEM=" << static_cast<UI16>( GuildMenuSystem() ) << '\n';
 		ofsOutput << "FISHINGSTAMINALOSS=" << FishingStaminaLoss() << '\n';
 		ofsOutput << "ITEMSDETECTSPEECH=" << ItemsDetectSpeech() << '\n';
 		ofsOutput << "MAXPLAYERPACKITEMS=" << MaxPlayerPackItems() << '\n';
@@ -6900,6 +6932,9 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 165:	// CLASSICOSIGUILDMENU
 			ClassicOSIGuildMenu( static_cast<SI16>( std::stoi( value, nullptr, 0 )) == 1 );
+			break;
+		case 166:	// GUILDMENUSYSTEM
+			GuildMenuSystem( static_cast<UI08>( std::stoul( value, nullptr, 0 )) );
 			break;
 		case 169:	 // DISPLAYDAMAGENUMBERS
 			CombatDisplayDamageNumbers( static_cast<UI16>( std::stoul( value, nullptr, 0 )) == 1 );
