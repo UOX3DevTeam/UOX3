@@ -80,6 +80,38 @@ function SetRosterOffset(pUser, off)
 		pUser.SetTag("recruitOffset", off | 0);
 }
 
+function GetClassicOffset(pUser, tagName)
+{
+	if (!pUser || !pUser.GetTag)
+		return 0;
+
+	var off = parseInt(pUser.GetTag(tagName), 10);
+	if (isNaN(off) || off < 0)
+		off = 0;
+	return off;
+}
+
+function SetClassicOffset(pUser, tagName, off)
+{
+	if (pUser && pUser.SetTag)
+		pUser.SetTag(tagName, Math.max(0, off | 0));
+}
+
+function AddClassicPaging(gump, x, y, offset, pageSize, total, prevButton, nextButton)
+{
+	if (offset > 0)
+	{
+		gump.AddButton(x, y, 4014, 4016, 1, 0, prevButton);
+		gump.AddHTMLGump(x + 35, y - 2, 70, 20, false, false, ClassicGuildText("Previous"));
+	}
+
+	if (offset + pageSize < total)
+	{
+		gump.AddButton(x + 120, y, 4005, 4007, 1, 0, nextButton);
+		gump.AddHTMLGump(x + 155, y - 2, 70, 20, false, false, ClassicGuildText("Next"));
+	}
+}
+
 function ClassicGuildText(text)
 {
 	return "<basefont color=#111111>" + String(text || "") + "</basefont>";
@@ -92,6 +124,9 @@ var classicGuildRanks = [
 	{ name: "Warlord", prio: 40 },
 	{ name: "Guild Master", prio: 50 }
 ];
+
+var classicWarDefaultMaxKills = 100;
+var classicWarDefaultDurationHours = 168;
 
 function IsClassicGuildMode(guild)
 {
@@ -204,6 +239,9 @@ function ClassicGuildMenu(pUser)
 		return;
 	}
 
+	if (GetServerSetting(165) && IsGuildMaster(guildinfo, pUser) && !IsClassicGuildMode(guildinfo))
+		EnsureClassicGuildRanks(guildinfo, pUser);
+
 	var classicMenu = new Gump;
 	var leader = guildinfo.master;
 	var leaderName = leader && leader.name ? leader.name : "None";
@@ -270,6 +308,8 @@ function ClassicGuildRoster(pUser)
 	var classicMode = IsClassicGuildMode(guildinfo);
 	var canManage = CanClassicManageRoster(guildinfo, pUser);
 	var roster = new Gump;
+	var offset = GetClassicOffset(pUser, "classicRosterOffset");
+	var pageSize = 12;
 
 	AddClassicGuildFrame(roster, "Guild Roster");
 	roster.AddHTMLGump(55, 88, 150, 22, false, false, ClassicGuildText("Name"));
@@ -284,14 +324,18 @@ function ClassicGuildRoster(pUser)
 	}
 	else
 	{
-		var maxRows = Math.min(12, members.length);
-		for (var i = 0; i < maxRows; i++)
+		if (offset >= members.length)
+			offset = 0;
+
+		var end = Math.min(offset + pageSize, members.length);
+		for (var i = offset; i < end; i++)
 		{
 			var m = members[i];
 			if (!m)
 				continue;
 
-			var y = 120 + i * 18;
+			var row = i - offset;
+			var y = 120 + row * 18;
 			var name = m.name || ("0x" + m.serial.toString(16).toUpperCase());
 			var rank = classicMode ? GetClassicRankName(guildinfo, m) : (GetRankName(guildinfo, m) || m.guildTitle || "Member");
 			var status = GetOnlineStatus(m);
@@ -305,8 +349,8 @@ function ClassicGuildRoster(pUser)
 			}
 		}
 
-		if (members.length > maxRows)
-			roster.AddHTMLGump(55, 340, 360, 18, false, false, ClassicGuildText("Showing first " + maxRows + " of " + members.length + " members."));
+		roster.AddHTMLGump(55, 332, 220, 18, false, false, ClassicGuildText("Showing " + (offset + 1) + "-" + end + " of " + members.length));
+		AddClassicPaging(roster, 290, 332, offset, pageSize, members.length, 31700, 31701);
 	}
 
 	roster.Send(pUser.socket);
@@ -403,6 +447,8 @@ function ClassicGuildCandidates(pUser)
 	var guildinfo = pUser.guild;
 	var recruits = guildinfo.recruits || [];
 	var candidates = new Gump;
+	var offset = GetClassicOffset(pUser, "classicCandidateOffset");
+	var pageSize = 10;
 
 	AddClassicGuildFrame(candidates, "Guild Candidates");
 	candidates.AddHTMLGump(55, 88, 170, 22, false, false, ClassicGuildText("Candidate"));
@@ -414,14 +460,18 @@ function ClassicGuildCandidates(pUser)
 	}
 	else
 	{
-		var maxRows = Math.min(10, recruits.length);
-		for (var i = 0; i < maxRows; i++)
+		if (offset >= recruits.length)
+			offset = 0;
+
+		var end = Math.min(offset + pageSize, recruits.length);
+		for (var i = offset; i < end; i++)
 		{
 			var c = recruits[i];
 			if (!c)
 				continue;
 
-			var y = 120 + i * 22;
+			var row = i - offset;
+			var y = 120 + row * 22;
 			var name = c.name || ("0x" + c.serial.toString(16).toUpperCase());
 			candidates.AddHTMLGump(55, y, 210, 20, false, false, ClassicGuildText(name));
 			candidates.AddButton(300, y, 4005, 4007, 1, 0, 30100 + i);
@@ -430,8 +480,8 @@ function ClassicGuildCandidates(pUser)
 			candidates.AddHTMLGump(435, y - 2, 55, 20, false, false, ClassicGuildText("Decline"));
 		}
 
-		if (recruits.length > maxRows)
-			candidates.AddHTMLGump(55, 340, 360, 18, false, false, ClassicGuildText("Showing first " + maxRows + " of " + recruits.length + " candidates."));
+		candidates.AddHTMLGump(55, 332, 220, 18, false, false, ClassicGuildText("Showing " + (offset + 1) + "-" + end + " of " + recruits.length));
+		AddClassicPaging(candidates, 290, 332, offset, pageSize, recruits.length, 31710, 31711);
 	}
 
 	candidates.Send(pUser.socket);
@@ -478,11 +528,14 @@ function ClassicGuildDiplomacy(pUser)
 	var diplomacy = new Gump;
 	var rowY = 88;
 	var shown = 0;
+	var offset = GetClassicOffset(pUser, "classicDiplomacyOffset");
+	var pageSize = 7;
+	var otherGuildCount = 0;
 
 	AddClassicGuildFrame(diplomacy, "Guild Diplomacy");
 	diplomacy.AddHTMLGump(55, 68, 210, 20, false, false, ClassicGuildText("Guild"));
-	diplomacy.AddHTMLGump(250, 68, 70, 20, false, false, ClassicGuildText("Status"));
-	diplomacy.AddHTMLGump(325, 68, 170, 20, false, false, ClassicGuildText("Actions"));
+	diplomacy.AddHTMLGump(235, 68, 105, 20, false, false, ClassicGuildText("Status"));
+	diplomacy.AddHTMLGump(350, 68, 150, 20, false, false, ClassicGuildText("Actions"));
 
 	if (!allGuilds.length)
 	{
@@ -490,11 +543,27 @@ function ClassicGuildDiplomacy(pUser)
 	}
 	else
 	{
-		for (var i = 0; i < allGuilds.length && shown < 7; i++)
+		for (var countIndex = 0; countIndex < allGuilds.length; countIndex++)
+		{
+			if (allGuilds[countIndex] && allGuilds[countIndex].id !== guildinfo.id)
+				otherGuildCount++;
+		}
+
+		if (offset >= otherGuildCount)
+			offset = 0;
+
+		var skipped = 0;
+		for (var i = 0; i < allGuilds.length && shown < pageSize; i++)
 		{
 			var g = allGuilds[i];
 			if (!g || g.id === guildinfo.id)
 				continue;
+
+			if (skipped < offset)
+			{
+				skipped++;
+				continue;
+			}
 
 			var y = rowY + shown * 24;
 			var rel = (typeof CompareGuildByGuild !== "undefined") ? CompareGuildByGuild(guildinfo.id, g.id) : 3;
@@ -503,19 +572,23 @@ function ClassicGuildDiplomacy(pUser)
 				name += " [" + g.abbreviation + "]";
 
 			diplomacy.AddHTMLGump(55, y, 185, 20, false, false, ClassicGuildText(name));
-			diplomacy.AddHTMLGump(250, y, 65, 20, false, false, ClassicGuildText(GetGuildRelationText(rel)));
+			if (rel === 1)
+				CheckClassicWarExpired(guildinfo, g);
+
+			var statusText = (rel === 1) ? FormatClassicWarStatus(guildinfo, g) : GetGuildRelationText(rel);
+			diplomacy.AddHTMLGump(235, y, 105, 20, false, false, ClassicGuildText(statusText));
 
 			if (rel === 1)
 			{
-				diplomacy.AddButton(325, y, 4005, 4007, 1, 0, 30300 + i);
-				diplomacy.AddHTMLGump(360, y - 2, 110, 20, false, false, ClassicGuildText("Offer peace"));
+				diplomacy.AddButton(350, y, 4005, 4007, 1, 0, 30300 + i);
+				diplomacy.AddHTMLGump(385, y - 2, 110, 20, false, false, ClassicGuildText("Offer peace"));
 			}
 			else
 			{
-				diplomacy.AddButton(325, y, 4005, 4007, 1, 0, 30400 + i);
-				diplomacy.AddHTMLGump(360, y - 2, 55, 20, false, false, ClassicGuildText("Ally"));
-				diplomacy.AddButton(415, y, 4017, 4019, 1, 0, 30500 + i);
-				diplomacy.AddHTMLGump(450, y - 2, 55, 20, false, false, ClassicGuildText("War"));
+				diplomacy.AddButton(350, y, 4005, 4007, 1, 0, 30400 + i);
+				diplomacy.AddHTMLGump(385, y - 2, 55, 20, false, false, ClassicGuildText("Ally"));
+				diplomacy.AddButton(440, y, 4017, 4019, 1, 0, 30500 + i);
+				diplomacy.AddHTMLGump(475, y - 2, 55, 20, false, false, ClassicGuildText("War"));
 			}
 
 			shown++;
@@ -523,6 +596,11 @@ function ClassicGuildDiplomacy(pUser)
 
 		if (shown === 0)
 			diplomacy.AddHTMLGump(55, rowY, 360, 20, false, false, ClassicGuildText("No other guilds found."));
+		else
+		{
+			diplomacy.AddHTMLGump(55, 232, 220, 18, false, false, ClassicGuildText("Showing " + (offset + 1) + "-" + (offset + shown) + " of " + otherGuildCount));
+			AddClassicPaging(diplomacy, 290, 232, offset, pageSize, otherGuildCount, 31720, 31721);
+		}
 	}
 
 	var requestY = 270;
@@ -649,6 +727,49 @@ function HandleClassicGuildButton(pSock, pUser, guildinfo, pButton, gumpData)
 	if (pButton === 30011 || pButton === 30071)
 	{
 		ClassicGuildMenu(pUser);
+		return true;
+	}
+
+	if (pButton === 31700 || pButton === 31701)
+	{
+		var membersForPage = (guildinfo.member || guildinfo.members) || [];
+		var rosterOffset = GetClassicOffset(pUser, "classicRosterOffset");
+		rosterOffset += (pButton === 31700) ? -12 : 12;
+		if (rosterOffset >= membersForPage.length)
+			rosterOffset = Math.max(0, membersForPage.length - 12);
+		SetClassicOffset(pUser, "classicRosterOffset", rosterOffset);
+		ClassicGuildRoster(pUser);
+		return true;
+	}
+
+	if (pButton === 31710 || pButton === 31711)
+	{
+		var recruitsForPage = guildinfo.recruits || [];
+		var candidateOffset = GetClassicOffset(pUser, "classicCandidateOffset");
+		candidateOffset += (pButton === 31710) ? -10 : 10;
+		if (candidateOffset >= recruitsForPage.length)
+			candidateOffset = Math.max(0, recruitsForPage.length - 10);
+		SetClassicOffset(pUser, "classicCandidateOffset", candidateOffset);
+		ClassicGuildCandidates(pUser);
+		return true;
+	}
+
+	if (pButton === 31720 || pButton === 31721)
+	{
+		var guildsForPage = GetAllGuilds() || [];
+		var otherCount = 0;
+		for (var pg = 0; pg < guildsForPage.length; pg++)
+		{
+			if (guildsForPage[pg] && guildsForPage[pg].id !== guildinfo.id)
+				otherCount++;
+		}
+
+		var diplomacyOffset = GetClassicOffset(pUser, "classicDiplomacyOffset");
+		diplomacyOffset += (pButton === 31720) ? -7 : 7;
+		if (diplomacyOffset >= otherCount)
+			diplomacyOffset = Math.max(0, otherCount - 7);
+		SetClassicOffset(pUser, "classicDiplomacyOffset", diplomacyOffset);
+		ClassicGuildDiplomacy(pUser);
 		return true;
 	}
 
@@ -1145,6 +1266,11 @@ function HandleClassicGuildButton(pSock, pUser, guildinfo, pButton, gumpData)
 			var okSet = SetGuildRelation(guildinfo.id, otherGuild.id, req.relation | 0);
 			if (okSet)
 			{
+				if ((req.relation | 0) === 1)
+					StartClassicWar(guildinfo, otherGuild, classicWarDefaultMaxKills, classicWarDefaultDurationHours);
+				else if ((req.relation | 0) === 0)
+					EndClassicWar(guildinfo, otherGuild);
+
 				pSock.SysMessage("Relation with " + (otherGuild.name || "that guild") + " set to " + GetGuildRelationText(req.relation | 0) + ".");
 				RemoveGuildRelationRequestByIndex(guildinfo, reqIndex);
 			}
@@ -1994,6 +2120,9 @@ function onGumpPress(pSock, pButton, gumpData)
 			var newGuild = CreateNewGuild(pUser, Text1, Text2);
 			if (newGuild)
 			{
+				if (GetServerSetting(165))
+					EnsureClassicGuildRanks(newGuild, pUser);
+
 				TriggerEvent(5022, "PlacePendingGuildstone", pUser, newGuild);
 				pUser.TextMessage("Guild automatically created: " + newGuild.name, false, 0x3b2, 0, pUser.serial);
 				pUser.Refresh();
@@ -2016,7 +2145,7 @@ function onGumpPress(pSock, pButton, gumpData)
 	if (!guildinfo)
 		return;
 
-	if ((pButton >= 30001 && pButton <= 30099) || (pButton >= 30100 && pButton < 31700))
+	if ((pButton >= 30001 && pButton <= 30099) || (pButton >= 30100 && pButton < 31800))
 	{
 		if (HandleClassicGuildButton(pSock, pUser, guildinfo, pButton, gumpData))
 			return;
@@ -3066,6 +3195,197 @@ function SaveGuildConfig(guild, cfg)
 	mFile.Close();
 	mFile.Free();
 	return true;
+}
+
+function GetClassicWarNow()
+{
+	return Math.floor((new Date()).getTime() / 1000);
+}
+
+function GetClassicWarKey(otherGuildId)
+{
+	return "CLASSIC_WAR_" + (otherGuildId | 0);
+}
+
+function ParseClassicWarState(raw)
+{
+	var parts = String(raw || "").split(",");
+	if (parts.length < 5)
+		return null;
+
+	return {
+		start: parseInt(parts[0], 10) || 0,
+		end: parseInt(parts[1], 10) || 0,
+		maxKills: parseInt(parts[2], 10) || classicWarDefaultMaxKills,
+		killsFor: parseInt(parts[3], 10) || 0,
+		killsAgainst: parseInt(parts[4], 10) || 0
+	};
+}
+
+function ReadClassicWarState(guild, otherGuild)
+{
+	if (!guild || !otherGuild)
+		return null;
+
+	var cfg = ReadGuildConfig(guild);
+	return ParseClassicWarState(cfg[GetClassicWarKey(otherGuild.id)]);
+}
+
+function SaveClassicWarState(guild, otherGuild, state)
+{
+	if (!guild || !otherGuild || !state)
+		return false;
+
+	var cfg = ReadGuildConfig(guild);
+	cfg[GetClassicWarKey(otherGuild.id)] = [
+		state.start | 0,
+		state.end | 0,
+		state.maxKills | 0,
+		state.killsFor | 0,
+		state.killsAgainst | 0
+	].join(",");
+	return SaveGuildConfig(guild, cfg);
+}
+
+function ClearClassicWarState(guild, otherGuild)
+{
+	if (!guild || !otherGuild)
+		return false;
+
+	var cfg = ReadGuildConfig(guild);
+	delete cfg[GetClassicWarKey(otherGuild.id)];
+	return SaveGuildConfig(guild, cfg);
+}
+
+function StartClassicWar(guildOne, guildTwo, maxKills, durationHours)
+{
+	if (!guildOne || !guildTwo)
+		return false;
+
+	var now = GetClassicWarNow();
+	var max = maxKills || classicWarDefaultMaxKills;
+	var hours = durationHours || classicWarDefaultDurationHours;
+	var state = {
+		start: now,
+		end: now + (hours * 3600),
+		maxKills: max,
+		killsFor: 0,
+		killsAgainst: 0
+	};
+
+	SaveClassicWarState(guildOne, guildTwo, state);
+	SaveClassicWarState(guildTwo, guildOne, state);
+	return true;
+}
+
+function EndClassicWar(guildOne, guildTwo)
+{
+	if (!guildOne || !guildTwo)
+		return false;
+
+	ClearClassicWarState(guildOne, guildTwo);
+	ClearClassicWarState(guildTwo, guildOne);
+	return true;
+}
+
+function CheckClassicWarExpired(guildOne, guildTwo)
+{
+	var state = ReadClassicWarState(guildOne, guildTwo);
+	if (!state || !state.end)
+		return false;
+
+	if (GetClassicWarNow() <= state.end)
+		return false;
+
+	EndClassicWar(guildOne, guildTwo);
+	if (typeof SetGuildRelation !== "undefined")
+		SetGuildRelation(guildOne.id, guildTwo.id, 0);
+	return true;
+}
+
+function FormatClassicWarStatus(guild, otherGuild)
+{
+	var state = ReadClassicWarState(guild, otherGuild);
+	if (!state)
+		return "War";
+
+	var remaining = Math.max(0, state.end - GetClassicWarNow());
+	var hoursLeft = Math.ceil(remaining / 3600);
+	return "War " + state.killsFor + "/" + state.maxKills + " (" + hoursLeft + "h)";
+}
+
+function NotifyGuildMembers(guild, message)
+{
+	if (!guild || !message)
+		return;
+
+	var members = (guild.member || guild.members) || [];
+	for (var i = 0; i < members.length; i++)
+	{
+		var m = members[i];
+		if (m && m.socket)
+			m.socket.SysMessage(message);
+	}
+}
+
+function RecordClassicWarKill(killerGuild, victimGuild)
+{
+	if (!killerGuild || !victimGuild || killerGuild.id === victimGuild.id)
+		return false;
+
+	var relation = (typeof CompareGuildByGuild !== "undefined") ? CompareGuildByGuild(killerGuild.id, victimGuild.id) : 3;
+	if (relation !== 1)
+		return false;
+
+	if (CheckClassicWarExpired(killerGuild, victimGuild))
+		return false;
+
+	var killerState = ReadClassicWarState(killerGuild, victimGuild);
+	var victimState = ReadClassicWarState(victimGuild, killerGuild);
+	if (!killerState || !victimState)
+	{
+		StartClassicWar(killerGuild, victimGuild, classicWarDefaultMaxKills, classicWarDefaultDurationHours);
+		killerState = ReadClassicWarState(killerGuild, victimGuild);
+		victimState = ReadClassicWarState(victimGuild, killerGuild);
+	}
+
+	killerState.killsFor++;
+	killerState.killsAgainst = victimState.killsFor;
+	victimState.killsAgainst++;
+	victimState.killsFor = killerState.killsAgainst;
+
+	SaveClassicWarState(killerGuild, victimGuild, killerState);
+	SaveClassicWarState(victimGuild, killerGuild, victimState);
+
+	if (killerState.killsFor >= killerState.maxKills)
+	{
+		EndClassicWar(killerGuild, victimGuild);
+		if (typeof SetGuildRelation !== "undefined")
+			SetGuildRelation(killerGuild.id, victimGuild.id, 0);
+		NotifyGuildMembers(killerGuild, "Your guild has won the war against " + (victimGuild.name || "the enemy guild") + ".");
+		NotifyGuildMembers(victimGuild, "Your guild has lost the war against " + (killerGuild.name || "the enemy guild") + ".");
+	}
+
+	return true;
+}
+
+function OnGuildPlayerDeath(pDead, iCorpse)
+{
+	if (!ValidateObject(pDead) || !ValidateObject(iCorpse) || pDead.npc || !pDead.guild)
+		return false;
+
+	var killerSerial = iCorpse.morex | 0;
+	if (!killerSerial || killerSerial < 0)
+		return false;
+
+	var killer = CalcCharFromSer(killerSerial);
+	if (!ValidateObject(killer) || killer.npc || !killer.guild)
+		return false;
+
+	if (!GetServerSetting(165) && !IsClassicGuildMode(killer.guild) && !IsClassicGuildMode(pDead.guild))
+		return false;
+
+	return RecordClassicWarKill(killer.guild, pDead.guild);
 }
 
 function SaveGuildMOTD(guild, motd)

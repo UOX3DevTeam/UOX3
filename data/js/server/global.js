@@ -241,6 +241,7 @@ function onDeath( pDead, iCorpse )
 	if( !ValidateObject( pDead ) || pDead.npc || !pDead.online )
 		return false;
 
+	TriggerEvent( 8020, "OnGuildPlayerDeath", pDead, iCorpse );
 	return TriggerEvent( 5045, "onDeath", pDead, iCorpse );
 }
 
