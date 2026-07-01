@@ -239,7 +239,7 @@ function ClassicGuildMenu(pUser)
 		return;
 	}
 
-	if (GetServerSetting(165) && IsGuildMaster(guildinfo, pUser) && !IsClassicGuildMode(guildinfo))
+	if (GetServerSetting( "ClassicOSIGuildMenu" ) && IsGuildMaster(guildinfo, pUser) && !IsClassicGuildMode(guildinfo))
 		EnsureClassicGuildRanks(guildinfo, pUser);
 
 	var classicMenu = new Gump;
@@ -2120,7 +2120,7 @@ function onGumpPress(pSock, pButton, gumpData)
 			var newGuild = CreateNewGuild(pUser, Text1, Text2);
 			if (newGuild)
 			{
-				if (GetServerSetting(165))
+				if (GetServerSetting( "ClassicOSIGuildMenu" ))
 					EnsureClassicGuildRanks(newGuild, pUser);
 
 				TriggerEvent(5022, "PlacePendingGuildstone", pUser, newGuild);
