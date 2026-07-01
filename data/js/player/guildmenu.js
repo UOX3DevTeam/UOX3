@@ -127,6 +127,7 @@ var classicGuildRanks = [
 
 var classicWarDefaultMaxKills = 100;
 var classicWarDefaultDurationHours = 168;
+var classicFealtyCheckIntervalSeconds = 86400;
 
 function IsClassicGuildMode(guild)
 {
@@ -241,6 +242,9 @@ function ClassicGuildMenu(pUser)
 
 	if (GetServerSetting( "ClassicOSIGuildMenu" ) && IsGuildMaster(guildinfo, pUser) && !IsClassicGuildMode(guildinfo))
 		EnsureClassicGuildRanks(guildinfo, pUser);
+
+	if (IsClassicGuildMode(guildinfo))
+		EvaluateClassicFealty(guildinfo, false);
 
 	var classicMenu = new Gump;
 	var leader = guildinfo.master;
@@ -641,17 +645,20 @@ function ClassicGuildMasterMenu(pUser)
 
 	var guildinfo = pUser.guild;
 	var masterMenu = new Gump;
+	var lastFealtyCheck = GetClassicLastFealtyCheck(guildinfo);
+	var fealtyText = lastFealtyCheck ? ("Last fealty check: " + FormatClassicFealtyTimeAgo(GetClassicWarNow() - lastFealtyCheck) + " ago") : "Fealty has not been checked yet.";
 
 	AddClassicGuildFrame(masterMenu, "Guildmaster Functions");
 	AddClassicGuildButton(masterMenu, 55, 105, 30013, "Pack guildstone");
 	AddClassicGuildButton(masterMenu, 55, 140, 30014, "Initialize classic ranks");
 	AddClassicGuildButton(masterMenu, 55, 175, 30015, "Edit guild information");
 	AddClassicGuildButton(masterMenu, 55, 210, 30016, "Set guild type");
-	AddClassicGuildButton(masterMenu, 55, 245, 30010, "Open custom guild settings");
+	AddClassicGuildButton(masterMenu, 55, 245, 30021, "Check fealty votes");
+	AddClassicGuildButton(masterMenu, 55, 280, 30010, "Open custom guild settings");
 	if (IsClassicGuildMode(guildinfo))
-		masterMenu.AddHTMLGump(55, 295, 420, 40, true, true, ClassicGuildText("Classic rank mode is enabled. Emissaries manage members; Warlords control diplomacy."));
+		masterMenu.AddHTMLGump(55, 315, 420, 40, true, true, ClassicGuildText("Classic rank mode is enabled. " + fealtyText));
 	else
-		masterMenu.AddHTMLGump(55, 295, 420, 40, true, true, ClassicGuildText("Classic rank mode has not been initialized for this guild yet."));
+		masterMenu.AddHTMLGump(55, 315, 420, 40, true, true, ClassicGuildText("Classic rank mode has not been initialized for this guild yet."));
 
 	masterMenu.Send(pUser.socket);
 	masterMenu.Free();
@@ -964,6 +971,21 @@ function HandleClassicGuildButton(pSock, pUser, guildinfo, pButton, gumpData)
 		}
 
 		ClassicGuildTypeMenu(pUser);
+		return true;
+	}
+
+	if (pButton === 30021)
+	{
+		if (!IsGuildMaster(guildinfo, pUser))
+		{
+			pSock.SysMessage("Only the guild master can check fealty votes.");
+			ClassicGuildMasterMenu(pUser);
+			return true;
+		}
+
+		var fealtyResult = EvaluateClassicFealty(guildinfo, true);
+		pSock.SysMessage(fealtyResult.message);
+		ClassicGuildMasterMenu(pUser);
 		return true;
 	}
 

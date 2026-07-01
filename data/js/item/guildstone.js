@@ -66,7 +66,7 @@ function onUseChecked( pUser, iUsed )
 				return false;
 			}
 
-			if( GetServerSetting( 165 ))
+			if( GetServerSetting( "ClassicOSIGuildMenu" ))
 				TriggerEvent( 8020, "ClassicGuildMenu", pUser );
 			else
 				TriggerEvent( 8020, "GuildMenu", pUser );
