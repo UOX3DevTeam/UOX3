@@ -335,6 +335,12 @@ private:
 	R32			weightPerSTR;					//	How much weight per point of STR a character can hold.
 	bool		paperdollGuildButton;			//	Enable Guild-button on paperdoll to access guild-menus without going through guildstone
 	UI08		guildMenuSystem;				//	0 = custom JS guild menu, 1 = classic OSI guild menu, 2 = new OSI guild menu
+	UI32		guildRegistrationFee;			//	Gold cost to create a guild; GMs bypass this fee
+	UI32		classicGuildWarMaxKills;		//	Default max kills before a classic guild war ends
+	UI32		classicGuildWarDurationHours;	//	Default duration in hours before a classic guild war expires
+	UI32		classicGuildFealtyCheckSeconds;	//	Seconds between classic guild fealty election checks
+	UI32		classicGuildTypeChangeSeconds;	//	Seconds between classic guild type changes
+	UI16		classicGuildstoneRange;			//	Required range from classic guildstone to use stone-only menus
 	UI16		petLoyaltyGainOnSuccess;		//	The default amount of pet loyalty gained on successful use of a pet command
 	UI16		petLoyaltyLossOnFailure;		//	The default amount of pet loyalty lost on a failed attempt to use a pet command
 
@@ -964,6 +970,24 @@ public:
 
 	auto		GuildMenuSystem( UI08 value ) -> void;
 	auto		GuildMenuSystem() const -> UI08;
+
+	auto		GuildRegistrationFee( UI32 value ) -> void;
+	auto		GuildRegistrationFee() const -> UI32;
+
+	auto		ClassicGuildWarMaxKills( UI32 value ) -> void;
+	auto		ClassicGuildWarMaxKills() const -> UI32;
+
+	auto		ClassicGuildWarDurationHours( UI32 value ) -> void;
+	auto		ClassicGuildWarDurationHours() const -> UI32;
+
+	auto		ClassicGuildFealtyCheckSeconds( UI32 value ) -> void;
+	auto		ClassicGuildFealtyCheckSeconds() const -> UI32;
+
+	auto		ClassicGuildTypeChangeSeconds( UI32 value ) -> void;
+	auto		ClassicGuildTypeChangeSeconds() const -> UI32;
+
+	auto		ClassicGuildstoneRange( UI16 value ) -> void;
+	auto		ClassicGuildstoneRange() const -> UI16;
 
 	auto		CombatMonstersVsAnimals( bool value ) -> void;
 	auto		CombatMonstersVsAnimals() const -> bool;

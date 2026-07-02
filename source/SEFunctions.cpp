@@ -2042,6 +2042,26 @@ JSBool SE_RemoveGuildRelationRequest( JSContext* cx, uintN argc, jsval* vp )
     return JS_TRUE;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Function    -  SE_DisbandGuild()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -  Disband a guild by id
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_DisbandGuild( JSContext* cx, uintN argc, jsval* vp )
+{
+	jsval* argv = JS_ARGV( cx, vp );
+
+	if( argc != 1 || GuildSys == nullptr )
+		return JS_FALSE;
+	if( !JSVAL_IS_INT( argv[0] ))
+		return JS_FALSE;
+
+	GUILDID gId = static_cast<GUILDID>( JSVAL_TO_INT( argv[0] ));
+	bool ok = GuildSys->Disband( gId );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ok ? JS_TRUE : JS_FALSE ));
+	return JS_TRUE;
+}
+
 
 //o------------------------------------------------------------------------------------------------o
 //| Function    - SE_GetAllGuilds()
@@ -5277,6 +5297,24 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 				break;
 			case 166:	// GUILDMENUSYSTEM
 				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( cwmWorldState->ServerData()->GuildMenuSystem() ) );
+				break;
+			case 167:	// GUILDREGISTRATIONFEE
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<int>( cwmWorldState->ServerData()->GuildRegistrationFee() ) ) );
+				break;
+			case 390:	// CLASSICGUILDWARMAXKILLS
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<int>( cwmWorldState->ServerData()->ClassicGuildWarMaxKills() ) ) );
+				break;
+			case 391:	// CLASSICGUILDWARDURATIONHOURS
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<int>( cwmWorldState->ServerData()->ClassicGuildWarDurationHours() ) ) );
+				break;
+			case 392:	// CLASSICGUILDFEALTYCHECKSECONDS
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<int>( cwmWorldState->ServerData()->ClassicGuildFealtyCheckSeconds() ) ) );
+				break;
+			case 393:	// CLASSICGUILDTYPECHANGESECONDS
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<int>( cwmWorldState->ServerData()->ClassicGuildTypeChangeSeconds() ) ) );
+				break;
+			case 394:	// CLASSICGUILDSTONERANGE
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<int>( cwmWorldState->ServerData()->ClassicGuildstoneRange() ) ) );
 				break;
 			case 169:	 // DISPLAYDAMAGENUMBERS
 				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CombatDisplayDamageNumbers() ) );

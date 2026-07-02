@@ -267,7 +267,14 @@ function onGuildButton( pChar )
 	}
     else
 	{
-        TriggerEvent( 8020, "GuildCreation", pChar );
+		var noGuildMenuSystem = parseInt( GetServerSetting( "GuildMenuSystem" ), 10 );
+		if( isNaN( noGuildMenuSystem ))
+			noGuildMenuSystem = GetServerSetting( "ClassicOSIGuildMenu" ) ? 1 : 0;
+
+		if( noGuildMenuSystem == 2 )
+			TriggerEvent( 8020, "NewGuildCreation", pChar );
+		else
+			TriggerEvent( 8020, "GuildCreation", pChar );
 		return true;
 	}
 

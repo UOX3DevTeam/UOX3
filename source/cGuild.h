@@ -324,6 +324,7 @@ private:
 	GUILDID			MaximumGuild( void );
 public:
 	void			Resign( CSocket *s );
+	bool			Disband( GUILDID toDisband );
 	CGuildCollection() = default;
 	size_t			NumGuilds( void ) const;
 	GUILDID			NewGuild( void );

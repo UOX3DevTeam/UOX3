@@ -27,6 +27,16 @@ function onUseChecked( pUser, iUsed )
 
 			if( iUsed.id == 0x14F0 )
 			{
+				var deedGuildMenuSystem = parseInt( GetServerSetting( "GuildMenuSystem" ), 10 );
+				if( isNaN( deedGuildMenuSystem ))
+					deedGuildMenuSystem = GetServerSetting( "ClassicOSIGuildMenu" ) ? 1 : 0;
+
+				if( deedGuildMenuSystem == 2 )
+				{
+					pSocket.SysMessage( "Use the guild button on your paperdoll to create or access a guild." );
+					return false;
+				}
+
 				if( !ValidateGuildstonePlacement( pUser, iUsed, true ))
 					return false;
 
@@ -73,7 +83,7 @@ function onUseChecked( pUser, iUsed )
 			if( guildMenuSystem == 1 )
 				TriggerEvent( 8020, "ClassicGuildMenu", pUser );
 			else if( guildMenuSystem == 2 )
-				TriggerEvent( 8020, "NewGuildMenu", pUser );
+				pSocket.SysMessage( "Use the guild button on your paperdoll to access the guild menu." );
 			else
 				TriggerEvent( 8020, "GuildMenu", pUser );
 			return false;

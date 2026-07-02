@@ -88,6 +88,7 @@ static JSFunctionSpec my_functions[] =
 	{ "SetGuildRelation",			SE_SetGuildRelation,		3, 0 },
     { "GetGuildRelationRequests",   SE_GetGuildRelationRequests, 1, 0 },
 	{ "RemoveGuildRelationRequest", SE_RemoveGuildRelationRequest, 2, 0 },
+	{ "DisbandGuild",				SE_DisbandGuild,			1, 0 },
 
 	{ "CommandLevelReq",			SE_CommandLevelReq,			1, 0 },
 	{ "CommandExists",				SE_CommandExists,			1, 0 },

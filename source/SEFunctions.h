@@ -99,6 +99,7 @@ JSBool SE_SendGuildRelationRequest( JSContext* cx, uintN argc, jsval* vp );
 JSBool SE_SetGuildRelation( JSContext* cx, uintN argc, jsval* vp );
 JSBool SE_GetGuildRelationRequests( JSContext* cx, uintN argc, jsval* vp );
 JSBool SE_RemoveGuildRelationRequest( JSContext* cx, uintN argc, jsval* vp );
+JSBool SE_DisbandGuild( JSContext* cx, uintN argc, jsval* vp );
 
 JSBool SE_PossessTown( JSContext *cx, uintN argc, jsval *vp );				//										***
 

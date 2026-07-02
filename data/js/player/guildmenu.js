@@ -32,6 +32,41 @@ function GuildCreation(pUser)
 	guildCreation.Free();
 }
 
+function NewGuildCreation(pUser)
+{
+	if (!pUser || !pUser.socket)
+		return;
+
+	var create = new Gump;
+	var ignoreInvites = IsIgnoringNewGuildInvites(pUser);
+
+	create.AddPage(0);
+	create.AddBackground(0, 0, 500, 390, 0x24AE);
+	create.AddBackground(65, 50, 370, 30, 0x2486);
+	create.AddHTMLGump(75, 55, 350, 26, false, false, NewGuildText("<center><i>Create Guild</i></center>"));
+	create.AddHTMLGump(65, 95, 370, 40, true, false, NewGuildText("Enter a guild name and abbreviation to establish a new guild."));
+	create.AddHTMLGump(65, 150, 140, 20, false, false, NewGuildText("Guild Name"));
+	create.AddGump(65, 173, 1803);
+	create.AddHTMLGump(65, 210, 140, 20, false, false, NewGuildText("Abbreviation"));
+	create.AddGump(65, 233, 1803);
+	create.AddHTMLGump(65, 255, 220, 18, false, false, NewGuildText("Registration Fee: " + GetNewGuildRegistrationFeeText(pUser)));
+	create.AddHTMLGump(65, 275, 220, 22, false, false, NewGuildText("Guild invitations: " + (ignoreInvites ? "Off" : "On")));
+	create.AddBackground(285, 270, 150, 26, 0x2486);
+	create.AddButton(290, 275, 0x845, 0x846, 1, 0, newGuildInviteToggleButton);
+	create.AddHTMLGump(315, 273, 110, 24, false, false, NewGuildText(ignoreInvites ? "Allow Invites" : "Ignore Invites"));
+	create.AddBackground(220, 335, 110, 26, 0x2486);
+	create.AddButton(225, 340, 0x845, 0x846, 1, 0, 0);
+	create.AddHTMLGump(250, 338, 65, 24, false, false, NewGuildText("Cancel"));
+	create.AddBackground(345, 335, 110, 26, 0x2486);
+	create.AddButton(350, 340, 0x845, 0x846, 1, 0, newGuildCreateButton);
+	create.AddHTMLGump(375, 338, 70, 24, false, false, NewGuildText("Create"));
+	create.AddTextEntryLimited(70, 175, 250, 20, 0, 0, 9, SafeTextEntryValue((pUser.name || "New") + "'s Guild"), 33);
+	create.AddTextEntryLimited(70, 235, 80, 20, 0, 1, 10, "NEW", 3);
+
+	create.Send(pUser.socket);
+	create.Free();
+}
+
 function GetRankName(guild, mChar)
 {
 	if (!guild || !mChar)
@@ -117,6 +152,12 @@ function ClassicGuildText(text)
 	return "<basefont color=#111111>" + String(text || "") + "</basefont>";
 }
 
+function SafeTextEntryValue(text)
+{
+	var value = String(text == null ? "" : text);
+	return value.length ? value : " ";
+}
+
 var classicGuildRanks = [
 	{ name: "Ronin", prio: 0 },
 	{ name: "Member", prio: 20 },
@@ -125,11 +166,12 @@ var classicGuildRanks = [
 	{ name: "Guild Master", prio: 50 }
 ];
 
-var classicWarDefaultMaxKills = 100;
-var classicWarDefaultDurationHours = 168;
-var classicFealtyCheckIntervalSeconds = 86400;
-var classicGuildTypeChangeIntervalSeconds = 604800;
-var classicGuildstoneRange = 2;
+var classicWarDefaultMaxKills = GetGuildSettingInt("ClassicGuildWarMaxKills", 100, 1);
+var classicWarDefaultDurationHours = GetGuildSettingInt("ClassicGuildWarDurationHours", 168, 1);
+var classicFealtyCheckIntervalSeconds = GetGuildSettingInt("ClassicGuildFealtyCheckSeconds", 86400, 1);
+var classicGuildTypeChangeIntervalSeconds = GetGuildSettingInt("ClassicGuildTypeChangeSeconds", 604800, 1);
+var classicGuildstoneRange = GetGuildSettingInt("ClassicGuildstoneRange", 2, 0);
+var newGuildRegistrationFeeDefault = 25000;
 var guildMenuSystemCustom = 0;
 var guildMenuSystemClassicOSI = 1;
 var guildMenuSystemNewOSI = 2;
@@ -154,6 +196,62 @@ function UseClassicOSIGuildMenu()
 function UseNewOSIGuildMenu()
 {
 	return GetConfiguredGuildMenuSystem() === guildMenuSystemNewOSI;
+}
+
+function GetGuildSettingInt(settingName, fallbackValue, minValue)
+{
+	var value = parseInt(GetServerSetting(settingName), 10);
+	if (isNaN(value) || value < minValue)
+		return fallbackValue;
+
+	return value;
+}
+
+function GetNewGuildRegistrationFee()
+{
+	return GetGuildSettingInt("GuildRegistrationFee", newGuildRegistrationFeeDefault, 0);
+}
+
+function GetNewGuildRegistrationFeeText(pUser)
+{
+	if (pUser && pUser.isGM)
+		return "Free";
+
+	return String(GetNewGuildRegistrationFee());
+}
+
+function TryPayNewGuildRegistrationFee(pSock, pUser)
+{
+	if (!pUser || pUser.isGM)
+		return true;
+
+	var newGuildRegistrationFee = GetNewGuildRegistrationFee();
+	if (newGuildRegistrationFee <= 0)
+		return true;
+
+	var gold = pUser.ResourceCount ? (pUser.ResourceCount(0x0EED, 0) | 0) : 0;
+	if (gold < newGuildRegistrationFee)
+	{
+		if (pSock)
+			pSock.SysMessage("You need " + newGuildRegistrationFee + " gold to register a guild.");
+		return false;
+	}
+
+	var spent = pUser.UseResource ? (pUser.UseResource(newGuildRegistrationFee, 0x0EED, 0) | 0) : 0;
+	if (spent < newGuildRegistrationFee)
+	{
+		if (pSock)
+			pSock.SysMessage("Unable to collect the guild registration fee.");
+		return false;
+	}
+
+	return true;
+}
+
+function RequireGuildstoneForConfiguredGuildMenu(guild)
+{
+	var menuSystem = GetConfiguredGuildMenuSystem();
+	return menuSystem === guildMenuSystemClassicOSI || (menuSystem === guildMenuSystemCustom && IsClassicGuildMode(guild));
 }
 
 function IsClassicGuildMode(guild)
@@ -288,6 +386,183 @@ function NewGuildText(text)
 	return "<basefont color=#111111>" + String(text || "") + "</basefont>";
 }
 
+var newGuildInviteAcceptButton = 33510;
+var newGuildInviteDeclineButton = 33511;
+var newGuildInviteIgnoreButton = 33512;
+var newGuildCreateButton = 32990;
+var newGuildInviteToggleButton = 32991;
+
+function IsIgnoringNewGuildInvites(pUser)
+{
+	return !!(pUser && pUser.GetTag && String(pUser.GetTag("newGuildIgnoreInvites") || "") === "1");
+}
+
+function SetIgnoringNewGuildInvites(pUser, ignoreInvites)
+{
+	if (pUser && pUser.SetTag)
+		pUser.SetTag("newGuildIgnoreInvites", ignoreInvites ? "1" : null);
+}
+
+function ClearLocalGuildState(pChar)
+{
+	if (!pChar)
+		return;
+
+	pChar.guild = null;
+	pChar.guildTitle = "";
+	if (pChar.SetGuildFealty)
+		pChar.SetGuildFealty(0);
+	if (pChar.Refresh)
+		pChar.Refresh();
+}
+
+function ClearNewGuildInvitation(pUser)
+{
+	if (!pUser || !pUser.SetTag)
+		return;
+
+	pUser.SetTag("newGuildInviteGuildId", null);
+	pUser.SetTag("newGuildInviteInviterSerial", null);
+	pUser.SetTag("newGuildInviteInviterName", null);
+}
+
+function NewGuildInvitationRequest(pTarget, guild, inviter)
+{
+	if (!pTarget || !pTarget.socket || !guild)
+		return false;
+
+	var invite = new Gump;
+	var guildName = guild.name || "this guild";
+	var inviterName = inviter && inviter.name ? inviter.name : "A guild member";
+
+	ClearNewGuildInvitation(pTarget);
+	pTarget.SetTag("newGuildInviteGuildId", String(guild.id | 0));
+	pTarget.SetTag("newGuildInviteInviterSerial", inviter ? String(inviter.serial) : "0");
+	pTarget.SetTag("newGuildInviteInviterName", inviterName);
+
+	invite.AddPage(0);
+	invite.AddBackground(0, 0, 350, 170, 0x242C);
+	invite.AddHTMLGump(20, 15, 310, 24, false, false, NewGuildText("<center><i>Guild Invitation</i></center>"));
+	invite.AddTiledGump(20, 42, 310, 2, 0x2711);
+	invite.AddHTMLGump(20, 55, 310, 38, true, false, NewGuildText(inviterName + " has invited you to join " + guildName + "."));
+	invite.AddHTMLGump(20, 95, 310, 20, false, false, NewGuildText("Do you wish to join this guild?"));
+
+	invite.AddBackground(20, 125, 90, 26, 0x2486);
+	invite.AddButton(25, 130, 0x845, 0x846, 1, 0, newGuildInviteAcceptButton);
+	invite.AddHTMLGump(50, 128, 55, 24, false, false, NewGuildText("Accept"));
+	invite.AddBackground(130, 125, 90, 26, 0x2486);
+	invite.AddButton(135, 130, 0x845, 0x846, 1, 0, newGuildInviteDeclineButton);
+	invite.AddHTMLGump(160, 128, 55, 24, false, false, NewGuildText("Decline"));
+	invite.AddBackground(240, 125, 90, 26, 0x2486);
+	invite.AddButton(245, 130, 0x845, 0x846, 1, 0, newGuildInviteIgnoreButton);
+	invite.AddHTMLGump(270, 128, 55, 24, false, false, NewGuildText("Ignore"));
+
+	invite.Send(pTarget.socket);
+	invite.Free();
+	return true;
+}
+
+function GetNewGuildInvitationGuild(pUser)
+{
+	if (!pUser || !pUser.GetTag)
+		return null;
+
+	var guildId = parseInt(pUser.GetTag("newGuildInviteGuildId"), 10);
+	if (isNaN(guildId) || guildId < 0)
+		return null;
+
+	return FindGuildById(guildId);
+}
+
+function GetNewGuildInvitationInviter(pUser)
+{
+	if (!pUser || !pUser.GetTag)
+		return null;
+
+	var serial = parseInt(pUser.GetTag("newGuildInviteInviterSerial"), 10);
+	if (isNaN(serial) || serial <= 0)
+		return null;
+
+	return CalcCharFromSer(serial);
+}
+
+function HandleNewGuildInvitationResponse(pSock, pUser, pButton)
+{
+	if (pButton !== newGuildInviteAcceptButton && pButton !== newGuildInviteDeclineButton && pButton !== newGuildInviteIgnoreButton)
+		return false;
+
+	if (GetConfiguredGuildMenuSystem() !== guildMenuSystemNewOSI)
+	{
+		ClearNewGuildInvitation(pUser);
+		return true;
+	}
+
+	var guild = GetNewGuildInvitationGuild(pUser);
+	var inviter = GetNewGuildInvitationInviter(pUser);
+	var inviterName = String((pUser.GetTag && pUser.GetTag("newGuildInviteInviterName")) || "The inviter");
+
+	if (pButton === newGuildInviteIgnoreButton)
+		SetIgnoringNewGuildInvites(pUser, true);
+
+	if (!guild)
+	{
+		pSock.SysMessage("That guild invitation is no longer valid.");
+		ClearNewGuildInvitation(pUser);
+		return true;
+	}
+
+	if (pButton === newGuildInviteDeclineButton || pButton === newGuildInviteIgnoreButton)
+	{
+		pSock.SysMessage("You decline the invitation to join " + (guild.name || "that guild") + ".");
+		if (inviter && inviter.socket)
+			inviter.socket.SysMessage((pUser.name || "The player") + " declined your guild invitation.");
+		ClearNewGuildInvitation(pUser);
+		return true;
+	}
+
+	if (pUser.guild)
+	{
+		pSock.SysMessage("You are already in a guild.");
+		if (inviter && inviter.socket)
+			inviter.socket.SysMessage((pUser.name || "The player") + " could not join because they are already in a guild.");
+		ClearNewGuildInvitation(pUser);
+		return true;
+	}
+
+	if (!guild.AddMember || !guild.AddMember(pUser))
+	{
+		pSock.SysMessage("You could not join that guild.");
+		if (inviter && inviter.socket)
+			inviter.socket.SysMessage((pUser.name || "The player") + " could not join your guild.");
+		ClearNewGuildInvitation(pUser);
+		return true;
+	}
+
+	var startRankName = GetLowestRankName(guild) || "Recruit";
+	try
+	{
+		if (guild.SetRank && startRankName.length)
+		{
+			guild.SetRank(pUser, startRankName);
+			pUser.guildTitle = startRankName;
+		}
+	}
+	catch (e) { /* ignore rank setup failures */ }
+
+	if (pUser.Refresh)
+		pUser.Refresh();
+
+	pSock.SysMessage("You have joined " + (guild.name || "the guild") + ".");
+	if (inviter && inviter.socket)
+		inviter.socket.SysMessage((pUser.name || "The player") + " has accepted your guild invitation.");
+	else if (inviterName.length)
+		pSock.SysMessage(inviterName + " is not available to receive your response.");
+
+	ClearNewGuildInvitation(pUser);
+	NewGuildMenu(pUser);
+	return true;
+}
+
 function AddNewGuildTab(gump, x, buttonId, label, active)
 {
 	gump.AddBackground(x, 40, 150, 26, 0x2486);
@@ -302,7 +577,6 @@ function AddNewGuildFrame(gump, activeTab)
 	AddNewGuildTab(gump, 66, 33001, "My Guild", activeTab === 1);
 	AddNewGuildTab(gump, 236, 33002, "Guild Roster", activeTab === 2);
 	AddNewGuildTab(gump, 401, 33003, "Diplomacy", activeTab === 3);
-	gump.AddButton(540, 405, 4017, 4019, 1, 0, 0);
 }
 
 function NewGuildMenu(pUser)
@@ -310,7 +584,7 @@ function NewGuildMenu(pUser)
 	NewGuildInfoMenu(pUser, false);
 }
 
-function NewGuildInfoMenu(pUser, confirmResign)
+function NewGuildInfoMenu(pUser, confirmResign, confirmDisband)
 {
 	if (!pUser || !pUser.socket)
 		return;
@@ -318,7 +592,7 @@ function NewGuildInfoMenu(pUser, confirmResign)
 	var guildinfo = pUser.guild;
 	if (!guildinfo)
 	{
-		GuildCreation(pUser);
+		NewGuildCreation(pUser);
 		return;
 	}
 
@@ -353,6 +627,9 @@ function NewGuildInfoMenu(pUser, confirmResign)
 		info.AddBackground(65, 350, 170, 26, 0x2486);
 		info.AddButton(70, 355, 0x845, 0x846, 1, 0, 33004);
 		info.AddHTMLGump(95, 353, 130, 26, false, false, NewGuildText("Edit Guild Info"));
+		info.AddBackground(245, 350, 170, 26, 0x2486);
+		info.AddButton(250, 355, 0x845, 0x846, 1, 0, confirmDisband ? 33008 : 33007);
+		info.AddHTMLGump(275, 353, 130, 26, false, false, confirmDisband ? "<basefont color=#990000>Confirm Disband</basefont>" : NewGuildText("Disband Guild"));
 	}
 
 	info.AddBackground(445, 350, 100, 26, 0x2486);
@@ -361,6 +638,49 @@ function NewGuildInfoMenu(pUser, confirmResign)
 
 	info.Send(pUser.socket);
 	info.Free();
+}
+
+function NewGuildInfoEdit(pUser)
+{
+	if (!pUser || !pUser.socket || !pUser.guild)
+		return;
+
+	var guildinfo = pUser.guild;
+	var edit = new Gump;
+
+	AddNewGuildFrame(edit, 1);
+	edit.AddBackground(65, 75, 480, 30, 0xBB8);
+	edit.AddHTMLGump(75, 80, 460, 24, false, false, NewGuildText("<center><i>Edit Guild Information</i></center>"));
+
+	edit.AddTiledGump(65, 120, 140, 26, 0xA40);
+	edit.AddTiledGump(207, 120, 338, 26, 0xBBC);
+	edit.AddHTMLGump(70, 123, 130, 20, false, false, "<basefont color=#ffffff>Guild Name</basefont>");
+
+	edit.AddTiledGump(65, 155, 140, 26, 0xA40);
+	edit.AddTiledGump(207, 155, 120, 26, 0xBBC);
+	edit.AddHTMLGump(70, 158, 130, 20, false, false, "<basefont color=#ffffff>Abbreviation</basefont>");
+
+	edit.AddTiledGump(65, 190, 140, 26, 0xA40);
+	edit.AddTiledGump(207, 190, 338, 26, 0xBBC);
+	edit.AddHTMLGump(70, 193, 130, 20, false, false, "<basefont color=#ffffff>Web Page</basefont>");
+
+	edit.AddTiledGump(65, 225, 140, 78, 0xA40);
+	edit.AddTiledGump(207, 225, 338, 78, 0xBBC);
+	edit.AddHTMLGump(70, 228, 130, 20, false, false, "<basefont color=#ffffff>Charter</basefont>");
+
+	edit.AddBackground(245, 350, 135, 26, 0x2486);
+	edit.AddButton(250, 355, 0x845, 0x846, 1, 0, 33009);
+	edit.AddHTMLGump(275, 353, 95, 24, false, false, NewGuildText("Save"));
+	edit.AddBackground(400, 350, 135, 26, 0x2486);
+	edit.AddButton(405, 355, 0x845, 0x846, 1, 0, 33001);
+	edit.AddHTMLGump(430, 353, 95, 24, false, false, NewGuildText("Cancel"));
+	edit.AddTextEntryLimited(212, 123, 328, 20, 0, 0, 10, SafeTextEntryValue(guildinfo.name), 33);
+	edit.AddTextEntryLimited(212, 158, 110, 20, 0, 1, 11, SafeTextEntryValue(guildinfo.abbreviation), 3);
+	edit.AddTextEntryLimited(212, 193, 328, 20, 0, 2, 12, SafeTextEntryValue(guildinfo.webPage), 60);
+	edit.AddTextEntryLimited(212, 228, 328, 72, 0, 3, 13, SafeTextEntryValue(guildinfo.charter), 168);
+
+	edit.Send(pUser.socket);
+	edit.Free();
 }
 
 function NewGuildRosterMenu(pUser)
@@ -385,10 +705,10 @@ function NewGuildRosterMenu(pUser)
 	roster.AddTiledGump(207, 110, 90, 26, 0xA40);
 	roster.AddTiledGump(299, 110, 90, 26, 0xA40);
 	roster.AddTiledGump(391, 110, 155, 26, 0xA40);
-	roster.AddHTMLGump(70, 113, 130, 20, false, false, NewGuildText("Name"));
-	roster.AddHTMLGump(212, 113, 80, 20, false, false, NewGuildText("Rank"));
-	roster.AddHTMLGump(304, 113, 80, 20, false, false, NewGuildText("Status"));
-	roster.AddHTMLGump(396, 113, 145, 20, false, false, NewGuildText("Guild Title"));
+	roster.AddHTMLGump(70, 113, 130, 20, false, false, "<basefont color=#ffffff>Name</basefont>");
+	roster.AddHTMLGump(212, 113, 80, 20, false, false, "<basefont color=#ffffff>Rank</basefont>");
+	roster.AddHTMLGump(304, 113, 80, 20, false, false, "<basefont color=#ffffff>Status</basefont>");
+	roster.AddHTMLGump(396, 113, 145, 20, false, false, "<basefont color=#ffffff>Guild Title</basefont>");
 
 	for (var i = 0; i < pageSize && offset + i < members.length; i++)
 	{
@@ -401,7 +721,7 @@ function NewGuildRosterMenu(pUser)
 		var rank = GetRankName(guildinfo, member) || member.guildTitle || "";
 		var status = member.online ? "Online" : "Offline";
 
-		roster.AddButton(40, y + 5, 0x4B9, 0x4BA, 1, 0, 33100 + offset + i);
+		roster.AddButton(40, y + 5, 0x4B9, 0x4BA, 1, 0, 33100 + i);
 		roster.AddTiledGump(65, y, 140, 26, 0xBBC);
 		roster.AddTiledGump(207, y, 90, 26, 0xBBC);
 		roster.AddTiledGump(299, y, 90, 26, 0xBBC);
@@ -412,10 +732,9 @@ function NewGuildRosterMenu(pUser)
 		roster.AddHTMLGump(396, y + 3, 145, 20, false, false, NewGuildText(member.guildTitle || ""));
 	}
 
-	AddClassicPaging(roster, 65, 365, offset, members.length, pageSize, 33020, 33021);
+	AddClassicPaging(roster, 65, 365, offset, pageSize, members.length, 33020, 33021);
 	if (CanClassicInvite(guildinfo, pUser))
 	{
-		roster.AddBackground(225, 365, 150, 26, 0x2486);
 		roster.AddButton(230, 370, 0x845, 0x846, 1, 0, 33022);
 		roster.AddHTMLGump(255, 368, 110, 26, false, false, NewGuildText("Invite Player"));
 	}
@@ -439,6 +758,8 @@ function NewGuildMemberInfoMenu(pUser, memberIndex, confirmKick)
 		return;
 	}
 
+	SetClassicOffset(pUser, "newGuildMemberIndex", memberIndex);
+
 	var memberInfo = new Gump;
 	var name = member.name || ("0x" + member.serial.toString(16).toUpperCase());
 	var rank = GetRankName(guildinfo, member) || member.guildTitle || "Member";
@@ -456,27 +777,68 @@ function NewGuildMemberInfoMenu(pUser, memberIndex, confirmKick)
 	memberInfo.AddTiledGump(20, 142, 310, 2, 0x2711);
 
 	memberInfo.AddBackground(20, 150, 310, 26, 0x2486);
-	memberInfo.AddButton(25, 155, 0x845, 0x846, 1, 0, 33150 + memberIndex);
+	memberInfo.AddButton(25, 155, 0x845, 0x846, 1, 0, 33150);
 	memberInfo.AddHTMLGump(50, 153, 270, 26, false, false, NewGuildText("Cast Vote For This Member"));
 
 	memberInfo.AddBackground(20, 180, 150, 26, 0x2486);
-	memberInfo.AddButton(25, 185, 0x845, 0x846, 1, 0, 33180 + memberIndex);
+	memberInfo.AddButton(25, 185, 0x845, 0x846, 1, 0, 33180);
 	memberInfo.AddHTMLGump(50, 183, 110, 26, false, false, NewGuildText("Promote"));
 
 	memberInfo.AddBackground(180, 180, 150, 26, 0x2486);
-	memberInfo.AddButton(185, 185, 0x845, 0x846, 1, 0, 33210 + memberIndex);
+	memberInfo.AddButton(185, 185, 0x845, 0x846, 1, 0, 33210);
 	memberInfo.AddHTMLGump(210, 183, 110, 26, false, false, NewGuildText("Set Title"));
 
 	memberInfo.AddBackground(20, 210, 150, 26, 0x2486);
-	memberInfo.AddButton(25, 215, 0x845, 0x846, 1, 0, 33240 + memberIndex);
+	memberInfo.AddButton(25, 215, 0x845, 0x846, 1, 0, 33240);
 	memberInfo.AddHTMLGump(50, 213, 110, 26, false, false, NewGuildText("Demote"));
 
 	memberInfo.AddBackground(180, 210, 150, 26, 0x2486);
-	memberInfo.AddButton(185, 215, 0x845, 0x846, 1, 0, confirmKick ? 33300 + memberIndex : 33270 + memberIndex);
+	memberInfo.AddButton(185, 215, 0x845, 0x846, 1, 0, confirmKick ? 33300 : 33270);
 	memberInfo.AddHTMLGump(210, 213, 110, 26, false, false, confirmKick ? "<basefont color=#990000>Confirm Kick</basefont>" : NewGuildText("Kick"));
 
 	memberInfo.Send(pUser.socket);
 	memberInfo.Free();
+}
+
+function NewGuildMemberTitleEdit(pUser, memberIndex)
+{
+	if (!pUser || !pUser.socket || !pUser.guild)
+		return;
+
+	var guildinfo = pUser.guild;
+	var members = (guildinfo.member || guildinfo.members) || [];
+	var member = members[memberIndex];
+	if (!member)
+	{
+		pUser.socket.SysMessage("That guild member is no longer available.");
+		NewGuildRosterMenu(pUser);
+		return;
+	}
+
+	SetClassicOffset(pUser, "newGuildMemberIndex", memberIndex);
+
+	var titleEdit = new Gump;
+	var memberName = member.name || ("0x" + member.serial.toString(16).toUpperCase());
+
+	titleEdit.AddPage(0);
+	titleEdit.AddBackground(0, 0, 350, 190, 0x242C);
+	titleEdit.AddHTMLGump(20, 15, 310, 26, false, false, NewGuildText("<center><i>Set Guild Title</i></center>"));
+	titleEdit.AddTiledGump(20, 42, 310, 2, 0x2711);
+	titleEdit.AddHTMLGump(20, 55, 90, 24, true, false, NewGuildText("Member"));
+	titleEdit.AddHTMLGump(120, 58, 210, 24, false, false, NewGuildText(memberName));
+	titleEdit.AddHTMLGump(20, 90, 90, 24, true, false, NewGuildText("Title"));
+	titleEdit.AddTiledGump(120, 88, 210, 26, 0xBBC);
+
+	titleEdit.AddBackground(55, 140, 110, 26, 0x2486);
+	titleEdit.AddButton(60, 145, 0x845, 0x846, 1, 0, 33211);
+	titleEdit.AddHTMLGump(85, 143, 70, 24, false, false, NewGuildText("Save"));
+	titleEdit.AddBackground(185, 140, 110, 26, 0x2486);
+	titleEdit.AddButton(190, 145, 0x845, 0x846, 1, 0, 33212);
+	titleEdit.AddHTMLGump(215, 143, 70, 24, false, false, NewGuildText("Cancel"));
+	titleEdit.AddTextEntryLimited(125, 91, 200, 20, 0, 0, 6, SafeTextEntryValue(member.guildTitle), 32);
+
+	titleEdit.Send(pUser.socket);
+	titleEdit.Free();
 }
 
 function NewGuildDiplomacyMenu(pUser)
@@ -485,60 +847,66 @@ function NewGuildDiplomacyMenu(pUser)
 		return;
 
 	var guildinfo = pUser.guild;
-	var allGuilds = GetAllGuilds() || [];
 	var offset = GetClassicOffset(pUser, "newGuildDiplomacyOffset");
 	var pageSize = 8;
-	var list = [];
+	var filter = GetNewGuildDiplomacyFilter(pUser);
+	var displayMode = GetNewGuildDiplomacyDisplay(pUser);
+	var list = GetNewGuildDiplomacyList(pUser, guildinfo);
 	var diplomacy = new Gump;
-
-	for (var i = 0; i < allGuilds.length; i++)
-	{
-		if (allGuilds[i])
-			list.push(allGuilds[i]);
-	}
 
 	if (offset >= list.length)
 		offset = 0;
 
 	AddNewGuildFrame(diplomacy, 3);
-	diplomacy.AddBackground(130, 75, 385, 30, 0xBB8);
-	diplomacy.AddHTMLGump(140, 80, 360, 24, false, false, NewGuildText("Guilds: " + list.length));
-	diplomacy.AddTiledGump(65, 110, 290, 26, 0xA40);
-	diplomacy.AddTiledGump(357, 110, 60, 26, 0xA40);
-	diplomacy.AddTiledGump(419, 110, 120, 26, 0xA40);
-	diplomacy.AddHTMLGump(70, 113, 280, 20, false, false, NewGuildText("Guild Name"));
-	diplomacy.AddHTMLGump(362, 113, 50, 20, false, false, NewGuildText("Abbr"));
-	diplomacy.AddHTMLGump(424, 113, 110, 20, false, false, NewGuildText("Status"));
+	diplomacy.AddBackground(65, 75, 260, 30, 0xBB8);
+	AddNewGuildModeButton(diplomacy, 335, 77, 33032, "Filter", false);
+	AddNewGuildModeButton(diplomacy, 455, 77, 33033, "Clear", false);
+	AddNewGuildModeButton(diplomacy, 65, 110, 33034, "All", displayMode === 0);
+	AddNewGuildModeButton(diplomacy, 205, 110, 33035, "Awaiting Action", displayMode === 1);
+	AddNewGuildModeButton(diplomacy, 385, 110, 33036, "Relations", displayMode === 2);
+
+	diplomacy.AddHTMLGump(65, 145, 350, 20, false, false, NewGuildText("Showing " + list.length + " guilds"));
+	diplomacy.AddTiledGump(65, 170, 290, 26, 0xA40);
+	diplomacy.AddTiledGump(357, 170, 60, 26, 0xA40);
+	diplomacy.AddTiledGump(419, 170, 120, 26, 0xA40);
+	diplomacy.AddHTMLGump(70, 173, 280, 20, false, false, "<basefont color=#ffffff>Guild Name</basefont>");
+	diplomacy.AddHTMLGump(362, 173, 50, 20, false, false, "<basefont color=#ffffff>Abbr</basefont>");
+	diplomacy.AddHTMLGump(424, 173, 110, 20, false, false, "<basefont color=#ffffff>Status</basefont>");
 
 	for (var row = 0; row < pageSize && offset + row < list.length; row++)
 	{
 		var otherGuild = list[offset + row];
-		var y = 138 + row * 28;
+		var y = 198 + row * 22;
 		var rel = otherGuild.id === guildinfo.id ? 4 : ((typeof CompareGuildByGuild !== "undefined") ? CompareGuildByGuild(guildinfo.id, otherGuild.id) : 3);
 		var status = rel === 1 ? FormatClassicWarStatus(guildinfo, otherGuild) : GetGuildRelationText(rel);
 
-		diplomacy.AddButton(40, y + 5, 0x4B9, 0x4BA, 1, 0, 33350 + offset + row);
-		diplomacy.AddTiledGump(65, y, 290, 26, 0xBBC);
-		diplomacy.AddTiledGump(357, y, 60, 26, 0xBBC);
-		diplomacy.AddTiledGump(419, y, 120, 26, 0xBBC);
+		diplomacy.AddButton(40, y + 3, 0x4B9, 0x4BA, 1, 0, 33350 + row);
+		diplomacy.AddTiledGump(65, y, 290, 22, 0xBBC);
+		diplomacy.AddTiledGump(357, y, 60, 22, 0xBBC);
+		diplomacy.AddTiledGump(419, y, 120, 22, 0xBBC);
 		diplomacy.AddHTMLGump(70, y + 3, 280, 20, false, false, NewGuildText(otherGuild.name || ("Guild #" + otherGuild.id)));
 		diplomacy.AddHTMLGump(362, y + 3, 50, 20, false, false, NewGuildText(otherGuild.abbreviation || ""));
 		diplomacy.AddHTMLGump(424, y + 3, 110, 20, false, false, NewGuildText(status));
 	}
 
-	AddClassicPaging(diplomacy, 65, 365, offset, list.length, pageSize, 33030, 33031);
+	AddClassicPaging(diplomacy, 65, 365, offset, pageSize, list.length, 33030, 33031);
+	var diplomacyEntryIndex = 13 + Math.min(pageSize, Math.max(0, list.length - offset)) * 3;
+	if (offset > 0)
+		diplomacyEntryIndex++;
+	if (offset + pageSize < list.length)
+		diplomacyEntryIndex++;
+	diplomacy.AddTextEntryLimited(70, 80, 250, 20, 0x481, 0, diplomacyEntryIndex, SafeTextEntryValue(filter), 32);
 	diplomacy.Send(pUser.socket);
 	diplomacy.Free();
 }
 
-function NewOtherGuildInfoMenu(pUser, otherIndex)
+function NewOtherGuildInfoMenu(pUser, otherGuildId)
 {
 	if (!pUser || !pUser.socket || !pUser.guild)
 		return;
 
 	var guildinfo = pUser.guild;
-	var allGuilds = GetAllGuilds() || [];
-	var otherGuild = allGuilds[otherIndex];
+	var otherGuild = FindGuildById(otherGuildId);
 	if (!otherGuild)
 	{
 		pUser.socket.SysMessage("That guild is no longer available.");
@@ -594,6 +962,13 @@ function AddNewGuildAction(gump, x, y, buttonId, label)
 	gump.AddHTMLGump(x + 30, y + 3, 185, 26, false, false, NewGuildText(label));
 }
 
+function AddNewGuildModeButton(gump, x, y, buttonId, label, active)
+{
+	gump.AddBackground(x, y, label.length > 8 ? 170 : 120, 26, 0x2486);
+	gump.AddButton(x + 5, y + 5, 0x845, 0x846, 1, 0, buttonId);
+	gump.AddHTMLGump(x + 30, y + 3, label.length > 8 ? 130 : 80, 26, false, false, active ? "<basefont color=#0000AA>" + label + "</basefont>" : NewGuildText(label));
+}
+
 function GetNewGuildRelationshipText(guild, otherGuild, rel)
 {
 	if (guild && otherGuild && guild.id === otherGuild.id)
@@ -621,6 +996,83 @@ function GetNewGuildTarget(pUser)
 		return null;
 
 	return FindGuildById(guildId);
+}
+
+function GetNewGuildDiplomacyFilter(pUser)
+{
+	if (!pUser || !pUser.GetTag)
+		return "";
+
+	return String(pUser.GetTag("newGuildDiplomacyFilter") || "");
+}
+
+function SetNewGuildDiplomacyFilter(pUser, filter)
+{
+	if (pUser && pUser.SetTag)
+		pUser.SetTag("newGuildDiplomacyFilter", manualTrim(filter || ""));
+}
+
+function GetNewGuildDiplomacyDisplay(pUser)
+{
+	if (!pUser || !pUser.GetTag)
+		return 0;
+
+	var mode = parseInt(pUser.GetTag("newGuildDiplomacyDisplay"), 10);
+	if (isNaN(mode) || mode < 0 || mode > 2)
+		return 0;
+
+	return mode;
+}
+
+function SetNewGuildDiplomacyDisplay(pUser, mode)
+{
+	if (pUser && pUser.SetTag)
+		pUser.SetTag("newGuildDiplomacyDisplay", String(Math.max(0, Math.min(mode | 0, 2))));
+}
+
+function NewGuildHasPendingDiplomacy(guild, otherGuild)
+{
+	if (!guild || !otherGuild)
+		return false;
+
+	var incoming = ReadGuildRelationRequests(guild);
+	for (var i = 0; i < incoming.length; i++)
+	{
+		if (incoming[i] && (incoming[i].fromId | 0) === (otherGuild.id | 0))
+			return true;
+	}
+
+	return HasOutgoingRelationRequest(guild, otherGuild);
+}
+
+function GetNewGuildDiplomacyList(pUser, guild)
+{
+	var allGuilds = GetAllGuilds() || [];
+	var filter = GetNewGuildDiplomacyFilter(pUser).toLowerCase();
+	var displayMode = GetNewGuildDiplomacyDisplay(pUser);
+	var list = [];
+
+	for (var i = 0; i < allGuilds.length; i++)
+	{
+		var otherGuild = allGuilds[i];
+		if (!otherGuild)
+			continue;
+
+		var name = String(otherGuild.name || "").toLowerCase();
+		var abbr = String(otherGuild.abbreviation || "").toLowerCase();
+		if (filter.length && name.indexOf(filter) === -1 && abbr.indexOf(filter) === -1)
+			continue;
+
+		var rel = otherGuild.id === guild.id ? 4 : ((typeof CompareGuildByGuild !== "undefined") ? CompareGuildByGuild(guild.id, otherGuild.id) : 3);
+		if (displayMode === 1 && !NewGuildHasPendingDiplomacy(guild, otherGuild))
+			continue;
+		if (displayMode === 2 && rel !== 1 && rel !== 2)
+			continue;
+
+		list.push(otherGuild);
+	}
+
+	return list;
 }
 
 function ClassicGuildMenu(pUser)
@@ -804,12 +1256,12 @@ function ClassicGuildMemberMenu(pUser, memberIndex)
 
 	memberMenu.AddHTMLGump(55, 225, 420, 20, false, false, ClassicGuildText("Set guild title"));
 	memberMenu.AddGump(55, 250, 1803);
-	memberMenu.AddTextEntryLimited(60, 252, 220, 20, 0, 0, 61020, member.guildTitle || "", 32);
 	memberMenu.AddButton(300, 250, 4005, 4007, 1, 0, 31600 + memberIndex);
 	memberMenu.AddHTMLGump(335, 248, 80, 20, false, false, ClassicGuildText("Set title"));
 
 	memberMenu.AddButton(55, 300, 4017, 4019, 1, 0, 30900 + memberIndex);
 	memberMenu.AddHTMLGump(90, 298, 180, 20, false, false, ClassicGuildText("Remove from guild"));
+	memberMenu.AddTextEntryLimited(60, 252, 220, 20, 0, 0, 12, SafeTextEntryValue(member.guildTitle), 32);
 
 	memberMenu.Send(pUser.socket);
 	memberMenu.Free();
@@ -1240,7 +1692,6 @@ function ClassicDeclareWarMenu(pUser)
 	AddClassicGuildFrame(declareWar, "Declare War");
 	declareWar.AddHTMLGump(55, 82, 210, 20, false, false, ClassicGuildText("Search guilds"));
 	declareWar.AddGump(55, 105, 1803);
-	declareWar.AddTextEntryLimited(60, 107, 190, 20, 0, 0, 61035, searchFilter, 32);
 	AddClassicGuildButton(declareWar, 270, 105, 30031, "Search");
 	AddClassicGuildButton(declareWar, 385, 105, 30032, "Clear");
 
@@ -1272,6 +1723,9 @@ function ClassicDeclareWarMenu(pUser)
 		}
 	}
 
+	var declareWarTextIndex = targets.length ? (9 + Math.min(8, targets.length) * 3) : 10;
+	declareWar.AddTextEntryLimited(60, 107, 190, 20, 0, 0, declareWarTextIndex, SafeTextEntryValue(searchFilter), 32);
+
 	declareWar.Send(pUser.socket);
 	declareWar.Free();
 }
@@ -1294,6 +1748,7 @@ function ClassicGuildMasterMenu(pUser)
 	AddClassicGuildButton(masterMenu, 55, 200, 30016, "Set guild type");
 	AddClassicGuildButton(masterMenu, 55, 230, 30021, "Check fealty votes");
 	AddClassicGuildButton(masterMenu, 55, 260, 30022, "Transfer guildmaster");
+	AddClassicGuildButton(masterMenu, 300, 260, 30033, "Disband guild");
 	if (IsClassicGuildMode(guildinfo))
 		masterMenu.AddHTMLGump(55, 295, 420, 40, true, true, ClassicGuildText("Classic rank mode is enabled. " + fealtyText));
 	else
@@ -1316,8 +1771,8 @@ function ClassicGuildMasterTitleEdit(pUser)
 	titleEdit.AddHTMLGump(55, 95, 420, 40, true, true, ClassicGuildText("Enter the title to display before the guildmaster's name."));
 	titleEdit.AddHTMLGump(55, 150, 140, 20, false, false, ClassicGuildText("Guildmaster title"));
 	titleEdit.AddGump(55, 173, 1803);
-	titleEdit.AddTextEntryLimited(60, 175, 260, 20, 0, 0, 61034, leader.guildTitle || "", 20);
 	AddClassicGuildButton(titleEdit, 300, 225, 30024, "Save title");
+	titleEdit.AddTextEntryLimited(60, 175, 260, 20, 0, 0, 6, SafeTextEntryValue(leader.guildTitle), 20);
 
 	titleEdit.Send(pUser.socket);
 	titleEdit.Free();
@@ -1334,20 +1789,20 @@ function ClassicGuildInfoEdit(pUser)
 	AddClassicGuildFrame(edit, "Edit Guild Information");
 	edit.AddHTMLGump(55, 82, 420, 20, false, false, ClassicGuildText("Guild name"));
 	edit.AddGump(55, 105, 1803);
-	edit.AddTextEntryLimited(60, 107, 240, 20, 0, 0, 61030, guildinfo.name || "", 33);
 
 	edit.AddHTMLGump(330, 82, 140, 20, false, false, ClassicGuildText("Abbreviation"));
 	edit.AddGump(330, 105, 1803);
-	edit.AddTextEntryLimited(335, 107, 80, 20, 0, 1, 61031, guildinfo.abbreviation || "", 3);
 
 	edit.AddHTMLGump(55, 140, 420, 20, false, false, ClassicGuildText("Web page"));
 	edit.AddGump(55, 163, 1803);
-	edit.AddTextEntryLimited(60, 165, 360, 20, 0, 2, 61032, guildinfo.webPage || "", 60);
 
 	edit.AddHTMLGump(55, 198, 420, 20, false, false, ClassicGuildText("Charter"));
-	edit.AddTextEntryLimited(55, 225, 420, 70, 0, 3, 61033, guildinfo.charter || "", 168);
 
 	AddClassicGuildButton(edit, 300, 315, 30017, "Save information");
+	edit.AddTextEntryLimited(60, 107, 240, 20, 0, 0, 8, SafeTextEntryValue(guildinfo.name), 33);
+	edit.AddTextEntryLimited(335, 107, 80, 20, 0, 1, 9, SafeTextEntryValue(guildinfo.abbreviation), 3);
+	edit.AddTextEntryLimited(60, 165, 360, 20, 0, 2, 10, SafeTextEntryValue(guildinfo.webPage), 60);
+	edit.AddTextEntryLimited(55, 225, 420, 70, 0, 3, 11, SafeTextEntryValue(guildinfo.charter), 168);
 
 	edit.Send(pUser.socket);
 	edit.Free();
@@ -1391,6 +1846,24 @@ function ClassicGuildResignConfirm(pUser)
 	resign.Free();
 }
 
+function ClassicGuildDisbandConfirm(pUser)
+{
+	if (!pUser || !pUser.socket || !pUser.guild)
+		return;
+
+	var guildinfo = pUser.guild;
+	var guildName = guildinfo.name || "thy guild";
+	var disband = new Gump;
+
+	AddClassicGuildFrame(disband, "Disband Guild");
+	disband.AddHTMLGump(55, 95, 420, 90, true, true, ClassicGuildText("Art thou certain thou wishest to disband " + guildName + "? This will remove all members and destroy the guild."));
+	AddClassicGuildButton(disband, 90, 220, 30034, "Yes, disband");
+	AddClassicGuildButton(disband, 300, 220, 30009, "No, return");
+
+	disband.Send(pUser.socket);
+	disband.Free();
+}
+
 function HandleNewGuildButton(pSock, pUser, guildinfo, pButton, gumpData)
 {
 	if (pButton === 33001)
@@ -1416,7 +1889,7 @@ function HandleNewGuildButton(pSock, pUser, guildinfo, pButton, gumpData)
 			NewGuildInfoMenu(pUser, false);
 			return true;
 		}
-		ClassicGuildInfoEdit(pUser);
+		NewGuildInfoEdit(pUser);
 		return true;
 	}
 	if (pButton === 33005)
@@ -1445,6 +1918,100 @@ function HandleNewGuildButton(pSock, pUser, guildinfo, pButton, gumpData)
 		pSock.SysMessage("You have resigned from your guild.");
 		return true;
 	}
+	if (pButton === 33007)
+	{
+		if (!IsGuildMaster(guildinfo, pUser))
+		{
+			pSock.SysMessage("Only the guild master can disband the guild.");
+			NewGuildInfoMenu(pUser, false, false);
+			return true;
+		}
+		NewGuildInfoMenu(pUser, false, true);
+		return true;
+	}
+	if (pButton === 33008)
+	{
+		if (!IsGuildMaster(guildinfo, pUser))
+		{
+			pSock.SysMessage("Only the guild master can disband the guild.");
+			NewGuildInfoMenu(pUser, false, false);
+			return true;
+		}
+
+		var disbandName = guildinfo.name || "the guild";
+		var disbandOk = (typeof DisbandGuild !== "undefined") && DisbandGuild(guildinfo.id | 0);
+		if (!disbandOk)
+		{
+			pSock.SysMessage("Unable to disband the guild.");
+			NewGuildInfoMenu(pUser, false, false);
+			return true;
+		}
+
+		ClearLocalGuildState(pUser);
+		pSock.SysMessage("You have disbanded " + disbandName + ".");
+		NewGuildCreation(pUser);
+		return true;
+	}
+	if (pButton === 33009)
+	{
+		if (!IsGuildMaster(guildinfo, pUser))
+		{
+			pSock.SysMessage("Only the guild master can edit guild information.");
+			NewGuildInfoMenu(pUser, false, false);
+			return true;
+		}
+
+		var newInfoName = manualTrim(gumpData.getEdit(0) || "");
+		var newInfoAbbr = manualTrim(gumpData.getEdit(1) || "");
+		var newInfoWeb = manualTrim(gumpData.getEdit(2) || "");
+		var newInfoCharter = manualTrim(gumpData.getEdit(3) || "");
+
+		if (!newInfoName.length)
+		{
+			pSock.SysMessage("Guild name cannot be blank.");
+			NewGuildInfoEdit(pUser);
+			return true;
+		}
+
+		if (!newInfoAbbr.length)
+		{
+			pSock.SysMessage("Guild abbreviation cannot be blank.");
+			NewGuildInfoEdit(pUser);
+			return true;
+		}
+
+		if (newInfoName.length > 33)
+			newInfoName = newInfoName.substring(0, 33);
+		if (newInfoAbbr.length > 3)
+			newInfoAbbr = newInfoAbbr.substring(0, 3);
+		if (newInfoWeb.length > 60)
+			newInfoWeb = newInfoWeb.substring(0, 60);
+		if (newInfoCharter.length > 168)
+			newInfoCharter = newInfoCharter.substring(0, 168);
+
+		if (!IsSameText(guildinfo.name, newInfoName) && FindGuildByNameOrAbbreviation(newInfoName, false, guildinfo))
+		{
+			pSock.SysMessage("Another guild already uses that name.");
+			NewGuildInfoEdit(pUser);
+			return true;
+		}
+
+		if (!IsSameText(guildinfo.abbreviation, newInfoAbbr) && FindGuildByNameOrAbbreviation(newInfoAbbr, true, guildinfo))
+		{
+			pSock.SysMessage("Another guild already uses that abbreviation.");
+			NewGuildInfoEdit(pUser);
+			return true;
+		}
+
+		guildinfo.name = newInfoName;
+		guildinfo.abbreviation = newInfoAbbr;
+		guildinfo.webPage = newInfoWeb;
+		guildinfo.charter = newInfoCharter;
+
+		pSock.SysMessage("Guild information updated.");
+		NewGuildInfoMenu(pUser, false, false);
+		return true;
+	}
 	if (pButton === 33020 || pButton === 33021)
 	{
 		var members = (guildinfo.member || guildinfo.members) || [];
@@ -1467,20 +2034,42 @@ function HandleNewGuildButton(pSock, pUser, guildinfo, pButton, gumpData)
 	}
 	if (pButton === 33030 || pButton === 33031)
 	{
-		var allGuilds = GetAllGuilds() || [];
+		var diplomacyList = GetNewGuildDiplomacyList(pUser, guildinfo);
 		var guildOffset = GetClassicOffset(pUser, "newGuildDiplomacyOffset") + ((pButton === 33030) ? -8 : 8);
-		SetClassicOffset(pUser, "newGuildDiplomacyOffset", Math.max(0, Math.min(guildOffset, Math.max(0, allGuilds.length - 8))));
+		SetClassicOffset(pUser, "newGuildDiplomacyOffset", Math.max(0, Math.min(guildOffset, Math.max(0, diplomacyList.length - 8))));
+		NewGuildDiplomacyMenu(pUser);
+		return true;
+	}
+	if (pButton === 33032)
+	{
+		SetNewGuildDiplomacyFilter(pUser, gumpData.getEdit(0) || "");
+		SetClassicOffset(pUser, "newGuildDiplomacyOffset", 0);
+		NewGuildDiplomacyMenu(pUser);
+		return true;
+	}
+	if (pButton === 33033)
+	{
+		SetNewGuildDiplomacyFilter(pUser, "");
+		SetClassicOffset(pUser, "newGuildDiplomacyOffset", 0);
+		NewGuildDiplomacyMenu(pUser);
+		return true;
+	}
+	if (pButton === 33034 || pButton === 33035 || pButton === 33036)
+	{
+		SetNewGuildDiplomacyDisplay(pUser, pButton - 33034);
+		SetClassicOffset(pUser, "newGuildDiplomacyOffset", 0);
 		NewGuildDiplomacyMenu(pUser);
 		return true;
 	}
 	if (pButton >= 33100 && pButton < 33150)
 	{
-		NewGuildMemberInfoMenu(pUser, pButton - 33100, false);
+		var selectedMemberIndex = GetClassicOffset(pUser, "newGuildRosterOffset") + (pButton - 33100);
+		NewGuildMemberInfoMenu(pUser, selectedMemberIndex, false);
 		return true;
 	}
-	if (pButton >= 33150 && pButton < 33180)
+	if (pButton === 33150)
 	{
-		var voteIndex = pButton - 33150;
+		var voteIndex = GetClassicOffset(pUser, "newGuildMemberIndex");
 		var voteMembers = (guildinfo.member || guildinfo.members) || [];
 		var voteTarget = voteMembers[voteIndex];
 		if (!voteTarget || !pUser.SetGuildFealty)
@@ -1499,15 +2088,57 @@ function HandleNewGuildButton(pSock, pUser, guildinfo, pButton, gumpData)
 		NewGuildMemberInfoMenu(pUser, voteIndex, false);
 		return true;
 	}
-	if (pButton >= 33180 && pButton < 33210)
+	if (pButton === 33180)
 	{
-		pSock.SysMessage("Promotion from the new guild gump will be added with rank flag support.");
-		NewGuildMemberInfoMenu(pUser, pButton - 33180, false);
+		var promoteIndex = GetClassicOffset(pUser, "newGuildMemberIndex");
+		var promoteMembers = (guildinfo.member || guildinfo.members) || [];
+		var promoteTarget = promoteMembers[promoteIndex];
+		if (!promoteTarget)
+		{
+			pSock.SysMessage("That guild member is no longer available.");
+			NewGuildRosterMenu(pUser);
+			return true;
+		}
+
+		if (!CanPromoteDemote(guildinfo, pUser))
+		{
+			pSock.SysMessage("Your rank does not allow promoting guild members.");
+			NewGuildMemberInfoMenu(pUser, promoteIndex, false);
+			return true;
+		}
+
+		var promoteRank = GetAdjacentRankName(guildinfo, promoteTarget, true);
+		if (!promoteRank.length)
+		{
+			pSock.SysMessage("That guild member cannot be promoted further.");
+			NewGuildMemberInfoMenu(pUser, promoteIndex, false);
+			return true;
+		}
+
+		if (!CanChangeTargetRank(guildinfo, pUser, promoteTarget, promoteRank))
+		{
+			pSock.SysMessage("Your rank does not allow promoting that guild member.");
+			NewGuildMemberInfoMenu(pUser, promoteIndex, false);
+			return true;
+		}
+
+		if (!guildinfo.SetRank || !guildinfo.SetRank(promoteTarget, promoteRank))
+		{
+			pSock.SysMessage("Unable to promote that guild member.");
+			NewGuildMemberInfoMenu(pUser, promoteIndex, false);
+			return true;
+		}
+
+		promoteTarget.guildTitle = promoteRank;
+		if (promoteTarget.Refresh)
+			promoteTarget.Refresh();
+		pSock.SysMessage((promoteTarget.name || "That guild member") + " has been promoted to " + promoteRank + ".");
+		NewGuildMemberInfoMenu(pUser, promoteIndex, false);
 		return true;
 	}
-	if (pButton >= 33210 && pButton < 33240)
+	if (pButton === 33210)
 	{
-		var titleIndex = pButton - 33210;
+		var titleIndex = GetClassicOffset(pUser, "newGuildMemberIndex");
 		var titleMembers = (guildinfo.member || guildinfo.members) || [];
 		var titleTarget = titleMembers[titleIndex];
 		if (!titleTarget)
@@ -1522,24 +2153,107 @@ function HandleNewGuildButton(pSock, pUser, guildinfo, pButton, gumpData)
 			NewGuildMemberInfoMenu(pUser, titleIndex, false);
 			return true;
 		}
-		SetClassicOffset(pUser, "classicRosterMemberIndex", titleIndex);
-		ClassicRosterMemberTitleEdit(pUser, titleTarget);
+		NewGuildMemberTitleEdit(pUser, titleIndex);
 		return true;
 	}
-	if (pButton >= 33240 && pButton < 33270)
+	if (pButton === 33211)
 	{
-		pSock.SysMessage("Demotion from the new guild gump will be added with rank flag support.");
-		NewGuildMemberInfoMenu(pUser, pButton - 33240, false);
+		var newTitleIndex = GetClassicOffset(pUser, "newGuildMemberIndex");
+		var newTitleMembers = (guildinfo.member || guildinfo.members) || [];
+		var newTitleTarget = newTitleMembers[newTitleIndex];
+		if (!newTitleTarget)
+		{
+			pSock.SysMessage("That guild member is no longer available.");
+			NewGuildRosterMenu(pUser);
+			return true;
+		}
+		if (!CanClassicManageRoster(guildinfo, pUser) && newTitleTarget.serial !== pUser.serial)
+		{
+			pSock.SysMessage("Your rank does not allow setting that guild title.");
+			NewGuildMemberInfoMenu(pUser, newTitleIndex, false);
+			return true;
+		}
+
+		var newMemberTitle = manualTrim(gumpData.getEdit(0) || "");
+		if (newMemberTitle.length > 32)
+			newMemberTitle = newMemberTitle.substring(0, 32);
+
+		newTitleTarget.guildTitle = newMemberTitle;
+		if (newTitleTarget.Refresh)
+			newTitleTarget.Refresh();
+
+		pSock.SysMessage("Updated guild title for " + (newTitleTarget.name || "member") + ".");
+		NewGuildMemberInfoMenu(pUser, newTitleIndex, false);
 		return true;
 	}
-	if (pButton >= 33270 && pButton < 33300)
+	if (pButton === 33212)
 	{
-		NewGuildMemberInfoMenu(pUser, pButton - 33270, true);
+		NewGuildMemberInfoMenu(pUser, GetClassicOffset(pUser, "newGuildMemberIndex"), false);
 		return true;
 	}
-	if (pButton >= 33300 && pButton < 33350)
+	if (pButton === 33240)
 	{
-		var kickIndex = pButton - 33300;
+		var demoteIndex = GetClassicOffset(pUser, "newGuildMemberIndex");
+		var demoteMembers = (guildinfo.member || guildinfo.members) || [];
+		var demoteTarget = demoteMembers[demoteIndex];
+		if (!demoteTarget)
+		{
+			pSock.SysMessage("That guild member is no longer available.");
+			NewGuildRosterMenu(pUser);
+			return true;
+		}
+
+		if (!CanPromoteDemote(guildinfo, pUser))
+		{
+			pSock.SysMessage("Your rank does not allow demoting guild members.");
+			NewGuildMemberInfoMenu(pUser, demoteIndex, false);
+			return true;
+		}
+
+		if (IsGuildMaster(guildinfo, demoteTarget))
+		{
+			pSock.SysMessage("The guild master cannot be demoted this way.");
+			NewGuildMemberInfoMenu(pUser, demoteIndex, false);
+			return true;
+		}
+
+		var demoteRank = GetAdjacentRankName(guildinfo, demoteTarget, false);
+		if (!demoteRank.length)
+		{
+			pSock.SysMessage("That guild member cannot be demoted further.");
+			NewGuildMemberInfoMenu(pUser, demoteIndex, false);
+			return true;
+		}
+
+		if (!CanChangeTargetRank(guildinfo, pUser, demoteTarget, demoteRank))
+		{
+			pSock.SysMessage("Your rank does not allow demoting that guild member.");
+			NewGuildMemberInfoMenu(pUser, demoteIndex, false);
+			return true;
+		}
+
+		if (!guildinfo.SetRank || !guildinfo.SetRank(demoteTarget, demoteRank))
+		{
+			pSock.SysMessage("Unable to demote that guild member.");
+			NewGuildMemberInfoMenu(pUser, demoteIndex, false);
+			return true;
+		}
+
+		demoteTarget.guildTitle = demoteRank;
+		if (demoteTarget.Refresh)
+			demoteTarget.Refresh();
+		pSock.SysMessage((demoteTarget.name || "That guild member") + " has been demoted to " + demoteRank + ".");
+		NewGuildMemberInfoMenu(pUser, demoteIndex, false);
+		return true;
+	}
+	if (pButton === 33270)
+	{
+		NewGuildMemberInfoMenu(pUser, GetClassicOffset(pUser, "newGuildMemberIndex"), true);
+		return true;
+	}
+	if (pButton === 33300)
+	{
+		var kickIndex = GetClassicOffset(pUser, "newGuildMemberIndex");
 		var kickMembers = (guildinfo.member || guildinfo.members) || [];
 		var kickTarget = kickMembers[kickIndex];
 		if (!kickTarget || !CanClassicManageRoster(guildinfo, pUser) || IsGuildMaster(guildinfo, kickTarget))
@@ -1564,7 +2278,16 @@ function HandleNewGuildButton(pSock, pUser, guildinfo, pButton, gumpData)
 	}
 	if (pButton >= 33350 && pButton < 33400)
 	{
-		NewOtherGuildInfoMenu(pUser, pButton - 33350);
+		var selectedGuildIndex = GetClassicOffset(pUser, "newGuildDiplomacyOffset") + (pButton - 33350);
+		var selectedGuilds = GetNewGuildDiplomacyList(pUser, guildinfo);
+		if (!selectedGuilds || selectedGuildIndex < 0 || selectedGuildIndex >= selectedGuilds.length)
+		{
+			pSock.SysMessage("That guild is no longer available.");
+			NewGuildDiplomacyMenu(pUser);
+			return true;
+		}
+
+		NewOtherGuildInfoMenu(pUser, selectedGuilds[selectedGuildIndex].id);
 		return true;
 	}
 	if (pButton === 33401 || pButton === 33402 || pButton === 33403)
@@ -1588,7 +2311,7 @@ function HandleNewGuildButton(pSock, pUser, guildinfo, pButton, gumpData)
 			pSock.SysMessage((relation === 1 ? "War proposal" : (relation === 2 ? "Alliance request" : "Peace offer")) + " sent to " + (otherGuild.name || "that guild") + ".");
 		else
 			pSock.SysMessage("Failed to send that guild proposal.");
-		NewOtherGuildInfoMenu(pUser, GetGuildIndexById(otherGuild.id));
+		NewOtherGuildInfoMenu(pUser, otherGuild.id);
 		return true;
 	}
 	return false;
@@ -1904,6 +2627,43 @@ function HandleClassicGuildButton(pSock, pUser, guildinfo, pButton, gumpData)
 
 		pSock.CustomTarget(2, "Select the guild member who shall become guild master.");
 		ClassicGuildMasterMenu(pUser);
+		return true;
+	}
+
+	if (pButton === 30033)
+	{
+		if (!IsGuildMaster(guildinfo, pUser))
+		{
+			pSock.SysMessage("Only the guild master can disband the guild.");
+			ClassicGuildMasterMenu(pUser);
+			return true;
+		}
+
+		ClassicGuildDisbandConfirm(pUser);
+		return true;
+	}
+
+	if (pButton === 30034)
+	{
+		if (!IsGuildMaster(guildinfo, pUser))
+		{
+			pSock.SysMessage("Only the guild master can disband the guild.");
+			ClassicGuildMasterMenu(pUser);
+			return true;
+		}
+
+		var classicDisbandName = guildinfo.name || "the guild";
+		var classicDisbandOk = (typeof DisbandGuild !== "undefined") && DisbandGuild(guildinfo.id | 0);
+		if (!classicDisbandOk)
+		{
+			pSock.SysMessage("Unable to disband the guild.");
+			ClassicGuildMasterMenu(pUser);
+			return true;
+		}
+
+		ClearLocalGuildState(pUser);
+		pSock.SysMessage("You have disbanded " + classicDisbandName + ".");
+		GuildCreation(pUser);
 		return true;
 	}
 
@@ -3346,6 +4106,77 @@ function onGumpPress(pSock, pButton, gumpData)
 	if (pButton === 0)
 		return; // no button pressed, early out
 
+	if (pButton === newGuildInviteToggleButton)
+	{
+		if (GetConfiguredGuildMenuSystem() !== guildMenuSystemNewOSI)
+			return;
+
+		var ignoreInvites = !IsIgnoringNewGuildInvites(pUser);
+		SetIgnoringNewGuildInvites(pUser, ignoreInvites);
+		pSock.SysMessage(ignoreInvites ? "You are now ignoring guild invitations." : "You are now accepting guild invitations.");
+
+		if (!pUser.guild)
+			NewGuildCreation(pUser);
+		else
+			NewGuildMenu(pUser);
+		return;
+	}
+
+	if (pButton === newGuildCreateButton)
+	{
+		if (GetConfiguredGuildMenuSystem() !== guildMenuSystemNewOSI)
+			return;
+
+		var newGuildName = manualTrim(gumpData.getEdit(0) || "");
+		var newGuildAbbr = manualTrim(gumpData.getEdit(1) || "");
+		if (!newGuildName.length)
+		{
+			pSock.SysMessage("Enter a guild name first.");
+			NewGuildCreation(pUser);
+			return;
+		}
+
+		if (!newGuildAbbr.length)
+		{
+			pSock.SysMessage("Enter a guild abbreviation first.");
+			NewGuildCreation(pUser);
+			return;
+		}
+
+		if (pUser.guild != null)
+		{
+			pSock.SysMessage("You are already in a guild.");
+			NewGuildMenu(pUser);
+			return;
+		}
+
+		var newOSIGuild = CreateNewGuild(pUser, newGuildName, newGuildAbbr);
+		if (!newOSIGuild)
+		{
+			pSock.SysMessage("Could not create guild.");
+			NewGuildCreation(pUser);
+			return;
+		}
+
+		if (!TryPayNewGuildRegistrationFee(pSock, pUser))
+		{
+			if (typeof DisbandGuild !== "undefined")
+				DisbandGuild(newOSIGuild.id | 0);
+			ClearLocalGuildState(pUser);
+			NewGuildCreation(pUser);
+			return;
+		}
+
+		pSock.SysMessage("Guild created: " + (newOSIGuild.name || newGuildName) + ".");
+		if (pUser.Refresh)
+			pUser.Refresh();
+		NewGuildMenu(pUser);
+		return;
+	}
+
+	if (HandleNewGuildInvitationResponse(pSock, pUser, pButton))
+		return;
+
 	if (pButton === 1) // Create Guild
 	{
 		var Text1 = manualTrim(gumpData.getEdit(0) || "");
@@ -3358,7 +4189,7 @@ function onGumpPress(pSock, pButton, gumpData)
 
 		if (pUser.guild == null)
 		{
-			if (TriggerEvent(5022, "CanPlacePendingGuildstone", pUser) === false)
+			if (!UseNewOSIGuildMenu() && TriggerEvent(5022, "CanPlacePendingGuildstone", pUser) === false)
 			{
 				pSock.SysMessage("Unable to place the guildstone deed.");
 				return;
@@ -3368,10 +4199,19 @@ function onGumpPress(pSock, pButton, gumpData)
 			var newGuild = CreateNewGuild(pUser, Text1, Text2);
 			if (newGuild)
 			{
+				if (!TryPayNewGuildRegistrationFee(pSock, pUser))
+				{
+					if (typeof DisbandGuild !== "undefined")
+						DisbandGuild(newGuild.id | 0);
+					ClearLocalGuildState(pUser);
+					return;
+				}
+
 				if (UseClassicOSIGuildMenu())
 					EnsureClassicGuildRanks(newGuild, pUser);
 
-				TriggerEvent(5022, "PlacePendingGuildstone", pUser, newGuild);
+				if (!UseNewOSIGuildMenu())
+					TriggerEvent(5022, "PlacePendingGuildstone", pUser, newGuild);
 				pUser.TextMessage("Guild automatically created: " + newGuild.name, false, 0x3b2, 0, pUser.serial);
 				pUser.Refresh();
 			}
@@ -4092,7 +4932,7 @@ function onCallback0(socket, target)
 		return;
 	}
 
-	if ((UseClassicOSIGuildMenu() || IsClassicGuildMode(guild)) && !RequireClassicGuildstoneRange(pUser, guild))
+	if (RequireGuildstoneForConfiguredGuildMenu(guild) && !RequireClassicGuildstoneRange(pUser, guild))
 		return;
 
 	if (!target || !target.isChar)
@@ -4126,6 +4966,38 @@ function onCallback0(socket, target)
 		}
 	}
 
+	if (UseNewOSIGuildMenu())
+	{
+		if (!target.socket)
+		{
+			socket.SysMessage((target.name || "That player") + " must be online to receive a guild invitation.");
+			return;
+		}
+
+		if (IsIgnoringNewGuildInvites(target))
+		{
+			socket.SysMessage((target.name || "That player") + " is not accepting guild invitations.");
+			return;
+		}
+
+		if (target.GetTag && parseInt(target.GetTag("newGuildInviteGuildId"), 10) > 0)
+		{
+			socket.SysMessage((target.name || "That player") + " is already considering a guild invitation.");
+			return;
+		}
+
+		if (NewGuildInvitationRequest(target, guild, pUser))
+		{
+			socket.SysMessage("Invitation sent to " + (target.name || "player") + ".");
+			target.socket.SysMessage("You have received a guild invitation from " + (pUser.name || "a guild member") + ".");
+		}
+		else
+		{
+			socket.SysMessage("Could not send the guild invitation.");
+		}
+		return;
+	}
+
 	guild.AddRecruit(target);
 	socket.SysMessage("Invited " + (target.name || "player") + " as a recruit.");
 
@@ -4147,7 +5019,7 @@ function onCallback1(socket, target)
 		return;
 	}
 
-	if ((UseClassicOSIGuildMenu() || IsClassicGuildMode(guild)) && !RequireClassicGuildstoneRange(pUser, guild))
+	if (RequireGuildstoneForConfiguredGuildMenu(guild) && !RequireClassicGuildstoneRange(pUser, guild))
 		return;
 
 	if (!target || !target.isChar)
@@ -4198,7 +5070,7 @@ function onCallback2(socket, target)
 		return;
 	}
 
-	if ((UseClassicOSIGuildMenu() || IsClassicGuildMode(guild)) && !RequireClassicGuildstoneRange(pUser, guild))
+	if (RequireGuildstoneForConfiguredGuildMenu(guild) && !RequireClassicGuildstoneRange(pUser, guild))
 		return;
 
 	if (!IsGuildMaster(guild, pUser))
@@ -4384,6 +5256,76 @@ function CanPromoteDemote(guild, pChar)
 	var prio = GetRankPriority(guild, pChar);
 	// Officer (40) and above can promote/demote / set rank
 	return prio >= 40;
+}
+
+function GetAdjacentRankName(guild, pChar, promote)
+{
+	if (!guild || !pChar || !guild.NumRanks || !guild.GetRankNameById || !guild.GetRankPrioById)
+		return "";
+
+	var currentName = GetRankName(guild, pChar) || pChar.guildTitle || "";
+	var currentPrio = GetRankPriority(guild, pChar);
+	var bestName = "";
+	var bestPrio = promote ? 2147480000 : -1;
+	var n = guild.NumRanks();
+
+	for (var id = 0; id < n; id++)
+	{
+		var rankName = guild.GetRankNameById(id) || "";
+		var rankPrio = guild.GetRankPrioById(id);
+		if (!rankName || rankName === "(deleted)" || rankPrio < 0 || rankPrio >= 2147480000)
+			continue;
+
+		if (rankName === currentName)
+			continue;
+
+		if (promote)
+		{
+			if (rankPrio > currentPrio && rankPrio < bestPrio)
+			{
+				bestPrio = rankPrio;
+				bestName = rankName;
+			}
+		}
+		else if (rankPrio < currentPrio && rankPrio > bestPrio)
+		{
+			bestPrio = rankPrio;
+			bestName = rankName;
+		}
+	}
+
+	return bestName;
+}
+
+function GetRankPriorityByName(guild, rankName)
+{
+	if (!guild || !rankName || !guild.NumRanks || !guild.GetRankNameById || !guild.GetRankPrioById)
+		return 0;
+
+	var n = guild.NumRanks();
+	for (var id = 0; id < n; id++)
+	{
+		var name = guild.GetRankNameById(id) || "";
+		var prio = guild.GetRankPrioById(id);
+		if (name === rankName && prio >= 0 && prio < 2147480000)
+			return prio;
+	}
+
+	return 0;
+}
+
+function CanChangeTargetRank(guild, actor, target, newRankName)
+{
+	if (!guild || !actor || !target || !newRankName)
+		return false;
+
+	if (IsGuildMaster(guild, actor))
+		return true;
+
+	var actorPrio = GetRankPriority(guild, actor);
+	var targetPrio = GetRankPriority(guild, target);
+	var newPrio = GetRankPriorityByName(guild, newRankName);
+	return actorPrio > targetPrio && actorPrio > newPrio;
 }
 
 function CanEditGuildWars(guild, pChar)

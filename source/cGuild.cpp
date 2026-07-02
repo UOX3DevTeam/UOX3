@@ -1747,6 +1747,31 @@ void CGuildCollection::Resign( CSocket *s )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CGuildCollection::Disband()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Disband a guild, deleting its stone and clearing all members/recruits
+//o------------------------------------------------------------------------------------------------o
+bool CGuildCollection::Disband( GUILDID toDisband )
+{
+	CGuild *toDelete = Guild( toDisband );
+	if( toDelete == nullptr )
+		return false;
+
+	SERIAL stone = toDelete->Stone();
+	if( stone != INVALIDSERIAL )
+	{
+		CItem *gStone = CalcItemObjFromSer( stone );
+		if( ValidateObject( gStone ))
+		{
+			gStone->Delete();
+		}
+	}
+
+	Erase( toDisband );
+	return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGuildCollection::Erase()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Erase guild - there are no guild members left

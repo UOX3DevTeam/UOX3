@@ -191,6 +191,12 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"ATTACKSPEEDFROMSTAMINA"s, 164},
 	{"CLASSICOSIGUILDMENU"s, 165},
 	{"GUILDMENUSYSTEM"s, 166},
+	{"GUILDREGISTRATIONFEE"s, 167},
+	{"CLASSICGUILDWARMAXKILLS"s, 390},
+	{"CLASSICGUILDWARDURATIONHOURS"s, 391},
+	{"CLASSICGUILDFEALTYCHECKSECONDS"s, 392},
+	{"CLASSICGUILDTYPECHANGESECONDS"s, 393},
+	{"CLASSICGUILDSTONERANGE"s, 394},
 	{"DISPLAYDAMAGENUMBERS"s, 169},
 	{"CLIENTSUPPORT4000"s, 170},
 	{"CLIENTSUPPORT5000"s, 171},
@@ -688,6 +694,12 @@ auto CServerData::ResetDefaults() -> void
 	YoungPlayerSystem( true );
 	KarmaLocking( true );
 	GuildMenuSystem( 0 );
+	GuildRegistrationFee( 25000 );
+	ClassicGuildWarMaxKills( 100 );
+	ClassicGuildWarDurationHours( 168 );
+	ClassicGuildFealtyCheckSeconds( 86400 );
+	ClassicGuildTypeChangeSeconds( 604800 );
+	ClassicGuildstoneRange( 2 );
 	CombatMaxRange( 10 );
 	CombatMaxSpellRange( 10 );
 	CombatMaxNpcAggroRange( 10 );
@@ -3982,6 +3994,90 @@ auto CServerData::GuildMenuSystem( UI08 newVal ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::GuildRegistrationFee()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets how much gold non-GM players must pay to create a guild
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::GuildRegistrationFee() const -> UI32
+{
+	return guildRegistrationFee;
+}
+auto CServerData::GuildRegistrationFee( UI32 newVal ) -> void
+{
+	guildRegistrationFee = newVal;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ClassicGuildWarMaxKills()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets default max kills before a classic guild war ends
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ClassicGuildWarMaxKills() const -> UI32
+{
+	return classicGuildWarMaxKills;
+}
+auto CServerData::ClassicGuildWarMaxKills( UI32 newVal ) -> void
+{
+	classicGuildWarMaxKills = newVal;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ClassicGuildWarDurationHours()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets default classic guild war duration, in hours
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ClassicGuildWarDurationHours() const -> UI32
+{
+	return classicGuildWarDurationHours;
+}
+auto CServerData::ClassicGuildWarDurationHours( UI32 newVal ) -> void
+{
+	classicGuildWarDurationHours = newVal;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ClassicGuildFealtyCheckSeconds()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets seconds between classic guild fealty election checks
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ClassicGuildFealtyCheckSeconds() const -> UI32
+{
+	return classicGuildFealtyCheckSeconds;
+}
+auto CServerData::ClassicGuildFealtyCheckSeconds( UI32 newVal ) -> void
+{
+	classicGuildFealtyCheckSeconds = newVal;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ClassicGuildTypeChangeSeconds()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets seconds between classic guild type changes
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ClassicGuildTypeChangeSeconds() const -> UI32
+{
+	return classicGuildTypeChangeSeconds;
+}
+auto CServerData::ClassicGuildTypeChangeSeconds( UI32 newVal ) -> void
+{
+	classicGuildTypeChangeSeconds = newVal;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ClassicGuildstoneRange()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets range required to use classic guildstone menus
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ClassicGuildstoneRange() const -> UI16
+{
+	return classicGuildstoneRange;
+}
+auto CServerData::ClassicGuildstoneRange( UI16 newVal ) -> void
+{
+	classicGuildstoneRange = newVal;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::CombatMonstersVsAnimals()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether monsters will attack animals or not
@@ -5817,9 +5913,6 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "GLOBALITEMDECAY=" << ( GlobalItemDecay() ? 1 : 0 ) << '\n';
 		ofsOutput << "SCRIPTITEMSDECAYABLE=" << ( ScriptItemsDecayable() ? 1 : 0 ) << '\n';
 		ofsOutput << "BASEITEMSDECAYABLE=" << ( BaseItemsDecayable() ? 1 : 0 ) << '\n';
-		ofsOutput << "PAPERDOLLGUILDBUTTON=" << ( PaperdollGuildButton() ? 1 : 0 ) << '\n';
-		ofsOutput << "CLASSICOSIGUILDMENU=" << ( ClassicOSIGuildMenu() ? 1 : 0 ) << '\n';
-		ofsOutput << "GUILDMENUSYSTEM=" << static_cast<UI16>( GuildMenuSystem() ) << '\n';
 		ofsOutput << "FISHINGSTAMINALOSS=" << FishingStaminaLoss() << '\n';
 		ofsOutput << "ITEMSDETECTSPEECH=" << ItemsDetectSpeech() << '\n';
 		ofsOutput << "MAXPLAYERPACKITEMS=" << MaxPlayerPackItems() << '\n';
@@ -5839,6 +5932,18 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "ENABLENPCGUILDPREMIUMS=" << ( EnableNPCGuildPremiums() ? 1 : 0 ) << '\n';
 		ofsOutput << "YOUNGPLAYERSYSTEM=" << ( YoungPlayerSystem() ? 1 : 0 ) << '\n';
 		ofsOutput << "KARMALOCKING=" << ( KarmaLocking() ? 1 : 0 ) << '\n';
+		ofsOutput << "}" << '\n';
+
+		ofsOutput << '\n' << "[guilds]" << '\n' << "{" << '\n';
+		ofsOutput << "PAPERDOLLGUILDBUTTON=" << ( PaperdollGuildButton() ? 1 : 0 ) << '\n';
+		ofsOutput << "CLASSICOSIGUILDMENU=" << ( ClassicOSIGuildMenu() ? 1 : 0 ) << '\n';
+		ofsOutput << "GUILDMENUSYSTEM=" << static_cast<UI16>( GuildMenuSystem() ) << '\n';
+		ofsOutput << "GUILDREGISTRATIONFEE=" << GuildRegistrationFee() << '\n';
+		ofsOutput << "CLASSICGUILDWARMAXKILLS=" << ClassicGuildWarMaxKills() << '\n';
+		ofsOutput << "CLASSICGUILDWARDURATIONHOURS=" << ClassicGuildWarDurationHours() << '\n';
+		ofsOutput << "CLASSICGUILDFEALTYCHECKSECONDS=" << ClassicGuildFealtyCheckSeconds() << '\n';
+		ofsOutput << "CLASSICGUILDTYPECHANGESECONDS=" << ClassicGuildTypeChangeSeconds() << '\n';
+		ofsOutput << "CLASSICGUILDSTONERANGE=" << ClassicGuildstoneRange() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[pets and followers]" << '\n' << "{" << '\n';
@@ -6935,6 +7040,24 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 166:	// GUILDMENUSYSTEM
 			GuildMenuSystem( static_cast<UI08>( std::stoul( value, nullptr, 0 )) );
+			break;
+		case 167:	// GUILDREGISTRATIONFEE
+			GuildRegistrationFee( static_cast<UI32>( std::stoul( value, nullptr, 0 )) );
+			break;
+		case 390:	// CLASSICGUILDWARMAXKILLS
+			ClassicGuildWarMaxKills( static_cast<UI32>( std::stoul( value, nullptr, 0 )) );
+			break;
+		case 391:	// CLASSICGUILDWARDURATIONHOURS
+			ClassicGuildWarDurationHours( static_cast<UI32>( std::stoul( value, nullptr, 0 )) );
+			break;
+		case 392:	// CLASSICGUILDFEALTYCHECKSECONDS
+			ClassicGuildFealtyCheckSeconds( static_cast<UI32>( std::stoul( value, nullptr, 0 )) );
+			break;
+		case 393:	// CLASSICGUILDTYPECHANGESECONDS
+			ClassicGuildTypeChangeSeconds( static_cast<UI32>( std::stoul( value, nullptr, 0 )) );
+			break;
+		case 394:	// CLASSICGUILDSTONERANGE
+			ClassicGuildstoneRange( static_cast<UI16>( std::stoul( value, nullptr, 0 )) );
 			break;
 		case 169:	 // DISPLAYDAMAGENUMBERS
 			CombatDisplayDamageNumbers( static_cast<UI16>( std::stoul( value, nullptr, 0 )) == 1 );
