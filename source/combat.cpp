@@ -727,6 +727,8 @@ UI08 CHandleCombat::GetWeaponType( CItem *i )
 		case 0x48BB: //gargish katana - SA
 		case 0xA28B: //bladed whip - ToL
 		case 0xA293: //bladed whip - ToL
+		case 0xB4CD: //Gargish Bokuto Publish 123
+		case 0xB4CE: //Gargish Bokuto Publish 123
 			return SLASH_SWORDS;
 		// One-Handed Lg. Swords
 		case 0x0F5E: //broadsword
@@ -768,6 +770,8 @@ UI08 CHandleCombat::GetWeaponType( CItem *i )
 		case 0x2D32: //rune blade - ML
 		case 0x0908: //gargish talwar - SA
 		case 0x4075: //gargish talwar - SA
+		case 0xB4BF: //Tachi Publish 123
+		case 0xB4C0: //Tachi Publish 123
 			return TWOHND_LG_SWORDS;
 		// Bardiche
 		case 0x0F4D: //bardiche
@@ -816,12 +820,16 @@ UI08 CHandleCombat::GetWeaponType( CItem *i )
 		case 0x48B1: //gargish battleaxe - SA
 		case 0x48B2: //gargish axe - SA
 		case 0x48B3: //gargish axe - SA
+		case 0xB4DE: //Skull_Axe Publish 123
+		case 0xB4DF: //Skull_Axe Publish 123
 			return TWOHND_AXES;
 		// Default Maces
 		case 0x0DF2: // Wand
 		case 0x0DF3: // Wand
 		case 0x0DF4: // Wand
 		case 0x0DF5: // Wand
+		case 0xA767: // Wand - ToL
+		case 0xA768: // Wand - ToL
 		case 0x13E3: //smith's hammer
 		case 0x13E4: //smith's hammer
 		case 0x13B3: //club
@@ -854,6 +862,17 @@ UI08 CHandleCombat::GetWeaponType( CItem *i )
 		case 0x48C3: //gargish maul - SA
 		case 0xA289: //barbed whip - ToL
 		case 0xA291: //barbed whip - ToL
+		case 0xAF2D: //Bottle - ToL
+		case 0xAEA4: //Air Paladin Hammer - ToL
+		case 0xAEB3: //Water Paladin Hammer - ToL
+		case 0xAEC2: //Earth Paladin Hammer - ToL
+		case 0xAED1: //Fire Paladin Hammer - ToL
+		case 0xB4C1: //Escrima Publish 123
+		case 0xB4C2: //Escrima Publish 123
+		case 0xB4CB: //Gargish Otsuchi Publish 123
+		case 0xB4CC: //Gargish Otsuchi Publish 123
+		case 0xB4DA: //Skull_Mace Publish 123
+		case 0xB4DB: //Skull_Mace Publish 123
 			return DEF_MACES;
 		// Large Maces
 		case 0x13F4: //crook
@@ -899,6 +918,10 @@ UI08 CHandleCombat::GetWeaponType( CItem *i )
 		case 0xA344: //skull staff east
 		case 0xA347: //gargoyle skull staff south
 		case 0xA348: //gargoyle skull staff east
+		case 0xA7C3: //candycane staff
+		case 0xA7C4: //candycane staff
+		case 0xB4C3: //Bo Staff Publish 123
+		case 0xB4C4: //Bo Staff Publish 123
 			return LG_MACES;
 		// Bows
 		case 0x13B1: //bow
@@ -920,6 +943,8 @@ UI08 CHandleCombat::GetWeaponType( CItem *i )
 		case 0x13FD: //heavy crossbow
 		case 0x26C3: //repeating crossbow - AoS
 		case 0x26CD: //repeating crossbow - AoS
+		case 0xB4DC: //Skull_Crossbow Publish 123
+		case 0xB4DD: //Skull_Crossbow Publish 123
 			return XBOWS;
 		case 0x27AA: //fukiya - SE - Blowgun, uses Dart ammo (0x2806 or 0x2804)
 		case 0x27F5: //fukiya - SE - Blowgun, uses Dart ammo (0x2806 or 0x2804)
@@ -950,6 +975,16 @@ UI08 CHandleCombat::GetWeaponType( CItem *i )
 		case 0x48BD: //gargish kryss - SA
 		case 0xA28A: //spiked whip - ToL
 		case 0xA292: //spiked whip - ToL
+		case 0xAEA5: //Air Paladin fork - ToL
+		case 0xAEB4: //Water Paladin fork - ToL
+		case 0xAEC3: //Earth Paladin fork - ToL
+		case 0xAED2: //Fire Paladin fork - ToL
+		case 0xB4C7: //Tanto Publish 123
+		case 0xB4C8: //Tanto Publish 123
+		case 0xB4C9: //Gargish Tanto Publish 123
+		case 0xB4CA: //Gargish Tanto Publish 123
+		case 0xB4D4: //Skull_Blade Publish 123
+		case 0xB4D5: //Skull_Blade Publish 123
 			return DEF_FENCING;
 		// Stabbing Fencing Weapons
 		case 0x0E87: //pitchfork
@@ -975,6 +1010,10 @@ UI08 CHandleCombat::GetWeaponType( CItem *i )
 		case 0x48C9: //gargish pike - SA
 		case 0x48CA: //gargish lance - SA
 		case 0x48CB: //gargish lance - SA
+		case 0xB4C5: //Yari Publish 123
+		case 0xB4C6: //Yari Publish 123
+		case 0xB4D6: //Skull_Spear Publish 123
+		case 0xB4D7: //Skull_Spear Publish 123
 			return TWOHND_FENCING;
 		case 0x27AF: //sai - SE
 		case 0x27FA: //sai - SE
@@ -999,6 +1038,8 @@ UI08 CHandleCombat::GetWeaponType( CItem *i )
 		case 0x406C: //gargish cyclone - SA
 		case 0x090A: //gargish soul glaive - SA
 		case 0x406B: //gargish soul glaive - SA
+		case 0xB4E0: //Skull_Glaive_G Publish 123
+		case 0xB4E1: //Skull_Glaive_G Publish 123
 			return THROWN;
 		default: // Wrestling
 			return WRESTLING;
@@ -2934,7 +2975,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			UI16 ammoFXHue = mWeapon->GetAmmoFXHue();
 			UI16 ammoFXRender = mWeapon->GetAmmoFXRender();
 
-			if( mChar.IsNpc() || ( ammoId != 0 && DeleteItemAmount( &mChar, 1, ammoId,  ammoHue ) == 1 ))
+			if( mChar.IsNpc() || ( ammoId != 0 && DeleteItemAmount( &mChar, 1, ammoId,  ammoHue, 0, true ) == 1 ))
 			{
 				PlaySwingAnimations( &mChar );
 				Effects->PlayMovingAnimation( mChar.GetX(), mChar.GetY(), mChar.GetZ() + 5, ourTarg->GetX(), ourTarg->GetY(), ourTarg->GetZ(), ammoFX, 0x15, 0x1, 0x00, static_cast<UI32>( ammoFXHue ), static_cast<UI32>( ammoFXRender ));

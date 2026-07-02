@@ -46,6 +46,7 @@
 //		"WRESTLING"
 //		"THROWING"
 
+/** @type { ( mChar: Character | null, itemID: number | null ) => string } */
 function GetWeaponType( mChar, itemID )
 {
 	var weaponType;
@@ -95,6 +96,10 @@ function GetWeaponType( mChar, itemID )
 		case 0x4076: //gargish shortblade - SA
 		case 0x48C6: //gargish bone harvester - SA
 		case 0x48C7: //gargish bone harvester - SA
+		case 0xA28B: // Bladed Whip - tol
+		case 0xA293: // Bladed Whip - tol
+		case 0xB4CD: //Gargish Bokuto Publish 123
+		case 0xB4CE: //Gargish Bokuto Publish 123
 			weaponType = "DEF_SWORDS"; break;
 	// Default Swords
 		case 0x13F6: //butcher knife
@@ -156,6 +161,10 @@ function GetWeaponType( mChar, itemID )
 		case 0x27F3: //bokuto - SE
 		case 0x2D32: //rune blade - ML
 		case 0x2D26: //rune blade - ML
+		case 0x0908: //gargish talwar - SA
+		case 0x4075: //gargish talwar - SA
+		case 0xB4BF: //Tachi Publish 123
+		case 0xB4C0: //Tachi Publish 123
 			weaponType = "TWOHND_LG_SWORDS"; break;
 	// Bardiche
 		case 0x0F4D: //bardiche
@@ -204,12 +213,16 @@ function GetWeaponType( mChar, itemID )
 		case 0x48B1: //gargish battleaxe - SA
 		case 0x48B2: //gargish axe - SA
 		case 0x48B3: //gargish axe - SA
+		case 0xB4DE: //Skull_Axe Publish 123
+		case 0xB4DF: //Skull_Axe Publish 123
 			weaponType = "TWOHND_AXES"; break;
 		// Default Maces
 		case 0x0DF2: // Wand
 		case 0x0DF3: // Wand
 		case 0x0DF4: // Wand
 		case 0x0DF5: // Wand
+		case 0xA767: // ToL Wand
+		case 0xA768: // ToL Wand
 		case 0x0FB4: //sledge hammer
 		case 0x0FB5: //sledge hammer
 		case 0x0F5C: //mace
@@ -238,6 +251,19 @@ function GetWeaponType( mChar, itemID )
 		case 0x406E: //gargish disc mace - SA
 		case 0x48C2: //gargish maul - SA
 		case 0x48C3: //gargish maul - SA
+		case 0xA289: //Barbed Whip - ToL
+		case 0xA291: //Barbed Whip - ToL
+		case 0xAF2D: //Bottle
+		case 0xAEA4: //Air Paladin Hammer - ToL
+		case 0xAEB3: //Water Paladin Hammer - ToL
+		case 0xAEC2: //Earth Paladin Hammer - ToL
+		case 0xAED1: //Fire Paladin Hammer - ToL
+		case 0xB4C1: //Escrima Publish 123
+		case 0xB4C2: //Escrima Publish 123
+		case 0xB4CB: //Gargish Otsuchi Publish 123
+		case 0xB4CC: //Gargish Otsuchi Publish 123
+		case 0xB4DA: //Skull_Mace Publish 123
+		case 0xB4DB: //Skull_Mace Publish 123
 			weaponType = "DEF_MACES"; break;
 		// Large Maces
 		case 0x1438: //war hammer
@@ -256,6 +282,10 @@ function GetWeaponType( mChar, itemID )
 		case 0x48C1: //gargish war hammer - SA
 		case 0x48CC: //gargish tessen - SA
 		case 0x48CD: //gargish tessen - SA
+		case 0xA7C3: //candycane staff
+		case 0xA7C4: //candycane staff
+		case 0xB4C3: //Bo Staff Publish 123
+		case 0xB4C4: //Bo Staff Publish 123
 			weaponType = "LG_MACES"; break;
 		// Staffs - treated differently in some cases than other maces
 		case 0x13F4: //crook
@@ -287,6 +317,8 @@ function GetWeaponType( mChar, itemID )
 		case 0xA344: //skull staff east
 		case 0xA347: //gargoyle skull staff south
 		case 0xA348: //gargoyle skull staff east
+		case 0xA7C3: //candycane staff
+		case 0xA7C4: //candycane staff
 			weaponType = "TWOHND_STAFFS"; break;
 	// Bows
 		case 0x13B1: //bow
@@ -298,6 +330,8 @@ function GetWeaponType( mChar, itemID )
 		case 0x27F0: //yumi - SE
 		case 0x2D1F: //magical shortbow - ML
 		case 0x2D2B: //magical shortbow - ML
+		case 0xB4DC: //Skull_Crossbow Publish 123
+		case 0xB4DD: //Skull_Crossbow Publish 123
 			weaponType = "BOWS"; break;
 	// Crossbows
 		case 0x0F4F: //crossbow
@@ -334,6 +368,18 @@ function GetWeaponType( mChar, itemID )
 		case 0x4072: //gargish bloodblade - SA
 		case 0x48BC: //gargish kryss - SA
 		case 0x48BD: //gargish kryss - SA
+		case 0xA28A: //Spiked Whip - ToL
+		case 0xA292: //Spiked Whip - ToL
+		case 0xAEA5: //Air Paladin fork - ToL
+		case 0xAEB4: //Water Paladin fork - ToL
+		case 0xAEC3: //Earth Paladin fork - ToL
+		case 0xAED2: //Fire Paladin fork - ToL
+		case 0xB4C7: //Tanto Publish 123
+		case 0xB4C8: //Tanto Publish 123
+		case 0xB4C9: //Gargish Tanto Publish 123
+		case 0xB4CA: //Gargish Tanto Publish 123
+		case 0xB4D4: //Skull_Blade Publish 123
+		case 0xB4D5: //Skull_Blade Publish 123
 			weaponType = "DEF_FENCING"; break;
 	// Stabbing Fencing Weapons
 		case 0x0E87: //pitchfork
@@ -363,6 +409,10 @@ function GetWeaponType( mChar, itemID )
 		case 0x48C9: //gargish pike - SA
 		case 0x48CA: //gargish lance - SA
 		case 0x48CB: //gargish lance - SA
+		case 0xB4C5: //Yari Publish 123
+		case 0xB4C6: //Yari Publish 123
+		case 0xB4D6: //Skull_Spear Publish 123
+		case 0xB4D7: //Skull_Spear Publish 123
 			weaponType = "TWOHND_FENCING"; break;
 		case 0x27AF: //sai - SE
 		case 0x27FA: //sai - SE
@@ -387,7 +437,9 @@ function GetWeaponType( mChar, itemID )
 		case 0x406C: //gargish cyclone - SA
 		case 0x090A: //gargish soul glaive - SA
 		case 0x406B: //gargish soul glaive - SA
-			weapontype = "THROWN"; break;
+		case 0xB4E0: //Skull_Glaive_G Publish 123
+		case 0xB4E1: //Skull_Glaive_G Publish 123
+			weaponType = "THROWN"; break;
 		default: // Wrestling
 			weaponType = "WRESTLING"; break;
 	}
@@ -395,6 +447,7 @@ function GetWeaponType( mChar, itemID )
 	return weaponType;
 }
 
+/** @type { ( weaponType: string ) => string } */
 function GetCombatSkill( weaponType )
 {
 	var combatSkill;

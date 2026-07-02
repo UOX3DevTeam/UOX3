@@ -1,0 +1,27 @@
+{
+  "questID": 4,
+  "title": "Chop Chop, On The Double!",
+  "description": "That's right, move it! I need sixty logs on the double, and they need to be freshly cut! If you can get them to me fast I'll have your payment in your hands before you have the scent of pine out from beneath your nostrils. Just get a sharp axe and hack away at some of the trees in the land and your lumberjacking skill will rise in no time.",
+  "uncomplete": "You're not quite done yet.  Get back to work!",
+  "complete": "Ahhh! The smell of fresh cut lumber. And look at you, all strong and proud, as if you had done an honest days work!",
+  "refuse": "Or perhaps you'd rather not.",
+  "type": "collect",
+  "category": "Side Quests",
+  "oneTimeQuest": 1,
+  "questTurnIn": 1,
+  "targetItems": [
+    {
+      "sectionID": "0x1BE0",
+      "amount": 60,
+      "name": "Log"
+    }
+  ],
+  "rewards": [
+    {
+      "type": "item",
+      "sectionID": "lumberjackssatchel",
+      "amount": 1,
+      "name": "Craftsman's Satchel"
+    }
+  ]
+}

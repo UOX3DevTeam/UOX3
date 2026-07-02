@@ -1,0 +1,1046 @@
+// ============================================================================
+// Power Scrolls (Scrolls of Power) - DFN (morex/morey version)
+// Base + skills, bonuses: +5, +10, +15, +20
+// Requires JS script 7504 (power_scrolls.js) that reads:
+//   morex = skills.dfn SKILL index
+//   morey = bonus (5/10/15/20)
+// ============================================================================
+
+[base_powerscroll]
+{
+get=base_item
+name=Scroll of Power
+id=0x14F0
+colour=0x481
+weight=100
+pileable=0
+amount=1
+decay=1
+script=7504
+origin=aos
+}
+
+// --------------------------------------------------------------------------
+// Swordsmanship (skills.dfn: [SKILL 40])
+// --------------------------------------------------------------------------
+
+[powerscroll_swordsmanship_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=40 // Swordsmanship
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_swordsmanship_10]
+{
+get=base_powerscroll
+morex=40
+morey=10
+}
+
+[powerscroll_swordsmanship_15]
+{
+get=base_powerscroll
+morex=40
+morey=15
+}
+
+[powerscroll_swordsmanship_20]
+{
+get=base_powerscroll
+morex=40
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Fencing (skills.dfn: [SKILL 42])
+// --------------------------------------------------------------------------
+
+[powerscroll_fencing_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=42 // Fencing
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_fencing_10]
+{
+get=base_powerscroll
+morex=42
+morey=10
+}
+
+[powerscroll_fencing_15]
+{
+get=base_powerscroll
+morex=42
+morey=15
+}
+
+[powerscroll_fencing_20]
+{
+get=base_powerscroll
+morex=42
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Mace Fighting (skills.dfn: [SKILL 41])
+// --------------------------------------------------------------------------
+
+[powerscroll_macefighting_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=41 // Mace Fighting
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_macefighting_10]
+{
+get=base_powerscroll
+morex=41
+morey=10
+}
+
+[powerscroll_macefighting_15]
+{
+get=base_powerscroll
+morex=41
+morey=15
+}
+
+[powerscroll_macefighting_20]
+{
+get=base_powerscroll
+morex=41
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Archery (skills.dfn: [SKILL 31])
+// --------------------------------------------------------------------------
+
+[powerscroll_archery_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=31 // Archery
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_archery_10]
+{
+get=base_powerscroll
+morex=31
+morey=10
+}
+
+[powerscroll_archery_15]
+{
+get=base_powerscroll
+morex=31
+morey=15
+}
+
+[powerscroll_archery_20]
+{
+get=base_powerscroll
+morex=31
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Wrestling (skills.dfn: [SKILL 43])
+// --------------------------------------------------------------------------
+
+[powerscroll_wrestling_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=43 // Wrestling
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_wrestling_10]
+{
+get=base_powerscroll
+morex=43
+morey=10
+}
+
+[powerscroll_wrestling_15]
+{
+get=base_powerscroll
+morex=43
+morey=15
+}
+
+[powerscroll_wrestling_20]
+{
+get=base_powerscroll
+morex=43
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Parrying (skills.dfn: [SKILL 5])
+// --------------------------------------------------------------------------
+
+[powerscroll_parrying_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=5  // Parrying
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_parrying_10]
+{
+get=base_powerscroll
+morex=5
+morey=10
+}
+
+[powerscroll_parrying_15]
+{
+get=base_powerscroll
+morex=5
+morey=15
+}
+
+[powerscroll_parrying_20]
+{
+get=base_powerscroll
+morex=5
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Tactics (skills.dfn: [SKILL 27])
+// --------------------------------------------------------------------------
+
+[powerscroll_tactics_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=27 // Tactics
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_tactics_10]
+{
+get=base_powerscroll
+morex=27
+morey=10
+}
+
+[powerscroll_tactics_15]
+{
+get=base_powerscroll
+morex=27
+morey=15
+}
+
+[powerscroll_tactics_20]
+{
+get=base_powerscroll
+morex=27
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Anatomy (skills.dfn: [SKILL 1])
+// --------------------------------------------------------------------------
+
+[powerscroll_anatomy_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=1  // Anatomy
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_anatomy_10]
+{
+get=base_powerscroll
+morex=1
+morey=10
+}
+
+[powerscroll_anatomy_15]
+{
+get=base_powerscroll
+morex=1
+morey=15
+}
+
+[powerscroll_anatomy_20]
+{
+get=base_powerscroll
+morex=1
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Healing (skills.dfn: [SKILL 17])
+// --------------------------------------------------------------------------
+
+[powerscroll_healing_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=17 // Healing
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_healing_10]
+{
+get=base_powerscroll
+morex=17
+morey=10
+}
+
+[powerscroll_healing_15]
+{
+get=base_powerscroll
+morex=17
+morey=15
+}
+
+[powerscroll_healing_20]
+{
+get=base_powerscroll
+morex=17
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Magery (skills.dfn: [SKILL 25])
+// --------------------------------------------------------------------------
+
+[powerscroll_magery_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=25 // Magery
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_magery_10]
+{
+get=base_powerscroll
+morex=25
+morey=10
+}
+
+[powerscroll_magery_15]
+{
+get=base_powerscroll
+morex=25
+morey=15
+}
+
+[powerscroll_magery_20]
+{
+get=base_powerscroll
+morex=25
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Meditation (skills.dfn: [SKILL 46])
+// --------------------------------------------------------------------------
+
+[powerscroll_meditation_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=46 // Meditation
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_meditation_10]
+{
+get=base_powerscroll
+morex=46
+morey=10
+}
+
+[powerscroll_meditation_15]
+{
+get=base_powerscroll
+morex=46
+morey=15
+}
+
+[powerscroll_meditation_20]
+{
+get=base_powerscroll
+morex=46
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Evaluate Intelligence (skills.dfn: [SKILL 16])
+// --------------------------------------------------------------------------
+
+[powerscroll_evaluatingintel_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=16 // Evaluate Intelligence
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_evaluatingintel_10]
+{
+get=base_powerscroll
+morex=16
+morey=10
+}
+
+[powerscroll_evaluatingintel_15]
+{
+get=base_powerscroll
+morex=16
+morey=15
+}
+
+[powerscroll_evaluatingintel_20]
+{
+get=base_powerscroll
+morex=16
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Magic Resistance (skills.dfn: [SKILL 26])
+// --------------------------------------------------------------------------
+
+[powerscroll_magicresistance_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=26 // Magic Resistance
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_magicresistance_10]
+{
+get=base_powerscroll
+morex=26
+morey=10
+}
+
+[powerscroll_magicresistance_15]
+{
+get=base_powerscroll
+morex=26
+morey=15
+}
+
+[powerscroll_magicresistance_20]
+{
+get=base_powerscroll
+morex=26
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Stealing (skills.dfn: [SKILL 33])
+// --------------------------------------------------------------------------
+
+[powerscroll_stealing_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=33 // Stealing
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_stealing_10]
+{
+get=base_powerscroll
+morex=33
+morey=10
+}
+
+[powerscroll_stealing_15]
+{
+get=base_powerscroll
+morex=33
+morey=15
+}
+
+[powerscroll_stealing_20]
+{
+get=base_powerscroll
+morex=33
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Throwing (skills.dfn: [SKILL 57])
+// --------------------------------------------------------------------------
+
+[powerscroll_throwing_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=57 // Throwing
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_throwing_10]
+{
+get=base_powerscroll
+morex=57
+morey=10
+}
+
+[powerscroll_throwing_15]
+{
+get=base_powerscroll
+morex=57
+morey=15
+}
+
+[powerscroll_throwing_20]
+{
+get=base_powerscroll
+morex=57
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Stealth (skills.dfn: [SKILL 47])
+// --------------------------------------------------------------------------
+
+[powerscroll_stealth_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=47 // Stealth
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_stealth_10]
+{
+get=base_powerscroll
+morex=47
+morey=10
+}
+
+[powerscroll_stealth_15]
+{
+get=base_powerscroll
+morex=47
+morey=15
+}
+
+[powerscroll_stealth_20]
+{
+get=base_powerscroll
+morex=47
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Animal Taming (skills.dfn: [SKILL 35])
+// --------------------------------------------------------------------------
+
+[powerscroll_taming_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=35 // Animal Taming
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_taming_10]
+{
+get=base_powerscroll
+morex=35
+morey=10
+}
+
+[powerscroll_taming_15]
+{
+get=base_powerscroll
+morex=35
+morey=15
+}
+
+[powerscroll_taming_20]
+{
+get=base_powerscroll
+morex=35
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Animal Lore (skills.dfn: [SKILL 2])
+// --------------------------------------------------------------------------
+
+[powerscroll_animallore_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=2  // Animal Lore
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_animallore_10]
+{
+get=base_powerscroll
+morex=2
+morey=10
+}
+
+[powerscroll_animallore_15]
+{
+get=base_powerscroll
+morex=2
+morey=15
+}
+
+[powerscroll_animallore_20]
+{
+get=base_powerscroll
+morex=2
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Veterinary (skills.dfn: [SKILL 39])
+// --------------------------------------------------------------------------
+
+[powerscroll_veterinary_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=39 // Veterinary
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_veterinary_10]
+{
+get=base_powerscroll
+morex=39
+morey=10
+}
+
+[powerscroll_veterinary_15]
+{
+get=base_powerscroll
+morex=39
+morey=15
+}
+
+[powerscroll_veterinary_20]
+{
+get=base_powerscroll
+morex=39
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Musicianship (skills.dfn: [SKILL 29])
+// --------------------------------------------------------------------------
+
+[powerscroll_musicianship_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=29 // Musicianship
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_musicianship_10]
+{
+get=base_powerscroll
+morex=29
+morey=10
+}
+
+[powerscroll_musicianship_15]
+{
+get=base_powerscroll
+morex=29
+morey=15
+}
+
+[powerscroll_musicianship_20]
+{
+get=base_powerscroll
+morex=29
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Provocation (skills.dfn: [SKILL 22])
+// --------------------------------------------------------------------------
+
+[powerscroll_provocation_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=22 // Provocation
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_provocation_10]
+{
+get=base_powerscroll
+morex=22
+morey=10
+}
+
+[powerscroll_provocation_15]
+{
+get=base_powerscroll
+morex=22
+morey=15
+}
+
+[powerscroll_provocation_20]
+{
+get=base_powerscroll
+morex=22
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Discordance (skills.dfn: [SKILL ???])
+// NOTE: Your skills.dfn snippet did not include Discordance.
+// Fill in the correct skill index from your skills.dfn here.
+// --------------------------------------------------------------------------
+
+// [powerscroll_discordance_5]
+// {
+// get=base_powerscroll
+// // morex = skills.dfn SKILL index, morey = bonus
+// morex=?? // Discordance
+// morey=5  // +5 cap (105)
+// }
+//
+// [powerscroll_discordance_10]
+// {
+// get=base_powerscroll
+// morex=??
+// morey=10
+// }
+//
+// [powerscroll_discordance_15]
+// {
+// get=base_powerscroll
+// morex=??
+// morey=15
+// }
+//
+// [powerscroll_discordance_20]
+// {
+// get=base_powerscroll
+// morex=??
+// morey=20
+// }
+
+// --------------------------------------------------------------------------
+// Peacemaking (skills.dfn: [SKILL 9])
+// --------------------------------------------------------------------------
+
+[powerscroll_peacemaking_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=9  // Peacemaking
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_peacemaking_10]
+{
+get=base_powerscroll
+morex=9
+morey=10
+}
+
+[powerscroll_peacemaking_15]
+{
+get=base_powerscroll
+morex=9
+morey=15
+}
+
+[powerscroll_peacemaking_20]
+{
+get=base_powerscroll
+morex=9
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Chivalry (skills.dfn: [SKILL 51])
+// --------------------------------------------------------------------------
+
+[powerscroll_chivalry_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=51 // Chivalry
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_chivalry_10]
+{
+get=base_powerscroll
+morex=51
+morey=10
+}
+
+[powerscroll_chivalry_15]
+{
+get=base_powerscroll
+morex=51
+morey=15
+}
+
+[powerscroll_chivalry_20]
+{
+get=base_powerscroll
+morex=51
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Focus (skills.dfn: [SKILL 50])
+// --------------------------------------------------------------------------
+
+[powerscroll_focus_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=50 // Focus
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_focus_10]
+{
+get=base_powerscroll
+morex=50
+morey=10
+}
+
+[powerscroll_focus_15]
+{
+get=base_powerscroll
+morex=50
+morey=15
+}
+
+[powerscroll_focus_20]
+{
+get=base_powerscroll
+morex=50
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Necromancy (skills.dfn: [SKILL 49])
+// --------------------------------------------------------------------------
+
+[powerscroll_necromancy_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=49 // Necromancy
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_necromancy_10]
+{
+get=base_powerscroll
+morex=49
+morey=10
+}
+
+[powerscroll_necromancy_15]
+{
+get=base_powerscroll
+morex=49
+morey=15
+}
+
+[powerscroll_necromancy_20]
+{
+get=base_powerscroll
+morex=49
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Bushido (skills.dfn: [SKILL 52])
+// --------------------------------------------------------------------------
+
+[powerscroll_bushido_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=52 // Bushido
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_bushido_10]
+{
+get=base_powerscroll
+morex=52
+morey=10
+}
+
+[powerscroll_bushido_15]
+{
+get=base_powerscroll
+morex=52
+morey=15
+}
+
+[powerscroll_bushido_20]
+{
+get=base_powerscroll
+morex=52
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Ninjitsu (skills.dfn: [SKILL 53])
+// --------------------------------------------------------------------------
+
+[powerscroll_ninjitsu_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=53 // Ninjitsu
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_ninjitsu_10]
+{
+get=base_powerscroll
+morex=53
+morey=10
+}
+
+[powerscroll_ninjitsu_15]
+{
+get=base_powerscroll
+morex=53
+morey=15
+}
+
+[powerscroll_ninjitsu_20]
+{
+get=base_powerscroll
+morex=53
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Spellweaving (skills.dfn: [SKILL 54])
+// --------------------------------------------------------------------------
+
+[powerscroll_spellweaving_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=54 // Spellweaving
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_spellweaving_10]
+{
+get=base_powerscroll
+morex=54
+morey=10
+}
+
+[powerscroll_spellweaving_15]
+{
+get=base_powerscroll
+morex=54
+morey=15
+}
+
+[powerscroll_spellweaving_20]
+{
+get=base_powerscroll
+morex=54
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Spirit Speak (skills.dfn: [SKILL 32])
+// --------------------------------------------------------------------------
+
+[powerscroll_spiritspeak_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=32 // Spirit Speak
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_spiritspeak_10]
+{
+get=base_powerscroll
+morex=32
+morey=10
+}
+
+[powerscroll_spiritspeak_15]
+{
+get=base_powerscroll
+morex=32
+morey=15
+}
+
+[powerscroll_spiritspeak_20]
+{
+get=base_powerscroll
+morex=32
+morey=20
+}
+
+// --------------------------------------------------------------------------
+// Mysticism (skills.dfn: [SKILL 55])
+// --------------------------------------------------------------------------
+
+[powerscroll_mysticism_5]
+{
+get=base_powerscroll
+// morex = skills.dfn SKILL index, morey = bonus
+morex=55 // Mysticism
+morey=5  // +5 cap (105)
+}
+
+[powerscroll_mysticism_10]
+{
+get=base_powerscroll
+morex=55
+morey=10
+}
+
+[powerscroll_mysticism_15]
+{
+get=base_powerscroll
+morex=55
+morey=15
+}
+
+[powerscroll_mysticism_20]
+{
+get=base_powerscroll
+morex=55
+morey=20
+}

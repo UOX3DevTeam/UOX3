@@ -2755,3 +2755,44 @@ get=base_wall
 name=sandstone wall
 id=0x0199
 }
+
+// very short sandstone block south
+[0x019a]
+{
+get=base_wall
+name=sandstone wall
+id=0x019a
+}
+
+// stone post
+[0x01d2]
+{
+get=base_wall
+name=stone post
+id=0x01d2
+}
+
+[0x01eb]
+{
+get=base_wall
+name=stone wall
+id=0x01eb
+}
+
+[0x4b0e]
+{
+get=base_wall
+id=0x4b0e
+}
+
+[0x513e]
+{
+get=base_wall
+id=0x513e
+}
+
+[0x9b81]
+{
+get=base_wall
+id=0x9b81
+}

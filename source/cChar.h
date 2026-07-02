@@ -82,6 +82,9 @@ private:
 		SI16				fx[2]; //NPC Wander Point x
 		SI16				fy[2]; //NPC Wander Point y
 		SI08				fz;    //NPC Wander Point z
+		SI16				spawnX; // NPC's initial X spawn coordinate
+		SI16				spawnY; // NPC's initial Y spawn coordinate
+		SI08				spawnZ; // NPC's initial Z spawn coordinate
 		SI16				aiType;
 		SI16				spellAttack;
 		SI08				spellDelay; // won't time out for more than 255 seconds!
@@ -227,7 +230,7 @@ protected:
   	RACEID  	raceGate;		// Race gate that has been used
   	UI08    	step;			// 1 if step 1 0 if step 2 3 if step 1 skip 2 if step 2 skip
 
-	std::bitset<17>		priv;
+	std::bitset<19>		priv;
 
 	std::string	guildTitle;		// Title Guildmaster granted player						(DasRaetsel)
 
@@ -235,6 +238,11 @@ protected:
 
 	TIMERVAL	regen[3];
 	TIMERVAL	weathDamage[WEATHNUM];	// Light Damage timer
+
+	// Weather packet cache (persisted)
+	UI16		lastWeathId;     // 0xFFFF = none/uninitialized
+	UI08		lastWeathPkt;    // 0xFF = none/uninitialized, otherwise 0..6
+	UI08		lastWeathParts;  // last particle count sent
 
 	UI08		PoisonStrength;
 	BodyType	bodyType;
@@ -453,6 +461,15 @@ public:
 	TIMERVAL	GetWeathDamage( UI08 part ) const;
 	UI08		GetNextAct( void ) const;
 
+	UI16		GetLastWeathId( void ) const;
+	void		SetLastWeathId( UI16 newValue );
+
+	UI08		GetLastWeathPkt( void ) const;
+	void		SetLastWeathPkt( UI08 newValue );
+
+	UI08		GetLastWeathParts( void ) const;
+	void		SetLastWeathParts( UI08 newValue );
+
 	void		SetTimer( cC_TID timerId, TIMERVAL value );
 	void		SetRegen( TIMERVAL newValue, UI08 part );
 	void		SetWeathDamage( TIMERVAL newValue, UI08 part );
@@ -519,6 +536,7 @@ public:
 	bool		IsPermReflected( void ) const;
 	bool		NoNeedReags( void ) const;
 	bool		HideFameKarmaTitle( void ) const;
+	bool		NoCharCollide( void ) const;
 
 	void		SetGM( bool newValue );
 	void		SetBroadcast( bool newValue );
@@ -537,6 +555,7 @@ public:
 	void		SetPermReflected( bool newValue );
 	void		SetNoNeedReags( bool newValue );
 	void		HideFameKarmaTitle( bool newValue );
+	void		NoCharCollide( bool newValue );
 
 	void		SetPriv( UI32 newValue );
 	void		SetTownpriv( SI08 newValue );
@@ -765,6 +784,13 @@ public:
 	void		SetFz( SI08 newVal );
 	void		SetNpcWander( SI08 newValue, bool initArea = false );
 	void		SetOldNpcWander( SI08 newValue );
+
+	SI16		GetSpawnX( void ) const;
+	SI16		GetSpawnY( void ) const;
+	SI08		GetSpawnZ( void ) const;
+	void		SetSpawnX( SI16 newVal );
+	void		SetSpawnY( SI16 newVal );
+	void		SetSpawnZ( SI08 newVal );
 
 	CChar *		GetFTarg( void ) const;
 	void		SetFTarg( CChar *newTarg );
