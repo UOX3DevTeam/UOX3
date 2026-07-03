@@ -1867,4 +1867,36 @@ o	39892	1	1	0	0	0	1	0	1	0	0	0	1	1	1
 ./	39750	0	1	0	0	0	0	0	0	0	0	0	1	0	0	
 ./	39752	0	1	0	0	0	0	0	0	0	0	0	1	0	0	
 ./	39754	0	1	0	0	0	0	0	0	0	0	0	1	0	0	
-
+v	46038	1	1	1	1	1	1	1	1	1	1	1	0	0	0	Celtic Walls
+\	46039	1	1	0	0	1	1	1	1	1	1	1	0	1	0	Celtic Walls
+./	46040	1	1	1	1	1	1	1	1	0	0	1	1	0	0	Celtic Walls
+\	46041	1	1	0	0	1	1	1	1	1	1	1	0	1	0	Celtic Walls
+./	46042	1	1	1	1	1	1	1	1	0	0	1	1	0	0	Celtic Walls
+\	46045	1	1	0	0	1	1	1	1	1	1	1	0	1	0	Celtic Walls Window
+./	46046	1	1	1	1	1	1	1	1	0	0	1	1	0	0	Celtic Walls Window
+o	46047	1	1	0	0	1	1	1	1	0	0	1	1	1	1	Celtic Walls
+\	46043	1	1	0	0	1	1	1	1	1	1	1	0	1	0	Celtic Walls Window
+./	46044	1	1	1	1	1	1	1	1	0	0	1	1	0	0	Celtic Walls Window
+\	46049	1	1	0	0	1	1	1	1	1	1	1	0	1	0	Celtic Walls Variant 1
+./	46050	1	1	1	1	1	1	1	1	0	0	1	1	0	0	Celtic Walls Variant 1
+\	46051	1	1	0	0	1	1	1	1	1	1	1	0	1	0	Celtic Walls Variant 1
+./	46052	1	1	1	1	1	1	1	1	0	0	1	1	0	0	Celtic Walls Variant 1
+v	46048	1	1	1	1	1	1	1	1	1	1	1	0	0	0	Celtic Walls Variant 1
+\	46055	1	1	0	0	1	1	1	1	1	1	1	0	1	0	Celtic Walls Variant 1 Window
+./	46056	1	1	1	1	1	1	1	1	0	0	1	1	0	0	Celtic Walls Variant 1 Window
+\	46053	1	1	0	0	1	1	1	1	1	1	1	0	1	0	Celtic Walls Variant 1 Window
+./	46054	1	1	1	1	1	1	1	1	0	0	1	1	0	0	Celtic Walls Variant 1 Window
+v	46059	1	1	1	1	1	1	1	1	1	1	1	0	0	0	Celtic Walls Extended
+\	46060	1	1	0	0	1	1	1	1	1	1	1	0	1	0	Celtic Walls Extended
+./	46061	1	1	1	1	1	1	1	1	0	0	1	1	0	0	Celtic Walls Extended
+./	46058	1	1	1	1	1	1	1	1	0	0	1	1	0	0	Celtic Walls Variant 1
+\	46057	1	1	0	0	1	1	1	1	1	1	1	0	1	0	Celtic Walls Variant 1
+v	46067	1	1	0	1	0	1	0	1	0	1	0	0	0	0	Celtic Half Walls
+\	46068	1	1	0	0	0	1	0	1	0	1	0	0	1	0	Celtic Half Walls
+./	46069	1	1	0	1	0	1	0	1	0	0	0	1	0	0	Celtic Half Walls
+o	46070	1	1	0	0	0	1	0	1	0	0	0	1	1	1	Celtic Half Walls
+v	46062	1	1	1	1	1	1	1	1	1	1	1	0	0	0	Celtic Archways
+\	46063	1	1	0	0	1	1	1	1	1	1	1	0	1	0	Celtic Archways
+\	46064	1	1	0	0	1	1	1	1	1	1	1	0	1	0	Celtic Archways
+./	46065	1	1	1	1	1	1	1	1	0	0	1	1	0	0	Celtic Archways
+./	46066	1	1	1	1	1	1	1	1	0	0	1	1	0	0	Celtic Archways

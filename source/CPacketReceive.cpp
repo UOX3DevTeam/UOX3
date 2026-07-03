@@ -6100,6 +6100,7 @@ bool CPIAOSCommand::Handle( void )
 				return true;
 
 			HC_Restore( *s );
+			HC_SyncSessionFixtures( tSock, *s );
 			HC_BumpRevision( *s );
 
 			HC_SendDesignState( tSock, *s );
@@ -6113,10 +6114,8 @@ bool CPIAOSCommand::Handle( void )
 
 			bool committed = HC_CommitSession( tSock );
 
-			if( committed )
-				HC_BumpRevision( *s );
-
-			HC_SendDesignState( tSock, *s );
+			if( !committed )
+				HC_SendDesignState( tSock, *s );
 			return true;
 		}
 
@@ -6153,22 +6152,21 @@ bool CPIAOSCommand::Handle( void )
 			if( pktZ == 0 )
 				z = SessionDesignZ( s );
 
-			bool removed = HC_RemoveTile( *s, itemID, x, y, z );
+			SI08 eraseZ = z;
+			bool removed = HC_DeleteComponent( *s, itemID, x, y, z );
 
 			if( !removed && z != pktZ )
-				removed = HC_RemoveTile( *s, itemID, x, y, pktZ );
-
-			if( !removed )
-				removed = HC_RemoveTileAnyZ( *s, itemID, x, y );
-
-			if( !removed )
-				removed = HC_RemoveTileAtXYZ( *s, x, y, z );
-
-			if( !removed && z != pktZ )
-				removed = HC_RemoveTileAtXYZ( *s, x, y, pktZ );
+			{
+				removed = HC_DeleteComponent( *s, itemID, x, y, pktZ );
+				if( removed )
+					eraseZ = pktZ;
+			}
 
 			if( removed )
+			{
+				HC_DeleteFixtureAt( tSock, *s, itemID, x, y, eraseZ );
 				HC_BumpRevision( *s );
+			}
 
 			HC_SendDesignState( tSock, *s );
 			return true;
@@ -6199,8 +6197,6 @@ bool CPIAOSCommand::Handle( void )
 			SI08 y = ( SI08 ) y16;
 
 			SI08 z = SessionDesignZ( s );
-			if( y == s->maxY )
-				z = 0;
 
 			if( HC_CanPlaceTile( *s, itemID, x, y, z ))
 			{
@@ -6263,6 +6259,58 @@ bool CPIAOSCommand::Handle( void )
 			HC_SendDesignState( tSock, *s );
 			return true;
 		}
+		case 0x0013: // House Customization :: Place Roof
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				return true;
+
+			UI32 itemID32 = tSock->GetDWord( 10 );
+			UI16 itemID = ( UI16 ) ( itemID32 & 0xFFFF );
+
+			SI16 x16 = ( SI16 ) tSock->GetDWord( 15 );
+			SI16 y16 = ( SI16 ) tSock->GetDWord( 20 );
+			SI16 z16 = ( SI16 ) tSock->GetDWord( 25 );
+
+			if( x16 < -128 ) x16 = -128;
+			if( x16 > 127 )  x16 = 127;
+			if( y16 < -128 ) y16 = -128;
+			if( y16 > 127 )  y16 = 127;
+			if( z16 < -128 ) z16 = -128;
+			if( z16 > 127 )  z16 = 127;
+
+			if( HC_AddRoofTile( *s, itemID, ( SI08 )x16, ( SI08 )y16, ( SI08 )z16 ))
+				HC_BumpRevision( *s );
+
+			HC_SendDesignState( tSock, *s );
+			return true;
+		}
+		case 0x0014: // House Customization :: Delete Roof
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				return true;
+
+			UI32 itemID32 = tSock->GetDWord( 10 );
+			UI16 itemID = ( UI16 ) ( itemID32 & 0xFFFF );
+
+			SI16 x16 = ( SI16 ) tSock->GetDWord( 15 );
+			SI16 y16 = ( SI16 ) tSock->GetDWord( 20 );
+			SI16 z16 = ( SI16 ) tSock->GetDWord( 25 );
+
+			if( x16 < -128 ) x16 = -128;
+			if( x16 > 127 )  x16 = 127;
+			if( y16 < -128 ) y16 = -128;
+			if( y16 > 127 )  y16 = 127;
+			if( z16 < -128 ) z16 = -128;
+			if( z16 > 127 )  z16 = 127;
+
+			if( HC_DeleteRoofTile( *s, itemID, ( SI08 )x16, ( SI08 )y16, ( SI08 )z16 ))
+				HC_BumpRevision( *s );
+
+			HC_SendDesignState( tSock, *s );
+			return true;
+		}
 		case 0x000C: // House Customization :: Exit
 		{
 			HouseCustomSession* s = HC_GetSession( tSock );
@@ -6270,6 +6318,12 @@ bool CPIAOSCommand::Handle( void )
 				return true;
 
 			SERIAL houseSerial = s->houseSerial;
+
+			// Cancel customize mode by restoring the last committed design.
+			// Failed commits must not leave uncommitted tiles visible after closing the menu.
+			HC_Revert( *s );
+			HC_SyncSessionFixtures( tSock, *s );
+			HC_BumpRevision( *s );
 
 			// Tell client to exit customize mode
 			tSock->Send( &CPHouseCustomization( houseSerial, false ) );
@@ -6298,6 +6352,7 @@ bool CPIAOSCommand::Handle( void )
 				return true;
 
 			HC_ClearAll( *s );
+			HC_SyncSessionFixtures( tSock, *s );
 			HC_BumpRevision( *s );
 
 			HC_SendDesignState( tSock, *s );
@@ -6331,6 +6386,7 @@ bool CPIAOSCommand::Handle( void )
 				return true;
 
 			HC_Revert( *s );
+			HC_SyncSessionFixtures( tSock, *s );
 			HC_BumpRevision( *s );
 
 			HC_SendDesignState( tSock, *s );
@@ -6453,6 +6509,8 @@ void CPIAOSCommand::Log( std::ostream &outStream, bool fullHeader )
 		case 0x000E:	outStream << "House Customisation :: Synch";					break;
 		case 0x0010:	outStream << "House Customisation :: Clear";					break;
 		case 0x0012:	outStream << "House Customisation :: Switch Floors";			break;
+		case 0x0013:	outStream << "House Customisation :: Place Roof";				break;
+		case 0x0014:	outStream << "House Customisation :: Delete Roof";				break;
 		case 0x0019:	outStream << "Special Moves :: Activate / Deactivate";			break;
 		case 0x001A:	outStream << "House Customisation :: Revert";					break;
 		case 0x0028:	outStream << "Guild :: Unknown";								break;

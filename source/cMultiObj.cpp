@@ -27,10 +27,13 @@
 #include "regions.h"
 #include <classes.h>
 #include <CPacketSend.h>
+#include <algorithm>
 #include <array>
 #include <fstream>
 #include <sstream>
+#include <unordered_map>
 #include <unordered_set>
+#include <utility>
 const UI16	DEFMULTI_MAXLOCKDOWNS	= 256;
 const UI16	DEFMULTI_MAXSECURECONTAINERS = 4;
 const UI16	DEFMULTI_MAXFRIENDS = 50;
@@ -1699,8 +1702,16 @@ static const UI16 CUSTOM_FOUNDATION_STEP_ID = 0x0751;
 static const UI16 CUSTOM_FOUNDATION_STEP_COLOUR = 0x0455;
 static const UI16 CUSTOM_SIGNPOST_ID = 0x0009;
 static const UI16 CUSTOM_SIGNHANGER_ID = 0x0B98;
+static const UI16 CUSTOM_FOUNDATION_DIRT_ID = 0x31F4;
+static const UI16 CUSTOM_HOUSE_GOLD_ID = 0x0EED;
+static const SI32 CUSTOM_HOUSE_COMPONENT_COST = 500;
+static const SI32 CUSTOM_HOUSE_PRE_AOS_CUSTOMIZATION_COST = 10000;
 static const char *CUSTOM_HOUSE_DESIGN_TAG = "customHouseDesign";
 static const char *CUSTOM_HOUSE_REVISION_TAG = "customHouseRevision";
+static const char *CUSTOM_HOUSE_PRICE_TAG = "customHousePrice";
+static const char *CUSTOM_HOUSE_PRICE_INITIALIZED_TAG = "customHousePriceInitialized";
+
+UI16 HandleAutoStack( CItem *mItem, CItem *mCont, CSocket *mSock, CChar *mChar );
 
 struct HouseStairComponent
 {
@@ -1708,6 +1719,13 @@ struct HouseStairComponent
     UI16 stairId;
     SI08 xStep;
     SI08 yStep;
+};
+
+struct HouseSupportInfo
+{
+    bool top;
+    bool bottom;
+    bool directSupports;
 };
 
 static bool HC_LoadFoundationMultiTiles( UI16 multiNum, std::vector<HouseTileEntry> &baseTiles );
@@ -1719,8 +1737,21 @@ static CItem *HC_FindHouseSign( CItem *houseItem, CMultiObj *mMulti );
 static bool HC_AddComponentStairs( HouseCustomSession &s, UI16 multiId, SI08 x, SI08 y, SI08 z );
 static bool HC_FindStairComponent( UI16 multiId, HouseStairComponent &component );
 static bool HC_IsStairComponentTile( UI16 id );
+static bool HC_IsFloorComponentTile( UI16 id );
+static bool HC_IsRoofComponentTile( UI16 id );
+static bool HC_IsDoorComponentTile( UI16 id );
+static bool HC_IsTeleporterComponentTile( UI16 id );
+static bool HC_IsFixtureComponentTile( UI16 id );
 static bool HC_IsPlaceableComponentTile( UI16 id );
+static void HC_LoadComponentIdsFromFile( std::unordered_set<UI16> &components, const std::string &componentFileName, size_t firstIndex, size_t lastIndex );
 static bool HC_CanPlaceDesignTile( const HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z );
+static bool HC_HasRequiredSupport( const HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z );
+static bool HC_HasFloorOverlayAt( const std::vector<HouseTileEntry> &tiles, SI08 x, SI08 y, SI08 z );
+static bool HC_CanBuildAt( const HouseCustomSession &s, SI08 x, SI08 y, SI08 z );
+static UI08 HC_DesignZToFloor( const HouseCustomSession &s, SI08 z );
+static bool HC_DeleteStairs( HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z );
+static void HC_RemoveUnsupportedTiles( HouseCustomSession &s );
+static bool HC_SanitizeDesignTiles( HouseCustomSession &s );
 static void HC_ApplyFoundationBaseTiles( FoundationType fType, SI16 width, SI16 height, SI16 xCenter, SI16 yCenter, SI08 designZ, std::vector<HouseTileEntry> &baseTiles );
 static void HC_RefreshHouseToClient( CSocket *sock, CItem *houseItem, CMultiObj *mMulti );
 static bool HC_ConvertToCustomFoundation( CSocket *sock, CItem *houseItem, CMultiObj *mMulti );
@@ -1729,8 +1760,19 @@ static bool HC_LoadSerializedDesignTiles( CMultiObj *mMulti, std::vector<HouseTi
 static void HC_SaveSerializedDesignTiles( CMultiObj *mMulti, const std::vector<HouseTileEntry> &tiles );
 static UI32 HC_GetCommittedDesignRevision( CMultiObj *mMulti );
 static UI32 HC_BumpCommittedDesignRevision( CMultiObj *mMulti );
+static SI32 HC_GetCustomizationCost();
+static SI32 HC_GetStoredHousePrice( CItem *houseItem, const std::vector<HouseTileEntry> &currentTiles );
+static void HC_SetStoredHousePrice( CItem *houseItem, SI32 price );
+static SI32 HC_CalculateStoredHousePrice( const std::vector<HouseTileEntry> &tiles );
+static bool HC_ProcessCommitCost( CSocket *sock, CChar *chr, SI32 cost );
+static bool HC_DepositGoldToBank( CSocket *sock, CChar *chr, UI32 amount );
+static bool HC_FindCustomHouseEjectLocation( CItem *houseItem, CMultiObj *mMulti, SI16 &ejectX, SI16 &ejectY, SI08 &ejectZ );
+static void HC_EjectCustomHouseContents( CChar *customizer, CItem *houseItem, CMultiObj *mMulti, bool includeCustomizer );
 static void HC_DeleteLegacyCustomHouseItems( CMultiObj *mMulti );
+static void HC_DeleteCustomHouseFixtures( CMultiObj *mMulti );
+static void HC_RebuildCustomHouseFixtures( CChar *chr, CItem *houseItem, CMultiObj *mMulti, const std::vector<HouseTileEntry> &tiles );
 static bool IsCustomHouseItem( CItem *i );
+static bool IsCustomHouseFixture( CItem *i );
 static bool IsCustomFoundationStepItem( CItem *i );
 static bool IsCustomFoundationSignFixture( CItem *i );
 
@@ -1754,6 +1796,7 @@ bool HC_StartSession( CSocket *sock, SERIAL houseSerial )
 	HC_ConvertToCustomFoundation( sock, houseItem, mMulti );
 	HC_EnsureFoundationStepItems( chr, houseItem, mMulti );
 	HC_EnsureFoundationSignFixtures( chr, houseItem, mMulti );
+    HC_EjectCustomHouseContents( chr, houseItem, mMulti, false );
 
 	HouseCustomSession s;
 	s.houseSerial = houseSerial;
@@ -1884,6 +1927,9 @@ static bool HC_CanPlaceDesignTile( const HouseCustomSession &s, UI16 id, SI08 x,
     if( z < FloorToDesignZ( 0 ) || z > FloorToDesignZ( 3 ))
         return false;
 
+    if( !HC_CanBuildAt( s, x, y, z ))
+        return false;
+
     for( const auto &tile : s.tiles )
     {
         if( tile.id == id && tile.x == x && tile.y == y && tile.z == z )
@@ -1898,13 +1944,73 @@ bool HC_CanPlaceTile( const HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08
     if( !HC_CanPlaceDesignTile( s, id, x, y, z ))
         return false;
 
-    return HC_IsPlaceableComponentTile( id );
+    if( !HC_IsPlaceableComponentTile( id ))
+        return false;
+
+    return HC_HasRequiredSupport( s, id, x, y, z );
 }
 
 bool HC_AddTile( HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z )
 {
     if( !HC_CanPlaceTile( s, id, x, y, z ))
         return false;
+
+    HouseTileEntry e;
+    e.id = id;
+    e.x = x;
+    e.y = y;
+    e.z = z;
+
+    if( HC_IsFloorComponentTile( id ))
+    {
+        for( auto it = s.tiles.begin(); it != s.tiles.end(); )
+        {
+            if( it->x == x && it->y == y && it->z == z && HC_IsFloorComponentTile( it->id ))
+                it = s.tiles.erase( it );
+            else
+                ++it;
+        }
+    }
+
+    s.tiles.push_back( e );
+    return true;
+}
+
+static UI08 HC_DesignZToFloor( const HouseCustomSession &s, SI08 z )
+{
+    SI16 floor = ( static_cast<SI16>( z ) - 4 ) / 20;
+    if( z < 4 )
+        floor = 0;
+
+    if( floor < 0 )
+        return 0;
+
+    if( floor > 3 )
+        return 3;
+
+    return static_cast<UI08>( floor );
+}
+
+bool HC_AddRoofTile( HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 relativeZ )
+{
+    if( !Map->IsValidTile( id ) || !HC_IsRoofComponentTile( id ))
+        return false;
+
+    if( x < s.minX || x > s.maxX || y < s.minY || y > s.maxY )
+        return false;
+
+    if( relativeZ < -3 || relativeZ > 12 || ( relativeZ % 3 ) != 0 )
+        relativeZ = -3;
+
+    const SI08 z = static_cast<SI08>( SessionDesignZ( &s ) + relativeZ );
+
+    for( auto it = s.tiles.begin(); it != s.tiles.end(); )
+    {
+        if( it->x == x && it->y == y && HC_DesignZToFloor( s, it->z ) == s.floor && HC_IsRoofComponentTile( it->id ))
+            it = s.tiles.erase( it );
+        else
+            ++it;
+    }
 
     HouseTileEntry e;
     e.id = id;
@@ -1972,6 +2078,106 @@ bool HC_RemoveTile( HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z )
         }
     }
     return false;
+}
+
+bool HC_DeleteComponent( HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z )
+{
+    bool removed = HC_DeleteStairs( s, id, x, y, z );
+
+    if( !removed )
+        removed = HC_RemoveTile( s, id, x, y, z );
+
+    if( !removed )
+        removed = HC_RemoveTileAtXYZ( s, x, y, z );
+
+    if( !removed )
+        removed = HC_RemoveTileAnyZ( s, id, x, y );
+
+    if( removed )
+        HC_RemoveUnsupportedTiles( s );
+
+    return removed;
+}
+
+bool HC_DeleteRoofTile( HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z )
+{
+    if( !HC_IsRoofComponentTile( id ))
+        return false;
+
+    const SI08 absoluteZ = ( z >= -3 && z <= 12 ) ? static_cast<SI08>( SessionDesignZ( &s ) + z ) : z;
+
+    for( auto it = s.tiles.begin(); it != s.tiles.end(); )
+    {
+        if( it->id == id && it->x == x && it->y == y && ( it->z == z || it->z == absoluteZ ))
+        {
+            it = s.tiles.erase( it );
+            return true;
+        }
+        else
+        {
+            ++it;
+        }
+    }
+
+    for( auto it = s.tiles.begin(); it != s.tiles.end(); )
+    {
+        if( it->id == id && it->x == x && it->y == y && HC_DesignZToFloor( s, it->z ) == s.floor && HC_IsRoofComponentTile( it->id ))
+        {
+            it = s.tiles.erase( it );
+            return true;
+        }
+        else
+        {
+            ++it;
+        }
+    }
+
+    return false;
+}
+
+bool HC_DeleteFixtureAt( CSocket *sock, const HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z )
+{
+    CItem *houseItem = CalcItemObjFromSer( s.houseSerial );
+    if( !ValidateObject( houseItem ))
+        return false;
+
+    CMultiObj *mMulti = FindMulti( houseItem );
+    if( !ValidateObject( mMulti ))
+        return false;
+
+    auto itemList = mMulti->GetItemsInMultiList();
+    if( itemList == nullptr )
+        return false;
+
+    const SI16 worldX = static_cast<SI16>( houseItem->GetX() + x );
+    const SI16 worldY = static_cast<SI16>( houseItem->GetY() + y );
+    const SI08 worldZ = static_cast<SI08>( houseItem->GetZ() + z );
+    const bool matchId = HC_IsFixtureComponentTile( id );
+
+    std::vector<CItem*> toDelete;
+    for( const auto &obj : itemList->collection() )
+    {
+        CItem *it = static_cast<CItem*>( obj );
+        if( !ValidateObject( it ) || !IsCustomHouseFixture( it ))
+            continue;
+
+        if( it->GetX() != worldX || it->GetY() != worldY || it->GetZ() != worldZ )
+            continue;
+
+        if( !matchId || it->GetId() == id )
+            toDelete.push_back( it );
+    }
+
+    for( auto it : toDelete )
+    {
+        if( ValidateObject( it ))
+        {
+            it->RemoveFromSight( sock );
+            it->Delete();
+        }
+    }
+
+    return !toDelete.empty();
 }
 
 bool HC_RemoveTileAtXYZ( HouseCustomSession &s, SI08 x, SI08 y, SI08 z )
@@ -2070,6 +2276,15 @@ static bool IsCustomHouseItem( CItem *i )
         return true;
 
     return false;
+}
+
+static bool IsCustomHouseFixture( CItem *i )
+{
+    if( !ValidateObject( i ))
+        return false;
+
+    TAGMAPOBJECT t = i->GetTag( "customhousefixture" );
+    return ( t.m_ObjectType == TAGMAP_TYPE_INT && t.m_IntValue == 1 );
 }
 
 static std::string HC_SerializeDesignTiles( const std::vector<HouseTileEntry> &tiles )
@@ -2225,12 +2440,452 @@ static void HC_DeleteLegacyCustomHouseItems( CMultiObj *mMulti )
     }
 }
 
-bool HC_LoadCommittedDesignTiles( CMultiObj *mMulti, std::vector<HouseTileEntry> &tiles )
+static void HC_DeleteCustomHouseFixtures( CMultiObj *mMulti )
 {
-    return HC_LoadSerializedDesignTiles( mMulti, tiles );
+    if( !ValidateObject( mMulti ))
+        return;
+
+    auto itemList = mMulti->GetItemsInMultiList();
+    if( itemList == nullptr )
+        return;
+
+    std::vector<CItem*> toDelete;
+    for( const auto &obj : itemList->collection() )
+    {
+        CItem *it = static_cast<CItem*>( obj );
+        if( !ValidateObject( it ) || !IsCustomHouseFixture( it ))
+            continue;
+
+        toDelete.push_back( it );
+    }
+
+    for( auto it : toDelete )
+    {
+        if( ValidateObject( it ))
+            it->Delete();
+    }
 }
 
-bool HC_SendCommittedDesignState( CSocket *sock, CMultiObj *mMulti, bool enableResponse )
+void HC_HideCustomHouseFixtures( CSocket *sock, CMultiObj *mMulti )
+{
+    if( sock == nullptr || !ValidateObject( mMulti ))
+        return;
+
+    auto itemList = mMulti->GetItemsInMultiList();
+    if( itemList == nullptr )
+        return;
+
+    for( const auto &obj : itemList->collection() )
+    {
+        CItem *it = static_cast<CItem*>( obj );
+        if( !ValidateObject( it ) || !IsCustomHouseFixture( it ))
+            continue;
+
+        it->RemoveFromSight( sock );
+    }
+}
+
+static void HC_SetIntTag( CItem *item, const char *tagName, SI32 value )
+{
+    if( !ValidateObject( item ) || tagName == nullptr )
+        return;
+
+    TAGMAPOBJECT tagObject;
+    tagObject.m_ObjectType = TAGMAP_TYPE_INT;
+    tagObject.m_IntValue = value;
+    tagObject.m_Destroy = false;
+    tagObject.m_StringValue = "";
+    item->SetTag( tagName, tagObject );
+}
+
+static void HC_SetStringTag( CItem *item, const char *tagName, const std::string &value )
+{
+    if( !ValidateObject( item ) || tagName == nullptr )
+        return;
+
+    TAGMAPOBJECT tagObject;
+    tagObject.m_ObjectType = TAGMAP_TYPE_STRING;
+    tagObject.m_IntValue = static_cast<SI32>( value.size() );
+    tagObject.m_Destroy = false;
+    tagObject.m_StringValue = value;
+    item->SetTag( tagName, tagObject );
+}
+
+static SI32 HC_GetCustomizationCost()
+{
+    if( cwmWorldState != nullptr && cwmWorldState->ServerData()->ExpansionCoreShardEra() >= ER_AOS )
+        return 0;
+
+    return CUSTOM_HOUSE_PRE_AOS_CUSTOMIZATION_COST;
+}
+
+static SI32 HC_CalculateStoredHousePrice( const std::vector<HouseTileEntry> &tiles )
+{
+    return static_cast<SI32>( tiles.size() ) * CUSTOM_HOUSE_COMPONENT_COST;
+}
+
+static SI32 HC_GetStoredHousePrice( CItem *houseItem, const std::vector<HouseTileEntry> &currentTiles )
+{
+    if( !ValidateObject( houseItem ))
+        return HC_CalculateStoredHousePrice( currentTiles );
+
+    TAGMAPOBJECT initializedTag = houseItem->GetTag( CUSTOM_HOUSE_PRICE_INITIALIZED_TAG );
+    if( initializedTag.m_ObjectType == TAGMAP_TYPE_INT && initializedTag.m_IntValue != 0 )
+    {
+        TAGMAPOBJECT priceTag = houseItem->GetTag( CUSTOM_HOUSE_PRICE_TAG );
+        if( priceTag.m_ObjectType == TAGMAP_TYPE_INT && priceTag.m_IntValue >= 0 )
+            return priceTag.m_IntValue;
+    }
+
+    return HC_CalculateStoredHousePrice( currentTiles );
+}
+
+static void HC_SetStoredHousePrice( CItem *houseItem, SI32 price )
+{
+    if( price < 0 )
+        price = 0;
+
+    HC_SetIntTag( houseItem, CUSTOM_HOUSE_PRICE_TAG, price );
+    HC_SetIntTag( houseItem, CUSTOM_HOUSE_PRICE_INITIALIZED_TAG, 1 );
+}
+
+SI32 HC_GetCommitCost( CItem *houseItem, const HouseCustomSession &s )
+{
+    const SI32 componentDelta = static_cast<SI32>( s.tiles.size() ) - static_cast<SI32>( s.originalTiles.size() );
+    return HC_GetCustomizationCost() + ( componentDelta * CUSTOM_HOUSE_COMPONENT_COST );
+}
+
+static bool HC_DepositGoldToBank( CSocket *sock, CChar *chr, UI32 amount )
+{
+    if( amount == 0 )
+        return true;
+
+    if( sock == nullptr || !ValidateObject( chr ))
+        return false;
+
+    CItem *bankBox = chr->GetItemAtLayer( IL_BANKBOX );
+    if( !ValidateObject( bankBox ))
+        return false;
+
+    UI32 remaining = amount;
+    while( remaining > 0 )
+    {
+        const UI16 pileAmount = static_cast<UI16>( std::min<UI32>( remaining, MAX_STACK ));
+        CItem *goldPile = Items->CreateScriptItem( nullptr, chr, "0x0EED", pileAmount, OT_ITEM, false );
+        if( !ValidateObject( goldPile ))
+            return false;
+
+        goldPile->SetCont( bankBox );
+        HandleAutoStack( goldPile, bankBox, nullptr, nullptr );
+        remaining -= pileAmount;
+    }
+
+    sock->SysMessage( oldstrutil::format( "%u gold has been deposited into your bank box.", amount ));
+    return true;
+}
+
+static bool HC_ProcessCommitCost( CSocket *sock, CChar *chr, SI32 cost )
+{
+    if( sock == nullptr || !ValidateObject( chr ))
+        return false;
+
+    if( chr->IsGM() )
+    {
+        if( cost > 0 )
+            sock->SysMessage( oldstrutil::format( "%i gold would have been withdrawn from your bank box, but GMs customize houses for free.", cost ));
+        else if( cost < 0 )
+            sock->SysMessage( oldstrutil::format( "%i gold would have been deposited into your bank box, but GMs customize houses for free.", -cost ));
+
+        return true;
+    }
+
+    if( cost > 0 )
+    {
+        if( GetBankCount( chr, CUSTOM_HOUSE_GOLD_ID ) < static_cast<UI32>( cost ))
+        {
+            sock->SysMessage( "You do not have enough gold in your bank box to commit this house design." );
+            return false;
+        }
+
+        DeleteBankItem( chr, static_cast<UI32>( cost ), CUSTOM_HOUSE_GOLD_ID );
+        sock->SysMessage( oldstrutil::format( "%i gold has been withdrawn from your bank box.", cost ));
+    }
+    else if( cost < 0 )
+    {
+        if( !HC_DepositGoldToBank( sock, chr, static_cast<UI32>( -cost )))
+        {
+            sock->SysMessage( "Unable to deposit the house design refund into your bank box." );
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static bool HC_FindCustomHouseEjectLocation( CItem *houseItem, CMultiObj *mMulti, SI16 &ejectX, SI16 &ejectY, SI08 &ejectZ )
+{
+    if( !ValidateObject( houseItem ) || !ValidateObject( mMulti ))
+        return false;
+
+    SI16 multiX1 = 0;
+    SI16 multiY1 = 0;
+    SI16 multiX2 = 0;
+    SI16 multiY2 = 0;
+    Map->MultiArea( mMulti, multiX1, multiY1, multiX2, multiY2 );
+
+    const UI08 worldNumber = houseItem->WorldNumber();
+    const UI16 instanceId = houseItem->GetInstanceId();
+    const SI16 preferredX = ( mMulti->GetBanX() == 0 && mMulti->GetBanY() == 0 ) ? multiX2 : mMulti->GetBanX();
+    const SI16 preferredY = ( mMulti->GetBanX() == 0 && mMulti->GetBanY() == 0 ) ? multiY2 : mMulti->GetBanY();
+
+    auto tryLocation = [&]( SI16 x, SI16 y ) -> bool
+    {
+        if( x >= multiX1 && x <= multiX2 && y >= multiY1 && y <= multiY2 )
+            return false;
+
+        SI08 z = Map->Height( x, y, houseItem->GetZ(), worldNumber, instanceId );
+        if( !Map->ValidSpawnLocation( x, y, z, worldNumber, instanceId, true ))
+            return false;
+
+        if( FindMulti( x, y, z, worldNumber, instanceId ) != nullptr )
+            return false;
+
+        ejectX = x;
+        ejectY = y;
+        ejectZ = z;
+        return true;
+    };
+
+    if( tryLocation( preferredX, preferredY ))
+        return true;
+
+    for( SI16 ring = 1; ring <= 6; ++ring )
+    {
+        std::vector<std::pair<SI16, SI16>> candidates;
+
+        for( SI16 x = static_cast<SI16>( multiX1 - ring ); x <= static_cast<SI16>( multiX2 + ring ); ++x )
+        {
+            candidates.push_back({ x, static_cast<SI16>( multiY1 - ring ) });
+            candidates.push_back({ x, static_cast<SI16>( multiY2 + ring ) });
+        }
+
+        for( SI16 y = static_cast<SI16>( multiY1 - ring + 1 ); y <= static_cast<SI16>( multiY2 + ring - 1 ); ++y )
+        {
+            candidates.push_back({ static_cast<SI16>( multiX1 - ring ), y });
+            candidates.push_back({ static_cast<SI16>( multiX2 + ring ), y });
+        }
+
+        std::sort( candidates.begin(), candidates.end(), [preferredX, preferredY]( const auto &a, const auto &b )
+        {
+            const SI32 aDist = std::abs( static_cast<SI32>( a.first ) - preferredX ) + std::abs( static_cast<SI32>( a.second ) - preferredY );
+            const SI32 bDist = std::abs( static_cast<SI32>( b.first ) - preferredX ) + std::abs( static_cast<SI32>( b.second ) - preferredY );
+            return aDist < bDist;
+        });
+
+        for( const auto &candidate : candidates )
+        {
+            if( tryLocation( candidate.first, candidate.second ))
+                return true;
+        }
+    }
+
+    ejectX = preferredX;
+    ejectY = preferredY;
+    ejectZ = houseItem->GetZ();
+    return false;
+}
+
+static void HC_EjectCustomHouseContents( CChar *customizer, CItem *houseItem, CMultiObj *mMulti, bool includeCustomizer )
+{
+    if( !ValidateObject( houseItem ) || !ValidateObject( mMulti ))
+        return;
+
+    SI16 ejectX = houseItem->GetX();
+    SI16 ejectY = houseItem->GetY();
+    SI08 ejectZ = houseItem->GetZ();
+    HC_FindCustomHouseEjectLocation( houseItem, mMulti, ejectX, ejectY, ejectZ );
+
+    std::vector<CItem *> itemsToMove;
+    auto itemList = mMulti->GetItemsInMultiList();
+    if( itemList != nullptr )
+    {
+        for( const auto &obj : itemList->collection() )
+        {
+            CItem *item = static_cast<CItem *>( obj );
+            if( !ValidateObject( item ))
+                continue;
+
+            if( item == houseItem || item->GetObjType() == OT_MULTI || item->GetObjType() == OT_BOAT )
+                continue;
+
+            if( item->GetVisible() != 0 )
+                continue;
+
+            if( IsCustomHouseItem( item ) || IsCustomHouseFixture( item ) || IsCustomFoundationStepItem( item ) || IsCustomFoundationSignFixture( item ))
+                continue;
+
+            ItemTypes itemType = item->GetType();
+            if( itemType == IT_DOOR || itemType == IT_LOCKEDDOOR || itemType == IT_HOUSESIGN )
+                continue;
+
+            itemsToMove.push_back( item );
+        }
+    }
+
+    for( auto item : itemsToMove )
+    {
+        if( ValidateObject( item ))
+            item->SetLocation( ejectX, ejectY, ejectZ, houseItem->WorldNumber(), houseItem->GetInstanceId() );
+    }
+
+    std::vector<CChar *> charsToMove;
+    auto charList = mMulti->GetCharsInMultiList();
+    if( charList != nullptr )
+    {
+        for( const auto &obj : charList->collection() )
+        {
+            CChar *chr = static_cast<CChar *>( obj );
+            if( !ValidateObject( chr ))
+                continue;
+
+            if( !includeCustomizer && chr == customizer )
+                continue;
+
+            charsToMove.push_back( chr );
+        }
+    }
+
+    for( auto chr : charsToMove )
+    {
+        if( !ValidateObject( chr ))
+            continue;
+
+        chr->SetLocation( ejectX, ejectY, ejectZ, houseItem->WorldNumber(), houseItem->GetInstanceId() );
+        chr->Teleport();
+    }
+}
+
+static bool HC_FindTeleporterDestination( const std::vector<HouseTileEntry> &tiles, const HouseTileEntry &source, SI08 &destZ )
+{
+    std::vector<SI08> floors;
+    for( const auto &tile : tiles )
+    {
+        if( tile.x == source.x && tile.y == source.y && HC_IsTeleporterComponentTile( tile.id ))
+            floors.push_back( tile.z );
+    }
+
+    std::sort( floors.begin(), floors.end() );
+    floors.erase( std::unique( floors.begin(), floors.end() ), floors.end() );
+
+    if( floors.size() < 2 )
+        return false;
+
+    for( size_t i = 0; i < floors.size(); ++i )
+    {
+        if( floors[i] != source.z )
+            continue;
+
+        destZ = floors[( i + 1 ) % floors.size()];
+        return true;
+    }
+
+    return false;
+}
+
+static void HC_RebuildCustomHouseFixtures( CChar *chr, CItem *houseItem, CMultiObj *mMulti, const std::vector<HouseTileEntry> &tiles )
+{
+    if( !ValidateObject( houseItem ) || !ValidateObject( mMulti ))
+        return;
+
+    HC_DeleteCustomHouseFixtures( mMulti );
+
+    const SI16 baseX = houseItem->GetX();
+    const SI16 baseY = houseItem->GetY();
+    const SI08 baseZ = houseItem->GetZ();
+
+    struct TeleporterFixture
+    {
+        CItem *item;
+        HouseTileEntry tile;
+    };
+
+    std::vector<TeleporterFixture> teleporters;
+
+    for( const auto &tile : tiles )
+    {
+        if( !HC_IsFixtureComponentTile( tile.id ))
+            continue;
+
+        const SI16 worldX = static_cast<SI16>( baseX + tile.x );
+        const SI16 worldY = static_cast<SI16>( baseY + tile.y );
+        const SI08 worldZ = static_cast<SI08>( baseZ + tile.z );
+
+        CItem *fixture = Items->CreateItem( nullptr, chr, tile.id, 1, 0, OT_ITEM, false, true,
+            houseItem->WorldNumber(), houseItem->GetInstanceId(), worldX, worldY, worldZ );
+        if( !ValidateObject( fixture ))
+            continue;
+
+        fixture->SetLocation( worldX, worldY, worldZ, houseItem->WorldNumber(), houseItem->GetInstanceId() );
+        fixture->SetMovable( 2 );
+        fixture->SetDecayable( false );
+        fixture->SetTempVar( CITV_MORE, houseItem->GetSerial() );
+        fixture->SetMulti( mMulti );
+        HC_SetIntTag( fixture, "customhousefixture", 1 );
+
+        if( HC_IsDoorComponentTile( tile.id ))
+        {
+            fixture->SetType( IT_DOOR );
+            HC_SetStringTag( fixture, "DoorType", "interior" );
+        }
+        else if( HC_IsTeleporterComponentTile( tile.id ))
+        {
+            fixture->SetType( IT_OBJTELEPORTER );
+            teleporters.push_back({ fixture, tile });
+            continue;
+        }
+
+        fixture->Update();
+    }
+
+    for( size_t i = 0; i < teleporters.size(); ++i )
+    {
+        CItem *tp = teleporters[i].item;
+        if( !ValidateObject( tp ))
+            continue;
+
+        for( size_t j = 1; j <= teleporters.size(); ++j )
+        {
+            TeleporterFixture &target = teleporters[( i + j ) % teleporters.size()];
+            if( !ValidateObject( target.item ) || target.item == tp || target.tile.id != teleporters[i].tile.id )
+                continue;
+
+            tp->SetTempVar( CITV_MOREX, static_cast<UI32>( target.item->GetX() ));
+            tp->SetTempVar( CITV_MOREY, static_cast<UI32>( target.item->GetY() ));
+            tp->SetTempVar( CITV_MOREZ, static_cast<UI32>( target.item->GetZ() ));
+            break;
+        }
+
+        tp->Update();
+    }
+}
+
+bool HC_LoadCommittedDesignTiles( CMultiObj *mMulti, std::vector<HouseTileEntry> &tiles )
+{
+    if( !HC_LoadSerializedDesignTiles( mMulti, tiles ))
+        return false;
+
+    for( auto it = tiles.begin(); it != tiles.end(); )
+    {
+        if( HC_IsFixtureComponentTile( it->id ))
+            it = tiles.erase( it );
+        else
+            ++it;
+    }
+
+    return true;
+}
+
+bool HC_SendCommittedDesignState( CSocket *sock, CMultiObj *mMulti, bool enableResponse, bool allowActiveSession )
 {
     if( sock == nullptr || !ValidateObject( mMulti ) || !sock->LoginComplete() )
         return false;
@@ -2239,11 +2894,11 @@ bool HC_SendCommittedDesignState( CSocket *sock, CMultiObj *mMulti, bool enableR
     if( !ValidateObject( viewer ))
         return false;
 
-    if( HC_IsSessionForHouse( sock, mMulti->GetSerial() ))
+    if( !allowActiveSession && HC_IsSessionForHouse( sock, mMulti->GetSerial() ))
         return false;
 
     std::vector<HouseTileEntry> customTiles;
-    if( !HC_LoadCommittedDesignTiles( mMulti, customTiles ) || customTiles.empty() )
+    if( !HC_LoadCommittedDesignTiles( mMulti, customTiles ))
         return false;
 
     HouseCustomSession state;
@@ -2267,6 +2922,28 @@ bool HC_SendCommittedDesignState( CSocket *sock, CMultiObj *mMulti, bool enableR
     std::vector<HouseTileEntry> sendTiles;
     HC_BuildCombinedTiles( state, sendTiles );
     sock->Send( &CPHouseDesignStateDetailed( state.houseSerial, state.revision, sendTiles, enableResponse ) );
+    return true;
+}
+
+bool HC_SyncSessionFixtures( CSocket *sock, const HouseCustomSession &s )
+{
+    if( sock == nullptr )
+        return false;
+
+    CChar *chr = sock->CurrcharObj();
+    if( !ValidateObject( chr ))
+        return false;
+
+    CItem *houseItem = CalcItemObjFromSer( s.houseSerial );
+    if( !ValidateObject( houseItem ))
+        return false;
+
+    CMultiObj *mMulti = FindMulti( houseItem );
+    if( !ValidateObject( mMulti ))
+        return false;
+
+    HC_DeleteCustomHouseFixtures( mMulti );
+    HC_RebuildCustomHouseFixtures( chr, houseItem, mMulti, s.tiles );
     return true;
 }
 
@@ -2532,12 +3209,56 @@ static bool HC_ParseComponentId( const std::vector<std::string> &tokens, size_t 
     return true;
 }
 
+static bool HC_ParseComponentFlag( const std::vector<std::string> &tokens, size_t index, bool &value )
+{
+    if( index >= tokens.size() || tokens[index].empty() )
+        return false;
+
+    try
+    {
+        value = ( std::stol( tokens[index], nullptr, 0 ) != 0 );
+    }
+    catch( ... )
+    {
+        return false;
+    }
+
+    return true;
+}
+
+static bool HC_OpenComponentFile( const std::string &fileName, std::ifstream &input, std::string &resolvedPath )
+{
+    const std::string rootDir = cwmWorldState->ServerData()->Directory( CSDDP_ROOT );
+    const std::array<std::string, 6> componentDirs =
+    {
+        rootDir + "data/components/",
+        "data/components/",
+        "../data/components/",
+        "../../data/components/",
+        "../../../data/components/",
+        "../../../../data/components/"
+    };
+
+    for( const auto &dir : componentDirs )
+    {
+        resolvedPath = dir + fileName;
+        input.open( resolvedPath.c_str() );
+        if( input.is_open() )
+            return true;
+
+        input.clear();
+    }
+
+    resolvedPath = componentDirs.front() + fileName;
+    return false;
+}
+
 static std::unordered_map<UI16, HouseStairComponent> HC_LoadStairComponents()
 {
     std::unordered_map<UI16, HouseStairComponent> components;
-    const std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_ROOT ) + "data/components/stairs.txt";
-    std::ifstream input( fileName.c_str() );
-    if( !input.is_open() )
+    std::ifstream input;
+    std::string fileName;
+    if( !HC_OpenComponentFile( "stairs.txt", input, fileName ))
     {
         Console.Warning( oldstrutil::format( "Unable to load custom housing stair components from %s", fileName.c_str() ));
         return components;
@@ -2613,10 +3334,68 @@ static bool HC_IsStairComponentTile( UI16 id )
     return false;
 }
 
-static void HC_LoadComponentIdsFromFile( std::unordered_set<UI16> &components, const std::string &fileName, size_t firstIndex, size_t lastIndex )
+static std::unordered_set<UI16> HC_LoadFloorComponents()
 {
-    std::ifstream input( fileName.c_str() );
-    if( !input.is_open() )
+    std::unordered_set<UI16> components;
+    HC_LoadComponentIdsFromFile( components, "floors.txt", 1, 16 );
+    return components;
+}
+
+static bool HC_IsFloorComponentTile( UI16 id )
+{
+    static const std::unordered_set<UI16> components = HC_LoadFloorComponents();
+    return ( components.find( id ) != components.end() );
+}
+
+static std::unordered_set<UI16> HC_LoadRoofComponents()
+{
+    std::unordered_set<UI16> components;
+    HC_LoadComponentIdsFromFile( components, "roof.txt", 3, 18 );
+    return components;
+}
+
+static bool HC_IsRoofComponentTile( UI16 id )
+{
+    static const std::unordered_set<UI16> components = HC_LoadRoofComponents();
+    return ( components.find( id ) != components.end() );
+}
+
+static std::unordered_set<UI16> HC_LoadDoorComponents()
+{
+    std::unordered_set<UI16> components;
+    HC_LoadComponentIdsFromFile( components, "doors.txt", 1, 8 );
+    return components;
+}
+
+static bool HC_IsDoorComponentTile( UI16 id )
+{
+    static const std::unordered_set<UI16> components = HC_LoadDoorComponents();
+    return ( components.find( id ) != components.end() );
+}
+
+static std::unordered_set<UI16> HC_LoadTeleporterComponents()
+{
+    std::unordered_set<UI16> components;
+    HC_LoadComponentIdsFromFile( components, "teleprts.txt", 1, 16 );
+    return components;
+}
+
+static bool HC_IsTeleporterComponentTile( UI16 id )
+{
+    static const std::unordered_set<UI16> components = HC_LoadTeleporterComponents();
+    return ( components.find( id ) != components.end() );
+}
+
+static bool HC_IsFixtureComponentTile( UI16 id )
+{
+    return HC_IsDoorComponentTile( id ) || HC_IsTeleporterComponentTile( id );
+}
+
+static void HC_LoadComponentIdsFromFile( std::unordered_set<UI16> &components, const std::string &componentFileName, size_t firstIndex, size_t lastIndex )
+{
+    std::ifstream input;
+    std::string fileName;
+    if( !HC_OpenComponentFile( componentFileName, input, fileName ))
     {
         Console.Warning( oldstrutil::format( "Unable to load custom housing components from %s", fileName.c_str() ));
         return;
@@ -2646,14 +3425,13 @@ static void HC_LoadComponentIdsFromFile( std::unordered_set<UI16> &components, c
 static std::unordered_set<UI16> HC_LoadPlaceableComponents()
 {
     std::unordered_set<UI16> components;
-    const std::string componentDir = cwmWorldState->ServerData()->Directory( CSDDP_ROOT ) + "data/components/";
 
-    HC_LoadComponentIdsFromFile( components, componentDir + "walls.txt", 3, 16 );
-    HC_LoadComponentIdsFromFile( components, componentDir + "floors.txt", 1, 16 );
-    HC_LoadComponentIdsFromFile( components, componentDir + "roof.txt", 3, 18 );
-    HC_LoadComponentIdsFromFile( components, componentDir + "misc.txt", 3, 10 );
-    HC_LoadComponentIdsFromFile( components, componentDir + "teleprts.txt", 1, 16 );
-    HC_LoadComponentIdsFromFile( components, componentDir + "doors.txt", 1, 8 );
+    HC_LoadComponentIdsFromFile( components, "walls.txt", 3, 16 );
+    HC_LoadComponentIdsFromFile( components, "floors.txt", 1, 16 );
+    HC_LoadComponentIdsFromFile( components, "roof.txt", 3, 18 );
+    HC_LoadComponentIdsFromFile( components, "misc.txt", 3, 10 );
+    HC_LoadComponentIdsFromFile( components, "teleprts.txt", 1, 16 );
+    HC_LoadComponentIdsFromFile( components, "doors.txt", 1, 8 );
 
     return components;
 }
@@ -2662,6 +3440,314 @@ static bool HC_IsPlaceableComponentTile( UI16 id )
 {
     static const std::unordered_set<UI16> components = HC_LoadPlaceableComponents();
     return ( components.find( id ) != components.end() );
+}
+
+static std::unordered_map<UI16, HouseSupportInfo> HC_LoadSupportInfo()
+{
+    std::unordered_map<UI16, HouseSupportInfo> supportInfo;
+    std::ifstream input;
+    std::string fileName;
+    if( !HC_OpenComponentFile( "suppinfo.txt", input, fileName ))
+    {
+        Console.Warning( oldstrutil::format( "Unable to load custom housing support info from %s", fileName.c_str() ));
+        return supportInfo;
+    }
+
+    std::string line;
+    UI32 lineNo = 0;
+    while( std::getline( input, line ))
+    {
+        ++lineNo;
+        if( line.empty() || lineNo <= 2 )
+            continue;
+
+        const auto tokens = HC_SplitTabLine( line );
+        if( tokens.size() < 16 )
+            continue;
+
+        UI16 tileId = 0;
+        bool top = false;
+        bool bottom = false;
+        bool directSupports = false;
+
+        if( !HC_ParseComponentId( tokens, 1, tileId ))
+            continue;
+        if( !HC_ParseComponentFlag( tokens, 2, top ))
+            continue;
+        if( !HC_ParseComponentFlag( tokens, 3, bottom ))
+            continue;
+        if( !HC_ParseComponentFlag( tokens, 12, directSupports ))
+            continue;
+
+        HouseSupportInfo info;
+        info.top = top;
+        info.bottom = bottom;
+        info.directSupports = directSupports;
+        supportInfo[tileId] = info;
+    }
+
+    return supportInfo;
+}
+
+static bool HC_GetSupportInfo( UI16 id, HouseSupportInfo &info )
+{
+    static const std::unordered_map<UI16, HouseSupportInfo> supportInfo = HC_LoadSupportInfo();
+    auto it = supportInfo.find( id );
+    if( it == supportInfo.end() )
+        return false;
+
+    info = it->second;
+    return true;
+}
+
+static bool HC_TileDirectlySupports( UI16 id )
+{
+    HouseSupportInfo info;
+    if( !HC_GetSupportInfo( id, info ))
+        return false;
+
+    return info.directSupports || info.top;
+}
+
+static bool HC_HasTileAt( const std::vector<HouseTileEntry> &tiles, SI08 x, SI08 y, SI08 z, bool requireDirectSupport )
+{
+    for( const auto &tile : tiles )
+    {
+        if( tile.x != x || tile.y != y || tile.z != z )
+            continue;
+
+        if( !requireDirectSupport || HC_TileDirectlySupports( tile.id ))
+            return true;
+    }
+
+    return false;
+}
+
+static bool HC_HasFloorOverlayAt( const std::vector<HouseTileEntry> &tiles, SI08 x, SI08 y, SI08 z )
+{
+    for( const auto &tile : tiles )
+    {
+        if( tile.x == x && tile.y == y && tile.z == z && HC_IsFloorComponentTile( tile.id ))
+            return true;
+    }
+
+    return false;
+}
+
+static bool HC_CanBuildAt( const HouseCustomSession &s, SI08 x, SI08 y, SI08 z )
+{
+    if( y == s.maxY )
+        return false;
+
+    if( z != FloorToDesignZ( 0 ))
+        return true;
+
+    for( const auto &tile : s.baseTiles )
+    {
+        if( tile.x != x || tile.y != y || tile.z != z )
+            continue;
+
+        return ( tile.id == CUSTOM_FOUNDATION_DIRT_ID );
+    }
+
+    return true;
+}
+
+static bool HC_HasRequiredSupport( const HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z )
+{
+    if( HC_IsStairComponentTile( id ))
+        return true;
+
+    HouseSupportInfo placedInfo;
+    if( !HC_GetSupportInfo( id, placedInfo ) || !placedInfo.bottom )
+        return true;
+
+    if( z <= FloorToDesignZ( 0 ) || ( y == s.maxY && z == DESIGN_FOUNDATION_Z ))
+        return true;
+
+    const SI16 belowZ = static_cast<SI16>( z - 20 );
+    if( belowZ < -128 || belowZ > 127 )
+        return false;
+
+    const SI08 supportZ = static_cast<SI08>( belowZ );
+    return HC_HasTileAt( s.tiles, x, y, supportZ, true ) || HC_HasTileAt( s.baseTiles, x, y, supportZ, true );
+}
+
+static bool HC_FindStairTileAt( const HouseCustomSession &s, SI08 x, SI08 y, SI08 z, UI16 &id, SI08 &tileZ )
+{
+    for( const auto &tile : s.tiles )
+    {
+        if( tile.x == x && tile.y == y && tile.z == z && HC_IsStairComponentTile( tile.id ))
+        {
+            id = tile.id;
+            tileZ = tile.z;
+            return true;
+        }
+    }
+
+    const SI16 nextZ = static_cast<SI16>( z + 5 );
+    if( nextZ < -128 || nextZ > 127 )
+        return false;
+
+    for( const auto &tile : s.tiles )
+    {
+        if( tile.x == x && tile.y == y && tile.z == static_cast<SI08>( nextZ ) && HC_IsStairComponentTile( tile.id ))
+        {
+            id = tile.id;
+            tileZ = tile.z;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static bool HC_StairTileExists( const HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z )
+{
+    for( const auto &tile : s.tiles )
+    {
+        if( tile.id == id && tile.x == x && tile.y == y && tile.z == z )
+            return true;
+    }
+
+    return false;
+}
+
+static bool HC_DeleteStairs( HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z )
+{
+    UI16 stairId = id;
+    SI08 stairZ = z;
+
+    if( !HC_IsStairComponentTile( stairId ) || !HC_StairTileExists( s, stairId, x, y, z ))
+    {
+        if( !HC_FindStairTileAt( s, x, y, z, stairId, stairZ ))
+            return false;
+    }
+
+    if( stairZ < FloorToDesignZ( 0 ))
+        return false;
+
+    const SI16 zOffset = static_cast<SI16>( stairZ - FloorToDesignZ( 0 ));
+    if(( zOffset % 5 ) != 0 )
+        return false;
+
+    const SI16 height = static_cast<SI16>(( zOffset % 20 ) / 5 );
+    const SI16 zStart = static_cast<SI16>( stairZ - ( height * 5 ));
+    if( zStart < -128 || zStart > 127 )
+        return false;
+
+    static const std::unordered_map<UI16, HouseStairComponent> components = HC_LoadStairComponents();
+    for( const auto &entry : components )
+    {
+        const HouseStairComponent &component = entry.second;
+        if( component.stairId != stairId )
+            continue;
+
+        const SI16 xStart = static_cast<SI16>( x - ( component.xStep * height ));
+        const SI16 yStart = static_cast<SI16>( y - ( component.yStep * height ));
+        bool matched = true;
+
+        for( SI16 step = 0; step < 4; ++step )
+        {
+            const SI16 rx = static_cast<SI16>( xStart + ( component.xStep * step ));
+            const SI16 ry = static_cast<SI16>( yStart + ( component.yStep * step ));
+            const SI16 rz = static_cast<SI16>( zStart + ( step * 5 ));
+
+            if( rx < -128 || rx > 127 || ry < -128 || ry > 127 || rz < -128 || rz > 127 ||
+                !HC_StairTileExists( s, stairId, static_cast<SI08>( rx ), static_cast<SI08>( ry ), static_cast<SI08>( rz )))
+            {
+                matched = false;
+                break;
+            }
+        }
+
+        if( !matched )
+            continue;
+
+        bool removed = false;
+        for( SI16 step = 0; step < 4; ++step )
+        {
+            const SI16 rx = static_cast<SI16>( xStart + ( component.xStep * step ));
+            const SI16 ry = static_cast<SI16>( yStart + ( component.yStep * step ));
+            const SI16 rz = static_cast<SI16>( zStart + ( step * 5 ));
+            if( HC_RemoveTile( s, stairId, static_cast<SI08>( rx ), static_cast<SI08>( ry ), static_cast<SI08>( rz )))
+                removed = true;
+        }
+
+        return removed;
+    }
+
+    return false;
+}
+
+static void HC_RemoveUnsupportedTiles( HouseCustomSession &s )
+{
+    bool removed = true;
+    while( removed )
+    {
+        removed = false;
+        for( auto it = s.tiles.begin(); it != s.tiles.end(); )
+        {
+            if( HC_HasRequiredSupport( s, it->id, it->x, it->y, it->z ))
+            {
+                ++it;
+                continue;
+            }
+
+            it = s.tiles.erase( it );
+            removed = true;
+        }
+    }
+}
+
+static bool HC_SanitizeDesignTiles( HouseCustomSession &s )
+{
+    std::vector<HouseTileEntry> pending = s.tiles;
+    std::sort( pending.begin(), pending.end(), []( const HouseTileEntry &a, const HouseTileEntry &b )
+    {
+        if( a.z != b.z )
+            return a.z < b.z;
+        if( a.y != b.y )
+            return a.y < b.y;
+        if( a.x != b.x )
+            return a.x < b.x;
+        return a.id < b.id;
+    });
+
+    s.tiles.clear();
+    bool changed = false;
+
+    for( const auto &tile : pending )
+    {
+        if( HC_IsStairComponentTile( tile.id ))
+        {
+            if( !HC_CanPlaceDesignTile( s, tile.id, tile.x, tile.y, tile.z ))
+            {
+                changed = true;
+                continue;
+            }
+
+            s.tiles.push_back( tile );
+            continue;
+        }
+
+        const size_t oldCount = s.tiles.size();
+        if( !HC_AddTile( s, tile.id, tile.x, tile.y, tile.z ))
+        {
+            changed = true;
+            continue;
+        }
+
+        if( s.tiles.size() != oldCount + 1 )
+            changed = true;
+    }
+
+    const size_t beforeSupportCleanup = s.tiles.size();
+    HC_RemoveUnsupportedTiles( s );
+    if( s.tiles.size() != beforeSupportCleanup )
+        changed = true;
+
+    return changed || s.tiles.size() != pending.size();
 }
 
 static bool HC_AddComponentStairs( HouseCustomSession &s, UI16 multiId, SI08 x, SI08 y, SI08 z )
@@ -2732,10 +3818,27 @@ bool HC_CommitSession( CSocket *sock )
         return false;
     }
 
+    HC_SanitizeDesignTiles( *s );
+
+    const SI32 oldPrice = HC_GetStoredHousePrice( houseItem, s->originalTiles );
+    const SI32 commitCost = HC_GetCommitCost( houseItem, *s );
+    const SI32 newPrice = std::max<SI32>( 0, oldPrice + commitCost - HC_GetCustomizationCost() );
+
+    if( !HC_ProcessCommitCost( sock, chr, commitCost ))
+        return false;
+
     HC_DeleteLegacyCustomHouseItems( mMulti );
     HC_SaveSerializedDesignTiles( mMulti, s->tiles );
+    HC_SetStoredHousePrice( houseItem, newPrice );
+    HC_RebuildCustomHouseFixtures( chr, houseItem, mMulti, s->tiles );
     s->revision = HC_BumpCommittedDesignRevision( mMulti );
-	HC_RefreshHouseToClient( sock, houseItem, mMulti );
+    HC_EjectCustomHouseContents( chr, houseItem, mMulti, true );
+
+    sock->Send( &CPHouseCustomization( s->houseSerial, false ) );
+    HC_EndSession( sock );
+
+    HC_RefreshHouseToClient( sock, houseItem, mMulti );
+    HC_SendCommittedDesignState( sock, mMulti, false, false );
 
     return true;
 }
@@ -2879,7 +3982,14 @@ void HC_BuildCombinedTiles( const HouseCustomSession &s, std::vector<HouseTileEn
     out.clear();
     out.reserve( s.baseTiles.size() + s.tiles.size() );
 
-    out.insert( out.end(), s.baseTiles.begin(), s.baseTiles.end() );
+    for( const auto &tile : s.baseTiles )
+    {
+        if( tile.id == CUSTOM_FOUNDATION_DIRT_ID && tile.z == FloorToDesignZ( 0 ) && HC_HasFloorOverlayAt( s.tiles, tile.x, tile.y, tile.z ))
+            continue;
+
+        out.push_back( tile );
+    }
+
     out.insert( out.end(), s.tiles.begin(), s.tiles.end() );
 }
 

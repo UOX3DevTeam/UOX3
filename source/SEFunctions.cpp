@@ -6090,7 +6090,6 @@ JSBool SE_HouseBeginCustomize( JSContext *cx, uintN argc, jsval *vp )
 		return JS_TRUE;
 	}
 
-
 	HC_SendDesignState( sock, *s );
 
     JS_SET_RVAL( cx, vp, JSVAL_TRUE );

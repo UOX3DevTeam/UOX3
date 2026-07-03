@@ -1,3 +1,4 @@
+int	int	int	int	int	int	int	int	int	int	int	int	int	int	int	string
 Category	Block	North	East	South	West	Squared1	Squared2	Rounded1	Rounded2	MultiNorth	MultiEast	MultiSouth	MultiWest	FeatureMask	Comment
 0	1848	1849	1852	1851	1850	1856	1854	1862	1861	7600	7601	7602	7603	0	Dark Wood
 1	1955	1956	1959	1958	1957	1963	1961	0	0	7604	7605	7606	7607	0	Grey Stone
