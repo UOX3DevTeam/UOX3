@@ -6073,15 +6073,15 @@ JSBool SE_HouseBeginCustomize( JSContext *cx, uintN argc, jsval *vp )
 
     const SERIAL houseSerial = pMulti->GetSerial();
 
-	// 1) Put client into customization mode
-	sock->Send( &CPHouseCustomization( houseSerial, true ) );
-
-	// 2) Start session (this must load baseTiles)
+	// Start session first so classic houses can be converted to foundation multis before the client enters customization mode.
 	if( !HC_StartSession( sock, houseSerial ) )
 	{
 		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
+
+	// Put client into customization mode
+	sock->Send( &CPHouseCustomization( houseSerial, true ) );
 
 	HouseCustomSession *s = HC_GetSession( sock );
 	if( s == nullptr || s->houseSerial != houseSerial )
@@ -6091,18 +6091,7 @@ JSBool SE_HouseBeginCustomize( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 
-	// 3) Send revision
-	sock->Send( &CPHouseDesignStateGeneral( houseSerial, s->revision ) );
-
-	// 4) Send D8 with base + custom
-	std::vector<HouseTileEntry> sendTiles;
-	HC_BuildCombinedTiles( *s, sendTiles );
-
-	CPHouseDesignStateGeneral revPkt( houseSerial, s->revision );
-	sock->Send( &revPkt );
-
-	CPHouseDesignStateDetailed detPkt( houseSerial, s->revision, sendTiles, true );
-	sock->Send( &detPkt );
+	HC_SendDesignState( sock, *s );
 
     JS_SET_RVAL( cx, vp, JSVAL_TRUE );
     return JS_TRUE;
@@ -6152,6 +6141,7 @@ JSBool SE_HouseEndCustomize( JSContext *cx, uintN argc, jsval *vp )
     // End customize mode
     CPHouseCustomization endPkt( houseSerial, false );
     sock->Send( &endPkt );
+	HC_EndSession( sock );
 
 	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 	return JS_TRUE;

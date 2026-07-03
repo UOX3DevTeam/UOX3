@@ -4,6 +4,22 @@
 #include "cRaces.h"
 #include "classes.h"
 
+static const UI16 CUSTOM_FOUNDATION_STEP_ID = 0x0751;
+
+static bool IsCustomFoundationMulti( UI16 multiId )
+{
+	return ( multiId >= 0x13EC && multiId <= 0x147B );
+}
+
+static bool IsCustomFoundationFrontStep( UI16 multiId, SI16 relX, SI16 relY )
+{
+	if( !IsCustomFoundationMulti( multiId ) || !Map->MultiExists( multiId ))
+		return false;
+
+	const auto &structure = Map->SeekMulti( multiId );
+	return ( relY == static_cast<SI16>( structure.maxY + 1 ) && relX >= static_cast<SI16>( structure.minX + 1 ) && relX <= structure.maxX );
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	FindPlayersInOldVisrange()
 //o------------------------------------------------------------------------------------------------o
@@ -454,6 +470,25 @@ bool InMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 					if( z >= multiZ || abs( multiZ - z ) <= zOff )
 						return true;
 				}
+			}
+		}
+		if( IsCustomFoundationFrontStep( multiId, static_cast<SI16>( x - baseX ), static_cast<SI16>( y - baseY )))
+		{
+			const SI08 multiZ = static_cast<SI08>( baseZ + Map->TileHeight( CUSTOM_FOUNDATION_STEP_ID ));
+			if( z >= multiZ || abs( multiZ - z ) <= zOff )
+				return true;
+		}
+		std::vector<HouseTileEntry> designTiles;
+		if( HC_LoadCommittedDesignTiles( m, designTiles ))
+		{
+			for( const auto &designTile : designTiles )
+			{
+				if(( baseX + designTile.x ) != x || ( baseY + designTile.y ) != y || !Map->IsValidTile( designTile.id ))
+					continue;
+
+				const SI08 multiZ = static_cast<SI08>( baseZ + designTile.z + Map->TileHeight( designTile.id ));
+				if( z >= multiZ || abs( multiZ - z ) <= zOff )
+					return true;
 			}
 		}
 	}

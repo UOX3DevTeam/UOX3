@@ -39,7 +39,6 @@ function onUseUnChecked( pUser, iUsed )
 {
 	// Grab reference to multi stored on sign
 	iMulti = iUsed.multi;
-	HouseBeginCustomize( pUser, iMulti );
 
 	if( ValidateObject( iMulti ))
 	{
@@ -71,6 +70,11 @@ function onUseUnChecked( pUser, iUsed )
 			// If multiple people hold key to house - well, multiple people own the house.
 			if( pUser.isGM || iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum ) || iMulti.IsOnFriendList( pUser ))
 			{
+				if( pUser.isGM || iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum ))
+				{
+					HouseBeginCustomize( pUser, iMulti );
+				}
+
 				// Store serial of sign in multi's MORE property
 				if( iMulti.more == 0 )
 				{

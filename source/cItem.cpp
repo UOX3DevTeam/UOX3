@@ -3036,6 +3036,10 @@ void CItem::SendToSocket( CSocket *mSock, [[maybe_unused]] bool drawGamePlayer )
 				mSock->Send( &pSend );
 			}
 		}
+		else
+		{
+			HC_SendCommittedDesignState( mSock, static_cast<CMultiObj *>( this ), false );
+		}
 	}
 }
 
