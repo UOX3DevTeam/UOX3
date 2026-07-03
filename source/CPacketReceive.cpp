@@ -6112,9 +6112,7 @@ bool CPIAOSCommand::Handle( void )
 			if( s == nullptr )
 				return true;
 
-			bool committed = HC_CommitSession( tSock );
-
-			if( !committed )
+			if( !HC_RequestCommitConfirm( tSock ))
 				HC_SendDesignState( tSock, *s );
 			return true;
 		}

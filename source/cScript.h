@@ -333,6 +333,7 @@ public:
 	SI08		OnBoughtFromVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought, UI16 numItemsBought );
 	SI08		OnSoldToVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold, UI16 numItemsSold );
 	SI08		OnHouseCommand( CSocket *targSock, CMultiObj *multiObj, UI08 targId );
+	bool		OnCustomHouseCommitConfirm( CSocket *targSock, CChar *targChar, CItem *houseItem, SI32 oldPrice, SI32 newPrice, SI32 commitCost, UI32 bankBalance, bool isGM );
 	SI08		OnMakeItem( CSocket *mSock, CChar *objChar, CItem *objItem, UI16 createEntryId );
 	SI08		OnReleasePet( CChar *owner, CChar *pet );
 

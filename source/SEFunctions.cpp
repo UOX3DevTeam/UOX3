@@ -6147,6 +6147,51 @@ JSBool SE_HouseEndCustomize( JSContext *cx, uintN argc, jsval *vp )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function	- 	SE_HouseCommitCustomize( pChar )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		- 	Commits the active custom house design after JS confirmation
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_HouseCommitCustomize( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval *argv = JS_ARGV( cx, vp );
+
+	if( argc != 1 )
+	{
+		ScriptError( cx, "HouseCommitCustomize: needs 1 argument (pChar)!" );
+		return JS_FALSE;
+	}
+
+	JSObject *mChar = JSVAL_TO_OBJECT( argv[0] );
+	CChar *pChar = static_cast<CChar *>( JS_GetPrivate( cx, mChar ));
+	if( !ValidateObject( pChar ))
+	{
+		ScriptError( cx, "HouseCommitCustomize: Invalid character" );
+		return JS_FALSE;
+	}
+
+	CSocket *sock = pChar->GetSocket();
+	if( sock == nullptr )
+	{
+		ScriptError( cx, "HouseCommitCustomize: Character has no socket" );
+		return JS_FALSE;
+	}
+
+	HouseCustomSession *s = HC_GetSession( sock );
+	if( s == nullptr )
+	{
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		return JS_TRUE;
+	}
+
+	const bool committed = HC_CommitSession( sock );
+	if( !committed )
+		HC_SendDesignState( sock, *s );
+
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( committed ));
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //| Function	- 	SE_HouseSendDesignRevision( pChar, pMulti, revision )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		- 	Sends 0xBF sub 0x1D revision packet to client

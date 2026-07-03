@@ -79,6 +79,7 @@ JSBool SE_RegisterPacket( JSContext *cx, uintN argc, jsval *vp );
 JSBool SE_HouseBeginCustomize( JSContext *cx, uintN argc, jsval *vp );
 JSBool SE_HouseEndCustomize( JSContext *cx, uintN argc, jsval *vp );
 JSBool SE_HouseSendDesignRevision( JSContext *cx, uintN argc, jsval *vp );
+JSBool SE_HouseCommitCustomize( JSContext *cx, uintN argc, jsval *vp );
 
 JSBool SE_GetHour( JSContext *cx, uintN argc, jsval *vp );					//										***
 JSBool SE_GetMinute( JSContext *cx, uintN argc, jsval *vp );				//										***
