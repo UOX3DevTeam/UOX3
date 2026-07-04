@@ -33,6 +33,29 @@ var houseTradeTime = "";
 // Fetch uox.ini settings on whether characters on same account as house owner will be
 // treated as if they were co-owners of the house
 const coOwnHousesOnSameAccount = GetServerSetting( "CoOwnHousesOnSameAccount" );
+const houseAOSScriptID = 15009;
+const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
+
+function UseAOSHouseGump()
+{
+	return coreShardEra >= EraStringToNum( "aos" );
+}
+
+function OpenHouseOwnerGump( pUser )
+{
+	if( UseAOSHouseGump() && TriggerEvent( houseAOSScriptID, "OpenHouseAOSGump", pUser, iMulti, iSign, houseOwner, visitCount ))
+		return;
+
+	HouseOwnerGump( pUser );
+}
+
+function OpenHouseGuestGump( pUser )
+{
+	if( UseAOSHouseGump() && TriggerEvent( houseAOSScriptID, "OpenHouseAOSGuestGump", pUser, iMulti, iSign, houseOwner, visitCount ))
+		return;
+
+	HouseGuestGump( pUser );
+}
 
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseUnChecked( pUser, iUsed )
@@ -70,11 +93,6 @@ function onUseUnChecked( pUser, iUsed )
 			// If multiple people hold key to house - well, multiple people own the house.
 			if( pUser.isGM || iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum ) || iMulti.IsOnFriendList( pUser ))
 			{
-				if( pUser.isGM || iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum ))
-				{
-					HouseBeginCustomize( pUser, iMulti );
-				}
-
 				// Store serial of sign in multi's MORE property
 				if( iMulti.more == 0 )
 				{
@@ -126,12 +144,12 @@ function onUseUnChecked( pUser, iUsed )
 				houseBanList.length = 0;
 
 				// Open house menu gump
-				HouseOwnerGump( pUser );
+				OpenHouseOwnerGump( pUser );
 			}
 			else
 			{
 				visitCount = iMulti.GetTag( "visitCount" );
-				HouseGuestGump( pUser );
+				OpenHouseGuestGump( pUser );
 			}
 		}
 	}
@@ -152,7 +170,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case 0: //Closes gump, stops refreshing
 			break;
 		case 1: // Open main house gump
-			HouseOwnerGump( pUser );
+			OpenHouseOwnerGump( pUser );
 			break;
 		case 2: // Open house sign selection gump
 			if( houseIsPublic )

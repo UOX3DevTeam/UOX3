@@ -1744,6 +1744,7 @@ static bool HC_AddExteriorStepMulti( HouseCustomSession &s, UI16 multiId, SI08 x
 static bool HC_FindStairComponent( UI16 multiId, HouseStairComponent &component );
 static bool HC_IsKnownExteriorStepTile( UI16 id );
 static bool HC_IsExteriorStepTile( UI16 id );
+static bool HC_IsExteriorStepLocation( const HouseCustomSession &s, SI08 x, SI08 y, SI08 z );
 static bool HC_CanPlaceExteriorStepTile( const HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z );
 static bool HC_IsStairComponentTile( UI16 id );
 static bool HC_IsFloorComponentTile( UI16 id );
@@ -1952,10 +1953,11 @@ static bool HC_CanPlaceDesignTile( const HouseCustomSession &s, UI16 id, SI08 x,
 
 bool HC_CanPlaceTile( const HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z )
 {
-    if( !HC_CanPlaceDesignTile( s, id, x, y, z ))
+    if( !HC_IsPlaceableComponentTile( id ))
         return false;
 
-    if( !HC_IsPlaceableComponentTile( id ))
+    const bool exteriorStepLocation = ( Map->IsValidTile( id ) && HC_IsExteriorStepLocation( s, x, y, z ));
+    if( !HC_CanPlaceDesignTile( s, id, x, y, z ) && !exteriorStepLocation )
         return false;
 
     return HC_HasRequiredSupport( s, id, x, y, z );
@@ -2037,21 +2039,24 @@ bool HC_AddStairs( HouseCustomSession &s, UI16 multiId, SI08 x, SI08 y, SI08 z )
     if( multiId >= 0x4000 )
         multiId = static_cast<UI16>( multiId - 0x4000 );
 
-    if( HC_AddComponentStairs( s, multiId, x, y, z ))
-        return true;
-
-    if( HC_AddExteriorStepMulti( s, multiId, x, y, z ))
-        return true;
-
     if( !Map->MultiExists( multiId ))
-        return false;
+        return HC_AddComponentStairs( s, multiId, x, y, z );
+
+    if( HC_AddExteriorStepMulti( s, multiId, x, y, DESIGN_FOUNDATION_Z ))
+        return true;
 
     const auto& structure = Map->SeekMulti( multiId );
     std::vector<HouseTileEntry> pending;
     pending.reserve( structure.items.size() );
+    bool hasExteriorStepTiles = false;
+    bool touchesFrontStepRow = false;
+    bool hasExteriorStepAnchor = false;
 
     for( const auto &multiItem : structure.items )
     {
+        if( multiItem.tileId == INVALIDID || multiItem.tileId == 1 )
+            continue;
+
         SI16 rx = static_cast<SI16>( x + multiItem.offsetX );
         SI16 ry = static_cast<SI16>( y + multiItem.offsetY );
         SI16 rz = static_cast<SI16>( z + multiItem.altitude );
@@ -2065,10 +2070,35 @@ bool HC_AddStairs( HouseCustomSession &s, UI16 multiId, SI08 x, SI08 y, SI08 z )
         e.y = static_cast<SI08>( ry );
         e.z = static_cast<SI08>( rz );
 
-        if( !HC_CanPlaceDesignTile( s, e.id, e.x, e.y, e.z ))
+        const bool exteriorStepLocation = Map->IsValidTile( e.id ) && HC_IsExteriorStepLocation( s, e.x, e.y, e.z );
+        const bool exteriorStepTile = exteriorStepLocation && HC_IsExteriorStepTile( e.id );
+        if( !HC_CanPlaceDesignTile( s, e.id, e.x, e.y, e.z ) && !exteriorStepLocation )
             return false;
 
+        if( exteriorStepLocation )
+        {
+            hasExteriorStepTiles = true;
+            if( e.y == s.maxY )
+                touchesFrontStepRow = true;
+            if( exteriorStepTile )
+                hasExteriorStepAnchor = true;
+        }
+
         pending.push_back( e );
+    }
+
+    if( pending.empty() || ( hasExteriorStepTiles && ( !touchesFrontStepRow || !hasExteriorStepAnchor )))
+        return false;
+
+    if( hasExteriorStepTiles )
+    {
+        for( auto it = s.tiles.begin(); it != s.tiles.end(); )
+        {
+            if( HC_CanPlaceExteriorStepTile( s, it->id, it->x, it->y, it->z ))
+                it = s.tiles.erase( it );
+            else
+                ++it;
+        }
     }
 
     for( const auto &tile : pending )
@@ -3398,9 +3428,20 @@ static bool HC_IsKnownExteriorStepTile( UI16 id )
     return knownStepIds.find( id ) != knownStepIds.end();
 }
 
+static std::unordered_set<UI16> HC_LoadExteriorStepComponents()
+{
+    std::unordered_set<UI16> components;
+    HC_LoadComponentIdsFromFile( components, "stairs.txt", 1, 9 );
+    return components;
+}
+
 static bool HC_IsExteriorStepTile( UI16 id )
 {
     if( HC_IsKnownExteriorStepTile( id ))
+        return true;
+
+    static const std::unordered_set<UI16> exteriorStepComponents = HC_LoadExteriorStepComponents();
+    if( exteriorStepComponents.find( id ) != exteriorStepComponents.end() )
         return true;
 
     if( !Map->IsValidTile( id ))
@@ -3412,14 +3453,22 @@ static bool HC_IsExteriorStepTile( UI16 id )
 
 static bool HC_CanPlaceExteriorStepTile( const HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z )
 {
-    if( !Map->IsValidTile( id ) || !HC_IsExteriorStepTile( id ))
+    if( !Map->IsValidTile( id ) || !HC_IsExteriorStepTile( id ) || !HC_IsExteriorStepLocation( s, x, y, z ))
         return false;
 
+    return true;
+}
+
+static bool HC_IsExteriorStepLocation( const HouseCustomSession &s, SI08 x, SI08 y, SI08 z )
+{
     if( x < s.minX || x > s.maxX )
         return false;
 
     if( y < static_cast<SI08>( s.maxY - 3 ) || y > s.maxY )
         return false;
+
+    if( y == s.maxY && z == 0 )
+        return true;
 
     if( z < DESIGN_FOUNDATION_Z || z > static_cast<SI08>( FloorToDesignZ( 0 ) + 20 ))
         return false;
@@ -3429,6 +3478,10 @@ static bool HC_CanPlaceExteriorStepTile( const HouseCustomSession &s, UI16 id, S
 
 static bool HC_IsStairComponentTile( UI16 id )
 {
+    static const std::unordered_set<UI16> exteriorStepComponents = HC_LoadExteriorStepComponents();
+    if( exteriorStepComponents.find( id ) != exteriorStepComponents.end() )
+        return true;
+
     static const std::unordered_map<UI16, HouseStairComponent> components = HC_LoadStairComponents();
     for( const auto &entry : components )
     {
@@ -3537,6 +3590,7 @@ static std::unordered_set<UI16> HC_LoadPlaceableComponents()
     HC_LoadComponentIdsFromFile( components, "misc.txt", 3, 10 );
     HC_LoadComponentIdsFromFile( components, "teleprts.txt", 1, 16 );
     HC_LoadComponentIdsFromFile( components, "doors.txt", 1, 8 );
+    HC_LoadComponentIdsFromFile( components, "stairs.txt", 1, 9 );
 
     return components;
 }
@@ -3643,7 +3697,7 @@ static bool HC_HasExteriorStepReplacementAt( const HouseCustomSession &s, SI08 x
 {
     for( const auto &tile : s.tiles )
     {
-        if( tile.x == x && tile.y == y && HC_CanPlaceExteriorStepTile( s, tile.id, tile.x, tile.y, tile.z ))
+        if( tile.x == x && tile.y == y && Map->IsValidTile( tile.id ) && HC_IsExteriorStepLocation( s, tile.x, tile.y, tile.z ))
             return true;
     }
 
@@ -3671,7 +3725,7 @@ static bool HC_CanBuildAt( const HouseCustomSession &s, SI08 x, SI08 y, SI08 z )
 
 static bool HC_HasRequiredSupport( const HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z )
 {
-    if( HC_IsStairComponentTile( id ) || HC_CanPlaceExteriorStepTile( s, id, x, y, z ))
+    if( HC_IsStairComponentTile( id ) || ( Map->IsValidTile( id ) && HC_IsExteriorStepLocation( s, x, y, z )))
         return true;
 
     HouseSupportInfo placedInfo;
@@ -3739,7 +3793,7 @@ static bool HC_DeleteExteriorSteps( HouseCustomSession &s, UI16 id, SI08 x, SI08
     bool removed = false;
     for( auto it = s.tiles.begin(); it != s.tiles.end(); )
     {
-        if( HC_CanPlaceExteriorStepTile( s, it->id, it->x, it->y, it->z ))
+        if( Map->IsValidTile( it->id ) && HC_IsExteriorStepLocation( s, it->x, it->y, it->z ))
         {
             it = s.tiles.erase( it );
             removed = true;
@@ -3859,10 +3913,11 @@ static bool HC_SanitizeDesignTiles( HouseCustomSession &s )
 
     for( const auto &tile : pending )
     {
-        if( HC_IsStairComponentTile( tile.id ) || HC_IsExteriorStepTile( tile.id ))
+        if( HC_IsStairComponentTile( tile.id ) || HC_IsExteriorStepTile( tile.id ) ||
+            ( Map->IsValidTile( tile.id ) && HC_IsExteriorStepLocation( s, tile.x, tile.y, tile.z )))
         {
             if( !HC_CanPlaceDesignTile( s, tile.id, tile.x, tile.y, tile.z ) &&
-                !HC_CanPlaceExteriorStepTile( s, tile.id, tile.x, tile.y, tile.z ))
+                !( Map->IsValidTile( tile.id ) && HC_IsExteriorStepLocation( s, tile.x, tile.y, tile.z )))
             {
                 changed = true;
                 continue;
@@ -3919,7 +3974,7 @@ static bool HC_AddExteriorStepMulti( HouseCustomSession &s, UI16 multiId, SI08 x
         e.y = static_cast<SI08>( ry );
         e.z = static_cast<SI08>( rz );
 
-        if( !HC_CanPlaceExteriorStepTile( s, e.id, e.x, e.y, e.z ))
+        if( !Map->IsValidTile( e.id ) || !HC_IsExteriorStepLocation( s, e.x, e.y, e.z ))
             return false;
 
         if( e.y == s.maxY )
@@ -3933,10 +3988,10 @@ static bool HC_AddExteriorStepMulti( HouseCustomSession &s, UI16 multiId, SI08 x
 
     for( auto it = s.tiles.begin(); it != s.tiles.end(); )
     {
-        if( HC_CanPlaceExteriorStepTile( s, it->id, it->x, it->y, it->z ))
-            it = s.tiles.erase( it );
-        else
-            ++it;
+            if( Map->IsValidTile( it->id ) && HC_IsExteriorStepLocation( s, it->x, it->y, it->z ))
+                it = s.tiles.erase( it );
+            else
+                ++it;
     }
 
     for( const auto &tile : pending )

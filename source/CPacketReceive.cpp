@@ -6195,6 +6195,8 @@ bool CPIAOSCommand::Handle( void )
 			SI08 y = ( SI08 ) y16;
 
 			SI08 z = SessionDesignZ( s );
+			if( y == s->maxY )
+				 z = 0;
 
 			if( HC_CanPlaceTile( *s, itemID, x, y, z ))
 			{
