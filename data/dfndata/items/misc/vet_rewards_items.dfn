@@ -1,0 +1,763 @@
+// Veteran reward items used by vet_rewards_table.json
+// Uses existing vet reward tooltip script 5303.
+
+[vet_black_dye_tub]
+{
+GET=base_item
+NAME=black dye tub
+ID=0x0FAB
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 1
+}
+
+[vet_furniture_dye_tub]
+{
+GET=base_item
+NAME=furniture dye tub
+ID=0x0FAB
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 1
+}
+
+[vet_special_dye_tub]
+{
+GET=base_item
+NAME=special dye tub
+ID=0x0FAB
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 1
+}
+
+[vet_leather_dye_tub]
+{
+GET=base_item
+NAME=leather dye tub
+ID=0x0FAB
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 2
+}
+
+[vet_runebook_dye_tub]
+{
+GET=base_item
+NAME=runebook dye tub
+ID=0x0FAB
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 4
+}
+
+[vet_statuette_dye_tub]
+{
+GET=base_item
+NAME=statuette dye tub
+ID=0x0FAB
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 5
+}
+
+[vet_bronze_cloak]
+{
+GET=base_item
+NAME=bronze cloak
+ID=0x1515
+WEIGHT=10
+MOVABLE=1
+COLOR=2418
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 1
+}
+
+[vet_bronze_robe]
+{
+GET=base_item
+NAME=bronze robe
+ID=0x1F03
+WEIGHT=10
+MOVABLE=1
+COLOR=2418
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 1
+}
+
+[vet_copper_cloak]
+{
+GET=base_item
+NAME=copper cloak
+ID=0x1515
+WEIGHT=10
+MOVABLE=1
+COLOR=2413
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 1
+}
+
+[vet_copper_robe]
+{
+GET=base_item
+NAME=copper robe
+ID=0x1F03
+WEIGHT=10
+MOVABLE=1
+COLOR=2413
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 1
+}
+
+[vet_agapite_cloak]
+{
+GET=base_item
+NAME=agapite cloak
+ID=0x1515
+WEIGHT=10
+MOVABLE=1
+COLOR=2425
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 2
+}
+
+[vet_agapite_robe]
+{
+GET=base_item
+NAME=agapite robe
+ID=0x1F03
+WEIGHT=10
+MOVABLE=1
+COLOR=2425
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 2
+}
+
+[vet_golden_cloak]
+{
+GET=base_item
+NAME=golden cloak
+ID=0x1515
+WEIGHT=10
+MOVABLE=1
+COLOR=2213
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 2
+}
+
+[vet_golden_robe]
+{
+GET=base_item
+NAME=golden robe
+ID=0x1F03
+WEIGHT=10
+MOVABLE=1
+COLOR=2213
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 2
+}
+
+[vet_verite_cloak]
+{
+GET=base_item
+NAME=verite cloak
+ID=0x1515
+WEIGHT=10
+MOVABLE=1
+COLOR=2207
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 3
+}
+
+[vet_verite_robe]
+{
+GET=base_item
+NAME=verite robe
+ID=0x1F03
+WEIGHT=10
+MOVABLE=1
+COLOR=2207
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 3
+}
+
+[vet_valorite_cloak]
+{
+GET=base_item
+NAME=valorite cloak
+ID=0x1515
+WEIGHT=10
+MOVABLE=1
+COLOR=2219
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 3
+}
+
+[vet_valorite_robe]
+{
+GET=base_item
+NAME=valorite robe
+ID=0x1F03
+WEIGHT=10
+MOVABLE=1
+COLOR=2219
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 3
+}
+
+[vet_dark_gray_cloak]
+{
+GET=base_item
+NAME=dark gray cloak
+ID=0x1515
+WEIGHT=10
+MOVABLE=1
+COLOR=1109
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 4
+}
+
+[vet_dark_gray_robe]
+{
+GET=base_item
+NAME=dark gray robe
+ID=0x1F03
+WEIGHT=10
+MOVABLE=1
+COLOR=1109
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 4
+}
+
+[vet_ice_green_cloak]
+{
+GET=base_item
+NAME=ice green cloak
+ID=0x1515
+WEIGHT=10
+MOVABLE=1
+COLOR=1167
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 4
+}
+
+[vet_ice_green_robe]
+{
+GET=base_item
+NAME=ice green robe
+ID=0x1F03
+WEIGHT=10
+MOVABLE=1
+COLOR=1167
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 4
+}
+
+[vet_ice_blue_cloak]
+{
+GET=base_item
+NAME=ice blue cloak
+ID=0x1515
+WEIGHT=10
+MOVABLE=1
+COLOR=1153
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 4
+}
+
+[vet_ice_blue_robe]
+{
+GET=base_item
+NAME=ice blue robe
+ID=0x1F03
+WEIGHT=10
+MOVABLE=1
+COLOR=1153
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 4
+}
+
+[vet_jet_black_cloak]
+{
+GET=base_item
+NAME=jet black cloak
+ID=0x1515
+WEIGHT=10
+MOVABLE=1
+COLOR=1109
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 5
+}
+
+[vet_jet_black_robe]
+{
+GET=base_item
+NAME=jet black robe
+ID=0x1F03
+WEIGHT=10
+MOVABLE=1
+COLOR=1109
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 5
+}
+
+[vet_ice_white_cloak]
+{
+GET=base_item
+NAME=ice white cloak
+ID=0x1515
+WEIGHT=10
+MOVABLE=1
+COLOR=1150
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 5
+}
+
+[vet_ice_white_robe]
+{
+GET=base_item
+NAME=ice white robe
+ID=0x1F03
+WEIGHT=10
+MOVABLE=1
+COLOR=1150
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 5
+}
+
+[vet_fire_cloak]
+{
+GET=base_item
+NAME=fire cloak
+ID=0x1515
+WEIGHT=10
+MOVABLE=1
+COLOR=1260
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 5
+}
+
+[vet_fire_robe]
+{
+GET=base_item
+NAME=fire robe
+ID=0x1F03
+WEIGHT=10
+MOVABLE=1
+COLOR=1260
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 5
+}
+
+[vet_statue_crocodile]
+{
+GET=base_item
+NAME=crocodile statue
+ID=0x20DA
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 1
+}
+
+[vet_statue_daemon]
+{
+GET=base_item
+NAME=daemon statue
+ID=0x20D3
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 1
+}
+
+[vet_statue_dragon]
+{
+GET=base_item
+NAME=dragon statue
+ID=0x20D6
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 1
+}
+
+[vet_statue_earth_elemental]
+{
+GET=base_item
+NAME=earth elemental statue
+ID=0x20D7
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 1
+}
+
+[vet_statue_ettin]
+{
+GET=base_item
+NAME=ettin statue
+ID=0x20D8
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 1
+}
+
+[vet_statue_gargoyle]
+{
+GET=base_item
+NAME=gargoyle statue
+ID=0x20D9
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 1
+}
+
+[vet_statue_gorilla]
+{
+GET=base_item
+NAME=gorilla statue
+ID=0x20F5
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 1
+}
+
+[vet_statue_lich]
+{
+GET=base_item
+NAME=lich statue
+ID=0x20F8
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 1
+}
+
+[vet_statue_lizardman]
+{
+GET=base_item
+NAME=lizardman statue
+ID=0x20DE
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 1
+}
+
+[vet_statue_ogre]
+{
+GET=base_item
+NAME=ogre statue
+ID=0x20DF
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 1
+}
+
+[vet_statue_orc]
+{
+GET=base_item
+NAME=orc statue
+ID=0x20E0
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 1
+}
+
+[vet_statue_ratman]
+{
+GET=base_item
+NAME=ratman statue
+ID=0x20E3
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 1
+}
+
+[vet_statue_skeleton]
+{
+GET=base_item
+NAME=skeleton statue
+ID=0x20E7
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 1
+}
+
+[vet_statue_troll]
+{
+GET=base_item
+NAME=troll statue
+ID=0x20E9
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 1
+}
+
+[vet_statue_cow]
+{
+GET=base_item
+NAME=cow statue
+ID=0x2103
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 3
+}
+
+[vet_statue_zombie]
+{
+GET=base_item
+NAME=zombie statue
+ID=0x20EC
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 3
+}
+
+[vet_statue_llama]
+{
+GET=base_item
+NAME=llama statue
+ID=0x20F6
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 3
+}
+
+[vet_statue_ophidian]
+{
+GET=base_item
+NAME=ophidian statue
+ID=0x2133
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 4
+}
+
+[vet_statue_reaper]
+{
+GET=base_item
+NAME=reaper statue
+ID=0x20FA
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 4
+}
+
+[vet_statue_mongbat]
+{
+GET=base_item
+NAME=mongbat statue
+ID=0x20F9
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 4
+}
+
+[vet_statue_gazer]
+{
+GET=base_item
+NAME=gazer statue
+ID=0x20F4
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 5
+}
+
+[vet_statue_fire_elemental]
+{
+GET=base_item
+NAME=fire elemental statue
+ID=0x20F3
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 5
+}
+
+[vet_statue_wolf]
+{
+GET=base_item
+NAME=wolf statue
+ID=0x25D1
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 5
+}
+
+[vet_banner_deed]
+{
+GET=base_item
+NAME=banner deed
+ID=0x14F0
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 2
+}
+
+[vet_flaming_head_deed]
+{
+GET=base_item
+NAME=flaming head deed
+ID=0x14F0
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 2
+}
+
+[vet_potted_cactus_deed]
+{
+GET=base_item
+NAME=potted cactus deed
+ID=0x14F0
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 3
+}
+
+[vet_decorative_shield_deed]
+{
+GET=base_item
+NAME=decorative shield deed
+ID=0x14F0
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 4
+}
+
+[vet_hanging_skeleton_deed]
+{
+GET=base_item
+NAME=hanging skeleton deed
+ID=0x14F0
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 4
+}
+
+[vet_stone_ankh_deed]
+{
+GET=base_item
+NAME=stone ankh deed
+ID=0x14F0
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 5
+}
+
+[vet_reward_brazier_deed]
+{
+GET=base_item
+NAME=reward brazier deed
+ID=0x14F0
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 6
+}
+
+[vet_cannon_deed]
+{
+GET=base_item
+NAME=cannon deed
+ID=0x14F0
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 7
+}
+
+[vet_tree_stump_deed]
+{
+GET=base_item
+NAME=tree stump deed
+ID=0x14F0
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 7
+}
+
+[vet_wall_banner_deed]
+{
+GET=base_item
+NAME=wall banner deed
+ID=0x14F0
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 9
+}
+
+[vet_mining_cart_deed]
+{
+GET=base_item
+NAME=mining cart deed
+ID=0x14F0
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 10
+}
+
+[vet_ankh_of_sacrifice_deed]
+{
+GET=base_item
+NAME=ankh of sacrifice deed
+ID=0x14F0
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 10
+}
+
+[vet_commodity_deed_box]
+{
+GET=base_item
+NAME=commodity deed box
+ID=0x0E7D
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 1
+}
+
+[vet_weapon_engraving_tool]
+{
+GET=base_item
+NAME=weapon engraving tool
+ID=0x0FB4
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 8
+}

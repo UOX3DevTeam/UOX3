@@ -1,0 +1,51 @@
+[vet_marble_statue_maker]
+{
+GET=base_item
+NAME=marble character statue maker
+ID=0x32F0
+WEIGHT=5
+MOVABLE=1
+COLOR=0x0B8F
+SCRIPT=5303//vet reward tooltips
+SCRIPT=5305
+custominttag=vetRewardYear 6
+customstringtag=statueType marble
+}
+
+[vet_jade_statue_maker]
+{
+GET=base_item
+NAME=jade character statue maker
+ID=0x32F0
+WEIGHT=5
+MOVABLE=1
+COLOR=0x0B93
+SCRIPT=5303//vet reward tooltips
+SCRIPT=5305
+custominttag=vetRewardYear 6
+customstringtag=statueType jade
+}
+
+[vet_bronze_statue_maker]
+{
+GET=base_item
+NAME=bronze character statue maker
+ID=0x32F0
+WEIGHT=5
+MOVABLE=1
+COLOR=0x0B97
+SCRIPT=5303//vet reward tooltips
+SCRIPT=5305
+custominttag=vetRewardYear 6
+customstringtag=statueType bronze
+}
+
+[vet_character_statue_plinth]
+{
+GET=base_item
+NAME=character statue plinth
+ID=0x32F2
+WEIGHT=255
+MOVABLE=2
+SCRIPT=5305
+}

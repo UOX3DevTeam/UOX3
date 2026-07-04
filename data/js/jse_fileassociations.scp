@@ -334,6 +334,8 @@
 5301=npc/pets/dismountetherealmount.js
 5302=item/retouchingtool.js
 5303=item/equip_effects/vetrewardtooltips.js
+7602=server/veteranrewards/vet_rewards.js
+5305=item/character_statue_rewards.js
 
 19100=item/plant_growing/plantsystem.js
 19101=item/plant_growing/plantbowl.js
@@ -511,6 +513,7 @@
 1068=commands/spawnregionadmin.js
 1069=commands/em.js
 1070=commands/champion_spawn_cmd.js
+7603=server/veteranrewards/vet_rewards_commands.js
 }
 
 //-------------------------------------------

@@ -1374,3 +1374,23 @@ TOTAME=2000
 FLAG=INNOCENT
 PRIV=4
 }
+
+[character_statue_base]
+{
+GET=basehuman
+NAME=character statue
+ID=0x0190
+NPCWANDER=0
+NPCAI=0
+FX1=0
+FX2=0
+FROZEN
+INVULNERABLE
+SCRIPT=7606
+NOTRAIN
+}
+
+[vet_character_statue_base]
+{
+GET=character_statue_base
+}
