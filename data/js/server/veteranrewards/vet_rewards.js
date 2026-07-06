@@ -5,15 +5,23 @@ var vetRewardTable = null;
 var vetRewardTableLoaded = false;
 var vetRewardTableLoadError = false;
 
-// Number of account playtime days required for each veteran reward point.
+// Number of account age days required for each veteran reward point.
 // 90 = about 3 months, 180 = about 6 months, 365 = about 1 year.
-var vetRewardDaysPerReward = 90;
+const vetRewardDaysPerReward  = 90;
 
+// Account age source for veteran rewards.
+// "playtime" = use account.totalPlayTime minutes.
+// "firstlogin" = use account.firstLogin real account age.
+// "auto" = use firstLogin if available, otherwise fall back to playtime.
+const vetRewardAccountAgeMode = "firstlogin";
+
+/** @type { ( sockPlayer: Socket, pChar: Character ) => void } */
 function HandleVetRewardLogin( sockPlayer, pChar )
 {
 	VetRewardOnLogin( sockPlayer, pChar );
 }
 
+/** @type { ( sockPlayer: Socket, pChar: Character ) => void } */
 function VetRewardOnLogin( sockPlayer, pChar )
 {
 	if( !ValidateObject( pChar ) || pChar.dead )
@@ -29,11 +37,13 @@ function VetRewardOnLogin( sockPlayer, pChar )
 	ShowVeteranRewardNotice( pChar );
 }
 
+/** @type { ( pUser: Character ) => void } */
 function VetRewardMenu( pUser )
 {
 	ShowVeteranRewardNotice( pUser );
 }
 
+/** @type { () => void } */
 function ReloadVeteranRewardTable()
 {
 	vetRewardTable = null;
@@ -42,6 +52,7 @@ function ReloadVeteranRewardTable()
 	LoadVeteranRewardTable();
 }
 
+/** @type { () => any } */
 function GetVeteranRewardTable()
 {
 	if( !vetRewardTableLoaded )
@@ -57,6 +68,7 @@ function GetVeteranRewardTable()
 	return vetRewardTable;
 }
 
+/** @type { () => any } */
 function LoadVeteranRewardTable()
 {
 	vetRewardTable = { version: 1, categories: [] };
@@ -124,6 +136,7 @@ function LoadVeteranRewardTable()
 	vetRewardTableLoadError = true;
 }
 
+/** @type { ( table: any ) => void } */
 function NormalizeVeteranRewardTable( table )
 {
 	if( !table.categories )
@@ -151,6 +164,7 @@ function NormalizeVeteranRewardTable( table )
 	}
 }
 
+/** @type { ( table: any ) => number } */
 function CountVeteranRewardEntries( table )
 {
 	var rewardCount = 0;
@@ -174,6 +188,7 @@ function CountVeteranRewardEntries( table )
 	return rewardCount;
 }
 
+/** @type { () => any[] } */
 function GetVeteranRewardFlatList()
 {
 	var table = GetVeteranRewardTable();
@@ -196,17 +211,7 @@ function GetVeteranRewardFlatList()
 				continue;
 			}
 
-			rewards.push({
-				rewardID: rewardID,
-				categoryIndex: categoryIndex,
-				entryIndex: entryIndex,
-				categoryName: category.name,
-				name: entry.name || entry.section,
-				section: entry.section,
-				level: parseInt( entry.level, 10 ) || 1,
-				color: entry.color,
-				amount: parseInt( entry.amount, 10 ) || 1
-			});
+			rewards.push({ rewardID: rewardID, categoryIndex: categoryIndex, entryIndex: entryIndex, categoryName: category.name, name: entry.name || entry.section, section: entry.section, level: parseInt( entry.level, 10 ) || 1, color: entry.color, amount: parseInt( entry.amount, 10 ) || 1 });
 
 			rewardID++;
 		}
@@ -215,6 +220,7 @@ function GetVeteranRewardFlatList()
 	return rewards;
 }
 
+/** @type { ( rewardID: number|string ) => any|null } */
 function GetVeteranRewardByID( rewardID )
 {
 	rewardID = parseInt( rewardID, 10 );
@@ -235,6 +241,7 @@ function GetVeteranRewardByID( rewardID )
 	return null;
 }
 
+/** @type { ( player: Character ) => any } */
 function ReadVeteranRewardSave( player )
 {
 	if( !ValidateObject( player ) || !player.account )
@@ -296,6 +303,7 @@ function ReadVeteranRewardSave( player )
 	return CreateDefaultVeteranRewardSave( player );
 }
 
+/** @type { ( player: Character, characterSave: any ) => boolean } */
 function WriteVeteranRewardSave( player, characterSave )
 {
 	if( !ValidateObject( player ) || !player.account )
@@ -389,6 +397,7 @@ function WriteVeteranRewardSave( player, characterSave )
 	return true;
 }
 
+/** @type { ( player: Character ) => any } */
 function CreateDefaultVeteranRewardSave( player )
 {
 	var playerSerial = 0;
@@ -405,6 +414,7 @@ function CreateDefaultVeteranRewardSave( player )
 	};
 }
 
+/** @type { ( player: Character, characterSave: any ) => any } */
 function NormalizeVeteranRewardSave( player, characterSave )
 {
 	if( !characterSave || typeof characterSave != "object" )
@@ -433,6 +443,7 @@ function NormalizeVeteranRewardSave( player, characterSave )
 	return characterSave;
 }
 
+/** @type { ( player: Character ) => number } */
 function GetVeteranRewardLevel( player )
 {
 	if( !ValidateObject( player ) || !player.account )
@@ -457,6 +468,7 @@ function GetVeteranRewardLevel( player )
 	return rewardLevel;
 }
 
+/** @type { () => number } */
 function GetVeteranRewardDaysPerReward()
 {
 	var rewardDays = parseInt( vetRewardDaysPerReward, 10 );
@@ -468,7 +480,37 @@ function GetVeteranRewardDaysPerReward()
 	return rewardDays;
 }
 
+/** @type { ( player: Character ) => number } */
 function GetVeteranAccountAgeDays( player )
+{
+	if( !ValidateObject( player ) || !player.account )
+	{
+		return 0;
+	}
+
+	var accountAgeMode = String( vetRewardAccountAgeMode || "playtime" ).toLowerCase();
+
+	if( accountAgeMode == "firstlogin" )
+	{
+		return GetVeteranAccountAgeDaysFromFirstLogin( player );
+	}
+
+	if( accountAgeMode == "auto" )
+	{
+		var firstLoginDays = GetVeteranAccountAgeDaysFromFirstLogin( player );
+		if( firstLoginDays > 0 )
+		{
+			return firstLoginDays;
+		}
+
+		return GetVeteranAccountAgeDaysFromPlayTime( player );
+	}
+
+	return GetVeteranAccountAgeDaysFromPlayTime( player );
+}
+
+/** @type { ( player: Character ) => number } */
+function GetVeteranAccountAgeDaysFromPlayTime( player )
 {
 	if( !ValidateObject( player ) || !player.account )
 	{
@@ -484,23 +526,39 @@ function GetVeteranAccountAgeDays( player )
 	return Math.floor( totalPlayTime / 1440 );
 }
 
-function GetVeteranAccountAgeHours( player )
+/** @type { ( player: Character ) => number } */
+function GetVeteranAccountAgeDaysFromFirstLogin( player )
 {
 	if( !ValidateObject( player ) || !player.account )
 	{
 		return 0;
 	}
 
-	var totalPlayTime = parseInt( player.account.totalPlayTime, 10 );
-	if( isNaN( totalPlayTime ) || totalPlayTime <= 0 )
+	var firstLoginMinutes = parseInt( player.account.firstLogin, 10 );
+	if( isNaN( firstLoginMinutes ) || firstLoginMinutes <= 0 )
 	{
 		return 0;
 	}
 
-	return Math.floor( totalPlayTime / 60 );
+	var currentMinutes = Math.floor( Date.now() / 60000 );
+	var accountAgeMinutes = currentMinutes - firstLoginMinutes;
+
+	if( isNaN( accountAgeMinutes ) || accountAgeMinutes <= 0 )
+	{
+		return 0;
+	}
+
+	return Math.floor( accountAgeMinutes / 1440 );
 }
 
+/** @type { ( player: Character ) => number } */
+function GetVeteranAccountAgeHours( player )
+{
+	var accountAgeDays = GetVeteranAccountAgeDays( player );
+	return accountAgeDays * 24;
+}
 
+/** @type { ( player: Character ) => number } */
 function GetVeteranDaysUntilNextReward( player )
 {
 	var accountAgeDays = GetVeteranAccountAgeDays( player );
@@ -516,6 +574,7 @@ function GetVeteranDaysUntilNextReward( player )
 	return daysLeft;
 }
 
+/** @type { ( player: Character ) => number } */
 function GetVeteranRewardMax( player )
 {
 	var rewardLevel = GetVeteranRewardLevel( player );
@@ -527,11 +586,13 @@ function GetVeteranRewardMax( player )
 	return rewardLevel;
 }
 
+/** @type { ( player: Character ) => number } */
 function GetVeteranRewardsChosen( player )
 {
 	return ReadVeteranRewardSave( player ).rewardsChosen;
 }
 
+/** @type { ( player: Character ) => number } */
 function GetVeteranRewardsLeft( player )
 {
 	var rewardsLeft = GetVeteranRewardMax( player ) - GetVeteranRewardsChosen( player );
@@ -543,6 +604,7 @@ function GetVeteranRewardsLeft( player )
 	return rewardsLeft;
 }
 
+/** @type { ( player: Character, testLevel: number|string ) => boolean } */
 function SetVeteranRewardTestLevel( player, testLevel )
 {
 	if( !ValidateObject( player ) )
@@ -561,6 +623,7 @@ function SetVeteranRewardTestLevel( player, testLevel )
 	return WriteVeteranRewardSave( player, characterSave );
 }
 
+/** @type { ( player: Character ) => boolean } */
 function ClearVeteranRewardSave( player )
 {
 	if( !ValidateObject( player ) )
@@ -571,6 +634,173 @@ function ClearVeteranRewardSave( player )
 	return WriteVeteranRewardSave( player, CreateDefaultVeteranRewardSave( player ) );
 }
 
+/** @type { ( rewardDays: number|string ) => string } */
+function GetVeteranRewardIntervalText( rewardDays )
+{
+	rewardDays = parseInt( rewardDays, 10 );
+	if( isNaN( rewardDays ) || rewardDays <= 0 )
+	{
+		rewardDays = 90;
+	}
+
+	if( rewardDays == 30 )
+	{
+		return "month";
+	}
+	if( rewardDays == 60 )
+	{
+		return "two months";
+	}
+	if( rewardDays == 90 )
+	{
+		return "three months";
+	}
+	if( rewardDays == 180 )
+	{
+		return "six months";
+	}
+	if( rewardDays == 365 )
+	{
+		return "year";
+	}
+
+	return rewardDays + " day" + ( rewardDays == 1 ? "" : "s" );
+}
+
+/** @type { ( categoryIndex: number|string, entryIndex: number|string ) => number } */
+function GetVeteranRewardButtonID( categoryIndex, entryIndex )
+{
+	categoryIndex = parseInt( categoryIndex, 10 );
+	entryIndex = parseInt( entryIndex, 10 );
+
+	if( isNaN( categoryIndex ) || categoryIndex < 0 )
+	{
+		categoryIndex = 0;
+	}
+	if( isNaN( entryIndex ) || entryIndex < 0 )
+	{
+		entryIndex = 0;
+	}
+
+	return 2 + ( entryIndex * 20 ) + categoryIndex;
+}
+
+/** @type { ( buttonID: number|string ) => any|null } */
+function DecodeVeteranRewardButtonID( buttonID )
+{
+	buttonID = parseInt( buttonID, 10 );
+	if( isNaN( buttonID ) || buttonID < 2 )
+	{
+		return null;
+	}
+
+	var decodedButton = buttonID - 2;
+	return {
+		categoryIndex: decodedButton % 20,
+		entryIndex: Math.floor( decodedButton / 20 )
+	};
+}
+
+/** @type { ( categoryIndex: number|string, entryIndex: number|string ) => any|null } */
+function GetVeteranRewardByCategoryEntry( categoryIndex, entryIndex )
+{
+	var table = GetVeteranRewardTable();
+	categoryIndex = parseInt( categoryIndex, 10 );
+	entryIndex = parseInt( entryIndex, 10 );
+
+	if( isNaN( categoryIndex ) || categoryIndex < 0 || isNaN( entryIndex ) || entryIndex < 0 )
+	{
+		return null;
+	}
+
+	if( !table.categories || !table.categories[categoryIndex] || !table.categories[categoryIndex].entries )
+	{
+		return null;
+	}
+
+	var entry = table.categories[categoryIndex].entries[entryIndex];
+	if( !entry || !entry.section )
+	{
+		return null;
+	}
+
+	var rewards = GetVeteranRewardFlatList();
+	for( var rewardIndex = 0; rewardIndex < rewards.length; rewardIndex++ )
+	{
+		var reward = rewards[rewardIndex];
+		if( reward.categoryIndex == categoryIndex && reward.entryIndex == entryIndex )
+		{
+			return reward;
+		}
+	}
+
+	return null;
+}
+
+/** @type { ( pUser: Character, rewardEntry: any ) => boolean } */
+function HasVeteranRewardAccess( pUser, rewardEntry )
+{
+	if( !ValidateObject( pUser ) || !rewardEntry )
+	{
+		return false;
+	}
+
+	var requiredLevel = parseInt( rewardEntry.level, 10 );
+	if( isNaN( requiredLevel ) || requiredLevel <= 0 )
+	{
+		requiredLevel = 1;
+	}
+
+	return ( GetVeteranRewardLevel( pUser ) >= requiredLevel );
+}
+
+/** @type { ( pUser: Character, category: any ) => boolean } */
+function HasVeteranRewardCategoryAccess( pUser, category )
+{
+	if( !category || !category.entries )
+	{
+		return false;
+	}
+
+	for( var entryIndex = 0; entryIndex < category.entries.length; entryIndex++ )
+	{
+		if( HasVeteranRewardAccess( pUser, category.entries[entryIndex] ) )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+/** @type { ( pUser: Character, category: any ) => number } */
+function GetVeteranRewardCategoryPageCount( pUser, category )
+{
+	if( !category || !category.entries )
+	{
+		return 1;
+	}
+
+	var availableCount = 0;
+	for( var entryIndex = 0; entryIndex < category.entries.length; entryIndex++ )
+	{
+		if( HasVeteranRewardAccess( pUser, category.entries[entryIndex] ) )
+		{
+			availableCount++;
+		}
+	}
+
+	var pageCount = Math.ceil( availableCount / 24 );
+	if( pageCount <= 0 )
+	{
+		pageCount = 1;
+	}
+
+	return pageCount;
+}
+
+/** @type { ( pUser: Character ) => void } */
 function ShowVeteranRewardNotice( pUser )
 {
 	if( !ValidateObject( pUser ) )
@@ -584,39 +814,39 @@ function ShowVeteranRewardNotice( pUser )
 		return;
 	}
 
-	var rewardLevel = GetVeteranRewardLevel( pUser );
-	var rewardsChosen = GetVeteranRewardsChosen( pUser );
-	var rewardsMax = GetVeteranRewardMax( pUser );
 	var rewardsLeft = GetVeteranRewardsLeft( pUser );
-	var accountAgeDays = GetVeteranAccountAgeDays( pUser );
-	var daysUntilNextReward = GetVeteranDaysUntilNextReward( pUser );
-
-	var noticeGump = new Gump();
-	noticeGump.AddPage( 0 );
-	noticeGump.AddBackground( 40, 80, 430, 300, 5054 );
-	noticeGump.AddText( 155, 105, 1152, "Veteran Rewards" );
-	noticeGump.AddHTMLGump( 70, 135, 370, 115, true, true,
-		"Your account has earned veteran reward points. These rewards are saved in a veteran reward save file for this character instead of character tags.<br><br>" +
-		"Reward level: " + rewardLevel + "<br>" +
-		"Account playtime days: " + accountAgeDays + "<br>" +
-		"Reward every: " + GetVeteranRewardDaysPerReward() + " days<br>" +
-		"Days until next reward: " + daysUntilNextReward + "<br>" +
-		"Rewards chosen: " + rewardsChosen + " / " + rewardsMax + "<br>" +
-		"Rewards available: " + rewardsLeft );
-
-	if( rewardsLeft > 0 )
+	if( rewardsLeft <= 0 )
 	{
-		noticeGump.AddButton( 100, 300, 4005, 4007, 1, 0, 1 );
-		noticeGump.AddText( 135, 300, 0, "Choose Reward" );
+		socket.SysMessage( "You do not have any veteran rewards available." );
+		return;
 	}
 
-	noticeGump.AddButton( 300, 300, 4017, 4019, 1, 0, 0 );
-	noticeGump.AddText( 335, 300, 0, "Close" );
+	pUser.SetTempTag( "VeteranRewardGumpMode", "notice" );
+	pUser.SetTempTag( "VeteranRewardConfirmID", null );
+
+	var noticeGump = new Gump;
+	noticeGump.AddPage( 0 );
+	noticeGump.AddBackground( 10, 10, 500, 135, 2600 );
+	noticeGump.AddHTMLGump( 52, 35, 420, 55, true, true, "You have reward items available.<br>Click 'ok' below to get the selection menu or 'cancel' to be prompted upon your next login." );
+
+	noticeGump.AddButton( 60, 95, 4005, 4007, 1, 0, 1 );
+	noticeGump.AddHTMLGump( 95, 96, 150, 35, false, false, "Ok" );
+
+	noticeGump.AddButton( 285, 95, 4017, 4019, 1, 0, 0 );
+	noticeGump.AddHTMLGump( 320, 96, 150, 35, false, false, "Cancel" );
+
 	noticeGump.Send( socket );
 	noticeGump.Free();
 }
 
+/** @type { ( pUser: Character ) => void } */
 function ShowVeteranRewardCategories( pUser )
+{
+	ShowVeteranRewardChoiceGump( pUser );
+}
+
+/** @type { ( pUser: Character ) => void } */
+function ShowVeteranRewardChoiceGump( pUser )
 {
 	if( !ValidateObject( pUser ) )
 	{
@@ -630,136 +860,141 @@ function ShowVeteranRewardCategories( pUser )
 	}
 
 	var table = GetVeteranRewardTable();
-	var rewardLevel = GetVeteranRewardLevel( pUser );
-	var rewardsLeft = GetVeteranRewardsLeft( pUser );
+	if( !table || !table.categories )
+	{
+		socket.SysMessage( "Veteran reward table is not loaded." );
+		return;
+	}
 
-	var categoryGump = new Gump();
-	categoryGump.AddPage( 0 );
-	categoryGump.AddBackground( 40, 60, 390, 420, 5054 );
-	categoryGump.AddText( 145, 85, 1152, "Veteran Rewards" );
-	categoryGump.AddText( 70, 115, 0, "Reward level: " + rewardLevel + "  Available: " + rewardsLeft );
+	var rewardsChosen = GetVeteranRewardsChosen( pUser );
+	var rewardsMax = GetVeteranRewardMax( pUser );
+	var rewardsAvailable = GetVeteranRewardsLeft( pUser );
+	var rewardDays = GetVeteranRewardDaysPerReward();
+	var intervalText = GetVeteranRewardIntervalText( rewardDays );
 
-	var buttonY = 150;
+	pUser.SetTempTag( "VeteranRewardGumpMode", "choice" );
+	pUser.SetTempTag( "VeteranRewardConfirmID", null );
+
+	var choiceGump = new Gump;
+	choiceGump.AddPage( 0 );
+	choiceGump.AddBackground( 10, 10, 600, 450, 2600 );
+	choiceGump.AddButton( 530, 415, 4017, 4019, 1, 0, 0 );
+	choiceGump.AddHTMLGump( 565, 416, 80, 20, false, false, "Close" );
+	choiceGump.AddPageButton( 60, 415, 4014, 4016, 1 );
+	choiceGump.AddHTMLGump( 95, 416, 200, 20, false, false, "Main Menu" );
+
+	choiceGump.AddPage( 1 );
+	choiceGump.AddHTMLGump( 60, 35, 500,70, true, true,
+		"<B>Ultima Online Rewards Program</B><BR>" +
+		"Thank you for being a part of the Ultima Online community for a full " + intervalText + ". " +
+		"As a token of our appreciation, you may select from the following in-game reward items listed below. " +
+		"The gift items will be attributed to the character you have logged-in with on the shard you are on when you choose the item. " +
+		"The number of rewards you are entitled to are listed below and are for your entire account." );
+
+	choiceGump.AddHTMLGump( 60, 105, 300, 35, false, false, "Your current total of rewards to choose:" );
+	choiceGump.AddText( 370, 107, 50, String( rewardsAvailable ));
+	choiceGump.AddHTMLGump( 60, 140, 300, 35, false, false, "You have already chosen:" );
+	choiceGump.AddText( 370, 142, 50, String( rewardsChosen ));
+	choiceGump.AddHTMLGump( 60, 165, 300, 35, false, false, "Your reward limit on this account:" );
+	choiceGump.AddText( 370, 167, 50, String( rewardsMax ));
+
+	var categoryPageStarts = [];
+	var currentPage = 2;
+	var visibleCategoryIndex = 0;
+
 	for( var categoryIndex = 0; categoryIndex < table.categories.length; categoryIndex++ )
 	{
 		var category = table.categories[categoryIndex];
-		if( !category )
+		categoryPageStarts[categoryIndex] = currentPage;
+
+		var categoryPageCount = GetVeteranRewardCategoryPageCount( pUser, category );
+		if( HasVeteranRewardCategoryAccess( pUser, category ))
 		{
-			continue;
+			var categoryX = 100;
+			var categoryY = 205 + ( visibleCategoryIndex * 30 );
+			choiceGump.AddPageButton( categoryX, categoryY, 4005, 4007, currentPage );
+			choiceGump.AddHTMLGump( categoryX + 35, categoryY + 1, 300, 22, false, false, category.name || "Veteran Rewards" );
+			visibleCategoryIndex++;
 		}
 
-		if( !VeteranRewardCategoryHasAvailableEntries( pUser, categoryIndex ) )
-		{
-			continue;
-		}
-
-		categoryGump.AddButton( 70, buttonY, 4005, 4007, 1, 0, 1000 + categoryIndex );
-		categoryGump.AddText( 105, buttonY, 0, category.name );
-		buttonY += 32;
+		currentPage += categoryPageCount;
 	}
 
-	if( buttonY == 150 )
+	if( visibleCategoryIndex == 0 )
 	{
-		categoryGump.AddText( 70, 160, 0, "No rewards are available for your level." );
+		choiceGump.AddHTMLGump( 100, 210, 350, 60, true, true, "No rewards are available for your current reward level." );
 	}
 
-	categoryGump.AddButton( 70, 430, 4017, 4019, 1, 0, 0 );
-	categoryGump.AddText( 105, 430, 0, "Close" );
-	categoryGump.Send( socket );
-	categoryGump.Free();
+	for( var renderCategoryIndex = 0; renderCategoryIndex < table.categories.length; renderCategoryIndex++ )
+	{
+		RenderVeteranRewardCategoryPages( choiceGump, pUser, table.categories[renderCategoryIndex], renderCategoryIndex, categoryPageStarts[renderCategoryIndex] );
+	}
+
+	choiceGump.Send( socket );
+	choiceGump.Free();
 }
 
-function VeteranRewardCategoryHasAvailableEntries( pUser, categoryIndex )
+/** @type { ( rewardGump: Gump, pUser: Character, category: any, categoryIndex: number, startPage: number ) => void } */
+function RenderVeteranRewardCategoryPages( rewardGump, pUser, category, categoryIndex, startPage )
 {
-	var table = GetVeteranRewardTable();
-	if( !table.categories || !table.categories[categoryIndex] )
+	if( !category || !category.entries )
 	{
-		return false;
+		rewardGump.AddPage( startPage );
+		return;
 	}
 
-	var rewardLevel = GetVeteranRewardLevel( pUser );
-	var category = table.categories[categoryIndex];
+	var page = startPage;
+	var visibleIndex = 0;
+	rewardGump.AddPage( page );
+	rewardGump.AddHTMLGump( 55, 40, 500, 25, false, false, "<B>" + ( category.name || "Veteran Rewards" ) + "</B>" );
+
 	for( var entryIndex = 0; entryIndex < category.entries.length; entryIndex++ )
 	{
-		var entry = category.entries[entryIndex];
-		if( entry && ( parseInt( entry.level, 10 ) || 1 ) <= rewardLevel )
+		var rewardEntry = category.entries[entryIndex];
+		if( !HasVeteranRewardAccess( pUser, rewardEntry ))
 		{
-			return true;
+			continue;
 		}
+
+		if( visibleIndex > 0 && ( visibleIndex % 24 ) == 0 )
+		{
+			rewardGump.AddPageButton( 305, 415, 0x0FA5, 0x0FA7, page + 1 );
+			rewardGump.AddHTMLGump( 340, 416, 150, 20, false, false, "Next page" );
+			page++;
+			rewardGump.AddPage( page );
+			rewardGump.AddHTMLGump( 55, 40, 500, 25, false, false, "<B>" + ( category.name || "Veteran Rewards" ) + "</B>" );
+			rewardGump.AddPageButton( 270, 415, 0x0FAE, 0x0FB0, page - 1 );
+			rewardGump.AddHTMLGump( 165, 416, 150, 20, false, false, "Previous page" );
+		}
+
+		var pageVisibleIndex = visibleIndex % 24;
+		var column = Math.floor( pageVisibleIndex / 12 );
+		var row = pageVisibleIndex % 12;
+		var buttonX = 55 + ( column * 260 );
+		var textX = 82 + ( column * 260 );
+		var lineY = 80 + ( row * 25 );
+
+		rewardGump.AddButton( buttonX, lineY, 5540, 5541, 1, 0, GetVeteranRewardButtonID( categoryIndex, entryIndex ));
+		rewardGump.AddHTMLGump( textX, lineY, 235, 20, false, false, rewardEntry.name || rewardEntry.section || "Veteran Reward" );
+		visibleIndex++;
 	}
 
-	return false;
+	if( visibleIndex == 0 )
+	{
+		rewardGump.AddHTMLGump( 55, 80, 400, 40, true, true, "No rewards are available in this category yet." );
+	}
 }
 
+/** @type { ( pUser: Character, categoryIndex: number|string ) => void } */
 function ShowVeteranRewardCategory( pUser, categoryIndex )
 {
-	if( !ValidateObject( pUser ) )
-	{
-		return;
-	}
-
-	var socket = pUser.socket;
-	if( socket == null )
-	{
-		return;
-	}
-
-	var table = GetVeteranRewardTable();
-	categoryIndex = parseInt( categoryIndex, 10 );
-	if( isNaN( categoryIndex ) || categoryIndex < 0 || !table.categories[categoryIndex] )
-	{
-		ShowVeteranRewardCategories( pUser );
-		return;
-	}
-
-	var category = table.categories[categoryIndex];
-	var rewards = GetVeteranRewardFlatList();
-	var rewardLevel = GetVeteranRewardLevel( pUser );
-
-	var rewardGump = new Gump();
-	rewardGump.AddPage( 0 );
-	rewardGump.AddBackground( 40, 60, 480, 500, 5054 );
-	rewardGump.AddText( 170, 85, 1152, category.name );
-	rewardGump.AddText( 70, 115, 0, "Reward level: " + rewardLevel + "  Available: " + GetVeteranRewardsLeft( pUser ) );
-
-	var rewardY = 145;
-	for( var rewardIndex = 0; rewardIndex < rewards.length; rewardIndex++ )
-	{
-		var reward = rewards[rewardIndex];
-		if( reward.categoryIndex != categoryIndex )
-		{
-			continue;
-		}
-
-		if( reward.level > rewardLevel )
-		{
-			continue;
-		}
-
-		rewardGump.AddButton( 70, rewardY, 4005, 4007, 1, 0, 2000 + reward.rewardID );
-		rewardGump.AddText( 105, rewardY, 0, reward.name + " (Level " + reward.level + ")" );
-		rewardY += 25;
-
-		if( rewardY > 505 )
-		{
-			break;
-		}
-	}
-
-	if( rewardY == 145 )
-	{
-		rewardGump.AddText( 70, 155, 0, "No rewards are available in this category yet." );
-	}
-
-	rewardGump.AddButton( 70, 525, 4014, 4016, 1, 0, 1 );
-	rewardGump.AddText( 105, 525, 0, "Back" );
-	rewardGump.Send( socket );
-	rewardGump.Free();
+	ShowVeteranRewardChoiceGump( pUser );
 }
 
+/** @type { ( pUser: Character, rewardID: number|string ) => void } */
 function ShowVeteranRewardConfirm( pUser, rewardID )
 {
-	if( !ValidateObject( pUser ) )
+	if( !ValidateObject( pUser ))
 	{
 		return;
 	}
@@ -774,26 +1009,31 @@ function ShowVeteranRewardConfirm( pUser, rewardID )
 	if( !reward )
 	{
 		socket.SysMessage( "That veteran reward does not exist." );
-		ShowVeteranRewardCategories( pUser );
+		ShowVeteranRewardChoiceGump( pUser );
 		return;
 	}
 
-	var confirmGump = new Gump();
+	pUser.SetTempTag( "VeteranRewardGumpMode", "confirm" );
+	pUser.SetTempTag( "VeteranRewardConfirmID", reward.rewardID );
+
+	var confirmGump = new Gump;
 	confirmGump.AddPage( 0 );
-	confirmGump.AddBackground( 50, 100, 420, 260, 5054 );
-	confirmGump.AddText( 165, 125, 1152, "Confirm Reward" );
-	confirmGump.AddHTMLGump( 80, 160, 360, 90, true, true,
-		"Choose this veteran reward?<br><br>" +
-		"Reward: " + reward.name + "<br>" +
-		"Required level: " + reward.level );
-	confirmGump.AddButton( 105, 295, 4005, 4007, 1, 0, 3000 + reward.rewardID );
-	confirmGump.AddText( 140, 295, 0, "Confirm" );
-	confirmGump.AddButton( 285, 295, 4017, 4019, 1, 0, 0 );
-	confirmGump.AddText( 320, 295, 0, "Cancel" );
+	confirmGump.AddBackground( 10, 10, 500, 300, 2600 );
+	confirmGump.AddHTMLGump( 30, 55, 300, 35, false, false, "You have selected:" );
+	confirmGump.AddHTMLGump( 335, 55, 150, 35, false, false, reward.name || reward.section );
+	confirmGump.AddHTMLGump( 30, 95, 300, 35, false, false, "This will be assigned to this character:" );
+	confirmGump.AddText( 335, 95, 0, pUser.name );
+	confirmGump.AddHTMLGump( 35, 160, 450, 90, true, true, "Are you sure you wish to select this reward for this character? You will not be able to transfer this reward to another character on another shard. Click 'ok' below to confirm your selection or 'cancel' to go back to the selection screen." );
+
+	confirmGump.AddButton( 60, 265, 4005, 4007, 1, 0, 1 );
+	confirmGump.AddHTMLGump( 95, 266, 150, 35, false, false, "Ok" );
+	confirmGump.AddButton( 295, 265, 4017, 4019, 1, 0, 0 );
+	confirmGump.AddHTMLGump( 330, 266, 150, 35, false, false, "Cancel" );
 	confirmGump.Send( socket );
 	confirmGump.Free();
 }
 
+/** @type { ( pUser: Character, rewardID: number|string ) => boolean } */
 function ClaimVeteranReward( pUser, rewardID )
 {
 	if( !ValidateObject( pUser ) )
@@ -820,7 +1060,7 @@ function ClaimVeteranReward( pUser, rewardID )
 		return false;
 	}
 
-	if( reward.level > GetVeteranRewardLevel( pUser ) )
+	if( reward.level > GetVeteranRewardLevel( pUser ))
 	{
 		socket.SysMessage( "Your account is not old enough for that veteran reward." );
 		return false;
@@ -829,7 +1069,7 @@ function ClaimVeteranReward( pUser, rewardID )
 	var pack = pUser.pack;
 	if( !ValidateObject( pack ) || pack.totalItemCount >= pack.maxItems )
 	{
-		socket.SysMessage( GetDictionaryEntry( 1819, socket.language ) );
+		socket.SysMessage( GetDictionaryEntry( 1819, socket.language ));
 		return false;
 	}
 
@@ -845,7 +1085,7 @@ function ClaimVeteranReward( pUser, rewardID )
 		rewardItem = CreateDFNItem( socket, pUser, reward.section, reward.amount, "ITEM", true );
 	}
 
-	if( !ValidateObject( rewardItem ) )
+	if( !ValidateObject( rewardItem ))
 	{
 		socket.SysMessage( "Unable to create veteran reward: " + reward.section );
 		return false;
@@ -863,14 +1103,7 @@ function ClaimVeteranReward( pUser, rewardID )
 
 	var characterSave = ReadVeteranRewardSave( pUser );
 	characterSave.rewardsChosen++;
-	characterSave.history.push({
-		rewardID: reward.rewardID,
-		name: reward.name,
-		section: reward.section,
-		level: reward.level,
-		itemSerial: rewardItem.serial,
-		claimedAt: Date.now()
-	});
+	characterSave.history.push({ rewardID: reward.rewardID, name: reward.name, section: reward.section, level: reward.level, itemSerial: rewardItem.serial, claimedAt: Date.now() });
 
 	if( !WriteVeteranRewardSave( pUser, characterSave ) )
 	{
@@ -884,6 +1117,7 @@ function ClaimVeteranReward( pUser, rewardID )
 	return true;
 }
 
+/** @type { ( reward: any ) => number } */
 function GetVeteranRewardColor( reward )
 {
 	if( !reward || reward.color == null || typeof reward.color == "undefined" )
@@ -919,9 +1153,10 @@ function GetVeteranRewardColor( reward )
 	return rewardColor;
 }
 
+/** @type { ( pUser: Character, rewardItem: Item ) => boolean } */
 function CanUseVeteranRewardItem( pUser, rewardItem )
 {
-	if( !ValidateObject( pUser ) || !ValidateObject( rewardItem ) )
+	if( !ValidateObject( pUser ) || !ValidateObject( rewardItem ))
 	{
 		return false;
 	}
@@ -959,44 +1194,96 @@ function CanUseVeteranRewardItem( pUser, rewardItem )
 	return true;
 }
 
+/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( pSock, pButton, gumpData )
 {
-	var pUser = pSock.currentChar;
-	if( !ValidateObject( pUser ) )
+	if( pSock == null )
 	{
 		return;
 	}
 
-	if( pButton == 0 )
+	var pUser = pSock.currentChar;
+	if( !ValidateObject( pUser ))
 	{
+		return;
+	}
+
+	var gumpMode = String( pUser.GetTempTag( "VeteranRewardGumpMode" ) || "" );
+
+	if( gumpMode == "notice" )
+	{
+		if( pButton == 1 )
+		{
+			ShowVeteranRewardChoiceGump( pUser );
+		}
+		return;
+	}
+
+	if( gumpMode == "confirm" )
+	{
+		if( pButton == 1 )
+		{
+			var confirmRewardID = parseInt( pUser.GetTempTag( "VeteranRewardConfirmID" ), 10 );
+			pUser.SetTempTag( "VeteranRewardConfirmID", null );
+
+			if( !isNaN( confirmRewardID ) && ClaimVeteranReward( pUser, confirmRewardID ))
+			{
+				if( GetVeteranRewardsLeft( pUser ) > 0 )
+				{
+					ShowVeteranRewardNotice( pUser );
+				}
+				else
+				{
+					pUser.SetTempTag( "VeteranRewardGumpMode", null );
+				}
+			}
+		}
+		else
+		{
+			ShowVeteranRewardChoiceGump( pUser );
+		}
+		return;
+	}
+
+	if( gumpMode == "choice" )
+	{
+		if( pButton == 0 )
+		{
+			if( GetVeteranRewardsLeft( pUser ) > 0 )
+			{
+				ShowVeteranRewardNotice( pUser );
+			}
+			return;
+		}
+
+		var decodedButton = DecodeVeteranRewardButtonID( pButton );
+		if( decodedButton == null )
+		{
+			return;
+		}
+
+		var reward = GetVeteranRewardByCategoryEntry( decodedButton.categoryIndex, decodedButton.entryIndex );
+		if( !reward )
+		{
+			return;
+		}
+
+		if( !HasVeteranRewardAccess( pUser, reward ))
+		{
+			return;
+		}
+
+		ShowVeteranRewardConfirm( pUser, reward.rewardID );
 		return;
 	}
 
 	if( pButton == 1 )
 	{
-		ShowVeteranRewardCategories( pUser );
-		return;
-	}
-
-	if( pButton >= 1000 && pButton < 2000 )
-	{
-		ShowVeteranRewardCategory( pUser, pButton - 1000 );
-		return;
-	}
-
-	if( pButton >= 2000 && pButton < 3000 )
-	{
-		ShowVeteranRewardConfirm( pUser, pButton - 2000 );
-		return;
-	}
-
-	if( pButton >= 3000 && pButton < 4000 )
-	{
-		ClaimVeteranReward( pUser, pButton - 3000 );
-		return;
+		ShowVeteranRewardChoiceGump( pUser );
 	}
 }
 
+/** @type { ( fileText: string ) => string } */
 function VetRewardSanitizeJsonText( fileText )
 {
 	if( fileText == null || typeof fileText == "undefined" )
@@ -1007,6 +1294,7 @@ function VetRewardSanitizeJsonText( fileText )
 	return String( fileText ).replace( /[^\x20-\x7E\r\n\t]/g, "" ).trim();
 }
 
+/** @type { ( value: any ) => boolean } */
 function VetRewardIsArray( value )
 {
 	return Object.prototype.toString.call( value ) == "[object Array]";
