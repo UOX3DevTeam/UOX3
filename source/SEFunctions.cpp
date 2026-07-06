@@ -6192,6 +6192,49 @@ JSBool SE_HouseCommitCustomize( JSContext *cx, uintN argc, jsval *vp )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function	- 	SE_HouseSetCustomizationFixture( pChar, pMulti, action, value )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		- 	Changes custom house sign hanger, signpost or foundation style.
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_HouseSetCustomizationFixture( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval *argv = JS_ARGV( cx, vp );
+
+	if( argc != 4 )
+	{
+		ScriptError( cx, "HouseSetCustomizationFixture: needs 4 arguments (pChar, pMulti, action, value)!" );
+		return JS_FALSE;
+	}
+
+	JSObject *mChar = JSVAL_TO_OBJECT( argv[0] );
+	CChar *pChar = static_cast<CChar *>( JS_GetPrivate( cx, mChar ));
+	if( !ValidateObject( pChar ))
+	{
+		ScriptError( cx, "HouseSetCustomizationFixture: Invalid character" );
+		return JS_FALSE;
+	}
+
+	JSObject *mMulti = JSVAL_TO_OBJECT( argv[1] );
+	CItem *pMulti = static_cast<CItem *>( JS_GetPrivate( cx, mMulti ));
+	if( !ValidateObject( pMulti ))
+	{
+		ScriptError( cx, "HouseSetCustomizationFixture: Invalid multi" );
+		return JS_FALSE;
+	}
+
+	CSocket *sock = pChar->GetSocket();
+	if( sock == nullptr )
+	{
+		ScriptError( cx, "HouseSetCustomizationFixture: Character has no socket" );
+		return JS_FALSE;
+	}
+
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( HC_SetCustomizationFixture( sock, pMulti,
+		static_cast<UI08>( JSVAL_TO_INT( argv[2] )), static_cast<UI16>( JSVAL_TO_INT( argv[3] )))));
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //| Function	- 	SE_HouseSendDesignRevision( pChar, pMulti, revision )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		- 	Sends 0xBF sub 0x1D revision packet to client

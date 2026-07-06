@@ -259,6 +259,7 @@ bool HC_DeleteRoofTile( HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z )
 bool HC_DeleteFixtureAt( CSocket *sock, const HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z );
 bool HC_CommitSession( CSocket *sock );
 bool HC_RequestCommitConfirm( CSocket *sock );
+bool HC_SetCustomizationFixture( CSocket *sock, CItem *houseItem, UI08 action, UI16 value );
 SI32 HC_GetCommitCost( CItem *houseItem, const HouseCustomSession &s );
 void HC_Backup( HouseCustomSession &s );
 void HC_Restore( HouseCustomSession &s );

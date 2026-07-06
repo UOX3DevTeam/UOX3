@@ -166,6 +166,7 @@ static JSFunctionSpec my_functions[] =
 	{ "HouseEndCustomize",			SE_HouseEndCustomize,		2, 0 },
 	{ "HouseSendDesignRevision",	SE_HouseSendDesignRevision,	3, 0 },
 	{ "HouseCommitCustomize",		SE_HouseCommitCustomize,		1, 0 },
+	{ "HouseSetCustomizationFixture", SE_HouseSetCustomizationFixture, 4, 0 },
 	{ "ReloadJSFile",				SE_ReloadJSFile,			1, 0 },
 
 	{ "ValidateObject",				SE_ValidateObject,			1, 0 },

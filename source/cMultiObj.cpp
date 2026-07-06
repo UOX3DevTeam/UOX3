@@ -1706,6 +1706,11 @@ static const UI16 CUSTOM_FOUNDATION_STEP_COLOUR = 0x0455;
 static const UI16 CUSTOM_SIGNPOST_ID = 0x0009;
 static const UI16 CUSTOM_SIGNHANGER_ID = 0x0B98;
 static const UI16 CUSTOM_FOUNDATION_DIRT_ID = 0x31F4;
+static const char *CUSTOM_SIGNPOST_ID_TAG = "customFoundationSignpostId";
+static const char *CUSTOM_SIGNHANGER_ID_TAG = "customFoundationSignhangerId";
+static const char *CUSTOM_SIGN_FIXTURE_TYPE_TAG = "customfoundationfixturetype";
+static const SI32 CUSTOM_SIGN_FIXTURE_POST = 1;
+static const SI32 CUSTOM_SIGN_FIXTURE_HANGER = 2;
 static const UI16 CUSTOM_HOUSE_GOLD_ID = 0x0EED;
 static const UI16 CUSTOM_HOUSE_COMMIT_CONFIRM_SCRIPT = 15008;
 static const SI32 CUSTOM_HOUSE_COMPONENT_COST = 500;
@@ -3066,6 +3071,31 @@ static void SetCustomFoundationFixtureTag( CItem *i, const char *tagName )
     i->SetTag( tagName, tagObject );
 }
 
+static void SetIntTag( CItem *i, const char *tagName, SI32 value )
+{
+    if( !ValidateObject( i ) || tagName == nullptr )
+        return;
+
+    TAGMAPOBJECT tagObject;
+    tagObject.m_ObjectType = TAGMAP_TYPE_INT;
+    tagObject.m_IntValue = value;
+    tagObject.m_Destroy = false;
+    tagObject.m_StringValue = "";
+    i->SetTag( tagName, tagObject );
+}
+
+static SI32 GetIntTag( CItem *i, const char *tagName, SI32 defaultValue )
+{
+    if( !ValidateObject( i ) || tagName == nullptr )
+        return defaultValue;
+
+    TAGMAPOBJECT tagObject = i->GetTag( tagName );
+    if( tagObject.m_ObjectType == TAGMAP_TYPE_INT )
+        return tagObject.m_IntValue;
+
+    return defaultValue;
+}
+
 static void SetCustomFoundationStepTag( CItem *i )
 {
     SetCustomFoundationFixtureTag( i, "customfoundationstep" );
@@ -3074,6 +3104,11 @@ static void SetCustomFoundationStepTag( CItem *i )
 static void SetCustomFoundationSignFixtureTag( CItem *i )
 {
     SetCustomFoundationFixtureTag( i, "customfoundationsignfixture" );
+}
+
+static void SetCustomFoundationSignFixtureType( CItem *i, SI32 fixtureType )
+{
+    SetIntTag( i, CUSTOM_SIGN_FIXTURE_TYPE_TAG, fixtureType );
 }
 
 static void HC_AddFoundationStepTiles( HouseCustomSession &s )
@@ -3239,8 +3274,10 @@ static void HC_EnsureFoundationSignFixtures( CChar *chr, CItem *houseItem, CMult
     }
 
     const SI16 postY = static_cast<SI16>( signY - 1 );
+    const UI16 postId = static_cast<UI16>( GetIntTag( houseItem, CUSTOM_SIGNPOST_ID_TAG, CUSTOM_SIGNPOST_ID ));
+    const UI16 hangerId = static_cast<UI16>( GetIntTag( houseItem, CUSTOM_SIGNHANGER_ID_TAG, CUSTOM_SIGNHANGER_ID ));
 
-    CItem *post = Items->CreateItem( nullptr, chr, CUSTOM_SIGNPOST_ID, 1, 0, OT_ITEM, false, true,
+    CItem *post = Items->CreateItem( nullptr, chr, postId, 1, 0, OT_ITEM, false, true,
         houseItem->WorldNumber(), houseItem->GetInstanceId(), signX, postY, signZ );
     if( ValidateObject( post ))
     {
@@ -3248,10 +3285,11 @@ static void HC_EnsureFoundationSignFixtures( CChar *chr, CItem *houseItem, CMult
         post->SetMovable( 2 );
         post->SetDecayable( false );
         SetCustomFoundationSignFixtureTag( post );
+        SetCustomFoundationSignFixtureType( post, CUSTOM_SIGN_FIXTURE_POST );
         post->SetMulti( mMulti );
     }
 
-    CItem *hanger = Items->CreateItem( nullptr, chr, CUSTOM_SIGNHANGER_ID, 1, 0, OT_ITEM, false, true,
+    CItem *hanger = Items->CreateItem( nullptr, chr, hangerId, 1, 0, OT_ITEM, false, true,
         houseItem->WorldNumber(), houseItem->GetInstanceId(), signX, signY, signZ );
     if( ValidateObject( hanger ))
     {
@@ -3259,8 +3297,81 @@ static void HC_EnsureFoundationSignFixtures( CChar *chr, CItem *houseItem, CMult
         hanger->SetMovable( 2 );
         hanger->SetDecayable( false );
         SetCustomFoundationSignFixtureTag( hanger );
+        SetCustomFoundationSignFixtureType( hanger, CUSTOM_SIGN_FIXTURE_HANGER );
         hanger->SetMulti( mMulti );
     }
+}
+
+bool HC_SetCustomizationFixture( CSocket *sock, CItem *houseItem, UI08 action, UI16 value )
+{
+    if( sock == nullptr || !ValidateObject( houseItem ))
+        return false;
+
+    CChar *chr = sock->CurrcharObj();
+    if( !ValidateObject( chr ))
+        return false;
+
+    CMultiObj *mMulti = FindMulti( houseItem );
+    if( !ValidateObject( mMulti ))
+        return false;
+
+    if( !IsCustomFoundationId( mMulti->GetId() ))
+        return false;
+
+    switch( action )
+    {
+        case 0: // Sign hanger
+        {
+            if( !Map->IsValidTile( value ))
+                return false;
+
+            SetIntTag( houseItem, CUSTOM_SIGNHANGER_ID_TAG, value );
+            SetIntTag( mMulti, CUSTOM_SIGNHANGER_ID_TAG, value );
+            HC_EnsureFoundationSignFixtures( chr, houseItem, mMulti );
+            HC_RefreshHouseToClient( sock, houseItem, mMulti );
+            return true;
+        }
+        case 1: // Signpost
+        {
+            if( !Map->IsValidTile( value ))
+                return false;
+
+            SetIntTag( houseItem, CUSTOM_SIGNPOST_ID_TAG, value );
+            SetIntTag( mMulti, CUSTOM_SIGNPOST_ID_TAG, value );
+            HC_EnsureFoundationSignFixtures( chr, houseItem, mMulti );
+            HC_RefreshHouseToClient( sock, houseItem, mMulti );
+            return true;
+        }
+        case 2: // Foundation style
+        {
+            if( value > FT_Stone )
+                return false;
+
+            SetIntTag( houseItem, "foundationType", value );
+            SetIntTag( mMulti, "foundationType", value );
+
+            HouseCustomSession *s = HC_GetSession( sock );
+            if( s != nullptr && s->houseSerial == houseItem->GetSerial() )
+            {
+                if( HC_LoadFoundationTiles( sock, *s ))
+                {
+                    HC_BumpRevision( *s );
+                    HC_SendDesignState( sock, *s );
+                }
+            }
+            else
+            {
+                HC_SendCommittedDesignState( sock, mMulti, false, true );
+            }
+
+            houseItem->Update( sock );
+            return true;
+        }
+        default:
+            break;
+    }
+
+    return false;
 }
 
 static std::vector<std::string> HC_SplitTabLine( const std::string &line )
