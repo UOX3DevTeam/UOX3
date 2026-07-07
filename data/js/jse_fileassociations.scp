@@ -334,8 +334,6 @@
 5301=npc/pets/dismountetherealmount.js
 5302=item/retouchingtool.js
 5303=item/equip_effects/vetrewardtooltips.js
-7602=server/veteranrewards/vet_rewards.js
-5305=item/character_statue_rewards.js
 
 19100=item/plant_growing/plantsystem.js
 19101=item/plant_growing/plantbowl.js
@@ -418,6 +416,10 @@
 7503=item/champion_system/champion_spawn_data.js
 7504=item/power_scroll.js
 7505=item/champion_system/champ_rotation.js
+
+7602=server/misc/vet_rewards.js
+7607=item/vet_reward_dye_tubs.js
+7608=item/character_statue_rewards.js
 
 //-------------------------------------------
 // Misc Player Scripts [8000-8499]
@@ -513,7 +515,7 @@
 1068=commands/spawnregionadmin.js
 1069=commands/em.js
 1070=commands/champion_spawn_cmd.js
-7603=server/veteranrewards/vet_rewards_commands.js
+1071=commands/vet_rewards_cmds.js
 }
 
 //-------------------------------------------

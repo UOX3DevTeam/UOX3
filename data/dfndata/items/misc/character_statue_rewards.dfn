@@ -7,7 +7,7 @@ WEIGHT=5
 MOVABLE=1
 COLOR=0x0B8F
 SCRIPT=5303//vet reward tooltips
-SCRIPT=5305
+SCRIPT=7608//character statue rewards
 custominttag=vetRewardYear 6
 customstringtag=statueType marble
 }
@@ -21,7 +21,7 @@ WEIGHT=5
 MOVABLE=1
 COLOR=0x0B93
 SCRIPT=5303//vet reward tooltips
-SCRIPT=5305
+SCRIPT=7608//character statue rewards
 custominttag=vetRewardYear 6
 customstringtag=statueType jade
 }
@@ -35,7 +35,7 @@ WEIGHT=5
 MOVABLE=1
 COLOR=0x0B97
 SCRIPT=5303//vet reward tooltips
-SCRIPT=5305
+SCRIPT=7608//character statue rewards
 custominttag=vetRewardYear 6
 customstringtag=statueType bronze
 }
@@ -47,5 +47,5 @@ NAME=character statue plinth
 ID=0x32F2
 WEIGHT=255
 MOVABLE=2
-SCRIPT=5305
+SCRIPT=7608//character statue rewards
 }

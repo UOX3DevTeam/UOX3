@@ -3,38 +3,63 @@
 	"categories": [
 		{
 			"name": "Special Dye Tubs",
-			"entries": [
-				{
-					"level": 1,
-					"name": "Black dye tub",
-					"section": "vet_black_dye_tub"
-				},
-				{
-					"level": 1,
-					"name": "Furniture dye tub",
-					"section": "vet_furniture_dye_tub"
-				},
-				{
-					"level": 1,
-					"name": "Special dye tub",
-					"section": "vet_special_dye_tub"
-				},
-				{
-					"level": 2,
-					"name": "Leather dye tub",
-					"section": "vet_leather_dye_tub"
-				},
-				{
-					"level": 4,
-					"name": "Runebook dye tub",
-					"section": "vet_runebook_dye_tub"
-				},
-				{
-					"level": 5,
-					"name": "Statuette dye tub",
-					"section": "vet_statuette_dye_tub"
-				}
-			]
+      "entries": [
+        {
+          "level": 1,
+          "name": "Black dye tub",
+          "section": "vet_black_dye_tub"
+        },
+        {
+          "level": 1,
+          "name": "Furniture dye tub",
+          "section": "vet_furniture_dye_tub"
+        },
+        {
+          "level": 1,
+          "name": "Special dye tub",
+          "section": "vet_special_dye_tub"
+        },
+        {
+          "level": 1,
+          "name": "Blaze dye tub",
+          "section": "vet_blaze_dye_tub"
+        },
+        {
+          "level": 1,
+          "name": "White cloth dye tub",
+          "section": "vet_white_cloth_dye_tub"
+        },
+        {
+          "level": 2,
+          "name": "Leather dye tub",
+          "section": "vet_leather_dye_tub"
+        },
+        {
+          "level": 2,
+          "name": "White leather dye tub",
+          "section": "vet_white_leather_dye_tub"
+        },
+        {
+          "level": 4,
+          "name": "Runebook dye tub",
+          "section": "vet_runebook_dye_tub"
+        },
+        {
+          "level": 5,
+          "name": "Statuette dye tub",
+          "section": "vet_statuette_dye_tub"
+        },
+        {
+          "level": 5,
+          "name": "Metallic cloth dye tub",
+          "section": "vet_metallic_cloth_dye_tub"
+        },
+        {
+          "level": 5,
+          "name": "Metallic leather dye tub",
+          "section": "vet_metallic_leather_dye_tub"
+        }
+      ]
 		},
 		{
 			"name": "Cloaks And Robes",

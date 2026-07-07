@@ -8,8 +8,13 @@ NAME=black dye tub
 ID=0x0FAB
 WEIGHT=10
 MOVABLE=1
+COLOR=1
 SCRIPT=5303//vet reward tooltips
+SCRIPT=7607//vet reward dye tub
 custominttag=vetRewardYear 1
+customstringtag=dyeTubType dyable
+custominttag=dyeTubHue 1
+custominttag=dyeTubRedyable 0
 }
 
 [vet_furniture_dye_tub]
@@ -20,7 +25,11 @@ ID=0x0FAB
 WEIGHT=10
 MOVABLE=1
 SCRIPT=5303//vet reward tooltips
+SCRIPT=7607//vet reward dye tub
 custominttag=vetRewardYear 1
+customstringtag=dyeTubType furniture
+customstringtag=dyeTubHuePicker leather
+custominttag=dyeTubRedyable 1
 }
 
 [vet_special_dye_tub]
@@ -31,7 +40,11 @@ ID=0x0FAB
 WEIGHT=10
 MOVABLE=1
 SCRIPT=5303//vet reward tooltips
+SCRIPT=7607//vet reward dye tub
 custominttag=vetRewardYear 1
+customstringtag=dyeTubType dyable
+customstringtag=dyeTubHuePicker special
+custominttag=dyeTubRedyable 1
 }
 
 [vet_leather_dye_tub]
@@ -42,7 +55,11 @@ ID=0x0FAB
 WEIGHT=10
 MOVABLE=1
 SCRIPT=5303//vet reward tooltips
+SCRIPT=7607//vet reward dye tub
 custominttag=vetRewardYear 2
+customstringtag=dyeTubType leather
+customstringtag=dyeTubHuePicker leather
+custominttag=dyeTubRedyable 1
 }
 
 [vet_runebook_dye_tub]
@@ -53,7 +70,11 @@ ID=0x0FAB
 WEIGHT=10
 MOVABLE=1
 SCRIPT=5303//vet reward tooltips
+SCRIPT=7607//vet reward dye tub
 custominttag=vetRewardYear 4
+customstringtag=dyeTubType runebook
+customstringtag=dyeTubHuePicker leather
+custominttag=dyeTubRedyable 1
 }
 
 [vet_statuette_dye_tub]
@@ -64,7 +85,89 @@ ID=0x0FAB
 WEIGHT=10
 MOVABLE=1
 SCRIPT=5303//vet reward tooltips
+SCRIPT=7607//vet reward dye tub
 custominttag=vetRewardYear 5
+customstringtag=dyeTubType statuette
+customstringtag=dyeTubHuePicker leather
+custominttag=dyeTubRedyable 1
+}
+
+[vet_blaze_dye_tub]
+{
+GET=base_item
+NAME=blaze dye tub
+ID=0x0FAB
+WEIGHT=10
+MOVABLE=1
+COLOR=0x0489
+SCRIPT=5303//vet reward tooltips
+SCRIPT=7607//vet reward dye tub
+custominttag=vetRewardYear 1
+customstringtag=dyeTubType dyable
+custominttag=dyeTubHue 1161
+custominttag=dyeTubRedyable 0
+}
+
+[vet_white_cloth_dye_tub]
+{
+GET=base_item
+NAME=white cloth dye tub
+ID=0x0FAB
+WEIGHT=10
+MOVABLE=1
+COLOR=0x09C2
+SCRIPT=5303//vet reward tooltips
+SCRIPT=7607//vet reward dye tub
+custominttag=vetRewardYear 1
+customstringtag=dyeTubType dyable
+custominttag=dyeTubHue 2498
+custominttag=dyeTubRedyable 0
+}
+
+[vet_white_leather_dye_tub]
+{
+GET=base_item
+NAME=white leather dye tub
+ID=0x0FAB
+WEIGHT=10
+MOVABLE=1
+COLOR=0x09C2
+SCRIPT=5303//vet reward tooltips
+SCRIPT=7607//vet reward dye tub
+custominttag=vetRewardYear 2
+customstringtag=dyeTubType leather
+custominttag=dyeTubHue 2498
+custominttag=dyeTubRedyable 0
+}
+
+[vet_metallic_cloth_dye_tub]
+{
+GET=base_item
+NAME=metallic cloth dye tub
+ID=0x0FAB
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+SCRIPT=7607//vet reward dye tub
+custominttag=vetRewardYear 5
+customstringtag=dyeTubType dyable
+customstringtag=dyeTubHuePicker metallic
+custominttag=dyeTubRedyable 1
+}
+
+[vet_metallic_leather_dye_tub]
+{
+GET=base_item
+NAME=metallic leather dye tub
+ID=0x0FAB
+WEIGHT=10
+MOVABLE=1
+SCRIPT=5303//vet reward tooltips
+SCRIPT=7607//vet reward dye tub
+custominttag=vetRewardYear 5
+customstringtag=dyeTubType leather
+customstringtag=dyeTubHuePicker metallic
+custominttag=dyeTubRedyable 1
 }
 
 [vet_bronze_cloak]
