@@ -27,7 +27,7 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 7. February, 2026</small></p>
+	<p style="margin:0"><small>Last Updated: 6. July, 2026</small></p>
 	<p style="margin:0"><small>Written for UOX3 Version: v0.99.7c</small></p>
 </div>
 
@@ -9351,6 +9351,137 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 					</ul>
 					<h4>Young Player Starting Locations</h4>
 					<p>A section of uox.ini - <span class="hl">[young start locations]</span> - can be used to define starting locations for Young players. If only one location is provided, all new players start there. Otherwise, it should match up with the regular starting location setup, with one entry per town in Britannia (as displayed in client during character creation)</p>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#veteranRewardSystem" id="veteranRewardSystem"><span>Veteran Reward System</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<p>The <span class="hl">Veteran Reward System</span> gives players account-based reward points and lets them claim configurable rewards through a ServUO-style reward menu. The system is script-driven, uses a JSON reward table for reward definitions, and saves reward progress outside of character tags.</p>
+
+					<h4>Core Features</h4>
+					<ul>
+						<li>Players are notified on login when they have veteran rewards available.</li>
+						<li>Rewards are selected through a notice gump, reward category gump, reward listing pages and a final confirmation gump.</li>
+						<li>Reward categories, reward levels, item DFN sections, item amounts and optional colors are defined in <span class="hl">vet_rewards_table.json</span>.</li>
+						<li>Reward progress is saved per account and character in veteran reward save files instead of being stored directly on character tags.</li>
+						<li>Reward eligibility can be based on either total account playtime or first-login account age.</li>
+						<li>Reward intervals are configurable, so shards can grant rewards every 90 days, 180 days, 365 days or another custom value.</li>
+					</ul>
+
+					<h4>Script Setup</h4>
+					<p>The default script setup separates the main reward logic, commands, tooltip support, character statue support and dye tub support into separate files:</p>
+<pre><code class="language-javascript">5303=js/item/vetrewardtooltips.js
+7602=js/server/veteranrewards/vet_rewards.js
+7603=js/server/veteranrewards/vet_rewards_commands.js
+7606=js/server/veteranrewards/character_statue_rewards.js
+7607=js/item/vet_reward_dye_tubs.js</code></pre>
+					<p>To show the login reward notice, trigger the main reward script from the player login flow:</p>
+<pre><code class="language-javascript">TriggerEvent( 7602, "HandleVetRewardLogin", sockPlayer, pChar );</code></pre>
+
+					<h4>Reward Timing</h4>
+					<p>The reward interval and age source are configured at the top of <span class="hl">vet_rewards.js</span>:</p>
+<pre><code class="language-javascript">// Account age source for veteran rewards.
+// "playtime" = use account.totalPlayTime.
+// "firstlogin" = use account.firstLogin.
+// "auto" = use firstLogin if available, otherwise fall back to playtime.
+var vetRewardAccountAgeMode = "playtime";
+
+// Number of account age days required for each veteran reward point.
+// Uses the age source selected by vetRewardAccountAgeMode.
+// 90 = about 3 months, 180 = about 6 months, 365 = about 1 year.
+var vetRewardDaysPerReward = 90;</code></pre>
+					<p>When using <span class="hl">playtime</span>, the system uses <span class="hl">account.totalPlayTime</span>, which is total combined account playtime in minutes. When using <span class="hl">firstlogin</span>, the system uses <span class="hl">account.firstLogin</span>, which is the account's first login timestamp in minutes since epoch.</p>
+
+					<h4>Reward Table</h4>
+					<p>The reward table lives in <span class="hl">js/jsdata/vetrewards/vet_rewards_table.json</span>. Each category contains one or more entries. Each entry points to a DFN item section and defines the minimum reward level required:</p>
+<pre><code class="language-javascript">{
+	"id": "special_dye_tubs",
+	"name": "Special Dye Tubs",
+	"entries": [
+		{
+			"level": 1,
+			"name": "Black dye tub",
+			"section": "vet_black_dye_tub"
+		},
+		{
+			"level": 2,
+			"name": "Leather dye tub",
+			"section": "vet_leather_dye_tub"
+		}
+	]
+}</code></pre>
+					<p>Optional reward colors can be defined in JSON using a decimal number or a hex string. If no color is defined in JSON, the item keeps the color defined by its DFN section.</p>
+
+					<h4>Reward Save Files</h4>
+					<p>Veteran reward progress is saved in account-based JSON files, with one character entry per serial. These files track how many rewards the character has chosen, any temporary test level used by staff, and reward claim history.</p>
+<pre><code class="language-javascript">{
+	"version": 1,
+	"characters": {
+		"123456": {
+			"serial": 123456,
+			"rewardsChosen": 1,
+			"testLevel": -1,
+			"history": []
+		}
+	}
+}</code></pre>
+
+					<h4>Commands</h4>
+					<p>The veteran reward command script provides player and staff commands for opening and testing the system:</p>
+					<ul>
+						<li><span class="hl">'vetreward</span> - opens the veteran reward menu for the current character.</li>
+						<li><span class="hl">'vetrewardtest level</span> - sets a test reward level for the current character.</li>
+						<li><span class="hl">'clearvetrewards</span> - clears the current character's veteran reward save data.</li>
+						<li><span class="hl">'reloadvetrewards</span> - reloads the JSON reward table.</li>
+					</ul>
+
+					<h4>Reward Items and Tooltips</h4>
+					<p>Reward items use normal DFN sections. Existing veteran reward tooltip support can be added by attaching the tooltip script and setting reward metadata tags on the DFN item:</p>
+<pre><code class="language-javascript">[vet_bronze_cloak]
+{
+GET=base_item
+NAME=bronze cloak
+ID=0x1515
+WEIGHT=10
+MOVABLE=1
+COLOR=2418
+SCRIPT=5303//vet reward tooltips
+custominttag=vetRewardYear 1
+}</code></pre>
+
+					<h4>Character Statue Rewards</h4>
+					<p>Character statue makers can be added as veteran rewards. A player uses the statue maker, targets a valid house location, and creates a plinth with a frozen character statue. The statue can copy the player's body and visual equipment, then be customized through a gump:</p>
+					<ul>
+						<li>Change pose</li>
+						<li>Change direction</li>
+						<li>Change material shade</li>
+						<li>Apply the selected pose</li>
+						<li>Redeed the statue back into a maker item</li>
+					</ul>
+					<p>The statue script also supports sending the character statue animation packet so selected poses display correctly on clients that support the packet.</p>
+
+					<h4>Dye Tub Rewards</h4>
+					<p>Veteran reward dye tubs use the dye tub script to validate dye targets and apply custom dye rules. The script supports fixed-color tubs and hue picker tubs, and uses <span class="hl">onDyeTarget</span> to override hardcoded dye behavior when needed.</p>
+					<ul>
+						<li>Black dye tub</li>
+						<li>Blaze dye tub</li>
+						<li>White cloth dye tub</li>
+						<li>White leather dye tub</li>
+						<li>Leather dye tub</li>
+						<li>Furniture dye tub</li>
+						<li>Runebook dye tub</li>
+						<li>Statuette dye tub</li>
+						<li>Special dye tub</li>
+						<li>Metallic cloth and metallic leather dye tubs</li>
+					</ul>
+					<p>Dye tubs can be used from a player's backpack or from nearby ground locations. Dye targets can be allowed through material checks, normal dyeable item behavior, or explicit DFN tags such as <span class="hl">furnitureDyeable</span>, <span class="hl">runebookDyeable</span> or <span class="hl">statuetteDyeable</span>.</p>
+
+					<h4>Adding New Rewards</h4>
+					<p>To add a new veteran reward, create or reuse a DFN item section, then add an entry for it in <span class="hl">vet_rewards_table.json</span>. For special behavior, attach a script to the item in DFN. For basic rewards, no script is required beyond optional tooltip support.</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
