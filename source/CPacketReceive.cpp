@@ -6213,32 +6213,9 @@ bool CPIAOSCommand::Handle( void )
 			if( s == nullptr )
 				return true;
 
-			bool added = false;
-			bool ignoredAtCharacter = false;
-			SI08 z = SessionDesignZ( s );
-			CChar *chr = tSock->CurrcharObj();
-			CItem *houseItem = CalcItemObjFromSer( s->houseSerial );
-
-			if( len >= 18 )
+			if( len >= 24 )
 			{
-				UI16 multiId = tSock->GetWord( 10 );
-				SI16 x16 = static_cast<SI16>( tSock->GetWord( 13 ));
-				SI16 y16 = static_cast<SI16>( tSock->GetWord( 16 ));
-
-				if( x16 < -128 ) x16 = -128;
-				if( x16 > 127 )  x16 = 127;
-				if( y16 < -128 ) y16 = -128;
-				if( y16 > 127 )  y16 = 127;
-
-				if( ValidateObject( chr ) && ValidateObject( houseItem ) && x16 == ( chr->GetX() - houseItem->GetX() ) && y16 == ( chr->GetY() - houseItem->GetY() ))
-					ignoredAtCharacter = true;
-				else
-					added = HC_AddStairs( *s, multiId, static_cast<SI08>( x16 ), static_cast<SI08>( y16 ), z );
-			}
-
-			if( !added && !ignoredAtCharacter && len >= 24 )
-			{
-				UI16 multiId = static_cast<UI16>( tSock->GetDWord( 10 ) & 0xFFFF );
+				const UI16 multiId = static_cast<UI16>( tSock->GetDWord( 10 ) & 0xFFFF );
 				SI16 x16 = static_cast<SI16>( tSock->GetDWord( 15 ));
 				SI16 y16 = static_cast<SI16>( tSock->GetDWord( 20 ));
 
@@ -6247,14 +6224,12 @@ bool CPIAOSCommand::Handle( void )
 				if( y16 < -128 ) y16 = -128;
 				if( y16 > 127 )  y16 = 127;
 
-				if( ValidateObject( chr ) && ValidateObject( houseItem ) && x16 == ( chr->GetX() - houseItem->GetX() ) && y16 == ( chr->GetY() - houseItem->GetY() ))
-					ignoredAtCharacter = true;
-				else
-					added = HC_AddStairs( *s, multiId, static_cast<SI08>( x16 ), static_cast<SI08>( y16 ), z );
+				// Other Emus allows the multi anchor to occupy the
+				// customizer's tile. Directional stair art extends away from
+				// that anchor, so rejecting it breaks north/west placement.
+				if( HC_AddStairs( *s, multiId, static_cast<SI08>( x16 ), static_cast<SI08>( y16 ), SessionDesignZ( s )))
+					HC_BumpRevision( *s );
 			}
-
-			if( added )
-				HC_BumpRevision( *s );
 
 			HC_SendDesignState( tSock, *s );
 			return true;
@@ -6328,7 +6303,7 @@ bool CPIAOSCommand::Handle( void )
 			// Tell client to exit customize mode
 			tSock->Send( &CPHouseCustomization( houseSerial, false ) );
 
-			// Refresh the visible committed design like ServUO's CurrentState.SendDetailedInfoTo(..., false).
+			// Refresh the visible committed design like Other Emus CurrentState.SendDetailedInfoTo(..., false).
 			HC_SendDesignState( tSock, *s, false );
 
 			// Destroy the session

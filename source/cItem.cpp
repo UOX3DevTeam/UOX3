@@ -2995,6 +2995,12 @@ void CItem::SendToSocket( CSocket *mSock, [[maybe_unused]] bool drawGamePlayer )
 	if( !mSock->LoginComplete() )
 		return;
 
+	// Custom-house fixtures and the sign assembly are represented by the
+	// editable design packet while their owner is customizing. Movement or a
+	// teleport must not resend the corresponding world objects.
+	if( HC_IsHiddenToCustomizer( mSock, this ))
+		return;
+
 	CChar *mChar = mSock->CurrcharObj();
 	if( mChar != nullptr )
 	{

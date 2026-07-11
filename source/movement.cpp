@@ -1018,6 +1018,16 @@ bool CMovement::CheckForRunning( CChar *c, UI08 dir )
 //o------------------------------------------------------------------------------------------------o
 bool CMovement::CheckForStealth( CChar *c )
 {
+	// House customization uses visibility as a design-context state, not as
+	// skill-based hiding. Other Emus keeps the customizer hidden while moving, so
+	// do not run the normal no-stealth-counter reveal logic for this session.
+	if( c != nullptr )
+	{
+		CSocket *sock = c->GetSocket();
+		if( sock != nullptr && HC_GetSession( sock ) != nullptr )
+			return true;
+	}
+
 	if( c->GetVisible() == VT_TEMPHIDDEN || c->GetVisible() == VT_INVISIBLE )
 	{
 		if( c->IsOnHorse() || c->IsFlying() ) // Consider Gargoyle flying as mounted for this context

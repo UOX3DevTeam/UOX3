@@ -240,8 +240,10 @@ enum FoundationType : UI08
 
 bool HC_StartSession( CSocket *sock, SERIAL houseSerial );
 void HC_EndSession( CSocket *sock );
+void HC_CancelSession( CSocket *sock );
 HouseCustomSession *HC_GetSession( CSocket *sock );
 bool HC_IsSessionForHouse( CSocket *sock, SERIAL houseSerial );
+bool HC_IsHiddenToCustomizer( CSocket *sock, CItem *item );
 void HC_LoadExistingCustomTiles( HouseCustomSession &s, CItem *houseItem, CMultiObj *mMulti );
 bool HC_LoadCommittedDesignTiles( CMultiObj *mMulti, std::vector<HouseTileEntry> &tiles );
 bool HC_SendCommittedDesignState( CSocket *sock, CMultiObj *mMulti, bool enableResponse = false, bool allowActiveSession = false );

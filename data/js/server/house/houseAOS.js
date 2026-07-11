@@ -146,7 +146,7 @@ function HouseAOSAddMainFrame( houseGump, iSign, pageName )
 	houseGump.AddTiledGump( 10, 390, 400, 40, 2624 );
 	houseGump.AddCheckerTrans( 10, 390, 400, 40 );
 	houseGump.AddButton( 250, 410, 4005, 4007, 1, 0, 0 );
-	houseGump.AddHTMLGump( 285, 410, 100, 22, false, false, "CLOSE" );
+	houseGump.AddHTMLGump( 285, 410, 100, 22, false, false, HouseAOSLabel( "CLOSE" ));
 	houseGump.AddGump( 10, 10, 100 );
 
 	if( ValidateObject( iSign ))
@@ -163,13 +163,13 @@ function HouseAOSAddQuickActions( houseGump, iMulti )
 {
 	if( iMulti.isPublic )
 	{
-		HouseAOSAddButtonLine( houseGump, 10, 390, 30, "Banish", true );
-		HouseAOSAddButtonLine( houseGump, 10, 410, 33, "Lift a Ban", true );
+		HouseAOSAddButtonLine( houseGump, 10, 390, 30, HouseAOSLabel("Banish", true ));
+		HouseAOSAddButtonLine( houseGump, 10, 410, 33, HouseAOSLabel("Lift a Ban", true ));
 	}
 	else
 	{
-		HouseAOSAddButtonLine( houseGump, 10, 390, 41, "Grant Access", true );
-		HouseAOSAddButtonLine( houseGump, 10, 410, 42, "Revoke Access", true );
+		HouseAOSAddButtonLine( houseGump, 10, 390, 41, HouseAOSLabel("Grant Access", true ));
+		HouseAOSAddButtonLine( houseGump, 10, 410, 42, HouseAOSLabel("Revoke Access", true ));
 	}
 }
 
@@ -196,88 +196,90 @@ function OpenHouseAOSGump( pUser, iMulti, iSign, houseOwner, visitCount, pageNam
 
 	if( pageName == "info" )
 	{
-		houseGump.AddHTMLGump( 20, 130, 180, 22, false, false, "Owned By:" );
+		houseGump.AddHTMLGump( 20, 130, 180, 22, false, false, HouseAOSLabel( "Owned By:" ));
 		houseGump.AddText( 210, 130, 0x481, houseOwner );
 		houseGump.AddHTMLGump( 20, 170, 380, 22, false, false, HouseAOSLabel( "This house is properly placed.", true ));
 		houseGump.AddHTMLGump( 20, 190, 380, 22, false, false, HouseAOSLabel( "This house is of modern design.", true ));
 		houseGump.AddHTMLGump( 20, 210, 380, 22, false, false, HouseAOSLabel( isCustomizable ? "This is a custom-built house." : "This is a pre-built house.", true ));
 		houseGump.AddHTMLGump( 20, 230, 380, 22, false, false, HouseAOSLabel( isPublicText, true ));
 		if( statusText != "" )
-			houseGump.AddHTMLGump( 20, 250, 380, 22, false, false, statusText );
+			houseGump.AddHTMLGump( 20, 250, 380, 22, false, false, HouseAOSLabel( statusText ));
 		houseGump.AddHTMLGump( 20, 290, 200, 22, false, false, HouseAOSLabel( "Built On:", true ));
-		houseGump.AddHTMLGump( 250, 290, 140, 22, false, false, iMulti.GetTag( "builtOn" ));
+		houseGump.AddHTMLGump( 250, 290, 140, 22, false, false, HouseAOSLabel( iMulti.GetTag( "builtOn" )));
 		houseGump.AddHTMLGump( 20, 310, 200, 22, false, false, HouseAOSLabel( "Last Traded:", true ));
-		houseGump.AddHTMLGump( 250, 310, 140, 22, false, false, iMulti.GetTag( "lastTraded" ));
+		houseGump.AddHTMLGump( 250, 310, 140, 22, false, false, HouseAOSLabel( iMulti.GetTag( "lastTraded" )));
 		houseGump.AddHTMLGump( 20, 330, 200, 22, false, false, HouseAOSLabel( "House Value", true ));
-		houseGump.AddHTMLGump( 250, 330, 140, 22, false, false, iMulti.GetTag( "houseValue" ));
+		houseGump.AddHTMLGump( 250, 330, 140, 22, false, false, HouseAOSLabel( iMulti.GetTag( "houseValue" )));
 		houseGump.AddHTMLGump( 20, 360, 300, 22, false, false, HouseAOSLabel( "Number of visits this building has had:", true ));
-		houseGump.AddHTMLGump( 350, 360, 40, 22, false, false, visitCount.toString() );
+		houseGump.AddHTMLGump( 350, 360, 40, 22, false, false, HouseAOSLabel( visitCount.toString() ));
 	}
 	else if( pageName == "security" )
 	{
-		HouseAOSAddButtonLine( houseGump, 10, 130, 10, "View Co-Owner List", true );
-		HouseAOSAddButtonLine( houseGump, 10, 150, 11, "Add a Co-Owner", isOwner );
-		HouseAOSAddButtonLine( houseGump, 10, 170, 12, "Remove a Co-Owner", isOwner );
-		HouseAOSAddButtonLine( houseGump, 10, 190, 13, "Clear Co-Owner List", isOwner );
-		HouseAOSAddButtonLine( houseGump, 10, 220, 20, "View Friends List", true );
-		HouseAOSAddButtonLine( houseGump, 10, 240, 21, "Add a Friend", isCoOwner );
-		HouseAOSAddButtonLine( houseGump, 10, 260, 22, "Remove a Friend", isCoOwner );
-		HouseAOSAddButtonLine( houseGump, 10, 280, 23, "Clear Friend List", isOwner );
+		HouseAOSAddButtonLine( houseGump, 10, 130, 10, HouseAOSLabel( "View Co-Owner List", true ));
+		HouseAOSAddButtonLine( houseGump, 10, 150, 11, HouseAOSLabel( "Add a Co-Owner", isOwner ));
+		HouseAOSAddButtonLine( houseGump, 10, 170, 12, HouseAOSLabel( "Remove a Co-Owner", isOwner ));
+		HouseAOSAddButtonLine( houseGump, 10, 190, 13, HouseAOSLabel( "Clear Co-Owner List", isOwner ));
+		HouseAOSAddButtonLine( houseGump, 10, 220, 20, HouseAOSLabel( "View Friends List", true ));
+		HouseAOSAddButtonLine( houseGump, 10, 240, 21, HouseAOSLabel( "Add a Friend", isCoOwner ));
+		HouseAOSAddButtonLine( houseGump, 10, 260, 22, HouseAOSLabel( "Remove a Friend", isCoOwner ));
+		HouseAOSAddButtonLine( houseGump, 10, 280, 23, HouseAOSLabel( "Clear Friend List", isOwner ));
 
 		if( iMulti.isPublic )
 		{
-			HouseAOSAddButtonLine( houseGump, 10, 310, 32, "View Ban List", true );
-			HouseAOSAddButtonLine( houseGump, 10, 330, 62, "Clear Ban List", isOwner );
-			HouseAOSAddButtonLine( houseGump, 210, 130, 54, "Change to Private", isOwner );
+			HouseAOSAddButtonLine( houseGump, 10, 310, 32, HouseAOSLabel( "View Ban List", true ));
+			HouseAOSAddButtonLine( houseGump, 10, 330, 62, HouseAOSLabel( "Clear Ban List", isOwner ));
+			HouseAOSAddButtonLine( houseGump, 210, 130, 54, HouseAOSLabel( "Change to Private", isOwner ));
 			houseGump.AddHTMLGump( 245, 150, 150, 22, false, false, HouseAOSLabel( "Change to Public", true ));
 		}
 		else
 		{
-			HouseAOSAddButtonLine( houseGump, 10, 310, 40, "View Access List", true );
-			HouseAOSAddButtonLine( houseGump, 10, 330, 43, "Clear Access List", isOwner );
+			HouseAOSAddButtonLine( houseGump, 10, 310, 40, HouseAOSLabel( "View Access List", true ));
+			HouseAOSAddButtonLine( houseGump, 10, 330, 43, HouseAOSLabel( "Clear Access List", isOwner ));
 			houseGump.AddHTMLGump( 245, 130, 150, 22, false, false, HouseAOSLabel( "Change to Private", true ));
-			HouseAOSAddButtonLine( houseGump, 210, 150, 53, "Change to Public", isOwner );
+			HouseAOSAddButtonLine( houseGump, 210, 150, 53, HouseAOSLabel( "Change to Public", isOwner ));
 		}
 	}
 	else if( pageName == "storage" )
 	{
-		houseGump.AddHTMLGump( 10, 130, 400, 22, false, false, "<CENTER>HOUSE STORAGE SUMMARY</CENTER>" );
-		houseGump.AddHTMLGump( 10, 170, 300, 22, false, false, "Maximum Secure Storage" );
-		houseGump.AddHTMLGump( 310, 170, 80, 22, false, false, iMulti.maxSecureContainers.toString() );
-		houseGump.AddHTMLGump( 10, 210, 300, 22, false, false, "Used by Lockdowns" );
-		houseGump.AddHTMLGump( 310, 210, 80, 22, false, false, iMulti.lockdowns.toString() );
-		houseGump.AddHTMLGump( 10, 230, 300, 22, false, false, "Used by Secure Containers" );
-		houseGump.AddHTMLGump( 310, 230, 80, 22, false, false, iMulti.secureContainers.toString() );
-		houseGump.AddHTMLGump( 10, 250, 300, 22, false, false, "Available Storage" );
-		houseGump.AddHTMLGump( 310, 250, 80, 22, false, false, Math.max( iMulti.maxSecureContainers - iMulti.secureContainers, 0 ).toString() );
-		houseGump.AddHTMLGump( 10, 290, 300, 22, false, false, "Maximum Lockdowns" );
-		houseGump.AddHTMLGump( 310, 290, 80, 22, false, false, iMulti.maxLockdowns.toString() );
-		houseGump.AddHTMLGump( 10, 310, 300, 22, false, false, "Available Lockdowns" );
-		houseGump.AddHTMLGump( 310, 310, 80, 22, false, false, Math.max( iMulti.maxLockdowns - iMulti.lockdowns, 0 ).toString() );
-		houseGump.AddHTMLGump( 10, 350, 300, 22, false, false, "Vendor Count" );
-		houseGump.AddHTMLGump( 310, 350, 80, 22, false, false, iMulti.vendors + " / " + iMulti.maxVendors );
+		houseGump.AddHTMLGump( 10, 130, 400, 22, false, false, HouseAOSLabel( "<CENTER>HOUSE STORAGE SUMMARY</CENTER>" ));
+		houseGump.AddHTMLGump( 10, 170, 300, 22, false, false, HouseAOSLabel( "Maximum Secure Storage" ));
+		houseGump.AddHTMLGump( 310, 170, 80, 22, false, false, HouseAOSLabel( iMulti.maxSecureContainers.toString() ));
+		houseGump.AddHTMLGump( 10, 210, 300, 22, false, false, HouseAOSLabel( "Used by Lockdowns" ));
+		houseGump.AddHTMLGump( 310, 210, 80, 22, false, false, HouseAOSLabel( iMulti.lockdowns.toString() ));
+		houseGump.AddHTMLGump( 10, 230, 300, 22, false, false, HouseAOSLabel( "Used by Secure Containers" ));
+		houseGump.AddHTMLGump( 310, 230, 80, 22, false, false, HouseAOSLabel( iMulti.secureContainers.toString() ));
+		houseGump.AddHTMLGump( 10, 250, 300, 22, false, false, HouseAOSLabel( "Available Storage" ));
+		houseGump.AddHTMLGump( 310, 250, 80, 22, false, false, HouseAOSLabel( Math.max( iMulti.maxSecureContainers - iMulti.secureContainers, 0 ).toString() ));
+		houseGump.AddHTMLGump( 10, 290, 300, 22, false, false, HouseAOSLabel( "Maximum Lockdowns" ));
+		houseGump.AddHTMLGump( 310, 290, 80, 22, false, false, HouseAOSLabel( iMulti.maxLockdowns.toString() ));
+		houseGump.AddHTMLGump( 10, 310, 300, 22, false, false, HouseAOSLabel( "Available Lockdowns" ));
+		houseGump.AddHTMLGump( 310, 310, 80, 22, false, false, HouseAOSLabel( Math.max( iMulti.maxLockdowns - iMulti.lockdowns, 0 ).toString() ));
+		houseGump.AddHTMLGump( 10, 350, 300, 22, false, false, HouseAOSLabel( "Vendor Count" ));
+		houseGump.AddHTMLGump( 310, 350, 80, 22, false, false, HouseAOSLabel( iMulti.vendors + " / " + iMulti.maxVendors ));
 	}
 	else if( pageName == "customize" )
 	{
-		HouseAOSAddButtonLine( houseGump, 10, 120, 70, "Convert Into Customizable House", isOwner && !isCustomizable );
-		HouseAOSAddButtonLine( houseGump, 10, 140, 70, "Customize This House", isOwner && isCustomizable );
-		HouseAOSAddButtonLine( houseGump, 10, 180, 2, "Change House Sign", isOwner && iMulti.isPublic );
-		HouseAOSAddButtonLine( houseGump, 10, 200, 206, "Change House Sign Hanger", isOwner && isCustomizable );
-		HouseAOSAddButtonLine( houseGump, 10, 220, 207, "Change Signpost", isOwner && isCustomizable );
-		HouseAOSAddButtonLine( houseGump, 10, 250, 208, "Change Foundation Style", isOwner && isCustomizable );
-		HouseAOSAddButtonLine( houseGump, 10, 280, 4, "Rename House", isCoOwner );
+		if( isCustomizable )
+			HouseAOSAddButtonLine( houseGump, 10, 120, 70, HouseAOSLabel( "Customize This House", isOwner ));
+		else
+			HouseAOSAddButtonLine( houseGump, 10, 120, 70, HouseAOSLabel( "Convert Into Customizable House", isOwner ));
+		HouseAOSAddButtonLine( houseGump, 10, 180, 2, HouseAOSLabel( "Change House Sign", isOwner && iMulti.isPublic ));
+		HouseAOSAddButtonLine( houseGump, 10, 200, 206, HouseAOSLabel( "Change House Sign Hanger", isOwner && isCustomizable ));
+		HouseAOSAddButtonLine( houseGump, 10, 220, 207, HouseAOSLabel( "Change Signpost", isOwner && isCustomizable ));
+		HouseAOSAddButtonLine( houseGump, 10, 250, 208, HouseAOSLabel( "Change Foundation Style", isOwner && isCustomizable ));
+		HouseAOSAddButtonLine( houseGump, 10, 280, 4, HouseAOSLabel( "Rename House", isCoOwner ));
 	}
 	else if( pageName == "ownership" )
 	{
-		HouseAOSAddButtonLine( houseGump, 10, 130, 51, "Demolish House", isOwner );
-		HouseAOSAddButtonLine( houseGump, 10, 150, 50, "Trade House", isOwner );
-		HouseAOSAddButtonLine( houseGump, 10, 190, 209, "Make Primary", false );
+		HouseAOSAddButtonLine( houseGump, 10, 130, 51, HouseAOSLabel( "Demolish House", isOwner ));
+		HouseAOSAddButtonLine( houseGump, 10, 150, 50, HouseAOSLabel( "Trade House", isOwner ));
+		HouseAOSAddButtonLine( houseGump, 10, 190, 209, HouseAOSLabel( "Make Primary", false )	);
 		if( pUser.isGM )
 		{
 			if( HouseAOSBoolTag( iMulti, "Grandfathered" ))
-				HouseAOSAddButtonLine( houseGump, 10, 230, 60, "Disable Grandfathered", true );
+				HouseAOSAddButtonLine( houseGump, 10, 230, 60, HouseAOSLabel( "Disable Grandfathered", true ));
 			else
-				HouseAOSAddButtonLine( houseGump, 10, 230, 61, "Enable Grandfathered", true );
+				HouseAOSAddButtonLine( houseGump, 10, 230, 61, HouseAOSLabel( "Enable Grandfathered", true ));
 		}
 	}
 

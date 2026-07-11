@@ -325,7 +325,9 @@ bool CPITalkRequest::Handle( void )
 			}
 		}
 
-		if(( Type() != WHISPER && Type() != ASCIIWHISPER ) && ( mChar->GetVisible() == VT_TEMPHIDDEN || mChar->GetVisible() == VT_INVISIBLE ))
+		if(( Type() != WHISPER && Type() != ASCIIWHISPER ) &&
+			( mChar->GetVisible() == VT_TEMPHIDDEN || mChar->GetVisible() == VT_INVISIBLE ) &&
+			HC_GetSession( tSock ) == nullptr )
 		{
 			mChar->ExposeToView();
 		}

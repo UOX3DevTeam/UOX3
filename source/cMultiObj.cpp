@@ -1702,7 +1702,9 @@ bool CBoatObj::CanBeObjType( ObjectType toCompare ) const
 static std::unordered_map<SERIAL, HouseCustomSession> g_houseCustomSessions;
 static const SI08 DESIGN_FOUNDATION_Z = 0;
 static const UI16 CUSTOM_FOUNDATION_STEP_ID = 0x0751;
-static const UI16 CUSTOM_SIGNPOST_ID = 0x0B97;
+// other Emus foundations use the plain wooden post (0x0009) together with the
+// south-facing dark wooden hanger (0x0B98) for their initial sign assembly.
+static const UI16 CUSTOM_SIGNPOST_ID = 0x0009;
 static const UI16 CUSTOM_SIGNHANGER_ID = 0x0B98;
 static const UI16 CUSTOM_FOUNDATION_DIRT_ID = 0x31F4;
 static const char *CUSTOM_SIGNPOST_ID_TAG = "customFoundationSignpostId";
@@ -1743,7 +1745,6 @@ static void HC_EnsureFoundationStepItems( CChar *chr, CItem *houseItem, CMultiOb
 static void HC_EnsureFoundationSignFixtures( CChar *chr, CItem *houseItem, CMultiObj *mMulti );
 static CItem *HC_CreateFoundationSignStatic( CItem *houseItem, CMultiObj *mMulti, UI16 id, SI16 x, SI16 y, SI08 z, const char *name );
 static bool HC_IsPossibleFoundationSignSupportGraphic( UI16 id );
-static UI16 HC_NormalizeFoundationSignpostGraphic( UI16 id );
 static void HC_RemoveCustomizerFootStairs( HouseCustomSession &s, CChar *chr, CItem *houseItem, CMultiObj *mMulti );
 static CItem *HC_FindHouseSign( CItem *houseItem, CMultiObj *mMulti );
 static bool HC_AddComponentStairs( HouseCustomSession &s, UI16 multiId, SI08 x, SI08 y, SI08 z );
@@ -1810,13 +1811,19 @@ bool HC_StartSession( CSocket *sock, SERIAL houseSerial )
 	if( !ValidateObject( houseItem ))
 		return false;
 
+	// Do not carry a pending spellcast into the design context.
+	chr->StopSpell();
+
 	CMultiObj *mMulti = FindMulti( houseItem );
 	if( !ValidateObject( mMulti ))
 		return false;
 
 	HC_ConvertToCustomFoundation( sock, houseItem, mMulti );
 	HC_EnsureFoundationStepItems( chr, houseItem, mMulti );
-	HC_EnsureFoundationSignFixtures( chr, houseItem, mMulti );
+	// Other Emus foundations have an established sign assembly which is
+	// removed from the customizing client's view. UOX3 converts classic houses
+	// during this same transition, so defer creating the new supports until the
+	// session ends instead of briefly introducing world items here.
     HC_EjectCustomHouseContents( chr, houseItem, mMulti, false );
 
 	HouseCustomSession s;
@@ -1844,6 +1851,17 @@ bool HC_StartSession( CSocket *sock, SERIAL houseSerial )
     s.backupTiles   = s.tiles;
 
     g_houseCustomSessions[ chr->GetSerial() ] = s;
+
+    // Other Emus DesignContext.Add moves the customizer to the foundation
+    // origin at the first editable plane and hides them from other players,
+    // even when customization was started from outside the house.
+    chr->SetVisible( VT_TEMPHIDDEN );
+    chr->RemoveFromSight();
+    chr->SetLocation( houseItem->GetX(), houseItem->GetY(),
+        static_cast<SI08>( houseItem->GetZ() + FloorToDesignZ( 0 )),
+        houseItem->WorldNumber(), houseItem->GetInstanceId() );
+    chr->Teleport();
+
     return true;
 }
 
@@ -1913,9 +1931,24 @@ void HC_EndSession( CSocket *sock )
             if( ValidateObject( mMulti ))
                 HC_EnsureFoundationSignFixtures( chr, houseItem, mMulti );
         }
+
+        // Match Other Emus RevealingAction when the design context is removed.
+        chr->ExposeToView();
+        chr->Teleport();
     }
 
     g_houseCustomSessions.erase( chr->GetSerial() );
+}
+
+void HC_CancelSession( CSocket *sock )
+{
+    HouseCustomSession *s = HC_GetSession( sock );
+    if( s == nullptr )
+        return;
+
+    HC_Revert( *s );
+    HC_SyncSessionFixtures( sock, *s );
+    HC_EndSession( sock );
 }
 
 HouseCustomSession *HC_GetSession( CSocket *sock )
@@ -1938,6 +1971,37 @@ bool HC_IsSessionForHouse( CSocket *sock, SERIAL houseSerial )
 {
     HouseCustomSession *s = HC_GetSession( sock );
     return ( s != nullptr && s->houseSerial == houseSerial );
+}
+
+bool HC_IsHiddenToCustomizer( CSocket *sock, CItem *item )
+{
+    if( sock == nullptr || !ValidateObject( item ))
+        return false;
+
+    HouseCustomSession *s = HC_GetSession( sock );
+    if( s == nullptr )
+        return false;
+
+    CItem *houseItem = CalcItemObjFromSer( s->houseSerial );
+    if( !ValidateObject( houseItem ))
+        return false;
+
+    CMultiObj *mMulti = FindMulti( houseItem );
+    if( !ValidateObject( mMulti ))
+        return false;
+
+    const bool belongsToHouse = item == houseItem || item == mMulti || FindMulti( item ) == mMulti ||
+        item->GetTempVar( CITV_MORE ) == s->houseSerial ||
+        houseItem->GetTempVar( CITV_MORE ) == item->GetSerial() ||
+        mMulti->GetTempVar( CITV_MORE ) == item->GetSerial();
+    if( !belongsToHouse )
+        return false;
+
+    TAGMAPOBJECT fixtureTag = item->GetTag( "customhousefixture" );
+    TAGMAPOBJECT signFixtureTag = item->GetTag( "customfoundationsignfixture" );
+    return item->GetType() == IT_HOUSESIGN ||
+        ( fixtureTag.m_ObjectType == TAGMAP_TYPE_INT && fixtureTag.m_IntValue == 1 ) ||
+        ( signFixtureTag.m_ObjectType == TAGMAP_TYPE_INT && signFixtureTag.m_IntValue == 1 );
 }
 
 void HC_BumpRevision( HouseCustomSession &s )
@@ -2058,10 +2122,17 @@ bool HC_AddStairs( HouseCustomSession &s, UI16 multiId, SI08 x, SI08 y, SI08 z )
     if( multiId >= 0x4000 )
         multiId = static_cast<UI16>( multiId - 0x4000 );
 
+    HouseStairComponent interiorComponent;
+    const bool interiorStairs = HC_FindStairComponent( multiId, interiorComponent );
+
     if( !Map->MultiExists( multiId ))
         return HC_AddComponentStairs( s, multiId, x, y, z );
 
-    if( HC_AddExteriorStepMulti( s, multiId, x, y, DESIGN_FOUNDATION_Z ))
+    // Interior stair graphics are also listed in stairs.txt, which is used by
+    // the exterior-step classifier. Do not let an interior multi be consumed
+    // by the exterior placement path merely because its north/west footprint
+    // happens to touch the front rows of the foundation.
+    if( !interiorStairs && HC_AddExteriorStepMulti( s, multiId, x, y, DESIGN_FOUNDATION_Z ))
         return true;
 
     const auto& structure = Map->SeekMulti( multiId );
@@ -2089,10 +2160,24 @@ bool HC_AddStairs( HouseCustomSession &s, UI16 multiId, SI08 x, SI08 y, SI08 z )
         e.y = static_cast<SI08>( ry );
         e.z = static_cast<SI08>( rz );
 
-        const bool exteriorStepLocation = Map->IsValidTile( e.id ) && HC_IsExteriorStepLocation( s, e.x, e.y, e.z );
+        const bool exteriorStepLocation = !interiorStairs && Map->IsValidTile( e.id ) && HC_IsExteriorStepLocation( s, e.x, e.y, e.z );
         const bool exteriorStepTile = exteriorStepLocation && HC_IsExteriorStepTile( e.id );
-        if( !HC_CanPlaceDesignTile( s, e.id, e.x, e.y, e.z ) && !exteriorStepLocation )
+        if( interiorStairs )
+        {
+            // Other Emus Designer_AddStairs inserts the verified multi entries
+            // directly. Its MultiComponentList handles the directional
+            // offsets; it does not reject the whole north/west multi through
+            // the normal single-component placement preflight.
+            if( !Map->IsValidTile( e.id ) || e.x < s.minX || e.x > s.maxX ||
+                e.y < s.minY || e.y > s.maxY || e.z < FloorToDesignZ( 0 ) || e.z > FloorToDesignZ( 3 ))
+            {
+                continue;
+            }
+        }
+        else if( !HC_CanPlaceDesignTile( s, e.id, e.x, e.y, e.z ) && !exteriorStepLocation )
+        {
             return false;
+        }
 
         if( exteriorStepLocation )
         {
@@ -2145,6 +2230,25 @@ bool HC_RemoveTile( HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z )
 
 bool HC_DeleteComponent( HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z )
 {
+    // Teleporter delete packets commonly report Z as zero instead of their
+    // design-plane Z. Match them by graphic/position on the active floor and
+    // keep them out of the generic stair deletion path, which can otherwise
+    // consume the supporting floor component at the same coordinates.
+    if( HC_IsTeleporterComponentTile( id ))
+    {
+        for( auto it = s.tiles.begin(); it != s.tiles.end(); ++it )
+        {
+            if( it->id == id && it->x == x && it->y == y &&
+                HC_IsTeleporterComponentTile( it->id ) && HC_DesignZToFloor( s, it->z ) == s.floor )
+            {
+                s.tiles.erase( it );
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     bool removed = HC_DeleteStairs( s, id, x, y, z );
 
     if( !removed )
@@ -2614,7 +2718,7 @@ void HC_HideCustomHouseFixtures( CSocket *sock, CMultiObj *mMulti )
     for( const auto &obj : itemList->collection() )
     {
         CItem *it = static_cast<CItem*>( obj );
-        if( !ValidateObject( it ) || ( !IsCustomHouseFixture( it ) && !IsCustomFoundationSignFixture( it )))
+        if( !ValidateObject( it ) || ( !IsCustomHouseFixture( it ) && !IsCustomFoundationSignFixture( it ) && it->GetType() != IT_HOUSESIGN ))
             continue;
 
         it->RemoveFromSight( sock );
@@ -3332,18 +3436,10 @@ static CItem *HC_CreateFoundationSignStatic( CItem *houseItem, CMultiObj *mMulti
 
 static bool HC_IsPossibleFoundationSignSupportGraphic( UI16 id )
 {
-    if( id == 0x0009 || id == CUSTOM_SIGNPOST_ID || id == CUSTOM_SIGNHANGER_ID )
+    if( id == CUSTOM_SIGNPOST_ID || id == CUSTOM_SIGNHANGER_ID )
         return true;
 
     return ( id >= 0x0B97 && id <= 0x0BA2 );
-}
-
-static UI16 HC_NormalizeFoundationSignpostGraphic( UI16 id )
-{
-    if( id == 0x0009 )
-        return CUSTOM_SIGNPOST_ID;
-
-    return id;
 }
 
 static void HC_EnsureFoundationSignFixtures( CChar *chr, CItem *houseItem, CMultiObj *mMulti )
@@ -3398,8 +3494,22 @@ static void HC_EnsureFoundationSignFixtures( CChar *chr, CItem *houseItem, CMult
     }
 
     const SI16 postY = static_cast<SI16>( signY - 1 );
-    const UI16 postId = HC_NormalizeFoundationSignpostGraphic( static_cast<UI16>( GetIntTag( houseItem, CUSTOM_SIGNPOST_ID_TAG, CUSTOM_SIGNPOST_ID )));
-    const UI16 hangerId = static_cast<UI16>( GetIntTag( houseItem, CUSTOM_SIGNHANGER_ID_TAG, CUSTOM_SIGNHANGER_ID ));
+    UI16 postId = static_cast<UI16>( GetIntTag( houseItem, CUSTOM_SIGNPOST_ID_TAG, CUSTOM_SIGNPOST_ID ));
+    UI16 hangerId = static_cast<UI16>( GetIntTag( houseItem, CUSTOM_SIGNHANGER_ID_TAG, CUSTOM_SIGNHANGER_ID ));
+
+    // GetTag returns an integer-valued empty object for a missing tag on some
+    // objects, so GetIntTag can yield zero instead of its supplied default.
+    // Never create sign supports with item ID zero (the client's UNUSED art).
+    if( postId == 0 || !Map->IsValidTile( postId ))
+        postId = CUSTOM_SIGNPOST_ID;
+
+    if( hangerId == 0 || !Map->IsValidTile( hangerId ))
+        hangerId = CUSTOM_SIGNHANGER_ID;
+
+    SetIntTag( houseItem, CUSTOM_SIGNPOST_ID_TAG, postId );
+    SetIntTag( houseItem, CUSTOM_SIGNHANGER_ID_TAG, hangerId );
+    SetIntTag( mMulti, CUSTOM_SIGNPOST_ID_TAG, postId );
+    SetIntTag( mMulti, CUSTOM_SIGNHANGER_ID_TAG, hangerId );
 
     itemList = mMulti->GetItemsInMultiList();
     if( itemList != nullptr )
@@ -3564,9 +3674,11 @@ static bool HC_ParseComponentFlag( const std::vector<std::string> &tokens, size_
 
 static bool HC_OpenComponentFile( const std::string &fileName, std::ifstream &input, std::string &resolvedPath )
 {
+    const std::string dataDir = cwmWorldState->ServerData()->Directory( CSDDP_DATA );
     const std::string rootDir = cwmWorldState->ServerData()->Directory( CSDDP_ROOT );
-    const std::array<std::string, 6> componentDirs =
+    const std::array<std::string, 7> componentDirs =
     {
+        dataDir,
         rootDir + "data/components/",
         "data/components/",
         "../data/components/",
@@ -4456,7 +4568,18 @@ void HC_BuildCombinedTiles( const HouseCustomSession &s, std::vector<HouseTileEn
 
     for( const auto &tile : s.baseTiles )
     {
-        if( tile.id == CUSTOM_FOUNDATION_DIRT_ID && tile.z == FloorToDesignZ( 0 ) && HC_HasFloorOverlayAt( s.tiles, tile.x, tile.y, tile.z ))
+        bool teleporterOverlay = false;
+        for( const auto &designTile : s.tiles )
+        {
+            if( designTile.x == tile.x && designTile.y == tile.y && designTile.z == tile.z && HC_IsTeleporterComponentTile( designTile.id ))
+            {
+                teleporterOverlay = true;
+                break;
+            }
+        }
+
+        if( tile.id == CUSTOM_FOUNDATION_DIRT_ID && tile.z == FloorToDesignZ( 0 ) &&
+            ( HC_HasFloorOverlayAt( s.tiles, tile.x, tile.y, tile.z ) || teleporterOverlay ))
             continue;
 
         if( tile.id == CUSTOM_FOUNDATION_STEP_ID && tile.z == DESIGN_FOUNDATION_Z && HC_HasExteriorStepReplacementAt( s, tile.x, tile.y ))
@@ -4465,7 +4588,38 @@ void HC_BuildCombinedTiles( const HouseCustomSession &s, std::vector<HouseTileEn
         out.push_back( tile );
     }
 
-    out.insert( out.end(), s.tiles.begin(), s.tiles.end() );
+    // Other Emus freezes fixtures back into the editable component list after the
+    // ordinary design components. Teleporters share the base-floor plane and
+    // cell, so emitting a floor after a teleporter hides the teleporter even
+    // though it is still present in the design. Preserve that fixture-last
+    // ordering whenever a detailed design state is built.
+    for( const auto &tile : s.tiles )
+    {
+        bool teleporterOverlay = false;
+        if( HC_IsFloorComponentTile( tile.id ))
+        {
+            for( const auto &designTile : s.tiles )
+            {
+                if( designTile.x == tile.x && designTile.y == tile.y && designTile.z == tile.z && HC_IsTeleporterComponentTile( designTile.id ))
+                {
+                    teleporterOverlay = true;
+                    break;
+                }
+            }
+        }
+
+        if( teleporterOverlay )
+            continue;
+
+        if( !HC_IsFixtureComponentTile( tile.id ))
+            out.push_back( tile );
+    }
+
+    for( const auto &tile : s.tiles )
+    {
+        if( HC_IsFixtureComponentTile( tile.id ))
+            out.push_back( tile );
+    }
 }
 
 void HC_SendDesignState( CSocket *sock, const HouseCustomSession &s, bool enableResponse )
@@ -4514,6 +4668,25 @@ static void HC_ApplyFoundationBaseTiles( FoundationType fType, SI16 width, SI16 
     const SI16 eastCol  = (width  - 1) - xCenter;
     const SI16 southRow = 0 - yCenter;
     const SI16 northRow = (height - 1) - yCenter;
+
+    // Other Emus starts with the original foundation multi, whose buildable
+    // footprint contains dirt at Z+7, before replacing the visible border.
+    // Since UOX3 synthesizes the foundation instead of copying that multi,
+    // recreate those permanent base-floor tiles here. Player flooring is
+    // layered at the same Z and HC_BuildCombinedTiles suppresses the dirt
+    // wherever such an overlay exists.
+    for( SI16 x = 1; x < width; ++x )
+    {
+        for( SI16 y = 1; y < height; ++y )
+        {
+            HouseTileEntry dirt;
+            dirt.id = CUSTOM_FOUNDATION_DIRT_ID;
+            dirt.x = static_cast<SI08>( x - xCenter );
+            dirt.y = static_cast<SI08>( y - yCenter );
+            dirt.z = FloorToDesignZ( 0 );
+            baseTiles.push_back( dirt );
+        }
+    }
 
     // Corner / post anchors
     Add( post,   westCol,  southRow );

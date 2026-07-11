@@ -877,6 +877,12 @@ void CSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 void CSkills::SkillUse( CSocket *s, UI08 x )
 {
 	VALIDATESOCKET( s );
+	if( HC_GetSession( s ) != nullptr )
+	{
+		s->SysMessage( "You cannot use skills while customizing a house." );
+		return;
+	}
+
 	CChar *mChar = s->CurrcharObj();
 	if( mChar->IsDead() )
 	{

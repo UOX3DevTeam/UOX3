@@ -4037,6 +4037,12 @@ void CMagic::SpellFail( CSocket *s )
 //o------------------------------------------------------------------------------------------------o
 bool CMagic::SelectSpell( CSocket *mSock, SI32 num )
 {
+	if( mSock != nullptr && HC_GetSession( mSock ) != nullptr )
+	{
+		mSock->SysMessage( "You cannot cast spells while customizing a house." );
+		return false;
+	}
+
 	if( num < 1 )
 	{
 		Console.Error( "Invalid spell ID passed to CMagic::SelectSpell() - aborting spellcast attempt!" );

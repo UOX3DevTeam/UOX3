@@ -3639,6 +3639,12 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 bool CPIDblClick::Handle( void )
 {
 	CChar *ourChar	= tSock->CurrcharObj();
+	if( HC_GetSession( tSock ) != nullptr )
+	{
+		tSock->SysMessage( "You cannot use objects while customizing a house." );
+		return true;
+	}
+
 	ourChar->BreakConcentration( tSock );
 	UI08 a1			= tSock->GetByte( 1 );
 
