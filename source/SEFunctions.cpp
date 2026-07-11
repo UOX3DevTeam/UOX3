@@ -6082,6 +6082,8 @@ JSBool SE_HouseBeginCustomize( JSContext *cx, uintN argc, jsval *vp )
 
 	// Put client into customization mode
 	sock->Send( &CPHouseCustomization( houseSerial, true ) );
+	if( CMultiObj *mMultiObj = FindMulti( pMulti ); ValidateObject( mMultiObj ))
+		HC_HideCustomHouseFixtures( sock, mMultiObj );
 
 	HouseCustomSession *s = HC_GetSession( sock );
 	if( s == nullptr || s->houseSerial != houseSerial )
