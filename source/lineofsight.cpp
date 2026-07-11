@@ -448,6 +448,33 @@ UI16 DynamicCanBlock( CItem *toCheck, Vector3D_st *collisions, SI32 collisioncou
 					}
 				}
 			}
+			std::vector<HouseTileEntry> designTiles;
+			if( HC_LoadCommittedDesignTiles( static_cast<CMultiObj *>( toCheck ), designTiles ))
+			{
+				for( const auto &designTile : designTiles )
+				{
+					if( !Map->IsValidTile( designTile.id ))
+						continue;
+
+					const SI16 checkX = static_cast<SI16>( curX + designTile.x );
+					const SI16 checkY = static_cast<SI16>( curY + designTile.y );
+					if( checkX < x1 || checkX > x2 || checkY < y1 || checkY > y2 )
+						continue;
+
+					const SI08 checkZ = static_cast<SI08>( curZ + designTile.z );
+					CTile& multiTile = Map->SeekTile( designTile.id );
+					for( i = 0; i < collisioncount; ++i )
+					{
+						checkLoc = &collisions[i];
+						if( checkX == checkLoc->x && checkY == checkLoc->y &&
+						   (( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height() )) ||
+						    ( multiTile.Height() <= 2 && abs( checkLoc->z - checkZ ) <= dz )))
+						{
+							return designTile.id;
+						}
+					}
+				}
+			}
 		}
 	}
 	return INVALIDID;

@@ -6043,9 +6043,32 @@ void CPIAOSCommand::Receive( void )
 	UI16 len = tSock->GetWord( 1 );
 	tSock->Receive( len, false );
 }
+
+static UI08 ClientLevelToFloor( UI32 clientLevel )
+{
+    // OSI typically: 1=ground, 2=1st, 3=2nd, 4=3rd
+    if( clientLevel <= 1 ) return 0;
+    if( clientLevel == 2 ) return 1;
+    if( clientLevel == 3 ) return 2;
+    return 3; // allow 4th view if you support it
+}
+
 bool CPIAOSCommand::Handle( void )
 {
-	switch( tSock->GetWord( 7 ))	// Which subcommand?
+    UI16 len = tSock->GetWord( 1 );
+
+    // 0xD7:
+    // [0] cmd
+    // [1-2] len
+    // [3-6] player serial
+    // [7-8] subcommand
+    UI32 playerSer = tSock->GetDWord( 3 );
+    UI16 subCmd    = tSock->GetWord( 7 );
+
+    // Debug (optional)
+    // Console.Print("D7 len=%u player=0x%X sub=0x%04X\n", len, playerSer, subCmd );
+
+	switch( subCmd )	// Which subcommand?
 	{
 			/*case 0x0002:	break;	//House Customisation :: Backup
 			 case 0x0003:	break;	//House Customisation :: Restore
@@ -6057,6 +6080,293 @@ bool CPIAOSCommand::Handle( void )
 			 case 0x000E:	break;	//House Customisation :: Synch
 			 case 0x0010:	break;	//House Customisation :: Clear
 			 case 0x0012:	break;	//House Customisation :: Switch Floors*/
+		case 0x0002: // Backup
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				return true;
+
+			HC_Backup( *s );
+			HC_BumpRevision( *s );
+
+			HC_SendDesignState( tSock, *s );
+			return true;
+		}
+
+		case 0x0003: // Restore
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				return true;
+
+			HC_Restore( *s );
+			HC_SyncSessionFixtures( tSock, *s );
+			HC_BumpRevision( *s );
+
+			HC_SendDesignState( tSock, *s );
+			return true;
+		}
+		case 0x0004: // Commit
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				return true;
+
+			if( !HC_RequestCommitConfirm( tSock ))
+				HC_SendDesignState( tSock, *s );
+			return true;
+		}
+
+		case 0x0005: // Destroy item
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				return true;
+
+			UI32 itemID32 = tSock->GetDWord( 10 );
+			UI16 itemID = ( UI16 ) ( itemID32 & 0xFFFF );
+
+			SI16 x16 = ( SI16 ) tSock->GetDWord( 15 );
+			SI16 y16 = ( SI16 ) tSock->GetDWord( 20 );
+			SI16 z16 = (SI16)tSock->GetDWord( 25 );
+
+			if( x16 < -128 )
+				x16 = -128;
+
+			if( x16 > 127 )
+				x16 = 127;
+
+			if( y16 < -128 )
+				y16 = -128;
+
+			if( y16 > 127 )
+				y16 = 127;
+
+			SI08 x = ( SI08 ) x16;
+			SI08 y = ( SI08 ) y16;
+			SI08 pktZ = ( SI08 ) z16;
+			SI08 z = pktZ;
+
+			if( pktZ == 0 )
+				z = SessionDesignZ( s );
+
+			SI08 eraseZ = z;
+			bool removed = HC_DeleteComponent( *s, itemID, x, y, z );
+
+			if( !removed && z != pktZ )
+			{
+				removed = HC_DeleteComponent( *s, itemID, x, y, pktZ );
+				if( removed )
+					eraseZ = pktZ;
+			}
+
+			if( removed )
+			{
+				HC_DeleteFixtureAt( tSock, *s, itemID, x, y, eraseZ );
+				HC_BumpRevision( *s );
+			}
+
+			HC_SendDesignState( tSock, *s );
+			return true;
+		}
+
+		// ------------------------------------------------------------
+		// House customization place item
+		// ------------------------------------------------------------
+		case 0x0006:
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				return true;
+
+			UI32 itemID32 = tSock->GetDWord( 10 );
+			UI16 itemID = ( UI16 ) ( itemID32 & 0xFFFF );
+
+			SI16 x16 = ( SI16 ) tSock->GetDWord( 15 );
+			SI16 y16 = ( SI16 ) tSock->GetDWord( 20 );
+
+			// Clamp to SI08 if your struct uses SI08
+			if( x16 < -128 ) x16 = -128;
+			if( x16 > 127 )  x16 = 127;
+			if( y16 < -128 ) y16 = -128;
+			if( y16 > 127 )  y16 = 127;
+
+			SI08 x = ( SI08 ) x16;
+			SI08 y = ( SI08 ) y16;
+
+			SI08 z = SessionDesignZ( s );
+			if( y == s->maxY )
+				 z = 0;
+
+			if( HC_CanPlaceTile( *s, itemID, x, y, z ))
+			{
+				if( HC_AddTile( *s, itemID, x, y, z ))
+					HC_BumpRevision( *s );
+			}
+
+			HC_SendDesignState( tSock, *s );
+			return true;
+		}
+		case 0x000D: // House Customization :: Place Multi (Stairs)
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				return true;
+
+			if( len >= 24 )
+			{
+				const UI16 multiId = static_cast<UI16>( tSock->GetDWord( 10 ) & 0xFFFF );
+				SI16 x16 = static_cast<SI16>( tSock->GetDWord( 15 ));
+				SI16 y16 = static_cast<SI16>( tSock->GetDWord( 20 ));
+
+				if( x16 < -128 ) x16 = -128;
+				if( x16 > 127 )  x16 = 127;
+				if( y16 < -128 ) y16 = -128;
+				if( y16 > 127 )  y16 = 127;
+
+				// Other Emus allows the multi anchor to occupy the
+				// customizer's tile. Directional stair art extends away from
+				// that anchor, so rejecting it breaks north/west placement.
+				if( HC_AddStairs( *s, multiId, static_cast<SI08>( x16 ), static_cast<SI08>( y16 ), SessionDesignZ( s )))
+					HC_BumpRevision( *s );
+			}
+
+			HC_SendDesignState( tSock, *s );
+			return true;
+		}
+		case 0x0013: // House Customization :: Place Roof
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				return true;
+
+			UI32 itemID32 = tSock->GetDWord( 10 );
+			UI16 itemID = ( UI16 ) ( itemID32 & 0xFFFF );
+
+			SI16 x16 = ( SI16 ) tSock->GetDWord( 15 );
+			SI16 y16 = ( SI16 ) tSock->GetDWord( 20 );
+			SI16 z16 = ( SI16 ) tSock->GetDWord( 25 );
+
+			if( x16 < -128 ) x16 = -128;
+			if( x16 > 127 )  x16 = 127;
+			if( y16 < -128 ) y16 = -128;
+			if( y16 > 127 )  y16 = 127;
+			if( z16 < -128 ) z16 = -128;
+			if( z16 > 127 )  z16 = 127;
+
+			if( HC_AddRoofTile( *s, itemID, ( SI08 )x16, ( SI08 )y16, ( SI08 )z16 ))
+				HC_BumpRevision( *s );
+
+			HC_SendDesignState( tSock, *s );
+			return true;
+		}
+		case 0x0014: // House Customization :: Delete Roof
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				return true;
+
+			UI32 itemID32 = tSock->GetDWord( 10 );
+			UI16 itemID = ( UI16 ) ( itemID32 & 0xFFFF );
+
+			SI16 x16 = ( SI16 ) tSock->GetDWord( 15 );
+			SI16 y16 = ( SI16 ) tSock->GetDWord( 20 );
+			SI16 z16 = ( SI16 ) tSock->GetDWord( 25 );
+
+			if( x16 < -128 ) x16 = -128;
+			if( x16 > 127 )  x16 = 127;
+			if( y16 < -128 ) y16 = -128;
+			if( y16 > 127 )  y16 = 127;
+			if( z16 < -128 ) z16 = -128;
+			if( z16 > 127 )  z16 = 127;
+
+			if( HC_DeleteRoofTile( *s, itemID, ( SI08 )x16, ( SI08 )y16, ( SI08 )z16 ))
+				HC_BumpRevision( *s );
+
+			HC_SendDesignState( tSock, *s );
+			return true;
+		}
+		case 0x000C: // House Customization :: Exit
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				return true;
+
+			SERIAL houseSerial = s->houseSerial;
+
+			// Cancel customize mode by restoring the last committed design.
+			// Failed commits must not leave uncommitted tiles visible after closing the menu.
+			HC_Revert( *s );
+			HC_SyncSessionFixtures( tSock, *s );
+			HC_BumpRevision( *s );
+
+			// Tell client to exit customize mode
+			tSock->Send( &CPHouseCustomization( houseSerial, false ) );
+
+			// Refresh the visible committed design like Other Emus CurrentState.SendDetailedInfoTo(..., false).
+			HC_SendDesignState( tSock, *s, false );
+
+			// Destroy the session
+			HC_EndSession( tSock );
+			return true;
+		}
+		case 0x000E:
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				 return true;
+
+			HC_SendDesignState( tSock, *s );
+
+			return true;
+		}
+		case 0x0010: // Clear
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				return true;
+
+			HC_ClearAll( *s );
+			HC_SyncSessionFixtures( tSock, *s );
+			HC_BumpRevision( *s );
+
+			HC_SendDesignState( tSock, *s );
+			return true;
+		}
+		case 0x0012:
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				return true;
+
+			UI32 level = tSock->GetDWord( 10 );
+			s->clientLevel = (UI08)level;
+			s->floor = ClientLevelToFloor( level );
+
+			// Move player to correct design Z
+			CChar *chr = tSock->CurrcharObj();
+			if( ValidateObject( chr ))
+			{
+				chr->SetLocation( chr->GetX(), chr->GetY(), FloorToDesignZ( s->floor ), chr->WorldNumber(), chr->GetInstanceId() );
+				chr->Teleport();
+			}
+
+			HC_SendDesignState( tSock, *s );
+			return true;
+		}
+		case 0x001A: // Revert
+		{
+			HouseCustomSession* s = HC_GetSession( tSock );
+			if( s == nullptr )
+				return true;
+
+			HC_Revert( *s );
+			HC_SyncSessionFixtures( tSock, *s );
+			HC_BumpRevision( *s );
+
+			HC_SendDesignState( tSock, *s );
+			return true;
+		}
 		case 0x0019: //Special Moves :: Activate / Deactivate
 		{
 			//UI32 unknown = tSock->GetDWord( 9 );
@@ -6174,6 +6484,8 @@ void CPIAOSCommand::Log( std::ostream &outStream, bool fullHeader )
 		case 0x000E:	outStream << "House Customisation :: Synch";					break;
 		case 0x0010:	outStream << "House Customisation :: Clear";					break;
 		case 0x0012:	outStream << "House Customisation :: Switch Floors";			break;
+		case 0x0013:	outStream << "House Customisation :: Place Roof";				break;
+		case 0x0014:	outStream << "House Customisation :: Delete Roof";				break;
 		case 0x0019:	outStream << "Special Moves :: Activate / Deactivate";			break;
 		case 0x001A:	outStream << "House Customisation :: Revert";					break;
 		case 0x0028:	outStream << "Guild :: Unknown";								break;

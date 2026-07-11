@@ -75,6 +75,13 @@ JSBool SE_DisableSpell( JSContext *cx, uintN argc, jsval *vp );		//											**
 JSBool SE_RegisterSkill( JSContext *cx, uintN argc, jsval *vp );
 JSBool SE_RegisterPacket( JSContext *cx, uintN argc, jsval *vp );
 
+// House Customization (Custom Housing) helpers
+JSBool SE_HouseBeginCustomize( JSContext *cx, uintN argc, jsval *vp );
+JSBool SE_HouseEndCustomize( JSContext *cx, uintN argc, jsval *vp );
+JSBool SE_HouseSendDesignRevision( JSContext *cx, uintN argc, jsval *vp );
+JSBool SE_HouseCommitCustomize( JSContext *cx, uintN argc, jsval *vp );
+JSBool SE_HouseSetCustomizationFixture( JSContext *cx, uintN argc, jsval *vp );
+
 JSBool SE_GetHour( JSContext *cx, uintN argc, jsval *vp );					//										***
 JSBool SE_GetMinute( JSContext *cx, uintN argc, jsval *vp );				//										***
 JSBool SE_GetDay( JSContext *cx, uintN argc, jsval *vp );					//										***

@@ -55,6 +55,27 @@
 
 CMovement *Movement;
 
+static const UI16 CUSTOM_FOUNDATION_STEP_ID = 0x0751;
+
+static bool IsCustomFoundationMulti( UI16 multiId )
+{
+	return ( multiId >= 0x13EC && multiId <= 0x147B );
+}
+
+static bool IsCustomFoundationItemId( UI16 itemId )
+{
+	return ( itemId >= 0x53EC && itemId <= 0x547B );
+}
+
+static bool IsCustomFoundationFrontStep( UI16 multiId, SI16 relX, SI16 relY )
+{
+	if( !IsCustomFoundationMulti( multiId ) || !Map->MultiExists( multiId ))
+		return false;
+
+	const auto &structure = Map->SeekMulti( multiId );
+	return ( relY == static_cast<SI16>( structure.maxY + 1 ) && relX >= static_cast<SI16>( structure.minX + 1 ) && relX <= structure.maxX );
+}
+
 // These are defines that I'll use. I have a history of working with properties, so that's why
 // I'm using custom definitions here versus what may be defined in the other includes.
 // NOTE: P = Property, P_C = Property for Characters, P_PF = Property for Pathfinding
@@ -997,6 +1018,16 @@ bool CMovement::CheckForRunning( CChar *c, UI08 dir )
 //o------------------------------------------------------------------------------------------------o
 bool CMovement::CheckForStealth( CChar *c )
 {
+	// House customization uses visibility as a design-context state, not as
+	// skill-based hiding. Other Emus keeps the customizer hidden while moving, so
+	// do not run the normal no-stealth-counter reveal logic for this session.
+	if( c != nullptr )
+	{
+		CSocket *sock = c->GetSocket();
+		if( sock != nullptr && HC_GetSession( sock ) != nullptr )
+			return true;
+	}
+
 	if( c->GetVisible() == VT_TEMPHIDDEN || c->GetVisible() == VT_INVISIBLE )
 	{
 		if( c->IsOnHorse() || c->IsFlying() ) // Consider Gargoyle flying as mounted for this context
@@ -1179,6 +1210,39 @@ auto CMovement::GetBlockingDynamics( SI16 x, SI16 y, std::vector<Tile_st> &xyblo
 									xyblock.push_back( tile );
 									++xycount;
 									if( xycount >= XYMAX ) // don't overflow
+									{
+										return;
+									}
+								}
+							}
+							if( IsCustomFoundationFrontStep( multiId, static_cast<SI16>( x - tItem->GetX() ), static_cast<SI16>( y - tItem->GetY() )))
+							{
+								auto tile = Tile_st( TileType_t::dyn );
+								tile.artInfo = &Map->SeekTile( CUSTOM_FOUNDATION_STEP_ID );
+								tile.tileId = CUSTOM_FOUNDATION_STEP_ID;
+								tile.altitude = tItem->GetZ();
+								xyblock.push_back( tile );
+								++xycount;
+								if( xycount >= XYMAX )
+								{
+									return;
+								}
+							}
+							std::vector<HouseTileEntry> designTiles;
+							if( HC_LoadCommittedDesignTiles( static_cast<CMultiObj *>( tItem ), designTiles ))
+							{
+								for( const auto &designTile : designTiles )
+								{
+									if(( tItem->GetX() + designTile.x ) != x || ( tItem->GetY() + designTile.y ) != y || !Map->IsValidTile( designTile.id ))
+										continue;
+
+									auto tile = Tile_st( TileType_t::dyn );
+									tile.artInfo = &Map->SeekTile( designTile.id );
+									tile.tileId = designTile.id;
+									tile.altitude = designTile.z + tItem->GetZ();
+									xyblock.push_back( tile );
+									++xycount;
+									if( xycount >= XYMAX )
 									{
 										return;
 									}
@@ -1450,7 +1514,7 @@ bool UpdateItemsOnPlane( CSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI
 {
 	if( isGM || tItem->GetVisible() == VT_VISIBLE || ( tItem->GetVisible() == VT_TEMPHIDDEN && tItem->GetOwnerObj() == mChar ))
 	{
-		if( mSock != nullptr && (( id >= 0x407A && id <= 0x407F) || id == 0x5388 ))
+		if( mSock != nullptr && (( id >= 0x407A && id <= 0x407F) || id == 0x5388 || IsCustomFoundationItemId( id )))
 		{
 			if( dNew == DIST_BUILDRANGE && dOld > DIST_BUILDRANGE )	// It's a large building
 			{

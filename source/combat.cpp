@@ -44,6 +44,16 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 	if( !ValidateObject( cAttack ) || !ValidateObject( cTarget ) || cAttack == cTarget )
 		return false;
 
+	CSocket *attackSock = cAttack->GetSocket();
+	CSocket *targetSock = cTarget->GetSocket();
+	if(( attackSock != nullptr && HC_GetSession( attackSock ) != nullptr ) ||
+		( targetSock != nullptr && HC_GetSession( targetSock ) != nullptr ))
+	{
+		if( attackSock != nullptr && HC_GetSession( attackSock ) != nullptr )
+			attackSock->SysMessage( "You cannot do that while customizing a house." );
+		return false;
+	}
+
 	if( cAttack->IsDead() || cTarget->IsDead() )
 		return false;
 

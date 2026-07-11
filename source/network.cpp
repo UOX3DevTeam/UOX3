@@ -313,6 +313,10 @@ void CNetworkStuff::Disconnect( UOXSOCKET s )
 	{
 		if( !currChar->IsFree() && connClients[s] != nullptr )
 		{
+			// A design context is transient. Disconnecting cancels uncommitted
+			// work and restores normal house/character state before logout.
+			HC_CancelSession( connClients[s] );
+
 			// October 6, 2002 - Support for the onLogout event.
 			bool returnState = false;
 			std::vector<UI16> scriptTriggers = currChar->GetScriptTriggers();

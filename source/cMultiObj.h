@@ -203,5 +203,94 @@ public:
 	virtual bool		CanBeObjType( ObjectType toCompare ) const override;
 };
 
-#endif
+struct HouseTileEntry
+{
+    UI16 id;
+    SI08 x;
+    SI08 y;
+    SI08 z;
+};
 
+struct HouseCustomSession
+{
+    SERIAL houseSerial;
+    UI32 revision;
+	UI08 clientLevel; // raw from client (1..3 typically)
+	UI08 floor; // current floor selected by client (0 = ground)
+	SI16 minX;
+	SI16 maxX;
+	SI16 minY;
+	SI16 maxY;
+
+    std::vector<HouseTileEntry> baseTiles;     // foundation border, always visible in design
+    std::vector<HouseTileEntry> tiles;         // actual placed design tiles
+    std::vector<HouseTileEntry> originalTiles; // snapshot from start of session
+    std::vector<HouseTileEntry> backupTiles;   // set by Backup button
+};
+
+enum FoundationType : UI08
+{
+    FT_DarkWood = 0,
+    FT_LightWood = 1,
+    FT_Dungeon = 2,
+    FT_Brick = 3,
+    FT_Stone = 4,
+    // add more as needed
+};
+
+bool HC_StartSession( CSocket *sock, SERIAL houseSerial );
+void HC_EndSession( CSocket *sock );
+void HC_CancelSession( CSocket *sock );
+HouseCustomSession *HC_GetSession( CSocket *sock );
+bool HC_IsSessionForHouse( CSocket *sock, SERIAL houseSerial );
+bool HC_IsHiddenToCustomizer( CSocket *sock, CItem *item );
+void HC_LoadExistingCustomTiles( HouseCustomSession &s, CItem *houseItem, CMultiObj *mMulti );
+bool HC_LoadCommittedDesignTiles( CMultiObj *mMulti, std::vector<HouseTileEntry> &tiles );
+bool HC_SendCommittedDesignState( CSocket *sock, CMultiObj *mMulti, bool enableResponse = false, bool allowActiveSession = false );
+void HC_HideCustomHouseFixtures( CSocket *sock, CMultiObj *mMulti );
+bool HC_SyncSessionFixtures( CSocket *sock, const HouseCustomSession &s );
+void HC_BumpRevision( HouseCustomSession &s );
+bool HC_CanPlaceTile( const HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z );
+bool HC_AddTile( HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z );
+bool HC_AddStairs( HouseCustomSession &s, UI16 multiId, SI08 x, SI08 y, SI08 z );
+bool HC_AddRoofTile( HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 relativeZ );
+bool HC_RemoveTile( HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z );
+bool HC_DeleteComponent( HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z );
+bool HC_DeleteRoofTile( HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z );
+bool HC_DeleteFixtureAt( CSocket *sock, const HouseCustomSession &s, UI16 id, SI08 x, SI08 y, SI08 z );
+bool HC_CommitSession( CSocket *sock );
+bool HC_RequestCommitConfirm( CSocket *sock );
+bool HC_SetCustomizationFixture( CSocket *sock, CItem *houseItem, UI08 action, UI16 value );
+SI32 HC_GetCommitCost( CItem *houseItem, const HouseCustomSession &s );
+void HC_Backup( HouseCustomSession &s );
+void HC_Restore( HouseCustomSession &s );
+void HC_Revert( HouseCustomSession &s );
+void HC_ClearAll( HouseCustomSession &s );
+void HC_BuildCombinedTiles( const HouseCustomSession &s, std::vector<HouseTileEntry> &out );
+void HC_SendDesignState( CSocket *sock, const HouseCustomSession &s, bool enableResponse = true );
+bool HC_LoadFoundationTiles( CSocket* sock, HouseCustomSession& s );
+void HC_RemoveAtXYZ( HouseCustomSession& s, SI08 x, SI08 y, SI08 z );
+
+static SI08 FloorToDesignZ( UI08 floor )
+{
+    // Your expected planes:
+    // floor 0 => 7
+    // floor 1 => 27
+    // floor 2 => 47
+    // floor 3 => 67 (if you allow it)
+    return (SI08)( 7 + (floor * 20) );
+}
+
+static SI08 SessionDesignZ( const HouseCustomSession *s )
+{
+    if( s == nullptr ) return 7;
+    return FloorToDesignZ( s->floor );
+}
+
+namespace zlibhelper
+{
+    std::vector<UI08> Compress( const std::vector<UI08> &src );
+    std::vector<UI08> Decompress( const std::vector<UI08> &src, size_t outSize );
+}
+
+#endif

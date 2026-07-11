@@ -14,6 +14,22 @@ using namespace std::string_literals;
 
 CMulHandler *Map				= nullptr;
 
+static const UI16 CUSTOM_FOUNDATION_STEP_ID = 0x0751;
+
+static bool IsCustomFoundationMulti( UI16 multiId )
+{
+	return ( multiId >= 0x13EC && multiId <= 0x147B );
+}
+
+static bool IsCustomFoundationFrontStep( UI16 multiId, SI16 relX, SI16 relY )
+{
+	if( !IsCustomFoundationMulti( multiId ) || !Map->MultiExists( multiId ))
+		return false;
+
+	const auto &structure = Map->SeekMulti( multiId );
+	return ( relY == static_cast<SI16>( structure.maxY + 1 ) && relX >= static_cast<SI16>( structure.minX + 1 ) && relX <= structure.maxX );
+}
+
 //const UI16 LANDDATA_SIZE		= 0x4000; //(512 * 32)
 
 /*!
@@ -547,6 +563,41 @@ auto CMulHandler::MultiHeight( CItem *i, std::int16_t x, std::int16_t y, std::in
 			}
 		}
 	}
+	if( IsCustomFoundationFrontStep( multiId, static_cast<SI16>( x - baseX ), static_cast<SI16>( y - baseY )))
+	{
+		tmpTop = baseZ;
+		if( checkHeight )
+		{
+			if(( tmpTop <= oldZ + maxZ ) && tmpTop > oldZ && tmpTop > mHeight )
+				mHeight = tmpTop;
+		}
+		else if( std::abs( tmpTop - oldZ ) <= maxZ )
+		{
+			mHeight = static_cast<SI08>( tmpTop + TileHeight( CUSTOM_FOUNDATION_STEP_ID ));
+		}
+	}
+	std::vector<HouseTileEntry> designTiles;
+	if( HC_LoadCommittedDesignTiles( static_cast<CMultiObj *>( i ), designTiles ))
+	{
+		for( const auto &designTile : designTiles )
+		{
+			if(( baseX + designTile.x ) != x || ( baseY + designTile.y ) != y || !IsValidTile( designTile.id ))
+				continue;
+
+			tmpTop = static_cast<SI08>( baseZ + designTile.z );
+			if( checkHeight )
+			{
+				if(( tmpTop <= oldZ + maxZ ) && tmpTop > oldZ && tmpTop > mHeight )
+					mHeight = tmpTop;
+			}
+			else if( std::abs( tmpTop - oldZ ) <= maxZ )
+			{
+				mHeight = static_cast<SI08>( tmpTop + TileHeight( designTile.id ));
+				if( mHeight == oldZ )
+					break;
+			}
+		}
+	}
 	
 	return mHeight;
 }
@@ -599,6 +650,29 @@ auto CMulHandler::MultiTile( CItem *i, std::int16_t x, std::int16_t y, std::int8
 				{
 					rValue = multi.tileId;
 					break;
+				}
+			}
+		}
+		if( rValue == 0 && IsCustomFoundationFrontStep( multiId, static_cast<SI16>( x - i->GetX() ), static_cast<SI16>( y - i->GetY() )))
+		{
+			if( !checkVisible || std::abs( i->GetZ() - oldz ) <= 1 )
+				rValue = CUSTOM_FOUNDATION_STEP_ID;
+		}
+		if( rValue == 0 )
+		{
+			std::vector<HouseTileEntry> designTiles;
+			if( HC_LoadCommittedDesignTiles( static_cast<CMultiObj *>( i ), designTiles ))
+			{
+				for( const auto &designTile : designTiles )
+				{
+					if(( i->GetX() + designTile.x ) != x || ( i->GetY() + designTile.y ) != y || !IsValidTile( designTile.id ))
+						continue;
+
+					if( !checkVisible || std::abs( i->GetZ() + designTile.z - oldz ) <= 1 )
+					{
+						rValue = designTile.id;
+						break;
+					}
 				}
 			}
 		}
@@ -880,6 +954,21 @@ auto CMulHandler::CheckDynamicFlag( std::int16_t x, std::int16_t y, std::int8_t 
 				}
 			}
 		}
+		std::vector<HouseTileEntry> designTiles;
+		if( HC_LoadCommittedDesignTiles( tempMulti, designTiles ))
+		{
+			for( const auto &designTile : designTiles )
+			{
+				if(( tempMulti->GetX() + designTile.x ) != x || ( tempMulti->GetY() + designTile.y ) != y || !IsValidTile( designTile.id ))
+					continue;
+
+				if( abs( tempMulti->GetZ() + designTile.z - z ) <= 1 && SeekTile( designTile.id ).CheckFlag( toCheck ))
+				{
+					foundTileId = designTile.id;
+					return true;
+				}
+			}
+		}
 	}
 	else
 	{
@@ -911,6 +1000,21 @@ auto CMulHandler::CheckDynamicFlag( std::int16_t x, std::int16_t y, std::int8_t 
 									foundTileId = multiItem.tileId;
 									return true;
 								}
+							}
+						}
+					}
+					std::vector<HouseTileEntry> designTiles;
+					if( HC_LoadCommittedDesignTiles( static_cast<CMultiObj *>( item ), designTiles ))
+					{
+						for( const auto &designTile : designTiles )
+						{
+							if(( item->GetX() + designTile.x ) != x || ( item->GetY() + designTile.y ) != y || !IsValidTile( designTile.id ))
+								continue;
+
+							if( abs( item->GetZ() + designTile.z - z ) <= 1 && SeekTile( designTile.id ).CheckFlag( toCheck ))
+							{
+								foundTileId = designTile.id;
+								return true;
 							}
 						}
 					}

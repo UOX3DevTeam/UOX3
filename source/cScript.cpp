@@ -162,6 +162,11 @@ static JSFunctionSpec my_functions[] =
 
 	{ "RegisterSkill",				SE_RegisterSkill,			2, 0 },
 	{ "RegisterPacket",				SE_RegisterPacket,			2, 0 },
+	{ "HouseBeginCustomize",		SE_HouseBeginCustomize,		2, 0 },
+	{ "HouseEndCustomize",			SE_HouseEndCustomize,		2, 0 },
+	{ "HouseSendDesignRevision",	SE_HouseSendDesignRevision,	3, 0 },
+	{ "HouseCommitCustomize",		SE_HouseCommitCustomize,		1, 0 },
+	{ "HouseSetCustomizationFixture", SE_HouseSetCustomizationFixture, 4, 0 },
 	{ "ReloadJSFile",				SE_ReloadJSFile,			1, 0 },
 
 	{ "ValidateObject",				SE_ValidateObject,			1, 0 },
@@ -4769,6 +4774,33 @@ SI08 cScript::OnHouseCommand( CSocket *tSock, CMultiObj *objMulti, UI08 cmdId )
 	}
 
 	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnCustomHouseCommitConfirm()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Allows JS to display the custom house commit confirmation gump
+//o------------------------------------------------------------------------------------------------o
+bool cScript::OnCustomHouseCommitConfirm( CSocket *tSock, CChar *tChar, CItem *houseItem, SI32 oldPrice, SI32 newPrice, SI32 commitCost, UI32 bankBalance, bool isGM )
+{
+	if( tSock == nullptr || !ValidateObject( tChar ) || !ValidateObject( houseItem ))
+		return false;
+
+	jsval rval, params[8];
+	JSObject *sockObj	= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
+	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, tChar, runTime );
+	JSObject *houseObj	= JSEngine->AcquireObject( IUE_ITEM, houseItem, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( sockObj );
+	params[1] = OBJECT_TO_JSVAL( charObj );
+	params[2] = OBJECT_TO_JSVAL( houseObj );
+	params[3] = INT_TO_JSVAL( oldPrice );
+	params[4] = INT_TO_JSVAL( newPrice );
+	params[5] = INT_TO_JSVAL( commitCost );
+	params[6] = INT_TO_JSVAL( static_cast<SI32>( bankBalance ));
+	params[7] = BOOLEAN_TO_JSVAL( isGM );
+
+	return CallParticularEvent( "onConfirm", params, 8, &rval );
 }
 
 //o------------------------------------------------------------------------------------------------o
