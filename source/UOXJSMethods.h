@@ -234,7 +234,17 @@ JSBool CMulti_FirstChar( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMulti_NextChar( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMulti_FinishedChars( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMulti_TurnBoat( JSContext *cx, uintN argc, jsval *vp );
+JSBool CMulti_SailBoat( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMulti_GetTiller( JSContext *cx, uintN argc, jsval *vp );
+JSBool CMulti_GetHold( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBoat_DamageHull( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBoat_RepairHull( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBoat_GetHullHits( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBoat_GetHullMaxHits( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBoat_StartEmergencyRepairs( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBoat_IsUnderEmergencyRepairs( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBoat_CheckDryDock( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBoat_DeleteForDryDock( JSContext *cx, uintN argc, jsval *vp );
 
 // Socket Methods
 JSBool CSocket_Disconnect( JSContext *cx, uintN argc, jsval *vp );
@@ -535,6 +545,14 @@ inline JSFunctionSpec CItem_Methods[] =
 	{ "OpenPlank",			CItem_OpenPlank,			0, 0 },
 	{ "IsMulti",			CItem_IsMulti,				0, 0 },
 	{ "IsBoat",				CBase_IsBoat,				0, 0 },
+	{ "DamageHull",			CBoat_DamageHull,			1, 0 },
+	{ "RepairHull",			CBoat_RepairHull,			1, 0 },
+	{ "GetHullHits",			CBoat_GetHullHits,			0, 0 },
+	{ "GetHullMaxHits",		CBoat_GetHullMaxHits,		0, 0 },
+	{ "StartEmergencyRepairs", CBoat_StartEmergencyRepairs,	1, 0 },
+	{ "IsUnderEmergencyRepairs", CBoat_IsUnderEmergencyRepairs, 0, 0 },
+	{ "CheckDryDock",			CBoat_CheckDryDock,		0, 0 },
+	{ "DeleteForDryDock",		CBoat_DeleteForDryDock,	0, 0 },
 	{ "IsInMulti",			CMulti_IsInMulti,			1, 0 },
 	{ "IsOnBanList",		CMulti_IsOnBanList,			1, 0 },
 	{ "IsOnFriendList",		CMulti_IsOnFriendList,		1, 0 },
@@ -597,7 +615,9 @@ inline JSFunctionSpec CItem_Methods[] =
 	{ "FinishedChars",		CMulti_FinishedChars,		1, 0 },
 
 	{ "TurnBoat",			CMulti_TurnBoat,			1, 0 },
+	{ "SailBoat",			CMulti_SailBoat,			1, 0 },
 	{ "GetTiller",			CMulti_GetTiller,			0, 0 },
+	{ "GetHold",			CMulti_GetHold,			0, 0 },
 
 	//{ "SetMoreSerial",		CBase_SetMoreSerial,		1, 0, 0 },
 	//{ "SetMoreSerial",		CBase_SetMoreSerial,		1, 0 },

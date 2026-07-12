@@ -10229,3 +10229,91 @@ CPDropItemApproved::CPDropItemApproved()
 	pStream.ReserveSize( 1 );
 	pStream.WriteByte( 0, 0x29 );
 }
+
+CPBoatSmoothMove::CPBoatSmoothMove( CBoatObj *boat, const std::vector<CItem *>& items, const std::vector<CChar *>& characters,
+	UI08 direction, UI08 speed, SI16 xOffset, SI16 yOffset )
+{
+	std::vector<CBaseObject *> entities;
+	std::unordered_set<SERIAL> serials;
+	auto addEntity = [&]( CBaseObject *object )
+	{
+		if( ValidateObject( object ) && object != boat && serials.insert( object->GetSerial() ).second )
+			entities.push_back( object );
+	};
+
+	addEntity( CalcItemObjFromSer( boat->GetTiller() ));
+	addEntity( CalcItemObjFromSer( boat->GetPlank( 0 )));
+	addEntity( CalcItemObjFromSer( boat->GetPlank( 1 )));
+	addEntity( CalcItemObjFromSer( boat->GetHold() ));
+	for( auto *item : items )
+		addEntity( item );
+	for( auto *character : characters )
+		addEntity( character );
+
+	const UI16 packetLength = static_cast<UI16>( 18 + ( entities.size() * 10 ));
+	pStream.ReserveSize( packetLength );
+	pStream.WriteByte( 0, 0xF6 );
+	pStream.WriteShort( 1, packetLength );
+	pStream.WriteLong( 3, boat->GetSerial() );
+	pStream.WriteByte( 7, speed );
+	pStream.WriteByte( 8, direction );
+	pStream.WriteByte( 9, boat->GetDir() );
+	pStream.WriteShort( 10, boat->GetX() + xOffset );
+	pStream.WriteShort( 12, boat->GetY() + yOffset );
+	pStream.WriteShort( 14, boat->GetZ() );
+	pStream.WriteShort( 16, static_cast<UI16>( entities.size() ));
+
+	size_t offset = 18;
+	for( auto *entity : entities )
+	{
+		pStream.WriteLong( offset, entity->GetSerial() );
+		pStream.WriteShort( offset + 4, entity->GetX() + xOffset );
+		pStream.WriteShort( offset + 6, entity->GetY() + yOffset );
+		pStream.WriteShort( offset + 8, entity->GetZ() );
+		offset += 10;
+	}
+}
+
+bool CPBoatSmoothMove::ClientCanReceive( CSocket *mSock )
+{
+	return mSock != nullptr && mSock->ClientVersion() >= CV_HS2D && mSock->ClientVerShort() >= CVS_7090;
+}
+
+CPBoatPilotLock::CPBoatPilotLock( CChar *pilot )
+{
+	pStream.ReserveSize( 19 );
+	pStream.WriteByte( 0, 0xBF );
+	pStream.WriteShort( 1, 19 );
+	pStream.WriteShort( 3, 0x19 );
+	pStream.WriteByte( 5, 0x05 );
+	pStream.WriteLong( 6, pilot->GetSerial() );
+	pStream.WriteByte( 10, 0x00 );
+	pStream.WriteByte( 11, 0xFF );
+	pStream.WriteByte( 12, 0x00 );
+	pStream.WriteShort( 13, 0x04 );
+	pStream.WriteShort( 15, 0x00 );
+	pStream.WriteByte( 17, 0x00 );
+	pStream.WriteByte( 18, 0x00 );
+}
+
+bool CPBoatPilotLock::ClientCanReceive( CSocket *mSock )
+{
+	return mSock != nullptr && mSock->ClientVersion() >= CV_HS2D && mSock->ClientVerShort() >= CVS_7090;
+}
+
+CPBoatPilotEquip::CPBoatPilotEquip( CChar *pilot, CItem *mount )
+{
+	pStream.ReserveSize( 15 );
+	pStream.WriteByte( 0, 0x2E );
+	pStream.WriteLong( 1, mount->GetSerial() );
+	pStream.WriteShort( 5, 0x3E96 );
+	pStream.WriteByte( 7, 0 );
+	pStream.WriteByte( 8, IL_MOUNT );
+	pStream.WriteLong( 9, pilot->GetSerial() );
+	pStream.WriteShort( 13, 0 );
+}
+
+bool CPBoatPilotEquip::ClientCanReceive( CSocket *mSock )
+{
+	return mSock != nullptr && mSock->ClientVersion() >= CV_HS2D && mSock->ClientVerShort() >= CVS_7090;
+}

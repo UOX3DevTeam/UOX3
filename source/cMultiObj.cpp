@@ -370,9 +370,14 @@ void CMultiObj::RemoveFromMulti( CBaseObject *toRemove )
 		charInMulti.Remove( static_cast<CChar *>( toRemove ));
 		if( CanBeObjType( OT_BOAT ) && charInMulti.Num() == 0 )
 		{
-			if(( static_cast<CBoatObj *>( this ))->GetMoveType() != -1 )
+			CBoatObj *boat = static_cast<CBoatObj *>( this );
+			// Moving a character with a High Seas vessel briefly recalculates
+			// multi membership. Do not interpret that transient removal of the
+			// active pilot as disembarking and cancel the persistent mouse order.
+			const bool movingActivePilot = boat->GetPilot() == toRemove->GetSerial() && boat->GetPilotSpeed() > 0;
+			if( !movingActivePilot && boat->GetMoveType() != BOAT_ANCHORED )
 			{
-				( static_cast<CBoatObj *>( this ))->SetMoveType( 0 );
+				boat->SetMoveType( BOAT_STOP );
 			}
 		}
 	}
@@ -1486,11 +1491,18 @@ GenericList<CItem *> * CMultiObj::GetItemsInMultiList( void )
 
 const SERIAL		DEFBOAT_TILLER		= INVALIDSERIAL;
 const SERIAL		DEFBOAT_HOLD		= INVALIDSERIAL;
+const SERIAL		DEFBOAT_PILOT		= INVALIDSERIAL;
+const SERIAL		DEFBOAT_PILOTMOUNT	= INVALIDSERIAL;
+const UI08			DEFBOAT_PILOTSPEED	= 0;
+const SI32			DEFBOAT_HULLHITS		= 0;
+const SI32			DEFBOAT_HULLMAXHITS	= 0;
+const UI64			DEFBOAT_EMERGENCYREPAIRUNTIL = 0;
 const SI08			DEFBOAT_MOVETYPE	= 0;
 const TIMERVAL		DEFBOAT_MOVETIME	= 0;
 
-CBoatObj::CBoatObj() : CMultiObj(), tiller( DEFBOAT_TILLER ), hold( DEFBOAT_HOLD ),
-moveType( DEFBOAT_MOVETYPE ), nextMoveTime( DEFBOAT_MOVETIME )
+CBoatObj::CBoatObj() : CMultiObj(), tiller( DEFBOAT_TILLER ), hold( DEFBOAT_HOLD ), pilot( DEFBOAT_PILOT ), pilotMount( DEFBOAT_PILOTMOUNT ), pilotSpeed( DEFBOAT_PILOTSPEED ),
+hullHits( DEFBOAT_HULLHITS ), hullMaxHits( DEFBOAT_HULLMAXHITS ),
+emergencyRepairUntil( DEFBOAT_EMERGENCYREPAIRUNTIL ), moveType( DEFBOAT_MOVETYPE ), nextMoveTime( DEFBOAT_MOVETIME )
 {
 	planks[0] = planks[1] = INVALIDSERIAL;
 	objType = OT_BOAT;
@@ -1529,6 +1541,9 @@ bool CBoatObj::DumpBody( std::ostream &outStream ) const
 
 	// Decimal / String Values
 	outStream << std::dec;
+	outStream << "HullMaxHits=" << hullMaxHits << '\n';
+	outStream << "HullHits=" << hullHits << '\n';
+	outStream << "EmergencyRepairUntil=" << emergencyRepairUntil << '\n';
 	return true;
 }
 
@@ -1547,6 +1562,13 @@ bool CBoatObj::HandleLine( std::string &UTag, std::string &data )
 		auto csecs = oldstrutil::sections( data, "," );
 		switch(( UTag.data()[0] ))
 		{
+			case 'E':
+				if( UTag == "EMERGENCYREPAIRUNTIL" )
+				{
+					emergencyRepairUntil = oldstrutil::value<UI64>( data );
+					rValue = true;
+				}
+				break;
 			case 'M':
 				if( UTag == "MOVETYPE" )
 				{
@@ -1557,6 +1579,16 @@ bool CBoatObj::HandleLine( std::string &UTag, std::string &data )
 				if( UTag == "HOLD" )
 				{
 					SetHold( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					rValue = true;
+				}
+				else if( UTag == "HULLHITS" )
+				{
+					SetHullHits( oldstrutil::value<SI32>( data ));
+					rValue = true;
+				}
+				else if( UTag == "HULLMAXHITS" )
+				{
+					SetHullMaxHits( oldstrutil::value<SI32>( data ));
 					rValue = true;
 				}
 				break;
@@ -1634,6 +1666,80 @@ SERIAL CBoatObj::GetHold( void ) const
 void CBoatObj::SetHold( SERIAL newVal )
 {
 	hold = newVal;
+}
+
+SERIAL CBoatObj::GetPilot( void ) const
+{
+	return pilot;
+}
+void CBoatObj::SetPilot( SERIAL newVal )
+{
+	pilot = newVal;
+}
+SERIAL CBoatObj::GetPilotMount( void ) const
+{
+	return pilotMount;
+}
+void CBoatObj::SetPilotMount( SERIAL newVal )
+{
+	pilotMount = newVal;
+}
+UI08 CBoatObj::GetPilotSpeed( void ) const
+{
+	return pilotSpeed;
+}
+void CBoatObj::SetPilotSpeed( UI08 newVal )
+{
+	pilotSpeed = newVal;
+}
+SI32 CBoatObj::GetHullHits( void ) const
+{
+	return hullHits;
+}
+SI32 CBoatObj::GetHullMaxHits( void ) const
+{
+	return hullMaxHits;
+}
+void CBoatObj::SetHullHits( SI32 newVal )
+{
+	// During world load HullHits may be encountered before HullMaxHits (all
+	// saves produced before the corrected field order do this). Preserve the
+	// positive value until the maximum is loaded instead of clamping it to 0
+	// and silently scuttling every restored vessel.
+	if( hullMaxHits > 0 )
+		hullHits = std::clamp<SI32>( newVal, 0, hullMaxHits );
+	else
+		hullHits = std::max<SI32>( 0, newVal );
+}
+void CBoatObj::SetHullMaxHits( SI32 newVal )
+{
+	hullMaxHits = std::max<SI32>( 0, newVal );
+	if( hullHits > hullMaxHits )
+		hullHits = hullMaxHits;
+}
+UI08 CBoatObj::GetHullDamageLevel( void ) const
+{
+	if( hullMaxHits <= 0 || hullHits >= hullMaxHits )
+		return 0;
+	const R64 durability = static_cast<R64>( hullHits ) * 100.0 / static_cast<R64>( hullMaxHits );
+	if( durability >= 75.0 ) return 1;
+	if( durability >= 50.0 ) return 2;
+	if( durability >= 25.0 ) return 3;
+	return 4;
+}
+bool CBoatObj::IsScuttled( void ) const
+{
+	return !IsUnderEmergencyRepairs() && hullMaxHits > 0 && static_cast<SI64>( hullHits ) * 4 < hullMaxHits;
+}
+
+bool CBoatObj::IsUnderEmergencyRepairs( void ) const
+{
+	return emergencyRepairUntil > static_cast<UI64>( std::time( nullptr ));
+}
+
+void CBoatObj::StartEmergencyRepairs( UI32 durationSeconds )
+{
+	emergencyRepairUntil = static_cast<UI64>( std::time( nullptr )) + durationSeconds;
 }
 
 //o------------------------------------------------------------------------------------------------o

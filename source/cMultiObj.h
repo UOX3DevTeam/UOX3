@@ -173,6 +173,12 @@ protected:
 	SERIAL				tiller;
 	SERIAL				planks[2];
 	SERIAL				hold;
+	SERIAL				pilot;
+	SERIAL				pilotMount;
+	UI08				pilotSpeed;
+	SI32				hullHits;
+	SI32				hullMaxHits;
+	UI64				emergencyRepairUntil;
 	SI08				moveType;
 
 	TIMERVAL			nextMoveTime;
@@ -190,11 +196,25 @@ public:
 	SERIAL				GetTiller( void ) const;
 	SERIAL				GetPlank( UI08 plankNum ) const;
 	SERIAL				GetHold( void ) const;
+	SERIAL				GetPilot( void ) const;
+	SERIAL				GetPilotMount( void ) const;
+	UI08				GetPilotSpeed( void ) const;
+	SI32				GetHullHits( void ) const;
+	SI32				GetHullMaxHits( void ) const;
+	UI08				GetHullDamageLevel( void ) const;
+	bool				IsScuttled( void ) const;
+	bool				IsUnderEmergencyRepairs( void ) const;
 	SI08				GetMoveType( void ) const;
 
 	void				SetPlank( UI08 plankNum, SERIAL newVal );
 	void				SetTiller( SERIAL newVal );
 	void				SetHold( SERIAL newVal );
+	void				SetPilot( SERIAL newVal );
+	void				SetPilotMount( SERIAL newVal );
+	void				SetPilotSpeed( UI08 newVal );
+	void				SetHullHits( SI32 newVal );
+	void				SetHullMaxHits( SI32 newVal );
+	void				StartEmergencyRepairs( UI32 durationSeconds );
 	void				SetMoveType( SI08 newVal );
 
 	TIMERVAL			GetMoveTime( void ) const;

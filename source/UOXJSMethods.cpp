@@ -5880,6 +5880,157 @@ JSBool CBase_IsBoat( JSContext *cx, uintN argc, jsval *vp )
 	return JS_TRUE;
 }
 
+JSBool CMulti_GetHold( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc > 0 )
+	{
+		ScriptError( cx, "(GetHold) Invalid Count of Arguments: %d, needs: 0", argc );
+		return JS_FALSE;
+	}
+	auto *boat = static_cast<CBoatObj *>( JS_GetPrivate( cx, JS_THIS_OBJECT( cx, vp )));
+	if( !ValidateObject( boat ) || !boat->CanBeObjType( OT_BOAT ))
+		return JS_FALSE;
+	auto *hold = CalcItemObjFromSer( boat->GetHold() );
+	if( !ValidateObject( hold ))
+	{
+		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		return JS_TRUE;
+	}
+	JSObject *jsHold = JSEngine->AcquireObject( IUE_ITEM, hold, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( jsHold ));
+	return JS_TRUE;
+}
+
+void MoveBoat( UI08 dir, CBoatObj *boat );
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CMulti_SailBoat()
+//| Prototype   - void SailBoat( direction )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Moves a boat one tile through the normal native boat movement/collision path.
+//|               This is intended for scripted helmsmen and does not bypass any sailing checks.
+//o------------------------------------------------------------------------------------------------o
+JSBool CMulti_SailBoat( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "(SailBoat) Invalid Count of Arguments: %d, needs: 1", argc );
+		return JS_FALSE;
+	}
+
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto *myBoat = static_cast<CBoatObj *>( JS_GetPrivate( cx, obj ));
+	if( !ValidateObject( myBoat ) || !myBoat->CanBeObjType( OT_BOAT ))
+	{
+		ScriptError( cx, "(SailBoat) Invalid boat object assigned" );
+		return JS_FALSE;
+	}
+
+	auto sailDir = static_cast<UI08>( JSVAL_TO_INT( argv[0] )) & 0x07;
+	MoveBoat( sailDir, myBoat );
+	return JS_TRUE;
+}
+
+// Damage a boat through the same persistent hull-durability path used by
+// High Seas combat. This is intentionally boat-only so scripts cannot treat
+// ordinary multis as damageable vessels.
+JSBool CBoat_DamageHull( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "(DamageHull) Invalid Number of Arguments %d, needs: 1", argc );
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		return JS_TRUE;
+	}
+	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto *boat = static_cast<CBoatObj *>( JS_GetPrivate( cx, obj ));
+	if( !ValidateObject( boat ) || !boat->CanBeObjType( OT_BOAT ))
+	{
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		return JS_TRUE;
+	}
+	jsval *argv = JS_ARGV( cx, vp );
+	SI32 amount = 0;
+	if( !JS_ValueToInt32( cx, argv[0], &amount ) || amount <= 0 )
+	{
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		return JS_TRUE;
+	}
+	DamageBoatHull( boat, amount );
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	return JS_TRUE;
+}
+
+JSBool CBoat_RepairHull( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "(RepairHull) Invalid Number of Arguments %d, needs: 1", argc );
+		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ));
+		return JS_TRUE;
+	}
+	auto *boat = static_cast<CBoatObj *>( JS_GetPrivate( cx, JS_THIS_OBJECT( cx, vp )));
+	SI32 amount = 0;
+	if( !ValidateObject( boat ) || !boat->CanBeObjType( OT_BOAT ) ||
+		!JS_ValueToInt32( cx, JS_ARGV( cx, vp )[0], &amount ) || amount <= 0 )
+	{
+		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ));
+		return JS_TRUE;
+	}
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( RepairBoatHull( boat, amount )));
+	return JS_TRUE;
+}
+
+JSBool CBoat_GetHullHits( JSContext *cx, uintN argc, jsval *vp )
+{
+	auto *boat = static_cast<CBoatObj *>( JS_GetPrivate( cx, JS_THIS_OBJECT( cx, vp )));
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( ValidateObject( boat ) && boat->CanBeObjType( OT_BOAT ) ? boat->GetHullHits() : 0 ));
+	return JS_TRUE;
+}
+
+JSBool CBoat_GetHullMaxHits( JSContext *cx, uintN argc, jsval *vp )
+{
+	auto *boat = static_cast<CBoatObj *>( JS_GetPrivate( cx, JS_THIS_OBJECT( cx, vp )));
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( ValidateObject( boat ) && boat->CanBeObjType( OT_BOAT ) ? boat->GetHullMaxHits() : 0 ));
+	return JS_TRUE;
+}
+
+JSBool CBoat_StartEmergencyRepairs( JSContext *cx, uintN argc, jsval *vp )
+{
+	auto *boat = static_cast<CBoatObj *>( JS_GetPrivate( cx, JS_THIS_OBJECT( cx, vp )));
+	SI32 seconds = 0;
+	if( argc != 1 || !ValidateObject( boat ) || !boat->CanBeObjType( OT_BOAT ) ||
+		!JS_ValueToInt32( cx, JS_ARGV( cx, vp )[0], &seconds ) || seconds <= 0 )
+	{
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		return JS_TRUE;
+	}
+	boat->StartEmergencyRepairs( static_cast<UI32>( seconds ));
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	return JS_TRUE;
+}
+
+JSBool CBoat_IsUnderEmergencyRepairs( JSContext *cx, uintN argc, jsval *vp )
+{
+	auto *boat = static_cast<CBoatObj *>( JS_GetPrivate( cx, JS_THIS_OBJECT( cx, vp )));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ValidateObject( boat ) && boat->CanBeObjType( OT_BOAT ) && boat->IsUnderEmergencyRepairs() ));
+	return JS_TRUE;
+}
+
+JSBool CBoat_CheckDryDock( JSContext *cx, uintN argc, jsval *vp )
+{
+	auto *boat = static_cast<CBoatObj *>( JS_GetPrivate( cx, JS_THIS_OBJECT( cx, vp )));
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( ValidateObject( boat ) && boat->CanBeObjType( OT_BOAT ) ? CheckHighSeasDryDock( boat ) : 7 ));
+	return JS_TRUE;
+}
+
+JSBool CBoat_DeleteForDryDock( JSContext *cx, uintN argc, jsval *vp )
+{
+	auto *boat = static_cast<CBoatObj *>( JS_GetPrivate( cx, JS_THIS_OBJECT( cx, vp )));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ValidateObject( boat ) && boat->CanBeObjType( OT_BOAT ) && DeleteHighSeasBoatForDryDock( boat )));
+	return JS_TRUE;
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMulti_IsInMulti()
 //|	Prototype	-	bool IsInMulti( object )

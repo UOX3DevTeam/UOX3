@@ -6903,6 +6903,7 @@
         { "name": "RemoveVendor",         "cppName": "CMulti_RemoveVendor",         "params": { "num": 1, "list": [ { "name": "vendorToRemove", "type": "Character", "required": true } ] }, "returns": "boolean" },
         { "name": "SecureContainer",      "cppName": "CMulti_SecureContainer",      "params": { "num": 1, "list": [ { "name": "toSecure", "type": "Item", "required": true } ] }, "returns": "boolean" },
         { "name": "TurnBoat",             "cppName": "CMulti_TurnBoat",             "params": { "num": 1, "list": [ { "name": "direction", "type": "number", "required": true } ] }, "returns": "void" },
+        { "name": "SailBoat",             "cppName": "CMulti_SailBoat",             "params": { "num": 1, "list": [ { "name": "direction", "type": "number", "required": true } ] }, "returns": "void" },
         { "name": "UnsecureContainer",    "cppName": "CMulti_UnsecureContainer",    "params": { "num": 1, "list": [ { "name": "toUnsecure", "type": "Item", "required": true } ] }, "returns": "boolean" }
       ]
     },

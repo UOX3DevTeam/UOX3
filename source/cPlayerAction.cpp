@@ -2757,8 +2757,16 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				if( baseCont->CanBeObjType( OT_ITEM ))
 				{
 					CMultiObj * baseContMultiObj = baseCont->GetMultiObj();
+					bool highSeasHoldAccess = false;
+					if( ValidateObject( baseContMultiObj ) && baseContMultiObj->CanBeObjType( OT_BOAT ))
+					{
+						auto *holdBoat = static_cast<CBoatObj *>( baseContMultiObj );
+						highSeasHoldAccess = holdBoat->GetHold() == iUsed->GetSerial() && ObjInRange( mChar, iUsed, DIST_NEARBY ) &&
+							( mChar->GetMultiObj() == holdBoat || holdBoat->IsOwner( mChar ) || holdBoat->IsOnOwnerList( mChar ) ||
+								holdBoat->IsOnFriendList( mChar ) || holdBoat->GetTag( "hsPirateDefeated" ).m_IntValue == 1 );
+					}
 
-					if( baseContMultiObj == nullptr || mChar->GetMultiObj() == baseContMultiObj )
+					if( baseContMultiObj == nullptr || mChar->GetMultiObj() == baseContMultiObj || highSeasHoldAccess )
 					{
 						if( baseContMultiObj && baseContMultiObj->IsSecureContainer( static_cast<CItem *>( baseCont )) && !mChar->GetMultiObj()->IsOnOwnerList( mChar ))
 						{
@@ -2967,6 +2975,29 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			iUsed->SetType( IT_MORPHOBJECT );
 			return true;
 		case IT_PLANK:	// Planks
+		{
+			// High Seas pirate mooring ropes are boarding points. When two vessels
+			// are alongside, allow a player to cross directly onto the pirate deck.
+			auto *targetMulti = iUsed->GetMultiObj();
+			auto *sourceMulti = mChar->GetMultiObj();
+			if( ValidateObject( targetMulti ) && targetMulti->CanBeObjType( OT_BOAT ) && targetMulti != sourceMulti &&
+				targetMulti->GetTag( "hsPirateGalleon" ).m_IntValue == 1 &&
+				( iUsed->GetId() == 0x14F8 || iUsed->GetId() == 0x14FA ) && ObjInRange( mChar, iUsed, DIST_NEARBY ))
+			{
+				auto *pirateBoat = static_cast<CBoatObj *>( targetMulti );
+				SI16 boardX = iUsed->GetX();
+				SI16 boardY = iUsed->GetY();
+				if( boardX < pirateBoat->GetX() ) ++boardX;
+				else if( boardX > pirateBoat->GetX() ) --boardX;
+				if( boardY < pirateBoat->GetY() ) ++boardY;
+				else if( boardY > pirateBoat->GetY() ) --boardY;
+				mChar->SetLocation( boardX, boardY, static_cast<SI08>( pirateBoat->GetZ() + 28 ),
+					pirateBoat->WorldNumber(), pirateBoat->GetInstanceId() );
+				mChar->SetMulti( pirateBoat );
+				mChar->Update();
+				mSock->SysMessage( "You pull yourself across the mooring line and board the pirate vessel." );
+				return true;
+			}
 			if( ObjInRange( mChar, iUsed, DIST_INRANGE ))
 			{
 				auto plankStatus = iUsed->GetTag( "plankLocked" );
@@ -2977,8 +3008,10 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 					if( ValidateObject( iMulti ) && ValidateObject( mMulti ) && iMulti == mMulti )
 					{
 						// Allow opening plank for disembarking purposes if player is onboard boat
-						switch( iUsed->GetId() )
-						{
+							switch( iUsed->GetId() )
+							{
+								case 0x14F8: [[fallthrough]];
+								case 0x14FA: PlankStuff( mSock, iUsed ); break;
 							// Open the plank visually
 							case 0x3EE9: iUsed->SetId( 0x3E84 ); break;
 							case 0x3EB1: iUsed->SetId( 0x3ED5 ); break;
@@ -3008,6 +3041,8 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 					// Plank is unlocked! Open the plank, or use it to disembark
 					switch( iUsed->GetId() )
 					{
+						case 0x14F8: [[fallthrough]];
+						case 0x14FA: PlankStuff( mSock, iUsed ); return true;
 						case 0x3EE9: iUsed->SetId( 0x3E84 ); break;
 						case 0x3EB1: iUsed->SetId( 0x3ED5 ); break;
 						case 0x3EB2: iUsed->SetId( 0x3ED4 ); break;
@@ -3023,6 +3058,7 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				mSock->SysMessage( 399 ); // You can't reach that!
 			}
 			return true;
+		}
 		case IT_FIREWORKSWAND: //Fireworks wands
 			// If item is locked down, check if player has access to use it
 			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, true ))
@@ -3072,9 +3108,96 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			return true;
 		case IT_TILLER:	// Tillerman
 		{
-			CBoatObj *boat = static_cast<CBoatObj *>( iUsed->GetMultiObj() );
+			CMultiObj *multi = iUsed->GetMultiObj();
+			if( !ValidateObject( multi ))
+				multi = FindMulti( iUsed );
+			CBoatObj *boat = ( ValidateObject( multi ) && multi->CanBeObjType( OT_BOAT )) ? static_cast<CBoatObj *>( multi ) : nullptr;
 			if( ValidateObject( boat ))
 			{
+				if( iUsed->GetMultiObj() != boat )
+					iUsed->SetMulti( boat );
+				const UI08 boatBaseId = boat->GetTempVar( CITV_MOREZ, 1 );
+				const bool highSeasShip = boatBaseId == 0x18 || boatBaseId == 0x24 || boatBaseId == 0x30 || boatBaseId == 0x40;
+				if( highSeasShip && mSock->ClientVersion() >= CV_HS2D && mSock->ClientVerShort() >= CVS_7090 )
+				{
+					// Saved generated deck fixtures may reload before their runtime
+					// multi membership is restored. Rebind them before movement and
+					// collision processing can mistake our own deck for an obstacle.
+					RestoreHighSeasBoatFixtures( boat );
+					CChar *existingPilot = CalcCharObjFromSer( boat->GetPilot() );
+					CMultiObj *pilotMulti = ValidateObject( existingPilot ) ? existingPilot->GetMultiObj() : nullptr;
+					if( ValidateObject( existingPilot ) && !ValidateObject( pilotMulti ))
+						pilotMulti = FindMulti( existingPilot );
+					if( boat->GetPilot() != INVALIDSERIAL &&
+						( !ValidateObject( existingPilot ) || pilotMulti != boat ))
+					{
+						CItem *staleMount = CalcItemObjFromSer( boat->GetPilotMount() );
+						if( ValidateObject( staleMount ))
+							staleMount->Delete();
+						boat->SetPilot( INVALIDSERIAL );
+						boat->SetPilotMount( INVALIDSERIAL );
+						boat->SetPilotSpeed( 0 );
+					}
+					if( !boat->IsOwner( mChar ))
+					{
+						mSock->SysMessage( 2034 );
+						return true;
+					}
+					if( boat->GetPilot() == mChar->GetSerial() )
+					{
+						CItem *pilotMount = CalcItemObjFromSer( boat->GetPilotMount() );
+						if( ValidateObject( pilotMount ))
+							pilotMount->RemoveFromSight( mSock );
+						boat->SetPilot( INVALIDSERIAL );
+						boat->SetPilotMount( INVALIDSERIAL );
+						boat->SetPilotSpeed( 0 );
+						boat->SetMoveType( BOAT_STOP );
+						// Use the normal dismount path so both the server movement state and
+						// the client's virtual High Seas mount/animation are cleared.
+						DismountCreature( mChar );
+						mChar->SetMounted( false );
+						mChar->Update();
+						boat->Update();
+						mSock->SysMessage( "You are no longer piloting this vessel." );
+					}
+					else if( boat->GetPilot() != INVALIDSERIAL )
+					{
+						mSock->SysMessage( "Someone else is already piloting this vessel." );
+					}
+					else
+					{
+						if( ValidateObject( mChar->GetItemAtLayer( IL_MOUNT )))
+						{
+							mSock->SysMessage( "You cannot pilot a ship while mounted." );
+							return true;
+						}
+						CItem *pilotMount = Items->CreateItem( nullptr, mChar, 0x3E96, 1, 0, OT_ITEM );
+						if( !ValidateObject( pilotMount ))
+							return true;
+						pilotMount->SetLayer( IL_MOUNT );
+						pilotMount->SetMovable( 2 );
+						pilotMount->SetDecayable( false );
+						pilotMount->SetCont( mChar );
+						mChar->SetMounted( true );
+						if( mChar->GetMultiObj() != boat )
+							mChar->SetMulti( boat );
+						boat->SetPilot( mChar->GetSerial() );
+						boat->SetPilotMount( pilotMount->GetSerial() );
+						boat->SetPilotSpeed( 0 );
+						boat->SetMoveType( BOAT_STOP );
+						boat->SetMoveTime( 0 );
+						mChar->SetDir( boat->GetDir() & 0x07 );
+						CPBoatPilotEquip pilotEquip( mChar, pilotMount );
+						mSock->Send( &pilotEquip );
+						// Restore the client-side High Seas pilot controller. The
+						// virtual mount alone is insufficient after reconnect/restart.
+						CPBoatPilotLock pilotLock( mChar );
+						mSock->Send( &pilotLock );
+						mChar->Update();
+						mSock->SysMessage( "You are now piloting this vessel. Steer with the mouse." );
+					}
+					return true;
+				}
 				if( boat->GetMoveType() != BOAT_ANCHORED )
 				{
 					mSock->SysMessage( 2029 ); // You must lower the anchor to dock the boat.

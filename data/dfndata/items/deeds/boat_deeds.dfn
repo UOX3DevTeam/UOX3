@@ -61,3 +61,145 @@ RESTOCK=5
 GOOD=9
 }
 
+// High Seas ship deeds
+[orcishgalleondeed]
+{
+NAME=orcish galleon deed
+ID=0x14F0
+MOREX=210
+SCRIPT=5098
+VALUE=150000
+GOOD=9
+}
+
+[gargishgalleondeed]
+{
+NAME=gargish galleon deed
+ID=0x14F0
+MOREX=211
+SCRIPT=5098
+VALUE=150000
+GOOD=9
+}
+
+[tokunogalleondeed]
+{
+NAME=tokuno galleon deed
+ID=0x14F0
+MOREX=212
+SCRIPT=5098
+VALUE=150000
+GOOD=9
+}
+
+[rowboatdeed]
+{
+NAME=rowboat deed
+ID=0x14F0
+MOREX=213
+VALUE=5000
+GOOD=9
+}
+
+[britannianshipdeed]
+{
+NAME=britannian ship deed
+ID=0x14F0
+MOREX=214
+SCRIPT=5098
+VALUE=200000
+GOOD=9
+}
+
+[highseas_light_cannon_deed]
+{
+NAME=light ship cannon deed
+ID=0x14F0
+SCRIPT=5099
+VALUE=50000
+CUSTOMINTTAG=hsCannonKind 1
+CUSTOMINTTAG=hsCannonPower 1
+}
+
+[highseas_light_cannon]
+{
+NAME=light ship cannon
+ID=0x4216
+MOVABLE=2
+DECAY=0
+SCRIPT=5099
+CUSTOMINTTAG=hsCannonKind 2
+CUSTOMINTTAG=hsCannonPower 1
+}
+
+[highseas_heavy_cannon_deed]
+{
+NAME=heavy ship cannon deed
+ID=0x14F0
+COLOR=1118
+SCRIPT=5099
+VALUE=75000
+CUSTOMINTTAG=hsCannonKind 1
+CUSTOMINTTAG=hsCannonPower 2
+}
+
+[highseas_heavy_cannon]
+{
+NAME=heavy ship cannon
+ID=0x421A
+MOVABLE=2
+DECAY=0
+SCRIPT=5099
+CUSTOMINTTAG=hsCannonKind 2
+CUSTOMINTTAG=hsCannonPower 2
+}
+
+[highseas_powder_charge]
+{
+NAME=powder charge
+ID=0xA2BE
+PILEABLE=1
+}
+
+[highseas_cannonball]
+{
+NAME=cannonball
+ID=0x4224
+PILEABLE=1
+TYPE=227
+}
+
+[highseas_grapeshot]
+{
+NAME=grapeshot
+ID=0xA2BF
+PILEABLE=1
+}
+
+[highseas_flame_cannonball]
+{
+NAME=flame cannonball
+ID=0x44C1
+PILEABLE=1
+}
+
+[highseas_frost_cannonball]
+{
+NAME=frost cannonball
+ID=0x422B
+PILEABLE=1
+}
+
+[highseas_fuse_cord]
+{
+NAME=fuse cord
+ID=0x1420
+PILEABLE=1
+}
+
+[highseas_ramrod]
+{
+NAME=ramrod
+ID=0x4246
+}
+

@@ -876,6 +876,14 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 		{
 			house->SetTag( key, value );
 		}
+		// A dry-docked High Seas deed carries its deployed cannon layout and
+		// condition as persistent tags. Transfer those tags to the new vessel
+		// before CreateBoat reconstructs its fixtures and cannons.
+		if( ValidateObject( mChar ) && ValidateObject( mChar->GetSpeechItem() ))
+		{
+			for( const auto &[key, value] : mChar->GetSpeechItem()->GetTagMap() )
+				house->SetTag( key, value );
+		}
 
 		// Find corners of new house
 		SI16 multiX1 = 0;
@@ -1021,7 +1029,7 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 		CreateHouseItems( mChar, houseItems, fakeHouse, houseId, x, y, z, worldNumber );
 	}
 
-	if( ValidateObject( mChar ) && ( isMulti || isBoat ))
+	if( ValidateObject( mChar ) && isMulti && !isBoat )
 	{
 		mChar->SetLocation( x + cx, y + cy, z + cz );
 

@@ -241,6 +241,33 @@ RUNS
 SCRIPT=3204
 }
 
+[highseas_pirate_captain]
+{
+GET=m_pirate
+NAME=Pirate Captain
+TITLE=the Dread Captain
+STR=175 225
+DEX=100 125
+INT=90 120
+FAME=7000
+KARMA=-7000
+NPCWANDER=0
+SCRIPT=5100
+}
+
+[highseas_pirate_crew]
+{
+GET=m_pirate
+NAME=Pirate Crewman
+STR=100 140
+DEX=80 110
+INT=50 80
+FAME=3000
+KARMA=-3000
+NPCWANDER=0
+SCRIPT=5100
+}
+
 [m_fighter]
 {
 GET=basehuman
