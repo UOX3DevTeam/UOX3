@@ -2757,16 +2757,24 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				if( baseCont->CanBeObjType( OT_ITEM ))
 				{
 					CMultiObj * baseContMultiObj = baseCont->GetMultiObj();
+					bool highSeasHold = false;
 					bool highSeasHoldAccess = false;
 					if( ValidateObject( baseContMultiObj ) && baseContMultiObj->CanBeObjType( OT_BOAT ))
 					{
 						auto *holdBoat = static_cast<CBoatObj *>( baseContMultiObj );
-						highSeasHoldAccess = holdBoat->GetHold() == iUsed->GetSerial() && ObjInRange( mChar, iUsed, DIST_NEARBY ) &&
-							( mChar->GetMultiObj() == holdBoat || holdBoat->IsOwner( mChar ) || holdBoat->IsOnOwnerList( mChar ) ||
-								holdBoat->IsOnFriendList( mChar ) || holdBoat->GetTag( "hsPirateDefeated" ).m_IntValue == 1 );
+						highSeasHold = holdBoat->GetHold() == iUsed->GetSerial() && holdBoat->GetHullMaxHits() > 0;
+						if( highSeasHold )
+						{
+							auto *shipOwner = holdBoat->GetOwnerObj();
+							const bool playerOwned = ValidateObject( shipOwner ) && !shipOwner->IsNpc();
+							highSeasHoldAccess = mChar->GetMultiObj() == holdBoat && ObjInRange( mChar, iUsed, DIST_NEARBY ) &&
+								( mChar->IsGM() || !playerOwned || holdBoat->GetTag( "hsPirateDefeated" ).m_IntValue == 1 ||
+									holdBoat->IsOwner( mChar ) || holdBoat->IsOnOwnerList( mChar ));
+						}
 					}
 
-					if( baseContMultiObj == nullptr || mChar->GetMultiObj() == baseContMultiObj || highSeasHoldAccess )
+					if(( highSeasHold && highSeasHoldAccess ) || ( !highSeasHold &&
+						( baseContMultiObj == nullptr || mChar->GetMultiObj() == baseContMultiObj )))
 					{
 						if( baseContMultiObj && baseContMultiObj->IsSecureContainer( static_cast<CItem *>( baseCont )) && !mChar->GetMultiObj()->IsOnOwnerList( mChar ))
 						{
@@ -2976,27 +2984,53 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			return true;
 		case IT_PLANK:	// Planks
 		{
-			// High Seas pirate mooring ropes are boarding points. When two vessels
-			// are alongside, allow a player to cross directly onto the pirate deck.
+			// ServUO mooring-line boarding: an accessible, stationary galleon may
+			// be boarded from land or another vessel at range eight. Active hostile
+			// vessels are not accessible; a defeated pirate vessel is.
 			auto *targetMulti = iUsed->GetMultiObj();
 			auto *sourceMulti = mChar->GetMultiObj();
-			if( ValidateObject( targetMulti ) && targetMulti->CanBeObjType( OT_BOAT ) && targetMulti != sourceMulti &&
-				targetMulti->GetTag( "hsPirateGalleon" ).m_IntValue == 1 &&
-				( iUsed->GetId() == 0x14F8 || iUsed->GetId() == 0x14FA ) && ObjInRange( mChar, iUsed, DIST_NEARBY ))
+			if( ValidateObject( targetMulti ) && targetMulti->CanBeObjType( OT_BOAT ) && targetMulti != sourceMulti )
 			{
-				auto *pirateBoat = static_cast<CBoatObj *>( targetMulti );
-				SI16 boardX = iUsed->GetX();
-				SI16 boardY = iUsed->GetY();
-				if( boardX < pirateBoat->GetX() ) ++boardX;
-				else if( boardX > pirateBoat->GetX() ) --boardX;
-				if( boardY < pirateBoat->GetY() ) ++boardY;
-				else if( boardY > pirateBoat->GetY() ) --boardY;
-				mChar->SetLocation( boardX, boardY, static_cast<SI08>( pirateBoat->GetZ() + 28 ),
-					pirateBoat->WorldNumber(), pirateBoat->GetInstanceId() );
-				mChar->SetMulti( pirateBoat );
-				mChar->Update();
-				mSock->SysMessage( "You pull yourself across the mooring line and board the pirate vessel." );
-				return true;
+				auto *targetBoat = static_cast<CBoatObj *>( targetMulti );
+				const UI08 baseId = targetBoat->GetTempVar( CITV_MOREZ, 1 );
+				const bool highSeasShip = baseId == 0x18 || baseId == 0x24 || baseId == 0x30 || baseId == 0x40;
+				if( highSeasShip && ( iUsed->GetId() == 0x14F8 || iUsed->GetId() == 0x14FA ))
+				{
+					if( !ObjInRange( mChar, iUsed, 8 ))
+					{
+						mSock->SysMessage( "You are too far away to do that." );
+						return true;
+					}
+					if( !CheckItemLineOfSight( mChar, iUsed ))
+					{
+						mSock->SysMessage( "You cannot see that." );
+						return true;
+					}
+					if( targetBoat->GetMoveType() != BOAT_STOP )
+					{
+						mSock->SysMessage( "You cannot use that while the ship is moving." );
+						return true;
+					}
+					if( ValidateObject( sourceMulti ) && sourceMulti->CanBeObjType( OT_BOAT ) &&
+						static_cast<CBoatObj *>( sourceMulti )->GetPilot() == mChar->GetSerial() )
+					{
+						mSock->SysMessage( "You cannot do that while piloting a ship." );
+						return true;
+					}
+					const bool hasAccess = mChar->IsGM() || targetBoat->IsOwner( mChar ) || targetBoat->IsOnOwnerList( mChar ) ||
+						targetBoat->IsOnFriendList( mChar ) || targetBoat->GetTag( "hsPirateDefeated" ).m_IntValue == 1;
+					if( !hasAccess )
+					{
+						mSock->SysMessage( "You do not have permission to board this ship." );
+						return true;
+					}
+					mChar->SetLocation( iUsed->GetX(), iUsed->GetY(), static_cast<SI08>( iUsed->GetZ() + 3 ),
+						targetBoat->WorldNumber(), targetBoat->GetInstanceId() );
+					mChar->SetMulti( targetBoat );
+					mChar->Update();
+					mSock->SysMessage( "You board the ship." );
+					return true;
+				}
 			}
 			if( ObjInRange( mChar, iUsed, DIST_INRANGE ))
 			{
@@ -3145,18 +3179,15 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 					}
 					if( boat->GetPilot() == mChar->GetSerial() )
 					{
-						CItem *pilotMount = CalcItemObjFromSer( boat->GetPilotMount() );
-						if( ValidateObject( pilotMount ))
-							pilotMount->RemoveFromSight( mSock );
-						boat->SetPilot( INVALIDSERIAL );
-						boat->SetPilotMount( INVALIDSERIAL );
-						boat->SetPilotSpeed( 0 );
-						boat->SetMoveType( BOAT_STOP );
+						ReleaseBoatPilot( mChar );
 						// Use the normal dismount path so both the server movement state and
 						// the client's virtual High Seas mount/animation are cleared.
 						DismountCreature( mChar );
-						mChar->SetMounted( false );
-						mChar->Update();
+						mChar->SetOnHorse( false );
+						// Rebuild the controlling client's world state at the same
+						// location. This clears ClassicUO's residual smooth-boat/mobile
+						// offsets and resets its walk sequence without relocating the player.
+						mChar->Teleport();
 						boat->Update();
 						mSock->SysMessage( "You are no longer piloting this vessel." );
 					}
@@ -3177,8 +3208,14 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 						pilotMount->SetLayer( IL_MOUNT );
 						pilotMount->SetMovable( 2 );
 						pilotMount->SetDecayable( false );
+						// ServUO's BoatMountItem holds an IMount reference to its BaseBoat.
+						// Persist the equivalent relationship on UOX's virtual mount item.
+						pilotMount->SetTempVar( CITV_MOREX, boat->GetSerial() );
 						pilotMount->SetCont( mChar );
-						mChar->SetMounted( true );
+						// BaseBoat.Pilot is transient in ServUO. Do not write this
+						// equipped controller into UOX world saves; it is recreated
+						// each time the player takes the wheel.
+						pilotMount->ShouldSave( false );
 						if( mChar->GetMultiObj() != boat )
 							mChar->SetMulti( boat );
 						boat->SetPilot( mChar->GetSerial() );
@@ -3187,12 +3224,8 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 						boat->SetMoveType( BOAT_STOP );
 						boat->SetMoveTime( 0 );
 						mChar->SetDir( boat->GetDir() & 0x07 );
-						CPBoatPilotEquip pilotEquip( mChar, pilotMount );
-						mSock->Send( &pilotEquip );
-						// Restore the client-side High Seas pilot controller. The
-						// virtual mount alone is insufficient after reconnect/restart.
-						CPBoatPilotLock pilotLock( mChar );
-						mSock->Send( &pilotLock );
+						// SetCont/WearItem plus this single mobile update is the UOX
+						// equivalent of ServUO's pilot.AddItem(VirtualMount) delta.
 						mChar->Update();
 						mSock->SysMessage( "You are now piloting this vessel. Steer with the mouse." );
 					}

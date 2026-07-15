@@ -180,6 +180,10 @@ protected:
 	SI32				hullMaxHits;
 	UI64				emergencyRepairUntil;
 	SI08				moveType;
+	// High Seas galleons are assembled from dynamic fixture items.  Keep their
+	// identities on the boat, just as ServUO's BaseGalleon owns its Fixtures
+	// collection, rather than rediscovering them from overlapping world tiles.
+	std::vector<SERIAL>	fixtures;
 
 	TIMERVAL			nextMoveTime;
 
@@ -216,6 +220,10 @@ public:
 	void				SetHullMaxHits( SI32 newVal );
 	void				StartEmergencyRepairs( UI32 durationSeconds );
 	void				SetMoveType( SI08 newVal );
+	void				RegisterFixture( SERIAL serial );
+	void				UnregisterFixture( SERIAL serial );
+	void				ClearFixtures( void );
+	const std::vector<SERIAL>& GetFixtures( void ) const;
 
 	TIMERVAL			GetMoveTime( void ) const;
 	void				SetMoveTime( TIMERVAL newVal );

@@ -5629,9 +5629,14 @@ bool CPIBoatMouseMovement::Handle( void )
 	if( !ValidateObject( character ) || tSock->GetDWord( 5 ) != character->GetSerial() )
 		return false;
 
-	CMultiObj *multi = character->GetMultiObj();
-	if( !ValidateObject( multi ))
-		multi = FindMulti( character );
+	// ServUO resolves mouse steering through BoatMountItem.Mount, never through
+	// the mobile's spatial multi. MOREX is UOX's persisted BaseBoat reference for
+	// the virtual BoatMountItem and remains authoritative when hulls overlap.
+	CItem *pilotMount = character->GetItemAtLayer( IL_MOUNT );
+	if( !ValidateObject( pilotMount ) || pilotMount->GetId() != 0x3E96 )
+		return false;
+	const SERIAL pilotBoatSerial = pilotMount->GetTempVar( CITV_MOREX );
+	CMultiObj *multi = CalcMultiFromSer( pilotBoatSerial );
 	if( !ValidateObject( multi ) || !multi->CanBeObjType( OT_BOAT ))
 		return false;
 	CBoatObj *boat = static_cast<CBoatObj *>( multi );
@@ -5653,10 +5658,30 @@ bool CPIBoatMouseMovement::Handle( void )
 	// movement interval even when the client continues requesting full speed.
 	const UI08 effectiveSpeed = boat->GetHullDamageLevel() >= 3 ? 1 : rawSpeed;
 
-	if( rawSpeed > 1 && ( direction % 2 ) == 0 && ( boat->GetDir() & 0x07 ) != direction )
+	// ClassicUO can send the initial mouse order at slow speed before its full
+	// speed continuation. Resolve a requested cardinal facing before accepting
+	// either movement order; otherwise that first packet moves the vessel using
+	// its old facing and leaves the pilot rotated away from the wheel.
+	if(( direction % 2 ) == 0 && ( boat->GetDir() & 0x07 ) != direction )
 	{
-		const UI08 delta = ( direction - ( boat->GetDir() & 0x07 )) & 0x07;
-		TurnBoat( boat, delta <= 4, false );
+		UI08 delta = ( direction - ( boat->GetDir() & 0x07 )) & 0x07;
+		if( delta == 4 )
+		{
+			TurnBoat( boat, true, false );
+			if(( boat->GetDir() & 0x07 ) != direction )
+				TurnBoat( boat, true, false );
+		}
+		else
+			TurnBoat( boat, delta == 2, false );
+
+		// A collision can reject the requested facing. Do not translate that same
+		// world direction into sideways/backward movement on the old heading.
+		if(( boat->GetDir() & 0x07 ) != direction )
+		{
+			boat->SetMoveType( BOAT_STOP );
+			boat->SetPilotSpeed( 0 );
+			return true;
+		}
 	}
 
 	const UI08 relativeDirection = ( direction - ( boat->GetDir() & 0x07 )) & 0x07;

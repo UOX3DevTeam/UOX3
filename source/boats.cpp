@@ -607,6 +607,7 @@ static bool ConfigureHighSeasFixtures( CBoatObj *boat, CItem *tiller, CItem *por
 				item->Delete();
 		}
 		oldFixtures.clear();
+		boat->ClearFixtures();
 	}
 	bool foundHold = false;
 	bool foundWheel = false;
@@ -678,6 +679,7 @@ static bool ConfigureHighSeasFixtures( CBoatObj *boat, CItem *tiller, CItem *por
 				parentTag.m_ObjectType = TAGMAP_TYPE_INT;
 				parentTag.m_StringValue = "";
 				deckPiece->SetTag( "hsGalleonSerial", parentTag );
+				boat->RegisterFixture( deckPiece->GetSerial() );
 				if( cannonPadIds.find( component.tileId ) != cannonPadIds.end() )
 					deckPiece->SetTag( "hsWeaponPad", fixtureTag );
 				// Newly reconstructed directional fixtures must be sent now. Their
@@ -697,6 +699,67 @@ bool RestoreHighSeasBoatFixtures( CBoatObj *boat )
 		return false;
 	return ConfigureHighSeasFixtures( boat, CalcItemObjFromSer( boat->GetTiller() ), CalcItemObjFromSer( boat->GetPlank( 0 )),
 		CalcItemObjFromSer( boat->GetPlank( 1 )), CalcItemObjFromSer( boat->GetHold() ), true );
+}
+
+static void ClearLegacyBoatPilotTags( CChar *pilot )
+{
+	if( !ValidateObject( pilot ))
+		return;
+	// Older High Seas test builds persisted a captured deck Z and reapplied it
+	// during movement, release, and login. ServUO never changes a pilot's Z;
+	// remove those legacy values without applying them to the character.
+	TAGMAPOBJECT destroyTag;
+	destroyTag.m_Destroy = true;
+	destroyTag.m_ObjectType = TAGMAP_TYPE_INT;
+	destroyTag.m_IntValue = 0;
+	destroyTag.m_StringValue = "";
+	pilot->SetTag( "hsPilotDeckZ", destroyTag );
+	pilot->SetTag( "hsPilotDeckZValid", destroyTag );
+	pilot->SetTag( "hsPilotBoatSerial", destroyTag );
+}
+
+// ServUO forcibly releases a galleon pilot on disconnection and death. Keep
+// that lifecycle in one native helper so every exit path clears movement and
+// the boat-side pilot reference before the virtual mount is removed.
+void ReleaseBoatPilot( CChar *pilot )
+{
+	if( !ValidateObject( pilot ))
+		return;
+	// Resolve the same persisted BoatMountItem -> BaseBoat relationship ServUO
+	// uses. Spatial FindMulti can select a touching vessel and is only a fallback
+	// for sessions created before the mount relationship was introduced.
+	CItem *pilotMount = pilot->GetItemAtLayer( IL_MOUNT );
+	SERIAL capturedBoatSerial = INVALIDSERIAL;
+	if( ValidateObject( pilotMount ) && pilotMount->GetId() == 0x3E96 )
+		capturedBoatSerial = pilotMount->GetTempVar( CITV_MOREX );
+	if( capturedBoatSerial == INVALIDSERIAL )
+		capturedBoatSerial = static_cast<SERIAL>( pilot->GetTag( "hsPilotBoatSerial" ).m_IntValue );
+	CMultiObj *multi = CalcMultiFromSer( capturedBoatSerial );
+	if( !ValidateObject( multi ))
+		multi = pilot->GetMultiObj();
+	if( !ValidateObject( multi ))
+		multi = FindMulti( pilot );
+	if( ValidateObject( multi ) && multi->CanBeObjType( OT_BOAT ))
+	{
+		auto *boat = static_cast<CBoatObj *>( multi );
+		// Pilot state is deliberately transient, like ServUO's BaseBoat.Pilot.
+		// After a restart the boat correctly has no pilot, while an older world
+		// save may still contain the character's equipped virtual mount. Clear
+		// boat movement only when this character still owns the live session.
+		if( boat->GetPilot() == pilot->GetSerial() ||
+			( ValidateObject( pilotMount ) && boat->GetPilotMount() == pilotMount->GetSerial() ))
+		{
+			boat->SetPilot( INVALIDSERIAL );
+			boat->SetPilotMount( INVALIDSERIAL );
+			boat->SetPilotSpeed( 0 );
+			boat->SetMoveType( BOAT_STOP );
+			boat->SetMoveTime( 0 );
+		}
+	}
+	// This must also run for a stale post-restart mount. Do not restore the old
+	// captured Z: ServUO leaves the mobile's location unchanged when releasing
+	// a pilot and only removes/internalizes its virtual mount.
+	ClearLegacyBoatPilotTags( pilot );
 }
 
 static void RestoreDryDockedCannons( CBoatObj *boat )
@@ -731,7 +794,8 @@ static void RestoreDryDockedCannons( CBoatObj *boat )
 		};
 		setIntTag( "hsCannonKind", 2 );
 		setIntTag( "hsCannonPower", power );
-		setIntTag( "hsCannonStage", 0 );
+		setIntTag( "hsCannonStage", 1 ); // ServUO cannons are constructed clean.
+		setIntTag( "hsCannonShots", 0 );
 		setIntTag( "hsCannonAmmo", 0 );
 		setIntTag( "hsCannonHits", oldstrutil::value<SI32>( fields[3] ));
 		setIntTag( "hsPreferredAmmo", oldstrutil::value<SI32>( fields[4] ));
@@ -803,6 +867,28 @@ SI32 RepairBoatHull( CBoatObj *boat, SI32 amount )
 	if( boat->GetHullDamageLevel() != oldLevel )
 		RefreshHighSeasDamageState( boat );
 	return boat->GetHullHits() - oldHits;
+}
+
+bool IsBoatNearLandOrDocks( CBoatObj *boat )
+{
+	if( !ValidateObject( boat ))
+		return false;
+	for( SI16 x = boat->GetX() - 12; x <= boat->GetX() + 12; ++x )
+	{
+		for( SI16 y = boat->GetY() - 12; y <= boat->GetY() + 12; ++y )
+		{
+			auto land = Map->SeekMap( x, y, boat->WorldNumber() );
+			if( land.terrainInfo != nullptr && !land.CheckFlag( TF_BLOCKING ) && !land.CheckFlag( TF_WET ))
+				return true;
+			for( const auto &tile : Map->ArtAt( x, y, boat->WorldNumber() ))
+			{
+				const auto name = oldstrutil::lower( tile.name() );
+				if( name == "wooden plank" || name == "pier" )
+					return true;
+			}
+		}
+	}
+	return false;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1017,56 +1103,29 @@ static void CollectBoatEntities( CBoatObj *boat, std::vector<CItem *>& items, st
 	if( !ValidateObject( boat ))
 		return;
 
-	const auto &components = Map->SeekMulti( boat->GetId() - 0x4000 ).items;
-	SI16 minX = 0, maxX = 0, minY = 0, maxY = 0;
-	SI08 minZ = 0, maxZ = 0;
-	std::unordered_set<UI32> footprint;
-	auto footprintKey = []( SI16 x, SI16 y )
-	{
-		return( static_cast<UI32>( static_cast<UI16>( x )) << 16 ) |
-			static_cast<UI16>( y );
-	};
-	for( const auto &component : components )
-	{
-		minX = std::min<SI16>( minX, static_cast<SI16>( component.offsetX ));
-		maxX = std::max<SI16>( maxX, static_cast<SI16>( component.offsetX ));
-		minY = std::min<SI16>( minY, static_cast<SI16>( component.offsetY ));
-		maxY = std::max<SI16>( maxY, static_cast<SI16>( component.offsetY ));
-		minZ = std::min<SI08>( minZ, static_cast<SI08>( component.altitude ));
-		maxZ = std::max<SI08>( maxZ, static_cast<SI08>( component.altitude ));
-		footprint.insert( footprintKey( static_cast<SI16>( component.offsetX ), static_cast<SI16>( component.offsetY )));
-	}
-	const UI16 range = static_cast<UI16>( std::max({ std::abs( minX ), std::abs( maxX ), std::abs( minY ), std::abs( maxY ) }) + 2 );
 	std::unordered_set<SERIAL> seen;
-	for( auto *item : FindNearbyItems( boat->GetX(), boat->GetY(), boat->WorldNumber(), boat->GetInstanceId(), range ))
+	// The live multi collection owns cargo/cannons/addons.  The serialized fixture
+	// registry owns generated deck pieces even if a location update temporarily
+	// removes one from the live collection.  Geometry is never ownership.
+	for( auto *item : boat->GetItemsInMultiList()->collection() )
 	{
 		if( !ValidateObject( item ) || item == boat )
 			continue;
-		auto *itemMulti = item->GetMultiObj();
-		const bool taggedFixture = item->GetTag( "hsGalleonFixture" ).m_IntValue == 1 &&
-			item->GetTag( "hsGalleonSerial" ).m_IntValue == static_cast<SI32>( boat->GetSerial() );
-		// Multi ownership takes precedence over geometric overlap. Without this
-		// guard, two touching galleons can capture each other's fixtures. A fixture's
-		// persistent parent serial is authoritative, however, because SetLocation can
-		// temporarily assign it to an overlapping neighboring multi.
-		if( ValidateObject( itemMulti ) && itemMulti != boat && !taggedFixture )
-			continue;
-		const bool inBounds = footprint.find( footprintKey( item->GetX() - boat->GetX(), item->GetY() - boat->GetY() )) != footprint.end() &&
-			item->GetZ() >= boat->GetZ() + minZ - 2 && item->GetZ() <= boat->GetZ() + maxZ + 20;
-		const bool ownedByBoat = itemMulti == boat;
-		if(( taggedFixture || ownedByBoat || ( inBounds && !ValidateObject( itemMulti ))) && seen.insert( item->GetSerial() ).second )
+		if( item->GetMultiObj() == boat && seen.insert( item->GetSerial() ).second )
 			items.push_back( item );
 	}
-	for( auto *character : FindNearbyChars( boat->GetX(), boat->GetY(), boat->WorldNumber(), boat->GetInstanceId(), range ))
+	for( const auto serial : boat->GetFixtures() )
+	{
+		auto *item = CalcItemObjFromSer( serial );
+		if( ValidateObject( item ) && item->GetTag( "hsGalleonSerial" ).m_IntValue == static_cast<SI32>( boat->GetSerial() ) &&
+			seen.insert( serial ).second )
+			items.push_back( item );
+	}
+	for( auto *character : boat->GetCharsInMultiList()->collection() )
 	{
 		if( !ValidateObject( character ))
 			continue;
-		auto *characterMulti = character->GetMultiObj();
-		if( ValidateObject( characterMulti ) && characterMulti != boat )
-			continue;
-		const bool inBounds = footprint.find( footprintKey( character->GetX() - boat->GetX(), character->GetY() - boat->GetY() )) != footprint.end() &&
-			character->GetZ() >= boat->GetZ() + minZ - 2 && character->GetZ() <= boat->GetZ() + maxZ + 20;
-		if(( characterMulti == boat || ( inBounds && !ValidateObject( characterMulti ))) && seen.insert( character->GetSerial() ).second )
+		if( character->GetMultiObj() == boat && seen.insert( character->GetSerial() ).second )
 			characters.push_back( character );
 	}
 	CChar *pilot = CalcCharObjFromSer( boat->GetPilot() );
@@ -1093,7 +1152,7 @@ UI08 CheckHighSeasDryDock( CBoatObj *boat )
 			item->GetTag( "hsGalleonFixture" ).m_IntValue == 1 ) continue;
 		if( item->GetTag( "hsCannonKind" ).m_IntValue == 2 )
 		{
-			if( item->GetTag( "hsCannonStage" ).m_IntValue != 0 ) return 5;
+			if( item->GetTag( "hsCannonStage" ).m_IntValue > 1 ) return 5;
 			continue;
 		}
 		return 4;
@@ -1431,21 +1490,13 @@ void TurnBoat( CBoatObj *b, bool rightTurn, bool disableChecks )
 
 	if( rightTurn )
 	{
-		b->SetDir( olddir + 2 );
+		b->SetDir( static_cast<UI08>(( olddir + 2 ) & 0x07 ));
 		++id2;
 	}
 	else
 	{
-		b->SetDir( olddir - 2 );
+		b->SetDir( static_cast<UI08>(( olddir + 6 ) & 0x07 ));
 		--id2;
-	}
-	if( b->GetDir() > 250 )
-	{
-		b->SetDir( b->GetDir() + 4 );
-	}
-	if( b->GetDir() > NORTHWEST )
-	{
-		b->SetDir( b->GetDir() - 4 );//Make sure we dont have any DIR errors
 	}
 
 	if( highSeasHull )
@@ -1607,6 +1658,15 @@ void TurnBoat( CBoatObj *b, bool rightTurn, bool disableChecks )
 	// and resend the completed multi so the client loads the new directional hull.
 	b->RemoveFromSight();
 	b->Update();
+	// Refresh the mounted pilot after the hull and its directional fixtures are
+	// complete. Sending the mobile before the multi replacement can leave the
+	// client displaying the pilot at the rotated location on the old hull.
+	auto *pilot = CalcCharObjFromSer( b->GetPilot() );
+	if( ValidateObject( pilot ))
+	{
+		pilot->SetDir( b->GetDir() & 0x07 );
+		pilot->Update();
+	}
 
 	for( auto &tSock :nearbyChars )
 	{

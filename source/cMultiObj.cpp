@@ -1544,6 +1544,8 @@ bool CBoatObj::DumpBody( std::ostream &outStream ) const
 	outStream << "HullMaxHits=" << hullMaxHits << '\n';
 	outStream << "HullHits=" << hullHits << '\n';
 	outStream << "EmergencyRepairUntil=" << emergencyRepairUntil << '\n';
+	for( const auto fixtureSerial : fixtures )
+		outStream << "Fixture=0x" << std::hex << fixtureSerial << std::dec << '\n';
 	return true;
 }
 
@@ -1562,10 +1564,17 @@ bool CBoatObj::HandleLine( std::string &UTag, std::string &data )
 		auto csecs = oldstrutil::sections( data, "," );
 		switch(( UTag.data()[0] ))
 		{
-			case 'E':
+		case 'E':
 				if( UTag == "EMERGENCYREPAIRUNTIL" )
 				{
 					emergencyRepairUntil = oldstrutil::value<UI64>( data );
+					rValue = true;
+				}
+				break;
+			case 'F':
+				if( UTag == "FIXTURE" )
+				{
+					RegisterFixture( static_cast<SERIAL>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				break;
@@ -1691,6 +1700,27 @@ UI08 CBoatObj::GetPilotSpeed( void ) const
 void CBoatObj::SetPilotSpeed( UI08 newVal )
 {
 	pilotSpeed = newVal;
+}
+
+void CBoatObj::RegisterFixture( SERIAL serial )
+{
+	if( serial != INVALIDSERIAL && std::find( fixtures.begin(), fixtures.end(), serial ) == fixtures.end() )
+		fixtures.push_back( serial );
+}
+
+void CBoatObj::UnregisterFixture( SERIAL serial )
+{
+	fixtures.erase( std::remove( fixtures.begin(), fixtures.end(), serial ), fixtures.end() );
+}
+
+void CBoatObj::ClearFixtures( void )
+{
+	fixtures.clear();
+}
+
+const std::vector<SERIAL>& CBoatObj::GetFixtures( void ) const
+{
+	return fixtures;
 }
 SI32 CBoatObj::GetHullHits( void ) const
 {

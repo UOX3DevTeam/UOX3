@@ -60,7 +60,9 @@ CMultiObj *	FindMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceId
 CMultiObj *	FindMulti( CBaseObject *i );
 void		DamageBoatHull( CBoatObj *boat, SI32 amount );
 SI32		RepairBoatHull( CBoatObj *boat, SI32 amount );
+bool		IsBoatNearLandOrDocks( CBoatObj *boat );
 bool		RestoreHighSeasBoatFixtures( CBoatObj *boat );
+void		ReleaseBoatPilot( CChar *pilot );
 UI08		CheckHighSeasDryDock( CBoatObj *boat );
 bool		DeleteHighSeasBoatForDryDock( CBoatObj *boat );
 

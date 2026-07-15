@@ -6,14 +6,13 @@ const CANNON_SCRIPT = 5099;
 const AI_TIMER = 1;
 const CLEANUP_TIMER = 2;
 const AI_INTERVAL = 1000;
-const FIRE_COOLDOWN = 7000;
+// Four crew produce ServUO's 10 second ShootFrequency (20 - 4 * 2.5), with
+// each cannon adding its own random zero-to-three-second delay.
+const FIRE_COOLDOWN = 10000;
 const CLEANUP_DELAY = 1800000;
-const ENGAGE_RANGE = 28;
-// Center-to-center station range. Individual cannon objects still enforce
-// their exact 10-tile muzzle range and firing arc.
-const BROADSIDE_RANGE = 14;
-const BROADSIDE_OFFSET = 11;
-const COURSE_TOLERANCE = 3;
+const ENGAGE_RANGE = 25;
+const MIN_PURSUIT_RANGE = 10;
+const MAX_PURSUIT_RANGE = 35;
 
 function CommandRegistration()
 {
@@ -111,6 +110,12 @@ function onTimer( boat, timerID )
 	if( !ValidateObject( boat ) || !boat.isItem || boat.GetTag( "hsPirateGalleon" ) != 1 ) return;
 	if( timerID == CLEANUP_TIMER )
 	{
+		if( AreaCharacterFunction( "CountPlayersAboardPirate", boat, 25 ) > 0 )
+		{
+			boat.decaytime = 30;
+			boat.StartTimer( 30000, CLEANUP_TIMER, PIRATE_SCRIPT );
+			return;
+		}
 		RemovePirateCrew( boat );
 		boat.Delete();
 		return;
@@ -118,15 +123,57 @@ function onTimer( boat, timerID )
 	if( timerID != AI_TIMER ) return;
 
 	var captain = CalcCharFromSer( parseInt( boat.GetTag( "hsPirateCaptain" )));
+	RunPirateCaptainAI( boat, captain );
+	if( ValidateObject( boat ) && boat.GetTag( "hsPirateDefeated" ) != 1 )
+		boat.StartTimer( AI_INTERVAL, AI_TIMER, PIRATE_SCRIPT );
+}
+
+// NPC AI slivers are restored with the captain from the world save. This is
+// the restart-safe equivalent of BaseShipCaptain.Deserialize scheduling its
+// course and crew checks; the boat timer remains only as a live-world fallback.
+function onAISliver( pirate )
+{
+	if( !ValidateObject( pirate )) return false;
+	var linkedBoat = CalcItemFromSer( parseInt( pirate.GetTag( "hsPirateBoat" )));
+	if( ValidateObject( linkedBoat ) && linkedBoat.GetTag( "hsPirateDefeated" ) == 1 &&
+		AreaCharacterFunction( "CountPlayersAboardPirate", linkedBoat, 25 ) > 0 )
+		linkedBoat.decaytime = 30;
+	if( pirate.GetTag( "hsPirateCaptain" ) != 1 ) return false;
+	var now = GetCurrentClock();
+	var nextThink = parseInt( pirate.GetTempTag( "hsNextShipThink" ));
+	if( !isNaN( nextThink ) && now < nextThink ) return false;
+	pirate.SetTempTag( "hsNextShipThink", now + AI_INTERVAL );
+	var boat = CalcItemFromSer( parseInt( pirate.GetTag( "hsPirateBoat" )));
+	if( ValidateObject( boat )) RunPirateCaptainAI( boat, pirate );
+	return false;
+}
+
+function CountPlayersAboardPirate( boat, character )
+{
+	return ValidateObject( character ) && !character.npc && character.multi == boat;
+}
+
+function RunPirateCaptainAI( boat, captain )
+{
+	var now = GetCurrentClock();
+	var nextBoatThink = parseInt( boat.GetTempTag( "hsNextCaptainThink" ));
+	if( !isNaN( nextBoatThink ) && now < nextBoatThink ) return;
+	boat.SetTempTag( "hsNextCaptainThink", now + AI_INTERVAL );
 	if( !ValidateObject( captain ) || captain.dead || ( boat.GetHullMaxHits() > 0 && boat.GetHullHits() * 4 < boat.GetHullMaxHits() ))
 	{
 		DefeatPirateGalleon( boat );
 		return;
 	}
-	// Repair pirate encounters created by older versions which used the wheel
-	// fixture's base Z and consequently left their crew beneath the deck.
-	boat.SetTempTag( "hsPirateDeckZ", boat.z + 28 );
-	AreaCharacterFunction( "CorrectPirateCrewDeckZ", boat, 25 );
+	// BaseShipCaptain.CheckCrew returns strays to the galleon's current surface.
+	// The captain is already carried at that surface, avoiding a hull-specific
+	// hard-coded Z when restoring crew after movement or a world reload.
+	boat.SetTempTag( "hsPirateDeckZ", captain.z );
+	var nextCrewCheck = parseInt( captain.GetTempTag( "hsNextCrewCheck" ));
+	if( isNaN( nextCrewCheck ) || now >= nextCrewCheck )
+	{
+		AreaCharacterFunction( "CorrectPirateCrewDeckZ", boat, 25 );
+		captain.SetTempTag( "hsNextCrewCheck", now + 1800000 );
+	}
 
 	boat.SetTempTag( "hsBestTarget", 0 );
 	boat.SetTempTag( "hsBestTargetChar", 0 );
@@ -135,7 +182,6 @@ function onTimer( boat, timerID )
 	var targetBoat = CalcItemFromSer( parseInt( boat.GetTempTag( "hsBestTarget" )));
 	if( ValidateObject( targetBoat ) && targetBoat.IsBoat() )
 		NavigatePirateGalleon( boat, targetBoat, captain );
-	boat.StartTimer( AI_INTERVAL, AI_TIMER, PIRATE_SCRIPT );
 }
 
 function CorrectPirateCrewDeckZ( boat, character )
@@ -168,78 +214,28 @@ function NavigatePirateGalleon( boat, target, captain )
 	var dx = target.x - boat.x;
 	var dy = target.y - boat.y;
 	var distance = Math.max( Math.abs( dx ), Math.abs( dy ));
-	var targetDir = parseInt( target.dir ) & 0x06;
-	var waypointX = target.x;
-	var waypointY = target.y;
-	// Approach a point off the target's port or starboard side instead of its
-	// center. This prevents bow-first collisions and gives the pirate a real
-	// parallel broadside course matching the target vessel's heading.
-	if( targetDir == 0 || targetDir == 4 )
-		waypointX += boat.x < target.x ? -BROADSIDE_OFFSET : BROADSIDE_OFFSET;
-	else
-		waypointY += boat.y < target.y ? -BROADSIDE_OFFSET : BROADSIDE_OFFSET;
-	var approachX = waypointX - boat.x;
-	var approachY = waypointY - boat.y;
-	var approachDistance = Math.max( Math.abs( approachX ), Math.abs( approachY ));
-	var desired = approachDistance > COURSE_TOLERANCE ?
-		( Math.abs( approachX ) > Math.abs( approachY ) ? ( approachX > 0 ? 2 : 6 ) : ( approachY > 0 ? 4 : 0 )) : targetDir;
-
-	var current = parseInt( boat.dir ) & 0x06;
-	if( current != desired )
+	// BaseShipCaptain pursues the target vessel only while it is between ten
+	// and thirty-five tiles away. It does not use the prototype side waypoint or
+	// station-keeping behavior that was previously added here.
+	if( distance >= MIN_PURSUIT_RANGE && distance <= MAX_PURSUIT_RANGE )
 	{
-		var delta = ( desired - current + 8 ) % 8;
-		// Never use TurnBoat(3) here. A flip performs two complete directional
-		// fixture rebuilds in one tick, which can leave the intermediate fixtures
-		// visible to nearby clients. Turn one quarter at a time, as a helmsman does.
-		// The native bridge's historical command numbering is opposite its labels:
-		// command 2 advances the cardinal heading (+2), command 1 reduces it (-2).
-		boat.TurnBoat( delta == 2 ? 2 : 1 );
+		var desired = Math.abs( dx ) > Math.abs( dy ) ? ( dx > 0 ? 2 : 6 ) : ( dy > 0 ? 4 : 0 );
+		var current = parseInt( boat.dir ) & 0x06;
+		if( current != desired )
+		{
+			var delta = ( desired - current + 8 ) % 8;
+			boat.TurnBoat( delta == 2 ? 2 : 1 );
+		}
+		else
+			boat.SailBoat( current );
 	}
-	// Once a valid broadside is established, hold station. Resume sailing only
-	// when the target pulls beyond cannon range and its side waypoint must be
-	// reacquired; otherwise a stationary target causes repeated ramming attempts.
-	else if( distance > BROADSIDE_RANGE && approachDistance > COURSE_TOLERANCE )
-		boat.SailBoat( current );
 
-	if( distance <= BROADSIDE_RANGE )
+	if( distance <= ENGAGE_RANGE )
 	{
-		var boardingTarget = CalcCharFromSer( parseInt( boat.GetTempTag( "hsBestTargetChar" )));
-		if( ValidateObject( boardingTarget ))
-		{
-			boat.SetTempTag( "hsBoardingTarget", boardingTarget.serial );
-			boat.SetTempTag( "hsBoardingCount", 0 );
-			AreaCharacterFunction( "BoardPirateCrew", boat, 25 );
-		}
-		var now = GetCurrentClock();
-		var nextFire = parseInt( boat.GetTempTag( "hsNextBroadside" ));
-		if( isNaN( nextFire ) || now >= nextFire )
-		{
-			boat.SetTempTag( "hsBroadsideTarget", target.serial );
-			boat.SetTempTag( "hsBroadsideCaptain", captain.serial );
-			AreaItemFunction( "FirePirateBroadside", boat, 25 );
-			boat.SetTempTag( "hsNextBroadside", now + FIRE_COOLDOWN );
-		}
+		boat.SetTempTag( "hsBroadsideTarget", target.serial );
+		boat.SetTempTag( "hsBroadsideCaptain", captain.serial );
+		AreaItemFunction( "FirePirateBroadside", boat, 25 );
 	}
-}
-
-function BoardPirateCrew( pirateBoat, pirate )
-{
-	if( !ValidateObject( pirate ) || pirate.dead || pirate.GetTag( "hsPirateCaptain" ) == 1 ||
-		parseInt( pirate.GetTag( "hsPirateBoat" )) != pirateBoat.serial || pirate.GetTag( "hsPirateBoarded" ) == 1 ) return false;
-	var count = parseInt( pirateBoat.GetTempTag( "hsBoardingCount" ));
-	if( count >= 2 ) return false;
-	var target = CalcCharFromSer( parseInt( pirateBoat.GetTempTag( "hsBoardingTarget" )));
-	if( !ValidateObject( target ) || target.dead || !ValidateObject( target.multi ) || !target.multi.IsBoat() ) return false;
-	var side = count == 0 ? -1 : 1;
-	pirate.SetLocation( target.x + side, target.y, target.z, target.worldnumber, target.instanceID );
-	pirate.multi = target.multi;
-	pirate.SetTag( "hsPirateBoarded", 1 );
-	pirate.target = target;
-	pirate.attacker = target;
-	pirate.atWar = true;
-	pirateBoat.SetTempTag( "hsBoardingCount", count + 1 );
-	target.SysMessage( "Pirates swing across the lines and board your vessel!" );
-	return true;
 }
 
 function FirePirateBroadside( boat, item )
@@ -247,8 +243,11 @@ function FirePirateBroadside( boat, item )
 	if( !ValidateObject( item ) || item.multi != boat || item.GetTag( "hsCannonKind" ) != 2 ) return false;
 	var target = CalcItemFromSer( parseInt( boat.GetTempTag( "hsBroadsideTarget" )));
 	var captain = CalcCharFromSer( parseInt( boat.GetTempTag( "hsBroadsideCaptain" )));
-	if( ValidateObject( target ) && ValidateObject( captain ))
-		TriggerEvent( CANNON_SCRIPT, "FireNpcCannon", item, target, captain );
+	var now = GetCurrentClock();
+	var nextFire = parseInt( item.GetTempTag( "hsNextFire" ));
+	if( ValidateObject( target ) && ValidateObject( captain ) && ( isNaN( nextFire ) || now >= nextFire ) &&
+		TriggerEvent( CANNON_SCRIPT, "FireNpcCannon", item, target, captain ))
+		item.SetTempTag( "hsNextFire", now + FIRE_COOLDOWN + RandomNumber( 0, 3000 ));
 	return true;
 }
 
@@ -268,6 +267,10 @@ function DefeatPirateGalleon( boat )
 	if( ValidateObject( hold )) hold.owner = null;
 	var tiller = boat.GetTiller();
 	if( ValidateObject( tiller )) tiller.TextMessage( null, "The pirate vessel is defeated! Its hold may now be plundered." );
+	// ServUO gives a defeated captain's galleon a thirty-minute decay window.
+	// Native decay state is serialized, so cleanup survives a shard restart.
+	boat.decayable = true;
+	boat.decaytime = 1800;
 	boat.StartTimer( CLEANUP_DELAY, CLEANUP_TIMER, PIRATE_SCRIPT );
 }
 

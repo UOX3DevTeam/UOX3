@@ -5981,6 +5981,13 @@ JSBool CBoat_RepairHull( JSContext *cx, uintN argc, jsval *vp )
 	return JS_TRUE;
 }
 
+JSBool CBoat_IsNearLandOrDocks( JSContext *cx, uintN argc, jsval *vp )
+{
+	auto *boat = static_cast<CBoatObj *>( JS_GetPrivate( cx, JS_THIS_OBJECT( cx, vp )));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( IsBoatNearLandOrDocks( boat )));
+	return JS_TRUE;
+}
+
 JSBool CBoat_GetHullHits( JSContext *cx, uintN argc, jsval *vp )
 {
 	auto *boat = static_cast<CBoatObj *>( JS_GetPrivate( cx, JS_THIS_OBJECT( cx, vp )));

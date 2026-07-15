@@ -239,6 +239,7 @@ JSBool CMulti_GetTiller( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMulti_GetHold( JSContext *cx, uintN argc, jsval *vp );
 JSBool CBoat_DamageHull( JSContext *cx, uintN argc, jsval *vp );
 JSBool CBoat_RepairHull( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBoat_IsNearLandOrDocks( JSContext *cx, uintN argc, jsval *vp );
 JSBool CBoat_GetHullHits( JSContext *cx, uintN argc, jsval *vp );
 JSBool CBoat_GetHullMaxHits( JSContext *cx, uintN argc, jsval *vp );
 JSBool CBoat_StartEmergencyRepairs( JSContext *cx, uintN argc, jsval *vp );
@@ -547,6 +548,7 @@ inline JSFunctionSpec CItem_Methods[] =
 	{ "IsBoat",				CBase_IsBoat,				0, 0 },
 	{ "DamageHull",			CBoat_DamageHull,			1, 0 },
 	{ "RepairHull",			CBoat_RepairHull,			1, 0 },
+	{ "IsNearLandOrDocks",	CBoat_IsNearLandOrDocks,	0, 0 },
 	{ "GetHullHits",			CBoat_GetHullHits,			0, 0 },
 	{ "GetHullMaxHits",		CBoat_GetHullMaxHits,		0, 0 },
 	{ "StartEmergencyRepairs", CBoat_StartEmergencyRepairs,	1, 0 },

@@ -7338,6 +7338,14 @@ CSocket * CChar::GetSocket( void ) const
 }
 void CChar::SetSocket( CSocket *newVal )
 {
+	// The High Seas pilot controller is a virtual mount. ServUO forcibly drops
+	// it on disconnect so a boat never retains an offline pilot or movement
+	// state. Do this before the old socket reference is detached.
+	if( newVal == nullptr && IsValidPlayer() && mPlayer->socket != nullptr )
+	{
+		ReleaseBoatPilot( this );
+		DismountCreature( this );
+	}
 	if( !IsValidPlayer() )
 	{
 		if( newVal != nullptr )
