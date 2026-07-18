@@ -12,8 +12,13 @@ function command_DRYDOCK( socket, cmdString )
 
 function onCallback0( socket, target )
 {
-	var user = socket.currentChar;
 	var boat = ResolveDryDockBoat( target );
+	BeginHighSeasDryDock( socket, boat );
+}
+
+function BeginHighSeasDryDock( socket, boat )
+{
+	var user = socket.currentChar;
 	if( !ValidateDryDockOwnerAndRange( socket, user, boat )) return;
 	var result = boat.CheckDryDock();
 	if( !ReportDryDockResult( socket, result )) return;
@@ -94,7 +99,9 @@ function ResolveDryDockBoat( target )
 function ValidateDryDockOwnerAndRange( socket, user, boat )
 {
 	if( !ValidateObject( boat ) || !boat.IsBoat() ) { socket.SysMessage( "That is not a High Seas vessel." ); return false; }
-	if( !boat.IsOwner( user ) && !user.isGM ) { socket.SysMessage( "Only the ship's captain may dry dock it." ); return false; }
+	var servUOOwner = user.isGM || boat.IsOwner( user ) ||
+		( ValidateObject( boat.owner ) && boat.owner.accountNum == user.accountNum );
+	if( !servUOOwner ) { socket.SysMessage( "Only the ship's owner may dry dock it." ); return false; }
 	if( user.dead ) { socket.SysMessage( "You cannot dry dock a vessel while dead." ); return false; }
 	if( user.multi == boat ) { socket.SysMessage( "You must disembark before dry docking the vessel." ); return false; }
 	if( !boat.InRange( user, 12 )) { socket.SysMessage( "You are too far away from the vessel." ); return false; }

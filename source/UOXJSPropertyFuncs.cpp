@@ -1295,6 +1295,18 @@ JSBool CItemProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool str
 					gPriv->SetCont( nullptr, true );
 				}
 				break;
+			case CIP_MULTI:
+				if( *vp != JSVAL_NULL )
+				{
+					auto *myObj = static_cast<CBaseObject *>( encaps.toObject() );
+					if( ValidateObject( myObj ) && myObj->CanBeObjType( OT_MULTI ))
+						gPriv->SetMulti( static_cast<CMultiObj *>( myObj ));
+				}
+				else
+				{
+					gPriv->SetMulti( INVALIDSERIAL );
+				}
+				break;
 			case CIP_TYPE:			gPriv->SetType( static_cast<ItemTypes>( encaps.toInt() )); 	break;
 			case CIP_MORE:
 			{
@@ -2354,6 +2366,18 @@ JSBool CCharacterProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBoo
 				else
 				{
 					gPriv->SetOwner( nullptr );
+				}
+				break;
+			case CCP_MULTI:
+				if( *vp != JSVAL_NULL )
+				{
+					auto *myObj = static_cast<CBaseObject *>( encaps.toObject() );
+					if( ValidateObject( myObj ) && myObj->CanBeObjType( OT_MULTI ))
+						gPriv->SetMulti( static_cast<CMultiObj *>( myObj ));
+				}
+				else
+				{
+					gPriv->SetMulti( INVALIDSERIAL );
 				}
 				break;
 			case CCP_VISIBLE:		gPriv->SetVisible( static_cast<VisibleTypes>( encaps.toInt() ));	break;

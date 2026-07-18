@@ -218,6 +218,14 @@ JSBool CMulti_IsOnFriendList( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMulti_IsOnGuestList( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMulti_IsOnOwnerList( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMulti_IsOwner( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBoat_GetSecurityLevel( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBoat_HasAccess( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBoat_CanCommand( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBoat_SetSecurityLevel( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBoat_GetAccessSetting( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBoat_SetAccessSetting( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBoat_ResetSecurity( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBoat_RelocateTillerman( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMulti_AddToBanList( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMulti_AddToFriendList( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMulti_AddToGuestList( JSContext *cx, uintN argc, jsval *vp );
@@ -246,6 +254,8 @@ JSBool CBoat_StartEmergencyRepairs( JSContext *cx, uintN argc, jsval *vp );
 JSBool CBoat_IsUnderEmergencyRepairs( JSContext *cx, uintN argc, jsval *vp );
 JSBool CBoat_CheckDryDock( JSContext *cx, uintN argc, jsval *vp );
 JSBool CBoat_DeleteForDryDock( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBoat_PaintShip( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBoat_RemoveShipPaint( JSContext *cx, uintN argc, jsval *vp );
 
 // Socket Methods
 JSBool CSocket_Disconnect( JSContext *cx, uintN argc, jsval *vp );
@@ -555,12 +565,22 @@ inline JSFunctionSpec CItem_Methods[] =
 	{ "IsUnderEmergencyRepairs", CBoat_IsUnderEmergencyRepairs, 0, 0 },
 	{ "CheckDryDock",			CBoat_CheckDryDock,		0, 0 },
 	{ "DeleteForDryDock",		CBoat_DeleteForDryDock,	0, 0 },
+	{ "PaintShip",			CBoat_PaintShip,		2, 0 },
+	{ "RemoveShipPaint",		CBoat_RemoveShipPaint,	0, 0 },
 	{ "IsInMulti",			CMulti_IsInMulti,			1, 0 },
 	{ "IsOnBanList",		CMulti_IsOnBanList,			1, 0 },
 	{ "IsOnFriendList",		CMulti_IsOnFriendList,		1, 0 },
 	{ "IsOnGuestList",		CMulti_IsOnGuestList,		1, 0 },
 	{ "IsOwner",			CMulti_IsOwner,				1, 0 },
 	{ "IsOnOwnerList",		CMulti_IsOnOwnerList,		1, 0 },
+	{ "GetSecurityLevel",	CBoat_GetSecurityLevel,		1, 0 },
+	{ "HasShipAccess",		CBoat_HasAccess,			1, 0 },
+	{ "CanCommandShip",		CBoat_CanCommand,			1, 0 },
+	{ "SetSecurityLevel",	CBoat_SetSecurityLevel,		2, 0 },
+	{ "GetShipAccessSetting", CBoat_GetAccessSetting,	1, 0 },
+	{ "SetShipAccessSetting", CBoat_SetAccessSetting,	2, 0 },
+	{ "ResetShipSecurity",	CBoat_ResetSecurity,		0, 0 },
+	{ "RelocateTillerman",	CBoat_RelocateTillerman,	3, 0 },
 	{ "AddToBanList",		CMulti_AddToBanList,		1, 0 },
 	{ "AddToFriendList",	CMulti_AddToFriendList,		1, 0 },
 	{ "AddToGuestList",		CMulti_AddToGuestList,		1, 0 },

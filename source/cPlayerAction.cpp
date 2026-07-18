@@ -1347,6 +1347,17 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 			newZ = (( dynZ >= z && dynZ <= z + 14 ) ? dynZ : newZ );
 		}
 
+		// The High Seas client targets the visible hull at water level even when
+		// the cursor is over its deck. Resolve the owning ship independently of
+		// that reported Z and never place an item below its main deck surface.
+		auto *sourceBoat = FindHighSeasBoatAtXY( nChar->GetX(), nChar->GetY(), nChar->WorldNumber(), nChar->GetInstanceId() );
+		if( ValidateObject( sourceBoat ) && HighSeasBoatContainsXY( sourceBoat, x, y ))
+		{
+			const SI08 deckZ = HighSeasBoatDeckZ( sourceBoat );
+			if( newZ < deckZ )
+				newZ = deckZ;
+		}
+
 		auto iMulti = FindMulti( x, y, newZ, nChar->WorldNumber(), nChar->GetInstanceId() );
 		if( ValidateObject( iMulti ) )
 		{
@@ -2768,8 +2779,8 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 							auto *shipOwner = holdBoat->GetOwnerObj();
 							const bool playerOwned = ValidateObject( shipOwner ) && !shipOwner->IsNpc();
 							highSeasHoldAccess = mChar->GetMultiObj() == holdBoat && ObjInRange( mChar, iUsed, DIST_NEARBY ) &&
-								( mChar->IsGM() || !playerOwned || holdBoat->GetTag( "hsPirateDefeated" ).m_IntValue == 1 ||
-									holdBoat->IsOwner( mChar ) || holdBoat->IsOnOwnerList( mChar ));
+								( !playerOwned || holdBoat->GetTag( "hsPirateDefeated" ).m_IntValue == 1 ||
+									holdBoat->GetSecurityLevel( mChar ) >= BoatSecurityLevel::Officer );
 						}
 					}
 
@@ -2950,7 +2961,8 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			}
 			return true;
 		case IT_RECALLRUNE: // Recall Rune
-			if( iUsed->GetTempVar( CITV_MOREX ) == 0 && iUsed->GetTempVar( CITV_MOREY ) == 0 && iUsed->GetTempVar( CITV_MOREZ ) == 0 )	// changed, to fix, Lord Vader
+			if( iUsed->GetTag( "multiSerial" ).m_StringValue.empty() && iUsed->GetTempVar( CITV_MOREX ) == 0 &&
+				iUsed->GetTempVar( CITV_MOREY ) == 0 && iUsed->GetTempVar( CITV_MOREZ ) == 0 )	// changed, to fix, Lord Vader
 			{
 				mSock->SysMessage( 431 ); // That rune is not yet marked!
 			}
@@ -3017,9 +3029,7 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 						mSock->SysMessage( "You cannot do that while piloting a ship." );
 						return true;
 					}
-					const bool hasAccess = mChar->IsGM() || targetBoat->IsOwner( mChar ) || targetBoat->IsOnOwnerList( mChar ) ||
-						targetBoat->IsOnFriendList( mChar ) || targetBoat->GetTag( "hsPirateDefeated" ).m_IntValue == 1;
-					if( !hasAccess )
+					if( !targetBoat->HasAccess( mChar ))
 					{
 						mSock->SysMessage( "You do not have permission to board this ship." );
 						return true;
@@ -3172,7 +3182,21 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 						boat->SetPilotMount( INVALIDSERIAL );
 						boat->SetPilotSpeed( 0 );
 					}
-					if( !boat->IsOwner( mChar ))
+					// A freshly placed High Seas multi may not yet be cached on the
+					// character even when the character is physically on its deck.
+					// Resolve the live geometry before rejecting wheel access. Do not
+					// persist a missing relationship here: SetMulti() can immediately
+					// reinsert the local player below the regenerated High Seas deck.
+					CMultiObj *characterMulti = mChar->GetMultiObj();
+					if( !ValidateObject( characterMulti ))
+						characterMulti = FindMulti( mChar );
+					if( characterMulti != boat )
+					{
+						mSock->SysMessage( "You must be aboard the ship to use its wheel." );
+						return true;
+					}
+					const auto requesterLevel = boat->GetSecurityLevel( mChar );
+					if( requesterLevel < BoatSecurityLevel::Crewman )
 					{
 						mSock->SysMessage( 2034 );
 						return true;
@@ -3184,22 +3208,41 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 						// the client's virtual High Seas mount/animation are cleared.
 						DismountCreature( mChar );
 						mChar->SetOnHorse( false );
-						// Rebuild the controlling client's world state at the same
-						// location. This clears ClassicUO's residual smooth-boat/mobile
-						// offsets and resets its walk sequence without relocating the player.
-						mChar->Teleport();
 						boat->Update();
 						mSock->SysMessage( "You are no longer piloting this vessel." );
+						return true;
+					}
+					if( boat->IsScuttled() || boat->IsSinking() )
+					{
+						mSock->SysMessage( boat->IsSinking() ? "This vessel is sinking and cannot be piloted." :
+							"This vessel is too badly damaged to pilot." );
+						return true;
 					}
 					else if( boat->GetPilot() != INVALIDSERIAL )
 					{
-						mSock->SysMessage( "Someone else is already piloting this vessel." );
-					}
-					else
-					{
-						if( ValidateObject( mChar->GetItemAtLayer( IL_MOUNT )))
+						auto *currentPilot = CalcCharObjFromSer( boat->GetPilot() );
+						const auto pilotLevel = boat->GetSecurityLevel( currentPilot );
+						if( !ValidateObject( currentPilot ) || boat->IsOwner( currentPilot ) || requesterLevel < pilotLevel )
 						{
-							mSock->SysMessage( "You cannot pilot a ship while mounted." );
+							mSock->SysMessage( "Someone else is already piloting this vessel." );
+							return true;
+						}
+						ReleaseBoatPilot( currentPilot );
+						DismountCreature( currentPilot );
+						currentPilot->SetOnHorse( false );
+						boat->SetPilot( INVALIDSERIAL );
+						boat->SetPilotMount( INVALIDSERIAL );
+						boat->SetPilotSpeed( 0 );
+						mSock->SysMessage( "You take command of the vessel." );
+					}
+					if( boat->GetPilot() == INVALIDSERIAL )
+					{
+						const SI08 deckZ = HighSeasBoatDeckZ( boat );
+						if( deckZ != ILLEGAL_Z && mChar->GetZ() < deckZ )
+							mChar->SetLocation( mChar->GetX(), mChar->GetY(), deckZ );
+						if( ValidateObject( mChar->GetItemAtLayer( IL_MOUNT )) || mChar->IsFlying() )
+						{
+							mSock->SysMessage( "You cannot pilot a ship while mounted or flying." );
 							return true;
 						}
 						CItem *pilotMount = Items->CreateItem( nullptr, mChar, 0x3E96, 1, 0, OT_ITEM );
@@ -3216,13 +3259,12 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 						// equipped controller into UOX world saves; it is recreated
 						// each time the player takes the wheel.
 						pilotMount->ShouldSave( false );
-						if( mChar->GetMultiObj() != boat )
-							mChar->SetMulti( boat );
 						boat->SetPilot( mChar->GetSerial() );
 						boat->SetPilotMount( pilotMount->GetSerial() );
 						boat->SetPilotSpeed( 0 );
 						boat->SetMoveType( BOAT_STOP );
 						boat->SetMoveTime( 0 );
+						boat->RefreshBoatDecay();
 						mChar->SetDir( boat->GetDir() & 0x07 );
 						// SetCont/WearItem plus this single mobile update is the UOX
 						// equivalent of ServUO's pilot.AddItem(VirtualMount) delta.

@@ -5,7 +5,10 @@ const PIRATE_SCRIPT = 5100;
 const CANNON_SCRIPT = 5099;
 const AI_TIMER = 1;
 const CLEANUP_TIMER = 2;
-const AI_INTERVAL = 1000;
+// A player-controlled High Seas ship can move every 250ms at full speed. Keep
+// pirate pursuit slower so it can pressure a target without matching every
+// tile forever and making escape impossible once the hulls meet.
+const AI_INTERVAL = 500;
 // Four crew produce ServUO's 10 second ShootFrequency (20 - 4 * 2.5), with
 // each cannon adding its own random zero-to-three-second delay.
 const FIRE_COOLDOWN = 10000;
@@ -13,6 +16,13 @@ const CLEANUP_DELAY = 1800000;
 const ENGAGE_RANGE = 25;
 const MIN_PURSUIT_RANGE = 10;
 const MAX_PURSUIT_RANGE = 35;
+// These UOX High Seas hulls can span roughly twenty tiles end-to-end when two
+// vessels approach bow-first. Stop before their collision footprints touch and
+// use a separate resume range to prevent one-tile chase/stop oscillation.
+const UOX_STOP_RANGE = 20;
+const UOX_RESUME_RANGE = 24;
+const LOITER_DELAY = 2000;
+const FIRE_CHECK_INTERVAL = 750;
 
 function CommandRegistration()
 {
@@ -41,11 +51,15 @@ function onCallback0( socket, target )
 	boat.SetTag( "hsPirateGalleon", 1 );
 	boat.SetTag( "hsPirateDefeated", 0 );
 	boat.AddScriptTrigger( PIRATE_SCRIPT );
-	// High Seas galleon fixture bases are below the walkable deck. The Orcish
-	// galleon's deck surface is 28 Z above its waterline (the same Z occupied by
-	// players standing aboard); the wheel object's base Z is not a character Z.
-	var deckZ = boat.z + 28;
-	var captain = SpawnPirate( "highseas_pirate_captain", boat, boat.x, boat.y + 6, deckZ );
+	// ServUO OrcishGalleon.ZSurface is 14 above the hull origin.  Using the
+	// fixture height (28) puts mobiles a full deck level too high and visually
+	// projects them into the masts and sails even when their X/Y is correct.
+	var deckZ = boat.z + 14;
+	// ServUO spawns the captain one tile north of the hull origin and keeps
+	// crew within a one-tile radius of center.  The Orcish deck narrows sharply
+	// toward both ends, so wider classic-boat offsets can place mobiles outside
+	// the walkable multi even though their Z is correct.
+	var captain = SpawnPirate( "highseas_pirate_captain", boat, boat.x, boat.y - 1, deckZ );
 	if( !ValidateObject( captain ))
 	{
 		boat.Delete();
@@ -56,10 +70,10 @@ function onCallback0( socket, target )
 	boat.SetTag( "hsPirateCaptain", captain.serial );
 	captain.SetTag( "hsPirateCaptain", 1 );
 
-	SpawnPirate( "highseas_pirate_crew", boat, boat.x - 2, boat.y + 2, deckZ );
-	SpawnPirate( "highseas_pirate_crew", boat, boat.x + 2, boat.y + 1, deckZ );
-	SpawnPirate( "highseas_pirate_crew", boat, boat.x - 2, boat.y - 3, deckZ );
-	SpawnPirate( "highseas_pirate_crew", boat, boat.x + 2, boat.y - 4, deckZ );
+	SpawnPirate( "highseas_pirate_crew", boat, boat.x - 1, boat.y - 1, deckZ );
+	SpawnPirate( "highseas_pirate_crew", boat, boat.x + 1, boat.y - 1, deckZ );
+	SpawnPirate( "highseas_pirate_crew", boat, boat.x - 1, boat.y + 1, deckZ );
+	SpawnPirate( "highseas_pirate_crew", boat, boat.x + 1, boat.y + 1, deckZ );
 
 	boat.SetTempTag( "hsDeployPower", 2 );
 	AreaItemFunction( "DeployPirateCannonOnPad", boat, 25 );
@@ -175,13 +189,30 @@ function RunPirateCaptainAI( boat, captain )
 		captain.SetTempTag( "hsNextCrewCheck", now + 1800000 );
 	}
 
-	boat.SetTempTag( "hsBestTarget", 0 );
-	boat.SetTempTag( "hsBestTargetChar", 0 );
-	boat.SetTempTag( "hsBestDistance", ENGAGE_RANGE + 1 );
-	AreaCharacterFunction( "FindPirateShipTarget", boat, ENGAGE_RANGE );
+	// Retain a live target while it remains in ServUO's pursuit envelope. This
+	// avoids rebuilding the target every 250ms and lets the captain finish a
+	// broadside approach when the player's mobile is briefly outside the scan.
 	var targetBoat = CalcItemFromSer( parseInt( boat.GetTempTag( "hsBestTarget" )));
+	var targetChar = CalcCharFromSer( parseInt( boat.GetTempTag( "hsBestTargetChar" )));
+	if( !IsValidPirateTarget( boat, targetBoat, targetChar, MAX_PURSUIT_RANGE ))
+	{
+		boat.SetTempTag( "hsBestTarget", 0 );
+		boat.SetTempTag( "hsBestTargetChar", 0 );
+		boat.SetTempTag( "hsBestDistance", MAX_PURSUIT_RANGE + 1 );
+		AreaCharacterFunction( "FindPirateShipTarget", boat, MAX_PURSUIT_RANGE );
+		targetBoat = CalcItemFromSer( parseInt( boat.GetTempTag( "hsBestTarget" )));
+		targetChar = CalcCharFromSer( parseInt( boat.GetTempTag( "hsBestTargetChar" )));
+	}
 	if( ValidateObject( targetBoat ) && targetBoat.IsBoat() )
 		NavigatePirateGalleon( boat, targetBoat, captain );
+}
+
+function IsValidPirateTarget( pirateBoat, targetBoat, targetChar, maxRange )
+{
+	if( !ValidateObject( targetBoat ) || !targetBoat.IsBoat() || targetBoat == pirateBoat ||
+		targetBoat.GetTag( "hsPirateGalleon" ) == 1 || !ValidateObject( targetChar ) ||
+		targetChar.npc || targetChar.dead || !targetChar.online || targetChar.multi != targetBoat ) return false;
+	return Math.max( Math.abs( targetBoat.x - pirateBoat.x ), Math.abs( targetBoat.y - pirateBoat.y )) <= maxRange;
 }
 
 function CorrectPirateCrewDeckZ( boat, character )
@@ -214,28 +245,107 @@ function NavigatePirateGalleon( boat, target, captain )
 	var dx = target.x - boat.x;
 	var dy = target.y - boat.y;
 	var distance = Math.max( Math.abs( dx ), Math.abs( dy ));
-	// BaseShipCaptain pursues the target vessel only while it is between ten
-	// and thirty-five tiles away. It does not use the prototype side waypoint or
-	// station-keeping behavior that was previously added here.
-	if( distance >= MIN_PURSUIT_RANGE && distance <= MAX_PURSUIT_RANGE )
+	var now = GetCurrentClock();
+	var navTarget = parseInt( boat.GetTempTag( "hsNavTarget" ));
+	var pursuing = parseInt( boat.GetTempTag( "hsPursuing" )) == 1;
+	var resumeAt = parseInt( boat.GetTempTag( "hsResumePursuitAt" ));
+	if( isNaN( resumeAt )) resumeAt = 0;
+
+	// SailBoat does not report a blocked native move back to JavaScript. Detect
+	// an unchanged position on the following AI tick and loiter before retrying,
+	// instead of hammering the obstruction and spamming the tiller message.
+	var attemptPending = parseInt( boat.GetTempTag( "hsMoveAttemptPending" )) == 1;
+	var attemptX = parseInt( boat.GetTempTag( "hsMoveAttemptX" ));
+	var attemptY = parseInt( boat.GetTempTag( "hsMoveAttemptY" ));
+	if( attemptPending )
 	{
-		var desired = Math.abs( dx ) > Math.abs( dy ) ? ( dx > 0 ? 2 : 6 ) : ( dy > 0 ? 4 : 0 );
-		var current = parseInt( boat.dir ) & 0x06;
-		if( current != desired )
+		boat.SetTempTag( "hsMoveAttemptPending", 0 );
+		if( !isNaN( attemptX ) && !isNaN( attemptY ) && attemptX == boat.x && attemptY == boat.y )
 		{
-			var delta = ( desired - current + 8 ) % 8;
-			boat.TurnBoat( delta == 2 ? 2 : 1 );
+			pursuing = false;
+			boat.SetTempTag( "hsPursuing", 0 );
+			resumeAt = now + LOITER_DELAY;
+			boat.SetTempTag( "hsResumePursuitAt", resumeAt );
 		}
-		else
-			boat.SailBoat( current );
+	}
+	if( navTarget != target.serial )
+	{
+		boat.SetTempTag( "hsNavTarget", target.serial );
+		pursuing = distance > UOX_STOP_RANGE;
+		boat.SetTempTag( "hsPursuing", pursuing ? 1 : 0 );
+		resumeAt = 0;
 	}
 
-	if( distance <= ENGAGE_RANGE )
+	if( pursuing && distance <= UOX_STOP_RANGE )
 	{
+		// ServUO StopMove + ResumeCourseTimed(loiter), adapted to scripted
+		// one-tile movement. Do not chase the target's changing relative offset.
+		pursuing = false;
+		boat.SetTempTag( "hsPursuing", 0 );
+		resumeAt = now + LOITER_DELAY;
+		boat.SetTempTag( "hsResumePursuitAt", resumeAt );
+	}
+	else if( !pursuing && distance >= UOX_RESUME_RANGE && now >= resumeAt )
+	{
+		pursuing = true;
+		boat.SetTempTag( "hsPursuing", 1 );
+	}
+
+	if( pursuing && distance <= MAX_PURSUIT_RANGE )
+	{
+		// BaseBoat.StartMove receives a world direction in ServUO. SailBoat is
+		// UOX's collision-checked one-tile equivalent and does not require the bow
+		// to point at the target.
+		boat.SetTempTag( "hsMoveAttemptX", boat.x );
+		boat.SetTempTag( "hsMoveAttemptY", boat.y );
+		boat.SetTempTag( "hsMoveAttemptPending", 1 );
+		boat.SailBoat( DirectionToPoint( boat.x, boat.y, target.x, target.y ));
+	}
+	else if( distance <= UOX_RESUME_RANGE )
+	{
+		// While loitering, rotate only as needed to put a beam toward the target.
+		// The hull remains stationary, so this does not tether the two vessels.
+		AlignPirateForTarget( boat, dx, dy );
+	}
+
+	var nextFireCheck = parseInt( boat.GetTempTag( "hsNextBroadsideCheck" ));
+	if( distance <= ENGAGE_RANGE && ( isNaN( nextFireCheck ) || now >= nextFireCheck ))
+	{
+		boat.SetTempTag( "hsNextBroadsideCheck", now + FIRE_CHECK_INTERVAL );
 		boat.SetTempTag( "hsBroadsideTarget", target.serial );
 		boat.SetTempTag( "hsBroadsideCaptain", captain.serial );
 		AreaItemFunction( "FirePirateBroadside", boat, 25 );
 	}
+}
+
+function DirectionToPoint( fromX, fromY, toX, toY )
+{
+	var dx = toX - fromX;
+	var dy = toY - fromY;
+	var adx = Math.abs( dx );
+	var ady = Math.abs( dy );
+	if( dx == 0 ) return dy > 0 ? 4 : 0;
+	if( dy == 0 ) return dx > 0 ? 2 : 6;
+	if( adx > ady * 2 ) return dx > 0 ? 2 : 6;
+	if( ady > adx * 2 ) return dy > 0 ? 4 : 0;
+	if( dx > 0 ) return dy > 0 ? 3 : 1;
+	return dy > 0 ? 5 : 7;
+}
+
+function AlignPirateForTarget( boat, dx, dy )
+{
+	var current = parseInt( boat.dir ) & 0x06;
+	// If the target is east/west, a north/south hull exposes its beam; if the
+	// target is north/south, use an east/west hull. Pick the nearer parallel
+	// orientation to avoid unnecessary 180-degree turns.
+	var first = Math.abs( dx ) >= Math.abs( dy ) ? 0 : 2;
+	var second = ( first + 4 ) & 0x07;
+	var firstTurns = Math.min(( first - current + 8 ) % 8, ( current - first + 8 ) % 8 );
+	var secondTurns = Math.min(( second - current + 8 ) % 8, ( current - second + 8 ) % 8 );
+	var desired = firstTurns <= secondTurns ? first : second;
+	if( current == desired ) return;
+	var delta = ( desired - current + 8 ) % 8;
+	boat.TurnBoat( delta == 2 || delta == 4 ? 2 : 1 );
 }
 
 function FirePirateBroadside( boat, item )

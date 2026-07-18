@@ -1953,7 +1953,23 @@ void CChar::SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world, UI16 insta
 	z		= newZ;
 	WorldNumber( world );
 	SetInstanceId( instanceId );
-	CMultiObj *newMulti = FindMulti( newX, newY, newZ, world, instanceId );
+	// When two High Seas hulls overlap, FindMulti can return the other vessel and
+	// detach a passenger from the ship they are already standing on. Keep the
+	// current boat association while the destination remains inside its hull.
+	CMultiObj *newMulti = nullptr;
+	CMultiObj *currentMulti = GetMultiObj();
+	if( ValidateObject( currentMulti ) && currentMulti->CanBeObjType( OT_BOAT ))
+	{
+		auto *currentBoat = static_cast<CBoatObj *>( currentMulti );
+		if( HighSeasBoatContainsXY( currentBoat, newX, newY ))
+		{
+			newMulti = currentMulti;
+		}
+	}
+	if( !ValidateObject( newMulti ))
+	{
+		newMulti = FindMulti( newX, newY, newZ, world, instanceId );
+	}
 	if( GetMultiObj() != newMulti )
 	{
 		SetMulti( newMulti );

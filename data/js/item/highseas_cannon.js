@@ -86,12 +86,12 @@ function OperateCannon( user, used )
 
 function CanOperateCannon( boat, user )
 {
-	return ValidateObject( boat ) && ( user.isGM || boat.IsOwner( user ) || boat.IsOnOwnerList( user ) || boat.IsOnFriendList( user ));
+	return ValidateObject( boat ) && boat.CanCommandShip( user );
 }
 
 function IsShipOfficer( boat, user )
 {
-	return ValidateObject( boat ) && ( user.isGM || boat.IsOwner( user ) || boat.IsOnOwnerList( user ));
+	return ValidateObject( boat ) && boat.GetSecurityLevel( user ) >= 4;
 }
 
 function ShowCannonGump( user, cannon )
@@ -246,7 +246,7 @@ function RepairCannon( user, cannon )
 
 function RepairShipHull( user, boat )
 {
-	if( !IsShipOfficer( boat, user )) { user.socket.SysMessage( "Only the captain or a ship officer may repair this vessel." ); return; }
+	if( !CanOperateCannon( boat, user )) { user.socket.SysMessage( "Only authorized ship crew may repair this vessel." ); return; }
 	if( user.multi != boat ) { user.socket.SysMessage( "You must be aboard the vessel to repair it." ); return; }
 	if( !boat.IsNearLandOrDocks() ) { user.socket.SysMessage( "Permanent ship repairs may only be made near land or docks." ); return; }
 	var hits = boat.GetHullHits();
@@ -287,9 +287,9 @@ function RepairShipHull( user, boat )
 function DismantleCannon( user, cannon )
 {
 	var boat = cannon.multi;
-	if( !ValidateObject( boat ) || ( !user.isGM && !boat.IsOwner( user )))
+	if( !ValidateObject( boat ) || boat.GetSecurityLevel( user ) < 4 )
 	{
-		user.socket.SysMessage( "Only the ship's captain may dismantle this cannon." ); return;
+		user.socket.SysMessage( "Only the ship's captain or an officer may dismantle this cannon." ); return;
 	}
 	var hits = parseInt( cannon.GetTag( "hsCannonHits" ));
 	if( isNaN( hits ) || hits <= 0 ) hits = 100;
@@ -305,7 +305,7 @@ function DismantleCannon( user, cannon )
 
 function BeginEmergencyRepairs( user, boat )
 {
-	if( !IsShipOfficer( boat, user )) { user.socket.SysMessage( "Only the captain or a ship officer may order emergency repairs." ); return; }
+	if( !CanOperateCannon( boat, user )) { user.socket.SysMessage( "Only authorized ship crew may order emergency repairs." ); return; }
 	if( user.multi != boat ) { user.socket.SysMessage( "You must be aboard the vessel." ); return; }
 	var hits = boat.GetHullHits();
 	var maxHits = boat.GetHullMaxHits();

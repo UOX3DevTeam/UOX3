@@ -6038,6 +6038,145 @@ JSBool CBoat_DeleteForDryDock( JSContext *cx, uintN argc, jsval *vp )
 	return JS_TRUE;
 }
 
+JSBool CBoat_PaintShip( JSContext *cx, uintN argc, jsval *vp )
+{
+	auto *boat = static_cast<CBoatObj *>( JS_GetPrivate( cx, JS_THIS_OBJECT( cx, vp )));
+	SI32 hue = 0;
+	JSBool permanent = JS_FALSE;
+	if( argc != 2 || !ValidateObject( boat ) || !boat->CanBeObjType( OT_BOAT ) ||
+		!JS_ValueToInt32( cx, JS_ARGV( cx, vp )[0], &hue ) || hue <= 0 || hue > 0xFFFF ||
+		!JS_ValueToBoolean( cx, JS_ARGV( cx, vp )[1], &permanent ))
+	{
+		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ));
+		return JS_TRUE;
+	}
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( PaintHighSeasBoat( boat, static_cast<UI16>( hue ), permanent == JS_TRUE )));
+	return JS_TRUE;
+}
+
+JSBool CBoat_RemoveShipPaint( JSContext *cx, uintN argc, jsval *vp )
+{
+	auto *boat = static_cast<CBoatObj *>( JS_GetPrivate( cx, JS_THIS_OBJECT( cx, vp )));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ValidateObject( boat ) && boat->CanBeObjType( OT_BOAT ) && RemoveHighSeasBoatPaint( boat )));
+	return JS_TRUE;
+}
+
+static CBoatObj *GetJSBoat( JSContext *cx, jsval *vp )
+{
+	auto *boat = static_cast<CBoatObj *>( JS_GetPrivate( cx, JS_THIS_OBJECT( cx, vp )));
+	return ValidateObject( boat ) && boat->CanBeObjType( OT_BOAT ) ? boat : nullptr;
+}
+
+static CChar *GetJSCharacterArgument( JSContext *cx, jsval value )
+{
+	if( !JSVAL_IS_OBJECT( value ))
+		return nullptr;
+	auto *object = JSVAL_TO_OBJECT( value );
+	auto *character = static_cast<CChar *>( JS_GetPrivate( cx, object ));
+	return ValidateObject( character ) && character->CanBeObjType( OT_CHAR ) ? character : nullptr;
+}
+
+JSBool CBoat_GetSecurityLevel( JSContext *cx, uintN argc, jsval *vp )
+{
+	auto *boat = GetJSBoat( cx, vp );
+	auto *character = argc == 1 ? GetJSCharacterArgument( cx, JS_ARGV( cx, vp )[0] ) : nullptr;
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( boat != nullptr && character != nullptr ? static_cast<UI08>( boat->GetSecurityLevel( character )) : static_cast<UI08>( BoatSecurityLevel::Denied )));
+	return JS_TRUE;
+}
+
+JSBool CBoat_HasAccess( JSContext *cx, uintN argc, jsval *vp )
+{
+	auto *boat = GetJSBoat( cx, vp );
+	auto *character = argc == 1 ? GetJSCharacterArgument( cx, JS_ARGV( cx, vp )[0] ) : nullptr;
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( boat != nullptr && character != nullptr && boat->HasAccess( character )));
+	return JS_TRUE;
+}
+
+JSBool CBoat_CanCommand( JSContext *cx, uintN argc, jsval *vp )
+{
+	auto *boat = GetJSBoat( cx, vp );
+	auto *character = argc == 1 ? GetJSCharacterArgument( cx, JS_ARGV( cx, vp )[0] ) : nullptr;
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( boat != nullptr && character != nullptr && boat->CanCommand( character )));
+	return JS_TRUE;
+}
+
+JSBool CBoat_SetSecurityLevel( JSContext *cx, uintN argc, jsval *vp )
+{
+	auto *boat = GetJSBoat( cx, vp );
+	auto *character = argc == 2 ? GetJSCharacterArgument( cx, JS_ARGV( cx, vp )[0] ) : nullptr;
+	SI32 level = 0;
+	if( boat == nullptr || character == nullptr || !JS_ValueToInt32( cx, JS_ARGV( cx, vp )[1], &level ) || level < 0 || level > 5 )
+	{
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		return JS_TRUE;
+	}
+	boat->SetSecurityLevel( character, static_cast<BoatSecurityLevel>( level ));
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	return JS_TRUE;
+}
+
+JSBool CBoat_GetAccessSetting( JSContext *cx, uintN argc, jsval *vp )
+{
+	auto *boat = GetJSBoat( cx, vp );
+	SI32 setting = -1;
+	if( boat == nullptr || argc != 1 || !JS_ValueToInt32( cx, JS_ARGV( cx, vp )[0], &setting ))
+	{
+		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ));
+		return JS_TRUE;
+	}
+	UI08 value = 0;
+	if( setting == 0 ) value = static_cast<UI08>( boat->GetDefaultPublicAccess() );
+	else if( setting == 1 ) value = static_cast<UI08>( boat->GetDefaultPartyAccess() );
+	else if( setting == 2 ) value = static_cast<UI08>( boat->GetDefaultGuildAccess() );
+	else if( setting == 3 ) value = static_cast<UI08>( boat->GetPartyAccess() );
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( value ));
+	return JS_TRUE;
+}
+
+JSBool CBoat_SetAccessSetting( JSContext *cx, uintN argc, jsval *vp )
+{
+	auto *boat = GetJSBoat( cx, vp );
+	SI32 setting = -1, value = -1;
+	if( boat == nullptr || argc != 2 || !JS_ValueToInt32( cx, JS_ARGV( cx, vp )[0], &setting ) ||
+		!JS_ValueToInt32( cx, JS_ARGV( cx, vp )[1], &value ))
+	{
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		return JS_TRUE;
+	}
+	bool valid = value >= 0 && value <= 5;
+	if( setting == 0 && valid ) boat->SetDefaultPublicAccess( static_cast<BoatSecurityLevel>( value ));
+	else if( setting == 1 && valid ) boat->SetDefaultPartyAccess( static_cast<BoatSecurityLevel>( value ));
+	else if( setting == 2 && valid ) boat->SetDefaultGuildAccess( static_cast<BoatSecurityLevel>( value ));
+	else if( setting == 3 && value >= 0 && value <= 2 ) boat->SetPartyAccess( static_cast<BoatPartyAccess>( value ));
+	else valid = false;
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( valid ));
+	return JS_TRUE;
+}
+
+JSBool CBoat_ResetSecurity( JSContext *cx, uintN argc, jsval *vp )
+{
+	auto *boat = GetJSBoat( cx, vp );
+	if( boat != nullptr ) boat->ResetSecurity();
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( boat != nullptr ));
+	return JS_TRUE;
+}
+
+JSBool CBoat_RelocateTillerman( JSContext *cx, uintN argc, jsval *vp )
+{
+	auto *boat = GetJSBoat( cx, vp );
+	SI32 x = 0, y = 0, z = 0;
+	if( boat == nullptr || argc != 3 || !JS_ValueToInt32( cx, JS_ARGV( cx, vp )[0], &x ) ||
+		!JS_ValueToInt32( cx, JS_ARGV( cx, vp )[1], &y ) ||
+		!JS_ValueToInt32( cx, JS_ARGV( cx, vp )[2], &z ))
+	{
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		return JS_TRUE;
+	}
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( RelocateHighSeasTillerman( boat, static_cast<SI16>( x ),
+		static_cast<SI16>( y ), static_cast<SI08>( z ))));
+	return JS_TRUE;
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMulti_IsInMulti()
 //|	Prototype	-	bool IsInMulti( object )

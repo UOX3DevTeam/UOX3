@@ -1,6 +1,26 @@
 #ifndef __CMULTIOBJ_H__
 #define __CMULTIOBJ_H__
 
+// ServUO pub57 High Seas vessel security levels.  The numeric order is
+// significant: the highest applicable grant wins, while an explicit Denied
+// manifest entry always takes precedence.
+enum class BoatSecurityLevel : UI08
+{
+	NA = 0,
+	Denied,
+	Passenger,
+	Crewman,
+	Officer,
+	Captain
+};
+
+enum class BoatPartyAccess : UI08
+{
+	Never = 0,
+	LeaderOnly,
+	MemberOnly
+};
+
 
 class CMultiObj : public CItem
 {
@@ -179,11 +199,19 @@ protected:
 	SI32				hullHits;
 	SI32				hullMaxHits;
 	UI64				emergencyRepairUntil;
+	UI64				boatDecayAt;
+	UI64				nextSinkAt;
+	UI08				sinkStep;
 	SI08				moveType;
 	// High Seas galleons are assembled from dynamic fixture items.  Keep their
 	// identities on the boat, just as ServUO's BaseGalleon owns its Fixtures
 	// collection, rather than rediscovering them from overlapping world tiles.
 	std::vector<SERIAL>	fixtures;
+	std::map<SERIAL, BoatSecurityLevel> securityManifest;
+	BoatSecurityLevel	defaultPublicAccess;
+	BoatSecurityLevel	defaultPartyAccess;
+	BoatSecurityLevel	defaultGuildAccess;
+	BoatPartyAccess		partyAccess;
 
 	TIMERVAL			nextMoveTime;
 
@@ -196,6 +224,7 @@ private:
 public:
 	CBoatObj();
 	virtual				~CBoatObj();
+	virtual void		PostLoadProcessing( void ) override;
 
 	SERIAL				GetTiller( void ) const;
 	SERIAL				GetPlank( UI08 plankNum ) const;
@@ -208,6 +237,10 @@ public:
 	UI08				GetHullDamageLevel( void ) const;
 	bool				IsScuttled( void ) const;
 	bool				IsUnderEmergencyRepairs( void ) const;
+	UI64				GetBoatDecayAt( void ) const;
+	UI64				GetNextSinkAt( void ) const;
+	UI08				GetSinkStep( void ) const;
+	bool				IsSinking( void ) const;
 	SI08				GetMoveType( void ) const;
 
 	void				SetPlank( UI08 plankNum, SERIAL newVal );
@@ -219,11 +252,29 @@ public:
 	void				SetHullHits( SI32 newVal );
 	void				SetHullMaxHits( SI32 newVal );
 	void				StartEmergencyRepairs( UI32 durationSeconds );
+	void				RefreshBoatDecay( void );
+	void				SetBoatDecayAt( UI64 newVal );
+	void				SetNextSinkAt( UI64 newVal );
+	void				SetSinkStep( UI08 newVal );
 	void				SetMoveType( SI08 newVal );
 	void				RegisterFixture( SERIAL serial );
 	void				UnregisterFixture( SERIAL serial );
 	void				ClearFixtures( void );
 	const std::vector<SERIAL>& GetFixtures( void ) const;
+
+	BoatSecurityLevel	GetSecurityLevel( CChar *toCheck ) const;
+	bool				HasAccess( CChar *toCheck ) const;
+	bool				CanCommand( CChar *toCheck ) const;
+	void				SetSecurityLevel( CChar *toSet, BoatSecurityLevel level );
+	BoatSecurityLevel	GetDefaultPublicAccess( void ) const;
+	BoatSecurityLevel	GetDefaultPartyAccess( void ) const;
+	BoatSecurityLevel	GetDefaultGuildAccess( void ) const;
+	BoatPartyAccess		GetPartyAccess( void ) const;
+	void				SetDefaultPublicAccess( BoatSecurityLevel level );
+	void				SetDefaultPartyAccess( BoatSecurityLevel level );
+	void				SetDefaultGuildAccess( BoatSecurityLevel level );
+	void				SetPartyAccess( BoatPartyAccess access );
+	void				ResetSecurity( void );
 
 	TIMERVAL			GetMoveTime( void ) const;
 	void				SetMoveTime( TIMERVAL newVal );

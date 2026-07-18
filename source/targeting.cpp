@@ -1892,7 +1892,20 @@ void MakeStatusTarget( CSocket *sock, CChar *optionalTargChar = nullptr, const s
 		Console.Log( temp2, temp );
 	}
 
-	DismountCreature( targetChar );
+	// ServUO's access-level change refreshes the client's world without removing
+	// its High Seas BoatMountItem. Treat UOX's equivalent virtual mount the same
+	// way; deleting it here leaves the boat pointing at a pilot whose controller
+	// item no longer exists and causes a second, conflicting character refresh.
+	CItem *equippedMount = targetChar->GetItemAtLayer( IL_MOUNT );
+	bool preserveBoatPilot = false;
+	if( ValidateObject( equippedMount ) && equippedMount->GetId() == 0x3E96 )
+	{
+		auto *pilotBoatItem = CalcItemObjFromSer( equippedMount->GetTempVar( CITV_MOREX ));
+		preserveBoatPilot = ValidateObject( pilotBoatItem ) && pilotBoatItem->CanBeObjType( OT_BOAT ) &&
+			static_cast<CBoatObj *>( pilotBoatItem )->GetPilot() == targetChar->GetSerial();
+	}
+	if( !preserveBoatPilot )
+		DismountCreature( targetChar );
 
 	auto bodyType = targetChar->GetBodyType();
 	if( bodyType == BT_HUMAN || bodyType == BT_ELF || bodyType == BT_GARGOYLE )
@@ -2102,6 +2115,16 @@ void MakeStatusTarget( CSocket *sock, CChar *optionalTargChar = nullptr, const s
 		}
 	}
 
+	CMultiObj *targetMulti = targetChar->GetMultiObj();
+	if( !ValidateObject( targetMulti ))
+		targetMulti = FindMulti( targetChar );
+	if( ValidateObject( targetMulti ) && targetMulti->CanBeObjType( OT_BOAT ))
+	{
+		auto *targetBoat = static_cast<CBoatObj *>( targetMulti );
+		const SI08 deckZ = HighSeasBoatDeckZ( targetBoat );
+		if( deckZ != ILLEGAL_Z && targetChar->GetZ() < deckZ )
+			targetChar->SetLocation( targetChar->GetX(), targetChar->GetY(), deckZ );
+	}
 	targetChar->Teleport();
 }
 

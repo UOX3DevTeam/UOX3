@@ -23,6 +23,7 @@
 //o------------------------------------------------------------------------------------------------o
 #include "uox3.h"
 #include "mapstuff.h"
+#include "PartySystem.h"
 #include "osunique.hpp"
 const UI16	DEFMULTI_MAXLOCKDOWNS	= 256;
 const UI16	DEFMULTI_MAXSECURECONTAINERS = 4;
@@ -1497,12 +1498,18 @@ const UI08			DEFBOAT_PILOTSPEED	= 0;
 const SI32			DEFBOAT_HULLHITS		= 0;
 const SI32			DEFBOAT_HULLMAXHITS	= 0;
 const UI64			DEFBOAT_EMERGENCYREPAIRUNTIL = 0;
+const UI64			DEFBOAT_DECAYAT		= 0;
+const UI64			DEFBOAT_NEXTSINKAT	= 0;
+const UI08			DEFBOAT_SINKSTEP	= 0;
 const SI08			DEFBOAT_MOVETYPE	= 0;
 const TIMERVAL		DEFBOAT_MOVETIME	= 0;
 
 CBoatObj::CBoatObj() : CMultiObj(), tiller( DEFBOAT_TILLER ), hold( DEFBOAT_HOLD ), pilot( DEFBOAT_PILOT ), pilotMount( DEFBOAT_PILOTMOUNT ), pilotSpeed( DEFBOAT_PILOTSPEED ),
 hullHits( DEFBOAT_HULLHITS ), hullMaxHits( DEFBOAT_HULLMAXHITS ),
-emergencyRepairUntil( DEFBOAT_EMERGENCYREPAIRUNTIL ), moveType( DEFBOAT_MOVETYPE ), nextMoveTime( DEFBOAT_MOVETIME )
+emergencyRepairUntil( DEFBOAT_EMERGENCYREPAIRUNTIL ), boatDecayAt( DEFBOAT_DECAYAT ),
+nextSinkAt( DEFBOAT_NEXTSINKAT ), sinkStep( DEFBOAT_SINKSTEP ), moveType( DEFBOAT_MOVETYPE ),
+defaultPublicAccess( BoatSecurityLevel::NA ), defaultPartyAccess( BoatSecurityLevel::NA ),
+defaultGuildAccess( BoatSecurityLevel::NA ), partyAccess( BoatPartyAccess::Never ), nextMoveTime( DEFBOAT_MOVETIME )
 {
 	planks[0] = planks[1] = INVALIDSERIAL;
 	objType = OT_BOAT;
@@ -1510,6 +1517,49 @@ emergencyRepairUntil( DEFBOAT_EMERGENCYREPAIRUNTIL ), moveType( DEFBOAT_MOVETYPE
 
 CBoatObj::~CBoatObj()
 {
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CBoatObj::PostLoadProcessing()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Restore boat-owned component relationships after world loading. The serialized
+//|               component serials also repair saves made after the old MultiID loader bug.
+//o------------------------------------------------------------------------------------------------o
+void CBoatObj::PostLoadProcessing( void )
+{
+	CMultiObj::PostLoadProcessing();
+
+	auto rebindComponent = [this]( SERIAL componentSerial, bool requireFixtureTag = false )
+	{
+		auto *component = CalcItemObjFromSer( componentSerial );
+		if( ValidateObject( component ) &&
+			( !requireFixtureTag || component->GetTag( "hsGalleonSerial" ).m_IntValue == static_cast<SI32>( GetSerial() )) &&
+			component->GetMultiObj() != this )
+			component->SetMulti( this, false );
+	};
+
+	rebindComponent( tiller );
+	rebindComponent( planks[0] );
+	rebindComponent( planks[1] );
+	rebindComponent( hold );
+	for( const auto fixtureSerial : fixtures )
+		rebindComponent( fixtureSerial, true );
+
+	// Existing saved galleons predate the security context-menu trigger. Bind it
+	// during deferred loading as well as at initial construction.
+	auto *wheel = CalcItemObjFromSer( tiller );
+	if( ValidateObject( wheel ))
+		wheel->AddScriptTrigger( 5101 );
+
+	// ServUO treats active piloting as session state and never resumes it from
+	// disk merely because the vessel was present in a world save.
+	pilot = DEFBOAT_PILOT;
+	pilotMount = DEFBOAT_PILOTMOUNT;
+	pilotSpeed = DEFBOAT_PILOTSPEED;
+	moveType = DEFBOAT_MOVETYPE;
+	nextMoveTime = DEFBOAT_MOVETIME;
+	if( boatDecayAt == 0 )
+		RefreshBoatDecay();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1544,6 +1594,15 @@ bool CBoatObj::DumpBody( std::ostream &outStream ) const
 	outStream << "HullMaxHits=" << hullMaxHits << '\n';
 	outStream << "HullHits=" << hullHits << '\n';
 	outStream << "EmergencyRepairUntil=" << emergencyRepairUntil << '\n';
+	outStream << "BoatDecayAt=" << boatDecayAt << '\n';
+	outStream << "NextSinkAt=" << nextSinkAt << '\n';
+	outStream << "SinkStep=" << static_cast<UI16>( sinkStep ) << '\n';
+	outStream << "SecurityPublic=" << static_cast<UI16>( defaultPublicAccess ) << '\n';
+	outStream << "SecurityParty=" << static_cast<UI16>( defaultPartyAccess ) << '\n';
+	outStream << "SecurityGuild=" << static_cast<UI16>( defaultGuildAccess ) << '\n';
+	outStream << "SecurityPartyMode=" << static_cast<UI16>( partyAccess ) << '\n';
+	for( const auto &[characterSerial, level] : securityManifest )
+		outStream << "SecurityEntry=0x" << std::hex << characterSerial << std::dec << ',' << static_cast<UI16>( level ) << '\n';
 	for( const auto fixtureSerial : fixtures )
 		outStream << "Fixture=0x" << std::hex << fixtureSerial << std::dec << '\n';
 	return true;
@@ -1564,6 +1623,13 @@ bool CBoatObj::HandleLine( std::string &UTag, std::string &data )
 		auto csecs = oldstrutil::sections( data, "," );
 		switch(( UTag.data()[0] ))
 		{
+			case 'B':
+				if( UTag == "BOATDECAYAT" )
+				{
+					boatDecayAt = oldstrutil::value<UI64>( data );
+					rValue = true;
+				}
+				break;
 		case 'E':
 				if( UTag == "EMERGENCYREPAIRUNTIL" )
 				{
@@ -1601,11 +1667,53 @@ bool CBoatObj::HandleLine( std::string &UTag, std::string &data )
 					rValue = true;
 				}
 				break;
-			case 'P':
+		case 'P':
 				if( UTag == "PLANKS" )
 				{
 					SetPlank( 0, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
 					SetPlank( 1, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
+					rValue = true;
+				}
+				break;
+			case 'N':
+				if( UTag == "NEXTSINKAT" )
+				{
+					nextSinkAt = oldstrutil::value<UI64>( data );
+					rValue = true;
+				}
+				break;
+			case 'S':
+				if( UTag == "SINKSTEP" )
+				{
+					sinkStep = oldstrutil::value<UI08>( data );
+					rValue = true;
+				}
+				else if( UTag == "SECURITYPUBLIC" )
+				{
+					SetDefaultPublicAccess( static_cast<BoatSecurityLevel>( oldstrutil::value<UI08>( data )));
+					rValue = true;
+				}
+				else if( UTag == "SECURITYPARTY" )
+				{
+					SetDefaultPartyAccess( static_cast<BoatSecurityLevel>( oldstrutil::value<UI08>( data )));
+					rValue = true;
+				}
+				else if( UTag == "SECURITYGUILD" )
+				{
+					SetDefaultGuildAccess( static_cast<BoatSecurityLevel>( oldstrutil::value<UI08>( data )));
+					rValue = true;
+				}
+				else if( UTag == "SECURITYPARTYMODE" )
+				{
+					SetPartyAccess( static_cast<BoatPartyAccess>( oldstrutil::value<UI08>( data )));
+					rValue = true;
+				}
+				else if( UTag == "SECURITYENTRY" && csecs.size() >= 2 )
+				{
+					const auto serial = static_cast<SERIAL>( std::stoul( oldstrutil::trim( csecs[0] ), nullptr, 0 ));
+					const auto level = static_cast<BoatSecurityLevel>( oldstrutil::value<UI08>( csecs[1] ));
+					if( level >= BoatSecurityLevel::Denied && level <= BoatSecurityLevel::Captain )
+						securityManifest[serial] = level;
 					rValue = true;
 				}
 				break;
@@ -1675,6 +1783,116 @@ SERIAL CBoatObj::GetHold( void ) const
 void CBoatObj::SetHold( SERIAL newVal )
 {
 	hold = newVal;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Purpose - ServUO BaseGalleon.SecurityEntry.GetEffectiveLevel parity.
+//o------------------------------------------------------------------------------------------------o
+BoatSecurityLevel CBoatObj::GetSecurityLevel( CChar *toCheck ) const
+{
+	if( !ValidateObject( toCheck ))
+		return BoatSecurityLevel::Denied;
+
+	auto *shipOwner = GetOwnerObj();
+	if( toCheck->IsGM() || IsOwner( toCheck ) ||
+		( ValidateObject( shipOwner ) && shipOwner->GetAccountNum() == toCheck->GetAccountNum() ))
+		return BoatSecurityLevel::Captain;
+
+	BoatSecurityLevel effective = BoatSecurityLevel::Denied;
+	auto explicitEntry = securityManifest.find( toCheck->GetSerial() );
+	if( explicitEntry != securityManifest.end() )
+	{
+		if( explicitEntry->second == BoatSecurityLevel::Denied )
+			return BoatSecurityLevel::Denied;
+		effective = explicitEntry->second;
+	}
+	else if( IsOnBanList( toCheck ))
+		return BoatSecurityLevel::Denied;
+	else if( IsOnOwnerList( toCheck ))
+		effective = BoatSecurityLevel::Officer;
+	else if( IsOnFriendList( toCheck ))
+		effective = BoatSecurityLevel::Crewman;
+	else if( IsOnGuestList( toCheck ))
+		effective = BoatSecurityLevel::Passenger;
+
+	if( defaultPublicAccess > effective )
+		effective = defaultPublicAccess;
+
+	if( ValidateObject( shipOwner ) && partyAccess != BoatPartyAccess::Never )
+	{
+		auto *ownerParty = PartyFactory::GetSingleton().Get( shipOwner );
+		auto *userParty = PartyFactory::GetSingleton().Get( toCheck );
+		const bool eligible = ownerParty != nullptr && ownerParty == userParty && ownerParty->HasMember( toCheck ) &&
+			( partyAccess == BoatPartyAccess::MemberOnly || ownerParty->Leader() == shipOwner );
+		if( eligible && defaultPartyAccess > effective )
+			effective = defaultPartyAccess;
+	}
+
+	if( ValidateObject( shipOwner ) && shipOwner->GetGuildNumber() != -1 &&
+		shipOwner->GetGuildNumber() == toCheck->GetGuildNumber() && defaultGuildAccess > effective )
+		effective = defaultGuildAccess;
+
+	// ServUO grants Passenger to an account whose alternate character has an
+	// explicit manifest grant, unless this character itself is explicitly denied.
+	if( effective == BoatSecurityLevel::Denied )
+	{
+		for( const auto &[characterSerial, level] : securityManifest )
+		{
+			auto *alternate = CalcCharObjFromSer( characterSerial );
+			if( level > BoatSecurityLevel::Denied && ValidateObject( alternate ) &&
+				alternate->GetAccountNum() == toCheck->GetAccountNum() )
+				return BoatSecurityLevel::Passenger;
+		}
+		for( const auto &[alternate, privilege] : housePrivList )
+		{
+			if( privilege != HOUSEPRIV_BANNED && ValidateObject( alternate ) &&
+				alternate->GetAccountNum() == toCheck->GetAccountNum() )
+				return BoatSecurityLevel::Passenger;
+		}
+	}
+
+	return effective;
+}
+
+bool CBoatObj::HasAccess( CChar *toCheck ) const
+{
+	auto *shipOwner = GetOwnerObj();
+	return !ValidateObject( shipOwner ) || GetTag( "hsPirateDefeated" ).m_IntValue == 1 ||
+		GetSecurityLevel( toCheck ) > BoatSecurityLevel::Denied;
+}
+
+bool CBoatObj::CanCommand( CChar *toCheck ) const
+{
+	return GetSecurityLevel( toCheck ) >= BoatSecurityLevel::Crewman;
+}
+
+void CBoatObj::SetSecurityLevel( CChar *toSet, BoatSecurityLevel level )
+{
+	if( !ValidateObject( toSet ) || IsOwner( toSet ))
+		return;
+	if( level == BoatSecurityLevel::NA )
+		securityManifest.erase( toSet->GetSerial() );
+	else if( level >= BoatSecurityLevel::Denied && level <= BoatSecurityLevel::Captain )
+		securityManifest[toSet->GetSerial()] = level;
+}
+
+BoatSecurityLevel CBoatObj::GetDefaultPublicAccess( void ) const { return defaultPublicAccess; }
+BoatSecurityLevel CBoatObj::GetDefaultPartyAccess( void ) const { return defaultPartyAccess; }
+BoatSecurityLevel CBoatObj::GetDefaultGuildAccess( void ) const { return defaultGuildAccess; }
+BoatPartyAccess CBoatObj::GetPartyAccess( void ) const { return partyAccess; }
+void CBoatObj::SetDefaultPublicAccess( BoatSecurityLevel level ) { defaultPublicAccess = level <= BoatSecurityLevel::Captain ? level : BoatSecurityLevel::NA; }
+void CBoatObj::SetDefaultPartyAccess( BoatSecurityLevel level ) { defaultPartyAccess = level <= BoatSecurityLevel::Captain ? level : BoatSecurityLevel::NA; }
+void CBoatObj::SetDefaultGuildAccess( BoatSecurityLevel level ) { defaultGuildAccess = level <= BoatSecurityLevel::Captain ? level : BoatSecurityLevel::NA; }
+void CBoatObj::SetPartyAccess( BoatPartyAccess access ) { partyAccess = access <= BoatPartyAccess::MemberOnly ? access : BoatPartyAccess::Never; }
+void CBoatObj::ResetSecurity( void )
+{
+	// ServUO's "Reset Security" context action clears the access manifest but
+	// deliberately preserves the configured public/party/guild defaults.
+	securityManifest.clear();
+	ClearBanList();
+	ClearFriendList();
+	ClearGuestList();
+	ClearOwnerList();
 }
 
 SERIAL CBoatObj::GetPilot( void ) const
@@ -1771,6 +1989,21 @@ void CBoatObj::StartEmergencyRepairs( UI32 durationSeconds )
 {
 	emergencyRepairUntil = static_cast<UI64>( std::time( nullptr )) + durationSeconds;
 }
+
+UI64 CBoatObj::GetBoatDecayAt( void ) const { return boatDecayAt; }
+UI64 CBoatObj::GetNextSinkAt( void ) const { return nextSinkAt; }
+UI08 CBoatObj::GetSinkStep( void ) const { return sinkStep; }
+bool CBoatObj::IsSinking( void ) const { return sinkStep > 0; }
+void CBoatObj::RefreshBoatDecay( void )
+{
+	// ServUO BaseBoat.BoatDecayDelay is thirteen days.
+	boatDecayAt = static_cast<UI64>( std::time( nullptr )) + ( 13ULL * 24ULL * 60ULL * 60ULL );
+	nextSinkAt = 0;
+	sinkStep = 0;
+}
+void CBoatObj::SetBoatDecayAt( UI64 newVal ) { boatDecayAt = newVal; }
+void CBoatObj::SetNextSinkAt( UI64 newVal ) { nextSinkAt = newVal; }
+void CBoatObj::SetSinkStep( UI08 newVal ) { sinkStep = newVal; }
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBoatObj::GetMoveType()

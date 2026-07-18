@@ -16,6 +16,87 @@ sectionid=tribalpaint
 get=tribalpaint
 }
 
+// High Seas temporary boat paints. Repeated coats deepen the shade and one
+// coat fades every fourteen days, up to the ServUO maximum of four coats.
+[boatpaint_blue]
+{
+get=base_item
+id=0x0fab
+name=boat paint
+color=276
+weight=1000
+value=6256 3128
+restock=20
+script=5102
+custominttag=hsPaintMode 1
+}
+
+[boatpaint_green]
+{
+get=boatpaint_blue
+color=396
+}
+
+[boatpaint_red]
+{
+get=boatpaint_blue
+color=516
+}
+
+[boatpaint_gold]
+{
+get=boatpaint_blue
+color=1900
+}
+
+[boatpaint_purple]
+{
+get=boatpaint_blue
+color=251
+}
+
+[boatpaint_brown]
+{
+get=boatpaint_blue
+color=246
+}
+
+[boatpaint_black]
+{
+get=boatpaint_blue
+color=2213
+}
+
+[boatpaint_white]
+{
+get=boatpaint_blue
+color=36
+}
+
+[boatpaint_remover]
+{
+get=base_item
+id=0x0fab
+name=boat paint remover
+weight=1000
+value=6256 3128
+restock=20
+script=5102
+custominttag=hsPaintMode 3
+}
+
+// Reward/loot version; intentionally not stocked by ordinary shipwrights.
+[permanent_boat_paint]
+{
+get=base_item
+id=0x0fab
+name=permanent boat paint
+color=1954
+weight=1000
+script=5102
+custominttag=hsPaintMode 2
+}
+
 [haironlydye]
 {
 get=base_item

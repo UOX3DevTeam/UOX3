@@ -2626,6 +2626,8 @@ auto CheckItem( CMapRegion *toCheck, bool checkItems, TIMERVAL nextDecayItems, T
 					}
 				}
 			}
+			if( ProcessBoatDecay( mBoat ))
+				continue;
 		}
 
 		// Do JS Weather for item
