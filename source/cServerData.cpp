@@ -438,6 +438,7 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"BOATDRIFT", 424},
 	{"BOATDRIFTINTERVAL", 425},
 	{"HIGHSEASSHIPSPEECHCONTROL", 426},
+	{"CANNONCHARACTERTARGETING", 427},
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -562,6 +563,7 @@ constexpr auto BIT_CLASSICBOATMOUSECONTROL		= UI32( 115 );
 constexpr auto BIT_HIGHSEASSHIPANCHORS			= UI32( 116 );
 constexpr auto BIT_BOATDRIFT						= UI32( 117 );
 constexpr auto BIT_HIGHSEASSHIPSPEECHCONTROL	= UI32( 118 );
+constexpr auto BIT_CANNONCHARACTERTARGETING	= UI32( 126 );
 constexpr auto BIT_SPEEDHACKDETECTION				= UI32( 119 );
 constexpr auto BIT_EVENTMANAGERSYSTEM				= UI32( 120 );
 constexpr auto BIT_QUESTSYSTEMENABLED				= UI32( 121 );
@@ -1073,6 +1075,7 @@ auto CServerData::ResetDefaults() -> void
 	ClassicBoatMouseControl( false );
 	HighSeasShipAnchors( true );
 	HighSeasShipSpeechControl( true );
+	CannonCharacterTargeting( false );
 	BoatDrift( true );
 	BoatDecaySeconds( 13 * 24 * 60 * 60 );
 	BoatPaintDecaySeconds( 14 * 24 * 60 * 60 );
@@ -3990,6 +3993,15 @@ auto CServerData::HighSeasShipSpeechControl( bool newVal ) -> void
 	boolVals.set( BIT_HIGHSEASSHIPSPEECHCONTROL, newVal );
 }
 
+auto CServerData::CannonCharacterTargeting() const -> bool
+{
+	return boolVals.test( BIT_CANNONCHARACTERTARGETING );
+}
+auto CServerData::CannonCharacterTargeting( bool newVal ) -> void
+{
+	boolVals.set( BIT_CANNONCHARACTERTARGETING, newVal );
+}
+
 UI32 CServerData::BoatDecaySeconds() const
 {
 	return boatDecaySeconds;
@@ -6319,6 +6331,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "BOATDRIFT=" << ( BoatDrift() ? 1 : 0 ) << '\n';
 		ofsOutput << "BOATDRIFTINTERVAL=" << BoatDriftInterval() << '\n';
 		ofsOutput << "HIGHSEASSHIPSPEECHCONTROL=" << ( HighSeasShipSpeechControl() ? 1 : 0 ) << '\n';
+		ofsOutput << "CANNONCHARACTERTARGETING=" << ( CannonCharacterTargeting() ? 1 : 0 ) << '\n';
 		ofsOutput << "BOATDECAYSECS=" << BoatDecaySeconds() << '\n';
 		ofsOutput << "BOATPAINTDECAYSECS=" << BoatPaintDecaySeconds() << '\n';
 		ofsOutput << "CHECKBOATS=" << CheckBoatSpeed() << '\n';
@@ -7930,6 +7943,9 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 426: // HIGHSEASSHIPSPEECHCONTROL
 			HighSeasShipSpeechControl( std::stoul( value, nullptr, 0 ) != 0 );
+			break;
+		case 427: // CANNONCHARACTERTARGETING
+			CannonCharacterTargeting( std::stoul( value, nullptr, 0 ) != 0 );
 			break;
 		default:
 			rValue = false;

@@ -241,6 +241,34 @@ RUNS
 SCRIPT=3204
 }
 
+[m_harbormaster]
+{
+GET=basehuman
+NAMELIST=1
+TITLE=the Harbor Master
+ID=0x0190
+EQUIPITEM=listobject13
+HAIRCOLOR=15
+EQUIPITEM=listobject14
+COLORMATCHHAIR
+EQUIPITEM=0x0E8A
+EQUIPITEM=listobject20
+COLORLIST=11
+EQUIPITEM=listobject21
+COLORLIST=11
+EQUIPITEM=listobject22
+COLORLIST=11
+EQUIPITEM=listobject23
+EQUIPITEM=listobject24
+COLORLIST=11
+STR=31
+DEX=41
+INT=51
+MINING=360 680
+PRIV=4
+SCRIPT=3235
+}
+
 [highseas_pirate_captain]
 {
 GET=m_pirate
@@ -266,6 +294,12 @@ FAME=3000
 KARMA=-3000
 NPCWANDER=0
 SCRIPT=5100
+}
+
+[highseas_pirate_region_captain]
+{
+GET=highseas_pirate_captain
+ID=0x0097
 }
 
 [m_fighter]

@@ -5834,6 +5834,9 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 			case 426:	// HIGHSEASSHIPSPEECHCONTROL
 				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HighSeasShipSpeechControl() ));
 				break;
+			case 427:	// CANNONCHARACTERTARGETING
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CannonCharacterTargeting() ));
+				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );
 				return false;

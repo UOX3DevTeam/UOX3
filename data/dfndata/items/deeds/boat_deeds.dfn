@@ -70,6 +70,7 @@ MOREX=210
 SCRIPT=5098
 VALUE=150000
 GOOD=9
+ORIGIN=hs
 }
 
 [gargishgalleondeed]
@@ -80,6 +81,7 @@ MOREX=211
 SCRIPT=5098
 VALUE=150000
 GOOD=9
+ORIGIN=hs
 }
 
 [tokunogalleondeed]
@@ -90,6 +92,7 @@ MOREX=212
 SCRIPT=5098
 VALUE=150000
 GOOD=9
+ORIGIN=hs
 }
 
 [rowboatdeed]
@@ -99,6 +102,7 @@ ID=0x14F0
 MOREX=213
 VALUE=5000
 GOOD=9
+ORIGIN=hs
 }
 
 [britannianshipdeed]
@@ -109,6 +113,7 @@ MOREX=214
 SCRIPT=5098
 VALUE=200000
 GOOD=9
+ORIGIN=hs
 }
 
 // Forsaken Foes seasonal collection rewards
@@ -119,151 +124,5 @@ ID=0x14F0
 MOREX=215
 VALUE=250000
 GOOD=9
+ORIGIN=hs
 }
-
-[highseas_light_cannon_deed]
-{
-NAME=light ship cannon deed
-ID=0x14F0
-SCRIPT=5099
-VALUE=50000
-CANNONINFO=1,1,0,10,1500
-}
-
-[highseas_light_cannon]
-{
-NAME=light ship cannon
-ID=0x4216
-TYPE=1
-MAXITEMS=3
-WEIGHTMAX=30000
-MOVABLE=2
-DECAY=0
-SCRIPT=5099
-CANNONINFO=2,1,0,10,1500
-CANNONDIRECTION=0x4218,0x4219,0x4216,0x4217
-HP=100
-MAXHP=100
-}
-
-[highseas_heavy_cannon_deed]
-{
-NAME=heavy ship cannon deed
-ID=0x14F0
-COLOR=1118
-SCRIPT=5099
-VALUE=75000
-CANNONINFO=1,2,0,10,2000
-}
-
-[highseas_heavy_cannon]
-{
-NAME=heavy ship cannon
-ID=0x421A
-TYPE=1
-MAXITEMS=3
-WEIGHTMAX=30000
-MOVABLE=2
-DECAY=0
-SCRIPT=5099
-CANNONINFO=2,2,0,10,2000
-CANNONDIRECTION=0x421C,0x421D,0x421A,0x421B
-HP=100
-MAXHP=100
-}
-
-[pumpkin_cannon_deed]
-{
-NAME=pumpkin cannon deed
-ID=0x14F2
-COLOR=1192
-SCRIPT=5099
-VALUE=50000
-CANNONINFO=1,4,0,10,1500
-}
-
-[pumpkin_cannon]
-{
-NAME=pumpkin cannon
-ID=41979
-TYPE=1
-MAXITEMS=3
-WEIGHTMAX=30000
-MOVABLE=2
-DECAY=0
-SCRIPT=5099
-CANNONINFO=2,4,0,10,1500
-CANNONDIRECTION=0xA3FD,0xA3FE,0xA3FB,0xA3FC
-HP=100
-MAXHP=100
-}
-
-[highseas_powder_charge]
-{
-NAME=powder charge
-ID=0xA2BE
-PILEABLE=1
-}
-
-[highseas_cannonball]
-{
-NAME=cannonball
-ID=0x4224
-PILEABLE=1
-TYPE=227
-MOREX=1
-DAMAGE=5000 5000
-MOREY=1
-MOREZ=0
-}
-
-[highseas_grapeshot]
-{
-NAME=grapeshot
-ID=0xA2BF
-PILEABLE=1
-TYPE=227
-MOREX=2
-DAMAGE=100 150
-MOREY=15
-MOREZ=3
-}
-
-[highseas_flame_cannonball]
-{
-NAME=flame cannonball
-ID=0x44C1
-PILEABLE=1
-TYPE=227
-MOREX=3
-DAMAGE=5000 5000
-MOREY=1
-MOREZ=0
-}
-
-[highseas_frost_cannonball]
-{
-NAME=frost cannonball
-ID=0x422B
-PILEABLE=1
-TYPE=227
-MOREX=4
-DAMAGE=30 50
-MOREY=1
-MOREZ=0
-}
-
-[highseas_fuse_cord]
-{
-NAME=fuse cord
-ID=0x1420
-COLOR=1164
-PILEABLE=1
-}
-
-[highseas_ramrod]
-{
-NAME=ramrod
-ID=0x4246
-}
-

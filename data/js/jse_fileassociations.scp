@@ -185,6 +185,7 @@
 3232=npc/ai/monster/silvani.js
 3233=npc/ai/monster/rikktor.js
 3234=npc/ai/monster/semidar.js
+3235=npc/ai/harbor_master.js
 
 // Magic Items
 3300=item/magic_items.js

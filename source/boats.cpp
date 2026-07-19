@@ -680,6 +680,8 @@ static bool ConfigureHighSeasFixtures( CBoatObj *boat, CItem *tiller, CItem *por
 		{
 			fixture = hold;
 			foundHold = true;
+			hold->SetName( "ship cargo hold" );
+			hold->SetGumpType( 0x4C );
 		}
 		else if( !foundWheel && wheelComponent )
 		{
@@ -1063,16 +1065,21 @@ static void RestoreDryDockedCannons( CBoatObj *boat )
 		const SI16 x = boat->GetX() + dx;
 		const SI16 y = boat->GetY() + dy;
 		const SI08 z = static_cast<SI08>( boat->GetZ() + record.localZ );
-		const UI08 power = record.power == 4 ? 4 : ( record.power == 2 ? 2 : 1 );
+		const UI08 power = record.power == 4 ? 4 : ( record.power == 3 ? 3 : ( record.power == 2 ? 2 : 1 ));
 		const UI16 artOffset = power == 2 ? 4 : 0;
-		auto *cannon = Items->CreateItem( nullptr, nullptr, power == 4 ? 41981 : 16920 + artOffset, 1, 0, OT_ITEM, false, true,
+		const UI16 northArt = power == 4 ? 41981 : ( power == 3 ? 41666 : 16920 + artOffset );
+		const UI16 eastArt = power == 4 ? 41982 : ( power == 3 ? 41667 : 16921 + artOffset );
+		const UI16 southArt = power == 4 ? 41979 : ( power == 3 ? 41664 : 16918 + artOffset );
+		const UI16 westArt = power == 4 ? 41980 : ( power == 3 ? 41665 : 16919 + artOffset );
+		auto *cannon = Items->CreateItem( nullptr, nullptr, northArt, 1, 0, OT_ITEM, false, true,
 			boat->WorldNumber(), boat->GetInstanceId(), x, y, z );
 		if( !ValidateObject( cannon ))
 		{
 			continue;
 		}
 
-		cannon->SetName( power == 4 ? "pumpkin cannon" : ( power == 2 ? "heavy ship cannon" : "light ship cannon" ));
+		cannon->SetName( power == 4 ? "pumpkin cannon" :
+			( power == 3 ? "blundercannon" : ( power == 2 ? "heavy ship cannon" : "light ship cannon" )));
 		cannon->SetMovable( 2 );
 		cannon->SetDecayable( false );
 		cannon->SetMulti( boat );
@@ -1080,10 +1087,13 @@ static void RestoreDryDockedCannons( CBoatObj *boat )
 		cannon->SetCannonRole( CannonRole::Cannon );
 		cannon->SetCannonPower( static_cast<UI08>( power ));
 		cannon->SetCannonStage( 1 );
-		cannon->SetCannonDirectionArt( 0, power == 4 ? 41981 : 16920 + artOffset );
-		cannon->SetCannonDirectionArt( 1, power == 4 ? 41982 : 16921 + artOffset );
-		cannon->SetCannonDirectionArt( 2, power == 4 ? 41979 : 16918 + artOffset );
-		cannon->SetCannonDirectionArt( 3, power == 4 ? 41980 : 16919 + artOffset );
+		cannon->SetCannonRange( power == 3 ? 12 : 10 );
+		cannon->SetCannonActionTime( power == 1 || power == 4 ? 1500 : 2000 );
+		cannon->SetGumpType( 0x3C );
+		cannon->SetCannonDirectionArt( 0, northArt );
+		cannon->SetCannonDirectionArt( 1, eastArt );
+		cannon->SetCannonDirectionArt( 2, southArt );
+		cannon->SetCannonDirectionArt( 3, westArt );
 		cannon->SetMaxHP( 100 );
 		cannon->SetHP( record.hits > 0 ? record.hits : 100 );
 		for( auto *pad : boat->GetItemsInMultiList()->collection() )
@@ -1093,10 +1103,10 @@ static void RestoreDryDockedCannons( CBoatObj *boat )
 			pad->SetCannonLinkSerial( cannon->GetSerial() );
 			break;
 		}
-		if( power == 4 )
+		if( power == 4 || power == 3 )
 		{
-			if( facing == NORTH || facing == SOUTH ) cannon->SetId( x < boat->GetX() ? 41980 : ( x > boat->GetX() ? 41982 : ( facing == NORTH ? 41981 : 41979 )));
-			else cannon->SetId( y < boat->GetY() ? 41981 : ( y > boat->GetY() ? 41979 : ( facing == EAST ? 41982 : 41980 )));
+			if( facing == NORTH || facing == SOUTH ) cannon->SetId( x < boat->GetX() ? westArt : ( x > boat->GetX() ? eastArt : ( facing == NORTH ? northArt : southArt )));
+			else cannon->SetId( y < boat->GetY() ? northArt : ( y > boat->GetY() ? southArt : ( facing == EAST ? eastArt : westArt )));
 		}
 		else if( facing == NORTH || facing == SOUTH ) cannon->SetId(( x < boat->GetX() ? 16919 : ( x > boat->GetX() ? 16921 : ( facing == NORTH ? 16920 : 16918 ))) + artOffset );
 		else cannon->SetId(( y < boat->GetY() ? 16920 : ( y > boat->GetY() ? 16918 : ( facing == EAST ? 16921 : 16919 ))) + artOffset );
@@ -1580,6 +1590,7 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 		return false;
 
 	hold->SetType( IT_CONTAINER ); // Conatiner
+	hold->SetGumpType( 0x4C );
 	hold->SetDecayable( false );
 	hold->SetWeightMax( maxWeight );
 	hold->SetMaxItems( maxItems );
@@ -1757,7 +1768,7 @@ bool DeleteHighSeasBoatForDryDock( CBoatObj *boat, CItem *deed )
 			localY = dx;
 		}
 		const UI08 storedPower = item->GetCannonPower();
-		const UI08 power = storedPower == 4 ? 4 : ( storedPower == 2 ? 2 : 1 );
+		const UI08 power = storedPower == 4 ? 4 : ( storedPower == 3 ? 3 : ( storedPower == 2 ? 2 : 1 ));
 		deed->AddDockedCannon( localX, localY, static_cast<SI16>( item->GetZ() - boat->GetZ() ),
 			item->GetHP() > 0 ? item->GetHP() : 100, power );
 	}
@@ -2315,10 +2326,10 @@ void TurnBoat( CBoatObj *b, bool rightTurn, bool disableChecks )
 			{
 				const SI32 cannonPower = bItem->GetCannonPower();
 				const UI16 artOffset = cannonPower == 2 ? 4 : 0;
-				const UI16 northArt = bItem->GetCannonDirectionArt( 0 ) ? bItem->GetCannonDirectionArt( 0 ) : ( cannonPower == 4 ? 41981 : 16920 + artOffset );
-				const UI16 eastArt = bItem->GetCannonDirectionArt( 1 ) ? bItem->GetCannonDirectionArt( 1 ) : ( cannonPower == 4 ? 41982 : 16921 + artOffset );
-				const UI16 southArt = bItem->GetCannonDirectionArt( 2 ) ? bItem->GetCannonDirectionArt( 2 ) : ( cannonPower == 4 ? 41979 : 16918 + artOffset );
-				const UI16 westArt = bItem->GetCannonDirectionArt( 3 ) ? bItem->GetCannonDirectionArt( 3 ) : ( cannonPower == 4 ? 41980 : 16919 + artOffset );
+				const UI16 northArt = bItem->GetCannonDirectionArt( 0 ) ? bItem->GetCannonDirectionArt( 0 ) : ( cannonPower == 4 ? 41981 : ( cannonPower == 3 ? 41666 : 16920 + artOffset ));
+				const UI16 eastArt = bItem->GetCannonDirectionArt( 1 ) ? bItem->GetCannonDirectionArt( 1 ) : ( cannonPower == 4 ? 41982 : ( cannonPower == 3 ? 41667 : 16921 + artOffset ));
+				const UI16 southArt = bItem->GetCannonDirectionArt( 2 ) ? bItem->GetCannonDirectionArt( 2 ) : ( cannonPower == 4 ? 41979 : ( cannonPower == 3 ? 41664 : 16918 + artOffset ));
+				const UI16 westArt = bItem->GetCannonDirectionArt( 3 ) ? bItem->GetCannonDirectionArt( 3 ) : ( cannonPower == 4 ? 41980 : ( cannonPower == 3 ? 41665 : 16919 + artOffset ));
 				UI16 cannonId = northArt;
 				if( b->GetDir() == NORTH || b->GetDir() == SOUTH )
 				{
@@ -2498,6 +2509,38 @@ void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
 	if( highSeasShip && !boat->CanCommand( mChar ))
 	{
 		mSock->SysMessage( 2034 );
+		return;
+	}
+
+	const std::string spokenCommand = oldstrutil::upper( oldstrutil::trim( ourText ));
+	const bool firePortBroadside = spokenCommand == "FIRE PORT BROADSIDE";
+	const bool fireStarboardBroadside = spokenCommand == "FIRE STARBOARD BROADSIDE";
+	if( firePortBroadside || fireStarboardBroadside )
+	{
+		if( !highSeasShip )
+		{
+			return;
+		}
+
+		auto *cannonScript = JSMapping->GetScript( 5099 );
+		UI16 cannonCount = 0;
+		if( cannonScript != nullptr )
+		{
+			const char *broadsideFunction = firePortBroadside ?
+				"FireHighSeasPortBroadsideCannon" : "FireHighSeasStarboardBroadsideCannon";
+			for( auto *item : boat->GetItemsInMultiList()->collection() )
+			{
+				if( ValidateObject( item ) && cannonScript->AreaObjFunc( broadsideFunction, mChar, item, mSock ))
+				{
+					++cannonCount;
+				}
+			}
+		}
+
+		if( cannonCount == 0 )
+		{
+			mSock->SysMessage( "There are no loaded cannons ready on that broadside." );
+		}
 		return;
 	}
 

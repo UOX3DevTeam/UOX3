@@ -12,10 +12,33 @@ const AI_INTERVAL = Math.max( 1, parseInt( GetServerSetting( "BOATNPCMOVEINTERVA
 function AddPirateShip( socket, x, y, z )
 {
 	var user = socket.currentChar;
-	var boat = CreateHouse( 210, x, y, z, user.worldnumber, user.instanceID, 0, true );
+	CreatePirateShipEncounter( socket, x, y, z, user.worldnumber, user.instanceID, null );
+}
+
+/** @type { ( pirate: Character, spawnRegion: number ) => any } */
+function onSpawn( pirate, spawnRegion )
+{
+	if( !ValidateObject( pirate ) || pirate.sectionID != "highseas_pirate_region_captain" )
+	{
+		return;
+	}
+	CreatePirateShipEncounter( null, pirate.x, pirate.y, pirate.z, pirate.worldnumber, pirate.instanceID, pirate );
+}
+
+/** @type { ( socket: Socket | null, x: number, y: number, z: number, world: number, instanceID: number, regionCaptain: Character | null ) => any } */
+function CreatePirateShipEncounter( socket, x, y, z, world, instanceID, regionCaptain )
+{
+	var boat = CreateHouse( 210, x, y, z, world, instanceID, 0, true );
 	if( !ValidateObject( boat ) || !boat.IsBoat() )
 	{
-		socket.SysMessage( "The pirate galleon cannot be placed there." );
+		if( socket )
+		{
+			socket.SysMessage( "The pirate galleon cannot be placed there." );
+		}
+		if( ValidateObject( regionCaptain ))
+		{
+			regionCaptain.Delete();
+		}
 		return;
 	}
 
@@ -28,11 +51,25 @@ function AddPirateShip( socket, x, y, z )
 	// one-tile radius of center. The Orcish deck narrows sharply
 	// toward both ends, so wider classic-boat offsets can place mobiles outside
 	// the walkable multi even though their Z is correct.
-	var captain = SpawnPirate( "highseas_pirate_captain", boat, boat.x, boat.y - 1, deckZ );
+	var captain = regionCaptain;
+	if( ValidateObject( captain ))
+	{
+		captain.id = 0x0190;
+		captain.SetLocation( boat.x, boat.y - 1, deckZ, boat.worldnumber, boat.instanceID );
+		captain.multi = boat;
+		captain.Refresh();
+	}
+	else
+	{
+		captain = SpawnPirate( "highseas_pirate_captain", boat, boat.x, boat.y - 1, deckZ );
+	}
 	if( !ValidateObject( captain ))
 	{
 		boat.Delete();
-		socket.SysMessage( "The pirate captain could not be created." );
+		if( socket )
+		{
+			socket.SysMessage( "The pirate captain could not be created." );
+		}
 		return;
 	}
 	boat.owner = captain;
@@ -45,9 +82,40 @@ function AddPirateShip( socket, x, y, z )
 	boat.SetTempTag( "hsDeployPower", 2 );
 	AreaItemFunction( "DeployPirateCannonOnPad", boat, 25 );
 	StockPirateHold( boat );
+	if( ValidateObject( regionCaptain ))
+	{
+		boat.shouldSave = false;
+		AreaItemFunction( "MarkRegionPirateItemTransient", boat, 25 );
+		AreaCharacterFunction( "MarkRegionPirateCharacterTransient", boat, 25 );
+	}
 	boat.StartTimer( AI_INTERVAL, 1, 5100 );
 	boat.Refresh();
-	socket.SysMessage( "A hostile pirate galleon has entered these waters." );
+	if( socket )
+	{
+		socket.SysMessage( "A hostile pirate galleon has entered these waters." );
+	}
+}
+
+/** @type { ( boat: Multi, item: Item ) => boolean } */
+function MarkRegionPirateItemTransient( boat, item )
+{
+	if( !ValidateObject( item ) || item.multi != boat )
+	{
+		return false;
+	}
+	item.shouldSave = false;
+	return true;
+}
+
+/** @type { ( boat: Multi, character: Character ) => boolean } */
+function MarkRegionPirateCharacterTransient( boat, character )
+{
+	if( !ValidateObject( character ) || character.multi != boat )
+	{
+		return false;
+	}
+	character.shouldSave = false;
+	return true;
 }
 
 /** @type { ( section: string, boat: Multi, x: number, y: number, z: number ) => any } */
