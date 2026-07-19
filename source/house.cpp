@@ -957,13 +957,70 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 	}
 
 	const bool isMulti = ( houseId >= 0x4000 );
+	CBoatObj *shipAddonBoat = nullptr;
 	if( !isMulti )
 	{
 		// Trying to place a house addon, let's subtract the tileHeight of the targeted tile so it doesn't mess with placement rules
 		z -= tileHeight;
+		auto *targetBoat = FindHighSeasBoatAtXY( x, y, worldNumber, instanceId );
+		if( ValidateObject( targetBoat ) && targetBoat->GetTempVar( CITV_MOREZ, 1 ) == 0x40 )
+		{
+			static const std::unordered_set<UI16> addonPadIds = {
+				23556, 23557, 23610, 23611, 23664, 23665, 23718, 23719
+			};
+			bool validPad = false;
+			for( auto *item : FindNearbyItems( x, y, worldNumber, instanceId, 0 ))
+			{
+				if( ValidateObject( item ) && item->GetX() == x && item->GetY() == y &&
+					targetBoat->IsFixture( item->GetSerial() ) && addonPadIds.find( item->GetId() ) != addonPadIds.end() )
+				{
+					validPad = true;
+					break;
+				}
+			}
+			UI08 addonCount = 0;
+			bool padOccupied = false;
+			for( auto *item : targetBoat->GetItemsInMultiList()->collection() )
+			{
+				if( !ValidateObject( item ) || item->GetTag( "shipAddon" ).m_IntValue != 1 )
+				{
+					continue;
+				}
+				++addonCount;
+				if( item->GetX() == x && item->GetY() == y )
+				{
+					padOccupied = true;
+				}
+			}
+			if( !ValidateObject( mChar ) || targetBoat->GetSecurityLevel( mChar ) != BoatSecurityLevel::Captain )
+			{
+				if( mSock )
+				{
+					mSock->SysMessage( "You must own the ship to place an addon." );
+				}
+				return nullptr;
+			}
+			if( houseItems.size() != 1 || sx != 1 || sy != 1 )
+			{
+				mSock->SysMessage( "Only single-tile addons can be placed on this ship." );
+				return nullptr;
+			}
+			if( addonCount >= 2 )
+			{
+				mSock->SysMessage( "This ship already has two addons." );
+				return nullptr;
+			}
+			if( !validPad || padOccupied )
+			{
+				mSock->SysMessage( "That is not an available ship addon location." );
+				return nullptr;
+			}
+			shipAddonBoat = targetBoat;
+		}
 	}
 
-	if( checkLocation && !CheckForValidHouseLocation( mSock, mChar, x, y, z, sx, sy, worldNumber, instanceId, isBoat, isMulti ))
+	if( checkLocation && !ValidateObject( shipAddonBoat ) &&
+		!CheckForValidHouseLocation( mSock, mChar, x, y, z, sx, sy, worldNumber, instanceId, isBoat, isMulti ))
 	{
 		return nullptr;
 	}
@@ -1110,8 +1167,18 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 		}
 		fakeHouse->SetLocation( x, y, z );
 
-		CMultiObj *mMulti = FindMulti( fakeHouse );
-		if( checkLocation && ValidateObject( mMulti ))
+		CMultiObj *mMulti = ValidateObject( shipAddonBoat ) ? shipAddonBoat : FindMulti( fakeHouse );
+		if( ValidateObject( shipAddonBoat ))
+		{
+			fakeHouse->SetMulti( shipAddonBoat );
+			TAGMAPOBJECT shipAddonTag;
+			shipAddonTag.m_Destroy = false;
+			shipAddonTag.m_IntValue = 1;
+			shipAddonTag.m_ObjectType = TAGMAP_TYPE_INT;
+			shipAddonTag.m_StringValue = "";
+			fakeHouse->SetTag( "shipAddon", shipAddonTag );
+		}
+		else if( checkLocation && ValidateObject( mMulti ))
 		{
 			if( mMulti->GetLockdownCount() < mMulti->GetMaxLockdowns() )
 			{
