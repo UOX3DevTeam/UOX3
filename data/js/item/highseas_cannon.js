@@ -6,10 +6,16 @@ const BALL_ID = 0x4224;
 const GRAPE_ID = 0xA2BF;
 const FLAME_ID = 0x44C1;
 const FROST_ID = 0x422B;
+const AMMO_STANDARD = 1;
+const AMMO_GRAPESHOT = 2;
+const AMMO_FLAME = 3;
+const AMMO_FROST = 4;
 const FUSE_ID = 0x1420;
 const RAMROD_ID = 0x4246;
-const LIGHT_CANNON_RANGE = 8;
+const LIGHT_CANNON_RANGE = 10;
 const HEAVY_CANNON_RANGE = 10;
+const PUMPKIN_CANNON_RANGE = 10;
+const PUMPKIN_CANNON_POWER = 4;
 const PREP_TIME = 4000;
 const ACTION_TIME = 1500;
 const TIMER_PREP = 10;
@@ -20,24 +26,73 @@ const TIMER_FIRE = 14;
 const IRON_ID = 0x1BF2;
 const BOARD_ID = 0x1BD7;
 const CLOTH_ID = 0x1766;
+const CANNON_UNLOAD_ENTRY = 40;
+const CANNON_DISMANTLE_ENTRY = 41;
+const CANNON_REPAIR_ENTRY = 42;
 
 function onUseChecked( user, used )
 {
-	if( used.GetTag( "hsCannonKind" ) == CANNON_DEED )
+	if( used.cannonRole == CANNON_DEED )
 	{
 		if( !IsInPack( used, user.pack ))
 		{
 			user.socket.SysMessage( "The cannon deed must be in your backpack." );
 			return false;
 		}
+		if( !ValidateObject( user.multi ) || !user.multi.IsBoat() )
+		{
+			user.socket.SysMessage( "You must be on the ship to deploy a weapon." );
+			return false;
+		}
+		if( !user.multi.IsOwner( user ))
+		{
+			user.socket.SysMessage( "You must be the owner of the ship to do this." );
+			return false;
+		}
 		user.socket.tempObj = used;
 		user.socket.CustomTarget( 0, "Target a weapon pad on your ship." );
 		return false;
 	}
-	if( used.GetTag( "hsCannonKind" ) != CANNON || !used.InRange( user, 3 ))
+	if( used.cannonRole != CANNON )
 		return false;
+	if( !used.InRange( user, 3 ))
+	{
+		user.socket.SysMessage( "You are too far away." );
+		return false;
+	}
+	if( !CanOperateCannon( used.multi, user ))
+	{
+		user.socket.SysMessage( "You do not have permission to use this ship cannon." );
+		return false;
+	}
+	NormalizeCannonMagazine( used );
+	AddCannonAction( used, user.multi == used.multi && used.InRange( user, 2 ) ?
+		"You are now operating the cannon." : "You are too far away." );
 	ShowCannonGump( user, used );
-	return false;
+	return true; // Also open the cannon's three-stack ServUO magazine.
+}
+
+function onDropItemOnItem( dropped, user, cannon )
+{
+	if( !ValidateObject( dropped ) || !ValidateObject( user ) || !ValidateObject( cannon ) ||
+		cannon.cannonRole != CANNON ) return 0;
+	if( !CanOperateCannon( cannon.multi, user ) || user.multi != cannon.multi || !cannon.InRange( user, 2 ))
+	{
+		user.socket.SysMessage( "You may not use this cannon magazine." );
+		return 0;
+	}
+	if( dropped.id != BALL_ID && dropped.id != GRAPE_ID && dropped.id != FLAME_ID &&
+		dropped.id != FROST_ID && dropped.id != POWDER_ID && dropped.id != FUSE_ID )
+	{
+		user.socket.SysMessage( "The cannon magazine cannot hold that type of object." );
+		return 0;
+	}
+	if( cannon.totalItemCount >= 3 )
+	{
+		user.socket.SysMessage( "The cannon magazine cannot hold more items." );
+		return 0;
+	}
+	return 1;
 }
 
 function OperateCannon( user, used )
@@ -54,7 +109,7 @@ function OperateCannon( user, used )
 		return false;
 	}
 
-	var stage = parseInt( used.GetTag( "hsCannonStage" ));
+	var stage = parseInt( used.cannonStage );
 	if( stage < 1 )
 	{
 		if( user.ResourceCount( RAMROD_ID, 0 ) < 1 ) { user.socket.SysMessage( "You need a ramrod." ); return false; }
@@ -62,19 +117,19 @@ function OperateCannon( user, used )
 	}
 	else if( stage == 1 )
 	{
-		if( CountShipResource( user, boat, POWDER_ID ) < 1 ) { user.socket.SysMessage( "You need a powder charge." ); return false; }
+		if( CountCannonResource( used, POWDER_ID ) < 1 ) { user.socket.SysMessage( "The magazine does not have a powder charge." ); return false; }
 		BeginCannonAction( used, user, TIMER_CHARGE, CannonActionTime( used ), "Charging started." );
 	}
 	else if( stage == 2 )
 	{
 		var ammo = SelectCannonAmmo( user, boat, used );
-		if( CountShipResource( user, boat, ammo ) < 1 ) { user.socket.SysMessage( "You need a cannonball or grapeshot." ); return false; }
+		if( CountCannonResource( used, ammo ) < 1 ) { user.socket.SysMessage( "The magazine does not have ammunition." ); return false; }
 		used.SetTempTag( "hsPendingAmmo", ammo );
 		BeginCannonAction( used, user, TIMER_LOAD, CannonActionTime( used ), "Loading started." );
 	}
 	else if( stage == 3 )
 	{
-		if( CountShipResource( user, boat, FUSE_ID ) < 1 ) { user.socket.SysMessage( "You need fuse cord." ); return false; }
+		if( CountCannonResource( used, FUSE_ID ) < 1 ) { user.socket.SysMessage( "The magazine does not have fuse cord." ); return false; }
 		BeginCannonAction( used, user, TIMER_PRIME, CannonActionTime( used ), "Priming started." );
 	}
 	else
@@ -89,9 +144,46 @@ function CanOperateCannon( boat, user )
 	return ValidateObject( boat ) && boat.CanCommandShip( user );
 }
 
+function NormalizeCannonMagazine( cannon )
+{
+	if( !ValidateObject( cannon ) || !cannon.isShipCannon ) return;
+	cannon.type = 1;
+	cannon.maxItems = 3;
+	cannon.weightMax = 30000;
+}
+
 function IsShipOfficer( boat, user )
 {
 	return ValidateObject( boat ) && boat.GetSecurityLevel( user ) >= 4;
+}
+
+function onContextMenuRequest( socket, cannon )
+{
+	var user = socket.currentChar;
+	var boat = ValidateObject( cannon ) ? cannon.multi : null;
+	if( !ValidateObject( user ) || !cannon.isShipCannon ||
+		!IsShipOfficer( boat, user ) || !cannon.InRange( user, 2 )) return true;
+	var stage = parseInt( cannon.cannonStage );
+	var hits = parseInt( cannon.health );
+	if( isNaN( hits ) || hits <= 0 ) hits = 100;
+	var entries = [
+		{ id: CANNON_UNLOAD_ENTRY, text: 1116072, flags: stage == 4 ? 0x0000 : 0x0001, hue: 0x03E0 },
+		{ id: CANNON_DISMANTLE_ENTRY, text: 1116069, flags: stage <= 1 && cannon.totalItemCount == 0 && hits >= 100 ? 0x0000 : 0x0001, hue: 0x03E0 },
+		{ id: CANNON_REPAIR_ENTRY, text: 1116602, flags: hits < 100 ? 0x0000 : 0x0001, hue: 0x03E0 }
+	];
+	TriggerEvent( 18001, "modifyContextMenu", socket, cannon, entries, true );
+	return false;
+}
+
+function onContextMenuSelect( socket, cannon, popupEntry )
+{
+	var user = socket.currentChar;
+	var boat = ValidateObject( cannon ) ? cannon.multi : null;
+	if( !ValidateObject( user ) || !IsShipOfficer( boat, user ) || !cannon.InRange( user, 2 )) return false;
+	if( popupEntry == CANNON_UNLOAD_ENTRY ) UnloadCannon( user, cannon );
+	else if( popupEntry == CANNON_DISMANTLE_ENTRY ) DismantleCannon( user, cannon );
+	else if( popupEntry == CANNON_REPAIR_ENTRY ) RepairCannon( user, cannon );
+	return false;
 }
 
 function ShowCannonGump( user, cannon )
@@ -102,47 +194,84 @@ function ShowCannonGump( user, cannon )
 		user.socket.SysMessage( "Only the ship's captain and authorized crew may operate this cannon." );
 		return;
 	}
-	var linkedPad = CalcItemFromSer( parseInt( cannon.GetTag( "hsWeaponPadSerial" )));
+	var linkedPad = CalcItemFromSer( parseInt( cannon.cannonLinkSerial ));
 	if( !ValidateObject( linkedPad )) AreaItemFunction( "RestoreHighSeasCannonPad", cannon, 2 );
 	user.SetTempTag( "hsCannonMenu", cannon.serial );
-	var stage = parseInt( cannon.GetTag( "hsCannonStage" ));
-	var hits = parseInt( cannon.GetTag( "hsCannonHits" ));
-	if( isNaN( hits ) || hits <= 0 ) hits = 100;
-	var hullPercent = ValidateObject( boat ) && boat.GetHullMaxHits() > 0 ? Math.floor( boat.GetHullHits() * 100 / boat.GetHullMaxHits() ) : 0;
+	var stage = parseInt( cannon.cannonStage );
 	var g = new Gump();
 	g.AddPage( 0 );
-	g.AddBackground( 0, 0, 420, 420, 0x0A28 );
-	g.AddHTMLGump( 25, 20, 310, 30, false, false,
-		"<CENTER><BIG>" + ( parseInt( cannon.GetTag( "hsCannonPower" )) == 2 ? "Heavy" : "Light" ) + " Ship Cannon</BIG></CENTER>" );
-	g.AddHTMLGump( 35, 55, 350, 35, false, false, "Cannon: " + hits + "% &nbsp; Hull: " + hullPercent + "% &nbsp; State: " + CannonStageName( stage ));
-	AddCannonMenuButton( g, 40, 95, 1, stage == 4 ? "Light fuse" : "Prepare and load cannon" );
-	AddCannonMenuButton( g, 40, 125, 2, "Unload cannon" );
-	AddCannonMenuButton( g, 40, 155, 3, "Repair cannon" );
-	AddCannonMenuButton( g, 40, 185, 4, "Dismantle cannon" );
-	AddCannonMenuButton( g, 40, 215, 5, "Repair ship hull" );
-	AddCannonMenuButton( g, 40, 245, 6, "Begin emergency repairs" );
-	g.AddHTMLGump( 35, 280, 340, 25, false, false, "Magazine ammunition preference:" );
-	AddCannonMenuButton( g, 40, 305, 7, "Standard cannonball" );
-	AddCannonMenuButton( g, 40, 335, 8, "Flame cannonball" );
-	AddCannonMenuButton( g, 220, 305, 9, "Frost cannonball" );
-	AddCannonMenuButton( g, 220, 335, 10, "Grapeshot" );
+	// Exact ServUO ShipCannonGump footprint and control placement.
+	g.AddBackground( 0, 0, 250, 175, 0x06DB );
+	g.AddHTMLGump( 10, 10, 230, 18, false, false,
+		"<BASEFONT COLOR=#7FCFFF>" + CannonPositionName( cannon ) + "</BASEFONT>" );
+	g.AddHTMLGump( 115, 35, 70, 18, false, false, "<BASEFONT COLOR=#80FF80>STATUS</BASEFONT>" );
+	if( stage == 4 )
+	{
+		g.AddButton( 10, 35, 0x0FA5, 0x0FA7, 1, 0, 8 );
+		g.AddHTMLGump( 45, 35, 70, 18, false, false, "<BASEFONT COLOR=#FFFFFF>UNLOAD</BASEFONT>" );
+		g.AddButton( 10, 89, 0x0FA5, 0x0FA7, 1, 0, 6 );
+		g.AddHTMLGump( 45, 89, 70, 18, false, false, "<BASEFONT COLOR=#FFFFFF>FIRE</BASEFONT>" );
+	}
+	else
+	{
+		g.AddButton( 10, 35, 0x0FA5, 0x0FA7, 1, 0, 1 );
+		g.AddHTMLGump( 45, 35, 70, 18, false, false, "<BASEFONT COLOR=#FFFFFF>PREP</BASEFONT>" );
+	}
+	AddCannonStatusLine( g, 53, stage >= 2 ? "Charged" : "Not Charged", stage >= 2 );
+	AddCannonStatusLine( g, 71, stage >= 3 ? AmmoName( parseInt( cannon.morex )) : "Not Loaded", stage >= 3 );
+	AddCannonStatusLine( g, 89, stage >= 4 ? "Primed" : "No Fuse", stage >= 4 );
+	for( var i = 0; i < 3; ++i )
+	{
+		var action = cannon.GetTempTag( "hsCannonAction" + i );
+		if( action ) g.AddHTMLGump( 10, 112 + i * 18, 230, 18, false, false,
+			"<BASEFONT COLOR=" + ( i == 0 ? "#FFFFFF" : "#B0B0B0" ) + ">" + action + "</BASEFONT>" );
+	}
 	g.Send( user );
 	g.Free();
 }
 
-function RestoreHighSeasCannonPad( cannon, candidate )
+function IsViewingCannonGump( user, cannon )
 {
-	if( !ValidateObject( candidate ) || candidate.GetTag( "hsWeaponPad" ) != 1 || candidate.multi != cannon.multi ||
-		candidate.x != cannon.x || candidate.y != cannon.y ) return false;
-	cannon.SetTag( "hsWeaponPadSerial", candidate.serial );
-	candidate.SetTag( "hsCannonSerial", cannon.serial );
-	return true;
+	return ValidateObject( user ) && ValidateObject( cannon ) &&
+		parseInt( user.GetTempTag( "hsCannonMenu" )) == cannon.serial;
 }
 
-function AddCannonMenuButton( g, x, y, button, text )
+function AddCannonStatusLine( g, y, text, good )
 {
-	g.AddButton( x, y, 0x0FA5, 0x0FA7, 1, 0, button );
-	g.AddHTMLGump( x + 35, y + 2, 250, 25, false, false, text );
+	g.AddHTMLGump( 115, y, 125, 18, false, false,
+		"<BASEFONT COLOR=" + ( good ? "#80FF80" : "#FF8080" ) + ">" + text + "</BASEFONT>" );
+}
+
+function CannonPositionName( cannon )
+{
+	var boat = cannon.multi;
+	if( !ValidateObject( boat )) return CannonName( cannon );
+	var dx = cannon.x - boat.x, dy = cannon.y - boat.y;
+	var facing = parseInt( boat.dir ) & 0x06;
+	var localX = dx, localY = dy;
+	if( facing == 2 ) { localX = dy; localY = -dx; }
+	else if( facing == 4 ) { localX = -dx; localY = -dy; }
+	else if( facing == 6 ) { localX = -dy; localY = dx; }
+	var side = localX < 0 ? "Port" : ( localX > 0 ? "Starboard" : "" );
+	var section = localY < -2 ? "Bow" : ( localY > 2 ? "Aft" : "Amidship" );
+	return section + ( side ? " " + side : "" ) + " Cannon";
+}
+
+function AddCannonAction( cannon, message )
+{
+	if( !ValidateObject( cannon ) || !message ) return;
+	cannon.SetTempTag( "hsCannonAction2", cannon.GetTempTag( "hsCannonAction1" ));
+	cannon.SetTempTag( "hsCannonAction1", cannon.GetTempTag( "hsCannonAction0" ));
+	cannon.SetTempTag( "hsCannonAction0", message );
+}
+
+function RestoreHighSeasCannonPad( cannon, candidate )
+{
+	if( !ValidateObject( candidate ) || !candidate.isWeaponPad || candidate.multi != cannon.multi ||
+		candidate.x != cannon.x || candidate.y != cannon.y ) return false;
+	cannon.cannonLinkSerial = candidate.serial;
+	candidate.cannonLinkSerial = cannon.serial;
+	return true;
 }
 
 function CannonStageName( stage )
@@ -154,45 +283,92 @@ function CannonStageName( stage )
 	return "empty";
 }
 
+function CannonName( cannon )
+{
+	var power = parseInt( cannon.cannonPower );
+	if( power == PUMPKIN_CANNON_POWER ) return "Pumpkin Cannon";
+	return power == 2 ? "Heavy Ship Cannon" : "Light Ship Cannon";
+}
+
+function CannonRange( cannon )
+{
+	var configuredRange = parseInt( cannon.cannonRange );
+	if( configuredRange > 0 ) return configuredRange;
+	var power = parseInt( cannon.cannonPower );
+	if( power == PUMPKIN_CANNON_POWER ) return PUMPKIN_CANNON_RANGE;
+	return power == 2 ? HEAVY_CANNON_RANGE : LIGHT_CANNON_RANGE;
+}
+
 function onGumpPress( socket, button, gumpData )
 {
 	var user = socket.currentChar;
 	var cannon = CalcItemFromSer( parseInt( user.GetTempTag( "hsCannonMenu" )));
-	if( !ValidateObject( cannon ) || cannon.GetTag( "hsCannonKind" ) != CANNON || !cannon.InRange( user, 3 )) return;
+	// Right-click/close sends button zero. ServUO removes the mobile from the
+	// cannon's Viewing list here; clearing our equivalent tag prevents both this
+	// response and later action timers from reopening the window.
+	if( button == 0 )
+	{
+		user.SetTempTag( "hsCannonMenu", null );
+		return;
+	}
+	if( !ValidateObject( cannon ) || !cannon.isShipCannon ) return;
 	var boat = cannon.multi;
 	if( !CanOperateCannon( boat, user )) return;
-	if( button == 1 ) OperateCannon( user, cannon );
-	else if( button == 2 ) UnloadCannon( user, cannon );
-	else if( button == 3 ) RepairCannon( user, cannon );
-	else if( button == 4 ) DismantleCannon( user, cannon );
-	else if( button == 5 ) RepairShipHull( user, boat );
-	else if( button == 6 ) BeginEmergencyRepairs( user, boat );
-	else if( button >= 7 && button <= 10 )
+	if( user.multi != boat || !cannon.InRange( user, 2 ) || user.dead )
 	{
-		var preferred = button == 7 ? BALL_ID : ( button == 8 ? FLAME_ID : ( button == 9 ? FROST_ID : GRAPE_ID ));
-		cannon.SetTag( "hsPreferredAmmo", preferred );
-		user.socket.SysMessage( "Cannon magazine preference set to " + AmmoName( preferred ) + "." );
+		AddCannonAction( cannon, "You are too far away." );
 		ShowCannonGump( user, cannon );
+		return;
 	}
+	if( button == 1 ) OperateCannon( user, cannon );
+	else if( button == 6 && parseInt( cannon.cannonStage ) == 4 ) LightCannonFuse( user, cannon );
+	else if( button == 8 && parseInt( cannon.cannonStage ) == 4 ) UnloadCannon( user, cannon );
+	ShowCannonGump( user, cannon );
 }
 
 function SelectCannonAmmo( user, boat, cannon )
 {
-	var preferred = parseInt( cannon.GetTag( "hsPreferredAmmo" ));
-	if(( preferred == BALL_ID || preferred == GRAPE_ID || preferred == FLAME_ID || preferred == FROST_ID ) &&
-		CountShipResource( user, boat, preferred ) > 0 ) return preferred;
-	var choices = [BALL_ID, FLAME_ID, FROST_ID, GRAPE_ID];
+	// ServUO loads a cannonball first when one is present in the magazine, then
+	// falls back to grapeshot. Special cannonballs remain valid cannonballs.
+	var choices = [BALL_ID, FROST_ID, FLAME_ID, GRAPE_ID];
 	for( var i = 0; i < choices.length; ++i )
-		if( CountShipResource( user, boat, choices[i] ) > 0 ) return choices[i];
+		if( CountCannonResource( cannon, choices[i] ) > 0 ) return choices[i];
 	return BALL_ID;
+}
+
+function CountCannonResource( cannon, itemID )
+{
+	return ValidateObject( cannon ) ? cannon.ResourceCount( itemID, 0 ) : 0;
+}
+
+function ConsumeCannonResource( cannon, amount, itemID )
+{
+	if( ValidateObject( cannon )) cannon.UseResource( amount, itemID, 0 );
+}
+
+function FindCannonResource( cannon, itemID )
+{
+	if( !ValidateObject( cannon )) return null;
+	for( var item = cannon.FirstItem(); !cannon.FinishedItems(); item = cannon.NextItem() )
+		if( ValidateObject( item ) && item.id == itemID ) return item;
+	return null;
 }
 
 function AmmoName( ammo )
 {
-	if( ammo == GRAPE_ID ) return "grapeshot";
-	if( ammo == FLAME_ID ) return "flame cannonball";
-	if( ammo == FROST_ID ) return "frost cannonball";
+	if( ammo == AMMO_GRAPESHOT ) return "grapeshot";
+	if( ammo == AMMO_FLAME ) return "flame cannonball";
+	if( ammo == AMMO_FROST ) return "frost cannonball";
 	return "standard cannonball";
+}
+
+function ClearLoadedAmmoProfile( cannon )
+{
+	cannon.morex = 0;
+	cannon.morey = 0;
+	cannon.morez = 0;
+	cannon.lodamage = 0;
+	cannon.hidamage = 0;
 }
 
 function UnloadCannon( user, cannon )
@@ -200,18 +376,20 @@ function UnloadCannon( user, cannon )
 	var boat = cannon.multi;
 	if( !IsShipOfficer( boat, user )) { user.socket.SysMessage( "Only the captain or a ship officer may unload this cannon." ); return; }
 	if( parseInt( cannon.GetTempTag( "hsCannonBusy" )) == 1 ) { user.socket.SysMessage( "The cannon is currently being operated." ); return; }
-	var stage = parseInt( cannon.GetTag( "hsCannonStage" ));
+	var stage = parseInt( cannon.cannonStage );
+	if( stage != 4 ) { user.socket.SysMessage( "The ship cannon is not fully loaded." ); return; }
 	if( stage >= 4 ) CreateDFNItem( user.socket, user, "highseas_fuse_cord", 1, "ITEM", true );
 	if( stage >= 3 )
 	{
-		var loadedAmmo = parseInt( cannon.GetTag( "hsCannonAmmo" ));
-		var ammoSection = loadedAmmo == GRAPE_ID ? "highseas_grapeshot" :
-			( loadedAmmo == FLAME_ID ? "highseas_flame_cannonball" : ( loadedAmmo == FROST_ID ? "highseas_frost_cannonball" : "highseas_cannonball" ));
+		var loadedAmmo = parseInt( cannon.morex );
+		var ammoSection = loadedAmmo == AMMO_GRAPESHOT ? "highseas_grapeshot" :
+			( loadedAmmo == AMMO_FLAME ? "highseas_flame_cannonball" : ( loadedAmmo == AMMO_FROST ? "highseas_frost_cannonball" : "highseas_cannonball" ));
 		CreateDFNItem( user.socket, user, ammoSection, 1, "ITEM", true );
 	}
 	if( stage >= 2 ) CreateDFNItem( user.socket, user, "highseas_powder_charge", 1, "ITEM", true );
-	cannon.SetTag( "hsCannonStage", stage == 0 ? 0 : 1 );
-	cannon.SetTag( "hsCannonAmmo", 0 );
+	cannon.cannonStage = stage == 0 ? 0 : 1;
+	ClearLoadedAmmoProfile( cannon );
+	AddCannonAction( cannon, "Cannon unloaded." );
 	user.socket.SysMessage( "The cannon has been fully unloaded and its supplies returned." );
 }
 
@@ -219,7 +397,7 @@ function RepairCannon( user, cannon )
 {
 	var boat = cannon.multi;
 	if( !IsShipOfficer( boat, user )) { user.socket.SysMessage( "Only the captain or a ship officer may repair this cannon." ); return; }
-	var hits = parseInt( cannon.GetTag( "hsCannonHits" ));
+	var hits = parseInt( cannon.health );
 	if( isNaN( hits ) || hits <= 0 ) hits = 100;
 	if( hits >= 100 ) { user.socket.SysMessage( "The cannon is already in pristine condition." ); return; }
 	var level = hits >= 75 ? 1 : ( hits >= 50 ? 2 : ( hits >= 25 ? 3 : 4 ));
@@ -239,7 +417,7 @@ function RepairCannon( user, cannon )
 	ConsumeShipResource( user, boat, used, IRON_ID );
 	hits += Math.floor(( 100 - hits ) * percent );
 	if( hits > 100 ) hits = 100;
-	cannon.SetTag( "hsCannonHits", hits );
+	cannon.health = hits;
 	cannon.Refresh();
 	user.socket.SysMessage( "You use " + used + " iron ingots. The cannon is now " + hits + "% repaired." );
 }
@@ -291,14 +469,15 @@ function DismantleCannon( user, cannon )
 	{
 		user.socket.SysMessage( "Only the ship's captain or an officer may dismantle this cannon." ); return;
 	}
-	var hits = parseInt( cannon.GetTag( "hsCannonHits" ));
+	var hits = parseInt( cannon.health );
 	if( isNaN( hits ) || hits <= 0 ) hits = 100;
-	if( parseInt( cannon.GetTag( "hsCannonStage" )) > 1 ) { user.socket.SysMessage( "The cannon must be fully unloaded before it can be dismantled." ); return; }
+	if( parseInt( cannon.cannonStage ) > 1 || cannon.totalItemCount > 0 ) { user.socket.SysMessage( "The ship cannon and magazine must be fully unloaded before it can be dismantled." ); return; }
 	if( hits < 100 ) { user.socket.SysMessage( "The cannon must be fully repaired before it can be dismantled." ); return; }
-	var pad = CalcItemFromSer( parseInt( cannon.GetTag( "hsWeaponPadSerial" )));
-	if( ValidateObject( pad )) pad.SetTag( "hsCannonSerial", 0 );
-	CreateDFNItem( user.socket, user, parseInt( cannon.GetTag( "hsCannonPower" )) == 2 ?
-		"highseas_heavy_cannon_deed" : "highseas_light_cannon_deed", 1, "ITEM", true );
+	var pad = CalcItemFromSer( parseInt( cannon.cannonLinkSerial ));
+	if( ValidateObject( pad )) pad.cannonLinkSerial = 0;
+	var power = parseInt( cannon.cannonPower );
+	CreateDFNItem( user.socket, user, power == PUMPKIN_CANNON_POWER ? "pumpkin_cannon_deed" :
+		( power == 2 ? "highseas_heavy_cannon_deed" : "highseas_light_cannon_deed" ), 1, "ITEM", true );
 	cannon.Delete();
 	user.socket.SysMessage( "You dismantle the ship cannon and recover its deed." );
 }
@@ -325,13 +504,14 @@ function BeginCannonAction( cannon, user, timerID, delay, message )
 {
 	cannon.SetTempTag( "hsCannonBusy", 1 );
 	cannon.SetTempTag( "hsCannonOperator", user.serial );
+	AddCannonAction( cannon, message );
 	user.socket.SysMessage( message );
 	cannon.StartTimer( delay, timerID, true );
 }
 
 function CannonActionTime( cannon )
 {
-	return parseInt( cannon.GetTag( "hsCannonPower" )) == 2 ? 2000 : ACTION_TIME;
+	return cannon.cannonActionTime > 0 ? cannon.cannonActionTime : ACTION_TIME;
 }
 
 function CountShipResource( user, boat, itemID )
@@ -366,47 +546,52 @@ function onCallback0( socket, target )
 {
 	var deed = socket.tempObj;
 	socket.tempObj = null;
-	var cannonPower = ValidateObject( deed ) && parseInt( deed.GetTag( "hsCannonPower" )) == 2 ? 2 : 1;
-	if( !ValidateObject( deed ) || !ValidateObject( target ) || !target.isItem || target.GetTag( "hsWeaponPad" ) != 1 )
+	var deedPower = ValidateObject( deed ) ? parseInt( deed.cannonPower ) : 1;
+	var cannonPower = deedPower == PUMPKIN_CANNON_POWER ? PUMPKIN_CANNON_POWER : ( deedPower == 2 ? 2 : 1 );
+	if( !ValidateObject( deed ) || !ValidateObject( target ) || !target.isItem || !target.isWeaponPad )
 	{
 		socket.SysMessage( "That is not a weapon pad." ); return;
 	}
 	var boat = target.multi;
-	if( !ValidateObject( boat ) || !boat.IsBoat() || !boat.IsOwner( socket.currentChar ) || !target.InRange( socket.currentChar, 2 ))
+	if( !ValidateObject( boat ) || !boat.IsBoat() || socket.currentChar.multi != boat ||
+		!boat.IsOwner( socket.currentChar ) || !target.InRange( socket.currentChar, 2 ))
 	{
 		socket.SysMessage( "You may only place this on your own ship." ); return;
 	}
-	var existingSerial = parseInt( target.GetTag( "hsCannonSerial" ));
+	var existingSerial = parseInt( target.cannonLinkSerial );
 	if( existingSerial )
 	{
 		var existing = CalcItemFromSer( existingSerial );
-		if( ValidateObject( existing ) && existing.GetTag( "hsCannonKind" ) == CANNON )
+		if( ValidateObject( existing ) && existing.isShipCannon )
 		{
 			// ServUO IsValidCannonSpot places the cannon at the weapon pad's
 			// calculated tile top, not at the pad's base Z.
 			existing.SetLocation( target.x, target.y, target.z + GetTileHeight( target.id ), target.worldnumber, target.instanceID );
 			existing.multi = boat;
-			existing.SetTag( "hsWeaponPadSerial", target.serial );
-			if( parseInt( existing.GetTag( "hsCannonHits" )) <= 0 ) existing.SetTag( "hsCannonHits", 100 );
+			existing.cannonLinkSerial = target.serial;
+			if( parseInt( existing.health ) <= 0 ) existing.health = 100;
+			NormalizeCannonMagazine( existing );
 			SetCannonArt( existing, boat );
 			existing.Refresh();
 			socket.SysMessage( "The existing cannon has been restored to the weapon pad." );
 			return;
 		}
-		target.SetTag( "hsCannonSerial", 0 );
+		target.cannonLinkSerial = 0;
 	}
-	var cannon = CreateDFNItem( socket, socket.currentChar, cannonPower == 2 ? "highseas_heavy_cannon" : "highseas_light_cannon", 1, "ITEM", false );
+	var cannon = CreateDFNItem( socket, socket.currentChar, cannonPower == PUMPKIN_CANNON_POWER ? "pumpkin_cannon" :
+		( cannonPower == 2 ? "highseas_heavy_cannon" : "highseas_light_cannon" ), 1, "ITEM", false );
 	if( !ValidateObject( cannon )) return;
 	cannon.SetLocation( target.x, target.y, target.z + GetTileHeight( target.id ), target.worldnumber, target.instanceID );
 	cannon.multi = boat;
 	SetCannonArt( cannon, boat );
-	cannon.SetTag( "hsCannonKind", CANNON );
-	cannon.SetTag( "hsCannonPower", cannonPower );
-	cannon.SetTag( "hsCannonStage", 1 );
-	cannon.SetTag( "hsCannonShots", 0 );
-	cannon.SetTag( "hsCannonHits", 100 );
-	cannon.SetTag( "hsWeaponPadSerial", target.serial );
-	target.SetTag( "hsCannonSerial", cannon.serial );
+	cannon.cannonRole = CANNON;
+	cannon.cannonPower = cannonPower;
+	cannon.cannonStage = 0;
+	cannon.health = 100;
+	cannon.maxhp = 100;
+	cannon.cannonLinkSerial = target.serial;
+	target.cannonLinkSerial = cannon.serial;
+	NormalizeCannonMagazine( cannon );
 	deed.Delete();
 }
 
@@ -414,7 +599,7 @@ function onCallback1( socket, target )
 {
 	var cannon = socket.tempObj;
 	socket.tempObj = null;
-	if( !ValidateObject( cannon ) || parseInt( cannon.GetTag( "hsCannonStage" )) != 4 ) return;
+	if( !ValidateObject( cannon ) || parseInt( cannon.cannonStage ) != 4 ) return;
 	if( !CanOperateCannon( cannon.multi, socket.currentChar ) || socket.currentChar.multi != cannon.multi )
 	{
 		socket.SysMessage( "You are no longer authorized to operate this cannon." ); return;
@@ -476,19 +661,48 @@ function LightCannonFuse( user, cannon )
 		user.socket.SysMessage( "You are forbidden from discharging cannons within guarded town limits." );
 		return false;
 	}
+	if( !HasLitTorch( user ))
+	{
+		AddCannonAction( cannon, "You need a lighted fire source." );
+		user.socket.SysMessage( "You need a lighted fire source." );
+		return false;
+	}
 	cannon.SetTempTag( "hsCannonBusy", 1 );
 	cannon.SetTempTag( "hsCannonOperator", user.serial );
 	cannon.SetTempTag( "hsCannonTarget", 0 );
 	ResolveAutomaticCannonTarget( cannon, user );
+	AddCannonAction( cannon, "The fuse is lit!" );
 	user.socket.SysMessage( "The fuse is lit!" );
 	cannon.SoundEffect( 0x0666, true );
-	cannon.StartTimer( 2000, TIMER_FIRE, true );
+	cannon.StartTimer( ACTION_TIME, TIMER_FIRE, true );
 	return true;
+}
+
+function HasLitTorch( user )
+{
+	for( var layer = 1; layer <= 2; ++layer )
+	{
+		var held = user.FindItemLayer( layer );
+		if( ValidateObject( held ) && held.id >= 0x0A12 && held.id <= 0x0A15 ) return true;
+	}
+	return ContainerHasLitTorch( user.pack );
+}
+
+function ContainerHasLitTorch( container )
+{
+	if( !ValidateObject( container )) return false;
+	for( var item = container.FirstItem(); !container.FinishedItems(); item = container.NextItem() )
+	{
+		if( !ValidateObject( item )) continue;
+		if( item.id >= 0x0A12 && item.id <= 0x0A15 ) return true;
+		if( item.itemsinside > 0 && ContainerHasLitTorch( item )) return true;
+	}
+	return false;
 }
 
 function ResolveAutomaticCannonTarget( cannon, user )
 {
-	var range = parseInt( cannon.GetTag( "hsCannonPower" )) == 2 ? HEAVY_CANNON_RANGE : LIGHT_CANNON_RANGE;
+	var range = CannonRange( cannon );
 	cannon.SetTempTag( "hsTrajectoryOperator", ValidateObject( user ) ? user.serial : 0 );
 	cannon.SetTempTag( "hsTrajectoryBest", range + 1 );
 	cannon.SetTempTag( "hsCannonTarget", 0 );
@@ -511,7 +725,7 @@ function FindCannonTrajectoryTarget( cannon, candidate )
 	}
 	var forward = dx * vx + dy * vy;
 	var lateral = Math.abs( dx * vy - dy * vx );
-	var range = parseInt( cannon.GetTag( "hsCannonPower" )) == 2 ? HEAVY_CANNON_RANGE : LIGHT_CANNON_RANGE;
+	var range = CannonRange( cannon );
 	if( forward <= 0 || forward > range || lateral > 1 + Math.floor( forward / 3 )) return false;
 	if( forward < parseInt( cannon.GetTempTag( "hsTrajectoryBest" )))
 	{
@@ -535,15 +749,15 @@ function IsTargetInCannonArc( cannon, target )
 	}
 	var forward = dx * vx + dy * vy;
 	var lateral = Math.abs( dx * vy - dy * vx );
-	var range = parseInt( cannon.GetTag( "hsCannonPower" )) == 2 ? HEAVY_CANNON_RANGE : LIGHT_CANNON_RANGE;
+	var range = CannonRange( cannon );
 	return forward > 0 && forward <= range && lateral <= 1 + Math.floor( forward / 3 );
 }
 
 function GetCannonFacing( cannon )
 {
-	if( cannon.id == 16918 || cannon.id == 16922 ) return 4;
-	if( cannon.id == 16919 || cannon.id == 16923 ) return 6;
-	if( cannon.id == 16920 || cannon.id == 16924 ) return 0;
+	if( cannon.id == cannon.cannonArtSouth || cannon.id == 16918 || cannon.id == 16922 || cannon.id == 41979 ) return 4;
+	if( cannon.id == cannon.cannonArtWest || cannon.id == 16919 || cannon.id == 16923 || cannon.id == 41980 ) return 6;
+	if( cannon.id == cannon.cannonArtNorth || cannon.id == 16920 || cannon.id == 16924 || cannon.id == 41981 ) return 0;
 	return 2;
 }
 
@@ -559,12 +773,13 @@ function onTimer( cannon, timerID )
 	}
 	if( timerID == TIMER_PREP )
 	{
-		if( user.ResourceCount( RAMROD_ID, 0 ) < 1 ) user.socket.SysMessage( "You need a ramrod." );
+		if( user.ResourceCount( RAMROD_ID, 0 ) < 1 ) { AddCannonAction( cannon, "You need a ramrod." ); user.socket.SysMessage( "You need a ramrod." ); }
 		else
 		{
-			cannon.SetTag( "hsCannonStage", 1 );
+			cannon.cannonStage = 1;
+			AddCannonAction( cannon, "Preparation finished." );
 			user.socket.SysMessage( "Preparation finished." );
-			if( CountShipResource( user, cannon.multi, POWDER_ID ) >= 1 )
+			if( CountCannonResource( cannon, POWDER_ID ) >= 1 )
 			{
 				BeginCannonAction( cannon, user, TIMER_CHARGE, CannonActionTime( cannon ), "Charging started." );
 				return;
@@ -574,14 +789,15 @@ function onTimer( cannon, timerID )
 	}
 	else if( timerID == TIMER_CHARGE )
 	{
-		if( CountShipResource( user, cannon.multi, POWDER_ID ) < 1 ) user.socket.SysMessage( "Charging stopped. You need a powder charge." );
+		if( CountCannonResource( cannon, POWDER_ID ) < 1 ) user.socket.SysMessage( "Charging stopped. The magazine needs a powder charge." );
 		else
 		{
-			ConsumeShipResource( user, cannon.multi, 1, POWDER_ID );
-			cannon.SetTag( "hsCannonStage", 2 );
+			ConsumeCannonResource( cannon, 1, POWDER_ID );
+			cannon.cannonStage = 2;
+			AddCannonAction( cannon, "Charging finished." );
 			user.socket.SysMessage( "Charging finished." );
 			var nextAmmo = SelectCannonAmmo( user, cannon.multi, cannon );
-			if( CountShipResource( user, cannon.multi, nextAmmo ) >= 1 )
+			if( CountCannonResource( cannon, nextAmmo ) >= 1 )
 			{
 				cannon.SetTempTag( "hsPendingAmmo", nextAmmo );
 				BeginCannonAction( cannon, user, TIMER_LOAD, CannonActionTime( cannon ), "Loading started." );
@@ -593,14 +809,20 @@ function onTimer( cannon, timerID )
 	else if( timerID == TIMER_LOAD )
 	{
 		var ammo = parseInt( cannon.GetTempTag( "hsPendingAmmo" ));
-		if( CountShipResource( user, cannon.multi, ammo ) < 1 ) user.socket.SysMessage( "Loading stopped. The ammunition is missing." );
+		var ammoItem = FindCannonResource( cannon, ammo );
+		if( !ValidateObject( ammoItem )) user.socket.SysMessage( "Loading stopped. The magazine ammunition is missing." );
 		else
 		{
-			ConsumeShipResource( user, cannon.multi, 1, ammo );
-			cannon.SetTag( "hsCannonAmmo", ammo );
-			cannon.SetTag( "hsCannonStage", 3 );
+			cannon.morex = Math.max( AMMO_STANDARD, parseInt( ammoItem.morex ));
+			cannon.morey = Math.max( 1, parseInt( ammoItem.morey ));
+			cannon.morez = Math.max( 0, parseInt( ammoItem.morez ));
+			cannon.lodamage = Math.max( 0, parseInt( ammoItem.lodamage ));
+			cannon.hidamage = Math.max( cannon.lodamage, parseInt( ammoItem.hidamage ));
+			ConsumeCannonResource( cannon, 1, ammo );
+			cannon.cannonStage = 3;
+			AddCannonAction( cannon, "Loading finished." );
 			user.socket.SysMessage( "Loading finished." );
-			if( CountShipResource( user, cannon.multi, FUSE_ID ) >= 1 )
+			if( CountCannonResource( cannon, FUSE_ID ) >= 1 )
 			{
 				BeginCannonAction( cannon, user, TIMER_PRIME, CannonActionTime( cannon ), "Priming started." );
 				return;
@@ -610,8 +832,8 @@ function onTimer( cannon, timerID )
 	}
 	else if( timerID == TIMER_PRIME )
 	{
-		if( CountShipResource( user, cannon.multi, FUSE_ID ) < 1 ) user.socket.SysMessage( "Priming stopped. You need fuse cord." );
-		else { ConsumeShipResource( user, cannon.multi, 1, FUSE_ID ); cannon.SetTag( "hsCannonStage", 4 ); user.socket.SysMessage( "Priming finished. The cannon is ready to fire." ); }
+		if( CountCannonResource( cannon, FUSE_ID ) < 1 ) user.socket.SysMessage( "Priming stopped. The magazine needs fuse cord." );
+		else { ConsumeCannonResource( cannon, 1, FUSE_ID ); cannon.cannonStage = 4; AddCannonAction( cannon, "Ready to fire." ); user.socket.SysMessage( "Priming finished. The cannon is ready to fire." ); }
 	}
 	else if( timerID == TIMER_FIRE )
 	{
@@ -619,6 +841,8 @@ function onTimer( cannon, timerID )
 		return;
 	}
 	cannon.SetTempTag( "hsCannonBusy", 0 );
+	if( ValidateObject( user ) && user.socket && cannon.InRange( user, 3 ) && IsViewingCannonGump( user, cannon ))
+		ShowCannonGump( user, cannon );
 }
 
 function FireCannon( cannon, user )
@@ -630,9 +854,13 @@ function FireCannon( cannon, user )
 		if( user.socket ) user.socket.SysMessage( "Cannon fire is forbidden within guarded town limits." );
 		return;
 	}
-	var ammo = parseInt( cannon.GetTag( "hsCannonAmmo" ));
-	var heavy = parseInt( cannon.GetTag( "hsCannonPower" )) == 2;
-	var range = heavy ? HEAVY_CANNON_RANGE : LIGHT_CANNON_RANGE;
+	var ammo = parseInt( cannon.morex );
+	var minDamage = Math.max( 0, parseInt( cannon.lodamage ));
+	var maxDamage = Math.max( minDamage, parseInt( cannon.hidamage ));
+	var sourceBoat = cannon.multi;
+	var cannonDamageMod = ValidateObject( sourceBoat ) &&
+		( parseInt( sourceBoat.id ) - 0x4000 ) >= 0x18 && ( parseInt( sourceBoat.id ) - 0x4000 ) <= 0x1B ? 1.5 : 1.0;
+	var range = CannonRange( cannon );
 	var missX = cannon.x;
 	var missY = cannon.y;
 	switch( GetCannonFacing( cannon ))
@@ -646,16 +874,18 @@ function FireCannon( cannon, user )
 		ValidateObject( target ) ? target.y : missY, ValidateObject( target ) ? target.z + 8 : cannon.z, 0x36E4, 8, 0, false );
 	cannon.SoundEffect( 0x011C, true );
 	var damage = 0;
-	if( ValidateObject( target ) && ammo == GRAPE_ID )
+	if( ValidateObject( target ) && ammo == AMMO_GRAPESHOT )
 	{
 		var lastHitDamage = 0;
 		var lastHitX = target.x;
 		var lastHitY = target.y;
-		for( var i = 0; i < 15; ++i )
+		var pellets = Math.max( 1, parseInt( cannon.morey ));
+		var spread = Math.max( 0, parseInt( cannon.morez ));
+		for( var i = 0; i < pellets; ++i )
 		{
-			var hitDamage = heavy ? RandomNumber( 50, 75 ) : RandomNumber( 40, 50 );
-			var hitX = target.x + RandomNumber( -2, 2 );
-			var hitY = target.y + RandomNumber( -2, 2 );
+			var hitDamage = Math.floor( RandomNumber( minDamage, maxDamage ) * cannonDamageMod );
+			var hitX = target.x + RandomNumber( -spread, spread );
+			var hitY = target.y + RandomNumber( -spread, spread );
 			damage += hitDamage;
 			target.DamageHull( hitDamage );
 			DoStaticEffect( hitX, hitY, target.z + 8, 0x36CB, 15, 15, true );
@@ -668,7 +898,7 @@ function FireCannon( cannon, user )
 	}
 	else if( ValidateObject( target ))
 	{
-		damage = heavy && ammo == BALL_ID ? 6500 : 5000;
+		damage = Math.floor( RandomNumber( minDamage, maxDamage ) * cannonDamageMod );
 		var impactX = target.x;
 		var impactY = target.y;
 		var shotDX = target.x - cannon.x;
@@ -692,16 +922,17 @@ function FireCannon( cannon, user )
 		target.SoundEffect( 0x0207, true );
 		target.Refresh();
 	}
-	// ServUO clears charge, ammunition and primer after firing. Cleaning is only
-	// required once the cannon's cleanliness counter passes ten shots.
-	var shots = parseInt( cannon.GetTag( "hsCannonShots" ));
-	if( isNaN( shots ) || shots < 0 ) shots = 0;
-	cannon.SetTag( "hsCannonStage", shots >= 10 ? 0 : 1 );
-	cannon.SetTag( "hsCannonShots", shots >= 10 ? 0 : shots + 1 );
-	cannon.SetTag( "hsCannonAmmo", 0 );
+	// ServUO ClearCannon resets every preparation stage after each shot.
+	cannon.cannonStage = 0;
+	ClearLoadedAmmoProfile( cannon );
 	cannon.SetTempTag( "hsCannonBusy", 0 );
 	if( ValidateObject( user ) && user.socket )
-		user.socket.SysMessage( ValidateObject( target ) ? "The cannon strikes the enemy hull for " + damage + " damage." : "The cannon fires, but the shot finds no target." );
+	{
+		var resultMessage = ValidateObject( target ) ? "The cannon strikes the enemy hull for " + damage + " damage." : "The cannon fires, but the shot finds no target.";
+		AddCannonAction( cannon, resultMessage );
+		user.socket.SysMessage( resultMessage );
+		if( cannon.InRange( user, 3 ) && IsViewingCannonGump( user, cannon )) ShowCannonGump( user, cannon );
+	}
 }
 
 function DamageCrewAtImpact( targetBoat, shooter, hitX, hitY )
@@ -733,11 +964,11 @@ function DamageCannonNearImpact( targetBoat, shooter, damage, hitX, hitY )
 
 function HighSeasCannonImpact( targetBoat, targetItem )
 {
-	if( !ValidateObject( targetItem ) || targetItem.GetTag( "hsCannonKind" ) != CANNON || targetItem.multi != targetBoat ) return false;
+	if( !ValidateObject( targetItem ) || !targetItem.isShipCannon || targetItem.multi != targetBoat ) return false;
 	var hitX = parseInt( targetBoat.GetTempTag( "hsImpactX" ));
 	var hitY = parseInt( targetBoat.GetTempTag( "hsImpactY" ));
 	if( Math.abs( targetItem.x - hitX ) > 1 || Math.abs( targetItem.y - hitY ) > 1 ) return false;
-	var hits = parseInt( targetItem.GetTag( "hsCannonHits" ));
+	var hits = parseInt( targetItem.health );
 	if( isNaN( hits ) || hits <= 0 ) hits = 100;
 	hits -= parseInt( targetBoat.GetTempTag( "hsImpactDamage" ));
 	if( hits <= 0 )
@@ -750,7 +981,7 @@ function HighSeasCannonImpact( targetBoat, targetItem )
 	}
 	else
 	{
-		targetItem.SetTag( "hsCannonHits", hits );
+		targetItem.health = hits;
 		targetItem.Refresh();
 	}
 	return true;
@@ -758,33 +989,39 @@ function HighSeasCannonImpact( targetBoat, targetItem )
 
 function onTooltip( cannon, socket )
 {
-	if( cannon.GetTag( "hsCannonKind" ) != CANNON ) return "";
-	var hits = parseInt( cannon.GetTag( "hsCannonHits" ));
+	if( !cannon.isShipCannon ) return "";
+	var hits = parseInt( cannon.health );
 	if( isNaN( hits ) || hits <= 0 ) hits = 100;
-	var stage = parseInt( cannon.GetTag( "hsCannonStage" ));
-	var ammo = parseInt( cannon.GetTag( "hsCannonAmmo" ));
-	var boat = cannon.multi;
-	var hull = ValidateObject( boat ) && boat.GetHullMaxHits() > 0 ? Math.floor( boat.GetHullHits() * 100 / boat.GetHullMaxHits() ) : 0;
+	var stage = parseInt( cannon.cannonStage );
+	var ammo = parseInt( cannon.morex );
 	cannon.SetTempTag( "clilocTooltip", 1042971 );
-	return "Condition: " + hits + "%\nState: " + CannonStageName( stage ) +
-		( stage >= 3 ? "\nAmmo: " + AmmoName( ammo ) : "" ) + "\nShip hull: " + hull + "%";
+	var condition = hits >= 100 ? "Pristine" : ( hits >= 75 ? "Slightly Damaged" :
+		( hits >= 50 ? "Moderately Damaged" : ( hits >= 25 ? "Heavily Damaged" : "Severely Damaged" )));
+	return "Charged: " + ( stage >= 2 ? "Yes" : "No" ) + "\nAmmo: " +
+		( stage >= 3 ? AmmoName( ammo ) : "Empty" ) + "\nPrimed: " + ( stage >= 4 ? "Yes" : "No" ) +
+		"\nCondition: " + condition;
 }
 
 function SetCannonArt( cannon, boat )
 {
 	var facing = parseInt( boat.dir ) & 0x07;
-	var artOffset = parseInt( cannon.GetTag( "hsCannonPower" )) == 2 ? 4 : 0;
+	var power = parseInt( cannon.cannonPower );
+	var artOffset = power == 2 ? 4 : 0;
+	var south = parseInt( cannon.cannonArtSouth ) || ( power == PUMPKIN_CANNON_POWER ? 41979 : 16918 + artOffset );
+	var west = parseInt( cannon.cannonArtWest ) || ( power == PUMPKIN_CANNON_POWER ? 41980 : 16919 + artOffset );
+	var north = parseInt( cannon.cannonArtNorth ) || ( power == PUMPKIN_CANNON_POWER ? 41981 : 16920 + artOffset );
+	var east = parseInt( cannon.cannonArtEast ) || ( power == PUMPKIN_CANNON_POWER ? 41982 : 16921 + artOffset );
 	if( facing == 0 || facing == 4 )
 	{
-		if( cannon.x < boat.x ) cannon.id = 16919 + artOffset;      // West
-		else if( cannon.x > boat.x ) cannon.id = 16921 + artOffset; // East
-		else cannon.id = ( facing == 0 ? 16920 : 16918 ) + artOffset;
+		if( cannon.x < boat.x ) cannon.id = west;
+		else if( cannon.x > boat.x ) cannon.id = east;
+		else cannon.id = facing == 0 ? north : south;
 	}
 	else
 	{
-		if( cannon.y < boat.y ) cannon.id = 16920 + artOffset;
-		else if( cannon.y > boat.y ) cannon.id = 16918 + artOffset;
-		else cannon.id = ( facing == 2 ? 16921 : 16919 ) + artOffset;
+		if( cannon.y < boat.y ) cannon.id = north;
+		else if( cannon.y > boat.y ) cannon.id = south;
+		else cannon.id = facing == 2 ? east : west;
 	}
 	cannon.dir = facing;
 }
@@ -794,21 +1031,24 @@ function SetCannonArt( cannon, boat )
 // deed/loading clicks performed by a player crew.
 function DeployNpcCannon( boat, pad, cannonPower )
 {
-	if( !ValidateObject( boat ) || !ValidateObject( pad ) || pad.multi != boat || pad.GetTag( "hsWeaponPad" ) != 1 ) return null;
-	var existing = CalcItemFromSer( parseInt( pad.GetTag( "hsCannonSerial" )));
-	if( ValidateObject( existing ) && existing.GetTag( "hsCannonKind" ) == CANNON ) return existing;
-	var cannon = CreateDFNItem( null, null, cannonPower == 2 ? "highseas_heavy_cannon" : "highseas_light_cannon", 1,
+	if( !ValidateObject( boat ) || !ValidateObject( pad ) || pad.multi != boat || !pad.isWeaponPad ) return null;
+	var existing = CalcItemFromSer( parseInt( pad.cannonLinkSerial ));
+	if( ValidateObject( existing ) && existing.isShipCannon ) return existing;
+	var normalizedPower = cannonPower == PUMPKIN_CANNON_POWER ? PUMPKIN_CANNON_POWER : ( cannonPower == 2 ? 2 : 1 );
+	var cannon = CreateDFNItem( null, null, normalizedPower == PUMPKIN_CANNON_POWER ? "pumpkin_cannon" :
+		( normalizedPower == 2 ? "highseas_heavy_cannon" : "highseas_light_cannon" ), 1,
 		"ITEM", false, 0, boat.worldnumber, boat.instanceID );
 	if( !ValidateObject( cannon )) return null;
 	cannon.SetLocation( pad.x, pad.y, pad.z + GetTileHeight( pad.id ), boat.worldnumber, boat.instanceID );
 	cannon.multi = boat;
-	cannon.SetTag( "hsCannonKind", CANNON );
-	cannon.SetTag( "hsCannonPower", cannonPower == 2 ? 2 : 1 );
-	cannon.SetTag( "hsCannonStage", 1 );
-	cannon.SetTag( "hsCannonShots", 0 );
-	cannon.SetTag( "hsCannonHits", 100 );
-	cannon.SetTag( "hsWeaponPadSerial", pad.serial );
-	pad.SetTag( "hsCannonSerial", cannon.serial );
+	cannon.cannonRole = CANNON;
+	cannon.cannonPower = normalizedPower;
+	cannon.cannonStage = 1;
+	cannon.health = 100;
+	cannon.maxhp = 100;
+	cannon.cannonLinkSerial = pad.serial;
+	pad.cannonLinkSerial = cannon.serial;
+	NormalizeCannonMagazine( cannon );
 	SetCannonArt( cannon, boat );
 	cannon.Refresh();
 	return cannon;
@@ -817,10 +1057,14 @@ function DeployNpcCannon( boat, pad, cannonPower )
 function FireNpcCannon( cannon, targetBoat, captain )
 {
 	if( !ValidateObject( cannon ) || !ValidateObject( targetBoat ) || !ValidateObject( captain ) ||
-		cannon.GetTag( "hsCannonKind" ) != CANNON || cannon.multi == targetBoat ||
+		!cannon.isShipCannon || cannon.multi == targetBoat ||
 		parseInt( cannon.GetTempTag( "hsCannonBusy" )) == 1 || !IsTargetInCannonArc( cannon, targetBoat )) return false;
-	cannon.SetTag( "hsCannonStage", 4 );
-	cannon.SetTag( "hsCannonAmmo", BALL_ID );
+	cannon.cannonStage = 4;
+	cannon.morex = AMMO_STANDARD;
+	cannon.morey = 1;
+	cannon.morez = 0;
+	cannon.lodamage = 5000;
+	cannon.hidamage = 5000;
 	cannon.SetTempTag( "hsCannonBusy", 1 );
 	cannon.SetTempTag( "hsCannonOperator", captain.serial );
 	cannon.SetTempTag( "hsCannonTarget", targetBoat.serial );

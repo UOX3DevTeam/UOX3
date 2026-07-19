@@ -48,11 +48,7 @@ function onGumpPress( socket, button, gumpData )
 	if( deedSection == "" ) { socket.SysMessage( "That vessel cannot be converted into a High Seas deed." ); return; }
 	var deed = CreateDFNItem( socket, user, deedSection, 1, "ITEM", true );
 	if( !ValidateObject( deed )) return;
-	deed.SetTag( "hsDockedShip", 1 );
-	deed.SetTag( "hsDockedCannonCount", 0 );
-	boat.SetTempTag( "hsDryDockDeed", deed.serial );
-	AreaItemFunction( "SerializeDryDockedCannon", boat, 30 );
-	if( !boat.DeleteForDryDock() )
+	if( !boat.DeleteForDryDock( deed ))
 	{
 		deed.Delete();
 		socket.SysMessage( "The vessel changed before dry docking could finish." );
@@ -60,32 +56,6 @@ function onGumpPress( socket, button, gumpData )
 	}
 	user.SetTempTag( "hsDryDockBoat", null );
 	socket.SysMessage( "The vessel has been dry docked and returned to your backpack." );
-}
-
-function SerializeDryDockedCannon( boat, item )
-{
-	if( !ValidateObject( item ) || item.multi != boat || item.GetTag( "hsCannonKind" ) != 2 ) return false;
-	var deed = CalcItemFromSer( parseInt( boat.GetTempTag( "hsDryDockDeed" )));
-	if( !ValidateObject( deed )) return false;
-	var count = parseInt( deed.GetTag( "hsDockedCannonCount" ));
-	if( isNaN( count )) count = 0;
-	var hits = parseInt( item.GetTag( "hsCannonHits" ));
-	if( isNaN( hits ) || hits <= 0 ) hits = 100;
-	var preferred = parseInt( item.GetTag( "hsPreferredAmmo" ));
-	if( isNaN( preferred )) preferred = 0x4224;
-	var power = parseInt( item.GetTag( "hsCannonPower" )) == 2 ? 2 : 1;
-	var dx = item.x - boat.x;
-	var dy = item.y - boat.y;
-	var localX = dx;
-	var localY = dy;
-	var facing = parseInt( boat.dir ) & 0x07;
-	if( facing == 2 ) { localX = dy; localY = -dx; }
-	else if( facing == 4 ) { localX = -dx; localY = -dy; }
-	else if( facing == 6 ) { localX = -dy; localY = dx; }
-	deed.SetTag( "hsDockedCannon" + count,
-		localX + "," + localY + "," + ( item.z - boat.z ) + "," + hits + "," + preferred + "," + power );
-	deed.SetTag( "hsDockedCannonCount", count + 1 );
-	return true;
 }
 
 function ResolveDryDockBoat( target )
@@ -127,5 +97,6 @@ function DryDockDeedSection( boat )
 	if( multiID >= 0x24 && multiID <= 0x27 ) return "gargishgalleondeed";
 	if( multiID >= 0x30 && multiID <= 0x33 ) return "tokunogalleondeed";
 	if( multiID >= 0x40 && multiID <= 0x43 ) return "britannianshipdeed";
+	if( multiID >= 0x50 && multiID <= 0x53 ) return "pumpkinrowboatdeed";
 	return "";
 }

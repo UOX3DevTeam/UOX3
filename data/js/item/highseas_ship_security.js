@@ -27,6 +27,14 @@ function IsCaptain( boat, user )
 	return ValidateObject( boat ) && ValidateObject( user ) && boat.GetSecurityLevel( user ) >= 5;
 }
 
+function IsRowBoat( boat )
+{
+	if( !ValidateObject( boat )) return false;
+	var multiID = parseInt( boat.id ) - 0x4000;
+	return ( multiID >= 0x3C && multiID <= 0x3F ) ||
+		( multiID >= 0x50 && multiID <= 0x53 );
+}
+
 function onContextMenuRequest( socket, wheel )
 {
 	var user = socket.currentChar;
@@ -35,6 +43,18 @@ function onContextMenuRequest( socket, wheel )
 	var entries = [];
 	var aboard = user.multi == boat;
 	var level = parseInt( boat.GetSecurityLevel( user ));
+	// Rowboats have no hull damage, repair, manifest, rename, or movable-pilot
+	// controls. Their tiller menu contains only Dry Dock, and only while the
+	// owner is standing off the boat.
+	if( IsRowBoat( boat ))
+	{
+		if( !aboard && level >= 5 )
+			entries.push({ id: DRY_DOCK_ENTRY, text: 1116520, flags: 0x0000, hue: 0x03E0 });
+		else
+			return true;
+		TriggerEvent( 18001, "modifyContextMenu", socket, wheel, entries, true );
+		return false;
+	}
 	if( aboard )
 	{
 		if( level >= 3 )
@@ -65,6 +85,12 @@ function onContextMenuSelect( socket, wheel, popupEntry )
 	if( !ValidateObject( boat ) || !ValidateObject( user )) return false;
 	var aboard = user.multi == boat;
 	var level = parseInt( boat.GetSecurityLevel( user ));
+	if( IsRowBoat( boat ))
+	{
+		if( popupEntry == DRY_DOCK_ENTRY && !aboard && level >= 5 )
+			TriggerEvent( 5098, "BeginHighSeasDryDock", socket, boat );
+		return false;
+	}
 	if( popupEntry == EMERGENCY_REPAIR_ENTRY && aboard && level >= 3 )
 		TriggerEvent( 5099, "BeginEmergencyRepairs", user, boat );
 	else if( popupEntry == PERMANENT_REPAIR_ENTRY && aboard && level >= 3 )

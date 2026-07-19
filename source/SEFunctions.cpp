@@ -5801,6 +5801,24 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 			case 415:	// VENDORMAXFUNDS
 				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->VendorMaxFunds() )));
 				break;
+			case 416:	// BOATDECAY
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->BoatDecay() ));
+				break;
+			case 417:	// BOATDECAYSECS
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->BoatDecaySeconds() )));
+				break;
+			case 418:	// BOATPAINTDECAYSECS
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->BoatPaintDecaySeconds() )));
+				break;
+			case 419:	// BOATFASTMOVEINTERVAL
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->BoatFastMoveInterval() )));
+				break;
+			case 420:	// BOATSLOWMOVEINTERVAL
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->BoatSlowMoveInterval() )));
+				break;
+			case 421:	// BOATNPCMOVEINTERVAL
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->BoatNpcMoveInterval() )));
+				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );
 				return false;

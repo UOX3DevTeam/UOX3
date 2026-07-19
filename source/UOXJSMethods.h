@@ -564,7 +564,7 @@ inline JSFunctionSpec CItem_Methods[] =
 	{ "StartEmergencyRepairs", CBoat_StartEmergencyRepairs,	1, 0 },
 	{ "IsUnderEmergencyRepairs", CBoat_IsUnderEmergencyRepairs, 0, 0 },
 	{ "CheckDryDock",			CBoat_CheckDryDock,		0, 0 },
-	{ "DeleteForDryDock",		CBoat_DeleteForDryDock,	0, 0 },
+	{ "DeleteForDryDock",		CBoat_DeleteForDryDock,	1, 0 },
 	{ "PaintShip",			CBoat_PaintShip,		2, 0 },
 	{ "RemoveShipPaint",		CBoat_RemoveShipPaint,	0, 0 },
 	{ "IsInMulti",			CMulti_IsInMulti,			1, 0 },

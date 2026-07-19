@@ -28,7 +28,7 @@ weight=1000
 value=6256 3128
 restock=20
 script=5102
-custominttag=hsPaintMode 1
+morex=1 // Temporary paint
 }
 
 [boatpaint_green]
@@ -82,7 +82,7 @@ weight=1000
 value=6256 3128
 restock=20
 script=5102
-custominttag=hsPaintMode 3
+morex=3 // Paint remover
 }
 
 // Reward/loot version; intentionally not stocked by ordinary shipwrights.
@@ -94,7 +94,7 @@ name=permanent boat paint
 color=1954
 weight=1000
 script=5102
-custominttag=hsPaintMode 2
+morex=2 // Permanent paint
 }
 
 [haironlydye]

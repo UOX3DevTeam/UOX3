@@ -5629,32 +5629,34 @@ bool CPIBoatMouseMovement::Handle( void )
 	if( !ValidateObject( character ) || tSock->GetDWord( 5 ) != character->GetSerial() )
 		return false;
 
-	// ServUO resolves mouse steering through BoatMountItem.Mount, never through
-	// the mobile's spatial multi. MOREX is UOX's persisted BaseBoat reference for
-	// the virtual BoatMountItem and remains authoritative when hulls overlap.
 	CItem *pilotMount = character->GetItemAtLayer( IL_MOUNT );
 	if( !ValidateObject( pilotMount ) || pilotMount->GetId() != 0x3E96 )
 		return false;
+
 	const SERIAL pilotBoatSerial = pilotMount->GetTempVar( CITV_MOREX );
 	CMultiObj *multi = CalcMultiFromSer( pilotBoatSerial );
 	if( !ValidateObject( multi ) || !multi->CanBeObjType( OT_BOAT ))
 		return false;
+
 	CBoatObj *boat = static_cast<CBoatObj *>( multi );
 	if( boat->GetPilot() != character->GetSerial() )
 		return false;
+
 	if( character->GetMultiObj() != boat )
 		character->SetMulti( boat );
+
 	const UI08 direction = tSock->GetByte( 9 ) & 0x07;
 	const UI08 rawSpeed = tSock->GetByte( 11 );
 	if( rawSpeed > 2 )
 		return false;
+
 	if( rawSpeed == 0 )
 	{
 		boat->SetMoveType( BOAT_STOP );
 		boat->SetPilotSpeed( 0 );
 		return true;
 	}
-	// ServUO forces heavily and severely damaged vessels onto their slow
+	// UO forces heavily and severely damaged vessels onto their slow
 	// movement interval even when the client continues requesting full speed.
 	const UI08 effectiveSpeed = boat->GetHullDamageLevel() >= 3 ? 1 : rawSpeed;
 

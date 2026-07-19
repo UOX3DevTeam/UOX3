@@ -1892,7 +1892,7 @@ void MakeStatusTarget( CSocket *sock, CChar *optionalTargChar = nullptr, const s
 		Console.Log( temp2, temp );
 	}
 
-	// ServUO's access-level change refreshes the client's world without removing
+	// UO access-level change refreshes the client's world without removing
 	// its High Seas BoatMountItem. Treat UOX's equivalent virtual mount the same
 	// way; deleting it here leaves the boat pointing at a pilot whose controller
 	// item no longer exists and causes a second, conflicting character refresh.

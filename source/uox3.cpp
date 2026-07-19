@@ -2617,12 +2617,14 @@ auto CheckItem( CMapRegion *toCheck, bool checkItems, TIMERVAL nextDecayItems, T
 						mBoat->SetMoveTime( BuildTimeValue( cwmWorldState->ServerData()->CheckBoatSpeed() ));
 					}
 
-					// Mouse piloting is a persistent order. Match ServUO's slow/fast
+					// Mouse piloting is a persistent order. Match UO slow/fast
 					// intervals instead of the legacy speech-command boat speed.
 					if( mBoat->GetPilot() != INVALIDSERIAL && mBoat->GetPilotSpeed() > 0 )
 					{
 						mBoat->SetMoveTime( cwmWorldState->GetUICurrentTime() +
-							( mBoat->GetPilotSpeed() == 2 && mBoat->GetHullDamageLevel() < 3 ? 250 : 1000 ));
+							( mBoat->GetPilotSpeed() == 2 && mBoat->GetHullDamageLevel() < 3 ?
+								cwmWorldState->ServerData()->BoatFastMoveInterval() :
+								cwmWorldState->ServerData()->BoatSlowMoveInterval() ));
 					}
 				}
 			}

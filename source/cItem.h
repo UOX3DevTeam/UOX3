@@ -2,6 +2,8 @@
 #define __CITEM_H__
 #include "GenericList.h"
 #include <array>
+#include <memory>
+#include <vector>
 enum CITempVars
 {
 	CITV_MORE	= 0,
@@ -12,6 +14,27 @@ enum CITempVars
 	CITV_MORE1,
 	CITV_MORE2,
 	CITV_COUNT
+};
+
+// Permanent High Seas cannon data. These values are part of the item itself;
+// scripts should only use temporary tags for short-lived UI/targeting state.
+enum class CannonRole : UI08
+{
+	None = 0,
+	Deed = 1,
+	Cannon = 2,
+	WeaponPad = 3
+};
+
+// A cannon packed into a dry-docked High Seas deed. Most items never carry
+// this data, so CItem stores the list behind an optional allocation.
+struct DockedCannonInfo
+{
+	SI16 localX;
+	SI16 localY;
+	SI16 localZ;
+	SI16 hits;
+	UI08 power;
 };
 
 class CItem : public CBaseObject
@@ -86,6 +109,7 @@ protected:
 	SI16			packYMin;
 	SI16			packYMax;
 	SI08			packZ;
+	std::shared_ptr<std::vector<DockedCannonInfo>> dockedCannons;
 
 	std::bitset<WEATHNUM>	weatherBools;	// For elemental weaponry.  So a Heat weapon would be a fire weapon, and does elemental damage to Heat weak races
 
@@ -275,6 +299,25 @@ public:
 
 	auto			GetAmmoId() const -> UI16;
 	auto			SetAmmoId( UI16 newValue ) -> void;
+
+	auto			GetCannonRole() const -> CannonRole;
+	auto			SetCannonRole( CannonRole newValue ) -> void;
+	auto			GetCannonPower() const -> UI08;
+	auto			SetCannonPower( UI08 newValue ) -> void;
+	auto			GetCannonStage() const -> UI08;
+	auto			SetCannonStage( UI08 newValue ) -> void;
+	auto			GetCannonLinkSerial() const -> SERIAL;
+	auto			SetCannonLinkSerial( SERIAL newValue ) -> void;
+	auto			GetCannonRange() const -> UI08;
+	auto			SetCannonRange( UI08 newValue ) -> void;
+	auto			GetCannonActionTime() const -> UI16;
+	auto			SetCannonActionTime( UI16 newValue ) -> void;
+	auto			GetCannonDirectionArt( UI08 directionIndex ) const -> UI16;
+	auto			SetCannonDirectionArt( UI08 directionIndex, UI16 newValue ) -> void;
+	void			AddDockedCannon( SI16 localX, SI16 localY, SI16 localZ, SI16 hits, UI08 power );
+	void			SetDockedCannons( const std::vector<DockedCannonInfo>& cannons );
+	void			ClearDockedCannons( void );
+	const std::vector<DockedCannonInfo>& GetDockedCannons( void ) const;
 
 	auto			GetAmmoHue() const -> UI16;
 	auto			SetAmmoHue( UI16 newValue ) -> void;

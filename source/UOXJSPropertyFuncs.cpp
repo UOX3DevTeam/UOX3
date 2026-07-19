@@ -908,6 +908,18 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp 
 				break;
 			case CIP_ISITEMHELD:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsHeldOnCursor() );		break;
 			case CIP_STEALABLE:		*vp = INT_TO_JSVAL( gPriv->GetStealable() );				break;
+			case CIP_CANNONROLE:		*vp = INT_TO_JSVAL( static_cast<UI08>( gPriv->GetCannonRole() )); break;
+			case CIP_CANNONPOWER:		*vp = INT_TO_JSVAL( gPriv->GetCannonPower() ); break;
+			case CIP_CANNONSTAGE:		*vp = INT_TO_JSVAL( gPriv->GetCannonStage() ); break;
+			case CIP_CANNONLINKSERIAL: JS_NewNumberValue( cx, gPriv->GetCannonLinkSerial(), vp ); break;
+			case CIP_CANNONRANGE:		*vp = INT_TO_JSVAL( gPriv->GetCannonRange() ); break;
+			case CIP_CANNONACTIONTIME: *vp = INT_TO_JSVAL( gPriv->GetCannonActionTime() ); break;
+			case CIP_ISSHIPCANNON:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetCannonRole() == CannonRole::Cannon ); break;
+			case CIP_ISWEAPONPAD:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetCannonRole() == CannonRole::WeaponPad ); break;
+			case CIP_CANNONARTNORTH:	*vp = INT_TO_JSVAL( gPriv->GetCannonDirectionArt( 0 )); break;
+			case CIP_CANNONARTEAST:	*vp = INT_TO_JSVAL( gPriv->GetCannonDirectionArt( 1 )); break;
+			case CIP_CANNONARTSOUTH:	*vp = INT_TO_JSVAL( gPriv->GetCannonDirectionArt( 2 )); break;
+			case CIP_CANNONARTWEST:	*vp = INT_TO_JSVAL( gPriv->GetCannonDirectionArt( 3 )); break;
 
 				// The following entries are specifically for CSpawnItem objects
 			case CIP_SPAWNSECTION:
@@ -1566,6 +1578,16 @@ JSBool CItemProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool str
 			case CIP_ORIGIN:		gPriv->SetOrigin( cwmWorldState->ServerData()->EraStringToEnum( encaps.toString() ));						break;
 			case CIP_ISITEMHELD:	gPriv->SetHeldOnCursor( encaps.toBool() );					break;
 			case CIP_STEALABLE:		gPriv->SetStealable( static_cast<UI08>( encaps.toInt() ));	break;
+			case CIP_CANNONROLE:		gPriv->SetCannonRole( static_cast<CannonRole>( encaps.toInt() )); break;
+			case CIP_CANNONPOWER:		gPriv->SetCannonPower( static_cast<UI08>( encaps.toInt() )); break;
+			case CIP_CANNONSTAGE:		gPriv->SetCannonStage( static_cast<UI08>( encaps.toInt() )); break;
+			case CIP_CANNONLINKSERIAL: gPriv->SetCannonLinkSerial( static_cast<SERIAL>( encaps.toInt() )); break;
+			case CIP_CANNONRANGE:		gPriv->SetCannonRange( static_cast<UI08>( encaps.toInt() )); break;
+			case CIP_CANNONACTIONTIME: gPriv->SetCannonActionTime( static_cast<UI16>( encaps.toInt() )); break;
+			case CIP_CANNONARTNORTH:	gPriv->SetCannonDirectionArt( 0, static_cast<UI16>( encaps.toInt() )); break;
+			case CIP_CANNONARTEAST:	gPriv->SetCannonDirectionArt( 1, static_cast<UI16>( encaps.toInt() )); break;
+			case CIP_CANNONARTSOUTH:	gPriv->SetCannonDirectionArt( 2, static_cast<UI16>( encaps.toInt() )); break;
+			case CIP_CANNONARTWEST:	gPriv->SetCannonDirectionArt( 3, static_cast<UI16>( encaps.toInt() )); break;
 
 				// The following entries are specifically for CSpawnItem objects
 			case CIP_SPAWNSECTION:

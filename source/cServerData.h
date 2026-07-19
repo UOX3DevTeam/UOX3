@@ -472,6 +472,13 @@ private:
 	UI32		numHrsDecayStageHi;				//	Time (in HRS)
 	UI32		numHrsDecayStageDanger;			//	Time (in HRS)
 
+	// Boats
+	UI32		boatDecaySeconds;				// Seconds before an unattended vessel begins sinking
+	UI32		boatPaintDecaySeconds;			// Seconds between temporary paint coat losses
+	UI16		boatFastMoveInterval;			// Milliseconds between fast mouse-pilot movement steps
+	UI16		boatSlowMoveInterval;			// Milliseconds between slow mouse-pilot movement steps
+	UI16		boatNpcMoveInterval;			// Milliseconds between pirate/NPC vessel movement steps
+
 	// Townstone stuff
 	UI32		numSecsPollOpen;				//	Time (in seconds) for which a town voting poll is open
 	UI32		numSecsAsMayor;				//	Time (in seconds) that a PC would be a mayor
@@ -951,6 +958,24 @@ public:
 
 	auto		HouseGrandFatheredSystem( bool value ) -> void;
 	auto		HouseGrandFatheredSystem() const -> bool;
+
+	auto		BoatDecay( bool value ) -> void;
+	auto		BoatDecay() const -> bool;
+
+	auto		BoatDecaySeconds( UI32 value ) -> void;
+	UI32		BoatDecaySeconds() const;
+
+	auto		BoatPaintDecaySeconds( UI32 value ) -> void;
+	UI32		BoatPaintDecaySeconds() const;
+
+	auto		BoatFastMoveInterval( UI16 value ) -> void;
+	UI16		BoatFastMoveInterval() const;
+
+	auto		BoatSlowMoveInterval( UI16 value ) -> void;
+	UI16		BoatSlowMoveInterval() const;
+
+	auto		BoatNpcMoveInterval( UI16 value ) -> void;
+	UI16		BoatNpcMoveInterval() const;
 
 	auto		DecayStageLikeNewMins( UI32 value ) -> void;
 	UI32		DecayStageLikeNewMins() const;

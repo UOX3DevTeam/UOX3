@@ -1508,6 +1508,8 @@ CBoatObj::CBoatObj() : CMultiObj(), tiller( DEFBOAT_TILLER ), hold( DEFBOAT_HOLD
 hullHits( DEFBOAT_HULLHITS ), hullMaxHits( DEFBOAT_HULLMAXHITS ),
 emergencyRepairUntil( DEFBOAT_EMERGENCYREPAIRUNTIL ), boatDecayAt( DEFBOAT_DECAYAT ),
 nextSinkAt( DEFBOAT_NEXTSINKAT ), sinkStep( DEFBOAT_SINKSTEP ), moveType( DEFBOAT_MOVETYPE ),
+paintBaseBoatHue( 0 ), paintHue( 0 ), paintCoats( 0 ), paintDecayAt( 0 ),
+tillermanMoved( false ), tillermanLocalX( 0 ), tillermanLocalY( 0 ), tillermanArtZ( 0 ),
 defaultPublicAccess( BoatSecurityLevel::NA ), defaultPartyAccess( BoatSecurityLevel::NA ),
 defaultGuildAccess( BoatSecurityLevel::NA ), partyAccess( BoatPartyAccess::Never ), nextMoveTime( DEFBOAT_MOVETIME )
 {
@@ -1529,12 +1531,10 @@ void CBoatObj::PostLoadProcessing( void )
 {
 	CMultiObj::PostLoadProcessing();
 
-	auto rebindComponent = [this]( SERIAL componentSerial, bool requireFixtureTag = false )
+	auto rebindComponent = [this]( SERIAL componentSerial )
 	{
 		auto *component = CalcItemObjFromSer( componentSerial );
-		if( ValidateObject( component ) &&
-			( !requireFixtureTag || component->GetTag( "hsGalleonSerial" ).m_IntValue == static_cast<SI32>( GetSerial() )) &&
-			component->GetMultiObj() != this )
+		if( ValidateObject( component ) && component->GetMultiObj() != this )
 			component->SetMulti( this, false );
 	};
 
@@ -1543,7 +1543,8 @@ void CBoatObj::PostLoadProcessing( void )
 	rebindComponent( planks[1] );
 	rebindComponent( hold );
 	for( const auto fixtureSerial : fixtures )
-		rebindComponent( fixtureSerial, true );
+		rebindComponent( fixtureSerial );
+	RestorePumpkinBoatFixtures( this );
 
 	// Existing saved galleons predate the security context-menu trigger. Bind it
 	// during deferred loading as well as at initial construction.
@@ -1551,7 +1552,7 @@ void CBoatObj::PostLoadProcessing( void )
 	if( ValidateObject( wheel ))
 		wheel->AddScriptTrigger( 5101 );
 
-	// ServUO treats active piloting as session state and never resumes it from
+	// UO treats active piloting as session state and never resumes it from
 	// disk merely because the vessel was present in a world save.
 	pilot = DEFBOAT_PILOT;
 	pilotMount = DEFBOAT_PILOTMOUNT;
@@ -1597,6 +1598,10 @@ bool CBoatObj::DumpBody( std::ostream &outStream ) const
 	outStream << "BoatDecayAt=" << boatDecayAt << '\n';
 	outStream << "NextSinkAt=" << nextSinkAt << '\n';
 	outStream << "SinkStep=" << static_cast<UI16>( sinkStep ) << '\n';
+	if( paintCoats > 0 )
+		outStream << "PaintInfo=" << paintBaseBoatHue << ',' << paintHue << ',' << static_cast<UI16>( paintCoats ) << ',' << paintDecayAt << '\n';
+	if( tillermanMoved )
+		outStream << "TillermanOffset=" << tillermanLocalX << ',' << tillermanLocalY << '\n';
 	outStream << "SecurityPublic=" << static_cast<UI16>( defaultPublicAccess ) << '\n';
 	outStream << "SecurityParty=" << static_cast<UI16>( defaultPartyAccess ) << '\n';
 	outStream << "SecurityGuild=" << static_cast<UI16>( defaultGuildAccess ) << '\n';
@@ -1681,6 +1686,12 @@ bool CBoatObj::HandleLine( std::string &UTag, std::string &data )
 					nextSinkAt = oldstrutil::value<UI64>( data );
 					rValue = true;
 				}
+				else if( UTag == "PAINTINFO" && csecs.size() >= 4 )
+				{
+					SetPaintState( oldstrutil::value<UI16>( csecs[0] ), oldstrutil::value<UI16>( csecs[1] ),
+						oldstrutil::value<UI08>( csecs[2] ), oldstrutil::value<UI64>( csecs[3] ));
+					rValue = true;
+				}
 				break;
 			case 'S':
 				if( UTag == "SINKSTEP" )
@@ -1721,6 +1732,11 @@ bool CBoatObj::HandleLine( std::string &UTag, std::string &data )
 				if( UTag == "TILLER" )
 				{
 					SetTiller( oldstrutil::value<UI32>( data ));
+					rValue = true;
+				}
+				else if( UTag == "TILLERMANOFFSET" && csecs.size() >= 2 )
+				{
+					SetTillermanOffset( oldstrutil::value<SI16>( csecs[0] ), oldstrutil::value<SI16>( csecs[1] ));
 					rValue = true;
 				}
 				break;
@@ -1786,7 +1802,7 @@ void CBoatObj::SetHold( SERIAL newVal )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//| Purpose - ServUO BaseGalleon.SecurityEntry.GetEffectiveLevel parity.
+//| Purpose - UO Galleon Security Entry GetEffectiveLevel parity.
 //o------------------------------------------------------------------------------------------------o
 BoatSecurityLevel CBoatObj::GetSecurityLevel( CChar *toCheck ) const
 {
@@ -1832,7 +1848,7 @@ BoatSecurityLevel CBoatObj::GetSecurityLevel( CChar *toCheck ) const
 		shipOwner->GetGuildNumber() == toCheck->GetGuildNumber() && defaultGuildAccess > effective )
 		effective = defaultGuildAccess;
 
-	// ServUO grants Passenger to an account whose alternate character has an
+	// UO grants Passenger to an account whose alternate character has an
 	// explicit manifest grant, unless this character itself is explicitly denied.
 	if( effective == BoatSecurityLevel::Denied )
 	{
@@ -1857,7 +1873,7 @@ BoatSecurityLevel CBoatObj::GetSecurityLevel( CChar *toCheck ) const
 bool CBoatObj::HasAccess( CChar *toCheck ) const
 {
 	auto *shipOwner = GetOwnerObj();
-	return !ValidateObject( shipOwner ) || GetTag( "hsPirateDefeated" ).m_IntValue == 1 ||
+	return !ValidateObject( shipOwner ) ||
 		GetSecurityLevel( toCheck ) > BoatSecurityLevel::Denied;
 }
 
@@ -1886,7 +1902,7 @@ void CBoatObj::SetDefaultGuildAccess( BoatSecurityLevel level ) { defaultGuildAc
 void CBoatObj::SetPartyAccess( BoatPartyAccess access ) { partyAccess = access <= BoatPartyAccess::MemberOnly ? access : BoatPartyAccess::Never; }
 void CBoatObj::ResetSecurity( void )
 {
-	// ServUO's "Reset Security" context action clears the access manifest but
+	// UO "Reset Security" context action clears the access manifest but
 	// deliberately preserves the configured public/party/guild defaults.
 	securityManifest.clear();
 	ClearBanList();
@@ -1934,6 +1950,11 @@ void CBoatObj::UnregisterFixture( SERIAL serial )
 void CBoatObj::ClearFixtures( void )
 {
 	fixtures.clear();
+}
+
+bool CBoatObj::IsFixture( SERIAL serial ) const
+{
+	return serial != INVALIDSERIAL && std::find( fixtures.begin(), fixtures.end(), serial ) != fixtures.end();
 }
 
 const std::vector<SERIAL>& CBoatObj::GetFixtures( void ) const
@@ -1996,14 +2017,43 @@ UI08 CBoatObj::GetSinkStep( void ) const { return sinkStep; }
 bool CBoatObj::IsSinking( void ) const { return sinkStep > 0; }
 void CBoatObj::RefreshBoatDecay( void )
 {
-	// ServUO BaseBoat.BoatDecayDelay is thirteen days.
-	boatDecayAt = static_cast<UI64>( std::time( nullptr )) + ( 13ULL * 24ULL * 60ULL * 60ULL );
+	boatDecayAt = cwmWorldState->ServerData()->BoatDecay() ?
+		static_cast<UI64>( std::time( nullptr )) + cwmWorldState->ServerData()->BoatDecaySeconds() : 0;
 	nextSinkAt = 0;
 	sinkStep = 0;
 }
 void CBoatObj::SetBoatDecayAt( UI64 newVal ) { boatDecayAt = newVal; }
 void CBoatObj::SetNextSinkAt( UI64 newVal ) { nextSinkAt = newVal; }
 void CBoatObj::SetSinkStep( UI08 newVal ) { sinkStep = newVal; }
+UI16 CBoatObj::GetPaintBaseBoatHue( void ) const { return paintBaseBoatHue; }
+UI16 CBoatObj::GetPaintHue( void ) const { return paintHue; }
+UI08 CBoatObj::GetPaintCoats( void ) const { return paintCoats; }
+UI64 CBoatObj::GetPaintDecayAt( void ) const { return paintDecayAt; }
+void CBoatObj::SetPaintState( UI16 baseBoatHue, UI16 basePaintHue, UI08 coats, UI64 decayAt )
+{
+	paintBaseBoatHue = baseBoatHue;
+	paintHue = basePaintHue;
+	paintCoats = std::min<UI08>( coats, 4 );
+	paintDecayAt = paintCoats > 0 ? decayAt : 0;
+}
+void CBoatObj::ClearPaintState( void )
+{
+	paintBaseBoatHue = 0;
+	paintHue = 0;
+	paintCoats = 0;
+	paintDecayAt = 0;
+}
+bool CBoatObj::IsTillermanMoved( void ) const { return tillermanMoved; }
+SI16 CBoatObj::GetTillermanLocalX( void ) const { return tillermanLocalX; }
+SI16 CBoatObj::GetTillermanLocalY( void ) const { return tillermanLocalY; }
+SI08 CBoatObj::GetTillermanArtZ( void ) const { return tillermanArtZ; }
+void CBoatObj::SetTillermanOffset( SI16 localX, SI16 localY )
+{
+	tillermanMoved = true;
+	tillermanLocalX = localX;
+	tillermanLocalY = localY;
+}
+void CBoatObj::SetTillermanArtZ( SI08 artZ ) { tillermanArtZ = artZ; }
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBoatObj::GetMoveType()

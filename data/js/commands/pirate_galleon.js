@@ -8,7 +8,7 @@ const CLEANUP_TIMER = 2;
 // A player-controlled High Seas ship can move every 250ms at full speed. Keep
 // pirate pursuit slower so it can pressure a target without matching every
 // tile forever and making escape impossible once the hulls meet.
-const AI_INTERVAL = 500;
+const AI_INTERVAL = Math.max( 1, parseInt( GetServerSetting( "BOATNPCMOVEINTERVAL" )));
 // Four crew produce ServUO's 10 second ShootFrequency (20 - 4 * 2.5), with
 // each cannon adding its own random zero-to-three-second delay.
 const FIRE_COOLDOWN = 10000;
@@ -48,8 +48,6 @@ function onCallback0( socket, target )
 		return;
 	}
 
-	boat.SetTag( "hsPirateGalleon", 1 );
-	boat.SetTag( "hsPirateDefeated", 0 );
 	boat.AddScriptTrigger( PIRATE_SCRIPT );
 	// ServUO OrcishGalleon.ZSurface is 14 above the hull origin.  Using the
 	// fixture height (28) puts mobiles a full deck level too high and visually
@@ -67,8 +65,6 @@ function onCallback0( socket, target )
 		return;
 	}
 	boat.owner = captain;
-	boat.SetTag( "hsPirateCaptain", captain.serial );
-	captain.SetTag( "hsPirateCaptain", 1 );
 
 	SpawnPirate( "highseas_pirate_crew", boat, boat.x - 1, boat.y - 1, deckZ );
 	SpawnPirate( "highseas_pirate_crew", boat, boat.x + 1, boat.y - 1, deckZ );
@@ -87,16 +83,13 @@ function SpawnPirate( section, boat, x, y, z )
 {
 	var pirate = SpawnNPC( section, x, y, z, boat.worldnumber, boat.instanceID, false );
 	if( ValidateObject( pirate ))
-	{
 		pirate.multi = boat;
-		pirate.SetTag( "hsPirateBoat", boat.serial );
-	}
 	return pirate;
 }
 
 function DeployPirateCannonOnPad( boat, item )
 {
-	if( !ValidateObject( item ) || item.multi != boat || item.GetTag( "hsWeaponPad" ) != 1 ) return false;
+	if( !ValidateObject( item ) || item.multi != boat || !item.isWeaponPad ) return false;
 	TriggerEvent( CANNON_SCRIPT, "DeployNpcCannon", boat, item, parseInt( boat.GetTempTag( "hsDeployPower" )));
 	return true;
 }
@@ -121,7 +114,7 @@ function AddHoldLoot( hold, section, amount )
 
 function onTimer( boat, timerID )
 {
-	if( !ValidateObject( boat ) || !boat.isItem || boat.GetTag( "hsPirateGalleon" ) != 1 ) return;
+	if( !ValidateObject( boat ) || !boat.isItem || !boat.HasScriptTrigger( PIRATE_SCRIPT )) return;
 	if( timerID == CLEANUP_TIMER )
 	{
 		if( AreaCharacterFunction( "CountPlayersAboardPirate", boat, 25 ) > 0 )
@@ -136,9 +129,9 @@ function onTimer( boat, timerID )
 	}
 	if( timerID != AI_TIMER ) return;
 
-	var captain = CalcCharFromSer( parseInt( boat.GetTag( "hsPirateCaptain" )));
+	var captain = boat.owner;
 	RunPirateCaptainAI( boat, captain );
-	if( ValidateObject( boat ) && boat.GetTag( "hsPirateDefeated" ) != 1 )
+	if( ValidateObject( boat ) && ValidateObject( boat.owner ))
 		boat.StartTimer( AI_INTERVAL, AI_TIMER, PIRATE_SCRIPT );
 }
 
@@ -148,16 +141,16 @@ function onTimer( boat, timerID )
 function onAISliver( pirate )
 {
 	if( !ValidateObject( pirate )) return false;
-	var linkedBoat = CalcItemFromSer( parseInt( pirate.GetTag( "hsPirateBoat" )));
-	if( ValidateObject( linkedBoat ) && linkedBoat.GetTag( "hsPirateDefeated" ) == 1 &&
+	var linkedBoat = pirate.multi;
+	if( ValidateObject( linkedBoat ) && !ValidateObject( linkedBoat.owner ) &&
 		AreaCharacterFunction( "CountPlayersAboardPirate", linkedBoat, 25 ) > 0 )
 		linkedBoat.decaytime = 30;
-	if( pirate.GetTag( "hsPirateCaptain" ) != 1 ) return false;
+	if( !ValidateObject( linkedBoat ) || linkedBoat.owner != pirate ) return false;
 	var now = GetCurrentClock();
 	var nextThink = parseInt( pirate.GetTempTag( "hsNextShipThink" ));
 	if( !isNaN( nextThink ) && now < nextThink ) return false;
 	pirate.SetTempTag( "hsNextShipThink", now + AI_INTERVAL );
-	var boat = CalcItemFromSer( parseInt( pirate.GetTag( "hsPirateBoat" )));
+	var boat = pirate.multi;
 	if( ValidateObject( boat )) RunPirateCaptainAI( boat, pirate );
 	return false;
 }
@@ -210,14 +203,14 @@ function RunPirateCaptainAI( boat, captain )
 function IsValidPirateTarget( pirateBoat, targetBoat, targetChar, maxRange )
 {
 	if( !ValidateObject( targetBoat ) || !targetBoat.IsBoat() || targetBoat == pirateBoat ||
-		targetBoat.GetTag( "hsPirateGalleon" ) == 1 || !ValidateObject( targetChar ) ||
+		targetBoat.HasScriptTrigger( PIRATE_SCRIPT ) || !ValidateObject( targetChar ) ||
 		targetChar.npc || targetChar.dead || !targetChar.online || targetChar.multi != targetBoat ) return false;
 	return Math.max( Math.abs( targetBoat.x - pirateBoat.x ), Math.abs( targetBoat.y - pirateBoat.y )) <= maxRange;
 }
 
 function CorrectPirateCrewDeckZ( boat, character )
 {
-	if( !ValidateObject( character ) || parseInt( character.GetTag( "hsPirateBoat" )) != boat.serial ) return false;
+	if( !ValidateObject( character ) || character.multi != boat ) return false;
 	var deckZ = parseInt( boat.GetTempTag( "hsPirateDeckZ" ));
 	if( character.z < deckZ - 2 || character.z > deckZ + 2 )
 		character.SetLocation( character.x, character.y, deckZ, boat.worldnumber, boat.instanceID );
@@ -229,7 +222,7 @@ function FindPirateShipTarget( pirateBoat, candidate )
 {
 	if( !ValidateObject( candidate ) || candidate.npc || candidate.dead || !candidate.online ) return false;
 	var targetBoat = candidate.multi;
-	if( !ValidateObject( targetBoat ) || !targetBoat.IsBoat() || targetBoat == pirateBoat || targetBoat.GetTag( "hsPirateGalleon" ) == 1 ) return false;
+	if( !ValidateObject( targetBoat ) || !targetBoat.IsBoat() || targetBoat == pirateBoat || targetBoat.HasScriptTrigger( PIRATE_SCRIPT )) return false;
 	var distance = Math.max( Math.abs( targetBoat.x - pirateBoat.x ), Math.abs( targetBoat.y - pirateBoat.y ));
 	if( distance < parseInt( pirateBoat.GetTempTag( "hsBestDistance" )))
 	{
@@ -350,7 +343,7 @@ function AlignPirateForTarget( boat, dx, dy )
 
 function FirePirateBroadside( boat, item )
 {
-	if( !ValidateObject( item ) || item.multi != boat || item.GetTag( "hsCannonKind" ) != 2 ) return false;
+	if( !ValidateObject( item ) || item.multi != boat || !item.isShipCannon ) return false;
 	var target = CalcItemFromSer( parseInt( boat.GetTempTag( "hsBroadsideTarget" )));
 	var captain = CalcCharFromSer( parseInt( boat.GetTempTag( "hsBroadsideCaptain" )));
 	var now = GetCurrentClock();
@@ -363,15 +356,15 @@ function FirePirateBroadside( boat, item )
 
 function onDeath( deadChar, corpse )
 {
-	if( !ValidateObject( deadChar ) || deadChar.GetTag( "hsPirateCaptain" ) != 1 ) return;
-	var boat = CalcItemFromSer( parseInt( deadChar.GetTag( "hsPirateBoat" )));
+	if( !ValidateObject( deadChar )) return;
+	var boat = deadChar.multi;
+	if( !ValidateObject( boat ) || boat.owner != deadChar || !boat.HasScriptTrigger( PIRATE_SCRIPT )) return;
 	if( ValidateObject( boat )) DefeatPirateGalleon( boat );
 }
 
 function DefeatPirateGalleon( boat )
 {
-	if( boat.GetTag( "hsPirateDefeated" ) == 1 ) return;
-	boat.SetTag( "hsPirateDefeated", 1 );
+	if( !ValidateObject( boat.owner )) return;
 	boat.owner = null;
 	var hold = boat.GetHold();
 	if( ValidateObject( hold )) hold.owner = null;
@@ -391,6 +384,6 @@ function RemovePirateCrew( boat )
 
 function DeletePirateCrewMember( boat, character )
 {
-	if( ValidateObject( character ) && parseInt( character.GetTag( "hsPirateBoat" )) == boat.serial ) character.Delete();
+	if( ValidateObject( character ) && character.multi == boat ) character.Delete();
 	return true;
 }

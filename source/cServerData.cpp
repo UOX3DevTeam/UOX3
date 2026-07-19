@@ -427,6 +427,12 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"VENDORITEMFEEAMOUNT", 413},
 	{"ONLYRETURNTOBANK", 414},
 	{"VENDORMAXFUNDS", 415},
+	{"BOATDECAY", 416},
+	{"BOATDECAYSECS", 417},
+	{"BOATPAINTDECAYSECS", 418},
+	{"BOATFASTMOVEINTERVAL", 419},
+	{"BOATSLOWMOVEINTERVAL", 420},
+	{"BOATNPCMOVEINTERVAL", 421},
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -546,6 +552,7 @@ constexpr auto BIT_POISONCORROSIONSYSTEM			= UI32( 110 );
 constexpr auto BIT_HOUSEDECAY						= UI32( 111 );
 constexpr auto BIT_HOUSEITEMSDELETEONDECAY			= UI32( 112 );
 constexpr auto BIT_HOUSEGRANDFATHERED				= UI32( 113 );
+constexpr auto BIT_BOATDECAY						= UI32( 114 );
 constexpr auto BIT_SPEEDHACKDETECTION				= UI32( 119 );
 constexpr auto BIT_EVENTMANAGERSYSTEM				= UI32( 120 );
 constexpr auto BIT_QUESTSYSTEMENABLED				= UI32( 121 );
@@ -1051,6 +1058,14 @@ auto CServerData::ResetDefaults() -> void
 	DecayStageLowHrs( 48 );
 	DecayStageHiHrs( 72 );
 	DecayStageDangerHrs( 18 );
+
+	// Boats
+	BoatDecay( true );
+	BoatDecaySeconds( 13 * 24 * 60 * 60 );
+	BoatPaintDecaySeconds( 14 * 24 * 60 * 60 );
+	BoatFastMoveInterval( 250 );
+	BoatSlowMoveInterval( 1000 );
+	BoatNpcMoveInterval( 500 );
 
 	// Bulk Order Deeds
 	OfferBODsFromItemSales( true );
@@ -3916,6 +3931,60 @@ auto CServerData::HouseGrandFatheredSystem( bool newVal ) -> void
 	boolVals.set( BIT_HOUSEGRANDFATHERED, newVal );
 }
 
+auto CServerData::BoatDecay() const -> bool
+{
+	return boolVals.test( BIT_BOATDECAY );
+}
+auto CServerData::BoatDecay( bool newVal ) -> void
+{
+	boolVals.set( BIT_BOATDECAY, newVal );
+}
+
+UI32 CServerData::BoatDecaySeconds() const
+{
+	return boatDecaySeconds;
+}
+auto CServerData::BoatDecaySeconds( UI32 value ) -> void
+{
+	boatDecaySeconds = std::max<UI32>( 1, value );
+}
+
+UI32 CServerData::BoatPaintDecaySeconds() const
+{
+	return boatPaintDecaySeconds;
+}
+auto CServerData::BoatPaintDecaySeconds( UI32 value ) -> void
+{
+	boatPaintDecaySeconds = std::max<UI32>( 1, value );
+}
+
+UI16 CServerData::BoatFastMoveInterval() const
+{
+	return boatFastMoveInterval;
+}
+auto CServerData::BoatFastMoveInterval( UI16 value ) -> void
+{
+	boatFastMoveInterval = std::max<UI16>( 1, value );
+}
+
+UI16 CServerData::BoatSlowMoveInterval() const
+{
+	return boatSlowMoveInterval;
+}
+auto CServerData::BoatSlowMoveInterval( UI16 value ) -> void
+{
+	boatSlowMoveInterval = std::max<UI16>( 1, value );
+}
+
+UI16 CServerData::BoatNpcMoveInterval() const
+{
+	return boatNpcMoveInterval;
+}
+auto CServerData::BoatNpcMoveInterval( UI16 value ) -> void
+{
+	boatNpcMoveInterval = std::max<UI16>( 1, value );
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::DecayStageLikeNewMins()
 //o------------------------------------------------------------------------------------------------o
@@ -5988,7 +6057,6 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 
 		ofsOutput << '\n' << "[speedup]" << '\n' << "{" << '\n';
 		ofsOutput << "CHECKITEMS=" << CheckItemsSpeed() << '\n';
-		ofsOutput << "CHECKBOATS=" << CheckBoatSpeed() << '\n';
 		ofsOutput << "CHECKNPCAI=" << CheckNpcAISpeed() << '\n';
 		ofsOutput << "CHECKSPAWNREGIONS=" << CheckSpawnRegionSpeed() << '\n';
 		ofsOutput << "NPCMOVEMENTSPEED=" << NPCWalkingSpeed() << '\n';
@@ -6183,6 +6251,16 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "DECAYSTAGELOWHRS=" << DecayStageLowHrs() << '\n';
 		ofsOutput << "DECAYSTAGEHIHRS=" << DecayStageHiHrs() << '\n';
 		ofsOutput << "DECAYSTAGEDANGERHRS=" << DecayStageDangerHrs() << '\n';
+		ofsOutput << "}" << '\n';
+
+		ofsOutput << '\n' << "[boats]" << '\n' << "{" << '\n';
+		ofsOutput << "BOATDECAY=" << ( BoatDecay() ? 1 : 0 ) << '\n';
+		ofsOutput << "BOATDECAYSECS=" << BoatDecaySeconds() << '\n';
+		ofsOutput << "BOATPAINTDECAYSECS=" << BoatPaintDecaySeconds() << '\n';
+		ofsOutput << "CHECKBOATS=" << CheckBoatSpeed() << '\n';
+		ofsOutput << "BOATFASTMOVEINTERVAL=" << BoatFastMoveInterval() << '\n';
+		ofsOutput << "BOATSLOWMOVEINTERVAL=" << BoatSlowMoveInterval() << '\n';
+		ofsOutput << "BOATNPCMOVEINTERVAL=" << BoatNpcMoveInterval() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[bulk order deeds]" << '\n' << "{" << '\n';
@@ -7755,6 +7833,24 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 415: // VENDORMAXFUNDS
 			VendorMaxFunds( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 416: // BOATDECAY
+			BoatDecay( std::stoul( value, nullptr, 0 ) != 0 );
+			break;
+		case 417: // BOATDECAYSECS
+			BoatDecaySeconds( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 418: // BOATPAINTDECAYSECS
+			BoatPaintDecaySeconds( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 419: // BOATFASTMOVEINTERVAL
+			BoatFastMoveInterval( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 420: // BOATSLOWMOVEINTERVAL
+			BoatSlowMoveInterval( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 421: // BOATNPCMOVEINTERVAL
+			BoatNpcMoveInterval( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
 			break;
 		default:
 			rValue = false;

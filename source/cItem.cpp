@@ -1446,6 +1446,63 @@ auto CItem::SetAmmoId( UI16 newValue ) -> void
 	UpdateRegion();
 }
 
+auto CItem::GetCannonRole() const -> CannonRole { return static_cast<CannonRole>( GetTempVar( CITV_MORE, 1 )); }
+auto CItem::SetCannonRole( CannonRole newValue ) -> void { SetTempVar( CITV_MORE, 1, static_cast<UI08>( newValue )); }
+auto CItem::GetCannonPower() const -> UI08 { return GetTempVar( CITV_MORE, 2 ); }
+auto CItem::SetCannonPower( UI08 newValue ) -> void { SetTempVar( CITV_MORE, 2, newValue ); }
+auto CItem::GetCannonStage() const -> UI08 { return GetTempVar( CITV_MORE, 3 ); }
+auto CItem::SetCannonStage( UI08 newValue ) -> void { SetTempVar( CITV_MORE, 3, std::min<UI08>( newValue, 4 )); }
+auto CItem::GetCannonLinkSerial() const -> SERIAL { return GetTempVar( CITV_MORE2 ); }
+auto CItem::SetCannonLinkSerial( SERIAL newValue ) -> void { SetTempVar( CITV_MORE2, newValue ); }
+auto CItem::GetCannonRange() const -> UI08 { return GetMaxRange(); }
+auto CItem::SetCannonRange( UI08 newValue ) -> void { SetMaxRange( newValue ); }
+auto CItem::GetCannonActionTime() const -> UI16 { return GetMaxUses(); }
+auto CItem::SetCannonActionTime( UI16 newValue ) -> void { SetMaxUses( newValue ); }
+auto CItem::GetCannonDirectionArt( UI08 directionIndex ) const -> UI16
+{
+	if( directionIndex > 3 ) return 0;
+	const UI32 packed = GetTempVar( directionIndex < 2 ? CITV_MORE0 : CITV_MORE1 );
+	return static_cast<UI16>(( packed >> (( directionIndex & 1 ) * 16 )) & 0xFFFF );
+}
+auto CItem::SetCannonDirectionArt( UI08 directionIndex, UI16 newValue ) -> void
+{
+	if( directionIndex > 3 ) return;
+	const CITempVars storage = directionIndex < 2 ? CITV_MORE0 : CITV_MORE1;
+	const UI08 shift = static_cast<UI08>(( directionIndex & 1 ) * 16 );
+	const UI32 mask = static_cast<UI32>( 0xFFFF ) << shift;
+	SetTempVar( storage, ( GetTempVar( storage ) & ~mask ) | ( static_cast<UI32>( newValue ) << shift ));
+}
+
+void CItem::AddDockedCannon( SI16 localX, SI16 localY, SI16 localZ, SI16 hits, UI08 power )
+{
+	if( !dockedCannons )
+		dockedCannons = std::make_shared<std::vector<DockedCannonInfo>>();
+	else if( !dockedCannons.unique() )
+		dockedCannons = std::make_shared<std::vector<DockedCannonInfo>>( *dockedCannons );
+	dockedCannons->push_back({ localX, localY, localZ, hits, power });
+}
+
+void CItem::SetDockedCannons( const std::vector<DockedCannonInfo>& cannons )
+{
+	if( cannons.empty() )
+	{
+		dockedCannons.reset();
+		return;
+	}
+	dockedCannons = std::make_shared<std::vector<DockedCannonInfo>>( cannons );
+}
+
+void CItem::ClearDockedCannons( void )
+{
+	dockedCannons.reset();
+}
+
+const std::vector<DockedCannonInfo>& CItem::GetDockedCannons( void ) const
+{
+	static const std::vector<DockedCannonInfo> empty;
+	return dockedCannons ? *dockedCannons : empty;
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem::GetAmmoHue()
 //|					CItem::SetAmmoHue()
@@ -1888,6 +1945,7 @@ auto CItem::CopyData( CItem *target ) -> void
 	// Don't forget to copy the tags
 	target->tags = GetTagMap();
 	target->tempTags = GetTempTagMap();
+	target->SetDockedCannons( GetDockedCannons() );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1979,7 +2037,11 @@ bool CItem::DumpBody( std::ostream &outStream ) const
 	outStream << "EntryMadeFrom=" + std::to_string( EntryMadeFrom() ) + newLine;
 	outStream << "Stealable=" + std::to_string( GetStealable() ) + newLine;
 	outStream << "PoisonCharges" + std::to_string( GetPoisonCharges() ) + newLine;
-
+	for( const auto& cannon : GetDockedCannons() )
+	{
+		outStream << "DockedCannon=" << cannon.localX << "," << cannon.localY << "," << cannon.localZ << ","
+			<< cannon.hits << "," << static_cast<UI16>( cannon.power ) << newLine;
+	}
 	return true;
 }
 
@@ -2081,7 +2143,18 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				}
 				break;
 			case 'D':
-				if( UTag == "DESC" )
+				if( UTag == "DOCKEDCANNON" )
+				{
+					if( csecs.size() >= 5 )
+					{
+						AddDockedCannon(
+							oldstrutil::value<SI16>( csecs[0] ), oldstrutil::value<SI16>( csecs[1] ),
+							oldstrutil::value<SI16>( csecs[2] ), oldstrutil::value<SI16>( csecs[3] ),
+							oldstrutil::value<UI08>( csecs[4] ));
+					}
+					rValue = true;
+				}
+				else if( UTag == "DESC" )
 				{
 					SetDesc( data.c_str() );
 					rValue = true;
@@ -2254,9 +2327,9 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "MORE012" )
 				{
-					SetTempVar( CITV_MOREX, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
-					SetTempVar( CITV_MOREY, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
-					SetTempVar( CITV_MOREZ, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
+					SetTempVar( CITV_MORE0, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
+					SetTempVar( CITV_MORE1, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
+					SetTempVar( CITV_MORE2, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				else if( UTag == "MOREXYZ" )

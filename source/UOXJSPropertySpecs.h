@@ -598,6 +598,18 @@ inline JSPropertySpec CItemProps[] =
 	{ "origin",			CIP_ORIGIN,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isItemHeld",		CIP_ISITEMHELD,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "stealable",		CIP_STEALABLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "cannonRole",		CIP_CANNONROLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "cannonPower",	CIP_CANNONPOWER,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "cannonStage",	CIP_CANNONSTAGE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "cannonLinkSerial", CIP_CANNONLINKSERIAL, JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "cannonRange",	CIP_CANNONRANGE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "cannonActionTime", CIP_CANNONACTIONTIME, JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "isShipCannon",	CIP_ISSHIPCANNON,	JSPROP_ENUMPERMRO, nullptr, nullptr },
+	{ "isWeaponPad",	CIP_ISWEAPONPAD,	JSPROP_ENUMPERMRO, nullptr, nullptr },
+	{ "cannonArtNorth",	CIP_CANNONARTNORTH, JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "cannonArtEast",	CIP_CANNONARTEAST, JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "cannonArtSouth",	CIP_CANNONARTSOUTH, JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "cannonArtWest",	CIP_CANNONARTWEST, JSPROP_ENUMANDPERM, nullptr, nullptr },
 
 	// The Following vars are specific to CSpawnItem objects
 	{ "spawnsection",	CIP_SPAWNSECTION,	JSPROP_ENUMANDPERM, nullptr, nullptr },

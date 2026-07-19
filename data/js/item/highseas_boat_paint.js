@@ -12,7 +12,7 @@ function onUseChecked( user, used )
 		return false;
 	}
 	user.socket.tempObj = used;
-	user.socket.CustomTarget( 0, parseInt( used.GetTag( "hsPaintMode" )) == PAINT_MODE_REMOVER ?
+	user.socket.CustomTarget( 0, used.morex == PAINT_MODE_REMOVER ?
 		"Select the ship whose paint you wish to remove." :
 		"Select the main mast of the ship you wish to paint." );
 	return false;
@@ -43,7 +43,7 @@ function onCallback0( socket, target )
 		return;
 	}
 
-	var mode = parseInt( paint.GetTag( "hsPaintMode" ));
+	var mode = paint.morex;
 	if( mode == PAINT_MODE_REMOVER )
 	{
 		if( boat.RemoveShipPaint() )

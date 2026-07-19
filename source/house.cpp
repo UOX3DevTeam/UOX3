@@ -24,7 +24,7 @@ static bool IsDirectionalBoatMulti( UI16 houseId )
 	if( houseId < 0x4000 )
 		return false;
 	const UI16 multiId = houseId - 0x4000;
-	return multiId == 0x18 || multiId == 0x24 || multiId == 0x30 || multiId == 0x3C || multiId == 0x40;
+	return multiId == 0x18 || multiId == 0x24 || multiId == 0x30 || multiId == 0x3C || multiId == 0x40 || multiId == 0x50;
 }
 
 static bool IsHighSeasBoatMulti( UI16 houseId )
@@ -147,11 +147,7 @@ void SendBoatPlacementTarget( CSocket *socket, UI16 houseEntry, UI08 direction )
 	}
 	if( !IsDirectionalBoatMulti( houseId ))
 		return;
-	TAGMAPOBJECT directionTag;
-	directionTag.m_Destroy = false;
-	directionTag.m_IntValue = direction;
-	directionTag.m_ObjectType = TAGMAP_TYPE_INT;
-	character->GetSpeechItem()->SetTag( "hsPlacementDirection", directionTag );
+	character->GetSpeechItem()->SetTempVar( CITV_MOREY, direction );
 	socket->AddId( houseEntry );
 	socket->mtarget( static_cast<UI16>(( houseId - 0x4000 ) + direction / 2 ), 576 );
 }
@@ -956,7 +952,7 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 	UI08 placementDirection = NORTH;
 	if( isBoat && IsDirectionalBoatMulti( baseHouseId ) && ValidateObject( mChar ) && ValidateObject( mChar->GetSpeechItem() ))
 	{
-		placementDirection = static_cast<UI08>( mChar->GetSpeechItem()->GetTag( "hsPlacementDirection" ).m_IntValue ) & 0x06;
+		placementDirection = static_cast<UI08>( mChar->GetSpeechItem()->GetTempVar( CITV_MOREY )) & 0x06;
 		houseId = static_cast<UI16>( baseHouseId + placementDirection / 2 );
 	}
 
@@ -1042,17 +1038,10 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 		{
 			house->SetTag( key, value );
 		}
-		// A dry-docked High Seas deed carries its deployed cannon layout and
-		// condition as persistent tags. Transfer those tags to the new vessel
-		// before CreateBoat reconstructs its fixtures and cannons.
+		// Transfer the deed's native dry-docked cannon payload before CreateBoat
+		// reconstructs the vessel's fixtures and weapons.
 		if( ValidateObject( mChar ) && ValidateObject( mChar->GetSpeechItem() ))
-		{
-			for( const auto &[key, value] : mChar->GetSpeechItem()->GetTagMap() )
-			{
-				if( key != "hsPlacementDirection" )
-					house->SetTag( key, value );
-			}
-		}
+			house->SetDockedCannons( mChar->GetSpeechItem()->GetDockedCannons() );
 
 		// Find corners of new house
 		SI16 multiX1 = 0;

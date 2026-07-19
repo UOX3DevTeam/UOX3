@@ -6034,7 +6034,15 @@ JSBool CBoat_CheckDryDock( JSContext *cx, uintN argc, jsval *vp )
 JSBool CBoat_DeleteForDryDock( JSContext *cx, uintN argc, jsval *vp )
 {
 	auto *boat = static_cast<CBoatObj *>( JS_GetPrivate( cx, JS_THIS_OBJECT( cx, vp )));
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ValidateObject( boat ) && boat->CanBeObjType( OT_BOAT ) && DeleteHighSeasBoatForDryDock( boat )));
+	CItem *deed = nullptr;
+	if( argc == 1 && JSVAL_IS_OBJECT( JS_ARGV( cx, vp )[0] ))
+	{
+		auto *object = static_cast<CBaseObject *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( JS_ARGV( cx, vp )[0] )));
+		if( ValidateObject( object ) && object->CanBeObjType( OT_ITEM ))
+			deed = static_cast<CItem *>( object );
+	}
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ValidateObject( boat ) && boat->CanBeObjType( OT_BOAT ) &&
+		ValidateObject( deed ) && DeleteHighSeasBoatForDryDock( boat, deed )));
 	return JS_TRUE;
 }
 

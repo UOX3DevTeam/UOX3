@@ -30,6 +30,7 @@ void		DoHouseTarget( CSocket *mSock, UI16 houseEntry );
 void		SocketMapChange( CSocket *sock, CChar *charMoving, CItem *gate );
 void		BuildGumpFromScripts( CSocket *s, UI16 m );
 void		PlankStuff( CSocket *s, CItem *p );
+bool		LeaveBoat( CSocket *s, CItem *p );
 CBoatObj *	GetBoat( CSocket *s );
 void		ModelBoat( CSocket *s, CBoatObj *i );
 
@@ -2779,7 +2780,7 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 							auto *shipOwner = holdBoat->GetOwnerObj();
 							const bool playerOwned = ValidateObject( shipOwner ) && !shipOwner->IsNpc();
 							highSeasHoldAccess = mChar->GetMultiObj() == holdBoat && ObjInRange( mChar, iUsed, DIST_NEARBY ) &&
-								( !playerOwned || holdBoat->GetTag( "hsPirateDefeated" ).m_IntValue == 1 ||
+								( !playerOwned ||
 									holdBoat->GetSecurityLevel( mChar ) >= BoatSecurityLevel::Officer );
 						}
 					}
@@ -2996,7 +2997,7 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			return true;
 		case IT_PLANK:	// Planks
 		{
-			// ServUO mooring-line boarding: an accessible, stationary galleon may
+			// UO mooring-line boarding: an accessible, stationary galleon may
 			// be boarded from land or another vessel at range eight. Active hostile
 			// vessels are not accessible; a defeated pirate vessel is.
 			auto *targetMulti = iUsed->GetMultiObj();
@@ -3041,6 +3042,45 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 					mSock->SysMessage( "You board the ship." );
 					return true;
 				}
+			}
+			// The Forsaken Foes pumpkin rowboat uses a mooring block rather than a
+			// conventional plank. UO makes it publicly accessible and boards at
+			// the boat's mark offset instead of placing the mobile atop the block art.
+			if( ValidateObject( targetMulti ) && targetMulti->CanBeObjType( OT_BOAT ) &&
+				static_cast<CBoatObj *>( targetMulti )->GetTempVar( CITV_MOREZ, 1 ) == 0x50 &&
+				( iUsed->GetId() == 42087 || iUsed->GetId() == 42088 ))
+			{
+				auto *pumpkinBoat = static_cast<CBoatObj *>( targetMulti );
+				if( !ObjInRange( mChar, iUsed, 8 ))
+				{
+					mSock->SysMessage( "You are too far away to do that." );
+					return true;
+				}
+				if( sourceMulti == targetMulti )
+				{
+					LeaveBoat( mSock, iUsed );
+					return true;
+				}
+				if( pumpkinBoat->GetMoveType() != BOAT_STOP && pumpkinBoat->GetMoveType() != BOAT_ANCHORED )
+				{
+					mSock->SysMessage( "You cannot use that while the boat is moving." );
+					return true;
+				}
+				SI16 boardX = pumpkinBoat->GetX();
+				SI16 boardY = pumpkinBoat->GetY();
+				switch( pumpkinBoat->GetDir() & 0x06 )
+				{
+					case SOUTH: --boardY; break;
+					case EAST:  --boardX; break;
+					case WEST:  ++boardX; break;
+					default:    ++boardY; break;
+				}
+				mChar->SetLocation( boardX, boardY, static_cast<SI08>( pumpkinBoat->GetZ() + 3 ),
+					pumpkinBoat->WorldNumber(), pumpkinBoat->GetInstanceId() );
+				mChar->SetMulti( pumpkinBoat );
+				mChar->Update();
+				mSock->SysMessage( "You board the pumpkin rowboat." );
+				return true;
 			}
 			if( ObjInRange( mChar, iUsed, DIST_INRANGE ))
 			{
@@ -3162,12 +3202,16 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 					iUsed->SetMulti( boat );
 				const UI08 boatBaseId = boat->GetTempVar( CITV_MOREZ, 1 );
 				const bool highSeasShip = boatBaseId == 0x18 || boatBaseId == 0x24 || boatBaseId == 0x30 || boatBaseId == 0x40;
-				if( highSeasShip && mSock->ClientVersion() >= CV_HS2D && mSock->ClientVerShort() >= CVS_7090 )
+				const bool rowBoat = boatBaseId == 0x3C || boatBaseId == 0x50;
+				if(( highSeasShip || rowBoat ) && mSock->ClientVersion() >= CV_HS2D && mSock->ClientVerShort() >= CVS_7090 )
 				{
 					// Saved generated deck fixtures may reload before their runtime
 					// multi membership is restored. Rebind them before movement and
 					// collision processing can mistake our own deck for an obstacle.
-					RestoreHighSeasBoatFixtures( boat );
+					if( highSeasShip )
+						RestoreHighSeasBoatFixtures( boat );
+					else if( boatBaseId == 0x50 )
+						RestorePumpkinBoatFixtures( boat );
 					CChar *existingPilot = CalcCharObjFromSer( boat->GetPilot() );
 					CMultiObj *pilotMulti = ValidateObject( existingPilot ) ? existingPilot->GetMultiObj() : nullptr;
 					if( ValidateObject( existingPilot ) && !ValidateObject( pilotMulti ))
@@ -3196,7 +3240,7 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 						return true;
 					}
 					const auto requesterLevel = boat->GetSecurityLevel( mChar );
-					if( requesterLevel < BoatSecurityLevel::Crewman )
+					if( !rowBoat && requesterLevel < BoatSecurityLevel::Crewman )
 					{
 						mSock->SysMessage( 2034 );
 						return true;
@@ -3222,7 +3266,7 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 					{
 						auto *currentPilot = CalcCharObjFromSer( boat->GetPilot() );
 						const auto pilotLevel = boat->GetSecurityLevel( currentPilot );
-						if( !ValidateObject( currentPilot ) || boat->IsOwner( currentPilot ) || requesterLevel < pilotLevel )
+						if( !ValidateObject( currentPilot ) || ( !rowBoat && ( boat->IsOwner( currentPilot ) || requesterLevel < pilotLevel )))
 						{
 							mSock->SysMessage( "Someone else is already piloting this vessel." );
 							return true;
@@ -3251,13 +3295,8 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 						pilotMount->SetLayer( IL_MOUNT );
 						pilotMount->SetMovable( 2 );
 						pilotMount->SetDecayable( false );
-						// ServUO's BoatMountItem holds an IMount reference to its BaseBoat.
-						// Persist the equivalent relationship on UOX's virtual mount item.
 						pilotMount->SetTempVar( CITV_MOREX, boat->GetSerial() );
 						pilotMount->SetCont( mChar );
-						// BaseBoat.Pilot is transient in ServUO. Do not write this
-						// equipped controller into UOX world saves; it is recreated
-						// each time the player takes the wheel.
 						pilotMount->ShouldSave( false );
 						boat->SetPilot( mChar->GetSerial() );
 						boat->SetPilotMount( pilotMount->GetSerial() );
@@ -3266,8 +3305,6 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 						boat->SetMoveTime( 0 );
 						boat->RefreshBoatDecay();
 						mChar->SetDir( boat->GetDir() & 0x07 );
-						// SetCont/WearItem plus this single mobile update is the UOX
-						// equivalent of ServUO's pilot.AddItem(VirtualMount) delta.
 						mChar->Update();
 						mSock->SysMessage( "You are now piloting this vessel. Steer with the mouse." );
 					}
