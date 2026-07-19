@@ -4027,7 +4027,7 @@ Y=0
 Z=0
 }
 
-// High Seas ships (pristine hull multi IDs from ServUO pub57)
+// High Seas ships (pristine directional hull multi IDs)
 [HOUSE 210]
 { Orcish Galleon
 ID=0x4018

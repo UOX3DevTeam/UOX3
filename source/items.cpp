@@ -81,6 +81,16 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 		auto ssecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), " " );
 		switch( tag )
 		{
+			case DFNTAG_CANNONDIRECTION:
+			{
+				auto cannonArt = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), "," );
+				if( cannonArt.size() == 4 )
+				{
+					for( UI08 i = 0; i < 4; ++i )
+						applyTo->SetCannonDirectionArt( i, static_cast<UI16>( std::stoul( oldstrutil::trim( cannonArt[i] ), nullptr, 0 )));
+				}
+				break;
+			}
 			case DFNTAG_CANNONINFO:
 			{
 				auto cannonFields = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), "," );
@@ -91,16 +101,6 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					applyTo->SetCannonStage( static_cast<UI08>( std::stoul( oldstrutil::trim( cannonFields[2] ), nullptr, 0 )));
 					applyTo->SetCannonRange( static_cast<UI08>( std::stoul( oldstrutil::trim( cannonFields[3] ), nullptr, 0 )));
 					applyTo->SetCannonActionTime( static_cast<UI16>( std::stoul( oldstrutil::trim( cannonFields[4] ), nullptr, 0 )));
-				}
-				break;
-			}
-			case DFNTAG_CANNONDIRECTION:
-			{
-				auto cannonArt = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), "," );
-				if( cannonArt.size() == 4 )
-				{
-					for( UI08 i = 0; i < 4; ++i )
-						applyTo->SetCannonDirectionArt( i, static_cast<UI16>( std::stoul( oldstrutil::trim( cannonArt[i] ), nullptr, 0 )));
 				}
 				break;
 			}

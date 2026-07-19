@@ -328,10 +328,12 @@
 5063=item/recipescroll.js
 5064=item/runicatlas.js
 5065=item/jacobspickaxe.js
+5070=item/dawns_music_box.js
+5098=item/highseas_drydock.js
 5099=item/highseas_cannon.js
+5100=npc/ai/pirate_galleon.js
 5101=item/highseas_ship_security.js
 5102=item/highseas_boat_paint.js
-5070=item/dawns_music_box.js
 
 18001=server/misc/context_menu.js
 
@@ -516,8 +518,7 @@
 1068=commands/spawnregionadmin.js
 1069=commands/em.js
 1070=commands/champion_spawn_cmd.js
-5098=commands/drydock.js
-5100=commands/pirate_galleon.js
+1071=commands/addpirateship.js
 }
 
 //-------------------------------------------

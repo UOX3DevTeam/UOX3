@@ -17,7 +17,7 @@ get=tribalpaint
 }
 
 // High Seas temporary boat paints. Repeated coats deepen the shade and one
-// coat fades every fourteen days, up to the ServUO maximum of four coats.
+// coat fades every fourteen days, up to a maximum of four coats.
 [boatpaint_blue]
 {
 get=base_item

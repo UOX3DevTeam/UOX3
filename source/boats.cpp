@@ -2397,9 +2397,9 @@ void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
 		{
 			// Check if player trying to rename the boat is actually the owner
 			auto *shipOwner = boat->GetOwnerObj();
-			const bool servUOOwner = mChar->IsGM() || boat->IsOwner( mChar ) ||
+			const bool highSeasOwner = mChar->IsGM() || boat->IsOwner( mChar ) ||
 				( ValidateObject( shipOwner ) && shipOwner->GetAccountNum() == mChar->GetAccountNum() );
-			if(( highSeasShip && !servUOOwner ) ||
+			if(( highSeasShip && !highSeasOwner ) ||
 				( !highSeasShip && mChar->GetSerial() != boat->GetOwner() ))
 			{
 				tiller->TextMessage( mSock, 2034 ); // Arr! Only the owner of the ship may change its name!
