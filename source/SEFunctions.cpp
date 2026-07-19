@@ -5819,6 +5819,21 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 			case 421:	// BOATNPCMOVEINTERVAL
 				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->BoatNpcMoveInterval() )));
 				break;
+			case 422:	// CLASSICBOATMOUSECONTROL
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClassicBoatMouseControl() ));
+				break;
+			case 423:	// HIGHSEASSHIPANCHORS
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HighSeasShipAnchors() ));
+				break;
+			case 424:	// BOATDRIFT
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->BoatDrift() ));
+				break;
+			case 425:	// BOATDRIFTINTERVAL
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->BoatDriftInterval() )));
+				break;
+			case 426:	// HIGHSEASSHIPSPEECHCONTROL
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HighSeasShipSpeechControl() ));
+				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );
 				return false;

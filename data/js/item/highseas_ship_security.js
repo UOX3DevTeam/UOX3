@@ -308,6 +308,13 @@ function ShowSecurityGump( user, boat )
 	AddLocalized( g, 10, 193, 150, 1149733, 0x7FFF );
 	g.AddButton( 140, 191, 0x0FA5, 0x0FA7, 0, 4, 0 );
 	AddLevel( g, 175, 193, 125, guildLevel, true );
+	if( GetServerSetting( "HIGHSEASSHIPANCHORS" ))
+	{
+		g.AddText( 10, 220, 0x7FFF, "Anchor" );
+		g.AddButton( 140, 218, 0x0FA5, 0x0FA7, 1, 0, 1400 );
+		g.AddText( 175, 220, boat.moveType == -1 ? 0x44 : 0x53,
+			boat.moveType == -1 ? "Lowered" : "Raised" );
+	}
 	g.AddButton( 160, 355, 0x0FA5, 0x0FA7, 1, 0, 2000 );
 	AddLocalized( g, 195, 357, 100, 1149734, 0x7FFF );
 	AddAccessPanel( g, 2, 30, 1149731, publicLevel, 1100 );
@@ -355,6 +362,24 @@ function onGumpPress( socket, button, gumpData )
 	else if( button >= 1300 && button <= 1304 )
 	{
 		boat.SetShipAccessSetting( 2, button - 1300 );
+		ShowSecurityGump( user, boat );
+	}
+	else if( button == 1400 && GetServerSetting( "HIGHSEASSHIPANCHORS" ))
+	{
+		if( user.multi != boat )
+		{
+			socket.SysMessage( "You must be aboard the ship to use its anchor." );
+		}
+		else if( boat.moveType == -1 )
+		{
+			boat.moveType = 0;
+			socket.SysMessage( "You raise the anchor. The unattended ship can now drift forward." );
+		}
+		else
+		{
+			boat.moveType = -1;
+			socket.SysMessage( "You lower the anchor." );
+		}
 		ShowSecurityGump( user, boat );
 	}
 	else if( button == 2000 )

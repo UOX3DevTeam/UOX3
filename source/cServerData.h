@@ -478,6 +478,7 @@ private:
 	UI16		boatFastMoveInterval;			// Milliseconds between fast mouse-pilot movement steps
 	UI16		boatSlowMoveInterval;			// Milliseconds between slow mouse-pilot movement steps
 	UI16		boatNpcMoveInterval;			// Milliseconds between pirate/NPC vessel movement steps
+	UI16		boatDriftInterval;			// Milliseconds between unattended forward drift steps
 
 	// Townstone stuff
 	UI32		numSecsPollOpen;				//	Time (in seconds) for which a town voting poll is open
@@ -962,6 +963,15 @@ public:
 	auto		BoatDecay( bool value ) -> void;
 	auto		BoatDecay() const -> bool;
 
+	auto		ClassicBoatMouseControl( bool value ) -> void;
+	auto		ClassicBoatMouseControl() const -> bool;
+	auto		BoatDrift( bool value ) -> void;
+	auto		BoatDrift() const -> bool;
+	auto		HighSeasShipAnchors( bool value ) -> void;
+	auto		HighSeasShipAnchors() const -> bool;
+	auto		HighSeasShipSpeechControl( bool value ) -> void;
+	auto		HighSeasShipSpeechControl() const -> bool;
+
 	auto		BoatDecaySeconds( UI32 value ) -> void;
 	UI32		BoatDecaySeconds() const;
 
@@ -976,6 +986,8 @@ public:
 
 	auto		BoatNpcMoveInterval( UI16 value ) -> void;
 	UI16		BoatNpcMoveInterval() const;
+	auto		BoatDriftInterval( UI16 value ) -> void;
+	UI16		BoatDriftInterval() const;
 
 	auto		DecayStageLikeNewMins( UI32 value ) -> void;
 	UI32		DecayStageLikeNewMins() const;

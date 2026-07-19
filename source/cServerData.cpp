@@ -433,6 +433,11 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"BOATFASTMOVEINTERVAL", 419},
 	{"BOATSLOWMOVEINTERVAL", 420},
 	{"BOATNPCMOVEINTERVAL", 421},
+	{"CLASSICBOATMOUSECONTROL", 422},
+	{"HIGHSEASSHIPANCHORS", 423},
+	{"BOATDRIFT", 424},
+	{"BOATDRIFTINTERVAL", 425},
+	{"HIGHSEASSHIPSPEECHCONTROL", 426},
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -553,6 +558,10 @@ constexpr auto BIT_HOUSEDECAY						= UI32( 111 );
 constexpr auto BIT_HOUSEITEMSDELETEONDECAY			= UI32( 112 );
 constexpr auto BIT_HOUSEGRANDFATHERED				= UI32( 113 );
 constexpr auto BIT_BOATDECAY						= UI32( 114 );
+constexpr auto BIT_CLASSICBOATMOUSECONTROL		= UI32( 115 );
+constexpr auto BIT_HIGHSEASSHIPANCHORS			= UI32( 116 );
+constexpr auto BIT_BOATDRIFT						= UI32( 117 );
+constexpr auto BIT_HIGHSEASSHIPSPEECHCONTROL	= UI32( 118 );
 constexpr auto BIT_SPEEDHACKDETECTION				= UI32( 119 );
 constexpr auto BIT_EVENTMANAGERSYSTEM				= UI32( 120 );
 constexpr auto BIT_QUESTSYSTEMENABLED				= UI32( 121 );
@@ -1061,11 +1070,16 @@ auto CServerData::ResetDefaults() -> void
 
 	// Boats
 	BoatDecay( true );
+	ClassicBoatMouseControl( false );
+	HighSeasShipAnchors( true );
+	HighSeasShipSpeechControl( true );
+	BoatDrift( true );
 	BoatDecaySeconds( 13 * 24 * 60 * 60 );
 	BoatPaintDecaySeconds( 14 * 24 * 60 * 60 );
 	BoatFastMoveInterval( 250 );
 	BoatSlowMoveInterval( 1000 );
 	BoatNpcMoveInterval( 500 );
+	BoatDriftInterval( 10000 );
 
 	// Bulk Order Deeds
 	OfferBODsFromItemSales( true );
@@ -3940,6 +3954,42 @@ auto CServerData::BoatDecay( bool newVal ) -> void
 	boolVals.set( BIT_BOATDECAY, newVal );
 }
 
+auto CServerData::ClassicBoatMouseControl() const -> bool
+{
+	return boolVals.test( BIT_CLASSICBOATMOUSECONTROL );
+}
+auto CServerData::ClassicBoatMouseControl( bool newVal ) -> void
+{
+	boolVals.set( BIT_CLASSICBOATMOUSECONTROL, newVal );
+}
+
+auto CServerData::BoatDrift() const -> bool
+{
+	return boolVals.test( BIT_BOATDRIFT );
+}
+auto CServerData::BoatDrift( bool newVal ) -> void
+{
+	boolVals.set( BIT_BOATDRIFT, newVal );
+}
+
+auto CServerData::HighSeasShipAnchors() const -> bool
+{
+	return boolVals.test( BIT_HIGHSEASSHIPANCHORS );
+}
+auto CServerData::HighSeasShipAnchors( bool newVal ) -> void
+{
+	boolVals.set( BIT_HIGHSEASSHIPANCHORS, newVal );
+}
+
+auto CServerData::HighSeasShipSpeechControl() const -> bool
+{
+	return boolVals.test( BIT_HIGHSEASSHIPSPEECHCONTROL );
+}
+auto CServerData::HighSeasShipSpeechControl( bool newVal ) -> void
+{
+	boolVals.set( BIT_HIGHSEASSHIPSPEECHCONTROL, newVal );
+}
+
 UI32 CServerData::BoatDecaySeconds() const
 {
 	return boatDecaySeconds;
@@ -3983,6 +4033,15 @@ UI16 CServerData::BoatNpcMoveInterval() const
 auto CServerData::BoatNpcMoveInterval( UI16 value ) -> void
 {
 	boatNpcMoveInterval = std::max<UI16>( 1, value );
+}
+
+UI16 CServerData::BoatDriftInterval() const
+{
+	return boatDriftInterval;
+}
+auto CServerData::BoatDriftInterval( UI16 value ) -> void
+{
+	boatDriftInterval = std::max<UI16>( 1, value );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6255,6 +6314,11 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 
 		ofsOutput << '\n' << "[boats]" << '\n' << "{" << '\n';
 		ofsOutput << "BOATDECAY=" << ( BoatDecay() ? 1 : 0 ) << '\n';
+		ofsOutput << "CLASSICBOATMOUSECONTROL=" << ( ClassicBoatMouseControl() ? 1 : 0 ) << '\n';
+		ofsOutput << "HIGHSEASSHIPANCHORS=" << ( HighSeasShipAnchors() ? 1 : 0 ) << '\n';
+		ofsOutput << "BOATDRIFT=" << ( BoatDrift() ? 1 : 0 ) << '\n';
+		ofsOutput << "BOATDRIFTINTERVAL=" << BoatDriftInterval() << '\n';
+		ofsOutput << "HIGHSEASSHIPSPEECHCONTROL=" << ( HighSeasShipSpeechControl() ? 1 : 0 ) << '\n';
 		ofsOutput << "BOATDECAYSECS=" << BoatDecaySeconds() << '\n';
 		ofsOutput << "BOATPAINTDECAYSECS=" << BoatPaintDecaySeconds() << '\n';
 		ofsOutput << "CHECKBOATS=" << CheckBoatSpeed() << '\n';
@@ -7851,6 +7915,21 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 421: // BOATNPCMOVEINTERVAL
 			BoatNpcMoveInterval( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 422: // CLASSICBOATMOUSECONTROL
+			ClassicBoatMouseControl( std::stoul( value, nullptr, 0 ) != 0 );
+			break;
+		case 423: // HIGHSEASSHIPANCHORS
+			HighSeasShipAnchors( std::stoul( value, nullptr, 0 ) != 0 );
+			break;
+		case 424: // BOATDRIFT
+			BoatDrift( std::stoul( value, nullptr, 0 ) != 0 );
+			break;
+		case 425: // BOATDRIFTINTERVAL
+			BoatDriftInterval( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 426: // HIGHSEASSHIPSPEECHCONTROL
+			HighSeasShipSpeechControl( std::stoul( value, nullptr, 0 ) != 0 );
 			break;
 		default:
 			rValue = false;

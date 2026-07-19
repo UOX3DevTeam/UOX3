@@ -2499,6 +2499,34 @@ auto CheckItem( CMapRegion *toCheck, bool checkItems, TIMERVAL nextDecayItems, T
 		{
 			CBoatObj *mBoat = static_cast<CBoatObj *>( itemCheck );
 			SI08 boatMoveType = mBoat->GetMoveType();
+			const UI08 boatBaseId = mBoat->GetTempVar( CITV_MOREZ, 1 );
+			const bool highSeasGalleon = boatBaseId == 0x18 || boatBaseId == 0x24 ||
+				boatBaseId == 0x30 || boatBaseId == 0x40;
+			const bool classicBoat = boatBaseId == 0x00 || boatBaseId == 0x04 || boatBaseId == 0x08 ||
+				boatBaseId == 0x0C || boatBaseId == 0x10 || boatBaseId == 0x14;
+			const bool driftingBoat = highSeasGalleon || classicBoat;
+			auto *boatOwner = mBoat->GetOwnerObj();
+			if( driftingBoat && boatMoveType == BOAT_ANCHORED && mBoat->GetPilot() == INVALIDSERIAL )
+			{
+				mBoat->SetMoveTime( 0 );
+			}
+			if( ValidateObject( mBoat ) && driftingBoat && boatMoveType == BOAT_STOP &&
+				( classicBoat || cwmWorldState->ServerData()->HighSeasShipAnchors() ) &&
+				cwmWorldState->ServerData()->BoatDrift() && mBoat->GetPilot() == INVALIDSERIAL &&
+				ValidateObject( boatOwner ) && !boatOwner->IsNpc() )
+			{
+				if( mBoat->GetMoveTime() == 0 )
+				{
+					mBoat->SetMoveTime( cwmWorldState->GetUICurrentTime() +
+						cwmWorldState->ServerData()->BoatDriftInterval() );
+				}
+				else if( mBoat->GetMoveTime() <= cwmWorldState->GetUICurrentTime() )
+				{
+					MoveBoat( itemCheck->GetDir(), mBoat );
+					mBoat->SetMoveTime( cwmWorldState->GetUICurrentTime() +
+						cwmWorldState->ServerData()->BoatDriftInterval() );
+				}
+			}
 			if( ValidateObject( mBoat ) && boatMoveType && mBoat->GetMoveTime() <= cwmWorldState->GetUICurrentTime() )
 			{
 				if( boatMoveType != BOAT_ANCHORED )

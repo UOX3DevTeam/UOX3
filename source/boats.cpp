@@ -1632,7 +1632,10 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 	RestorePumpkinBoatFixtures( b );
 	RestoreDryDockedCannons( b );
 	if( id2 == 0x18 || id2 == 0x24 || id2 == 0x30 || id2 == 0x3C || id2 == 0x40 )
-		b->SetMoveType( BOAT_STOP ); // High Seas galleons do not use classic anchors.
+	{
+		const bool anchoredGalleon = id2 != 0x3C && cwmWorldState->ServerData()->HighSeasShipAnchors();
+		b->SetMoveType( anchoredGalleon ? BOAT_ANCHORED : BOAT_STOP );
+	}
 	return true;
 }
 
@@ -2485,7 +2488,13 @@ void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
 	// High Seas rowboats are controlled exclusively through the mouse-piloting
 	// rudder. They do not understand classic tillerman speech or anchor orders.
 	if( boatBaseId == 0x3C || boatBaseId == 0x50 )
+	{
 		return;
+	}
+	if( highSeasShip && !cwmWorldState->ServerData()->HighSeasShipSpeechControl() )
+	{
+		return;
+	}
 	if( highSeasShip && !boat->CanCommand( mChar ))
 	{
 		mSock->SysMessage( 2034 );

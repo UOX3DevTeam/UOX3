@@ -3214,8 +3214,24 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				const UI08 boatBaseId = boat->GetTempVar( CITV_MOREZ, 1 );
 				const bool highSeasShip = boatBaseId == 0x18 || boatBaseId == 0x24 || boatBaseId == 0x30 || boatBaseId == 0x40;
 				const bool rowBoat = boatBaseId == 0x3C || boatBaseId == 0x50;
-				if(( highSeasShip || rowBoat ) && mSock->ClientVersion() >= CV_HS2D && mSock->ClientVerShort() >= CVS_7090 )
+				const bool classicBoat = boatBaseId == 0x00 || boatBaseId == 0x04 || boatBaseId == 0x08 ||
+					boatBaseId == 0x0C || boatBaseId == 0x10 || boatBaseId == 0x14;
+				const bool classicMouseBoat = classicBoat && cwmWorldState->ServerData()->ClassicBoatMouseControl();
+				const bool highSeasMouseBoat = highSeasShip && !cwmWorldState->ServerData()->HighSeasShipSpeechControl();
+				if( highSeasShip && !highSeasMouseBoat )
 				{
+					mSock->SysMessage( "This ship is controlled with speech commands." );
+					return true;
+				}
+				if(( highSeasMouseBoat || rowBoat || classicMouseBoat ) && mSock->ClientVersion() >= CV_HS2D &&
+					mSock->ClientVerShort() >= CVS_7090 )
+				{
+					if(( classicMouseBoat || ( highSeasShip && cwmWorldState->ServerData()->HighSeasShipAnchors() )) &&
+						boat->GetMoveType() == BOAT_ANCHORED )
+					{
+						mSock->SysMessage( 2023 ); // You must raise the anchor to pilot the ship.
+						return true;
+					}
 					// Saved generated deck fixtures may reload before their runtime
 					// multi membership is restored. Rebind them before movement and
 					// collision processing can mistake our own deck for an obstacle.
@@ -3259,7 +3275,7 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 						return true;
 					}
 					const auto requesterLevel = boat->GetSecurityLevel( mChar );
-					if( !rowBoat && requesterLevel < BoatSecurityLevel::Crewman )
+					if( !rowBoat && !classicMouseBoat && requesterLevel < BoatSecurityLevel::Crewman )
 					{
 						mSock->SysMessage( 2034 );
 						return true;
@@ -3285,7 +3301,8 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 					{
 						auto *currentPilot = CalcCharObjFromSer( boat->GetPilot() );
 						const auto pilotLevel = boat->GetSecurityLevel( currentPilot );
-						if( !ValidateObject( currentPilot ) || ( !rowBoat && ( boat->IsOwner( currentPilot ) || requesterLevel < pilotLevel )))
+						if( !ValidateObject( currentPilot ) || classicMouseBoat ||
+							( !rowBoat && ( boat->IsOwner( currentPilot ) || requesterLevel < pilotLevel )))
 						{
 							mSock->SysMessage( "Someone else is already piloting this vessel." );
 							return true;
