@@ -63,6 +63,7 @@ void		DamageBoatHull( CBoatObj *boat, SI32 amount );
 SI32		RepairBoatHull( CBoatObj *boat, SI32 amount );
 bool		IsBoatNearLandOrDocks( CBoatObj *boat );
 bool		RestoreHighSeasBoatFixtures( CBoatObj *boat );
+bool		RestoreRowboatFixtures( CBoatObj *boat );
 bool		RestorePumpkinBoatFixtures( CBoatObj *boat );
 SI08		HighSeasBoatDeckZ( const CBoatObj *boat );
 bool		HighSeasBoatContainsXY( const CBoatObj *boat, SI16 x, SI16 y );

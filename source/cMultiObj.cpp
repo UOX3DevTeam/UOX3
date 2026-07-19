@@ -1544,6 +1544,7 @@ void CBoatObj::PostLoadProcessing( void )
 	rebindComponent( hold );
 	for( const auto fixtureSerial : fixtures )
 		rebindComponent( fixtureSerial );
+	RestoreRowboatFixtures( this );
 	RestorePumpkinBoatFixtures( this );
 
 	// Existing saved galleons predate the security context-menu trigger. Bind it

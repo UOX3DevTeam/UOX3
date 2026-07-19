@@ -183,32 +183,41 @@ auto LeaveBoat( CSocket *s, CItem *p ) -> bool
 	CChar *mChar = s->CurrcharObj();
 	UI08 worldNumber = mChar->WorldNumber();
 	UI16 instanceId = mChar->GetInstanceId();
-	for( SI16 x = x2 - 3; x <= x2 + 4; ++x )
+	for( SI16 distance = 1; distance <= 8; ++distance )
 	{
-		for( SI16 y = y2 - 3; y <= y2 + 4; ++y )
+		for( SI16 x = x2 - distance; x <= x2 + distance; ++x )
 		{
-			SI08 z = Map->Height( x, y, mChar->GetZ(), worldNumber, instanceId );
-			if( Map->ValidSpawnLocation( x, y, z, worldNumber, instanceId, true ) && !FindMulti( x, y, z, worldNumber, instanceId ))
+			for( SI16 y = y2 - distance; y <= y2 + distance; ++y )
 			{
-				mChar->SetLocation( x, y, z, worldNumber, instanceId );
-				
-				// Freeze player temporarily after teleporting
-				Effects->TempEffect( nullptr, mChar, 1, 1, 1, 5 ); // 1 second, divided by 5 for 0.2s duration freeze
-
-				auto myFollowers = mChar->GetFollowerList();
-				for( const auto &follower : myFollowers->collection() )
+				if( x != x2 - distance && x != x2 + distance && y != y2 - distance && y != y2 + distance )
 				{
-					if( ValidateObject( follower ))
+					continue;
+				}
+				SI08 z = Map->Height( x, y, mChar->GetZ(), worldNumber, instanceId );
+				auto *destinationMulti = FindMulti( x, y, z, worldNumber, instanceId );
+				if( Map->ValidSpawnLocation( x, y, z, worldNumber, instanceId, true ) &&
+					( !ValidateObject( destinationMulti ) || !destinationMulti->CanBeObjType( OT_BOAT )))
+				{
+					mChar->SetLocation( x, y, z, worldNumber, instanceId );
+				
+					// Freeze player temporarily after teleporting
+					Effects->TempEffect( nullptr, mChar, 1, 1, 1, 5 ); // 1 second, divided by 5 for 0.2s duration freeze
+
+					auto myFollowers = mChar->GetFollowerList();
+					for( const auto &follower : myFollowers->collection() )
 					{
-						// Only teleport followers with player if they're set to follow player, and within range
-						if( !follower->GetMounted() && follower->GetNpcWander() == WT_FOLLOW && ObjInRange( mChar, follower, DIST_SAMESCREEN ))
+						if( ValidateObject( follower ))
 						{
-							follower->SetLocation( x, y, z, worldNumber, instanceId );
+							// Only teleport followers with player if they're set to follow player, and within range
+							if( !follower->GetMounted() && follower->GetNpcWander() == WT_FOLLOW && ObjInRange( mChar, follower, DIST_SAMESCREEN ))
+							{
+								follower->SetLocation( x, y, z, worldNumber, instanceId );
+							}
 						}
 					}
+					s->SysMessage( 3 ); // You left the boat.
+					return true;
 				}
-				s->SysMessage( 3 ); // You left the boat.
-				return true;
 			}
 		}
 	}
@@ -462,7 +471,8 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 	}
 
 	const UI08 baseId = b->GetTempVar( CITV_MOREZ, 1 );
-	const bool highSeasHull = baseId == 0x18 || baseId == 0x24 || baseId == 0x30 || baseId == 0x40;
+	const bool highSeasHull = baseId == 0x18 || baseId == 0x24 || baseId == 0x30 || baseId == 0x3C || baseId == 0x40;
+	std::vector<std::pair<SI16, SI16>> collisionPoints;
 	if( highSeasHull && !turnBoat )
 	{
 		const auto &components = Map->SeekMulti( b->GetId() - 0x4000 ).items;
@@ -473,11 +483,27 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 			maxX = std::max<SI16>( maxX, static_cast<SI16>( component.offsetX ));
 			minY = std::min<SI16>( minY, static_cast<SI16>( component.offsetY ));
 			maxY = std::max<SI16>( maxY, static_cast<SI16>( component.offsetY ));
+			const auto point = std::make_pair( static_cast<SI16>( cx + component.offsetX ),
+				static_cast<SI16>( cy + component.offsetY ));
+			if( std::find( collisionPoints.begin(), collisionPoints.end(), point ) == collisionPoints.end() )
+			{
+				collisionPoints.push_back( point );
+			}
 		}
 		x1 = cx + minX;
 		x2 = cx + maxX + 1;
 		y1 = cy + minY;
 		y2 = cy + maxY + 1;
+	}
+	else
+	{
+		for( SI16 x = x1; x < x2; ++x )
+		{
+			for( SI16 y = y1; y < y2; ++y )
+			{
+				collisionPoints.emplace_back( x, y );
+			}
+		}
 	}
 
 	UI08 worldNumber = b->WorldNumber();
@@ -495,64 +521,75 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 		const SI32 newDy = static_cast<SI32>( cy ) - other->GetY();
 		return newDx * newDx + newDy * newDy > oldDx * oldDx + oldDy * oldDy;
 	};
-	for( SI16 x = x1; x < x2; ++x )
+	for( const auto &[x, y] : collisionPoints )
 	{
-		for( SI16 y = y1; y < y2; ++y )
+		// Look for other boats
+		CMultiObj *tempBoat = FindMulti( x, y, boatZ, worldNumber, instanceId );
+		if( ValidateObject( tempBoat ) && tempBoat->GetSerial() != b->GetSerial() && !movingAwayFrom( tempBoat ))
 		{
-			// Look for other boats
-			CMultiObj * tempBoat = FindMulti( x, y, boatZ, worldNumber, instanceId );
-			if( ValidateObject( tempBoat ) && tempBoat->GetSerial() != b->GetSerial() && !movingAwayFrom( tempBoat ))
-				return true;
+			return true;
+		}
 
-			// Look for blocking dynamic items at boat's Z level
-			CItem *tempItem = GetItemAtXYZ( x, y, boatZ, worldNumber, instanceId );
-			if( ValidateObject( tempItem ))
+		// Look for blocking dynamic items at boat's Z level
+		CItem *tempItem = GetItemAtXYZ( x, y, boatZ, worldNumber, instanceId );
+		if( ValidateObject( tempItem ))
+		{
+			auto multiSerial = tempItem->GetMulti();
+			if( multiSerial != INVALIDSERIAL && multiSerial != b->GetSerial() )
 			{
-				auto multiSerial = tempItem->GetMulti();
-				//auto boatSerial = b->GetSerial();
-				if( multiSerial != INVALIDSERIAL && multiSerial != b->GetSerial() )
+				auto *otherMulti = tempItem->GetMultiObj();
+				if( ValidateObject( otherMulti ) && movingAwayFrom( otherMulti ))
 				{
-					auto *otherMulti = tempItem->GetMultiObj();
-					if( ValidateObject( otherMulti ) && movingAwayFrom( otherMulti ))
-						continue;
-					CTile& tile = Map->SeekTile( tempItem->GetId() );
-					if( tile.CheckFlag( TF_BLOCKING ))
-						return true;
+					continue;
+				}
+				CTile &tile = Map->SeekTile( tempItem->GetId() );
+				if( tile.CheckFlag( TF_BLOCKING ))
+				{
+					return true;
 				}
 			}
+		}
 
-			// Docks and addon components are often dynamic items above the
-			// waterline, so an exact-Z lookup at the boat's Z misses them.
-			for( auto *dynamicItem : nearbyDynamicItems )
+		// Docks and addon components are often dynamic items above the
+		// waterline, so an exact-Z lookup at the boat's Z misses them.
+		for( auto *dynamicItem : nearbyDynamicItems )
+		{
+			if( !ValidateObject( dynamicItem ) || dynamicItem == b || dynamicItem->GetX() != x || dynamicItem->GetY() != y ||
+				dynamicItem->GetMulti() == b->GetSerial() )
 			{
-				if( !ValidateObject( dynamicItem ) || dynamicItem == b || dynamicItem->GetX() != x || dynamicItem->GetY() != y ||
-					dynamicItem->GetMulti() == b->GetSerial() )
-					continue;
-				auto *otherMulti = dynamicItem->GetMultiObj();
-				if( ValidateObject( otherMulti ) && movingAwayFrom( otherMulti ))
-					continue;
-				CTile& dynamicTile = Map->SeekTile( dynamicItem->GetId() );
-				const SI16 dynamicTop = dynamicItem->GetZ() + std::max<SI16>( 1, dynamicTile.Height() );
-				if( !dynamicTile.CheckFlag( TF_WET ) && dynamicTop >= cz && dynamicItem->GetZ() <= cz + 20 )
-					return true;
+				continue;
 			}
-
-			SI08 sz = Map->StaticTop( x, y, boatZ, worldNumber, MAX_Z_STEP );
-
-			if( sz == ILLEGAL_Z ) //map tile
+			auto *otherMulti = dynamicItem->GetMultiObj();
+			if( ValidateObject( otherMulti ) && movingAwayFrom( otherMulti ))
 			{
-				auto map = Map->SeekMap( x, y, worldNumber );
-				if( map.terrainInfo == nullptr || ( map.altitude >= cz && !map.CheckFlag( TF_WET ) && map.name() != "water" ))//only tiles on/above the water
-					return true;
+				continue;
 			}
-			else
+			CTile &dynamicTile = Map->SeekTile( dynamicItem->GetId() );
+			const SI16 dynamicTop = dynamicItem->GetZ() + std::max<SI16>( 1, dynamicTile.Height() );
+			if( !dynamicTile.CheckFlag( TF_WET ) && dynamicTop >= cz && dynamicItem->GetZ() <= cz + 20 )
 			{
-				auto artwork = Map->ArtAt( x, y, worldNumber );
-				for( auto &tile : artwork )
+				return true;
+			}
+		}
+
+		SI08 sz = Map->StaticTop( x, y, boatZ, worldNumber, MAX_Z_STEP );
+		if( sz == ILLEGAL_Z ) // map tile
+		{
+			auto map = Map->SeekMap( x, y, worldNumber );
+			if( map.terrainInfo == nullptr || ( map.altitude >= cz && !map.CheckFlag( TF_WET ) && map.name() != "water" ))
+			{
+				return true;
+			}
+		}
+		else
+		{
+			auto artwork = Map->ArtAt( x, y, worldNumber );
+			for( auto &tile : artwork )
+			{
+				SI08 zt = tile.altitude + tile.height();
+				if( !tile.CheckFlag( TF_WET ) && zt >= cz && zt <= ( cz + 20 ) && tile.name() != "water" )
 				{
-					SI08 zt = tile.altitude + tile.height();
-					if( !tile.CheckFlag( TF_WET ) && zt >= cz && zt <= ( cz + 20 ) && ( tile.name() != "water" ))
-						return true;
+					return true;
 				}
 			}
 		}
@@ -635,12 +672,16 @@ static bool ConfigureHighSeasFixtures( CBoatObj *boat, CItem *tiller, CItem *por
 	for( const auto &component : Map->SeekMulti( boat->GetId() - 0x4000 ).items )
 	{
 		CItem *fixture = nullptr;
+		const bool mooringLine = component.tileId == 0x14F8 || component.tileId == 0x14FA;
+		const auto componentName = oldstrutil::lower( Map->SeekTile( component.tileId ).Name() );
+		const bool wheelComponent = wheelIds.find( component.tileId ) != wheelIds.end() ||
+			componentName.find( "wheel" ) != std::string::npos;
 		if( !foundHold && holdIds.find( component.tileId ) != holdIds.end() )
 		{
 			fixture = hold;
 			foundHold = true;
 		}
-		else if( !foundWheel && wheelIds.find( component.tileId ) != wheelIds.end() )
+		else if( !foundWheel && wheelComponent )
 		{
 			fixture = tiller;
 			foundWheel = true;
@@ -652,7 +693,7 @@ static bool ConfigureHighSeasFixtures( CBoatObj *boat, CItem *tiller, CItem *por
 			// using the static target Z intended for a mobile pilot.
 			boat->SetTillermanArtZ( component.altitude );
 		}
-		else if(( component.tileId == 0x14F8 || component.tileId == 0x14FA ) && mooringCount < 2 )
+		else if( mooringLine && mooringCount < 2 )
 		{
 			fixture = ( mooringCount++ == 0 ) ? portPlank : starboardPlank;
 		}
@@ -729,7 +770,14 @@ static bool ConfigureHighSeasFixtures( CBoatObj *boat, CItem *tiller, CItem *por
 				deckPiece->SetMovable( 2 );
 				deckPiece->SetDecayable( false );
 				deckPiece->SetMulti( boat );
-				deckPiece->SetColour( boat->GetColour() );
+				if( mooringLine )
+				{
+					deckPiece->SetType( IT_PLANK );
+				}
+				else
+				{
+					deckPiece->SetColour( boat->GetColour() );
+				}
 				boat->RegisterFixture( deckPiece->GetSerial() );
 				if( cannonPadIds.find( component.tileId ) != cannonPadIds.end() )
 					deckPiece->SetCannonRole( CannonRole::WeaponPad );
@@ -750,6 +798,108 @@ bool RestoreHighSeasBoatFixtures( CBoatObj *boat )
 		return false;
 	return ConfigureHighSeasFixtures( boat, CalcItemObjFromSer( boat->GetTiller() ), CalcItemObjFromSer( boat->GetPlank( 0 )),
 		CalcItemObjFromSer( boat->GetPlank( 1 )), CalcItemObjFromSer( boat->GetHold() ), true );
+}
+
+bool RestoreRowboatFixtures( CBoatObj *boat )
+{
+	if( !ValidateObject( boat ) || boat->GetTempVar( CITV_MOREZ, 1 ) != 0x3C )
+	{
+		return false;
+	}
+	auto *rudder = CalcItemObjFromSer( boat->GetTiller() );
+	auto *line = CalcItemObjFromSer( boat->GetPlank( 0 ));
+	auto *hiddenPlank = CalcItemObjFromSer( boat->GetPlank( 1 ));
+	auto *hiddenHold = CalcItemObjFromSer( boat->GetHold() );
+	if( !ValidateObject( rudder ) || !ValidateObject( line ) || !ValidateObject( hiddenPlank ) || !ValidateObject( hiddenHold ))
+	{
+		return false;
+	}
+	CItem *handle = nullptr;
+	for( const auto serial : boat->GetFixtures() )
+	{
+		auto *candidate = CalcItemObjFromSer( serial );
+		if( ValidateObject( candidate ) && candidate->GetType() == IT_TILLER && candidate != rudder )
+		{
+			handle = candidate;
+			break;
+		}
+	}
+	if( !ValidateObject( handle ))
+	{
+		handle = Items->CreateItem( nullptr, nullptr, 16063, 1, 0, OT_ITEM, false, true,
+			boat->WorldNumber(), boat->GetInstanceId(), boat->GetX(), boat->GetY(), boat->GetZ() );
+		if( !ValidateObject( handle ))
+		{
+			return false;
+		}
+		boat->RegisterFixture( handle->GetSerial() );
+	}
+	rudder->SetType( IT_TILLER );
+	rudder->AddScriptTrigger( 5101 );
+	handle->SetType( IT_TILLER );
+	handle->AddScriptTrigger( 5101 );
+	handle->SetTempVar( CITV_MOREX, rudder->GetTempVar( CITV_MOREX ));
+	line->SetType( IT_PLANK );
+	boat->SetDamageable( false );
+	boat->SetHullMaxHits( 0 );
+	boat->SetHullHits( 0 );
+	const SI16 x = boat->GetX();
+	const SI16 y = boat->GetY();
+	const SI08 z = boat->GetZ();
+	switch( boat->GetDir() & 0x06 )
+	{
+		case SOUTH:
+			rudder->SetId( 16068 );
+			rudder->SetLocation( x, y - 4, z );
+			line->SetId( 5368 );
+			line->SetLocation( x, y + 2, static_cast<SI08>( z + 5 ));
+			handle->SetId( 16067 );
+			handle->SetLocation( x, y - 3, z );
+			break;
+		case EAST:
+			rudder->SetId( 15971 );
+			rudder->SetLocation( x - 4, y, z );
+			line->SetId( 5368 );
+			line->SetLocation( x + 2, y, static_cast<SI08>( z + 5 ));
+			handle->SetId( 15970 );
+			handle->SetLocation( x - 3, y, z );
+			break;
+		case WEST:
+			rudder->SetId( 15990 );
+			rudder->SetLocation( x + 4, y, z );
+			line->SetId( 5368 );
+			line->SetLocation( x - 2, y, static_cast<SI08>( z + 5 ));
+			handle->SetId( 15991 );
+			handle->SetLocation( x + 3, y + 1, z );
+			break;
+		default:
+			rudder->SetId( 16062 );
+			rudder->SetLocation( x, y + 4, z );
+			line->SetId( 5368 );
+			line->SetLocation( x, y - 2, static_cast<SI08>( z + 5 ));
+			handle->SetId( 16063 );
+			handle->SetLocation( x + 1, y + 3, z );
+			break;
+	}
+	rudder->SetName( "rowboat rudder" );
+	handle->SetName( "rowboat rudder handle" );
+	line->SetName( "rope" );
+	hiddenPlank->SetId( 0x0001 );
+	hiddenHold->SetId( 0x0001 );
+	hiddenPlank->SetName( "internal rowboat component" );
+	hiddenHold->SetName( "internal rowboat component" );
+	hiddenPlank->SetVisible( VT_PERMHIDDEN );
+	hiddenHold->SetVisible( VT_PERMHIDDEN );
+	hiddenPlank->SetLocation( boat );
+	hiddenHold->SetLocation( boat );
+	for( auto *item : { rudder, line, hiddenPlank, hiddenHold, handle })
+	{
+		item->SetMovable( 2 );
+		item->SetDecayable( false );
+		item->SetMulti( boat, false );
+		item->Update();
+	}
+	return true;
 }
 
 // UO seasonal pumpkin rowboat is multi 0x50-0x53. It has no cargo hold
@@ -1395,13 +1545,17 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 	p2->SetType( IT_PLANK );
 	p2->SetDecayable( false );
 
-	// Lock the plank
-	TAGMAPOBJECT tagvalObject;
-	tagvalObject.m_ObjectType	= TAGMAP_TYPE_INT;
-	tagvalObject.m_IntValue		= 1;
-	tagvalObject.m_Destroy		= false;
-	tagvalObject.m_StringValue	= "";
-	p2->SetTag( "plankLocked", tagvalObject );
+	const bool usesMooringLines = id2 == 0x18 || id2 == 0x24 || id2 == 0x30 || id2 == 0x3C || id2 == 0x40 || id2 == 0x50;
+	if( !usesMooringLines )
+	{
+		// Lock the classic plank.
+		TAGMAPOBJECT tagvalObject;
+		tagvalObject.m_ObjectType = TAGMAP_TYPE_INT;
+		tagvalObject.m_IntValue = 1;
+		tagvalObject.m_Destroy = false;
+		tagvalObject.m_StringValue = "";
+		p2->SetTag( "plankLocked", tagvalObject );
+	}
 
 	CItem *p1 = Items->CreateItem( nullptr, mChar, 0x3EB1, 1, 0, OT_ITEM, false, true, worldNumber, instanceId, x, y, z ); // Plank1 is on the LEFT side of the boat
 	if( p1 == nullptr )
@@ -1410,12 +1564,16 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 	p1->SetType( IT_PLANK ); // Boat type
 	p1->SetDecayable( false );
 
-	// Lock the plank
-	tagvalObject.m_ObjectType	= TAGMAP_TYPE_INT;
-	tagvalObject.m_IntValue		= 1;
-	tagvalObject.m_Destroy		= false;
-	tagvalObject.m_StringValue	= "";
-	p1->SetTag( "plankLocked", tagvalObject );
+	if( !usesMooringLines )
+	{
+		// Lock the classic plank.
+		TAGMAPOBJECT tagvalObject;
+		tagvalObject.m_ObjectType = TAGMAP_TYPE_INT;
+		tagvalObject.m_IntValue = 1;
+		tagvalObject.m_Destroy = false;
+		tagvalObject.m_StringValue = "";
+		p1->SetTag( "plankLocked", tagvalObject );
+	}
 
 	CItem *hold = Items->CreateItem( nullptr, mChar, 0x3EAE, 1, 0, OT_ITEM, false, true, worldNumber, instanceId, x, y, z );
 	if( hold == nullptr )
@@ -1470,9 +1628,10 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 			break;
 	}
 	ConfigureHighSeasFixtures( b, tiller, p1, p2, hold, true );
+	RestoreRowboatFixtures( b );
 	RestorePumpkinBoatFixtures( b );
 	RestoreDryDockedCannons( b );
-	if( id2 == 0x18 || id2 == 0x24 || id2 == 0x30 || id2 == 0x40 )
+	if( id2 == 0x18 || id2 == 0x24 || id2 == 0x30 || id2 == 0x3C || id2 == 0x40 )
 		b->SetMoveType( BOAT_STOP ); // High Seas galleons do not use classic anchors.
 	return true;
 }
@@ -2253,6 +2412,7 @@ void TurnBoat( CBoatObj *b, bool rightTurn, bool disableChecks )
 		default: Console.Error( oldstrutil::format( "TurnBoat() more1 error! more1 = %c not found!", b->GetTempVar( CITV_MOREZ, 1 )));
 	}
 	ConfigureHighSeasFixtures( b, tiller, p1, p2, hold, false );
+	RestoreRowboatFixtures( b );
 	RestorePumpkinBoatFixtures( b );
 
 	// A multi keeps the same serial when its directional ID changes. High Seas

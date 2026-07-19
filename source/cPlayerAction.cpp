@@ -3006,7 +3006,7 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			{
 				auto *targetBoat = static_cast<CBoatObj *>( targetMulti );
 				const UI08 baseId = targetBoat->GetTempVar( CITV_MOREZ, 1 );
-				const bool highSeasShip = baseId == 0x18 || baseId == 0x24 || baseId == 0x30 || baseId == 0x40;
+				const bool highSeasShip = baseId == 0x18 || baseId == 0x24 || baseId == 0x30 || baseId == 0x3C || baseId == 0x40;
 				if( highSeasShip && ( iUsed->GetId() == 0x14F8 || iUsed->GetId() == 0x14FA ))
 				{
 					if( !ObjInRange( mChar, iUsed, 8 ))
@@ -3040,6 +3040,17 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 					mChar->SetMulti( targetBoat );
 					mChar->Update();
 					mSock->SysMessage( "You board the ship." );
+					return true;
+				}
+			}
+			if( ValidateObject( targetMulti ) && targetMulti == sourceMulti )
+			{
+				auto *sourceBoat = static_cast<CBoatObj *>( targetMulti );
+				const UI08 baseId = sourceBoat->GetTempVar( CITV_MOREZ, 1 );
+				const bool highSeasShip = baseId == 0x18 || baseId == 0x24 || baseId == 0x30 || baseId == 0x3C || baseId == 0x40;
+				if( highSeasShip && ( iUsed->GetId() == 0x14F8 || iUsed->GetId() == 0x14FA ))
+				{
+					LeaveBoat( mSock, iUsed );
 					return true;
 				}
 			}
@@ -3095,7 +3106,7 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 							switch( iUsed->GetId() )
 							{
 								case 0x14F8: [[fallthrough]];
-								case 0x14FA: PlankStuff( mSock, iUsed ); break;
+								case 0x14FA: PlankStuff( mSock, iUsed ); return true;
 							// Open the plank visually
 							case 0x3EE9: iUsed->SetId( 0x3E84 ); break;
 							case 0x3EB1: iUsed->SetId( 0x3ED5 ); break;
@@ -3209,9 +3220,17 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 					// multi membership is restored. Rebind them before movement and
 					// collision processing can mistake our own deck for an obstacle.
 					if( highSeasShip )
+					{
 						RestoreHighSeasBoatFixtures( boat );
+					}
+					else if( boatBaseId == 0x3C )
+					{
+						RestoreRowboatFixtures( boat );
+					}
 					else if( boatBaseId == 0x50 )
+					{
 						RestorePumpkinBoatFixtures( boat );
+					}
 					CChar *existingPilot = CalcCharObjFromSer( boat->GetPilot() );
 					CMultiObj *pilotMulti = ValidateObject( existingPilot ) ? existingPilot->GetMultiObj() : nullptr;
 					if( ValidateObject( existingPilot ) && !ValidateObject( pilotMulti ))
