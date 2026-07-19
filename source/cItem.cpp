@@ -1460,13 +1460,19 @@ auto CItem::GetCannonActionTime() const -> UI16 { return GetMaxUses(); }
 auto CItem::SetCannonActionTime( UI16 newValue ) -> void { SetMaxUses( newValue ); }
 auto CItem::GetCannonDirectionArt( UI08 directionIndex ) const -> UI16
 {
-	if( directionIndex > 3 ) return 0;
+	if( directionIndex > 3 )
+	{
+		return 0;
+	}
 	const UI32 packed = GetTempVar( directionIndex < 2 ? CITV_MORE0 : CITV_MORE1 );
 	return static_cast<UI16>(( packed >> (( directionIndex & 1 ) * 16 )) & 0xFFFF );
 }
 auto CItem::SetCannonDirectionArt( UI08 directionIndex, UI16 newValue ) -> void
 {
-	if( directionIndex > 3 ) return;
+	if( directionIndex > 3 )
+	{
+		return;
+	}
 	const CITempVars storage = directionIndex < 2 ? CITV_MORE0 : CITV_MORE1;
 	const UI08 shift = static_cast<UI08>(( directionIndex & 1 ) * 16 );
 	const UI32 mask = static_cast<UI32>( 0xFFFF ) << shift;
@@ -1476,9 +1482,13 @@ auto CItem::SetCannonDirectionArt( UI08 directionIndex, UI16 newValue ) -> void
 void CItem::AddDockedCannon( SI16 localX, SI16 localY, SI16 localZ, SI16 hits, UI08 power )
 {
 	if( !dockedCannons )
+	{
 		dockedCannons = std::make_shared<std::vector<DockedCannonInfo>>();
-	else if( !dockedCannons.unique() )
+	}
+	else if( dockedCannons.use_count() != 1 )
+	{
 		dockedCannons = std::make_shared<std::vector<DockedCannonInfo>>( *dockedCannons );
+	}
 	dockedCannons->push_back({ localX, localY, localZ, hits, power });
 }
 
