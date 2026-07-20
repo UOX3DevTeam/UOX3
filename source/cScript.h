@@ -162,10 +162,10 @@ class cScript
 {
 private:
 
-	JS::RootedScript *			targScript;
+	JS::PersistentRootedScript	targScript;
 	JSContext *			targContext;
-	JS::RootedObject *			targObject;
-	JSObject *			scriptObj;
+	JS::PersistentRootedObject	targObject;
+	JS::PersistentRootedObject	scriptObj;
 	UI16				scriptID;
 
 	bool				isFiring;

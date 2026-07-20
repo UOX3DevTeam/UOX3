@@ -1,9 +1,20 @@
 #include "JSEncapsulate.h"
 #include <string>
 #include "StringUtility.hpp"
-#include "jsobj.h"
-#include "jsutil.h"
+#include <js/Object.h>
 #include "SEFunctions.h"
+
+namespace
+{
+void *GetUOXPrivate( JSObject *object )
+{
+	if( object == nullptr || JSCLASS_RESERVED_SLOTS( JS::GetClass( object ) ) == 0 )
+		return nullptr;
+
+	const JS::Value &value = JS::GetReservedSlot( object, 0 );
+	return value.isUndefined() || value.isNull() ? nullptr : value.toPrivate();
+}
+}
 
 void JSEncapsulate::InternalReset( void )
 {
@@ -75,7 +86,7 @@ JSEncapsulate::JSEncapsulate( JSContext *jsCX, JSObject *jsVP ) : intVal( 0 ), f
 	InternalReset();
 	// We don't want to call Init() here, because we *know* it's an Object
 	nativeType				= JSOT_OBJECT;
-	objectVal				= ( void* )JS_GetPrivate( cx, jsVP );
+	objectVal				= GetUOXPrivate( jsVP );
 	beenParsed[JSOT_OBJECT]	= true;
 }
 
@@ -163,7 +174,7 @@ std::string JSEncapsulate::ClassName( void )
 			}
 			if( obj2 != nullptr )
 			{
-				js::Class* mClass = obj2->getClass();
+				const JSClass *mClass = JS::GetClass( obj2 );
 				rVal = oldstrutil::trim( mClass->name ); // Remove any whitespace, though I wouldn't have expected any?
 				className = rVal;	// Ensure we update the cached value for subsequent calls
 			}
@@ -271,7 +282,7 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 			}
 			break;
 		case JSOT_OBJECT:
-			objectVal	= ( void* )JS_GetPrivate( cx, JSVAL_TO_OBJECT( *vp ));
+			objectVal	= GetUOXPrivate( JSVAL_TO_OBJECT( *vp ) );
 			break;
 		default:
 		case JSOT_COUNT:

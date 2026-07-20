@@ -3,6 +3,33 @@ cmake_minimum_required(VERSION 3.18)
 project(uox3 VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 
+if(WIN32 AND NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    message(FATAL_ERROR
+        "mozjs 115 must be compiled with the ClangCL toolset. "
+        "Configure Visual Studio builds with -T ClangCL.")
+endif()
+
+if(WIN32)
+    set(MOZJS_BRIDGE_DIR "${PROJECT_SOURCE_DIR}/../../tools/mozjs-bridge")
+    execute_process(
+        COMMAND cargo build --manifest-path "${MOZJS_BRIDGE_DIR}/Cargo.toml" --release
+        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/../.."
+        RESULT_VARIABLE MOZJS_BRIDGE_RESULT
+        COMMAND_ECHO STDOUT
+    )
+    if(NOT MOZJS_BRIDGE_RESULT EQUAL 0)
+        message(FATAL_ERROR "Failed to build the pinned mozjs 115 bridge")
+    endif()
+
+    file(GLOB MOZJS_BUILD_DIRS
+        "${MOZJS_BRIDGE_DIR}/target/release/build/mozjs_sys-*/out/build")
+    list(LENGTH MOZJS_BUILD_DIRS MOZJS_BUILD_DIR_COUNT)
+    if(NOT MOZJS_BUILD_DIR_COUNT EQUAL 1)
+        message(FATAL_ERROR "Expected exactly one generated mozjs build directory")
+    endif()
+    list(GET MOZJS_BUILD_DIRS 0 MOZJS_BUILD_DIR)
+endif()
+
 # 2. Fix for modern, strict GCC compilers (like on new Ubuntu/WSL)
 #    Adds permissive flags only if using GCC greater than 10.0
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 10.0)
@@ -160,6 +187,7 @@ add_executable(uox3
    ../../source/UOXJSMethods.cpp
    ../../source/UOXJSMethods.h
    ../../source/UOXJSPropertyEnums.h
+   ../../source/UOXJSPropertyAdapters.cpp
    ../../source/UOXJSPropertyFuncs.cpp
    ../../source/UOXJSPropertyFuncs.h
    ../../source/UOXJSPropertySpecs.h
@@ -211,6 +239,8 @@ target_compile_definitions(uox3 PRIVATE
 	
 	target_compile_options( uox3 PRIVATE
 		/J
+		"/FI${MOZJS_BUILD_DIR}/js/src/js-confdefs.h"
+		/GR-
 		$<$<CONFIG:Release>:/O2>
 	)
 else()
@@ -249,7 +279,8 @@ endif(WIN32)
 target_include_directories(uox3
 	PUBLIC
 		${PROJECT_SOURCE_DIR}/../../source
-		${PROJECT_SOURCE_DIR}/../../spidermonkey/include
+		$<$<PLATFORM_ID:Windows>:${MOZJS_BUILD_DIR}/dist/include>
+		$<$<NOT:$<PLATFORM_ID:Windows>>:${PROJECT_SOURCE_DIR}/../../spidermonkey/include>
 		${PROJECT_SOURCE_DIR}/../../utf8cpp
 )
 if (NOT SYSTEM_ZLIB)
@@ -261,16 +292,20 @@ endif (NOT SYSTEM_ZLIB)
 # *************************************************************************
 # The libraries we need
 # *************************************************************************
-target_link_directories(uox3
-    PUBLIC
-		${PROJECT_SOURCE_DIR}/../../spidermonkey
-)
 target_link_libraries(uox3 PRIVATE
-	jsapi
-    jsglue
-    js_static
+	$<$<PLATFORM_ID:Windows>:${MOZJS_BRIDGE_DIR}/target/release/uox3_mozjs_bridge.lib>
+	$<$<NOT:$<PLATFORM_ID:Windows>>:jsapi>
+	$<$<NOT:$<PLATFORM_ID:Windows>>:jsglue>
+	$<$<NOT:$<PLATFORM_ID:Windows>>:js_static>
 	$<$<PLATFORM_ID:Windows>:ws2_32>
 	$<$<PLATFORM_ID:Windows>:Kernel32>
+	$<$<PLATFORM_ID:Windows>:winmm>
+	$<$<PLATFORM_ID:Windows>:psapi>
+	$<$<PLATFORM_ID:Windows>:user32>
+	$<$<PLATFORM_ID:Windows>:dbghelp>
+	$<$<PLATFORM_ID:Windows>:legacy_stdio_definitions>
+	$<$<PLATFORM_ID:Windows>:ntdll>
+	$<$<PLATFORM_ID:Windows>:userenv>
 	$<$<PLATFORM_ID:Linux>:pthread>
    $<$<PLATFORM_ID:FreeBSD>:pthread>
    $<$<AND:$<CXX_COMPILER_ID:GNU>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,9.0>>:stdc++fs>

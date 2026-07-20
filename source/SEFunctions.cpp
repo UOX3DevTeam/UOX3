@@ -65,11 +65,14 @@ void InitStringToObjType( void )
 
 std::string JS_GetStringBytes( JSContext* cx, jsval val )
 {
-	JSString* str = JS_ValueToString( cx, val );
-	char* chars = JS_EncodeString( cx, str );
-	std::string nnpcNum(chars);
-	js_free( chars );
-	return nnpcNum;
+	JS::RootedValue rootedValue( cx, val );
+	JS::RootedString str( cx, JS::ToString( cx, rootedValue ));
+	if( str == nullptr )
+	{
+		return {};
+	}
+	JS::UniqueChars chars = JS_EncodeStringToUTF8( cx, str );
+	return chars ? std::string( chars.get() ) : std::string();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4407,7 +4410,7 @@ JSBool SE_DeleteFile( JSContext *cx, uintN argc, jsval *vp )
 		if( !std::filesystem::exists( pathString ))
 		{
 			// Return JS_TRUE to allow script to continue running even if file was not found for deletion, but set return value to false
-			JS_SET_RVAL( cx, vp, false );
+			JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 			return JS_TRUE;
 		}
 
@@ -4417,7 +4420,7 @@ JSBool SE_DeleteFile( JSContext *cx, uintN argc, jsval *vp )
 	pathString.append( fileName );
 
 	std::filesystem::path filePath = pathString;
-	JS_SET_RVAL( cx, vp, std::filesystem::remove( filePath ) );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( std::filesystem::remove( filePath )));
 	return JS_TRUE;
 }
 
@@ -4519,7 +4522,7 @@ JSBool SE_GetCommandLevelVal( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 {
-	JS_SET_RVAL( cx, vp, reinterpret_cast<long>(nullptr) );
+	JS_SET_RVAL( cx, vp, JSVAL_NULL );
 	jsval* argv = JS_ARGV( cx, vp );
 
 	if( argc != 1 )

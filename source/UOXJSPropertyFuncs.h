@@ -22,67 +22,68 @@ extern std::map< std::string, int >		propLookupSkills;
 extern std::map< std::string, int >		propLookupSocket;
 extern std::map< std::string, int >		propLookupSpawnRegion;
 
-typedef bool ( JSPropertyFunc )( JSContext *cx, JSObject *obj, JS::Value id, JS::Value *vp );
+typedef bool ( JSPropertyFunc )( JSContext *cx, JSObject *obj, jsid id, JS::Value *vp );
+typedef bool ( JSPropertySetter )( JSContext *cx, JSObject *obj, jsid id, bool strict, JS::Value *vp );
 
 JSPropertyFunc CSpellsProps_getProperty;
 JSPropertyFunc CSpellProps_getProperty;
-JSPropertyFunc CSpellProps_setProperty;
+JSPropertySetter CSpellProps_setProperty;
 
 JSPropertyFunc CGlobalSkillsProps_getProperty;
 JSPropertyFunc CGlobalSkillProps_getProperty;
-JSPropertyFunc CGlobalSkillProps_setProperty;
+JSPropertySetter CGlobalSkillProps_setProperty;
 
 JSPropertyFunc CCreateEntriesProps_getProperty;
 JSPropertyFunc CCreateEntryProps_getProperty;
-JSPropertyFunc CCreateEntryProps_setProperty;
+JSPropertySetter CCreateEntryProps_setProperty;
 
 JSPropertyFunc CTimerProps_getProperty;
 
 JSPropertyFunc CItemProps_getProperty;
-JSPropertyFunc CItemProps_setProperty;
+JSPropertySetter CItemProps_setProperty;
 JSPropertyFunc CCharacterProps_getProperty;
-JSPropertyFunc CCharacterProps_setProperty;
+JSPropertySetter CCharacterProps_setProperty;
 
 JSPropertyFunc CRegionProps_getProperty;
-JSPropertyFunc CRegionProps_setProperty;
+JSPropertySetter CRegionProps_setProperty;
 
 JSPropertyFunc CSpawnRegionProps_getProperty;
-JSPropertyFunc CSpawnRegionProps_setProperty;
+JSPropertySetter CSpawnRegionProps_setProperty;
 
 JSPropertyFunc CGuildProps_getProperty;
-JSPropertyFunc CGuildProps_setProperty;
+JSPropertySetter CGuildProps_setProperty;
 JSPropertyFunc CGuildsProps_getProperty;
-JSPropertyFunc CGuildsProps_setProperty;
+JSPropertySetter CGuildsProps_setProperty;
 
 JSPropertyFunc CRaceProps_getProperty;
-JSPropertyFunc CRaceProps_setProperty;
+JSPropertySetter CRaceProps_setProperty;
 
 JSPropertyFunc CSocketProps_getProperty;
-JSPropertyFunc CSocketProps_setProperty;
+JSPropertySetter CSocketProps_setProperty;
 
 JSPropertyFunc CSkillsProps_getProperty;
-JSPropertyFunc CSkillsProps_setProperty;
+JSPropertySetter CSkillsProps_setProperty;
 
 JSPropertyFunc CGumpDataProps_getProperty;
 
 JSPropertyFunc CFileProps_getProperty;
-JSPropertyFunc CFileProps_setProperty;
+JSPropertySetter CFileProps_setProperty;
 
 JSPropertyFunc CAccountProps_getProperty;
-JSPropertyFunc CAccountProps_setProperty;
+JSPropertySetter CAccountProps_setProperty;
 
 JSPropertyFunc CConsoleProps_getProperty;
-JSPropertyFunc CConsoleProps_setProperty;
+JSPropertySetter CConsoleProps_setProperty;
 
 JSPropertyFunc CScriptSectionProps_getProperty;
-JSPropertyFunc CScriptSectionProps_setProperty;
+JSPropertySetter CScriptSectionProps_setProperty;
 
 JSPropertyFunc CScriptProps_getProperty;
 
 JSPropertyFunc CResourceProps_getProperty;
-JSPropertyFunc CResourceProps_setProperty;
+JSPropertySetter CResourceProps_setProperty;
 
 JSPropertyFunc CPartyProps_getProperty;
-JSPropertyFunc CPartyProps_setProperty;
+JSPropertySetter CPartyProps_setProperty;
 
 #endif

@@ -31,9 +31,6 @@
 #include "Dictionary.h"
 #include "cSpawnRegion.h"
 
-#include "jsobj.h"
-#include "jsutil.h"
-
 #include "PartySystem.h"
 
 void MakeShop( CChar *c );
@@ -105,14 +102,17 @@ UI16 getScriptID( JSContext *cx, jsid id, JSPrototypes section )
 	UI16 propID = 0xFFFF;
 	if( JSID_IS_STRING( id ) )
 	{
-		auto str = JSID_TO_STRING( id );
-		char* chars = JS_EncodeString( cx, str );
-		propID = GetPropByName( section, chars );
+		JS::RootedString str( cx, JSID_TO_STRING( id ));
+		JS::UniqueChars chars = JS_EncodeStringToUTF8( cx, str );
+		if( !chars )
+		{
+			return propID;
+		}
+		propID = GetPropByName( section, chars.get() );
 		/*if( propID == 0xFFFF )
 		{
 			Console.Log( oldstrutil::format( "String property '%s' found on object type %d in script %d", chars, section, JSMapping->currentActive()->GetScriptID() ), "warning.log");
 		}*/
-		js_free( chars );
 	}
 	else if( JSID_IS_INT( id ) )
 	{
@@ -434,8 +434,8 @@ JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsv
 			std::vector<ResAmountPair_st> resourcesNeeded = gPriv->resourceNeeded;
 
 			// Loop through each resource required, and add them to a JSObject
-			jsval amountNeeded = 0;
-			jsval targColour = 0;
+			jsval amountNeeded = JSVAL_VOID;
+			jsval targColour = JSVAL_VOID;
 			JSObject *resources = JS_NewArrayObject( cx, 0, nullptr );
 			for( auto i = 0; i < static_cast<int>( resourcesNeeded.size() ); i++ )
 			{
@@ -472,9 +472,9 @@ JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsv
 			std::vector<ResSkillReq_st> skillReqs = gPriv->skillReqs;
 
 			// Loop through each skill required, and add the details to a JSObject
-			jsval skillNumber = 0;
-			jsval minSkill = 0;
-			jsval maxSkill = 0;
+			jsval skillNumber = JSVAL_VOID;
+			jsval minSkill = JSVAL_VOID;
+			jsval maxSkill = JSVAL_VOID;
 			JSObject *skills = JS_NewArrayObject( cx, 0, nullptr );
 			for( auto i = 0; i < static_cast<int>( skillReqs.size() ); i++ )
 			{
@@ -4279,14 +4279,17 @@ JSBool CScriptProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *v
 	{
 		// This is trying to resolve *everything* - functions, global variables, etc
 		// We *only* care about script_id
-		JSString* str = JSID_TO_STRING( id );
-		char* chars = JS_EncodeString(cx, str);
-		std::string propID(chars);
+		JS::RootedString str( cx, JSID_TO_STRING( id ));
+		JS::UniqueChars chars = JS_EncodeStringToUTF8( cx, str );
+		if( !chars )
+		{
+			return JS_FALSE;
+		}
+		std::string propID( chars.get() );
 		if( propID == "script_id" )
 		{
 			*vp = INT_TO_JSVAL( gPriv->GetScriptID() );
 		}
-		js_free(chars);
 	}
 	return JS_TRUE;
 }

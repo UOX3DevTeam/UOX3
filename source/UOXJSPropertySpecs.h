@@ -1658,8 +1658,8 @@ inline JSPropertySpec CSkillsProps[] =
 // clang-format off
 inline JSPropertySpec CGumpDataProperties[] =
 {
-  UX_PSGS( CGumpData, buttons, JSPROP_ENUMANDPERM ),
-  UX_PSGS( CGumpData, IDs,     JSPROP_ENUMANDPERM ),
+  UX_PSG( CGumpData, buttons, JSPROP_ENUMPERMRO ),
+  UX_PSG( CGumpData, IDs,     JSPROP_ENUMPERMRO ),
   JS_PS_END
 };
 // clang-format on
@@ -1752,7 +1752,7 @@ inline JSPropertySpec CPartyProperties[] =
 // clang-format off
 inline JSPropertySpec CScriptProperties[] =
 {
-  UX_PSGS( CScript, script_id,    JSPROP_ENUMANDPERM ),
+  UX_PSG( CScript, script_id, JSPROP_ENUMPERMRO ),
   JS_PS_END
 };
 // clang-format on

@@ -199,7 +199,7 @@ static JSFunctionSpec my_functions[] =
 	JS_FS_END
 };
 
-void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *report )
+void UOX3ErrorReporter( JSContext *cx, JSErrorReport *report )
 {
 	JSErrorInfo* errorInfo = ( JSErrorInfo *)JS_GetContextPrivate( cx );
 	if( errorInfo != nullptr )
@@ -211,16 +211,7 @@ void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *repor
 			return;
 		}
 
-		if( report->linebuf != nullptr  )
-		{
-			errorInfo->lineSource = report->linebuf;
-		}
-		if( report->tokenptr != nullptr )
-		{
-			errorInfo->tokenPointer = report->tokenptr;
-		}
-
-		errorInfo->message  = message;
+		errorInfo->message  = report->message().c_str();
 		errorInfo->filename = report->filename;
 		errorInfo->lineNum  = report->lineno;
 	}
@@ -237,14 +228,6 @@ void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *repor
 
 		Console.Error( oldstrutil::format( "Filename: %s", report->filename ));
 		Console.Error( oldstrutil::format( "Line Number: %i", report->lineno ));
-  if (report->linebuf() != nullptr)
-		{
-  	Console.Error(oldstrutil::format("Erroneous Line: %s", report->linebuf()));
-		}
-		if( report->tokenptr != nullptr )
-		{
-			Console.Error( oldstrutil::format( "Token Ptr: %s", report->tokenptr ));
-		}
 	}
 }
 
@@ -258,16 +241,6 @@ std::string g_errorMessage;
 //| Notes		-	Relies on global variable g_errorMessage to pass in error message from
 //|					MethodError function.
 //o------------------------------------------------------------------------------------------------o
-const JSErrorFormatString* ScriptErrorCallback( [[maybe_unused]] void *userRef, [[maybe_unused]] const char *locale, [[maybe_unused]] const uintN errorNumber )
-{
-	// Return a pointer to a JSErrorFormatString, to the UOX3ErrorReporter function in cScript.cpp
-	static JSErrorFormatString errorFormat;
-	errorFormat.format = g_errorMessage.c_str();
-	errorFormat.argCount = 0;
-	errorFormat.exnType = JSEXN_ERR;
-	return &errorFormat;
-}
-
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	ScriptError()
 //o------------------------------------------------------------------------------------------------o
@@ -283,13 +256,7 @@ void ScriptError( JSContext *cx, const char *txt, ... )
 	g_errorMessage = oldstrutil::format( txt, argptr );
 	va_end( argptr );
 
-	// Define a custom error number. Needed, but not really used for anything
-	const uintN customErrorNumber = 1000;
-
-	// Manually trigger an error using SpiderMonkey's internal error reporting,
-	// which makes use of JSErrorFormatString from ScriptErrorCallback function
-	// to call upon UOX3ErrorReporter function in cScript.cpp
-	JS_ReportErrorNumber( cx, ScriptErrorCallback, nullptr, customErrorNumber, "" );
+	JS_ReportErrorUTF8( cx, "%s", g_errorMessage.c_str() );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -332,42 +299,60 @@ cScript::cScript( std::string targFile, UI08 rT, UI16 scrID ) : isFiring( false 
 	if( targContext == nullptr )
 		return;
 
-	auto glob = JS_GetGlobalObject( targContext );
-
-	targObject = JS_NewObject( targContext, &uox_class, glob, glob );
-	if( targObject == nullptr )
+	JS::RootedObject glob( targContext, JS::CurrentGlobalOrNull( targContext ) );
+	if( glob == nullptr )
 		return;
 
-	JS_LockGCThing( targContext, targObject );
+	JS::RootedObject newTargObject( targContext, JS_NewObject( targContext, &uox_class ) );
+	if( newTargObject == nullptr )
+		return;
+	targObject.init( targContext, newTargObject );
+	scriptObj.init( targContext );
+	targScript.init( targContext );
 
-	// Moved here so it reports errors during script-startup too
-	JS_SetErrorReporter( targContext, UOX3ErrorReporter );
-	JS_DefineFunctions( targContext, targObject, my_functions );
-	JS_SetPrivate( targContext, targObject, this );
+	JS::SetWarningReporter( targContext, UOX3ErrorReporter );
+	JS_DefineFunctions( targContext, newTargObject, my_functions );
+	JS_SetReservedSlot( newTargObject, 0, JS::PrivateValue( this ) );
 
 	// Define some global constants that can be used in any scripts
 #if defined( UOX_DEBUG_MODE )
-	JS_DefineProperty( targContext, targObject, "UOX_DEBUG_MODE", BOOLEAN_TO_JSVAL( JS_TRUE ), nullptr, nullptr, JSPROP_PERMANENT | JSPROP_READONLY );
+	JS_DefineProperty( targContext, newTargObject, "UOX_DEBUG_MODE", JS::TrueHandleValue, JSPROP_PERMANENT | JSPROP_READONLY );
 #else
-	JS_DefineProperty( targContext, targObject, "UOX_DEBUG_MODE", BOOLEAN_TO_JSVAL( JS_FALSE ), nullptr, nullptr, JSPROP_PERMANENT | JSPROP_READONLY );
+	JS_DefineProperty( targContext, newTargObject, "UOX_DEBUG_MODE", JS::FalseHandleValue, JSPROP_PERMANENT | JSPROP_READONLY );
 #endif
 
-	auto proto = JSEngine->GetPrototype( rT, JSP_SCRIPT );
-	scriptObj = JS_DefineObject( targContext, targObject, "SCRIPT", &uox_class, proto, 0 );
-	JS_LockGCThing( targContext, scriptObj );
-	JS_SetPrivate( targContext, scriptObj, this );
+	JS::RootedObject proto( targContext, JSEngine->GetPrototype( rT, JSP_SCRIPT ) );
+	JS::RootedObject newScriptObj( targContext,
+		JS_NewObjectWithGivenProto( targContext, &uox_class, proto ) );
+	if( newScriptObj == nullptr ||
+		!JS_DefineProperty( targContext, newTargObject, "SCRIPT", newScriptObj, 0 ) )
+		return;
+	scriptObj = newScriptObj;
+	JS_SetReservedSlot( newScriptObj, 0, JS::PrivateValue( this ) );
 
 
 	// Let's fetch some error details when we compile the script
 	JSErrorInfo errorDetails;
 	JS_SetContextPrivate( targContext, &errorDetails );
-	targScript = JS_CompileFile( targContext, targObject, targFile.c_str() );
+	std::ifstream scriptFile( targFile, std::ios::binary );
+	std::string scriptSource( ( std::istreambuf_iterator<char>( scriptFile ) ),
+		std::istreambuf_iterator<char>() );
+	JS::CompileOptions compileOptions( targContext );
+	compileOptions.setFileAndLine( targFile.c_str(), 1 );
+	JS::SourceText<mozilla::Utf8Unit> sourceText;
+	JS::RootedScript compiledScript( targContext );
+	if( scriptFile && sourceText.init( targContext, scriptSource.c_str(), scriptSource.size(),
+		JS::SourceOwnership::Borrowed ) )
+	{
+		compiledScript = JS::Compile( targContext, compileOptions, sourceText );
+	}
+	targScript = compiledScript;
 	JS_SetContextPrivate( targContext, nullptr );
 
 	if( targScript == nullptr )
 	{
 		std::string errorMessage, errorFile, errorLineStr, tokenPtrLine;
-		uint32 errorLine = 0;
+		uint32_t errorLine = 0;
 		UI16 scriptNum = 0xFFFF; // Script Number is unknown at this stage
 		if( !errorDetails.message.empty() )
 		{
@@ -430,8 +415,9 @@ cScript::cScript( std::string targFile, UI08 rT, UI16 scrID ) : isFiring( false 
 		throw std::runtime_error( "Error during JS Compilation" );
 	}
 
-	jsval rval;
-	JSBool ok = JS_ExecuteScript( targContext, targObject, targScript, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedScript rootedScript( targContext, targScript );
+	JSBool ok = JS_ExecuteScript( targContext, rootedScript, &rval );
 	if( ok != JS_TRUE )
 	{
 		Console << "script result: " << JS_GetStringBytes( targContext, rval ) << myendl;
@@ -447,28 +433,17 @@ void cScript::Cleanup( void )
 	}
 	gumpDisplays.resize( 0 );
 
-	JS_UnlockGCThing( targContext, targObject );
 }
 void cScript::CollectGarbage( void )
 {
 	Cleanup();
-	JS_LockGCThing( targContext, targObject );
 }
 cScript::~cScript()
 {
-	if( scriptObj != nullptr )
-	{
-		JS_UnlockGCThing( targContext, scriptObj );
-	}
-	JS_GC( targContext );
-	if( targScript != nullptr )
-	{
-		JS_DestroyScript( targContext, targScript );
-		targScript = nullptr;
-	}
 	Cleanup();
-
-	//JS_GC( targContext );
+	targScript.reset();
+	scriptObj.reset();
+	targObject.reset();
 }
 
 bool cScript::IsFiring( void )
@@ -1119,7 +1094,7 @@ std::string cScript::OnTooltip( CBaseObject *myObj, CSocket *pSocket )
 
 	// If rval is negative, it's possible some other function/method called from within Ontooltip() encountered
 	// an error. Abort attempt to turn it into a string - it might crash the server!
-	if( rval < 0 )
+	if( rval.isInt32() && rval.toInt32() < 0 )
 	{
 		Console.Error( "Handled exception in cScript.cpp OnTooltip() - invalid return value/error encountered!" );
 		return "";
@@ -1191,7 +1166,7 @@ std::string cScript::OnNameRequest( CBaseObject *myObj, CChar *nameRequester, UI
 
 		// If rval is negative, it's possible some other function/method called from within onNameRequest() encountered
 		// an error. Abort attempt to turn it into a string - it might crash the server!
-		if( rval < 0 )
+		if( rval.isInt32() && rval.toInt32() < 0 )
 		{
 			Console.Error( "Handled exception in cScript.cpp OnNameRequest() - invalid return value/error encountered!" );
 			return "";
@@ -3131,13 +3106,16 @@ void cScript::HandleGumpPress( CPIGumpMenuSelect *packet )
 	UI16 nButtons	= static_cast<UI16>( packet->SwitchCount() );
 	UI16 nText		= static_cast<UI16>( packet->TextCount() );
 
-	SEGumpData_st *segdGumpData	= new SEGumpData_st;
-	JSObject *jsoObject			= JS_NewObject( targContext, &UOXGumpData_class, nullptr, nullptr );
-	JS_DefineFunctions( targContext, jsoObject, CGumpData_Methods );
-	JS_DefineProperties( targContext, jsoObject, CGumpDataProperties );
-	JS_SetPrivate( targContext, jsoObject, segdGumpData );
-	JS_LockGCThing( targContext, jsoObject );
-	//JS_AddRoot( targContext, &jsoObject );
+	SEGumpData_st *segdGumpData = new SEGumpData_st;
+	JS::RootedObject jsoObject( targContext, JS_NewObject( targContext, &UOXGumpData_class ) );
+	if( jsoObject == nullptr ||
+		!JS_DefineFunctions( targContext, jsoObject, CGumpData_Methods ) ||
+		!JS_DefineProperties( targContext, jsoObject, CGumpDataProperties ) )
+	{
+		delete segdGumpData;
+		return;
+	}
+	JS_SetReservedSlot( jsoObject, 0, JS::PrivateValue( segdGumpData ) );
 
 	UI16 i;
 	// Loop through Buttons
@@ -3159,6 +3137,8 @@ void cScript::HandleGumpPress( CPIGumpMenuSelect *packet )
 	jsvParams[1] = INT_TO_JSVAL( button );
 	jsvParams[2] = OBJECT_TO_JSVAL( jsoObject );
 	[[maybe_unused]] JSBool retVal = InvokeEvent( "onGumpPress", 3, jsvParams, &jsvRVal );
+	JS_SetReservedSlot( jsoObject, 0, JS::UndefinedValue() );
+	delete segdGumpData;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3790,7 +3770,7 @@ std::string cScript::OnProfileRequest( CSocket *mSock, CChar *profileOwner )
 		SetEventExists( seOnProfileRequest, false );
 	}
 
-	if( rval < 0 )
+	if( rval.isInt32() && rval.toInt32() < 0 )
 	{
 		Console.Error( "Handled exception in cScript.cpp OnProfileRequest() - invalid return value/error encountered!" );
 		return "";

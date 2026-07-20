@@ -8,26 +8,9 @@
 #ifndef __UOXJSClasses__
 #define __UOXJSClasses__
 #include "UOXJSPropertyFuncs.h"
-#include "cChar.h"  // Ensure you include the header for CChar
 #include <js/TypeDecls.h>  // Ensure proper definitions for JSFreeOp and JSObject
 #include <jsapi.h>  // Make sure you include this for SpiderMonkey APIs
 
-
-// Correct signature for JSFinalizeOp
-void UOXClassFinalize(JS::GCContext* gcx, JSObject* obj)
-{
-    // Use JS::GetReservedSlot to retrieve the reserved slot data (index 0)
-    JS::Value privateValue = JS::GetReservedSlot(obj, 0);  
-    CChar* privateData = static_cast<CChar*>(privateValue.toPrivate());  // Convert to private data
-
-    if (privateData != nullptr)
-    {
-        delete privateData;  // Clean up memory
-        JS::SetReservedSlot(obj, 0, JS::NullValue());  // Clear the reserved slot to prevent issues
-    }
-}
-
-// Class operations with finalize
 static constexpr JSClassOps classOpsWithFinalize = {
     nullptr,  // addProperty
     nullptr,  // deleteProperty
@@ -35,7 +18,7 @@ static constexpr JSClassOps classOpsWithFinalize = {
     nullptr,  // newEnumerate
     nullptr,  // resolve
     nullptr,  // mayResolve
-    UOXClassFinalize,  // finalize
+    nullptr,  // finalize; reserved slots point to engine-owned UOX3 objects
     nullptr,  // call
     nullptr,  // construct
     nullptr   // trace
@@ -51,21 +34,21 @@ inline JSClass global_class =
 inline JSClass uox_class =
 {
 	"uoxscript",
-	0,
+	JSCLASS_HAS_RESERVED_SLOTS(2),
 	&classOpsWithFinalize 
 };
 
 inline JSClass UOXSpell_class =
 {
 	"UOXSpell",
-  JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 
 inline JSClass UOXSpells_class =
 {
 	"UOXSpells",
-  JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 // CSpellsProps_getProperty,
@@ -73,14 +56,14 @@ inline JSClass UOXSpells_class =
 inline JSClass UOXGlobalSkill_class =
 {
 	"UOXGlobalSkill",
-  JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 
 inline  JSClass UOXGlobalSkills_class =
 {
 	"UOXGlobalSkills",
-  JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 //	CGlobalSkillsProps_getProperty,
@@ -88,7 +71,7 @@ inline  JSClass UOXGlobalSkills_class =
 inline JSClass UOXCreateEntry_class =
 {
 	"UOXCreateEntry",
-  JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 //	CCreateEntryProps_getProperty,
@@ -97,7 +80,7 @@ inline JSClass UOXCreateEntry_class =
 inline JSClass UOXCreateEntries_class =
 {
 	"UOXCreateEntries",
-  JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 //	CCreateEntriesProps_getProperty,
@@ -105,14 +88,14 @@ inline JSClass UOXCreateEntries_class =
 inline JSClass UOXTimer_class =
 {
 	"UOXTimer",
-  JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 
 inline JSClass UOXChar_class =
 {
 	"UOXChar",
-	JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 // CCharacterProps_getProperty,
@@ -122,7 +105,7 @@ inline JSClass UOXChar_class =
 inline JSClass UOXItem_class =
 {
 	"UOXItem",
-  JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 // CItemProps_getProperty,
@@ -137,7 +120,7 @@ inline JSClass UOXItem_class =
 inline JSClass UOXSkills_class =
 {
 	"UOXSkills",
-  JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 //	CSkillsProps_getProperty,
@@ -146,7 +129,7 @@ inline JSClass UOXSkills_class =
 inline JSClass UOXBaseSkills_class =
 {
 	"UOXBaseSkills",
-  JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 //	CSkillsProps_getProperty,
@@ -155,7 +138,7 @@ inline JSClass UOXBaseSkills_class =
 inline JSClass UOXSkillsUsed_class =
 {
 	"UOXSkillsUsed",
-  JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 //	CSkillsProps_getProperty,
@@ -164,21 +147,21 @@ inline JSClass UOXSkillsUsed_class =
 inline JSClass UOXSkillsLock_class =
 {
 	"UOXSkillsLock",
-  JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 
 inline JSClass UOXSkillsCap_class =
 {
   "UOXSkillsCap",
-  JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 
 inline JSClass UOXRace_class =
 {
 	"UOXRace",
-  JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 //	CRaceProps_setProperty,
@@ -186,7 +169,7 @@ inline JSClass UOXRace_class =
 inline JSClass UOXGuild_class =
 {
 	"UOXGuild",
-  JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 //	CGuildProps_getProperty,
@@ -195,7 +178,7 @@ inline JSClass UOXGuild_class =
 inline JSClass UOXRegion_class =
 {
 	"UOXRegion",
-  JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 //	CRegionProps_getProperty,
@@ -204,7 +187,7 @@ inline JSClass UOXRegion_class =
 inline JSClass UOXSpawnRegion_class =
 {
 	"UOXSpawnRegion",
-  JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 //	CSpawnRegionProps_getProperty,
@@ -213,7 +196,7 @@ inline JSClass UOXSpawnRegion_class =
 inline JSClass UOXSocket_class =
 {
 	"UOXSocket",
-  JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 //		CSocketProps_getProperty,
@@ -223,14 +206,14 @@ inline JSClass UOXSocket_class =
 inline JSClass UOXFile_class =
 {
 	"UOXCFile",
-  JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 
 inline JSClass UOXGump_class =
 {
 	"Gump",
-  JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 
@@ -241,7 +224,7 @@ inline JSClass UOXGump_class =
 inline JSClass UOXGumpData_class =
 {
 	"GumpData",
-  JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 //	CGumpDataProps_getProperty,
@@ -249,7 +232,7 @@ inline JSClass UOXGumpData_class =
 inline JSClass UOXAccount_class =
 {
 	"CAccountClass",
-  JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 //	CAccountProps_getProperty,
@@ -258,7 +241,7 @@ inline JSClass UOXAccount_class =
 inline JSClass UOXConsole_class =
 {
 	"CConsoleClass",
-  JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 //	CConsoleProps_setProperty,
@@ -266,7 +249,7 @@ inline JSClass UOXConsole_class =
 inline JSClass UOXResource_class =
 {
 	"UOXResource",
-  JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 //	CResourceProps_getProperty,
@@ -275,14 +258,14 @@ inline JSClass UOXResource_class =
 inline JSClass UOXPacket_class =
 {
 	"Packet",
-  JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 
 inline JSClass UOXParty_class =
 {
 	"UOXParty",
-	JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
 //		CPartyProps_getProperty,

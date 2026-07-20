@@ -24,7 +24,7 @@
 
 CJSEngine *JSEngine = nullptr;
 
-void UOX3ErrorReporter(JSContext* cx, JSErrorReport* report)
+void UOX3EngineWarningReporter(JSContext* cx, JSErrorReport* report)
 {
 	if (report->isWarning())
 	{
@@ -195,7 +195,7 @@ CJSRuntime::CJSRuntime( UI32 engineSize )
 
 	InitializePrototypes();
 
-	JS::SetWarningReporter( jsContext, UOX3ErrorReporter );
+	JS::SetWarningReporter( jsContext, UOX3EngineWarningReporter );
 }
 CJSRuntime::~CJSRuntime( void )
 {
@@ -214,7 +214,7 @@ void CJSRuntime::Cleanup( void )
 		JSOBJECTMAP& ourList = ( *oIter );
 		for( JSOBJECTMAP_ITERATOR lIter = ourList.begin(); lIter != ourList.end(); ++lIter )
 		{
-			JS::SetReservedSlot( ( *lIter ).second, 0, JS::UndefinedValue() );
+			JS_SetReservedSlot( ( *lIter ).second, 0, JS::UndefinedValue() );
 		}
 		ourList.clear();
 	}
@@ -241,9 +241,9 @@ void setupMap( std::map< std::string, int >& lkpMap, const JSPropertySpec lkpPro
 	lkpMap.clear();
 	for( int i = 0; i < countOfProps; ++i )
 	{
-		if( lkpProps[i].name != nullptr)
+		if( lkpProps[i].name && lkpProps[i].name.isString() )
 		{
-			lkpMap[lkpProps[i].name] = lkpProps[i].tinyid;
+			lkpMap[lkpProps[i].name.string()] = i;
 		}
 	}
 }
@@ -340,7 +340,7 @@ JSObject *CJSRuntime::AcquireObject( IUEEntries iType, void *index )
 			if( retVal != nullptr )
 			{
 				objectList[iType][index] = retVal;
-				JS::SetReservedSlot( retVal, 0, JS::PrivateValue( index ) );
+				JS_SetReservedSlot( retVal, 0, JS::PrivateValue( index ) );
 			}
 		}
 	}
@@ -353,7 +353,7 @@ void CJSRuntime::ReleaseObject( IUEEntries iType, void *index )
 	{
 		JSObject *toRelease = ( *toSearch ).second;
 		// TODO: Unroot it
-		JS::SetReservedSlot( toRelease, 0, JS::UndefinedValue() );
+		JS_SetReservedSlot( toRelease, 0, JS::UndefinedValue() );
 		objectList[iType].erase( toSearch );
 	}
 }

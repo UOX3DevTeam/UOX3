@@ -1786,7 +1786,7 @@ bool CGump_AddXMFHTMLTok( JSContext *cx, unsigned argc, JS::Value* vp )
 	SI32 iBrd	= ( hasBorder ? 1 : 0 );
 	SI32 iScrl	= ( hasScrollbar ? 1 : 0 );
 
-	gList->one->push_back( oldstrutil::format( "xmfhtmltok %i %i %i %i %i %i %i %i @%s@", x, y, width, height, iBrd, iScrl, rgbColour, number, fullArgs ));
+	gList->one->push_back( oldstrutil::format( "xmfhtmltok %i %i %i %i %i %i %i %i @%s@", x, y, width, height, iBrd, iScrl, rgbColour, number, fullArgs.c_str() ));
 
 	return true;
 }
@@ -4962,7 +4962,7 @@ bool CMisc_PopUpTarget( JSContext *cx, unsigned argc, JS::Value* vp )
 	std::string toSay;
 	if( argc == 2 )
 	{
-		toSay = oldstrutil::format( 512, "%s", JS_GetStringBytes( cx, argv[1]));
+		toSay = oldstrutil::format( 512, "%s", JS_GetStringBytes( cx, argv[1]).c_str() );
 	}
 
 	mySock->SendTargetCursor( 0, tNum, toSay );
@@ -7937,7 +7937,7 @@ bool CFile_ReadUntil( JSContext *cx, unsigned argc, JS::Value* vp )
 			case '\'': until[0] = '\''; break;
 			case '\"': until[0] = '\"'; break;
 			case 'n':  until[0] = '\n'; break;
-			default: ScriptError( cx, "ReadUntil: Unsupported character escape sequence %s", until );	break;
+			default: ScriptError( cx, "ReadUntil: Unsupported character escape sequence %s", until.c_str() );	break;
 		}
 	}
 
