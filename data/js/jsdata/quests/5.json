@@ -1,0 +1,27 @@
+{
+  "questID": 5,
+  "title": "Battered Bucklers",
+  "description": "Hey there! Yeah... you! Ya' any good with a hammer? Tell ya what, if yer thinking about tryin' some metal work, and have a bit of skill, I can show ya how to bend it into shape.Just get some of those ingots there, and grab a hammer and use it over here at this forge.I need a few more bucklers hammered out to fill this here order with...hmmm about ten more.that'll give some taste of how to work the metal.",
+  "uncomplete": "Come On! Whats that... a bucket? We need ten bucklers... not spitoons.",
+  "complete": "Thanks for the help. Here's something for ya to remember me by.",
+  "refuse": "Not enough muscle on yer bones to use it? hmph, probably afraid of the sparks markin' up yer loverly skin... togood for some honest labor...ha!...off with ya!",
+  "type": "collect",
+  "category": "Side Quests",
+  "oneTimeQuest": 1,
+  "questTurnIn": 1,
+  "targetItems": [
+    {
+      "sectionID": "Buckler",
+      "amount": 10,
+      "name": "Buckler"
+    }
+  ],
+  "rewards": [
+    {
+      "type": "item",
+      "sectionID": "smithssatchel",
+      "amount": 1,
+      "name": "Craftsman's Satchel"
+    }
+  ]
+}

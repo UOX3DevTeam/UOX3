@@ -1,3 +1,27 @@
+21/06/2026 - DragonSlayer62 (#537)
+    [ADD] Extended Player Vendor AI functionality through new js/npc/ai/playervendor.js script
+    [ADD] Added new vendorGoldHeld character property to track gold earned from player vendor sales separately from deposited vendor funds.
+    [ADD] Added Character JS property .vendorGoldHeld to track gold earned from player vendor sales separately from deposited vendor funds
+    [ADD] Added support for player vendor bank accounts, gold collection, gold deposits, and bank flush operations.
+    [ADD] Added automatic upkeep calculations with configurable charge periods and item-based fees.
+    [ADD] Added support for player vendors returning items, gold, and deeds to owners when dismissed or removed due to lack of funds.
+    [ADD] Added player vendor appearance customization, clothing customization, and vendor renaming options.
+
+21/06/2026 - Xoduz (#548)
+    [FIX] Fixed an issue where settings in ADD-menu were not appearing correctly for client versions below 7.0.30.x
+    [FIX] Fixed an issue where images in ADD-menu were not appearing correctly for client versions below 7.0.30.x
+
+08/05/2026 - DragonSlayer62 (#546)
+    [ADD] Added Publish 123 weapons and armors to GetWeaponType in combat.cpp and js/server/data/weapontypes.js, and to material list in js/server/data/material_types.js
+    [UPD] Added TypeScript validation hints for item material lookup functions (js/server/data/material_types.js)
+    [FIX] Fixed ground material lookup to use the correct map tile list variable (js/server/data/material_types.js)
+
+02/05/2026 - DragonSlayer62 (#543)
+    [ADD] Added the first 8 new player quest givers, including their quest JSON files and NPC definitions.
+    [ADD] Added quest reward items for the new player quests, including crafting satchels, Jacob's Pickaxe, and the Clasp of Concentration.
+    [ADD] Added item and NPC add-menu entries for the new quest givers and quest rewards.
+    [UPD] Updated quest JSON loading to better handle sanitized quest files and quoted quest text.
+
 29/04/2026 - DragonSlayer62 (#527)
     [ADD] Added flexible quest system in JS that can be used to setup a variety of player quests, accessible to players via context menus and conversational gumps on NPCs (scripts in /js/server/quest/)
     [ADD] Added new settings in new [quests] section of uox.ini:

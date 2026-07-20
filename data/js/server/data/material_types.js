@@ -36,6 +36,11 @@ const itemTileIDList = [
 		//New ToL Weapons
 		0xaea4, 0xaea5, 0xaeb3, 0xaeb4, 0xaec2, 0xaec3, 0xaed1, 0xaed2,
 
+		// Publish 123 Weapons
+		0xB4BF, 0xB4C0, 0xB4C1, 0xB4C2, 0xB4C3, 0xB4C4, 0xB4C5, 0xB4C6, 0xB4C7, 0xB4C8, 0xB4C9,
+		0xB4CA, 0xB4CB, 0xB4CC, 0xB4CD, 0xB4CE, 0xB4D4, 0xB4D5, 0xB4D6, 0xB4D7, 0xB4DA, 0xB4DB,
+		0xB4DC, 0xB4DD, 0xB4DE, 0xB4DF, 0xB4E0, 0xB4E1,
+
 		// Armor
 		0x13bb, 0x13be, 0x13bf, 0x13c0, 0x13c3, 0x13c4, 0x13eb, 0x13ec, 0x13ed, 0x13ee, 0x13ef,
 		0x13f0, 0x13f1, 0x13f2, 0x1408, 0x1409, 0x140a, 0x140b, 0x140c, 0x140d, 0x140e, 0x140f,
@@ -53,6 +58,9 @@ const itemTileIDList = [
 		0xaeb0, 0xaeb1, 0xaeb7, 0xaeb8, 0xaeb9, 0xaeba, 0xaebb, 0xaebc, 0xaebd, 0xaebe,
 		0xaebf, 0xaec0, 0xaec6, 0xaec7, 0xaec8, 0xaec9, 0xaeca, 0xaecb, 0xaecc, 0xaecd,
 		0xaece, 0xaecf, 0xaed5, 0xaed6, 0xaed7, 0xaed8, 0xaed9, 0xaeda, 0xaedb,
+
+		// Publish 123 Armors
+		0xB4E2, 0xB4E3,
 
 		// Shields
 		0x1b72, 0x1b73, 0x1b74, 0x1b75, 0x1b76, 0x1b77, 0x1b7b, 0x2b01, 0x4201, 0x4202, 0x4203,
@@ -132,6 +140,9 @@ const itemTileIDList = [
 		0xa700, 0xa701, 0xa702, 0xa703, 0xb2b7, 0xb2b8, 0xb2b9, 0xb2ba, 0xb298, 0xb299, 0xb29a, 0xb29b, 0xb29c, 0xb29d, 0xaea3,
 		0xaeb2, 0xaec1, 0xaed0, 0xb1de,
 
+		// Publish 123 Clothing
+		0xB40A,
+
 		// Armor
 		0x2794, 0x2797, 0x2798, 0x405f, 0x4060, 0x4061, 0x4062, 0x4063, 0x4064, 0x4065, 0x4066
 	]],
@@ -166,9 +177,11 @@ const itemTileIDList = [
 	]]
 ];
 
+/** @type { ( itemToCheck: Item | null, idToCheck?: number ) => string | number | boolean } */
 function GetItemMaterialType( itemToCheck, idToCheck )
 {
 	var itemTileID = 0;
+
 	if( ValidateObject( itemToCheck ))
 	{
 		// Return custom material from item tag, if it exists
@@ -176,7 +189,6 @@ function GetItemMaterialType( itemToCheck, idToCheck )
 		{
 			return itemToCheck.GetTag( "materialType" );
 		}
-
 		// Otherwise return material based on item's ID
 		itemTileID = itemToCheck.id;
 	}
@@ -232,6 +244,7 @@ const resourceTileIDList = [
 	]]*/
 ];
 
+/** @type { ( idToCheck: number ) => string } */
 function GetResourceType( idToCheck )
 {
 	for( var i = 0; i < resourceTileIDList.length; i++ )
@@ -250,13 +263,14 @@ function GetResourceType( idToCheck )
 const mapTileIDList = [
 ];
 
+/** @type { ( mapTileID: number ) => string } */
 function GetGroundMaterialType( mapTileID )
 {
-	for( var i = 0; i < mapTileIDListList.length; i++ )
+	for( var i = 0; i < mapTileIDList.length; i++ )
 	{
 		for( var j = 0; j < mapTileIDListList[i].length; j++ )
 		{
-			if( mapTileIDListList[i][j].indexOf( mapTileID ) > -1 )
+			if( mapTileIDList[i][j].indexOf( mapTileID ) > -1 )
 			{
 				return mapTileIDListList[i][0];
 			}

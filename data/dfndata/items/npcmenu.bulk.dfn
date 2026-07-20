@@ -959,6 +959,38 @@ NPC=halloweenboneaxeman
 ITEMMENU=5024
 }
 
+[ITEMMENU 5027]
+{
+Quest Givers
+<=New Player Quest Givers
+ITEMMENU=5028
+<=Previous Menu
+ITEMMENU=5003
+}
+
+[ITEMMENU 5028]
+{
+Quest Givers
+0x2106=Mugg the Miner
+NPC=mugg
+0x2107=Clairesse the Servant
+NPC=clairesse
+0x2106=Asandos the Chef
+NPC=asandos
+0x2106=Hargrove the Lumberjack
+NPC=hargrove
+0x2106=Gervis the Blacksmith Trainer
+NPC=gervis
+0x2106=Nibbet the Tinker
+NPC=nibbet
+0x2106=Jacob Waltzt the Miner Instructor
+NPC=jacob
+0x2106=Sarsmea Smythe the Focus Instructor
+NPC=sarsmea
+<=Previous Menu
+ITEMMENU=5024
+}
+
 [ITEMMENU 5026]
 {
 Christmas
