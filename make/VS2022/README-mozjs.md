@@ -10,8 +10,10 @@ Install these prerequisites:
 From PowerShell in the repository root, run:
 
 ```powershell
-.\make\VS2022\generate-cmake-solution.ps1
+.\make\VS2022\generate-cmake-solution.cmd
 ```
+
+The `.cmd` launcher works even when PowerShell script execution is disabled.
 
 The script generates and opens `build-vs2022\uox3.sln`. Build the `uox3`
 project using `Debug`, `Release`, or `RelWithDebInfo` and the `x64` platform.
