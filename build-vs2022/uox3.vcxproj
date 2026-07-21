@@ -106,12 +106,10 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      </DebugInformationFormat>
       <AdditionalIncludeDirectories>..\make\cmake\..\source;..\make\cmake\..\tools\mozjs-bridge\target\release\build\mozjs_sys-95fa614e6cedf33f\out\build\dist\include;..\make\cmake\..\utf8cpp;..\make\cmake\..\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /J</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <DebugInformationFormat>
       <ExceptionHandling>Sync</ExceptionHandling>
       <ForcedIncludeFiles>../make/cmake/../../tools/mozjs-bridge/target/release/build/mozjs_sys-95fa614e6cedf33f/out/build/js/src/js-confdefs.h</ForcedIncludeFiles>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>

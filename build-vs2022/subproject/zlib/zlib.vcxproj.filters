@@ -1,89 +1,89 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="E:\GitHub\UOX3\zlib\adler32.c">
+    <ClCompile Include="..\zlib\adler32.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\zlib\compress.c">
+    <ClCompile Include="..\zlib\compress.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\zlib\crc32.c">
+    <ClCompile Include="..\zlib\crc32.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\zlib\deflate.c">
+    <ClCompile Include="..\zlib\deflate.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\zlib\gzclose.c">
+    <ClCompile Include="..\zlib\gzclose.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\zlib\gzlib.c">
+    <ClCompile Include="..\zlib\gzlib.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\zlib\gzread.c">
+    <ClCompile Include="..\zlib\gzread.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\zlib\gzwrite.c">
+    <ClCompile Include="..\zlib\gzwrite.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\zlib\infback.c">
+    <ClCompile Include="..\zlib\infback.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\zlib\inffast.c">
+    <ClCompile Include="..\zlib\inffast.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\zlib\inflate.c">
+    <ClCompile Include="..\zlib\inflate.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\zlib\inftrees.c">
+    <ClCompile Include="..\zlib\inftrees.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\zlib\trees.c">
+    <ClCompile Include="..\zlib\trees.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\zlib\uncompr.c">
+    <ClCompile Include="..\zlib\uncompr.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\zlib\zutil.c">
+    <ClCompile Include="..\zlib\zutil.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="E:\GitHub\UOX3\zlib\crc32.h">
+    <ClInclude Include="..\zlib\crc32.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\zlib\deflate.h">
+    <ClInclude Include="..\zlib\deflate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\zlib\gzguts.h">
+    <ClInclude Include="..\zlib\gzguts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\zlib\inffast.h">
+    <ClInclude Include="..\zlib\inffast.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\zlib\inffixed.h">
+    <ClInclude Include="..\zlib\inffixed.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\zlib\inflate.h">
+    <ClInclude Include="..\zlib\inflate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\zlib\inftrees.h">
+    <ClInclude Include="..\zlib\inftrees.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\zlib\trees.h">
+    <ClInclude Include="..\zlib\trees.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\zlib\zconf.h">
+    <ClInclude Include="..\zlib\zconf.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\zlib\zlib.h">
+    <ClInclude Include="..\zlib\zlib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\zlib\zutil.h">
+    <ClInclude Include="..\zlib\zutil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="E:\GitHub\UOX3\zlib\make\cmake\CMakeLists.txt" />
+    <CustomBuild Include="..\zlib\make\cmake\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">

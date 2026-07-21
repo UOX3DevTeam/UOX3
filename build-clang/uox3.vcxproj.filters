@@ -1,482 +1,482 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="E:\GitHub\UOX3\source\uox3.cpp">
+    <ClCompile Include="..\source\uox3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\cServerData.cpp">
+    <ClCompile Include="..\source\cServerData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\cServerDefinitions.cpp">
+    <ClCompile Include="..\source\cServerDefinitions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\Dictionary.cpp">
+    <ClCompile Include="..\source\Dictionary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\scriptc.cpp">
+    <ClCompile Include="..\source\scriptc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\ssection.cpp">
+    <ClCompile Include="..\source\ssection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\boats.cpp">
+    <ClCompile Include="..\source\boats.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\cBaseObject.cpp">
+    <ClCompile Include="..\source\cBaseObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\cChar.cpp">
+    <ClCompile Include="..\source\cChar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\cConsole.cpp">
+    <ClCompile Include="..\source\cConsole.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\cGuild.cpp">
+    <ClCompile Include="..\source\cGuild.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\cItem.cpp">
+    <ClCompile Include="..\source\cItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\cMultiObj.cpp">
+    <ClCompile Include="..\source\cMultiObj.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\cSocket.cpp">
+    <ClCompile Include="..\source\cSocket.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\cSpawnRegion.cpp">
+    <ClCompile Include="..\source\cSpawnRegion.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\cThreadQueue.cpp">
+    <ClCompile Include="..\source\cThreadQueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\ObjectFactory.cpp">
+    <ClCompile Include="..\source\ObjectFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\books.cpp">
+    <ClCompile Include="..\source\books.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\cAccountClass.cpp">
+    <ClCompile Include="..\source\cAccountClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\CGump.cpp">
+    <ClCompile Include="..\source\CGump.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\cHTMLSystem.cpp">
+    <ClCompile Include="..\source\cHTMLSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\combat.cpp">
+    <ClCompile Include="..\source\combat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\commands.cpp">
+    <ClCompile Include="..\source\commands.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\cRaces.cpp">
+    <ClCompile Include="..\source\cRaces.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\cWeather.cpp">
+    <ClCompile Include="..\source\cWeather.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\gumps.cpp">
+    <ClCompile Include="..\source\gumps.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\house.cpp">
+    <ClCompile Include="..\source\house.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\items.cpp">
+    <ClCompile Include="..\source\items.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\jail.cpp">
+    <ClCompile Include="..\source\jail.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\lineofsight.cpp">
+    <ClCompile Include="..\source\lineofsight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\magic.cpp">
+    <ClCompile Include="..\source\magic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\movement.cpp">
+    <ClCompile Include="..\source\movement.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\msgboard.cpp">
+    <ClCompile Include="..\source\msgboard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\PartySystem.cpp">
+    <ClCompile Include="..\source\PartySystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\quantityfuncs.cpp">
+    <ClCompile Include="..\source\quantityfuncs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\queue.cpp">
+    <ClCompile Include="..\source\queue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\regions.cpp">
+    <ClCompile Include="..\source\regions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\skills.cpp">
+    <ClCompile Include="..\source\skills.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\sound.cpp">
+    <ClCompile Include="..\source\sound.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\speech.cpp">
+    <ClCompile Include="..\source\speech.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\targeting.cpp">
+    <ClCompile Include="..\source\targeting.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\townregion.cpp">
+    <ClCompile Include="..\source\townregion.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\trade.cpp">
+    <ClCompile Include="..\source\trade.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\vendor.cpp">
+    <ClCompile Include="..\source\vendor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\weight.cpp">
+    <ClCompile Include="..\source\weight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\wholist.cpp">
+    <ClCompile Include="..\source\wholist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\worldmain.cpp">
+    <ClCompile Include="..\source\worldmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\ai.cpp">
+    <ClCompile Include="..\source\ai.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\archive.cpp">
+    <ClCompile Include="..\source\archive.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\calcfuncs.cpp">
+    <ClCompile Include="..\source\calcfuncs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\cDice.cpp">
+    <ClCompile Include="..\source\cDice.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\cmdtable.cpp">
+    <ClCompile Include="..\source\cmdtable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\cPlayerAction.cpp">
+    <ClCompile Include="..\source\cPlayerAction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\CResponse.cpp">
+    <ClCompile Include="..\source\CResponse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\cVersionClass.cpp">
+    <ClCompile Include="..\source\cVersionClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\dist.cpp">
+    <ClCompile Include="..\source\dist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\effect.cpp">
+    <ClCompile Include="..\source\effect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\fileio.cpp">
+    <ClCompile Include="..\source\fileio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\findfuncs.cpp">
+    <ClCompile Include="..\source\findfuncs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\npcs.cpp">
+    <ClCompile Include="..\source\npcs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\osunique.cpp">
+    <ClCompile Include="..\source\osunique.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\pcmanage.cpp">
+    <ClCompile Include="..\source\pcmanage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\CJSEngine.cpp">
+    <ClCompile Include="..\source\CJSEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\CJSMapping.cpp">
+    <ClCompile Include="..\source\CJSMapping.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\cScript.cpp">
+    <ClCompile Include="..\source\cScript.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\JSEncapsulate.cpp">
+    <ClCompile Include="..\source\JSEncapsulate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\SEFunctions.cpp">
+    <ClCompile Include="..\source\SEFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\UOXJSMethods.cpp">
+    <ClCompile Include="..\source\UOXJSMethods.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\UOXJSPropertyFuncs.cpp">
+    <ClCompile Include="..\source\UOXJSPropertyFuncs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\CPacketReceive.cpp">
+    <ClCompile Include="..\source\CPacketReceive.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\CPacketSend.cpp">
+    <ClCompile Include="..\source\CPacketSend.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\network.cpp">
+    <ClCompile Include="..\source\network.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\IP4Address.cpp">
+    <ClCompile Include="..\source\IP4Address.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\StringUtility.cpp">
+    <ClCompile Include="..\source\StringUtility.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\TimeUtility.cpp">
+    <ClCompile Include="..\source\TimeUtility.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\EventTimer.cpp">
+    <ClCompile Include="..\source\EventTimer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\mapstuff.cpp">
+    <ClCompile Include="..\source\mapstuff.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\MultiMul.cpp">
+    <ClCompile Include="..\source\MultiMul.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\GitHub\UOX3\source\UOPData.cpp">
+    <ClCompile Include="..\source\UOPData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="E:\GitHub\UOX3\source\uox3.h">
+    <ClInclude Include="..\source\uox3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\cServerData.h">
+    <ClInclude Include="..\source\cServerData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\cServerDefinitions.h">
+    <ClInclude Include="..\source\cServerDefinitions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\Dictionary.h">
+    <ClInclude Include="..\source\Dictionary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\scriptc.h">
+    <ClInclude Include="..\source\scriptc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\ssection.h">
+    <ClInclude Include="..\source\ssection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\cBaseObject.h">
+    <ClInclude Include="..\source\cBaseObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\cChar.h">
+    <ClInclude Include="..\source\cChar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\cConsole.h">
+    <ClInclude Include="..\source\cConsole.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\cGuild.h">
+    <ClInclude Include="..\source\cGuild.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\cItem.h">
+    <ClInclude Include="..\source\cItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\cMultiObj.h">
+    <ClInclude Include="..\source\cMultiObj.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\cSocket.h">
+    <ClInclude Include="..\source\cSocket.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\cSpawnRegion.h">
+    <ClInclude Include="..\source\cSpawnRegion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\cThreadQueue.h">
+    <ClInclude Include="..\source\cThreadQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\funcdecl.h">
+    <ClInclude Include="..\source\funcdecl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\ObjectFactory.h">
+    <ClInclude Include="..\source\ObjectFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\PageVector.h">
+    <ClInclude Include="..\source\PageVector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\uoxstruct.h">
+    <ClInclude Include="..\source\uoxstruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\books.h">
+    <ClInclude Include="..\source\books.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\cAccountClass.h">
+    <ClInclude Include="..\source\cAccountClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\cEffects.h">
+    <ClInclude Include="..\source\cEffects.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\CGump.h">
+    <ClInclude Include="..\source\CGump.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\cHTMLSystem.h">
+    <ClInclude Include="..\source\cHTMLSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\cMagic.h">
+    <ClInclude Include="..\source\cMagic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\combat.h">
+    <ClInclude Include="..\source\combat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\commands.h">
+    <ClInclude Include="..\source\commands.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\cRaces.h">
+    <ClInclude Include="..\source\cRaces.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\cWeather.hpp">
+    <ClInclude Include="..\source\cWeather.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\jail.h">
+    <ClInclude Include="..\source\jail.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\magic.h">
+    <ClInclude Include="..\source\magic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\movement.h">
+    <ClInclude Include="..\source\movement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\msgboard.h">
+    <ClInclude Include="..\source\msgboard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\PartySystem.h">
+    <ClInclude Include="..\source\PartySystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\regions.h">
+    <ClInclude Include="..\source\regions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\skills.h">
+    <ClInclude Include="..\source\skills.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\speech.h">
+    <ClInclude Include="..\source\speech.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\teffect.h">
+    <ClInclude Include="..\source\teffect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\townregion.h">
+    <ClInclude Include="..\source\townregion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\weight.h">
+    <ClInclude Include="..\source\weight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\wholist.h">
+    <ClInclude Include="..\source\wholist.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\worldmain.h">
+    <ClInclude Include="..\source\worldmain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\cdice.h">
+    <ClInclude Include="..\source\cdice.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\classes.h">
+    <ClInclude Include="..\source\classes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\cmdtable.h">
+    <ClInclude Include="..\source\cmdtable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\ConfigOS.h">
+    <ClInclude Include="..\source\ConfigOS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\CResponse.h">
+    <ClInclude Include="..\source\CResponse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\cSkillClass.h">
+    <ClInclude Include="..\source\cSkillClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\cVersionClass.h">
+    <ClInclude Include="..\source\cVersionClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\enums.h">
+    <ClInclude Include="..\source\enums.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\GenericList.h">
+    <ClInclude Include="..\source\GenericList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\osunique.hpp">
+    <ClInclude Include="..\source\osunique.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\power.h">
+    <ClInclude Include="..\source\power.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\Prerequisites.h">
+    <ClInclude Include="..\source\Prerequisites.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\typedefs.h">
+    <ClInclude Include="..\source\typedefs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\UOXStdHeaders.h">
+    <ClInclude Include="..\source\UOXStdHeaders.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\CJSEngine.h">
+    <ClInclude Include="..\source\CJSEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\CJSMapping.h">
+    <ClInclude Include="..\source\CJSMapping.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\cScript.h">
+    <ClInclude Include="..\source\cScript.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\JSEncapsulate.h">
+    <ClInclude Include="..\source\JSEncapsulate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\SEFunctions.h">
+    <ClInclude Include="..\source\SEFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\UOXJSClasses.h">
+    <ClInclude Include="..\source\UOXJSClasses.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\UOXJSMethods.h">
+    <ClInclude Include="..\source\UOXJSMethods.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\UOXJSPropertyEnums.h">
+    <ClInclude Include="..\source\UOXJSPropertyEnums.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\UOXJSPropertyFuncs.h">
+    <ClInclude Include="..\source\UOXJSPropertyFuncs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\UOXJSPropertySpecs.h">
+    <ClInclude Include="..\source\UOXJSPropertySpecs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\CPacketReceive.h">
+    <ClInclude Include="..\source\CPacketReceive.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\CPacketSend.h">
+    <ClInclude Include="..\source\CPacketSend.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\network.h">
+    <ClInclude Include="..\source\network.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\IP4Address.hpp">
+    <ClInclude Include="..\source\IP4Address.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\StringUtility.hpp">
+    <ClInclude Include="..\source\StringUtility.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\TimeUtility.hpp">
+    <ClInclude Include="..\source\TimeUtility.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\EventTimer.hpp">
+    <ClInclude Include="..\source\EventTimer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\mapclasses.h">
+    <ClInclude Include="..\source\mapclasses.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\mapstuff.h">
+    <ClInclude Include="..\source\mapstuff.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\MultiMul.hpp">
+    <ClInclude Include="..\source\MultiMul.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="E:\GitHub\UOX3\source\UOPData.hpp">
+    <ClInclude Include="..\source\UOPData.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="E:\GitHub\UOX3\make\cmake\CMakeLists.txt" />
+    <CustomBuild Include="..\make\cmake\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="E:\GitHub\UOX3\assets\uox3.rc">
+    <ResourceCompile Include="..\assets\uox3.rc">
       <Filter>Source Files</Filter>
     </ResourceCompile>
   </ItemGroup>

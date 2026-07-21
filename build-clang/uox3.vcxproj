@@ -41,13 +41,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\GitHub\UOX3\build-clang\Debug\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\build-clang\Debug\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">uox3.dir\Debug\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">uox3</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\GitHub\UOX3\build-clang\Release\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\build-clang\Release\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">uox3.dir\Release\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">uox3</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.exe</TargetExt>
@@ -56,13 +56,13 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>E:\GitHub\UOX3\make\cmake\..\..\source;E:\GitHub\UOX3\make\cmake\..\..\tools\mozjs-bridge\target\release\build\mozjs_sys-95fa614e6cedf33f\out\build\dist\include;E:\GitHub\UOX3\make\cmake\..\..\utf8cpp;E:\GitHub\UOX3\make\cmake\..\..\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\make\cmake\..\..\source;..\make\cmake\..\..\tools\mozjs-bridge\target\release\build\mozjs_sys-95fa614e6cedf33f\out\build\dist\include;..\make\cmake\..\..\utf8cpp;..\make\cmake\..\..\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /J</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <ForcedIncludeFiles>E:/GitHub/UOX3/make/cmake/../../tools/mozjs-bridge/target/release/build/mozjs_sys-95fa614e6cedf33f/out/build/js/src/js-confdefs.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles>../make/cmake/../../tools/mozjs-bridge/target/release/build/mozjs_sys-95fa614e6cedf33f/out/build/js/src/js-confdefs.h</ForcedIncludeFiles>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MinimalRebuild></MinimalRebuild>
@@ -78,10 +78,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;EXPORT_JS_API;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_CRT_NO_VA_START_VALIDATION;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_CONSOLE;_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:\GitHub\UOX3\make\cmake\..\..\source;E:\GitHub\UOX3\make\cmake\..\..\tools\mozjs-bridge\target\release\build\mozjs_sys-95fa614e6cedf33f\out\build\dist\include;E:\GitHub\UOX3\make\cmake\..\..\utf8cpp;E:\GitHub\UOX3\make\cmake\..\..\zlib;E:\GitHub\UOX3\make\cmake\..\..\assets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\make\cmake\..\..\source;..\make\cmake\..\..\tools\mozjs-bridge\target\release\build\mozjs_sys-95fa614e6cedf33f\out\build\dist\include;..\make\cmake\..\..\utf8cpp;..\make\cmake\..\..\zlib;..\make\cmake\..\..\assets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>E:\GitHub\UOX3\make\cmake\..\..\source;E:\GitHub\UOX3\make\cmake\..\..\tools\mozjs-bridge\target\release\build\mozjs_sys-95fa614e6cedf33f\out\build\dist\include;E:\GitHub\UOX3\make\cmake\..\..\utf8cpp;E:\GitHub\UOX3\make\cmake\..\..\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\make\cmake\..\..\source;..\make\cmake\..\..\tools\mozjs-bridge\target\release\build\mozjs_sys-95fa614e6cedf33f\out\build\dist\include;..\make\cmake\..\..\utf8cpp;..\make\cmake\..\..\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -89,13 +89,13 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>E:\GitHub\UOX3\make\cmake\..\..\tools\mozjs-bridge\target\release\uox3_mozjs_bridge.lib;ws2_32.lib;Kernel32.lib;winmm.lib;psapi.lib;user32.lib;dbghelp.lib;legacy_stdio_definitions.lib;ntdll.lib;userenv.lib;subproject\zlib\Debug\zlib.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>..\make\cmake\..\..\tools\mozjs-bridge\target\release\uox3_mozjs_bridge.lib;ws2_32.lib;Kernel32.lib;winmm.lib;psapi.lib;user32.lib;dbghelp.lib;legacy_stdio_definitions.lib;ntdll.lib;userenv.lib;subproject\zlib\Debug\zlib.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>E:/GitHub/UOX3/build-clang/Debug/uox3.lib</ImportLibrary>
-      <ProgramDataBaseFile>E:/GitHub/UOX3/build-clang/Debug/uox3.pdb</ProgramDataBaseFile>
+      <ImportLibrary>../build-clang/Debug/uox3.lib</ImportLibrary>
+      <ProgramDataBaseFile>../build-clang/Debug/uox3.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
     </Link>
     <ProjectReference>
@@ -104,12 +104,12 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>E:\GitHub\UOX3\make\cmake\..\..\source;E:\GitHub\UOX3\make\cmake\..\..\tools\mozjs-bridge\target\release\build\mozjs_sys-95fa614e6cedf33f\out\build\dist\include;E:\GitHub\UOX3\make\cmake\..\..\utf8cpp;E:\GitHub\UOX3\make\cmake\..\..\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\make\cmake\..\..\source;..\make\cmake\..\..\tools\mozjs-bridge\target\release\build\mozjs_sys-95fa614e6cedf33f\out\build\dist\include;..\make\cmake\..\..\utf8cpp;..\make\cmake\..\..\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /J</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <ForcedIncludeFiles>E:/GitHub/UOX3/make/cmake/../../tools/mozjs-bridge/target/release/build/mozjs_sys-95fa614e6cedf33f/out/build/js/src/js-confdefs.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles>../make/cmake/../../tools/mozjs-bridge/target/release/build/mozjs_sys-95fa614e6cedf33f/out/build/js/src/js-confdefs.h</ForcedIncludeFiles>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MinimalRebuild></MinimalRebuild>
@@ -127,10 +127,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;EXPORT_JS_API;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_CRT_NO_VA_START_VALIDATION;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_CONSOLE;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:\GitHub\UOX3\make\cmake\..\..\source;E:\GitHub\UOX3\make\cmake\..\..\tools\mozjs-bridge\target\release\build\mozjs_sys-95fa614e6cedf33f\out\build\dist\include;E:\GitHub\UOX3\make\cmake\..\..\utf8cpp;E:\GitHub\UOX3\make\cmake\..\..\zlib;E:\GitHub\UOX3\make\cmake\..\..\assets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\make\cmake\..\..\source;..\make\cmake\..\..\tools\mozjs-bridge\target\release\build\mozjs_sys-95fa614e6cedf33f\out\build\dist\include;..\make\cmake\..\..\utf8cpp;..\make\cmake\..\..\zlib;..\make\cmake\..\..\assets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>E:\GitHub\UOX3\make\cmake\..\..\source;E:\GitHub\UOX3\make\cmake\..\..\tools\mozjs-bridge\target\release\build\mozjs_sys-95fa614e6cedf33f\out\build\dist\include;E:\GitHub\UOX3\make\cmake\..\..\utf8cpp;E:\GitHub\UOX3\make\cmake\..\..\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\make\cmake\..\..\source;..\make\cmake\..\..\tools\mozjs-bridge\target\release\build\mozjs_sys-95fa614e6cedf33f\out\build\dist\include;..\make\cmake\..\..\utf8cpp;..\make\cmake\..\..\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -138,13 +138,13 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>E:\GitHub\UOX3\make\cmake\..\..\tools\mozjs-bridge\target\release\uox3_mozjs_bridge.lib;ws2_32.lib;Kernel32.lib;winmm.lib;psapi.lib;user32.lib;dbghelp.lib;legacy_stdio_definitions.lib;ntdll.lib;userenv.lib;subproject\zlib\Release\zlib.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>..\make\cmake\..\..\tools\mozjs-bridge\target\release\uox3_mozjs_bridge.lib;ws2_32.lib;Kernel32.lib;winmm.lib;psapi.lib;user32.lib;dbghelp.lib;legacy_stdio_definitions.lib;ntdll.lib;userenv.lib;subproject\zlib\Release\zlib.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>E:/GitHub/UOX3/build-clang/Release/uox3.lib</ImportLibrary>
-      <ProgramDataBaseFile>E:/GitHub/UOX3/build-clang/Release/uox3.pdb</ProgramDataBaseFile>
+      <ImportLibrary>../build-clang/Release/uox3.lib</ImportLibrary>
+      <ProgramDataBaseFile>../build-clang/Release/uox3.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
     </Link>
     <ProjectReference>
@@ -152,11 +152,11 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="E:\GitHub\UOX3\make\cmake\CMakeLists.txt">
+    <CustomBuild Include="..\make\cmake\CMakeLists.txt">
       <UseUtf8Encoding>Always</UseUtf8Encoding>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule E:/GitHub/UOX3/make/cmake/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule ../make/cmake/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SE:/GitHub/UOX3/make/cmake -BE:/GitHub/UOX3/build-clang --check-stamp-file E:/GitHub/UOX3/build-clang/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -S../make/cmake -B../build-clang --check-stamp-file ../build-clang/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -164,12 +164,12 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\Clang-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\Clang.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Internal\CMakeCXXLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Internal\CMakeCommonLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Linker\GNU.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Linker\LLD-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Linker\LLD.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-LLD-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-LLD.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-Clang-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-Clang.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\WindowsPaths.cmake;E:\GitHub\UOX3\build-clang\CMakeFiles\3.31.5\CMakeCXXCompiler.cmake;E:\GitHub\UOX3\build-clang\CMakeFiles\3.31.5\CMakeRCCompiler.cmake;E:\GitHub\UOX3\build-clang\CMakeFiles\3.31.5\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\GitHub\UOX3\build-clang\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\Clang-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\Clang.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Internal\CMakeCXXLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Internal\CMakeCommonLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Linker\GNU.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Linker\LLD-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Linker\LLD.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-LLD-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-LLD.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-Clang-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-Clang.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\WindowsPaths.cmake;..\build-clang\CMakeFiles\3.31.5\CMakeCXXCompiler.cmake;..\build-clang\CMakeFiles\3.31.5\CMakeRCCompiler.cmake;..\build-clang\CMakeFiles\3.31.5\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\build-clang\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule E:/GitHub/UOX3/make/cmake/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule ../make/cmake/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SE:/GitHub/UOX3/make/cmake -BE:/GitHub/UOX3/build-clang --check-stamp-file E:/GitHub/UOX3/build-clang/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -S../make/cmake -B../build-clang --check-stamp-file ../build-clang/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -177,179 +177,179 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\Clang-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\Clang.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Internal\CMakeCXXLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Internal\CMakeCommonLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Linker\GNU.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Linker\LLD-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Linker\LLD.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-LLD-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-LLD.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-Clang-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-Clang.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\WindowsPaths.cmake;E:\GitHub\UOX3\build-clang\CMakeFiles\3.31.5\CMakeCXXCompiler.cmake;E:\GitHub\UOX3\build-clang\CMakeFiles\3.31.5\CMakeRCCompiler.cmake;E:\GitHub\UOX3\build-clang\CMakeFiles\3.31.5\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\GitHub\UOX3\build-clang\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\Clang-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\Clang.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Internal\CMakeCXXLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Internal\CMakeCommonLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Linker\GNU.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Linker\LLD-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Linker\LLD.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-LLD-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-LLD.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-Clang-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-Clang.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\WindowsPaths.cmake;..\build-clang\CMakeFiles\3.31.5\CMakeCXXCompiler.cmake;..\build-clang\CMakeFiles\3.31.5\CMakeRCCompiler.cmake;..\build-clang\CMakeFiles\3.31.5\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\build-clang\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="E:\GitHub\UOX3\source\ai.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\archive.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\boats.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\books.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\cAccountClass.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\calcfuncs.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\cBaseObject.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\cChar.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\cConsole.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\cDice.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\cGuild.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\CGump.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\cHTMLSystem.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\cItem.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\CJSEngine.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\CJSMapping.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\cmdtable.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\cMultiObj.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\combat.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\commands.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\CPacketReceive.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\CPacketSend.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\cPlayerAction.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\cRaces.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\CResponse.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\cScript.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\cServerData.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\cServerDefinitions.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\cSocket.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\cSpawnRegion.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\cThreadQueue.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\cVersionClass.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\cWeather.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\Dictionary.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\dist.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\effect.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\EventTimer.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\fileio.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\findfuncs.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\gumps.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\house.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\IP4Address.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\items.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\jail.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\JSEncapsulate.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\lineofsight.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\magic.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\mapstuff.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\movement.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\msgboard.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\MultiMul.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\network.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\npcs.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\ObjectFactory.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\osunique.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\PartySystem.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\pcmanage.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\quantityfuncs.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\queue.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\regions.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\scriptc.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\SEFunctions.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\skills.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\sound.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\speech.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\ssection.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\StringUtility.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\targeting.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\TimeUtility.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\townregion.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\trade.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\UOPData.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\uox3.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\UOXJSMethods.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\UOXJSPropertyFuncs.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\vendor.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\weight.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\wholist.cpp" />
-    <ClCompile Include="E:\GitHub\UOX3\source\worldmain.cpp" />
-    <ClInclude Include="E:\GitHub\UOX3\source\books.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\cAccountClass.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\cBaseObject.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\cChar.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\cConsole.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\cdice.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\cEffects.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\cGuild.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\CGump.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\cHTMLSystem.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\cItem.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\CJSEngine.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\CJSMapping.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\classes.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\cMagic.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\cmdtable.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\cMultiObj.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\combat.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\commands.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\ConfigOS.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\CPacketReceive.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\CPacketSend.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\cRaces.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\CResponse.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\cScript.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\cServerData.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\cServerDefinitions.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\cSkillClass.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\cSocket.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\cSpawnRegion.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\cThreadQueue.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\cVersionClass.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\cWeather.hpp" />
-    <ClInclude Include="E:\GitHub\UOX3\source\Dictionary.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\enums.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\EventTimer.hpp" />
-    <ClInclude Include="E:\GitHub\UOX3\source\funcdecl.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\GenericList.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\IP4Address.hpp" />
-    <ClInclude Include="E:\GitHub\UOX3\source\jail.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\JSEncapsulate.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\magic.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\mapclasses.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\mapstuff.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\movement.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\msgboard.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\MultiMul.hpp" />
-    <ClInclude Include="E:\GitHub\UOX3\source\network.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\ObjectFactory.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\osunique.hpp" />
-    <ClInclude Include="E:\GitHub\UOX3\source\PageVector.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\PartySystem.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\power.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\Prerequisites.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\regions.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\scriptc.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\SEFunctions.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\skills.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\speech.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\ssection.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\StringUtility.hpp" />
-    <ClInclude Include="E:\GitHub\UOX3\source\teffect.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\TimeUtility.hpp" />
-    <ClInclude Include="E:\GitHub\UOX3\source\townregion.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\typedefs.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\UOPData.hpp" />
-    <ClInclude Include="E:\GitHub\UOX3\source\uox3.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\UOXJSClasses.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\UOXJSMethods.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\UOXJSPropertyEnums.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\UOXJSPropertyFuncs.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\UOXJSPropertySpecs.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\UOXStdHeaders.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\uoxstruct.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\weight.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\wholist.h" />
-    <ClInclude Include="E:\GitHub\UOX3\source\worldmain.h" />
-    <ResourceCompile Include="E:\GitHub\UOX3\assets\uox3.rc" />
+    <ClCompile Include="..\source\ai.cpp" />
+    <ClCompile Include="..\source\archive.cpp" />
+    <ClCompile Include="..\source\boats.cpp" />
+    <ClCompile Include="..\source\books.cpp" />
+    <ClCompile Include="..\source\cAccountClass.cpp" />
+    <ClCompile Include="..\source\calcfuncs.cpp" />
+    <ClCompile Include="..\source\cBaseObject.cpp" />
+    <ClCompile Include="..\source\cChar.cpp" />
+    <ClCompile Include="..\source\cConsole.cpp" />
+    <ClCompile Include="..\source\cDice.cpp" />
+    <ClCompile Include="..\source\cGuild.cpp" />
+    <ClCompile Include="..\source\CGump.cpp" />
+    <ClCompile Include="..\source\cHTMLSystem.cpp" />
+    <ClCompile Include="..\source\cItem.cpp" />
+    <ClCompile Include="..\source\CJSEngine.cpp" />
+    <ClCompile Include="..\source\CJSMapping.cpp" />
+    <ClCompile Include="..\source\cmdtable.cpp" />
+    <ClCompile Include="..\source\cMultiObj.cpp" />
+    <ClCompile Include="..\source\combat.cpp" />
+    <ClCompile Include="..\source\commands.cpp" />
+    <ClCompile Include="..\source\CPacketReceive.cpp" />
+    <ClCompile Include="..\source\CPacketSend.cpp" />
+    <ClCompile Include="..\source\cPlayerAction.cpp" />
+    <ClCompile Include="..\source\cRaces.cpp" />
+    <ClCompile Include="..\source\CResponse.cpp" />
+    <ClCompile Include="..\source\cScript.cpp" />
+    <ClCompile Include="..\source\cServerData.cpp" />
+    <ClCompile Include="..\source\cServerDefinitions.cpp" />
+    <ClCompile Include="..\source\cSocket.cpp" />
+    <ClCompile Include="..\source\cSpawnRegion.cpp" />
+    <ClCompile Include="..\source\cThreadQueue.cpp" />
+    <ClCompile Include="..\source\cVersionClass.cpp" />
+    <ClCompile Include="..\source\cWeather.cpp" />
+    <ClCompile Include="..\source\Dictionary.cpp" />
+    <ClCompile Include="..\source\dist.cpp" />
+    <ClCompile Include="..\source\effect.cpp" />
+    <ClCompile Include="..\source\EventTimer.cpp" />
+    <ClCompile Include="..\source\fileio.cpp" />
+    <ClCompile Include="..\source\findfuncs.cpp" />
+    <ClCompile Include="..\source\gumps.cpp" />
+    <ClCompile Include="..\source\house.cpp" />
+    <ClCompile Include="..\source\IP4Address.cpp" />
+    <ClCompile Include="..\source\items.cpp" />
+    <ClCompile Include="..\source\jail.cpp" />
+    <ClCompile Include="..\source\JSEncapsulate.cpp" />
+    <ClCompile Include="..\source\lineofsight.cpp" />
+    <ClCompile Include="..\source\magic.cpp" />
+    <ClCompile Include="..\source\mapstuff.cpp" />
+    <ClCompile Include="..\source\movement.cpp" />
+    <ClCompile Include="..\source\msgboard.cpp" />
+    <ClCompile Include="..\source\MultiMul.cpp" />
+    <ClCompile Include="..\source\network.cpp" />
+    <ClCompile Include="..\source\npcs.cpp" />
+    <ClCompile Include="..\source\ObjectFactory.cpp" />
+    <ClCompile Include="..\source\osunique.cpp" />
+    <ClCompile Include="..\source\PartySystem.cpp" />
+    <ClCompile Include="..\source\pcmanage.cpp" />
+    <ClCompile Include="..\source\quantityfuncs.cpp" />
+    <ClCompile Include="..\source\queue.cpp" />
+    <ClCompile Include="..\source\regions.cpp" />
+    <ClCompile Include="..\source\scriptc.cpp" />
+    <ClCompile Include="..\source\SEFunctions.cpp" />
+    <ClCompile Include="..\source\skills.cpp" />
+    <ClCompile Include="..\source\sound.cpp" />
+    <ClCompile Include="..\source\speech.cpp" />
+    <ClCompile Include="..\source\ssection.cpp" />
+    <ClCompile Include="..\source\StringUtility.cpp" />
+    <ClCompile Include="..\source\targeting.cpp" />
+    <ClCompile Include="..\source\TimeUtility.cpp" />
+    <ClCompile Include="..\source\townregion.cpp" />
+    <ClCompile Include="..\source\trade.cpp" />
+    <ClCompile Include="..\source\UOPData.cpp" />
+    <ClCompile Include="..\source\uox3.cpp" />
+    <ClCompile Include="..\source\UOXJSMethods.cpp" />
+    <ClCompile Include="..\source\UOXJSPropertyFuncs.cpp" />
+    <ClCompile Include="..\source\vendor.cpp" />
+    <ClCompile Include="..\source\weight.cpp" />
+    <ClCompile Include="..\source\wholist.cpp" />
+    <ClCompile Include="..\source\worldmain.cpp" />
+    <ClInclude Include="..\source\books.h" />
+    <ClInclude Include="..\source\cAccountClass.h" />
+    <ClInclude Include="..\source\cBaseObject.h" />
+    <ClInclude Include="..\source\cChar.h" />
+    <ClInclude Include="..\source\cConsole.h" />
+    <ClInclude Include="..\source\cdice.h" />
+    <ClInclude Include="..\source\cEffects.h" />
+    <ClInclude Include="..\source\cGuild.h" />
+    <ClInclude Include="..\source\CGump.h" />
+    <ClInclude Include="..\source\cHTMLSystem.h" />
+    <ClInclude Include="..\source\cItem.h" />
+    <ClInclude Include="..\source\CJSEngine.h" />
+    <ClInclude Include="..\source\CJSMapping.h" />
+    <ClInclude Include="..\source\classes.h" />
+    <ClInclude Include="..\source\cMagic.h" />
+    <ClInclude Include="..\source\cmdtable.h" />
+    <ClInclude Include="..\source\cMultiObj.h" />
+    <ClInclude Include="..\source\combat.h" />
+    <ClInclude Include="..\source\commands.h" />
+    <ClInclude Include="..\source\ConfigOS.h" />
+    <ClInclude Include="..\source\CPacketReceive.h" />
+    <ClInclude Include="..\source\CPacketSend.h" />
+    <ClInclude Include="..\source\cRaces.h" />
+    <ClInclude Include="..\source\CResponse.h" />
+    <ClInclude Include="..\source\cScript.h" />
+    <ClInclude Include="..\source\cServerData.h" />
+    <ClInclude Include="..\source\cServerDefinitions.h" />
+    <ClInclude Include="..\source\cSkillClass.h" />
+    <ClInclude Include="..\source\cSocket.h" />
+    <ClInclude Include="..\source\cSpawnRegion.h" />
+    <ClInclude Include="..\source\cThreadQueue.h" />
+    <ClInclude Include="..\source\cVersionClass.h" />
+    <ClInclude Include="..\source\cWeather.hpp" />
+    <ClInclude Include="..\source\Dictionary.h" />
+    <ClInclude Include="..\source\enums.h" />
+    <ClInclude Include="..\source\EventTimer.hpp" />
+    <ClInclude Include="..\source\funcdecl.h" />
+    <ClInclude Include="..\source\GenericList.h" />
+    <ClInclude Include="..\source\IP4Address.hpp" />
+    <ClInclude Include="..\source\jail.h" />
+    <ClInclude Include="..\source\JSEncapsulate.h" />
+    <ClInclude Include="..\source\magic.h" />
+    <ClInclude Include="..\source\mapclasses.h" />
+    <ClInclude Include="..\source\mapstuff.h" />
+    <ClInclude Include="..\source\movement.h" />
+    <ClInclude Include="..\source\msgboard.h" />
+    <ClInclude Include="..\source\MultiMul.hpp" />
+    <ClInclude Include="..\source\network.h" />
+    <ClInclude Include="..\source\ObjectFactory.h" />
+    <ClInclude Include="..\source\osunique.hpp" />
+    <ClInclude Include="..\source\PageVector.h" />
+    <ClInclude Include="..\source\PartySystem.h" />
+    <ClInclude Include="..\source\power.h" />
+    <ClInclude Include="..\source\Prerequisites.h" />
+    <ClInclude Include="..\source\regions.h" />
+    <ClInclude Include="..\source\scriptc.h" />
+    <ClInclude Include="..\source\SEFunctions.h" />
+    <ClInclude Include="..\source\skills.h" />
+    <ClInclude Include="..\source\speech.h" />
+    <ClInclude Include="..\source\ssection.h" />
+    <ClInclude Include="..\source\StringUtility.hpp" />
+    <ClInclude Include="..\source\teffect.h" />
+    <ClInclude Include="..\source\TimeUtility.hpp" />
+    <ClInclude Include="..\source\townregion.h" />
+    <ClInclude Include="..\source\typedefs.h" />
+    <ClInclude Include="..\source\UOPData.hpp" />
+    <ClInclude Include="..\source\uox3.h" />
+    <ClInclude Include="..\source\UOXJSClasses.h" />
+    <ClInclude Include="..\source\UOXJSMethods.h" />
+    <ClInclude Include="..\source\UOXJSPropertyEnums.h" />
+    <ClInclude Include="..\source\UOXJSPropertyFuncs.h" />
+    <ClInclude Include="..\source\UOXJSPropertySpecs.h" />
+    <ClInclude Include="..\source\UOXStdHeaders.h" />
+    <ClInclude Include="..\source\uoxstruct.h" />
+    <ClInclude Include="..\source\weight.h" />
+    <ClInclude Include="..\source\wholist.h" />
+    <ClInclude Include="..\source\worldmain.h" />
+    <ResourceCompile Include="..\assets\uox3.rc" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="E:\GitHub\UOX3\build-clang\ZERO_CHECK.vcxproj">
+    <ProjectReference Include="..\build-clang\ZERO_CHECK.vcxproj">
       <Project>{0C2928A9-B58F-3DDE-AE1B-34A987DEEF13}</Project>
       <Name>ZERO_CHECK</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </ProjectReference>
-    <ProjectReference Include="E:\GitHub\UOX3\build-clang\subproject\zlib\zlib.vcxproj">
+    <ProjectReference Include="..\build-clang\subproject\zlib\zlib.vcxproj">
       <Project>{E3A7A0BB-F721-36EF-9ED5-0C165D7C4163}</Project>
       <Name>zlib</Name>
     </ProjectReference>
