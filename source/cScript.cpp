@@ -603,7 +603,7 @@ bool cScript::OnCreate( CBaseObject *thingCreated, bool dfnCreated, bool isPlaye
 	}
 
 	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = INT_TO_JSVAL( paramType );
+	params[1] = JS::Int32Value( paramType );
 	bool retVal = InvokeEvent( functionName.c_str(), 2, params, &rval );
 	if( !retVal )
 	{
@@ -652,7 +652,7 @@ bool cScript::OnSpawn( CBaseObject *objectSpawned, UI16 spawnRegion )
 	}
 
 	params[0] = JS::ObjectOrNullValue( jsObj );
-	params[1] = INT_TO_JSVAL( spawnRegion );
+	params[1] = JS::Int32Value( spawnRegion );
 
 	bool retVal = InvokeEvent( "onSpawn", 2, params, &rval );
 	if( !retVal )
@@ -689,7 +689,7 @@ bool cScript::OnDelete( CBaseObject *thingDestroyed )
 		paramType = 1;
 	}
 	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = INT_TO_JSVAL( paramType );
+	params[1] = JS::Int32Value( paramType );
 	bool retVal = InvokeEvent( "onDelete", 2, params, &rval );
 	if( !retVal )
 	{
@@ -740,7 +740,7 @@ SI08 cScript::OnSpeech( const char *speech, CChar *personTalking, CBaseObject *t
 		ttObj = JSEngine->AcquireObject( IUE_ITEM, talkingTo, runTime );
 	}
 
-	params[0] = STRING_TO_JSVAL( strSpeech );
+	params[0] = JS::StringValue( strSpeech );
 	params[1] = JS::ObjectOrNullValue( ptObj );
 	params[2] = JS::ObjectOrNullValue( ttObj );
 	bool retVal = InvokeEvent( "onSpeech", 3, params, &rval );
@@ -883,9 +883,9 @@ SI08 cScript::OnMoveDetect( CBaseObject *sourceObj, CChar *charInRange, UI08 ran
 
 	params[0] = JS::ObjectOrNullValue( myObj );
 	params[1] = JS::ObjectOrNullValue( charObj );
-	params[2] = INT_TO_JSVAL( rangeToChar );
-	params[3] = INT_TO_JSVAL( oldCharX );
-	params[4] = INT_TO_JSVAL( oldCharY );
+	params[2] = JS::Int32Value( rangeToChar );
+	params[3] = JS::Int32Value( oldCharX );
+	params[4] = JS::Int32Value( oldCharY );
 
 	if( !InvokeEvent( "onMoveDetect", 5, params, &rval ) )
 	{
@@ -913,7 +913,7 @@ SI08 cScript::OnSpeedHackDetect( CChar *player, SI32 deltaTime )
 	JSObject *myChar	= JSEngine->AcquireObject( IUE_CHAR, player, runTime );
 
 	params[0] = JS::ObjectOrNullValue( myChar );
-	params[1] = INT_TO_JSVAL( deltaTime );
+	params[1] = JS::Int32Value( deltaTime );
 
 	if( !InvokeEvent( "onSpeedHackDetect", 2, params, &rval ) )
 	{
@@ -941,8 +941,8 @@ SI08 cScript::OnSpeedHackSuspicion( CChar *player, SI32 grossDebt, SI32 deltaTim
 	JSObject *myChar	= JSEngine->AcquireObject( IUE_CHAR, player, runTime );
 
 	params[0] = JS::ObjectOrNullValue( myChar );
-	params[1] = INT_TO_JSVAL( grossDebt );
-	params[2] = INT_TO_JSVAL( deltaTime );
+	params[1] = JS::Int32Value( grossDebt );
+	params[2] = JS::Int32Value( deltaTime );
 
 	if( !InvokeEvent( "onSpeedHackSuspicion", 3, params, &rval ) )
 	{
@@ -1003,12 +1003,12 @@ SI08 cScript::OnDispel( CBaseObject *dispelled )
 	if( dispelled->GetObjType() == OT_CHAR )
 	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, dispelled, runTime );
-		params[1] = INT_TO_JSVAL( 0 );
+		params[1] = JS::Int32Value( 0 );
 	}
 	else
 	{
 		myObj = JSEngine->AcquireObject( IUE_ITEM, dispelled, runTime );
-		params[1] = INT_TO_JSVAL( 1 );
+		params[1] = JS::Int32Value( 1 );
 	}
 
 	params[0] = JS::ObjectOrNullValue( myObj );
@@ -1046,15 +1046,15 @@ bool cScript::OnSkill( CBaseObject *skillUse, SI08 skillUsed )
 	if( skillUse->GetObjType() == OT_CHAR )
 	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, skillUse, runTime );
-		params[2] = INT_TO_JSVAL( 0 );
+		params[2] = JS::Int32Value( 0 );
 	}
 	else
 	{
 		myObj = JSEngine->AcquireObject( IUE_ITEM, skillUse, runTime );
-		params[2] = INT_TO_JSVAL( 1 );
+		params[2] = JS::Int32Value( 1 );
 	}
 	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = INT_TO_JSVAL( skillUsed );
+	params[1] = JS::Int32Value( skillUsed );
 	bool retVal = InvokeEvent( "onSkill", 3, params, &rval );
 	if( !retVal )
 	{
@@ -1162,7 +1162,7 @@ std::string cScript::OnNameRequest( CBaseObject *myObj, CChar *nameRequester, UI
 
 		params[0] = JS::ObjectOrNullValue( nameRequestObj );
 		params[1] = JS::ObjectOrNullValue( nameRequesterObj );
-		params[2] = INT_TO_JSVAL( requestSource );
+		params[2] = JS::Int32Value( requestSource );
 		bool retVal = InvokeEvent( "onNameRequest", 3, params, &rval );
 		if( !retVal )
 		{
@@ -1252,9 +1252,9 @@ bool cScript::OnAttack( CChar *attacker, CChar *defender, bool hitStatus, SI08 h
 
     params[0] = JS::ObjectOrNullValue( attObj );
     params[1] = JS::ObjectOrNullValue( defObj );
-    params[2] = BOOLEAN_TO_JSVAL( hitStatus );
-    params[3] = INT_TO_JSVAL( hitLoc );
-    params[4] = INT_TO_JSVAL( damageDealt );
+    params[2] = JS::BooleanValue( hitStatus );
+    params[3] = JS::Int32Value( hitLoc );
+    params[4] = JS::Int32Value( damageDealt );
     bool retVal = InvokeEvent( "onAttack", 5, params, &rval );
     if( !retVal )
     {
@@ -1283,9 +1283,9 @@ bool cScript::OnDefense( CChar *attacker, CChar *defender, bool hitStatus, SI08 
 
 	params[0] = JS::ObjectOrNullValue( attObj );
 	params[1] = JS::ObjectOrNullValue( defObj );
-	params[2] = BOOLEAN_TO_JSVAL( hitStatus );
-	params[3] = INT_TO_JSVAL( hitLoc );
-	params[4] = INT_TO_JSVAL( damageReceived );
+	params[2] = JS::BooleanValue( hitStatus );
+	params[3] = JS::Int32Value( hitLoc );
+	params[4] = JS::Int32Value( damageReceived );
 	bool retVal = InvokeEvent( "onDefense", 5, params, &rval );
 	if( !retVal )
 	{
@@ -1312,8 +1312,8 @@ SI08 cScript::OnSkillGain( CChar *player, SI08 skill, UI32 skillGainAmount )
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
 
 	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = INT_TO_JSVAL( skill );
-	params[2] = INT_TO_JSVAL( skillGainAmount );
+	params[1] = JS::Int32Value( skill );
+	params[2] = JS::Int32Value( skillGainAmount );
 	bool retVal = InvokeEvent( "onSkillGain", 3, params, &rval );
 	if( !retVal )
 	{
@@ -1341,9 +1341,9 @@ SI08 cScript::OnStatGained( CChar *player, UI32 stat, SI08 skill, UI32 statGaine
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
 
 	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = INT_TO_JSVAL( stat );
-	params[2] = INT_TO_JSVAL( skill );
-	params[3] = INT_TO_JSVAL( statGainedAmount );
+	params[1] = JS::Int32Value( stat );
+	params[2] = JS::Int32Value( skill );
+	params[3] = JS::Int32Value( statGainedAmount );
 	bool retVal = InvokeEvent( "onStatGained", 4, params, &rval );
 	if( !retVal )
 	{
@@ -1371,9 +1371,9 @@ bool cScript::OnStatGain( CChar *player, UI32 stat, SI08 skill, UI32 statGainAmo
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
 
 	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = INT_TO_JSVAL( stat );
-	params[2] = INT_TO_JSVAL( skill );
-	params[3] = INT_TO_JSVAL( statGainAmount );
+	params[1] = JS::Int32Value( stat );
+	params[2] = JS::Int32Value( skill );
+	params[3] = JS::Int32Value( statGainAmount );
 	bool retVal = InvokeEvent( "onStatGain", 4, params, &rval );
 	if( !retVal )
 	{
@@ -1403,7 +1403,7 @@ SI08 cScript::OnVirtueGumpPress( CChar *mChar, CChar *tChar, UI16 buttonId )
 
 	params[0] = JS::ObjectOrNullValue( charObj );
 	params[1] = JS::ObjectOrNullValue( targObj );
-	params[2] = INT_TO_JSVAL( buttonId );
+	params[2] = JS::Int32Value( buttonId );
 	bool retVal = InvokeEvent( "onVirtueGumpPress", 3, params, &rval );
 	if( !retVal )
 	{
@@ -1568,7 +1568,7 @@ SI08 cScript::OnContextMenuSelect( CSocket *tSock, CBaseObject *baseObj, UI16 po
  
 	params[0] = JS::ObjectOrNullValue( mySockObj );
 	params[1] = JS::ObjectOrNullValue( myObj );
-	params[2] = INT_TO_JSVAL( popupEntry );
+	params[2] = JS::Int32Value( popupEntry );
 	bool retVal = InvokeEvent( "onContextMenuSelect", 3, params, &rval );
  
 	if( !retVal )
@@ -1626,7 +1626,7 @@ SI08 cScript::OnSpecialMove( CChar *mChar, UI08 abilityId )
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, mChar, runTime );
 
 	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = INT_TO_JSVAL( abilityId );
+	params[1] = JS::Int32Value( abilityId );
 	bool retVal = InvokeEvent( "onSpecialMove", 2, params, &rval );
 
 	if( !retVal )
@@ -1885,12 +1885,12 @@ SI08 cScript::OnLeaving( CMultiObj *left, CBaseObject *leaving )
 	if( leaving->GetObjType() == OT_CHAR )
 	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, leaving, runTime );
-		params[2] = INT_TO_JSVAL( 0 );
+		params[2] = JS::Int32Value( 0 );
 	}
 	else
 	{
 		myObj = JSEngine->AcquireObject( IUE_ITEM, leaving, runTime );
-		params[2] = INT_TO_JSVAL( 1 );
+		params[2] = JS::Int32Value( 1 );
 	}
 	params[0] = JS::ObjectOrNullValue( myItem );
 	params[1] = JS::ObjectOrNullValue( myObj );
@@ -1954,8 +1954,8 @@ SI08 cScript::OnBoatTurn( CBoatObj *iBoat, UI08 oldDir, UI08 newDir, CItem *iTil
     
 
 	params[0] = JS::ObjectOrNullValue( myBoat );
-	params[1] = INT_TO_JSVAL( oldDir );
-	params[2] = INT_TO_JSVAL( newDir );
+	params[1] = JS::Int32Value( oldDir );
+	params[2] = JS::Int32Value( newDir );
 	params[3] = JS::ObjectOrNullValue( myTiller );
 
 	bool retVal = InvokeEvent( "onBoatTurn", 4, params, &rval );
@@ -2223,12 +2223,12 @@ SI08 cScript::OnEntrance( CMultiObj *left, CBaseObject *leaving )
 	if( leaving->GetObjType() == OT_CHAR )
 	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, leaving, runTime );
-		params[2] = INT_TO_JSVAL( 0 );
+		params[2] = JS::Int32Value( 0 );
 	}
 	else
 	{
 		myObj = JSEngine->AcquireObject( IUE_ITEM, leaving, runTime );
-		params[2] = INT_TO_JSVAL( 1 );
+		params[2] = JS::Int32Value( 1 );
 	}
 	params[0] = JS::ObjectOrNullValue( myItem );
 	params[1] = JS::ObjectOrNullValue( myObj );
@@ -2403,7 +2403,7 @@ bool cScript::OnFall( CChar *pFall, SI08 fallDistance )
 	JS::Value params[2], rval;
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, pFall, runTime );
 	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = INT_TO_JSVAL( fallDistance );
+	params[1] = JS::Int32Value( fallDistance );
 	bool retVal = InvokeEvent( "onFall", 2, params, &rval );
 	if( !retVal )
 	{
@@ -2484,7 +2484,7 @@ SI08 cScript::OnLightChange( CBaseObject *tObject, UI08 lightLevel )
 	}
 
 	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = INT_TO_JSVAL( lightLevel );
+	params[1] = JS::Int32Value( lightLevel );
 	bool retVal = InvokeEvent( "onLightChange", 2, params, &rval );
 	if( !retVal )
 	{
@@ -2521,7 +2521,7 @@ bool cScript::OnWeatherChange( CBaseObject *tObject, WeatherType element )
 	}
 
 	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = INT_TO_JSVAL( element );
+	params[1] = JS::Int32Value( element );
 	bool retVal = InvokeEvent( "onWeatherChange", 2, params, &rval );
 	if( !retVal )
 	{
@@ -2557,7 +2557,7 @@ bool cScript::OnTempChange( CBaseObject *tObject, SI08 temp )
 	}
 
 	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = INT_TO_JSVAL( temp );
+	params[1] = JS::Int32Value( temp );
 	bool retVal = InvokeEvent( "onTempChange", 2, params, &rval );
 	if( !retVal )
 	{
@@ -2593,7 +2593,7 @@ bool cScript::OnTimer( CBaseObject *tObject, UI16 timerId )
 	}
 
 	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = INT_TO_JSVAL( timerId );
+	params[1] = JS::Int32Value( timerId );
 	bool retVal = InvokeEvent( "onTimer", 2, params, &rval );
 	if( !retVal )
 	{
@@ -2619,8 +2619,8 @@ SI08 cScript::OnStatLoss( CChar *player, UI32 stat, UI32 statLossAmount )
 	JS::Value rval, params[3];
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
 	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = INT_TO_JSVAL( stat );
-	params[2] = INT_TO_JSVAL( statLossAmount );
+	params[1] = JS::Int32Value( stat );
+	params[2] = JS::Int32Value( statLossAmount );
 	bool retVal = InvokeEvent( "onStatLoss", 3, params, &rval );
 	if( !retVal )
 	{
@@ -2647,8 +2647,8 @@ bool cScript::OnStatChange( CChar *player, UI32 stat, SI32 statChangeAmount )
 	JS::Value rval, params[3];
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
 	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = INT_TO_JSVAL( stat );
-	params[2] = INT_TO_JSVAL( statChangeAmount );
+	params[1] = JS::Int32Value( stat );
+	params[2] = JS::Int32Value( statChangeAmount );
 	bool retVal = InvokeEvent( "onStatChange", 3, params, &rval );
 	if( !retVal )
 	{
@@ -2674,8 +2674,8 @@ SI08 cScript::OnSkillLoss( CChar *player, SI08 skill, UI32 skillLossAmount )
 	JS::Value params[3], rval;
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
 	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = INT_TO_JSVAL( skill );
-	params[2] = INT_TO_JSVAL( skillLossAmount );
+	params[1] = JS::Int32Value( skill );
+	params[2] = JS::Int32Value( skillLossAmount );
 	bool retVal = InvokeEvent( "onSkillLoss", 3, params, &rval );
 	if( !retVal )
 	{
@@ -2702,8 +2702,8 @@ bool cScript::OnSkillChange( CChar *player, SI08 skill, SI32 skillChangeAmount )
 	JS::Value params[3], rval;
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
 	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = INT_TO_JSVAL( skill );
-	params[2] = INT_TO_JSVAL( skillChangeAmount );
+	params[1] = JS::Int32Value( skill );
+	params[2] = JS::Int32Value( skillChangeAmount );
 	bool retVal = InvokeEvent( "onSkillChange", 3, params, &rval );
 	if( !retVal )
 	{
@@ -2784,8 +2784,8 @@ SI08 cScript::OnFlagChange( CChar *pChanging, UI08 newStatus, UI08 oldStatus )
 	JS::Value params[3], rval;
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, pChanging, runTime );
 	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = INT_TO_JSVAL( newStatus );
-	params[2] = INT_TO_JSVAL( oldStatus );
+	params[1] = JS::Int32Value( newStatus );
+	params[2] = JS::Int32Value( oldStatus );
 	bool retVal = InvokeEvent( "onFlagChange", 3, params, &rval );
 	if( !retVal )
 	{
@@ -2881,7 +2881,7 @@ SI08 cScript::OnLoyaltyChange( CChar *pChanging, SI08 newStatus )
 	JS::Value params[2], rval;
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, pChanging, runTime );
 	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = INT_TO_JSVAL( newStatus );
+	params[1] = JS::Int32Value( newStatus );
 	bool retVal = InvokeEvent( "onLoyaltyChange", 2, params, &rval );
 	if( !retVal )
 	{
@@ -2908,7 +2908,7 @@ SI08 cScript::OnHungerChange( CChar *pChanging, SI08 newStatus )
 	JS::Value params[2], rval;
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, pChanging, runTime );
 	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = INT_TO_JSVAL( newStatus );
+	params[1] = JS::Int32Value( newStatus );
 	bool retVal = InvokeEvent( "onHungerChange", 2, params, &rval );
 	if( !retVal )
 	{
@@ -2935,7 +2935,7 @@ bool cScript::OnThirstChange( CChar* pChanging, SI08 newStatus )
 	JS::Value params[2], rval;
 	JSObject* charObj = JSEngine->AcquireObject( IUE_CHAR, pChanging, runTime );
 	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = INT_TO_JSVAL( newStatus );
+	params[1] = JS::Int32Value( newStatus );
 	bool retVal = InvokeEvent( "onThirstChange", 2, params, &rval );
 	if( !retVal )
 	{
@@ -2998,7 +2998,7 @@ SI08 cScript::OnSnooped( CChar *snooped, CChar *snooper, bool success )
 
 	params[0] = JS::ObjectOrNullValue( thiefObj );
 	params[1] = JS::ObjectOrNullValue( victimObj );
-	params[2] = BOOLEAN_TO_JSVAL( success );
+	params[2] = JS::BooleanValue( success );
 	bool retVal = InvokeEvent( "onSnooped", 3, params, &rval );
 	if( !retVal )
 	{
@@ -3139,7 +3139,7 @@ void cScript::HandleGumpPress( CPIGumpMenuSelect *packet )
 
 	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, pressing, runTime );
 	jsvParams[0] = JS::ObjectOrNullValue( myObj );
-	jsvParams[1] = INT_TO_JSVAL( button );
+	jsvParams[1] = JS::Int32Value( button );
 	jsvParams[2] = JS::ObjectOrNullValue( jsoObject );
 	[[maybe_unused]] bool retVal = InvokeEvent( "onGumpPress", 3, jsvParams, &jsvRVal );
 	JS_SetReservedSlot( jsoObject, 0, JS::UndefinedValue() );
@@ -3164,8 +3164,8 @@ void cScript::HandleGumpInput( CPIGumpInput *pressing )
 	JSString *gumpReply = nullptr;
 	gumpReply = JS_NewStringCopyZ( targContext, pressing->Reply().c_str() );
 	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = INT_TO_JSVAL( pressing->Index() );
-	params[2] = STRING_TO_JSVAL( gumpReply );
+	params[1] = JS::Int32Value( pressing->Index() );
+	params[2] = JS::StringValue( gumpReply );
 	[[maybe_unused]] bool retVal = InvokeEvent( "onGumpInput", 3, params, &rval );
 }
 
@@ -3186,8 +3186,8 @@ SI08 cScript::OnScrollingGumpPress( CSocket *tSock, UI16 gumpId, UI16 buttonId )
 	JS::Value params[3], rval;
 	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
 	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = INT_TO_JSVAL( gumpId );
-	params[2] = INT_TO_JSVAL( buttonId );
+	params[1] = JS::Int32Value( gumpId );
+	params[2] = JS::Int32Value( buttonId );
 	bool retVal = InvokeEvent( "onScrollingGumpPress", 3, params, &rval );
 	if( !retVal )
 	{
@@ -3215,7 +3215,7 @@ bool cScript::OnEnterRegion( CChar *entering, UI16 region )
 
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, entering, runTime );
 	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = INT_TO_JSVAL( region );
+	params[1] = JS::Int32Value( region );
 	bool retVal = InvokeEvent( "onEnterRegion", 2, params, &rval );
 	if( !retVal )
 	{
@@ -3240,7 +3240,7 @@ bool cScript::OnLeaveRegion( CChar *leaving, UI16 region )
 	JS::Value params[2], rval;
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, leaving, runTime );
 	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = INT_TO_JSVAL( region );
+	params[1] = JS::Int32Value( region );
 	bool retVal = InvokeEvent( "onLeaveRegion", 2, params, &rval );
 	if( !retVal )
 	{
@@ -3267,8 +3267,8 @@ SI08 cScript::OnFacetChange( CChar *mChar, const UI08 oldFacet, const UI08 newFa
 
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, mChar, runTime );
 	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = INT_TO_JSVAL( oldFacet );
-	params[2] = INT_TO_JSVAL( newFacet );
+	params[1] = JS::Int32Value( oldFacet );
+	params[2] = JS::Int32Value( newFacet );
 	bool retVal = InvokeEvent( "onFacetChange", 3, params, &rval );
 
 	if( !retVal )
@@ -3306,7 +3306,7 @@ SI08 cScript::OnSpellTargetSelect(  CChar *caster, CBaseObject *target, UI08 spe
 	}
 	params[0] = JS::ObjectOrNullValue( targObj );
 	params[1] = JS::ObjectOrNullValue( castObj );
-	params[2] = INT_TO_JSVAL( spellNum );
+	params[2] = JS::Int32Value( spellNum );
 	bool retVal = InvokeEvent( "onSpellTargetSelect", 3, params, &rval );
 	if( !retVal )
 	{
@@ -3343,7 +3343,7 @@ SI08 cScript::OnSpellTarget( CBaseObject *target, CChar *caster, UI08 spellNum )
 	}
 	params[0] = JS::ObjectOrNullValue( targObj );
 	params[1] = JS::ObjectOrNullValue( castObj );
-	params[2] = INT_TO_JSVAL( spellNum );
+	params[2] = JS::Int32Value( spellNum );
 	bool retVal = InvokeEvent( "onSpellTarget", 3, params, &rval );
 	if( !retVal )
 	{
@@ -3398,7 +3398,7 @@ SI16 cScript::OnSpellCast( CChar *tChar, UI08 SpellId )
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, tChar, runTime );
 
 	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = INT_TO_JSVAL( SpellId );
+	params[1] = JS::Int32Value( SpellId );
 
 	bool retVal = InvokeEvent( "onSpellCast", 2, params, &rval );
 
@@ -3432,7 +3432,7 @@ SI16 cScript::OnScrollCast( CChar *tChar, UI08 SpellId )
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, tChar, runTime );
 
 	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = INT_TO_JSVAL( SpellId );
+	params[1] = JS::Int32Value( SpellId );
 
 	bool retVal = InvokeEvent( "onScrollCast", 2, params, &rval );
 
@@ -3462,7 +3462,7 @@ SI08 cScript::OnSpellSuccess( CChar *tChar, UI08 SpellId )
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, tChar, runTime );
 
 	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = INT_TO_JSVAL( SpellId );
+	params[1] = JS::Int32Value( SpellId );
 
 	bool retVal = InvokeEvent( "onSpellSuccess", 2, params, &rval );
 
@@ -3498,7 +3498,7 @@ SI08 cScript::OnTalk( CChar *myChar, const char *mySpeech )
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, myChar, runTime );
 
 	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = STRING_TO_JSVAL( strSpeech );
+	params[1] = JS::StringValue( strSpeech );
 
 	bool retVal = InvokeEvent( "onTalk", 2, params, &rval );
 
@@ -3547,8 +3547,8 @@ bool cScript::OnSpeechInput( CChar *myChar, CItem *myItem, const char *mySpeech 
 		params[1] = JS::ObjectOrNullValue( itemObj );
 	}
 
-	params[2] = STRING_TO_JSVAL( strSpeech );
-	params[3] = INT_TO_JSVAL( myChar->GetSpeechId() );
+	params[2] = JS::StringValue( strSpeech );
+	params[3] = JS::Int32Value( myChar->GetSpeechId() );
 
 	bool retVal = InvokeEvent( "onSpeechInput", 4, params, &rval );
 
@@ -3577,7 +3577,7 @@ SI08 cScript::OnSpellGain( CItem *book, const UI08 spellNum )
 	JS::Value params[2], rval;
 	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, book, runTime );
 	params[0] = JS::ObjectOrNullValue( itemObj );
-	params[1] = INT_TO_JSVAL( spellNum );
+	params[1] = JS::Int32Value( spellNum );
 	bool retVal = InvokeEvent( "onSpellGain", 2, params, &rval );
 	if( !retVal )
 	{
@@ -3604,7 +3604,7 @@ SI08 cScript::OnSpellLoss( CItem *book, const UI08 spellNum )
 	JS::Value params[2], rval;
 	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, book, runTime );
 	params[0] = JS::ObjectOrNullValue( itemObj );
-	params[1] = INT_TO_JSVAL( spellNum );
+	params[1] = JS::Int32Value( spellNum );
 	bool retVal = InvokeEvent( "onSpellLoss", 2, params, &rval );
 	if( !retVal )
 	{
@@ -3631,11 +3631,11 @@ SI08 cScript::OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill
 	JS::Value params[6], rval;
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, myChar, runTime );
 	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = INT_TO_JSVAL( skill );
-	params[2] = INT_TO_JSVAL( lowSkill );
-	params[3] = INT_TO_JSVAL( highSkill );
-	params[4] = BOOLEAN_TO_JSVAL( isCraftSkill );
-	params[5] = INT_TO_JSVAL( overrideOutcome );
+	params[1] = JS::Int32Value( skill );
+	params[2] = JS::Int32Value( lowSkill );
+	params[3] = JS::Int32Value( highSkill );
+	params[4] = JS::BooleanValue( isCraftSkill );
+	params[5] = JS::Int32Value( overrideOutcome );
     bool retVal = InvokeEvent( "onSkillCheck", 6, params, &rval );
 	if( !retVal )
 	{
@@ -3739,7 +3739,7 @@ SI08 cScript::OnCommand( CSocket *mSock, std::string command )
 	JSString *strCmd = nullptr;
 	strCmd = JS_NewStringCopyZ( targContext, oldstrutil::lower( command ).c_str() );
 	params[0]	= JS::ObjectOrNullValue( myObj );
-	params[1]	= STRING_TO_JSVAL( strCmd );
+	params[1]	= JS::StringValue( strCmd );
 	bool retVal	= InvokeEvent( "onCommand", 2, params, &rval );
 	if( !retVal )
 	{
@@ -3813,7 +3813,7 @@ SI08 cScript::OnProfileUpdate( CSocket *mSock, std::string profileText )
 	strProfileText = JS_NewStringCopyZ( targContext, profileText.c_str() );
 
 	params[0]	= JS::ObjectOrNullValue( myObj );
-	params[1]	= STRING_TO_JSVAL( strProfileText );
+	params[1]	= JS::StringValue( strProfileText );
 	bool retVal	= JS_CallFunctionName( targContext, targObject, "onProfileUpdate", 2, params, &rval );
 	if( !retVal )
 	{
@@ -3885,7 +3885,7 @@ bool cScript::executeCommand( CSocket *s, std::string funcName, std::string exec
 	JSString *execString = JS_NewStringCopyZ( targContext, executedString.c_str() );
 	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, s, runTime );
 	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = STRING_TO_JSVAL( execString );
+	params[1] = JS::StringValue( execString );
 	// ExistAndVerify() normally sets our Global Object, but not on custom named functions.
 	bool retVal = InvokeEvent( funcName.c_str(), 2, params, &rval );
 
@@ -3911,8 +3911,8 @@ bool cScript::MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, SI3
 
 	params[0] = JS::ObjectOrNullValue( sockObj );
 	params[1] = JS::ObjectOrNullValue( charObj );
-	params[2] = BOOLEAN_TO_JSVAL( directCast );
-	params[3] = INT_TO_JSVAL( spellNum );
+	params[2] = JS::BooleanValue( directCast );
+	params[3] = JS::Int32Value( spellNum );
 
 	bool retVal = InvokeEvent( "onSpellCast", 4, params, &rval );
 
@@ -4046,8 +4046,8 @@ bool cScript::OnPacketReceive( CSocket *mSock, UI16 packetNum )
 	JS::Value rval, params[3];
 	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
 	params[0]		= JS::ObjectOrNullValue( myObj );
-	params[1]		= INT_TO_JSVAL( static_cast<UI08>( packetNum % 256 ));
-	params[2]		= INT_TO_JSVAL( static_cast<UI08>( packetNum >> 8 ));
+	params[1]		= JS::Int32Value( static_cast<UI08>( packetNum % 256 ));
+	params[2]		= JS::Int32Value( static_cast<UI08>( packetNum >> 8 ));
 	bool retVal	= InvokeEvent( "onPacketReceive", 3, params, &rval );
 
 	if( !retVal )
@@ -4110,7 +4110,7 @@ SI08 cScript::OnCharDoubleClick( CChar *currChar, CChar *targChar, bool nonMouse
 
 	params[0] = JS::ObjectOrNullValue( srcObj );
 	params[1] = JS::ObjectOrNullValue( trgObj );
-	params[2] = BOOLEAN_TO_JSVAL( nonMouseClickEvent );
+	params[2] = JS::BooleanValue( nonMouseClickEvent );
 
 	bool retVal = InvokeEvent( "onCharDoubleClick", 3, params, &rval );
 
@@ -4406,8 +4406,8 @@ SI16 cScript::OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFigh
 
 	params[0] = JS::ObjectOrNullValue( attackerObj );
 	params[1] = JS::ObjectOrNullValue( defenderObj );
-	params[2] = INT_TO_JSVAL( getFightSkill );
-	params[3] = INT_TO_JSVAL( hitLoc );
+	params[2] = JS::Int32Value( getFightSkill );
+	params[3] = JS::Int32Value( hitLoc );
 
 	bool retVal = InvokeEvent( "onCombatDamageCalc", 4, params, &rval );
 	if( !retVal )
@@ -4457,8 +4457,8 @@ SI08 cScript::OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue, Weath
 		params[1] = JS::NullValue();
 	}
 
-	params[2] = INT_TO_JSVAL( damageValue );
-	params[3] = INT_TO_JSVAL( damageType );
+	params[2] = JS::Int32Value( damageValue );
+	params[3] = JS::Int32Value( damageType );
 
 	bool retVal = InvokeEvent( "onDamage", 4, params, &rval );
 	if( !retVal )
@@ -4491,8 +4491,8 @@ SI08 cScript::OnDamageDeal( CChar *attacker, CChar *damaged, SI16 damageValue, W
 	params[1] = JS::ObjectOrNullValue( damagedObj );
 
 
-	params[2] = INT_TO_JSVAL( damageValue );
-	params[3] = INT_TO_JSVAL( damageType );
+	params[2] = JS::Int32Value( damageValue );
+	params[3] = JS::Int32Value( damageType );
 
 	bool retVal = InvokeEvent( "onDamageDeal", 4, params, &rval );
 	if( !retVal )
@@ -4595,7 +4595,7 @@ SI08 cScript::OnBuyFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *ob
 	params[0] = JS::ObjectOrNullValue( myObj );
 	params[1] = JS::ObjectOrNullValue( charObj );
 	params[2] = JS::ObjectOrNullValue( myObj2 );
-	params[3] = INT_TO_JSVAL( numItemsBuying );
+	params[3] = JS::Int32Value( numItemsBuying );
 
 	bool retVal = InvokeEvent( "onBuyFromVendor", 4, params, &rval );
 
@@ -4635,7 +4635,7 @@ SI08 cScript::OnSellToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 	params[0] = JS::ObjectOrNullValue( myObj );
 	params[1] = JS::ObjectOrNullValue( charObj );
 	params[2] = JS::ObjectOrNullValue( myObj2 );
-	params[3] = INT_TO_JSVAL( numItemsSelling );
+	params[3] = JS::Int32Value( numItemsSelling );
 
 	bool retVal = InvokeEvent( "onSellToVendor", 4, params, &rval );
 
@@ -4675,7 +4675,7 @@ SI08 cScript::OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject 
 	params[0] = JS::ObjectOrNullValue( myObj );
 	params[1] = JS::ObjectOrNullValue( charObj );
 	params[2] = JS::ObjectOrNullValue( myObj2 );
-	params[3] = INT_TO_JSVAL( numItemsBought );
+	params[3] = JS::Int32Value( numItemsBought );
 
 	bool retVal = InvokeEvent( "onBoughtFromVendor", 4, params, &rval );
 
@@ -4715,7 +4715,7 @@ SI08 cScript::OnSoldToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 	params[0] = JS::ObjectOrNullValue( myObj );
 	params[1] = JS::ObjectOrNullValue( charObj );
 	params[2] = JS::ObjectOrNullValue( myObj2 );
-	params[3] = INT_TO_JSVAL( numItemsSold );
+	params[3] = JS::Int32Value( numItemsSold );
 
 	bool retVal = InvokeEvent( "onSoldToVendor", 4, params, &rval );
 
@@ -4747,7 +4747,7 @@ SI08 cScript::OnHouseCommand( CSocket *tSock, CMultiObj *objMulti, UI08 cmdId )
 
 	params[0] = JS::ObjectOrNullValue( myObj );
 	params[1] = JS::ObjectOrNullValue( multiObj );
-	params[2] = INT_TO_JSVAL( cmdId );
+	params[2] = JS::Int32Value( cmdId );
 
 	bool retVal = InvokeEvent( "onHouseCommand", 3, params, &rval );
 
@@ -4781,7 +4781,7 @@ SI08 cScript::OnMakeItem( CSocket *mSock, CChar *objChar, CItem *objItem, UI16 c
 	params[0] = JS::ObjectOrNullValue( mySock );
 	params[1] = JS::ObjectOrNullValue( myChar );
 	params[2] = JS::ObjectOrNullValue( myItem );
-	params[3] = INT_TO_JSVAL( createEntryId );
+	params[3] = JS::Int32Value( createEntryId );
 
 	bool retVal = InvokeEvent( "onMakeItem", 4, params, &rval );
 
@@ -4812,7 +4812,7 @@ SI08 cScript::OnPathfindEnd( CChar *npc, SI08 pathfindResult )
 
 	JS::Value params[2], rval;
 	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = INT_TO_JSVAL( pathfindResult );
+	params[1] = JS::Int32Value( pathfindResult );
 
 	bool retVal = InvokeEvent( "onPathfindEnd", 2, params, &rval );
 	if( !retVal )

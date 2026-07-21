@@ -472,7 +472,7 @@ bool CGumpData_GetEdit( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( argc == 0 )
 	{
 		ScriptError( cx, "(GumpData_getEdit) Invalid Number of Arguments %d, needs: 1 ", argc );
-		JS_SET_RVAL( cx, vp, STRING_TO_JSVAL(JS_NewStringCopyZ(cx, "")) );
+		JS_SET_RVAL( cx, vp, JS::StringValue(JS_NewStringCopyZ(cx, "")) );
 		return true;
 	}
 
@@ -482,7 +482,7 @@ bool CGumpData_GetEdit( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( myItem == nullptr  )
 	{
 		ScriptError( cx, "(DataGump-getEdit) Invalid object assigned" );
-		JS_SET_RVAL(cx, vp, STRING_TO_JSVAL(JS_NewStringCopyZ(cx, "")) );
+		JS_SET_RVAL(cx, vp, JS::StringValue(JS_NewStringCopyZ(cx, "")) );
 		return true;
 	}
 
@@ -491,11 +491,11 @@ bool CGumpData_GetEdit( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( index < myItem->sEdits.size() )
 	{
-		JS_SET_RVAL(cx, vp, STRING_TO_JSVAL( JS_NewStringCopyZ( cx, myItem->sEdits[index].c_str() )) );
+		JS_SET_RVAL(cx, vp, JS::StringValue( JS_NewStringCopyZ( cx, myItem->sEdits[index].c_str() )) );
 	}
 	else
 	{
-		JS_SET_RVAL(cx, vp, STRING_TO_JSVAL(JS_NewStringCopyZ(cx, "")) );
+		JS_SET_RVAL(cx, vp, JS::StringValue(JS_NewStringCopyZ(cx, "")) );
 	}
 	return true;
 }
@@ -511,7 +511,7 @@ bool CGumpData_GetId( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( argc == 0 )
 	{
 		ScriptError( cx, "(GumpData_getID) Invalid Number of Arguments %d, needs: 1 ", argc );
-		JS_SET_RVAL(cx, vp, INT_TO_JSVAL( -1 ) );
+		JS_SET_RVAL(cx, vp, JS::Int32Value( -1 ) );
 		return true;
 	}
 
@@ -521,7 +521,7 @@ bool CGumpData_GetId( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( myItem == nullptr  )
 	{
 		ScriptError( cx, "(DataGump_getID) Invalid object assigned" );
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( -1 ) );
+		JS_SET_RVAL( cx, vp, JS::Int32Value( -1 ) );
 		return true;
 	}
 	JS::Value* argv = JS_ARGV( cx, vp );
@@ -529,11 +529,11 @@ bool CGumpData_GetId( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( index < myItem->nIDs.size() )
 	{
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( myItem->nIDs[index] ) );
+		JS_SET_RVAL( cx, vp, JS::Int32Value( myItem->nIDs[index] ) );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( -1 ) );
+		JS_SET_RVAL( cx, vp, JS::Int32Value( -1 ) );
 	}
 
 	return true;
@@ -550,7 +550,7 @@ bool CGumpData_GetButton( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( argc == 0 )
 	{
 		ScriptError( cx, "(GumpData_getbutton) Invalid Number of Arguments %d, needs: 1 ", argc );
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL(-1) );
+		JS_SET_RVAL( cx, vp, JS::Int32Value(-1) );
 		return true;
 	}
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
@@ -560,17 +560,17 @@ bool CGumpData_GetButton( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( myItem == nullptr  )
 	{
 		ScriptError( cx, "(DataGump-getID) Invalid object assigned" );
-		JS_SET_RVAL(cx, vp, INT_TO_JSVAL( -1 ) );
+		JS_SET_RVAL(cx, vp, JS::Int32Value( -1 ) );
 		return true;
 	}
 	size_t index = argv[0].toInt32();
 	if( index < myItem->nButtons.size() )
 	{
-		JS_SET_RVAL(cx, vp, INT_TO_JSVAL( myItem->nButtons[index] ) );
+		JS_SET_RVAL(cx, vp, JS::Int32Value( myItem->nButtons[index] ) );
 	}
 	else
 	{
-		JS_SET_RVAL(cx, vp, INT_TO_JSVAL( -1 ) );
+		JS_SET_RVAL(cx, vp, JS::Int32Value( -1 ) );
 	}
 
 	return true;
@@ -2061,7 +2061,7 @@ bool CBase_GetJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid timer found
+	JS_SET_RVAL( cx, vp, JS::Int32Value( 0 ) ); // Return value 0 by default, to indicate no valid timer found
 	UI16 timerId = static_cast<UI16>( argv[0].toInt32());
 	UI16 scriptId = static_cast<UI16>( argv[1].toInt32());
 
@@ -2114,7 +2114,7 @@ bool CBase_SetJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value is 0 by default, indicating no timer was found or updated
+	JS_SET_RVAL( cx, vp, JS::Int32Value( 0 ) ); // Return value is 0 by default, indicating no timer was found or updated
 	UI16 timerId = static_cast<UI16>( argv[0].toInt32());
 	double expireTime_double;
 	JS_ValueToNumber( cx, argv[1], &expireTime_double );
@@ -2140,7 +2140,7 @@ bool CBase_SetJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 			{
 				// Set the timestamp for when the Effect timer expires to that specified in parameters
 				Effect->ExpireTime( expireTime );
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) ); // Return 1 indicating timer was found and updated
+				JS_SET_RVAL( cx, vp, JS::Int32Value( 1 ) ); // Return 1 indicating timer was found and updated
 			}
 		}
 	}
@@ -2170,7 +2170,7 @@ bool CBase_KillJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid timer found
+	JS_SET_RVAL( cx, vp, JS::Int32Value( 0 ) ); // Return value 0 by default, to indicate no valid timer found
 	UI16 timerId = static_cast<UI16>( argv[0].toInt32());
 	UI16 scriptId = static_cast<UI16>( argv[1].toInt32());
 
@@ -2202,7 +2202,7 @@ bool CBase_KillJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( removeEffect != nullptr )
 	{
 		cwmWorldState->tempEffects.Remove( removeEffect, true );
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) ); // Return 1 indicating timer was found and removed
+		JS_SET_RVAL( cx, vp, JS::Int32Value( 1 ) ); // Return 1 indicating timer was found and removed
 	}
 
 	return true;
@@ -2230,7 +2230,7 @@ bool CBase_PauseJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid timer found
+	JS_SET_RVAL( cx, vp, JS::Int32Value( 0 ) ); // Return value 0 by default, to indicate no valid timer found
 	UI16 timerId = static_cast<UI16>( argv[0].toInt32());
 	UI16 scriptId = static_cast<UI16>( argv[1].toInt32());
 
@@ -2256,11 +2256,11 @@ bool CBase_PauseJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 				if( Effect->PauseTime() == 0 )
 				{
 					PauseEffect( Effect );
-					JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) ); // Return 1 indicating timer was found and paused
+					JS_SET_RVAL( cx, vp, JS::Int32Value( 1 ) ); // Return 1 indicating timer was found and paused
 				}
 				else
 				{
-					JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 2 ) ); // Return 2 indicating timer was found, but already paused
+					JS_SET_RVAL( cx, vp, JS::Int32Value( 2 ) ); // Return 2 indicating timer was found, but already paused
 				}
 				break;
 			}
@@ -2292,7 +2292,7 @@ bool CBase_ResumeJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid timer found
+	JS_SET_RVAL( cx, vp, JS::Int32Value( 0 ) ); // Return value 0 by default, to indicate no valid timer found
 	UI16 timerId = static_cast<UI16>( argv[0].toInt32());
 	UI16 scriptId = static_cast<UI16>( argv[1].toInt32());
 
@@ -2318,11 +2318,11 @@ bool CBase_ResumeJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 				if( Effect->PauseTime() > 0 )
 				{
 					ResumeEffect( Effect );
-					JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) ); // Return 1 indicating timer was found and resumed
+					JS_SET_RVAL( cx, vp, JS::Int32Value( 1 ) ); // Return 1 indicating timer was found and resumed
 				}
 				else
 				{
-					JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 2 ) ); // Return 2 indicating timer was found, but it was not paused!
+					JS_SET_RVAL( cx, vp, JS::Int32Value( 2 ) ); // Return 2 indicating timer was found, but it was not paused!
 				}
 				break;
 			}
@@ -2355,7 +2355,7 @@ bool CBase_GetTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid tempe effect
+	JS_SET_RVAL( cx, vp, JS::Int32Value( 0 ) ); // Return value 0 by default, to indicate no valid tempe effect
 	UI16 tempEffectID = static_cast<UI16>( argv[0].toInt32());
 
 	SERIAL myObjSerial = myObj->GetSerial();
@@ -2394,7 +2394,7 @@ bool CBase_ReverseTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid temp effect found
+	JS_SET_RVAL( cx, vp, JS::Int32Value( 0 ) ); // Return value 0 by default, to indicate no valid temp effect found
 	UI16 tempEffectID = static_cast<UI16>( argv[0].toInt32());
 
 	SERIAL myObjSerial = myObj->GetSerial();
@@ -2414,7 +2414,7 @@ bool CBase_ReverseTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 	{
 		ReverseEffect( removeEffect );
 		cwmWorldState->tempEffects.Remove( removeEffect, true );
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) ); // Return 1 indicating temp effect was found and removed
+		JS_SET_RVAL( cx, vp, JS::Int32Value( 1 ) ); // Return 1 indicating temp effect was found and removed
 	}
 
 	return true;
@@ -2442,7 +2442,7 @@ bool CBase_PauseTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid temp effect found
+	JS_SET_RVAL( cx, vp, JS::Int32Value( 0 ) ); // Return value 0 by default, to indicate no valid temp effect found
 	UI16 tempEffectID = static_cast<UI16>( argv[0].toInt32());
 
 	SERIAL myObjSerial = myObj->GetSerial();
@@ -2454,7 +2454,7 @@ bool CBase_PauseTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 		{
 			// Found our timer! Let's pause it
 			PauseEffect( pauseEffect );
-			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) ); // Return 1 indicating temp effect was found and paused
+			JS_SET_RVAL( cx, vp, JS::Int32Value( 1 ) ); // Return 1 indicating temp effect was found and paused
 			break;
 		}
 	}
@@ -2484,7 +2484,7 @@ bool CBase_ResumeTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid paused temp effect found
+	JS_SET_RVAL( cx, vp, JS::Int32Value( 0 ) ); // Return value 0 by default, to indicate no valid paused temp effect found
 	UI16 tempEffectID = static_cast<UI16>( argv[0].toInt32());
 
 	SERIAL myObjSerial = myObj->GetSerial();
@@ -2496,7 +2496,7 @@ bool CBase_ResumeTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 		{
 			// Found our timer! Let's resume it
 			ResumeEffect( resumeEffect );
-			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) ); // Return 1 indicating temp effect was found and resumed
+			JS_SET_RVAL( cx, vp, JS::Int32Value( 1 ) ); // Return 1 indicating temp effect was found and resumed
 			break;
 		}
 	}
@@ -3432,7 +3432,7 @@ bool CMisc_HasSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 		}
 		else
 		{
-			JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+			JS_SET_RVAL( cx, vp, JS::BooleanValue( false ) );
 		}
 	}
 
@@ -3517,15 +3517,15 @@ bool CBase_GetTag( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( localObject.m_ObjectType == TAGMAP_TYPE_STRING )
 	{
 		JSString *localJSString = JS_NewStringCopyN( cx, ( const char* )localObject.m_StringValue.c_str(), localObject.m_StringValue.length() );
-		JS_SET_RVAL( cx, vp, static_cast<JS::Value>( STRING_TO_JSVAL( localJSString )) );
+		JS_SET_RVAL( cx, vp, static_cast<JS::Value>( JS::StringValue( localJSString )) );
 	}
 	else if( localObject.m_ObjectType == TAGMAP_TYPE_BOOL )
 	{
-		JS_SET_RVAL( cx, vp, static_cast<JS::Value>( BOOLEAN_TO_JSVAL(( localObject.m_IntValue == 1 ))) );
+		JS_SET_RVAL( cx, vp, static_cast<JS::Value>( JS::BooleanValue(( localObject.m_IntValue == 1 ))) );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, static_cast<JS::Value>( INT_TO_JSVAL( localObject.m_IntValue )) );
+		JS_SET_RVAL( cx, vp, static_cast<JS::Value>( JS::Int32Value( localObject.m_IntValue )) );
 	}
 	return true;
 }
@@ -3662,15 +3662,15 @@ bool CBase_GetTempTag( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( localObject.m_ObjectType == TAGMAP_TYPE_STRING )
 	{
 		JSString *localJSString = JS_NewStringCopyN( cx, ( const char* )localObject.m_StringValue.c_str(), localObject.m_StringValue.length() );
-		JS_SET_RVAL( cx, vp, static_cast<JS::Value>( STRING_TO_JSVAL( localJSString )) );
+		JS_SET_RVAL( cx, vp, static_cast<JS::Value>( JS::StringValue( localJSString )) );
 	}
 	else if( localObject.m_ObjectType == TAGMAP_TYPE_BOOL )
 	{
-		JS_SET_RVAL( cx, vp, static_cast<JS::Value>( BOOLEAN_TO_JSVAL(( localObject.m_IntValue == 1 ))) );
+		JS_SET_RVAL( cx, vp, static_cast<JS::Value>( JS::BooleanValue(( localObject.m_IntValue == 1 ))) );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, static_cast<JS::Value>( INT_TO_JSVAL( localObject.m_IntValue )) );
+		JS_SET_RVAL( cx, vp, static_cast<JS::Value>( JS::Int32Value( localObject.m_IntValue )) );
 	}
 	return true;
 }
@@ -3802,7 +3802,7 @@ bool CBase_GetNumTags( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( myObj->GetNumTags() ) );
+	JS_SET_RVAL( cx, vp, JS::Int32Value( myObj->GetNumTags() ) );
 	return true;
 }
 
@@ -3843,7 +3843,7 @@ bool CBase_GetTagMap( JSContext *cx, unsigned argc, JS::Value* vp )
 		
 		// Convert tag name to JSString
 		JSString *tagName = JS_NewStringCopyZ( cx, tagObj.first.c_str() );
-		JS::Value jsTagName = STRING_TO_JSVAL( tagName );
+		JS::Value jsTagName = JS::StringValue( tagName );
 
 		// Add tag name to JSObject for tag
 		JS_SetElement( cx, jsTag, 0, &jsTagName );
@@ -3854,19 +3854,19 @@ bool CBase_GetTagMap( JSContext *cx, unsigned argc, JS::Value* vp )
 		switch( tagObj.second.m_ObjectType )
 		{
 			case TAGMAP_TYPE_INT:
-				jsType = INT_TO_JSVAL( TAGMAP_TYPE_INT );
-				jsValue = INT_TO_JSVAL( tagObj.second.m_IntValue );
+				jsType = JS::Int32Value( TAGMAP_TYPE_INT );
+				jsValue = JS::Int32Value( tagObj.second.m_IntValue );
 				break;
 			case TAGMAP_TYPE_STRING:
 			{
-				jsType = INT_TO_JSVAL( TAGMAP_TYPE_STRING );
+				jsType = JS::Int32Value( TAGMAP_TYPE_STRING );
 				JSString *jsStringVal = JS_NewStringCopyZ( cx, tagObj.second.m_StringValue.c_str() );
-				jsValue = STRING_TO_JSVAL( jsStringVal );
+				jsValue = JS::StringValue( jsStringVal );
 				break;
 			}
 			case TAGMAP_TYPE_BOOL:
-				jsType = INT_TO_JSVAL( TAGMAP_TYPE_BOOL );
-				jsValue = BOOLEAN_TO_JSVAL( tagObj.second.m_IntValue != 0 );
+				jsType = JS::Int32Value( TAGMAP_TYPE_BOOL );
+				jsValue = JS::BooleanValue( tagObj.second.m_IntValue != 0 );
 				break;
 			default:
 				// Unhandled tag type detected!
@@ -3926,7 +3926,7 @@ bool CBase_GetTempTagMap( JSContext *cx, unsigned argc, JS::Value* vp )
 
 		// Convert tag name to JSString
 		JSString *tagName = JS_NewStringCopyZ( cx, tagObj.first.c_str() );
-		JS::Value jsTagName = STRING_TO_JSVAL( tagName );
+		JS::Value jsTagName = JS::StringValue( tagName );
 
 		// Add tag name to JSObject for tag
 		JS_SetElement( cx, jsTag, 0, &jsTagName );
@@ -3937,19 +3937,19 @@ bool CBase_GetTempTagMap( JSContext *cx, unsigned argc, JS::Value* vp )
 		switch( tagObj.second.m_ObjectType )
 		{
 			case TAGMAP_TYPE_INT:
-				jsType = INT_TO_JSVAL( TAGMAP_TYPE_INT );
-				jsValue = INT_TO_JSVAL( tagObj.second.m_IntValue );
+				jsType = JS::Int32Value( TAGMAP_TYPE_INT );
+				jsValue = JS::Int32Value( tagObj.second.m_IntValue );
 				break;
 			case TAGMAP_TYPE_STRING:
 			{
-				jsType = INT_TO_JSVAL( TAGMAP_TYPE_STRING );
+				jsType = JS::Int32Value( TAGMAP_TYPE_STRING );
 				JSString *jsStringVal = JS_NewStringCopyZ( cx, tagObj.second.m_StringValue.c_str() );
-				jsValue = STRING_TO_JSVAL( jsStringVal );
+				jsValue = JS::StringValue( jsStringVal );
 				break;
 			}
 			case TAGMAP_TYPE_BOOL:
-				jsType = INT_TO_JSVAL( TAGMAP_TYPE_BOOL );
-				jsValue = BOOLEAN_TO_JSVAL( tagObj.second.m_IntValue != 0 );
+				jsType = JS::Int32Value( TAGMAP_TYPE_BOOL );
+				jsValue = JS::BooleanValue( tagObj.second.m_IntValue != 0 );
 				break;
 			default:
 				// Unhandled tag type detected!
@@ -4210,7 +4210,7 @@ bool CChar_DirectionTo( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	UI08 NewDir = Movement->Direction( myChar, x, y );
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( NewDir ) );
+	JS_SET_RVAL( cx, vp, JS::Int32Value( NewDir ) );
 
 	return true;
 }
@@ -4306,7 +4306,7 @@ bool CGuild_IsAtPeace( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myGuild->IsAtPeace() ) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( myGuild->IsAtPeace() ) );
 
 	return true;
 }
@@ -4330,7 +4330,7 @@ bool CGuild_AddMember( JSContext *cx, unsigned argc, JS::Value* vp )
 	JSEncapsulate myClass( cx, obj );
 
 	// let's setup our default return value here
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( false ) );
 
 	if( myClass.ClassName() == "UOXGuild" )
 	{
@@ -4352,7 +4352,7 @@ bool CGuild_AddMember( JSContext *cx, unsigned argc, JS::Value* vp )
 		myGuild->NewMember( *trgChar );
 		GUILDID guildId = GuildSys->FindGuildId( myGuild );
 		trgChar->SetGuildNumber( guildId );
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
+		JS_SET_RVAL( cx, vp, JS::BooleanValue( true ));
 	}
 	return true;
 }
@@ -4376,7 +4376,7 @@ bool CGuild_AddRecruit( JSContext *cx, unsigned argc, JS::Value* vp )
 	JSEncapsulate myClass( cx, obj );
 
 	// let's setup our default return value here
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( false ) );
 
 	if( myClass.ClassName() == "UOXGuild" )
 	{
@@ -4398,7 +4398,7 @@ bool CGuild_AddRecruit( JSContext *cx, unsigned argc, JS::Value* vp )
 		myGuild->NewRecruit( *trgChar );
 		GUILDID guildId = GuildSys->FindGuildId( myGuild );
 		trgChar->SetGuildNumber( guildId );
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
+		JS_SET_RVAL( cx, vp, JS::BooleanValue( true ));
 	}
 	return true;
 }
@@ -4422,7 +4422,7 @@ bool CGuild_RemoveRecruit( JSContext *cx, unsigned argc, JS::Value* vp )
 	JSEncapsulate myClass( cx, obj );
 
 	// let's setup our default return value here
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( false ) );
 
 	if( myClass.ClassName() == "UOXGuild" )
 	{
@@ -4443,7 +4443,7 @@ bool CGuild_RemoveRecruit( JSContext *cx, unsigned argc, JS::Value* vp )
 
 		myGuild->RemoveRecruit( *trgChar );
 		trgChar->SetGuildNumber( -1 );
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
+		JS_SET_RVAL( cx, vp, JS::BooleanValue( true ));
 	}
 	return true;
 }
@@ -4467,7 +4467,7 @@ bool CGuild_RemoveMember( JSContext *cx, unsigned argc, JS::Value* vp )
 	JSEncapsulate myClass( cx, obj );
 
 	// let's setup our default return value here
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( false ) );
 
 	if( myClass.ClassName() == "UOXGuild" )
 	{
@@ -4488,7 +4488,7 @@ bool CGuild_RemoveMember( JSContext *cx, unsigned argc, JS::Value* vp )
 
 		myGuild->RemoveMember( *trgChar );
 		trgChar->SetGuildNumber( -1 );
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
+		JS_SET_RVAL( cx, vp, JS::BooleanValue( true ));
 	}
 	return true;
 }
@@ -4512,7 +4512,7 @@ bool CGuild_RecruitToMember( JSContext *cx, unsigned argc, JS::Value* vp )
 	JSEncapsulate myClass( cx, obj );
 
 	// let's setup our default return value here
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( false ) );
 
 	if( myClass.ClassName() == "UOXGuild" )
 	{
@@ -4532,7 +4532,7 @@ bool CGuild_RecruitToMember( JSContext *cx, unsigned argc, JS::Value* vp )
 		}
 
 		myGuild->RecruitToMember( *trgChar );
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
+		JS_SET_RVAL( cx, vp, JS::BooleanValue( true ));
 	}
 	return true;
 }
@@ -4576,7 +4576,7 @@ bool CGuild_IsAtWar( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	bool result = myGuild->IsAtWar( otherID );
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( result ));
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( result ));
 	return true;
 }
 
@@ -4619,7 +4619,7 @@ bool CGuild_IsAlly( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	bool result = myGuild->IsAlly( otherID );
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( result ));
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( result ));
 	return true;
 }
 
@@ -4662,7 +4662,7 @@ bool CGuild_IsNeutral( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	bool result = myGuild->IsNeutral( otherID );
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( result ));
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( result ));
 	return true;
 }
 
@@ -4725,7 +4725,7 @@ bool CBase_ResourceCount( JSContext *cx, unsigned argc, JS::Value* vp )
 		CItem *myItem	= static_cast<CItem *>( myObj );
 		retVal			= GetSubItemAmount( myItem, realId, static_cast<UI16>( itemColour ), static_cast<UI32>( moreVal ), colorCheck, moreCheck, sectionId );
 	}
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( retVal ) );
+	JS_SET_RVAL( cx, vp, JS::Int32Value( retVal ) );
 	return true;
 }
 
@@ -4793,7 +4793,7 @@ bool CBase_UseResource( JSContext *cx, unsigned argc, JS::Value* vp )
 		CItem *myItem	= static_cast<CItem *>( myObj );
 		retVal			= DeleteSubItemAmount( myItem, amount, realId, static_cast<UI16>( itemColour ), static_cast<UI32>( moreVal ), colorCheck, moreCheck, sectionId );
 	}
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( retVal ) );
+	JS_SET_RVAL( cx, vp, JS::Int32Value( retVal ) );
 	return true;
 }
 
@@ -5005,12 +5005,12 @@ bool CBase_InRange( JSContext *cx, unsigned argc, JS::Value* vp )
 		CItem *myItem = static_cast<CItem *>( them );
 		if( myItem->GetCont() != nullptr )
 		{
-			JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( FindItemOwner( myItem ) == me ) );
+			JS_SET_RVAL( cx, vp, JS::BooleanValue( FindItemOwner( myItem ) == me ) );
 			return true;
 		}
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ObjInRange( me, them, distance )) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( ObjInRange( me, them, distance )) );
 	return true;
 }
 
@@ -5131,7 +5131,7 @@ bool CChar_CheckSkill( JSContext *cx, unsigned argc, JS::Value* vp )
 	{
 		forceResult = static_cast<SI08>( argv[4].toInt32());
 	}
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( Skills->CheckSkill( myChar, skillNum, minSkill, maxSkill, isCraftSkill, forceResult ) ) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( Skills->CheckSkill( myChar, skillNum, minSkill, maxSkill, isCraftSkill, forceResult ) ) );
 	return true;
 }
 
@@ -5531,7 +5531,7 @@ bool CChar_CastSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 		else
 		{
 			bool spellSuccess = Magic->SelectSpell( sock, spellCast );
-			JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( spellSuccess ) );
+			JS_SET_RVAL( cx, vp, JS::BooleanValue( spellSuccess ) );
 		}
 	}
 	return true;
@@ -5578,11 +5578,11 @@ bool CChar_GetSerial( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( !ValidateObject( myObj ) || ( part == 0 ) || ( part > 4 ))
 	{
 		ScriptError( cx, "GetSerial: Invalid Object/Argument, takes 1 arg: part of serial (1-4)" );
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) );
+		JS_SET_RVAL( cx, vp, JS::Int32Value( 0 ) );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( myObj->GetSerial( part )) );
+	JS_SET_RVAL( cx, vp, JS::Int32Value( myObj->GetSerial( part )) );
 
 	return true;
 }
@@ -5603,11 +5603,11 @@ bool CBase_GetSerial( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( !ValidateObject( myObj ) || ( part == 0 ) || ( part > 4 ))
 	{
 		ScriptError( cx, "GetSerial: Invalid Object/Argument, takes 1 arg: part of serial (1-4)" );
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) );
+		JS_SET_RVAL( cx, vp, JS::Int32Value( 0 ) );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( myObj->GetSerial( part )) );
+	JS_SET_RVAL( cx, vp, JS::Int32Value( myObj->GetSerial( part )) );
 
 	return true;
 }
@@ -5819,7 +5819,7 @@ bool CItem_SetCont( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	// return true if the change was successful, false otherwise
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myItem->SetCont( trgObj )) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( myItem->SetCont( trgObj )) );
 
 	return true;
 }
@@ -5848,7 +5848,7 @@ bool CItem_IsMulti( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myItem->CanBeObjType( OT_MULTI )) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( myItem->CanBeObjType( OT_MULTI )) );
 	return true;
 }
 
@@ -5876,7 +5876,7 @@ bool CBase_IsBoat( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myObject->CanBeObjType( OT_BOAT )) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( myObject->CanBeObjType( OT_BOAT )) );
 	return true;
 }
 
@@ -5913,7 +5913,7 @@ bool CMulti_IsInMulti( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( toFind->GetMultiObj() == myItem )) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue(( toFind->GetMultiObj() == myItem )) );
 	return true;
 }
 
@@ -5950,7 +5950,7 @@ bool CMulti_IsOnBanList( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myItem->IsOnBanList( toFind )) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( myItem->IsOnBanList( toFind )) );
 	return true;
 }
 
@@ -5987,7 +5987,7 @@ bool CMulti_IsOnFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myItem->IsOnFriendList( toFind )) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( myItem->IsOnFriendList( toFind )) );
 	return true;
 }
 
@@ -6024,7 +6024,7 @@ bool CMulti_IsOnGuestList( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myItem->IsOnGuestList( toFind )) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( myItem->IsOnGuestList( toFind )) );
 	return true;
 }
 
@@ -6061,7 +6061,7 @@ bool CMulti_IsOnOwnerList( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myItem->IsOnOwnerList( toFind )) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( myItem->IsOnOwnerList( toFind )) );
 	return true;
 }
 
@@ -6098,7 +6098,7 @@ bool CMulti_IsOwner( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myItem->IsOwner( toFind )) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( myItem->IsOwner( toFind )) );
 	return true;
 }
 
@@ -6560,7 +6560,7 @@ bool CItem_PlaceInPack( JSContext *cx, unsigned argc, JS::Value* vp )
 		CItem *myCont = static_cast<CItem *>( myItem->GetCont() );
 		if( ValidateObject( myCont ))
 		{
-			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( HandleAutoStack( myItem, myCont, nullptr, nullptr )) );
+			JS_SET_RVAL( cx, vp, JS::Int32Value( HandleAutoStack( myItem, myCont, nullptr, nullptr )) );
 		}
 	}
 
@@ -6623,7 +6623,7 @@ bool CSocket_GetByte( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	SI32 offset	= argv[0].toInt32();
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( mySock->GetByte( offset )) );
+	JS_SET_RVAL( cx, vp, JS::Int32Value( mySock->GetByte( offset )) );
 	return true;
 }
 
@@ -6650,7 +6650,7 @@ bool CSocket_GetSByte( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	SI32 offset	= argv[0].toInt32();
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI08>( mySock->GetByte( offset ))) );
+	JS_SET_RVAL( cx, vp, JS::Int32Value( static_cast<SI08>( mySock->GetByte( offset ))) );
 	return true;
 }
 
@@ -6677,7 +6677,7 @@ bool CSocket_GetWord( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	SI32 offset = argv[0].toInt32();
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( mySock->GetWord( offset )) );
+	JS_SET_RVAL( cx, vp, JS::Int32Value( mySock->GetWord( offset )) );
 	return true;
 }
 
@@ -6704,7 +6704,7 @@ bool CSocket_GetSWord( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	SI32 offset = argv[0].toInt32();
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>(mySock->GetWord( offset ))) );
+	JS_SET_RVAL( cx, vp, JS::Int32Value( static_cast<SI16>(mySock->GetWord( offset ))) );
 	return true;
 }
 
@@ -6758,7 +6758,7 @@ bool CSocket_GetSDWord( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	SI32 offset = argv[0].toInt32();
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI32>(mySock->GetDWord( offset ))) );
+	JS_SET_RVAL( cx, vp, JS::Int32Value( static_cast<SI32>(mySock->GetDWord( offset ))) );
 	return true;
 }
 
@@ -6807,7 +6807,7 @@ bool CSocket_GetString( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	JSString *strSpeech = nullptr;
 	strSpeech = JS_NewStringCopyZ( cx, toReturn );
-	JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( strSpeech ) );
+	JS_SET_RVAL( cx, vp, JS::StringValue( strSpeech ) );
 
 	return true;
 }
@@ -7226,7 +7226,7 @@ bool CRace_CanWearArmour( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	ARMORCLASS srcClass = myRace->ArmourClassRestriction();
 	ARMORCLASS trgClass = toFind->GetArmourClass();
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( trgClass == 0 ) || (( srcClass & trgClass ) != 0 )) );	// they have a matching class
+	JS_SET_RVAL( cx, vp, JS::BooleanValue(( trgClass == 0 ) || (( srcClass & trgClass ) != 0 )) );	// they have a matching class
 	return true;
 }
 
@@ -7257,7 +7257,7 @@ bool CRace_CanEquip( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	UI16 itemId = static_cast<UI16>( argv[0].toInt32());
 	bool canEquip = myRace->CanEquipItem( itemId );
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( canEquip ));    // they can equip the item
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( canEquip ));    // they can equip the item
 	return true;
 }
 
@@ -7285,7 +7285,7 @@ bool CRace_IsValidHairColour( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	COLOUR cVal = static_cast<COLOUR>( argv[0].toInt32());
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( myRace->IsValidHair( cVal ))) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue(( myRace->IsValidHair( cVal ))) );
 	return true;
 }
 
@@ -7313,7 +7313,7 @@ bool CRace_IsValidSkinColour( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	COLOUR cVal = static_cast<COLOUR>( argv[0].toInt32());
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( myRace->IsValidSkin( cVal ))) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue(( myRace->IsValidSkin( cVal ))) );
 	return true;
 }
 
@@ -7341,7 +7341,7 @@ bool CRace_IsValidBeardColour( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	COLOUR cVal = static_cast<COLOUR>( argv[0].toInt32());
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( myRace->IsValidBeard( cVal ))) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue(( myRace->IsValidBeard( cVal ))) );
 	return true;
 }
 
@@ -7579,7 +7579,7 @@ bool CItem_IsOnFoodList( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 	std::string foodList = JS_GetStringBytes( cx, argv[0]);
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( IsOnFoodList( foodList, myItem->GetId() )) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( IsOnFoodList( foodList, myItem->GetId() )) );
 	return true;
 }
 
@@ -7896,7 +7896,7 @@ bool CFile_Read( JSContext *cx, unsigned argc, JS::Value* vp )
 	// We don't care about return value, so suppress compiler warning
 	[[maybe_unused]] size_t bytesRead = fread( data, 1, bytes, mFile->mWrap );
 
-	JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( JS_NewStringCopyZ( cx, data )) );
+	JS_SET_RVAL( cx, vp, JS::StringValue( JS_NewStringCopyZ( cx, data )) );
 	return true;
 }
 
@@ -7948,7 +7948,7 @@ bool CFile_ReadUntil( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 	line[c < 512 ? c : 511] = 0;
 
-	JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( JS_NewStringCopyZ( cx, line )) );
+	JS_SET_RVAL( cx, vp, JS::StringValue( JS_NewStringCopyZ( cx, line )) );
 	return true;
 }
 
@@ -8010,7 +8010,7 @@ bool CFile_EOF( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( !mFile || !mFile->mWrap )
 		return false;
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( feof( mFile->mWrap ) != 0 )) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue(( feof( mFile->mWrap ) != 0 )) );
 
 	return true;
 }
@@ -8034,13 +8034,13 @@ bool CFile_Length( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( !mFile || !mFile->mWrap )
 	{
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( -1 ) );
+		JS_SET_RVAL( cx, vp, JS::Int32Value( -1 ) );
 		return true;
 	}
 
 	long fpos = ftell( mFile->mWrap );
 	fseek( mFile->mWrap, 0, SEEK_END );
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( ftell( mFile->mWrap )) );
+	JS_SET_RVAL( cx, vp, JS::Int32Value( ftell( mFile->mWrap )) );
 
 	if( fpos > -1 )
 	{
@@ -8076,7 +8076,7 @@ bool CFile_Pos( JSContext *cx, unsigned argc, JS::Value* vp )
 		[[maybe_unused]] int newFPos = fseek( mFile->mWrap, argv[0].toInt32(), SEEK_SET );
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( ftell( mFile->mWrap )) );
+	JS_SET_RVAL( cx, vp, JS::Int32Value( ftell( mFile->mWrap )) );
 
 	return true;
 }
@@ -8208,15 +8208,15 @@ bool CBase_FinishedItems( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 	if( myObj->GetObjType() == OT_CHAR )
 	{
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( static_cast<CChar *>( myObj ))->FinishedItems() ) );
+		JS_SET_RVAL( cx, vp, JS::BooleanValue(( static_cast<CChar *>( myObj ))->FinishedItems() ) );
 	}
 	else if( myObj->GetObjType() == OT_ITEM )
 	{
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( static_cast<CItem *>( myObj ))->GetContainsList()->Finished() ) );
+		JS_SET_RVAL( cx, vp, JS::BooleanValue(( static_cast<CItem *>( myObj ))->GetContainsList()->Finished() ) );
 	}
 	else if( myObj->GetObjType() == OT_MULTI || myObj->GetObjType() == OT_BOAT )
 	{
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( static_cast<CMultiObj *>( myObj ))->GetItemsInMultiList()->Finished() ) );
+		JS_SET_RVAL( cx, vp, JS::BooleanValue(( static_cast<CMultiObj *>( myObj ))->GetItemsInMultiList()->Finished() ) );
 	}
 	return true;
 }
@@ -8658,7 +8658,7 @@ bool CBase_DistanceTo( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( GetDist( thisObj, myObj )) );
+	JS_SET_RVAL( cx, vp, JS::Int32Value( GetDist( thisObj, myObj )) );
 	return true;
 }
 
@@ -10006,7 +10006,7 @@ bool CItem_Carve( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( NewCarveTarget( mSock, toCarve )) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( NewCarveTarget( mSock, toCarve )) );
 	return true;
 }
 
@@ -10037,7 +10037,7 @@ bool CItem_GetTileName( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	JSString *tString;
 	tString = JS_NewStringCopyZ( cx, itemName.c_str() );
-	JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+	JS_SET_RVAL( cx, vp, JS::StringValue( tString ) );
 	return true;
 }
 
@@ -10076,17 +10076,17 @@ bool CMulti_GetMultiCorner( JSContext *cx, unsigned argc, JS::Value* vp )
 	switch( cornerToFind )
 	{
 		case 0: // NW
-			JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( JS_NewStringCopyZ( cx, ( std::to_string( x1 ) + "," + std::to_string( y1 )).c_str() )) );
+			JS_SET_RVAL( cx, vp, JS::StringValue( JS_NewStringCopyZ( cx, ( std::to_string( x1 ) + "," + std::to_string( y1 )).c_str() )) );
 			break;
 		case 1: // NE
-			JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( JS_NewStringCopyZ( cx, ( std::to_string( x2 ) + "," + std::to_string( y1 )).c_str() )) );
+			JS_SET_RVAL( cx, vp, JS::StringValue( JS_NewStringCopyZ( cx, ( std::to_string( x2 ) + "," + std::to_string( y1 )).c_str() )) );
 			break;
 		case 2: // SW
-			JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( JS_NewStringCopyZ( cx, ( std::to_string( x1 ) + "," + std::to_string( y2 )).c_str() )) );
+			JS_SET_RVAL( cx, vp, JS::StringValue( JS_NewStringCopyZ( cx, ( std::to_string( x1 ) + "," + std::to_string( y2 )).c_str() )) );
 			break;
 		case 3: // SE
 		{
-			JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( JS_NewStringCopyZ( cx, ( std::to_string( x2 ) + "," + std::to_string( y2 )).c_str() )) );
+			JS_SET_RVAL( cx, vp, JS::StringValue( JS_NewStringCopyZ( cx, ( std::to_string( x2 ) + "," + std::to_string( y2 )).c_str() )) );
 			break;
 		}
 		default:
@@ -10221,7 +10221,7 @@ bool CMulti_IsSecureContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	bool isSecureContainer = multiObject->IsSecureContainer( itemToCheck );
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( isSecureContainer ) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( isSecureContainer ) );
 	return true;
 }
 
@@ -10707,23 +10707,23 @@ bool CMulti_FinishedChars( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( listType == "visitor" ) // All chars inside the multi
 	{
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myObj->GetCharsInMultiList()->Finished() ) );
+		JS_SET_RVAL( cx, vp, JS::BooleanValue( myObj->GetCharsInMultiList()->Finished() ) );
 	}
 	else if( listType == "owner" ) // Owners
 	{
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myObj->GetOwnersOfMultiList()->Finished() ) );
+		JS_SET_RVAL( cx, vp, JS::BooleanValue( myObj->GetOwnersOfMultiList()->Finished() ) );
 	}
 	else if( listType == "friend" ) // Friends
 	{
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myObj->GetFriendsOfMultiList()->Finished() ) );
+		JS_SET_RVAL( cx, vp, JS::BooleanValue( myObj->GetFriendsOfMultiList()->Finished() ) );
 	}
 	else if( listType == "guest" ) // Guests
 	{
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myObj->GetGuestsOfMultiList()->Finished() ) );
+		JS_SET_RVAL( cx, vp, JS::BooleanValue( myObj->GetGuestsOfMultiList()->Finished() ) );
 	}
 	else if( listType == "banned" ) // Banned
 	{
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myObj->GetBannedFromMultiList()->Finished() ) );
+		JS_SET_RVAL( cx, vp, JS::BooleanValue( myObj->GetBannedFromMultiList()->Finished() ) );
 	}
 	else
 	{
@@ -10863,11 +10863,11 @@ bool CBase_CanSee( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( ValidateObject( mChar ))
 	{
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( LineOfSight( mSock, mChar, x, y, z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false, zTop )) );
+		JS_SET_RVAL( cx, vp, JS::BooleanValue( LineOfSight( mSock, mChar, x, y, z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false, zTop )) );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+		JS_SET_RVAL( cx, vp, JS::BooleanValue( false ) );
 	}
 
 	return true;
@@ -11064,7 +11064,7 @@ bool CChar_InitiateCombat( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( Combat->StartAttack( mChar, ourTarget )) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( Combat->StartAttack( mChar, ourTarget )) );
 	return true;
 }
 
@@ -11193,7 +11193,7 @@ bool CChar_CheckAggressorFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mChar->CheckAggressorFlag( ourTarget->GetSerial() )) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( mChar->CheckAggressorFlag( ourTarget->GetSerial() )) );
 	return true;
 }
 
@@ -11284,7 +11284,7 @@ bool CChar_IsAggressor( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	bool checkForPlayerOnly	= ( argv[0].toBoolean() == true );
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mChar->IsAggressor( checkForPlayerOnly )) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( mChar->IsAggressor( checkForPlayerOnly )) );
 	return true;
 }
 
@@ -11386,7 +11386,7 @@ bool CChar_CheckPermaGreyFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mChar->CheckPermaGreyFlag( ourTarget->GetSerial() )) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( mChar->CheckPermaGreyFlag( ourTarget->GetSerial() )) );
 	return true;
 }
 
@@ -11477,7 +11477,7 @@ bool CChar_IsPermaGrey( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	bool checkForPlayerOnly	= ( argv[0].toBoolean() == true );
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mChar->IsPermaGrey( checkForPlayerOnly )) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( mChar->IsPermaGrey( checkForPlayerOnly )) );
 	return true;
 }
 
@@ -11592,11 +11592,11 @@ bool CBase_Resist( JSContext *cx, unsigned argc, JS::Value* vp )
 	{
 		if( ValidateObject( mChar ))
 		{
-			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( mChar->GetResist( static_cast<WeatherType>( resistType.toInt() ))) );
+			JS_SET_RVAL( cx, vp, JS::Int32Value( mChar->GetResist( static_cast<WeatherType>( resistType.toInt() ))) );
 		}
 		else if( ValidateObject( mItem ))
 		{
-			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( mItem->GetResist( static_cast<WeatherType>( resistType.toInt() ))) );
+			JS_SET_RVAL( cx, vp, JS::Int32Value( mItem->GetResist( static_cast<WeatherType>( resistType.toInt() ))) );
 		}
 		else
 		{
@@ -11675,7 +11675,7 @@ bool CChar_Defense( JSContext *cx, unsigned argc, JS::Value* vp )
 	bool excludeMedableArmor = ( argc == 4 ? ( argv[3].toBoolean() == true ) : false );
 	bool includeShield = ( argc == 5 ? ( argv[4].toBoolean() == true ) : false );
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( Combat->CalcDef( mChar, static_cast<UI08>( hitLoc.toInt() ), doArmorDamage.toBool(), static_cast<WeatherType>( resistType.toInt() ), excludeMedableArmor, includeShield )) );
+	JS_SET_RVAL( cx, vp, JS::Int32Value( Combat->CalcDef( mChar, static_cast<UI08>( hitLoc.toInt() ), doArmorDamage.toBool(), static_cast<WeatherType>( resistType.toInt() ), excludeMedableArmor, includeShield )) );
 	return true;
 }
 
@@ -11756,7 +11756,7 @@ bool CItem_GetMoreVar( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Fetch the value of the moreVarPart and return it to the script
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( mItem->GetTempVar( static_cast<CITempVars>( moreVar ), moreVarPart )) );
+	JS_SET_RVAL( cx, vp, JS::Int32Value( mItem->GetTempVar( static_cast<CITempVars>( moreVar ), moreVarPart )) );
 	return true;
 }
 
@@ -11959,7 +11959,7 @@ bool CBase_HasScriptTrigger( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	UI16 scriptId = static_cast<UI16>( argv[0].toInt32());
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( scriptId > 0 && myObj->HasScriptTrigger( scriptId ) ) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( scriptId > 0 && myObj->HasScriptTrigger( scriptId ) ) );
 	return true;
 }
 
@@ -12104,21 +12104,21 @@ bool CRegion_GetOrePref( JSContext *cx, unsigned argc, JS::Value* vp )
 	// Start with name of ore
 	JSString *oreName = nullptr;
 	oreName = JS_NewStringCopyZ( cx, orePrefs->oreIndex->oreName.c_str() );
-	auto jsOreName = STRING_TO_JSVAL( oreName );
+	auto jsOreName = JS::StringValue( oreName );
 	JS_SetElement( cx, jsMiningData, 0, &jsOreName );
 
 	// Name of ingot
 	JSString *ingotName = nullptr;
 	ingotName = JS_NewStringCopyZ( cx, orePrefs->oreIndex->name.c_str() );
-	auto jsIngotName = STRING_TO_JSVAL( ingotName );
+	auto jsIngotName = JS::StringValue( ingotName );
 	JS_SetElement( cx, jsMiningData, 3, &jsIngotName );
 
 	// Ore colour, min skill, Makemenu entry, oreChance, scriptID
-	auto jsOreColor = INT_TO_JSVAL( orePrefs->oreIndex->colour );
-	auto jsOreMinSkill = INT_TO_JSVAL( orePrefs->oreIndex->minSkill );
-	auto jsOreMakemenu = INT_TO_JSVAL( orePrefs->oreIndex->makemenu );
-	auto jsOreChance = INT_TO_JSVAL( orePrefs->oreIndex->oreChance );
-	auto jsOreScriptID = INT_TO_JSVAL( orePrefs->oreIndex->scriptID );
+	auto jsOreColor = JS::Int32Value( orePrefs->oreIndex->colour );
+	auto jsOreMinSkill = JS::Int32Value( orePrefs->oreIndex->minSkill );
+	auto jsOreMakemenu = JS::Int32Value( orePrefs->oreIndex->makemenu );
+	auto jsOreChance = JS::Int32Value( orePrefs->oreIndex->oreChance );
+	auto jsOreScriptID = JS::Int32Value( orePrefs->oreIndex->scriptID );
 	JS_SetElement( cx, jsMiningData, 1, &jsOreColor );
 	JS_SetElement( cx, jsMiningData, 2, &jsOreMinSkill );
 	JS_SetElement( cx, jsMiningData, 4, &jsOreMakemenu );
@@ -12130,7 +12130,7 @@ bool CRegion_GetOrePref( JSContext *cx, unsigned argc, JS::Value* vp )
 	JS_SetElement( cx, jsOrePref, 0, &miningDataVal );
 
 	// Add percent chance to orePref array
-	JS::Value jsOrePrefChance = INT_TO_JSVAL( orePrefs->percentChance );
+	JS::Value jsOrePrefChance = JS::Int32Value( orePrefs->percentChance );
 	JS_SetElement( cx, jsOrePref, 1, &jsOrePrefChance );
 
 	// Convert orePref array object to JS::Value and pass it to script
@@ -12162,7 +12162,7 @@ bool CRegion_GetOreChance( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( myObj->GetOreChance() ) );
+	JS_SET_RVAL( cx, vp, JS::Int32Value( myObj->GetOreChance() ) );
 	return true;
 }
 
@@ -12208,7 +12208,7 @@ bool CChar_AddFriend( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mChar->AddFriend( newFriend )) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( mChar->AddFriend( newFriend )) );
 	return true;
 }
 
@@ -12254,7 +12254,7 @@ bool CChar_RemoveFriend( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mChar->RemoveFriend( friendToRemove )) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( mChar->RemoveFriend( friendToRemove )) );
 	return true;
 }
 
@@ -12358,7 +12358,7 @@ bool CChar_ClearFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 	// Clear friend list
 	mChar->ClearFriendList();
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( true ) );
 	return true;
 }
 
@@ -12475,7 +12475,7 @@ bool CChar_HasBeenOwner( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	bool hasBeenOwner = mChar->IsOnPetOwnerList( pChar );
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( hasBeenOwner ) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( hasBeenOwner ) );
 	return true;
 }
 
@@ -12524,7 +12524,7 @@ bool CChar_CalculateControlChance( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	UI16 petControlChance = Skills->CalculatePetControlChance( mChar, pChar );
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( petControlChance ) );
+	JS_SET_RVAL( cx, vp, JS::Int32Value( petControlChance ) );
 	return true;
 }
 
@@ -12570,7 +12570,7 @@ bool CChar_AddFollower( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mChar->AddFollower( newFollower )) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( mChar->AddFollower( newFollower )) );
 	return true;
 }
 
@@ -12616,7 +12616,7 @@ bool CChar_RemoveFollower( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mChar->RemoveFollower( followerToRemove )) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( mChar->RemoveFollower( followerToRemove )) );
 	return true;
 }
 
@@ -12722,7 +12722,7 @@ bool CParty_Remove( JSContext *cx, unsigned argc, JS::Value* vp )
 			ScriptError( cx, "Remove: Invalid character to remove" );
 			return false;
 		}
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ourParty->RemoveMember( charToRemove )) );
+		JS_SET_RVAL( cx, vp, JS::BooleanValue( ourParty->RemoveMember( charToRemove )) );
 	}
 
 	return true;
@@ -12747,7 +12747,7 @@ bool CParty_Add( JSContext *cx, unsigned argc, JS::Value* vp )
 	JSEncapsulate myClass( cx, obj );
 
 	// let's setup our default return value here
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( false ) );
 
 	if( myClass.ClassName() == "UOXParty" )
 	{
@@ -12769,11 +12769,11 @@ bool CParty_Add( JSContext *cx, unsigned argc, JS::Value* vp )
 		{
 			if( ourParty->IsNPC() )
 			{
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ourParty->AddMember( charToAdd )) );
+				JS_SET_RVAL( cx, vp, JS::BooleanValue( ourParty->AddMember( charToAdd )) );
 			}
 			else
 			{
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+				JS_SET_RVAL( cx, vp, JS::BooleanValue( false ) );
 				ScriptError( cx, "Add: Adding NPC to a PC party attempted" );
 			}
 		}
@@ -12781,7 +12781,7 @@ bool CParty_Add( JSContext *cx, unsigned argc, JS::Value* vp )
 		{
 			if( ourParty->IsNPC() )
 			{
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+				JS_SET_RVAL( cx, vp, JS::BooleanValue( false ) );
 				ScriptError( cx, "Add: Adding PC to a NPC party attempted" );
 			}
 			else
@@ -12802,17 +12802,17 @@ bool CParty_Add( JSContext *cx, unsigned argc, JS::Value* vp )
 						toSend.Leader( leader );
 						targSock->Send( &toSend );
 						targSock->SysMessage( 9002 ); // You have been invited to join a party, type /accept or /decline to deal with the invitation
-						JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ) );
+						JS_SET_RVAL( cx, vp, JS::BooleanValue( true ) );
 					}
 					else
 					{
-						JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+						JS_SET_RVAL( cx, vp, JS::BooleanValue( false ) );
 						ScriptError( cx, "Add: PC selected is not online" );
 					}
 				}
 				else
 				{
-					JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+					JS_SET_RVAL( cx, vp, JS::BooleanValue( false ) );
 					ScriptError( cx, "Add: PC selected is not online" );
 				}
 			}
@@ -12893,7 +12893,7 @@ bool CSocket_FirstTriggerWord( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	UI16 trigWord = mySock->FirstTrigWord();
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( trigWord ) );
+	JS_SET_RVAL( cx, vp, JS::Int32Value( trigWord ) );
 	return true;
 }
 
@@ -12919,7 +12919,7 @@ bool CSocket_NextTriggerWord( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	UI16 trigWord = mySock->NextTrigWord();
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( trigWord ) );
+	JS_SET_RVAL( cx, vp, JS::Int32Value( trigWord ) );
 	return true;
 }
 
@@ -12945,7 +12945,7 @@ bool CSocket_FinishedTriggerWords( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mySock->FinishedTrigWords() ) );
+	JS_SET_RVAL( cx, vp, JS::BooleanValue( mySock->FinishedTrigWords() ) );
 	return true;
 }
 
