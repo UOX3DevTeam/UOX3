@@ -201,7 +201,8 @@ bool Packet( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CPacket_Free( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	CPUOXBuffer *toDelete = static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, obj ) );
 
 	if( toDelete == nullptr )
@@ -229,7 +230,8 @@ bool CPacket_WriteByte( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	CPUOXBuffer *myPacket = static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, obj ));
 	if( myPacket == nullptr )
 	{
@@ -237,7 +239,6 @@ bool CPacket_WriteByte( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	auto args = JS::CallArgsFromVp(argc, vp);
 	size_t	position	= static_cast<size_t>( args.get(0).toInt32());
 	UI08	toWrite		= static_cast<UI08>( args.get(1).toInt32());
 
@@ -260,7 +261,8 @@ bool CPacket_WriteShort( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	CPUOXBuffer *myPacket = static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, obj ));
 	if( myPacket == nullptr )
 	{
@@ -268,7 +270,6 @@ bool CPacket_WriteShort( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	auto args = JS::CallArgsFromVp(argc, vp);
 	size_t	position	= static_cast<size_t>( args.get(0).toInt32());
 	UI16	toWrite		= static_cast<UI16>( args.get(1).toInt32());
 
@@ -291,7 +292,8 @@ bool CPacket_WriteLong( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	CPUOXBuffer *myPacket = static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, obj ));
 	if( myPacket == nullptr )
 	{
@@ -299,7 +301,6 @@ bool CPacket_WriteLong( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	auto args = JS::CallArgsFromVp(argc, vp);
 	size_t	position	= static_cast<size_t>( args.get(0).toInt32());
 	//UI32	toWrite		= static_cast<UI32>( args.get(1).toInt32());
 	std::string toWriteChar	= JS_GetStringBytes( cx, args.get(1));
@@ -324,7 +325,8 @@ bool CPacket_WriteString( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	CPUOXBuffer *myPacket = static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, obj ));
 	if( myPacket == nullptr )
 	{
@@ -332,7 +334,6 @@ bool CPacket_WriteString( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	auto args = JS::CallArgsFromVp(argc, vp);
 	size_t	position	= static_cast<size_t>( args.get(0).toInt32());
 	std::string	toWrite		= JS_GetStringBytes( cx, args.get(1));
 	size_t	len			= static_cast<size_t>( args.get(2).toInt32());
@@ -356,7 +357,8 @@ bool CPacket_ReserveSize( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	CPUOXBuffer *myPacket = static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, obj ));
 	if( myPacket == nullptr )
 	{
@@ -364,7 +366,6 @@ bool CPacket_ReserveSize( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	auto args = JS::CallArgsFromVp(argc, vp);
 	size_t len = static_cast<size_t>( args.get(0).toInt32());
 
 	myPacket->GetPacketStream().ReserveSize( len );
@@ -386,8 +387,8 @@ bool CSocket_Send( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	CSocket *mSock			= static_cast<CSocket *>( JS_GetPrivate( cx, obj ));
 	JSObject *jsObj			= &args.get(0).toObject();
 	CPUOXBuffer *myPacket	= static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, jsObj ));
@@ -433,7 +434,8 @@ bool Gump( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CGump_Free( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	SEGump_st *toDelete = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 
 	if( toDelete == nullptr )
@@ -458,7 +460,8 @@ bool CGump_Free( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CGumpData_Free( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	SEGumpData_st *toDelete = static_cast<SEGumpData_st*>( JS_GetPrivate( cx, obj ));
 
 	if( toDelete == nullptr )
@@ -487,7 +490,8 @@ bool CGumpData_GetEdit( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	SEGumpData_st *myItem = static_cast<SEGumpData_st *>( JS_GetPrivate( cx, obj ));
 
 	if( myItem == nullptr  )
@@ -497,7 +501,6 @@ bool CGumpData_GetEdit( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	auto args = JS::CallArgsFromVp(argc, vp);
 	size_t index = args.get(0).toInt32();
 
 	if( index < myItem->sEdits.size() )
@@ -526,7 +529,8 @@ bool CGumpData_GetId( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	SEGumpData_st *myItem = static_cast<SEGumpData_st *>( JS_GetPrivate( cx, obj ));
 
 	if( myItem == nullptr  )
@@ -535,7 +539,6 @@ bool CGumpData_GetId( JSContext *cx, unsigned argc, JS::Value* vp )
 		JS_SET_RVAL( cx, vp, JS::Int32Value( -1 ) );
 		return true;
 	}
-	auto args = JS::CallArgsFromVp(argc, vp);
 	size_t index = args.get(0).toInt32();
 
 	if( index < myItem->nIDs.size() )
@@ -564,8 +567,8 @@ bool CGumpData_GetButton( JSContext *cx, unsigned argc, JS::Value* vp )
 		JS_SET_RVAL( cx, vp, JS::Int32Value(-1) );
 		return true;
 	}
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	SEGumpData_st *myItem = static_cast<SEGumpData_st *>( JS_GetPrivate( cx, obj ));
 
 	if( myItem == nullptr  )
@@ -628,7 +631,7 @@ bool CGump_AddCheckbox( JSContext *cx, unsigned argc, JS::Value* vp )
 		relay		= static_cast<UI32>( args.get(5).toInt32());
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 
 	if( gList == nullptr )
@@ -656,7 +659,8 @@ bool CGump_NoClose( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "NoClose: Wrong count of Parameters, needs 0" );
 		return false;
 	}
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 
 	if( gList == nullptr )
@@ -685,7 +689,8 @@ bool CGump_NoMove( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 
 	if( gList == nullptr )
@@ -718,7 +723,8 @@ bool CGump_NoDispose( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 
 	if( gList == nullptr )
@@ -747,7 +753,8 @@ bool CGump_NoResize( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st *>( JS_GetPrivate( cx, obj ));
 
 	if( gList == nullptr )
@@ -777,7 +784,7 @@ bool CGump_MasterGump( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	auto args = JS::CallArgsFromVp(argc, vp);
 	SI32 masterGumpId = static_cast<SI32>( args.get(0).toInt32());
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st *>( JS_GetPrivate( cx, obj ));
 
 	if( gList == nullptr )
@@ -813,7 +820,7 @@ bool CGump_AddBackground( JSContext *cx, unsigned argc, JS::Value* vp )
 	SI16 bR = static_cast<SI16>( args.get(3).toInt32());
 	UI16 gImage = static_cast<UI16>( args.get(4).toInt32());
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
@@ -848,7 +855,7 @@ bool CGump_AddButton( JSContext *cx, unsigned argc, JS::Value* vp )
 	SI16 pageNum = ( argc == 6 ? static_cast<SI16>( args.get(4).toInt32()) : static_cast<SI16>( args.get(5).toInt32()));
 	UI32 buttonId = ( argc == 6 ? static_cast<UI32>( args.get(5).toInt32()) : static_cast<UI32>( args.get(6).toInt32()));
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
@@ -889,7 +896,7 @@ bool CGump_AddButtonTileArt( JSContext *cx, unsigned argc, JS::Value* vp )
 	SI16 tileY = static_cast<SI16>( argv[10].toInt32());
 	//SI32 cliloc = 0;
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
@@ -922,7 +929,7 @@ bool CGump_AddPageButton( JSContext *cx, unsigned argc, JS::Value* vp )
 	UI16 gImage2 = ( argc == 4 ? ( gImage + 1 ) : static_cast<UI16>( args.get(3).toInt32()));
 	SI16 pageNum = ( argc == 4 ? static_cast<SI16>( args.get(3).toInt32()) : static_cast<SI16>( args.get(4).toInt32()));
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
@@ -956,7 +963,7 @@ bool CGump_AddCheckerTrans( JSContext *cx, unsigned argc, JS::Value* vp )
 	SI16 width	= static_cast<SI16>( args.get(2).toInt32()); // width
 	SI16 height	= static_cast<SI16>( args.get(3).toInt32()); // height
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
@@ -991,7 +998,7 @@ bool CGump_AddCroppedText( JSContext *cx, unsigned argc, JS::Value* vp )
 	SI16 TextWidth	= static_cast<SI16>( args.get(3).toInt32()); // width
 	SI16 TextHeight	= static_cast<SI16>( args.get(4).toInt32()); // height
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	std::string TextString = JS_GetStringBytes( cx, args.get(5));
 
 	if( TextString.empty() )
@@ -1031,7 +1038,8 @@ bool CGump_AddGroup( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
@@ -1039,7 +1047,6 @@ bool CGump_AddGroup( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	auto args = JS::CallArgsFromVp(argc, vp);
 	gList->one->push_back( oldstrutil::format( "group %d", args.get(0).toInt32()));
 
 	return true;
@@ -1059,7 +1066,8 @@ bool CGump_EndGroup( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
@@ -1067,7 +1075,6 @@ bool CGump_EndGroup( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	auto args = JS::CallArgsFromVp(argc, vp);
 	gList->one->push_back( oldstrutil::format( "endgroup", args.get(0).toInt32()));
 
 	return true;
@@ -1097,7 +1104,7 @@ bool CGump_AddGump( JSContext *cx, unsigned argc, JS::Value* vp )
 		rgbColor = static_cast<UI16>( args.get(3).toInt32());
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
@@ -1131,8 +1138,8 @@ bool CGump_AddGumpColor( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	SI16 tL			= static_cast<SI16>( args.get(0).toInt32());
 	SI16 tR			= static_cast<SI16>( args.get(1).toInt32());
 	UI16 gImage		= static_cast<UI16>( args.get(2).toInt32());
@@ -1172,7 +1179,8 @@ bool CGump_AddToolTip( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
@@ -1180,7 +1188,6 @@ bool CGump_AddToolTip( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	auto args = JS::CallArgsFromVp(argc, vp);
 	SI32 tooltip = static_cast<SI32>( args.get(0).toInt32());
 	std::stringstream temp;
 	if( argc > 1 )
@@ -1238,7 +1245,7 @@ bool CGump_AddHTMLGump( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
@@ -1272,7 +1279,8 @@ bool CGump_AddPage( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
@@ -1280,7 +1288,6 @@ bool CGump_AddPage( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	auto args = JS::CallArgsFromVp(argc, vp);
 	gList->one->push_back( oldstrutil::format( "page %d", args.get(0).toInt32()));
 
 	return true;
@@ -1305,7 +1312,7 @@ bool CGump_AddPicture( JSContext *cx, unsigned argc, JS::Value* vp )
 	SI16 tR		= static_cast<SI16>( args.get(1).toInt32());
 	UI16 gImage = static_cast<UI16>( args.get(2).toInt32());
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
@@ -1338,7 +1345,7 @@ bool CGump_AddPictureColor( JSContext *cx, unsigned argc, JS::Value* vp )
 	UI16 gImage		= static_cast<UI16>( args.get(2).toInt32());
 	SI32 rgbColour	= static_cast<SI32>( args.get(3).toInt32());	// colour
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
@@ -1375,7 +1382,7 @@ bool CGump_AddPicInPic( JSContext *cx, unsigned argc, JS::Value* vp )
 	SI16 width		= static_cast<SI16>( args.get(5).toInt32()); // width
 	SI16 height		= static_cast<SI16>( args.get(6).toInt32()); // height
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
@@ -1418,7 +1425,7 @@ bool CGump_AddItemProperty( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	SERIAL trgSer = trgObj->GetSerial();
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
@@ -1473,7 +1480,7 @@ bool CGump_AddRadio( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
@@ -1515,7 +1522,7 @@ bool CGump_AddText( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
@@ -1562,7 +1569,7 @@ bool CGump_AddTextEntry( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
@@ -1607,7 +1614,7 @@ bool CGump_AddTextEntryLimited( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
@@ -1643,7 +1650,7 @@ bool CGump_AddTiledGump( JSContext *cx, unsigned argc, JS::Value* vp )
 	SI16 height	= static_cast<SI16>( args.get(3).toInt32()); // height
 	SI16 gumpId = static_cast<SI16>( args.get(4).toInt32()); // gump to tile
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
@@ -1680,7 +1687,7 @@ bool CGump_AddXMFHTMLGump( JSContext *cx, unsigned argc, JS::Value* vp )
 	bool hasBorder		= ( args.get(5).toBoolean() == true );
 	bool hasScrollbar	= ( args.get(6).toBoolean() == true );
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
@@ -1721,7 +1728,7 @@ bool CGump_AddXMFHTMLGumpColor( JSContext *cx, unsigned argc, JS::Value* vp )
 	bool hasScrollbar	= ( args.get(6).toBoolean() == true );
 	SI32 rgbColour		= static_cast<SI32>( args.get(7).toInt32());	// colour
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
@@ -1785,7 +1792,7 @@ bool CGump_AddXMFHTMLTok( JSContext *cx, unsigned argc, JS::Value* vp )
 		fullArgs = " " + fullArgs;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
@@ -1823,7 +1830,7 @@ bool CGump_Send( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	JSEncapsulate myClass( cx, &( args.get(0) ));
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	SEGump_st *myGump = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 
 	if( myClass.ClassName() == "UOXSocket" )
@@ -1877,11 +1884,11 @@ bool CBase_TextMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	JSEncapsulate myClass( cx, obj );
 	CBaseObject *myObj		= static_cast<CBaseObject*>( myClass.toObject() );
 
-	auto args = JS::CallArgsFromVp(argc, vp);
 	std::string trgMessage		= JS_GetStringBytes( cx, args.get(0) );
 	if( trgMessage.empty() )
 	{
@@ -2011,8 +2018,8 @@ bool CBase_KillTimers( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "KillTimers: Invalid count of arguments :%d, needs :0 or 1", argc );
 		return false;
 	}
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( myObj == nullptr )
 	{
@@ -2063,8 +2070,8 @@ bool CBase_GetJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( myObj == nullptr )
 	{
@@ -2116,8 +2123,8 @@ bool CBase_SetJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( myObj == nullptr )
 	{
@@ -2172,8 +2179,8 @@ bool CBase_KillJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "KillJSTimer: Invalid count of arguments :%d, needs 2 (timerId, scriptId)", argc );
 		return false;
 	}
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( myObj == nullptr )
 	{
@@ -2232,8 +2239,8 @@ bool CBase_PauseJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "PauseJSTimer: Invalid count of arguments :%d, needs 2 (timerId, scriptId)", argc );
 		return false;
 	}
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( myObj == nullptr )
 	{
@@ -2294,8 +2301,8 @@ bool CBase_ResumeJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "ResumeJSTimer: Invalid count of arguments :%d, needs 2 (timerId, scriptId)", argc );
 		return false;
 	}
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( myObj == nullptr )
 	{
@@ -2357,8 +2364,8 @@ bool CBase_GetTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( myObj == nullptr )
 	{
@@ -2396,8 +2403,8 @@ bool CBase_ReverseTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "ReverseTempEffect: Invalid count of arguments :%d, needs 1 (tempEffectID)", argc );
 		return false;
 	}
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( myObj == nullptr )
 	{
@@ -2444,8 +2451,8 @@ bool CBase_PauseTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "PauseTempEffect: Invalid count of arguments :%d, needs 1 (tempEffectID)", argc );
 		return false;
 	}
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( myObj == nullptr )
 	{
@@ -2486,8 +2493,8 @@ bool CBase_ResumeTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "ResumeTempEffect: Invalid count of arguments :%d, needs 1 (tempEffectID)", argc );
 		return false;
 	}
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( myObj == nullptr )
 	{
@@ -2524,8 +2531,8 @@ bool CBase_ResumeTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_Delete( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myObj ))
@@ -2564,7 +2571,7 @@ bool CChar_Wander( JSContext *cx, unsigned argc, JS::Value* vp )
 		y2 = static_cast<SI16>( args.get(3).toInt32());
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myChar ) || !myChar->IsNpc() )
@@ -2603,8 +2610,8 @@ bool CChar_Follow( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( myChar ) || !myChar->IsNpc() )
 	{
@@ -2676,7 +2683,7 @@ bool CChar_DoAction( JSContext *cx, unsigned argc, JS::Value* vp )
 		playBackwards = args.get(4).toBoolean();
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myChar ))
@@ -2714,8 +2721,8 @@ bool CChar_EmoteMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	std::string trgMessage = JS_GetStringBytes( cx, args.get(0) );
 
@@ -2776,7 +2783,8 @@ bool CChar_Dismount( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myChar ))
@@ -2810,8 +2818,8 @@ bool CMisc_SysMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	CSocket *mySock = nullptr;
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	JSEncapsulate myClass( cx, obj );
 
 	if( myClass.ClassName() == "UOXChar" )
@@ -2876,8 +2884,8 @@ bool CSocket_Disconnect( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	CSocket *targSock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
 
 	if( targSock == nullptr )
@@ -2904,8 +2912,8 @@ bool CSocket_Disconnect( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	JSEncapsulate myClass( cx, obj );
 
 	CBaseObject *myObj	= static_cast<CBaseObject*>( myClass.toObject() );
@@ -3123,7 +3131,7 @@ bool CBase_StaticEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 	UI08 speed			= static_cast<UI08>( args.get(1).toInt32());
 	UI08 loop			= static_cast<UI08>( args.get(2).toInt32());
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	JSEncapsulate		myClass( cx, obj );
 	CBaseObject *myObj	= static_cast<CBaseObject*>( myClass.toObject() );
 
@@ -3161,8 +3169,8 @@ bool CMisc_MakeMenu( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	CSocket *mySock		= nullptr;
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	JSEncapsulate myClass( cx, obj );
 	if( myClass.ClassName() == "UOXChar" )
 	{
@@ -3199,8 +3207,8 @@ bool CMisc_SoundEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	JSEncapsulate myClass( cx, obj );
 
 	UI16 soundId = static_cast<UI16>( args.get(0).toInt32());
@@ -3260,8 +3268,8 @@ bool CMisc_SellTo( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	JSEncapsulate myClass( cx, obj );
 	CChar *myNPC = static_cast<CChar*>( JS_GetPrivate( cx, &args.get(0).toObject()));
 	if( !ValidateObject( myNPC ))
@@ -3326,8 +3334,8 @@ bool CMisc_BuyFrom( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	JSEncapsulate myClass( cx, obj );
 	CChar *myNPC = static_cast<CChar*>( JS_GetPrivate( cx, &args.get(0).toObject()));
 	if( !ValidateObject( myNPC ))
@@ -3396,8 +3404,8 @@ bool CMisc_HasSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	JSEncapsulate myClass( cx, obj );
 	UI08 spellId = static_cast<UI08>( args.get(0).toInt32());
 
@@ -3464,8 +3472,8 @@ bool CMisc_RemoveSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	JSEncapsulate myClass( cx, obj );
 	UI08 spellId = static_cast<UI08>( args.get(0).toInt32());
 
@@ -3513,8 +3521,8 @@ bool CBase_GetTag( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "GetTag: Invalid Count of Parameters: %d, need: 1", argc );
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myObj ))
@@ -3556,8 +3564,8 @@ bool CBase_SetTag( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "SetTag: Invalid Count of Parameters: %d, need: 2", argc );
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myObj ))
@@ -3658,8 +3666,8 @@ bool CBase_GetTempTag( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "GetTempTag: Invalid Count of Parameters: %d, need: 1", argc );
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myObj ))
@@ -3702,8 +3710,8 @@ bool CBase_SetTempTag( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "SetTempTag: Invalid Count of Parameters: %d, need: 2", argc );
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myObj ))
@@ -3804,7 +3812,8 @@ bool CBase_GetNumTags( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Invalid Count of Parameters: %d, need: 0", argc );
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myObj ))
@@ -3830,7 +3839,8 @@ bool CBase_GetTagMap( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Invalid Count of Parameters: %d, need: 0", argc );
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myObj ))
@@ -3913,7 +3923,8 @@ bool CBase_GetTempTagMap( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Invalid Count of Parameters: %d, need: 0", argc );
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myObj ))
@@ -3991,8 +4002,8 @@ bool CBase_GetTempTagMap( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_OpenBank( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( myChar ))
 	{
@@ -4036,8 +4047,8 @@ bool CChar_OpenBank( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_OpenContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	CSocket *mSock = static_cast<CSocket *>( JS_GetPrivate( cx, obj ));
 	if( mSock == nullptr )
 	{
@@ -4069,7 +4080,7 @@ bool CSocket_OpenContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_OpenLayer( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( myChar ))
 	{
@@ -4105,7 +4116,7 @@ bool CChar_OpenLayer( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_TurnToward( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myChar ))
@@ -4180,7 +4191,8 @@ bool CChar_TurnToward( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_DirectionTo( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myChar ))
@@ -4191,7 +4203,6 @@ bool CChar_DirectionTo( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	SI16 x, y;
 
-	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc == 1 )
 	{
 		if( !args.get(0).isObject() )
@@ -4234,14 +4245,14 @@ bool CChar_DirectionTo( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_ExecuteCommand( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "ExecuteCommand: Invalid number of arguments (takes 1)" );
 		return false;
 	}
 
-	auto args = JS::CallArgsFromVp(argc, vp);
 	CChar *myChar			= static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	std::string trgMessage		= JS_GetStringBytes( cx, args.get(0) );
 	CSocket *targSock		= myChar->GetSocket();
@@ -4263,7 +4274,8 @@ bool CChar_ExecuteCommand( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CGuild_AcceptRecruit( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
 
 	if( myGuild == nullptr )
@@ -4274,7 +4286,6 @@ bool CGuild_AcceptRecruit( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	// Two choices here... 0 paramteres = accept the JS_GetParent object
 	// 1 parameter = get the cchar from there
-	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc == 0 )
 	{
 		JSObject *Parent = JS_GetParent( cx, obj );
@@ -4303,7 +4314,8 @@ bool CGuild_AcceptRecruit( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CGuild_IsAtPeace( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(IsAtPeace) Invalid Parameter Count: %d", argc );
@@ -4331,7 +4343,7 @@ bool CGuild_IsAtPeace( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CGuild_AddMember( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddMember: Invalid number of arguments (requires 1)" );
@@ -4377,7 +4389,7 @@ bool CGuild_AddMember( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CGuild_AddRecruit( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddRecruit: Invalid number of arguments (requires 1)" );
@@ -4423,7 +4435,7 @@ bool CGuild_AddRecruit( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CGuild_RemoveRecruit( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveRecruit: Invalid number of arguments (requires 1)" );
@@ -4468,7 +4480,7 @@ bool CGuild_RemoveRecruit( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CGuild_RemoveMember( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveMember: Invalid number of arguments (requires 1)" );
@@ -4513,7 +4525,7 @@ bool CGuild_RemoveMember( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CGuild_RecruitToMember( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RecruitToMember: Invalid number of arguments (requires 1)" );
@@ -4562,7 +4574,8 @@ bool CGuild_IsAtWar( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	CGuild* myGuild = static_cast<CGuild*>(JS_GetPrivate( cx, obj ));
 	if( myGuild == nullptr )
 	{
@@ -4570,7 +4583,6 @@ bool CGuild_IsAtWar( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	auto args = JS::CallArgsFromVp(argc, vp);
 	JSObject* otherObj = &args.get(0).toObject();
 	CGuild* otherGuild = static_cast<CGuild*>( JS_GetPrivate( cx, otherObj ));
 	if( otherGuild == nullptr )
@@ -4605,7 +4617,8 @@ bool CGuild_IsAlly( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	CGuild* myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
 	if( myGuild == nullptr )
 	{
@@ -4613,7 +4626,6 @@ bool CGuild_IsAlly( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	auto args = JS::CallArgsFromVp(argc, vp);
 	JSObject* otherObj = &args.get(0).toObject();
 	CGuild* otherGuild = static_cast<CGuild*>( JS_GetPrivate( cx, otherObj ));
 	if( otherGuild == nullptr )
@@ -4648,7 +4660,8 @@ bool CGuild_IsNeutral( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	CGuild* myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
 	if( myGuild == nullptr )
 	{
@@ -4656,7 +4669,6 @@ bool CGuild_IsNeutral( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	auto args = JS::CallArgsFromVp(argc, vp);
 	JSObject* otherObj = &args.get(0).toObject();
 	CGuild* otherGuild = static_cast<CGuild*>( JS_GetPrivate( cx, otherObj ));
 	if( otherGuild == nullptr )
@@ -4687,7 +4699,8 @@ bool CGuild_IsNeutral( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_ResourceCount( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	JSEncapsulate myClass( cx, obj );
 	auto args = JS::CallArgsFromVp(argc, vp);
 	CBaseObject* myObj = static_cast<CBaseObject*>( myClass.toObject() );
@@ -4752,7 +4765,8 @@ bool CBase_ResourceCount( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_UseResource( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	JSEncapsulate myClass( cx, obj );
 	auto args = JS::CallArgsFromVp(argc, vp);
 	CBaseObject *myObj = static_cast<CBaseObject*>( myClass.toObject() );
@@ -4816,7 +4830,8 @@ bool CBase_UseResource( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_BoltEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	if( ValidateObject( myChar ))
 	{
@@ -4845,7 +4860,7 @@ bool CChar_BoltEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMisc_CustomTarget( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	JSEncapsulate myClass( cx, obj );
 	UI16 scriptID = 0xFFFF;
 
@@ -4928,7 +4943,8 @@ bool CMisc_CustomTarget( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMisc_PopUpTarget( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if(( argc > 2 ) || ( argc < 1 ))
 	{
 		ScriptError( cx, "(PopUpTarget) Invalid count of parameters: %d, either needs 1 or 2", argc );
@@ -4937,7 +4953,6 @@ bool CMisc_PopUpTarget( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	// Either useable with sockets OR characters
 	JSEncapsulate myClass( cx, obj );
-	auto args = JS::CallArgsFromVp(argc, vp);
 	CSocket *mySock = nullptr;
 
 	if( myClass.ClassName() == "UOXChar" )
@@ -4987,14 +5002,14 @@ bool CMisc_PopUpTarget( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_InRange( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "(InRange): Invalid count of parameters: %d needs 2 (Item/Char and distance)", argc );
 		return false;
 	}
 
-	auto args = JS::CallArgsFromVp(argc, vp);
 	UI16 distance = static_cast<UI16>( args.get(1).toInt32());
 
 	CBaseObject *me = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
@@ -5040,7 +5055,8 @@ bool CBase_InRange( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_StartTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myObj ))
@@ -5055,7 +5071,6 @@ bool CBase_StartTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	auto args = JS::CallArgsFromVp(argc, vp);
 	// 1. Parameter Delay, 2. Parameter Callback
 	double expireTime_double;
 	JS_ValueToNumber( cx, args.get(0), &expireTime_double );
@@ -5119,8 +5134,8 @@ bool CChar_CheckSkill( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myChar ))
@@ -5160,8 +5175,8 @@ bool CChar_AddSkill( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	JSEncapsulate myClass( cx, obj );
 	CChar *myChar = static_cast<CChar*>( myClass.toObject() );
 
@@ -5200,8 +5215,8 @@ bool CChar_AddSkill( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_FindItemLayer( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	CItem *myItem = nullptr;
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 
@@ -5242,14 +5257,14 @@ bool CChar_FindItemLayer( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_FindItemType( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(FindItemType) Invalid Count of Arguments, takes 1" );
 		return false;
 	}
 
-	auto args = JS::CallArgsFromVp(argc, vp);
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( myChar ))
 	{
@@ -5281,7 +5296,8 @@ bool CChar_FindItemType( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_FindItemSection( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(FindItemSection) Invalid Count of Arguments, takes 1" );
@@ -5295,7 +5311,6 @@ bool CChar_FindItemSection( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	auto args = JS::CallArgsFromVp(argc, vp);
 	std::string sectionID = JS_GetStringBytes( cx, args.get(0));
 
 	CItem *myItem = FindItemOfSectionId( myChar, sectionID );
@@ -5321,7 +5336,8 @@ void OpenPlank( CItem *p );
 //o------------------------------------------------------------------------------------------------o
 bool CItem_OpenPlank( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(OpenPlank) Invalid Count of Arguments: %d, needs: 0", argc );
@@ -5358,7 +5374,7 @@ bool CMulti_TurnBoat( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	CBoatObj *myBoat = static_cast<CBoatObj *>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myBoat ))
@@ -5419,7 +5435,8 @@ bool CMulti_GetTiller( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	CBoatObj *myBoat = static_cast<CBoatObj *>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myBoat ))
@@ -5452,8 +5469,8 @@ bool CChar_SpeechInput( JSContext *cx, unsigned argc, JS::Value* vp )
 	// Get our own Script ID
 	UI08 speechId		= 0;
 	CItem *speechItem	= nullptr;
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc == 1 ) // Just the ID has been passed
 	{
 		speechId = static_cast<UI08>( args.get(0).toInt32());
@@ -5513,7 +5530,7 @@ bool CChar_CastSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myChar ))
@@ -5557,7 +5574,7 @@ bool CChar_CastSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_MagicEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	SI08 spellId = static_cast<SI08>( args.get(0).toInt32());
 
 	CChar *myObj = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
@@ -5582,7 +5599,7 @@ bool CChar_MagicEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_GetSerial( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	CChar *myObj = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	UI08 part = static_cast<UI08>( args.get(0).toInt32());
 
@@ -5607,7 +5624,7 @@ bool CChar_GetSerial( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CBase_GetSerial( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	UI08 part = static_cast<UI08>( args.get(0).toInt32());
 
@@ -5633,14 +5650,14 @@ void UpdateStats( CBaseObject *mObj, UI08 x, bool skipStatWindowUpdate = false )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_UpdateStats( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(UpdateStats) Invalid Number of Arguments %d, needs: 1 (stat type - 0, 1 or 2 for Health, Mana or Stamina)", argc );
 		return false;
 	}
 
-	auto args = JS::CallArgsFromVp(argc, vp);
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	UI08 statType = static_cast<UI08>( args.get(0).toInt32());
 
@@ -5693,14 +5710,14 @@ bool CBase_UpdateStats( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_SetPoisoned( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc < 2 || argc > 3 )
 	{
 		ScriptError( cx, "(SetPoisoned) Invalid Number of Arguments %d, needs: 2 or 3", argc );
 		return false;
 	}
 
-	auto args = JS::CallArgsFromVp(argc, vp);
 	CChar *myChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myChar ) || myChar->GetObjType() != OT_CHAR )
@@ -5761,7 +5778,7 @@ bool CChar_ExplodeItem( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	CChar *myChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	JSObject *tObj = &args.get(0).toObject();
 	CBaseObject *trgObj = static_cast<CBaseObject *>( JS_GetPrivate( cx, tObj ));
@@ -5796,7 +5813,7 @@ bool CChar_SetInvisible( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	CChar *myChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	UI08 newVal = static_cast<UI08>( args.get(0).toInt32());
 
@@ -5818,7 +5835,7 @@ bool CChar_SetInvisible( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CItem_SetCont( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	CItem *myItem = static_cast<CItem*>( JS_GetPrivate( cx, obj ));
 	JSObject *tObj = &args.get(0).toObject();
 	CBaseObject *trgObj = static_cast<CBaseObject *>( JS_GetPrivate( cx, tObj ));
@@ -5849,7 +5866,8 @@ bool CItem_IsMulti( JSContext *cx, unsigned argc, JS::Value* vp )
 		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return true;
 	}
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	CItem *myItem = static_cast<CItem *>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myItem ))
@@ -5877,7 +5895,8 @@ bool CBase_IsBoat( JSContext *cx, unsigned argc, JS::Value* vp )
 		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return true;
 	}
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	CBaseObject *myObject = static_cast<CBaseObject *>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myObject ))
@@ -5907,7 +5926,7 @@ bool CMulti_IsInMulti( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
@@ -5937,7 +5956,7 @@ bool CMulti_IsInMulti( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_IsOnBanList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOnBanList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -5974,7 +5993,7 @@ bool CMulti_IsOnBanList( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_IsOnFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOnFriendList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -6011,7 +6030,7 @@ bool CMulti_IsOnFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_IsOnGuestList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOnGuestList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -6048,7 +6067,7 @@ bool CMulti_IsOnGuestList( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_IsOnOwnerList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOnOwnerList) Invalid Number of Arguments %d, needs: 1 or 2", argc );
@@ -6085,7 +6104,7 @@ bool CMulti_IsOnOwnerList( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_IsOwner( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOwner) Invalid Number of Arguments %d, needs: 1 or 2", argc );
@@ -6122,7 +6141,7 @@ bool CMulti_IsOwner( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_AddToBanList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddToBanList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -6157,7 +6176,7 @@ bool CMulti_AddToBanList( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_AddToFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddToFriendList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -6195,7 +6214,7 @@ bool CMulti_AddToFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_AddToGuestList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddToGuestList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -6233,7 +6252,7 @@ bool CMulti_AddToGuestList( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_AddToOwnerList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddToOwnerList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -6271,7 +6290,7 @@ bool CMulti_AddToOwnerList( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_RemoveFromBanList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveFromBanList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -6309,7 +6328,7 @@ bool CMulti_RemoveFromBanList( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_RemoveFromFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveFromFriendList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -6347,7 +6366,7 @@ bool CMulti_RemoveFromFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_RemoveFromGuestList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveFromGuestList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -6385,7 +6404,7 @@ bool CMulti_RemoveFromGuestList( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_RemoveFromOwnerList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveFromOwnerList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -6423,7 +6442,7 @@ bool CMulti_RemoveFromOwnerList( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_ClearBanList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearBanList) Invalid Number of Arguments %d, needs: 0", argc );
@@ -6454,7 +6473,7 @@ bool CMulti_ClearBanList( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_ClearFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearFriendList) Invalid Number of Arguments %d, needs: 0", argc );
@@ -6485,7 +6504,7 @@ bool CMulti_ClearFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_ClearGuestList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearGuestList) Invalid Number of Arguments %d, needs: 0", argc );
@@ -6516,7 +6535,7 @@ bool CMulti_ClearGuestList( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_ClearOwnerList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearOwnerList) Invalid Number of Arguments %d, needs: 0", argc );
@@ -6550,7 +6569,7 @@ UI16 HandleAutoStack( CItem *mItem, CItem *mCont, CSocket *mSock = nullptr, CCha
 bool CItem_PlaceInPack( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "(PlaceInPack) Invalid Number of Arguments %d, needs: 0 or 1", argc );
@@ -6593,7 +6612,7 @@ bool CItem_PlaceInPack( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CSocket_OpenURL( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "OpenURL: Invalid Number of Arguments %d, needs: 1" );
@@ -6620,7 +6639,7 @@ bool CSocket_OpenURL( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CSocket_GetByte( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "GetByte: Invalid Number of Arguments %d, needs: 1 (offset)" );
@@ -6647,7 +6666,7 @@ bool CSocket_GetByte( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CSocket_GetSByte( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "GetSByte: Invalid Number of Arguments %d, needs: 1 (offset)" );
@@ -6674,7 +6693,7 @@ bool CSocket_GetSByte( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CSocket_GetWord( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "GetWord: Invalid Number of Arguments %d, needs: 1 (offset)" );
@@ -6701,7 +6720,7 @@ bool CSocket_GetWord( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CSocket_GetSWord( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "GetSWord: Invalid Number of Arguments %d, needs: 1 (offset)" );
@@ -6728,7 +6747,7 @@ bool CSocket_GetSWord( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CSocket_GetDWord( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "GetDWord: Invalid Number of Arguments %d, needs: 1 (offset)" );
@@ -6755,7 +6774,7 @@ bool CSocket_GetDWord( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CSocket_GetSDWord( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "GetSDWord: Invalid Number of Arguments %d, needs: 1 (offset)" );
@@ -6783,7 +6802,7 @@ bool CSocket_GetSDWord( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CSocket_GetString( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 && argc != 2 )
 	{
 		ScriptError( cx, "GetString: Invalid number of arguments. Takes 1 (offset) or 2 (offset, length)" );
@@ -6832,7 +6851,7 @@ bool CSocket_GetString( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CSocket_SetByte( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SetByte: Invalid number of arguments (takes 3)" );
@@ -6860,7 +6879,7 @@ bool CSocket_SetByte( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CSocket_SetWord( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SetWord: Invalid number of arguments (takes 3)" );
@@ -6890,7 +6909,7 @@ bool CSocket_SetWord( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CSocket_SetDWord( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SetDWord: Invalid number of arguments (takes 3)" );
@@ -6920,7 +6939,7 @@ bool CSocket_SetDWord( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CSocket_SetString( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SetString: Invalid number of arguments (takes 3)" );
@@ -6956,7 +6975,7 @@ bool CSocket_SetString( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CSocket_ReadBytes( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "ReadBytes: Invalid number of arguments (takes 1)" );
@@ -6985,7 +7004,7 @@ bool CSocket_ReadBytes( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CSocket_WhoList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
 	if( mySock == nullptr )
 	{
@@ -7021,7 +7040,7 @@ bool CSocket_WhoList( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CSocket_Music( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Music: Invalid number of arguments (takes 1)" );
@@ -7050,7 +7069,7 @@ bool CSocket_Music( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_YellMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "YellMessage: Invalid number of arguments (takes 1)" );
@@ -7097,7 +7116,7 @@ bool CChar_YellMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_WhisperMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "WhisperMessage: Invalid number of arguments (takes 1)" );
@@ -7144,7 +7163,7 @@ void BuildGumpFromScripts( CSocket *s, UI16 m );
 bool CSocket_OpenGump( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "OpenGump: Invalid number of arguments (takes 1, number)" );
@@ -7179,7 +7198,7 @@ bool CSocket_OpenGump( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CSocket_CloseGump( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "CloseGump: Invalid number of arguments (takes 2 - gumpId to close, and buttonId to send as response)" );
@@ -7214,7 +7233,7 @@ bool CSocket_CloseGump( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CRace_CanWearArmour( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "CanWearArmour: Invalid number of arguments (takes 1, number)" );
@@ -7252,7 +7271,7 @@ bool CRace_CanWearArmour( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CRace_CanEquip( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "CanEquip: Invalid number of arguments (takes 1, item ID)" );
@@ -7281,7 +7300,7 @@ bool CRace_CanEquip( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CRace_IsValidHairColour( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "IsValidHairColour: Invalid number of arguments (takes 1, number)" );
@@ -7309,7 +7328,7 @@ bool CRace_IsValidHairColour( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CRace_IsValidSkinColour( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "IsValidSkinColour: Invalid number of arguments (takes 1, number)" );
@@ -7337,7 +7356,7 @@ bool CRace_IsValidSkinColour( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CRace_IsValidBeardColour( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "IsValidBeardColour: Invalid number of arguments (takes 1, number)" );
@@ -7368,7 +7387,7 @@ bool ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 bool CBase_ApplySection( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "ApplySection: Invalid number of arguments (takes 1)" );
@@ -7422,7 +7441,7 @@ bool CBase_ApplySection( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_AddSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddSpell: Invalid number of arguments (takes 1)" );
@@ -7449,7 +7468,7 @@ bool CChar_AddSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_SpellFail( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "SpellFail: Invalid number of arguments (takes 0)" );
@@ -7486,7 +7505,7 @@ bool CBase_Refresh( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 
@@ -7544,7 +7563,7 @@ bool CBase_Refresh( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CItem_ApplyRank( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "ApplyRank: Invalid number of arguments (takes 2)" );
@@ -7568,7 +7587,7 @@ bool IsOnFoodList( const std::string& sFoodList, const UI16 sItemId );
 bool CItem_IsOnFoodList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 || argc > 7 )
 	{
 		ScriptError( cx, "(IsOnFoodList) Invalid Number of Arguments %d, needs: 1 - foodlist name", argc );
@@ -7627,7 +7646,7 @@ bool CAccount_SetAccount(JSContext* cx, unsigned argc, JS::Value* vp)
 bool CAccount_AddAccount( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 4 )
 	{
 		ScriptError( cx, "Account.AddAccount(user,pass,email,flags): Invalid number of arguments (takes 4)" );
@@ -7680,7 +7699,7 @@ bool CAccount_AddAccount( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CAccount_DelAccount( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Account.DelAccount([username/id]): Invalid number of arguments (takes 1)" );
@@ -7758,7 +7777,8 @@ bool UOXCFile( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CFile_Free( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Free: Invalid number of arguments (takes 0)" );
@@ -7781,8 +7801,8 @@ bool CFile_Free( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CFile_Open( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc < 2 || argc > 4 )
 	{
 		ScriptError( cx, "Open: Invalid number of arguments (takes 2 to 4 - filename, file mode and - optionally - folderName and useScriptDataDir bool)" );
@@ -7865,7 +7885,8 @@ bool CFile_Close( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Open: Invalid number of arguments (takes 0)" );
 		return false;
 	}
-	JSObject* obj = JS_THIS_OBJECT(cx, vp);
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis(cx, args);
 	UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>( JS_GetPrivate( cx, obj ));
 
 	fclose( mFile->mWrap );
@@ -7882,7 +7903,7 @@ bool CFile_Close( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CFile_Read( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Read: Invalid number of arguments (takes 1)" );
@@ -7922,7 +7943,7 @@ bool CFile_Read( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CFile_ReadUntil( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "ReadUntil: Invalid number of arguments (takes 1)" );
@@ -7973,7 +7994,7 @@ bool CFile_ReadUntil( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CFile_Write( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Write: Invalid number of arguments (takes 1)" );
@@ -8010,7 +8031,8 @@ bool CFile_Write( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CFile_EOF( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "EOF: Invalid number of arguments (takes 0)" );
@@ -8035,7 +8057,8 @@ bool CFile_EOF( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CFile_Length( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Length: Invalid number of arguments (takes 0)" );
@@ -8071,7 +8094,7 @@ bool CFile_Length( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CFile_Pos( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 0 && argc != 1 )
 	{
 		ScriptError( cx, "Pos: Invalid number of arguments (takes 0 or 1)" );
@@ -8101,7 +8124,8 @@ bool CFile_Pos( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_FirstItem( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "FirstItem: Invalid count of arguments :%d, needs :0", argc );
@@ -8153,7 +8177,8 @@ bool CBase_FirstItem( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_NextItem( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "NextItem: Invalid count of arguments :%d, needs :0", argc );
@@ -8205,7 +8230,8 @@ bool CBase_NextItem( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_FinishedItems( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "FinishedItems: Invalid count of arguments :%d, needs :0", argc );
@@ -8249,7 +8275,7 @@ bool CChar_WalkTo( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 
 	CChar *cMove = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( cMove ))
@@ -8407,7 +8433,7 @@ bool CChar_RunTo( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 
 	CChar *cMove = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( cMove ))
@@ -8557,7 +8583,7 @@ bool CChar_RunTo( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMisc_GetTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetTimer: Invalid number of arguments (takes 1)" );
@@ -8600,7 +8626,7 @@ bool CMisc_GetTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMisc_SetTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SetTimer: Invalid number of arguments (takes 2)" );
@@ -8651,7 +8677,7 @@ bool CMisc_SetTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CBase_DistanceTo( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "DistanceTo: Invalid number of arguments (takes 1, game object)" );
@@ -8682,7 +8708,7 @@ bool CBase_DistanceTo( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CItem_Glow( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	JSObject *mSock	= &args.get(0).toObject();
 	CSocket *mySock	= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
 
@@ -8739,7 +8765,7 @@ bool CItem_Glow( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CItem_UnGlow( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	JSObject *mSock	= &args.get(0).toObject();
 	CSocket *mySock	= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
 
@@ -8791,7 +8817,7 @@ bool CItem_UnGlow( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_Gate( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 && argc != 4 && argc != 5 )
 	{
 		ScriptError( cx, "Gate: Invalid number of arguments (takes 1: item/place; 4: x y z worldNumber; or 5: x y z worldNumber instanceID)" );
@@ -8872,7 +8898,7 @@ bool CChar_Gate( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_Recall( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Recall: Invalid number of arguments (takes 1, item)" );
@@ -8926,7 +8952,7 @@ bool CChar_Recall( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_Mark( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Mark: Invalid number of arguments (takes 1, character)" );
@@ -8977,7 +9003,7 @@ void SetRandomName( CBaseObject *s, const std::string& namelist );
 bool CBase_SetRandomName( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "SetRandomName: Invalid number of arguments (takes 1, namelist string)" );
@@ -9008,7 +9034,7 @@ UI16 AddRandomColor( const std::string& colorlist );
 bool CBase_SetRandomColor( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "SetRandomColor: Invalid number of arguments (takes 1, colorlist string)" );
@@ -9039,7 +9065,7 @@ bool CBase_SetRandomColor( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_SetSkillByName( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SetSkillByName: Invalid number of arguments (takes 2, string, value)" );
@@ -9082,7 +9108,7 @@ bool CChar_SetSkillByName( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_Kill( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Kill: Invalid number of arguments (takes 0)" );
@@ -9125,7 +9151,7 @@ bool CChar_Kill( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_Resurrect( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Resurrect: Invalid number of arguments (takes 0)" );
@@ -9151,7 +9177,7 @@ bool CChar_Resurrect( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CItem_Dupe( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Dupe: Invalid number of arguments (takes 1 - socket/null)" );
@@ -9203,7 +9229,7 @@ bool CItem_Dupe( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_Dupe( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Dupe: Invalid number of arguments (takes 0)" );
@@ -9244,7 +9270,7 @@ bool CChar_Dupe( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_Jail( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "Jail: Invalid number of arguments (takes 0 or 1, seconds to Jail)" );
@@ -9277,7 +9303,7 @@ bool CChar_Jail( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_Release( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Release: Invalid number of arguments (takes 0)" );
@@ -9306,7 +9332,7 @@ void GMPage( CSocket *s, const std::string& reason );
 bool CSocket_Page( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "Page: Invalid number of arguments (takes 1, pageType)" );
@@ -9797,7 +9823,7 @@ bool CConsole_Reload( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_SpellMoveEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SpellMoveEffect: Invalid number of arguments (takes 2)" );
@@ -9838,7 +9864,7 @@ bool CChar_SpellMoveEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_SpellStaticEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "SpellStaticEffect: Invalid number of arguments (takes 1)" );
@@ -9879,7 +9905,7 @@ bool CChar_SpellStaticEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_BreakConcentration( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "BreakConcentration: Invalid number of arguments (takes 0 or 1)" );
@@ -9918,7 +9944,7 @@ bool CChar_BreakConcentration( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CSocket_SendAddMenu( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "SendAddMenu: Invalid number of arguments (takes 1)" );
@@ -9948,7 +9974,7 @@ bool CSocket_SendAddMenu( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CItem_LockDown( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "LockDown: Invalid number of arguments (takes 0)" );
@@ -9975,7 +10001,8 @@ bool CItem_LockDown( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_InitWanderArea( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( mChar ) || !mChar->IsNpc() )
 	{
@@ -9996,7 +10023,7 @@ auto NewCarveTarget( CSocket *s, CItem *i ) -> bool;
 bool CItem_Carve( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "Carve: Invalid number of arguments (1)" );
@@ -10029,7 +10056,7 @@ bool CItem_Carve( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CItem_GetTileName( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "GetTileName: needs 0 arguments!" );
@@ -10061,7 +10088,7 @@ bool CItem_GetTileName( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_GetMultiCorner( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetMultiCorner: Invalid number of arguments (1 required)" );
@@ -10116,7 +10143,7 @@ bool CMulti_GetMultiCorner( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_SecureContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "SecureContainer: Invalid number of arguments (1 required)" );
@@ -10159,7 +10186,7 @@ bool CMulti_SecureContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_UnsecureContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "UnsecureContainer: Invalid number of arguments (1 required)" );
@@ -10202,7 +10229,7 @@ bool CMulti_UnsecureContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_IsSecureContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "IsSecureContainer: Invalid number of arguments (1 required)" );
@@ -10245,7 +10272,7 @@ bool CMulti_IsSecureContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_LockDownItem( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "LockDownItem: Invalid number of arguments (1 required)" );
@@ -10288,7 +10315,7 @@ bool CMulti_LockDownItem( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_ReleaseItem( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "ReleaseItem: Invalid number of arguments (1 required)" );
@@ -10331,7 +10358,7 @@ bool CMulti_ReleaseItem( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_AddTrashCont( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddTrashCont: Invalid number of arguments (1 required)" );
@@ -10374,7 +10401,7 @@ bool CMulti_AddTrashCont( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_RemoveTrashCont( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveTrashCont: Invalid number of arguments (1 required)" );
@@ -10417,7 +10444,7 @@ bool CMulti_RemoveTrashCont( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_AddVendor( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddVendor: Invalid number of arguments (1 required)" );
@@ -10460,7 +10487,7 @@ bool CMulti_AddVendor( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_RemoveVendor( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveVendor: Invalid number of arguments (1 required)" );
@@ -10504,7 +10531,7 @@ void KillKeys( SERIAL targSerial, SERIAL charSerial = INVALIDSERIAL );
 bool CMulti_KillKeys( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 0 && argc != 1 )
 	{
 		ScriptError( cx, "KillKeys: Invalid number of arguments (0 or 1 (character) required)" );
@@ -10550,7 +10577,7 @@ bool CMulti_KillKeys( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_FirstChar( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "FirstChar: Invalid count of arguments :%d, needs :0 or 1", argc );
@@ -10621,7 +10648,7 @@ bool CMulti_FirstChar( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_NextChar( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "NextChar: Invalid count of arguments :%d, needs :0 or 1", argc );
@@ -10692,7 +10719,7 @@ bool CMulti_NextChar( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CMulti_FinishedChars( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "FinishedChars: Invalid count of arguments :%d, needs :0 or 1", argc );
@@ -10755,7 +10782,7 @@ bool CMulti_FinishedChars( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CBase_CanSee( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 && argc != 3 )
 	{
 		ScriptError( cx, "CanSee: Invalid number of arguments (takes 1, a char/item or 3, an x/y/z)" );
@@ -10893,7 +10920,7 @@ bool CBase_CanSee( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CSocket_DisplayDamage( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "(CSocket_DisplayDamage) Invalid Number of Arguments %d, needs: 2", argc );
@@ -10934,7 +10961,7 @@ bool CSocket_DisplayDamage( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_ReactOnDamage( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 && argc != 2 )
 	{
 		ScriptError( cx, "(CChar_ReactOnDamage) Invalid Number of Arguments %d, needs: 1 (damageType) or 2 (damageType and attacker)", argc );
@@ -10990,7 +11017,7 @@ bool CChar_ReactOnDamage( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_Damage( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc < 1 || argc > 4 )
 	{
 		ScriptError( cx, "(CChar_Damage) Invalid Number of Arguments %d, needs: 1 (amount), 2 (amount, damageType), 3 (amount, damageType and attacker) or 4 (amount, damageType, attacker and doRepsys)", argc );
@@ -11054,7 +11081,7 @@ bool CChar_Damage( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_InitiateCombat( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(InitiateCombat) Invalid Number of Arguments %d, takes: 1 (targetChar))", argc );
@@ -11088,7 +11115,7 @@ bool CChar_InitiateCombat( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_InvalidateAttacker( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(InvalidateAttacker) Invalid Number of Arguments %d, takes: 0)", argc );
@@ -11115,7 +11142,7 @@ bool CChar_InvalidateAttacker( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_AddAggressorFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddAggressorFlag) Invalid Number of Arguments %d, takes: 1)", argc );
@@ -11149,7 +11176,7 @@ bool CChar_AddAggressorFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_RemoveAggressorFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveAggressorFlag) Invalid Number of Arguments %d, takes: 1)", argc );
@@ -11183,7 +11210,7 @@ bool CChar_RemoveAggressorFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_CheckAggressorFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(CheckAggressorFlag) Invalid Number of Arguments %d, takes: 1)", argc );
@@ -11217,7 +11244,7 @@ bool CChar_CheckAggressorFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_UpdateAggressorFlagTimestamp( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(UpdateAggressorFlagTimestamp) Invalid Number of Arguments %d, takes: 1)", argc );
@@ -11251,7 +11278,7 @@ bool CChar_UpdateAggressorFlagTimestamp( JSContext *cx, unsigned argc, JS::Value
 bool CChar_ClearAggressorFlags( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearAggressorFlags) Invalid Number of Arguments %d, takes: 0)", argc );
@@ -11279,7 +11306,7 @@ bool CChar_ClearAggressorFlags( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_IsAggressor( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "(IsAggressor) Invalid Number of Arguments %d, takes: 0 or 1)", argc );
@@ -11308,7 +11335,7 @@ bool CChar_IsAggressor( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_AddPermaGreyFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddPermaGreyFlag) Invalid Number of Arguments %d, takes: 1)", argc );
@@ -11342,7 +11369,7 @@ bool CChar_AddPermaGreyFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_RemovePermaGreyFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemovePermaGreyFlag) Invalid Number of Arguments %d, takes: 1)", argc );
@@ -11376,7 +11403,7 @@ bool CChar_RemovePermaGreyFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_CheckPermaGreyFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(CheckPermaGreyFlag) Invalid Number of Arguments %d, takes: 1)", argc );
@@ -11410,7 +11437,7 @@ bool CChar_CheckPermaGreyFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_UpdatePermaGreyFlagTimestamp( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(UpdatePermaGreyFlagTimestamp) Invalid Number of Arguments %d, takes: 1)", argc );
@@ -11444,7 +11471,7 @@ bool CChar_UpdatePermaGreyFlagTimestamp( JSContext *cx, unsigned argc, JS::Value
 bool CChar_ClearPermaGreyFlags( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearPermaGreyFlags) Invalid Number of Arguments %d, takes: 0)", argc );
@@ -11472,7 +11499,7 @@ bool CChar_ClearPermaGreyFlags( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_IsPermaGrey( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "(IsPermaGrey) Invalid Number of Arguments %d, takes: 0 or 1)", argc );
@@ -11502,7 +11529,7 @@ bool CChar_IsPermaGrey( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_Heal( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 && argc != 2 )
 	{
 		ScriptError( cx, "(CChar_Heal) Invalid Number of Arguments %d, needs: 1 (amount) or 2 (amount and healer)", argc );
@@ -11565,7 +11592,7 @@ bool CChar_Heal( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CBase_Resist( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 && argc != 2 )
 	{
 		ScriptError( cx, "Resist: Invalid number of arguments (takes 1, the resist type or 2, the resist type and value to set)" );
@@ -11654,7 +11681,7 @@ bool CBase_Resist( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_Defense( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc < 3 || argc > 5 )
 	{
 		ScriptError( cx, "Defense: Invalid number of arguments (takes 3-5, the hit location, the resist type, if the armor should get damaged, (optional) whether to ignore medable armor and (optional) whether to include shield)" );
@@ -11702,7 +11729,7 @@ bool CChar_Defense( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CItem_GetMoreVar( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "GetMoreVar: Invalid number of arguments (takes 2, the moreVarName (more, more0, more1, more2, morex, morey or morez - and the moreVarPart (1 to 4))" );
@@ -11784,7 +11811,7 @@ bool CItem_GetMoreVar( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CItem_SetMoreVar( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 3 )
 	{
 		ScriptError( cx, "SetMoreVar: Invalid number of arguments (takes 3, the moreVarName (more, more0, more1, more2, morex, morey or morez); the moreVarPart (1 to 4) and the moreVarValue (0-255)" );
@@ -11863,7 +11890,7 @@ bool CItem_SetMoreVar( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CBase_AddScriptTrigger( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddScriptTrigger: Invalid number of arguments (takes 1)" );
@@ -11909,7 +11936,7 @@ bool CBase_AddScriptTrigger( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CBase_RemoveScriptTrigger( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveScriptTrigger: Invalid number of arguments (takes 1)" );
@@ -11950,7 +11977,7 @@ bool CBase_RemoveScriptTrigger( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CBase_HasScriptTrigger( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "HasScriptTrigger: Invalid number of arguments (takes 1)" );
@@ -11983,7 +12010,7 @@ bool CBase_HasScriptTrigger( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CRegion_AddScriptTrigger( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddScriptTrigger: Invalid number of arguments (takes 1)" );
@@ -12030,7 +12057,7 @@ bool CRegion_AddScriptTrigger( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CRegion_RemoveScriptTrigger( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveScriptTrigger: Invalid number of arguments (takes 1)" );
@@ -12071,7 +12098,7 @@ bool CRegion_RemoveScriptTrigger( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CRegion_GetOrePref( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetOrePref: Invalid number of arguments (takes 1 - oreId)" );
@@ -12159,7 +12186,7 @@ bool CRegion_GetOrePref( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CRegion_GetOreChance( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "GetOreChance: Invalid number of arguments (takes 0)" );
@@ -12186,7 +12213,7 @@ bool CRegion_GetOreChance( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_AddFriend( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddFriend: Invalid number of arguments (takes 1 - playerObject)" );
@@ -12232,7 +12259,7 @@ bool CChar_AddFriend( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_RemoveFriend( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveFriend: Invalid number of arguments (takes 1 - playerObject)" );
@@ -12278,7 +12305,7 @@ bool CChar_RemoveFriend( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_GetFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "GetFriendList: Invalid number of arguments (takes 0)" );
@@ -12340,7 +12367,7 @@ bool CChar_GetFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_ClearFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "ClearFriendList: Invalid number of arguments (takes 0)" );
@@ -12382,7 +12409,7 @@ bool CChar_ClearFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_GetPetList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "GetPetList: Invalid number of arguments (takes 0)" );
@@ -12450,7 +12477,7 @@ bool CChar_GetPetList( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_HasBeenOwner( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "HasBeenOwner: Invalid number of arguments (takes 1)" );
@@ -12499,7 +12526,7 @@ bool CChar_HasBeenOwner( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_CalculateControlChance( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "CalculateControlChance: Invalid number of arguments (takes 1 - pChar)" );
@@ -12548,7 +12575,7 @@ bool CChar_CalculateControlChance( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_AddFollower( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddFollower: Invalid number of arguments (takes 1 - npcObject)" );
@@ -12594,7 +12621,7 @@ bool CChar_AddFollower( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_RemoveFollower( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveFollower: Invalid number of arguments (takes 1 - followerObject)" );
@@ -12640,7 +12667,7 @@ bool CChar_RemoveFollower( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CChar_GetFollowerList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "GetFollowerList: Invalid number of arguments (takes 0)" );
@@ -12709,7 +12736,7 @@ bool CChar_GetFollowerList( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CParty_Remove( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "Remove: Invalid number of arguments (1)" );
@@ -12748,7 +12775,7 @@ bool CParty_Remove( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CParty_Add( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Add: Invalid number of arguments (1)" );
@@ -12841,7 +12868,7 @@ bool CParty_Add( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CParty_GetMember( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "GetMember: Invalid number of arguments (1)" );
@@ -12891,7 +12918,8 @@ bool CParty_GetMember( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_FirstTriggerWord( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "FirstTriggerWord: Invalid count of arguments :%d, needs :0", argc );
@@ -12917,7 +12945,8 @@ bool CSocket_FirstTriggerWord( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_NextTriggerWord( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "NextTriggerWord: Invalid count of arguments :%d, needs :0", argc );
@@ -12943,7 +12972,8 @@ bool CSocket_NextTriggerWord( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_FinishedTriggerWords( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "FinishedTriggerWords: Invalid count of arguments :%d, needs :0", argc );

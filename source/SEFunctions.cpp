@@ -50,6 +50,16 @@ void		ScriptError( JSContext *cx, const char *txt, ... );
 
 #define __EXTREMELY_VERBOSE__
 
+inline JSObject* getThis(JSContext* cx, JS::CallArgs& args)
+{
+	JS::RootedObject thisObject(cx);
+	if (!args.computeThis(cx, &thisObject))
+	{
+		return nullptr;
+	}
+	return thisObject;
+}
+
 std::map<std::string, ObjectType> stringToObjType;
 
 void InitStringToObjType( void )
@@ -788,8 +798,8 @@ bool SE_RegisterCommand( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_RegisterSpell( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto scriptEnv = getThis( cx, args );
 
 	if( argc != 2 )
 	{
@@ -867,8 +877,8 @@ bool SE_RegisterSkill( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_RegisterPacket( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  scriptEnv = getThis( cx, args );
 
 	if( argc != 2 )
 	{
@@ -898,8 +908,8 @@ bool SE_RegisterPacket( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_RegisterKey( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  scriptEnv = getThis( cx, args );
 
 	if( argc != 2 )
 	{
@@ -945,7 +955,7 @@ bool SE_RegisterKey( JSContext *cx, unsigned int argc, JS::Value *vp )
 bool SE_RegisterConsoleFunc( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
+	auto  scriptEnv = getThis( cx, args );	
 
 	if( argc != 2 )
 	{
@@ -1294,7 +1304,7 @@ bool SE_SpawnNPC( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
 	JS::Value* rval = &JS_RVAL(cx, vp);
-	JSObject* obj = JS_THIS_OBJECT(cx, vp);
+	auto obj = getThis(cx, args);
 
 	if( argc < 5 || argc > 7 )
 	{
@@ -1337,7 +1347,7 @@ bool SE_SpawnNPC( JSContext *cx, unsigned int argc, JS::Value *vp )
 bool SE_CreateDFNItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 
 	if( argc < 3 )
 	{
@@ -1429,7 +1439,7 @@ bool SE_CreateDFNItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 bool SE_CreateBlankItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 
 	if( argc != 8 )
 	{
@@ -1489,8 +1499,8 @@ CMultiObj * BuildHouse( CSocket *s, UI16 houseEntry, bool checkLocation = true, 
 //o------------------------------------------------------------------------------------------------o
 bool SE_CreateHouse( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 
 	if( argc < 4 )
 	{
@@ -1557,7 +1567,7 @@ CMultiObj * BuildBaseMulti( UI16 multiId, SI16 xLoc = -1, SI16 yLoc = -1, SI08 z
 bool SE_CreateBaseMulti( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 
 	if( argc < 4 )
 	{
@@ -1896,7 +1906,8 @@ bool SE_CompareGuildByGuild( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_CreateNewGuild( JSContext* cx, unsigned int argc, JS::Value* vp )
 {
-	JSObject* jsThis = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  jsThis = getThis( cx, args );
 	if( jsThis == nullptr )
 		return false;
 
@@ -1986,7 +1997,7 @@ bool SE_GetRaceSkillAdjustment( JSContext *cx, unsigned int argc, JS::Value *vp 
 bool SE_UseItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 
 	if( argc != 2 )
 	{
@@ -2116,7 +2127,7 @@ bool SE_UseItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 bool SE_TriggerTrap( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 
 	if( argc != 2 )
 	{
@@ -2188,7 +2199,7 @@ bool SE_TriggerTrap( JSContext *cx, unsigned int argc, JS::Value *vp )
 bool SE_TriggerEvent( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto obj = getThis( cx, args );
 	JS::Value *rval = &JS_RVAL( cx, vp );
 
 	if( argc < 2 )
@@ -2603,8 +2614,8 @@ bool SE_GetRaceCount( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_AreaCharacterFunction( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  scriptEnv = getThis( cx, args );
 
 	if( argc != 3 && argc != 4 )
 	{
@@ -2693,8 +2704,8 @@ bool SE_AreaCharacterFunction( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_AreaItemFunction( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  scriptEnv = getThis( cx, args );
 
 	if( argc != 3 && argc != 4 )
 	{
@@ -3087,8 +3098,8 @@ bool SE_IterateFunctor( CBaseObject *a, UI32 &b, void *extraData )
 //o------------------------------------------------------------------------------------------------o
 bool SE_IterateOver( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  scriptEnv = getThis( cx, args );
 	if( argc < 1 || argc > 2 )
 	{
 		ScriptError( cx, "IterateOver: needs 1 or 2 arguments!" );
@@ -3156,8 +3167,8 @@ bool SE_IterateSpawnRegionsFunctor( CSpawnRegion *a, UI32 &b, void *extraData )
 //o------------------------------------------------------------------------------------------------o
 bool SE_IterateOverSpawnRegions( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  scriptEnv = getThis( cx, args );
 	cScript *myScript = JSMapping->GetScript( scriptEnv );
 
 	auto* iterData = new IterateExtraData;
@@ -3428,8 +3439,8 @@ bool SE_GetSocketFromIndex( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_ReloadJSFile( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
 	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  scriptEnv = getThis( cx, args );
 
 	if( argc != 1 )
 	{
@@ -3583,7 +3594,7 @@ bool SE_ResourceTime( JSContext *cx, unsigned int argc, JS::Value *vp )
 bool SE_ResourceRegion( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto  obj = getThis( cx, args );
 
 	if( argc != 3 )
 	{
