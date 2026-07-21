@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <PreferredToolArchitecture>x64</PreferredToolArchitecture>
   </PropertyGroup>
@@ -14,7 +14,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{E3A7A0BB-F721-36EF-9ED5-0C165D7C4163}</ProjectGuid>
+    <ProjectGuid>{55226677-31B2-3FD0-8884-7CC5F53039C1}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
     <Platform>x64</Platform>
@@ -25,12 +25,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>ClangCL</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>ClangCL</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -41,11 +41,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\GitHub\UOX3\build-clang\subproject\zlib\Debug\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Media\Code\UOX3\built\subproject\zlib\Debug\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">zlib.dir\Debug\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">zlib</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\GitHub\UOX3\build-clang\subproject\zlib\Release\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Media\Code\UOX3\built\subproject\zlib\Release\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">zlib.dir\Release\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">zlib</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
@@ -54,17 +54,23 @@
     <ClCompile>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4244;4267;4047;4146;4334;4311</DisableSpecificWarnings>
       <ExceptionHandling>
       </ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <MinimalRebuild></MinimalRebuild>
       <Optimization>Disabled</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <SDLCheck>false</SDLCheck>
       <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
       <TreatWarningAsError>false</TreatWarningAsError>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
@@ -74,7 +80,7 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;_LIB;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:\GitHub\UOX3\make\cmake\..\..\assets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Media\Code\UOX3\make\cmake\..\..\assets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -92,16 +98,22 @@
     <ClCompile>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
       <DisableSpecificWarnings>4244;4267;4047;4146;4334;4311</DisableSpecificWarnings>
       <ExceptionHandling>
       </ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <MinimalRebuild></MinimalRebuild>
       <Optimization>MaxSpeed</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <SDLCheck>false</SDLCheck>
       <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
       <TreatWarningAsError>false</TreatWarningAsError>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
@@ -113,7 +125,7 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:\GitHub\UOX3\make\cmake\..\..\assets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Media\Code\UOX3\make\cmake\..\..\assets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -128,11 +140,11 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="E:\GitHub\UOX3\zlib\make\cmake\CMakeLists.txt">
+    <CustomBuild Include="D:\Media\Code\UOX3\zlib\make\cmake\CMakeLists.txt">
       <UseUtf8Encoding>Always</UseUtf8Encoding>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule E:/GitHub/UOX3/zlib/make/cmake/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule D:/Media/Code/UOX3/zlib/make/cmake/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SE:/GitHub/UOX3/make/cmake -BE:/GitHub/UOX3/build-clang --check-stamp-file E:/GitHub/UOX3/build-clang/subproject/zlib/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/Media/Code/UOX3/make/cmake -BD:/Media/Code/UOX3/built --check-stamp-file D:/Media/Code/UOX3/built/subproject/zlib/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -140,12 +152,12 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\Clang-C.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\Clang.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Internal\CMakeCLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Internal\CMakeCommonLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Linker\LLD-C.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Linker\LLD.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-LLD-C.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-LLD.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-Clang-C.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-Clang.cmake;E:\GitHub\UOX3\build-clang\CMakeFiles\3.31.5\CMakeCCompiler.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\GitHub\UOX3\build-clang\subproject\zlib\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Compiler\MSVC.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Internal\CMakeCLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Internal\CMakeCommonLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Linker\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Linker\MSVC.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Platform\Linker\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Platform\Linker\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Platform\Windows-MSVC.cmake;D:\Media\Code\UOX3\built\CMakeFiles\4.2.3\CMakeCCompiler.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Media\Code\UOX3\built\subproject\zlib\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule E:/GitHub/UOX3/zlib/make/cmake/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule D:/Media/Code/UOX3/zlib/make/cmake/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SE:/GitHub/UOX3/make/cmake -BE:/GitHub/UOX3/build-clang --check-stamp-file E:/GitHub/UOX3/build-clang/subproject/zlib/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/Media/Code/UOX3/make/cmake -BD:/Media/Code/UOX3/built --check-stamp-file D:/Media/Code/UOX3/built/subproject/zlib/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -153,43 +165,43 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\Clang-C.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\Clang.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Internal\CMakeCLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Internal\CMakeCommonLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Linker\LLD-C.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Linker\LLD.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-LLD-C.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-LLD.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-Clang-C.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-Clang.cmake;E:\GitHub\UOX3\build-clang\CMakeFiles\3.31.5\CMakeCCompiler.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\GitHub\UOX3\build-clang\subproject\zlib\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Compiler\MSVC.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Internal\CMakeCLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Internal\CMakeCommonLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Linker\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Linker\MSVC.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Platform\Linker\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Platform\Linker\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Platform\Windows-MSVC.cmake;D:\Media\Code\UOX3\built\CMakeFiles\4.2.3\CMakeCCompiler.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Media\Code\UOX3\built\subproject\zlib\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="E:\GitHub\UOX3\zlib\adler32.c" />
-    <ClCompile Include="E:\GitHub\UOX3\zlib\compress.c" />
-    <ClCompile Include="E:\GitHub\UOX3\zlib\crc32.c" />
-    <ClCompile Include="E:\GitHub\UOX3\zlib\deflate.c" />
-    <ClCompile Include="E:\GitHub\UOX3\zlib\gzclose.c" />
-    <ClCompile Include="E:\GitHub\UOX3\zlib\gzlib.c" />
-    <ClCompile Include="E:\GitHub\UOX3\zlib\gzread.c" />
-    <ClCompile Include="E:\GitHub\UOX3\zlib\gzwrite.c" />
-    <ClCompile Include="E:\GitHub\UOX3\zlib\infback.c" />
-    <ClCompile Include="E:\GitHub\UOX3\zlib\inffast.c" />
-    <ClCompile Include="E:\GitHub\UOX3\zlib\inflate.c" />
-    <ClCompile Include="E:\GitHub\UOX3\zlib\inftrees.c" />
-    <ClCompile Include="E:\GitHub\UOX3\zlib\trees.c" />
-    <ClCompile Include="E:\GitHub\UOX3\zlib\uncompr.c" />
-    <ClCompile Include="E:\GitHub\UOX3\zlib\zutil.c" />
-    <ClInclude Include="E:\GitHub\UOX3\zlib\crc32.h" />
-    <ClInclude Include="E:\GitHub\UOX3\zlib\deflate.h" />
-    <ClInclude Include="E:\GitHub\UOX3\zlib\gzguts.h" />
-    <ClInclude Include="E:\GitHub\UOX3\zlib\inffast.h" />
-    <ClInclude Include="E:\GitHub\UOX3\zlib\inffixed.h" />
-    <ClInclude Include="E:\GitHub\UOX3\zlib\inflate.h" />
-    <ClInclude Include="E:\GitHub\UOX3\zlib\inftrees.h" />
-    <ClInclude Include="E:\GitHub\UOX3\zlib\trees.h" />
-    <ClInclude Include="E:\GitHub\UOX3\zlib\zconf.h" />
-    <ClInclude Include="E:\GitHub\UOX3\zlib\zlib.h" />
-    <ClInclude Include="E:\GitHub\UOX3\zlib\zutil.h" />
+    <ClCompile Include="D:\Media\Code\UOX3\zlib\adler32.c" />
+    <ClCompile Include="D:\Media\Code\UOX3\zlib\compress.c" />
+    <ClCompile Include="D:\Media\Code\UOX3\zlib\crc32.c" />
+    <ClCompile Include="D:\Media\Code\UOX3\zlib\deflate.c" />
+    <ClCompile Include="D:\Media\Code\UOX3\zlib\gzclose.c" />
+    <ClCompile Include="D:\Media\Code\UOX3\zlib\gzlib.c" />
+    <ClCompile Include="D:\Media\Code\UOX3\zlib\gzread.c" />
+    <ClCompile Include="D:\Media\Code\UOX3\zlib\gzwrite.c" />
+    <ClCompile Include="D:\Media\Code\UOX3\zlib\infback.c" />
+    <ClCompile Include="D:\Media\Code\UOX3\zlib\inffast.c" />
+    <ClCompile Include="D:\Media\Code\UOX3\zlib\inflate.c" />
+    <ClCompile Include="D:\Media\Code\UOX3\zlib\inftrees.c" />
+    <ClCompile Include="D:\Media\Code\UOX3\zlib\trees.c" />
+    <ClCompile Include="D:\Media\Code\UOX3\zlib\uncompr.c" />
+    <ClCompile Include="D:\Media\Code\UOX3\zlib\zutil.c" />
+    <ClInclude Include="D:\Media\Code\UOX3\zlib\crc32.h" />
+    <ClInclude Include="D:\Media\Code\UOX3\zlib\deflate.h" />
+    <ClInclude Include="D:\Media\Code\UOX3\zlib\gzguts.h" />
+    <ClInclude Include="D:\Media\Code\UOX3\zlib\inffast.h" />
+    <ClInclude Include="D:\Media\Code\UOX3\zlib\inffixed.h" />
+    <ClInclude Include="D:\Media\Code\UOX3\zlib\inflate.h" />
+    <ClInclude Include="D:\Media\Code\UOX3\zlib\inftrees.h" />
+    <ClInclude Include="D:\Media\Code\UOX3\zlib\trees.h" />
+    <ClInclude Include="D:\Media\Code\UOX3\zlib\zconf.h" />
+    <ClInclude Include="D:\Media\Code\UOX3\zlib\zlib.h" />
+    <ClInclude Include="D:\Media\Code\UOX3\zlib\zutil.h" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="E:\GitHub\UOX3\build-clang\ZERO_CHECK.vcxproj">
-      <Project>{0C2928A9-B58F-3DDE-AE1B-34A987DEEF13}</Project>
+    <ProjectReference Include="D:\Media\Code\UOX3\built\ZERO_CHECK.vcxproj">
+      <Project>{274C3A0A-A882-33DE-9AD3-01A24ADE691E}</Project>
       <Name>ZERO_CHECK</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
