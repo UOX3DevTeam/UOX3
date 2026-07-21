@@ -2315,6 +2315,575 @@ FDCLG( CCharacter, oldX ) { FNARGS auto character = JS::GetMaybePtrFromReservedS
 FDCLG( CCharacter, oldY ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); args.rval().setInt32( character->GetOldLocation().y ); return true; }
 FDCLG( CCharacter, oldZ ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); args.rval().setInt32( character->GetOldLocation().z ); return true; }
 
+#define CHARACTER_STATS_SET( attr, propertyId )                             \
+FDCLS( CCharacter, attr )                                                    \
+{                                                                            \
+	FNARGS                                                                     \
+	return SetLegacyCharacterProperty( cx, thisObj, propertyId, args.get( 0 ));\
+}
+CHARACTER_STATS_SET( owner, CCP_OWNER )
+CHARACTER_STATS_SET( scripttrigger, CCP_SCRIPTTRIGGER )
+CHARACTER_STATS_SET( scriptTriggers, CCP_SCRIPTTRIGGERS )
+CHARACTER_STATS_SET( target, CCP_TARGET )
+CHARACTER_STATS_SET( dexterity, CCP_DEXTERITY )
+CHARACTER_STATS_SET( intelligence, CCP_INTELLIGENCE )
+CHARACTER_STATS_SET( strength, CCP_STRENGTH )
+CHARACTER_STATS_SET( actualDexterity, CCP_ACTUALDEXTERITY )
+CHARACTER_STATS_SET( actualIntelligence, CCP_ACTUALINTELLIGENCE )
+CHARACTER_STATS_SET( actualStrength, CCP_ACTUALSTRENGTH )
+CHARACTER_STATS_SET( healthRegenBonus, CCP_HEALTHREGENBONUS )
+CHARACTER_STATS_SET( staminaRegenBonus, CCP_STAMINAREGENBONUS )
+CHARACTER_STATS_SET( manaRegenBonus, CCP_MANAREGENBONUS )
+CHARACTER_STATS_SET( mana, CCP_MANA )
+CHARACTER_STATS_SET( stamina, CCP_STAMINA )
+CHARACTER_STATS_SET( pack, CCP_CHARPACK )
+#undef CHARACTER_STATS_SET
+
+#define CHARACTER_STATS_GET( attr, method, expression ) IMPL_GET_OBJ( CCharacter, attr, CChar, method, expression )
+CHARACTER_STATS_GET( dexterity, setInt32, GetDexterity() )
+CHARACTER_STATS_GET( intelligence, setInt32, GetIntelligence() )
+CHARACTER_STATS_GET( strength, setInt32, GetStrength() )
+CHARACTER_STATS_GET( actualDexterity, setInt32, ActualDexterity() )
+CHARACTER_STATS_GET( actualIntelligence, setInt32, ActualIntelligence() )
+CHARACTER_STATS_GET( actualStrength, setInt32, ActualStrength() )
+CHARACTER_STATS_GET( healthRegenBonus, setInt32, GetHealthRegenBonus() )
+CHARACTER_STATS_GET( staminaRegenBonus, setInt32, GetStaminaRegenBonus() )
+CHARACTER_STATS_GET( manaRegenBonus, setInt32, GetManaRegenBonus() )
+CHARACTER_STATS_GET( mana, setInt32, GetMana() )
+CHARACTER_STATS_GET( stamina, setInt32, GetStamina() )
+#undef CHARACTER_STATS_GET
+
+#define CHARACTER_OBJECT_GET( attr, objectType, expression )              \
+FDCLG( CCharacter, attr )                                                  \
+{                                                                          \
+	FNARGS                                                                   \
+	auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );   \
+	auto object = expression;                                                \
+	if( !ValidateObject( object )) { args.rval().setNull(); return true; }    \
+	JSObject *wrapper = JSEngine->AcquireObject( objectType, object, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))); \
+	if( wrapper == nullptr ) return false;                                   \
+	args.rval().setObject( *wrapper );                                       \
+	return true;                                                             \
+}
+CHARACTER_OBJECT_GET( owner, IUE_CHAR, character->GetOwnerObj() )
+CHARACTER_OBJECT_GET( target, IUE_CHAR, character->GetTarg() )
+CHARACTER_OBJECT_GET( pack, IUE_ITEM, character->GetPackItem() )
+#undef CHARACTER_OBJECT_GET
+
+FDCLG( CCharacter, scripttrigger )
+{
+	FNARGS
+	auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );
+	const auto &triggers = character->GetScriptTriggers();
+	args.rval().setInt32( triggers.empty() ? 0 : triggers.back() );
+	return true;
+}
+
+FDCLG( CCharacter, scriptTriggers )
+{
+	FNARGS
+	auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );
+	const auto &triggers = character->GetScriptTriggers();
+	JS::RootedObject result( cx, JS::NewArrayObject( cx, triggers.size() ));
+	if( result == nullptr ) return false;
+	for( uint32_t index = 0; index < triggers.size(); ++index )
+	{
+		JS::RootedValue value( cx, JS::Int32Value( triggers[index] ));
+		if( !JS_SetElement( cx, result, index, value )) return false;
+	}
+	args.rval().setObject( *result );
+	return true;
+}
+
+#define CHARACTER_STATE_SET( attr, propertyId )                             \
+FDCLS( CCharacter, attr )                                                    \
+{                                                                            \
+	FNARGS                                                                     \
+	return SetLegacyCharacterProperty( cx, thisObj, propertyId, args.get( 0 ));\
+}
+CHARACTER_STATE_SET( fame, CCP_FAME )
+CHARACTER_STATE_SET( karma, CCP_KARMA )
+CHARACTER_STATE_SET( canAttack, CCP_CANATTACK )
+CHARACTER_STATE_SET( karmaLock, CCP_KARMALOCK )
+CHARACTER_STATE_SET( fleeAt, CCP_FLEEAT )
+CHARACTER_STATE_SET( reAttackAt, CCP_REATTACKAT )
+CHARACTER_STATE_SET( brkPeaceChance, CCP_BRKPEACE )
+CHARACTER_STATE_SET( hunger, CCP_HUNGER )
+CHARACTER_STATE_SET( thirst, CCP_THIRST )
+CHARACTER_STATE_SET( frozen, CCP_FROZEN )
+CHARACTER_STATE_SET( commandlevel, CCP_COMMANDLEVEL )
+CHARACTER_STATE_SET( hasStolen, CCP_HASSTOLEN )
+CHARACTER_STATE_SET( criminal, CCP_CRIMINAL )
+CHARACTER_STATE_SET( innocent, CCP_INNOCENT )
+CHARACTER_STATE_SET( murdercount, CCP_MURDERCOUNT )
+CHARACTER_STATE_SET( neutral, CCP_NEUTRAL )
+CHARACTER_STATE_SET( npcFlag, CCP_NPCFLAG )
+#undef CHARACTER_STATE_SET
+
+#define CHARACTER_STATE_GET( attr, method, expression ) IMPL_GET_OBJ( CCharacter, attr, CChar, method, expression )
+CHARACTER_STATE_GET( fame, setInt32, GetFame() )
+CHARACTER_STATE_GET( karma, setInt32, GetKarma() )
+CHARACTER_STATE_GET( canAttack, setBoolean, GetCanAttack() )
+CHARACTER_STATE_GET( karmaLock, setBoolean, GetKarmaLock() )
+CHARACTER_STATE_GET( fleeAt, setInt32, GetFleeAt() )
+CHARACTER_STATE_GET( reAttackAt, setInt32, GetReattackAt() )
+CHARACTER_STATE_GET( brkPeaceChance, setInt32, GetBrkPeaceChance() )
+CHARACTER_STATE_GET( hunger, setInt32, GetHunger() )
+CHARACTER_STATE_GET( thirst, setInt32, GetThirst() )
+CHARACTER_STATE_GET( frozen, setBoolean, IsFrozen() )
+CHARACTER_STATE_GET( commandlevel, setInt32, GetCommandLevel() )
+CHARACTER_STATE_GET( hasStolen, setBoolean, HasStolen() )
+CHARACTER_STATE_GET( criminal, setBoolean, IsCriminal() )
+CHARACTER_STATE_GET( murderer, setBoolean, IsMurderer() )
+CHARACTER_STATE_GET( innocent, setBoolean, IsInnocent() )
+CHARACTER_STATE_GET( murdercount, setInt32, GetKills() )
+CHARACTER_STATE_GET( neutral, setBoolean, IsNeutral() )
+CHARACTER_STATE_GET( npcFlag, setInt32, GetNPCFlag() )
+#undef CHARACTER_STATE_GET
+
+FDCLG( CCharacter, attack )
+{
+	FNARGS
+	auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );
+	if( !ValidateObject( character )) return false;
+	args.rval().setInt32( Combat->CalcAttackPower( character, true ));
+	return true;
+}
+
+#define CHARACTER_LIFECYCLE_SET( attr, propertyId )                         \
+FDCLS( CCharacter, attr )                                                    \
+{                                                                            \
+	FNARGS                                                                     \
+	return SetLegacyCharacterProperty( cx, thisObj, propertyId, args.get( 0 ));\
+}
+CHARACTER_LIFECYCLE_SET( dead, CCP_DEAD )
+CHARACTER_LIFECYCLE_SET( npc, CCP_NPC )
+CHARACTER_LIFECYCLE_SET( isAwake, CCP_AWAKE )
+CHARACTER_LIFECYCLE_SET( online, CCP_ONLINE )
+CHARACTER_LIFECYCLE_SET( direction, CCP_DIRECTION )
+CHARACTER_LIFECYCLE_SET( isRunning, CCP_ISRUNNING )
+CHARACTER_LIFECYCLE_SET( isChar, CCP_ISCHAR )
+CHARACTER_LIFECYCLE_SET( isItem, CCP_ISITEM )
+CHARACTER_LIFECYCLE_SET( isSpawner, CCP_ISSPAWNER )
+CHARACTER_LIFECYCLE_SET( isonhorse, CCP_ISONHORSE )
+CHARACTER_LIFECYCLE_SET( isFlying, CCP_ISFLYING )
+CHARACTER_LIFECYCLE_SET( isGuarded, CCP_ISGUARDED )
+CHARACTER_LIFECYCLE_SET( tempdex, CCP_TDEXTERITY )
+CHARACTER_LIFECYCLE_SET( tempint, CCP_TINTELLIGENCE )
+CHARACTER_LIFECYCLE_SET( tempstr, CCP_TSTRENGTH )
+CHARACTER_LIFECYCLE_SET( poison, CCP_POISON )
+CHARACTER_LIFECYCLE_SET( poisonedBy, CCP_POISONEDBY )
+CHARACTER_LIFECYCLE_SET( lightlevel, CCP_LIGHTLEVEL )
+CHARACTER_LIFECYCLE_SET( vulnerable, CCP_VULNERABLE )
+CHARACTER_LIFECYCLE_SET( willhunger, CCP_HUNGERSTATUS )
+CHARACTER_LIFECYCLE_SET( willthirst, CCP_THIRSTSTATUS )
+#undef CHARACTER_LIFECYCLE_SET
+
+#define CHARACTER_LIFECYCLE_GET( attr, method, expression ) IMPL_GET_OBJ( CCharacter, attr, CChar, method, expression )
+CHARACTER_LIFECYCLE_GET( dead, setBoolean, IsDead() )
+CHARACTER_LIFECYCLE_GET( npc, setBoolean, IsNpc() )
+CHARACTER_LIFECYCLE_GET( isAwake, setBoolean, IsAwake() )
+CHARACTER_LIFECYCLE_GET( direction, setInt32, GetDir() )
+CHARACTER_LIFECYCLE_GET( isRunning, setBoolean, GetRunning() )
+CHARACTER_LIFECYCLE_GET( isonhorse, setBoolean, IsOnHorse() )
+CHARACTER_LIFECYCLE_GET( isFlying, setBoolean, IsFlying() )
+CHARACTER_LIFECYCLE_GET( isGuarded, setBoolean, IsGuarded() )
+CHARACTER_LIFECYCLE_GET( tempdex, setInt32, GetDexterity2() )
+CHARACTER_LIFECYCLE_GET( tempint, setInt32, GetIntelligence2() )
+CHARACTER_LIFECYCLE_GET( tempstr, setInt32, GetStrength2() )
+CHARACTER_LIFECYCLE_GET( poison, setInt32, GetPoisoned() )
+CHARACTER_LIFECYCLE_GET( poisonedBy, setNumber, GetPoisonedBy() )
+CHARACTER_LIFECYCLE_GET( lightlevel, setInt32, GetFixedLight() )
+CHARACTER_LIFECYCLE_GET( willhunger, setBoolean, WillHunger() )
+CHARACTER_LIFECYCLE_GET( willthirst, setBoolean, WillThirst() )
+#undef CHARACTER_LIFECYCLE_GET
+
+FDCLG( CCharacter, online ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); args.rval().setBoolean( IsOnline( *character )); return true; }
+FDCLG( CCharacter, isChar ) { FNARGS args.rval().setBoolean( true ); return true; }
+FDCLG( CCharacter, isItem ) { FNARGS args.rval().setBoolean( false ); return true; }
+FDCLG( CCharacter, isSpawner ) { FNARGS args.rval().setBoolean( false ); return true; }
+FDCLG( CCharacter, vulnerable ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); args.rval().setBoolean( !character->IsInvulnerable() ); return true; }
+
+#define CHARACTER_NPC_SET( attr, propertyId )                               \
+FDCLS( CCharacter, attr )                                                    \
+{                                                                            \
+	FNARGS                                                                     \
+	return SetLegacyCharacterProperty( cx, thisObj, propertyId, args.get( 0 ));\
+}
+CHARACTER_NPC_SET( npcGuild, CCP_NPCGUILD )
+CHARACTER_NPC_SET( spawnSerial, CCP_SPAWNSERIAL )
+CHARACTER_NPC_SET( maxhp, CCP_MAXHP )
+CHARACTER_NPC_SET( maxstamina, CCP_MAXSTAMINA )
+CHARACTER_NPC_SET( maxmana, CCP_MAXMANA )
+CHARACTER_NPC_SET( oldWandertype, CCP_OLDWANDERTYPE )
+CHARACTER_NPC_SET( wandertype, CCP_WANDERTYPE )
+CHARACTER_NPC_SET( fx1, CCP_FX1 )
+CHARACTER_NPC_SET( fy1, CCP_FY1 )
+CHARACTER_NPC_SET( fx2, CCP_FX2 )
+CHARACTER_NPC_SET( fy2, CCP_FY2 )
+CHARACTER_NPC_SET( fz, CCP_FZ )
+CHARACTER_NPC_SET( spawnX, CCP_SPAWNX )
+CHARACTER_NPC_SET( spawnY, CCP_SPAWNY )
+CHARACTER_NPC_SET( spawnZ, CCP_SPAWNZ )
+CHARACTER_NPC_SET( pathTargX, CCP_PATHTARGX )
+CHARACTER_NPC_SET( pathTargY, CCP_PATHTARGY )
+CHARACTER_NPC_SET( nextAct, CCP_NEXTACT )
+#undef CHARACTER_NPC_SET
+
+#define CHARACTER_NPC_GET( attr, method, expression ) IMPL_GET_OBJ( CCharacter, attr, CChar, method, expression )
+CHARACTER_NPC_GET( npcGuild, setInt32, GetNPCGuild() )
+CHARACTER_NPC_GET( spawnSerial, setNumber, GetSpawn() )
+CHARACTER_NPC_GET( maxhp, setInt32, GetMaxHP() )
+CHARACTER_NPC_GET( maxstamina, setInt32, GetMaxStam() )
+CHARACTER_NPC_GET( maxmana, setInt32, GetMaxMana() )
+CHARACTER_NPC_GET( oldWandertype, setInt32, GetOldNpcWander() )
+CHARACTER_NPC_GET( wandertype, setInt32, GetNpcWander() )
+CHARACTER_NPC_GET( fx1, setInt32, GetFx( 0 ) )
+CHARACTER_NPC_GET( fy1, setInt32, GetFy( 0 ) )
+CHARACTER_NPC_GET( fx2, setInt32, GetFx( 1 ) )
+CHARACTER_NPC_GET( fy2, setInt32, GetFy( 1 ) )
+CHARACTER_NPC_GET( fz, setInt32, GetFz() )
+CHARACTER_NPC_GET( spawnX, setInt32, GetSpawnX() )
+CHARACTER_NPC_GET( spawnY, setInt32, GetSpawnY() )
+CHARACTER_NPC_GET( spawnZ, setInt32, GetSpawnZ() )
+CHARACTER_NPC_GET( pathTargX, setInt32, GetPathTargX() )
+CHARACTER_NPC_GET( pathTargY, setInt32, GetPathTargY() )
+CHARACTER_NPC_GET( nextAct, setInt32, GetNextAct() )
+#undef CHARACTER_NPC_GET
+
+#define CHARACTER_COMBAT_SET( attr, propertyId )                            \
+FDCLS( CCharacter, attr )                                                    \
+{                                                                            \
+	FNARGS                                                                     \
+	return SetLegacyCharacterProperty( cx, thisObj, propertyId, args.get( 0 ));\
+}
+CHARACTER_COMBAT_SET( lodamage, CCP_LODAMAGE )
+CHARACTER_COMBAT_SET( hidamage, CCP_HIDAMAGE )
+CHARACTER_COMBAT_SET( flag, CCP_FLAG )
+CHARACTER_COMBAT_SET( atWar, CCP_ATWAR )
+CHARACTER_COMBAT_SET( spellCast, CCP_SPELLCAST )
+CHARACTER_COMBAT_SET( isCasting, CCP_ISCASTING )
+CHARACTER_COMBAT_SET( priv, CCP_PRIV )
+CHARACTER_COMBAT_SET( townPriv, CCP_TOWNPRIV )
+CHARACTER_COMBAT_SET( guildTitle, CCP_GUILDTITLE )
+CHARACTER_COMBAT_SET( hairStyle, CCP_HAIRSTYLE )
+CHARACTER_COMBAT_SET( hairColour, CCP_HAIRCOLOUR )
+CHARACTER_COMBAT_SET( hairColor, CCP_HAIRCOLOUR )
+CHARACTER_COMBAT_SET( beardStyle, CCP_BEARDSTYLE )
+CHARACTER_COMBAT_SET( beardColour, CCP_BEARDCOLOUR )
+CHARACTER_COMBAT_SET( beardColor, CCP_BEARDCOLOUR )
+CHARACTER_COMBAT_SET( fontType, CCP_FONTTYPE )
+CHARACTER_COMBAT_SET( sayColour, CCP_SAYCOLOUR )
+CHARACTER_COMBAT_SET( emoteColour, CCP_EMOTECOLOUR )
+CHARACTER_COMBAT_SET( attacker, CCP_ATTACKER )
+CHARACTER_COMBAT_SET( raceGate, CCP_RACEGATE )
+CHARACTER_COMBAT_SET( deaths, CCP_DEATHS )
+CHARACTER_COMBAT_SET( cell, CCP_CELL )
+CHARACTER_COMBAT_SET( allmove, CCP_ALLMOVE )
+CHARACTER_COMBAT_SET( houseicons, CCP_HOUSEICONS )
+CHARACTER_COMBAT_SET( spattack, CCP_SPATTACK )
+CHARACTER_COMBAT_SET( spdelay, CCP_SPDELAY )
+CHARACTER_COMBAT_SET( swingSpeedIncrease, CCP_SWINGSPEEDINCREASE )
+CHARACTER_COMBAT_SET( luck, CCP_LUCK )
+CHARACTER_COMBAT_SET( damageIncrease, CCP_DAMAGEINCREASE )
+CHARACTER_COMBAT_SET( hitChance, CCP_HITCHANCE )
+CHARACTER_COMBAT_SET( defenseChance, CCP_DEFENSECHANCE )
+#undef CHARACTER_COMBAT_SET
+
+#define CHARACTER_COMBAT_GET( attr, method, expression ) IMPL_GET_OBJ( CCharacter, attr, CChar, method, expression )
+CHARACTER_COMBAT_GET( lodamage, setInt32, GetLoDamage() )
+CHARACTER_COMBAT_GET( hidamage, setInt32, GetHiDamage() )
+CHARACTER_COMBAT_GET( flag, setInt32, GetFlag() )
+CHARACTER_COMBAT_GET( atWar, setBoolean, IsAtWar() )
+CHARACTER_COMBAT_GET( spellCast, setInt32, GetSpellCast() )
+CHARACTER_COMBAT_GET( priv, setNumber, GetPriv() )
+CHARACTER_COMBAT_GET( townPriv, setInt32, GetTownPriv() )
+CHARACTER_COMBAT_GET( hairStyle, setInt32, GetHairStyle() )
+CHARACTER_COMBAT_GET( hairColour, setInt32, GetHairColour() )
+CHARACTER_COMBAT_GET( hairColor, setInt32, GetHairColour() )
+CHARACTER_COMBAT_GET( beardStyle, setInt32, GetBeardStyle() )
+CHARACTER_COMBAT_GET( beardColour, setInt32, GetBeardColour() )
+CHARACTER_COMBAT_GET( beardColor, setInt32, GetBeardColour() )
+CHARACTER_COMBAT_GET( fontType, setInt32, GetFontType() )
+CHARACTER_COMBAT_GET( sayColour, setInt32, GetSayColour() )
+CHARACTER_COMBAT_GET( emoteColour, setInt32, GetEmoteColour() )
+CHARACTER_COMBAT_GET( raceGate, setInt32, GetRaceGate() )
+CHARACTER_COMBAT_GET( deaths, setInt32, GetDeaths() )
+CHARACTER_COMBAT_GET( cell, setInt32, GetCell() )
+CHARACTER_COMBAT_GET( allmove, setBoolean, AllMove() )
+CHARACTER_COMBAT_GET( houseicons, setBoolean, ViewHouseAsIcon() )
+CHARACTER_COMBAT_GET( spattack, setInt32, GetSpAttack() )
+CHARACTER_COMBAT_GET( spdelay, setInt32, GetSpDelay() )
+CHARACTER_COMBAT_GET( swingSpeedIncrease, setInt32, GetSwingSpeedIncrease() )
+CHARACTER_COMBAT_GET( luck, setInt32, GetLuck() )
+CHARACTER_COMBAT_GET( damageIncrease, setInt32, GetDamageIncrease() )
+CHARACTER_COMBAT_GET( hitChance, setInt32, GetHitChance() )
+CHARACTER_COMBAT_GET( defenseChance, setInt32, GetDefenseChance() )
+#undef CHARACTER_COMBAT_GET
+
+FDCLG( CCharacter, isCasting ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); args.rval().setBoolean( character->IsCasting() || character->IsJSCasting() ); return true; }
+FDCLG( CCharacter, guildTitle )
+{
+	FNARGS
+	auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );
+	JS::RootedString value( cx, JS_NewStringCopyZ( cx, character->GetGuildTitle().c_str() ));
+	if( value == nullptr ) return false;
+	args.rval().setString( value );
+	return true;
+}
+FDCLG( CCharacter, attacker )
+{
+	FNARGS
+	auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );
+	CChar *attacker = character->GetAttacker();
+	if( !ValidateObject( attacker )) { args.rval().setNull(); return true; }
+	JSObject *wrapper = JSEngine->AcquireObject( IUE_CHAR, attacker, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	if( wrapper == nullptr ) return false;
+	args.rval().setObject( *wrapper );
+	return true;
+}
+
+#define CHARACTER_AI_SET( attr, propertyId )                                \
+FDCLS( CCharacter, attr )                                                    \
+{                                                                            \
+	FNARGS                                                                     \
+	return SetLegacyCharacterProperty( cx, thisObj, propertyId, args.get( 0 ));\
+}
+CHARACTER_AI_SET( aitype, CCP_AITYPE )
+CHARACTER_AI_SET( split, CCP_SPLIT )
+CHARACTER_AI_SET( splitchance, CCP_SPLITCHANCE )
+CHARACTER_AI_SET( hireling, CCP_HIRELING )
+CHARACTER_AI_SET( trainer, CCP_TRAINER )
+CHARACTER_AI_SET( weight, CCP_WEIGHT )
+CHARACTER_AI_SET( squelch, CCP_SQUELCH )
+CHARACTER_AI_SET( isJailed, CCP_ISJAILED )
+CHARACTER_AI_SET( magicReflect, CCP_MAGICREFLECT )
+CHARACTER_AI_SET( permanentMagicReflect, CCP_PERMMAGICREFLECT )
+CHARACTER_AI_SET( hideFameKarmaTitle, CCP_HIDEFAMEKARMATITLE )
+CHARACTER_AI_SET( noCharCollide, CCP_NOCHARCOLLIDE )
+CHARACTER_AI_SET( tamed, CCP_TAMED )
+CHARACTER_AI_SET( tamedHungerRate, CCP_TAMEDHUNGERRATE )
+CHARACTER_AI_SET( tamedThirstRate, CCP_TAMEDTHIRSTRATE )
+CHARACTER_AI_SET( hungerWildChance, CCP_HUNGERWILDCHANCE )
+CHARACTER_AI_SET( thirstWildChance, CCP_THIRSTWILDCHANCE )
+CHARACTER_AI_SET( foodList, CCP_FOODLIST )
+CHARACTER_AI_SET( mounted, CCP_MOUNTED )
+CHARACTER_AI_SET( stabled, CCP_STABLED )
+CHARACTER_AI_SET( isUsingPotion, CCP_USINGPOTION )
+CHARACTER_AI_SET( stealth, CCP_STEALTH )
+CHARACTER_AI_SET( skillToTame, CCP_SKILLTOTAME )
+CHARACTER_AI_SET( skillToProv, CCP_SKILLTOPROV )
+CHARACTER_AI_SET( skillToPeace, CCP_SKILLTOPEACE )
+CHARACTER_AI_SET( poisonStrength, CCP_POISONSTRENGTH )
+CHARACTER_AI_SET( isPolymorphed, CCP_ISPOLYMORPHED )
+CHARACTER_AI_SET( isIncognito, CCP_ISINCOGNITO )
+CHARACTER_AI_SET( isDisguised, CCP_ISDISGUISED )
+CHARACTER_AI_SET( canRun, CCP_CANRUN )
+CHARACTER_AI_SET( isMeditating, CCP_ISMEDITATING )
+#undef CHARACTER_AI_SET
+
+#define CHARACTER_AI_GET( attr, method, expression ) IMPL_GET_OBJ( CCharacter, attr, CChar, method, expression )
+CHARACTER_AI_GET( aitype, setInt32, GetNpcAiType() )
+CHARACTER_AI_GET( split, setInt32, GetSplit() )
+CHARACTER_AI_GET( splitchance, setInt32, GetSplitChance() )
+CHARACTER_AI_GET( hireling, setBoolean, CanBeHired() )
+CHARACTER_AI_GET( trainer, setBoolean, CanTrain() )
+CHARACTER_AI_GET( weight, setInt32, GetWeight() )
+CHARACTER_AI_GET( squelch, setInt32, GetSquelched() )
+CHARACTER_AI_GET( isJailed, setBoolean, IsJailed() )
+CHARACTER_AI_GET( magicReflect, setBoolean, IsTempReflected() )
+CHARACTER_AI_GET( permanentMagicReflect, setBoolean, IsPermReflected() )
+CHARACTER_AI_GET( hideFameKarmaTitle, setBoolean, HideFameKarmaTitle() )
+CHARACTER_AI_GET( noCharCollide, setBoolean, NoCharCollide() )
+CHARACTER_AI_GET( tamed, setBoolean, IsTamed() )
+CHARACTER_AI_GET( tamedHungerRate, setInt32, GetTamedHungerRate() )
+CHARACTER_AI_GET( tamedThirstRate, setInt32, GetTamedThirstRate() )
+CHARACTER_AI_GET( hungerWildChance, setInt32, GetTamedHungerWildChance() )
+CHARACTER_AI_GET( thirstWildChance, setInt32, GetTamedThirstWildChance() )
+CHARACTER_AI_GET( mounted, setBoolean, GetMounted() )
+CHARACTER_AI_GET( stabled, setBoolean, GetStabled() )
+CHARACTER_AI_GET( isUsingPotion, setBoolean, IsUsingPotion() )
+CHARACTER_AI_GET( stealth, setInt32, GetStealth() )
+CHARACTER_AI_GET( skillToTame, setInt32, GetTaming() )
+CHARACTER_AI_GET( skillToProv, setInt32, GetProvoing() )
+CHARACTER_AI_GET( skillToPeace, setInt32, GetPeaceing() )
+CHARACTER_AI_GET( poisonStrength, setInt32, GetPoisonStrength() )
+CHARACTER_AI_GET( isPolymorphed, setBoolean, IsPolymorphed() )
+CHARACTER_AI_GET( isIncognito, setBoolean, IsIncognito() )
+CHARACTER_AI_GET( isDisguised, setBoolean, IsDisguised() )
+CHARACTER_AI_GET( canRun, setBoolean, CanRun() )
+CHARACTER_AI_GET( isMeditating, setBoolean, IsMeditating() )
+#undef CHARACTER_AI_GET
+
+FDCLG( CCharacter, foodList )
+{
+	FNARGS
+	auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );
+	JS::RootedString value( cx, JS_NewStringCopyZ( cx, character->GetFood().c_str() ));
+	if( value == nullptr ) return false;
+	args.rval().setString( value );
+	return true;
+}
+
+#define CHARACTER_MISC_SET( attr, propertyId )                              \
+FDCLS( CCharacter, attr )                                                    \
+{                                                                            \
+	FNARGS                                                                     \
+	return SetLegacyCharacterProperty( cx, thisObj, propertyId, args.get( 0 ));\
+}
+CHARACTER_MISC_SET( setPeace, CCP_SETPEACE )
+CHARACTER_MISC_SET( gender, CCP_GENDER )
+CHARACTER_MISC_SET( guildNumber, CCP_GUILDNUMBER )
+CHARACTER_MISC_SET( ownerCount, CCP_OWNERCOUNT )
+CHARACTER_MISC_SET( isGM, CCP_ISGM )
+CHARACTER_MISC_SET( canBroadcast, CCP_CANBROADCAST )
+CHARACTER_MISC_SET( singClickSer, CCP_SINGCLICKSER )
+CHARACTER_MISC_SET( noSkillTitles, CCP_NOSKILLTITLES )
+CHARACTER_MISC_SET( isGMPageable, CCP_ISGMPAGEABLE )
+CHARACTER_MISC_SET( canSnoop, CCP_CANSNOOP )
+CHARACTER_MISC_SET( isCounselor, CCP_ISCOUNSELOR )
+CHARACTER_MISC_SET( noNeedMana, CCP_NONEEDMANA )
+CHARACTER_MISC_SET( isDispellable, CCP_ISDISPELLABLE )
+CHARACTER_MISC_SET( noNeedReags, CCP_NONEEDREAGS )
+CHARACTER_MISC_SET( orgID, CCP_ORGID )
+CHARACTER_MISC_SET( orgSkin, CCP_ORGSKIN )
+CHARACTER_MISC_SET( isShop, CCP_ISSHOP )
+CHARACTER_MISC_SET( maxLoyalty, CCP_MAXLOYALTY )
+CHARACTER_MISC_SET( loyalty, CCP_LOYALTY )
+CHARACTER_MISC_SET( loyaltyRate, CCP_LOYALTYRATE )
+CHARACTER_MISC_SET( shouldSave, CCP_SHOULDSAVE )
+CHARACTER_MISC_SET( origin, CCP_ORIGIN )
+CHARACTER_MISC_SET( accountNum, CCP_ACCOUNTNUM )
+CHARACTER_MISC_SET( createdOn, CCP_CREATEDON )
+CHARACTER_MISC_SET( playTime, CCP_PLAYTIME )
+CHARACTER_MISC_SET( housesOwned, CCP_HOUSESOWNED )
+CHARACTER_MISC_SET( housesCoOwned, CCP_HOUSESCOOWNED )
+CHARACTER_MISC_SET( tithing, CCP_TITHING )
+#undef CHARACTER_MISC_SET
+
+#define CHARACTER_MISC_GET( attr, method, expression ) IMPL_GET_OBJ( CCharacter, attr, CChar, method, expression )
+CHARACTER_MISC_GET( guildNumber, setInt32, GetGuildNumber() )
+CHARACTER_MISC_GET( ownerCount, setInt32, GetOwnerCount() )
+CHARACTER_MISC_GET( isGM, setBoolean, IsGM() )
+CHARACTER_MISC_GET( canBroadcast, setBoolean, CanBroadcast() )
+CHARACTER_MISC_GET( singClickSer, setBoolean, GetSingClickSer() )
+CHARACTER_MISC_GET( noSkillTitles, setBoolean, NoSkillTitles() )
+CHARACTER_MISC_GET( isGMPageable, setBoolean, IsGMPageable() )
+CHARACTER_MISC_GET( canSnoop, setBoolean, CanSnoop() )
+CHARACTER_MISC_GET( isCounselor, setBoolean, IsCounselor() )
+CHARACTER_MISC_GET( noNeedMana, setBoolean, NoNeedMana() )
+CHARACTER_MISC_GET( isDispellable, setBoolean, IsDispellable() )
+CHARACTER_MISC_GET( noNeedReags, setBoolean, NoNeedReags() )
+CHARACTER_MISC_GET( orgID, setInt32, GetOrgId() )
+CHARACTER_MISC_GET( orgSkin, setInt32, GetOrgSkin() )
+CHARACTER_MISC_GET( isShop, setBoolean, IsShop() )
+CHARACTER_MISC_GET( maxLoyalty, setInt32, GetMaxLoyalty() )
+CHARACTER_MISC_GET( loyalty, setInt32, GetLoyalty() )
+CHARACTER_MISC_GET( shouldSave, setBoolean, ShouldSave() )
+CHARACTER_MISC_GET( accountNum, setInt32, GetAccountNum() )
+CHARACTER_MISC_GET( createdOn, setInt32, GetCreatedOn() )
+CHARACTER_MISC_GET( playTime, setInt32, GetPlayTime() )
+CHARACTER_MISC_GET( housesOwned, setInt32, CountHousesOwned( false ) )
+CHARACTER_MISC_GET( housesCoOwned, setInt32, CountHousesOwned( true ) )
+CHARACTER_MISC_GET( tithing, setInt32, GetTithing() )
+CHARACTER_MISC_GET( lastOnSecs, setNumber, GetLastOnSecs() )
+#undef CHARACTER_MISC_GET
+
+FDCLG( CCharacter, setPeace ) { FNARGS args.rval().setUndefined(); return true; }
+FDCLG( CCharacter, petCount ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); args.rval().setInt32( character->GetPetList()->Num() ); return true; }
+FDCLG( CCharacter, followerCount ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); args.rval().setInt32( character->GetFollowerList()->Num() ); return true; }
+FDCLG( CCharacter, ownedItemsCount ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); args.rval().setInt32( character->GetOwnedItems()->size() ); return true; }
+FDCLG( CCharacter, isAnimal ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); args.rval().setBoolean( cwmWorldState->creatures[character->GetId()].IsAnimal() ); return true; }
+FDCLG( CCharacter, isPackAnimal ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); args.rval().setBoolean( cwmWorldState->creatures[character->GetId()].IsPackAnimal() ); return true; }
+FDCLG( CCharacter, isHuman ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); args.rval().setBoolean( cwmWorldState->creatures[character->GetId()].IsHuman() ); return true; }
+FDCLG( CCharacter, hungerRate ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); CRace *race = Races->Race( character->GetRace() ); UI16 rate = race == nullptr ? 0 : race->GetHungerRate(); if( rate == 0 ) rate = cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE ); args.rval().setInt32( rate ); return true; }
+FDCLG( CCharacter, thirstRate ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); CRace *race = Races->Race( character->GetRace() ); UI16 rate = race == nullptr ? 0 : race->GetThirstRate(); if( rate == 0 ) rate = cwmWorldState->ServerData()->SystemTimer( tSERVER_THIRSTRATE ); args.rval().setInt32( rate ); return true; }
+FDCLG( CCharacter, loyaltyRate ) { FNARGS args.rval().setInt32( cwmWorldState->ServerData()->SystemTimer( tSERVER_LOYALTYRATE )); return true; }
+FDCLG( CCharacter, gender ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); int32_t gender = 0; switch( character->GetId() ) { case 0x0191: case 0x0193: gender = 1; break; case 0x025D: case 0x025F: gender = 2; break; case 0x025E: case 0x0260: gender = 3; break; case 0x029A: case 0x02B6: gender = 4; break; case 0x029B: case 0x02B7: gender = 5; break; default: break; } args.rval().setInt32( gender ); return true; }
+FDCLG( CCharacter, origin ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); const auto text = cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( character->GetOrigin() )); JS::RootedString value( cx, JS_NewStringCopyZ( cx, text.c_str() )); if( value == nullptr ) return false; args.rval().setString( value ); return true; }
+FDCLG( CCharacter, lastOn ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); JS::RootedString value( cx, JS_NewStringCopyZ( cx, character->GetLastOn().c_str() )); if( value == nullptr ) return false; args.rval().setString( value ); return true; }
+
+#define CHARACTER_FINAL_SET( attr, propertyId )                              \
+FDCLS( CCharacter, attr )                                                    \
+{                                                                            \
+	FNARGS                                                                     \
+	return SetLegacyCharacterProperty( cx, thisObj, propertyId, args.get( 0 ));\
+}
+CHARACTER_FINAL_SET( skills, CCP_SKILLS )
+CHARACTER_FINAL_SET( race, CCP_RACE )
+CHARACTER_FINAL_SET( region, CCP_REGION )
+CHARACTER_FINAL_SET( town, CCP_TOWN )
+CHARACTER_FINAL_SET( guild, CCP_GUILD )
+CHARACTER_FINAL_SET( baseskills, CCP_BASESKILLS )
+CHARACTER_FINAL_SET( skillsused, CCP_SKILLUSE )
+CHARACTER_FINAL_SET( socket, CCP_SOCKET )
+CHARACTER_FINAL_SET( guarding, CCP_GUARDING )
+CHARACTER_FINAL_SET( skillLock, CCP_SKILLLOCK )
+CHARACTER_FINAL_SET( skillCaps, CCP_SKILLCAP )
+CHARACTER_FINAL_SET( partyLootable, CCP_PARTYLOOTABLE )
+CHARACTER_FINAL_SET( party, CCP_PARTY )
+CHARACTER_FINAL_SET( multi, CCP_MULTI )
+CHARACTER_FINAL_SET( account, CCP_ACCOUNT )
+#undef CHARACTER_FINAL_SET
+
+static bool CreateCharacterSkillProxy( JSContext *cx, CChar *character, const JSClass *proxyClass, JS::MutableHandleValue result )
+{
+	JS::RootedObject proxy( cx, JS_NewObject( cx, proxyClass ));
+	if( proxy == nullptr || !JS_DefineProperties( cx, proxy, CSkillsProps )) return false;
+	JS::SetReservedSlot( proxy, 0, JS::PrivateValue( character ));
+	result.setObject( *proxy );
+	return true;
+}
+
+#define CHARACTER_SKILL_PROXY_GET( attr, proxyClass )                       \
+FDCLG( CCharacter, attr )                                                    \
+{                                                                            \
+	FNARGS                                                                     \
+	auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );     \
+	return CreateCharacterSkillProxy( cx, character, proxyClass, args.rval() );\
+}
+CHARACTER_SKILL_PROXY_GET( skills, &UOXSkills_class )
+CHARACTER_SKILL_PROXY_GET( baseskills, &UOXBaseSkills_class )
+CHARACTER_SKILL_PROXY_GET( skillsused, &UOXSkillsUsed_class )
+CHARACTER_SKILL_PROXY_GET( skillLock, &UOXSkillsLock_class )
+CHARACTER_SKILL_PROXY_GET( skillCaps, &UOXSkillsCap_class )
+#undef CHARACTER_SKILL_PROXY_GET
+
+static bool SetCharacterObjectResult( JSContext *cx, JS::MutableHandleValue result, IUEEntries objectType, void *object )
+{
+	if( object == nullptr ) { result.setNull(); return true; }
+	JSObject *wrapper = JSEngine->AcquireObject( objectType, object, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	if( wrapper == nullptr ) return false;
+	result.setObject( *wrapper );
+	return true;
+}
+
+FDCLG( CCharacter, race ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); return SetCharacterObjectResult( cx, args.rval(), IUE_RACE, Races->Race( character->GetRace() )); }
+FDCLG( CCharacter, region ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); return SetCharacterObjectResult( cx, args.rval(), IUE_REGION, character->GetRegion() ); }
+FDCLG( CCharacter, town ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); const UI16 town = character->GetTown(); return SetCharacterObjectResult( cx, args.rval(), IUE_REGION, town == 0xFF ? nullptr : cwmWorldState->townRegions[town] ); }
+FDCLG( CCharacter, guild ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); const GUILDID guild = character->GetGuildNumber(); return SetCharacterObjectResult( cx, args.rval(), IUE_GUILD, guild == -1 ? nullptr : GuildSys->Guild( guild )); }
+FDCLG( CCharacter, socket ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); return SetCharacterObjectResult( cx, args.rval(), IUE_SOCK, character->GetSocket() ); }
+FDCLG( CCharacter, party ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); return SetCharacterObjectResult( cx, args.rval(), IUE_PARTY, PartyFactory::GetSingleton().Get( character )); }
+FDCLG( CCharacter, multi ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); CMultiObj *multi = character->GetMultiObj(); return SetCharacterObjectResult( cx, args.rval(), IUE_ITEM, ValidateObject( multi ) ? multi : nullptr ); }
+FDCLG( CCharacter, account ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); return SetCharacterObjectResult( cx, args.rval(), IUE_ACCOUNT, &character->GetAccount() ); }
+FDCLG( CCharacter, guarding )
+{
+	FNARGS
+	auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );
+	CBaseObject *object = character->GetGuarding();
+	if( !ValidateObject( object )) { args.rval().setNull(); return true; }
+	return SetCharacterObjectResult( cx, args.rval(), object->CanBeObjType( OT_CHAR ) ? IUE_CHAR : IUE_ITEM, object );
+}
+FDCLG( CCharacter, partyLootable )
+{
+	FNARGS
+	auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );
+	Party *party = PartyFactory::GetSingleton().Get( character );
+	CPartyEntry *entry = party == nullptr ? nullptr : party->Find( character );
+	args.rval().setBoolean( entry != nullptr && entry->IsLootable() );
+	return true;
+}
+
 JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CChar *gPriv = static_cast<CChar *>( JS_GetPrivate( cx, obj ));

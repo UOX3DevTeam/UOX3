@@ -84,6 +84,52 @@ DIRECT_PROPERTIES["CCharacter"] = {
     "colour", "color", "skin", "hue", "controlSlots", "controlSlotsUsed", "orneriness", "visible",
     "serial", "health", "worldnumber", "instanceID"
 }
+DIRECT_PROPERTIES["CCharacter"].update({
+    "owner", "scripttrigger", "scriptTriggers", "target", "dexterity", "intelligence", "strength",
+    "actualDexterity", "actualIntelligence", "actualStrength", "healthRegenBonus", "staminaRegenBonus",
+    "manaRegenBonus", "mana", "stamina", "pack"
+})
+DIRECT_PROPERTIES["CCharacter"].update({
+    "skills", "race", "region", "town", "guild", "baseskills", "skillsused", "socket", "guarding",
+    "skillLock", "skillCaps", "partyLootable", "party", "multi", "account"
+})
+DIRECT_PROPERTIES["CCharacter"].update({
+    "setPeace", "hungerRate", "thirstRate", "gender", "guildNumber", "ownerCount", "petCount",
+    "followerCount", "ownedItemsCount", "isGM", "canBroadcast", "singClickSer", "noSkillTitles",
+    "isGMPageable", "canSnoop", "isCounselor", "noNeedMana", "isDispellable", "noNeedReags",
+    "orgID", "orgSkin", "isAnimal", "isPackAnimal", "isHuman", "isShop", "maxLoyalty", "loyalty",
+    "loyaltyRate", "shouldSave", "origin", "accountNum", "createdOn", "playTime", "housesOwned",
+    "housesCoOwned", "tithing", "lastOn", "lastOnSecs"
+})
+DIRECT_PROPERTIES["CCharacter"].update({
+    "aitype", "split", "splitchance", "hireling", "trainer", "weight", "squelch", "isJailed",
+    "magicReflect", "permanentMagicReflect", "hideFameKarmaTitle", "noCharCollide", "tamed",
+    "tamedHungerRate", "tamedThirstRate", "hungerWildChance", "thirstWildChance", "foodList", "mounted",
+    "stabled", "isUsingPotion", "stealth", "skillToTame", "skillToProv", "skillToPeace", "poisonStrength",
+    "isPolymorphed", "isIncognito", "isDisguised", "canRun", "isMeditating"
+})
+DIRECT_PROPERTIES["CCharacter"].update({
+    "lodamage", "hidamage", "flag", "atWar", "spellCast", "isCasting", "priv", "townPriv",
+    "guildTitle", "hairStyle", "hairColour", "hairColor", "beardStyle", "beardColour", "beardColor",
+    "fontType", "sayColour", "emoteColour", "attacker", "raceGate", "deaths", "cell", "allmove",
+    "houseicons", "spattack", "spdelay", "swingSpeedIncrease", "luck", "damageIncrease", "hitChance",
+    "defenseChance"
+})
+DIRECT_PROPERTIES["CCharacter"].update({
+    "npcGuild", "spawnSerial", "maxhp", "maxstamina", "maxmana", "oldWandertype", "wandertype",
+    "fx1", "fy1", "fx2", "fy2", "fz", "spawnX", "spawnY", "spawnZ", "pathTargX", "pathTargY",
+    "nextAct"
+})
+DIRECT_PROPERTIES["CCharacter"].update({
+    "dead", "npc", "isAwake", "online", "direction", "isRunning", "isChar", "isItem", "isSpawner",
+    "isonhorse", "isFlying", "isGuarded", "tempdex", "tempint", "tempstr", "poison", "poisonedBy",
+    "lightlevel", "vulnerable", "willhunger", "willthirst"
+})
+DIRECT_PROPERTIES["CCharacter"].update({
+    "fame", "karma", "attack", "canAttack", "karmaLock", "fleeAt", "reAttackAt", "brkPeaceChance",
+    "hunger", "thirst", "frozen", "commandlevel", "hasStolen", "criminal", "murderer", "innocent",
+    "murdercount", "neutral", "npcFlag"
+})
 
 DIRECT_PROPERTIES["CItem"].update({
     "more", "more0", "more1", "more2", "morex", "morey", "morez", "lodamage", "hidamage", "ac", "def",
