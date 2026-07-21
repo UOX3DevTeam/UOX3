@@ -107,22 +107,22 @@ bool SE_DoTempEffect( JSContext *cx, unsigned int argc, JS::Value *vp )
 		ScriptError( cx, "DoTempEffect: Invalid number of arguments (takes 7 or 8)" );
 		return false;
 	}
-	JS::Value *argv = JS_ARGV( cx, vp );
-	UI08 iType			= static_cast<UI08>( argv[0].toInt32());
-	UI32 targNum		= argv[3].toInt32();
-	UI08 more1			= static_cast<UI08>( argv[4].toInt32());
-	UI08 more2			= static_cast<UI08>( argv[5].toInt32());
-	UI08 more3			= static_cast<UI08>( argv[6].toInt32());
+	auto args = JS::CallArgsFromVp(argc, vp);
+	UI08 iType			= static_cast<UI08>( args.get(0).toInt32());
+	UI32 targNum		= args.get(3).toInt32();
+	UI08 more1			= static_cast<UI08>( args.get(4).toInt32());
+	UI08 more2			= static_cast<UI08>( args.get(5).toInt32());
+	UI08 more3			= static_cast<UI08>( args.get(6).toInt32());
 
 	CItem *myItemPtr	= nullptr;
 
 	if( argc == 8 )
 	{
-		JSObject *myitemptr = &argv[7].toObject();
+		JSObject *myitemptr = &args.get(7).toObject();
 		myItemPtr = static_cast<CItem *>( JS_GetPrivate( cx, myitemptr ));
 	}
 
-	JSObject *mysrc		= &argv[1].toObject();
+	JSObject *mysrc		= &args.get(1).toObject();
 	CChar *mysrcChar	= nullptr;
 
 	// Check if mysrc is null before continuing - it could be this temp effect as no character-based source!
@@ -138,7 +138,7 @@ bool SE_DoTempEffect( JSContext *cx, unsigned int argc, JS::Value *vp )
 
 	if( iType == 0 )	// character
 	{
-		JSObject *mydestc = &argv[2].toObject();
+		JSObject *mydestc = &args.get(2).toObject();
 		CChar *mydestChar = static_cast<CChar*>( JS_GetPrivate( cx, mydestc ));
 
 		if( !ValidateObject( mydestChar ))
@@ -157,7 +157,7 @@ bool SE_DoTempEffect( JSContext *cx, unsigned int argc, JS::Value *vp )
 	}
 	else
 	{
-		JSObject *mydesti = &argv[2].toObject();
+		JSObject *mydesti = &args.get(2).toObject();
 		CItem *mydestItem = static_cast<CItem *>( JS_GetPrivate( cx, mydesti ));
 
 		if( !ValidateObject( mydestItem ))
@@ -184,8 +184,8 @@ bool SE_BroadcastMessage( JSContext *cx, unsigned int argc, JS::Value *vp )
 		ScriptError( cx, "BroadcastMessage: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	JS::Value *argv = JS_ARGV( cx, vp );
-	std::string trgMessage = JS_GetStringBytes( cx, argv[0] );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	std::string trgMessage = JS_GetStringBytes( cx, args.get(0) );
 	if( trgMessage.empty() || trgMessage.length() == 0 )
 	{
 		ScriptError( cx, oldstrutil::format( "BroadcastMessage: Invalid string (%s)", trgMessage.c_str() ).c_str() );
@@ -208,16 +208,16 @@ bool SE_CalcItemFromSer( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 	SERIAL targSerial;
-	JS::Value *argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc == 1 )
 	{
-		std::string str = JS_GetStringBytes( cx, argv[0]);
+		std::string str = JS_GetStringBytes( cx, args.get(0));
 		targSerial = oldstrutil::value<SERIAL>( str );
 	}
 	else
 	{
-		targSerial = CalcSerial( static_cast<UI08>( argv[0].toInt32()), static_cast<UI08>( argv[1].toInt32()), 
-						static_cast<UI08>( argv[2].toInt32()), static_cast<UI08>( argv[3].toInt32()));
+		targSerial = CalcSerial( static_cast<UI08>( args.get(0).toInt32()), static_cast<UI08>( args.get(1).toInt32()), 
+						static_cast<UI08>( args.get(2).toInt32()), static_cast<UI08>( args.get(3).toInt32()));
 	}
 
 	CItem *newItem	= CalcItemObjFromSer( targSerial );
@@ -240,7 +240,7 @@ bool SE_CalcItemFromSer( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_CalcMultiFromSer( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 && argc != 4 )
 	{
@@ -250,11 +250,11 @@ bool SE_CalcMultiFromSer( JSContext *cx, unsigned int argc, JS::Value *vp )
 	SERIAL targSerial;
 	if( argc == 1 )
 	{
-		targSerial = static_cast<SERIAL>( argv[0].toInt32());
+		targSerial = static_cast<SERIAL>( args.get(0).toInt32());
 	}
 	else
 	{
-		targSerial = CalcSerial( static_cast<UI08>( argv[0].toInt32()), static_cast<UI08>( argv[1].toInt32()), static_cast<UI08>( argv[2].toInt32()), static_cast<UI08>( argv[3].toInt32()));
+		targSerial = CalcSerial( static_cast<UI08>( args.get(0).toInt32()), static_cast<UI08>( args.get(1).toInt32()), static_cast<UI08>( args.get(2).toInt32()), static_cast<UI08>( args.get(3).toInt32()));
 	}
 
 	CItem *newMulti	= CalcMultiFromSer( targSerial );
@@ -277,7 +277,7 @@ bool SE_CalcMultiFromSer( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_CheckTimeSinceLastCombat( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if (argc != 2)
 	{
@@ -288,19 +288,19 @@ bool SE_CheckTimeSinceLastCombat( JSContext *cx, unsigned int argc, JS::Value *v
 	CChar* from = nullptr;
 	UI32 timespanInSeconds = 0;
 
-	if( !argv[0].isObject() || !( from = ( CChar* )JS_GetPrivate( cx, &argv[0].toObject())))
+	if( !args.get(0).isObject() || !( from = ( CChar* )JS_GetPrivate( cx, &args.get(0).toObject())))
 	{
 		ScriptError( cx, "CheckTimeSinceLastCombat: Invalid first argument (expected CChar)" );
 		return false;
 	}
 
-	if( !argv[1].isInt32() )
+	if( !args.get(1).isInt32() )
 	{
 		ScriptError( cx, "CheckTimeSinceLastCombat: Invalid second argument (expected time in seconds)" );
 		return false;
 	}
 
-	timespanInSeconds = static_cast<UI32>( argv[1].toInt32());
+	timespanInSeconds = static_cast<UI32>( args.get(1).toInt32());
 
 	// Use GetGUITimerCurTime() instead of time(nullptr) for consistency
 	TIMERVAL now = cwmWorldState->GetUICurrentTime();
@@ -322,7 +322,7 @@ bool SE_CheckTimeSinceLastCombat( JSContext *cx, unsigned int argc, JS::Value *v
 //o------------------------------------------------------------------------------------------------o
 bool SE_CalcCharFromSer( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 && argc != 4 )
 	{
@@ -332,11 +332,11 @@ bool SE_CalcCharFromSer( JSContext *cx, unsigned int argc, JS::Value *vp )
 	SERIAL targSerial = INVALIDSERIAL;
 	if( argc == 1 )
 	{
-		targSerial = static_cast<SERIAL>( argv[0].toInt32());
+		targSerial = static_cast<SERIAL>( args.get(0).toInt32());
 	}
 	else
 	{
-		targSerial = CalcSerial( static_cast<UI08>( argv[0].toInt32()), static_cast<UI08>( argv[1].toInt32()), static_cast<UI08>( argv[2].toInt32()), static_cast<UI08>( argv[3].toInt32()));
+		targSerial = CalcSerial( static_cast<UI08>( args.get(0).toInt32()), static_cast<UI08>( args.get(1).toInt32()), static_cast<UI08>( args.get(2).toInt32()), static_cast<UI08>( args.get(3).toInt32()));
 	}
 
 	CChar *newChar = CalcCharObjFromSer( targSerial );
@@ -359,7 +359,7 @@ bool SE_CalcCharFromSer( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_CheckInstaLog( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 4 )
 	{
@@ -367,10 +367,10 @@ bool SE_CheckInstaLog( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	SI16 targX = static_cast<SI16>( argv[0].toInt32());
-	SI16 targY = static_cast<SI16>( argv[1].toInt32());
-	UI08 targWorld = static_cast<UI08>( argv[2].toInt32());
-	UI16 targInstanceId = static_cast<UI16>( argv[3].toInt32());
+	SI16 targX = static_cast<SI16>( args.get(0).toInt32());
+	SI16 targY = static_cast<SI16>( args.get(1).toInt32());
+	UI08 targWorld = static_cast<UI08>( args.get(2).toInt32());
+	UI16 targInstanceId = static_cast<UI16>( args.get(3).toInt32());
 
 	auto logLocs = cwmWorldState->logoutLocs;
 
@@ -401,7 +401,7 @@ bool SE_CheckInstaLog( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_DoMovingEffect( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc < 6 )
 	{
@@ -427,23 +427,23 @@ bool SE_DoMovingEffect( JSContext *cx, unsigned int argc, JS::Value *vp )
 	UI32 renderMode		= 0;
 	bool stationaryFX	= false;
 
-	if( argv[0].isInt32() )
+	if( args.get(0).isInt32() )
 	{
 		// 10, 11 or 12 arguments
 		// srcX, srcY, srcZ, targX, targY, targZ, effect, speed, loop, explode, [hue], [renderMode]
 		srcLocation = true;
 		targLocation = true;
 		targLocation = true;
-		srcX	= static_cast<SI16>( argv[0].toInt32());
-		srcY	= static_cast<SI16>( argv[1].toInt32());
-		srcZ	= static_cast<SI08>( argv[2].toInt32());
-		targX	= static_cast<SI16>( argv[3].toInt32());
-		targY	= static_cast<SI16>( argv[4].toInt32());
-		targZ	= static_cast<SI08>( argv[5].toInt32());
-		effect	= static_cast<UI16>( argv[6].toInt32());
-		speed	= static_cast<UI08>( argv[7].toInt32());
-		loop	= static_cast<UI08>( argv[8].toInt32());
-		explode	= ( argv[9].toBoolean() == true );
+		srcX	= static_cast<SI16>( args.get(0).toInt32());
+		srcY	= static_cast<SI16>( args.get(1).toInt32());
+		srcZ	= static_cast<SI08>( args.get(2).toInt32());
+		targX	= static_cast<SI16>( args.get(3).toInt32());
+		targY	= static_cast<SI16>( args.get(4).toInt32());
+		targZ	= static_cast<SI08>( args.get(5).toInt32());
+		effect	= static_cast<UI16>( args.get(6).toInt32());
+		speed	= static_cast<UI08>( args.get(7).toInt32());
+		loop	= static_cast<UI08>( args.get(8).toInt32());
+		explode	= ( args.get(9).toBoolean() == true );
 		if( argc >= 11 )
 		{
 			hue = static_cast<UI32>( argv[10].toInt32());
@@ -459,7 +459,7 @@ bool SE_DoMovingEffect( JSContext *cx, unsigned int argc, JS::Value *vp )
 	}
 	else
 	{
-		JSObject *srcObj = &argv[0].toObject();
+		JSObject *srcObj = &args.get(0).toObject();
 		src				 = static_cast<CBaseObject *>( JS_GetPrivate( cx, srcObj ));
 		if( !ValidateObject( src ))
 		{
@@ -467,25 +467,25 @@ bool SE_DoMovingEffect( JSContext *cx, unsigned int argc, JS::Value *vp )
 			return false;
 		}
 
-		if( argv[1].isInt32() )
+		if( args.get(1).isInt32() )
 		{
 			// 8, 9 or 10 arguments
 			// srcObj, targX, targY, targZ, effect, speed, loop, explode, [hue], [renderMode]
 			targLocation = true;
-			targX	= static_cast<UI16>( argv[1].toInt32());
-			targY	= static_cast<UI16>( argv[2].toInt32());
-			targZ	= static_cast<SI08>( argv[3].toInt32());
-			effect	= static_cast<UI16>( argv[4].toInt32());
-			speed	= static_cast<UI08>( argv[5].toInt32());
-			loop	= static_cast<UI08>( argv[6].toInt32());
-			explode	= ( argv[7].toBoolean() == true );
+			targX	= static_cast<UI16>( args.get(1).toInt32());
+			targY	= static_cast<UI16>( args.get(2).toInt32());
+			targZ	= static_cast<SI08>( args.get(3).toInt32());
+			effect	= static_cast<UI16>( args.get(4).toInt32());
+			speed	= static_cast<UI08>( args.get(5).toInt32());
+			loop	= static_cast<UI08>( args.get(6).toInt32());
+			explode	= ( args.get(7).toBoolean() == true );
 			if( argc >= 9 )
 			{
-				hue = static_cast<UI32>( argv[8].toInt32());
+				hue = static_cast<UI32>( args.get(8).toInt32());
 			}
 			if( argc >= 10 )
 			{
-				renderMode = static_cast<UI32>( argv[9].toInt32());
+				renderMode = static_cast<UI32>( args.get(9).toInt32());
 			}
 			if( argc >= 11 )
 			{
@@ -496,13 +496,13 @@ bool SE_DoMovingEffect( JSContext *cx, unsigned int argc, JS::Value *vp )
 		{
 			// 6, 7 or 8 arguments
 			// srcObj, targObj, effect, speed, loop, explode, [hue], [renderMode]
-			if( !argv[1].isObject() )
+			if( !args.get(1).isObject() )
 			{
 				ScriptError( cx, "DoMovingEffect: Invalid target object" );
 				return false;
 			}
 
-			JSObject *trgObj	= &argv[1].toObject();
+			JSObject *trgObj	= &args.get(1).toObject();
 			trg = static_cast<CBaseObject *>( JS_GetPrivate( cx, trgObj ));
 			if( !ValidateObject( trg ))
 			{
@@ -510,21 +510,21 @@ bool SE_DoMovingEffect( JSContext *cx, unsigned int argc, JS::Value *vp )
 				return false;
 			}
 
-			effect	= static_cast<UI16>( argv[2].toInt32());
-			speed	= static_cast<UI08>( argv[3].toInt32());
-			loop	= static_cast<UI08>( argv[4].toInt32());
-			explode	= ( argv[5].toBoolean() == true );
+			effect	= static_cast<UI16>( args.get(2).toInt32());
+			speed	= static_cast<UI08>( args.get(3).toInt32());
+			loop	= static_cast<UI08>( args.get(4).toInt32());
+			explode	= ( args.get(5).toBoolean() == true );
 			if( argc >= 7 )
 			{
-				hue = static_cast<UI32>( argv[6].toInt32());
+				hue = static_cast<UI32>( args.get(6).toInt32());
 			}
 			if( argc >= 8 )
 			{
-				renderMode = static_cast<UI32>( argv[7].toInt32());
+				renderMode = static_cast<UI32>( args.get(7).toInt32());
 			}
 			if( argc >= 9 )
 			{
-				stationaryFX = ( argv[8].toBoolean() == true );
+				stationaryFX = ( args.get(8).toBoolean() == true );
 			}
 		}
 	}
@@ -551,7 +551,7 @@ bool SE_DoMovingEffect( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_DoStaticEffect( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 7 )
 	{
@@ -559,13 +559,13 @@ bool SE_DoStaticEffect( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	SI16 targX		= static_cast<SI16>( argv[0].toInt32());
-	SI16 targY		= static_cast<SI16>( argv[1].toInt32());
-	SI16 targZ		= static_cast<SI16>( argv[2].toInt32());
-	UI16 effectId	= static_cast<UI16>( argv[3].toInt32());
-	UI08 speed		= static_cast<UI08>( argv[4].toInt32());
-	UI08 loop		= static_cast<UI08>( argv[5].toInt32());
-	bool explode	= ( argv[6].toBoolean() == true );
+	SI16 targX		= static_cast<SI16>( args.get(0).toInt32());
+	SI16 targY		= static_cast<SI16>( args.get(1).toInt32());
+	SI16 targZ		= static_cast<SI16>( args.get(2).toInt32());
+	UI16 effectId	= static_cast<UI16>( args.get(3).toInt32());
+	UI08 speed		= static_cast<UI08>( args.get(4).toInt32());
+	UI08 loop		= static_cast<UI08>( args.get(5).toInt32());
+	bool explode	= ( args.get(6).toBoolean() == true );
 
 	Effects->PlayStaticAnimation( targX, targY, targZ, effectId, speed, loop, explode );
 
@@ -579,15 +579,15 @@ bool SE_DoStaticEffect( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_RandomNumber( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
 		ScriptError( cx, "RandomNumber: Invalid number of arguments (takes 2)" );
 		return false;
 	}
-	JSEncapsulate loVal( cx, &( argv[0] ));
-	JSEncapsulate hiVal( cx, &( argv[1] ));
+	JSEncapsulate loVal( cx, &( args.get(0) ));
+	JSEncapsulate hiVal( cx, &( args.get(1) ));
 	JS_SET_RVAL( cx, vp, JS::Int32Value( RandomNum( loVal.toInt(), hiVal.toInt() )) );
 	return true;
 }
@@ -599,23 +599,23 @@ bool SE_RandomNumber( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_MakeItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 3 && argc != 4 )
 	{
 		ScriptError( cx, "MakeItem: Invalid number of arguments (takes 3, or 4 - socket, character, createID - and optionally - resourceColour)" );
 		return false;
 	}
-	JSObject *mSock = &argv[0].toObject();
+	JSObject *mSock = &args.get(0).toObject();
 	CSocket *sock	= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
-	JSObject *mChar = &argv[1].toObject();
+	JSObject *mChar = &args.get(1).toObject();
 	CChar *player	= static_cast<CChar *>( JS_GetPrivate( cx, mChar ));
 	if( !ValidateObject( player ))
 	{
 		ScriptError( cx, "MakeItem: Invalid character" );
 		return false;
 	}
-	UI16 itemMenu		= static_cast<UI16>( argv[2].toInt32());
+	UI16 itemMenu		= static_cast<UI16>( args.get(2).toInt32());
 	CreateEntry_st *toFind = Skills->FindItem( itemMenu );
 	if( toFind == nullptr )
 	{
@@ -625,7 +625,7 @@ bool SE_MakeItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 	UI16 resourceColour = 0;
 	if( argc == 4 )
 	{
-		resourceColour = static_cast<UI16>( argv[3].toInt32());
+		resourceColour = static_cast<UI16>( args.get(3).toInt32());
 	}
 
 	Skills->MakeItem( *toFind, player, sock, itemMenu, resourceColour );
@@ -640,14 +640,14 @@ bool SE_MakeItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_CommandLevelReq( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "CommandLevelReq: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	std::string test = JS_GetStringBytes( cx, argv[0]);
+	std::string test = JS_GetStringBytes( cx, args.get(0));
 	if( test.empty() || test.length() == 0 )
 	{
 		ScriptError( cx, "CommandLevelReq: Invalid command name" );
@@ -672,14 +672,14 @@ bool SE_CommandLevelReq( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_CommandExists( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "CommandExists: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	std::string test = JS_GetStringBytes( cx, argv[0]);
+	std::string test = JS_GetStringBytes( cx, args.get(0));
 	if( test.empty() || test.length() == 0 )
 	{
 		ScriptError( cx, "CommandExists: Invalid command name" );
@@ -755,16 +755,16 @@ bool SE_FinishedCommandList( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_RegisterCommand( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 3 )
 	{
 		ScriptError( cx, "  RegisterCommand: Invalid number of arguments (takes 3)" );
 		return false;
 	}
-	std::string toRegister	= JS_GetStringBytes( cx, argv[0]);
-	UI08 execLevel			= static_cast<UI08>( argv[1].toInt32());
-	bool isEnabled			= ( argv[2].toBoolean() == true );
+	std::string toRegister	= JS_GetStringBytes( cx, args.get(0));
+	UI08 execLevel			= static_cast<UI08>( args.get(1).toInt32());
+	bool isEnabled			= ( args.get(2).toBoolean() == true );
 	cScript *activeScript = JSMapping->currentActive();
 	UI16 scriptId = activeScript != nullptr ? activeScript->GetScriptID() : 0xFFFF;
 
@@ -789,15 +789,15 @@ bool SE_RegisterCommand( JSContext *cx, unsigned int argc, JS::Value *vp )
 bool SE_RegisterSpell( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
 		ScriptError( cx, "RegisterSpell: Invalid number of arguments (takes 2)" );
 		return false;
 	}
-	SI32 spellNumber	= argv[0].toInt32();
-	bool isEnabled		= ( argv[1].toBoolean() == true );
+	SI32 spellNumber	= args.get(0).toInt32();
+	bool isEnabled		= ( args.get(1).toBoolean() == true );
 	cScript *myScript	= JSMapping->GetScript( scriptEnv );
 	Magic->Register( myScript, spellNumber, isEnabled );
 	return true;
@@ -813,15 +813,15 @@ bool SE_RegisterSpell( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_RegisterSkill( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
 		ScriptError( cx, "RegisterSkill: Invalid number of arguments (takes 2)" );
 		return false;
 	}
-	SI32 skillNumber	= argv[0].toInt32();
-	bool isEnabled		= ( argv[1].toBoolean() == true );
+	SI32 skillNumber	= args.get(0).toInt32();
+	bool isEnabled		= ( args.get(1).toBoolean() == true );
 	cScript *activeScript = JSMapping->currentActive();
 	UI16 scriptId = activeScript != nullptr ? activeScript->GetScriptID() : 0xFFFF;
 	if( scriptId != 0xFFFF )
@@ -868,15 +868,15 @@ bool SE_RegisterSkill( JSContext *cx, unsigned int argc, JS::Value *vp )
 bool SE_RegisterPacket( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
 		ScriptError( cx, "RegisterPacket: Invalid number of arguments (takes 2)" );
 		return false;
 	}
-	UI08 packet			= static_cast<UI08>( argv[0].toInt32());
-	UI08 subCmd			= static_cast<UI08>( argv[1].toInt32());
+	UI08 packet			= static_cast<UI08>( args.get(0).toInt32());
+	UI08 subCmd			= static_cast<UI08>( args.get(1).toInt32());
 	UI16 scriptId		= JSMapping->GetScriptId( scriptEnv );
 	if( scriptId != 0xFFFF )
 	{
@@ -899,15 +899,15 @@ bool SE_RegisterPacket( JSContext *cx, unsigned int argc, JS::Value *vp )
 bool SE_RegisterKey( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
 		ScriptError( cx, "RegisterKey: Invalid number of arguments (takes 2)" );
 		return false;
 	}
-	JSEncapsulate encaps( cx, &( argv[0] ));
-	std::string toRegister	= JS_GetStringBytes( cx, argv[1]);
+	JSEncapsulate encaps( cx, &( args.get(0) ));
+	std::string toRegister	= JS_GetStringBytes( cx, args.get(1));
 	UI16 scriptId			= JSMapping->GetScriptId( scriptEnv );
 
 	if( scriptId == 0xFFFF )
@@ -944,7 +944,7 @@ bool SE_RegisterKey( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_RegisterConsoleFunc( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
 
 	if( argc != 2 )
@@ -952,8 +952,8 @@ bool SE_RegisterConsoleFunc( JSContext *cx, unsigned int argc, JS::Value *vp )
 		ScriptError( cx, "RegisterConsoleFunc: Invalid number of arguments (takes 2)" );
 		return false;
 	}
-	std::string funcToRegister	= JS_GetStringBytes( cx, argv[0]);
-	std::string toRegister		= JS_GetStringBytes( cx, argv[1]);
+	std::string funcToRegister	= JS_GetStringBytes( cx, args.get(0));
+	std::string toRegister		= JS_GetStringBytes( cx, args.get(1));
 	UI16 scriptId				= JSMapping->GetScriptId( scriptEnv );
 
 	if( scriptId == 0xFFFF )
@@ -973,14 +973,14 @@ bool SE_RegisterConsoleFunc( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_DisableCommand( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "DisableCommand: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	std::string toDisable = JS_GetStringBytes( cx, argv[0]);
+	std::string toDisable = JS_GetStringBytes( cx, args.get(0));
 	Commands->SetCommandStatus( toDisable, false );
 	return true;
 }
@@ -992,14 +992,14 @@ bool SE_DisableCommand( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_DisableKey( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "DisableKey: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	SI32 toDisable = argv[0].toInt32();
+	SI32 toDisable = args.get(0).toInt32();
 	Console.SetKeyStatus( toDisable, false );
 	return true;
 }
@@ -1011,14 +1011,14 @@ bool SE_DisableKey( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_DisableConsoleFunc( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "DisableConsoleFunc: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	std::string toDisable = JS_GetStringBytes( cx, argv[0]);
+	std::string toDisable = JS_GetStringBytes( cx, args.get(0));
 	Console.SetFuncStatus( toDisable, false );
 	return true;
 }
@@ -1030,14 +1030,14 @@ bool SE_DisableConsoleFunc( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_DisableSpell( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "DisableSpell: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	SI32 spellNumber = argv[0].toInt32();
+	SI32 spellNumber = args.get(0).toInt32();
 	Magic->SetSpellStatus( spellNumber, false );
 	return true;
 }
@@ -1049,14 +1049,14 @@ bool SE_DisableSpell( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_EnableCommand( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "EnableCommand: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	std::string toEnable = JS_GetStringBytes( cx, argv[0]);
+	std::string toEnable = JS_GetStringBytes( cx, args.get(0));
 	Commands->SetCommandStatus( toEnable, true );
 	return true;
 }
@@ -1068,14 +1068,14 @@ bool SE_EnableCommand( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_EnableSpell( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "EnableSpell: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	SI32 spellNumber = argv[0].toInt32();
+	SI32 spellNumber = args.get(0).toInt32();
 	Magic->SetSpellStatus( spellNumber, true );
 	return true;
 }
@@ -1087,14 +1087,14 @@ bool SE_EnableSpell( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_EnableKey( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "EnableKey: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	SI32 toEnable = argv[0].toInt32();
+	SI32 toEnable = args.get(0).toInt32();
 	Console.SetKeyStatus( toEnable, true );
 	return true;
 }
@@ -1106,14 +1106,14 @@ bool SE_EnableKey( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_EnableConsoleFunc( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "EnableConsoleFunc: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	std::string toEnable	= JS_GetStringBytes( cx, argv[0]);
+	std::string toEnable	= JS_GetStringBytes( cx, args.get(0));
 	Console.SetFuncStatus( toEnable, false );
 	return true;
 }
@@ -1169,7 +1169,7 @@ bool SE_GetDay( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_SecondsPerUOMinute( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc > 1 )
 	{
@@ -1178,7 +1178,7 @@ bool SE_SecondsPerUOMinute( JSContext *cx, unsigned int argc, JS::Value *vp )
 	}
 	else if( argc == 1 )
 	{
-		UI16 secondsPerUOMinute = static_cast<UI16>( argv[0].toInt32());
+		UI16 secondsPerUOMinute = static_cast<UI16>( args.get(0).toInt32());
 		cwmWorldState->ServerData()->ServerSecondsPerUOMinute( secondsPerUOMinute );
 	}
 	JS_SET_RVAL( cx, vp, JS::Int32Value( cwmWorldState->ServerData()->ServerSecondsPerUOMinute() ) );
@@ -1218,7 +1218,7 @@ bool SE_GetStartTime( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetRandomSOSArea( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
@@ -1228,10 +1228,10 @@ bool SE_GetRandomSOSArea( JSContext *cx, unsigned int argc, JS::Value *vp )
 
 	UI08 worldNum	= 0;
 	UI16 instanceId	= 0;
-	if( argv[0].isInt32() && argv[1].isInt32() )
+	if( args.get(0).isInt32() && args.get(1).isInt32() )
 	{
-		worldNum	= static_cast<UI08>( argv[0].toInt32());
-		instanceId	= static_cast<UI16>( argv[1].toInt32());
+		worldNum	= static_cast<UI08>( args.get(0).toInt32());
+		instanceId	= static_cast<UI16>( args.get(1).toInt32());
 	}
 	else
 	{
@@ -1292,7 +1292,7 @@ bool SE_GetRandomSOSArea( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_SpawnNPC( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	JS::Value* rval = &JS_RVAL(cx, vp);
 	JSObject* obj = JS_THIS_OBJECT(cx, vp);
 
@@ -1303,13 +1303,13 @@ bool SE_SpawnNPC( JSContext *cx, unsigned int argc, JS::Value *vp )
 	}
 
 	CChar *cMade		= nullptr;
-	std::string nnpcNum	= JS_GetStringBytes( cx, argv[0] );
-	UI16 x				= static_cast<UI16>( argv[1].toInt32());
-	UI16 y				= static_cast<UI16>( argv[2].toInt32());
-	SI08 z				= static_cast<SI08>( argv[3].toInt32());
-	UI08 world			= static_cast<UI08>( argv[4].toInt32());
-	UI16 instanceId = ( argc == 6 ? static_cast<SI16>( argv[5].toInt32()) : 0 );
-	bool useNpcList = ( argc == 7 ? ( argv[6].toBoolean() == true ) : false );
+	std::string nnpcNum	= JS_GetStringBytes( cx, args.get(0) );
+	UI16 x				= static_cast<UI16>( args.get(1).toInt32());
+	UI16 y				= static_cast<UI16>( args.get(2).toInt32());
+	SI08 z				= static_cast<SI08>( args.get(3).toInt32());
+	UI08 world			= static_cast<UI08>( args.get(4).toInt32());
+	UI16 instanceId = ( argc == 6 ? static_cast<SI16>( args.get(5).toInt32()) : 0 );
+	bool useNpcList = ( argc == 7 ? ( args.get(6).toBoolean() == true ) : false );
 
 	// Store original script context and object, in case NPC spawned has some event that triggers on spawn and grabs context
 	auto origContext = cx;
@@ -1336,7 +1336,7 @@ bool SE_SpawnNPC( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_CreateDFNItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 
 	if( argc < 3 )
@@ -1346,20 +1346,20 @@ bool SE_CreateDFNItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 	}
 
 	CSocket *mySock = nullptr;
-	if( argv[0] != JS::NullValue() )
+	if( args.get(0) != JS::NullValue() )
 	{
-		JSObject *mSock			= &argv[0].toObject();
+		JSObject *mSock			= &args.get(0).toObject();
 		mySock					= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
 	}
 
 	CChar *myChar = nullptr;
-	if( argv[1] != JS::NullValue() )
+	if( args.get(1) != JS::NullValue() )
 	{
-		JSObject *mChar			= &argv[1].toObject();
+		JSObject *mChar			= &args.get(1).toObject();
 		myChar					= static_cast<CChar *>( JS_GetPrivate( cx, mChar ));
 	}
 
-	std::string bpSectNumber	= JS_GetStringBytes( cx, argv[2]);
+	std::string bpSectNumber	= JS_GetStringBytes( cx, args.get(2));
 	bool bInPack				= true;
 	UI16 iAmount				= 1;
 	ObjectType itemType			= OT_ITEM;
@@ -1369,28 +1369,28 @@ bool SE_CreateDFNItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 
 	if( argc > 3 )
 	{
-		iAmount	= static_cast<UI16> (argv[3].toInt32());
+		iAmount	= static_cast<UI16> (args.get(3).toInt32());
 	}
 	if( argc > 4 )
 	{
-		std::string objType	= JS_GetStringBytes( cx, argv[4]);
+		std::string objType	= JS_GetStringBytes( cx, args.get(4));
 		itemType			= FindObjTypeFromString( objType );
 	}
 	if( argc > 5 )
 	{
-		bInPack	= ( argv[5].toBoolean() == true );
+		bInPack	= ( args.get(5).toBoolean() == true );
 	}
 	if( argc > 6 )
 	{
-		iColor = static_cast<UI16>( argv[6].toInt32());
+		iColor = static_cast<UI16>( args.get(6).toInt32());
 	}
 	if( argc > 7 )
 	{
-		worldNumber	= static_cast<UI08>( argv[7].toInt32());
+		worldNumber	= static_cast<UI08>( args.get(7).toInt32());
 	}
 	if( argc > 8 )
 	{
-		instanceId = static_cast<UI16>( argv[8].toInt32());
+		instanceId = static_cast<UI16>( args.get(8).toInt32());
 	}
 
 	// Store original script context and object, in case Item spawned has some event that triggers on spawn and grabs context
@@ -1428,7 +1428,7 @@ bool SE_CreateDFNItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_CreateBlankItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 
 	if( argc != 8 )
@@ -1438,26 +1438,26 @@ bool SE_CreateBlankItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 	}
 	CItem *newItem			= nullptr;
 	CSocket *mySock			= nullptr;
-	if( argv[0] != JS::NullValue() )
+	if( args.get(0) != JS::NullValue() )
 	{
-		JSObject *mSock		= &argv[0].toObject();
+		JSObject *mSock		= &args.get(0).toObject();
 		mySock				= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
 	}
 
 	CChar *myChar = nullptr;
-	if( argv[1] != JS::NullValue() )
+	if( args.get(1) != JS::NullValue() )
 	{
-		JSObject *mChar			= &argv[1].toObject();
+		JSObject *mChar			= &args.get(1).toObject();
 		myChar					= static_cast<CChar *>( JS_GetPrivate( cx, mChar ));
 	}
 
-	SI32 amount				= static_cast<SI32>( argv[2].toInt32());
-	std::string itemName	= JS_GetStringBytes( cx, argv[3]);
-	UI16 itemId				= static_cast<UI16>( argv[4].toInt32());
-	UI16 colour				= static_cast<UI16>( argv[5].toInt32());
-	std::string objType		= JS_GetStringBytes( cx, argv[6]);
+	SI32 amount				= static_cast<SI32>( args.get(2).toInt32());
+	std::string itemName	= JS_GetStringBytes( cx, args.get(3));
+	UI16 itemId				= static_cast<UI16>( args.get(4).toInt32());
+	UI16 colour				= static_cast<UI16>( args.get(5).toInt32());
+	std::string objType		= JS_GetStringBytes( cx, args.get(6));
 	ObjectType itemType		= FindObjTypeFromString( objType );
-	bool inPack				= ( argv[7].toBoolean() == true );
+	bool inPack				= ( args.get(7).toBoolean() == true );
 
 	// Store original script context and object, in case NPC spawned has some event that triggers on spawn and grabs context
 	auto origContext = cx;
@@ -1490,7 +1490,7 @@ CMultiObj * BuildHouse( CSocket *s, UI16 houseEntry, bool checkLocation = true, 
 bool SE_CreateHouse( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc < 4 )
 	{
@@ -1498,10 +1498,10 @@ bool SE_CreateHouse( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	UI16 houseId				= static_cast<UI16>( argv[0].toInt32());
-	SI16 xLoc					= static_cast<SI16>( argv[1].toInt32());
-	SI16 yLoc					= static_cast<SI16>( argv[2].toInt32());
-	SI08 zLoc					= static_cast<SI08>( argv[3].toInt32());
+	UI16 houseId				= static_cast<UI16>( args.get(0).toInt32());
+	SI16 xLoc					= static_cast<SI16>( args.get(1).toInt32());
+	SI16 yLoc					= static_cast<SI16>( args.get(2).toInt32());
+	SI08 zLoc					= static_cast<SI08>( args.get(3).toInt32());
 	UI16 iColor					= 0xFFFF;
 	UI08 worldNumber			= 0;
 	UI16 instanceId				= 0;
@@ -1509,19 +1509,19 @@ bool SE_CreateHouse( JSContext *cx, unsigned int argc, JS::Value *vp )
 
 	if( argc > 4 )
 	{
-		worldNumber	= static_cast<UI08>( argv[4].toInt32());
+		worldNumber	= static_cast<UI08>( args.get(4).toInt32());
 	}
 	if( argc > 5 )
 	{
-		instanceId	= static_cast<UI16>( argv[5].toInt32());
+		instanceId	= static_cast<UI16>( args.get(5).toInt32());
 	}
 	if( argc > 6 )
 	{
-		iColor		= static_cast<UI16>( argv[6].toInt32());
+		iColor		= static_cast<UI16>( args.get(6).toInt32());
 	}
 	if( argc > 7 )
 	{
-		checkLocation = ( argv[7].toBoolean() == true );
+		checkLocation = ( args.get(7).toBoolean() == true );
 	}
 
 	// Store original script context and object, in case Item spawned has some event that triggers on spawn and grabs context
@@ -1556,7 +1556,7 @@ CMultiObj * BuildBaseMulti( UI16 multiId, SI16 xLoc = -1, SI16 yLoc = -1, SI08 z
 //o------------------------------------------------------------------------------------------------o
 bool SE_CreateBaseMulti( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 
 	if( argc < 4 )
@@ -1565,10 +1565,10 @@ bool SE_CreateBaseMulti( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	UI16 multiId				= static_cast<UI16>( argv[0].toInt32());
-	SI16 xLoc					= static_cast<SI16>( argv[1].toInt32());
-	SI16 yLoc					= static_cast<SI16>( argv[2].toInt32());
-	SI08 zLoc					= static_cast<SI08>( argv[3].toInt32());
+	UI16 multiId				= static_cast<UI16>( args.get(0).toInt32());
+	SI16 xLoc					= static_cast<SI16>( args.get(1).toInt32());
+	SI16 yLoc					= static_cast<SI16>( args.get(2).toInt32());
+	SI08 zLoc					= static_cast<SI08>( args.get(3).toInt32());
 	UI16 iColor					= 0xFFFF;
 	UI08 worldNumber			= 0;
 	UI16 instanceId				= 0;
@@ -1577,19 +1577,19 @@ bool SE_CreateBaseMulti( JSContext *cx, unsigned int argc, JS::Value *vp )
 
 	if( argc > 4 )
 	{
-		worldNumber				= static_cast<UI08>( argv[4].toInt32());
+		worldNumber				= static_cast<UI08>( args.get(4).toInt32());
 	}
 	if( argc > 5 )
 	{
-		instanceId				= static_cast<UI16>( argv[5].toInt32());
+		instanceId				= static_cast<UI16>( args.get(5).toInt32());
 	}
 	if( argc > 6 )
 	{
-		iColor					= static_cast<UI16>( argv[6].toInt32());
+		iColor					= static_cast<UI16>( args.get(6).toInt32());
 	}
 	if( argc > 7 )
 	{
-		checkLocation = ( argv[7].toBoolean() == true );
+		checkLocation = ( args.get(7).toBoolean() == true );
 	}
 
 	// Store original script context and object, in case Item spawned has some event that triggers on spawn and grabs context
@@ -1634,16 +1634,16 @@ bool SE_GetMurderThreshold( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_RollDice( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc < 3 )
 	{
 		ScriptError( cx, "RollDice: Invalid number of arguments (takes 3)" );
 		return false;
 	}
-	UI32 numDice = argv[0].toInt32();
-	UI32 numFace = argv[1].toInt32();
-	UI32 numAdd  = argv[2].toInt32();
+	UI32 numDice = args.get(0).toInt32();
+	UI32 numFace = args.get(1).toInt32();
+	UI32 numAdd  = args.get(2).toInt32();
 
 	cDice toRoll( numDice, numFace, numAdd );
 
@@ -1661,14 +1661,14 @@ bool SE_RollDice( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_RaceCompareByRace( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
 		return false;
 	}
-	RACEID r0 = static_cast<RACEID>( argv[0].toInt32());
-	RACEID r1 = static_cast<RACEID>( argv[1].toInt32());
+	RACEID r0 = static_cast<RACEID>( args.get(0).toInt32());
+	RACEID r1 = static_cast<RACEID>( args.get(1).toInt32());
 	JS_SET_RVAL( cx, vp, JS::Int32Value( Races->CompareByRace( r0, r1 )) );
 
 	return true;
@@ -1681,7 +1681,7 @@ bool SE_RaceCompareByRace( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_FindMulti( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 && argc != 4 && argc != 5 )
 	{
@@ -1694,7 +1694,7 @@ bool SE_FindMulti( JSContext *cx, unsigned int argc, JS::Value *vp )
 	UI16 instanceId = 0;
 	if( argc == 1 )
 	{
-		JSObject *myitemptr = &argv[0].toObject();
+		JSObject *myitemptr = &args.get(0).toObject();
 		CBaseObject *myItemPtr = static_cast<CBaseObject *>( JS_GetPrivate( cx, myitemptr ));
 		if( ValidateObject( myItemPtr ))
 		{
@@ -1712,13 +1712,13 @@ bool SE_FindMulti( JSContext *cx, unsigned int argc, JS::Value *vp )
 	}
 	else
 	{
-		xLoc		= static_cast<SI16>( argv[0].toInt32());
-		yLoc		= static_cast<SI16>( argv[1].toInt32());
-		zLoc		= static_cast<SI08>( argv[2].toInt32());
-		worldNumber = static_cast<UI08>( argv[3].toInt32());
+		xLoc		= static_cast<SI16>( args.get(0).toInt32());
+		yLoc		= static_cast<SI16>( args.get(1).toInt32());
+		zLoc		= static_cast<SI08>( args.get(2).toInt32());
+		worldNumber = static_cast<UI08>( args.get(3).toInt32());
 		if( argc == 5 )
 		{
-			instanceId = static_cast<UI16>( argv[4].toInt32());
+			instanceId = static_cast<UI16>( args.get(4).toInt32());
 		}
 	}
 	CMultiObj *multi = FindMulti( xLoc, yLoc, zLoc, worldNumber, instanceId );
@@ -1742,7 +1742,7 @@ bool SE_FindMulti( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 4 && argc != 5 )
 	{
@@ -1754,13 +1754,13 @@ bool SE_GetItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 	UI08 worldNumber = 0;
 	UI16 instanceId = 0;
 
-	xLoc		= static_cast<SI16>( argv[0].toInt32());
-	yLoc		= static_cast<SI16>( argv[1].toInt32());
-	zLoc		= static_cast<SI08>( argv[2].toInt32());
-	worldNumber = static_cast<UI08>( argv[3].toInt32());
+	xLoc		= static_cast<SI16>( args.get(0).toInt32());
+	yLoc		= static_cast<SI16>( args.get(1).toInt32());
+	zLoc		= static_cast<SI08>( args.get(2).toInt32());
+	worldNumber = static_cast<UI08>( args.get(3).toInt32());
 	if( argc == 5 )
 	{
-		instanceId = static_cast<UI16>( argv[4].toInt32());
+		instanceId = static_cast<UI16>( args.get(4).toInt32());
 	}
 
 	CItem *item = GetItemAtXYZ( xLoc, yLoc, zLoc, worldNumber, instanceId );
@@ -1784,7 +1784,7 @@ bool SE_GetItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_FindItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 5 && argc != 6 )
 	{
@@ -1797,14 +1797,14 @@ bool SE_FindItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 	UI16 id = 0;
 	UI16 instanceId = 0;
 
-	xLoc		= static_cast<SI16>( argv[0].toInt32());
-	yLoc		= static_cast<SI16>( argv[1].toInt32());
-	zLoc		= static_cast<SI08>( argv[2].toInt32());
-	worldNumber = static_cast<UI08>( argv[3].toInt32());
-	id			= static_cast<UI16>( argv[4].toInt32());
+	xLoc		= static_cast<SI16>( args.get(0).toInt32());
+	yLoc		= static_cast<SI16>( args.get(1).toInt32());
+	zLoc		= static_cast<SI08>( args.get(2).toInt32());
+	worldNumber = static_cast<UI08>( args.get(3).toInt32());
+	id			= static_cast<UI16>( args.get(4).toInt32());
 	if( argc == 6 )
 	{
-		instanceId = static_cast<UI16>( argv[5].toInt32());
+		instanceId = static_cast<UI16>( args.get(5).toInt32());
 	}
 
 	CItem *item = FindNearestItemNearXYZ( xLoc, yLoc, zLoc, worldNumber, id, instanceId );
@@ -1827,7 +1827,7 @@ bool SE_FindItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_FindItemBySection( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 5 && argc != 6 )
 	{
@@ -1840,14 +1840,14 @@ bool SE_FindItemBySection( JSContext *cx, unsigned int argc, JS::Value *vp )
 	std::string sectionId = "";
 	UI16 instanceId = 0;
 
-	xLoc		= static_cast<SI16>( argv[0].toInt32());
-	yLoc		= static_cast<SI16>( argv[1].toInt32());
-	zLoc		= static_cast<SI08>( argv[2].toInt32());
-	worldNumber = static_cast<UI08>( argv[3].toInt32());
-	sectionId	= JS_GetStringBytes( cx, argv[4]);
+	xLoc		= static_cast<SI16>( args.get(0).toInt32());
+	yLoc		= static_cast<SI16>( args.get(1).toInt32());
+	zLoc		= static_cast<SI08>( args.get(2).toInt32());
+	worldNumber = static_cast<UI08>( args.get(3).toInt32());
+	sectionId	= JS_GetStringBytes( cx, args.get(4));
 	if( argc == 6 )
 	{
-		instanceId = static_cast<UI16>( argv[5].toInt32());
+		instanceId = static_cast<UI16>( args.get(5).toInt32());
 	}
 
 	CItem *item = FindNearestItemBySectionNearXYZ( xLoc, yLoc, zLoc, worldNumber, sectionId, instanceId );
@@ -1876,14 +1876,14 @@ bool SE_FindItemBySection( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_CompareGuildByGuild( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
 		return false;
 	}
-	GUILDID toCheck		= static_cast<GUILDID>( argv[0].toInt32());
-	GUILDID toCheck2	= static_cast<GUILDID>( argv[1].toInt32());
+	GUILDID toCheck		= static_cast<GUILDID>( args.get(0).toInt32());
+	GUILDID toCheck2	= static_cast<GUILDID>( args.get(1).toInt32());
 	JS_SET_RVAL( cx, vp, JS::Int32Value( GuildSys->Compare( toCheck, toCheck2 )) );
 	return true;
 }
@@ -1923,14 +1923,14 @@ bool SE_CreateNewGuild( JSContext* cx, unsigned int argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_PossessTown( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
 		return false;
 	}
-	UI16 town	= static_cast<UI16>( argv[0].toInt32());
-	UI16 sTown	= static_cast<UI16>( argv[1].toInt32());
+	UI16 town	= static_cast<UI16>( args.get(0).toInt32());
+	UI16 sTown	= static_cast<UI16>( args.get(1).toInt32());
 	cwmWorldState->townRegions[town]->Possess( cwmWorldState->townRegions[sTown] );
 	return true;
 }
@@ -1942,14 +1942,14 @@ bool SE_PossessTown( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_IsRaceWeakToWeather( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
 		return false;
 	}
-	RACEID race		= static_cast<RACEID>( argv[0].toInt32());
-	WEATHID toCheck = static_cast<WEATHID>( argv[1].toInt32());
+	RACEID race		= static_cast<RACEID>( args.get(0).toInt32());
+	WEATHID toCheck = static_cast<WEATHID>( args.get(1).toInt32());
 	CRace *tRace	= Races->Race( race );
 	if( tRace == nullptr || toCheck >= WEATHNUM )
 	{
@@ -1966,14 +1966,14 @@ bool SE_IsRaceWeakToWeather( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetRaceSkillAdjustment( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
 		return false;
 	}
-	RACEID race = static_cast<RACEID>( argv[0].toInt32());
-	SI32 skill = argv[1].toInt32();
+	RACEID race = static_cast<RACEID>( args.get(0).toInt32());
+	SI32 skill = args.get(1).toInt32();
 	JS_SET_RVAL( cx, vp, JS::Int32Value( Races->DamageFromSkill( skill, race )) );
 	return true;
 }
@@ -1985,7 +1985,7 @@ bool SE_GetRaceSkillAdjustment( JSContext *cx, unsigned int argc, JS::Value *vp 
 //o------------------------------------------------------------------------------------------------o
 bool SE_UseItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 
 	if( argc != 2 )
@@ -1997,7 +1997,7 @@ bool SE_UseItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 	CChar *mChar = nullptr;
 	CSocket *mySocket = nullptr;
 
-	JSEncapsulate myClass( cx, &( argv[0] ));
+	JSEncapsulate myClass( cx, &( args.get(0) ));
 	if( myClass.ClassName() == "UOXChar" )
 	{
 		if( myClass.isType( JSOT_OBJECT ))
@@ -2021,7 +2021,7 @@ bool SE_UseItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 		}
 	}
 
-	JSObject *mItem	= &argv[1].toObject();
+	JSObject *mItem	= &args.get(1).toObject();
 	CItem *myItem	= static_cast<CItem *>( JS_GetPrivate( cx, mItem ));
 
 	if( !ValidateObject( myItem ))
@@ -2115,7 +2115,7 @@ bool SE_UseItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_TriggerTrap( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 
 	if( argc != 2 )
@@ -2127,7 +2127,7 @@ bool SE_TriggerTrap( JSContext *cx, unsigned int argc, JS::Value *vp )
 	CChar *mChar = nullptr;
 	CSocket *mySocket = nullptr;
 
-	JSEncapsulate myClass( cx, &( argv[0] ));
+	JSEncapsulate myClass( cx, &( args.get(0) ));
 	if( myClass.ClassName() == "UOXChar" )
 	{
 		if( myClass.isType( JSOT_OBJECT ))
@@ -2157,7 +2157,7 @@ bool SE_TriggerTrap( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	JSObject *mItem = &argv[1].toObject();
+	JSObject *mItem = &args.get(1).toObject();
 	CItem *myItem = static_cast<CItem *>( JS_GetPrivate( cx, mItem ));
 
 	if( !ValidateObject( myItem ))
@@ -2187,7 +2187,7 @@ bool SE_TriggerTrap( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_TriggerEvent( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value *argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	JS::Value *rval = &JS_RVAL( cx, vp );
 
@@ -2196,14 +2196,14 @@ bool SE_TriggerEvent( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	UI16 scriptNumberToFire = static_cast<UI16>( argv[0].toInt32());
-	std::string eventToFire		= JS_GetStringBytes( cx, argv[1]);
+	UI16 scriptNumberToFire = static_cast<UI16>( args.get(0).toInt32());
+	std::string eventToFire		= JS_GetStringBytes( cx, args.get(1));
 	cScript *toExecute		= JSMapping->GetScript( scriptNumberToFire );
 
 	if( toExecute == nullptr || eventToFire == "" )
 		return false;
 
-	bool retVal = toExecute->CallParticularEvent( eventToFire.c_str(), &argv[2], argc - 2, rval);
+	bool retVal = toExecute->CallParticularEvent( eventToFire.c_str(), &args.get(2), argc - 2, rval);
 	return retVal;
 }
 
@@ -2216,7 +2216,7 @@ bool SE_TriggerEvent( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_DoesEventExist( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
@@ -2224,8 +2224,8 @@ bool SE_DoesEventExist( JSContext *cx, unsigned int argc, JS::Value *vp )
 	}
 
 	JS_SET_RVAL( cx, vp, JS::Int32Value( 1 ) );
-	UI16 scriptNumberToCheck = static_cast<UI16>( argv[0].toInt32());
-	std::string eventToCheck		= JS_GetStringBytes( cx, argv[1]);
+	UI16 scriptNumberToCheck = static_cast<UI16>( args.get(0).toInt32());
+	std::string eventToCheck		= JS_GetStringBytes( cx, args.get(1));
 	cScript *toExecute		= JSMapping->GetScript( scriptNumberToCheck );
 
 	if( toExecute == nullptr || eventToCheck == "" )
@@ -2247,7 +2247,7 @@ bool SE_DoesEventExist( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetPackOwner( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
@@ -2255,18 +2255,18 @@ bool SE_GetPackOwner( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	UI08 mType		= static_cast<UI08>( argv[1].toInt32());
+	UI08 mType		= static_cast<UI08>( args.get(1).toInt32());
 	CChar *pOwner	= nullptr;
 
 	if( mType == 0 )	// item
 	{
-		JSObject *mItem	= &argv[0].toObject();
+		JSObject *mItem	= &args.get(0).toObject();
 		CItem *myItem	= static_cast<CItem *>( JS_GetPrivate( cx, mItem ));
 		pOwner			= FindItemOwner( myItem );
 	}
 	else				// serial
 	{
-		SI32 mSerItem	= argv[0].toInt32();
+		SI32 mSerItem	= args.get(0).toInt32();
 		pOwner			= FindItemOwner( CalcItemObjFromSer( mSerItem ));
 	}
 	if( ValidateObject( pOwner ))
@@ -2288,7 +2288,7 @@ bool SE_GetPackOwner( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_FindRootContainer( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
@@ -2296,18 +2296,18 @@ bool SE_FindRootContainer( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	UI08 mType		= static_cast<UI08>( argv[1].toInt32());
+	UI08 mType		= static_cast<UI08>( args.get(1).toInt32());
 	CItem *iRoot	= nullptr;
 
 	if( mType == 0 )	// item
 	{
-		JSObject *mItem	= &argv[0].toObject();
+		JSObject *mItem	= &args.get(0).toObject();
 		CItem *myItem	= static_cast<CItem *>( JS_GetPrivate( cx, mItem ));
 		iRoot			= FindRootContainer( myItem );
 	}
 	else				// serial
 	{
-		SI32 mSerItem	= argv[0].toInt32();
+		SI32 mSerItem	= args.get(0).toInt32();
 		iRoot			= FindRootContainer( CalcItemObjFromSer( mSerItem ));
 	}
 	if( ValidateObject( iRoot ))
@@ -2329,7 +2329,7 @@ bool SE_FindRootContainer( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_CalcTargetedItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
@@ -2337,7 +2337,7 @@ bool SE_CalcTargetedItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	JSObject *mysockptr = &argv[0].toObject();
+	JSObject *mysockptr = &args.get(0).toObject();
 	CSocket *sChar		= static_cast<CSocket *>( JS_GetPrivate( cx, mysockptr ));
 	if( sChar == nullptr )
 	{
@@ -2365,7 +2365,7 @@ bool SE_CalcTargetedItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_CalcTargetedChar( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
@@ -2373,7 +2373,7 @@ bool SE_CalcTargetedChar( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	JSObject *mysockptr = &argv[0].toObject();
+	JSObject *mysockptr = &args.get(0).toObject();
 	CSocket *sChar		= static_cast<CSocket *>( JS_GetPrivate( cx, mysockptr ));
 	if( sChar == nullptr )
 	{
@@ -2401,7 +2401,7 @@ bool SE_CalcTargetedChar( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetTileIdAtMapCoord( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	JS::Value* rval = &JS_RVAL(cx, vp);
 	if( argc != 3 )
 	{
@@ -2409,9 +2409,9 @@ bool SE_GetTileIdAtMapCoord( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	UI16 xLoc		= static_cast<UI16>( argv[0].toInt32());
-	UI16 yLoc		= static_cast<UI16>( argv[1].toInt32());
-	UI08 wrldNumber	= static_cast<UI08>( argv[2].toInt32());
+	UI16 xLoc		= static_cast<UI16>( args.get(0).toInt32());
+	UI16 yLoc		= static_cast<UI16>( args.get(1).toInt32());
+	UI08 wrldNumber	= static_cast<UI08>( args.get(2).toInt32());
 	auto mMap		= Map->SeekMap( xLoc, yLoc, wrldNumber );
 	if( mMap.terrainInfo != nullptr )
 	{
@@ -2432,7 +2432,7 @@ bool SE_GetTileIdAtMapCoord( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_StaticInRange( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 5 )
 	{
@@ -2440,11 +2440,11 @@ bool SE_StaticInRange( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	UI16 xLoc		= static_cast<UI16>( argv[0].toInt32());
-	UI16 yLoc		= static_cast<UI16>( argv[1].toInt32());
-	UI08 wrldNumber = static_cast<UI08>( argv[2].toInt32());
-	UI16 radius		= static_cast<UI16>( argv[3].toInt32());
-	UI16 tileId		= static_cast<UI16>( argv[4].toInt32());
+	UI16 xLoc		= static_cast<UI16>( args.get(0).toInt32());
+	UI16 yLoc		= static_cast<UI16>( args.get(1).toInt32());
+	UI08 wrldNumber = static_cast<UI08>( args.get(2).toInt32());
+	UI16 radius		= static_cast<UI16>( args.get(3).toInt32());
+	UI16 tileId		= static_cast<UI16>( args.get(4).toInt32());
 	bool tileFound	= false;
 
 	for( SI32 i = xLoc - radius; i <= ( xLoc + radius ); ++i )
@@ -2481,7 +2481,7 @@ bool SE_StaticInRange( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_StaticAt( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 4 && argc != 3 )
 	{
@@ -2489,14 +2489,14 @@ bool SE_StaticAt( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	UI16 xLoc		= static_cast<UI16>( argv[0].toInt32());
-	UI16 yLoc		= static_cast<UI16>( argv[1].toInt32());
-	UI08 wrldNumber = static_cast<UI08>( argv[2].toInt32());
+	UI16 xLoc		= static_cast<UI16>( args.get(0).toInt32());
+	UI16 yLoc		= static_cast<UI16>( args.get(1).toInt32());
+	UI08 wrldNumber = static_cast<UI08>( args.get(2).toInt32());
 	UI16 tileId		= 0xFFFF;
 	[[maybe_unused]] bool tileMatch	= false;
 	if( argc == 4 )
 	{
-		tileId = static_cast<UI16>( argv[3].toInt32());
+		tileId = static_cast<UI16>( args.get(3).toInt32());
 		tileMatch = true;
 	}
 	bool tileFound = false;
@@ -2519,7 +2519,7 @@ bool SE_StaticAt( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_StringToNum( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
@@ -2527,7 +2527,7 @@ bool SE_StringToNum( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	std::string str = JS_GetStringBytes( cx, argv[0]);
+	std::string str = JS_GetStringBytes( cx, args.get(0));
 
 	JS_SET_RVAL( cx, vp, JS::Int32Value( std::stoi( str, nullptr, 0 )) );
 	return true;
@@ -2541,7 +2541,7 @@ bool SE_StringToNum( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_NumToString( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
@@ -2549,7 +2549,7 @@ bool SE_NumToString( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	SI32 num = argv[0].toInt32();
+	SI32 num = args.get(0).toInt32();
 	auto str = oldstrutil::number( num );
 	JS_SET_RVAL( cx, vp, JS::StringValue( JS_NewStringCopyZ( cx, str.c_str() )) );
 	return true;
@@ -2563,7 +2563,7 @@ bool SE_NumToString( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_NumToHexString( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
@@ -2571,7 +2571,7 @@ bool SE_NumToHexString( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	SI32 num = argv[0].toInt32();
+	SI32 num = args.get(0).toInt32();
 	auto str = oldstrutil::number( num, 16 );
 
 	JS_SET_RVAL( cx, vp, JS::StringValue( JS_NewStringCopyZ( cx, str.c_str() )) );
@@ -2604,7 +2604,7 @@ bool SE_GetRaceCount( JSContext *cx, unsigned int argc, JS::Value *vp )
 bool SE_AreaCharacterFunction( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 3 && argc != 4 )
 	{
@@ -2616,14 +2616,14 @@ bool SE_AreaCharacterFunction( JSContext *cx, unsigned int argc, JS::Value *vp )
 	// Do parameter validation here
 	JSObject *srcSocketObj	= nullptr;
 	CSocket *srcSocket		= nullptr;
-	std::string trgFunc			= JS_GetStringBytes( cx, argv[0]);
+	std::string trgFunc			= JS_GetStringBytes( cx, args.get(0));
 	if( trgFunc.empty() )
 	{
 		ScriptError( cx, "AreaCharacterFunction: Argument 0 not a valid string" );
 		return false;
 	}
 
-	JSObject *srcBaseObj = &argv[1].toObject();
+	JSObject *srcBaseObj = &args.get(1).toObject();
 	CBaseObject *srcObject = static_cast<CBaseObject *>( JS_GetPrivate( cx, srcBaseObj ));
 
 	if( !ValidateObject( srcObject ))
@@ -2631,10 +2631,10 @@ bool SE_AreaCharacterFunction( JSContext *cx, unsigned int argc, JS::Value *vp )
 		ScriptError( cx, "AreaCharacterFunction: Argument 1 not a valid object" );
 		return false;
 	}
-	R32 distance = static_cast<R32>( argv[2].toInt32());
-	if( argc == 4 && argv[3] != JS::NullValue() )
+	R32 distance = static_cast<R32>( args.get(2).toInt32());
+	if( argc == 4 && args.get(3) != JS::NullValue() )
 	{
-		srcSocketObj = &argv[3].toObject();
+		srcSocketObj = &args.get(3).toObject();
 		srcSocket = static_cast<CSocket *>( JS_GetPrivate( cx, srcSocketObj ));
 	}
 
@@ -2694,7 +2694,7 @@ bool SE_AreaCharacterFunction( JSContext *cx, unsigned int argc, JS::Value *vp )
 bool SE_AreaItemFunction( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 3 && argc != 4 )
 	{
@@ -2706,14 +2706,14 @@ bool SE_AreaItemFunction( JSContext *cx, unsigned int argc, JS::Value *vp )
 	// Do parameter validation here
 	JSObject *srcSocketObj	= nullptr;
 	CSocket *srcSocket		= nullptr;
-	std::string trgFunc			= JS_GetStringBytes( cx, argv[0]);
+	std::string trgFunc			= JS_GetStringBytes( cx, args.get(0));
 	if( trgFunc.empty() )
 	{
 		ScriptError( cx, "AreaItemFunction: Argument 0 not a valid string" );
 		return false;
 	}
 
-	JSObject *srcBaseObj = &argv[1].toObject();
+	JSObject *srcBaseObj = &args.get(1).toObject();
 	CBaseObject *srcObject = static_cast<CBaseObject *>( JS_GetPrivate( cx, srcBaseObj ));
 
 	if( !ValidateObject( srcObject ))
@@ -2721,10 +2721,10 @@ bool SE_AreaItemFunction( JSContext *cx, unsigned int argc, JS::Value *vp )
 		ScriptError( cx, "AreaItemFunction: Argument 1 not a valid object" );
 		return false;
 	}
-	R32 distance = static_cast<R32>( argv[2].toInt32());
-	if( argc == 4 && argv[3] != JS::NullValue() )
+	R32 distance = static_cast<R32>( args.get(2).toInt32());
+	if( argc == 4 && args.get(3) != JS::NullValue() )
 	{
-		srcSocketObj = &argv[3].toObject();
+		srcSocketObj = &args.get(3).toObject();
 		if( srcSocketObj != nullptr )
 		{
 			srcSocket	= static_cast<CSocket *>( JS_GetPrivate( cx, srcSocketObj ));
@@ -2779,7 +2779,7 @@ bool SE_AreaItemFunction( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetDictionaryEntry( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc < 1 )
 	{
@@ -2787,11 +2787,11 @@ bool SE_GetDictionaryEntry( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	SI32 dictEntry = static_cast<SI32>( argv[0].toInt32());
+	SI32 dictEntry = static_cast<SI32>( args.get(0).toInt32());
 	UnicodeTypes language = ZERO;
 	if( argc == 2 )
 	{
-		language = static_cast<UnicodeTypes>( argv[1].toInt32());
+		language = static_cast<UnicodeTypes>( args.get(1).toInt32());
 	}
 	std::string txt = Dictionary->GetEntry( dictEntry, language );
 	txt = oldstrutil::stringToWstringToString( txt );
@@ -2810,7 +2810,7 @@ bool SE_GetDictionaryEntry( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_Yell( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc < 3 )
 	{
@@ -2818,11 +2818,11 @@ bool SE_Yell( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	JSObject *mSock			= &argv[0].toObject();
+	JSObject *mSock			= &args.get(0).toObject();
 	CSocket *mySock			= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
 	CChar *myChar			= mySock->CurrcharObj();
-	std::string textToYell	= JS_GetStringBytes( cx, argv[1]);
-	UI08 commandLevel		= static_cast<UI08>( argv[2].toInt32());
+	std::string textToYell	= JS_GetStringBytes( cx, args.get(1));
+	UI08 commandLevel		= static_cast<UI08>( args.get(2).toInt32());
 
 	std::string yellTo = "";
 	switch( static_cast<CommandLevels>( commandLevel ))
@@ -2897,7 +2897,7 @@ bool SE_Yell( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_Reload( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
@@ -2905,7 +2905,7 @@ bool SE_Reload( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	SI32 toLoad = argv[0].toInt32();
+	SI32 toLoad = args.get(0).toInt32();
 
 	switch( toLoad )
 	{
@@ -2986,7 +2986,7 @@ bool SE_Reload( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_SendStaticStats( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
@@ -2994,7 +2994,7 @@ bool SE_SendStaticStats( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	JSObject *mSock			= &argv[0].toObject();
+	JSObject *mSock			= &args.get(0).toObject();
 	CSocket *mySock			= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
 	if( mySock == nullptr )
 	{
@@ -3049,7 +3049,7 @@ bool SE_SendStaticStats( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetTileHeight( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
@@ -3057,7 +3057,7 @@ bool SE_GetTileHeight( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	UI16 tileNum = static_cast<UI16>( argv[0].toInt32());
+	UI16 tileNum = static_cast<UI16>( args.get(0).toInt32());
 	JS_SET_RVAL( cx, vp, JS::Int32Value( Map->TileHeight( tileNum )) );
 	return true;
 }
@@ -3088,7 +3088,7 @@ bool SE_IterateFunctor( CBaseObject *a, UI32 &b, void *extraData )
 bool SE_IterateOver( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc < 1 || argc > 2 )
 	{
 		ScriptError( cx, "IterateOver: needs 1 or 2 arguments!" );
@@ -3096,7 +3096,7 @@ bool SE_IterateOver( JSContext *cx, unsigned int argc, JS::Value *vp )
 	}
 
 	// Parse the object type to iterate over
-	std::string objType = JS_GetStringBytes( cx, argv[0]);
+	std::string objType = JS_GetStringBytes( cx, args.get(0));
 	ObjectType toCheck	= FindObjTypeFromString( objType );
 	cScript *myScript	= JSMapping->GetScript( scriptEnv );
 	if( myScript == nullptr )
@@ -3111,9 +3111,9 @@ bool SE_IterateOver( JSContext *cx, unsigned int argc, JS::Value *vp )
 	iterData->socket = nullptr; // default if no 2nd arg
 
 								// If there's a 2nd argument, see if it's a Socket
-	if( argc == 2 && argv[1].isObject() )
+	if( argc == 2 && args.get(1).isObject() )
 	{
-		JSObject* sockObj = &argv[1].toObject();
+		JSObject* sockObj = &args.get(1).toObject();
 		if( sockObj )
 		{
 			// Our CSocket pointer is stored in the JS private data for that object
@@ -3157,7 +3157,7 @@ bool SE_IterateSpawnRegionsFunctor( CSpawnRegion *a, UI32 &b, void *extraData )
 bool SE_IterateOverSpawnRegions( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	cScript *myScript = JSMapping->GetScript( scriptEnv );
 
 	auto* iterData = new IterateExtraData;
@@ -3165,9 +3165,9 @@ bool SE_IterateOverSpawnRegions( JSContext *cx, unsigned int argc, JS::Value *vp
 	iterData->socket = nullptr;
 
 	// Check if a socket was passed as an argument in JS
-	if( argc >= 1 && argv[0].isObject() )
+	if( argc >= 1 && args.get(0).isObject() )
 	{
-		JSObject* sockObj = &argv[0].toObject();
+		JSObject* sockObj = &args.get(0).toObject();
 		if( sockObj )
 		{
 			CSocket* pSock = static_cast<CSocket*>( JS_GetPrivate( cx, sockObj ) );
@@ -3205,7 +3205,7 @@ bool SE_IterateOverSpawnRegions( JSContext *cx, unsigned int argc, JS::Value *vp
 //o------------------------------------------------------------------------------------------------o
 bool SE_WorldBrightLevel( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc > 1 )
 	{
@@ -3214,7 +3214,7 @@ bool SE_WorldBrightLevel( JSContext *cx, unsigned int argc, JS::Value *vp )
 	}
 	else if( argc == 1 )
 	{
-		LIGHTLEVEL brightLevel = static_cast<LIGHTLEVEL>( argv[0].toInt32());
+		LIGHTLEVEL brightLevel = static_cast<LIGHTLEVEL>( args.get(0).toInt32());
 		cwmWorldState->ServerData()->WorldLightBrightLevel( brightLevel );
 	}
 	JS_SET_RVAL( cx, vp, JS::Int32Value( cwmWorldState->ServerData()->WorldLightBrightLevel() ) );
@@ -3229,7 +3229,7 @@ bool SE_WorldBrightLevel( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_WorldDarkLevel( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc > 1 )
 	{
@@ -3238,7 +3238,7 @@ bool SE_WorldDarkLevel( JSContext *cx, unsigned int argc, JS::Value *vp )
 	}
 	else if( argc == 1 )
 	{
-		LIGHTLEVEL darkLevel = static_cast<LIGHTLEVEL>( argv[0].toInt32());
+		LIGHTLEVEL darkLevel = static_cast<LIGHTLEVEL>( args.get(0).toInt32());
 		cwmWorldState->ServerData()->WorldLightDarkLevel( darkLevel );
 	}
 	JS_SET_RVAL( cx, vp, JS::Int32Value( cwmWorldState->ServerData()->WorldLightDarkLevel() ) );
@@ -3253,7 +3253,7 @@ bool SE_WorldDarkLevel( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_WorldDungeonLevel( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc > 1 )
 	{
@@ -3262,7 +3262,7 @@ bool SE_WorldDungeonLevel( JSContext *cx, unsigned int argc, JS::Value *vp )
 	}
 	else if( argc == 1 )
 	{
-		LIGHTLEVEL dungeonLevel = static_cast<LIGHTLEVEL>( argv[0].toInt32());
+		LIGHTLEVEL dungeonLevel = static_cast<LIGHTLEVEL>( args.get(0).toInt32());
 		cwmWorldState->ServerData()->DungeonLightLevel( dungeonLevel );
 	}
 	JS_SET_RVAL( cx, vp, JS::Int32Value( cwmWorldState->ServerData()->DungeonLightLevel() ) );
@@ -3276,7 +3276,7 @@ bool SE_WorldDungeonLevel( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetSpawnRegionFacetStatus( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc > 1 )
 	{
@@ -3285,7 +3285,7 @@ bool SE_GetSpawnRegionFacetStatus( JSContext *cx, unsigned int argc, JS::Value *
 	}
 	else if( argc == 1 )
 	{
-		UI32 spawnRegionFacet = static_cast<UI32>( argv[0].toInt32());
+		UI32 spawnRegionFacet = static_cast<UI32>( args.get(0).toInt32());
 		bool spawnRegionFacetStatus = cwmWorldState->ServerData()->GetSpawnRegionsFacetStatus( spawnRegionFacet );
 		if( spawnRegionFacetStatus )
 		{
@@ -3306,7 +3306,7 @@ bool SE_GetSpawnRegionFacetStatus( JSContext *cx, unsigned int argc, JS::Value *
 //o------------------------------------------------------------------------------------------------o
 bool SE_SetSpawnRegionFacetStatus( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc > 2 )
 	{
@@ -3315,13 +3315,13 @@ bool SE_SetSpawnRegionFacetStatus( JSContext *cx, unsigned int argc, JS::Value *
 	}
 	else if( argc == 1 )
 	{
-		UI32 spawnRegionFacetVal = static_cast<UI32>( argv[0].toInt32());
+		UI32 spawnRegionFacetVal = static_cast<UI32>( args.get(0).toInt32());
 		cwmWorldState->ServerData()->SetSpawnRegionsFacetStatus( spawnRegionFacetVal );
 	}
 	else if( argc == 2 )
 	{
-		UI32 spawnRegionFacet = static_cast<UI32>( argv[0].toInt32());
-		bool spawnRegionFacetStatus = ( argv[1].toBoolean() == true );
+		UI32 spawnRegionFacet = static_cast<UI32>( args.get(0).toInt32());
+		bool spawnRegionFacetStatus = ( args.get(1).toBoolean() == true );
 		cwmWorldState->ServerData()->SetSpawnRegionsFacetStatus( spawnRegionFacet, spawnRegionFacetStatus );
 	}
 	return true;
@@ -3334,7 +3334,7 @@ bool SE_SetSpawnRegionFacetStatus( JSContext *cx, unsigned int argc, JS::Value *
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetMoongateFacetStatus( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
@@ -3343,7 +3343,7 @@ bool SE_GetMoongateFacetStatus( JSContext *cx, unsigned int argc, JS::Value *vp 
 	}
 	else if( argc == 1 )
 	{
-		UI32 moongateFacets = static_cast<UI32>( argv[0].toInt32());
+		UI32 moongateFacets = static_cast<UI32>( args.get(0).toInt32());
 		bool MoongateFacetStatus = cwmWorldState->ServerData()->GetMoongateFacetStatus( moongateFacets );
 		if( MoongateFacetStatus )
 		{
@@ -3364,7 +3364,7 @@ bool SE_GetMoongateFacetStatus( JSContext *cx, unsigned int argc, JS::Value *vp 
 //o------------------------------------------------------------------------------------------------o
 bool SE_SetMoongateFacetStatus( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
@@ -3373,13 +3373,13 @@ bool SE_SetMoongateFacetStatus( JSContext *cx, unsigned int argc, JS::Value *vp 
 	}
 	else if( argc == 1 )
 	{
-		UI32 MoongateFacetVal = static_cast<UI32>( argv[0].toInt32());
+		UI32 MoongateFacetVal = static_cast<UI32>( args.get(0).toInt32());
 		cwmWorldState->ServerData()->SetMoongateFacetStatus( MoongateFacetVal );
 	}
 	else if( argc == 2 )
 	{
-		UI32 MoongateFacet = static_cast<UI32>( argv[0].toInt32());
-		bool MoongateStatus = ( argv[1].toBoolean() == true );
+		UI32 MoongateFacet = static_cast<UI32>( args.get(0).toInt32());
+		bool MoongateStatus = ( args.get(1).toBoolean() == true );
 		cwmWorldState->ServerData()->SetMoongateFacetStatus( MoongateFacet, MoongateStatus );
 	}
 	return true;
@@ -3393,14 +3393,14 @@ bool SE_SetMoongateFacetStatus( JSContext *cx, unsigned int argc, JS::Value *vp 
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetSocketFromIndex( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetSocketFromIndex: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	UOXSOCKET index = static_cast<UOXSOCKET>( argv[0].toInt32());
+	UOXSOCKET index = static_cast<UOXSOCKET>( args.get(0).toInt32());
 
 	CSocket *mSock = Network->GetSockPtr( index );
 	CChar *mChar = nullptr;
@@ -3429,14 +3429,14 @@ bool SE_GetSocketFromIndex( JSContext *cx, unsigned int argc, JS::Value *vp )
 bool SE_ReloadJSFile( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "ReloadJSFile: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	UI16 scriptId = static_cast<UI16>( argv[0].toInt32());
+	UI16 scriptId = static_cast<UI16>( args.get(0).toInt32());
 	if( scriptId == JSMapping->GetScriptId( scriptEnv ) )
 	{
 		ScriptError( cx, oldstrutil::format( "ReloadJSFile: JS Script attempted to reload itself, crash avoided (ScriptID %u)", scriptId ).c_str() );
@@ -3456,7 +3456,7 @@ bool SE_ReloadJSFile( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_ResourceArea( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 0 )
 	{
@@ -3464,7 +3464,7 @@ bool SE_ResourceArea( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	auto resType = std::string( JS_GetStringBytes( cx, argv[0]));
+	auto resType = std::string( JS_GetStringBytes( cx, args.get(0)));
 	resType = oldstrutil::upper( oldstrutil::trim( oldstrutil::removeTrailing( resType, "//" )));
 
 	JS_SET_RVAL( cx, vp, JS::Int32Value( cwmWorldState->ServerData()->ResourceAreaSize() ) );
@@ -3480,19 +3480,19 @@ bool SE_ResourceArea( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_ResourceAmount( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc > 2 || argc == 0 )
 	{
 		ScriptError( cx, oldstrutil::format( "ResourceAmount: Invalid Count of Arguments: %d", argc ).c_str() );
 		return false;
 	}
-	auto resType = std::string( JS_GetStringBytes( cx, argv[0]));
+	auto resType = std::string( JS_GetStringBytes( cx, args.get(0)));
 	resType = oldstrutil::upper( oldstrutil::trim( oldstrutil::removeTrailing( resType, "//" )));
 
 	if( argc == 2 )
 	{
-		SI16 newVal = static_cast<SI16>( argv[1].toInt32());
+		SI16 newVal = static_cast<SI16>( args.get(1).toInt32());
 		if( resType == "LOGS" )
 		{
 			cwmWorldState->ServerData()->ResLogs( newVal );
@@ -3531,7 +3531,7 @@ bool SE_ResourceAmount( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_ResourceTime( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc > 2 || argc == 0 )
 	{
@@ -3539,11 +3539,11 @@ bool SE_ResourceTime( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	auto resType = std::string( JS_GetStringBytes( cx, argv[0]));
+	auto resType = std::string( JS_GetStringBytes( cx, args.get(0)));
 	resType = oldstrutil::upper( oldstrutil::trim( oldstrutil::removeTrailing( resType, "//" )));
 	if( argc == 2 )
 	{
-		UI16 newVal = static_cast<UI16>( argv[1].toInt32());
+		UI16 newVal = static_cast<UI16>( args.get(1).toInt32());
 		if( resType == "LOGS" )
 		{
 			cwmWorldState->ServerData()->ResLogTime( newVal );
@@ -3582,7 +3582,7 @@ bool SE_ResourceTime( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_ResourceRegion( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 
 	if( argc != 3 )
@@ -3590,9 +3590,9 @@ bool SE_ResourceRegion( JSContext *cx, unsigned int argc, JS::Value *vp )
 		ScriptError( cx, "ResourceRegion: Invalid number of arguments (takes 3)" );
 		return false;
 	}
-	SI16 x			= static_cast<SI16>( argv[0].toInt32());
-	SI16 y			= static_cast<SI16>( argv[1].toInt32());
-	UI08 worldNum	= static_cast<UI08>( argv[2].toInt32());
+	SI16 x			= static_cast<SI16>( args.get(0).toInt32());
+	SI16 y			= static_cast<SI16>( args.get(1).toInt32());
+	UI08 worldNum	= static_cast<UI08>( args.get(2).toInt32());
 	MapResource_st *mRes = MapRegion->GetResource( x, y, worldNum );
 	if( mRes == nullptr )
 	{
@@ -3617,7 +3617,7 @@ bool SE_ResourceRegion( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_ValidateObject( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
@@ -3625,7 +3625,7 @@ bool SE_ValidateObject( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, &( argv[0] ));
+	JSEncapsulate myClass( cx, &( args.get(0) ));
 
 	if( myClass.ClassName() == "UOXChar" || myClass.ClassName() == "UOXItem" )
 	{
@@ -3648,7 +3648,7 @@ bool SE_ValidateObject( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_ApplyDamageBonuses( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 6 )
 	{
@@ -3659,12 +3659,12 @@ bool SE_ApplyDamageBonuses( JSContext *cx, unsigned int argc, JS::Value *vp )
 	CChar *attacker	= nullptr, *defender = nullptr;
 	SI16 damage = 0;
 
-	JSEncapsulate damageType( cx, &( argv[0] ));
-	JSEncapsulate getFightSkill( cx, &( argv[3] ));
-	JSEncapsulate hitLoc( cx, &( argv[4] ));
+	JSEncapsulate damageType( cx, &( args.get(0) ));
+	JSEncapsulate getFightSkill( cx, &( args.get(3) ));
+	JSEncapsulate hitLoc( cx, &( args.get(4) ));
 	JSEncapsulate baseDamage( cx, &(argv [5] ));
 
-	JSEncapsulate attackerClass( cx, &( argv[1] ));
+	JSEncapsulate attackerClass( cx, &( args.get(1) ));
 	if( attackerClass.ClassName() != "UOXChar" )	// It must be a character!
 	{
 		ScriptError( cx, "ApplyDamageBonuses: Passed an invalid Character" );
@@ -3686,7 +3686,7 @@ bool SE_ApplyDamageBonuses( JSContext *cx, unsigned int argc, JS::Value *vp )
 		}
 	}
 
-	JSEncapsulate defenderClass( cx, &( argv[2] ));
+	JSEncapsulate defenderClass( cx, &( args.get(2) ));
 	if( defenderClass.ClassName() != "UOXChar" ) // It must be a character!
 	{
 		ScriptError( cx, "ApplyDamageBonuses: Passed an invalid Character" );
@@ -3723,7 +3723,7 @@ bool SE_ApplyDamageBonuses( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_ApplyDefenseModifiers( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 7 )
 	{
@@ -3734,13 +3734,13 @@ bool SE_ApplyDefenseModifiers( JSContext *cx, unsigned int argc, JS::Value *vp )
 	CChar *attacker	= nullptr, *defender = nullptr;
 	SI16 damage = 0;
 
-	JSEncapsulate damageType( cx, &( argv[0] ));
-	JSEncapsulate getFightSkill( cx, &( argv[3] ));
-	JSEncapsulate hitLoc( cx, &( argv[4] ));
-	JSEncapsulate baseDamage( cx, &( argv[5] ));
-	JSEncapsulate doArmorDamage(cx, &( argv[6] ));
+	JSEncapsulate damageType( cx, &( args.get(0) ));
+	JSEncapsulate getFightSkill( cx, &( args.get(3) ));
+	JSEncapsulate hitLoc( cx, &( args.get(4) ));
+	JSEncapsulate baseDamage( cx, &( args.get(5) ));
+	JSEncapsulate doArmorDamage(cx, &( args.get(6) ));
 
-	JSEncapsulate attackerClass( cx, &( argv[1] ));
+	JSEncapsulate attackerClass( cx, &( args.get(1) ));
 	if( attackerClass.ClassName() == "UOXChar" )
 	{
 		if( attackerClass.isType( JSOT_VOID ) || attackerClass.isType( JSOT_NULL ))
@@ -3757,7 +3757,7 @@ bool SE_ApplyDefenseModifiers( JSContext *cx, unsigned int argc, JS::Value *vp )
 		}
 	}
 
-	JSEncapsulate defenderClass( cx, &( argv[2] ));
+	JSEncapsulate defenderClass( cx, &( args.get(2) ));
 	if( defenderClass.ClassName() != "UOXChar" )	// It must be a character!
 	{
 		ScriptError( cx, "ApplyDefenseModifiers: Passed an invalid Character" );
@@ -3794,7 +3794,7 @@ bool SE_ApplyDefenseModifiers( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_WillResultInCriminal( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
@@ -3806,12 +3806,12 @@ bool SE_WillResultInCriminal( JSContext *cx, unsigned int argc, JS::Value *vp )
 	CChar *srcChar = nullptr;
 	CChar *trgChar = nullptr;
 
-	if( argv[0] != JS::NullValue() && argv[1] != JS::NullValue() )
+	if( args.get(0) != JS::NullValue() && args.get(1) != JS::NullValue() )
 	{
-		JSObject *srcCharObj = &argv[0].toObject();
+		JSObject *srcCharObj = &args.get(0).toObject();
 		srcChar = static_cast<CChar *>( JS_GetPrivate( cx, srcCharObj ));
 
-		JSObject *trgCharObj = &argv[1].toObject();
+		JSObject *trgCharObj = &args.get(1).toObject();
 		trgChar = static_cast<CChar *>( JS_GetPrivate( cx, trgCharObj ));
 
 		if( ValidateObject( srcChar ) && ValidateObject( trgChar ))
@@ -3837,7 +3837,7 @@ bool SE_WillResultInCriminal( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_CreateParty( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	JS::Value* rval = &JS_RVAL(cx, vp);
 	if( argc != 1 )
 	{
@@ -3845,7 +3845,7 @@ bool SE_CreateParty( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, &( argv[0] ));
+	JSEncapsulate myClass( cx, &( args.get(0) ));
 
 	if( myClass.ClassName() == "UOXChar" || myClass.ClassName() == "UOXSocket" )
 	{	// it's a character or socket, fantastic
@@ -3889,7 +3889,7 @@ bool SE_CreateParty( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_Moon( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc > 2 || argc == 0 )
 	{
@@ -3897,10 +3897,10 @@ bool SE_Moon( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	SI16 slot = static_cast<SI16>( argv[0].toInt32());
+	SI16 slot = static_cast<SI16>( args.get(0).toInt32());
 	if( argc == 2 )
 	{
-		SI16 newVal = static_cast<SI16>( argv[1].toInt32());
+		SI16 newVal = static_cast<SI16>( args.get(1).toInt32());
 		cwmWorldState->ServerData()->ServerMoon( slot, newVal );
 	}
 
@@ -3916,7 +3916,7 @@ bool SE_Moon( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetTownRegion( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
@@ -3924,7 +3924,7 @@ bool SE_GetTownRegion( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	UI16 regNum = static_cast<UI16>( argv[0].toInt32());
+	UI16 regNum = static_cast<UI16>( args.get(0).toInt32());
 	if( cwmWorldState->townRegions.find( regNum ) != cwmWorldState->townRegions.end() )
 	{
 		CTownRegion *townReg = cwmWorldState->townRegions[regNum];
@@ -3952,7 +3952,7 @@ bool SE_GetTownRegion( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetTownRegionFromXY( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 4 )
 	{
@@ -3960,10 +3960,10 @@ bool SE_GetTownRegionFromXY( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	SI16 locX = static_cast<SI16>( argv[0].toInt32());
-	SI16 locY = static_cast<SI16>( argv[1].toInt32());
-	UI08 locWorldNumber = static_cast<UI08>( argv[2].toInt32());
-	UI16 locInstanceId = static_cast<UI16>( argv[3].toInt32());
+	SI16 locX = static_cast<SI16>( args.get(0).toInt32());
+	SI16 locY = static_cast<SI16>( args.get(1).toInt32());
+	UI08 locWorldNumber = static_cast<UI08>( args.get(2).toInt32());
+	UI16 locInstanceId = static_cast<UI16>( args.get(3).toInt32());
 
 	auto townReg = CalcRegionFromXY( locX, locY, locWorldNumber, locInstanceId, nullptr );
 	if( townReg != nullptr )
@@ -4006,7 +4006,7 @@ static auto FindSpawnRegionsAt( UI16 x, UI16 y, UI08 worldNum, UI16 instanceID )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetSpawnRegion( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	JS::Value* rval = &JS_RVAL(cx, vp);
 	if( argc != 1 && argc != 4 )
 	{
@@ -4017,7 +4017,7 @@ bool SE_GetSpawnRegion( JSContext *cx, unsigned int argc, JS::Value *vp )
 	if( argc == 1 )
 	{
 		// Assume spawn region number was provided
-		UI16 spawnRegNum = static_cast<UI16>( argv[0].toInt32());
+		UI16 spawnRegNum = static_cast<UI16>( args.get(0).toInt32());
 		if( cwmWorldState->spawnRegions.find( spawnRegNum ) != cwmWorldState->spawnRegions.end() )
 		{
 			CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
@@ -4048,7 +4048,7 @@ bool SE_GetSpawnRegion( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetSpawnRegions( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc != 4 )
 	{
 		ScriptError( cx, "GetSpawnRegions: Invalid number of parameters (4 required - x, y, world and instanceID)" );
@@ -4057,10 +4057,10 @@ bool SE_GetSpawnRegions( JSContext *cx, unsigned int argc, JS::Value *vp )
 	}
 
 	// Assume coordinates were provided
-	UI16 x = static_cast<UI16>( argv[0].toInt32());
-	UI16 y = static_cast<UI16>( argv[1].toInt32());
-	UI08 worldNum = static_cast<UI08>( argv[2].toInt32());
-	UI16 instanceID = static_cast<UI16>( argv[3].toInt32());
+	UI16 x = static_cast<UI16>( args.get(0).toInt32());
+	UI16 y = static_cast<UI16>( args.get(1).toInt32());
+	UI08 worldNum = static_cast<UI08>( args.get(2).toInt32());
+	UI16 instanceID = static_cast<UI16>( args.get(3).toInt32());
 
 	auto regions = FindSpawnRegionsAt( x, y, worldNum, instanceID );
 	if( !regions.empty() )
@@ -4095,7 +4095,7 @@ bool SE_GetSpawnRegions( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetSpawnRegionCount( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 0 )
 	{
@@ -4113,7 +4113,7 @@ bool SE_GetSpawnRegionCount( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetMapElevation( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 3 )
 	{
@@ -4121,9 +4121,9 @@ bool SE_GetMapElevation( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	SI16 x			= static_cast<SI16>( argv[0].toInt32());
-	SI16 y			= static_cast<SI16>( argv[1].toInt32());
-	UI08 worldNum	= static_cast<UI08>( argv[2].toInt32());
+	SI16 x			= static_cast<SI16>( args.get(0).toInt32());
+	SI16 y			= static_cast<SI16>( args.get(1).toInt32());
+	UI08 worldNum	= static_cast<UI08>( args.get(2).toInt32());
 	SI08 mapElevation = Map->MapElevation( x, y, worldNum );
 	JS_SET_RVAL( cx, vp, JS::Int32Value( mapElevation ) );
 	return true;
@@ -4138,7 +4138,7 @@ bool SE_GetMapElevation( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_IsInBuilding( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 6 )
 	{
@@ -4146,12 +4146,12 @@ bool SE_IsInBuilding( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	SI16 x			= static_cast<SI16>( argv[0].toInt32());
-	SI16 y			= static_cast<SI16>( argv[1].toInt32());
-	SI08 z			= static_cast<SI08>( argv[2].toInt32());
-	UI08 worldNum	= static_cast<UI08>( argv[3].toInt32());
-	UI16 instanceId = static_cast<UI16>( argv[4].toInt32());
-	bool checkHeight = ( argv[5].toBoolean() == true );
+	SI16 x			= static_cast<SI16>( args.get(0).toInt32());
+	SI16 y			= static_cast<SI16>( args.get(1).toInt32());
+	SI08 z			= static_cast<SI08>( args.get(2).toInt32());
+	UI08 worldNum	= static_cast<UI08>( args.get(3).toInt32());
+	UI16 instanceId = static_cast<UI16>( args.get(4).toInt32());
+	bool checkHeight = ( args.get(5).toBoolean() == true );
 	bool isInBuilding = Map->InBuilding( x, y, z, worldNum, instanceId );
 	if( !isInBuilding )
 	{
@@ -4185,7 +4185,7 @@ bool SE_IsInBuilding( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_CheckStaticFlag( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 5 )
 	{
@@ -4193,11 +4193,11 @@ bool SE_CheckStaticFlag( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	SI16 x			= static_cast<SI16>( argv[0].toInt32());
-	SI16 y			= static_cast<SI16>( argv[1].toInt32());
-	SI08 z			= static_cast<SI08>( argv[2].toInt32());
-	UI08 worldNum	= static_cast<UI08>( argv[3].toInt32());
-	TileFlags toCheck	= static_cast<TileFlags>( argv[4].toInt32());
+	SI16 x			= static_cast<SI16>( args.get(0).toInt32());
+	SI16 y			= static_cast<SI16>( args.get(1).toInt32());
+	SI08 z			= static_cast<SI08>( args.get(2).toInt32());
+	UI08 worldNum	= static_cast<UI08>( args.get(3).toInt32());
+	TileFlags toCheck	= static_cast<TileFlags>( args.get(4).toInt32());
 	[[maybe_unused]] UI16 ignoreMe = 0;
 	bool hasStaticFlag = Map->CheckStaticFlag( x, y, z, worldNum, toCheck, ignoreMe, false );
 	JS_SET_RVAL( cx, vp, JS::BooleanValue( hasStaticFlag ) );
@@ -4211,7 +4211,7 @@ bool SE_CheckStaticFlag( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_CheckDynamicFlag( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 6 )
 	{
@@ -4219,12 +4219,12 @@ bool SE_CheckDynamicFlag( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	SI16 x = static_cast<SI16>( argv[0].toInt32());
-	SI16 y = static_cast<SI16>( argv[1].toInt32());
-	SI08 z = static_cast<SI08>( argv[2].toInt32());
-	UI08 worldNum = static_cast<UI08>( argv[3].toInt32());
-	UI08 instanceId = static_cast<UI08>( argv[4].toInt32());
-	TileFlags toCheck = static_cast<TileFlags>( argv[5].toInt32());
+	SI16 x = static_cast<SI16>( args.get(0).toInt32());
+	SI16 y = static_cast<SI16>( args.get(1).toInt32());
+	SI08 z = static_cast<SI08>( args.get(2).toInt32());
+	UI08 worldNum = static_cast<UI08>( args.get(3).toInt32());
+	UI08 instanceId = static_cast<UI08>( args.get(4).toInt32());
+	TileFlags toCheck = static_cast<TileFlags>( args.get(5).toInt32());
 	[[maybe_unused]] UI16 ignoreMe = 0;
 	bool hasDynamicFlag = Map->CheckDynamicFlag( x, y, z, worldNum, instanceId, toCheck, ignoreMe );
 	JS_SET_RVAL( cx, vp, JS::BooleanValue( hasDynamicFlag ) );
@@ -4238,7 +4238,7 @@ bool SE_CheckDynamicFlag( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_CheckTileFlag( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
@@ -4246,8 +4246,8 @@ bool SE_CheckTileFlag( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	UI16 itemId = static_cast<UI16>( argv[0].toInt32());
-	TileFlags flagToCheck	= static_cast<TileFlags>( argv[1].toInt32());
+	UI16 itemId = static_cast<UI16>( args.get(0).toInt32());
+	TileFlags flagToCheck	= static_cast<TileFlags>( args.get(1).toInt32());
 
 	bool tileHasFlag = Map->CheckTileFlag( itemId, flagToCheck );
 	JS_SET_RVAL( cx, vp, JS::BooleanValue( tileHasFlag ) );
@@ -4261,7 +4261,7 @@ bool SE_CheckTileFlag( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_DoesStaticBlock( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 5 )
 	{
@@ -4269,11 +4269,11 @@ bool SE_DoesStaticBlock( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	SI16 x			= static_cast<SI16>( argv[0].toInt32());
-	SI16 y			= static_cast<SI16>( argv[1].toInt32());
-	SI08 z			= static_cast<SI08>( argv[2].toInt32());
-	UI08 worldNum	= static_cast<UI08>( argv[3].toInt32());
-	bool checkWater = ( argv[4].toBoolean() == true );
+	SI16 x			= static_cast<SI16>( args.get(0).toInt32());
+	SI16 y			= static_cast<SI16>( args.get(1).toInt32());
+	SI08 z			= static_cast<SI08>( args.get(2).toInt32());
+	UI08 worldNum	= static_cast<UI08>( args.get(3).toInt32());
+	bool checkWater = ( args.get(4).toBoolean() == true );
 	bool staticBlocks = Map->DoesStaticBlock( x, y, z, worldNum, checkWater );
 	JS_SET_RVAL( cx, vp, JS::BooleanValue( staticBlocks ) );
 	return true;
@@ -4286,7 +4286,7 @@ bool SE_DoesStaticBlock( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_DoesDynamicBlock( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 9 )
 	{
@@ -4294,15 +4294,15 @@ bool SE_DoesDynamicBlock( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	SI16 x			= static_cast<SI16>( argv[0].toInt32());
-	SI16 y			= static_cast<SI16>( argv[1].toInt32());
-	SI08 z			= static_cast<SI08>( argv[2].toInt32());
-	UI08 worldNum	= static_cast<UI08>( argv[3].toInt32());
-	UI08 instanceId	= static_cast<UI08>( argv[4].toInt32());
-	bool checkWater = ( argv[5].toBoolean() == true );
-	bool waterWalk = ( argv[6].toBoolean() == true );
-	bool checkOnlyMultis = ( argv[7].toBoolean() == true );
-	bool checkOnlyNonMultis = ( argv[8].toBoolean() == true );
+	SI16 x			= static_cast<SI16>( args.get(0).toInt32());
+	SI16 y			= static_cast<SI16>( args.get(1).toInt32());
+	SI08 z			= static_cast<SI08>( args.get(2).toInt32());
+	UI08 worldNum	= static_cast<UI08>( args.get(3).toInt32());
+	UI08 instanceId	= static_cast<UI08>( args.get(4).toInt32());
+	bool checkWater = ( args.get(5).toBoolean() == true );
+	bool waterWalk = ( args.get(6).toBoolean() == true );
+	bool checkOnlyMultis = ( args.get(7).toBoolean() == true );
+	bool checkOnlyNonMultis = ( args.get(8).toBoolean() == true );
 	bool dynamicBlocks = Map->DoesDynamicBlock( x, y, z, worldNum, instanceId, checkWater, waterWalk, checkOnlyMultis, checkOnlyNonMultis );
 	JS_SET_RVAL( cx, vp, JS::BooleanValue( dynamicBlocks ) );
 	return true;
@@ -4315,7 +4315,7 @@ bool SE_DoesDynamicBlock( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_DoesMapBlock( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 8 )
 	{
@@ -4323,14 +4323,14 @@ bool SE_DoesMapBlock( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	SI16 x			= static_cast<SI16>( argv[0].toInt32());
-	SI16 y			= static_cast<SI16>( argv[1].toInt32());
-	SI08 z			= static_cast<SI08>( argv[2].toInt32());
-	UI08 worldNum	= static_cast<UI08>( argv[3].toInt32());
-	bool checkWater = ( argv[4].toBoolean() == true );
-	bool waterWalk = ( argv[5].toBoolean() == true );
-	bool checkMultiPlacement = ( argv[6].toBoolean() == true );
-	bool checkForRoad = ( argv[7].toBoolean() == true );
+	SI16 x			= static_cast<SI16>( args.get(0).toInt32());
+	SI16 y			= static_cast<SI16>( args.get(1).toInt32());
+	SI08 z			= static_cast<SI08>( args.get(2).toInt32());
+	UI08 worldNum	= static_cast<UI08>( args.get(3).toInt32());
+	bool checkWater = ( args.get(4).toBoolean() == true );
+	bool waterWalk = ( args.get(5).toBoolean() == true );
+	bool checkMultiPlacement = ( args.get(6).toBoolean() == true );
+	bool checkForRoad = ( args.get(7).toBoolean() == true );
 	bool mapBlocks = Map->DoesMapBlock( x, y, z, worldNum, checkWater, waterWalk, checkMultiPlacement, checkForRoad );
 	JS_SET_RVAL( cx, vp, JS::BooleanValue( mapBlocks ) );
 	return true;
@@ -4343,7 +4343,7 @@ bool SE_DoesMapBlock( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_DoesCharacterBlock( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 5 )
 	{
@@ -4351,11 +4351,11 @@ bool SE_DoesCharacterBlock( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	SI16 x			= static_cast<SI16>( argv[0].toInt32());
-	SI16 y			= static_cast<SI16>( argv[1].toInt32());
-	SI08 z			= static_cast<SI08>( argv[2].toInt32());
-	UI08 worldNum	= static_cast<UI08>( argv[3].toInt32());
-	UI08 instanceId	= static_cast<UI08>( argv[4].toInt32());
+	SI16 x			= static_cast<SI16>( args.get(0).toInt32());
+	SI16 y			= static_cast<SI16>( args.get(1).toInt32());
+	SI08 z			= static_cast<SI08>( args.get(2).toInt32());
+	UI08 worldNum	= static_cast<UI08>( args.get(3).toInt32());
+	UI08 instanceId	= static_cast<UI08>( args.get(4).toInt32());
 	bool characterBlocks = Map->DoesCharacterBlock( x, y, z, worldNum, instanceId );
 	JS_SET_RVAL( cx, vp, JS::BooleanValue( characterBlocks ) );
 	return true;
@@ -4368,7 +4368,7 @@ bool SE_DoesCharacterBlock( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_DeleteFile( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc < 1 || argc > 3 )
 	{
@@ -4376,16 +4376,16 @@ bool SE_DeleteFile( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	std::string fileName = JS_GetStringBytes( cx, argv[0]);
+	std::string fileName = JS_GetStringBytes( cx, args.get(0));
 	std::string subFolderName;
 	if( argc >= 2 )
 	{
-		subFolderName = JS_GetStringBytes( cx, argv[1]);
+		subFolderName = JS_GetStringBytes( cx, args.get(1));
 	}
 	bool useScriptDataDir = false;
 	if( argc >= 3 )
 	{
-		useScriptDataDir = ( argv[2].toBoolean() == true );
+		useScriptDataDir = ( args.get(2).toBoolean() == true );
 	}
 
 	if( fileName.find( ".." ) != std::string::npos || fileName.find( "\\" ) != std::string::npos || fileName.find( "/" ) != std::string::npos )
@@ -4440,7 +4440,7 @@ bool SE_DeleteFile( JSContext *cx, unsigned int argc, JS::Value *vp )
 bool SE_EraStringToNum( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	JS_SET_RVAL( cx, vp, JS::NullValue() );
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
@@ -4448,7 +4448,7 @@ bool SE_EraStringToNum( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	std::string eraString = oldstrutil::upper( JS_GetStringBytes( cx, argv[0]));
+	std::string eraString = oldstrutil::upper( JS_GetStringBytes( cx, args.get(0)));
 	if( !eraString.empty() )
 	{
 		UI08 eraNum = static_cast<UI08>( cwmWorldState->ServerData()->EraStringToEnum( eraString, false, false ));
@@ -4485,8 +4485,8 @@ bool SE_GetCommandLevelVal( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	std::string cmdLvlString = oldstrutil::upper( JS_GetStringBytes( cx, argv[0] ) );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	std::string cmdLvlString = oldstrutil::upper( JS_GetStringBytes( cx, args.get(0) ) );
 	if( !cmdLvlString.empty() )
 	{
 		if( cmdLvlString == "PLAYER" )
@@ -4531,7 +4531,7 @@ bool SE_GetCommandLevelVal( JSContext *cx, unsigned int argc, JS::Value *vp )
 bool SE_GetServerSetting( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	JS_SET_RVAL( cx, vp, JS::NullValue() );
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
@@ -4540,7 +4540,7 @@ bool SE_GetServerSetting( JSContext *cx, unsigned int argc, JS::Value *vp )
 	}
 
 	JSString *tString;
-	std::string settingName = oldstrutil::upper( JS_GetStringBytes( cx, argv[0]));
+	std::string settingName = oldstrutil::upper( JS_GetStringBytes( cx, args.get(0)));
 	if( !settingName.empty() )
 	{
 		auto settingId = cwmWorldState->ServerData()->LookupINIValue( settingName );
@@ -5832,7 +5832,7 @@ bool SE_GetServerSetting( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetClientFeature( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
@@ -5840,7 +5840,7 @@ bool SE_GetClientFeature( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	ClientFeatures clientFeature = static_cast<ClientFeatures>( argv[0].toInt32());
+	ClientFeatures clientFeature = static_cast<ClientFeatures>( args.get(0).toInt32());
 	JS_SET_RVAL( cx, vp, JS::BooleanValue( cwmWorldState->ServerData()->GetClientFeature( clientFeature )) );
 	return true;
 }
@@ -5852,7 +5852,7 @@ bool SE_GetClientFeature( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetServerFeature( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
@@ -5860,7 +5860,7 @@ bool SE_GetServerFeature( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	ServerFeatures serverFeature = static_cast<ServerFeatures>( argv[0].toInt32());
+	ServerFeatures serverFeature = static_cast<ServerFeatures>( args.get(0).toInt32());
 	JS_SET_RVAL( cx, vp, JS::BooleanValue( cwmWorldState->ServerData()->GetServerFeature( serverFeature )) );
 	return true;
 }
@@ -5940,7 +5940,7 @@ bool SE_GetServerVersionString( JSContext *cx, unsigned int argc, JS::Value *vp 
 //o------------------------------------------------------------------------------------------------o
 bool SE_DistanceBetween( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	JS::Value* rval = &JS_RVAL(cx, vp);
 	if( argc != 2 && argc != 3 && argc != 4 && argc != 6 )
 	{
@@ -5951,9 +5951,9 @@ bool SE_DistanceBetween( JSContext *cx, unsigned int argc, JS::Value *vp )
 	if( argc <= 3 )
 	{
 		// 2 or 3 arguments - find dinstance between two objects in 2D or 3D
-		JSObject *srcObj = &argv[0].toObject();
-		JSObject *trgObj = &argv[1].toObject();
-		bool checkZ = argc == 3 ? ( argv[2].toBoolean() == true ) : false;
+		JSObject *srcObj = &args.get(0).toObject();
+		JSObject *trgObj = &args.get(1).toObject();
+		bool checkZ = argc == 3 ? ( args.get(2).toBoolean() == true ) : false;
 		CBaseObject *srcBaseObj = static_cast<CBaseObject *>( JS_GetPrivate( cx, srcObj ));
 		CBaseObject *trgBaseObj = static_cast<CBaseObject *>( JS_GetPrivate( cx, trgObj ));
 		if( !ValidateObject( srcBaseObj ) || !ValidateObject( trgBaseObj ))
@@ -5974,24 +5974,24 @@ bool SE_DistanceBetween( JSContext *cx, unsigned int argc, JS::Value *vp )
 	}
 	else
 	{
-		UI16 x1 = static_cast<UI16>( argv[0].toInt32());
-		UI16 y1 = static_cast<UI16>( argv[1].toInt32());
+		UI16 x1 = static_cast<UI16>( args.get(0).toInt32());
+		UI16 y1 = static_cast<UI16>( args.get(1).toInt32());
 		UI16 x2 = 0;
 		UI16 y2 = 0;
 		if( argc == 4 )
 		{
 			// 4 arguments - find distance in 2D
-			x2		= static_cast<UI16>( argv[2].toInt32());
-			y2		= static_cast<UI16>( argv[3].toInt32());
+			x2		= static_cast<UI16>( args.get(2).toInt32());
+			y2		= static_cast<UI16>( args.get(3).toInt32());
 			*rval	= JS::Int32Value( GetDist( Point3_st( x1, y1, 0 ), Point3_st( x2, y2, 0 )));
 		}
 		else
 		{
 			// 6 arguments - find distance in 3D
-			SI08 z1 = static_cast<SI08>( argv[2].toInt32());
-			x2		= static_cast<UI16>( argv[3].toInt32());
-			y2		= static_cast<UI16>( argv[4].toInt32());
-			SI08 z2 = static_cast<SI08>( argv[5].toInt32());
+			SI08 z1 = static_cast<SI08>( args.get(2).toInt32());
+			x2		= static_cast<UI16>( args.get(3).toInt32());
+			y2		= static_cast<UI16>( args.get(4).toInt32());
+			SI08 z2 = static_cast<SI08>( args.get(5).toInt32());
 			*rval	= JS::Int32Value( GetDist3D( Point3_st( x1, y1, z1 ), Point3_st( x2, y2, z2 )));
 		}
 	}
