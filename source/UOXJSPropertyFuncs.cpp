@@ -1655,25 +1655,46 @@ IMPL_ITEM_INT_SET( type, ItemTypes, item->SetType( value ))
 FDCLS( CItem, serial ) { return true; }
 FDCLS( CItem, title ) { return true; }
 
-static bool SetLegacyItemProperty( JSContext *cx, JS::HandleObject itemObject, int32_t propertyId, JS::HandleValue value )
+FDCLS( CItem, owner )
 {
-	JS::RootedValue rootedValue( cx, value );
-	return CItemProps_setProperty( cx, itemObject, JS::PropertyKey::Int( propertyId ), false, rootedValue.address() );
+	FNARGS
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );
+	if( args.get( 0 ).isNullOrUndefined() ) { item->SetOwner( nullptr ); return true; }
+	if( !args.get( 0 ).isObject() ) return true;
+	CChar *owner = JS::GetMaybePtrFromReservedSlot<CChar>( &args.get( 0 ).toObject(), 0 );
+	if( ValidateObject( owner )) item->SetOwner( owner );
+	return true;
 }
 
-#define IMPL_ITEM_LEGACY_SET( attr, propertyId )                         \
-FDCLS( CItem, attr )                                                     \
-{                                                                        \
-	FNARGS                                                                 \
-	return SetLegacyItemProperty( cx, thisObj, propertyId, args.get( 0 )); \
+FDCLS( CItem, container )
+{
+	FNARGS
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );
+	if( args.get( 0 ).isNullOrUndefined() ) { item->SetCont( nullptr, true ); return true; }
+	if( !args.get( 0 ).isObject() ) return true;
+	CBaseObject *container = JS::GetMaybePtrFromReservedSlot<CBaseObject>( &args.get( 0 ).toObject(), 0 );
+	if( ValidateObject( container )) item->SetCont( container, true );
+	return true;
 }
 
-IMPL_ITEM_LEGACY_SET( owner,          CIP_OWNER )
-IMPL_ITEM_LEGACY_SET( container,      CIP_CONTAINER )
-IMPL_ITEM_LEGACY_SET( scriptTrigger,  CIP_SCRIPTTRIGGER )
-IMPL_ITEM_LEGACY_SET( scriptTriggers, CIP_SCRIPTTRIGGERS )
+static bool SetItemScriptTrigger( JSContext *cx, CItem *item, JS::HandleValue input, bool replace )
+{
+	if( input.isNullOrUndefined() ) { item->ClearScriptTriggers(); return true; }
+	int32_t value = 0;
+	if( !JS::ToInt32( cx, input, &value )) return false;
+	const UI16 scriptId = static_cast<UI16>( value );
+	if( JSMapping->GetScript( scriptId ) == nullptr )
+	{
+		ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
+		return true;
+	}
+	if( replace ) item->ClearScriptTriggers();
+	item->AddScriptTrigger( scriptId );
+	return true;
+}
 
-#undef IMPL_ITEM_LEGACY_SET
+FDCLS( CItem, scriptTrigger ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); return SetItemScriptTrigger( cx, item, args.get( 0 ), true ); }
+FDCLS( CItem, scriptTriggers ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); return SetItemScriptTrigger( cx, item, args.get( 0 ), false ); }
 
 FDCLG( CItem, owner )
 {
@@ -1727,23 +1748,49 @@ FDCLG( CItem, scriptTriggers )
 	return true;
 }
 
-#define ITEM_METADATA_SET( attr, propertyId )                            \
-FDCLS( CItem, attr )                                                     \
-{                                                                        \
-	FNARGS                                                                 \
-	return SetLegacyItemProperty( cx, thisObj, propertyId, args.get( 0 )); \
+FDCLS( CItem, oldX ) { return true; }
+FDCLS( CItem, oldY ) { return true; }
+FDCLS( CItem, oldZ ) { return true; }
+FDCLS( CItem, multi ) { return true; }
+#define ITEM_COLOUR_ALIAS_SET( attr )                                    \
+FDCLS( CItem, attr )                                                      \
+{                                                                         \
+	FNARGS                                                                  \
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );       \
+	int32_t value = 0;                                                       \
+	if( !JS::ToInt32( cx, args.get( 0 ), &value )) return false;             \
+	item->SetColour( static_cast<UI16>( value ));                            \
+	return true;                                                             \
 }
-ITEM_METADATA_SET( oldX, CIP_OLDX )
-ITEM_METADATA_SET( oldY, CIP_OLDY )
-ITEM_METADATA_SET( oldZ, CIP_OLDZ )
-ITEM_METADATA_SET( skin, CIP_COLOUR )
-ITEM_METADATA_SET( hue, CIP_COLOUR )
-ITEM_METADATA_SET( scripttrigger, CIP_SCRIPTTRIGGER )
-ITEM_METADATA_SET( decaytime, CIP_DECAYTIME )
-ITEM_METADATA_SET( race, CIP_RACE )
-ITEM_METADATA_SET( multi, CIP_MULTI )
-ITEM_METADATA_SET( region, CIP_REGION )
-#undef ITEM_METADATA_SET
+ITEM_COLOUR_ALIAS_SET( skin )
+ITEM_COLOUR_ALIAS_SET( hue )
+#undef ITEM_COLOUR_ALIAS_SET
+FDCLS( CItem, scripttrigger )
+{
+	FNARGS
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );
+	int32_t value = 0;
+	if( !JS::ToInt32( cx, args.get( 0 ), &value )) return false;
+	const UI16 scriptId = static_cast<UI16>( value );
+	if( JSMapping->GetScript( scriptId ) == nullptr ) { ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() ); return true; }
+	item->ClearScriptTriggers();
+	item->AddScriptTrigger( scriptId );
+	return true;
+}
+FDCLS( CItem, decaytime ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); double value = 0; if( !JS::ToNumber( cx, args.get( 0 ), &value )) return false; item->SetDecayTime( value == 0 ? 0 : BuildTimeValue( value )); return true; }
+#define ITEM_METADATA_INT_SET( attr, valueType, accessor )                \
+FDCLS( CItem, attr )                                                       \
+{                                                                          \
+	FNARGS                                                                   \
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );        \
+	int32_t value = 0;                                                       \
+	if( !JS::ToInt32( cx, args.get( 0 ), &value )) return false;             \
+	item->accessor( static_cast<valueType>( value ));                         \
+	return true;                                                             \
+}
+ITEM_METADATA_INT_SET( race, RACEID, SetRace )
+ITEM_METADATA_INT_SET( region, UI16, SetRegion )
+#undef ITEM_METADATA_INT_SET
 
 FDCLG( CItem, oldX ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); args.rval().setInt32( item->GetOldLocation().x ); return true; }
 FDCLG( CItem, oldY ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); args.rval().setInt32( item->GetOldLocation().y ); return true; }
@@ -1806,17 +1853,29 @@ FDCLG( CItem, spawnSerial )
 	return true;
 }
 
-#define ITEM_SPAWNER_SET( attr, propertyId )                            \
-FDCLS( CItem, attr )                                                    \
-{                                                                       \
-	FNARGS                                                                \
-	return SetLegacyItemProperty( cx, thisObj, propertyId, args.get( 0 ));\
+FDCLS( CItem, spawnsection )
+{
+	FNARGS
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );
+	JS::RootedString value( cx, JS::ToString( cx, args.get( 0 )));
+	if( value == nullptr ) return false;
+	if( item->GetObjType() == OT_SPAWNER ) static_cast<CSpawnItem *>( item )->SetSpawnSection( convertToString( cx, value ));
+	return true;
 }
-ITEM_SPAWNER_SET( spawnsection, CIP_SPAWNSECTION )
-ITEM_SPAWNER_SET( sectionalist, CIP_SECTIONALIST )
-ITEM_SPAWNER_SET( mininterval, CIP_MININTERVAL )
-ITEM_SPAWNER_SET( maxinterval, CIP_MAXINTERVAL )
-#undef ITEM_SPAWNER_SET
+FDCLS( CItem, sectionalist ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); if( item->GetObjType() == OT_SPAWNER ) static_cast<CSpawnItem *>( item )->IsSectionAList( JS::ToBoolean( args.get( 0 ))); return true; }
+#define ITEM_SPAWNER_INTERVAL_SET( attr, part )                           \
+FDCLS( CItem, attr )                                                      \
+{                                                                         \
+	FNARGS                                                                  \
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );       \
+	int32_t value = 0;                                                       \
+	if( !JS::ToInt32( cx, args.get( 0 ), &value )) return false;             \
+	if( item->GetObjType() == OT_SPAWNER ) static_cast<CSpawnItem *>( item )->SetInterval( part, static_cast<UI08>( value )); \
+	return true;                                                             \
+}
+ITEM_SPAWNER_INTERVAL_SET( mininterval, 0 )
+ITEM_SPAWNER_INTERVAL_SET( maxinterval, 1 )
+#undef ITEM_SPAWNER_INTERVAL_SET
 
 FDCLG( CItem, spawnsection )
 {
@@ -1845,35 +1904,41 @@ ITEM_SPAWNER_GET( mininterval, setInt32, GetInterval( 0 ) )
 ITEM_SPAWNER_GET( maxinterval, setInt32, GetInterval( 1 ) )
 #undef ITEM_SPAWNER_GET
 
-#define ITEM_MULTI_SET( attr, propertyId )                              \
-FDCLS( CItem, attr )                                                    \
-{                                                                       \
-	FNARGS                                                                \
-	return SetLegacyItemProperty( cx, thisObj, propertyId, args.get( 0 ));\
+FDCLS( CItem, lockdowns ) { return true; }
+FDCLS( CItem, trashContainers ) { return true; }
+FDCLS( CItem, secureContainers ) { return true; }
+FDCLS( CItem, friends ) { return true; }
+FDCLS( CItem, guests ) { return true; }
+FDCLS( CItem, owners ) { return true; }
+FDCLS( CItem, bans ) { return true; }
+FDCLS( CItem, vendors ) { return true; }
+
+#define ITEM_MULTI_INT_SET( attr, valueType, accessor )                  \
+FDCLS( CItem, attr )                                                      \
+{                                                                         \
+	FNARGS                                                                  \
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );       \
+	int32_t value = 0;                                                       \
+	if( !JS::ToInt32( cx, args.get( 0 ), &value )) return false;             \
+	if( item->GetObjType() == OT_MULTI ) static_cast<CMultiObj *>( item )->accessor( static_cast<valueType>( value )); \
+	return true;                                                             \
 }
-ITEM_MULTI_SET( lockdowns, CIP_LOCKDDOWNS )
-ITEM_MULTI_SET( maxLockdowns, CIP_MAXLOCKDOWNS )
-ITEM_MULTI_SET( trashContainers, CIP_TRASHCONTAINERS )
-ITEM_MULTI_SET( maxTrashContainers, CIP_MAXTRASHCONTAINERS )
-ITEM_MULTI_SET( secureContainers, CIP_SECURECONTAINERS )
-ITEM_MULTI_SET( maxSecureContainers, CIP_MAXSECURECONTAINERS )
-ITEM_MULTI_SET( friends, CIP_FRIENDS )
-ITEM_MULTI_SET( maxFriends, CIP_MAXFRIENDS )
-ITEM_MULTI_SET( guests, CIP_GUESTS )
-ITEM_MULTI_SET( maxGuests, CIP_MAXGUESTS )
-ITEM_MULTI_SET( owners, CIP_OWNERS )
-ITEM_MULTI_SET( maxOwners, CIP_MAXOWNERS )
-ITEM_MULTI_SET( bans, CIP_BANS )
-ITEM_MULTI_SET( maxBans, CIP_MAXBANS )
-ITEM_MULTI_SET( vendors, CIP_VENDORS )
-ITEM_MULTI_SET( maxVendors, CIP_MAXVENDORS )
-ITEM_MULTI_SET( deed, CIP_DEED )
-ITEM_MULTI_SET( isPublic, CIP_ISPUBLIC )
-ITEM_MULTI_SET( buildTimestamp, CIP_BUILDTIMESTAMP )
-ITEM_MULTI_SET( tradeTimestamp, CIP_TRADETIMESTAMP )
-ITEM_MULTI_SET( banX, CIP_BANX )
-ITEM_MULTI_SET( banY, CIP_BANY )
-#undef ITEM_MULTI_SET
+ITEM_MULTI_INT_SET( maxLockdowns, UI16, SetMaxLockdowns )
+ITEM_MULTI_INT_SET( maxTrashContainers, UI16, SetMaxTrashContainers )
+ITEM_MULTI_INT_SET( maxSecureContainers, UI16, SetMaxSecureContainers )
+ITEM_MULTI_INT_SET( maxFriends, UI16, SetMaxFriends )
+ITEM_MULTI_INT_SET( maxGuests, UI16, SetMaxGuests )
+ITEM_MULTI_INT_SET( maxOwners, UI16, SetMaxOwners )
+ITEM_MULTI_INT_SET( maxBans, UI16, SetMaxBans )
+ITEM_MULTI_INT_SET( maxVendors, UI16, SetMaxVendors )
+ITEM_MULTI_INT_SET( banX, SI16, SetBanX )
+ITEM_MULTI_INT_SET( banY, SI16, SetBanY )
+#undef ITEM_MULTI_INT_SET
+
+FDCLS( CItem, deed ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); JS::RootedString value( cx, JS::ToString( cx, args.get( 0 ))); if( value == nullptr ) return false; if( item->GetObjType() == OT_MULTI ) static_cast<CMultiObj *>( item )->SetDeed( convertToString( cx, value )); return true; }
+FDCLS( CItem, isPublic ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); if( item->GetObjType() == OT_MULTI ) static_cast<CMultiObj *>( item )->SetPublicStatus( JS::ToBoolean( args.get( 0 ))); return true; }
+FDCLS( CItem, buildTimestamp ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); if( item->GetObjType() == OT_MULTI ) static_cast<CMultiObj *>( item )->SetBuildTimestamp( std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() )); return true; }
+FDCLS( CItem, tradeTimestamp ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); if( item->GetObjType() == OT_MULTI ) static_cast<CMultiObj *>( item )->SetTradeTimestamp( std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() )); return true; }
 
 #define ITEM_MULTI_GET( attr, method, expression )                      \
 FDCLG( CItem, attr )                                                    \
@@ -1944,35 +2009,49 @@ IMPL_GET_OBJ( CItem, maxItems,      CItem, setInt32,   GetMaxItems() )
 IMPL_GET_OBJ( CItem, corpse,        CItem, setBoolean, IsCorpse() )
 IMPL_GETS_OBJ( CItem, desc,         CItem, setString,  GetDesc().c_str() )
 
-#define IMPL_ITEM_STATE_SET( attr, propertyId )                         \
-FDCLS( CItem, attr )                                                    \
-{                                                                       \
-	FNARGS                                                                \
-	return SetLegacyItemProperty( cx, thisObj, propertyId, args.get( 0 ));\
+#define ITEM_STATE_INT_SET( attr, valueType, accessor )                  \
+FDCLS( CItem, attr )                                                      \
+{                                                                         \
+	FNARGS                                                                  \
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );       \
+	int32_t value = 0;                                                       \
+	if( !JS::ToInt32( cx, args.get( 0 ), &value )) return false;             \
+	item->accessor( static_cast<valueType>( value ));                         \
+	return true;                                                             \
 }
+ITEM_STATE_INT_SET( movable, UI08, SetMovable )
+ITEM_STATE_INT_SET( layer, ItemLayers, SetLayer )
+ITEM_STATE_INT_SET( maxhp, SI16, SetMaxHP )
+ITEM_STATE_INT_SET( maxUses, UI16, SetMaxUses )
+ITEM_STATE_INT_SET( usesLeft, UI16, SetUsesLeft )
+ITEM_STATE_INT_SET( rank, SI08, SetRank )
+ITEM_STATE_INT_SET( creator, SERIAL, SetCreator )
+ITEM_STATE_INT_SET( poison, UI08, SetPoisoned )
+ITEM_STATE_INT_SET( poisonedBy, UI32, SetPoisonedBy )
+ITEM_STATE_INT_SET( poisonCharges, UI16, SetPoisonCharges )
+ITEM_STATE_INT_SET( dir, SI16, SetDir )
+ITEM_STATE_INT_SET( weight, SI32, SetWeight )
+ITEM_STATE_INT_SET( weightMax, SI32, SetWeightMax )
+ITEM_STATE_INT_SET( baseWeight, SI32, SetBaseWeight )
+ITEM_STATE_INT_SET( maxItems, UI16, SetMaxItems )
+#undef ITEM_STATE_INT_SET
 
-IMPL_ITEM_STATE_SET( movable, CIP_MOVABLE )
-IMPL_ITEM_STATE_SET( layer, CIP_LAYER )
-IMPL_ITEM_STATE_SET( decayable, CIP_DECAYABLE )
-IMPL_ITEM_STATE_SET( name2, CIP_NAME2 )
-IMPL_ITEM_STATE_SET( maxhp, CIP_MAXHP )
-IMPL_ITEM_STATE_SET( maxUses, CIP_MAXUSES )
-IMPL_ITEM_STATE_SET( usesLeft, CIP_USESLEFT )
-IMPL_ITEM_STATE_SET( rank, CIP_RANK )
-IMPL_ITEM_STATE_SET( creator, CIP_CREATOR )
-IMPL_ITEM_STATE_SET( poison, CIP_POISON )
-IMPL_ITEM_STATE_SET( poisonedBy, CIP_POISONEDBY )
-IMPL_ITEM_STATE_SET( poisonCharges, CIP_POISONCHARGES )
-IMPL_ITEM_STATE_SET( dir, CIP_DIR )
-IMPL_ITEM_STATE_SET( wipable, CIP_WIPABLE )
-IMPL_ITEM_STATE_SET( weight, CIP_WEIGHT )
-IMPL_ITEM_STATE_SET( weightMax, CIP_WEIGHTMAX )
-IMPL_ITEM_STATE_SET( baseWeight, CIP_BASEWEIGHT )
-IMPL_ITEM_STATE_SET( maxItems, CIP_MAXITEMS )
-IMPL_ITEM_STATE_SET( corpse, CIP_CORPSE )
-IMPL_ITEM_STATE_SET( desc, CIP_DESC )
-
-#undef IMPL_ITEM_STATE_SET
+FDCLS( CItem, decayable ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); item->SetDecayable( JS::ToBoolean( args.get( 0 ))); return true; }
+FDCLS( CItem, wipable ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); item->SetWipeable( JS::ToBoolean( args.get( 0 ))); return true; }
+FDCLS( CItem, corpse ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); item->SetCorpse( JS::ToBoolean( args.get( 0 ))); return true; }
+#define ITEM_STATE_STRING_SET( attr, accessor )                           \
+FDCLS( CItem, attr )                                                       \
+{                                                                          \
+	FNARGS                                                                   \
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );        \
+	JS::RootedString value( cx, JS::ToString( cx, args.get( 0 )));           \
+	if( value == nullptr ) return false;                                     \
+	item->accessor( convertToString( cx, value ));                            \
+	return true;                                                             \
+}
+ITEM_STATE_STRING_SET( name2, SetName2 )
+ITEM_STATE_STRING_SET( desc, SetDesc )
+#undef ITEM_STATE_STRING_SET
 
 #define ITEM_NUM_GET( attr, accessor ) IMPL_GET_OBJ( CItem, attr, CItem, setInt32, accessor )
 #define ITEM_BOOL_GET( attr, accessor ) IMPL_GET_OBJ( CItem, attr, CItem, setBoolean, accessor )
@@ -2019,53 +2098,114 @@ ITEM_NUM_GET( lowerStateReq, GetLowerStatReq() )
 #undef ITEM_NUM_GET
 #undef ITEM_BOOL_GET
 
-#define ITEM_NUM_SET( attr, propertyId )                                  \
+static bool SetItemTempVariable( JSContext *cx, CItem *item, CITempVars variable, JS::HandleValue input )
+{
+	JS::RootedString converted( cx, JS::ToString( cx, input ));
+	if( converted == nullptr ) return false;
+	auto text = oldstrutil::trim( oldstrutil::removeTrailing( convertToString( cx, converted ), "//" ));
+	auto sections = oldstrutil::sections( text, " " );
+	if( sections.size() >= 4 )
+	{
+		try
+		{
+			for( UI08 part = 1; part <= 4; ++part )
+				item->SetTempVar( variable, part, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( sections[part - 1], "//" )), nullptr, 0 )));
+		}
+		catch( const std::exception & )
+		{
+			JS_ReportErrorASCII( cx, "Invalid packed item property value" );
+			return false;
+		}
+		return true;
+	}
+	int32_t value = 0;
+	if( !JS::ToInt32( cx, input, &value )) return false;
+	item->SetTempVar( variable, value );
+	return true;
+}
+
+#define ITEM_TEMP_VAR_SET( attr, variable )                              \
 FDCLS( CItem, attr )                                                      \
 {                                                                         \
 	FNARGS                                                                  \
-	return SetLegacyItemProperty( cx, thisObj, propertyId, args.get( 0 ));  \
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );       \
+	return SetItemTempVariable( cx, item, variable, args.get( 0 ));          \
 }
-ITEM_NUM_SET( more, CIP_MORE )
-ITEM_NUM_SET( more0, CIP_MORE0 )
-ITEM_NUM_SET( more1, CIP_MORE1 )
-ITEM_NUM_SET( more2, CIP_MORE2 )
-ITEM_NUM_SET( morex, CIP_MOREX )
-ITEM_NUM_SET( morey, CIP_MOREY )
-ITEM_NUM_SET( morez, CIP_MOREZ )
-ITEM_NUM_SET( lodamage, CIP_LODAMAGE )
-ITEM_NUM_SET( hidamage, CIP_HIDAMAGE )
-ITEM_NUM_SET( ac, CIP_AC )
-ITEM_NUM_SET( def, CIP_DEF )
-ITEM_NUM_SET( resistCold, CIP_RESISTCOLD )
-ITEM_NUM_SET( resistHeat, CIP_RESISTHEAT )
-ITEM_NUM_SET( resistLight, CIP_RESISTLIGHT )
-ITEM_NUM_SET( resistLightning, CIP_RESISTLIGHTNING )
-ITEM_NUM_SET( resistPoison, CIP_RESISTPOISON )
-ITEM_NUM_SET( resistRain, CIP_RESISTRAIN )
-ITEM_NUM_SET( resistSnow, CIP_RESISTSNOW )
-ITEM_NUM_SET( damageCold, CIP_DAMAGECOLD )
-ITEM_NUM_SET( damageHeat, CIP_DAMAGEHEAT )
-ITEM_NUM_SET( damageLight, CIP_DAMAGELIGHT )
-ITEM_NUM_SET( damageLightning, CIP_DAMAGELIGHTNING )
-ITEM_NUM_SET( damagePoison, CIP_DAMAGEPOISON )
-ITEM_NUM_SET( damageRain, CIP_DAMAGERAIN )
-ITEM_NUM_SET( damageSnow, CIP_DAMAGESNOW )
-ITEM_NUM_SET( speed, CIP_SPEED )
-ITEM_NUM_SET( swingSpeedIncrease, CIP_SWINGSPEEDINCREASE )
-ITEM_NUM_SET( damageIncrease, CIP_DAMAGEINCREASE )
-ITEM_NUM_SET( healthLeech, CIP_HEALTHLEECH )
-ITEM_NUM_SET( staminaLeech, CIP_STAMINALEECH )
-ITEM_NUM_SET( manaLeech, CIP_MANALEECH )
-ITEM_NUM_SET( hitChance, CIP_HITCHANCE )
-ITEM_NUM_SET( defenseChance, CIP_DEFENSECHANCE )
-ITEM_NUM_SET( luck, CIP_LUCK )
-ITEM_NUM_SET( healthBonus, CIP_HEALTHBONUS )
-ITEM_NUM_SET( staminaBonus, CIP_STAMINABONUS )
-ITEM_NUM_SET( manaBonus, CIP_MANABONUS )
-ITEM_NUM_SET( artifactRarity, CIP_ARTIFACTRARITY )
-ITEM_NUM_SET( durabilityHpBonus, CIP_DURABILITYHPBONUS )
-ITEM_NUM_SET( lowerStateReq, CIP_LOWERSTATREQ )
-#undef ITEM_NUM_SET
+ITEM_TEMP_VAR_SET( more, CITV_MORE )
+ITEM_TEMP_VAR_SET( more0, CITV_MORE0 )
+ITEM_TEMP_VAR_SET( more1, CITV_MORE1 )
+ITEM_TEMP_VAR_SET( more2, CITV_MORE2 )
+ITEM_TEMP_VAR_SET( morex, CITV_MOREX )
+ITEM_TEMP_VAR_SET( morey, CITV_MOREY )
+ITEM_TEMP_VAR_SET( morez, CITV_MOREZ )
+#undef ITEM_TEMP_VAR_SET
+
+#define ITEM_COMBAT_INT_SET( attr, valueType, accessor )                 \
+FDCLS( CItem, attr )                                                      \
+{                                                                         \
+	FNARGS                                                                  \
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );       \
+	int32_t value = 0;                                                       \
+	if( !JS::ToInt32( cx, args.get( 0 ), &value )) return false;             \
+	item->accessor( static_cast<valueType>( value ));                         \
+	return true;                                                             \
+}
+ITEM_COMBAT_INT_SET( lodamage, SI16, SetLoDamage )
+ITEM_COMBAT_INT_SET( hidamage, SI16, SetHiDamage )
+ITEM_COMBAT_INT_SET( ac, UI08, SetArmourClass )
+ITEM_COMBAT_INT_SET( speed, UI08, SetSpeed )
+ITEM_COMBAT_INT_SET( swingSpeedIncrease, SI16, SetSwingSpeedIncrease )
+ITEM_COMBAT_INT_SET( damageIncrease, SI16, SetDamageIncrease )
+ITEM_COMBAT_INT_SET( healthLeech, SI16, SetHealthLeech )
+ITEM_COMBAT_INT_SET( staminaLeech, SI16, SetStaminaLeech )
+ITEM_COMBAT_INT_SET( manaLeech, SI16, SetManaLeech )
+ITEM_COMBAT_INT_SET( hitChance, SI16, SetHitChance )
+ITEM_COMBAT_INT_SET( defenseChance, SI16, SetDefenseChance )
+ITEM_COMBAT_INT_SET( luck, SI16, SetLuck )
+ITEM_COMBAT_INT_SET( healthBonus, SI16, SetHealthBonus )
+ITEM_COMBAT_INT_SET( staminaBonus, SI16, SetStaminaBonus )
+ITEM_COMBAT_INT_SET( manaBonus, SI16, SetManaBonus )
+ITEM_COMBAT_INT_SET( artifactRarity, SI16, SetArtifactRarity )
+ITEM_COMBAT_INT_SET( durabilityHpBonus, SI16, SetDurabilityHpBonus )
+ITEM_COMBAT_INT_SET( lowerStateReq, SI16, SetLowerStatReq )
+#undef ITEM_COMBAT_INT_SET
+
+#define ITEM_RESIST_SET( attr, damageType )                              \
+FDCLS( CItem, attr )                                                      \
+{                                                                         \
+	FNARGS                                                                  \
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );       \
+	int32_t value = 0;                                                       \
+	if( !JS::ToInt32( cx, args.get( 0 ), &value )) return false;             \
+	item->SetResist( static_cast<UI16>( value ), damageType );               \
+	return true;                                                             \
+}
+ITEM_RESIST_SET( def, PHYSICAL )
+ITEM_RESIST_SET( resistCold, COLD )
+ITEM_RESIST_SET( resistHeat, HEAT )
+ITEM_RESIST_SET( resistLight, LIGHT )
+ITEM_RESIST_SET( resistLightning, LIGHTNING )
+ITEM_RESIST_SET( resistPoison, POISON )
+ITEM_RESIST_SET( resistRain, RAIN )
+ITEM_RESIST_SET( resistSnow, SNOW )
+#undef ITEM_RESIST_SET
+
+#define ITEM_WEATHER_DAMAGE_SET( attr, damageType )                      \
+FDCLS( CItem, attr )                                                      \
+{                                                                         \
+	FNARGS                                                                  \
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );       \
+	item->SetWeatherDamage( damageType, JS::ToBoolean( args.get( 0 )));      \
+	return true;                                                             \
+}
+ITEM_WEATHER_DAMAGE_SET( damageCold, COLD )
+ITEM_WEATHER_DAMAGE_SET( damageHeat, HEAT )
+ITEM_WEATHER_DAMAGE_SET( damageLight, LIGHT )
+ITEM_WEATHER_DAMAGE_SET( damageLightning, LIGHTNING )
+ITEM_WEATHER_DAMAGE_SET( damagePoison, POISON )
+ITEM_WEATHER_DAMAGE_SET( damageRain, RAIN )
+ITEM_WEATHER_DAMAGE_SET( damageSnow, SNOW )
+#undef ITEM_WEATHER_DAMAGE_SET
 
 #define ITEM_FLAG_GET( attr, method, accessor ) IMPL_GET_OBJ( CItem, attr, CItem, method, accessor )
 ITEM_FLAG_GET( shouldSave, setBoolean, ShouldSave() )
@@ -2138,22 +2278,38 @@ ITEM_FLAG_GET( ammoFXRender, setInt32, GetAmmoFXRender() )
 ITEM_FLAG_GET( isItemHeld, setBoolean, IsHeldOnCursor() )
 #undef ITEM_FLAG_GET
 
-#define ITEM_RETAINED_SET( attr, propertyId )                            \
-FDCLS( CItem, attr )                                                     \
-{                                                                        \
-	FNARGS                                                                 \
-	return SetLegacyItemProperty( cx, thisObj, propertyId, args.get( 0 )); \
+#define ITEM_TIMER_SET( attr, accessor )                                  \
+FDCLS( CItem, attr )                                                       \
+{                                                                          \
+	FNARGS                                                                   \
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );        \
+	double value = 0;                                                        \
+	if( !JS::ToNumber( cx, args.get( 0 ), &value )) return false;             \
+	item->accessor( value == 0 ? 0 : BuildTimeValue( value ));                \
+	return true;                                                             \
 }
-ITEM_RETAINED_SET( tempLastTraded, CIP_TEMPLASTTRADED )
-ITEM_RETAINED_SET( tempTimer, CIP_TEMPTIMER )
-ITEM_RETAINED_SET( carveSection, CIP_CARVESECTION )
-ITEM_RETAINED_SET( ammoID, CIP_AMMOID )
-ITEM_RETAINED_SET( ammoHue, CIP_AMMOHUE )
-ITEM_RETAINED_SET( ammoFX, CIP_AMMOFX )
-ITEM_RETAINED_SET( ammoFXHue, CIP_AMMOFXHUE )
-ITEM_RETAINED_SET( ammoFXRender, CIP_AMMOFXRENDER )
-ITEM_RETAINED_SET( isItemHeld, CIP_ISITEMHELD )
-#undef ITEM_RETAINED_SET
+ITEM_TIMER_SET( tempLastTraded, SetTempLastTraded )
+ITEM_TIMER_SET( tempTimer, SetTempTimer )
+#undef ITEM_TIMER_SET
+
+#define ITEM_PROJECTILE_SET( attr, valueType, accessor )                  \
+FDCLS( CItem, attr )                                                       \
+{                                                                          \
+	FNARGS                                                                   \
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );        \
+	int32_t value = 0;                                                       \
+	if( !JS::ToInt32( cx, args.get( 0 ), &value )) return false;             \
+	item->accessor( static_cast<valueType>( value ));                         \
+	return true;                                                             \
+}
+ITEM_PROJECTILE_SET( carveSection, UI16, SetCarve )
+ITEM_PROJECTILE_SET( ammoID, UI16, SetAmmoId )
+ITEM_PROJECTILE_SET( ammoHue, UI16, SetAmmoHue )
+ITEM_PROJECTILE_SET( ammoFX, UI16, SetAmmoFX )
+ITEM_PROJECTILE_SET( ammoFXHue, UI16, SetAmmoFXHue )
+ITEM_PROJECTILE_SET( ammoFXRender, UI16, SetAmmoFXRender )
+#undef ITEM_PROJECTILE_SET
+FDCLS( CItem, isItemHeld ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); item->SetHeldOnCursor( JS::ToBoolean( args.get( 0 ))); return true; }
 
 #define ITEM_GENERAL_GET( attr, method, accessor ) IMPL_GET_OBJ( CItem, attr, CItem, method, accessor )
 FDCLG( CItem, att )
@@ -2207,72 +2363,111 @@ FDCLG( CItem, moveType )
 ITEM_GENERAL_GET( tithing, setInt32, GetTithing() )
 #undef ITEM_GENERAL_GET
 
-#define ITEM_GENERAL_SET( attr, propertyId )                             \
-FDCLS( CItem, attr )                                                     \
-{                                                                        \
-	FNARGS                                                                 \
-	return SetLegacyItemProperty( cx, thisObj, propertyId, args.get( 0 )); \
+#define ITEM_GENERAL_INT_SET( attr, valueType, accessor )                  \
+FDCLS( CItem, attr )                                                       \
+{                                                                          \
+	FNARGS                                                                   \
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );       \
+	int32_t value = 0;                                                       \
+	if( !JS::ToInt32( cx, args.get( 0 ), &value )) return false;             \
+	item->accessor( static_cast<valueType>( value ));                         \
+	return true;                                                             \
 }
-ITEM_GENERAL_SET( att, CIP_ATT )
-ITEM_GENERAL_SET( itemsinside, CIP_ITEMSINSIDE )
-ITEM_GENERAL_SET( totalItemCount, CIP_TOTALITEMCOUNT )
-ITEM_GENERAL_SET( healthRegenBonus, CIP_HEALTHREGENBONUS )
-ITEM_GENERAL_SET( staminaRegenBonus, CIP_STAMINAREGENBONUS )
-ITEM_GENERAL_SET( manaRegenBonus, CIP_MANAREGENBONUS )
-ITEM_GENERAL_SET( buyvalue, CIP_BUYVALUE )
-ITEM_GENERAL_SET( sellvalue, CIP_SELLVALUE )
-ITEM_GENERAL_SET( vendorPrice, CIP_VENDORPRICE )
-ITEM_GENERAL_SET( restock, CIP_RESTOCK )
-ITEM_GENERAL_SET( good, CIP_GOOD )
-ITEM_GENERAL_SET( divinelock, CIP_DIVINELOCK )
-ITEM_GENERAL_SET( strength, CIP_STRENGTH )
-ITEM_GENERAL_SET( dexterity, CIP_DEXTERITY )
-ITEM_GENERAL_SET( intelligence, CIP_INTELLIGENCE )
-ITEM_GENERAL_SET( event, CIP_EVENT )
-ITEM_GENERAL_SET( maxRange, CIP_MAXRANGE )
-ITEM_GENERAL_SET( baseRange, CIP_BASERANGE )
-ITEM_GENERAL_SET( origin, CIP_ORIGIN )
-ITEM_GENERAL_SET( stealable, CIP_STEALABLE )
-ITEM_GENERAL_SET( moveType, CIP_MOVETYPE )
-ITEM_GENERAL_SET( tithing, CIP_TITHING )
-#undef ITEM_GENERAL_SET
+ITEM_GENERAL_INT_SET( healthRegenBonus, SI16, SetHealthRegenBonus )
+ITEM_GENERAL_INT_SET( staminaRegenBonus, SI16, SetStaminaRegenBonus )
+ITEM_GENERAL_INT_SET( manaRegenBonus, SI16, SetManaRegenBonus )
+ITEM_GENERAL_INT_SET( buyvalue, UI32, SetBuyValue )
+ITEM_GENERAL_INT_SET( sellvalue, UI32, SetSellValue )
+ITEM_GENERAL_INT_SET( vendorPrice, UI32, SetVendorPrice )
+ITEM_GENERAL_INT_SET( restock, UI16, SetRestock )
+ITEM_GENERAL_INT_SET( good, UI16, SetGood )
+ITEM_GENERAL_INT_SET( strength, SI16, SetStrength )
+ITEM_GENERAL_INT_SET( dexterity, SI16, SetDexterity )
+ITEM_GENERAL_INT_SET( intelligence, SI16, SetIntelligence )
+ITEM_GENERAL_INT_SET( maxRange, UI08, SetMaxRange )
+ITEM_GENERAL_INT_SET( baseRange, UI08, SetBaseRange )
+ITEM_GENERAL_INT_SET( stealable, UI08, SetStealable )
+ITEM_GENERAL_INT_SET( tithing, SI32, SetTithing )
+#undef ITEM_GENERAL_INT_SET
 
-static bool SetLegacyCharacterProperty( JSContext *cx, JS::HandleObject characterObject, int32_t propertyId, JS::HandleValue value )
+FDCLS( CItem, att ) { return true; }
+FDCLS( CItem, itemsinside ) { return true; }
+FDCLS( CItem, totalItemCount ) { return true; }
+FDCLS( CItem, divinelock ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); item->SetDivineLock( JS::ToBoolean( args.get( 0 ))); return true; }
+FDCLS( CItem, event ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); JS::RootedString value( cx, JS::ToString( cx, args.get( 0 ))); if( value == nullptr ) return false; item->SetEvent( convertToString( cx, value )); return true; }
+FDCLS( CItem, origin ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); JS::RootedString value( cx, JS::ToString( cx, args.get( 0 ))); if( value == nullptr ) return false; item->SetOrigin( cwmWorldState->ServerData()->EraStringToEnum( convertToString( cx, value ))); return true; }
+FDCLS( CItem, moveType ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); int32_t value = 0; if( !JS::ToInt32( cx, args.get( 0 ), &value )) return false; if( item->GetObjType() == OT_BOAT ) static_cast<CBoatObj *>( item )->SetMoveType( static_cast<SI08>( value )); return true; }
+
+#define CHARACTER_CORE_STRING_SET( attr, accessor )                       \
+FDCLS( CCharacter, attr )                                                  \
+{                                                                          \
+	FNARGS                                                                   \
+	auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );   \
+	JS::RootedString value( cx, JS::ToString( cx, args.get( 0 )));           \
+	if( value == nullptr ) return false;                                     \
+	character->accessor( convertToString( cx, value ));                       \
+	return true;                                                             \
+}
+CHARACTER_CORE_STRING_SET( sectionID, SetSectionId )
+CHARACTER_CORE_STRING_SET( name, SetName )
+CHARACTER_CORE_STRING_SET( origName, SetOrgName )
+CHARACTER_CORE_STRING_SET( title, SetTitle )
+#undef CHARACTER_CORE_STRING_SET
+
+#define CHARACTER_CORE_INT_SET( attr, valueType, statement )              \
+FDCLS( CCharacter, attr )                                                   \
+{                                                                           \
+	FNARGS                                                                    \
+	auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );    \
+	int32_t converted = 0;                                                     \
+	if( !JS::ToInt32( cx, args.get( 0 ), &converted )) return false;           \
+	auto value = static_cast<valueType>( converted );                          \
+	statement;                                                                 \
+	return true;                                                               \
+}
+CHARACTER_CORE_INT_SET( x, SI16, character->SetLocation( value, character->GetY(), character->GetZ() ))
+CHARACTER_CORE_INT_SET( y, SI16, character->SetLocation( character->GetX(), value, character->GetZ() ))
+CHARACTER_CORE_INT_SET( z, SI08, character->SetZ( value ))
+CHARACTER_CORE_INT_SET( id, UI16, character->SetId( value ))
+CHARACTER_CORE_INT_SET( colour, UI16, character->SetColour( value ))
+CHARACTER_CORE_INT_SET( color, UI16, character->SetColour( value ))
+CHARACTER_CORE_INT_SET( skin, UI16, character->SetColour( value ))
+CHARACTER_CORE_INT_SET( hue, UI16, character->SetColour( value ))
+CHARACTER_CORE_INT_SET( controlSlots, UI16, character->SetControlSlots( value ))
+CHARACTER_CORE_INT_SET( controlSlotsUsed, UI16, character->SetControlSlotsUsed( value ))
+CHARACTER_CORE_INT_SET( orneriness, UI16, character->SetOrneriness( value ))
+CHARACTER_CORE_INT_SET( visible, VisibleTypes, character->SetVisible( value ))
+CHARACTER_CORE_INT_SET( health, SI16, character->SetHP( value ))
+#undef CHARACTER_CORE_INT_SET
+
+FDCLS( CCharacter, oldX ) { return true; }
+FDCLS( CCharacter, oldY ) { return true; }
+FDCLS( CCharacter, oldZ ) { return true; }
+FDCLS( CCharacter, serial ) { return true; }
+FDCLS( CCharacter, worldnumber )
 {
-	JS::RootedValue rootedValue( cx, value );
-	return CCharacterProps_setProperty( cx, characterObject, JS::PropertyKey::Int( propertyId ), false, rootedValue.address() );
+	FNARGS
+	auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );
+	int32_t converted = 0;
+	if( !JS::ToInt32( cx, args.get( 0 ), &converted )) return false;
+	const UI08 world = static_cast<UI08>( converted );
+	if( !Map->InsideValidWorld( character->GetX(), character->GetY(), world )) return false;
+	character->RemoveFromSight();
+	character->SetLocation( character->GetX(), character->GetY(), character->GetZ(), world, character->GetInstanceId() );
+	if( !character->IsNpc() ) SendMapChange( world, character->GetSocket() );
+	return true;
 }
-
-#define CHARACTER_CORE_SET( attr, propertyId )                              \
-FDCLS( CCharacter, attr )                                                    \
-{                                                                            \
-	FNARGS                                                                     \
-	return SetLegacyCharacterProperty( cx, thisObj, propertyId, args.get( 0 ));\
+FDCLS( CCharacter, instanceID )
+{
+	FNARGS
+	auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );
+	int32_t converted = 0;
+	if( !JS::ToInt32( cx, args.get( 0 ), &converted )) return false;
+	character->RemoveFromSight();
+	if( !character->IsNpc() ) character->RemoveAllObjectsFromSight( character->GetSocket() );
+	character->SetLocation( character->GetX(), character->GetY(), character->GetZ(), character->WorldNumber(), static_cast<UI16>( converted ));
+	return true;
 }
-CHARACTER_CORE_SET( sectionID, CCP_SECTIONID )
-CHARACTER_CORE_SET( name, CCP_NAME )
-CHARACTER_CORE_SET( origName, CCP_ORIGNAME )
-CHARACTER_CORE_SET( title, CCP_TITLE )
-CHARACTER_CORE_SET( x, CCP_X )
-CHARACTER_CORE_SET( y, CCP_Y )
-CHARACTER_CORE_SET( z, CCP_Z )
-CHARACTER_CORE_SET( oldX, CCP_OLDX )
-CHARACTER_CORE_SET( oldY, CCP_OLDY )
-CHARACTER_CORE_SET( oldZ, CCP_OLDZ )
-CHARACTER_CORE_SET( id, CCP_ID )
-CHARACTER_CORE_SET( colour, CCP_COLOUR )
-CHARACTER_CORE_SET( color, CCP_COLOUR )
-CHARACTER_CORE_SET( skin, CCP_COLOUR )
-CHARACTER_CORE_SET( hue, CCP_COLOUR )
-CHARACTER_CORE_SET( controlSlots, CCP_CONTROLSLOTS )
-CHARACTER_CORE_SET( controlSlotsUsed, CCP_CONTROLSLOTSUSED )
-CHARACTER_CORE_SET( orneriness, CCP_ORNERINESS )
-CHARACTER_CORE_SET( visible, CCP_VISIBLE )
-CHARACTER_CORE_SET( serial, CCP_SERIAL )
-CHARACTER_CORE_SET( health, CCP_HEALTH )
-CHARACTER_CORE_SET( worldnumber, CCP_WORLDNUMBER )
-CHARACTER_CORE_SET( instanceID, CCP_INSTANCEID )
-#undef CHARACTER_CORE_SET
 
 #define CHARACTER_STRING_GET( attr, expression )                         \
 FDCLG( CCharacter, attr )                                                 \
@@ -2315,29 +2510,51 @@ FDCLG( CCharacter, oldX ) { FNARGS auto character = JS::GetMaybePtrFromReservedS
 FDCLG( CCharacter, oldY ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); args.rval().setInt32( character->GetOldLocation().y ); return true; }
 FDCLG( CCharacter, oldZ ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); args.rval().setInt32( character->GetOldLocation().z ); return true; }
 
-#define CHARACTER_STATS_SET( attr, propertyId )                             \
-FDCLS( CCharacter, attr )                                                    \
-{                                                                            \
-	FNARGS                                                                     \
-	return SetLegacyCharacterProperty( cx, thisObj, propertyId, args.get( 0 ));\
+static CChar *CharacterFromValue( JS::HandleValue value )
+{
+	if( !value.isObject() ) return nullptr;
+	return JS::GetMaybePtrFromReservedSlot<CChar>( &value.toObject(), 0 );
 }
-CHARACTER_STATS_SET( owner, CCP_OWNER )
-CHARACTER_STATS_SET( scripttrigger, CCP_SCRIPTTRIGGER )
-CHARACTER_STATS_SET( scriptTriggers, CCP_SCRIPTTRIGGERS )
-CHARACTER_STATS_SET( target, CCP_TARGET )
-CHARACTER_STATS_SET( dexterity, CCP_DEXTERITY )
-CHARACTER_STATS_SET( intelligence, CCP_INTELLIGENCE )
-CHARACTER_STATS_SET( strength, CCP_STRENGTH )
-CHARACTER_STATS_SET( actualDexterity, CCP_ACTUALDEXTERITY )
-CHARACTER_STATS_SET( actualIntelligence, CCP_ACTUALINTELLIGENCE )
-CHARACTER_STATS_SET( actualStrength, CCP_ACTUALSTRENGTH )
-CHARACTER_STATS_SET( healthRegenBonus, CCP_HEALTHREGENBONUS )
-CHARACTER_STATS_SET( staminaRegenBonus, CCP_STAMINAREGENBONUS )
-CHARACTER_STATS_SET( manaRegenBonus, CCP_MANAREGENBONUS )
-CHARACTER_STATS_SET( mana, CCP_MANA )
-CHARACTER_STATS_SET( stamina, CCP_STAMINA )
-CHARACTER_STATS_SET( pack, CCP_CHARPACK )
-#undef CHARACTER_STATS_SET
+FDCLS( CCharacter, owner ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); if( args.get( 0 ).isNullOrUndefined() ) character->SetOwner( nullptr ); else { CChar *owner = CharacterFromValue( args.get( 0 )); if( ValidateObject( owner )) character->SetOwner( owner ); } return true; }
+FDCLS( CCharacter, target ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); if( args.get( 0 ).isNullOrUndefined() ) character->SetTarg( nullptr ); else { CChar *target = CharacterFromValue( args.get( 0 )); if( ValidateObject( target )) character->SetTarg( target ); } return true; }
+
+static bool SetCharacterScriptTrigger( JSContext *cx, CChar *character, JS::HandleValue input, bool replace )
+{
+	if( input.isNullOrUndefined() ) { character->ClearScriptTriggers(); return true; }
+	int32_t value = 0;
+	if( !JS::ToInt32( cx, input, &value )) return false;
+	const UI16 scriptId = static_cast<UI16>( value );
+	if( JSMapping->GetScript( scriptId ) == nullptr ) { ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() ); return true; }
+	if( replace ) character->ClearScriptTriggers();
+	character->AddScriptTrigger( scriptId );
+	return true;
+}
+FDCLS( CCharacter, scripttrigger ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); return SetCharacterScriptTrigger( cx, character, args.get( 0 ), true ); }
+FDCLS( CCharacter, scriptTriggers ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); return SetCharacterScriptTrigger( cx, character, args.get( 0 ), false ); }
+
+#define CHARACTER_STATS_INT_SET( attr, valueType, accessor )             \
+FDCLS( CCharacter, attr )                                                  \
+{                                                                          \
+	FNARGS                                                                   \
+	auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );   \
+	int32_t value = 0;                                                       \
+	if( !JS::ToInt32( cx, args.get( 0 ), &value )) return false;             \
+	character->accessor( static_cast<valueType>( value ));                    \
+	return true;                                                             \
+}
+CHARACTER_STATS_INT_SET( dexterity, SI16, SetDexterity )
+CHARACTER_STATS_INT_SET( intelligence, SI16, SetIntelligence )
+CHARACTER_STATS_INT_SET( strength, SI16, SetStrength )
+CHARACTER_STATS_INT_SET( healthRegenBonus, SI16, SetHealthRegenBonus )
+CHARACTER_STATS_INT_SET( staminaRegenBonus, SI16, SetStaminaRegenBonus )
+CHARACTER_STATS_INT_SET( manaRegenBonus, SI16, SetManaRegenBonus )
+CHARACTER_STATS_INT_SET( mana, SI16, SetMana )
+CHARACTER_STATS_INT_SET( stamina, SI16, SetStamina )
+#undef CHARACTER_STATS_INT_SET
+FDCLS( CCharacter, actualDexterity ) { return true; }
+FDCLS( CCharacter, actualIntelligence ) { return true; }
+FDCLS( CCharacter, actualStrength ) { return true; }
+FDCLS( CCharacter, pack ) { return true; }
 
 #define CHARACTER_STATS_GET( attr, method, expression ) IMPL_GET_OBJ( CCharacter, attr, CChar, method, expression )
 CHARACTER_STATS_GET( dexterity, setInt32, GetDexterity() )
@@ -2395,30 +2612,34 @@ FDCLG( CCharacter, scriptTriggers )
 	return true;
 }
 
-#define CHARACTER_STATE_SET( attr, propertyId )                             \
-FDCLS( CCharacter, attr )                                                    \
-{                                                                            \
-	FNARGS                                                                     \
-	return SetLegacyCharacterProperty( cx, thisObj, propertyId, args.get( 0 ));\
+#define CHARACTER_STATE_INT_SET( attr, valueType, accessor )             \
+FDCLS( CCharacter, attr )                                                  \
+{                                                                          \
+	FNARGS                                                                   \
+	auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );   \
+	int32_t value = 0;                                                       \
+	if( !JS::ToInt32( cx, args.get( 0 ), &value )) return false;             \
+	character->accessor( static_cast<valueType>( value ));                    \
+	return true;                                                             \
 }
-CHARACTER_STATE_SET( fame, CCP_FAME )
-CHARACTER_STATE_SET( karma, CCP_KARMA )
-CHARACTER_STATE_SET( canAttack, CCP_CANATTACK )
-CHARACTER_STATE_SET( karmaLock, CCP_KARMALOCK )
-CHARACTER_STATE_SET( fleeAt, CCP_FLEEAT )
-CHARACTER_STATE_SET( reAttackAt, CCP_REATTACKAT )
-CHARACTER_STATE_SET( brkPeaceChance, CCP_BRKPEACE )
-CHARACTER_STATE_SET( hunger, CCP_HUNGER )
-CHARACTER_STATE_SET( thirst, CCP_THIRST )
-CHARACTER_STATE_SET( frozen, CCP_FROZEN )
-CHARACTER_STATE_SET( commandlevel, CCP_COMMANDLEVEL )
-CHARACTER_STATE_SET( hasStolen, CCP_HASSTOLEN )
-CHARACTER_STATE_SET( criminal, CCP_CRIMINAL )
-CHARACTER_STATE_SET( innocent, CCP_INNOCENT )
-CHARACTER_STATE_SET( murdercount, CCP_MURDERCOUNT )
-CHARACTER_STATE_SET( neutral, CCP_NEUTRAL )
-CHARACTER_STATE_SET( npcFlag, CCP_NPCFLAG )
-#undef CHARACTER_STATE_SET
+CHARACTER_STATE_INT_SET( fame, SI16, SetFame )
+CHARACTER_STATE_INT_SET( karma, SI16, SetKarma )
+CHARACTER_STATE_INT_SET( fleeAt, SI16, SetFleeAt )
+CHARACTER_STATE_INT_SET( reAttackAt, SI16, SetReattackAt )
+CHARACTER_STATE_INT_SET( brkPeaceChance, SI16, SetBrkPeaceChance )
+CHARACTER_STATE_INT_SET( hunger, SI08, SetHunger )
+CHARACTER_STATE_INT_SET( thirst, SI08, SetThirst )
+CHARACTER_STATE_INT_SET( commandlevel, UI08, SetCommandLevel )
+#undef CHARACTER_STATE_INT_SET
+FDCLS( CCharacter, canAttack ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); character->SetCanAttack( JS::ToBoolean( args.get( 0 ))); return true; }
+FDCLS( CCharacter, karmaLock ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); character->SetKarmaLock( JS::ToBoolean( args.get( 0 ))); return true; }
+FDCLS( CCharacter, frozen ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); character->SetFrozen( JS::ToBoolean( args.get( 0 ))); return true; }
+FDCLS( CCharacter, hasStolen ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); if( JS::ToBoolean( args.get( 0 ))) FlagForStealing( character ); else { character->HasStolen( false ); character->SetTimer( tCHAR_STEALFLAG, 0 ); UpdateFlag( character ); } return true; }
+FDCLS( CCharacter, criminal ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); if( JS::ToBoolean( args.get( 0 ))) MakeCriminal( character ); else { character->SetTimer( tCHAR_CRIMFLAG, 0 ); UpdateFlag( character ); } return true; }
+FDCLS( CCharacter, innocent ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); if( !JS::ToBoolean( args.get( 0 ))) MakeCriminal( character ); else { character->SetTimer( tCHAR_CRIMFLAG, 0 ); UpdateFlag( character ); } return true; }
+FDCLS( CCharacter, neutral ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); if( JS::ToBoolean( args.get( 0 ))) character->SetFlagNeutral(); else character->SetFlagBlue(); character->SetTimer( tCHAR_CRIMFLAG, 0 ); UpdateFlag( character ); return true; }
+FDCLS( CCharacter, murdercount ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); int32_t value = 0; if( !JS::ToInt32( cx, args.get( 0 ), &value )) return false; character->SetKills( static_cast<SI16>( value )); UpdateFlag( character ); return true; }
+FDCLS( CCharacter, npcFlag ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); int32_t value = 0; if( !JS::ToInt32( cx, args.get( 0 ), &value )) return false; character->SetNPCFlag( static_cast<cNPC_FLAG>( value )); UpdateFlag( character ); return true; }
 
 #define CHARACTER_STATE_GET( attr, method, expression ) IMPL_GET_OBJ( CCharacter, attr, CChar, method, expression )
 CHARACTER_STATE_GET( fame, setInt32, GetFame() )
@@ -2450,34 +2671,47 @@ FDCLG( CCharacter, attack )
 	return true;
 }
 
-#define CHARACTER_LIFECYCLE_SET( attr, propertyId )                         \
-FDCLS( CCharacter, attr )                                                    \
-{                                                                            \
-	FNARGS                                                                     \
-	return SetLegacyCharacterProperty( cx, thisObj, propertyId, args.get( 0 ));\
+FDCLS( CCharacter, dead ) { return true; }
+FDCLS( CCharacter, online ) { return true; }
+FDCLS( CCharacter, isRunning ) { return true; }
+FDCLS( CCharacter, isChar ) { return true; }
+FDCLS( CCharacter, isItem ) { return true; }
+FDCLS( CCharacter, isSpawner ) { return true; }
+FDCLS( CCharacter, isFlying ) { return true; }
+#define CHARACTER_LIFECYCLE_BOOL_SET( attr, accessor )                    \
+FDCLS( CCharacter, attr )                                                  \
+{                                                                          \
+	FNARGS                                                                   \
+	auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );   \
+	character->accessor( JS::ToBoolean( args.get( 0 )));                      \
+	return true;                                                             \
 }
-CHARACTER_LIFECYCLE_SET( dead, CCP_DEAD )
-CHARACTER_LIFECYCLE_SET( npc, CCP_NPC )
-CHARACTER_LIFECYCLE_SET( isAwake, CCP_AWAKE )
-CHARACTER_LIFECYCLE_SET( online, CCP_ONLINE )
-CHARACTER_LIFECYCLE_SET( direction, CCP_DIRECTION )
-CHARACTER_LIFECYCLE_SET( isRunning, CCP_ISRUNNING )
-CHARACTER_LIFECYCLE_SET( isChar, CCP_ISCHAR )
-CHARACTER_LIFECYCLE_SET( isItem, CCP_ISITEM )
-CHARACTER_LIFECYCLE_SET( isSpawner, CCP_ISSPAWNER )
-CHARACTER_LIFECYCLE_SET( isonhorse, CCP_ISONHORSE )
-CHARACTER_LIFECYCLE_SET( isFlying, CCP_ISFLYING )
-CHARACTER_LIFECYCLE_SET( isGuarded, CCP_ISGUARDED )
-CHARACTER_LIFECYCLE_SET( tempdex, CCP_TDEXTERITY )
-CHARACTER_LIFECYCLE_SET( tempint, CCP_TINTELLIGENCE )
-CHARACTER_LIFECYCLE_SET( tempstr, CCP_TSTRENGTH )
-CHARACTER_LIFECYCLE_SET( poison, CCP_POISON )
-CHARACTER_LIFECYCLE_SET( poisonedBy, CCP_POISONEDBY )
-CHARACTER_LIFECYCLE_SET( lightlevel, CCP_LIGHTLEVEL )
-CHARACTER_LIFECYCLE_SET( vulnerable, CCP_VULNERABLE )
-CHARACTER_LIFECYCLE_SET( willhunger, CCP_HUNGERSTATUS )
-CHARACTER_LIFECYCLE_SET( willthirst, CCP_THIRSTSTATUS )
-#undef CHARACTER_LIFECYCLE_SET
+CHARACTER_LIFECYCLE_BOOL_SET( npc, SetNpc )
+CHARACTER_LIFECYCLE_BOOL_SET( isAwake, SetAwake )
+CHARACTER_LIFECYCLE_BOOL_SET( isonhorse, SetOnHorse )
+CHARACTER_LIFECYCLE_BOOL_SET( isGuarded, SetGuarded )
+CHARACTER_LIFECYCLE_BOOL_SET( willhunger, SetHungerStatus )
+CHARACTER_LIFECYCLE_BOOL_SET( willthirst, SetThirstStatus )
+#undef CHARACTER_LIFECYCLE_BOOL_SET
+#define CHARACTER_LIFECYCLE_INT_SET( attr, valueType, accessor )          \
+FDCLS( CCharacter, attr )                                                  \
+{                                                                          \
+	FNARGS                                                                   \
+	auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );   \
+	int32_t value = 0;                                                       \
+	if( !JS::ToInt32( cx, args.get( 0 ), &value )) return false;             \
+	character->accessor( static_cast<valueType>( value ));                    \
+	return true;                                                             \
+}
+CHARACTER_LIFECYCLE_INT_SET( direction, UI08, SetDir )
+CHARACTER_LIFECYCLE_INT_SET( tempdex, SI16, SetDexterity2 )
+CHARACTER_LIFECYCLE_INT_SET( tempint, SI16, SetIntelligence2 )
+CHARACTER_LIFECYCLE_INT_SET( tempstr, SI16, SetStrength2 )
+CHARACTER_LIFECYCLE_INT_SET( poison, UI08, SetPoisoned )
+CHARACTER_LIFECYCLE_INT_SET( poisonedBy, UI32, SetPoisoned )
+#undef CHARACTER_LIFECYCLE_INT_SET
+FDCLS( CCharacter, lightlevel ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); int32_t converted = 0; if( !JS::ToInt32( cx, args.get( 0 ), &converted )) return false; const UI08 value = static_cast<UI08>( converted ); character->SetFixedLight( value ); if( character->GetSocket() != nullptr ) DoLight( character->GetSocket(), value == 255 ? cwmWorldState->ServerData()->WorldLightCurrentLevel() : value ); return true; }
+FDCLS( CCharacter, vulnerable ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); character->SetInvulnerable( !JS::ToBoolean( args.get( 0 ))); return true; }
 
 #define CHARACTER_LIFECYCLE_GET( attr, method, expression ) IMPL_GET_OBJ( CCharacter, attr, CChar, method, expression )
 CHARACTER_LIFECYCLE_GET( dead, setBoolean, IsDead() )
@@ -2504,31 +2738,37 @@ FDCLG( CCharacter, isItem ) { FNARGS args.rval().setBoolean( false ); return tru
 FDCLG( CCharacter, isSpawner ) { FNARGS args.rval().setBoolean( false ); return true; }
 FDCLG( CCharacter, vulnerable ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); args.rval().setBoolean( !character->IsInvulnerable() ); return true; }
 
-#define CHARACTER_NPC_SET( attr, propertyId )                               \
-FDCLS( CCharacter, attr )                                                    \
-{                                                                            \
-	FNARGS                                                                     \
-	return SetLegacyCharacterProperty( cx, thisObj, propertyId, args.get( 0 ));\
+#define CHARACTER_NPC_INT_SET( attr, valueType, statement )                \
+FDCLS( CCharacter, attr )                                                   \
+{                                                                           \
+	FNARGS                                                                    \
+	auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );   \
+	int32_t converted = 0;                                                    \
+	if( !JS::ToInt32( cx, args.get( 0 ), &converted )) return false;          \
+	auto value = static_cast<valueType>( converted );                         \
+	statement;                                                                \
+	return true;                                                              \
 }
-CHARACTER_NPC_SET( npcGuild, CCP_NPCGUILD )
-CHARACTER_NPC_SET( spawnSerial, CCP_SPAWNSERIAL )
-CHARACTER_NPC_SET( maxhp, CCP_MAXHP )
-CHARACTER_NPC_SET( maxstamina, CCP_MAXSTAMINA )
-CHARACTER_NPC_SET( maxmana, CCP_MAXMANA )
-CHARACTER_NPC_SET( oldWandertype, CCP_OLDWANDERTYPE )
-CHARACTER_NPC_SET( wandertype, CCP_WANDERTYPE )
-CHARACTER_NPC_SET( fx1, CCP_FX1 )
-CHARACTER_NPC_SET( fy1, CCP_FY1 )
-CHARACTER_NPC_SET( fx2, CCP_FX2 )
-CHARACTER_NPC_SET( fy2, CCP_FY2 )
-CHARACTER_NPC_SET( fz, CCP_FZ )
-CHARACTER_NPC_SET( spawnX, CCP_SPAWNX )
-CHARACTER_NPC_SET( spawnY, CCP_SPAWNY )
-CHARACTER_NPC_SET( spawnZ, CCP_SPAWNZ )
-CHARACTER_NPC_SET( pathTargX, CCP_PATHTARGX )
-CHARACTER_NPC_SET( pathTargY, CCP_PATHTARGY )
-CHARACTER_NPC_SET( nextAct, CCP_NEXTACT )
-#undef CHARACTER_NPC_SET
+CHARACTER_NPC_INT_SET( npcGuild, UI16, character->SetNPCGuild( value ))
+CHARACTER_NPC_INT_SET( maxhp, SI16, character->SetFixedMaxHP( value ))
+CHARACTER_NPC_INT_SET( maxstamina, SI16, character->SetFixedMaxStam( value ))
+CHARACTER_NPC_INT_SET( maxmana, SI16, character->SetFixedMaxMana( value ))
+CHARACTER_NPC_INT_SET( oldWandertype, SI08, character->SetOldNpcWander( value ))
+CHARACTER_NPC_INT_SET( wandertype, SI08, character->SetNpcWander( value, true ))
+CHARACTER_NPC_INT_SET( fx1, SI16, character->SetFx( value, 0 ))
+CHARACTER_NPC_INT_SET( fy1, SI16, character->SetFy( value, 0 ))
+CHARACTER_NPC_INT_SET( fx2, SI16, character->SetFx( value, 1 ))
+CHARACTER_NPC_INT_SET( fy2, SI16, character->SetFy( value, 1 ))
+CHARACTER_NPC_INT_SET( fz, SI08, character->SetFz( value ))
+CHARACTER_NPC_INT_SET( spawnX, SI16, character->SetSpawnX( value ))
+CHARACTER_NPC_INT_SET( spawnY, SI16, character->SetSpawnY( value ))
+CHARACTER_NPC_INT_SET( spawnZ, SI08, character->SetSpawnZ( value ))
+CHARACTER_NPC_INT_SET( pathTargX, UI16, character->SetPathTargX( value ))
+CHARACTER_NPC_INT_SET( pathTargY, UI16, character->SetPathTargY( value ))
+CHARACTER_NPC_INT_SET( nextAct, UI08, character->SetNextAct( value ))
+#undef CHARACTER_NPC_INT_SET
+
+FDCLS( CCharacter, spawnSerial ) { return true; }
 
 #define CHARACTER_NPC_GET( attr, method, expression ) IMPL_GET_OBJ( CCharacter, attr, CChar, method, expression )
 CHARACTER_NPC_GET( npcGuild, setInt32, GetNPCGuild() )
@@ -2551,44 +2791,53 @@ CHARACTER_NPC_GET( pathTargY, setInt32, GetPathTargY() )
 CHARACTER_NPC_GET( nextAct, setInt32, GetNextAct() )
 #undef CHARACTER_NPC_GET
 
-#define CHARACTER_COMBAT_SET( attr, propertyId )                            \
-FDCLS( CCharacter, attr )                                                    \
-{                                                                            \
-	FNARGS                                                                     \
-	return SetLegacyCharacterProperty( cx, thisObj, propertyId, args.get( 0 ));\
+#define CHARACTER_COMBAT_INT_SET( attr, valueType, statement )             \
+FDCLS( CCharacter, attr )                                                   \
+{                                                                           \
+	FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); \
+	int32_t converted = 0; if( !JS::ToInt32( cx, args.get( 0 ), &converted )) return false; \
+	auto value = static_cast<valueType>( converted ); statement; return true; \
 }
-CHARACTER_COMBAT_SET( lodamage, CCP_LODAMAGE )
-CHARACTER_COMBAT_SET( hidamage, CCP_HIDAMAGE )
-CHARACTER_COMBAT_SET( flag, CCP_FLAG )
-CHARACTER_COMBAT_SET( atWar, CCP_ATWAR )
-CHARACTER_COMBAT_SET( spellCast, CCP_SPELLCAST )
-CHARACTER_COMBAT_SET( isCasting, CCP_ISCASTING )
-CHARACTER_COMBAT_SET( priv, CCP_PRIV )
-CHARACTER_COMBAT_SET( townPriv, CCP_TOWNPRIV )
-CHARACTER_COMBAT_SET( guildTitle, CCP_GUILDTITLE )
-CHARACTER_COMBAT_SET( hairStyle, CCP_HAIRSTYLE )
-CHARACTER_COMBAT_SET( hairColour, CCP_HAIRCOLOUR )
-CHARACTER_COMBAT_SET( hairColor, CCP_HAIRCOLOUR )
-CHARACTER_COMBAT_SET( beardStyle, CCP_BEARDSTYLE )
-CHARACTER_COMBAT_SET( beardColour, CCP_BEARDCOLOUR )
-CHARACTER_COMBAT_SET( beardColor, CCP_BEARDCOLOUR )
-CHARACTER_COMBAT_SET( fontType, CCP_FONTTYPE )
-CHARACTER_COMBAT_SET( sayColour, CCP_SAYCOLOUR )
-CHARACTER_COMBAT_SET( emoteColour, CCP_EMOTECOLOUR )
-CHARACTER_COMBAT_SET( attacker, CCP_ATTACKER )
-CHARACTER_COMBAT_SET( raceGate, CCP_RACEGATE )
-CHARACTER_COMBAT_SET( deaths, CCP_DEATHS )
-CHARACTER_COMBAT_SET( cell, CCP_CELL )
-CHARACTER_COMBAT_SET( allmove, CCP_ALLMOVE )
-CHARACTER_COMBAT_SET( houseicons, CCP_HOUSEICONS )
-CHARACTER_COMBAT_SET( spattack, CCP_SPATTACK )
-CHARACTER_COMBAT_SET( spdelay, CCP_SPDELAY )
-CHARACTER_COMBAT_SET( swingSpeedIncrease, CCP_SWINGSPEEDINCREASE )
-CHARACTER_COMBAT_SET( luck, CCP_LUCK )
-CHARACTER_COMBAT_SET( damageIncrease, CCP_DAMAGEINCREASE )
-CHARACTER_COMBAT_SET( hitChance, CCP_HITCHANCE )
-CHARACTER_COMBAT_SET( defenseChance, CCP_DEFENSECHANCE )
-#undef CHARACTER_COMBAT_SET
+#define CHARACTER_COMBAT_BOOL_SET( attr, statement )                       \
+FDCLS( CCharacter, attr )                                                   \
+{                                                                           \
+	FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); \
+	auto value = JS::ToBoolean( args.get( 0 )); statement; return true;       \
+}
+CHARACTER_COMBAT_INT_SET( lodamage, SI16, character->SetLoDamage( value ))
+CHARACTER_COMBAT_INT_SET( hidamage, SI16, character->SetHiDamage( value ))
+CHARACTER_COMBAT_INT_SET( spellCast, SI08, character->SetSpellCast( value ))
+CHARACTER_COMBAT_INT_SET( priv, UI32, character->SetPriv( value ))
+CHARACTER_COMBAT_INT_SET( townPriv, SI08, character->SetTownpriv( value ))
+CHARACTER_COMBAT_INT_SET( hairStyle, UI16, character->SetHairStyle( value ))
+CHARACTER_COMBAT_INT_SET( hairColour, UI16, character->SetHairColour( value ))
+CHARACTER_COMBAT_INT_SET( hairColor, UI16, character->SetHairColour( value ))
+CHARACTER_COMBAT_INT_SET( beardStyle, UI16, character->SetBeardStyle( value ))
+CHARACTER_COMBAT_INT_SET( beardColour, UI16, character->SetBeardColour( value ))
+CHARACTER_COMBAT_INT_SET( beardColor, UI16, character->SetBeardColour( value ))
+CHARACTER_COMBAT_INT_SET( fontType, SI08, character->SetFontType( value ))
+CHARACTER_COMBAT_INT_SET( sayColour, COLOUR, character->SetSayColour( value ))
+CHARACTER_COMBAT_INT_SET( emoteColour, COLOUR, character->SetEmoteColour( value ))
+CHARACTER_COMBAT_INT_SET( raceGate, RACEID, character->SetRaceGate( value ))
+CHARACTER_COMBAT_INT_SET( deaths, UI16, character->SetDeaths( value ))
+CHARACTER_COMBAT_INT_SET( cell, SI08, character->SetCell( value ))
+CHARACTER_COMBAT_INT_SET( spattack, SI16, character->SetSpAttack( value ))
+CHARACTER_COMBAT_INT_SET( spdelay, SI08, character->SetSpDelay( value ))
+CHARACTER_COMBAT_INT_SET( swingSpeedIncrease, SI16, character->SetSwingSpeedIncrease( value ))
+CHARACTER_COMBAT_INT_SET( luck, SI16, character->SetLuck( value ))
+CHARACTER_COMBAT_INT_SET( damageIncrease, SI16, character->SetDamageIncrease( value ))
+CHARACTER_COMBAT_INT_SET( hitChance, SI16, character->SetHitChance( value ))
+CHARACTER_COMBAT_INT_SET( defenseChance, SI16, character->SetDefenseChance( value ))
+CHARACTER_COMBAT_BOOL_SET( allmove, character->SetAllMove( value ))
+CHARACTER_COMBAT_BOOL_SET( houseicons, character->SetViewHouseAsIcon( value ))
+CHARACTER_COMBAT_BOOL_SET( isCasting, character->SetCasting( value ); character->SetJSCasting( value ))
+CHARACTER_COMBAT_BOOL_SET( atWar, character->SetWar( value ); Movement->CombatWalk( character ))
+#undef CHARACTER_COMBAT_INT_SET
+#undef CHARACTER_COMBAT_BOOL_SET
+
+FDCLS( CCharacter, flag ) { return true; }
+FDCLS( CCharacter, guildTitle ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); JS::RootedString value( cx, JS::ToString( cx, args.get( 0 ))); if( value == nullptr ) return false; character->SetGuildTitle( convertToString( cx, value )); return true; }
+FDCLS( CCharacter, attacker ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); if( args.get( 0 ).isNullOrUndefined() ) { character->SetAttacker( nullptr ); return true; } if( !args.get( 0 ).isObject() ) return true; auto attacker = JS::GetMaybePtrFromReservedSlot<CChar>( &args.get( 0 ).toObject(), 0 ); if( ValidateObject( attacker )) character->SetAttacker( attacker ); return true; }
 
 #define CHARACTER_COMBAT_GET( attr, method, expression ) IMPL_GET_OBJ( CCharacter, attr, CChar, method, expression )
 CHARACTER_COMBAT_GET( lodamage, setInt32, GetLoDamage() )
@@ -2643,44 +2892,43 @@ FDCLG( CCharacter, attacker )
 	return true;
 }
 
-#define CHARACTER_AI_SET( attr, propertyId )                                \
-FDCLS( CCharacter, attr )                                                    \
-{                                                                            \
-	FNARGS                                                                     \
-	return SetLegacyCharacterProperty( cx, thisObj, propertyId, args.get( 0 ));\
-}
-CHARACTER_AI_SET( aitype, CCP_AITYPE )
-CHARACTER_AI_SET( split, CCP_SPLIT )
-CHARACTER_AI_SET( splitchance, CCP_SPLITCHANCE )
-CHARACTER_AI_SET( hireling, CCP_HIRELING )
-CHARACTER_AI_SET( trainer, CCP_TRAINER )
-CHARACTER_AI_SET( weight, CCP_WEIGHT )
-CHARACTER_AI_SET( squelch, CCP_SQUELCH )
-CHARACTER_AI_SET( isJailed, CCP_ISJAILED )
-CHARACTER_AI_SET( magicReflect, CCP_MAGICREFLECT )
-CHARACTER_AI_SET( permanentMagicReflect, CCP_PERMMAGICREFLECT )
-CHARACTER_AI_SET( hideFameKarmaTitle, CCP_HIDEFAMEKARMATITLE )
-CHARACTER_AI_SET( noCharCollide, CCP_NOCHARCOLLIDE )
-CHARACTER_AI_SET( tamed, CCP_TAMED )
-CHARACTER_AI_SET( tamedHungerRate, CCP_TAMEDHUNGERRATE )
-CHARACTER_AI_SET( tamedThirstRate, CCP_TAMEDTHIRSTRATE )
-CHARACTER_AI_SET( hungerWildChance, CCP_HUNGERWILDCHANCE )
-CHARACTER_AI_SET( thirstWildChance, CCP_THIRSTWILDCHANCE )
-CHARACTER_AI_SET( foodList, CCP_FOODLIST )
-CHARACTER_AI_SET( mounted, CCP_MOUNTED )
-CHARACTER_AI_SET( stabled, CCP_STABLED )
-CHARACTER_AI_SET( isUsingPotion, CCP_USINGPOTION )
-CHARACTER_AI_SET( stealth, CCP_STEALTH )
-CHARACTER_AI_SET( skillToTame, CCP_SKILLTOTAME )
-CHARACTER_AI_SET( skillToProv, CCP_SKILLTOPROV )
-CHARACTER_AI_SET( skillToPeace, CCP_SKILLTOPEACE )
-CHARACTER_AI_SET( poisonStrength, CCP_POISONSTRENGTH )
-CHARACTER_AI_SET( isPolymorphed, CCP_ISPOLYMORPHED )
-CHARACTER_AI_SET( isIncognito, CCP_ISINCOGNITO )
-CHARACTER_AI_SET( isDisguised, CCP_ISDISGUISED )
-CHARACTER_AI_SET( canRun, CCP_CANRUN )
-CHARACTER_AI_SET( isMeditating, CCP_ISMEDITATING )
-#undef CHARACTER_AI_SET
+#define CHARACTER_AI_INT_SET( attr, valueType, statement )                 \
+FDCLS( CCharacter, attr ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); int32_t converted = 0; if( !JS::ToInt32( cx, args.get( 0 ), &converted )) return false; auto value = static_cast<valueType>( converted ); statement; return true; }
+#define CHARACTER_AI_BOOL_SET( attr, statement )                           \
+FDCLS( CCharacter, attr ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); auto value = JS::ToBoolean( args.get( 0 )); statement; return true; }
+CHARACTER_AI_INT_SET( aitype, SI16, character->SetNPCAiType( value ))
+CHARACTER_AI_INT_SET( split, UI08, character->SetSplit( value ))
+CHARACTER_AI_INT_SET( splitchance, UI08, character->SetSplitChance( value ))
+CHARACTER_AI_INT_SET( weight, SI32, character->SetWeight( value ))
+CHARACTER_AI_INT_SET( squelch, UI08, character->SetSquelched( value ))
+CHARACTER_AI_INT_SET( tamedHungerRate, UI16, character->SetTamedHungerRate( value ))
+CHARACTER_AI_INT_SET( tamedThirstRate, UI16, character->SetTamedThirstRate( value ))
+CHARACTER_AI_INT_SET( hungerWildChance, UI08, character->SetTamedHungerWildChance( value ))
+CHARACTER_AI_INT_SET( thirstWildChance, UI08, character->SetTamedThirstWildChance( value ))
+CHARACTER_AI_INT_SET( stealth, SI32, character->SetStealth( value ))
+CHARACTER_AI_INT_SET( skillToTame, SI32, character->SetTaming( value ))
+CHARACTER_AI_INT_SET( skillToProv, SI32, character->SetProvoing( value ))
+CHARACTER_AI_INT_SET( skillToPeace, SI32, character->SetPeaceing( value ))
+CHARACTER_AI_INT_SET( poisonStrength, UI08, character->SetPoisonStrength( value ))
+CHARACTER_AI_BOOL_SET( hireling, character->SetCanHire( value ))
+CHARACTER_AI_BOOL_SET( trainer, character->SetCanTrain( value ))
+CHARACTER_AI_BOOL_SET( magicReflect, character->SetTempReflected( value ))
+CHARACTER_AI_BOOL_SET( permanentMagicReflect, character->SetPermReflected( value ))
+CHARACTER_AI_BOOL_SET( hideFameKarmaTitle, character->HideFameKarmaTitle( value ))
+CHARACTER_AI_BOOL_SET( noCharCollide, character->NoCharCollide( value ))
+CHARACTER_AI_BOOL_SET( tamed, character->SetTamed( value ))
+CHARACTER_AI_BOOL_SET( mounted, character->SetMounted( value ))
+CHARACTER_AI_BOOL_SET( stabled, character->SetStabled( value ))
+CHARACTER_AI_BOOL_SET( isUsingPotion, character->SetUsingPotion( value ))
+CHARACTER_AI_BOOL_SET( isPolymorphed, character->IsPolymorphed( value ))
+CHARACTER_AI_BOOL_SET( isIncognito, character->IsIncognito( value ))
+CHARACTER_AI_BOOL_SET( isDisguised, character->IsDisguised( value ))
+CHARACTER_AI_BOOL_SET( canRun, character->SetRun( value ))
+CHARACTER_AI_BOOL_SET( isMeditating, character->SetMeditating( value ))
+#undef CHARACTER_AI_INT_SET
+#undef CHARACTER_AI_BOOL_SET
+FDCLS( CCharacter, isJailed ) { return true; }
+FDCLS( CCharacter, foodList ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); JS::RootedString value( cx, JS::ToString( cx, args.get( 0 ))); if( value == nullptr ) return false; character->SetFood( convertToString( cx, value )); return true; }
 
 #define CHARACTER_AI_GET( attr, method, expression ) IMPL_GET_OBJ( CCharacter, attr, CChar, method, expression )
 CHARACTER_AI_GET( aitype, setInt32, GetNpcAiType() )
@@ -2725,41 +2973,38 @@ FDCLG( CCharacter, foodList )
 	return true;
 }
 
-#define CHARACTER_MISC_SET( attr, propertyId )                              \
-FDCLS( CCharacter, attr )                                                    \
-{                                                                            \
-	FNARGS                                                                     \
-	return SetLegacyCharacterProperty( cx, thisObj, propertyId, args.get( 0 ));\
-}
-CHARACTER_MISC_SET( setPeace, CCP_SETPEACE )
-CHARACTER_MISC_SET( gender, CCP_GENDER )
-CHARACTER_MISC_SET( guildNumber, CCP_GUILDNUMBER )
-CHARACTER_MISC_SET( ownerCount, CCP_OWNERCOUNT )
-CHARACTER_MISC_SET( isGM, CCP_ISGM )
-CHARACTER_MISC_SET( canBroadcast, CCP_CANBROADCAST )
-CHARACTER_MISC_SET( singClickSer, CCP_SINGCLICKSER )
-CHARACTER_MISC_SET( noSkillTitles, CCP_NOSKILLTITLES )
-CHARACTER_MISC_SET( isGMPageable, CCP_ISGMPAGEABLE )
-CHARACTER_MISC_SET( canSnoop, CCP_CANSNOOP )
-CHARACTER_MISC_SET( isCounselor, CCP_ISCOUNSELOR )
-CHARACTER_MISC_SET( noNeedMana, CCP_NONEEDMANA )
-CHARACTER_MISC_SET( isDispellable, CCP_ISDISPELLABLE )
-CHARACTER_MISC_SET( noNeedReags, CCP_NONEEDREAGS )
-CHARACTER_MISC_SET( orgID, CCP_ORGID )
-CHARACTER_MISC_SET( orgSkin, CCP_ORGSKIN )
-CHARACTER_MISC_SET( isShop, CCP_ISSHOP )
-CHARACTER_MISC_SET( maxLoyalty, CCP_MAXLOYALTY )
-CHARACTER_MISC_SET( loyalty, CCP_LOYALTY )
-CHARACTER_MISC_SET( loyaltyRate, CCP_LOYALTYRATE )
-CHARACTER_MISC_SET( shouldSave, CCP_SHOULDSAVE )
-CHARACTER_MISC_SET( origin, CCP_ORIGIN )
-CHARACTER_MISC_SET( accountNum, CCP_ACCOUNTNUM )
-CHARACTER_MISC_SET( createdOn, CCP_CREATEDON )
-CHARACTER_MISC_SET( playTime, CCP_PLAYTIME )
-CHARACTER_MISC_SET( housesOwned, CCP_HOUSESOWNED )
-CHARACTER_MISC_SET( housesCoOwned, CCP_HOUSESCOOWNED )
-CHARACTER_MISC_SET( tithing, CCP_TITHING )
-#undef CHARACTER_MISC_SET
+#define CHARACTER_MISC_INT_SET( attr, valueType, statement ) FDCLS( CCharacter, attr ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); int32_t converted = 0; if( !JS::ToInt32( cx, args.get( 0 ), &converted )) return false; auto value = static_cast<valueType>( converted ); statement; return true; }
+#define CHARACTER_MISC_BOOL_SET( attr, statement ) FDCLS( CCharacter, attr ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); auto value = JS::ToBoolean( args.get( 0 )); statement; return true; }
+CHARACTER_MISC_INT_SET( setPeace, SI32, character->SetPeace( value ))
+CHARACTER_MISC_INT_SET( guildNumber, SI16, character->SetGuildNumber( value ))
+CHARACTER_MISC_INT_SET( orgID, UI16, character->SetOrgId( value ))
+CHARACTER_MISC_INT_SET( orgSkin, UI16, character->SetOrgSkin( value ))
+CHARACTER_MISC_INT_SET( maxLoyalty, UI16, character->SetMaxLoyalty( value ))
+CHARACTER_MISC_INT_SET( loyalty, UI16, character->SetLoyalty( value ))
+CHARACTER_MISC_INT_SET( tithing, SI32, character->SetTithing( value ))
+CHARACTER_MISC_BOOL_SET( isGM, character->SetGM( value ))
+CHARACTER_MISC_BOOL_SET( canBroadcast, character->SetBroadcast( value ))
+CHARACTER_MISC_BOOL_SET( singClickSer, character->SetSingClickSer( value ))
+CHARACTER_MISC_BOOL_SET( noSkillTitles, character->SetSkillTitles( value ))
+CHARACTER_MISC_BOOL_SET( isGMPageable, character->SetGMPageable( value ))
+CHARACTER_MISC_BOOL_SET( canSnoop, character->SetSnoop( value ))
+CHARACTER_MISC_BOOL_SET( isCounselor, character->SetCounselor( value ))
+CHARACTER_MISC_BOOL_SET( noNeedMana, character->SetNoNeedMana( value ))
+CHARACTER_MISC_BOOL_SET( isDispellable, character->SetDispellable( value ))
+CHARACTER_MISC_BOOL_SET( noNeedReags, character->SetNoNeedReags( value ))
+CHARACTER_MISC_BOOL_SET( shouldSave, character->ShouldSave( value ))
+#undef CHARACTER_MISC_INT_SET
+#undef CHARACTER_MISC_BOOL_SET
+FDCLS( CCharacter, ownerCount ) { return true; }
+FDCLS( CCharacter, loyaltyRate ) { return true; }
+FDCLS( CCharacter, accountNum ) { return true; }
+FDCLS( CCharacter, createdOn ) { return true; }
+FDCLS( CCharacter, playTime ) { return true; }
+FDCLS( CCharacter, housesOwned ) { return true; }
+FDCLS( CCharacter, housesCoOwned ) { return true; }
+FDCLS( CCharacter, origin ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); JS::RootedString value( cx, JS::ToString( cx, args.get( 0 ))); if( value == nullptr ) return false; character->SetOrigin( cwmWorldState->ServerData()->EraStringToEnum( convertToString( cx, value ))); return true; }
+FDCLS( CCharacter, gender ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); int32_t value = 0; if( !JS::ToInt32( cx, args.get( 0 ), &value )) return false; static const UI16 living[] = { 0x0190, 0x0191, 0x025D, 0x025E, 0x029A, 0x029B }; static const UI16 dead[] = { 0x0192, 0x0193, 0x025F, 0x0260, 0x02B6, 0x02B7 }; if( value >= 0 && value < 6 ) character->SetId( character->IsDead() ? dead[value] : living[value] ); return true; }
+FDCLS( CCharacter, isShop ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); if( JS::ToBoolean( args.get( 0 ))) { MakeShop( character ); } else { character->SetShop( false ); for( UI08 i = IL_SELLCONTAINER; i <= IL_BUYCONTAINER; ++i ) { auto pack = character->GetItemAtLayer( static_cast<ItemLayers>( i )); if( ValidateObject( pack )) pack->Delete(); } character->Update(); } return true; }
 
 #define CHARACTER_MISC_GET( attr, method, expression ) IMPL_GET_OBJ( CCharacter, attr, CChar, method, expression )
 CHARACTER_MISC_GET( guildNumber, setInt32, GetGuildNumber() )
@@ -2803,28 +3048,21 @@ FDCLG( CCharacter, gender ) { FNARGS auto character = JS::GetMaybePtrFromReserve
 FDCLG( CCharacter, origin ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); const auto text = cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( character->GetOrigin() )); JS::RootedString value( cx, JS_NewStringCopyZ( cx, text.c_str() )); if( value == nullptr ) return false; args.rval().setString( value ); return true; }
 FDCLG( CCharacter, lastOn ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); JS::RootedString value( cx, JS_NewStringCopyZ( cx, character->GetLastOn().c_str() )); if( value == nullptr ) return false; args.rval().setString( value ); return true; }
 
-#define CHARACTER_FINAL_SET( attr, propertyId )                              \
-FDCLS( CCharacter, attr )                                                    \
-{                                                                            \
-	FNARGS                                                                     \
-	return SetLegacyCharacterProperty( cx, thisObj, propertyId, args.get( 0 ));\
-}
-CHARACTER_FINAL_SET( skills, CCP_SKILLS )
-CHARACTER_FINAL_SET( race, CCP_RACE )
-CHARACTER_FINAL_SET( region, CCP_REGION )
-CHARACTER_FINAL_SET( town, CCP_TOWN )
-CHARACTER_FINAL_SET( guild, CCP_GUILD )
-CHARACTER_FINAL_SET( baseskills, CCP_BASESKILLS )
-CHARACTER_FINAL_SET( skillsused, CCP_SKILLUSE )
-CHARACTER_FINAL_SET( socket, CCP_SOCKET )
-CHARACTER_FINAL_SET( guarding, CCP_GUARDING )
-CHARACTER_FINAL_SET( skillLock, CCP_SKILLLOCK )
-CHARACTER_FINAL_SET( skillCaps, CCP_SKILLCAP )
-CHARACTER_FINAL_SET( partyLootable, CCP_PARTYLOOTABLE )
-CHARACTER_FINAL_SET( party, CCP_PARTY )
-CHARACTER_FINAL_SET( multi, CCP_MULTI )
-CHARACTER_FINAL_SET( account, CCP_ACCOUNT )
-#undef CHARACTER_FINAL_SET
+FDCLS( CCharacter, race ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); int32_t value = 0; if( !JS::ToInt32( cx, args.get( 0 ), &value )) return false; Races->ApplyRace( character, static_cast<RACEID>( value ), true ); return true; }
+FDCLS( CCharacter, region ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); int32_t value = 0; if( !JS::ToInt32( cx, args.get( 0 ), &value )) return false; character->SetRegion( static_cast<UI16>( value )); return true; }
+FDCLS( CCharacter, town ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); cwmWorldState->townRegions[character->GetTown()]->RemoveTownMember( *character ); if( !args.get( 0 ).isNullOrUndefined() ) { int32_t value = 0; if( !JS::ToInt32( cx, args.get( 0 ), &value )) return false; cwmWorldState->townRegions[value]->AddAsTownMember( *character ); } return true; }
+FDCLS( CCharacter, guild ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); if( character->IsNpc() ) return true; GuildSys->Resign( character->GetSocket() ); if( args.get( 0 ).isObject() ) { auto guild = JS::GetMaybePtrFromReservedSlot<CGuild>( &args.get( 0 ).toObject(), 0 ); if( guild != nullptr ) guild->NewRecruit( character->GetSerial() ); } return true; }
+FDCLS( CCharacter, guarding ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); if( args.get( 0 ).isNullOrUndefined() ) { character->SetGuarding( nullptr ); return true; } if( args.get( 0 ).isObject() ) { auto object = JS::GetMaybePtrFromReservedSlot<CBaseObject>( &args.get( 0 ).toObject(), 0 ); if( ValidateObject( object )) character->SetGuarding( object ); } return true; }
+FDCLS( CCharacter, partyLootable ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); auto party = PartyFactory::GetSingleton().Get( character ); if( party != nullptr ) { auto entry = party->Find( character ); if( entry != nullptr ) entry->IsLootable( JS::ToBoolean( args.get( 0 ))); } return true; }
+FDCLS( CCharacter, skills ) { return true; }
+FDCLS( CCharacter, baseskills ) { return true; }
+FDCLS( CCharacter, skillsused ) { return true; }
+FDCLS( CCharacter, socket ) { return true; }
+FDCLS( CCharacter, skillLock ) { return true; }
+FDCLS( CCharacter, skillCaps ) { return true; }
+FDCLS( CCharacter, party ) { return true; }
+FDCLS( CCharacter, multi ) { return true; }
+FDCLS( CCharacter, account ) { return true; }
 
 static bool CreateCharacterSkillProxy( JSContext *cx, CChar *character, const JSClass *proxyClass, JS::MutableHandleValue result )
 {
@@ -5084,31 +5322,31 @@ IMPL_SOCKET_SET( moveBurstAllowance, toInt32,   MovementBurstAllowance )
 #undef IMPL_SOCKET_GET
 #undef IMPL_SOCKET_SET
 
-#define IMPL_SOCKET_LEGACY( attr, propertyId )                                      \
-FDCLG( CSocket, attr )                                                              \
-{                                                                                   \
-	FNARGS                                                                            \
-	JS::RootedValue result( cx );                                                     \
-	if( !CSocketProps_getProperty( cx, thisObj, JS::PropertyKey::Int( propertyId ), result.address() )) \
-		return false;                                                                   \
-	args.rval().set( result );                                                        \
-	return true;                                                                      \
-}                                                                                   \
-FDCLS( CSocket, attr )                                                              \
-{                                                                                   \
-	FNARGS                                                                            \
-	JS::RootedValue value( cx, args.get( 0 ));                                        \
-	return CSocketProps_setProperty( cx, thisObj, JS::PropertyKey::Int( propertyId ), false, value.address() ); \
+static bool SetSocketObjectResult( JSContext *cx, JS::MutableHandleValue result, CBaseObject *object )
+{
+	if( !ValidateObject( object )) { result.setNull(); return true; }
+	const auto objectType = object->CanBeObjType( OT_ITEM ) ? IUE_ITEM : IUE_CHAR;
+	auto wrapper = JSEngine->AcquireObject( objectType, object, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	if( wrapper == nullptr ) return false;
+	result.setObject( *wrapper );
+	return true;
 }
 
-IMPL_SOCKET_LEGACY( account,      CSOCKP_ACCOUNT )
-IMPL_SOCKET_LEGACY( currentChar,  CSOCKP_CURRENTCHAR )
-IMPL_SOCKET_LEGACY( idleTimeout,  CSOCKP_IDLETIMEOUT )
-IMPL_SOCKET_LEGACY( pickupSerial, CSOCKP_PICKUPSERIAL )
-IMPL_SOCKET_LEGACY( target,       CSOCKP_TARGET )
-IMPL_SOCKET_LEGACY( tempObj,      CSOCKP_TEMPOBJ )
-IMPL_SOCKET_LEGACY( tempObj2,     CSOCKP_TEMPOBJ2 )
-#undef IMPL_SOCKET_LEGACY
+FDCLG( CSocket, account ) { FNARGS auto socket = JS::GetMaybePtrFromReservedSlot<CSocket>( thisObj, 0 ); auto account = &socket->GetAccount(); auto wrapper = JSEngine->AcquireObject( IUE_ACCOUNT, account, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))); if( wrapper == nullptr ) return false; args.rval().setObject( *wrapper ); return true; }
+FDCLG( CSocket, currentChar ) { FNARGS auto socket = JS::GetMaybePtrFromReservedSlot<CSocket>( thisObj, 0 ); return SetCharacterObjectResult( cx, args.rval(), IUE_CHAR, socket->CurrcharObj() ); }
+FDCLG( CSocket, tempObj ) { FNARGS auto socket = JS::GetMaybePtrFromReservedSlot<CSocket>( thisObj, 0 ); return SetSocketObjectResult( cx, args.rval(), socket->TempObj() ); }
+FDCLG( CSocket, tempObj2 ) { FNARGS auto socket = JS::GetMaybePtrFromReservedSlot<CSocket>( thisObj, 0 ); return SetSocketObjectResult( cx, args.rval(), socket->TempObj2() ); }
+FDCLG( CSocket, target ) { FNARGS auto socket = JS::GetMaybePtrFromReservedSlot<CSocket>( thisObj, 0 ); const auto serial = socket->GetDWord( 7 ); return serial >= BASEITEMSERIAL ? SetSocketObjectResult( cx, args.rval(), CalcItemObjFromSer( serial )) : SetSocketObjectResult( cx, args.rval(), CalcCharObjFromSer( serial )); }
+FDCLG( CSocket, idleTimeout ) { FNARGS args.rval().setUndefined(); return true; }
+FDCLG( CSocket, pickupSerial ) { FNARGS args.rval().setUndefined(); return true; }
+
+FDCLS( CSocket, account ) { return true; }
+FDCLS( CSocket, idleTimeout ) { return true; }
+FDCLS( CSocket, pickupSerial ) { return true; }
+FDCLS( CSocket, target ) { return true; }
+FDCLS( CSocket, currentChar ) { FNARGS auto socket = JS::GetMaybePtrFromReservedSlot<CSocket>( thisObj, 0 ); if( args.get( 0 ).isObject() ) { auto character = JS::GetMaybePtrFromReservedSlot<CChar>( &args.get( 0 ).toObject(), 0 ); if( ValidateObject( character )) socket->CurrcharObj( character ); } return true; }
+FDCLS( CSocket, tempObj ) { FNARGS auto socket = JS::GetMaybePtrFromReservedSlot<CSocket>( thisObj, 0 ); if( args.get( 0 ).isNullOrUndefined() ) socket->TempObj( nullptr ); else if( args.get( 0 ).isObject() ) socket->TempObj( JS::GetMaybePtrFromReservedSlot<CBaseObject>( &args.get( 0 ).toObject(), 0 )); return true; }
+FDCLS( CSocket, tempObj2 ) { FNARGS auto socket = JS::GetMaybePtrFromReservedSlot<CSocket>( thisObj, 0 ); if( args.get( 0 ).isNullOrUndefined() ) socket->TempObj2( nullptr ); else if( args.get( 0 ).isObject() ) socket->TempObj2( JS::GetMaybePtrFromReservedSlot<CBaseObject>( &args.get( 0 ).toObject(), 0 )); return true; }
 
 FDCLS( CSocket, bytesSent ) { return true; }
 FDCLS( CSocket, bytesReceived ) { return true; }

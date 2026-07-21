@@ -187,7 +187,6 @@ add_executable(uox3
    ../../source/UOXJSMethods.cpp
    ../../source/UOXJSMethods.h
    ../../source/UOXJSPropertyEnums.h
-   ../../source/UOXJSPropertyAdapters.cpp
    ../../source/UOXJSPropertyFuncs.cpp
    ../../source/UOXJSPropertyFuncs.h
    ../../source/UOXJSPropertySpecs.h
