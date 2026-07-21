@@ -22,38 +22,4 @@ extern std::map< std::string, int >		propLookupSkills;
 extern std::map< std::string, int >		propLookupSocket;
 extern std::map< std::string, int >		propLookupSpawnRegion;
 
-typedef bool ( JSPropertyFunc )( JSContext *cx, JSObject *obj, jsid id, JS::Value *vp );
-typedef bool ( JSPropertySetter )( JSContext *cx, JSObject *obj, jsid id, bool strict, JS::Value *vp );
-
-JSPropertyFunc CSpellsProps_getProperty;
-
-JSPropertyFunc CGlobalSkillsProps_getProperty;
-
-JSPropertyFunc CCreateEntriesProps_getProperty;
-
-JSPropertyFunc CItemProps_getProperty;
-JSPropertySetter CItemProps_setProperty;
-JSPropertyFunc CCharacterProps_getProperty;
-JSPropertySetter CCharacterProps_setProperty;
-
-JSPropertyFunc CRegionProps_getProperty;
-JSPropertySetter CRegionProps_setProperty;
-
-JSPropertyFunc CSpawnRegionProps_getProperty;
-JSPropertySetter CSpawnRegionProps_setProperty;
-
-JSPropertyFunc CGuildProps_getProperty;
-JSPropertySetter CGuildProps_setProperty;
-JSPropertyFunc CGuildsProps_getProperty;
-JSPropertySetter CGuildsProps_setProperty;
-
-JSPropertyFunc CSocketProps_getProperty;
-JSPropertySetter CSocketProps_setProperty;
-
-JSPropertyFunc CFileProps_getProperty;
-JSPropertySetter CFileProps_setProperty;
-
-JSPropertyFunc CAccountProps_getProperty;
-JSPropertySetter CAccountProps_setProperty;
-
 #endif
