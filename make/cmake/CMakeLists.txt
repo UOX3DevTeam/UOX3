@@ -216,6 +216,13 @@ add_executable(uox3
     ../../source/UOPData.hpp
 )
 
+if(MSVC)
+    set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT uox3)
+    set_target_properties(uox3 PROPERTIES
+        VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/../../data"
+    )
+endif()
+
 # *************************************************************************
 # Platform specific settings
 # *************************************************************************
