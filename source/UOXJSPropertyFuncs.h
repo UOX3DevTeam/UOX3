@@ -26,18 +26,10 @@ typedef bool ( JSPropertyFunc )( JSContext *cx, JSObject *obj, jsid id, JS::Valu
 typedef bool ( JSPropertySetter )( JSContext *cx, JSObject *obj, jsid id, bool strict, JS::Value *vp );
 
 JSPropertyFunc CSpellsProps_getProperty;
-JSPropertyFunc CSpellProps_getProperty;
-JSPropertySetter CSpellProps_setProperty;
 
 JSPropertyFunc CGlobalSkillsProps_getProperty;
-JSPropertyFunc CGlobalSkillProps_getProperty;
-JSPropertySetter CGlobalSkillProps_setProperty;
 
 JSPropertyFunc CCreateEntriesProps_getProperty;
-JSPropertyFunc CCreateEntryProps_getProperty;
-JSPropertySetter CCreateEntryProps_setProperty;
-
-JSPropertyFunc CTimerProps_getProperty;
 
 JSPropertyFunc CItemProps_getProperty;
 JSPropertySetter CItemProps_setProperty;
@@ -55,35 +47,13 @@ JSPropertySetter CGuildProps_setProperty;
 JSPropertyFunc CGuildsProps_getProperty;
 JSPropertySetter CGuildsProps_setProperty;
 
-JSPropertyFunc CRaceProps_getProperty;
-JSPropertySetter CRaceProps_setProperty;
-
 JSPropertyFunc CSocketProps_getProperty;
 JSPropertySetter CSocketProps_setProperty;
-
-JSPropertyFunc CSkillsProps_getProperty;
-JSPropertySetter CSkillsProps_setProperty;
-
-JSPropertyFunc CGumpDataProps_getProperty;
 
 JSPropertyFunc CFileProps_getProperty;
 JSPropertySetter CFileProps_setProperty;
 
 JSPropertyFunc CAccountProps_getProperty;
 JSPropertySetter CAccountProps_setProperty;
-
-JSPropertyFunc CConsoleProps_getProperty;
-JSPropertySetter CConsoleProps_setProperty;
-
-JSPropertyFunc CScriptSectionProps_getProperty;
-JSPropertySetter CScriptSectionProps_setProperty;
-
-JSPropertyFunc CScriptProps_getProperty;
-
-JSPropertyFunc CResourceProps_getProperty;
-JSPropertySetter CResourceProps_setProperty;
-
-JSPropertyFunc CPartyProps_getProperty;
-JSPropertySetter CPartyProps_setProperty;
 
 #endif

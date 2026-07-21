@@ -163,62 +163,37 @@ JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *v
 	return JS_TRUE;
 }
 
-JSBool CSpellProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
+// Direct mozjs accessors for the fully migrated CSpell property family.
+FDCLG( CSpell, id )
 {
-	return JS_TRUE;
+	FNARGS
+	auto priv = JS::GetMaybePtrFromReservedSlot<CSpellInfo>( thisObj, 0 );
+	if( priv == nullptr )
+		return false;
+
+	auto spellIter = std::find_if( Magic->spells.begin(), Magic->spells.end(),
+		[priv]( const CSpellInfo &spell ) { return &spell == priv; } );
+	if( spellIter == Magic->spells.end() )
+		return false;
+
+	args.rval().setInt32( static_cast<int32_t>( std::distance( Magic->spells.begin(), spellIter )) );
+	return true;
 }
 
-JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
+FDCLG( CSpell, name )
 {
-	CSpellInfo *gPriv = static_cast<CSpellInfo*>( JS_GetPrivate( cx, obj ));
-	if( gPriv == nullptr )
-		return JS_FALSE;
+	FNARGS
+	auto priv = JS::GetMaybePtrFromReservedSlot<CSpellInfo>( thisObj, 0 );
+	if( priv == nullptr || Magic->spells.empty() || priv <= Magic->spells.data() || priv > &Magic->spells.back() )
+		return false;
 
-	std::string spellName = "";
-
-	if( JSID_IS_INT( id ))
-	{
-		JSString *tString = nullptr;
-		bool bDone = false;
-		size_t i = 0;
-		switch( JSID_TO_INT( id ))
-		{
-			case CSP_ID:
-				for( i = 0; i < Magic->spells.size() && !bDone; ++i )
-				{
-					if( &Magic->spells[i] == gPriv )
-					{
-						*vp = INT_TO_JSVAL( i );
-						bDone = true;
-					}
-				}
-				break;
-			case CSP_DELAY:				JS_NewNumberValue( cx, gPriv->Delay(), vp );			break;
-			case CSP_DAMAGEDELAY:		JS_NewNumberValue( cx, gPriv->DamageDelay(), vp );		break;
-			case CSP_RECOVERYDELAY:		JS_NewNumberValue( cx, gPriv->RecoveryDelay(), vp );	break;
-			case CSP_NAME:
-				for( i = 0; i < Magic->spells.size() && !bDone; ++i )
-				{
-					if( &Magic->spells[i] == gPriv - 1  )
-					{
-						spellName = Dictionary->GetEntry( magic_table[i].spell_name );
-						tString = JS_NewStringCopyZ( cx, spellName.c_str() );
-						*vp = STRING_TO_JSVAL( tString );
-						bDone = true;
-					}
-				}
-				break;
-			case CSP_BATWING:			*vp = INT_TO_JSVAL( gPriv->Reagants().batwing );		break;
-			case CSP_DAEMONBLOOD:		*vp = INT_TO_JSVAL( gPriv->Reagants().daemonblood );	break;
-			case CSP_GRAVEDUST:			*vp = INT_TO_JSVAL( gPriv->Reagants().gravedust );		break;
-			case CSP_NOXCRYSTAL:		*vp = INT_TO_JSVAL( gPriv->Reagants().noxcrystal );		break;
-			case CSP_PIGIRON:			*vp = INT_TO_JSVAL( gPriv->Reagants().pigiron );		break;
-			case CSP_SOUNDEFFECT:		*vp = INT_TO_JSVAL( gPriv->Effect() );					break;
-			case CSP_TITHING:			*vp = INT_TO_JSVAL( gPriv->Tithing() );					break;
-			default:																			break;
-		}
-	}
-	return JS_TRUE;
+	const auto spellIndex = static_cast<size_t>( priv - Magic->spells.data() - 1 );
+	const auto spellName = Dictionary->GetEntry( magic_table[spellIndex].spell_name );
+	JS::RootedString value( cx, JS_NewStringCopyZ( cx, spellName.c_str() ));
+	if( value == nullptr )
+		return false;
+	args.rval().setString( value );
+	return true;
 }
 
 // clang-format off
@@ -240,7 +215,13 @@ IMPL_GET( CSpell, silk,            CSpellInfo, setInt32, Reagants().silk )
 IMPL_GET( CSpell, ash,             CSpellInfo, setInt32, Reagants().ash )
 IMPL_GET( CSpell, shade,           CSpellInfo, setInt32, Reagants().shade )
 IMPL_GET( CSpell, garlic,          CSpellInfo, setInt32, Reagants().garlic )
+IMPL_GET( CSpell, batwing,         CSpellInfo, setInt32, Reagants().batwing )
+IMPL_GET( CSpell, daemonBlood,     CSpellInfo, setInt32, Reagants().daemonblood )
+IMPL_GET( CSpell, graveDust,       CSpellInfo, setInt32, Reagants().gravedust )
+IMPL_GET( CSpell, noxCrystal,      CSpellInfo, setInt32, Reagants().noxcrystal )
+IMPL_GET( CSpell, pigIron,         CSpellInfo, setInt32, Reagants().pigiron )
 IMPL_GET( CSpell, soundEffect,     CSpellInfo, setInt32, Effect() )
+IMPL_GET( CSpell, tithing,         CSpellInfo, setInt32, Tithing() )
 IMPL_GET( CSpell, delay,           CSpellInfo, setDouble, Delay() )
 IMPL_GET( CSpell, damageDelay,     CSpellInfo, setDouble, DamageDelay() )
 IMPL_GET( CSpell, recoveryDelay,   CSpellInfo, setDouble, RecoveryDelay() )
@@ -284,94 +265,52 @@ JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsid id, js
 	return JS_TRUE;
 }
 
-JSBool CGlobalSkillProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
-{
-	return JS_TRUE;
-}
+// clang-format off
+IMPL_GETS( CGlobalSkill, name,         CWorldMain::Skill_st, setString, name.c_str() )
+IMPL_GETS( CGlobalSkill, madeWord,     CWorldMain::Skill_st, setString, madeWord.c_str() )
+IMPL_GET(  CGlobalSkill, strength,     CWorldMain::Skill_st, setInt32,  strength )
+IMPL_GET(  CGlobalSkill, dexterity,    CWorldMain::Skill_st, setInt32,  dexterity )
+IMPL_GET(  CGlobalSkill, intelligence, CWorldMain::Skill_st, setInt32,  intelligence )
+IMPL_GET(  CGlobalSkill, skillDelay,   CWorldMain::Skill_st, setInt32,  skillDelay )
+IMPL_GET(  CGlobalSkill, scriptID,     CWorldMain::Skill_st, setInt32,  jsScript )
+// clang-format on
 
-JSBool CGlobalSkillProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
-{
-	CWorldMain::Skill_st *gPriv = static_cast<CWorldMain::Skill_st*>( JS_GetPrivate( cx, obj ));
-	if( gPriv == nullptr )
-		return JS_FALSE;
-
-	std::string skillName = "";
-
-	if( JSID_IS_INT( id ))
-	{
-		JSString *tString = nullptr;
-		switch( JSID_TO_INT( id ))
-		{
-			case CGSKILL_NAME:
-				tString = JS_NewStringCopyZ( cx, gPriv->name.c_str() );
-				*vp = STRING_TO_JSVAL( tString );
-				break;
-			case CGSKILL_MADEWORD:
-				tString = JS_NewStringCopyZ( cx, gPriv->madeWord.c_str() );
-				*vp = STRING_TO_JSVAL( tString );
-				break;
-			case CGSKILL_STRENGTH:		*vp = INT_TO_JSVAL( gPriv->strength );		break;
-			case CGSKILL_DEXTERITY:		*vp = INT_TO_JSVAL( gPriv->dexterity );		break;
-			case CGSKILL_INTELLIGENCE:	*vp = INT_TO_JSVAL( gPriv->intelligence );	break;
-			case CGSKILL_SKILLDELAY:	*vp = INT_TO_JSVAL( gPriv->skillDelay );	break;
-			case CGSKILL_SCRIPTID:		*vp = INT_TO_JSVAL( gPriv->jsScript );		break;
-			default:																break;
-		}
-	}
-	return JS_TRUE;
-}
-
-JSBool CTimerProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
-{
-	if( JSID_IS_INT( id ))
-	{
-		switch( JSID_TO_INT( id ))
-		{
-			// Character timers (PC and NPC)
-			case TIMER_TIMEOUT:			*vp = INT_TO_JSVAL( tCHAR_TIMEOUT );		break;
-			case TIMER_INVIS:			*vp = INT_TO_JSVAL( tCHAR_INVIS );			break;
-			case TIMER_HUNGER:			*vp = INT_TO_JSVAL( tCHAR_HUNGER );			break;
-			case TIMER_THIRST:			*vp = INT_TO_JSVAL( tCHAR_THIRST );			break;
-			case TIMER_POISONTIME:		*vp = INT_TO_JSVAL( tCHAR_POISONTIME );		break;
-			case TIMER_POISONTEXT:		*vp = INT_TO_JSVAL( tCHAR_POISONTEXT );		break;
-			case TIMER_POISONWEAROFF:	*vp = INT_TO_JSVAL( tCHAR_POISONWEAROFF );	break;
-			case TIMER_SPELLTIME:		*vp = INT_TO_JSVAL( tCHAR_SPELLTIME );		break;
-			case TIMER_SPELLRECOVERYTIME:		*vp = INT_TO_JSVAL( tCHAR_SPELLRECOVERYTIME );		break;
-			case TIMER_ANTISPAM:		*vp = INT_TO_JSVAL( tCHAR_ANTISPAM );		break;
-			case TIMER_CRIMFLAG:		*vp = INT_TO_JSVAL( tCHAR_CRIMFLAG );		break;
-			case TIMER_MURDERRATE:		*vp = INT_TO_JSVAL( tCHAR_MURDERRATE );		break;
-			case TIMER_PEACETIMER:		*vp = INT_TO_JSVAL( tCHAR_PEACETIMER );		break;
-			case TIMER_FLYINGTOGGLE:	*vp = INT_TO_JSVAL( tCHAR_FLYINGTOGGLE );	break;
-			case TIMER_FIREFIELDTICK:	*vp = INT_TO_JSVAL( tCHAR_FIREFIELDTICK );	break;
-			case TIMER_POISONFIELDTICK:	*vp = INT_TO_JSVAL( tCHAR_POISONFIELDTICK );break;
-			case TIMER_PARAFIELDTICK:	*vp = INT_TO_JSVAL( tCHAR_PARAFIELDTICK );	break;
-			case TIMER_YOUNGHEAL:		*vp = INT_TO_JSVAL( tCHAR_YOUNGHEAL );		break;
-			case TIMER_YOUNGMESSAGE:	*vp = INT_TO_JSVAL( tCHAR_YOUNGMESSAGE );	break;
-			case TIMER_MOVETIME:		*vp = INT_TO_JSVAL( tNPC_MOVETIME );		break;
-			case TIMER_SPATIMER:		*vp = INT_TO_JSVAL( tNPC_SPATIMER );		break;
-			case TIMER_SUMMONTIME:		*vp = INT_TO_JSVAL( tNPC_SUMMONTIME );		break;
-			case TIMER_EVADETIME:		*vp = INT_TO_JSVAL( tNPC_EVADETIME );		break;
-			case TIMER_LOYALTYTIME:		*vp = INT_TO_JSVAL( tNPC_LOYALTYTIME );		break;
-			case TIMER_IDLEANIMTIME:	*vp = INT_TO_JSVAL( tNPC_IDLEANIMTIME );	break;
-			case TIMER_LOGOUT:			*vp = INT_TO_JSVAL( tPC_LOGOUT );			break;
-
-			// Socket Timers (PC only)
-			case TIMER_SOCK_SKILLDELAY:		*vp = INT_TO_JSVAL( tPC_SKILLDELAY );		break;
-			case TIMER_SOCK_OBJDELAY:		*vp = INT_TO_JSVAL( tPC_OBJDELAY );			break;
-			case TIMER_SOCK_SPIRITSPEAK:	*vp = INT_TO_JSVAL( tPC_SPIRITSPEAK );		break;
-			case TIMER_SOCK_TRACKING:		*vp = INT_TO_JSVAL( tPC_TRACKING );			break;
-			case TIMER_SOCK_FISHING:		*vp = INT_TO_JSVAL( tPC_FISHING );			break;
-			case TIMER_SOCK_MUTETIME:		*vp = INT_TO_JSVAL( tPC_MUTETIME );			break;
-			case TIMER_SOCK_TRACKINGDISPLAY: *vp = INT_TO_JSVAL( tPC_TRACKINGDISPLAY );	break;
-			case TIMER_SOCK_TRAFFICWARDEN:	*vp = INT_TO_JSVAL( tPC_TRAFFICWARDEN );	break;
-			case TIMER_SOCK_SPEEDHACKPENALTY:	*vp = INT_TO_JSVAL( tPC_SPEEDHACKPENALTY );		break;
-			case TIMER_SOCK_SPEEDHACKLOGGED:	*vp = INT_TO_JSVAL( tPC_SPEEDHACKLOGGED );		break;
-			default:
-				break;
-		}
-	}
-	return JS_TRUE;
-}
+// clang-format off
+IMPL_GET_NP( CTimer, TIMEOUT,                   setInt32, tCHAR_TIMEOUT )
+IMPL_GET_NP( CTimer, INVIS,                     setInt32, tCHAR_INVIS )
+IMPL_GET_NP( CTimer, HUNGER,                    setInt32, tCHAR_HUNGER )
+IMPL_GET_NP( CTimer, THIRST,                    setInt32, tCHAR_THIRST )
+IMPL_GET_NP( CTimer, POISONTIME,                setInt32, tCHAR_POISONTIME )
+IMPL_GET_NP( CTimer, POISONTEXT,                setInt32, tCHAR_POISONTEXT )
+IMPL_GET_NP( CTimer, POISONWEAROFF,             setInt32, tCHAR_POISONWEAROFF )
+IMPL_GET_NP( CTimer, SPELLTIME,                 setInt32, tCHAR_SPELLTIME )
+IMPL_GET_NP( CTimer, SPELLRECOVERYTIME,         setInt32, tCHAR_SPELLRECOVERYTIME )
+IMPL_GET_NP( CTimer, CRIMFLAG,                  setInt32, tCHAR_CRIMFLAG )
+IMPL_GET_NP( CTimer, ANTISPAM,                  setInt32, tCHAR_ANTISPAM )
+IMPL_GET_NP( CTimer, MURDERRATE,                setInt32, tCHAR_MURDERRATE )
+IMPL_GET_NP( CTimer, PEACETIMER,                setInt32, tCHAR_PEACETIMER )
+IMPL_GET_NP( CTimer, FLYINGTOGGLE,              setInt32, tCHAR_FLYINGTOGGLE )
+IMPL_GET_NP( CTimer, FIREFIELDTICK,             setInt32, tCHAR_FIREFIELDTICK )
+IMPL_GET_NP( CTimer, POISONFIELDTICK,           setInt32, tCHAR_POISONFIELDTICK )
+IMPL_GET_NP( CTimer, PARAFIELDTICK,             setInt32, tCHAR_PARAFIELDTICK )
+IMPL_GET_NP( CTimer, MOVETIME,                  setInt32, tNPC_MOVETIME )
+IMPL_GET_NP( CTimer, SPATIMER,                  setInt32, tNPC_SPATIMER )
+IMPL_GET_NP( CTimer, SUMMONTIME,                setInt32, tNPC_SUMMONTIME )
+IMPL_GET_NP( CTimer, EVADETIME,                 setInt32, tNPC_EVADETIME )
+IMPL_GET_NP( CTimer, LOYALTYTIME,               setInt32, tNPC_LOYALTYTIME )
+IMPL_GET_NP( CTimer, IDLEANIMTIME,              setInt32, tNPC_IDLEANIMTIME )
+IMPL_GET_NP( CTimer, LOGOUT,                    setInt32, tPC_LOGOUT )
+IMPL_GET_NP( CTimer, SOCK_SKILLDELAY,           setInt32, tPC_SKILLDELAY )
+IMPL_GET_NP( CTimer, SOCK_OBJDELAY,             setInt32, tPC_OBJDELAY )
+IMPL_GET_NP( CTimer, SOCK_SPIRITSPEAK,          setInt32, tPC_SPIRITSPEAK )
+IMPL_GET_NP( CTimer, SOCK_TRACKING,             setInt32, tPC_TRACKING )
+IMPL_GET_NP( CTimer, SOCK_FISHING,              setInt32, tPC_FISHING )
+IMPL_GET_NP( CTimer, SOCK_MUTETIME,             setInt32, tPC_MUTETIME )
+IMPL_GET_NP( CTimer, SOCK_TRACKINGDISPLAY,      setInt32, tPC_TRACKINGDISPLAY )
+IMPL_GET_NP( CTimer, SOCK_TRAFFICWARDEN,        setInt32, tPC_TRAFFICWARDEN )
+IMPL_GET_NP( CTimer, SOCK_SPEEDHACKPENALTY,     setInt32, tPC_SPEEDHACKPENALTY )
+IMPL_GET_NP( CTimer, SOCK_SPEEDHACKLOGGED,      setInt32, tPC_SPEEDHACKLOGGED )
+// clang-format on
 
 JSBool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
@@ -393,119 +332,96 @@ JSBool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsid id, j
 	return JS_TRUE;
 }
 
-JSBool CCreateEntryProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
+// clang-format off
+IMPL_GET(  CCreateEntry, id,          CreateEntry_st, setInt32,  targId )
+IMPL_GETS( CCreateEntry, name,        CreateEntry_st, setString, name.c_str() )
+IMPL_GETS( CCreateEntry, addItem,     CreateEntry_st, setString, addItem.c_str() )
+IMPL_GET(  CCreateEntry, colour,      CreateEntry_st, setInt32,  colour )
+IMPL_GET(  CCreateEntry, sound,       CreateEntry_st, setInt32,  soundPlayed )
+IMPL_GET(  CCreateEntry, minRank,     CreateEntry_st, setInt32,  minRank )
+IMPL_GET(  CCreateEntry, maxRank,     CreateEntry_st, setInt32,  maxRank )
+IMPL_GET(  CCreateEntry, delay,       CreateEntry_st, setInt32,  delay )
+IMPL_GET(  CCreateEntry, spell,       CreateEntry_st, setInt32,  spell )
+IMPL_GET(  CCreateEntry, avgMinSkill, CreateEntry_st, setInt32,  AverageMinSkill() )
+IMPL_GET(  CCreateEntry, avgMaxSkill, CreateEntry_st, setInt32,  AverageMaxSkill() )
+// clang-format on
+
+FDCLG( CCreateEntry, resources )
 {
-	return JS_TRUE;
+	FNARGS
+	auto priv = JS::GetMaybePtrFromReservedSlot<CreateEntry_st>( thisObj, 0 );
+	if( priv == nullptr )
+		return false;
+
+	JS::RootedObject resources( cx, JS::NewArrayObject( cx, 0 ) );
+	if( resources == nullptr )
+		return false;
+
+	for( size_t i = 0; i < priv->resourceNeeded.size(); ++i )
+	{
+		const auto &entry = priv->resourceNeeded[i];
+		JS::RootedObject resource( cx, JS::NewArrayObject( cx, 0 ) );
+		JS::RootedObject ids( cx, JS::NewArrayObject( cx, 0 ) );
+		if( resource == nullptr || ids == nullptr )
+			return false;
+
+		for( size_t j = 0; j < entry.idList.size(); ++j )
+		{
+			JS::RootedValue idValue( cx, JS::Int32Value( entry.idList[j] ) );
+			if( !JS_SetElement( cx, ids, static_cast<uint32_t>( j ), idValue ) )
+				return false;
+		}
+
+		JS::RootedValue amountValue( cx, JS::Int32Value( entry.amountNeeded ) );
+		JS::RootedValue colourValue( cx, JS::Int32Value( entry.colour ) );
+		JS::RootedValue idsValue( cx, JS::ObjectValue( *ids ) );
+		if( !JS_SetElement( cx, resource, 0, amountValue ) ||
+			!JS_SetElement( cx, resource, 1, colourValue ) ||
+			!JS_SetElement( cx, resource, 2, idsValue ) )
+			return false;
+
+		JS::RootedValue resourceValue( cx, JS::ObjectValue( *resource ) );
+		if( !JS_SetElement( cx, resources, static_cast<uint32_t>( i ), resourceValue ) )
+			return false;
+	}
+
+	args.rval().setObject( *resources );
+	return true;
 }
 
-JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
+FDCLG( CCreateEntry, skills )
 {
-	CreateEntry_st *gPriv = static_cast<CreateEntry_st*>( JS_GetPrivate( cx, obj ));
-	if( gPriv == nullptr )
-		return JS_FALSE;
+	FNARGS
+	auto priv = JS::GetMaybePtrFromReservedSlot<CreateEntry_st>( thisObj, 0 );
+	if( priv == nullptr )
+		return false;
 
-	if( JSID_IS_INT( id ))
+	JS::RootedObject skills( cx, JS::NewArrayObject( cx, 0 ) );
+	if( skills == nullptr )
+		return false;
+
+	for( size_t i = 0; i < priv->skillReqs.size(); ++i )
 	{
-		JSString *tString = nullptr;
-		switch( JSID_TO_INT( id ))
-		{
-		case CMAKE_ID:
-			*vp = INT_TO_JSVAL( gPriv->targId );
-			break;
-		case CMAKE_NAME:
-		{
-			std::string createName = gPriv->name;
-			tString = JS_NewStringCopyZ( cx, createName.c_str() );
-			*vp = STRING_TO_JSVAL( tString );
-			break;
-		}
-		case CMAKE_ADDITEM:
-		{
-			std::string addItem = gPriv->addItem;
-			tString = JS_NewStringCopyZ( cx, addItem.c_str() );
-			*vp = STRING_TO_JSVAL( tString );
-			break;
-		}
-		case CMAKE_COLOUR:			*vp = INT_TO_JSVAL( gPriv->colour );				break;
-		case CMAKE_SOUND:			*vp = INT_TO_JSVAL( gPriv->soundPlayed );			break;
-		case CMAKE_MINRANK:			*vp = INT_TO_JSVAL( gPriv->minRank );				break;
-		case CMAKE_MAXRANK:			*vp = INT_TO_JSVAL( gPriv->maxRank );				break;
-		case CMAKE_DELAY:			*vp = INT_TO_JSVAL( gPriv->delay );					break;
-		case CMAKE_SPELL:			*vp = INT_TO_JSVAL( gPriv->spell );					break;
-		case CMAKE_RESOURCES:
-		{
-			ResAmountPair_st resEntry;
-			std::vector<ResAmountPair_st> resourcesNeeded = gPriv->resourceNeeded;
+		const auto &entry = priv->skillReqs[i];
+		JS::RootedObject skill( cx, JS::NewArrayObject( cx, 0 ) );
+		if( skill == nullptr )
+			return false;
 
-			// Loop through each resource required, and add them to a JSObject
-			jsval amountNeeded = JSVAL_VOID;
-			jsval targColour = JSVAL_VOID;
-			JSObject *resources = JS_NewArrayObject( cx, 0, nullptr );
-			for( auto i = 0; i < static_cast<int>( resourcesNeeded.size() ); i++ )
-			{
-				resEntry = resourcesNeeded[i];
-				amountNeeded = INT_TO_JSVAL( resEntry.amountNeeded );
-				targColour = INT_TO_JSVAL( resEntry.colour );
+		JS::RootedValue numberValue( cx, JS::Int32Value( entry.skillNumber ) );
+		JS::RootedValue minValue( cx, JS::Int32Value( entry.minSkill ) );
+		JS::RootedValue maxValue( cx, JS::Int32Value( entry.maxSkill ) );
+		if( !JS_SetElement( cx, skill, 0, numberValue ) ||
+			!JS_SetElement( cx, skill, 1, minValue ) ||
+			!JS_SetElement( cx, skill, 2, maxValue ) )
+			return false;
 
-				// Add each required resource as its own object
-				JSObject *resource = JS_NewArrayObject( cx, 0, nullptr );
-				JS_SetElement( cx, resource, 0, &amountNeeded );
-				JS_SetElement( cx, resource, 1, &targColour );
-
-				// Make a child object with all the supported resource IDs
-				JSObject *idList = JS_NewArrayObject( cx, 0, nullptr );
-				for( auto j = 0; j < static_cast<int>( resEntry.idList.size() ); j++ )
-				{
-					jsval targId = INT_TO_JSVAL( resEntry.idList[j] );
-					JS_SetElement( cx, idList, j, &targId );
-				}
-				jsval idListVal = OBJECT_TO_JSVAL( idList );
-				JS_SetElement( cx, resource, 2, &idListVal );
-
-				// Now stuff the resource object into the parent object
-				jsval resourceVal = OBJECT_TO_JSVAL( resource );
-				JS_SetElement( cx, resources, i, &resourceVal );
-			}
-
-			*vp = OBJECT_TO_JSVAL( resources );
-			break;
-		}
-		case CMAKE_SKILLS:
-		{
-			ResSkillReq_st resEntry;
-			std::vector<ResSkillReq_st> skillReqs = gPriv->skillReqs;
-
-			// Loop through each skill required, and add the details to a JSObject
-			jsval skillNumber = JSVAL_VOID;
-			jsval minSkill = JSVAL_VOID;
-			jsval maxSkill = JSVAL_VOID;
-			JSObject *skills = JS_NewArrayObject( cx, 0, nullptr );
-			for( auto i = 0; i < static_cast<int>( skillReqs.size() ); i++ )
-			{
-				resEntry = skillReqs[i];
-				skillNumber = INT_TO_JSVAL( resEntry.skillNumber );
-				minSkill = INT_TO_JSVAL( resEntry.minSkill );
-				maxSkill = INT_TO_JSVAL( resEntry.maxSkill );
-
-				// Add each required skill as its own object
-				JSObject *skill = JS_NewArrayObject( cx, 0, nullptr );
-				JS_SetElement( cx, skill, 0, &skillNumber );
-				JS_SetElement( cx, skill, 1, &minSkill );
-				JS_SetElement( cx, skill, 2, &maxSkill );
-
-				// Now stuff the skill object into the parent object
-				jsval skillVal = OBJECT_TO_JSVAL( skill );
-				JS_SetElement( cx, skills, i, &skillVal );
-			}
-
-			*vp = OBJECT_TO_JSVAL( skills );
-			break;
-		}
-		case CMAKE_AVGMINSKILL:		*vp = INT_TO_JSVAL( gPriv->AverageMinSkill() );		break;
-		case CMAKE_AVGMAXSKILL:		*vp = INT_TO_JSVAL( gPriv->AverageMaxSkill() );		break;
-		}
+		JS::RootedValue skillValue( cx, JS::ObjectValue( *skill ) );
+		if( !JS_SetElement( cx, skills, static_cast<uint32_t>( i ), skillValue ) )
+			return false;
 	}
-	return JS_TRUE;
+
+	args.rval().setObject( *skills );
+	return true;
 }
 
 JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
@@ -1688,6 +1604,716 @@ JSBool CItemProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool str
 
 	return JS_TRUE;
 }
+
+IMPL_GETS_OBJ( CItem, sectionID, CItem, setString, GetSectionId().c_str() )
+IMPL_GETS_OBJ( CItem, name, CItem, setString, GetName().c_str() )
+IMPL_GETS_OBJ( CItem, title, CItem, setString, GetTitle().c_str() )
+IMPL_GET_OBJ( CItem, x, CItem, setInt32, GetX() )
+IMPL_GET_OBJ( CItem, y, CItem, setInt32, GetY() )
+IMPL_GET_OBJ( CItem, z, CItem, setInt32, GetZ() )
+IMPL_GET_OBJ( CItem, id, CItem, setInt32, GetId() )
+IMPL_GET_OBJ( CItem, colour, CItem, setInt32, GetColour() )
+IMPL_GET_OBJ( CItem, color, CItem, setInt32, GetColour() )
+IMPL_GET_OBJ( CItem, visible, CItem, setInt32, GetVisible() )
+IMPL_GET_OBJ( CItem, serial, CItem, setNumber, GetSerial() )
+IMPL_GET_OBJ( CItem, health, CItem, setInt32, GetHP() )
+IMPL_GET_OBJ( CItem, worldnumber, CItem, setInt32, WorldNumber() )
+IMPL_GET_OBJ( CItem, worldNumber, CItem, setInt32, WorldNumber() )
+IMPL_GET_OBJ( CItem, instanceID, CItem, setInt32, GetInstanceId() )
+IMPL_GET_OBJ( CItem, amount, CItem, setInt32, GetAmount() )
+IMPL_GET_OBJ( CItem, type, CItem, setInt32, GetType() )
+IMPL_SETS( CItem, sectionID, CItem, toString, SetSectionId )
+IMPL_SETS( CItem, name, CItem, toString, SetName )
+
+#define IMPL_ITEM_INT_SET( attr, typeName, statement )                    \
+FDCLS( CItem, attr )                                                      \
+{                                                                         \
+	FNARGS                                                                  \
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );       \
+	if( !ValidateObject( item )) return false;                              \
+	const typeName value = static_cast<typeName>( args.get( 0 ).toInt32() );\
+	statement;                                                              \
+	return true;                                                            \
+}
+
+IMPL_ITEM_INT_SET( x, SI16, item->SetLocation( value, item->GetY(), item->GetZ() ))
+IMPL_ITEM_INT_SET( y, SI16, item->SetLocation( item->GetX(), value, item->GetZ() ))
+IMPL_ITEM_INT_SET( z, SI08, item->SetZ( value ))
+IMPL_ITEM_INT_SET( id, UI16, item->SetId( value ))
+IMPL_ITEM_INT_SET( colour, UI16, item->SetColour( value ))
+IMPL_ITEM_INT_SET( color, UI16, item->SetColour( value ))
+IMPL_ITEM_INT_SET( visible, VisibleTypes, item->SetVisible( value ))
+IMPL_ITEM_INT_SET( health, SI16, item->SetHP( value ))
+IMPL_ITEM_INT_SET( worldnumber, UI08, item->SetLocation( item->GetX(), item->GetY(), item->GetZ(), value, item->GetInstanceId() ))
+IMPL_ITEM_INT_SET( worldNumber, UI08, item->SetLocation( item->GetX(), item->GetY(), item->GetZ(), value, item->GetInstanceId() ))
+IMPL_ITEM_INT_SET( instanceID, UI16, item->SetLocation( item->GetX(), item->GetY(), item->GetZ(), item->WorldNumber(), value ))
+IMPL_ITEM_INT_SET( amount, UI32, item->SetAmount( value ))
+IMPL_ITEM_INT_SET( type, ItemTypes, item->SetType( value ))
+
+#undef IMPL_ITEM_INT_SET
+
+FDCLS( CItem, serial ) { return true; }
+FDCLS( CItem, title ) { return true; }
+
+static bool SetLegacyItemProperty( JSContext *cx, JS::HandleObject itemObject, int32_t propertyId, JS::HandleValue value )
+{
+	JS::RootedValue rootedValue( cx, value );
+	return CItemProps_setProperty( cx, itemObject, JS::PropertyKey::Int( propertyId ), false, rootedValue.address() );
+}
+
+#define IMPL_ITEM_LEGACY_SET( attr, propertyId )                         \
+FDCLS( CItem, attr )                                                     \
+{                                                                        \
+	FNARGS                                                                 \
+	return SetLegacyItemProperty( cx, thisObj, propertyId, args.get( 0 )); \
+}
+
+IMPL_ITEM_LEGACY_SET( owner,          CIP_OWNER )
+IMPL_ITEM_LEGACY_SET( container,      CIP_CONTAINER )
+IMPL_ITEM_LEGACY_SET( scriptTrigger,  CIP_SCRIPTTRIGGER )
+IMPL_ITEM_LEGACY_SET( scriptTriggers, CIP_SCRIPTTRIGGERS )
+
+#undef IMPL_ITEM_LEGACY_SET
+
+FDCLG( CItem, owner )
+{
+	FNARGS
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );
+	CChar *owner = item->GetOwnerObj();
+	if( !ValidateObject( owner )) { args.rval().setNull(); return true; }
+	JSObject *wrapper = JSEngine->AcquireObject( IUE_CHAR, owner, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	if( wrapper == nullptr ) return false;
+	args.rval().setObject( *wrapper );
+	return true;
+}
+
+FDCLG( CItem, container )
+{
+	FNARGS
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );
+	const SERIAL serial = item->GetContSerial();
+	if( serial == INVALIDSERIAL ) { args.rval().setNull(); return true; }
+	CBaseObject *container = serial >= BASEITEMSERIAL ? static_cast<CBaseObject *>( CalcItemObjFromSer( serial )) : static_cast<CBaseObject *>( CalcCharObjFromSer( serial ));
+	if( !ValidateObject( container )) { args.rval().setNull(); return true; }
+	const auto objectType = serial >= BASEITEMSERIAL ? IUE_ITEM : IUE_CHAR;
+	JSObject *wrapper = JSEngine->AcquireObject( objectType, container, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	if( wrapper == nullptr ) return false;
+	args.rval().setObject( *wrapper );
+	return true;
+}
+
+FDCLG( CItem, scriptTrigger )
+{
+	FNARGS
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );
+	const auto &triggers = item->GetScriptTriggers();
+	args.rval().setInt32( triggers.empty() ? 0 : triggers.back() );
+	return true;
+}
+
+FDCLG( CItem, scriptTriggers )
+{
+	FNARGS
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );
+	const auto &triggers = item->GetScriptTriggers();
+	JS::RootedObject result( cx, JS::NewArrayObject( cx, triggers.size() ));
+	if( result == nullptr ) return false;
+	for( uint32_t index = 0; index < triggers.size(); ++index )
+	{
+		JS::RootedValue value( cx, JS::Int32Value( triggers[index] ));
+		if( !JS_SetElement( cx, result, index, value )) return false;
+	}
+	args.rval().setObject( *result );
+	return true;
+}
+
+#define ITEM_METADATA_SET( attr, propertyId )                            \
+FDCLS( CItem, attr )                                                     \
+{                                                                        \
+	FNARGS                                                                 \
+	return SetLegacyItemProperty( cx, thisObj, propertyId, args.get( 0 )); \
+}
+ITEM_METADATA_SET( oldX, CIP_OLDX )
+ITEM_METADATA_SET( oldY, CIP_OLDY )
+ITEM_METADATA_SET( oldZ, CIP_OLDZ )
+ITEM_METADATA_SET( skin, CIP_COLOUR )
+ITEM_METADATA_SET( hue, CIP_COLOUR )
+ITEM_METADATA_SET( scripttrigger, CIP_SCRIPTTRIGGER )
+ITEM_METADATA_SET( decaytime, CIP_DECAYTIME )
+ITEM_METADATA_SET( race, CIP_RACE )
+ITEM_METADATA_SET( multi, CIP_MULTI )
+ITEM_METADATA_SET( region, CIP_REGION )
+#undef ITEM_METADATA_SET
+
+FDCLG( CItem, oldX ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); args.rval().setInt32( item->GetOldLocation().x ); return true; }
+FDCLG( CItem, oldY ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); args.rval().setInt32( item->GetOldLocation().y ); return true; }
+FDCLG( CItem, oldZ ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); args.rval().setInt32( item->GetOldLocation().z ); return true; }
+IMPL_GET_OBJ( CItem, skin, CItem, setInt32, GetColour() )
+IMPL_GET_OBJ( CItem, hue, CItem, setInt32, GetColour() )
+
+FDCLG( CItem, scripttrigger )
+{
+	FNARGS
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );
+	const auto &triggers = item->GetScriptTriggers();
+	args.rval().setInt32( triggers.empty() ? 0 : triggers.back() );
+	return true;
+}
+
+IMPL_GET_OBJ( CItem, decaytime, CItem, setNumber, GetDecayTime() )
+
+FDCLG( CItem, race )
+{
+	FNARGS
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );
+	CRace *race = Races->Race( item->GetRace() );
+	if( race == nullptr ) { args.rval().setNull(); return true; }
+	JSObject *wrapper = JSEngine->AcquireObject( IUE_RACE, race, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	if( wrapper == nullptr ) return false;
+	args.rval().setObject( *wrapper );
+	return true;
+}
+
+FDCLG( CItem, multi )
+{
+	FNARGS
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );
+	CMultiObj *multi = item->GetMultiObj();
+	if( !ValidateObject( multi )) { args.rval().setNull(); return true; }
+	JSObject *wrapper = JSEngine->AcquireObject( IUE_ITEM, multi, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	if( wrapper == nullptr ) return false;
+	args.rval().setObject( *wrapper );
+	return true;
+}
+
+FDCLG( CItem, region )
+{
+	FNARGS
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );
+	CTownRegion *region = item->GetRegion();
+	if( region == nullptr ) { args.rval().setNull(); return true; }
+	JSObject *wrapper = JSEngine->AcquireObject( IUE_REGION, region, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	if( wrapper == nullptr ) return false;
+	args.rval().setObject( *wrapper );
+	return true;
+}
+
+FDCLG( CItem, spawnSerial )
+{
+	FNARGS
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );
+	args.rval().setNumber( item->GetSpawn() );
+	return true;
+}
+
+#define ITEM_SPAWNER_SET( attr, propertyId )                            \
+FDCLS( CItem, attr )                                                    \
+{                                                                       \
+	FNARGS                                                                \
+	return SetLegacyItemProperty( cx, thisObj, propertyId, args.get( 0 ));\
+}
+ITEM_SPAWNER_SET( spawnsection, CIP_SPAWNSECTION )
+ITEM_SPAWNER_SET( sectionalist, CIP_SECTIONALIST )
+ITEM_SPAWNER_SET( mininterval, CIP_MININTERVAL )
+ITEM_SPAWNER_SET( maxinterval, CIP_MAXINTERVAL )
+#undef ITEM_SPAWNER_SET
+
+FDCLG( CItem, spawnsection )
+{
+	FNARGS
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );
+	if( !ValidateObject( item )) return false;
+	if( item->GetObjType() != OT_SPAWNER ) { args.rval().setNull(); return true; }
+	JS::RootedString value( cx, JS_NewStringCopyZ( cx, static_cast<CSpawnItem *>( item )->GetSpawnSection().c_str() ));
+	if( value == nullptr ) return false;
+	args.rval().setString( value );
+	return true;
+}
+
+#define ITEM_SPAWNER_GET( attr, method, expression )                    \
+FDCLG( CItem, attr )                                                    \
+{                                                                       \
+	FNARGS                                                                \
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );     \
+	if( !ValidateObject( item )) return false;                            \
+	if( item->GetObjType() != OT_SPAWNER ) { args.rval().setNull(); return true; } \
+	args.rval().method( static_cast<CSpawnItem *>( item )->expression );  \
+	return true;                                                          \
+}
+ITEM_SPAWNER_GET( sectionalist, setBoolean, IsSectionAList() )
+ITEM_SPAWNER_GET( mininterval, setInt32, GetInterval( 0 ) )
+ITEM_SPAWNER_GET( maxinterval, setInt32, GetInterval( 1 ) )
+#undef ITEM_SPAWNER_GET
+
+#define ITEM_MULTI_SET( attr, propertyId )                              \
+FDCLS( CItem, attr )                                                    \
+{                                                                       \
+	FNARGS                                                                \
+	return SetLegacyItemProperty( cx, thisObj, propertyId, args.get( 0 ));\
+}
+ITEM_MULTI_SET( lockdowns, CIP_LOCKDDOWNS )
+ITEM_MULTI_SET( maxLockdowns, CIP_MAXLOCKDOWNS )
+ITEM_MULTI_SET( trashContainers, CIP_TRASHCONTAINERS )
+ITEM_MULTI_SET( maxTrashContainers, CIP_MAXTRASHCONTAINERS )
+ITEM_MULTI_SET( secureContainers, CIP_SECURECONTAINERS )
+ITEM_MULTI_SET( maxSecureContainers, CIP_MAXSECURECONTAINERS )
+ITEM_MULTI_SET( friends, CIP_FRIENDS )
+ITEM_MULTI_SET( maxFriends, CIP_MAXFRIENDS )
+ITEM_MULTI_SET( guests, CIP_GUESTS )
+ITEM_MULTI_SET( maxGuests, CIP_MAXGUESTS )
+ITEM_MULTI_SET( owners, CIP_OWNERS )
+ITEM_MULTI_SET( maxOwners, CIP_MAXOWNERS )
+ITEM_MULTI_SET( bans, CIP_BANS )
+ITEM_MULTI_SET( maxBans, CIP_MAXBANS )
+ITEM_MULTI_SET( vendors, CIP_VENDORS )
+ITEM_MULTI_SET( maxVendors, CIP_MAXVENDORS )
+ITEM_MULTI_SET( deed, CIP_DEED )
+ITEM_MULTI_SET( isPublic, CIP_ISPUBLIC )
+ITEM_MULTI_SET( buildTimestamp, CIP_BUILDTIMESTAMP )
+ITEM_MULTI_SET( tradeTimestamp, CIP_TRADETIMESTAMP )
+ITEM_MULTI_SET( banX, CIP_BANX )
+ITEM_MULTI_SET( banY, CIP_BANY )
+#undef ITEM_MULTI_SET
+
+#define ITEM_MULTI_GET( attr, method, expression )                      \
+FDCLG( CItem, attr )                                                    \
+{                                                                       \
+	FNARGS                                                                \
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );     \
+	if( !ValidateObject( item )) return false;                            \
+	if( item->GetObjType() != OT_MULTI ) { args.rval().setNull(); return true; } \
+	args.rval().method( static_cast<CMultiObj *>( item )->expression );   \
+	return true;                                                          \
+}
+ITEM_MULTI_GET( lockdowns, setInt32, GetLockdownCount() )
+ITEM_MULTI_GET( maxLockdowns, setInt32, GetMaxLockdowns() )
+ITEM_MULTI_GET( trashContainers, setInt32, GetTrashContainerCount() )
+ITEM_MULTI_GET( maxTrashContainers, setInt32, GetMaxTrashContainers() )
+ITEM_MULTI_GET( secureContainers, setInt32, GetSecureContainerCount() )
+ITEM_MULTI_GET( maxSecureContainers, setInt32, GetMaxSecureContainers() )
+ITEM_MULTI_GET( friends, setInt32, GetFriendCount() )
+ITEM_MULTI_GET( maxFriends, setInt32, GetMaxFriends() )
+ITEM_MULTI_GET( guests, setInt32, GetGuestCount() )
+ITEM_MULTI_GET( maxGuests, setInt32, GetMaxGuests() )
+ITEM_MULTI_GET( owners, setInt32, GetOwnerCount() )
+ITEM_MULTI_GET( maxOwners, setInt32, GetMaxOwners() )
+ITEM_MULTI_GET( bans, setInt32, GetBanCount() )
+ITEM_MULTI_GET( maxBans, setInt32, GetMaxBans() )
+ITEM_MULTI_GET( vendors, setInt32, GetVendorCount() )
+ITEM_MULTI_GET( maxVendors, setInt32, GetMaxVendors() )
+ITEM_MULTI_GET( isPublic, setBoolean, GetPublicStatus() )
+ITEM_MULTI_GET( banX, setInt32, GetBanX() )
+ITEM_MULTI_GET( banY, setInt32, GetBanY() )
+#undef ITEM_MULTI_GET
+
+#define ITEM_MULTI_STRING_GET( attr, expression )                       \
+FDCLG( CItem, attr )                                                     \
+{                                                                        \
+	FNARGS                                                                 \
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );      \
+	if( !ValidateObject( item )) return false;                             \
+	if( item->GetObjType() != OT_MULTI ) { args.rval().setNull(); return true; } \
+	JS::RootedString value( cx, JS_NewStringCopyZ( cx, static_cast<CMultiObj *>( item )->expression.c_str() )); \
+	if( value == nullptr ) return false;                                   \
+	args.rval().setString( value );                                        \
+	return true;                                                           \
+}
+ITEM_MULTI_STRING_GET( deed, GetDeed() )
+ITEM_MULTI_STRING_GET( buildTimestamp, GetBuildTimestamp() )
+ITEM_MULTI_STRING_GET( tradeTimestamp, GetTradeTimestamp() )
+#undef ITEM_MULTI_STRING_GET
+
+IMPL_GET_OBJ( CItem, movable,       CItem, setInt32,   GetMovable() )
+IMPL_GET_OBJ( CItem, layer,         CItem, setInt32,   GetLayer() )
+IMPL_GET_OBJ( CItem, decayable,     CItem, setBoolean, IsDecayable() )
+IMPL_GETS_OBJ( CItem, name2,        CItem, setString,  GetName2().c_str() )
+IMPL_GET_OBJ( CItem, maxhp,         CItem, setInt32,   GetMaxHP() )
+IMPL_GET_OBJ( CItem, maxUses,       CItem, setInt32,   GetMaxUses() )
+IMPL_GET_OBJ( CItem, usesLeft,      CItem, setInt32,   GetUsesLeft() )
+IMPL_GET_OBJ( CItem, rank,          CItem, setInt32,   GetRank() )
+IMPL_GET_OBJ( CItem, creator,       CItem, setNumber,  GetCreator() )
+IMPL_GET_OBJ( CItem, poison,        CItem, setInt32,   GetPoisoned() )
+IMPL_GET_OBJ( CItem, poisonedBy,    CItem, setNumber,  GetPoisonedBy() )
+IMPL_GET_OBJ( CItem, poisonCharges, CItem, setInt32,   GetPoisonCharges() )
+IMPL_GET_OBJ( CItem, dir,           CItem, setInt32,   GetDir() )
+IMPL_GET_OBJ( CItem, wipable,       CItem, setBoolean, IsWipeable() )
+IMPL_GET_OBJ( CItem, weight,        CItem, setInt32,   GetWeight() )
+IMPL_GET_OBJ( CItem, weightMax,     CItem, setInt32,   GetWeightMax() )
+IMPL_GET_OBJ( CItem, baseWeight,    CItem, setInt32,   GetBaseWeight() )
+IMPL_GET_OBJ( CItem, maxItems,      CItem, setInt32,   GetMaxItems() )
+IMPL_GET_OBJ( CItem, corpse,        CItem, setBoolean, IsCorpse() )
+IMPL_GETS_OBJ( CItem, desc,         CItem, setString,  GetDesc().c_str() )
+
+#define IMPL_ITEM_STATE_SET( attr, propertyId )                         \
+FDCLS( CItem, attr )                                                    \
+{                                                                       \
+	FNARGS                                                                \
+	return SetLegacyItemProperty( cx, thisObj, propertyId, args.get( 0 ));\
+}
+
+IMPL_ITEM_STATE_SET( movable, CIP_MOVABLE )
+IMPL_ITEM_STATE_SET( layer, CIP_LAYER )
+IMPL_ITEM_STATE_SET( decayable, CIP_DECAYABLE )
+IMPL_ITEM_STATE_SET( name2, CIP_NAME2 )
+IMPL_ITEM_STATE_SET( maxhp, CIP_MAXHP )
+IMPL_ITEM_STATE_SET( maxUses, CIP_MAXUSES )
+IMPL_ITEM_STATE_SET( usesLeft, CIP_USESLEFT )
+IMPL_ITEM_STATE_SET( rank, CIP_RANK )
+IMPL_ITEM_STATE_SET( creator, CIP_CREATOR )
+IMPL_ITEM_STATE_SET( poison, CIP_POISON )
+IMPL_ITEM_STATE_SET( poisonedBy, CIP_POISONEDBY )
+IMPL_ITEM_STATE_SET( poisonCharges, CIP_POISONCHARGES )
+IMPL_ITEM_STATE_SET( dir, CIP_DIR )
+IMPL_ITEM_STATE_SET( wipable, CIP_WIPABLE )
+IMPL_ITEM_STATE_SET( weight, CIP_WEIGHT )
+IMPL_ITEM_STATE_SET( weightMax, CIP_WEIGHTMAX )
+IMPL_ITEM_STATE_SET( baseWeight, CIP_BASEWEIGHT )
+IMPL_ITEM_STATE_SET( maxItems, CIP_MAXITEMS )
+IMPL_ITEM_STATE_SET( corpse, CIP_CORPSE )
+IMPL_ITEM_STATE_SET( desc, CIP_DESC )
+
+#undef IMPL_ITEM_STATE_SET
+
+#define ITEM_NUM_GET( attr, accessor ) IMPL_GET_OBJ( CItem, attr, CItem, setInt32, accessor )
+#define ITEM_BOOL_GET( attr, accessor ) IMPL_GET_OBJ( CItem, attr, CItem, setBoolean, accessor )
+IMPL_GET_OBJ( CItem, more,  CItem, setNumber, GetTempVar( CITV_MORE ))
+IMPL_GET_OBJ( CItem, more0, CItem, setNumber, GetTempVar( CITV_MORE0 ))
+IMPL_GET_OBJ( CItem, more1, CItem, setNumber, GetTempVar( CITV_MORE1 ))
+IMPL_GET_OBJ( CItem, more2, CItem, setNumber, GetTempVar( CITV_MORE2 ))
+IMPL_GET_OBJ( CItem, morex, CItem, setNumber, GetTempVar( CITV_MOREX ))
+IMPL_GET_OBJ( CItem, morey, CItem, setNumber, GetTempVar( CITV_MOREY ))
+IMPL_GET_OBJ( CItem, morez, CItem, setNumber, GetTempVar( CITV_MOREZ ))
+ITEM_NUM_GET( lodamage, GetLoDamage() )
+ITEM_NUM_GET( hidamage, GetHiDamage() )
+ITEM_NUM_GET( ac, GetArmourClass() )
+ITEM_NUM_GET( def, GetResist( PHYSICAL ))
+ITEM_NUM_GET( resistCold, GetResist( COLD ))
+ITEM_NUM_GET( resistHeat, GetResist( HEAT ))
+ITEM_NUM_GET( resistLight, GetResist( LIGHT ))
+ITEM_NUM_GET( resistLightning, GetResist( LIGHTNING ))
+ITEM_NUM_GET( resistPoison, GetResist( POISON ))
+ITEM_NUM_GET( resistRain, GetResist( RAIN ))
+ITEM_NUM_GET( resistSnow, GetResist( SNOW ))
+ITEM_BOOL_GET( damageCold, GetWeatherDamage( COLD ))
+ITEM_BOOL_GET( damageHeat, GetWeatherDamage( HEAT ))
+ITEM_BOOL_GET( damageLight, GetWeatherDamage( LIGHT ))
+ITEM_BOOL_GET( damageLightning, GetWeatherDamage( LIGHTNING ))
+ITEM_BOOL_GET( damagePoison, GetWeatherDamage( POISON ))
+ITEM_BOOL_GET( damageRain, GetWeatherDamage( RAIN ))
+ITEM_BOOL_GET( damageSnow, GetWeatherDamage( SNOW ))
+ITEM_NUM_GET( speed, GetSpeed() )
+ITEM_NUM_GET( swingSpeedIncrease, GetSwingSpeedIncrease() )
+ITEM_NUM_GET( damageIncrease, GetDamageIncrease() )
+ITEM_NUM_GET( healthLeech, GetHealthLeech() )
+ITEM_NUM_GET( staminaLeech, GetStaminaLeech() )
+ITEM_NUM_GET( manaLeech, GetManaLeech() )
+ITEM_NUM_GET( hitChance, GetHitChance() )
+ITEM_NUM_GET( defenseChance, GetDefenseChance() )
+ITEM_NUM_GET( luck, GetLuck() )
+ITEM_NUM_GET( healthBonus, GetHealthBonus() )
+ITEM_NUM_GET( staminaBonus, GetStaminaBonus() )
+ITEM_NUM_GET( manaBonus, GetManaBonus() )
+ITEM_NUM_GET( artifactRarity, GetArtifactRarity() )
+ITEM_NUM_GET( durabilityHpBonus, GetDurabilityHpBonus() )
+ITEM_NUM_GET( lowerStateReq, GetLowerStatReq() )
+#undef ITEM_NUM_GET
+#undef ITEM_BOOL_GET
+
+#define ITEM_NUM_SET( attr, propertyId )                                  \
+FDCLS( CItem, attr )                                                      \
+{                                                                         \
+	FNARGS                                                                  \
+	return SetLegacyItemProperty( cx, thisObj, propertyId, args.get( 0 ));  \
+}
+ITEM_NUM_SET( more, CIP_MORE )
+ITEM_NUM_SET( more0, CIP_MORE0 )
+ITEM_NUM_SET( more1, CIP_MORE1 )
+ITEM_NUM_SET( more2, CIP_MORE2 )
+ITEM_NUM_SET( morex, CIP_MOREX )
+ITEM_NUM_SET( morey, CIP_MOREY )
+ITEM_NUM_SET( morez, CIP_MOREZ )
+ITEM_NUM_SET( lodamage, CIP_LODAMAGE )
+ITEM_NUM_SET( hidamage, CIP_HIDAMAGE )
+ITEM_NUM_SET( ac, CIP_AC )
+ITEM_NUM_SET( def, CIP_DEF )
+ITEM_NUM_SET( resistCold, CIP_RESISTCOLD )
+ITEM_NUM_SET( resistHeat, CIP_RESISTHEAT )
+ITEM_NUM_SET( resistLight, CIP_RESISTLIGHT )
+ITEM_NUM_SET( resistLightning, CIP_RESISTLIGHTNING )
+ITEM_NUM_SET( resistPoison, CIP_RESISTPOISON )
+ITEM_NUM_SET( resistRain, CIP_RESISTRAIN )
+ITEM_NUM_SET( resistSnow, CIP_RESISTSNOW )
+ITEM_NUM_SET( damageCold, CIP_DAMAGECOLD )
+ITEM_NUM_SET( damageHeat, CIP_DAMAGEHEAT )
+ITEM_NUM_SET( damageLight, CIP_DAMAGELIGHT )
+ITEM_NUM_SET( damageLightning, CIP_DAMAGELIGHTNING )
+ITEM_NUM_SET( damagePoison, CIP_DAMAGEPOISON )
+ITEM_NUM_SET( damageRain, CIP_DAMAGERAIN )
+ITEM_NUM_SET( damageSnow, CIP_DAMAGESNOW )
+ITEM_NUM_SET( speed, CIP_SPEED )
+ITEM_NUM_SET( swingSpeedIncrease, CIP_SWINGSPEEDINCREASE )
+ITEM_NUM_SET( damageIncrease, CIP_DAMAGEINCREASE )
+ITEM_NUM_SET( healthLeech, CIP_HEALTHLEECH )
+ITEM_NUM_SET( staminaLeech, CIP_STAMINALEECH )
+ITEM_NUM_SET( manaLeech, CIP_MANALEECH )
+ITEM_NUM_SET( hitChance, CIP_HITCHANCE )
+ITEM_NUM_SET( defenseChance, CIP_DEFENSECHANCE )
+ITEM_NUM_SET( luck, CIP_LUCK )
+ITEM_NUM_SET( healthBonus, CIP_HEALTHBONUS )
+ITEM_NUM_SET( staminaBonus, CIP_STAMINABONUS )
+ITEM_NUM_SET( manaBonus, CIP_MANABONUS )
+ITEM_NUM_SET( artifactRarity, CIP_ARTIFACTRARITY )
+ITEM_NUM_SET( durabilityHpBonus, CIP_DURABILITYHPBONUS )
+ITEM_NUM_SET( lowerStateReq, CIP_LOWERSTATREQ )
+#undef ITEM_NUM_SET
+
+#define ITEM_FLAG_GET( attr, method, accessor ) IMPL_GET_OBJ( CItem, attr, CItem, method, accessor )
+ITEM_FLAG_GET( shouldSave, setBoolean, ShouldSave() )
+ITEM_FLAG_GET( isNewbie, setBoolean, IsNewbie() )
+ITEM_FLAG_GET( isDispellable, setBoolean, IsDispellable() )
+ITEM_FLAG_GET( madeWith, setInt32, GetMadeWith() )
+ITEM_FLAG_GET( entryMadeFrom, setInt32, EntryMadeFrom() )
+ITEM_FLAG_GET( isPileable, setBoolean, IsPileable() )
+ITEM_FLAG_GET( isMarkedByMaker, setBoolean, IsMarkedByMaker() )
+ITEM_FLAG_GET( isDyeable, setBoolean, IsDyeable() )
+ITEM_FLAG_GET( isDamageable, setBoolean, IsDamageable() )
+ITEM_FLAG_GET( isWipeable, setBoolean, IsWipeable() )
+ITEM_FLAG_GET( isGuarded, setBoolean, IsGuarded() )
+ITEM_FLAG_GET( isDoorOpen, setBoolean, IsDoorOpen() )
+#undef ITEM_FLAG_GET
+
+#define ITEM_BOOL_SET( attr, accessor )                                  \
+FDCLS( CItem, attr )                                                     \
+{                                                                        \
+	FNARGS                                                                 \
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );      \
+	if( !ValidateObject( item )) return false;                             \
+	item->accessor( args.get( 0 ).toBoolean() );                           \
+	return true;                                                          \
+}
+ITEM_BOOL_SET( shouldSave, ShouldSave )
+ITEM_BOOL_SET( isNewbie, SetNewbie )
+ITEM_BOOL_SET( isDispellable, SetDispellable )
+ITEM_BOOL_SET( isPileable, SetPileable )
+ITEM_BOOL_SET( isMarkedByMaker, SetMakersMark )
+ITEM_BOOL_SET( isDyeable, SetDye )
+ITEM_BOOL_SET( isDamageable, SetDamageable )
+ITEM_BOOL_SET( isWipeable, SetWipeable )
+ITEM_BOOL_SET( isGuarded, SetGuarded )
+ITEM_BOOL_SET( isDoorOpen, SetDoorOpen )
+#undef ITEM_BOOL_SET
+
+#define ITEM_META_SET( attr, typeName, accessor )                         \
+FDCLS( CItem, attr )                                                      \
+{                                                                         \
+	FNARGS                                                                  \
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );       \
+	if( !ValidateObject( item )) return false;                              \
+	item->accessor( static_cast<typeName>( args.get( 0 ).toInt32() ));      \
+	return true;                                                            \
+}
+ITEM_META_SET( madeWith, SI08, SetMadeWith )
+ITEM_META_SET( entryMadeFrom, UI16, EntryMadeFrom )
+#undef ITEM_META_SET
+
+IMPL_GET_OBJ( CItem, tempLastTraded, CItem, setNumber, GetTempLastTraded() )
+IMPL_GET_OBJ( CItem, tempTimer, CItem, setNumber, GetTempTimer() )
+#define ITEM_FLAG_GET( attr, method, accessor ) IMPL_GET_OBJ( CItem, attr, CItem, method, accessor )
+FDCLG( CItem, isChar ) { FNARGS args.rval().setBoolean( false ); return true; }
+FDCLG( CItem, isItem ) { FNARGS args.rval().setBoolean( true ); return true; }
+ITEM_FLAG_GET( isSpawner, setBoolean, GetObjType() == OT_SPAWNER )
+ITEM_FLAG_GET( isFieldSpell, setBoolean, IsFieldSpell() )
+ITEM_FLAG_GET( isLockedDown, setBoolean, IsLockedDown() )
+ITEM_FLAG_GET( isShieldType, setBoolean, IsShieldType() )
+ITEM_FLAG_GET( isMetalType, setBoolean, IsMetalType() )
+ITEM_FLAG_GET( isLeatherType, setBoolean, IsLeatherType() )
+ITEM_FLAG_GET( canBeLockedDown, setBoolean, CanBeLockedDown() )
+ITEM_FLAG_GET( isContType, setBoolean, IsContType() )
+ITEM_FLAG_GET( carveSection, setInt32, GetCarve() )
+ITEM_FLAG_GET( ammoID, setInt32, GetAmmoId() )
+ITEM_FLAG_GET( ammoHue, setInt32, GetAmmoHue() )
+ITEM_FLAG_GET( ammoFX, setInt32, GetAmmoFX() )
+ITEM_FLAG_GET( ammoFXHue, setInt32, GetAmmoFXHue() )
+ITEM_FLAG_GET( ammoFXRender, setInt32, GetAmmoFXRender() )
+ITEM_FLAG_GET( isItemHeld, setBoolean, IsHeldOnCursor() )
+#undef ITEM_FLAG_GET
+
+#define ITEM_RETAINED_SET( attr, propertyId )                            \
+FDCLS( CItem, attr )                                                     \
+{                                                                        \
+	FNARGS                                                                 \
+	return SetLegacyItemProperty( cx, thisObj, propertyId, args.get( 0 )); \
+}
+ITEM_RETAINED_SET( tempLastTraded, CIP_TEMPLASTTRADED )
+ITEM_RETAINED_SET( tempTimer, CIP_TEMPTIMER )
+ITEM_RETAINED_SET( carveSection, CIP_CARVESECTION )
+ITEM_RETAINED_SET( ammoID, CIP_AMMOID )
+ITEM_RETAINED_SET( ammoHue, CIP_AMMOHUE )
+ITEM_RETAINED_SET( ammoFX, CIP_AMMOFX )
+ITEM_RETAINED_SET( ammoFXHue, CIP_AMMOFXHUE )
+ITEM_RETAINED_SET( ammoFXRender, CIP_AMMOFXRENDER )
+ITEM_RETAINED_SET( isItemHeld, CIP_ISITEMHELD )
+#undef ITEM_RETAINED_SET
+
+#define ITEM_GENERAL_GET( attr, method, accessor ) IMPL_GET_OBJ( CItem, attr, CItem, method, accessor )
+FDCLG( CItem, att )
+{
+	FNARGS
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );
+	if( !ValidateObject( item ))
+		return false;
+	args.rval().setInt32( RandomNum( item->GetLoDamage(), item->GetHiDamage() ));
+	return true;
+}
+ITEM_GENERAL_GET( itemsinside, setInt32, GetContainsList()->Num() )
+FDCLG( CItem, totalItemCount )
+{
+	FNARGS
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );
+	if( !ValidateObject( item ))
+		return false;
+	args.rval().setInt32( GetTotalItemCount( item ));
+	return true;
+}
+ITEM_GENERAL_GET( healthRegenBonus, setInt32, GetHealthRegenBonus() )
+ITEM_GENERAL_GET( staminaRegenBonus, setInt32, GetStaminaRegenBonus() )
+ITEM_GENERAL_GET( manaRegenBonus, setInt32, GetManaRegenBonus() )
+ITEM_GENERAL_GET( buyvalue, setInt32, GetBuyValue() )
+ITEM_GENERAL_GET( sellvalue, setInt32, GetSellValue() )
+ITEM_GENERAL_GET( vendorPrice, setInt32, GetVendorPrice() )
+ITEM_GENERAL_GET( restock, setInt32, GetRestock() )
+ITEM_GENERAL_GET( good, setInt32, GetGood() )
+ITEM_GENERAL_GET( divinelock, setBoolean, IsDivineLocked() )
+ITEM_GENERAL_GET( strength, setInt32, GetStrength() )
+ITEM_GENERAL_GET( dexterity, setInt32, GetDexterity() )
+ITEM_GENERAL_GET( intelligence, setInt32, GetIntelligence() )
+IMPL_GETS_OBJ( CItem, event, CItem, setString, GetEvent().c_str() )
+ITEM_GENERAL_GET( maxRange, setInt32, GetMaxRange() )
+ITEM_GENERAL_GET( baseRange, setInt32, GetBaseRange() )
+ITEM_GENERAL_GET( origin, setInt32, GetOrigin() )
+ITEM_GENERAL_GET( stealable, setInt32, GetStealable() )
+FDCLG( CItem, moveType )
+{
+	FNARGS
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );
+	if( !ValidateObject( item ))
+		return false;
+	if( item->GetObjType() == OT_BOAT )
+		args.rval().setInt32( static_cast<CBoatObj *>( item )->GetMoveType() );
+	else
+		args.rval().setNull();
+	return true;
+}
+ITEM_GENERAL_GET( tithing, setInt32, GetTithing() )
+#undef ITEM_GENERAL_GET
+
+#define ITEM_GENERAL_SET( attr, propertyId )                             \
+FDCLS( CItem, attr )                                                     \
+{                                                                        \
+	FNARGS                                                                 \
+	return SetLegacyItemProperty( cx, thisObj, propertyId, args.get( 0 )); \
+}
+ITEM_GENERAL_SET( att, CIP_ATT )
+ITEM_GENERAL_SET( itemsinside, CIP_ITEMSINSIDE )
+ITEM_GENERAL_SET( totalItemCount, CIP_TOTALITEMCOUNT )
+ITEM_GENERAL_SET( healthRegenBonus, CIP_HEALTHREGENBONUS )
+ITEM_GENERAL_SET( staminaRegenBonus, CIP_STAMINAREGENBONUS )
+ITEM_GENERAL_SET( manaRegenBonus, CIP_MANAREGENBONUS )
+ITEM_GENERAL_SET( buyvalue, CIP_BUYVALUE )
+ITEM_GENERAL_SET( sellvalue, CIP_SELLVALUE )
+ITEM_GENERAL_SET( vendorPrice, CIP_VENDORPRICE )
+ITEM_GENERAL_SET( restock, CIP_RESTOCK )
+ITEM_GENERAL_SET( good, CIP_GOOD )
+ITEM_GENERAL_SET( divinelock, CIP_DIVINELOCK )
+ITEM_GENERAL_SET( strength, CIP_STRENGTH )
+ITEM_GENERAL_SET( dexterity, CIP_DEXTERITY )
+ITEM_GENERAL_SET( intelligence, CIP_INTELLIGENCE )
+ITEM_GENERAL_SET( event, CIP_EVENT )
+ITEM_GENERAL_SET( maxRange, CIP_MAXRANGE )
+ITEM_GENERAL_SET( baseRange, CIP_BASERANGE )
+ITEM_GENERAL_SET( origin, CIP_ORIGIN )
+ITEM_GENERAL_SET( stealable, CIP_STEALABLE )
+ITEM_GENERAL_SET( moveType, CIP_MOVETYPE )
+ITEM_GENERAL_SET( tithing, CIP_TITHING )
+#undef ITEM_GENERAL_SET
+
+static bool SetLegacyCharacterProperty( JSContext *cx, JS::HandleObject characterObject, int32_t propertyId, JS::HandleValue value )
+{
+	JS::RootedValue rootedValue( cx, value );
+	return CCharacterProps_setProperty( cx, characterObject, JS::PropertyKey::Int( propertyId ), false, rootedValue.address() );
+}
+
+#define CHARACTER_CORE_SET( attr, propertyId )                              \
+FDCLS( CCharacter, attr )                                                    \
+{                                                                            \
+	FNARGS                                                                     \
+	return SetLegacyCharacterProperty( cx, thisObj, propertyId, args.get( 0 ));\
+}
+CHARACTER_CORE_SET( sectionID, CCP_SECTIONID )
+CHARACTER_CORE_SET( name, CCP_NAME )
+CHARACTER_CORE_SET( origName, CCP_ORIGNAME )
+CHARACTER_CORE_SET( title, CCP_TITLE )
+CHARACTER_CORE_SET( x, CCP_X )
+CHARACTER_CORE_SET( y, CCP_Y )
+CHARACTER_CORE_SET( z, CCP_Z )
+CHARACTER_CORE_SET( oldX, CCP_OLDX )
+CHARACTER_CORE_SET( oldY, CCP_OLDY )
+CHARACTER_CORE_SET( oldZ, CCP_OLDZ )
+CHARACTER_CORE_SET( id, CCP_ID )
+CHARACTER_CORE_SET( colour, CCP_COLOUR )
+CHARACTER_CORE_SET( color, CCP_COLOUR )
+CHARACTER_CORE_SET( skin, CCP_COLOUR )
+CHARACTER_CORE_SET( hue, CCP_COLOUR )
+CHARACTER_CORE_SET( controlSlots, CCP_CONTROLSLOTS )
+CHARACTER_CORE_SET( controlSlotsUsed, CCP_CONTROLSLOTSUSED )
+CHARACTER_CORE_SET( orneriness, CCP_ORNERINESS )
+CHARACTER_CORE_SET( visible, CCP_VISIBLE )
+CHARACTER_CORE_SET( serial, CCP_SERIAL )
+CHARACTER_CORE_SET( health, CCP_HEALTH )
+CHARACTER_CORE_SET( worldnumber, CCP_WORLDNUMBER )
+CHARACTER_CORE_SET( instanceID, CCP_INSTANCEID )
+#undef CHARACTER_CORE_SET
+
+#define CHARACTER_STRING_GET( attr, expression )                         \
+FDCLG( CCharacter, attr )                                                 \
+{                                                                         \
+	FNARGS                                                                  \
+	auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );  \
+	if( !ValidateObject( character )) return false;                         \
+	const std::string text = expression;                                    \
+	JS::RootedString value( cx, JS_NewStringCopyZ( cx, text.c_str() ));      \
+	if( value == nullptr ) return false;                                    \
+	args.rval().setString( value );                                         \
+	return true;                                                            \
+}
+CHARACTER_STRING_GET( sectionID, character->GetSectionId() )
+CHARACTER_STRING_GET( name, oldstrutil::stringToWstringToString( GetNpcDictName( character, nullptr, NRS_SCRIPT )))
+CHARACTER_STRING_GET( origName, oldstrutil::stringToWstringToString( character->GetOrgName() ))
+CHARACTER_STRING_GET( title, character->GetTitle() )
+#undef CHARACTER_STRING_GET
+
+#define CHARACTER_CORE_GET( attr, method, expression ) IMPL_GET_OBJ( CCharacter, attr, CChar, method, expression )
+CHARACTER_CORE_GET( x, setInt32, GetX() )
+CHARACTER_CORE_GET( y, setInt32, GetY() )
+CHARACTER_CORE_GET( z, setInt32, GetZ() )
+CHARACTER_CORE_GET( id, setInt32, GetId() )
+CHARACTER_CORE_GET( colour, setInt32, GetColour() )
+CHARACTER_CORE_GET( color, setInt32, GetColour() )
+CHARACTER_CORE_GET( skin, setInt32, GetColour() )
+CHARACTER_CORE_GET( hue, setInt32, GetColour() )
+CHARACTER_CORE_GET( controlSlots, setInt32, GetControlSlots() )
+CHARACTER_CORE_GET( controlSlotsUsed, setInt32, GetControlSlotsUsed() )
+CHARACTER_CORE_GET( orneriness, setInt32, GetOrneriness() )
+CHARACTER_CORE_GET( visible, setInt32, GetVisible() )
+CHARACTER_CORE_GET( serial, setNumber, GetSerial() )
+CHARACTER_CORE_GET( health, setInt32, GetHP() )
+CHARACTER_CORE_GET( worldnumber, setInt32, WorldNumber() )
+CHARACTER_CORE_GET( instanceID, setInt32, GetInstanceId() )
+#undef CHARACTER_CORE_GET
+
+FDCLG( CCharacter, oldX ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); args.rval().setInt32( character->GetOldLocation().x ); return true; }
+FDCLG( CCharacter, oldY ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); args.rval().setInt32( character->GetOldLocation().y ); return true; }
+FDCLG( CCharacter, oldZ ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); args.rval().setInt32( character->GetOldLocation().z ); return true; }
 
 JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
@@ -2991,6 +3617,82 @@ JSBool CRegionProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool s
 
 	return JS_TRUE;
 }
+
+IMPL_GETS( CRegion, name,              CTownRegion, setString,  GetName().c_str() )
+IMPL_GET(  CRegion, race,              CTownRegion, setInt32,   GetRace() )
+IMPL_GET(  CRegion, tax,               CTownRegion, setInt32,   TaxedAmount() )
+IMPL_GET(  CRegion, taxResource,       CTownRegion, setInt32,   GetResourceId() )
+IMPL_GET(  CRegion, canMark,           CTownRegion, setBoolean, CanMark() )
+IMPL_GET(  CRegion, canRecall,         CTownRegion, setBoolean, CanRecall() )
+IMPL_GET(  CRegion, canGate,           CTownRegion, setBoolean, CanGate() )
+IMPL_GET(  CRegion, canTeleport,       CTownRegion, setBoolean, CanTeleport() )
+IMPL_GET(  CRegion, canPlaceHouse,     CTownRegion, setBoolean, CanPlaceHouse() )
+IMPL_GET(  CRegion, isGuarded,         CTownRegion, setBoolean, IsGuarded() )
+IMPL_GET(  CRegion, canCastAggressive, CTownRegion, setBoolean, CanCastAggressive() )
+IMPL_GET(  CRegion, isSafeZone,        CTownRegion, setBoolean, IsSafeZone() )
+IMPL_GET(  CRegion, health,            CTownRegion, setInt32,   GetHealth() )
+IMPL_GET(  CRegion, isDungeon,         CTownRegion, setBoolean, IsDungeon() )
+IMPL_GET(  CRegion, isDisabled,        CTownRegion, setBoolean, IsDisabled() )
+IMPL_GET(  CRegion, worldNumber,       CTownRegion, setInt32,   WorldNumber() )
+IMPL_GET(  CRegion, instanceID,        CTownRegion, setInt32,   GetInstanceId() )
+IMPL_GET(  CRegion, chanceBigOre,      CTownRegion, setInt32,   GetChanceBigOre() )
+IMPL_GET(  CRegion, numOrePrefs,       CTownRegion, setInt32,   GetNumOrePreferences() )
+IMPL_GET(  CRegion, population,        CTownRegion, setInt32,   GetPopulation() )
+IMPL_GETS( CRegion, members,           CTownRegion, setString,  GetTownMemberSerials().c_str() )
+IMPL_GET(  CRegion, id,                CTownRegion, setInt32,   GetRegionNum() )
+IMPL_GET(  CRegion, numGuards,         CTownRegion, setInt32,   NumGuards() )
+IMPL_GET(  CRegion, taxes,             CTownRegion, setInt32,   GetTaxes() )
+IMPL_GET(  CRegion, reserves,          CTownRegion, setInt32,   GetReserves() )
+IMPL_GET(  CRegion, appearance,        CTownRegion, setInt32,   GetAppearance() )
+IMPL_GET(  CRegion, music,             CTownRegion, setInt32,   GetMusicList() )
+IMPL_GET(  CRegion, weather,           CTownRegion, setInt32,   GetWeather() )
+IMPL_GETS( CRegion, owner,             CTownRegion, setString,  GetOwner().c_str() )
+
+FDCLG( CRegion, mayor )
+{
+	FNARGS
+	auto region = JS::GetMaybePtrFromReservedSlot<CTownRegion>( thisObj, 0 );
+	CChar *mayor = region->GetMayor();
+	if( !ValidateObject( mayor ))
+	{
+		args.rval().setNull();
+		return true;
+	}
+
+	JSObject *mayorObject = JSEngine->AcquireObject( IUE_CHAR, mayor, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	if( mayorObject == nullptr )
+		return false;
+	args.rval().setObject( *mayorObject );
+	return true;
+}
+
+FDCLG( CRegion, scriptTrigger )
+{
+	FNARGS
+	auto region = JS::GetMaybePtrFromReservedSlot<CTownRegion>( thisObj, 0 );
+	const auto &triggers = region->GetScriptTriggers();
+	args.rval().setInt32( triggers.empty() ? 0 : triggers.back() );
+	return true;
+}
+
+FDCLG( CRegion, scriptTriggers )
+{
+	FNARGS
+	auto region = JS::GetMaybePtrFromReservedSlot<CTownRegion>( thisObj, 0 );
+	const auto &triggers = region->GetScriptTriggers();
+	JS::RootedObject result( cx, JS::NewArrayObject( cx, triggers.size() ));
+	if( result == nullptr )
+		return false;
+	for( uint32_t index = 0; index < triggers.size(); ++index )
+	{
+		JS::RootedValue value( cx, JS::Int32Value( triggers[index] ));
+		if( !JS_SetElement( cx, result, index, value ))
+			return false;
+	}
+	args.rval().setObject( *result );
+	return true;
+}
+
 JSBool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CSpawnRegion *gPriv = static_cast<CSpawnRegion *>( JS_GetPrivate( cx, obj ));
@@ -3121,6 +3823,80 @@ JSBool CSpawnRegionProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSB
 	return JS_TRUE;
 }
 
+static std::string JoinSpawnEntries( const std::vector<std::string> &entries )
+{
+	std::string result;
+	for( const auto &entry : entries )
+	{
+		if( !result.empty() )
+			result += ',';
+		result += entry;
+	}
+	return result;
+}
+
+IMPL_GETS( CSpawnRegion, name,        CSpawnRegion, setString,  GetName().c_str() )
+IMPL_GET(  CSpawnRegion, regionNum,   CSpawnRegion, setInt32,   GetRegionNum() )
+#define IMPL_GET_SPAWN_LIST( attr, accessor )                         \
+FDCLG( CSpawnRegion, attr )                                           \
+{                                                                    \
+	FNARGS                                                             \
+	auto region = JS::GetMaybePtrFromReservedSlot<CSpawnRegion>( thisObj, 0 ); \
+	const std::string entries = JoinSpawnEntries( region->accessor() ); \
+	JSString *value = JS_NewStringCopyZ( cx, entries.c_str() );         \
+	if( value == nullptr )                                              \
+		return false;                                                    \
+	args.rval().setString( value );                                     \
+	return true;                                                        \
+}
+
+IMPL_GET_SPAWN_LIST( itemList, GetItem )
+IMPL_GET_SPAWN_LIST( npcList,  GetNPC )
+IMPL_GET_SPAWN_LIST( item,     GetItem )
+IMPL_GET_SPAWN_LIST( npc,      GetNPC )
+
+#undef IMPL_GET_SPAWN_LIST
+IMPL_GET(  CSpawnRegion, maxItems,    CSpawnRegion, setInt32,   GetMaxItemSpawn() )
+IMPL_GET(  CSpawnRegion, maxNpcs,     CSpawnRegion, setInt32,   GetMaxCharSpawn() )
+IMPL_GET(  CSpawnRegion, itemCount,   CSpawnRegion, setInt32,   GetCurrentItemAmt() )
+IMPL_GET(  CSpawnRegion, npcCount,    CSpawnRegion, setInt32,   GetCurrentCharAmt() )
+IMPL_GET(  CSpawnRegion, onlyOutside, CSpawnRegion, setBoolean, GetOnlyOutside() )
+IMPL_GET(  CSpawnRegion, isSpawner,   CSpawnRegion, setBoolean, IsSpawner() )
+IMPL_GET(  CSpawnRegion, forceSpawn,  CSpawnRegion, setBoolean, GetForceSpawn() )
+IMPL_GET(  CSpawnRegion, defZ,        CSpawnRegion, setInt32,   GetDefZ() )
+IMPL_GET(  CSpawnRegion, prefZ,       CSpawnRegion, setInt32,   GetPrefZ() )
+IMPL_GET(  CSpawnRegion, x1,          CSpawnRegion, setInt32,   GetX1() )
+IMPL_GET(  CSpawnRegion, y1,          CSpawnRegion, setInt32,   GetY1() )
+IMPL_GET(  CSpawnRegion, x2,          CSpawnRegion, setInt32,   GetX2() )
+IMPL_GET(  CSpawnRegion, y2,          CSpawnRegion, setInt32,   GetY2() )
+IMPL_GET(  CSpawnRegion, world,       CSpawnRegion, setInt32,   WorldNumber() )
+IMPL_GET(  CSpawnRegion, instanceID,  CSpawnRegion, setInt32,   GetInstanceId() )
+IMPL_GET(  CSpawnRegion, minTime,     CSpawnRegion, setInt32,   GetMinTime() )
+IMPL_GET(  CSpawnRegion, maxTime,     CSpawnRegion, setInt32,   GetMaxTime() )
+IMPL_GET(  CSpawnRegion, call,        CSpawnRegion, setInt32,   GetCall() )
+
+IMPL_SETS( CSpawnRegion, name,        CSpawnRegion, toString,  SetName )
+IMPL_SETS( CSpawnRegion, itemList,    CSpawnRegion, toString,  SetItemList )
+IMPL_SETS( CSpawnRegion, npcList,     CSpawnRegion, toString,  SetNPCList )
+IMPL_SETS( CSpawnRegion, item,        CSpawnRegion, toString,  SetItem )
+IMPL_SETS( CSpawnRegion, npc,         CSpawnRegion, toString,  SetNPC )
+IMPL_SET(  CSpawnRegion, maxItems,    CSpawnRegion, toInt32,   SetMaxItemSpawn )
+IMPL_SET(  CSpawnRegion, maxNpcs,     CSpawnRegion, toInt32,   SetMaxCharSpawn )
+IMPL_SET(  CSpawnRegion, onlyOutside, CSpawnRegion, toBoolean, SetOnlyOutside )
+IMPL_SET(  CSpawnRegion, isSpawner,   CSpawnRegion, toBoolean, IsSpawner )
+IMPL_SET(  CSpawnRegion, forceSpawn,  CSpawnRegion, toBoolean, SetForceSpawn )
+IMPL_SET(  CSpawnRegion, defZ,        CSpawnRegion, toInt32,   SetDefZ )
+IMPL_SET(  CSpawnRegion, prefZ,       CSpawnRegion, toInt32,   SetPrefZ )
+IMPL_SET(  CSpawnRegion, x1,          CSpawnRegion, toInt32,   SetX1 )
+IMPL_SET(  CSpawnRegion, y1,          CSpawnRegion, toInt32,   SetY1 )
+IMPL_SET(  CSpawnRegion, x2,          CSpawnRegion, toInt32,   SetX2 )
+IMPL_SET(  CSpawnRegion, y2,          CSpawnRegion, toInt32,   SetY2 )
+IMPL_SET(  CSpawnRegion, world,       CSpawnRegion, toInt32,   WorldNumber )
+IMPL_SET(  CSpawnRegion, instanceID,  CSpawnRegion, toInt32,   SetInstanceId )
+IMPL_SET(  CSpawnRegion, minTime,     CSpawnRegion, toInt32,   SetMinTime )
+IMPL_SET(  CSpawnRegion, maxTime,     CSpawnRegion, toInt32,   SetMaxTime )
+IMPL_SET(  CSpawnRegion, call,        CSpawnRegion, toInt32,   SetCall )
+
 JSBool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CGuild *gPriv = static_cast<CGuild *>( JS_GetPrivate( cx, obj ));
@@ -3250,6 +4026,52 @@ JSBool CGuildProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool st
 
 	return JS_TRUE;
 }
+
+IMPL_GETS( CGuild, name,         CGuild, setString, Name().c_str() )
+IMPL_GET(  CGuild, type,         CGuild, setInt32,  Type() )
+IMPL_GET(  CGuild, numMembers,   CGuild, setInt32,  NumMembers() )
+IMPL_GET(  CGuild, numRecruits,  CGuild, setInt32,  NumRecruits() )
+IMPL_GETS( CGuild, charter,      CGuild, setString, Charter().c_str() )
+IMPL_GETS( CGuild, abbreviation, CGuild, setString, Abbreviation().c_str() )
+IMPL_GETS( CGuild, webPage,      CGuild, setString, Webpage().c_str() )
+
+IMPL_SETS( CGuild, name,         CGuild, toString, Name )
+IMPL_SETS( CGuild, charter,      CGuild, toString, Charter )
+IMPL_SETS( CGuild, abbreviation, CGuild, toString, Abbreviation )
+IMPL_SETS( CGuild, webPage,      CGuild, toString, Webpage )
+
+FDCLG( CGuild, id )
+{
+	FNARGS
+	auto guild = JS::GetMaybePtrFromReservedSlot<CGuild>( thisObj, 0 );
+	args.rval().setInt32( GuildSys->FindGuildId( guild ));
+	return true;
+}
+
+#define IMPL_GET_GUILD_OBJECT( attr, objectType, serialAccessor, objectTypeId, lookup ) \
+FDCLG( CGuild, attr )                                                               \
+{                                                                                   \
+	FNARGS                                                                            \
+	auto guild = JS::GetMaybePtrFromReservedSlot<CGuild>( thisObj, 0 );                \
+	objectType *object = lookup( guild->serialAccessor() );                            \
+	if( !ValidateObject( object ))                                                     \
+	{                                                                                  \
+		args.rval().setNull();                                                           \
+		return true;                                                                     \
+	}                                                                                  \
+	JSObject *wrapper = JSEngine->AcquireObject( objectTypeId, object,                 \
+		JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));                              \
+	if( wrapper == nullptr )                                                           \
+		return false;                                                                    \
+	args.rval().setObject( *wrapper );                                                  \
+	return true;                                                                        \
+}
+
+IMPL_GET_GUILD_OBJECT( master, CChar, Master, IUE_CHAR, CalcCharObjFromSer )
+IMPL_GET_GUILD_OBJECT( stone,  CItem, Stone,  IUE_ITEM, CalcItemObjFromSer )
+
+#undef IMPL_GET_GUILD_OBJECT
+
 JSBool CRaceProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CRace *gPriv = static_cast<CRace *>( JS_GetPrivate( cx, obj ));
@@ -3320,6 +4142,51 @@ JSBool CRaceProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool str
 
 	return JS_TRUE;
 }
+
+// clang-format off
+IMPL_GET(  CRace, id,               CRace, setInt32,   GetRaceID() )
+IMPL_GETS( CRace, name,             CRace, setString,  Name().c_str() )
+IMPL_GET(  CRace, requiresBeard,    CRace, setBoolean, RequiresBeard() )
+IMPL_GET(  CRace, requiresNoBeard,  CRace, setBoolean, NoBeard() )
+IMPL_GET(  CRace, isPlayerRace,     CRace, setBoolean, IsPlayerRace() )
+IMPL_GET(  CRace, genderRestrict,   CRace, setInt32,   GenderRestriction() )
+IMPL_GET(  CRace, armourClass,      CRace, setInt32,   ArmourClassRestriction() )
+IMPL_GET(  CRace, languageSkillMin, CRace, setInt32,   LanguageMin() )
+IMPL_GET(  CRace, poisonResistance, CRace, setNumber,  PoisonResistance() )
+IMPL_GET(  CRace, magicResistance,  CRace, setNumber,  MagicResistance() )
+IMPL_GET(  CRace, visibleDistance,  CRace, setInt32,   VisibilityRange() )
+IMPL_GET(  CRace, nightVision,      CRace, setInt32,   NightVision() )
+IMPL_SETS( CRace, name,             CRace, toString,   Name )
+IMPL_SET(  CRace, requiresBeard,    CRace, toBoolean,  RequiresBeard )
+IMPL_SET(  CRace, requiresNoBeard,  CRace, toBoolean,  NoBeard )
+IMPL_SET(  CRace, isPlayerRace,     CRace, toBoolean,  IsPlayerRace )
+IMPL_SET(  CRace, poisonResistance, CRace, toNumber,   PoisonResistance )
+IMPL_SET(  CRace, magicResistance,  CRace, toNumber,   MagicResistance )
+// clang-format on
+
+FDCLS( CRace, id )
+{
+	return true;
+}
+
+#define IMPL_RACE_INT_SET( attr, type, method )                         \
+FDCLS( CRace, attr )                                                    \
+{                                                                       \
+	FNARGS                                                                \
+	auto priv = JS::GetMaybePtrFromReservedSlot<CRace>( thisObj, 0 );     \
+	if( priv == nullptr )                                                 \
+		return false;                                                       \
+	priv->method( static_cast<type>( args.get( 0 ).toInt32() ));          \
+	return true;                                                          \
+}
+
+IMPL_RACE_INT_SET( genderRestrict,   GENDER,     GenderRestriction )
+IMPL_RACE_INT_SET( armourClass,      ARMORCLASS, ArmourClassRestriction )
+IMPL_RACE_INT_SET( languageSkillMin, SKILLVAL,   LanguageMin )
+IMPL_RACE_INT_SET( visibleDistance,  RANGE,      VisibilityRange )
+IMPL_RACE_INT_SET( nightVision,      LIGHTLEVEL, NightVision )
+
+#undef IMPL_RACE_INT_SET
 
 JSBool CSocketProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
 {
@@ -3583,6 +4450,115 @@ JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *v
 	return JS_TRUE;
 }
 
+#define IMPL_SOCKET_GET( attr, method, accessor ) IMPL_GET( CSocket, attr, CSocket, method, accessor )
+#define IMPL_SOCKET_SET( attr, method, accessor ) IMPL_SET( CSocket, attr, CSocket, method, accessor )
+
+IMPL_SOCKET_GET( wasIdleWarned,      setBoolean, WasIdleWarned() )
+IMPL_SOCKET_GET( tempInt,            setInt32,   TempInt() )
+IMPL_SOCKET_GET( tempInt2,           setInt32,   TempInt2() )
+IMPL_GETS( CSocket, xText,  CSocket, setString, XText().c_str() )
+IMPL_GETS( CSocket, xText2, CSocket, setString, XText2().c_str() )
+IMPL_SOCKET_GET( clickZ,             setInt32,   ClickZ() )
+IMPL_SOCKET_GET( newClient,          setBoolean, NewClient() )
+IMPL_SOCKET_GET( firstPacket,        setBoolean, FirstPacket() )
+IMPL_SOCKET_GET( cryptClient,        setBoolean, CryptClient() )
+IMPL_SOCKET_GET( walkSequence,       setInt32,   WalkSequence() )
+IMPL_SOCKET_GET( currentSpellType,   setInt32,   CurrentSpellType() )
+IMPL_SOCKET_GET( logging,            setBoolean, Logging() )
+IMPL_SOCKET_GET( bytesSent,          setInt32,   BytesSent() )
+IMPL_SOCKET_GET( bytesReceived,      setInt32,   BytesReceived() )
+IMPL_SOCKET_GET( targetOK,           setBoolean, TargetOK() )
+IMPL_SOCKET_GET( clickX,             setInt32,   ClickX() )
+IMPL_SOCKET_GET( clickY,             setInt32,   ClickY() )
+IMPL_SOCKET_GET( pickupX,            setInt32,   PickupX() )
+IMPL_SOCKET_GET( pickupY,            setInt32,   PickupY() )
+IMPL_SOCKET_GET( pickupZ,            setInt32,   PickupZ() )
+IMPL_SOCKET_GET( pickupSpot,         setInt32,   PickupSpot() )
+IMPL_SOCKET_GET( language,           setInt32,   Language() )
+IMPL_SOCKET_GET( clientMajorVer,     setInt32,   ClientVersionMajor() )
+IMPL_SOCKET_GET( clientMinorVer,     setInt32,   ClientVersionMinor() )
+IMPL_SOCKET_GET( clientSubVer,       setInt32,   ClientVersionSub() )
+IMPL_SOCKET_GET( clientLetterVer,    setInt32,   ClientVersionLetter() )
+IMPL_SOCKET_GET( clientType,         setInt32,   ClientType() )
+IMPL_SOCKET_GET( nextMoveTime,       setNumber,  NextMovementTime() )
+IMPL_SOCKET_GET( moveDebt,           setInt32,   MovementDebt() )
+IMPL_SOCKET_GET( moveDebtAvg,        setInt32,   MovementDebtAverage() )
+IMPL_SOCKET_GET( moveBurstAllowance, setInt32,   MovementBurstAllowance() )
+
+IMPL_SOCKET_SET( wasIdleWarned,      toBoolean, WasIdleWarned )
+IMPL_SOCKET_SET( tempInt,            toInt32,   TempInt )
+IMPL_SOCKET_SET( tempInt2,           toInt32,   TempInt2 )
+IMPL_SETS( CSocket, xText,  CSocket, toString, XText )
+IMPL_SETS( CSocket, xText2, CSocket, toString, XText2 )
+IMPL_SOCKET_SET( clickZ,             toInt32,   ClickZ )
+IMPL_SOCKET_SET( newClient,          toBoolean, NewClient )
+IMPL_SOCKET_SET( firstPacket,        toBoolean, FirstPacket )
+IMPL_SOCKET_SET( cryptClient,        toBoolean, CryptClient )
+IMPL_SOCKET_SET( walkSequence,       toInt32,   WalkSequence )
+IMPL_SOCKET_SET( currentSpellType,   toInt32,   CurrentSpellType )
+IMPL_SOCKET_SET( logging,            toBoolean, Logging )
+IMPL_SOCKET_SET( targetOK,           toBoolean, TargetOK )
+IMPL_SOCKET_SET( clickX,             toInt32,   ClickX )
+IMPL_SOCKET_SET( clickY,             toInt32,   ClickY )
+IMPL_SOCKET_SET( pickupX,            toInt32,   PickupX )
+IMPL_SOCKET_SET( pickupY,            toInt32,   PickupY )
+IMPL_SOCKET_SET( pickupZ,            toInt32,   PickupZ )
+IMPL_SOCKET_SET( clientMajorVer,     toInt32,   ClientVersionMajor )
+IMPL_SOCKET_SET( clientMinorVer,     toInt32,   ClientVersionMinor )
+IMPL_SOCKET_SET( clientSubVer,       toInt32,   ClientVersionSub )
+IMPL_SOCKET_SET( clientLetterVer,    toInt32,   ClientVersionLetter )
+IMPL_SOCKET_SET( nextMoveTime,       toNumber,  NextMovementTime )
+IMPL_SOCKET_SET( moveDebt,           toInt32,   MovementDebt )
+IMPL_SOCKET_SET( moveDebtAvg,        toInt32,   MovementDebtAverage )
+IMPL_SOCKET_SET( moveBurstAllowance, toInt32,   MovementBurstAllowance )
+
+#undef IMPL_SOCKET_GET
+#undef IMPL_SOCKET_SET
+
+#define IMPL_SOCKET_LEGACY( attr, propertyId )                                      \
+FDCLG( CSocket, attr )                                                              \
+{                                                                                   \
+	FNARGS                                                                            \
+	JS::RootedValue result( cx );                                                     \
+	if( !CSocketProps_getProperty( cx, thisObj, JS::PropertyKey::Int( propertyId ), result.address() )) \
+		return false;                                                                   \
+	args.rval().set( result );                                                        \
+	return true;                                                                      \
+}                                                                                   \
+FDCLS( CSocket, attr )                                                              \
+{                                                                                   \
+	FNARGS                                                                            \
+	JS::RootedValue value( cx, args.get( 0 ));                                        \
+	return CSocketProps_setProperty( cx, thisObj, JS::PropertyKey::Int( propertyId ), false, value.address() ); \
+}
+
+IMPL_SOCKET_LEGACY( account,      CSOCKP_ACCOUNT )
+IMPL_SOCKET_LEGACY( currentChar,  CSOCKP_CURRENTCHAR )
+IMPL_SOCKET_LEGACY( idleTimeout,  CSOCKP_IDLETIMEOUT )
+IMPL_SOCKET_LEGACY( pickupSerial, CSOCKP_PICKUPSERIAL )
+IMPL_SOCKET_LEGACY( target,       CSOCKP_TARGET )
+IMPL_SOCKET_LEGACY( tempObj,      CSOCKP_TEMPOBJ )
+IMPL_SOCKET_LEGACY( tempObj2,     CSOCKP_TEMPOBJ2 )
+#undef IMPL_SOCKET_LEGACY
+
+FDCLS( CSocket, bytesSent ) { return true; }
+FDCLS( CSocket, bytesReceived ) { return true; }
+
+#define IMPL_SOCKET_ENUM_SET( attr, type, accessor )                    \
+FDCLS( CSocket, attr )                                                  \
+{                                                                       \
+	FNARGS                                                                \
+	auto socket = JS::GetMaybePtrFromReservedSlot<CSocket>( thisObj, 0 ); \
+	socket->accessor( static_cast<type>( args.get( 0 ).toInt32() ));      \
+	return true;                                                          \
+}
+
+IMPL_SOCKET_ENUM_SET( pickupSpot, PickupLocations, PickupSpot )
+IMPL_SOCKET_ENUM_SET( language,   UnicodeTypes,    Language )
+IMPL_SOCKET_ENUM_SET( clientType, ClientTypes,     ClientType )
+
+#undef IMPL_SOCKET_ENUM_SET
+
 JSBool CSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	JSEncapsulate myClass( cx, obj );
@@ -3726,28 +4702,156 @@ JSBool CSkillsProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool s
 	return JS_TRUE;
 }
 
-JSBool CGumpDataProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
+static bool GetSkillValue( JSContext *cx, unsigned int argc, JS::Value *vp, UI08 skillId )
 {
-	SEGumpData_st *gPriv = static_cast<SEGumpData_st *>( JS_GetPrivate( cx, obj ));
+	FNARGS
+	JSEncapsulate skillObject( cx, thisObj );
+	CChar *character = static_cast<CChar *>( skillObject.toObject() );
+	if( !ValidateObject( character ))
+		return false;
 
-	if( gPriv == nullptr )
-		return JS_FALSE;
+	if( skillObject.ClassName() == "UOXSkills" )
+		args.rval().setInt32( character->GetSkill( skillId ));
+	else if( skillObject.ClassName() == "UOXBaseSkills" )
+		args.rval().setInt32( character->GetBaseSkill( skillId ));
+	else if( skillObject.ClassName() == "UOXSkillsUsed" )
+		args.rval().setBoolean( character->SkillUsed( skillId ));
+	else if( skillObject.ClassName() == "UOXSkillsLock" )
+		args.rval().setInt32( static_cast<UI08>( character->GetSkillLock( skillId )));
+	else if( skillObject.ClassName() == "UOXSkillsCap" )
+		args.rval().setInt32( character->GetSkillCap( skillId ));
+	else
+		return false;
+	return true;
+}
 
-	if( JSID_IS_INT( id ))
+static bool SetSkillValue( JSContext *cx, unsigned int argc, JS::Value *vp, UI08 skillId )
+{
+	FNARGS
+	JSEncapsulate skillObject( cx, thisObj );
+	CChar *character = static_cast<CChar *>( skillObject.toObject() );
+	if( !ValidateObject( character ))
+		return false;
+
+	JS::RootedValue value( cx, args.get( 0 ));
+	JSEncapsulate encaps( cx, value.address() );
+	SI16 newValue = static_cast<SI16>( encaps.toInt() );
+	UI08 firstSkill = skillId == ALLSKILLS ? 0 : skillId;
+	UI08 lastSkill = skillId == ALLSKILLS ? ALLSKILLS : static_cast<UI08>( skillId + 1 );
+
+	for( UI08 i = firstSkill; i < lastSkill; ++i )
 	{
-		switch( JSID_TO_INT( id ))
+		if( skillObject.ClassName() == "UOXSkills" )
+			character->SetSkill( newValue, i );
+		else if( skillObject.ClassName() == "UOXBaseSkills" )
 		{
-			case CGumpData_ID:
-				*vp = INT_TO_JSVAL( gPriv->nIDs.size() );
-				break;
-			case CGumpData_Button:
-				*vp = INT_TO_JSVAL( gPriv->nButtons.size() );
-				break;
-			default:
-				break;
+			character->SetBaseSkill( newValue, i );
+			Skills->UpdateSkillLevel( character, i );
 		}
+		else if( skillObject.ClassName() == "UOXSkillsUsed" )
+			character->SkillUsed( encaps.toBool(), i );
+		else if( skillObject.ClassName() == "UOXSkillsLock" )
+			character->SetSkillLock( static_cast<SkillLock>( newValue ), i );
+		else if( skillObject.ClassName() == "UOXSkillsCap" )
+			character->SetSkillCap( newValue, i );
+		else
+			return false;
 	}
-	return JS_TRUE;
+
+	if( !character->IsNpc() && character->GetSocket() != nullptr )
+	{
+		for( UI08 i = firstSkill; i < lastSkill; ++i )
+			character->GetSocket()->UpdateSkill( i );
+	}
+	return true;
+}
+
+#define IMPL_SKILL_PROPERTY( attr, skillId )                                      \
+FDCLG( CSkills, attr ) { return GetSkillValue( cx, argc, vp, skillId ); }          \
+FDCLS( CSkills, attr ) { return SetSkillValue( cx, argc, vp, skillId ); }
+
+IMPL_SKILL_PROPERTY( alchemy,         ALCHEMY )
+IMPL_SKILL_PROPERTY( anatomy,         ANATOMY )
+IMPL_SKILL_PROPERTY( animallore,      ANIMALLORE )
+IMPL_SKILL_PROPERTY( itemid,          ITEMID )
+IMPL_SKILL_PROPERTY( armslore,        ARMSLORE )
+IMPL_SKILL_PROPERTY( parrying,        PARRYING )
+IMPL_SKILL_PROPERTY( begging,         BEGGING )
+IMPL_SKILL_PROPERTY( blacksmithing,   BLACKSMITHING )
+IMPL_SKILL_PROPERTY( bowcraft,        BOWCRAFT )
+IMPL_SKILL_PROPERTY( peacemaking,     PEACEMAKING )
+IMPL_SKILL_PROPERTY( camping,         CAMPING )
+IMPL_SKILL_PROPERTY( carpentry,       CARPENTRY )
+IMPL_SKILL_PROPERTY( cartography,     CARTOGRAPHY )
+IMPL_SKILL_PROPERTY( cooking,         COOKING )
+IMPL_SKILL_PROPERTY( detectinghidden, DETECTINGHIDDEN )
+IMPL_SKILL_PROPERTY( enticement,      ENTICEMENT )
+IMPL_SKILL_PROPERTY( evaluatingintel, EVALUATINGINTEL )
+IMPL_SKILL_PROPERTY( healing,         HEALING )
+IMPL_SKILL_PROPERTY( fishing,         FISHING )
+IMPL_SKILL_PROPERTY( forensics,       FORENSICS )
+IMPL_SKILL_PROPERTY( herding,         HERDING )
+IMPL_SKILL_PROPERTY( hiding,          HIDING )
+IMPL_SKILL_PROPERTY( provocation,     PROVOCATION )
+IMPL_SKILL_PROPERTY( inscription,     INSCRIPTION )
+IMPL_SKILL_PROPERTY( lockpicking,     LOCKPICKING )
+IMPL_SKILL_PROPERTY( magery,          MAGERY )
+IMPL_SKILL_PROPERTY( magicresistance, MAGICRESISTANCE )
+IMPL_SKILL_PROPERTY( tactics,         TACTICS )
+IMPL_SKILL_PROPERTY( snooping,        SNOOPING )
+IMPL_SKILL_PROPERTY( musicianship,    MUSICIANSHIP )
+IMPL_SKILL_PROPERTY( poisoning,       POISONING )
+IMPL_SKILL_PROPERTY( archery,         ARCHERY )
+IMPL_SKILL_PROPERTY( spiritspeak,     SPIRITSPEAK )
+IMPL_SKILL_PROPERTY( stealing,        STEALING )
+IMPL_SKILL_PROPERTY( tailoring,       TAILORING )
+IMPL_SKILL_PROPERTY( taming,          TAMING )
+IMPL_SKILL_PROPERTY( tasteid,         TASTEID )
+IMPL_SKILL_PROPERTY( tinkering,       TINKERING )
+IMPL_SKILL_PROPERTY( tracking,        TRACKING )
+IMPL_SKILL_PROPERTY( veterinary,      VETERINARY )
+IMPL_SKILL_PROPERTY( swordsmanship,   SWORDSMANSHIP )
+IMPL_SKILL_PROPERTY( macefighting,    MACEFIGHTING )
+IMPL_SKILL_PROPERTY( fencing,         FENCING )
+IMPL_SKILL_PROPERTY( wrestling,       WRESTLING )
+IMPL_SKILL_PROPERTY( lumberjacking,   LUMBERJACKING )
+IMPL_SKILL_PROPERTY( mining,          MINING )
+IMPL_SKILL_PROPERTY( meditation,      MEDITATION )
+IMPL_SKILL_PROPERTY( stealth,         STEALTH )
+IMPL_SKILL_PROPERTY( removetrap,      REMOVETRAP )
+IMPL_SKILL_PROPERTY( necromancy,      NECROMANCY )
+IMPL_SKILL_PROPERTY( focus,           FOCUS )
+IMPL_SKILL_PROPERTY( chivalry,        CHIVALRY )
+IMPL_SKILL_PROPERTY( bushido,         BUSHIDO )
+IMPL_SKILL_PROPERTY( ninjitsu,        NINJITSU )
+IMPL_SKILL_PROPERTY( spellweaving,    SPELLWEAVING )
+IMPL_SKILL_PROPERTY( mysticism,       MYSTICISM )
+IMPL_SKILL_PROPERTY( imbuing,         IMBUING )
+IMPL_SKILL_PROPERTY( throwing,        THROWING )
+IMPL_SKILL_PROPERTY( allskills,       ALLSKILLS )
+
+#undef IMPL_SKILL_PROPERTY
+
+FDCLG( CGumpData, buttons )
+{
+	FNARGS
+	auto priv = JS::GetMaybePtrFromReservedSlot<SEGumpData_st>( thisObj, 0 );
+	if( priv == nullptr )
+		return false;
+
+	args.rval().setNumber( static_cast<double>( priv->nButtons.size() ));
+	return true;
+}
+
+FDCLG( CGumpData, IDs )
+{
+	FNARGS
+	auto priv = JS::GetMaybePtrFromReservedSlot<SEGumpData_st>( thisObj, 0 );
+	if( priv == nullptr )
+		return false;
+
+	args.rval().setNumber( static_cast<double>( priv->nIDs.size() ));
+	return true;
 }
 
 JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
@@ -4078,64 +5182,160 @@ JSBool CAccountProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool 
 	return JS_TRUE;
 }
 
-JSBool CConsoleProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
+IMPL_GET(  CAccount, id,            CAccountBlock_st, setInt32,  wAccountIndex )
+IMPL_GETS( CAccount, username,      CAccountBlock_st, setString, sUsername.c_str() )
+IMPL_GET(  CAccount, flags,         CAccountBlock_st, setInt32,  wFlags.to_ulong() )
+IMPL_GETS( CAccount, comment,       CAccountBlock_st, setString, sContact.c_str() )
+IMPL_GET(  CAccount, timeban,       CAccountBlock_st, setInt32,  wTimeBan )
+IMPL_GET(  CAccount, firstLogin,    CAccountBlock_st, setInt32,  wFirstLogin )
+IMPL_GET(  CAccount, totalPlayTime, CAccountBlock_st, setInt32,  wTotalPlayTime )
+
+IMPL_SETS(   CAccount, comment,       CAccountBlock_st, toString, sContact.assign )
+IMPL_SET_DIR( CAccount, totalPlayTime, CAccountBlock_st, toInt32,  wTotalPlayTime )
+
+#define IMPL_ACCOUNT_UNDEFINED( attr ) FDCLG( CAccount, attr ) { FNARGS args.rval().setUndefined(); return true; }
+#define IMPL_ACCOUNT_NOOP_SET( attr ) FDCLS( CAccount, attr ) { return true; }
+
+IMPL_ACCOUNT_UNDEFINED( password )
+IMPL_ACCOUNT_UNDEFINED( path )
+IMPL_ACCOUNT_NOOP_SET( flags )
+IMPL_ACCOUNT_NOOP_SET( path )
+IMPL_ACCOUNT_NOOP_SET( firstLogin )
+IMPL_ACCOUNT_NOOP_SET( isOnline )
+
+#undef IMPL_ACCOUNT_UNDEFINED
+#undef IMPL_ACCOUNT_NOOP_SET
+
+FDCLS( CAccount, password )
 {
-	if( JSID_IS_INT( id ))
-	{
-		switch( JSID_TO_INT( id ))
-		{
-			case CCONSOLE_MODE:		*vp = INT_TO_JSVAL( Console.CurrentMode() );	break;
-			case CCONSOLE_LOGECHO:	*vp = INT_TO_JSVAL( Console.LogEcho() );		break;
-			default:
-				break;
-		}
-	}
-	return JS_TRUE;
+	FNARGS
+	auto account = JS::GetMaybePtrFromReservedSlot<CAccountBlock_st>( thisObj, 0 );
+	JS::RootedString passwordValue( cx, JS::ToString( cx, args.get( 0 )));
+	if( passwordValue == nullptr )
+		return false;
+	const std::string password = convertToString( cx, passwordValue );
+	if( password.length() <= 3 )
+		return false;
+	account->sPassword = password;
+	return true;
 }
 
-JSBool CConsoleProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
+FDCLS( CAccount, timeban )
 {
-	JSEncapsulate encaps( cx, vp );
-	UI16 propID = getScriptID( cx, id, JSP_CONSOLE );
-	if( propID != 0xFFFF )
-	{
-		switch( propID )
-		{
-			case CCONSOLE_MODE:		Console.CurrentMode( encaps.toInt() );		break;
-			case CCONSOLE_LOGECHO:	Console.LogEcho( encaps.toBool() );			break;
-			default:
-				break;
-		}
-	}
-
-	return JS_TRUE;
+	FNARGS
+	auto account = JS::GetMaybePtrFromReservedSlot<CAccountBlock_st>( thisObj, 0 );
+	const UI32 minutes = static_cast<UI32>( args.get( 0 ).toInt32() );
+	account->wTimeBan = minutes > 0 ? GetMinutesSinceEpoch() + minutes : 0;
+	if( minutes > 0 )
+		account->wFlags.set( AB_FLAGS_BANNED, true );
+	return true;
 }
 
-JSBool CScriptSectionProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
-{
-	CScriptSection *gPriv = static_cast<CScriptSection *>( JS_GetPrivate( cx, obj ));
-	if( gPriv == nullptr )
-		return JS_FALSE;
-
-	UI16 propID = getScriptID( cx, id, JSP_CONSOLE );
-	if( propID != 0xFFFF )
-	{
-		switch( propID )
-		{
-			case CSS_NUMTAGS:		*vp = INT_TO_JSVAL( gPriv->NumEntries() );			break;
-			case CSS_ATEND:			*vp = BOOLEAN_TO_JSVAL( gPriv->AtEnd() );			break;
-			case CSS_ATENDTAGS:		*vp = BOOLEAN_TO_JSVAL( gPriv->AtEndTags() );		break;
-			default:
-				break;
-		}
-	}
-	return JS_TRUE;
+#define IMPL_ACCOUNT_FLAG( attr, flag )                                      \
+FDCLG( CAccount, attr )                                                      \
+{                                                                            \
+	FNARGS                                                                     \
+	auto account = JS::GetMaybePtrFromReservedSlot<CAccountBlock_st>( thisObj, 0 ); \
+	args.rval().setBoolean( account->wFlags.test( flag ));                     \
+	return true;                                                               \
+}                                                                            \
+FDCLS( CAccount, attr )                                                      \
+{                                                                            \
+	FNARGS                                                                     \
+	auto account = JS::GetMaybePtrFromReservedSlot<CAccountBlock_st>( thisObj, 0 ); \
+	account->wFlags.set( flag, args.get( 0 ).toBoolean() );                    \
+	return true;                                                               \
 }
 
-JSBool CScriptSectionProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
+IMPL_ACCOUNT_FLAG( isBanned,       AB_FLAGS_BANNED )
+IMPL_ACCOUNT_FLAG( isSuspended,    AB_FLAGS_SUSPENDED )
+IMPL_ACCOUNT_FLAG( isPublic,       AB_FLAGS_PUBLIC )
+IMPL_ACCOUNT_FLAG( isSlot1Blocked, AB_FLAGS_CHARACTER1 )
+IMPL_ACCOUNT_FLAG( isSlot2Blocked, AB_FLAGS_CHARACTER2 )
+IMPL_ACCOUNT_FLAG( isSlot3Blocked, AB_FLAGS_CHARACTER3 )
+IMPL_ACCOUNT_FLAG( isSlot4Blocked, AB_FLAGS_CHARACTER4 )
+IMPL_ACCOUNT_FLAG( isSlot5Blocked, AB_FLAGS_CHARACTER5 )
+IMPL_ACCOUNT_FLAG( isSlot6Blocked, AB_FLAGS_CHARACTER6 )
+IMPL_ACCOUNT_FLAG( isSlot7Blocked, AB_FLAGS_CHARACTER7 )
+IMPL_ACCOUNT_FLAG( isYoung,        AB_FLAGS_YOUNG )
+IMPL_ACCOUNT_FLAG( unused10,       AB_FLAGS_UNUSED10 )
+IMPL_ACCOUNT_FLAG( isSeer,         AB_FLAGS_SEER )
+IMPL_ACCOUNT_FLAG( isCounselor,    AB_FLAGS_COUNSELOR )
+IMPL_ACCOUNT_FLAG( isGM,           AB_FLAGS_GM )
+
+#undef IMPL_ACCOUNT_FLAG
+
+FDCLG( CAccount, isOnline )
 {
-		return JS_TRUE;
+	FNARGS
+	auto account = JS::GetMaybePtrFromReservedSlot<CAccountBlock_st>( thisObj, 0 );
+	args.rval().setBoolean( account->wFlags.test( AB_FLAGS_ONLINE ));
+	return true;
 }
+
+#define IMPL_ACCOUNT_CHARACTER( attr, index )                               \
+FDCLG( CAccount, attr )                                                     \
+{                                                                           \
+	FNARGS                                                                    \
+	auto account = JS::GetMaybePtrFromReservedSlot<CAccountBlock_st>( thisObj, 0 ); \
+	CBaseObject *character = account->dwCharacters[index] == INVALIDSERIAL ? nullptr : account->lpCharacters[index]; \
+	if( !ValidateObject( character ))                                         \
+	{                                                                         \
+		args.rval().setNull();                                                  \
+		return true;                                                            \
+	}                                                                         \
+	JSObject *wrapper = JSEngine->AcquireObject( IUE_CHAR, character, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))); \
+	if( wrapper == nullptr ) return false;                                    \
+	args.rval().setObject( *wrapper );                                         \
+	return true;                                                               \
+}
+
+IMPL_ACCOUNT_CHARACTER( character1, 0 )
+IMPL_ACCOUNT_CHARACTER( character2, 1 )
+IMPL_ACCOUNT_CHARACTER( character3, 2 )
+IMPL_ACCOUNT_CHARACTER( character4, 3 )
+IMPL_ACCOUNT_CHARACTER( character5, 4 )
+IMPL_ACCOUNT_CHARACTER( character6, 5 )
+IMPL_ACCOUNT_CHARACTER( character7, 6 )
+
+#undef IMPL_ACCOUNT_CHARACTER
+
+FDCLG( CAccount, currentChar )
+{
+	FNARGS
+	auto account = JS::GetMaybePtrFromReservedSlot<CAccountBlock_st>( thisObj, 0 );
+	CChar *character = account->dwInGame == INVALIDSERIAL ? nullptr : CalcCharObjFromSer( account->dwInGame );
+	if( !ValidateObject( character )) { args.rval().setNull(); return true; }
+	JSObject *wrapper = JSEngine->AcquireObject( IUE_CHAR, character, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	if( wrapper == nullptr ) return false;
+	args.rval().setObject( *wrapper );
+	return true;
+}
+
+FDCLG( CAccount, lastIP )
+{
+	FNARGS
+	auto account = JS::GetMaybePtrFromReservedSlot<CAccountBlock_st>( thisObj, 0 );
+	const UI32 ip = account->dwLastIP;
+	const std::string text = oldstrutil::format( "%u.%u.%u.%u", ( ip >> 24 ) & 0xFF, ( ip >> 16 ) & 0xFF, ( ip >> 8 ) & 0xFF, ip & 0xFF );
+	JSString *value = JS_NewStringCopyZ( cx, text.c_str() );
+	if( value == nullptr ) return false;
+	args.rval().setString( value );
+	return true;
+}
+
+// clang-format off
+IMPL_GET_NP( CConsole, mode,    setInt32,   Console.CurrentMode() )
+IMPL_GET_NP( CConsole, logEcho, setBoolean, Console.LogEcho() )
+IMPL_SET_NP( CConsole, mode,    toInt32,    Console.CurrentMode )
+IMPL_SET_NP( CConsole, logEcho, toBoolean,  Console.LogEcho )
+// clang-format on
+
+// clang-format off
+IMPL_GET( CScriptSection, numTags,   CScriptSection, setInt32,   NumEntries() )
+IMPL_GET( CScriptSection, atEnd,     CScriptSection, setBoolean, AtEnd() )
+IMPL_GET( CScriptSection, atEndTags, CScriptSection, setBoolean, AtEndTags() )
+// clang-format on
 
 JSBool CResourceProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
 {
@@ -4196,6 +5396,35 @@ JSBool CResourceProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval 
 	}
 	return JS_TRUE;
 }
+
+// clang-format off
+IMPL_GET(     CResource, logAmount,  MapResource_st, setInt32,  logAmt )
+IMPL_GET(     CResource, logTime,    MapResource_st, setNumber, logTime )
+IMPL_GET(     CResource, oreAmount,  MapResource_st, setInt32,  oreAmt )
+IMPL_GET(     CResource, oreTime,    MapResource_st, setNumber, oreTime )
+IMPL_GET(     CResource, fishAmount, MapResource_st, setInt32,  fishAmt )
+IMPL_GET(     CResource, fishTime,   MapResource_st, setNumber, fishTime )
+IMPL_SET_DIR( CResource, logAmount,  MapResource_st, toInt32,   logAmt )
+IMPL_SET_DIR( CResource, oreAmount,  MapResource_st, toInt32,   oreAmt )
+IMPL_SET_DIR( CResource, fishAmount, MapResource_st, toInt32,   fishAmt )
+// clang-format on
+
+#define IMPL_RESOURCE_TIME_SET( attr, field )                                \
+FDCLS( CResource, attr )                                                     \
+{                                                                            \
+	FNARGS                                                                     \
+	auto priv = JS::GetMaybePtrFromReservedSlot<MapResource_st>( thisObj, 0 ); \
+	if( priv == nullptr )                                                      \
+		return false;                                                            \
+	priv->field = static_cast<TIMERVAL>( args.get( 0 ).toInt32() * 1000 );     \
+	return true;                                                               \
+}
+
+IMPL_RESOURCE_TIME_SET( logTime, logTime )
+IMPL_RESOURCE_TIME_SET( oreTime, oreTime )
+IMPL_RESOURCE_TIME_SET( fishTime, fishTime )
+
+#undef IMPL_RESOURCE_TIME_SET
 
 JSBool CPartyProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
 {
@@ -4272,28 +5501,59 @@ JSBool CPartyProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp
 	return JS_TRUE;
 }
 
-JSBool CScriptProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
+FDCLG( CParty, leader )
 {
-	cScript *gPriv = static_cast<cScript*>( JS_GetPrivate( cx, obj ) );
-	if( JSID_IS_INT( id ) && JSID_TO_INT( id ) == CSCRIPT_SCRIPTID )
+	FNARGS
+	auto priv = JS::GetMaybePtrFromReservedSlot<Party>( thisObj, 0 );
+	if( priv == nullptr )
+		return false;
+
+	CChar *leader = priv->Leader();
+	if( !ValidateObject( leader ))
 	{
-		*vp = INT_TO_JSVAL( gPriv->GetScriptID() );
+		args.rval().setNull();
+		return true;
 	}
-	else if( JSID_IS_STRING( id ) )
-	{
-		// This is trying to resolve *everything* - functions, global variables, etc
-		// We *only* care about script_id
-		JS::RootedString str( cx, JSID_TO_STRING( id ));
-		JS::UniqueChars chars = JS_EncodeStringToUTF8( cx, str );
-		if( !chars )
-		{
-			return JS_FALSE;
-		}
-		std::string propID( chars.get() );
-		if( propID == "script_id" )
-		{
-			*vp = INT_TO_JSVAL( gPriv->GetScriptID() );
-		}
-	}
-	return JS_TRUE;
+
+	JSObject *leaderObject = JSEngine->AcquireObject(
+		IUE_CHAR, leader, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	if( leaderObject == nullptr )
+		return false;
+
+	args.rval().setObject( *leaderObject );
+	return true;
 }
+
+FDCLS( CParty, leader )
+{
+	FNARGS
+	auto priv = JS::GetMaybePtrFromReservedSlot<Party>( thisObj, 0 );
+	if( priv == nullptr )
+		return false;
+
+	JS::RootedValue value( cx, args.get( 0 ));
+	JSEncapsulate encaps( cx, value.address() );
+	CChar *newLeader = nullptr;
+	if( encaps.ClassName() == "UOXChar" )
+	{
+		newLeader = static_cast<CChar *>( encaps.toObject() );
+	}
+	else if( encaps.ClassName() == "UOXSocket" )
+	{
+		CSocket *socket = static_cast<CSocket *>( encaps.toObject() );
+		if( socket != nullptr )
+			newLeader = socket->CurrcharObj();
+	}
+
+	if( ValidateObject( newLeader ))
+		priv->Leader( newLeader );
+	return true;
+}
+
+// clang-format off
+IMPL_GET( CParty, memberCount, Party, setInt32,   MemberList()->size() )
+IMPL_GET( CParty, isNPC,       Party, setBoolean, IsNPC() )
+IMPL_SET( CParty, isNPC,       Party, toBoolean,  IsNPC )
+// clang-format on
+
+IMPL_GET( CScript, script_id, cScript, setInt32, GetScriptID() )

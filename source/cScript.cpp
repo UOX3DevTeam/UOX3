@@ -338,7 +338,8 @@ cScript::cScript( std::string targFile, UI08 rT, UI16 scrID ) : isFiring( false 
 	std::string scriptSource( ( std::istreambuf_iterator<char>( scriptFile ) ),
 		std::istreambuf_iterator<char>() );
 	JS::CompileOptions compileOptions( targContext );
-	compileOptions.setFileAndLine( targFile.c_str(), 1 );
+	compileOptions.setFileAndLine( targFile.c_str(), 1 )
+		.setNonSyntacticScope( true );
 	JS::SourceText<mozilla::Utf8Unit> sourceText;
 	JS::RootedScript compiledScript( targContext );
 	if( scriptFile && sourceText.init( targContext, scriptSource.c_str(), scriptSource.size(),
@@ -417,7 +418,12 @@ cScript::cScript( std::string targFile, UI08 rT, UI16 scrID ) : isFiring( false 
 
 	JS::RootedValue rval( targContext );
 	JS::RootedScript rootedScript( targContext, targScript );
-	JSBool ok = JS_ExecuteScript( targContext, rootedScript, &rval );
+	JS::RootedObjectVector environmentChain( targContext );
+	if( !environmentChain.append( targObject ))
+	{
+		throw std::runtime_error( "Unable to create JS script environment" );
+	}
+	JSBool ok = JS_ExecuteScript( targContext, environmentChain, rootedScript, &rval );
 	if( ok != JS_TRUE )
 	{
 		Console << "script result: " << JS_GetStringBytes( targContext, rval ) << myendl;

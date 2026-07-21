@@ -110,7 +110,9 @@ FDCLS( main, attr ) {                                    \
   auto priv         = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0);                                         \
   auto origScript   = JSMapping->GetScript(JS::CurrentGlobalOrNull(cx));                                         \
   auto origScriptID = JSMapping->GetScriptId(JS::CurrentGlobalOrNull(cx));                                       \
-  priv->accessor(convertToString(cx, args.get(0).method()));                                                     \
+  JS::RootedString converted(cx, JS::ToString(cx, args.get(0)));                                                 \
+  if( converted == nullptr ) return false;                                                                       \
+  priv->accessor(convertToString(cx, converted));                                                                \
   if (origScript != JSMapping->GetScript(JS::CurrentGlobalOrNull(cx))) {                                         \
   }                                                                                                              \
   return true;                                                                                                   \
@@ -122,7 +124,9 @@ FDCLS( main, attr ) {                                    \
   auto priv         = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0);                                         \
   auto origScript   = JSMapping->GetScript(JS::CurrentGlobalOrNull(cx));                                         \
   auto origScriptID = JSMapping->GetScriptId(JS::CurrentGlobalOrNull(cx));                                       \
-  priv->accessor    = convertToString(cx, args.get(0).method());                                                 \
+  JS::RootedString converted(cx, JS::ToString(cx, args.get(0)));                                                 \
+  if( converted == nullptr ) return false;                                                                       \
+  priv->accessor    = convertToString(cx, converted);                                                            \
   if (origScript != JSMapping->GetScript(JS::CurrentGlobalOrNull(cx))) {                                         \
   }                                                                                                              \
   return true;                                                                                                   \
@@ -1103,15 +1107,15 @@ inline JSPropertySpec CRegionProperties[] =
 inline JSPropertySpec CSpawnRegionProperties[] =
 {
   UX_PSGS( CSpawnRegion, name,          JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSpawnRegion, regionNum,     JSPROP_ENUMPERMRO ),
+  UX_PSG( CSpawnRegion, regionNum, JSPROP_ENUMPERMRO ),
   UX_PSGS( CSpawnRegion, itemList,      JSPROP_ENUMANDPERM ),
   UX_PSGS( CSpawnRegion, npcList,       JSPROP_ENUMANDPERM ),
   UX_PSGS( CSpawnRegion, item,          JSPROP_ENUMANDPERM ),
   UX_PSGS( CSpawnRegion, npc,           JSPROP_ENUMANDPERM ),
   UX_PSGS( CSpawnRegion, maxItems,      JSPROP_ENUMANDPERM ),
   UX_PSGS( CSpawnRegion, maxNpcs,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSpawnRegion, itemCount,     JSPROP_ENUMPERMRO  ),
-  UX_PSGS( CSpawnRegion, npcCount,      JSPROP_ENUMPERMRO  ),
+  UX_PSG( CSpawnRegion, itemCount, JSPROP_ENUMPERMRO ),
+  UX_PSG( CSpawnRegion, npcCount, JSPROP_ENUMPERMRO ),
   UX_PSGS( CSpawnRegion, onlyOutside,   JSPROP_ENUMANDPERM ),
   UX_PSGS( CSpawnRegion, isSpawner,     JSPROP_ENUMANDPERM ),
   UX_PSGS( CSpawnRegion, forceSpawn,    JSPROP_ENUMANDPERM ),
@@ -1192,7 +1196,7 @@ inline JSPropertySpec CCharacterProps[] =
   UX_PSGS( CCharacter, pack,                  JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, fame,                  JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, karma,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, attack,                JSPROP_ENUMPERMRO ),
+  UX_PSG( CCharacter, attack, JSPROP_ENUMPERMRO ),
   UX_PSGS( CCharacter, canAttack,             JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, karmaLock,             JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, fleeAt,                JSPROP_ENUMANDPERM ),
@@ -1200,25 +1204,25 @@ inline JSPropertySpec CCharacterProps[] =
   UX_PSGS( CCharacter, brkPeaceChance,        JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, setPeace,              JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, hunger,                JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, hungerRate,            JSPROP_ENUMPERMRO ),
+  UX_PSG( CCharacter, hungerRate, JSPROP_ENUMPERMRO ),
   UX_PSGS( CCharacter, thirst,                JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, thirstRate,            JSPROP_ENUMPERMRO ),
+  UX_PSG( CCharacter, thirstRate, JSPROP_ENUMPERMRO ),
   UX_PSGS( CCharacter, frozen,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, commandlevel,          JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, race,                  JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, hasStolen,             JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, criminal,              JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, murderer,              JSPROP_ENUMPERMRO ),
+  UX_PSG( CCharacter, murderer, JSPROP_ENUMPERMRO ),
   UX_PSGS( CCharacter, innocent,              JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, murdercount,           JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, neutral,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, npcFlag,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, npcGuild,              JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, gender,                JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, dead,                  JSPROP_ENUMPERMRO ),
+  UX_PSG( CCharacter, dead, JSPROP_ENUMPERMRO ),
   UX_PSGS( CCharacter, npc,                   JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, isAwake,               JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, online,                JSPROP_ENUMPERMRO ),
+  UX_PSG( CCharacter, online, JSPROP_ENUMPERMRO ),
   UX_PSGS( CCharacter, direction,             JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, isRunning,             JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, region,                JSPROP_ENUMANDPERM ),
@@ -1228,10 +1232,10 @@ inline JSPropertySpec CCharacterProps[] =
   UX_PSGS( CCharacter, baseskills,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, skillsused,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, socket,                JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, isChar,                JSPROP_ENUMPERMRO ),
-  UX_PSGS( CCharacter, isItem,                JSPROP_ENUMPERMRO ),
-  UX_PSGS( CCharacter, isSpawner,             JSPROP_ENUMPERMRO ),
-  UX_PSGS( CCharacter, spawnSerial,           JSPROP_ENUMPERMRO ),
+  UX_PSG( CCharacter, isChar, JSPROP_ENUMPERMRO ),
+  UX_PSG( CCharacter, isItem, JSPROP_ENUMPERMRO ),
+  UX_PSG( CCharacter, isSpawner, JSPROP_ENUMPERMRO ),
+  UX_PSG( CCharacter, spawnSerial, JSPROP_ENUMPERMRO ),
   UX_PSGS( CCharacter, maxhp,                 JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, maxstamina,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, maxmana,               JSPROP_ENUMANDPERM ),
@@ -1262,7 +1266,7 @@ inline JSPropertySpec CCharacterProps[] =
   UX_PSGS( CCharacter, willthirst,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, lodamage,              JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, hidamage,              JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, flag,                  JSPROP_ENUMPERMRO ),
+  UX_PSG( CCharacter, flag, JSPROP_ENUMPERMRO ),
   UX_PSGS( CCharacter, atWar,                 JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, spellCast,             JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, isCasting,             JSPROP_ENUMANDPERM ),
@@ -1285,9 +1289,9 @@ inline JSPropertySpec CCharacterProps[] =
   UX_PSGS( CCharacter, deaths,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, ownerCount,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, nextAct,               JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, petCount,              JSPROP_ENUMPERMRO ),
-  UX_PSGS( CCharacter, followerCount,         JSPROP_ENUMPERMRO ),
-  UX_PSGS( CCharacter, ownedItemsCount,       JSPROP_ENUMPERMRO ),
+  UX_PSG( CCharacter, petCount, JSPROP_ENUMPERMRO ),
+  UX_PSG( CCharacter, followerCount, JSPROP_ENUMPERMRO ),
+  UX_PSG( CCharacter, ownedItemsCount, JSPROP_ENUMPERMRO ),
   UX_PSGS( CCharacter, cell,                  JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, allmove,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, houseicons,            JSPROP_ENUMANDPERM ),
@@ -1305,7 +1309,7 @@ inline JSPropertySpec CCharacterProps[] =
   UX_PSGS( CCharacter, trainer,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, weight,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, squelch,               JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, isJailed,              JSPROP_ENUMPERMRO ),
+  UX_PSG( CCharacter, isJailed, JSPROP_ENUMPERMRO ),
   UX_PSGS( CCharacter, magicReflect,          JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, permanentMagicReflect, JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, hideFameKarmaTitle,    JSPROP_ENUMANDPERM ),
@@ -1342,7 +1346,7 @@ inline JSPropertySpec CCharacterProps[] =
   UX_PSGS( CCharacter, orgID,                 JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, orgSkin,               JSPROP_ENUMANDPERM ),
   UX_PSG(  CCharacter, isAnimal,              JSPROP_ENUMPERMRO ),
-  UX_PSGS( CCharacter, isPackAnimal,          JSPROP_ENUMPERMRO ),
+  UX_PSG( CCharacter, isPackAnimal, JSPROP_ENUMPERMRO ),
   UX_PSG(  CCharacter, isHuman,               JSPROP_ENUMPERMRO ),
   UX_PSGS( CCharacter, isShop,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, maxLoyalty,            JSPROP_ENUMANDPERM ),
@@ -1360,8 +1364,8 @@ inline JSPropertySpec CCharacterProps[] =
   UX_PSGS( CCharacter, housesOwned,           JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, housesCoOwned,         JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, tithing,               JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, lastOn,                JSPROP_ENUMPERMRO ),
-  UX_PSGS( CCharacter, lastOnSecs,            JSPROP_ENUMPERMRO ),
+  UX_PSG( CCharacter, lastOn, JSPROP_ENUMPERMRO ),
+  UX_PSG( CCharacter, lastOnSecs, JSPROP_ENUMPERMRO ),
   JS_PS_END
 };
 // clang-format on
@@ -1428,9 +1432,9 @@ inline JSPropertySpec CItemProps[] =
   UX_PSGS( CItem, damageSnow,          JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, lowerStateReq,       JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, name2,               JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, isChar,              JSPROP_ENUMPERMRO ),
-  UX_PSGS( CItem, isItem,              JSPROP_ENUMPERMRO ),
-  UX_PSGS( CItem, isSpawner,           JSPROP_ENUMPERMRO ),
+  UX_PSG( CItem, isChar, JSPROP_ENUMPERMRO ),
+  UX_PSG( CItem, isItem, JSPROP_ENUMPERMRO ),
+  UX_PSG( CItem, isSpawner, JSPROP_ENUMPERMRO ),
   UX_PSGS( CItem, race,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, maxhp,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, maxUses,             JSPROP_ENUMANDPERM ),
@@ -1475,13 +1479,13 @@ inline JSPropertySpec CItemProps[] =
   UX_PSGS( CItem, isWipeable,          JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, isGuarded,           JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, isDoorOpen,          JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, isFieldSpell,        JSPROP_ENUMPERMRO ),
-  UX_PSGS( CItem, isLockedDown,        JSPROP_ENUMPERMRO ),
-  UX_PSGS( CItem, isShieldType,        JSPROP_ENUMPERMRO ),
-  UX_PSGS( CItem, isMetalType,         JSPROP_ENUMPERMRO ),
-  UX_PSGS( CItem, isLeatherType,       JSPROP_ENUMPERMRO ),
-  UX_PSGS( CItem, canBeLockedDown,     JSPROP_ENUMPERMRO ),
-  UX_PSGS( CItem, isContType,          JSPROP_ENUMPERMRO ),
+  UX_PSG( CItem, isFieldSpell, JSPROP_ENUMPERMRO ),
+  UX_PSG( CItem, isLockedDown, JSPROP_ENUMPERMRO ),
+  UX_PSG( CItem, isShieldType, JSPROP_ENUMPERMRO ),
+  UX_PSG( CItem, isMetalType, JSPROP_ENUMPERMRO ),
+  UX_PSG( CItem, isLeatherType, JSPROP_ENUMPERMRO ),
+  UX_PSG( CItem, canBeLockedDown, JSPROP_ENUMPERMRO ),
+  UX_PSG( CItem, isContType, JSPROP_ENUMPERMRO ),
   UX_PSGS( CItem, carveSection,        JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, ammoID,              JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, ammoHue,             JSPROP_ENUMANDPERM ),
@@ -1505,8 +1509,8 @@ inline JSPropertySpec CItemProps[] =
   UX_PSGS( CItem, multi,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, maxRange,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, baseRange,           JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, region,              JSPROP_ENUMPERMRO ),
-  UX_PSGS( CItem, spawnSerial,         JSPROP_ENUMPERMRO ),
+  UX_PSG( CItem, region, JSPROP_ENUMPERMRO ),
+  UX_PSG( CItem, spawnSerial, JSPROP_ENUMPERMRO ),
   UX_PSGS( CItem, origin,              JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, isItemHeld,          JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, stealable,           JSPROP_ENUMANDPERM ),

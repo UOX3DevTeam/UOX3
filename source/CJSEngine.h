@@ -46,11 +46,11 @@ enum JSPrototypes
 class CJSRuntime
 {
 private:
-	using JSOBJECTMAP           = std::map<void *, JSObject * >;
+	using JSOBJECTMAP           = std::map<void *, std::unique_ptr<JS::PersistentRootedObject>>;
 	using JSOBJECTMAP_ITERATOR  = JSOBJECTMAP::iterator;
 	using JSOBJECTMAP_CITERATOR = JSOBJECTMAP::const_iterator;
 
-	std::vector<JSOBJECTMAP>								objectList;
+	std::array<JSOBJECTMAP, IUE_COUNT>					objectList;
     JS::RootedObjectVector *   protoList;
 
 	JSObject * spellsObj;
@@ -63,6 +63,7 @@ private:
 	JSRuntime * jsRuntime;
 	JSContext * jsContext;
 	JSObject * jsGlobal;
+	JSAutoRealm * realmGuard;
 
 	JSObject *	FindAssociatedObject( IUEEntries iType, void *index );
 	JSObject *	MakeNewObject( IUEEntries iType );

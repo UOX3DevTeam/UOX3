@@ -13,6 +13,9 @@
 //o------------------------------------------------------------------------------------------------o
 #include "uox3.h"
 #include "CJSEngine.h"
+#include "cMagic.h"
+#include "magic.h"
+#include "skills.h"
 #include "UOXJSClasses.h"
 #include "UOXJSMethods.h"
 #include "UOXJSPropertySpecs.h"
@@ -179,6 +182,7 @@ void CJSEngine::ReleaseObject( IUEEntries iType, void *index )
 CJSRuntime::CJSRuntime( UI32 engineSize )
 {
   JS::RealmOptions options;
+	realmGuard = nullptr;
 	jsContext = JS_NewContext( engineSize );
 
 	JS::InitSelfHostedCode(jsContext);
@@ -188,10 +192,8 @@ CJSRuntime::CJSRuntime( UI32 engineSize )
 	{
 		Shutdown( FATAL_UOX3_JAVASCRIPT );
 	}
-	JSAutoRealm realmAuto(jsContext, jsGlobal);
+	realmGuard = new JSAutoRealm( jsContext, jsGlobal );
 	JS::InitRealmStandardClasses( jsContext );
-
-	objectList.resize( IUE_COUNT );
 
 	InitializePrototypes();
 
@@ -203,29 +205,35 @@ CJSRuntime::~CJSRuntime( void )
 
 	// TODO: Unroot them
 
+	delete realmGuard;
+	realmGuard = nullptr;
 	JS_DestroyContext( jsContext );
 }
 
 void CJSRuntime::Cleanup( void )
 {
-	std::vector<JSOBJECTMAP>::iterator oIter;
+	std::array<JSOBJECTMAP, IUE_COUNT>::iterator oIter;
 	for( oIter = objectList.begin(); oIter != objectList.end(); ++oIter )
 	{
 		JSOBJECTMAP& ourList = ( *oIter );
 		for( JSOBJECTMAP_ITERATOR lIter = ourList.begin(); lIter != ourList.end(); ++lIter )
 		{
-			JS_SetReservedSlot( ( *lIter ).second, 0, JS::UndefinedValue() );
+			JS_SetReservedSlot( *( *lIter ).second, 0, JS::UndefinedValue() );
 		}
 		ourList.clear();
 	}
-	objectList.resize( 0 );
 	delete protoList;
 }
 void CJSRuntime::Reload()
 {
-	Cleanup();
-
-	objectList.resize( IUE_COUNT );
+	for( auto &ourList : objectList )
+	{
+		for( auto &entry : ourList )
+		{
+			JS_SetReservedSlot( *entry.second, 0, JS::UndefinedValue() );
+		}
+		ourList.clear();
+	}
 }
 void CJSRuntime::CollectGarbage()
 {
@@ -246,6 +254,59 @@ void setupMap( std::map< std::string, int >& lkpMap, const JSPropertySpec lkpPro
 			lkpMap[lkpProps[i].name.string()] = i;
 		}
 	}
+}
+
+bool ResolveSpellCollection( JSContext *cx, JS::HandleObject obj, JS::HandleId id, bool *resolved )
+{
+	*resolved = false;
+	if( !JSID_IS_INT( id ))
+		return true;
+
+	const int32_t spellId = JSID_TO_INT( id );
+	if( spellId < 0 || static_cast<size_t>( spellId ) >= Magic->spells.size() )
+		return true;
+
+	const UI08 runTime = JSEngine->FindActiveRuntime( JS_GetRuntime( cx ));
+	JS::RootedObject prototype( cx, JSEngine->GetPrototype( runTime, JSP_SPELL ));
+	JS::RootedObject entry( cx, JS_NewObjectWithGivenProto( cx, &UOXSpell_class, prototype ));
+	if( entry == nullptr )
+		return false;
+
+	JS_SetReservedSlot( entry, 0, JS::PrivateValue( &Magic->spells[spellId] ));
+	JS::RootedValue value( cx, JS::ObjectValue( *entry ));
+	if( !JS_DefinePropertyById( cx, obj, id, value,
+		JSPROP_ENUMERATE | JSPROP_READONLY | JSPROP_PERMANENT ))
+		return false;
+	*resolved = true;
+	return true;
+}
+
+bool ResolveCreateEntryCollection( JSContext *cx, JS::HandleObject obj, JS::HandleId id, bool *resolved )
+{
+	*resolved = false;
+	if( !JSID_IS_INT( id ))
+		return true;
+
+	const int32_t entryId = JSID_TO_INT( id );
+	if( entryId < 0 || entryId > 0xFFFF )
+		return true;
+	CreateEntry_st *nativeEntry = Skills->FindItem( static_cast<UI16>( entryId ));
+	if( nativeEntry == nullptr )
+		return true;
+
+	const UI08 runTime = JSEngine->FindActiveRuntime( JS_GetRuntime( cx ));
+	JS::RootedObject prototype( cx, JSEngine->GetPrototype( runTime, JSP_CREATEENTRY ));
+	JS::RootedObject entry( cx, JS_NewObjectWithGivenProto( cx, &UOXCreateEntry_class, prototype ));
+	if( entry == nullptr )
+		return false;
+
+	JS_SetReservedSlot( entry, 0, JS::PrivateValue( nativeEntry ));
+	JS::RootedValue value( cx, JS::ObjectValue( *entry ));
+	if( !JS_DefinePropertyById( cx, obj, id, value,
+		JSPROP_ENUMERATE | JSPROP_READONLY | JSPROP_PERMANENT ))
+		return false;
+	*resolved = true;
+	return true;
 }
 
 
@@ -287,6 +348,21 @@ void CJSRuntime::InitializePrototypes()
   timerObj         = JS_DefineObject( cx, obj, "Timer", &UOXTimer_class );
   scriptObj        = JS_DefineObject( cx, obj, "SCRIPT", &uox_class );
   // clang-format on
+
+	JS::RootedObject skillsCollection( cx, skillsObj );
+	JS::RootedObject skillPrototype( cx, ( *protoList )[JSP_GLOBALSKILL] );
+	for( UI08 skillId = 0; skillId < ALLSKILLS; ++skillId )
+	{
+		JS::RootedObject skillObject( cx,
+			JS_NewObjectWithGivenProto( cx, &UOXGlobalSkill_class, skillPrototype ));
+		if( skillObject == nullptr )
+			continue;
+
+		JS_SetReservedSlot( skillObject, 0, JS::PrivateValue( &cwmWorldState->skill[skillId] ));
+		std::string propertyName = std::to_string( skillId );
+		JS_DefineProperty( cx, skillsCollection, propertyName.c_str(), skillObject,
+			JSPROP_ENUMERATE | JSPROP_READONLY | JSPROP_PERMANENT );
+	}
 
 	// TODO: Root them
 
@@ -339,7 +415,9 @@ JSObject *CJSRuntime::AcquireObject( IUEEntries iType, void *index )
 			retVal = MakeNewObject( iType );
 			if( retVal != nullptr )
 			{
-				objectList[iType][index] = retVal;
+				auto rootedObject = std::make_unique<JS::PersistentRootedObject>();
+				rootedObject->init( jsContext, retVal );
+				objectList[iType][index] = std::move( rootedObject );
 				JS_SetReservedSlot( retVal, 0, JS::PrivateValue( index ) );
 			}
 		}
@@ -351,8 +429,7 @@ void CJSRuntime::ReleaseObject( IUEEntries iType, void *index )
 	JSOBJECTMAP_ITERATOR toSearch = objectList[iType].find( index );
 	if( toSearch != objectList[iType].end() )
 	{
-		JSObject *toRelease = ( *toSearch ).second;
-		// TODO: Unroot it
+		JSObject *toRelease = *( *toSearch ).second;
 		JS_SetReservedSlot( toRelease, 0, JS::UndefinedValue() );
 		objectList[iType].erase( toSearch );
 	}
@@ -363,7 +440,7 @@ JSObject *CJSRuntime::FindAssociatedObject( IUEEntries iType, void *index )
 	JSOBJECTMAP_CITERATOR toSearch = objectList[iType].find( index );
 	if( toSearch != objectList[iType].end() )
 	{
-		retVal = ( *toSearch ).second;
+		retVal = *( *toSearch ).second;
 	}
 
 	return retVal;

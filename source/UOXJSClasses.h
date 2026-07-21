@@ -38,6 +38,19 @@ inline JSClass uox_class =
 	&classOpsWithFinalize 
 };
 
+bool ResolveSpellCollection( JSContext *cx, JS::HandleObject obj, JS::HandleId id, bool *resolved );
+bool ResolveCreateEntryCollection( JSContext *cx, JS::HandleObject obj, JS::HandleId id, bool *resolved );
+
+static constexpr JSClassOps spellCollectionClassOps = {
+	nullptr, nullptr, nullptr, nullptr, ResolveSpellCollection,
+	nullptr, nullptr, nullptr, nullptr, nullptr
+};
+
+static constexpr JSClassOps createEntryCollectionClassOps = {
+	nullptr, nullptr, nullptr, nullptr, ResolveCreateEntryCollection,
+	nullptr, nullptr, nullptr, nullptr, nullptr
+};
+
 inline JSClass UOXSpell_class =
 {
 	"UOXSpell",
@@ -49,7 +62,7 @@ inline JSClass UOXSpells_class =
 {
 	"UOXSpells",
 	JSCLASS_HAS_RESERVED_SLOTS(2),
-  &classOpsWithFinalize 
+  &spellCollectionClassOps
 };
 // CSpellsProps_getProperty,
 
@@ -81,7 +94,7 @@ inline JSClass UOXCreateEntries_class =
 {
 	"UOXCreateEntries",
 	JSCLASS_HAS_RESERVED_SLOTS(2),
-  &classOpsWithFinalize 
+  &createEntryCollectionClassOps
 };
 //	CCreateEntriesProps_getProperty,
 

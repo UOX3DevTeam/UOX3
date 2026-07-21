@@ -757,7 +757,6 @@ JSBool SE_FinishedCommandList( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_RegisterCommand( JSContext *cx, uintN argc, jsval *vp )
 {
-	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
 	jsval* argv = JS_ARGV( cx, vp );
 
 	if( argc != 3 )
@@ -768,7 +767,8 @@ JSBool SE_RegisterCommand( JSContext *cx, uintN argc, jsval *vp )
 	std::string toRegister	= JS_GetStringBytes( cx, argv[0]);
 	UI08 execLevel			= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
 	bool isEnabled			= ( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE );
-	UI16 scriptId			= JSMapping->GetScriptId( scriptEnv );
+	cScript *activeScript = JSMapping->currentActive();
+	UI16 scriptId = activeScript != nullptr ? activeScript->GetScriptID() : 0xFFFF;
 
 	if( scriptId == 0xFFFF )
 	{
@@ -815,7 +815,6 @@ JSBool SE_RegisterSpell( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_RegisterSkill( JSContext *cx, uintN argc, jsval *vp )
 {
-	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
 	jsval* argv = JS_ARGV( cx, vp );
 
 	if( argc != 2 )
@@ -825,7 +824,8 @@ JSBool SE_RegisterSkill( JSContext *cx, uintN argc, jsval *vp )
 	}
 	SI32 skillNumber	= JSVAL_TO_INT( argv[0] );
 	bool isEnabled		= ( JSVAL_TO_BOOLEAN( argv[1] ) == JS_TRUE );
-	UI16 scriptId		= JSMapping->GetScriptId( scriptEnv );
+	cScript *activeScript = JSMapping->currentActive();
+	UI16 scriptId = activeScript != nullptr ? activeScript->GetScriptID() : 0xFFFF;
 	if( scriptId != 0xFFFF )
 	{
 #if defined( UOX_DEBUG_MODE )
@@ -2642,7 +2642,12 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, uintN argc, jsval *vp )
 
 	std::vector<CChar *> charsFound;
 	UI16 retCounter	= 0;
-	cScript *myScript = JSMapping->GetScript( scriptEnv );
+	cScript *myScript = JSMapping->currentActive();
+	if( myScript == nullptr )
+	{
+		ScriptError( cx, "AreaCharacterFunction: Unable to determine active script" );
+		return JS_FALSE;
+	}
 	for( auto &MapArea : MapRegion->PopulateList( srcObject ))
 	{
 		if( MapArea )
@@ -2730,7 +2735,12 @@ JSBool SE_AreaItemFunction( JSContext *cx, uintN argc, jsval *vp )
 
 	std::vector<CItem *> itemsFound;
 	UI16 retCounter	= 0;
-	cScript *myScript = JSMapping->GetScript( scriptEnv );
+	cScript *myScript = JSMapping->currentActive();
+	if( myScript == nullptr )
+	{
+		ScriptError( cx, "AreaItemFunction: Unable to determine active script" );
+		return JS_FALSE;
+	}
 	for( auto &MapArea : MapRegion->PopulateList( srcObject ))
 	{
 		if( MapArea )
