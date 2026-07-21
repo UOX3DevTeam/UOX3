@@ -191,6 +191,6 @@ bool SE_INVALIDSERIAL( JSContext *cx, unsigned argc, JS::Value *vp );			//						
 bool SE_INVALIDID( JSContext *cx, unsigned argc, JS::Value *vp );				//										***
 bool SE_INVALIDCOLOUR( JSContext *cx, unsigned argc, JS::Value *vp );			//										***
 
-std::string JS_GetStringBytes( JSContext* cx, jsval val );
+std::string JS_GetStringBytes( JSContext* cx, JS::Value val );
 
 #endif

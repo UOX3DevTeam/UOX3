@@ -11,7 +11,6 @@
 #include "UOXJSPropertySpecs.h"
 #include "UOXJSPropertyEnums.h"
 #include "UOXJSPropertyFuncs.h"
-#include "JSEncapsulate.h"
 #include "CJSEngine.h"
 
 #include "cGuild.h"
@@ -39,23 +38,23 @@
 void MakeShop( CChar *c );
 void ScriptError( JSContext *cx, const char *txt, ... );
 
-std::map< std::string, intN >		propLookupAccount;
-std::map< std::string, intN >		propLookupChar;
-std::map< std::string, intN >		propLookupConsole;
-std::map< std::string, intN >		propLookupGuild;
-std::map< std::string, intN >		propLookupItem;
-std::map< std::string, intN >		propLookupParty;
-std::map< std::string, intN >		propLookupRace;
-std::map< std::string, intN >		propLookupRegion;
-std::map< std::string, intN >		propLookupResource;
-std::map< std::string, intN >		propLookupSkills;
-std::map< std::string, intN >		propLookupSocket;
-std::map< std::string, intN >		propLookupSpawnRegion;
+std::map< std::string, int >		propLookupAccount;
+std::map< std::string, int >		propLookupChar;
+std::map< std::string, int >		propLookupConsole;
+std::map< std::string, int >		propLookupGuild;
+std::map< std::string, int >		propLookupItem;
+std::map< std::string, int >		propLookupParty;
+std::map< std::string, int >		propLookupRace;
+std::map< std::string, int >		propLookupRegion;
+std::map< std::string, int >		propLookupResource;
+std::map< std::string, int >		propLookupSkills;
+std::map< std::string, int >		propLookupSocket;
+std::map< std::string, int >		propLookupSpawnRegion;
 
 
 UI16    GetPropByName( JSPrototypes protoNum, const std::string& prop )
 {
-	const std::map< std::string, intN > * toScan = nullptr;
+	const std::map< std::string, int > * toScan = nullptr;
 	switch( protoNum )
 	{
 	case JSP_ITEM: toScan = &propLookupItem; break;
@@ -85,7 +84,7 @@ UI16    GetPropByName( JSPrototypes protoNum, const std::string& prop )
 	};
 	if( toScan != nullptr )
 	{
-		std::map< std::string, intN >::const_iterator citer = toScan->find( prop );
+		std::map< std::string, int >::const_iterator citer = toScan->find( prop );
 		if( citer != toScan->cend() ) {
 			return citer->second;
 		}
@@ -103,9 +102,9 @@ UI16    GetPropByName( JSPrototypes protoNum, const std::string& prop )
 UI16 getScriptID( JSContext *cx, jsid id, JSPrototypes section )
 {
 	UI16 propID = 0xFFFF;
-	if( JSID_IS_STRING( id ) )
+	if( id.isString() )
 	{
-		JS::RootedString str( cx, JSID_TO_STRING( id ));
+		JS::RootedString str( cx, id.toString() );
 		JS::UniqueChars chars = JS_EncodeStringToUTF8( cx, str );
 		if( !chars )
 		{
@@ -117,9 +116,9 @@ UI16 getScriptID( JSContext *cx, jsid id, JSPrototypes section )
 			Console.Log( oldstrutil::format( "String property '%s' found on object type %d in script %d", chars, section, JSMapping->currentActive()->GetScriptID() ), "warning.log");
 		}*/
 	}
-	else if( JSID_IS_INT( id ) )
+	else if( id.isInt() )
 	{
-		propID = JSID_TO_INT( id );
+		propID = id.toInt();
 	}
 	return propID;
 }

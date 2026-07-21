@@ -19,7 +19,6 @@
 #include "SEFunctions.h"
 #include "UOXJSClasses.h"
 #include "UOXJSMethods.h"
-#include "JSEncapsulate.h"
 #include "CJSEngine.h"
 
 #include "cMagic.h"
@@ -179,7 +178,7 @@ bool Packet( JSContext *cx, unsigned argc, JS::Value* vp )
 	JS_SetPrivate( cx, obj, toAdd);
 	JS_LockGCThing( cx, obj );
 	//JS_AddRoot( cx, &obj );
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( obj ) );
+	JS_SET_RVAL( cx, vp, JS::ObjectOrNullValue( obj ) );
 	return true;
 }
 
@@ -228,8 +227,8 @@ bool CPacket_WriteByte( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	size_t	position	= static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
-	UI08	toWrite		= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+	size_t	position	= static_cast<size_t>( argv[0].toInt32());
+	UI08	toWrite		= static_cast<UI08>( argv[1].toInt32());
 
 	myPacket->GetPacketStream().WriteByte( position, toWrite );
 
@@ -258,9 +257,9 @@ bool CPacket_WriteShort( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	jsval* argv = JS_ARGV(cx, vp);
-	size_t	position	= static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
-	UI16	toWrite		= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	JS::Value* argv = JS_ARGV(cx, vp);
+	size_t	position	= static_cast<size_t>( argv[0].toInt32());
+	UI16	toWrite		= static_cast<UI16>( argv[1].toInt32());
 
 	myPacket->GetPacketStream().WriteShort( position, toWrite );
 
@@ -290,8 +289,8 @@ bool CPacket_WriteLong( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	size_t	position	= static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
-	//UI32	toWrite		= static_cast<UI32>( JSVAL_TO_INT( argv[1] ));
+	size_t	position	= static_cast<size_t>( argv[0].toInt32());
+	//UI32	toWrite		= static_cast<UI32>( argv[1].toInt32());
 	std::string toWriteChar	= JS_GetStringBytes( cx, argv[1]);
 	UI32 toWrite = oldstrutil::value<UI32>( toWriteChar );
 
@@ -323,9 +322,9 @@ bool CPacket_WriteString( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	size_t	position	= static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
+	size_t	position	= static_cast<size_t>( argv[0].toInt32());
 	std::string	toWrite		= JS_GetStringBytes( cx, argv[1]);
-	size_t	len			= static_cast<size_t>( JSVAL_TO_INT( argv[2] ));
+	size_t	len			= static_cast<size_t>( argv[2].toInt32());
 
 	myPacket->GetPacketStream().WriteString( position, toWrite, len );
 
@@ -355,7 +354,7 @@ bool CPacket_ReserveSize( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	size_t len = static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
+	size_t len = static_cast<size_t>( argv[0].toInt32());
 
 	myPacket->GetPacketStream().ReserveSize( len );
 
@@ -379,7 +378,7 @@ bool CSocket_Send( JSContext *cx, unsigned argc, JS::Value* vp )
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	JS::Value* argv = JS_ARGV( cx, vp );
 	CSocket *mSock			= static_cast<CSocket *>( JS_GetPrivate( cx, obj ));
-	JSObject *jsObj			= JSVAL_TO_OBJECT( argv[0] );
+	JSObject *jsObj			= &argv[0].toObject();
 	CPUOXBuffer *myPacket	= static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, jsObj ));
 
 	if( mSock == nullptr || myPacket == nullptr )
@@ -411,7 +410,7 @@ bool Gump( JSContext *cx, unsigned argc, JS::Value* vp )
 	JS_SetPrivate( cx, obj, toAdd);
 	JS_LockGCThing( cx, obj );
 	//JS_AddRoot( cx, &obj );
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( obj ) );
+	JS_SET_RVAL( cx, vp, JS::ObjectOrNullValue( obj ) );
 	return true;
 }
 
@@ -488,7 +487,7 @@ bool CGumpData_GetEdit( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	size_t index = JSVAL_TO_INT( argv[0] );
+	size_t index = argv[0].toInt32();
 
 	if( index < myItem->sEdits.size() )
 	{
@@ -526,7 +525,7 @@ bool CGumpData_GetId( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 	JS::Value* argv = JS_ARGV( cx, vp );
-	size_t index = JSVAL_TO_INT( argv[0] );
+	size_t index = argv[0].toInt32();
 
 	if( index < myItem->nIDs.size() )
 	{
@@ -564,7 +563,7 @@ bool CGumpData_GetButton( JSContext *cx, unsigned argc, JS::Value* vp )
 		JS_SET_RVAL(cx, vp, INT_TO_JSVAL( -1 ) );
 		return true;
 	}
-	size_t index = JSVAL_TO_INT( argv[0] );
+	size_t index = argv[0].toInt32();
 	if( index < myItem->nButtons.size() )
 	{
 		JS_SET_RVAL(cx, vp, INT_TO_JSVAL( myItem->nButtons[index] ) );
@@ -601,21 +600,21 @@ bool CGump_AddCheckbox( JSContext *cx, unsigned argc, JS::Value* vp )
 	JS::Value* argv = JS_ARGV( cx, vp );
 	if( argc == 5 )
 	{
-		tL			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-		tR			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-		gImage		= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+		tL			= static_cast<SI16>( argv[0].toInt32());
+		tR			= static_cast<SI16>( argv[1].toInt32());
+		gImage		= static_cast<UI16>( argv[2].toInt32());
 		gImageChk	= gImage + 1;
-		initState	= static_cast<SI16>( JSVAL_TO_INT( argv[3] ));
-		relay		= static_cast<UI32>( JSVAL_TO_INT( argv[4] ));
+		initState	= static_cast<SI16>( argv[3].toInt32());
+		relay		= static_cast<UI32>( argv[4].toInt32());
 	}
 	else
 	{
-		tL			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-		tR			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-		gImage		= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-		gImageChk	= static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
-		initState	= static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
-		relay		= static_cast<UI32>( JSVAL_TO_INT( argv[5] ));
+		tL			= static_cast<SI16>( argv[0].toInt32());
+		tR			= static_cast<SI16>( argv[1].toInt32());
+		gImage		= static_cast<UI16>( argv[2].toInt32());
+		gImageChk	= static_cast<UI16>( argv[3].toInt32());
+		initState	= static_cast<SI16>( argv[4].toInt32());
+		relay		= static_cast<UI32>( argv[5].toInt32());
 	}
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
@@ -766,7 +765,7 @@ bool CGump_MasterGump( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	SI32 masterGumpId = static_cast<SI32>( JSVAL_TO_INT( argv[0] ));
+	SI32 masterGumpId = static_cast<SI32>( argv[0].toInt32());
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	SEGump_st *gList = static_cast<SEGump_st *>( JS_GetPrivate( cx, obj ));
 
@@ -797,11 +796,11 @@ bool CGump_AddBackground( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 tL = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI16 bL = static_cast<SI16>( JSVAL_TO_INT( argv[2] ));
-	SI16 bR = static_cast<SI16>( JSVAL_TO_INT( argv[3] ));
-	UI16 gImage = static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
+	SI16 tL = static_cast<SI16>( argv[0].toInt32());
+	SI16 tR = static_cast<SI16>( argv[1].toInt32());
+	SI16 bL = static_cast<SI16>( argv[2].toInt32());
+	SI16 bR = static_cast<SI16>( argv[3].toInt32());
+	UI16 gImage = static_cast<UI16>( argv[4].toInt32());
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
@@ -830,13 +829,13 @@ bool CGump_AddButton( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 tL = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 gImage = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-	UI16 gImage2 = ( argc == 6 ? (gImage + 1) : static_cast<UI16>( JSVAL_TO_INT( argv[3] )));
-	SI16 x1 = ( argc == 6 ? static_cast<SI16>( JSVAL_TO_INT( argv[3] )) : static_cast<SI16>( JSVAL_TO_INT( argv[4] )));
-	SI16 pageNum = ( argc == 6 ? static_cast<SI16>( JSVAL_TO_INT( argv[4] )) : static_cast<SI16>( JSVAL_TO_INT( argv[5] )));
-	UI32 buttonId = ( argc == 6 ? static_cast<UI32>( JSVAL_TO_INT( argv[5] )) : static_cast<UI32>( JSVAL_TO_INT( argv[6] )));
+	SI16 tL = static_cast<SI16>( argv[0].toInt32());
+	SI16 tR = static_cast<SI16>( argv[1].toInt32());
+	UI16 gImage = static_cast<UI16>( argv[2].toInt32());
+	UI16 gImage2 = ( argc == 6 ? (gImage + 1) : static_cast<UI16>( argv[3].toInt32()));
+	SI16 x1 = ( argc == 6 ? static_cast<SI16>( argv[3].toInt32()) : static_cast<SI16>( argv[4].toInt32()));
+	SI16 pageNum = ( argc == 6 ? static_cast<SI16>( argv[4].toInt32()) : static_cast<SI16>( argv[5].toInt32()));
+	UI32 buttonId = ( argc == 6 ? static_cast<UI32>( argv[5].toInt32()) : static_cast<UI32>( argv[6].toInt32()));
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
@@ -866,17 +865,17 @@ bool CGump_AddButtonTileArt( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 tL = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 tileIdNorm = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-	UI16 tileIdPush = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
-	SI16 buttonType = static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
-	SI16 pageNum = static_cast<SI16>( JSVAL_TO_INT( argv[5] ));
-	UI32 buttonId = static_cast<UI32>( JSVAL_TO_INT( argv[6] ));
-	UI16 tileId = static_cast<UI16>( JSVAL_TO_INT( argv[7] ));
-	SI16 hue = static_cast<SI16>( JSVAL_TO_INT( argv[8] ));
-	SI16 tileX = static_cast<SI16>( JSVAL_TO_INT( argv[9] ));
-	SI16 tileY = static_cast<SI16>( JSVAL_TO_INT( argv[10] ));
+	SI16 tL = static_cast<SI16>( argv[0].toInt32());
+	SI16 tR = static_cast<SI16>( argv[1].toInt32());
+	UI16 tileIdNorm = static_cast<UI16>( argv[2].toInt32());
+	UI16 tileIdPush = static_cast<UI16>( argv[3].toInt32());
+	SI16 buttonType = static_cast<SI16>( argv[4].toInt32());
+	SI16 pageNum = static_cast<SI16>( argv[5].toInt32());
+	UI32 buttonId = static_cast<UI32>( argv[6].toInt32());
+	UI16 tileId = static_cast<UI16>( argv[7].toInt32());
+	SI16 hue = static_cast<SI16>( argv[8].toInt32());
+	SI16 tileX = static_cast<SI16>( argv[9].toInt32());
+	SI16 tileY = static_cast<SI16>( argv[10].toInt32());
 	//SI32 cliloc = 0;
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
@@ -906,11 +905,11 @@ bool CGump_AddPageButton( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 tL = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 gImage = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-	UI16 gImage2 = ( argc == 4 ? ( gImage + 1 ) : static_cast<UI16>( JSVAL_TO_INT( argv[3] )));
-	SI16 pageNum = ( argc == 4 ? static_cast<SI16>( JSVAL_TO_INT( argv[3] )) : static_cast<SI16>( JSVAL_TO_INT( argv[4] )));
+	SI16 tL = static_cast<SI16>( argv[0].toInt32());
+	SI16 tR = static_cast<SI16>( argv[1].toInt32());
+	UI16 gImage = static_cast<UI16>( argv[2].toInt32());
+	UI16 gImage2 = ( argc == 4 ? ( gImage + 1 ) : static_cast<UI16>( argv[3].toInt32()));
+	SI16 pageNum = ( argc == 4 ? static_cast<SI16>( argv[3].toInt32()) : static_cast<SI16>( argv[4].toInt32()));
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
@@ -941,10 +940,10 @@ bool CGump_AddCheckerTrans( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 x		= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
-	SI16 y		= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
-	SI16 width	= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // width
-	SI16 height	= static_cast<SI16>( JSVAL_TO_INT( argv[3] )); // height
+	SI16 x		= static_cast<SI16>( argv[0].toInt32()); // x
+	SI16 y		= static_cast<SI16>( argv[1].toInt32()); // y
+	SI16 width	= static_cast<SI16>( argv[2].toInt32()); // width
+	SI16 height	= static_cast<SI16>( argv[3].toInt32()); // height
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
@@ -975,11 +974,11 @@ bool CGump_AddCroppedText( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 TextX		= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
-	SI16 TextY		= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
-	SI16 TextHue	= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // Hue
-	SI16 TextWidth	= static_cast<SI16>( JSVAL_TO_INT( argv[3] )); // width
-	SI16 TextHeight	= static_cast<SI16>( JSVAL_TO_INT( argv[4] )); // height
+	SI16 TextX		= static_cast<SI16>( argv[0].toInt32()); // x
+	SI16 TextY		= static_cast<SI16>( argv[1].toInt32()); // y
+	SI16 TextHue	= static_cast<SI16>( argv[2].toInt32()); // Hue
+	SI16 TextWidth	= static_cast<SI16>( argv[3].toInt32()); // width
+	SI16 TextHeight	= static_cast<SI16>( argv[4].toInt32()); // height
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	std::string TextString = JS_GetStringBytes( cx, argv[5]);
@@ -1030,7 +1029,7 @@ bool CGump_AddGroup( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	gList->one->push_back( oldstrutil::format( "group %d", JSVAL_TO_INT( argv[0] )));
+	gList->one->push_back( oldstrutil::format( "group %d", argv[0].toInt32()));
 
 	return true;
 }
@@ -1058,7 +1057,7 @@ bool CGump_EndGroup( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	gList->one->push_back( oldstrutil::format( "endgroup", JSVAL_TO_INT( argv[0] )));
+	gList->one->push_back( oldstrutil::format( "endgroup", argv[0].toInt32()));
 
 	return true;
 }
@@ -1078,13 +1077,13 @@ bool CGump_AddGump( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 tL = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 gImage = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+	SI16 tL = static_cast<SI16>( argv[0].toInt32());
+	SI16 tR = static_cast<SI16>( argv[1].toInt32());
+	UI16 gImage = static_cast<UI16>( argv[2].toInt32());
 	SI32 rgbColor = 0;
 	if( argc == 4 )
 	{
-		rgbColor = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+		rgbColor = static_cast<UI16>( argv[3].toInt32());
 	}
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
@@ -1123,10 +1122,10 @@ bool CGump_AddGumpColor( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 tL			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 gImage		= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-	SI32 rgbColour	= static_cast<SI32>( JSVAL_TO_INT( argv[3] ));	// colour
+	SI16 tL			= static_cast<SI16>( argv[0].toInt32());
+	SI16 tR			= static_cast<SI16>( argv[1].toInt32());
+	UI16 gImage		= static_cast<UI16>( argv[2].toInt32());
+	SI32 rgbColour	= static_cast<SI32>( argv[3].toInt32());	// colour
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
@@ -1171,7 +1170,7 @@ bool CGump_AddToolTip( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	SI32 tooltip = static_cast<SI32>( JSVAL_TO_INT( argv[0] ));
+	SI32 tooltip = static_cast<SI32>( argv[0].toInt32());
 	std::stringstream temp;
 	if( argc > 1 )
 	{
@@ -1213,12 +1212,12 @@ bool CGump_AddHTMLGump( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 x				= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
-	SI16 y				= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
-	SI16 width			= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // width
-	SI16 height			= static_cast<SI16>( JSVAL_TO_INT( argv[3] )); // height
-	bool hasBorder		= ( JSVAL_TO_BOOLEAN( argv[4] ) == true );
-	bool hasScrollbar	= ( JSVAL_TO_BOOLEAN( argv[5] ) == true );
+	SI16 x				= static_cast<SI16>( argv[0].toInt32()); // x
+	SI16 y				= static_cast<SI16>( argv[1].toInt32()); // y
+	SI16 width			= static_cast<SI16>( argv[2].toInt32()); // width
+	SI16 height			= static_cast<SI16>( argv[3].toInt32()); // height
+	bool hasBorder		= ( argv[4].toBoolean() == true );
+	bool hasScrollbar	= ( argv[5].toBoolean() == true );
 
 	std::string TextString = JS_GetStringBytes( cx, argv[6] );
 
@@ -1271,7 +1270,7 @@ bool CGump_AddPage( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	gList->one->push_back( oldstrutil::format( "page %d", JSVAL_TO_INT( argv[0] )));
+	gList->one->push_back( oldstrutil::format( "page %d", argv[0].toInt32()));
 
 	return true;
 }
@@ -1291,9 +1290,9 @@ bool CGump_AddPicture( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 tL		= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR		= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 gImage = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+	SI16 tL		= static_cast<SI16>( argv[0].toInt32());
+	SI16 tR		= static_cast<SI16>( argv[1].toInt32());
+	UI16 gImage = static_cast<UI16>( argv[2].toInt32());
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
@@ -1323,10 +1322,10 @@ bool CGump_AddPictureColor( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 tL			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 gImage		= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-	SI32 rgbColour	= static_cast<SI32>( JSVAL_TO_INT( argv[3] ));	// colour
+	SI16 tL			= static_cast<SI16>( argv[0].toInt32());
+	SI16 tR			= static_cast<SI16>( argv[1].toInt32());
+	UI16 gImage		= static_cast<UI16>( argv[2].toInt32());
+	SI32 rgbColour	= static_cast<SI32>( argv[3].toInt32());	// colour
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
@@ -1357,13 +1356,13 @@ bool CGump_AddPicInPic( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 x			= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // starting x
-	SI16 y			= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // starting y
-	UI16 gImage		= static_cast<UI16>( JSVAL_TO_INT( argv[2] )); // GumpId
-	SI16 spriteX	= static_cast<SI16>( JSVAL_TO_INT( argv[3] )); // spriteX
-	SI16 spriteY	= static_cast<SI16>( JSVAL_TO_INT( argv[4] )); // spriteY
-	SI16 width		= static_cast<SI16>( JSVAL_TO_INT( argv[5] )); // width
-	SI16 height		= static_cast<SI16>( JSVAL_TO_INT( argv[6] )); // height
+	SI16 x			= static_cast<SI16>( argv[0].toInt32()); // starting x
+	SI16 y			= static_cast<SI16>( argv[1].toInt32()); // starting y
+	UI16 gImage		= static_cast<UI16>( argv[2].toInt32()); // GumpId
+	SI16 spriteX	= static_cast<SI16>( argv[3].toInt32()); // spriteX
+	SI16 spriteY	= static_cast<SI16>( argv[4].toInt32()); // spriteY
+	SI16 width		= static_cast<SI16>( argv[5].toInt32()); // width
+	SI16 height		= static_cast<SI16>( argv[6].toInt32()); // height
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
@@ -1397,7 +1396,7 @@ bool CGump_AddItemProperty( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject *tObj = JSVAL_TO_OBJECT( argv[0] );
+	JSObject *tObj = &argv[0].toObject();
 	CBaseObject *trgObj = static_cast<CBaseObject *>( JS_GetPrivate( cx, tObj ));
 
 	if( !ValidateObject( trgObj ) || ( trgObj->GetSerial() == INVALIDSERIAL ))
@@ -1445,21 +1444,21 @@ bool CGump_AddRadio( JSContext *cx, unsigned argc, JS::Value* vp )
 	JS::Value* argv = JS_ARGV( cx, vp );
 	if( argc == 5 )
 	{
-		tL				= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-		tR				= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-		gImage			= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+		tL				= static_cast<SI16>( argv[0].toInt32());
+		tR				= static_cast<SI16>( argv[1].toInt32());
+		gImage			= static_cast<UI16>( argv[2].toInt32());
 		gImageChk		= gImage + 1;
-		initialState	= static_cast<SI16>( JSVAL_TO_INT( argv[3] ));
-		relay			= static_cast<UI32>( JSVAL_TO_INT( argv[4] ));
+		initialState	= static_cast<SI16>( argv[3].toInt32());
+		relay			= static_cast<UI32>( argv[4].toInt32());
 	}
 	else
 	{
-		tL				= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-		tR				= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-		gImage			= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-		gImageChk		= static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
-		initialState	= static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
-		relay			= static_cast<UI32>( JSVAL_TO_INT( argv[5] ));
+		tL				= static_cast<SI16>( argv[0].toInt32());
+		tR				= static_cast<SI16>( argv[1].toInt32());
+		gImage			= static_cast<UI16>( argv[2].toInt32());
+		gImageChk		= static_cast<UI16>( argv[3].toInt32());
+		initialState	= static_cast<SI16>( argv[4].toInt32());
+		relay			= static_cast<UI32>( argv[5].toInt32());
 	}
 
 
@@ -1493,9 +1492,9 @@ bool CGump_AddText( JSContext *cx, unsigned argc, JS::Value* vp )
 	UI32 textId;
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 TextX		= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
-	SI16 TextY		= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
-	SI16 TextHue	= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // Hue
+	SI16 TextX		= static_cast<SI16>( argv[0].toInt32()); // x
+	SI16 TextY		= static_cast<SI16>( argv[1].toInt32()); // y
+	SI16 TextHue	= static_cast<SI16>( argv[2].toInt32()); // Hue
 
 	std::string TextString = JS_GetStringBytes( cx, argv[3]);
 
@@ -1537,13 +1536,13 @@ bool CGump_AddTextEntry( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 tL					= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR					= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI16 width				= static_cast<SI16>( JSVAL_TO_INT( argv[2] ));
-	SI16 height				= static_cast<SI16>( JSVAL_TO_INT( argv[3] ));
-	SI16 hue				= static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
-	SI16 relay				= static_cast<SI16>( JSVAL_TO_INT( argv[5] ));
-	SI16 initialTextIndex	= static_cast<SI16>( JSVAL_TO_INT( argv[6] ));
+	SI16 tL					= static_cast<SI16>( argv[0].toInt32());
+	SI16 tR					= static_cast<SI16>( argv[1].toInt32());
+	SI16 width				= static_cast<SI16>( argv[2].toInt32());
+	SI16 height				= static_cast<SI16>( argv[3].toInt32());
+	SI16 hue				= static_cast<SI16>( argv[4].toInt32());
+	SI16 relay				= static_cast<SI16>( argv[5].toInt32());
+	SI16 initialTextIndex	= static_cast<SI16>( argv[6].toInt32());
 	std::string test = JS_GetStringBytes( cx, argv[7]);
 
 	if( test.empty() )
@@ -1581,15 +1580,15 @@ bool CGump_AddTextEntryLimited( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 tL					= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR					= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI16 width				= static_cast<SI16>( JSVAL_TO_INT( argv[2] ));
-	SI16 height				= static_cast<SI16>( JSVAL_TO_INT( argv[3] ));
-	SI16 hue				= static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
-	SI16 relay				= static_cast<SI16>( JSVAL_TO_INT( argv[5] ));
-	SI16 initialTextIndex	= static_cast<SI16>( JSVAL_TO_INT( argv[6] ));
+	SI16 tL					= static_cast<SI16>( argv[0].toInt32());
+	SI16 tR					= static_cast<SI16>( argv[1].toInt32());
+	SI16 width				= static_cast<SI16>( argv[2].toInt32());
+	SI16 height				= static_cast<SI16>( argv[3].toInt32());
+	SI16 hue				= static_cast<SI16>( argv[4].toInt32());
+	SI16 relay				= static_cast<SI16>( argv[5].toInt32());
+	SI16 initialTextIndex	= static_cast<SI16>( argv[6].toInt32());
 	std::string test = JS_GetStringBytes( cx, argv[7]);
-	SI16 textEntrySize		= static_cast<SI16>( JSVAL_TO_INT( argv[8] ));
+	SI16 textEntrySize		= static_cast<SI16>( argv[8].toInt32());
 
 	if( test.empty() )
 	{
@@ -1627,11 +1626,11 @@ bool CGump_AddTiledGump( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 x		= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
-	SI16 y		= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
-	SI16 width	= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // width
-	SI16 height	= static_cast<SI16>( JSVAL_TO_INT( argv[3] )); // height
-	SI16 gumpId = static_cast<SI16>( JSVAL_TO_INT( argv[4] )); // gump to tile
+	SI16 x		= static_cast<SI16>( argv[0].toInt32()); // x
+	SI16 y		= static_cast<SI16>( argv[1].toInt32()); // y
+	SI16 width	= static_cast<SI16>( argv[2].toInt32()); // width
+	SI16 height	= static_cast<SI16>( argv[3].toInt32()); // height
+	SI16 gumpId = static_cast<SI16>( argv[4].toInt32()); // gump to tile
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
@@ -1662,13 +1661,13 @@ bool CGump_AddXMFHTMLGump( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 x				= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
-	SI16 y				= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
-	SI16 width			= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // width
-	SI16 height			= static_cast<SI16>( JSVAL_TO_INT( argv[3] )); // height
-	SI32 number			= static_cast<SI32>( JSVAL_TO_INT( argv[4] )); // number
-	bool hasBorder		= ( JSVAL_TO_BOOLEAN( argv[5] ) == true );
-	bool hasScrollbar	= ( JSVAL_TO_BOOLEAN( argv[6] ) == true );
+	SI16 x				= static_cast<SI16>( argv[0].toInt32()); // x
+	SI16 y				= static_cast<SI16>( argv[1].toInt32()); // y
+	SI16 width			= static_cast<SI16>( argv[2].toInt32()); // width
+	SI16 height			= static_cast<SI16>( argv[3].toInt32()); // height
+	SI32 number			= static_cast<SI32>( argv[4].toInt32()); // number
+	bool hasBorder		= ( argv[5].toBoolean() == true );
+	bool hasScrollbar	= ( argv[6].toBoolean() == true );
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
@@ -1702,14 +1701,14 @@ bool CGump_AddXMFHTMLGumpColor( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 x				= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
-	SI16 y				= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
-	SI16 width			= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // width
-	SI16 height			= static_cast<SI16>( JSVAL_TO_INT( argv[3] )); // height
-	SI32 number			= static_cast<SI32>( JSVAL_TO_INT( argv[4] )); // number
-	bool hasBorder		= ( JSVAL_TO_BOOLEAN( argv[5] ) == true );
-	bool hasScrollbar	= ( JSVAL_TO_BOOLEAN( argv[6] ) == true );
-	SI32 rgbColour		= static_cast<SI32>( JSVAL_TO_INT( argv[7] ));	// colour
+	SI16 x				= static_cast<SI16>( argv[0].toInt32()); // x
+	SI16 y				= static_cast<SI16>( argv[1].toInt32()); // y
+	SI16 width			= static_cast<SI16>( argv[2].toInt32()); // width
+	SI16 height			= static_cast<SI16>( argv[3].toInt32()); // height
+	SI32 number			= static_cast<SI32>( argv[4].toInt32()); // number
+	bool hasBorder		= ( argv[5].toBoolean() == true );
+	bool hasScrollbar	= ( argv[6].toBoolean() == true );
+	SI32 rgbColour		= static_cast<SI32>( argv[7].toInt32());	// colour
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
@@ -1742,14 +1741,14 @@ bool CGump_AddXMFHTMLTok( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 x				= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
-	SI16 y				= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
-	SI16 width			= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // width
-	SI16 height			= static_cast<SI16>( JSVAL_TO_INT( argv[3] )); // height
-	bool hasBorder		= ( JSVAL_TO_BOOLEAN( argv[4] ) == true );
-	bool hasScrollbar	= ( JSVAL_TO_BOOLEAN( argv[5] ) == true );
-	SI32 rgbColour		= static_cast<SI32>( JSVAL_TO_INT( argv[6] ));	// colour
-	SI32 number			= static_cast<SI32>( JSVAL_TO_INT( argv[7] )); // number
+	SI16 x				= static_cast<SI16>( argv[0].toInt32()); // x
+	SI16 y				= static_cast<SI16>( argv[1].toInt32()); // y
+	SI16 width			= static_cast<SI16>( argv[2].toInt32()); // width
+	SI16 height			= static_cast<SI16>( argv[3].toInt32()); // height
+	bool hasBorder		= ( argv[4].toBoolean() == true );
+	bool hasScrollbar	= ( argv[5].toBoolean() == true );
+	SI32 rgbColour		= static_cast<SI32>( argv[6].toInt32());	// colour
+	SI32 number			= static_cast<SI32>( argv[7].toInt32()); // number
 
 	// Iterate through potential cliloc arguments (8-10)
 	std::string fullArgs = "";
@@ -1806,7 +1805,7 @@ bool CGump_Send( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !argv[0].isObject() )
 	{
 		ScriptError( cx, "You have to pass a valid Socket or Character" );
 	}
@@ -1882,13 +1881,13 @@ bool CBase_TextMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 	UI16 txtHue = 0x0000;
 	if( argc >= 3 )
 	{
-		txtHue = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+		txtHue = static_cast<UI16>( argv[2].toInt32());
 	}
 
 	SpeechTarget speechTarget = SPTRG_NULL;
 	if( argc >= 4 )
 	{
-		speechTarget = static_cast<SpeechTarget>( JSVAL_TO_INT( argv[3] ));
+		speechTarget = static_cast<SpeechTarget>( argv[3].toInt32());
 	}
 	if( speechTarget == SPTRG_NULL )
 	{
@@ -1898,19 +1897,19 @@ bool CBase_TextMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 	SERIAL speechTargetSerial = INVALIDSERIAL;
 	if( argc >= 5 )
 	{
-		speechTargetSerial = static_cast<SERIAL>( JSVAL_TO_INT( argv[4] ));
+		speechTargetSerial = static_cast<SERIAL>( argv[4].toInt32());
 	}
 
 	FontType speechFontType = FNT_NULL;
 	if( argc == 6 )
 	{
-		speechFontType = static_cast<FontType>( JSVAL_TO_INT( argv[5] ));
+		speechFontType = static_cast<FontType>( argv[5].toInt32());
 	}
 
 	SpeechType speechType = UNKNOWN;
 	if( argc == 7 )
 	{
-		speechType = static_cast<SpeechType>( JSVAL_TO_INT( argv[6] ));
+		speechType = static_cast<SpeechType>( argv[6].toInt32());
 	}
 
 	bool useUnicode = cwmWorldState->ServerData()->UseUnicodeMessages();
@@ -1947,7 +1946,7 @@ bool CBase_TextMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 			return false;
 		}
 
-		if( argc >= 2 && argc <= 3 && JSVAL_TO_BOOLEAN( argv[1] ) != true )
+		if( argc >= 2 && argc <= 3 && argv[1].toBoolean() != true )
 		{
 			speechTarget = SPTRG_INDIVIDUAL;
 			if( speechTargetSerial == INVALIDSERIAL )
@@ -2012,7 +2011,7 @@ bool CBase_KillTimers( JSContext *cx, unsigned argc, JS::Value* vp )
 	SI32 triggerNum = -1;
 	if( argc == 1 )
 	{
-		triggerNum = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+		triggerNum = static_cast<UI16>( argv[0].toInt32());
 	}
 
 	SERIAL mySer = myObj->GetSerial();
@@ -2063,8 +2062,8 @@ bool CBase_GetJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid timer found
-	UI16 timerId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	UI16 timerId = static_cast<UI16>( argv[0].toInt32());
+	UI16 scriptId = static_cast<UI16>( argv[1].toInt32());
 
 	SERIAL myObjSerial = myObj->GetSerial();
 	for( const auto &Effect : cwmWorldState->tempEffects.collection() )
@@ -2116,11 +2115,11 @@ bool CBase_SetJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value is 0 by default, indicating no timer was found or updated
-	UI16 timerId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	jsdouble expireTime_double;
+	UI16 timerId = static_cast<UI16>( argv[0].toInt32());
+	double expireTime_double;
 	JS_ValueToNumber( cx, argv[1], &expireTime_double );
 	TIMERVAL expireTime = BuildTimeValue( static_cast<R64>( expireTime_double ) / 1000.0 );
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+	UI16 scriptId = static_cast<UI16>( argv[2].toInt32());
 
 	SERIAL myObjSerial = myObj->GetSerial();
 	for( const auto &Effect : cwmWorldState->tempEffects.collection() )
@@ -2172,8 +2171,8 @@ bool CBase_KillJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid timer found
-	UI16 timerId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	UI16 timerId = static_cast<UI16>( argv[0].toInt32());
+	UI16 scriptId = static_cast<UI16>( argv[1].toInt32());
 
 	SERIAL myObjSerial = myObj->GetSerial();
 	CTEffect *removeEffect = nullptr;
@@ -2232,8 +2231,8 @@ bool CBase_PauseJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid timer found
-	UI16 timerId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	UI16 timerId = static_cast<UI16>( argv[0].toInt32());
+	UI16 scriptId = static_cast<UI16>( argv[1].toInt32());
 
 	SERIAL myObjSerial = myObj->GetSerial();
 	CTEffect *removeEffect = nullptr;
@@ -2294,8 +2293,8 @@ bool CBase_ResumeJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid timer found
-	UI16 timerId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	UI16 timerId = static_cast<UI16>( argv[0].toInt32());
+	UI16 scriptId = static_cast<UI16>( argv[1].toInt32());
 
 	SERIAL myObjSerial = myObj->GetSerial();
 	CTEffect *removeEffect = nullptr;
@@ -2357,7 +2356,7 @@ bool CBase_GetTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid tempe effect
-	UI16 tempEffectID = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 tempEffectID = static_cast<UI16>( argv[0].toInt32());
 
 	SERIAL myObjSerial = myObj->GetSerial();
 	for( const auto &Effect : cwmWorldState->tempEffects.collection() )
@@ -2396,7 +2395,7 @@ bool CBase_ReverseTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid temp effect found
-	UI16 tempEffectID = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 tempEffectID = static_cast<UI16>( argv[0].toInt32());
 
 	SERIAL myObjSerial = myObj->GetSerial();
 	CTEffect *removeEffect = nullptr;
@@ -2444,7 +2443,7 @@ bool CBase_PauseTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid temp effect found
-	UI16 tempEffectID = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 tempEffectID = static_cast<UI16>( argv[0].toInt32());
 
 	SERIAL myObjSerial = myObj->GetSerial();
 	CTEffect *pauseEffect = nullptr;
@@ -2486,7 +2485,7 @@ bool CBase_ResumeTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid paused temp effect found
-	UI16 tempEffectID = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 tempEffectID = static_cast<UI16>( argv[0].toInt32());
 
 	SERIAL myObjSerial = myObj->GetSerial();
 	CTEffect *resumeEffect = nullptr;
@@ -2545,13 +2544,13 @@ bool CChar_Wander( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 x1 = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 y1 = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI16 x2 = static_cast<SI16>( JSVAL_TO_INT( argv[2] ));
+	SI16 x1 = static_cast<SI16>( argv[0].toInt32());
+	SI16 y1 = static_cast<SI16>( argv[1].toInt32());
+	SI16 x2 = static_cast<SI16>( argv[2].toInt32());
 	SI16 y2 = 0;
 	if( argc > 3 )
 	{
-		y2 = static_cast<SI16>( JSVAL_TO_INT( argv[3] ));
+		y2 = static_cast<SI16>( argv[3].toInt32());
 	}
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
@@ -2602,7 +2601,7 @@ bool CChar_Follow( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( argv[0] == JSVAL_NULL )
+	if( argv[0] == JS::NullValue() )
 	{
 		// Clear follow target if null was provided instead of a character object to follow
 		myChar->SetFTarg( nullptr );
@@ -2610,7 +2609,7 @@ bool CChar_Follow( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JSObject *jsObj = JSVAL_TO_OBJECT( argv[0] );
+	JSObject *jsObj = &argv[0].toObject();
 	CBaseObject *myObj = static_cast<CBaseObject *>( JS_GetPrivate( cx, jsObj ));
 
 	if( !ValidateObject( myObj ) || myObj->GetSerial() >= BASEITEMSERIAL )
@@ -2641,29 +2640,29 @@ bool CChar_DoAction( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	UI16 targAction = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 targAction = static_cast<UI16>( argv[0].toInt32());
 	SI16 targSubAction = -1;
 	UI16 frameCount = 7;
 	UI16 frameDelay = 0;
 	bool playBackwards = false;
 	if( argc > 1 )
 	{
-		if( argv[1] != JSVAL_NULL )
+		if( argv[1] != JS::NullValue() )
 		{
-			targSubAction = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+			targSubAction = static_cast<SI16>( argv[1].toInt32());
 		}
 	}
 	if( argc > 2 )
 	{
-		frameCount = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+		frameCount = static_cast<UI16>( argv[2].toInt32());
 	}
 	if( argc > 3 )
 	{
-		frameDelay = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+		frameDelay = static_cast<UI16>( argv[3].toInt32());
 	}
 	if( argc > 4 )
 	{
-		playBackwards = JSVAL_TO_BOOLEAN( argv[4] );
+		playBackwards = argv[4].toBoolean();
 	}
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
@@ -2718,7 +2717,7 @@ bool CChar_EmoteMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 	UI16 txtHue = 0x0000;
 	if( argc >= 3 )
 	{
-		txtHue = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+		txtHue = static_cast<UI16>( argv[2].toInt32());
 	}
 	if( txtHue == 0x0000 )
 	{
@@ -2728,7 +2727,7 @@ bool CChar_EmoteMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 	SpeechTarget speechTarget = SPTRG_NULL;
 	if( argc >= 4 )
 	{
-		speechTarget = static_cast<SpeechTarget>( JSVAL_TO_INT( argv[3] ));
+		speechTarget = static_cast<SpeechTarget>( argv[3].toInt32());
 	}
 	if( speechTarget == SPTRG_NULL )
 	{
@@ -2738,10 +2737,10 @@ bool CChar_EmoteMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 	SERIAL speechTargetSerial = INVALIDSERIAL;
 	if( argc >= 5 )
 	{
-		speechTargetSerial = static_cast<SERIAL>( JSVAL_TO_INT( argv[4] ));
+		speechTargetSerial = static_cast<SERIAL>( argv[4].toInt32());
 	}
 
-	if( argc >= 2 && argc <= 3 && JSVAL_TO_BOOLEAN( argv[1] ) != true )
+	if( argc >= 2 && argc <= 3 && argv[1].toBoolean() != true )
 	{
 		speechTarget = SPTRG_INDIVIDUAL;
 	}
@@ -2822,9 +2821,9 @@ bool CMisc_SysMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	UI16 msgColor = 0;
 	UI08 argCounter = 0;
-	if( argc > 1 && JSVAL_IS_INT( argv[0] ))
+	if( argc > 1 && argv[0].isObject() )
 	{
-		msgColor = static_cast<UI16>( JSVAL_TO_INT( argv[argCounter++] ));
+		msgColor = static_cast<UI16>( argv[argCounter++].toInt32() );
 	}
 
 	std::string trgMessage = JS_GetStringBytes( cx, argv[argCounter++] );
@@ -2919,7 +2918,7 @@ bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 
 			// Parameters as a string
 		case 1:
-			if( JSVAL_IS_OBJECT( argv[0] ))
+			if( argv[0].isObject() )
 			{	// we can work with this, it should be either a character or item, hopefully
 				JSEncapsulate jsToGoTo( cx, &( argv[0] ));
 				if( jsToGoTo.ClassName() == "UOXItem" || jsToGoTo.ClassName() == "UOXChar" )
@@ -2953,9 +2952,9 @@ bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 					return false;
 				}
 			}
-			else if( JSVAL_IS_INT( argv[0] ))
+			else if( argv[0].isObject() )
 			{
-				UI16 placeNum = JSVAL_TO_INT( argv[0] );
+				UI16 placeNum = argv[0].toInt32();
 				if( cwmWorldState->goPlaces.find( placeNum ) != cwmWorldState->goPlaces.end() )
 				{
 					GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
@@ -2974,10 +2973,10 @@ bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 
 			// 2 Parameters, x + y
 		case 2:
-			if( JSVAL_IS_INT( argv[0] ) && JSVAL_IS_INT( argv[1] ))
+			if( argv[0].isInt32() && argv[1].isInt32() )
 			{
-				x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-				y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+				x = static_cast<SI16>( argv[0].toInt32());
+				y = static_cast<SI16>( argv[1].toInt32());
 			}
 			else
 			{
@@ -2988,11 +2987,11 @@ bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 
 			// x,y,z
 		case 3:
-			if( JSVAL_IS_INT( argv[0] ) && JSVAL_IS_INT( argv[1] ) && JSVAL_IS_INT( argv[2] ))
+			if( argv[0].isInt32() && argv[1].isInt32() && argv[2].isInt32() )
 			{
-				x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-				y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-				z = static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
+				x = static_cast<SI16>( argv[0].toInt32());
+				y = static_cast<SI16>( argv[1].toInt32());
+				z = static_cast<SI08>( argv[2].toInt32());
 			}
 			else
 			{
@@ -3003,12 +3002,12 @@ bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 
 			// x,y,z,world
 		case 4:
-			if( JSVAL_IS_INT( argv[0] ) && JSVAL_IS_INT( argv[1] ) && JSVAL_IS_INT( argv[2] ) && JSVAL_IS_INT( argv[3] ))
+			if( argv[0].isInt32() && argv[1].isInt32() && argv[2].isInt32() && argv[3].isInt32() )
 			{
-				x		= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-				y		= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-				z		= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-				world	= static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
+				x		= static_cast<SI16>( argv[0].toInt32());
+				y		= static_cast<SI16>( argv[1].toInt32());
+				z		= static_cast<SI08>( argv[2].toInt32());
+				world	= static_cast<UI08>( argv[3].toInt32());
 			}
 			else
 			{
@@ -3019,13 +3018,13 @@ bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 
 			// x,y,z,world,instanceId
 		case 5:
-			if( JSVAL_IS_INT( argv[0] ) && JSVAL_IS_INT( argv[1] ) && JSVAL_IS_INT( argv[2] ) && JSVAL_IS_INT( argv[3] ) && JSVAL_IS_INT( argv[4] ))
+			if( argv[0].isInt32() && argv[1].isInt32() && argv[2].isInt32() && argv[3].isInt32() && argv[4].isInt32() )
 			{
-				x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-				y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-				z = static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-				world = static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
-				instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
+				x = static_cast<SI16>( argv[0].toInt32());
+				y = static_cast<SI16>( argv[1].toInt32());
+				z = static_cast<SI08>( argv[2].toInt32());
+				world = static_cast<UI08>( argv[3].toInt32());
+				instanceId = static_cast<UI16>( argv[4].toInt32());
 			}
 			else
 			{
@@ -3109,9 +3108,9 @@ bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 bool CBase_StaticEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	JS::Value* argv = JS_ARGV( cx, vp );
-	UI16 effectId		= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	UI08 speed			= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
-	UI08 loop			= static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+	UI16 effectId		= static_cast<UI16>( argv[0].toInt32());
+	UI08 speed			= static_cast<UI08>( argv[1].toInt32());
+	UI08 loop			= static_cast<UI08>( argv[2].toInt32());
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	JSEncapsulate		myClass( cx, obj );
@@ -3125,7 +3124,7 @@ bool CBase_StaticEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( myClass.ClassName() == "UOXItem" )
 	{
-		bool explode = ( JSVAL_TO_BOOLEAN( argv[3] ) == true );
+		bool explode = ( argv[3].toBoolean() == true );
 		Effects->PlayStaticAnimation( myObj, effectId, speed, loop, explode );
 	}
 	else
@@ -3169,8 +3168,8 @@ bool CMisc_MakeMenu( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "MakeMenu: invalid socket" );
 		return false;
 	}
-	SI32 menu		= JSVAL_TO_INT( argv[0] );
-	UI08 skillNum	= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+	SI32 menu		= argv[0].toInt32();
+	UI08 skillNum	= static_cast<UI08>( argv[1].toInt32());
 	Skills->NewMakeMenu( mySock, menu, skillNum );
 	return true;
 }
@@ -3193,13 +3192,13 @@ bool CMisc_SoundEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 	JS::Value* argv = JS_ARGV( cx, vp );
 	JSEncapsulate myClass( cx, obj );
 
-	UI16 soundId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 soundId = static_cast<UI16>( argv[0].toInt32());
 	SI16 tmpMonsterSound = -1;
 	if( argc == 3 )
 	{
-		tmpMonsterSound = static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+		tmpMonsterSound = static_cast<UI08>( argv[1].toInt32());
 	}
-	bool allHear = ( JSVAL_TO_BOOLEAN( argv[1] ) == true );
+	bool allHear = ( argv[1].toBoolean() == true );
 
 	if( myClass.ClassName() == "UOXChar" || myClass.ClassName() == "UOXItem" )
 	{
@@ -3253,7 +3252,7 @@ bool CMisc_SellTo( JSContext *cx, unsigned argc, JS::Value* vp )
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	JS::Value* argv = JS_ARGV( cx, vp );
 	JSEncapsulate myClass( cx, obj );
-	CChar *myNPC = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *myNPC = static_cast<CChar*>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( myNPC ))
 	{
 		ScriptError( cx, "SellTo: Invalid NPC" );
@@ -3319,7 +3318,7 @@ bool CMisc_BuyFrom( JSContext *cx, unsigned argc, JS::Value* vp )
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	JS::Value* argv = JS_ARGV( cx, vp );
 	JSEncapsulate myClass( cx, obj );
-	CChar *myNPC = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *myNPC = static_cast<CChar*>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( myNPC ))
 	{
 		ScriptError( cx, "BuyFrom: Invalid NPC" );
@@ -3389,7 +3388,7 @@ bool CMisc_HasSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	JS::Value* argv = JS_ARGV( cx, vp );
 	JSEncapsulate myClass( cx, obj );
-	UI08 spellId = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 spellId = static_cast<UI08>( argv[0].toInt32());
 
 	if( myClass.ClassName() == "UOXChar" )
 	{
@@ -3457,7 +3456,7 @@ bool CMisc_RemoveSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	JS::Value* argv = JS_ARGV( cx, vp );
 	JSEncapsulate myClass( cx, obj );
-	UI08 spellId = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 spellId = static_cast<UI08>( argv[0].toInt32());
 
 	if( myClass.ClassName() == "UOXChar" )
 	{
@@ -3518,15 +3517,15 @@ bool CBase_GetTag( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( localObject.m_ObjectType == TAGMAP_TYPE_STRING )
 	{
 		JSString *localJSString = JS_NewStringCopyN( cx, ( const char* )localObject.m_StringValue.c_str(), localObject.m_StringValue.length() );
-		JS_SET_RVAL( cx, vp, static_cast<jsval>( STRING_TO_JSVAL( localJSString )) );
+		JS_SET_RVAL( cx, vp, static_cast<JS::Value>( STRING_TO_JSVAL( localJSString )) );
 	}
 	else if( localObject.m_ObjectType == TAGMAP_TYPE_BOOL )
 	{
-		JS_SET_RVAL( cx, vp, static_cast<jsval>( BOOLEAN_TO_JSVAL(( localObject.m_IntValue == 1 ))) );
+		JS_SET_RVAL( cx, vp, static_cast<JS::Value>( BOOLEAN_TO_JSVAL(( localObject.m_IntValue == 1 ))) );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, static_cast<jsval>( INT_TO_JSVAL( localObject.m_IntValue )) );
+		JS_SET_RVAL( cx, vp, static_cast<JS::Value>( INT_TO_JSVAL( localObject.m_IntValue )) );
 	}
 	return true;
 }
@@ -3663,15 +3662,15 @@ bool CBase_GetTempTag( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( localObject.m_ObjectType == TAGMAP_TYPE_STRING )
 	{
 		JSString *localJSString = JS_NewStringCopyN( cx, ( const char* )localObject.m_StringValue.c_str(), localObject.m_StringValue.length() );
-		JS_SET_RVAL( cx, vp, static_cast<jsval>( STRING_TO_JSVAL( localJSString )) );
+		JS_SET_RVAL( cx, vp, static_cast<JS::Value>( STRING_TO_JSVAL( localJSString )) );
 	}
 	else if( localObject.m_ObjectType == TAGMAP_TYPE_BOOL )
 	{
-		JS_SET_RVAL( cx, vp, static_cast<jsval>( BOOLEAN_TO_JSVAL(( localObject.m_IntValue == 1 ))) );
+		JS_SET_RVAL( cx, vp, static_cast<JS::Value>( BOOLEAN_TO_JSVAL(( localObject.m_IntValue == 1 ))) );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, static_cast<jsval>( INT_TO_JSVAL( localObject.m_IntValue )) );
+		JS_SET_RVAL( cx, vp, static_cast<JS::Value>( INT_TO_JSVAL( localObject.m_IntValue )) );
 	}
 	return true;
 }
@@ -3844,14 +3843,14 @@ bool CBase_GetTagMap( JSContext *cx, unsigned argc, JS::Value* vp )
 		
 		// Convert tag name to JSString
 		JSString *tagName = JS_NewStringCopyZ( cx, tagObj.first.c_str() );
-		jsval jsTagName = STRING_TO_JSVAL( tagName );
+		JS::Value jsTagName = STRING_TO_JSVAL( tagName );
 
 		// Add tag name to JSObject for tag
 		JS_SetElement( cx, jsTag, 0, &jsTagName );
 		
 		// Fetch type of tag, and value of tag
-		jsval jsType;
-		jsval jsValue;
+		JS::Value jsType;
+		JS::Value jsValue;
 		switch( tagObj.second.m_ObjectType )
 		{
 			case TAGMAP_TYPE_INT:
@@ -3871,8 +3870,8 @@ bool CBase_GetTagMap( JSContext *cx, unsigned argc, JS::Value* vp )
 				break;
 			default:
 				// Unhandled tag type detected!
-				jsType = JSVAL_NULL;
-				jsValue = JSVAL_NULL;
+				jsType = JS::NullValue();
+				jsValue = JS::NullValue();
 				break;
 		}
 
@@ -3881,12 +3880,12 @@ bool CBase_GetTagMap( JSContext *cx, unsigned argc, JS::Value* vp )
 		JS_SetElement( cx, jsTag, 2, &jsValue );
 
 		// Add JSObject for tag to main jsTagMap object
-		jsval subTagObj = OBJECT_TO_JSVAL( jsTag );
+		JS::Value subTagObj = JS::ObjectOrNullValue( jsTag );
 		JS_SetElement( cx, jsTagMap, i, &subTagObj );
 		i++;
 	}
 
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( jsTagMap ) );
+	JS_SET_RVAL( cx, vp, JS::ObjectOrNullValue( jsTagMap ) );
 	return true;
 }
 
@@ -3927,14 +3926,14 @@ bool CBase_GetTempTagMap( JSContext *cx, unsigned argc, JS::Value* vp )
 
 		// Convert tag name to JSString
 		JSString *tagName = JS_NewStringCopyZ( cx, tagObj.first.c_str() );
-		jsval jsTagName = STRING_TO_JSVAL( tagName );
+		JS::Value jsTagName = STRING_TO_JSVAL( tagName );
 
 		// Add tag name to JSObject for tag
 		JS_SetElement( cx, jsTag, 0, &jsTagName );
 
 		// Fetch type of tag, and value of tag
-		jsval jsType;
-		jsval jsValue;
+		JS::Value jsType;
+		JS::Value jsValue;
 		switch( tagObj.second.m_ObjectType )
 		{
 			case TAGMAP_TYPE_INT:
@@ -3954,8 +3953,8 @@ bool CBase_GetTempTagMap( JSContext *cx, unsigned argc, JS::Value* vp )
 				break;
 			default:
 				// Unhandled tag type detected!
-				jsType = JSVAL_NULL;
-				jsValue = JSVAL_NULL;
+				jsType = JS::NullValue();
+				jsValue = JS::NullValue();
 				break;
 		}
 
@@ -3964,12 +3963,12 @@ bool CBase_GetTempTagMap( JSContext *cx, unsigned argc, JS::Value* vp )
 		JS_SetElement( cx, jsTag, 2, &jsValue );
 
 		// Add JSObject for tag to main jsTagMap object
-		jsval subTagObj = OBJECT_TO_JSVAL( jsTag );
+		JS::Value subTagObj = JS::ObjectOrNullValue( jsTag );
 		JS_SetElement( cx, jsTagMap, i, &subTagObj );
 		i++;
 	}
 
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( jsTagMap ) );
+	JS_SET_RVAL( cx, vp, JS::ObjectOrNullValue( jsTagMap ) );
 	return true;
 }
 
@@ -4003,7 +4002,7 @@ bool CChar_OpenBank( JSContext *cx, unsigned argc, JS::Value* vp )
 	// Open it to the passed socket
 	else if( argc == 1 )
 	{
-		mySock = static_cast<CSocket*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+		mySock = static_cast<CSocket*>( JS_GetPrivate( cx, &argv[0].toObject()));
 		if( mySock != nullptr )
 		{
 			mySock->OpenBank( myChar );
@@ -4041,7 +4040,7 @@ bool CSocket_OpenContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	CItem *contToOpen = static_cast<CItem*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CItem *contToOpen = static_cast<CItem*>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( ValidateObject( contToOpen ))
 	{
 		mSock->OpenPack( contToOpen, false );
@@ -4072,10 +4071,10 @@ bool CChar_OpenLayer( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "OpenLayer, Invalid count of Paramters: %d", argc );
 		return false;
 	}
-	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( mySock != nullptr )
 	{
-		CItem *iLayer = myChar->GetItemAtLayer( static_cast<ItemLayers>( JSVAL_TO_INT( argv[1] )));
+		CItem *iLayer = myChar->GetItemAtLayer( static_cast<ItemLayers>( argv[1].toInt32()));
 		if( ValidateObject( iLayer ))
 		{
 			mySock->OpenPack( iLayer );
@@ -4108,13 +4107,13 @@ bool CChar_TurnToward( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( argc == 1 )
 	{
-		if( !JSVAL_IS_OBJECT( argv[0] ))
+		if( !argv[0].isObject() )
 		{
 			ScriptError( cx, "(TurnToward) Invalid Object passed" );
 			return false;
 		}
 
-		CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+		CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, &argv[0].toObject()));
 		if( !ValidateObject( myObj ))
 		{
 			ScriptError( cx, "(TurnToward) Invalid Object passed" );
@@ -4127,8 +4126,8 @@ bool CChar_TurnToward( JSContext *cx, unsigned argc, JS::Value* vp )
 	else if( argc == 2 )
 	{
 		// x + y
-		x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-		y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+		x = static_cast<SI16>( argv[0].toInt32());
+		y = static_cast<SI16>( argv[1].toInt32());
 	}
 	else
 	{
@@ -4184,13 +4183,13 @@ bool CChar_DirectionTo( JSContext *cx, unsigned argc, JS::Value* vp )
 	JS::Value* argv = JS_ARGV( cx, vp );
 	if( argc == 1 )
 	{
-		if( !JSVAL_IS_OBJECT( argv[0] ))
+		if( !argv[0].isObject() )
 		{
 			ScriptError( cx, "(DirectionTo) Invalid Object passed" );
 			return false;
 		}
 
-		CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+		CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, &argv[0].toObject()));
 
 		x = myObj->GetX();
 		y = myObj->GetY();
@@ -4198,8 +4197,8 @@ bool CChar_DirectionTo( JSContext *cx, unsigned argc, JS::Value* vp )
 	else if( argc == 2 )
 	{
 		// x + y
-		x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-		y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+		x = static_cast<SI16>( argv[0].toInt32());
+		y = static_cast<SI16>( argv[1].toInt32());
 	}
 	else
 	{
@@ -4273,7 +4272,7 @@ bool CGuild_AcceptRecruit( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 	else if( argc == 1 )
 	{
-		CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+		CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, &argv[0].toObject()));
 		myGuild->RecruitToMember( *myChar );
 	}
 	else
@@ -4560,8 +4559,8 @@ bool CGuild_IsAtWar( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	jsval* argv = JS_ARGV( cx, vp );
-	JSObject* otherObj = JSVAL_TO_OBJECT( argv[0] );
+	JS::Value* argv = JS_ARGV( cx, vp );
+	JSObject* otherObj = &argv[0].toObject();
 	CGuild* otherGuild = static_cast<CGuild*>( JS_GetPrivate( cx, otherObj ));
 	if( otherGuild == nullptr )
 	{
@@ -4603,8 +4602,8 @@ bool CGuild_IsAlly( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	jsval* argv = JS_ARGV( cx, vp );
-	JSObject* otherObj = JSVAL_TO_OBJECT( argv[0] );
+	JS::Value* argv = JS_ARGV( cx, vp );
+	JSObject* otherObj = &argv[0].toObject();
 	CGuild* otherGuild = static_cast<CGuild*>( JS_GetPrivate( cx, otherObj ));
 	if( otherGuild == nullptr )
 	{
@@ -4646,8 +4645,8 @@ bool CGuild_IsNeutral( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	jsval* argv = JS_ARGV( cx, vp );
-	JSObject* otherObj = JSVAL_TO_OBJECT(argv[0] );
+	JS::Value* argv = JS_ARGV( cx, vp );
+	JSObject* otherObj = &argv[0].toObject();
 	CGuild* otherGuild = static_cast<CGuild*>( JS_GetPrivate( cx, otherObj ));
 	if( otherGuild == nullptr )
 	{
@@ -4688,7 +4687,7 @@ bool CBase_ResourceCount( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI16 realId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 realId = static_cast<UI16>( argv[0].toInt32());
 	SI32 itemColour = 0;
 	SI64 moreVal = -1;
 	std::string sectionId = "";
@@ -4701,11 +4700,11 @@ bool CBase_ResourceCount( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( argc >= 2 )
 	{
-		itemColour = static_cast<SI32>( JSVAL_TO_INT( argv[1] ));
+		itemColour = static_cast<SI32>( argv[1].toInt32());
 	}
 	if( argc >= 3 )
 	{
-		moreVal = static_cast<SI64>( JSVAL_TO_INT( argv[2] ));
+		moreVal = static_cast<SI64>( argv[2].toInt32());
 	}
 	if( argc >= 4 )
 	{
@@ -4753,8 +4752,8 @@ bool CBase_UseResource( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI32 amount		= static_cast<UI32>( JSVAL_TO_INT( argv[0] ));
-	UI16 realId		= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	UI32 amount		= static_cast<UI32>( argv[0].toInt32());
+	UI16 realId		= static_cast<UI16>( argv[1].toInt32());
 	SI32 itemColour = 0;
 	SI64 moreVal	= -1;
 	std::string sectionId = "";
@@ -4768,11 +4767,11 @@ bool CBase_UseResource( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( argc >= 3 )
 	{
-		itemColour = static_cast<SI32>( JSVAL_TO_INT( argv[2] ));
+		itemColour = static_cast<SI32>( argv[2].toInt32());
 	}
 	if( argc >= 4 )
 	{
-		moreVal = static_cast<SI64>( JSVAL_TO_INT( argv[3] ));
+		moreVal = static_cast<SI64>( argv[3].toInt32());
 	}
 	if( argc >= 5 )
 	{
@@ -4874,7 +4873,7 @@ bool CMisc_CustomTarget( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 	
 	mySock->scriptForCallBack = JSMapping->currentActive();
-	UI08 tNum = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 tNum = static_cast<UI08>( argv[0].toInt32());
 
 #if defined UOX_DEBUG_MODE
 	Console.Warning( oldstrutil::format( "CustomTarget script ID: %d", mySock->scriptForCallBack->GetScriptID() ) );
@@ -4894,7 +4893,7 @@ bool CMisc_CustomTarget( JSContext *cx, unsigned argc, JS::Value* vp )
 	UI08 cursorType = 0;
 	if( argc == 3 )
 	{
-		cursorType = static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+		cursorType = static_cast<UI08>( argv[2].toInt32());
 	}
 
 	if( cursorType == 3 )
@@ -4957,7 +4956,7 @@ bool CMisc_PopUpTarget( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	UI08 tNum = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 tNum = static_cast<UI08>( argv[0].toInt32());
 
 	std::string toSay;
 	if( argc == 2 )
@@ -4985,7 +4984,7 @@ bool CBase_InRange( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	JS::Value* argv = JS_ARGV( cx, vp );
-	UI16 distance = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	UI16 distance = static_cast<UI16>( argv[1].toInt32());
 
 	CBaseObject *me = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( me ))
@@ -4994,7 +4993,7 @@ bool CBase_InRange( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	CBaseObject *them = static_cast<CBaseObject*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CBaseObject *them = static_cast<CBaseObject*>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( them ))
 	{
 		ScriptError( cx, "(InRange) Invalid Object assigned to target" );
@@ -5047,18 +5046,18 @@ bool CBase_StartTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	JS::Value* argv = JS_ARGV( cx, vp );
 	// 1. Parameter Delay, 2. Parameter Callback
-	jsdouble expireTime_double;
+	double expireTime_double;
 	JS_ValueToNumber( cx, argv[0], &expireTime_double );
 	TIMERVAL ExpireTime = BuildTimeValue( static_cast<R64>( expireTime_double ) / 1000.0 );
-	UI16 TriggerNum = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	UI16 TriggerNum = static_cast<UI16>( argv[1].toInt32());
 
 	CTEffect *Effect = new CTEffect;
 
 	if( argc == 3 )
 	{
-		if( JSVAL_IS_BOOLEAN( argv[2] ))	// Is it a boolean?  If so, might be calling back into here
+		if( argv[2].isBoolean() )	// Is it a boolean?  If so, might be calling back into here
 		{
-			if( JSVAL_TO_BOOLEAN( argv[2] ) == true )
+			if( argv[2].toBoolean() == true )
 			{
 #if defined UOX_DEBUG_MODE
 				Console.Log( oldstrutil::format( "Firing a new timer from script %d", JSMapping->currentActive()->GetScriptID() ) );
@@ -5072,7 +5071,7 @@ bool CBase_StartTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 		}
 		else
 		{
-			Effect->More2( static_cast<UI16>( JSVAL_TO_INT( argv[2] )));
+			Effect->More2( static_cast<UI16>( argv[2].toInt32()));
 		}
 	}
 	else
@@ -5119,18 +5118,18 @@ bool CChar_CheckSkill( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI08 skillNum = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
-	UI16 minSkill = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 maxSkill = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+	UI08 skillNum = static_cast<UI08>( argv[0].toInt32());
+	UI16 minSkill = static_cast<UI16>( argv[1].toInt32());
+	UI16 maxSkill = static_cast<UI16>( argv[2].toInt32());
 	bool isCraftSkill = false;
 	SI08 forceResult = 0;
 	if( argc == 4 )
 	{
-		isCraftSkill = JSVAL_TO_BOOLEAN( argv[3] );
+		isCraftSkill = argv[3].toBoolean();
 	}
 	if( argc == 5 )
 	{
-		forceResult = static_cast<SI08>( JSVAL_TO_INT( argv[4] ));
+		forceResult = static_cast<SI08>( argv[4].toInt32());
 	}
 	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( Skills->CheckSkill( myChar, skillNum, minSkill, maxSkill, isCraftSkill, forceResult ) ) );
 	return true;
@@ -5161,21 +5160,21 @@ bool CChar_AddSkill( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_INT( argv[0] ) || !JSVAL_IS_INT( argv[1] ))
+	if( !argv[0].isInt32() || !argv[1].isInt32() )
 	{
 		ScriptError( cx, "Invalid parameters! Only integers between 0-65535 are accepted for the first two parameters of .AddSkill Method." );
 		return false;
 	}
 
-	if( !JSVAL_IS_BOOLEAN( argv[2] ) )
+	if( !argv[2].isBoolean() )
 	{
 		ScriptError( cx, "Invalid parameters! Only boolean is accepted for the third parameter of .AddSkill Method." );
 		return false;
 	}
 
-	UI16 skillID = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	SKILLVAL skillAmt = static_cast<SKILLVAL>( JSVAL_TO_INT( argv[1] ));
-	bool triggerEvent = ( JSVAL_TO_BOOLEAN( argv[2] ) == true );
+	UI16 skillID = static_cast<UI16>( argv[0].toInt32());
+	SKILLVAL skillAmt = static_cast<SKILLVAL>( argv[1].toInt32());
+	bool triggerEvent = ( argv[2].toBoolean() == true );
 
 	Skills->AdvanceSkill( myChar, skillID, false, skillAmt, triggerEvent );
 
@@ -5203,7 +5202,7 @@ bool CChar_FindItemLayer( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( argc == 1 )
 	{
-		myItem = myChar->GetItemAtLayer( static_cast<ItemLayers>( JSVAL_TO_INT( argv[0] )));
+		myItem = myChar->GetItemAtLayer( static_cast<ItemLayers>( argv[0].toInt32()));
 	}
 	else
 	{
@@ -5213,13 +5212,13 @@ bool CChar_FindItemLayer( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( !ValidateObject( myItem ))
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		JS_SET_RVAL( cx, vp, JS::NullValue() );
 		return true;
 	}
 
 	JSObject *myJSItem = JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
 
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myJSItem ) );
+	JS_SET_RVAL( cx, vp, JS::ObjectOrNullValue( myJSItem ) );
 
 	return true;
 }
@@ -5247,18 +5246,18 @@ bool CChar_FindItemType( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI08 iType = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 iType = static_cast<UI08>( argv[0].toInt32());
 
 	CItem *myItem = FindItemOfType( myChar, static_cast<ItemTypes>( iType ));
 	if( !ValidateObject( myItem ))
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		JS_SET_RVAL( cx, vp, JS::NullValue() );
 		return true;
 	}
 
 	JSObject *myJSItem	= JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
 
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myJSItem ) );
+	JS_SET_RVAL( cx, vp, JS::ObjectOrNullValue( myJSItem ) );
 
 	return true;
 }
@@ -5291,13 +5290,13 @@ bool CChar_FindItemSection( JSContext *cx, unsigned argc, JS::Value* vp )
 	CItem *myItem = FindItemOfSectionId( myChar, sectionID );
 	if( !ValidateObject( myItem ))
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		JS_SET_RVAL( cx, vp, JS::NullValue() );
 		return true;
 	}
 
 	JSObject *myJSItem	= JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
 
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myJSItem ) );
+	JS_SET_RVAL( cx, vp, JS::ObjectOrNullValue( myJSItem ) );
 
 	return true;
 }
@@ -5357,7 +5356,7 @@ bool CMulti_TurnBoat( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI08 turnDir = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 turnDir = static_cast<UI08>( argv[0].toInt32());
 	auto currDir = myBoat->GetDir();
 	auto myTiller =  CalcItemObjFromSer( myBoat->GetTiller() );
 
@@ -5421,12 +5420,12 @@ bool CMulti_GetTiller( JSContext *cx, unsigned argc, JS::Value* vp )
 	auto myTiller =  CalcItemObjFromSer( myBoat->GetTiller() );
 	if( !ValidateObject( myTiller ))
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		JS_SET_RVAL( cx, vp, JS::NullValue() );
 		return true;
 	}
 
 	JSObject *myJSTiller	= JSEngine->AcquireObject( IUE_ITEM, myTiller, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myJSTiller ) );
+	JS_SET_RVAL( cx, vp, JS::ObjectOrNullValue( myJSTiller ) );
 
 	return true;
 }
@@ -5446,15 +5445,15 @@ bool CChar_SpeechInput( JSContext *cx, unsigned argc, JS::Value* vp )
 	JS::Value* argv = JS_ARGV( cx, vp );
 	if( argc == 1 ) // Just the ID has been passed
 	{
-		speechId = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+		speechId = static_cast<UI08>( argv[0].toInt32());
 	}
 	else if( argc == 2 ) // We got an "affected" item as well
 	{
-		speechId = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+		speechId = static_cast<UI08>( argv[0].toInt32());
 
-		if( argv[1] != JSVAL_NULL )
+		if( argv[1] != JS::NullValue() )
 		{
-			JSObject *myObj = JSVAL_TO_OBJECT( argv[1] );
+			JSObject *myObj = &argv[1].toObject();
 			speechItem = static_cast<CItem*>( JS_GetPrivate( cx, myObj ));
 		}
 	}
@@ -5512,7 +5511,7 @@ bool CChar_CastSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI08 spellCast = static_cast<SI08>( JSVAL_TO_INT( argv[0] ));
+	SI08 spellCast = static_cast<SI08>( argv[0].toInt32());
 
 	if( myChar->IsNpc() )
 	{
@@ -5548,7 +5547,7 @@ bool CChar_MagicEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	JS::Value* argv = JS_ARGV( cx, vp );
 	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	SI08 spellId = static_cast<SI08>( JSVAL_TO_INT( argv[0] ));
+	SI08 spellId = static_cast<SI08>( argv[0].toInt32());
 
 	CChar *myObj = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 
@@ -5574,7 +5573,7 @@ bool CChar_GetSerial( JSContext *cx, unsigned argc, JS::Value* vp )
 	JS::Value* argv = JS_ARGV( cx, vp );
 	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	CChar *myObj = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
-	UI08 part = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 part = static_cast<UI08>( argv[0].toInt32());
 
 	if( !ValidateObject( myObj ) || ( part == 0 ) || ( part > 4 ))
 	{
@@ -5599,7 +5598,7 @@ bool CBase_GetSerial( JSContext *cx, unsigned argc, JS::Value* vp )
 	JS::Value* argv = JS_ARGV( cx, vp );
 	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
-	UI08 part = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 part = static_cast<UI08>( argv[0].toInt32());
 
 	if( !ValidateObject( myObj ) || ( part == 0 ) || ( part > 4 ))
 	{
@@ -5632,7 +5631,7 @@ bool CBase_UpdateStats( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	JS::Value* argv = JS_ARGV( cx, vp );
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
-	UI08 statType = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 statType = static_cast<UI08>( argv[0].toInt32());
 
 	if( !ValidateObject( myObj ))
 	{
@@ -5699,11 +5698,11 @@ bool CChar_SetPoisoned( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI08 poisonLevel = static_cast<SI08>( JSVAL_TO_INT( argv[0] ));
+	SI08 poisonLevel = static_cast<SI08>( argv[0].toInt32());
 
 	if( poisonLevel > 0 && argc > 1 )
 	{
-		SI32 wearOff = static_cast<SI32>( JSVAL_TO_INT( argv[1] ));
+		SI32 wearOff = static_cast<SI32>( argv[1].toInt32());
 
 		if( argc >= 2 )
 		{
@@ -5716,7 +5715,7 @@ bool CChar_SetPoisoned( JSContext *cx, unsigned argc, JS::Value* vp )
 
 		if( argc >= 3 )
 		{
-			CChar *poisonSourceChar = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[2] )));
+			CChar *poisonSourceChar = static_cast<CChar*>( JS_GetPrivate( cx, &argv[2].toObject()));
 			if( !ValidateObject( poisonSourceChar ))
 			{
 				ScriptError( cx, "(SetPoisoned) Invalid Object passed as third function parameter" );
@@ -5753,7 +5752,7 @@ bool CChar_ExplodeItem( JSContext *cx, unsigned argc, JS::Value* vp )
 	JS::Value* argv = JS_ARGV( cx, vp );
 	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	CChar *myChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
-	JSObject *tObj = JSVAL_TO_OBJECT( argv[0] );
+	JSObject *tObj = &argv[0].toObject();
 	CBaseObject *trgObj = static_cast<CBaseObject *>( JS_GetPrivate( cx, tObj ));
 
 	if( !ValidateObject( trgObj ) || trgObj->GetObjType() != OT_ITEM || myChar->GetSocket() == nullptr )
@@ -5762,9 +5761,9 @@ bool CChar_ExplodeItem( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI32 damage = static_cast<UI32>( JSVAL_TO_INT( argv[1] ));
-	UI08 damageType = static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
-	bool explodeNearby = ( JSVAL_TO_BOOLEAN( argv[3] ) == true );
+	UI32 damage = static_cast<UI32>( argv[1].toInt32());
+	UI08 damageType = static_cast<UI08>( argv[2].toInt32());
+	bool explodeNearby = ( argv[3].toBoolean() == true );
 
 	ExplodeItem( myChar->GetSocket(), static_cast<CItem *>( trgObj ), damage, damageType, explodeNearby );
 	return true;
@@ -5788,12 +5787,12 @@ bool CChar_SetInvisible( JSContext *cx, unsigned argc, JS::Value* vp )
 	JS::Value* argv = JS_ARGV( cx, vp );
 	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	CChar *myChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
-	UI08 newVal = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 newVal = static_cast<UI08>( argv[0].toInt32());
 
 	myChar->SetVisible( static_cast<VisibleTypes>( newVal ));
 	if( argc == 2 )
 	{
-		UI32 TimeOut = static_cast<UI32>( JSVAL_TO_INT( argv[1] ));
+		UI32 TimeOut = static_cast<UI32>( argv[1].toInt32());
 		myChar->SetTimer( tCHAR_INVIS, BuildTimeValue( static_cast<R64>( TimeOut ) / 1000.0 ));
 	}
 	return true;
@@ -5810,7 +5809,7 @@ bool CItem_SetCont( JSContext *cx, unsigned argc, JS::Value* vp )
 	JS::Value* argv = JS_ARGV( cx, vp );
 	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	CItem *myItem = static_cast<CItem*>( JS_GetPrivate( cx, obj ));
-	JSObject *tObj = JSVAL_TO_OBJECT( argv[0] );
+	JSObject *tObj = &argv[0].toObject();
 	CBaseObject *trgObj = static_cast<CBaseObject *>( JS_GetPrivate( cx, tObj ));
 
 	if( !ValidateObject( myItem ) || !ValidateObject( trgObj ) || ( trgObj->GetSerial() == INVALIDSERIAL ))
@@ -5906,7 +5905,7 @@ bool CMulti_IsInMulti( JSContext *cx, unsigned argc, JS::Value* vp )
 		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return true;
 	}
-	CBaseObject *toFind = static_cast<CBaseObject *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CBaseObject *toFind = static_cast<CBaseObject *>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(IsInMulti) Invalid object in house" );
@@ -5943,7 +5942,7 @@ bool CMulti_IsOnBanList( JSContext *cx, unsigned argc, JS::Value* vp )
 		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return true;
 	}
-	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(IsOnBanList) Invalid character" );
@@ -5980,7 +5979,7 @@ bool CMulti_IsOnFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return true;
 	}
-	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(IsOnFriendList) Invalid character" );
@@ -6017,7 +6016,7 @@ bool CMulti_IsOnGuestList( JSContext *cx, unsigned argc, JS::Value* vp )
 		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return true;
 	}
-	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(IsOnGuestList) Invalid character" );
@@ -6054,7 +6053,7 @@ bool CMulti_IsOnOwnerList( JSContext *cx, unsigned argc, JS::Value* vp )
 		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return true;
 	}
-	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(IsOnOwnerList) Invalid character" );
@@ -6091,7 +6090,7 @@ bool CMulti_IsOwner( JSContext *cx, unsigned argc, JS::Value* vp )
 		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return true;
 	}
-	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(IsOwner) Invalid character" );
@@ -6126,7 +6125,7 @@ bool CMulti_AddToBanList( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "(AddToBanList) Invalid object assigned" );
 		return false;
 	}
-	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(AddToBanList) Invalid character" );
@@ -6163,7 +6162,7 @@ bool CMulti_AddToFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return true;
 	}
-	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(AddToFriendList) Invalid character" );
@@ -6201,7 +6200,7 @@ bool CMulti_AddToGuestList( JSContext *cx, unsigned argc, JS::Value* vp )
 		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return true;
 	}
-	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(AddToGuestList) Invalid character" );
@@ -6239,7 +6238,7 @@ bool CMulti_AddToOwnerList( JSContext *cx, unsigned argc, JS::Value* vp )
 		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return true;
 	}
-	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(AddToOwnerList) Invalid character" );
@@ -6277,7 +6276,7 @@ bool CMulti_RemoveFromBanList( JSContext *cx, unsigned argc, JS::Value* vp )
 		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return true;
 	}
-	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(RemoveFromBanList) Invalid character" );
@@ -6315,7 +6314,7 @@ bool CMulti_RemoveFromFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return true;
 	}
-	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(RemoveFromFriendList) Invalid character" );
@@ -6353,7 +6352,7 @@ bool CMulti_RemoveFromGuestList( JSContext *cx, unsigned argc, JS::Value* vp )
 		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return true;
 	}
-	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(RemoveFromGuestList) Invalid character" );
@@ -6391,7 +6390,7 @@ bool CMulti_RemoveFromOwnerList( JSContext *cx, unsigned argc, JS::Value* vp )
 		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return true;
 	}
-	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(RemoveFromOwnerList) Invalid character" );
@@ -6553,7 +6552,7 @@ bool CItem_PlaceInPack( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	auto autoStack = ( JSVAL_TO_BOOLEAN( argv[0] ) == true );
+	auto autoStack = ( argv[0].toBoolean() == true );
 	if( autoStack && ValidateObject( myItem->GetCont() ))
 	{
 		// Attempt to stack the item with existing items. If item has any left-over amount after, it
@@ -6623,7 +6622,7 @@ bool CSocket_GetByte( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "GetByte: Invalid socket!" );
 		return false;
 	}
-	SI32 offset	= JSVAL_TO_INT( argv[0] );
+	SI32 offset	= argv[0].toInt32();
 	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( mySock->GetByte( offset )) );
 	return true;
 }
@@ -6650,7 +6649,7 @@ bool CSocket_GetSByte( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "GetSByte: Invalid socket!" );
 		return false;
 	}
-	SI32 offset	= JSVAL_TO_INT( argv[0] );
+	SI32 offset	= argv[0].toInt32();
 	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI08>( mySock->GetByte( offset ))) );
 	return true;
 }
@@ -6677,7 +6676,7 @@ bool CSocket_GetWord( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "GetWord: Invalid socket!" );
 		return false;
 	}
-	SI32 offset = JSVAL_TO_INT( argv[0] );
+	SI32 offset = argv[0].toInt32();
 	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( mySock->GetWord( offset )) );
 	return true;
 }
@@ -6704,7 +6703,7 @@ bool CSocket_GetSWord( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "GetSWord: Invalid socket!" );
 		return false;
 	}
-	SI32 offset = JSVAL_TO_INT( argv[0] );
+	SI32 offset = argv[0].toInt32();
 	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>(mySock->GetWord( offset ))) );
 	return true;
 }
@@ -6731,7 +6730,7 @@ bool CSocket_GetDWord( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "GetDWord: Invalid socket!" );
 		return false;
 	}
-	SI32 offset = JSVAL_TO_INT( argv[0] );
+	SI32 offset = argv[0].toInt32();
 	JS_NewNumberValue( cx, mySock->GetDWord( offset ), &JS_RVAL( cx, vp ) );
 	return true;
 }
@@ -6758,7 +6757,7 @@ bool CSocket_GetSDWord( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "GetSDWord: Invalid socket!" );
 		return false;
 	}
-	SI32 offset = JSVAL_TO_INT( argv[0] );
+	SI32 offset = argv[0].toInt32();
 	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI32>(mySock->GetDWord( offset ))) );
 	return true;
 }
@@ -6788,10 +6787,10 @@ bool CSocket_GetString( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	SI32 length		= -1;
-	SI32 offset		= JSVAL_TO_INT( argv[0] );
+	SI32 offset		= argv[0].toInt32();
 	if( argc == 2 )
 	{
-		length = JSVAL_TO_INT( argv[1] );
+		length = argv[1].toInt32();
 	}
 
 	char toReturn[128];
@@ -6834,8 +6833,8 @@ bool CSocket_SetByte( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "SetByte: Invalid socket!" );
 		return false;
 	}
-	SI32 offset = JSVAL_TO_INT( argv[0] );
-	UI08 byteToSet = static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+	SI32 offset = argv[0].toInt32();
+	UI08 byteToSet = static_cast<UI08>( argv[1].toInt32());
 
 	mSock->SetByte( offset, byteToSet );
 	return true;
@@ -6864,8 +6863,8 @@ bool CSocket_SetWord( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI32 offset		= JSVAL_TO_INT( argv[0] );
-	UI16 byteToSet	= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	SI32 offset		= argv[0].toInt32();
+	UI16 byteToSet	= static_cast<UI16>( argv[1].toInt32());
 
 	mSock->SetWord( offset, byteToSet );
 	return true;
@@ -6894,8 +6893,8 @@ bool CSocket_SetDWord( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI32 offset		= JSVAL_TO_INT( argv[0] );
-	UI32 byteToSet	= JSVAL_TO_INT( argv[1] );
+	SI32 offset		= argv[0].toInt32();
+	UI32 byteToSet	= argv[1].toInt32();
 
 	mSock->SetDWord( offset, byteToSet );
 	return true;
@@ -6924,7 +6923,7 @@ bool CSocket_SetString( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI32 offset = JSVAL_TO_INT( argv[0] );
+	SI32 offset = argv[0].toInt32();
 	std::string trgMessage = JS_GetStringBytes( cx, argv[1]);
 	if( trgMessage.empty() )
 	{
@@ -6960,7 +6959,7 @@ bool CSocket_ReadBytes( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI32 bCount		= JSVAL_TO_INT( argv[0] );
+	SI32 bCount		= argv[0].toInt32();
 	mSock->Receive( bCount );
 	return true;
 }
@@ -6986,7 +6985,7 @@ bool CSocket_WhoList( JSContext *cx, unsigned argc, JS::Value* vp )
 	bool sendOnList = true;
 	if( argc == 1 )
 	{
-		sendOnList = ( JSVAL_TO_BOOLEAN( argv[0] ) == true );
+		sendOnList = ( argv[0].toBoolean() == true );
 	}
 
 	if( sendOnList )
@@ -7018,7 +7017,7 @@ bool CSocket_Music( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI16 music = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 music = static_cast<UI16>( argv[0].toInt32());
 
 	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
 
@@ -7141,12 +7140,12 @@ bool CSocket_OpenGump( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_INT( argv[0] ))
+	if( !argv[0].isInt32() )
 	{
 		ScriptError( cx, "You have to pass a valid menu number" );
 	}
 
-	UI16 menuNumber = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 menuNumber = static_cast<UI16>( argv[0].toInt32());
 	CSocket *mySock = static_cast<CSocket *>( JS_GetPrivate( cx, obj ));
 
 	if( mySock == nullptr )
@@ -7184,8 +7183,8 @@ bool CSocket_CloseGump( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI32 gumpId = static_cast<UI32>( JSVAL_TO_INT( argv[0] ));
-	UI32 buttonId = static_cast<UI32>( JSVAL_TO_INT( argv[1] ));
+	UI32 gumpId = static_cast<UI32>( argv[0].toInt32());
+	UI32 buttonId = static_cast<UI32>( argv[1].toInt32());
 
 	CPCloseGump gumpToClose( gumpId, buttonId );
 	mySock->Send( &gumpToClose );
@@ -7218,7 +7217,7 @@ bool CRace_CanWearArmour( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	CItem *toFind = static_cast<CItem *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CItem *toFind = static_cast<CItem *>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "CanWearArmour: Invalid item passed" );
@@ -7256,7 +7255,7 @@ bool CRace_CanEquip( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI16 itemId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 itemId = static_cast<UI16>( argv[0].toInt32());
 	bool canEquip = myRace->CanEquipItem( itemId );
 	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( canEquip ));    // they can equip the item
 	return true;
@@ -7285,7 +7284,7 @@ bool CRace_IsValidHairColour( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	COLOUR cVal = static_cast<COLOUR>( JSVAL_TO_INT( argv[0] ));
+	COLOUR cVal = static_cast<COLOUR>( argv[0].toInt32());
 	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( myRace->IsValidHair( cVal ))) );
 	return true;
 }
@@ -7313,7 +7312,7 @@ bool CRace_IsValidSkinColour( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	COLOUR cVal = static_cast<COLOUR>( JSVAL_TO_INT( argv[0] ));
+	COLOUR cVal = static_cast<COLOUR>( argv[0].toInt32());
 	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( myRace->IsValidSkin( cVal ))) );
 	return true;
 }
@@ -7341,7 +7340,7 @@ bool CRace_IsValidBeardColour( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	COLOUR cVal = static_cast<COLOUR>( JSVAL_TO_INT( argv[0] ));
+	COLOUR cVal = static_cast<COLOUR>( argv[0].toInt32());
 	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( myRace->IsValidBeard( cVal ))) );
 	return true;
 }
@@ -7420,7 +7419,7 @@ bool CChar_AddSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	CChar *myChar	= static_cast<CChar *>( JS_GetPrivate( cx, obj ));
-	UI08 spellNum	= static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 spellNum	= static_cast<UI08>( argv[0].toInt32());
 	CItem *sBook	= FindItemOfType( myChar, IT_SPELLBOOK );
 	if( ValidateObject( sBook ))
 	{
@@ -7541,8 +7540,8 @@ bool CItem_ApplyRank( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	CItem *myItem	= static_cast<CItem *>( JS_GetPrivate( cx, obj ));
-	SI32 rank		= JSVAL_TO_INT( argv[0] );
-	SI32 maxrank	= JSVAL_TO_INT( argv[1] );
+	SI32 rank		= argv[0].toInt32();
+	SI32 maxrank	= argv[1].toInt32();
 
 	Skills->ApplyRank( nullptr, myItem, rank, maxrank );
 	return true;
@@ -7573,7 +7572,7 @@ bool CItem_IsOnFoodList( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	if( !JSVAL_IS_STRING( argv[0] ))
+	if( !argv[0].isString() )
 	{
 		ScriptError( cx, "IsOnFoodList: Invalid parameter specifled, string required!" );
 		return false;
@@ -7589,7 +7588,7 @@ bool CItem_IsOnFoodList( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	NOT IMPLEMENTED
 //o------------------------------------------------------------------------------------------------o
-bool CAccount_GetAccount(JSContext* cx, unsigned argc, jsval* vp)
+bool CAccount_GetAccount(JSContext* cx, unsigned argc, JS::Value* vp)
 {
 	return false;
 }
@@ -7599,7 +7598,7 @@ bool CAccount_GetAccount(JSContext* cx, unsigned argc, jsval* vp)
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	NOT IMPLEMENTED
 //o------------------------------------------------------------------------------------------------o
-bool CAccount_SetAccount(JSContext* cx, unsigned argc, jsval* vp)
+bool CAccount_SetAccount(JSContext* cx, unsigned argc, JS::Value* vp)
 {
 	return false;
 }
@@ -7624,7 +7623,7 @@ bool CAccount_AddAccount( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	// Ok get our object from the global context
-	if( !JSVAL_IS_STRING( argv[0] ) || !JSVAL_IS_STRING( argv[1] ) || !JSVAL_IS_STRING( argv[2] ) || !( JSVAL_IS_INT( argv[3] ) || JSVAL_IS_STRING( argv[3] )))
+	if( !argv[0].isString() || !argv[1].isString() || !argv[2].isString() || !( argv[3].isInt32() || argv[3].isString() ) )
 	{
 		ScriptError( cx, "Account.AddAccount(user,pass,email,flags): Invalid parameter specifled, please check param types." );
 		return false;
@@ -7634,9 +7633,9 @@ bool CAccount_AddAccount( JSContext *cx, unsigned argc, JS::Value* vp )
 	std::string lpszComment		= JS_GetStringBytes( cx, argv[2]);
 	UI16 u16Flags		= 0;
 
-	if( JSVAL_IS_INT( argv[3] ))
+	if( argv[3].isInt32() )
 	{
-		u16Flags = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+		u16Flags = static_cast<UI16>( argv[3].toInt32());
 	}
 	else
 	{
@@ -7677,7 +7676,7 @@ bool CAccount_DelAccount( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	// Ok get out object from the global context
-	if( JSVAL_IS_STRING( argv[0] ))
+	if( argv[0].isString() )
 	{
 		std::string lpszUsername = JS_GetStringBytes( cx, argv[0]);
 		if( !Accounts->DelAccount( lpszUsername ))
@@ -7687,9 +7686,9 @@ bool CAccount_DelAccount( JSContext *cx, unsigned argc, JS::Value* vp )
 		}
 
 	}
-	else if( JSVAL_IS_INT( argv[0] ))
+	else if( argv[0].isInt32() )
 	{
-		UI16 ui16AccountId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+		UI16 ui16AccountId = static_cast<UI16>( argv[0].toInt32());
 		if( !Accounts->DelAccount( ui16AccountId ))
 		{
 			ScriptError( cx, " Account.DelAccount(accountID): Unable to remove account specified." );
@@ -7708,7 +7707,7 @@ bool CAccount_DelAccount( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	NOT IMPLEMENTED
 //o------------------------------------------------------------------------------------------------o
-bool CAccount_ModAccount(JSContext* cx, unsigned argc, jsval* vp)
+bool CAccount_ModAccount(JSContext* cx, unsigned argc, JS::Value* vp)
 {
 	return false;
 }
@@ -7718,7 +7717,7 @@ bool CAccount_ModAccount(JSContext* cx, unsigned argc, jsval* vp)
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	NOT IMPLEMENTED
 //o------------------------------------------------------------------------------------------------o
-bool CAccount_SaveAccounts(JSContext* cx, unsigned argc, jsval* vp)
+bool CAccount_SaveAccounts(JSContext* cx, unsigned argc, JS::Value* vp)
 {
 	return false;
 }
@@ -7735,7 +7734,7 @@ bool UOXCFile( JSContext *cx, unsigned argc, JS::Value* vp )
 	JS_SetPrivate( cx, obj, toAdd );
 	JS_LockGCThing( cx, obj );
 	//JS_AddRoot( cx, &obj );
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( obj ) );
+	JS_SET_RVAL( cx, vp, JS::ObjectOrNullValue( obj ) );
 	return true;
 }
 
@@ -7790,7 +7789,7 @@ bool CFile_Open( JSContext *cx, unsigned argc, JS::Value* vp )
 	bool useScriptDataDir = false;
 	if( argc >= 4 )
 	{
-		useScriptDataDir = ( JSVAL_TO_BOOLEAN( argv[3] ) == true );
+		useScriptDataDir = ( argv[3].toBoolean() == true );
 	}
 
 	if( oldstrutil::lower( mode ).find_first_of( "rwa", 0, 3 ) == std::string::npos )
@@ -7885,7 +7884,7 @@ bool CFile_Read( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Read: Error reading file, is not opened or has reached EOF" );
 		return false;
 	}
-	SI32 bytes = JSVAL_TO_INT( argv[0] );
+	SI32 bytes = argv[0].toInt32();
 	char data[512];
 
 	if( bytes > 512 || bytes < 1 )
@@ -8074,7 +8073,7 @@ bool CFile_Pos( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( argc == 1 )
 	{
-		[[maybe_unused]] int newFPos = fseek( mFile->mWrap, JSVAL_TO_INT( argv[0] ), SEEK_SET );
+		[[maybe_unused]] int newFPos = fseek( mFile->mWrap, argv[0].toInt32(), SEEK_SET );
 	}
 
 	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( ftell( mFile->mWrap )) );
@@ -8125,11 +8124,11 @@ bool CBase_FirstItem( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( ValidateObject( firstItem ))
 	{
 		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, firstItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+		JS_SET_RVAL( cx, vp, JS::ObjectOrNullValue( myObj ) );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		JS_SET_RVAL( cx, vp, JS::NullValue() );
 	}
 	return true;
 }
@@ -8177,11 +8176,11 @@ bool CBase_NextItem( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( ValidateObject( nextItem ))
 	{
 		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, nextItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+		JS_SET_RVAL( cx, vp, JS::ObjectOrNullValue( myObj ) );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		JS_SET_RVAL( cx, vp, JS::NullValue() );
 	}
 	return true;
 }
@@ -8254,7 +8253,7 @@ bool CChar_WalkTo( JSContext *cx, unsigned argc, JS::Value* vp )
 	bool allowPartial = false;
 	bool ignoreDoors = false;
 
-	if( JSVAL_IS_OBJECT( argv[0] ))
+	if( argv[0].isObject() )
 	{	// we can work with this, it should be either a character or item, hopefully
 		JSEncapsulate jsToGoTo( cx, &( argv[0] ));
 		if( jsToGoTo.ClassName() == "UOXItem" || jsToGoTo.ClassName() == "UOXChar" )
@@ -8282,14 +8281,14 @@ bool CChar_WalkTo( JSContext *cx, unsigned argc, JS::Value* vp )
 			ScriptError( cx, "Invalid class of object" );
 			return false;
 		}
-		maxSteps = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+		maxSteps = static_cast<UI16>( argv[1].toInt32());
 		if( argc >= 3 )
 		{
-			allowPartial = ( JSVAL_TO_BOOLEAN( argv[2] ) == true );
+			allowPartial = ( argv[2].toBoolean() == true );
 		}
 		if( argc >= 4 )
 		{
-			ignoreDoors = ( JSVAL_TO_BOOLEAN( argv[3] ) == true );
+			ignoreDoors = ( argv[3].toBoolean() == true );
 		}
 	}
 	else
@@ -8311,7 +8310,7 @@ bool CChar_WalkTo( JSContext *cx, unsigned argc, JS::Value* vp )
 		else if( argc == 4 || argc == 5 )
 		{
 			// Check if 4th argument is bool (allowPartial, 2D pathfinding) or int (maxSteps, 3D pathfinding)
-			if( JSVAL_IS_BOOLEAN( argv[3] ))
+			if( argv[3].isBoolean() )
 			{
 				includeZ = false;
 			}
@@ -8321,33 +8320,33 @@ bool CChar_WalkTo( JSContext *cx, unsigned argc, JS::Value* vp )
 		if( !includeZ )
 		{
 			// 2D pathfinding
-			gx			= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-			gy			= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+			gx			= static_cast<UI16>( argv[0].toInt32());
+			gy			= static_cast<UI16>( argv[1].toInt32());
 			gz			= ILLEGAL_Z; // Forces 2D in advanced pathfinder code
-			maxSteps	= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+			maxSteps	= static_cast<UI16>( argv[2].toInt32());
 			if( argc >= 5 )
 			{
-				allowPartial = ( JSVAL_TO_BOOLEAN( argv[3] ) == true );
+				allowPartial = ( argv[3].toBoolean() == true );
 			}
 			if( argc == 6 )
 			{
-				ignoreDoors = ( JSVAL_TO_BOOLEAN( argv[4] ) == true );
+				ignoreDoors = ( argv[4].toBoolean() == true );
 			}
 		}
 		else
 		{
 			// 3D pathfinding
-			gx			= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-			gy			= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
-			gz			= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-			maxSteps	= static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+			gx			= static_cast<UI16>( argv[0].toInt32());
+			gy			= static_cast<UI16>( argv[1].toInt32());
+			gz			= static_cast<SI08>( argv[2].toInt32());
+			maxSteps	= static_cast<UI16>( argv[3].toInt32());
 			if( argc >= 5 )
 			{
-				allowPartial = ( JSVAL_TO_BOOLEAN( argv[4] ) == true );
+				allowPartial = ( argv[4].toBoolean() == true );
 			}
 			if( argc == 6 )
 			{
-				ignoreDoors = ( JSVAL_TO_BOOLEAN( argv[5] ) == true );
+				ignoreDoors = ( argv[5].toBoolean() == true );
 			}
 		}
 	}
@@ -8411,7 +8410,7 @@ bool CChar_RunTo( JSContext *cx, unsigned argc, JS::Value* vp )
 	UI16 maxSteps	= 0;
 	bool allowPartial = false;
 	bool ignoreDoors = false;
-	if( JSVAL_IS_OBJECT( argv[0] ))
+	if( argv[0].isObject() )
 	{
 		JSEncapsulate jsToGoTo( cx, &( argv[0] ));
 		if( jsToGoTo.ClassName() == "UOXItem" || jsToGoTo.ClassName() == "UOXChar" )
@@ -8439,14 +8438,14 @@ bool CChar_RunTo( JSContext *cx, unsigned argc, JS::Value* vp )
 			ScriptError( cx, "Invalid class of object" );
 			return false;
 		}
-		maxSteps = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+		maxSteps = static_cast<UI16>( argv[1].toInt32());
 		if( argc >= 3 )
 		{
-			allowPartial = ( JSVAL_TO_BOOLEAN( argv[2] ) == true );
+			allowPartial = ( argv[2].toBoolean() == true );
 		}
 		if( argc >= 4 )
 		{
-			ignoreDoors = ( JSVAL_TO_BOOLEAN( argv[3] ) == true );
+			ignoreDoors = ( argv[3].toBoolean() == true );
 		}
 	}
 	else
@@ -8468,7 +8467,7 @@ bool CChar_RunTo( JSContext *cx, unsigned argc, JS::Value* vp )
 		else if( argc == 4 || argc == 5 )
 		{
 			// Check if 4th argument is bool (allowPartial, 2D pathfinding) or int (maxSteps, 3D pathfinding)
-			if( JSVAL_IS_BOOLEAN( argv[3] ))
+			if( argv[3].isBoolean() )
 			{
 				includeZ = false;
 			}
@@ -8478,33 +8477,33 @@ bool CChar_RunTo( JSContext *cx, unsigned argc, JS::Value* vp )
 		if( !includeZ )
 		{
 			// 2D pathfinding
-			gx			= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-			gy			= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+			gx			= static_cast<UI16>( argv[0].toInt32());
+			gy			= static_cast<UI16>( argv[1].toInt32());
 			gz			= ILLEGAL_Z; // Forces 2D in advanced pathfinder code
-			maxSteps	= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+			maxSteps	= static_cast<UI16>( argv[2].toInt32());
 			if( argc >= 5 )
 			{
-				allowPartial = ( JSVAL_TO_BOOLEAN( argv[3] ) == true );
+				allowPartial = ( argv[3].toBoolean() == true );
 			}
 			if( argc == 6 )
 			{
-				ignoreDoors = ( JSVAL_TO_BOOLEAN( argv[4] ) == true );
+				ignoreDoors = ( argv[4].toBoolean() == true );
 			}
 		}
 		else
 		{
 			// 3D pathfinding
-			gx			= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-			gy			= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
-			gz			= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-			maxSteps	= static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+			gx			= static_cast<UI16>( argv[0].toInt32());
+			gy			= static_cast<UI16>( argv[1].toInt32());
+			gz			= static_cast<SI08>( argv[2].toInt32());
+			maxSteps	= static_cast<UI16>( argv[3].toInt32());
 			if( argc >= 5 )
 			{
-				allowPartial = ( JSVAL_TO_BOOLEAN( argv[4] ) == true );
+				allowPartial = ( argv[4].toBoolean() == true );
 			}
 			if( argc == 6 )
 			{
-				ignoreDoors = ( JSVAL_TO_BOOLEAN( argv[5] ) == true );
+				ignoreDoors = ( argv[5].toBoolean() == true );
 			}
 		}
 	}
@@ -8599,7 +8598,7 @@ bool CMisc_SetTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 	JSEncapsulate encaps( cx, &( argv[0] ));
 	JSEncapsulate myClass( cx, obj );
 
-	jsdouble timerVal_double;
+	double timerVal_double;
 	JS_ValueToNumber( cx, argv[1], &timerVal_double );
 	TIMERVAL timerVal = 0;
 	if( timerVal_double != 0 )
@@ -8648,7 +8647,7 @@ bool CBase_DistanceTo( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *jsObj		= JSVAL_TO_OBJECT( argv[0] );
+	JSObject *jsObj		= &argv[0].toObject();
 	CBaseObject *myObj	= static_cast<CBaseObject *>( JS_GetPrivate( cx, jsObj ));
 
 	CBaseObject *thisObj	= static_cast<CBaseObject *>( JS_GetPrivate( cx, obj ));
@@ -8673,7 +8672,7 @@ bool CItem_Glow( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	JS::Value* argv = JS_ARGV( cx, vp );
 	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	JSObject *mSock	= JSVAL_TO_OBJECT( argv[0] );
+	JSObject *mSock	= &argv[0].toObject();
 	CSocket *mySock	= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
 
 	CItem *mItem = static_cast<CItem *>( JS_GetPrivate( cx, obj ));
@@ -8730,7 +8729,7 @@ bool CItem_UnGlow( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	JS::Value* argv = JS_ARGV( cx, vp );
 	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	JSObject *mSock	= JSVAL_TO_OBJECT( argv[0] );
+	JSObject *mSock	= &argv[0].toObject();
 	CSocket *mySock	= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
 
 	CItem *mItem	= static_cast<CItem *>( JS_GetPrivate( cx, obj ));
@@ -8802,9 +8801,9 @@ bool CChar_Gate( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( argc == 1 )
 	{
-		if( JSVAL_IS_OBJECT( argv[0] ))
+		if( argv[0].isObject() )
 		{
-			JSObject *jsObj		= JSVAL_TO_OBJECT( argv[0] );
+			JSObject *jsObj		= &argv[0].toObject();
 			CItem *mItem		= static_cast<CItem *>( JS_GetPrivate( cx, jsObj ));
 			if( !ValidateObject( mItem ))
 			{
@@ -8820,7 +8819,7 @@ bool CChar_Gate( JSContext *cx, unsigned argc, JS::Value* vp )
 		}
 		else
 		{
-			UI16 placeNum = JSVAL_TO_INT( argv[0] );
+			UI16 placeNum = argv[0].toInt32();
 			if( cwmWorldState->goPlaces.find( placeNum ) != cwmWorldState->goPlaces.end() )
 			{
 				GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
@@ -8833,13 +8832,13 @@ bool CChar_Gate( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 	else
 	{
-		destX		= JSVAL_TO_INT( argv[0] );
-		destY		= JSVAL_TO_INT( argv[1] );
-		destZ		= JSVAL_TO_INT( argv[2] );
-		destWorld	= JSVAL_TO_INT( argv[3] );
+		destX		= argv[0].toInt32();
+		destY		= argv[1].toInt32();
+		destZ		= argv[2].toInt32();
+		destWorld	= argv[3].toInt32();
 		if( argc == 5 )
 		{
-			destInstanceId = JSVAL_TO_INT( argv[4] );
+			destInstanceId = argv[4].toInt32();
 		}
 	}
 
@@ -8876,7 +8875,7 @@ bool CChar_Recall( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *jsObj		= JSVAL_TO_OBJECT( argv[0] );
+	JSObject *jsObj		= &argv[0].toObject();
 	CItem *mItem		= static_cast<CItem *>( JS_GetPrivate( cx, jsObj ));
 	if( !ValidateObject( mItem ))
 	{
@@ -8930,7 +8929,7 @@ bool CChar_Mark( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *jsObj		= JSVAL_TO_OBJECT( argv[0] );
+	JSObject *jsObj		= &argv[0].toObject();
 	CItem *mItem		= static_cast<CItem *>( JS_GetPrivate( cx, jsObj ));
 	if( !ValidateObject( mItem ))
 	{
@@ -9038,7 +9037,7 @@ bool CChar_SetSkillByName( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	CChar *mChar			= static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	std::string skillName	= JS_GetStringBytes( cx, argv[0]);
-	UI16 value				= JSVAL_TO_INT( argv[1] );
+	UI16 value				= argv[1].toInt32();
 	CSocket *mSock			= nullptr;
 	if( !mChar->IsNpc() )
 	{
@@ -9149,7 +9148,7 @@ bool CItem_Dupe( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	CItem *mItem	= static_cast<CItem *>( JS_GetPrivate( cx, obj ));
-	JSObject *jsObj	= JSVAL_TO_OBJECT( argv[0] );
+	JSObject *jsObj	= &argv[0].toObject();
 
 	CSocket *mSock = nullptr;
 	bool dupeInPack = true;
@@ -9180,7 +9179,7 @@ bool CItem_Dupe( JSContext *cx, unsigned argc, JS::Value* vp )
 		dupeItem = JSEngine->AcquireObject( IUE_ITEM, dupeItemTemp, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
 	}
 
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( dupeItem ) );
+	JS_SET_RVAL( cx, vp, JS::ObjectOrNullValue( dupeItem ) );
 	return true;
 }
 
@@ -9220,7 +9219,7 @@ bool CChar_Dupe( JSContext *cx, unsigned argc, JS::Value* vp )
 	JSObject *dupeChar = nullptr;
 	dupeChar = JSEngine->AcquireObject( IUE_CHAR, dupeCharTemp, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
 
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( dupeChar ) );
+	JS_SET_RVAL( cx, vp, JS::ObjectOrNullValue( dupeChar ) );
 	return true;
 }
 
@@ -9251,7 +9250,7 @@ bool CChar_Jail( JSContext *cx, unsigned argc, JS::Value* vp )
 	SI32 numSecsToJail = 86400;
 	if( argc == 1 )
 	{
-		numSecsToJail = static_cast<SI32>( JSVAL_TO_INT( argv[0] ));
+		numSecsToJail = static_cast<SI32>( argv[0].toInt32());
 	}
 
 	JailSys->JailPlayer( myChar, numSecsToJail );
@@ -9310,7 +9309,7 @@ bool CSocket_Page( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI08 pageType = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 pageType = static_cast<UI08>( argv[0].toInt32());
 	switch( pageType )
 	{
 		case 0: // Counselor page - Free Text
@@ -9794,7 +9793,7 @@ bool CChar_SpellMoveEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	CSpellInfo *mySpell = static_cast<CSpellInfo *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[1] )));
+	CSpellInfo *mySpell = static_cast<CSpellInfo *>( JS_GetPrivate( cx, &argv[1].toObject()));
 	if( mySpell == nullptr )
 	{
 		ScriptError( cx, "SpellMoveEffect: Invalid spell" );
@@ -9802,7 +9801,7 @@ bool CChar_SpellMoveEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	CChar *source = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
-	CBaseObject *target = static_cast<CBaseObject *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CBaseObject *target = static_cast<CBaseObject *>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( source ) || !ValidateObject( target ))
 	{
 		ScriptError( cx, "SpellMoveEffect: Invalid object passed" );
@@ -9842,7 +9841,7 @@ bool CChar_SpellStaticEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	CSpellInfo *mySpell = static_cast<CSpellInfo *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CSpellInfo *mySpell = static_cast<CSpellInfo *>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( mySpell == nullptr )
 	{
 		ScriptError( cx, "SpellStaticEffect: Invalid spell" );
@@ -9886,7 +9885,7 @@ bool CChar_BreakConcentration( JSContext *cx, unsigned argc, JS::Value* vp )
 	CSocket *mSock = nullptr;
 	if( argc == 1 )
 	{
-		mSock = static_cast<CSocket *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+		mSock = static_cast<CSocket *>( JS_GetPrivate( cx, &argv[0].toObject()));
 		if( mSock == nullptr )
 		{
 			ScriptError( cx, "BreakConcentration: Invalid socket" );
@@ -9922,7 +9921,7 @@ bool CSocket_SendAddMenu( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI16 menuNum = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 menuNum = static_cast<UI16>( argv[0].toInt32());
 
 	BuildAddMenuGump( mSock, menuNum );
 
@@ -10000,7 +9999,7 @@ bool CItem_Carve( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	CSocket *mSock = static_cast<CSocket *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CSocket *mSock = static_cast<CSocket *>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( mSock == nullptr )
 	{
 		ScriptError( cx, "Carve: Invalid socket" );
@@ -10067,7 +10066,7 @@ bool CMulti_GetMultiCorner( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	UI08 cornerToFind = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 cornerToFind = static_cast<UI08>( argv[0].toInt32());
 	SI16 x1 = 0;
 	SI16 y1 = 0;
 	SI16 x2 = 0;
@@ -10122,13 +10121,13 @@ bool CMulti_SecureContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !argv[0].isObject() )
 	{
 		ScriptError( cx, "(SecureContainer) Invalid Object passed" );
 		return false;
 	}
 
-	CItem *itemToSecure = static_cast<CItem*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CItem *itemToSecure = static_cast<CItem*>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( itemToSecure ))
 	{
 		ScriptError( cx, "(SecureContainer) Invalid Object passed" );
@@ -10165,13 +10164,13 @@ bool CMulti_UnsecureContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !argv[0].isObject() )
 	{
 		ScriptError( cx, "(UnsecureContainer) Invalid Object passed" );
 		return false;
 	}
 
-	CItem *itemToUnsecure = static_cast<CItem*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CItem *itemToUnsecure = static_cast<CItem*>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( itemToUnsecure ))
 	{
 		ScriptError( cx, "(UnsecureContainer) Invalid Object passed" );
@@ -10208,13 +10207,13 @@ bool CMulti_IsSecureContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !argv[0].isObject() )
 	{
 		ScriptError( cx, "(IsSecureContainer) Invalid Object passed" );
 		return false;
 	}
 
-	CItem *itemToCheck = static_cast<CItem*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CItem *itemToCheck = static_cast<CItem*>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( itemToCheck ))
 	{
 		ScriptError( cx, "(IsSecureContainer) Invalid Object passed" );
@@ -10251,13 +10250,13 @@ bool CMulti_LockDownItem( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !argv[0].isObject() )
 	{
 		ScriptError( cx, "(LockDownItem) Invalid item object passed" );
 		return false;
 	}
 
-	CItem *itemToLockDown = static_cast<CItem*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CItem *itemToLockDown = static_cast<CItem*>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( itemToLockDown ))
 	{
 		ScriptError( cx, "(LockDownItem) Invalid item object passed" );
@@ -10294,13 +10293,13 @@ bool CMulti_ReleaseItem( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !argv[0].isObject() )
 	{
 		ScriptError( cx, "(ReleaseItem) Invalid item object passed" );
 		return false;
 	}
 
-	CItem *itemToRemove = static_cast<CItem*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CItem *itemToRemove = static_cast<CItem*>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( itemToRemove ))
 	{
 		ScriptError( cx, "(ReleaseItem) Invalid item object passed" );
@@ -10337,13 +10336,13 @@ bool CMulti_AddTrashCont( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !argv[0].isObject() )
 	{
 		ScriptError( cx, "(AddTrashCont) Invalid item object passed" );
 		return false;
 	}
 
-	CItem *itemToLockDown = static_cast<CItem*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CItem *itemToLockDown = static_cast<CItem*>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( itemToLockDown ))
 	{
 		ScriptError( cx, "(AddTrashCont) Invalid item object passed" );
@@ -10380,13 +10379,13 @@ bool CMulti_RemoveTrashCont( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !argv[0].isObject() )
 	{
 		ScriptError( cx, "(RemoveTrashCont) Invalid item object passed" );
 		return false;
 	}
 
-	CItem *itemToRemove = static_cast<CItem*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CItem *itemToRemove = static_cast<CItem*>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( itemToRemove ))
 	{
 		ScriptError( cx, "(RemoveTrashCont) Invalid item object passed" );
@@ -10423,13 +10422,13 @@ bool CMulti_AddVendor( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !argv[0].isObject() )
 	{
 		ScriptError( cx, "(AddVendor) Invalid character object passed" );
 		return false;
 	}
 
-	CChar *vendorToAdd = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *vendorToAdd = static_cast<CChar *>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( vendorToAdd ))
 	{
 		ScriptError( cx, "(AddVendor) Invalid character object passed" );
@@ -10466,13 +10465,13 @@ bool CMulti_RemoveVendor( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !argv[0].isObject() )
 	{
 		ScriptError( cx, "(RemoveVendor) Invalid character object passed" );
 		return false;
 	}
 
-	CChar *vendorToRemove = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *vendorToRemove = static_cast<CChar *>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( vendorToRemove ))
 	{
 		ScriptError( cx, "(RemoveVendor) Invalid character object passed" );
@@ -10512,7 +10511,7 @@ bool CMulti_KillKeys( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( argc == 1 )
 	{
-		JSObject *jsObj = JSVAL_TO_OBJECT( argv[0] );
+		JSObject *jsObj = &argv[0].toObject();
 		CChar *myObj = static_cast<CChar *>( JS_GetPrivate( cx, jsObj ));
 		
 		if( !ValidateObject( myObj ))
@@ -10593,11 +10592,11 @@ bool CMulti_FirstChar( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( ValidateObject( firstChar ))
 	{
 		JSObject *myObj	= JSEngine->AcquireObject( IUE_CHAR, firstChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+		JS_SET_RVAL( cx, vp, JS::ObjectOrNullValue( myObj ) );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		JS_SET_RVAL( cx, vp, JS::NullValue() );
 	}
 	return true;
 }
@@ -10664,11 +10663,11 @@ bool CMulti_NextChar( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( ValidateObject( nextChar ))
 	{
 		JSObject *myObj	= JSEngine->AcquireObject( IUE_CHAR, nextChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+		JS_SET_RVAL( cx, vp, JS::ObjectOrNullValue( myObj ) );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		JS_SET_RVAL( cx, vp, JS::NullValue() );
 	}
 	return true;
 }
@@ -10857,9 +10856,9 @@ bool CBase_CanSee( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 	else	// we've been passed an x, y and z
 	{
-		x	= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-		y	= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-		z	= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
+		x	= static_cast<SI16>( argv[0].toInt32());
+		y	= static_cast<SI16>( argv[1].toInt32());
+		z	= static_cast<SI08>( argv[2].toInt32());
 	}
 
 	if( ValidateObject( mChar ))
@@ -10999,7 +10998,7 @@ bool CChar_Damage( JSContext *cx, unsigned argc, JS::Value* vp )
 	WeatherType element = PHYSICAL;
 	if( argc >= 2 )
 	{
-		element = static_cast<WeatherType>( JSVAL_TO_INT( argv[1] ));
+		element = static_cast<WeatherType>( argv[1].toInt32());
 	}
 
 	if( argc >= 3 )
@@ -11028,7 +11027,7 @@ bool CChar_Damage( JSContext *cx, unsigned argc, JS::Value* vp )
 	bool doRepsys = false;
 	if( argc >= 4 )
 	{
-		doRepsys = ( JSVAL_TO_BOOLEAN( argv[3] ) == true );
+		doRepsys = ( argv[3].toBoolean() == true );
 	}
 
 	mChar->Damage( damage.toInt(), element, attacker, doRepsys );
@@ -11058,7 +11057,7 @@ bool CChar_InitiateCombat( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(InitiateCombat): Operating on an invalid Character" );
@@ -11119,7 +11118,7 @@ bool CChar_AddAggressorFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(AddAggressorFlag): Operating on an invalid Character (arg 0)" );
@@ -11153,7 +11152,7 @@ bool CChar_RemoveAggressorFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(RemoveAggressorFlag): Operating on an invalid Character (arg 0)" );
@@ -11187,7 +11186,7 @@ bool CChar_CheckAggressorFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(CheckAggressorFlag): Operating on an invalid Character (arg 0)" );
@@ -11221,7 +11220,7 @@ bool CChar_UpdateAggressorFlagTimestamp( JSContext *cx, unsigned argc, JS::Value
 		return true;
 	}
 
-	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(UpdateAggressorFlagTimestamp): Operating on an invalid Character (arg 0)" );
@@ -11283,7 +11282,7 @@ bool CChar_IsAggressor( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	bool checkForPlayerOnly	= ( JSVAL_TO_BOOLEAN( argv[0] ) == true );
+	bool checkForPlayerOnly	= ( argv[0].toBoolean() == true );
 
 	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mChar->IsAggressor( checkForPlayerOnly )) );
 	return true;
@@ -11312,7 +11311,7 @@ bool CChar_AddPermaGreyFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(AddPermaGreyFlag): Operating on an invalid Character (arg 0)" );
@@ -11346,7 +11345,7 @@ bool CChar_RemovePermaGreyFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(RemovePermaGreyFlag): Operating on an invalid Character (arg 0)" );
@@ -11380,7 +11379,7 @@ bool CChar_CheckPermaGreyFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(CheckPermaGreyFlag): Operating on an invalid Character (arg 0)" );
@@ -11414,7 +11413,7 @@ bool CChar_UpdatePermaGreyFlagTimestamp( JSContext *cx, unsigned argc, JS::Value
 		return true;
 	}
 
-	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(UpdatePermaGreyFlagTimestamp): Operating on an invalid Character (arg 0)" );
@@ -11476,7 +11475,7 @@ bool CChar_IsPermaGrey( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	bool checkForPlayerOnly	= ( JSVAL_TO_BOOLEAN( argv[0] ) == true );
+	bool checkForPlayerOnly	= ( argv[0].toBoolean() == true );
 
 	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mChar->IsPermaGrey( checkForPlayerOnly )) );
 	return true;
@@ -11506,7 +11505,7 @@ bool CChar_Heal( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "(CChar_Heal): Operating on an invalid Character" );
 		return true;
 	}
-	SI16 healVal = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
+	SI16 healVal = static_cast<SI16>( argv[0].toInt32());
 
 	if( argc == 2 )
 	{
@@ -11673,8 +11672,8 @@ bool CChar_Defense( JSContext *cx, unsigned argc, JS::Value* vp )
 	JSEncapsulate hitLoc( cx, &( argv[0] ));
 	JSEncapsulate resistType( cx, &( argv[1] ));
 	JSEncapsulate doArmorDamage( cx, &( argv[2] ));
-	bool excludeMedableArmor = ( argc == 4 ? ( JSVAL_TO_BOOLEAN( argv[3] ) == true ) : false );
-	bool includeShield = ( argc == 5 ? ( JSVAL_TO_BOOLEAN( argv[4] ) == true ) : false );
+	bool excludeMedableArmor = ( argc == 4 ? ( argv[3].toBoolean() == true ) : false );
+	bool includeShield = ( argc == 5 ? ( argv[4].toBoolean() == true ) : false );
 
 	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( Combat->CalcDef( mChar, static_cast<UI08>( hitLoc.toInt() ), doArmorDamage.toBool(), static_cast<WeatherType>( resistType.toInt() ), excludeMedableArmor, includeShield )) );
 	return true;
@@ -11720,7 +11719,7 @@ bool CItem_GetMoreVar( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	// Fetch data from the function arguments, and figure out which tempVar to get data from
 	UI08 moreVar			= 0;
-	UI08 moreVarPart		= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+	UI08 moreVarPart		= static_cast<UI08>( argv[1].toInt32());
 	std::string moreVarName	= JS_GetStringBytes( cx, argv[0]);
 	if( moreVarName == "more" )
 	{
@@ -11802,8 +11801,8 @@ bool CItem_SetMoreVar( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	// Fetch data from the function arguments, and figure out which moreVar to set data for
 	UI08 moreVar			= 0;
-	UI08 moreVarPart		= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
-	UI08 moreVarValue		= static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+	UI08 moreVarPart		= static_cast<UI08>( argv[1].toInt32());
+	UI08 moreVarValue		= static_cast<UI08>( argv[2].toInt32());
 	std::string moreVarName	= JS_GetStringBytes( cx, argv[0]);
 	if( moreVarName == "more" )
 	{
@@ -11867,12 +11866,12 @@ bool CBase_AddScriptTrigger( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_INT( argv[0] ))
+	if( !argv[0].isInt32() )
 	{
 		ScriptError( cx, "That is not a valid script trigger! Only integers between 0-65535 are accepted." );
 	}
 
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 scriptId = static_cast<UI16>( argv[0].toInt32());
 	if( scriptId > 0 )
 	{
 		cScript *toExecute	= JSMapping->GetScript( scriptId );
@@ -11913,12 +11912,12 @@ bool CBase_RemoveScriptTrigger( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_INT( argv[0] ))
+	if( !argv[0].isInt32() )
 	{
 		ScriptError( cx, "That is not a valid script trigger! Only integers between 0-65535 are accepted." );
 	}
 
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 scriptId = static_cast<UI16>( argv[0].toInt32());
 	if( scriptId > 0 )
 	{
 		myObj->RemoveScriptTrigger( scriptId );
@@ -11954,12 +11953,12 @@ bool CBase_HasScriptTrigger( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_INT( argv[0] ))
+	if( !argv[0].isInt32() )
 	{
 		ScriptError( cx, "That is not a valid script trigger! Only integers between 0-65535 are accepted." );
 	}
 
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 scriptId = static_cast<UI16>( argv[0].toInt32());
 	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( scriptId > 0 && myObj->HasScriptTrigger( scriptId ) ) );
 	return true;
 }
@@ -11987,13 +11986,13 @@ bool CRegion_AddScriptTrigger( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_INT( argv[0] ))
+	if( !argv[0].isInt32() )
 	{
 		ScriptError( cx, "That is not a valid script trigger! Only integers between 0-65535 are accepted." );
 		return false;
 	}
 
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 scriptId = static_cast<UI16>( argv[0].toInt32());
 	if( scriptId > 0 )
 	{
 		cScript *toExecute	= JSMapping->GetScript( scriptId );
@@ -12034,12 +12033,12 @@ bool CRegion_RemoveScriptTrigger( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_INT( argv[0] ))
+	if( !argv[0].isInt32() )
 	{
 		ScriptError( cx, "That is not a valid script trigger! Only integers between 0-65535 are accepted." );
 	}
 
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 scriptId = static_cast<UI16>( argv[0].toInt32());
 	if( scriptId > 0 )
 	{
 		myObj->RemoveScriptTrigger( scriptId );
@@ -12075,7 +12074,7 @@ bool CRegion_GetOrePref( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_INT( argv[0] ))
+	if( !argv[0].isInt32() )
 	{
 		ScriptError( cx, "That is not a valid ore ID! Only integers between 0-65535 are accepted." );
 	}
@@ -12094,7 +12093,7 @@ bool CRegion_GetOrePref( JSContext *cx, unsigned argc, JS::Value* vp )
 	//	UI16 scriptID
 
 	// Fetch region's ore preference details for specified ore type
-	size_t oreType = static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
+	size_t oreType = static_cast<size_t>( argv[0].toInt32());
 	auto orePrefs = myObj->GetOrePreference( oreType );
 
 	// Prepare some temporary helper variables
@@ -12127,15 +12126,15 @@ bool CRegion_GetOrePref( JSContext *cx, unsigned argc, JS::Value* vp )
 	JS_SetElement( cx, jsMiningData, 6, &jsOreScriptID );
 
 	// Add mining data to the orePref array
-	jsval miningDataVal = OBJECT_TO_JSVAL( jsMiningData );
+	JS::Value miningDataVal = JS::ObjectOrNullValue( jsMiningData );
 	JS_SetElement( cx, jsOrePref, 0, &miningDataVal );
 
 	// Add percent chance to orePref array
-	jsval jsOrePrefChance = INT_TO_JSVAL( orePrefs->percentChance );
+	JS::Value jsOrePrefChance = INT_TO_JSVAL( orePrefs->percentChance );
 	JS_SetElement( cx, jsOrePref, 1, &jsOrePrefChance );
 
-	// Convert orePref array object to jsval and pass it to script
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( jsOrePref ) );
+	// Convert orePref array object to JS::Value and pass it to script
+	JS_SET_RVAL( cx, vp, JS::ObjectOrNullValue( jsOrePref ) );
 
 	return true;
 }
@@ -12202,7 +12201,7 @@ bool CChar_AddFriend( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	CChar *newFriend = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *newFriend = static_cast<CChar*>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( newFriend ))
 	{
 		ScriptError( cx, "(AddFriend) Invalid Object passed as function parameter" );
@@ -12248,7 +12247,7 @@ bool CChar_RemoveFriend( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	CChar *friendToRemove = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *friendToRemove = static_cast<CChar*>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( friendToRemove ))
 	{
 		ScriptError( cx, "(AddFriend) Invalid Object passed as function parameter" );
@@ -12299,7 +12298,7 @@ bool CChar_GetFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	// Prepare some temporary helper variables
 	JSObject *jsFriendList = JS_NewArrayObject( cx, 0, nullptr );
-	jsval jsTempFriend;
+	JS::Value jsTempFriend;
 
 	// Loop through list of friends, and add each one to the JS ArrayObject
 	int i = 0;
@@ -12308,16 +12307,16 @@ bool CChar_GetFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 		// Create a new JS Object based on character
 		JSObject *myObj = JSEngine->AcquireObject( IUE_CHAR, tempFriend, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
 
-		// Convert JS Object to jsval
-		jsTempFriend = OBJECT_TO_JSVAL( myObj );
+		// Convert JS Object to JS::Value
+		jsTempFriend = JS::ObjectOrNullValue( myObj );
 
-		// Add jsval to ArrayObject
+		// Add JS::Value to ArrayObject
 		JS_SetElement( cx, jsFriendList, i, &jsTempFriend );
 		i++;
 	}
 
-	// Convert ArrayObject to jsval and pass it to script
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( jsFriendList ) );
+	// Convert ArrayObject to JS::Value and pass it to script
+	JS_SET_RVAL( cx, vp, JS::ObjectOrNullValue( jsFriendList ) );
 	return true;
 }
 
@@ -12403,7 +12402,7 @@ bool CChar_GetPetList( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	// Prepare some temporary helper variables
 	JSObject *jsPetList = JS_NewArrayObject( cx, 0, nullptr );
-	jsval jsTempPet;
+	JS::Value jsTempPet;
 
 	// Loop through list of pets, and add each one to the JS ArrayObject
 	int i = 0;
@@ -12416,18 +12415,18 @@ bool CChar_GetPetList( JSContext *cx, unsigned argc, JS::Value* vp )
 				// Create a new JS Object based on character
 				JSObject *myObj = JSEngine->AcquireObject( IUE_CHAR, pet, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
 
-				// Convert JS Object to jsval
-				jsTempPet = OBJECT_TO_JSVAL( myObj );
+				// Convert JS Object to JS::Value
+				jsTempPet = JS::ObjectOrNullValue( myObj );
 
-				// Add jsval to ArrayObject
+				// Add JS::Value to ArrayObject
 				JS_SetElement( cx, jsPetList, i, &jsTempPet );
 				i++;
 			}
 		}
 	}
 
-	// Convert ArrayObject to jsval and pass it to script
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( jsPetList ) );
+	// Convert ArrayObject to JS::Value and pass it to script
+	JS_SET_RVAL( cx, vp, JS::ObjectOrNullValue( jsPetList ) );
 	return true;
 }
 
@@ -12564,7 +12563,7 @@ bool CChar_AddFollower( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	CChar *newFollower = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *newFollower = static_cast<CChar*>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( newFollower ))
 	{
 		ScriptError( cx, "(AddFollower) Invalid Object passed as function parameter" );
@@ -12610,7 +12609,7 @@ bool CChar_RemoveFollower( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	CChar *followerToRemove = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *followerToRemove = static_cast<CChar*>( JS_GetPrivate( cx, &argv[0].toObject()));
 	if( !ValidateObject( followerToRemove ))
 	{
 		ScriptError( cx, "(RemoveFollower) Invalid Object passed as function parameter" );
@@ -12661,7 +12660,7 @@ bool CChar_GetFollowerList( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	// Prepare some temporary helper variables
 	JSObject *jsFollowerList = JS_NewArrayObject( cx, 0, nullptr );
-	jsval jsTempFollower;
+	JS::Value jsTempFollower;
 
 	// Loop through list of friends, and add each one to the JS ArrayObject
 	int i = 0;
@@ -12674,18 +12673,18 @@ bool CChar_GetFollowerList( JSContext *cx, unsigned argc, JS::Value* vp )
 				// Create a new JS Object based on character
 				JSObject *myObj = JSEngine->AcquireObject( IUE_CHAR, follower, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
 
-				// Convert JS Object to jsval
-				jsTempFollower = OBJECT_TO_JSVAL( myObj );
+				// Convert JS Object to JS::Value
+				jsTempFollower = JS::ObjectOrNullValue( myObj );
 
-				// Add jsval to ArrayObject
+				// Add JS::Value to ArrayObject
 				JS_SetElement( cx, jsFollowerList, i, &jsTempFollower );
 				i++;
 			}
 		}
 	}
 
-	// Convert ArrayObject to jsval and pass it to script
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( jsFollowerList ) );
+	// Convert ArrayObject to JS::Value and pass it to script
+	JS_SET_RVAL( cx, vp, JS::ObjectOrNullValue( jsFollowerList ) );
 	return true;
 }
 
@@ -12853,22 +12852,22 @@ bool CParty_GetMember( JSContext *cx, unsigned argc, JS::Value* vp )
 		if( memberOffset >= ourParty->MemberList()->size() )
 		{
 			ScriptError( cx, "GetMember: Invalid character to get, index out of bounds" );
-			JS_SET_RVAL( cx, vp, JSVAL_NULL );
+			JS_SET_RVAL( cx, vp, JS::NullValue() );
 			return true;
 		}
 		CChar *mChar = (*( ourParty->MemberList() ))[memberOffset]->Member();
 		if( mChar == nullptr )
 		{
-			JS_SET_RVAL( cx, vp, JSVAL_NULL );
+			JS_SET_RVAL( cx, vp, JS::NullValue() );
 		}
 		else
 		{
 			JSObject *myJSChar	= JSEngine->AcquireObject( IUE_CHAR, mChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-			JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myJSChar ) );
+			JS_SET_RVAL( cx, vp, JS::ObjectOrNullValue( myJSChar ) );
 		}
 	}
 	else
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		JS_SET_RVAL( cx, vp, JS::NullValue() );
 	return true;
 }
 

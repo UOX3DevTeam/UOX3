@@ -259,10 +259,10 @@ void setupMap( std::map< std::string, int >& lkpMap, const JSPropertySpec lkpPro
 bool ResolveSpellCollection( JSContext *cx, JS::HandleObject obj, JS::HandleId id, bool *resolved )
 {
 	*resolved = false;
-	if( !JSID_IS_INT( id ))
+	if( !id.isInt())
 		return true;
 
-	const int32_t spellId = JSID_TO_INT( id );
+	const int32_t spellId = id.toInt();
 	if( spellId < 0 || static_cast<size_t>( spellId ) >= Magic->spells.size() )
 		return true;
 
@@ -284,10 +284,10 @@ bool ResolveSpellCollection( JSContext *cx, JS::HandleObject obj, JS::HandleId i
 bool ResolveCreateEntryCollection( JSContext *cx, JS::HandleObject obj, JS::HandleId id, bool *resolved )
 {
 	*resolved = false;
-	if( !JSID_IS_INT( id ))
+	if( !id.isInt())
 		return true;
 
-	const int32_t entryId = JSID_TO_INT( id );
+	const int32_t entryId = id.toInt();
 	if( entryId < 0 || entryId > 0xFFFF )
 		return true;
 	CreateEntry_st *nativeEntry = Skills->FindItem( static_cast<UI16>( entryId ));
