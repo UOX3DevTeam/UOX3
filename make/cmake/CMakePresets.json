@@ -1,0 +1,33 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 25,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "vs2022-clang",
+      "displayName": "Visual Studio 2022 - ClangCL x64",
+      "description": "Build UOX3 with the compiler and ABI required by mozjs 115.",
+      "generator": "Visual Studio 17 2022",
+      "binaryDir": "${sourceDir}/../../build-vs2022",
+      "architecture": "x64",
+      "toolset": "ClangCL"
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "vs2022-debug",
+      "displayName": "Visual Studio 2022 Debug",
+      "configurePreset": "vs2022-clang",
+      "configuration": "Debug"
+    },
+    {
+      "name": "vs2022-release",
+      "displayName": "Visual Studio 2022 RelWithDebInfo",
+      "configurePreset": "vs2022-clang",
+      "configuration": "RelWithDebInfo"
+    }
+  ]
+}
