@@ -2619,6 +2619,14 @@ bool cScript::OnTimer( CBaseObject *tObject, UI16 timerId )
 	return ( retVal == JS_TRUE );
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Function    -   cScript::OnTempEffectExpire()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -   Calls the associated script when a script-owned temporary effect reaches its
+//|                 expiration time. The source can be null if it no longer exists, while target is
+//|                 the character or item carrying the effect and effectId identifies the script's
+//|                 specific effect.
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OnTempEffectExpire( CBaseObject *source, CBaseObject *target, UI16 effectId )
 {
 	if( !ValidateObject( target ))
@@ -2644,6 +2652,13 @@ bool cScript::OnTempEffectExpire( CBaseObject *source, CBaseObject *target, UI16
 	return ( retVal == JS_TRUE );
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Function    -   cScript::OnTempEffectRemove()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -   Calls the associated script when a script-owned temporary effect is manually
+//|                 removed or replaced before expiration. The source can be null if it no longer
+//|                 exists, while target and effectId identify the affected object and effect.
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OnTempEffectRemove( CBaseObject *source, CBaseObject *target, UI16 effectId )
 {
 	if( !ValidateObject( target ))
