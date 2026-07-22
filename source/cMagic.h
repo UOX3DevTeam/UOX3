@@ -57,7 +57,7 @@ private:
 	UI08 GetFieldDir( CChar *s, SI16 x, SI16 y );
 	bool RegMsg( CChar *s, Reag_st failmsg );
 	void LogSpell( std::string spell, CChar *player1, CChar *player2, const std::string &extraInfo );
-	UI08 spellCount;
+	UI32 spellCount;
 
 };
 

@@ -25,8 +25,6 @@
 #include "osunique.hpp"
 CMagic *Magic = nullptr;
 
-#define SPELL_MAX 214 // use define for now; can make autocount later
-
 // Look up spell-names from dictionary-files
 const MagicTable_st magic_table[] = {
 	{ 593, (MAGIC_DEFN)&splClumsy },
@@ -4103,7 +4101,7 @@ void CMagic::SpellFail( CSocket *s )
 //o------------------------------------------------------------------------------------------------o
 bool CMagic::SelectSpell( CSocket *mSock, SI32 num )
 {
-	if( num < 1 )
+	if( num < 1 || static_cast<size_t>( num ) >= spells.size() )
 	{
 		Console.Error( "Invalid spell ID passed to CMagic::SelectSpell() - aborting spellcast attempt!" );
 		return false;
@@ -5267,15 +5265,40 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 //o------------------------------------------------------------------------------------------------o
 void CMagic::LoadScript( void )
 {
-	spells.resize( 0 );
+	spells.clear();
+	spellCount = 0;
 
-	// for some strange reason, spells go from index 1 to SPELL_MAX and
-	// apparently index 0 is left unused
-	spells.resize( SPELL_MAX + 1 );
+	// Spell IDs are data-driven. Determine the largest configured ID before loading
+	// the spell data so new scripted spells do not require a matching core change.
+	SI32 maxSpellId = 0;
+	for( auto &spellScp : FileLookup->ScriptListings[spells_def] )
+	{
+		if( spellScp == nullptr )
+			continue;
+
+		for( const auto &[spEntry, spellLoad] : spellScp->collection() )
+		{
+			if( spellLoad == nullptr )
+				continue;
+
+			auto spellSections = oldstrutil::sections( spEntry, " " );
+			if( spellSections.size() > 1 && spellSections[0] == "SPELL" )
+			{
+				SI32 spellId = static_cast<SI32>( std::stol( oldstrutil::trim( oldstrutil::removeTrailing( spellSections[1], "//" )), nullptr, 0 ));
+				if( spellId > maxSpellId )
+				{
+					maxSpellId = spellId;
+				}
+			}
+		}
+	}
+
+	// Spell IDs start at one; index zero remains unused for compatibility.
+	spells.resize( static_cast<size_t>( maxSpellId ) + 1 );
 
 	std::string spEntry;
 	std::string tag, data, UTag;
-	UI08 i = 0;
+	SI32 i = 0;
 	for( auto &spellScp : FileLookup->ScriptListings[spells_def] )
 	{
 		if( spellScp == nullptr )
@@ -5289,8 +5312,8 @@ void CMagic::LoadScript( void )
 			auto ssecs = oldstrutil::sections( spEntry, " " );
 			if( ssecs[0] == "SPELL" )
 			{
-				i = static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ));
-				if( i <= SPELL_MAX )
+				i = static_cast<SI32>( std::stol( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ));
+				if( i > 0 && static_cast<size_t>( i ) < spells.size() )
 				{
 					++spellCount;
 					spells[i].Enabled( false );
