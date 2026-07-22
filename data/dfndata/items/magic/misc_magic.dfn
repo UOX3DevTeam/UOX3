@@ -164,7 +164,7 @@ decay=1
 good=28
 origin=aos
 sectionid=0x2252
-type=100
+type=9
 spellbookdata=201,10,0x2271
 }
 
@@ -190,7 +190,7 @@ decay=1
 good=28
 origin=aos
 sectionid=0x2253
-type=99
+type=9
 spellbookdata=101,17,0x2260
 }
 

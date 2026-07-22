@@ -3342,8 +3342,6 @@ void InitTagToItemType( void )
 	tagToItemType["KEY"]					= IT_KEY;
 	tagToItemType["LOCKEDCONTAINER"]		= IT_LOCKEDCONTAINER;
 	tagToItemType["SPELLBOOK"]				= IT_SPELLBOOK;
-	tagToItemType["PALADINBOOK"]			= IT_PALADINBOOK;
-	tagToItemType["NECROBOOK"]				= IT_NECROBOOK;
 	tagToItemType["MAP"]					= IT_MAP;
 	tagToItemType["BOOK"]					= IT_BOOK;
 	tagToItemType["DOOR"]					= IT_DOOR;

@@ -1175,7 +1175,7 @@ function classifyCorpseSectionID(secID)
 // Function to check if an equipped item allows casting
 function isSpellCastingAllowed(item)
 {
-	return item != null && (item.type == 9 || item.type == 100 || item.type == 119); // Assuming type 9 is spellbook, type 100 paladin book and type 119 is spell channeling item
+	return item != null && ( item.type == 9 || item.type == 119 ); // Spellbook or spell-channeling item
 }
 
 // Function to handle items

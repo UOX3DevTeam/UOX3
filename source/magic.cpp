@@ -2756,10 +2756,6 @@ SpellBookConfig CMagic::GetSpellBookConfig( CItem *book ) const
 	{
 		case IT_SPELLBOOK:
 			return { 1, 64, 0x1F2D, true };
-		case IT_NECROBOOK:
-			return { 101, 17, 0x2260, true };
-		case IT_PALADINBOOK:
-			return { 201, 10, 0x2271, true };
 		default:
 			return config;
 	}
