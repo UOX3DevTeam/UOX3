@@ -260,7 +260,7 @@ function onSpellCast(mSock, mChar, directCast, spellNum)
 				mChar.spellCast = -1;
 				return true;
 			}
-			if (mSpell.tithing >= mChar.tithing) 
+			if (mSpell.tithing > mChar.tithing)
 			{
 				if (mSock != null)
 				{
