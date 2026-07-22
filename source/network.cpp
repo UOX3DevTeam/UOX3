@@ -819,7 +819,6 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 		UI08 *buffer = mSock->Buffer();
 		if( mSock->Receive( 1, false ) > 0 )
 		{
-			SI32 book;
 			UI08 packetId = buffer[0];
 			if( mSock->FirstPacket() && packetId != 0x80 && packetId != 0x91 )
 			{
@@ -1000,9 +999,9 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 						else if( buffer[3] == 0x27 || buffer[3] == 0x56 ) // Casting a spell
 						{
 							// Determine the spell number from the buffer
-							SI32 book = static_cast<SI32>( std::stol( std::string(( char* )&buffer[4] )));
+							const SI32 spellNumber = static_cast<SI32>( std::stol( std::string(( char* )&buffer[4] )));
 
-							CItem *activeBook = Magic->FindSpellBook( ourChar, book );
+							CItem *activeBook = Magic->FindSpellBook( ourChar, spellNumber );
 
 							if( !ValidateObject( activeBook )) // No valid book found
 							{
@@ -1010,11 +1009,11 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 								break;
 							}
 #if defined( UOX_DEBUG_MODE )
-							Console.Print( oldstrutil::format( "DEBUG: Spellbook type: %d selected for spell: %d.", activeBook->GetType(), book ));
+							Console.Print( oldstrutil::format( "DEBUG: Spellbook type: %d selected for spell: %d.", activeBook->GetType(), spellNumber ));
 #endif
 
 							// Check if the spell exists in the active book
-							if( Magic->HasSpell( activeBook, book ))
+							if( Magic->HasSpell( activeBook, spellNumber ))
 							{
 								if( ourChar->IsFrozen() )
 								{
@@ -1030,7 +1029,7 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 								else
 								{
 									mSock->CurrentSpellType( 0 );
-									Magic->SelectSpell( mSock, book );
+									Magic->SelectSpell( mSock, spellNumber );
 								}
 							}
 							else
