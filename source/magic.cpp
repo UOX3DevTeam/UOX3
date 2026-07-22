@@ -2778,22 +2778,22 @@ CItem *CMagic::FindSpellBook( CChar *character, SI32 spellNum ) const
 			( spellNum >= bookConfig.firstSpell && spellNum < bookConfig.firstSpell + bookConfig.spellCount ));
 	};
 
-	for( CItem *item = character->FirstItem(); !character->FinishedItems(); item = character->NextItem() )
+	CItem *rightHand = character->GetItemAtLayer( IL_RIGHTHAND );
+	if( ValidateObject( rightHand ) && matchesSpell( rightHand ))
+		return rightHand;
+
+	CItem *leftHand = character->GetItemAtLayer( IL_LEFTHAND );
+	if( ValidateObject( leftHand ) && matchesSpell( leftHand ))
+		return leftHand;
+
+	CItem *backpack = character->GetPackItem();
+	if( !ValidateObject( backpack ))
+		return nullptr;
+
+	for( const auto &packItem : backpack->GetContainsList()->collection() )
 	{
-		if( !ValidateObject( item ))
-			continue;
-
-		if( matchesSpell( item ))
-			return item;
-
-		if( item->GetLayer() == IL_PACKITEM )
-		{
-			for( const auto &packItem : item->GetContainsList()->collection() )
-			{
-				if( ValidateObject( packItem ) && matchesSpell( packItem ))
-					return packItem;
-			}
-		}
+		if( ValidateObject( packItem ) && matchesSpell( packItem ))
+			return packItem;
 	}
 
 	return nullptr;

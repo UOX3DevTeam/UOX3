@@ -360,7 +360,6 @@ void CNetworkStuff::Disconnect( UOXSOCKET s )
 	OffList->FlagUpdate();
 }
 
-
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CNetworkStuff::LogOut()
 //o------------------------------------------------------------------------------------------------o
@@ -1013,16 +1012,6 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 #if defined( UOX_DEBUG_MODE )
 							Console.Print( oldstrutil::format( "DEBUG: Spellbook type: %d selected for spell: %d.", activeBook->GetType(), book ));
 #endif
-
-							// Validate the book's location
-							CItem *packItem = ourChar->GetPackItem();
-							bool validLoc = ( activeBook->GetCont() == ourChar) || ( ValidateObject( packItem ) && activeBook->GetCont() == packItem );
-
-							if( !validLoc )
-							{
-								mSock->SysMessage( 765 ); // "To cast spells, your spellbook must be in your hands or in the first layer of your pack."
-								break;
-							}
 
 							// Check if the spell exists in the active book
 							if( Magic->HasSpell( activeBook, book ))
