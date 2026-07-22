@@ -3,6 +3,14 @@
 
 struct Reag_st;
 
+struct SpellBookConfig
+{
+	SI32 firstSpell;
+	UI16 spellCount;
+	UI16 firstScroll;
+	bool valid;
+};
+
 class CMagic
 {
 public:
@@ -13,6 +21,7 @@ public:
 	bool HasSpell( CItem *book, SI32 spellNum );
 	void AddSpell( CItem *book, SI32 spellNum );
 	void RemoveSpell( CItem *book, SI32 spellNum );
+	SpellBookConfig GetSpellBookConfig( CItem *book ) const;
 
 	void LoadScript( void ); // adding function for spell system "cache"
 	void SpellBook( CSocket *mSock );

@@ -2732,6 +2732,48 @@ CMagic::~CMagic()
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function    - CMagic::GetSpellBookConfig()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Returns the spell and scroll ranges represented by a spellbook.
+//| Notes       - Custom books can override the defaults with the spellbookFirstSpell,
+//|               spellbookSpellCount and spellbookFirstScroll integer tags.
+//o------------------------------------------------------------------------------------------------o
+SpellBookConfig CMagic::GetSpellBookConfig( CItem *book ) const
+{
+	SpellBookConfig config = { 0, 0, 0, false };
+	if( !ValidateObject( book ))
+		return config;
+
+	auto firstSpellTag = book->GetTag( "spellbookFirstSpell" );
+	auto spellCountTag = book->GetTag( "spellbookSpellCount" );
+	auto firstScrollTag = book->GetTag( "spellbookFirstScroll" );
+	if( firstSpellTag.m_ObjectType == TAGMAP_TYPE_INT && firstSpellTag.m_IntValue > 0 &&
+		spellCountTag.m_ObjectType == TAGMAP_TYPE_INT && spellCountTag.m_IntValue > 0 && spellCountTag.m_IntValue <= 96 )
+	{
+		config.firstSpell = firstSpellTag.m_IntValue;
+		config.spellCount = static_cast<UI16>( spellCountTag.m_IntValue );
+		if( firstScrollTag.m_ObjectType == TAGMAP_TYPE_INT && firstScrollTag.m_IntValue > 0 )
+		{
+			config.firstScroll = static_cast<UI16>( firstScrollTag.m_IntValue );
+		}
+		config.valid = true;
+		return config;
+	}
+
+	switch( book->GetType() )
+	{
+		case IT_SPELLBOOK:
+			return { 1, 64, 0x1F2D, true };
+		case IT_NECROBOOK:
+			return { 101, 17, 0x2260, true };
+		case IT_PALADINBOOK:
+			return { 201, 10, 0x2271, true };
+		default:
+			return config;
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMagic::HasSpell()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if given spellbook contains specific spell
@@ -2741,10 +2783,8 @@ bool CMagic::HasSpell( CItem *book, SI32 spellNum )
 	if( !ValidateObject( book ))
 		return false;
 
-	// Validate spell range for the book type
-	if(( book->GetType() == IT_SPELLBOOK && ( spellNum < 1 || spellNum > 64 )) ||
-		( book->GetType() == IT_PALADINBOOK && ( spellNum < 201 || spellNum > 210)) ||
-		( book->GetType() == IT_NECROBOOK && ( spellNum < 101 || spellNum > 117 )))
+	auto bookConfig = GetSpellBookConfig( book );
+	if( !bookConfig.valid || spellNum < bookConfig.firstSpell || spellNum >= bookConfig.firstSpell + bookConfig.spellCount )
 	{
 #if defined( UOX_DEBUG_MODE )
 		Console.Print( oldstrutil::format( "ERROR: HasSpell: SpellNum=%d is out of range for BookType=%d", spellNum, book->GetType() ));
@@ -2752,11 +2792,7 @@ bool CMagic::HasSpell( CItem *book, SI32 spellNum )
 		return false;
 	}
 
-	// Adjust spell number for different book types
-	if( book->GetType() == IT_PALADINBOOK )
-		spellNum -= 200;
-	else if( book->GetType() == IT_NECROBOOK )
-		spellNum -= 100;
+	spellNum -= bookConfig.firstSpell - 1;
 
 	// Determine which word and bit to check
 	UI32 wordNum = ( spellNum - 1 ) / 32;  // Adjust for 0-based indexing
@@ -2798,10 +2834,8 @@ void CMagic::AddSpell( CItem *book, SI32 spellNum )
 	if( !ValidateObject( book ))
 		return;
 
-	// Validate spell number range for the book type
-	if(( book->GetType() == IT_SPELLBOOK && ( spellNum < 1 || spellNum > 64 )) ||
-		( book->GetType() == IT_PALADINBOOK && ( spellNum < 201 || spellNum > 210 )) ||
-		( book->GetType() == IT_NECROBOOK && ( spellNum < 101 || spellNum > 117 )))
+	auto bookConfig = GetSpellBookConfig( book );
+	if( !bookConfig.valid || spellNum < bookConfig.firstSpell || spellNum >= bookConfig.firstSpell + bookConfig.spellCount )
 	{
 #if defined( UOX_DEBUG_MODE )
 		Console.Print( oldstrutil::format( "ERROR: AddSpell: SpellNum=%d is out of range for BookType=%d", spellNum, book->GetType() ));
@@ -2809,11 +2843,7 @@ void CMagic::AddSpell( CItem *book, SI32 spellNum )
 		return;
 	}
 
-	// Adjust spell number for different book types
-	if( book->GetType() == IT_PALADINBOOK )
-		spellNum -= 200;
-	else if( book->GetType() == IT_NECROBOOK )
-		spellNum -= 100;
+	spellNum -= bookConfig.firstSpell - 1;
 
 	// Calculate word and bit position
 	UI32 wordNum = ( spellNum - 1 ) / 32;  // Adjust for 0-based indexing
@@ -2856,11 +2886,16 @@ void CMagic::RemoveSpell( CItem *book, SI32 spellNum )
 	if( !ValidateObject( book ))
 		return;
 
-	UI32 wordNum = spellNum / 32;
+	auto bookConfig = GetSpellBookConfig( book );
+	if( !bookConfig.valid || spellNum < bookConfig.firstSpell || spellNum >= bookConfig.firstSpell + bookConfig.spellCount )
+		return;
+
+	spellNum -= bookConfig.firstSpell - 1;
+	UI32 wordNum = ( spellNum - 1 ) / 32;
 	if( wordNum < 3 )
 	{
-		UI32 bitNum		= ( spellNum % 32 );
-		UI32 flagToSet	= power( 2, bitNum );
+		UI32 bitNum		= ( spellNum - 1 ) % 32;
+		UI32 flagToSet	= 1 << bitNum;
 		UI32 flagMask	= 0xFFFFFFFF;
 		UI32 targAmount;
 		flagMask ^= flagToSet;
@@ -2907,14 +2942,16 @@ void CMagic::SpellBook( CSocket *mSock )
 		return;
 	}
 
-	// Determine the type of spellbook
-	bool isPaladinBook = ( spellBook->GetType() == IT_PALADINBOOK );
-	bool isNecroBook = ( spellBook->GetType() == IT_NECROBOOK );
-	int startSpell = isPaladinBook ? 201 : ( isNecroBook ? 101 : 1 );
-	int endSpell = isPaladinBook ? 210 : ( isNecroBook ? 117 : 64 );
+	auto bookConfig = GetSpellBookConfig( spellBook );
+	if( !bookConfig.valid )
+	{
+		mSock->SysMessage( 692 ); // You have no spellbook upon you!
+		return;
+	}
+	SI32 startSpell = bookConfig.firstSpell;
+	SI32 endSpell = startSpell + bookConfig.spellCount - 1;
 
-	// Initialize spellsList
-	UI08 spellsList[70] = {0}; // Covers maximum spells for fallback logic
+	std::vector<UI08> spellsList( bookConfig.spellCount, 0 );
 
 	// Populate spellsList with proper indexing
 	for( int spellID = startSpell; spellID <= endSpell; ++spellID )
@@ -2943,23 +2980,23 @@ void CMagic::SpellBook( CSocket *mSock )
 	}
 
 	// Fallback logic for older clients
-	UI08 spellCount = 0;
+	UI16 spellsInBook = 0;
 	for( int i = 0; i < ( endSpell - startSpell + 1 ); ++i )
 	{
 		if( spellsList[i] )
 		{
-			++spellCount;
+			++spellsInBook;
 		}
 	}
 
-	if( spellCount > 0 )
+	if( spellsInBook > 0 )
 	{
 		CPItemsInContainer mItems;
 		if( mSock->ClientVerShort() >= CVS_6017 )
 		{
 			mItems.UOKRFlag( true );
 		}
-		mItems.NumberOfItems( spellCount );
+		mItems.NumberOfItems( spellsInBook );
 		UI16 runningCounter = 0;
 		const SERIAL containerSerial = spellBook->GetSerial();
 
@@ -3249,19 +3286,12 @@ bool CMagic::CheckBook( int circle, int spellOffset, CItem* book )
 		return false;
 	}
 
-	// Determine the type of spellbook and calculate the appropriate spell number range
-	int baseSpellNum = 1; // Default to regular spellbook
-	if( book->GetType() == IT_PALADINBOOK )
-		baseSpellNum = 201;
-	else if( book->GetType() == IT_NECROBOOK )
-		baseSpellNum = 101;
+	auto bookConfig = GetSpellBookConfig( book );
+	if( !bookConfig.valid )
+		return false;
 
-	int spellNum = (( circle - 1 ) * 8 ) + spellOffset + baseSpellNum;
-
-	// Ensure the spellNum is within valid range for the book type
-	if(( book->GetType() == IT_SPELLBOOK && ( spellNum < 1 || spellNum > 64 )) ||
-		( book->GetType() == IT_PALADINBOOK && ( spellNum < 201 || spellNum > 210 )) ||
-		( book->GetType() == IT_NECROBOOK && ( spellNum < 101 || spellNum > 117 )))
+	SI32 spellNum = (( circle - 1 ) * 8 ) + spellOffset + bookConfig.firstSpell;
+	if( spellNum < bookConfig.firstSpell || spellNum >= bookConfig.firstSpell + bookConfig.spellCount )
 	{
 #if defined( UOX_DEBUG_MODE )
 		Console.Error( oldstrutil::format( "ERROR: CheckBook: SpellNum=%d is out of range for BookType=%d", spellNum, book->GetType() ));

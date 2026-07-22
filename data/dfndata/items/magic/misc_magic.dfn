@@ -6,6 +6,9 @@ id=0x0efa
 weight=100
 value=22 11
 type=9
+custominttag=spellbookFirstSpell 1
+custominttag=spellbookSpellCount 64
+custominttag=spellbookFirstScroll 0x1f2d
 restock=15
 decay=1
 good=28
@@ -164,6 +167,9 @@ good=28
 origin=aos
 sectionid=0x2252
 type=100
+custominttag=spellbookFirstSpell 201
+custominttag=spellbookSpellCount 10
+custominttag=spellbookFirstScroll 0x2271
 }
 
 [paladinspellbook]
@@ -189,6 +195,9 @@ good=28
 origin=aos
 sectionid=0x2253
 type=99
+custominttag=spellbookFirstSpell 101
+custominttag=spellbookSpellCount 17
+custominttag=spellbookFirstScroll 0x2260
 }
 
 [necromancerbook]
