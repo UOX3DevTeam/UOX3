@@ -98,10 +98,10 @@ class JSEncapsulate
 {
 public:
 
-	JSEncapsulate( JSContext *jsCX, jsval *jsVP );
+	JSEncapsulate( JSContext *jsCX, const JS::Value *jsVP );
 	JSEncapsulate( JSContext *jsCX, JSObject *jsVP );
 	JSEncapsulate();
-	void		SetContext( JSContext *jsCX, jsval *jsVP );
+	void		SetContext( JSContext *jsCX, const JS::Value *jsVP );
 	bool		isType( JSEncapsObjectType toCheck );
 	SI32		toInt( void );
 	bool		toBool( void );
@@ -124,7 +124,7 @@ private:
 	void *				objectVal;
 
 	JSContext *			cx;
-	jsval *				vp;
+	const JS::Value *				vp;
 	JSObject *			obj;
 
 	std::string			className;

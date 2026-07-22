@@ -5,6 +5,7 @@
 #include "SEFunctions.h"
 #include "UOXJSMethods.h"
 #include "UOXJSPropertySpecs.h"
+#include "JSEncapsulate.h"
 #include "CJSMapping.h"
 #include "CPacketReceive.h"
 #include "CJSEngine.h"
@@ -464,7 +465,7 @@ void cScript::Stop( void )
 	isFiring = false;
 }
 
-bool cScript::InvokeEvent( const char* name, unsigned int argc, JS::Value* argv, JS::Value* rval )
+bool cScript::InvokeEvent( const char* name, unsigned int argc, const JS::Value* argv, JS::Value* rval )
 {
 	JSMapping->pushActive( this );
 #if defined UOX_DEBUG_MODE
@@ -3360,7 +3361,7 @@ SI08 cScript::OnSpellTarget( CBaseObject *target, CChar *caster, UI08 spellNum )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calls a particular script event, passing parameters
 //o------------------------------------------------------------------------------------------------o
-bool cScript::CallParticularEvent( const char *eventToCall, JS::Value *params, SI32 numParams, JS::Value *eventRetVal )
+bool cScript::CallParticularEvent( const char *eventToCall, const JS::Value *params, SI32 numParams, JS::Value *eventRetVal )
 {
 	if( eventToCall == nullptr )
 		return false;

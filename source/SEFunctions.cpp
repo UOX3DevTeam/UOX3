@@ -30,6 +30,7 @@
 #include "network.h"
 #include "UOXJSClasses.h"
 #include "UOXJSPropertySpecs.h"
+#include "JSEncapsulate.h"
 #include "CJSEngine.h"
 #include "PartySystem.h"
 #include "cSpawnRegion.h"
@@ -597,8 +598,8 @@ bool SE_RandomNumber( JSContext *cx, unsigned int argc, JS::Value *vp )
 		ScriptError( cx, "RandomNumber: Invalid number of arguments (takes 2)" );
 		return false;
 	}
-	JSEncapsulate loVal( cx, &( args.get(0) ));
-	JSEncapsulate hiVal( cx, &( args.get(1) ));
+	JSEncapsulate loVal( cx, &args.get(0).get() );
+	JSEncapsulate hiVal( cx, &args.get(1).get() );
 	args.rval().setInt32(  RandomNum( loVal.toInt(), hiVal.toInt() ) );
 	return true;
 }
@@ -919,7 +920,7 @@ bool SE_RegisterKey( JSContext *cx, unsigned int argc, JS::Value *vp )
 		ScriptError( cx, "RegisterKey: Invalid number of arguments (takes 2)" );
 		return false;
 	}
-	JSEncapsulate encaps( cx, &( args.get(0) ));
+	JSEncapsulate encaps( cx, &( args.get(0).get()));
 	std::string toRegister	= JS_GetStringBytes( cx, args.get(1));
 	UI16 scriptId			= JSMapping->GetScriptId( scriptEnv );
 
@@ -1138,6 +1139,7 @@ bool SE_EnableConsoleFunc( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetHour( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
+	auto args = JS::CallArgsFromVp(argc, vp);
 	bool ampm = cwmWorldState->ServerData()->ServerTimeAMPM();
 	UI08 hour = cwmWorldState->ServerData()->ServerTimeHours();
 	if( ampm )
@@ -1158,6 +1160,7 @@ bool SE_GetHour( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetMinute( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
+	auto args = JS::CallArgsFromVp(argc, vp);
 	UI08 minute = cwmWorldState->ServerData()->ServerTimeMinutes();
 	args.rval().setInt32(  minute  );
 	return true;
@@ -1170,6 +1173,7 @@ bool SE_GetMinute( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetDay( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
+	auto args = JS::CallArgsFromVp(argc, vp);
 	SI16 day = cwmWorldState->ServerData()->ServerTimeDay();
 	args.rval().setInt32(  day  );
 	return true;
@@ -2012,7 +2016,7 @@ bool SE_UseItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 	CChar *mChar = nullptr;
 	CSocket *mySocket = nullptr;
 
-	JSEncapsulate myClass( cx, &( args.get(0) ));
+	JSEncapsulate myClass( cx, &( args.get(0).get() ));
 	if( myClass.ClassName() == "UOXChar" )
 	{
 		if( myClass.isType( JSOT_OBJECT ))
@@ -2142,7 +2146,7 @@ bool SE_TriggerTrap( JSContext *cx, unsigned int argc, JS::Value *vp )
 	CChar *mChar = nullptr;
 	CSocket *mySocket = nullptr;
 
-	JSEncapsulate myClass( cx, &( args.get(0) ));
+	JSEncapsulate myClass( cx, &( args.get(0).get()));
 	if( myClass.ClassName() == "UOXChar" )
 	{
 		if( myClass.isType( JSOT_OBJECT ))
@@ -2218,7 +2222,7 @@ bool SE_TriggerEvent( JSContext *cx, unsigned int argc, JS::Value *vp )
 	if( toExecute == nullptr || eventToFire == "" )
 		return false;
 
-	bool retVal = toExecute->CallParticularEvent( eventToFire.c_str(), &args.get(2), argc - 2, rval);
+	bool retVal = toExecute->CallParticularEvent( eventToFire.c_str(), &args.get(2).get(), argc - 2, rval);
 	return retVal;
 }
 
@@ -3641,7 +3645,7 @@ bool SE_ValidateObject( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, &( args.get(0) ));
+	JSEncapsulate myClass( cx, &( args.get(0).get() ));
 
 	if( myClass.ClassName() == "UOXChar" || myClass.ClassName() == "UOXItem" )
 	{
@@ -3675,12 +3679,12 @@ bool SE_ApplyDamageBonuses( JSContext *cx, unsigned int argc, JS::Value *vp )
 	CChar *attacker	= nullptr, *defender = nullptr;
 	SI16 damage = 0;
 
-	JSEncapsulate damageType( cx, &( args.get(0) ));
-	JSEncapsulate getFightSkill( cx, &( args.get(3) ));
-	JSEncapsulate hitLoc( cx, &( args.get(4) ));
-	JSEncapsulate baseDamage( cx, &(argv [5] ));
+	JSEncapsulate damageType( cx, &( args.get(0).get()));
+	JSEncapsulate getFightSkill( cx, &( args.get(3).get()));
+	JSEncapsulate hitLoc( cx, &( args.get(4).get()));
+	JSEncapsulate baseDamage( cx, &(args.get(5).get()));
 
-	JSEncapsulate attackerClass( cx, &( args.get(1) ));
+	JSEncapsulate attackerClass( cx, &( args.get(1).get()));
 	if( attackerClass.ClassName() != "UOXChar" )	// It must be a character!
 	{
 		ScriptError( cx, "ApplyDamageBonuses: Passed an invalid Character" );
@@ -3702,7 +3706,7 @@ bool SE_ApplyDamageBonuses( JSContext *cx, unsigned int argc, JS::Value *vp )
 		}
 	}
 
-	JSEncapsulate defenderClass( cx, &( args.get(2) ));
+	JSEncapsulate defenderClass( cx, &( args.get(2).get()));
 	if( defenderClass.ClassName() != "UOXChar" ) // It must be a character!
 	{
 		ScriptError( cx, "ApplyDamageBonuses: Passed an invalid Character" );
@@ -3750,13 +3754,13 @@ bool SE_ApplyDefenseModifiers( JSContext *cx, unsigned int argc, JS::Value *vp )
 	CChar *attacker	= nullptr, *defender = nullptr;
 	SI16 damage = 0;
 
-	JSEncapsulate damageType( cx, &( args.get(0) ));
-	JSEncapsulate getFightSkill( cx, &( args.get(3) ));
-	JSEncapsulate hitLoc( cx, &( args.get(4) ));
-	JSEncapsulate baseDamage( cx, &( args.get(5) ));
-	JSEncapsulate doArmorDamage(cx, &( args.get(6) ));
+	JSEncapsulate damageType( cx, &( args.get(0).get()));
+	JSEncapsulate getFightSkill( cx, &( args.get(3).get()));
+	JSEncapsulate hitLoc( cx, &( args.get(4).get()));
+	JSEncapsulate baseDamage( cx, &( args.get(5).get()));
+	JSEncapsulate doArmorDamage(cx, &( args.get(6).get()));
 
-	JSEncapsulate attackerClass( cx, &( args.get(1) ));
+	JSEncapsulate attackerClass( cx, &( args.get(1).get()));
 	if( attackerClass.ClassName() == "UOXChar" )
 	{
 		if( attackerClass.isType( JSOT_VOID ) || attackerClass.isType( JSOT_NULL ))
@@ -3773,7 +3777,7 @@ bool SE_ApplyDefenseModifiers( JSContext *cx, unsigned int argc, JS::Value *vp )
 		}
 	}
 
-	JSEncapsulate defenderClass( cx, &( args.get(2) ));
+	JSEncapsulate defenderClass( cx, &( args.get(2).get()));
 	if( defenderClass.ClassName() != "UOXChar" )	// It must be a character!
 	{
 		ScriptError( cx, "ApplyDefenseModifiers: Passed an invalid Character" );
@@ -3861,7 +3865,7 @@ bool SE_CreateParty( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, &( args.get(0) ));
+	JSEncapsulate myClass( cx, &( args.get(0).get()));
 
 	if( myClass.ClassName() == "UOXChar" || myClass.ClassName() == "UOXSocket" )
 	{	// it's a character or socket, fantastic
@@ -4455,8 +4459,8 @@ bool SE_DeleteFile( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_EraStringToNum( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	args.rval().setNull();
 	auto args = JS::CallArgsFromVp(argc, vp);
+	args.rval().setNull();
 
 	if( argc != 1 )
 	{
@@ -4493,6 +4497,7 @@ bool SE_EraStringToNum( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetCommandLevelVal( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
+	auto args = JS::CallArgsFromVp(argc, vp);
 	args.rval().setNull();
 
 	if( argc != 1 )
@@ -4501,7 +4506,6 @@ bool SE_GetCommandLevelVal( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	auto args = JS::CallArgsFromVp(argc, vp);
 	std::string cmdLvlString = oldstrutil::upper( JS_GetStringBytes( cx, args.get(0) ) );
 	if( !cmdLvlString.empty() )
 	{
@@ -4546,8 +4550,8 @@ bool SE_GetCommandLevelVal( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetServerSetting( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	args.rval().setNull();
 	auto args = JS::CallArgsFromVp(argc, vp);
+	args.rval().setNull();
 
 	if( argc != 1 )
 	{
@@ -5888,6 +5892,7 @@ bool SE_GetServerFeature( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetAccountCount( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
+	auto args = JS::CallArgsFromVp(argc, vp);
 	args.rval().setInt32(  Accounts->size()  );
 	return true;
 }
@@ -5899,6 +5904,7 @@ bool SE_GetAccountCount( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetPlayerCount( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
+	auto args = JS::CallArgsFromVp(argc, vp);
 	args.rval().setInt32(  cwmWorldState->GetPlayersOnline()  );
 	return true;
 }
@@ -5910,6 +5916,7 @@ bool SE_GetPlayerCount( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetItemCount( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
+	auto args = JS::CallArgsFromVp(argc, vp);
 	args.rval().setInt32(  ObjectFactory::GetSingleton().CountOfObjects( OT_ITEM ) );
 	return true;
 }
@@ -5921,6 +5928,7 @@ bool SE_GetItemCount( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetMultiCount( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
+	auto args = JS::CallArgsFromVp(argc, vp);
 	args.rval().setInt32(  ObjectFactory::GetSingleton().CountOfObjects( OT_MULTI ) );
 	return true;
 }
@@ -5932,6 +5940,7 @@ bool SE_GetMultiCount( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetCharacterCount( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
+	auto args = JS::CallArgsFromVp(argc, vp);
 	args.rval().setInt32(  ObjectFactory::GetSingleton().CountOfObjects( OT_CHAR ) );
 	return true;
 }

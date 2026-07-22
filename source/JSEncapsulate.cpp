@@ -36,7 +36,7 @@ JSEncapsulate::JSEncapsulate() : cx( nullptr ), vp( nullptr ), obj( nullptr )
 {
 	InternalReset();
 }
-void JSEncapsulate::SetContext( JSContext *jsCX, jsval *jsVP )
+void JSEncapsulate::SetContext( JSContext *jsCX, const JS::Value *jsVP )
 {
 	cx = jsCX;
 	vp = jsVP;
@@ -76,7 +76,7 @@ void JSEncapsulate::Init( void )
 		nativeType	= JSOT_OBJECT;
 	}
 }
-JSEncapsulate::JSEncapsulate( JSContext *jsCX, jsval *jsVP ) : cx( jsCX ), vp( jsVP ), obj( nullptr )
+JSEncapsulate::JSEncapsulate( JSContext *jsCX, const JS::Value *jsVP ) : cx( jsCX ), vp( jsVP ), obj( nullptr )
 {
 	InternalReset();
 	Init();

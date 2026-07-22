@@ -12,6 +12,7 @@
 #include "UOXJSPropertyEnums.h"
 #include "UOXJSPropertyFuncs.h"
 #include "CJSEngine.h"
+#include "JSEncapsulate.h"
 
 #include "cGuild.h"
 #include "combat.h"

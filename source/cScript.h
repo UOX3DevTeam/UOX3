@@ -182,7 +182,7 @@ private:
 	std::vector<SEGump_st *>		gumpDisplays;
 
 	void		Cleanup( void );
-	bool		InvokeEvent( const char* name, unsigned int argc, JS::Value* argv, JS::Value* rval );
+	bool		InvokeEvent( const char* name, unsigned int argc, const JS::Value* argv, JS::Value* rval );
 
 public:
 	void		CollectGarbage( void );
@@ -305,7 +305,7 @@ public:
 	SI08		OnFacetChange( CChar *mChar, const UI08 oldFacet, const UI08 newFacet );
 
 	bool		AreaObjFunc( const char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s );
-	bool		CallParticularEvent( const char *eventToCall, JS::Value *params, SI32 numParams, JS::Value *eventRetVal );
+	bool		CallParticularEvent( const char *eventToCall, const JS::Value *params, SI32 numParams, JS::Value *eventRetVal );
 
 	bool		ScriptRegistration( std::string scriptType );
 
