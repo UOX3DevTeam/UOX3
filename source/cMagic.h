@@ -1,7 +1,6 @@
 #ifndef __CMAGIC_H__
 #define __CMAGIC_H__
 
-struct Reag_st;
 class CSpellInfo;
 
 struct SpellBookConfig
@@ -34,7 +33,6 @@ public:
 	void DoStaticEffect( CChar *source, SI32 num );
 	void PlaySound( CChar *source, SI32 num );
 	void DelReagents( CChar *s, const CSpellInfo& spell );
-	void DelReagents( CChar *s, Reag_st reags );
 	void ConsumeSpellResources( CSocket *s, CChar *caster, SI08 curSpell );
 	bool CheckMagicSkill( CSocket *s, CChar *caster, SI08 curSpell );
 	void CastSpell( CSocket *s, CChar *caster );	// changed for NPC casting
@@ -45,7 +43,6 @@ public:
 	bool HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id );
 	bool CheckBook( SI32 circle, SI32 spell, CItem *i );
 	bool CheckReagents( CChar *s, const CSpellInfo& spell );
-	bool CheckReagents( CChar *s, const Reag_st *reagents );
 	bool CheckMana( CChar *s, SI32 num );
 	bool CheckStamina( CChar *s, SI32 num );
 	bool CheckHealth( CChar *s, SI32 num );
@@ -69,7 +66,6 @@ public:
 
 private:
 	UI08 GetFieldDir( CChar *s, SI16 x, SI16 y );
-	bool RegMsg( CChar *s, Reag_st failmsg );
 	void LogSpell( std::string spell, CChar *player1, CChar *player2, const std::string &extraInfo );
 	UI32 spellCount;
 

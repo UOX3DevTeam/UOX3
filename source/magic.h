@@ -83,27 +83,6 @@ public:
 	}
 };
 
-struct Reag_st
-{
-	UI08 ginseng;
-	UI08 moss;
-	UI08 drake;
-	UI08 pearl;
-	UI08 silk;
-	UI08 ash;
-	UI08 shade;
-	UI08 garlic;
-	UI08 batwing;
-	UI08 daemonblood;
-	UI08 gravedust;
-	UI08 noxcrystal;
-	UI08 pigiron;
-	Reag_st() : ginseng( 0 ), moss( 0 ), drake( 0 ), pearl( 0 ), silk( 0 ), ash( 0 ), shade( 0 ), garlic( 0 ), batwing( 0 ), daemonblood( 0 ), gravedust( 0 ),
-	noxcrystal( 0 ), pigiron( 0 )
-	{
-	}
-};
-
 struct SpellReagent
 {
 	UI16 itemId;
@@ -128,7 +107,6 @@ private:
 	R64			damageDelay;	// Minimum delay between targeting of a damage spell and the application of damage
 	R64			recoveryDelay;	// Minimum delay between the end of one spellcast and the start of another
 	UI16		action;
-	Reag_st		reags;
 	std::string mantra;
 	std::string strToSay;	// string visualized with targ. system
 	bool		enabled;
@@ -211,18 +189,6 @@ public:
 	SI16 BaseDmg( void ) const
 	{
 		return baseDmg;
-	}
-	Reag_st	Reagants( void ) const
-	{
-		return reags;
-	}
-	Reag_st *ReagantsPtr( void )
-	{
-		return &reags;
-	}
-	const Reag_st *ReagantsPtr( void ) const
-	{
-		return &reags;
 	}
 	const std::vector<SpellReagent>& Reagents( void ) const
 	{

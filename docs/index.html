@@ -9588,13 +9588,6 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 					<div class="spoiler">
 						<p><strong>Location:</strong> <span class="hl">UOX3\dfndata\spells\spells.dfn</span><br>
 						Contains definitions for all spells in the game, their requirements in skills, stats and resources, their words of power and other special properties.</p>
-						<p><span class="hl">REAGENT</span>=<strong>[itemSectionID],[amount],[optionalColour]</strong><br>
-						Adds a custom reagent requirement to the spell. The tag is singular and may be repeated to require multiple reagents. <strong>itemSectionID</strong> identifies an Item DFN section, <strong>amount</strong> must be greater than zero, and the optional colour value restricts the requirement to items with that exact colour. These requirements are checked and consumed in addition to the spell's standard reagent flags.</p>
-<pre><code class="language-javascript">[SPELL 101]
-{
-REAGENT=blackpearl,2
-REAGENT=custom_reagent,1,0x0481
-}</code></pre>
 					</div>
 					<input type="checkbox" id="spoiler_dfnsystem_titles">
 					<label for="spoiler_dfnsystem_titles">titles <i class="fas fa-angle-down"></i></label>
@@ -11454,6 +11447,50 @@ ADDSCRIPT=8000,8001
 							<p><span class="hl">y2</span>=<strong>[y coordinate]</strong><br>
 							Lower right corner of coordinate set</p>
 						</div>
+					</div>
+
+					<input type="checkbox" id="spoiler_dfn_tags_spells">
+					<label for="spoiler_dfn_tags_spells">Spell DFN Tags <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<h4>Example section in Spell DFNs:</h4>
+						<p><pre>[SPELL 101]
+{
+ENABLE=1
+CIRCLE=1
+MANA=10
+LOSKILL=300
+HISKILL=700
+MANTRA=In Vas Custom
+ACTION=17
+DELAY=1.0
+RECOVERYDELAY=1.5
+REAGENT=blackpearl,2
+REAGENT=custom_reagent,1,0x0481
+FLAGS=0x01C9
+}</pre></p>
+						<h4>List of supported tags:</h4>
+						<div class="settingsDiv"><p><span class="hl">action</span>=<strong>[animationID]</strong><br>Animation performed by the caster when casting the spell.</p></div>
+						<div class="settingsDiv"><p><span class="hl">basedmg</span>=<strong>[amount]</strong><br>Base damage or healing value used by the spell implementation.</p></div>
+						<div class="settingsDiv"><p><span class="hl">circle</span>=<strong>[circle]</strong><br>Spell circle used for difficulty and display grouping.</p></div>
+						<div class="settingsDiv"><p><span class="hl">damagedelay</span>=<strong>[seconds]</strong><br>Delay before the damage portion of the spell is applied.</p></div>
+						<div class="settingsDiv"><p><span class="hl">delay</span>=<strong>[seconds]</strong><br>Base casting delay before the spell is completed.</p></div>
+						<div class="settingsDiv"><p><span class="hl">enable</span>=<strong>[0/1]</strong><br>Enables or disables the spell.</p></div>
+						<div class="settingsDiv"><p><span class="hl">flags</span>=<strong>[bitmask]</strong><br>Controls targeting and spell behavior: 0x01 requires a target, 0x02 requires an item target, 0x04 requires a location target, 0x08 requires a character target, 0x10 marks a travel spell, 0x20 marks a field spell, 0x40 permits spell reflection, 0x80 marks an aggressive spell, and 0x100 marks a resistable spell.</p></div>
+						<div class="settingsDiv"><p><span class="hl">health</span>=<strong>[amount]</strong><br>Health cost paid when casting the spell.</p></div>
+						<div class="settingsDiv"><p><span class="hl">hiskill</span>=<strong>[skillpoints]</strong><br>Skill level at which casting reaches its configured maximum success chance.</p></div>
+						<div class="settingsDiv"><p><span class="hl">loskill</span>=<strong>[skillpoints]</strong><br>Minimum skill threshold used by the spell's casting check.</p></div>
+						<div class="settingsDiv"><p><span class="hl">mana</span>=<strong>[amount]</strong><br>Mana cost paid when casting the spell.</p></div>
+						<div class="settingsDiv"><p><span class="hl">mantra</span>=<strong>[text]</strong><br>Words of power spoken while casting the spell.</p></div>
+						<div class="settingsDiv"><p><span class="hl">movefx</span>=<strong>[idByte1 idByte2 speed loop explode]</strong><br>Configures the spell's moving visual effect.</p></div>
+						<div class="settingsDiv"><p><span class="hl">reagent</span>=<strong>[itemSectionID],[amount],[optionalColour]</strong><br>Adds a reagent requirement. This singular tag may be repeated. The item section is resolved through Item DFNs, amount must be greater than zero, and the optional colour requires an exact match.</p></div>
+						<div class="settingsDiv"><p><span class="hl">recoverydelay</span>=<strong>[seconds]</strong><br>Delay after casting before another spell can be started.</p></div>
+						<div class="settingsDiv"><p><span class="hl">schi</span>=<strong>[skillpoints]</strong><br>Upper skill threshold used when casting the spell from a scroll.</p></div>
+						<div class="settingsDiv"><p><span class="hl">sclo</span>=<strong>[skillpoints]</strong><br>Lower skill threshold used when casting the spell from a scroll.</p></div>
+						<div class="settingsDiv"><p><span class="hl">soundfx</span>=<strong>[soundID]</strong><br>Sound effect played by the spell. Old two-byte hexadecimal syntax is also supported.</p></div>
+						<div class="settingsDiv"><p><span class="hl">stamina</span>=<strong>[amount]</strong><br>Stamina cost paid when casting the spell.</p></div>
+						<div class="settingsDiv"><p><span class="hl">statfx</span>=<strong>[idByte1 idByte2 speed loop]</strong><br>Configures the spell's static visual effect.</p></div>
+						<div class="settingsDiv"><p><span class="hl">targ</span>=<strong>[text]</strong><br>Prompt displayed when the spell requests a target.</p></div>
+						<div class="settingsDiv"><p><span class="hl">tithing</span>=<strong>[amount]</strong><br>Tithing-point cost paid when casting the spell.</p></div>
 					</div>
 
 					<input type="checkbox" id="spoiler_dfn_tags_weather">

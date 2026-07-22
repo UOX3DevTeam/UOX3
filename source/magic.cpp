@@ -2937,11 +2937,12 @@ void CMagic::RemoveSpell( CItem *book, SI32 spellNum )
 //o------------------------------------------------------------------------------------------------o
 void CMagic::SpellBook( CSocket *mSock )
 {
-	SERIAL serial = ( mSock->GetDWord( 1 ) & 0x7FFFFFFF );
-	CChar *mChar = mSock->CurrcharObj();
-	CItem *spellBook = CalcItemObjFromSer( serial );
+	SERIAL serial		= ( mSock->GetDWord( 1 ) & 0x7FFFFFFF );
+	CChar *mChar		= mSock->CurrcharObj();
+	CItem *spellBook	= CalcItemObjFromSer( serial );
 
-	// Ensure we have the correct book
+	// A direct open supplies the spellbook serial, so use that exact book. Macros do not
+	// identify a book, so find the first equipped or top-level backpack spellbook instead.
 	if( !ValidateObject( spellBook ))
 	{
 		spellBook = FindSpellBook( mChar );
@@ -3964,75 +3965,10 @@ auto CMagic::MagicTrap( CChar *s, CItem *i ) -> void
 //|	Changes		-	to use reag-st
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check for required reagents in player's backpack.
-//o------------------------------------------------------------------------------------------------o
-bool CMagic::CheckReagents( CChar *s, const Reag_st *reagents )
-{
-	Reag_st failmsg;
-	if( s->NoNeedReags() )
-		return true;
-
-	if( reagents->ash != 0 && GetItemAmount( s, 0x0F8C ) < reagents->ash )
-	{
-		failmsg.ash = 1;
-	}
-	if( reagents->drake!=0 && GetItemAmount( s, 0x0F86 ) < reagents->drake )
-	{
-		failmsg.drake = 1;
-	}
-	if( reagents->garlic != 0 && GetItemAmount( s, 0x0F84 ) < reagents->garlic )
-	{
-		failmsg.garlic = 1;
-	}
-	if( reagents->ginseng != 0 && GetItemAmount( s, 0x0F85 ) < reagents->ginseng )
-	{
-		failmsg.ginseng = 1;
-	}
-	if( reagents->moss != 0 && GetItemAmount( s, 0x0F7B ) < reagents->moss )
-	{
-		failmsg.moss = 1;
-	}
-	if( reagents->pearl != 0 && GetItemAmount( s, 0x0F7A ) < reagents->pearl )
-	{
-		failmsg.pearl = 1;
-	}
-	if( reagents->shade != 0 && GetItemAmount( s, 0x0F88 ) < reagents->shade )
-	{
-		failmsg.shade = 1;
-	}
-	if( reagents->silk != 0 && GetItemAmount( s, 0x0F8D ) < reagents->silk )
-	{
-		failmsg.silk = 1;
-	}
-	if( reagents->batwing != 0 && GetItemAmount( s, 0x0F78 ) < reagents->batwing )
-	{
-		failmsg.batwing = 1;
-	}
-	if( reagents->daemonblood != 0 && GetItemAmount( s, 0x0F7D ) < reagents->daemonblood )
-	{
-		failmsg.daemonblood = 1;
-	}
-	if( reagents->gravedust != 0 && GetItemAmount( s, 0x0F8F ) < reagents->gravedust )
-	{
-		failmsg.gravedust = 1;
-	}
-	if( reagents->noxcrystal != 0 && GetItemAmount( s, 0x0F8E ) < reagents->noxcrystal )
-	{
-		failmsg.noxcrystal = 1;
-	}
-	if( reagents->pigiron != 0 && GetItemAmount( s, 0x0F8A ) < reagents->pigiron  )
-	{
-		failmsg.pigiron = 1;
-	}
-	return RegMsg( s, failmsg );
-}
-
 bool CMagic::CheckReagents( CChar *s, const CSpellInfo& spell )
 {
 	if( s->NoNeedReags() )
 		return true;
-
-	if( !CheckReagents( s, spell.ReagantsPtr() ))
-		return false;
 
 	for( const auto& reagent : spell.Reagents() )
 	{
@@ -4054,95 +3990,6 @@ bool CMagic::CheckReagents( CChar *s, const CSpellInfo& spell )
 //|	Changes		-	display missing reagents types
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Display an error message if character has not enough regs
-//o------------------------------------------------------------------------------------------------o
-bool CMagic::RegMsg( CChar *s, Reag_st failmsg )
-{
-	if( !ValidateObject( s ))
-		return true;
-
-	bool display = false;
-	char message[100] = { 0, };
-
-	// Copy dictionary message into char array
-	strcopy( message, 100, Dictionary->GetEntry( 702 ).c_str() ); // You do not have enough reagents to cast that spell.
-
-	// Create temporary string to hold info on our missing reagents
-	std::string tempString;
-	tempString = " [";
-
-	if( failmsg.ash )
-	{
-		display = true; tempString += "Sa, ";
-	}
-	if( failmsg.drake )
-	{
-		display = true; tempString += "Mr, ";
-	}
-	if( failmsg.garlic )
-	{
-		display = true; tempString += "Ga, ";
-	}
-	if( failmsg.ginseng )
-	{
-		display = true; tempString += "Gi, ";
-	}
-	if( failmsg.moss )
-	{
-		display = true; tempString += "Bm, ";
-	}
-	if( failmsg.pearl )
-	{
-		display = true; tempString += "Bp, ";
-	}
-	if( failmsg.shade )
-	{
-		display = true; tempString += "Ns, ";
-	}
-	if( failmsg.silk )
-	{
-		display = true; tempString += "Ss, ";
-	}
-	if( failmsg.batwing )
-	{
-		display = true; tempString += "Ba, ";
-	}
-	if( failmsg.daemonblood )
-	{
-		display = true; tempString += "Db, ";
-	}
-	if( failmsg.gravedust )
-	{
-		display = true; tempString += "Gd, ";
-	}
-	if( failmsg.noxcrystal )
-	{
-		display = true; tempString += "Nc, ";
-	}
-	if( failmsg.pigiron )
-	{
-		display = true; tempString += "Pi, ";
-	}
-
-	// Append our temporary string to the end of the char array and add an end-bracket
-	mstrcat( message, 100, tempString.c_str() );
-	message[strlen( message ) - 2] = ']';
-
-	if( display )
-	{
-		CSocket *i = s->GetSocket();
-		if( i != nullptr )
-		{
-			i->SysMessage( message );
-		}
-		return false;
-	}
-	return true;
-}
-
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	CMagic::SpellFail()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Do visual and sound effects when a player fails to cast a spell.
 //o------------------------------------------------------------------------------------------------o
 void CMagic::SpellFail( CSocket *s )
 {
@@ -5421,7 +5268,6 @@ void CMagic::LoadScript( void )
 				{
 					++spellCount;
 					spells[i].Enabled( false );
-					Reag_st *mRegs = spells[i].ReagantsPtr();
 
 					//Console.Log( "Spell number: %i", "spell.log", i ); // Disabled for performance reasons
 					for( const auto &sec : SpellLoad->collection() )
@@ -5438,19 +5284,11 @@ void CMagic::LoadScript( void )
 								{
 									spells[i].Action( static_cast<UI16>( std::stoul( data, nullptr, 0 )));
 								}
-								else if( UTag == "ASH" )
-								{
-									mRegs->ash =static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-								}
 								break;
 							case 'B':
 								if( UTag == "BASEDMG" )
 								{
 									spells[i].BaseDmg( static_cast<SI16>( std::stoi( data, nullptr, 0 )));
-								}
-								else if( UTag == "BATWING" )
-								{
-									mRegs->batwing =static_cast<UI08>( std::stoul( data, nullptr, 0 ));
 								}
 								break;
 							case 'C':
@@ -5467,14 +5305,6 @@ void CMagic::LoadScript( void )
 								else if( UTag == "DELAY" )
 								{
 									spells[i].Delay( static_cast<R64>( std::stod( data )));
-								}
-								else if( UTag == "DAEMONBLOOD" )
-								{
-									mRegs->daemonblood =static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-								}
-								else if( UTag == "DRAKE" )
-								{
-									mRegs->drake = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
 								}
 								break;
 							case 'E':
@@ -5500,18 +5330,6 @@ void CMagic::LoadScript( void )
 								}
 								break;
 							case 'G':
-								if( UTag == "GARLIC" )
-								{
-									mRegs->garlic  = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-								}
-								else if( UTag == "GINSENG" )
-								{
-									mRegs->ginseng = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-								}
-								else if( UTag == "GRAVEDUST" )
-								{
-									mRegs->gravedust =static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-								}
 								break;
 							case 'H':
 								if( UTag == "HISKILL" )
@@ -5538,10 +5356,6 @@ void CMagic::LoadScript( void )
 								{
 									spells[i].Mantra( data );
 								}
-								else if( UTag == "MOSS" )
-								{
-									mRegs->moss = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-								}
 								else if( UTag == "MOVEFX" )
 								{
 									auto ssecs = oldstrutil::sections( data, " " );
@@ -5556,20 +5370,8 @@ void CMagic::LoadScript( void )
 								}
 								break;
 							case 'N':
-								if( UTag == "NOXCRYSTAL" )
-								{
-									mRegs->noxcrystal =static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-								}
 								break;
 							case 'P':
-								if( UTag == "PEARL" )
-								{
-									mRegs->pearl = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-								}
-								else if( UTag == "PIGIRON" )
-								{
-									mRegs->pigiron = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-								}
 								break;
 							case 'R':
 								if( UTag == "RECOVERYDELAY" )
@@ -5603,15 +5405,7 @@ void CMagic::LoadScript( void )
 								}
 								break;
 							case 'S':
-								if( UTag == "SHADE" )
-								{
-									mRegs->shade = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-								}
-								else if( UTag == "SILK" )
-								{
-									mRegs->silk = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-								}
-								else if( UTag == "SOUNDFX" )
+								if( UTag == "SOUNDFX" )
 								{
 									auto ssecs = oldstrutil::sections( data, " " );
 									if( ssecs.size() > 1 )
@@ -5686,30 +5480,8 @@ void CMagic::LoadScript( void )
 //|	Function	-	CMagic::DelReagents()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes the specified amount of reagents when a spell is cast
-//o------------------------------------------------------------------------------------------------o
-void CMagic::DelReagents( CChar *s, Reag_st reags )
-{
-	if( s->NoNeedReags() )
-		return;
-
-	DeleteItemAmount( s, reags.pearl, 0x0F7A );
-	DeleteItemAmount( s, reags.moss, 0x0F7B );
-	DeleteItemAmount( s, reags.garlic, 0x0F84 );
-	DeleteItemAmount( s, reags.ginseng, 0x0F85 );
-	DeleteItemAmount( s, reags.drake, 0x0F86 );
-	DeleteItemAmount( s, reags.shade, 0x0F88 );
-	DeleteItemAmount( s, reags.ash, 0x0F8C  );
-	DeleteItemAmount( s, reags.silk, 0x0F8D );
-	DeleteItemAmount( s, reags.batwing, 0x0F78 );
-	DeleteItemAmount( s, reags.daemonblood, 0x0F7D );
-	DeleteItemAmount( s, reags.gravedust, 0x0F8F );
-	DeleteItemAmount( s, reags.noxcrystal, 0x0F8E );
-	DeleteItemAmount( s, reags.pigiron, 0x0F8A );
-}
-
 void CMagic::DelReagents( CChar *s, const CSpellInfo& spell )
 {
-	DelReagents( s, spell.Reagants() );
 	if( s->NoNeedReags() )
 		return;
 
