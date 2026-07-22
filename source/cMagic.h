@@ -22,6 +22,8 @@ public:
 	void AddSpell( CItem *book, SI32 spellNum );
 	void RemoveSpell( CItem *book, SI32 spellNum );
 	SpellBookConfig GetSpellBookConfig( CItem *book ) const;
+	bool IsSpellBook( CItem *book ) const;
+	CItem *FindSpellBook( CChar *character, SI32 spellNum = -1 ) const;
 
 	void LoadScript( void ); // adding function for spell system "cache"
 	void SpellBook( CSocket *mSock );

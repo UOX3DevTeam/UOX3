@@ -1003,22 +1003,7 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 							// Determine the spell number from the buffer
 							SI32 book = static_cast<SI32>( std::stol( std::string(( char* )&buffer[4] )));
 
-							// Try to find both regular and Paladin spellbooks
-							CItem *sBook = FindItemOfType( ourChar, IT_SPELLBOOK );
-							CItem *pBook = FindItemOfType( ourChar, IT_PALADINBOOK );
-							CItem *nBook = FindItemOfType( ourChar, IT_NECROBOOK );
-							CItem *activeBook = nullptr;
-
-							CItem *availableBooks[] = { sBook, nBook, pBook };
-							for( auto spellBook : availableBooks )
-							{
-								auto bookConfig = Magic->GetSpellBookConfig( spellBook );
-								if( bookConfig.valid && book >= bookConfig.firstSpell && book < bookConfig.firstSpell + bookConfig.spellCount )
-								{
-									activeBook = spellBook;
-									break;
-								}
-							}
+							CItem *activeBook = Magic->FindSpellBook( ourChar, book );
 
 							if( !ValidateObject( activeBook )) // No valid book found
 							{

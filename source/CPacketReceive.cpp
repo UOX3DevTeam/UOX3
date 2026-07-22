@@ -5869,48 +5869,22 @@ void CPISpellbookSelect::Receive( void )
 bool CPISpellbookSelect::Handle( void )
 {
 	CChar *ourChar = tSock->CurrcharObj();
-	CItem *sBook = FindItemOfType( ourChar, IT_SPELLBOOK );
-	CItem *pBook = FindItemOfType( ourChar, IT_PALADINBOOK );
-	CItem *nBook = FindItemOfType( ourChar, IT_NECROBOOK );
 	CItem *packItem = ourChar->GetPackItem();
+	SI32 spellNumber = tSock->GetWord( 7 );
+	CItem *activeBook = Magic->FindSpellBook( ourChar, spellNumber );
 
-	if( !ValidateObject( sBook ) && !ValidateObject( pBook ) && !ValidateObject( nBook ))
+	if( !ValidateObject( activeBook ))
 	{
 		tSock->SysMessage( 765 ); // "To cast spells, your spellbook must be in your hands or in the first layer of your pack."
 		return true;
 	}
 
 	// Validate location
-	bool validLoc = 
-		( ValidateObject( sBook ) && 
-		 ( sBook->GetCont() == ourChar || ( ValidateObject( packItem ) && sBook->GetCont() == packItem ))) ||
-		( ValidateObject(pBook ) && 
-		 ( pBook->GetCont() == ourChar || ( ValidateObject( packItem ) && pBook->GetCont() == packItem ))) ||
-		( ValidateObject(nBook ) && 
-		 ( nBook->GetCont() == ourChar || ( ValidateObject( packItem ) && nBook->GetCont() == packItem )));
+	bool validLoc = activeBook->GetCont() == ourChar || ( ValidateObject( packItem ) && activeBook->GetCont() == packItem );
 
 	if( !validLoc )
 	{
 		tSock->SysMessage( 765 ); // "Your spellbook must be equipped or in your pack."
-		return true;
-	}
-
-	CItem *activeBook = nullptr;
-	SI32 spellNumber = tSock->GetWord( 7 );
-	CItem *availableBooks[] = { sBook, nBook, pBook };
-	for( auto book : availableBooks )
-	{
-		auto bookConfig = Magic->GetSpellBookConfig( book );
-		if( bookConfig.valid && spellNumber >= bookConfig.firstSpell && spellNumber < bookConfig.firstSpell + bookConfig.spellCount )
-		{
-			activeBook = book;
-			break;
-		}
-	}
-
-	if( !ValidateObject( activeBook ))
-	{
-		tSock->SysMessage( 764 ); // "You do not have that spell."
 		return true;
 	}
 

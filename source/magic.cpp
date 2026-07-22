@@ -2765,6 +2765,44 @@ SpellBookConfig CMagic::GetSpellBookConfig( CItem *book ) const
 	}
 }
 
+bool CMagic::IsSpellBook( CItem *book ) const
+{
+	return GetSpellBookConfig( book ).valid;
+}
+
+CItem *CMagic::FindSpellBook( CChar *character, SI32 spellNum ) const
+{
+	if( !ValidateObject( character ))
+		return nullptr;
+
+	auto matchesSpell = [this, spellNum]( CItem *book )
+	{
+		auto bookConfig = GetSpellBookConfig( book );
+		return bookConfig.valid && ( spellNum < 0 ||
+			( spellNum >= bookConfig.firstSpell && spellNum < bookConfig.firstSpell + bookConfig.spellCount ));
+	};
+
+	for( CItem *item = character->FirstItem(); !character->FinishedItems(); item = character->NextItem() )
+	{
+		if( !ValidateObject( item ))
+			continue;
+
+		if( matchesSpell( item ))
+			return item;
+
+		if( item->GetLayer() == IL_PACKITEM )
+		{
+			for( const auto &packItem : item->GetContainsList()->collection() )
+			{
+				if( ValidateObject( packItem ) && matchesSpell( packItem ))
+					return packItem;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMagic::HasSpell()
 //o------------------------------------------------------------------------------------------------o
@@ -2910,15 +2948,7 @@ void CMagic::SpellBook( CSocket *mSock )
 	// Ensure we have the correct book
 	if( !ValidateObject( spellBook ))
 	{
-		spellBook = FindItemOfType( mChar, IT_SPELLBOOK );
-		if( !ValidateObject( spellBook ))
-		{
-			spellBook = FindItemOfType( mChar, IT_PALADINBOOK );
-		}
-		if( !ValidateObject( spellBook ))
-		{
-			spellBook = FindItemOfType( mChar, IT_NECROBOOK ); // Check for Necromancer book
-		}
+		spellBook = FindSpellBook( mChar );
 	}
 
 	if( !ValidateObject( spellBook )) // Still no book found

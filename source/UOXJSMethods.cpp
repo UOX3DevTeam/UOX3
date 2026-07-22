@@ -3399,41 +3399,8 @@ JSBool CMisc_HasSpell( JSContext *cx, uintN argc, jsval *vp )
 			return JS_FALSE;
 		}
 
-		// Find spellbooks
-		CItem *spellBook = FindItemOfType( myChar, IT_SPELLBOOK );
-		CItem *paladinBook = FindItemOfType( myChar, IT_PALADINBOOK );
-		CItem *necroBook = FindItemOfType( myChar, IT_NECROBOOK );
-
-		// If neither book is present, return false
-		if( !ValidateObject( spellBook ) && !ValidateObject( paladinBook ) && !ValidateObject( necroBook ))
-		{
-			JS_SET_RVAL( cx, vp, JS_FALSE );
-			return JS_TRUE;
-		}
-
-		// Determine the active book and offset
-		CItem *activeBook = nullptr;
-		int offset = 0;
-
-		if( spellId >= 101 && spellId <= 117 && ValidateObject( necroBook ))
-		{
-			activeBook = necroBook;
-			offset = 100; // Necro spell offset
-		}
-
-		if( spellId >= 201 && spellId <= 210 && ValidateObject( paladinBook ))
-		{
-			activeBook = paladinBook;
-			offset = 200; // Paladin spell offset
-		}
-		else if( spellId >= 1 && spellId <= 64 && ValidateObject( spellBook ))
-		{
-			activeBook = spellBook;
-			offset = 0; // Regular spell offset
-		}
-
-		// Check if the spell exists in the active book
-		if( activeBook && Magic->HasSpell( activeBook, spellId - offset ))
+		CItem *activeBook = Magic->FindSpellBook( myChar, spellId );
+		if( ValidateObject( activeBook ) && Magic->HasSpell( activeBook, spellId ))
 		{
 			JS_SET_RVAL(cx, vp, JS_TRUE );
 		}
@@ -3482,7 +3449,7 @@ JSBool CMisc_RemoveSpell( JSContext *cx, uintN argc, jsval *vp )
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	jsval *argv = JS_ARGV( cx, vp );
 	JSEncapsulate myClass( cx, obj );
-	UI08 spellId = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	SI32 spellId = static_cast<SI32>( JSVAL_TO_INT( argv[0] ));
 
 	if( myClass.ClassName() == "UOXChar" )
 	{
@@ -3493,7 +3460,7 @@ JSBool CMisc_RemoveSpell( JSContext *cx, uintN argc, jsval *vp )
 			return JS_FALSE;
 		}
 
-		CItem *myItem = FindItemOfType( myChar, IT_SPELLBOOK );
+		CItem *myItem = Magic->FindSpellBook( myChar, spellId );
 
 		if( ValidateObject( myItem ))
 		{
@@ -7446,10 +7413,10 @@ JSBool CChar_AddSpell( JSContext *cx, uintN argc, jsval *vp )
 
 	CChar *myChar	= static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	SI32 spellNum	= static_cast<SI32>( JSVAL_TO_INT( argv[0] ));
-	CItem *sBook	= FindItemOfType( myChar, IT_SPELLBOOK );
-	if( ValidateObject( sBook ))
+	CItem *spellBook = Magic->FindSpellBook( myChar, spellNum );
+	if( ValidateObject( spellBook ))
 	{
-		Magic->AddSpell( sBook, spellNum );
+		Magic->AddSpell( spellBook, spellNum );
 	}
 	return JS_TRUE;
 }
