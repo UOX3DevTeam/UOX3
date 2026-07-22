@@ -3023,7 +3023,9 @@ void CMagic::SpellBook( CSocket *mSock )
 		{
 			if( spellsList[i] )
 			{
-				mItems.Add( runningCounter++, 0x41000000 + ( startSpell + i ), containerSerial, startSpell + i );
+				const SI32 spellNumber = startSpell + i;
+				// Legacy clients expect a zero-based pseudo-item serial and the actual spell ID as its amount.
+				mItems.Add( runningCounter++, 0x41000000 + i, containerSerial, static_cast<UI08>( spellNumber ));
 			}
 		}
 		mSock->Send( &mItems );
