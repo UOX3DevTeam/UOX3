@@ -693,15 +693,15 @@ function DispatchSpell(spellNum, mSpell, sourceChar, ourTarg, caster)
 		mob.SetTag("animated", 1);
 		mob.SetTag("animatedBy", caster.serial);
 
-		// Attach your animate-dead script (AI+timers); 3229 is what you showed
-		mob.AddScriptTrigger(3229);
+		// Attach the Animate Dead AI and timer script
+		mob.AddScriptTrigger(3250);
 
 		// Mark corpse & make it look drained
 		ourTarg.colour = 1109;
 		ourTarg.SetTag("animated", true);
 
-		// Life span: keep your 24h kill timer (ID=1 in your 3229 file), plus soft HP decay pings
-		mob.StartTimer(86400000, 1, 3229);
+		// Life span: keep the 24-hour kill timer, plus soft HP decay pings
+		mob.StartTimer(86400000, 1, 3250);
 		StartAnimateDecay(mob);
 
 		// Track and enforce cap 3 (OSI nukes an old one if you create another)
@@ -1061,19 +1061,19 @@ function TrackAnimatedAndCullIfNeeded(pChar, newSer){
         var oldMob = CalcCharFromSer(oldSer);
         if (ValidateObject(oldMob)){
             // visually poof then kill
-            oldMob.StartTimer(50, 1, 3229); // your 3229 script handles timed kill; this nudges it
+			oldMob.StartTimer(50, 1, 3250); // Animate Dead script handles the timed kill
             oldMob.Kill();
         }
     }
     SetAnimatedList(pChar, list);
 }
 
-/** gentle HP decay every few seconds; attach as tag so 3229 can also read if desired */
+/** gentle HP decay every few seconds; attach as tag so the Animate Dead script can also read if desired */
 function StartAnimateDecay(mob)
 {
 	// tick every 5s for ~5 HP; adjust to taste
 	mob.SetTag("ad_decay", 1);
-	mob.StartTimer(5000, 2, 3229); // your 3229 can check timerID==2 to do: mob.health = Math.max(1, mob.health-5)
+	mob.StartTimer(5000, 2, 3250);
 }
 
 // ---------- Animate Dead: spawn mapping ----------

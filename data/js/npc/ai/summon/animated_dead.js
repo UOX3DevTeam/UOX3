@@ -46,7 +46,7 @@ function onTimer( mChar, timerID )
 			if (mChar.GetTag("ad_decay"))
 			{
 				mChar.health = Math.max(1, mChar.health - 5);
-				mChar.StartTimer(5000, 2, 3229);
+				mChar.StartTimer(5000, 2, 3250);
 			}
 			break;
 	}
