@@ -17,7 +17,7 @@ function onUseChecked( pUser, iUsed )
 				{
 					var tempFollower = followerList[i];
 					// Only teleport pets if set to follow and within range
-					if( ValidateObject( tempFollower ) && tempFollower.wandertype == 1 && tempFollower.InRange( pChar, 24 ))
+					if( ValidateObject( tempFollower ) && tempFollower.wandertype == 1 && tempFollower.InRange( pUser, 24 ))
 					{
 						tempFollower.Teleport( otherGate );
 						tempFollower.Follow( pUser );

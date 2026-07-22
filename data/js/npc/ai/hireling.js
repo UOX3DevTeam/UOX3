@@ -1352,13 +1352,34 @@ function PatrolArea( socket, pChar, myTarget )
 		hireling.SetTag( "pathMode", "patrolling" );
 		var targX = socket.GetWord( 11 );
 		var targY = socket.GetWord( 13 );
+		var targZ = socket.GetSByte( 16 );
+		var tileID = socket.GetWord( 17 );
+
+		// If connected with a client lower than v7.0.9, manually add height of targeted tile
+		if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+		{
+			targZ += GetTileHeight( tileID );
+		}
+		else
+		{
+			// Newer clients natively add full height to the target Z, but if
+			// a tile has TF_CLIMBABLE flag set, we follow what server normally does,
+			// i.e. divide the the tile's height by half to get the surface Z
+			if( CheckTileFlag( tileID, 10 )) // 10 = TF_CLIMBABLE
+			{
+				// GetTileHeight() returns the halved height for climbable tiles, so
+				// subtract the result from targZ to get correct target Z
+				targZ -= GetTileHeight( tileID );
+			}
+		}
 		hireling.SetTag( "origPosX", hireling.x );
 		hireling.SetTag( "origPosY", hireling.y );
+		hireling.SetTag( "origPosZ", hirelingz );
 
 		// Calculate distance hireling needs to cover, then double it for max pathfinding steps
 		var maxSteps = DistanceBetween( hireling.x, hireling.y, targX, targY ) * 2;
 
-		hireling.WalkTo( targX, targY, maxSteps );
+		hireling.WalkTo( targX, targY, targZ, maxSteps );
 	}
 }
 
@@ -1374,6 +1395,7 @@ function onPathfindEnd( hireling, pathfindResult )
 			hireling.SetTag( "patrolStop", null );
 			hireling.SetTag( "origPosX", null );
 			hireling.SetTag( "origPosY", null );
+			hireling.SetTag( "origPosZ", null );
 			return;
 		}
 
@@ -1450,13 +1472,15 @@ function onPathfindEnd( hireling, pathfindResult )
 					// Continue patrolling
 					var targX = hireling.GetTag( "origPosX" );
 					var targY = hireling.GetTag( "origPosY" );
+					var targZ = hireling.GetTag( "origPosZ" );
 					hireling.SetTag( "origPosX", hireling.x );
 					hireling.SetTag( "origPosY", hireling.y );
+					hireling.SetTag( "origPosZ", hireling.z );
 
 					// Calculate distance hireling needs to cover, then double it for max pathfinding steps
 					var maxSteps = DistanceBetween( hireling.x, hireling.y, targX, targY ) * 2;
 
-					hireling.WalkTo( targX, targY, maxSteps );
+					hireling.WalkTo( targX, targY, targZ, maxSteps );
 				}
 				else if( pathMode == "guarding" )
 				{

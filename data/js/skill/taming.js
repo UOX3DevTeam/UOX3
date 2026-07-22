@@ -244,6 +244,8 @@ function CheckTameSuccess( pUser, toTame )
 			pUser.target 	= null;
 			pUser.atWar	 	= false;
 		}
+
+		TriggerEvent( 5800, "CreatureTamed", pUser, toTame );
 		return true;
 	}
 }

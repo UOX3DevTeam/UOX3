@@ -1,0 +1,27 @@
+{
+  "questID": 6,
+  "title": "A clockwork puzzle",
+  "description": "'Tis a riddle, you see! What kind of clock is only right twice per day? A broken one! laughs heartily Ah, yes *wipes eye*, that's one of my favorites! Ah... to business. Could you fashion me some clock parts? I wish my own clocks to be right all the day long! You'll need some tinker's tools and some iron ingots, I think, but from there it should be just a matter of working the metal.",
+  "uncomplete": "You're not quite done yet.  Get back to work!",
+  "complete": "Wonderful! Tick tock, tick tock, soon all shall be well with grandfather's clock!",
+  "refuse": "Or perhaps you'd rather not.",
+  "type": "collect",
+  "category": "Side Quests",
+  "oneTimeQuest": 1,
+  "questTurnIn": 1,
+  "targetItems": [
+    {
+      "sectionID": "0x104F",
+      "amount": 5,
+      "name": "Clock Parts"
+    }
+  ],
+  "rewards": [
+    {
+      "type": "item",
+      "sectionID": "tinkerssatchel",
+      "amount": 1,
+      "name": "Craftsman's Satchel"
+    }
+  ]
+}

@@ -2,6 +2,9 @@
 // @ts-check
 // Global Script
 // Supported Events trigger for every character/item, use with care
+const questSystemEnabled = GetServerSetting( "QuestSystemEnabled" );
+const loginQuestEnabled = GetServerSetting( "LoginQuestEnabled" );
+
 /** @type { ( sockPlayer: Socket, pPlayer: Character ) => boolean } */
 function onLogin( socket, pChar )
 {
@@ -73,6 +76,28 @@ function onLogin( socket, pChar )
 		var timeLeft = Math.round(( disguiseKitTime - currentTime ) / 1000 );
 		TriggerEvent( 2204, "RemoveBuff", pChar, 1033 );
 		TriggerEvent( 2204, "AddBuff", pChar, 1033, 1075821, 1075820, timeLeft, "" );
+	}
+
+	// Attach OnQuest Toggle
+	if( questSystemEnabled && !pChar.HasScriptTrigger( 5805 ) )
+	{
+		pChar.AddScriptTrigger( 5805 );
+	}
+
+	// Repair and validate active quests on login
+	if( questSystemEnabled )
+	{
+		TriggerEvent( 5800, "ValidateTimedQuestsOnLogin", pChar );
+		TriggerEvent( 5800, "RestoreQuestPlayerTriggersOnLogin", pChar );
+		TriggerEvent( 5800, "ValidateEscortQuestsOnLogin", pChar );
+		TriggerEvent( 5800, "ValidateGuidedWalkQuestsOnLogin", pChar );
+		TriggerEvent( 5800, "ValidateRaceQuestsOnLogin", pChar );
+	}
+
+	if( questSystemEnabled && loginQuestEnabled )
+	{
+		// Show the login quest gump
+		TriggerEvent( 5813, "LoginQuest", pChar );
 	}
 }
 
@@ -260,4 +285,20 @@ function onUseBandageMacro( pSock, targChar, bandageItem )
 		}
 	}
 	return true;
+}
+
+/** @type { ( mChar: Character ) => boolean } */
+function onQuestGump( pUser ) 
+{
+	if( questSystemEnabled )
+	{
+		if( ValidateObject( pUser ) && !pUser.dead )
+		{
+			TriggerEvent( 5803, "QuestMenu", pUser );
+		}
+		else
+		{
+			pUser.SysMessage( "Something is wrong, pUser is not valid or is dead." );
+		}
+	}
 }

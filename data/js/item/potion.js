@@ -135,7 +135,7 @@ function onUseChecked( pUser, iUsed )
 					if( iUsed.amount > 1 )
 					{
 						// Stack of potions
-						var explosionPotion = iUsed.Dupe( socket );
+						var explosionPotion = iUsed.Dupe( pSocket );
 						explosionPotion.amount = 1;
 						if( ValidateObject( explosionPotion ))
 						{
@@ -295,10 +295,17 @@ function onUseChecked( pUser, iUsed )
 					default:
 						break;
 				}
-				pUser.StaticEffect( 0x376A, 0x09, 0x06 );
-				pUser.SoundEffect( 0x01E7, true );
-				pUser.isUsingPotion = true;
-				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion
+				break;
+			case 11:		// Elixir of Rebirth Potion
+				switch( iUsed.morez )
+				{
+					case 1:
+						pSocket.tempObj = iUsed;
+						pSocket.CustomTarget( 2, "Which pet do you wish to revive?" ); //"Which pet do you wish to revive?"
+						break;
+					default:
+						break;
+				}
 				break;
 			default:
 				break;
@@ -409,14 +416,17 @@ function onCallback1( socket, ourObj )
 	if( ourObj.GetTag( "isBondedPet" ))
 	{
 		socket.SysMessage( GetDictionaryEntry( 19320, socket.language )); // That pet is already bonded to you.
+		return;
 	}
-	else if( ourObj.owner != mChar )
+	else if( ourObj.owner != pUser )
 	{
 		socket.SysMessage( GetDictionaryEntry( 19321, socket.language )); // This is not your pet!
+		return;
 	}
 	else
 	{
 		ourObj.SetTag( "isBondedPet", true );
+		ourObj.Refresh();
 		socket.SysMessage( GetDictionaryEntry( 19308, socket.language )); // Your pet has bonded with you!
 		if( iUsed && iUsed.isItem )
 		{
@@ -429,6 +439,68 @@ function onCallback1( socket, ourObj )
 				iUsed.Delete();
 			}
 		}
+		ourObj.StaticEffect( 0x376A, 0x09, 0x06 );
+		pUser.SoundEffect( 0x01E7, true );
+		pUser.isUsingPotion = true;
+		DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion
+
+		// Create empty bottle
+		var eBottle = CreateDFNItem( socket, pUser, "0x0F0E", 1, "ITEM", true );
+		if( eBottle && eBottle.isItem )
+		{
+			eBottle.decayable = true;
+		}
+	}
+}
+
+/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+function onCallback2( socket, ourObj )
+{
+	var pUser = socket.currentChar;
+	var iUsed = socket.tempObj;
+	var now = GetCurrentClock();
+	var deathTime = parseInt( ourObj.GetTempTag( "bondedPetDeathTime" )) || 0;
+	var waitTime = 10 * 60 * 1000; // 10 minutes in ms
+	var cancelCheck = parseInt( socket.GetByte( 11 ));
+	if( cancelCheck == 255 )
+	{
+		return;
+	}
+
+	if( ourObj.GetTag( "isPetDead" ) == false)
+	{
+		socket.SysMessage( "This may only be used to resurrect dead pets." ); // This may only be used to resurrect dead pets.
+		return;
+	}
+	else if( ourObj.region.id == 42 ) // Khaldun, resurrection not allowed
+	{
+		socket.SysMessage( "The veil of death in this area is too strong and resists thy efforts to restore life." );
+		return;
+	}
+	else if(( now - deathTime ) < waitTime )
+	{
+		socket.SysMessage( GetDictionaryEntry( 19340, socket.language )); // That creature's spirit lacks cohesion. Try again in a few minutes.
+		return;
+	}
+	else
+	{
+		TriggerEvent( 4000,	"ResurrectBondedPet",socket, ourObj );
+		ourObj.StaticEffect( 0x376A, 10, 16 );
+		ourObj.SoundEffect( 0x214, true );
+		socket.SysMessage( GetDictionaryEntry( 19306, socket.language )); // You successfully resurrected the pet!
+		if( iUsed && iUsed.isItem )
+		{
+			if( iUsed.amount > 1 )
+			{
+				iUsed.amount--;
+			}
+			else
+			{
+				iUsed.Delete();
+			}
+		}
+		pUser.isUsingPotion = true;
+		DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion
 
 		// Create empty bottle
 		var eBottle = CreateDFNItem( socket, pUser, "0x0F0E", 1, "ITEM", true );

@@ -108,10 +108,10 @@ UI16 getScriptID( JSContext *cx, jsid id, JSPrototypes section )
 		auto str = JSID_TO_STRING( id );
 		char* chars = JS_EncodeString( cx, str );
 		propID = GetPropByName( section, chars );
-		if( propID == 0xFFFF )
+		/*if( propID == 0xFFFF )
 		{
 			Console.Log( oldstrutil::format( "String property '%s' found on object type %d in script %d", chars, section, JSMapping->currentActive()->GetScriptID() ), "warning.log");
-		}
+		}*/
 		js_free( chars );
 	}
 	else if( JSID_IS_INT( id ) )
@@ -2069,6 +2069,9 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval
 			case CCP_FX2:			*vp = INT_TO_JSVAL( gPriv->GetFx( 1 ));				break;
 			case CCP_FY2:			*vp = INT_TO_JSVAL( gPriv->GetFy( 1 ));				break;
 			case CCP_FZ:			*vp = INT_TO_JSVAL( gPriv->GetFz() );				break;
+			case CCP_SPAWNX:		*vp = INT_TO_JSVAL( gPriv->GetSpawnX() );			break;
+			case CCP_SPAWNY:		*vp = INT_TO_JSVAL( gPriv->GetSpawnY() );			break;
+			case CCP_SPAWNZ:		*vp = INT_TO_JSVAL( gPriv->GetSpawnZ() );			break;
 			case CCP_PATHTARGX:		*vp = INT_TO_JSVAL( gPriv->GetPathTargX() );		break;
 			case CCP_PATHTARGY:		*vp = INT_TO_JSVAL( gPriv->GetPathTargY() );		break;
 			case CCP_ISONHORSE:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsOnHorse() );		break;
@@ -2173,6 +2176,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval
 			case CCP_AITYPE:		*vp = INT_TO_JSVAL( gPriv->GetNpcAiType() );				break;
 			case CCP_SPLIT:			*vp = INT_TO_JSVAL( gPriv->GetSplit() );					break;
 			case CCP_SPLITCHANCE:	*vp = INT_TO_JSVAL( gPriv->GetSplitChance() );				break;
+			case CCP_VENDORGOLDHELD:*vp = INT_TO_JSVAL( gPriv->GetHoldG() );					break;
 			case CCP_TRAINER:		*vp = BOOLEAN_TO_JSVAL( gPriv->CanTrain() );				break;
 			case CCP_HIRELING:		*vp = BOOLEAN_TO_JSVAL( gPriv->CanBeHired() );				break;
 			case CCP_WEIGHT:		*vp = INT_TO_JSVAL( gPriv->GetWeight() );					break;
@@ -2181,6 +2185,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval
 			case CCP_MAGICREFLECT:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsTempReflected() );			break;
 			case CCP_PERMMAGICREFLECT:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsPermReflected() );		break;
 			case CCP_HIDEFAMEKARMATITLE: *vp = BOOLEAN_TO_JSVAL( gPriv->HideFameKarmaTitle() );	break;
+			case CCP_NOCHARCOLLIDE: *vp = BOOLEAN_TO_JSVAL( gPriv->NoCharCollide() );		    break;
 			case CCP_TAMED:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsTamed() );					break;
 			case CCP_TAMEDHUNGERRATE: *vp = INT_TO_JSVAL( gPriv->GetTamedHungerRate() );		break;
 			case CCP_TAMEDTHIRSTRATE: *vp = INT_TO_JSVAL( gPriv->GetTamedThirstRate() );		break;
@@ -2608,8 +2613,12 @@ JSBool CCharacterProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBoo
 			case CCP_FX2:			gPriv->SetFx( static_cast<SI16>( encaps.toInt() ), 1 );	break;
 			case CCP_FY2:			gPriv->SetFy( static_cast<SI16>( encaps.toInt() ), 1 );	break;
 			case CCP_FZ:			gPriv->SetFz( static_cast<SI08>( encaps.toInt() ));		break;
+			case CCP_SPAWNX:		gPriv->SetSpawnX( static_cast<SI16>( encaps.toInt() ));	break;
+			case CCP_SPAWNY:		gPriv->SetSpawnY( static_cast<SI16>( encaps.toInt() ));	break;
+			case CCP_SPAWNZ:		gPriv->SetSpawnZ( static_cast<SI08>( encaps.toInt() ));	break;
 			case CCP_PATHTARGX:		gPriv->SetPathTargX( static_cast<UI16>( encaps.toInt() ));		break;
 			case CCP_PATHTARGY:		gPriv->SetPathTargY( static_cast<UI16>( encaps.toInt() ));		break;
+			case CCP_ISONHORSE:		gPriv->SetOnHorse( encaps.toBool() );					break;
 			case CCP_TDEXTERITY:	gPriv->SetDexterity2( encaps.toInt() );					break;
 			case CCP_TINTELLIGENCE:	gPriv->SetIntelligence2( encaps.toInt() );				break;
 			case CCP_TSTRENGTH:		gPriv->SetStrength2( encaps.toInt() );					break;
@@ -2686,6 +2695,7 @@ JSBool CCharacterProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBoo
 			case CCP_AITYPE:		gPriv->SetNPCAiType( static_cast<SI16>( encaps.toInt() ));	break;
 			case CCP_SPLIT:			gPriv->SetSplit( static_cast<UI08>( encaps.toInt() ));		break;
 			case CCP_SPLITCHANCE:	gPriv->SetSplitChance( static_cast<UI08>( encaps.toInt() ));break;
+			case CCP_VENDORGOLDHELD:gPriv->SetHoldG( static_cast<UI32>( encaps.toInt() ));		break;
 			case CCP_HIRELING:		gPriv->SetCanHire( encaps.toBool() );						break;
 			case CCP_TRAINER:		gPriv->SetCanTrain( encaps.toBool() );						break;
 			case CCP_WEIGHT:		gPriv->SetWeight( static_cast<SI32>( encaps.toInt() ));		break;
@@ -2693,6 +2703,7 @@ JSBool CCharacterProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBoo
 			case CCP_MAGICREFLECT:	gPriv->SetTempReflected( encaps.toBool() );					break;
 			case CCP_PERMMAGICREFLECT:	gPriv->SetPermReflected( encaps.toBool() );				break;
 			case CCP_HIDEFAMEKARMATITLE: gPriv->HideFameKarmaTitle( encaps.toBool() );			break;
+			case CCP_NOCHARCOLLIDE: gPriv->NoCharCollide( encaps.toBool() );					break;
 			case CCP_TAMED:			gPriv->SetTamed( encaps.toBool() );							break;
 			case CCP_TAMEDHUNGERRATE: gPriv->SetTamedHungerRate( static_cast<UI16>( encaps.toInt() )); break;
 			case CCP_TAMEDTHIRSTRATE: gPriv->SetTamedThirstRate( static_cast<UI16>( encaps.toInt() )); break;

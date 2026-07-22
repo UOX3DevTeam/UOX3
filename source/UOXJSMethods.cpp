@@ -1750,9 +1750,29 @@ JSBool CGump_AddXMFHTMLTok( JSContext *cx, uintN argc, jsval *vp )
 	SI32 rgbColour		= static_cast<SI32>( JSVAL_TO_INT( argv[6] ));	// colour
 	SI32 number			= static_cast<SI32>( JSVAL_TO_INT( argv[7] )); // number
 
-	std::string TextString1	= JS_GetStringBytes( cx, argv[8]); // ClilocArgument1
-	std::string TextString2	= JS_GetStringBytes( cx, argv[9]); // ClilocArgument2
-	std::string TextString3	= JS_GetStringBytes( cx, argv[10]); // ClilocArgument3
+	// Iterate through potential cliloc arguments (8-10)
+	std::string fullArgs = "";
+	for( int i = 8; i <= 10; ++i )
+	{
+		if( argc > i )
+		{
+			std::string currentArg = JS_GetStringBytes( cx, argv[i] );
+
+			// Add delimiter between each argument
+			if( !fullArgs.empty() )
+			{
+				fullArgs += "\t";
+			}
+
+			fullArgs += currentArg;
+		}
+	}
+
+	// Prevent crash in case user provided an empty first argument
+	if( fullArgs.length() > 0 && fullArgs[0] == '\t' )
+	{
+		fullArgs = " " + fullArgs;
+	}
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
@@ -1765,7 +1785,7 @@ JSBool CGump_AddXMFHTMLTok( JSContext *cx, uintN argc, jsval *vp )
 	SI32 iBrd	= ( hasBorder ? 1 : 0 );
 	SI32 iScrl	= ( hasScrollbar ? 1 : 0 );
 
-	gList->one->push_back( oldstrutil::format( "xmfhtmltok %i %i %i %i %i %i %i %i @%s\t%s\t%s@", x, y, width, height, iBrd, iScrl, rgbColour, number, TextString1, TextString2, TextString3 ));
+	gList->one->push_back( oldstrutil::format( "xmfhtmltok %i %i %i %i %i %i %i %i @%s@", x, y, width, height, iBrd, iScrl, rgbColour, number, fullArgs ));
 
 	return JS_TRUE;
 }
@@ -4881,7 +4901,10 @@ JSBool CMisc_CustomTarget( JSContext *cx, uintN argc, jsval *vp )
 	mySock->scriptForCallBack = JSMapping->currentActive();
 	UI08 tNum = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
 
+#if defined UOX_DEBUG_MODE
 	Console.Warning( oldstrutil::format( "CustomTarget script ID: %d", mySock->scriptForCallBack->GetScriptID() ) );
+#endif
+
 	constexpr auto maxsize = 512; // Could become long (make sure it's nullptr )
 	std::string toSay;
 	if( argc >= 2 )
@@ -8227,7 +8250,7 @@ JSBool CBase_FinishedItems( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar_WalkTo()
 //|	Prototype	-	void WalkTo( object, maxsteps, allowPartial, ignoreDoors )
-//|					void WalkTo( x, y, maxsteps, allowPartial, ignoreDoors )
+//|					void WalkTo( x, y, z, maxsteps, allowPartial, ignoreDoors )
 //|	Date		-	06 Sep 2003
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Begins pathfinding for a character, making them walk to target location,
@@ -8235,9 +8258,9 @@ JSBool CBase_FinishedItems( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_WalkTo( JSContext *cx, uintN argc, jsval *vp )
 {
-	if( argc < 2 || argc > 5 )
+	if( argc < 2 || argc > 6 )
 	{
-		ScriptError( cx, "WalkTo: Invalid number of arguments (takes 2 to 5)" );
+		ScriptError( cx, "WalkTo: Invalid number of arguments (takes 2 to 6)" );
 		return JS_FALSE;
 	}
 	jsval *argv = JS_ARGV( cx, vp );
@@ -8251,61 +8274,107 @@ JSBool CChar_WalkTo( JSContext *cx, uintN argc, jsval *vp )
 	}
 	SI16 gx			= 0;
 	SI16 gy			= 0;
+	SI08 gz			= ILLEGAL_Z;
 	UI16 maxSteps	= 0;
 	bool allowPartial = false;
 	bool ignoreDoors = false;
-	switch( argc )
-	{
-		case 2:
-			if( JSVAL_IS_OBJECT( argv[0] ))
-			{	// we can work with this, it should be either a character or item, hopefully
-				JSEncapsulate jsToGoTo( cx, &( argv[0] ));
-				if( jsToGoTo.ClassName() == "UOXItem" || jsToGoTo.ClassName() == "UOXChar" )
-				{
-					CBaseObject *toGoTo = static_cast<CBaseObject *>( jsToGoTo.toObject() );
-					if( !ValidateObject( toGoTo ))
-					{
-						ScriptError( cx, "No object associated with this object" );
-						return JS_FALSE;
-					}
-					gx = toGoTo->GetX();
-					gy = toGoTo->GetY();
-				}
-				else if( jsToGoTo.ClassName() == "UOXSocket" )
-				{
-					CSocket *mySock		= static_cast<CSocket *>( jsToGoTo.toObject() );
-					CChar *mySockChar	= mySock->CurrcharObj();
-					gx					= mySockChar->GetX();
-					gy					= mySockChar->GetY();
-				}
-				else
-				{
-					ScriptError( cx, "Invalid class of object" );
-					return JS_FALSE;
-				}
-				maxSteps = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
-				break;
+
+	if( JSVAL_IS_OBJECT( argv[0] ))
+	{	// we can work with this, it should be either a character or item, hopefully
+		JSEncapsulate jsToGoTo( cx, &( argv[0] ));
+		if( jsToGoTo.ClassName() == "UOXItem" || jsToGoTo.ClassName() == "UOXChar" )
+		{
+			CBaseObject *toGoTo = static_cast<CBaseObject *>( jsToGoTo.toObject() );
+			if( !ValidateObject( toGoTo ))
+			{
+				ScriptError( cx, "No object associated with this object" );
+				return JS_FALSE;
 			}
+			gx = toGoTo->GetX();
+			gy = toGoTo->GetY();
+			gz = toGoTo->GetZ();
+		}
+		else if( jsToGoTo.ClassName() == "UOXSocket" )
+		{
+			CSocket *mySock		= static_cast<CSocket *>( jsToGoTo.toObject() );
+			CChar *mySockChar	= mySock->CurrcharObj();
+			gx					= mySockChar->GetX();
+			gy					= mySockChar->GetY();
+			gz					= mySockChar->GetZ();
+		}
+		else
+		{
+			ScriptError( cx, "Invalid class of object" );
 			return JS_FALSE;
-			// 2 Parameters, x + y
-		case 3:
-		case 4:
-		case 5:
-			gx			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-			gy			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+		}
+		maxSteps = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+		if( argc >= 3 )
+		{
+			allowPartial = ( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE );
+		}
+		if( argc >= 4 )
+		{
+			ignoreDoors = ( JSVAL_TO_BOOLEAN( argv[3] ) == JS_TRUE );
+		}
+	}
+	else
+	{
+		if( argc < 3 )
+		{
+			ScriptError( cx, "WalkTo: Invalid number of arguments. Needs at least 3 for 2D pathfinding (x, y, maxSteps) or 4 for 3D pathfinding (x, y, z, maxSteps)" );
+			return JS_FALSE;
+		}
+
+		// By default, assume Z is included for 3D pathfinding
+		bool includeZ = true;
+
+		if( argc == 3 )
+		{
+			// WalkTo( x, y, maxSteps )
+			includeZ = false;
+		}
+		else if( argc == 4 || argc == 5 )
+		{
+			// Check if 4th argument is bool (allowPartial, 2D pathfinding) or int (maxSteps, 3D pathfinding)
+			if( JSVAL_IS_BOOLEAN( argv[3] ))
+			{
+				includeZ = false;
+			}
+		}
+		// if argc == 6 is guaranteed to be 3D pathfinding
+
+		if( !includeZ )
+		{
+			// 2D pathfinding
+			gx			= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+			gy			= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+			gz			= ILLEGAL_Z; // Forces 2D in advanced pathfinder code
 			maxSteps	= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-			if( argc >= 4 )
+			if( argc >= 5 )
 			{
 				allowPartial = ( JSVAL_TO_BOOLEAN( argv[3] ) == JS_TRUE );
 			}
-			if( argc == 5 )
+			if( argc == 6 )
 			{
 				ignoreDoors = ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );
 			}
-			break;
-		default:
-			ScriptError( cx, "Invalid number of arguments passed to WalkTo, needs either 2 or 3" );
-			return JS_FALSE;
+		}
+		else
+		{
+			// 3D pathfinding
+			gx			= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+			gy			= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+			gz			= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
+			maxSteps	= static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+			if( argc >= 5 )
+			{
+				allowPartial = ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );
+			}
+			if( argc == 6 )
+			{
+				ignoreDoors = ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
+			}
+		}
 	}
 
 	if( maxSteps == 0 )
@@ -8326,7 +8395,7 @@ JSBool CChar_WalkTo( JSContext *cx, uintN argc, jsval *vp )
 	cMove->SetNpcWander( WT_PATHFIND );
 	if( cwmWorldState->ServerData()->AdvancedPathfinding() )
 	{
-		Movement->AdvancedPathfinding( cMove, gx, gy, false, allowPartial, maxSteps, ignoreDoors );
+		Movement->AdvancedPathfinding( cMove, gx, gy, gz, false, allowPartial, maxSteps, ignoreDoors );
 	}
 	else
 	{
@@ -8339,7 +8408,7 @@ JSBool CChar_WalkTo( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar_RunTo()
 //|	Prototype	-	void RunTo( object, maxsteps, allowPartial, ignoreDoors )
-//|					void RunTo( x, y, maxsteps, allowPartial, ignoreDoors )
+//|					void RunTo( x, y, z, maxsteps, allowPartial, ignoreDoors )
 //|	Date		-	06 Sep 2003
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Begins pathfinding for a character, making them run to target location,
@@ -8347,9 +8416,9 @@ JSBool CChar_WalkTo( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_RunTo( JSContext *cx, uintN argc, jsval *vp )
 {
-	if( argc < 2 || argc > 5 )
+	if( argc < 2 || argc > 6 )
 	{
-		ScriptError( cx, "RunTo: Invalid number of arguments (takes 2 to 5)" );
+		ScriptError( cx, "RunTo: Invalid number of arguments (takes 2 to 6)" );
 		return JS_FALSE;
 	}
 	jsval *argv = JS_ARGV( cx, vp );
@@ -8363,62 +8432,106 @@ JSBool CChar_RunTo( JSContext *cx, uintN argc, jsval *vp )
 	}
 	UI16 gx			= 0;
 	UI16 gy			= 0;
+	SI08 gz			= ILLEGAL_Z;
 	UI16 maxSteps	= 0;
 	bool allowPartial = false;
 	bool ignoreDoors = false;
-	switch( argc )
+	if( JSVAL_IS_OBJECT( argv[0] ))
 	{
-		case 2:
-			if( JSVAL_IS_OBJECT( argv[0] ))
-			{	// we can work with this, it should be either a character or item, hopefully
-				JSEncapsulate jsToGoTo( cx, &( argv[0] ));
-				if( jsToGoTo.ClassName() == "UOXItem" || jsToGoTo.ClassName() == "UOXChar" )
-				{
-					CBaseObject *toGoTo = static_cast<CBaseObject *>( jsToGoTo.toObject() );
-					if( !ValidateObject( toGoTo ))
-					{
-						ScriptError( cx, "No object associated with this object" );
-						return JS_FALSE;
-					}
-					gx = toGoTo->GetX();
-					gy = toGoTo->GetY();
-				}
-				else if( jsToGoTo.ClassName() == "UOXSocket" )
-				{
-					CSocket *mySock		= static_cast<CSocket *>( jsToGoTo.toObject() );
-					CChar *mySockChar	= mySock->CurrcharObj();
-					gx					= mySockChar->GetX();
-					gy					= mySockChar->GetY();
-				}
-				else
-				{
-					ScriptError( cx, "Invalid class of object" );
-					return JS_FALSE;
-				}
-				maxSteps = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
-				break;
+		JSEncapsulate jsToGoTo( cx, &( argv[0] ));
+		if( jsToGoTo.ClassName() == "UOXItem" || jsToGoTo.ClassName() == "UOXChar" )
+		{
+			CBaseObject *toGoTo = static_cast<CBaseObject *>( jsToGoTo.toObject() );
+			if( !ValidateObject( toGoTo ))
+			{
+				ScriptError( cx, "No object associated with this object" );
+				return JS_FALSE;
 			}
+			gx = toGoTo->GetX();
+			gy = toGoTo->GetY();
+			gz = toGoTo->GetZ();
+		}
+		else if( jsToGoTo.ClassName() == "UOXSocket" )
+		{
+			CSocket *mySock		= static_cast<CSocket *>( jsToGoTo.toObject() );
+			CChar *mySockChar	= mySock->CurrcharObj();
+			gx					= mySockChar->GetX();
+			gy					= mySockChar->GetY();
+			gz					= mySockChar->GetZ();
+		}
+		else
+		{
+			ScriptError( cx, "Invalid class of object" );
 			return JS_FALSE;
+		}
+		maxSteps = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+		if( argc >= 3 )
+		{
+			allowPartial = ( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE );
+		}
+		if( argc >= 4 )
+		{
+			ignoreDoors = ( JSVAL_TO_BOOLEAN( argv[3] ) == JS_TRUE );
+		}
+	}
+	else
+	{
+		if( argc < 3 )
+		{
+			ScriptError( cx, "RunTo: Invalid number of arguments. Needs at least 3 for 2D pathfinding (x, y, maxSteps) or 4 for 3D pathfinding (x, y, z, maxSteps)" );
+			return JS_FALSE;
+		}
 
-			// 2 Parameters, x + y
-		case 3:
-		case 4:
-		case 5:
-			gx			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-			gy			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+		// By default, assume Z is included for 3D pathfinding
+		bool includeZ = true;
+
+		if( argc == 3 )
+		{
+			// WalkTo( x, y, maxSteps )
+			includeZ = false;
+		}
+		else if( argc == 4 || argc == 5 )
+		{
+			// Check if 4th argument is bool (allowPartial, 2D pathfinding) or int (maxSteps, 3D pathfinding)
+			if( JSVAL_IS_BOOLEAN( argv[3] ))
+			{
+				includeZ = false;
+			}
+		}
+		// if argc == 6 is guaranteed to be 3D pathfinding
+
+		if( !includeZ )
+		{
+			// 2D pathfinding
+			gx			= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+			gy			= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+			gz			= ILLEGAL_Z; // Forces 2D in advanced pathfinder code
 			maxSteps	= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-			if( argc >= 4 )
+			if( argc >= 5 )
 			{
 				allowPartial = ( JSVAL_TO_BOOLEAN( argv[3] ) == JS_TRUE );
 			}
-			if( argc == 5 )
+			if( argc == 6 )
 			{
 				ignoreDoors = ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );
 			}
-			break;
-		default:
-			ScriptError( cx, "Invalid number of arguments passed to RunTo, needs either 2 or 3" );
-			return JS_FALSE;
+		}
+		else
+		{
+			// 3D pathfinding
+			gx			= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+			gy			= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+			gz			= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
+			maxSteps	= static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+			if( argc >= 5 )
+			{
+				allowPartial = ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );
+			}
+			if( argc == 6 )
+			{
+				ignoreDoors = ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
+			}
+		}
 	}
 
 	if( maxSteps == 0 )
@@ -8440,7 +8553,7 @@ JSBool CChar_RunTo( JSContext *cx, uintN argc, jsval *vp )
 
 	if( cwmWorldState->ServerData()->AdvancedPathfinding() )
 	{
-		Movement->AdvancedPathfinding( cMove, gx, gy, true, allowPartial, maxSteps, ignoreDoors );
+		Movement->AdvancedPathfinding( cMove, gx, gy, gz, true, allowPartial, maxSteps, ignoreDoors );
 	}
 	else
 	{
@@ -10306,6 +10419,92 @@ JSBool CMulti_RemoveTrashCont( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	multiObject->RemoveTrashContainer( itemToRemove );
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|  Function    -   CMulti_AddVendor()
+//|  Prototype   -   void AddVendor( vendorToAdd )
+//o------------------------------------------------------------------------------------------------o
+//|  Purpose     -   Adds a player vendor to a multi
+//o------------------------------------------------------------------------------------------------o
+JSBool CMulti_AddVendor( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	if( argc != 1 )
+	{
+		ScriptError( cx, "AddVendor: Invalid number of arguments (1 required)" );
+		return JS_FALSE;
+	}
+
+	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+	CMultiObj *multiObject = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
+	{
+		ScriptError( cx, "(AddVendor) Invalid multi object referenced" );
+		return JS_FALSE;
+	}
+
+	if( !JSVAL_IS_OBJECT( argv[0] ))
+	{
+		ScriptError( cx, "(AddVendor) Invalid character object passed" );
+		return JS_FALSE;
+	}
+
+	CChar *vendorToAdd = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	if( !ValidateObject( vendorToAdd ))
+	{
+		ScriptError( cx, "(AddVendor) Invalid character object passed" );
+		return JS_FALSE;
+	}
+
+	multiObject->AddVendor( vendorToAdd );
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|  Function    -   CMulti_RemoveVendor()
+//|  Prototype   -   void RemoveVendor( vendorToRemove )
+//o------------------------------------------------------------------------------------------------o
+//|  Purpose     -   Removes a player vendor from a multi
+//o------------------------------------------------------------------------------------------------o
+JSBool CMulti_RemoveVendor( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	if( argc != 1 )
+	{
+		ScriptError( cx, "RemoveVendor: Invalid number of arguments (1 required)" );
+		return JS_FALSE;
+	}
+
+	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+	CMultiObj *multiObject = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
+	{
+		ScriptError( cx, "(RemoveVendor) Invalid multi object referenced" );
+		return JS_FALSE;
+	}
+
+	if( !JSVAL_IS_OBJECT( argv[0] ))
+	{
+		ScriptError( cx, "(RemoveVendor) Invalid character object passed" );
+		return JS_FALSE;
+	}
+
+	CChar *vendorToRemove = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	if( !ValidateObject( vendorToRemove ))
+	{
+		ScriptError( cx, "(RemoveVendor) Invalid character object passed" );
+		return JS_FALSE;
+	}
+
+	multiObject->RemoveVendor( vendorToRemove );
 	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 	return JS_TRUE;
 }
