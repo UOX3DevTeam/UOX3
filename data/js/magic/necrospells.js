@@ -310,8 +310,6 @@ function onSpellCast(mSock, mChar, directCast, spellNum)
 
 	mChar.isCasting = true;
 
-	mSock.SysMessage(spellNum);
-
 	mChar.StartTimer(delay * 1000, spellNum, true);
 
 	return true;
@@ -362,24 +360,22 @@ function onTimer(mChar, timerID)
 		return;
 	}
 
-	    // --- Summon Familiar: no target required ---
-    if (timerID == 112)
+	// --- Summon Familiar: no target required ---
+	if (timerID == 112)
 	{
-        if (mSock)
+		if (mSock)
 			mChar.SetTimer(Timer.SPELLRECOVERYTIME, Spells[112].recoveryDelay);
-        // call success with self as target (not used, but keeps flow consistent)
-        onSpellSuccess(mSock, mChar, mChar, 109);
-        return;
-    }
+		onSpellSuccess(mSock, mChar, mChar, 112);
+		return;
+	}
 
 	if (timerID == 113)
 	{
-        if (mSock)
+		if (mSock)
 			mChar.SetTimer(Timer.SPELLRECOVERYTIME, Spells[113].recoveryDelay);
-        // call success with self as target (not used, but keeps flow consistent)
-        onSpellSuccess(mSock, mChar, mChar, 109);
-        return;
-    }
+		onSpellSuccess(mSock, mChar, mChar, 113);
+		return;
+	}
 
 	// --- Wraith Form: no target required ---
 	if (timerID == 116)
@@ -1302,8 +1298,8 @@ function onGumpPress(pSock, buttonID, gumpID)
 		// Example localized message style (swap #s if you have a matching cliloc)
 		// pSock.SysMessage(GetDictionaryEntry(XXXX, pSock.language));
 		pSock.SysMessage(
-			"That familiar requires " + (entry.necReq10 / 10).toFixed(1) +
-			" Necromancy and " + (entry.ssReq10 / 10).toFixed(1) + " Spirit Speak."
+			"That familiar requires " + entry.necReq.toFixed(1) +
+			" Necromancy and " + entry.ssReq.toFixed(1) + " Spirit Speak."
 		);
 		OpenSummonFamiliarGump(pSock, pChar);
 		return;
@@ -1312,13 +1308,13 @@ function onGumpPress(pSock, buttonID, gumpID)
 	// Check to see if player actually has space for ANY more pets
 	if (maxControlSlots > 0)
 	{
-		if (pUser.controlSlotsUsed >= maxControlSlots)
+		if (pChar.controlSlotsUsed >= maxControlSlots)
 		{
 			pSock.SysMessage(GetDictionaryEntry(2397, pSock.language)); // You have too many followers to tame that creature.
 			return;
 		}
 	}
-	else if (maxFollowers > 0 && pUser.followerCount >= maxFollowers)
+	else if (maxFollowers > 0 && pChar.followerCount >= maxFollowers)
 	{
 		pSock.SysMessage(GetDictionaryEntry(2397, pSock.language)); // You have too many followers to tame that creature.
 		return;
@@ -1344,7 +1340,7 @@ function onGumpPress(pSock, buttonID, gumpID)
 	pChar.controlSlotsUsed = pChar.controlSlotsUsed + n.controlSlots;
 
 	// Also add pet to player's list of active followers
-	pUser.AddFollower(n);
+	pChar.AddFollower(n);
 
 	// If you use follower slots, increment here:
 	// var cur = parseInt(pChar.GetTag("followers"),10)||0; pChar.SetTag("followers", cur+1);
