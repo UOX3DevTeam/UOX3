@@ -1935,7 +1935,7 @@
         { "name": "GetJSTimer",          "cppName": "CBase_GetJSTimer",           "params": { "num": 2, "list": [ { "name": "timerId",  "type": "number",     "required": true }, { "name": "scriptId",  "type": "number",     "required": true } ] }, "returns": "number" },
         { "name": "GetSerial",           "cppName": "CBase_GetSerial",            "params": { "num": 1, "list": [ { "name": "part",     "type": "0 | 1 | 2 | 3 | 4", "required": true } ] }, "returns": "number" },
         { "name": "GetTag",              "cppName": "CBase_GetTag",               "params": { "num": 1, "list": [ { "name": "tag",      "type": "string",     "required": true } ] }, "returns": "string | boolean | number" },
-        { "name": "GetTempEffect",       "cppName": "CBase_GetTempEffect",        "params": { "num": 1, "list": [ { "name": "effectID", "type": "number",     "required": true } ] }, "returns": "number" },
+        { "name": "GetTempEffect",       "cppName": "CBase_GetTempEffect",        "params": { "num": 1, "max": 2, "list": [ { "name": "effectID", "type": "number", "required": true }, { "name": "scriptEffectID", "type": "number", "required": false } ] }, "returns": "number" },
         { "name": "GetTempTag",          "cppName": "CBase_GetTempTag",           "params": { "num": 1, "list": [ { "name": "tag",      "type": "string",     "required": true } ] }, "returns": "string | boolean | number" },
         { "name": "HasScriptTrigger",    "cppName": "CBase_HasScriptTrigger",     "params": { "num": 1, "list": [ { "name": "scriptId", "type": "number",     "required": true } ] }, "returns": "boolean" },
         { "name": "InRange",             "cppName": "CBase_InRange",              "params": { "num": 2, "list": [
@@ -1945,7 +1945,7 @@
         { "name": "KillJSTimer",         "cppName": "CBase_KillJSTimer",          "params": { "num": 2, "list": [ { "name": "timerId",  "type": "number",     "required": true }, { "name": "scriptId",  "type": "number",     "required": true } ] }, "returns": "number" },
         { "name": "KillTimers",          "cppName": "CBase_KillTimers",           "params": { "num": 1, "list": [ { "name": "triggerId","type": "number",     "required": false} ] }, "returns": "void" },
         { "name": "PauseJSTimer",        "cppName": "CBase_PauseJSTimer",         "params": { "num": 2, "list": [ { "name": "timerId",  "type": "number",     "required": true }, { "name": "scriptId",  "type": "number",     "required": true } ] }, "returns": "number" },
-        { "name": "PauseTempEffect",     "cppName": "CBase_PauseTempEffect",      "params": { "num": 1, "list": [ { "name": "effectID", "type": "number",     "required": true } ] }, "returns": "number" },
+        { "name": "PauseTempEffect",     "cppName": "CBase_PauseTempEffect",      "params": { "num": 1, "max": 2, "list": [ { "name": "effectID", "type": "number", "required": true }, { "name": "scriptEffectID", "type": "number", "required": false } ] }, "returns": "number" },
         { "name": "RemoveScriptTrigger", "cppName": "CBase_RemoveScriptTrigger",  "params": { "num": 1, "list": [ { "name": "scriptId", "type": "number", "required": true } ] }, "returns": "void" },
         { "name": "Resist",              "cppName": "CBase_Resist",               "params": { 
           "sets": [
@@ -1960,8 +1960,8 @@
           { "name": "sectionId",  "type": "string", "required": false }
         ] }, "returns": "number" },
         { "name": "ResumeJSTimer",       "cppName": "CBase_ResumeJSTimer",        "params": { "num": 2, "list": [ { "name": "timerId",  "type": "number",     "required": true }, { "name": "scriptId",  "type": "number",     "required": true } ] }, "returns": "number" },
-        { "name": "ResumeTempEffect",    "cppName": "CBase_ResumeTempEffect",     "params": { "num": 1, "list": [ { "name": "effectID", "type": "number",     "required": true } ] }, "returns": "number" },
-        { "name": "ReverseTempEffect",   "cppName": "CBase_ReverseTempEffect",    "params": { "num": 1, "list": [ { "name": "effectID", "type": "number",     "required": true } ] }, "returns": "number" },
+        { "name": "ResumeTempEffect",    "cppName": "CBase_ResumeTempEffect",     "params": { "num": 1, "max": 2, "list": [ { "name": "effectID", "type": "number", "required": true }, { "name": "scriptEffectID", "type": "number", "required": false } ] }, "returns": "number" },
+        { "name": "ReverseTempEffect",   "cppName": "CBase_ReverseTempEffect",    "params": { "num": 1, "max": 2, "list": [ { "name": "effectID", "type": "number", "required": true }, { "name": "scriptEffectID", "type": "number", "required": false } ] }, "returns": "number" },
         { "name": "SetJSTimer",          "cppName": "CBase_SetJSTimer",           "params": { "num": 3, "list": [ 
           { "name": "timerId",  "type": "number",     "required": true }, 
           { "name": "millis",   "type": "number",     "required": true },

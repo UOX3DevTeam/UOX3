@@ -131,7 +131,9 @@ enum ScriptEvent
 	seOnSpecialMove,
 	seOnFacetChange,
 	seOnReleasePet,
-	seOnPaperDoll
+	seOnPaperDoll,
+	seOnTempEffectExpire,
+	seOnTempEffectRemove
 };
 
 struct SEGump_st
@@ -269,6 +271,8 @@ public:
 	bool		OnWeatherChange( CBaseObject *tObject, WeatherType element );
 	bool		OnTempChange( CBaseObject *tObject, SI08 temp );
 	bool		OnTimer( CBaseObject *tObject, UI16 timerId );
+	bool		OnTempEffectExpire( CBaseObject *source, CBaseObject *target, UI16 effectId );
+	bool		OnTempEffectRemove( CBaseObject *source, CBaseObject *target, UI16 effectId );
 	SI08		OnDeath( CChar *pDead, CItem *iCorpse );
 	SI08		OnResurrect( CChar *pAlive );
 	SI08		OnFlagChange( CChar *pChanging, UI08 newStatus, UI08 oldStatus );

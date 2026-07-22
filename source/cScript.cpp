@@ -2619,6 +2619,56 @@ bool cScript::OnTimer( CBaseObject *tObject, UI16 timerId )
 	return ( retVal == JS_TRUE );
 }
 
+bool cScript::OnTempEffectExpire( CBaseObject *source, CBaseObject *target, UI16 effectId )
+{
+	if( !ValidateObject( target ))
+		return false;
+	if( !ExistAndVerify( seOnTempEffectExpire, "onTempEffectExpire" ))
+		return false;
+
+	jsval rval, params[3];
+	params[0] = JSVAL_NULL;
+	if( ValidateObject( source ))
+	{
+		JSObject *sourceObj = JSEngine->AcquireObject(( source->GetObjType() == OT_CHAR ? IUE_CHAR : IUE_ITEM ), source, runTime );
+		params[0] = OBJECT_TO_JSVAL( sourceObj );
+	}
+	JSObject *targetObj = JSEngine->AcquireObject(( target->GetObjType() == OT_CHAR ? IUE_CHAR : IUE_ITEM ), target, runTime );
+	params[1] = OBJECT_TO_JSVAL( targetObj );
+	params[2] = INT_TO_JSVAL( effectId );
+	JSBool retVal = InvokeEvent( "onTempEffectExpire", 3, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnTempEffectExpire, false );
+	}
+	return ( retVal == JS_TRUE );
+}
+
+bool cScript::OnTempEffectRemove( CBaseObject *source, CBaseObject *target, UI16 effectId )
+{
+	if( !ValidateObject( target ))
+		return false;
+	if( !ExistAndVerify( seOnTempEffectRemove, "onTempEffectRemove" ))
+		return false;
+
+	jsval rval, params[3];
+	params[0] = JSVAL_NULL;
+	if( ValidateObject( source ))
+	{
+		JSObject *sourceObj = JSEngine->AcquireObject(( source->GetObjType() == OT_CHAR ? IUE_CHAR : IUE_ITEM ), source, runTime );
+		params[0] = OBJECT_TO_JSVAL( sourceObj );
+	}
+	JSObject *targetObj = JSEngine->AcquireObject(( target->GetObjType() == OT_CHAR ? IUE_CHAR : IUE_ITEM ), target, runTime );
+	params[1] = OBJECT_TO_JSVAL( targetObj );
+	params[2] = INT_TO_JSVAL( effectId );
+	JSBool retVal = InvokeEvent( "onTempEffectRemove", 3, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnTempEffectRemove, false );
+	}
+	return ( retVal == JS_TRUE );
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::OnStatLoss()
 //o------------------------------------------------------------------------------------------------o
