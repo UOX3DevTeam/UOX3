@@ -2735,8 +2735,7 @@ CMagic::~CMagic()
 //| Function    - CMagic::GetSpellBookConfig()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose     - Returns the spell and scroll ranges represented by a spellbook.
-//| Notes       - Custom books can override the defaults with the spellbookFirstSpell,
-//|               spellbookSpellCount and spellbookFirstScroll integer tags.
+//| Notes       - Book ranges can be configured with SPELLBOOKDATA in item DFNs.
 //o------------------------------------------------------------------------------------------------o
 SpellBookConfig CMagic::GetSpellBookConfig( CItem *book ) const
 {
@@ -2744,18 +2743,11 @@ SpellBookConfig CMagic::GetSpellBookConfig( CItem *book ) const
 	if( !ValidateObject( book ))
 		return config;
 
-	auto firstSpellTag = book->GetTag( "spellbookFirstSpell" );
-	auto spellCountTag = book->GetTag( "spellbookSpellCount" );
-	auto firstScrollTag = book->GetTag( "spellbookFirstScroll" );
-	if( firstSpellTag.m_ObjectType == TAGMAP_TYPE_INT && firstSpellTag.m_IntValue > 0 &&
-		spellCountTag.m_ObjectType == TAGMAP_TYPE_INT && spellCountTag.m_IntValue > 0 && spellCountTag.m_IntValue <= 96 )
+	if( book->GetSpellBookFirstSpell() > 0 && book->GetSpellBookSpellCount() > 0 && book->GetSpellBookSpellCount() <= 96 )
 	{
-		config.firstSpell = firstSpellTag.m_IntValue;
-		config.spellCount = static_cast<UI16>( spellCountTag.m_IntValue );
-		if( firstScrollTag.m_ObjectType == TAGMAP_TYPE_INT && firstScrollTag.m_IntValue > 0 )
-		{
-			config.firstScroll = static_cast<UI16>( firstScrollTag.m_IntValue );
-		}
+		config.firstSpell = book->GetSpellBookFirstSpell();
+		config.spellCount = book->GetSpellBookSpellCount();
+		config.firstScroll = book->GetSpellBookFirstScroll();
 		config.valid = true;
 		return config;
 	}
