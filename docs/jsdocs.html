@@ -5183,6 +5183,74 @@ function onSpellTargetSelect( myTarget, pCaster, spellID )
 			</li>
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnTempEffectExpire" id="eventOnTempEffectExpire"><span>onTempEffectExpire</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onTempEffectExpire( source, target, effectID )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>Handles the natural expiration of a script-owned temporary effect created with effect ID 44.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>Triggered in the script that created the effect when its configured duration elapses.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<p><strong>source</strong> is the character supplied as <strong>srcObj</strong> to DoTempEffect, or null if no source was supplied or it no longer exists. <strong>target</strong> is the character or item carrying the effect. <strong>effectID</strong> is the script-defined identifier passed in <strong>more1</strong>.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">function onTempEffectExpire( source, target, effectID )
+{
+	if( effectID == 1 )
+	{
+		Console.Log( "Custom effect expired on " + target.serial );
+	}
+}</code></pre>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnTempEffectRemove" id="eventOnTempEffectRemove"><span>onTempEffectRemove</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onTempEffectRemove( source, target, effectID )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>Handles the early removal of a script-owned temporary effect created with effect ID 44.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>Triggered in the script that created the effect when it is reversed or replaced before its duration elapses.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<p><strong>source</strong> is the character supplied as <strong>srcObj</strong> to DoTempEffect, or null if no source was supplied or it no longer exists. <strong>target</strong> is the character or item carrying the effect. <strong>effectID</strong> is the script-defined identifier passed in <strong>more1</strong>. Creating another effect with the same target, calling script and effectID replaces the existing effect and triggers this event.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">function onTempEffectRemove( source, target, effectID )
+{
+	if( effectID == 1 )
+	{
+		Console.Log( "Custom effect removed from " + target.serial );
+	}
+}</code></pre>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnTimer" id="eventOnTimer"><span>onTimer</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">
@@ -6398,12 +6466,15 @@ function ConsoleRegistration()
 									<p><span class="hl">41 = Crafting</span> - crafting duration provided by more1 param (100 = 1.00 second), ID of item to craft via more2, crafter via srcObj</p>
 									<p><span class="hl">42 = Crafting Sound</span> - delay for crafting sound effect provided via more1 param (100 = 1.00 second), sound FX to play provided via more2 param</p>
 									<p><span class="hl">43 = Regrow Sheep Wool</span> - delay in seconds for when wool will regrow on a sheep provided via more1 param</p>
+									<p><span class="hl">44 = Script-owned Temporary Effect</span> - more1 is a script-defined effect ID, more2 is the duration in seconds, and more3 determines whether the effect is dispellable (0 = no, non-zero = yes). The effect is associated with the script that calls DoTempEffect. Natural expiration triggers onTempEffectExpire; reversing or replacing it triggers onTempEffectRemove. Effects are replaced only when the target, calling script and more1 effect ID all match.</p>
 								</div>
 							</div>
 							<div class="settingsDiv">
 								<p><span class="hl">Example of usage</span></p>
 								<pre><code class="language-javascript">// Add effect of a lesser Agility potion to pUser (copied from js/items/potion.js)
 DoTempEffect( 0, pUser, pUser, 6, RandomNumber( 6, 15 ), 0, 0 );</code></pre>
+								<pre><code class="language-javascript">// Add a dispellable, script-owned effect with ID 1 for 30 seconds
+DoTempEffect( 0, pUser, pUser, 44, 1, 30, 1 );</code></pre>
 							</div>
 						</div>
 					</div>

@@ -9588,6 +9588,13 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 					<div class="spoiler">
 						<p><strong>Location:</strong> <span class="hl">UOX3\dfndata\spells\spells.dfn</span><br>
 						Contains definitions for all spells in the game, their requirements in skills, stats and resources, their words of power and other special properties.</p>
+						<p><span class="hl">REAGENT</span>=<strong>[itemSectionID],[amount],[optionalColour]</strong><br>
+						Adds a custom reagent requirement to the spell. The tag is singular and may be repeated to require multiple reagents. <strong>itemSectionID</strong> identifies an Item DFN section, <strong>amount</strong> must be greater than zero, and the optional colour value restricts the requirement to items with that exact colour. These requirements are checked and consumed in addition to the spell's standard reagent flags.</p>
+<pre><code class="language-javascript">[SPELL 101]
+{
+REAGENT=blackpearl,2
+REAGENT=custom_reagent,1,0x0481
+}</code></pre>
 					</div>
 					<input type="checkbox" id="spoiler_dfnsystem_titles">
 					<label for="spoiler_dfnsystem_titles">titles <i class="fas fa-angle-down"></i></label>
@@ -10869,6 +10876,10 @@ script=5021
 						<div class="settingsDiv">
 							<p><span class="hl">staminabonus</span>=<strong>[number]</strong><br>
 							A property that provides a direct increase to a character’s maximum stamina by percentage.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">spellbookdata</span>=<strong>[firstSpell],[spellCount],[firstScroll]</strong><br>
+							Defines the global spell range and scroll range represented by a spellbook. <strong>firstSpell</strong> is the first spell ID in the book, <strong>spellCount</strong> is the number of spells represented (1 to 96), and <strong>firstScroll</strong> is the item ID of the scroll corresponding to firstSpell. For example, <span class="hl">SPELLBOOKDATA=1,64,0x1f2d</span> defines a traditional Magery spellbook. Existing type-9 spellbooks without this tag retain that same traditional range for compatibility.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">spells</span>=<strong>[hex value for circles 1-4],[hex value for circles 5-8],[hex value - unused]</strong><br>

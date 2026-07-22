@@ -9231,6 +9231,30 @@
       "returns": "boolean"
     },
     {
+      "name": "onTempEffectExpire",
+      "cppName": "OnTempEffectExpire",
+      "params": {
+        "list": [
+          { "name": "source", "type": "BaseOrNull", "required": true },
+          { "name": "target", "type": "BaseObject", "required": true },
+          { "name": "effectId", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onTempEffectRemove",
+      "cppName": "OnTempEffectRemove",
+      "params": {
+        "list": [
+          { "name": "source", "type": "BaseOrNull", "required": true },
+          { "name": "target", "type": "BaseObject", "required": true },
+          { "name": "effectId", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
       "name": "onTimer",
       "cppName": "OnTimer",
       "params": {
