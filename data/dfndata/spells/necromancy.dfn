@@ -4,6 +4,7 @@
 // LOSKILL: Minimum skill to cast    SCLO:   Min. Scroll Skill to cast
 // HISKILL: 100% Success over this   SCHI:   100% Success over this
 // TARG: message for targ. spells    RECOVERYDELAY: Delay until next spell can be cast (tenths of sec)
+// REAGENT: Item DFN section, amount, optional colour (section,amount[,colour])
 // FLAGS: 							 DAMAGEDELAY: Delay until damage portion of spell hits (tenths of sec)
 // 0x1 or 1 - requireTarget
 // 0x2 or 2 - reqItemTarget
@@ -28,8 +29,8 @@ HISKILL=500
 MANTRA=Uus Corp
 ACTION=18
 DELAY=1.75
-GRAVEDUST=1
-DAEMONBLOOD=1
+REAGENT=gravedust,1
+REAGENT=daemonblood,1
 FLAGS=0x1
 TARG=Animate what corpse?
 STATFX=37 09 09 1e
@@ -140,8 +141,8 @@ HISKILL=400
 MANTRA=Rel Xen Vas Bal
 ACTION=203
 DELAY=1.75
-BATWING=1
-DAEMONBLOOD=1
+REAGENT=batwing,1
+REAGENT=daemonblood,1
 FLAGS=0x000
 STATFX=0x37 0x00 0x01 0x0D
 SOUNDFX=0x165
@@ -158,9 +159,9 @@ HISKILL=1000
 MANTRA=Rel Xen Corp Ort
 ACTION=203
 DELAY=1.75
-DAEMONBLOOD=1
-GRAVEDUST=1
-NOXCRYSTAL=1
+REAGENT=daemonblood,1
+REAGENT=gravedust,1
+REAGENT=noxcrystal,1
 FLAGS=0x0000
 STATFX=37 00 01 0D
 SOUNDFX=0x19C
@@ -292,10 +293,10 @@ MANTRA=Kal Xen Bal
 ACTION=17
 DELAY=4.0
 RECOVERYDELAY=1500
-BATWING=1
-DAEMONBLOOD=1
-GRAVEDUST=1
-NOXCRYSTAL=1
+REAGENT=batwing,1
+REAGENT=daemonblood,1
+REAGENT=gravedust,1
+REAGENT=noxcrystal,1
 FLAGS=0x0000
 STATFX=37 09 09 1e
 SOUNDFX=0x255
@@ -312,8 +313,8 @@ HISKILL=1000
 MANTRA=Rel Xen Um
 ACTION=203
 DELAY=1.75
-NOXCRYSTAL=1
-PIGIRON=1
+REAGENT=noxcrystal,1
+REAGENT=pigiron,1
 FLAGS=0x000
 STATFX=37 4A 00 0F
 SOUNDFX=0x17F

@@ -4030,6 +4030,29 @@ bool CMagic::CheckReagents( CChar *s, const Reag_st *reagents )
 	return RegMsg( s, failmsg );
 }
 
+bool CMagic::CheckReagents( CChar *s, const CSpellInfo& spell )
+{
+	if( s->NoNeedReags() )
+		return true;
+
+	if( !CheckReagents( s, spell.ReagantsPtr() ))
+		return false;
+
+	for( const auto& reagent : spell.Reagents() )
+	{
+		if( GetItemAmount( s, reagent.itemId, reagent.colour, 0, reagent.colourCheck, false, reagent.sectionId ) < reagent.amount )
+		{
+			CSocket *socket = s->GetSocket();
+			if( socket != nullptr )
+			{
+				socket->SysMessage( 702 ); // You do not have enough reagents to cast that spell.
+			}
+			return false;
+		}
+	}
+	return true;
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMagic::RegMsg()
 //|	Changes		-	display missing reagents types
@@ -4533,7 +4556,7 @@ void CMagic::ConsumeSpellResources( CSocket *s, CChar *caster, SI08 curSpell )
 	// Consume reagents for the spellcast attempt
 	if( validSocket && s->CurrentSpellType() == 0 && !caster->IsNpc() )
 	{
-		DelReagents( caster, spells[curSpell].Reagants() );
+		DelReagents( caster, spells[curSpell] );
 	}
 }
 
@@ -4675,7 +4698,7 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 
 	//Check for enough reagents
 	// type == 0 -> SpellBook
-	if( validSocket && s->CurrentSpellType() == 0 && !CheckReagents( caster, spells[curSpell].ReagantsPtr() ))
+	if( validSocket && s->CurrentSpellType() == 0 && !CheckReagents( caster, spells[curSpell] ))
 	{
 		caster->StopSpell();
 		return;
@@ -5315,6 +5338,39 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 //|	Notes		-	Avoid multiple reading of the spell script every time a spell is
 //|					cast to avoid crippling the server when a mage enters combat
 //o------------------------------------------------------------------------------------------------o
+static bool ResolveReagentItemId( const std::string& sectionId, UI16& itemId, UI08 depth = 0 )
+{
+	if( depth >= 20 )
+		return false;
+
+	CScriptSection *itemSection = FileLookup->FindEntry( sectionId, items_def );
+	if( itemSection == nullptr )
+		return false;
+
+	bool foundId = false;
+	for( const auto& entry : itemSection->collection2() )
+	{
+		if( entry->tag == DFNTAG_GET )
+		{
+			auto parentSections = oldstrutil::sections( entry->cdata, " " );
+			if( !parentSections.empty() )
+			{
+				foundId = ResolveReagentItemId( oldstrutil::trim( parentSections[0] ), itemId, depth + 1 ) || foundId;
+			}
+		}
+		else if( entry->tag == DFNTAG_ID )
+		{
+			auto itemIds = oldstrutil::sections( entry->cdata, " " );
+			if( !itemIds.empty() )
+			{
+				itemId = static_cast<UI16>( std::stoul( oldstrutil::trim( itemIds[0] ), nullptr, 0 ));
+				foundId = true;
+			}
+		}
+	}
+	return foundId;
+}
+
 void CMagic::LoadScript( void )
 {
 	spells.clear();
@@ -5524,6 +5580,31 @@ void CMagic::LoadScript( void )
 								{
 									spells[i].RecoveryDelay( static_cast<R64>( std::stod( data )));
 								}
+								else if( UTag == "REAGENT" )
+								{
+									auto reagentData = oldstrutil::sections( data, "," );
+									if( reagentData.size() < 2 || reagentData.size() > 3 )
+									{
+										Console.Warning( oldstrutil::format( "Invalid REAGENT tag in spell %i: expected section,amount[,colour]", i ));
+										break;
+									}
+
+									std::string sectionId = oldstrutil::trim( reagentData[0] );
+									UI16 itemId = 0;
+									if( !ResolveReagentItemId( sectionId, itemId ))
+									{
+										Console.Warning( oldstrutil::format( "Invalid item section '%s' in REAGENT tag for spell %i", sectionId.c_str(), i ));
+										break;
+									}
+
+									UI16 amount = static_cast<UI16>( std::stoul( oldstrutil::trim( reagentData[1] ), nullptr, 0 ));
+									if( amount == 0 )
+										break;
+
+									bool colourCheck = reagentData.size() == 3;
+									UI16 colour = colourCheck ? static_cast<UI16>( std::stoul( oldstrutil::trim( reagentData[2] ), nullptr, 0 )) : 0;
+									spells[i].AddReagent( SpellReagent( itemId, amount, sectionId, colour, colourCheck ));
+								}
 								break;
 							case 'S':
 								if( UTag == "SHADE" )
@@ -5628,6 +5709,18 @@ void CMagic::DelReagents( CChar *s, Reag_st reags )
 	DeleteItemAmount( s, reags.gravedust, 0x0F8F );
 	DeleteItemAmount( s, reags.noxcrystal, 0x0F8E );
 	DeleteItemAmount( s, reags.pigiron, 0x0F8A );
+}
+
+void CMagic::DelReagents( CChar *s, const CSpellInfo& spell )
+{
+	DelReagents( s, spell.Reagants() );
+	if( s->NoNeedReags() )
+		return;
+
+	for( const auto& reagent : spell.Reagents() )
+	{
+		DeleteItemAmount( s, reagent.amount, reagent.itemId, reagent.colour, 0, reagent.colourCheck, false, reagent.sectionId );
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o

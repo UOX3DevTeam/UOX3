@@ -35,6 +35,15 @@ function CheckReagents( mChar, mSpell )
 	{
 		failedCheck = 1;
 	}
+	for( var i = 0; i < mSpell.reagents.length; ++i )
+	{
+		var reagent = mSpell.reagents[i];
+		var reagentCount = reagent.length > 3 ? mChar.ResourceCount( reagent[0], reagent[3], -1, reagent[2] ) : mChar.ResourceCount( reagent[0], -1, -1, reagent[2] );
+		if( reagentCount < reagent[1] )
+		{
+			failedCheck = 1;
+		}
+	}
 	if( failedCheck == 1 )
 	{
 		if( mChar.socket != null )
@@ -59,4 +68,16 @@ function DeleteReagents( mChar, mSpell )
 	mChar.UseResource( mSpell.shade, 0x0F88 );
 	mChar.UseResource( mSpell.ash, 0x0F8C );
 	mChar.UseResource( mSpell.silk, 0x0F8D );
+	for( var i = 0; i < mSpell.reagents.length; ++i )
+	{
+		var reagent = mSpell.reagents[i];
+		if( reagent.length > 3 )
+		{
+			mChar.UseResource( reagent[1], reagent[0], reagent[3], -1, reagent[2] );
+		}
+		else
+		{
+			mChar.UseResource( reagent[1], reagent[0], -1, -1, reagent[2] );
+		}
+	}
 }

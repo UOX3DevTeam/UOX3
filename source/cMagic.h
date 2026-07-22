@@ -2,6 +2,7 @@
 #define __CMAGIC_H__
 
 struct Reag_st;
+class CSpellInfo;
 
 struct SpellBookConfig
 {
@@ -32,6 +33,7 @@ public:
 	void DoMoveEffect( SI32 num, CBaseObject *target, CChar *source );
 	void DoStaticEffect( CChar *source, SI32 num );
 	void PlaySound( CChar *source, SI32 num );
+	void DelReagents( CChar *s, const CSpellInfo& spell );
 	void DelReagents( CChar *s, Reag_st reags );
 	void ConsumeSpellResources( CSocket *s, CChar *caster, SI08 curSpell );
 	bool CheckMagicSkill( CSocket *s, CChar *caster, SI08 curSpell );
@@ -42,6 +44,7 @@ public:
 	void CheckFieldEffects( CChar& mChar );
 	bool HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id );
 	bool CheckBook( SI32 circle, SI32 spell, CItem *i );
+	bool CheckReagents( CChar *s, const CSpellInfo& spell );
 	bool CheckReagents( CChar *s, const Reag_st *reagents );
 	bool CheckMana( CChar *s, SI32 num );
 	bool CheckStamina( CChar *s, SI32 num );

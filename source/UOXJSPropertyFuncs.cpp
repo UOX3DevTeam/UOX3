@@ -247,6 +247,31 @@ JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp
 			case CSP_SOUNDEFFECT:		*vp = INT_TO_JSVAL( gPriv->Effect() );					break;
 			case CSP_ENABLED:			*vp = BOOLEAN_TO_JSVAL( gPriv->Enabled() );				break;
 			case CSP_TITHING:			*vp = INT_TO_JSVAL( gPriv->Tithing() );					break;
+			case CSP_REAGENTS:
+			{
+				JSObject *reagents = JS_NewArrayObject( cx, 0, nullptr );
+				const auto& spellReagents = gPriv->Reagents();
+				for( size_t reagentIndex = 0; reagentIndex < spellReagents.size(); ++reagentIndex )
+				{
+					const auto& spellReagent = spellReagents[reagentIndex];
+					JSObject *reagent = JS_NewArrayObject( cx, 0, nullptr );
+					jsval itemId = INT_TO_JSVAL( spellReagent.itemId );
+					jsval amount = INT_TO_JSVAL( spellReagent.amount );
+					jsval sectionId = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, spellReagent.sectionId.c_str() ));
+					JS_SetElement( cx, reagent, 0, &itemId );
+					JS_SetElement( cx, reagent, 1, &amount );
+					JS_SetElement( cx, reagent, 2, &sectionId );
+					if( spellReagent.colourCheck )
+					{
+						jsval colour = INT_TO_JSVAL( spellReagent.colour );
+						JS_SetElement( cx, reagent, 3, &colour );
+					}
+					jsval reagentValue = OBJECT_TO_JSVAL( reagent );
+					JS_SetElement( cx, reagents, reagentIndex, &reagentValue );
+				}
+				*vp = OBJECT_TO_JSVAL( reagents );
+				break;
+			}
 			default:																			break;
 		}
 	}
