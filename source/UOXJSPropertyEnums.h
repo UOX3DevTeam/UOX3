@@ -48,6 +48,7 @@ enum CSpell_Properties
 	CSP_ENABLED,
 	CSP_TITHING,
 	CSP_BASEDMG,
+	CSP_REAGENTS,
 	CSP_COUNT
 };
 

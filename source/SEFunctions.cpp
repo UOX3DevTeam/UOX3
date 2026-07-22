@@ -108,9 +108,14 @@ JSBool SE_DoTempEffect( JSContext *cx, uintN argc, jsval *vp )
 	jsval *argv = JS_ARGV( cx, vp );
 	UI08 iType			= static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
 	UI32 targNum		= JSVAL_TO_INT( argv[3] );
-	UI08 more1			= static_cast<UI08>( JSVAL_TO_INT( argv[4] ));
-	UI08 more2			= static_cast<UI08>( JSVAL_TO_INT( argv[5] ));
-	UI08 more3			= static_cast<UI08>( JSVAL_TO_INT( argv[6] ));
+	UI16 more1			= static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
+	UI16 more2			= static_cast<UI16>( JSVAL_TO_INT( argv[5] ));
+	UI16 more3			= static_cast<UI16>( JSVAL_TO_INT( argv[6] ));
+	UI16 assocScript	= 0xFFFF;
+	if( targNum == 44 && JSMapping->currentActive() != nullptr )
+	{
+		assocScript = JSMapping->currentActive()->GetScriptID();
+	}
 
 	CItem *myItemPtr	= nullptr;
 
@@ -147,11 +152,11 @@ JSBool SE_DoTempEffect( JSContext *cx, uintN argc, jsval *vp )
 		}
 		if( argc == 8 )
 		{
-			Effects->TempEffect( mysrcChar, mydestChar, static_cast<SI08>( targNum ), more1, more2, more3, myItemPtr );
+			Effects->TempEffect( mysrcChar, mydestChar, static_cast<UI08>( targNum ), more1, more2, more3, myItemPtr, assocScript );
 		}
 		else
 		{
-			Effects->TempEffect( mysrcChar, mydestChar, static_cast<SI08>( targNum ), more1, more2, more3 );
+			Effects->TempEffect( mysrcChar, mydestChar, static_cast<UI08>( targNum ), more1, more2, more3, nullptr, assocScript );
 		}
 	}
 	else
@@ -164,7 +169,7 @@ JSBool SE_DoTempEffect( JSContext *cx, uintN argc, jsval *vp )
 			ScriptError( cx, "DoTempEffect: Invalid target " );
 			return JS_FALSE;
 		}
-		Effects->TempEffect( mysrcChar, mydestItem, static_cast<SI08>( targNum ), more1, more2, more3 );
+		Effects->TempEffect( mysrcChar, mydestItem, static_cast<UI08>( targNum ), more1, more2, more3, assocScript );
 	}
 	return JS_TRUE;
 }

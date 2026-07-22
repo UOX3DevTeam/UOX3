@@ -98,6 +98,9 @@ protected:
 	virtual bool	LoadRemnants( void ) override;
 
 	UI32			spells[3];		// For spellbooks (eventually should be a derived class)
+	SI32			spellBookFirstSpell;
+	UI16			spellBookSpellCount;
+	UI16			spellBookFirstScroll;
 
 	auto			CopyData( CItem *target ) -> void;
 
@@ -359,6 +362,12 @@ public:
 
 	auto			GetSpell( UI08 part ) const -> UI32;
 	auto			SetSpell( UI08 part, UI32 newValue ) -> void;
+	auto			GetSpellBookFirstSpell() const -> SI32;
+	auto			SetSpellBookFirstSpell( SI32 newValue ) -> void;
+	auto			GetSpellBookSpellCount() const -> UI16;
+	auto			SetSpellBookSpellCount( UI16 newValue ) -> void;
+	auto			GetSpellBookFirstScroll() const -> UI16;
+	auto			SetSpellBookFirstScroll( UI16 newValue ) -> void;
 };
 
 class CSpawnItem : public CItem

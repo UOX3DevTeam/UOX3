@@ -104,6 +104,20 @@ struct Reag_st
 	}
 };
 
+struct SpellReagent
+{
+	UI16 itemId;
+	UI16 amount;
+	UI16 colour;
+	bool colourCheck;
+	std::string sectionId;
+
+	SpellReagent( UI16 newItemId, UI16 newAmount, const std::string& newSectionId = "", UI16 newColour = 0, bool newColourCheck = false ) :
+	itemId( newItemId ), amount( newAmount ), colour( newColour ), colourCheck( newColourCheck ), sectionId( newSectionId )
+	{
+	}
+};
+
 class CSpellInfo
 {
 private:
@@ -130,6 +144,7 @@ private:
 	SI32		tithing;
 	UI16		jsScript;
 	SI16		baseDmg;
+	std::vector<SpellReagent> reagents;
 public:
 	CSpellInfo() : mana( 0 ), stamina( 0 ), health( 0 ), delay( 0 ), damageDelay( 0 ), recoveryDelay( 1.0f ), action( 0 ), mantra( "" ), strToSay( "" ), enabled( false ),
 	circle( 1 ), flags( 0 ), effect( INVALIDID ), hiskill( 0 ), loskill( 0 ), sclo( 0 ), schi( 0 ), tithing( 0 ), jsScript( 0 ), baseDmg( 0 )
@@ -204,6 +219,18 @@ public:
 	Reag_st *ReagantsPtr( void )
 	{
 		return &reags;
+	}
+	const Reag_st *ReagantsPtr( void ) const
+	{
+		return &reags;
+	}
+	const std::vector<SpellReagent>& Reagents( void ) const
+	{
+		return reagents;
+	}
+	void AddReagent( const SpellReagent& reagent )
+	{
+		reagents.push_back( reagent );
 	}
 	const std::string Mantra( void ) const
 	{

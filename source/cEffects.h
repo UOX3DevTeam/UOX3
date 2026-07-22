@@ -6,8 +6,8 @@ class cEffects
 private:
 	void	HandleMakeItemEffect( CTEffect *tMake );
 public:
-	void	TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI16 more2, UI16 more3, CItem *targItemPtr = nullptr);
-	void	TempEffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI16 more2, UI16 more3 );
+	void	TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI16 more2, UI16 more3, CItem *targItemPtr = nullptr, UI16 assocScript = 0xFFFF );
+	void	TempEffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI16 more2, UI16 more3, UI16 assocScript = 0xFFFF );
 	void	CheckTempeffects( void );
 	void	SaveEffects( void );
 	void	LoadEffects( void );
