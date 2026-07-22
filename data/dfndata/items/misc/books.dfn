@@ -491,28 +491,6 @@ decay=1
 good=32
 }
 
-[0x238c]
-{
-get=base_item
-name=book of bushido
-id=0x23a0
-weight=100
-value=22 11
-decay=1
-good=32
-}
-
-[0x23a0]
-{
-get=base_item
-name=book of ninjitsu
-id=0x23a0
-weight=100
-value=22 11
-decay=1
-good=32
-}
-
 [base_khaldun_book]
 {
 get=base_item

@@ -7110,13 +7110,11 @@ void CPNewSpellBook::CopyData( CItem &obj )
 	auto bookConfig = Magic->GetSpellBookConfig( &obj );
 	SI32 startSpell = bookConfig.valid ? bookConfig.firstSpell : 1;
 	UI16 spellCount = bookConfig.valid ? bookConfig.spellCount : 64;
-	SI32 endSpell = startSpell + spellCount - 1;
+	SI32 endSpell = startSpell + std::min<UI16>( spellCount, 64 ) - 1;
 
-	// Calculate the total size dynamically based on spell count
-	int spellBytes = ( spellCount + 7 ) / 8; // Each byte holds 8 spells
-	int packetSize = 15 + spellBytes;
-
-	// Reserve space and write header
+	// The client protocol always reserves eight bytes for spell contents.
+	constexpr int spellBytes = 8;
+	constexpr int packetSize = 23;
 	pStream.ReserveSize( packetSize );
 	pStream.WriteByte( 0, 0xBF );          // Packet ID
 	pStream.WriteShort( 1, packetSize );   // Packet size

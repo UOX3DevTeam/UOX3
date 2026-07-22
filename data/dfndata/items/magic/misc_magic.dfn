@@ -212,6 +212,50 @@ get=0x2253
 spells=0x1FFFF 0x0 0x0
 }
 
+[0x238c]
+{
+get=base_item
+name=book of bushido
+id=0x238c
+weight=100
+value=22 11
+decay=1
+good=28
+origin=se
+sectionid=0x238c
+type=9
+layer=1
+spellbookdata=401,6,0
+spells=0x3f 0x0 0x0
+}
+
+[bookofbushido]
+{
+get=0x238c
+}
+
+[0x23a0]
+{
+get=base_item
+name=book of ninjitsu
+id=0x23a0
+weight=100
+value=22 11
+decay=1
+good=28
+origin=se
+sectionid=0x23a0
+type=9
+layer=1
+spellbookdata=501,8,0
+spells=0xff 0x0 0x0
+}
+
+[bookofninjitsu]
+{
+get=0x23a0
+}
+
 [0x2d9d]
 {
 get=base_item
