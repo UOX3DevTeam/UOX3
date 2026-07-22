@@ -5176,12 +5176,9 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CMagic::LoadScript()
+//|	Function	-	ResolveReagentItemId()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Loads spell data from spell DFNs
-//|
-//|	Notes		-	Avoid multiple reading of the spell script every time a spell is
-//|					cast to avoid crippling the server when a mage enters combat
+//|	Purpose		-	Resolves a reagent item section to its item ID, following GET inheritance.
 //o------------------------------------------------------------------------------------------------o
 static bool ResolveReagentItemId( const std::string& sectionId, UI16& itemId, UI08 depth = 0 )
 {
@@ -5216,6 +5213,14 @@ static bool ResolveReagentItemId( const std::string& sectionId, UI16& itemId, UI
 	return foundId;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CMagic::LoadScript()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Loads spell data from spell DFNs
+//|
+//|	Notes		-	Avoid multiple reading of the spell script every time a spell is
+//|					cast to avoid crippling the server when a mage enters combat
+//o------------------------------------------------------------------------------------------------o
 void CMagic::LoadScript( void )
 {
 	spells.clear();
