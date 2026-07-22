@@ -7092,12 +7092,8 @@ void CPNewSpellBook::InternalReset( CItem &obj )
 	// Reset the base buffer
 	CPUOXBuffer::InternalReset();
 
-	// Determine the offset based on book type
-	int offset = 1; // Default to regular spellbook
-	if( obj.GetType() == IT_PALADINBOOK )
-		offset = 201;
-	else if( obj.GetType() == IT_NECROBOOK )
-		offset = 101;
+	auto bookConfig = Magic->GetSpellBookConfig( &obj );
+	SI32 offset = bookConfig.valid ? bookConfig.firstSpell : 1;
 
 	pStream.ReserveSize( 23 );
 	pStream.WriteByte( 0, 0xBF ); // Main packet
@@ -7111,19 +7107,10 @@ void CPNewSpellBook::InternalReset( CItem &obj )
 
 void CPNewSpellBook::CopyData( CItem &obj )
 {
-	// Determine the spell range and offset based on book type
-	int startSpell = 1, endSpell = 64;
-	if( obj.GetType() == IT_PALADINBOOK )
-	{
-		startSpell = 201;
-		endSpell = 210;
-	}
-	else if( obj.GetType() == IT_NECROBOOK )
-	{
-		startSpell = 101;
-		endSpell = 117;
-	}
-	int spellCount = endSpell - startSpell + 1;
+	auto bookConfig = Magic->GetSpellBookConfig( &obj );
+	SI32 startSpell = bookConfig.valid ? bookConfig.firstSpell : 1;
+	UI16 spellCount = bookConfig.valid ? bookConfig.spellCount : 64;
+	SI32 endSpell = startSpell + spellCount - 1;
 
 	// Calculate the total size dynamically based on spell count
 	int spellBytes = ( spellCount + 7 ) / 8; // Each byte holds 8 spells

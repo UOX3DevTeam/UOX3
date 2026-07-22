@@ -5873,7 +5873,6 @@ bool CPISpellbookSelect::Handle( void )
 	CItem *pBook = FindItemOfType( ourChar, IT_PALADINBOOK );
 	CItem *nBook = FindItemOfType( ourChar, IT_NECROBOOK );
 	CItem *packItem = ourChar->GetPackItem();
-	UI08 *buffer = tSock->Buffer();
 
 	if( !ValidateObject( sBook ) && !ValidateObject( pBook ) && !ValidateObject( nBook ))
 	{
@@ -5896,27 +5895,17 @@ bool CPISpellbookSelect::Handle( void )
 		return true;
 	}
 
-	// Determine the spellbook type and offset
-	int offset = 0;
 	CItem *activeBook = nullptr;
-
-	// Use Buffer[8] to determine the spell number
-	int spellNumber = buffer[8];
-
-	if( ValidateObject( pBook ) && spellNumber >= 201 && spellNumber <= 210 ) // Paladin spells
+	SI32 spellNumber = tSock->GetWord( 7 );
+	CItem *availableBooks[] = { sBook, nBook, pBook };
+	for( auto book : availableBooks )
 	{
-		activeBook = pBook;
-		offset = 200; // Paladin spells offset starts from 201
-	}
-	else if( ValidateObject( nBook ) && spellNumber >= 101 && spellNumber <= 117 ) // Necromancer spells
-	{
-		activeBook = nBook;
-		offset = 100; // Necromancer spells offset starts from 101
-	}
-	else if( ValidateObject( sBook ) && spellNumber < 201 ) // Regular spells
-	{
-		activeBook = sBook;
-		offset = 0; // Regular spells offset starts from 1
+		auto bookConfig = Magic->GetSpellBookConfig( book );
+		if( bookConfig.valid && spellNumber >= bookConfig.firstSpell && spellNumber < bookConfig.firstSpell + bookConfig.spellCount )
+		{
+			activeBook = book;
+			break;
+		}
 	}
 
 	if( !ValidateObject( activeBook ))
@@ -5925,8 +5914,8 @@ bool CPISpellbookSelect::Handle( void )
 		return true;
 	}
 
-	// Calculate the actual spell number
-	SI32 book = spellNumber - offset;
+	auto bookConfig = Magic->GetSpellBookConfig( activeBook );
+	SI32 book = spellNumber - bookConfig.firstSpell + 1;
 
 	// Validate the spell in the book
 	if( Magic->CheckBook((( book - 1 ) / 8 ) + 1, ( book - 1 ) % 8, activeBook ))
@@ -5945,7 +5934,7 @@ bool CPISpellbookSelect::Handle( void )
 		else
 		{
 			tSock->CurrentSpellType( 0 );
-			Magic->SelectSpell( tSock, book + offset ); // Ensure the correct spell is cast
+			Magic->SelectSpell( tSock, spellNumber );
 		}
 	}
 	else

@@ -1001,11 +1001,7 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 						else if( buffer[3] == 0x27 || buffer[3] == 0x56 ) // Casting a spell
 						{
 							// Determine the spell number from the buffer
-							SI32 book = buffer[4] - 0x30; // Extract the first digit of the spell
-							if( buffer[5] > 0x20 )
-							{
-								book = ( book * 10 ) + ( buffer[5] - 0x30 ); // Add the second digit if present
-							}
+							SI32 book = static_cast<SI32>( std::stol( std::string(( char* )&buffer[4] )));
 
 							// Try to find both regular and Paladin spellbooks
 							CItem *sBook = FindItemOfType( ourChar, IT_SPELLBOOK );
@@ -1013,18 +1009,15 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 							CItem *nBook = FindItemOfType( ourChar, IT_NECROBOOK );
 							CItem *activeBook = nullptr;
 
-							// Match the spell number with the correct book type
-							if( book >= 101 && book <= 117 && ValidateObject( nBook ))
+							CItem *availableBooks[] = { sBook, nBook, pBook };
+							for( auto spellBook : availableBooks )
 							{
-								activeBook = nBook; // Necro book
-							}
-							else if( book >= 201 && book <= 210 && ValidateObject( pBook ))
-							{
-								activeBook = pBook; // Paladin book
-							}
-							else if( book >= 1 && book <= 64 && ValidateObject( sBook ))
-							{
-								activeBook = sBook; // Regular spellbook
+								auto bookConfig = Magic->GetSpellBookConfig( spellBook );
+								if( bookConfig.valid && book >= bookConfig.firstSpell && book < bookConfig.firstSpell + bookConfig.spellCount )
+								{
+									activeBook = spellBook;
+									break;
+								}
 							}
 
 							if( !ValidateObject( activeBook )) // No valid book found
@@ -1032,13 +1025,9 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 								mSock->SysMessage( 765 ); // "To cast spells, your spellbook must be in your hands or in the first layer of your pack."
 								break;
 							}
-							else
-							{
 #if defined( UOX_DEBUG_MODE )
-								Console.Print(oldstrutil::format( "DEBUG: Spellbook type: %d selected for spell: %d.", activeBook->GetType(), book ));
+							Console.Print( oldstrutil::format( "DEBUG: Spellbook type: %d selected for spell: %d.", activeBook->GetType(), book ));
 #endif
-								break;
-							}
 
 							// Validate the book's location
 							CItem *packItem = ourChar->GetPackItem();

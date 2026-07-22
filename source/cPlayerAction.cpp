@@ -1526,18 +1526,11 @@ void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDr
 		Weight->SubtractItemWeight( &mChar, &iDropped );
 	}
 
-	// Determine the type of spellbook
-	bool isPaladinBook = ( spellBook.GetType() == IT_PALADINBOOK );
-	bool isNecroBook = ( spellBook.GetType() == IT_NECROBOOK );
-	bool isRegularBook = ( spellBook.GetType() == IT_SPELLBOOK );
+	auto bookConfig = Magic->GetSpellBookConfig( &spellBook );
+	bool validScroll = bookConfig.valid && bookConfig.firstScroll > 0 &&
+		iDropped.GetId() >= bookConfig.firstScroll && iDropped.GetId() < bookConfig.firstScroll + bookConfig.spellCount;
 
-	// Validate the dropped scroll's ID range
-	bool isPaladinScroll = ( iDropped.GetId() >= 0x2271 && iDropped.GetId() <= 0x227C ); // Paladin scrolls
-	bool isnNecroScroll = ( iDropped.GetId() >= 0x2260 && iDropped.GetId() <= 0x2270 ); // Necro scrolls
-	bool isRegularScroll = ( iDropped.GetId() >= 0x1F2D && iDropped.GetId() <= 0x1F6C ); // Regular scrolls
-
-	// Check if the dropped item is a valid spell scroll and is dropped on correct book.
-	if(( isNecroBook && !isnNecroScroll ) || ( isPaladinBook && !isPaladinScroll ) || ( isRegularBook && !isRegularScroll ))
+	if( !validScroll )
 	{
 		Bounce( &mSock, &iDropped );
 		mSock.SysMessage( 1202 ); // You can only place spell scrolls in a spellbook!
@@ -1581,29 +1574,7 @@ void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDr
 	}
 	else
 	{
-		// Determine the spell number from the scroll ID
-		SI32 targSpellNum = 0;
-		UI16 scrollId = iDropped.GetId();
-
-		// Regular spells (Magery)
-		if( scrollId >= 0x1F2D && scrollId <= 0x1F6C )
-		{
-			targSpellNum = scrollId - 0x1F2C; // Adjust to spell number range
-		}
-		else if( scrollId >= 0x2260 && scrollId <= 0x2270 )
-		{
-			targSpellNum = scrollId - 0x225F + 100; // Adjust to Necromancer spell number range (101–117)
-		} 
-		else if( scrollId >= 0x2271 && scrollId <= 0x227C )
-		{
-			targSpellNum = scrollId - 0x2271 + 200; // Adjust to Paladin spell number range (201–210)
-		}
-		else
-		{
-			mSock.SysMessage( "Invalid spell scroll." ); // Invalid spell scroll.
-			Bounce( &mSock, &iDropped );
-			return;
-		}
+		SI32 targSpellNum = bookConfig.firstSpell + ( iDropped.GetId() - bookConfig.firstScroll );
 
 		// Check if the spell already exists in the book
 		if( Magic->HasSpell( &spellBook, targSpellNum ))
