@@ -1977,7 +1977,7 @@ void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 
 		mSock->SysMessage( 1201 ); // As you let go of the item it disappears.
 		return;
 	}
-	else if( nCont->GetType() == IT_SPELLBOOK || nCont->GetType() == IT_PALADINBOOK || nCont->GetType() == IT_NECROBOOK )	// Spell Book
+	else if( Magic->IsSpellBook( nCont ))
 	{
 		DropOnSpellBook(( *mSock ), ( *mChar ), ( *nCont ), ( *nItem ));
 		return;
@@ -2726,6 +2726,23 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 	UI16 itemId		= iUsed->GetId();
 	bool canTrap	= false;
 
+	if( Magic->IsSpellBook( iUsed ))
+	{
+		i = mChar->GetPackItem();
+		if( ValidateObject( i ))
+		{
+			if(( iUsed->GetCont() == i || iUsed->GetCont() == mChar ) || iUsed->GetLayer() == IL_RIGHTHAND )
+			{
+				Magic->SpellBook( mSock );
+			}
+			else
+			{
+				mSock->SysMessage( 403 ); // If you wish to open a spellbook, it must be equipped or in your main backpack.
+			}
+		}
+		return true;
+	}
+
 	// Begin Check items by type
 	switch( iType )
 	{
@@ -2842,22 +2859,6 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 		case IT_LOCKEDCONTAINER:	// Locked container
 		case IT_LOCKEDSPAWNCONT: // locked spawn container
 			mSock->SysMessage( 1428 ); // This item is locked.
-			return true;
-		case IT_NECROBOOK:
-		case IT_PALADINBOOK:
-		case IT_SPELLBOOK:	// Spellbook
-			i = mChar->GetPackItem();
-			if( ValidateObject( i ))
-			{
-				if(( iUsed->GetCont() == i || iUsed->GetCont() == mChar ) || iUsed->GetLayer() == IL_RIGHTHAND )
-				{
-					Magic->SpellBook( mSock );
-				}
-				else
-				{
-					mSock->SysMessage( 403 ); // If you wish to open a spellbook, it must be equipped or in your main backpack.
-				}
-			}
 			return true;
 		case IT_SPELLCHANNELING: //  Spell Channeling
 			return true;

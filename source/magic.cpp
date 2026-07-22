@@ -4324,7 +4324,7 @@ bool CMagic::SelectSpell( CSocket *mSock, SI32 num )
 
 		// Evaluate blocking for left and right hand items
 		handleItem( itemLHand, []( CItem* item ) { return item->GetType() != IT_SPELLCHANNELING; }, lHandBlocks );
-		handleItem( itemRHand, []( CItem* item ) { return item->GetType() != IT_SPELLBOOK && item->GetType() != IT_SPELLCHANNELING; }, rHandBlocks );
+		handleItem( itemRHand, []( CItem* item ) { return !Magic->IsSpellBook( item ) && item->GetType() != IT_SPELLCHANNELING; }, rHandBlocks );
 
 		if( lHandBlocks || rHandBlocks )
 		{

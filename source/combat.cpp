@@ -643,7 +643,7 @@ CItem * CHandleCombat::GetWeapon( CChar *i )
 	CItem *j = i->GetItemAtLayer( IL_RIGHTHAND );
 	if( ValidateObject( j ))
 	{
-		if( j->GetType() == IT_SPELLBOOK )	// spell books aren't weapons
+		if( Magic->IsSpellBook( j ))
 			return nullptr;
 
 		return j;
