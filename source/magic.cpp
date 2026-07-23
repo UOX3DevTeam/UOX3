@@ -3974,7 +3974,12 @@ bool CMagic::CheckReagents( CChar *s, const CSpellInfo& spell )
 
 	for( const auto& reagent : spell.Reagents() )
 	{
-		if( GetItemAmount( s, reagent.itemId, reagent.colour, 0, reagent.colourCheck, false, reagent.sectionId ) < reagent.amount )
+		UI32 reagentCount = 0;
+		for( const auto& sectionId : reagent.sectionIds )
+		{
+			reagentCount += GetItemAmount( s, reagent.itemId, reagent.colour, 0, reagent.colourCheck, false, sectionId );
+		}
+		if( reagentCount < reagent.amount )
 		{
 			CSocket *socket = s->GetSocket();
 			if( socket != nullptr )
@@ -5385,30 +5390,68 @@ void CMagic::LoadScript( void )
 								{
 									spells[i].RecoveryDelay( static_cast<R64>( std::stod( data )));
 								}
-								else if( UTag == "REAGENT" )
-								{
-									auto reagentData = oldstrutil::sections( data, "," );
-									if( reagentData.size() < 2 || reagentData.size() > 3 )
-									{
-										Console.Warning( oldstrutil::format( "Invalid REAGENT tag in spell %i: expected section,amount[,colour]", i ));
-										break;
-									}
+				else if( UTag == "REAGENT" )
+				{
+					auto reagentData = oldstrutil::sections( data, "," );
+					if( reagentData.size() < 2 || reagentData.size() > 4 )
+					{
+						Console.Warning( oldstrutil::format( "Invalid REAGENT tag in spell %i: expected section[,alias],amount[,colour]", i ));
+						break;
+					}
 
-									std::string sectionId = oldstrutil::trim( reagentData[0] );
-									UI16 itemId = 0;
-									if( !ResolveReagentItemId( sectionId, itemId ))
-									{
-										Console.Warning( oldstrutil::format( "Invalid item section '%s' in REAGENT tag for spell %i", sectionId.c_str(), i ));
-										break;
-									}
+					std::vector<std::string> sectionIds = { oldstrutil::trim( reagentData[0] ) };
+					size_t amountIndex = 1;
+					try
+					{
+						size_t parsedLength = 0;
+						std::string amountValue = oldstrutil::trim( reagentData[1] );
+						std::stoul( amountValue, &parsedLength, 0 );
+						if( parsedLength != amountValue.size() )
+						{
+							amountIndex = 2;
+						}
+					}
+					catch( const std::exception& )
+					{
+						amountIndex = 2;
+					}
+					if( amountIndex == 2 )
+					{
+						sectionIds.push_back( oldstrutil::trim( reagentData[1] ));
+					}
+					if( reagentData.size() <= amountIndex || reagentData.size() > amountIndex + 2 )
+					{
+						Console.Warning( oldstrutil::format( "Invalid REAGENT tag in spell %i: expected section[,alias],amount[,colour]", i ));
+						break;
+					}
 
-									UI16 amount = static_cast<UI16>( std::stoul( oldstrutil::trim( reagentData[1] ), nullptr, 0 ));
-									if( amount == 0 )
-										break;
+					UI16 itemId = 0;
+					if( !ResolveReagentItemId( sectionIds[0], itemId ))
+					{
+						Console.Warning( oldstrutil::format( "Invalid item section '%s' in REAGENT tag for spell %i", sectionIds[0].c_str(), i ));
+						break;
+					}
+					bool validAliases = true;
+					for( size_t aliasIndex = 1; aliasIndex < sectionIds.size(); ++aliasIndex )
+					{
+						UI16 aliasItemId = 0;
+						if( !ResolveReagentItemId( sectionIds[aliasIndex], aliasItemId ) || aliasItemId != itemId )
+						{
+							Console.Warning( oldstrutil::format( "REAGENT sections '%s' and '%s' do not resolve to the same item for spell %i", sectionIds[0].c_str(), sectionIds[aliasIndex].c_str(), i ));
+							validAliases = false;
+							break;
+						}
+					}
+					if( !validAliases )
+						break;
 
-									bool colourCheck = reagentData.size() == 3;
-									UI16 colour = colourCheck ? static_cast<UI16>( std::stoul( oldstrutil::trim( reagentData[2] ), nullptr, 0 )) : 0;
-									spells[i].AddReagent( SpellReagent( itemId, amount, sectionId, colour, colourCheck ));
+					UI16 amount = static_cast<UI16>( std::stoul( oldstrutil::trim( reagentData[amountIndex] ), nullptr, 0 ));
+					if( amount == 0 )
+						break;
+
+					bool colourCheck = reagentData.size() == amountIndex + 2;
+					UI16 colour = colourCheck ? static_cast<UI16>( std::stoul( oldstrutil::trim( reagentData[amountIndex + 1] ), nullptr, 0 )) : 0;
+					spells[i].AddReagent( SpellReagent( itemId, amount, sectionIds, colour, colourCheck ));
 								}
 								break;
 							case 'S':
@@ -5494,7 +5537,13 @@ void CMagic::DelReagents( CChar *s, const CSpellInfo& spell )
 
 	for( const auto& reagent : spell.Reagents() )
 	{
-		DeleteItemAmount( s, reagent.amount, reagent.itemId, reagent.colour, 0, reagent.colourCheck, false, reagent.sectionId );
+		UI32 amountRemaining = reagent.amount;
+		for( const auto& sectionId : reagent.sectionIds )
+		{
+			amountRemaining -= DeleteItemAmount( s, amountRemaining, reagent.itemId, reagent.colour, 0, reagent.colourCheck, false, sectionId );
+			if( amountRemaining == 0 )
+				break;
+		}
 	}
 }
 

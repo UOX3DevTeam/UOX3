@@ -244,10 +244,16 @@ JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp
 					JSObject *reagent = JS_NewArrayObject( cx, 0, nullptr );
 					jsval itemId = INT_TO_JSVAL( spellReagent.itemId );
 					jsval amount = INT_TO_JSVAL( spellReagent.amount );
-					jsval sectionId = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, spellReagent.sectionId.c_str() ));
+					JSObject *sectionIds = JS_NewArrayObject( cx, 0, nullptr );
+					for( size_t sectionIndex = 0; sectionIndex < spellReagent.sectionIds.size(); ++sectionIndex )
+					{
+						jsval sectionId = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, spellReagent.sectionIds[sectionIndex].c_str() ));
+						JS_SetElement( cx, sectionIds, sectionIndex, &sectionId );
+					}
+					jsval sectionIdValues = OBJECT_TO_JSVAL( sectionIds );
 					JS_SetElement( cx, reagent, 0, &itemId );
 					JS_SetElement( cx, reagent, 1, &amount );
-					JS_SetElement( cx, reagent, 2, &sectionId );
+					JS_SetElement( cx, reagent, 2, &sectionIdValues );
 					if( spellReagent.colourCheck )
 					{
 						jsval colour = INT_TO_JSVAL( spellReagent.colour );
