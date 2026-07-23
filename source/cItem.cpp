@@ -3380,7 +3380,8 @@ auto CItem::SetSpell( UI08 part, UI32 newValue ) -> void
 //|	Function	-	CItem::GetSpellBookFirstSpell()
 //|					CItem::SetSpellBookFirstSpell()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the first global spell ID represented by this spellbook.
+//|	Purpose		-	Gets/Sets the spell number mapped to the first bit in this spellbook.
+//|					Later bits map to consecutive spell numbers.
 //o------------------------------------------------------------------------------------------------o
 auto CItem::GetSpellBookFirstSpell() const -> SI32
 {
