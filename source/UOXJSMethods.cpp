@@ -51,6 +51,7 @@
 #include <jsapi.h>
 #include <js/Object.h>
 #include <js/Array.h>
+#include <js/Conversions.h>
 
 void BuildAddMenuGump( CSocket *s, UI16 m );	// Menus for item creation
 void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, SI16 trgX, SI16 trgY, SI08 trgZ, UI08 trgWorld, UI16 trgInstanceId = 0 );
@@ -2104,7 +2105,7 @@ bool CBase_GetJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 			if( tScript != nullptr && ( scriptId == Effect->AssocScript() || scriptId == Effect->More2() ))
 			{
 				// Return the timestamp for when the Effect timer expires
-				JS_NewNumberValue( cx, Effect->ExpireTime(), &JS_RVAL( cx, vp ) );
+				JS_RVAL(cx, vp) = JS::NumberValue( Effect->ExpireTime() );
 			}
 		}
 	}
@@ -2138,7 +2139,8 @@ bool CBase_SetJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 	args.rval().setInt32(  0  ); // Return value is 0 by default, indicating no timer was found or updated
 	UI16 timerId = static_cast<UI16>( args.get(0).toInt32());
 	double expireTime_double;
-	JS_ValueToNumber( cx, args.get(1), &expireTime_double );
+	JS::RootedValue rootedValue( cx, args.get(1) );
+	JS::ToNumber( cx, rootedValue, &expireTime_double );
 	TIMERVAL expireTime = BuildTimeValue( static_cast<R64>( expireTime_double ) / 1000.0 );
 	UI16 scriptId = static_cast<UI16>( args.get(2).toInt32());
 
@@ -2386,7 +2388,7 @@ bool CBase_GetTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID )
 		{
 			// Return the timestamp for when the Temp Effect timer expires
-			JS_NewNumberValue( cx, Effect->ExpireTime(), &JS_RVAL( cx, vp ) );
+			JS_RVAL(cx, vp) = JS::NumberValue( Effect->ExpireTime() );
 		}
 	}
 
@@ -3856,14 +3858,14 @@ bool CBase_GetTagMap( JSContext *cx, unsigned argc, JS::Value* vp )
 	TAGMAP2 tagMap = myObj->GetTagMap();
 
 	// Create main JSObject to store full list of tags
-	JSObject *jsTagMap = JS_NewArrayObject( cx, 0, nullptr );
+	JSObject *jsTagMap = JS::NewArrayObject( cx, 0 );
 
 	// Iterate over tag map to fetch details on each tag
 	int i = 0;
 	for( auto &tagObj : tagMap )
 	{
 		// Create JSObject for current tag
-		JSObject *jsTag = JS_NewArrayObject( cx, 0, nullptr );
+		JSObject *jsTag = JS::NewArrayObject( cx, 0 );
 		
 		// Convert tag name to JSString
 		JSString *tagName = JS_NewStringCopyZ( cx, tagObj.first.c_str() );
@@ -3940,14 +3942,14 @@ bool CBase_GetTempTagMap( JSContext *cx, unsigned argc, JS::Value* vp )
 	TAGMAP2 tagMap = myObj->GetTempTagMap();
 
 	// Create main JSObject to store full list of tags
-	JSObject *jsTagMap = JS_NewArrayObject( cx, 0, nullptr );
+	JSObject *jsTagMap = JS::NewArrayObject( cx, 0 );
 
 	// Iterate over tag map to fetch details on each tag
 	int i = 0;
 	for( auto &tagObj : tagMap )
 	{
 		// Create JSObject for current tag
-		JSObject *jsTag = JS_NewArrayObject( cx, 0, nullptr );
+		JSObject *jsTag = JS::NewArrayObject( cx, 0 );
 
 		// Convert tag name to JSString
 		JSString *tagName = JS_NewStringCopyZ( cx, tagObj.first.c_str() );
@@ -5074,7 +5076,8 @@ bool CBase_StartTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	// 1. Parameter Delay, 2. Parameter Callback
 	double expireTime_double;
-	JS_ValueToNumber( cx, args.get(0), &expireTime_double );
+	JS::RootedValue rootedValue( cx, args.get(0) );
+	JS::ToNumber( cx, rootedValue, &expireTime_double );
 	TIMERVAL ExpireTime = BuildTimeValue( static_cast<R64>( expireTime_double ) / 1000.0 );
 	UI16 TriggerNum = static_cast<UI16>( args.get(1).toInt32());
 
@@ -6762,7 +6765,7 @@ bool CSocket_GetDWord( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	SI32 offset = args.get(0).toInt32();
-	JS_NewNumberValue( cx, mySock->GetDWord( offset ), &JS_RVAL( cx, vp ) );
+	JS_RVAL(cx, vp) = JS::NumberValue(  mySock->GetDWord( offset ) );
 	return true;
 }
 
@@ -8602,7 +8605,7 @@ bool CMisc_GetTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 			return false;
 		}
 
-		JS_NewNumberValue( cx, cMove->GetTimer( static_cast<cC_TID>( encaps.toInt() )), &JS_RVAL( cx, vp ) );
+		JS_RVAL(cx, vp) = JS::NumberValue( cMove->GetTimer( static_cast<cC_TID>( encaps.toInt() )) );
 	}
 	else if( myClass.ClassName() == "UOXSocket" )
 	{
@@ -8613,7 +8616,7 @@ bool CMisc_GetTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 			return false;
 		}
 
-		JS_NewNumberValue( cx, mSock->GetTimer( static_cast<cS_TID>( encaps.toInt() )), &JS_RVAL( cx, vp ) );
+		JS_RVAL(cx, vp) = JS::NumberValue( mSock->GetTimer( static_cast<cS_TID>( encaps.toInt() )) );
 	}
 
 	return true;
@@ -8638,7 +8641,8 @@ bool CMisc_SetTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 	JSEncapsulate myClass( cx, obj );
 
 	double timerVal_double;
-	JS_ValueToNumber( cx, args.get(1), &timerVal_double );
+	JS::RootedValue rootedValue( cx, args.get(1) );
+	JS::ToNumber( cx, rootedValue, &timerVal_double );
 	TIMERVAL timerVal = 0;
 	if( timerVal_double != 0 )
 	{
@@ -12137,8 +12141,8 @@ bool CRegion_GetOrePref( JSContext *cx, unsigned argc, JS::Value* vp )
 	auto orePrefs = myObj->GetOrePreference( oreType );
 
 	// Prepare some temporary helper variables
-	JSObject *jsOrePref = JS_NewArrayObject( cx, 0, nullptr );
-	JSObject *jsMiningData = JS_NewArrayObject( cx, 0, nullptr );
+	JSObject *jsOrePref = JS::NewArrayObject( cx, 0 );
+	JSObject *jsMiningData = JS::NewArrayObject( cx, 0 );
 
 	// Set up the mining data info
 	// Start with name of ore
@@ -12337,7 +12341,7 @@ bool CChar_GetFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 	auto friendList = mChar->GetFriendList();
 
 	// Prepare some temporary helper variables
-	JSObject *jsFriendList = JS_NewArrayObject( cx, 0, nullptr );
+	JSObject *jsFriendList = JS::NewArrayObject( cx, 0 );
 	JS::Value jsTempFriend;
 
 	// Loop through list of friends, and add each one to the JS ArrayObject
@@ -12441,7 +12445,7 @@ bool CChar_GetPetList( JSContext *cx, unsigned argc, JS::Value* vp )
 	auto petList = mChar->GetPetList();
 
 	// Prepare some temporary helper variables
-	JSObject *jsPetList = JS_NewArrayObject( cx, 0, nullptr );
+	JSObject *jsPetList = JS::NewArrayObject( cx, 0 );
 	JS::Value jsTempPet;
 
 	// Loop through list of pets, and add each one to the JS ArrayObject
@@ -12699,7 +12703,7 @@ bool CChar_GetFollowerList( JSContext *cx, unsigned argc, JS::Value* vp )
 	auto followerList = mChar->GetFollowerList();
 
 	// Prepare some temporary helper variables
-	JSObject *jsFollowerList = JS_NewArrayObject( cx, 0, nullptr );
+	JSObject *jsFollowerList = JS::NewArrayObject( cx, 0 );
 	JS::Value jsTempFollower;
 
 	// Loop through list of friends, and add each one to the JS ArrayObject

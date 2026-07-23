@@ -16,6 +16,7 @@
 #include <js/Object.h>
 #include <js/CompilationAndEvaluation.h>
 #include <js/SourceText.h>
+#include <js/Conversions.h>
 
 static constexpr SI08 RV_NOFUNC = -1;
 
@@ -368,7 +369,7 @@ cScript::cScript( std::string targFile, UI08 rT, UI16 scrID ) : isFiring( false 
 		{
 			// Triggered when reloading individual scripts at runtime
 			JS::Value pendingException;
-			if( JS_GetPendingException( targContext, &pendingException ) == true )
+			if( JS_GetPendingException( targContext, JS::MutableHandleValue::fromMarkedLocation(&pendingException) ) == true )
 			{
 				if( pendingException.isObject() && !pendingException.isNull() )
 				{
@@ -385,7 +386,8 @@ cScript::cScript( std::string targFile, UI08 rT, UI16 scrID ) : isFiring( false 
 					JS::Value lineVal;
 					if( JS_GetProperty( targContext, errObj, "lineNumber", &lineVal ) == true )
 					{
-						JS_ValueToECMAUint32( targContext, lineVal, &errorLine );
+						JS::RootedValue rootedValue( targContext, lineVal );
+						JS::ToUint32( targContext, rootedValue, &errorLine );
 					}
 
 					// Get filename from pending exception

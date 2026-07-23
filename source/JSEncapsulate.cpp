@@ -2,6 +2,7 @@
 #include <string>
 #include "StringUtility.hpp"
 #include <js/Object.h>
+#include <js/Conversions.h>
 #include "SEFunctions.h"
 
 namespace
@@ -196,8 +197,11 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 			{
 				case JSOT_INT:		intVal = vp->toInt32();	break;
 				case JSOT_DOUBLE:
-					JS_ValueToNumber( cx, ( *vp ), &fvalue );
+				{
+					JS::RootedValue rootedValue(cx, (*vp) );
+					JS::ToNumber( cx, rootedValue, &fvalue );
 					intVal = static_cast<SI32>( fvalue );
+				}
 					break;
 				case JSOT_BOOL:		intVal = (vp->toBoolean() ? 1 : 0);	break;
 				case JSOT_STRING:
@@ -217,8 +221,11 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 					floatVal	= static_cast<R32>( ivalue );
 					break;
 				case JSOT_DOUBLE:
-					JS_ValueToNumber( cx, ( *vp ), &fvalue );
+				{
+					JS::RootedValue rootedValue( cx, (*vp) );
+					JS::ToNumber( cx, rootedValue, &fvalue );
 					floatVal	= static_cast<R32>( fvalue );
+					}
 					break;
 				case JSOT_BOOL:		floatVal	= (vp->toBoolean() ? 1.0f : 0.0f);	break;
 				case JSOT_STRING:
@@ -238,8 +245,11 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 					boolVal	= ( ivalue != 0 );
 					break;
 				case JSOT_DOUBLE:
-					JS_ValueToNumber( cx, ( *vp ), &fvalue );
+				{
+					JS::RootedValue rootedValue( cx, (*vp) );
+					JS::ToNumber( cx, rootedValue, &fvalue );
 					boolVal	= ( fvalue != 0.0f );
+				}
 					break;
 				case JSOT_BOOL:		boolVal = vp->toBoolean();	break;
 				case JSOT_STRING:
@@ -259,8 +269,11 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 					stringVal	= oldstrutil::number( ivalue );
 					break;
 				case JSOT_DOUBLE:
-					JS_ValueToNumber( cx, ( *vp ), &fvalue );
+				{
+					JS::RootedValue rootedValue(cx, (*vp) );
+					JS::ToNumber( cx, rootedValue, &fvalue );
 					stringVal	= oldstrutil::number( fvalue );
+				}
 					break;
 				case JSOT_BOOL:
 					bvalue	= vp->toBoolean();

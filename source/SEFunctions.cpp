@@ -36,6 +36,7 @@
 #include "cSpawnRegion.h"
 #include "CPacketSend.h"
 #include <js/Object.h>
+#include <js/Array.h>
 
 
 
@@ -1210,7 +1211,7 @@ bool SE_SecondsPerUOMinute( JSContext *cx, unsigned int argc, JS::Value *vp )
 bool SE_GetCurrentClock( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	JS::Value* rval = &JS_RVAL(cx, vp);
-	JS_NewNumberValue( cx, cwmWorldState->GetUICurrentTime(), rval );
+	*rval = JS::NumberValue( cwmWorldState->GetUICurrentTime() );
 
 	return true;
 }
@@ -1223,7 +1224,7 @@ bool SE_GetCurrentClock( JSContext *cx, unsigned int argc, JS::Value *vp )
 bool SE_GetStartTime( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	JS::Value* rval = &JS_RVAL(cx, vp);
-	JS_NewNumberValue( cx, cwmWorldState->GetStartTime(), rval );
+	*rval = JS::NumberValue( cwmWorldState->GetStartTime() );
 
 	return true;
 }
@@ -1288,7 +1289,7 @@ bool SE_GetRandomSOSArea( JSContext *cx, unsigned int argc, JS::Value *vp )
 	JS::Value jsInstanceId	= JS::Int32Value( rndSosLoc.instanceId );
 
 	// Construct a JS Object with the properties of the chosen SOS area
-	JSObject *rndSosLocObj = JS_NewArrayObject( cx, 0, nullptr );
+	JSObject *rndSosLocObj = JS::NewArrayObject( cx, 0 );
 	JS_SetElement( cx, rndSosLocObj, 0, &jsX1 );
 	JS_SetElement( cx, rndSosLocObj, 1, &jsY1 );
 	JS_SetElement( cx, rndSosLocObj, 2, &jsX2 );
@@ -4086,7 +4087,7 @@ bool SE_GetSpawnRegions( JSContext *cx, unsigned int argc, JS::Value *vp )
 	if( !regions.empty() )
 	{
 		// Create a new JS array to store spawn regions
-		JSObject *spawnRegs = JS_NewArrayObject( cx, 0, nullptr );
+		JSObject *spawnRegs = JS::NewArrayObject( cx, 0 );
 		int regionCount = 0;
 
 		// Iterate over each spawn region to find all matching regions
@@ -6032,7 +6033,7 @@ bool SE_DistanceBetween( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_BASEITEMSERIAL( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS_NewNumberValue( cx, BASEITEMSERIAL, &JS_RVAL( cx, vp ));
+	JS_RVAL(cx, vp) = JS::NumberValue( BASEITEMSERIAL );
 	return true;
 }
 
@@ -6043,7 +6044,7 @@ bool SE_BASEITEMSERIAL( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_INVALIDSERIAL( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS_NewNumberValue( cx, INVALIDSERIAL, &JS_RVAL( cx, vp ));
+	JS_RVAL(cx, vp) = JS::NumberValue( INVALIDSERIAL );
 	return true;
 }
 
@@ -6054,7 +6055,7 @@ bool SE_INVALIDSERIAL( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_INVALIDID( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS_NewNumberValue( cx, INVALIDID, &JS_RVAL( cx, vp ));
+	JS_RVAL(cx, vp) = JS::NumberValue( INVALIDID );
 	return true;
 }
 
@@ -6065,6 +6066,6 @@ bool SE_INVALIDID( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_INVALIDCOLOUR( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS_NewNumberValue( cx, INVALIDCOLOUR, &JS_RVAL( cx, vp ));
+	JS_RVAL(cx, vp) = JS::NumberValue( INVALIDCOLOUR );
 	return true;
 }

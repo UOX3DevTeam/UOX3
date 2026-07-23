@@ -35,17 +35,6 @@ inline void JS_SetPrivate( JSContext *, JSObject *obj, void *value )
 		value == nullptr ? JS::UndefinedValue() : JS::PrivateValue( value ));
 }
 
-inline bool JS_NewNumberValue( JSContext *, double number, JS::Value *value )
-{
-	*value = JS::NumberValue( number );
-	return true;
-}
-
-inline JSObject *JS_NewArrayObject( JSContext *cx, size_t length, JS::Value * )
-{
-	return JS::NewArrayObject( cx, length );
-}
-
 inline JSObject *JS_NewObject( JSContext *cx, const JSClass *jsClass,
 	JSObject *, JSObject *parent )
 {
@@ -115,24 +104,6 @@ inline bool JS_GetProperty( JSContext *cx, JSObject *obj, const char *name, JS::
 	JS::RootedObject rootedObj( cx, obj );
 	return JS_GetProperty( cx, rootedObj, name,
 		JS::MutableHandleValue::fromMarkedLocation( value ) );
-}
-
-inline bool JS_GetPendingException( JSContext *cx, JS::Value *value )
-{
-	return JS_GetPendingException( cx,
-		JS::MutableHandleValue::fromMarkedLocation( value ) );
-}
-
-inline bool JS_ValueToECMAUint32( JSContext *cx, const JS::Value &value, uint32_t *result )
-{
-	JS::RootedValue rootedValue( cx, value );
-	return JS::ToUint32( cx, rootedValue, result );
-}
-
-inline bool JS_ValueToNumber( JSContext *cx, const JS::Value &value, double *result )
-{
-	JS::RootedValue rootedValue( cx, value );
-	return JS::ToNumber( cx, rootedValue, result );
 }
 
 #endif
