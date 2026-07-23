@@ -244,17 +244,6 @@ JSObject *rootClass(JSContext *cx, JS::HandleObject obj, const JSClass *clazz, J
                            const JSPropertySpec *ps, const JSFunctionSpec *fs) {
   return JS_InitClass( cx, obj, clazz, nullptr, clazz->name, constructor,  0, ps, fs, nullptr, nullptr );
 }
-void setupMap( std::map< std::string, int >& lkpMap, const JSPropertySpec lkpProps[], int countOfProps )
-{
-	lkpMap.clear();
-	for( int i = 0; i < countOfProps; ++i )
-	{
-		if( lkpProps[i].name && lkpProps[i].name.isString() )
-		{
-			lkpMap[lkpProps[i].name.string()] = i;
-		}
-	}
-}
 
 bool ResolveSpellCollection( JSContext *cx, JS::HandleObject obj, JS::HandleId id, bool *resolved )
 {
@@ -365,19 +354,6 @@ void CJSRuntime::InitializePrototypes()
 	}
 
 	// TODO: Root them
-
-	setupMap( propLookupAccount, CAccountProperties, std::size( CAccountProperties ) );
-	setupMap( propLookupChar, CCharacterProps, std::size( CCharacterProps ) );
-	setupMap( propLookupConsole, CConsoleProperties, std::size( CConsoleProperties ) );
-	setupMap( propLookupGuild, CGuildProperties, std::size( CGuildProperties ) );
-	setupMap( propLookupItem, CItemProps, std::size( CItemProps ) );
-	setupMap( propLookupParty, CPartyProperties, std::size( CPartyProperties ) );
-	setupMap( propLookupRace, CRaceProperties, std::size( CRaceProperties ) );
-	setupMap( propLookupRegion, CRegionProperties, std::size( CRegionProperties ) );
-	setupMap( propLookupResource, CResourceProperties, std::size( CResourceProperties ) );
-	setupMap( propLookupSkills, CSkillsProps, std::size( CSkillsProps ) );
-	setupMap( propLookupSocket, CSocketProps, std::size( CSocketProps ) );
-	setupMap( propLookupSpawnRegion, CSpawnRegionProperties, std::size( CSpawnRegionProperties ) );
 }
 
 JSRuntime *CJSRuntime::GetRuntime( void ) const
