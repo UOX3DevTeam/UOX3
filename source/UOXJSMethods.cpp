@@ -5551,7 +5551,7 @@ bool CChar_CastSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 	{
 		CSocket *sock = myChar->GetSocket();
 
-		if(( argc == 2 ) && ( args.get(1) == JSVAL_TRUE ))
+		if( argc == 2 && args.get(1).toBoolean() )
 		{
 			// Next...
 			myChar->SetSpellCast( spellCast );

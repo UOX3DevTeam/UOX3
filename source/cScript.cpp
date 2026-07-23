@@ -471,7 +471,10 @@ bool cScript::InvokeEvent( const char* name, unsigned int argc, const JS::Value*
 #if defined UOX_DEBUG_MODE
 	Console.Log( oldstrutil::format( "Triggering event '%s' from script %d", name, GetScriptID() ) );
 #endif
-	bool rVal = JS_CallFunctionName( targContext, targObject, name, argc, argv, rval );
+	JS::RootedObject rootedObj( targContext, targObject );
+	auto args = JS::HandleValueArray::fromMarkedLocation( argc, argv );
+	auto result = JS::MutableHandleValue::fromMarkedLocation( rval );
+	bool rVal = JS_CallFunctionName( targContext, rootedObj, name, args, result );
 	JSMapping->popActive();
 	return rVal;
 }
@@ -497,7 +500,8 @@ bool cScript::OnStart( void *myObj, SI32 objType )
 		params[0] = JS::ObjectOrNullValue( jsObj );
 	}
 
-	bool retVal = JS_CallFunctionName( targContext, targObject, "onStart", 1, params, &rval );
+	bool retVal = InvokeEvent( "onStart", 1, params, &rval );
+
 	if( !retVal )
 	{
 		SetEventExists( seOnStart, false );
@@ -518,7 +522,7 @@ bool cScript::OnScriptLoad( void )
 		return false;
 
 	JS::Value rval;
-	bool retVal = JS_CallFunctionName( targContext, targObject, "onScriptLoad", 0, nullptr, &rval );
+	bool retVal = InvokeEvent( "onScriptLoad", 0, nullptr, &rval );
 	if( !retVal )
 	{
 		SetEventExists( seOnScriptLoad, false );
@@ -1856,7 +1860,7 @@ SI08 cScript::OnReleasePet( CChar *owner, CChar *pet )
 	params[0] = JS::ObjectOrNullValue( ownerObj );
 	params[1] = JS::ObjectOrNullValue( petObj );
 
-	bool retVal = JS_CallFunctionName( targContext, targObject, "onReleasePet", 2, params, &rval );
+	bool retVal = InvokeEvent( "onReleasePet", 2, params, &rval );
 
 	if( !retVal )
 	{
@@ -3559,7 +3563,7 @@ bool cScript::OnSpeechInput( CChar *myChar, CItem *myItem, const char *mySpeech 
 		return true;
 	}
 
-	return ( rval == JSVAL_TRUE );
+	return ( rval.toBoolean() );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3709,7 +3713,6 @@ bool cScript::AreaObjFunc( const char *funcName, CBaseObject *srcObject, CBaseOb
 	// ExistAndVerify() normally sets our Global Object, but not on custom named functions.
 
 	//FIXME === do we need this retvalue?
-	//bool retVal = JS_CallFunctionName( targContext, targObject, funcName, 3, params, &rval );
 	try
 	{
 		[[maybe_unused]] bool retVal = InvokeEvent( funcName, 3, params, &rval );
@@ -3770,7 +3773,7 @@ std::string cScript::OnProfileRequest( CSocket *mSock, CChar *profileOwner )
 	
 	params[0]	= JS::ObjectOrNullValue( myObj );
 	params[1]	= JS::ObjectOrNullValue( profOwnerObj );
-	bool retVal	= JS_CallFunctionName( targContext, targObject, "onProfileRequest", 2, params, &rval );
+	bool retVal	= InvokeEvent( "onProfileRequest", 2, params, &rval );
 	if( !retVal )
 	{
 		SetEventExists( seOnProfileRequest, false );
@@ -3815,7 +3818,7 @@ SI08 cScript::OnProfileUpdate( CSocket *mSock, std::string profileText )
 
 	params[0]	= JS::ObjectOrNullValue( myObj );
 	params[1]	= JS::StringValue( strProfileText );
-	bool retVal	= JS_CallFunctionName( targContext, targObject, "onProfileUpdate", 2, params, &rval );
+	bool retVal	= InvokeEvent( "onProfileUpdate", 2, params, &rval );
 	if( !retVal )
 	{
 		SetEventExists( seOnProfileUpdate, false );
@@ -4143,7 +4146,7 @@ SI08 cScript::OnDismount( CChar *pChar, CChar *npcMount )
 
 	params[0] = JS::ObjectOrNullValue( pObj );
 	params[1] = JS::ObjectOrNullValue( npcObj );
-	bool retVal = JS_CallFunctionName( targContext, targObject, "onDismount", 2, params, &rval );
+	bool retVal = InvokeEvent( "onDismount", 2, params, &rval );
 
 	if( !retVal )
 	{

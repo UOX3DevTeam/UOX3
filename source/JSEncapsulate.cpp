@@ -44,34 +44,34 @@ void JSEncapsulate::SetContext( JSContext *jsCX, const JS::Value *jsVP )
 }
 void JSEncapsulate::Init( void )
 {
-	if( JSVAL_IS_PRIMITIVE( *vp ))
+	if( vp->isPrimitive() )
 	{
-		if( JSVAL_IS_DOUBLE(( *vp )))
+		if( vp->isDouble() )
 		{
 			nativeType	= JSOT_DOUBLE;
 		}
-		else if( JSVAL_IS_INT(( *vp )))
+		else if( vp->isInt32() )
 		{
 			nativeType	= JSOT_INT;
 		}
-		else if( JSVAL_IS_BOOLEAN(( *vp )))
+		else if( vp->isBoolean() )
 		{
 			nativeType	= JSOT_BOOL;
 		}
-		else if( JSVAL_IS_STRING(( *vp )))
+		else if( vp->isString() )
 		{
 			nativeType	= JSOT_STRING;
 		}
-		else if( JSVAL_IS_VOID(( *vp )))
+		else if( vp->isUndefined() )
 		{
 			nativeType	= JSOT_VOID;
 		}
-		else if( JSVAL_IS_NULL(( *vp )))
+		else if( vp->isNull() )
 		{
 			nativeType	= JSOT_NULL;
 		}
 	}
-	else if( JSVAL_IS_OBJECT(( *vp )))
+	else if( vp->isObject() )
 	{
 		nativeType	= JSOT_OBJECT;
 	}
@@ -166,7 +166,7 @@ std::string JSEncapsulate::ClassName( void )
 			JSObject *obj2 = nullptr;
 			if( vp != nullptr )
 			{
-				obj2 = JSVAL_TO_OBJECT( *vp );
+				obj2 = vp->toObjectOrNull();
 			}
 			else
 			{
@@ -185,7 +185,7 @@ std::string JSEncapsulate::ClassName( void )
 }
 void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 {
-	jsdouble	fvalue;
+	double	fvalue;
 	SI32		ivalue;
 	std::string	svalue;
 	bool		bvalue;
@@ -194,12 +194,12 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 		case JSOT_INT:
 			switch( nativeType )
 			{
-				case JSOT_INT:		intVal = JSVAL_TO_INT(( *vp ));	break;
+				case JSOT_INT:		intVal = vp->toInt32();	break;
 				case JSOT_DOUBLE:
 					JS_ValueToNumber( cx, ( *vp ), &fvalue );
 					intVal = static_cast<SI32>( fvalue );
 					break;
-				case JSOT_BOOL:		intVal = (( JSVAL_TO_BOOLEAN(( *vp )) == JS_TRUE) ? 1 : 0 );	break;
+				case JSOT_BOOL:		intVal = (vp->toBoolean() ? 1 : 0);	break;
 				case JSOT_STRING:
 					svalue = JS_GetStringBytes( cx, *vp );
 					intVal = std::stoi( svalue, nullptr, 0 );
@@ -213,14 +213,14 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 			switch( nativeType )
 			{
 				case JSOT_INT:
-					ivalue		= JSVAL_TO_INT((*vp) );
+					ivalue		= vp->toInt32();
 					floatVal	= static_cast<R32>( ivalue );
 					break;
 				case JSOT_DOUBLE:
 					JS_ValueToNumber( cx, ( *vp ), &fvalue );
 					floatVal	= static_cast<R32>( fvalue );
 					break;
-				case JSOT_BOOL:		floatVal	= (( JSVAL_TO_BOOLEAN(( *vp )) == JS_TRUE ) ? 1.0f : 0.0f );	break;
+				case JSOT_BOOL:		floatVal	= (vp->toBoolean() ? 1.0f : 0.0f);	break;
 				case JSOT_STRING:
 					svalue		= JS_GetStringBytes( cx, *vp );
 					floatVal	= std::stof( svalue );
@@ -234,14 +234,14 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 			switch( nativeType )
 			{
 				case JSOT_INT:
-					ivalue	= JSVAL_TO_INT(( *vp ));
+					ivalue	= vp->toInt32();
 					boolVal	= ( ivalue != 0 );
 					break;
 				case JSOT_DOUBLE:
 					JS_ValueToNumber( cx, ( *vp ), &fvalue );
 					boolVal	= ( fvalue != 0.0f );
 					break;
-				case JSOT_BOOL:		boolVal = ( JSVAL_TO_BOOLEAN(( *vp )) == JS_TRUE );	break;
+				case JSOT_BOOL:		boolVal = vp->toBoolean();	break;
 				case JSOT_STRING:
 					svalue	= JS_GetStringBytes( cx, *vp );
 					boolVal = ( oldstrutil::upper( svalue ) == "TRUE" );
@@ -255,7 +255,7 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 			switch( nativeType )
 			{
 				case JSOT_INT:
-					ivalue		= JSVAL_TO_INT(( *vp ));
+					ivalue		= vp->toInt32();
 					stringVal	= oldstrutil::number( ivalue );
 					break;
 				case JSOT_DOUBLE:
@@ -263,7 +263,7 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 					stringVal	= oldstrutil::number( fvalue );
 					break;
 				case JSOT_BOOL:
-					bvalue	= ( JSVAL_TO_BOOLEAN(( *vp )) == JS_TRUE );
+					bvalue	= vp->toBoolean();
 					if( bvalue )
 					{
 						stringVal = "TRUE";
@@ -282,7 +282,7 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 			}
 			break;
 		case JSOT_OBJECT:
-			objectVal	= GetUOXPrivate( JSVAL_TO_OBJECT( *vp ) );
+			objectVal	= GetUOXPrivate( vp->toObjectOrNull() );
 			break;
 		default:
 		case JSOT_COUNT:
