@@ -3397,7 +3397,9 @@ auto CItem::SetSpellBookFirstSpell( SI32 newValue ) -> void
 //|	Function	-	CItem::GetSpellBookSpellCount()
 //|					CItem::SetSpellBookSpellCount()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the number of consecutive spells represented by this spellbook.
+//|	Purpose		-	Gets/Sets how many consecutive spell bits belong to this spellbook.
+//|					Together with FirstSpell, this defines the inclusive spell range as
+//|					FirstSpell through FirstSpell + SpellCount - 1.
 //o------------------------------------------------------------------------------------------------o
 auto CItem::GetSpellBookSpellCount() const -> UI16
 {
@@ -3413,7 +3415,9 @@ auto CItem::SetSpellBookSpellCount( UI16 newValue ) -> void
 //|	Function	-	CItem::GetSpellBookFirstScroll()
 //|					CItem::SetSpellBookFirstScroll()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the item ID of the first scroll associated with this spellbook.
+//|	Purpose		-	Gets/Sets the scroll item ID that teaches the spell at FirstSpell.
+//|					Consecutive scroll item IDs map to consecutive spell numbers; zero means
+//|					this spellbook does not accept scroll items.
 //o------------------------------------------------------------------------------------------------o
 auto CItem::GetSpellBookFirstScroll() const -> UI16
 {
