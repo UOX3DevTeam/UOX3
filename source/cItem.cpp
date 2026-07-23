@@ -3376,6 +3376,12 @@ auto CItem::SetSpell( UI08 part, UI32 newValue ) -> void
 	}
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CItem::GetSpellBookFirstSpell()
+//|					CItem::SetSpellBookFirstSpell()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the first global spell ID represented by this spellbook.
+//o------------------------------------------------------------------------------------------------o
 auto CItem::GetSpellBookFirstSpell() const -> SI32
 {
 	return spellBookFirstSpell;
@@ -3386,6 +3392,12 @@ auto CItem::SetSpellBookFirstSpell( SI32 newValue ) -> void
 	spellBookFirstSpell = newValue;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CItem::GetSpellBookSpellCount()
+//|					CItem::SetSpellBookSpellCount()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the number of consecutive spells represented by this spellbook.
+//o------------------------------------------------------------------------------------------------o
 auto CItem::GetSpellBookSpellCount() const -> UI16
 {
 	return spellBookSpellCount;
@@ -3396,6 +3408,12 @@ auto CItem::SetSpellBookSpellCount( UI16 newValue ) -> void
 	spellBookSpellCount = newValue;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CItem::GetSpellBookFirstScroll()
+//|					CItem::SetSpellBookFirstScroll()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the item ID of the first scroll associated with this spellbook.
+//o------------------------------------------------------------------------------------------------o
 auto CItem::GetSpellBookFirstScroll() const -> UI16
 {
 	return spellBookFirstScroll;
