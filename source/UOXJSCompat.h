@@ -15,10 +15,6 @@
 #include <js/Conversions.h>
 #include <js/Warnings.h>
 
-// Legacy native callbacks receive argc/vp and access their call frame through
-// these macros. Keep that source shape while using the modern CallArgs API.
-#define JS_RVAL(cx, vp) (JS::CallArgsFromVp( argc, vp ).rval().get())
-
 inline void *JS_GetPrivate( JSContext *, JSObject *obj )
 {
 	if( obj == nullptr )
@@ -83,12 +79,6 @@ inline void JS_UnlockGCThing( JSContext *, JSObject *obj )
 	auto &roots = UOX_GCLockedObjects();
 	roots.erase( std::remove_if( roots.begin(), roots.end(),
 		[obj]( const auto &root ) { return root->get() == obj; } ), roots.end() );
-}
-
-inline JSObject *JS_GetParent( JSContext *, JSObject *obj )
-{
-	const JS::Value &parent = JS::GetReservedSlot( obj, 1 );
-	return parent.isObject() ? &parent.toObject() : nullptr;
 }
 
 inline bool JS_SetElement( JSContext *cx, JSObject *obj, uint32_t index,

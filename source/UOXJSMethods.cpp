@@ -2105,7 +2105,7 @@ bool CBase_GetJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 			if( tScript != nullptr && ( scriptId == Effect->AssocScript() || scriptId == Effect->More2() ))
 			{
 				// Return the timestamp for when the Effect timer expires
-				JS_RVAL(cx, vp) = JS::NumberValue( Effect->ExpireTime() );
+				args.rval().setNumber( Effect->ExpireTime() );
 			}
 		}
 	}
@@ -2388,7 +2388,7 @@ bool CBase_GetTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID )
 		{
 			// Return the timestamp for when the Temp Effect timer expires
-			JS_RVAL(cx, vp) = JS::NumberValue( Effect->ExpireTime() );
+			args.rval().setNumber( Effect->ExpireTime() );
 		}
 	}
 
@@ -4293,13 +4293,13 @@ bool CGuild_AcceptRecruit( JSContext *cx, unsigned argc, JS::Value* vp )
 	// 1 parameter = get the cchar from there
 	if( argc == 0 )
 	{
-		JSObject *Parent = JS_GetParent( cx, obj );
-  auto *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( Parent , 0 );
+		JSObject *Parent = JS::GetReservedSlot( obj, 1 ).toObjectOrNull();
+		auto *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( Parent , 0 );
 		myGuild->RecruitToMember( *myChar );
 	}
 	else if( argc == 1 )
 	{
-  auto *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( &args.get(0).toObject(), 0 );
+		auto *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( &args.get(0).toObject(), 0 );
 		myGuild->RecruitToMember( *myChar );
 	}
 	else
@@ -6765,7 +6765,7 @@ bool CSocket_GetDWord( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	SI32 offset = args.get(0).toInt32();
-	JS_RVAL(cx, vp) = JS::NumberValue(  mySock->GetDWord( offset ) );
+	args.rval().setNumber(  mySock->GetDWord( offset ) );
 	return true;
 }
 
@@ -8605,7 +8605,7 @@ bool CMisc_GetTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 			return false;
 		}
 
-		JS_RVAL(cx, vp) = JS::NumberValue( cMove->GetTimer( static_cast<cC_TID>( encaps.toInt() )) );
+		args.rval().setNumber( cMove->GetTimer( static_cast<cC_TID>( encaps.toInt() )) );
 	}
 	else if( myClass.ClassName() == "UOXSocket" )
 	{
@@ -8616,7 +8616,7 @@ bool CMisc_GetTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 			return false;
 		}
 
-		JS_RVAL(cx, vp) = JS::NumberValue( mSock->GetTimer( static_cast<cS_TID>( encaps.toInt() )) );
+		args.rval().setNumber( mSock->GetTimer( static_cast<cS_TID>( encaps.toInt() )) );
 	}
 
 	return true;

@@ -1210,8 +1210,8 @@ bool SE_SecondsPerUOMinute( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetCurrentClock( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* rval = &JS_RVAL(cx, vp);
-	*rval = JS::NumberValue( cwmWorldState->GetUICurrentTime() );
+	auto args = JS::CallArgsFromVp( argc, vp );
+	args.rval().setNumber( cwmWorldState->GetUICurrentTime() );
 
 	return true;
 }
@@ -1223,8 +1223,8 @@ bool SE_GetCurrentClock( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetStartTime( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS::Value* rval = &JS_RVAL(cx, vp);
-	*rval = JS::NumberValue( cwmWorldState->GetStartTime() );
+	auto args = JS::CallArgsFromVp( argc, vp );
+	args.rval().setNumber( cwmWorldState->GetStartTime() );
 
 	return true;
 }
@@ -1311,8 +1311,7 @@ bool SE_GetRandomSOSArea( JSContext *cx, unsigned int argc, JS::Value *vp )
 bool SE_SpawnNPC( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JS::Value* rval = &JS_RVAL(cx, vp);
-	auto obj = getThis(cx, args);
+	auto obj = getThis( cx, args );
 
 	if( argc < 5 || argc > 7 )
 	{
@@ -1329,21 +1328,16 @@ bool SE_SpawnNPC( JSContext *cx, unsigned int argc, JS::Value *vp )
 	UI16 instanceId = ( argc == 6 ? static_cast<SI16>( args.get(5).toInt32()) : 0 );
 	bool useNpcList = ( argc == 7 ? ( args.get(6).toBoolean() == true ) : false );
 
-	// Store original script context and object, in case NPC spawned has some event that triggers on spawn and grabs context
-	auto origContext = cx;
-	auto origObject = obj;
-
 	cMade = Npcs->CreateNPCxyz( nnpcNum, x, y, z, world, instanceId, useNpcList );
 	if( cMade != nullptr )
 	{
 		JSObject *myobj		= JSEngine->AcquireObject( IUE_CHAR, cMade, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		*rval				= JS::ObjectOrNullValue( myobj );
+		args.rval().setObjectOrNull( myobj );
 	}
 	else
 	{
 		args.rval().setNull();
 	}
-
 	return true;
 }
 
@@ -2209,7 +2203,6 @@ bool SE_TriggerEvent( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
 	auto obj = getThis( cx, args );
-	JS::Value *rval = &JS_RVAL( cx, vp );
 
 	if( argc < 2 )
 	{
@@ -2223,6 +2216,7 @@ bool SE_TriggerEvent( JSContext *cx, unsigned int argc, JS::Value *vp )
 	if( toExecute == nullptr || eventToFire == "" )
 		return false;
 
+	auto rval = &args.rval().get();
 	bool retVal = toExecute->CallParticularEvent( eventToFire.c_str(), &args.get(2).get(), argc - 2, rval);
 	return retVal;
 }
@@ -2422,7 +2416,6 @@ bool SE_CalcTargetedChar( JSContext *cx, unsigned int argc, JS::Value *vp )
 bool SE_GetTileIdAtMapCoord( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JS::Value* rval = &JS_RVAL(cx, vp);
 	if( argc != 3 )
 	{
 		ScriptError( cx, "GetTileIDAtMapCoord: Invalid number of arguments (takes 3)" );
@@ -2435,11 +2428,11 @@ bool SE_GetTileIdAtMapCoord( JSContext *cx, unsigned int argc, JS::Value *vp )
 	auto mMap		= Map->SeekMap( xLoc, yLoc, wrldNumber );
 	if( mMap.terrainInfo != nullptr )
 	{
-		*rval = JS::Int32Value( mMap.tileId );
+		args.rval().setInt32( mMap.tileId );
 	}
 	else
 	{
-		*rval = JS::NullValue();
+		args.rval().setNull();
 	}
 	return true;
 }
@@ -3859,7 +3852,6 @@ bool SE_WillResultInCriminal( JSContext *cx, unsigned int argc, JS::Value *vp )
 bool SE_CreateParty( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JS::Value* rval = &JS_RVAL(cx, vp);
 	if( argc != 1 )
 	{
 		ScriptError( cx, "CreateParty: Invalid number of arguments (takes 1, the leader)" );
@@ -3891,7 +3883,7 @@ bool SE_CreateParty( JSContext *cx, unsigned int argc, JS::Value *vp )
 		{
 			Party *tParty	= PartyFactory::GetSingleton().Create( leader );
 			JSObject *myObj	= JSEngine->AcquireObject( IUE_PARTY, tParty, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-			*rval			= JS::ObjectOrNullValue( myObj );
+			args.rval().setObjectOrNull( myObj );
 		}
 	}
 	else	// anything else isn't a valid leader people
@@ -4028,7 +4020,6 @@ static auto FindSpawnRegionsAt( UI16 x, UI16 y, UI08 worldNum, UI16 instanceID )
 bool SE_GetSpawnRegion( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JS::Value* rval = &JS_RVAL(cx, vp);
 	if( argc != 1 && argc != 4 )
 	{
 		ScriptError( cx, "GetSpawnRegion: Invalid number of parameters (1 - spawnRegionID, or 4 - x, y, world and instanceID)" );
@@ -5968,7 +5959,6 @@ bool SE_GetServerVersionString( JSContext *cx, unsigned int argc, JS::Value *vp 
 bool SE_DistanceBetween( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	JS::Value* rval = &JS_RVAL(cx, vp);
 	if( argc != 2 && argc != 3 && argc != 4 && argc != 6 )
 	{
 		ScriptError( cx, "DistanceBetween: needs 2, 3, 4 or 6 arguments - object a, object b - or object a, object b, (bool)checkZ - or x1, y1 and x2, y2 - or x1, y1, z1 and x2, y2, z2!" );
@@ -6010,7 +6000,7 @@ bool SE_DistanceBetween( JSContext *cx, unsigned int argc, JS::Value *vp )
 			// 4 arguments - find distance in 2D
 			x2		= static_cast<UI16>( args.get(2).toInt32());
 			y2		= static_cast<UI16>( args.get(3).toInt32());
-			*rval	= JS::Int32Value( GetDist( Point3_st( x1, y1, 0 ), Point3_st( x2, y2, 0 )));
+			args.rval().setInt32( GetDist( Point3_st( x1, y1, 0 ), Point3_st( x2, y2, 0 )));
 		}
 		else
 		{
@@ -6019,7 +6009,7 @@ bool SE_DistanceBetween( JSContext *cx, unsigned int argc, JS::Value *vp )
 			x2		= static_cast<UI16>( args.get(3).toInt32());
 			y2		= static_cast<UI16>( args.get(4).toInt32());
 			SI08 z2 = static_cast<SI08>( args.get(5).toInt32());
-			*rval	= JS::Int32Value( GetDist3D( Point3_st( x1, y1, z1 ), Point3_st( x2, y2, z2 )));
+			args.rval().setInt32( GetDist3D( Point3_st( x1, y1, z1 ), Point3_st( x2, y2, z2 )));
 		}
 	}
 	
@@ -6033,7 +6023,8 @@ bool SE_DistanceBetween( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_BASEITEMSERIAL( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS_RVAL(cx, vp) = JS::NumberValue( BASEITEMSERIAL );
+	auto args = JS::CallArgsFromVp( argc, vp );
+	args.rval().setNumber( BASEITEMSERIAL );
 	return true;
 }
 
@@ -6044,7 +6035,8 @@ bool SE_BASEITEMSERIAL( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_INVALIDSERIAL( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS_RVAL(cx, vp) = JS::NumberValue( INVALIDSERIAL );
+	auto args = JS::CallArgsFromVp( argc, vp );
+	args.rval().setNumber( INVALIDSERIAL );
 	return true;
 }
 
@@ -6055,7 +6047,8 @@ bool SE_INVALIDSERIAL( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_INVALIDID( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS_RVAL(cx, vp) = JS::NumberValue( INVALIDID );
+	auto args = JS::CallArgsFromVp( argc, vp );
+	args.rval().setNumber( INVALIDID );
 	return true;
 }
 
@@ -6066,6 +6059,7 @@ bool SE_INVALIDID( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_INVALIDCOLOUR( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS_RVAL(cx, vp) = JS::NumberValue( INVALIDCOLOUR );
+	auto args = JS::CallArgsFromVp( argc, vp );
+	args.rval().setNumber( INVALIDCOLOUR );
 	return true;
 }
