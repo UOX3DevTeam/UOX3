@@ -25,12 +25,6 @@ inline void *JS_GetPrivate( JSContext *, JSObject *obj )
 	return value.isUndefined() || value.isNull() ? nullptr : value.toPrivate();
 }
 
-inline void JS_SetPrivate( JSContext *, JSObject *obj, void *value )
-{
-	JS::SetReservedSlot( obj, 0,
-		value == nullptr ? JS::UndefinedValue() : JS::PrivateValue( value ));
-}
-
 inline JSObject *JS_NewObject( JSContext *cx, const JSClass *jsClass,
 	JSObject *, JSObject *parent )
 {

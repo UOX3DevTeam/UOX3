@@ -188,7 +188,7 @@ bool Packet( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	JSObject* obj = JS_NewObject( cx, &UOXPacket_class, nullptr, nullptr );
 	JS_DefineFunctions( cx, obj, CPacket_Methods );
-	JS_SetPrivate( cx, obj, toAdd);
+	JS::SetReservedSlot( obj, 0, JS::PrivateValue( toAdd ) );
 	JS_LockGCThing( cx, obj );
 	//JS_AddRoot( cx, &obj );
 	auto args = JS::CallArgsFromVp(argc, vp);
@@ -214,7 +214,7 @@ bool CPacket_Free( JSContext *cx, unsigned argc, JS::Value* vp )
 	delete toDelete;
 	JS_UnlockGCThing( cx, obj );
 	//JS_RemoveRoot( cx, obj );
-	JS_SetPrivate( cx, obj, nullptr );
+	JS::SetReservedSlot( obj, 0, JS::UndefinedValue() );
 
 	return true;
 }
@@ -422,7 +422,7 @@ bool Gump( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	JSObject* obj = JS_NewObject( cx, &UOXGump_class, nullptr, nullptr );
 	JS_DefineFunctions( cx, obj, CGump_Methods );
-	JS_SetPrivate( cx, obj, toAdd);
+	JS::SetReservedSlot(obj, 0, JS::PrivateValue( toAdd ) );
 	JS_LockGCThing( cx, obj );
 	//JS_AddRoot( cx, &obj );
 	auto args = JS::CallArgsFromVp(argc, vp);
@@ -451,7 +451,7 @@ bool CGump_Free( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	JS_UnlockGCThing( cx, obj );
 	//JS_RemoveRoot( cx, obj );
-	JS_SetPrivate( cx, obj, nullptr );
+	JS::SetReservedSlot( obj, 0, JS::UndefinedValue() );
 
 	return true;
 }
@@ -473,7 +473,7 @@ bool CGumpData_Free( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	JS_UnlockGCThing( cx, obj );
 	//JS_RemoveRoot( cx, &obj );
-	JS_SetPrivate( cx, obj, nullptr );
+	JS::SetReservedSlot( obj, 0, JS::UndefinedValue() );
 
 	delete toDelete;
 	return true;
@@ -2900,7 +2900,7 @@ bool CSocket_Disconnect( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	Network->Disconnect( targSock );
-	JS_SetPrivate( cx, obj, nullptr ); // yes we should do that...
+	JS::SetReservedSlot( obj, 0, JS::UndefinedValue() ); // yes we should do that...
 
 	return true;
 }
@@ -7765,7 +7765,7 @@ bool UOXCFile( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	JSObject* obj = JS_NewObject( cx, &UOXFile_class, nullptr, nullptr );
 	JS_DefineFunctions( cx, obj, CFile_Methods );
-	JS_SetPrivate( cx, obj, toAdd );
+	JS::SetReservedSlot( obj, 0, JS::PrivateValue( toAdd ) );
 	JS_LockGCThing( cx, obj );
 	//JS_AddRoot( cx, &obj );
 	auto args = JS::CallArgsFromVp(argc, vp);
@@ -7793,7 +7793,7 @@ bool CFile_Free( JSContext *cx, unsigned argc, JS::Value* vp )
 	delete mFile;
 	JS_UnlockGCThing( cx, obj );
 	//JS_RemoveRoot( cx, &obj );
-	JS_SetPrivate( cx, obj, nullptr );
+	JS::SetReservedSlot( obj, 0, JS::UndefinedValue() );
 	return true;
 }
 
