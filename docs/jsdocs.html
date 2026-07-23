@@ -18790,14 +18790,21 @@ var createFoodSpellSFX = createFoodSpell.soundEffect; // Get the sound effect de
 							Get which sound FX should be played when casting the spell (Read-Only)</p>
 						</div>
 
+						<h3>Array Types</h3>
+						<div class="settingsDiv">
+							<p><span class="hl">.reagents</span> <strong>(array)</strong><br>
+							Get the spell's reagent requirements (Read-Only). Each entry is <code>[itemID, amount, sectionIDs, optionalColour]</code>. <code>sectionIDs</code> is an array containing every accepted Item DFN section name. The colour value is present only when the requirement specifies an exact hue.</p>
+							<pre><code class="language-javascript">var reagent = Spells[1].reagents[0];
+var itemID = reagent[0];
+var amount = reagent[1];
+var acceptedSections = reagent[2];
+var colour = reagent.length &gt; 3 ? reagent[3] : null;</code></pre>
+						</div>
+
 						<h3>Integer Types</h3>
 						<div class="settingsDiv">
-							<p><span class="hl">.ash</span> <strong>(int)</strong><br>
-							Get amount of Sulphurous Ash required to cast the spell (Read-Only)</p>
-						</div>
-						<div class="settingsDiv">
 							<p><span class="hl">.baseDmg</span> <strong>(int)</strong><br>
-							Get amount of Sulphurous Ash required to cast the spell (Read-Only)</p>
+							Get the spell's base damage or healing value (Read-Only)</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.circle</span> <strong>(int)</strong><br>
@@ -18810,18 +18817,6 @@ var createFoodSpellSFX = createFoodSpell.soundEffect; // Get the sound effect de
 						<div class="settingsDiv">
 							<p><span class="hl">.delay</span> <strong>(int)</strong><br>
 							Get the duration (in seconds, using decimals) it takes to finish casting the spell (Read-Only)</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">.drake</span> <strong>(int)</strong><br>
-							Get amount of Mandrake Root required to cast the spell (Read-Only)</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">.garlic</span> <strong>(int)</strong><br>
-							Get amount of Garlic required to cast the spell (Read-Only)</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">.ginseng</span> <strong>(int)</strong><br>
-							Get amount of Ginseng required to cast the spell (Read-Only)</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.health</span> <strong>(int)</strong><br>
@@ -18844,14 +18839,6 @@ var createFoodSpellSFX = createFoodSpell.soundEffect; // Get the sound effect de
 							Get the amount of mana required to cast this spell (Read-Only)</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">.moss</span> <strong>(int)</strong><br>
-							Get amount of Bloodmoss required to cast the spell (Read-Only)</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">.pearl</span> <strong>(int)</strong><br>
-							Get amount of Black Pearl required to cast the spell (Read-Only)</p>
-						</div>
-						<div class="settingsDiv">
 							<p><span class="hl">.recoveryDelay</span> <strong>(int)</strong><br>
 							Get amount of time (in seconds, using decimals) it takes to recover from casting this spell before Character can cast another spell (Read-Only)</p>
 						</div>
@@ -18862,14 +18849,6 @@ var createFoodSpellSFX = createFoodSpell.soundEffect; // Get the sound effect de
 						<div class="settingsDiv">
 							<p><span class="hl">.scrollLow</span> <strong>(int)</strong><br>
 							Get the minimum amount of Magery skill points required to have a chance of successfully casting this spell when cast from a magic scroll (Read-Only)</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">.shade</span> <strong>(int)</strong><br>
-							Get amount of Nightshade required to cast the spell (Read-Only)</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">.silk</span> <strong>(int)</strong><br>
-							Get amount of Silk required to cast the spell (Read-Only)</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.stamina</span> <strong>(int)</strong><br>
