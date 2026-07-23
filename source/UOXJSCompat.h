@@ -25,19 +25,7 @@ inline void *JS_GetPrivate( JSContext *, JSObject *obj )
 	return value.isUndefined() || value.isNull() ? nullptr : value.toPrivate();
 }
 
-inline JSObject *JS_NewObject( JSContext *cx, const JSClass *jsClass,
-	JSObject *, JSObject *parent )
-{
-	JSObject *obj = JS_NewObject( cx, jsClass );
-	if( obj != nullptr && parent != nullptr )
-	{
-		JS::SetReservedSlot( obj, 1, JS::ObjectValue( *parent ));
-	}
-	return obj;
-}
-
-inline bool UOX_JS_DefineProperties( JSContext *cx, JSObject *obj,
-	const JSPropertySpec *properties )
+inline bool UOX_JS_DefineProperties( JSContext *cx, JSObject *obj, const JSPropertySpec *properties )
 {
 	JS::RootedObject rootedObj( cx, obj );
 	return JS_DefineProperties( cx, rootedObj, properties );

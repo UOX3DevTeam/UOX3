@@ -3614,7 +3614,11 @@ bool SE_ResourceRegion( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	JSObject *jsResource = JS_NewObject( cx, &UOXResource_class, nullptr, obj );
+	JSObject* jsResource = JS_NewObject( cx, &UOXResource_class );
+	if( jsResource != nullptr )
+	{
+		JS::SetReservedSlot( jsResource, 1, JS::ObjectValue( *obj ) );
+	}
 	JS_DefineProperties( cx, jsResource, CResourceProperties );
 	JS::SetReservedSlot( jsResource, 0, JS::PrivateValue( mRes ) );
 
