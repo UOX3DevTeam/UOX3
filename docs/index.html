@@ -11464,7 +11464,7 @@ MANTRA=In Vas Custom
 ACTION=17
 DELAY=1.0
 RECOVERYDELAY=1.5
-REAGENT=0x0f7a,blackpearl,2
+REAGENT=blackpearl,2
 REAGENT=custom_reagent,1,0x0481
 FLAGS=0x01C9
 }</pre></p>
@@ -11482,7 +11482,7 @@ FLAGS=0x01C9
 						<div class="settingsDiv"><p><span class="hl">mana</span>=<strong>[amount]</strong><br>Mana cost paid when casting the spell.</p></div>
 						<div class="settingsDiv"><p><span class="hl">mantra</span>=<strong>[text]</strong><br>Words of power spoken while casting the spell.</p></div>
 						<div class="settingsDiv"><p><span class="hl">movefx</span>=<strong>[idByte1 idByte2 speed loop explode]</strong><br>Configures the spell's moving visual effect.</p></div>
-						<div class="settingsDiv"><p><span class="hl">reagent</span>=<strong>[itemSectionID],[optionalAliasSectionID],[amount],[optionalColour]</strong><br>Adds a reagent requirement. This singular tag may be repeated. Each section is resolved through Item DFNs and, when an alias is supplied, both sections must resolve to the same item ID. Items created from either section satisfy the shared requirement. Amount must be greater than zero, and the optional colour requires an exact match.</p></div>
+						<div class="settingsDiv"><p><span class="hl">reagent</span>=<strong>[sectionID],[amount],[optionalColour]</strong><br>Adds a reagent requirement. This singular tag may be repeated. Items satisfy the requirement when their SECTIONID matches the configured sectionID, regardless of the item section used to create them. Amount must be greater than zero, and the optional colour requires an exact match. Reagent item definitions should use the SECTIONID item tag to give equivalent item sections the same reagent identity.</p></div>
 						<div class="settingsDiv"><p><span class="hl">recoverydelay</span>=<strong>[seconds]</strong><br>Delay after casting before another spell can be started.</p></div>
 						<div class="settingsDiv"><p><span class="hl">schi</span>=<strong>[skillpoints]</strong><br>Upper skill threshold used when casting the spell from a scroll.</p></div>
 						<div class="settingsDiv"><p><span class="hl">sclo</span>=<strong>[skillpoints]</strong><br>Lower skill threshold used when casting the spell from a scroll.</p></div>

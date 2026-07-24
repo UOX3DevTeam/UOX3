@@ -85,14 +85,13 @@ public:
 
 struct SpellReagent
 {
-	UI16 itemId;
 	UI16 amount;
 	UI16 colour;
 	bool colourCheck;
-	std::vector<std::string> sectionIds;
+	std::string sectionId;
 
-	SpellReagent( UI16 newItemId, UI16 newAmount, const std::vector<std::string>& newSectionIds, UI16 newColour = 0, bool newColourCheck = false ) :
-	itemId( newItemId ), amount( newAmount ), colour( newColour ), colourCheck( newColourCheck ), sectionIds( newSectionIds )
+	SpellReagent( const std::string& newSectionId, UI16 newAmount, UI16 newColour = 0, bool newColourCheck = false ) :
+	amount( newAmount ), colour( newColour ), colourCheck( newColourCheck ), sectionId( newSectionId )
 	{
 	}
 };

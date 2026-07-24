@@ -2251,7 +2251,7 @@
           "cppType": "JSPROP_ENUMANDPERM",
           "readOnly": true,
           "type": "any[][]",
-          "comments": "Reagent entries formatted as [itemID, amount, sectionIDs, optionalColour], where sectionIDs is an array of accepted Item DFN section names."
+          "comments": "Reagent entries formatted as [sectionID, amount, optionalColour], where sectionID is the reagent identity assigned through the SECTIONID item DFN tag."
         }
       ],
       "methods": [],

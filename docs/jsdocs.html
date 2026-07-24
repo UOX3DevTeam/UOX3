@@ -18793,12 +18793,11 @@ var createFoodSpellSFX = createFoodSpell.soundEffect; // Get the sound effect de
 						<h3>Array Types</h3>
 						<div class="settingsDiv">
 							<p><span class="hl">.reagents</span> <strong>(array)</strong><br>
-							Get the spell's reagent requirements (Read-Only). Each entry is <code>[itemID, amount, sectionIDs, optionalColour]</code>. <code>sectionIDs</code> is an array containing every accepted Item DFN section name. The colour value is present only when the requirement specifies an exact hue.</p>
+							Get the spell's reagent requirements (Read-Only). Each entry is <code>[sectionID, amount, optionalColour]</code>. <code>sectionID</code> is the reagent identity assigned through the SECTIONID item DFN tag. The colour value is present only when the requirement specifies an exact hue.</p>
 							<pre><code class="language-javascript">var reagent = Spells[1].reagents[0];
-var itemID = reagent[0];
+var sectionID = reagent[0];
 var amount = reagent[1];
-var acceptedSections = reagent[2];
-var colour = reagent.length &gt; 3 ? reagent[3] : null;</code></pre>
+var colour = reagent.length &gt; 2 ? reagent[2] : null;</code></pre>
 						</div>
 
 						<h3>Integer Types</h3>
