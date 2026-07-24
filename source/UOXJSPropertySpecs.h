@@ -84,11 +84,7 @@ FDCLG( main, attr ) { \
 FDCLS( main, attr ) {                                                                                            \
   FNARGS                                                                                                         \
   auto priv         = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0);                                         \
-  auto origScript   = JSMapping->GetScript(JS::CurrentGlobalOrNull(cx));                                         \
-  auto origScriptID = JSMapping->GetScriptId(JS::CurrentGlobalOrNull(cx));                                       \
   priv->accessor(args.get(0).method());                                                                          \
-  if (origScript != JSMapping->GetScript(JS::CurrentGlobalOrNull(cx))) {                                         \
-  }                                                                                                              \
   return true;                                                                                                   \
 }
 
@@ -96,11 +92,7 @@ FDCLS( main, attr ) {                                                           
 FDCLS( main, attr ) {                                    \
   FNARGS                                                                                                         \
   auto priv         = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0);                                         \
-  auto origScript   = JSMapping->GetScript(JS::CurrentGlobalOrNull(cx));                                         \
-  auto origScriptID = JSMapping->GetScriptId(JS::CurrentGlobalOrNull(cx));                                       \
   priv->accessor    = args.get(0).method();                                                                      \
-  if (origScript != JSMapping->GetScript(JS::CurrentGlobalOrNull(cx))) {                                         \
-  }                                                                                                              \
   return true;                                                                                                   \
 }
 
@@ -108,13 +100,9 @@ FDCLS( main, attr ) {                                    \
 FDCLS( main, attr ) {                                    \
   FNARGS                                                                                                         \
   auto priv         = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0);                                         \
-  auto origScript   = JSMapping->GetScript(JS::CurrentGlobalOrNull(cx));                                         \
-  auto origScriptID = JSMapping->GetScriptId(JS::CurrentGlobalOrNull(cx));                                       \
   JS::RootedString converted(cx, JS::ToString(cx, args.get(0)));                                                 \
   if( converted == nullptr ) return false;                                                                       \
   priv->accessor(convertToString(cx, converted));                                                                \
-  if (origScript != JSMapping->GetScript(JS::CurrentGlobalOrNull(cx))) {                                         \
-  }                                                                                                              \
   return true;                                                                                                   \
 }
 
@@ -122,13 +110,9 @@ FDCLS( main, attr ) {                                    \
 FDCLS( main, attr ) {                                    \
   FNARGS                                                                                                         \
   auto priv         = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0);                                         \
-  auto origScript   = JSMapping->GetScript(JS::CurrentGlobalOrNull(cx));                                         \
-  auto origScriptID = JSMapping->GetScriptId(JS::CurrentGlobalOrNull(cx));                                       \
   JS::RootedString converted(cx, JS::ToString(cx, args.get(0)));                                                 \
   if( converted == nullptr ) return false;                                                                       \
   priv->accessor    = convertToString(cx, converted);                                                            \
-  if (origScript != JSMapping->GetScript(JS::CurrentGlobalOrNull(cx))) {                                         \
-  }                                                                                                              \
   return true;                                                                                                   \
 }
 
