@@ -3962,6 +3962,7 @@ auto CMagic::MagicTrap( CChar *s, CItem *i ) -> void
 //|	Changes		-	to use reag-st
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check for required reagents in player's backpack.
+//o------------------------------------------------------------------------------------------------o
 bool CMagic::CheckReagents( CChar *s, const CSpellInfo& spell )
 {
 	if( s->NoNeedReags() )
@@ -3984,10 +3985,9 @@ bool CMagic::CheckReagents( CChar *s, const CSpellInfo& spell )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CMagic::RegMsg()
-//|	Changes		-	display missing reagents types
+//|    Function    -    CMagic::SpellFail()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Display an error message if character has not enough regs
+//|    Purpose        -    Do visual and sound effects when a player fails to cast a spell.
 //o------------------------------------------------------------------------------------------------o
 void CMagic::SpellFail( CSocket *s )
 {
@@ -5341,30 +5341,30 @@ void CMagic::LoadScript( void )
 							case 'R':
 								if( UTag == "RECOVERYDELAY" )
 								{
-									spells[i].RecoveryDelay( static_cast<R64>( std::stod( data )));
+									spells[i].RecoveryDelay( static_cast< R64 >( std::stod( data )));
 								}
-				else if( UTag == "REAGENT" )
-				{
-					auto reagentData = oldstrutil::sections( data, "," );
-					if( reagentData.size() < 2 || reagentData.size() > 3 )
-					{
-						Console.Warning( oldstrutil::format( "Invalid REAGENT tag in spell %i: expected section,amount[,colour]", i ));
-						break;
-					}
+								else if( UTag == "REAGENT" )
+								{
+									auto reagentData = oldstrutil::sections( data, "," );
+									if( reagentData.size() < 2 || reagentData.size() > 3 )
+									{
+										Console.Warning( oldstrutil::format( "Invalid REAGENT tag in spell %i: expected section,amount[,colour]", i ));
+										break;
+									}
 
-					std::string sectionId = oldstrutil::trim( reagentData[0] );
-					if( sectionId.empty() )
-					{
-						break;
-					}
+									std::string sectionId = oldstrutil::trim( reagentData[ 0 ] );
+									if( sectionId.empty() )
+									{
+										break;
+									}
 
-					UI16 amount = static_cast<UI16>( std::stoul( oldstrutil::trim( reagentData[1] ), nullptr, 0 ));
-					if( amount == 0 )
-						break;
+									UI16 amount = static_cast< UI16 >( std::stoul( oldstrutil::trim( reagentData[1] ), nullptr, 0 ));
+									if( amount == 0 )
+										break;
 
-					bool colourCheck = reagentData.size() == 3;
-					UI16 colour = colourCheck ? static_cast<UI16>( std::stoul( oldstrutil::trim( reagentData[2] ), nullptr, 0 )) : 0;
-					spells[i].AddReagent( SpellReagent( sectionId, amount, colour, colourCheck ));
+									bool colourCheck = reagentData.size() == 3;
+									UI16 colour = colourCheck ? static_cast< UI16 >( std::stoul( oldstrutil::trim( reagentData[2] ), nullptr, 0 )) : 0;
+									spells[i].AddReagent( SpellReagent( sectionId, amount, colour, colourCheck ));
 								}
 								break;
 							case 'S':
@@ -5374,12 +5374,12 @@ void CMagic::LoadScript( void )
 									if( ssecs.size() > 1 )
 									{
 										// This is used to load sounds from old-style spells.dfn, where soundfx are written as SOUNDFX=## ## instead of SOUNDFX=0x####
-										spells[i].Effect(((static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16 )) << 8 ) |
-													 static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 16 ))));
+										spells[i].Effect((( static_cast< UI08 >( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16 ) ) << 8 ) |
+											static_cast< UI08 >( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 16 ))));
 									}
 									else
 									{
-										spells[i].Effect( static_cast<UI16>( std::stoul( data, nullptr, 0 )));
+										spells[i].Effect( static_cast< UI16 >( std::stoul( data, nullptr, 0 )));
 									}
 								}
 								else if( UTag == "STATFX" )
@@ -5387,24 +5387,24 @@ void CMagic::LoadScript( void )
 									auto ssecs = oldstrutil::sections( data, " " );
 									if( ssecs.size() > 1 )
 									{
-										CMagicStat *stat = spells[i].StaticEffectPtr();
+										CMagicStat* stat = spells[i].StaticEffectPtr();
 
-										stat->Effect( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16 )), static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 16 )));
-										stat->Speed( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 16 )));
-										stat->Loop( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 16 )));
+										stat->Effect( static_cast< UI08 >( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16 )), static_cast< UI08 >( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[ 1 ], "//" ) ), nullptr, 16 )));
+										stat->Speed( static_cast< UI08 >( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 16 )));
+										stat->Loop( static_cast< UI08 >( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 16 )));
 									}
 								}
 								else if( UTag == "SCLO" )
 								{
-									spells[i].ScrollLow( static_cast<SI16>( std::stoi( data, nullptr, 0 )));
+									spells[i].ScrollLow( static_cast< SI16 >( std::stoi( data, nullptr, 0 )));
 								}
 								else if( UTag == "SCHI" )
 								{
-									spells[i].ScrollHigh(  static_cast<SI16>( std::stoi( data, nullptr, 0 )));
+									spells[i].ScrollHigh( static_cast< SI16 >( std::stoi( data, nullptr, 0 )));
 								}
 								else if( UTag == "STAMINA" )
 								{
-									spells[i].Stamina(  static_cast<SI16>( std::stoi( data, nullptr, 0 )));
+									spells[i].Stamina( static_cast< SI16 >( std::stoi( data, nullptr, 0 )));
 								}
 								break;
 							case 'T':
@@ -5414,7 +5414,7 @@ void CMagic::LoadScript( void )
 								}
 								else if( UTag == "TITHING" )
 								{
-									spells[i].Tithing(  static_cast<SI32>( std::stoi( data, nullptr, 0 )));
+									spells[i].Tithing( static_cast< SI32 >( std::stoi( data, nullptr, 0 )));
 								}
 								break;
 						}
