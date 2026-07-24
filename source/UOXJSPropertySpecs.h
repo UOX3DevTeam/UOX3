@@ -31,19 +31,6 @@ inline JSPropertySpec CSpellProperties[] =
 	{ "circle",				CSP_CIRCLE,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "lowSkill",			CSP_LOWSKILL,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "highSkill",			CSP_HIGHSKILL,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "ginseng",			CSP_GINSENG,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "moss",				CSP_MOSS,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "drake",				CSP_DRAKE,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "pearl",				CSP_PEARL,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "silk",				CSP_SILK,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "ash",				CSP_ASH,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "shade",				CSP_SHADE,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "garlic",				CSP_GARLIC,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "batwing",			CSP_BATWING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "daemonBlood",		CSP_DAEMONBLOOD,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "graveDust",			CSP_GRAVEDUST,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "noxCrystal",			CSP_NOXCRYSTAL,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "pigIron",			CSP_PIGIRON,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "requireTarget",		CSP_REQUIRETARGET,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "requireItem",		CSP_REQUIREITEM,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "requireLocation",    CSP_REQUIRELOCATION,    JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -57,6 +44,7 @@ inline JSPropertySpec CSpellProperties[] =
 	{ "enabled",			CSP_ENABLED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "tithing",			CSP_TITHING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "baseDmg",			CSP_BASEDMG,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "reagents",			CSP_REAGENTS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ nullptr,				static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
 };
 

@@ -1356,13 +1356,12 @@ public:
 class CPNewSpellBook : public CPUOXBuffer
 {
 protected:
-	virtual void	InternalReset( void ) override;
+	virtual void	InternalReset( CItem &obj );
 	virtual void	CopyData( CItem& obj );
 public:
 	virtual			~CPNewSpellBook()
 	{
 	}
-	CPNewSpellBook();
 	CPNewSpellBook( CItem& obj );
 	virtual bool	ClientCanReceive( CSocket *mSock ) override;
 };

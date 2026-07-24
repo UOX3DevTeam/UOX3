@@ -222,19 +222,6 @@ JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp
 			case CSP_CIRCLE:			*vp = INT_TO_JSVAL( gPriv->Circle() );					break;
 			case CSP_LOWSKILL:			*vp = INT_TO_JSVAL( gPriv->LowSkill() );				break;
 			case CSP_HIGHSKILL:			*vp = INT_TO_JSVAL( gPriv->HighSkill() );				break;
-			case CSP_GINSENG:			*vp = INT_TO_JSVAL( gPriv->Reagants().ginseng );		break;
-			case CSP_MOSS:				*vp = INT_TO_JSVAL( gPriv->Reagants().moss );			break;
-			case CSP_DRAKE:				*vp = INT_TO_JSVAL( gPriv->Reagants().drake );			break;
-			case CSP_PEARL:				*vp = INT_TO_JSVAL( gPriv->Reagants().pearl );			break;
-			case CSP_SILK:				*vp = INT_TO_JSVAL( gPriv->Reagants().silk );			break;
-			case CSP_ASH:				*vp = INT_TO_JSVAL( gPriv->Reagants().ash );			break;
-			case CSP_SHADE:				*vp = INT_TO_JSVAL( gPriv->Reagants().shade );			break;
-			case CSP_GARLIC:			*vp = INT_TO_JSVAL( gPriv->Reagants().garlic );			break;
-			case CSP_BATWING:			*vp = INT_TO_JSVAL( gPriv->Reagants().batwing );		break;
-			case CSP_DAEMONBLOOD:		*vp = INT_TO_JSVAL( gPriv->Reagants().daemonblood );	break;
-			case CSP_GRAVEDUST:			*vp = INT_TO_JSVAL( gPriv->Reagants().gravedust );		break;
-			case CSP_NOXCRYSTAL:		*vp = INT_TO_JSVAL( gPriv->Reagants().noxcrystal );		break;
-			case CSP_PIGIRON:			*vp = INT_TO_JSVAL( gPriv->Reagants().pigiron );		break;
 			case CSP_REQUIRETARGET:		*vp = BOOLEAN_TO_JSVAL( gPriv->RequireTarget() );		break;
 			case CSP_REQUIREITEM:		*vp = BOOLEAN_TO_JSVAL( gPriv->RequireItemTarget() );	break;
 			case CSP_REQUIRECHAR:		*vp = BOOLEAN_TO_JSVAL( gPriv->RequireCharTarget() );	break;
@@ -247,6 +234,29 @@ JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp
 			case CSP_SOUNDEFFECT:		*vp = INT_TO_JSVAL( gPriv->Effect() );					break;
 			case CSP_ENABLED:			*vp = BOOLEAN_TO_JSVAL( gPriv->Enabled() );				break;
 			case CSP_TITHING:			*vp = INT_TO_JSVAL( gPriv->Tithing() );					break;
+			case CSP_REAGENTS:
+			{
+				JSObject *reagents = JS_NewArrayObject( cx, 0, nullptr );
+				const auto& spellReagents = gPriv->Reagents();
+				for( size_t reagentIndex = 0; reagentIndex < spellReagents.size(); ++reagentIndex )
+				{
+					const auto& spellReagent = spellReagents[reagentIndex];
+					JSObject *reagent = JS_NewArrayObject( cx, 0, nullptr );
+					jsval sectionId = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, spellReagent.sectionId.c_str() ));
+					jsval amount = INT_TO_JSVAL( spellReagent.amount );
+					JS_SetElement( cx, reagent, 0, &sectionId );
+					JS_SetElement( cx, reagent, 1, &amount );
+					if( spellReagent.colourCheck )
+					{
+						jsval colour = INT_TO_JSVAL( spellReagent.colour );
+						JS_SetElement( cx, reagent, 2, &colour );
+					}
+					jsval reagentValue = OBJECT_TO_JSVAL( reagent );
+					JS_SetElement( cx, reagents, reagentIndex, &reagentValue );
+				}
+				*vp = OBJECT_TO_JSVAL( reagents );
+				break;
+			}
 			default:																			break;
 		}
 	}
@@ -2691,7 +2701,7 @@ JSBool CCharacterProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBoo
 			case CCP_LUCK:			gPriv->SetLuck( static_cast<SI16>( encaps.toInt() ));		break;
 			case CCP_HITCHANCE:		gPriv->SetHitChance( static_cast<SI16>( encaps.toInt() ));	break;
 			case CCP_DEFENSECHANCE:	gPriv->SetDefenseChance( static_cast<SI16>( encaps.toInt() ));	break;
-			case CCP_DAMAGEINCREASE:gPriv->SetDamageIncrease( static_cast<SI16>( encaps.toInt() ));	break;
+			case CCP_DAMAGEINCREASE:	gPriv->SetDamageIncrease( static_cast<SI16>( encaps.toInt() ));		break;
 			case CCP_AITYPE:		gPriv->SetNPCAiType( static_cast<SI16>( encaps.toInt() ));	break;
 			case CCP_SPLIT:			gPriv->SetSplit( static_cast<UI08>( encaps.toInt() ));		break;
 			case CCP_SPLITCHANCE:	gPriv->SetSplitChance( static_cast<UI08>( encaps.toInt() ));break;
