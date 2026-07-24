@@ -643,7 +643,7 @@ CItem * CHandleCombat::GetWeapon( CChar *i )
 	CItem *j = i->GetItemAtLayer( IL_RIGHTHAND );
 	if( ValidateObject( j ))
 	{
-		if( Magic->IsSpellBook( j ))
+		if( j->IsSpellBook() )
 			return nullptr;
 
 		return j;

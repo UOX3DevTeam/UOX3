@@ -362,6 +362,7 @@ public:
 
 	auto			GetSpell( UI08 part ) const -> UI32;
 	auto			SetSpell( UI08 part, UI32 newValue ) -> void;
+	auto			IsSpellBook() const -> bool;
 	auto			GetSpellBookFirstSpell() const -> SI32;
 	auto			SetSpellBookFirstSpell( SI32 newValue ) -> void;
 	auto			GetSpellBookSpellCount() const -> UI16;

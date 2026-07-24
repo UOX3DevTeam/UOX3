@@ -1977,7 +1977,7 @@ void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 
 		mSock->SysMessage( 1201 ); // As you let go of the item it disappears.
 		return;
 	}
-	else if( Magic->IsSpellBook( nCont ))
+	else if( nCont->IsSpellBook() )
 	{
 		DropOnSpellBook(( *mSock ), ( *mChar ), ( *nCont ), ( *nItem ));
 		return;
@@ -2726,7 +2726,7 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 	UI16 itemId		= iUsed->GetId();
 	bool canTrap	= false;
 
-	if( Magic->IsSpellBook( iUsed ))
+	if( iUsed->IsSpellBook() )
 	{
 		i = mChar->GetPackItem();
 		if( ValidateObject( i ))

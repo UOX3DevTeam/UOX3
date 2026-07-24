@@ -2737,7 +2737,7 @@ CMagic::~CMagic()
 //| Purpose     - Returns the spell and scroll ranges represented by a spellbook.
 //| Notes       - Book ranges can be configured with SPELLBOOKDATA in item DFNs.
 //o------------------------------------------------------------------------------------------------o
-SpellBookConfig CMagic::GetSpellBookConfig( CItem *book ) const
+SpellBookConfig CMagic::GetSpellBookConfig( const CItem *book ) const
 {
 	SpellBookConfig config = { 0, 0, 0, false };
 	if( !ValidateObject( book ))
@@ -2759,11 +2759,6 @@ SpellBookConfig CMagic::GetSpellBookConfig( CItem *book ) const
 		default:
 			return config;
 	}
-}
-
-bool CMagic::IsSpellBook( CItem *book ) const
-{
-	return GetSpellBookConfig( book ).valid;
 }
 
 CItem *CMagic::FindSpellBook( CChar *character, SI32 spellNum ) const
@@ -4197,7 +4192,7 @@ bool CMagic::SelectSpell( CSocket *mSock, SI32 num )
 
 		// Evaluate blocking for left and right hand items
 		handleItem( itemLHand, []( CItem* item ) { return item->GetType() != IT_SPELLCHANNELING; }, lHandBlocks );
-		handleItem( itemRHand, []( CItem* item ) { return !Magic->IsSpellBook( item ) && item->GetType() != IT_SPELLCHANNELING; }, rHandBlocks );
+		handleItem( itemRHand, []( CItem* item ) { return !item->IsSpellBook() && item->GetType() != IT_SPELLCHANNELING; }, rHandBlocks );
 
 		if( lHandBlocks || rHandBlocks )
 		{

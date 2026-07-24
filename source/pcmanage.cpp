@@ -1673,7 +1673,7 @@ auto MoveItemsToCorpse( CChar &mChar, CItem *iCorpse ) -> void
 						if( ValidateObject( k ))
 						{
 							// If the character dying is a pack animal, drop everything they're carrying - including newbie items and spellbooks
-							if(( cwmWorldState->creatures[mChar.GetId()].IsPackAnimal() ) || ( !k->IsNewbie() && !Magic->IsSpellBook( k )))
+							if(( cwmWorldState->creatures[mChar.GetId()].IsPackAnimal() ) || ( !k->IsNewbie() && !k->IsSpellBook() ))
 							{
 								// Store a reference to the item we want to move...
 								moveItems.push_back( k );

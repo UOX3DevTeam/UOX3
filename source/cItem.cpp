@@ -33,6 +33,7 @@
 #include "uox3.h"
 #include "weight.h"
 #include "CPacketSend.h"
+#include "cMagic.h"
 #include "classes.h"
 #include "regions.h"
 #include "ObjectFactory.h"
@@ -3374,6 +3375,17 @@ auto CItem::SetSpell( UI08 part, UI32 newValue ) -> void
 		spells[part] = newValue;
 		UpdateRegion();
 	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CItem::IsSpellBook()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns whether this item has a valid spellbook configuration, either from
+//|					SPELLBOOKDATA or from the standard spellbook item type.
+//o------------------------------------------------------------------------------------------------o
+auto CItem::IsSpellBook() const -> bool
+{
+	return Magic->GetSpellBookConfig( this ).valid;
 }
 
 //o------------------------------------------------------------------------------------------------o
