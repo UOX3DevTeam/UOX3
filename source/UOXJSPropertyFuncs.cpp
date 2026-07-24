@@ -440,11 +440,12 @@ ITEM_METADATA_INT_SET( race, RACEID, SetRace )
 ITEM_METADATA_INT_SET( region, UI16, SetRegion )
 #undef ITEM_METADATA_INT_SET
 
-FDCLG( CItem, oldX ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); args.rval().setInt32( item->GetOldLocation().x ); return true; }
-FDCLG( CItem, oldY ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); args.rval().setInt32( item->GetOldLocation().y ); return true; }
-FDCLG( CItem, oldZ ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); args.rval().setInt32( item->GetOldLocation().z ); return true; }
+IMPL_GET_OBJ( CItem, oldX, CItem, setInt32, GetOldLocation().x )
+IMPL_GET_OBJ( CItem, oldY, CItem, setInt32, GetOldLocation().y )
+IMPL_GET_OBJ( CItem, oldZ, CItem, setInt32, GetOldLocation().z )
 IMPL_GET_OBJ( CItem, skin, CItem, setInt32, GetColour() )
 IMPL_GET_OBJ( CItem, hue, CItem, setInt32, GetColour() )
+IMPL_GET_OBJ(CItem, decaytime, CItem, setNumber, GetDecayTime())
 
 FDCLG( CItem, scripttrigger )
 {
@@ -455,7 +456,6 @@ FDCLG( CItem, scripttrigger )
 	return true;
 }
 
-IMPL_GET_OBJ( CItem, decaytime, CItem, setNumber, GetDecayTime() )
 
 FDCLG( CItem, race )
 {
@@ -493,14 +493,7 @@ FDCLG( CItem, region )
 	return true;
 }
 
-FDCLG( CItem, spawnSerial )
-{
-	FNARGS
-	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );
-	args.rval().setNumber( item->GetSpawn() );
-	return true;
-}
-
+IMPL_GET_OBJ( CItem, spawnSerial, CItem, setNumber, GetSpawn() )
 FDCLS( CItem, spawnsection )
 {
 	FNARGS
@@ -701,8 +694,6 @@ ITEM_STATE_STRING_SET( name2, SetName2 )
 ITEM_STATE_STRING_SET( desc, SetDesc )
 #undef ITEM_STATE_STRING_SET
 
-#define ITEM_NUM_GET( attr, accessor ) IMPL_GET_OBJ( CItem, attr, CItem, setInt32, accessor )
-#define ITEM_BOOL_GET( attr, accessor ) IMPL_GET_OBJ( CItem, attr, CItem, setBoolean, accessor )
 IMPL_GET_OBJ( CItem, more,  CItem, setNumber, GetTempVar( CITV_MORE ))
 IMPL_GET_OBJ( CItem, more0, CItem, setNumber, GetTempVar( CITV_MORE0 ))
 IMPL_GET_OBJ( CItem, more1, CItem, setNumber, GetTempVar( CITV_MORE1 ))
@@ -710,40 +701,39 @@ IMPL_GET_OBJ( CItem, more2, CItem, setNumber, GetTempVar( CITV_MORE2 ))
 IMPL_GET_OBJ( CItem, morex, CItem, setNumber, GetTempVar( CITV_MOREX ))
 IMPL_GET_OBJ( CItem, morey, CItem, setNumber, GetTempVar( CITV_MOREY ))
 IMPL_GET_OBJ( CItem, morez, CItem, setNumber, GetTempVar( CITV_MOREZ ))
-ITEM_NUM_GET( lodamage, GetLoDamage() )
-ITEM_NUM_GET( hidamage, GetHiDamage() )
-ITEM_NUM_GET( ac, GetArmourClass() )
-ITEM_NUM_GET( def, GetResist( PHYSICAL ))
-ITEM_NUM_GET( resistCold, GetResist( COLD ))
-ITEM_NUM_GET( resistHeat, GetResist( HEAT ))
-ITEM_NUM_GET( resistLight, GetResist( LIGHT ))
-ITEM_NUM_GET( resistLightning, GetResist( LIGHTNING ))
-ITEM_NUM_GET( resistPoison, GetResist( POISON ))
-ITEM_NUM_GET( resistRain, GetResist( RAIN ))
-ITEM_NUM_GET( resistSnow, GetResist( SNOW ))
-ITEM_BOOL_GET( damageCold, GetWeatherDamage( COLD ))
-ITEM_BOOL_GET( damageHeat, GetWeatherDamage( HEAT ))
-ITEM_BOOL_GET( damageLight, GetWeatherDamage( LIGHT ))
-ITEM_BOOL_GET( damageLightning, GetWeatherDamage( LIGHTNING ))
-ITEM_BOOL_GET( damagePoison, GetWeatherDamage( POISON ))
-ITEM_BOOL_GET( damageRain, GetWeatherDamage( RAIN ))
-ITEM_BOOL_GET( damageSnow, GetWeatherDamage( SNOW ))
-ITEM_NUM_GET( speed, GetSpeed() )
-ITEM_NUM_GET( swingSpeedIncrease, GetSwingSpeedIncrease() )
-ITEM_NUM_GET( damageIncrease, GetDamageIncrease() )
-ITEM_NUM_GET( healthLeech, GetHealthLeech() )
-ITEM_NUM_GET( staminaLeech, GetStaminaLeech() )
-ITEM_NUM_GET( manaLeech, GetManaLeech() )
-ITEM_NUM_GET( hitChance, GetHitChance() )
-ITEM_NUM_GET( defenseChance, GetDefenseChance() )
-ITEM_NUM_GET( luck, GetLuck() )
-ITEM_NUM_GET( healthBonus, GetHealthBonus() )
-ITEM_NUM_GET( staminaBonus, GetStaminaBonus() )
-ITEM_NUM_GET( manaBonus, GetManaBonus() )
-ITEM_NUM_GET( artifactRarity, GetArtifactRarity() )
-ITEM_NUM_GET( durabilityHpBonus, GetDurabilityHpBonus() )
-ITEM_NUM_GET( lowerStateReq, GetLowerStatReq() )
-#undef ITEM_NUM_GET
+IMPL_GET_OBJ( CItem, lodamage, CItem, setInt32, GetLoDamage() )
+IMPL_GET_OBJ( CItem, hidamage, CItem, setInt32, GetHiDamage() )
+IMPL_GET_OBJ( CItem, ac, CItem, setInt32, GetArmourClass() )
+IMPL_GET_OBJ( CItem, def, CItem, setInt32, GetResist( PHYSICAL ))
+IMPL_GET_OBJ( CItem, resistCold, CItem, setInt32, GetResist( COLD ))
+IMPL_GET_OBJ( CItem, resistHeat, CItem, setInt32, GetResist( HEAT ))
+IMPL_GET_OBJ( CItem, resistLight, CItem, setInt32, GetResist( LIGHT ))
+IMPL_GET_OBJ( CItem, resistLightning, CItem, setInt32, GetResist( LIGHTNING ))
+IMPL_GET_OBJ( CItem, resistPoison, CItem, setInt32, GetResist( POISON ))
+IMPL_GET_OBJ( CItem, resistRain, CItem, setInt32, GetResist( RAIN ))
+IMPL_GET_OBJ( CItem, resistSnow, CItem, setInt32, GetResist( SNOW ))
+IMPL_GET_OBJ( CItem, damageCold, CItem, setBoolean, GetWeatherDamage( COLD ) )
+IMPL_GET_OBJ( CItem, damageHeat, CItem, setBoolean, GetWeatherDamage( HEAT ) )
+IMPL_GET_OBJ( CItem, damageLight, CItem, setBoolean, GetWeatherDamage( LIGHT ) )
+IMPL_GET_OBJ( CItem, damageLightning, CItem, setBoolean, GetWeatherDamage( LIGHTNING ) )
+IMPL_GET_OBJ( CItem, damagePoison, CItem, setBoolean, GetWeatherDamage( POISON ) )
+IMPL_GET_OBJ( CItem, damageRain, CItem, setBoolean, GetWeatherDamage( RAIN ) )
+IMPL_GET_OBJ( CItem, damageSnow, CItem, setBoolean, GetWeatherDamage( SNOW ) )
+IMPL_GET_OBJ( CItem, speed, CItem, setInt32, GetSpeed() )
+IMPL_GET_OBJ( CItem, swingSpeedIncrease, CItem, setInt32, GetSwingSpeedIncrease() )
+IMPL_GET_OBJ( CItem, damageIncrease, CItem, setInt32, GetDamageIncrease() )
+IMPL_GET_OBJ( CItem, healthLeech, CItem, setInt32, GetHealthLeech() )
+IMPL_GET_OBJ( CItem, staminaLeech, CItem, setInt32, GetStaminaLeech() )
+IMPL_GET_OBJ( CItem, manaLeech, CItem, setInt32, GetManaLeech() )
+IMPL_GET_OBJ( CItem, hitChance, CItem, setInt32, GetHitChance() )
+IMPL_GET_OBJ( CItem, defenseChance, CItem, setInt32, GetDefenseChance() )
+IMPL_GET_OBJ( CItem, luck, CItem, setInt32, GetLuck() )
+IMPL_GET_OBJ( CItem, healthBonus, CItem, setInt32, GetHealthBonus() )
+IMPL_GET_OBJ( CItem, staminaBonus, CItem, setInt32, GetStaminaBonus() )
+IMPL_GET_OBJ( CItem, manaBonus, CItem, setInt32, GetManaBonus() )
+IMPL_GET_OBJ( CItem, artifactRarity, CItem, setInt32, GetArtifactRarity() )
+IMPL_GET_OBJ( CItem, durabilityHpBonus, CItem, setInt32, GetDurabilityHpBonus() )
+IMPL_GET_OBJ( CItem, lowerStateReq, CItem, setInt32, GetLowerStatReq() )
 #undef ITEM_BOOL_GET
 
 static bool SetItemTempVariable( JSContext *cx, CItem *item, CITempVars variable, JS::HandleValue input )

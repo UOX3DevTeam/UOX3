@@ -62,7 +62,6 @@ FDCLG( main, attr ) {                                                         \
 FDCLG( main, attr ) { \
   FNARGS \
   auto priv = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0); \
-  SERIAL TempSerial = INVALIDSERIAL; \
   if( !ValidateObject( priv )) \
     return false; \
   args.rval().method(priv->accessor); \
@@ -73,7 +72,6 @@ FDCLG( main, attr ) { \
 FDCLG( main, attr ) { \
   FNARGS \
   auto priv = JS::GetMaybePtrFromReservedSlot< type >(thisObj, 0); \
-  SERIAL TempSerial = INVALIDSERIAL; \
   if( !ValidateObject( priv )) \
     return false; \
   args.rval().method( JS_NewStringCopyZ( cx, priv->accessor ) ); \
