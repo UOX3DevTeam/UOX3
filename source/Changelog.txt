@@ -1,3 +1,27 @@
+24/07/2026 - DragonSlayer62 (#556)
+    [ADD] Added new item DFN tag for defining configurable spellbook ranges:
+        SPELLBOOKDATA=firstSpell,spellCount,firstScroll // Example: SPELLBOOKDATA=1,64,0x1f2d
+        firstSpell is the global spell ID represented by the first spell bit in the book
+        spellCount defines how many consecutive spells the book can contain with a supported range of 1 to 96
+        firstScroll is the item ID of the scroll corresponding to firstSpell with consecutive scroll IDs mapping to consecutive spells
+        A firstScroll value of 0 disables adding spells to that book through scroll items
+    [ADD] Added new spell DFN tag for defining configurable reagent requirements (multiple supported per spell):
+        REAGENT=itemSectionID,amount
+        REAGENT=itemSectionID,aliasSectionID,amount // With alias
+        REAGENT=itemSectionID,amount,color // With color requirement
+        REAGENT=itemSectionID,aliasSectionID,amount,color // With alias and color requirement
+    [ADD] Added new read-only JavaScript spell property:
+        .reagents // Returns an array of reagent entries in the format [amount, sectionIDs, optionalColor]
+        sectionIDs is a sub-array that contains every accepted Item DFN section name that matches that reagent requirement
+    [ADD] Added support for creating script-owned temporary effects (ID 44) through DoTempEffect() JS function, which will call back to onTempEffectExpire/onTempEffectRemove in script
+    [ADD] Added new JavaScript event that triggers for script-owned temporary effects when it reaches end of duration naturally
+        onTempEffectExpire(source, target, effectID)
+    [ADD] Added new JavaScript event that triggers for script-owned temporary effects when reversed, removed or replaced before natural expiration
+        onTempEffectRemove(source, target, effectID)
+    [UPD] Updated DoTempEffect JS Function to associate temporary effects with ID 44 with the scripts that created them, and expanded more1, more2 and more3 parameters to use UI16 instead of UI08
+    [UPD] Updated spellbook lookup (via IsSpellBook() item function), casting, display, scroll insertion and spell packet generation to rely on the range defined by SPELLBOOKDATA, while still preserving support for the traditional type 9 spellbooks that remain unchanged
+    [UPD] Updated the DFN and JavaScript documentation for SPELLBOOKDATA, REAGENT, the .reagents spell property, DoTempEffect, onTempEffectExpire and onTempEffectRemove
+
 21/06/2026 - DragonSlayer62 (#537)
     [ADD] Extended Player Vendor AI functionality through new js/npc/ai/playervendor.js script
     [ADD] Added new vendorGoldHeld character property to track gold earned from player vendor sales separately from deposited vendor funds.
