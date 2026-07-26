@@ -428,6 +428,7 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"VENDORITEMFEEAMOUNT", 413},
 	{"ONLYRETURNTOBANK", 414},
 	{"VENDORMAXFUNDS", 415},
+	{"ELEMENTALDAMAGE"s, 416},
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -865,6 +866,7 @@ auto CServerData::ResetDefaults() -> void
 	// Expansion settings
 	ExpansionCoreShardEra( ER_LBR ); // Default to LBR expansion
 	ExpansionArmorCalculation( ER_CORE );
+	ExpansionElementalDamage( ER_CORE );
 	ExpansionStrengthDamageBonus( ER_CORE );
 	ExpansionTacticsDamageBonus( ER_CORE );
 	ExpansionAnatomyDamageBonus( ER_CORE );
@@ -1717,6 +1719,26 @@ auto CServerData::ExpansionArmorCalculation( UI08 setting ) -> void
 		setting = ExpansionCoreShardEra();
 	}
 	expansionArmorCalculation = setting;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ExpansionElementalDamage()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the era ruleset for elemental damage and percentage-based resistance
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ExpansionElementalDamage() const -> UI08
+{
+	if( static_cast<ExpansionRuleset>( expansionElementalDamage ) == ER_CORE )
+		return ExpansionCoreShardEra();
+
+	return expansionElementalDamage;
+}
+auto CServerData::ExpansionElementalDamage( UI08 setting ) -> void
+{
+	if( setting >= ER_COUNT )
+		setting = ER_COUNT - 1;
+
+	expansionElementalDamage = setting;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5883,6 +5905,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "[expansion settings]" << '\n' << "{" << '\n';
 		ofsOutput << "CORESHARDERA=" << EraEnumToString( static_cast<ExpansionRuleset>( ExpansionCoreShardEra() ), true ) << '\n';
 		ofsOutput << "ARMORCALCULATION=" << EraEnumToString( static_cast<ExpansionRuleset>( expansionArmorCalculation )) << '\n';
+		ofsOutput << "ELEMENTALDAMAGE=" << EraEnumToString( static_cast<ExpansionRuleset>( expansionElementalDamage )) << '\n';
 		ofsOutput << "STRENGTHDAMAGEBONUS=" << EraEnumToString( static_cast<ExpansionRuleset>( expansionStrengthDamageBonus )) << '\n';
 		ofsOutput << "TACTICSDAMAGEBONUS=" << EraEnumToString( static_cast<ExpansionRuleset>( expansionTacticsDamageBonus )) << '\n';
 		ofsOutput << "ANATOMYDAMAGEBONUS=" << EraEnumToString( static_cast<ExpansionRuleset>( expansionAnatomyDamageBonus )) << '\n';
@@ -7776,6 +7799,9 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 415: // VENDORMAXFUNDS
 			VendorMaxFunds( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 416: // ELEMENTALDAMAGE
+			ExpansionElementalDamage( EraStringToEnum( oldstrutil::trim( value )));
 			break;
 		default:
 			rValue = false;

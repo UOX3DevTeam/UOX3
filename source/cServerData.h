@@ -290,6 +290,7 @@ private:
 	// 0 = core, 1 = UO, 2 = T2A, 3 = UOR, 4 = TD, 5 = LBR (Pub15), 6 = AoS, 7 = SE, 8 = ML, 9 = SA, 10 = HS, 11 = ToL
 	UI08		coreShardEra;					// Determines core era ruleset for shard (determines which items/npcs are loaded, and which rules are applied in combat)
 	UI08		expansionArmorCalculation;		// Determines which era ruleset to use for calculating armor and defense
+	UI08		expansionElementalDamage;		// Determines which era ruleset enables elemental damage and percentage-based resistance
 	UI08		expansionStrengthDamageBonus;	// Determines which era ruleset to use for calculating strength damage bonus
 	UI08		expansionTacticsDamageBonus;	// Determines which era ruleset to use for calculating tactics damage bonus
 	UI08		expansionAnatomyDamageBonus;	// Determines which era ruleset to use for calculating anatomy damage bonus
@@ -1161,6 +1162,9 @@ public:
 
 	void		ExpansionArmorCalculation( UI08 value );
 	UI08		ExpansionArmorCalculation() const;
+
+	void		ExpansionElementalDamage( UI08 value );
+	UI08		ExpansionElementalDamage() const;
 
 	void		ExpansionStrengthDamageBonus( UI08 value );
 	UI08		ExpansionStrengthDamageBonus() const;

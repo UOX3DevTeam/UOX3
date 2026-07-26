@@ -784,6 +784,8 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp 
 			case CIP_RESISTSNOW:	*vp = INT_TO_JSVAL( gPriv->GetResist( SNOW ));		break;
 			case CIP_RESISTSTORM:	*vp = INT_TO_JSVAL( gPriv->GetResist( STORM ));		break;
 			case CIP_RESISTSTORMBREW: *vp = INT_TO_JSVAL( gPriv->GetResist( STORMBREW ));	break;
+			case CIP_RESISTACID:	*vp = INT_TO_JSVAL( gPriv->GetResist( ACID ));		break;
+			case CIP_RESISTNECROTIC: *vp = INT_TO_JSVAL( gPriv->GetResist( NECROTIC ));	break;
 			case CIP_DAMAGEPHYSICALPERCENT: *vp = INT_TO_JSVAL( gPriv->GetDamageType( PHYSICAL )); break;
 			case CIP_DAMAGEFIREPERCENT: *vp = INT_TO_JSVAL( gPriv->GetDamageType( HEAT )); break;
 			case CIP_DAMAGECOLDPERCENT: *vp = INT_TO_JSVAL( gPriv->GetDamageType( COLD )); break;
@@ -795,6 +797,8 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp 
 			case CIP_DAMAGESNOWPERCENT: *vp = INT_TO_JSVAL( gPriv->GetDamageType( SNOW )); break;
 			case CIP_DAMAGESTORMPERCENT: *vp = INT_TO_JSVAL( gPriv->GetDamageType( STORM )); break;
 			case CIP_DAMAGESTORMBREWPERCENT: *vp = INT_TO_JSVAL( gPriv->GetDamageType( STORMBREW )); break;
+			case CIP_DAMAGEACIDPERCENT: *vp = INT_TO_JSVAL( gPriv->GetDamageType( ACID )); break;
+			case CIP_DAMAGENECROTICPERCENT: *vp = INT_TO_JSVAL( gPriv->GetDamageType( NECROTIC )); break;
 			case CIP_DAMAGECOLD:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( COLD ));	break;
 			case CIP_DAMAGEHEAT:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( HEAT ));	break;
 			case CIP_DAMAGELIGHT:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( LIGHT ));	break;
@@ -1481,6 +1485,8 @@ JSBool CItemProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool str
 			case CIP_RESISTSNOW:	gPriv->SetResist( static_cast<UI16>( encaps.toInt() ), SNOW );		break;
 			case CIP_RESISTSTORM:	gPriv->SetResist( static_cast<UI16>( std::clamp( encaps.toInt(), 0, 100 )), STORM ); break;
 			case CIP_RESISTSTORMBREW: gPriv->SetResist( static_cast<UI16>( std::clamp( encaps.toInt(), 0, 100 )), STORMBREW ); break;
+			case CIP_RESISTACID: gPriv->SetResist( static_cast<UI16>( std::clamp( encaps.toInt(), 0, 100 )), ACID ); break;
+			case CIP_RESISTNECROTIC: gPriv->SetResist( static_cast<UI16>( std::clamp( encaps.toInt(), 0, 100 )), NECROTIC ); break;
 			case CIP_DAMAGEPHYSICALPERCENT: gPriv->SetDamageType( static_cast<UI08>( std::clamp( encaps.toInt(), 0, 100 )), PHYSICAL ); break;
 			case CIP_DAMAGEFIREPERCENT: gPriv->SetDamageType( static_cast<UI08>( std::clamp( encaps.toInt(), 0, 100 )), HEAT ); break;
 			case CIP_DAMAGECOLDPERCENT: gPriv->SetDamageType( static_cast<UI08>( std::clamp( encaps.toInt(), 0, 100 )), COLD ); break;
@@ -1492,6 +1498,8 @@ JSBool CItemProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool str
 			case CIP_DAMAGESNOWPERCENT: gPriv->SetDamageType( static_cast<UI08>( std::clamp( encaps.toInt(), 0, 100 )), SNOW ); break;
 			case CIP_DAMAGESTORMPERCENT: gPriv->SetDamageType( static_cast<UI08>( std::clamp( encaps.toInt(), 0, 100 )), STORM ); break;
 			case CIP_DAMAGESTORMBREWPERCENT: gPriv->SetDamageType( static_cast<UI08>( std::clamp( encaps.toInt(), 0, 100 )), STORMBREW ); break;
+			case CIP_DAMAGEACIDPERCENT: gPriv->SetDamageType( static_cast<UI08>( std::clamp( encaps.toInt(), 0, 100 )), ACID ); break;
+			case CIP_DAMAGENECROTICPERCENT: gPriv->SetDamageType( static_cast<UI08>( std::clamp( encaps.toInt(), 0, 100 )), NECROTIC ); break;
 			case CIP_DAMAGECOLD:	gPriv->SetWeatherDamage( COLD, encaps.toBool() );			break;
 			case CIP_DAMAGEHEAT:	gPriv->SetWeatherDamage( HEAT, encaps.toBool() );			break;
 			case CIP_DAMAGELIGHT:	gPriv->SetWeatherDamage( LIGHT, encaps.toBool() );			break;

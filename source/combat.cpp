@@ -2800,14 +2800,14 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 		default:			//	Elemental damage
 			{
 				UI16 elementalResist = CalcDef( ourTarg, hitLoc, doArmorDamage, damageType, false, false );
-				getDef = serverData->ExpansionArmorCalculation() >= ER_AOS ? elementalResist : HalfRandomNum( elementalResist );
+				getDef = serverData->ExpansionElementalDamage() >= ER_AOS ? elementalResist : HalfRandomNum( elementalResist );
 			}
 			break;
 	}
 
 	if( getDef > 0 )
 	{
-		if( serverData->ExpansionArmorCalculation() >= ER_AOS )
+		if(( damageType == PHYSICAL ? serverData->ExpansionArmorCalculation() : serverData->ExpansionElementalDamage() ) >= ER_AOS )
 			damage -= damage * ( static_cast<R32>( std::min<UI16>( getDef, 100 )) / 100.0f );
 		else
 			damage -= static_cast<R32>( getDef );
@@ -2856,7 +2856,7 @@ SI16 CHandleCombat::CalcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 	if( damage < 1 )
 		return 0;
 
-	if( cwmWorldState->ServerData()->ExpansionArmorCalculation() >= ER_AOS )
+	if( cwmWorldState->ServerData()->ExpansionElementalDamage() >= ER_AOS )
 	{
 		CBaseObject *damageSource = mChar;
 		CItem *weapon = GetWeapon( mChar );
@@ -2890,9 +2890,9 @@ SI16 CHandleCombat::CalcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 		SI16 resistedDamage = 0;
 		SI16 distributedDamage = 0;
 		CRace *targetRace = Races->Race( ourTarg->GetRace() );
-		for( UI08 type = PHYSICAL; type < CHAOS; ++type )
+		for( UI08 type = PHYSICAL; type < WEATHNUM; ++type )
 		{
-			if( percentages[type] == 0 )
+			if( type == CHAOS || percentages[type] == 0 )
 				continue;
 
 			const WeatherType componentType = static_cast<WeatherType>( type );

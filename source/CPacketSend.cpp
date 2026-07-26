@@ -7776,6 +7776,20 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 						tempEntry.sortOrder = 96;
 						FinalizeData( tempEntry, totalStringLen );
 					}
+					if( cItem.GetDamageType( ACID ) > 0 )
+					{
+						tempEntry.stringNum = 1042971; // ~1_NOTHING~
+						tempEntry.ourText = oldstrutil::format( "acid damage: %u%%", cItem.GetDamageType( ACID ));
+						tempEntry.sortOrder = 97;
+						FinalizeData( tempEntry, totalStringLen );
+					}
+					if( cItem.GetDamageType( NECROTIC ) > 0 )
+					{
+						tempEntry.stringNum = 1042971; // ~1_NOTHING~
+						tempEntry.ourText = oldstrutil::format( "necrotic damage: %u%%", cItem.GetDamageType( NECROTIC ));
+						tempEntry.sortOrder = 98;
+						FinalizeData( tempEntry, totalStringLen );
+					}
 				}
 
 				tempEntry.stringNum = 1061168; // weapon damage ~1_val~ - ~2_val~
@@ -7912,8 +7926,8 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 					FinalizeData( tempEntry, totalStringLen );
 				}
 
-				const WeatherType customResistTypes[] = { LIGHT, RAIN, SNOW, STORM, STORMBREW };
-				const char *customResistNames[] = { "light", "rain", "snow", "storm", "storm brew" };
+				const WeatherType customResistTypes[] = { LIGHT, RAIN, SNOW, STORM, STORMBREW, ACID, NECROTIC };
+				const char *customResistNames[] = { "light", "rain", "snow", "storm", "storm brew", "acid", "necrotic" };
 				for( size_t i = 0; i < ( sizeof( customResistTypes ) / sizeof( customResistTypes[0] )); ++i )
 				{
 					if( cItem.GetResist( customResistTypes[i] ) > 0 )

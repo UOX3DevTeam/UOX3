@@ -921,6 +921,8 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 			case DFNTAG_DAMAGESNOW:
 			case DFNTAG_DAMAGESTORM:
 			case DFNTAG_DAMAGESTORMBREW:
+			case DFNTAG_DAMAGEACID:
+			case DFNTAG_DAMAGENECROTIC:
 				{
 					WeatherType damageType = PHYSICAL;
 					if( tag == DFNTAG_DAMAGEFIRE ) damageType = HEAT;
@@ -933,6 +935,8 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 					else if( tag == DFNTAG_DAMAGESNOW ) damageType = SNOW;
 					else if( tag == DFNTAG_DAMAGESTORM ) damageType = STORM;
 					else if( tag == DFNTAG_DAMAGESTORMBREW ) damageType = STORMBREW;
+					else if( tag == DFNTAG_DAMAGEACID ) damageType = ACID;
+					else if( tag == DFNTAG_DAMAGENECROTIC ) damageType = NECROTIC;
 
 					if( ndata >= 0 )
 					{
@@ -955,7 +959,7 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 					auto values = oldstrutil::sections( cdata, "," );
 					if( values.size() >= 6 )
 					{
-						const WeatherType types[] = { PHYSICAL, HEAT, COLD, POISON, LIGHTNING, CHAOS, LIGHT, RAIN, SNOW, STORM, STORMBREW };
+						const WeatherType types[] = { PHYSICAL, HEAT, COLD, POISON, LIGHTNING, CHAOS, LIGHT, RAIN, SNOW, STORM, STORMBREW, ACID, NECROTIC };
 						UI16 total = 0;
 						for( size_t i = 0; i < ( sizeof( types ) / sizeof( types[0] )); ++i )
 						{
@@ -1181,7 +1185,7 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 			case DFNTAG_ELEMENTRESIST:
 				if( ssects.size() >= 4 )
 				{
-					const WeatherType resistTypes[] = { HEAT, COLD, LIGHTNING, POISON, LIGHT, RAIN, SNOW, STORM, STORMBREW };
+					const WeatherType resistTypes[] = { HEAT, COLD, LIGHTNING, POISON, LIGHT, RAIN, SNOW, STORM, STORMBREW, ACID, NECROTIC };
 					for( size_t i = 0; i < ssects.size() && i < ( sizeof( resistTypes ) / sizeof( resistTypes[0] )); ++i )
 					{
 						applyTo->SetResist( static_cast<UI16>( std::clamp( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( ssects[i], "//" )), nullptr, 0 ), 0, 100 )), resistTypes[i] );
@@ -1754,12 +1758,16 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 			case DFNTAG_RESISTSNOW:
 			case DFNTAG_RESISTSTORM:
 			case DFNTAG_RESISTSTORMBREW:
+			case DFNTAG_RESISTACID:
+			case DFNTAG_RESISTNECROTIC:
 				{
 					WeatherType resistType = LIGHT;
 					if( tag == DFNTAG_RESISTRAIN ) resistType = RAIN;
 					else if( tag == DFNTAG_RESISTSNOW ) resistType = SNOW;
 					else if( tag == DFNTAG_RESISTSTORM ) resistType = STORM;
 					else if( tag == DFNTAG_RESISTSTORMBREW ) resistType = STORMBREW;
+					else if( tag == DFNTAG_RESISTACID ) resistType = ACID;
+					else if( tag == DFNTAG_RESISTNECROTIC ) resistType = NECROTIC;
 
 					if( ndata >= 0 )
 						applyTo->SetResist( static_cast<UI16>( odata > ndata ? RandomNum( ndata, odata ) : ndata ), resistType );

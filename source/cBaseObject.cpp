@@ -492,19 +492,47 @@ UI08 CBaseObject::GetDamageType( WeatherType damage ) const
 
 void CBaseObject::SetDamageType( UI08 newValue, WeatherType damage )
 {
-	if( damage < WEATHNUM )
+	if( damage <= NONE || damage >= WEATHNUM )
+		return;
+
+	newValue = std::min<UI08>( newValue, 100 );
+
+	if( damage == PHYSICAL )
 	{
-		damageTypes[damage] = std::min<UI08>( newValue, 100 );
-		if( damage != PHYSICAL && damage != NONE )
+		// Physical damage is the remainder of the shared 100% damage pool.
+		// Setting it explicitly reduces existing elemental channels as needed.
+		UI16 elementalBudget = 100 - newValue;
+		UI16 elementalTotal = 0;
+		for( UI08 type = LIGHT; type < WEATHNUM; ++type )
 		{
-			UI16 elementalTotal = 0;
-			for( UI08 type = LIGHT; type < WEATHNUM; ++type )
-			{
-				elementalTotal += damageTypes[type];
-			}
-			damageTypes[PHYSICAL] = static_cast<UI08>( 100 - std::min<UI16>( elementalTotal, 100 ));
+			UI08 retained = static_cast<UI08>( std::min<UI16>( damageTypes[type], elementalBudget - elementalTotal ));
+			damageTypes[type] = retained;
+			elementalTotal += retained;
 		}
+		damageTypes[PHYSICAL] = static_cast<UI08>( 100 - elementalTotal );
 	}
+	else
+	{
+		// The most recently assigned elemental channel takes priority. Retain older
+		// channels only while room remains, then return unused damage to physical.
+		damageTypes[damage] = newValue;
+		UI16 remaining = 100 - newValue;
+		for( UI08 type = LIGHT; type < WEATHNUM; ++type )
+		{
+			if( type == damage )
+				continue;
+
+			UI08 retained = static_cast<UI08>( std::min<UI16>( damageTypes[type], remaining ));
+			damageTypes[type] = retained;
+			remaining -= retained;
+		}
+		damageTypes[PHYSICAL] = static_cast<UI08>( remaining );
+	}
+
+	if( CanBeObjType( OT_ITEM ))
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		( static_cast<CChar *>( this ))->UpdateRegion();
 }
 
 //o------------------------------------------------------------------------------------------------o

@@ -214,6 +214,12 @@ function onCallback0( socket, ourObj )
 	case "RESISTSTORMBREW":
 		socket.SysMessage( ourObj.Resist( 10 ));
 		break;
+	case "RESISTACID":
+		socket.SysMessage( ourObj.Resist( 12 ));
+		break;
+	case "RESISTNECROTIC":
+		socket.SysMessage( ourObj.Resist( 13 ));
+		break;
 	case "DAMAGEPHYSICAL": socket.SysMessage( ourObj.DamageType( 1 )); break;
 	case "DAMAGELIGHT": socket.SysMessage( ourObj.DamageType( 2 )); break;
 	case "DAMAGERAIN": socket.SysMessage( ourObj.DamageType( 3 )); break;
@@ -225,6 +231,8 @@ function onCallback0( socket, ourObj )
 	case "DAMAGESTORM": socket.SysMessage( ourObj.DamageType( 9 )); break;
 	case "DAMAGESTORMBREW": socket.SysMessage( ourObj.DamageType( 10 )); break;
 	case "DAMAGECHAOS": socket.SysMessage( ourObj.DamageType( 11 )); break;
+	case "DAMAGEACID": socket.SysMessage( ourObj.DamageType( 12 )); break;
+	case "DAMAGENECROTIC": socket.SysMessage( ourObj.DamageType( 13 )); break;
 	case "SCRIPTTRIGGER":
 	{
 		// Get last script trigger in list of triggers on object

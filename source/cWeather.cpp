@@ -257,10 +257,14 @@ void CWeather::NewHour( void )
 	RainIntensity(static_cast<SI08>( RandomNum( static_cast<SI16>( RainIntensityLow() ), static_cast<SI16>( RainIntensityHigh() ))));
 	SnowIntensity(static_cast<SI08>( RandomNum( static_cast<SI16>( SnowIntensityLow() ), static_cast<SI16>( SnowIntensityHigh() ))));
 	StormIntensity(static_cast<SI08>( RandomNum( static_cast<SI16>( StormIntensityLow() ), static_cast<SI16>( StormIntensityHigh() ))));
+	Intensity( ACID, static_cast<SI08>( RandomNum( static_cast<SI16>( IntensityLow( ACID )), static_cast<SI16>( IntensityHigh( ACID )))));
+	Intensity( NECROTIC, static_cast<SI08>( RandomNum( static_cast<SI16>( IntensityLow( NECROTIC )), static_cast<SI16>( IntensityHigh( NECROTIC )))));
 
 	SnowActive( isSnowing );
 	RainActive( isRaining );
 	StormBrewing( isStorm );
+	Active( ACID, static_cast<UI08>( RandomNum( 1, 100 )) <= Chance( ACID ));
+	Active( NECROTIC, static_cast<UI08>( RandomNum( 1, 100 )) <= Chance( NECROTIC ));
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -321,6 +325,15 @@ SI08 CWeather::Chance( UI08 weathType ) const
 void CWeather::Chance( UI08 weathType, SI08 value )
 {
 	weather[weathType].Chance = value;
+}
+
+bool CWeather::Active( UI08 weathType ) const
+{
+	return weather[weathType].Active;
+}
+void CWeather::Active( UI08 weathType, bool value )
+{
+	weather[weathType].Active = value;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -916,6 +929,19 @@ auto cWeatherAb::Load() -> bool
 				UTag = oldstrutil::upper( tag );
 				switch( tag[0] )
 				{
+					case 'a':
+					case 'A':
+						if( UTag == "ACIDCHANCE" )
+						{
+							Chance( static_cast<WEATHID>( i ), ACID, static_cast<SI08>( std::stoi( data, nullptr, 0 )));
+						}
+						else if( UTag == "ACIDINTENSITY" )
+						{
+							auto csecs = oldstrutil::sections( data, "," );
+							IntensityLow( static_cast<WEATHID>( i ), ACID, csecs.size() > 1 ? static_cast<SI08>( std::stoi( oldstrutil::trim( csecs[0] ))) : 0 );
+							IntensityHigh( static_cast<WEATHID>( i ), ACID, static_cast<SI08>( std::stoi( oldstrutil::trim( csecs.size() > 1 ? csecs[1] : csecs[0] ))));
+						}
+						break;
 					case 'c':
 					case 'C':
 						if( UTag == "COLDCHANCE" ) // chance for a cold day
@@ -966,6 +992,19 @@ auto cWeatherAb::Load() -> bool
 						else if( UTag == "MINWIND" ) // minimum wind speed
 						{
 							MinWindSpeed( static_cast<WEATHID>( i ), std::stof( data ));
+						}
+						break;
+					case 'n':
+					case 'N':
+						if( UTag == "NECROTICCHANCE" )
+						{
+							Chance( static_cast<WEATHID>( i ), NECROTIC, static_cast<SI08>( std::stoi( data, nullptr, 0 )));
+						}
+						else if( UTag == "NECROTICINTENSITY" )
+						{
+							auto csecs = oldstrutil::sections( data, "," );
+							IntensityLow( static_cast<WEATHID>( i ), NECROTIC, csecs.size() > 1 ? static_cast<SI08>( std::stoi( oldstrutil::trim( csecs[0] ))) : 0 );
+							IntensityHigh( static_cast<WEATHID>( i ), NECROTIC, static_cast<SI08>( std::stoi( oldstrutil::trim( csecs.size() > 1 ? csecs[1] : csecs[0] ))));
 						}
 						break;
 					case 'r':
@@ -1105,6 +1144,15 @@ SI08 cWeatherAb::Chance( WEATHID toCheck, UI08 weathType )
 void cWeatherAb::Chance( WEATHID toCheck, UI08 weathType, SI08 value )
 {
 	weather[toCheck].Chance( weathType, value );
+}
+
+bool cWeatherAb::Active( WEATHID toCheck, UI08 weathType )
+{
+	return weather[toCheck].Active( weathType );
+}
+void cWeatherAb::Active( WEATHID toCheck, UI08 weathType, bool value )
+{
+	weather[toCheck].Active( weathType, value );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1658,6 +1706,12 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 	WEATHID currVal = p->GetRegion()->GetEffectiveWeather();
 	if( weather.empty() || currVal >= weather.size() || p->InBuilding() )
 	{
+		for( WeatherType element : { RAIN, SNOW, STORM, COLD, HEAT, ACID, NECROTIC } )
+		{
+			if( p->GetWeathDamage( element ) != 0 )
+				p->SetWeathDamage( 0, element );
+		}
+
 		if( s != nullptr )
 		{
 			CPWeather dry( 0xFF, 0x00, defaultTemp );
@@ -1665,26 +1719,6 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 			p->SetLastWeathId( 0xFFFF );
 			p->SetLastWeathPkt( 0 );
 			p->SetLastWeathParts( 0 );
-			if( p->GetWeathDamage( SNOW ) != 0 )
-			{
-				p->SetWeathDamage( 0, SNOW );
-			}
-			if( p->GetWeathDamage( STORM ) != 0 )
-			{
-				p->SetWeathDamage( 0, STORM );
-			}
-			if( p->GetWeathDamage( RAIN ) != 0 )
-			{
-				p->SetWeathDamage( 0, RAIN );
-			}
-			if( p->GetWeathDamage( COLD ) != 0 )
-			{
-				p->SetWeathDamage( 0, COLD );
-			}
-			if( p->GetWeathDamage( HEAT ) != 0 )
-			{
-				p->SetWeathDamage( 0, HEAT );
-			}
 			SendJSWeather( p, LIGHT, defaultTemp );
 		}
 		return false;
@@ -1814,6 +1848,22 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 		p->SetWeathDamage( BuildTimeValue( static_cast<R64>( Races->Secs( p->GetRace(), COLD ))), COLD );
 	}
 
+	for( WeatherType element : { ACID, NECROTIC } )
+	{
+		if( Active( currVal, element ))
+		{
+			SendJSWeather( p, element, temp );
+			if( Races->Affect( p->GetRace(), element ) && p->GetWeathDamage( element ) == 0 )
+			{
+				p->SetWeathDamage( BuildTimeValue( static_cast<R64>( Races->Secs( p->GetRace(), element ))), element );
+			}
+		}
+		else if( p->GetWeathDamage( element ) != 0 )
+		{
+			p->SetWeathDamage( 0, element );
+		}
+	}
+
 	return true;
 }
 
@@ -1829,8 +1879,13 @@ bool cWeatherAb::DoNPCStuff( CChar *p )
 		return true;
 
 	WEATHID currVal = p->GetRegion()->GetEffectiveWeather();
-	if( currVal > weather.size() || weather.empty() || p->InBuilding() )
+	if( weather.empty() || currVal >= weather.size() || p->InBuilding() )
 	{
+		for( WeatherType element : { RAIN, SNOW, STORM, COLD, HEAT, ACID, NECROTIC } )
+		{
+			if( p->GetWeathDamage( element ) != 0 )
+				p->SetWeathDamage( 0, element );
+		}
 		SendJSWeather( p, LIGHT, 0 );
 		return false;
 	}
@@ -1913,6 +1968,22 @@ bool cWeatherAb::DoNPCStuff( CChar *p )
 	if(( Races->Affect( p->GetRace(), COLD )) && p->GetWeathDamage( COLD ) == 0 )
 	{
 		p->SetWeathDamage( BuildTimeValue( static_cast<R64>( Races->Secs( p->GetRace(), COLD ))), COLD );
+	}
+
+	for( WeatherType element : { ACID, NECROTIC } )
+	{
+		if( Active( currVal, element ))
+		{
+			SendJSWeather( p, element, temp );
+			if( Races->Affect( p->GetRace(), element ) && p->GetWeathDamage( element ) == 0 )
+			{
+				p->SetWeathDamage( BuildTimeValue( static_cast<R64>( Races->Secs( p->GetRace(), element ))), element );
+			}
+		}
+		else if( p->GetWeathDamage( element ) != 0 )
+		{
+			p->SetWeathDamage( 0, element );
+		}
 	}
 
 	return true;
@@ -2260,8 +2331,14 @@ bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType elem
 		return false;
 
 	bool didDamage = false;
-	WEATHID weatherSys = mChar.GetRegion()->GetWeather();
-	if( !( weatherSys > weather.size() || weather.empty() ) && mChar.GetWeathDamage( element ) != 0 && mChar.GetWeathDamage( element ) <= cwmWorldState->GetUICurrentTime() )
+	WEATHID weatherSys = mChar.GetRegion()->GetEffectiveWeather();
+	if( weather.empty() || weatherSys >= weather.size() )
+		return false;
+
+	if(( element == ACID || element == NECROTIC ) && !Active( weatherSys, element ))
+		return false;
+
+	if( mChar.GetWeathDamage( element ) != 0 && mChar.GetWeathDamage( element ) <= cwmWorldState->GetUICurrentTime() )
 	{
 		const R32 tempCurrent	= Temp( weatherSys );
 		const R32 tempEffMax	= EffectiveMaxTemp( weatherSys );
@@ -2282,6 +2359,13 @@ bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType elem
 			damage = static_cast<SI32>( std::round(( baseDamage / 100 ) * damageModifier ));
 			damageMessage = 1219;
 			resistElement = RAIN;
+		}
+
+		if( element == ACID || element == NECROTIC )
+		{
+			damageModifier = static_cast<R32>( Intensity( weatherSys, element ));
+			damage = static_cast<SI32>( std::round(( baseDamage / 100 ) * damageModifier ));
+			resistElement = element;
 		}
 
 		if( element == SNOW )
@@ -2351,7 +2435,7 @@ bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType elem
 			if( mChar.Damage( damage, element ))
 			{
 				mChar.SetStamina( mChar.GetStamina() - 2 );
-				if( mSock != nullptr )
+				if( mSock != nullptr && damageMessage != 0 )
 				{
 					mSock->SysMessage( damageMessage );
 				}

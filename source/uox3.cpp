@@ -2051,6 +2051,8 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 		Weather->doWeatherEffect( mSock, mChar, HEAT );
 		Weather->doWeatherEffect( mSock, mChar, COLD );
 		Weather->doWeatherEffect( mSock, mChar, STORM );
+		Weather->doWeatherEffect( mSock, mChar, ACID );
+		Weather->doWeatherEffect( mSock, mChar, NECROTIC );
 
 		if( checkFieldEffects )
 		{

@@ -4682,6 +4682,18 @@
           "type": "number"
         },
         {
+          "name": "resistAcid",
+          "cppName": "CIP_RESISTACID",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "resistNecrotic",
+          "cppName": "CIP_RESISTNECROTIC",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
           "name": "damagePhysicalPercent",
           "cppName": "CIP_DAMAGEPHYSICALPERCENT",
           "cppType": "JSPROP_ENUMANDPERM",
@@ -4744,6 +4756,18 @@
         {
           "name": "damageStormBrewPercent",
           "cppName": "CIP_DAMAGESTORMBREWPERCENT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "damageAcidPercent",
+          "cppName": "CIP_DAMAGEACIDPERCENT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "damageNecroticPercent",
+          "cppName": "CIP_DAMAGENECROTICPERCENT",
           "cppType": "JSPROP_ENUMANDPERM",
           "type": "number"
         },
@@ -6252,8 +6276,10 @@
         { "label": "SNOW"     , "value": 8 },
         { "label": "STORM"    , "value": 9 },
         { "label": "STORMBREW", "value": 10 },
-        { "label": "CHAOS",     "value": 11 },
-        { "label": "WEATHNUM" , "value": 12 }
+          { "label": "CHAOS",     "value": 11 },
+          { "label": "ACID",      "value": 12 },
+          { "label": "NECROTIC",  "value": 13 },
+          { "label": "WEATHNUM" , "value": 14 }
       ]
     },
     {

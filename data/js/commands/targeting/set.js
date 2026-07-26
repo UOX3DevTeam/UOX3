@@ -130,6 +130,14 @@ function onCallback0( socket, ourObj )
 		ourObj.Resist( 10, nVal );
 		okMsg( socket );
 		break;
+	case "RESISTACID":
+		ourObj.Resist( 12, nVal );
+		okMsg( socket );
+		break;
+	case "RESISTNECROTIC":
+		ourObj.Resist( 13, nVal );
+		okMsg( socket );
+		break;
 	case "DAMAGEPHYSICAL": ourObj.DamageType( 1, nVal ); okMsg( socket ); break;
 	case "DAMAGELIGHT": ourObj.DamageType( 2, nVal ); okMsg( socket ); break;
 	case "DAMAGERAIN": ourObj.DamageType( 3, nVal ); okMsg( socket ); break;
@@ -141,6 +149,8 @@ function onCallback0( socket, ourObj )
 	case "DAMAGESTORM": ourObj.DamageType( 9, nVal ); okMsg( socket ); break;
 	case "DAMAGESTORMBREW": ourObj.DamageType( 10, nVal ); okMsg( socket ); break;
 	case "DAMAGECHAOS": ourObj.DamageType( 11, nVal ); okMsg( socket ); break;
+	case "DAMAGEACID": ourObj.DamageType( 12, nVal ); okMsg( socket ); break;
+	case "DAMAGENECROTIC": ourObj.DamageType( 13, nVal ); okMsg( socket ); break;
 	case "HEALTHREGENBONUS":
 		ourObj.healthRegenBonus = nVal;
 		okMsg( socket );

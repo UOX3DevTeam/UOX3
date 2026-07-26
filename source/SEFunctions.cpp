@@ -5806,6 +5806,13 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 			case 415:	// VENDORMAXFUNDS
 				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->VendorMaxFunds() )));
 				break;
+			case 416:	// ELEMENTALDAMAGE
+			{
+				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionElementalDamage() )) };
+				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
+				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ));
+				break;
+			}
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );
 				return false;

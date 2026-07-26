@@ -9795,6 +9795,8 @@ spellbookItem.RemoveSpell( 0 );</code></pre>
 											<li>8 - Snow</li>
 											<li>9 - Storm</li>
 											<li>10 - Stormbrew</li>
+											<li>12 - Acid</li>
+											<li>13 - Necrotic</li>
 											<li>11 - Chaos (damage only; no dedicated resistance)</li>
 										</ul>
 									</p>
@@ -11435,6 +11437,8 @@ myChar.PopUpTarget( 1, "Where do you wish to teleport to?" );</code></pre>
 											<li>8 - Snow</li>
 											<li>9 - Storm</li>
 											<li>10 - Stormbrew</li>
+											<li>12 - Acid</li>
+											<li>13 - Necrotic</li>
 											<li>11 - Chaos (damage only; no dedicated resistance)</li>
 										</ul>
 									</p>
@@ -17506,15 +17510,15 @@ myObject.propertyName = newValue;
 							Get/Set the item's Snow Resistance (0-1000, where 1000 = 100.0%) - no effect implemented yet</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">.resistStorm / .resistStormBrew</span> <strong>(int, <em>0-100</em>)</strong><br>
-							Get/Set the item's custom Storm and Stormbrew resistance percentages.</p>
+							<p><span class="hl">.resistStorm / .resistStormBrew / .resistAcid / .resistNecrotic</span> <strong>(int, <em>0-100</em>)</strong><br>
+							Get/Set the item's custom Storm, Stormbrew, Acid, and Necrotic resistance percentages.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.damagePhysicalPercent / .damageFirePercent / .damageColdPercent / .damagePoisonPercent / .damageEnergyPercent / .damageChaosPercent</span> <strong>(int, <em>0-100</em>)</strong><br>
 							Get/Set the item's standard AoS weapon damage percentages. Chaos resolves to a random standard damage channel on each hit.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">.damageLightPercent / .damageRainPercent / .damageSnowPercent / .damageStormPercent / .damageStormBrewPercent</span> <strong>(int, <em>0-100</em>)</strong><br>
+							<p><span class="hl">.damageLightPercent / .damageRainPercent / .damageSnowPercent / .damageStormPercent / .damageStormBrewPercent / .damageAcidPercent / .damageNecroticPercent</span> <strong>(int, <em>0-100</em>)</strong><br>
 							Get/Set the item's custom elemental weapon damage percentages.</p>
 						</div>
 						<div class="settingsDiv">
