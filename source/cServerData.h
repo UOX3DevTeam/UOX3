@@ -787,6 +787,9 @@ public:
 	auto		CombatArmorClassDamageBonus( bool value ) -> void;
 	auto		CombatArmorClassDamageBonus() const -> bool;
 
+	auto		CombatRandomZeroDamageFallback( bool value ) -> void;
+	auto		CombatRandomZeroDamageFallback() const -> bool;
+
 	auto		CombatDisplayHitMessage( bool value ) -> void;
 	auto		CombatDisplayHitMessage() const -> bool;
 

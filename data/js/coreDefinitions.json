@@ -1944,6 +1944,12 @@
         ] }, "returns": "boolean" },
         { "name": "KillJSTimer",         "cppName": "CBase_KillJSTimer",          "params": { "num": 2, "list": [ { "name": "timerId",  "type": "number",     "required": true }, { "name": "scriptId",  "type": "number",     "required": true } ] }, "returns": "number" },
         { "name": "KillTimers",          "cppName": "CBase_KillTimers",           "params": { "num": 1, "list": [ { "name": "triggerId","type": "number",     "required": false} ] }, "returns": "void" },
+        { "name": "DamageType",          "cppName": "CBase_DamageType",           "params": {
+          "sets": [
+            { "num": 1, "list": [ { "name": "damageType", "type": "WeatherType", "required": true } ] },
+            { "num": 2, "list": [ { "name": "damageType", "type": "WeatherType", "required": true }, { "name": "percentage", "type": "number", "required": true } ] }
+          ] },
+          "returns": "number | boolean" },
         { "name": "PauseJSTimer",        "cppName": "CBase_PauseJSTimer",         "params": { "num": 2, "list": [ { "name": "timerId",  "type": "number",     "required": true }, { "name": "scriptId",  "type": "number",     "required": true } ] }, "returns": "number" },
         { "name": "PauseTempEffect",     "cppName": "CBase_PauseTempEffect",      "params": { "num": 1, "list": [ { "name": "effectID", "type": "number",     "required": true } ] }, "returns": "number" },
         { "name": "RemoveScriptTrigger", "cppName": "CBase_RemoveScriptTrigger",  "params": { "num": 1, "list": [ { "name": "scriptId", "type": "number", "required": true } ] }, "returns": "void" },
@@ -4664,6 +4670,84 @@
           "type": "number"
         },
         {
+          "name": "resistStorm",
+          "cppName": "CIP_RESISTSTORM",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "resistStormBrew",
+          "cppName": "CIP_RESISTSTORMBREW",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "damagePhysicalPercent",
+          "cppName": "CIP_DAMAGEPHYSICALPERCENT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "damageFirePercent",
+          "cppName": "CIP_DAMAGEFIREPERCENT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "damageColdPercent",
+          "cppName": "CIP_DAMAGECOLDPERCENT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "damagePoisonPercent",
+          "cppName": "CIP_DAMAGEPOISONPERCENT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "damageEnergyPercent",
+          "cppName": "CIP_DAMAGEENERGYPERCENT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "damageChaosPercent",
+          "cppName": "CIP_DAMAGECHAOSPERCENT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "damageLightPercent",
+          "cppName": "CIP_DAMAGELIGHTPERCENT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "damageRainPercent",
+          "cppName": "CIP_DAMAGERAINPERCENT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "damageSnowPercent",
+          "cppName": "CIP_DAMAGESNOWPERCENT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "damageStormPercent",
+          "cppName": "CIP_DAMAGESTORMPERCENT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "damageStormBrewPercent",
+          "cppName": "CIP_DAMAGESTORMBREWPERCENT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
           "name": "damageHeat",
           "cppName": "CIP_DAMAGEHEAT",
           "cppType": "JSPROP_ENUMANDPERM",
@@ -6168,7 +6252,8 @@
         { "label": "SNOW"     , "value": 8 },
         { "label": "STORM"    , "value": 9 },
         { "label": "STORMBREW", "value": 10 },
-        { "label": "WEATHNUM" , "value": 11 }
+        { "label": "CHAOS",     "value": 11 },
+        { "label": "WEATHNUM" , "value": 12 }
       ]
     },
     {

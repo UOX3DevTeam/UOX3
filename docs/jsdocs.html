@@ -9792,6 +9792,10 @@ spellbookItem.RemoveSpell( 0 );</code></pre>
 											<li>5 - Heat</li>
 											<li>6 - Energy</li>
 											<li>7 - Poison</li>
+											<li>8 - Snow</li>
+											<li>9 - Storm</li>
+											<li>10 - Stormbrew</li>
+											<li>11 - Chaos (damage only; no dedicated resistance)</li>
 										</ul>
 									</p>
 								</div>
@@ -9802,6 +9806,22 @@ mItem.Resist( 1, 25 );
 
 // Get the armor value of an item:
 value = mItem.Resist( 1 );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_baseObj_DamageType"/>
+							<label for="spoiler_method_baseObj_DamageType">DamageType <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int DamageType( damageType );</em></p>
+									<p><em>void DamageType( damageType, percentage );</em></p>
+									<p><span class="hl">Purpose</span></p>
+									<p>Gets or sets an item or NPC melee damage percentage using the WeatherType values listed under Resist. Percentages are clamped to 0-100; Chaos uses type 11.</p>
+									<pre><code class="language-javascript">weapon.DamageType( 5, 40 ); // 40% Fire
+var firePercent = weapon.DamageType( 5 );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -11412,6 +11432,10 @@ myChar.PopUpTarget( 1, "Where do you wish to teleport to?" );</code></pre>
 											<li>5 - Heat</li>
 											<li>6 - Energy</li>
 											<li>7 - Poison</li>
+											<li>8 - Snow</li>
+											<li>9 - Storm</li>
+											<li>10 - Stormbrew</li>
+											<li>11 - Chaos (damage only; no dedicated resistance)</li>
 										</ul>
 									</p>
 								</div>
@@ -17480,6 +17504,18 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.resistSnow</span> <strong>(int, <em>0-1000</em>)</strong><br>
 							Get/Set the item's Snow Resistance (0-1000, where 1000 = 100.0%) - no effect implemented yet</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.resistStorm / .resistStormBrew</span> <strong>(int, <em>0-100</em>)</strong><br>
+							Get/Set the item's custom Storm and Stormbrew resistance percentages.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.damagePhysicalPercent / .damageFirePercent / .damageColdPercent / .damagePoisonPercent / .damageEnergyPercent / .damageChaosPercent</span> <strong>(int, <em>0-100</em>)</strong><br>
+							Get/Set the item's standard AoS weapon damage percentages. Chaos resolves to a random standard damage channel on each hit.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.damageLightPercent / .damageRainPercent / .damageSnowPercent / .damageStormPercent / .damageStormBrewPercent</span> <strong>(int, <em>0-100</em>)</strong><br>
+							Get/Set the item's custom elemental weapon damage percentages.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.restock</span> <strong>(int)</strong><br>

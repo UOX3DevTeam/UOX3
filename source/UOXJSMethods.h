@@ -182,6 +182,7 @@ JSBool CBase_DistanceTo( JSContext *cx, uintN argc, jsval *vp );
 JSBool CBase_GetSerial( JSContext *cx, uintN argc, jsval *vp );
 JSBool CBase_UpdateStats( JSContext *cx, uintN argc, jsval *vp );
 JSBool CBase_Resist( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBase_DamageType( JSContext *cx, uintN argc, jsval *vp );
 JSBool CBase_IsBoat( JSContext *cx, uintN argc, jsval *vp );
 JSBool CBase_CanSee( JSContext *cx, uintN argc, jsval *vp );
 JSBool CBase_ResourceCount( JSContext *cx, uintN argc, jsval *vp );
@@ -486,6 +487,7 @@ inline JSFunctionSpec CChar_Methods[] =
 	{ "ClearPermaGreyFlags",	CChar_ClearPermaGreyFlags,				0, 0 },
 	{ "Heal",				CChar_Heal,				1, 0 },
 	{ "Resist",				CBase_Resist,			1, 0 },
+	{ "DamageType",			CBase_DamageType,		1, 0 },
 	{ "Defense",			CChar_Defense,			3, 0 },
 	{ "AddScriptTrigger",	CBase_AddScriptTrigger,		1, 0 },
 	{ "HasScriptTrigger",	CBase_HasScriptTrigger,		1, 0 },
@@ -574,6 +576,7 @@ inline JSFunctionSpec CItem_Methods[] =
 	{ "GetMoreVar",			CItem_GetMoreVar,			2, 0 },
 	{ "SetMoreVar",			CItem_SetMoreVar,			3, 0 },
 	{ "Resist",				CBase_Resist,				1, 0 },
+	{ "DamageType",			CBase_DamageType,			1, 0 },
 	{ "ResourceCount",		CBase_ResourceCount,		2, 0 },
 	{ "UseResource",		CBase_UseResource,			3, 0 },
 	{ "AddScriptTrigger",	CBase_AddScriptTrigger,		1, 0 },

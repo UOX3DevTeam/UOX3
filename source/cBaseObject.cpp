@@ -149,6 +149,8 @@ luck( DEFBASE_LUCK ), tithing( DEFBASE_TITHING ), poisonedBy( DEFBASE_POISONEDBY
 	}
 	ShouldSave( true );
 	memset( &resistances[0], DEFBASE_RESIST, sizeof( UI16 ) * WEATHNUM );
+	memset( &damageTypes[0], 0, sizeof( UI08 ) * WEATHNUM );
+	damageTypes[PHYSICAL] = 100;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -480,6 +482,28 @@ void CBaseObject::SetResist( UI16 newValue, WeatherType damage )
 	else if( CanBeObjType( OT_CHAR ))
 	{
 		( static_cast<CChar *>( this ))->UpdateRegion();
+	}
+}
+
+UI08 CBaseObject::GetDamageType( WeatherType damage ) const
+{
+	return damage < WEATHNUM ? damageTypes[damage] : 0;
+}
+
+void CBaseObject::SetDamageType( UI08 newValue, WeatherType damage )
+{
+	if( damage < WEATHNUM )
+	{
+		damageTypes[damage] = std::min<UI08>( newValue, 100 );
+		if( damage != PHYSICAL && damage != NONE )
+		{
+			UI16 elementalTotal = 0;
+			for( UI08 type = LIGHT; type < WEATHNUM; ++type )
+			{
+				elementalTotal += damageTypes[type];
+			}
+			damageTypes[PHYSICAL] = static_cast<UI08>( 100 - std::min<UI16>( elementalTotal, 100 ));
+		}
 	}
 }
 
@@ -837,13 +861,19 @@ bool CBaseObject::DumpBody( std::ostream &outStream ) const
 	outStream << "Visible=" + std::to_string( visible ) + newLine;
 	outStream << "Disabled=" << ( IsDisabled() ? "1" : "0" ) << newLine;
 	outStream << "Damage=" + std::to_string( loDamage ) + "," + std::to_string( hiDamage ) + newLine;
+	outStream << "DamageTypes=";
+	for( UI08 damageType = 1; damageType < WEATHNUM; ++damageType )
+	{
+		outStream << static_cast<UI16>( GetDamageType( static_cast<WeatherType>( damageType ))) << ",";
+	}
+	outStream << "[END]" << newLine;
 	outStream << "Poisoned=" + std::to_string( poisoned ) + newLine;
 	outStream << "PoisonedBy=" + std::to_string( poisonedBy ) + newLine;
 	outStream << "Carve=" + std::to_string( GetCarve() ) + newLine;
 	outStream << "Damageable=" << ( IsDamageable() ? "1" : "0" ) << newLine;
 
 	outStream << "Defense=";
-	for( UI08 resist = 1; resist < WEATHNUM; ++resist )
+	for( UI08 resist = 1; resist < CHAOS; ++resist )
 	{
 		outStream << GetResist( static_cast<WeatherType>( resist )) << ",";
 	}
@@ -2289,6 +2319,17 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 			{
 				dx2	= static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 ));
 			}
+			else if( UTag == "DAMAGETYPES" )
+			{
+				int count = 1;
+				for( auto &val : csecs )
+				{
+					auto temp = oldstrutil::upper( oldstrutil::trim( oldstrutil::removeTrailing( val, "//" )));
+					if( temp.empty() || temp == "[END]" || count >= WEATHNUM )
+						break;
+					SetDamageType( static_cast<UI08>( std::clamp( std::stoi( temp, nullptr, 0 ), 0, 100 )), static_cast<WeatherType>( count++ ));
+				}
+			}
 			else if( UTag == "DEFENSE" )
 			{
 				if( data.find( "," ) != std::string::npos )
@@ -3080,6 +3121,7 @@ void CBaseObject::CopyData( CBaseObject *target )
 	for( UI08 resist = 0; resist < WEATHNUM; ++resist )
 	{
 		target->SetResist( GetResist( static_cast<WeatherType>( resist )), static_cast<WeatherType>( resist ));
+		target->SetDamageType( GetDamageType( static_cast<WeatherType>( resist )), static_cast<WeatherType>( resist ));
 	}
 	target->SetStrength2( GetStrength2() );
 	target->SetDexterity2( GetDexterity2() );

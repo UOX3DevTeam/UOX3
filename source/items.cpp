@@ -140,6 +140,46 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				}
 				break;
 			case DFNTAG_DAMAGEINCREASE:	applyTo->SetDamageIncrease( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_DAMAGEPHYSICAL:
+			case DFNTAG_DAMAGEFIRE:
+			case DFNTAG_DAMAGECOLD:
+			case DFNTAG_DAMAGEPOISON:
+			case DFNTAG_DAMAGEENERGY:
+			case DFNTAG_DAMAGECHAOS:
+			case DFNTAG_DAMAGELIGHT:
+			case DFNTAG_DAMAGERAIN:
+			case DFNTAG_DAMAGESNOW:
+			case DFNTAG_DAMAGESTORM:
+			case DFNTAG_DAMAGESTORMBREW:
+				{
+					WeatherType damageType = PHYSICAL;
+					if( tag == DFNTAG_DAMAGEFIRE ) damageType = HEAT;
+					else if( tag == DFNTAG_DAMAGECOLD ) damageType = COLD;
+					else if( tag == DFNTAG_DAMAGEPOISON ) damageType = POISON;
+					else if( tag == DFNTAG_DAMAGEENERGY ) damageType = LIGHTNING;
+					else if( tag == DFNTAG_DAMAGECHAOS ) damageType = CHAOS;
+					else if( tag == DFNTAG_DAMAGELIGHT ) damageType = LIGHT;
+					else if( tag == DFNTAG_DAMAGERAIN ) damageType = RAIN;
+					else if( tag == DFNTAG_DAMAGESNOW ) damageType = SNOW;
+					else if( tag == DFNTAG_DAMAGESTORM ) damageType = STORM;
+					else if( tag == DFNTAG_DAMAGESTORMBREW ) damageType = STORMBREW;
+
+					if( ndata >= 0 )
+					{
+						UI08 value = static_cast<UI08>( std::clamp( odata > ndata ? RandomNum( ndata, odata ) : ndata, 0, 100 ));
+						applyTo->SetDamageType( value, damageType );
+						if( damageType != PHYSICAL )
+						{
+							UI16 elementalTotal = 0;
+							for( UI08 i = LIGHT; i < WEATHNUM; ++i )
+								elementalTotal += applyTo->GetDamageType( static_cast<WeatherType>( i ));
+							applyTo->SetDamageType( static_cast<UI08>( 100 - std::min<UI16>( elementalTotal, 100 )), PHYSICAL );
+						}
+					}
+					else
+						Console.Warning( oldstrutil::format( "Invalid elemental damage tag inside item script [%s]", sectionId.c_str() ));
+				}
+				break;
 			case DFNTAG_AC:				applyTo->SetArmourClass( static_cast<UI08>( ndata ));	break;
 			case DFNTAG_HEALTHLEECH:	applyTo->SetHealthLeech( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_STAMINALEECH:	applyTo->SetStaminaLeech( static_cast<SI16>( ndata ));		break;
@@ -156,10 +196,37 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			case DFNTAG_ELEMENTRESIST:
 				if( ssecs.size() >= 4 )
 				{
-					applyTo->SetResist( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )), HEAT );
-					applyTo->SetResist( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 )), COLD );
-					applyTo->SetResist( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 0 )), LIGHTNING );
-					applyTo->SetResist( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 0 )), POISON );
+					const WeatherType resistTypes[] = { HEAT, COLD, LIGHTNING, POISON, LIGHT, RAIN, SNOW, STORM, STORMBREW };
+					for( size_t i = 0; i < ssecs.size() && i < ( sizeof( resistTypes ) / sizeof( resistTypes[0] )); ++i )
+					{
+						applyTo->SetResist( static_cast<UI16>( std::clamp( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[i], "//" )), nullptr, 0 ), 0, 100 )), resistTypes[i] );
+					}
+				}
+				break;
+			case DFNTAG_ELEMENTDAMAGE:
+				{
+					auto values = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), "," );
+					if( values.size() >= 6 )
+					{
+						const WeatherType types[] = { PHYSICAL, HEAT, COLD, POISON, LIGHTNING, CHAOS, LIGHT, RAIN, SNOW, STORM, STORMBREW };
+						UI16 total = 0;
+						for( size_t i = 0; i < ( sizeof( types ) / sizeof( types[0] )); ++i )
+						{
+							UI08 value = 0;
+							if( i < values.size() )
+								value = static_cast<UI08>( std::clamp( std::stoi( oldstrutil::trim( values[i] ), nullptr, 0 ), 0, 100 ));
+							applyTo->SetDamageType( value, types[i] );
+							total += value;
+						}
+						if( total < 100 )
+							applyTo->SetDamageType( static_cast<UI08>( applyTo->GetDamageType( PHYSICAL ) + ( 100 - total )), PHYSICAL );
+						else if( total > 100 )
+							Console.Warning( oldstrutil::format( "ELEMENTDAMAGE totals %u%% (maximum 100%%) in item script [%s]", total, sectionId.c_str() ));
+					}
+					else
+					{
+						Console.Warning( oldstrutil::format( "ELEMENTDAMAGE requires physical,fire,cold,poison,energy,chaos in item script [%s]", sectionId.c_str() ));
+					}
 				}
 				break;
 			case DFNTAG_ERBONUS:
@@ -592,6 +659,24 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				else
 				{
 					Console.Warning( oldstrutil::format( "Invalid data found in RESISTPOISON tag inside Item script [%s]", sectionId.c_str() ));
+				}
+				break;
+			case DFNTAG_RESISTLIGHT:
+			case DFNTAG_RESISTRAIN:
+			case DFNTAG_RESISTSNOW:
+			case DFNTAG_RESISTSTORM:
+			case DFNTAG_RESISTSTORMBREW:
+				{
+					WeatherType resistType = LIGHT;
+					if( tag == DFNTAG_RESISTRAIN ) resistType = RAIN;
+					else if( tag == DFNTAG_RESISTSNOW ) resistType = SNOW;
+					else if( tag == DFNTAG_RESISTSTORM ) resistType = STORM;
+					else if( tag == DFNTAG_RESISTSTORMBREW ) resistType = STORMBREW;
+
+					if( ndata >= 0 )
+						applyTo->SetResist( static_cast<UI16>( odata > ndata ? RandomNum( ndata, odata ) : ndata ), resistType );
+					else
+						Console.Warning( oldstrutil::format( "Invalid custom resistance tag inside item script [%s]", sectionId.c_str() ));
 				}
 				break;
 			case DFNTAG_RESTOCK:	

@@ -2281,7 +2281,7 @@ bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType elem
 			damageModifier = static_cast<R32>( RainIntensity( weatherSys ));
 			damage = static_cast<SI32>( std::round(( baseDamage / 100 ) * damageModifier ));
 			damageMessage = 1219;
-			resistElement = NONE;
+			resistElement = RAIN;
 		}
 
 		if( element == SNOW )
@@ -2298,7 +2298,7 @@ bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType elem
 			damageModifier = static_cast<R32>( StormIntensity( weatherSys ));
 			damage = static_cast<SI32>( std::round(( baseDamage / 100 ) * damageModifier ));
 			damageMessage = 1775;
-			resistElement = NONE;
+			resistElement = STORM;
 
 			if( Races->Affect( mChar.GetRace(), LIGHTNING ))
 			{
