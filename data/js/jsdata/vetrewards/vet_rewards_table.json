@@ -1,0 +1,461 @@
+{
+	"version": 1,
+	"categories": [
+		{
+			"name": "Special Dye Tubs",
+      "entries": [
+        {
+          "level": 1,
+          "name": "Black dye tub",
+          "section": "vet_black_dye_tub"
+        },
+        {
+          "level": 1,
+          "name": "Furniture dye tub",
+          "section": "vet_furniture_dye_tub"
+        },
+        {
+          "level": 1,
+          "name": "Special dye tub",
+          "section": "vet_special_dye_tub"
+        },
+        {
+          "level": 1,
+          "name": "Blaze dye tub",
+          "section": "vet_blaze_dye_tub"
+        },
+        {
+          "level": 1,
+          "name": "White cloth dye tub",
+          "section": "vet_white_cloth_dye_tub"
+        },
+        {
+          "level": 2,
+          "name": "Leather dye tub",
+          "section": "vet_leather_dye_tub"
+        },
+        {
+          "level": 2,
+          "name": "White leather dye tub",
+          "section": "vet_white_leather_dye_tub"
+        },
+        {
+          "level": 4,
+          "name": "Runebook dye tub",
+          "section": "vet_runebook_dye_tub"
+        },
+        {
+          "level": 5,
+          "name": "Statuette dye tub",
+          "section": "vet_statuette_dye_tub"
+        },
+        {
+          "level": 5,
+          "name": "Metallic cloth dye tub",
+          "section": "vet_metallic_cloth_dye_tub"
+        },
+        {
+          "level": 5,
+          "name": "Metallic leather dye tub",
+          "section": "vet_metallic_leather_dye_tub"
+        }
+      ]
+		},
+		{
+			"name": "Cloaks And Robes",
+			"entries": [
+				{
+					"level": 1,
+					"name": "Bronze cloak",
+					"section": "vet_bronze_cloak"
+				},
+				{
+					"level": 1,
+					"name": "Bronze robe",
+					"section": "vet_bronze_robe"
+				},
+				{
+					"level": 1,
+					"name": "Copper cloak",
+					"section": "vet_copper_cloak"
+				},
+				{
+					"level": 1,
+					"name": "Copper robe",
+					"section": "vet_copper_robe"
+				},
+				{
+					"level": 2,
+					"name": "Agapite cloak",
+					"section": "vet_agapite_cloak"
+				},
+				{
+					"level": 2,
+					"name": "Agapite robe",
+					"section": "vet_agapite_robe"
+				},
+				{
+					"level": 2,
+					"name": "Golden cloak",
+					"section": "vet_golden_cloak"
+				},
+				{
+					"level": 2,
+					"name": "Golden robe",
+					"section": "vet_golden_robe"
+				},
+				{
+					"level": 3,
+					"name": "Verite cloak",
+					"section": "vet_verite_cloak"
+				},
+				{
+					"level": 3,
+					"name": "Verite robe",
+					"section": "vet_verite_robe"
+				},
+				{
+					"level": 3,
+					"name": "Valorite cloak",
+					"section": "vet_valorite_cloak"
+				},
+				{
+					"level": 3,
+					"name": "Valorite robe",
+					"section": "vet_valorite_robe"
+				},
+				{
+					"level": 4,
+					"name": "Dark gray cloak",
+					"section": "vet_dark_gray_cloak"
+				},
+				{
+					"level": 4,
+					"name": "Dark gray robe",
+					"section": "vet_dark_gray_robe"
+				},
+				{
+					"level": 4,
+					"name": "Ice green cloak",
+					"section": "vet_ice_green_cloak"
+				},
+				{
+					"level": 4,
+					"name": "Ice green robe",
+					"section": "vet_ice_green_robe"
+				},
+				{
+					"level": 4,
+					"name": "Ice blue cloak",
+					"section": "vet_ice_blue_cloak"
+				},
+				{
+					"level": 4,
+					"name": "Ice blue robe",
+					"section": "vet_ice_blue_robe"
+				},
+				{
+					"level": 5,
+					"name": "Jet black cloak",
+					"section": "vet_jet_black_cloak"
+				},
+				{
+					"level": 5,
+					"name": "Jet black robe",
+					"section": "vet_jet_black_robe"
+				},
+				{
+					"level": 5,
+					"name": "Ice white cloak",
+					"section": "vet_ice_white_cloak"
+				},
+				{
+					"level": 5,
+					"name": "Ice white robe",
+					"section": "vet_ice_white_robe"
+				},
+				{
+					"level": 5,
+					"name": "Fire cloak",
+					"section": "vet_fire_cloak"
+				},
+				{
+					"level": 5,
+					"name": "Fire robe",
+					"section": "vet_fire_robe"
+				}
+			]
+		},
+		{
+			"name": "Monster Statues",
+			"entries": [
+				{
+					"level": 1,
+					"name": "Crocodile statue",
+					"section": "vet_statue_crocodile"
+				},
+				{
+					"level": 1,
+					"name": "Daemon statue",
+					"section": "vet_statue_daemon"
+				},
+				{
+					"level": 1,
+					"name": "Dragon statue",
+					"section": "vet_statue_dragon"
+				},
+				{
+					"level": 1,
+					"name": "Earth elemental statue",
+					"section": "vet_statue_earth_elemental"
+				},
+				{
+					"level": 1,
+					"name": "Ettin statue",
+					"section": "vet_statue_ettin"
+				},
+				{
+					"level": 1,
+					"name": "Gargoyle statue",
+					"section": "vet_statue_gargoyle"
+				},
+				{
+					"level": 1,
+					"name": "Gorilla statue",
+					"section": "vet_statue_gorilla"
+				},
+				{
+					"level": 1,
+					"name": "Lich statue",
+					"section": "vet_statue_lich"
+				},
+				{
+					"level": 1,
+					"name": "Lizardman statue",
+					"section": "vet_statue_lizardman"
+				},
+				{
+					"level": 1,
+					"name": "Ogre statue",
+					"section": "vet_statue_ogre"
+				},
+				{
+					"level": 1,
+					"name": "Orc statue",
+					"section": "vet_statue_orc"
+				},
+				{
+					"level": 1,
+					"name": "Ratman statue",
+					"section": "vet_statue_ratman"
+				},
+				{
+					"level": 1,
+					"name": "Skeleton statue",
+					"section": "vet_statue_skeleton"
+				},
+				{
+					"level": 1,
+					"name": "Troll statue",
+					"section": "vet_statue_troll"
+				},
+				{
+					"level": 3,
+					"name": "Cow statue",
+					"section": "vet_statue_cow"
+				},
+				{
+					"level": 3,
+					"name": "Zombie statue",
+					"section": "vet_statue_zombie"
+				},
+				{
+					"level": 3,
+					"name": "Llama statue",
+					"section": "vet_statue_llama"
+				},
+				{
+					"level": 4,
+					"name": "Ophidian statue",
+					"section": "vet_statue_ophidian"
+				},
+				{
+					"level": 4,
+					"name": "Reaper statue",
+					"section": "vet_statue_reaper"
+				},
+				{
+					"level": 4,
+					"name": "Mongbat statue",
+					"section": "vet_statue_mongbat"
+				},
+				{
+					"level": 5,
+					"name": "Gazer statue",
+					"section": "vet_statue_gazer"
+				},
+				{
+					"level": 5,
+					"name": "Fire elemental statue",
+					"section": "vet_statue_fire_elemental"
+				},
+				{
+					"level": 5,
+					"name": "Wolf statue",
+					"section": "vet_statue_wolf"
+				}
+			]
+		},
+		{
+			"name": "Ethereal Steeds",
+			"entries": [
+				{
+					"level": 1,
+					"name": "Ethereal horse",
+					"section": "etherealhorsestatuette"
+				},
+				{
+					"level": 3,
+					"name": "Ethereal ostard",
+					"section": "etherealostardstatuette"
+				},
+				{
+					"level": 3,
+					"name": "Ethereal llama",
+					"section": "etherealllamastatuette"
+				},
+				{
+					"level": 4,
+					"name": "Ethereal kirin",
+					"section": "etherealkirinstatuette"
+				},
+				{
+					"level": 4,
+					"name": "Ethereal unicorn",
+					"section": "etherealunicornstatuette"
+				},
+				{
+					"level": 4,
+					"name": "Ethereal ridgeback",
+					"section": "etherealridgebackstatuette"
+				},
+				{
+					"level": 5,
+					"name": "Ethereal swamp dragon",
+					"section": "etherealswampdragonstatuette"
+				},
+				{
+					"level": 5,
+					"name": "Ethereal beetle",
+					"section": "etherealbeetlestatuette"
+				},
+				{
+					"level": 9,
+					"name": "Rideable polar bear",
+					"section": "rideablepolarbearstatuette"
+				}
+			]
+		},
+		{
+			"name": "House Add Ons",
+			"entries": [
+				{
+					"level": 2,
+					"name": "Banner deed",
+					"section": "vet_banner_deed"
+				},
+				{
+					"level": 2,
+					"name": "Flaming head deed",
+					"section": "vet_flaming_head_deed"
+				},
+				{
+					"level": 3,
+					"name": "Potted cactus deed",
+					"section": "vet_potted_cactus_deed"
+				},
+				{
+					"level": 4,
+					"name": "Decorative shield deed",
+					"section": "vet_decorative_shield_deed"
+				},
+				{
+					"level": 4,
+					"name": "Hanging skeleton deed",
+					"section": "vet_hanging_skeleton_deed"
+				},
+				{
+					"level": 5,
+					"name": "Stone ankh deed",
+					"section": "vet_stone_ankh_deed"
+				},
+				{
+					"level": 6,
+					"name": "Reward brazier deed",
+					"section": "vet_reward_brazier_deed"
+				},
+				{
+					"level": 7,
+					"name": "Cannon deed",
+					"section": "vet_cannon_deed"
+				},
+				{
+					"level": 7,
+					"name": "Tree stump deed",
+					"section": "vet_tree_stump_deed"
+				},
+				{
+					"level": 9,
+					"name": "Wall banner deed",
+					"section": "vet_wall_banner_deed"
+				},
+				{
+					"level": 10,
+					"name": "Mining cart deed",
+					"section": "vet_mining_cart_deed"
+				},
+				{
+					"level": 10,
+					"name": "Ankh of sacrifice deed",
+					"section": "vet_ankh_of_sacrifice_deed"
+				}
+			]
+		},
+		{
+			"name": "Miscellaneous",
+			"entries": [
+				{
+					"level": 1,
+					"name": "Commodity deed box",
+					"section": "vet_commodity_deed_box"
+				},
+        {
+          "level": 8,
+          "name": "Weapon engraving tool",
+          "section": "vet_weapon_engraving_tool"
+        },
+        {
+          "id": "character_statue_makers",
+          "name": "Character Statue Makers",
+          "entries": [
+            {
+              "level": 6,
+              "name": "Marble character statue maker",
+              "section": "vet_marble_statue_maker"
+            },
+            {
+              "level": 6,
+              "name": "Jade character statue maker",
+              "section": "vet_jade_statue_maker"
+            },
+            {
+              "level": 6,
+              "name": "Bronze character statue maker",
+              "section": "vet_bronze_statue_maker"
+            }
+          ]
+        }
+			]
+		}
+	]
+}

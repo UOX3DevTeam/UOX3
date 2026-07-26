@@ -99,6 +99,8 @@ function onLogin( socket, pChar )
 		// Show the login quest gump
 		TriggerEvent( 5813, "LoginQuest", pChar );
 	}
+
+	TriggerEvent( 7602, "HandleVetRewardLogin", socket, pChar );
 }
 
 /** @type { ( sockPlayer: Socket, pPlayer: Character ) => boolean } */

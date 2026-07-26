@@ -1,5 +1,5 @@
 const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
-const VetRewardEnabled = false;
+const VetRewardEnabled = true;
 
 /** @type { ( myObj: BaseObject, pSocket: Socket ) => string } */
 function onTooltip( vetRewardItem )
