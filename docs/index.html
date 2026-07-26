@@ -6096,6 +6096,64 @@ packitem=0x0f8d,30
 			</li>
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#elementalDamageSystem" id="elementalDamageSystem"><span>Elemental Damage System</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<p>The <strong>Elemental Damage System</strong> provides Age of Shadows-style damage distributions and resistances for weapons, characters, NPCs and environmental weather effects. It can be enabled independently of the armor ruleset, allowing an older-era shard to use elemental combat without changing its armor calculations.</p>
+
+					<h3>Enabling Elemental Damage</h3>
+					<p>Use <span class="hl">ELEMENTALDAMAGE=core</span> under <strong>[expansion settings]</strong> in <em>uox.ini</em>. The value accepts an expansion era such as <strong>aos</strong>. When set to <strong>core</strong>, it inherits <span class="hl">CORESHARDERA</span>. Elemental damage and elemental percentage resistance calculations are enabled when the effective value is <strong>AoS or newer</strong>.</p>
+					<pre><code>[expansion settings]
+CORESHARDERA=lbr
+ARMORCALCULATION=core
+ELEMENTALDAMAGE=aos</code></pre>
+					<p>In this example, the shard retains its LBR armor rules while explicitly enabling AoS elemental damage.</p>
+
+					<h3>Damage Types</h3>
+					<p>UOX3 supports the standard AoS channels and additional custom channels:</p>
+					<ul>
+						<li><strong>Standard:</strong> Physical, Fire, Cold, Poison and Energy</li>
+						<li><strong>Chaos:</strong> Resolves to one random standard channel on each hit</li>
+						<li><strong>Custom:</strong> Light, Rain, Snow, Storm, Storm Brew, Acid and Necrotic</li>
+					</ul>
+					<p>All damage channels share one <strong>100% distribution</strong>. Physical damage is the unassigned remainder. Setting one channel to 100% clears every other channel; setting Fire to 50% and Cold to 50% produces a 50/50 weapon with no Physical damage.</p>
+					<pre><code>ELEMENTDAMAGE=0,50,50,0,0,0
+// physical,fire,cold,poison,energy,chaos
+
+DAMAGEFIRE=50
+DAMAGECOLD=50</code></pre>
+					<p>The combined <span class="hl">ELEMENTDAMAGE</span> tag also accepts the optional custom channels after Chaos:</p>
+					<pre><code>ELEMENTDAMAGE=physical,fire,cold,poison,energy,chaos,light,rain,snow,storm,stormbrew,acid,necrotic</code></pre>
+					<p>Weapons use their item damage distribution. NPCs and unarmed/wrestling characters use the distribution stored on the character. The most recently assigned channel takes priority when individual assignments would otherwise push the total over 100%.</p>
+
+					<h3>Resistance and Damage Calculation</h3>
+					<p>Each portion of a hit is reduced independently by its matching resistance. A hit containing 50% Fire and 50% Cold checks the defender's Fire resistance for the Fire portion and Cold resistance for the Cold portion.</p>
+					<pre><code>final component damage = component damage * (100 - effective resistance) / 100</code></pre>
+					<p>Effective resistance is capped at <strong>100%</strong>. A raw resistance above 100 is retained, but cannot reduce damage below zero or heal the target. Keeping the raw value allows future resistance penalties to reduce the stored value before the effective 100% cap is applied.</p>
+					<ul>
+						<li>40 Fire resistance removes 40% of incoming Fire damage.</li>
+						<li>100 or more Fire resistance provides effective Fire immunity.</li>
+						<li>Resistance to one channel does not protect against another channel.</li>
+					</ul>
+					<p>The combined resistance and additive resistance-bonus tags use this order:</p>
+					<pre><code>ELEMENTRESIST=fire cold energy poison [light rain snow storm stormbrew acid necrotic]
+ERBONUS=fire cold energy poison [light rain snow storm stormbrew acid necrotic]</code></pre>
+					<p><span class="hl">ELEMENTRESIST</span> sets supplied resistance values. <span class="hl">ERBONUS</span> adds its supplied values to existing resistances. Existing four-value <span class="hl">ERBONUS</span> definitions remain valid.</p>
+
+					<h3>Fully Resisted Hits</h3>
+					<p>The <span class="hl">RANDOMZERODAMAGEFALLBACK</span> combat setting controls what happens when all components are completely resisted:</p>
+					<ul>
+						<li><strong>0:</strong> A fully resisted hit deals zero damage.</li>
+						<li><strong>1:</strong> The legacy random 0-4 damage fallback is used.</li>
+					</ul>
+
+					<h3>JavaScript Access</h3>
+					<p>Item and Character objects expose named <span class="hl">damage...Percent</span> and <span class="hl">resist...</span> properties. The generic <span class="hl">DamageType()</span> and <span class="hl">Resist()</span> methods can also get or set a channel using a <strong>WeatherType</strong> value. Race objects expose Acid/Necrotic affected, damage and interval properties. See the <a href="jsdocs.html#propCharacters">Character Properties</a>, <a href="jsdocs.html#propItems">Item Properties</a> and <a href="jsdocs.html#propRaces">Race Properties</a> sections for the complete property names.</p>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#uox3EventManager" id="uox3EventManager"><span>Event Manager</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
@@ -8548,6 +8606,16 @@ TAG=QuestID 2200
 					<p>The race system in UOX3 is integrated with both player and NPC characters, and offers numerous options for customizing the behaviour and properties of each race, like taking double damage from silver weapons, dealing more damage with a particular weapon skill, or being allied to or the sworn enemy of another race.</p>
 					<p>By default, UOX3 is setup to work with the default player races that can be selected in the UO client's character creation (depending on client version) - i.e. humans, elves and gargoyles - and will automatically assign players to the associated race in the race system, but there's nothing preventing a shard admin from creating multiple other player races, and to provide players with other means of selecting a race for their character.</p>
 					<p>Some default races have also been setup for monsters, like Orcs, Ratmen, Undead and Daemons (and more), while animals are generally divided into some predefined Predator and Animal races (with a few other special cases for Birds, Arachnids, etc).</p>
+					<h3>Environmental Weaknesses</h3>
+					<p>Race definitions can opt into environmental weather weaknesses and define the base damage and interval for each effect. Acid and Necrotic use the following race tags:</p>
+					<pre><code>ACIDAFFECT
+ACIDDAMAGE=20
+ACIDSECS=5
+
+NECROTICAFFECT
+NECROTICDAMAGE=15
+NECROTICSECS=8</code></pre>
+					<p>The <strong>AFFECT</strong> tag opts members of the race into that environmental effect, <strong>DAMAGE</strong> defines its base damage at 100% weather intensity, and <strong>SECS</strong> defines how often damage is applied. The resulting damage is reduced by the character's matching Acid or Necrotic resistance. See the <a href="#elementalDamageSystem">Elemental Damage System</a> and <a href="#weatherSystem">Weather System</a> sections for resistance and weather-intensity details.</p>
 						<h4>How does it work?</h4>
 					<p>Each race in UOX3 is setup in its own <span class="hl">[RACE #]</span> section of <strong>UOX3/dfndata/race/races.dfn</strong>, which contain the properties, bonuses and penalties associated with the race. For a full list of properties available in the race system, check the Race DFN Tags portion of the <a href="#dfnTagSystem" title="UOX3 Documentation - DFN Tag Overview">DFN Tag Overview</a> section of this document.</p>
 					<input type="checkbox" id="spoiler_race_examples">
@@ -9397,6 +9465,14 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 							<span class="hl">//LIGHTMAX=9</span> // Max light level of the day (at midnight)<br>
 							}</p>
 						</div>
+						<h3>Acid and Necrotic Weather</h3>
+						<p>Weather definitions can independently activate Acid and Necrotic environmental effects and control what percentage of the affected race's base damage is applied:</p>
+						<pre><code>ACIDCHANCE=30
+ACIDINTENSITY=25,75
+NECROTICCHANCE=10
+NECROTICINTENSITY=40,100</code></pre>
+						<p><strong>CHANCE</strong> is rolled when the weather system calculates conditions for the next hour. <strong>INTENSITY</strong> supplies the minimum and maximum percentage of the corresponding race damage. At 50% Acid intensity, a race with <span class="hl">ACIDDAMAGE=20</span> receives 10 Acid damage before Acid resistance.</p>
+						<p>Acid and Necrotic can be active alongside ordinary rain, snow or storms. Their damage timers stop when the effect becomes inactive, the character enters a building or the character leaves the applicable weather region. Race opt-in and base damage are configured in the <a href="#raceSystem">Race System</a>; resistance behavior is described in the <a href="#elementalDamageSystem">Elemental Damage System</a>.</p>
 						<p>For a full list of tags that can be set in a weather system, and what they do, check out the <strong>Weather System DFN Tags</strong> portion of the <a href="#dfnTagSystem">DFN Tag Overview</a> section of this document.</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
