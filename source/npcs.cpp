@@ -1195,10 +1195,13 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 			case DFNTAG_ERBONUS:
 				if( ssects.size() >= 4 )
 				{
-					applyTo->SetResist( applyTo->GetResist( HEAT ) + static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssects[0], "//" )), nullptr, 0 )), HEAT );
-					applyTo->SetResist( applyTo->GetResist( COLD ) + static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssects[1], "//" )), nullptr, 0 )), COLD );
-					applyTo->SetResist( applyTo->GetResist( LIGHTNING ) + static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssects[2], "//" )), nullptr, 0 )), LIGHTNING );
-					applyTo->SetResist( applyTo->GetResist( POISON ) + static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssects[3], "//" )), nullptr, 0 )), POISON );
+					const WeatherType resistTypes[] = { HEAT, COLD, LIGHTNING, POISON, LIGHT, RAIN, SNOW, STORM, STORMBREW, ACID, NECROTIC };
+					for( size_t i = 0; i < ssects.size() && i < ( sizeof( resistTypes ) / sizeof( resistTypes[0] )); ++i )
+					{
+						const WeatherType resistType = resistTypes[i];
+						const UI16 bonus = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssects[i], "//" )), nullptr, 0 ));
+						applyTo->SetResist( applyTo->GetResist( resistType ) + bonus, resistType );
+					}
 				}
 				break;
 			case DFNTAG_EMOTECOLOUR:

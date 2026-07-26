@@ -236,10 +236,13 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			case DFNTAG_ERBONUS:
 				if( ssecs.size() >= 4 )
 				{
-					applyTo->SetResist( applyTo->GetResist( HEAT ) + static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )), HEAT );
-					applyTo->SetResist( applyTo->GetResist( COLD ) + static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 )), COLD );
-					applyTo->SetResist( applyTo->GetResist( LIGHTNING ) + static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 0 )), LIGHTNING );
-					applyTo->SetResist( applyTo->GetResist( POISON ) + static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 0 )), POISON );
+					const WeatherType resistTypes[] = { HEAT, COLD, LIGHTNING, POISON, LIGHT, RAIN, SNOW, STORM, STORMBREW, ACID, NECROTIC };
+					for( size_t i = 0; i < ssecs.size() && i < ( sizeof( resistTypes ) / sizeof( resistTypes[0] )); ++i )
+					{
+						const WeatherType resistType = resistTypes[i];
+						const UI16 bonus = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[i], "//" )), nullptr, 0 ));
+						applyTo->SetResist( applyTo->GetResist( resistType ) + bonus, resistType );
+					}
 				}
 				break;
 			case DFNTAG_EVENT:			applyTo->SetEvent( cdata );				break;
