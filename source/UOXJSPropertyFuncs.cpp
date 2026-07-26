@@ -2217,6 +2217,30 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval
 			case CCP_DAMAGEINCREASE:*vp = INT_TO_JSVAL( gPriv->GetDamageIncrease() );			break;
 			case CCP_HITCHANCE:		*vp = INT_TO_JSVAL( gPriv->GetHitChance() );				break;
 			case CCP_DEFENSECHANCE:	*vp = INT_TO_JSVAL( gPriv->GetDefenseChance() );			break;
+			case CCP_RESISTCOLD: *vp = INT_TO_JSVAL( gPriv->GetResist( COLD )); break;
+			case CCP_RESISTHEAT: *vp = INT_TO_JSVAL( gPriv->GetResist( HEAT )); break;
+			case CCP_RESISTLIGHT: *vp = INT_TO_JSVAL( gPriv->GetResist( LIGHT )); break;
+			case CCP_RESISTLIGHTNING: *vp = INT_TO_JSVAL( gPriv->GetResist( LIGHTNING )); break;
+			case CCP_RESISTPOISON: *vp = INT_TO_JSVAL( gPriv->GetResist( POISON )); break;
+			case CCP_RESISTRAIN: *vp = INT_TO_JSVAL( gPriv->GetResist( RAIN )); break;
+			case CCP_RESISTSNOW: *vp = INT_TO_JSVAL( gPriv->GetResist( SNOW )); break;
+			case CCP_RESISTSTORM: *vp = INT_TO_JSVAL( gPriv->GetResist( STORM )); break;
+			case CCP_RESISTSTORMBREW: *vp = INT_TO_JSVAL( gPriv->GetResist( STORMBREW )); break;
+			case CCP_RESISTACID: *vp = INT_TO_JSVAL( gPriv->GetResist( ACID )); break;
+			case CCP_RESISTNECROTIC: *vp = INT_TO_JSVAL( gPriv->GetResist( NECROTIC )); break;
+			case CCP_DAMAGEPHYSICALPERCENT: *vp = INT_TO_JSVAL( gPriv->GetDamageType( PHYSICAL )); break;
+			case CCP_DAMAGEFIREPERCENT: *vp = INT_TO_JSVAL( gPriv->GetDamageType( HEAT )); break;
+			case CCP_DAMAGECOLDPERCENT: *vp = INT_TO_JSVAL( gPriv->GetDamageType( COLD )); break;
+			case CCP_DAMAGEPOISONPERCENT: *vp = INT_TO_JSVAL( gPriv->GetDamageType( POISON )); break;
+			case CCP_DAMAGEENERGYPERCENT: *vp = INT_TO_JSVAL( gPriv->GetDamageType( LIGHTNING )); break;
+			case CCP_DAMAGECHAOSPERCENT: *vp = INT_TO_JSVAL( gPriv->GetDamageType( CHAOS )); break;
+			case CCP_DAMAGELIGHTPERCENT: *vp = INT_TO_JSVAL( gPriv->GetDamageType( LIGHT )); break;
+			case CCP_DAMAGERAINPERCENT: *vp = INT_TO_JSVAL( gPriv->GetDamageType( RAIN )); break;
+			case CCP_DAMAGESNOWPERCENT: *vp = INT_TO_JSVAL( gPriv->GetDamageType( SNOW )); break;
+			case CCP_DAMAGESTORMPERCENT: *vp = INT_TO_JSVAL( gPriv->GetDamageType( STORM )); break;
+			case CCP_DAMAGESTORMBREWPERCENT: *vp = INT_TO_JSVAL( gPriv->GetDamageType( STORMBREW )); break;
+			case CCP_DAMAGEACIDPERCENT: *vp = INT_TO_JSVAL( gPriv->GetDamageType( ACID )); break;
+			case CCP_DAMAGENECROTICPERCENT: *vp = INT_TO_JSVAL( gPriv->GetDamageType( NECROTIC )); break;
 			case CCP_AITYPE:		*vp = INT_TO_JSVAL( gPriv->GetNpcAiType() );				break;
 			case CCP_SPLIT:			*vp = INT_TO_JSVAL( gPriv->GetSplit() );					break;
 			case CCP_SPLITCHANCE:	*vp = INT_TO_JSVAL( gPriv->GetSplitChance() );				break;
@@ -2736,6 +2760,30 @@ JSBool CCharacterProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBoo
 			case CCP_HITCHANCE:		gPriv->SetHitChance( static_cast<SI16>( encaps.toInt() ));	break;
 			case CCP_DEFENSECHANCE:	gPriv->SetDefenseChance( static_cast<SI16>( encaps.toInt() ));	break;
 			case CCP_DAMAGEINCREASE:	gPriv->SetDamageIncrease( static_cast<SI16>( encaps.toInt() ));		break;
+			case CCP_RESISTCOLD: gPriv->SetResist( static_cast<UI16>( std::max( 0, encaps.toInt() )), COLD ); break;
+			case CCP_RESISTHEAT: gPriv->SetResist( static_cast<UI16>( std::max( 0, encaps.toInt() )), HEAT ); break;
+			case CCP_RESISTLIGHT: gPriv->SetResist( static_cast<UI16>( std::max( 0, encaps.toInt() )), LIGHT ); break;
+			case CCP_RESISTLIGHTNING: gPriv->SetResist( static_cast<UI16>( std::max( 0, encaps.toInt() )), LIGHTNING ); break;
+			case CCP_RESISTPOISON: gPriv->SetResist( static_cast<UI16>( std::max( 0, encaps.toInt() )), POISON ); break;
+			case CCP_RESISTRAIN: gPriv->SetResist( static_cast<UI16>( std::max( 0, encaps.toInt() )), RAIN ); break;
+			case CCP_RESISTSNOW: gPriv->SetResist( static_cast<UI16>( std::max( 0, encaps.toInt() )), SNOW ); break;
+			case CCP_RESISTSTORM: gPriv->SetResist( static_cast<UI16>( std::max( 0, encaps.toInt() )), STORM ); break;
+			case CCP_RESISTSTORMBREW: gPriv->SetResist( static_cast<UI16>( std::max( 0, encaps.toInt() )), STORMBREW ); break;
+			case CCP_RESISTACID: gPriv->SetResist( static_cast<UI16>( std::max( 0, encaps.toInt() )), ACID ); break;
+			case CCP_RESISTNECROTIC: gPriv->SetResist( static_cast<UI16>( std::max( 0, encaps.toInt() )), NECROTIC ); break;
+			case CCP_DAMAGEPHYSICALPERCENT: gPriv->SetDamageType( static_cast<UI08>( std::clamp( encaps.toInt(), 0, 100 )), PHYSICAL ); break;
+			case CCP_DAMAGEFIREPERCENT: gPriv->SetDamageType( static_cast<UI08>( std::clamp( encaps.toInt(), 0, 100 )), HEAT ); break;
+			case CCP_DAMAGECOLDPERCENT: gPriv->SetDamageType( static_cast<UI08>( std::clamp( encaps.toInt(), 0, 100 )), COLD ); break;
+			case CCP_DAMAGEPOISONPERCENT: gPriv->SetDamageType( static_cast<UI08>( std::clamp( encaps.toInt(), 0, 100 )), POISON ); break;
+			case CCP_DAMAGEENERGYPERCENT: gPriv->SetDamageType( static_cast<UI08>( std::clamp( encaps.toInt(), 0, 100 )), LIGHTNING ); break;
+			case CCP_DAMAGECHAOSPERCENT: gPriv->SetDamageType( static_cast<UI08>( std::clamp( encaps.toInt(), 0, 100 )), CHAOS ); break;
+			case CCP_DAMAGELIGHTPERCENT: gPriv->SetDamageType( static_cast<UI08>( std::clamp( encaps.toInt(), 0, 100 )), LIGHT ); break;
+			case CCP_DAMAGERAINPERCENT: gPriv->SetDamageType( static_cast<UI08>( std::clamp( encaps.toInt(), 0, 100 )), RAIN ); break;
+			case CCP_DAMAGESNOWPERCENT: gPriv->SetDamageType( static_cast<UI08>( std::clamp( encaps.toInt(), 0, 100 )), SNOW ); break;
+			case CCP_DAMAGESTORMPERCENT: gPriv->SetDamageType( static_cast<UI08>( std::clamp( encaps.toInt(), 0, 100 )), STORM ); break;
+			case CCP_DAMAGESTORMBREWPERCENT: gPriv->SetDamageType( static_cast<UI08>( std::clamp( encaps.toInt(), 0, 100 )), STORMBREW ); break;
+			case CCP_DAMAGEACIDPERCENT: gPriv->SetDamageType( static_cast<UI08>( std::clamp( encaps.toInt(), 0, 100 )), ACID ); break;
+			case CCP_DAMAGENECROTICPERCENT: gPriv->SetDamageType( static_cast<UI08>( std::clamp( encaps.toInt(), 0, 100 )), NECROTIC ); break;
 			case CCP_AITYPE:		gPriv->SetNPCAiType( static_cast<SI16>( encaps.toInt() ));	break;
 			case CCP_SPLIT:			gPriv->SetSplit( static_cast<UI08>( encaps.toInt() ));		break;
 			case CCP_SPLITCHANCE:	gPriv->SetSplitChance( static_cast<UI08>( encaps.toInt() ));break;
@@ -3322,6 +3370,12 @@ JSBool CRaceProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp 
 			case CRP_MAGICRESISTANCE:	JS_NewNumberValue( cx, gPriv->MagicResistance(), vp );  break;
 			case CRP_VISIBLEDISTANCE:	*vp = INT_TO_JSVAL( gPriv->VisibilityRange() );			break;
 			case CRP_NIGHTVISION:		*vp = INT_TO_JSVAL( gPriv->NightVision() );				break;
+			case CRP_ACIDAFFECTED:		*vp = BOOLEAN_TO_JSVAL( gPriv->AffectedBy( ACID ));		break;
+			case CRP_ACIDDAMAGE:			*vp = INT_TO_JSVAL( gPriv->WeatherDamage( ACID ));		break;
+			case CRP_ACIDSECONDS:		*vp = INT_TO_JSVAL( gPriv->WeatherSeconds( ACID ));		break;
+			case CRP_NECROTICAFFECTED:	*vp = BOOLEAN_TO_JSVAL( gPriv->AffectedBy( NECROTIC ));	break;
+			case CRP_NECROTICDAMAGE:	*vp = INT_TO_JSVAL( gPriv->WeatherDamage( NECROTIC ));	break;
+			case CRP_NECROTICSECONDS:	*vp = INT_TO_JSVAL( gPriv->WeatherSeconds( NECROTIC ));	break;
 			default:
 				break;
 		}
@@ -3353,6 +3407,12 @@ JSBool CRaceProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool str
 			case CRP_MAGICRESISTANCE:	gPriv->MagicResistance( encaps.toFloat() );						break;
 			case CRP_VISIBLEDISTANCE:	gPriv->VisibilityRange( static_cast<SI08>( encaps.toInt() ));	break;
 			case CRP_NIGHTVISION:		gPriv->NightVision( static_cast<UI08>( encaps.toInt() ));		break;
+			case CRP_ACIDAFFECTED:		gPriv->AffectedBy( encaps.toBool(), ACID );					break;
+			case CRP_ACIDDAMAGE:			gPriv->WeatherDamage( static_cast<UI16>( std::max( 0, encaps.toInt() )), ACID ); break;
+			case CRP_ACIDSECONDS:		gPriv->WeatherSeconds( static_cast<UI16>( std::max( 0, encaps.toInt() )), ACID ); break;
+			case CRP_NECROTICAFFECTED:	gPriv->AffectedBy( encaps.toBool(), NECROTIC );				break;
+			case CRP_NECROTICDAMAGE:	gPriv->WeatherDamage( static_cast<UI16>( std::max( 0, encaps.toInt() )), NECROTIC ); break;
+			case CRP_NECROTICSECONDS:	gPriv->WeatherSeconds( static_cast<UI16>( std::max( 0, encaps.toInt() )), NECROTIC ); break;
 			default:
 				break;
 		}

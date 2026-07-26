@@ -16496,6 +16496,14 @@ myObject.propertyName = newValue;
 							Get/Set the number of pet control slots currently in use by the character's pets</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.damagePhysicalPercent / .damageFirePercent / .damageColdPercent / .damagePoisonPercent / .damageEnergyPercent / .damageChaosPercent</span> <strong>(int, <em>0-100</em>)</strong><br>
+							Get/Set the character's standard AoS melee damage distribution. All channels share one 100% pool; Chaos resolves to a random standard channel on each hit.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.damageLightPercent / .damageRainPercent / .damageSnowPercent / .damageStormPercent / .damageStormBrewPercent / .damageAcidPercent / .damageNecroticPercent</span> <strong>(int, <em>0-100</em>)</strong><br>
+							Get/Set the character's custom elemental melee damage distribution. All channels share the same 100% pool.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.deaths</span> <strong>(int, <em>0 - 65535</em>)</strong><br>
 							Get/Set the total number of deaths of a player character</p>
 						</div>
@@ -16702,6 +16710,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.reAttackAt</span> <strong>(int, <em>0 - 100</em>)</strong><br>
 							Get/Set percentage health threshold the NPC will re-attack current target in combat at</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.resistCold / .resistHeat / .resistLight / .resistLightning / .resistPoison / .resistRain / .resistSnow / .resistStorm / .resistStormBrew / .resistAcid / .resistNecrotic</span> <strong>(int, <em>0+</em>)</strong><br>
+							Get/Set the character's raw elemental resistances. Effective damage reduction is capped at 100%, while stored values may exceed 100 for resistance-debuff support.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.serial</span> <strong>(int, <em>0 - 4294967295</em>)</strong><br>
@@ -17382,6 +17394,14 @@ myObject.propertyName = newValue;
 							Get/Set serial of item's creator - primarily used in crafting/for maker's marks</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.damagePhysicalPercent / .damageFirePercent / .damageColdPercent / .damagePoisonPercent / .damageEnergyPercent / .damageChaosPercent</span> <strong>(int, <em>0-100</em>)</strong><br>
+							Get/Set the item's standard AoS weapon damage distribution. All channels share one 100% pool; Chaos resolves to a random standard channel on each hit.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.damageLightPercent / .damageRainPercent / .damageSnowPercent / .damageStormPercent / .damageStormBrewPercent / .damageAcidPercent / .damageNecroticPercent</span> <strong>(int, <em>0-100</em>)</strong><br>
+							Get/Set the item's custom elemental weapon damage distribution. All channels share the same 100% pool.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.decaytime</span> <strong>(int)</strong><br>
 							Get/Set the amount of time (in seconds) it takes the item to decay</p>
 						</div>
@@ -17482,44 +17502,36 @@ myObject.propertyName = newValue;
 							Get/Set the quality-rank of this item (used in item-creation, for instance)</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">.resistCold</span> <strong>(int, <em>0-1000</em>)</strong><br>
-							Get/Set the item's Cold Resistance (0-1000, where 1000 = 100.0%) - no effect implemented yet</p>
+							<p><span class="hl">.resistCold</span> <strong>(int, <em>0+</em>)</strong><br>
+							Get/Set the item's raw Cold resistance percentage.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">.resistHeat</span> <strong>(int, <em>0-1000</em>)</strong><br>
-							Get/Set the item's Heat Resistance (0-1000, where 1000 = 100.0%) - no effect implemented yet</p>
+							<p><span class="hl">.resistHeat</span> <strong>(int, <em>0+</em>)</strong><br>
+							Get/Set the item's raw Heat/Fire resistance percentage.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">.resistLight</span> <strong>(int, <em>0-1000</em>)</strong><br>
-							Get/Set the item's Light Resistance (0-1000, where 1000 = 100.0%) - no effect implemented yet</p>
+							<p><span class="hl">.resistLight</span> <strong>(int, <em>0+</em>)</strong><br>
+							Get/Set the item's raw Light resistance percentage.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">.resistLightning</span> <strong>(int, <em>0-1000</em>)</strong><br>
-							Get/Set the item's Lightning Resistance (0-1000, where 1000 = 100.0%) - no effect implemented yet</p>
+							<p><span class="hl">.resistLightning</span> <strong>(int, <em>0+</em>)</strong><br>
+							Get/Set the item's raw Lightning/Energy resistance percentage.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">.resistPoison</span> <strong>(int, <em>0-1000</em>)</strong><br>
-							Get/Set the item's Poison Resistance (0-1000, where 1000 = 100.0%) - no effect implemented yet</p>
+							<p><span class="hl">.resistPoison</span> <strong>(int, <em>0+</em>)</strong><br>
+							Get/Set the item's raw Poison resistance percentage.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">.resistRain</span> <strong>(int, <em>0-1000</em>)</strong><br>
-							Get/Set the item's Rain Resistance (0-1000, where 1000 = 100.0%) - no effect implemented yet</p>
+							<p><span class="hl">.resistRain</span> <strong>(int, <em>0+</em>)</strong><br>
+							Get/Set the item's raw Rain resistance percentage.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">.resistSnow</span> <strong>(int, <em>0-1000</em>)</strong><br>
-							Get/Set the item's Snow Resistance (0-1000, where 1000 = 100.0%) - no effect implemented yet</p>
+							<p><span class="hl">.resistSnow</span> <strong>(int, <em>0+</em>)</strong><br>
+							Get/Set the item's raw Snow resistance percentage.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">.resistStorm / .resistStormBrew / .resistAcid / .resistNecrotic</span> <strong>(int, <em>0-100</em>)</strong><br>
-							Get/Set the item's custom Storm, Stormbrew, Acid, and Necrotic resistance percentages.</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">.damagePhysicalPercent / .damageFirePercent / .damageColdPercent / .damagePoisonPercent / .damageEnergyPercent / .damageChaosPercent</span> <strong>(int, <em>0-100</em>)</strong><br>
-							Get/Set the item's standard AoS weapon damage percentages. Chaos resolves to a random standard damage channel on each hit.</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">.damageLightPercent / .damageRainPercent / .damageSnowPercent / .damageStormPercent / .damageStormBrewPercent / .damageAcidPercent / .damageNecroticPercent</span> <strong>(int, <em>0-100</em>)</strong><br>
-							Get/Set the item's custom elemental weapon damage percentages.</p>
+							<p><span class="hl">.resistStorm / .resistStormBrew / .resistAcid / .resistNecrotic</span> <strong>(int, <em>0+</em>)</strong><br>
+							Get/Set the item's raw custom resistance percentages. Effective damage reduction is capped at 100%.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.restock</span> <strong>(int)</strong><br>
@@ -17820,6 +17832,10 @@ myObject.propertyName = newValue;
 
 						<h3>Flag/Boolean Types</h3>
 						<div class="settingsDiv">
+							<p><span class="hl">.acidAffected / .necroticAffected</span> <strong>(bool, <em>true/false</em>)</strong><br>
+							Get/Set whether members of this race are affected by Acid or Necrotic weather.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.isPlayerRace</span> <strong>(bool, <em>true/false</em>)</strong><br>
 							Get/Set whether race is marked as a player race, i.e. a race usable by players (via something like Race Gates)</p>
 						</div>
@@ -17833,6 +17849,14 @@ myObject.propertyName = newValue;
 						</div>
 
 						<h3>Integer Types</h3>
+						<div class="settingsDiv">
+							<p><span class="hl">.acidDamage / .necroticDamage</span> <strong>(int, <em>0-65535</em>)</strong><br>
+							Get/Set the race's Acid or Necrotic weather damage at 100% weather intensity.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.acidSeconds / .necroticSeconds</span> <strong>(int, <em>0-65535</em>)</strong><br>
+							Get/Set how often Acid or Necrotic weather damages members of this race, in seconds.</p>
+						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.armourClass</span> <strong>(int, <em>0-255</em>)</strong><br>
 							Get/Set the armor class restriction of the race. Race will be unable to equip any armor with the specified AC</p>

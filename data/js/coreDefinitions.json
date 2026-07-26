@@ -3178,7 +3178,13 @@
           "cppID": "CRP_NIGHTVISION",
           "cppType": "JSPROP_ENUMANDPERM",
           "type": "number"
-        }
+        },
+        { "name": "acidAffected", "cppID": "CRP_ACIDAFFECTED", "cppType": "JSPROP_ENUMANDPERM", "type": "boolean" },
+        { "name": "acidDamage", "cppID": "CRP_ACIDDAMAGE", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
+        { "name": "acidSeconds", "cppID": "CRP_ACIDSECONDS", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
+        { "name": "necroticAffected", "cppID": "CRP_NECROTICAFFECTED", "cppType": "JSPROP_ENUMANDPERM", "type": "boolean" },
+        { "name": "necroticDamage", "cppID": "CRP_NECROTICDAMAGE", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
+        { "name": "necroticSeconds", "cppID": "CRP_NECROTICSECONDS", "cppType": "JSPROP_ENUMANDPERM", "type": "number" }
       ],
       "methods": [
         {
@@ -3721,6 +3727,30 @@
           "cppType": "JSPROP_ENUMPERMRO",
           "type": "number"
         },
+        { "name": "resistCold", "cppName": "CCP_RESISTCOLD", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
+        { "name": "resistHeat", "cppName": "CCP_RESISTHEAT", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
+        { "name": "resistLight", "cppName": "CCP_RESISTLIGHT", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
+        { "name": "resistLightning", "cppName": "CCP_RESISTLIGHTNING", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
+        { "name": "resistPoison", "cppName": "CCP_RESISTPOISON", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
+        { "name": "resistRain", "cppName": "CCP_RESISTRAIN", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
+        { "name": "resistSnow", "cppName": "CCP_RESISTSNOW", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
+        { "name": "resistStorm", "cppName": "CCP_RESISTSTORM", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
+        { "name": "resistStormBrew", "cppName": "CCP_RESISTSTORMBREW", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
+        { "name": "resistAcid", "cppName": "CCP_RESISTACID", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
+        { "name": "resistNecrotic", "cppName": "CCP_RESISTNECROTIC", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
+        { "name": "damagePhysicalPercent", "cppName": "CCP_DAMAGEPHYSICALPERCENT", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
+        { "name": "damageFirePercent", "cppName": "CCP_DAMAGEFIREPERCENT", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
+        { "name": "damageColdPercent", "cppName": "CCP_DAMAGECOLDPERCENT", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
+        { "name": "damagePoisonPercent", "cppName": "CCP_DAMAGEPOISONPERCENT", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
+        { "name": "damageEnergyPercent", "cppName": "CCP_DAMAGEENERGYPERCENT", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
+        { "name": "damageChaosPercent", "cppName": "CCP_DAMAGECHAOSPERCENT", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
+        { "name": "damageLightPercent", "cppName": "CCP_DAMAGELIGHTPERCENT", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
+        { "name": "damageRainPercent", "cppName": "CCP_DAMAGERAINPERCENT", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
+        { "name": "damageSnowPercent", "cppName": "CCP_DAMAGESNOWPERCENT", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
+        { "name": "damageStormPercent", "cppName": "CCP_DAMAGESTORMPERCENT", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
+        { "name": "damageStormBrewPercent", "cppName": "CCP_DAMAGESTORMBREWPERCENT", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
+        { "name": "damageAcidPercent", "cppName": "CCP_DAMAGEACIDPERCENT", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
+        { "name": "damageNecroticPercent", "cppName": "CCP_DAMAGENECROTICPERCENT", "cppType": "JSPROP_ENUMANDPERM", "type": "number" },
         {
           "name": "lightlevel",
           "cppName": "CCP_LIGHTLEVEL",

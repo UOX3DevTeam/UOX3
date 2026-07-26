@@ -134,6 +134,12 @@ inline JSPropertySpec CRaceProperties[] =
 	{ "magicResistance",	CRP_MAGICRESISTANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "visibleDistance",	CRP_VISIBLEDISTANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "nightVision",		CRP_NIGHTVISION,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "acidAffected",		CRP_ACIDAFFECTED,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "acidDamage",			CRP_ACIDDAMAGE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "acidSeconds",		CRP_ACIDSECONDS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "necroticAffected",	CRP_NECROTICAFFECTED,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "necroticDamage",		CRP_NECROTICDAMAGE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "necroticSeconds",	CRP_NECROTICSECONDS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ nullptr,				static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
 };
 
@@ -434,6 +440,30 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "tithing",		CCP_TITHING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "lastOn",			CCP_LASTON,			JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "lastOnSecs",		CCP_LASTONSECS,		JSPROP_ENUMPERMRO, nullptr, nullptr },
+	{ "resistCold",		CCP_RESISTCOLD,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "resistHeat",		CCP_RESISTHEAT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "resistLight",	CCP_RESISTLIGHT,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "resistLightning",CCP_RESISTLIGHTNING,JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "resistPoison",	CCP_RESISTPOISON,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "resistRain",		CCP_RESISTRAIN,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "resistSnow",		CCP_RESISTSNOW,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "resistStorm",	CCP_RESISTSTORM,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "resistStormBrew",CCP_RESISTSTORMBREW,JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "resistAcid",		CCP_RESISTACID,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "resistNecrotic",	CCP_RESISTNECROTIC,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "damagePhysicalPercent", CCP_DAMAGEPHYSICALPERCENT, JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "damageFirePercent", CCP_DAMAGEFIREPERCENT, JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "damageColdPercent", CCP_DAMAGECOLDPERCENT, JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "damagePoisonPercent", CCP_DAMAGEPOISONPERCENT, JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "damageEnergyPercent", CCP_DAMAGEENERGYPERCENT, JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "damageChaosPercent", CCP_DAMAGECHAOSPERCENT, JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "damageLightPercent", CCP_DAMAGELIGHTPERCENT, JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "damageRainPercent", CCP_DAMAGERAINPERCENT, JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "damageSnowPercent", CCP_DAMAGESNOWPERCENT, JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "damageStormPercent", CCP_DAMAGESTORMPERCENT, JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "damageStormBrewPercent", CCP_DAMAGESTORMBREWPERCENT, JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "damageAcidPercent", CCP_DAMAGEACIDPERCENT, JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "damageNecroticPercent", CCP_DAMAGENECROTICPERCENT, JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ nullptr,			static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
 };
 
