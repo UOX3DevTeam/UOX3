@@ -7719,14 +7719,14 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 					}
 					if( cItem.GetDamageType( COLD ) > 0 )
 					{
-						tempEntry.stringNum = 1060405; // cold damage ~1_val~%
+						tempEntry.stringNum = 1060404; // cold damage ~1_val~%
 						tempEntry.ourText = oldstrutil::number( cItem.GetDamageType( COLD ));
 						tempEntry.sortOrder = 70;
 						FinalizeData( tempEntry, totalStringLen );
 					}
 					if( cItem.GetDamageType( HEAT ) > 0 )
 					{
-						tempEntry.stringNum = 1060404; // fire damage ~1_val~%
+						tempEntry.stringNum = 1060405; // fire damage ~1_val~%
 						tempEntry.ourText = oldstrutil::number( cItem.GetDamageType( HEAT ));
 						tempEntry.sortOrder = 75;
 						FinalizeData( tempEntry, totalStringLen );
