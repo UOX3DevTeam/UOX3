@@ -64,7 +64,6 @@ inline JSClass UOXSpells_class =
 	JSCLASS_HAS_RESERVED_SLOTS(2),
   &spellCollectionClassOps
 };
-// CSpellsProps_getProperty,
 
 inline JSClass UOXGlobalSkill_class =
 {
@@ -79,7 +78,6 @@ inline  JSClass UOXGlobalSkills_class =
 	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
-//	CGlobalSkillsProps_getProperty,
 
 inline JSClass UOXCreateEntry_class =
 {
@@ -87,8 +85,6 @@ inline JSClass UOXCreateEntry_class =
 	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
-//	CCreateEntryProps_getProperty,
-//	CCreateEntryProps_setProperty,
 
 inline JSClass UOXCreateEntries_class =
 {
@@ -96,7 +92,6 @@ inline JSClass UOXCreateEntries_class =
 	JSCLASS_HAS_RESERVED_SLOTS(2),
   &createEntryCollectionClassOps
 };
-//	CCreateEntriesProps_getProperty,
 
 inline JSClass UOXTimer_class =
 {
@@ -105,15 +100,19 @@ inline JSClass UOXTimer_class =
   &classOpsWithFinalize 
 };
 
+inline JSClass UOXBase_class =
+{
+	"UOXBase",
+	JSCLASS_HAS_RESERVED_SLOTS(2),
+	&classOpsWithFinalize
+};
+
 inline JSClass UOXChar_class =
 {
 	"UOXChar",
 	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
-// CCharacterProps_getProperty,
-// CCharacterProps_setProperty,
-// CBaseObject_equality,
 
 inline JSClass UOXItem_class =
 {
@@ -121,9 +120,6 @@ inline JSClass UOXItem_class =
 	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
-// CItemProps_getProperty,
-// CItemProps_setProperty,
-// CBaseObject_equality,
 
 //
 // What this class does:
@@ -136,8 +132,6 @@ inline JSClass UOXSkills_class =
 	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
-//	CSkillsProps_getProperty,
-//	CSkillsProps_setProperty,
 
 inline JSClass UOXBaseSkills_class =
 {
@@ -145,8 +139,6 @@ inline JSClass UOXBaseSkills_class =
 	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
-//	CSkillsProps_getProperty,
-//	CSkillsProps_setProperty,
 
 inline JSClass UOXSkillsUsed_class =
 {
@@ -154,8 +146,6 @@ inline JSClass UOXSkillsUsed_class =
 	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
-//	CSkillsProps_getProperty,
-//	CSkillsProps_setProperty,
 
 inline JSClass UOXSkillsLock_class =
 {
@@ -177,7 +167,6 @@ inline JSClass UOXRace_class =
 	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
-//	CRaceProps_setProperty,
 
 inline JSClass UOXGuild_class =
 {
@@ -185,8 +174,6 @@ inline JSClass UOXGuild_class =
 	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
-//	CGuildProps_getProperty,
-//	CGuildProps_setProperty,
 
 inline JSClass UOXRegion_class =
 {
@@ -194,8 +181,6 @@ inline JSClass UOXRegion_class =
 	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
-//	CRegionProps_getProperty,
-//	CRegionProps_setProperty,
 
 inline JSClass UOXSpawnRegion_class =
 {
@@ -203,8 +188,6 @@ inline JSClass UOXSpawnRegion_class =
 	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
-//	CSpawnRegionProps_getProperty,
-//	CSpawnRegionProps_setProperty,
 
 inline JSClass UOXSocket_class =
 {
@@ -212,9 +195,6 @@ inline JSClass UOXSocket_class =
 	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
-//		CSocketProps_getProperty,
-//		CSocketProps_setProperty,
-//	CSocket_equality,
 
 inline JSClass UOXFile_class =
 {
@@ -240,7 +220,6 @@ inline JSClass UOXGumpData_class =
 	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
-//	CGumpDataProps_getProperty,
 
 inline JSClass UOXAccount_class =
 {
@@ -248,8 +227,6 @@ inline JSClass UOXAccount_class =
 	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
-//	CAccountProps_getProperty,
-//	CAccountProps_setProperty,
 
 inline JSClass UOXConsole_class =
 {
@@ -257,7 +234,6 @@ inline JSClass UOXConsole_class =
 	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
-//	CConsoleProps_setProperty,
 
 inline JSClass UOXResource_class =
 {
@@ -265,8 +241,6 @@ inline JSClass UOXResource_class =
 	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
-//	CResourceProps_getProperty,
-//	CResourceProps_setProperty,
 
 inline JSClass UOXPacket_class =
 {
@@ -281,26 +255,6 @@ inline JSClass UOXParty_class =
 	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
-//		CPartyProps_getProperty,
-//		CPartyProps_setProperty,
-//	CParty_equality,
-
-/*inline std::string convertToString(JSContext *cx, JSString *string) {
-  // For some reason, no matter what I do here, I'm crashing ... do I need to have it rooted?
-    //auto chars = JS_EncodeStringToASCII(cx, string);
-    //JS::Rooted< JSString* > str(cx, string);
-    //JS::UniqueChars message_ascii(JS_EncodeStringToASCII(cx, str));
-    //std::string rVal = message_ascii.get();
-    //return rVal;
-  JS::Rooted<JSString*> rootedStr(cx, string);
-  JS::UniqueChars asciiChars = JS_EncodeStringToASCII(cx, rootedStr);
-  if (!asciiChars) {
-    // Handle encoding error
-    return "";
-  }
-  std::string asciiString(asciiChars.get());
-  return asciiString;
-}*/
 
 inline std::string convertToString(JSContext *cx, JSString *string)
  {
@@ -318,9 +272,6 @@ inline std::string convertToString(JSContext *cx, JSString *string)
   return std::string(asciiChars.get());
 }
 
-/*inline JSString *convertFromString(JSContext* cx, const std::string& value) {
-  return JS_NewStringCopyZ(cx, value.c_str());
-}*/
 inline JSString* convertFromString(JSContext* cx, const std::string& value) {
   JSString* jsStr = JS_NewStringCopyZ(cx, value.c_str());
   if (!jsStr) {

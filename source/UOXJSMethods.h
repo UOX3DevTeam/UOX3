@@ -382,6 +382,11 @@ inline JSFunctionSpec CGump_Methods[] =
 	JS_FS_END
 };
 
+inline JSFunctionSpec CBaseObject_Methods[] =
+{
+	JS_FS_END
+};
+
 inline JSFunctionSpec CChar_Methods[] =
 {
 	JS_FN( "AddSkill",			CChar_AddSkill,			3, 0 ),

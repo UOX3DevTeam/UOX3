@@ -17,7 +17,8 @@ enum IUEEntries
 
 enum JSPrototypes
 {
-	JSP_ITEM	= 0,
+	JSP_BASE  = 0,
+	JSP_ITEM,
 	JSP_CHAR,
 	JSP_SOCK,
 	JSP_GUMP,

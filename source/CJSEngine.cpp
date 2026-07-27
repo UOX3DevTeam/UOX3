@@ -245,6 +245,11 @@ JSObject *rootClass(JSContext *cx, JS::HandleObject obj, const JSClass *clazz, J
   return JS_InitClass( cx, obj, clazz, nullptr, clazz->name, constructor,  0, ps, fs, nullptr, nullptr );
 }
 
+JSObject* rootInheritedClass(JSContext* cx, JS::HandleObject obj, const JSClass* clazz, JSNative constructor,
+	const JSPropertySpec* ps, const JSFunctionSpec* fs, JS::HandleObject parent ) {
+	return JS_InitClass(cx, obj, clazz, parent, clazz->name, constructor, 0, ps, fs, nullptr, nullptr);
+}
+
 bool ResolveSpellCollection( JSContext *cx, JS::HandleObject obj, JS::HandleId id, bool *resolved )
 {
 	*resolved = false;
@@ -307,28 +312,29 @@ void CJSRuntime::InitializePrototypes()
   protoList = new JS::RootedObjectVector( cx );
   protoList->resize( JSP_COUNT );
 
-  (*protoList)[JSP_CHAR]          .set( rootClass( cx, obj, &UOXChar_class,          nullptr,  CCharacterProps,        CChar_Methods ) );
-  (*protoList)[JSP_ITEM]          .set( rootClass( cx, obj, &UOXItem_class,          nullptr,  CItemProps,             CItem_Methods ) );
-  (*protoList)[JSP_SPELL]         .set( rootClass( cx, obj, &UOXSpell_class,         nullptr,  CSpellProperties,       nullptr ) );
-  (*protoList)[JSP_SPELLS]        .set( rootClass( cx, obj, &UOXSpells_class,        nullptr,  nullptr,                nullptr ) );
-  (*protoList)[JSP_GLOBALSKILL]   .set( rootClass( cx, obj, &UOXGlobalSkill_class,   nullptr,  CGlobalSkillProperties, nullptr ) );
-  (*protoList)[JSP_GLOBALSKILLS]  .set( rootClass( cx, obj, &UOXGlobalSkills_class,  nullptr,  nullptr,                nullptr ) );
-  (*protoList)[JSP_CREATEENTRY]   .set( rootClass( cx, obj, &UOXCreateEntry_class,   nullptr,  CCreateEntryProperties, nullptr ) );
-  (*protoList)[JSP_CREATEENTRIES] .set( rootClass( cx, obj, &UOXCreateEntries_class, nullptr,  nullptr,                nullptr ) );
-  (*protoList)[JSP_TIMER]         .set( rootClass( cx, obj, &UOXTimer_class,         nullptr,  CTimerProperties,       nullptr ) );
-  (*protoList)[JSP_SOCK]          .set( rootClass( cx, obj, &UOXSocket_class,        nullptr,  CSocketProps,           CSocket_Methods ) );
-  (*protoList)[JSP_ACCOUNTS]      .set( rootClass( cx, obj, &UOXAccount_class,       nullptr,  CAccountProperties,     CAccount_Methods ) );
-  (*protoList)[JSP_CONSOLE]       .set( rootClass( cx, obj, &UOXConsole_class,       nullptr,  CConsoleProperties,     CConsole_Methods ) );
-  (*protoList)[JSP_REGION]        .set( rootClass( cx, obj, &UOXRegion_class,        nullptr,  CRegionProperties,      CRegion_Methods ) );
-  (*protoList)[JSP_SPAWNREGION]   .set( rootClass( cx, obj, &UOXSpawnRegion_class,   nullptr,  CSpawnRegionProperties, nullptr ) );
-  (*protoList)[JSP_RESOURCE]      .set( rootClass( cx, obj, &UOXResource_class,      nullptr,  CResourceProperties,    nullptr ) );
-  (*protoList)[JSP_RACE]          .set( rootClass( cx, obj, &UOXRace_class,          nullptr,  CRaceProperties,        CRace_Methods ) );
-  (*protoList)[JSP_GUILD]         .set( rootClass( cx, obj, &UOXGuild_class,         nullptr,  CGuildProperties,       CGuild_Methods ) );
-  (*protoList)[JSP_PARTY]         .set( rootClass( cx, obj, &UOXParty_class,         nullptr,  CPartyProperties,       CParty_Methods ) );
-  (*protoList)[JSP_PACKET]        .set( rootClass( cx, obj, &UOXPacket_class,        Packet,   nullptr,                nullptr ) );
-  (*protoList)[JSP_GUMP]          .set( rootClass( cx, obj, &UOXGump_class,          Gump,     nullptr,                nullptr ) );
-  (*protoList)[JSP_FILE]          .set( rootClass( cx, obj, &UOXFile_class,          UOXCFile, nullptr,                nullptr ) );
-  (*protoList)[JSP_SCRIPT]        .set( rootClass( cx, obj, &uox_class,              nullptr,  CScriptProperties,      nullptr ) );
+  (*protoList)[JSP_BASE]          .set( rootClass(          cx, obj, &UOXBase_class,          nullptr,  CBaseObjectProps,       CBaseObject_Methods ) );
+  (*protoList)[JSP_CHAR]          .set( rootInheritedClass( cx, obj, &UOXChar_class,          nullptr,  CCharacterProps,        CChar_Methods, (*protoList)[JSP_BASE] ) );
+  (*protoList)[JSP_ITEM]          .set( rootInheritedClass( cx, obj, &UOXItem_class,          nullptr,  CItemProps,             CItem_Methods, (*protoList)[JSP_BASE] ) );
+  (*protoList)[JSP_SPELL]         .set( rootClass(          cx, obj, &UOXSpell_class,         nullptr,  CSpellProperties,       nullptr ) );
+  (*protoList)[JSP_SPELLS]        .set( rootClass(          cx, obj, &UOXSpells_class,        nullptr,  nullptr,                nullptr ) );
+  (*protoList)[JSP_GLOBALSKILL]   .set( rootClass(          cx, obj, &UOXGlobalSkill_class,   nullptr,  CGlobalSkillProperties, nullptr ) );
+  (*protoList)[JSP_GLOBALSKILLS]  .set( rootClass(          cx, obj, &UOXGlobalSkills_class,  nullptr,  nullptr,                nullptr ) );
+  (*protoList)[JSP_CREATEENTRY]   .set( rootClass(          cx, obj, &UOXCreateEntry_class,   nullptr,  CCreateEntryProperties, nullptr ) );
+  (*protoList)[JSP_CREATEENTRIES] .set( rootClass(          cx, obj, &UOXCreateEntries_class, nullptr,  nullptr,                nullptr ) );
+  (*protoList)[JSP_TIMER]         .set( rootClass(          cx, obj, &UOXTimer_class,         nullptr,  CTimerProperties,       nullptr ) );
+  (*protoList)[JSP_SOCK]          .set( rootClass(          cx, obj, &UOXSocket_class,        nullptr,  CSocketProps,           CSocket_Methods ) );
+  (*protoList)[JSP_ACCOUNTS]      .set( rootClass(          cx, obj, &UOXAccount_class,       nullptr,  CAccountProperties,     CAccount_Methods ) );
+  (*protoList)[JSP_CONSOLE]       .set( rootClass(          cx, obj, &UOXConsole_class,       nullptr,  CConsoleProperties,     CConsole_Methods ) );
+  (*protoList)[JSP_REGION]        .set( rootClass(          cx, obj, &UOXRegion_class,        nullptr,  CRegionProperties,      CRegion_Methods ) );
+  (*protoList)[JSP_SPAWNREGION]   .set( rootClass(          cx, obj, &UOXSpawnRegion_class,   nullptr,  CSpawnRegionProperties, nullptr ) );
+  (*protoList)[JSP_RESOURCE]      .set( rootClass(          cx, obj, &UOXResource_class,      nullptr,  CResourceProperties,    nullptr ) );
+  (*protoList)[JSP_RACE]          .set( rootClass(          cx, obj, &UOXRace_class,          nullptr,  CRaceProperties,        CRace_Methods ) );
+  (*protoList)[JSP_GUILD]         .set( rootClass(          cx, obj, &UOXGuild_class,         nullptr,  CGuildProperties,       CGuild_Methods ) );
+  (*protoList)[JSP_PARTY]         .set( rootClass(          cx, obj, &UOXParty_class,         nullptr,  CPartyProperties,       CParty_Methods ) );
+  (*protoList)[JSP_PACKET]        .set( rootClass(          cx, obj, &UOXPacket_class,        Packet,   nullptr,                nullptr ) );
+  (*protoList)[JSP_GUMP]          .set( rootClass(          cx, obj, &UOXGump_class,          Gump,     nullptr,                nullptr ) );
+  (*protoList)[JSP_FILE]          .set( rootClass(          cx, obj, &UOXFile_class,          UOXCFile, nullptr,                nullptr ) );
+  (*protoList)[JSP_SCRIPT]        .set( rootClass(          cx, obj, &uox_class,              nullptr,  CScriptProperties,      nullptr ) );
   spellsObj        = JS_DefineObject( cx, obj, "Spells", &UOXSpells_class );
   skillsObj        = JS_DefineObject( cx, obj, "Skills", &UOXGlobalSkills_class );
   accountsObj      = JS_DefineObject( cx, obj, "Accounts", &UOXAccount_class );

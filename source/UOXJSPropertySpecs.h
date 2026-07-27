@@ -321,6 +321,12 @@ DECL_GET_SET( CGuild, stone )
 DECL_GET_SET( CGuild, type )
 DECL_GET_SET( CGuild, webPage )
 
+// Base Object properties
+DECL_GET_SET( CBaseObject, x )
+DECL_GET_SET( CBaseObject, y )
+DECL_GET_SET( CBaseObject, z )
+
+
 // Character Properties
 DECL_GET_SET( CCharacter, account )
 DECL_GET_SET( CCharacter, accountNum )
@@ -527,9 +533,6 @@ DECL_GET_SET( CCharacter, weight )
 DECL_GET_SET( CCharacter, willhunger )
 DECL_GET_SET( CCharacter, willthirst )
 DECL_GET_SET( CCharacter, worldnumber )
-DECL_GET_SET( CCharacter, x )
-DECL_GET_SET( CCharacter, y )
-DECL_GET_SET( CCharacter, z )
 DECL_GET( CCharacter, attack )
 DECL_GET( CCharacter, flag )
 DECL_GET( CCharacter, followerCount )
@@ -721,9 +724,6 @@ DECL_GET_SET( CItem, weight )
 DECL_GET_SET( CItem, weightMax )
 DECL_GET_SET( CItem, wipable )
 DECL_GET_SET( CItem, worldnumber )
-DECL_GET_SET( CItem, x )
-DECL_GET_SET( CItem, y )
-DECL_GET_SET( CItem, z )
 
 // Socket Properties
 DECL_GET_SET( CSocket, account )
@@ -1133,6 +1133,14 @@ inline JSPropertySpec CGuildProperties[] =
 };
 // clang-format on
 
+inline JSPropertySpec CBaseObjectProps[] =
+{
+  UX_PSGS( CBaseObject, x,                     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, y,                     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, z,                     JSPROP_ENUMANDPERM ),
+  JS_PS_END
+};
+
 // clang-format off
 inline JSPropertySpec CCharacterProps[] =
 {
@@ -1140,9 +1148,6 @@ inline JSPropertySpec CCharacterProps[] =
   UX_PSGS( CCharacter, name,                  JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, origName,              JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, title,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, x,                     JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, y,                     JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, z,                     JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, oldX,                  JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, oldY,                  JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, oldZ,                  JSPROP_ENUMANDPERM ),
@@ -1358,9 +1363,6 @@ inline JSPropertySpec CItemProps[] =
   UX_PSGS( CItem, sectionID,           JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, name,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, title,               JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, x,                   JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, y,                   JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, z,                   JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, oldX,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, oldY,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, oldZ,                JSPROP_ENUMANDPERM ),

@@ -39,6 +39,25 @@
 void MakeShop( CChar *c );
 void ScriptError( JSContext *cx, const char *txt, ... );
 
+#define IMPL_BASE_INT_SET( attr, typeName, statement )                    \
+FDCLS( CBaseObject, attr )                                                \
+{                                                                         \
+	FNARGS                                                                  \
+	auto item = JS::GetMaybePtrFromReservedSlot<CBaseObject>( thisObj, 0 ); \
+	if( !ValidateObject( item )) return false;                              \
+	const typeName value = static_cast<typeName>( args.get( 0 ).toInt32() );\
+	statement;                                                              \
+	return true;                                                            \
+}
+
+IMPL_BASE_INT_SET( x, SI16, item->SetLocation(value, item->GetY(), item->GetZ()))
+IMPL_BASE_INT_SET( y, SI16, item->SetLocation(item->GetX(), value, item->GetZ()))
+IMPL_BASE_INT_SET( z, SI08, item->SetZ(value))
+
+IMPL_GET_OBJ( CBaseObject, x, CBaseObject, setInt32, GetX() )
+IMPL_GET_OBJ( CBaseObject, y, CBaseObject, setInt32, GetY() )
+IMPL_GET_OBJ( CBaseObject, z, CBaseObject, setInt32, GetZ() )
+
 // Direct mozjs accessors for the fully migrated CSpell property family.
 FDCLG( CSpell, id )
 {
@@ -256,9 +275,6 @@ FDCLG( CCreateEntry, skills )
 IMPL_GETS_OBJ( CItem, sectionID, CItem, setString, GetSectionId().c_str() )
 IMPL_GETS_OBJ( CItem, name, CItem, setString, GetName().c_str() )
 IMPL_GETS_OBJ( CItem, title, CItem, setString, GetTitle().c_str() )
-IMPL_GET_OBJ( CItem, x, CItem, setInt32, GetX() )
-IMPL_GET_OBJ( CItem, y, CItem, setInt32, GetY() )
-IMPL_GET_OBJ( CItem, z, CItem, setInt32, GetZ() )
 IMPL_GET_OBJ( CItem, id, CItem, setInt32, GetId() )
 IMPL_GET_OBJ( CItem, colour, CItem, setInt32, GetColour() )
 IMPL_GET_OBJ( CItem, color, CItem, setInt32, GetColour() )
@@ -284,9 +300,6 @@ FDCLS( CItem, attr )                                                      \
 	return true;                                                            \
 }
 
-IMPL_ITEM_INT_SET( x, SI16, item->SetLocation( value, item->GetY(), item->GetZ() ))
-IMPL_ITEM_INT_SET( y, SI16, item->SetLocation( item->GetX(), value, item->GetZ() ))
-IMPL_ITEM_INT_SET( z, SI08, item->SetZ( value ))
 IMPL_ITEM_INT_SET( id, UI16, item->SetId( value ))
 IMPL_ITEM_INT_SET( colour, UI16, item->SetColour( value ))
 IMPL_ITEM_INT_SET( color, UI16, item->SetColour( value ))
@@ -1063,9 +1076,6 @@ FDCLS( CCharacter, attr )                                                   \
 	statement;                                                                 \
 	return true;                                                               \
 }
-CHARACTER_CORE_INT_SET( x, SI16, character->SetLocation( value, character->GetY(), character->GetZ() ))
-CHARACTER_CORE_INT_SET( y, SI16, character->SetLocation( character->GetX(), value, character->GetZ() ))
-CHARACTER_CORE_INT_SET( z, SI08, character->SetZ( value ))
 CHARACTER_CORE_INT_SET( id, UI16, character->SetId( value ))
 CHARACTER_CORE_INT_SET( colour, UI16, character->SetColour( value ))
 CHARACTER_CORE_INT_SET( color, UI16, character->SetColour( value ))
@@ -1126,9 +1136,6 @@ CHARACTER_STRING_GET( title, character->GetTitle() )
 #undef CHARACTER_STRING_GET
 
 #define CHARACTER_CORE_GET( attr, method, expression ) IMPL_GET_OBJ( CCharacter, attr, CChar, method, expression )
-CHARACTER_CORE_GET( x, setInt32, GetX() )
-CHARACTER_CORE_GET( y, setInt32, GetY() )
-CHARACTER_CORE_GET( z, setInt32, GetZ() )
 CHARACTER_CORE_GET( id, setInt32, GetId() )
 CHARACTER_CORE_GET( colour, setInt32, GetColour() )
 CHARACTER_CORE_GET( color, setInt32, GetColour() )
