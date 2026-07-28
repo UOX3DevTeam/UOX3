@@ -50,13 +50,21 @@ FDCLS( CBaseObject, attr )                                                \
 	return true;                                                            \
 }
 
-IMPL_BASE_INT_SET( x, SI16, item->SetLocation(value, item->GetY(), item->GetZ()))
-IMPL_BASE_INT_SET( y, SI16, item->SetLocation(item->GetX(), value, item->GetZ()))
-IMPL_BASE_INT_SET( z, SI08, item->SetZ(value))
+IMPL_BASE_INT_SET( x,      SI16, item->SetLocation( value, item->GetY(), item->GetZ() ) )
+IMPL_BASE_INT_SET( y,      SI16, item->SetLocation( item->GetX(), value, item->GetZ() ) )
+IMPL_BASE_INT_SET( z,      SI08, item->SetZ( value ) )
+IMPL_BASE_INT_SET( colour, UI16, item->SetColour( value ) )
+IMPL_BASE_INT_SET( color,  UI16, item->SetColour( value ) )
+IMPL_BASE_INT_SET( skin,   UI16, item->SetColour( value ) )
+IMPL_BASE_INT_SET( hue,    UI16, item->SetColour( value ) )
 
-IMPL_GET_OBJ( CBaseObject, x, CBaseObject, setInt32, GetX() )
-IMPL_GET_OBJ( CBaseObject, y, CBaseObject, setInt32, GetY() )
-IMPL_GET_OBJ( CBaseObject, z, CBaseObject, setInt32, GetZ() )
+IMPL_GET_OBJ( CBaseObject, x,      CBaseObject, setInt32, GetX() )
+IMPL_GET_OBJ( CBaseObject, y,      CBaseObject, setInt32, GetY() )
+IMPL_GET_OBJ( CBaseObject, z,      CBaseObject, setInt32, GetZ() )
+IMPL_GET_OBJ( CBaseObject, colour, CBaseObject, setInt32, GetColour() )
+IMPL_GET_OBJ( CBaseObject, color,  CBaseObject, setInt32, GetColour() )
+IMPL_GET_OBJ( CBaseObject, skin,   CBaseObject, setInt32, GetColour() )
+IMPL_GET_OBJ( CBaseObject, hue,    CBaseObject, setInt32, GetColour() )
 
 // Direct mozjs accessors for the fully migrated CSpell property family.
 FDCLG( CSpell, id )
@@ -276,8 +284,6 @@ IMPL_GETS_OBJ( CItem, sectionID, CItem, setString, GetSectionId().c_str() )
 IMPL_GETS_OBJ( CItem, name, CItem, setString, GetName().c_str() )
 IMPL_GETS_OBJ( CItem, title, CItem, setString, GetTitle().c_str() )
 IMPL_GET_OBJ( CItem, id, CItem, setInt32, GetId() )
-IMPL_GET_OBJ( CItem, colour, CItem, setInt32, GetColour() )
-IMPL_GET_OBJ( CItem, color, CItem, setInt32, GetColour() )
 IMPL_GET_OBJ( CItem, visible, CItem, setInt32, GetVisible() )
 IMPL_GET_OBJ( CItem, serial, CItem, setNumber, GetSerial() )
 IMPL_GET_OBJ( CItem, health, CItem, setInt32, GetHP() )
@@ -301,8 +307,6 @@ FDCLS( CItem, attr )                                                      \
 }
 
 IMPL_ITEM_INT_SET( id, UI16, item->SetId( value ))
-IMPL_ITEM_INT_SET( colour, UI16, item->SetColour( value ))
-IMPL_ITEM_INT_SET( color, UI16, item->SetColour( value ))
 IMPL_ITEM_INT_SET( visible, VisibleTypes, item->SetVisible( value ))
 IMPL_ITEM_INT_SET( health, SI16, item->SetHP( value ))
 IMPL_ITEM_INT_SET( worldnumber, UI08, item->SetLocation( item->GetX(), item->GetY(), item->GetZ(), value, item->GetInstanceId() ))
@@ -413,19 +417,6 @@ FDCLS( CItem, oldX ) { return true; }
 FDCLS( CItem, oldY ) { return true; }
 FDCLS( CItem, oldZ ) { return true; }
 FDCLS( CItem, multi ) { return true; }
-#define ITEM_COLOUR_ALIAS_SET( attr )                                    \
-FDCLS( CItem, attr )                                                      \
-{                                                                         \
-	FNARGS                                                                  \
-	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );       \
-	int32_t value = 0;                                                       \
-	if( !JS::ToInt32( cx, args.get( 0 ), &value )) return false;             \
-	item->SetColour( static_cast<UI16>( value ));                            \
-	return true;                                                             \
-}
-ITEM_COLOUR_ALIAS_SET( skin )
-ITEM_COLOUR_ALIAS_SET( hue )
-#undef ITEM_COLOUR_ALIAS_SET
 FDCLS( CItem, scripttrigger )
 {
 	FNARGS
@@ -456,8 +447,6 @@ ITEM_METADATA_INT_SET( region, UI16, SetRegion )
 IMPL_GET_OBJ( CItem, oldX, CItem, setInt32, GetOldLocation().x )
 IMPL_GET_OBJ( CItem, oldY, CItem, setInt32, GetOldLocation().y )
 IMPL_GET_OBJ( CItem, oldZ, CItem, setInt32, GetOldLocation().z )
-IMPL_GET_OBJ( CItem, skin, CItem, setInt32, GetColour() )
-IMPL_GET_OBJ( CItem, hue, CItem, setInt32, GetColour() )
 IMPL_GET_OBJ(CItem, decaytime, CItem, setNumber, GetDecayTime())
 
 FDCLG( CItem, scripttrigger )
@@ -1077,10 +1066,6 @@ FDCLS( CCharacter, attr )                                                   \
 	return true;                                                               \
 }
 CHARACTER_CORE_INT_SET( id, UI16, character->SetId( value ))
-CHARACTER_CORE_INT_SET( colour, UI16, character->SetColour( value ))
-CHARACTER_CORE_INT_SET( color, UI16, character->SetColour( value ))
-CHARACTER_CORE_INT_SET( skin, UI16, character->SetColour( value ))
-CHARACTER_CORE_INT_SET( hue, UI16, character->SetColour( value ))
 CHARACTER_CORE_INT_SET( controlSlots, UI16, character->SetControlSlots( value ))
 CHARACTER_CORE_INT_SET( controlSlotsUsed, UI16, character->SetControlSlotsUsed( value ))
 CHARACTER_CORE_INT_SET( orneriness, UI16, character->SetOrneriness( value ))
@@ -1137,10 +1122,6 @@ CHARACTER_STRING_GET( title, character->GetTitle() )
 
 #define CHARACTER_CORE_GET( attr, method, expression ) IMPL_GET_OBJ( CCharacter, attr, CChar, method, expression )
 CHARACTER_CORE_GET( id, setInt32, GetId() )
-CHARACTER_CORE_GET( colour, setInt32, GetColour() )
-CHARACTER_CORE_GET( color, setInt32, GetColour() )
-CHARACTER_CORE_GET( skin, setInt32, GetColour() )
-CHARACTER_CORE_GET( hue, setInt32, GetColour() )
 CHARACTER_CORE_GET( controlSlots, setInt32, GetControlSlots() )
 CHARACTER_CORE_GET( controlSlotsUsed, setInt32, GetControlSlotsUsed() )
 CHARACTER_CORE_GET( orneriness, setInt32, GetOrneriness() )

@@ -325,6 +325,10 @@ DECL_GET_SET( CGuild, webPage )
 DECL_GET_SET( CBaseObject, x )
 DECL_GET_SET( CBaseObject, y )
 DECL_GET_SET( CBaseObject, z )
+DECL_GET_SET( CBaseObject, color )
+DECL_GET_SET( CBaseObject, colour )
+DECL_GET_SET( CBaseObject, hue )
+DECL_GET_SET( CBaseObject, skin )
 
 
 // Character Properties
@@ -351,8 +355,6 @@ DECL_GET_SET( CCharacter, canBroadcast )
 DECL_GET_SET( CCharacter, canRun )
 DECL_GET_SET( CCharacter, canSnoop )
 DECL_GET_SET( CCharacter, cell )
-DECL_GET_SET( CCharacter, color )
-DECL_GET_SET( CCharacter, colour )
 DECL_GET_SET( CCharacter, commandlevel )
 DECL_GET_SET( CCharacter, controlSlots )
 DECL_GET_SET( CCharacter, controlSlotsUsed )
@@ -397,7 +399,6 @@ DECL_GET_SET( CCharacter, hitChance )
 DECL_GET_SET( CCharacter, houseicons )
 DECL_GET_SET( CCharacter, housesCoOwned )
 DECL_GET_SET( CCharacter, housesOwned )
-DECL_GET_SET( CCharacter, hue )
 DECL_GET_SET( CCharacter, hunger )
 DECL_GET_SET( CCharacter, hungerRate )
 DECL_GET_SET( CCharacter, hungerWildChance )
@@ -496,7 +497,6 @@ DECL_GET_SET( CCharacter, skillsused )
 DECL_GET_SET( CCharacter, skillToPeace )
 DECL_GET_SET( CCharacter, skillToProv )
 DECL_GET_SET( CCharacter, skillToTame )
-DECL_GET_SET( CCharacter, skin )
 DECL_GET_SET( CCharacter, socket )
 DECL_GET_SET( CCharacter, spattack )
 DECL_GET_SET( CCharacter, spawnSerial )
@@ -575,8 +575,6 @@ DECL_GET_SET( CItem, buildTimestamp )
 DECL_GET_SET( CItem, buyvalue )
 DECL_GET_SET( CItem, canBeLockedDown )
 DECL_GET_SET( CItem, carveSection )
-DECL_GET_SET( CItem, color )
-DECL_GET_SET( CItem, colour )
 DECL_GET_SET( CItem, container )
 DECL_GET_SET( CItem, corpse )
 DECL_GET_SET( CItem, creator )
@@ -611,7 +609,6 @@ DECL_GET_SET( CItem, hitChance )
 DECL_GET_SET( CItem, staminaRegenBonus )
 DECL_GET_SET( CItem, manaRegenBonus )
 DECL_GET_SET( CItem, hidamage )
-DECL_GET_SET( CItem, hue )
 DECL_GET_SET( CItem, id )
 DECL_GET_SET( CItem, instanceID )
 DECL_GET_SET( CItem, intelligence )
@@ -699,7 +696,6 @@ DECL_GET_SET( CItem, secureContainers )
 DECL_GET_SET( CItem, sellvalue )
 DECL_GET_SET( CItem, serial )
 DECL_GET_SET( CItem, shouldSave )
-DECL_GET_SET( CItem, skin )
 DECL_GET_SET( CItem, spawnsection )
 DECL_GET_SET( CItem, spawnSerial )
 DECL_GET_SET( CItem, speed )
@@ -1138,6 +1134,10 @@ inline JSPropertySpec CBaseObjectProps[] =
   UX_PSGS( CBaseObject, x,                     JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, y,                     JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, z,                     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, colour,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, color,                 JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, skin,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, hue,                   JSPROP_ENUMANDPERM ),
   JS_PS_END
 };
 
@@ -1152,10 +1152,6 @@ inline JSPropertySpec CCharacterProps[] =
   UX_PSGS( CCharacter, oldY,                  JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, oldZ,                  JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, id,                    JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, colour,                JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, color,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, skin,                  JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, hue,                   JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, controlSlots,          JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, controlSlotsUsed,      JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, orneriness,            JSPROP_ENUMANDPERM ),
@@ -1367,10 +1363,6 @@ inline JSPropertySpec CItemProps[] =
   UX_PSGS( CItem, oldY,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, oldZ,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, id,                  JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, colour,              JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, color,               JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, skin,                JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, hue,                 JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, owner,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, visible,             JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, serial,              JSPROP_ENUMANDPERM ),
