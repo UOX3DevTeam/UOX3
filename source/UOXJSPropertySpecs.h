@@ -9,6 +9,8 @@
 #ifndef __UOXJSPropertySpecs__
 #define __UOXJSPropertySpecs__
 
+#include <jsapi.h>
+
 #include "UOXJSPropertyEnums.h"
 #include "enums.h"
 

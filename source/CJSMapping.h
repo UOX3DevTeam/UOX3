@@ -1,6 +1,8 @@
 #ifndef __CJSMAPPING_H__
 #define __CJSMAPPING_H__
 
+#include <jsapi.h>
+
 #include <stack> 
 
 enum SCRIPTTYPE

@@ -1,6 +1,7 @@
 #ifndef __CSCRIPT_H__
 #define __CSCRIPT_H__
 
+#include <jsapi.h>
 
 class CPIGumpMenuSelect;
 class CPIGumpInput;

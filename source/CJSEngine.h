@@ -1,6 +1,8 @@
 #ifndef __CJSENGINE_H__
 #define __CJSENGINE_H__
 
+#include <jsapi.h>
+
 enum IUEEntries
 {
 	IUE_RACE = 0,
