@@ -20,8 +20,6 @@
 #include "UOXJSClasses.h"
 #include "UOXJSMethods.h"
 #include "CJSEngine.h"
-#include "JSEncapsulate.h"
-
 #include "cMagic.h"
 #include "cGuild.h"
 #include "skills.h"
@@ -79,6 +77,11 @@ bool HasWrapperClass( JSObject *object, const JSClass *expectedClass )
 	return object != nullptr && JS::GetClass( object ) == expectedClass;
 }
 
+bool HasWrapperClass( JS::HandleValue value, const JSClass *expectedClass )
+{
+	return value.isObject() && HasWrapperClass( &value.toObject(), expectedClass );
+}
+
 template<typename T>
 T *GetWrappedObject( JSObject *object, const JSClass *expectedClass )
 {
@@ -92,6 +95,21 @@ template<typename T>
 T *GetWrappedObject( JS::HandleValue value, const JSClass *expectedClass )
 {
 	return value.isObject() ? GetWrappedObject<T>( &value.toObject(), expectedClass ) : nullptr;
+}
+
+CBaseObject *GetBaseObject( JSObject *object )
+{
+	if( HasWrapperClass( object, &UOXChar_class ))
+		return JS::GetMaybePtrFromReservedSlot<CChar>( object, 0 );
+	if( HasWrapperClass( object, &UOXItem_class ))
+		return JS::GetMaybePtrFromReservedSlot<CItem>( object, 0 );
+
+	return nullptr;
+}
+
+CBaseObject *GetBaseObject( JS::HandleValue value )
+{
+	return value.isObject() ? GetBaseObject( &value.toObject() ) : nullptr;
 }
 
 std::string ConsoleValueToString( JSContext *cx, JS::HandleValue value )
@@ -1906,14 +1924,12 @@ bool CGump_Send( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "You have to pass a valid Socket or Character" );
 	}
 
-	JSEncapsulate myClass( cx, &( args.get(0).get() ));
-
 	auto obj = getThis( cx, args );
   SEGump_st *myGump = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 
-	if( myClass.ClassName() == "UOXSocket" )
+	if( HasWrapperClass( args.get( 0 ), &UOXSocket_class ))
 	{
-		CSocket *mySock = static_cast<CSocket *>( myClass.toObject() );
+		CSocket *mySock = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 		if( mySock == nullptr )
 		{
 			ScriptError( cx, "Send: Passed an invalid Socket" );
@@ -1922,9 +1938,9 @@ bool CGump_Send( JSContext *cx, unsigned argc, JS::Value* vp )
 		UI32 gumpId = ( 0xFFFF + JSMapping->currentActive()->GetScriptID() );
 		SendVecsAsGump( mySock, *( myGump->one ), *( myGump->two ), gumpId, INVALIDSERIAL );
 	}
-	else if( myClass.ClassName() == "UOXChar" )
+	else if( HasWrapperClass( args.get( 0 ), &UOXChar_class ))
 	{
-		CChar *myChar = static_cast<CChar*>( myClass.toObject() );
+		CChar *myChar = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 		if( !ValidateObject( myChar ))
 		{
 			ScriptError( cx, "Send: Passed an invalid Character" );
@@ -1964,8 +1980,7 @@ bool CBase_TextMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	auto args = JS::CallArgsFromVp(argc, vp);
 	auto obj = getThis( cx, args );
-	JSEncapsulate myClass( cx, obj );
-	CBaseObject *myObj		= static_cast<CBaseObject*>( myClass.toObject() );
+	CBaseObject *myObj = GetBaseObject( obj );
 
 	std::string trgMessage		= JS_GetStringBytes( cx, args.get(0) );
 	if( trgMessage.empty() )
@@ -2011,7 +2026,7 @@ bool CBase_TextMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 	bool useUnicode = cwmWorldState->ServerData()->UseUnicodeMessages();
 
 	// Keep track of original script that's executing
-	if( myClass.ClassName() == "UOXItem" )
+	if( HasWrapperClass( obj, &UOXItem_class ))
 	{
 		CItem *myItem = static_cast<CItem *>( myObj );
 		if( !ValidateObject( myItem ))
@@ -2033,7 +2048,7 @@ bool CBase_TextMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 		}
 		MethodSpeech( *myItem, trgMessage.c_str(), speechType, txtHue, speechFontType, speechTarget, speechTargetSerial, useUnicode);
 	}
-	else if( myClass.ClassName() == "UOXChar" )
+	else if( HasWrapperClass( obj, &UOXChar_class ))
 	{
 		CChar *myChar = static_cast<CChar *>( myObj );
 		if( !ValidateObject( myChar ))
@@ -2899,16 +2914,14 @@ bool CMisc_SysMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 	CSocket *mySock = nullptr;
 	auto args = JS::CallArgsFromVp(argc, vp);
 	auto obj = getThis( cx, args );
-	JSEncapsulate myClass( cx, obj );
-
-	if( myClass.ClassName() == "UOXChar" )
+	if( HasWrapperClass( obj, &UOXChar_class ))
 	{
-		CChar *myChar = static_cast<CChar*>( myClass.toObject() );
+		CChar *myChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
 		mySock = myChar->GetSocket();
 	}
-	else if( myClass.ClassName() == "UOXSocket" )
+	else if( HasWrapperClass( obj, &UOXSocket_class ))
 	{
-		mySock = static_cast<CSocket*>( myClass.toObject() );
+		mySock = GetWrappedObject<CSocket>( obj, &UOXSocket_class );
 	}
 
 	if( mySock == nullptr )
@@ -2993,9 +3006,13 @@ bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
 	auto obj = getThis( cx, args );
-	JSEncapsulate myClass( cx, obj );
+	CBaseObject *myObj = GetBaseObject( obj );
+	if( !ValidateObject( myObj ))
+	{
+		ScriptError( cx, "Teleport: Invalid Object" );
+		return false;
+	}
 
-	CBaseObject *myObj	= static_cast<CBaseObject*>( myClass.toObject() );
 	SI16 x				= -1;
 	SI16 y				= -1;
 	SI08 z				= myObj->GetZ();
@@ -3006,7 +3023,7 @@ bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 	{
 			// Just Teleport...
 		case 0:
-			if( myClass.ClassName() == "UOXChar" )
+			if( HasWrapperClass( obj, &UOXChar_class ))
 			{
 				( static_cast<CChar*>( myObj ))->Teleport();
 				return true;
@@ -3018,10 +3035,9 @@ bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 		case 1:
 			if( args.get(0).isObject() )
 			{	// we can work with this, it should be either a character or item, hopefully
-				JSEncapsulate jsToGoTo( cx, &( args.get(0).get()));
-				if( jsToGoTo.ClassName() == "UOXItem" || jsToGoTo.ClassName() == "UOXChar" )
+				CBaseObject *toGoTo = GetBaseObject( args.get( 0 ));
+				if( toGoTo != nullptr )
 				{
-					CBaseObject *toGoTo = static_cast<CBaseObject *>( jsToGoTo.toObject() );
 					if( !ValidateObject( toGoTo ))
 					{
 						ScriptError( cx, "No object associated with this object" );
@@ -3034,9 +3050,9 @@ bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 					world	= toGoTo->WorldNumber();
 					instanceId = toGoTo->GetInstanceId();
 				}
-				else if( jsToGoTo.ClassName() == "UOXSocket" )
+				else if( HasWrapperClass( args.get( 0 ), &UOXSocket_class ))
 				{
-					CSocket *mySock		= static_cast<CSocket *>( jsToGoTo.toObject() );
+					CSocket *mySock		= GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 					CChar *mySockChar	= mySock->CurrcharObj();
 					x					= mySockChar->GetX();
 					y					= mySockChar->GetY();
@@ -3136,7 +3152,7 @@ bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 			break;
 	}
 
-	if( myClass.ClassName() == "UOXItem" )
+	if( HasWrapperClass( obj, &UOXItem_class ))
 	{
 		CItem *myItem = static_cast<CItem*>( myObj );
 		if( !ValidateObject( myItem ))
@@ -3150,7 +3166,7 @@ bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 		myItem->RemoveFromSight();
 		myItem->SetLocation( x, y, z, world, instanceId );
 	}
-	else if( myClass.ClassName() == "UOXChar" )
+	else if( HasWrapperClass( obj, &UOXChar_class ))
 	{
 		CChar *myChar = static_cast<CChar*>( myObj );
 		if( !ValidateObject( myChar ))
@@ -3211,8 +3227,7 @@ bool CBase_StaticEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 	UI08 loop			= static_cast<UI08>( args.get(2).toInt32());
 
 	auto obj = getThis( cx, args );
-	JSEncapsulate		myClass( cx, obj );
-	CBaseObject *myObj	= static_cast<CBaseObject*>( myClass.toObject() );
+	CBaseObject *myObj = GetBaseObject( obj );
 
 	if( !ValidateObject( myObj ))
 	{
@@ -3220,7 +3235,7 @@ bool CBase_StaticEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( myClass.ClassName() == "UOXItem" )
+	if( HasWrapperClass( obj, &UOXItem_class ))
 	{
 		bool explode = ( args.get(3).toBoolean() == true );
 		Effects->PlayStaticAnimation( myObj, effectId, speed, loop, explode );
@@ -3250,15 +3265,14 @@ bool CMisc_MakeMenu( JSContext *cx, unsigned argc, JS::Value* vp )
 	CSocket *mySock		= nullptr;
 	auto args = JS::CallArgsFromVp(argc, vp);
 	auto obj = getThis( cx, args );
-	JSEncapsulate myClass( cx, obj );
-	if( myClass.ClassName() == "UOXChar" )
+	if( HasWrapperClass( obj, &UOXChar_class ))
 	{
-		CChar *myChar	= static_cast<CChar*>( myClass.toObject() );
+		CChar *myChar	= GetWrappedObject<CChar>( obj, &UOXChar_class );
 		mySock			= myChar->GetSocket();
 	}
-	else if( myClass.ClassName() == "UOXSocket" )
+	else if( HasWrapperClass( obj, &UOXSocket_class ))
 	{
-		mySock			= static_cast<CSocket*>( myClass.toObject() );
+		mySock			= GetWrappedObject<CSocket>( obj, &UOXSocket_class );
 	}
 
 	if( mySock == nullptr )
@@ -3288,8 +3302,6 @@ bool CMisc_SoundEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	auto args = JS::CallArgsFromVp(argc, vp);
 	auto obj = getThis( cx, args );
-	JSEncapsulate myClass( cx, obj );
-
 	UI16 soundId = static_cast<UI16>( args.get(0).toInt32());
 	SI16 tmpMonsterSound = -1;
 	if( argc == 3 )
@@ -3298,15 +3310,15 @@ bool CMisc_SoundEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 	bool allHear = ( args.get(1).toBoolean() == true );
 
-	if( myClass.ClassName() == "UOXChar" || myClass.ClassName() == "UOXItem" )
+	if( HasWrapperClass( obj, &UOXChar_class ) || HasWrapperClass( obj, &UOXItem_class ))
 	{
-		CBaseObject *myObj = static_cast<CBaseObject*>( myClass.toObject() );
+		CBaseObject *myObj = GetBaseObject( obj );
 
 		if( ValidateObject( myObj ))
 		{
-			if( myClass.ClassName() == "UOXChar" && tmpMonsterSound > -1 )
+			if( HasWrapperClass( obj, &UOXChar_class ) && tmpMonsterSound > -1 )
 			{
-				CChar *myChar = static_cast<CChar*>( myClass.toObject() );
+				CChar *myChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
 				UI16 monsterSoundToPlay = cwmWorldState->creatures[myChar->GetId()].GetSound( static_cast<monsterSound>( tmpMonsterSound ));
 				if( monsterSoundToPlay != 0 )
 				{
@@ -3319,9 +3331,9 @@ bool CMisc_SoundEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 			}
 		}
 	}
-	else if( myClass.ClassName() == "UOXSocket" )
+	else if( HasWrapperClass( obj, &UOXSocket_class ))
 	{
-		CSocket *mySock = static_cast<CSocket*>( myClass.toObject() );
+		CSocket *mySock = GetWrappedObject<CSocket>( obj, &UOXSocket_class );
 
 		if( mySock != nullptr )
 		{
@@ -3349,8 +3361,7 @@ bool CMisc_SellTo( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	auto obj = getThis( cx, args );
-	JSEncapsulate myClass( cx, obj );
-	CChar *myNPC = JS::GetMaybePtrFromReservedSlot<CChar>( &args.get(0).toObject(), 0 );
+	CChar *myNPC = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( myNPC ))
 	{
 		ScriptError( cx, "SellTo: Invalid NPC" );
@@ -3358,9 +3369,9 @@ bool CMisc_SellTo( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	CPSellList toSend;
-	if( myClass.ClassName() == "UOXSocket" )
+	if( HasWrapperClass( obj, &UOXSocket_class ))
 	{
-		CSocket *mySock = static_cast<CSocket*>( myClass.toObject() );
+		CSocket *mySock = GetWrappedObject<CSocket>( obj, &UOXSocket_class );
 		if( mySock == nullptr )
 		{
 			ScriptError( cx, "Passed an invalid socket to SellTo" );
@@ -3378,9 +3389,9 @@ bool CMisc_SellTo( JSContext *cx, unsigned argc, JS::Value* vp )
 			}
 		}
 	}
-	else if( myClass.ClassName() == "UOXChar" )
+	else if( HasWrapperClass( obj, &UOXChar_class ))
 	{
-		CChar *myChar = static_cast<CChar*>( myClass.toObject() );
+		CChar *myChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
 		if( !ValidateObject( myChar ))
 		{
 			ScriptError( cx, "Passed an invalid char to SellTo" );
@@ -3415,17 +3426,16 @@ bool CMisc_BuyFrom( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	auto args = JS::CallArgsFromVp(argc, vp);
 	auto obj = getThis( cx, args );
-	JSEncapsulate myClass( cx, obj );
-	CChar *myNPC = JS::GetMaybePtrFromReservedSlot<CChar>( &args.get(0).toObject(), 0 );
+	CChar *myNPC = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( myNPC ))
 	{
 		ScriptError( cx, "BuyFrom: Invalid NPC" );
 		return false;
 	}
 
-	if( myClass.ClassName() == "UOXSocket" )
+	if( HasWrapperClass( obj, &UOXSocket_class ))
 	{
-		CSocket *mySock = static_cast<CSocket *>( myClass.toObject() );
+		CSocket *mySock = GetWrappedObject<CSocket>( obj, &UOXSocket_class );
 		if( mySock == nullptr )
 		{
 			ScriptError( cx, "Invalid source socket in BuyFrom" );
@@ -3443,9 +3453,9 @@ bool CMisc_BuyFrom( JSContext *cx, unsigned argc, JS::Value* vp )
 			BuyShop( mySock, myNPC );
 		}
 	}
-	else if( myClass.ClassName() == "UOXChar" )
+	else if( HasWrapperClass( obj, &UOXChar_class ))
 	{
-		CChar *myChar = static_cast<CChar*>( myClass.toObject() );
+		CChar *myChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
 		if( !ValidateObject( myChar ))
 		{
 			ScriptError( cx, "Passed an invalid char to BuyFrom" );
@@ -3485,12 +3495,11 @@ bool CMisc_HasSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	auto args = JS::CallArgsFromVp(argc, vp);
 	auto obj = getThis( cx, args );
-	JSEncapsulate myClass( cx, obj );
 	UI08 spellId = static_cast<UI08>( args.get(0).toInt32());
 
-	if( myClass.ClassName() == "UOXChar" )
+	if( HasWrapperClass( obj, &UOXChar_class ))
 	{
-		CChar *myChar = static_cast<CChar*>( myClass.toObject() );
+		CChar *myChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
 		if( !ValidateObject( myChar ))
 		{
 			ScriptError( cx, "Invalid char for HasSpell" );
@@ -3515,9 +3524,9 @@ bool CMisc_HasSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 			args.rval().setBoolean( false );
 		}
 	}
-	else if( myClass.ClassName() == "UOXItem" )
+	else if( HasWrapperClass( obj, &UOXItem_class ))
 	{
-		CItem *myItem = static_cast<CItem*>( myClass.toObject() );
+		CItem *myItem = GetWrappedObject<CItem>( obj, &UOXItem_class );
 		if( !ValidateObject( myItem ))
 		{
 			ScriptError( cx, "Invalid item for HasSpell" );
@@ -3553,12 +3562,11 @@ bool CMisc_RemoveSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	auto args = JS::CallArgsFromVp(argc, vp);
 	auto obj = getThis( cx, args );
-	JSEncapsulate myClass( cx, obj );
 	UI08 spellId = static_cast<UI08>( args.get(0).toInt32());
 
-	if( myClass.ClassName() == "UOXChar" )
+	if( HasWrapperClass( obj, &UOXChar_class ))
 	{
-		CChar *myChar = static_cast<CChar*>( myClass.toObject() );
+		CChar *myChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
 		if( !ValidateObject( myChar ))
 		{
 			ScriptError( cx, "Invalid char for HasSpell" );
@@ -3572,9 +3580,9 @@ bool CMisc_RemoveSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 			Magic->RemoveSpell( myItem, spellId );
 		}
 	}
-	else if( myClass.ClassName() == "UOXItem" )
+	else if( HasWrapperClass( obj, &UOXItem_class ))
 	{
-		CItem *myItem = static_cast<CItem*>( myClass.toObject() );
+		CItem *myItem = GetWrappedObject<CItem>( obj, &UOXItem_class );
 		if( !ValidateObject( myItem ))
 		{
 			ScriptError( cx, "Invalid item for RemoveSpell" );
@@ -3657,10 +3665,10 @@ bool CBase_SetTag( JSContext *cx, unsigned argc, JS::Value* vp )
 	TAGMAPOBJECT localObject;
 	if( argc == 2 )
 	{
-		JSEncapsulate encaps( cx, &( args.get(1).get()));
-		if( encaps.isType( JSOT_STRING ))
+		JS::HandleValue value = args.get( 1 );
+		if( value.isString() )
 		{			// String value handling
-			const std::string stringVal = encaps.toString();
+			const std::string stringVal = convertToString( cx, value.toString() );
 			if( stringVal == "" )
 			{
 				localObject.m_Destroy		= true;
@@ -3676,9 +3684,9 @@ bool CBase_SetTag( JSContext *cx, unsigned argc, JS::Value* vp )
 				localObject.m_ObjectType	= TAGMAP_TYPE_STRING;
 			}
 		}
-		else if( encaps.isType( JSOT_BOOL ))
+		else if( value.isBoolean() )
 		{
-			const bool boolVal = encaps.toBool();
+			const bool boolVal = value.toBoolean();
 			if( !boolVal )
 			{
 				localObject.m_Destroy		= true;
@@ -3692,9 +3700,9 @@ bool CBase_SetTag( JSContext *cx, unsigned argc, JS::Value* vp )
 			localObject.m_ObjectType	= TAGMAP_TYPE_BOOL;
 			localObject.m_StringValue	= "";
 		}
-		else if( encaps.isType( JSOT_INT ))
+		else if( value.isInt32() )
 		{
-			const SI32 intVal = encaps.toInt();
+			const SI32 intVal = value.toInt32();
 			if( !intVal )
 			{
 				localObject.m_Destroy		= true;
@@ -3708,7 +3716,7 @@ bool CBase_SetTag( JSContext *cx, unsigned argc, JS::Value* vp )
 			localObject.m_ObjectType	= TAGMAP_TYPE_INT;
 			localObject.m_StringValue	= "";
 		}
-		else if( encaps.isType( JSOT_NULL ))
+		else if( value.isNull() )
 		{
 			localObject.m_Destroy		= true;
 			localObject.m_IntValue		= 0;
@@ -3803,10 +3811,10 @@ bool CBase_SetTempTag( JSContext *cx, unsigned argc, JS::Value* vp )
 	TAGMAPOBJECT localObject;
 	if( argc == 2 )
 	{
-		JSEncapsulate encaps( cx, &( args.get(1).get()));
-		if( encaps.isType( JSOT_STRING ))
+		JS::HandleValue value = args.get( 1 );
+		if( value.isString() )
 		{			// String value handling
-			const std::string stringVal = encaps.toString();
+			const std::string stringVal = convertToString( cx, value.toString() );
 			if( stringVal == "" )
 			{
 				localObject.m_Destroy		= true;
@@ -3822,9 +3830,9 @@ bool CBase_SetTempTag( JSContext *cx, unsigned argc, JS::Value* vp )
 				localObject.m_ObjectType	= TAGMAP_TYPE_STRING;
 			}
 		}
-		else if( encaps.isType( JSOT_BOOL ))
+		else if( value.isBoolean() )
 		{
-			const bool boolVal = encaps.toBool();
+			const bool boolVal = value.toBoolean();
 			if( !boolVal )
 			{
 				localObject.m_Destroy		= true;
@@ -3838,9 +3846,9 @@ bool CBase_SetTempTag( JSContext *cx, unsigned argc, JS::Value* vp )
 			localObject.m_ObjectType	= TAGMAP_TYPE_BOOL;
 			localObject.m_StringValue	= "";
 		}
-		else if( encaps.isType( JSOT_INT ))
+		else if( value.isInt32() )
 		{
-			const SI32 intVal = encaps.toInt();
+			const SI32 intVal = value.toInt32();
 			if( !intVal )
 			{
 				localObject.m_Destroy		= true;
@@ -3854,7 +3862,7 @@ bool CBase_SetTempTag( JSContext *cx, unsigned argc, JS::Value* vp )
 			localObject.m_ObjectType	= TAGMAP_TYPE_INT;
 			localObject.m_StringValue	= "";
 		}
-		else if( encaps.isType( JSOT_NULL ))
+		else if( value.isNull() )
 		{
 			localObject.m_Destroy		= true;
 			localObject.m_IntValue		= 0;
@@ -4765,8 +4773,7 @@ bool CBase_ResourceCount( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
 	auto  obj = getThis( cx, args );
-	JSEncapsulate myClass( cx, obj );
-	CBaseObject* myObj = static_cast<CBaseObject*>( myClass.toObject() );
+	CBaseObject *myObj = GetBaseObject( obj );
 
 	if( !ValidateObject( myObj ))
 	{
@@ -4802,7 +4809,7 @@ bool CBase_ResourceCount( JSContext *cx, unsigned argc, JS::Value* vp )
 	bool moreCheck = ( moreVal != -1 ? true : false );
 
 	UI32 retVal = 0;
-	if( myClass.ClassName() == "UOXChar" )
+	if( HasWrapperClass( obj, &UOXChar_class ))
 	{
 		CChar *myChar	= static_cast<CChar *>( myObj );
 		retVal = GetItemAmount( myChar, realId, static_cast<UI16>( itemColour ), static_cast<UI32>( moreVal ), colorCheck, moreCheck, sectionId );
@@ -4830,8 +4837,7 @@ bool CBase_UseResource( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
 	auto  obj = getThis( cx, args );
-	JSEncapsulate myClass( cx, obj );
-	CBaseObject *myObj = static_cast<CBaseObject*>( myClass.toObject() );
+	CBaseObject *myObj = GetBaseObject( obj );
 
 	if( !ValidateObject( myObj ))
 	{
@@ -4870,7 +4876,7 @@ bool CBase_UseResource( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	UI32 retVal = 0;
 
-	if( myClass.ClassName() == "UOXChar" )
+	if( HasWrapperClass( obj, &UOXChar_class ))
 	{
 		CChar *myChar	= static_cast<CChar *>( myObj );
 		retVal			= DeleteItemAmount( myChar, amount, realId, static_cast<UI16>( itemColour ), static_cast<UI32>( moreVal ), colorCheck, moreCheck, sectionId );
@@ -4923,7 +4929,6 @@ bool CMisc_CustomTarget( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
 	auto  obj = getThis( cx, args );
-	JSEncapsulate myClass( cx, obj );
 	UI16 scriptID = 0xFFFF;
 
 	if(( argc > 3 ) || ( argc < 1 ))
@@ -4934,10 +4939,10 @@ bool CMisc_CustomTarget( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	CSocket *mySock = nullptr;
 
-	if( myClass.ClassName() == "UOXChar" )
+	if( HasWrapperClass( obj, &UOXChar_class ))
 	{
 		// Character
-		CChar *myChar = static_cast<CChar*>( myClass.toObject() );
+		CChar *myChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
 
 		if( !ValidateObject( myChar ))
 		{
@@ -4947,10 +4952,10 @@ bool CMisc_CustomTarget( JSContext *cx, unsigned argc, JS::Value* vp )
 
 		mySock = myChar->GetSocket();
 	}
-	else if( myClass.ClassName() == "UOXSocket" )
+	else if( HasWrapperClass( obj, &UOXSocket_class ))
 	{
 		// We have a socket here
-		mySock = static_cast<CSocket*>( myClass.toObject() );
+		mySock = GetWrappedObject<CSocket>( obj, &UOXSocket_class );
 	}
 
 	if( mySock == nullptr )
@@ -5014,13 +5019,12 @@ bool CMisc_PopUpTarget( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Either useable with sockets OR characters
-	JSEncapsulate myClass( cx, obj );
 	CSocket *mySock = nullptr;
 
-	if( myClass.ClassName() == "UOXChar" )
+	if( HasWrapperClass( obj, &UOXChar_class ))
 	{
 		// Character
-		CChar *myChar = static_cast<CChar*>( myClass.toObject() );
+		CChar *myChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
 
 		if( !ValidateObject( myChar ))
 		{
@@ -5031,10 +5035,10 @@ bool CMisc_PopUpTarget( JSContext *cx, unsigned argc, JS::Value* vp )
 		mySock = myChar->GetSocket();
 	}
 
-	else if( myClass.ClassName() == "UOXSocket" )
+	else if( HasWrapperClass( obj, &UOXSocket_class ))
 	{
 		// We have a socket here
-		mySock = static_cast<CSocket*>( myClass.toObject() );
+		mySock = GetWrappedObject<CSocket>( obj, &UOXSocket_class );
 	}
 
 	if( mySock == nullptr )
@@ -5240,8 +5244,7 @@ bool CChar_AddSkill( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	auto args = JS::CallArgsFromVp(argc, vp);
 	auto obj = getThis( cx, args );
-	JSEncapsulate myClass( cx, obj );
-	CChar *myChar = static_cast<CChar*>( myClass.toObject() );
+	CChar *myChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
 
 	if( myChar == nullptr )
 	{
@@ -7457,8 +7460,7 @@ bool CBase_ApplySection( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CBaseObject *myObj		= static_cast<CBaseObject*>( myClass.toObject() );
+	CBaseObject *myObj = GetBaseObject( obj );
 	std::string trgSection	= JS_GetStringBytes( cx, args.get(0));
 
 	if( trgSection.empty() || trgSection.length() == 0 )
@@ -7467,7 +7469,7 @@ bool CBase_ApplySection( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( myClass.ClassName() == "UOXItem" )
+	if( HasWrapperClass( obj, &UOXItem_class ))
 	{
 		CItem *myItem = static_cast<CItem*>( myObj );
 		if( !ValidateObject( myItem ))
@@ -7478,7 +7480,7 @@ bool CBase_ApplySection( JSContext *cx, unsigned argc, JS::Value* vp )
 		CScriptSection *toFind = FileLookup->FindEntry( trgSection, items_def );
 		ApplyItemSection( myItem, toFind, trgSection );
 	}
-	else if( myClass.ClassName() == "UOXChar" )
+	else if( HasWrapperClass( obj, &UOXChar_class ))
 	{
 		CChar *myChar = static_cast<CChar*>( myObj );
 		if( !ValidateObject( myChar ))
@@ -7586,11 +7588,7 @@ bool CBase_Refresh( JSContext *cx, unsigned argc, JS::Value* vp )
 			CSocket *mySock = nullptr;
 			if( argc == 1 )
 			{
-				JSEncapsulate myClass( cx, &( args.get(0).get()));
-				if( myClass.ClassName() == "UOXSocket" )
-				{
-					mySock = static_cast<CSocket *>( myClass.toObject() );
-		}
+				mySock = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 	}
 
 			myChar->Update( mySock );
@@ -8356,10 +8354,9 @@ bool CChar_WalkTo( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( args.get(0).isObject() )
 	{	// we can work with this, it should be either a character or item, hopefully
-		JSEncapsulate jsToGoTo( cx, &( args.get(0).get()));
-		if( jsToGoTo.ClassName() == "UOXItem" || jsToGoTo.ClassName() == "UOXChar" )
+		CBaseObject *toGoTo = GetBaseObject( args.get( 0 ));
+		if( toGoTo != nullptr )
 		{
-			CBaseObject *toGoTo = static_cast<CBaseObject *>( jsToGoTo.toObject() );
 			if( !ValidateObject( toGoTo ))
 			{
 				ScriptError( cx, "No object associated with this object" );
@@ -8369,9 +8366,9 @@ bool CChar_WalkTo( JSContext *cx, unsigned argc, JS::Value* vp )
 			gy = toGoTo->GetY();
 			gz = toGoTo->GetZ();
 		}
-		else if( jsToGoTo.ClassName() == "UOXSocket" )
+		else if( HasWrapperClass( args.get( 0 ), &UOXSocket_class ))
 		{
-			CSocket *mySock		= static_cast<CSocket *>( jsToGoTo.toObject() );
+			CSocket *mySock		= GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 			CChar *mySockChar	= mySock->CurrcharObj();
 			gx					= mySockChar->GetX();
 			gy					= mySockChar->GetY();
@@ -8513,10 +8510,9 @@ bool CChar_RunTo( JSContext *cx, unsigned argc, JS::Value* vp )
 	bool ignoreDoors = false;
 	if( args.get(0).isObject() )
 	{
-		JSEncapsulate jsToGoTo( cx, &( args.get(0).get()));
-		if( jsToGoTo.ClassName() == "UOXItem" || jsToGoTo.ClassName() == "UOXChar" )
+		CBaseObject *toGoTo = GetBaseObject( args.get( 0 ));
+		if( toGoTo != nullptr )
 		{
-			CBaseObject *toGoTo = static_cast<CBaseObject *>( jsToGoTo.toObject() );
 			if( !ValidateObject( toGoTo ))
 			{
 				ScriptError( cx, "No object associated with this object" );
@@ -8526,9 +8522,9 @@ bool CChar_RunTo( JSContext *cx, unsigned argc, JS::Value* vp )
 			gy = toGoTo->GetY();
 			gz = toGoTo->GetZ();
 		}
-		else if( jsToGoTo.ClassName() == "UOXSocket" )
+		else if( HasWrapperClass( args.get( 0 ), &UOXSocket_class ))
 		{
-			CSocket *mySock		= static_cast<CSocket *>( jsToGoTo.toObject() );
+			CSocket *mySock		= GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 			CChar *mySockChar	= mySock->CurrcharObj();
 			gx					= mySockChar->GetX();
 			gy					= mySockChar->GetY();
@@ -8653,29 +8649,31 @@ bool CMisc_GetTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "GetTimer: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	JSEncapsulate encaps( cx, &( args.get(0).get()));
-	JSEncapsulate myClass( cx, obj );
-	if( myClass.ClassName() == "UOXChar" )
+	int32_t timerId = 0;
+	if( !JS::ToInt32( cx, args.get( 0 ), &timerId ))
+		return false;
+
+	if( HasWrapperClass( obj, &UOXChar_class ))
 	{
-		CChar *cMove = static_cast<CChar*>( myClass.toObject() );
+		CChar *cMove = GetWrappedObject<CChar>( obj, &UOXChar_class );
 		if( !ValidateObject( cMove ))
 		{
 			ScriptError( cx, "GetTimer: Invalid source character" );
 			return false;
 		}
 
-		args.rval().setNumber( cMove->GetTimer( static_cast<cC_TID>( encaps.toInt() )) );
+		args.rval().setNumber( cMove->GetTimer( static_cast<cC_TID>( timerId )) );
 	}
-	else if( myClass.ClassName() == "UOXSocket" )
+	else if( HasWrapperClass( obj, &UOXSocket_class ))
 	{
-		CSocket *mSock = static_cast<CSocket *>( myClass.toObject() );
+		CSocket *mSock = GetWrappedObject<CSocket>( obj, &UOXSocket_class );
 		if( mSock == nullptr )
 		{
 			ScriptError( cx, "GetTimer: Invalid source socket" );
 			return false;
 		}
 
-		args.rval().setNumber( mSock->GetTimer( static_cast<cS_TID>( encaps.toInt() )) );
+		args.rval().setNumber( mSock->GetTimer( static_cast<cS_TID>( timerId )) );
 	}
 
 	return true;
@@ -8696,8 +8694,9 @@ bool CMisc_SetTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "SetTimer: Invalid number of arguments (takes 2)" );
 		return false;
 	}
-	JSEncapsulate encaps( cx, &( args.get(0).get()));
-	JSEncapsulate myClass( cx, obj );
+	int32_t timerId = 0;
+	if( !JS::ToInt32( cx, args.get( 0 ), &timerId ))
+		return false;
 
 	double timerVal_double;
 	JS::RootedValue rootedValue( cx, args.get(1) );
@@ -8707,27 +8706,27 @@ bool CMisc_SetTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 	{
 		timerVal = BuildTimeValue( static_cast<R64>( timerVal_double ) / 1000.0 );
 	}
-	if( myClass.ClassName() == "UOXChar" )
+	if( HasWrapperClass( obj, &UOXChar_class ))
 	{
-		CChar *cMove = static_cast<CChar*>( myClass.toObject() );
+		CChar *cMove = GetWrappedObject<CChar>( obj, &UOXChar_class );
 		if( !ValidateObject( cMove ))
 		{
 			ScriptError( cx, "SetTimer: Invalid source character" );
 			return false;
 		}
 
-		cMove->SetTimer( static_cast<cC_TID>( encaps.toInt() ), timerVal );
+		cMove->SetTimer( static_cast<cC_TID>( timerId ), timerVal );
 	}
-	else if( myClass.ClassName() == "UOXSocket" )
+	else if( HasWrapperClass( obj, &UOXSocket_class ))
 	{
-		CSocket *mSock = static_cast<CSocket *>( myClass.toObject() );
+		CSocket *mSock = GetWrappedObject<CSocket>( obj, &UOXSocket_class );
 		if( mSock == nullptr )
 		{
 			ScriptError( cx, "SetTimer: Invalid source socket" );
 			return false;
 		}
 
-		mSock->SetTimer( static_cast<cS_TID>( encaps.toInt() ), static_cast<TIMERVAL>( timerVal ));
+		mSock->SetTimer( static_cast<cS_TID>( timerId ), static_cast<TIMERVAL>( timerVal ));
 	}
 
 	return true;
@@ -10840,15 +10839,14 @@ bool CBase_CanSee( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
 	CSocket *mSock		= nullptr;
 	CChar *mChar		= nullptr;
 
 	// Let's validate the person seeing (socket/char)
 
-	if( myClass.ClassName() == "UOXSocket" )
+	if( HasWrapperClass( obj, &UOXSocket_class ))
 	{
-		mSock = static_cast<CSocket *>( myClass.toObject() );
+		mSock = GetWrappedObject<CSocket>( obj, &UOXSocket_class );
 		if( mSock == nullptr )
 		{
 			ScriptError( cx, "CanSee: Passed an invalid Socket" );
@@ -10861,9 +10859,9 @@ bool CBase_CanSee( JSContext *cx, unsigned argc, JS::Value* vp )
 			return false;
 		}
 	}
-	else if( myClass.ClassName() == "UOXChar" )
+	else if( HasWrapperClass( obj, &UOXChar_class ))
 	{
-		mChar = static_cast<CChar *>( myClass.toObject() );
+		mChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
 		if( !ValidateObject( mChar ))
 		{
 			ScriptError( cx, "CanSee: Passed an invalid Character" );
@@ -10880,11 +10878,9 @@ bool CBase_CanSee( JSContext *cx, unsigned argc, JS::Value* vp )
 	SI08 zTop = 0;
 	if( argc == 1 )	// we've been passed an item, character, or socket
 	{
-		JSEncapsulate myClass( cx, &( args.get(0).get()));
-
-		if( myClass.ClassName() == "UOXSocket" )
+		if( HasWrapperClass( args.get( 0 ), &UOXSocket_class ))
 		{
-			CSocket *tSock = static_cast<CSocket *>( myClass.toObject() );
+			CSocket *tSock = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 			if( tSock == nullptr )
 			{
 				ScriptError( cx, "CanSee: Passed an invalid Socket to look at" );
@@ -10907,9 +10903,9 @@ bool CBase_CanSee( JSContext *cx, unsigned argc, JS::Value* vp )
 			y = tChar->GetY();
 			z = tChar->GetZ();
 		}
-		else if( myClass.ClassName() == "UOXChar" || myClass.ClassName() == "UOXItem" )
+		else if( HasWrapperClass( args.get( 0 ), &UOXChar_class ) || HasWrapperClass( args.get( 0 ), &UOXItem_class ))
 		{
-			CBaseObject *tObj = static_cast<CBaseObject *>( myClass.toObject() );
+			CBaseObject *tObj = GetBaseObject( args.get( 0 ));
 			if( !ValidateObject( tObj ))
 			{
 				ScriptError( cx, "CanSee: Object to look at is invalid" );
@@ -10979,24 +10975,24 @@ bool CSocket_DisplayDamage( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
   CSocket *mSock = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
-	JSEncapsulate myClass( cx, &( args.get(0).get()));
-
-	if( myClass.ClassName() != "UOXChar" )	// It must be a character!
+	if( !HasWrapperClass( args.get( 0 ), &UOXChar_class ))	// It must be a character!
 	{
 		ScriptError( cx, "CSocket_DisplayDamage: Passed an invalid Character" );
 		return false;
 	}
 
-	CChar *mChar = static_cast<CChar *>( myClass.toObject() );
+	CChar *mChar = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(CSocket_DisplayDamage): Passed an invalid Character" );
 		return true;
 	}
 
-	JSEncapsulate damage( cx, &( args.get(1).get()));
+	int32_t damage = 0;
+	if( !JS::ToInt32( cx, args.get( 1 ), &damage ))
+		return false;
 
-	CPDisplayDamage dispDamage(( *mChar ), static_cast<UI16>( damage.toInt() ));
+	CPDisplayDamage dispDamage(( *mChar ), static_cast<UI16>( damage ));
 	mSock->Send( &dispDamage );
 
 	return true;
@@ -11026,32 +11022,26 @@ bool CChar_ReactOnDamage( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "(CChar_ReactOnDamage): Operating on an invalid Character" );
 		return true;
 	}
-	JSEncapsulate damage( cx, &( args.get(0).get()));
+	int32_t damage = 0;
+	if( !JS::ToInt32( cx, args.get( 0 ), &damage ))
+		return false;
 
 	if( argc >= 2 )
 	{
-		JSEncapsulate attackerClass( cx, &( args.get(1).get()));
-		if( attackerClass.ClassName() != "UOXChar" ) // It must be a character!
+		if( !HasWrapperClass( args.get( 1 ), &UOXChar_class )) // It must be a character!
 		{
 			ScriptError( cx, "CChar_ReactOnDamage: Passed an invalid Character" );
 			return false;
 		}
 
-		if( attackerClass.isType( JSOT_VOID ) || attackerClass.isType( JSOT_NULL ))
+		attacker = GetWrappedObject<CChar>( args.get( 1 ), &UOXChar_class );
+		if( !ValidateObject( attacker ))
 		{
-			attacker = nullptr;
-		}
-		else
-		{
-			attacker = static_cast<CChar *>( attackerClass.toObject() );
-			if( !ValidateObject( attacker ))
-			{
-				ScriptError( cx, "(CChar_ReactOnDamage): Passed an invalid Character" );
-				return true;
-			}
+			ScriptError( cx, "(CChar_ReactOnDamage): Passed an invalid Character" );
+			return true;
 		}
 	}
-	mChar->ReactOnDamage( static_cast<WeatherType>( damage.toInt() ), attacker );
+	mChar->ReactOnDamage( static_cast<WeatherType>( damage ), attacker );
 	return true;
 }
 
@@ -11082,7 +11072,9 @@ bool CChar_Damage( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "(CChar_Damage): Operating on an invalid Character" );
 		return true;
 	}
-	JSEncapsulate damage( cx, &( args.get(0).get()));
+	int32_t damage = 0;
+	if( !JS::ToInt32( cx, args.get( 0 ), &damage ))
+		return false;
 
 	WeatherType element = PHYSICAL;
 	if( argc >= 2 )
@@ -11092,25 +11084,17 @@ bool CChar_Damage( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( argc >= 3 )
 	{
-		JSEncapsulate attackerClass( cx, &( args.get(2).get()));
-		if( attackerClass.ClassName() != "UOXChar" )	// It must be a character!
+		if( !HasWrapperClass( args.get( 2 ), &UOXChar_class ))	// It must be a character!
 		{
 			ScriptError( cx, "CChar_Damage: Passed an invalid Character" );
 			return false;
 		}
 
-		if( attackerClass.isType( JSOT_VOID ) || attackerClass.isType( JSOT_NULL ))
+		attacker = GetWrappedObject<CChar>( args.get( 2 ), &UOXChar_class );
+		if( !ValidateObject( attacker ))
 		{
-			attacker = nullptr;
-		}
-		else
-		{
-			attacker = static_cast<CChar *>( attackerClass.toObject() );
-			if( !ValidateObject( attacker ))
-			{
-				ScriptError( cx, "(CChar_Damage): Passed an invalid Character" );
-				return true;
-			}
+			ScriptError( cx, "(CChar_Damage): Passed an invalid Character" );
+			return true;
 		}
 	}
 	bool doRepsys = false;
@@ -11119,7 +11103,7 @@ bool CChar_Damage( JSContext *cx, unsigned argc, JS::Value* vp )
 		doRepsys = ( args.get(3).toBoolean() == true );
 	}
 
-	mChar->Damage( damage.toInt(), element, attacker, doRepsys );
+	mChar->Damage( damage, element, attacker, doRepsys );
 	return true;
 }
 
@@ -11598,25 +11582,17 @@ bool CChar_Heal( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( argc == 2 )
 	{
-		JSEncapsulate healerClass( cx, &( args.get(1).get()));
-		if( healerClass.ClassName() != "UOXChar" )	// It must be a character!
+		if( !HasWrapperClass( args.get( 1 ), &UOXChar_class ))	// It must be a character!
 		{
 			ScriptError( cx, "CChar_Heal: Passed an invalid Character" );
 			return false;
 		}
 
-		if( healerClass.isType( JSOT_VOID ) || healerClass.isType( JSOT_NULL ))
+		healer = GetWrappedObject<CChar>( args.get( 1 ), &UOXChar_class );
+		if( !ValidateObject( healer ))
 		{
-			healer = nullptr;
-		}
-		else
-		{
-			healer	= static_cast<CChar *>( healerClass.toObject() );
-			if( !ValidateObject( healer ))
-			{
-				ScriptError( cx, "(CChar_Heal): Passed an invalid Character" );
-				return true;
-			}
+			ScriptError( cx, "(CChar_Heal): Passed an invalid Character" );
+			return true;
 		}
 	}
 
@@ -11650,24 +11626,23 @@ bool CBase_Resist( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
 	CChar *mChar		= nullptr;
 	CItem *mItem		= nullptr;
 
 	// Let's validate the char/item
 
-	if( myClass.ClassName() == "UOXItem" )
+	if( HasWrapperClass( obj, &UOXItem_class ))
 	{
-		mItem	= static_cast<CItem *>( myClass.toObject() );
+		mItem = GetWrappedObject<CItem>( obj, &UOXItem_class );
 		if( !ValidateObject( mItem ))
 		{
 			ScriptError( cx, "Resist: Passed an invalid Item" );
 			return false;
 		}
 	}
-	else if( myClass.ClassName() == "UOXChar" )
+	else if( HasWrapperClass( obj, &UOXChar_class ))
 	{
-		mChar	= static_cast<CChar *>( myClass.toObject() );
+		mChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
 		if( !ValidateObject( mChar ))
 		{
 			ScriptError( cx, "Resist: Passed an invalid Character" );
@@ -11675,17 +11650,19 @@ bool CBase_Resist( JSContext *cx, unsigned argc, JS::Value* vp )
 		}
 	}
 
-	JSEncapsulate resistType( cx, &( args.get(0).get()));
+	int32_t resistType = 0;
+	if( !JS::ToInt32( cx, args.get( 0 ), &resistType ))
+		return false;
 
 	if( argc == 1 )
 	{
 		if( ValidateObject( mChar ))
 		{
-			args.rval().setInt32(  mChar->GetResist( static_cast<WeatherType>( resistType.toInt() )) );
+			args.rval().setInt32(  mChar->GetResist( static_cast<WeatherType>( resistType )) );
 		}
 		else if( ValidateObject( mItem ))
 		{
-			args.rval().setInt32(  mItem->GetResist( static_cast<WeatherType>( resistType.toInt() )) );
+			args.rval().setInt32(  mItem->GetResist( static_cast<WeatherType>( resistType )) );
 		}
 		else
 		{
@@ -11695,14 +11672,17 @@ bool CBase_Resist( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( argc == 2 )
 	{
 		args.rval().setBoolean( true );
-		JSEncapsulate value( cx, &( args.get(1).get()));
+		int32_t value = 0;
+		if( !JS::ToInt32( cx, args.get( 1 ), &value ))
+			return false;
+
 		if( ValidateObject( mChar ))
 		{
-			mChar->SetResist( static_cast<UI16>( value.toInt() ), static_cast<WeatherType>( resistType.toInt() ));
+			mChar->SetResist( static_cast<UI16>( value ), static_cast<WeatherType>( resistType ));
 		}
 		else if( ValidateObject( mItem ))
 		{
-			mItem->SetResist( static_cast<UI16>( value.toInt() ), static_cast<WeatherType>( resistType.toInt() ));
+			mItem->SetResist( static_cast<UI16>( value ), static_cast<WeatherType>( resistType ));
 		}
 		else
 		{
@@ -11739,32 +11719,25 @@ bool CChar_Defense( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CChar *mChar = nullptr;
-
-	// Let's validate the char
-	if( myClass.ClassName() == "UOXChar" )
-	{
-		mChar	= static_cast<CChar *>( myClass.toObject() );
-		if( !ValidateObject( mChar ))
-		{
-			ScriptError( cx, "Defense: Passed an invalid Character" );
-			return false;
-		}
-	}
-	else
+	CChar *mChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "Defense: Passed an invalid Character" );
 		return false;
 	}
 
-	JSEncapsulate hitLoc( cx, &( args.get(0).get()));
-	JSEncapsulate resistType( cx, &( args.get(1).get()));
-	JSEncapsulate doArmorDamage( cx, &( args.get(2).get()));
+	int32_t hitLoc = 0;
+	int32_t resistType = 0;
+	if( !JS::ToInt32( cx, args.get( 0 ), &hitLoc ) ||
+		!JS::ToInt32( cx, args.get( 1 ), &resistType ))
+	{
+		return false;
+	}
+	bool doArmorDamage = JS::ToBoolean( args.get( 2 ));
 	bool excludeMedableArmor = ( argc == 4 ? ( args.get(3).toBoolean() == true ) : false );
 	bool includeShield = ( argc == 5 ? ( args.get(4).toBoolean() == true ) : false );
 
-	args.rval().setInt32(  Combat->CalcDef( mChar, static_cast<UI08>( hitLoc.toInt() ), doArmorDamage.toBool(), static_cast<WeatherType>( resistType.toInt() ), excludeMedableArmor, includeShield ) );
+	args.rval().setInt32(  Combat->CalcDef( mChar, static_cast<UI08>( hitLoc ), doArmorDamage, static_cast<WeatherType>( resistType ), excludeMedableArmor, includeShield ) );
 	return true;
 }
 
@@ -11787,20 +11760,8 @@ bool CItem_GetMoreVar( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CItem *mItem = nullptr;
-
-	// Let's validate the item
-	if( myClass.ClassName() == "UOXItem" )
-	{
-		mItem	= static_cast<CItem *>( myClass.toObject() );
-		if( !ValidateObject( mItem ))
-		{
-			ScriptError( cx, "GetMoreVar: Passed an invalid Item" );
-			return false;
-		}
-	}
-	else
+	CItem *mItem = GetWrappedObject<CItem>( obj, &UOXItem_class );
+	if( !ValidateObject( mItem ))
 	{
 		ScriptError( cx, "GetMoreVar: Passed an invalid Item" );
 		return false;
@@ -11869,20 +11830,8 @@ bool CItem_SetMoreVar( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CItem *mItem = nullptr;
-
-	// Let's validate the item
-	if( myClass.ClassName() == "UOXItem" )
-	{
-		mItem = static_cast<CItem *>( myClass.toObject() );
-		if( !ValidateObject( mItem ))
-		{
-			ScriptError( cx, "SetMoreVar: Passed an invalid Item" );
-			return false;
-		}
-	}
-	else
+	CItem *mItem = GetWrappedObject<CItem>( obj, &UOXItem_class );
+	if( !ValidateObject( mItem ))
 	{
 		ScriptError( cx, "SetMoreVar: Passed an invalid Item" );
 		return false;
