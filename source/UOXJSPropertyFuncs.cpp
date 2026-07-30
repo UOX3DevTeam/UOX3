@@ -52,18 +52,24 @@ FDCLS( CBaseObject, attr )                                                \
 IMPL_BASE_INT_SET( x,      SI16, item->SetLocation( value, item->GetY(), item->GetZ() ) )
 IMPL_BASE_INT_SET( y,      SI16, item->SetLocation( item->GetX(), value, item->GetZ() ) )
 IMPL_BASE_INT_SET( z,      SI08, item->SetZ( value ) )
+IMPL_BASE_INT_SET( id,     UI16, item->SetId( value ) )
 IMPL_BASE_INT_SET( colour, UI16, item->SetColour( value ) )
 IMPL_BASE_INT_SET( color,  UI16, item->SetColour( value ) )
 IMPL_BASE_INT_SET( skin,   UI16, item->SetColour( value ) )
 IMPL_BASE_INT_SET( hue,    UI16, item->SetColour( value ) )
 
+IMPL_GETS_OBJ( CBaseObject, sectionID, CBaseObject, setString, GetSectionId().c_str() )
+IMPL_SETS(    CBaseObject, sectionID, CBaseObject, toString,  SetSectionId )
 IMPL_GET_OBJ( CBaseObject, x,      CBaseObject, setInt32, GetX() )
 IMPL_GET_OBJ( CBaseObject, y,      CBaseObject, setInt32, GetY() )
 IMPL_GET_OBJ( CBaseObject, z,      CBaseObject, setInt32, GetZ() )
+IMPL_GET_OBJ( CBaseObject, id,     CBaseObject, setInt32, GetId() )
+IMPL_GET_OBJ( CBaseObject, serial, CBaseObject, setNumber, GetSerial() )
 IMPL_GET_OBJ( CBaseObject, colour, CBaseObject, setInt32, GetColour() )
 IMPL_GET_OBJ( CBaseObject, color,  CBaseObject, setInt32, GetColour() )
 IMPL_GET_OBJ( CBaseObject, skin,   CBaseObject, setInt32, GetColour() )
 IMPL_GET_OBJ( CBaseObject, hue,    CBaseObject, setInt32, GetColour() )
+FDCLS( CBaseObject, serial ) { return true; }
 
 // Direct mozjs accessors for the fully migrated CSpell property family.
 FDCLG( CSpell, id )
@@ -279,19 +285,15 @@ FDCLG( CCreateEntry, skills )
 	return true;
 }
 
-IMPL_GETS_OBJ( CItem, sectionID, CItem, setString, GetSectionId().c_str() )
 IMPL_GETS_OBJ( CItem, name, CItem, setString, GetName().c_str() )
 IMPL_GETS_OBJ( CItem, title, CItem, setString, GetTitle().c_str() )
-IMPL_GET_OBJ( CItem, id, CItem, setInt32, GetId() )
 IMPL_GET_OBJ( CItem, visible, CItem, setInt32, GetVisible() )
-IMPL_GET_OBJ( CItem, serial, CItem, setNumber, GetSerial() )
 IMPL_GET_OBJ( CItem, health, CItem, setInt32, GetHP() )
 IMPL_GET_OBJ( CItem, worldnumber, CItem, setInt32, WorldNumber() )
 IMPL_GET_OBJ( CItem, worldNumber, CItem, setInt32, WorldNumber() )
 IMPL_GET_OBJ( CItem, instanceID, CItem, setInt32, GetInstanceId() )
 IMPL_GET_OBJ( CItem, amount, CItem, setInt32, GetAmount() )
 IMPL_GET_OBJ( CItem, type, CItem, setInt32, GetType() )
-IMPL_SETS( CItem, sectionID, CItem, toString, SetSectionId )
 IMPL_SETS( CItem, name, CItem, toString, SetName )
 
 #define IMPL_ITEM_INT_SET( attr, typeName, statement )                    \
@@ -305,7 +307,6 @@ FDCLS( CItem, attr )                                                      \
 	return true;                                                            \
 }
 
-IMPL_ITEM_INT_SET( id, UI16, item->SetId( value ))
 IMPL_ITEM_INT_SET( visible, VisibleTypes, item->SetVisible( value ))
 IMPL_ITEM_INT_SET( health, SI16, item->SetHP( value ))
 IMPL_ITEM_INT_SET( worldnumber, UI08, item->SetLocation( item->GetX(), item->GetY(), item->GetZ(), value, item->GetInstanceId() ))
@@ -316,7 +317,6 @@ IMPL_ITEM_INT_SET( type, ItemTypes, item->SetType( value ))
 
 #undef IMPL_ITEM_INT_SET
 
-FDCLS( CItem, serial ) { return true; }
 FDCLS( CItem, title ) { return true; }
 
 FDCLS( CItem, owner )
@@ -1041,7 +1041,6 @@ FDCLS( CCharacter, attr )                                                  \
 	character->accessor( convertToString( cx, value ));                       \
 	return true;                                                             \
 }
-CHARACTER_CORE_STRING_SET( sectionID, SetSectionId )
 CHARACTER_CORE_STRING_SET( name, SetName )
 CHARACTER_CORE_STRING_SET( origName, SetOrgName )
 CHARACTER_CORE_STRING_SET( title, SetTitle )
@@ -1058,7 +1057,6 @@ FDCLS( CCharacter, attr )                                                   \
 	statement;                                                                 \
 	return true;                                                               \
 }
-CHARACTER_CORE_INT_SET( id, UI16, character->SetId( value ))
 CHARACTER_CORE_INT_SET( controlSlots, UI16, character->SetControlSlots( value ))
 CHARACTER_CORE_INT_SET( controlSlotsUsed, UI16, character->SetControlSlotsUsed( value ))
 CHARACTER_CORE_INT_SET( orneriness, UI16, character->SetOrneriness( value ))
@@ -1069,7 +1067,6 @@ CHARACTER_CORE_INT_SET( health, SI16, character->SetHP( value ))
 FDCLS( CCharacter, oldX ) { return true; }
 FDCLS( CCharacter, oldY ) { return true; }
 FDCLS( CCharacter, oldZ ) { return true; }
-FDCLS( CCharacter, serial ) { return true; }
 FDCLS( CCharacter, worldnumber )
 {
 	FNARGS
@@ -1107,19 +1104,16 @@ FDCLG( CCharacter, attr )                                                 \
 	args.rval().setString( value );                                         \
 	return true;                                                            \
 }
-CHARACTER_STRING_GET( sectionID, character->GetSectionId() )
 CHARACTER_STRING_GET( name, oldstrutil::stringToWstringToString( GetNpcDictName( character, nullptr, NRS_SCRIPT )))
 CHARACTER_STRING_GET( origName, oldstrutil::stringToWstringToString( character->GetOrgName() ))
 CHARACTER_STRING_GET( title, character->GetTitle() )
 #undef CHARACTER_STRING_GET
 
 #define CHARACTER_CORE_GET( attr, method, expression ) IMPL_GET_OBJ( CCharacter, attr, CChar, method, expression )
-CHARACTER_CORE_GET( id, setInt32, GetId() )
 CHARACTER_CORE_GET( controlSlots, setInt32, GetControlSlots() )
 CHARACTER_CORE_GET( controlSlotsUsed, setInt32, GetControlSlotsUsed() )
 CHARACTER_CORE_GET( orneriness, setInt32, GetOrneriness() )
 CHARACTER_CORE_GET( visible, setInt32, GetVisible() )
-CHARACTER_CORE_GET( serial, setNumber, GetSerial() )
 CHARACTER_CORE_GET( health, setInt32, GetHP() )
 CHARACTER_CORE_GET( worldnumber, setInt32, WorldNumber() )
 CHARACTER_CORE_GET( instanceID, setInt32, GetInstanceId() )

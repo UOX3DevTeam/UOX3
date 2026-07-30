@@ -322,9 +322,12 @@ DECL_GET_SET( CGuild, type )
 DECL_GET_SET( CGuild, webPage )
 
 // Base Object properties
+DECL_GET_SET( CBaseObject, sectionID )
 DECL_GET_SET( CBaseObject, x )
 DECL_GET_SET( CBaseObject, y )
 DECL_GET_SET( CBaseObject, z )
+DECL_GET_SET( CBaseObject, id )
+DECL_GET_SET( CBaseObject, serial )
 DECL_GET_SET( CBaseObject, color )
 DECL_GET_SET( CBaseObject, colour )
 DECL_GET_SET( CBaseObject, hue )
@@ -402,7 +405,6 @@ DECL_GET_SET( CCharacter, housesOwned )
 DECL_GET_SET( CCharacter, hunger )
 DECL_GET_SET( CCharacter, hungerRate )
 DECL_GET_SET( CCharacter, hungerWildChance )
-DECL_GET_SET( CCharacter, id )
 DECL_GET_SET( CCharacter, innocent )
 DECL_GET_SET( CCharacter, instanceID )
 DECL_GET_SET( CCharacter, intelligence )
@@ -485,8 +487,6 @@ DECL_GET_SET( CCharacter, region )
 DECL_GET_SET( CCharacter, sayColour )
 DECL_GET_SET( CCharacter, scripttrigger )
 DECL_GET_SET( CCharacter, scriptTriggers )
-DECL_GET_SET( CCharacter, sectionID )
-DECL_GET_SET( CCharacter, serial )
 DECL_GET_SET( CCharacter, setPeace )
 DECL_GET_SET( CCharacter, shouldSave )
 DECL_GET_SET( CCharacter, singClickSer )
@@ -609,7 +609,6 @@ DECL_GET_SET( CItem, hitChance )
 DECL_GET_SET( CItem, staminaRegenBonus )
 DECL_GET_SET( CItem, manaRegenBonus )
 DECL_GET_SET( CItem, hidamage )
-DECL_GET_SET( CItem, id )
 DECL_GET_SET( CItem, instanceID )
 DECL_GET_SET( CItem, intelligence )
 DECL_GET_SET( CItem, isChar )
@@ -691,10 +690,8 @@ DECL_GET_SET( CItem, restock )
 DECL_GET_SET( CItem, scripttrigger )
 DECL_GET_SET( CItem, scriptTriggers )
 DECL_GET_SET( CItem, sectionalist )
-DECL_GET_SET( CItem, sectionID )
 DECL_GET_SET( CItem, secureContainers )
 DECL_GET_SET( CItem, sellvalue )
-DECL_GET_SET( CItem, serial )
 DECL_GET_SET( CItem, shouldSave )
 DECL_GET_SET( CItem, spawnsection )
 DECL_GET_SET( CItem, spawnSerial )
@@ -1131,9 +1128,12 @@ inline JSPropertySpec CGuildProperties[] =
 
 inline JSPropertySpec CBaseObjectProps[] =
 {
+  UX_PSGS( CBaseObject, sectionID,             JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, x,                     JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, y,                     JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, z,                     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, id,                    JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, serial,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, colour,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, color,                 JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, skin,                  JSPROP_ENUMANDPERM ),
@@ -1144,20 +1144,17 @@ inline JSPropertySpec CBaseObjectProps[] =
 // clang-format off
 inline JSPropertySpec CCharacterProps[] =
 {
-  UX_PSGS( CCharacter, sectionID,             JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, name,                  JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, origName,              JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, title,                 JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, oldX,                  JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, oldY,                  JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, oldZ,                  JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, id,                    JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, controlSlots,          JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, controlSlotsUsed,      JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, orneriness,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, owner,                 JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, visible,               JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, serial,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, health,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, scripttrigger,         JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, scriptTriggers,        JSPROP_ENUMANDPERM ),
@@ -1356,16 +1353,13 @@ inline JSPropertySpec CCharacterProps[] =
 // clang-format off
 inline JSPropertySpec CItemProps[] =
 {
-  UX_PSGS( CItem, sectionID,           JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, name,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, title,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, oldX,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, oldY,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, oldZ,                JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, id,                  JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, owner,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, visible,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, serial,              JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, health,              JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, scripttrigger,       JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, scriptTriggers,      JSPROP_ENUMANDPERM ),
