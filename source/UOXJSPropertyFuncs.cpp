@@ -533,7 +533,7 @@ FDCLS( CItem, spawnsection )
 	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );
 	JS::RootedString value( cx, JS::ToString( cx, args.get( 0 )));
 	if( value == nullptr ) return false;
-	if( item->GetObjType() == OT_SPAWNER ) static_cast<CSpawnItem *>( item )->SetSpawnSection( convertToString( cx, value ));
+	if( item->GetObjType() == OT_SPAWNER ) static_cast<CSpawnItem *>( item )->SetSpawnSection( JSStringToString( cx, value ));
 	return true;
 }
 FDCLS( CItem, sectionalist ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); if( item->GetObjType() == OT_SPAWNER ) static_cast<CSpawnItem *>( item )->IsSectionAList( JS::ToBoolean( args.get( 0 ))); return true; }
@@ -609,7 +609,7 @@ ITEM_MULTI_INT_SET( banX, SI16, SetBanX )
 ITEM_MULTI_INT_SET( banY, SI16, SetBanY )
 #undef ITEM_MULTI_INT_SET
 
-FDCLS( CItem, deed ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); JS::RootedString value( cx, JS::ToString( cx, args.get( 0 ))); if( value == nullptr ) return false; if( item->GetObjType() == OT_MULTI ) static_cast<CMultiObj *>( item )->SetDeed( convertToString( cx, value )); return true; }
+FDCLS( CItem, deed ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); JS::RootedString value( cx, JS::ToString( cx, args.get( 0 ))); if( value == nullptr ) return false; if( item->GetObjType() == OT_MULTI ) static_cast<CMultiObj *>( item )->SetDeed( JSStringToString( cx, value )); return true; }
 FDCLS( CItem, isPublic ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); if( item->GetObjType() == OT_MULTI ) static_cast<CMultiObj *>( item )->SetPublicStatus( JS::ToBoolean( args.get( 0 ))); return true; }
 FDCLS( CItem, buildTimestamp ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); if( item->GetObjType() == OT_MULTI ) static_cast<CMultiObj *>( item )->SetBuildTimestamp( std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() )); return true; }
 FDCLS( CItem, tradeTimestamp ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); if( item->GetObjType() == OT_MULTI ) static_cast<CMultiObj *>( item )->SetTradeTimestamp( std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() )); return true; }
@@ -716,7 +716,7 @@ FDCLS( CItem, attr )                                                       \
 	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );        \
 	JS::RootedString value( cx, JS::ToString( cx, args.get( 0 )));           \
 	if( value == nullptr ) return false;                                     \
-	item->accessor( convertToString( cx, value ));                            \
+	item->accessor( JSStringToString( cx, value ));                           \
 	return true;                                                             \
 }
 ITEM_STATE_STRING_SET( name2, SetName2 )
@@ -767,7 +767,7 @@ static bool SetItemTempVariable( JSContext *cx, CItem *item, CITempVars variable
 {
 	JS::RootedString converted( cx, JS::ToString( cx, input ));
 	if( converted == nullptr ) return false;
-	auto text = oldstrutil::trim( oldstrutil::removeTrailing( convertToString( cx, converted ), "//" ));
+	auto text = oldstrutil::trim( oldstrutil::removeTrailing( JSStringToString( cx, converted ), "//" ));
 	auto sections = oldstrutil::sections( text, " " );
 	if( sections.size() >= 4 )
 	{
@@ -1053,8 +1053,8 @@ FDCLS( CItem, att ) { return true; }
 FDCLS( CItem, itemsinside ) { return true; }
 FDCLS( CItem, totalItemCount ) { return true; }
 FDCLS( CItem, divinelock ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); item->SetDivineLock( JS::ToBoolean( args.get( 0 ))); return true; }
-FDCLS( CItem, event ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); JS::RootedString value( cx, JS::ToString( cx, args.get( 0 ))); if( value == nullptr ) return false; item->SetEvent( convertToString( cx, value )); return true; }
-FDCLS( CItem, origin ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); JS::RootedString value( cx, JS::ToString( cx, args.get( 0 ))); if( value == nullptr ) return false; item->SetOrigin( cwmWorldState->ServerData()->EraStringToEnum( convertToString( cx, value ))); return true; }
+FDCLS( CItem, event ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); JS::RootedString value( cx, JS::ToString( cx, args.get( 0 ))); if( value == nullptr ) return false; item->SetEvent( JSStringToString( cx, value )); return true; }
+FDCLS( CItem, origin ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); JS::RootedString value( cx, JS::ToString( cx, args.get( 0 ))); if( value == nullptr ) return false; item->SetOrigin( cwmWorldState->ServerData()->EraStringToEnum( JSStringToString( cx, value ))); return true; }
 FDCLS( CItem, moveType ) { FNARGS auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 ); int32_t value = 0; if( !JS::ToInt32( cx, args.get( 0 ), &value )) return false; if( item->GetObjType() == OT_BOAT ) static_cast<CBoatObj *>( item )->SetMoveType( static_cast<SI08>( value )); return true; }
 
 #define CHARACTER_CORE_STRING_SET( attr, accessor )                       \
@@ -1064,7 +1064,7 @@ FDCLS( CCharacter, attr )                                                  \
 	auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );   \
 	JS::RootedString value( cx, JS::ToString( cx, args.get( 0 )));           \
 	if( value == nullptr ) return false;                                     \
-	character->accessor( convertToString( cx, value ));                       \
+	character->accessor( JSStringToString( cx, value ));                      \
 	return true;                                                             \
 }
 CHARACTER_CORE_STRING_SET( name, SetName )
@@ -1460,7 +1460,7 @@ CHARACTER_COMBAT_BOOL_SET( atWar, character->SetWar( value ); Movement->CombatWa
 #undef CHARACTER_COMBAT_BOOL_SET
 
 FDCLS( CCharacter, flag ) { return true; }
-FDCLS( CCharacter, guildTitle ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); JS::RootedString value( cx, JS::ToString( cx, args.get( 0 ))); if( value == nullptr ) return false; character->SetGuildTitle( convertToString( cx, value )); return true; }
+FDCLS( CCharacter, guildTitle ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); JS::RootedString value( cx, JS::ToString( cx, args.get( 0 ))); if( value == nullptr ) return false; character->SetGuildTitle( JSStringToString( cx, value )); return true; }
 FDCLS( CCharacter, attacker ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); if( args.get( 0 ).isNullOrUndefined() ) { character->SetAttacker( nullptr ); return true; } if( !args.get( 0 ).isObject() ) return true; auto attacker = JS::GetMaybePtrFromReservedSlot<CChar>( &args.get( 0 ).toObject(), 0 ); if( ValidateObject( attacker )) character->SetAttacker( attacker ); return true; }
 
 #define CHARACTER_COMBAT_GET( attr, method, expression ) IMPL_GET_OBJ( CCharacter, attr, CChar, method, expression )
@@ -1552,7 +1552,7 @@ CHARACTER_AI_BOOL_SET( isMeditating, character->SetMeditating( value ))
 #undef CHARACTER_AI_INT_SET
 #undef CHARACTER_AI_BOOL_SET
 FDCLS( CCharacter, isJailed ) { return true; }
-FDCLS( CCharacter, foodList ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); JS::RootedString value( cx, JS::ToString( cx, args.get( 0 ))); if( value == nullptr ) return false; character->SetFood( convertToString( cx, value )); return true; }
+FDCLS( CCharacter, foodList ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); JS::RootedString value( cx, JS::ToString( cx, args.get( 0 ))); if( value == nullptr ) return false; character->SetFood( JSStringToString( cx, value )); return true; }
 
 IMPL_GET_OBJ( CCharacter, aitype, CChar, setInt32, GetNpcAiType() )
 IMPL_GET_OBJ( CCharacter, split, CChar, setInt32, GetSplit() )
@@ -1624,7 +1624,7 @@ FDCLS( CCharacter, createdOn ) { return true; }
 FDCLS( CCharacter, playTime ) { return true; }
 FDCLS( CCharacter, housesOwned ) { return true; }
 FDCLS( CCharacter, housesCoOwned ) { return true; }
-FDCLS( CCharacter, origin ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); JS::RootedString value( cx, JS::ToString( cx, args.get( 0 ))); if( value == nullptr ) return false; character->SetOrigin( cwmWorldState->ServerData()->EraStringToEnum( convertToString( cx, value ))); return true; }
+FDCLS( CCharacter, origin ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); JS::RootedString value( cx, JS::ToString( cx, args.get( 0 ))); if( value == nullptr ) return false; character->SetOrigin( cwmWorldState->ServerData()->EraStringToEnum( JSStringToString( cx, value ))); return true; }
 FDCLS( CCharacter, gender ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); int32_t value = 0; if( !JS::ToInt32( cx, args.get( 0 ), &value )) return false; static const UI16 living[] = { 0x0190, 0x0191, 0x025D, 0x025E, 0x029A, 0x029B }; static const UI16 dead[] = { 0x0192, 0x0193, 0x025F, 0x0260, 0x02B6, 0x02B7 }; if( value >= 0 && value < 6 ) character->SetId( character->IsDead() ? dead[value] : living[value] ); return true; }
 FDCLS( CCharacter, isShop ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); if( JS::ToBoolean( args.get( 0 ))) { MakeShop( character ); } else { character->SetShop( false ); for( UI08 i = IL_SELLCONTAINER; i <= IL_BUYCONTAINER; ++i ) { auto pack = character->GetItemAtLayer( static_cast<ItemLayers>( i )); if( ValidateObject( pack )) pack->Delete(); } character->Update(); } return true; }
 
@@ -2122,7 +2122,7 @@ static bool SetSkillValue( JSContext *cx, unsigned int argc, JS::Value *vp, UI08
 	if( value.isString() )
 	{
 		JS::RootedString stringValue( cx, value.toString() );
-		boolValue = oldstrutil::upper( convertToString( cx, stringValue )) == "TRUE";
+		boolValue = oldstrutil::upper( JSStringToString( cx, stringValue )) == "TRUE";
 	}
 	const JSClass *skillClass = JS::GetClass( thisObj );
 	UI08 firstSkill = skillId == ALLSKILLS ? 0 : skillId;
@@ -2274,7 +2274,7 @@ FDCLS( CAccount, password )
 	JS::RootedString passwordValue( cx, JS::ToString( cx, args.get( 0 )));
 	if( passwordValue == nullptr )
 		return false;
-	const std::string password = convertToString( cx, passwordValue );
+	const std::string password = JSStringToString( cx, passwordValue );
 	if( password.length() <= 3 )
 		return false;
 	account->sPassword = password;

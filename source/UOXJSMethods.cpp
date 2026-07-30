@@ -124,7 +124,7 @@ std::string ConsoleValueToString( JSContext *cx, JS::HandleValue value )
 	if( value.isBoolean() )
 		return value.toBoolean() ? "TRUE" : "FALSE";
 	if( value.isString() )
-		return convertToString( cx, value.toString() );
+		return JSStringToString( cx, value.toString() );
 
 	return {};
 }
@@ -141,7 +141,7 @@ bool ConsoleValueToBool( JSContext *cx, JS::HandleValue value )
 	if( value.isBoolean() )
 		return value.toBoolean();
 	if( value.isString() )
-		return oldstrutil::upper( convertToString( cx, value.toString() )) == "TRUE";
+		return oldstrutil::upper( JSStringToString( cx, value.toString() )) == "TRUE";
 
 	return false;
 }
@@ -158,7 +158,7 @@ SI32 ConsoleValueToInt( JSContext *cx, JS::HandleValue value )
 	if( value.isBoolean() )
 		return value.toBoolean() ? 1 : 0;
 	if( value.isString() )
-		return std::stoi( convertToString( cx, value.toString() ), nullptr, 0 );
+		return std::stoi( JSStringToString( cx, value.toString() ), nullptr, 0 );
 
 	return 0;
 }
@@ -3658,7 +3658,7 @@ bool CBase_SetTag( JSContext *cx, unsigned argc, JS::Value* vp )
 		JS::HandleValue value = args.get( 1 );
 		if( value.isString() )
 		{			// String value handling
-			const std::string stringVal = convertToString( cx, value.toString() );
+			const std::string stringVal = JSStringToString( cx, value.toString() );
 			if( stringVal == "" )
 			{
 				localObject.m_Destroy		= true;
@@ -3804,7 +3804,7 @@ bool CBase_SetTempTag( JSContext *cx, unsigned argc, JS::Value* vp )
 		JS::HandleValue value = args.get( 1 );
 		if( value.isString() )
 		{			// String value handling
-			const std::string stringVal = convertToString( cx, value.toString() );
+			const std::string stringVal = JSStringToString( cx, value.toString() );
 			if( stringVal == "" )
 			{
 				localObject.m_Destroy		= true;

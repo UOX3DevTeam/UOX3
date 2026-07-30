@@ -188,6 +188,8 @@ add_executable(uox3
    ../../source/UOXJSPropertyFuncs.cpp
    ../../source/UOXJSPropertyFuncs.h
    ../../source/UOXJSPropertySpecs.h
+   ../../source/UOXJSUtilities.cpp
+   ../../source/UOXJSUtilities.h
 # Network group
    ../../source/CPacketReceive.cpp  
    ../../source/CPacketReceive.h

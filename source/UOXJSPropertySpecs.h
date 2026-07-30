@@ -11,6 +11,7 @@
 
 #include <js/PropertySpec.h>
 
+#include "UOXJSUtilities.h"
 #include "UOXJSPropertyEnums.h"
 #include "enums.h"
 
@@ -102,7 +103,7 @@ FDCLS( main, attr ) {                                    \
   auto priv         = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0);                                         \
   JS::RootedString converted(cx, JS::ToString(cx, args.get(0)));                                                 \
   if( converted == nullptr ) return false;                                                                       \
-  priv->accessor(convertToString(cx, converted));                                                                \
+  priv->accessor(JSStringToString(cx, converted));                                                               \
   return true;                                                                                                   \
 }
 
@@ -112,7 +113,7 @@ FDCLS( main, attr ) {                                    \
   auto priv         = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0);                                         \
   JS::RootedString converted(cx, JS::ToString(cx, args.get(0)));                                                 \
   if( converted == nullptr ) return false;                                                                       \
-  priv->accessor    = convertToString(cx, converted);                                                            \
+  priv->accessor    = JSStringToString(cx, converted);                                                           \
   return true;                                                                                                   \
 }
 

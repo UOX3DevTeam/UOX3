@@ -8,14 +8,9 @@
 #ifndef __UOXJSClasses__
 #define __UOXJSClasses__
 
-#include <string>
-
 #include "UOXJSPropertyFuncs.h"
-#include <js/CharacterEncoding.h>
 #include <js/Class.h>
 #include <js/GlobalObject.h>
-#include <js/RootingAPI.h>
-#include <js/String.h>
 
 static constexpr JSClassOps classOpsWithFinalize = {
     nullptr,  // addProperty
@@ -261,31 +256,5 @@ inline JSClass UOXParty_class =
 	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
-
-inline std::string convertToString(JSContext *cx, JSString *string)
- {
-  // Ensure the JSString is rooted to prevent it from being garbage collected
-  JS::Rooted<JSString*> rootedStr(cx, string);
-  
-  // Encode the JSString to ASCII
-  JS::UniqueChars asciiChars = JS_EncodeStringToASCII(cx, rootedStr);
-  if (!asciiChars) {
-    // Handle encoding error
-    return "";
-  }
-  
-  // Convert the encoded C string to std::string
-  return std::string(asciiChars.get());
-}
-
-inline JSString* convertFromString(JSContext* cx, const std::string& value) {
-  JSString* jsStr = JS_NewStringCopyZ(cx, value.c_str());
-  if (!jsStr) {
-    // Handle error (e.g., out of memory)
-    // This could involve throwing an exception, logging an error, etc.
-    return nullptr;
-  }
-  return jsStr;
-}
 
 #endif
