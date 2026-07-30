@@ -36,6 +36,7 @@
 #include "CPacketSend.h"
 #include <js/Object.h>
 #include <js/Array.h>
+#include <js/Conversions.h>
 
 namespace
 {
@@ -1303,21 +1304,21 @@ bool SE_GetRandomSOSArea( JSContext *cx, unsigned int argc, JS::Value *vp )
 	auto rndSosLoc = validSOSLocs[RandomNum( static_cast<size_t>( 0 ), validSOSLocs.size() - 1 )];
 
 	// Convert properties of chosen SOS area to jsvals, so we can pass them to a JSObject
-	JS::Value jsX1			= JS::Int32Value( rndSosLoc.x1 );
-	JS::Value jsY1			= JS::Int32Value( rndSosLoc.y1 );
-	JS::Value jsX2			= JS::Int32Value( rndSosLoc.x2 );
-	JS::Value jsY2			= JS::Int32Value( rndSosLoc.y2 );
-	JS::Value jsWorldNum	= JS::Int32Value( rndSosLoc.worldNum );
-	JS::Value jsInstanceId	= JS::Int32Value( rndSosLoc.instanceId );
+	JS::RootedValue jsX1( cx, JS::Int32Value( rndSosLoc.x1 ));
+	JS::RootedValue jsY1( cx, JS::Int32Value( rndSosLoc.y1 ));
+	JS::RootedValue jsX2( cx, JS::Int32Value( rndSosLoc.x2 ));
+	JS::RootedValue jsY2( cx, JS::Int32Value( rndSosLoc.y2 ));
+	JS::RootedValue jsWorldNum( cx, JS::Int32Value( rndSosLoc.worldNum ));
+	JS::RootedValue jsInstanceId( cx, JS::Int32Value( rndSosLoc.instanceId ));
 
 	// Construct a JS Object with the properties of the chosen SOS area
-	JSObject *rndSosLocObj = JS::NewArrayObject( cx, 0 );
-	JS_SetElement( cx, rndSosLocObj, 0, &jsX1 );
-	JS_SetElement( cx, rndSosLocObj, 1, &jsY1 );
-	JS_SetElement( cx, rndSosLocObj, 2, &jsX2 );
-	JS_SetElement( cx, rndSosLocObj, 3, &jsY2 );
-	JS_SetElement( cx, rndSosLocObj, 4, &jsWorldNum );
-	JS_SetElement( cx, rndSosLocObj, 5, &jsInstanceId );
+	JS::RootedObject rndSosLocObj( cx, JS::NewArrayObject( cx, 0 ));
+	JS_SetElement( cx, rndSosLocObj, 0, jsX1 );
+	JS_SetElement( cx, rndSosLocObj, 1, jsY1 );
+	JS_SetElement( cx, rndSosLocObj, 2, jsX2 );
+	JS_SetElement( cx, rndSosLocObj, 3, jsY2 );
+	JS_SetElement( cx, rndSosLocObj, 4, jsWorldNum );
+	JS_SetElement( cx, rndSosLocObj, 5, jsInstanceId );
 
 	// Pass the JS object to script
 	args.rval().setObjectOrNull( rndSosLocObj );
@@ -4041,15 +4042,15 @@ bool SE_GetSpawnRegions( JSContext *cx, unsigned int argc, JS::Value *vp )
 	if( !regions.empty() )
 	{
 		// Create a new JS array to store spawn regions
-		JSObject *spawnRegs = JS::NewArrayObject( cx, 0 );
+		JS::RootedObject spawnRegs( cx, JS::NewArrayObject( cx, 0 ));
 		int regionCount = 0;
 
 		// Iterate over each spawn region to find all matching regions
 		for( auto const& spawnReg : regions )
 		{
 			JSObject *myObj = JSEngine->AcquireObject( IUE_SPAWNREGION, spawnReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-			JS::Value spawnRegVal = JS::ObjectOrNullValue( myObj );
-			JS_SetElement( cx, spawnRegs, regionCount, &spawnRegVal );
+			JS::RootedValue spawnRegVal( cx, JS::ObjectOrNullValue( myObj ));
+			JS_SetElement( cx, spawnRegs, regionCount, spawnRegVal );
 			++regionCount;
 		}
 		args.rval().setObjectOrNull( spawnRegs );

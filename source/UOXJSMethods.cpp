@@ -3930,25 +3930,25 @@ bool CBase_GetTagMap( JSContext *cx, unsigned argc, JS::Value* vp )
 	TAGMAP2 tagMap = myObj->GetTagMap();
 
 	// Create main JSObject to store full list of tags
-	JSObject *jsTagMap = JS::NewArrayObject( cx, 0 );
+	JS::RootedObject jsTagMap( cx, JS::NewArrayObject( cx, 0 ));
 
 	// Iterate over tag map to fetch details on each tag
 	int i = 0;
 	for( auto &tagObj : tagMap )
 	{
 		// Create JSObject for current tag
-		JSObject *jsTag = JS::NewArrayObject( cx, 0 );
+		JS::RootedObject jsTag( cx, JS::NewArrayObject( cx, 0 ));
 		
 		// Convert tag name to JSString
-		JSString *tagName = JS_NewStringCopyZ( cx, tagObj.first.c_str() );
-		JS::Value jsTagName = JS::StringValue( tagName );
+		JS::RootedString tagName( cx, JS_NewStringCopyZ( cx, tagObj.first.c_str() ));
+		JS::RootedValue jsTagName( cx, JS::StringValue( tagName ));
 
 		// Add tag name to JSObject for tag
-		JS_SetElement( cx, jsTag, 0, &jsTagName );
+		JS_SetElement( cx, jsTag, 0, jsTagName );
 		
 		// Fetch type of tag, and value of tag
-		JS::Value jsType;
-		JS::Value jsValue;
+		JS::RootedValue jsType( cx );
+		JS::RootedValue jsValue( cx );
 		switch( tagObj.second.m_ObjectType )
 		{
 			case TAGMAP_TYPE_INT:
@@ -3974,12 +3974,12 @@ bool CBase_GetTagMap( JSContext *cx, unsigned argc, JS::Value* vp )
 		}
 
 		// Add tag type and value to JSObject for tag
-		JS_SetElement( cx, jsTag, 1, &jsType );
-		JS_SetElement( cx, jsTag, 2, &jsValue );
+		JS_SetElement( cx, jsTag, 1, jsType );
+		JS_SetElement( cx, jsTag, 2, jsValue );
 
 		// Add JSObject for tag to main jsTagMap object
-		JS::Value subTagObj = JS::ObjectOrNullValue( jsTag );
-		JS_SetElement( cx, jsTagMap, i, &subTagObj );
+		JS::RootedValue subTagObj( cx, JS::ObjectOrNullValue( jsTag ));
+		JS_SetElement( cx, jsTagMap, i, subTagObj );
 		i++;
 	}
 
@@ -4014,25 +4014,25 @@ bool CBase_GetTempTagMap( JSContext *cx, unsigned argc, JS::Value* vp )
 	TAGMAP2 tagMap = myObj->GetTempTagMap();
 
 	// Create main JSObject to store full list of tags
-	JSObject *jsTagMap = JS::NewArrayObject( cx, 0 );
+	JS::RootedObject jsTagMap( cx, JS::NewArrayObject( cx, 0 ));
 
 	// Iterate over tag map to fetch details on each tag
 	int i = 0;
 	for( auto &tagObj : tagMap )
 	{
 		// Create JSObject for current tag
-		JSObject *jsTag = JS::NewArrayObject( cx, 0 );
+		JS::RootedObject jsTag( cx, JS::NewArrayObject( cx, 0 ));
 
 		// Convert tag name to JSString
-		JSString *tagName = JS_NewStringCopyZ( cx, tagObj.first.c_str() );
-		JS::Value jsTagName = JS::StringValue( tagName );
+		JS::RootedString tagName( cx, JS_NewStringCopyZ( cx, tagObj.first.c_str() ));
+		JS::RootedValue jsTagName( cx, JS::StringValue( tagName ));
 
 		// Add tag name to JSObject for tag
-		JS_SetElement( cx, jsTag, 0, &jsTagName );
+		JS_SetElement( cx, jsTag, 0, jsTagName );
 
 		// Fetch type of tag, and value of tag
-		JS::Value jsType;
-		JS::Value jsValue;
+		JS::RootedValue jsType( cx );
+		JS::RootedValue jsValue( cx );
 		switch( tagObj.second.m_ObjectType )
 		{
 			case TAGMAP_TYPE_INT:
@@ -4058,12 +4058,12 @@ bool CBase_GetTempTagMap( JSContext *cx, unsigned argc, JS::Value* vp )
 		}
 
 		// Add tag type and value to JSObject for tag
-		JS_SetElement( cx, jsTag, 1, &jsType );
-		JS_SetElement( cx, jsTag, 2, &jsValue );
+		JS_SetElement( cx, jsTag, 1, jsType );
+		JS_SetElement( cx, jsTag, 2, jsValue );
 
 		// Add JSObject for tag to main jsTagMap object
-		JS::Value subTagObj = JS::ObjectOrNullValue( jsTag );
-		JS_SetElement( cx, jsTagMap, i, &subTagObj );
+		JS::RootedValue subTagObj( cx, JS::ObjectOrNullValue( jsTag ));
+		JS_SetElement( cx, jsTagMap, i, subTagObj );
 		i++;
 	}
 
@@ -12121,41 +12121,39 @@ bool CRegion_GetOrePref( JSContext *cx, unsigned argc, JS::Value* vp )
 	auto orePrefs = myObj->GetOrePreference( oreType );
 
 	// Prepare some temporary helper variables
-	JSObject *jsOrePref = JS::NewArrayObject( cx, 0 );
-	JSObject *jsMiningData = JS::NewArrayObject( cx, 0 );
+	JS::RootedObject jsOrePref( cx, JS::NewArrayObject( cx, 0 ));
+	JS::RootedObject jsMiningData( cx, JS::NewArrayObject( cx, 0 ));
 
 	// Set up the mining data info
 	// Start with name of ore
-	JSString *oreName = nullptr;
-	oreName = JS_NewStringCopyZ( cx, orePrefs->oreIndex->oreName.c_str() );
-	auto jsOreName = JS::StringValue( oreName );
-	JS_SetElement( cx, jsMiningData, 0, &jsOreName );
+	JS::RootedString oreName( cx, JS_NewStringCopyZ( cx, orePrefs->oreIndex->oreName.c_str() ));
+	JS::RootedValue jsOreName( cx, JS::StringValue( oreName ));
+	JS_SetElement( cx, jsMiningData, 0, jsOreName );
 
 	// Name of ingot
-	JSString *ingotName = nullptr;
-	ingotName = JS_NewStringCopyZ( cx, orePrefs->oreIndex->name.c_str() );
-	auto jsIngotName = JS::StringValue( ingotName );
-	JS_SetElement( cx, jsMiningData, 3, &jsIngotName );
+	JS::RootedString ingotName( cx, JS_NewStringCopyZ( cx, orePrefs->oreIndex->name.c_str() ));
+	JS::RootedValue jsIngotName( cx, JS::StringValue( ingotName ));
+	JS_SetElement( cx, jsMiningData, 3, jsIngotName );
 
 	// Ore colour, min skill, Makemenu entry, oreChance, scriptID
-	auto jsOreColor = JS::Int32Value( orePrefs->oreIndex->colour );
-	auto jsOreMinSkill = JS::Int32Value( orePrefs->oreIndex->minSkill );
-	auto jsOreMakemenu = JS::Int32Value( orePrefs->oreIndex->makemenu );
-	auto jsOreChance = JS::Int32Value( orePrefs->oreIndex->oreChance );
-	auto jsOreScriptID = JS::Int32Value( orePrefs->oreIndex->scriptID );
-	JS_SetElement( cx, jsMiningData, 1, &jsOreColor );
-	JS_SetElement( cx, jsMiningData, 2, &jsOreMinSkill );
-	JS_SetElement( cx, jsMiningData, 4, &jsOreMakemenu );
-	JS_SetElement( cx, jsMiningData, 5, &jsOreChance );
-	JS_SetElement( cx, jsMiningData, 6, &jsOreScriptID );
+	JS::RootedValue jsOreColor( cx, JS::Int32Value( orePrefs->oreIndex->colour ));
+	JS::RootedValue jsOreMinSkill( cx, JS::Int32Value( orePrefs->oreIndex->minSkill ));
+	JS::RootedValue jsOreMakemenu( cx, JS::Int32Value( orePrefs->oreIndex->makemenu ));
+	JS::RootedValue jsOreChance( cx, JS::Int32Value( orePrefs->oreIndex->oreChance ));
+	JS::RootedValue jsOreScriptID( cx, JS::Int32Value( orePrefs->oreIndex->scriptID ));
+	JS_SetElement( cx, jsMiningData, 1, jsOreColor );
+	JS_SetElement( cx, jsMiningData, 2, jsOreMinSkill );
+	JS_SetElement( cx, jsMiningData, 4, jsOreMakemenu );
+	JS_SetElement( cx, jsMiningData, 5, jsOreChance );
+	JS_SetElement( cx, jsMiningData, 6, jsOreScriptID );
 
 	// Add mining data to the orePref array
-	JS::Value miningDataVal = JS::ObjectOrNullValue( jsMiningData );
-	JS_SetElement( cx, jsOrePref, 0, &miningDataVal );
+	JS::RootedValue miningDataVal( cx, JS::ObjectOrNullValue( jsMiningData ));
+	JS_SetElement( cx, jsOrePref, 0, miningDataVal );
 
 	// Add percent chance to orePref array
-	JS::Value jsOrePrefChance = JS::Int32Value( orePrefs->percentChance );
-	JS_SetElement( cx, jsOrePref, 1, &jsOrePrefChance );
+	JS::RootedValue jsOrePrefChance( cx, JS::Int32Value( orePrefs->percentChance ));
+	JS_SetElement( cx, jsOrePref, 1, jsOrePrefChance );
 
 	// Convert orePref array object to JS::Value and pass it to script
 	args.rval().setObjectOrNull( jsOrePref );
@@ -12285,8 +12283,8 @@ bool CChar_GetFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 	auto friendList = mChar->GetFriendList();
 
 	// Prepare some temporary helper variables
-	JSObject *jsFriendList = JS::NewArrayObject( cx, 0 );
-	JS::Value jsTempFriend;
+	JS::RootedObject jsFriendList( cx, JS::NewArrayObject( cx, 0 ));
+	JS::RootedValue jsTempFriend( cx );
 
 	// Loop through list of friends, and add each one to the JS ArrayObject
 	int i = 0;
@@ -12299,7 +12297,7 @@ bool CChar_GetFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 		jsTempFriend = JS::ObjectOrNullValue( myObj );
 
 		// Add JS::Value to ArrayObject
-		JS_SetElement( cx, jsFriendList, i, &jsTempFriend );
+		JS_SetElement( cx, jsFriendList, i, jsTempFriend );
 		i++;
 	}
 
@@ -12365,8 +12363,8 @@ bool CChar_GetPetList( JSContext *cx, unsigned argc, JS::Value* vp )
 	auto petList = mChar->GetPetList();
 
 	// Prepare some temporary helper variables
-	JSObject *jsPetList = JS::NewArrayObject( cx, 0 );
-	JS::Value jsTempPet;
+	JS::RootedObject jsPetList( cx, JS::NewArrayObject( cx, 0 ));
+	JS::RootedValue jsTempPet( cx );
 
 	// Loop through list of pets, and add each one to the JS ArrayObject
 	int i = 0;
@@ -12383,7 +12381,7 @@ bool CChar_GetPetList( JSContext *cx, unsigned argc, JS::Value* vp )
 				jsTempPet = JS::ObjectOrNullValue( myObj );
 
 				// Add JS::Value to ArrayObject
-				JS_SetElement( cx, jsPetList, i, &jsTempPet );
+				JS_SetElement( cx, jsPetList, i, jsTempPet );
 				i++;
 			}
 		}
@@ -12561,8 +12559,8 @@ bool CChar_GetFollowerList( JSContext *cx, unsigned argc, JS::Value* vp )
 	auto followerList = mChar->GetFollowerList();
 
 	// Prepare some temporary helper variables
-	JSObject *jsFollowerList = JS::NewArrayObject( cx, 0 );
-	JS::Value jsTempFollower;
+	JS::RootedObject jsFollowerList( cx, JS::NewArrayObject( cx, 0 ));
+	JS::RootedValue jsTempFollower( cx );
 
 	// Loop through list of friends, and add each one to the JS ArrayObject
 	int i = 0;
@@ -12579,7 +12577,7 @@ bool CChar_GetFollowerList( JSContext *cx, unsigned argc, JS::Value* vp )
 				jsTempFollower = JS::ObjectOrNullValue( myObj );
 
 				// Add JS::Value to ArrayObject
-				JS_SetElement( cx, jsFollowerList, i, &jsTempFollower );
+				JS_SetElement( cx, jsFollowerList, i, jsTempFollower );
 				i++;
 			}
 		}

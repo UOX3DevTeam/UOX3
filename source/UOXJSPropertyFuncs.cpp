@@ -33,6 +33,8 @@
 #include "PartySystem.h"
 
 #include <jsapi.h>
+#include <js/Array.h>
+#include <js/Conversions.h>
 #include <js/Object.h>
 void MakeShop( CChar *c );
 void ScriptError( JSContext *cx, const char *txt, ... );

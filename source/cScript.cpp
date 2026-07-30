@@ -18,6 +18,7 @@
 #include <js/Conversions.h>
 #include <js/ErrorReport.h>
 #include <js/Exception.h>
+#include <js/Warnings.h>
 
 static constexpr SI08 RV_NOFUNC = -1;
 
@@ -411,17 +412,17 @@ cScript::cScript( std::string targFile, UI08 rT, UI16 scrID ) : isFiring( false 
 			{
 				if( pendingException.isObject() && !pendingException.isNull() )
 				{
-					JSObject *errObj = &pendingException.toObject();
+					JS::RootedObject errObj( targContext, &pendingException.toObject() );
 
 					// Get error message from pending exception
-					JS::Value messageVal;
+					JS::RootedValue messageVal( targContext );
 					if( JS_GetProperty( targContext, errObj, "message", &messageVal ) == true )
 					{
 						errorMessage = JS_GetStringBytes(targContext, messageVal);
 					}
 
 					// Get line number from pending exception
-					JS::Value lineVal;
+					JS::RootedValue lineVal( targContext );
 					if( JS_GetProperty( targContext, errObj, "lineNumber", &lineVal ) == true )
 					{
 						JS::RootedValue rootedValue( targContext, lineVal );
@@ -429,7 +430,7 @@ cScript::cScript( std::string targFile, UI08 rT, UI16 scrID ) : isFiring( false 
 					}
 
 					// Get filename from pending exception
-					JS::Value fileVal;
+					JS::RootedValue fileVal( targContext );
 					if( JS_GetProperty( targContext, errObj, "fileName", &fileVal ) == true )
 					{
 						errorFile = JS_GetStringBytes( targContext, fileVal );
@@ -598,7 +599,7 @@ bool cScript::OnStop( void )
 //o------------------------------------------------------------------------------------------------o
 bool cScript::DoesEventExist( const char *eventToFind )
 {
-	JS::Value Func = JS::NullValue();
+	JS::RootedValue Func( targContext, JS::NullValue() );
 	JS_GetProperty( targContext, targObject, eventToFind, &Func );
 	if( Func == JS::UndefinedValue() )
 	{
@@ -3884,7 +3885,7 @@ bool cScript::ExistAndVerify( ScriptEvent eventNum, std::string functionName )
 	if( NeedsChecking( eventNum ))
 	{
 		SetNeedsChecking( eventNum, false );
-		JS::Value Func = JS::NullValue();
+		JS::RootedValue Func( targContext, JS::NullValue() );
 		JS_GetProperty( targContext, targObject, functionName.c_str(), &Func );
 		if( Func == JS::UndefinedValue() )
 		{
@@ -3910,7 +3911,7 @@ bool cScript::ScriptRegistration( std::string scriptType )
 	JS::Value params[1], rval;
 	// ExistAndVerify() normally sets our Global Object, but not on custom named functions.
 
-	JS::Value Func = JS::NullValue();
+	JS::RootedValue Func( targContext, JS::NullValue() );
 	JS_GetProperty( targContext, targObject, scriptType.c_str(), &Func );
 	if( Func == JS::UndefinedValue() )
 	{
