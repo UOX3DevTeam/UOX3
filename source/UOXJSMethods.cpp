@@ -281,8 +281,6 @@ bool Packet( JSContext *cx, unsigned argc, JS::Value* vp )
 	JS::RootedObject obj( cx, JS_NewObject( cx, &UOXPacket_class ));
 	JS_DefineFunctions( cx, obj, CPacket_Methods );
 	JS::SetReservedSlot( obj, 0, JS::PrivateValue( toAdd ) );
-	JS_LockGCThing( cx, obj );
-	//JS_AddRoot( cx, &obj );
 	auto args = JS::CallArgsFromVp(argc, vp);
 	args.rval().setObjectOrNull( obj );
 	return true;
@@ -304,8 +302,6 @@ bool CPacket_Free( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 
 	delete toDelete;
-	JS_UnlockGCThing( cx, obj );
-	//JS_RemoveRoot( cx, obj );
 	JS::SetReservedSlot( obj, 0, JS::UndefinedValue() );
 
 	return true;
@@ -515,8 +511,6 @@ bool Gump( JSContext *cx, unsigned argc, JS::Value* vp )
 	JS::RootedObject obj( cx, JS_NewObject( cx, &UOXGump_class ));
 	JS_DefineFunctions( cx, obj, CGump_Methods );
 	JS::SetReservedSlot(obj, 0, JS::PrivateValue( toAdd ) );
-	JS_LockGCThing( cx, obj );
-	//JS_AddRoot( cx, &obj );
 	auto args = JS::CallArgsFromVp(argc, vp);
 	args.rval().setObjectOrNull( obj );
 	return true;
@@ -541,8 +535,6 @@ bool CGump_Free( JSContext *cx, unsigned argc, JS::Value* vp )
 	delete toDelete->two;
 	delete toDelete;
 
-	JS_UnlockGCThing( cx, obj );
-	//JS_RemoveRoot( cx, obj );
 	JS::SetReservedSlot( obj, 0, JS::UndefinedValue() );
 
 	return true;
@@ -563,8 +555,6 @@ bool CGumpData_Free( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( toDelete == nullptr )
 		return false;
 
-	JS_UnlockGCThing( cx, obj );
-	//JS_RemoveRoot( cx, &obj );
 	JS::SetReservedSlot( obj, 0, JS::UndefinedValue() );
 
 	delete toDelete;
@@ -7823,8 +7813,6 @@ bool UOXCFile( JSContext *cx, unsigned argc, JS::Value* vp )
 	JS::RootedObject obj( cx, JS_NewObject( cx, &UOXFile_class ));
 	JS_DefineFunctions( cx, obj, CFile_Methods );
 	JS::SetReservedSlot( obj, 0, JS::PrivateValue( toAdd ) );
-	JS_LockGCThing( cx, obj );
-	//JS_AddRoot( cx, &obj );
 	auto args = JS::CallArgsFromVp(argc, vp);
 	args.rval().setObjectOrNull( obj );
 	return true;
@@ -7848,8 +7836,6 @@ bool CFile_Free( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
   UOXFileWrapper_st *mFile = JS::GetMaybePtrFromReservedSlot<UOXFileWrapper_st>( obj, 0 );
 	delete mFile;
-	JS_UnlockGCThing( cx, obj );
-	//JS_RemoveRoot( cx, &obj );
 	JS::SetReservedSlot( obj, 0, JS::UndefinedValue() );
 	return true;
 }
