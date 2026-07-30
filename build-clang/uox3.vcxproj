@@ -227,7 +227,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="..\source\IP4Address.cpp" />
     <ClCompile Include="..\source\items.cpp" />
     <ClCompile Include="..\source\jail.cpp" />
-    <ClCompile Include="..\source\JSEncapsulate.cpp" />
     <ClCompile Include="..\source\lineofsight.cpp" />
     <ClCompile Include="..\source\magic.cpp" />
     <ClCompile Include="..\source\mapstuff.cpp" />
@@ -302,7 +301,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\source\GenericList.h" />
     <ClInclude Include="..\source\IP4Address.hpp" />
     <ClInclude Include="..\source\jail.h" />
-    <ClInclude Include="..\source\JSEncapsulate.h" />
     <ClInclude Include="..\source\magic.h" />
     <ClInclude Include="..\source\mapclasses.h" />
     <ClInclude Include="..\source\mapstuff.h" />

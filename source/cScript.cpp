@@ -5,7 +5,6 @@
 #include "SEFunctions.h"
 #include "UOXJSMethods.h"
 #include "UOXJSPropertySpecs.h"
-#include "JSEncapsulate.h"
 #include "CJSMapping.h"
 #include "CPacketReceive.h"
 #include "CJSEngine.h"
@@ -4464,11 +4463,13 @@ SI16 cScript::OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFigh
 		SetEventExists( seOnCombatDamageCalc, false );
 		return RV_NOFUNC;
 	}
-	JSEncapsulate damage( targContext, &rval );
-
-	if( damage.isType( JSOT_INT ) || damage.isType( JSOT_DOUBLE ))	// They returned some sort of value
+	if( rval.isInt32() )
 	{
-		return static_cast<SI16>( damage.toInt() );
+		return static_cast<SI16>( rval.toInt32() );
+	}
+	else if( rval.isDouble() )
+	{
+		return static_cast<SI16>( static_cast<SI32>( rval.toDouble() ));
 	}
 	else
 	{

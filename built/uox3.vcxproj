@@ -324,8 +324,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\..\source\CJSMapping.h" />
     <ClCompile Include="..\..\source\cScript.cpp" />
     <ClInclude Include="..\..\source\cScript.h" />
-    <ClCompile Include="..\..\source\JSEncapsulate.cpp" />
-    <ClInclude Include="..\..\source\JSEncapsulate.h" />
     <ClCompile Include="..\..\source\SEFunctions.cpp" />
     <ClInclude Include="..\..\source\SEFunctions.h" />
     <ClInclude Include="..\..\source\UOXJSClasses.h" />

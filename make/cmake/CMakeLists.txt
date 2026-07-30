@@ -179,8 +179,6 @@ add_executable(uox3
    ../../source/CJSMapping.h
    ../../source/cScript.cpp
    ../../source/cScript.h
-   ../../source/JSEncapsulate.cpp
-   ../../source/JSEncapsulate.h
    ../../source/SEFunctions.cpp
    ../../source/SEFunctions.h
    ../../source/UOXJSClasses.h

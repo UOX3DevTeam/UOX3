@@ -170,7 +170,6 @@
     <ClCompile Include="..\..\source\CJSEngine.cpp" />
     <ClCompile Include="..\..\source\CJSMapping.cpp" />
     <ClCompile Include="..\..\source\cScript.cpp" />
-    <ClCompile Include="..\..\source\JSEncapsulate.cpp" />
     <ClCompile Include="..\..\source\SEFunctions.cpp" />
     <ClCompile Include="..\..\source\UOXJSMethods.cpp" />
     <ClCompile Include="..\..\source\UOXJSPropertyFuncs.cpp" />
@@ -253,7 +252,6 @@
     <ClInclude Include="..\..\source\CJSEngine.h" />
     <ClInclude Include="..\..\source\CJSMapping.h" />
     <ClInclude Include="..\..\source\cScript.h" />
-    <ClInclude Include="..\..\source\JSEncapsulate.h" />
     <ClInclude Include="..\..\source\SEFunctions.h" />
     <ClInclude Include="..\..\source\UOXJSClasses.h" />
     <ClInclude Include="..\..\source\UOXJSMethods.h" />
