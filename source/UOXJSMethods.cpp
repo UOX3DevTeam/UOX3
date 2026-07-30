@@ -72,6 +72,60 @@ inline JSObject* getThis( JSContext * cx, JS::CallArgs& args )
   return thisObject;
 }
 
+namespace
+{
+std::string ConsoleValueToString( JSContext *cx, JS::HandleValue value )
+{
+	if( value.isObject() )
+		throw new std::runtime_error( "Cannot convert JS Object to a string" );
+
+	if( value.isInt32() )
+		return oldstrutil::number( value.toInt32() );
+	if( value.isDouble() )
+		return oldstrutil::number( value.toDouble() );
+	if( value.isBoolean() )
+		return value.toBoolean() ? "TRUE" : "FALSE";
+	if( value.isString() )
+		return convertToString( cx, value.toString() );
+
+	return {};
+}
+
+bool ConsoleValueToBool( JSContext *cx, JS::HandleValue value )
+{
+	if( value.isObject() )
+		throw new std::runtime_error( "Cannot convert JS Object to a bool" );
+
+	if( value.isInt32() )
+		return value.toInt32() != 0;
+	if( value.isDouble() )
+		return value.toDouble() != 0.0;
+	if( value.isBoolean() )
+		return value.toBoolean();
+	if( value.isString() )
+		return oldstrutil::upper( convertToString( cx, value.toString() )) == "TRUE";
+
+	return false;
+}
+
+SI32 ConsoleValueToInt( JSContext *cx, JS::HandleValue value )
+{
+	if( value.isObject() )
+		throw new std::runtime_error( "Cannot convert JS Object to an int" );
+
+	if( value.isInt32() )
+		return value.toInt32();
+	if( value.isDouble() )
+		return static_cast<SI32>( value.toDouble() );
+	if( value.isBoolean() )
+		return value.toBoolean() ? 1 : 0;
+	if( value.isString() )
+		return std::stoi( convertToString( cx, value.toString() ), nullptr, 0 );
+
+	return 0;
+}
+}
+
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	MethodSpeech()
@@ -9394,8 +9448,7 @@ bool CConsole_Print( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Print: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	JSEncapsulate arg0( cx, &( args.get(0).get()));
-	Console.Print( arg0.toString() );
+	Console.Print( ConsoleValueToString( cx, args.get( 0 )));
 	return true;
 }
 
@@ -9414,16 +9467,13 @@ bool CConsole_Log( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Log: Invalid number of arguments (takes 1 or 2)" );
 		return false;
 	}
-	JSEncapsulate arg0( cx, &( args.get(0).get() ));
-	JSEncapsulate arg1;
 	if( argc == 1 )
 	{
-		Console.Log( arg0.toString() );
+		Console.Log( ConsoleValueToString( cx, args.get( 0 )));
 	}
 	else
 	{
-		arg1.SetContext( cx, &args.get(1).get() );
-		Console.Log( arg0.toString(), arg1.toString() );
+		Console.Log( ConsoleValueToString( cx, args.get( 0 )), ConsoleValueToString( cx, args.get( 1 )));
 	}
 	return true;
 }
@@ -9442,8 +9492,7 @@ bool CConsole_Error( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Error: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	JSEncapsulate arg0( cx, &( args.get(0).get()));
-	Console.Error( arg0.toString() );
+	Console.Error( ConsoleValueToString( cx, args.get( 0 )));
 	return true;
 }
 
@@ -9461,8 +9510,7 @@ bool CConsole_Warning( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Warning: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	JSEncapsulate arg0( cx, &( args.get(0).get()));
-	Console.Warning( arg0.toString() );
+	Console.Warning( ConsoleValueToString( cx, args.get( 0 )));
 	return true;
 }
 
@@ -9603,8 +9651,7 @@ bool CConsole_PrintDone( JSContext *cx, unsigned argc, JS::Value* vp )
 	bool normalDone = true;
 	if( argc != 0 )
 	{
-		JSEncapsulate encaps( cx, &( args.get(0).get()));
-		normalDone = encaps.toBool();
+		normalDone = ConsoleValueToBool( cx, args.get( 0 ));
 	}
 	if( normalDone )
 	{
@@ -9635,8 +9682,7 @@ bool CConsole_PrintFailed( JSContext *cx, unsigned argc, JS::Value* vp )
 	bool normalFailed = true;
 	if( argc != 0 )
 	{
-		JSEncapsulate encaps( cx, &( args.get(0).get()));
-		normalFailed = encaps.toBool();
+		normalFailed = ConsoleValueToBool( cx, args.get( 0 ));
 	}
 	if( normalFailed )
 	{
@@ -9697,8 +9743,7 @@ bool CConsole_PrintBasedOnVal( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "PrintBasedOnVal: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	JSEncapsulate arg0( cx, &( args.get(0).get()));
-	Console.PrintBasedOnVal( arg0.toBool() );
+	Console.PrintBasedOnVal( ConsoleValueToBool( cx, args.get( 0 )));
 	return true;
 }
 
@@ -9717,9 +9762,7 @@ bool CConsole_MoveTo( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "MoveTo: Invalid number of arguments (takes 2)" );
 		return false;
 	}
-	JSEncapsulate arg0( cx, &( args.get(0).get() ));
-	JSEncapsulate arg1( cx, &( args.get(1).get() ));
-	Console.MoveTo( arg0.toInt(), arg1.toInt() );
+	Console.MoveTo( ConsoleValueToInt( cx, args.get( 0 )), ConsoleValueToInt( cx, args.get( 1 )));
 	return true;
 }
 
@@ -9745,9 +9788,7 @@ bool CConsole_PrintSpecial( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "PrintSpecial: Invalid number of arguments (takes 2)" );
 		return false;
 	}
-	JSEncapsulate arg0( cx, &( args.get(0).get() ));
-	JSEncapsulate arg1( cx, &( args.get(1).get() ));
-	Console.PrintSpecial( arg0.toInt(), arg1.toString().c_str() );
+	Console.PrintSpecial( ConsoleValueToInt( cx, args.get( 0 )), ConsoleValueToString( cx, args.get( 1 )).c_str() );
 	return true;
 }
 
@@ -9808,8 +9849,7 @@ bool CConsole_Reload( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Reload: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	JSEncapsulate arg0( cx, &( args.get(0).get()));
-	SI32 mArg = arg0.toInt();
+	SI32 mArg = ConsoleValueToInt( cx, args.get( 0 ));
 	if( mArg < 0 || mArg > 8 )
 	{
 		ScriptError( cx, "Reload: Section to reload must be between 0 and 8" );
