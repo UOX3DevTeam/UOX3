@@ -2,7 +2,7 @@
 #ifndef __SEFuncs_h__
 #define __SEFuncs_h__
 
-#include <jsapi.h>
+#include <js/Value.h>
 
 // Function prototypes exposed to the Script Engine
 

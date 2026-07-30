@@ -1,7 +1,7 @@
 #ifndef __CSCRIPT_H__
 #define __CSCRIPT_H__
 
-#include <jsapi.h>
+#include <js/RootingAPI.h>
 
 class CPIGumpMenuSelect;
 class CPIGumpInput;

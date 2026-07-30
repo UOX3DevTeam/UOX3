@@ -1,7 +1,9 @@
 #ifndef __CJSENGINE_H__
 #define __CJSENGINE_H__
 
-#include <jsapi.h>
+#include <js/RootingAPI.h>
+
+class JSAutoRealm;
 
 enum IUEEntries
 {

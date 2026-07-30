@@ -14,7 +14,7 @@
 #ifndef __UOXJSMethods__
 #define __UOXJSMethods__
 
-#include <jsapi.h>
+#include <js/TypeDecls.h>
 
 // Object Constructors
 bool Gump( JSContext *cx, unsigned argc, JS::Value *vp );

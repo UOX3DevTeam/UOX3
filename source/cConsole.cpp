@@ -30,6 +30,7 @@
 #include "cGuild.h"
 #include "cScript.h"
 #include "StringUtility.hpp"
+#include <js/Value.h>
 #include <iostream>
 #include <cctype>
 #include <stdexcept>
