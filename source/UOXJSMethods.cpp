@@ -278,7 +278,7 @@ bool Packet( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	CPUOXBuffer *toAdd = new CPUOXBuffer;
 
-	JSObject* obj = JS_NewObject( cx, &UOXPacket_class );
+	JS::RootedObject obj( cx, JS_NewObject( cx, &UOXPacket_class ));
 	JS_DefineFunctions( cx, obj, CPacket_Methods );
 	JS::SetReservedSlot( obj, 0, JS::PrivateValue( toAdd ) );
 	JS_LockGCThing( cx, obj );
@@ -512,7 +512,7 @@ bool Gump( JSContext *cx, unsigned argc, JS::Value* vp )
 	toAdd->two = new std::vector<std::string>();
 	toAdd->textId = 0;
 
-	JSObject* obj = JS_NewObject( cx, &UOXGump_class );
+	JS::RootedObject obj( cx, JS_NewObject( cx, &UOXGump_class ));
 	JS_DefineFunctions( cx, obj, CGump_Methods );
 	JS::SetReservedSlot(obj, 0, JS::PrivateValue( toAdd ) );
 	JS_LockGCThing( cx, obj );
@@ -7820,7 +7820,7 @@ bool UOXCFile( JSContext *cx, unsigned argc, JS::Value* vp )
 	UOXFileWrapper_st *toAdd = new UOXFileWrapper_st;
 	toAdd->mWrap = nullptr;
 
-	JSObject* obj = JS_NewObject( cx, &UOXFile_class );
+	JS::RootedObject obj( cx, JS_NewObject( cx, &UOXFile_class ));
 	JS_DefineFunctions( cx, obj, CFile_Methods );
 	JS::SetReservedSlot( obj, 0, JS::PrivateValue( toAdd ) );
 	JS_LockGCThing( cx, obj );

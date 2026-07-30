@@ -15,35 +15,6 @@
 #include <js/Conversions.h>
 #include <js/Warnings.h>
 
-inline void *JS_GetPrivate( JSContext *, JSObject *obj )
-{
-	if( obj == nullptr )
-	{
-		return nullptr;
-	}
-	const JS::Value &value = JS::GetReservedSlot( obj, 0 );
-	return value.isUndefined() || value.isNull() ? nullptr : value.toPrivate();
-}
-
-inline bool UOX_JS_DefineProperties( JSContext *cx, JSObject *obj, const JSPropertySpec *properties )
-{
-	JS::RootedObject rootedObj( cx, obj );
-	return JS_DefineProperties( cx, rootedObj, properties );
-}
-
-#define JS_DefineProperties(cx, obj, properties) \
-	UOX_JS_DefineProperties( cx, obj, properties )
-
-inline bool UOX_JS_DefineFunctions( JSContext *cx, JSObject *obj,
-	const JSFunctionSpec *functions )
-{
-	JS::RootedObject rootedObj( cx, obj );
-	return JS_DefineFunctions( cx, rootedObj, functions );
-}
-
-#define JS_DefineFunctions(cx, obj, functions) \
-	UOX_JS_DefineFunctions( cx, obj, functions )
-
 inline std::vector<std::unique_ptr<JS::PersistentRootedObject>> &UOX_GCLockedObjects()
 {
 	static std::vector<std::unique_ptr<JS::PersistentRootedObject>> roots;
