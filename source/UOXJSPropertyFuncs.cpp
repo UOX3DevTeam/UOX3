@@ -72,6 +72,7 @@ IMPL_GET_OBJ( CBaseObject, id,     CBaseObject, setInt32, GetId() )
 IMPL_GET_OBJ( CBaseObject, serial, CBaseObject, setNumber, GetSerial() )
 IMPL_GET_OBJ( CBaseObject, visible, CBaseObject, setInt32, GetVisible() )
 IMPL_GET_OBJ( CBaseObject, health,  CBaseObject, setInt32, GetHP() )
+IMPL_GET_OBJ( CBaseObject, shouldSave, CBaseObject, setBoolean, ShouldSave() )
 IMPL_GET_OBJ( CBaseObject, colour, CBaseObject, setInt32, GetColour() )
 IMPL_GET_OBJ( CBaseObject, color,  CBaseObject, setInt32, GetColour() )
 IMPL_GET_OBJ( CBaseObject, skin,   CBaseObject, setInt32, GetColour() )
@@ -80,6 +81,14 @@ FDCLS( CBaseObject, serial ) { return true; }
 FDCLS( CBaseObject, oldX ) { return true; }
 FDCLS( CBaseObject, oldY ) { return true; }
 FDCLS( CBaseObject, oldZ ) { return true; }
+FDCLS( CBaseObject, shouldSave )
+{
+	FNARGS
+	auto object = JS::GetMaybePtrFromReservedSlot<CBaseObject>( thisObj, 0 );
+	if( !ValidateObject( object )) return false;
+	object->ShouldSave( JS::ToBoolean( args.get( 0 )));
+	return true;
+}
 
 // Direct mozjs accessors for the fully migrated CSpell property family.
 FDCLG( CSpell, id )
@@ -844,7 +853,6 @@ ITEM_WEATHER_DAMAGE_SET( damageRain, RAIN )
 ITEM_WEATHER_DAMAGE_SET( damageSnow, SNOW )
 #undef ITEM_WEATHER_DAMAGE_SET
 
-IMPL_GET_OBJ( CItem, shouldSave,      CItem, setBoolean, ShouldSave() )
 IMPL_GET_OBJ( CItem, isNewbie,        CItem, setBoolean, IsNewbie() )
 IMPL_GET_OBJ( CItem, isDispellable,   CItem, setBoolean, IsDispellable() )
 IMPL_GET_OBJ( CItem, madeWith,        CItem, setInt32,   GetMadeWith() )
@@ -866,7 +874,6 @@ FDCLS( CItem, attr )                                                     \
 	item->accessor( args.get( 0 ).toBoolean() );                           \
 	return true;                                                          \
 }
-ITEM_BOOL_SET( shouldSave, ShouldSave )
 ITEM_BOOL_SET( isNewbie, SetNewbie )
 ITEM_BOOL_SET( isDispellable, SetDispellable )
 ITEM_BOOL_SET( isPileable, SetPileable )
@@ -1593,7 +1600,6 @@ CHARACTER_MISC_BOOL_SET( isCounselor, character->SetCounselor( value ))
 CHARACTER_MISC_BOOL_SET( noNeedMana, character->SetNoNeedMana( value ))
 CHARACTER_MISC_BOOL_SET( isDispellable, character->SetDispellable( value ))
 CHARACTER_MISC_BOOL_SET( noNeedReags, character->SetNoNeedReags( value ))
-CHARACTER_MISC_BOOL_SET( shouldSave, character->ShouldSave( value ))
 #undef CHARACTER_MISC_INT_SET
 #undef CHARACTER_MISC_BOOL_SET
 FDCLS( CCharacter, ownerCount ) { return true; }
@@ -1624,7 +1630,6 @@ IMPL_GET_OBJ( CCharacter, orgSkin, CChar, setInt32, GetOrgSkin() )
 IMPL_GET_OBJ( CCharacter, isShop, CChar, setBoolean, IsShop() )
 IMPL_GET_OBJ( CCharacter, maxLoyalty, CChar, setInt32, GetMaxLoyalty() )
 IMPL_GET_OBJ( CCharacter, loyalty, CChar, setInt32, GetLoyalty() )
-IMPL_GET_OBJ( CCharacter, shouldSave, CChar, setBoolean, ShouldSave() )
 IMPL_GET_OBJ( CCharacter, accountNum, CChar, setInt32, GetAccountNum() )
 IMPL_GET_OBJ( CCharacter, createdOn, CChar, setInt32, GetCreatedOn() )
 IMPL_GET_OBJ( CCharacter, playTime, CChar, setInt32, GetPlayTime() )

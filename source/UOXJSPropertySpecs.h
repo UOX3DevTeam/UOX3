@@ -333,6 +333,7 @@ DECL_GET_SET( CBaseObject, id )
 DECL_GET_SET( CBaseObject, serial )
 DECL_GET_SET( CBaseObject, visible )
 DECL_GET_SET( CBaseObject, health )
+DECL_GET_SET( CBaseObject, shouldSave )
 DECL_GET_SET( CBaseObject, color )
 DECL_GET_SET( CBaseObject, colour )
 DECL_GET_SET( CBaseObject, hue )
@@ -489,7 +490,6 @@ DECL_GET_SET( CCharacter, sayColour )
 DECL_GET_SET( CCharacter, scripttrigger )
 DECL_GET_SET( CCharacter, scriptTriggers )
 DECL_GET_SET( CCharacter, setPeace )
-DECL_GET_SET( CCharacter, shouldSave )
 DECL_GET_SET( CCharacter, singClickSer )
 DECL_GET_SET( CCharacter, skillCaps )
 DECL_GET_SET( CCharacter, skillLock )
@@ -688,7 +688,6 @@ DECL_GET_SET( CItem, scriptTriggers )
 DECL_GET_SET( CItem, sectionalist )
 DECL_GET_SET( CItem, secureContainers )
 DECL_GET_SET( CItem, sellvalue )
-DECL_GET_SET( CItem, shouldSave )
 DECL_GET_SET( CItem, spawnsection )
 DECL_GET_SET( CItem, spawnSerial )
 DECL_GET_SET( CItem, speed )
@@ -1134,6 +1133,7 @@ inline JSPropertySpec CBaseObjectProps[] =
   UX_PSGS( CBaseObject, serial,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, visible,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, health,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, shouldSave,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, colour,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, color,                 JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, skin,                  JSPROP_ENUMANDPERM ),
@@ -1327,7 +1327,6 @@ inline JSPropertySpec CCharacterProps[] =
   UX_PSGS( CCharacter, maxLoyalty,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, loyalty,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, loyaltyRate,           JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, shouldSave,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, origin,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, partyLootable,         JSPROP_ENUMANDPERM ),
   UX_PSG(  CCharacter, party,                 JSPROP_ENUMPERMRO ),
@@ -1427,7 +1426,6 @@ inline JSPropertySpec CItemProps[] =
   UX_PSGS( CItem, event,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, tempLastTraded,      JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, tempTimer,           JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, shouldSave,          JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, isNewbie,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, isDispellable,       JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, madeWith,            JSPROP_ENUMANDPERM ),
