@@ -17,6 +17,8 @@
 #include <js/CompilationAndEvaluation.h>
 #include <js/SourceText.h>
 #include <js/Conversions.h>
+#include <js/ErrorReport.h>
+#include <js/Exception.h>
 
 static constexpr SI08 RV_NOFUNC = -1;
 
@@ -203,10 +205,23 @@ static JSFunctionSpec my_functions[] =
 void UOX3ErrorReporter( JSContext *cx, JSErrorReport *report )
 {
 	JSErrorInfo* errorInfo = ( JSErrorInfo *)JS_GetContextPrivate( cx );
+	if( report == nullptr )
+	{
+		if( errorInfo != nullptr )
+		{
+			errorInfo->message = "No detailed data";
+		}
+		else
+		{
+			Console.Error( "JS script failure: No detailed data" );
+		}
+		return;
+	}
+
 	if( errorInfo != nullptr )
 	{
 		// Silently populate errorInfo for cScript constructor during compilation
-		if( report == nullptr || report->filename == nullptr )
+		if( report->filename == nullptr )
 		{
 			errorInfo->message = "No detailed data";
 			return;
@@ -219,9 +234,9 @@ void UOX3ErrorReporter( JSContext *cx, JSErrorReport *report )
 	else
 	{
 		// Output errors directly here, triggered by runtime execution of scripts
-  UI16 scriptNum = JSMapping->GetScriptId(JS::CurrentGlobalOrNull(cx));
-  Console.Error(oldstrutil::format("JS script failure: Script Number (%u) Message (%s)", scriptNum, report->message().c_str() ));
-		if( report == nullptr || report->filename == nullptr )
+		UI16 scriptNum = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ) );
+		Console.Error( oldstrutil::format( "JS script failure: Script Number (%u) Message (%s)", scriptNum, report->message().c_str() ));
+		if( report->filename == nullptr )
 		{
 			Console.Error( "No detailed data" );
 			return;
@@ -230,6 +245,26 @@ void UOX3ErrorReporter( JSContext *cx, JSErrorReport *report )
 		Console.Error( oldstrutil::format( "Filename: %s", report->filename ));
 		Console.Error( oldstrutil::format( "Line Number: %i", report->lineno ));
 	}
+}
+
+// Error reporters registered with JS::SetWarningReporter only receive warnings.
+// Turn a pending exception into a JSErrorReport so compile/runtime failures use
+// the same UOX3 reporting path as warnings.
+static void ReportPendingJSException( JSContext *cx )
+{
+	if( !JS_IsExceptionPending( cx ) )
+		return;
+
+	JS::ExceptionStack exceptionStack( cx );
+	if( JS::GetPendingExceptionStack( cx, &exceptionStack ) )
+	{
+		JS::ErrorReportBuilder report( cx );
+		if( report.init( cx, exceptionStack, JS::ErrorReportBuilder::NoSideEffects ) )
+		{
+			UOX3ErrorReporter( cx, report.report() );
+		}
+	}
+	JS_ClearPendingException( cx );
 }
 
 // Global error message variable used to pass error message from MethodError() to the custom JSError callback function
@@ -349,6 +384,10 @@ cScript::cScript( std::string targFile, UI08 rT, UI16 scrID ) : isFiring( false 
 		compiledScript = JS::Compile( targContext, compileOptions, sourceText );
 	}
 	targScript = compiledScript;
+	if( targScript == nullptr )
+	{
+		ReportPendingJSException( targContext );
+	}
 	JS_SetContextPrivate( targContext, nullptr );
 
 	if( targScript == nullptr )
@@ -428,7 +467,7 @@ cScript::cScript( std::string targFile, UI08 rT, UI16 scrID ) : isFiring( false 
 	bool ok = JS_ExecuteScript( targContext, environmentChain, rootedScript, &rval );
 	if( ok != true )
 	{
-		Console << "script result: " << JS_GetStringBytes( targContext, rval ) << myendl;
+		ReportPendingJSException( targContext );
 	}
 }
 
@@ -477,6 +516,10 @@ bool cScript::InvokeEvent( const char* name, unsigned int argc, const JS::Value*
 	auto args = JS::HandleValueArray::fromMarkedLocation( argc, argv );
 	auto result = JS::MutableHandleValue::fromMarkedLocation( rval );
 	bool rVal = JS_CallFunctionName( targContext, rootedObj, name, args, result );
+	if( !rVal )
+	{
+		ReportPendingJSException( targContext );
+	}
 	JSMapping->popActive();
 	return rVal;
 }
