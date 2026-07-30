@@ -74,6 +74,26 @@ inline JSObject* getThis( JSContext * cx, JS::CallArgs& args )
 
 namespace
 {
+bool HasWrapperClass( JSObject *object, const JSClass *expectedClass )
+{
+	return object != nullptr && JS::GetClass( object ) == expectedClass;
+}
+
+template<typename T>
+T *GetWrappedObject( JSObject *object, const JSClass *expectedClass )
+{
+	if( !HasWrapperClass( object, expectedClass ))
+		return nullptr;
+
+	return JS::GetMaybePtrFromReservedSlot<T>( object, 0 );
+}
+
+template<typename T>
+T *GetWrappedObject( JS::HandleValue value, const JSClass *expectedClass )
+{
+	return value.isObject() ? GetWrappedObject<T>( &value.toObject(), expectedClass ) : nullptr;
+}
+
 std::string ConsoleValueToString( JSContext *cx, JS::HandleValue value )
 {
 	if( value.isObject() )
@@ -4409,22 +4429,19 @@ bool CGuild_AddMember( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-
 	// let's setup our default return value here
 	args.rval().setBoolean(  false  );
 
 	if( myClass.ClassName() == "UOXGuild" )
 	{
-  CGuild *myGuild = JS::GetMaybePtrFromReservedSlot<CGuild>( obj, 0 );
+		CGuild *myGuild = GetWrappedObject<CGuild>( obj, &UOXGuild_class );
 		if( myGuild == nullptr )
 		{
 			ScriptError( cx, "AddMember: Invalid guild" );
 			return false;
 		}
 
-		JSEncapsulate toAdd( cx, &( args.get(0).get()));
-		CChar *trgChar = static_cast<CChar *>( toAdd.toObject() );
+		CChar *trgChar = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 		if( !ValidateObject( trgChar ))
 		{
 			ScriptError( cx, "AddGuildMember: Invalid character to add" );
@@ -4455,22 +4472,19 @@ bool CGuild_AddRecruit( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-
 	// let's setup our default return value here
 	args.rval().setBoolean(  false  );
 
-	if( myClass.ClassName() == "UOXGuild" )
+	if( HasWrapperClass( obj, &UOXGuild_class ))
 	{
-  CGuild *myGuild = JS::GetMaybePtrFromReservedSlot<CGuild>( obj, 0 );
+		CGuild *myGuild = GetWrappedObject<CGuild>( obj, &UOXGuild_class );
 		if( myGuild == nullptr )
 		{
 			ScriptError( cx, "AddRecruit: Invalid guild" );
 			return false;
 		}
 
-		JSEncapsulate toAdd( cx, &( args.get(0).get()));
-		CChar *trgChar = static_cast<CChar *>( toAdd.toObject() );
+		CChar *trgChar = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 		if( !ValidateObject( trgChar ))
 		{
 			ScriptError( cx, "AddRecruit: Invalid character to add" );
@@ -4501,22 +4515,19 @@ bool CGuild_RemoveRecruit( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-
 	// let's setup our default return value here
 	args.rval().setBoolean(  false  );
 
-	if( myClass.ClassName() == "UOXGuild" )
+	if( HasWrapperClass( obj, &UOXGuild_class ))
 	{
-  CGuild *myGuild = JS::GetMaybePtrFromReservedSlot<CGuild>( obj, 0 );
+		CGuild *myGuild = GetWrappedObject<CGuild>( obj, &UOXGuild_class );
 		if( myGuild == nullptr )
 		{
 			ScriptError( cx, "RemoveRecruit: Invalid guild" );
 			return false;
 		}
 
-		JSEncapsulate toAdd( cx, &( args.get(0).get()));
-		CChar *trgChar = static_cast<CChar *>( toAdd.toObject() );
+		CChar *trgChar = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 		if( !ValidateObject( trgChar ))
 		{
 			ScriptError( cx, "RemoveRecruit: Invalid character to add" );
@@ -4546,22 +4557,19 @@ bool CGuild_RemoveMember( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-
 	// let's setup our default return value here
 	args.rval().setBoolean(  false  );
 
-	if( myClass.ClassName() == "UOXGuild" )
+	if( HasWrapperClass( obj, &UOXGuild_class ))
 	{
-  CGuild *myGuild = JS::GetMaybePtrFromReservedSlot<CGuild>( obj, 0 );
+		CGuild *myGuild = GetWrappedObject<CGuild>( obj, &UOXGuild_class );
 		if( myGuild == nullptr )
 		{
 			ScriptError( cx, "RemoveMember: Invalid guild" );
 			return false;
 		}
 
-		JSEncapsulate toAdd( cx, &( args.get(0).get()));
-		CChar *trgChar = static_cast<CChar *>( toAdd.toObject() );
+		CChar *trgChar = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 		if( !ValidateObject( trgChar ))
 		{
 			ScriptError( cx, "RemoveMember: Invalid character to add" );
@@ -4591,22 +4599,19 @@ bool CGuild_RecruitToMember( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-
 	// let's setup our default return value here
 	args.rval().setBoolean(  false  );
 
-	if( myClass.ClassName() == "UOXGuild" )
+	if( HasWrapperClass( obj, &UOXGuild_class ))
 	{
-  CGuild *myGuild = JS::GetMaybePtrFromReservedSlot<CGuild>( obj, 0 );
+		CGuild *myGuild = GetWrappedObject<CGuild>( obj, &UOXGuild_class );
 		if( myGuild == nullptr )
 		{
 			ScriptError( cx, "RecruitToMember: Invalid guild" );
 			return false;
 		}
 
-		JSEncapsulate toAdd( cx, &( args.get(0).get()));
-		CChar *trgChar = static_cast<CChar *>( toAdd.toObject() );
+		CChar *trgChar = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 		if( !ValidateObject( trgChar ))
 		{
 			ScriptError( cx, "RecruitToMember: Invalid character to add" );
