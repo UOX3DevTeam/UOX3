@@ -7,9 +7,15 @@
 
 #ifndef __UOXJSClasses__
 #define __UOXJSClasses__
+
+#include <string>
+
 #include "UOXJSPropertyFuncs.h"
-#include <js/TypeDecls.h>  // Ensure proper definitions for JSFreeOp and JSObject
-#include <jsapi.h>  // Make sure you include this for SpiderMonkey APIs
+#include <js/CharacterEncoding.h>
+#include <js/Class.h>
+#include <js/GlobalObject.h>
+#include <js/RootingAPI.h>
+#include <js/String.h>
 
 static constexpr JSClassOps classOpsWithFinalize = {
     nullptr,  // addProperty
