@@ -12,7 +12,6 @@
 #include "UOXJSPropertyEnums.h"
 #include "UOXJSPropertyFuncs.h"
 #include "CJSEngine.h"
-#include "JSEncapsulate.h"
 
 #include "cGuild.h"
 #include "combat.h"
@@ -2085,20 +2084,20 @@ IMPL_SOCKET_ENUM_SET( clientType, ClientTypes,     ClientType )
 static bool GetSkillValue( JSContext *cx, unsigned int argc, JS::Value *vp, UI08 skillId )
 {
 	FNARGS
-	JSEncapsulate skillObject( cx, thisObj );
-	CChar *character = static_cast<CChar *>( skillObject.toObject() );
+	CChar *character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );
 	if( !ValidateObject( character ))
 		return false;
 
-	if( skillObject.ClassName() == "UOXSkills" )
+	const JSClass *skillClass = JS::GetClass( thisObj );
+	if( skillClass == &UOXSkills_class )
 		args.rval().setInt32( character->GetSkill( skillId ));
-	else if( skillObject.ClassName() == "UOXBaseSkills" )
+	else if( skillClass == &UOXBaseSkills_class )
 		args.rval().setInt32( character->GetBaseSkill( skillId ));
-	else if( skillObject.ClassName() == "UOXSkillsUsed" )
+	else if( skillClass == &UOXSkillsUsed_class )
 		args.rval().setBoolean( character->SkillUsed( skillId ));
-	else if( skillObject.ClassName() == "UOXSkillsLock" )
+	else if( skillClass == &UOXSkillsLock_class )
 		args.rval().setInt32( static_cast<UI08>( character->GetSkillLock( skillId )));
-	else if( skillObject.ClassName() == "UOXSkillsCap" )
+	else if( skillClass == &UOXSkillsCap_class )
 		args.rval().setInt32( character->GetSkillCap( skillId ));
 	else
 		return false;
@@ -2108,31 +2107,39 @@ static bool GetSkillValue( JSContext *cx, unsigned int argc, JS::Value *vp, UI08
 static bool SetSkillValue( JSContext *cx, unsigned int argc, JS::Value *vp, UI08 skillId )
 {
 	FNARGS
-	JSEncapsulate skillObject( cx, thisObj );
-	CChar *character = static_cast<CChar *>( skillObject.toObject() );
+	CChar *character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );
 	if( !ValidateObject( character ))
 		return false;
 
 	JS::RootedValue value( cx, args.get( 0 ));
-	JSEncapsulate encaps( cx, value.address() );
-	SI16 newValue = static_cast<SI16>( encaps.toInt() );
+	int32_t converted = 0;
+	if( !JS::ToInt32( cx, value, &converted ))
+		return false;
+	const SI16 newValue = static_cast<SI16>( converted );
+	bool boolValue = JS::ToBoolean( value );
+	if( value.isString() )
+	{
+		JS::RootedString stringValue( cx, value.toString() );
+		boolValue = oldstrutil::upper( convertToString( cx, stringValue )) == "TRUE";
+	}
+	const JSClass *skillClass = JS::GetClass( thisObj );
 	UI08 firstSkill = skillId == ALLSKILLS ? 0 : skillId;
 	UI08 lastSkill = skillId == ALLSKILLS ? ALLSKILLS : static_cast<UI08>( skillId + 1 );
 
 	for( UI08 i = firstSkill; i < lastSkill; ++i )
 	{
-		if( skillObject.ClassName() == "UOXSkills" )
+		if( skillClass == &UOXSkills_class )
 			character->SetSkill( newValue, i );
-		else if( skillObject.ClassName() == "UOXBaseSkills" )
+		else if( skillClass == &UOXBaseSkills_class )
 		{
 			character->SetBaseSkill( newValue, i );
 			Skills->UpdateSkillLevel( character, i );
 		}
-		else if( skillObject.ClassName() == "UOXSkillsUsed" )
-			character->SkillUsed( encaps.toBool(), i );
-		else if( skillObject.ClassName() == "UOXSkillsLock" )
+		else if( skillClass == &UOXSkillsUsed_class )
+			character->SkillUsed( boolValue, i );
+		else if( skillClass == &UOXSkillsLock_class )
 			character->SetSkillLock( static_cast<SkillLock>( newValue ), i );
-		else if( skillObject.ClassName() == "UOXSkillsCap" )
+		else if( skillClass == &UOXSkillsCap_class )
 			character->SetSkillCap( newValue, i );
 		else
 			return false;
@@ -2448,18 +2455,21 @@ FDCLS( CParty, leader )
 	if( priv == nullptr )
 		return false;
 
-	JS::RootedValue value( cx, args.get( 0 ));
-	JSEncapsulate encaps( cx, value.address() );
 	CChar *newLeader = nullptr;
-	if( encaps.ClassName() == "UOXChar" )
+	if( args.get( 0 ).isObject() )
 	{
-		newLeader = static_cast<CChar *>( encaps.toObject() );
-	}
-	else if( encaps.ClassName() == "UOXSocket" )
-	{
-		CSocket *socket = static_cast<CSocket *>( encaps.toObject() );
-		if( socket != nullptr )
-			newLeader = socket->CurrcharObj();
+		JSObject *leaderObject = &args.get( 0 ).toObject();
+		const JSClass *leaderClass = JS::GetClass( leaderObject );
+		if( leaderClass == &UOXChar_class )
+		{
+			newLeader = JS::GetMaybePtrFromReservedSlot<CChar>( leaderObject, 0 );
+		}
+		else if( leaderClass == &UOXSocket_class )
+		{
+			CSocket *socket = JS::GetMaybePtrFromReservedSlot<CSocket>( leaderObject, 0 );
+			if( socket != nullptr )
+				newLeader = socket->CurrcharObj();
+		}
 	}
 
 	if( ValidateObject( newLeader ))
