@@ -326,6 +326,9 @@ DECL_GET_SET( CBaseObject, sectionID )
 DECL_GET_SET( CBaseObject, x )
 DECL_GET_SET( CBaseObject, y )
 DECL_GET_SET( CBaseObject, z )
+DECL_GET_SET( CBaseObject, oldX )
+DECL_GET_SET( CBaseObject, oldY )
+DECL_GET_SET( CBaseObject, oldZ )
 DECL_GET_SET( CBaseObject, id )
 DECL_GET_SET( CBaseObject, serial )
 DECL_GET_SET( CBaseObject, color )
@@ -457,9 +460,6 @@ DECL_GET_SET( CCharacter, npCCharacter )
 DECL_GET_SET( CCharacter, npcFlag )
 DECL_GET_SET( CCharacter, npcGuild )
 DECL_GET_SET( CCharacter, oldWandertype )
-DECL_GET_SET( CCharacter, oldX )
-DECL_GET_SET( CCharacter, oldY )
-DECL_GET_SET( CCharacter, oldZ )
 DECL_GET_SET( CCharacter, online )
 DECL_GET_SET( CCharacter, orgID )
 DECL_GET_SET( CCharacter, orgSkin )
@@ -666,9 +666,6 @@ DECL_GET_SET( CItem, moveType )
 DECL_GET_SET( CItem, multi )
 DECL_GET_SET( CItem, name )
 DECL_GET_SET( CItem, name2 )
-DECL_GET_SET( CItem, oldX )
-DECL_GET_SET( CItem, oldY )
-DECL_GET_SET( CItem, oldZ )
 DECL_GET_SET( CItem, origin )
 DECL_GET_SET( CItem, origName )
 DECL_GET_SET( CItem, owner )
@@ -1132,6 +1129,9 @@ inline JSPropertySpec CBaseObjectProps[] =
   UX_PSGS( CBaseObject, x,                     JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, y,                     JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, z,                     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, oldX,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, oldY,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, oldZ,                  JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, id,                    JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, serial,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, colour,                JSPROP_ENUMANDPERM ),
@@ -1147,9 +1147,6 @@ inline JSPropertySpec CCharacterProps[] =
   UX_PSGS( CCharacter, name,                  JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, origName,              JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, title,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, oldX,                  JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, oldY,                  JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, oldZ,                  JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, controlSlots,          JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, controlSlotsUsed,      JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, orneriness,            JSPROP_ENUMANDPERM ),
@@ -1355,9 +1352,6 @@ inline JSPropertySpec CItemProps[] =
 {
   UX_PSGS( CItem, name,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, title,               JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, oldX,                JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, oldY,                JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, oldZ,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, owner,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, visible,             JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, health,              JSPROP_ENUMANDPERM ),

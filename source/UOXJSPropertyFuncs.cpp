@@ -63,6 +63,9 @@ IMPL_SETS(    CBaseObject, sectionID, CBaseObject, toString,  SetSectionId )
 IMPL_GET_OBJ( CBaseObject, x,      CBaseObject, setInt32, GetX() )
 IMPL_GET_OBJ( CBaseObject, y,      CBaseObject, setInt32, GetY() )
 IMPL_GET_OBJ( CBaseObject, z,      CBaseObject, setInt32, GetZ() )
+IMPL_GET_OBJ( CBaseObject, oldX,   CBaseObject, setInt32, GetOldLocation().x )
+IMPL_GET_OBJ( CBaseObject, oldY,   CBaseObject, setInt32, GetOldLocation().y )
+IMPL_GET_OBJ( CBaseObject, oldZ,   CBaseObject, setInt32, GetOldLocation().z )
 IMPL_GET_OBJ( CBaseObject, id,     CBaseObject, setInt32, GetId() )
 IMPL_GET_OBJ( CBaseObject, serial, CBaseObject, setNumber, GetSerial() )
 IMPL_GET_OBJ( CBaseObject, colour, CBaseObject, setInt32, GetColour() )
@@ -70,6 +73,9 @@ IMPL_GET_OBJ( CBaseObject, color,  CBaseObject, setInt32, GetColour() )
 IMPL_GET_OBJ( CBaseObject, skin,   CBaseObject, setInt32, GetColour() )
 IMPL_GET_OBJ( CBaseObject, hue,    CBaseObject, setInt32, GetColour() )
 FDCLS( CBaseObject, serial ) { return true; }
+FDCLS( CBaseObject, oldX ) { return true; }
+FDCLS( CBaseObject, oldY ) { return true; }
+FDCLS( CBaseObject, oldZ ) { return true; }
 
 // Direct mozjs accessors for the fully migrated CSpell property family.
 FDCLG( CSpell, id )
@@ -412,9 +418,6 @@ FDCLG( CItem, scriptTriggers )
 	return true;
 }
 
-FDCLS( CItem, oldX ) { return true; }
-FDCLS( CItem, oldY ) { return true; }
-FDCLS( CItem, oldZ ) { return true; }
 FDCLS( CItem, multi ) { return true; }
 FDCLS( CItem, scripttrigger )
 {
@@ -443,9 +446,6 @@ ITEM_METADATA_INT_SET( race, RACEID, SetRace )
 ITEM_METADATA_INT_SET( region, UI16, SetRegion )
 #undef ITEM_METADATA_INT_SET
 
-IMPL_GET_OBJ( CItem, oldX, CItem, setInt32, GetOldLocation().x )
-IMPL_GET_OBJ( CItem, oldY, CItem, setInt32, GetOldLocation().y )
-IMPL_GET_OBJ( CItem, oldZ, CItem, setInt32, GetOldLocation().z )
 IMPL_GET_OBJ(CItem, decaytime, CItem, setNumber, GetDecayTime())
 
 FDCLG( CItem, scripttrigger )
@@ -1064,9 +1064,6 @@ CHARACTER_CORE_INT_SET( visible, VisibleTypes, character->SetVisible( value ))
 CHARACTER_CORE_INT_SET( health, SI16, character->SetHP( value ))
 #undef CHARACTER_CORE_INT_SET
 
-FDCLS( CCharacter, oldX ) { return true; }
-FDCLS( CCharacter, oldY ) { return true; }
-FDCLS( CCharacter, oldZ ) { return true; }
 FDCLS( CCharacter, worldnumber )
 {
 	FNARGS
@@ -1118,10 +1115,6 @@ CHARACTER_CORE_GET( health, setInt32, GetHP() )
 CHARACTER_CORE_GET( worldnumber, setInt32, WorldNumber() )
 CHARACTER_CORE_GET( instanceID, setInt32, GetInstanceId() )
 #undef CHARACTER_CORE_GET
-
-FDCLG( CCharacter, oldX ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); args.rval().setInt32( character->GetOldLocation().x ); return true; }
-FDCLG( CCharacter, oldY ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); args.rval().setInt32( character->GetOldLocation().y ); return true; }
-FDCLG( CCharacter, oldZ ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); args.rval().setInt32( character->GetOldLocation().z ); return true; }
 
 static CChar *CharacterFromValue( JS::HandleValue value )
 {
