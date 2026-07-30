@@ -4432,7 +4432,7 @@ bool CGuild_AddMember( JSContext *cx, unsigned argc, JS::Value* vp )
 	// let's setup our default return value here
 	args.rval().setBoolean(  false  );
 
-	if( myClass.ClassName() == "UOXGuild" )
+	if( HasWrapperClass( obj, &UOXGuild_class ))
 	{
 		CGuild *myGuild = GetWrappedObject<CGuild>( obj, &UOXGuild_class );
 		if( myGuild == nullptr )
@@ -12271,26 +12271,14 @@ bool CChar_AddFriend( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CChar *mChar = nullptr;
-
-	// Let's validate the character
-	if( myClass.ClassName() == "UOXChar" )
-	{
-		mChar = static_cast<CChar *>( myClass.toObject() );
-		if( !ValidateObject( mChar ))
-		{
-			ScriptError( cx, "AddFriend: Passed an invalid Character" );
-			return false;
-		}
-	}
-	else
+	CChar *mChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "AddFriend: Passed an invalid Character" );
 		return false;
 	}
 
-  auto *newFriend = JS::GetMaybePtrFromReservedSlot<CChar>( &args.get(0).toObject(), 0 );
+	CChar *newFriend = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( newFriend ))
 	{
 		ScriptError( cx, "(AddFriend) Invalid Object passed as function parameter" );
@@ -12317,26 +12305,14 @@ bool CChar_RemoveFriend( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CChar *mChar = nullptr;
-
-	// Let's validate the character
-	if( myClass.ClassName() == "UOXChar" )
-	{
-		mChar = static_cast<CChar *>( myClass.toObject() );
-		if( !ValidateObject( mChar ))
-		{
-			ScriptError( cx, "RemoveFriend: Passed an invalid Character" );
-			return false;
-		}
-	}
-	else
+	CChar *mChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "RemoveFriend: Passed an invalid Character" );
 		return false;
 	}
 
-  auto *friendToRemove = JS::GetMaybePtrFromReservedSlot<CChar>( &args.get(0).toObject(), 0 );
+	CChar *friendToRemove = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( friendToRemove ))
 	{
 		ScriptError( cx, "(AddFriend) Invalid Object passed as function parameter" );
@@ -12363,20 +12339,8 @@ bool CChar_GetFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CChar *mChar = nullptr;
-
-	// Let's validate the character
-	if( myClass.ClassName() == "UOXChar" )
-	{
-		mChar = static_cast<CChar *>( myClass.toObject() );
-		if( !ValidateObject( mChar ))
-		{
-			ScriptError( cx, "GetFriendList: Passed an invalid Character" );
-			return false;
-		}
-	}
-	else
+	CChar *mChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "GetFriendList: Passed an invalid Character" );
 		return false;
@@ -12425,20 +12389,8 @@ bool CChar_ClearFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CChar *mChar = nullptr;
-
-	// Let's validate the character
-	if( myClass.ClassName() == "UOXChar" )
-	{
-		mChar = static_cast<CChar *>( myClass.toObject() );
-		if( !ValidateObject( mChar ))
-		{
-			ScriptError( cx, "ClearFriendList: Passed an invalid Character" );
-			return false;
-		}
-	}
-	else
+	CChar *mChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "ClearFriendList: Passed an invalid Character" );
 		return false;
@@ -12467,20 +12419,8 @@ bool CChar_GetPetList( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CChar *mChar = nullptr;
-
-	// Let's validate the character
-	if( myClass.ClassName() == "UOXChar" )
-	{
-		mChar = static_cast<CChar *>( myClass.toObject() );
-		if( !ValidateObject( mChar ))
-		{
-			ScriptError( cx, "GetPetList: Passed an invalid Character" );
-			return false;
-		}
-	}
-	else
+	CChar *mChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "GetPetList: Passed an invalid Character" );
 		return false;
@@ -12535,27 +12475,14 @@ bool CChar_HasBeenOwner( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CChar *mChar = nullptr;
-
-	// Let's validate the character
-	if( myClass.ClassName() == "UOXChar" )
-	{
-		mChar = static_cast<CChar *>( myClass.toObject() );
-		if( !ValidateObject( mChar ))
-		{
-			ScriptError( cx, "HasBeenOwner: Passed an invalid Character" );
-			return false;
-		}
-	}
-	else
+	CChar *mChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "HasBeenOwner: Passed an invalid Character" );
 		return false;
 	}
 	
-	JSEncapsulate toCheck( cx, &( args.get(0).get()));
-	CChar *pChar = static_cast<CChar *>( toCheck.toObject() );
+	CChar *pChar = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( pChar ))
 	{
 		ScriptError( cx, "HasBeenOwner: Invalid Character passed as parameter" );
@@ -12584,27 +12511,14 @@ bool CChar_CalculateControlChance( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CChar *mChar = nullptr;
-
-	// Let's validate the character
-	if( myClass.ClassName() == "UOXChar" )
-	{
-		mChar = static_cast<CChar *>( myClass.toObject() );
-		if( !ValidateObject( mChar ))
-		{
-			ScriptError( cx, "CalculateControlChance: Passed an invalid Character" );
-			return false;
-		}
-	}
-	else
+	CChar *mChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "CalculateControlChance: Passed an invalid Character" );
 		return false;
 	}
 
-	JSEncapsulate toCheck( cx, &( args.get(0).get()));
-	CChar *pChar = static_cast<CChar *>( toCheck.toObject() );
+	CChar *pChar = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( pChar ))
 	{
 		ScriptError( cx, "CalculateControlChance: Invalid Character passed as parameter" );
@@ -12633,26 +12547,14 @@ bool CChar_AddFollower( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CChar *mChar = nullptr;
-
-	// Let's validate the character
-	if( myClass.ClassName() == "UOXChar" )
-	{
-		mChar = static_cast<CChar *>( myClass.toObject() );
-		if( !ValidateObject( mChar ))
-		{
-			ScriptError( cx, "AddFollower: Passed an invalid Character" );
-			return false;
-		}
-	}
-	else
+	CChar *mChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "AddFollower: Passed an invalid Character" );
 		return false;
 	}
 
-  auto *newFollower = JS::GetMaybePtrFromReservedSlot<CChar>( &args.get(0).toObject(), 0 );
+	CChar *newFollower = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( newFollower ))
 	{
 		ScriptError( cx, "(AddFollower) Invalid Object passed as function parameter" );
@@ -12679,26 +12581,14 @@ bool CChar_RemoveFollower( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CChar *mChar = nullptr;
-
-	// Let's validate the character
-	if( myClass.ClassName() == "UOXChar" )
-	{
-		mChar = static_cast<CChar *>( myClass.toObject() );
-		if( !ValidateObject( mChar ))
-		{
-			ScriptError( cx, "RemoveFollower: Passed an invalid Character" );
-			return false;
-		}
-	}
-	else
+	CChar *mChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "RemoveFollower: Passed an invalid Character" );
 		return false;
 	}
 
-  auto *followerToRemove = JS::GetMaybePtrFromReservedSlot<CChar>( &args.get(0).toObject(), 0 );
+	CChar *followerToRemove = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( followerToRemove ))
 	{
 		ScriptError( cx, "(RemoveFollower) Invalid Object passed as function parameter" );
@@ -12725,20 +12615,8 @@ bool CChar_GetFollowerList( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CChar *mChar = nullptr;
-
-	// Let's validate the character
-	if( myClass.ClassName() == "UOXChar" )
-	{
-		mChar = static_cast<CChar *>( myClass.toObject() );
-		if( !ValidateObject( mChar ))
-		{
-			ScriptError( cx, "GetFollowerList: Passed an invalid Character" );
-			return false;
-		}
-	}
-	else
+	CChar *mChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "GetFollowerList: Passed an invalid Character" );
 		return false;
@@ -12794,18 +12672,16 @@ bool CParty_Remove( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	if( myClass.ClassName() == "UOXParty" )
+	if( HasWrapperClass( obj, &UOXParty_class ))
 	{
-		Party *ourParty = static_cast<Party *>( myClass.toObject() );
+		Party *ourParty = GetWrappedObject<Party>( obj, &UOXParty_class );
 		if( ourParty == nullptr )
 		{
 			ScriptError( cx, "Remove: Invalid party" );
 			return false;
 		}
 
-		JSEncapsulate toRemove( cx, &( args.get(0).get()));
-		CChar *charToRemove = static_cast<CChar *>( toRemove.toObject() );
+		CChar *charToRemove = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 		if( !ValidateObject( charToRemove ))
 		{
 			ScriptError( cx, "Remove: Invalid character to remove" );
@@ -12833,22 +12709,19 @@ bool CParty_Add( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-
 	// let's setup our default return value here
 	args.rval().setBoolean(  false  );
 
-	if( myClass.ClassName() == "UOXParty" )
+	if( HasWrapperClass( obj, &UOXParty_class ))
 	{
-		Party *ourParty = static_cast<Party *>( myClass.toObject() );
+		Party *ourParty = GetWrappedObject<Party>( obj, &UOXParty_class );
 		if( ourParty == nullptr )
 		{
 			ScriptError( cx, "Add: Invalid party" );
 			return false;
 		}
 
-		JSEncapsulate toAdd( cx, &( args.get(0).get()));
-		CChar *charToAdd = static_cast<CChar *>( toAdd.toObject() );
+		CChar *charToAdd = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 		if( !ValidateObject( charToAdd ))
 		{
 			ScriptError( cx, "Add: Invalid character to add" );
@@ -12926,18 +12799,20 @@ bool CParty_GetMember( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	if( myClass.ClassName() == "UOXParty" )
+	if( HasWrapperClass( obj, &UOXParty_class ))
 	{
-		Party *ourParty = static_cast<Party *>( myClass.toObject() );
+		Party *ourParty = GetWrappedObject<Party>( obj, &UOXParty_class );
 		if( ourParty == nullptr )
 		{
 			ScriptError( cx, "GetMember: Invalid party" );
 			return false;
 		}
 
-		JSEncapsulate toGetMember( cx, &( args.get(0).get()));
-		size_t memberOffset = toGetMember.toInt();
+		int32_t memberIndex = 0;
+		if( !JS::ToInt32( cx, args.get( 0 ), &memberIndex ))
+			return false;
+
+		size_t memberOffset = static_cast<size_t>( memberIndex );
 		if( memberOffset >= ourParty->MemberList()->size() )
 		{
 			ScriptError( cx, "GetMember: Invalid character to get, index out of bounds" );
