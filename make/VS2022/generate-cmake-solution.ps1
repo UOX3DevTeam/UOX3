@@ -5,7 +5,7 @@ $buildDir = Join-Path $PSScriptRoot "..\..\build-vs2022"
 
 cmake --preset vs2022-clang -S $sourceDir
 if ($LASTEXITCODE -ne 0) {
-    throw "CMake configuration failed. Install Visual Studio's C++ Clang tools and Rust first."
+    throw "CMake configuration failed. Install Visual Studio's C++ Clang tools first."
 }
 
 $solution = Join-Path $buildDir "uox3.sln"

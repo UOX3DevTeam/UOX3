@@ -10,24 +10,25 @@ if(WIN32 AND NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 if(WIN32)
-    set(MOZJS_BRIDGE_DIR "${PROJECT_SOURCE_DIR}/../../tools/mozjs-bridge")
-    execute_process(
-        COMMAND cargo build --manifest-path "${MOZJS_BRIDGE_DIR}/Cargo.toml" --release
-        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/../.."
-        RESULT_VARIABLE MOZJS_BRIDGE_RESULT
-        COMMAND_ECHO STDOUT
-    )
-    if(NOT MOZJS_BRIDGE_RESULT EQUAL 0)
-        message(FATAL_ERROR "Failed to build the pinned mozjs 115 bridge")
+    set(MOZJS_DIR "${PROJECT_SOURCE_DIR}/../../spidermonkey")
+    set(MOZJS_ARCHIVE "${MOZJS_DIR}/mozjs-115.13-windows-x64-clangcl.zip")
+    set(MOZJS_PREBUILT_DIR "${CMAKE_BINARY_DIR}/mozjs-115.13")
+    set(MOZJS_LIBRARY "${MOZJS_PREBUILT_DIR}/mozjs-115.13-windows-x64-clangcl.lib")
+
+    if(NOT EXISTS "${MOZJS_ARCHIVE}")
+        message(FATAL_ERROR "Bundled SpiderMonkey archive not found: ${MOZJS_ARCHIVE}")
     endif()
 
-    file(GLOB MOZJS_BUILD_DIRS
-        "${MOZJS_BRIDGE_DIR}/target/release/build/mozjs_sys-*/out/build")
-    list(LENGTH MOZJS_BUILD_DIRS MOZJS_BUILD_DIR_COUNT)
-    if(NOT MOZJS_BUILD_DIR_COUNT EQUAL 1)
-        message(FATAL_ERROR "Expected exactly one generated mozjs build directory")
+    if(NOT EXISTS "${MOZJS_LIBRARY}")
+        file(MAKE_DIRECTORY "${MOZJS_PREBUILT_DIR}")
+        file(ARCHIVE_EXTRACT
+            INPUT "${MOZJS_ARCHIVE}"
+            DESTINATION "${MOZJS_PREBUILT_DIR}")
     endif()
-    list(GET MOZJS_BUILD_DIRS 0 MOZJS_BUILD_DIR)
+
+    if(NOT EXISTS "${MOZJS_LIBRARY}")
+        message(FATAL_ERROR "Failed to extract bundled SpiderMonkey library")
+    endif()
 endif()
 
 # 2. Fix for modern, strict GCC compilers (like on new Ubuntu/WSL)
@@ -232,7 +233,8 @@ set (CMAKE_RC_STANDARD_INCLUDE_DIRECTORIES ${PROJECT_SOURCE_DIR}/../../assets/)
 	
 target_compile_definitions(uox3 PRIVATE
 		_WINDOWS
-		EXPORT_JS_API
+		JS_STANDALONE
+		STATIC_JS_API
 		_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
 		_CRT_NO_VA_START_VALIDATION
 		_CRT_SECURE_NO_DEPRECATE
@@ -245,7 +247,6 @@ target_compile_definitions(uox3 PRIVATE
 	
 	target_compile_options( uox3 PRIVATE
 		/J
-		"/FI${MOZJS_BUILD_DIR}/js/src/js-confdefs.h"
 		/GR-
 		$<$<CONFIG:Release>:/O2>
 	)
@@ -285,7 +286,7 @@ endif(WIN32)
 target_include_directories(uox3
 	PUBLIC
 		${PROJECT_SOURCE_DIR}/../../source
-		$<$<PLATFORM_ID:Windows>:${MOZJS_BUILD_DIR}/dist/include>
+		$<$<PLATFORM_ID:Windows>:${MOZJS_DIR}/include>
 		$<$<NOT:$<PLATFORM_ID:Windows>>:${PROJECT_SOURCE_DIR}/../../spidermonkey/include>
 		${PROJECT_SOURCE_DIR}/../../utf8cpp
 )
@@ -299,7 +300,7 @@ endif (NOT SYSTEM_ZLIB)
 # The libraries we need
 # *************************************************************************
 target_link_libraries(uox3 PRIVATE
-	$<$<PLATFORM_ID:Windows>:${MOZJS_BRIDGE_DIR}/target/release/uox3_mozjs_bridge.lib>
+	$<$<PLATFORM_ID:Windows>:${MOZJS_LIBRARY}>
 	$<$<NOT:$<PLATFORM_ID:Windows>>:jsapi>
 	$<$<NOT:$<PLATFORM_ID:Windows>>:jsglue>
 	$<$<NOT:$<PLATFORM_ID:Windows>>:js_static>

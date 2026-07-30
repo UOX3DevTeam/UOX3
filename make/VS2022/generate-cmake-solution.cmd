@@ -5,7 +5,7 @@ set "SOURCE_DIR=%~dp0..\cmake"
 
 cmake --preset vs2022-clang -S "%SOURCE_DIR%"
 if errorlevel 1 (
-    echo CMake configuration failed. Install Visual Studio C++ Clang tools and Rust first.
+    echo CMake configuration failed. Install Visual Studio C++ Clang tools first.
     exit /b 1
 )
 
