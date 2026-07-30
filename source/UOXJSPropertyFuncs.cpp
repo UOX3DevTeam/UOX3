@@ -53,6 +53,8 @@ IMPL_BASE_INT_SET( x,      SI16, item->SetLocation( value, item->GetY(), item->G
 IMPL_BASE_INT_SET( y,      SI16, item->SetLocation( item->GetX(), value, item->GetZ() ) )
 IMPL_BASE_INT_SET( z,      SI08, item->SetZ( value ) )
 IMPL_BASE_INT_SET( id,     UI16, item->SetId( value ) )
+IMPL_BASE_INT_SET( visible, VisibleTypes, item->SetVisible( value ) )
+IMPL_BASE_INT_SET( health,  SI16, item->SetHP( value ) )
 IMPL_BASE_INT_SET( colour, UI16, item->SetColour( value ) )
 IMPL_BASE_INT_SET( color,  UI16, item->SetColour( value ) )
 IMPL_BASE_INT_SET( skin,   UI16, item->SetColour( value ) )
@@ -68,6 +70,8 @@ IMPL_GET_OBJ( CBaseObject, oldY,   CBaseObject, setInt32, GetOldLocation().y )
 IMPL_GET_OBJ( CBaseObject, oldZ,   CBaseObject, setInt32, GetOldLocation().z )
 IMPL_GET_OBJ( CBaseObject, id,     CBaseObject, setInt32, GetId() )
 IMPL_GET_OBJ( CBaseObject, serial, CBaseObject, setNumber, GetSerial() )
+IMPL_GET_OBJ( CBaseObject, visible, CBaseObject, setInt32, GetVisible() )
+IMPL_GET_OBJ( CBaseObject, health,  CBaseObject, setInt32, GetHP() )
 IMPL_GET_OBJ( CBaseObject, colour, CBaseObject, setInt32, GetColour() )
 IMPL_GET_OBJ( CBaseObject, color,  CBaseObject, setInt32, GetColour() )
 IMPL_GET_OBJ( CBaseObject, skin,   CBaseObject, setInt32, GetColour() )
@@ -293,8 +297,6 @@ FDCLG( CCreateEntry, skills )
 
 IMPL_GETS_OBJ( CItem, name, CItem, setString, GetName().c_str() )
 IMPL_GETS_OBJ( CItem, title, CItem, setString, GetTitle().c_str() )
-IMPL_GET_OBJ( CItem, visible, CItem, setInt32, GetVisible() )
-IMPL_GET_OBJ( CItem, health, CItem, setInt32, GetHP() )
 IMPL_GET_OBJ( CItem, worldnumber, CItem, setInt32, WorldNumber() )
 IMPL_GET_OBJ( CItem, worldNumber, CItem, setInt32, WorldNumber() )
 IMPL_GET_OBJ( CItem, instanceID, CItem, setInt32, GetInstanceId() )
@@ -313,8 +315,6 @@ FDCLS( CItem, attr )                                                      \
 	return true;                                                            \
 }
 
-IMPL_ITEM_INT_SET( visible, VisibleTypes, item->SetVisible( value ))
-IMPL_ITEM_INT_SET( health, SI16, item->SetHP( value ))
 IMPL_ITEM_INT_SET( worldnumber, UI08, item->SetLocation( item->GetX(), item->GetY(), item->GetZ(), value, item->GetInstanceId() ))
 IMPL_ITEM_INT_SET( worldNumber, UI08, item->SetLocation( item->GetX(), item->GetY(), item->GetZ(), value, item->GetInstanceId() ))
 IMPL_ITEM_INT_SET( instanceID, UI16, item->SetLocation( item->GetX(), item->GetY(), item->GetZ(), item->WorldNumber(), value ))
@@ -1060,8 +1060,6 @@ FDCLS( CCharacter, attr )                                                   \
 CHARACTER_CORE_INT_SET( controlSlots, UI16, character->SetControlSlots( value ))
 CHARACTER_CORE_INT_SET( controlSlotsUsed, UI16, character->SetControlSlotsUsed( value ))
 CHARACTER_CORE_INT_SET( orneriness, UI16, character->SetOrneriness( value ))
-CHARACTER_CORE_INT_SET( visible, VisibleTypes, character->SetVisible( value ))
-CHARACTER_CORE_INT_SET( health, SI16, character->SetHP( value ))
 #undef CHARACTER_CORE_INT_SET
 
 FDCLS( CCharacter, worldnumber )
@@ -1110,8 +1108,6 @@ CHARACTER_STRING_GET( title, character->GetTitle() )
 CHARACTER_CORE_GET( controlSlots, setInt32, GetControlSlots() )
 CHARACTER_CORE_GET( controlSlotsUsed, setInt32, GetControlSlotsUsed() )
 CHARACTER_CORE_GET( orneriness, setInt32, GetOrneriness() )
-CHARACTER_CORE_GET( visible, setInt32, GetVisible() )
-CHARACTER_CORE_GET( health, setInt32, GetHP() )
 CHARACTER_CORE_GET( worldnumber, setInt32, WorldNumber() )
 CHARACTER_CORE_GET( instanceID, setInt32, GetInstanceId() )
 #undef CHARACTER_CORE_GET

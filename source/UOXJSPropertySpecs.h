@@ -331,6 +331,8 @@ DECL_GET_SET( CBaseObject, oldY )
 DECL_GET_SET( CBaseObject, oldZ )
 DECL_GET_SET( CBaseObject, id )
 DECL_GET_SET( CBaseObject, serial )
+DECL_GET_SET( CBaseObject, visible )
+DECL_GET_SET( CBaseObject, health )
 DECL_GET_SET( CBaseObject, color )
 DECL_GET_SET( CBaseObject, colour )
 DECL_GET_SET( CBaseObject, hue )
@@ -397,7 +399,6 @@ DECL_GET_SET( CCharacter, hairColor )
 DECL_GET_SET( CCharacter, hairColour )
 DECL_GET_SET( CCharacter, hairStyle )
 DECL_GET_SET( CCharacter, hasStolen )
-DECL_GET_SET( CCharacter, health )
 DECL_GET_SET( CCharacter, hidamage )
 DECL_GET_SET( CCharacter, hideFameKarmaTitle )
 DECL_GET_SET( CCharacter, hireling )
@@ -526,7 +527,6 @@ DECL_GET_SET( CCharacter, title )
 DECL_GET_SET( CCharacter, town )
 DECL_GET_SET( CCharacter, townPriv )
 DECL_GET_SET( CCharacter, trainer )
-DECL_GET_SET( CCharacter, visible )
 DECL_GET_SET( CCharacter, vulnerable )
 DECL_GET_SET( CCharacter, wandertype )
 DECL_GET_SET( CCharacter, weight )
@@ -601,7 +601,6 @@ DECL_GET_SET( CItem, event )
 DECL_GET_SET( CItem, friends )
 DECL_GET_SET( CItem, good )
 DECL_GET_SET( CItem, guests )
-DECL_GET_SET( CItem, health )
 DECL_GET_SET( CItem, healthBonus )
 DECL_GET_SET( CItem, healthLeech )
 DECL_GET_SET( CItem, healthRegenBonus )
@@ -709,7 +708,6 @@ DECL_GET_SET( CItem, type )
 DECL_GET_SET( CItem, usesLeft )
 DECL_GET_SET( CItem, vendorPrice )
 DECL_GET_SET( CItem, vendors )
-DECL_GET_SET( CItem, visible )
 DECL_GET_SET( CItem, weight )
 DECL_GET_SET( CItem, weightMax )
 DECL_GET_SET( CItem, wipable )
@@ -1134,6 +1132,8 @@ inline JSPropertySpec CBaseObjectProps[] =
   UX_PSGS( CBaseObject, oldZ,                  JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, id,                    JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, serial,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, visible,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, health,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, colour,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, color,                 JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, skin,                  JSPROP_ENUMANDPERM ),
@@ -1151,8 +1151,6 @@ inline JSPropertySpec CCharacterProps[] =
   UX_PSGS( CCharacter, controlSlotsUsed,      JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, orneriness,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, owner,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, visible,               JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, health,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, scripttrigger,         JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, scriptTriggers,        JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, worldnumber,           JSPROP_ENUMANDPERM ),
@@ -1353,8 +1351,6 @@ inline JSPropertySpec CItemProps[] =
   UX_PSGS( CItem, name,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, title,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, owner,               JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, visible,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, health,              JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, scripttrigger,       JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, scriptTriggers,      JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, worldnumber,         JSPROP_ENUMANDPERM ),
