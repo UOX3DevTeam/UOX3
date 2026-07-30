@@ -35,7 +35,6 @@
 
 #include <jsapi.h>
 #include <js/Object.h>
-#define INT_FITS_IN_JSVAL(i) ((i) >= INT32_MIN && (i) <= INT32_MAX)
 void MakeShop( CChar *c );
 void ScriptError( JSContext *cx, const char *txt, ... );
 
@@ -736,8 +735,6 @@ IMPL_GET_OBJ( CItem, manaBonus, CItem, setInt32, GetManaBonus() )
 IMPL_GET_OBJ( CItem, artifactRarity, CItem, setInt32, GetArtifactRarity() )
 IMPL_GET_OBJ( CItem, durabilityHpBonus, CItem, setInt32, GetDurabilityHpBonus() )
 IMPL_GET_OBJ( CItem, lowerStateReq, CItem, setInt32, GetLowerStatReq() )
-#undef ITEM_BOOL_GET
-
 static bool SetItemTempVariable( JSContext *cx, CItem *item, CITempVars variable, JS::HandleValue input )
 {
 	JS::RootedString converted( cx, JS::ToString( cx, input ));
