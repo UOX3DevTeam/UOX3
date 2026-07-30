@@ -334,6 +334,8 @@ DECL_GET_SET( CBaseObject, serial )
 DECL_GET_SET( CBaseObject, visible )
 DECL_GET_SET( CBaseObject, health )
 DECL_GET_SET( CBaseObject, shouldSave )
+DECL_GET_SET( CBaseObject, poison )
+DECL_GET_SET( CBaseObject, poisonedBy )
 DECL_GET_SET( CBaseObject, color )
 DECL_GET_SET( CBaseObject, colour )
 DECL_GET_SET( CBaseObject, hue )
@@ -478,8 +480,6 @@ DECL_GET_SET( CCharacter, pathTargY )
 DECL_GET_SET( CCharacter, permanentMagicReflect )
 DECL_GET_SET( CCharacter, petCount )
 DECL_GET_SET( CCharacter, playTime )
-DECL_GET_SET( CCharacter, poison )
-DECL_GET_SET( CCharacter, poisonedBy )
 DECL_GET_SET( CCharacter, poisonStrength )
 DECL_GET_SET( CCharacter, priv )
 DECL_GET_SET( CCharacter, race )
@@ -669,8 +669,6 @@ DECL_GET_SET( CItem, origin )
 DECL_GET_SET( CItem, origName )
 DECL_GET_SET( CItem, owner )
 DECL_GET_SET( CItem, owners )
-DECL_GET_SET( CItem, poison )
-DECL_GET_SET( CItem, poisonedBy )
 DECL_GET_SET( CItem, poisonCharges )
 DECL_GET_SET( CItem, race )
 DECL_GET_SET( CItem, rank )
@@ -1134,6 +1132,8 @@ inline JSPropertySpec CBaseObjectProps[] =
   UX_PSGS( CBaseObject, visible,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, health,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, shouldSave,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, poison,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, poisonedBy,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, colour,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, color,                 JSPROP_ENUMANDPERM ),
   UX_PSGS( CBaseObject, skin,                  JSPROP_ENUMANDPERM ),
@@ -1233,8 +1233,6 @@ inline JSPropertySpec CCharacterProps[] =
   UX_PSGS( CCharacter, tempdex,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, tempint,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, tempstr,               JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, poison,                JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, poisonedBy,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, lightlevel,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, vulnerable,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, willhunger,            JSPROP_ENUMANDPERM ),
@@ -1400,8 +1398,6 @@ inline JSPropertySpec CItemProps[] =
   UX_PSGS( CItem, usesLeft,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, rank,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, creator,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, poison,              JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, poisonedBy,          JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, poisonCharges,       JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, dir,                 JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, wipable,             JSPROP_ENUMANDPERM ),

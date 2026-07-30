@@ -73,6 +73,8 @@ IMPL_GET_OBJ( CBaseObject, serial, CBaseObject, setNumber, GetSerial() )
 IMPL_GET_OBJ( CBaseObject, visible, CBaseObject, setInt32, GetVisible() )
 IMPL_GET_OBJ( CBaseObject, health,  CBaseObject, setInt32, GetHP() )
 IMPL_GET_OBJ( CBaseObject, shouldSave, CBaseObject, setBoolean, ShouldSave() )
+IMPL_GET_OBJ( CBaseObject, poison, CBaseObject, setInt32, GetPoisoned() )
+IMPL_GET_OBJ( CBaseObject, poisonedBy, CBaseObject, setNumber, GetPoisonedBy() )
 IMPL_GET_OBJ( CBaseObject, colour, CBaseObject, setInt32, GetColour() )
 IMPL_GET_OBJ( CBaseObject, color,  CBaseObject, setInt32, GetColour() )
 IMPL_GET_OBJ( CBaseObject, skin,   CBaseObject, setInt32, GetColour() )
@@ -87,6 +89,26 @@ FDCLS( CBaseObject, shouldSave )
 	auto object = JS::GetMaybePtrFromReservedSlot<CBaseObject>( thisObj, 0 );
 	if( !ValidateObject( object )) return false;
 	object->ShouldSave( JS::ToBoolean( args.get( 0 )));
+	return true;
+}
+FDCLS( CBaseObject, poison )
+{
+	FNARGS
+	auto object = JS::GetMaybePtrFromReservedSlot<CBaseObject>( thisObj, 0 );
+	if( !ValidateObject( object )) return false;
+	int32_t value = 0;
+	if( !JS::ToInt32( cx, args.get( 0 ), &value )) return false;
+	object->SetPoisoned( static_cast<UI08>( value ));
+	return true;
+}
+FDCLS( CBaseObject, poisonedBy )
+{
+	FNARGS
+	auto object = JS::GetMaybePtrFromReservedSlot<CBaseObject>( thisObj, 0 );
+	if( !ValidateObject( object )) return false;
+	int32_t value = 0;
+	if( !JS::ToInt32( cx, args.get( 0 ), &value )) return false;
+	object->SetPoisonedBy( static_cast<UI32>( value ));
 	return true;
 }
 
@@ -648,8 +670,6 @@ IMPL_GET_OBJ( CItem, maxUses,       CItem, setInt32,   GetMaxUses() )
 IMPL_GET_OBJ( CItem, usesLeft,      CItem, setInt32,   GetUsesLeft() )
 IMPL_GET_OBJ( CItem, rank,          CItem, setInt32,   GetRank() )
 IMPL_GET_OBJ( CItem, creator,       CItem, setNumber,  GetCreator() )
-IMPL_GET_OBJ( CItem, poison,        CItem, setInt32,   GetPoisoned() )
-IMPL_GET_OBJ( CItem, poisonedBy,    CItem, setNumber,  GetPoisonedBy() )
 IMPL_GET_OBJ( CItem, poisonCharges, CItem, setInt32,   GetPoisonCharges() )
 IMPL_GET_OBJ( CItem, dir,           CItem, setInt32,   GetDir() )
 IMPL_GET_OBJ( CItem, wipable,       CItem, setBoolean, IsWipeable() )
@@ -677,8 +697,6 @@ ITEM_STATE_INT_SET( maxUses, UI16, SetMaxUses )
 ITEM_STATE_INT_SET( usesLeft, UI16, SetUsesLeft )
 ITEM_STATE_INT_SET( rank, SI08, SetRank )
 ITEM_STATE_INT_SET( creator, SERIAL, SetCreator )
-ITEM_STATE_INT_SET( poison, UI08, SetPoisoned )
-ITEM_STATE_INT_SET( poisonedBy, UI32, SetPoisonedBy )
 ITEM_STATE_INT_SET( poisonCharges, UI16, SetPoisonCharges )
 ITEM_STATE_INT_SET( dir, SI16, SetDir )
 ITEM_STATE_INT_SET( weight, SI32, SetWeight )
@@ -1316,8 +1334,6 @@ CHARACTER_LIFECYCLE_INT_SET( direction, UI08, SetDir )
 CHARACTER_LIFECYCLE_INT_SET( tempdex, SI16, SetDexterity2 )
 CHARACTER_LIFECYCLE_INT_SET( tempint, SI16, SetIntelligence2 )
 CHARACTER_LIFECYCLE_INT_SET( tempstr, SI16, SetStrength2 )
-CHARACTER_LIFECYCLE_INT_SET( poison, UI08, SetPoisoned )
-CHARACTER_LIFECYCLE_INT_SET( poisonedBy, UI32, SetPoisoned )
 #undef CHARACTER_LIFECYCLE_INT_SET
 FDCLS( CCharacter, lightlevel ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); int32_t converted = 0; if( !JS::ToInt32( cx, args.get( 0 ), &converted )) return false; const UI08 value = static_cast<UI08>( converted ); character->SetFixedLight( value ); if( character->GetSocket() != nullptr ) DoLight( character->GetSocket(), value == 255 ? cwmWorldState->ServerData()->WorldLightCurrentLevel() : value ); return true; }
 FDCLS( CCharacter, vulnerable ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); character->SetInvulnerable( !JS::ToBoolean( args.get( 0 ))); return true; }
@@ -1334,8 +1350,6 @@ CHARACTER_LIFECYCLE_GET( isGuarded, setBoolean, IsGuarded() )
 CHARACTER_LIFECYCLE_GET( tempdex, setInt32, GetDexterity2() )
 CHARACTER_LIFECYCLE_GET( tempint, setInt32, GetIntelligence2() )
 CHARACTER_LIFECYCLE_GET( tempstr, setInt32, GetStrength2() )
-CHARACTER_LIFECYCLE_GET( poison, setInt32, GetPoisoned() )
-CHARACTER_LIFECYCLE_GET( poisonedBy, setNumber, GetPoisonedBy() )
 CHARACTER_LIFECYCLE_GET( lightlevel, setInt32, GetFixedLight() )
 CHARACTER_LIFECYCLE_GET( willhunger, setBoolean, WillHunger() )
 CHARACTER_LIFECYCLE_GET( willthirst, setBoolean, WillThirst() )
