@@ -52,6 +52,15 @@ T *GetWrappedObject( JS::HandleValue value, const JSClass *expectedClass )
 
 	return JS::GetMaybePtrFromReservedSlot<T>( &value.toObject(), 0 );
 }
+
+CBaseObject *GetBaseObject( JS::HandleValue value )
+{
+	CBaseObject *object = GetWrappedObject<CChar>( value, &UOXChar_class );
+	if( object == nullptr )
+		object = GetWrappedObject<CItem>( value, &UOXItem_class );
+
+	return object;
+}
 }
 
 
@@ -146,17 +155,15 @@ bool SE_DoTempEffect( JSContext *cx, unsigned int argc, JS::Value *vp )
 
 	if( argc == 8 )
 	{
-		JSObject *myitemptr = &args.get(7).toObject();
-		myItemPtr = static_cast<CItem *>( JS_GetPrivate( cx, myitemptr ));
+		myItemPtr = GetWrappedObject<CItem>( args.get( 7 ), &UOXItem_class );
 	}
 
-	JSObject *mysrc		= &args.get(1).toObject();
-	CChar *mysrcChar	= nullptr;
+	CChar *mysrcChar = nullptr;
 
 	// Check if mysrc is null before continuing - it could be this temp effect as no character-based source!
-	if( mysrc != nullptr )
+	if( !args.get( 1 ).isNull() )
 	{
-		mysrcChar = static_cast<CChar*>( JS_GetPrivate( cx, mysrc ));
+		mysrcChar = GetWrappedObject<CChar>( args.get( 1 ), &UOXChar_class );
 		if( !ValidateObject( mysrcChar ))
 		{
 			ScriptError( cx, "DoTempEffect: Invalid src" );
@@ -316,7 +323,7 @@ bool SE_CheckTimeSinceLastCombat( JSContext *cx, unsigned int argc, JS::Value *v
 	CChar* from = nullptr;
 	UI32 timespanInSeconds = 0;
 
-	if( !args.get(0).isObject() || !( from = ( CChar* )JS_GetPrivate( cx, &args.get(0).toObject())))
+	if( !( from = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class )))
 	{
 		ScriptError( cx, "CheckTimeSinceLastCombat: Invalid first argument (expected CChar)" );
 		return false;
@@ -487,8 +494,7 @@ bool SE_DoMovingEffect( JSContext *cx, unsigned int argc, JS::Value *vp )
 	}
 	else
 	{
-		JSObject *srcObj = &args.get(0).toObject();
-		src				 = static_cast<CBaseObject *>( JS_GetPrivate( cx, srcObj ));
+		src = GetBaseObject( args.get( 0 ));
 		if( !ValidateObject( src ))
 		{
 			ScriptError( cx, "DoMovingEffect: Invalid source object" );
@@ -530,8 +536,7 @@ bool SE_DoMovingEffect( JSContext *cx, unsigned int argc, JS::Value *vp )
 				return false;
 			}
 
-			JSObject *trgObj	= &args.get(1).toObject();
-			trg = static_cast<CBaseObject *>( JS_GetPrivate( cx, trgObj ));
+			trg = GetBaseObject( args.get( 1 ));
 			if( !ValidateObject( trg ))
 			{
 				ScriptError( cx, "DoMovingEffect: Invalid target object" );
@@ -1377,15 +1382,13 @@ bool SE_CreateDFNItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 	CSocket *mySock = nullptr;
 	if( args.get(0) != JS::NullValue() )
 	{
-		JSObject *mSock			= &args.get(0).toObject();
-		mySock					= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
+		mySock = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 	}
 
 	CChar *myChar = nullptr;
 	if( args.get(1) != JS::NullValue() )
 	{
-		JSObject *mChar			= &args.get(1).toObject();
-		myChar					= static_cast<CChar *>( JS_GetPrivate( cx, mChar ));
+		myChar = GetWrappedObject<CChar>( args.get( 1 ), &UOXChar_class );
 	}
 
 	std::string bpSectNumber	= JS_GetStringBytes( cx, args.get(2));
@@ -1469,15 +1472,13 @@ bool SE_CreateBlankItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 	CSocket *mySock			= nullptr;
 	if( args.get(0) != JS::NullValue() )
 	{
-		JSObject *mSock		= &args.get(0).toObject();
-		mySock				= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
+		mySock = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 	}
 
 	CChar *myChar = nullptr;
 	if( args.get(1) != JS::NullValue() )
 	{
-		JSObject *mChar			= &args.get(1).toObject();
-		myChar					= static_cast<CChar *>( JS_GetPrivate( cx, mChar ));
+		myChar = GetWrappedObject<CChar>( args.get( 1 ), &UOXChar_class );
 	}
 
 	SI32 amount				= static_cast<SI32>( args.get(2).toInt32());
@@ -2629,7 +2630,6 @@ bool SE_AreaCharacterFunction( JSContext *cx, unsigned int argc, JS::Value *vp )
 	}
 
 	// Do parameter validation here
-	JSObject *srcSocketObj	= nullptr;
 	CSocket *srcSocket		= nullptr;
 	std::string trgFunc			= JS_GetStringBytes( cx, args.get(0));
 	if( trgFunc.empty() )
@@ -2649,8 +2649,7 @@ bool SE_AreaCharacterFunction( JSContext *cx, unsigned int argc, JS::Value *vp )
 	R32 distance = static_cast<R32>( args.get(2).toInt32());
 	if( argc == 4 && args.get(3) != JS::NullValue() )
 	{
-		srcSocketObj = &args.get(3).toObject();
-		srcSocket = static_cast<CSocket *>( JS_GetPrivate( cx, srcSocketObj ));
+		srcSocket = GetWrappedObject<CSocket>( args.get( 3 ), &UOXSocket_class );
 	}
 
 	std::vector<CChar *> charsFound;
@@ -2719,7 +2718,6 @@ bool SE_AreaItemFunction( JSContext *cx, unsigned int argc, JS::Value *vp )
 	}
 
 	// Do parameter validation here
-	JSObject *srcSocketObj	= nullptr;
 	CSocket *srcSocket		= nullptr;
 	std::string trgFunc			= JS_GetStringBytes( cx, args.get(0));
 	if( trgFunc.empty() )
@@ -2739,11 +2737,7 @@ bool SE_AreaItemFunction( JSContext *cx, unsigned int argc, JS::Value *vp )
 	R32 distance = static_cast<R32>( args.get(2).toInt32());
 	if( argc == 4 && args.get(3) != JS::NullValue() )
 	{
-		srcSocketObj = &args.get(3).toObject();
-		if( srcSocketObj != nullptr )
-		{
-			srcSocket	= static_cast<CSocket *>( JS_GetPrivate( cx, srcSocketObj ));
-		}
+		srcSocket = GetWrappedObject<CSocket>( args.get( 3 ), &UOXSocket_class );
 	}
 
 	std::vector<CItem *> itemsFound;
@@ -3801,11 +3795,8 @@ bool SE_WillResultInCriminal( JSContext *cx, unsigned int argc, JS::Value *vp )
 
 	if( args.get(0) != JS::NullValue() && args.get(1) != JS::NullValue() )
 	{
-		JSObject *srcCharObj = &args.get(0).toObject();
-		srcChar = static_cast<CChar *>( JS_GetPrivate( cx, srcCharObj ));
-
-		JSObject *trgCharObj = &args.get(1).toObject();
-		trgChar = static_cast<CChar *>( JS_GetPrivate( cx, trgCharObj ));
+		srcChar = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
+		trgChar = GetWrappedObject<CChar>( args.get( 1 ), &UOXChar_class );
 
 		if( ValidateObject( srcChar ) && ValidateObject( trgChar ))
 		{
