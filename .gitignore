@@ -1,6 +1,8 @@
 # Project unique Items
 
 [Bb]uild/
+/build-*/
+/built/
 /uox3
 
 
