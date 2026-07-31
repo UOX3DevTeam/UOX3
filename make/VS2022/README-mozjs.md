@@ -1,34 +1,25 @@
-# Visual Studio 2022 mozjs build
+# Visual Studio 2022 build
 
 Install these prerequisites:
 
 - Visual Studio 2022 with **Desktop development with C++**
 - **C++ Clang tools for Windows** in the Visual Studio Installer
-- CMake 3.25 or newer
+- Windows 10 or newer (provides `tar.exe`)
 
-From PowerShell in the repository root, run:
+Open the checked-in solution directly:
 
-```powershell
-.\make\VS2022\generate-cmake-solution.cmd
-```
+- Double-click `make\VS2022\uox3.sln`.
+- Select `Debug` or `Release` and the `x64` platform.
+- Build the `uox3` project.
 
-The `.cmd` launcher works even when PowerShell script execution is disabled.
+The executable is written to `make\VS2022\x64\<configuration>\uox3.exe`.
 
-The script generates and opens `build-vs2022\uox3.sln`. Build the `uox3`
-project using `Debug`, `Release`, or `RelWithDebInfo` and the `x64` platform.
-The executable is written to `build-vs2022\<configuration>\uox3.exe`.
+The project extracts the bundled SpiderMonkey 115.13 static library on the
+first build. The extracted library and all compiler output remain under the
+ignored `make\VS2022\x64` directory. CMake, Rust, and Cargo are not required.
 
-CMake extracts the bundled SpiderMonkey 115.13 static library into the build
-directory when the solution is generated. Rust and Cargo are not required.
-
-The older solution stored directly in `make\VS2022` targets the retired
-SpiderMonkey libraries and must not be used for the mozjs 115 branch.
-
-Command-line equivalents:
+Command-line equivalent from a Visual Studio developer terminal:
 
 ```powershell
-Push-Location make\cmake
-cmake --preset vs2022-clang
-cmake --build --preset vs2022-release
-Pop-Location
+msbuild make\VS2022\uox3.sln /m /p:Configuration=Release /p:Platform=x64
 ```

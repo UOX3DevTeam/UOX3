@@ -11,7 +11,7 @@
       "displayName": "Visual Studio 2022 - ClangCL x64",
       "description": "Build UOX3 with the bundled mozjs 115 library.",
       "generator": "Visual Studio 17 2022",
-      "binaryDir": "${sourceDir}/../../build-vs2022",
+      "binaryDir": "${sourceDir}/build/vs2022",
       "architecture": "x64",
       "toolset": "ClangCL"
     }

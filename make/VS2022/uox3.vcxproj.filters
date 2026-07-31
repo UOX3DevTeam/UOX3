@@ -272,6 +272,9 @@
     <ClCompile Include="..\..\source\UOXJSPropertyFuncs.cpp">
       <Filter>Source Files\JS Engine</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\UOXJSUtilities.cpp">
+      <Filter>Source Files\JS Engine</Filter>
+    </ClCompile>
     <!-- Network group -->
     <ClCompile Include="..\..\source\CPacketReceive.cpp">
       <Filter>Source Files\Network</Filter>
@@ -505,6 +508,9 @@
       <Filter>Header Files\JS Engine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\UOXJSPropertySpecs.h">
+      <Filter>Header Files\JS Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\UOXJSUtilities.h">
       <Filter>Header Files\JS Engine</Filter>
     </ClInclude>
     <!-- Network group -->
