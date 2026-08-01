@@ -582,6 +582,9 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
+# Rust build output for the optional SpiderMonkey bridge
+spidermonkey/uox3-mozjs-bridge/target/
+
 ### VisualStudio Patch ###
 # Additional files built by Visual Studio
 

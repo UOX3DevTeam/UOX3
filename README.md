@@ -24,9 +24,9 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
   > * **Windows** - Download and install [Visual Studio 2022 Community](https://visualstudio.microsoft.com/vs/community/) on Windows 10 or newer.
   >   * In the Visual Studio Installer, select the **Desktop development with C++** workload.
   >   * Under **Individual components**, select **C++ Clang Compiler for Windows** and **MSBuild support for LLVM (clang-cl) toolset**.
-  > * **Linux (Debian-based)** - Run `sudo apt-get update` + `sudo apt install build-essential cmake` in a Terminal:  (or use your Linux distro's package manager)
+  > * **Linux (Debian-based)** - Run `sudo apt update && sudo apt install build-essential cmake curl` in a Terminal (or use your distribution's package manager).
   > * **FreeBSD** - Run `pkg install cmake` in a Terminal. Alternatively, build `cmake` via ports if desired.
-  > * **macOS** - Download [Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12) (for building with an IDE) via the App Store, and/or [CMake](https://cmake.org/download/) (for command-line builds)
+  > * **macOS** - Install the Xcode command-line tools with `xcode-select --install`, then run `brew install cmake` using [Homebrew](https://brew.sh/).
   > * **Docker/Podman** - Ensure that it is downloaded and installed (Windows) or installed from your package manager
 </details>
 
@@ -41,7 +41,7 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 ---
 
 ## Step 2: Clone the UOX3 Git Repository
-*Next up, clone the UOX3 git repository, which includes the supported SpiderMonkey and zlib source and libraries.*
+*Next up, clone the UOX3 git repository, which includes the supported SpiderMonkey headers and precompiled libraries, along with zlib source.*
 <details>
   <summary>Using <strong>GitHub Desktop</strong> (Windows/macOS)</summary>
 
@@ -74,7 +74,8 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
   <summary><strong>Visual Studio 2022</strong> (Windows), <strong>automake.sh</strong> (Linux/FreeBSD), <strong>XCode</strong> (macOS)</summary>
 
   > * **Visual Studio 2022** - (Windows) Open *UOX3\make\VS2022\uox3.sln*, select *Debug*, *Release*, or the performance-optimized *ReleaseLTO* configuration and the *x64* platform, then build the *uox3* project.
-  > * **automake.sh** - (Linux/FreeBSD) Run `./automake.sh` in a Terminal, from the root of the cloned UOX3 repository. This compiles UOX3 with CMake, but in one command only. Use optional argument `-b debug` to create debug build, and/or `-o clean` to do a clean build
+  > * **automake.sh** - (Linux/macOS) From the root of the UOX3 repository, run `./automake.sh`. The bundled SpiderMonkey library for your platform is used automatically. Use optional argument `-b debug` for a debug build and/or `-o clean` for a clean build.
+  > * **automake.sh** - (FreeBSD) From the root of the UOX3 repository, run `./automake.sh`. Use optional argument `-b debug` for a debug build and/or `-o clean` for a clean build.
   > * **XCode** - (macOS) Open *UOX3/make/XCode/uox3/uox3.xcworkspace*, select *Build*
 </details>
 
@@ -127,6 +128,50 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
   <summary><strong>Docker/Podman</strong></summary>
 
   Build and tag the image from the root of the repository like: `docker buildx build --progress=plain -t uox3 .` or `podman build -t uox3 .`
+</details>
+
+<details>
+  <summary>Build <strong>SpiderMonkey 115.13</strong> from source (Linux/macOS — optional)</summary>
+
+  > Use this instead of the bundled library if you prefer to build SpiderMonkey yourself. Install Rust, Python, Clang, and libclang first, then run from the UOX3 repository:
+  >
+  > `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`\
+  > `source "$HOME/.cargo/env"`\
+  > `cd spidermonkey/uox3-mozjs-bridge`\
+  > `MOZJS_FROM_SOURCE=1 cargo build --locked --release`\
+  > `cd ../../`\
+  > `UOX3_MOZJS_LIBRARY="$PWD/spidermonkey/uox3-mozjs-bridge/target/release/libuox3_mozjs_bridge.a" ./automake.sh`
+</details>
+
+<details>
+  <summary>Build <strong>SpiderMonkey 115.13</strong> from source (Windows — optional)</summary>
+
+  Use this instead of the ZIP included with UOX3 if you prefer to build SpiderMonkey yourself.
+
+  1. Install [Rust](https://rustup.rs/), Python 3.11, [LLVM/Clang 14 or newer](https://releases.llvm.org/), and [MozTools 4.0](https://github.com/servo/servo-build-deps/releases/download/msvc-deps/moztools-4.0.zip). In Visual Studio Installer, also install the Windows SDK, C++ ATL, and C++ MFC components.
+  2. Open a Visual Studio Developer PowerShell in `spidermonkey\uox3-mozjs-bridge`, update the paths for your installation, and build:
+
+     ```powershell
+     $env:MOZJS_FROM_SOURCE = "1"
+     Remove-Item Env:MOZJS_ARCHIVE -ErrorAction SilentlyContinue
+     $env:CC = "clang-cl"
+     $env:CXX = "clang-cl"
+     $env:LD = "lld-link"
+     $env:PYTHON = "C:\Python311\python.exe"
+     $env:PYTHON3 = "C:\Python311\python.exe"
+     $env:MOZTOOLS_PATH = "C:\path\to\moztools-4.0"
+     $env:LIBCLANG_PATH = "C:\path\to\LLVM\lib"
+     cargo build --release
+     ```
+
+  3. Create the drop-in archive:
+
+     ```powershell
+     Copy-Item target\release\uox3_mozjs_bridge.lib mozjs-115.13-windows-x64-clangcl.lib
+     Compress-Archive mozjs-115.13-windows-x64-clangcl.lib mozjs-115.13-windows-x64-clangcl.zip
+     ```
+
+  Replace `spidermonkey\mozjs-115.13-windows-x64-clangcl.zip` in your UOX3 checkout with the ZIP you created, then follow the normal Windows build instructions.
 </details>
 
 ---
