@@ -2,6 +2,11 @@ name: Build SpiderMonkey libraries
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - feature/libmozjs-115-13-2-cleanup
+    paths:
+      - .github/workflows/build-mozjs-libraries.yml
 
 permissions:
   contents: write
@@ -10,17 +15,48 @@ env:
   MOZJS_ARCHIVE: https://github.com/servo/mozjs/releases/download
 
 jobs:
-  build:
+  build-linux:
+    name: Linux x64
+    runs-on: ubuntu-24.04
+    container: registry.access.redhat.com/ubi8/ubi:latest
+
+    steps:
+      - name: Install build tools
+        run: yum -y install gcc gcc-c++ git curl gzip tar zlib-devel
+
+      - name: Check out UOX3
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+
+      - name: Build UOX3 SpiderMonkey library
+        run: cargo build --locked --release
+        working-directory: spidermonkey/uox3-mozjs-bridge
+
+      - name: Package library
+        run: |
+          mkdir -p package
+          cp target/release/libuox3_mozjs_bridge.a package/uox3-mozjs-115.13-linux-x64.a
+          tar -czf uox3-mozjs-115.13-linux-x64.tar.gz -C package uox3-mozjs-115.13-linux-x64.a
+        working-directory: spidermonkey/uox3-mozjs-bridge
+
+      - name: Upload library
+        uses: actions/upload-artifact@v4
+        with:
+          name: uox3-mozjs-115.13-linux-x64
+          path: spidermonkey/uox3-mozjs-bridge/uox3-mozjs-115.13-linux-x64.tar.gz
+          if-no-files-found: error
+
+  build-macos:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - name: Linux x64
-            runner: ubuntu-24.04
-            target: x86_64-unknown-linux-gnu
-            package: uox3-mozjs-115.13-linux-x64
           - name: macOS Intel
             runner: macos-15-intel
             target: x86_64-apple-darwin
@@ -59,7 +95,7 @@ jobs:
 
   publish:
     name: Add libraries to branch
-    needs: build
+    needs: [build-linux, build-macos]
     runs-on: ubuntu-24.04
 
     steps:

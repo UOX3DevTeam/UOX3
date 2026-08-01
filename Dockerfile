@@ -8,8 +8,8 @@ RUN mkdir -p ~/uox3
 FROM buildbase AS buildapp
 WORKDIR /root/uox3
 COPY . .
-# Ensure Linux linefeeds
-RUN find /root/uox3 -name \* -type f -exec dos2unix {} \;
+# Ensure shell scripts use Linux line endings without modifying binary archives
+RUN dos2unix automake.sh docker/run.sh
 # Build it
 RUN cd /root/uox3 && ./automake.sh
 CMD ["/bin/bash"]
