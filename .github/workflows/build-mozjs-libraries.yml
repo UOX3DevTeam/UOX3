@@ -1,0 +1,64 @@
+name: Build SpiderMonkey libraries
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/libmozjs-115-13-2-cleanup
+    paths:
+      - .github/workflows/build-mozjs-libraries.yml
+      - spidermonkey/uox3-mozjs-bridge/**
+
+permissions:
+  contents: read
+
+env:
+  MOZJS_ARCHIVE: https://github.com/servo/mozjs/releases
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Linux x64
+            runner: ubuntu-24.04
+            target: x86_64-unknown-linux-gnu
+            package: uox3-mozjs-115.13-linux-x64
+          - name: macOS Intel
+            runner: macos-15-intel
+            target: x86_64-apple-darwin
+            package: uox3-mozjs-115.13-macos-x64
+          - name: macOS Apple Silicon
+            runner: macos-15
+            target: aarch64-apple-darwin
+            package: uox3-mozjs-115.13-macos-arm64
+
+    defaults:
+      run:
+        working-directory: spidermonkey/uox3-mozjs-bridge
+
+    steps:
+      - name: Check out UOX3
+        uses: actions/checkout@v4
+
+      - name: Install Rust target
+        run: rustup target add "${{ matrix.target }}"
+
+      - name: Build UOX3 SpiderMonkey library
+        run: cargo build --locked --release --target "${{ matrix.target }}"
+
+      - name: Package library
+        run: |
+          mkdir -p package
+          cp "target/${{ matrix.target }}/release/libuox3_mozjs_bridge.a" "package/${{ matrix.package }}.a"
+          tar -czf "${{ matrix.package }}.tar.gz" -C package "${{ matrix.package }}.a"
+
+      - name: Upload library
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.package }}
+          path: spidermonkey/uox3-mozjs-bridge/${{ matrix.package }}.tar.gz
+          if-no-files-found: error
