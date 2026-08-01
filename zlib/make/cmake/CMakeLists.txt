@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.18)
-project(zlib VERSION 1 LANGUAGES C)
+project(zlib VERSION 1.3.2 LANGUAGES C)
 
 add_library(zlib STATIC
 	../../adler32.c
