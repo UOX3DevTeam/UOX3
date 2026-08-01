@@ -73,7 +73,7 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 <details>
   <summary><strong>Visual Studio 2022</strong> (Windows), <strong>automake.sh</strong> (Linux/FreeBSD), <strong>XCode</strong> (macOS)</summary>
 
-  > * **Visual Studio 2022** - (Windows) Open *UOX3\make\VS2022\uox3.sln*, select *Debug* or *Release* and the *x64* platform, then build the *uox3* project. The first build extracts the bundled SpiderMonkey 115.13 static library. The extracted library and all compiler output remain under the ignored *UOX3\make\VS2022\x64* directory.
+  > * **Visual Studio 2022** - (Windows) Open *UOX3\make\VS2022\uox3.sln*, select *Debug*, *Release*, or *ReleaseLTO* and the *x64* platform, then build the *uox3* project. *ReleaseLTO* enables Clang full optimization, ThinLTO, and linker reference/COMDAT folding for performance testing; keep *Release* as the baseline when benchmarking. The first build extracts the bundled SpiderMonkey 115.13 static library. The extracted library and all compiler output remain under the ignored *UOX3\make\VS2022\x64* directory.
   > * **automake.sh** - (Linux/FreeBSD) Run `./automake.sh` in a Terminal, from the root of the cloned UOX3 repository. This compiles UOX3 with CMake, but in one command only. Use optional argument `-b debug` to create debug build, and/or `-o clean` to do a clean build
   > * **XCode** - (macOS) Open *UOX3/make/XCode/uox3/uox3.xcworkspace*, select *Build*
 </details>
@@ -83,6 +83,8 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 
   > From a Visual Studio developer terminal, run:
   > `msbuild make\VS2022\uox3.sln /m /p:Configuration=Release /p:Platform=x64`
+  >
+  > To build the optimized ThinLTO configuration, replace `Release` with `ReleaseLTO`.
 </details>
 
 <details>
@@ -122,19 +124,13 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 </details>
 
 <details>
-  <summary>(Troubleshooting) Adding SpiderMonkey/zlib references in Configuration Manager</summary>
+  <summary>(Troubleshooting) Visual Studio 2022 SpiderMonkey/zlib dependencies</summary>
 
-  > If VS give you link errors when attempting to build UOX3, references to SpiderMonkey or zlib might have gone missing! Try the following steps to add them back.
-
-  > 1) Right click on **UOX3_Official** in the Solution Explorer, and select Properties.
-  > 2) With the desired configuration (ex: Release, x64) selected at the top of the panel, add references to SpiderMonkey and zlib in these sections:
-  > * *VC++ Directories >* **Include Directories** (add path to SpiderMonkey and zlib root folders)
-  > * *VC++ Directories >* **Library Directories** (add path to **spidermonkey\make\VS2017\jscript\x64\Release** folder, as well as **zlib\make\VS2017\x64\Release** folder)
-  > * *VC++ Directories >* **Source Directories** (add path to SpiderMonkey and zlib root folders)
-  > * *Linker >* **Additional Library Dependencies** (add path to **spidermonkey\make\VS2017\jscript\x64\Release** folder, as well as **zlib\make\VS2017\x64\Release** folder)
-  > Press apply!
-  > Repeat process for both Release and Debug configurations (chosen at top of panel), then retry the UOX3 build process!
-
+  > The Visual Studio 2022 projects configure these dependencies automatically; do not add manual include or library paths in Configuration Manager.
+  >
+  > * **SpiderMonkey archive not found** - Confirm that *UOX3\spidermonkey\mozjs-115.13-windows-x64-clangcl.zip* exists in your checkout.
+  > * **SpiderMonkey extraction failed** - Confirm that `tar.exe` is available from a Terminal. Remove the partially extracted *UOX3\make\VS2022\x64\mozjs-115.13* directory, then rebuild.
+  > * **zlib project or link errors** - Open *UOX3\make\VS2022\uox3.sln* rather than the individual project file so Visual Studio loads and builds the referenced zlib project.
 </details>
 </details>
 <details>
@@ -146,7 +142,7 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 ---
 ## UOX3 Compiled! Now what?
 Once done compiling, you can copy the compiled UOX3 binary/executable to the directory you intend to run your UOX3 shard from, along with all the files and folders contained in the UOX3/data subdirectory. Where you'll find the compiled UOX3 binary/executable depends on your platform and build method. Examples:
-  * **Windows** - (Visual Studio 2022/MSBuild) Compiled uox3.exe can be found in **UOX3/make/VS2022/x64/Release** (or **Debug** for a debug build)
+  * **Windows** - (Visual Studio 2022/MSBuild) Compiled uox3.exe can be found in **UOX3/make/VS2022/x64/Release**, **ReleaseLTO**, or **Debug**, matching the selected configuration
   * **Linux/FreeBSD** - (automake.sh) Compiled uox3 binary can be found in **root UOX3 repository**
   * **macOS** - (XCode) Compiled uox3 binary can be found in **UOX3\make\XCode\Build\Products\Release**
   * **Either Platform** - (CMake, manual) Compiled uox3 binary can be found in **UOX3\make\cmake\build**
