@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 env:
-  MOZJS_ARCHIVE: https://github.com/servo/mozjs/releases
+  MOZJS_ARCHIVE: https://github.com/servo/mozjs/releases/download
 
 jobs:
   build:
