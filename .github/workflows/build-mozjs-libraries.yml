@@ -93,6 +93,18 @@ jobs:
           path: spidermonkey/uox3-mozjs-bridge/${{ matrix.package }}.tar.gz
           if-no-files-found: error
 
+  test-container:
+    name: Docker image
+    needs: build-linux
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Check out UOX3
+        uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build --tag uox3:test .
+
   publish:
     name: Add libraries to branch
     needs: [build-linux, build-macos]
