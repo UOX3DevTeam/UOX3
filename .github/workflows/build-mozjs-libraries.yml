@@ -10,7 +10,7 @@ on:
       - spidermonkey/uox3-mozjs-bridge/**
 
 permissions:
-  contents: read
+  contents: write
 
 env:
   MOZJS_ARCHIVE: https://github.com/servo/mozjs/releases/download
@@ -62,3 +62,28 @@ jobs:
           name: ${{ matrix.package }}
           path: spidermonkey/uox3-mozjs-bridge/${{ matrix.package }}.tar.gz
           if-no-files-found: error
+
+  publish:
+    name: Add libraries to branch
+    needs: build
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Check out UOX3
+        uses: actions/checkout@v4
+
+      - name: Download libraries
+        uses: actions/download-artifact@v4
+        with:
+          pattern: uox3-mozjs-115.13-*
+          path: artifacts
+          merge-multiple: true
+
+      - name: Add libraries to branch
+        run: |
+          cp artifacts/*.tar.gz spidermonkey/
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add spidermonkey/uox3-mozjs-115.13-*.tar.gz
+          git commit -m "Add precompiled SpiderMonkey libraries"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
