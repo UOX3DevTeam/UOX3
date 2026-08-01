@@ -2,12 +2,6 @@ name: Build SpiderMonkey libraries
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - feature/libmozjs-115-13-2-cleanup
-    paths:
-      - .github/workflows/build-mozjs-libraries.yml
-      - spidermonkey/uox3-mozjs-bridge/**
 
 permissions:
   contents: write
@@ -85,5 +79,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add spidermonkey/uox3-mozjs-115.13-*.tar.gz
-          git commit -m "Add precompiled SpiderMonkey libraries"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+          if ! git diff --cached --quiet; then
+            git commit -m "Add precompiled SpiderMonkey libraries"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
