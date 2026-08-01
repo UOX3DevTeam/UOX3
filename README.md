@@ -9,7 +9,7 @@
 
 Supported UO Client versions: **~4.0.0p** to at least **~7.0.109.0** (with encryption removed by [ClassicUO](https://www.classicuo.eu), [Razor](https://github.com/msturgill/razor/releases) or similar tools). For additional details on UO client compatibility, check https://www.uox3.org/forums/viewtopic.php?f=1&t=2289
 
-UOX3 relies on **SpiderMonkey v1.8.5** for its JS-based scripting engine, and on **zlib-1.3.2** for data compression matters, and comes bundled with specific, compatible versions of these.
+UOX3 includes **SpiderMonkey 115.13** for its JavaScript scripting engine and **zlib 1.3.2** for data compression.
 
 Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick chat!
 
@@ -22,8 +22,8 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
   <summary>Install <strong>build tools</strong></summary>
 
   > * **Windows** - Download and install [Visual Studio 2022 Community](https://visualstudio.microsoft.com/vs/community/) on Windows 10 or newer.
-  >   * In the Visual Studio Installer, select the **Desktop development with C++** workload and the **C++ Clang tools for Windows** individual component.
-  >   * Windows 10 or newer provides the required `tar.exe`. CMake, Rust, and Cargo are not required for the Visual Studio 2022 build.
+  >   * In the Visual Studio Installer, select the **Desktop development with C++** workload.
+  >   * Under **Individual components**, select **C++ Clang Compiler for Windows** and **MSBuild support for LLVM (clang-cl) toolset**.
   > * **Linux (Debian-based)** - Run `sudo apt-get update` + `sudo apt install build-essential cmake` in a Terminal:  (or use your Linux distro's package manager)
   > * **FreeBSD** - Run `pkg install cmake` in a Terminal. Alternatively, build `cmake` via ports if desired.
   > * **macOS** - Download [Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12) (for building with an IDE) via the App Store, and/or [CMake](https://cmake.org/download/) (for command-line builds)
@@ -41,7 +41,7 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 ---
 
 ## Step 2: Clone the UOX3 Git Repository
-*Next up, clone the UOX3 git repository, which also includes the latest verified compatible version of SpiderMonkey (v1.8.0-RC1) and a minimal set of files required to compile zlib-1.3.2.*
+*Next up, clone the UOX3 git repository, which includes the supported SpiderMonkey and zlib source and libraries.*
 <details>
   <summary>Using <strong>GitHub Desktop</strong> (Windows/macOS)</summary>
 
@@ -73,7 +73,7 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 <details>
   <summary><strong>Visual Studio 2022</strong> (Windows), <strong>automake.sh</strong> (Linux/FreeBSD), <strong>XCode</strong> (macOS)</summary>
 
-  > * **Visual Studio 2022** - (Windows) Open *UOX3\make\VS2022\uox3.sln*, select *Debug*, *Release*, or *ReleaseLTO* and the *x64* platform, then build the *uox3* project. *ReleaseLTO* enables Clang full optimization, ThinLTO, and linker reference/COMDAT folding for performance testing; keep *Release* as the baseline when benchmarking. The first build extracts the bundled SpiderMonkey 115.13 static library. The extracted library and all compiler output remain under the ignored *UOX3\make\VS2022\x64* directory.
+  > * **Visual Studio 2022** - (Windows) Open *UOX3\make\VS2022\uox3.sln*, select *Debug*, *Release*, or the performance-optimized *ReleaseLTO* configuration and the *x64* platform, then build the *uox3* project.
   > * **automake.sh** - (Linux/FreeBSD) Run `./automake.sh` in a Terminal, from the root of the cloned UOX3 repository. This compiles UOX3 with CMake, but in one command only. Use optional argument `-b debug` to create debug build, and/or `-o clean` to do a clean build
   > * **XCode** - (macOS) Open *UOX3/make/XCode/uox3/uox3.xcworkspace*, select *Build*
 </details>
@@ -84,7 +84,7 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
   > From a Visual Studio developer terminal, run:
   > `msbuild make\VS2022\uox3.sln /m /p:Configuration=Release /p:Platform=x64`
   >
-  > To build the optimized ThinLTO configuration, replace `Release` with `ReleaseLTO`.
+  > To build the performance-optimized configuration, replace `Release` with `ReleaseLTO`.
 </details>
 
 <details>
@@ -123,16 +123,6 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
   > `gmake` (FreeBSD)
 </details>
 
-<details>
-  <summary>(Troubleshooting) Visual Studio 2022 SpiderMonkey/zlib dependencies</summary>
-
-  > The Visual Studio 2022 projects configure these dependencies automatically; do not add manual include or library paths in Configuration Manager.
-  >
-  > * **SpiderMonkey archive not found** - Confirm that *UOX3\spidermonkey\mozjs-115.13-windows-x64-clangcl.zip* exists in your checkout.
-  > * **SpiderMonkey extraction failed** - Confirm that `tar.exe` is available from a Terminal. Remove the partially extracted *UOX3\make\VS2022\x64\mozjs-115.13* directory, then rebuild.
-  > * **zlib project or link errors** - Open *UOX3\make\VS2022\uox3.sln* rather than the individual project file so Visual Studio loads and builds the referenced zlib project.
-</details>
-</details>
 <details>
   <summary><strong>Docker/Podman</strong></summary>
 

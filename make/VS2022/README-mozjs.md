@@ -3,8 +3,8 @@
 Install these prerequisites:
 
 - Visual Studio 2022 with **Desktop development with C++**
-- **C++ Clang tools for Windows** in the Visual Studio Installer
-- Windows 10 or newer (provides `tar.exe`)
+- **C++ Clang Compiler for Windows** under **Individual components**
+- **MSBuild support for LLVM (clang-cl) toolset** under **Individual components**
 
 Open the checked-in solution directly:
 
@@ -12,15 +12,9 @@ Open the checked-in solution directly:
 - Select `Debug`, `Release`, or `ReleaseLTO` and the `x64` platform.
 - Build the `uox3` project.
 
-`ReleaseLTO` enables Clang full optimization, ThinLTO, and linker
-reference/COMDAT folding. Use the regular `Release` configuration as the
-baseline when comparing world-load and world-save performance.
+`ReleaseLTO` is the performance-optimized configuration.
 
 The executable is written to `make\VS2022\x64\<configuration>\uox3.exe`.
-
-The project extracts the bundled SpiderMonkey 115.13 static library on the
-first build. The extracted library and all compiler output remain under the
-ignored `make\VS2022\x64` directory. CMake, Rust, and Cargo are not required.
 
 Command-line equivalent from a Visual Studio developer terminal:
 
@@ -28,4 +22,4 @@ Command-line equivalent from a Visual Studio developer terminal:
 msbuild make\VS2022\uox3.sln /m /p:Configuration=Release /p:Platform=x64
 ```
 
-Replace `Release` with `ReleaseLTO` to build the optimized configuration.
+Replace `Release` with `ReleaseLTO` to build the performance-optimized configuration.
