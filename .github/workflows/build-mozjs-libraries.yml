@@ -7,6 +7,8 @@ on:
       - feature/libmozjs-115-13-2-cleanup
     paths:
       - .github/workflows/build-mozjs-libraries.yml
+      - Dockerfile
+      - make/cmake/CMakeLists.txt
 
 permissions:
   contents: write
