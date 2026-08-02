@@ -30,6 +30,12 @@ add_library(zlib STATIC
 	../../zutil.h
 )
 
+# SpiderMonkey's Windows static library exports a few unprefixed zlib symbols.
+# Prefix UOX3's bundled zlib API on Windows so both libraries can coexist.
+if(WIN32)
+	target_compile_definitions(zlib PUBLIC Z_PREFIX)
+endif()
+
 if (WIN32)
 
 	target_compile_definitions(zlib PRIVATE
