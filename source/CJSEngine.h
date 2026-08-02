@@ -58,16 +58,9 @@ private:
 	std::array<JSOBJECTMAP, IUE_COUNT>					objectList;
     JS::RootedObjectVector *   protoList;
 
-	JSObject * spellsObj;
-	JSObject * skillsObj;
-	JSObject * accountsObj;
-	JSObject * consoleObj;
-	JSObject * createEntriesObj;
-	JSObject * timerObj;
-	JSObject * scriptObj;
 	JSRuntime * jsRuntime;
 	JSContext * jsContext;
-	JSObject * jsGlobal;
+	JS::PersistentRootedObject jsGlobal;
 	JSAutoRealm * realmGuard;
 
 	JSObject *	FindAssociatedObject( IUEEntries iType, void *index );

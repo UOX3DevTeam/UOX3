@@ -175,8 +175,7 @@ bool SE_DoTempEffect( JSContext *cx, unsigned int argc, JS::Value *vp )
 
 	if( iType == 0 )	// character
 	{
-		JSObject *mydestc = &args.get(2).toObject();
-  CChar *mydestChar = JS::GetMaybePtrFromReservedSlot<CChar>( mydestc , 0 );
+		CChar *mydestChar = GetWrappedObject<CChar>( args.get( 2 ), &UOXChar_class );
 
 		if( !ValidateObject( mydestChar ))
 		{
@@ -194,8 +193,7 @@ bool SE_DoTempEffect( JSContext *cx, unsigned int argc, JS::Value *vp )
 	}
 	else
 	{
-		JSObject *mydesti = &args.get(2).toObject();
-  CItem  *mydestItem = JS::GetMaybePtrFromReservedSlot<CItem >( mydesti , 0 );
+		CItem *mydestItem = GetWrappedObject<CItem>( args.get( 2 ), &UOXItem_class );
 
 		if( !ValidateObject( mydestItem ))
 		{
@@ -643,10 +641,13 @@ bool SE_MakeItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 		ScriptError( cx, "MakeItem: Invalid number of arguments (takes 3, or 4 - socket, character, createID - and optionally - resourceColour)" );
 		return false;
 	}
-	JSObject *mSock = &args.get(0).toObject();
-  CSocket  *sock = JS::GetMaybePtrFromReservedSlot<CSocket >( mSock , 0 );
-	JSObject *mChar = &args.get(1).toObject();
-  CChar  *player = JS::GetMaybePtrFromReservedSlot<CChar >( mChar , 0 );
+	CSocket *sock = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
+	CChar *player = GetWrappedObject<CChar>( args.get( 1 ), &UOXChar_class );
+	if( sock == nullptr )
+	{
+		ScriptError( cx, "MakeItem: Invalid socket" );
+		return false;
+	}
 	if( !ValidateObject( player ))
 	{
 		ScriptError( cx, "MakeItem: Invalid character" );
@@ -734,7 +735,7 @@ bool SE_CommandExists( JSContext *cx, unsigned int argc, JS::Value *vp )
 bool SE_FirstCommand( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	const std::string tVal = Commands->FirstCommand();
-	JSString *strSpeech = nullptr;
+	JS::RootedString strSpeech( cx );
 	if( tVal.empty() )
 	{
 		strSpeech = JS_NewStringCopyZ( cx, "" );
@@ -756,7 +757,7 @@ bool SE_FirstCommand( JSContext *cx, unsigned int argc, JS::Value *vp )
 bool SE_NextCommand( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	const std::string tVal = Commands->NextCommand();
-	JSString *strSpeech = nullptr;
+	JS::RootedString strSpeech( cx );
 	if( tVal.empty() )
 	{
 		strSpeech = JS_NewStringCopyZ( cx, "" );
@@ -1727,8 +1728,7 @@ bool SE_FindMulti( JSContext *cx, unsigned int argc, JS::Value *vp )
 	UI16 instanceId = 0;
 	if( argc == 1 )
 	{
-		JSObject *myitemptr = &args.get(0).toObject();
-  CBaseObject  *myItemPtr = JS::GetMaybePtrFromReservedSlot<CBaseObject >( myitemptr , 0 );
+		CBaseObject *myItemPtr = GetBaseObject( args.get( 0 ));
 		if( ValidateObject( myItemPtr ))
 		{
 			xLoc		= myItemPtr->GetX();
@@ -2278,8 +2278,7 @@ bool SE_GetPackOwner( JSContext *cx, unsigned int argc, JS::Value *vp )
 
 	if( mType == 0 )	// item
 	{
-		JSObject *mItem	= &args.get(0).toObject();
-  CItem  *myItem = JS::GetMaybePtrFromReservedSlot<CItem >( mItem , 0 );
+		CItem *myItem = GetWrappedObject<CItem>( args.get( 0 ), &UOXItem_class );
 		pOwner			= FindItemOwner( myItem );
 	}
 	else				// serial
@@ -2319,8 +2318,7 @@ bool SE_FindRootContainer( JSContext *cx, unsigned int argc, JS::Value *vp )
 
 	if( mType == 0 )	// item
 	{
-		JSObject *mItem	= &args.get(0).toObject();
-  CItem  *myItem = JS::GetMaybePtrFromReservedSlot<CItem >( mItem , 0 );
+		CItem *myItem = GetWrappedObject<CItem>( args.get( 0 ), &UOXItem_class );
 		iRoot			= FindRootContainer( myItem );
 	}
 	else				// serial
@@ -2355,8 +2353,7 @@ bool SE_CalcTargetedItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	JSObject *mysockptr = &args.get(0).toObject();
-  CSocket  *sChar	 = JS::GetMaybePtrFromReservedSlot<CSocket >( mysockptr , 0 );
+	CSocket *sChar = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 	if( sChar == nullptr )
 	{
 		ScriptError( cx, "CalcTargetedItem: Invalid socket" );
@@ -2391,8 +2388,7 @@ bool SE_CalcTargetedChar( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	JSObject *mysockptr = &args.get(0).toObject();
-  CSocket  *sChar	 = JS::GetMaybePtrFromReservedSlot<CSocket >( mysockptr , 0 );
+	CSocket *sChar = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 	if( sChar == nullptr )
 	{
 		ScriptError( cx, "CalcTargetedChar: Invalid socket" );
@@ -2640,8 +2636,7 @@ bool SE_AreaCharacterFunction( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	JSObject *srcBaseObj = &args.get(1).toObject();
-  CBaseObject  *srcObject = JS::GetMaybePtrFromReservedSlot<CBaseObject >( srcBaseObj , 0 );
+	CBaseObject *srcObject = GetBaseObject( args.get( 1 ));
 
 	if( !ValidateObject( srcObject ))
 	{
@@ -2728,8 +2723,7 @@ bool SE_AreaItemFunction( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	JSObject *srcBaseObj = &args.get(1).toObject();
-  CBaseObject  *srcObject = JS::GetMaybePtrFromReservedSlot<CBaseObject >( srcBaseObj , 0 );
+	CBaseObject *srcObject = GetBaseObject( args.get( 1 ));
 
 	if( !ValidateObject( srcObject ))
 	{
@@ -2807,8 +2801,7 @@ bool SE_GetDictionaryEntry( JSContext *cx, unsigned int argc, JS::Value *vp )
 	std::string txt = Dictionary->GetEntry( dictEntry, language );
 	txt = oldstrutil::stringToWstringToString( txt );
 
-	JSString *strTxt = nullptr;
-	strTxt = JS_NewStringCopyZ( cx, txt.c_str() );
+	JS::RootedString strTxt( cx, JS_NewStringCopyZ( cx, txt.c_str() ));
 	args.rval().setString( strTxt );
 	return true;
 }
@@ -2829,8 +2822,12 @@ bool SE_Yell( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	JSObject *mSock			= &args.get(0).toObject();
-  CSocket  *mySock		 = JS::GetMaybePtrFromReservedSlot<CSocket >( mSock , 0 );
+	CSocket *mySock = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
+	if( mySock == nullptr )
+	{
+		ScriptError( cx, "Yell: Invalid socket" );
+		return false;
+	}
 	CChar *myChar			= mySock->CurrcharObj();
 	std::string textToYell	= JS_GetStringBytes( cx, args.get(1));
 	UI08 commandLevel		= static_cast<UI08>( args.get(2).toInt32());
@@ -3005,8 +3002,7 @@ bool SE_SendStaticStats( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	JSObject *mSock			= &args.get(0).toObject();
-  CSocket  *mySock		 = JS::GetMaybePtrFromReservedSlot<CSocket >( mSock , 0 );
+	CSocket *mySock = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "SendStaticStats: passed an invalid socket!" );
@@ -3124,13 +3120,10 @@ bool SE_IterateOver( JSContext *cx, unsigned int argc, JS::Value *vp )
 								// If there's a 2nd argument, see if it's a Socket
 	if( argc == 2 && args.get(1).isObject() )
 	{
-		JSObject* sockObj = &args.get(1).toObject();
-		if( sockObj )
+		CSocket *pSock = GetWrappedObject<CSocket>( args.get( 1 ), &UOXSocket_class );
+		if( pSock != nullptr )
 		{
-			// Our CSocket pointer is stored in the JS private data for that object
-  CSocket * pSock = JS::GetMaybePtrFromReservedSlot<CSocket>( sockObj , 0 );
-			if( pSock )
-				iterData->socket = pSock;
+			iterData->socket = pSock;
 		}
 	}
 
@@ -3178,14 +3171,10 @@ bool SE_IterateOverSpawnRegions( JSContext *cx, unsigned int argc, JS::Value *vp
 	// Check if a socket was passed as an argument in JS
 	if( argc >= 1 && args.get(0).isObject() )
 	{
-		JSObject* sockObj = &args.get(0).toObject();
-		if( sockObj )
+		CSocket *pSock = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
+		if( pSock != nullptr )
 		{
-  CSocket * pSock = JS::GetMaybePtrFromReservedSlot<CSocket>( sockObj , 0 );
-			if( pSock )
-			{
-				iterData->socket = pSock;
-			}
+			iterData->socket = pSock;
 		}
 	}
 
@@ -4516,7 +4505,7 @@ bool SE_GetServerSetting( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	JSString *tString;
+	JS::RootedString tString( cx );
 	std::string settingName = oldstrutil::upper( JS_GetStringBytes( cx, args.get(0)));
 	if( !settingName.empty() )
 	{
@@ -4626,7 +4615,7 @@ bool SE_GetServerSetting( JSContext *cx, unsigned int argc, JS::Value *vp )
 				break;
 			case 40:	 // DIRECTORY
 			{
-				JSString *tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_ROOT ).c_str() );
+				JS::RootedString tString( cx, JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_ROOT ).c_str() ));
 				args.rval().setString( tString );
 				break;
 			}
@@ -5910,7 +5899,7 @@ bool SE_GetCharacterCount( JSContext *cx, unsigned int argc, JS::Value *vp )
 bool SE_GetServerVersionString( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	std::string versionString = CVersionClass::GetVersion() + "." + CVersionClass::GetBuild() + " [" + OS_STR + "]";
-	JSString *tString = JS_NewStringCopyZ( cx, versionString.c_str() );
+	JS::RootedString tString( cx, JS_NewStringCopyZ( cx, versionString.c_str() ));
 	auto args = JS::CallArgsFromVp(argc, vp);
 	args.rval().setString( tString );
 	return true;
@@ -5933,11 +5922,14 @@ bool SE_DistanceBetween( JSContext *cx, unsigned int argc, JS::Value *vp )
 	if( argc <= 3 )
 	{
 		// 2 or 3 arguments - find dinstance between two objects in 2D or 3D
-		JSObject *srcObj = &args.get(0).toObject();
-		JSObject *trgObj = &args.get(1).toObject();
+		if( !args.get( 0 ).isObject() || !args.get( 1 ).isObject() )
+		{
+			ScriptError( cx, "DistanceBetween: Invalid source or target object" );
+			return false;
+		}
 		bool checkZ = argc == 3 ? ( args.get(2).toBoolean() == true ) : false;
-    CBaseObject  *srcBaseObj = JS::GetMaybePtrFromReservedSlot<CBaseObject >( srcObj , 0 );
-    CBaseObject  *trgBaseObj = JS::GetMaybePtrFromReservedSlot<CBaseObject >( trgObj , 0 );
+		CBaseObject *srcBaseObj = GetBaseObject( args.get( 0 ));
+		CBaseObject *trgBaseObj = GetBaseObject( args.get( 1 ));
 		if( !ValidateObject( srcBaseObj ) || !ValidateObject( trgBaseObj ))
 		{
 			ScriptError( cx, "DistanceBetween: Invalid source or target object" );
