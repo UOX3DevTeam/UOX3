@@ -16,8 +16,8 @@ CMD ["/bin/bash"]
 
 
 # Now actually generate the executable image
-FROM registry.access.redhat.com/ubi8/ubi:latest
-RUN yum -y install glibc.i686 dos2unix && yum clean all && rm -rf /var/cache/yum
+FROM registry.access.redhat.com/ubi8/ubi-minimal:latest
+RUN microdnf install -y glibc.i686 dos2unix shadow-utils && microdnf clean all && rm -rf /var/cache/dnf
 # Define our non-root user
 RUN adduser --system --create-home uox3
 USER uox3
