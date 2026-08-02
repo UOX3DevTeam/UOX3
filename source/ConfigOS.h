@@ -5,6 +5,9 @@
 
 // Initial platform/compiler-related stuff to set.
 
+#ifdef WINDOWS
+#undef WINDOWS
+#endif
 #define WINDOWS		1
 #define LINUX 		2
 #define MACOS		3
