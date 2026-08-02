@@ -10,6 +10,55 @@ env:
   MOZJS_ARCHIVE: https://github.com/servo/mozjs/releases/download
 
 jobs:
+  build-windows:
+    name: Windows x64
+    runs-on: windows-2022
+
+    defaults:
+      run:
+        working-directory: spidermonkey/uox3-mozjs-bridge
+
+    steps:
+      - name: Check out UOX3
+        uses: actions/checkout@v4
+
+      - name: Build UOX3 SpiderMonkey library
+        run: cargo build --locked --release
+
+      - name: Remove redundant bundled zlib objects
+        shell: pwsh
+        run: |
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $vsPath = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          $libTool = Get-ChildItem "$vsPath\VC\Tools\MSVC\*\bin\Hostx64\x64\lib.exe" |
+            Sort-Object FullName |
+            Select-Object -Last 1 -ExpandProperty FullName
+          $bridge = Resolve-Path "target\release\uox3_mozjs_bridge.lib"
+          $members = & $libTool /LIST $bridge | Where-Object { $_ -match 'libz-sys.*\.(o|obj)$' }
+          if ($members.Count -eq 0) {
+            throw "No bundled libz-sys objects were found in $bridge"
+          }
+          foreach ($member in $members) {
+            & $libTool "/REMOVE:$member" $bridge
+            if ($LASTEXITCODE -ne 0) {
+              throw "Failed to remove $member"
+            }
+          }
+
+      - name: Package library
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force package | Out-Null
+          Copy-Item target\release\uox3_mozjs_bridge.lib package\mozjs-115.13-windows-x64-clangcl.lib
+          Compress-Archive -Path package\mozjs-115.13-windows-x64-clangcl.lib -DestinationPath mozjs-115.13-windows-x64-clangcl.zip -Force
+
+      - name: Upload library
+        uses: actions/upload-artifact@v4
+        with:
+          name: mozjs-115.13-windows-x64-clangcl
+          path: spidermonkey/uox3-mozjs-bridge/mozjs-115.13-windows-x64-clangcl.zip
+          if-no-files-found: error
+
   build-linux:
     name: Linux x64
     runs-on: ubuntu-24.04
@@ -102,7 +151,7 @@ jobs:
 
   publish:
     name: Add libraries to branch
-    needs: [build-linux, build-macos]
+    needs: [build-windows, build-linux, build-macos]
     runs-on: ubuntu-24.04
 
     steps:
@@ -112,16 +161,18 @@ jobs:
       - name: Download libraries
         uses: actions/download-artifact@v4
         with:
-          pattern: uox3-mozjs-115.13-*
+          pattern: "*mozjs-115.13-*"
           path: artifacts
           merge-multiple: true
 
       - name: Add libraries to branch
         run: |
           cp artifacts/*.tar.gz spidermonkey/
+          cp artifacts/*.zip spidermonkey/
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add spidermonkey/uox3-mozjs-115.13-*.tar.gz
+          git add spidermonkey/mozjs-115.13-windows-x64-clangcl.zip
           if ! git diff --cached --quiet; then
             git commit -m "Add precompiled SpiderMonkey libraries"
             git push origin "HEAD:${GITHUB_REF_NAME}"
