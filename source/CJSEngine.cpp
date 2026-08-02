@@ -250,6 +250,16 @@ JSObject* rootInheritedClass(JSContext* cx, JS::HandleObject obj, const JSClass*
 	return JS_InitClass(cx, obj, clazz, parent, clazz->name, constructor, 0, ps, fs, nullptr, nullptr);
 }
 
+JSObject *defineSingleton( JSContext *cx, JS::HandleObject obj, const char *name, const JSClass *clazz, JS::HandleObject prototype )
+{
+	JS::RootedObject singleton( cx, JS_NewObjectWithGivenProto( cx, clazz, prototype ));
+	if( singleton == nullptr || !JS_DefineProperty( cx, obj, name, singleton, 0 ))
+	{
+		return nullptr;
+	}
+	return singleton;
+}
+
 bool ResolveSpellCollection( JSContext *cx, JS::HandleObject obj, JS::HandleId id, bool *resolved )
 {
 	*resolved = false;
@@ -335,13 +345,13 @@ void CJSRuntime::InitializePrototypes()
   (*protoList)[JSP_GUMP]          .set( rootClass(          cx, obj, &UOXGump_class,          Gump,     nullptr,                nullptr ) );
   (*protoList)[JSP_FILE]          .set( rootClass(          cx, obj, &UOXFile_class,          UOXCFile, nullptr,                nullptr ) );
   (*protoList)[JSP_SCRIPT]        .set( rootClass(          cx, obj, &uox_class,              nullptr,  CScriptProperties,      nullptr ) );
-  spellsObj        = JS_DefineObject( cx, obj, "Spells", &UOXSpells_class );
-  skillsObj        = JS_DefineObject( cx, obj, "Skills", &UOXGlobalSkills_class );
-  accountsObj      = JS_DefineObject( cx, obj, "Accounts", &UOXAccount_class );
-  consoleObj       = JS_DefineObject( cx, obj, "Console", &UOXConsole_class );
-  createEntriesObj = JS_DefineObject( cx, obj, "CreateEntries", &UOXCreateEntries_class );
-  timerObj         = JS_DefineObject( cx, obj, "Timer", &UOXTimer_class );
-  scriptObj        = JS_DefineObject( cx, obj, "SCRIPT", &uox_class );
+  spellsObj        = defineSingleton( cx, obj, "Spells",        &UOXSpells_class,       ( *protoList )[JSP_SPELLS] );
+  skillsObj        = defineSingleton( cx, obj, "Skills",        &UOXGlobalSkills_class, ( *protoList )[JSP_GLOBALSKILLS] );
+  accountsObj      = defineSingleton( cx, obj, "Accounts",      &UOXAccount_class,      ( *protoList )[JSP_ACCOUNTS] );
+  consoleObj       = defineSingleton( cx, obj, "Console",       &UOXConsole_class,      ( *protoList )[JSP_CONSOLE] );
+  createEntriesObj = defineSingleton( cx, obj, "CreateEntries", &UOXCreateEntries_class, ( *protoList )[JSP_CREATEENTRIES] );
+  timerObj         = defineSingleton( cx, obj, "Timer",         &UOXTimer_class,        ( *protoList )[JSP_TIMER] );
+  scriptObj        = defineSingleton( cx, obj, "SCRIPT",        &uox_class,             ( *protoList )[JSP_SCRIPT] );
   // clang-format on
 
 	JS::RootedObject skillsCollection( cx, skillsObj );
