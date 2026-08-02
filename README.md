@@ -91,37 +91,15 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 <details>
   <summary><strong>CMake</strong> (Any platform, manual instructions)</summary>
 
-  > If you don't wish to rely on the automake.sh script, but want control over the process yourself, follow these steps (same as what automake.sh does) in a Terminal. This also works on Windows/macOS as an alternative to compiling with IDEs:
-  > - Navigate to root of cloned UOX3 git repository, and execute these commands:\
+  > From the root of the UOX3 repository on Linux or macOS, run:\
   > `cmake make/cmake -B ./build -DCMAKE_BUILD_TYPE=Release`\
   > `cmake --build ./build --config Release`
-
-  > Replace "Release" with "Debug" in the above instructions to create a debug-build; delete **build** directory to do clean builds.
-</details>
-
-<details>
-  <summary><strong>GCC/make/gmake</strong> (Linux/FreeBSD, manual instructions)</summary>
-
-  > If you'd rather use GCC (v9.x or higher)/make (GNU Make 4.2.1 or higher) than CMake, you can follow these manual steps. Note that for FreeBSD, this approach requires installing **gmake** as an alternative to *make*: `pkg install gmake`
-
-  > First, navigate to **spidermonkey** directory and run these commands:\
-  > `make -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=gcc` (Linux)\
-  > `ar -r libjs32.a Linux_All_DBG.OBJ/*.o` (Linux)\
-  > `cp Linux_All_DBG.OBJ/jsautocfg.h ./` (Linux)\
-  > `gmake -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=clang` (FreeBSD)\
-  > `ar rcs libjs32.a FreeBSD_DBG.OBJ/*.o` (FreeBSD)\
-  > `cp FreeBSD_DBG.OBJ/jsautocfg.h ./` (FreeBSD)
-
-  > Next, head to the **zlib** directory:\
-  > `cd ../zlib`\
-  > `make distclean`\
-  > `./configure`\
-  > `make`
-
-  > Finally, head to **UOX3/source** directory:\
-  > `cd ../source`\
-  > `make` (Linux)\
-  > `gmake` (FreeBSD)
+  >
+  > From a Visual Studio Developer PowerShell on Windows, run:\
+  > `cmake make/cmake -B ./build -G "Visual Studio 17 2022" -A x64 -T ClangCL`\
+  > `cmake --build ./build --config Release`
+  >
+  > Replace `Release` with `Debug` for a debug build. Delete the **build** directory for a clean build.
 </details>
 
 <details>
@@ -131,7 +109,7 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 </details>
 
 <details>
-  <summary>Build <strong>SpiderMonkey 115.13</strong> from source (Linux/macOS — optional)</summary>
+  <summary>(Optional) Build <strong>SpiderMonkey 115.13</strong> from source (Linux/macOS)</summary>
 
   > Use this instead of the bundled library if you prefer to build SpiderMonkey yourself. Install Rust, Python, Clang, and libclang first, then run from the UOX3 repository:
   >
@@ -144,7 +122,7 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 </details>
 
 <details>
-  <summary>Build <strong>SpiderMonkey 115.13</strong> from source (Windows — optional)</summary>
+  <summary>(Optional) Build <strong>SpiderMonkey 115.13</strong> from source (Windows)</summary>
 
   Use this instead of the ZIP included with UOX3 if you prefer to build SpiderMonkey yourself.
 
