@@ -9,11 +9,11 @@ For detailed instructions on compiling and using this zlib configuration with UO
   
   ### Visual Studio 2022
   1. Open zlib.sln in the *make/VS2022/* folder
-  2. Choose *Release*, *ReleaseLTO*, or *Debug* from the build configuration dropdown
+  2. Choose *Release* or *Debug* from the build configuration dropdown
   3. Go *Build -> Build zlib-static*
   
   ### CMake
-  1. Open Developer Command Prompt for VS2017 or Developer Powershell for VS2022
+  1. Open Developer PowerShell for VS2022
   2. Traverse to the make/cmake folder, and enter the following commands:
   3. `mkdir build`
   4. `cd build`

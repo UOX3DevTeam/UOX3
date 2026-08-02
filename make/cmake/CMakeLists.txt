@@ -3,6 +3,10 @@ cmake_minimum_required(VERSION 3.18)
 project(uox3 VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 
+if(WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+	set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE ON)
+endif()
+
 if(WIN32 AND NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     message(FATAL_ERROR
         "mozjs 115 must be compiled with the ClangCL toolset. "
