@@ -18,6 +18,7 @@
 #include <js/Conversions.h>
 #include <js/ErrorReport.h>
 #include <js/Exception.h>
+#include <js/GCVector.h>
 #include <js/Warnings.h>
 
 static constexpr SI08 RV_NOFUNC = -1;
@@ -407,8 +408,8 @@ cScript::cScript( std::string targFile, UI08 rT, UI16 scrID ) : isFiring( false 
 		else
 		{
 			// Triggered when reloading individual scripts at runtime
-			JS::Value pendingException;
-			if( JS_GetPendingException( targContext, JS::MutableHandleValue::fromMarkedLocation(&pendingException) ) == true )
+			JS::RootedValue pendingException( targContext );
+			if( JS_GetPendingException( targContext, &pendingException ) == true )
 			{
 				if( pendingException.isObject() && !pendingException.isNull() )
 				{
@@ -513,9 +514,19 @@ bool cScript::InvokeEvent( const char* name, unsigned int argc, const JS::Value*
 	Console.Log( oldstrutil::format( "Triggering event '%s' from script %d", name, GetScriptID() ) );
 #endif
 	JS::RootedObject rootedObj( targContext, targObject );
-	auto args = JS::HandleValueArray::fromMarkedLocation( argc, argv );
-	auto result = JS::MutableHandleValue::fromMarkedLocation( rval );
-	bool rVal = JS_CallFunctionName( targContext, rootedObj, name, args, result );
+	JS::RootedValueVector rootedArgs( targContext );
+	if( argc > 0 && !rootedArgs.append( argv, argc ))
+	{
+		ReportPendingJSException( targContext );
+		JSMapping->popActive();
+		return false;
+	}
+	JS::RootedValue rootedResult( targContext );
+	bool rVal = JS_CallFunctionName( targContext, rootedObj, name, rootedArgs, &rootedResult );
+	if( rval != nullptr )
+	{
+		*rval = rootedResult;
+	}
 	if( !rVal )
 	{
 		ReportPendingJSException( targContext );
@@ -774,10 +785,8 @@ SI08 cScript::OnSpeech( const char *speech, CChar *personTalking, CBaseObject *t
 		return RV_NOFUNC;
 
 	JS::Value params[3], rval;
-	JSString *strSpeech 	= nullptr;
 	std::string lwrSpeech	= speech;
-
-	strSpeech = JS_NewStringCopyZ( targContext, oldstrutil::lower( lwrSpeech ).c_str() );
+	JS::RootedString strSpeech( targContext, JS_NewStringCopyZ( targContext, oldstrutil::lower( lwrSpeech ).c_str() ));
 
 	JSObject *ptObj = JSEngine->AcquireObject( IUE_CHAR, personTalking, runTime );
 	JSObject *ttObj = nullptr;
@@ -3211,8 +3220,7 @@ void cScript::HandleGumpInput( CPIGumpInput *pressing )
 
 	JS::Value params[3], rval;
 	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, pressing->GetSocket(), runTime );
-	JSString *gumpReply = nullptr;
-	gumpReply = JS_NewStringCopyZ( targContext, pressing->Reply().c_str() );
+	JS::RootedString gumpReply( targContext, JS_NewStringCopyZ( targContext, pressing->Reply().c_str() ));
 	params[0] = JS::ObjectOrNullValue( myObj );
 	params[1] = JS::Int32Value( pressing->Index() );
 	params[2] = JS::StringValue( gumpReply );
@@ -3540,10 +3548,8 @@ SI08 cScript::OnTalk( CChar *myChar, const char *mySpeech )
 
 	JS::Value params[2], rval;
 
-	JSString *strSpeech		= nullptr;
 	std::string lwrSpeech	= mySpeech;
-
-	strSpeech = JS_NewStringCopyZ( targContext, oldstrutil::lower( lwrSpeech ).c_str() );
+	JS::RootedString strSpeech( targContext, JS_NewStringCopyZ( targContext, oldstrutil::lower( lwrSpeech ).c_str() ));
 
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, myChar, runTime );
 
@@ -3577,11 +3583,9 @@ bool cScript::OnSpeechInput( CChar *myChar, CItem *myItem, const char *mySpeech 
 		return true;
 
 	JS::Value params[4], rval;
-	JSString *strSpeech = nullptr;
-
 	char *lwrSpeech = new char[strlen( mySpeech ) + 1];
 	strcopy( lwrSpeech, strlen( mySpeech ) + 1, mySpeech );
-	strSpeech = JS_NewStringCopyZ( targContext, lwrSpeech );
+	JS::RootedString strSpeech( targContext, JS_NewStringCopyZ( targContext, lwrSpeech ));
 	delete[] lwrSpeech;
 
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, myChar, runTime );
@@ -3785,8 +3789,7 @@ SI08 cScript::OnCommand( CSocket *mSock, std::string command )
 
 	JS::Value params[2], rval;
 	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
-	JSString *strCmd = nullptr;
-	strCmd = JS_NewStringCopyZ( targContext, oldstrutil::lower( command ).c_str() );
+	JS::RootedString strCmd( targContext, JS_NewStringCopyZ( targContext, oldstrutil::lower( command ).c_str() ));
 	params[0]	= JS::ObjectOrNullValue( myObj );
 	params[1]	= JS::StringValue( strCmd );
 	bool retVal	= InvokeEvent( "onCommand", 2, params, &rval );
@@ -3858,8 +3861,7 @@ SI08 cScript::OnProfileUpdate( CSocket *mSock, std::string profileText )
 
 	JS::Value params[2], rval;
 	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
-	JSString *strProfileText = nullptr;
-	strProfileText = JS_NewStringCopyZ( targContext, profileText.c_str() );
+	JS::RootedString strProfileText( targContext, JS_NewStringCopyZ( targContext, profileText.c_str() ));
 
 	params[0]	= JS::ObjectOrNullValue( myObj );
 	params[1]	= JS::StringValue( strProfileText );
@@ -3931,7 +3933,7 @@ bool cScript::ScriptRegistration( std::string scriptType )
 bool cScript::executeCommand( CSocket *s, std::string funcName, std::string executedString )
 {
 	JS::Value params[2], rval;
-	JSString *execString = JS_NewStringCopyZ( targContext, executedString.c_str() );
+	JS::RootedString execString( targContext, JS_NewStringCopyZ( targContext, executedString.c_str() ));
 	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, s, runTime );
 	params[0] = JS::ObjectOrNullValue( myObj );
 	params[1] = JS::StringValue( execString );

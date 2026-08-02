@@ -187,11 +187,12 @@ CJSRuntime::CJSRuntime( UI32 engineSize )
 
 	JS::InitSelfHostedCode(jsContext);
 
-	jsGlobal = JS_NewGlobalObject(jsContext, &global_class, nullptr, JS::FireOnNewGlobalHook, options);
-	if( jsGlobal == nullptr )
+	JS::RootedObject rootedGlobal( jsContext, JS_NewGlobalObject( jsContext, &global_class, nullptr, JS::FireOnNewGlobalHook, options ));
+	if( rootedGlobal == nullptr )
 	{
 		Shutdown( FATAL_UOX3_JAVASCRIPT );
 	}
+	jsGlobal.init( jsContext, rootedGlobal );
 	realmGuard = new JSAutoRealm( jsContext, jsGlobal );
 	JS::InitRealmStandardClasses( jsContext );
 
@@ -203,10 +204,9 @@ CJSRuntime::~CJSRuntime( void )
 {
 	Cleanup();
 
-	// TODO: Unroot them
-
 	delete realmGuard;
 	realmGuard = nullptr;
+	jsGlobal.reset();
 	JS_DestroyContext( jsContext );
 }
 
@@ -333,7 +333,8 @@ void CJSRuntime::InitializePrototypes()
   (*protoList)[JSP_CREATEENTRIES] .set( rootClass(          cx, obj, &UOXCreateEntries_class, nullptr,  nullptr,                nullptr ) );
   (*protoList)[JSP_TIMER]         .set( rootClass(          cx, obj, &UOXTimer_class,         nullptr,  CTimerProperties,       nullptr ) );
   (*protoList)[JSP_SOCK]          .set( rootClass(          cx, obj, &UOXSocket_class,        nullptr,  CSocketProps,           CSocket_Methods ) );
-  (*protoList)[JSP_ACCOUNTS]      .set( rootClass(          cx, obj, &UOXAccount_class,       nullptr,  CAccountProperties,     CAccount_Methods ) );
+  (*protoList)[JSP_ACCOUNT]       .set( rootClass(          cx, obj, &UOXAccount_class,       nullptr,  CAccountProperties,     nullptr ) );
+  (*protoList)[JSP_ACCOUNTS]      .set( rootClass(          cx, obj, &UOXAccount_class,       nullptr,  nullptr,                CAccount_Methods ) );
   (*protoList)[JSP_CONSOLE]       .set( rootClass(          cx, obj, &UOXConsole_class,       nullptr,  CConsoleProperties,     CConsole_Methods ) );
   (*protoList)[JSP_REGION]        .set( rootClass(          cx, obj, &UOXRegion_class,        nullptr,  CRegionProperties,      CRegion_Methods ) );
   (*protoList)[JSP_SPAWNREGION]   .set( rootClass(          cx, obj, &UOXSpawnRegion_class,   nullptr,  CSpawnRegionProperties, nullptr ) );
@@ -345,13 +346,13 @@ void CJSRuntime::InitializePrototypes()
   (*protoList)[JSP_GUMP]          .set( rootClass(          cx, obj, &UOXGump_class,          Gump,     nullptr,                nullptr ) );
   (*protoList)[JSP_FILE]          .set( rootClass(          cx, obj, &UOXFile_class,          UOXCFile, nullptr,                nullptr ) );
   (*protoList)[JSP_SCRIPT]        .set( rootClass(          cx, obj, &uox_class,              nullptr,  CScriptProperties,      nullptr ) );
-  spellsObj        = defineSingleton( cx, obj, "Spells",        &UOXSpells_class,       ( *protoList )[JSP_SPELLS] );
-  skillsObj        = defineSingleton( cx, obj, "Skills",        &UOXGlobalSkills_class, ( *protoList )[JSP_GLOBALSKILLS] );
-  accountsObj      = defineSingleton( cx, obj, "Accounts",      &UOXAccount_class,      ( *protoList )[JSP_ACCOUNTS] );
-  consoleObj       = defineSingleton( cx, obj, "Console",       &UOXConsole_class,      ( *protoList )[JSP_CONSOLE] );
-  createEntriesObj = defineSingleton( cx, obj, "CreateEntries", &UOXCreateEntries_class, ( *protoList )[JSP_CREATEENTRIES] );
-  timerObj         = defineSingleton( cx, obj, "Timer",         &UOXTimer_class,        ( *protoList )[JSP_TIMER] );
-  scriptObj        = defineSingleton( cx, obj, "SCRIPT",        &uox_class,             ( *protoList )[JSP_SCRIPT] );
+  JS::RootedObject spellsObj(        cx, defineSingleton( cx, obj, "Spells",        &UOXSpells_class,        ( *protoList )[JSP_SPELLS] ) );
+  JS::RootedObject skillsObj(        cx, defineSingleton( cx, obj, "Skills",        &UOXGlobalSkills_class,  ( *protoList )[JSP_GLOBALSKILLS] ) );
+  JS::RootedObject accountsObj(      cx, defineSingleton( cx, obj, "Accounts",      &UOXAccount_class,       ( *protoList )[JSP_ACCOUNTS] ) );
+  JS::RootedObject consoleObj(       cx, defineSingleton( cx, obj, "Console",       &UOXConsole_class,       ( *protoList )[JSP_CONSOLE] ) );
+  JS::RootedObject createEntriesObj( cx, defineSingleton( cx, obj, "CreateEntries", &UOXCreateEntries_class, ( *protoList )[JSP_CREATEENTRIES] ) );
+  JS::RootedObject timerObj(         cx, defineSingleton( cx, obj, "Timer",         &UOXTimer_class,         ( *protoList )[JSP_TIMER] ) );
+  JS::RootedObject scriptObj(        cx, defineSingleton( cx, obj, "SCRIPT",        &uox_class,              ( *protoList )[JSP_SCRIPT] ) );
   // clang-format on
 
 	JS::RootedObject skillsCollection( cx, skillsObj );
@@ -369,7 +370,6 @@ void CJSRuntime::InitializePrototypes()
 			JSPROP_ENUMERATE | JSPROP_READONLY | JSPROP_PERMANENT );
 	}
 
-	// TODO: Root them
 }
 
 JSRuntime *CJSRuntime::GetRuntime( void ) const

@@ -1836,7 +1836,7 @@ FDCLG( CSpawnRegion, attr )                                           \
 	FNARGS                                                             \
 	auto region = JS::GetMaybePtrFromReservedSlot<CSpawnRegion>( thisObj, 0 ); \
 	const std::string entries = JoinSpawnEntries( region->accessor() ); \
-	JSString *value = JS_NewStringCopyZ( cx, entries.c_str() );         \
+	JS::RootedString value( cx, JS_NewStringCopyZ( cx, entries.c_str() )); \
 	if( value == nullptr )                                              \
 		return false;                                                    \
 	args.rval().setString( value );                                     \
@@ -2379,7 +2379,7 @@ FDCLG( CAccount, lastIP )
 	auto account = JS::GetMaybePtrFromReservedSlot<CAccountBlock_st>( thisObj, 0 );
 	const UI32 ip = account->dwLastIP;
 	const std::string text = oldstrutil::format( "%u.%u.%u.%u", ( ip >> 24 ) & 0xFF, ( ip >> 16 ) & 0xFF, ( ip >> 8 ) & 0xFF, ip & 0xFF );
-	JSString *value = JS_NewStringCopyZ( cx, text.c_str() );
+	JS::RootedString value( cx, JS_NewStringCopyZ( cx, text.c_str() ));
 	if( value == nullptr ) return false;
 	args.rval().setString( value );
 	return true;
