@@ -21,7 +21,7 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 <details>
   <summary>Install <strong>build tools</strong></summary>
 
-  > * **Windows** - Download and install [Visual Studio 2022 Community](https://visualstudio.microsoft.com/vs/community/) on Windows 10 or newer.
+  > * **Windows** - Download and install [Visual Studio 2022 Community]https://aka.ms/vs/17/release/vs_community.exe) on Windows 10 or newer.
   >   * In the Visual Studio Installer, select the **Desktop development with C++** workload.
   >   * Under **Individual components**, select **C++ Clang Compiler for Windows** and **MSBuild support for LLVM (clang-cl) toolset**.
   > * **Linux (Debian-based)** - Run `sudo apt update && sudo apt install build-essential cmake curl` in a Terminal (or use your distribution's package manager).
@@ -73,7 +73,7 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 <details>
   <summary><strong>Visual Studio 2022</strong> (Windows), <strong>automake.sh</strong> (Linux/FreeBSD), <strong>XCode</strong> (macOS)</summary>
 
-  > * **Visual Studio 2022** - (Windows) Open *UOX3\make\VS2022\uox3.sln*, select *Debug*, *Release*, or the performance-optimized *ReleaseLTO* configuration and the *x64* platform, then build the *uox3* project.
+  > * **Visual Studio 2022** - (Windows) Open *UOX3\make\VS2022\uox3.sln*, select the *Debug* or performance-optimized *Release* configuration and the *x64* platform, then build the *uox3* project.
   > * **automake.sh** - (Linux/macOS) From the root of the UOX3 repository, run `./automake.sh`. The bundled SpiderMonkey library for your platform is used automatically. Use optional argument `-b debug` for a debug build and/or `-o clean` for a clean build.
   > * **automake.sh** - (FreeBSD) From the root of the UOX3 repository, run `./automake.sh`. Use optional argument `-b debug` for a debug build and/or `-o clean` for a clean build.
   > * **XCode** - (macOS) Open *UOX3/make/XCode/uox3/uox3.xcworkspace*, select *Build*
@@ -85,7 +85,6 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
   > From a Visual Studio developer terminal, run:
   > `msbuild make\VS2022\uox3.sln /m /p:Configuration=Release /p:Platform=x64`
   >
-  > To build the performance-optimized configuration, replace `Release` with `ReleaseLTO`.
 </details>
 
 <details>
@@ -155,7 +154,7 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 ---
 ## UOX3 Compiled! Now what?
 Once done compiling, you can copy the compiled UOX3 binary/executable to the directory you intend to run your UOX3 shard from, along with all the files and folders contained in the UOX3/data subdirectory. Where you'll find the compiled UOX3 binary/executable depends on your platform and build method. Examples:
-  * **Windows** - (Visual Studio 2022/MSBuild) Compiled uox3.exe can be found in **UOX3/make/VS2022/x64/Release**, **ReleaseLTO**, or **Debug**, matching the selected configuration
+  * **Windows** - (Visual Studio 2022/MSBuild) Compiled uox3.exe can be found in **UOX3/make/VS2022/x64/Release** or **Debug**, matching the selected configuration
   * **Linux/FreeBSD** - (automake.sh) Compiled uox3 binary can be found in **root UOX3 repository**
   * **macOS** - (XCode) Compiled uox3 binary can be found in **UOX3\make\XCode\Build\Products\Release**
   * **Either Platform** - (CMake, manual) Compiled uox3 binary can be found in **UOX3\make\cmake\build**

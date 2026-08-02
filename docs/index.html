@@ -5274,9 +5274,9 @@ packitem=0x0f8d,30
 					<label for="spoiler_install_build_tools">Install <strong>build tools</strong> <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<ul>
-							<li><strong>Windows</strong> - Download and install <a href="https://visualstudio.microsoft.com/downloads/" title="Community Edition of Visual Studio" target="_blank">Community Edition of Visual Studio 2017 or 2022</a>.
+							<li><strong>Windows</strong> - Download and install <a href="https://visualstudio.microsoft.com/downloads/" title="Community Edition of Visual Studio" target="_blank">Community Edition of Visual Studio 2022</a>.
 								<ul>
-									<li>Be sure to also install <span class="hl">Desktop development with C++</span> via the Visual Studio Installer, along with the individual component titled <span class="hl">VC++ 2017 version 15.9 v14.16 latest v141 tools</span> (VS2017) or <span class="hl">MSVC v143 - VS 2022 C++ x64/x86 build tools</span> (VS2022). CMake is included for command-line builds.</li>
+									<li>Be sure to also install <span class="hl">Desktop development with C++</span>, <span class="hl">C++ Clang Compiler for Windows</span>, and <span class="hl">MSBuild support for LLVM (clang-cl) toolset</span> via the Visual Studio Installer.</li>
 								</ul>
 							<li><strong>Linux</strong> (Debian-based) - Run <span class="hl">sudo apt-get update</span> + <span class="hl">sudo apt install build-essential cmake</span> in a Terminal: (or use your Linux distro's package manager)</li>
 							<li><strong>FreeBSD</strong> - Run <span class="hl">pkg install cmake</span> in a Terminal. Alternatively, build cmake via ports if desired.</li>
@@ -5318,10 +5318,10 @@ packitem=0x0f8d,30
 					<h4>Step 3: Compile UOX3</h4>
 					<em>Finally, compile UOX3 using the build environment you setup in Step 1.</em>
 					<input type="checkbox" id="spoiler_compile_with_vs2022_xcode_automake">
-					<label for="spoiler_compile_with_vs2022_xcode_automake"><strong>Visual Studio 2017/2022</strong> (Windows), <strong>automake.sh</strong> (Linux/FreeBSD), <strong>XCode</strong> (macOS) <i class="fas fa-angle-down"></i></label>
+					<label for="spoiler_compile_with_vs2022_xcode_automake"><strong>Visual Studio 2022</strong> (Windows), <strong>automake.sh</strong> (Linux/FreeBSD), <strong>XCode</strong> (macOS) <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 					<ul style="margin-left: 15px">
-						<li><strong>Visual Studio 2017/2022</strong> - (Windows) Open <em>UOX3\make\VS20XX\uox3.sln</em>, choose Release/Debug from dropdown menu, and hit Build -> Build UOX3</li>
+						<li><strong>Visual Studio 2022</strong> - (Windows) Open <em>UOX3\make\VS2022\uox3.sln</em>, choose Release/Debug from dropdown menu, and hit Build -> Build UOX3</li>
 						<li><strong>automake.sh</strong> - (Linux/FreeBSD) Run <span class="hl">./automake.sh</span> in a Terminal, from the root of the cloned UOX3 repository. This compiles UOX3 with CMake, but in one command only. Use optional argument <span class="hl">-b debug</span> to create debug build, and/or <span class="hl">-o clean</span> to do a clean build.</li>
 						<li><strong>XCode</strong> - (macOS) Open <em>UOX3/make/XCode/uox3/uox3.xcworkspace</em>, select Build</li>
 					</ul>
@@ -5375,7 +5375,7 @@ packitem=0x0f8d,30
 					<h4>UOX3 Compiled! Now what?</h4>
 					<p><em>Once done compiling, you can copy the compiled UOX3 binary/executable to the directory you intend to run your UOX3 shard from, along with all the files and folders contained in the UOX3/data subdirectory. Where you'll find the compiled UOX3 binary/executable depends on your platform and build method. Examples:</em></p>
 					<ul style="margin-left: 15px">
-						<li><strong>Windows</strong> - (VS2017/VS2022) Compiled UOX3.exe can be found in <strong>UOX3/make/VS20XX/x64/Release</strong></li>
+						<li><strong>Windows</strong> - (Visual Studio 2022) Compiled UOX3.exe can be found in <strong>UOX3/make/VS2022/x64/Release</strong></li>
 						<li><strong>Linux/FreeBSD</strong> - (automake.sh) Compiled uox3 binary can be found in <strong>root UOX3 repository</strong></li>
 						<li><strong>macOS</strong> - (XCode) Compiled uox3 binary can be found in <strong>UOX3\make\XCode\Build\Products\Release</strong></li>
 						<li><strong>Either Platform</strong> - (CMake, manual) Compiled uox3 binary can be found in <strong>UOX3\make\cmake\build</strong>

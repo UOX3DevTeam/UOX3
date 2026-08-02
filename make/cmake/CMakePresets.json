@@ -25,9 +25,9 @@
     },
     {
       "name": "vs2022-release",
-      "displayName": "Visual Studio 2022 RelWithDebInfo",
+      "displayName": "Visual Studio 2022 Release",
       "configurePreset": "vs2022-clang",
-      "configuration": "RelWithDebInfo"
+      "configuration": "Release"
     }
   ]
 }
