@@ -3508,8 +3508,7 @@ bool CMisc_HasSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 		}
 
 		CItem *activeBook = Magic->FindSpellBook( myChar, spellId );
-		// Code checks for spell based on index starting at 0, while spells have spellIDs starting from 1 in DFN
-		if( ValidateObject( activeBook ) && Magic->HasSpell( activeBook, spellId - 1 ))
+		if( ValidateObject( activeBook ) && Magic->HasSpell( activeBook, spellId ))
 		{
 			args.rval().setBoolean( true );
 		}
@@ -3527,8 +3526,7 @@ bool CMisc_HasSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 			return false;
 		}
 
-		// Code checks for spell based on index starting at 0, while spells have spellIDs starting from 1 in DFN
-		if( Magic->HasSpell( myItem, spellId - 1 ))
+		if( Magic->HasSpell( myItem, spellId ))
 		{
 			args.rval().setBoolean( true );
 		}
