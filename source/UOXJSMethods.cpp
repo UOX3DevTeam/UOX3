@@ -2440,9 +2440,9 @@ bool CBase_ResumeJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_GetTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	if( argc != 1 )
+	if( argc < 1 || argc > 2 )
 	{
-		ScriptError( cx, "GetTempEffect: Invalid count of arguments :%d, needs 1 (tempEffectID)", argc );
+		ScriptError( cx, "GetTempEffect: Invalid count of arguments :%d, needs 1-2 (tempEffectID, scriptEffectID = optional)", argc );
 		return false;
 	}
 
@@ -2457,12 +2457,16 @@ bool CBase_GetTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	args.rval().setInt32(  0  ); // Return value 0 by default, to indicate no valid tempe effect
 	UI16 tempEffectID = static_cast<UI16>( args.get(0).toInt32());
+	UI16 scriptEffectID = ( argc == 2 ? static_cast<UI16>( args.get(1).toInt32() : 0 );
+	UI16 assocScript = ( JSMapping->currentActive() != nullptr ? JSMapping->currentActive()->GetScriptID() : 0xFFFF );
 
 	SERIAL myObjSerial = myObj->GetSerial();
 	for( const auto &Effect : cwmWorldState->tempEffects.collection() )
 	{
 		// We only want results that have same object serial and tempEffectID as specified
-		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID )
+		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID &&
+			( argc == 1 || ( Effect->More1() == scriptEffectID &&
+				( tempEffectID != 44 || Effect->AssocScript() == assocScript ))))
 		{
 			// Return the timestamp for when the Temp Effect timer expires
 			args.rval().setNumber( Effect->ExpireTime() );
@@ -2480,9 +2484,9 @@ bool CBase_GetTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_ReverseTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	if( argc != 1 )
+	if( argc < 1 || argc > 2 )
 	{
-		ScriptError( cx, "ReverseTempEffect: Invalid count of arguments :%d, needs 1 (tempEffectID)", argc );
+		ScriptError( cx, "ReverseTempEffect: Invalid count of arguments :%d, needs 1-2 (tempEffectID, scriptEffectID = optional)", argc );
 		return false;
 	}
 	auto args = JS::CallArgsFromVp(argc, vp);
@@ -2496,13 +2500,17 @@ bool CBase_ReverseTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	args.rval().setInt32(  0  ); // Return value 0 by default, to indicate no valid temp effect found
 	UI16 tempEffectID = static_cast<UI16>( args.get(0).toInt32());
+	UI16 scriptEffectID = ( argc == 2 ? static_cast<UI16>( args.get(1).toInt32() : 0 );
+	UI16 assocScript = ( JSMapping->currentActive() != nullptr ? JSMapping->currentActive()->GetScriptID() : 0xFFFF );
 
 	SERIAL myObjSerial = myObj->GetSerial();
 	CTEffect *removeEffect = nullptr;
 
 	for( auto &Effect : cwmWorldState->tempEffects.collection() )
 	{
-		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID )
+		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID &&
+			( argc == 1 || ( Effect->More1() == scriptEffectID &&
+				( tempEffectID != 44 || Effect->AssocScript() == assocScript ))))
 		{
 			// Found our timer! Keep track of it for removal outside loop
 			removeEffect = Effect;
@@ -2528,9 +2536,9 @@ bool CBase_ReverseTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_PauseTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	if( argc != 1 )
+	if( argc < 1 || argc > 2 )
 	{
-		ScriptError( cx, "PauseTempEffect: Invalid count of arguments :%d, needs 1 (tempEffectID)", argc );
+		ScriptError( cx, "PauseTempEffect: Invalid count of arguments :%d, needs 1-2 (tempEffectID, scriptEffectID = optional)", argc );
 		return false;
 	}
 	auto args = JS::CallArgsFromVp(argc, vp);
@@ -2544,16 +2552,19 @@ bool CBase_PauseTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	args.rval().setInt32(  0  ); // Return value 0 by default, to indicate no valid temp effect found
 	UI16 tempEffectID = static_cast<UI16>( args.get(0).toInt32());
+	UI16 scriptEffectID = ( argc == 2 ? static_cast<UI16>( args.get(1).toInt32() : 0 );
+	UI16 assocScript = ( JSMapping->currentActive() != nullptr ? JSMapping->currentActive()->GetScriptID() : 0xFFFF );
 
 	SERIAL myObjSerial = myObj->GetSerial();
-	CTEffect *pauseEffect = nullptr;
 
 	for( auto &Effect : cwmWorldState->tempEffects.collection() )
 	{
-		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID )
+		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID &&
+			( argc == 1 || ( Effect->More1() == scriptEffectID &&
+				( tempEffectID != 44 || Effect->AssocScript() == assocScript ))))
 		{
 			// Found our timer! Let's pause it
-			PauseEffect( pauseEffect );
+			PauseEffect( Effect );
 			args.rval().setInt32(  1  ); // Return 1 indicating temp effect was found and paused
 			break;
 		}
@@ -2570,9 +2581,9 @@ bool CBase_PauseTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_ResumeTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	if( argc != 1 )
+	if( argc < 1 || argc > 2 )
 	{
-		ScriptError( cx, "ResumeTempEffect: Invalid count of arguments :%d, needs 1 (tempEffectID)", argc );
+		ScriptError( cx, "ResumeTempEffect: Invalid count of arguments :%d, needs 1-2 (tempEffectID, scriptEffectID = optional)", argc );
 		return false;
 	}
 	auto args = JS::CallArgsFromVp(argc, vp);
@@ -2586,16 +2597,19 @@ bool CBase_ResumeTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	args.rval().setInt32(  0  ); // Return value 0 by default, to indicate no valid paused temp effect found
 	UI16 tempEffectID = static_cast<UI16>( args.get(0).toInt32());
+	UI16 scriptEffectID = ( argc == 2 ? static_cast<UI16>( args.get(1).toInt32() : 0 );
+	UI16 assocScript = ( JSMapping->currentActive() != nullptr ? JSMapping->currentActive()->GetScriptID() : 0xFFFF );
 
 	SERIAL myObjSerial = myObj->GetSerial();
-	CTEffect *resumeEffect = nullptr;
 
 	for( auto &Effect : cwmWorldState->tempEffects.collection() )
 	{
-		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID && Effect->PauseTime() > 0 )
+		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID && Effect->PauseTime() > 0 &&
+			( argc == 1 || ( Effect->More1() == scriptEffectID &&
+				( tempEffectID != 44 || Effect->AssocScript() == assocScript ))))
 		{
 			// Found our timer! Let's resume it
-			ResumeEffect( resumeEffect );
+			ResumeEffect( Effect );
 			args.rval().setInt32(  1  ); // Return 1 indicating temp effect was found and resumed
 			break;
 		}
@@ -3482,7 +3496,7 @@ bool CMisc_HasSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	auto args = JS::CallArgsFromVp(argc, vp);
 	auto obj = getThis( cx, args );
-	UI08 spellId = static_cast<UI08>( args.get(0).toInt32());
+	SI32 spellId = static_cast<SI32>( args.get(0).toInt32());
 
 	if( HasWrapperClass( obj, &UOXChar_class ))
 	{
@@ -3493,16 +3507,9 @@ bool CMisc_HasSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 			return false;
 		}
 
-		CItem *myItem = FindItemOfType( myChar, IT_SPELLBOOK );
-
-		if( !ValidateObject( myItem ))
-		{
-			args.rval().setBoolean( false );
-			return true;
-		}
-
-		// Code checks for spell based on index starting at 0, while spells have spellIDs starting from 1
-		if( Magic->HasSpell( myItem, spellId - 1 ))
+		CItem *activeBook = Magic->FindSpellBook( myChar, spellId );
+		// Code checks for spell based on index starting at 0, while spells have spellIDs starting from 1 in DFN
+		if( ValidateObject( activeBook ) && Magic->HasSpell( activeBook, spellId - 1 ))
 		{
 			args.rval().setBoolean( true );
 		}
@@ -3520,7 +3527,8 @@ bool CMisc_HasSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 			return false;
 		}
 
-		if( Magic->HasSpell( myItem, spellId ))
+		// Code checks for spell based on index starting at 0, while spells have spellIDs starting from 1 in DFN
+		if( Magic->HasSpell( myItem, spellId - 1 ))
 		{
 			args.rval().setBoolean( true );
 		}
@@ -3549,18 +3557,18 @@ bool CMisc_RemoveSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	auto args = JS::CallArgsFromVp(argc, vp);
 	auto obj = getThis( cx, args );
-	UI08 spellId = static_cast<UI08>( args.get(0).toInt32());
+	SI32 spellId = static_cast<SI32>( args.get(0).toInt32());
 
 	if( HasWrapperClass( obj, &UOXChar_class ))
 	{
 		CChar *myChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
 		if( !ValidateObject( myChar ))
 		{
-			ScriptError( cx, "Invalid char for HasSpell" );
+			ScriptError( cx, "Invalid char for RemoveSpell" );
 			return false;
 		}
 
-		CItem *myItem = FindItemOfType( myChar, IT_SPELLBOOK );
+		CItem *myItem = Magic->FindSpellBook( myChar, spellId );
 
 		if( ValidateObject( myItem ))
 		{
@@ -5602,7 +5610,7 @@ bool CChar_CastSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI08 spellCast = static_cast<SI08>( args.get(0).toInt32());
+	SI32 spellCast = static_cast<SI32>( args.get(0).toInt32());
 
 	if( myChar->IsNpc() )
 	{
@@ -7507,12 +7515,12 @@ bool CChar_AddSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-  CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
-	UI08 spellNum	= static_cast<UI08>( args.get(0).toInt32());
-	CItem *sBook	= FindItemOfType( myChar, IT_SPELLBOOK );
-	if( ValidateObject( sBook ))
+	CChar *myChar 		= JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
+	SI32 spellNum		= static_cast<SI32>( args.get(0).toInt32());
+	CItem *spellBook	= Magic->FindSpellBook( myChar, spellNum );
+	if( ValidateObject( spellBook ))
 	{
-		Magic->AddSpell( sBook, spellNum );
+		Magic->AddSpell( spellBook, spellNum );
 	}
 	return true;
 }

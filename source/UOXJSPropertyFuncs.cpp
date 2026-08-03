@@ -146,6 +146,60 @@ FDCLG( CSpell, name )
 	return true;
 }
 
+FDCLG( CSpell, reagents )
+{
+    FNARGS
+    auto priv = JS::GetMaybePtrFromReservedSlot<CSpellInfo>( thisObj, 0 );
+    if( priv == nullptr )
+        return false;
+
+    JS::RootedObject reagents( cx, JS::NewArrayObject( cx, 0 ));
+    if( reagents == nullptr )
+        return false;
+
+    const auto &spellReagents = priv->Reagents();
+    for( size_t reagentIndex = 0; reagentIndex < spellReagents.size(); ++reagentIndex )
+    {
+        const auto &spellReagent = spellReagents[reagentIndex];
+
+        JS::RootedObject reagent( cx, JS::NewArrayObject( cx, 0 ));
+        if( reagent == nullptr )
+            return false;
+
+        JS::RootedString sectionId( cx,
+            JS_NewStringCopyZ( cx, spellReagent.sectionId.c_str() ));
+        if( sectionId == nullptr )
+            return false;
+
+        JS::RootedValue sectionIdValue( cx, JS::StringValue( sectionId ));
+        JS::RootedValue amountValue( cx, JS::Int32Value( spellReagent.amount ));
+
+        if( !JS_SetElement( cx, reagent, 0, sectionIdValue ) ||
+            !JS_SetElement( cx, reagent, 1, amountValue ))
+            return false;
+
+        if( spellReagent.colourCheck )
+        {
+            JS::RootedValue colourValue( cx,
+                JS::Int32Value( spellReagent.colour ));
+
+            if( !JS_SetElement( cx, reagent, 2, colourValue ))
+                return false;
+        }
+
+        JS::RootedValue reagentValue( cx, JS::ObjectValue( *reagent ));
+        if( !JS_SetElement(
+            cx,
+            reagents,
+            static_cast<uint32_t>( reagentIndex ),
+            reagentValue ))
+            return false;
+    }
+
+    args.rval().setObject( *reagents );
+    return true;
+}
+
 // clang-format off
 IMPL_GET( CSpell, action,          CSpellInfo, setInt32, Action() )
 IMPL_GET( CSpell, baseDmg,         CSpellInfo, setInt32, BaseDmg() )
@@ -157,19 +211,6 @@ IMPL_GET( CSpell, scrollHigh,      CSpellInfo, setInt32, ScrollHigh() )
 IMPL_GET( CSpell, circle,          CSpellInfo, setInt32, Circle() )
 IMPL_GET( CSpell, lowSkill,        CSpellInfo, setInt32, LowSkill() )
 IMPL_GET( CSpell, highSkill,       CSpellInfo, setInt32, HighSkill() )
-IMPL_GET( CSpell, ginseng,         CSpellInfo, setInt32, Reagants().ginseng )
-IMPL_GET( CSpell, moss,            CSpellInfo, setInt32, Reagants().moss )
-IMPL_GET( CSpell, drake,           CSpellInfo, setInt32, Reagants().drake )
-IMPL_GET( CSpell, pearl,           CSpellInfo, setInt32, Reagants().pearl )
-IMPL_GET( CSpell, silk,            CSpellInfo, setInt32, Reagants().silk )
-IMPL_GET( CSpell, ash,             CSpellInfo, setInt32, Reagants().ash )
-IMPL_GET( CSpell, shade,           CSpellInfo, setInt32, Reagants().shade )
-IMPL_GET( CSpell, garlic,          CSpellInfo, setInt32, Reagants().garlic )
-IMPL_GET( CSpell, batwing,         CSpellInfo, setInt32, Reagants().batwing )
-IMPL_GET( CSpell, daemonBlood,     CSpellInfo, setInt32, Reagants().daemonblood )
-IMPL_GET( CSpell, graveDust,       CSpellInfo, setInt32, Reagants().gravedust )
-IMPL_GET( CSpell, noxCrystal,      CSpellInfo, setInt32, Reagants().noxcrystal )
-IMPL_GET( CSpell, pigIron,         CSpellInfo, setInt32, Reagants().pigiron )
 IMPL_GET( CSpell, soundEffect,     CSpellInfo, setInt32, Effect() )
 IMPL_GET( CSpell, tithing,         CSpellInfo, setInt32, Tithing() )
 IMPL_GET( CSpell, delay,           CSpellInfo, setDouble, Delay() )

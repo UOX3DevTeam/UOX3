@@ -131,30 +131,20 @@ DECL_SET( main, attr )
 // Forward declares
 DECL_GET( CSpell, action )
 DECL_GET( CSpell, aggressiveSpell )
-DECL_GET( CSpell, ash )
 DECL_GET( CSpell, baseDmg )
 DECL_GET( CSpell, circle )
 DECL_GET( CSpell, damageDelay )
 DECL_GET( CSpell, delay )
-DECL_GET( CSpell, drake )
 DECL_GET( CSpell, enabled )
 DECL_GET( CSpell, fieldSpell )
-DECL_GET( CSpell, garlic )
-DECL_GET( CSpell, batwing )
-DECL_GET( CSpell, daemonBlood )
-DECL_GET( CSpell, graveDust )
-DECL_GET( CSpell, noxCrystal )
-DECL_GET( CSpell, pigIron )
-DECL_GET( CSpell, ginseng )
 DECL_GET( CSpell, health )
 DECL_GET( CSpell, highSkill )
 DECL_GET( CSpell, id )
 DECL_GET( CSpell, lowSkill )
 DECL_GET( CSpell, mana )
 DECL_GET( CSpell, mantra )
-DECL_GET( CSpell, moss )
 DECL_GET( CSpell, name )
-DECL_GET( CSpell, pearl )
+DECL_GET( CSpell, reagents )
 DECL_GET( CSpell, recoveryDelay )
 DECL_GET( CSpell, reflectable )
 DECL_GET( CSpell, requireChar )
@@ -164,8 +154,6 @@ DECL_GET( CSpell, requireTarget )
 DECL_GET( CSpell, resistable )
 DECL_GET( CSpell, scrollHigh )
 DECL_GET( CSpell, scrollLow )
-DECL_GET( CSpell, shade )
-DECL_GET( CSpell, silk )
 DECL_GET( CSpell, soundEffect )
 DECL_GET( CSpell, stamina )
 DECL_GET( CSpell, strToSay )
@@ -907,19 +895,6 @@ inline JSPropertySpec CSpellProperties[] =
   UX_PSG( CSpell, circle,          JSPROP_ENUMANDPERM ),
   UX_PSG( CSpell, lowSkill,        JSPROP_ENUMANDPERM ),
   UX_PSG( CSpell, highSkill,       JSPROP_ENUMANDPERM ),
-  UX_PSG( CSpell, ginseng,         JSPROP_ENUMANDPERM ),
-  UX_PSG( CSpell, moss,            JSPROP_ENUMANDPERM ),
-  UX_PSG( CSpell, drake,           JSPROP_ENUMANDPERM ),
-  UX_PSG( CSpell, pearl,           JSPROP_ENUMANDPERM ),
-  UX_PSG( CSpell, silk,            JSPROP_ENUMANDPERM ),
-  UX_PSG( CSpell, ash,             JSPROP_ENUMANDPERM ),
-  UX_PSG( CSpell, shade,           JSPROP_ENUMANDPERM ),
-  UX_PSG( CSpell, garlic,          JSPROP_ENUMANDPERM ),
-  UX_PSG( CSpell, batwing,         JSPROP_ENUMANDPERM ),
-  UX_PSG( CSpell, daemonBlood,     JSPROP_ENUMANDPERM ),
-  UX_PSG( CSpell, graveDust,       JSPROP_ENUMANDPERM ),
-  UX_PSG( CSpell, noxCrystal,      JSPROP_ENUMANDPERM ),
-  UX_PSG( CSpell, pigIron,         JSPROP_ENUMANDPERM ),
   UX_PSG( CSpell, requireTarget,   JSPROP_ENUMANDPERM ),
   UX_PSG( CSpell, requireItem,     JSPROP_ENUMANDPERM ),
   UX_PSG( CSpell, requireLocation, JSPROP_ENUMANDPERM ),
@@ -933,6 +908,7 @@ inline JSPropertySpec CSpellProperties[] =
   UX_PSG( CSpell, enabled,         JSPROP_ENUMANDPERM ),
   UX_PSG( CSpell, tithing,         JSPROP_ENUMANDPERM ),
   UX_PSG( CSpell, baseDmg,         JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, reagents,        JSPROP_ENUMANDPERM ),
   JS_PS_END
 };
 // clang-format on

@@ -16,6 +16,33 @@
 #include "StringUtility.hpp"
 #include <algorithm>
 
+static CBaseObject *TempEffectObject( SERIAL serial )
+{
+	if( serial == INVALIDSERIAL || serial == 0 )
+		return nullptr;
+	if( serial < BASEITEMSERIAL )
+		return CalcCharObjFromSer( serial );
+	return CalcItemObjFromSer( serial );
+}
+
+static void ScriptTempEffectCallback( CTEffect *effect, bool expired )
+{
+	cScript *script = JSMapping->GetScript( effect->AssocScript() );
+	CBaseObject *target = TempEffectObject( effect->Destination() );
+	if( script == nullptr || !ValidateObject( target ))
+		return;
+
+	CBaseObject *source = TempEffectObject( effect->Source() );
+	if( expired )
+	{
+		script->OnTempEffectExpire( source, target, effect->More1() );
+	}
+	else
+	{
+		script->OnTempEffectRemove( source, target, effect->More1() );
+	}
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	cEffects::DeathAction()
 //o------------------------------------------------------------------------------------------------o
@@ -1108,6 +1135,9 @@ auto cEffects::CheckTempeffects() -> void
 				}
 				break;
 			}
+			case 44: // Script-owned temporary effect
+				ScriptTempEffectCallback( Effect, true );
+				break;
 			default:
 				Console.Error( oldstrutil::format( " Fallout of switch statement without default (%i). checktempeffects()", Effect->Number() ));
 				break;
@@ -1131,6 +1161,12 @@ auto cEffects::CheckTempeffects() -> void
 //o------------------------------------------------------------------------------------------------o
 void ReverseEffect( CTEffect *Effect )
 {
+	if( Effect->Number() == 44 )
+	{
+		ScriptTempEffectCallback( Effect, false );
+		return;
+	}
+
 	CChar *s = CalcCharObjFromSer( Effect->Destination() );
 	if( ValidateObject( s ))
 	{
@@ -1247,7 +1283,7 @@ void ResumeEffect( CTEffect *Effect )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a temp effect to a character
 //o------------------------------------------------------------------------------------------------o
-void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI16 more2, UI16 more3, [[maybe_unused]] CItem *targItemPtr )
+void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI16 more2, UI16 more3, [[maybe_unused]] CItem *targItemPtr, UI16 assocScript )
 {
 	//if( !ValidateObject( source ) || !ValidateObject( dest ))
 	if( !ValidateObject( dest ))
@@ -1286,6 +1322,13 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 						ReverseEffect( Effect );
 						removeEffect.push_back( Effect );
 						break;
+					case 44: // Script-owned temporary effect
+						if( Effect->More1() == more1 && Effect->AssocScript() == assocScript )
+						{
+							ReverseEffect( Effect );
+							removeEffect.push_back( Effect );
+						}
+						break;
 					default:
 						break;
 				}
@@ -1298,6 +1341,7 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 	});
 	CSocket *tSock = dest->GetSocket();
 	toAdd->Number( num );
+	toAdd->AssocScript( assocScript );
 	switch( num )
 	{
 		case 1: // Paralyse Spell
@@ -1744,6 +1788,11 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 		case 43: // regain wool for sheeps (JS)
 			toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( more1 )));
 			break;
+		case 44: // Script-owned temporary effect
+			toAdd->More1( more1 );
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( more2 )));
+			toAdd->Dispellable( more3 != 0 );
+			break;
 		default:
 			Console.Error( oldstrutil::format( " Fallout of switch statement (%d) without default. uox3.cpp, tempeffect()", num ));
 			delete toAdd;
@@ -1757,10 +1806,28 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a temp effect to an item
 //o------------------------------------------------------------------------------------------------o
-void cEffects::TempEffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI16 more2, [[maybe_unused]] UI16 more3 )
+void cEffects::TempEffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI16 more2, [[maybe_unused]] UI16 more3, UI16 assocScript )
 {
 	if( !ValidateObject( dest ))
 		return;
+
+	if( num == 44 )
+	{
+		std::vector<CTEffect *> removeEffect;
+		for( const auto &Effect : cwmWorldState->tempEffects.collection() )
+		{
+			if( Effect->Destination() == dest->GetSerial() && Effect->Number() == num &&
+				Effect->More1() == more1 && Effect->AssocScript() == assocScript )
+			{
+				ReverseEffect( Effect );
+				removeEffect.push_back( Effect );
+			}
+		}
+		std::for_each( removeEffect.begin(), removeEffect.end(), []( CTEffect *effect )
+		{
+			cwmWorldState->tempEffects.Remove( effect, true );
+		});
+	}
 
 	CTEffect *toAdd = new CTEffect;
 
@@ -1775,6 +1842,7 @@ void cEffects::TempEffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI1
 
 	toAdd->Destination( dest->GetSerial() );
 	toAdd->Number( num );
+	toAdd->AssocScript( assocScript );
 	switch( num )
 	{
 		case 10: // Crafting Potion??
@@ -1810,6 +1878,11 @@ void cEffects::TempEffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI1
 			toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( more1 )));
 			toAdd->ObjPtr( dest );
 			toAdd->Dispellable( false );
+			break;
+		case 44: // Script-owned temporary effect
+			toAdd->More1( more1 );
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( more2 )));
+			toAdd->Dispellable( more3 != 0 );
 			break;
 		default:
 			Console.Error( " Fallout of switch statement without default. uox3.cpp, tempeffect2()" );

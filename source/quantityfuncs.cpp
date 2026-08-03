@@ -47,7 +47,8 @@ UI32 GetTotalItemCount( CItem *objCont )
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	GetSubItemAmount()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Get the total amount of an item in a pack
+//|	Purpose		-	Get the total amount of an item in a pack. INVALIDID can be used with a
+//|					non-empty sectionId to match items by section ID only.
 //o------------------------------------------------------------------------------------------------o
 auto GetSubItemAmount( CItem* p, UI16 realId, UI16 realColour, UI32 realMoreVal, bool colorCheck, bool moreCheck, std::string sectionId ) -> UI32 
 {
@@ -57,11 +58,12 @@ auto GetSubItemAmount( CItem* p, UI16 realId, UI16 realColour, UI32 realMoreVal,
 	{
 		if( ValidateObject( i ))
 		{
-			if( i->GetId() != realId && ( i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER ))
+			const bool itemMatches = i->GetId() == realId || ( realId == INVALIDID && !sectionId.empty() );
+			if(( realId == INVALIDID || !itemMatches ) && ( i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER ))
 			{
 				total += GetSubItemAmount( i, realId, realColour, realMoreVal, colorCheck, moreCheck, sectionId  );
 			}
-			else if( i->GetId() == realId 
+			else if( itemMatches
 				&& ( !colorCheck || ( colorCheck && i->GetColour() == realColour )) 
 				&& ( !moreCheck || ( moreCheck && i->GetTempVar( CITV_MORE ) == realMoreVal ))
 				&& ( sectionId == "" || oldstrutil::lower( sectionId ) == oldstrutil::lower( i->GetSectionId() )))
@@ -113,12 +115,13 @@ auto DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realId, UI16 realColour, U
 		if( !ValidateObject( i ))
 			continue;
 
-		if( i->GetId() != realId && ( i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER ))
+		const bool itemMatches = i->GetId() == realId || ( realId == INVALIDID && !sectionId.empty() );
+		if(( realId == INVALIDID || !itemMatches ) && ( i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER ))
 		{
 			// Is item an pack or container?
 			amtDeleted += DeleteSubItemAmount( i, total, realId, realColour, realMoreVal, colorCheck, moreCheck, sectionId );
 		}
-		else if( i->GetId() == realId 
+		else if( itemMatches
 			&& ( !colorCheck || ( colorCheck && i->GetColour() == realColour ))
 			&& ( !moreCheck || ( moreCheck && i->GetTempVar( CITV_MORE ) == realMoreVal ))
 			&& ( sectionId == "" || oldstrutil::lower( sectionId ) == oldstrutil::lower( i->GetSectionId() )))

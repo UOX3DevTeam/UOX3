@@ -352,10 +352,7 @@ void TeleTarget( CSocket *s )
 			Magic->SubtractMana( mChar, 3 );	// subtract mana on scroll or spell
 			if( s->CurrentSpellType() == 0 )	// del regs on normal spell
 			{
-				Reag_st toDel;
-				toDel.drake = 1;
-				toDel.moss = 1;
-				Magic->DelReagents( mChar, toDel );
+				Magic->DelReagents( mChar, Magic->spells[22] );
 			}
 		}
 

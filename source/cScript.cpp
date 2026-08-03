@@ -2663,6 +2663,71 @@ bool cScript::OnTimer( CBaseObject *tObject, UI16 timerId )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function    -   cScript::OnTempEffectExpire()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -   Calls the associated script when a script-owned temporary effect reaches its
+//|                 expiration time. The source can be null if it no longer exists, while target is
+//|                 the character or item carrying the effect and effectId identifies the script's
+//|                 specific effect.
+//o------------------------------------------------------------------------------------------------o
+bool cScript::OnTempEffectExpire( CBaseObject *source, CBaseObject *target, UI16 effectId )
+{
+	if( !ValidateObject( target ))
+		return false;
+	if( !ExistAndVerify( seOnTempEffectExpire, "onTempEffectExpire" ))
+		return false;
+
+	jsval rval, params[3];
+	params[0] = JSVAL_NULL;
+	if( ValidateObject( source ))
+	{
+		JSObject *sourceObj = JSEngine->AcquireObject(( source->GetObjType() == OT_CHAR ? IUE_CHAR : IUE_ITEM ), source, runTime );
+		params[0] = OBJECT_TO_JSVAL( sourceObj );
+	}
+	JSObject *targetObj = JSEngine->AcquireObject(( target->GetObjType() == OT_CHAR ? IUE_CHAR : IUE_ITEM ), target, runTime );
+	params[1] = OBJECT_TO_JSVAL( targetObj );
+	params[2] = INT_TO_JSVAL( effectId );
+	JSBool retVal = InvokeEvent( "onTempEffectExpire", 3, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnTempEffectExpire, false );
+	}
+	return ( retVal == JS_TRUE );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -   cScript::OnTempEffectRemove()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -   Calls the associated script when a script-owned temporary effect is manually
+//|                 removed or replaced before expiration. The source can be null if it no longer
+//|                 exists, while target and effectId identify the affected object and effect.
+//o------------------------------------------------------------------------------------------------o
+bool cScript::OnTempEffectRemove( CBaseObject *source, CBaseObject *target, UI16 effectId )
+{
+	if( !ValidateObject( target ))
+		return false;
+	if( !ExistAndVerify( seOnTempEffectRemove, "onTempEffectRemove" ))
+		return false;
+
+	jsval rval, params[3];
+	params[0] = JSVAL_NULL;
+	if( ValidateObject( source ))
+	{
+		JSObject *sourceObj = JSEngine->AcquireObject(( source->GetObjType() == OT_CHAR ? IUE_CHAR : IUE_ITEM ), source, runTime );
+		params[0] = OBJECT_TO_JSVAL( sourceObj );
+	}
+	JSObject *targetObj = JSEngine->AcquireObject(( target->GetObjType() == OT_CHAR ? IUE_CHAR : IUE_ITEM ), target, runTime );
+	params[1] = OBJECT_TO_JSVAL( targetObj );
+	params[2] = INT_TO_JSVAL( effectId );
+	JSBool retVal = InvokeEvent( "onTempEffectRemove", 3, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnTempEffectRemove, false );
+	}
+	return ( retVal == JS_TRUE );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::OnStatLoss()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached when losing stats
@@ -3343,8 +3408,10 @@ SI08 cScript::OnFacetChange( CChar *mChar, const UI08 oldFacet, const UI08 newFa
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached who targets someone with a spell
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSpellTargetSelect(  CChar *caster, CBaseObject *target, UI08 spellNum )
+SI32 cScript::OnSpellTargetSelect(  CChar *caster, CBaseObject *target, SI32 spellNum )
 {
+	const SI32 RV_NOFUNC = -1;
+
 	if( !ValidateObject( target ) || !ValidateObject( caster ))
 		return RV_NOFUNC;
 
@@ -3380,8 +3447,10 @@ SI08 cScript::OnSpellTargetSelect(  CChar *caster, CBaseObject *target, UI08 spe
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached who is the target of a spell
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSpellTarget( CBaseObject *target, CChar *caster, UI08 spellNum )
+SI32 cScript::OnSpellTarget( CBaseObject *target, CChar *caster, SI32 spellNum )
 {
+	const SI32 RV_NOFUNC = -1;
+
 	if( !ValidateObject( target ) || !ValidateObject( caster ))
 		return RV_NOFUNC;
 
@@ -3444,7 +3513,7 @@ bool cScript::CallParticularEvent( const char *eventToCall, const JS::Value *par
 //|						-1: CANCEL spellcasting
 //|						0->inf: Spell delay in ms
 //o------------------------------------------------------------------------------------------------o
-SI16 cScript::OnSpellCast( CChar *tChar, UI08 SpellId )
+SI32 cScript::OnSpellCast( CChar *tChar, SI32 SpellId )
 {
 	if( !ValidateObject( tChar ))
 		return -2;
@@ -3478,7 +3547,7 @@ SI16 cScript::OnSpellCast( CChar *tChar, UI08 SpellId )
 //|						-1: CANCEL spellcasting
 //|						0->inf: Spell delay in ms
 //o------------------------------------------------------------------------------------------------o
-SI16 cScript::OnScrollCast( CChar *tChar, UI08 SpellId )
+SI32 cScript::OnScrollCast( CChar *tChar, SI32 SpellId )
 {
 	if( !ValidateObject( tChar ))
 		return -2;
@@ -3508,8 +3577,11 @@ SI16 cScript::OnScrollCast( CChar *tChar, UI08 SpellId )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers after character with event attached successfully casts a spell
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSpellSuccess( CChar *tChar, UI08 SpellId )
+SI32 cScript::OnSpellSuccess( CChar *tChar, SI32 SpellId )
 {
+
+	const SI32 RV_NOFUNC = -1;
+
 	if( !ValidateObject( tChar ))
 		return RV_NOFUNC;
 
@@ -3620,8 +3692,11 @@ bool cScript::OnSpeechInput( CChar *myChar, CItem *myItem, const char *mySpeech 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for spellbooks with event attached when spells are added to them
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSpellGain( CItem *book, const UI08 spellNum )
+SI32 cScript::OnSpellGain( CItem *book, const SI32 spellNum )
 {
+
+	const SI32 RV_NOFUNC = -1;
+
 	if( !ValidateObject( book ))
 		return RV_NOFUNC;
 
@@ -3647,8 +3722,10 @@ SI08 cScript::OnSpellGain( CItem *book, const UI08 spellNum )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for spellbooks with event attached when spells are removed from them
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSpellLoss( CItem *book, const UI08 spellNum )
+SI32 cScript::OnSpellLoss( CItem *book, const SI32 spellNum )
 {
+	const SI32 RV_NOFUNC = -1;
+
 	if( !ValidateObject( book ))
 		return RV_NOFUNC;
 

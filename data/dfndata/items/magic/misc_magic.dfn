@@ -6,6 +6,7 @@ id=0x0efa
 weight=100
 value=22 11
 type=9
+spellbookdata=1,64,0x1f2d
 restock=15
 decay=1
 good=28
