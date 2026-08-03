@@ -19,6 +19,7 @@
 #include <js/ErrorReport.h>
 #include <js/Exception.h>
 #include <js/GCVector.h>
+#include <js/ValueArray.h>
 #include <js/Warnings.h>
 
 static constexpr SI08 RV_NOFUNC = -1;
@@ -547,16 +548,15 @@ bool cScript::OnStart( void *myObj, SI32 objType )
 	if( !ExistAndVerify( seOnStart, "onStart" ))
 		return false;
 
-	JS::Value rval;
-	JS::Value params[1];
-
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<1> params( targContext );
 	if( myObj != nullptr && objType != -1 )
 	{
-		JSObject *jsObj = JSEngine->AcquireObject( static_cast<IUEEntries>( objType ), myObj, runTime );
-		params[0] = JS::ObjectOrNullValue( jsObj );
+		JS::RootedObject jsObj( targContext, JSEngine->AcquireObject( static_cast<IUEEntries>( objType ), myObj, runTime ) );
+		params[0].set( JS::ObjectOrNullValue( jsObj ) );
 	}
 
-	bool retVal = InvokeEvent( "onStart", 1, params, &rval );
+	bool retVal = InvokeEvent( "onStart", 1, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -577,8 +577,8 @@ bool cScript::OnScriptLoad( void )
 	if( !ExistAndVerify( seOnScriptLoad, "onScriptLoad" ))
 		return false;
 
-	JS::Value rval;
-	bool retVal = InvokeEvent( "onScriptLoad", 0, nullptr, &rval );
+	JS::RootedValue rval( targContext );
+	bool retVal = InvokeEvent( "onScriptLoad", 0, nullptr, rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnScriptLoad, false );
@@ -650,9 +650,10 @@ bool cScript::OnCreate( CBaseObject *thingCreated, bool dfnCreated, bool isPlaye
 			return false;
 	}
 
-	JS::Value rval, params[2];
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<2> params( targContext );
 	UI08 paramType = 0;
-	JSObject *myObj;
+	JS::RootedObject myObj( targContext );
 	if( thingCreated->GetObjType() == OT_CHAR )
 	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, thingCreated, runTime );
@@ -663,9 +664,9 @@ bool cScript::OnCreate( CBaseObject *thingCreated, bool dfnCreated, bool isPlaye
 		myObj = JSEngine->AcquireObject( IUE_ITEM, thingCreated, runTime );
 	}
 
-	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = JS::Int32Value( paramType );
-	bool retVal = InvokeEvent( functionName.c_str(), 2, params, &rval );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::Int32Value( paramType ) );
+	bool retVal = InvokeEvent( functionName.c_str(), 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		if( isPlayer )
@@ -700,9 +701,9 @@ bool cScript::OnSpawn( CBaseObject *objectSpawned, UI16 spawnRegion )
 	if( !ExistAndVerify( seOnSpawn, "onSpawn" ))
 		return false;
 
-	JS::Value params[2], rval;
-	JSObject *jsObj = nullptr;
-
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject jsObj( targContext );
 	if( objectSpawned->GetObjType() == OT_CHAR )
 	{
 		jsObj = JSEngine->AcquireObject( IUE_CHAR, static_cast<CChar *>( objectSpawned ), runTime );
@@ -712,10 +713,9 @@ bool cScript::OnSpawn( CBaseObject *objectSpawned, UI16 spawnRegion )
 		jsObj = JSEngine->AcquireObject( IUE_ITEM, static_cast<CItem *>( objectSpawned ), runTime );
 	}
 
-	params[0] = JS::ObjectOrNullValue( jsObj );
-	params[1] = JS::Int32Value( spawnRegion );
-
-	bool retVal = InvokeEvent( "onSpawn", 2, params, &rval );
+	params[0].set( JS::ObjectOrNullValue( jsObj ) );
+	params[1].set( JS::Int32Value( spawnRegion ) );
+	bool retVal = InvokeEvent( "onSpawn", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnSpawn, false );
@@ -737,9 +737,10 @@ bool cScript::OnDelete( CBaseObject *thingDestroyed )
 	if( !ExistAndVerify( seOnDelete, "onDelete" ))
 		return false;
 
-	JS::Value rval, params[2];
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<2> params( targContext );
 	UI08 paramType = 0;
-	JSObject *myObj;
+	JS::RootedObject myObj( targContext );
 	if( thingDestroyed->GetObjType() != OT_CHAR )
 	{
 		myObj = JSEngine->AcquireObject( IUE_ITEM, thingDestroyed, runTime );
@@ -749,9 +750,9 @@ bool cScript::OnDelete( CBaseObject *thingDestroyed )
 		myObj = JSEngine->AcquireObject( IUE_CHAR, thingDestroyed, runTime );
 		paramType = 1;
 	}
-	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = JS::Int32Value( paramType );
-	bool retVal = InvokeEvent( "onDelete", 2, params, &rval );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::Int32Value( paramType ) );
+	bool retVal = InvokeEvent( "onDelete", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnDelete, false );
@@ -784,12 +785,13 @@ SI08 cScript::OnSpeech( const char *speech, CChar *personTalking, CBaseObject *t
 	if( !ExistAndVerify( seOnSpeech, "onSpeech" ))
 		return RV_NOFUNC;
 
-	JS::Value params[3], rval;
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedValue rval( targContext );
 	std::string lwrSpeech	= speech;
 	JS::RootedString strSpeech( targContext, JS_NewStringCopyZ( targContext, oldstrutil::lower( lwrSpeech ).c_str() ));
 
-	JSObject *ptObj = JSEngine->AcquireObject( IUE_CHAR, personTalking, runTime );
-	JSObject *ttObj = nullptr;
+	JS::RootedObject ptObj( targContext, JSEngine->AcquireObject( IUE_CHAR, personTalking, runTime ) );
+	JS::RootedObject ttObj( targContext );
 	if( talkingTo->CanBeObjType( OT_CHAR ))
 	{
 		ttObj = JSEngine->AcquireObject( IUE_CHAR, talkingTo, runTime );
@@ -799,10 +801,10 @@ SI08 cScript::OnSpeech( const char *speech, CChar *personTalking, CBaseObject *t
 		ttObj = JSEngine->AcquireObject( IUE_ITEM, talkingTo, runTime );
 	}
 
-	params[0] = JS::StringValue( strSpeech );
-	params[1] = JS::ObjectOrNullValue( ptObj );
-	params[2] = JS::ObjectOrNullValue( ttObj );
-	bool retVal = InvokeEvent( "onSpeech", 3, params, &rval );
+	params[0].set( JS::StringValue( strSpeech ) );
+	params[1].set( JS::ObjectOrNullValue( ptObj ) );
+	params[2].set( JS::ObjectOrNullValue( ttObj ) );
+	bool retVal = InvokeEvent( "onSpeech", 3, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -842,8 +844,9 @@ bool cScript::InRange( CBaseObject *srcObj, CBaseObject *objInRange )
 	if( !ExistAndVerify( seInRange, "inRange" ))
 		return false;
 
-	JS::Value params[3], rval;
-	JSObject *myObj;
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject myObj( targContext );
 	if( srcObj->CanBeObjType( OT_CHAR ))
 	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, srcObj, runTime );
@@ -853,7 +856,7 @@ bool cScript::InRange( CBaseObject *srcObj, CBaseObject *objInRange )
 		myObj = JSEngine->AcquireObject( IUE_ITEM, srcObj, runTime );
 	}
 
-	JSObject *myObj2;
+	JS::RootedObject myObj2( targContext );
 	if( objInRange->CanBeObjType( OT_CHAR ))
 	{
 		myObj2 = JSEngine->AcquireObject( IUE_CHAR, objInRange, runTime );
@@ -863,10 +866,9 @@ bool cScript::InRange( CBaseObject *srcObj, CBaseObject *objInRange )
 		myObj2 = JSEngine->AcquireObject( IUE_ITEM, objInRange, runTime );
 	}
 
-	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = JS::ObjectOrNullValue( myObj2 );
-
-	bool retVal = InvokeEvent( "inRange", 2, params, &rval );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::ObjectOrNullValue( myObj2 ) );
+	bool retVal = InvokeEvent( "inRange", 2, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -889,10 +891,11 @@ SI08 cScript::OnCollide( CSocket *tSock, CChar *objColliding, CBaseObject *objCo
 	if( !ExistAndVerify( seOnCollide, "onCollide" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[3];
-	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
-	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objColliding, runTime );
-	JSObject *myObj2	= nullptr;
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedObject myObj( targContext, JSEngine->AcquireObject( IUE_SOCK, tSock, runTime ) );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, objColliding, runTime ) );
+	JS::RootedObject myObj2( targContext );
 	if( objCollideWith->GetObjType() == OT_CHAR )
 	{
 		myObj2 = JSEngine->AcquireObject( IUE_CHAR, objCollideWith, runTime );
@@ -902,11 +905,10 @@ SI08 cScript::OnCollide( CSocket *tSock, CChar *objColliding, CBaseObject *objCo
 		myObj2 = JSEngine->AcquireObject( IUE_ITEM, objCollideWith, runTime );
 	}
 
-	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = JS::ObjectOrNullValue( charObj );
-	params[2] = JS::ObjectOrNullValue( myObj2 );
-
-	if( !InvokeEvent( "onCollide", 3, params, &rval ) )
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::ObjectOrNullValue( charObj ) );
+	params[2].set( JS::ObjectOrNullValue( myObj2 ) );
+	if( !InvokeEvent( "onCollide", 3, params.begin(), rval.address() ) )
 	{
 		SetEventExists( seOnCollide, false );
 		return RV_NOFUNC;
@@ -928,8 +930,9 @@ SI08 cScript::OnMoveDetect( CBaseObject *sourceObj, CChar *charInRange, UI08 ran
 	if( !ExistAndVerify( seOnMoveDetect, "onMoveDetect" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[5];
-	JSObject *myObj	= nullptr;
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<5> params( targContext );
+	JS::RootedObject myObj( targContext );
 	if( sourceObj->GetObjType() == OT_CHAR )
 	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, sourceObj, runTime );
@@ -938,15 +941,13 @@ SI08 cScript::OnMoveDetect( CBaseObject *sourceObj, CChar *charInRange, UI08 ran
 	{
 		myObj = JSEngine->AcquireObject( IUE_ITEM, sourceObj, runTime );
 	}
-	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, charInRange, runTime );
-
-	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = JS::ObjectOrNullValue( charObj );
-	params[2] = JS::Int32Value( rangeToChar );
-	params[3] = JS::Int32Value( oldCharX );
-	params[4] = JS::Int32Value( oldCharY );
-
-	if( !InvokeEvent( "onMoveDetect", 5, params, &rval ) )
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, charInRange, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::ObjectOrNullValue( charObj ) );
+	params[2].set( JS::Int32Value( rangeToChar ) );
+	params[3].set( JS::Int32Value( oldCharX ) );
+	params[4].set( JS::Int32Value( oldCharY ) );
+	if( !InvokeEvent( "onMoveDetect", 5, params.begin(), rval.address() ) )
 	{
 		SetEventExists( seOnMoveDetect, false );
 		return RV_NOFUNC;
@@ -968,13 +969,12 @@ SI08 cScript::OnSpeedHackDetect( CChar *player, SI32 deltaTime )
 	if( !ExistAndVerify( seOnSpeedHackDetect, "onSpeedHackDetect" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[2];
-	JSObject *myChar	= JSEngine->AcquireObject( IUE_CHAR, player, runTime );
-
-	params[0] = JS::ObjectOrNullValue( myChar );
-	params[1] = JS::Int32Value( deltaTime );
-
-	if( !InvokeEvent( "onSpeedHackDetect", 2, params, &rval ) )
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedObject myChar( targContext, JSEngine->AcquireObject( IUE_CHAR, player, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( myChar ) );
+	params[1].set( JS::Int32Value( deltaTime ) );
+	if( !InvokeEvent( "onSpeedHackDetect", 2, params.begin(), rval.address() ) )
 	{
 		SetEventExists( seOnSpeedHackDetect, false );
 		return RV_NOFUNC;
@@ -996,14 +996,13 @@ SI08 cScript::OnSpeedHackSuspicion( CChar *player, SI32 grossDebt, SI32 deltaTim
 	if( !ExistAndVerify( seOnSpeedHackSuspicion, "onSpeedHackSuspicion" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[3];
-	JSObject *myChar	= JSEngine->AcquireObject( IUE_CHAR, player, runTime );
-
-	params[0] = JS::ObjectOrNullValue( myChar );
-	params[1] = JS::Int32Value( grossDebt );
-	params[2] = JS::Int32Value( deltaTime );
-
-	if( !InvokeEvent( "onSpeedHackSuspicion", 3, params, &rval ) )
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedObject myChar( targContext, JSEngine->AcquireObject( IUE_CHAR, player, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( myChar ) );
+	params[1].set( JS::Int32Value( grossDebt ) );
+	params[2].set( JS::Int32Value( deltaTime ) );
+	if( !InvokeEvent( "onSpeedHackSuspicion", 3, params.begin(), rval.address() ) )
 	{
 		SetEventExists( seOnSpeedHackSuspicion, false );
 		return RV_NOFUNC;
@@ -1025,16 +1024,15 @@ SI08 cScript::OnSteal( CChar *thief, CItem *theft, CChar *victim )
 	if( !ExistAndVerify( seOnSteal, "onSteal" ))
 		return RV_NOFUNC;
 
-	JSObject *thiefCharObj = JSEngine->AcquireObject( IUE_CHAR, thief, runTime );
-	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, theft, runTime );
-	JSObject *victimCharObj = JSEngine->AcquireObject( IUE_CHAR, victim, runTime );
-
-	JS::Value params[3], rval;
-	params[0] = JS::ObjectOrNullValue( thiefCharObj );
-	params[1] = JS::ObjectOrNullValue( itemObj );
-	params[2] = JS::ObjectOrNullValue( victimCharObj );
-
-	bool retVal = InvokeEvent( "onSteal", 3, params, &rval );
+	JS::RootedObject thiefCharObj( targContext, JSEngine->AcquireObject( IUE_CHAR, thief, runTime ) );
+	JS::RootedObject itemObj( targContext, JSEngine->AcquireObject( IUE_ITEM, theft, runTime ) );
+	JS::RootedObject victimCharObj( targContext, JSEngine->AcquireObject( IUE_CHAR, victim, runTime ) );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedValue rval( targContext );
+	params[0].set( JS::ObjectOrNullValue( thiefCharObj ) );
+	params[1].set( JS::ObjectOrNullValue( itemObj ) );
+	params[2].set( JS::ObjectOrNullValue( victimCharObj ) );
+	bool retVal = InvokeEvent( "onSteal", 3, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnSteal, false );
@@ -1057,21 +1055,22 @@ SI08 cScript::OnDispel( CBaseObject *dispelled )
 	if( !ExistAndVerify( seOnDispel, "onDispel" ))
 		return RV_NOFUNC;
 
-	JS::Value params[2], rval;
-	JSObject *myObj;
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject myObj( targContext );
 	if( dispelled->GetObjType() == OT_CHAR )
 	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, dispelled, runTime );
-		params[1] = JS::Int32Value( 0 );
+		params[1].set( JS::Int32Value( 0 ) );
 	}
 	else
 	{
 		myObj = JSEngine->AcquireObject( IUE_ITEM, dispelled, runTime );
-		params[1] = JS::Int32Value( 1 );
+		params[1].set( JS::Int32Value( 1 ) );
 	}
 
-	params[0] = JS::ObjectOrNullValue( myObj );
-	bool retVal = InvokeEvent( "onDispel", 2, params, &rval );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	bool retVal = InvokeEvent( "onDispel", 2, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -1100,21 +1099,22 @@ bool cScript::OnSkill( CBaseObject *skillUse, SI08 skillUsed )
 	if( !ExistAndVerify( seOnSkill, "onSkill" ))
 		return false;
 
-	JS::Value rval, params[3];
-	JSObject *myObj;
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedObject myObj( targContext );
 	if( skillUse->GetObjType() == OT_CHAR )
 	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, skillUse, runTime );
-		params[2] = JS::Int32Value( 0 );
+		params[2].set( JS::Int32Value( 0 ) );
 	}
 	else
 	{
 		myObj = JSEngine->AcquireObject( IUE_ITEM, skillUse, runTime );
-		params[2] = JS::Int32Value( 1 );
+		params[2].set( JS::Int32Value( 1 ) );
 	}
-	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = JS::Int32Value( skillUsed );
-	bool retVal = InvokeEvent( "onSkill", 3, params, &rval );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::Int32Value( skillUsed ) );
+	bool retVal = InvokeEvent( "onSkill", 3, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnSkill, false );
@@ -1136,8 +1136,9 @@ std::string cScript::OnTooltip( CBaseObject *myObj, CSocket *pSocket )
 	if( !ExistAndVerify( seOnTooltip, "onTooltip" ))
 		return "";
 
-	JS::Value rval, params[2];
-	JSObject *tooltipObj = nullptr;
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedObject tooltipObj( targContext );
 	if( myObj->CanBeObjType( OT_CHAR ))
 	{
 		tooltipObj = JSEngine->AcquireObject( IUE_CHAR, myObj, runTime );
@@ -1146,11 +1147,10 @@ std::string cScript::OnTooltip( CBaseObject *myObj, CSocket *pSocket )
 	{
 		tooltipObj = JSEngine->AcquireObject( IUE_ITEM, myObj, runTime );
 	}
-	JSObject *sockObj = JSEngine->AcquireObject( IUE_SOCK, pSocket, runTime );
-
-	params[0] = JS::ObjectOrNullValue( tooltipObj );
-	params[1] = JS::ObjectOrNullValue( sockObj );
-	bool retVal = InvokeEvent( "onTooltip", 2, params, &rval );
+	JS::RootedObject sockObj( targContext, JSEngine->AcquireObject( IUE_SOCK, pSocket, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( tooltipObj ) );
+	params[1].set( JS::ObjectOrNullValue( sockObj ) );
+	bool retVal = InvokeEvent( "onTooltip", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnTooltip, false );
@@ -1199,10 +1199,10 @@ std::string cScript::OnNameRequest( CBaseObject *myObj, CChar *nameRequester, UI
 
 	try
 	{
-		JS::Value rval, params[3];
-
+		JS::RootedValue rval( targContext );
+		JS::RootedValueArray<3> params( targContext );
 		// Create JS object reference for myObj, based on whether it's an item or character
-		JSObject *nameRequestObj = nullptr;
+		JS::RootedObject nameRequestObj( targContext );
 		if( myObj->CanBeObjType( OT_CHAR ))
 		{
 			nameRequestObj = JSEngine->AcquireObject( IUE_CHAR, myObj, runTime );
@@ -1213,16 +1213,16 @@ std::string cScript::OnNameRequest( CBaseObject *myObj, CChar *nameRequester, UI
 		}
 
 		// Create JS object reference for the name requester (which might be nullptr!)
-		JSObject *nameRequesterObj = nullptr;
+		JS::RootedObject nameRequesterObj( targContext );
 		if( nameRequester != nullptr )
 		{
 			nameRequesterObj = JSEngine->AcquireObject( IUE_CHAR, nameRequester, runTime );
 		}
 
-		params[0] = JS::ObjectOrNullValue( nameRequestObj );
-		params[1] = JS::ObjectOrNullValue( nameRequesterObj );
-		params[2] = JS::Int32Value( requestSource );
-		bool retVal = InvokeEvent( "onNameRequest", 3, params, &rval );
+		params[0].set( JS::ObjectOrNullValue( nameRequestObj ) );
+		params[1].set( JS::ObjectOrNullValue( nameRequesterObj ) );
+		params[2].set( JS::Int32Value( requestSource ) );
+		bool retVal = InvokeEvent( "onNameRequest", 3, params.begin(), rval.address() );
 		if( !retVal )
 		{
 			SetEventExists( seOnNameRequest, false );
@@ -1274,14 +1274,13 @@ SI08 cScript::onQuestToggle( CChar* toggler, CItem *iUsing )
     if( !ExistAndVerify( seOnQuestToggle, "onQuestToggle" ))
 		return RV_NOFUNC;
 
-    JS::Value rval, params[2];
-    JSObject* togglerObj = JSEngine->AcquireObject( IUE_CHAR, toggler, runTime );
-    JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, iUsing, runTime );
-
-    params[0] = JS::ObjectOrNullValue( togglerObj );
-    params[1] = JS::ObjectOrNullValue( itemObj );
-
-	bool retVal = InvokeEvent( "onQuestToggle", 2, params, &rval );
+    JS::RootedValue rval( targContext );
+    JS::RootedValueArray<2> params( targContext );
+    JS::RootedObject togglerObj( targContext, JSEngine->AcquireObject( IUE_CHAR, toggler, runTime ));
+    JS::RootedObject itemObj( targContext, JSEngine->AcquireObject( IUE_ITEM, iUsing, runTime ) );
+    params[0].set( JS::ObjectOrNullValue( togglerObj ) );
+    params[1].set( JS::ObjectOrNullValue( itemObj ) );
+	bool retVal = InvokeEvent( "onQuestToggle", 2, params.begin(), rval.address() );
     if( !retVal )
     {
         SetEventExists( seOnQuestToggle, false );
@@ -1304,16 +1303,16 @@ bool cScript::OnAttack( CChar *attacker, CChar *defender, bool hitStatus, SI08 h
     if( !ExistAndVerify( seOnAttack, "onAttack" ))
         return false;
 
-    JS::Value rval, params[5];
-    JSObject *attObj = JSEngine->AcquireObject( IUE_CHAR, attacker, runTime );
-    JSObject *defObj = JSEngine->AcquireObject( IUE_CHAR, defender, runTime );
-
-    params[0] = JS::ObjectOrNullValue( attObj );
-    params[1] = JS::ObjectOrNullValue( defObj );
-    params[2] = JS::BooleanValue( hitStatus );
-    params[3] = JS::Int32Value( hitLoc );
-    params[4] = JS::Int32Value( damageDealt );
-    bool retVal = InvokeEvent( "onAttack", 5, params, &rval );
+    JS::RootedValue rval( targContext );
+    JS::RootedValueArray<5> params( targContext );
+    JS::RootedObject attObj( targContext, JSEngine->AcquireObject( IUE_CHAR, attacker, runTime ) );
+    JS::RootedObject defObj( targContext, JSEngine->AcquireObject( IUE_CHAR, defender, runTime ) );
+    params[0].set( JS::ObjectOrNullValue( attObj ) );
+    params[1].set( JS::ObjectOrNullValue( defObj ) );
+    params[2].set( JS::BooleanValue( hitStatus ) );
+    params[3].set( JS::Int32Value( hitLoc ) );
+    params[4].set( JS::Int32Value( damageDealt ) );
+    bool retVal = InvokeEvent( "onAttack", 5, params.begin(), rval.address() );
     if( !retVal )
     {
         SetEventExists( seOnAttack, false );
@@ -1335,16 +1334,16 @@ bool cScript::OnDefense( CChar *attacker, CChar *defender, bool hitStatus, SI08 
 	if( !ExistAndVerify( seOnDefense, "onDefense" ))
 		return false;
 
-	JS::Value rval, params[5];
-	JSObject *attObj = JSEngine->AcquireObject( IUE_CHAR, attacker, runTime );
-	JSObject *defObj = JSEngine->AcquireObject( IUE_CHAR, defender, runTime );
-
-	params[0] = JS::ObjectOrNullValue( attObj );
-	params[1] = JS::ObjectOrNullValue( defObj );
-	params[2] = JS::BooleanValue( hitStatus );
-	params[3] = JS::Int32Value( hitLoc );
-	params[4] = JS::Int32Value( damageReceived );
-	bool retVal = InvokeEvent( "onDefense", 5, params, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<5> params( targContext );
+	JS::RootedObject attObj( targContext, JSEngine->AcquireObject( IUE_CHAR, attacker, runTime ) );
+	JS::RootedObject defObj( targContext, JSEngine->AcquireObject( IUE_CHAR, defender, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( attObj ) );
+	params[1].set( JS::ObjectOrNullValue( defObj ) );
+	params[2].set( JS::BooleanValue( hitStatus ) );
+	params[3].set( JS::Int32Value( hitLoc ) );
+	params[4].set( JS::Int32Value( damageReceived ) );
+	bool retVal = InvokeEvent( "onDefense", 5, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnDefense, false );
@@ -1366,13 +1365,13 @@ SI08 cScript::OnSkillGain( CChar *player, SI08 skill, UI32 skillGainAmount )
 	if( !ExistAndVerify( seOnSkillGain, "onSkillGain" ))
 		return RV_NOFUNC;
 
-	JS::Value params[3], rval;
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
-
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::Int32Value( skill );
-	params[2] = JS::Int32Value( skillGainAmount );
-	bool retVal = InvokeEvent( "onSkillGain", 3, params, &rval );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, player, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::Int32Value( skill ) );
+	params[2].set( JS::Int32Value( skillGainAmount ) );
+	bool retVal = InvokeEvent( "onSkillGain", 3, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnSkillGain, false );
@@ -1395,14 +1394,14 @@ SI08 cScript::OnStatGained( CChar *player, UI32 stat, SI08 skill, UI32 statGaine
 	if( !ExistAndVerify( seOnStatGained, "onStatGained" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[4];
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
-
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::Int32Value( stat );
-	params[2] = JS::Int32Value( skill );
-	params[3] = JS::Int32Value( statGainedAmount );
-	bool retVal = InvokeEvent( "onStatGained", 4, params, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<4> params( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, player, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::Int32Value( stat ) );
+	params[2].set( JS::Int32Value( skill ) );
+	params[3].set( JS::Int32Value( statGainedAmount ) );
+	bool retVal = InvokeEvent( "onStatGained", 4, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnStatGained, false );
@@ -1425,14 +1424,14 @@ bool cScript::OnStatGain( CChar *player, UI32 stat, SI08 skill, UI32 statGainAmo
 	if( !ExistAndVerify( seOnStatGain, "onStatGain" ))
 		return false;
 
-	JS::Value rval, params[4];
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
-
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::Int32Value( stat );
-	params[2] = JS::Int32Value( skill );
-	params[3] = JS::Int32Value( statGainAmount );
-	bool retVal = InvokeEvent( "onStatGain", 4, params, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<4> params( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, player, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::Int32Value( stat ) );
+	params[2].set( JS::Int32Value( skill ) );
+	params[3].set( JS::Int32Value( statGainAmount ) );
+	bool retVal = InvokeEvent( "onStatGain", 4, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnStatGain, false );
@@ -1455,14 +1454,14 @@ SI08 cScript::OnVirtueGumpPress( CChar *mChar, CChar *tChar, UI16 buttonId )
 	if( !ExistAndVerify( seOnVirtueGumpPress, "onVirtueGumpPress" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[3];
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, mChar, runTime );
-	JSObject *targObj = JSEngine->AcquireObject( IUE_CHAR, tChar, runTime );
-
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::ObjectOrNullValue( targObj );
-	params[2] = JS::Int32Value( buttonId );
-	bool retVal = InvokeEvent( "onVirtueGumpPress", 3, params, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, mChar, runTime ) );
+	JS::RootedObject targObj( targContext, JSEngine->AcquireObject( IUE_CHAR, tChar, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::ObjectOrNullValue( targObj ) );
+	params[2].set( JS::Int32Value( buttonId ) );
+	bool retVal = InvokeEvent( "onVirtueGumpPress", 3, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnVirtueGumpPress, false );
@@ -1486,11 +1485,11 @@ SI08 cScript::OnQuestGump( CChar *mChar )
 	if( !ExistAndVerify( seOnQuestGump, "onQuestGump" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[1];
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, mChar, runTime );
-
-	params[0] = JS::ObjectOrNullValue( charObj );
-	bool retVal = InvokeEvent( "onQuestGump", 1, params, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<1> params( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, mChar, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	bool retVal = InvokeEvent( "onQuestGump", 1, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -1515,11 +1514,11 @@ SI08 cScript::OnGuildButton( CChar *mChar )
 	if( !ExistAndVerify( seOnGuildButton, "onGuildButton" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[1];
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, mChar, runTime );
-
-	params[0] = JS::ObjectOrNullValue( charObj );
-	bool retVal = InvokeEvent( "onGuildButton", 1, params, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<1> params( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, mChar, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	bool retVal = InvokeEvent( "onGuildButton", 1, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -1544,11 +1543,11 @@ SI08 cScript::OnHelpButton( CChar *mChar )
 	if( !ExistAndVerify( seOnHelpButton, "onHelpButton" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[1];
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, mChar, runTime );
-
-	params[0] = JS::ObjectOrNullValue( charObj );
-	bool retVal = InvokeEvent( "onHelpButton", 1, params, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<1> params( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, mChar, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	bool retVal = InvokeEvent( "onHelpButton", 1, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -1569,13 +1568,14 @@ SI08 cScript::OnContextMenuRequest( CSocket *tSock, CBaseObject *baseObj )
 {
 	if( !ValidateObject( baseObj ) || tSock == nullptr )
 		return RV_NOFUNC;
- 
+
 	if( !ExistAndVerify( seOnContextMenuRequest, "onContextMenuRequest" ))
 		return RV_NOFUNC;
- 
-	JS::Value rval, params[2];
-	JSObject *mySockObj = JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
-	JSObject *myObj = nullptr;
+
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedObject mySockObj( targContext, JSEngine->AcquireObject( IUE_SOCK, tSock, runTime ) );
+	JS::RootedObject myObj( targContext );
 	if( baseObj->GetObjType() == OT_CHAR )
 	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, baseObj, runTime );
@@ -1584,20 +1584,20 @@ SI08 cScript::OnContextMenuRequest( CSocket *tSock, CBaseObject *baseObj )
 	{
 		myObj = JSEngine->AcquireObject( IUE_ITEM, baseObj, runTime );
 	}
- 
-	params[0] = JS::ObjectOrNullValue( mySockObj );
-	params[1] = JS::ObjectOrNullValue( myObj );
-	bool retVal = InvokeEvent( "onContextMenuRequest", 2, params, &rval );
- 
+
+	params[0].set( JS::ObjectOrNullValue( mySockObj ) );
+	params[1].set( JS::ObjectOrNullValue( myObj ) );
+	bool retVal = InvokeEvent( "onContextMenuRequest", 2, params.begin(), rval.address() );
+
 	if( !retVal )
 	{
 		SetEventExists( seOnContextMenuRequest, false );
 		return RV_NOFUNC;
     }
- 
+
 	return TryParseJSVal( rval );
 }
- 
+
 //o------------------------------------------------------------------------------------------------o
 //| Function	-	cScript::OnContextMenuSelect()
 //o------------------------------------------------------------------------------------------------o
@@ -1608,13 +1608,14 @@ SI08 cScript::OnContextMenuSelect( CSocket *tSock, CBaseObject *baseObj, UI16 po
 {
 	if( !ValidateObject( baseObj ) || tSock == nullptr )
 		return RV_NOFUNC;
- 
+
 	if( !ExistAndVerify( seOnContextMenuSelect, "onContextMenuSelect" ))
 		return RV_NOFUNC;
- 
-	JS::Value rval, params[3];
-	JSObject *mySockObj = JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
-	JSObject *myObj = nullptr;
+
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedObject mySockObj( targContext, JSEngine->AcquireObject( IUE_SOCK, tSock, runTime ) );
+	JS::RootedObject myObj( targContext );
 	if( baseObj->GetObjType() == OT_CHAR )
 	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, baseObj, runTime );
@@ -1623,18 +1624,18 @@ SI08 cScript::OnContextMenuSelect( CSocket *tSock, CBaseObject *baseObj, UI16 po
 	{
 		myObj = JSEngine->AcquireObject( IUE_ITEM, baseObj, runTime );
 	}
- 
-	params[0] = JS::ObjectOrNullValue( mySockObj );
-	params[1] = JS::ObjectOrNullValue( myObj );
-	params[2] = JS::Int32Value( popupEntry );
-	bool retVal = InvokeEvent( "onContextMenuSelect", 3, params, &rval );
- 
+
+	params[0].set( JS::ObjectOrNullValue( mySockObj ) );
+	params[1].set( JS::ObjectOrNullValue( myObj ) );
+	params[2].set( JS::Int32Value( popupEntry ) );
+	bool retVal = InvokeEvent( "onContextMenuSelect", 3, params.begin(), rval.address() );
+
 	if( !retVal )
 	{
 		SetEventExists( seOnContextMenuSelect, false );
 		return RV_NOFUNC;
 	}
- 
+
 	return TryParseJSVal( rval );
 }
 
@@ -1652,11 +1653,11 @@ SI08 cScript::OnWarModeToggle( CChar *mChar )
 	if( !ExistAndVerify( seOnWarModeToggle, "onWarModeToggle" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[1];
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, mChar, runTime );
-
-	params[0] = JS::ObjectOrNullValue( charObj );
-	bool retVal = InvokeEvent( "onWarModeToggle", 1, params, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<1> params( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, mChar, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	bool retVal = InvokeEvent( "onWarModeToggle", 1, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -1680,19 +1681,19 @@ SI08 cScript::OnSpecialMove( CChar *mChar, UI08 abilityId )
 	if( !ExistAndVerify( seOnSpecialMove, "onSpecialMove" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[2];
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, mChar, runTime );
-
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::Int32Value( abilityId );
-	bool retVal = InvokeEvent( "onSpecialMove", 2, params, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, mChar, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::Int32Value( abilityId ) );
+	bool retVal = InvokeEvent( "onSpecialMove", 2, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
 		SetEventExists( seOnSpecialMove, false );
 		return RV_NOFUNC;
 	}
-	
+
 	return TryParseJSVal( rval );
 }
 
@@ -1710,13 +1711,13 @@ SI08 cScript::OnDrop( CItem *item, CChar *dropper )
 	if( !ExistAndVerify( seOnDrop, "onDrop" ))
 		return RV_NOFUNC;
 
-	JS::Value params[2], rval;
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, dropper, runTime );
-	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, item, runTime );
-
-	params[0] = JS::ObjectOrNullValue( itemObj );
-	params[1] = JS::ObjectOrNullValue( charObj );
-	bool retVal = InvokeEvent( "onDrop", 2, params, &rval );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, dropper, runTime ) );
+	JS::RootedObject itemObj( targContext, JSEngine->AcquireObject( IUE_ITEM, item, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( itemObj ) );
+	params[1].set( JS::ObjectOrNullValue( charObj ) );
+	bool retVal = InvokeEvent( "onDrop", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnDrop, false );
@@ -1740,15 +1741,15 @@ SI08 cScript::OnDropItemOnItem( CItem *item, CChar *dropper, CItem *dest )
 	if( !ExistAndVerify( seOnDropItemOnItem, "onDropItemOnItem" ))
 		return RV_NOFUNC;
 
-	JS::Value params[3], rval;
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, dropper, runTime );
-	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, item, runTime );
-	JSObject *destObj = JSEngine->AcquireObject( IUE_ITEM, dest, runTime );
-
-	params[0] = JS::ObjectOrNullValue( itemObj );
-	params[1] = JS::ObjectOrNullValue( charObj );
-	params[2] = JS::ObjectOrNullValue( destObj );
-	bool retVal = InvokeEvent( "onDropItemOnItem", 3, params, &rval );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, dropper, runTime ) );
+	JS::RootedObject itemObj( targContext, JSEngine->AcquireObject( IUE_ITEM, item, runTime ) );
+	JS::RootedObject destObj( targContext, JSEngine->AcquireObject( IUE_ITEM, dest, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( itemObj ) );
+	params[1].set( JS::ObjectOrNullValue( charObj ) );
+	params[2].set( JS::ObjectOrNullValue( destObj ) );
+	bool retVal = InvokeEvent( "onDropItemOnItem", 3, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnDropItemOnItem, false );
@@ -1775,10 +1776,11 @@ SI08 cScript::OnPickup( CItem *item, CChar *pickerUpper, CBaseObject *objCont )
 	if( !ExistAndVerify( seOnPickup, "onPickup" ))
 		return RV_NOFUNC;
 
-	JS::Value params[3], rval;
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, pickerUpper, runTime );
-	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, item, runTime );
-	JSObject *objContObj = nullptr;
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, pickerUpper, runTime ) );
+	JS::RootedObject itemObj( targContext, JSEngine->AcquireObject( IUE_ITEM, item, runTime ) );
+	JS::RootedObject objContObj( targContext );
 	if( objCont != nullptr )
 	{
 		if( objCont->GetObjType() == OT_CHAR )
@@ -1791,10 +1793,10 @@ SI08 cScript::OnPickup( CItem *item, CChar *pickerUpper, CBaseObject *objCont )
 		}
 	}
 
-	params[0] = JS::ObjectOrNullValue( itemObj );
-	params[1] = JS::ObjectOrNullValue( charObj );
-	params[2] = JS::ObjectOrNullValue( objContObj );
-	bool retVal	= InvokeEvent( "onPickup", 3, params, &rval );
+	params[0].set( JS::ObjectOrNullValue( itemObj ) );
+	params[1].set( JS::ObjectOrNullValue( charObj ) );
+	params[2].set( JS::ObjectOrNullValue( objContObj ) );
+	bool retVal	= InvokeEvent( "onPickup", 3, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -1818,16 +1820,15 @@ bool cScript::OnContRemoveItem( CItem *contItem, CItem *item, CChar *itemRemover
 	if( !ExistAndVerify( seOnContRemoveItem, "onContRemoveItem" ))
 		return false;
 
-	JS::Value params[3], rval;
-
-	JSObject *contObj = JSEngine->AcquireObject( IUE_ITEM, contItem, runTime );
-	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, item, runTime );
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, itemRemover, runTime );
-
-	params[0] = JS::ObjectOrNullValue( contObj );
-	params[1] = JS::ObjectOrNullValue( itemObj );
-	params[2] = JS::ObjectOrNullValue( charObj );
-	bool retVal = InvokeEvent( "onContRemoveItem", 3, params, &rval );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject contObj( targContext, JSEngine->AcquireObject( IUE_ITEM, contItem, runTime ) );
+	JS::RootedObject itemObj( targContext, JSEngine->AcquireObject( IUE_ITEM, item, runTime ) );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, itemRemover, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( contObj ) );
+	params[1].set( JS::ObjectOrNullValue( itemObj ) );
+	params[2].set( JS::ObjectOrNullValue( charObj ) );
+	bool retVal = InvokeEvent( "onContRemoveItem", 3, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnContRemoveItem, false );
@@ -1849,15 +1850,15 @@ SI08 cScript::OnSwing( CItem *swinging, CChar *swinger, CChar *swingTarg )
 	if( !ExistAndVerify( seOnSwing, "onSwing" ))
 		return RV_NOFUNC;
 
-	JSObject *itemObj	= ( ValidateObject( swinging ) ? JSEngine->AcquireObject( IUE_ITEM, swinging, runTime ) : nullptr );
-	JSObject *attObj	= JSEngine->AcquireObject( IUE_CHAR, swinger, runTime );
-	JSObject *defObj	= JSEngine->AcquireObject( IUE_CHAR, swingTarg, runTime );
-
-	JS::Value params[3], rval;
-	params[0] = JS::ObjectOrNullValue( itemObj );
-	params[1] = JS::ObjectOrNullValue( attObj );
-	params[2] = JS::ObjectOrNullValue( defObj );
-	bool retVal = InvokeEvent( "onSwing", 3, params, &rval );
+	JS::RootedObject itemObj( targContext, ( ValidateObject( swinging ) ? JSEngine->AcquireObject( IUE_ITEM, swinging, runTime ) : nullptr ) );
+	JS::RootedObject attObj( targContext, JSEngine->AcquireObject( IUE_CHAR, swinger, runTime ) );
+	JS::RootedObject defObj( targContext, JSEngine->AcquireObject( IUE_CHAR, swingTarg, runTime ) );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedValue rval( targContext );
+	params[0].set( JS::ObjectOrNullValue( itemObj ) );
+	params[1].set( JS::ObjectOrNullValue( attObj ) );
+	params[2].set( JS::ObjectOrNullValue( defObj ) );
+	bool retVal = InvokeEvent( "onSwing", 3, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnSwing, false );
@@ -1880,10 +1881,11 @@ SI08 cScript::OnDecay( CItem *decaying )
 	if( !ExistAndVerify( seOnDecay, "onDecay" ))
 		return RV_NOFUNC;
 
-	JS::Value params[1], rval;
-	JSObject *myObj = JSEngine->AcquireObject( IUE_ITEM, decaying, runTime );
-	params[0] = JS::ObjectOrNullValue( myObj );
-	bool retVal = InvokeEvent( "onDecay", 1, params, &rval );
+	JS::RootedValueArray<1> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject myObj( targContext, JSEngine->AcquireObject( IUE_ITEM, decaying, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	bool retVal = InvokeEvent( "onDecay", 1, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnDecay, false );
@@ -1905,14 +1907,13 @@ SI08 cScript::OnReleasePet( CChar *owner, CChar *pet )
 	if( !ExistAndVerify( seOnReleasePet, "onReleasePet" ))
 		return RV_NOFUNC;
 
-	JS::Value params[2], rval;
-	JSObject *ownerObj = JSEngine->AcquireObject( IUE_CHAR, owner, runTime );
-	JSObject *petObj   = JSEngine->AcquireObject( IUE_CHAR, pet, runTime );
-
-	params[0] = JS::ObjectOrNullValue( ownerObj );
-	params[1] = JS::ObjectOrNullValue( petObj );
-
-	bool retVal = InvokeEvent( "onReleasePet", 2, params, &rval );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject ownerObj( targContext, JSEngine->AcquireObject( IUE_CHAR, owner, runTime ) );
+	JS::RootedObject petObj( targContext, JSEngine->AcquireObject( IUE_CHAR, pet, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( ownerObj ) );
+	params[1].set( JS::ObjectOrNullValue( petObj ) );
+	bool retVal = InvokeEvent( "onReleasePet", 2, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -1936,23 +1937,23 @@ SI08 cScript::OnLeaving( CMultiObj *left, CBaseObject *leaving )
 	if( !ExistAndVerify( seOnLeaving, "onLeaving" ))
 		return RV_NOFUNC;
 
-	JS::Value params[3], rval;
-	JSObject *myObj;
-	JSObject *myItem = JSEngine->AcquireObject( IUE_ITEM, left, runTime );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject myObj( targContext );
+	JS::RootedObject myItem( targContext, JSEngine->AcquireObject( IUE_ITEM, left, runTime ) );
 	if( leaving->GetObjType() == OT_CHAR )
 	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, leaving, runTime );
-		params[2] = JS::Int32Value( 0 );
+		params[2].set( JS::Int32Value( 0 ) );
 	}
 	else
 	{
 		myObj = JSEngine->AcquireObject( IUE_ITEM, leaving, runTime );
-		params[2] = JS::Int32Value( 1 );
+		params[2].set( JS::Int32Value( 1 ) );
 	}
-	params[0] = JS::ObjectOrNullValue( myItem );
-	params[1] = JS::ObjectOrNullValue( myObj );
-
-	bool retVal = InvokeEvent( "onLeaving", 3, params, &rval );
+	params[0].set( JS::ObjectOrNullValue( myItem ) );
+	params[1].set( JS::ObjectOrNullValue( myObj ) );
+	bool retVal = InvokeEvent( "onLeaving", 3, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnLeaving, false );
@@ -1975,14 +1976,13 @@ SI08 cScript::OnMultiLogout( CMultiObj *iMulti, CChar *cPlayer )
 	if( !ExistAndVerify( seOnMultiLogout, "onMultiLogout" ))
 		return RV_NOFUNC;
 
-	JS::Value params[2], rval;
-	JSObject *myMulti = JSEngine->AcquireObject( IUE_ITEM, iMulti, runTime );
-	JSObject *myPlayer = JSEngine->AcquireObject( IUE_CHAR, cPlayer, runTime );
-
-	params[0] = JS::ObjectOrNullValue( myMulti );
-	params[1] = JS::ObjectOrNullValue( myPlayer );
-
-	bool retVal = InvokeEvent( "onMultiLogout", 2, params, &rval );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject myMulti( targContext, JSEngine->AcquireObject( IUE_ITEM, iMulti, runTime ) );
+	JS::RootedObject myPlayer( targContext, JSEngine->AcquireObject( IUE_CHAR, cPlayer, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( myMulti ) );
+	params[1].set( JS::ObjectOrNullValue( myPlayer ) );
+	bool retVal = InvokeEvent( "onMultiLogout", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnMultiLogout, false );
@@ -2005,17 +2005,15 @@ SI08 cScript::OnBoatTurn( CBoatObj *iBoat, UI08 oldDir, UI08 newDir, CItem *iTil
 	if( !ExistAndVerify( seOnBoatTurn, "onBoatTurn" ))
 		return RV_NOFUNC;
 
-	JS::Value params[4], rval;
-	JSObject *myBoat = JSEngine->AcquireObject( IUE_ITEM, iBoat, runTime );
-	JSObject *myTiller = JSEngine->AcquireObject( IUE_ITEM, iTiller, runTime );
-    
-
-	params[0] = JS::ObjectOrNullValue( myBoat );
-	params[1] = JS::Int32Value( oldDir );
-	params[2] = JS::Int32Value( newDir );
-	params[3] = JS::ObjectOrNullValue( myTiller );
-
-	bool retVal = InvokeEvent( "onBoatTurn", 4, params, &rval );
+	JS::RootedValueArray<4> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject myBoat( targContext, JSEngine->AcquireObject( IUE_ITEM, iBoat, runTime ) );
+	JS::RootedObject myTiller( targContext, JSEngine->AcquireObject( IUE_ITEM, iTiller, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( myBoat ) );
+	params[1].set( JS::Int32Value( oldDir ) );
+	params[2].set( JS::Int32Value( newDir ) );
+	params[3].set( JS::ObjectOrNullValue( myTiller ) );
+	bool retVal = InvokeEvent( "onBoatTurn", 4, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnBoatTurn, false );
@@ -2038,13 +2036,13 @@ SI08 cScript::OnEquipAttempt( CChar *equipper, CItem *equipping )
 	if( !ExistAndVerify( seOnEquipAttempt, "onEquipAttempt" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[2];
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, equipper, runTime );
-	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, equipping, runTime );
-
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::ObjectOrNullValue( itemObj );
-	bool retVal = InvokeEvent( "onEquipAttempt", 2, params, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, equipper, runTime ) );
+	JS::RootedObject itemObj( targContext, JSEngine->AcquireObject( IUE_ITEM, equipping, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::ObjectOrNullValue( itemObj ) );
+	bool retVal = InvokeEvent( "onEquipAttempt", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnEquipAttempt, false );
@@ -2067,13 +2065,13 @@ SI08 cScript::OnEquip( CChar *equipper, CItem *equipping )
 	if( !ExistAndVerify( seOnEquip, "onEquip" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[2];
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, equipper, runTime );
-	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, equipping, runTime );
-
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::ObjectOrNullValue( itemObj );
-	bool retVal = InvokeEvent( "onEquip", 2, params, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, equipper, runTime ) );
+	JS::RootedObject itemObj( targContext, JSEngine->AcquireObject( IUE_ITEM, equipping, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::ObjectOrNullValue( itemObj ) );
+	bool retVal = InvokeEvent( "onEquip", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnEquip, false );
@@ -2096,13 +2094,13 @@ SI08 cScript::OnUnequipAttempt( CChar *equipper, CItem *equipping )
 	if( !ExistAndVerify( seOnUnequipAttempt, "onUnequipAttempt" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[2];
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, equipper, runTime );
-	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, equipping, runTime );
-
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::ObjectOrNullValue( itemObj );
-	bool retVal = InvokeEvent( "onUnequipAttempt", 2, params, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, equipper, runTime ) );
+	JS::RootedObject itemObj( targContext, JSEngine->AcquireObject( IUE_ITEM, equipping, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::ObjectOrNullValue( itemObj ) );
+	bool retVal = InvokeEvent( "onUnequipAttempt", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnUnequipAttempt, false );
@@ -2125,13 +2123,13 @@ SI08 cScript::OnUnequip( CChar *equipper, CItem *equipping )
 	if( !ExistAndVerify( seOnUnequip, "onUnequip" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[2];
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, equipper, runTime );
-	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, equipping, runTime );
-
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::ObjectOrNullValue( itemObj );
-	bool retVal = InvokeEvent( "onUnequip", 2, params, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, equipper, runTime ) );
+	JS::RootedObject itemObj( targContext, JSEngine->AcquireObject( IUE_ITEM, equipping, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::ObjectOrNullValue( itemObj ) );
+	bool retVal = InvokeEvent( "onUnequip", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnUnequip, false );
@@ -2164,14 +2162,13 @@ SI08 cScript::OnUseChecked( CChar *user, CItem *iUsing )
 	if( !ExistAndVerify( seOnUseChecked, "onUseChecked" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[2];
-
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, user, runTime );
-	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, iUsing, runTime );
-
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::ObjectOrNullValue( itemObj );
-	bool retVal = InvokeEvent( "onUseChecked", 2, params, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, user, runTime ) );
+	JS::RootedObject itemObj( targContext, JSEngine->AcquireObject( IUE_ITEM, iUsing, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::ObjectOrNullValue( itemObj ) );
+	bool retVal = InvokeEvent( "onUseChecked", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnUseChecked, false );
@@ -2204,14 +2201,13 @@ SI08 cScript::OnUseUnChecked( CChar *user, CItem *iUsing )
 	if( !ExistAndVerify( seOnUseUnChecked, "onUseUnChecked" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[2];
-
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, user, runTime );
-	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, iUsing, runTime );
-
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::ObjectOrNullValue( itemObj );
-	bool retVal = InvokeEvent( "onUseUnChecked", 2, params, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, user, runTime ) );
+	JS::RootedObject itemObj( targContext, JSEngine->AcquireObject( IUE_ITEM, iUsing, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::ObjectOrNullValue( itemObj ) );
+	bool retVal = InvokeEvent( "onUseUnChecked", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnUseUnChecked, false );
@@ -2242,16 +2238,15 @@ SI08 cScript::OnDropItemOnNpc( CChar *srcChar, CChar *dstChar, CItem *item )
 	if( !ExistAndVerify( seOnDropItemOnNpc, "onDropItemOnNpc" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[3];
-
-	JSObject *srcObj	= JSEngine->AcquireObject( IUE_CHAR, srcChar, runTime );
-	JSObject *dstObj	= JSEngine->AcquireObject( IUE_CHAR, dstChar, runTime );
-	JSObject *itemObj	= JSEngine->AcquireObject( IUE_ITEM, item, runTime );
-	params[0] = JS::ObjectOrNullValue( srcObj );
-	params[1] = JS::ObjectOrNullValue( dstObj );
-	params[2] = JS::ObjectOrNullValue( itemObj );
-
-	bool retVal = InvokeEvent( "onDropItemOnNpc", 3, params, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedObject srcObj( targContext, JSEngine->AcquireObject( IUE_CHAR, srcChar, runTime ) );
+	JS::RootedObject dstObj( targContext, JSEngine->AcquireObject( IUE_CHAR, dstChar, runTime ) );
+	JS::RootedObject itemObj( targContext, JSEngine->AcquireObject( IUE_ITEM, item, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( srcObj ) );
+	params[1].set( JS::ObjectOrNullValue( dstObj ) );
+	params[2].set( JS::ObjectOrNullValue( itemObj ) );
+	bool retVal = InvokeEvent( "onDropItemOnNpc", 3, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnDropItemOnNpc, false );
@@ -2274,23 +2269,23 @@ SI08 cScript::OnEntrance( CMultiObj *left, CBaseObject *leaving )
 	if( !ExistAndVerify( seOnEntrance, "onEntrance" ))
 		return RV_NOFUNC;
 
-	JS::Value params[3], rval;
-	JSObject *myObj;
-	JSObject *myItem = JSEngine->AcquireObject( IUE_ITEM, left, runTime );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject myObj( targContext );
+	JS::RootedObject myItem( targContext, JSEngine->AcquireObject( IUE_ITEM, left, runTime ) );
 	if( leaving->GetObjType() == OT_CHAR )
 	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, leaving, runTime );
-		params[2] = JS::Int32Value( 0 );
+		params[2].set( JS::Int32Value( 0 ) );
 	}
 	else
 	{
 		myObj = JSEngine->AcquireObject( IUE_ITEM, leaving, runTime );
-		params[2] = JS::Int32Value( 1 );
+		params[2].set( JS::Int32Value( 1 ) );
 	}
-	params[0] = JS::ObjectOrNullValue( myItem );
-	params[1] = JS::ObjectOrNullValue( myObj );
-
-	bool retVal = InvokeEvent( "onEntrance", 3, params, &rval );
+	params[0].set( JS::ObjectOrNullValue( myItem ) );
+	params[1].set( JS::ObjectOrNullValue( myObj ) );
+	bool retVal = InvokeEvent( "onEntrance", 3, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnEntrance, false );
@@ -2315,9 +2310,9 @@ bool cScript::OutOfRange( CBaseObject *srcObj, CBaseObject *objVanish )
 	if( !ExistAndVerify( seOutOfRange, "outOfRange" ))
 		return false;
 
-	JS::Value params[2], rval;
-
-	JSObject *myObj;
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject myObj( targContext );
 	if( srcObj->GetObjType() == OT_CHAR )
 	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, srcObj, runTime );
@@ -2327,7 +2322,7 @@ bool cScript::OutOfRange( CBaseObject *srcObj, CBaseObject *objVanish )
 		myObj = JSEngine->AcquireObject( IUE_ITEM, srcObj, runTime );
 	}
 
-	JSObject *myObj2;
+	JS::RootedObject myObj2( targContext );
 	if( objVanish->GetObjType() == OT_CHAR )
 	{
 		myObj2 = JSEngine->AcquireObject( IUE_CHAR, objVanish, runTime );
@@ -2337,9 +2332,9 @@ bool cScript::OutOfRange( CBaseObject *srcObj, CBaseObject *objVanish )
 		myObj2 = JSEngine->AcquireObject( IUE_ITEM, objVanish, runTime );
 	}
 
-	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = JS::ObjectOrNullValue( myObj2 );
-	bool retVal = InvokeEvent( "outOfRange", 2, params, &rval );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::ObjectOrNullValue( myObj2 ) );
+	bool retVal = InvokeEvent( "outOfRange", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOutOfRange, false );
@@ -2361,13 +2356,13 @@ bool cScript::OnLogin( CSocket *sockPlayer, CChar *pPlayer )
 	if( !ExistAndVerify( seOnLogin, "onLogin" ))
 		return false;
 
-	JS::Value params[2], rval;
-	JSObject *sockObj = JSEngine->AcquireObject( IUE_SOCK, sockPlayer, runTime );
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, pPlayer, runTime );
-
-	params[0] = JS::ObjectOrNullValue( sockObj );
-	params[1] = JS::ObjectOrNullValue( charObj );
-	bool retVal = InvokeEvent( "onLogin", 2, params, &rval );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject sockObj( targContext, JSEngine->AcquireObject( IUE_SOCK, sockPlayer, runTime ) );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, pPlayer, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( sockObj ) );
+	params[1].set( JS::ObjectOrNullValue( charObj ) );
+	bool retVal = InvokeEvent( "onLogin", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnLogin, false );
@@ -2390,14 +2385,13 @@ bool cScript::OnLogout( CSocket *sockPlayer, CChar *pPlayer )
 	if( !ExistAndVerify( seOnLogout, "onLogout" ))
 		return false;
 
-	JS::Value params[2], rval;
-
-	JSObject *sockObj = JSEngine->AcquireObject( IUE_SOCK, sockPlayer, runTime );
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, pPlayer, runTime );
-
-	params[0] = JS::ObjectOrNullValue( sockObj );
-	params[1] = JS::ObjectOrNullValue( charObj );
-	bool retVal = InvokeEvent( "onLogout", 2, params, &rval );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject sockObj( targContext, JSEngine->AcquireObject( IUE_SOCK, sockPlayer, runTime ) );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, pPlayer, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( sockObj ) );
+	params[1].set( JS::ObjectOrNullValue( charObj ) );
+	bool retVal = InvokeEvent( "onLogout", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnLogout, false );
@@ -2420,8 +2414,8 @@ SI08 cScript::OnClick( CSocket *sockPlayer, CBaseObject *objClicked )
 	if( !ExistAndVerify( seOnClick, "onClick" ))
 		return RV_NOFUNC;
 
-	JSObject *sockObj = JSEngine->AcquireObject( IUE_SOCK, sockPlayer, runTime );
-	JSObject *myObj;
+	JS::RootedObject sockObj( targContext, JSEngine->AcquireObject( IUE_SOCK, sockPlayer, runTime ) );
+	JS::RootedObject myObj( targContext );
 	if( objClicked->GetObjType() == OT_CHAR )
 	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, objClicked, runTime );
@@ -2431,10 +2425,11 @@ SI08 cScript::OnClick( CSocket *sockPlayer, CBaseObject *objClicked )
 		myObj = JSEngine->AcquireObject( IUE_ITEM, objClicked, runTime );
 	}
 
-	JS::Value params[2], rval;
-	params[0] = JS::ObjectOrNullValue( sockObj );
-	params[1] = JS::ObjectOrNullValue( myObj );
-	bool retVal = InvokeEvent( "onClick", 2, params, &rval );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	params[0].set( JS::ObjectOrNullValue( sockObj ) );
+	params[1].set( JS::ObjectOrNullValue( myObj ) );
+	bool retVal = InvokeEvent( "onClick", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnClick, false );
@@ -2457,11 +2452,12 @@ bool cScript::OnFall( CChar *pFall, SI08 fallDistance )
 	if( !ExistAndVerify( seOnFall, "onFall" ))
 		return false;
 
-	JS::Value params[2], rval;
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, pFall, runTime );
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::Int32Value( fallDistance );
-	bool retVal = InvokeEvent( "onFall", 2, params, &rval );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, pFall, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::Int32Value( fallDistance ) );
+	bool retVal = InvokeEvent( "onFall", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnFall, false );
@@ -2483,10 +2479,11 @@ SI08 cScript::OnAISliver( CChar *pSliver )
 	if( !ExistAndVerify( seOnAISliver, "onAISliver" ))
 		return RV_NOFUNC;
 
-	JS::Value params[1], rval;
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, pSliver, runTime );
-	params[0] = JS::ObjectOrNullValue( charObj );
-	bool retVal = InvokeEvent( "onAISliver", 1, params, &rval );
+	JS::RootedValueArray<1> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, pSliver, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	bool retVal = InvokeEvent( "onAISliver", 1, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnAISliver, false );
@@ -2506,8 +2503,8 @@ bool cScript::OnSystemSlice( void )
 	if( !ExistAndVerify( seOnSystemSlice, "onSystemSlice" ))
 		return false;
 
-	JS::Value rval;
-	bool retVal = InvokeEvent( "onSystemSlice", 0, nullptr, &rval );
+	JS::RootedValue rval( targContext );
+	bool retVal = InvokeEvent( "onSystemSlice", 0, nullptr, rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnSystemSlice, false );
@@ -2529,8 +2526,9 @@ SI08 cScript::OnLightChange( CBaseObject *tObject, UI08 lightLevel )
 	if( !ExistAndVerify( seOnLightChange, "onLightChange" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[2];
-	JSObject *myObj;
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedObject myObj( targContext );
 	if( tObject->GetObjType() == OT_CHAR )
 	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, tObject, runTime );
@@ -2540,9 +2538,9 @@ SI08 cScript::OnLightChange( CBaseObject *tObject, UI08 lightLevel )
 		myObj = JSEngine->AcquireObject( IUE_ITEM, tObject, runTime );
 	}
 
-	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = JS::Int32Value( lightLevel );
-	bool retVal = InvokeEvent( "onLightChange", 2, params, &rval );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::Int32Value( lightLevel ) );
+	bool retVal = InvokeEvent( "onLightChange", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnLightChange, false );
@@ -2566,8 +2564,9 @@ bool cScript::OnWeatherChange( CBaseObject *tObject, WeatherType element )
 	if( !ExistAndVerify( seOnWeatherChange, "onWeatherChange" ))
 		return false;
 
-	JS::Value rval, params[2];
-	JSObject *myObj;
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedObject myObj( targContext );
 	if( tObject->GetObjType() == OT_CHAR )
 	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, tObject, runTime );
@@ -2577,9 +2576,9 @@ bool cScript::OnWeatherChange( CBaseObject *tObject, WeatherType element )
 		myObj = JSEngine->AcquireObject( IUE_ITEM, tObject, runTime );
 	}
 
-	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = JS::Int32Value( element );
-	bool retVal = InvokeEvent( "onWeatherChange", 2, params, &rval );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::Int32Value( element ) );
+	bool retVal = InvokeEvent( "onWeatherChange", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnWeatherChange, false );
@@ -2602,8 +2601,9 @@ bool cScript::OnTempChange( CBaseObject *tObject, SI08 temp )
 	if( !ExistAndVerify( seOnTempChange, "onTempChange" ))
 		return false;
 
-	JS::Value rval, params[2];
-	JSObject *myObj;
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedObject myObj( targContext );
 	if( tObject->GetObjType() == OT_CHAR )
 	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, tObject, runTime );
@@ -2613,9 +2613,9 @@ bool cScript::OnTempChange( CBaseObject *tObject, SI08 temp )
 		myObj = JSEngine->AcquireObject( IUE_ITEM, tObject, runTime );
 	}
 
-	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = JS::Int32Value( temp );
-	bool retVal = InvokeEvent( "onTempChange", 2, params, &rval );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::Int32Value( temp ) );
+	bool retVal = InvokeEvent( "onTempChange", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnTempChange, false );
@@ -2638,8 +2638,9 @@ bool cScript::OnTimer( CBaseObject *tObject, UI16 timerId )
 	if( !ExistAndVerify( seOnTimer, "onTimer" ))
 		return false;
 
-	JS::Value rval, params[2];
-	JSObject *myObj;
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedObject myObj( targContext );
 	if( tObject->GetObjType() == OT_CHAR )
 	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, tObject, runTime );
@@ -2649,9 +2650,9 @@ bool cScript::OnTimer( CBaseObject *tObject, UI16 timerId )
 		myObj = JSEngine->AcquireObject( IUE_ITEM, tObject, runTime );
 	}
 
-	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = JS::Int32Value( timerId );
-	bool retVal = InvokeEvent( "onTimer", 2, params, &rval );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::Int32Value( timerId ) );
+	bool retVal = InvokeEvent( "onTimer", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnTimer, false );
@@ -2675,17 +2676,18 @@ bool cScript::OnTempEffectExpire( CBaseObject *source, CBaseObject *target, UI16
 	if( !ExistAndVerify( seOnTempEffectExpire, "onTempEffectExpire" ))
 		return false;
 
-	JS::Value rval, params[3];
-	params[0] = JS::NullValue();
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<3> params( targContext );
+	params[0].set( JS::NullValue() );
 	if( ValidateObject( source ))
 	{
-		JSObject *sourceObj = JSEngine->AcquireObject(( source->GetObjType() == OT_CHAR ? IUE_CHAR : IUE_ITEM ), source, runTime );
-		params[0] = JS::ObjectOrNullValue( sourceObj );
+		JS::RootedObject sourceObj( targContext, JSEngine->AcquireObject(( source->GetObjType() == OT_CHAR ? IUE_CHAR : IUE_ITEM ), source, runTime ) );
+		params[0].set( JS::ObjectOrNullValue( sourceObj ) );
 	}
-	JSObject *targetObj = JSEngine->AcquireObject(( target->GetObjType() == OT_CHAR ? IUE_CHAR : IUE_ITEM ), target, runTime );
-	params[1] = JS::ObjectOrNullValue( targetObj );
-	params[2] = JS::Int32Value( effectId );
-	bool retVal = InvokeEvent( "onTempEffectExpire", 3, params, &rval );
+	JS::RootedObject targetObj( targContext, JSEngine->AcquireObject(( target->GetObjType() == OT_CHAR ? IUE_CHAR : IUE_ITEM ), target, runTime ) );
+	params[1].set( JS::ObjectOrNullValue( targetObj ) );
+	params[2].set( JS::Int32Value( effectId ) );
+	bool retVal = InvokeEvent( "onTempEffectExpire", 3, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnTempEffectExpire, false );
@@ -2707,17 +2709,18 @@ bool cScript::OnTempEffectRemove( CBaseObject *source, CBaseObject *target, UI16
 	if( !ExistAndVerify( seOnTempEffectRemove, "onTempEffectRemove" ))
 		return false;
 
-	JS::Value rval, params[3];
-	params[0] = JS::NullValue();
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<3> params( targContext );
+	params[0].set( JS::NullValue() );
 	if( ValidateObject( source ))
 	{
-		JSObject *sourceObj = JSEngine->AcquireObject(( source->GetObjType() == OT_CHAR ? IUE_CHAR : IUE_ITEM ), source, runTime );
-		params[0] = JS::ObjectOrNullValue( sourceObj );
+		JS::RootedObject sourceObj( targContext, JSEngine->AcquireObject(( source->GetObjType() == OT_CHAR ? IUE_CHAR : IUE_ITEM ), source, runTime ) );
+		params[0].set( JS::ObjectOrNullValue( sourceObj ) );
 	}
-	JSObject *targetObj = JSEngine->AcquireObject(( target->GetObjType() == OT_CHAR ? IUE_CHAR : IUE_ITEM ), target, runTime );
-	params[1] = JS::ObjectOrNullValue( targetObj );
-	params[2] = JS::Int32Value( effectId );
-	bool retVal = InvokeEvent( "onTempEffectRemove", 3, params, &rval );
+	JS::RootedObject targetObj( targContext, JSEngine->AcquireObject(( target->GetObjType() == OT_CHAR ? IUE_CHAR : IUE_ITEM ), target, runTime ) );
+	params[1].set( JS::ObjectOrNullValue( targetObj ) );
+	params[2].set( JS::Int32Value( effectId ) );
+	bool retVal = InvokeEvent( "onTempEffectRemove", 3, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnTempEffectRemove, false );
@@ -2738,12 +2741,13 @@ SI08 cScript::OnStatLoss( CChar *player, UI32 stat, UI32 statLossAmount )
 	if( !ExistAndVerify( seOnStatLoss, "onStatLoss" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[3];
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::Int32Value( stat );
-	params[2] = JS::Int32Value( statLossAmount );
-	bool retVal = InvokeEvent( "onStatLoss", 3, params, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, player, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::Int32Value( stat ) );
+	params[2].set( JS::Int32Value( statLossAmount ) );
+	bool retVal = InvokeEvent( "onStatLoss", 3, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnStatLoss, false );
@@ -2766,12 +2770,13 @@ bool cScript::OnStatChange( CChar *player, UI32 stat, SI32 statChangeAmount )
 	if( !ExistAndVerify( seOnStatChange, "onStatChange" ))
 		return false;
 
-	JS::Value rval, params[3];
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::Int32Value( stat );
-	params[2] = JS::Int32Value( statChangeAmount );
-	bool retVal = InvokeEvent( "onStatChange", 3, params, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, player, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::Int32Value( stat ) );
+	params[2].set( JS::Int32Value( statChangeAmount ) );
+	bool retVal = InvokeEvent( "onStatChange", 3, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnStatChange, false );
@@ -2793,12 +2798,13 @@ SI08 cScript::OnSkillLoss( CChar *player, SI08 skill, UI32 skillLossAmount )
 	if( !ExistAndVerify( seOnSkillLoss, "onSkillLoss" ))
 		return RV_NOFUNC;
 
-	JS::Value params[3], rval;
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::Int32Value( skill );
-	params[2] = JS::Int32Value( skillLossAmount );
-	bool retVal = InvokeEvent( "onSkillLoss", 3, params, &rval );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, player, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::Int32Value( skill ) );
+	params[2].set( JS::Int32Value( skillLossAmount ) );
+	bool retVal = InvokeEvent( "onSkillLoss", 3, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnSkillLoss, false );
@@ -2821,12 +2827,13 @@ bool cScript::OnSkillChange( CChar *player, SI08 skill, SI32 skillChangeAmount )
 	if( !ExistAndVerify( seOnSkillChange, "onSkillChange" ))
 		return false;
 
-	JS::Value params[3], rval;
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::Int32Value( skill );
-	params[2] = JS::Int32Value( skillChangeAmount );
-	bool retVal = InvokeEvent( "onSkillChange", 3, params, &rval );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, player, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::Int32Value( skill ) );
+	params[2].set( JS::Int32Value( skillChangeAmount ) );
+	bool retVal = InvokeEvent( "onSkillChange", 3, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnSkillChange, false );
@@ -2848,12 +2855,13 @@ SI08 cScript::OnDeath( CChar *pDead, CItem *iCorpse )
 	if( !ExistAndVerify( seOnDeath, "onDeath" ))
 		return RV_NOFUNC;
 
-	JS::Value params[2], rval;
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, pDead, runTime );
-	JSObject *corpseObj = JSEngine->AcquireObject( IUE_ITEM, iCorpse, runTime );
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::ObjectOrNullValue( corpseObj );
-	bool retVal = InvokeEvent( "onDeath", 2, params, &rval );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, pDead, runTime ) );
+	JS::RootedObject corpseObj( targContext, JSEngine->AcquireObject( IUE_ITEM, iCorpse, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::ObjectOrNullValue( corpseObj ) );
+	bool retVal = InvokeEvent( "onDeath", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnDeath, false );
@@ -2877,10 +2885,11 @@ SI08 cScript::OnResurrect( CChar *pAlive )
 	if( !ExistAndVerify( seOnResurrect, "onResurrect" ))
 		return RV_NOFUNC;
 
-	JS::Value params[1], rval;
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, pAlive, runTime );
-	params[0] = JS::ObjectOrNullValue( charObj );
-	bool retVal = InvokeEvent( "onResurrect", 1, params, &rval );
+	JS::RootedValueArray<1> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, pAlive, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	bool retVal = InvokeEvent( "onResurrect", 1, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnResurrect, false );
@@ -2903,12 +2912,13 @@ SI08 cScript::OnFlagChange( CChar *pChanging, UI08 newStatus, UI08 oldStatus )
 	if( !ExistAndVerify( seOnFlagChange, "onFlagChange" ))
 		return RV_NOFUNC;
 
-	JS::Value params[3], rval;
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, pChanging, runTime );
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::Int32Value( newStatus );
-	params[2] = JS::Int32Value( oldStatus );
-	bool retVal = InvokeEvent( "onFlagChange", 3, params, &rval );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, pChanging, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::Int32Value( newStatus ) );
+	params[2].set( JS::Int32Value( oldStatus ) );
+	bool retVal = InvokeEvent( "onFlagChange", 3, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnFlagChange, false );
@@ -2928,17 +2938,18 @@ bool cScript::DoCallback( CSocket *tSock, SERIAL targeted, UI08 callNum )
 	if( tSock == nullptr )
 		return false;
 
-	JS::Value params[2], rval;
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
 	SI32 objType		= 2;	// 2 == null, 1 == char, 0 == item
 	CBaseObject *mObj	= nullptr;
-	JSObject *myObj2	= nullptr;
+	JS::RootedObject myObj2( targContext );
 	try
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
+		JS::RootedObject myObj( targContext, JSEngine->AcquireObject( IUE_SOCK, tSock, runTime ) );
 		if( myObj == nullptr )
 			return false;
 
-		params[0] = JS::ObjectOrNullValue( myObj );
+		params[0].set( JS::ObjectOrNullValue( myObj ) );
 		if( targeted >= BASEITEMSERIAL )
 		{
 			mObj	= CalcItemObjFromSer( targeted );
@@ -2952,7 +2963,7 @@ bool cScript::DoCallback( CSocket *tSock, SERIAL targeted, UI08 callNum )
 		if( !ValidateObject( mObj ))
 		{
 			objType		= 2;
-			params[1]	= JS::NullValue();
+			params[1].set( JS::NullValue() );
 		}
 		else
 		{
@@ -2964,10 +2975,10 @@ bool cScript::DoCallback( CSocket *tSock, SERIAL targeted, UI08 callNum )
 			{
 				myObj2 = JSEngine->AcquireObject( IUE_CHAR, mObj, runTime );
 			}
-			params[1] = JS::ObjectOrNullValue( myObj2 );
+			params[1].set( JS::ObjectOrNullValue( myObj2 ) );
 		}
 
-		bool retVal = InvokeEvent( oldstrutil::format( "onCallback%i", callNum ).c_str(), 2, params, &rval );
+		bool retVal = InvokeEvent( oldstrutil::format( "onCallback%i", callNum ).c_str(), 2, params.begin(), rval.address() );
 		return ( retVal == true );
 	}
 	catch( ... )
@@ -3000,11 +3011,12 @@ SI08 cScript::OnLoyaltyChange( CChar *pChanging, SI08 newStatus )
 	if( !ExistAndVerify( seOnLoyaltyChange, "onLoyaltyChange" ))
 		return RV_NOFUNC;
 
-	JS::Value params[2], rval;
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, pChanging, runTime );
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::Int32Value( newStatus );
-	bool retVal = InvokeEvent( "onLoyaltyChange", 2, params, &rval );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, pChanging, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::Int32Value( newStatus ) );
+	bool retVal = InvokeEvent( "onLoyaltyChange", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnLoyaltyChange, false );
@@ -3027,11 +3039,12 @@ SI08 cScript::OnHungerChange( CChar *pChanging, SI08 newStatus )
 	if( !ExistAndVerify( seOnHungerChange, "onHungerChange" ))
 		return RV_NOFUNC;
 
-	JS::Value params[2], rval;
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, pChanging, runTime );
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::Int32Value( newStatus );
-	bool retVal = InvokeEvent( "onHungerChange", 2, params, &rval );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, pChanging, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::Int32Value( newStatus ) );
+	bool retVal = InvokeEvent( "onHungerChange", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnHungerChange, false );
@@ -3054,11 +3067,12 @@ bool cScript::OnThirstChange( CChar* pChanging, SI08 newStatus )
 	if( !ExistAndVerify( seOnThirstChange, "onThirstChange" ))
 		return RV_NOFUNC;
 
-	JS::Value params[2], rval;
-	JSObject* charObj = JSEngine->AcquireObject( IUE_CHAR, pChanging, runTime );
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::Int32Value( newStatus );
-	bool retVal = InvokeEvent( "onThirstChange", 2, params, &rval );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, pChanging, runTime ));
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::Int32Value( newStatus ) );
+	bool retVal = InvokeEvent( "onThirstChange", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnThirstChange, false );
@@ -3081,16 +3095,15 @@ SI08 cScript::OnStolenFrom( CChar *stealing, CChar *stolenFrom, CItem *stolen )
 	if( !ExistAndVerify( seOnStolenFrom, "onStolenFrom" ))
 		return RV_NOFUNC;
 
-	JS::Value params[3], rval;
-
-	JSObject *thiefObj	= JSEngine->AcquireObject( IUE_CHAR, stealing, runTime );
-	JSObject *victimObj	= JSEngine->AcquireObject( IUE_CHAR, stolenFrom, runTime );
-	JSObject *itemObj	= JSEngine->AcquireObject( IUE_ITEM, stolen, runTime );
-
-	params[0] = JS::ObjectOrNullValue( thiefObj );
-	params[1] = JS::ObjectOrNullValue( victimObj );
-	params[2] = JS::ObjectOrNullValue( itemObj );
-	bool retVal = InvokeEvent( "onStolenFrom", 3, params, &rval );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject thiefObj( targContext, JSEngine->AcquireObject( IUE_CHAR, stealing, runTime ) );
+	JS::RootedObject victimObj( targContext, JSEngine->AcquireObject( IUE_CHAR, stolenFrom, runTime ) );
+	JS::RootedObject itemObj( targContext, JSEngine->AcquireObject( IUE_ITEM, stolen, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( thiefObj ) );
+	params[1].set( JS::ObjectOrNullValue( victimObj ) );
+	params[2].set( JS::ObjectOrNullValue( itemObj ) );
+	bool retVal = InvokeEvent( "onStolenFrom", 3, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnStolenFrom, false );
@@ -3113,15 +3126,14 @@ SI08 cScript::OnSnooped( CChar *snooped, CChar *snooper, bool success )
 	if( !ExistAndVerify( seOnSnooped, "onSnooped" ))
 		return RV_NOFUNC;
 
-	JS::Value params[3], rval;
-
-	JSObject *thiefObj	= JSEngine->AcquireObject( IUE_CHAR, snooped, runTime );
-	JSObject *victimObj	= JSEngine->AcquireObject( IUE_CHAR, snooper, runTime );
-
-	params[0] = JS::ObjectOrNullValue( thiefObj );
-	params[1] = JS::ObjectOrNullValue( victimObj );
-	params[2] = JS::BooleanValue( success );
-	bool retVal = InvokeEvent( "onSnooped", 3, params, &rval );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject thiefObj( targContext, JSEngine->AcquireObject( IUE_CHAR, snooped, runTime ) );
+	JS::RootedObject victimObj( targContext, JSEngine->AcquireObject( IUE_CHAR, snooper, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( thiefObj ) );
+	params[1].set( JS::ObjectOrNullValue( victimObj ) );
+	params[2].set( JS::BooleanValue( success ) );
+	bool retVal = InvokeEvent( "onSnooped", 3, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnSnooped, false );
@@ -3144,16 +3156,15 @@ SI08 cScript::OnSnoopAttempt( CChar *snooped, CItem *pack, CChar *snooper )
 	if( !ExistAndVerify( seOnSnoopAttempt, "onSnoopAttempt" ))
 		return RV_NOFUNC;
 
-	JS::Value params[3], rval;
-
-	JSObject *thiefObj	= JSEngine->AcquireObject( IUE_CHAR, snooped, runTime );
-	JSObject *packObj	= JSEngine->AcquireObject( IUE_ITEM, pack, runTime );
-	JSObject *victimObj	= JSEngine->AcquireObject( IUE_CHAR, snooper, runTime );
-
-	params[0] = JS::ObjectOrNullValue( thiefObj );
-	params[1] = JS::ObjectOrNullValue( packObj );
-	params[2] = JS::ObjectOrNullValue( victimObj );
-	bool retVal = InvokeEvent( "onSnoopAttempt", 3, params, &rval );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject thiefObj( targContext, JSEngine->AcquireObject( IUE_CHAR, snooped, runTime ) );
+	JS::RootedObject packObj( targContext, JSEngine->AcquireObject( IUE_ITEM, pack, runTime ) );
+	JS::RootedObject victimObj( targContext, JSEngine->AcquireObject( IUE_CHAR, snooper, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( thiefObj ) );
+	params[1].set( JS::ObjectOrNullValue( packObj ) );
+	params[2].set( JS::ObjectOrNullValue( victimObj ) );
+	bool retVal = InvokeEvent( "onSnoopAttempt", 3, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnSnoopAttempt, false );
@@ -3257,13 +3268,13 @@ void cScript::HandleGumpPress( CPIGumpMenuSelect *packet )
 		segdGumpData->nIDs.push_back( packet->GetTextId( i ));
 		segdGumpData->sEdits.push_back( packet->GetTextString( i ));
 	}
-	JS::Value jsvParams[3], jsvRVal;
-
-	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, pressing, runTime );
-	jsvParams[0] = JS::ObjectOrNullValue( myObj );
-	jsvParams[1] = JS::Int32Value( button );
-	jsvParams[2] = JS::ObjectOrNullValue( jsoObject );
-	[[maybe_unused]] bool retVal = InvokeEvent( "onGumpPress", 3, jsvParams, &jsvRVal );
+	JS::RootedValueArray<3> jsvParams( targContext );
+	JS::RootedValue jsvRVal( targContext );
+	JS::RootedObject myObj( targContext, JSEngine->AcquireObject( IUE_SOCK, pressing, runTime ) );
+	jsvParams[0].set( JS::ObjectOrNullValue( myObj ) );
+	jsvParams[1].set( JS::Int32Value( button ) );
+	jsvParams[2].set( JS::ObjectOrNullValue( jsoObject ) );
+	[[maybe_unused]] bool retVal = InvokeEvent( "onGumpPress", 3, jsvParams.begin(), jsvRVal.address() );
 	JS_SetReservedSlot( jsoObject, 0, JS::UndefinedValue() );
 	delete segdGumpData;
 }
@@ -3281,13 +3292,14 @@ void cScript::HandleGumpInput( CPIGumpInput *pressing )
 	if( !ExistAndVerify( seOnGumpInput, "onGumpInput" ))
 		return;
 
-	JS::Value params[3], rval;
-	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, pressing->GetSocket(), runTime );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject myObj( targContext, JSEngine->AcquireObject( IUE_SOCK, pressing->GetSocket(), runTime ) );
 	JS::RootedString gumpReply( targContext, JS_NewStringCopyZ( targContext, pressing->Reply().c_str() ));
-	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = JS::Int32Value( pressing->Index() );
-	params[2] = JS::StringValue( gumpReply );
-	[[maybe_unused]] bool retVal = InvokeEvent( "onGumpInput", 3, params, &rval );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::Int32Value( pressing->Index() ) );
+	params[2].set( JS::StringValue( gumpReply ) );
+	[[maybe_unused]] bool retVal = InvokeEvent( "onGumpInput", 3, params.begin(), rval.address() );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3304,12 +3316,13 @@ SI08 cScript::OnScrollingGumpPress( CSocket *tSock, UI16 gumpId, UI16 buttonId )
 	if( !ExistAndVerify( seOnScrollingGumpPress, "onScrollingGumpPress" ))
 		return RV_NOFUNC;
 
-	JS::Value params[3], rval;
-	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
-	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = JS::Int32Value( gumpId );
-	params[2] = JS::Int32Value( buttonId );
-	bool retVal = InvokeEvent( "onScrollingGumpPress", 3, params, &rval );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject myObj( targContext, JSEngine->AcquireObject( IUE_SOCK, tSock, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::Int32Value( gumpId ) );
+	params[2].set( JS::Int32Value( buttonId ) );
+	bool retVal = InvokeEvent( "onScrollingGumpPress", 3, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnScrollingGumpPress, false );
@@ -3332,12 +3345,12 @@ bool cScript::OnEnterRegion( CChar *entering, UI16 region )
 	if( !ExistAndVerify( seOnEnterRegion, "onEnterRegion" ))
 		return false;
 
-	JS::Value params[2], rval;
-
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, entering, runTime );
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::Int32Value( region );
-	bool retVal = InvokeEvent( "onEnterRegion", 2, params, &rval );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, entering, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::Int32Value( region ) );
+	bool retVal = InvokeEvent( "onEnterRegion", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnEnterRegion, false );
@@ -3358,11 +3371,12 @@ bool cScript::OnLeaveRegion( CChar *leaving, UI16 region )
 	if( !ExistAndVerify( seOnLeaveRegion, "onLeaveRegion" ))
 		return false;
 
-	JS::Value params[2], rval;
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, leaving, runTime );
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::Int32Value( region );
-	bool retVal = InvokeEvent( "onLeaveRegion", 2, params, &rval );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, leaving, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::Int32Value( region ) );
+	bool retVal = InvokeEvent( "onLeaveRegion", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnLeaveRegion, false );
@@ -3384,13 +3398,13 @@ SI08 cScript::OnFacetChange( CChar *mChar, const UI08 oldFacet, const UI08 newFa
 	if( !ExistAndVerify( seOnFacetChange, "onFacetChange" ))
 		return RV_NOFUNC;
 
-	JS::Value params[3], rval;
-
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, mChar, runTime );
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::Int32Value( oldFacet );
-	params[2] = JS::Int32Value( newFacet );
-	bool retVal = InvokeEvent( "onFacetChange", 3, params, &rval );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, mChar, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::Int32Value( oldFacet ) );
+	params[2].set( JS::Int32Value( newFacet ) );
+	bool retVal = InvokeEvent( "onFacetChange", 3, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -3414,9 +3428,10 @@ SI32 cScript::OnSpellTargetSelect(  CChar *caster, CBaseObject *target, SI32 spe
 	if( !ExistAndVerify( seOnSpellTargetSelect, "onSpellTargetSelect" ))
 		return RV_NOFUNC;
 
-	JS::Value params[4], rval;
-	JSObject *castObj = JSEngine->AcquireObject( IUE_CHAR, caster, runTime );
-	JSObject *targObj;
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject castObj( targContext, JSEngine->AcquireObject( IUE_CHAR, caster, runTime ) );
+	JS::RootedObject targObj( targContext );
 	if( target->CanBeObjType( OT_CHAR ))
 	{
 		targObj = JSEngine->AcquireObject( IUE_CHAR, target, runTime );
@@ -3425,10 +3440,10 @@ SI32 cScript::OnSpellTargetSelect(  CChar *caster, CBaseObject *target, SI32 spe
 	{
 		targObj = JSEngine->AcquireObject( IUE_ITEM, target, runTime );
 	}
-	params[0] = JS::ObjectOrNullValue( targObj );
-	params[1] = JS::ObjectOrNullValue( castObj );
-	params[2] = JS::Int32Value( spellNum );
-	bool retVal = InvokeEvent( "onSpellTargetSelect", 3, params, &rval );
+	params[0].set( JS::ObjectOrNullValue( targObj ) );
+	params[1].set( JS::ObjectOrNullValue( castObj ) );
+	params[2].set( JS::Int32Value( spellNum ) );
+	bool retVal = InvokeEvent( "onSpellTargetSelect", 3, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnSpellTargetSelect, false );
@@ -3451,9 +3466,10 @@ SI32 cScript::OnSpellTarget( CBaseObject *target, CChar *caster, SI32 spellNum )
 	if( !ExistAndVerify( seOnSpellTarget, "onSpellTarget" ))
 		return RV_NOFUNC;
 
-	JS::Value params[4], rval;
-	JSObject *castObj = JSEngine->AcquireObject( IUE_CHAR, caster, runTime );
-	JSObject *targObj;
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject castObj( targContext, JSEngine->AcquireObject( IUE_CHAR, caster, runTime ) );
+	JS::RootedObject targObj( targContext );
 	if( target->CanBeObjType( OT_CHAR ))
 	{
 		targObj = JSEngine->AcquireObject( IUE_CHAR, target, runTime );
@@ -3462,10 +3478,10 @@ SI32 cScript::OnSpellTarget( CBaseObject *target, CChar *caster, SI32 spellNum )
 	{
 		targObj = JSEngine->AcquireObject( IUE_ITEM, target, runTime );
 	}
-	params[0] = JS::ObjectOrNullValue( targObj );
-	params[1] = JS::ObjectOrNullValue( castObj );
-	params[2] = JS::Int32Value( spellNum );
-	bool retVal = InvokeEvent( "onSpellTarget", 3, params, &rval );
+	params[0].set( JS::ObjectOrNullValue( targObj ) );
+	params[1].set( JS::ObjectOrNullValue( castObj ) );
+	params[2].set( JS::Int32Value( spellNum ) );
+	bool retVal = InvokeEvent( "onSpellTarget", 3, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnSpellTarget, false );
@@ -3494,7 +3510,7 @@ bool cScript::CallParticularEvent( const char *eventToCall, const JS::Value *par
 		SetEventExists( seOnSpellSuccess, false );
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -3515,13 +3531,12 @@ SI32 cScript::OnSpellCast( CChar *tChar, SI32 SpellId )
 	if( !ExistAndVerify( seOnSpellCast, "onSpellCast" ))
 		return -2;
 
-	JS::Value params[2], rval;
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, tChar, runTime );
-
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::Int32Value( SpellId );
-
-	bool retVal = InvokeEvent( "onSpellCast", 2, params, &rval );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, tChar, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::Int32Value( SpellId ) );
+	bool retVal = InvokeEvent( "onSpellCast", 2, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -3549,13 +3564,12 @@ SI32 cScript::OnScrollCast( CChar *tChar, SI32 SpellId )
 	if( !ExistAndVerify( seOnScrollCast, "onScrollCast" ))
 		return -2;
 
-	JS::Value params[2], rval;
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, tChar, runTime );
-
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::Int32Value( SpellId );
-
-	bool retVal = InvokeEvent( "onScrollCast", 2, params, &rval );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, tChar, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::Int32Value( SpellId ) );
+	bool retVal = InvokeEvent( "onScrollCast", 2, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -3579,13 +3593,12 @@ SI32 cScript::OnSpellSuccess( CChar *tChar, SI32 SpellId )
 	if( !ExistAndVerify( seOnSpellSuccess, "onSpellSuccess" ))
 		return RV_NOFUNC;
 
-	JS::Value params[2], rval;
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, tChar, runTime );
-
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::Int32Value( SpellId );
-
-	bool retVal = InvokeEvent( "onSpellSuccess", 2, params, &rval );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, tChar, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::Int32Value( SpellId ) );
+	bool retVal = InvokeEvent( "onSpellSuccess", 2, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -3609,17 +3622,15 @@ SI08 cScript::OnTalk( CChar *myChar, const char *mySpeech )
 	if( !ExistAndVerify( seOnTalk, "onTalk" ))
 		return RV_NOFUNC;
 
-	JS::Value params[2], rval;
-
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
 	std::string lwrSpeech	= mySpeech;
 	JS::RootedString strSpeech( targContext, JS_NewStringCopyZ( targContext, oldstrutil::lower( lwrSpeech ).c_str() ));
 
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, myChar, runTime );
-
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::StringValue( strSpeech );
-
-	bool retVal = InvokeEvent( "onTalk", 2, params, &rval );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, myChar, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::StringValue( strSpeech ) );
+	bool retVal = InvokeEvent( "onTalk", 2, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -3645,29 +3656,28 @@ bool cScript::OnSpeechInput( CChar *myChar, CItem *myItem, const char *mySpeech 
 	if( !ExistAndVerify( seOnSpeechInput, "onSpeechInput" ))
 		return true;
 
-	JS::Value params[4], rval;
+	JS::RootedValueArray<4> params( targContext );
+	JS::RootedValue rval( targContext );
 	char *lwrSpeech = new char[strlen( mySpeech ) + 1];
 	strcopy( lwrSpeech, strlen( mySpeech ) + 1, mySpeech );
 	JS::RootedString strSpeech( targContext, JS_NewStringCopyZ( targContext, lwrSpeech ));
 	delete[] lwrSpeech;
 
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, myChar, runTime );
-	params[0] = JS::ObjectOrNullValue( charObj );
-
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, myChar, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
 	if( !ValidateObject( myItem ))
 	{
-		params[1] = JS::NullValue();
+		params[1].set( JS::NullValue() );
 	}
 	else
 	{
-		JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, myItem, runTime );
-		params[1] = JS::ObjectOrNullValue( itemObj );
+		JS::RootedObject itemObj( targContext, JSEngine->AcquireObject( IUE_ITEM, myItem, runTime ) );
+		params[1].set( JS::ObjectOrNullValue( itemObj ) );
 	}
 
-	params[2] = JS::StringValue( strSpeech );
-	params[3] = JS::Int32Value( myChar->GetSpeechId() );
-
-	bool retVal = InvokeEvent( "onSpeechInput", 4, params, &rval );
+	params[2].set( JS::StringValue( strSpeech ) );
+	params[3].set( JS::Int32Value( myChar->GetSpeechId() ) );
+	bool retVal = InvokeEvent( "onSpeechInput", 4, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -3691,11 +3701,12 @@ SI32 cScript::OnSpellGain( CItem *book, const SI32 spellNum )
 	if( !ExistAndVerify( seOnSpellGain, "onSpellGain" ))
 		return RV_NOFUNC;
 
-	JS::Value params[2], rval;
-	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, book, runTime );
-	params[0] = JS::ObjectOrNullValue( itemObj );
-	params[1] = JS::Int32Value( spellNum );
-	bool retVal = InvokeEvent( "onSpellGain", 2, params, &rval );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject itemObj( targContext, JSEngine->AcquireObject( IUE_ITEM, book, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( itemObj ) );
+	params[1].set( JS::Int32Value( spellNum ) );
+	bool retVal = InvokeEvent( "onSpellGain", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnSpellGain, false );
@@ -3718,11 +3729,12 @@ SI32 cScript::OnSpellLoss( CItem *book, const SI32 spellNum )
 	if( !ExistAndVerify( seOnSpellLoss, "onSpellLoss" ))
 		return RV_NOFUNC;
 
-	JS::Value params[2], rval;
-	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, book, runTime );
-	params[0] = JS::ObjectOrNullValue( itemObj );
-	params[1] = JS::Int32Value( spellNum );
-	bool retVal = InvokeEvent( "onSpellLoss", 2, params, &rval );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject itemObj( targContext, JSEngine->AcquireObject( IUE_ITEM, book, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( itemObj ) );
+	params[1].set( JS::Int32Value( spellNum ) );
+	bool retVal = InvokeEvent( "onSpellLoss", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnSpellLoss, false );
@@ -3745,15 +3757,16 @@ SI08 cScript::OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill
 	if( !ExistAndVerify( seOnSkillCheck, "onSkillCheck" ))
 		return RV_NOFUNC;
 
-	JS::Value params[6], rval;
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, myChar, runTime );
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::Int32Value( skill );
-	params[2] = JS::Int32Value( lowSkill );
-	params[3] = JS::Int32Value( highSkill );
-	params[4] = JS::BooleanValue( isCraftSkill );
-	params[5] = JS::Int32Value( overrideOutcome );
-    bool retVal = InvokeEvent( "onSkillCheck", 6, params, &rval );
+	JS::RootedValueArray<6> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, myChar, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::Int32Value( skill ) );
+	params[2].set( JS::Int32Value( lowSkill ) );
+	params[3].set( JS::Int32Value( highSkill ) );
+	params[4].set( JS::BooleanValue( isCraftSkill ) );
+	params[5].set( JS::Int32Value( overrideOutcome ) );
+    bool retVal = InvokeEvent( "onSkillCheck", 6, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnSkillCheck, false );
@@ -3778,11 +3791,10 @@ bool cScript::AreaObjFunc( const char *funcName, CBaseObject *srcObject, CBaseOb
 	if( !ValidateObject( srcObject ) || !ValidateObject( tmpObject ) || funcName == nullptr )
 		return false;
 
-	JS::Value params[3], rval;
-
-	JSObject *srcObj = nullptr;
-	JSObject *tmpObj = nullptr;
-
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject srcObj( targContext );
+	JS::RootedObject tmpObj( targContext );
 	if( srcObject == nullptr || tmpObject == nullptr )
 		return false;
 
@@ -3809,25 +3821,24 @@ bool cScript::AreaObjFunc( const char *funcName, CBaseObject *srcObject, CBaseOb
 		return false;
 	}
 
-	params[0]			= JS::ObjectOrNullValue( srcObj );
-	params[1]			= JS::ObjectOrNullValue( tmpObj );
-
+	params[0].set( JS::ObjectOrNullValue( srcObj ) );
+	params[1].set( JS::ObjectOrNullValue( tmpObj ) );
 	if( s != nullptr )
 	{
-		JSObject *sockObj	= nullptr;
+		JS::RootedObject sockObj( targContext );
 		sockObj		= JSEngine->AcquireObject( IUE_SOCK, s, runTime );
-		params[2]	= JS::ObjectOrNullValue( sockObj );
+		params[2].set( JS::ObjectOrNullValue( sockObj ) );
 	}
 	else
 	{
-		params[2]	= JS::NullValue();
+		params[2].set( JS::NullValue() );
 	}
 	// ExistAndVerify() normally sets our Global Object, but not on custom named functions.
 
 	//FIXME === do we need this retvalue?
 	try
 	{
-		[[maybe_unused]] bool retVal = InvokeEvent( funcName, 3, params, &rval );
+		[[maybe_unused]] bool retVal = InvokeEvent( funcName, 3, params.begin(), rval.address() );
 	}
 	catch( ... )
 	{
@@ -3850,12 +3861,13 @@ SI08 cScript::OnCommand( CSocket *mSock, std::string command )
 	if( !ExistAndVerify( seOnCommand, "onCommand" ))
 		return RV_NOFUNC;
 
-	JS::Value params[2], rval;
-	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject myObj( targContext, JSEngine->AcquireObject( IUE_SOCK, mSock, runTime ) );
 	JS::RootedString strCmd( targContext, JS_NewStringCopyZ( targContext, oldstrutil::lower( command ).c_str() ));
-	params[0]	= JS::ObjectOrNullValue( myObj );
-	params[1]	= JS::StringValue( strCmd );
-	bool retVal	= InvokeEvent( "onCommand", 2, params, &rval );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::StringValue( strCmd ) );
+	bool retVal	= InvokeEvent( "onCommand", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnCommand, false );
@@ -3878,13 +3890,13 @@ std::string cScript::OnProfileRequest( CSocket *mSock, CChar *profileOwner )
 	if( !ExistAndVerify( seOnProfileRequest, "onProfileRequest" ))
 		return "";
 
-	JS::Value params[2], rval;
-	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
-	JSObject *profOwnerObj	= JSEngine->AcquireObject( IUE_CHAR, profileOwner, runTime );
-	
-	params[0]	= JS::ObjectOrNullValue( myObj );
-	params[1]	= JS::ObjectOrNullValue( profOwnerObj );
-	bool retVal	= InvokeEvent( "onProfileRequest", 2, params, &rval );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject myObj( targContext, JSEngine->AcquireObject( IUE_SOCK, mSock, runTime ) );
+	JS::RootedObject profOwnerObj( targContext, JSEngine->AcquireObject( IUE_CHAR, profileOwner, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::ObjectOrNullValue( profOwnerObj ) );
+	bool retVal	= InvokeEvent( "onProfileRequest", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnProfileRequest, false );
@@ -3922,13 +3934,14 @@ SI08 cScript::OnProfileUpdate( CSocket *mSock, std::string profileText )
 	if( !ExistAndVerify( seOnProfileUpdate, "onProfileUpdate" ))
 		return false;
 
-	JS::Value params[2], rval;
-	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject myObj( targContext, JSEngine->AcquireObject( IUE_SOCK, mSock, runTime ) );
 	JS::RootedString strProfileText( targContext, JS_NewStringCopyZ( targContext, profileText.c_str() ));
 
-	params[0]	= JS::ObjectOrNullValue( myObj );
-	params[1]	= JS::StringValue( strProfileText );
-	bool retVal	= InvokeEvent( "onProfileUpdate", 2, params, &rval );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::StringValue( strProfileText ) );
+	bool retVal	= InvokeEvent( "onProfileUpdate", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnProfileUpdate, false );
@@ -3973,7 +3986,7 @@ bool cScript::ExistAndVerify( ScriptEvent eventNum, std::string functionName )
 bool cScript::ScriptRegistration( std::string scriptType )
 {
 	scriptType += "Registration";
-	JS::Value params[1], rval;
+	JS::RootedValue rval( targContext );
 	// ExistAndVerify() normally sets our Global Object, but not on custom named functions.
 
 	JS::RootedValue Func( targContext, JS::NullValue() );
@@ -3984,7 +3997,7 @@ bool cScript::ScriptRegistration( std::string scriptType )
 		return false;
 	}
 
-	bool retVal = InvokeEvent( scriptType.c_str(), 0, params, &rval );
+	bool retVal = InvokeEvent( scriptType.c_str(), 0, nullptr, rval.address() );
 	return ( retVal == true );
 }
 
@@ -3995,13 +4008,14 @@ bool cScript::ScriptRegistration( std::string scriptType )
 //o------------------------------------------------------------------------------------------------o
 bool cScript::executeCommand( CSocket *s, std::string funcName, std::string executedString )
 {
-	JS::Value params[2], rval;
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
 	JS::RootedString execString( targContext, JS_NewStringCopyZ( targContext, executedString.c_str() ));
-	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, s, runTime );
-	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = JS::StringValue( execString );
+	JS::RootedObject myObj( targContext, JSEngine->AcquireObject( IUE_SOCK, s, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::StringValue( execString ) );
 	// ExistAndVerify() normally sets our Global Object, but not on custom named functions.
-	bool retVal = InvokeEvent( funcName.c_str(), 2, params, &rval );
+	bool retVal = InvokeEvent( funcName.c_str(), 2, params.begin(), rval.address() );
 
 	return ( retVal == true );
 }
@@ -4019,16 +4033,15 @@ bool cScript::MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, SI3
 	if( !ExistAndVerify( seOnSpellCast, "onSpellCast" ))
 		return false;
 
-	JS::Value params[4], rval;
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, tChar, runTime );
-	JSObject *sockObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
-
-	params[0] = JS::ObjectOrNullValue( sockObj );
-	params[1] = JS::ObjectOrNullValue( charObj );
-	params[2] = JS::BooleanValue( directCast );
-	params[3] = JS::Int32Value( spellNum );
-
-	bool retVal = InvokeEvent( "onSpellCast", 4, params, &rval );
+	JS::RootedValueArray<4> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, tChar, runTime ) );
+	JS::RootedObject sockObj( targContext, JSEngine->AcquireObject( IUE_SOCK, mSock, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( sockObj ) );
+	params[1].set( JS::ObjectOrNullValue( charObj ) );
+	params[2].set( JS::BooleanValue( directCast ) );
+	params[3].set( JS::Int32Value( spellNum ) );
+	bool retVal = InvokeEvent( "onSpellCast", 4, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -4053,9 +4066,9 @@ bool cScript::OnIterate( CBaseObject *a, UI32 &b, CSocket *mSock )
 	if( !ExistAndVerify( seOnIterate, "onIterate" ))
 		return false;
 
-	JS::Value params[2], rval;
-
-	JSObject *myObj = nullptr;
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject myObj( targContext );
 	if( a->GetObjType() == OT_CHAR )
 	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, a, runTime );
@@ -4065,16 +4078,15 @@ bool cScript::OnIterate( CBaseObject *a, UI32 &b, CSocket *mSock )
 		myObj = JSEngine->AcquireObject( IUE_ITEM, a, runTime );
 	}
 
-	JSObject *sockObj = nullptr;
+	JS::RootedObject sockObj( targContext );
 	if( mSock )
 	{
 		sockObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
 	}
 
-	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = JS::ObjectOrNullValue( sockObj );
-
-	bool retVal	= InvokeEvent( "onIterate", 2, params, &rval );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::ObjectOrNullValue( sockObj ) );
+	bool retVal	= InvokeEvent( "onIterate", 2, params.begin(), rval.address() );
 
 	/*	if( ValidateObject( a ))
 	{
@@ -4114,21 +4126,20 @@ bool cScript::OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b, CSocket *mSock  )
 	if( !ExistAndVerify( seOnIterateSpawnRegions, "onIterateSpawnRegions" ))
 		return false;
 
-	JS::Value params[2], rval;
-
-	JSObject *myObj = nullptr;
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject myObj( targContext );
 	myObj = JSEngine->AcquireObject( IUE_SPAWNREGION, a, runTime );
 
-	JSObject *sockObj = nullptr;
+	JS::RootedObject sockObj( targContext );
 	if( mSock )
 	{
 		sockObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
 	}
 
-	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = JS::ObjectOrNullValue( sockObj );
-
-	bool retVal = InvokeEvent( "onIterateSpawnRegions", 2, params, &rval );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::ObjectOrNullValue( sockObj ) );
+	bool retVal = InvokeEvent( "onIterateSpawnRegions", 2, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -4157,12 +4168,13 @@ bool cScript::OnPacketReceive( CSocket *mSock, UI16 packetNum )
 	if( !ExistAndVerify( seOnPacketReceive, "onPacketReceive" ))
 		return false;
 
-	JS::Value rval, params[3];
-	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
-	params[0]		= JS::ObjectOrNullValue( myObj );
-	params[1]		= JS::Int32Value( static_cast<UI08>( packetNum % 256 ));
-	params[2]		= JS::Int32Value( static_cast<UI08>( packetNum >> 8 ));
-	bool retVal	= InvokeEvent( "onPacketReceive", 3, params, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedObject myObj( targContext, JSEngine->AcquireObject( IUE_SOCK, mSock, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::Int32Value( static_cast<UI08>( packetNum % 256 )) );
+	params[2].set( JS::Int32Value( static_cast<UI08>( packetNum >> 8 )) );
+	bool retVal	= InvokeEvent( "onPacketReceive", 3, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -4185,14 +4197,13 @@ SI08 cScript::OnPaperDoll( CChar *currChar, CChar *targChar )
 	if( !ExistAndVerify( seOnPaperDoll, "onPaperDoll" ))
 		return RV_NOFUNC;
 
-	JS::Value params[2], rval;
-	JSObject *srcObj = JSEngine->AcquireObject( IUE_CHAR, currChar, runTime );
-	JSObject *trgObj = JSEngine->AcquireObject( IUE_CHAR, targChar, runTime );
-
-	params[0] = JS::ObjectOrNullValue( srcObj );
-	params[1] = JS::ObjectOrNullValue( trgObj );
-
-	bool retVal = InvokeEvent( "onPaperDoll", 2, params, &rval );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject srcObj( targContext, JSEngine->AcquireObject( IUE_CHAR, currChar, runTime ) );
+	JS::RootedObject trgObj( targContext, JSEngine->AcquireObject( IUE_CHAR, targChar, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( srcObj ) );
+	params[1].set( JS::ObjectOrNullValue( trgObj ) );
+	bool retVal = InvokeEvent( "onPaperDoll", 2, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -4218,15 +4229,14 @@ SI08 cScript::OnCharDoubleClick( CChar *currChar, CChar *targChar, bool nonMouse
 	if( !ExistAndVerify( seOnCharDoubleClick, "onCharDoubleClick" ))
 		return RV_NOFUNC;
 
-	JS::Value params[3], rval;
-	JSObject *srcObj = JSEngine->AcquireObject( IUE_CHAR, currChar, runTime );
-	JSObject *trgObj = JSEngine->AcquireObject( IUE_CHAR, targChar, runTime );
-
-	params[0] = JS::ObjectOrNullValue( srcObj );
-	params[1] = JS::ObjectOrNullValue( trgObj );
-	params[2] = JS::BooleanValue( nonMouseClickEvent );
-
-	bool retVal = InvokeEvent( "onCharDoubleClick", 3, params, &rval );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject srcObj( targContext, JSEngine->AcquireObject( IUE_CHAR, currChar, runTime ) );
+	JS::RootedObject trgObj( targContext, JSEngine->AcquireObject( IUE_CHAR, targChar, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( srcObj ) );
+	params[1].set( JS::ObjectOrNullValue( trgObj ) );
+	params[2].set( JS::BooleanValue( nonMouseClickEvent ) );
+	bool retVal = InvokeEvent( "onCharDoubleClick", 3, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -4250,13 +4260,13 @@ SI08 cScript::OnDismount( CChar *pChar, CChar *npcMount )
 	if( !ExistAndVerify( seOnDismount, "onDismount" ))
 		return false;
 
-	JS::Value params[2], rval;
-	JSObject *pObj = JSEngine->AcquireObject( IUE_CHAR, pChar, runTime );
-	JSObject *npcObj = JSEngine->AcquireObject( IUE_CHAR, npcMount, runTime );
-
-	params[0] = JS::ObjectOrNullValue( pObj );
-	params[1] = JS::ObjectOrNullValue( npcObj );
-	bool retVal = InvokeEvent( "onDismount", 2, params, &rval );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject pObj( targContext, JSEngine->AcquireObject( IUE_CHAR, pChar, runTime ) );
+	JS::RootedObject npcObj( targContext, JSEngine->AcquireObject( IUE_CHAR, npcMount, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( pObj ) );
+	params[1].set( JS::ObjectOrNullValue( npcObj ) );
+	bool retVal = InvokeEvent( "onDismount", 2, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -4281,11 +4291,11 @@ SI08 cScript::OnSkillGump( CChar *currChar )
 	if( !ExistAndVerify( seOnSkillGump, "onSkillGump" ))
 		return RV_NOFUNC;
 
-	JS::Value params[1], rval;
-
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, currChar, runTime );
-	params[0] = JS::ObjectOrNullValue( charObj );
-	bool retVal	= InvokeEvent( "onSkillGump", 1, params, &rval );
+	JS::RootedValueArray<1> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, currChar, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	bool retVal	= InvokeEvent( "onSkillGump", 1, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -4310,15 +4320,15 @@ SI08 cScript::OnUseBandageMacro( CSocket *mSock, CChar *targChar, CItem *bandage
 	if( !ExistAndVerify( seOnUseBandageMacro, "onUseBandageMacro" ))
 		return RV_NOFUNC;
 
-	JS::Value params[3], rval;
-
-	JSObject *mSockObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
-	JSObject *targCharObj = JSEngine->AcquireObject( IUE_CHAR, targChar, runTime );
-	JSObject *bandageItemObj = JSEngine->AcquireObject( IUE_ITEM, bandageItem, runTime );
-	params[0] = JS::ObjectOrNullValue( mSockObj );
-	params[1] = JS::ObjectOrNullValue( targCharObj );
-	params[2] = JS::ObjectOrNullValue( bandageItemObj );
-	bool retVal = InvokeEvent( "onUseBandageMacro", 3, params, &rval );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject mSockObj( targContext, JSEngine->AcquireObject( IUE_SOCK, mSock, runTime ) );
+	JS::RootedObject targCharObj( targContext, JSEngine->AcquireObject( IUE_CHAR, targChar, runTime ) );
+	JS::RootedObject bandageItemObj( targContext, JSEngine->AcquireObject( IUE_ITEM, bandageItem, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( mSockObj ) );
+	params[1].set( JS::ObjectOrNullValue( targCharObj ) );
+	params[2].set( JS::ObjectOrNullValue( bandageItemObj ) );
+	bool retVal = InvokeEvent( "onUseBandageMacro", 3, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -4345,14 +4355,13 @@ SI08 cScript::OnAICombatTarget( CChar *attacker, CChar *target )
 	if( !ExistAndVerify( seOnAICombatTarget, "onAICombatTarget" ))
 		return RV_NOFUNC;
 
-	JS::Value params[2], rval;
-
-	JSObject *attObj = JSEngine->AcquireObject( IUE_CHAR, attacker, runTime );
-	JSObject *targObj = JSEngine->AcquireObject( IUE_CHAR, target, runTime );
-
-	params[0] = JS::ObjectOrNullValue( attObj );
-	params[1] = JS::ObjectOrNullValue( targObj );
-	bool retVal = InvokeEvent( "onAICombatTarget", 2, params, &rval );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject attObj( targContext, JSEngine->AcquireObject( IUE_CHAR, attacker, runTime ) );
+	JS::RootedObject targObj( targContext, JSEngine->AcquireObject( IUE_CHAR, target, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( attObj ) );
+	params[1].set( JS::ObjectOrNullValue( targObj ) );
+	bool retVal = InvokeEvent( "onAICombatTarget", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnAICombatTarget, false );
@@ -4378,14 +4387,13 @@ SI08 cScript::OnCombatStart( CChar *attacker, CChar *defender )
 	if( !ExistAndVerify( seOnCombatStart, "onCombatStart" ))
 		return RV_NOFUNC;
 
-	JS::Value params[2], rval;
-
-	JSObject *attObj = JSEngine->AcquireObject( IUE_CHAR, attacker, runTime );
-	JSObject *defObj = JSEngine->AcquireObject( IUE_CHAR, defender, runTime );
-
-	params[0] = JS::ObjectOrNullValue( attObj );
-	params[1] = JS::ObjectOrNullValue( defObj );
-	bool retVal = InvokeEvent( "onCombatStart", 2, params, &rval );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject attObj( targContext, JSEngine->AcquireObject( IUE_CHAR, attacker, runTime ) );
+	JS::RootedObject defObj( targContext, JSEngine->AcquireObject( IUE_CHAR, defender, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( attObj ) );
+	params[1].set( JS::ObjectOrNullValue( defObj ) );
+	bool retVal = InvokeEvent( "onCombatStart", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnCombatStart, false );
@@ -4411,14 +4419,13 @@ SI08 cScript::OnCombatEnd( CChar *currChar, CChar *targChar )
 	if( !ExistAndVerify( seOnCombatEnd, "onCombatEnd" ))
 		return RV_NOFUNC;
 
-	JS::Value params[2], rval;
-
-	JSObject *attObj = JSEngine->AcquireObject( IUE_CHAR, currChar, runTime );
-	JSObject *defObj = JSEngine->AcquireObject( IUE_CHAR, targChar, runTime );
-
-	params[0] = JS::ObjectOrNullValue( attObj );
-	params[1] = JS::ObjectOrNullValue( defObj );
-	bool retVal = InvokeEvent( "onCombatEnd", 2, params, &rval );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	JS::RootedObject attObj( targContext, JSEngine->AcquireObject( IUE_CHAR, currChar, runTime ) );
+	JS::RootedObject defObj( targContext, JSEngine->AcquireObject( IUE_CHAR, targChar, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( attObj ) );
+	params[1].set( JS::ObjectOrNullValue( defObj ) );
+	bool retVal = InvokeEvent( "onCombatEnd", 2, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -4445,13 +4452,13 @@ SI08 cScript::OnDeathBlow( CChar *mKilled, CChar *mKiller )
 	if( !ExistAndVerify( seOnDeathBlow, "onDeathBlow" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[2];
-	JSObject *killedObj = JSEngine->AcquireObject( IUE_CHAR, mKilled, runTime );
-	JSObject *killerObj = JSEngine->AcquireObject( IUE_CHAR, mKiller, runTime );
-
-	params[0] = JS::ObjectOrNullValue( killedObj );
-	params[1] = JS::ObjectOrNullValue( killerObj );
-	bool retVal = InvokeEvent( "onDeathBlow", 2, params, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedObject killedObj( targContext, JSEngine->AcquireObject( IUE_CHAR, mKilled, runTime ) );
+	JS::RootedObject killerObj( targContext, JSEngine->AcquireObject( IUE_CHAR, mKiller, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( killedObj ) );
+	params[1].set( JS::ObjectOrNullValue( killerObj ) );
+	bool retVal = InvokeEvent( "onDeathBlow", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnDeathBlow, false );
@@ -4477,15 +4484,14 @@ SI08 cScript::OnKill( CChar *mKiller, CChar *mKilled )
 	if( !ExistAndVerify( seOnKill, "onKill" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[2];
-	JSObject *killerObj = JSEngine->AcquireObject( IUE_CHAR, mKiller, runTime );
-	JSObject *killedObj = JSEngine->AcquireObject( IUE_CHAR, mKilled, runTime );
-
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedObject killerObj( targContext, JSEngine->AcquireObject( IUE_CHAR, mKiller, runTime ) );
+	JS::RootedObject killedObj( targContext, JSEngine->AcquireObject( IUE_CHAR, mKilled, runTime ) );
 	// JS: function onKill( killer, killed )
-	params[0] = JS::ObjectOrNullValue( killerObj );
-	params[1] = JS::ObjectOrNullValue( killedObj );
-
-	bool retVal = InvokeEvent( "onKill", 2, params, &rval );
+	params[0].set( JS::ObjectOrNullValue( killerObj ) );
+	params[1].set( JS::ObjectOrNullValue( killedObj ) );
+	bool retVal = InvokeEvent( "onKill", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnKill, false );
@@ -4513,16 +4519,15 @@ SI16 cScript::OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFigh
 
 	SI16 funcRetVal	= -1;
 
-	JS::Value rval, params[4];
-	JSObject *attackerObj = JSEngine->AcquireObject( IUE_CHAR, attacker, runTime );
-	JSObject *defenderObj = JSEngine->AcquireObject( IUE_CHAR, defender, runTime );
-
-	params[0] = JS::ObjectOrNullValue( attackerObj );
-	params[1] = JS::ObjectOrNullValue( defenderObj );
-	params[2] = JS::Int32Value( getFightSkill );
-	params[3] = JS::Int32Value( hitLoc );
-
-	bool retVal = InvokeEvent( "onCombatDamageCalc", 4, params, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedObject attackerObj( targContext, JSEngine->AcquireObject( IUE_CHAR, attacker, runTime ) );
+	JS::RootedObject defenderObj( targContext, JSEngine->AcquireObject( IUE_CHAR, defender, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( attackerObj ) );
+	params[1].set( JS::ObjectOrNullValue( defenderObj ) );
+	params[2].set( JS::Int32Value( getFightSkill ) );
+	params[3].set( JS::Int32Value( hitLoc ) );
+	bool retVal = InvokeEvent( "onCombatDamageCalc", 4, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnCombatDamageCalc, false );
@@ -4558,24 +4563,23 @@ SI08 cScript::OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue, Weath
 	if( !ExistAndVerify( seOnDamage, "onDamage" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[4];
-	JSObject *damagedObj = JSEngine->AcquireObject( IUE_CHAR, damaged, runTime );
-	params[0] = JS::ObjectOrNullValue( damagedObj );
-
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedObject damagedObj( targContext, JSEngine->AcquireObject( IUE_CHAR, damaged, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( damagedObj ) );
 	if( ValidateObject( attacker ))
 	{
-		JSObject *attackerObj = JSEngine->AcquireObject( IUE_CHAR, attacker, runTime );
-		params[1] = JS::ObjectOrNullValue( attackerObj );
+		JS::RootedObject attackerObj( targContext, JSEngine->AcquireObject( IUE_CHAR, attacker, runTime ) );
+		params[1].set( JS::ObjectOrNullValue( attackerObj ) );
 	}
 	else
 	{
-		params[1] = JS::NullValue();
+		params[1].set( JS::NullValue() );
 	}
 
-	params[2] = JS::Int32Value( damageValue );
-	params[3] = JS::Int32Value( damageType );
-
-	bool retVal = InvokeEvent( "onDamage", 4, params, &rval );
+	params[2].set( JS::Int32Value( damageValue ) );
+	params[3].set( JS::Int32Value( damageType ) );
+	bool retVal = InvokeEvent( "onDamage", 4, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnDamage, false );
@@ -4598,18 +4602,15 @@ SI08 cScript::OnDamageDeal( CChar *attacker, CChar *damaged, SI16 damageValue, W
 	if( !ExistAndVerify( seOnDamageDeal, "onDamageDeal" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[4];
-	JSObject *attackerObj = JSEngine->AcquireObject( IUE_CHAR, attacker, runTime );
-	params[0] = JS::ObjectOrNullValue( attackerObj );
-
-	JSObject *damagedObj = JSEngine->AcquireObject( IUE_CHAR, damaged, runTime );
-	params[1] = JS::ObjectOrNullValue( damagedObj );
-
-
-	params[2] = JS::Int32Value( damageValue );
-	params[3] = JS::Int32Value( damageType );
-
-	bool retVal = InvokeEvent( "onDamageDeal", 4, params, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<4> params( targContext );
+	JS::RootedObject attackerObj( targContext, JSEngine->AcquireObject( IUE_CHAR, attacker, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( attackerObj ) );
+	JS::RootedObject damagedObj( targContext, JSEngine->AcquireObject( IUE_CHAR, damaged, runTime ) );
+	params[1].set( JS::ObjectOrNullValue( damagedObj ) );
+	params[2].set( JS::Int32Value( damageValue ) );
+	params[3].set( JS::Int32Value( damageType ) );
+	bool retVal = InvokeEvent( "onDamageDeal", 4, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnDamageDeal, false );
@@ -4633,14 +4634,13 @@ SI08 cScript::OnBuy( CSocket *tSock, CChar *objVendor )
 	if( !ExistAndVerify( seOnBuy, "onBuy" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[3];
-	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
-	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
-
-	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = JS::ObjectOrNullValue( charObj );
-
-	bool retVal = InvokeEvent( "onBuy", 2, params, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedObject myObj( targContext, JSEngine->AcquireObject( IUE_SOCK, tSock, runTime ) );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::ObjectOrNullValue( charObj ) );
+	bool retVal = InvokeEvent( "onBuy", 2, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -4665,14 +4665,13 @@ SI08 cScript::OnSell( CSocket *tSock, CChar *objVendor )
 	if( !ExistAndVerify( seOnSell, "onSell" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[3];
-	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
-	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
-
-	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = JS::ObjectOrNullValue( charObj );
-
-	bool retVal = InvokeEvent( "onSell", 2, params, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedObject myObj( targContext, JSEngine->AcquireObject( IUE_SOCK, tSock, runTime ) );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::ObjectOrNullValue( charObj ) );
+	bool retVal = InvokeEvent( "onSell", 2, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -4687,7 +4686,7 @@ SI08 cScript::OnSell( CSocket *tSock, CChar *objVendor )
 //|	Function	-	cScript::OnBuyFromVendor()
 //|	Date		-	26th November, 2011
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Allows determining what happens when an item is in the process of being bought 
+//|	Purpose		-	Allows determining what happens when an item is in the process of being bought
 //|					from an NPC vendor. Returning false/0 from the script will halt the purchase
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnBuyFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought, UI16 numItemsBuying )
@@ -4698,21 +4697,21 @@ SI08 cScript::OnBuyFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *ob
 	if( !ExistAndVerify( seOnBuyFromVendor, "onBuyFromVendor" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[4];
-	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
-	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
-	JSObject *myObj2	= nullptr;
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<4> params( targContext );
+	JS::RootedObject myObj( targContext, JSEngine->AcquireObject( IUE_SOCK, tSock, runTime ) );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime ) );
+	JS::RootedObject myObj2( targContext );
 	if( objItemBought->GetObjType() == OT_ITEM )
 	{
 		myObj2 = JSEngine->AcquireObject( IUE_ITEM, objItemBought, runTime );
 	}
 
-	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = JS::ObjectOrNullValue( charObj );
-	params[2] = JS::ObjectOrNullValue( myObj2 );
-	params[3] = JS::Int32Value( numItemsBuying );
-
-	bool retVal = InvokeEvent( "onBuyFromVendor", 4, params, &rval );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::ObjectOrNullValue( charObj ) );
+	params[2].set( JS::ObjectOrNullValue( myObj2 ) );
+	params[3].set( JS::Int32Value( numItemsBuying ) );
+	bool retVal = InvokeEvent( "onBuyFromVendor", 4, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -4738,21 +4737,21 @@ SI08 cScript::OnSellToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 	if( !ExistAndVerify( seOnSellToVendor, "onSellToVendor" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[4];
-	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
-	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
-	JSObject *myObj2	= nullptr;
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<4> params( targContext );
+	JS::RootedObject myObj( targContext, JSEngine->AcquireObject( IUE_SOCK, tSock, runTime ) );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime ) );
+	JS::RootedObject myObj2( targContext );
 	if( objItemSold->GetObjType() == OT_ITEM )
 	{
 		myObj2 = JSEngine->AcquireObject( IUE_ITEM, objItemSold, runTime );
 	}
 
-	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = JS::ObjectOrNullValue( charObj );
-	params[2] = JS::ObjectOrNullValue( myObj2 );
-	params[3] = JS::Int32Value( numItemsSelling );
-
-	bool retVal = InvokeEvent( "onSellToVendor", 4, params, &rval );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::ObjectOrNullValue( charObj ) );
+	params[2].set( JS::ObjectOrNullValue( myObj2 ) );
+	params[3].set( JS::Int32Value( numItemsSelling ) );
+	bool retVal = InvokeEvent( "onSellToVendor", 4, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -4778,21 +4777,21 @@ SI08 cScript::OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject 
 	if( !ExistAndVerify( seOnBoughtFromVendor, "onBoughtFromVendor" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[4];
-	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
-	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
-	JSObject *myObj2	= nullptr;
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<4> params( targContext );
+	JS::RootedObject myObj( targContext, JSEngine->AcquireObject( IUE_SOCK, tSock, runTime ) );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime ) );
+	JS::RootedObject myObj2( targContext );
 	if( objItemBought->GetObjType() == OT_ITEM )
 	{
 		myObj2 = JSEngine->AcquireObject( IUE_ITEM, objItemBought, runTime );
 	}
 
-	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = JS::ObjectOrNullValue( charObj );
-	params[2] = JS::ObjectOrNullValue( myObj2 );
-	params[3] = JS::Int32Value( numItemsBought );
-
-	bool retVal = InvokeEvent( "onBoughtFromVendor", 4, params, &rval );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::ObjectOrNullValue( charObj ) );
+	params[2].set( JS::ObjectOrNullValue( myObj2 ) );
+	params[3].set( JS::Int32Value( numItemsBought ) );
+	bool retVal = InvokeEvent( "onBoughtFromVendor", 4, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -4818,21 +4817,21 @@ SI08 cScript::OnSoldToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 	if( !ExistAndVerify( seOnSoldToVendor, "onSoldToVendor" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[4];
-	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
-	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
-	JSObject *myObj2	= nullptr;
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<4> params( targContext );
+	JS::RootedObject myObj( targContext, JSEngine->AcquireObject( IUE_SOCK, tSock, runTime ) );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime ) );
+	JS::RootedObject myObj2( targContext );
 	if( objItemSold->GetObjType() == OT_ITEM )
 	{
 		myObj2 = JSEngine->AcquireObject( IUE_ITEM, objItemSold, runTime );
 	}
 
-	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = JS::ObjectOrNullValue( charObj );
-	params[2] = JS::ObjectOrNullValue( myObj2 );
-	params[3] = JS::Int32Value( numItemsSold );
-
-	bool retVal = InvokeEvent( "onSoldToVendor", 4, params, &rval );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::ObjectOrNullValue( charObj ) );
+	params[2].set( JS::ObjectOrNullValue( myObj2 ) );
+	params[3].set( JS::Int32Value( numItemsSold ) );
+	bool retVal = InvokeEvent( "onSoldToVendor", 4, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -4856,15 +4855,14 @@ SI08 cScript::OnHouseCommand( CSocket *tSock, CMultiObj *objMulti, UI08 cmdId )
 	if( !ExistAndVerify( seOnHouseCommand, "onHouseCommand" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[3];
-	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
-	JSObject *multiObj	= JSEngine->AcquireObject( IUE_ITEM, objMulti, runTime );
-
-	params[0] = JS::ObjectOrNullValue( myObj );
-	params[1] = JS::ObjectOrNullValue( multiObj );
-	params[2] = JS::Int32Value( cmdId );
-
-	bool retVal = InvokeEvent( "onHouseCommand", 3, params, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedObject myObj( targContext, JSEngine->AcquireObject( IUE_SOCK, tSock, runTime ) );
+	JS::RootedObject multiObj( targContext, JSEngine->AcquireObject( IUE_ITEM, objMulti, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( myObj ) );
+	params[1].set( JS::ObjectOrNullValue( multiObj ) );
+	params[2].set( JS::Int32Value( cmdId ) );
+	bool retVal = InvokeEvent( "onHouseCommand", 3, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -4888,17 +4886,16 @@ SI08 cScript::OnMakeItem( CSocket *mSock, CChar *objChar, CItem *objItem, UI16 c
 	if( !ExistAndVerify( seOnMakeItem, "onMakeItem" ))
 		return RV_NOFUNC;
 
-	JS::Value rval, params[4];
-	JSObject *mySock	= JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
-	JSObject *myChar	= JSEngine->AcquireObject( IUE_CHAR, objChar, runTime );
-	JSObject *myItem	= JSEngine->AcquireObject( IUE_ITEM, objItem, runTime );
-
-	params[0] = JS::ObjectOrNullValue( mySock );
-	params[1] = JS::ObjectOrNullValue( myChar );
-	params[2] = JS::ObjectOrNullValue( myItem );
-	params[3] = JS::Int32Value( createEntryId );
-
-	bool retVal = InvokeEvent( "onMakeItem", 4, params, &rval );
+	JS::RootedValue rval( targContext );
+	JS::RootedValueArray<4> params( targContext );
+	JS::RootedObject mySock( targContext, JSEngine->AcquireObject( IUE_SOCK, mSock, runTime ) );
+	JS::RootedObject myChar( targContext, JSEngine->AcquireObject( IUE_CHAR, objChar, runTime ) );
+	JS::RootedObject myItem( targContext, JSEngine->AcquireObject( IUE_ITEM, objItem, runTime ) );
+	params[0].set( JS::ObjectOrNullValue( mySock ) );
+	params[1].set( JS::ObjectOrNullValue( myChar ) );
+	params[2].set( JS::ObjectOrNullValue( myItem ) );
+	params[3].set( JS::Int32Value( createEntryId ) );
+	bool retVal = InvokeEvent( "onMakeItem", 4, params.begin(), rval.address() );
 
 	if( !retVal )
 	{
@@ -4913,7 +4910,7 @@ SI08 cScript::OnMakeItem( CSocket *mSock, CChar *objChar, CItem *objItem, UI16 c
 //|	Function	-	cScript::OnPathfindEnd()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for NPCs after their pathfinding efforts come to and end
-//|	Notes		-	pathfindResult gives a value that represents how the pathfinding ended				
+//|	Notes		-	pathfindResult gives a value that represents how the pathfinding ended
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnPathfindEnd( CChar *npc, SI08 pathfindResult )
 {
@@ -4923,13 +4920,12 @@ SI08 cScript::OnPathfindEnd( CChar *npc, SI08 pathfindResult )
 	if( !ExistAndVerify( seOnPathfindEnd, "onPathfindEnd" ))
 		return RV_NOFUNC;
 
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, npc, runTime );
-
-	JS::Value params[2], rval;
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::Int32Value( pathfindResult );
-
-	bool retVal = InvokeEvent( "onPathfindEnd", 2, params, &rval );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, npc, runTime ) );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::Int32Value( pathfindResult ) );
+	bool retVal = InvokeEvent( "onPathfindEnd", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnPathfindEnd, false );
@@ -4953,14 +4949,13 @@ SI08 cScript::OnEnterEvadeState( CChar *npc, CChar *enemy )
 	if( !ExistAndVerify( seOnEnterEvadeState, "onEnterEvadeState" ))
 		return RV_NOFUNC;
 
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, npc, runTime );
-	JSObject *enemyObj = JSEngine->AcquireObject( IUE_CHAR, enemy, runTime );
-
-	JS::Value params[2], rval;
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::ObjectOrNullValue( enemyObj );
-
-	bool retVal = InvokeEvent( "onEnterEvadeState", 2, params, &rval );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, npc, runTime ) );
+	JS::RootedObject enemyObj( targContext, JSEngine->AcquireObject( IUE_CHAR, enemy, runTime ) );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::ObjectOrNullValue( enemyObj ) );
+	bool retVal = InvokeEvent( "onEnterEvadeState", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnEnterEvadeState, false );
@@ -4983,14 +4978,13 @@ SI08 cScript::OnCarveCorpse( CChar *player, CItem *corpse )
 	if( !ExistAndVerify( seOnCarveCorpse, "onCarveCorpse" ))
 		return RV_NOFUNC;
 
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
-	JSObject *corpseObj = JSEngine->AcquireObject( IUE_ITEM, corpse, runTime );
-
-	JS::Value params[2], rval;
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::ObjectOrNullValue( corpseObj );
-
-	bool retVal = InvokeEvent( "onCarveCorpse", 2, params, &rval );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, player, runTime ) );
+	JS::RootedObject corpseObj( targContext, JSEngine->AcquireObject( IUE_ITEM, corpse, runTime ) );
+	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValue rval( targContext );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::ObjectOrNullValue( corpseObj ) );
+	bool retVal = InvokeEvent( "onCarveCorpse", 2, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnCarveCorpse, false );
@@ -5013,16 +5007,15 @@ SI08 cScript::OnDyeTarget( CChar *player, CItem *dyeTub, CItem *target )
 	if( !ExistAndVerify( seOnDyeTarget, "onDyeTarget" ))
 		return RV_NOFUNC;
 
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
-	JSObject *dyeTubObj = JSEngine->AcquireObject( IUE_ITEM, dyeTub, runTime );
-	JSObject *targObj = JSEngine->AcquireObject( IUE_ITEM, target, runTime );
-
-	JS::Value params[3], rval;
-	params[0] = JS::ObjectOrNullValue( charObj );
-	params[1] = JS::ObjectOrNullValue( dyeTubObj );
-	params[2] = JS::ObjectOrNullValue( targObj );
-
-	bool retVal = InvokeEvent( "onDyeTarget", 3, params, &rval );
+	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, player, runTime ) );
+	JS::RootedObject dyeTubObj( targContext, JSEngine->AcquireObject( IUE_ITEM, dyeTub, runTime ) );
+	JS::RootedObject targObj( targContext, JSEngine->AcquireObject( IUE_ITEM, target, runTime ) );
+	JS::RootedValueArray<3> params( targContext );
+	JS::RootedValue rval( targContext );
+	params[0].set( JS::ObjectOrNullValue( charObj ) );
+	params[1].set( JS::ObjectOrNullValue( dyeTubObj ) );
+	params[2].set( JS::ObjectOrNullValue( targObj ) );
+	bool retVal = InvokeEvent( "onDyeTarget", 3, params.begin(), rval.address() );
 	if( !retVal )
 	{
 		SetEventExists( seOnDyeTarget, false );
