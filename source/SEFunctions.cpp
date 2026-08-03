@@ -39,33 +39,6 @@
 #include <js/Array.h>
 #include <js/Conversions.h>
 
-namespace
-{
-bool HasWrapperClass( JS::HandleValue value, const JSClass *expectedClass )
-{
-	return value.isObject() && JS::GetClass( &value.toObject() ) == expectedClass;
-}
-
-template<typename T>
-T *GetWrappedObject( JS::HandleValue value, const JSClass *expectedClass )
-{
-	if( !HasWrapperClass( value, expectedClass ))
-		return nullptr;
-
-	return JS::GetMaybePtrFromReservedSlot<T>( &value.toObject(), 0 );
-}
-
-CBaseObject *GetBaseObject( JS::HandleValue value )
-{
-	CBaseObject *object = GetWrappedObject<CChar>( value, &UOXChar_class );
-	if( object == nullptr )
-		object = GetWrappedObject<CItem>( value, &UOXItem_class );
-
-	return object;
-}
-}
-
-
 void		LoadTeleportLocations( void );
 void		LoadSpawnRegions( void );
 void		LoadRegions( void );

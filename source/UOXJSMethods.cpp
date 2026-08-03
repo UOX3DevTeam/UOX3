@@ -72,46 +72,6 @@ inline JSObject* getThis( JSContext * cx, JS::CallArgs& args )
 
 namespace
 {
-bool HasWrapperClass( JSObject *object, const JSClass *expectedClass )
-{
-	return object != nullptr && JS::GetClass( object ) == expectedClass;
-}
-
-bool HasWrapperClass( JS::HandleValue value, const JSClass *expectedClass )
-{
-	return value.isObject() && HasWrapperClass( &value.toObject(), expectedClass );
-}
-
-template<typename T>
-T *GetWrappedObject( JSObject *object, const JSClass *expectedClass )
-{
-	if( !HasWrapperClass( object, expectedClass ))
-		return nullptr;
-
-	return JS::GetMaybePtrFromReservedSlot<T>( object, 0 );
-}
-
-template<typename T>
-T *GetWrappedObject( JS::HandleValue value, const JSClass *expectedClass )
-{
-	return value.isObject() ? GetWrappedObject<T>( &value.toObject(), expectedClass ) : nullptr;
-}
-
-CBaseObject *GetBaseObject( JSObject *object )
-{
-	if( HasWrapperClass( object, &UOXChar_class ))
-		return JS::GetMaybePtrFromReservedSlot<CChar>( object, 0 );
-	if( HasWrapperClass( object, &UOXItem_class ))
-		return JS::GetMaybePtrFromReservedSlot<CItem>( object, 0 );
-
-	return nullptr;
-}
-
-CBaseObject *GetBaseObject( JS::HandleValue value )
-{
-	return value.isObject() ? GetBaseObject( &value.toObject() ) : nullptr;
-}
-
 std::string ConsoleValueToString( JSContext *cx, JS::HandleValue value )
 {
 	if( value.isObject() )
