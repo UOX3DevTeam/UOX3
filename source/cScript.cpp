@@ -1268,7 +1268,6 @@ std::string cScript::OnNameRequest( CBaseObject *myObj, CChar *nameRequester, UI
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::onQuestToggle( CChar* toggler, CItem *iUsing )
 {
-	const SI08 RV_NOFUNC = -1;
     if( !ValidateObject( toggler) || !ValidateObject( iUsing ))
 		return RV_NOFUNC;
 
@@ -1900,7 +1899,6 @@ SI08 cScript::OnDecay( CItem *decaying )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnReleasePet( CChar *owner, CChar *pet )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( owner ) || !ValidateObject( pet ))
 		return RV_NOFUNC;
 
@@ -2677,22 +2675,22 @@ bool cScript::OnTempEffectExpire( CBaseObject *source, CBaseObject *target, UI16
 	if( !ExistAndVerify( seOnTempEffectExpire, "onTempEffectExpire" ))
 		return false;
 
-	jsval rval, params[3];
-	params[0] = JSVAL_NULL;
+	JS::Value rval, params[3];
+	params[0] = JS::NullValue();
 	if( ValidateObject( source ))
 	{
 		JSObject *sourceObj = JSEngine->AcquireObject(( source->GetObjType() == OT_CHAR ? IUE_CHAR : IUE_ITEM ), source, runTime );
-		params[0] = OBJECT_TO_JSVAL( sourceObj );
+		params[0] = JS::ObjectOrNullValue( sourceObj );
 	}
 	JSObject *targetObj = JSEngine->AcquireObject(( target->GetObjType() == OT_CHAR ? IUE_CHAR : IUE_ITEM ), target, runTime );
-	params[1] = OBJECT_TO_JSVAL( targetObj );
-	params[2] = INT_TO_JSVAL( effectId );
-	JSBool retVal = InvokeEvent( "onTempEffectExpire", 3, params, &rval );
-	if( retVal == JS_FALSE )
+	params[1] = JS::ObjectOrNullValue( targetObj );
+	params[2] = JS::Int32Value( effectId );
+	bool retVal = InvokeEvent( "onTempEffectExpire", 3, params, &rval );
+	if( !retVal )
 	{
 		SetEventExists( seOnTempEffectExpire, false );
 	}
-	return ( retVal == JS_TRUE );
+	return ( retVal == true );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2709,22 +2707,22 @@ bool cScript::OnTempEffectRemove( CBaseObject *source, CBaseObject *target, UI16
 	if( !ExistAndVerify( seOnTempEffectRemove, "onTempEffectRemove" ))
 		return false;
 
-	jsval rval, params[3];
-	params[0] = JSVAL_NULL;
+	JS::Value rval, params[3];
+	params[0] = JS::NullValue();
 	if( ValidateObject( source ))
 	{
 		JSObject *sourceObj = JSEngine->AcquireObject(( source->GetObjType() == OT_CHAR ? IUE_CHAR : IUE_ITEM ), source, runTime );
-		params[0] = OBJECT_TO_JSVAL( sourceObj );
+		params[0] = JS::ObjectOrNullValue( sourceObj );
 	}
 	JSObject *targetObj = JSEngine->AcquireObject(( target->GetObjType() == OT_CHAR ? IUE_CHAR : IUE_ITEM ), target, runTime );
-	params[1] = OBJECT_TO_JSVAL( targetObj );
-	params[2] = INT_TO_JSVAL( effectId );
-	JSBool retVal = InvokeEvent( "onTempEffectRemove", 3, params, &rval );
-	if( retVal == JS_FALSE )
+	params[1] = JS::ObjectOrNullValue( targetObj );
+	params[2] = JS::Int32Value( effectId );
+	bool retVal = InvokeEvent( "onTempEffectRemove", 3, params, &rval );
+	if( !retVal )
 	{
 		SetEventExists( seOnTempEffectRemove, false );
 	}
-	return ( retVal == JS_TRUE );
+	return ( retVal == true );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3410,8 +3408,6 @@ SI08 cScript::OnFacetChange( CChar *mChar, const UI08 oldFacet, const UI08 newFa
 //o------------------------------------------------------------------------------------------------o
 SI32 cScript::OnSpellTargetSelect(  CChar *caster, CBaseObject *target, SI32 spellNum )
 {
-	const SI32 RV_NOFUNC = -1;
-
 	if( !ValidateObject( target ) || !ValidateObject( caster ))
 		return RV_NOFUNC;
 
@@ -3449,8 +3445,6 @@ SI32 cScript::OnSpellTargetSelect(  CChar *caster, CBaseObject *target, SI32 spe
 //o------------------------------------------------------------------------------------------------o
 SI32 cScript::OnSpellTarget( CBaseObject *target, CChar *caster, SI32 spellNum )
 {
-	const SI32 RV_NOFUNC = -1;
-
 	if( !ValidateObject( target ) || !ValidateObject( caster ))
 		return RV_NOFUNC;
 
@@ -3579,9 +3573,6 @@ SI32 cScript::OnScrollCast( CChar *tChar, SI32 SpellId )
 //o------------------------------------------------------------------------------------------------o
 SI32 cScript::OnSpellSuccess( CChar *tChar, SI32 SpellId )
 {
-
-	const SI32 RV_NOFUNC = -1;
-
 	if( !ValidateObject( tChar ))
 		return RV_NOFUNC;
 
@@ -3694,9 +3685,6 @@ bool cScript::OnSpeechInput( CChar *myChar, CItem *myItem, const char *mySpeech 
 //o------------------------------------------------------------------------------------------------o
 SI32 cScript::OnSpellGain( CItem *book, const SI32 spellNum )
 {
-
-	const SI32 RV_NOFUNC = -1;
-
 	if( !ValidateObject( book ))
 		return RV_NOFUNC;
 
@@ -3724,8 +3712,6 @@ SI32 cScript::OnSpellGain( CItem *book, const SI32 spellNum )
 //o------------------------------------------------------------------------------------------------o
 SI32 cScript::OnSpellLoss( CItem *book, const SI32 spellNum )
 {
-	const SI32 RV_NOFUNC = -1;
-
 	if( !ValidateObject( book ))
 		return RV_NOFUNC;
 
@@ -4519,7 +4505,6 @@ SI08 cScript::OnKill( CChar *mKiller, CChar *mKilled )
 //o------------------------------------------------------------------------------------------------o
 SI16 cScript::OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill, UI08 hitLoc )
 {
-	const SI16 RV_NOFUNC = -1;
 	if( !ValidateObject( attacker ) || !ValidateObject( defender ))
 		return RV_NOFUNC;
 

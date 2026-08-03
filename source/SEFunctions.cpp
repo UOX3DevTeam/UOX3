@@ -146,12 +146,12 @@ bool SE_DoTempEffect( JSContext *cx, unsigned int argc, JS::Value *vp )
 		ScriptError( cx, "DoTempEffect: Invalid number of arguments (takes 7 or 8)" );
 		return false;
 	}
-	jsval *argv = JS_ARGV( cx, vp );
-	UI08 iType			= static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
-	UI32 targNum		= JSVAL_TO_INT( argv[3] );
-	UI16 more1			= static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
-	UI16 more2			= static_cast<UI16>( JSVAL_TO_INT( argv[5] ));
-	UI16 more3			= static_cast<UI16>( JSVAL_TO_INT( argv[6] ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	UI08 iType			= static_cast<UI08>( args.get(0).toInt32() );
+	UI32 targNum		= args.get(3).toInt32();
+	UI16 more1			= static_cast<UI16>( args.get(4).toInt32() );
+	UI16 more2			= static_cast<UI16>( args.get(5).toInt32() );
+	UI16 more3			= static_cast<UI16>( args.get(6).toInt32() );
 	UI16 assocScript	= 0xFFFF;
 	if( targNum == 44 && JSMapping->currentActive() != nullptr )
 	{

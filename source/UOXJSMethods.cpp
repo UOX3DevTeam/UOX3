@@ -2448,7 +2448,7 @@ bool CBase_GetTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	auto args = JS::CallArgsFromVp(argc, vp);
 	auto obj = getThis( cx, args );
-  auto *myObj  = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
+	auto *myObj  = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 	if( myObj == nullptr )
 	{
 		ScriptError( cx, "GetTempEffect: Invalid object assigned." );
@@ -2457,7 +2457,7 @@ bool CBase_GetTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	args.rval().setInt32(  0  ); // Return value 0 by default, to indicate no valid tempe effect
 	UI16 tempEffectID = static_cast<UI16>( args.get(0).toInt32());
-	UI16 scriptEffectID = ( argc == 2 ? static_cast<UI16>( args.get(1).toInt32() : 0 );
+	UI16 scriptEffectID = ( argc == 2 ? static_cast<UI16>( args.get(1).toInt32() ) : 0 );
 	UI16 assocScript = ( JSMapping->currentActive() != nullptr ? JSMapping->currentActive()->GetScriptID() : 0xFFFF );
 
 	SERIAL myObjSerial = myObj->GetSerial();
@@ -2500,7 +2500,7 @@ bool CBase_ReverseTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	args.rval().setInt32(  0  ); // Return value 0 by default, to indicate no valid temp effect found
 	UI16 tempEffectID = static_cast<UI16>( args.get(0).toInt32());
-	UI16 scriptEffectID = ( argc == 2 ? static_cast<UI16>( args.get(1).toInt32() : 0 );
+	UI16 scriptEffectID = ( argc == 2 ? static_cast<UI16>( args.get(1).toInt32() ) : 0 );
 	UI16 assocScript = ( JSMapping->currentActive() != nullptr ? JSMapping->currentActive()->GetScriptID() : 0xFFFF );
 
 	SERIAL myObjSerial = myObj->GetSerial();
@@ -2552,7 +2552,7 @@ bool CBase_PauseTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	args.rval().setInt32(  0  ); // Return value 0 by default, to indicate no valid temp effect found
 	UI16 tempEffectID = static_cast<UI16>( args.get(0).toInt32());
-	UI16 scriptEffectID = ( argc == 2 ? static_cast<UI16>( args.get(1).toInt32() : 0 );
+	UI16 scriptEffectID = ( argc == 2 ? static_cast<UI16>( args.get(1).toInt32() ) : 0 );
 	UI16 assocScript = ( JSMapping->currentActive() != nullptr ? JSMapping->currentActive()->GetScriptID() : 0xFFFF );
 
 	SERIAL myObjSerial = myObj->GetSerial();
@@ -2597,7 +2597,7 @@ bool CBase_ResumeTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	args.rval().setInt32(  0  ); // Return value 0 by default, to indicate no valid paused temp effect found
 	UI16 tempEffectID = static_cast<UI16>( args.get(0).toInt32());
-	UI16 scriptEffectID = ( argc == 2 ? static_cast<UI16>( args.get(1).toInt32() : 0 );
+	UI16 scriptEffectID = ( argc == 2 ? static_cast<UI16>( args.get(1).toInt32() ) : 0 );
 	UI16 assocScript = ( JSMapping->currentActive() != nullptr ? JSMapping->currentActive()->GetScriptID() : 0xFFFF );
 
 	SERIAL myObjSerial = myObj->GetSerial();
