@@ -287,11 +287,12 @@ T *GetWrappedObject( JS::HandleValue value, const JSClass *expectedClass )
 
 inline CBaseObject *GetBaseObject( JSObject *object )
 {
-	if( !HasWrapperClass( object, &UOXItem_class ) &&
-		!HasWrapperClass( object, &UOXChar_class ))
-		return nullptr;
+	if( HasWrapperClass( object, &UOXItem_class ))
+		return JS::GetMaybePtrFromReservedSlot<CItem>( object, 0 );
+	if( HasWrapperClass( object, &UOXChar_class ))
+		return JS::GetMaybePtrFromReservedSlot<CChar>( object, 0 );
 
-	return JS::GetMaybePtrFromReservedSlot<CBaseObject>( object, 0 );
+	return nullptr;
 }
 
 inline CBaseObject *GetBaseObject( JS::HandleValue value )
