@@ -11,6 +11,9 @@
 #include "UOXJSPropertyFuncs.h"
 #include <js/Class.h>
 #include <js/GlobalObject.h>
+#include <js/Object.h>
+
+class CBaseObject;
 
 static constexpr JSClassOps classOpsWithFinalize = {
     nullptr,  // addProperty
@@ -256,5 +259,44 @@ inline JSClass UOXParty_class =
 	JSCLASS_HAS_RESERVED_SLOTS(2),
   &classOpsWithFinalize 
 };
+
+inline bool HasWrapperClass( JSObject *object, const JSClass *expectedClass )
+{
+	return object != nullptr && JS::GetClass( object ) == expectedClass;
+}
+
+inline bool HasWrapperClass( JS::HandleValue value, const JSClass *expectedClass )
+{
+	return value.isObject() && HasWrapperClass( value.toObjectOrNull(), expectedClass );
+}
+
+template<typename T>
+T *GetWrappedObject( JSObject *object, const JSClass *expectedClass )
+{
+	if( !HasWrapperClass( object, expectedClass ))
+		return nullptr;
+
+	return JS::GetMaybePtrFromReservedSlot<T>( object, 0 );
+}
+
+template<typename T>
+T *GetWrappedObject( JS::HandleValue value, const JSClass *expectedClass )
+{
+	return value.isObject() ? GetWrappedObject<T>( value.toObjectOrNull(), expectedClass ) : nullptr;
+}
+
+inline CBaseObject *GetBaseObject( JSObject *object )
+{
+	if( !HasWrapperClass( object, &UOXItem_class ) &&
+		!HasWrapperClass( object, &UOXChar_class ))
+		return nullptr;
+
+	return JS::GetMaybePtrFromReservedSlot<CBaseObject>( object, 0 );
+}
+
+inline CBaseObject *GetBaseObject( JS::HandleValue value )
+{
+	return value.isObject() ? GetBaseObject( value.toObjectOrNull() ) : nullptr;
+}
 
 #endif
