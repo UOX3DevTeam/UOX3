@@ -4342,7 +4342,7 @@ bool CGuild_AcceptRecruit( JSContext *cx, unsigned argc, JS::Value* vp )
 	// 1 parameter = get the cchar from there
 	if( argc == 0 )
 	{
-		JSObject *Parent = JS::GetReservedSlot( obj, 1 ).toObjectOrNull();
+		JS::RootedObject Parent( cx, JS::GetReservedSlot( obj, 1 ).toObjectOrNull() );
 		auto *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( Parent , 0 );
 		myGuild->RecruitToMember( *myChar );
 	}
@@ -5272,7 +5272,7 @@ bool CChar_FindItemLayer( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JSObject *myJSItem = JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	JS::RootedObject myJSItem( cx, JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 
 	args.rval().setObjectOrNull( myJSItem );
 
@@ -5311,7 +5311,7 @@ bool CChar_FindItemType( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JSObject *myJSItem	= JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	JS::RootedObject myJSItem( cx, JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 
 	args.rval().setObjectOrNull( myJSItem );
 
@@ -5350,7 +5350,7 @@ bool CChar_FindItemSection( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JSObject *myJSItem	= JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	JS::RootedObject myJSItem( cx, JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 
 	args.rval().setObjectOrNull( myJSItem );
 
@@ -5482,7 +5482,7 @@ bool CMulti_GetTiller( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JSObject *myJSTiller	= JSEngine->AcquireObject( IUE_ITEM, myTiller, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	JS::RootedObject myJSTiller( cx, JSEngine->AcquireObject( IUE_ITEM, myTiller, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 	args.rval().setObjectOrNull( myJSTiller );
 
 	return true;
@@ -8176,7 +8176,7 @@ bool CBase_FirstItem( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( ValidateObject( firstItem ))
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, firstItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, firstItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 		args.rval().setObjectOrNull( myObj );
 	}
 	else
@@ -8229,7 +8229,7 @@ bool CBase_NextItem( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( ValidateObject( nextItem ))
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, nextItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, nextItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 		args.rval().setObjectOrNull( myObj );
 	}
 	else
@@ -9217,7 +9217,7 @@ bool CItem_Dupe( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *dupeItem = nullptr;
+	JS::RootedObject dupeItem( cx );
 	if( dupeInPack && mSock != nullptr )
 	{
 		dupeItem = JSEngine->AcquireObject( IUE_ITEM, Items->DupeItem( mSock, mItem, mItem->GetAmount() ), JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
@@ -9265,7 +9265,7 @@ bool CChar_Dupe( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	// JS Object for duped character
-	JSObject *dupeChar = nullptr;
+	JS::RootedObject dupeChar( cx );
 	dupeChar = JSEngine->AcquireObject( IUE_CHAR, dupeCharTemp, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
 
 	args.rval().setObjectOrNull( dupeChar );
@@ -10625,7 +10625,7 @@ bool CMulti_FirstChar( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( ValidateObject( firstChar ))
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_CHAR, firstChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_CHAR, firstChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 		args.rval().setObjectOrNull( myObj );
 	}
 	else
@@ -10696,7 +10696,7 @@ bool CMulti_NextChar( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( ValidateObject( nextChar ))
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_CHAR, nextChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_CHAR, nextChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 		args.rval().setObjectOrNull( myObj );
 	}
 	else
@@ -12251,7 +12251,7 @@ bool CChar_GetFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 	for( auto &tempFriend : *friendList )
 	{
 		// Create a new JS Object based on character
-		JSObject *myObj = JSEngine->AcquireObject( IUE_CHAR, tempFriend, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_CHAR, tempFriend, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 
 		// Convert JS Object to JS::Value
 		jsTempFriend = JS::ObjectOrNullValue( myObj );
@@ -12335,7 +12335,7 @@ bool CChar_GetPetList( JSContext *cx, unsigned argc, JS::Value* vp )
 			if( pet->GetOwnerObj() == mChar )
 			{
 				// Create a new JS Object based on character
-				JSObject *myObj = JSEngine->AcquireObject( IUE_CHAR, pet, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+				JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_CHAR, pet, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 
 				// Convert JS Object to JS::Value
 				jsTempPet = JS::ObjectOrNullValue( myObj );
@@ -12531,7 +12531,7 @@ bool CChar_GetFollowerList( JSContext *cx, unsigned argc, JS::Value* vp )
 			if( follower->GetOwnerObj() == mChar )
 			{
 				// Create a new JS Object based on character
-				JSObject *myObj = JSEngine->AcquireObject( IUE_CHAR, follower, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+				JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_CHAR, follower, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 
 				// Convert JS Object to JS::Value
 				jsTempFollower = JS::ObjectOrNullValue( myObj );
@@ -12719,7 +12719,7 @@ bool CParty_GetMember( JSContext *cx, unsigned argc, JS::Value* vp )
 		}
 		else
 		{
-			JSObject *myJSChar	= JSEngine->AcquireObject( IUE_CHAR, mChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+			JS::RootedObject myJSChar( cx, JSEngine->AcquireObject( IUE_CHAR, mChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 			args.rval().setObjectOrNull( myJSChar );
 		}
 	}
