@@ -445,7 +445,7 @@ FDCLG( CItem, owner )
 	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );
 	CChar *owner = item->GetOwnerObj();
 	if( !ValidateObject( owner )) { args.rval().setNull(); return true; }
-	JSObject *wrapper = JSEngine->AcquireObject( IUE_CHAR, owner, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	JS::RootedObject wrapper( cx, JSEngine->AcquireObject( IUE_CHAR, owner, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 	if( wrapper == nullptr ) return false;
 	args.rval().setObject( *wrapper );
 	return true;
@@ -460,7 +460,7 @@ FDCLG( CItem, container )
 	CBaseObject *container = serial >= BASEITEMSERIAL ? static_cast<CBaseObject *>( CalcItemObjFromSer( serial )) : static_cast<CBaseObject *>( CalcCharObjFromSer( serial ));
 	if( !ValidateObject( container )) { args.rval().setNull(); return true; }
 	const auto objectType = serial >= BASEITEMSERIAL ? IUE_ITEM : IUE_CHAR;
-	JSObject *wrapper = JSEngine->AcquireObject( objectType, container, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	JS::RootedObject wrapper( cx, JSEngine->AcquireObject( objectType, container, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 	if( wrapper == nullptr ) return false;
 	args.rval().setObject( *wrapper );
 	return true;
@@ -537,7 +537,7 @@ FDCLG( CItem, race )
 	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );
 	CRace *race = Races->Race( item->GetRace() );
 	if( race == nullptr ) { args.rval().setNull(); return true; }
-	JSObject *wrapper = JSEngine->AcquireObject( IUE_RACE, race, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	JS::RootedObject wrapper( cx, JSEngine->AcquireObject( IUE_RACE, race, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 	if( wrapper == nullptr ) return false;
 	args.rval().setObject( *wrapper );
 	return true;
@@ -549,7 +549,7 @@ FDCLG( CItem, multi )
 	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );
 	CMultiObj *multi = item->GetMultiObj();
 	if( !ValidateObject( multi )) { args.rval().setNull(); return true; }
-	JSObject *wrapper = JSEngine->AcquireObject( IUE_ITEM, multi, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	JS::RootedObject wrapper( cx, JSEngine->AcquireObject( IUE_ITEM, multi, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 	if( wrapper == nullptr ) return false;
 	args.rval().setObject( *wrapper );
 	return true;
@@ -561,7 +561,7 @@ FDCLG( CItem, region )
 	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );
 	CTownRegion *region = item->GetRegion();
 	if( region == nullptr ) { args.rval().setNull(); return true; }
-	JSObject *wrapper = JSEngine->AcquireObject( IUE_REGION, region, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	JS::RootedObject wrapper( cx, JSEngine->AcquireObject( IUE_REGION, region, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 	if( wrapper == nullptr ) return false;
 	args.rval().setObject( *wrapper );
 	return true;
@@ -1246,7 +1246,7 @@ FDCLG( CCharacter, attr )                                                  \
 	auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );   \
 	auto object = expression;                                                \
 	if( !ValidateObject( object )) { args.rval().setNull(); return true; }    \
-	JSObject *wrapper = JSEngine->AcquireObject( objectType, object, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))); \
+	JS::RootedObject wrapper( cx, JSEngine->AcquireObject( objectType, object, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )))); \
 	if( wrapper == nullptr ) return false;                                   \
 	args.rval().setObject( *wrapper );                                       \
 	return true;                                                             \
@@ -1551,7 +1551,7 @@ FDCLG( CCharacter, attacker )
 	auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );
 	CChar *attacker = character->GetAttacker();
 	if( !ValidateObject( attacker )) { args.rval().setNull(); return true; }
-	JSObject *wrapper = JSEngine->AcquireObject( IUE_CHAR, attacker, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	JS::RootedObject wrapper( cx, JSEngine->AcquireObject( IUE_CHAR, attacker, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 	if( wrapper == nullptr ) return false;
 	args.rval().setObject( *wrapper );
 	return true;
@@ -1750,7 +1750,7 @@ CHARACTER_SKILL_PROXY_GET( skillCaps, &UOXSkillsCap_class )
 static bool SetCharacterObjectResult( JSContext *cx, JS::MutableHandleValue result, IUEEntries objectType, void *object )
 {
 	if( object == nullptr ) { result.setNull(); return true; }
-	JSObject *wrapper = JSEngine->AcquireObject( objectType, object, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	JS::RootedObject wrapper( cx, JSEngine->AcquireObject( objectType, object, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 	if( wrapper == nullptr ) return false;
 	result.setObject( *wrapper );
 	return true;
@@ -1823,7 +1823,7 @@ FDCLG( CRegion, mayor )
 		return true;
 	}
 
-	JSObject *mayorObject = JSEngine->AcquireObject( IUE_CHAR, mayor, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	JS::RootedObject mayorObject( cx, JSEngine->AcquireObject( IUE_CHAR, mayor, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 	if( mayorObject == nullptr )
 		return false;
 	args.rval().setObject( *mayorObject );
@@ -1963,8 +1963,8 @@ FDCLG( CGuild, attr )                                                           
 		args.rval().setNull();                                                           \
 		return true;                                                                     \
 	}                                                                                  \
-	JSObject *wrapper = JSEngine->AcquireObject( objectTypeId, object,                 \
-		JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));                              \
+	JS::RootedObject wrapper( cx, JSEngine->AcquireObject( objectTypeId, object,      \
+		JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));                             \
 	if( wrapper == nullptr )                                                           \
 		return false;                                                                    \
 	args.rval().setObject( *wrapper );                                                  \
@@ -2386,7 +2386,7 @@ FDCLG( CAccount, attr )                                                     \
 		args.rval().setNull();                                                  \
 		return true;                                                            \
 	}                                                                         \
-	JSObject *wrapper = JSEngine->AcquireObject( IUE_CHAR, character, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))); \
+	JS::RootedObject wrapper( cx, JSEngine->AcquireObject( IUE_CHAR, character, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )))); \
 	if( wrapper == nullptr ) return false;                                    \
 	args.rval().setObject( *wrapper );                                         \
 	return true;                                                               \
@@ -2408,7 +2408,7 @@ FDCLG( CAccount, currentChar )
 	auto account = JS::GetMaybePtrFromReservedSlot<CAccountBlock_st>( thisObj, 0 );
 	CChar *character = account->dwInGame == INVALIDSERIAL ? nullptr : CalcCharObjFromSer( account->dwInGame );
 	if( !ValidateObject( character )) { args.rval().setNull(); return true; }
-	JSObject *wrapper = JSEngine->AcquireObject( IUE_CHAR, character, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	JS::RootedObject wrapper( cx, JSEngine->AcquireObject( IUE_CHAR, character, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 	if( wrapper == nullptr ) return false;
 	args.rval().setObject( *wrapper );
 	return true;
@@ -2482,8 +2482,8 @@ FDCLG( CParty, leader )
 		return true;
 	}
 
-	JSObject *leaderObject = JSEngine->AcquireObject(
-		IUE_CHAR, leader, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	JS::RootedObject leaderObject( cx, JSEngine->AcquireObject(
+		IUE_CHAR, leader, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 	if( leaderObject == nullptr )
 		return false;
 
@@ -2501,7 +2501,7 @@ FDCLS( CParty, leader )
 	CChar *newLeader = nullptr;
 	if( args.get( 0 ).isObject() )
 	{
-		JSObject *leaderObject = &args.get( 0 ).toObject();
+		JS::RootedObject leaderObject( cx, &args.get( 0 ).toObject() );
 		const JSClass *leaderClass = JS::GetClass( leaderObject );
 		if( leaderClass == &UOXChar_class )
 		{
