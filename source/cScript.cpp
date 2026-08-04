@@ -236,7 +236,15 @@ void UOX3ErrorReporter( JSContext *cx, JSErrorReport *report )
 	else
 	{
 		// Output errors directly here, triggered by runtime execution of scripts
-		UI16 scriptNum = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ) );
+		UI16 scriptNum = 0xFFFF;
+		if( JSMapping != nullptr )
+		{
+			cScript *activeScript = JSMapping->currentActive( false );
+			if( activeScript != nullptr )
+			{
+				scriptNum = activeScript->GetScriptID();
+			}
+		}
 		Console.Error( oldstrutil::format( "JS script failure: Script Number (%u) Message (%s)", scriptNum, report->message().c_str() ));
 		if( report->filename == nullptr )
 		{
@@ -396,7 +404,7 @@ cScript::cScript( std::string targFile, UI08 rT, UI16 scrID ) : isFiring( false 
 	{
 		std::string errorMessage, errorFile, errorLineStr, tokenPtrLine;
 		uint32_t errorLine = 0;
-		UI16 scriptNum = 0xFFFF; // Script Number is unknown at this stage
+		UI16 scriptNum = scriptID;
 		if( !errorDetails.message.empty() )
 		{
 			// Triggered during compilation of scripts at startup, or upon full reload of script engine at runtime
@@ -466,11 +474,13 @@ cScript::cScript( std::string targFile, UI08 rT, UI16 scrID ) : isFiring( false 
 	{
 		throw std::runtime_error( "Unable to create JS script environment" );
 	}
+	JSMapping->pushActive( this );
 	bool ok = JS_ExecuteScript( targContext, environmentChain, rootedScript, &rval );
 	if( ok != true )
 	{
 		ReportPendingJSException( targContext );
 	}
+	JSMapping->popActive();
 }
 
 void cScript::Cleanup( void )
