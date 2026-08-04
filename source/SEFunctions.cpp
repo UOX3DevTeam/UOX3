@@ -236,7 +236,7 @@ bool SE_CalcItemFromSer( JSContext *cx, unsigned int argc, JS::Value *vp )
 	CItem *newItem	= CalcItemObjFromSer( targSerial );
 	if( newItem != nullptr )
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, newItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, newItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 		args.rval().setObjectOrNull( myObj );
 	}
 	else
@@ -273,7 +273,7 @@ bool SE_CalcMultiFromSer( JSContext *cx, unsigned int argc, JS::Value *vp )
 	CItem *newMulti	= CalcMultiFromSer( targSerial );
 	if( newMulti != nullptr )
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, newMulti, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, newMulti, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 		args.rval().setObjectOrNull( myObj );
 	}
 	else
@@ -355,7 +355,7 @@ bool SE_CalcCharFromSer( JSContext *cx, unsigned int argc, JS::Value *vp )
 	CChar *newChar = CalcCharObjFromSer( targSerial );
 	if( newChar != nullptr )
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_CHAR, newChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_CHAR, newChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 		args.rval().setObjectOrNull( myObj );
 	}
 	else
@@ -1334,7 +1334,7 @@ bool SE_SpawnNPC( JSContext *cx, unsigned int argc, JS::Value *vp )
 	cMade = Npcs->CreateNPCxyz( nnpcNum, x, y, z, world, instanceId, useNpcList );
 	if( cMade != nullptr )
 	{
-		JSObject *myobj		= JSEngine->AcquireObject( IUE_CHAR, cMade, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS::RootedObject myobj( cx, JSEngine->AcquireObject( IUE_CHAR, cMade, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 		args.rval().setObjectOrNull( myobj );
 	}
 	else
@@ -1422,7 +1422,7 @@ bool SE_CreateDFNItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 
 	if( newItem != nullptr )
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, newItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, newItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 		args.rval().setObjectOrNull( myObj );
 	}
 	else
@@ -1481,7 +1481,7 @@ bool SE_CreateBlankItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 		{
 			newItem->SetName( itemName );
 		}
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, newItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, newItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 		args.rval().setObjectOrNull( myObj );
 	}
 	else
@@ -1548,7 +1548,7 @@ bool SE_CreateHouse( JSContext *cx, unsigned int argc, JS::Value *vp )
 			newMulti->SetColour( iColor );
 		}
 
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, newMulti, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, newMulti, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 		args.rval().setObjectOrNull( myObj );
 	}
 	else
@@ -1616,7 +1616,7 @@ bool SE_CreateBaseMulti( JSContext *cx, unsigned int argc, JS::Value *vp )
 			newMulti->SetColour( iColor );
 		}
 
-		JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, newMulti, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, newMulti, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 		args.rval().setObjectOrNull( myObj );
 	}
 	else
@@ -1735,7 +1735,7 @@ bool SE_FindMulti( JSContext *cx, unsigned int argc, JS::Value *vp )
 	CMultiObj *multi = FindMulti( xLoc, yLoc, zLoc, worldNumber, instanceId );
 	if( ValidateObject( multi ))
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, multi, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, multi, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 		args.rval().setObjectOrNull( myObj );
 	}
 	else
@@ -1777,7 +1777,7 @@ bool SE_GetItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 	CItem *item = GetItemAtXYZ( xLoc, yLoc, zLoc, worldNumber, instanceId );
 	if( ValidateObject( item ))
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, item, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, item, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 		args.rval().setObjectOrNull( myObj );
 	}
 	else
@@ -1821,7 +1821,7 @@ bool SE_FindItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 	CItem *item = FindNearestItemNearXYZ( xLoc, yLoc, zLoc, worldNumber, id, instanceId );
 	if( ValidateObject( item ))
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, item, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, item, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 		args.rval().setObjectOrNull( myObj );
 	}
 	else
@@ -1864,7 +1864,7 @@ bool SE_FindItemBySection( JSContext *cx, unsigned int argc, JS::Value *vp )
 	CItem *item = FindNearestItemBySectionNearXYZ( xLoc, yLoc, zLoc, worldNumber, sectionId, instanceId );
 	if( ValidateObject( item ))
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, item, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, item, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 		args.rval().setObjectOrNull( myObj );
 	}
 	else
@@ -1917,7 +1917,7 @@ bool SE_CreateNewGuild( JSContext* cx, unsigned int argc, JS::Value* vp )
 
 	if( newGuild != nullptr )
 	{
-		JSObject* jsGuildObj = JSEngine->AcquireObject( IUE_GUILD, newGuild, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS::RootedObject jsGuildObj( cx, JSEngine->AcquireObject( IUE_GUILD, newGuild, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 		args.rval().setObjectOrNull( jsGuildObj );
 	}
 	else
@@ -2266,7 +2266,7 @@ bool SE_GetPackOwner( JSContext *cx, unsigned int argc, JS::Value *vp )
 	}
 	if( ValidateObject( pOwner ))
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_CHAR, pOwner, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_CHAR, pOwner, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 		args.rval().setObjectOrNull( myObj );
 	}
 	else
@@ -2306,7 +2306,7 @@ bool SE_FindRootContainer( JSContext *cx, unsigned int argc, JS::Value *vp )
 	}
 	if( ValidateObject( iRoot ))
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, iRoot, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, iRoot, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 		args.rval().setObjectOrNull( myObj );
 	}
 	else
@@ -2345,7 +2345,7 @@ bool SE_CalcTargetedItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 	}
 	else
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, calcedItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, calcedItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 		args.rval().setObjectOrNull( myObj );
 	}
 	return true;
@@ -2380,7 +2380,7 @@ bool SE_CalcTargetedChar( JSContext *cx, unsigned int argc, JS::Value *vp )
 	}
 	else
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_CHAR, calcedChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_CHAR, calcedChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 		args.rval().setObjectOrNull( myObj );
 	}
 	return true;
@@ -3393,7 +3393,7 @@ bool SE_GetSocketFromIndex( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 
-	JSObject *myObj = JSEngine->AcquireObject( IUE_CHAR, mChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_CHAR, mChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 	args.rval().setObjectOrNull( myObj );
 	return true;
 }
@@ -3814,7 +3814,7 @@ bool SE_CreateParty( JSContext *cx, unsigned int argc, JS::Value *vp )
 		else
 		{
 			Party *tParty	= PartyFactory::GetSingleton().Create( leader );
-			JSObject *myObj	= JSEngine->AcquireObject( IUE_PARTY, tParty, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+			JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_PARTY, tParty, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 			args.rval().setObjectOrNull( myObj );
 		}
 	}
@@ -3875,7 +3875,7 @@ bool SE_GetTownRegion( JSContext *cx, unsigned int argc, JS::Value *vp )
 		CTownRegion *townReg = cwmWorldState->townRegions[regNum];
 		if( townReg != nullptr )
 		{
-			JSObject *myObj = JSEngine->AcquireObject( IUE_REGION, townReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+			JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_REGION, townReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 			args.rval().setObjectOrNull( myObj );
 		}
 		else
@@ -3913,7 +3913,7 @@ bool SE_GetTownRegionFromXY( JSContext *cx, unsigned int argc, JS::Value *vp )
 	auto townReg = CalcRegionFromXY( locX, locY, locWorldNumber, locInstanceId, nullptr );
 	if( townReg != nullptr )
 	{
-		JSObject *myObj = JSEngine->AcquireObject( IUE_REGION, townReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_REGION, townReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 		args.rval().setObjectOrNull( myObj );
 	}
 	else
@@ -3967,7 +3967,7 @@ bool SE_GetSpawnRegion( JSContext *cx, unsigned int argc, JS::Value *vp )
 			CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
 			if( spawnReg != nullptr )
 			{
-				JSObject *myObj = JSEngine->AcquireObject( IUE_SPAWNREGION, spawnReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+				JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_SPAWNREGION, spawnReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 				args.rval().setObjectOrNull( myObj );
 			}
 			else
@@ -4016,7 +4016,7 @@ bool SE_GetSpawnRegions( JSContext *cx, unsigned int argc, JS::Value *vp )
 		// Iterate over each spawn region to find all matching regions
 		for( auto const& spawnReg : regions )
 		{
-			JSObject *myObj = JSEngine->AcquireObject( IUE_SPAWNREGION, spawnReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+			JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_SPAWNREGION, spawnReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 			JS::RootedValue spawnRegVal( cx, JS::ObjectOrNullValue( myObj ));
 			JS_SetElement( cx, spawnRegs, regionCount, spawnRegVal );
 			++regionCount;
