@@ -54,7 +54,7 @@ auto CJSEngine::Startup() -> void
 	UI32 engineMaxBytes = std::min( static_cast<UI32>( static_cast<UI32>( maxBytesSize ) * 1024 * 1024 ), maxEngineSize );
 
 	Console.PrintSectionBegin();
-	Console << "Starting JavaScript Engine...." << myendl;
+	Console << "Starting JavaScript Engine (" << JS_GetImplementationVersion() << ")...." << myendl;
 
 	if (!JS_Init())
 	{
