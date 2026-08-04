@@ -398,7 +398,7 @@ JSObject *CJSRuntime::GetPrototype( JSPrototypes protoNum ) const
 
 JSObject *CJSRuntime::AcquireObject( IUEEntries iType, void *index )
 {
-	JSObject *retVal = nullptr;
+	JS::RootedObject retVal( jsContext );
 	if( iType != IUE_COUNT && static_cast<size_t>( iType ) < objectList.size() )
 	{
 		retVal = FindAssociatedObject( iType, index );
@@ -439,7 +439,7 @@ JSObject *CJSRuntime::FindAssociatedObject( IUEEntries iType, void *index )
 }
 JSObject *CJSRuntime::MakeNewObject( IUEEntries iType )
 {
-	JSObject *toMake = nullptr;
+	JS::RootedObject toMake( jsContext );
 	switch( iType )
 	{
 		case IUE_RACE:				toMake = JS_NewObjectWithGivenProto( jsContext, &UOXRace_class, (*protoList)[JSP_RACE] );								break;
@@ -457,7 +457,5 @@ JSObject *CJSRuntime::MakeNewObject( IUEEntries iType )
 
 	if( toMake == nullptr )
 		return nullptr;
-	// DAMN! Using the deprecated function it works!
-	// TODO: Root it
 	return toMake;
 }
