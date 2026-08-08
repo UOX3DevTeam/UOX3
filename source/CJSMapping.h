@@ -105,6 +105,36 @@ public:
 
 };
 
+class CActiveScriptGuard
+{
+private:
+	CJSMapping *mapping;
+
+public:
+	CActiveScriptGuard( CJSMapping *scriptMapping, cScript *script ) : mapping( scriptMapping )
+	{
+		if( mapping != nullptr && script != nullptr )
+		{
+			mapping->pushActive( script );
+		}
+		else
+		{
+			mapping = nullptr;
+		}
+	}
+
+	~CActiveScriptGuard()
+	{
+		if( mapping != nullptr )
+		{
+			mapping->popActive();
+		}
+	}
+
+	CActiveScriptGuard( const CActiveScriptGuard& ) = delete;
+	CActiveScriptGuard& operator=( const CActiveScriptGuard& ) = delete;
+};
+
 class CEnvoke
 {
 private:
