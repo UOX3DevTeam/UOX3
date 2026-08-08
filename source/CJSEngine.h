@@ -67,7 +67,7 @@ private:
 	JSObject *	MakeNewObject( IUEEntries iType );
 
 	void		Cleanup( void );
-	void		InitializePrototypes( void );
+	bool		InitializePrototypes( void );
 public:
 	CJSRuntime();
 	CJSRuntime( UI32 engineSize );
