@@ -94,6 +94,7 @@ private:
 	typedef std::vector<CJSRuntime *>::const_iterator	RUNTIMELIST_CITERATOR;
 
 	RUNTIMELIST											runtimeList;
+	bool											jsInitialized = false;
 
 public:
 
@@ -101,6 +102,7 @@ public:
 	~CJSEngine();
 
 	auto Startup() -> void;
+	void		Shutdown( void );
 	
 	JSRuntime *	GetRuntime( UI08 runTime ) const;
 	JSContext * GetContext( UI08 runTime ) const;

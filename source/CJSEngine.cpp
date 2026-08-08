@@ -59,7 +59,8 @@ auto CJSEngine::Startup() -> void
 	if (!JS_Init())
 	{
 		throw new std::runtime_error("Unable to initialise JavaScript engine");
-  }
+	}
+	jsInitialized = true;
 
 	runtimeList.push_back( new CJSRuntime( engineMaxBytes ));	// Default Runtime
 	//runtimeList.push_back( new CJSRuntime( engineMaxBytes ));	// Console Runtime
@@ -70,16 +71,30 @@ auto CJSEngine::Startup() -> void
 //===================================================================
 CJSEngine::~CJSEngine()
 {
-	// Why?  we are shutting down, the process memory will take care of this for us in theory
-	/*
+	Shutdown();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -   CJSEngine::Shutdown()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -   Releases all JavaScript runtimes before shutting down SpiderMonkey
+//o------------------------------------------------------------------------------------------------o
+void CJSEngine::Shutdown( void )
+{
 	for( RUNTIMELIST_ITERATOR rIter = runtimeList.begin(); rIter != runtimeList.end(); ++rIter )
 	{
-		if(( *rIter))
+		if(( *rIter ) != nullptr )
 		{
 			delete ( *rIter );
 		}
 	}
-	*/
+	runtimeList.clear();
+
+	if( jsInitialized )
+	{
+		JS_ShutDown();
+		jsInitialized = false;
+	}
 }
 
 void CJSEngine::Reload( void )
