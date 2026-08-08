@@ -474,13 +474,12 @@ cScript::cScript( std::string targFile, UI08 rT, UI16 scrID ) : isFiring( false 
 	{
 		throw std::runtime_error( "Unable to create JS script environment" );
 	}
-	JSMapping->pushActive( this );
+	CActiveScriptGuard activeScriptGuard( JSMapping, this );
 	bool ok = JS_ExecuteScript( targContext, environmentChain, rootedScript, &rval );
 	if( ok != true )
 	{
 		ReportPendingJSException( targContext );
 	}
-	JSMapping->popActive();
 }
 
 void cScript::Cleanup( void )
@@ -520,7 +519,7 @@ void cScript::Stop( void )
 
 bool cScript::InvokeEvent( const char* name, unsigned int argc, const JS::Value* argv, JS::Value* rval )
 {
-	JSMapping->pushActive( this );
+	CActiveScriptGuard activeScriptGuard( JSMapping, this );
 #if defined UOX_DEBUG_MODE
 	Console.Log( oldstrutil::format( "Triggering event '%s' from script %d", name, GetScriptID() ) );
 #endif
@@ -529,7 +528,6 @@ bool cScript::InvokeEvent( const char* name, unsigned int argc, const JS::Value*
 	if( argc > 0 && !rootedArgs.append( argv, argc ))
 	{
 		ReportPendingJSException( targContext );
-		JSMapping->popActive();
 		return false;
 	}
 	JS::RootedValue rootedResult( targContext );
@@ -542,7 +540,6 @@ bool cScript::InvokeEvent( const char* name, unsigned int argc, const JS::Value*
 	{
 		ReportPendingJSException( targContext );
 	}
-	JSMapping->popActive();
 	return rVal;
 }
 
