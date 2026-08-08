@@ -71,7 +71,7 @@ void CJSMapping::Cleanup( void )
 {
 	for( size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i )
 	{
-		if( mapSection[1] != nullptr )
+		if( mapSection[i] != nullptr )
 		{
 			delete mapSection[i];
 			mapSection[i] = nullptr;
