@@ -3400,6 +3400,15 @@ auto Shutdown( SI32 retCode ) -> void
 		cons.join();
 	}
 
+	if( JSMapping != nullptr )
+	{
+		JSMapping->Shutdown();
+	}
+	if( JSEngine != nullptr )
+	{
+		JSEngine->Shutdown();
+	}
+
 	// don't leave file pointers open, could lead to file corruption
 
 	Console.PrintSectionBegin();

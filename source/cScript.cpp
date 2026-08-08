@@ -12,6 +12,7 @@
 #include "StringUtility.hpp"
 #include "osunique.hpp"
 #include <jsapi.h>
+#include <js/CallAndConstruct.h>
 #include <js/Object.h>
 #include <js/CompilationAndEvaluation.h>
 #include <js/SourceText.h>
@@ -19,10 +20,27 @@
 #include <js/ErrorReport.h>
 #include <js/Exception.h>
 #include <js/GCVector.h>
+#include <js/PropertyAndElement.h>
 #include <js/ValueArray.h>
 #include <js/Warnings.h>
 
 static constexpr SI08 RV_NOFUNC = -1;
+
+static bool IsOwnScriptFunction( JSContext *cx, JS::HandleObject scriptObject, const char *functionName )
+{
+	if( functionName == nullptr )
+		return false;
+
+	bool hasOwnProperty = false;
+	if( !JS_HasOwnProperty( cx, scriptObject, functionName, &hasOwnProperty ) || !hasOwnProperty )
+		return false;
+
+	JS::RootedValue functionValue( cx );
+	if( !JS_GetProperty( cx, scriptObject, functionName, &functionValue ))
+		return false;
+
+	return functionValue.isObject() && JS::IsCallable( &functionValue.toObject() );
+}
 
 //o------------------------------------------------------------------------------------------------o
 //|	File		-	cScript.cpp
@@ -519,11 +537,14 @@ void cScript::Stop( void )
 
 bool cScript::InvokeEvent( const char* name, unsigned int argc, const JS::Value* argv, JS::Value* rval )
 {
+	JS::RootedObject rootedObj( targContext, targObject );
+	if( !IsOwnScriptFunction( targContext, rootedObj, name ))
+		return false;
+
 	CActiveScriptGuard activeScriptGuard( JSMapping, this );
 #if defined UOX_DEBUG_MODE
 	Console.Log( oldstrutil::format( "Triggering event '%s' from script %d", name, GetScriptID() ) );
 #endif
-	JS::RootedObject rootedObj( targContext, targObject );
 	JS::RootedValueVector rootedArgs( targContext );
 	if( argc > 0 && !rootedArgs.append( argv, argc ))
 	{
@@ -617,13 +638,8 @@ bool cScript::OnStop( void )
 //o------------------------------------------------------------------------------------------------o
 bool cScript::DoesEventExist( const char *eventToFind )
 {
-	JS::RootedValue Func( targContext, JS::NullValue() );
-	JS_GetProperty( targContext, targObject, eventToFind, &Func );
-	if( Func == JS::UndefinedValue() )
-	{
-		return false;
-	}
-	return true;
+	JS::RootedObject scriptObject( targContext, targObject );
+	return IsOwnScriptFunction( targContext, scriptObject, eventToFind );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3970,9 +3986,8 @@ bool cScript::ExistAndVerify( ScriptEvent eventNum, std::string functionName )
 	if( NeedsChecking( eventNum ))
 	{
 		SetNeedsChecking( eventNum, false );
-		JS::RootedValue Func( targContext, JS::NullValue() );
-		JS_GetProperty( targContext, targObject, functionName.c_str(), &Func );
-		if( Func == JS::UndefinedValue() )
+		JS::RootedObject scriptObject( targContext, targObject );
+		if( !IsOwnScriptFunction( targContext, scriptObject, functionName.c_str() ))
 		{
 			SetEventExists( eventNum, false );
 			return false;
@@ -3996,9 +4011,8 @@ bool cScript::ScriptRegistration( std::string scriptType )
 	JS::RootedValue rval( targContext );
 	// ExistAndVerify() normally sets our Global Object, but not on custom named functions.
 
-	JS::RootedValue Func( targContext, JS::NullValue() );
-	JS_GetProperty( targContext, targObject, scriptType.c_str(), &Func );
-	if( Func == JS::UndefinedValue() )
+	JS::RootedObject scriptObject( targContext, targObject );
+	if( !IsOwnScriptFunction( targContext, scriptObject, scriptType.c_str() ))
 	{
 		Console.Warning( oldstrutil::format( "Script Number (%u) does not have a %s function", JSMapping->GetScriptId( targObject ), scriptType.c_str() ));
 		return false;

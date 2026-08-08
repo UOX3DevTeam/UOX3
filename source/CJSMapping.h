@@ -54,10 +54,10 @@ public:
 class CJSMapping
 {
 private:
-	CJSMappingSection *				mapSection[SCPT_COUNT];
+	CJSMappingSection *				mapSection[SCPT_COUNT]{};
 
-	CEnvoke *						envokeById;
-	CEnvoke *						envokeByType;
+	CEnvoke *						envokeById = nullptr;
+	CEnvoke *						envokeByType = nullptr;
 
 	void				Cleanup( void );
 	void				Parse( SCRIPTTYPE toParse = SCPT_COUNT );
@@ -67,6 +67,7 @@ private:
 public:
 	CJSMapping() = default;
 	~CJSMapping();
+	void				Shutdown( void );
 	void				ResetDefaults( void );
 
 	void				Reload( UI16 scriptId = 0xFFFF );
