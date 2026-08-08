@@ -10,6 +10,7 @@ function CommandRegistration()
 	RegisterCommand( "testjsextended", 2, true );
 	RegisterCommand( "testjsgc", 8, true );
 	RegisterCommand( "testjstimer", 8, true );
+	RegisterCommand( "testjsinvalidation", 8, true );
 	RegisterCommand( "testjsarguments", 2, true );
 	RegisterCommand( "testjserror", 2, true );
 	RegisterCommand( "testjsall", 2, true );
@@ -300,6 +301,42 @@ function command_TESTJSTIMER( socket, cmdString )
 	pUser.StartTimer( 1000, gcTimerTestId, true );
 	pUser.ExecuteCommand( "gcollect" );
 	socket.SysMessage( "JavaScript timer/rooting test started. Results will follow in one second." );
+}
+
+/** @type { ( socket: Socket, cmdString: string ) => void } */
+function command_TESTJSINVALIDATION( socket, cmdString )
+{
+	var failures = [];
+	var pUser = socket.currentChar;
+	var testItem = CreateBlankItem( socket, pUser, 1, "wrapper invalidation test", 0x0eed, 0, "ITEM", false );
+
+	RunBindingTest( failures, "Invalidation setup", function()
+	{
+		RequireBinding( ValidateObject( testItem ), "could not create the test item" );
+	});
+
+	if( ValidateObject( testItem ))
+	{
+		var testSerial = testItem.serial;
+		testItem.Delete();
+
+		RunBindingTest( failures, "Deleted wrapper invalidation", function()
+		{
+			RequireBinding( !ValidateObject( testItem ), "deleted item wrapper remained valid" );
+		});
+		RunBindingTest( failures, "Deleted serial lookup", function()
+		{
+			RequireBinding( CalcItemFromSer( testSerial ) == null, "deleted item received a new wrapper" );
+		});
+
+		pUser.ExecuteCommand( "gcollect" );
+		RunBindingTest( failures, "Deleted wrapper after GC", function()
+		{
+			RequireBinding( !ValidateObject( testItem ), "deleted item wrapper became valid after collection" );
+		});
+	}
+
+	ReportBindingResults( socket, failures, "JavaScript wrapper-invalidation tests", "All JavaScript wrapper-invalidation tests passed." );
 }
 
 /** @type { ( timerObj: Character | Item, timerID: number ) => void } */
