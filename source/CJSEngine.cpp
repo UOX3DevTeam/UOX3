@@ -160,6 +160,11 @@ JSObject *CJSEngine::AcquireObject( IUEEntries iType, void *index, UI08 runTime 
 	JSObject *retVal = nullptr;
 	if( index != nullptr && runTime < runtimeList.size() )
 	{
+		if(( iType == IUE_CHAR && !ValidateObject( static_cast<CChar *>( index ))) ||
+			( iType == IUE_ITEM && !ValidateObject( static_cast<CItem *>( index ))))
+		{
+			return nullptr;
+		}
 		retVal = runtimeList[runTime]->AcquireObject( iType, index );
 	}
 
