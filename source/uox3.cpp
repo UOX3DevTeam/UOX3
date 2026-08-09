@@ -681,12 +681,6 @@ auto StartInitialize( CServerData &serverdata ) -> void
 
 	Console.Log( "-=Server Startup=-\n=======================================================================", "server.log" );
 
-	Console << "Creating and Initializing Console Thread      ";
-
-	cons = std::thread( &CheckConsoleKeyThread );
-
-	Console.PrintDone();
-
 	// Shows information about IPs and ports being listened on
 	Console.TurnYellow();
 
@@ -781,6 +775,11 @@ auto StartInitialize( CServerData &serverdata ) -> void
 			}
 		}
 	}
+
+	Console << "Creating and Initializing Console Thread      ";
+	Console.Registration();
+	cons = std::thread( &CheckConsoleKeyThread );
+	Console.PrintDone();
 
 	// Get a second timestamp for startup time
 	auto startupEndTime = std::chrono::high_resolution_clock::now();
@@ -1036,7 +1035,6 @@ auto NetworkPollConnectionThread() -> void
 auto CheckConsoleKeyThread() -> void
 {
 	messageLoop << "Thread: CheckConsoleThread has started";
-	Console.Registration();
 	conThreadCloseOk = false;
 	while( !conThreadCloseOk )
 	{
