@@ -941,6 +941,9 @@ auto DoMessageLoop() -> void
 				g_bPerformRestart = true;
 				cwmWorldState->SetKeepRun( false ); // This triggers the main loop to exit
 				break;
+			case MSG_CONSOLEJS:
+				Console.ExecuteJSCommand( oldstrutil::value<SI32>( tVal.data ));
+				break;
 			case MSG_COUNT: 	break;
 			case MSG_WORLDSAVE: cwmWorldState->SetOldTime( 0 ); break;
 			case MSG_PRINT: 	Console << tVal.data << myendl; break;
