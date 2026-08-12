@@ -2,6 +2,10 @@ name: Build SpiderMonkey libraries
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/build-mozjs-libraries.yml'
+      - 'spidermonkey/uox3-mozjs-bridge/**'
 
 permissions:
   contents: write
