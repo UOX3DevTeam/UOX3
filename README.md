@@ -25,7 +25,7 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
   >   * In the Visual Studio Installer, select the **Desktop development with C++** workload.
   >   * Under **Individual components**, select **C++ Clang Compiler for Windows** and **MSBuild support for LLVM (clang-cl) toolset**.
   > * **Linux (Debian-based)** - Run `sudo apt update && sudo apt install build-essential cmake curl` in Terminal (or use your distribution's package manager).
-  > * **FreeBSD** - Run `pkg install cmake` in Terminal. Alternatively, build `cmake` via ports if desired.
+  > * **FreeBSD** - Run `sudo pkg install -y cmake curl gmake` in Terminal (may require installing `sudo` first, or running as `root`).
   > * **macOS** - Download [Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12) from the App Store (for building with an IDE) and launch it once to complete setup. Alternatively, install the lightweight Xcode command-line tools via `xcode-select --install` in Terminal. After, run `brew install cmake` (requires [Homebrew](https://brew.sh/)) to install the CMake build system.
   > * **Docker/Podman** - Ensure that it is downloaded and installed (Windows) or installed from your package manager
 </details>
@@ -34,8 +34,8 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
   <summary>Install <strong>Git</strong></summary>
 
   > * **Windows/macOS** - Grab [GitHub Desktop](https://desktop.github.com) or your preferred git tool
-  > * **Linux** - Run `sudo apt install git` in Terminal.
-  > * **FreeBSD** - Run `pkg install git` in Terminal. Alternatively, build `git` via ports if desired.
+  > * **Linux** - Run `sudo apt install git` in Terminal (or use your distribution's package manager).
+  > * **FreeBSD** - Run `sudo pkg install git` in Terminal (may require installing `sudo` first, or running as `root`). Alternatively, build `git` via ports if desired.
 </details>
 
 ---
@@ -142,20 +142,35 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 </details>
 
 <details>
-  <summary>(Optional) Build <strong>SpiderMonkey 115.13</strong> from source (Linux/macOS)</summary>
+  <summary>(Optional) Build <strong>SpiderMonkey 115.13</strong> from source (Linux/macOS/FreeBSD)</summary>
 
   If you prefer to build SpiderMonkey yourself rather than relying on the precompiled libraries that come with UOX3, follow these steps:
 
-  1. Install Rust, Python 3.11, Clang and libclang from your preferred package manager.
+  1. Install dependencies:
+     * **Linux / macOS**: Install Python 3.11, Clang and libclang from your preferred package manager (or via Xcode / Homebrew on macOS).
+     * **FreeBSD**: Run `sudo pkg install -y rust python311 llvm18 bash pkgconf`
   2. Open Terminal and run from the UOX3 repository:
   >
+  > *(One-time operation, if Rust is not already installed on Linux/macOS)*:\
   > `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`\
   > `source "$HOME/.cargo/env"`\
+  > \
   > `cd spidermonkey/uox3-mozjs-bridge`\
+  > `export MAKE=gmake` *(Required on FreeBSD)*\
+  > `export PYTHON3=python3.11` *(Required on FreeBSD)*\
+  > `export CC=clang18` *(Required on FreeBSD)*\
+  > `export CXX=clang++18` *(Required on FreeBSD)*\
+  > `cargo fetch` *(Required on FreeBSD)*\
+  > `python3 fix_freebsd.py` *(Required on FreeBSD)*\
   > `MOZJS_FROM_SOURCE=1 cargo build --locked --release`\
   > `cd ../../`\
-  > `UOX3_MOZJS_LIBRARY="$PWD/spidermonkey/uox3-mozjs-bridge/target/release/libuox3_mozjs_bridge.a"`
+  > `export UOX3_MOZJS_LIBRARY="$PWD/spidermonkey/uox3-mozjs-bridge/target/release/libuox3_mozjs_bridge.a"`
   3. You can now use `./automake.sh` or the manual CMake instructions to build UOX3.
+
+  > **Note for FreeBSD builders**:
+  > * `MAKE=gmake` & `PYTHON3=python3.11`: Directs the build to use GNU Make and Python 3.11 explicitly.
+  > * `CC=clang18` & `CXX=clang++18`: Ensures the build uses LLVM 18 to avoid breaking C++ standard library deprecations present in newer toolchains.
+  > * `python3 fix_freebsd.py`: Automatically patches the downloaded `mozjs-sys` dependency to add missing FreeBSD platform support to `jsglue.cpp` and apply upstream C++ fixes in `ExclusiveData.h` (Mozilla Bug 1894423) and `Locale.cpp`.
 </details>
 
 ---

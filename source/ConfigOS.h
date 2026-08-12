@@ -11,6 +11,7 @@
 #define WINDOWS		1
 #define LINUX 		2
 #define MACOS		3
+#define FREEBSD		4
 
 // Finds the compiler type and version.
 #if defined( _MSC_VER )
@@ -78,6 +79,19 @@
 #define OS_STR "MacOS64"
 #elif INTPTR_MAX == INT32_MAX
 #define OS_STR "MacOS32"
+#endif   //INPTR_MAX
+
+#elif defined(__FreeBSD__)
+
+#define PLATFORM FREEBSD
+#define SOCKET int
+#define INVALID_SOCKET -1
+#define SOCKET_ERROR -1
+
+#if INTPTR_MAX == INT64_MAX
+#define OS_STR "FreeBSD64"
+#elif INTPTR_MAX == INT32_MAX
+#define OS_STR "FreeBSD32"
 #endif   //INPTR_MAX
 
 #else

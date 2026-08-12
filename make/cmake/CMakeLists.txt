@@ -51,8 +51,9 @@ else()
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux"
             AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|amd64|AMD64)$")
         set(MOZJS_PLATFORM "linux-x64")
-    elseif(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
-        set(MOZJS_LIBRARIES jsapi jsglue js_static)
+    elseif(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD"
+            AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|amd64|AMD64)$")
+        set(MOZJS_PLATFORM "freebsd-x64")
     else()
         message(FATAL_ERROR
             "No bundled SpiderMonkey library is available for ${CMAKE_SYSTEM_NAME} "

@@ -137,6 +137,40 @@ jobs:
           path: spidermonkey/uox3-mozjs-bridge/${{ matrix.package }}.tar.gz
           if-no-files-found: error
 
+  build-freebsd:
+    name: FreeBSD x64
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Check out UOX3
+        uses: actions/checkout@v4
+
+      - name: Build UOX3 SpiderMonkey library on FreeBSD
+        uses: vmactions/freebsd-vm@v1
+        with:
+          usesh: true
+          prepare: |
+            pkg install -y curl git gmake llvm18 python311 rust bash pkgconf
+          run: |
+            cd spidermonkey/uox3-mozjs-bridge
+            export MAKE=gmake
+            export PYTHON3=python3.11
+            export CC=clang18
+            export CXX=clang++18
+            cargo fetch
+            python3 fix_freebsd.py
+            cargo build --locked --release
+            mkdir -p package
+            cp target/release/libuox3_mozjs_bridge.a package/uox3-mozjs-115.13-freebsd-x64.a
+            tar -czf uox3-mozjs-115.13-freebsd-x64.tar.gz -C package uox3-mozjs-115.13-freebsd-x64.a
+
+      - name: Upload library
+        uses: actions/upload-artifact@v4
+        with:
+          name: uox3-mozjs-115.13-freebsd-x64
+          path: spidermonkey/uox3-mozjs-bridge/uox3-mozjs-115.13-freebsd-x64.tar.gz
+          if-no-files-found: error
+
   test-container:
     name: Docker image
     needs: build-linux
@@ -151,7 +185,7 @@ jobs:
 
   publish:
     name: Add libraries to branch
-    needs: [build-windows, build-linux, build-macos]
+    needs: [build-windows, build-linux, build-macos, build-freebsd]
     runs-on: ubuntu-24.04
 
     steps:
