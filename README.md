@@ -161,7 +161,7 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
   > `export CC=clang18` *(Required on FreeBSD)*\
   > `export CXX=clang++18` *(Required on FreeBSD)*\
   > `cargo fetch` *(Required on FreeBSD)*\
-  > `python3 fix_freebsd.py` *(Required on FreeBSD)*\
+  > `python3.11 fix_freebsd.py` *(Required on FreeBSD)*\
   > `MOZJS_FROM_SOURCE=1 cargo build --locked --release`\
   > `cd ../../`\
   > `export UOX3_MOZJS_LIBRARY="$PWD/spidermonkey/uox3-mozjs-bridge/target/release/libuox3_mozjs_bridge.a"`
@@ -170,7 +170,7 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
   > **Note for FreeBSD builders**:
   > * `MAKE=gmake` & `PYTHON3=python3.11`: Directs the build to use GNU Make and Python 3.11 explicitly.
   > * `CC=clang18` & `CXX=clang++18`: Ensures the build uses LLVM 18 to avoid breaking C++ standard library deprecations present in newer toolchains.
-  > * `python3 fix_freebsd.py`: Automatically patches the downloaded `mozjs-sys` dependency to add missing FreeBSD platform support to `jsglue.cpp` and apply upstream C++ fixes in `ExclusiveData.h` (Mozilla Bug 1894423) and `Locale.cpp`.
+  > * `python3.11 fix_freebsd.py`: Automatically patches the downloaded `mozjs-sys` dependency to add missing FreeBSD platform support to `jsglue.cpp` and apply upstream C++ fixes in `ExclusiveData.h` (Mozilla Bug 1894423) and `Locale.cpp`.
 </details>
 
 ---

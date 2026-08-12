@@ -5412,7 +5412,7 @@ export PYTHON3=python3.11
 export CC=clang18
 export CXX=clang++18
 cargo fetch
-python3 fix_freebsd.py
+python3.11 fix_freebsd.py
 
 MOZJS_FROM_SOURCE=1 cargo build --locked --release
 cd ../../
@@ -5422,7 +5422,7 @@ export UOX3_MOZJS_LIBRARY="$PWD/spidermonkey/uox3-mozjs-bridge/target/release/li
 						<div class="note"><p><strong>Note for FreeBSD builders:</strong>
 						<br>&bull; <span class="hl">MAKE=gmake</span> &amp; <span class="hl">PYTHON3=python3.11</span>: Directs the build to use GNU Make and Python 3.11 explicitly.
 						<br>&bull; <span class="hl">CC=clang18</span> &amp; <span class="hl">CXX=clang++18</span>: Ensures the build uses LLVM 18 to avoid breaking C++ standard library deprecations present in newer toolchains.
-						<br>&bull; <span class="hl">python3 fix_freebsd.py</span>: Automatically patches the downloaded <span class="hl">mozjs-sys</span> dependency to add missing FreeBSD platform support to <span class="hl">jsglue.cpp</span> and apply upstream C++ fixes in <span class="hl">ExclusiveData.h</span> (Mozilla Bug 1894423) and <span class="hl">Locale.cpp</span>.</p></div>
+						<br>&bull; <span class="hl">python3.11 fix_freebsd.py</span>: Automatically patches the downloaded <span class="hl">mozjs-sys</span> dependency to add missing FreeBSD platform support to <span class="hl">jsglue.cpp</span> and apply upstream C++ fixes in <span class="hl">ExclusiveData.h</span> (Mozilla Bug 1894423) and <span class="hl">Locale.cpp</span>.</p></div>
 					</div>
 
 					<h4>UOX3 Compiled! Now what?</h4>

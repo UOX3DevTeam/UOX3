@@ -162,7 +162,7 @@ jobs:
             export CC=clang18
             export CXX=clang++18
             cargo fetch
-            python3 fix_freebsd.py
+            python3.11 fix_freebsd.py
             cargo build --locked --release
             mkdir -p package
             cp target/release/libuox3_mozjs_bridge.a package/uox3-mozjs-115.13-freebsd-x64.a

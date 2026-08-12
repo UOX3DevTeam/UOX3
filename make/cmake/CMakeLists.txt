@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.18)
 
+if(APPLE AND NOT CMAKE_OSX_DEPLOYMENT_TARGET)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0" CACHE STRING "Minimum OS X version")
+endif()
+
 project(uox3 VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 
