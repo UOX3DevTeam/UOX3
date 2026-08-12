@@ -27,8 +27,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 7. February, 2026</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.7c</small></p>
+	<p style="margin:0"><small>Last Updated: 12. August, 2026</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.7d</small></p>
 </div>
 
 <div id="filterMainDocs" contenteditable="true" placeholder="(Search...)" style="margin: 0 auto; background-color: #fff; padding: 5px; width: 250px; margin-top: 5px;"></div>
@@ -5274,13 +5274,13 @@ packitem=0x0f8d,30
 					<label for="spoiler_install_build_tools">Install <strong>build tools</strong> <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<ul>
-							<li><strong>Windows</strong> - Download and install <a href="https://visualstudio.microsoft.com/downloads/" title="Community Edition of Visual Studio" target="_blank">Community Edition of Visual Studio 2022</a>.
+							<li><strong>Windows</strong> - Download and install <a href="https://aka.ms/vs/17/release/vs_community.exe" target="_blank">Community Edition of Visual Studio 2022</a>.
 								<ul>
 									<li>Be sure to also install <span class="hl">Desktop development with C++</span>, <span class="hl">C++ Clang Compiler for Windows</span>, and <span class="hl">MSBuild support for LLVM (clang-cl) toolset</span> via the Visual Studio Installer.</li>
 								</ul>
-							<li><strong>Linux</strong> (Debian-based) - Run <span class="hl">sudo apt-get update</span> + <span class="hl">sudo apt install build-essential cmake</span> in a Terminal: (or use your Linux distro's package manager)</li>
+							<li><strong>Linux</strong> (Debian-based) - Run <span class="hl">sudo apt-get update</span> + <span class="hl">sudo apt install build-essential cmake curl</span> in a Terminal: (or use your Linux distro's package manager)</li>
 							<li><strong>FreeBSD</strong> - Run <span class="hl">pkg install cmake</span> in a Terminal. Alternatively, build cmake via ports if desired.</li>
-							<li><strong>macOS</strong> - Download <a href="https://apps.apple.com/us/app/xcode/id497799835?mt=12" title="XCode" target="_blank">Xcode</a> (for building with an IDE) via the App Store, and/or <a href="https://cmake.org/download/" title="CMake" target="_blank">CMake</a> (for command-line builds)</li>
+							<li><strong>macOS</strong> - Download <a href="https://apps.apple.com/us/app/xcode/id497799835?mt=12" title="XCode" target="_blank">Xcode</a> from the App Store (for building with an IDE) and launch it once to complete setup. Alternatively, install the lightweight Xcode command-line tools via <span class="hl">xcode-select --install</span> in Terminal. After, run <span class="hl">brew install cmake</span> (requires <a href="https://brew.sh/" title="Homebrew" target="_blank">Homebrew</a>) to install the CMake build system.</li>
 							<li><strong>Docker/Podman</strong> - Ensure that it is downloaded and installed (Windows) or installed from your package manager</li>
 					</div>
 					<input type="checkbox" id="spoiler_install_git">
@@ -5293,7 +5293,7 @@ packitem=0x0f8d,30
 					</div>
 
 					<h4>Step 2: Clone the UOX3 Git Repository</h4>
-					<em>Next up, clone the UOX3 git repository, which also includes the latest verified compatible version of SpiderMonkey (v1.8.5) and a minimal set of files required to compile zlib-1.3.2.</em>
+					<em>Next up, clone the UOX3 git repository, which also includes headers and precompiled libraries for SpiderMonkey and a minimal set of files required to compile zlib.</em>
 					<input type="checkbox" id="spoiler_clone_with_github_desktop">
 					<label for="spoiler_clone_with_github_desktop">Using <strong>GitHub Desktop (Windows/macOS) </strong> <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -5322,60 +5322,90 @@ packitem=0x0f8d,30
 					<div class="spoiler">
 					<ul style="margin-left: 15px">
 						<li><strong>Visual Studio 2022</strong> - (Windows) Open <em>UOX3\make\VS2022\uox3.sln</em>, choose Release/Debug from dropdown menu, and hit Build -> Build UOX3</li>
-						<li><strong>automake.sh</strong> - (Linux/FreeBSD) Run <span class="hl">./automake.sh</span> in a Terminal, from the root of the cloned UOX3 repository. This compiles UOX3 with CMake, but in one command only. Use optional argument <span class="hl">-b debug</span> to create debug build, and/or <span class="hl">-o clean</span> to do a clean build.</li>
+						<li><strong>automake.sh</strong> - (Linux/macOS/FreeBSD) Run <span class="hl">./automake.sh</span> in a Terminal, from the root of the cloned UOX3 repository. This compiles UOX3 and dependencies in one command using CMake. Use optional argument <span class="hl">-b debug</span> to create debug build, and/or <span class="hl">-o clean</span> to do a clean build.</li>
 						<li><strong>XCode</strong> - (macOS) Open <em>UOX3/make/XCode/uox3/uox3.xcworkspace</em>, select Build</li>
 					</ul>
 					</div>
+
+					<input type="checkbox" id="spoiler_compile_with_msbuild">
+					<label for="spoiler_compile_with_msbuild"><strong>MSBuild</strong> (Windows) <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+					<p>Run the following from the root of the cloned UOX3 repository, in a Developer Powershell for VS:</p>
+<pre style="font-weight: bold">msbuild make\VS2022\uox3.sln /m /p:Configuration=Release /p:Platform=x64</pre>
+					</div>
+
 					<input type="checkbox" id="spoiler_compile_with_cmake">
 					<label for="spoiler_compile_with_cmake"><strong>CMake</strong> (Any platform, manual instructions<i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p>If you don't wish to rely on the automake.sh script, but want control over the process yourself, follow these steps (same as what automake.sh does) in a Terminal. This also works on Windows/macOS as an alternative to compile with IDEs:</p>
-						<ul>
-							<li>Navigate to root of cloned UOX3 git repository</li>
+						<p>If you don't wish to rely on the automake.sh script, but want control over the process yourself, follow these steps:</p>
+						<ul><strong>Linux/macOS, using <em>Terminal</em></strong>
+							<li>Navigate to root of cloned UOX3 git repository, then run:</li>
 							<li><span class="hl">cmake make/cmake -B ./build -DCMAKE_BUILD_TYPE=Release</span></li>
 							<li><span class="hl">cmake --build ./build --config Release</span></li>
 						</ul>
-						<p>Replace "Release" with "Debug" in the above instructions to create a debug-build; delete <strong>make/cmake/build</strong> directory to do clean builds.</p>
+						<ul><strong>Windows, using <em>Developer Powershell for VS:</em></strong>
+							<li>Navigate to root of cloned UOX3 git repository, then run:</li>
+							<li><span class="hl">cmake make/cmake -B ./build -G "Visual Studio 17 2022" -A x64 -T ClangCL</span></li>
+							<li><span class="hl">cmake --build ./build --config Release</span></li>
+						</ul>
+						<p>Replace "Release" with "Debug" in the above instructions to create a debug-build. Delete the <strong>make/cmake/build</strong> directory to do clean builds.</p>
 					</div>
 
-					<input type="checkbox" id="spoiler_compile_with_gccmake">
-					<label for="spoiler_compile_with_gccmake"><strong>GCC/make/gmake</strong> (Linux/FreeBSD, manual instructions) <i class="fas fa-angle-down"></i></label>
+					<input type="checkbox" id="spoiler_compile_with_docker">
+					<label for="spoiler_compile_with_docker"><strong>Docker/Podman</strong> <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p>If you'd rather use GCC (v9.x or higher)/make (GNU Make 4.2.1 or higher) than CMake, you can follow these manual steps. Note that for FreeBSD, this approach requires installing gmake as an alternative to make: pkg install gmake</p>
+						<p>Build and tag the image from the root of the repository:</p>
+						<ul>
+							<li>Docker: <span class="hl">docker buildx build --progress=plain -t uox3 .</span></li>
+							<li>Podman: <span class="hl">podman build -t uox3 .</span></li>
+						</ul>
+					</div>
 
-						<p>First, navigate to spidermonkey directory and run these commands:<br>
-						<span class="hl">make -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=gcc</span> (Linux)<br>
-						<span class="hl">ar -r libjs32.a Linux_All_DBG.OBJ/*.o</span> (Linux)<br>
-						<span class="hl">cp Linux_All_DBG.OBJ/jsautocfg.h ./</span> (Linux)<br>
-						<span class="hl">gmake -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=clang</span> (FreeBSD)<br>
-						<span class="hl">ar rcs libjs32.a FreeBSD_DBG.OBJ/*.o</span> (FreeBSD)<br>
-						<span class="hl">cp FreeBSD_DBG.OBJ/jsautocfg.h ./</span> (FreeBSD)</p>
+					<input type="checkbox" id="spoiler_compile_spidermonkey_windows">
+					<label for="spoiler_compile_spidermonkey_windows"><strong>(Optional) Build SpiderMonkey 115.13 from source (Windows)</strong> <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>If you prefer to build SpiderMonkey yourself rather than relying on the precompiled libraries that come with UOX3, follow these steps:</p>
+						<ol>
+							<li>Install <a href="https://rustup.rs/" title="Rust" target="_blank">Rust</a>, <a href="https://www.python.org/downloads/windows/" title="Python" target="_blank">Python 3.11</a>, <a href="https://releases.llvm.org/" title="LLVM/Clang" target="_blank">LLVM/Clang 14 or newer</a> and <a href="https://github.com/servo/servo-build-deps/releases/download/msvc-deps/moztools-4.0.zip" title="MozTools" target="_blank">MozTools 4.0</a>. In Visual Studio Installer, also install the <em>Windows SDK</em>, <em>C++ ATL</em> and <em>C++ MFC components</em>.</li>
+							<li>Open Developer Powershell for VS and navigate to <span class="hl">spidermonkey\uox3-mozjs-bridge</span>, update the paths for your installed tools, then build:</li>
+<pre style="font-weight: bold">$env:MOZJS_FROM_SOURCE = "1"
+Remove-Item Env:MOZJS_ARCHIVE -ErrorAction SilentlyContinue
+$env:CC = "clang-cl"
+$env:CXX = "clang-cl"
+$env:LD = "lld-link"
+$env:PYTHON = "C:\Python311\python.exe"
+$env:PYTHON3 = "C:\Python311\python.exe"
+$env:MOZTOOLS_PATH = "C:\path\to\moztools-4.0"
+$env:LIBCLANG_PATH = "C:\path\to\LLVM\lib"
+cargo build --release</pre>
+							<li>Create the drop-in archive:</li>
+<pre style="font-weight: bold">Copy-Item target\release\uox3_mozjs_bridge.lib mozjs-115.13-windows-x64-clangcl.lib
+Compress-Archive mozjs-115.13-windows-x64-clangcl.lib mozjs-115.13-windows-x64-clangcl.zip</pre>
+							<li>Replace <span class="hl">spidermonkey\mozjs-115.13-windows-x64-clangcl.zip</span> in your local UOX3 repository with the new ZIP you created, then follow normal Windows build instructions.</li>
+						</ol>
+					</div>
 
-						<p>Next, head to the zlib directory:<br>
-						<span class="hl">cd ../zlib</span><br>
-						<span class="hl">make distclean</span><br>
-						<span class="hl">./configure</span><br>
-						<span class="hl">make</span></p>
-
-						<p>Finally, head to UOX3/source directory:<br>
-						<span class="hl">cd ../source</span><br>
-						<span class="hl">make (Linux)</span><br>
-						<span class="hl">gmake (FreeBSD)</span></p>
-						<input type="checkbox" id="spoiler_compile_with_gccmake_special">
-						<label for="spoiler_compile_with_gccmake_special">Special note for users of Debian/GCC versions below 9.x  </strong> <i class="fas fa-angle-down"></i></label>
-						<div class="spoiler">
-							<p>If your version of gcc is below 9.x, you'll need to add -lstdc++fs in Makefile to include the experimental filesystem library from c++17.:</p>
-							<p>Change the following line (~34) from<br>
-							<span class="hl">$(CXX) $(CXXFLAGS) -o $(TARGET) $^ $(LDFLAGS)</span><br>
-							to<br>
-							<span class="hl">$(CXX) $(CXXFLAGS) -o $(TARGET) $^ $(LDFLAGS) -lstdc++fs</span></p>
-						</div>
+					<input type="checkbox" id="spoiler_compile_spidermonkey_linux">
+					<label for="spoiler_compile_spidermonkey_linux"><strong>(Optional) Build SpiderMonkey 115.13 from source (Linux/macOS)</strong> <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>If you prefer to build SpiderMonkey yourself rather than relying on the precompiled libraries that come with UOX3, follow these steps:</p>
+						<ol>
+							<li>Install Rust, Python 3.11, Clang and libclang from your preferred package manager.</li>
+							<li>Open Terminal and run from the UOX3 repository:</li>
+<pre style="font-weight: bold">curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source "$HOME/.cargo/env"
+cd spidermonkey/uox3-mozjs-bridge
+MOZJS_FROM_SOURCE=1 cargo build --locked --release
+cd ../../
+UOX3_MOZJS_LIBRARY="$PWD/spidermonkey/uox3-mozjs-bridge/target/release/libuox3_mozjs_bridge.a"</pre>
+							<li>You can now use <span class="hl">./automake.sh</span> or the manual CMake instructions to build UOX3.</li>
+						</ol>
 					</div>
 
 					<h4>UOX3 Compiled! Now what?</h4>
 					<p><em>Once done compiling, you can copy the compiled UOX3 binary/executable to the directory you intend to run your UOX3 shard from, along with all the files and folders contained in the UOX3/data subdirectory. Where you'll find the compiled UOX3 binary/executable depends on your platform and build method. Examples:</em></p>
 					<ul style="margin-left: 15px">
-						<li><strong>Windows</strong> - (Visual Studio 2022) Compiled UOX3.exe can be found in <strong>UOX3/make/VS2022/x64/Release</strong></li>
+						<li><strong>Windows</strong> - (Visual Studio 2022/MSBuild) Compiled UOX3.exe can be found in <strong>UOX3/make/VS2022/x64/Release</strong></li>
 						<li><strong>Linux/FreeBSD</strong> - (automake.sh) Compiled uox3 binary can be found in <strong>root UOX3 repository</strong></li>
 						<li><strong>macOS</strong> - (XCode) Compiled uox3 binary can be found in <strong>UOX3\make\XCode\Build\Products\Release</strong></li>
 						<li><strong>Either Platform</strong> - (CMake, manual) Compiled uox3 binary can be found in <strong>UOX3\make\cmake\build</strong>
