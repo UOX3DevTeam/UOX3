@@ -9,3 +9,7 @@ crate-type = ["staticlib"]
 
 [dependencies]
 mozjs_sys = { git = "https://github.com/servo/mozjs.git", tag = "mozjs-sys-v0.115.13-2", features = ["streams"] }
+
+[profile.release]
+debug = false
+strip = "debuginfo"

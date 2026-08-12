@@ -88,6 +88,7 @@ jobs:
         run: |
           mkdir -p package
           cp target/release/libuox3_mozjs_bridge.a package/uox3-mozjs-115.13-linux-x64.a
+          strip -g package/uox3-mozjs-115.13-linux-x64.a || true
           tar -czf uox3-mozjs-115.13-linux-x64.tar.gz -C package uox3-mozjs-115.13-linux-x64.a
         working-directory: spidermonkey/uox3-mozjs-bridge
 
@@ -132,6 +133,7 @@ jobs:
         run: |
           mkdir -p package
           cp "target/${{ matrix.target }}/release/libuox3_mozjs_bridge.a" "package/${{ matrix.package }}.a"
+          strip -S "package/${{ matrix.package }}.a" || true
           tar -czf "${{ matrix.package }}.tar.gz" -C package "${{ matrix.package }}.a"
 
       - name: Upload library
@@ -166,6 +168,7 @@ jobs:
             cargo build --locked --release
             mkdir -p package
             cp target/release/libuox3_mozjs_bridge.a package/uox3-mozjs-115.13-freebsd-x64.a
+            strip -g package/uox3-mozjs-115.13-freebsd-x64.a || true
             tar -czf uox3-mozjs-115.13-freebsd-x64.tar.gz -C package uox3-mozjs-115.13-freebsd-x64.a
 
       - name: Upload library
