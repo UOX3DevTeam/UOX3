@@ -327,6 +327,7 @@ else()
 		target_compile_options( uox3 PRIVATE
 			$<$<CONFIG:Release>:-Os>
 		)
+		target_link_options(uox3 PRIVATE -Wl,-ld_classic)
 	else()
 		target_compile_options(uox3 PRIVATE
 			$<$<CONFIG:Release>:-O2>
