@@ -2,6 +2,7 @@
 #define __CPACKETSEND_H__
 
 #include "CPacketReceive.h"
+#include <vector>
 
 
 // Forward declare
@@ -1644,6 +1645,77 @@ class CPDropItemApproved : public CPUOXBuffer
 {
 public:
 	CPDropItemApproved();
+};
+
+class CPUltimaLiveStaticsUpdate : public CPUOXBuffer
+{
+protected:
+	virtual void InternalReset( void ) override;
+
+public:
+	CPUltimaLiveStaticsUpdate();
+	CPUltimaLiveStaticsUpdate( UI32 blockNumber, UI08 mapNumber, const std::vector<UI08>& staticsData );
+
+	virtual void Log( std::ostream& outStream, bool fullHeader = true ) override;
+};
+
+class CPUltimaLiveTerrainUpdate : public CPUOXBuffer
+{
+protected:
+	virtual void InternalReset( void ) override;
+
+public:
+	CPUltimaLiveTerrainUpdate();
+	CPUltimaLiveTerrainUpdate( UI32 blockNumber, UI08 mapNumber, const std::vector<UI08>& terrainData );
+
+	virtual void Log( std::ostream& outStream, bool fullHeader = true ) override;
+};
+
+class CPUltimaLiveBlockQuery : public CPUOXBuffer
+{
+protected:
+	virtual void InternalReset( void ) override;
+
+public:
+	CPUltimaLiveBlockQuery();
+	CPUltimaLiveBlockQuery( UI32 blockNumber, UI08 mapNumber );
+
+	virtual void Log( std::ostream& outStream, bool fullHeader = true ) override;
+};
+
+class CPUltimaLiveHashResponse : public CPUOXBuffer
+{
+protected:
+	virtual void InternalReset( void ) override;
+
+public:
+	CPUltimaLiveHashResponse();
+	CPUltimaLiveHashResponse( UI32 blockNumber, UI08 mapNumber, const std::vector<UI16>& checkSums );
+
+	virtual void Log( std::ostream& outStream, bool fullHeader = true ) override;
+};
+
+class CPUltimaLiveLoginConfirm : public CPUOXBuffer
+{
+protected:
+	virtual void InternalReset( void ) override;
+
+public:
+	CPUltimaLiveLoginConfirm();
+	CPUltimaLiveLoginConfirm( const std::string& shardIdentifier );
+
+	virtual void Log( std::ostream& outStream, bool fullHeader = true ) override;
+};
+
+class CPUltimaLiveMapDefinitions : public CPUOXBuffer
+{
+protected:
+	virtual void InternalReset( void ) override;
+
+public:
+	CPUltimaLiveMapDefinitions();
+
+	virtual void Log( std::ostream& outStream, bool fullHeader = true ) override;
 };
 
 #endif

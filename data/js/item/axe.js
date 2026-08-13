@@ -2,6 +2,80 @@
 // @ts-check
 // This script handles all double-click functionality of axes (including lumberjacking)
 
+var HARVEST_TREE_STUMP_ID = 0x0E56;
+var HARVEST_TREE_STUMP_HUE = 0;
+var HARVEST_TREE_REGROW_TIMER = 3;
+
+function IsHarvestableTreeTile( tileID )
+{
+	return (
+		tileID == 0x0CD0 || tileID == 0x0CD3 || tileID == 0x0CD6 || tileID == 0x0CD8 || tileID == 0x0CDA ||
+		tileID == 0x0CDD || tileID == 0x0CE0 || tileID == 0x0CE3 || tileID == 0x0CE6 || tileID == 0x0D58 ||
+		( tileID >= 0x0CCA && tileID <= 0x0CCE ) || ( tileID >= 0x12B8 && tileID <= 0x12BB ) ||
+		tileID == 0x0D42 || tileID == 0x0D43 || tileID == 0x0D59 || tileID == 0x0D70 || tileID == 0x0D85 ||
+		tileID == 0x0D94 || tileID == 0x0D95 || tileID == 0x0D98 || tileID == 0x0DA4 || tileID == 0x0DA8
+	);
+}
+
+function ReplaceTreeWithStump( mChar )
+{
+	var treeX = parseInt( mChar.GetTempTag( "LumberTreeX" ));
+	var treeY = parseInt( mChar.GetTempTag( "LumberTreeY" ));
+	var treeZ = parseInt( mChar.GetTempTag( "LumberTreeZ" ));
+	var treeID = parseInt( mChar.GetTempTag( "LumberTreeID" ));
+
+	if( treeID == 0 || treeX == 0 || treeY == 0 )
+	{
+		return;
+	}
+
+	// One atomic call (this is the whole fix)
+	mChar.ReplaceTreeStatic(
+		treeX,
+		treeY,
+		treeZ,
+		mChar.worldnumber,
+		treeID,
+		HARVEST_TREE_STUMP_ID,
+		HARVEST_TREE_STUMP_HUE
+	);
+
+	mChar.SetTempTag( "LumberStumpX", treeX );
+	mChar.SetTempTag( "LumberStumpY", treeY );
+	mChar.SetTempTag( "LumberStumpZ", treeZ );
+	mChar.SetTempTag( "LumberStumpOriginalID", treeID );
+
+	mChar.StartTimer( ResourceTime( "LOGS" ) * 1000, HARVEST_TREE_REGROW_TIMER, true );
+}
+
+function RegrowTreeFromStump( mChar )
+{
+	var treeX = parseInt( mChar.GetTempTag( "LumberStumpX" ));
+	var treeY = parseInt( mChar.GetTempTag( "LumberStumpY" ));
+	var treeZ = parseInt( mChar.GetTempTag( "LumberStumpZ" ));
+	var treeID = parseInt( mChar.GetTempTag( "LumberStumpOriginalID" ));
+
+	if( treeID == 0 || treeX == 0 || treeY == 0 )
+	{
+		return;
+	}
+
+	mChar.ReplaceTreeStatic(
+		treeX,
+		treeY,
+		treeZ,
+		mChar.worldnumber,
+		HARVEST_TREE_STUMP_ID,
+		treeID,
+		0
+	);
+
+	mChar.SetTempTag( "LumberStumpX", null );
+	mChar.SetTempTag( "LumberStumpY", null );
+	mChar.SetTempTag( "LumberStumpZ", null );
+	mChar.SetTempTag( "LumberStumpOriginalID", null );
+}
+
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, iUsed )
 {
@@ -53,14 +127,18 @@ function onCallback1( socket, ourObj )
 
 		if( tileID != 0 )
 		{
-			if( tileID == 0x0CD0 || tileID == 0x0CD3 || tileID == 0x0CD6 || tileID == 0x0CD8 || tileID == 0x0CDA ||
+			/*if( tileID == 0x0CD0 || tileID == 0x0CD3 || tileID == 0x0CD6 || tileID == 0x0CD8 || tileID == 0x0CDA ||
 				tileID == 0x0CDD || tileID == 0x0CE0 || tileID == 0x0CE3 || tileID == 0x0CE6 || tileID == 0x0D58 ||
 				( tileID >= 0x0CCA && tileID <= 0x0CCE ) || ( tileID >= 0x12B8 && tileID <= 0x12BB ) || tileID == 0x0D42 ||
 				tileID == 0x0D43 || tileID == 0x0D58 || tileID == 0x0D59 || tileID == 0x0D70 || tileID == 0x0D85 ||
 				tileID == 0x0D94 || tileID == 0x0D95 || tileID == 0x0D98 || tileID == 0x0DA4 || tileID == 0x0DA8 ) // Trees
 			{
 				ChopTree( socket, mChar );
-			}
+			}*/
+							if( IsHarvestableTreeTile( tileID )) // Trees
+				{
+					ChopTree( socket, mChar, tileID );
+				}
 			else if( ourObj )
 			{
 				if( ourObj.type == 1 && ourObj.movable == 2 && !ourObj.GetTag( "addon" )) // Strongbox or Tent chest, and not an addon
@@ -262,7 +340,7 @@ function BowCraft( socket, mChar, ourObj, tileID )
 	}
 }
 
-function ChopTree( socket, mChar )
+function ChopTree( socket, mChar, tileID )
 {
 	if( mChar.skillsused.lumberjacking )
 	{
@@ -285,6 +363,10 @@ function ChopTree( socket, mChar )
 
 	var targX = socket.GetWord( 11 );
 	var targY = socket.GetWord( 13 );
+	mChar.SetTempTag( "LumberTreeX", targX );
+mChar.SetTempTag( "LumberTreeY", targY );
+mChar.SetTempTag( "LumberTreeZ", socket.GetSByte( 16 ));
+mChar.SetTempTag( "LumberTreeID", tileID );
 	var mResource = ResourceRegion( targX, targY, mChar.worldnumber );
 	RegenerateLog( mResource, socket );
 	if( mResource.logAmount <= 0 )
@@ -348,9 +430,17 @@ function onTimer( mChar, timerID )
 				{
 					if( mChar.CheckSkill( 44, 0, mChar.skillCaps.lumberjacking ))
 					{
-						mResource.logAmount = mResource.logAmount-1;
+						ReplaceTreeWithStump(mChar);
+						mResource.logAmount = mResource.logAmount -= 1;
 						CreateDFNItem( socket, mChar, "0x1BE0", 10, "ITEM", true );
-						socket.SysMessage( GetDictionaryEntry( 1435, socket.language )); // You place some logs in your pack.
+						socket.SysMessage(GetDictionaryEntry(1435, socket.language));
+
+						if (mResource.logAmount <= 0)
+						{
+							ReplaceTreeWithStump(mChar);
+						}
+						//CreateDFNItem( socket, mChar, "0x1BE0", 10, "ITEM", true );
+						//socket.SysMessage( GetDictionaryEntry( 1435, socket.language )); // You place some logs in your pack.
 					}
 					else
 					{
@@ -422,6 +512,9 @@ function onTimer( mChar, timerID )
 			mChar.SoundEffect( 0x013E, true );
 
 			mChar.StartTimer( 1300, 1, true );
+			break;
+		case 3: // Regrow harvested live static tree
+			RegrowTreeFromStump( mChar );
 			break;
 		default:
 			break;

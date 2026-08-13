@@ -24,6 +24,30 @@ public:
 	virtual void		Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
+class CPIUltimaLive : public CPInputBuffer
+{
+private:
+	UI16 packetSize;
+	UI08 command;
+	UI08 mapNumber;
+	UI32 blockNumber;
+	UI32 value;
+
+public:
+	CPIUltimaLive();
+	CPIUltimaLive( CSocket *s );
+
+	virtual void Receive( void ) override;
+	virtual bool Handle( void ) override;
+	virtual void Log( std::ostream &outStream, bool fullHeader = true ) override;
+
+	UI08 Command( void ) const;
+	UI08 MapNumber( void ) const;
+	UI32 BlockNumber( void ) const;
+	UI32 Value( void ) const;
+};
+
+
 class CPIServerSelect : public CPInputBuffer
 {
 protected:

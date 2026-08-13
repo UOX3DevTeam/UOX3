@@ -286,6 +286,10 @@ JSBool CMisc_SetTimer( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMisc_MakeMenu( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMisc_SysMessage( JSContext *cx, uintN argc, jsval *vp );
 
+JSBool CMisc_AddLiveStatic( JSContext *cx, uintN argc, jsval *vp );
+JSBool CMisc_RemoveLiveStatic( JSContext *cx, uintN argc, jsval *vp );
+JSBool CMisc_ReplaceTreeStatic( JSContext *cx, uintN argc, jsval *vp );
+
 // Race methods
 JSBool CRace_CanWearArmour( JSContext *cx, uintN argc, jsval *vp );
 JSBool CRace_CanEquip( JSContext *cx, uintN argc, jsval *vp );
@@ -425,6 +429,9 @@ inline JSFunctionSpec CChar_Methods[] =
 	{ "SpeechInput",		CChar_SpeechInput,		1, 0 },
 	{ "CastSpell",			CChar_CastSpell,		2, 0 },
 	{ "SysMessage",			CMisc_SysMessage,		10, 0 },
+	{ "AddLiveStatic",		CMisc_AddLiveStatic,		6, 0 },
+	{ "RemoveLiveStatic",	CMisc_RemoveLiveStatic,		6, 0 },
+	{ "ReplaceTreeStatic",	CMisc_ReplaceTreeStatic,	7, 0 },
 	{ "MagicEffect",		CChar_MagicEffect,		2, 0 },
 	{ "GetSerial",			CBase_GetSerial,		1, 0 },
 	{ "UpdateStats",		CBase_UpdateStats,		1, 0 },
@@ -624,6 +631,9 @@ inline JSFunctionSpec CRegion_Methods[] =
 inline JSFunctionSpec CSocket_Methods[] =
 {
 	{ "SysMessage",			CMisc_SysMessage,	10, 0 },
+	{ "AddLiveStatic",		CMisc_AddLiveStatic,		6, 0 },
+	{ "RemoveLiveStatic",	CMisc_RemoveLiveStatic,		6, 0 },
+	{ "ReplaceTreeStatic",	CMisc_ReplaceTreeStatic,	7, 0 },
 	{ "Disconnect",			CSocket_Disconnect,	0, 0 },
 	{ "SoundEffect",		CMisc_SoundEffect,	2, 0 },
 	{ "CustomTarget",		CMisc_CustomTarget, 1, 0 },
