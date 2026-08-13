@@ -1,7 +1,15 @@
 cmake_minimum_required(VERSION 3.18)
 
+if(APPLE AND NOT CMAKE_OSX_DEPLOYMENT_TARGET)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0" CACHE STRING "Minimum OS X version")
+endif()
+
 project(uox3 VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
+
+if(WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+	set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE ON)
+endif()
 
 if(WIN32 AND NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     message(FATAL_ERROR
@@ -10,24 +18,79 @@ if(WIN32 AND NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 if(WIN32)
-    set(MOZJS_BRIDGE_DIR "${PROJECT_SOURCE_DIR}/../../tools/mozjs-bridge")
-    execute_process(
-        COMMAND cargo build --manifest-path "${MOZJS_BRIDGE_DIR}/Cargo.toml" --release
-        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/../.."
-        RESULT_VARIABLE MOZJS_BRIDGE_RESULT
-        COMMAND_ECHO STDOUT
-    )
-    if(NOT MOZJS_BRIDGE_RESULT EQUAL 0)
-        message(FATAL_ERROR "Failed to build the pinned mozjs 115 bridge")
+    set(MOZJS_DIR "${PROJECT_SOURCE_DIR}/../../spidermonkey")
+    set(MOZJS_ARCHIVE "${MOZJS_DIR}/mozjs-115.13-windows-x64-clangcl.zip")
+    set(MOZJS_PREBUILT_DIR "${CMAKE_BINARY_DIR}/mozjs-115.13")
+    set(MOZJS_LIBRARY "${MOZJS_PREBUILT_DIR}/mozjs-115.13-windows-x64-clangcl.lib")
+
+    if(NOT EXISTS "${MOZJS_ARCHIVE}")
+        message(FATAL_ERROR "Bundled SpiderMonkey archive not found: ${MOZJS_ARCHIVE}")
     endif()
 
-    file(GLOB MOZJS_BUILD_DIRS
-        "${MOZJS_BRIDGE_DIR}/target/release/build/mozjs_sys-*/out/build")
-    list(LENGTH MOZJS_BUILD_DIRS MOZJS_BUILD_DIR_COUNT)
-    if(NOT MOZJS_BUILD_DIR_COUNT EQUAL 1)
-        message(FATAL_ERROR "Expected exactly one generated mozjs build directory")
+    if(NOT EXISTS "${MOZJS_LIBRARY}")
+        file(MAKE_DIRECTORY "${MOZJS_PREBUILT_DIR}")
+        file(ARCHIVE_EXTRACT
+            INPUT "${MOZJS_ARCHIVE}"
+            DESTINATION "${MOZJS_PREBUILT_DIR}")
     endif()
-    list(GET MOZJS_BUILD_DIRS 0 MOZJS_BUILD_DIR)
+
+    if(NOT EXISTS "${MOZJS_LIBRARY}")
+        message(FATAL_ERROR "Failed to extract bundled SpiderMonkey library")
+    endif()
+else()
+    set(UOX3_MOZJS_LIBRARY "$ENV{UOX3_MOZJS_LIBRARY}" CACHE FILEPATH
+        "Optional path to a custom UOX3 SpiderMonkey 115.13 static library")
+
+    if(UOX3_MOZJS_LIBRARY)
+        set(MOZJS_LIBRARY "${UOX3_MOZJS_LIBRARY}")
+    elseif(APPLE)
+        if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(arm64|aarch64)$")
+            set(MOZJS_PLATFORM "macos-arm64")
+        elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|amd64|AMD64)$")
+            set(MOZJS_PLATFORM "macos-x64")
+        else()
+            message(FATAL_ERROR
+                "No bundled SpiderMonkey library is available for macOS ${CMAKE_SYSTEM_PROCESSOR}.")
+        endif()
+    elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux"
+            AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|amd64|AMD64)$")
+        set(MOZJS_PLATFORM "linux-x64")
+    elseif(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD"
+            AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|amd64|AMD64)$")
+        set(MOZJS_PLATFORM "freebsd-x64")
+    else()
+        message(FATAL_ERROR
+            "No bundled SpiderMonkey library is available for ${CMAKE_SYSTEM_NAME} "
+            "${CMAKE_SYSTEM_PROCESSOR}. Set UOX3_MOZJS_LIBRARY to a compatible custom build.")
+    endif()
+
+    if(NOT MOZJS_LIBRARY AND NOT MOZJS_LIBRARIES)
+        set(MOZJS_ARCHIVE
+            "${PROJECT_SOURCE_DIR}/../../spidermonkey/uox3-mozjs-115.13-${MOZJS_PLATFORM}.tar.gz")
+        set(MOZJS_PREBUILT_DIR
+            "${CMAKE_BINARY_DIR}/mozjs-115.13-${MOZJS_PLATFORM}")
+        set(MOZJS_LIBRARY
+            "${MOZJS_PREBUILT_DIR}/uox3-mozjs-115.13-${MOZJS_PLATFORM}.a")
+
+        if(NOT EXISTS "${MOZJS_ARCHIVE}")
+            message(FATAL_ERROR "Bundled SpiderMonkey archive not found: ${MOZJS_ARCHIVE}")
+        endif()
+
+        if(NOT EXISTS "${MOZJS_LIBRARY}")
+            file(MAKE_DIRECTORY "${MOZJS_PREBUILT_DIR}")
+            file(ARCHIVE_EXTRACT
+                INPUT "${MOZJS_ARCHIVE}"
+                DESTINATION "${MOZJS_PREBUILT_DIR}")
+        endif()
+    endif()
+
+    if(MOZJS_LIBRARY AND NOT EXISTS "${MOZJS_LIBRARY}")
+        message(FATAL_ERROR "SpiderMonkey library not found: ${MOZJS_LIBRARY}")
+    endif()
+endif()
+
+if(NOT MOZJS_LIBRARIES)
+    set(MOZJS_LIBRARIES "${MOZJS_LIBRARY}")
 endif()
 
 # 2. Fix for modern, strict GCC compilers (like on new Ubuntu/WSL)
@@ -179,8 +242,6 @@ add_executable(uox3
    ../../source/CJSMapping.h
    ../../source/cScript.cpp
    ../../source/cScript.h
-   ../../source/JSEncapsulate.cpp
-   ../../source/JSEncapsulate.h
    ../../source/SEFunctions.cpp
    ../../source/SEFunctions.h
    ../../source/UOXJSClasses.h
@@ -190,6 +251,8 @@ add_executable(uox3
    ../../source/UOXJSPropertyFuncs.cpp
    ../../source/UOXJSPropertyFuncs.h
    ../../source/UOXJSPropertySpecs.h
+   ../../source/UOXJSUtilities.cpp
+   ../../source/UOXJSUtilities.h
 # Network group
    ../../source/CPacketReceive.cpp  
    ../../source/CPacketReceive.h
@@ -232,7 +295,8 @@ set (CMAKE_RC_STANDARD_INCLUDE_DIRECTORIES ${PROJECT_SOURCE_DIR}/../../assets/)
 	
 target_compile_definitions(uox3 PRIVATE
 		_WINDOWS
-		EXPORT_JS_API
+		JS_STANDALONE
+		STATIC_JS_API
 		_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
 		_CRT_NO_VA_START_VALIDATION
 		_CRT_SECURE_NO_DEPRECATE
@@ -245,7 +309,6 @@ target_compile_definitions(uox3 PRIVATE
 	
 	target_compile_options( uox3 PRIVATE
 		/J
-		"/FI${MOZJS_BUILD_DIR}/js/src/js-confdefs.h"
 		/GR-
 		$<$<CONFIG:Release>:/O2>
 	)
@@ -268,6 +331,7 @@ else()
 		target_compile_options( uox3 PRIVATE
 			$<$<CONFIG:Release>:-Os>
 		)
+		target_link_options(uox3 PRIVATE -Wl,-ld_classic -Wl,-unaligned_pointers,suppress)
 	else()
 		target_compile_options(uox3 PRIVATE
 			$<$<CONFIG:Release>:-O2>
@@ -285,12 +349,12 @@ endif(WIN32)
 target_include_directories(uox3
 	PUBLIC
 		${PROJECT_SOURCE_DIR}/../../source
-		$<$<PLATFORM_ID:Windows>:${MOZJS_BUILD_DIR}/dist/include>
+		$<$<PLATFORM_ID:Windows>:${MOZJS_DIR}/include>
 		$<$<NOT:$<PLATFORM_ID:Windows>>:${PROJECT_SOURCE_DIR}/../../spidermonkey/include>
 		${PROJECT_SOURCE_DIR}/../../utf8cpp
 )
 if (NOT SYSTEM_ZLIB)
-target_include_directories(uox3
+target_include_directories(uox3 BEFORE
 	PUBLIC
 		${PROJECT_SOURCE_DIR}/../../zlib
 )
@@ -299,10 +363,7 @@ endif (NOT SYSTEM_ZLIB)
 # The libraries we need
 # *************************************************************************
 target_link_libraries(uox3 PRIVATE
-	$<$<PLATFORM_ID:Windows>:${MOZJS_BRIDGE_DIR}/target/release/uox3_mozjs_bridge.lib>
-	$<$<NOT:$<PLATFORM_ID:Windows>>:jsapi>
-	$<$<NOT:$<PLATFORM_ID:Windows>>:jsglue>
-	$<$<NOT:$<PLATFORM_ID:Windows>>:js_static>
+	${MOZJS_LIBRARIES}
 	$<$<PLATFORM_ID:Windows>:ws2_32>
 	$<$<PLATFORM_ID:Windows>:Kernel32>
 	$<$<PLATFORM_ID:Windows>:winmm>
@@ -312,6 +373,7 @@ target_link_libraries(uox3 PRIVATE
 	$<$<PLATFORM_ID:Windows>:legacy_stdio_definitions>
 	$<$<PLATFORM_ID:Windows>:ntdll>
 	$<$<PLATFORM_ID:Windows>:userenv>
+	${CMAKE_DL_LIBS}
 	$<$<PLATFORM_ID:Linux>:pthread>
    $<$<PLATFORM_ID:FreeBSD>:pthread>
    $<$<AND:$<CXX_COMPILER_ID:GNU>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,9.0>>:stdc++fs>

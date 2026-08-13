@@ -30,6 +30,7 @@
 #include "cGuild.h"
 #include "cScript.h"
 #include "StringUtility.hpp"
+#include <js/Value.h>
 #include <iostream>
 #include <cctype>
 #include <stdexcept>
@@ -991,16 +992,7 @@ auto CConsole::Process(std::int32_t c) -> void
 		{
 			if( toFind->second.isEnabled )
 			{
-				cScript *toExecute = JSMapping->GetScript( toFind->second.scriptId );
-				if( toExecute )
-				{
-					// All commands that execute are of the form: command_commandname (to avoid possible clashes)
-#if defined( UOX_DEBUG_MODE )
-					Print( oldstrutil::format( "Executing JS keystroke %c %s\n", c, toFind->second.cmdName.c_str() ));
-#endif
-					JS::Value eventRetVal;
-					[[maybe_unused]] bool retVal = toExecute->CallParticularEvent( toFind->second.cmdName.c_str(), nullptr, 0, &eventRetVal );
-				}
+				messageLoop.NewMessage( MSG_CONSOLEJS, oldstrutil::number( c ));
 				return;
 			}
 		}
@@ -1390,6 +1382,28 @@ auto CConsole::DisplaySettings() -> void
 	(*this) << "   -HTML:            " << cwmWorldState->ServerData()->Directory( CSDDP_HTML ) << myendl;
 	(*this) << "   -Books:           " << cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) << myendl;
 	(*this) << "   -MessageBoards:   " << cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD ) << myendl;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -   CConsole::ExecuteJSCommand()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -   Executes a registered JavaScript console command on the main server thread
+//o------------------------------------------------------------------------------------------------o
+auto CConsole::ExecuteJSCommand( SI32 key ) -> void
+{
+	auto toFind = JSKeyHandler.find( key );
+	if( toFind == JSKeyHandler.end() || !toFind->second.isEnabled )
+		return;
+
+	cScript *toExecute = JSMapping->GetScript( toFind->second.scriptId );
+	if( toExecute != nullptr )
+	{
+#if defined( UOX_DEBUG_MODE )
+		Print( oldstrutil::format( "Executing JS keystroke %c %s\n", key, toFind->second.cmdName.c_str() ));
+#endif
+		JS::Value eventRetVal;
+		[[maybe_unused]] bool retVal = toExecute->CallParticularEvent( toFind->second.cmdName.c_str(), nullptr, 0, &eventRetVal );
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o

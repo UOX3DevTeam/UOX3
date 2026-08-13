@@ -16,20 +16,23 @@
     <RootNamespace>uox3</RootNamespace>
     <VCProjectVersion>16.0</VCProjectVersion>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <MozjsArchive>$(ProjectDir)..\..\spidermonkey\mozjs-115.13-windows-x64-clangcl.zip</MozjsArchive>
+    <MozjsDir>$(ProjectDir)x64\mozjs-115.13</MozjsDir>
+    <MozjsLibrary>$(MozjsDir)\mozjs-115.13-windows-x64-clangcl.lib</MozjsLibrary>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <CharacterSet>MultiByte</CharacterSet>
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>ClangCL</PlatformToolset>
-    <UseDebugLibraries>true</UseDebugLibraries>
+    <UseDebugLibraries>false</UseDebugLibraries>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <CharacterSet>MultiByte</CharacterSet>
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>ClangCL</PlatformToolset>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -43,30 +46,29 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <OutDir>$(ProjectDir)x64\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)x64\$(Configuration)\obj\</IntDir>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\</IntDir>
-  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\source;..\..\zlib;..\..\spidermonkey\include;..\..\utf8cpp</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\source;..\..\spidermonkey\include;..\..\utf8cpp;..\..\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /J</AdditionalOptions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <ConformanceMode>false</ConformanceMode>
-      <LanguageStandard_C>stdc11</LanguageStandard_C>
+      <ExceptionHandling>Sync</ExceptionHandling>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeaderFile />
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_NO_VA_START_VALIDATION;_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH;_CRT_SECURE_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION;STATIC_JS_API</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_CONSOLE;JS_STANDALONE;STATIC_JS_API;_CRT_NO_VA_START_VALIDATION;_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>jsapi.lib;jsglue.lib;js_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../spidermonkey;$(SolutionDir)$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(MozjsLibrary);ws2_32.lib;Kernel32.lib;winmm.lib;psapi.lib;user32.lib;dbghelp.lib;legacy_stdio_definitions.lib;ntdll.lib;userenv.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
@@ -74,28 +76,26 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\source;..\..\zlib;..\..\spidermonkey\include;..\..\utf8cpp</AdditionalIncludeDirectories>
-      <AdditionalOptions> /J</AdditionalOptions>
+      <AdditionalIncludeDirectories>..\..\source;..\..\spidermonkey\include;..\..\utf8cpp;..\..\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/clang:-flto=thin %(AdditionalOptions) /J</AdditionalOptions>
       <ConformanceMode>false</ConformanceMode>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>Full</Optimization>
       <PrecompiledHeaderFile />
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_CRT_NO_VA_START_VALIDATION;_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH;_CRT_SECURE_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION;STATIC_JS_API</PreprocessorDefinitions>
-      <PreprocessToFile>false</PreprocessToFile>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_CONSOLE;JS_STANDALONE;STATIC_JS_API;_CRT_NO_VA_START_VALIDATION;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <SDLCheck>true</SDLCheck>
       <WarningLevel>Level3</WarningLevel>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>jsapi.lib;jsglue.lib;js_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../spidermonkey;$(SolutionDir)$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
-      <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
-      <EnableCOMDATFolding>false</EnableCOMDATFolding>
+      <AdditionalDependencies>$(MozjsLibrary);ws2_32.lib;Kernel32.lib;winmm.lib;psapi.lib;user32.lib;dbghelp.lib;legacy_stdio_definitions.lib;ntdll.lib;userenv.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/OPT:REF /OPT:ICF %(AdditionalOptions)</AdditionalOptions>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <OptimizeReferences>true</OptimizeReferences>
       <SubSystem>Console</SubSystem>
     </Link>
@@ -171,10 +171,10 @@
     <ClCompile Include="..\..\source\CJSEngine.cpp" />
     <ClCompile Include="..\..\source\CJSMapping.cpp" />
     <ClCompile Include="..\..\source\cScript.cpp" />
-    <ClCompile Include="..\..\source\JSEncapsulate.cpp" />
     <ClCompile Include="..\..\source\SEFunctions.cpp" />
     <ClCompile Include="..\..\source\UOXJSMethods.cpp" />
     <ClCompile Include="..\..\source\UOXJSPropertyFuncs.cpp" />
+    <ClCompile Include="..\..\source\UOXJSUtilities.cpp" />
     <!-- Network group -->
     <ClCompile Include="..\..\source\CPacketReceive.cpp" />
     <ClCompile Include="..\..\source\CPacketSend.cpp" />
@@ -254,13 +254,13 @@
     <ClInclude Include="..\..\source\CJSEngine.h" />
     <ClInclude Include="..\..\source\CJSMapping.h" />
     <ClInclude Include="..\..\source\cScript.h" />
-    <ClInclude Include="..\..\source\JSEncapsulate.h" />
     <ClInclude Include="..\..\source\SEFunctions.h" />
     <ClInclude Include="..\..\source\UOXJSClasses.h" />
     <ClInclude Include="..\..\source\UOXJSMethods.h" />
     <ClInclude Include="..\..\source\UOXJSPropertyEnums.h" />
     <ClInclude Include="..\..\source\UOXJSPropertyFuncs.h" />
     <ClInclude Include="..\..\source\UOXJSPropertySpecs.h" />
+    <ClInclude Include="..\..\source\UOXJSUtilities.h" />
     <!-- Network group -->
     <ClInclude Include="..\..\source\CPacketReceive.h" />
     <ClInclude Include="..\..\source\CPacketSend.h" />
@@ -283,14 +283,20 @@
     <ResourceCompile Include="..\..\assets\uox3.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\spidermonkey\make\vs2022\jscript\jscript.vcxproj">
-      <Project>{2af3a5ea-0cec-4d24-80f7-05e0b8b300c5}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\..\zlib\make\vs2022\zlib.vcxproj">
       <Project>{091529fd-5075-45f1-9d96-5708b3ab7c2b}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Target Name="PrepareMozjs" BeforeTargets="PrepareForBuild"
+          Inputs="$(MozjsArchive)" Outputs="$(MozjsLibrary)">
+    <Error Condition="!Exists('$(MozjsArchive)')"
+           Text="Bundled SpiderMonkey archive not found: $(MozjsArchive)" />
+    <MakeDir Directories="$(MozjsDir)" />
+    <Exec Command="tar.exe -xf &quot;$(MozjsArchive)&quot; -C &quot;$(MozjsDir)&quot;" />
+    <Error Condition="!Exists('$(MozjsLibrary)')"
+           Text="Failed to extract SpiderMonkey library: $(MozjsLibrary)" />
+  </Target>
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>

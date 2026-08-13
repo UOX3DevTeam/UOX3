@@ -14,6 +14,8 @@
 #ifndef __UOXJSMethods__
 #define __UOXJSMethods__
 
+#include <js/PropertySpec.h>
+
 // Object Constructors
 bool Gump( JSContext *cx, unsigned argc, JS::Value *vp );
 bool GumpData( JSContext *cx, unsigned argc, JS::Value *vp );
@@ -382,6 +384,11 @@ inline JSFunctionSpec CGump_Methods[] =
 	JS_FS_END
 };
 
+inline JSFunctionSpec CBaseObject_Methods[] =
+{
+	JS_FS_END
+};
+
 inline JSFunctionSpec CChar_Methods[] =
 {
 	JS_FN( "AddSkill",			CChar_AddSkill,			3, 0 ),
@@ -599,8 +606,6 @@ inline JSFunctionSpec CItem_Methods[] =
 	JS_FN( "TurnBoat",			CMulti_TurnBoat,			1, 0 ),
 	JS_FN( "GetTiller",			CMulti_GetTiller,			0, 0 ),
 
-	//JS_FN( "SetMoreSerial",		CBase_SetMoreSerial,		1, 0, 0 ),
-	//JS_FN( "SetMoreSerial",		CBase_SetMoreSerial,		1, 0 ),
 	JS_FN( "SetRandomName",		CBase_SetRandomName,		1, 0 ),
 	JS_FN( "SetRandomColor",		CBase_SetRandomColor,		1, 0 ),
 	JS_FN( "GetTempEffect",		CBase_GetTempEffect,		1, 0 ),

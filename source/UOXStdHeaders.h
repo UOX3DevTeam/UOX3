@@ -48,7 +48,4 @@
 
 #endif
 
-#include "jsapi.h"
-#include "UOXJSCompat.h"
-
 #endif

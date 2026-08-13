@@ -1,6 +1,10 @@
 #ifndef __CJSENGINE_H__
 #define __CJSENGINE_H__
 
+#include <js/RootingAPI.h>
+
+class JSAutoRealm;
+
 enum IUEEntries
 {
 	IUE_RACE = 0,
@@ -17,7 +21,8 @@ enum IUEEntries
 
 enum JSPrototypes
 {
-	JSP_ITEM	= 0,
+	JSP_BASE  = 0,
+	JSP_ITEM,
 	JSP_CHAR,
 	JSP_SOCK,
 	JSP_GUMP,
@@ -53,23 +58,16 @@ private:
 	std::array<JSOBJECTMAP, IUE_COUNT>					objectList;
     JS::RootedObjectVector *   protoList;
 
-	JSObject * spellsObj;
-	JSObject * skillsObj;
-	JSObject * accountsObj;
-	JSObject * consoleObj;
-	JSObject * createEntriesObj;
-	JSObject * timerObj;
-	JSObject * scriptObj;
 	JSRuntime * jsRuntime;
 	JSContext * jsContext;
-	JSObject * jsGlobal;
+	JS::PersistentRootedObject jsGlobal;
 	JSAutoRealm * realmGuard;
 
 	JSObject *	FindAssociatedObject( IUEEntries iType, void *index );
 	JSObject *	MakeNewObject( IUEEntries iType );
 
 	void		Cleanup( void );
-	void		InitializePrototypes( void );
+	bool		InitializePrototypes( void );
 public:
 	CJSRuntime();
 	CJSRuntime( UI32 engineSize );
@@ -96,6 +94,7 @@ private:
 	typedef std::vector<CJSRuntime *>::const_iterator	RUNTIMELIST_CITERATOR;
 
 	RUNTIMELIST											runtimeList;
+	bool											jsInitialized = false;
 
 public:
 
@@ -103,6 +102,7 @@ public:
 	~CJSEngine();
 
 	auto Startup() -> void;
+	void		Shutdown( void );
 	
 	JSRuntime *	GetRuntime( UI08 runTime ) const;
 	JSContext * GetContext( UI08 runTime ) const;

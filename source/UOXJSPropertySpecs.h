@@ -9,6 +9,9 @@
 #ifndef __UOXJSPropertySpecs__
 #define __UOXJSPropertySpecs__
 
+#include <js/PropertySpec.h>
+
+#include "UOXJSUtilities.h"
 #include "UOXJSPropertyEnums.h"
 #include "enums.h"
 
@@ -62,7 +65,6 @@ FDCLG( main, attr ) {                                                         \
 FDCLG( main, attr ) { \
   FNARGS \
   auto priv = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0); \
-  SERIAL TempSerial = INVALIDSERIAL; \
   if( !ValidateObject( priv )) \
     return false; \
   args.rval().method(priv->accessor); \
@@ -73,7 +75,6 @@ FDCLG( main, attr ) { \
 FDCLG( main, attr ) { \
   FNARGS \
   auto priv = JS::GetMaybePtrFromReservedSlot< type >(thisObj, 0); \
-  SERIAL TempSerial = INVALIDSERIAL; \
   if( !ValidateObject( priv )) \
     return false; \
   args.rval().method( JS_NewStringCopyZ( cx, priv->accessor ) ); \
@@ -84,11 +85,7 @@ FDCLG( main, attr ) { \
 FDCLS( main, attr ) {                                                                                            \
   FNARGS                                                                                                         \
   auto priv         = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0);                                         \
-  auto origScript   = JSMapping->GetScript(JS::CurrentGlobalOrNull(cx));                                         \
-  auto origScriptID = JSMapping->GetScriptId(JS::CurrentGlobalOrNull(cx));                                       \
   priv->accessor(args.get(0).method());                                                                          \
-  if (origScript != JSMapping->GetScript(JS::CurrentGlobalOrNull(cx))) {                                         \
-  }                                                                                                              \
   return true;                                                                                                   \
 }
 
@@ -96,11 +93,7 @@ FDCLS( main, attr ) {                                                           
 FDCLS( main, attr ) {                                    \
   FNARGS                                                                                                         \
   auto priv         = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0);                                         \
-  auto origScript   = JSMapping->GetScript(JS::CurrentGlobalOrNull(cx));                                         \
-  auto origScriptID = JSMapping->GetScriptId(JS::CurrentGlobalOrNull(cx));                                       \
   priv->accessor    = args.get(0).method();                                                                      \
-  if (origScript != JSMapping->GetScript(JS::CurrentGlobalOrNull(cx))) {                                         \
-  }                                                                                                              \
   return true;                                                                                                   \
 }
 
@@ -108,13 +101,9 @@ FDCLS( main, attr ) {                                    \
 FDCLS( main, attr ) {                                    \
   FNARGS                                                                                                         \
   auto priv         = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0);                                         \
-  auto origScript   = JSMapping->GetScript(JS::CurrentGlobalOrNull(cx));                                         \
-  auto origScriptID = JSMapping->GetScriptId(JS::CurrentGlobalOrNull(cx));                                       \
   JS::RootedString converted(cx, JS::ToString(cx, args.get(0)));                                                 \
   if( converted == nullptr ) return false;                                                                       \
-  priv->accessor(convertToString(cx, converted));                                                                \
-  if (origScript != JSMapping->GetScript(JS::CurrentGlobalOrNull(cx))) {                                         \
-  }                                                                                                              \
+  priv->accessor(JSStringToString(cx, converted));                                                               \
   return true;                                                                                                   \
 }
 
@@ -122,13 +111,9 @@ FDCLS( main, attr ) {                                    \
 FDCLS( main, attr ) {                                    \
   FNARGS                                                                                                         \
   auto priv         = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0);                                         \
-  auto origScript   = JSMapping->GetScript(JS::CurrentGlobalOrNull(cx));                                         \
-  auto origScriptID = JSMapping->GetScriptId(JS::CurrentGlobalOrNull(cx));                                       \
   JS::RootedString converted(cx, JS::ToString(cx, args.get(0)));                                                 \
   if( converted == nullptr ) return false;                                                                       \
-  priv->accessor    = convertToString(cx, converted);                                                            \
-  if (origScript != JSMapping->GetScript(JS::CurrentGlobalOrNull(cx))) {                                         \
-  }                                                                                                              \
+  priv->accessor    = JSStringToString(cx, converted);                                                           \
   return true;                                                                                                   \
 }
 
@@ -146,30 +131,20 @@ DECL_SET( main, attr )
 // Forward declares
 DECL_GET( CSpell, action )
 DECL_GET( CSpell, aggressiveSpell )
-DECL_GET( CSpell, ash )
 DECL_GET( CSpell, baseDmg )
 DECL_GET( CSpell, circle )
 DECL_GET( CSpell, damageDelay )
 DECL_GET( CSpell, delay )
-DECL_GET( CSpell, drake )
 DECL_GET( CSpell, enabled )
 DECL_GET( CSpell, fieldSpell )
-DECL_GET( CSpell, garlic )
-DECL_GET( CSpell, batwing )
-DECL_GET( CSpell, daemonBlood )
-DECL_GET( CSpell, graveDust )
-DECL_GET( CSpell, noxCrystal )
-DECL_GET( CSpell, pigIron )
-DECL_GET( CSpell, ginseng )
 DECL_GET( CSpell, health )
 DECL_GET( CSpell, highSkill )
 DECL_GET( CSpell, id )
 DECL_GET( CSpell, lowSkill )
 DECL_GET( CSpell, mana )
 DECL_GET( CSpell, mantra )
-DECL_GET( CSpell, moss )
 DECL_GET( CSpell, name )
-DECL_GET( CSpell, pearl )
+DECL_GET( CSpell, reagents )
 DECL_GET( CSpell, recoveryDelay )
 DECL_GET( CSpell, reflectable )
 DECL_GET( CSpell, requireChar )
@@ -179,8 +154,6 @@ DECL_GET( CSpell, requireTarget )
 DECL_GET( CSpell, resistable )
 DECL_GET( CSpell, scrollHigh )
 DECL_GET( CSpell, scrollLow )
-DECL_GET( CSpell, shade )
-DECL_GET( CSpell, silk )
 DECL_GET( CSpell, soundEffect )
 DECL_GET( CSpell, stamina )
 DECL_GET( CSpell, strToSay )
@@ -339,6 +312,27 @@ DECL_GET_SET( CGuild, stone )
 DECL_GET_SET( CGuild, type )
 DECL_GET_SET( CGuild, webPage )
 
+// Base Object properties
+DECL_GET_SET( CBaseObject, sectionID )
+DECL_GET_SET( CBaseObject, x )
+DECL_GET_SET( CBaseObject, y )
+DECL_GET_SET( CBaseObject, z )
+DECL_GET_SET( CBaseObject, oldX )
+DECL_GET_SET( CBaseObject, oldY )
+DECL_GET_SET( CBaseObject, oldZ )
+DECL_GET_SET( CBaseObject, id )
+DECL_GET_SET( CBaseObject, serial )
+DECL_GET_SET( CBaseObject, visible )
+DECL_GET_SET( CBaseObject, health )
+DECL_GET_SET( CBaseObject, shouldSave )
+DECL_GET_SET( CBaseObject, poison )
+DECL_GET_SET( CBaseObject, poisonedBy )
+DECL_GET_SET( CBaseObject, color )
+DECL_GET_SET( CBaseObject, colour )
+DECL_GET_SET( CBaseObject, hue )
+DECL_GET_SET( CBaseObject, skin )
+
+
 // Character Properties
 DECL_GET_SET( CCharacter, account )
 DECL_GET_SET( CCharacter, accountNum )
@@ -363,8 +357,6 @@ DECL_GET_SET( CCharacter, canBroadcast )
 DECL_GET_SET( CCharacter, canRun )
 DECL_GET_SET( CCharacter, canSnoop )
 DECL_GET_SET( CCharacter, cell )
-DECL_GET_SET( CCharacter, color )
-DECL_GET_SET( CCharacter, colour )
 DECL_GET_SET( CCharacter, commandlevel )
 DECL_GET_SET( CCharacter, controlSlots )
 DECL_GET_SET( CCharacter, controlSlotsUsed )
@@ -401,7 +393,6 @@ DECL_GET_SET( CCharacter, hairColor )
 DECL_GET_SET( CCharacter, hairColour )
 DECL_GET_SET( CCharacter, hairStyle )
 DECL_GET_SET( CCharacter, hasStolen )
-DECL_GET_SET( CCharacter, health )
 DECL_GET_SET( CCharacter, hidamage )
 DECL_GET_SET( CCharacter, hideFameKarmaTitle )
 DECL_GET_SET( CCharacter, hireling )
@@ -409,11 +400,9 @@ DECL_GET_SET( CCharacter, hitChance )
 DECL_GET_SET( CCharacter, houseicons )
 DECL_GET_SET( CCharacter, housesCoOwned )
 DECL_GET_SET( CCharacter, housesOwned )
-DECL_GET_SET( CCharacter, hue )
 DECL_GET_SET( CCharacter, hunger )
 DECL_GET_SET( CCharacter, hungerRate )
 DECL_GET_SET( CCharacter, hungerWildChance )
-DECL_GET_SET( CCharacter, id )
 DECL_GET_SET( CCharacter, innocent )
 DECL_GET_SET( CCharacter, instanceID )
 DECL_GET_SET( CCharacter, intelligence )
@@ -466,9 +455,6 @@ DECL_GET_SET( CCharacter, npCCharacter )
 DECL_GET_SET( CCharacter, npcFlag )
 DECL_GET_SET( CCharacter, npcGuild )
 DECL_GET_SET( CCharacter, oldWandertype )
-DECL_GET_SET( CCharacter, oldX )
-DECL_GET_SET( CCharacter, oldY )
-DECL_GET_SET( CCharacter, oldZ )
 DECL_GET_SET( CCharacter, online )
 DECL_GET_SET( CCharacter, orgID )
 DECL_GET_SET( CCharacter, orgSkin )
@@ -485,8 +471,6 @@ DECL_GET_SET( CCharacter, pathTargY )
 DECL_GET_SET( CCharacter, permanentMagicReflect )
 DECL_GET_SET( CCharacter, petCount )
 DECL_GET_SET( CCharacter, playTime )
-DECL_GET_SET( CCharacter, poison )
-DECL_GET_SET( CCharacter, poisonedBy )
 DECL_GET_SET( CCharacter, poisonStrength )
 DECL_GET_SET( CCharacter, priv )
 DECL_GET_SET( CCharacter, race )
@@ -496,10 +480,7 @@ DECL_GET_SET( CCharacter, region )
 DECL_GET_SET( CCharacter, sayColour )
 DECL_GET_SET( CCharacter, scripttrigger )
 DECL_GET_SET( CCharacter, scriptTriggers )
-DECL_GET_SET( CCharacter, sectionID )
-DECL_GET_SET( CCharacter, serial )
 DECL_GET_SET( CCharacter, setPeace )
-DECL_GET_SET( CCharacter, shouldSave )
 DECL_GET_SET( CCharacter, singClickSer )
 DECL_GET_SET( CCharacter, skillCaps )
 DECL_GET_SET( CCharacter, skillLock )
@@ -508,7 +489,6 @@ DECL_GET_SET( CCharacter, skillsused )
 DECL_GET_SET( CCharacter, skillToPeace )
 DECL_GET_SET( CCharacter, skillToProv )
 DECL_GET_SET( CCharacter, skillToTame )
-DECL_GET_SET( CCharacter, skin )
 DECL_GET_SET( CCharacter, socket )
 DECL_GET_SET( CCharacter, spattack )
 DECL_GET_SET( CCharacter, spawnSerial )
@@ -538,16 +518,12 @@ DECL_GET_SET( CCharacter, title )
 DECL_GET_SET( CCharacter, town )
 DECL_GET_SET( CCharacter, townPriv )
 DECL_GET_SET( CCharacter, trainer )
-DECL_GET_SET( CCharacter, visible )
 DECL_GET_SET( CCharacter, vulnerable )
 DECL_GET_SET( CCharacter, wandertype )
 DECL_GET_SET( CCharacter, weight )
 DECL_GET_SET( CCharacter, willhunger )
 DECL_GET_SET( CCharacter, willthirst )
 DECL_GET_SET( CCharacter, worldnumber )
-DECL_GET_SET( CCharacter, x )
-DECL_GET_SET( CCharacter, y )
-DECL_GET_SET( CCharacter, z )
 DECL_GET( CCharacter, attack )
 DECL_GET( CCharacter, flag )
 DECL_GET( CCharacter, followerCount )
@@ -590,8 +566,6 @@ DECL_GET_SET( CItem, buildTimestamp )
 DECL_GET_SET( CItem, buyvalue )
 DECL_GET_SET( CItem, canBeLockedDown )
 DECL_GET_SET( CItem, carveSection )
-DECL_GET_SET( CItem, color )
-DECL_GET_SET( CItem, colour )
 DECL_GET_SET( CItem, container )
 DECL_GET_SET( CItem, corpse )
 DECL_GET_SET( CItem, creator )
@@ -618,7 +592,6 @@ DECL_GET_SET( CItem, event )
 DECL_GET_SET( CItem, friends )
 DECL_GET_SET( CItem, good )
 DECL_GET_SET( CItem, guests )
-DECL_GET_SET( CItem, health )
 DECL_GET_SET( CItem, healthBonus )
 DECL_GET_SET( CItem, healthLeech )
 DECL_GET_SET( CItem, healthRegenBonus )
@@ -626,8 +599,6 @@ DECL_GET_SET( CItem, hitChance )
 DECL_GET_SET( CItem, staminaRegenBonus )
 DECL_GET_SET( CItem, manaRegenBonus )
 DECL_GET_SET( CItem, hidamage )
-DECL_GET_SET( CItem, hue )
-DECL_GET_SET( CItem, id )
 DECL_GET_SET( CItem, instanceID )
 DECL_GET_SET( CItem, intelligence )
 DECL_GET_SET( CItem, isChar )
@@ -685,15 +656,10 @@ DECL_GET_SET( CItem, moveType )
 DECL_GET_SET( CItem, multi )
 DECL_GET_SET( CItem, name )
 DECL_GET_SET( CItem, name2 )
-DECL_GET_SET( CItem, oldX )
-DECL_GET_SET( CItem, oldY )
-DECL_GET_SET( CItem, oldZ )
 DECL_GET_SET( CItem, origin )
 DECL_GET_SET( CItem, origName )
 DECL_GET_SET( CItem, owner )
 DECL_GET_SET( CItem, owners )
-DECL_GET_SET( CItem, poison )
-DECL_GET_SET( CItem, poisonedBy )
 DECL_GET_SET( CItem, poisonCharges )
 DECL_GET_SET( CItem, race )
 DECL_GET_SET( CItem, rank )
@@ -709,12 +675,8 @@ DECL_GET_SET( CItem, restock )
 DECL_GET_SET( CItem, scripttrigger )
 DECL_GET_SET( CItem, scriptTriggers )
 DECL_GET_SET( CItem, sectionalist )
-DECL_GET_SET( CItem, sectionID )
 DECL_GET_SET( CItem, secureContainers )
 DECL_GET_SET( CItem, sellvalue )
-DECL_GET_SET( CItem, serial )
-DECL_GET_SET( CItem, shouldSave )
-DECL_GET_SET( CItem, skin )
 DECL_GET_SET( CItem, spawnsection )
 DECL_GET_SET( CItem, spawnSerial )
 DECL_GET_SET( CItem, speed )
@@ -734,14 +696,10 @@ DECL_GET_SET( CItem, type )
 DECL_GET_SET( CItem, usesLeft )
 DECL_GET_SET( CItem, vendorPrice )
 DECL_GET_SET( CItem, vendors )
-DECL_GET_SET( CItem, visible )
 DECL_GET_SET( CItem, weight )
 DECL_GET_SET( CItem, weightMax )
 DECL_GET_SET( CItem, wipable )
 DECL_GET_SET( CItem, worldnumber )
-DECL_GET_SET( CItem, x )
-DECL_GET_SET( CItem, y )
-DECL_GET_SET( CItem, z )
 
 // Socket Properties
 DECL_GET_SET( CSocket, account )
@@ -937,19 +895,6 @@ inline JSPropertySpec CSpellProperties[] =
   UX_PSG( CSpell, circle,          JSPROP_ENUMANDPERM ),
   UX_PSG( CSpell, lowSkill,        JSPROP_ENUMANDPERM ),
   UX_PSG( CSpell, highSkill,       JSPROP_ENUMANDPERM ),
-  UX_PSG( CSpell, ginseng,         JSPROP_ENUMANDPERM ),
-  UX_PSG( CSpell, moss,            JSPROP_ENUMANDPERM ),
-  UX_PSG( CSpell, drake,           JSPROP_ENUMANDPERM ),
-  UX_PSG( CSpell, pearl,           JSPROP_ENUMANDPERM ),
-  UX_PSG( CSpell, silk,            JSPROP_ENUMANDPERM ),
-  UX_PSG( CSpell, ash,             JSPROP_ENUMANDPERM ),
-  UX_PSG( CSpell, shade,           JSPROP_ENUMANDPERM ),
-  UX_PSG( CSpell, garlic,          JSPROP_ENUMANDPERM ),
-  UX_PSG( CSpell, batwing,         JSPROP_ENUMANDPERM ),
-  UX_PSG( CSpell, daemonBlood,     JSPROP_ENUMANDPERM ),
-  UX_PSG( CSpell, graveDust,       JSPROP_ENUMANDPERM ),
-  UX_PSG( CSpell, noxCrystal,      JSPROP_ENUMANDPERM ),
-  UX_PSG( CSpell, pigIron,         JSPROP_ENUMANDPERM ),
   UX_PSG( CSpell, requireTarget,   JSPROP_ENUMANDPERM ),
   UX_PSG( CSpell, requireItem,     JSPROP_ENUMANDPERM ),
   UX_PSG( CSpell, requireLocation, JSPROP_ENUMANDPERM ),
@@ -963,6 +908,7 @@ inline JSPropertySpec CSpellProperties[] =
   UX_PSG( CSpell, enabled,         JSPROP_ENUMANDPERM ),
   UX_PSG( CSpell, tithing,         JSPROP_ENUMANDPERM ),
   UX_PSG( CSpell, baseDmg,         JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, reagents,        JSPROP_ENUMANDPERM ),
   JS_PS_END
 };
 // clang-format on
@@ -1151,31 +1097,39 @@ inline JSPropertySpec CGuildProperties[] =
 };
 // clang-format on
 
+inline JSPropertySpec CBaseObjectProps[] =
+{
+  UX_PSGS( CBaseObject, sectionID,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, x,                     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, y,                     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, z,                     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, oldX,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, oldY,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, oldZ,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, id,                    JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, serial,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, visible,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, health,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, shouldSave,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, poison,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, poisonedBy,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, colour,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, color,                 JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, skin,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CBaseObject, hue,                   JSPROP_ENUMANDPERM ),
+  JS_PS_END
+};
+
 // clang-format off
 inline JSPropertySpec CCharacterProps[] =
 {
-  UX_PSGS( CCharacter, sectionID,             JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, name,                  JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, origName,              JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, title,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, x,                     JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, y,                     JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, z,                     JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, oldX,                  JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, oldY,                  JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, oldZ,                  JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, id,                    JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, colour,                JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, color,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, skin,                  JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, hue,                   JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, controlSlots,          JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, controlSlotsUsed,      JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, orneriness,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, owner,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, visible,               JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, serial,                JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, health,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, scripttrigger,         JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, scriptTriggers,        JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, worldnumber,           JSPROP_ENUMANDPERM ),
@@ -1258,8 +1212,6 @@ inline JSPropertySpec CCharacterProps[] =
   UX_PSGS( CCharacter, tempdex,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, tempint,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, tempstr,               JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, poison,                JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, poisonedBy,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, lightlevel,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, vulnerable,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, willhunger,            JSPROP_ENUMANDPERM ),
@@ -1352,7 +1304,6 @@ inline JSPropertySpec CCharacterProps[] =
   UX_PSGS( CCharacter, maxLoyalty,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, loyalty,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, loyaltyRate,           JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, shouldSave,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, origin,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, partyLootable,         JSPROP_ENUMANDPERM ),
   UX_PSG(  CCharacter, party,                 JSPROP_ENUMPERMRO ),
@@ -1373,24 +1324,9 @@ inline JSPropertySpec CCharacterProps[] =
 // clang-format off
 inline JSPropertySpec CItemProps[] =
 {
-  UX_PSGS( CItem, sectionID,           JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, name,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, title,               JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, x,                   JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, y,                   JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, z,                   JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, oldX,                JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, oldY,                JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, oldZ,                JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, id,                  JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, colour,              JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, color,               JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, skin,                JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, hue,                 JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, owner,               JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, visible,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, serial,              JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, health,              JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, scripttrigger,       JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, scriptTriggers,      JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, worldnumber,         JSPROP_ENUMANDPERM ),
@@ -1441,8 +1377,6 @@ inline JSPropertySpec CItemProps[] =
   UX_PSGS( CItem, usesLeft,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, rank,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, creator,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, poison,              JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, poisonedBy,          JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, poisonCharges,       JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, dir,                 JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, wipable,             JSPROP_ENUMANDPERM ),
@@ -1467,7 +1401,6 @@ inline JSPropertySpec CItemProps[] =
   UX_PSGS( CItem, event,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, tempLastTraded,      JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, tempTimer,           JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, shouldSave,          JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, isNewbie,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, isDispellable,       JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, madeWith,            JSPROP_ENUMANDPERM ),

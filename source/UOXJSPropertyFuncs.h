@@ -9,17 +9,4 @@
 #ifndef __UOXJSPropertyOps__
 #define __UOXJSPropertyOps__
 
-extern std::map< std::string, int >		propLookupAccount;
-extern std::map< std::string, int >		propLookupChar;
-extern std::map< std::string, int >		propLookupConsole;
-extern std::map< std::string, int >		propLookupGuild;
-extern std::map< std::string, int >		propLookupItem;
-extern std::map< std::string, int >		propLookupParty;
-extern std::map< std::string, int >		propLookupRace;
-extern std::map< std::string, int >		propLookupRegion;
-extern std::map< std::string, int >		propLookupResource;
-extern std::map< std::string, int >		propLookupSkills;
-extern std::map< std::string, int >		propLookupSocket;
-extern std::map< std::string, int >		propLookupSpawnRegion;
-
 #endif

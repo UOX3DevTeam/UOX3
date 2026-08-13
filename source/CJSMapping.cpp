@@ -39,7 +39,17 @@ CJSMapping::CJSMapping()
  */
 CJSMapping::~CJSMapping()
 {
-	//Cleanup();
+	Shutdown();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -   CJSMapping::Shutdown()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -   Releases all script mappings and their persistent JavaScript roots
+//o------------------------------------------------------------------------------------------------o
+void CJSMapping::Shutdown( void )
+{
+	Cleanup();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -71,7 +81,7 @@ void CJSMapping::Cleanup( void )
 {
 	for( size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i )
 	{
-		if( mapSection[1] != nullptr )
+		if( mapSection[i] != nullptr )
 		{
 			delete mapSection[i];
 			mapSection[i] = nullptr;

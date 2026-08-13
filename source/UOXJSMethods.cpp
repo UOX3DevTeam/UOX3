@@ -19,9 +19,7 @@
 #include "SEFunctions.h"
 #include "UOXJSClasses.h"
 #include "UOXJSMethods.h"
-#include "JSEncapsulate.h"
 #include "CJSEngine.h"
-
 #include "cMagic.h"
 #include "cGuild.h"
 #include "skills.h"
@@ -51,6 +49,7 @@
 #include <jsapi.h>
 #include <js/Object.h>
 #include <js/Array.h>
+#include <js/Conversions.h>
 
 void BuildAddMenuGump( CSocket *s, UI16 m );	// Menus for item creation
 void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, SI16 trgX, SI16 trgY, SI08 trgZ, UI08 trgWorld, UI16 trgInstanceId = 0 );
@@ -60,6 +59,71 @@ void ScriptError( JSContext *cx, const char *txt, ... );
 void ReverseEffect( CTEffect *Effect );
 void PauseEffect( CTEffect *Effect );
 void ResumeEffect( CTEffect *Effect );
+
+inline JSObject* getThis( JSContext * cx, JS::CallArgs& args )
+{
+  JS::RootedObject thisObject(cx);
+  if (!args.computeThis(cx, &thisObject))
+  {
+    return nullptr;
+  }
+  return thisObject;
+}
+
+namespace
+{
+std::string ConsoleValueToString( JSContext *cx, JS::HandleValue value )
+{
+	if( value.isObject() )
+		throw new std::runtime_error( "Cannot convert JS Object to a string" );
+
+	if( value.isInt32() )
+		return oldstrutil::number( value.toInt32() );
+	if( value.isDouble() )
+		return oldstrutil::number( value.toDouble() );
+	if( value.isBoolean() )
+		return value.toBoolean() ? "TRUE" : "FALSE";
+	if( value.isString() )
+		return JSStringToString( cx, value.toString() );
+
+	return {};
+}
+
+bool ConsoleValueToBool( JSContext *cx, JS::HandleValue value )
+{
+	if( value.isObject() )
+		throw new std::runtime_error( "Cannot convert JS Object to a bool" );
+
+	if( value.isInt32() )
+		return value.toInt32() != 0;
+	if( value.isDouble() )
+		return value.toDouble() != 0.0;
+	if( value.isBoolean() )
+		return value.toBoolean();
+	if( value.isString() )
+		return oldstrutil::upper( JSStringToString( cx, value.toString() )) == "TRUE";
+
+	return false;
+}
+
+SI32 ConsoleValueToInt( JSContext *cx, JS::HandleValue value )
+{
+	if( value.isObject() )
+		throw new std::runtime_error( "Cannot convert JS Object to an int" );
+
+	if( value.isInt32() )
+		return value.toInt32();
+	if( value.isDouble() )
+		return static_cast<SI32>( value.toDouble() );
+	if( value.isBoolean() )
+		return value.toBoolean() ? 1 : 0;
+	if( value.isString() )
+		return std::stoi( JSStringToString( cx, value.toString() ), nullptr, 0 );
+
+	return 0;
+}
+}
+
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	MethodSpeech()
@@ -174,12 +238,11 @@ bool Packet( JSContext *cx, unsigned argc, JS::Value* vp )
 {
 	CPUOXBuffer *toAdd = new CPUOXBuffer;
 
-	JSObject* obj = JS_NewObject( cx, &UOXPacket_class, nullptr, nullptr );
+	JS::RootedObject obj( cx, JS_NewObject( cx, &UOXPacket_class ));
 	JS_DefineFunctions( cx, obj, CPacket_Methods );
-	JS_SetPrivate( cx, obj, toAdd);
-	JS_LockGCThing( cx, obj );
-	//JS_AddRoot( cx, &obj );
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( obj ) );
+	JS::SetReservedSlot( obj, 0, JS::PrivateValue( toAdd ) );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	args.rval().setObjectOrNull( obj );
 	return true;
 }
 
@@ -191,16 +254,15 @@ bool Packet( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CPacket_Free( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	CPUOXBuffer *toDelete = static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, obj ) );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+	CPUOXBuffer* toDelete = JS::GetMaybePtrFromReservedSlot<CPUOXBuffer>(obj, 0);
 
 	if( toDelete == nullptr )
 		return false;
 
 	delete toDelete;
-	JS_UnlockGCThing( cx, obj );
-	//JS_RemoveRoot( cx, obj );
-	JS_SetPrivate( cx, obj, nullptr );
+	JS::SetReservedSlot( obj, 0, JS::UndefinedValue() );
 
 	return true;
 }
@@ -219,17 +281,17 @@ bool CPacket_WriteByte( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	CPUOXBuffer *myPacket = static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+	CPUOXBuffer* myPacket = JS::GetMaybePtrFromReservedSlot<CPUOXBuffer>(obj, 0);
 	if( myPacket == nullptr )
 	{
 		ScriptError( cx, "(CPacket_WriteByte) Invalid Object Passed" );
 		return true;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	size_t	position	= static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
-	UI08	toWrite		= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+	size_t	position	= static_cast<size_t>( args.get(0).toInt32());
+	UI08	toWrite		= static_cast<UI08>( args.get(1).toInt32());
 
 	myPacket->GetPacketStream().WriteByte( position, toWrite );
 
@@ -250,17 +312,17 @@ bool CPacket_WriteShort( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	CPUOXBuffer *myPacket = static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+	CPUOXBuffer* myPacket = JS::GetMaybePtrFromReservedSlot<CPUOXBuffer>(obj, 0);
 	if( myPacket == nullptr )
 	{
 		ScriptError( cx, "(CPacket_WriteShort) Invalid Object Passed" );
 		return true;
 	}
 
-	jsval* argv = JS_ARGV(cx, vp);
-	size_t	position	= static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
-	UI16	toWrite		= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	size_t	position	= static_cast<size_t>( args.get(0).toInt32());
+	UI16	toWrite		= static_cast<UI16>( args.get(1).toInt32());
 
 	myPacket->GetPacketStream().WriteShort( position, toWrite );
 
@@ -281,18 +343,18 @@ bool CPacket_WriteLong( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	CPUOXBuffer *myPacket = static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+	CPUOXBuffer* myPacket = JS::GetMaybePtrFromReservedSlot<CPUOXBuffer>(obj, 0);
 	if( myPacket == nullptr )
 	{
 		ScriptError( cx, "(CPacket_WriteLong) Invalid Object Passed" );
 		return true;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	size_t	position	= static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
-	//UI32	toWrite		= static_cast<UI32>( JSVAL_TO_INT( argv[1] ));
-	std::string toWriteChar	= JS_GetStringBytes( cx, argv[1]);
+	size_t	position	= static_cast<size_t>( args.get(0).toInt32());
+	//UI32	toWrite		= static_cast<UI32>( args.get(1).toInt32());
+	std::string toWriteChar	= JS_GetStringBytes( cx, args.get(1));
 	UI32 toWrite = oldstrutil::value<UI32>( toWriteChar );
 
 	myPacket->GetPacketStream().WriteLong( position, toWrite );
@@ -314,18 +376,18 @@ bool CPacket_WriteString( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	CPUOXBuffer *myPacket = static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+	CPUOXBuffer* myPacket = JS::GetMaybePtrFromReservedSlot<CPUOXBuffer>(obj, 0);
 	if( myPacket == nullptr )
 	{
 		ScriptError( cx, "(CPacket_WriteString) Invalid Object Passed" );
 		return true;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	size_t	position	= static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
-	std::string	toWrite		= JS_GetStringBytes( cx, argv[1]);
-	size_t	len			= static_cast<size_t>( JSVAL_TO_INT( argv[2] ));
+	size_t	position	= static_cast<size_t>( args.get(0).toInt32());
+	std::string	toWrite		= JS_GetStringBytes( cx, args.get(1));
+	size_t	len			= static_cast<size_t>( args.get(2).toInt32());
 
 	myPacket->GetPacketStream().WriteString( position, toWrite, len );
 
@@ -346,16 +408,16 @@ bool CPacket_ReserveSize( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	CPUOXBuffer *myPacket = static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+	CPUOXBuffer* myPacket = JS::GetMaybePtrFromReservedSlot<CPUOXBuffer>(obj, 0);
 	if( myPacket == nullptr )
 	{
 		ScriptError( cx, "(CPacket_ReserveSize) Invalid Object Passed" );
 		return true;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	size_t len = static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
+	size_t len = static_cast<size_t>( args.get(0).toInt32());
 
 	myPacket->GetPacketStream().ReserveSize( len );
 
@@ -373,19 +435,18 @@ bool CSocket_Send( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(CSocket_Send) Invalid Number of Arguments %d, needs: 1 ", argc );
-		return true;
+		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	CSocket *mSock			= static_cast<CSocket *>( JS_GetPrivate( cx, obj ));
-	JSObject *jsObj			= JSVAL_TO_OBJECT( argv[0] );
-	CPUOXBuffer *myPacket	= static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, jsObj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  CSocket *mSock		 = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
+	CPUOXBuffer *myPacket = GetWrappedObject<CPUOXBuffer>( args.get( 0 ), &UOXPacket_class );
 
 	if( mSock == nullptr || myPacket == nullptr )
 	{
 		ScriptError( cx, "(CPacket_WriteString) Invalid Object Passed" );
-		return true;
+		return false;
 	}
 
 	mSock->Send( myPacket );
@@ -406,12 +467,11 @@ bool Gump( JSContext *cx, unsigned argc, JS::Value* vp )
 	toAdd->two = new std::vector<std::string>();
 	toAdd->textId = 0;
 
-	JSObject* obj = JS_NewObject( cx, &UOXGump_class, nullptr, nullptr );
+	JS::RootedObject obj( cx, JS_NewObject( cx, &UOXGump_class ));
 	JS_DefineFunctions( cx, obj, CGump_Methods );
-	JS_SetPrivate( cx, obj, toAdd);
-	JS_LockGCThing( cx, obj );
-	//JS_AddRoot( cx, &obj );
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( obj ) );
+	JS::SetReservedSlot(obj, 0, JS::PrivateValue( toAdd ) );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	args.rval().setObjectOrNull( obj );
 	return true;
 }
 
@@ -423,8 +483,9 @@ bool Gump( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CGump_Free( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *toDelete = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+	SEGump_st* toDelete = JS::GetMaybePtrFromReservedSlot<SEGump_st>(obj, 0);
 
 	if( toDelete == nullptr )
 		return false;
@@ -433,9 +494,7 @@ bool CGump_Free( JSContext *cx, unsigned argc, JS::Value* vp )
 	delete toDelete->two;
 	delete toDelete;
 
-	JS_UnlockGCThing( cx, obj );
-	//JS_RemoveRoot( cx, obj );
-	JS_SetPrivate( cx, obj, nullptr );
+	JS::SetReservedSlot( obj, 0, JS::UndefinedValue() );
 
 	return true;
 }
@@ -448,15 +507,14 @@ bool CGump_Free( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CGumpData_Free( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGumpData_st *toDelete = static_cast<SEGumpData_st*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+	SEGumpData_st* toDelete = JS::GetMaybePtrFromReservedSlot<SEGumpData_st>(obj, 0);
 
 	if( toDelete == nullptr )
 		return false;
 
-	JS_UnlockGCThing( cx, obj );
-	//JS_RemoveRoot( cx, &obj );
-	JS_SetPrivate( cx, obj, nullptr );
+	JS::SetReservedSlot( obj, 0, JS::UndefinedValue() );
 
 	delete toDelete;
 	return true;
@@ -470,33 +528,33 @@ bool CGumpData_Free( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CGumpData_GetEdit( JSContext *cx, unsigned argc, JS::Value* vp )
 {
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc == 0 )
 	{
 		ScriptError( cx, "(GumpData_getEdit) Invalid Number of Arguments %d, needs: 1 ", argc );
-		JS_SET_RVAL( cx, vp, STRING_TO_JSVAL(JS_NewStringCopyZ(cx, "")) );
+		args.rval().setString(JS_NewStringCopyZ(cx, ""));
 		return true;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGumpData_st *myItem = static_cast<SEGumpData_st *>( JS_GetPrivate( cx, obj ));
+	auto obj = getThis( cx, args );
+	SEGumpData_st* myItem = JS::GetMaybePtrFromReservedSlot<SEGumpData_st >(obj, 0);
 
 	if( myItem == nullptr  )
 	{
 		ScriptError( cx, "(DataGump-getEdit) Invalid object assigned" );
-		JS_SET_RVAL(cx, vp, STRING_TO_JSVAL(JS_NewStringCopyZ(cx, "")) );
+		args.rval().setString(JS_NewStringCopyZ(cx, ""));
 		return true;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	size_t index = JSVAL_TO_INT( argv[0] );
+	size_t index = args.get(0).toInt32();
 
 	if( index < myItem->sEdits.size() )
 	{
-		JS_SET_RVAL(cx, vp, STRING_TO_JSVAL( JS_NewStringCopyZ( cx, myItem->sEdits[index].c_str() )) );
+		args.rval().setString( JS_NewStringCopyZ( cx, myItem->sEdits[index].c_str() ));
 	}
 	else
 	{
-		JS_SET_RVAL(cx, vp, STRING_TO_JSVAL(JS_NewStringCopyZ(cx, "")) );
+		args.rval().setString(JS_NewStringCopyZ(cx, ""));
 	}
 	return true;
 }
@@ -509,32 +567,32 @@ bool CGumpData_GetEdit( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CGumpData_GetId( JSContext *cx, unsigned argc, JS::Value* vp )
 {
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc == 0 )
 	{
 		ScriptError( cx, "(GumpData_getID) Invalid Number of Arguments %d, needs: 1 ", argc );
-		JS_SET_RVAL(cx, vp, INT_TO_JSVAL( -1 ) );
+		args.rval().setInt32(  -1  );
 		return true;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGumpData_st *myItem = static_cast<SEGumpData_st *>( JS_GetPrivate( cx, obj ));
+	auto obj = getThis( cx, args );
+	SEGumpData_st* myItem = JS::GetMaybePtrFromReservedSlot<SEGumpData_st>(obj, 0);
 
 	if( myItem == nullptr  )
 	{
 		ScriptError( cx, "(DataGump_getID) Invalid object assigned" );
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( -1 ) );
+		args.rval().setInt32(  -1  );
 		return true;
 	}
-	JS::Value* argv = JS_ARGV( cx, vp );
-	size_t index = JSVAL_TO_INT( argv[0] );
+	size_t index = args.get(0).toInt32();
 
 	if( index < myItem->nIDs.size() )
 	{
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( myItem->nIDs[index] ) );
+		args.rval().setInt32(  myItem->nIDs[index]  );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( -1 ) );
+		args.rval().setInt32(  -1  );
 	}
 
 	return true;
@@ -548,30 +606,30 @@ bool CGumpData_GetId( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CGumpData_GetButton( JSContext *cx, unsigned argc, JS::Value* vp )
 {
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc == 0 )
 	{
 		ScriptError( cx, "(GumpData_getbutton) Invalid Number of Arguments %d, needs: 1 ", argc );
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL(-1) );
+		args.rval().setInt32( -1 );
 		return true;
 	}
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV(cx, vp);
-	SEGumpData_st *myItem = static_cast<SEGumpData_st *>( JS_GetPrivate( cx, obj ));
+	auto obj = getThis( cx, args );
+	SEGumpData_st* myItem = JS::GetMaybePtrFromReservedSlot<SEGumpData_st>(obj, 0);
 
 	if( myItem == nullptr  )
 	{
 		ScriptError( cx, "(DataGump-getID) Invalid object assigned" );
-		JS_SET_RVAL(cx, vp, INT_TO_JSVAL( -1 ) );
+		args.rval().setInt32(  -1  );
 		return true;
 	}
-	size_t index = JSVAL_TO_INT( argv[0] );
+	size_t index = args.get(0).toInt32();
 	if( index < myItem->nButtons.size() )
 	{
-		JS_SET_RVAL(cx, vp, INT_TO_JSVAL( myItem->nButtons[index] ) );
+		args.rval().setInt32(  myItem->nButtons[index]  );
 	}
 	else
 	{
-		JS_SET_RVAL(cx, vp, INT_TO_JSVAL( -1 ) );
+		args.rval().setInt32(  -1  );
 	}
 
 	return true;
@@ -598,28 +656,28 @@ bool CGump_AddCheckbox( JSContext *cx, unsigned argc, JS::Value* vp )
 	SI16 initState = 0;
 	UI32 relay = 0;
 
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc == 5 )
 	{
-		tL			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-		tR			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-		gImage		= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+		tL			= static_cast<SI16>( args.get(0).toInt32());
+		tR			= static_cast<SI16>( args.get(1).toInt32());
+		gImage		= static_cast<UI16>( args.get(2).toInt32());
 		gImageChk	= gImage + 1;
-		initState	= static_cast<SI16>( JSVAL_TO_INT( argv[3] ));
-		relay		= static_cast<UI32>( JSVAL_TO_INT( argv[4] ));
+		initState	= static_cast<SI16>( args.get(3).toInt32());
+		relay		= static_cast<UI32>( args.get(4).toInt32());
 	}
 	else
 	{
-		tL			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-		tR			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-		gImage		= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-		gImageChk	= static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
-		initState	= static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
-		relay		= static_cast<UI32>( JSVAL_TO_INT( argv[5] ));
+		tL			= static_cast<SI16>( args.get(0).toInt32());
+		tR			= static_cast<SI16>( args.get(1).toInt32());
+		gImage		= static_cast<UI16>( args.get(2).toInt32());
+		gImageChk	= static_cast<UI16>( args.get(3).toInt32());
+		initState	= static_cast<SI16>( args.get(4).toInt32());
+		relay		= static_cast<UI32>( args.get(5).toInt32());
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto obj = getThis( cx, args );
+	SEGump_st* gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>(obj, 0);
 
 	if( gList == nullptr )
 	{
@@ -646,8 +704,9 @@ bool CGump_NoClose( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "NoClose: Wrong count of Parameters, needs 0" );
 		return false;
 	}
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 
 	if( gList == nullptr )
 	{
@@ -675,8 +734,9 @@ bool CGump_NoMove( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 
 	if( gList == nullptr )
 	{
@@ -708,8 +768,9 @@ bool CGump_NoDispose( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 
 	if( gList == nullptr )
 	{
@@ -737,8 +798,9 @@ bool CGump_NoResize( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st *>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 
 	if( gList == nullptr )
 	{
@@ -765,10 +827,10 @@ bool CGump_MasterGump( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	SI32 masterGumpId = static_cast<SI32>( JSVAL_TO_INT( argv[0] ));
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st *>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	SI32 masterGumpId = static_cast<SI32>( args.get(0).toInt32());
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 
 	if( gList == nullptr )
 	{
@@ -796,15 +858,15 @@ bool CGump_AddBackground( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 tL = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI16 bL = static_cast<SI16>( JSVAL_TO_INT( argv[2] ));
-	SI16 bR = static_cast<SI16>( JSVAL_TO_INT( argv[3] ));
-	UI16 gImage = static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	SI16 tL = static_cast<SI16>( args.get(0).toInt32());
+	SI16 tR = static_cast<SI16>( args.get(1).toInt32());
+	SI16 bL = static_cast<SI16>( args.get(2).toInt32());
+	SI16 bR = static_cast<SI16>( args.get(3).toInt32());
+	UI16 gImage = static_cast<UI16>( args.get(4).toInt32());
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddBackground: Couldn't find gump associated with object" );
@@ -829,17 +891,17 @@ bool CGump_AddButton( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "AddButton: Invalid number of arguments (takes 6 or 7)" );
 		return false;
 	}
-	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 tL = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 gImage = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-	UI16 gImage2 = ( argc == 6 ? (gImage + 1) : static_cast<UI16>( JSVAL_TO_INT( argv[3] )));
-	SI16 x1 = ( argc == 6 ? static_cast<SI16>( JSVAL_TO_INT( argv[3] )) : static_cast<SI16>( JSVAL_TO_INT( argv[4] )));
-	SI16 pageNum = ( argc == 6 ? static_cast<SI16>( JSVAL_TO_INT( argv[4] )) : static_cast<SI16>( JSVAL_TO_INT( argv[5] )));
-	UI32 buttonId = ( argc == 6 ? static_cast<UI32>( JSVAL_TO_INT( argv[5] )) : static_cast<UI32>( JSVAL_TO_INT( argv[6] )));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	SI16 tL = static_cast<SI16>( args.get(0).toInt32());
+	SI16 tR = static_cast<SI16>( args.get(1).toInt32());
+	UI16 gImage = static_cast<UI16>( args.get(2).toInt32());
+	UI16 gImage2 = ( argc == 6 ? (gImage + 1) : static_cast<UI16>( args.get(3).toInt32()));
+	SI16 x1 = ( argc == 6 ? static_cast<SI16>( args.get(3).toInt32()) : static_cast<SI16>( args.get(4).toInt32()));
+	SI16 pageNum = ( argc == 6 ? static_cast<SI16>( args.get(4).toInt32()) : static_cast<SI16>( args.get(5).toInt32()));
+	UI32 buttonId = ( argc == 6 ? static_cast<UI32>( args.get(5).toInt32()) : static_cast<UI32>( args.get(6).toInt32()));
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddButton: Couldn't find gump associated with object" );
@@ -865,22 +927,22 @@ bool CGump_AddButtonTileArt( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "AddButtonTileArt: Invalid number of arguments (takes 11)" );
 		return false;
 	}
-	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 tL = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 tileIdNorm = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-	UI16 tileIdPush = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
-	SI16 buttonType = static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
-	SI16 pageNum = static_cast<SI16>( JSVAL_TO_INT( argv[5] ));
-	UI32 buttonId = static_cast<UI32>( JSVAL_TO_INT( argv[6] ));
-	UI16 tileId = static_cast<UI16>( JSVAL_TO_INT( argv[7] ));
-	SI16 hue = static_cast<SI16>( JSVAL_TO_INT( argv[8] ));
-	SI16 tileX = static_cast<SI16>( JSVAL_TO_INT( argv[9] ));
-	SI16 tileY = static_cast<SI16>( JSVAL_TO_INT( argv[10] ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	SI16 tL = static_cast<SI16>( args.get(0).toInt32());
+	SI16 tR = static_cast<SI16>( args.get(1).toInt32());
+	UI16 tileIdNorm = static_cast<UI16>( args.get(2).toInt32());
+	UI16 tileIdPush = static_cast<UI16>( args.get(3).toInt32());
+	SI16 buttonType = static_cast<SI16>( args.get(4).toInt32());
+	SI16 pageNum = static_cast<SI16>( args.get(5).toInt32());
+	UI32 buttonId = static_cast<UI32>( args.get(6).toInt32());
+	UI16 tileId = static_cast<UI16>( args.get(7).toInt32());
+	SI16 hue = static_cast<SI16>( args.get(8).toInt32());
+	SI16 tileX = static_cast<SI16>( args.get(9).toInt32());
+	SI16 tileY = static_cast<SI16>(args.get(10).toInt32());
 	//SI32 cliloc = 0;
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddButtonTileArt: Couldn't find gump associated with object" );
@@ -905,15 +967,15 @@ bool CGump_AddPageButton( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "AddPageButton: Invalid number of arguments (takes 4 or 5)" );
 		return false;
 	}
-	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 tL = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 gImage = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-	UI16 gImage2 = ( argc == 4 ? ( gImage + 1 ) : static_cast<UI16>( JSVAL_TO_INT( argv[3] )));
-	SI16 pageNum = ( argc == 4 ? static_cast<SI16>( JSVAL_TO_INT( argv[3] )) : static_cast<SI16>( JSVAL_TO_INT( argv[4] )));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	SI16 tL = static_cast<SI16>( args.get(0).toInt32());
+	SI16 tR = static_cast<SI16>( args.get(1).toInt32());
+	UI16 gImage = static_cast<UI16>( args.get(2).toInt32());
+	UI16 gImage2 = ( argc == 4 ? ( gImage + 1 ) : static_cast<UI16>( args.get(3).toInt32()));
+	SI16 pageNum = ( argc == 4 ? static_cast<SI16>( args.get(3).toInt32()) : static_cast<SI16>( args.get(4).toInt32()));
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddPageButton: Couldn't find gump associated with object" );
@@ -940,14 +1002,14 @@ bool CGump_AddCheckerTrans( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 x		= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
-	SI16 y		= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
-	SI16 width	= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // width
-	SI16 height	= static_cast<SI16>( JSVAL_TO_INT( argv[3] )); // height
+	auto args = JS::CallArgsFromVp(argc, vp);
+	SI16 x		= static_cast<SI16>( args.get(0).toInt32()); // x
+	SI16 y		= static_cast<SI16>( args.get(1).toInt32()); // y
+	SI16 width	= static_cast<SI16>( args.get(2).toInt32()); // width
+	SI16 height	= static_cast<SI16>( args.get(3).toInt32()); // height
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddCheckerTrans: Couldn't find gump associated with object" );
@@ -974,15 +1036,15 @@ bool CGump_AddCroppedText( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 TextX		= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
-	SI16 TextY		= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
-	SI16 TextHue	= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // Hue
-	SI16 TextWidth	= static_cast<SI16>( JSVAL_TO_INT( argv[3] )); // width
-	SI16 TextHeight	= static_cast<SI16>( JSVAL_TO_INT( argv[4] )); // height
+	auto args = JS::CallArgsFromVp(argc, vp);
+	SI16 TextX		= static_cast<SI16>( args.get(0).toInt32()); // x
+	SI16 TextY		= static_cast<SI16>( args.get(1).toInt32()); // y
+	SI16 TextHue	= static_cast<SI16>( args.get(2).toInt32()); // Hue
+	SI16 TextWidth	= static_cast<SI16>( args.get(3).toInt32()); // width
+	SI16 TextHeight	= static_cast<SI16>( args.get(4).toInt32()); // height
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	std::string TextString = JS_GetStringBytes( cx, argv[5]);
+	auto obj = getThis( cx, args );
+	std::string TextString = JS_GetStringBytes( cx, args.get(5));
 
 	if( TextString.empty() )
 	{
@@ -990,7 +1052,7 @@ bool CGump_AddCroppedText( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddCroppedText: Couldn't find gump associated with object" );
@@ -1021,16 +1083,16 @@ bool CGump_AddGroup( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddGroup: Couldn't find gump associated with object" );
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	gList->one->push_back( oldstrutil::format( "group %d", JSVAL_TO_INT( argv[0] )));
+	gList->one->push_back( oldstrutil::format( "group %d", args.get(0).toInt32()));
 
 	return true;
 }
@@ -1049,16 +1111,16 @@ bool CGump_EndGroup( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "EndGroup: Couldn't find gump associated with object" );
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	gList->one->push_back( oldstrutil::format( "endgroup", JSVAL_TO_INT( argv[0] )));
+	gList->one->push_back( oldstrutil::format( "endgroup", args.get(0).toInt32()));
 
 	return true;
 }
@@ -1077,18 +1139,18 @@ bool CGump_AddGump( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 tL = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 gImage = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	SI16 tL = static_cast<SI16>( args.get(0).toInt32());
+	SI16 tR = static_cast<SI16>( args.get(1).toInt32());
+	UI16 gImage = static_cast<UI16>( args.get(2).toInt32());
 	SI32 rgbColor = 0;
 	if( argc == 4 )
 	{
-		rgbColor = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+		rgbColor = static_cast<UI16>( args.get(3).toInt32());
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddGump: Couldn't find gump associated with object" );
@@ -1121,14 +1183,14 @@ bool CGump_AddGumpColor( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 tL			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 gImage		= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-	SI32 rgbColour	= static_cast<SI32>( JSVAL_TO_INT( argv[3] ));	// colour
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+	SI16 tL			= static_cast<SI16>( args.get(0).toInt32());
+	SI16 tR			= static_cast<SI16>( args.get(1).toInt32());
+	UI16 gImage		= static_cast<UI16>( args.get(2).toInt32());
+	SI32 rgbColour	= static_cast<SI32>( args.get(3).toInt32());	// colour
 
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddGumpColor: Couldn't find gump associated with object" );
@@ -1162,16 +1224,16 @@ bool CGump_AddToolTip( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddToolTip: Couldn't find gump associated with object" );
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	SI32 tooltip = static_cast<SI32>( JSVAL_TO_INT( argv[0] ));
+	SI32 tooltip = static_cast<SI32>( args.get(0).toInt32());
 	std::stringstream temp;
 	if( argc > 1 )
 	{
@@ -1181,7 +1243,7 @@ bool CGump_AddToolTip( JSContext *cx, unsigned argc, JS::Value* vp )
 		std::string tempArg;
 		for( UI32 i = 2; i < argc; i++ )
 		{
-			tempArg = JS_GetStringBytes( cx, argv[i]);
+			tempArg = JS_GetStringBytes(cx, args.get(i));
 			temp << ( i == 2 ? tempArg : ( "\t" + tempArg ));
 		}
 		temp << "@";
@@ -1212,15 +1274,15 @@ bool CGump_AddHTMLGump( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 x				= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
-	SI16 y				= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
-	SI16 width			= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // width
-	SI16 height			= static_cast<SI16>( JSVAL_TO_INT( argv[3] )); // height
-	bool hasBorder		= ( JSVAL_TO_BOOLEAN( argv[4] ) == true );
-	bool hasScrollbar	= ( JSVAL_TO_BOOLEAN( argv[5] ) == true );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	SI16 x				= static_cast<SI16>( args.get(0).toInt32()); // x
+	SI16 y				= static_cast<SI16>( args.get(1).toInt32()); // y
+	SI16 width			= static_cast<SI16>( args.get(2).toInt32()); // width
+	SI16 height			= static_cast<SI16>( args.get(3).toInt32()); // height
+	bool hasBorder		= ( args.get(4).toBoolean() == true );
+	bool hasScrollbar	= ( args.get(5).toBoolean() == true );
 
-	std::string TextString = JS_GetStringBytes( cx, argv[6] );
+	std::string TextString = JS_GetStringBytes( cx, args.get(6) );
 
 	if( TextString.empty() )
 	{
@@ -1228,8 +1290,8 @@ bool CGump_AddHTMLGump( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddHTMLGump: Couldn't find gump associated with object" );
@@ -1262,16 +1324,16 @@ bool CGump_AddPage( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddPage: Couldn't find gump associated with object" );
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	gList->one->push_back( oldstrutil::format( "page %d", JSVAL_TO_INT( argv[0] )));
+	gList->one->push_back( oldstrutil::format( "page %d", args.get(0).toInt32()));
 
 	return true;
 }
@@ -1290,13 +1352,13 @@ bool CGump_AddPicture( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 tL		= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR		= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 gImage = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	SI16 tL		= static_cast<SI16>( args.get(0).toInt32());
+	SI16 tR		= static_cast<SI16>( args.get(1).toInt32());
+	UI16 gImage = static_cast<UI16>( args.get(2).toInt32());
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddPicture: Couldn't find gump associated with object" );
@@ -1322,14 +1384,14 @@ bool CGump_AddPictureColor( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 tL			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 gImage		= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-	SI32 rgbColour	= static_cast<SI32>( JSVAL_TO_INT( argv[3] ));	// colour
+	auto args = JS::CallArgsFromVp(argc, vp);
+	SI16 tL			= static_cast<SI16>( args.get(0).toInt32());
+	SI16 tR			= static_cast<SI16>( args.get(1).toInt32());
+	UI16 gImage		= static_cast<UI16>( args.get(2).toInt32());
+	SI32 rgbColour	= static_cast<SI32>( args.get(3).toInt32());	// colour
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddPictureColor: Couldn't find gump associated with object" );
@@ -1356,17 +1418,17 @@ bool CGump_AddPicInPic( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 x			= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // starting x
-	SI16 y			= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // starting y
-	UI16 gImage		= static_cast<UI16>( JSVAL_TO_INT( argv[2] )); // GumpId
-	SI16 spriteX	= static_cast<SI16>( JSVAL_TO_INT( argv[3] )); // spriteX
-	SI16 spriteY	= static_cast<SI16>( JSVAL_TO_INT( argv[4] )); // spriteY
-	SI16 width		= static_cast<SI16>( JSVAL_TO_INT( argv[5] )); // width
-	SI16 height		= static_cast<SI16>( JSVAL_TO_INT( argv[6] )); // height
+	auto args = JS::CallArgsFromVp(argc, vp);
+	SI16 x			= static_cast<SI16>( args.get(0).toInt32()); // starting x
+	SI16 y			= static_cast<SI16>( args.get(1).toInt32()); // starting y
+	UI16 gImage		= static_cast<UI16>( args.get(2).toInt32()); // GumpId
+	SI16 spriteX	= static_cast<SI16>( args.get(3).toInt32()); // spriteX
+	SI16 spriteY	= static_cast<SI16>( args.get(4).toInt32()); // spriteY
+	SI16 width		= static_cast<SI16>( args.get(5).toInt32()); // width
+	SI16 height		= static_cast<SI16>( args.get(6).toInt32()); // height
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddPicInPic: Couldn't find gump associated with object" );
@@ -1396,9 +1458,8 @@ bool CGump_AddItemProperty( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject *tObj = JSVAL_TO_OBJECT( argv[0] );
-	CBaseObject *trgObj = static_cast<CBaseObject *>( JS_GetPrivate( cx, tObj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	CBaseObject *trgObj = GetBaseObject( args.get( 0 ));
 
 	if( !ValidateObject( trgObj ) || ( trgObj->GetSerial() == INVALIDSERIAL ))
 	{
@@ -1408,8 +1469,8 @@ bool CGump_AddItemProperty( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	SERIAL trgSer = trgObj->GetSerial();
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddItemProperty: Couldn't find gump associated with object" );
@@ -1442,29 +1503,29 @@ bool CGump_AddRadio( JSContext *cx, unsigned argc, JS::Value* vp )
 	SI16 initialState = 0;
 	UI32 relay = 0;
 
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc == 5 )
 	{
-		tL				= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-		tR				= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-		gImage			= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+		tL				= static_cast<SI16>( args.get(0).toInt32());
+		tR				= static_cast<SI16>( args.get(1).toInt32());
+		gImage			= static_cast<UI16>( args.get(2).toInt32());
 		gImageChk		= gImage + 1;
-		initialState	= static_cast<SI16>( JSVAL_TO_INT( argv[3] ));
-		relay			= static_cast<UI32>( JSVAL_TO_INT( argv[4] ));
+		initialState	= static_cast<SI16>( args.get(3).toInt32());
+		relay			= static_cast<UI32>( args.get(4).toInt32());
 	}
 	else
 	{
-		tL				= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-		tR				= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-		gImage			= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-		gImageChk		= static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
-		initialState	= static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
-		relay			= static_cast<UI32>( JSVAL_TO_INT( argv[5] ));
+		tL				= static_cast<SI16>( args.get(0).toInt32());
+		tR				= static_cast<SI16>( args.get(1).toInt32());
+		gImage			= static_cast<UI16>( args.get(2).toInt32());
+		gImageChk		= static_cast<UI16>( args.get(3).toInt32());
+		initialState	= static_cast<SI16>( args.get(4).toInt32());
+		relay			= static_cast<UI32>( args.get(5).toInt32());
 	}
 
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddRadio: Couldn't find gump associated with object" );
@@ -1492,12 +1553,12 @@ bool CGump_AddText( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	UI32 textId;
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 TextX		= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
-	SI16 TextY		= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
-	SI16 TextHue	= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // Hue
+	auto args = JS::CallArgsFromVp(argc, vp);
+	SI16 TextX		= static_cast<SI16>( args.get(0).toInt32()); // x
+	SI16 TextY		= static_cast<SI16>( args.get(1).toInt32()); // y
+	SI16 TextHue	= static_cast<SI16>( args.get(2).toInt32()); // Hue
 
-	std::string TextString = JS_GetStringBytes( cx, argv[3]);
+	std::string TextString = JS_GetStringBytes( cx, args.get(3));
 
 	if( TextString.empty() )
 	{
@@ -1505,8 +1566,8 @@ bool CGump_AddText( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddText: Couldn't find gump associated with object" );
@@ -1536,15 +1597,15 @@ bool CGump_AddTextEntry( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 tL					= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR					= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI16 width				= static_cast<SI16>( JSVAL_TO_INT( argv[2] ));
-	SI16 height				= static_cast<SI16>( JSVAL_TO_INT( argv[3] ));
-	SI16 hue				= static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
-	SI16 relay				= static_cast<SI16>( JSVAL_TO_INT( argv[5] ));
-	SI16 initialTextIndex	= static_cast<SI16>( JSVAL_TO_INT( argv[6] ));
-	std::string test = JS_GetStringBytes( cx, argv[7]);
+	auto args = JS::CallArgsFromVp(argc, vp);
+	SI16 tL					= static_cast<SI16>( args.get(0).toInt32());
+	SI16 tR					= static_cast<SI16>( args.get(1).toInt32());
+	SI16 width				= static_cast<SI16>( args.get(2).toInt32());
+	SI16 height				= static_cast<SI16>( args.get(3).toInt32());
+	SI16 hue				= static_cast<SI16>( args.get(4).toInt32());
+	SI16 relay				= static_cast<SI16>( args.get(5).toInt32());
+	SI16 initialTextIndex	= static_cast<SI16>( args.get(6).toInt32());
+	std::string test = JS_GetStringBytes( cx, args.get(7));
 
 	if( test.empty() )
 	{
@@ -1552,8 +1613,8 @@ bool CGump_AddTextEntry( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddTextEntry: Couldn't find gump associated with object" );
@@ -1580,16 +1641,16 @@ bool CGump_AddTextEntryLimited( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 tL					= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR					= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI16 width				= static_cast<SI16>( JSVAL_TO_INT( argv[2] ));
-	SI16 height				= static_cast<SI16>( JSVAL_TO_INT( argv[3] ));
-	SI16 hue				= static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
-	SI16 relay				= static_cast<SI16>( JSVAL_TO_INT( argv[5] ));
-	SI16 initialTextIndex	= static_cast<SI16>( JSVAL_TO_INT( argv[6] ));
-	std::string test = JS_GetStringBytes( cx, argv[7]);
-	SI16 textEntrySize		= static_cast<SI16>( JSVAL_TO_INT( argv[8] ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	SI16 tL					= static_cast<SI16>( args.get(0).toInt32());
+	SI16 tR					= static_cast<SI16>( args.get(1).toInt32());
+	SI16 width				= static_cast<SI16>( args.get(2).toInt32());
+	SI16 height				= static_cast<SI16>( args.get(3).toInt32());
+	SI16 hue				= static_cast<SI16>( args.get(4).toInt32());
+	SI16 relay				= static_cast<SI16>( args.get(5).toInt32());
+	SI16 initialTextIndex	= static_cast<SI16>( args.get(6).toInt32());
+	std::string test = JS_GetStringBytes( cx, args.get(7));
+	SI16 textEntrySize		= static_cast<SI16>( args.get(8).toInt32());
 
 	if( test.empty() )
 	{
@@ -1597,8 +1658,8 @@ bool CGump_AddTextEntryLimited( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddTextEntryLimited: Couldn't find gump associated with object" );
@@ -1626,15 +1687,15 @@ bool CGump_AddTiledGump( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 x		= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
-	SI16 y		= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
-	SI16 width	= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // width
-	SI16 height	= static_cast<SI16>( JSVAL_TO_INT( argv[3] )); // height
-	SI16 gumpId = static_cast<SI16>( JSVAL_TO_INT( argv[4] )); // gump to tile
+	auto args = JS::CallArgsFromVp(argc, vp);
+	SI16 x		= static_cast<SI16>( args.get(0).toInt32()); // x
+	SI16 y		= static_cast<SI16>( args.get(1).toInt32()); // y
+	SI16 width	= static_cast<SI16>( args.get(2).toInt32()); // width
+	SI16 height	= static_cast<SI16>( args.get(3).toInt32()); // height
+	SI16 gumpId = static_cast<SI16>( args.get(4).toInt32()); // gump to tile
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddTiledGump: Couldn't find gump associated with object" );
@@ -1661,17 +1722,17 @@ bool CGump_AddXMFHTMLGump( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 x				= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
-	SI16 y				= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
-	SI16 width			= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // width
-	SI16 height			= static_cast<SI16>( JSVAL_TO_INT( argv[3] )); // height
-	SI32 number			= static_cast<SI32>( JSVAL_TO_INT( argv[4] )); // number
-	bool hasBorder		= ( JSVAL_TO_BOOLEAN( argv[5] ) == true );
-	bool hasScrollbar	= ( JSVAL_TO_BOOLEAN( argv[6] ) == true );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	SI16 x				= static_cast<SI16>( args.get(0).toInt32()); // x
+	SI16 y				= static_cast<SI16>( args.get(1).toInt32()); // y
+	SI16 width			= static_cast<SI16>( args.get(2).toInt32()); // width
+	SI16 height			= static_cast<SI16>( args.get(3).toInt32()); // height
+	SI32 number			= static_cast<SI32>( args.get(4).toInt32()); // number
+	bool hasBorder		= ( args.get(5).toBoolean() == true );
+	bool hasScrollbar	= ( args.get(6).toBoolean() == true );
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddXMFHTMLGump: Couldn't find gump associated with object" );
@@ -1701,18 +1762,18 @@ bool CGump_AddXMFHTMLGumpColor( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 x				= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
-	SI16 y				= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
-	SI16 width			= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // width
-	SI16 height			= static_cast<SI16>( JSVAL_TO_INT( argv[3] )); // height
-	SI32 number			= static_cast<SI32>( JSVAL_TO_INT( argv[4] )); // number
-	bool hasBorder		= ( JSVAL_TO_BOOLEAN( argv[5] ) == true );
-	bool hasScrollbar	= ( JSVAL_TO_BOOLEAN( argv[6] ) == true );
-	SI32 rgbColour		= static_cast<SI32>( JSVAL_TO_INT( argv[7] ));	// colour
+	auto args = JS::CallArgsFromVp(argc, vp);
+	SI16 x				= static_cast<SI16>( args.get(0).toInt32()); // x
+	SI16 y				= static_cast<SI16>( args.get(1).toInt32()); // y
+	SI16 width			= static_cast<SI16>( args.get(2).toInt32()); // width
+	SI16 height			= static_cast<SI16>( args.get(3).toInt32()); // height
+	SI32 number			= static_cast<SI32>( args.get(4).toInt32()); // number
+	bool hasBorder		= ( args.get(5).toBoolean() == true );
+	bool hasScrollbar	= ( args.get(6).toBoolean() == true );
+	SI32 rgbColour		= static_cast<SI32>( args.get(7).toInt32());	// colour
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddXMFHTMLGumpColor: Couldn't find gump associated with object" );
@@ -1741,15 +1802,15 @@ bool CGump_AddXMFHTMLTok( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 x				= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
-	SI16 y				= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
-	SI16 width			= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // width
-	SI16 height			= static_cast<SI16>( JSVAL_TO_INT( argv[3] )); // height
-	bool hasBorder		= ( JSVAL_TO_BOOLEAN( argv[4] ) == true );
-	bool hasScrollbar	= ( JSVAL_TO_BOOLEAN( argv[5] ) == true );
-	SI32 rgbColour		= static_cast<SI32>( JSVAL_TO_INT( argv[6] ));	// colour
-	SI32 number			= static_cast<SI32>( JSVAL_TO_INT( argv[7] )); // number
+	auto args = JS::CallArgsFromVp(argc, vp);
+	SI16 x				= static_cast<SI16>( args.get(0).toInt32()); // x
+	SI16 y				= static_cast<SI16>( args.get(1).toInt32()); // y
+	SI16 width			= static_cast<SI16>( args.get(2).toInt32()); // width
+	SI16 height			= static_cast<SI16>( args.get(3).toInt32()); // height
+	bool hasBorder		= ( args.get(4).toBoolean() == true );
+	bool hasScrollbar	= ( args.get(5).toBoolean() == true );
+	SI32 rgbColour		= static_cast<SI32>( args.get(6).toInt32());	// colour
+	SI32 number			= static_cast<SI32>( args.get(7).toInt32()); // number
 
 	// Iterate through potential cliloc arguments (8-10)
 	std::string fullArgs = "";
@@ -1757,7 +1818,7 @@ bool CGump_AddXMFHTMLTok( JSContext *cx, unsigned argc, JS::Value* vp )
 	{
 		if( argc > i )
 		{
-			std::string currentArg = JS_GetStringBytes( cx, argv[i] );
+			std::string currentArg = JS_GetStringBytes( cx, args.get(i) );
 
 			// Add delimiter between each argument
 			if( !fullArgs.empty() )
@@ -1775,8 +1836,8 @@ bool CGump_AddXMFHTMLTok( JSContext *cx, unsigned argc, JS::Value* vp )
 		fullArgs = " " + fullArgs;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
+	auto obj = getThis( cx, args );
+  SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddXMFHTMLTok: Couldn't find gump associated with object" );
@@ -1805,20 +1866,18 @@ bool CGump_Send( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	auto args = JS::CallArgsFromVp(argc, vp);
+	if( !args.get(0).isObject() )
 	{
 		ScriptError( cx, "You have to pass a valid Socket or Character" );
 	}
 
-	JSEncapsulate myClass( cx, &( argv[0] ));
+	auto obj = getThis( cx, args );
+  SEGump_st *myGump = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	SEGump_st *myGump = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
-
-	if( myClass.ClassName() == "UOXSocket" )
+	if( HasWrapperClass( args.get( 0 ), &UOXSocket_class ))
 	{
-		CSocket *mySock = static_cast<CSocket *>( myClass.toObject() );
+		CSocket *mySock = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 		if( mySock == nullptr )
 		{
 			ScriptError( cx, "Send: Passed an invalid Socket" );
@@ -1827,9 +1886,9 @@ bool CGump_Send( JSContext *cx, unsigned argc, JS::Value* vp )
 		UI32 gumpId = ( 0xFFFF + JSMapping->currentActive()->GetScriptID() );
 		SendVecsAsGump( mySock, *( myGump->one ), *( myGump->two ), gumpId, INVALIDSERIAL );
 	}
-	else if( myClass.ClassName() == "UOXChar" )
+	else if( HasWrapperClass( args.get( 0 ), &UOXChar_class ))
 	{
-		CChar *myChar = static_cast<CChar*>( myClass.toObject() );
+		CChar *myChar = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 		if( !ValidateObject( myChar ))
 		{
 			ScriptError( cx, "Send: Passed an invalid Character" );
@@ -1867,12 +1926,11 @@ bool CBase_TextMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JSEncapsulate myClass( cx, obj );
-	CBaseObject *myObj		= static_cast<CBaseObject*>( myClass.toObject() );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+	CBaseObject *myObj = GetBaseObject( obj );
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	std::string trgMessage		= JS_GetStringBytes( cx, argv[0] );
+	std::string trgMessage		= JS_GetStringBytes( cx, args.get(0) );
 	if( trgMessage.empty() )
 	{
 		ScriptError( cx, "You have to supply a message-text" );
@@ -1882,13 +1940,13 @@ bool CBase_TextMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 	UI16 txtHue = 0x0000;
 	if( argc >= 3 )
 	{
-		txtHue = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+		txtHue = static_cast<UI16>( args.get(2).toInt32());
 	}
 
 	SpeechTarget speechTarget = SPTRG_NULL;
 	if( argc >= 4 )
 	{
-		speechTarget = static_cast<SpeechTarget>( JSVAL_TO_INT( argv[3] ));
+		speechTarget = static_cast<SpeechTarget>( args.get(3).toInt32());
 	}
 	if( speechTarget == SPTRG_NULL )
 	{
@@ -1898,25 +1956,25 @@ bool CBase_TextMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 	SERIAL speechTargetSerial = INVALIDSERIAL;
 	if( argc >= 5 )
 	{
-		speechTargetSerial = static_cast<SERIAL>( JSVAL_TO_INT( argv[4] ));
+		speechTargetSerial = static_cast<SERIAL>( args.get(4).toInt32());
 	}
 
 	FontType speechFontType = FNT_NULL;
 	if( argc == 6 )
 	{
-		speechFontType = static_cast<FontType>( JSVAL_TO_INT( argv[5] ));
+		speechFontType = static_cast<FontType>( args.get(5).toInt32());
 	}
 
 	SpeechType speechType = UNKNOWN;
 	if( argc == 7 )
 	{
-		speechType = static_cast<SpeechType>( JSVAL_TO_INT( argv[6] ));
+		speechType = static_cast<SpeechType>( args.get(6).toInt32());
 	}
 
 	bool useUnicode = cwmWorldState->ServerData()->UseUnicodeMessages();
 
 	// Keep track of original script that's executing
-	if( myClass.ClassName() == "UOXItem" )
+	if( HasWrapperClass( obj, &UOXItem_class ))
 	{
 		CItem *myItem = static_cast<CItem *>( myObj );
 		if( !ValidateObject( myItem ))
@@ -1938,7 +1996,7 @@ bool CBase_TextMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 		}
 		MethodSpeech( *myItem, trgMessage.c_str(), speechType, txtHue, speechFontType, speechTarget, speechTargetSerial, useUnicode);
 	}
-	else if( myClass.ClassName() == "UOXChar" )
+	else if( HasWrapperClass( obj, &UOXChar_class ))
 	{
 		CChar *myChar = static_cast<CChar *>( myObj );
 		if( !ValidateObject( myChar ))
@@ -1947,7 +2005,7 @@ bool CBase_TextMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 			return false;
 		}
 
-		if( argc >= 2 && argc <= 3 && JSVAL_TO_BOOLEAN( argv[1] ) != true )
+		if( argc >= 2 && argc <= 3 && args.get(1).toBoolean() != true )
 		{
 			speechTarget = SPTRG_INDIVIDUAL;
 			if( speechTargetSerial == INVALIDSERIAL )
@@ -2001,9 +2059,9 @@ bool CBase_KillTimers( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "KillTimers: Invalid count of arguments :%d, needs :0 or 1", argc );
 		return false;
 	}
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+	auto myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 	if( myObj == nullptr )
 	{
 		ScriptError( cx, "KillTimers: Invalid object assigned." );
@@ -2012,7 +2070,7 @@ bool CBase_KillTimers( JSContext *cx, unsigned argc, JS::Value* vp )
 	SI32 triggerNum = -1;
 	if( argc == 1 )
 	{
-		triggerNum = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+		triggerNum = static_cast<UI16>( args.get(0).toInt32());
 	}
 
 	SERIAL mySer = myObj->GetSerial();
@@ -2053,18 +2111,18 @@ bool CBase_GetJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+	auto myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 	if( myObj == nullptr )
 	{
 		ScriptError( cx, "GetJSTimer: Invalid object assigned." );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid timer found
-	UI16 timerId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	args.rval().setInt32(  0  ); // Return value 0 by default, to indicate no valid timer found
+	UI16 timerId = static_cast<UI16>( args.get(0).toInt32());
+	UI16 scriptId = static_cast<UI16>( args.get(1).toInt32());
 
 	SERIAL myObjSerial = myObj->GetSerial();
 	for( const auto &Effect : cwmWorldState->tempEffects.collection() )
@@ -2084,7 +2142,7 @@ bool CBase_GetJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 			if( tScript != nullptr && ( scriptId == Effect->AssocScript() || scriptId == Effect->More2() ))
 			{
 				// Return the timestamp for when the Effect timer expires
-				JS_NewNumberValue( cx, Effect->ExpireTime(), &JS_RVAL( cx, vp ) );
+				args.rval().setNumber( Effect->ExpireTime() );
 			}
 		}
 	}
@@ -2106,21 +2164,22 @@ bool CBase_SetJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+	auto myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 	if( myObj == nullptr )
 	{
 		ScriptError( cx, "SetJSTimer: Invalid object assigned." );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value is 0 by default, indicating no timer was found or updated
-	UI16 timerId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	jsdouble expireTime_double;
-	JS_ValueToNumber( cx, argv[1], &expireTime_double );
+	args.rval().setInt32(  0  ); // Return value is 0 by default, indicating no timer was found or updated
+	UI16 timerId = static_cast<UI16>( args.get(0).toInt32());
+	double expireTime_double;
+	JS::RootedValue rootedValue( cx, args.get(1) );
+	JS::ToNumber( cx, rootedValue, &expireTime_double );
 	TIMERVAL expireTime = BuildTimeValue( static_cast<R64>( expireTime_double ) / 1000.0 );
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+	UI16 scriptId = static_cast<UI16>( args.get(2).toInt32());
 
 	SERIAL myObjSerial = myObj->GetSerial();
 	for( const auto &Effect : cwmWorldState->tempEffects.collection() )
@@ -2141,7 +2200,7 @@ bool CBase_SetJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 			{
 				// Set the timestamp for when the Effect timer expires to that specified in parameters
 				Effect->ExpireTime( expireTime );
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) ); // Return 1 indicating timer was found and updated
+				args.rval().setInt32(  1  ); // Return 1 indicating timer was found and updated
 			}
 		}
 	}
@@ -2162,18 +2221,18 @@ bool CBase_KillJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "KillJSTimer: Invalid count of arguments :%d, needs 2 (timerId, scriptId)", argc );
 		return false;
 	}
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+	auto myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 	if( myObj == nullptr )
 	{
 		ScriptError( cx, "KillJSTimer: Invalid object assigned." );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid timer found
-	UI16 timerId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	args.rval().setInt32(  0  ); // Return value 0 by default, to indicate no valid timer found
+	UI16 timerId = static_cast<UI16>( args.get(0).toInt32());
+	UI16 scriptId = static_cast<UI16>( args.get(1).toInt32());
 
 	SERIAL myObjSerial = myObj->GetSerial();
 	CTEffect *removeEffect = nullptr;
@@ -2203,7 +2262,7 @@ bool CBase_KillJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( removeEffect != nullptr )
 	{
 		cwmWorldState->tempEffects.Remove( removeEffect, true );
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) ); // Return 1 indicating timer was found and removed
+		args.rval().setInt32(  1  ); // Return 1 indicating timer was found and removed
 	}
 
 	return true;
@@ -2222,18 +2281,18 @@ bool CBase_PauseJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "PauseJSTimer: Invalid count of arguments :%d, needs 2 (timerId, scriptId)", argc );
 		return false;
 	}
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+	auto myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 	if( myObj == nullptr )
 	{
 		ScriptError( cx, "PauseJSTimer: Invalid object assigned." );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid timer found
-	UI16 timerId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	args.rval().setInt32(  0  ); // Return value 0 by default, to indicate no valid timer found
+	UI16 timerId = static_cast<UI16>( args.get(0).toInt32());
+	UI16 scriptId = static_cast<UI16>( args.get(1).toInt32());
 
 	SERIAL myObjSerial = myObj->GetSerial();
 	CTEffect *removeEffect = nullptr;
@@ -2257,11 +2316,11 @@ bool CBase_PauseJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 				if( Effect->PauseTime() == 0 )
 				{
 					PauseEffect( Effect );
-					JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) ); // Return 1 indicating timer was found and paused
+					args.rval().setInt32(  1  ); // Return 1 indicating timer was found and paused
 				}
 				else
 				{
-					JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 2 ) ); // Return 2 indicating timer was found, but already paused
+					args.rval().setInt32(  2  ); // Return 2 indicating timer was found, but already paused
 				}
 				break;
 			}
@@ -2284,18 +2343,18 @@ bool CBase_ResumeJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "ResumeJSTimer: Invalid count of arguments :%d, needs 2 (timerId, scriptId)", argc );
 		return false;
 	}
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  auto *myObj  = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 	if( myObj == nullptr )
 	{
 		ScriptError( cx, "ResumeJSTimer: Invalid object assigned." );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid timer found
-	UI16 timerId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	args.rval().setInt32(  0  ); // Return value 0 by default, to indicate no valid timer found
+	UI16 timerId = static_cast<UI16>( args.get(0).toInt32());
+	UI16 scriptId = static_cast<UI16>( args.get(1).toInt32());
 
 	SERIAL myObjSerial = myObj->GetSerial();
 	CTEffect *removeEffect = nullptr;
@@ -2319,11 +2378,11 @@ bool CBase_ResumeJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 				if( Effect->PauseTime() > 0 )
 				{
 					ResumeEffect( Effect );
-					JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) ); // Return 1 indicating timer was found and resumed
+					args.rval().setInt32(  1  ); // Return 1 indicating timer was found and resumed
 				}
 				else
 				{
-					JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 2 ) ); // Return 2 indicating timer was found, but it was not paused!
+					args.rval().setInt32(  2  ); // Return 2 indicating timer was found, but it was not paused!
 				}
 				break;
 			}
@@ -2341,32 +2400,36 @@ bool CBase_ResumeJSTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_GetTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	if( argc != 1 )
+	if( argc < 1 || argc > 2 )
 	{
-		ScriptError( cx, "GetTempEffect: Invalid count of arguments :%d, needs 1 (tempEffectID)", argc );
+		ScriptError( cx, "GetTempEffect: Invalid count of arguments :%d, needs 1-2 (tempEffectID, scriptEffectID = optional)", argc );
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+	auto *myObj  = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 	if( myObj == nullptr )
 	{
 		ScriptError( cx, "GetTempEffect: Invalid object assigned." );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid tempe effect
-	UI16 tempEffectID = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	args.rval().setInt32(  0  ); // Return value 0 by default, to indicate no valid tempe effect
+	UI16 tempEffectID = static_cast<UI16>( args.get(0).toInt32());
+	UI16 scriptEffectID = ( argc == 2 ? static_cast<UI16>( args.get(1).toInt32() ) : 0 );
+	UI16 assocScript = ( JSMapping->currentActive() != nullptr ? JSMapping->currentActive()->GetScriptID() : 0xFFFF );
 
 	SERIAL myObjSerial = myObj->GetSerial();
 	for( const auto &Effect : cwmWorldState->tempEffects.collection() )
 	{
 		// We only want results that have same object serial and tempEffectID as specified
-		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID )
+		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID &&
+			( argc == 1 || ( Effect->More1() == scriptEffectID &&
+				( tempEffectID != 44 || Effect->AssocScript() == assocScript ))))
 		{
 			// Return the timestamp for when the Temp Effect timer expires
-			JS_NewNumberValue( cx, Effect->ExpireTime(), &JS_RVAL( cx, vp ) );
+			args.rval().setNumber( Effect->ExpireTime() );
 		}
 	}
 
@@ -2381,29 +2444,33 @@ bool CBase_GetTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_ReverseTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	if( argc != 1 )
+	if( argc < 1 || argc > 2 )
 	{
-		ScriptError( cx, "ReverseTempEffect: Invalid count of arguments :%d, needs 1 (tempEffectID)", argc );
+		ScriptError( cx, "ReverseTempEffect: Invalid count of arguments :%d, needs 1-2 (tempEffectID, scriptEffectID = optional)", argc );
 		return false;
 	}
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  auto *myObj  = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 	if( myObj == nullptr )
 	{
 		ScriptError( cx, "ReverseTempEffect: Invalid object assigned." );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid temp effect found
-	UI16 tempEffectID = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	args.rval().setInt32(  0  ); // Return value 0 by default, to indicate no valid temp effect found
+	UI16 tempEffectID = static_cast<UI16>( args.get(0).toInt32());
+	UI16 scriptEffectID = ( argc == 2 ? static_cast<UI16>( args.get(1).toInt32() ) : 0 );
+	UI16 assocScript = ( JSMapping->currentActive() != nullptr ? JSMapping->currentActive()->GetScriptID() : 0xFFFF );
 
 	SERIAL myObjSerial = myObj->GetSerial();
 	CTEffect *removeEffect = nullptr;
 
 	for( auto &Effect : cwmWorldState->tempEffects.collection() )
 	{
-		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID )
+		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID &&
+			( argc == 1 || ( Effect->More1() == scriptEffectID &&
+				( tempEffectID != 44 || Effect->AssocScript() == assocScript ))))
 		{
 			// Found our timer! Keep track of it for removal outside loop
 			removeEffect = Effect;
@@ -2415,7 +2482,7 @@ bool CBase_ReverseTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 	{
 		ReverseEffect( removeEffect );
 		cwmWorldState->tempEffects.Remove( removeEffect, true );
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) ); // Return 1 indicating temp effect was found and removed
+		args.rval().setInt32(  1  ); // Return 1 indicating temp effect was found and removed
 	}
 
 	return true;
@@ -2429,33 +2496,36 @@ bool CBase_ReverseTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_PauseTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	if( argc != 1 )
+	if( argc < 1 || argc > 2 )
 	{
-		ScriptError( cx, "PauseTempEffect: Invalid count of arguments :%d, needs 1 (tempEffectID)", argc );
+		ScriptError( cx, "PauseTempEffect: Invalid count of arguments :%d, needs 1-2 (tempEffectID, scriptEffectID = optional)", argc );
 		return false;
 	}
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  auto *myObj  = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0 );
 	if( myObj == nullptr )
 	{
 		ScriptError( cx, "PauseTempEffect: Invalid object assigned." );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid temp effect found
-	UI16 tempEffectID = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	args.rval().setInt32(  0  ); // Return value 0 by default, to indicate no valid temp effect found
+	UI16 tempEffectID = static_cast<UI16>( args.get(0).toInt32());
+	UI16 scriptEffectID = ( argc == 2 ? static_cast<UI16>( args.get(1).toInt32() ) : 0 );
+	UI16 assocScript = ( JSMapping->currentActive() != nullptr ? JSMapping->currentActive()->GetScriptID() : 0xFFFF );
 
 	SERIAL myObjSerial = myObj->GetSerial();
-	CTEffect *pauseEffect = nullptr;
 
 	for( auto &Effect : cwmWorldState->tempEffects.collection() )
 	{
-		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID )
+		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID &&
+			( argc == 1 || ( Effect->More1() == scriptEffectID &&
+				( tempEffectID != 44 || Effect->AssocScript() == assocScript ))))
 		{
 			// Found our timer! Let's pause it
-			PauseEffect( pauseEffect );
-			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) ); // Return 1 indicating temp effect was found and paused
+			PauseEffect( Effect );
+			args.rval().setInt32(  1  ); // Return 1 indicating temp effect was found and paused
 			break;
 		}
 	}
@@ -2471,33 +2541,36 @@ bool CBase_PauseTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_ResumeTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	if( argc != 1 )
+	if( argc < 1 || argc > 2 )
 	{
-		ScriptError( cx, "ResumeTempEffect: Invalid count of arguments :%d, needs 1 (tempEffectID)", argc );
+		ScriptError( cx, "ResumeTempEffect: Invalid count of arguments :%d, needs 1-2 (tempEffectID, scriptEffectID = optional)", argc );
 		return false;
 	}
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  auto *myObj  = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 	if( myObj == nullptr )
 	{
 		ScriptError( cx, "ResumeTempEffect: Invalid object assigned." );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid paused temp effect found
-	UI16 tempEffectID = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	args.rval().setInt32(  0  ); // Return value 0 by default, to indicate no valid paused temp effect found
+	UI16 tempEffectID = static_cast<UI16>( args.get(0).toInt32());
+	UI16 scriptEffectID = ( argc == 2 ? static_cast<UI16>( args.get(1).toInt32() ) : 0 );
+	UI16 assocScript = ( JSMapping->currentActive() != nullptr ? JSMapping->currentActive()->GetScriptID() : 0xFFFF );
 
 	SERIAL myObjSerial = myObj->GetSerial();
-	CTEffect *resumeEffect = nullptr;
 
 	for( auto &Effect : cwmWorldState->tempEffects.collection() )
 	{
-		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID && Effect->PauseTime() > 0 )
+		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID && Effect->PauseTime() > 0 &&
+			( argc == 1 || ( Effect->More1() == scriptEffectID &&
+				( tempEffectID != 44 || Effect->AssocScript() == assocScript ))))
 		{
 			// Found our timer! Let's resume it
-			ResumeEffect( resumeEffect );
-			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) ); // Return 1 indicating temp effect was found and resumed
+			ResumeEffect( Effect );
+			args.rval().setInt32(  1  ); // Return 1 indicating temp effect was found and resumed
 			break;
 		}
 	}
@@ -2514,9 +2587,9 @@ bool CBase_ResumeTempEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_Delete( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 
 	if( !ValidateObject( myObj ))
 	{
@@ -2544,18 +2617,18 @@ bool CChar_Wander( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	SI16 x1 = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 y1 = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI16 x2 = static_cast<SI16>( JSVAL_TO_INT( argv[2] ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	SI16 x1 = static_cast<SI16>( args.get(0).toInt32());
+	SI16 y1 = static_cast<SI16>( args.get(1).toInt32());
+	SI16 x2 = static_cast<SI16>( args.get(2).toInt32());
 	SI16 y2 = 0;
 	if( argc > 3 )
 	{
-		y2 = static_cast<SI16>( JSVAL_TO_INT( argv[3] ));
+		y2 = static_cast<SI16>( args.get(3).toInt32());
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
+	auto obj = getThis( cx, args );
+  CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 
 	if( !ValidateObject( myChar ) || !myChar->IsNpc() )
 	{
@@ -2593,16 +2666,16 @@ bool CChar_Follow( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( myChar ) || !myChar->IsNpc() )
 	{
 		ScriptError( cx, "Follow: Invalid NPC character object referenced!" );
 		return false;
 	}
 
-	if( argv[0] == JSVAL_NULL )
+	if( args.get(0) == JS::NullValue() )
 	{
 		// Clear follow target if null was provided instead of a character object to follow
 		myChar->SetFTarg( nullptr );
@@ -2610,8 +2683,7 @@ bool CChar_Follow( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JSObject *jsObj = JSVAL_TO_OBJECT( argv[0] );
-	CBaseObject *myObj = static_cast<CBaseObject *>( JS_GetPrivate( cx, jsObj ));
+	CBaseObject *myObj = GetBaseObject( args.get( 0 ));
 
 	if( !ValidateObject( myObj ) || myObj->GetSerial() >= BASEITEMSERIAL )
 	{
@@ -2640,34 +2712,34 @@ bool CChar_DoAction( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	UI16 targAction = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	UI16 targAction = static_cast<UI16>( args.get(0).toInt32());
 	SI16 targSubAction = -1;
 	UI16 frameCount = 7;
 	UI16 frameDelay = 0;
 	bool playBackwards = false;
 	if( argc > 1 )
 	{
-		if( argv[1] != JSVAL_NULL )
+		if( args.get(1) != JS::NullValue() )
 		{
-			targSubAction = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+			targSubAction = static_cast<SI16>( args.get(1).toInt32());
 		}
 	}
 	if( argc > 2 )
 	{
-		frameCount = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+		frameCount = static_cast<UI16>( args.get(2).toInt32());
 	}
 	if( argc > 3 )
 	{
-		frameDelay = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+		frameDelay = static_cast<UI16>( args.get(3).toInt32());
 	}
 	if( argc > 4 )
 	{
-		playBackwards = JSVAL_TO_BOOLEAN( argv[4] );
+		playBackwards = args.get(4).toBoolean();
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
+	auto obj = getThis( cx, args );
+  CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 
 	if( !ValidateObject( myChar ))
 	{
@@ -2704,10 +2776,10 @@ bool CChar_EmoteMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
-	std::string trgMessage = JS_GetStringBytes( cx, argv[0] );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
+	std::string trgMessage = JS_GetStringBytes( cx, args.get(0) );
 
 	if( !ValidateObject( myChar ) || trgMessage.empty() )
 	{
@@ -2718,7 +2790,7 @@ bool CChar_EmoteMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 	UI16 txtHue = 0x0000;
 	if( argc >= 3 )
 	{
-		txtHue = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+		txtHue = static_cast<UI16>( args.get(2).toInt32());
 	}
 	if( txtHue == 0x0000 )
 	{
@@ -2728,7 +2800,7 @@ bool CChar_EmoteMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 	SpeechTarget speechTarget = SPTRG_NULL;
 	if( argc >= 4 )
 	{
-		speechTarget = static_cast<SpeechTarget>( JSVAL_TO_INT( argv[3] ));
+		speechTarget = static_cast<SpeechTarget>( args.get(3).toInt32());
 	}
 	if( speechTarget == SPTRG_NULL )
 	{
@@ -2738,10 +2810,10 @@ bool CChar_EmoteMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 	SERIAL speechTargetSerial = INVALIDSERIAL;
 	if( argc >= 5 )
 	{
-		speechTargetSerial = static_cast<SERIAL>( JSVAL_TO_INT( argv[4] ));
+		speechTargetSerial = static_cast<SERIAL>( args.get(4).toInt32());
 	}
 
-	if( argc >= 2 && argc <= 3 && JSVAL_TO_BOOLEAN( argv[1] ) != true )
+	if( argc >= 2 && argc <= 3 && args.get(1).toBoolean() != true )
 	{
 		speechTarget = SPTRG_INDIVIDUAL;
 	}
@@ -2766,8 +2838,9 @@ bool CChar_Dismount( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 
 	if( !ValidateObject( myChar ))
 	{
@@ -2800,18 +2873,16 @@ bool CMisc_SysMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	CSocket *mySock = nullptr;
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSEncapsulate myClass( cx, obj );
-
-	if( myClass.ClassName() == "UOXChar" )
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+	if( HasWrapperClass( obj, &UOXChar_class ))
 	{
-		CChar *myChar = static_cast<CChar*>( myClass.toObject() );
+		CChar *myChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
 		mySock = myChar->GetSocket();
 	}
-	else if( myClass.ClassName() == "UOXSocket" )
+	else if( HasWrapperClass( obj, &UOXSocket_class ))
 	{
-		mySock = static_cast<CSocket*>( myClass.toObject() );
+		mySock = GetWrappedObject<CSocket>( obj, &UOXSocket_class );
 	}
 
 	if( mySock == nullptr )
@@ -2822,12 +2893,12 @@ bool CMisc_SysMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	UI16 msgColor = 0;
 	UI08 argCounter = 0;
-	if( argc > 1 && JSVAL_IS_INT( argv[0] ))
+	if( argc > 1 && args.get(0).isObject() )
 	{
-		msgColor = static_cast<UI16>( JSVAL_TO_INT( argv[argCounter++] ));
+		msgColor = static_cast<UI16>( args.get(argCounter++).toInt32() );
 	}
 
-	std::string trgMessage = JS_GetStringBytes( cx, argv[argCounter++] );
+	std::string trgMessage = JS_GetStringBytes( cx, args.get(argCounter++) );
 
 	if( trgMessage.empty() )
 	{
@@ -2840,11 +2911,11 @@ bool CMisc_SysMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 	{
 		if( msgArg.empty() )
 		{
-			msgArg += JS_GetStringBytes( cx, argv[i]);
+			msgArg += JS_GetStringBytes( cx, args.get(i) );
 		}
 		else
 		{
-			msgArg += std::string(",") + JS_GetStringBytes( cx, argv[i]);
+			msgArg += std::string(",") + JS_GetStringBytes(cx, args.get(i));
 		}
 	}
 
@@ -2866,9 +2937,9 @@ bool CSocket_Disconnect( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	CSocket *targSock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  CSocket *targSock = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
 
 	if( targSock == nullptr )
 	{
@@ -2877,7 +2948,7 @@ bool CSocket_Disconnect( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	Network->Disconnect( targSock );
-	JS_SetPrivate( cx, obj, nullptr ); // yes we should do that...
+	JS::SetReservedSlot( obj, 0, JS::UndefinedValue() ); // yes we should do that...
 
 	return true;
 }
@@ -2894,11 +2965,15 @@ bool CSocket_Disconnect( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSEncapsulate myClass( cx, obj );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+	CBaseObject *myObj = GetBaseObject( obj );
+	if( !ValidateObject( myObj ))
+	{
+		ScriptError( cx, "Teleport: Invalid Object" );
+		return false;
+	}
 
-	CBaseObject *myObj	= static_cast<CBaseObject*>( myClass.toObject() );
 	SI16 x				= -1;
 	SI16 y				= -1;
 	SI08 z				= myObj->GetZ();
@@ -2909,7 +2984,7 @@ bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 	{
 			// Just Teleport...
 		case 0:
-			if( myClass.ClassName() == "UOXChar" )
+			if( HasWrapperClass( obj, &UOXChar_class ))
 			{
 				( static_cast<CChar*>( myObj ))->Teleport();
 				return true;
@@ -2919,12 +2994,11 @@ bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 
 			// Parameters as a string
 		case 1:
-			if( JSVAL_IS_OBJECT( argv[0] ))
+			if( args.get(0).isObject() )
 			{	// we can work with this, it should be either a character or item, hopefully
-				JSEncapsulate jsToGoTo( cx, &( argv[0] ));
-				if( jsToGoTo.ClassName() == "UOXItem" || jsToGoTo.ClassName() == "UOXChar" )
+				CBaseObject *toGoTo = GetBaseObject( args.get( 0 ));
+				if( toGoTo != nullptr )
 				{
-					CBaseObject *toGoTo = static_cast<CBaseObject *>( jsToGoTo.toObject() );
 					if( !ValidateObject( toGoTo ))
 					{
 						ScriptError( cx, "No object associated with this object" );
@@ -2937,9 +3011,9 @@ bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 					world	= toGoTo->WorldNumber();
 					instanceId = toGoTo->GetInstanceId();
 				}
-				else if( jsToGoTo.ClassName() == "UOXSocket" )
+				else if( HasWrapperClass( args.get( 0 ), &UOXSocket_class ))
 				{
-					CSocket *mySock		= static_cast<CSocket *>( jsToGoTo.toObject() );
+					CSocket *mySock		= GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 					CChar *mySockChar	= mySock->CurrcharObj();
 					x					= mySockChar->GetX();
 					y					= mySockChar->GetY();
@@ -2953,9 +3027,9 @@ bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 					return false;
 				}
 			}
-			else if( JSVAL_IS_INT( argv[0] ))
+			else if( args.get(0).isObject() )
 			{
-				UI16 placeNum = JSVAL_TO_INT( argv[0] );
+				UI16 placeNum = args.get(0).toInt32();
 				if( cwmWorldState->goPlaces.find( placeNum ) != cwmWorldState->goPlaces.end() )
 				{
 					GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
@@ -2974,10 +3048,10 @@ bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 
 			// 2 Parameters, x + y
 		case 2:
-			if( JSVAL_IS_INT( argv[0] ) && JSVAL_IS_INT( argv[1] ))
+			if( args.get(0).isInt32() && args.get(1).isInt32() )
 			{
-				x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-				y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+				x = static_cast<SI16>( args.get(0).toInt32());
+				y = static_cast<SI16>( args.get(1).toInt32());
 			}
 			else
 			{
@@ -2988,11 +3062,11 @@ bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 
 			// x,y,z
 		case 3:
-			if( JSVAL_IS_INT( argv[0] ) && JSVAL_IS_INT( argv[1] ) && JSVAL_IS_INT( argv[2] ))
+			if( args.get(0).isInt32() && args.get(1).isInt32() && args.get(2).isInt32() )
 			{
-				x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-				y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-				z = static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
+				x = static_cast<SI16>( args.get(0).toInt32());
+				y = static_cast<SI16>( args.get(1).toInt32());
+				z = static_cast<SI08>( args.get(2).toInt32());
 			}
 			else
 			{
@@ -3003,12 +3077,12 @@ bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 
 			// x,y,z,world
 		case 4:
-			if( JSVAL_IS_INT( argv[0] ) && JSVAL_IS_INT( argv[1] ) && JSVAL_IS_INT( argv[2] ) && JSVAL_IS_INT( argv[3] ))
+			if( args.get(0).isInt32() && args.get(1).isInt32() && args.get(2).isInt32() && args.get(3).isInt32() )
 			{
-				x		= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-				y		= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-				z		= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-				world	= static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
+				x		= static_cast<SI16>( args.get(0).toInt32());
+				y		= static_cast<SI16>( args.get(1).toInt32());
+				z		= static_cast<SI08>( args.get(2).toInt32());
+				world	= static_cast<UI08>( args.get(3).toInt32());
 			}
 			else
 			{
@@ -3019,13 +3093,13 @@ bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 
 			// x,y,z,world,instanceId
 		case 5:
-			if( JSVAL_IS_INT( argv[0] ) && JSVAL_IS_INT( argv[1] ) && JSVAL_IS_INT( argv[2] ) && JSVAL_IS_INT( argv[3] ) && JSVAL_IS_INT( argv[4] ))
+			if( args.get(0).isInt32() && args.get(1).isInt32() && args.get(2).isInt32() && args.get(3).isInt32() && args.get(4).isInt32() )
 			{
-				x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-				y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-				z = static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-				world = static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
-				instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
+				x = static_cast<SI16>( args.get(0).toInt32());
+				y = static_cast<SI16>( args.get(1).toInt32());
+				z = static_cast<SI08>( args.get(2).toInt32());
+				world = static_cast<UI08>( args.get(3).toInt32());
+				instanceId = static_cast<UI16>( args.get(4).toInt32());
 			}
 			else
 			{
@@ -3039,7 +3113,7 @@ bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 			break;
 	}
 
-	if( myClass.ClassName() == "UOXItem" )
+	if( HasWrapperClass( obj, &UOXItem_class ))
 	{
 		CItem *myItem = static_cast<CItem*>( myObj );
 		if( !ValidateObject( myItem ))
@@ -3053,7 +3127,7 @@ bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 		myItem->RemoveFromSight();
 		myItem->SetLocation( x, y, z, world, instanceId );
 	}
-	else if( myClass.ClassName() == "UOXChar" )
+	else if( HasWrapperClass( obj, &UOXChar_class ))
 	{
 		CChar *myChar = static_cast<CChar*>( myObj );
 		if( !ValidateObject( myChar ))
@@ -3108,14 +3182,13 @@ bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_StaticEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	UI16 effectId		= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	UI08 speed			= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
-	UI08 loop			= static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	UI16 effectId		= static_cast<UI16>( args.get(0).toInt32());
+	UI08 speed			= static_cast<UI08>( args.get(1).toInt32());
+	UI08 loop			= static_cast<UI08>( args.get(2).toInt32());
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JSEncapsulate		myClass( cx, obj );
-	CBaseObject *myObj	= static_cast<CBaseObject*>( myClass.toObject() );
+	auto obj = getThis( cx, args );
+	CBaseObject *myObj = GetBaseObject( obj );
 
 	if( !ValidateObject( myObj ))
 	{
@@ -3123,9 +3196,9 @@ bool CBase_StaticEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( myClass.ClassName() == "UOXItem" )
+	if( HasWrapperClass( obj, &UOXItem_class ))
 	{
-		bool explode = ( JSVAL_TO_BOOLEAN( argv[3] ) == true );
+		bool explode = ( args.get(3).toBoolean() == true );
 		Effects->PlayStaticAnimation( myObj, effectId, speed, loop, explode );
 	}
 	else
@@ -3151,17 +3224,16 @@ bool CMisc_MakeMenu( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	CSocket *mySock		= nullptr;
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSEncapsulate myClass( cx, obj );
-	if( myClass.ClassName() == "UOXChar" )
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+	if( HasWrapperClass( obj, &UOXChar_class ))
 	{
-		CChar *myChar	= static_cast<CChar*>( myClass.toObject() );
+		CChar *myChar	= GetWrappedObject<CChar>( obj, &UOXChar_class );
 		mySock			= myChar->GetSocket();
 	}
-	else if( myClass.ClassName() == "UOXSocket" )
+	else if( HasWrapperClass( obj, &UOXSocket_class ))
 	{
-		mySock			= static_cast<CSocket*>( myClass.toObject() );
+		mySock			= GetWrappedObject<CSocket>( obj, &UOXSocket_class );
 	}
 
 	if( mySock == nullptr )
@@ -3169,8 +3241,8 @@ bool CMisc_MakeMenu( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "MakeMenu: invalid socket" );
 		return false;
 	}
-	SI32 menu		= JSVAL_TO_INT( argv[0] );
-	UI08 skillNum	= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+	SI32 menu		= args.get(0).toInt32();
+	UI08 skillNum	= static_cast<UI08>( args.get(1).toInt32());
 	Skills->NewMakeMenu( mySock, menu, skillNum );
 	return true;
 }
@@ -3189,27 +3261,25 @@ bool CMisc_SoundEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSEncapsulate myClass( cx, obj );
-
-	UI16 soundId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+	UI16 soundId = static_cast<UI16>( args.get(0).toInt32());
 	SI16 tmpMonsterSound = -1;
 	if( argc == 3 )
 	{
-		tmpMonsterSound = static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+		tmpMonsterSound = static_cast<UI08>( args.get(1).toInt32());
 	}
-	bool allHear = ( JSVAL_TO_BOOLEAN( argv[1] ) == true );
+	bool allHear = ( args.get(1).toBoolean() == true );
 
-	if( myClass.ClassName() == "UOXChar" || myClass.ClassName() == "UOXItem" )
+	if( HasWrapperClass( obj, &UOXChar_class ) || HasWrapperClass( obj, &UOXItem_class ))
 	{
-		CBaseObject *myObj = static_cast<CBaseObject*>( myClass.toObject() );
+		CBaseObject *myObj = GetBaseObject( obj );
 
 		if( ValidateObject( myObj ))
 		{
-			if( myClass.ClassName() == "UOXChar" && tmpMonsterSound > -1 )
+			if( HasWrapperClass( obj, &UOXChar_class ) && tmpMonsterSound > -1 )
 			{
-				CChar *myChar = static_cast<CChar*>( myClass.toObject() );
+				CChar *myChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
 				UI16 monsterSoundToPlay = cwmWorldState->creatures[myChar->GetId()].GetSound( static_cast<monsterSound>( tmpMonsterSound ));
 				if( monsterSoundToPlay != 0 )
 				{
@@ -3222,9 +3292,9 @@ bool CMisc_SoundEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 			}
 		}
 	}
-	else if( myClass.ClassName() == "UOXSocket" )
+	else if( HasWrapperClass( obj, &UOXSocket_class ))
 	{
-		CSocket *mySock = static_cast<CSocket*>( myClass.toObject() );
+		CSocket *mySock = GetWrappedObject<CSocket>( obj, &UOXSocket_class );
 
 		if( mySock != nullptr )
 		{
@@ -3243,17 +3313,16 @@ bool CMisc_SoundEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMisc_SellTo( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	args.rval().setBoolean( false );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "SellTo: Invalid Number of Arguments: %d", argc );
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSEncapsulate myClass( cx, obj );
-	CChar *myNPC = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto obj = getThis( cx, args );
+	CChar *myNPC = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( myNPC ))
 	{
 		ScriptError( cx, "SellTo: Invalid NPC" );
@@ -3261,9 +3330,9 @@ bool CMisc_SellTo( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	CPSellList toSend;
-	if( myClass.ClassName() == "UOXSocket" )
+	if( HasWrapperClass( obj, &UOXSocket_class ))
 	{
-		CSocket *mySock = static_cast<CSocket*>( myClass.toObject() );
+		CSocket *mySock = GetWrappedObject<CSocket>( obj, &UOXSocket_class );
 		if( mySock == nullptr )
 		{
 			ScriptError( cx, "Passed an invalid socket to SellTo" );
@@ -3277,13 +3346,13 @@ bool CMisc_SellTo( JSContext *cx, unsigned argc, JS::Value* vp )
 			if( toSend.CanSellItems(( *mChar ), ( *myNPC )))
 			{
 				mySock->Send( &toSend );
-				JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+				args.rval().setBoolean( true );
 			}
 		}
 	}
-	else if( myClass.ClassName() == "UOXChar" )
+	else if( HasWrapperClass( obj, &UOXChar_class ))
 	{
-		CChar *myChar = static_cast<CChar*>( myClass.toObject() );
+		CChar *myChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
 		if( !ValidateObject( myChar ))
 		{
 			ScriptError( cx, "Passed an invalid char to SellTo" );
@@ -3295,7 +3364,7 @@ bool CMisc_SellTo( JSContext *cx, unsigned argc, JS::Value* vp )
 		if( toSend.CanSellItems(( *myChar ), ( *myNPC )))
 		{
 			mSock->Send( &toSend );
-			JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+			args.rval().setBoolean( true );
 		}
 	}
 
@@ -3316,19 +3385,18 @@ bool CMisc_BuyFrom( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSEncapsulate myClass( cx, obj );
-	CChar *myNPC = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+	CChar *myNPC = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( myNPC ))
 	{
 		ScriptError( cx, "BuyFrom: Invalid NPC" );
 		return false;
 	}
 
-	if( myClass.ClassName() == "UOXSocket" )
+	if( HasWrapperClass( obj, &UOXSocket_class ))
 	{
-		CSocket *mySock = static_cast<CSocket *>( myClass.toObject() );
+		CSocket *mySock = GetWrappedObject<CSocket>( obj, &UOXSocket_class );
 		if( mySock == nullptr )
 		{
 			ScriptError( cx, "Invalid source socket in BuyFrom" );
@@ -3346,9 +3414,9 @@ bool CMisc_BuyFrom( JSContext *cx, unsigned argc, JS::Value* vp )
 			BuyShop( mySock, myNPC );
 		}
 	}
-	else if( myClass.ClassName() == "UOXChar" )
+	else if( HasWrapperClass( obj, &UOXChar_class ))
 	{
-		CChar *myChar = static_cast<CChar*>( myClass.toObject() );
+		CChar *myChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
 		if( !ValidateObject( myChar ))
 		{
 			ScriptError( cx, "Passed an invalid char to BuyFrom" );
@@ -3386,41 +3454,32 @@ bool CMisc_HasSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSEncapsulate myClass( cx, obj );
-	UI08 spellId = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+	SI32 spellId = static_cast<SI32>( args.get(0).toInt32());
 
-	if( myClass.ClassName() == "UOXChar" )
+	if( HasWrapperClass( obj, &UOXChar_class ))
 	{
-		CChar *myChar = static_cast<CChar*>( myClass.toObject() );
+		CChar *myChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
 		if( !ValidateObject( myChar ))
 		{
 			ScriptError( cx, "Invalid char for HasSpell" );
 			return false;
 		}
 
-		CItem *myItem = FindItemOfType( myChar, IT_SPELLBOOK );
-
-		if( !ValidateObject( myItem ))
+		CItem *activeBook = Magic->FindSpellBook( myChar, spellId );
+		if( ValidateObject( activeBook ) && Magic->HasSpell( activeBook, spellId ))
 		{
-			JS_SET_RVAL( cx, vp, false );
-			return true;
-		}
-
-		// Code checks for spell based on index starting at 0, while spells have spellIDs starting from 1
-		if( Magic->HasSpell( myItem, spellId - 1 ))
-		{
-			JS_SET_RVAL(cx, vp, true );
+			args.rval().setBoolean( true );
 		}
 		else
 		{
-			JS_SET_RVAL(cx, vp, false );
+			args.rval().setBoolean( false );
 		}
 	}
-	else if( myClass.ClassName() == "UOXItem" )
+	else if( HasWrapperClass( obj, &UOXItem_class ))
 	{
-		CItem *myItem = static_cast<CItem*>( myClass.toObject() );
+		CItem *myItem = GetWrappedObject<CItem>( obj, &UOXItem_class );
 		if( !ValidateObject( myItem ))
 		{
 			ScriptError( cx, "Invalid item for HasSpell" );
@@ -3429,11 +3488,11 @@ bool CMisc_HasSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 
 		if( Magic->HasSpell( myItem, spellId ))
 		{
-			JS_SET_RVAL( cx, vp, true );
+			args.rval().setBoolean( true );
 		}
 		else
 		{
-			JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+			args.rval().setBoolean(  false  );
 		}
 	}
 
@@ -3454,30 +3513,29 @@ bool CMisc_RemoveSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSEncapsulate myClass( cx, obj );
-	UI08 spellId = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+	SI32 spellId = static_cast<SI32>( args.get(0).toInt32());
 
-	if( myClass.ClassName() == "UOXChar" )
+	if( HasWrapperClass( obj, &UOXChar_class ))
 	{
-		CChar *myChar = static_cast<CChar*>( myClass.toObject() );
+		CChar *myChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
 		if( !ValidateObject( myChar ))
 		{
-			ScriptError( cx, "Invalid char for HasSpell" );
+			ScriptError( cx, "Invalid char for RemoveSpell" );
 			return false;
 		}
 
-		CItem *myItem = FindItemOfType( myChar, IT_SPELLBOOK );
+		CItem *myItem = Magic->FindSpellBook( myChar, spellId );
 
 		if( ValidateObject( myItem ))
 		{
 			Magic->RemoveSpell( myItem, spellId );
 		}
 	}
-	else if( myClass.ClassName() == "UOXItem" )
+	else if( HasWrapperClass( obj, &UOXItem_class ))
 	{
-		CItem *myItem = static_cast<CItem*>( myClass.toObject() );
+		CItem *myItem = GetWrappedObject<CItem>( obj, &UOXItem_class );
 		if( !ValidateObject( myItem ))
 		{
 			ScriptError( cx, "Invalid item for RemoveSpell" );
@@ -3501,11 +3559,12 @@ bool CBase_GetTag( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetTag: Invalid Count of Parameters: %d, need: 1", argc );
+		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 
 	if( !ValidateObject( myObj ))
 	{
@@ -3513,20 +3572,20 @@ bool CBase_GetTag( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	std::string localString		= JS_GetStringBytes( cx, argv[0]);
+	std::string localString		= JS_GetStringBytes( cx, args.get(0));
 	TAGMAPOBJECT localObject	= myObj->GetTag( localString );
 	if( localObject.m_ObjectType == TAGMAP_TYPE_STRING )
 	{
-		JSString *localJSString = JS_NewStringCopyN( cx, ( const char* )localObject.m_StringValue.c_str(), localObject.m_StringValue.length() );
-		JS_SET_RVAL( cx, vp, static_cast<jsval>( STRING_TO_JSVAL( localJSString )) );
+		JS::RootedString localJSString( cx, JS_NewStringCopyN( cx, ( const char* )localObject.m_StringValue.c_str(), localObject.m_StringValue.length() ));
+		args.rval().setString( localJSString );
 	}
 	else if( localObject.m_ObjectType == TAGMAP_TYPE_BOOL )
 	{
-		JS_SET_RVAL( cx, vp, static_cast<jsval>( BOOLEAN_TO_JSVAL(( localObject.m_IntValue == 1 ))) );
+		args.rval().setBoolean( localObject.m_IntValue == 1 );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, static_cast<jsval>( INT_TO_JSVAL( localObject.m_IntValue )) );
+		args.rval().setInt32( localObject.m_IntValue );
 	}
 	return true;
 }
@@ -3544,11 +3603,12 @@ bool CBase_SetTag( JSContext *cx, unsigned argc, JS::Value* vp )
 	if(( argc != 2 ) && ( argc != 1 ))
 	{
 		ScriptError( cx, "SetTag: Invalid Count of Parameters: %d, need: 2", argc );
+		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 
 	if( !ValidateObject( myObj ))
 	{
@@ -3556,14 +3616,14 @@ bool CBase_SetTag( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	std::string localString = JS_GetStringBytes( cx, argv[0]);
+	std::string localString = JS_GetStringBytes( cx, args.get(0));
 	TAGMAPOBJECT localObject;
 	if( argc == 2 )
 	{
-		JSEncapsulate encaps( cx, &( argv[1] ));
-		if( encaps.isType( JSOT_STRING ))
+		JS::HandleValue value = args.get( 1 );
+		if( value.isString() )
 		{			// String value handling
-			const std::string stringVal = encaps.toString();
+			const std::string stringVal = JSStringToString( cx, value.toString() );
 			if( stringVal == "" )
 			{
 				localObject.m_Destroy		= true;
@@ -3579,9 +3639,9 @@ bool CBase_SetTag( JSContext *cx, unsigned argc, JS::Value* vp )
 				localObject.m_ObjectType	= TAGMAP_TYPE_STRING;
 			}
 		}
-		else if( encaps.isType( JSOT_BOOL ))
+		else if( value.isBoolean() )
 		{
-			const bool boolVal = encaps.toBool();
+			const bool boolVal = value.toBoolean();
 			if( !boolVal )
 			{
 				localObject.m_Destroy		= true;
@@ -3595,9 +3655,9 @@ bool CBase_SetTag( JSContext *cx, unsigned argc, JS::Value* vp )
 			localObject.m_ObjectType	= TAGMAP_TYPE_BOOL;
 			localObject.m_StringValue	= "";
 		}
-		else if( encaps.isType( JSOT_INT ))
+		else if( value.isInt32() )
 		{
-			const SI32 intVal = encaps.toInt();
+			const SI32 intVal = value.toInt32();
 			if( !intVal )
 			{
 				localObject.m_Destroy		= true;
@@ -3611,7 +3671,7 @@ bool CBase_SetTag( JSContext *cx, unsigned argc, JS::Value* vp )
 			localObject.m_ObjectType	= TAGMAP_TYPE_INT;
 			localObject.m_StringValue	= "";
 		}
-		else if( encaps.isType( JSOT_NULL ))
+		else if( value.isNull() )
 		{
 			localObject.m_Destroy		= true;
 			localObject.m_IntValue		= 0;
@@ -3646,11 +3706,12 @@ bool CBase_GetTempTag( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetTempTag: Invalid Count of Parameters: %d, need: 1", argc );
+		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 
 	if( !ValidateObject( myObj ))
 	{
@@ -3658,20 +3719,20 @@ bool CBase_GetTempTag( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	std::string localString		= JS_GetStringBytes( cx, argv[0]);
+	std::string localString		= JS_GetStringBytes( cx, args.get(0));
 	TAGMAPOBJECT localObject	= myObj->GetTempTag( localString );
 	if( localObject.m_ObjectType == TAGMAP_TYPE_STRING )
 	{
-		JSString *localJSString = JS_NewStringCopyN( cx, ( const char* )localObject.m_StringValue.c_str(), localObject.m_StringValue.length() );
-		JS_SET_RVAL( cx, vp, static_cast<jsval>( STRING_TO_JSVAL( localJSString )) );
+		JS::RootedString localJSString( cx, JS_NewStringCopyN( cx, ( const char* )localObject.m_StringValue.c_str(), localObject.m_StringValue.length() ));
+		args.rval().setString( localJSString );
 	}
 	else if( localObject.m_ObjectType == TAGMAP_TYPE_BOOL )
 	{
-		JS_SET_RVAL( cx, vp, static_cast<jsval>( BOOLEAN_TO_JSVAL(( localObject.m_IntValue == 1 ))) );
+		args.rval().setBoolean( localObject.m_IntValue == 1 );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, static_cast<jsval>( INT_TO_JSVAL( localObject.m_IntValue )) );
+		args.rval().setInt32( localObject.m_IntValue );
 	}
 	return true;
 }
@@ -3690,11 +3751,12 @@ bool CBase_SetTempTag( JSContext *cx, unsigned argc, JS::Value* vp )
 	if(( argc != 2 ) && ( argc != 1 ))
 	{
 		ScriptError( cx, "SetTempTag: Invalid Count of Parameters: %d, need: 2", argc );
+		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 
 	if( !ValidateObject( myObj ))
 	{
@@ -3702,14 +3764,14 @@ bool CBase_SetTempTag( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	std::string localString = JS_GetStringBytes( cx, argv[0]);
+	std::string localString = JS_GetStringBytes( cx, args.get(0));
 	TAGMAPOBJECT localObject;
 	if( argc == 2 )
 	{
-		JSEncapsulate encaps( cx, &( argv[1] ));
-		if( encaps.isType( JSOT_STRING ))
+		JS::HandleValue value = args.get( 1 );
+		if( value.isString() )
 		{			// String value handling
-			const std::string stringVal = encaps.toString();
+			const std::string stringVal = JSStringToString( cx, value.toString() );
 			if( stringVal == "" )
 			{
 				localObject.m_Destroy		= true;
@@ -3725,9 +3787,9 @@ bool CBase_SetTempTag( JSContext *cx, unsigned argc, JS::Value* vp )
 				localObject.m_ObjectType	= TAGMAP_TYPE_STRING;
 			}
 		}
-		else if( encaps.isType( JSOT_BOOL ))
+		else if( value.isBoolean() )
 		{
-			const bool boolVal = encaps.toBool();
+			const bool boolVal = value.toBoolean();
 			if( !boolVal )
 			{
 				localObject.m_Destroy		= true;
@@ -3741,9 +3803,9 @@ bool CBase_SetTempTag( JSContext *cx, unsigned argc, JS::Value* vp )
 			localObject.m_ObjectType	= TAGMAP_TYPE_BOOL;
 			localObject.m_StringValue	= "";
 		}
-		else if( encaps.isType( JSOT_INT ))
+		else if( value.isInt32() )
 		{
-			const SI32 intVal = encaps.toInt();
+			const SI32 intVal = value.toInt32();
 			if( !intVal )
 			{
 				localObject.m_Destroy		= true;
@@ -3757,7 +3819,7 @@ bool CBase_SetTempTag( JSContext *cx, unsigned argc, JS::Value* vp )
 			localObject.m_ObjectType	= TAGMAP_TYPE_INT;
 			localObject.m_StringValue	= "";
 		}
-		else if( encaps.isType( JSOT_NULL ))
+		else if( value.isNull() )
 		{
 			localObject.m_Destroy		= true;
 			localObject.m_IntValue		= 0;
@@ -3792,10 +3854,12 @@ bool CBase_GetNumTags( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Invalid Count of Parameters: %d, need: 0", argc );
+		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 
 	if( !ValidateObject( myObj ))
 	{
@@ -3803,7 +3867,7 @@ bool CBase_GetNumTags( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( myObj->GetNumTags() ) );
+	args.rval().setInt32(  myObj->GetNumTags()  );
 	return true;
 }
 
@@ -3818,10 +3882,12 @@ bool CBase_GetTagMap( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Invalid Count of Parameters: %d, need: 0", argc );
+		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 
 	if( !ValidateObject( myObj ))
 	{
@@ -3833,60 +3899,60 @@ bool CBase_GetTagMap( JSContext *cx, unsigned argc, JS::Value* vp )
 	TAGMAP2 tagMap = myObj->GetTagMap();
 
 	// Create main JSObject to store full list of tags
-	JSObject *jsTagMap = JS_NewArrayObject( cx, 0, nullptr );
+	JS::RootedObject jsTagMap( cx, JS::NewArrayObject( cx, 0 ));
 
 	// Iterate over tag map to fetch details on each tag
 	int i = 0;
 	for( auto &tagObj : tagMap )
 	{
 		// Create JSObject for current tag
-		JSObject *jsTag = JS_NewArrayObject( cx, 0, nullptr );
+		JS::RootedObject jsTag( cx, JS::NewArrayObject( cx, 0 ));
 		
 		// Convert tag name to JSString
-		JSString *tagName = JS_NewStringCopyZ( cx, tagObj.first.c_str() );
-		jsval jsTagName = STRING_TO_JSVAL( tagName );
+		JS::RootedString tagName( cx, JS_NewStringCopyZ( cx, tagObj.first.c_str() ));
+		JS::RootedValue jsTagName( cx, JS::StringValue( tagName ));
 
 		// Add tag name to JSObject for tag
-		JS_SetElement( cx, jsTag, 0, &jsTagName );
+		JS_SetElement( cx, jsTag, 0, jsTagName );
 		
 		// Fetch type of tag, and value of tag
-		jsval jsType;
-		jsval jsValue;
+		JS::RootedValue jsType( cx );
+		JS::RootedValue jsValue( cx );
 		switch( tagObj.second.m_ObjectType )
 		{
 			case TAGMAP_TYPE_INT:
-				jsType = INT_TO_JSVAL( TAGMAP_TYPE_INT );
-				jsValue = INT_TO_JSVAL( tagObj.second.m_IntValue );
+				jsType = JS::Int32Value( TAGMAP_TYPE_INT );
+				jsValue = JS::Int32Value( tagObj.second.m_IntValue );
 				break;
 			case TAGMAP_TYPE_STRING:
 			{
-				jsType = INT_TO_JSVAL( TAGMAP_TYPE_STRING );
-				JSString *jsStringVal = JS_NewStringCopyZ( cx, tagObj.second.m_StringValue.c_str() );
-				jsValue = STRING_TO_JSVAL( jsStringVal );
+				jsType = JS::Int32Value( TAGMAP_TYPE_STRING );
+				JS::RootedString jsStringVal( cx, JS_NewStringCopyZ( cx, tagObj.second.m_StringValue.c_str() ));
+				jsValue = JS::StringValue( jsStringVal );
 				break;
 			}
 			case TAGMAP_TYPE_BOOL:
-				jsType = INT_TO_JSVAL( TAGMAP_TYPE_BOOL );
-				jsValue = BOOLEAN_TO_JSVAL( tagObj.second.m_IntValue != 0 );
+				jsType = JS::Int32Value( TAGMAP_TYPE_BOOL );
+				jsValue = JS::BooleanValue( tagObj.second.m_IntValue != 0 );
 				break;
 			default:
 				// Unhandled tag type detected!
-				jsType = JSVAL_NULL;
-				jsValue = JSVAL_NULL;
+				jsType = JS::NullValue();
+				jsValue = JS::NullValue();
 				break;
 		}
 
 		// Add tag type and value to JSObject for tag
-		JS_SetElement( cx, jsTag, 1, &jsType );
-		JS_SetElement( cx, jsTag, 2, &jsValue );
+		JS_SetElement( cx, jsTag, 1, jsType );
+		JS_SetElement( cx, jsTag, 2, jsValue );
 
 		// Add JSObject for tag to main jsTagMap object
-		jsval subTagObj = OBJECT_TO_JSVAL( jsTag );
-		JS_SetElement( cx, jsTagMap, i, &subTagObj );
+		JS::RootedValue subTagObj( cx, JS::ObjectOrNullValue( jsTag ));
+		JS_SetElement( cx, jsTagMap, i, subTagObj );
 		i++;
 	}
 
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( jsTagMap ) );
+	args.rval().setObjectOrNull( jsTagMap );
 	return true;
 }
 
@@ -3901,10 +3967,12 @@ bool CBase_GetTempTagMap( JSContext *cx, unsigned argc, JS::Value* vp )
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Invalid Count of Parameters: %d, need: 0", argc );
+		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 
 	if( !ValidateObject( myObj ))
 	{
@@ -3916,60 +3984,60 @@ bool CBase_GetTempTagMap( JSContext *cx, unsigned argc, JS::Value* vp )
 	TAGMAP2 tagMap = myObj->GetTempTagMap();
 
 	// Create main JSObject to store full list of tags
-	JSObject *jsTagMap = JS_NewArrayObject( cx, 0, nullptr );
+	JS::RootedObject jsTagMap( cx, JS::NewArrayObject( cx, 0 ));
 
 	// Iterate over tag map to fetch details on each tag
 	int i = 0;
 	for( auto &tagObj : tagMap )
 	{
 		// Create JSObject for current tag
-		JSObject *jsTag = JS_NewArrayObject( cx, 0, nullptr );
+		JS::RootedObject jsTag( cx, JS::NewArrayObject( cx, 0 ));
 
 		// Convert tag name to JSString
-		JSString *tagName = JS_NewStringCopyZ( cx, tagObj.first.c_str() );
-		jsval jsTagName = STRING_TO_JSVAL( tagName );
+		JS::RootedString tagName( cx, JS_NewStringCopyZ( cx, tagObj.first.c_str() ));
+		JS::RootedValue jsTagName( cx, JS::StringValue( tagName ));
 
 		// Add tag name to JSObject for tag
-		JS_SetElement( cx, jsTag, 0, &jsTagName );
+		JS_SetElement( cx, jsTag, 0, jsTagName );
 
 		// Fetch type of tag, and value of tag
-		jsval jsType;
-		jsval jsValue;
+		JS::RootedValue jsType( cx );
+		JS::RootedValue jsValue( cx );
 		switch( tagObj.second.m_ObjectType )
 		{
 			case TAGMAP_TYPE_INT:
-				jsType = INT_TO_JSVAL( TAGMAP_TYPE_INT );
-				jsValue = INT_TO_JSVAL( tagObj.second.m_IntValue );
+				jsType = JS::Int32Value( TAGMAP_TYPE_INT );
+				jsValue = JS::Int32Value( tagObj.second.m_IntValue );
 				break;
 			case TAGMAP_TYPE_STRING:
 			{
-				jsType = INT_TO_JSVAL( TAGMAP_TYPE_STRING );
-				JSString *jsStringVal = JS_NewStringCopyZ( cx, tagObj.second.m_StringValue.c_str() );
-				jsValue = STRING_TO_JSVAL( jsStringVal );
+				jsType = JS::Int32Value( TAGMAP_TYPE_STRING );
+				JS::RootedString jsStringVal( cx, JS_NewStringCopyZ( cx, tagObj.second.m_StringValue.c_str() ));
+				jsValue = JS::StringValue( jsStringVal );
 				break;
 			}
 			case TAGMAP_TYPE_BOOL:
-				jsType = INT_TO_JSVAL( TAGMAP_TYPE_BOOL );
-				jsValue = BOOLEAN_TO_JSVAL( tagObj.second.m_IntValue != 0 );
+				jsType = JS::Int32Value( TAGMAP_TYPE_BOOL );
+				jsValue = JS::BooleanValue( tagObj.second.m_IntValue != 0 );
 				break;
 			default:
 				// Unhandled tag type detected!
-				jsType = JSVAL_NULL;
-				jsValue = JSVAL_NULL;
+				jsType = JS::NullValue();
+				jsValue = JS::NullValue();
 				break;
 		}
 
 		// Add tag type and value to JSObject for tag
-		JS_SetElement( cx, jsTag, 1, &jsType );
-		JS_SetElement( cx, jsTag, 2, &jsValue );
+		JS_SetElement( cx, jsTag, 1, jsType );
+		JS_SetElement( cx, jsTag, 2, jsValue );
 
 		// Add JSObject for tag to main jsTagMap object
-		jsval subTagObj = OBJECT_TO_JSVAL( jsTag );
-		JS_SetElement( cx, jsTagMap, i, &subTagObj );
+		JS::RootedValue subTagObj( cx, JS::ObjectOrNullValue( jsTag ));
+		JS_SetElement( cx, jsTagMap, i, subTagObj );
 		i++;
 	}
 
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( jsTagMap ) );
+	args.rval().setObjectOrNull( jsTagMap );
 	return true;
 }
 
@@ -3981,9 +4049,9 @@ bool CBase_GetTempTagMap( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_OpenBank( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( myChar ))
 	{
 		ScriptError( cx, "OpenBank: Invalid Character object assigned" );
@@ -4003,7 +4071,7 @@ bool CChar_OpenBank( JSContext *cx, unsigned argc, JS::Value* vp )
 	// Open it to the passed socket
 	else if( argc == 1 )
 	{
-		mySock = static_cast<CSocket*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+		mySock = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 		if( mySock != nullptr )
 		{
 			mySock->OpenBank( myChar );
@@ -4026,9 +4094,9 @@ bool CChar_OpenBank( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_OpenContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	CSocket *mSock = static_cast<CSocket *>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+  CSocket *mSock = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
 	if( mSock == nullptr )
 	{
 		ScriptError( cx, "OpenContainer: Invalid socket" );
@@ -4041,11 +4109,13 @@ bool CSocket_OpenContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	CItem *contToOpen = static_cast<CItem*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
-	if( ValidateObject( contToOpen ))
+	CItem *contToOpen = GetWrappedObject<CItem>( args.get( 0 ), &UOXItem_class );
+	if( !ValidateObject( contToOpen ))
 	{
-		mSock->OpenPack( contToOpen, false );
+		ScriptError( cx, "OpenContainer: Invalid container" );
+		return false;
 	}
+	mSock->OpenPack( contToOpen, false );
 
 	return true;
 }
@@ -4058,9 +4128,9 @@ bool CSocket_OpenContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_OpenLayer( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
+  CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( myChar ))
 	{
 		ScriptError( cx, "OpenLayer: Invalid Character object assigned" );
@@ -4072,10 +4142,10 @@ bool CChar_OpenLayer( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "OpenLayer, Invalid count of Paramters: %d", argc );
 		return false;
 	}
-	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CSocket *mySock = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 	if( mySock != nullptr )
 	{
-		CItem *iLayer = myChar->GetItemAtLayer( static_cast<ItemLayers>( JSVAL_TO_INT( argv[1] )));
+		CItem *iLayer = myChar->GetItemAtLayer( static_cast<ItemLayers>( args.get(1).toInt32()));
 		if( ValidateObject( iLayer ))
 		{
 			mySock->OpenPack( iLayer );
@@ -4094,9 +4164,9 @@ bool CChar_OpenLayer( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_TurnToward( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
+  CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 
 	if( !ValidateObject( myChar ))
 	{
@@ -4108,13 +4178,13 @@ bool CChar_TurnToward( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( argc == 1 )
 	{
-		if( !JSVAL_IS_OBJECT( argv[0] ))
+		if( !args.get(0).isObject() )
 		{
 			ScriptError( cx, "(TurnToward) Invalid Object passed" );
 			return false;
 		}
 
-		CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+		CBaseObject *myObj = GetBaseObject( args.get( 0 ));
 		if( !ValidateObject( myObj ))
 		{
 			ScriptError( cx, "(TurnToward) Invalid Object passed" );
@@ -4127,8 +4197,8 @@ bool CChar_TurnToward( JSContext *cx, unsigned argc, JS::Value* vp )
 	else if( argc == 2 )
 	{
 		// x + y
-		x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-		y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+		x = static_cast<SI16>( args.get(0).toInt32());
+		y = static_cast<SI16>( args.get(1).toInt32());
 	}
 	else
 	{
@@ -4170,8 +4240,9 @@ bool CChar_TurnToward( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_DirectionTo( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
+  CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 
 	if( !ValidateObject( myChar ))
 	{
@@ -4181,16 +4252,20 @@ bool CChar_DirectionTo( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	SI16 x, y;
 
-	JS::Value* argv = JS_ARGV( cx, vp );
 	if( argc == 1 )
 	{
-		if( !JSVAL_IS_OBJECT( argv[0] ))
+		if( !args.get(0).isObject() )
 		{
 			ScriptError( cx, "(DirectionTo) Invalid Object passed" );
 			return false;
 		}
 
-		CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+		auto *myObj = GetBaseObject( args.get( 0 ));
+		if( !ValidateObject( myObj ))
+		{
+			ScriptError( cx, "(DirectionTo) Invalid Object passed" );
+			return false;
+		}
 
 		x = myObj->GetX();
 		y = myObj->GetY();
@@ -4198,8 +4273,8 @@ bool CChar_DirectionTo( JSContext *cx, unsigned argc, JS::Value* vp )
 	else if( argc == 2 )
 	{
 		// x + y
-		x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-		y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+		x = static_cast<SI16>( args.get(0).toInt32());
+		y = static_cast<SI16>( args.get(1).toInt32());
 	}
 	else
 	{
@@ -4211,7 +4286,7 @@ bool CChar_DirectionTo( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	UI08 NewDir = Movement->Direction( myChar, x, y );
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( NewDir ) );
+	args.rval().setInt32(  NewDir  );
 
 	return true;
 }
@@ -4224,16 +4299,16 @@ bool CChar_DirectionTo( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_ExecuteCommand( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "ExecuteCommand: Invalid number of arguments (takes 1)" );
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	CChar *myChar			= static_cast<CChar*>( JS_GetPrivate( cx, obj ));
-	std::string trgMessage		= JS_GetStringBytes( cx, argv[0] );
+  CChar *myChar		 = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
+	std::string trgMessage		= JS_GetStringBytes( cx, args.get(0) );
 	CSocket *targSock		= myChar->GetSocket();
 	if( targSock == nullptr || trgMessage.empty() )
 	{
@@ -4253,8 +4328,9 @@ bool CChar_ExecuteCommand( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CGuild_AcceptRecruit( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
+  CGuild *myGuild = JS::GetMaybePtrFromReservedSlot<CGuild>( obj, 0 );
 
 	if( myGuild == nullptr )
 	{
@@ -4264,16 +4340,15 @@ bool CGuild_AcceptRecruit( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	// Two choices here... 0 paramteres = accept the JS_GetParent object
 	// 1 parameter = get the cchar from there
-	JS::Value* argv = JS_ARGV( cx, vp );
 	if( argc == 0 )
 	{
-		JSObject *Parent = JS_GetParent( cx, obj );
-		CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, Parent ));
+		JS::RootedObject Parent( cx, JS::GetReservedSlot( obj, 1 ).toObjectOrNull() );
+		auto *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( Parent , 0 );
 		myGuild->RecruitToMember( *myChar );
 	}
 	else if( argc == 1 )
 	{
-		CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+		auto *myChar = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 		myGuild->RecruitToMember( *myChar );
 	}
 	else
@@ -4293,21 +4368,22 @@ bool CGuild_AcceptRecruit( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CGuild_IsAtPeace( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(IsAtPeace) Invalid Parameter Count: %d", argc );
 		return false;
 	}
 
-	CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+  CGuild *myGuild = JS::GetMaybePtrFromReservedSlot<CGuild>( obj, 0 );
 	if( myGuild == nullptr )
 	{
 		ScriptError( cx, "(IsAtPeace) Invalid Object assigned" );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myGuild->IsAtPeace() ) );
+	args.rval().setBoolean(  myGuild->IsAtPeace()  );
 
 	return true;
 }
@@ -4320,30 +4396,27 @@ bool CGuild_IsAtPeace( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CGuild_AddMember( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddMember: Invalid number of arguments (requires 1)" );
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-
 	// let's setup our default return value here
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+	args.rval().setBoolean(  false  );
 
-	if( myClass.ClassName() == "UOXGuild" )
+	if( HasWrapperClass( obj, &UOXGuild_class ))
 	{
-		CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+		CGuild *myGuild = GetWrappedObject<CGuild>( obj, &UOXGuild_class );
 		if( myGuild == nullptr )
 		{
 			ScriptError( cx, "AddMember: Invalid guild" );
 			return false;
 		}
 
-		JSEncapsulate toAdd( cx, &( argv[0] ));
-		CChar *trgChar = static_cast<CChar *>( toAdd.toObject() );
+		CChar *trgChar = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 		if( !ValidateObject( trgChar ))
 		{
 			ScriptError( cx, "AddGuildMember: Invalid character to add" );
@@ -4353,7 +4426,7 @@ bool CGuild_AddMember( JSContext *cx, unsigned argc, JS::Value* vp )
 		myGuild->NewMember( *trgChar );
 		GUILDID guildId = GuildSys->FindGuildId( myGuild );
 		trgChar->SetGuildNumber( guildId );
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
+		args.rval().setBoolean(  true  );
 	}
 	return true;
 }
@@ -4366,30 +4439,27 @@ bool CGuild_AddMember( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CGuild_AddRecruit( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddRecruit: Invalid number of arguments (requires 1)" );
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-
 	// let's setup our default return value here
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+	args.rval().setBoolean(  false  );
 
-	if( myClass.ClassName() == "UOXGuild" )
+	if( HasWrapperClass( obj, &UOXGuild_class ))
 	{
-		CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+		CGuild *myGuild = GetWrappedObject<CGuild>( obj, &UOXGuild_class );
 		if( myGuild == nullptr )
 		{
 			ScriptError( cx, "AddRecruit: Invalid guild" );
 			return false;
 		}
 
-		JSEncapsulate toAdd( cx, &( argv[0] ));
-		CChar *trgChar = static_cast<CChar *>( toAdd.toObject() );
+		CChar *trgChar = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 		if( !ValidateObject( trgChar ))
 		{
 			ScriptError( cx, "AddRecruit: Invalid character to add" );
@@ -4399,7 +4469,7 @@ bool CGuild_AddRecruit( JSContext *cx, unsigned argc, JS::Value* vp )
 		myGuild->NewRecruit( *trgChar );
 		GUILDID guildId = GuildSys->FindGuildId( myGuild );
 		trgChar->SetGuildNumber( guildId );
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
+		args.rval().setBoolean(  true  );
 	}
 	return true;
 }
@@ -4412,30 +4482,27 @@ bool CGuild_AddRecruit( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CGuild_RemoveRecruit( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveRecruit: Invalid number of arguments (requires 1)" );
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-
 	// let's setup our default return value here
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+	args.rval().setBoolean(  false  );
 
-	if( myClass.ClassName() == "UOXGuild" )
+	if( HasWrapperClass( obj, &UOXGuild_class ))
 	{
-		CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+		CGuild *myGuild = GetWrappedObject<CGuild>( obj, &UOXGuild_class );
 		if( myGuild == nullptr )
 		{
 			ScriptError( cx, "RemoveRecruit: Invalid guild" );
 			return false;
 		}
 
-		JSEncapsulate toAdd( cx, &( argv[0] ));
-		CChar *trgChar = static_cast<CChar *>( toAdd.toObject() );
+		CChar *trgChar = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 		if( !ValidateObject( trgChar ))
 		{
 			ScriptError( cx, "RemoveRecruit: Invalid character to add" );
@@ -4444,7 +4511,7 @@ bool CGuild_RemoveRecruit( JSContext *cx, unsigned argc, JS::Value* vp )
 
 		myGuild->RemoveRecruit( *trgChar );
 		trgChar->SetGuildNumber( -1 );
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
+		args.rval().setBoolean(  true  );
 	}
 	return true;
 }
@@ -4457,30 +4524,27 @@ bool CGuild_RemoveRecruit( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CGuild_RemoveMember( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveMember: Invalid number of arguments (requires 1)" );
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-
 	// let's setup our default return value here
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+	args.rval().setBoolean(  false  );
 
-	if( myClass.ClassName() == "UOXGuild" )
+	if( HasWrapperClass( obj, &UOXGuild_class ))
 	{
-		CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+		CGuild *myGuild = GetWrappedObject<CGuild>( obj, &UOXGuild_class );
 		if( myGuild == nullptr )
 		{
 			ScriptError( cx, "RemoveMember: Invalid guild" );
 			return false;
 		}
 
-		JSEncapsulate toAdd( cx, &( argv[0] ));
-		CChar *trgChar = static_cast<CChar *>( toAdd.toObject() );
+		CChar *trgChar = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 		if( !ValidateObject( trgChar ))
 		{
 			ScriptError( cx, "RemoveMember: Invalid character to add" );
@@ -4489,7 +4553,7 @@ bool CGuild_RemoveMember( JSContext *cx, unsigned argc, JS::Value* vp )
 
 		myGuild->RemoveMember( *trgChar );
 		trgChar->SetGuildNumber( -1 );
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
+		args.rval().setBoolean(  true  );
 	}
 	return true;
 }
@@ -4502,30 +4566,27 @@ bool CGuild_RemoveMember( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CGuild_RecruitToMember( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RecruitToMember: Invalid number of arguments (requires 1)" );
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-
 	// let's setup our default return value here
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+	args.rval().setBoolean(  false  );
 
-	if( myClass.ClassName() == "UOXGuild" )
+	if( HasWrapperClass( obj, &UOXGuild_class ))
 	{
-		CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+		CGuild *myGuild = GetWrappedObject<CGuild>( obj, &UOXGuild_class );
 		if( myGuild == nullptr )
 		{
 			ScriptError( cx, "RecruitToMember: Invalid guild" );
 			return false;
 		}
 
-		JSEncapsulate toAdd( cx, &( argv[0] ));
-		CChar *trgChar = static_cast<CChar *>( toAdd.toObject() );
+		CChar *trgChar = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 		if( !ValidateObject( trgChar ))
 		{
 			ScriptError( cx, "RecruitToMember: Invalid character to add" );
@@ -4533,7 +4594,7 @@ bool CGuild_RecruitToMember( JSContext *cx, unsigned argc, JS::Value* vp )
 		}
 
 		myGuild->RecruitToMember( *trgChar );
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
+		args.rval().setBoolean(  true  );
 	}
 	return true;
 }
@@ -4552,17 +4613,16 @@ bool CGuild_IsAtWar( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	CGuild* myGuild = static_cast<CGuild*>(JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
+  CGuild * myGuild = JS::GetMaybePtrFromReservedSlot<CGuild>( obj, 0 );
 	if( myGuild == nullptr )
 	{
 		ScriptError(cx, "IsAtWar: Invalid Object assigned");
 		return false;
 	}
 
-	jsval* argv = JS_ARGV( cx, vp );
-	JSObject* otherObj = JSVAL_TO_OBJECT( argv[0] );
-	CGuild* otherGuild = static_cast<CGuild*>( JS_GetPrivate( cx, otherObj ));
+	auto *otherGuild = GetWrappedObject<CGuild>( args.get( 0 ), &UOXGuild_class );
 	if( otherGuild == nullptr )
 	{
 		ScriptError( cx, "IsAtWar: Invalid target Guild object" );
@@ -4572,12 +4632,12 @@ bool CGuild_IsAtWar( JSContext *cx, unsigned argc, JS::Value* vp )
 	GUILDID otherID = GuildSys->FindGuildId( otherGuild ); // Assuming Guilds is your CGuildCollection instance
 	if( otherID == -1 )
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
 	bool result = myGuild->IsAtWar( otherID );
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( result ));
+	args.rval().setBoolean(  result  );
 	return true;
 }
 
@@ -4595,17 +4655,16 @@ bool CGuild_IsAlly( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	CGuild* myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
+  CGuild * myGuild = JS::GetMaybePtrFromReservedSlot<CGuild>( obj, 0 );
 	if( myGuild == nullptr )
 	{
 		ScriptError( cx, "IsAlly: Invalid Guild object" );
 		return false;
 	}
 
-	jsval* argv = JS_ARGV( cx, vp );
-	JSObject* otherObj = JSVAL_TO_OBJECT( argv[0] );
-	CGuild* otherGuild = static_cast<CGuild*>( JS_GetPrivate( cx, otherObj ));
+	auto *otherGuild = GetWrappedObject<CGuild>( args.get( 0 ), &UOXGuild_class );
 	if( otherGuild == nullptr )
 	{
 		ScriptError( cx, "IsAlly: Invalid target Guild object" );
@@ -4615,12 +4674,12 @@ bool CGuild_IsAlly( JSContext *cx, unsigned argc, JS::Value* vp )
 	GUILDID otherID = GuildSys->FindGuildId( otherGuild );
 	if( otherID == -1 )
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
 	bool result = myGuild->IsAlly( otherID );
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( result ));
+	args.rval().setBoolean(  result  );
 	return true;
 }
 
@@ -4638,17 +4697,16 @@ bool CGuild_IsNeutral( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	CGuild* myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
+  CGuild * myGuild = JS::GetMaybePtrFromReservedSlot<CGuild>( obj, 0 );
 	if( myGuild == nullptr )
 	{
 		ScriptError( cx, "IsNeutral: Invalid Guild object" );
 		return false;
 	}
 
-	jsval* argv = JS_ARGV( cx, vp );
-	JSObject* otherObj = JSVAL_TO_OBJECT(argv[0] );
-	CGuild* otherGuild = static_cast<CGuild*>( JS_GetPrivate( cx, otherObj ));
+	auto *otherGuild = GetWrappedObject<CGuild>( args.get( 0 ), &UOXGuild_class );
 	if( otherGuild == nullptr )
 	{
 		ScriptError( cx, "IsNeutral: Invalid target Guild object" );
@@ -4658,12 +4716,12 @@ bool CGuild_IsNeutral( JSContext *cx, unsigned argc, JS::Value* vp )
 	GUILDID otherID = GuildSys->FindGuildId( otherGuild );
 	if( otherID == -1 )
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
 	bool result = myGuild->IsNeutral( otherID );
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( result ));
+	args.rval().setBoolean(  result  );
 	return true;
 }
 
@@ -4677,10 +4735,9 @@ bool CGuild_IsNeutral( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_ResourceCount( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	JSEncapsulate myClass( cx, obj );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	CBaseObject* myObj = static_cast<CBaseObject*>( myClass.toObject() );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
+	CBaseObject *myObj = GetBaseObject( obj );
 
 	if( !ValidateObject( myObj ))
 	{
@@ -4688,7 +4745,7 @@ bool CBase_ResourceCount( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI16 realId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 realId = static_cast<UI16>( args.get(0).toInt32());
 	SI32 itemColour = 0;
 	SI64 moreVal = -1;
 	std::string sectionId = "";
@@ -4701,22 +4758,22 @@ bool CBase_ResourceCount( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( argc >= 2 )
 	{
-		itemColour = static_cast<SI32>( JSVAL_TO_INT( argv[1] ));
+		itemColour = static_cast<SI32>( args.get(1).toInt32());
 	}
 	if( argc >= 3 )
 	{
-		moreVal = static_cast<SI64>( JSVAL_TO_INT( argv[2] ));
+		moreVal = static_cast<SI64>( args.get(2).toInt32());
 	}
 	if( argc >= 4 )
 	{
-		sectionId = JS_GetStringBytes( cx, argv[3]);
+		sectionId = JS_GetStringBytes( cx, args.get(3));
 	}
 
 	bool colorCheck = ( itemColour != -1 ? true : false );
 	bool moreCheck = ( moreVal != -1 ? true : false );
 
 	UI32 retVal = 0;
-	if( myClass.ClassName() == "UOXChar" )
+	if( HasWrapperClass( obj, &UOXChar_class ))
 	{
 		CChar *myChar	= static_cast<CChar *>( myObj );
 		retVal = GetItemAmount( myChar, realId, static_cast<UI16>( itemColour ), static_cast<UI32>( moreVal ), colorCheck, moreCheck, sectionId );
@@ -4726,7 +4783,7 @@ bool CBase_ResourceCount( JSContext *cx, unsigned argc, JS::Value* vp )
 		CItem *myItem	= static_cast<CItem *>( myObj );
 		retVal			= GetSubItemAmount( myItem, realId, static_cast<UI16>( itemColour ), static_cast<UI32>( moreVal ), colorCheck, moreCheck, sectionId );
 	}
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( retVal ) );
+	args.rval().setInt32(  retVal  );
 	return true;
 }
 
@@ -4742,10 +4799,9 @@ bool CBase_ResourceCount( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_UseResource( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	JSEncapsulate myClass( cx, obj );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	CBaseObject *myObj = static_cast<CBaseObject*>( myClass.toObject() );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
+	CBaseObject *myObj = GetBaseObject( obj );
 
 	if( !ValidateObject( myObj ))
 	{
@@ -4753,8 +4809,8 @@ bool CBase_UseResource( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI32 amount		= static_cast<UI32>( JSVAL_TO_INT( argv[0] ));
-	UI16 realId		= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	UI32 amount		= static_cast<UI32>( args.get(0).toInt32());
+	UI16 realId		= static_cast<UI16>( args.get(1).toInt32());
 	SI32 itemColour = 0;
 	SI64 moreVal	= -1;
 	std::string sectionId = "";
@@ -4768,15 +4824,15 @@ bool CBase_UseResource( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( argc >= 3 )
 	{
-		itemColour = static_cast<SI32>( JSVAL_TO_INT( argv[2] ));
+		itemColour = static_cast<SI32>( args.get(2).toInt32());
 	}
 	if( argc >= 4 )
 	{
-		moreVal = static_cast<SI64>( JSVAL_TO_INT( argv[3] ));
+		moreVal = static_cast<SI64>( args.get(3).toInt32());
 	}
 	if( argc >= 5 )
 	{
-		sectionId = JS_GetStringBytes( cx, argv[4]);
+		sectionId = JS_GetStringBytes( cx, args.get(4));
 	}
 
 	bool colorCheck = ( itemColour != -1 ? true : false );
@@ -4784,7 +4840,7 @@ bool CBase_UseResource( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	UI32 retVal = 0;
 
-	if( myClass.ClassName() == "UOXChar" )
+	if( HasWrapperClass( obj, &UOXChar_class ))
 	{
 		CChar *myChar	= static_cast<CChar *>( myObj );
 		retVal			= DeleteItemAmount( myChar, amount, realId, static_cast<UI16>( itemColour ), static_cast<UI32>( moreVal ), colorCheck, moreCheck, sectionId );
@@ -4794,7 +4850,7 @@ bool CBase_UseResource( JSContext *cx, unsigned argc, JS::Value* vp )
 		CItem *myItem	= static_cast<CItem *>( myObj );
 		retVal			= DeleteSubItemAmount( myItem, amount, realId, static_cast<UI16>( itemColour ), static_cast<UI32>( moreVal ), colorCheck, moreCheck, sectionId );
 	}
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( retVal ) );
+	args.rval().setInt32(  retVal  );
 	return true;
 }
 
@@ -4806,8 +4862,9 @@ bool CBase_UseResource( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_BoltEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
+  CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( ValidateObject( myChar ))
 	{
 		Effects->Bolteffect( myChar );
@@ -4834,9 +4891,8 @@ bool CChar_BoltEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMisc_CustomTarget( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	JSEncapsulate myClass( cx, obj );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	UI16 scriptID = 0xFFFF;
 
 	if(( argc > 3 ) || ( argc < 1 ))
@@ -4847,10 +4903,10 @@ bool CMisc_CustomTarget( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	CSocket *mySock = nullptr;
 
-	if( myClass.ClassName() == "UOXChar" )
+	if( HasWrapperClass( obj, &UOXChar_class ))
 	{
 		// Character
-		CChar *myChar = static_cast<CChar*>( myClass.toObject() );
+		CChar *myChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
 
 		if( !ValidateObject( myChar ))
 		{
@@ -4860,10 +4916,10 @@ bool CMisc_CustomTarget( JSContext *cx, unsigned argc, JS::Value* vp )
 
 		mySock = myChar->GetSocket();
 	}
-	else if( myClass.ClassName() == "UOXSocket" )
+	else if( HasWrapperClass( obj, &UOXSocket_class ))
 	{
 		// We have a socket here
-		mySock = static_cast<CSocket*>( myClass.toObject() );
+		mySock = GetWrappedObject<CSocket>( obj, &UOXSocket_class );
 	}
 
 	if( mySock == nullptr )
@@ -4874,7 +4930,7 @@ bool CMisc_CustomTarget( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 	
 	mySock->scriptForCallBack = JSMapping->currentActive();
-	UI08 tNum = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 tNum = static_cast<UI08>( args.get(0).toInt32());
 
 #if defined UOX_DEBUG_MODE
 	Console.Warning( oldstrutil::format( "CustomTarget script ID: %d", mySock->scriptForCallBack->GetScriptID() ) );
@@ -4884,7 +4940,7 @@ bool CMisc_CustomTarget( JSContext *cx, unsigned argc, JS::Value* vp )
 	std::string toSay;
 	if( argc >= 2 )
 	{
-		toSay = JS_GetStringBytes( cx, argv[1] );
+		toSay = JS_GetStringBytes( cx, args.get(1) );
 		if( toSay.size() > maxsize )
 		{
 			toSay = toSay.substr( 0, maxsize );
@@ -4894,7 +4950,7 @@ bool CMisc_CustomTarget( JSContext *cx, unsigned argc, JS::Value* vp )
 	UI08 cursorType = 0;
 	if( argc == 3 )
 	{
-		cursorType = static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+		cursorType = static_cast<UI08>( args.get(2).toInt32());
 	}
 
 	if( cursorType == 3 )
@@ -4918,7 +4974,8 @@ bool CMisc_CustomTarget( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMisc_PopUpTarget( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if(( argc > 2 ) || ( argc < 1 ))
 	{
 		ScriptError( cx, "(PopUpTarget) Invalid count of parameters: %d, either needs 1 or 2", argc );
@@ -4926,14 +4983,12 @@ bool CMisc_PopUpTarget( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Either useable with sockets OR characters
-	JSEncapsulate myClass( cx, obj );
-	JS::Value* argv = JS_ARGV( cx, vp );
 	CSocket *mySock = nullptr;
 
-	if( myClass.ClassName() == "UOXChar" )
+	if( HasWrapperClass( obj, &UOXChar_class ))
 	{
 		// Character
-		CChar *myChar = static_cast<CChar*>( myClass.toObject() );
+		CChar *myChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
 
 		if( !ValidateObject( myChar ))
 		{
@@ -4944,10 +4999,10 @@ bool CMisc_PopUpTarget( JSContext *cx, unsigned argc, JS::Value* vp )
 		mySock = myChar->GetSocket();
 	}
 
-	else if( myClass.ClassName() == "UOXSocket" )
+	else if( HasWrapperClass( obj, &UOXSocket_class ))
 	{
 		// We have a socket here
-		mySock = static_cast<CSocket*>( myClass.toObject() );
+		mySock = GetWrappedObject<CSocket>( obj, &UOXSocket_class );
 	}
 
 	if( mySock == nullptr )
@@ -4957,12 +5012,12 @@ bool CMisc_PopUpTarget( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	UI08 tNum = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 tNum = static_cast<UI08>( args.get(0).toInt32());
 
 	std::string toSay;
 	if( argc == 2 )
 	{
-		toSay = oldstrutil::format( 512, "%s", JS_GetStringBytes( cx, argv[1]).c_str() );
+		toSay = oldstrutil::format( 512, "%s", JS_GetStringBytes( cx, args.get(1)).c_str() );
 	}
 
 	mySock->SendTargetCursor( 0, tNum, toSay );
@@ -4977,24 +5032,24 @@ bool CMisc_PopUpTarget( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_InRange( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "(InRange): Invalid count of parameters: %d needs 2 (Item/Char and distance)", argc );
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	UI16 distance = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	UI16 distance = static_cast<UI16>( args.get(1).toInt32());
 
-	CBaseObject *me = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+  CBaseObject *me = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 	if( !ValidateObject( me ))
 	{
 		ScriptError( cx, "(InRange) Invalid Object assigned to self" );
 		return false;
 	}
 
-	CBaseObject *them = static_cast<CBaseObject*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *them = GetBaseObject( args.get( 0 ));
 	if( !ValidateObject( them ))
 	{
 		ScriptError( cx, "(InRange) Invalid Object assigned to target" );
@@ -5006,12 +5061,12 @@ bool CBase_InRange( JSContext *cx, unsigned argc, JS::Value* vp )
 		CItem *myItem = static_cast<CItem *>( them );
 		if( myItem->GetCont() != nullptr )
 		{
-			JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( FindItemOwner( myItem ) == me ) );
+			args.rval().setBoolean(  FindItemOwner( myItem ) == me  );
 			return true;
 		}
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ObjInRange( me, them, distance )) );
+	args.rval().setBoolean(  ObjInRange( me, them, distance ) );
 	return true;
 }
 
@@ -5030,8 +5085,9 @@ bool CBase_InRange( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_StartTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
+  CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 
 	if( !ValidateObject( myObj ))
 	{
@@ -5045,20 +5101,20 @@ bool CBase_StartTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
 	// 1. Parameter Delay, 2. Parameter Callback
-	jsdouble expireTime_double;
-	JS_ValueToNumber( cx, argv[0], &expireTime_double );
+	double expireTime_double;
+	JS::RootedValue rootedValue( cx, args.get(0) );
+	JS::ToNumber( cx, rootedValue, &expireTime_double );
 	TIMERVAL ExpireTime = BuildTimeValue( static_cast<R64>( expireTime_double ) / 1000.0 );
-	UI16 TriggerNum = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	UI16 TriggerNum = static_cast<UI16>( args.get(1).toInt32());
 
 	CTEffect *Effect = new CTEffect;
 
 	if( argc == 3 )
 	{
-		if( JSVAL_IS_BOOLEAN( argv[2] ))	// Is it a boolean?  If so, might be calling back into here
+		if( args.get(2).isBoolean() )	// Is it a boolean?  If so, might be calling back into here
 		{
-			if( JSVAL_TO_BOOLEAN( argv[2] ) == true )
+			if( args.get(2).toBoolean() == true )
 			{
 #if defined UOX_DEBUG_MODE
 				Console.Log( oldstrutil::format( "Firing a new timer from script %d", JSMapping->currentActive()->GetScriptID() ) );
@@ -5072,7 +5128,7 @@ bool CBase_StartTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 		}
 		else
 		{
-			Effect->More2( static_cast<UI16>( JSVAL_TO_INT( argv[2] )));
+			Effect->More2( static_cast<UI16>( args.get(2).toInt32()));
 		}
 	}
 	else
@@ -5109,9 +5165,9 @@ bool CChar_CheckSkill( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
+  CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 
 	if( !ValidateObject( myChar ))
 	{
@@ -5119,20 +5175,20 @@ bool CChar_CheckSkill( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI08 skillNum = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
-	UI16 minSkill = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 maxSkill = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+	UI08 skillNum = static_cast<UI08>( args.get(0).toInt32());
+	UI16 minSkill = static_cast<UI16>( args.get(1).toInt32());
+	UI16 maxSkill = static_cast<UI16>( args.get(2).toInt32());
 	bool isCraftSkill = false;
 	SI08 forceResult = 0;
 	if( argc == 4 )
 	{
-		isCraftSkill = JSVAL_TO_BOOLEAN( argv[3] );
+		isCraftSkill = args.get(3).toBoolean();
 	}
 	if( argc == 5 )
 	{
-		forceResult = static_cast<SI08>( JSVAL_TO_INT( argv[4] ));
+		forceResult = static_cast<SI08>( args.get(4).toInt32());
 	}
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( Skills->CheckSkill( myChar, skillNum, minSkill, maxSkill, isCraftSkill, forceResult ) ) );
+	args.rval().setBoolean(  Skills->CheckSkill( myChar, skillNum, minSkill, maxSkill, isCraftSkill, forceResult )  );
 	return true;
 }
 
@@ -5150,10 +5206,9 @@ bool CChar_AddSkill( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSEncapsulate myClass( cx, obj );
-	CChar *myChar = static_cast<CChar*>( myClass.toObject() );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
+	CChar *myChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
 
 	if( myChar == nullptr )
 	{
@@ -5161,21 +5216,21 @@ bool CChar_AddSkill( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_INT( argv[0] ) || !JSVAL_IS_INT( argv[1] ))
+	if( !args.get(0).isInt32() || !args.get(1).isInt32() )
 	{
 		ScriptError( cx, "Invalid parameters! Only integers between 0-65535 are accepted for the first two parameters of .AddSkill Method." );
 		return false;
 	}
 
-	if( !JSVAL_IS_BOOLEAN( argv[2] ) )
+	if( !args.get(2).isBoolean() )
 	{
 		ScriptError( cx, "Invalid parameters! Only boolean is accepted for the third parameter of .AddSkill Method." );
 		return false;
 	}
 
-	UI16 skillID = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	SKILLVAL skillAmt = static_cast<SKILLVAL>( JSVAL_TO_INT( argv[1] ));
-	bool triggerEvent = ( JSVAL_TO_BOOLEAN( argv[2] ) == true );
+	UI16 skillID = static_cast<UI16>( args.get(0).toInt32());
+	SKILLVAL skillAmt = static_cast<SKILLVAL>( args.get(1).toInt32());
+	bool triggerEvent = ( args.get(2).toBoolean() == true );
 
 	Skills->AdvanceSkill( myChar, skillID, false, skillAmt, triggerEvent );
 
@@ -5190,10 +5245,10 @@ bool CChar_AddSkill( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_FindItemLayer( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	CItem *myItem = nullptr;
-	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
+  CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 
 	if( !ValidateObject( myChar ))
 	{
@@ -5203,7 +5258,7 @@ bool CChar_FindItemLayer( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( argc == 1 )
 	{
-		myItem = myChar->GetItemAtLayer( static_cast<ItemLayers>( JSVAL_TO_INT( argv[0] )));
+		myItem = myChar->GetItemAtLayer( static_cast<ItemLayers>( args.get(0).toInt32()));
 	}
 	else
 	{
@@ -5213,13 +5268,13 @@ bool CChar_FindItemLayer( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( !ValidateObject( myItem ))
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 		return true;
 	}
 
-	JSObject *myJSItem = JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	JS::RootedObject myJSItem( cx, JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myJSItem ) );
+	args.rval().setObjectOrNull( myJSItem );
 
 	return true;
 }
@@ -5232,33 +5287,33 @@ bool CChar_FindItemLayer( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_FindItemType( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(FindItemType) Invalid Count of Arguments, takes 1" );
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
+  CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( myChar ))
 	{
 		ScriptError( cx, "(FindItemType) Invalid Charobject assigned" );
 		return false;
 	}
 
-	UI08 iType = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 iType = static_cast<UI08>( args.get(0).toInt32());
 
 	CItem *myItem = FindItemOfType( myChar, static_cast<ItemTypes>( iType ));
 	if( !ValidateObject( myItem ))
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 		return true;
 	}
 
-	JSObject *myJSItem	= JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	JS::RootedObject myJSItem( cx, JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myJSItem ) );
+	args.rval().setObjectOrNull( myJSItem );
 
 	return true;
 }
@@ -5271,33 +5326,33 @@ bool CChar_FindItemType( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_FindItemSection( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(FindItemSection) Invalid Count of Arguments, takes 1" );
 		return false;
 	}
 
-	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
+  CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( myChar ))
 	{
 		ScriptError( cx, "(FindItemSection) Invalid Charobject assigned" );
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	std::string sectionID = JS_GetStringBytes( cx, argv[0]);
+	std::string sectionID = JS_GetStringBytes( cx, args.get(0));
 
 	CItem *myItem = FindItemOfSectionId( myChar, sectionID );
 	if( !ValidateObject( myItem ))
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 		return true;
 	}
 
-	JSObject *myJSItem	= JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	JS::RootedObject myJSItem( cx, JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myJSItem ) );
+	args.rval().setObjectOrNull( myJSItem );
 
 	return true;
 }
@@ -5311,14 +5366,15 @@ void OpenPlank( CItem *p );
 //o------------------------------------------------------------------------------------------------o
 bool CItem_OpenPlank( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(OpenPlank) Invalid Count of Arguments: %d, needs: 0", argc );
 		return false;
 	}
 
-	CItem *myItem = static_cast<CItem*>( JS_GetPrivate( cx, obj ));
+  CItem *myItem = JS::GetMaybePtrFromReservedSlot<CItem>( obj, 0 );
 
 	if( !ValidateObject( myItem ))
 	{
@@ -5347,9 +5403,9 @@ bool CMulti_TurnBoat( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	CBoatObj *myBoat = static_cast<CBoatObj *>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
+  CBoatObj *myBoat = JS::GetMaybePtrFromReservedSlot<CBoatObj>( obj, 0 );
 
 	if( !ValidateObject( myBoat ))
 	{
@@ -5357,7 +5413,7 @@ bool CMulti_TurnBoat( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI08 turnDir = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 turnDir = static_cast<UI08>( args.get(0).toInt32());
 	auto currDir = myBoat->GetDir();
 	auto myTiller =  CalcItemObjFromSer( myBoat->GetTiller() );
 
@@ -5409,8 +5465,9 @@ bool CMulti_GetTiller( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	CBoatObj *myBoat = static_cast<CBoatObj *>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
+  CBoatObj *myBoat = JS::GetMaybePtrFromReservedSlot<CBoatObj>( obj, 0 );
 
 	if( !ValidateObject( myBoat ))
 	{
@@ -5421,12 +5478,12 @@ bool CMulti_GetTiller( JSContext *cx, unsigned argc, JS::Value* vp )
 	auto myTiller =  CalcItemObjFromSer( myBoat->GetTiller() );
 	if( !ValidateObject( myTiller ))
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 		return true;
 	}
 
-	JSObject *myJSTiller	= JSEngine->AcquireObject( IUE_ITEM, myTiller, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myJSTiller ) );
+	JS::RootedObject myJSTiller( cx, JSEngine->AcquireObject( IUE_ITEM, myTiller, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+	args.rval().setObjectOrNull( myJSTiller );
 
 	return true;
 }
@@ -5442,20 +5499,19 @@ bool CChar_SpeechInput( JSContext *cx, unsigned argc, JS::Value* vp )
 	// Get our own Script ID
 	UI08 speechId		= 0;
 	CItem *speechItem	= nullptr;
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc == 1 ) // Just the ID has been passed
 	{
-		speechId = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+		speechId = static_cast<UI08>( args.get(0).toInt32());
 	}
 	else if( argc == 2 ) // We got an "affected" item as well
 	{
-		speechId = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+		speechId = static_cast<UI08>( args.get(0).toInt32());
 
-		if( argv[1] != JSVAL_NULL )
+		if( args.get(1) != JS::NullValue() )
 		{
-			JSObject *myObj = JSVAL_TO_OBJECT( argv[1] );
-			speechItem = static_cast<CItem*>( JS_GetPrivate( cx, myObj ));
+			speechItem = GetWrappedObject<CItem>( args.get( 1 ), &UOXItem_class );
 		}
 	}
 	else
@@ -5464,7 +5520,7 @@ bool CChar_SpeechInput( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
+  CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 
 	if( !ValidateObject( myChar ))
 	{
@@ -5502,9 +5558,9 @@ bool CChar_CastSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
+  CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 
 	if( !ValidateObject( myChar ))
 	{
@@ -5512,7 +5568,7 @@ bool CChar_CastSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI08 spellCast = static_cast<SI08>( JSVAL_TO_INT( argv[0] ));
+	SI32 spellCast = static_cast<SI32>( args.get(0).toInt32());
 
 	if( myChar->IsNpc() )
 	{
@@ -5523,7 +5579,7 @@ bool CChar_CastSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 	{
 		CSocket *sock = myChar->GetSocket();
 
-		if(( argc == 2 ) && ( argv[1] == JSVAL_TRUE ))
+		if( argc == 2 && args.get(1).toBoolean() )
 		{
 			// Next...
 			myChar->SetSpellCast( spellCast );
@@ -5532,7 +5588,7 @@ bool CChar_CastSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 		else
 		{
 			bool spellSuccess = Magic->SelectSpell( sock, spellCast );
-			JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( spellSuccess ) );
+			args.rval().setBoolean(  spellSuccess  );
 		}
 	}
 	return true;
@@ -5546,11 +5602,11 @@ bool CChar_CastSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_MagicEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	SI08 spellId = static_cast<SI08>( JSVAL_TO_INT( argv[0] ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
+	SI08 spellId = static_cast<SI08>( args.get(0).toInt32());
 
-	CChar *myObj = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
+  CChar *myObj = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 
 	if( !ValidateObject( myObj ))
 	{
@@ -5571,19 +5627,19 @@ bool CChar_MagicEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_GetSerial( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	CChar *myObj = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
-	UI08 part = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
+  CChar *myObj = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
+	UI08 part = static_cast<UI08>( args.get(0).toInt32());
 
 	if( !ValidateObject( myObj ) || ( part == 0 ) || ( part > 4 ))
 	{
 		ScriptError( cx, "GetSerial: Invalid Object/Argument, takes 1 arg: part of serial (1-4)" );
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) );
+		args.rval().setInt32(  0  );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( myObj->GetSerial( part )) );
+	args.rval().setInt32(  myObj->GetSerial( part ) );
 
 	return true;
 }
@@ -5596,19 +5652,19 @@ bool CChar_GetSerial( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_GetSerial( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
-	UI08 part = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
+  CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
+	UI08 part = static_cast<UI08>( args.get(0).toInt32());
 
 	if( !ValidateObject( myObj ) || ( part == 0 ) || ( part > 4 ))
 	{
 		ScriptError( cx, "GetSerial: Invalid Object/Argument, takes 1 arg: part of serial (1-4)" );
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) );
+		args.rval().setInt32(  0  );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( myObj->GetSerial( part )) );
+	args.rval().setInt32(  myObj->GetSerial( part ) );
 
 	return true;
 }
@@ -5623,16 +5679,16 @@ void UpdateStats( CBaseObject *mObj, UI08 x, bool skipStatWindowUpdate = false )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_UpdateStats( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(UpdateStats) Invalid Number of Arguments %d, needs: 1 (stat type - 0, 1 or 2 for Health, Mana or Stamina)", argc );
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
-	UI08 statType = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+  CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
+	UI08 statType = static_cast<UI08>( args.get(0).toInt32());
 
 	if( !ValidateObject( myObj ))
 	{
@@ -5683,15 +5739,15 @@ bool CBase_UpdateStats( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_SetPoisoned( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc < 2 || argc > 3 )
 	{
 		ScriptError( cx, "(SetPoisoned) Invalid Number of Arguments %d, needs: 2 or 3", argc );
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	CChar *myChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 
 	if( !ValidateObject( myChar ) || myChar->GetObjType() != OT_CHAR )
 	{
@@ -5699,11 +5755,11 @@ bool CChar_SetPoisoned( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI08 poisonLevel = static_cast<SI08>( JSVAL_TO_INT( argv[0] ));
+	SI08 poisonLevel = static_cast<SI08>( args.get(0).toInt32());
 
 	if( poisonLevel > 0 && argc > 1 )
 	{
-		SI32 wearOff = static_cast<SI32>( JSVAL_TO_INT( argv[1] ));
+		SI32 wearOff = static_cast<SI32>( args.get(1).toInt32());
 
 		if( argc >= 2 )
 		{
@@ -5716,7 +5772,7 @@ bool CChar_SetPoisoned( JSContext *cx, unsigned argc, JS::Value* vp )
 
 		if( argc >= 3 )
 		{
-			CChar *poisonSourceChar = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[2] )));
+	auto *poisonSourceChar = GetWrappedObject<CChar>( args.get( 2 ), &UOXChar_class );
 			if( !ValidateObject( poisonSourceChar ))
 			{
 				ScriptError( cx, "(SetPoisoned) Invalid Object passed as third function parameter" );
@@ -5750,11 +5806,10 @@ bool CChar_ExplodeItem( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	CChar *myChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
-	JSObject *tObj = JSVAL_TO_OBJECT( argv[0] );
-	CBaseObject *trgObj = static_cast<CBaseObject *>( JS_GetPrivate( cx, tObj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
+  CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
+	CBaseObject *trgObj = GetBaseObject( args.get( 0 ));
 
 	if( !ValidateObject( trgObj ) || trgObj->GetObjType() != OT_ITEM || myChar->GetSocket() == nullptr )
 	{
@@ -5762,9 +5817,9 @@ bool CChar_ExplodeItem( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI32 damage = static_cast<UI32>( JSVAL_TO_INT( argv[1] ));
-	UI08 damageType = static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
-	bool explodeNearby = ( JSVAL_TO_BOOLEAN( argv[3] ) == true );
+	UI32 damage = static_cast<UI32>( args.get(1).toInt32());
+	UI08 damageType = static_cast<UI08>( args.get(2).toInt32());
+	bool explodeNearby = ( args.get(3).toBoolean() == true );
 
 	ExplodeItem( myChar->GetSocket(), static_cast<CItem *>( trgObj ), damage, damageType, explodeNearby );
 	return true;
@@ -5785,15 +5840,15 @@ bool CChar_SetInvisible( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	CChar *myChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
-	UI08 newVal = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
+  CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
+	UI08 newVal = static_cast<UI08>( args.get(0).toInt32());
 
 	myChar->SetVisible( static_cast<VisibleTypes>( newVal ));
 	if( argc == 2 )
 	{
-		UI32 TimeOut = static_cast<UI32>( JSVAL_TO_INT( argv[1] ));
+		UI32 TimeOut = static_cast<UI32>( args.get(1).toInt32());
 		myChar->SetTimer( tCHAR_INVIS, BuildTimeValue( static_cast<R64>( TimeOut ) / 1000.0 ));
 	}
 	return true;
@@ -5807,11 +5862,10 @@ bool CChar_SetInvisible( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CItem_SetCont( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	CItem *myItem = static_cast<CItem*>( JS_GetPrivate( cx, obj ));
-	JSObject *tObj = JSVAL_TO_OBJECT( argv[0] );
-	CBaseObject *trgObj = static_cast<CBaseObject *>( JS_GetPrivate( cx, tObj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
+  CItem *myItem = JS::GetMaybePtrFromReservedSlot<CItem>( obj, 0 );
+	CBaseObject *trgObj = GetBaseObject( args.get( 0 ));
 
 	if( !ValidateObject( myItem ) || !ValidateObject( trgObj ) || ( trgObj->GetSerial() == INVALIDSERIAL ))
 	{
@@ -5820,7 +5874,7 @@ bool CItem_SetCont( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	// return true if the change was successful, false otherwise
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myItem->SetCont( trgObj )) );
+	args.rval().setBoolean(  myItem->SetCont( trgObj ) );
 
 	return true;
 }
@@ -5833,23 +5887,24 @@ bool CItem_SetCont( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CItem_IsMulti( JSContext *cx, unsigned argc, JS::Value* vp )
 {
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(IsMulti) Invalid Number of Arguments %d, needs: 0", argc );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	CItem *myItem = static_cast<CItem *>( JS_GetPrivate( cx, obj ));
+	auto  obj = getThis( cx, args );
+  CItem *myItem = JS::GetMaybePtrFromReservedSlot<CItem>( obj, 0 );
 
 	if( !ValidateObject( myItem ))
 	{
 		ScriptError( cx, "(IsMulti) Invalid object assigned" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myItem->CanBeObjType( OT_MULTI )) );
+	args.rval().setBoolean(  myItem->CanBeObjType( OT_MULTI ) );
 	return true;
 }
 
@@ -5861,23 +5916,24 @@ bool CItem_IsMulti( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_IsBoat( JSContext *cx, unsigned argc, JS::Value* vp )
 {
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(IsBoat) Invalid Number of Arguments %d, needs: 0", argc );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	CBaseObject *myObject = static_cast<CBaseObject *>( JS_GetPrivate( cx, obj ));
+	auto  obj = getThis( cx, args );
+  CBaseObject *myObject = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 
 	if( !ValidateObject( myObject ))
 	{
 		ScriptError( cx, "(IsMulti) Invalid object assigned" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myObject->CanBeObjType( OT_BOAT )) );
+	args.rval().setBoolean(  myObject->CanBeObjType( OT_BOAT ) );
 	return true;
 }
 
@@ -5889,32 +5945,32 @@ bool CBase_IsBoat( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_IsInMulti( JSContext *cx, unsigned argc, JS::Value* vp )
 {
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsInMulti) Invalid Number of Arguments %d, needs: 1", argc );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+	auto  obj = getThis( cx, args );
+  CMultiObj *myItem = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(IsInMulti) Invalid object assigned" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
-	CBaseObject *toFind = static_cast<CBaseObject *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *toFind = GetBaseObject( args.get( 0 ));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(IsInMulti) Invalid object in house" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( toFind->GetMultiObj() == myItem )) );
+	args.rval().setBoolean( ( toFind->GetMultiObj() == myItem ) );
 	return true;
 }
 
@@ -5926,32 +5982,32 @@ bool CMulti_IsInMulti( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_IsOnBanList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOnBanList) Invalid Number of Arguments %d, needs: 1", argc );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+  CMultiObj *myItem = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(IsOnBanList) Invalid object assigned" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
-	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *toFind = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(IsOnBanList) Invalid character" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myItem->IsOnBanList( toFind )) );
+	args.rval().setBoolean(  myItem->IsOnBanList( toFind ) );
 	return true;
 }
 
@@ -5963,32 +6019,32 @@ bool CMulti_IsOnBanList( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_IsOnFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOnFriendList) Invalid Number of Arguments %d, needs: 1", argc );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+  CMultiObj *myItem = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(IsOnFriendList) Invalid object assigned" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
-	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *toFind = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(IsOnFriendList) Invalid character" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myItem->IsOnFriendList( toFind )) );
+	args.rval().setBoolean(  myItem->IsOnFriendList( toFind ) );
 	return true;
 }
 
@@ -6000,32 +6056,32 @@ bool CMulti_IsOnFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_IsOnGuestList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOnGuestList) Invalid Number of Arguments %d, needs: 1", argc );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+  CMultiObj *myItem = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(IsOnGuestList) Invalid object assigned" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
-	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *toFind = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(IsOnGuestList) Invalid character" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myItem->IsOnGuestList( toFind )) );
+	args.rval().setBoolean(  myItem->IsOnGuestList( toFind ) );
 	return true;
 }
 
@@ -6037,32 +6093,32 @@ bool CMulti_IsOnGuestList( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_IsOnOwnerList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOnOwnerList) Invalid Number of Arguments %d, needs: 1 or 2", argc );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+  CMultiObj *myItem = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(IsOnOwnerList) Invalid object assigned" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
-	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *toFind = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(IsOnOwnerList) Invalid character" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myItem->IsOnOwnerList( toFind )) );
+	args.rval().setBoolean(  myItem->IsOnOwnerList( toFind ) );
 	return true;
 }
 
@@ -6074,32 +6130,32 @@ bool CMulti_IsOnOwnerList( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_IsOwner( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOwner) Invalid Number of Arguments %d, needs: 1 or 2", argc );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+  CMultiObj *myItem = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(IsOwner) Invalid object assigned" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
-	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *toFind = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(IsOwner) Invalid character" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myItem->IsOwner( toFind )) );
+	args.rval().setBoolean(  myItem->IsOwner( toFind ) );
 	return true;
 }
 
@@ -6111,29 +6167,29 @@ bool CMulti_IsOwner( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_AddToBanList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddToBanList) Invalid Number of Arguments %d, needs: 1", argc );
 		return false;
 	}
 
-	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+  CMultiObj *myItem = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(AddToBanList) Invalid object assigned" );
 		return false;
 	}
-	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *toFind = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(AddToBanList) Invalid character" );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	args.rval().setBoolean( true );
 	myItem->AddToBanList( toFind );
 	return true;
 }
@@ -6146,32 +6202,32 @@ bool CMulti_AddToBanList( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_AddToFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddToFriendList) Invalid Number of Arguments %d, needs: 1", argc );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+  CMultiObj *myItem = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(AddToFriendList) Invalid object assigned" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
-	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *toFind = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(AddToFriendList) Invalid character" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	args.rval().setBoolean( true );
 	myItem->AddAsFriend( toFind );
 	return true;
 }
@@ -6184,32 +6240,32 @@ bool CMulti_AddToFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_AddToGuestList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddToGuestList) Invalid Number of Arguments %d, needs: 1", argc );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+  CMultiObj *myItem = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(AddToGuestList) Invalid object assigned" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
-	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *toFind = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(AddToGuestList) Invalid character" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	args.rval().setBoolean( true );
 	myItem->AddAsGuest( toFind );
 	return true;
 }
@@ -6222,32 +6278,32 @@ bool CMulti_AddToGuestList( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_AddToOwnerList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddToOwnerList) Invalid Number of Arguments %d, needs: 1", argc );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+  CMultiObj *myItem = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(AddToOwnerList) Invalid object assigned" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
-	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *toFind = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(AddToOwnerList) Invalid character" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	args.rval().setBoolean( true );
 	myItem->AddAsOwner( toFind );
 	return true;
 }
@@ -6260,32 +6316,32 @@ bool CMulti_AddToOwnerList( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_RemoveFromBanList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveFromBanList) Invalid Number of Arguments %d, needs: 1", argc );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+  CMultiObj *myItem = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(RemoveFromBanList) Invalid object assigned" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
-	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *toFind = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(RemoveFromBanList) Invalid character" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	args.rval().setBoolean( true );
 	myItem->RemoveFromBanList( toFind );
 	return true;
 }
@@ -6298,32 +6354,32 @@ bool CMulti_RemoveFromBanList( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_RemoveFromFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveFromFriendList) Invalid Number of Arguments %d, needs: 1", argc );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+  CMultiObj *myItem = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(RemoveFromFriendList) Invalid object assigned" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
-	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *toFind = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(RemoveFromFriendList) Invalid character" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	args.rval().setBoolean( true );
 	myItem->RemoveAsFriend( toFind );
 	return true;
 }
@@ -6336,32 +6392,32 @@ bool CMulti_RemoveFromFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_RemoveFromGuestList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveFromGuestList) Invalid Number of Arguments %d, needs: 1", argc );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+  CMultiObj *myItem = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(RemoveFromGuestList) Invalid object assigned" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
-	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *toFind = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(RemoveFromGuestList) Invalid character" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	args.rval().setBoolean( true );
 	myItem->RemoveAsGuest( toFind );
 	return true;
 }
@@ -6374,32 +6430,32 @@ bool CMulti_RemoveFromGuestList( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_RemoveFromOwnerList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveFromOwnerList) Invalid Number of Arguments %d, needs: 1", argc );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+  CMultiObj *myItem = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(RemoveFromOwnerList) Invalid object assigned" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
-	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *toFind = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(RemoveFromOwnerList) Invalid character" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	args.rval().setBoolean( true );
 	myItem->RemoveAsOwner( toFind );
 	return true;
 }
@@ -6412,25 +6468,25 @@ bool CMulti_RemoveFromOwnerList( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_ClearBanList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearBanList) Invalid Number of Arguments %d, needs: 0", argc );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+  CMultiObj *myItem = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(ClearBanList) Invalid object assigned" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	args.rval().setBoolean( true );
 	myItem->ClearBanList();
 	return true;
 }
@@ -6443,25 +6499,25 @@ bool CMulti_ClearBanList( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_ClearFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearFriendList) Invalid Number of Arguments %d, needs: 0", argc );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+  CMultiObj *myItem = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(ClearFriendList) Invalid object assigned" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	args.rval().setBoolean( true );
 	myItem->ClearFriendList();
 	return true;
 }
@@ -6474,25 +6530,25 @@ bool CMulti_ClearFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_ClearGuestList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearGuestList) Invalid Number of Arguments %d, needs: 0", argc );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+  CMultiObj *myItem = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(ClearGuestList) Invalid object assigned" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	args.rval().setBoolean( true );
 	myItem->ClearGuestList();
 	return true;
 }
@@ -6505,25 +6561,25 @@ bool CMulti_ClearGuestList( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_ClearOwnerList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearOwnerList) Invalid Number of Arguments %d, needs: 0", argc );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+  CMultiObj *myItem = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(ClearOwnerList) Invalid object assigned" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	args.rval().setBoolean( true );
 	myItem->ClearOwnerList();
 	return true;
 }
@@ -6539,21 +6595,21 @@ UI16 HandleAutoStack( CItem *mItem, CItem *mCont, CSocket *mSock = nullptr, CCha
 //o------------------------------------------------------------------------------------------------o
 bool CItem_PlaceInPack( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "(PlaceInPack) Invalid Number of Arguments %d, needs: 0 or 1", argc );
 		return false;
 	}
-	CItem *myItem = static_cast<CItem *>( JS_GetPrivate( cx, obj ));
+  CItem *myItem = JS::GetMaybePtrFromReservedSlot<CItem>( obj, 0 );
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_ITEM ))
 	{
 		ScriptError( cx, "(PlaceInPack) Invalid object assigned" );
 		return false;
 	}
 
-	auto autoStack = ( JSVAL_TO_BOOLEAN( argv[0] ) == true );
+	auto autoStack = ( args.get(0).toBoolean() == true );
 	if( autoStack && ValidateObject( myItem->GetCont() ))
 	{
 		// Attempt to stack the item with existing items. If item has any left-over amount after, it
@@ -6561,7 +6617,7 @@ bool CItem_PlaceInPack( JSContext *cx, unsigned argc, JS::Value* vp )
 		CItem *myCont = static_cast<CItem *>( myItem->GetCont() );
 		if( ValidateObject( myCont ))
 		{
-			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( HandleAutoStack( myItem, myCont, nullptr, nullptr )) );
+			args.rval().setInt32(  HandleAutoStack( myItem, myCont, nullptr, nullptr ) );
 		}
 	}
 
@@ -6582,21 +6638,21 @@ bool CItem_PlaceInPack( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_OpenURL( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "OpenURL: Invalid Number of Arguments %d, needs: 1" );
 		return false;
 	}
-	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
+  CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
 
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "OpenURL: Invalid socket!" );
 		return false;
 	}
-	std::string url = JS_GetStringBytes( cx, argv[0]);
+	std::string url = JS_GetStringBytes( cx, args.get(0));
 	mySock->OpenURL( url );
 	return true;
 }
@@ -6609,22 +6665,22 @@ bool CSocket_OpenURL( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_GetByte( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "GetByte: Invalid Number of Arguments %d, needs: 1 (offset)" );
 		return false;
 	}
-	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
+  CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
 
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "GetByte: Invalid socket!" );
 		return false;
 	}
-	SI32 offset	= JSVAL_TO_INT( argv[0] );
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( mySock->GetByte( offset )) );
+	SI32 offset	= args.get(0).toInt32();
+	args.rval().setInt32(  mySock->GetByte( offset ) );
 	return true;
 }
 
@@ -6636,22 +6692,22 @@ bool CSocket_GetByte( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_GetSByte( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "GetSByte: Invalid Number of Arguments %d, needs: 1 (offset)" );
 		return false;
 	}
-	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
+  CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
 
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "GetSByte: Invalid socket!" );
 		return false;
 	}
-	SI32 offset	= JSVAL_TO_INT( argv[0] );
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI08>( mySock->GetByte( offset ))) );
+	SI32 offset	= args.get(0).toInt32();
+	args.rval().setInt32(  static_cast<SI08>( mySock->GetByte( offset )) );
 	return true;
 }
 
@@ -6663,22 +6719,22 @@ bool CSocket_GetSByte( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_GetWord( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "GetWord: Invalid Number of Arguments %d, needs: 1 (offset)" );
 		return false;
 	}
-	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
+  CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
 
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "GetWord: Invalid socket!" );
 		return false;
 	}
-	SI32 offset = JSVAL_TO_INT( argv[0] );
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( mySock->GetWord( offset )) );
+	SI32 offset = args.get(0).toInt32();
+	args.rval().setInt32(  mySock->GetWord( offset ) );
 	return true;
 }
 
@@ -6690,22 +6746,22 @@ bool CSocket_GetWord( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_GetSWord( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "GetSWord: Invalid Number of Arguments %d, needs: 1 (offset)" );
 		return false;
 	}
-	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
+  CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
 
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "GetSWord: Invalid socket!" );
 		return false;
 	}
-	SI32 offset = JSVAL_TO_INT( argv[0] );
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>(mySock->GetWord( offset ))) );
+	SI32 offset = args.get(0).toInt32();
+	args.rval().setInt32(  static_cast<SI16>(mySock->GetWord( offset )) );
 	return true;
 }
 
@@ -6717,22 +6773,22 @@ bool CSocket_GetSWord( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_GetDWord( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "GetDWord: Invalid Number of Arguments %d, needs: 1 (offset)" );
 		return false;
 	}
-	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
+  CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
 
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "GetDWord: Invalid socket!" );
 		return false;
 	}
-	SI32 offset = JSVAL_TO_INT( argv[0] );
-	JS_NewNumberValue( cx, mySock->GetDWord( offset ), &JS_RVAL( cx, vp ) );
+	SI32 offset = args.get(0).toInt32();
+	args.rval().setNumber(  mySock->GetDWord( offset ) );
 	return true;
 }
 
@@ -6744,22 +6800,22 @@ bool CSocket_GetDWord( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_GetSDWord( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "GetSDWord: Invalid Number of Arguments %d, needs: 1 (offset)" );
 		return false;
 	}
-	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
+  CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
 
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "GetSDWord: Invalid socket!" );
 		return false;
 	}
-	SI32 offset = JSVAL_TO_INT( argv[0] );
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI32>(mySock->GetDWord( offset ))) );
+	SI32 offset = args.get(0).toInt32();
+	args.rval().setInt32(  static_cast<SI32>(mySock->GetDWord( offset )) );
 	return true;
 }
 
@@ -6772,15 +6828,15 @@ bool CSocket_GetSDWord( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_GetString( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 && argc != 2 )
 	{
 		ScriptError( cx, "GetString: Invalid number of arguments. Takes 1 (offset) or 2 (offset, length)" );
 		return false;
 	}
 
-	CSocket *mSock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
+  CSocket *mSock = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
 	if( mSock == nullptr )
 	{
 		ScriptError( cx, "GetString: Invalid socket!" );
@@ -6788,10 +6844,10 @@ bool CSocket_GetString( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	SI32 length		= -1;
-	SI32 offset		= JSVAL_TO_INT( argv[0] );
+	SI32 offset		= args.get(0).toInt32();
 	if( argc == 2 )
 	{
-		length = JSVAL_TO_INT( argv[1] );
+		length = args.get(1).toInt32();
 	}
 
 	char toReturn[128];
@@ -6806,9 +6862,8 @@ bool CSocket_GetString( JSContext *cx, unsigned argc, JS::Value* vp )
 		strcopy( toReturn, 128, ( char * ) & ( mSock->Buffer() )[offset] );
 	}
 
-	JSString *strSpeech = nullptr;
-	strSpeech = JS_NewStringCopyZ( cx, toReturn );
-	JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( strSpeech ) );
+	JS::RootedString strSpeech( cx, JS_NewStringCopyZ( cx, toReturn ));
+	args.rval().setString( strSpeech );
 
 	return true;
 }
@@ -6821,21 +6876,21 @@ bool CSocket_GetString( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_SetByte( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SetByte: Invalid number of arguments (takes 3)" );
 		return false;
 	}
-	CSocket *mSock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
+  CSocket *mSock = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
 	if( mSock == nullptr )
 	{
 		ScriptError( cx, "SetByte: Invalid socket!" );
 		return false;
 	}
-	SI32 offset = JSVAL_TO_INT( argv[0] );
-	UI08 byteToSet = static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+	SI32 offset = args.get(0).toInt32();
+	UI08 byteToSet = static_cast<UI08>( args.get(1).toInt32());
 
 	mSock->SetByte( offset, byteToSet );
 	return true;
@@ -6849,23 +6904,23 @@ bool CSocket_SetByte( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_SetWord( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SetWord: Invalid number of arguments (takes 3)" );
 		return false;
 	}
 
-	CSocket *mSock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
+  CSocket *mSock = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
 	if( mSock == nullptr )
 	{
 		ScriptError( cx, "SetWord: Invalid socket!" );
 		return false;
 	}
 
-	SI32 offset		= JSVAL_TO_INT( argv[0] );
-	UI16 byteToSet	= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	SI32 offset		= args.get(0).toInt32();
+	UI16 byteToSet	= static_cast<UI16>( args.get(1).toInt32());
 
 	mSock->SetWord( offset, byteToSet );
 	return true;
@@ -6879,23 +6934,23 @@ bool CSocket_SetWord( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_SetDWord( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SetDWord: Invalid number of arguments (takes 3)" );
 		return false;
 	}
 
-	CSocket *mSock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
+  CSocket *mSock = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
 	if( mSock == nullptr )
 	{
 		ScriptError( cx, "SetDWord: Invalid socket!" );
 		return false;
 	}
 
-	SI32 offset		= JSVAL_TO_INT( argv[0] );
-	UI32 byteToSet	= JSVAL_TO_INT( argv[1] );
+	SI32 offset		= args.get(0).toInt32();
+	UI32 byteToSet	= args.get(1).toInt32();
 
 	mSock->SetDWord( offset, byteToSet );
 	return true;
@@ -6909,23 +6964,23 @@ bool CSocket_SetDWord( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_SetString( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SetString: Invalid number of arguments (takes 3)" );
 		return false;
 	}
 
-	CSocket *mSock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
+  CSocket *mSock = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
 	if( mSock == nullptr )
 	{
 		ScriptError( cx, "SetString: Invalid socket!" );
 		return false;
 	}
 
-	SI32 offset = JSVAL_TO_INT( argv[0] );
-	std::string trgMessage = JS_GetStringBytes( cx, argv[1]);
+	SI32 offset = args.get(0).toInt32();
+	std::string trgMessage = JS_GetStringBytes( cx, args.get(1));
 	if( trgMessage.empty() )
 	{
 		ScriptError( cx, "SetString: No string to set" );
@@ -6945,22 +7000,22 @@ bool CSocket_SetString( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_ReadBytes( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "ReadBytes: Invalid number of arguments (takes 1)" );
 		return false;
 	}
 
-	CSocket *mSock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
+  CSocket *mSock = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
 	if( mSock == nullptr )
 	{
 		ScriptError( cx, "ReadBytes: Invalid socket!" );
 		return false;
 	}
 
-	SI32 bCount		= JSVAL_TO_INT( argv[0] );
+	SI32 bCount		= args.get(0).toInt32();
 	mSock->Receive( bCount );
 	return true;
 }
@@ -6974,9 +7029,9 @@ bool CSocket_ReadBytes( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_WhoList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
+  CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "WhoList: Invalid socket!" );
@@ -6986,7 +7041,7 @@ bool CSocket_WhoList( JSContext *cx, unsigned argc, JS::Value* vp )
 	bool sendOnList = true;
 	if( argc == 1 )
 	{
-		sendOnList = ( JSVAL_TO_BOOLEAN( argv[0] ) == true );
+		sendOnList = ( args.get(0).toBoolean() == true );
 	}
 
 	if( sendOnList )
@@ -7010,17 +7065,17 @@ bool CSocket_WhoList( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_Music( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Music: Invalid number of arguments (takes 1)" );
 		return false;
 	}
 
-	UI16 music = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 music = static_cast<UI16>( args.get(0).toInt32());
 
-	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
+  CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
 
 	if( mySock != nullptr )
 	{
@@ -7039,17 +7094,17 @@ bool CSocket_Music( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_YellMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "YellMessage: Invalid number of arguments (takes 1)" );
 		return false;
 	}
 
-	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+  CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 
-	std::string trgMessage		= JS_GetStringBytes( cx, argv[0] );
+	std::string trgMessage		= JS_GetStringBytes( cx, args.get(0) );
 
 	if( trgMessage.empty() )
 	{
@@ -7086,17 +7141,17 @@ bool CChar_YellMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_WhisperMessage( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "WhisperMessage: Invalid number of arguments (takes 1)" );
 		return false;
 	}
 
-	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+  CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 
-	std::string trgMessage = JS_GetStringBytes( cx, argv[0] );
+	std::string trgMessage = JS_GetStringBytes( cx, args.get(0) );
 
 	if( trgMessage.empty() )
 	{
@@ -7133,21 +7188,21 @@ void BuildGumpFromScripts( CSocket *s, UI16 m );
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_OpenGump( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "OpenGump: Invalid number of arguments (takes 1, number)" );
 		return false;
 	}
 
-	if( !JSVAL_IS_INT( argv[0] ))
+	if( !args.get(0).isInt32() )
 	{
 		ScriptError( cx, "You have to pass a valid menu number" );
 	}
 
-	UI16 menuNumber = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	CSocket *mySock = static_cast<CSocket *>( JS_GetPrivate( cx, obj ));
+	UI16 menuNumber = static_cast<UI16>( args.get(0).toInt32());
+  CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
 
 	if( mySock == nullptr )
 	{
@@ -7168,15 +7223,15 @@ bool CSocket_OpenGump( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_CloseGump( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "CloseGump: Invalid number of arguments (takes 2 - gumpId to close, and buttonId to send as response)" );
 		return false;
 	}
 
-	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
+  CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
 
 	if( mySock == nullptr )
 	{
@@ -7184,8 +7239,8 @@ bool CSocket_CloseGump( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI32 gumpId = static_cast<UI32>( JSVAL_TO_INT( argv[0] ));
-	UI32 buttonId = static_cast<UI32>( JSVAL_TO_INT( argv[1] ));
+	UI32 gumpId = static_cast<UI32>( args.get(0).toInt32());
+	UI32 buttonId = static_cast<UI32>( args.get(1).toInt32());
 
 	CPCloseGump gumpToClose( gumpId, buttonId );
 	mySock->Send( &gumpToClose );
@@ -7203,22 +7258,22 @@ bool CSocket_CloseGump( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CRace_CanWearArmour( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "CanWearArmour: Invalid number of arguments (takes 1, number)" );
 		return false;
 	}
 
-	CRace *myRace = static_cast<CRace *>( JS_GetPrivate( cx, obj ));
+  CRace *myRace = JS::GetMaybePtrFromReservedSlot<CRace>( obj, 0 );
 	if( myRace == nullptr )
 	{
 		ScriptError( cx, "CanWearArmour: Unknown Object has been passed" );
 		return false;
 	}
 
-	CItem *toFind = static_cast<CItem *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *toFind = GetWrappedObject<CItem>( args.get( 0 ), &UOXItem_class );
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "CanWearArmour: Invalid item passed" );
@@ -7227,7 +7282,7 @@ bool CRace_CanWearArmour( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	ARMORCLASS srcClass = myRace->ArmourClassRestriction();
 	ARMORCLASS trgClass = toFind->GetArmourClass();
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( trgClass == 0 ) || (( srcClass & trgClass ) != 0 )) );	// they have a matching class
+	args.rval().setBoolean( ( trgClass == 0 ) || (( srcClass & trgClass ) != 0 ) );	// they have a matching class
 	return true;
 }
 
@@ -7241,24 +7296,24 @@ bool CRace_CanWearArmour( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CRace_CanEquip( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "CanEquip: Invalid number of arguments (takes 1, item ID)" );
 		return false;
 	}
 
-	CRace *myRace = static_cast<CRace *>( JS_GetPrivate( cx, obj ));
+  CRace *myRace = JS::GetMaybePtrFromReservedSlot<CRace>( obj, 0 );
 	if( myRace == nullptr )
 	{
 		ScriptError( cx, "CanEquip: Unknown Object has been passed" );
 		return false;
 	}
 
-	UI16 itemId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 itemId = static_cast<UI16>( args.get(0).toInt32());
 	bool canEquip = myRace->CanEquipItem( itemId );
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( canEquip ));    // they can equip the item
+	args.rval().setBoolean(  canEquip  );    // they can equip the item
 	return true;
 }
 
@@ -7270,23 +7325,23 @@ bool CRace_CanEquip( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CRace_IsValidHairColour( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "IsValidHairColour: Invalid number of arguments (takes 1, number)" );
 		return false;
 	}
 
-	CRace *myRace = static_cast<CRace *>( JS_GetPrivate( cx, obj ));
+  CRace *myRace = JS::GetMaybePtrFromReservedSlot<CRace>( obj, 0 );
 	if( myRace == nullptr )
 	{
 		ScriptError( cx, "IsValidHairColour: Unknown Object has been passed" );
 		return false;
 	}
 
-	COLOUR cVal = static_cast<COLOUR>( JSVAL_TO_INT( argv[0] ));
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( myRace->IsValidHair( cVal ))) );
+	COLOUR cVal = static_cast<COLOUR>( args.get(0).toInt32());
+	args.rval().setBoolean( ( myRace->IsValidHair( cVal )) );
 	return true;
 }
 
@@ -7298,23 +7353,23 @@ bool CRace_IsValidHairColour( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CRace_IsValidSkinColour( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "IsValidSkinColour: Invalid number of arguments (takes 1, number)" );
 		return false;
 	}
 
-	CRace *myRace = static_cast<CRace *>( JS_GetPrivate( cx, obj ));
+  CRace *myRace = JS::GetMaybePtrFromReservedSlot<CRace>( obj, 0 );
 	if( myRace == nullptr )
 	{
 		ScriptError( cx, "IsValidSkinColour: Unknown Object has been passed" );
 		return false;
 	}
 
-	COLOUR cVal = static_cast<COLOUR>( JSVAL_TO_INT( argv[0] ));
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( myRace->IsValidSkin( cVal ))) );
+	COLOUR cVal = static_cast<COLOUR>( args.get(0).toInt32());
+	args.rval().setBoolean( ( myRace->IsValidSkin( cVal )) );
 	return true;
 }
 
@@ -7326,23 +7381,23 @@ bool CRace_IsValidSkinColour( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CRace_IsValidBeardColour( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "IsValidBeardColour: Invalid number of arguments (takes 1, number)" );
 		return false;
 	}
 
-	CRace *myRace = static_cast<CRace *>( JS_GetPrivate( cx, obj ));
+  CRace *myRace = JS::GetMaybePtrFromReservedSlot<CRace>( obj, 0 );
 	if( myRace == nullptr )
 	{
 		ScriptError( cx, "IsValidBeardColour: Unknown Object has been passed" );
 		return false;
 	}
 
-	COLOUR cVal = static_cast<COLOUR>( JSVAL_TO_INT( argv[0] ));
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( myRace->IsValidBeard( cVal ))) );
+	COLOUR cVal = static_cast<COLOUR>( args.get(0).toInt32());
+	args.rval().setBoolean( ( myRace->IsValidBeard( cVal )) );
 	return true;
 }
 
@@ -7357,17 +7412,16 @@ bool ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 //o------------------------------------------------------------------------------------------------o
 bool CBase_ApplySection( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "ApplySection: Invalid number of arguments (takes 1)" );
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CBaseObject *myObj		= static_cast<CBaseObject*>( myClass.toObject() );
-	std::string trgSection	= JS_GetStringBytes( cx, argv[0]);
+	CBaseObject *myObj = GetBaseObject( obj );
+	std::string trgSection	= JS_GetStringBytes( cx, args.get(0));
 
 	if( trgSection.empty() || trgSection.length() == 0 )
 	{
@@ -7375,7 +7429,7 @@ bool CBase_ApplySection( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( myClass.ClassName() == "UOXItem" )
+	if( HasWrapperClass( obj, &UOXItem_class ))
 	{
 		CItem *myItem = static_cast<CItem*>( myObj );
 		if( !ValidateObject( myItem ))
@@ -7386,7 +7440,7 @@ bool CBase_ApplySection( JSContext *cx, unsigned argc, JS::Value* vp )
 		CScriptSection *toFind = FileLookup->FindEntry( trgSection, items_def );
 		ApplyItemSection( myItem, toFind, trgSection );
 	}
-	else if( myClass.ClassName() == "UOXChar" )
+	else if( HasWrapperClass( obj, &UOXChar_class ))
 	{
 		CChar *myChar = static_cast<CChar*>( myObj );
 		if( !ValidateObject( myChar ))
@@ -7411,20 +7465,20 @@ bool CBase_ApplySection( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_AddSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddSpell: Invalid number of arguments (takes 1)" );
 		return false;
 	}
 
-	CChar *myChar	= static_cast<CChar *>( JS_GetPrivate( cx, obj ));
-	UI08 spellNum	= static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
-	CItem *sBook	= FindItemOfType( myChar, IT_SPELLBOOK );
-	if( ValidateObject( sBook ))
+	CChar *myChar 		= JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
+	SI32 spellNum		= static_cast<SI32>( args.get(0).toInt32());
+	CItem *spellBook	= Magic->FindSpellBook( myChar, spellNum );
+	if( ValidateObject( spellBook ))
 	{
-		Magic->AddSpell( sBook, spellNum );
+		Magic->AddSpell( spellBook, spellNum );
 	}
 	return true;
 }
@@ -7438,15 +7492,15 @@ bool CChar_AddSpell( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_SpellFail( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "SpellFail: Invalid number of arguments (takes 0)" );
 		return false;
 	}
 
-	CChar *myChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 
 	Effects->PlayStaticAnimation( myChar, 0x3735, 0, 30 );
 	Effects->PlaySound( myChar, 0x005C );
@@ -7475,10 +7529,10 @@ bool CBase_Refresh( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Refresh: Invalid number of arguments (takes 0 or 1 - socket to refresh for)" );
 		return false;
 	}
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 
-	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+  CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 
 	if( !ValidateObject( myObj ))
 	{
@@ -7488,17 +7542,13 @@ bool CBase_Refresh( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( myObj->CanBeObjType( OT_CHAR ))
 	{
-		CChar *myChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 		if( ValidateObject( myChar ))
 		{
 			CSocket *mySock = nullptr;
 			if( argc == 1 )
 			{
-				JSEncapsulate myClass( cx, &( argv[0] ));
-				if( myClass.ClassName() == "UOXSocket" )
-				{
-					mySock = static_cast<CSocket *>( myClass.toObject() );
-		}
+				mySock = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 	}
 
 			myChar->Update( mySock );
@@ -7506,7 +7556,7 @@ bool CBase_Refresh( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 	else if( myObj->CanBeObjType( OT_ITEM ))
 	{
-		CItem *myItem = static_cast<CItem *>( JS_GetPrivate( cx, obj ));
+  CItem *myItem = JS::GetMaybePtrFromReservedSlot<CItem>( obj, 0 );
 		if( ValidateObject( myItem ))
 		{
 			myItem->Update();
@@ -7533,16 +7583,16 @@ bool CBase_Refresh( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CItem_ApplyRank( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "ApplyRank: Invalid number of arguments (takes 2)" );
 		return false;
 	}
-	CItem *myItem	= static_cast<CItem *>( JS_GetPrivate( cx, obj ));
-	SI32 rank		= JSVAL_TO_INT( argv[0] );
-	SI32 maxrank	= JSVAL_TO_INT( argv[1] );
+  CItem *myItem = JS::GetMaybePtrFromReservedSlot<CItem>( obj, 0 );
+	SI32 rank		= args.get(0).toInt32();
+	SI32 maxrank	= args.get(1).toInt32();
 
 	Skills->ApplyRank( nullptr, myItem, rank, maxrank );
 	return true;
@@ -7557,15 +7607,15 @@ bool IsOnFoodList( const std::string& sFoodList, const UI16 sItemId );
 //o------------------------------------------------------------------------------------------------o
 bool CItem_IsOnFoodList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 || argc > 7 )
 	{
 		ScriptError( cx, "(IsOnFoodList) Invalid Number of Arguments %d, needs: 1 - foodlist name", argc );
 		return true;
 	}
 
-	CItem *myItem = static_cast<CItem *>( JS_GetPrivate( cx, obj ));
+  CItem *myItem = JS::GetMaybePtrFromReservedSlot<CItem>( obj, 0 );
 
 	if( !ValidateObject( myItem ))
 	{
@@ -7573,14 +7623,14 @@ bool CItem_IsOnFoodList( JSContext *cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	if( !JSVAL_IS_STRING( argv[0] ))
+	if( !args.get(0).isString() )
 	{
 		ScriptError( cx, "IsOnFoodList: Invalid parameter specifled, string required!" );
 		return false;
 	}
-	std::string foodList = JS_GetStringBytes( cx, argv[0]);
+	std::string foodList = JS_GetStringBytes( cx, args.get(0));
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( IsOnFoodList( foodList, myItem->GetId() )) );
+	args.rval().setBoolean(  IsOnFoodList( foodList, myItem->GetId() ) );
 	return true;
 }
 
@@ -7589,7 +7639,7 @@ bool CItem_IsOnFoodList( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	NOT IMPLEMENTED
 //o------------------------------------------------------------------------------------------------o
-bool CAccount_GetAccount(JSContext* cx, unsigned argc, jsval* vp)
+bool CAccount_GetAccount(JSContext* cx, unsigned argc, JS::Value* vp)
 {
 	return false;
 }
@@ -7599,7 +7649,7 @@ bool CAccount_GetAccount(JSContext* cx, unsigned argc, jsval* vp)
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	NOT IMPLEMENTED
 //o------------------------------------------------------------------------------------------------o
-bool CAccount_SetAccount(JSContext* cx, unsigned argc, jsval* vp)
+bool CAccount_SetAccount(JSContext* cx, unsigned argc, JS::Value* vp)
 {
 	return false;
 }
@@ -7616,31 +7666,31 @@ bool CAccount_SetAccount(JSContext* cx, unsigned argc, jsval* vp)
 //o------------------------------------------------------------------------------------------------o
 bool CAccount_AddAccount( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 4 )
 	{
 		ScriptError( cx, "Account.AddAccount(user,pass,email,flags): Invalid number of arguments (takes 4)" );
 		return false;
 	}
 	// Ok get our object from the global context
-	if( !JSVAL_IS_STRING( argv[0] ) || !JSVAL_IS_STRING( argv[1] ) || !JSVAL_IS_STRING( argv[2] ) || !( JSVAL_IS_INT( argv[3] ) || JSVAL_IS_STRING( argv[3] )))
+	if( !args.get(0).isString() || !args.get(1).isString() || !args.get(2).isString() || !( args.get(3).isInt32() || args.get(3).isString() ) )
 	{
 		ScriptError( cx, "Account.AddAccount(user,pass,email,flags): Invalid parameter specifled, please check param types." );
 		return false;
 	}
-	std::string lpszUsername	= JS_GetStringBytes( cx, argv[0]);
-	std::string lpszPassword	= JS_GetStringBytes( cx, argv[1]);
-	std::string lpszComment		= JS_GetStringBytes( cx, argv[2]);
+	std::string lpszUsername	= JS_GetStringBytes( cx, args.get(0));
+	std::string lpszPassword	= JS_GetStringBytes( cx, args.get(1));
+	std::string lpszComment		= JS_GetStringBytes( cx, args.get(2));
 	UI16 u16Flags		= 0;
 
-	if( JSVAL_IS_INT( argv[3] ))
+	if( args.get(3).isInt32() )
 	{
-		u16Flags = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+		u16Flags = static_cast<UI16>( args.get(3).toInt32());
 	}
 	else
 	{
-		u16Flags = static_cast<UI16>( std::stoul( JS_GetStringBytes( cx, argv[3] )), nullptr, 0);
+		u16Flags = static_cast<UI16>( std::stoul( JS_GetStringBytes( cx, args.get(3) )), nullptr, 0);
 	}
 
 	if( lpszUsername.empty() || lpszPassword.empty() || lpszComment.empty() || lpszUsername.length() == 0 || lpszPassword.length() == 0 || lpszComment.length() == 0 )
@@ -7669,17 +7719,17 @@ bool CAccount_AddAccount( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CAccount_DelAccount( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Account.DelAccount([username/id]): Invalid number of arguments (takes 1)" );
 		return false;
 	}
 	// Ok get out object from the global context
-	if( JSVAL_IS_STRING( argv[0] ))
+	if( args.get(0).isString() )
 	{
-		std::string lpszUsername = JS_GetStringBytes( cx, argv[0]);
+		std::string lpszUsername = JS_GetStringBytes( cx, args.get(0));
 		if( !Accounts->DelAccount( lpszUsername ))
 		{
 			ScriptError( cx, " Account.DelAccount(username): Unable to remove account specified." );
@@ -7687,9 +7737,9 @@ bool CAccount_DelAccount( JSContext *cx, unsigned argc, JS::Value* vp )
 		}
 
 	}
-	else if( JSVAL_IS_INT( argv[0] ))
+	else if( args.get(0).isInt32() )
 	{
-		UI16 ui16AccountId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+		UI16 ui16AccountId = static_cast<UI16>( args.get(0).toInt32());
 		if( !Accounts->DelAccount( ui16AccountId ))
 		{
 			ScriptError( cx, " Account.DelAccount(accountID): Unable to remove account specified." );
@@ -7708,7 +7758,7 @@ bool CAccount_DelAccount( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	NOT IMPLEMENTED
 //o------------------------------------------------------------------------------------------------o
-bool CAccount_ModAccount(JSContext* cx, unsigned argc, jsval* vp)
+bool CAccount_ModAccount(JSContext* cx, unsigned argc, JS::Value* vp)
 {
 	return false;
 }
@@ -7718,7 +7768,7 @@ bool CAccount_ModAccount(JSContext* cx, unsigned argc, jsval* vp)
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	NOT IMPLEMENTED
 //o------------------------------------------------------------------------------------------------o
-bool CAccount_SaveAccounts(JSContext* cx, unsigned argc, jsval* vp)
+bool CAccount_SaveAccounts(JSContext* cx, unsigned argc, JS::Value* vp)
 {
 	return false;
 }
@@ -7730,12 +7780,11 @@ bool UOXCFile( JSContext *cx, unsigned argc, JS::Value* vp )
 	UOXFileWrapper_st *toAdd = new UOXFileWrapper_st;
 	toAdd->mWrap = nullptr;
 
-	JSObject* obj = JS_NewObject( cx, &UOXFile_class, nullptr, nullptr );
+	JS::RootedObject obj( cx, JS_NewObject( cx, &UOXFile_class ));
 	JS_DefineFunctions( cx, obj, CFile_Methods );
-	JS_SetPrivate( cx, obj, toAdd );
-	JS_LockGCThing( cx, obj );
-	//JS_AddRoot( cx, &obj );
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( obj ) );
+	JS::SetReservedSlot( obj, 0, JS::PrivateValue( toAdd ) );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	args.rval().setObjectOrNull( obj );
 	return true;
 }
 
@@ -7748,17 +7797,16 @@ bool UOXCFile( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CFile_Free( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Free: Invalid number of arguments (takes 0)" );
 		return false;
 	}
-	UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>( JS_GetPrivate( cx, obj ));
+  UOXFileWrapper_st *mFile = JS::GetMaybePtrFromReservedSlot<UOXFileWrapper_st>( obj, 0 );
 	delete mFile;
-	JS_UnlockGCThing( cx, obj );
-	//JS_RemoveRoot( cx, &obj );
-	JS_SetPrivate( cx, obj, nullptr );
+	JS::SetReservedSlot( obj, 0, JS::UndefinedValue() );
 	return true;
 }
 
@@ -7771,26 +7819,26 @@ bool CFile_Free( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CFile_Open( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc < 2 || argc > 4 )
 	{
 		ScriptError( cx, "Open: Invalid number of arguments (takes 2 to 4 - filename, file mode and - optionally - folderName and useScriptDataDir bool)" );
 		return false;
 	}
-	UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>( JS_GetPrivate( cx, obj ));
+  UOXFileWrapper_st *mFile = JS::GetMaybePtrFromReservedSlot<UOXFileWrapper_st>( obj, 0 );
 
-	std::string fileName = JS_GetStringBytes( cx, argv[0]);
-	std::string mode = JS_GetStringBytes( cx, argv[1]);
+	std::string fileName = JS_GetStringBytes( cx, args.get(0));
+	std::string mode = JS_GetStringBytes( cx, args.get(1));
 	std::string folderName;
 	if( argc >= 3 )
 	{
-		folderName = JS_GetStringBytes( cx, argv[2]);
+		folderName = JS_GetStringBytes( cx, args.get(2));
 	}
 	bool useScriptDataDir = false;
 	if( argc >= 4 )
 	{
-		useScriptDataDir = ( JSVAL_TO_BOOLEAN( argv[3] ) == true );
+		useScriptDataDir = ( args.get(3).toBoolean() == true );
 	}
 
 	if( oldstrutil::lower( mode ).find_first_of( "rwa", 0, 3 ) == std::string::npos )
@@ -7855,8 +7903,9 @@ bool CFile_Close( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Open: Invalid number of arguments (takes 0)" );
 		return false;
 	}
-	JSObject* obj = JS_THIS_OBJECT(cx, vp);
-	UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis(cx, args);
+  UOXFileWrapper_st *mFile = JS::GetMaybePtrFromReservedSlot<UOXFileWrapper_st>( obj, 0 );
 
 	fclose( mFile->mWrap );
 	return true;
@@ -7871,21 +7920,21 @@ bool CFile_Close( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CFile_Read( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Read: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>( JS_GetPrivate( cx, obj ));
+  UOXFileWrapper_st *mFile = JS::GetMaybePtrFromReservedSlot<UOXFileWrapper_st>( obj, 0 );
 
 	if( !mFile || !mFile->mWrap || feof( mFile->mWrap ))
 	{
 		ScriptError( cx, "Read: Error reading file, is not opened or has reached EOF" );
 		return false;
 	}
-	SI32 bytes = JSVAL_TO_INT( argv[0] );
+	SI32 bytes = args.get(0).toInt32();
 	char data[512];
 
 	if( bytes > 512 || bytes < 1 )
@@ -7897,7 +7946,7 @@ bool CFile_Read( JSContext *cx, unsigned argc, JS::Value* vp )
 	// We don't care about return value, so suppress compiler warning
 	[[maybe_unused]] size_t bytesRead = fread( data, 1, bytes, mFile->mWrap );
 
-	JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( JS_NewStringCopyZ( cx, data )) );
+	args.rval().setString( JS_NewStringCopyZ( cx, data ));
 	return true;
 }
 
@@ -7911,21 +7960,21 @@ bool CFile_Read( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CFile_ReadUntil( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "ReadUntil: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>( JS_GetPrivate( cx, obj ));
+  UOXFileWrapper_st *mFile = JS::GetMaybePtrFromReservedSlot<UOXFileWrapper_st>( obj, 0 );
 
 	if( !mFile || !mFile->mWrap || feof( mFile->mWrap ))
 	{
 		ScriptError( cx, "ReadUntil: Error reading file, is not opened or has reached EOF" );
 		return false;
 	}
-	std::string until = JS_GetStringBytes( cx, argv[0]);
+	std::string until = JS_GetStringBytes( cx, args.get(0));
 	char line[512];
 	SI32 c;
 
@@ -7949,7 +7998,7 @@ bool CFile_ReadUntil( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 	line[c < 512 ? c : 511] = 0;
 
-	JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( JS_NewStringCopyZ( cx, line )) );
+	args.rval().setString( JS_NewStringCopyZ( cx, line ));
 	return true;
 }
 
@@ -7962,14 +8011,14 @@ bool CFile_ReadUntil( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CFile_Write( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Write: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>( JS_GetPrivate( cx, obj ));
+  UOXFileWrapper_st *mFile = JS::GetMaybePtrFromReservedSlot<UOXFileWrapper_st>( obj, 0 );
 
 	if( !mFile || !mFile->mWrap || feof( mFile->mWrap ))
 	{
@@ -7982,7 +8031,7 @@ bool CFile_Write( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	std::string str = JS_GetStringBytes( cx, argv[0]);
+	std::string str = JS_GetStringBytes( cx, args.get(0));
 	if( !str.empty() )
 	{
 		fprintf( mFile->mWrap, "%s", str.c_str() );
@@ -8000,18 +8049,19 @@ bool CFile_Write( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CFile_EOF( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "EOF: Invalid number of arguments (takes 0)" );
 		return false;
 	}
-	UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>( JS_GetPrivate( cx, obj ));
+  UOXFileWrapper_st *mFile = JS::GetMaybePtrFromReservedSlot<UOXFileWrapper_st>( obj, 0 );
 
 	if( !mFile || !mFile->mWrap )
 		return false;
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( feof( mFile->mWrap ) != 0 )) );
+	args.rval().setBoolean( ( feof( mFile->mWrap ) != 0 ) );
 
 	return true;
 }
@@ -8025,23 +8075,24 @@ bool CFile_EOF( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CFile_Length( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Length: Invalid number of arguments (takes 0)" );
 		return false;
 	}
-	UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>( JS_GetPrivate( cx, obj ));
+  UOXFileWrapper_st *mFile = JS::GetMaybePtrFromReservedSlot<UOXFileWrapper_st>( obj, 0 );
 
 	if( !mFile || !mFile->mWrap )
 	{
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( -1 ) );
+		args.rval().setInt32(  -1  );
 		return true;
 	}
 
 	long fpos = ftell( mFile->mWrap );
 	fseek( mFile->mWrap, 0, SEEK_END );
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( ftell( mFile->mWrap )) );
+	args.rval().setInt32(  ftell( mFile->mWrap ) );
 
 	if( fpos > -1 )
 	{
@@ -8060,24 +8111,24 @@ bool CFile_Length( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CFile_Pos( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 && argc != 1 )
 	{
 		ScriptError( cx, "Pos: Invalid number of arguments (takes 0 or 1)" );
 		return false;
 	}
-	UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>( JS_GetPrivate( cx, obj ));
+  UOXFileWrapper_st *mFile = JS::GetMaybePtrFromReservedSlot<UOXFileWrapper_st>( obj, 0 );
 
 	if( !mFile || !mFile->mWrap )
 		return false;
 
 	if( argc == 1 )
 	{
-		[[maybe_unused]] int newFPos = fseek( mFile->mWrap, JSVAL_TO_INT( argv[0] ), SEEK_SET );
+		[[maybe_unused]] int newFPos = fseek( mFile->mWrap, args.get(0).toInt32(), SEEK_SET );
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( ftell( mFile->mWrap )) );
+	args.rval().setInt32(  ftell( mFile->mWrap ) );
 
 	return true;
 }
@@ -8091,13 +8142,14 @@ bool CFile_Pos( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_FirstItem( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "FirstItem: Invalid count of arguments :%d, needs :0", argc );
 		return false;
 	}
-	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+  CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "FirstItem: Invalid object assigned." );
@@ -8124,12 +8176,12 @@ bool CBase_FirstItem( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( ValidateObject( firstItem ))
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, firstItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, firstItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+		args.rval().setObjectOrNull( myObj );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 	}
 	return true;
 }
@@ -8143,13 +8195,14 @@ bool CBase_FirstItem( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_NextItem( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "NextItem: Invalid count of arguments :%d, needs :0", argc );
 		return false;
 	}
-	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+  CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "NextItem: Invalid object assigned." );
@@ -8176,12 +8229,12 @@ bool CBase_NextItem( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( ValidateObject( nextItem ))
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, nextItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, nextItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+		args.rval().setObjectOrNull( myObj );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 	}
 	return true;
 }
@@ -8195,13 +8248,14 @@ bool CBase_NextItem( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_FinishedItems( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "FinishedItems: Invalid count of arguments :%d, needs :0", argc );
 		return false;
 	}
-	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+  CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "NextItem: Invalid object assigned." );
@@ -8209,15 +8263,15 @@ bool CBase_FinishedItems( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 	if( myObj->GetObjType() == OT_CHAR )
 	{
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( static_cast<CChar *>( myObj ))->FinishedItems() ) );
+		args.rval().setBoolean( ( static_cast<CChar *>( myObj ))->FinishedItems()  );
 	}
 	else if( myObj->GetObjType() == OT_ITEM )
 	{
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( static_cast<CItem *>( myObj ))->GetContainsList()->Finished() ) );
+		args.rval().setBoolean( ( static_cast<CItem *>( myObj ))->GetContainsList()->Finished()  );
 	}
 	else if( myObj->GetObjType() == OT_MULTI || myObj->GetObjType() == OT_BOAT )
 	{
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( static_cast<CMultiObj *>( myObj ))->GetItemsInMultiList()->Finished() ) );
+		args.rval().setBoolean( ( static_cast<CMultiObj *>( myObj ))->GetItemsInMultiList()->Finished()  );
 	}
 	return true;
 }
@@ -8238,10 +8292,10 @@ bool CChar_WalkTo( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "WalkTo: Invalid number of arguments (takes 2 to 6)" );
 		return false;
 	}
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 
-	CChar *cMove = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
+  CChar *cMove = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( cMove ))
 	{
 		ScriptError( cx, "WalkTo: Invalid source character" );
@@ -8254,12 +8308,11 @@ bool CChar_WalkTo( JSContext *cx, unsigned argc, JS::Value* vp )
 	bool allowPartial = false;
 	bool ignoreDoors = false;
 
-	if( JSVAL_IS_OBJECT( argv[0] ))
+	if( args.get(0).isObject() )
 	{	// we can work with this, it should be either a character or item, hopefully
-		JSEncapsulate jsToGoTo( cx, &( argv[0] ));
-		if( jsToGoTo.ClassName() == "UOXItem" || jsToGoTo.ClassName() == "UOXChar" )
+		CBaseObject *toGoTo = GetBaseObject( args.get( 0 ));
+		if( toGoTo != nullptr )
 		{
-			CBaseObject *toGoTo = static_cast<CBaseObject *>( jsToGoTo.toObject() );
 			if( !ValidateObject( toGoTo ))
 			{
 				ScriptError( cx, "No object associated with this object" );
@@ -8269,9 +8322,9 @@ bool CChar_WalkTo( JSContext *cx, unsigned argc, JS::Value* vp )
 			gy = toGoTo->GetY();
 			gz = toGoTo->GetZ();
 		}
-		else if( jsToGoTo.ClassName() == "UOXSocket" )
+		else if( HasWrapperClass( args.get( 0 ), &UOXSocket_class ))
 		{
-			CSocket *mySock		= static_cast<CSocket *>( jsToGoTo.toObject() );
+			CSocket *mySock		= GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 			CChar *mySockChar	= mySock->CurrcharObj();
 			gx					= mySockChar->GetX();
 			gy					= mySockChar->GetY();
@@ -8282,14 +8335,14 @@ bool CChar_WalkTo( JSContext *cx, unsigned argc, JS::Value* vp )
 			ScriptError( cx, "Invalid class of object" );
 			return false;
 		}
-		maxSteps = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+		maxSteps = static_cast<UI16>( args.get(1).toInt32());
 		if( argc >= 3 )
 		{
-			allowPartial = ( JSVAL_TO_BOOLEAN( argv[2] ) == true );
+			allowPartial = ( args.get(2).toBoolean() == true );
 		}
 		if( argc >= 4 )
 		{
-			ignoreDoors = ( JSVAL_TO_BOOLEAN( argv[3] ) == true );
+			ignoreDoors = ( args.get(3).toBoolean() == true );
 		}
 	}
 	else
@@ -8311,7 +8364,7 @@ bool CChar_WalkTo( JSContext *cx, unsigned argc, JS::Value* vp )
 		else if( argc == 4 || argc == 5 )
 		{
 			// Check if 4th argument is bool (allowPartial, 2D pathfinding) or int (maxSteps, 3D pathfinding)
-			if( JSVAL_IS_BOOLEAN( argv[3] ))
+			if( args.get(3).isBoolean() )
 			{
 				includeZ = false;
 			}
@@ -8321,33 +8374,33 @@ bool CChar_WalkTo( JSContext *cx, unsigned argc, JS::Value* vp )
 		if( !includeZ )
 		{
 			// 2D pathfinding
-			gx			= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-			gy			= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+			gx			= static_cast<UI16>( args.get(0).toInt32());
+			gy			= static_cast<UI16>( args.get(1).toInt32());
 			gz			= ILLEGAL_Z; // Forces 2D in advanced pathfinder code
-			maxSteps	= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+			maxSteps	= static_cast<UI16>( args.get(2).toInt32());
 			if( argc >= 5 )
 			{
-				allowPartial = ( JSVAL_TO_BOOLEAN( argv[3] ) == true );
+				allowPartial = ( args.get(3).toBoolean() == true );
 			}
 			if( argc == 6 )
 			{
-				ignoreDoors = ( JSVAL_TO_BOOLEAN( argv[4] ) == true );
+				ignoreDoors = ( args.get(4).toBoolean() == true );
 			}
 		}
 		else
 		{
 			// 3D pathfinding
-			gx			= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-			gy			= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
-			gz			= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-			maxSteps	= static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+			gx			= static_cast<UI16>( args.get(0).toInt32());
+			gy			= static_cast<UI16>( args.get(1).toInt32());
+			gz			= static_cast<SI08>( args.get(2).toInt32());
+			maxSteps	= static_cast<UI16>( args.get(3).toInt32());
 			if( argc >= 5 )
 			{
-				allowPartial = ( JSVAL_TO_BOOLEAN( argv[4] ) == true );
+				allowPartial = ( args.get(4).toBoolean() == true );
 			}
 			if( argc == 6 )
 			{
-				ignoreDoors = ( JSVAL_TO_BOOLEAN( argv[5] ) == true );
+				ignoreDoors = ( args.get(5).toBoolean() == true );
 			}
 		}
 	}
@@ -8396,10 +8449,10 @@ bool CChar_RunTo( JSContext *cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "RunTo: Invalid number of arguments (takes 2 to 6)" );
 		return false;
 	}
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 
-	CChar *cMove = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
+  CChar *cMove = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( cMove ))
 	{
 		ScriptError( cx, "RunTo: Invalid source character" );
@@ -8411,12 +8464,11 @@ bool CChar_RunTo( JSContext *cx, unsigned argc, JS::Value* vp )
 	UI16 maxSteps	= 0;
 	bool allowPartial = false;
 	bool ignoreDoors = false;
-	if( JSVAL_IS_OBJECT( argv[0] ))
+	if( args.get(0).isObject() )
 	{
-		JSEncapsulate jsToGoTo( cx, &( argv[0] ));
-		if( jsToGoTo.ClassName() == "UOXItem" || jsToGoTo.ClassName() == "UOXChar" )
+		CBaseObject *toGoTo = GetBaseObject( args.get( 0 ));
+		if( toGoTo != nullptr )
 		{
-			CBaseObject *toGoTo = static_cast<CBaseObject *>( jsToGoTo.toObject() );
 			if( !ValidateObject( toGoTo ))
 			{
 				ScriptError( cx, "No object associated with this object" );
@@ -8426,9 +8478,9 @@ bool CChar_RunTo( JSContext *cx, unsigned argc, JS::Value* vp )
 			gy = toGoTo->GetY();
 			gz = toGoTo->GetZ();
 		}
-		else if( jsToGoTo.ClassName() == "UOXSocket" )
+		else if( HasWrapperClass( args.get( 0 ), &UOXSocket_class ))
 		{
-			CSocket *mySock		= static_cast<CSocket *>( jsToGoTo.toObject() );
+			CSocket *mySock		= GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 			CChar *mySockChar	= mySock->CurrcharObj();
 			gx					= mySockChar->GetX();
 			gy					= mySockChar->GetY();
@@ -8439,14 +8491,14 @@ bool CChar_RunTo( JSContext *cx, unsigned argc, JS::Value* vp )
 			ScriptError( cx, "Invalid class of object" );
 			return false;
 		}
-		maxSteps = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+		maxSteps = static_cast<UI16>( args.get(1).toInt32());
 		if( argc >= 3 )
 		{
-			allowPartial = ( JSVAL_TO_BOOLEAN( argv[2] ) == true );
+			allowPartial = ( args.get(2).toBoolean() == true );
 		}
 		if( argc >= 4 )
 		{
-			ignoreDoors = ( JSVAL_TO_BOOLEAN( argv[3] ) == true );
+			ignoreDoors = ( args.get(3).toBoolean() == true );
 		}
 	}
 	else
@@ -8468,7 +8520,7 @@ bool CChar_RunTo( JSContext *cx, unsigned argc, JS::Value* vp )
 		else if( argc == 4 || argc == 5 )
 		{
 			// Check if 4th argument is bool (allowPartial, 2D pathfinding) or int (maxSteps, 3D pathfinding)
-			if( JSVAL_IS_BOOLEAN( argv[3] ))
+			if( args.get(3).isBoolean() )
 			{
 				includeZ = false;
 			}
@@ -8478,33 +8530,33 @@ bool CChar_RunTo( JSContext *cx, unsigned argc, JS::Value* vp )
 		if( !includeZ )
 		{
 			// 2D pathfinding
-			gx			= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-			gy			= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+			gx			= static_cast<UI16>( args.get(0).toInt32());
+			gy			= static_cast<UI16>( args.get(1).toInt32());
 			gz			= ILLEGAL_Z; // Forces 2D in advanced pathfinder code
-			maxSteps	= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+			maxSteps	= static_cast<UI16>( args.get(2).toInt32());
 			if( argc >= 5 )
 			{
-				allowPartial = ( JSVAL_TO_BOOLEAN( argv[3] ) == true );
+				allowPartial = ( args.get(3).toBoolean() == true );
 			}
 			if( argc == 6 )
 			{
-				ignoreDoors = ( JSVAL_TO_BOOLEAN( argv[4] ) == true );
+				ignoreDoors = ( args.get(4).toBoolean() == true );
 			}
 		}
 		else
 		{
 			// 3D pathfinding
-			gx			= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-			gy			= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
-			gz			= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-			maxSteps	= static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+			gx			= static_cast<UI16>( args.get(0).toInt32());
+			gy			= static_cast<UI16>( args.get(1).toInt32());
+			gz			= static_cast<SI08>( args.get(2).toInt32());
+			maxSteps	= static_cast<UI16>( args.get(3).toInt32());
 			if( argc >= 5 )
 			{
-				allowPartial = ( JSVAL_TO_BOOLEAN( argv[4] ) == true );
+				allowPartial = ( args.get(4).toBoolean() == true );
 			}
 			if( argc == 6 )
 			{
-				ignoreDoors = ( JSVAL_TO_BOOLEAN( argv[5] ) == true );
+				ignoreDoors = ( args.get(5).toBoolean() == true );
 			}
 		}
 	}
@@ -8546,36 +8598,38 @@ bool CChar_RunTo( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMisc_GetTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetTimer: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	JSEncapsulate encaps( cx, &( argv[0] ));
-	JSEncapsulate myClass( cx, obj );
-	if( myClass.ClassName() == "UOXChar" )
+	int32_t timerId = 0;
+	if( !JS::ToInt32( cx, args.get( 0 ), &timerId ))
+		return false;
+
+	if( HasWrapperClass( obj, &UOXChar_class ))
 	{
-		CChar *cMove = static_cast<CChar*>( myClass.toObject() );
+		CChar *cMove = GetWrappedObject<CChar>( obj, &UOXChar_class );
 		if( !ValidateObject( cMove ))
 		{
 			ScriptError( cx, "GetTimer: Invalid source character" );
 			return false;
 		}
 
-		JS_NewNumberValue( cx, cMove->GetTimer( static_cast<cC_TID>( encaps.toInt() )), &JS_RVAL( cx, vp ) );
+		args.rval().setNumber( cMove->GetTimer( static_cast<cC_TID>( timerId )) );
 	}
-	else if( myClass.ClassName() == "UOXSocket" )
+	else if( HasWrapperClass( obj, &UOXSocket_class ))
 	{
-		CSocket *mSock = static_cast<CSocket *>( myClass.toObject() );
+		CSocket *mSock = GetWrappedObject<CSocket>( obj, &UOXSocket_class );
 		if( mSock == nullptr )
 		{
 			ScriptError( cx, "GetTimer: Invalid source socket" );
 			return false;
 		}
 
-		JS_NewNumberValue( cx, mSock->GetTimer( static_cast<cS_TID>( encaps.toInt() )), &JS_RVAL( cx, vp ) );
+		args.rval().setNumber( mSock->GetTimer( static_cast<cS_TID>( timerId )) );
 	}
 
 	return true;
@@ -8589,44 +8643,46 @@ bool CMisc_GetTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMisc_SetTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SetTimer: Invalid number of arguments (takes 2)" );
 		return false;
 	}
-	JSEncapsulate encaps( cx, &( argv[0] ));
-	JSEncapsulate myClass( cx, obj );
+	int32_t timerId = 0;
+	if( !JS::ToInt32( cx, args.get( 0 ), &timerId ))
+		return false;
 
-	jsdouble timerVal_double;
-	JS_ValueToNumber( cx, argv[1], &timerVal_double );
+	double timerVal_double;
+	JS::RootedValue rootedValue( cx, args.get(1) );
+	JS::ToNumber( cx, rootedValue, &timerVal_double );
 	TIMERVAL timerVal = 0;
 	if( timerVal_double != 0 )
 	{
 		timerVal = BuildTimeValue( static_cast<R64>( timerVal_double ) / 1000.0 );
 	}
-	if( myClass.ClassName() == "UOXChar" )
+	if( HasWrapperClass( obj, &UOXChar_class ))
 	{
-		CChar *cMove = static_cast<CChar*>( myClass.toObject() );
+		CChar *cMove = GetWrappedObject<CChar>( obj, &UOXChar_class );
 		if( !ValidateObject( cMove ))
 		{
 			ScriptError( cx, "SetTimer: Invalid source character" );
 			return false;
 		}
 
-		cMove->SetTimer( static_cast<cC_TID>( encaps.toInt() ), timerVal );
+		cMove->SetTimer( static_cast<cC_TID>( timerId ), timerVal );
 	}
-	else if( myClass.ClassName() == "UOXSocket" )
+	else if( HasWrapperClass( obj, &UOXSocket_class ))
 	{
-		CSocket *mSock = static_cast<CSocket *>( myClass.toObject() );
+		CSocket *mSock = GetWrappedObject<CSocket>( obj, &UOXSocket_class );
 		if( mSock == nullptr )
 		{
 			ScriptError( cx, "SetTimer: Invalid source socket" );
 			return false;
 		}
 
-		mSock->SetTimer( static_cast<cS_TID>( encaps.toInt() ), static_cast<TIMERVAL>( timerVal ));
+		mSock->SetTimer( static_cast<cS_TID>( timerId ), static_cast<TIMERVAL>( timerVal ));
 	}
 
 	return true;
@@ -8640,18 +8696,17 @@ bool CMisc_SetTimer( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_DistanceTo( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "DistanceTo: Invalid number of arguments (takes 1, game object)" );
 		return false;
 	}
 
-	JSObject *jsObj		= JSVAL_TO_OBJECT( argv[0] );
-	CBaseObject *myObj	= static_cast<CBaseObject *>( JS_GetPrivate( cx, jsObj ));
+	auto *myObj = GetBaseObject( args.get( 0 ));
 
-	CBaseObject *thisObj	= static_cast<CBaseObject *>( JS_GetPrivate( cx, obj ));
+  CBaseObject *thisObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 
 	if( !ValidateObject( thisObj ) || !ValidateObject( myObj ))
 	{
@@ -8659,7 +8714,7 @@ bool CBase_DistanceTo( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( GetDist( thisObj, myObj )) );
+	args.rval().setInt32(  GetDist( thisObj, myObj ) );
 	return true;
 }
 
@@ -8671,12 +8726,11 @@ bool CBase_DistanceTo( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CItem_Glow( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	JSObject *mSock	= JSVAL_TO_OBJECT( argv[0] );
-	CSocket *mySock	= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
+	auto *mySock = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 
-	CItem *mItem = static_cast<CItem *>( JS_GetPrivate( cx, obj ));
+  CItem *mItem = JS::GetMaybePtrFromReservedSlot<CItem>( obj, 0 );
 
 	if( !ValidateObject( mItem ))
 	{
@@ -8728,12 +8782,11 @@ bool CItem_Glow( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CItem_UnGlow( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	JSObject *mSock	= JSVAL_TO_OBJECT( argv[0] );
-	CSocket *mySock	= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
+	auto *mySock = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 
-	CItem *mItem	= static_cast<CItem *>( JS_GetPrivate( cx, obj ));
+  CItem *mItem = JS::GetMaybePtrFromReservedSlot<CItem>( obj, 0 );
 
 	if( !ValidateObject( mItem ))
 	{
@@ -8780,15 +8833,15 @@ bool CItem_UnGlow( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_Gate( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 && argc != 4 && argc != 5 )
 	{
 		ScriptError( cx, "Gate: Invalid number of arguments (takes 1: item/place; 4: x y z worldNumber; or 5: x y z worldNumber instanceID)" );
 		return false;
 	}
 
-	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "Gate: Invalid source character" );
@@ -8802,10 +8855,9 @@ bool CChar_Gate( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( argc == 1 )
 	{
-		if( JSVAL_IS_OBJECT( argv[0] ))
+		if( args.get(0).isObject() )
 		{
-			JSObject *jsObj		= JSVAL_TO_OBJECT( argv[0] );
-			CItem *mItem		= static_cast<CItem *>( JS_GetPrivate( cx, jsObj ));
+			auto *mItem = GetWrappedObject<CItem>( args.get( 0 ), &UOXItem_class );
 			if( !ValidateObject( mItem ))
 			{
 				ScriptError( cx, "Gate: Invalid item passed" );
@@ -8820,7 +8872,7 @@ bool CChar_Gate( JSContext *cx, unsigned argc, JS::Value* vp )
 		}
 		else
 		{
-			UI16 placeNum = JSVAL_TO_INT( argv[0] );
+			UI16 placeNum = args.get(0).toInt32();
 			if( cwmWorldState->goPlaces.find( placeNum ) != cwmWorldState->goPlaces.end() )
 			{
 				GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
@@ -8833,13 +8885,13 @@ bool CChar_Gate( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 	else
 	{
-		destX		= JSVAL_TO_INT( argv[0] );
-		destY		= JSVAL_TO_INT( argv[1] );
-		destZ		= JSVAL_TO_INT( argv[2] );
-		destWorld	= JSVAL_TO_INT( argv[3] );
+		destX		= args.get(0).toInt32();
+		destY		= args.get(1).toInt32();
+		destZ		= args.get(2).toInt32();
+		destWorld	= args.get(3).toInt32();
 		if( argc == 5 )
 		{
-			destInstanceId = JSVAL_TO_INT( argv[4] );
+			destInstanceId = args.get(4).toInt32();
 		}
 	}
 
@@ -8861,23 +8913,22 @@ bool CChar_Gate( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_Recall( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Recall: Invalid number of arguments (takes 1, item)" );
 		return false;
 	}
 
-	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "Recall: Invalid source character" );
 		return false;
 	}
 
-	JSObject *jsObj		= JSVAL_TO_OBJECT( argv[0] );
-	CItem *mItem		= static_cast<CItem *>( JS_GetPrivate( cx, jsObj ));
+	auto *mItem = GetWrappedObject<CItem>( args.get( 0 ), &UOXItem_class );
 	if( !ValidateObject( mItem ))
 	{
 		ScriptError( cx, "Recall: Invalid item passed" );
@@ -8915,23 +8966,22 @@ bool CChar_Recall( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_Mark( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Mark: Invalid number of arguments (takes 1, character)" );
 		return false;
 	}
 
-	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "Mark: Invalid source character" );
 		return false;
 	}
 
-	JSObject *jsObj		= JSVAL_TO_OBJECT( argv[0] );
-	CItem *mItem		= static_cast<CItem *>( JS_GetPrivate( cx, jsObj ));
+	auto *mItem = GetWrappedObject<CItem>( args.get( 0 ), &UOXItem_class );
 	if( !ValidateObject( mItem ))
 	{
 		ScriptError( cx, "Mark: Invalid item passed" );
@@ -8966,25 +9016,25 @@ void SetRandomName( CBaseObject *s, const std::string& namelist );
 //o------------------------------------------------------------------------------------------------o
 bool CBase_SetRandomName( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "SetRandomName: Invalid number of arguments (takes 1, namelist string)" );
 		return false;
 	}
 
-	CBaseObject *mObj		= static_cast<CBaseObject *>( JS_GetPrivate( cx, obj ));
-	std::string namelist	= JS_GetStringBytes( cx, argv[0]);
+  CBaseObject *mObj	 = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
+	std::string namelist	= JS_GetStringBytes( cx, args.get(0));
 
 	if( !namelist.empty() )
 	{
 		SetRandomName( mObj, namelist );
-		JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+		args.rval().setBoolean( true );
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+	args.rval().setBoolean( false );
 	return true;
 }
 
@@ -8997,25 +9047,25 @@ UI16 AddRandomColor( const std::string& colorlist );
 //o------------------------------------------------------------------------------------------------o
 bool CBase_SetRandomColor( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "SetRandomColor: Invalid number of arguments (takes 1, colorlist string)" );
 		return false;
 	}
 
-	CBaseObject *mObj			= static_cast<CBaseObject *>( JS_GetPrivate( cx, obj ));
-	std::string colorlist		= JS_GetStringBytes( cx, argv[0]);
+  CBaseObject *mObj		 = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
+	std::string colorlist		= JS_GetStringBytes( cx, args.get(0));
 
 	if( !colorlist.empty() )
 	{
 		mObj->SetColour( AddRandomColor( colorlist ));
-		JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+		args.rval().setBoolean( true );
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+	args.rval().setBoolean( false );
 	return true;
 }
 
@@ -9028,17 +9078,17 @@ bool CBase_SetRandomColor( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_SetSkillByName( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SetSkillByName: Invalid number of arguments (takes 2, string, value)" );
 		return false;
 	}
 
-	CChar *mChar			= static_cast<CChar *>( JS_GetPrivate( cx, obj ));
-	std::string skillName	= JS_GetStringBytes( cx, argv[0]);
-	UI16 value				= JSVAL_TO_INT( argv[1] );
+  CChar *mChar		 = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
+	std::string skillName	= JS_GetStringBytes( cx, args.get(0));
+	UI16 value				= args.get(1).toInt32();
 	CSocket *mSock			= nullptr;
 	if( !mChar->IsNpc() )
 	{
@@ -9055,11 +9105,11 @@ bool CChar_SetSkillByName( JSContext *cx, unsigned argc, JS::Value* vp )
 			{
 				mSock->UpdateSkill( i );
 			}
-			JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+			args.rval().setBoolean( true );
 			return true;
 		}
 	}
-	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+	args.rval().setBoolean( false );
 	return true;
 }
 
@@ -9071,14 +9121,14 @@ bool CChar_SetSkillByName( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_Kill( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Kill: Invalid number of arguments (takes 0)" );
 		return false;
 	}
-	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "Kill: Invalid character passed" );
@@ -9114,14 +9164,14 @@ bool CChar_Kill( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_Resurrect( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Resurrect: Invalid number of arguments (takes 0)" );
 		return false;
 	}
-	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "Resurrect: Invalid character passed" );
@@ -9140,27 +9190,25 @@ bool CChar_Resurrect( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CItem_Dupe( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Dupe: Invalid number of arguments (takes 1 - socket/null)" );
 		return false;
 	}
 
-	CItem *mItem	= static_cast<CItem *>( JS_GetPrivate( cx, obj ));
-	JSObject *jsObj	= JSVAL_TO_OBJECT( argv[0] );
-
+  CItem *mItem = JS::GetMaybePtrFromReservedSlot<CItem>( obj, 0 );
 	CSocket *mSock = nullptr;
 	bool dupeInPack = true;
 
-	if( jsObj == nullptr )
+	if( args.get( 0 ).isNullOrUndefined() )
 	{
 		dupeInPack = false;
 	}
 	else
 	{
-		mSock = static_cast<CSocket *>( JS_GetPrivate( cx, jsObj ));
+		mSock = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 	}
 
 	if( !ValidateObject( mItem ) || ( mSock == nullptr && dupeInPack ))
@@ -9169,7 +9217,7 @@ bool CItem_Dupe( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *dupeItem = nullptr;
+	JS::RootedObject dupeItem( cx );
 	if( dupeInPack && mSock != nullptr )
 	{
 		dupeItem = JSEngine->AcquireObject( IUE_ITEM, Items->DupeItem( mSock, mItem, mItem->GetAmount() ), JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
@@ -9180,7 +9228,7 @@ bool CItem_Dupe( JSContext *cx, unsigned argc, JS::Value* vp )
 		dupeItem = JSEngine->AcquireObject( IUE_ITEM, dupeItemTemp, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
 	}
 
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( dupeItem ) );
+	args.rval().setObjectOrNull( dupeItem );
 	return true;
 }
 
@@ -9192,8 +9240,8 @@ bool CItem_Dupe( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_Dupe( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Dupe: Invalid number of arguments (takes 0)" );
@@ -9201,7 +9249,7 @@ bool CChar_Dupe( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Original character object
-	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "Dupe: Invalid character object passed?" );
@@ -9217,10 +9265,10 @@ bool CChar_Dupe( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	// JS Object for duped character
-	JSObject *dupeChar = nullptr;
+	JS::RootedObject dupeChar( cx );
 	dupeChar = JSEngine->AcquireObject( IUE_CHAR, dupeCharTemp, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
 
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( dupeChar ) );
+	args.rval().setObjectOrNull( dupeChar );
 	return true;
 }
 
@@ -9233,15 +9281,15 @@ bool CChar_Dupe( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_Jail( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "Jail: Invalid number of arguments (takes 0 or 1, seconds to Jail)" );
 		return false;
 	}
 
-	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
+  CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( myChar ))
 	{
 		ScriptError( cx, "Jail: Invalid character" );
@@ -9251,7 +9299,7 @@ bool CChar_Jail( JSContext *cx, unsigned argc, JS::Value* vp )
 	SI32 numSecsToJail = 86400;
 	if( argc == 1 )
 	{
-		numSecsToJail = static_cast<SI32>( JSVAL_TO_INT( argv[0] ));
+		numSecsToJail = static_cast<SI32>( args.get(0).toInt32());
 	}
 
 	JailSys->JailPlayer( myChar, numSecsToJail );
@@ -9266,15 +9314,15 @@ bool CChar_Jail( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_Release( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Release: Invalid number of arguments (takes 0)" );
 		return false;
 	}
 
-	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
+  CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( myChar ))
 	{
 		ScriptError( cx, "Jail: Invalid character" );
@@ -9295,22 +9343,22 @@ void GMPage( CSocket *s, const std::string& reason );
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_Page( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "Page: Invalid number of arguments (takes 1, pageType)" );
 		return false;
 	}
 
-	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
+  CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "SysMessage: Invalid socket" );
 		return false;
 	}
 
-	UI08 pageType = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 pageType = static_cast<UI08>( args.get(0).toInt32());
 	switch( pageType )
 	{
 		case 0: // Counselor page - Free Text
@@ -9346,14 +9394,13 @@ bool CSocket_Page( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CConsole_Print( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Print: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	JSEncapsulate arg0( cx, &( argv[0] ));
-	Console.Print( arg0.toString() );
+	Console.Print( ConsoleValueToString( cx, args.get( 0 )));
 	return true;
 }
 
@@ -9366,22 +9413,19 @@ bool CConsole_Print( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CConsole_Log( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc != 1 && argc != 2 )
 	{
 		ScriptError( cx, "Log: Invalid number of arguments (takes 1 or 2)" );
 		return false;
 	}
-	JSEncapsulate arg0( cx, &( argv[0] ));
-	JSEncapsulate arg1;
 	if( argc == 1 )
 	{
-		Console.Log( arg0.toString() );
+		Console.Log( ConsoleValueToString( cx, args.get( 0 )));
 	}
 	else
 	{
-		arg1.SetContext( cx, &( argv[1] ));
-		Console.Log( arg0.toString(), arg1.toString() );
+		Console.Log( ConsoleValueToString( cx, args.get( 0 )), ConsoleValueToString( cx, args.get( 1 )));
 	}
 	return true;
 }
@@ -9394,14 +9438,13 @@ bool CConsole_Log( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CConsole_Error( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Error: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	JSEncapsulate arg0( cx, &( argv[0] ));
-	Console.Error( arg0.toString() );
+	Console.Error( ConsoleValueToString( cx, args.get( 0 )));
 	return true;
 }
 
@@ -9413,14 +9456,13 @@ bool CConsole_Error( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CConsole_Warning( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Warning: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	JSEncapsulate arg0( cx, &( argv[0] ));
-	Console.Warning( arg0.toString() );
+	Console.Warning( ConsoleValueToString( cx, args.get( 0 )));
 	return true;
 }
 
@@ -9552,7 +9594,7 @@ bool CConsole_TurnBrightWhite( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CConsole_PrintDone( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc != 0 && argc != 1 )
 	{
 		ScriptError( cx, "PrintDone: Invalid number of arguments (takes 0 or 1)" );
@@ -9561,8 +9603,7 @@ bool CConsole_PrintDone( JSContext *cx, unsigned argc, JS::Value* vp )
 	bool normalDone = true;
 	if( argc != 0 )
 	{
-		JSEncapsulate encaps( cx, &( argv[0] ));
-		normalDone = encaps.toBool();
+		normalDone = ConsoleValueToBool( cx, args.get( 0 ));
 	}
 	if( normalDone )
 	{
@@ -9584,7 +9625,7 @@ bool CConsole_PrintDone( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CConsole_PrintFailed( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc != 0 && argc != 1 )
 	{
 		ScriptError( cx, "PrintFailed: Invalid number of arguments (takes 0 or 1)" );
@@ -9593,8 +9634,7 @@ bool CConsole_PrintFailed( JSContext *cx, unsigned argc, JS::Value* vp )
 	bool normalFailed = true;
 	if( argc != 0 )
 	{
-		JSEncapsulate encaps( cx, &( argv[0] ));
-		normalFailed = encaps.toBool();
+		normalFailed = ConsoleValueToBool( cx, args.get( 0 ));
 	}
 	if( normalFailed )
 	{
@@ -9649,14 +9689,13 @@ bool CConsole_ClearScreen( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CConsole_PrintBasedOnVal( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc != 1 )
 	{
 		ScriptError( cx, "PrintBasedOnVal: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	JSEncapsulate arg0( cx, &( argv[0] ));
-	Console.PrintBasedOnVal( arg0.toBool() );
+	Console.PrintBasedOnVal( ConsoleValueToBool( cx, args.get( 0 )));
 	return true;
 }
 
@@ -9669,15 +9708,13 @@ bool CConsole_PrintBasedOnVal( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CConsole_MoveTo( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc != 2 )
 	{
 		ScriptError( cx, "MoveTo: Invalid number of arguments (takes 2)" );
 		return false;
 	}
-	JSEncapsulate arg0( cx, &( argv[0] ));
-	JSEncapsulate arg1( cx, &( argv[1] ));
-	Console.MoveTo( arg0.toInt(), arg1.toInt() );
+	Console.MoveTo( ConsoleValueToInt( cx, args.get( 0 )), ConsoleValueToInt( cx, args.get( 1 )));
 	return true;
 }
 
@@ -9697,15 +9734,13 @@ bool CConsole_MoveTo( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CConsole_PrintSpecial( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc != 2 )
 	{
 		ScriptError( cx, "PrintSpecial: Invalid number of arguments (takes 2)" );
 		return false;
 	}
-	JSEncapsulate arg0( cx, &( argv[0] ));
-	JSEncapsulate arg1( cx, &( argv[1] ));
-	Console.PrintSpecial( arg0.toInt(), arg1.toString().c_str() );
+	Console.PrintSpecial( ConsoleValueToInt( cx, args.get( 0 )), ConsoleValueToString( cx, args.get( 1 )).c_str() );
 	return true;
 }
 
@@ -9760,14 +9795,13 @@ bool CConsole_BeginShutdown( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CConsole_Reload( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Reload: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	JSEncapsulate arg0( cx, &( argv[0] ));
-	SI32 mArg = arg0.toInt();
+	SI32 mArg = ConsoleValueToInt( cx, args.get( 0 ));
 	if( mArg < 0 || mArg > 8 )
 	{
 		ScriptError( cx, "Reload: Section to reload must be between 0 and 8" );
@@ -9786,23 +9820,23 @@ bool CConsole_Reload( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_SpellMoveEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SpellMoveEffect: Invalid number of arguments (takes 2)" );
 		return false;
 	}
 
-	CSpellInfo *mySpell = static_cast<CSpellInfo *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[1] )));
+	auto *mySpell = GetWrappedObject<CSpellInfo>( args.get( 1 ), &UOXSpell_class );
 	if( mySpell == nullptr )
 	{
 		ScriptError( cx, "SpellMoveEffect: Invalid spell" );
 		return false;
 	}
 
-	CChar *source = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
-	CBaseObject *target = static_cast<CBaseObject *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+  CChar *source = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
+	auto *target = GetBaseObject( args.get( 0 ));
 	if( !ValidateObject( source ) || !ValidateObject( target ))
 	{
 		ScriptError( cx, "SpellMoveEffect: Invalid object passed" );
@@ -9827,22 +9861,22 @@ bool CChar_SpellMoveEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_SpellStaticEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "SpellStaticEffect: Invalid number of arguments (takes 1)" );
 		return false;
 	}
 
-	CChar *source = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *source = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( source ))
 	{
 		ScriptError( cx, "SpellStaticEffect: Invalid character passed" );
 		return false;
 	}
 
-	CSpellInfo *mySpell = static_cast<CSpellInfo *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *mySpell = GetWrappedObject<CSpellInfo>( args.get( 0 ), &UOXSpell_class );
 	if( mySpell == nullptr )
 	{
 		ScriptError( cx, "SpellStaticEffect: Invalid spell" );
@@ -9868,15 +9902,15 @@ bool CChar_SpellStaticEffect( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_BreakConcentration( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "BreakConcentration: Invalid number of arguments (takes 0 or 1)" );
 		return false;
 	}
 
-	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "BreakConcentration: Invalid character" );
@@ -9886,7 +9920,7 @@ bool CChar_BreakConcentration( JSContext *cx, unsigned argc, JS::Value* vp )
 	CSocket *mSock = nullptr;
 	if( argc == 1 )
 	{
-		mSock = static_cast<CSocket *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+		mSock = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 		if( mSock == nullptr )
 		{
 			ScriptError( cx, "BreakConcentration: Invalid socket" );
@@ -9907,22 +9941,22 @@ bool CChar_BreakConcentration( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_SendAddMenu( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "SendAddMenu: Invalid number of arguments (takes 1)" );
 		return false;
 	}
 
-	CSocket *mSock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
+  CSocket *mSock = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
 	if( mSock == nullptr )
 	{
 		ScriptError( cx, "SendAddMenu: Invalid socket" );
 		return false;
 	}
 
-	UI16 menuNum = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 menuNum = static_cast<UI16>( args.get(0).toInt32());
 
 	BuildAddMenuGump( mSock, menuNum );
 
@@ -9937,15 +9971,15 @@ bool CSocket_SendAddMenu( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CItem_LockDown( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "LockDown: Invalid number of arguments (takes 0)" );
 		return false;
 	}
 
-	CItem *mItem = static_cast<CItem *>( JS_GetPrivate( cx, obj ));
+  CItem *mItem = JS::GetMaybePtrFromReservedSlot<CItem>( obj, 0 );
 	if( mItem == nullptr )
 	{
 		ScriptError( cx, "LockDown: Invalid item" );
@@ -9965,8 +9999,9 @@ bool CItem_LockDown( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_InitWanderArea( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
+  CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( mChar ) || !mChar->IsNpc() )
 	{
 		ScriptError( cx, "InitWanderArea: Invalid character" );
@@ -9985,29 +10020,29 @@ auto NewCarveTarget( CSocket *s, CItem *i ) -> bool;
 //o------------------------------------------------------------------------------------------------o
 bool CItem_Carve( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "Carve: Invalid number of arguments (1)" );
 		return false;
 	}
 
-	CItem *toCarve = static_cast<CItem *>( JS_GetPrivate( cx, obj ));
+  CItem *toCarve = JS::GetMaybePtrFromReservedSlot<CItem>( obj, 0 );
 	if( !ValidateObject( toCarve ))
 	{
 		ScriptError( cx, "Carve: Invalid item" );
 		return false;
 	}
 
-	CSocket *mSock = static_cast<CSocket *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *mSock = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 	if( mSock == nullptr )
 	{
 		ScriptError( cx, "Carve: Invalid socket" );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( NewCarveTarget( mSock, toCarve )) );
+	args.rval().setBoolean(  NewCarveTarget( mSock, toCarve ) );
 	return true;
 }
 
@@ -10018,15 +10053,15 @@ bool CItem_Carve( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CItem_GetTileName( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "GetTileName: needs 0 arguments!" );
 		return false;
 	}
 
-	CItem *mItem = static_cast<CItem *>( JS_GetPrivate( cx, obj ));
+  CItem *mItem = JS::GetMaybePtrFromReservedSlot<CItem>( obj, 0 );
 	if( !ValidateObject( mItem ))
 	{
 		ScriptError( cx, "GetTileName: Invalid item" );
@@ -10036,9 +10071,8 @@ bool CItem_GetTileName( JSContext *cx, unsigned argc, JS::Value* vp )
 	std::string itemName = "";
 	GetTileName(( *mItem ), itemName );
 
-	JSString *tString;
-	tString = JS_NewStringCopyZ( cx, itemName.c_str() );
-	JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+	JS::RootedString tString( cx, JS_NewStringCopyZ( cx, itemName.c_str() ));
+	args.rval().setString( tString );
 	return true;
 }
 
@@ -10050,24 +10084,24 @@ bool CItem_GetTileName( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_GetMultiCorner( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetMultiCorner: Invalid number of arguments (1 required)" );
 		return false;
 	}
 
-	CMultiObj *multiObject = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+  CMultiObj *multiObject = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(GetMultiCorner) Invalid object referenced - multi required" );
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		args.rval().setBoolean( false );
 		return true;
 	}
 
-	UI08 cornerToFind = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 cornerToFind = static_cast<UI08>( args.get(0).toInt32());
 	SI16 x1 = 0;
 	SI16 y1 = 0;
 	SI16 x2 = 0;
@@ -10077,17 +10111,17 @@ bool CMulti_GetMultiCorner( JSContext *cx, unsigned argc, JS::Value* vp )
 	switch( cornerToFind )
 	{
 		case 0: // NW
-			JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( JS_NewStringCopyZ( cx, ( std::to_string( x1 ) + "," + std::to_string( y1 )).c_str() )) );
+			args.rval().setString( JS_NewStringCopyZ( cx, ( std::to_string( x1 ) + "," + std::to_string( y1 )).c_str() ));
 			break;
 		case 1: // NE
-			JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( JS_NewStringCopyZ( cx, ( std::to_string( x2 ) + "," + std::to_string( y1 )).c_str() )) );
+			args.rval().setString( JS_NewStringCopyZ( cx, ( std::to_string( x2 ) + "," + std::to_string( y1 )).c_str() ));
 			break;
 		case 2: // SW
-			JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( JS_NewStringCopyZ( cx, ( std::to_string( x1 ) + "," + std::to_string( y2 )).c_str() )) );
+			args.rval().setString( JS_NewStringCopyZ( cx, ( std::to_string( x1 ) + "," + std::to_string( y2 )).c_str() ));
 			break;
 		case 3: // SE
 		{
-			JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( JS_NewStringCopyZ( cx, ( std::to_string( x2 ) + "," + std::to_string( y2 )).c_str() )) );
+			args.rval().setString( JS_NewStringCopyZ( cx, ( std::to_string( x2 ) + "," + std::to_string( y2 )).c_str() ));
 			break;
 		}
 		default:
@@ -10105,16 +10139,16 @@ bool CMulti_GetMultiCorner( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_SecureContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "SecureContainer: Invalid number of arguments (1 required)" );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
-	CMultiObj *multiObject = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+	args.rval().setBoolean( false );
+  CMultiObj *multiObject = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
 	{
@@ -10122,13 +10156,13 @@ bool CMulti_SecureContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !args.get(0).isObject() )
 	{
 		ScriptError( cx, "(SecureContainer) Invalid Object passed" );
 		return false;
 	}
 
-	CItem *itemToSecure = static_cast<CItem*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *itemToSecure = GetWrappedObject<CItem>( args.get( 0 ), &UOXItem_class );
 	if( !ValidateObject( itemToSecure ))
 	{
 		ScriptError( cx, "(SecureContainer) Invalid Object passed" );
@@ -10136,7 +10170,7 @@ bool CMulti_SecureContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	multiObject->SecureContainer( itemToSecure );
-	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	args.rval().setBoolean( true );
 	return true;
 }
 
@@ -10148,16 +10182,16 @@ bool CMulti_SecureContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_UnsecureContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "UnsecureContainer: Invalid number of arguments (1 required)" );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
-	CMultiObj *multiObject = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+	args.rval().setBoolean( false );
+  CMultiObj *multiObject = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
 	{
@@ -10165,13 +10199,13 @@ bool CMulti_UnsecureContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !args.get(0).isObject() )
 	{
 		ScriptError( cx, "(UnsecureContainer) Invalid Object passed" );
 		return false;
 	}
 
-	CItem *itemToUnsecure = static_cast<CItem*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *itemToUnsecure = GetWrappedObject<CItem>( args.get( 0 ), &UOXItem_class );
 	if( !ValidateObject( itemToUnsecure ))
 	{
 		ScriptError( cx, "(UnsecureContainer) Invalid Object passed" );
@@ -10179,7 +10213,7 @@ bool CMulti_UnsecureContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	multiObject->UnsecureContainer( itemToUnsecure );
-	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	args.rval().setBoolean( true );
 	return true;
 }
 
@@ -10191,16 +10225,16 @@ bool CMulti_UnsecureContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_IsSecureContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "IsSecureContainer: Invalid number of arguments (1 required)" );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
-	CMultiObj *multiObject = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+	args.rval().setBoolean( false );
+  CMultiObj *multiObject = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
 	{
@@ -10208,13 +10242,13 @@ bool CMulti_IsSecureContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !args.get(0).isObject() )
 	{
 		ScriptError( cx, "(IsSecureContainer) Invalid Object passed" );
 		return false;
 	}
 
-	CItem *itemToCheck = static_cast<CItem*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *itemToCheck = GetWrappedObject<CItem>( args.get( 0 ), &UOXItem_class );
 	if( !ValidateObject( itemToCheck ))
 	{
 		ScriptError( cx, "(IsSecureContainer) Invalid Object passed" );
@@ -10222,7 +10256,7 @@ bool CMulti_IsSecureContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	bool isSecureContainer = multiObject->IsSecureContainer( itemToCheck );
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( isSecureContainer ) );
+	args.rval().setBoolean(  isSecureContainer  );
 	return true;
 }
 
@@ -10234,16 +10268,16 @@ bool CMulti_IsSecureContainer( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_LockDownItem( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "LockDownItem: Invalid number of arguments (1 required)" );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
-	CMultiObj *multiObject = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+	args.rval().setBoolean( false );
+  CMultiObj *multiObject = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
 	{
@@ -10251,13 +10285,13 @@ bool CMulti_LockDownItem( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !args.get(0).isObject() )
 	{
 		ScriptError( cx, "(LockDownItem) Invalid item object passed" );
 		return false;
 	}
 
-	CItem *itemToLockDown = static_cast<CItem*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *itemToLockDown = GetWrappedObject<CItem>( args.get( 0 ), &UOXItem_class );
 	if( !ValidateObject( itemToLockDown ))
 	{
 		ScriptError( cx, "(LockDownItem) Invalid item object passed" );
@@ -10265,7 +10299,7 @@ bool CMulti_LockDownItem( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	multiObject->LockDownItem( itemToLockDown );
-	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	args.rval().setBoolean( true );
 	return true;
 }
 
@@ -10277,16 +10311,16 @@ bool CMulti_LockDownItem( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_ReleaseItem( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "ReleaseItem: Invalid number of arguments (1 required)" );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
-	CMultiObj *multiObject = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+	args.rval().setBoolean( false );
+  CMultiObj *multiObject = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
 	{
@@ -10294,13 +10328,13 @@ bool CMulti_ReleaseItem( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !args.get(0).isObject() )
 	{
 		ScriptError( cx, "(ReleaseItem) Invalid item object passed" );
 		return false;
 	}
 
-	CItem *itemToRemove = static_cast<CItem*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *itemToRemove = GetWrappedObject<CItem>( args.get( 0 ), &UOXItem_class );
 	if( !ValidateObject( itemToRemove ))
 	{
 		ScriptError( cx, "(ReleaseItem) Invalid item object passed" );
@@ -10308,7 +10342,7 @@ bool CMulti_ReleaseItem( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	multiObject->ReleaseItem( itemToRemove );
-	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	args.rval().setBoolean( true );
 	return true;
 }
 
@@ -10320,16 +10354,16 @@ bool CMulti_ReleaseItem( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_AddTrashCont( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddTrashCont: Invalid number of arguments (1 required)" );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
-	CMultiObj *multiObject = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+	args.rval().setBoolean( false );
+  CMultiObj *multiObject = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
 	{
@@ -10337,13 +10371,13 @@ bool CMulti_AddTrashCont( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !args.get(0).isObject() )
 	{
 		ScriptError( cx, "(AddTrashCont) Invalid item object passed" );
 		return false;
 	}
 
-	CItem *itemToLockDown = static_cast<CItem*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *itemToLockDown = GetWrappedObject<CItem>( args.get( 0 ), &UOXItem_class );
 	if( !ValidateObject( itemToLockDown ))
 	{
 		ScriptError( cx, "(AddTrashCont) Invalid item object passed" );
@@ -10351,7 +10385,7 @@ bool CMulti_AddTrashCont( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	multiObject->AddTrashContainer( itemToLockDown );
-	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	args.rval().setBoolean( true );
 	return true;
 }
 
@@ -10363,16 +10397,16 @@ bool CMulti_AddTrashCont( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_RemoveTrashCont( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveTrashCont: Invalid number of arguments (1 required)" );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
-	CMultiObj *multiObject = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+	args.rval().setBoolean( false );
+  CMultiObj *multiObject = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
 	{
@@ -10380,13 +10414,13 @@ bool CMulti_RemoveTrashCont( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !args.get(0).isObject() )
 	{
 		ScriptError( cx, "(RemoveTrashCont) Invalid item object passed" );
 		return false;
 	}
 
-	CItem *itemToRemove = static_cast<CItem*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *itemToRemove = GetWrappedObject<CItem>( args.get( 0 ), &UOXItem_class );
 	if( !ValidateObject( itemToRemove ))
 	{
 		ScriptError( cx, "(RemoveTrashCont) Invalid item object passed" );
@@ -10394,7 +10428,7 @@ bool CMulti_RemoveTrashCont( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	multiObject->RemoveTrashContainer( itemToRemove );
-	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	args.rval().setBoolean( true );
 	return true;
 }
 
@@ -10406,16 +10440,16 @@ bool CMulti_RemoveTrashCont( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_AddVendor( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddVendor: Invalid number of arguments (1 required)" );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
-	CMultiObj *multiObject = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+	args.rval().setBoolean( false );
+  CMultiObj *multiObject = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
 	{
@@ -10423,13 +10457,13 @@ bool CMulti_AddVendor( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !args.get(0).isObject() )
 	{
 		ScriptError( cx, "(AddVendor) Invalid character object passed" );
 		return false;
 	}
 
-	CChar *vendorToAdd = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *vendorToAdd = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( vendorToAdd ))
 	{
 		ScriptError( cx, "(AddVendor) Invalid character object passed" );
@@ -10437,7 +10471,7 @@ bool CMulti_AddVendor( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	multiObject->AddVendor( vendorToAdd );
-	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	args.rval().setBoolean( true );
 	return true;
 }
 
@@ -10449,16 +10483,16 @@ bool CMulti_AddVendor( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_RemoveVendor( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveVendor: Invalid number of arguments (1 required)" );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
-	CMultiObj *multiObject = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+	args.rval().setBoolean( false );
+  CMultiObj *multiObject = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
 	{
@@ -10466,13 +10500,13 @@ bool CMulti_RemoveVendor( JSContext *cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !args.get(0).isObject() )
 	{
 		ScriptError( cx, "(RemoveVendor) Invalid character object passed" );
 		return false;
 	}
 
-	CChar *vendorToRemove = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *vendorToRemove = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( vendorToRemove ))
 	{
 		ScriptError( cx, "(RemoveVendor) Invalid character object passed" );
@@ -10480,7 +10514,7 @@ bool CMulti_RemoveVendor( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	multiObject->RemoveVendor( vendorToRemove );
-	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	args.rval().setBoolean( true );
 	return true;
 }
 
@@ -10493,16 +10527,16 @@ void KillKeys( SERIAL targSerial, SERIAL charSerial = INVALIDSERIAL );
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_KillKeys( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 && argc != 1 )
 	{
 		ScriptError( cx, "KillKeys: Invalid number of arguments (0 or 1 (character) required)" );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
-	CMultiObj *multiObject = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
+	args.rval().setBoolean( false );
+  CMultiObj *multiObject = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
 	{
@@ -10512,8 +10546,7 @@ bool CMulti_KillKeys( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( argc == 1 )
 	{
-		JSObject *jsObj = JSVAL_TO_OBJECT( argv[0] );
-		CChar *myObj = static_cast<CChar *>( JS_GetPrivate( cx, jsObj ));
+		auto *myObj = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 		
 		if( !ValidateObject( myObj ))
 		{
@@ -10527,7 +10560,7 @@ bool CMulti_KillKeys( JSContext *cx, unsigned argc, JS::Value* vp )
 		KillKeys( multiObject->GetSerial() );
 	}
 
-	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
+	args.rval().setBoolean( true );
 	return true;
 }
 
@@ -10539,14 +10572,14 @@ bool CMulti_KillKeys( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_FirstChar( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "FirstChar: Invalid count of arguments :%d, needs :0 or 1", argc );
 		return false;
 	}
-	CMultiObj *myObj = static_cast<CMultiObj*>( JS_GetPrivate( cx, obj ));
+  CMultiObj *myObj = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "FirstChar: Invalid object assigned - multi required." );
@@ -10556,7 +10589,7 @@ bool CMulti_FirstChar( JSContext *cx, unsigned argc, JS::Value* vp )
 	std::string listType;
 	if( argc == 1 )
 	{
-		listType = JS_GetStringBytes( cx, argv[0]);
+		listType = JS_GetStringBytes( cx, args.get(0));
 	}
 	else
 	{
@@ -10592,12 +10625,12 @@ bool CMulti_FirstChar( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( ValidateObject( firstChar ))
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_CHAR, firstChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_CHAR, firstChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+		args.rval().setObjectOrNull( myObj );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 	}
 	return true;
 }
@@ -10610,14 +10643,14 @@ bool CMulti_FirstChar( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_NextChar( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "NextChar: Invalid count of arguments :%d, needs :0 or 1", argc );
 		return false;
 	}
-	CMultiObj *myObj = static_cast<CMultiObj*>( JS_GetPrivate( cx, obj ));
+  CMultiObj *myObj = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "NextChar: Invalid object assigned - multi required." );
@@ -10627,7 +10660,7 @@ bool CMulti_NextChar( JSContext *cx, unsigned argc, JS::Value* vp )
 	std::string listType;
 	if( argc == 1 )
 	{
-		listType = JS_GetStringBytes( cx, argv[0]);
+		listType = JS_GetStringBytes( cx, args.get(0));
 	}
 	else
 	{
@@ -10663,12 +10696,12 @@ bool CMulti_NextChar( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( ValidateObject( nextChar ))
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_CHAR, nextChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_CHAR, nextChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+		args.rval().setObjectOrNull( myObj );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 	}
 	return true;
 }
@@ -10681,14 +10714,14 @@ bool CMulti_NextChar( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CMulti_FinishedChars( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "FinishedChars: Invalid count of arguments :%d, needs :0 or 1", argc );
 		return false;
 	}
-	CMultiObj *myObj = static_cast<CMultiObj*>( JS_GetPrivate( cx, obj ));
+  CMultiObj *myObj = JS::GetMaybePtrFromReservedSlot<CMultiObj>( obj, 0 );
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "FinishedChars: Invalid object assigned - multi required." );
@@ -10699,7 +10732,7 @@ bool CMulti_FinishedChars( JSContext *cx, unsigned argc, JS::Value* vp )
 	std::string listType;
 	if( argc == 1 )
 	{
-		listType = JS_GetStringBytes( cx, argv[0]);
+		listType = JS_GetStringBytes( cx, args.get(0));
 	}
 	else
 	{
@@ -10708,23 +10741,23 @@ bool CMulti_FinishedChars( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	if( listType == "visitor" ) // All chars inside the multi
 	{
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myObj->GetCharsInMultiList()->Finished() ) );
+		args.rval().setBoolean(  myObj->GetCharsInMultiList()->Finished()  );
 	}
 	else if( listType == "owner" ) // Owners
 	{
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myObj->GetOwnersOfMultiList()->Finished() ) );
+		args.rval().setBoolean(  myObj->GetOwnersOfMultiList()->Finished()  );
 	}
 	else if( listType == "friend" ) // Friends
 	{
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myObj->GetFriendsOfMultiList()->Finished() ) );
+		args.rval().setBoolean(  myObj->GetFriendsOfMultiList()->Finished()  );
 	}
 	else if( listType == "guest" ) // Guests
 	{
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myObj->GetGuestsOfMultiList()->Finished() ) );
+		args.rval().setBoolean(  myObj->GetGuestsOfMultiList()->Finished()  );
 	}
 	else if( listType == "banned" ) // Banned
 	{
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myObj->GetBannedFromMultiList()->Finished() ) );
+		args.rval().setBoolean(  myObj->GetBannedFromMultiList()->Finished()  );
 	}
 	else
 	{
@@ -10744,23 +10777,22 @@ bool CMulti_FinishedChars( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_CanSee( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 && argc != 3 )
 	{
 		ScriptError( cx, "CanSee: Invalid number of arguments (takes 1, a char/item or 3, an x/y/z)" );
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
 	CSocket *mSock		= nullptr;
 	CChar *mChar		= nullptr;
 
 	// Let's validate the person seeing (socket/char)
 
-	if( myClass.ClassName() == "UOXSocket" )
+	if( HasWrapperClass( obj, &UOXSocket_class ))
 	{
-		mSock = static_cast<CSocket *>( myClass.toObject() );
+		mSock = GetWrappedObject<CSocket>( obj, &UOXSocket_class );
 		if( mSock == nullptr )
 		{
 			ScriptError( cx, "CanSee: Passed an invalid Socket" );
@@ -10773,9 +10805,9 @@ bool CBase_CanSee( JSContext *cx, unsigned argc, JS::Value* vp )
 			return false;
 		}
 	}
-	else if( myClass.ClassName() == "UOXChar" )
+	else if( HasWrapperClass( obj, &UOXChar_class ))
 	{
-		mChar = static_cast<CChar *>( myClass.toObject() );
+		mChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
 		if( !ValidateObject( mChar ))
 		{
 			ScriptError( cx, "CanSee: Passed an invalid Character" );
@@ -10792,45 +10824,43 @@ bool CBase_CanSee( JSContext *cx, unsigned argc, JS::Value* vp )
 	SI08 zTop = 0;
 	if( argc == 1 )	// we've been passed an item, character, or socket
 	{
-		JSEncapsulate myClass( cx, &( argv[0] ));
-
-		if( myClass.ClassName() == "UOXSocket" )
+		if( HasWrapperClass( args.get( 0 ), &UOXSocket_class ))
 		{
-			CSocket *tSock = static_cast<CSocket *>( myClass.toObject() );
+			CSocket *tSock = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 			if( tSock == nullptr )
 			{
 				ScriptError( cx, "CanSee: Passed an invalid Socket to look at" );
-				JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+				args.rval().setBoolean( false );
 				return true;
 			}
 			CChar *tChar = tSock->CurrcharObj();
 			if( !ValidateObject( tChar ))
 			{
 				ScriptError( cx, "CanSee: Socket to look at has invalid Character attached" );
-				JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+				args.rval().setBoolean( false );
 				return true;
 			}
 			if( tChar->WorldNumber() != mChar->WorldNumber() || tChar->GetInstanceId() != mChar->GetInstanceId() )
 			{
-				JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+				args.rval().setBoolean( false );
 				return true;
 			}
 			x = tChar->GetX();
 			y = tChar->GetY();
 			z = tChar->GetZ();
 		}
-		else if( myClass.ClassName() == "UOXChar" || myClass.ClassName() == "UOXItem" )
+		else if( HasWrapperClass( args.get( 0 ), &UOXChar_class ) || HasWrapperClass( args.get( 0 ), &UOXItem_class ))
 		{
-			CBaseObject *tObj = static_cast<CBaseObject *>( myClass.toObject() );
+			CBaseObject *tObj = GetBaseObject( args.get( 0 ));
 			if( !ValidateObject( tObj ))
 			{
 				ScriptError( cx, "CanSee: Object to look at is invalid" );
-				JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+				args.rval().setBoolean( false );
 				return true;
 			}
 			if( tObj->WorldNumber() != mChar->WorldNumber() || tObj->GetInstanceId() != mChar->GetInstanceId() )
 			{
-				JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+				args.rval().setBoolean( false );
 				return true;
 			}
 			if( tObj->CanBeObjType( OT_ITEM ))
@@ -10838,7 +10868,7 @@ bool CBase_CanSee( JSContext *cx, unsigned argc, JS::Value* vp )
 				if(( static_cast<CItem *>( tObj ))->GetCont() != nullptr )
 				{
 					ScriptError( cx, "CanSee: Object to look at cannot be in a container" );
-					JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+					args.rval().setBoolean( false );
 					return true;
 				}
 
@@ -10857,18 +10887,18 @@ bool CBase_CanSee( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 	else	// we've been passed an x, y and z
 	{
-		x	= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-		y	= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-		z	= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
+		x	= static_cast<SI16>( args.get(0).toInt32());
+		y	= static_cast<SI16>( args.get(1).toInt32());
+		z	= static_cast<SI08>( args.get(2).toInt32());
 	}
 
 	if( ValidateObject( mChar ))
 	{
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( LineOfSight( mSock, mChar, x, y, z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false, zTop )) );
+		args.rval().setBoolean(  LineOfSight( mSock, mChar, x, y, z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false, zTop ) );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+		args.rval().setBoolean(  false  );
 	}
 
 	return true;
@@ -10882,33 +10912,33 @@ bool CBase_CanSee( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_DisplayDamage( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "(CSocket_DisplayDamage) Invalid Number of Arguments %d, needs: 2", argc );
 		return true;
 	}
 
-	CSocket *mSock = static_cast<CSocket *>( JS_GetPrivate( cx, obj ));
-	JSEncapsulate myClass( cx, &( argv[0] ));
-
-	if( myClass.ClassName() != "UOXChar" )	// It must be a character!
+  CSocket *mSock = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
+	if( !HasWrapperClass( args.get( 0 ), &UOXChar_class ))	// It must be a character!
 	{
 		ScriptError( cx, "CSocket_DisplayDamage: Passed an invalid Character" );
 		return false;
 	}
 
-	CChar *mChar = static_cast<CChar *>( myClass.toObject() );
+	CChar *mChar = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(CSocket_DisplayDamage): Passed an invalid Character" );
 		return true;
 	}
 
-	JSEncapsulate damage( cx, &( argv[1] ));
+	int32_t damage = 0;
+	if( !JS::ToInt32( cx, args.get( 1 ), &damage ))
+		return false;
 
-	CPDisplayDamage dispDamage(( *mChar ), static_cast<UI16>( damage.toInt() ));
+	CPDisplayDamage dispDamage(( *mChar ), static_cast<UI16>( damage ));
 	mSock->Send( &dispDamage );
 
 	return true;
@@ -10923,8 +10953,8 @@ bool CSocket_DisplayDamage( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_ReactOnDamage( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 && argc != 2 )
 	{
 		ScriptError( cx, "(CChar_ReactOnDamage) Invalid Number of Arguments %d, needs: 1 (damageType) or 2 (damageType and attacker)", argc );
@@ -10932,38 +10962,32 @@ bool CChar_ReactOnDamage( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	CChar *attacker	= nullptr;
-	CChar *mChar	= static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(CChar_ReactOnDamage): Operating on an invalid Character" );
 		return true;
 	}
-	JSEncapsulate damage( cx, &( argv[0] ));
+	int32_t damage = 0;
+	if( !JS::ToInt32( cx, args.get( 0 ), &damage ))
+		return false;
 
 	if( argc >= 2 )
 	{
-		JSEncapsulate attackerClass( cx, &( argv[1] ));
-		if( attackerClass.ClassName() != "UOXChar" ) // It must be a character!
+		if( !HasWrapperClass( args.get( 1 ), &UOXChar_class )) // It must be a character!
 		{
 			ScriptError( cx, "CChar_ReactOnDamage: Passed an invalid Character" );
 			return false;
 		}
 
-		if( attackerClass.isType( JSOT_VOID ) || attackerClass.isType( JSOT_NULL ))
+		attacker = GetWrappedObject<CChar>( args.get( 1 ), &UOXChar_class );
+		if( !ValidateObject( attacker ))
 		{
-			attacker = nullptr;
-		}
-		else
-		{
-			attacker = static_cast<CChar *>( attackerClass.toObject() );
-			if( !ValidateObject( attacker ))
-			{
-				ScriptError( cx, "(CChar_ReactOnDamage): Passed an invalid Character" );
-				return true;
-			}
+			ScriptError( cx, "(CChar_ReactOnDamage): Passed an invalid Character" );
+			return true;
 		}
 	}
-	mChar->ReactOnDamage( static_cast<WeatherType>( damage.toInt() ), attacker );
+	mChar->ReactOnDamage( static_cast<WeatherType>( damage ), attacker );
 	return true;
 }
 
@@ -10979,8 +11003,8 @@ bool CChar_ReactOnDamage( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_Damage( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc < 1 || argc > 4 )
 	{
 		ScriptError( cx, "(CChar_Damage) Invalid Number of Arguments %d, needs: 1 (amount), 2 (amount, damageType), 3 (amount, damageType and attacker) or 4 (amount, damageType, attacker and doRepsys)", argc );
@@ -10988,50 +11012,44 @@ bool CChar_Damage( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	CChar *attacker	= nullptr;
-	CChar *mChar	= static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(CChar_Damage): Operating on an invalid Character" );
 		return true;
 	}
-	JSEncapsulate damage( cx, &( argv[0] ));
+	int32_t damage = 0;
+	if( !JS::ToInt32( cx, args.get( 0 ), &damage ))
+		return false;
 
 	WeatherType element = PHYSICAL;
 	if( argc >= 2 )
 	{
-		element = static_cast<WeatherType>( JSVAL_TO_INT( argv[1] ));
+		element = static_cast<WeatherType>( args.get(1).toInt32());
 	}
 
 	if( argc >= 3 )
 	{
-		JSEncapsulate attackerClass( cx, &( argv[2] ));
-		if( attackerClass.ClassName() != "UOXChar" )	// It must be a character!
+		if( !HasWrapperClass( args.get( 2 ), &UOXChar_class ))	// It must be a character!
 		{
 			ScriptError( cx, "CChar_Damage: Passed an invalid Character" );
 			return false;
 		}
 
-		if( attackerClass.isType( JSOT_VOID ) || attackerClass.isType( JSOT_NULL ))
+		attacker = GetWrappedObject<CChar>( args.get( 2 ), &UOXChar_class );
+		if( !ValidateObject( attacker ))
 		{
-			attacker = nullptr;
-		}
-		else
-		{
-			attacker = static_cast<CChar *>( attackerClass.toObject() );
-			if( !ValidateObject( attacker ))
-			{
-				ScriptError( cx, "(CChar_Damage): Passed an invalid Character" );
-				return true;
-			}
+			ScriptError( cx, "(CChar_Damage): Passed an invalid Character" );
+			return true;
 		}
 	}
 	bool doRepsys = false;
 	if( argc >= 4 )
 	{
-		doRepsys = ( JSVAL_TO_BOOLEAN( argv[3] ) == true );
+		doRepsys = ( args.get(3).toBoolean() == true );
 	}
 
-	mChar->Damage( damage.toInt(), element, attacker, doRepsys );
+	mChar->Damage( damage, element, attacker, doRepsys );
 	return true;
 }
 
@@ -11043,29 +11061,29 @@ bool CChar_Damage( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_InitiateCombat( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(InitiateCombat) Invalid Number of Arguments %d, takes: 1 (targetChar))", argc );
 		return true;
 	}
 
-	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(InitiateCombat): Operating on an invalid Character" );
 		return true;
 	}
 
-	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *ourTarget = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(InitiateCombat): Operating on an invalid Character" );
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( Combat->StartAttack( mChar, ourTarget )) );
+	args.rval().setBoolean(  Combat->StartAttack( mChar, ourTarget ) );
 	return true;
 }
 
@@ -11077,15 +11095,15 @@ bool CChar_InitiateCombat( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_InvalidateAttacker( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(InvalidateAttacker) Invalid Number of Arguments %d, takes: 0)", argc );
 		return true;
 	}
 
-	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(InvalidateAttacker): Operating on an invalid Character" );
@@ -11104,22 +11122,22 @@ bool CChar_InvalidateAttacker( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_AddAggressorFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddAggressorFlag) Invalid Number of Arguments %d, takes: 1)", argc );
 		return true;
 	}
 
-	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(AddAggressorFlag): Operating on an invalid Character" );
 		return true;
 	}
 
-	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *ourTarget = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(AddAggressorFlag): Operating on an invalid Character (arg 0)" );
@@ -11138,22 +11156,22 @@ bool CChar_AddAggressorFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_RemoveAggressorFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveAggressorFlag) Invalid Number of Arguments %d, takes: 1)", argc );
 		return true;
 	}
 
-	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(RemoveAggressorFlag): Operating on an invalid Character" );
 		return true;
 	}
 
-	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *ourTarget = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(RemoveAggressorFlag): Operating on an invalid Character (arg 0)" );
@@ -11172,29 +11190,29 @@ bool CChar_RemoveAggressorFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_CheckAggressorFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(CheckAggressorFlag) Invalid Number of Arguments %d, takes: 1)", argc );
 		return true;
 	}
 
-	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(CheckAggressorFlag): Operating on an invalid Character" );
 		return true;
 	}
 
-	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *ourTarget = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(CheckAggressorFlag): Operating on an invalid Character (arg 0)" );
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mChar->CheckAggressorFlag( ourTarget->GetSerial() )) );
+	args.rval().setBoolean(  mChar->CheckAggressorFlag( ourTarget->GetSerial() ) );
 	return true;
 }
 
@@ -11206,22 +11224,22 @@ bool CChar_CheckAggressorFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_UpdateAggressorFlagTimestamp( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(UpdateAggressorFlagTimestamp) Invalid Number of Arguments %d, takes: 1)", argc );
 		return true;
 	}
 
-	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(UpdateAggressorFlagTimestamp): Operating on an invalid Character" );
 		return true;
 	}
 
-	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *ourTarget = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(UpdateAggressorFlagTimestamp): Operating on an invalid Character (arg 0)" );
@@ -11240,15 +11258,15 @@ bool CChar_UpdateAggressorFlagTimestamp( JSContext *cx, unsigned argc, JS::Value
 //o------------------------------------------------------------------------------------------------o
 bool CChar_ClearAggressorFlags( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearAggressorFlags) Invalid Number of Arguments %d, takes: 0)", argc );
 		return true;
 	}
 
-	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(ClearAggressorFlags): Operating on an invalid Character" );
@@ -11268,24 +11286,24 @@ bool CChar_ClearAggressorFlags( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_IsAggressor( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "(IsAggressor) Invalid Number of Arguments %d, takes: 0 or 1)", argc );
 		return true;
 	}
 
-	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(IsAggressor): Operating on an invalid Character" );
 		return true;
 	}
 
-	bool checkForPlayerOnly	= ( JSVAL_TO_BOOLEAN( argv[0] ) == true );
+	bool checkForPlayerOnly	= ( args.get(0).toBoolean() == true );
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mChar->IsAggressor( checkForPlayerOnly )) );
+	args.rval().setBoolean(  mChar->IsAggressor( checkForPlayerOnly ) );
 	return true;
 }
 
@@ -11297,22 +11315,22 @@ bool CChar_IsAggressor( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_AddPermaGreyFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddPermaGreyFlag) Invalid Number of Arguments %d, takes: 1)", argc );
 		return true;
 	}
 
-	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(AddPermaGreyFlag): Operating on an invalid Character" );
 		return true;
 	}
 
-	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *ourTarget = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(AddPermaGreyFlag): Operating on an invalid Character (arg 0)" );
@@ -11331,22 +11349,22 @@ bool CChar_AddPermaGreyFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_RemovePermaGreyFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemovePermaGreyFlag) Invalid Number of Arguments %d, takes: 1)", argc );
 		return true;
 	}
 
-	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(RemovePermaGreyFlag): Operating on an invalid Character" );
 		return true;
 	}
 
-	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *ourTarget = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(RemovePermaGreyFlag): Operating on an invalid Character (arg 0)" );
@@ -11365,29 +11383,29 @@ bool CChar_RemovePermaGreyFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_CheckPermaGreyFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(CheckPermaGreyFlag) Invalid Number of Arguments %d, takes: 1)", argc );
 		return true;
 	}
 
-	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(CheckPermaGreyFlag): Operating on an invalid Character" );
 		return true;
 	}
 
-	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *ourTarget = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(CheckPermaGreyFlag): Operating on an invalid Character (arg 0)" );
 		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mChar->CheckPermaGreyFlag( ourTarget->GetSerial() )) );
+	args.rval().setBoolean(  mChar->CheckPermaGreyFlag( ourTarget->GetSerial() ) );
 	return true;
 }
 
@@ -11399,22 +11417,22 @@ bool CChar_CheckPermaGreyFlag( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_UpdatePermaGreyFlagTimestamp( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(UpdatePermaGreyFlagTimestamp) Invalid Number of Arguments %d, takes: 1)", argc );
 		return true;
 	}
 
-	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(UpdatePermaGreyFlagTimestamp): Operating on an invalid Character" );
 		return true;
 	}
 
-	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	auto *ourTarget = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(UpdatePermaGreyFlagTimestamp): Operating on an invalid Character (arg 0)" );
@@ -11433,15 +11451,15 @@ bool CChar_UpdatePermaGreyFlagTimestamp( JSContext *cx, unsigned argc, JS::Value
 //o------------------------------------------------------------------------------------------------o
 bool CChar_ClearPermaGreyFlags( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearPermaGreyFlags) Invalid Number of Arguments %d, takes: 0)", argc );
 		return true;
 	}
 
-	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(ClearPermaGreyFlags): Operating on an invalid Character" );
@@ -11461,24 +11479,24 @@ bool CChar_ClearPermaGreyFlags( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_IsPermaGrey( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "(IsPermaGrey) Invalid Number of Arguments %d, takes: 0 or 1)", argc );
 		return true;
 	}
 
-	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(IsPermaGrey): Operating on an invalid Character" );
 		return true;
 	}
 
-	bool checkForPlayerOnly	= ( JSVAL_TO_BOOLEAN( argv[0] ) == true );
+	bool checkForPlayerOnly	= ( args.get(0).toBoolean() == true );
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mChar->IsPermaGrey( checkForPlayerOnly )) );
+	args.rval().setBoolean(  mChar->IsPermaGrey( checkForPlayerOnly ) );
 	return true;
 }
 
@@ -11491,8 +11509,8 @@ bool CChar_IsPermaGrey( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_Heal( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 && argc != 2 )
 	{
 		ScriptError( cx, "(CChar_Heal) Invalid Number of Arguments %d, needs: 1 (amount) or 2 (amount and healer)", argc );
@@ -11500,35 +11518,27 @@ bool CChar_Heal( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	CChar *healer	= nullptr;
-	CChar *mChar	= static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+  CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>( obj, 0 );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(CChar_Heal): Operating on an invalid Character" );
 		return true;
 	}
-	SI16 healVal = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
+	SI16 healVal = static_cast<SI16>( args.get(0).toInt32());
 
 	if( argc == 2 )
 	{
-		JSEncapsulate healerClass( cx, &( argv[1] ));
-		if( healerClass.ClassName() != "UOXChar" )	// It must be a character!
+		if( !HasWrapperClass( args.get( 1 ), &UOXChar_class ))	// It must be a character!
 		{
 			ScriptError( cx, "CChar_Heal: Passed an invalid Character" );
 			return false;
 		}
 
-		if( healerClass.isType( JSOT_VOID ) || healerClass.isType( JSOT_NULL ))
+		healer = GetWrappedObject<CChar>( args.get( 1 ), &UOXChar_class );
+		if( !ValidateObject( healer ))
 		{
-			healer = nullptr;
-		}
-		else
-		{
-			healer	= static_cast<CChar *>( healerClass.toObject() );
-			if( !ValidateObject( healer ))
-			{
-				ScriptError( cx, "(CChar_Heal): Passed an invalid Character" );
-				return true;
-			}
+			ScriptError( cx, "(CChar_Heal): Passed an invalid Character" );
+			return true;
 		}
 	}
 
@@ -11554,32 +11564,31 @@ bool CChar_Heal( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_Resist( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 && argc != 2 )
 	{
 		ScriptError( cx, "Resist: Invalid number of arguments (takes 1, the resist type or 2, the resist type and value to set)" );
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
 	CChar *mChar		= nullptr;
 	CItem *mItem		= nullptr;
 
 	// Let's validate the char/item
 
-	if( myClass.ClassName() == "UOXItem" )
+	if( HasWrapperClass( obj, &UOXItem_class ))
 	{
-		mItem	= static_cast<CItem *>( myClass.toObject() );
+		mItem = GetWrappedObject<CItem>( obj, &UOXItem_class );
 		if( !ValidateObject( mItem ))
 		{
 			ScriptError( cx, "Resist: Passed an invalid Item" );
 			return false;
 		}
 	}
-	else if( myClass.ClassName() == "UOXChar" )
+	else if( HasWrapperClass( obj, &UOXChar_class ))
 	{
-		mChar	= static_cast<CChar *>( myClass.toObject() );
+		mChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
 		if( !ValidateObject( mChar ))
 		{
 			ScriptError( cx, "Resist: Passed an invalid Character" );
@@ -11587,38 +11596,43 @@ bool CBase_Resist( JSContext *cx, unsigned argc, JS::Value* vp )
 		}
 	}
 
-	JSEncapsulate resistType( cx, &( argv[0] ));
+	int32_t resistType = 0;
+	if( !JS::ToInt32( cx, args.get( 0 ), &resistType ))
+		return false;
 
 	if( argc == 1 )
 	{
 		if( ValidateObject( mChar ))
 		{
-			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( mChar->GetResist( static_cast<WeatherType>( resistType.toInt() ))) );
+			args.rval().setInt32(  mChar->GetResist( static_cast<WeatherType>( resistType )) );
 		}
 		else if( ValidateObject( mItem ))
 		{
-			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( mItem->GetResist( static_cast<WeatherType>( resistType.toInt() ))) );
+			args.rval().setInt32(  mItem->GetResist( static_cast<WeatherType>( resistType )) );
 		}
 		else
 		{
-			JS_SET_RVAL( cx, vp, false );
+			args.rval().setBoolean( false );
 		}
 	}
 	if( argc == 2 )
 	{
-		JS_SET_RVAL( cx, vp, true );
-		JSEncapsulate value( cx, &( argv[1] ));
+		args.rval().setBoolean( true );
+		int32_t value = 0;
+		if( !JS::ToInt32( cx, args.get( 1 ), &value ))
+			return false;
+
 		if( ValidateObject( mChar ))
 		{
-			mChar->SetResist( static_cast<UI16>( value.toInt() ), static_cast<WeatherType>( resistType.toInt() ));
+			mChar->SetResist( static_cast<UI16>( value ), static_cast<WeatherType>( resistType ));
 		}
 		else if( ValidateObject( mItem ))
 		{
-			mItem->SetResist( static_cast<UI16>( value.toInt() ), static_cast<WeatherType>( resistType.toInt() ));
+			mItem->SetResist( static_cast<UI16>( value ), static_cast<WeatherType>( resistType ));
 		}
 		else
 		{
-			JS_SET_RVAL( cx, vp, false );
+			args.rval().setBoolean( false );
 		}
 	}
 	return true;
@@ -11643,40 +11657,33 @@ bool CBase_Resist( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_Defense( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc < 3 || argc > 5 )
 	{
 		ScriptError( cx, "Defense: Invalid number of arguments (takes 3-5, the hit location, the resist type, if the armor should get damaged, (optional) whether to ignore medable armor and (optional) whether to include shield)" );
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CChar *mChar = nullptr;
-
-	// Let's validate the char
-	if( myClass.ClassName() == "UOXChar" )
-	{
-		mChar	= static_cast<CChar *>( myClass.toObject() );
-		if( !ValidateObject( mChar ))
-		{
-			ScriptError( cx, "Defense: Passed an invalid Character" );
-			return false;
-		}
-	}
-	else
+	CChar *mChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "Defense: Passed an invalid Character" );
 		return false;
 	}
 
-	JSEncapsulate hitLoc( cx, &( argv[0] ));
-	JSEncapsulate resistType( cx, &( argv[1] ));
-	JSEncapsulate doArmorDamage( cx, &( argv[2] ));
-	bool excludeMedableArmor = ( argc == 4 ? ( JSVAL_TO_BOOLEAN( argv[3] ) == true ) : false );
-	bool includeShield = ( argc == 5 ? ( JSVAL_TO_BOOLEAN( argv[4] ) == true ) : false );
+	int32_t hitLoc = 0;
+	int32_t resistType = 0;
+	if( !JS::ToInt32( cx, args.get( 0 ), &hitLoc ) ||
+		!JS::ToInt32( cx, args.get( 1 ), &resistType ))
+	{
+		return false;
+	}
+	bool doArmorDamage = JS::ToBoolean( args.get( 2 ));
+	bool excludeMedableArmor = ( argc == 4 ? ( args.get(3).toBoolean() == true ) : false );
+	bool includeShield = ( argc == 5 ? ( args.get(4).toBoolean() == true ) : false );
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( Combat->CalcDef( mChar, static_cast<UI08>( hitLoc.toInt() ), doArmorDamage.toBool(), static_cast<WeatherType>( resistType.toInt() ), excludeMedableArmor, includeShield )) );
+	args.rval().setInt32(  Combat->CalcDef( mChar, static_cast<UI08>( hitLoc ), doArmorDamage, static_cast<WeatherType>( resistType ), excludeMedableArmor, includeShield ) );
 	return true;
 }
 
@@ -11691,28 +11698,16 @@ bool CChar_Defense( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CItem_GetMoreVar( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "GetMoreVar: Invalid number of arguments (takes 2, the moreVarName (more, more0, more1, more2, morex, morey or morez - and the moreVarPart (1 to 4))" );
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CItem *mItem = nullptr;
-
-	// Let's validate the item
-	if( myClass.ClassName() == "UOXItem" )
-	{
-		mItem	= static_cast<CItem *>( myClass.toObject() );
-		if( !ValidateObject( mItem ))
-		{
-			ScriptError( cx, "GetMoreVar: Passed an invalid Item" );
-			return false;
-		}
-	}
-	else
+	CItem *mItem = GetWrappedObject<CItem>( obj, &UOXItem_class );
+	if( !ValidateObject( mItem ))
 	{
 		ScriptError( cx, "GetMoreVar: Passed an invalid Item" );
 		return false;
@@ -11720,8 +11715,8 @@ bool CItem_GetMoreVar( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	// Fetch data from the function arguments, and figure out which tempVar to get data from
 	UI08 moreVar			= 0;
-	UI08 moreVarPart		= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
-	std::string moreVarName	= JS_GetStringBytes( cx, argv[0]);
+	UI08 moreVarPart		= static_cast<UI08>( args.get(1).toInt32());
+	std::string moreVarName	= JS_GetStringBytes( cx, args.get(0));
 	if( moreVarName == "more" )
 	{
 		moreVar = 0;
@@ -11757,7 +11752,7 @@ bool CItem_GetMoreVar( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Fetch the value of the moreVarPart and return it to the script
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( mItem->GetTempVar( static_cast<CITempVars>( moreVar ), moreVarPart )) );
+	args.rval().setInt32(  mItem->GetTempVar( static_cast<CITempVars>( moreVar ), moreVarPart ) );
 	return true;
 }
 
@@ -11773,28 +11768,16 @@ bool CItem_GetMoreVar( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CItem_SetMoreVar( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 3 )
 	{
 		ScriptError( cx, "SetMoreVar: Invalid number of arguments (takes 3, the moreVarName (more, more0, more1, more2, morex, morey or morez); the moreVarPart (1 to 4) and the moreVarValue (0-255)" );
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CItem *mItem = nullptr;
-
-	// Let's validate the item
-	if( myClass.ClassName() == "UOXItem" )
-	{
-		mItem = static_cast<CItem *>( myClass.toObject() );
-		if( !ValidateObject( mItem ))
-		{
-			ScriptError( cx, "SetMoreVar: Passed an invalid Item" );
-			return false;
-		}
-	}
-	else
+	CItem *mItem = GetWrappedObject<CItem>( obj, &UOXItem_class );
+	if( !ValidateObject( mItem ))
 	{
 		ScriptError( cx, "SetMoreVar: Passed an invalid Item" );
 		return false;
@@ -11802,9 +11785,9 @@ bool CItem_SetMoreVar( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	// Fetch data from the function arguments, and figure out which moreVar to set data for
 	UI08 moreVar			= 0;
-	UI08 moreVarPart		= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
-	UI08 moreVarValue		= static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
-	std::string moreVarName	= JS_GetStringBytes( cx, argv[0]);
+	UI08 moreVarPart		= static_cast<UI08>( args.get(1).toInt32());
+	UI08 moreVarValue		= static_cast<UI08>( args.get(2).toInt32());
+	std::string moreVarName	= JS_GetStringBytes( cx, args.get(0));
 	if( moreVarName == "more" )
 	{
 		moreVar = 0;
@@ -11852,27 +11835,27 @@ bool CItem_SetMoreVar( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_AddScriptTrigger( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddScriptTrigger: Invalid number of arguments (takes 1)" );
 		return false;
 	}
 
-	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+  CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "Invalid Object assigned (AddScriptTrigger)" );
 		return false;
 	}
 
-	if( !JSVAL_IS_INT( argv[0] ))
+	if( !args.get(0).isInt32() )
 	{
 		ScriptError( cx, "That is not a valid script trigger! Only integers between 0-65535 are accepted." );
 	}
 
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 scriptId = static_cast<UI16>( args.get(0).toInt32());
 	if( scriptId > 0 )
 	{
 		cScript *toExecute	= JSMapping->GetScript( scriptId );
@@ -11898,27 +11881,27 @@ bool CBase_AddScriptTrigger( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_RemoveScriptTrigger( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveScriptTrigger: Invalid number of arguments (takes 1)" );
 		return false;
 	}
 
-	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+  CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "Invalid Object assigned (RemoveScriptTrigger)" );
 		return false;
 	}
 
-	if( !JSVAL_IS_INT( argv[0] ))
+	if( !args.get(0).isInt32() )
 	{
 		ScriptError( cx, "That is not a valid script trigger! Only integers between 0-65535 are accepted." );
 	}
 
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 scriptId = static_cast<UI16>( args.get(0).toInt32());
 	if( scriptId > 0 )
 	{
 		myObj->RemoveScriptTrigger( scriptId );
@@ -11939,28 +11922,28 @@ bool CBase_RemoveScriptTrigger( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CBase_HasScriptTrigger( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "HasScriptTrigger: Invalid number of arguments (takes 1)" );
 		return false;
 	}
 
-	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+  CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "Invalid Object assigned (HasScriptTrigger)" );
 		return false;
 	}
 
-	if( !JSVAL_IS_INT( argv[0] ))
+	if( !args.get(0).isInt32() )
 	{
 		ScriptError( cx, "That is not a valid script trigger! Only integers between 0-65535 are accepted." );
 	}
 
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( scriptId > 0 && myObj->HasScriptTrigger( scriptId ) ) );
+	UI16 scriptId = static_cast<UI16>( args.get(0).toInt32());
+	args.rval().setBoolean(  scriptId > 0 && myObj->HasScriptTrigger( scriptId )  );
 	return true;
 }
 
@@ -11972,28 +11955,28 @@ bool CBase_HasScriptTrigger( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CRegion_AddScriptTrigger( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddScriptTrigger: Invalid number of arguments (takes 1)" );
 		return false;
 	}
 
-	CTownRegion *myObj = static_cast<CTownRegion *>( JS_GetPrivate( cx, obj ));
+  CTownRegion *myObj = JS::GetMaybePtrFromReservedSlot<CTownRegion>( obj, 0 );
 	if( myObj == nullptr )
 	{
 		ScriptError( cx, "Invalid Object assigned (AddScriptTrigger)" );
 		return false;
 	}
 
-	if( !JSVAL_IS_INT( argv[0] ))
+	if( !args.get(0).isInt32() )
 	{
 		ScriptError( cx, "That is not a valid script trigger! Only integers between 0-65535 are accepted." );
 		return false;
 	}
 
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 scriptId = static_cast<UI16>( args.get(0).toInt32());
 	if( scriptId > 0 )
 	{
 		cScript *toExecute	= JSMapping->GetScript( scriptId );
@@ -12019,27 +12002,27 @@ bool CRegion_AddScriptTrigger( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CRegion_RemoveScriptTrigger( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveScriptTrigger: Invalid number of arguments (takes 1)" );
 		return false;
 	}
 
-	CTownRegion *myObj = static_cast<CTownRegion *>( JS_GetPrivate( cx, obj ));
+  CTownRegion *myObj = JS::GetMaybePtrFromReservedSlot<CTownRegion>( obj, 0 );
 	if( myObj == nullptr )
 	{
 		ScriptError( cx, "Invalid Object assigned (RemoveScriptTrigger)" );
 		return false;
 	}
 
-	if( !JSVAL_IS_INT( argv[0] ))
+	if( !args.get(0).isInt32() )
 	{
 		ScriptError( cx, "That is not a valid script trigger! Only integers between 0-65535 are accepted." );
 	}
 
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 scriptId = static_cast<UI16>( args.get(0).toInt32());
 	if( scriptId > 0 )
 	{
 		myObj->RemoveScriptTrigger( scriptId );
@@ -12060,22 +12043,22 @@ bool CRegion_RemoveScriptTrigger( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CRegion_GetOrePref( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetOrePref: Invalid number of arguments (takes 1 - oreId)" );
 		return false;
 	}
 
-	CTownRegion *myObj = static_cast<CTownRegion *>( JS_GetPrivate( cx, obj ));
+  CTownRegion *myObj = JS::GetMaybePtrFromReservedSlot<CTownRegion>( obj, 0 );
 	if( myObj == nullptr )
 	{
 		ScriptError( cx, "Invalid Object assigned (GetOrePref)" );
 		return false;
 	}
 
-	if( !JSVAL_IS_INT( argv[0] ))
+	if( !args.get(0).isInt32() )
 	{
 		ScriptError( cx, "That is not a valid ore ID! Only integers between 0-65535 are accepted." );
 	}
@@ -12094,48 +12077,46 @@ bool CRegion_GetOrePref( JSContext *cx, unsigned argc, JS::Value* vp )
 	//	UI16 scriptID
 
 	// Fetch region's ore preference details for specified ore type
-	size_t oreType = static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
+	size_t oreType = static_cast<size_t>( args.get(0).toInt32());
 	auto orePrefs = myObj->GetOrePreference( oreType );
 
 	// Prepare some temporary helper variables
-	JSObject *jsOrePref = JS_NewArrayObject( cx, 0, nullptr );
-	JSObject *jsMiningData = JS_NewArrayObject( cx, 0, nullptr );
+	JS::RootedObject jsOrePref( cx, JS::NewArrayObject( cx, 0 ));
+	JS::RootedObject jsMiningData( cx, JS::NewArrayObject( cx, 0 ));
 
 	// Set up the mining data info
 	// Start with name of ore
-	JSString *oreName = nullptr;
-	oreName = JS_NewStringCopyZ( cx, orePrefs->oreIndex->oreName.c_str() );
-	auto jsOreName = STRING_TO_JSVAL( oreName );
-	JS_SetElement( cx, jsMiningData, 0, &jsOreName );
+	JS::RootedString oreName( cx, JS_NewStringCopyZ( cx, orePrefs->oreIndex->oreName.c_str() ));
+	JS::RootedValue jsOreName( cx, JS::StringValue( oreName ));
+	JS_SetElement( cx, jsMiningData, 0, jsOreName );
 
 	// Name of ingot
-	JSString *ingotName = nullptr;
-	ingotName = JS_NewStringCopyZ( cx, orePrefs->oreIndex->name.c_str() );
-	auto jsIngotName = STRING_TO_JSVAL( ingotName );
-	JS_SetElement( cx, jsMiningData, 3, &jsIngotName );
+	JS::RootedString ingotName( cx, JS_NewStringCopyZ( cx, orePrefs->oreIndex->name.c_str() ));
+	JS::RootedValue jsIngotName( cx, JS::StringValue( ingotName ));
+	JS_SetElement( cx, jsMiningData, 3, jsIngotName );
 
 	// Ore colour, min skill, Makemenu entry, oreChance, scriptID
-	auto jsOreColor = INT_TO_JSVAL( orePrefs->oreIndex->colour );
-	auto jsOreMinSkill = INT_TO_JSVAL( orePrefs->oreIndex->minSkill );
-	auto jsOreMakemenu = INT_TO_JSVAL( orePrefs->oreIndex->makemenu );
-	auto jsOreChance = INT_TO_JSVAL( orePrefs->oreIndex->oreChance );
-	auto jsOreScriptID = INT_TO_JSVAL( orePrefs->oreIndex->scriptID );
-	JS_SetElement( cx, jsMiningData, 1, &jsOreColor );
-	JS_SetElement( cx, jsMiningData, 2, &jsOreMinSkill );
-	JS_SetElement( cx, jsMiningData, 4, &jsOreMakemenu );
-	JS_SetElement( cx, jsMiningData, 5, &jsOreChance );
-	JS_SetElement( cx, jsMiningData, 6, &jsOreScriptID );
+	JS::RootedValue jsOreColor( cx, JS::Int32Value( orePrefs->oreIndex->colour ));
+	JS::RootedValue jsOreMinSkill( cx, JS::Int32Value( orePrefs->oreIndex->minSkill ));
+	JS::RootedValue jsOreMakemenu( cx, JS::Int32Value( orePrefs->oreIndex->makemenu ));
+	JS::RootedValue jsOreChance( cx, JS::Int32Value( orePrefs->oreIndex->oreChance ));
+	JS::RootedValue jsOreScriptID( cx, JS::Int32Value( orePrefs->oreIndex->scriptID ));
+	JS_SetElement( cx, jsMiningData, 1, jsOreColor );
+	JS_SetElement( cx, jsMiningData, 2, jsOreMinSkill );
+	JS_SetElement( cx, jsMiningData, 4, jsOreMakemenu );
+	JS_SetElement( cx, jsMiningData, 5, jsOreChance );
+	JS_SetElement( cx, jsMiningData, 6, jsOreScriptID );
 
 	// Add mining data to the orePref array
-	jsval miningDataVal = OBJECT_TO_JSVAL( jsMiningData );
-	JS_SetElement( cx, jsOrePref, 0, &miningDataVal );
+	JS::RootedValue miningDataVal( cx, JS::ObjectOrNullValue( jsMiningData ));
+	JS_SetElement( cx, jsOrePref, 0, miningDataVal );
 
 	// Add percent chance to orePref array
-	jsval jsOrePrefChance = INT_TO_JSVAL( orePrefs->percentChance );
-	JS_SetElement( cx, jsOrePref, 1, &jsOrePrefChance );
+	JS::RootedValue jsOrePrefChance( cx, JS::Int32Value( orePrefs->percentChance ));
+	JS_SetElement( cx, jsOrePref, 1, jsOrePrefChance );
 
-	// Convert orePref array object to jsval and pass it to script
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( jsOrePref ) );
+	// Convert orePref array object to JS::Value and pass it to script
+	args.rval().setObjectOrNull( jsOrePref );
 
 	return true;
 }
@@ -12148,22 +12129,22 @@ bool CRegion_GetOrePref( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CRegion_GetOreChance( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "GetOreChance: Invalid number of arguments (takes 0)" );
 		return false;
 	}
 
-	CTownRegion *myObj = static_cast<CTownRegion *>( JS_GetPrivate( cx, obj ));
+  CTownRegion *myObj = JS::GetMaybePtrFromReservedSlot<CTownRegion>( obj, 0 );
 	if( myObj == nullptr )
 	{
 		ScriptError( cx, "Invalid Object assigned (GetOreChance)" );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( myObj->GetOreChance() ) );
+	args.rval().setInt32(  myObj->GetOreChance()  );
 	return true;
 }
 
@@ -12175,41 +12156,29 @@ bool CRegion_GetOreChance( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_AddFriend( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddFriend: Invalid number of arguments (takes 1 - playerObject)" );
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CChar *mChar = nullptr;
-
-	// Let's validate the character
-	if( myClass.ClassName() == "UOXChar" )
-	{
-		mChar = static_cast<CChar *>( myClass.toObject() );
-		if( !ValidateObject( mChar ))
-		{
-			ScriptError( cx, "AddFriend: Passed an invalid Character" );
-			return false;
-		}
-	}
-	else
+	CChar *mChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "AddFriend: Passed an invalid Character" );
 		return false;
 	}
 
-	CChar *newFriend = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *newFriend = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( newFriend ))
 	{
 		ScriptError( cx, "(AddFriend) Invalid Object passed as function parameter" );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mChar->AddFriend( newFriend )) );
+	args.rval().setBoolean(  mChar->AddFriend( newFriend ) );
 	return true;
 }
 
@@ -12221,41 +12190,29 @@ bool CChar_AddFriend( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_RemoveFriend( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveFriend: Invalid number of arguments (takes 1 - playerObject)" );
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CChar *mChar = nullptr;
-
-	// Let's validate the character
-	if( myClass.ClassName() == "UOXChar" )
-	{
-		mChar = static_cast<CChar *>( myClass.toObject() );
-		if( !ValidateObject( mChar ))
-		{
-			ScriptError( cx, "RemoveFriend: Passed an invalid Character" );
-			return false;
-		}
-	}
-	else
+	CChar *mChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "RemoveFriend: Passed an invalid Character" );
 		return false;
 	}
 
-	CChar *friendToRemove = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *friendToRemove = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( friendToRemove ))
 	{
 		ScriptError( cx, "(AddFriend) Invalid Object passed as function parameter" );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mChar->RemoveFriend( friendToRemove )) );
+	args.rval().setBoolean(  mChar->RemoveFriend( friendToRemove ) );
 	return true;
 }
 
@@ -12267,28 +12224,16 @@ bool CChar_RemoveFriend( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_GetFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "GetFriendList: Invalid number of arguments (takes 0)" );
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CChar *mChar = nullptr;
-
-	// Let's validate the character
-	if( myClass.ClassName() == "UOXChar" )
-	{
-		mChar = static_cast<CChar *>( myClass.toObject() );
-		if( !ValidateObject( mChar ))
-		{
-			ScriptError( cx, "GetFriendList: Passed an invalid Character" );
-			return false;
-		}
-	}
-	else
+	CChar *mChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "GetFriendList: Passed an invalid Character" );
 		return false;
@@ -12298,26 +12243,26 @@ bool CChar_GetFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 	auto friendList = mChar->GetFriendList();
 
 	// Prepare some temporary helper variables
-	JSObject *jsFriendList = JS_NewArrayObject( cx, 0, nullptr );
-	jsval jsTempFriend;
+	JS::RootedObject jsFriendList( cx, JS::NewArrayObject( cx, 0 ));
+	JS::RootedValue jsTempFriend( cx );
 
 	// Loop through list of friends, and add each one to the JS ArrayObject
 	int i = 0;
 	for( auto &tempFriend : *friendList )
 	{
 		// Create a new JS Object based on character
-		JSObject *myObj = JSEngine->AcquireObject( IUE_CHAR, tempFriend, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_CHAR, tempFriend, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 
-		// Convert JS Object to jsval
-		jsTempFriend = OBJECT_TO_JSVAL( myObj );
+		// Convert JS Object to JS::Value
+		jsTempFriend = JS::ObjectOrNullValue( myObj );
 
-		// Add jsval to ArrayObject
-		JS_SetElement( cx, jsFriendList, i, &jsTempFriend );
+		// Add JS::Value to ArrayObject
+		JS_SetElement( cx, jsFriendList, i, jsTempFriend );
 		i++;
 	}
 
-	// Convert ArrayObject to jsval and pass it to script
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( jsFriendList ) );
+	// Convert ArrayObject to JS::Value and pass it to script
+	args.rval().setObjectOrNull( jsFriendList );
 	return true;
 }
 
@@ -12329,28 +12274,16 @@ bool CChar_GetFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_ClearFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "ClearFriendList: Invalid number of arguments (takes 0)" );
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CChar *mChar = nullptr;
-
-	// Let's validate the character
-	if( myClass.ClassName() == "UOXChar" )
-	{
-		mChar = static_cast<CChar *>( myClass.toObject() );
-		if( !ValidateObject( mChar ))
-		{
-			ScriptError( cx, "ClearFriendList: Passed an invalid Character" );
-			return false;
-		}
-	}
-	else
+	CChar *mChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "ClearFriendList: Passed an invalid Character" );
 		return false;
@@ -12359,7 +12292,7 @@ bool CChar_ClearFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 	// Clear friend list
 	mChar->ClearFriendList();
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ) );
+	args.rval().setBoolean(  true  );
 	return true;
 }
 
@@ -12371,28 +12304,16 @@ bool CChar_ClearFriendList( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_GetPetList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "GetPetList: Invalid number of arguments (takes 0)" );
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CChar *mChar = nullptr;
-
-	// Let's validate the character
-	if( myClass.ClassName() == "UOXChar" )
-	{
-		mChar = static_cast<CChar *>( myClass.toObject() );
-		if( !ValidateObject( mChar ))
-		{
-			ScriptError( cx, "GetPetList: Passed an invalid Character" );
-			return false;
-		}
-	}
-	else
+	CChar *mChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "GetPetList: Passed an invalid Character" );
 		return false;
@@ -12402,8 +12323,8 @@ bool CChar_GetPetList( JSContext *cx, unsigned argc, JS::Value* vp )
 	auto petList = mChar->GetPetList();
 
 	// Prepare some temporary helper variables
-	JSObject *jsPetList = JS_NewArrayObject( cx, 0, nullptr );
-	jsval jsTempPet;
+	JS::RootedObject jsPetList( cx, JS::NewArrayObject( cx, 0 ));
+	JS::RootedValue jsTempPet( cx );
 
 	// Loop through list of pets, and add each one to the JS ArrayObject
 	int i = 0;
@@ -12414,20 +12335,20 @@ bool CChar_GetPetList( JSContext *cx, unsigned argc, JS::Value* vp )
 			if( pet->GetOwnerObj() == mChar )
 			{
 				// Create a new JS Object based on character
-				JSObject *myObj = JSEngine->AcquireObject( IUE_CHAR, pet, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+				JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_CHAR, pet, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 
-				// Convert JS Object to jsval
-				jsTempPet = OBJECT_TO_JSVAL( myObj );
+				// Convert JS Object to JS::Value
+				jsTempPet = JS::ObjectOrNullValue( myObj );
 
-				// Add jsval to ArrayObject
-				JS_SetElement( cx, jsPetList, i, &jsTempPet );
+				// Add JS::Value to ArrayObject
+				JS_SetElement( cx, jsPetList, i, jsTempPet );
 				i++;
 			}
 		}
 	}
 
-	// Convert ArrayObject to jsval and pass it to script
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( jsPetList ) );
+	// Convert ArrayObject to JS::Value and pass it to script
+	args.rval().setObjectOrNull( jsPetList );
 	return true;
 }
 
@@ -12439,35 +12360,22 @@ bool CChar_GetPetList( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_HasBeenOwner( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "HasBeenOwner: Invalid number of arguments (takes 1)" );
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CChar *mChar = nullptr;
-
-	// Let's validate the character
-	if( myClass.ClassName() == "UOXChar" )
-	{
-		mChar = static_cast<CChar *>( myClass.toObject() );
-		if( !ValidateObject( mChar ))
-		{
-			ScriptError( cx, "HasBeenOwner: Passed an invalid Character" );
-			return false;
-		}
-	}
-	else
+	CChar *mChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "HasBeenOwner: Passed an invalid Character" );
 		return false;
 	}
 	
-	JSEncapsulate toCheck( cx, &( argv[0] ));
-	CChar *pChar = static_cast<CChar *>( toCheck.toObject() );
+	CChar *pChar = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( pChar ))
 	{
 		ScriptError( cx, "HasBeenOwner: Invalid Character passed as parameter" );
@@ -12476,7 +12384,7 @@ bool CChar_HasBeenOwner( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	bool hasBeenOwner = mChar->IsOnPetOwnerList( pChar );
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( hasBeenOwner ) );
+	args.rval().setBoolean(  hasBeenOwner  );
 	return true;
 }
 
@@ -12488,35 +12396,22 @@ bool CChar_HasBeenOwner( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_CalculateControlChance( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "CalculateControlChance: Invalid number of arguments (takes 1 - pChar)" );
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CChar *mChar = nullptr;
-
-	// Let's validate the character
-	if( myClass.ClassName() == "UOXChar" )
-	{
-		mChar = static_cast<CChar *>( myClass.toObject() );
-		if( !ValidateObject( mChar ))
-		{
-			ScriptError( cx, "CalculateControlChance: Passed an invalid Character" );
-			return false;
-		}
-	}
-	else
+	CChar *mChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "CalculateControlChance: Passed an invalid Character" );
 		return false;
 	}
 
-	JSEncapsulate toCheck( cx, &( argv[0] ));
-	CChar *pChar = static_cast<CChar *>( toCheck.toObject() );
+	CChar *pChar = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( pChar ))
 	{
 		ScriptError( cx, "CalculateControlChance: Invalid Character passed as parameter" );
@@ -12525,7 +12420,7 @@ bool CChar_CalculateControlChance( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	UI16 petControlChance = Skills->CalculatePetControlChance( mChar, pChar );
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( petControlChance ) );
+	args.rval().setInt32(  petControlChance  );
 	return true;
 }
 
@@ -12537,41 +12432,29 @@ bool CChar_CalculateControlChance( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_AddFollower( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddFollower: Invalid number of arguments (takes 1 - npcObject)" );
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CChar *mChar = nullptr;
-
-	// Let's validate the character
-	if( myClass.ClassName() == "UOXChar" )
-	{
-		mChar = static_cast<CChar *>( myClass.toObject() );
-		if( !ValidateObject( mChar ))
-		{
-			ScriptError( cx, "AddFollower: Passed an invalid Character" );
-			return false;
-		}
-	}
-	else
+	CChar *mChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "AddFollower: Passed an invalid Character" );
 		return false;
 	}
 
-	CChar *newFollower = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *newFollower = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( newFollower ))
 	{
 		ScriptError( cx, "(AddFollower) Invalid Object passed as function parameter" );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mChar->AddFollower( newFollower )) );
+	args.rval().setBoolean(  mChar->AddFollower( newFollower ) );
 	return true;
 }
 
@@ -12583,41 +12466,29 @@ bool CChar_AddFollower( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_RemoveFollower( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveFollower: Invalid number of arguments (takes 1 - followerObject)" );
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CChar *mChar = nullptr;
-
-	// Let's validate the character
-	if( myClass.ClassName() == "UOXChar" )
-	{
-		mChar = static_cast<CChar *>( myClass.toObject() );
-		if( !ValidateObject( mChar ))
-		{
-			ScriptError( cx, "RemoveFollower: Passed an invalid Character" );
-			return false;
-		}
-	}
-	else
+	CChar *mChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "RemoveFollower: Passed an invalid Character" );
 		return false;
 	}
 
-	CChar *followerToRemove = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	CChar *followerToRemove = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 	if( !ValidateObject( followerToRemove ))
 	{
 		ScriptError( cx, "(RemoveFollower) Invalid Object passed as function parameter" );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mChar->RemoveFollower( followerToRemove )) );
+	args.rval().setBoolean(  mChar->RemoveFollower( followerToRemove ) );
 	return true;
 }
 
@@ -12629,28 +12500,16 @@ bool CChar_RemoveFollower( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CChar_GetFollowerList( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "GetFollowerList: Invalid number of arguments (takes 0)" );
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	CChar *mChar = nullptr;
-
-	// Let's validate the character
-	if( myClass.ClassName() == "UOXChar" )
-	{
-		mChar = static_cast<CChar *>( myClass.toObject() );
-		if( !ValidateObject( mChar ))
-		{
-			ScriptError( cx, "GetFollowerList: Passed an invalid Character" );
-			return false;
-		}
-	}
-	else
+	CChar *mChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "GetFollowerList: Passed an invalid Character" );
 		return false;
@@ -12660,8 +12519,8 @@ bool CChar_GetFollowerList( JSContext *cx, unsigned argc, JS::Value* vp )
 	auto followerList = mChar->GetFollowerList();
 
 	// Prepare some temporary helper variables
-	JSObject *jsFollowerList = JS_NewArrayObject( cx, 0, nullptr );
-	jsval jsTempFollower;
+	JS::RootedObject jsFollowerList( cx, JS::NewArrayObject( cx, 0 ));
+	JS::RootedValue jsTempFollower( cx );
 
 	// Loop through list of friends, and add each one to the JS ArrayObject
 	int i = 0;
@@ -12672,20 +12531,20 @@ bool CChar_GetFollowerList( JSContext *cx, unsigned argc, JS::Value* vp )
 			if( follower->GetOwnerObj() == mChar )
 			{
 				// Create a new JS Object based on character
-				JSObject *myObj = JSEngine->AcquireObject( IUE_CHAR, follower, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+				JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_CHAR, follower, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
 
-				// Convert JS Object to jsval
-				jsTempFollower = OBJECT_TO_JSVAL( myObj );
+				// Convert JS Object to JS::Value
+				jsTempFollower = JS::ObjectOrNullValue( myObj );
 
-				// Add jsval to ArrayObject
-				JS_SetElement( cx, jsFollowerList, i, &jsTempFollower );
+				// Add JS::Value to ArrayObject
+				JS_SetElement( cx, jsFollowerList, i, jsTempFollower );
 				i++;
 			}
 		}
 	}
 
-	// Convert ArrayObject to jsval and pass it to script
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( jsFollowerList ) );
+	// Convert ArrayObject to JS::Value and pass it to script
+	args.rval().setObjectOrNull( jsFollowerList );
 	return true;
 }
 
@@ -12698,32 +12557,30 @@ bool CChar_GetFollowerList( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CParty_Remove( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "Remove: Invalid number of arguments (1)" );
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	if( myClass.ClassName() == "UOXParty" )
+	if( HasWrapperClass( obj, &UOXParty_class ))
 	{
-		Party *ourParty = static_cast<Party *>( myClass.toObject() );
+		Party *ourParty = GetWrappedObject<Party>( obj, &UOXParty_class );
 		if( ourParty == nullptr )
 		{
 			ScriptError( cx, "Remove: Invalid party" );
 			return false;
 		}
 
-		JSEncapsulate toRemove( cx, &( argv[0] ));
-		CChar *charToRemove = static_cast<CChar *>( toRemove.toObject() );
+		CChar *charToRemove = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 		if( !ValidateObject( charToRemove ))
 		{
 			ScriptError( cx, "Remove: Invalid character to remove" );
 			return false;
 		}
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ourParty->RemoveMember( charToRemove )) );
+		args.rval().setBoolean(  ourParty->RemoveMember( charToRemove ) );
 	}
 
 	return true;
@@ -12737,30 +12594,27 @@ bool CParty_Remove( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CParty_Add( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Add: Invalid number of arguments (1)" );
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-
 	// let's setup our default return value here
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+	args.rval().setBoolean(  false  );
 
-	if( myClass.ClassName() == "UOXParty" )
+	if( HasWrapperClass( obj, &UOXParty_class ))
 	{
-		Party *ourParty = static_cast<Party *>( myClass.toObject() );
+		Party *ourParty = GetWrappedObject<Party>( obj, &UOXParty_class );
 		if( ourParty == nullptr )
 		{
 			ScriptError( cx, "Add: Invalid party" );
 			return false;
 		}
 
-		JSEncapsulate toAdd( cx, &( argv[0] ));
-		CChar *charToAdd = static_cast<CChar *>( toAdd.toObject() );
+		CChar *charToAdd = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
 		if( !ValidateObject( charToAdd ))
 		{
 			ScriptError( cx, "Add: Invalid character to add" );
@@ -12770,11 +12624,11 @@ bool CParty_Add( JSContext *cx, unsigned argc, JS::Value* vp )
 		{
 			if( ourParty->IsNPC() )
 			{
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ourParty->AddMember( charToAdd )) );
+				args.rval().setBoolean(  ourParty->AddMember( charToAdd ) );
 			}
 			else
 			{
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+				args.rval().setBoolean(  false  );
 				ScriptError( cx, "Add: Adding NPC to a PC party attempted" );
 			}
 		}
@@ -12782,7 +12636,7 @@ bool CParty_Add( JSContext *cx, unsigned argc, JS::Value* vp )
 		{
 			if( ourParty->IsNPC() )
 			{
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+				args.rval().setBoolean(  false  );
 				ScriptError( cx, "Add: Adding PC to a NPC party attempted" );
 			}
 			else
@@ -12803,17 +12657,17 @@ bool CParty_Add( JSContext *cx, unsigned argc, JS::Value* vp )
 						toSend.Leader( leader );
 						targSock->Send( &toSend );
 						targSock->SysMessage( 9002 ); // You have been invited to join a party, type /accept or /decline to deal with the invitation
-						JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ) );
+						args.rval().setBoolean(  true  );
 					}
 					else
 					{
-						JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+						args.rval().setBoolean(  false  );
 						ScriptError( cx, "Add: PC selected is not online" );
 					}
 				}
 				else
 				{
-					JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+					args.rval().setBoolean(  false  );
 					ScriptError( cx, "Add: PC selected is not online" );
 				}
 			}
@@ -12830,45 +12684,47 @@ bool CParty_Add( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CParty_GetMember( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JS::Value* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "GetMember: Invalid number of arguments (1)" );
 		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
-	if( myClass.ClassName() == "UOXParty" )
+	if( HasWrapperClass( obj, &UOXParty_class ))
 	{
-		Party *ourParty = static_cast<Party *>( myClass.toObject() );
+		Party *ourParty = GetWrappedObject<Party>( obj, &UOXParty_class );
 		if( ourParty == nullptr )
 		{
 			ScriptError( cx, "GetMember: Invalid party" );
 			return false;
 		}
 
-		JSEncapsulate toGetMember( cx, &( argv[0] ));
-		size_t memberOffset = toGetMember.toInt();
+		int32_t memberIndex = 0;
+		if( !JS::ToInt32( cx, args.get( 0 ), &memberIndex ))
+			return false;
+
+		size_t memberOffset = static_cast<size_t>( memberIndex );
 		if( memberOffset >= ourParty->MemberList()->size() )
 		{
 			ScriptError( cx, "GetMember: Invalid character to get, index out of bounds" );
-			JS_SET_RVAL( cx, vp, JSVAL_NULL );
+			args.rval().setNull();
 			return true;
 		}
 		CChar *mChar = (*( ourParty->MemberList() ))[memberOffset]->Member();
 		if( mChar == nullptr )
 		{
-			JS_SET_RVAL( cx, vp, JSVAL_NULL );
+			args.rval().setNull();
 		}
 		else
 		{
-			JSObject *myJSChar	= JSEngine->AcquireObject( IUE_CHAR, mChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-			JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myJSChar ) );
+			JS::RootedObject myJSChar( cx, JSEngine->AcquireObject( IUE_CHAR, mChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+			args.rval().setObjectOrNull( myJSChar );
 		}
 	}
 	else
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 	return true;
 }
 
@@ -12881,20 +12737,21 @@ bool CParty_GetMember( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_FirstTriggerWord( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "FirstTriggerWord: Invalid count of arguments :%d, needs :0", argc );
 		return false;
 	}
-	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
+  CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "FirstTriggerWord: Invalid socket assigned." );
 		return false;
 	}
 	UI16 trigWord = mySock->FirstTrigWord();
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( trigWord ) );
+	args.rval().setInt32(  trigWord  );
 	return true;
 }
 
@@ -12907,20 +12764,21 @@ bool CSocket_FirstTriggerWord( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_NextTriggerWord( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "NextTriggerWord: Invalid count of arguments :%d, needs :0", argc );
 		return false;
 	}
-	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
+  CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "NextTriggerWord: Invalid socket assigned." );
 		return false;
 	}
 	UI16 trigWord = mySock->NextTrigWord();
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( trigWord ) );
+	args.rval().setInt32(  trigWord  );
 	return true;
 }
 
@@ -12933,20 +12791,21 @@ bool CSocket_NextTriggerWord( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 bool CSocket_FinishedTriggerWords( JSContext *cx, unsigned argc, JS::Value* vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "FinishedTriggerWords: Invalid count of arguments :%d, needs :0", argc );
 		return false;
 	}
-	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
+  CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>( obj, 0 );
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "FinishedTriggerWords: Invalid socket assigned." );
 		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mySock->FinishedTrigWords() ) );
+	args.rval().setBoolean(  mySock->FinishedTrigWords()  );
 	return true;
 }
 
