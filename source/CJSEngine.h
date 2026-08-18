@@ -56,7 +56,7 @@ private:
 	using JSOBJECTMAP_CITERATOR = JSOBJECTMAP::const_iterator;
 
 	std::array<JSOBJECTMAP, IUE_COUNT>					objectList;
-    JS::RootedObjectVector *   protoList;
+	JS::PersistentRootedObjectVector *protoList;
 
 	JSRuntime * jsRuntime;
 	JSContext * jsContext;

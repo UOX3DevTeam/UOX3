@@ -807,7 +807,6 @@ bool SE_RegisterCommand( JSContext *cx, unsigned int argc, JS::Value *vp )
 bool SE_RegisterSpell( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	auto scriptEnv = getThis( cx, args );
 
 	if( argc != 2 )
 	{
@@ -816,7 +815,13 @@ bool SE_RegisterSpell( JSContext *cx, unsigned int argc, JS::Value *vp )
 	}
 	SI32 spellNumber	= args.get(0).toInt32();
 	bool isEnabled		= ( args.get(1).toBoolean() == true );
-	cScript *myScript	= JSMapping->GetScript( scriptEnv );
+
+	cScript *myScript = JSMapping->currentActive();
+	if( myScript == nullptr )
+	{
+		ScriptError( cx, "RegisterSpell: JS Script could not be resolved" );
+		return false;
+	}
 	Magic->Register( myScript, spellNumber, isEnabled );
 	return true;
 }
@@ -917,7 +922,6 @@ bool SE_RegisterPacket( JSContext *cx, unsigned int argc, JS::Value *vp )
 bool SE_RegisterKey( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
-	auto  scriptEnv = getThis( cx, args );
 
 	if( argc != 2 )
 	{
@@ -925,7 +929,12 @@ bool SE_RegisterKey( JSContext *cx, unsigned int argc, JS::Value *vp )
 		return false;
 	}
 	std::string toRegister	= JS_GetStringBytes( cx, args.get(1));
-	UI16 scriptId			= JSMapping->GetScriptId( scriptEnv );
+	UI16 scriptId = 0xFFFF;
+	cScript *activeScript = JSMapping->currentActive( false );
+	if( activeScript != nullptr )
+	{
+		scriptId = activeScript->GetScriptID();
+	}
 
 	if( scriptId == 0xFFFF )
 	{
