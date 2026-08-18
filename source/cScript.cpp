@@ -517,6 +517,15 @@ void cScript::CollectGarbage( void )
 cScript::~cScript()
 {
 	Cleanup();
+	if( scriptObj )
+	{
+		JS_SetReservedSlot( scriptObj, 0, JS::UndefinedValue() );
+	}
+
+	if( targObject )
+	{
+		JS_SetReservedSlot( targObject, 0, JS::UndefinedValue() );
+	}
 	targScript.reset();
 	scriptObj.reset();
 	targObject.reset();
