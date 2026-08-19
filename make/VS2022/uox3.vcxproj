@@ -66,6 +66,7 @@
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_CONSOLE;JS_STANDALONE;STATIC_JS_API;_CRT_NO_VA_START_VALIDATION;_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(MozjsLibrary);ws2_32.lib;Kernel32.lib;winmm.lib;psapi.lib;user32.lib;dbghelp.lib;legacy_stdio_definitions.lib;ntdll.lib;userenv.lib;%(AdditionalDependencies)</AdditionalDependencies>

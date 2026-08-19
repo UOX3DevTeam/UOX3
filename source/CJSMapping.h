@@ -2,6 +2,7 @@
 #define __CJSMAPPING_H__
 
 #include <js/TypeDecls.h>
+#include "js/Object.h"
 
 #include <stack> 
 
@@ -22,7 +23,6 @@ class CJSMappingSection
 {
 private:
 	std::map<UI16, cScript *>			scriptIdMap;
-	std::map<JSObject *, UI16>			scriptJSMap;
 
 	std::map<UI16, cScript *>::iterator	scriptIdIter;
 
@@ -31,8 +31,6 @@ public:
 	CJSMappingSection( SCRIPTTYPE sT );
 	~CJSMappingSection();
 
-	auto jsCollection() const -> const std::map<JSObject*, UI16>& { return scriptJSMap; }
-	auto jsCollection()  -> std::map<JSObject*, UI16>& { return scriptJSMap; }
 	auto collection() const -> const std::map<UI16, cScript*>& { return scriptIdMap; }
 	auto collection()  -> std::map<UI16, cScript*>& { return scriptIdMap; }
 	

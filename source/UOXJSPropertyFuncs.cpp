@@ -1760,7 +1760,17 @@ FDCLG( CCharacter, race ) { FNARGS auto character = JS::GetMaybePtrFromReservedS
 FDCLG( CCharacter, region ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); return SetCharacterObjectResult( cx, args.rval(), IUE_REGION, character->GetRegion() ); }
 FDCLG( CCharacter, town ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); const UI16 town = character->GetTown(); return SetCharacterObjectResult( cx, args.rval(), IUE_REGION, town == 0xFF ? nullptr : cwmWorldState->townRegions[town] ); }
 FDCLG( CCharacter, guild ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); const GUILDID guild = character->GetGuildNumber(); return SetCharacterObjectResult( cx, args.rval(), IUE_GUILD, guild == -1 ? nullptr : GuildSys->Guild( guild )); }
-FDCLG( CCharacter, socket ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); return SetCharacterObjectResult( cx, args.rval(), IUE_SOCK, character->GetSocket() ); }
+FDCLG( CCharacter, socket )
+{
+	FNARGS
+	auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );
+	if (!ValidateObject( character ))
+	{
+		args.rval().setNull();
+		return true;
+	}
+	return SetCharacterObjectResult( cx, args.rval(), IUE_SOCK, character->GetSocket() );
+}
 FDCLG( CCharacter, party ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); return SetCharacterObjectResult( cx, args.rval(), IUE_PARTY, PartyFactory::GetSingleton().Get( character )); }
 FDCLG( CCharacter, multi ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); CMultiObj *multi = character->GetMultiObj(); return SetCharacterObjectResult( cx, args.rval(), IUE_ITEM, ValidateObject( multi ) ? multi : nullptr ); }
 FDCLG( CCharacter, account ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); return SetCharacterObjectResult( cx, args.rval(), IUE_ACCOUNT, &character->GetAccount() ); }

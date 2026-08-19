@@ -44,7 +44,7 @@ void UOX3EngineWarningReporter(JSContext* cx, JSErrorReport* report)
 auto CJSEngine::Startup() -> void
 {
 	runtimeList.resize( 0 );
-  const UI32 maxEngineSize = JS::DefaultHeapMaxBytes;
+	const UI32 maxEngineSize = 0xFFFFFFFF; // 4 gb, hard max
 
 	// 16 MB minimum. Any lower and UOX3 is prone to crashes from frequent JS reloads
 	auto maxBytesSize = std::max( static_cast<UI16>( 16 ), cwmWorldState->ServerData()->GetJSEngineSize() ); // from INI
@@ -356,7 +356,7 @@ bool CJSRuntime::InitializePrototypes()
   JSContext *cx = jsContext;
   JS::RootedObject obj(jsContext, jsGlobal);
 
-  protoList = new JS::RootedObjectVector( cx );
+  protoList = new JS::PersistentRootedObjectVector( cx );
   if( !protoList->resize( JSP_COUNT ))
   {
     return false;

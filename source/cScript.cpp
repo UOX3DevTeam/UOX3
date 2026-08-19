@@ -517,6 +517,15 @@ void cScript::CollectGarbage( void )
 cScript::~cScript()
 {
 	Cleanup();
+	if( scriptObj )
+	{
+		JS_SetReservedSlot( scriptObj, 0, JS::UndefinedValue() );
+	}
+
+	if( targObject )
+	{
+		JS_SetReservedSlot( targObject, 0, JS::UndefinedValue() );
+	}
 	targScript.reset();
 	scriptObj.reset();
 	targObject.reset();
@@ -4541,7 +4550,7 @@ SI16 cScript::OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFigh
 	SI16 funcRetVal	= -1;
 
 	JS::RootedValue rval( targContext );
-	JS::RootedValueArray<3> params( targContext );
+	JS::RootedValueArray<4> params( targContext );
 	JS::RootedObject attackerObj( targContext, JSEngine->AcquireObject( IUE_CHAR, attacker, runTime ) );
 	JS::RootedObject defenderObj( targContext, JSEngine->AcquireObject( IUE_CHAR, defender, runTime ) );
 	params[0].set( JS::ObjectOrNullValue( attackerObj ) );
@@ -4585,7 +4594,7 @@ SI08 cScript::OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue, Weath
 		return RV_NOFUNC;
 
 	JS::RootedValue rval( targContext );
-	JS::RootedValueArray<3> params( targContext );
+	JS::RootedValueArray<4> params( targContext );
 	JS::RootedObject damagedObj( targContext, JSEngine->AcquireObject( IUE_CHAR, damaged, runTime ) );
 	params[0].set( JS::ObjectOrNullValue( damagedObj ) );
 	if( ValidateObject( attacker ))
