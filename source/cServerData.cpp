@@ -8244,11 +8244,7 @@ auto CServerData::LoadTimeTags( std::istream &input ) -> void
 		{
 			UTag = oldstrutil::upper( tag );
 			
-			if( UTag == "AMPM" )
-			{
-				ServerTimeAMPM(( std::stoi( data, nullptr, 0 ) == 1 ));
-			}
-			else if( UTag == "CURRENTLIGHT" )
+			if( UTag == "CURRENTLIGHT" )
 			{
 				WorldLightCurrentLevel( static_cast<UI16>( std::stoul( data, nullptr, 0 )));
 			}
@@ -8319,16 +8315,6 @@ auto CServerData::ServerTimeSeconds( UI08 nValue) -> void
 {
 	seconds = nValue;
 }
-//==============================================================================================
-auto CServerData::ServerTimeAMPM() const -> bool
-{
-	return ampm;
-}
-//==============================================================================================
-auto CServerData::ServerTimeAMPM( bool nValue ) -> void
-{
-	ampm = nValue;
-}
 
 //==============================================================================================
 auto CServerData::IncSecond() -> bool
@@ -8376,14 +8362,10 @@ auto CServerData::IncHour() -> bool
 {
 	++hours;
 	bool retVal = false;
-	if( hours == 12 )
+	if( hours >= 24 )
 	{
-		if( ampm )
-		{
-			retVal = IncDay();
-		}
 		hours	= 0;
-		ampm	= !ampm;
+		retVal = IncDay();
 	}
 	return retVal;
 }
