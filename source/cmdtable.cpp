@@ -826,7 +826,7 @@ void Command_RegSpawn( CSocket *s )
 			const TIMERVAL s_t = GetClock();
 			std::for_each( cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&itemsSpawned, &npcsSpawned]( std::pair<UI16, CSpawnRegion *> entry )
 			{
-				auto maxTries = 1000;
+				auto maxTries = 100;
 				auto numTries = 0;
 				if( entry.second )
 				{
@@ -1272,7 +1272,7 @@ void Command_HowTo( CSocket *s )
 		UI16 position = 40;
 		UI16 linenum = 1;
 
-		CPSendGumpMenu toSend;
+		CGumpPacket toSend( s );
 		toSend.UserId( INVALIDSERIAL );
 		toSend.GumpId( 13 );
 
@@ -1370,8 +1370,7 @@ void Command_HowTo( CSocket *s )
 			}
 			++pagenum;
 		}
-		toSend.Finalize();
-		s->Send( &toSend );
+		toSend.Send();
 	}
 	else
 	{

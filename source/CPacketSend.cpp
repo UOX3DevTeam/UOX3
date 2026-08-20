@@ -14,6 +14,8 @@
 #include "cScript.h"
 #include "CJSMapping.h"
 #include "cRaces.h"
+#include "utf8.h"
+#include <iterator>
 #include <string>
 #include <locale>
 #include <codecvt>
@@ -7057,7 +7059,287 @@ void CPSendGumpMenu::Log( std::ostream &outStream, bool fullHeader )
 	CPUOXBuffer::Log( outStream, false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CPSendCompressedGumpMenu()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles outgoing packet with gump menu details
+//o------------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xDD (Compressed Gump)
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE[1] Cmd
+//|						BYTE[2] len
+//|						BYTE[4] Player Serial
+//|						BYTE[4] Gump ID
+//|						BYTE[4] x
+//|						BYTE[4] y
+//|						BYTE[4] Compressed Gump Layout Length (CLen)
+//|						BYTE[4] Decompressed Gump Layout Length (DLen)
+//|						BYTE[CLen-4] Gump Data, zlib compressed
+//|						BYTE[4] Number of text lines
+//|						BYTE[4] Compressed Text Line Length (CTxtLen)
+//|						BYTE[4] Decompressed Text Line Length (DTxtLen)
+//|						BYTE[CTxtLen-4] Gump's Compressed Text data, zlib compressed
+//|
+//|						Notes
+//|						text lines is in Big-Endian Unicode formate, not NULL terminated
+//|						loop:
+//|							BYTE[2] Length
+//|							BYTE[Length*2] text
+//|						endloop
+//o------------------------------------------------------------------------------------------------o
+CPSendCompressedGumpMenu::CPSendCompressedGumpMenu()
+{
+	// Initialize standard header space (19 bytes)
+	// Cmd(1) + Len(2) + Serial(4) + GumpID(4) + X(4) + Y(4)
+	pStream.ReserveSize( 19 );
+	pStream.WriteByte( 0, 0xDD );       // Command byte (Compressed Gump)
+	pStream.WriteShort( 1, 19 );        // Initial length (updated in Finalize)
+	pStream.WriteLong( 3, 0 );          // Serial placeholder
+	pStream.WriteLong( 7, 0 );          // GumpID placeholder
+	pStream.WriteLong( 11, 0x6E );      // Default X
+	pStream.WriteLong( 15, 0x46 );      // Default Y
+}
+
+void CPSendCompressedGumpMenu::UserId( SERIAL value )
+{
+	pStream.WriteLong( 3, value );
+}
+
+void CPSendCompressedGumpMenu::GumpId( SERIAL value )
+{
+	pStream.WriteLong( 7, value );
+}
+
+void CPSendCompressedGumpMenu::X( UI32 value )
+{
+	pStream.WriteLong( 11, value );
+}
+
+void CPSendCompressedGumpMenu::Y( UI32 value )
+{
+	pStream.WriteLong( 15, value );
+}
+
+void CPSendCompressedGumpMenu::addCommand( const std::string& msg )
+{
+	if( msg.empty() )
+		return;
+
+	// Sanity check length
+	std::string temp = msg;
+	if( temp.size() > 4096 )
+	{
+		Console.Warning( oldstrutil::format( "Gump command much longer than expected! Truncating to 4096 bytes (original size: %u)! Check your scripts.", temp.size() ));
+		temp = temp.substr( 0, 4096 );
+	}
+
+	commands.push_back( temp );
+}
+
+void CPSendCompressedGumpMenu::addText( const std::string& msg )
+{
+	if( msg.empty() )
+		return;
+
+	// Sanity check length
+	if( msg.size() > 0xFFFE ) // 65534
+	{
+		Console.Warning( "Uncompressed gump text line exceeds protocol limit! Truncating to 65534 chars." );
+		std::string temp = msg.substr( 0, 0xFFFE );
+		text.push_back( temp );
+	}
+	else
+	{
+		text.push_back( msg );
+	}
+
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -   Compress()
+//| Notes       -   Helper using zlib compress2
+//o------------------------------------------------------------------------------------------------o
+std::vector<UI08> CPSendCompressedGumpMenu::Compress( const std::vector<UI08> &source )
+{
+	uLongf outSize = compressBound( static_cast<uLong>( source.size() ) );
+	std::vector<UI08> out( outSize, 0 );
+
+	int status = compress2(
+		reinterpret_cast<Bytef*>( out.data() ), 
+		&outSize,
+		reinterpret_cast<const Bytef*>( source.data() ), 
+		static_cast<uLongf>( source.size() ),
+		Z_DEFAULT_COMPRESSION
+	);
+
+	if( status != Z_OK )
+	{
+		out.clear();
+		return out;
+	}
+
+	out.resize( outSize );
+	return out;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -   WriteCompressedData()
+//| Notes       -   Writes [CLen][DLen][Data] and updates the offset cursor
+//o------------------------------------------------------------------------------------------------o
+void CPSendCompressedGumpMenu::WriteCompressedData( const std::vector<UI08>& rawData, UI32 &offset )
+{
+	UI32 uncompLen = static_cast<UI32>( rawData.size() );
+
+	// Compress
+	std::vector<UI08> compressedData = Compress( rawData );
+
+	if( compressedData.empty() && uncompLen > 0 )
+	{
+		throw std::runtime_error( "Gump compression failed!" );
+	}
+
+	UI32 compLen = static_cast<UI32>( compressedData.size() );
+
+	// Resize Packet Buffer
+	// Need space for: 4 bytes (CLen) + 4 bytes (DLen) + Data Size
+	UI32 requiredSize = offset + 4 + 4 + compLen;
+	pStream.ReserveSize( requiredSize );
+
+	// Write Headers
+	// Field 1: Compressed Length + 4
+	pStream.WriteLong( offset, compLen + 4 ); 
+	offset += 4;
+
+	// Field 2: Decompressed Length
+	pStream.WriteLong( offset, uncompLen );
+	offset += 4;
+
+	// Write Data Block
+	if( !compressedData.empty() )
+	{
+		pStream.WriteArray( offset, compressedData.data(), compLen );
+		offset += compLen;
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -   Finalize()
+//o------------------------------------------------------------------------------------------------o
+bool CPSendCompressedGumpMenu::Finalize( void )
+{
+	// Prepare Layout Data
+	std::string fullLayout;
+	for( const auto &entry : commands )
+	{
+		fullLayout += "{ " + entry + "  }";
+	}
+	fullLayout.push_back( '\0' ); // Null terminator
+
+	std::vector<UI08> rawLayoutData( fullLayout.begin(), fullLayout.end() );
+
+	// Prepare Text Data
+	std::vector<UI08> rawTextData;
+	for( const auto &entry : text )
+	{
+		std::u16string utf16Text;
+		if( utf8::is_valid( entry.begin(), entry.end() ))
+		{
+			// Convert UTF-8 string to UTF-16
+			utf8::utf8to16( entry.begin(), entry.end(), std::back_inserter( utf16Text ));
+		}
+		else
+		{
+			// 1-to-1 byte expansion fallback for non-UTF8/raw strings
+			utf16Text.assign( entry.begin(), entry.end() );
+		}
+
+		if( entry.length() > 0xFFFE ) continue; 
+
+		UI16 charCount = static_cast<UI16>( utf16Text.length() );
+
+		// Write line character count (Big Endian)
+		rawTextData.push_back( (charCount >> 8) & 0xFF );
+		rawTextData.push_back( charCount & 0xFF );
+
+		// Write UTF-16 characters (Big Endian)
+		for( char16_t ch : utf16Text )
+		{
+			rawTextData.push_back( (ch >> 8) & 0xFF );
+			rawTextData.push_back( ch & 0xFF );
+		}
+	}
+
+	// Write to Stream
+	// Start writing at offset 19 (immediately after the header we wrote in the constructor)
+	UI32 currentOffset = 19;
+
+	// Write Compressed Layout Block
+	// This will write the data and advance 'currentOffset' automatically
+	WriteCompressedData( rawLayoutData, currentOffset );
+
+	// Write Text Line Count
+	pStream.ReserveSize( currentOffset + 4 ); // Make sure we have space
+	pStream.WriteLong( currentOffset, static_cast<UI32>( text.size() ) );
+	currentOffset += 4;
+
+	// Write Compressed Text Block
+	WriteCompressedData( rawTextData, currentOffset );
+
+	// Update Packet Length (Header)
+	// Packet length is stored at offset 1
+	if ( currentOffset > 0xFFFF )
+	{
+		// Gump too large, doesn't fit in packet! 		
+		return false;
+	}
+
+	pStream.WriteShort( 1, static_cast<UI16>( currentOffset ) );
+	return true;
+}
+
+void CPSendCompressedGumpMenu::Log( std::ostream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+	{
+		// Update Packet ID to 0xDD
+		outStream << "[SEND]Packet      : CPSendCompressedGumpMenu 0xDD --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
+	}
+
+	// Serial and GumpID are standard 4-byte integers
+	outStream << "ID (Serial)      : " << std::hex << pStream.GetULong( 3 ) << std::endl;
+	outStream << "GumpId           : " << std::hex << pStream.GetULong( 7 ) << std::endl;
+
+	// In Packet 0xDD, X and Y are 4 bytes (ULong), not 2 bytes (UShort)
+	outStream << "X                : " << std::hex << pStream.GetULong( 11 ) << std::endl;
+	outStream << "Y                : " << std::hex << pStream.GetULong( 15 ) << std::endl;
+
+	// Offset 19 starts the Compressed Layout Length (4 bytes)
+	// We can log this to see the binary size of the layout block
+	if( pStream.GetSize() >= 23 )
+	{
+		outStream << "Comp Layout Len  : " << std::dec << pStream.GetULong( 19 ) << " bytes" << std::endl;
+	}
+
+	// We log the source vectors (commands/text) because the pStream
+	// now contains unreadable binary Zlib data.
+	outStream << "Layout Commands  : " << std::endl;
+	for( const auto &entry : commands )
+	{
+		outStream << "     " << entry << std::endl;
+	}
+
+	outStream << "Text Lines       : " << std::endl;
+	for( const auto &entry : text )
+	{
+		outStream << "     " << entry << std::endl;
+	}
+
+	outStream << "  Raw dump       :" << std::endl;
+	CPUOXBuffer::Log( outStream, false );
+}
+
 //o------------------------------------------------------------------------------------------------o
 //| Function	-	CPNewSpellBook()
 //o------------------------------------------------------------------------------------------------o

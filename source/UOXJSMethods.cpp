@@ -1886,7 +1886,7 @@ bool CGump_Send( JSContext *cx, unsigned argc, JS::Value* vp )
 			return false;
 		}
 		UI32 gumpId = ( 0xFFFF + JSMapping->currentActive()->GetScriptID() );
-		SendVecsAsGump( mySock, *( myGump->one ), *( myGump->two ), gumpId, INVALIDSERIAL );
+		SendVecsAsCompressedGump( mySock, *( myGump->one ), *( myGump->two ), gumpId, INVALIDSERIAL );
 	}
 	else if( HasWrapperClass( args.get( 0 ), &UOXChar_class ))
 	{
@@ -1899,7 +1899,7 @@ bool CGump_Send( JSContext *cx, unsigned argc, JS::Value* vp )
 
 		CSocket *mySock = myChar->GetSocket();
 		UI32 gumpId = ( 0xFFFF + JSMapping->currentActive()->GetScriptID() );
-		SendVecsAsGump( mySock, *( myGump->one ), *( myGump->two ), gumpId, INVALIDSERIAL );
+		SendVecsAsCompressedGump( mySock, *( myGump->one ), *( myGump->two ), gumpId, INVALIDSERIAL );
 	}
 	else
 	{
