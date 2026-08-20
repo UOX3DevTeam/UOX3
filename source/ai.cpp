@@ -38,7 +38,7 @@ bool IsValidAttackTarget( CChar& mChar, CChar *cTarget )
 	if( ValidateObject( cTarget ) && &mChar != cTarget )
 	{
 		// Offline players are not valid targets
-		if( !cTarget.IsNpc() && !IsOnline(( *cTarget )))
+		if( !cTarget->IsNpc() && !IsOnline(( *cTarget )))
 		{
 			return false;
 		}
