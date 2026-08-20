@@ -732,15 +732,15 @@ void CNetworkStuff::CheckMessage( void )
 				catch( socket_error& blah )
 				{
 #if PLATFORM != WINDOWS
-					Console << "Client (Socket " << i << ") disconnected [Total clients online: " << (cwmWorldState->GetPlayersOnline() - 1) << "]" << myendl;
+					Console << "Client (Socket " << static_cast<UI32>( i ) << ") disconnected [Total clients online: " << static_cast<UI32>( cwmWorldState->GetPlayersOnline() - 1 ) << "]" << myendl;
 #else
 					if( blah.ErrorNumber() == WSAECONNRESET )
 					{
-						Console << "Client (Socket " << i << ") disconnected [Total clients online: " << (cwmWorldState->GetPlayersOnline() - 1) << "]" << myendl;
+						Console << "Client (Socket " << static_cast<UI32>( i ) << ") disconnected [Total clients online: " << static_cast<UI32>( cwmWorldState->GetPlayersOnline() - 1 ) << "]" << myendl;
 					}
 					else if( blah.ErrorNumber() != -1 )
 					{
-						Console << "Socket error " << static_cast<SI32>( blah.ErrorNumber() ) << " on Client (Socket " << i << ")" << myendl;
+						Console << "Socket error " << static_cast<SI32>( blah.ErrorNumber() ) << " on Client (Socket " << static_cast<UI32>( i ) << ")" << myendl;
 					}
 #endif
 					Disconnect( static_cast<UOXSOCKET>( i ));	// abnormal error
