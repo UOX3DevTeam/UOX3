@@ -1,3 +1,21 @@
+20/08/2026 - strattond (#584)
+    [UPD] Upgraded the UOX3 JavaScript engine to SpiderMonkey 115.13
+    [UPD] Updated utf8cpp to v4.1.1
+    [UPD] Updated the build system and GitHub workflows to support SpiderMonkey 115.13, switched Windows builds to Visual Studio 2022 with ClangCL and removed Visual Studio 2017 support
+    [UPD] Upgraded the bundled zlib source from 1.2.11 to 1.3.2
+    [ADD] Added bundled SpiderMonkey libraries for Windows x64, Linux x64, macOS Intel and macOS Apple Silicon
+    [ADD] Added an in-game JavaScript binding test command for checking globals, objects, properties, callbacks, errors, garbage collection and events
+    [FIX] Improved JavaScript memory safety, object validation, error reporting, event handling, console command safety and clean server shutdown
+    [ADD] Added python helper script to automatically apply FreeBSD compatibility patches when compiling SpiderMonkey from source
+    [UPD] Updated workflows, documentation and UOX3 source to include manual and automated support for FreeBSD
+    [UPD] Updated workflow for updating changelog on PR merge to ignore lines that don't follow the expected format
+    [UPD] Changed protoList from heap-allocated JS::RootedObjectVector to a JS::PersistentRootedObjectVector for rooting safety
+    [UPD] Removed scriptJSMap in favor of accessing scripts and scriptIDs directly via reserved slots
+    [FIX] Fixed some UFT-8 issues and trailing EOF character pollution in CFile_ReadUntil and CFile_Read JS Methods, with fallback for legacy ANSI files
+    [ADD] Added support for paperdoll profile editing via onProfileRequest and onProfileUpdate JS events in js/server/global.js
+    [FIX] Fixed an issue where paperdoll profile updates would not properly accept/show unicode characters, and could not be emptied once written to
+    [UPD] Increased max amount of characters that can be added to paperdoll profile from 256 to 1536
+
 24/07/2026 - DragonSlayer62 (#556)
     [ADD] Added new item DFN tag for defining configurable spellbook ranges:
         SPELLBOOKDATA=firstSpell,spellCount,firstScroll // Example: SPELLBOOKDATA=1,64,0x1f2d
