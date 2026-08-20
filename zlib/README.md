@@ -1,8 +1,8 @@
 # zlib-1.3.2 configured for UOX3
 
-Herein are configured a minimum set of files from the official **zlib v1.3.2** release required to compile a static library on Windows, Linux/FreeBSD and macOS, for linking with [Ultima Offline eXperiment 3](https://github.com/UOX3DevTeam/UOX3/) and utilized to access Ultima Online data files and packets. UOX3-specific build setups can be found in the make/ folder, but extraneous upstream build files and folders have been removed from this configuration. For the full official zlib project, including build configurations for other platforms and third-party contributions, visit https://github.com/madler/zlib
+Herein is configured a minimum set of files from **zlib v1.3.2** required to compile a static library on Windows, Linux/FreeBSD and macOS, to be linked with [Ultima Offline eXperiment 3](https://github.com/UOX3DevTeam/UOX3/) as a tool for compressing/uncompressing data. UOX3-specific build setups can be found in the make/ folder, but extraneous build files and folders have been stripped from this configuration. For the full official zlib project visit https://github.com/madler/zlib.
 
-For detailed instructions on compiling and using this zlib configuration with UOX3, check out https://github.com/UOX3DevTeam/UOX3. Alternatively, follow the below instructions at your own peril:
+This zlib configuration is automatically compiled and linked with UOX3's default build process, but can be compiled as a stand-alone static library by following the instructions below:
 
 <details>
   <summary>Windows</summary>

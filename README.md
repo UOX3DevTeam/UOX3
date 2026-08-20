@@ -7,9 +7,9 @@
 
 **Ultima Offline eXperiment 3** - the original open source Ultima Online server emulator, allowing people to run their own, custom UO shards since 1997. Comes with cross-platform 64-bit support for **Windows**, **Linux**, **macOS**, and **FreeBSD**. Grab the latest version from the [Releases](https://github.com/UOX3DevTeam/UOX3/releases) page, while news, more details on releases, forums, additional documentation and more can be found at https://www.uox3.org
 
-Supported UO Client versions: **~4.0.0p** to at least **~7.0.109.0** (with encryption removed by [ClassicUO](https://www.classicuo.eu), [Razor](https://github.com/msturgill/razor/releases) or similar tools). For additional details on UO client compatibility, check https://www.uox3.org/forums/viewtopic.php?f=1&t=2289
+Supported UO Client versions: **~4.0.0p** to at least **~7.0.116.x** (with encryption removed by [ClassicUO](https://www.classicuo.eu), [Razor](https://github.com/msturgill/razor/releases) or similar tools). For additional details on UO client compatibility, check https://www.uox3.org/forums/viewtopic.php?f=1&t=2289
 
-UOX3 includes **SpiderMonkey 115.13** for its JavaScript scripting engine and **zlib 1.3.2** for data compression.
+UOX3 includes **SpiderMonkey 115.13** for its JavaScript scripting engine, **zlib 1.3.2** for data compression and **utf8cpp** for UTF-8 and UTF-16 string conversions.
 
 Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick chat!
 

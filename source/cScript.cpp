@@ -23,6 +23,7 @@
 #include <js/PropertyAndElement.h>
 #include <js/ValueArray.h>
 #include <js/Warnings.h>
+#include <js/CharacterEncoding.h>
 
 static constexpr SI08 RV_NOFUNC = -1;
 
@@ -3960,7 +3961,7 @@ std::string cScript::OnProfileRequest( CSocket *mSock, CChar *profileOwner )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnProfileUpdate( CSocket *mSock, std::string profileText )
 {
-	if( mSock == nullptr || profileText.empty() )
+	if( mSock == nullptr )
 		return false;
 
 	if( !ExistAndVerify( seOnProfileUpdate, "onProfileUpdate" ))
@@ -3969,7 +3970,7 @@ SI08 cScript::OnProfileUpdate( CSocket *mSock, std::string profileText )
 	JS::RootedValueArray<2> params( targContext );
 	JS::RootedValue rval( targContext );
 	JS::RootedObject myObj( targContext, JSEngine->AcquireObject( IUE_SOCK, mSock, runTime ) );
-	JS::RootedString strProfileText( targContext, JS_NewStringCopyZ( targContext, profileText.c_str() ));
+	JS::RootedString strProfileText( targContext, JS_NewStringCopyUTF8Z( targContext, JS::ConstUTF8CharsZ( profileText.c_str(), profileText.length() )));
 
 	params[0].set( JS::ObjectOrNullValue( myObj ) );
 	params[1].set( JS::StringValue( strProfileText ) );

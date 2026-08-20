@@ -46,10 +46,12 @@
 #include "combat.h"
 #include "PartySystem.h"
 #include "osunique.hpp"
+#include "utf8.h"
 #include <jsapi.h>
 #include <js/Object.h>
 #include <js/Array.h>
 #include <js/Conversions.h>
+#include <js/CharacterEncoding.h>
 
 void BuildAddMenuGump( CSocket *s, UI16 m );	// Menus for item creation
 void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, SI16 trgX, SI16 trgY, SI08 trgZ, UI08 trgWorld, UI16 trgInstanceId = 0 );
@@ -7945,8 +7947,16 @@ bool CFile_Read( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	// We don't care about return value, so suppress compiler warning
 	[[maybe_unused]] size_t bytesRead = fread( data, 1, bytes, mFile->mWrap );
+	data[bytesRead < 512 ? bytesRead : 511] = '\0';
 
-	args.rval().setString( JS_NewStringCopyZ( cx, data ));
+	if( utf8::is_valid( data, data + bytesRead ))
+	{
+		args.rval().setString( JS_NewStringCopyUTF8Z( cx, JS::ConstUTF8CharsZ( data, bytesRead )));
+	}
+	else
+	{
+		args.rval().setString( JS_NewStringCopyZ( cx, data ));
+	}
 	return true;
 }
 
@@ -7976,7 +7986,6 @@ bool CFile_ReadUntil( JSContext *cx, unsigned argc, JS::Value* vp )
 	}
 	std::string until = JS_GetStringBytes( cx, args.get(0));
 	char line[512];
-	SI32 c;
 
 	if( until[0] == '\\' && until.length() > 1 )
 	{
@@ -7990,15 +7999,26 @@ bool CFile_ReadUntil( JSContext *cx, unsigned argc, JS::Value* vp )
 		}
 	}
 
-	for( c = 0; c < 512 && !feof( mFile->mWrap ); ++c )
+	SI32 c = 0;
+	SI32 ch = 0;
+	while( c < 511 && ( ch = fgetc( mFile->mWrap )) != EOF )
 	{
-		line[c] = fgetc( mFile->mWrap );
-		if( line[c] == until[0] || line[c] == '\n' )
+		if( ch == until[0] || ch == '\n' )
 			break;
-	}
-	line[c < 512 ? c : 511] = 0;
 
-	args.rval().setString( JS_NewStringCopyZ( cx, line ));
+		line[c++] = static_cast<char>( ch );
+	}
+	line[c] = '\0';
+	
+	if( utf8::is_valid( line, line + c ))
+	{
+		args.rval().setString( JS_NewStringCopyUTF8Z( cx, JS::ConstUTF8CharsZ( line, static_cast<size_t>( c ))));
+	}
+	else
+	{
+		args.rval().setString( JS_NewStringCopyZ( cx, line ));
+	}
+
 	return true;
 }
 
