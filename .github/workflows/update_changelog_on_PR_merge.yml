@@ -56,8 +56,14 @@ jobs:
           MERGED_AT: ${{ steps.pr_data.outputs.merged_at }}
           PR_NUMBER: ${{ steps.get_info.outputs.pr_number }}
         run: |
+          FILTERED_BODY=$(echo "$PR_BODY" | grep '^[[:space:]]*-' || true)
+          if [ -z "$FILTERED_BODY" ]; then
+            echo "No valid changelog lines found. Exiting."
+            exit 0
+          fi
+
           TIMESTAMP=$(date -d "$MERGED_AT" +'%d/%m/%Y')
-          FORMATTED_BODY=$(echo "$PR_BODY" | sed 's/^[[:space:]]\{2,\}- /        /; s/^- /    /')
+          FORMATTED_BODY=$(echo "$FILTERED_BODY" | sed 's/^[[:space:]]\{2,\}- /        /; s/^- /    /')
 
           NEW_ENTRY=$(cat <<EOF
           ${TIMESTAMP} - ${PR_AUTHOR} (#${PR_NUMBER})

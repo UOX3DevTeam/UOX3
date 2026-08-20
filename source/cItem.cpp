@@ -1731,7 +1731,7 @@ auto CItem::RemoveSelfFromCont() -> void
 	{
 		if( contObj->GetObjType() == OT_CHAR )	// it's a char!
 		{
-			CChar *targChar = dynamic_cast<CChar *>( contObj );
+			CChar *targChar = static_cast<CChar *>( contObj );
 			if( ValidateObject( targChar ))
 			{
 				Weight->SubtractItemWeight( targChar, this );
@@ -1745,7 +1745,7 @@ auto CItem::RemoveSelfFromCont() -> void
 		}
 		else
 		{
-			CItem *targItem = dynamic_cast<CItem *>( contObj );
+			CItem *targItem = static_cast<CItem *>( contObj );
 			if( ValidateObject( targItem ))
 			{
 				Weight->SubtractItemWeight( targItem, this );

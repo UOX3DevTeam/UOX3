@@ -8,16 +8,16 @@ RUN mkdir -p ~/uox3
 FROM buildbase AS buildapp
 WORKDIR /root/uox3
 COPY . .
-# Ensure Linux linefeeds
-RUN find /root/uox3 -name \* -type f -exec dos2unix {} \;
+# Ensure shell scripts use Linux line endings without modifying binary archives
+RUN dos2unix automake.sh docker/run.sh
 # Build it
 RUN cd /root/uox3 && ./automake.sh
 CMD ["/bin/bash"]
 
 
 # Now actually generate the executable image
-FROM registry.access.redhat.com/ubi8/ubi:latest
-RUN yum -y install glibc.i686 dos2unix && yum clean all && rm -rf /var/cache/yum
+FROM registry.access.redhat.com/ubi8/ubi-minimal:latest
+RUN microdnf install -y glibc.i686 dos2unix shadow-utils && microdnf clean all && rm -rf /var/cache/dnf
 # Define our non-root user
 RUN adduser --system --create-home uox3
 USER uox3

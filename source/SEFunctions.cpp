@@ -30,13 +30,14 @@
 #include "network.h"
 #include "UOXJSClasses.h"
 #include "UOXJSPropertySpecs.h"
-#include "JSEncapsulate.h"
 #include "CJSEngine.h"
 #include "PartySystem.h"
 #include "cSpawnRegion.h"
 #include "CPacketSend.h"
-
-
+#include <jsapi.h>
+#include <js/Object.h>
+#include <js/Array.h>
+#include <js/Conversions.h>
 
 void		LoadTeleportLocations( void );
 void		LoadSpawnRegions( void );
@@ -51,6 +52,16 @@ void		ScriptError( JSContext *cx, const char *txt, ... );
 
 #define __EXTREMELY_VERBOSE__
 
+inline JSObject* getThis(JSContext* cx, JS::CallArgs& args)
+{
+	JS::RootedObject thisObject(cx);
+	if (!args.computeThis(cx, &thisObject))
+	{
+		return nullptr;
+	}
+	return thisObject;
+}
+
 std::map<std::string, ObjectType> stringToObjType;
 
 void InitStringToObjType( void )
@@ -63,13 +74,16 @@ void InitStringToObjType( void )
 	stringToObjType["BOAT"]			= OT_BOAT;
 }
 
-std::string JS_GetStringBytes( JSContext* cx, jsval val )
+std::string JS_GetStringBytes( JSContext* cx, JS::Value val )
 {
-	JSString* str = JS_ValueToString( cx, val );
-	char* chars = JS_EncodeString( cx, str );
-	std::string nnpcNum(chars);
-	js_free( chars );
-	return nnpcNum;
+	JS::RootedValue rootedValue( cx, val );
+	JS::RootedString str( cx, JS::ToString( cx, rootedValue ));
+	if( str == nullptr )
+	{
+		return {};
+	}
+	JS::UniqueChars chars = JS_EncodeStringToUTF8( cx, str );
+	return chars ? std::string( chars.get() ) : std::string();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -98,19 +112,19 @@ ObjectType FindObjTypeFromString( std::string strToFind )
 //|	Purpose		-	Does a temporary effect (things like protection, night sight, and what not) frm
 //|					src to trg. If iType = 0, then it's a character, otherwise it's an item.
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DoTempEffect( JSContext *cx, uintN argc, jsval *vp )
+bool SE_DoTempEffect( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	if( argc < 7 )
 	{
 		ScriptError( cx, "DoTempEffect: Invalid number of arguments (takes 7 or 8)" );
-		return JS_FALSE;
+		return false;
 	}
-	jsval *argv = JS_ARGV( cx, vp );
-	UI08 iType			= static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
-	UI32 targNum		= JSVAL_TO_INT( argv[3] );
-	UI16 more1			= static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
-	UI16 more2			= static_cast<UI16>( JSVAL_TO_INT( argv[5] ));
-	UI16 more3			= static_cast<UI16>( JSVAL_TO_INT( argv[6] ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	UI08 iType			= static_cast<UI08>( args.get(0).toInt32() );
+	UI32 targNum		= args.get(3).toInt32();
+	UI16 more1			= static_cast<UI16>( args.get(4).toInt32() );
+	UI16 more2			= static_cast<UI16>( args.get(5).toInt32() );
+	UI16 more3			= static_cast<UI16>( args.get(6).toInt32() );
 	UI16 assocScript	= 0xFFFF;
 	if( targNum == 44 && JSMapping->currentActive() != nullptr )
 	{
@@ -121,34 +135,30 @@ JSBool SE_DoTempEffect( JSContext *cx, uintN argc, jsval *vp )
 
 	if( argc == 8 )
 	{
-		JSObject *myitemptr = nullptr;
-		myitemptr = JSVAL_TO_OBJECT( argv[7] );
-		myItemPtr = static_cast<CItem *>( JS_GetPrivate( cx, myitemptr ));
+		myItemPtr = GetWrappedObject<CItem>( args.get( 7 ), &UOXItem_class );
 	}
 
-	JSObject *mysrc		= JSVAL_TO_OBJECT( argv[1] );
-	CChar *mysrcChar	= nullptr;
+	CChar *mysrcChar = nullptr;
 
 	// Check if mysrc is null before continuing - it could be this temp effect as no character-based source!
-	if( mysrc != nullptr )
+	if( !args.get( 1 ).isNull() )
 	{
-		mysrcChar = static_cast<CChar*>( JS_GetPrivate( cx, mysrc ));
+		mysrcChar = GetWrappedObject<CChar>( args.get( 1 ), &UOXChar_class );
 		if( !ValidateObject( mysrcChar ))
 		{
 			ScriptError( cx, "DoTempEffect: Invalid src" );
-			return JS_FALSE;
+			return false;
 		}
 	}
 
 	if( iType == 0 )	// character
 	{
-		JSObject *mydestc = JSVAL_TO_OBJECT( argv[2] );
-		CChar *mydestChar = static_cast<CChar*>( JS_GetPrivate( cx, mydestc ));
+		CChar *mydestChar = GetWrappedObject<CChar>( args.get( 2 ), &UOXChar_class );
 
 		if( !ValidateObject( mydestChar ))
 		{
 			ScriptError( cx, "DoTempEffect: Invalid target " );
-			return JS_FALSE;
+			return false;
 		}
 		if( argc == 8 )
 		{
@@ -161,17 +171,16 @@ JSBool SE_DoTempEffect( JSContext *cx, uintN argc, jsval *vp )
 	}
 	else
 	{
-		JSObject *mydesti = JSVAL_TO_OBJECT( argv[2] );
-		CItem *mydestItem = static_cast<CItem *>( JS_GetPrivate( cx, mydesti ));
+		CItem *mydestItem = GetWrappedObject<CItem>( args.get( 2 ), &UOXItem_class );
 
 		if( !ValidateObject( mydestItem ))
 		{
 			ScriptError( cx, "DoTempEffect: Invalid target " );
-			return JS_FALSE;
+			return false;
 		}
 		Effects->TempEffect( mysrcChar, mydestItem, static_cast<UI08>( targNum ), more1, more2, more3, assocScript );
 	}
-	return JS_TRUE;
+	return true;
 }
 
 // Speech related functions
@@ -181,22 +190,22 @@ void SysBroadcast( const std::string& txt );
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Broadcasts specified string to all online players
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_BroadcastMessage( JSContext *cx, uintN argc, jsval *vp )
+bool SE_BroadcastMessage( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "BroadcastMessage: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
-	jsval *argv = JS_ARGV( cx, vp );
-	std::string trgMessage = JS_GetStringBytes( cx, argv[0] );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	std::string trgMessage = JS_GetStringBytes( cx, args.get(0) );
 	if( trgMessage.empty() || trgMessage.length() == 0 )
 	{
 		ScriptError( cx, oldstrutil::format( "BroadcastMessage: Invalid string (%s)", trgMessage.c_str() ).c_str() );
-		return JS_FALSE;
+		return false;
 	}
 	SysBroadcast( trgMessage );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -204,37 +213,37 @@ JSBool SE_BroadcastMessage( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculates and returns item object based on provided serial
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CalcItemFromSer( JSContext *cx, uintN argc, jsval *vp )
+bool SE_CalcItemFromSer( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	if( argc != 1 && argc != 4 )
 	{
 		ScriptError( cx, "CalcItemFromSer: Invalid number of arguments (takes 1 or 4)" );
-		return JS_FALSE;
+		return false;
 	}
 	SERIAL targSerial;
-	jsval *argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc == 1 )
 	{
-		std::string str = JS_GetStringBytes( cx, argv[0]);
+		std::string str = JS_GetStringBytes( cx, args.get(0));
 		targSerial = oldstrutil::value<SERIAL>( str );
 	}
 	else
 	{
-		targSerial = CalcSerial( static_cast<UI08>( JSVAL_TO_INT( argv[0] )), static_cast<UI08>( JSVAL_TO_INT( argv[1] )), 
-						static_cast<UI08>( JSVAL_TO_INT( argv[2] )), static_cast<UI08>( JSVAL_TO_INT( argv[3] )));
+		targSerial = CalcSerial( static_cast<UI08>( args.get(0).toInt32()), static_cast<UI08>( args.get(1).toInt32()), 
+						static_cast<UI08>( args.get(2).toInt32()), static_cast<UI08>( args.get(3).toInt32()));
 	}
 
 	CItem *newItem	= CalcItemObjFromSer( targSerial );
 	if( newItem != nullptr )
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, newItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, newItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+		args.rval().setObjectOrNull( myObj );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -242,36 +251,36 @@ JSBool SE_CalcItemFromSer( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculates and returns item object based on provided serial
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CalcMultiFromSer( JSContext *cx, uintN argc, jsval *vp )
+bool SE_CalcMultiFromSer( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 && argc != 4 )
 	{
 		ScriptError( cx, "CalcMultiFromSer: Invalid number of arguments (takes 1 or 4)" );
-		return JS_FALSE;
+		return false;
 	}
 	SERIAL targSerial;
 	if( argc == 1 )
 	{
-		targSerial = static_cast<SERIAL>( JSVAL_TO_INT( argv[0] ));
+		targSerial = static_cast<SERIAL>( args.get(0).toInt32());
 	}
 	else
 	{
-		targSerial = CalcSerial( static_cast<UI08>( JSVAL_TO_INT( argv[0] )), static_cast<UI08>( JSVAL_TO_INT( argv[1] )), static_cast<UI08>( JSVAL_TO_INT( argv[2] )), static_cast<UI08>( JSVAL_TO_INT( argv[3] )));
+		targSerial = CalcSerial( static_cast<UI08>( args.get(0).toInt32()), static_cast<UI08>( args.get(1).toInt32()), static_cast<UI08>( args.get(2).toInt32()), static_cast<UI08>( args.get(3).toInt32()));
 	}
 
 	CItem *newMulti	= CalcMultiFromSer( targSerial );
 	if( newMulti != nullptr )
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, newMulti, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, newMulti, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+		args.rval().setObjectOrNull( myObj );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -279,44 +288,44 @@ JSBool SE_CalcMultiFromSer( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if a character has engaged in combat within a given time span
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CheckTimeSinceLastCombat( JSContext *cx, uintN argc, jsval *vp )
+bool SE_CheckTimeSinceLastCombat( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if (argc != 2)
 	{
 		ScriptError( cx, "CheckTimeSinceLastCombat: Invalid number of parameters (2)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar* from = nullptr;
 	UI32 timespanInSeconds = 0;
 
-	if( !JSVAL_IS_OBJECT( argv[0] ) || !( from = ( CChar* )JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ))))
+	if( !( from = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class )))
 	{
 		ScriptError( cx, "CheckTimeSinceLastCombat: Invalid first argument (expected CChar)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	if( !JSVAL_IS_INT( argv[1] ))
+	if( !args.get(1).isInt32() )
 	{
 		ScriptError( cx, "CheckTimeSinceLastCombat: Invalid second argument (expected time in seconds)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	timespanInSeconds = static_cast<UI32>( JSVAL_TO_INT( argv[1] ));
+	timespanInSeconds = static_cast<UI32>( args.get(1).toInt32());
 
 	// Use GetGUITimerCurTime() instead of time(nullptr) for consistency
 	TIMERVAL now = cwmWorldState->GetUICurrentTime();
 
 	if(( now - from->GetLastCombatTime() ) < timespanInSeconds )
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_TRUE );
-		return JS_TRUE;
+		args.rval().setBoolean( true );
+		return true;
 	}
 
-	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
-	return JS_TRUE;
+	args.rval().setBoolean( false );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -324,36 +333,36 @@ JSBool SE_CheckTimeSinceLastCombat( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculates and returns character object based on provided serial
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CalcCharFromSer( JSContext *cx, uintN argc, jsval *vp )
+bool SE_CalcCharFromSer( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 && argc != 4 )
 	{
 		ScriptError( cx, "CalcCharFromSer: Invalid number of arguments (takes 1 or 4)" );
-		return JS_FALSE;
+		return false;
 	}
 	SERIAL targSerial = INVALIDSERIAL;
 	if( argc == 1 )
 	{
-		targSerial = static_cast<SERIAL>( JSVAL_TO_INT( argv[0] ));
+		targSerial = static_cast<SERIAL>( args.get(0).toInt32());
 	}
 	else
 	{
-		targSerial = CalcSerial( static_cast<UI08>( JSVAL_TO_INT( argv[0] )), static_cast<UI08>( JSVAL_TO_INT( argv[1] )), static_cast<UI08>( JSVAL_TO_INT( argv[2] )), static_cast<UI08>( JSVAL_TO_INT( argv[3] )));
+		targSerial = CalcSerial( static_cast<UI08>( args.get(0).toInt32()), static_cast<UI08>( args.get(1).toInt32()), static_cast<UI08>( args.get(2).toInt32()), static_cast<UI08>( args.get(3).toInt32()));
 	}
 
 	CChar *newChar = CalcCharObjFromSer( targSerial );
 	if( newChar != nullptr )
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_CHAR, newChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_CHAR, newChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+		args.rval().setObjectOrNull( myObj );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -361,24 +370,24 @@ JSBool SE_CalcCharFromSer( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if a specific location is within an instant logout zone 
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CheckInstaLog( JSContext *cx, uintN argc, jsval *vp )
+bool SE_CheckInstaLog( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 4 )
 	{
 		ScriptError( cx, "CheckInstaLog: Invalid number of parameters (4)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	SI16 targX = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 targY = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI08 targWorld = static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
-	UI16 targInstanceId = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+	SI16 targX = static_cast<SI16>( args.get(0).toInt32());
+	SI16 targY = static_cast<SI16>( args.get(1).toInt32());
+	UI08 targWorld = static_cast<UI08>( args.get(2).toInt32());
+	UI16 targInstanceId = static_cast<UI16>( args.get(3).toInt32());
 
 	auto logLocs = cwmWorldState->logoutLocs;
 
-	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+	args.rval().setBoolean( false );
 
 	if( logLocs.size() > 0 )
 	{
@@ -388,14 +397,14 @@ JSBool SE_CheckInstaLog( JSContext *cx, uintN argc, jsval *vp )
 			{
 				if(( targX >= logLocs[i].x1 && targX <= logLocs[i].x2 ) && ( targY >= logLocs[i].y1 && targY <= logLocs[i].y2 ))
 				{
-					JS_SET_RVAL( cx, vp, JSVAL_TRUE );
-					return JS_TRUE;
+					args.rval().setBoolean( true );
+					return true;
 				}
 			}
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -403,14 +412,14 @@ JSBool SE_CheckInstaLog( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays a moving effect from source object to target object or location
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DoMovingEffect( JSContext *cx, uintN argc, jsval *vp )
+bool SE_DoMovingEffect( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc < 6 )
 	{
 		ScriptError( cx, "DoMovingEffect: Invalid number of arguments (takes 6->9 or 8->11, or 10->13)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CBaseObject *src	= nullptr;
@@ -431,104 +440,102 @@ JSBool SE_DoMovingEffect( JSContext *cx, uintN argc, jsval *vp )
 	UI32 renderMode		= 0;
 	bool stationaryFX	= false;
 
-	if( JSVAL_IS_INT( argv[0] ))
+	if( args.get(0).isInt32() )
 	{
 		// 10, 11 or 12 arguments
 		// srcX, srcY, srcZ, targX, targY, targZ, effect, speed, loop, explode, [hue], [renderMode]
 		srcLocation = true;
 		targLocation = true;
 		targLocation = true;
-		srcX	= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-		srcY	= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-		srcZ	= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-		targX	= static_cast<SI16>( JSVAL_TO_INT( argv[3] ));
-		targY	= static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
-		targZ	= static_cast<SI08>( JSVAL_TO_INT( argv[5] ));
-		effect	= static_cast<UI16>( JSVAL_TO_INT( argv[6] ));
-		speed	= static_cast<UI08>( JSVAL_TO_INT( argv[7] ));
-		loop	= static_cast<UI08>( JSVAL_TO_INT( argv[8] ));
-		explode	= ( JSVAL_TO_BOOLEAN( argv[9] ) == JS_TRUE );
+		srcX	= static_cast<SI16>( args.get(0).toInt32());
+		srcY	= static_cast<SI16>( args.get(1).toInt32());
+		srcZ	= static_cast<SI08>( args.get(2).toInt32());
+		targX	= static_cast<SI16>( args.get(3).toInt32());
+		targY	= static_cast<SI16>( args.get(4).toInt32());
+		targZ	= static_cast<SI08>( args.get(5).toInt32());
+		effect	= static_cast<UI16>( args.get(6).toInt32());
+		speed	= static_cast<UI08>( args.get(7).toInt32());
+		loop	= static_cast<UI08>( args.get(8).toInt32());
+		explode	= ( args.get(9).toBoolean() );
 		if( argc >= 11 )
 		{
-			hue = static_cast<UI32>( JSVAL_TO_INT( argv[10] ));
+			hue = static_cast<UI32>(args.get(10).toInt32());
 		}
 		if( argc >= 12 )
 		{
-			renderMode = static_cast<UI32>( JSVAL_TO_INT( argv[11] ));
+			renderMode = static_cast<UI32>(args.get(11).toInt32());
 		}
 		if( argc >= 13 )
 		{
-			stationaryFX = ( JSVAL_TO_BOOLEAN( argv[12] ) == JS_TRUE );
+			stationaryFX = (args.get(12).toBoolean() );
 		}
 	}
 	else
 	{
-		JSObject *srcObj = JSVAL_TO_OBJECT( argv[0] );
-		src				 = static_cast<CBaseObject *>( JS_GetPrivate( cx, srcObj ));
+		src = GetBaseObject( args.get( 0 ));
 		if( !ValidateObject( src ))
 		{
 			ScriptError( cx, "DoMovingEffect: Invalid source object" );
-			return JS_FALSE;
+			return false;
 		}
 
-		if( JSVAL_IS_INT( argv[1] ))
+		if( args.get(1).isInt32() )
 		{
 			// 8, 9 or 10 arguments
 			// srcObj, targX, targY, targZ, effect, speed, loop, explode, [hue], [renderMode]
 			targLocation = true;
-			targX	= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
-			targY	= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-			targZ	= static_cast<SI08>( JSVAL_TO_INT( argv[3] ));
-			effect	= static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
-			speed	= static_cast<UI08>( JSVAL_TO_INT( argv[5] ));
-			loop	= static_cast<UI08>( JSVAL_TO_INT( argv[6] ));
-			explode	= ( JSVAL_TO_BOOLEAN( argv[7] ) == JS_TRUE );
+			targX	= static_cast<UI16>( args.get(1).toInt32());
+			targY	= static_cast<UI16>( args.get(2).toInt32());
+			targZ	= static_cast<SI08>( args.get(3).toInt32());
+			effect	= static_cast<UI16>( args.get(4).toInt32());
+			speed	= static_cast<UI08>( args.get(5).toInt32());
+			loop	= static_cast<UI08>( args.get(6).toInt32());
+			explode	= ( args.get(7).toBoolean() == true );
 			if( argc >= 9 )
 			{
-				hue = static_cast<UI32>( JSVAL_TO_INT( argv[8] ));
+				hue = static_cast<UI32>( args.get(8).toInt32());
 			}
 			if( argc >= 10 )
 			{
-				renderMode = static_cast<UI32>( JSVAL_TO_INT( argv[9] ));
+				renderMode = static_cast<UI32>( args.get(9).toInt32());
 			}
 			if( argc >= 11 )
 			{
-				stationaryFX = ( JSVAL_TO_BOOLEAN( argv[11] ) == JS_TRUE );
+				stationaryFX = (args.get(11).toBoolean() );
 			}
 		}
 		else
 		{
 			// 6, 7 or 8 arguments
 			// srcObj, targObj, effect, speed, loop, explode, [hue], [renderMode]
-			if( !JSVAL_IS_OBJECT( argv[1] ))
+			if( !args.get(1).isObject() )
 			{
 				ScriptError( cx, "DoMovingEffect: Invalid target object" );
-				return JS_FALSE;
+				return false;
 			}
 
-			JSObject *trgObj	= JSVAL_TO_OBJECT( argv[1] );
-			trg = static_cast<CBaseObject *>( JS_GetPrivate( cx, trgObj ));
+			trg = GetBaseObject( args.get( 1 ));
 			if( !ValidateObject( trg ))
 			{
 				ScriptError( cx, "DoMovingEffect: Invalid target object" );
-				return JS_FALSE;
+				return false;
 			}
 
-			effect	= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-			speed	= static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
-			loop	= static_cast<UI08>( JSVAL_TO_INT( argv[4] ));
-			explode	= ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
+			effect	= static_cast<UI16>( args.get(2).toInt32());
+			speed	= static_cast<UI08>( args.get(3).toInt32());
+			loop	= static_cast<UI08>( args.get(4).toInt32());
+			explode	= ( args.get(5).toBoolean() == true );
 			if( argc >= 7 )
 			{
-				hue = static_cast<UI32>( JSVAL_TO_INT( argv[6] ));
+				hue = static_cast<UI32>( args.get(6).toInt32());
 			}
 			if( argc >= 8 )
 			{
-				renderMode = static_cast<UI32>( JSVAL_TO_INT( argv[7] ));
+				renderMode = static_cast<UI32>( args.get(7).toInt32());
 			}
 			if( argc >= 9 )
 			{
-				stationaryFX = ( JSVAL_TO_BOOLEAN( argv[8] ) == JS_TRUE );
+				stationaryFX = ( args.get(8).toBoolean() == true );
 			}
 		}
 	}
@@ -545,7 +552,7 @@ JSBool SE_DoMovingEffect( JSContext *cx, uintN argc, jsval *vp )
 	{
 		Effects->PlayMovingAnimation( src, trg, effect, speed, loop, explode, hue, renderMode, stationaryFX );
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -553,27 +560,27 @@ JSBool SE_DoMovingEffect( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays a static effect at a target location
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DoStaticEffect( JSContext *cx, uintN argc, jsval *vp )
+bool SE_DoStaticEffect( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 7 )
 	{
 		ScriptError( cx, "StaticEffect: Invalid number of arguments (takes 7 - targX, targY, targZ, effectID, speed, loop, explode)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	SI16 targX		= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 targY		= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI16 targZ		= static_cast<SI16>( JSVAL_TO_INT( argv[2] ));
-	UI16 effectId	= static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
-	UI08 speed		= static_cast<UI08>( JSVAL_TO_INT( argv[4] ));
-	UI08 loop		= static_cast<UI08>( JSVAL_TO_INT( argv[5] ));
-	bool explode	= ( JSVAL_TO_BOOLEAN( argv[6] ) == JS_TRUE );
+	SI16 targX		= static_cast<SI16>( args.get(0).toInt32());
+	SI16 targY		= static_cast<SI16>( args.get(1).toInt32());
+	SI16 targZ		= static_cast<SI16>( args.get(2).toInt32());
+	UI16 effectId	= static_cast<UI16>( args.get(3).toInt32());
+	UI08 speed		= static_cast<UI08>( args.get(4).toInt32());
+	UI08 loop		= static_cast<UI08>( args.get(5).toInt32());
+	bool explode	= ( args.get(6).toBoolean() == true );
 
 	Effects->PlayStaticAnimation( targX, targY, targZ, effectId, speed, loop, explode );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -581,19 +588,21 @@ JSBool SE_DoStaticEffect( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a random number between loNum and hiNum
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_RandomNumber( JSContext *cx, uintN argc, jsval *vp )
+bool SE_RandomNumber( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
 		ScriptError( cx, "RandomNumber: Invalid number of arguments (takes 2)" );
-		return JS_FALSE;
+		return false;
 	}
-	JSEncapsulate loVal( cx, &( argv[0] ));
-	JSEncapsulate hiVal( cx, &( argv[1] ));
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( RandomNum( loVal.toInt(), hiVal.toInt() )) );
-	return JS_TRUE;
+	int32_t low = 0;
+	int32_t high = 0;
+	if( !JS::ToInt32( cx, args.get( 0 ), &low ) || !JS::ToInt32( cx, args.get( 1 ), &high ))
+		return false;
+	args.rval().setInt32( RandomNum( low, high ));
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -601,40 +610,43 @@ JSBool SE_RandomNumber( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Character creates specified item based on entry in CREATE DFNs
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_MakeItem( JSContext *cx, uintN argc, jsval *vp )
+bool SE_MakeItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 3 && argc != 4 )
 	{
 		ScriptError( cx, "MakeItem: Invalid number of arguments (takes 3, or 4 - socket, character, createID - and optionally - resourceColour)" );
-		return JS_FALSE;
+		return false;
 	}
-	JSObject *mSock = JSVAL_TO_OBJECT( argv[0] );
-	CSocket *sock	= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
-	JSObject *mChar = JSVAL_TO_OBJECT( argv[1] );
-	CChar *player	= static_cast<CChar *>( JS_GetPrivate( cx, mChar ));
+	CSocket *sock = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
+	CChar *player = GetWrappedObject<CChar>( args.get( 1 ), &UOXChar_class );
+	if( sock == nullptr )
+	{
+		ScriptError( cx, "MakeItem: Invalid socket" );
+		return false;
+	}
 	if( !ValidateObject( player ))
 	{
 		ScriptError( cx, "MakeItem: Invalid character" );
-		return JS_FALSE;
+		return false;
 	}
-	UI16 itemMenu		= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+	UI16 itemMenu		= static_cast<UI16>( args.get(2).toInt32());
 	CreateEntry_st *toFind = Skills->FindItem( itemMenu );
 	if( toFind == nullptr )
 	{
 		ScriptError( cx, oldstrutil::format( "MakeItem: Invalid make item (%i)", itemMenu ).c_str() );
-		return JS_FALSE;
+		return false;
 	}
 	UI16 resourceColour = 0;
 	if( argc == 4 )
 	{
-		resourceColour = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+		resourceColour = static_cast<UI16>( args.get(3).toInt32());
 	}
 
 	Skills->MakeItem( *toFind, player, sock, itemMenu, resourceColour );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -642,31 +654,31 @@ JSBool SE_MakeItem( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the command level required to execute the specified command
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CommandLevelReq( JSContext *cx, uintN argc, jsval *vp )
+bool SE_CommandLevelReq( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "CommandLevelReq: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
-	std::string test = JS_GetStringBytes( cx, argv[0]);
+	std::string test = JS_GetStringBytes( cx, args.get(0));
 	if( test.empty() || test.length() == 0 )
 	{
 		ScriptError( cx, "CommandLevelReq: Invalid command name" );
-		return JS_FALSE;
+		return false;
 	}
 	CommandMapEntry_st *details = Commands->CommandDetails( test );
 	if( details == nullptr )
 	{
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 255 ) );
+		args.rval().setInt32(  255  );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( details->cmdLevelReq ) );
+		args.rval().setInt32(  details->cmdLevelReq  );
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -674,23 +686,23 @@ JSBool SE_CommandLevelReq( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns whether specified command exists in command table or not
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CommandExists( JSContext *cx, uintN argc, jsval *vp )
+bool SE_CommandExists( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "CommandExists: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
-	std::string test = JS_GetStringBytes( cx, argv[0]);
+	std::string test = JS_GetStringBytes( cx, args.get(0));
 	if( test.empty() || test.length() == 0 )
 	{
 		ScriptError( cx, "CommandExists: Invalid command name" );
-		return JS_FALSE;
+		return false;
 	}
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( Commands->CommandExists( test )) );
-	return JS_TRUE;
+	args.rval().setBoolean(  Commands->CommandExists( test ) );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -698,10 +710,10 @@ JSBool SE_CommandExists( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the name of the first command in the table. If nothing, it's a 0 length string.
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_FirstCommand( JSContext *cx, uintN argc, jsval *vp )
+bool SE_FirstCommand( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	const std::string tVal = Commands->FirstCommand();
-	JSString *strSpeech = nullptr;
+	JS::RootedString strSpeech( cx );
 	if( tVal.empty() )
 	{
 		strSpeech = JS_NewStringCopyZ( cx, "" );
@@ -710,9 +722,9 @@ JSBool SE_FirstCommand( JSContext *cx, uintN argc, jsval *vp )
 	{
 		strSpeech = JS_NewStringCopyZ( cx, tVal.c_str() );
 	}
-
-	JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( strSpeech ) );
-	return JS_TRUE;
+	auto args = JS::CallArgsFromVp(argc, vp);
+	args.rval().setString( strSpeech );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -720,10 +732,10 @@ JSBool SE_FirstCommand( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the name of the next command in the table. If nothing, it's a 0 length string.
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_NextCommand( JSContext *cx, uintN argc, jsval *vp )
+bool SE_NextCommand( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	const std::string tVal = Commands->NextCommand();
-	JSString *strSpeech = nullptr;
+	JS::RootedString strSpeech( cx );
 	if( tVal.empty() )
 	{
 		strSpeech = JS_NewStringCopyZ( cx, "" );
@@ -733,8 +745,9 @@ JSBool SE_NextCommand( JSContext *cx, uintN argc, jsval *vp )
 		strSpeech = JS_NewStringCopyZ( cx, tVal.c_str() );
 	}
 
-	JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( strSpeech ) );
-	return JS_TRUE;
+	auto args = JS::CallArgsFromVp(argc, vp);
+	args.rval().setString( strSpeech );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -742,10 +755,11 @@ JSBool SE_NextCommand( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if there are no more commands left in the table.
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_FinishedCommandList( JSContext *cx, uintN argc, jsval *vp )
+bool SE_FinishedCommandList( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( Commands->FinishedCommandList() ) );
-	return JS_TRUE;
+	auto args = JS::CallArgsFromVp(argc, vp);
+	args.rval().setBoolean(  Commands->FinishedCommandList()  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -757,29 +771,29 @@ JSBool SE_FinishedCommandList( JSContext *cx, uintN argc, jsval *vp )
 //|					script whose name corresponds with the command name, in the shape of
 //|						function command_CMDNAME( socket, cmdString )
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_RegisterCommand( JSContext *cx, uintN argc, jsval *vp )
+bool SE_RegisterCommand( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 3 )
 	{
 		ScriptError( cx, "  RegisterCommand: Invalid number of arguments (takes 3)" );
-		return JS_FALSE;
+		return false;
 	}
-	std::string toRegister	= JS_GetStringBytes( cx, argv[0]);
-	UI08 execLevel			= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
-	bool isEnabled			= ( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE );
-	UI16 scriptId			= JSMapping->GetScriptId( scriptEnv );
+	std::string toRegister	= JS_GetStringBytes( cx, args.get(0));
+	UI08 execLevel			= static_cast<UI08>( args.get(1).toInt32());
+	bool isEnabled			= ( args.get(2).toBoolean() == true );
+	cScript *activeScript = JSMapping->currentActive();
+	UI16 scriptId = activeScript != nullptr ? activeScript->GetScriptID() : 0xFFFF;
 
 	if( scriptId == 0xFFFF )
 	{
 		ScriptError( cx, " RegisterCommand: JS Script has an Invalid ScriptID" );
-		return JS_FALSE;
+		return false;
 	}
 
 	Commands->Register( toRegister, scriptId, execLevel, isEnabled );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -790,21 +804,26 @@ JSBool SE_RegisterCommand( JSContext *cx, uintN argc, jsval *vp )
 //|					onSpellCast() event in the same script as a global listener for use of the
 //|					specified magic spell.
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_RegisterSpell( JSContext *cx, uintN argc, jsval *vp )
+bool SE_RegisterSpell( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
 		ScriptError( cx, "RegisterSpell: Invalid number of arguments (takes 2)" );
-		return JS_FALSE;
+		return false;
 	}
-	SI32 spellNumber	= JSVAL_TO_INT( argv[0] );
-	bool isEnabled		= ( JSVAL_TO_BOOLEAN( argv[1] ) == JS_TRUE );
-	cScript *myScript	= JSMapping->GetScript( scriptEnv );
+	SI32 spellNumber	= args.get(0).toInt32();
+	bool isEnabled		= ( args.get(1).toBoolean() == true );
+
+	cScript *myScript = JSMapping->currentActive();
+	if( myScript == nullptr )
+	{
+		ScriptError( cx, "RegisterSpell: JS Script could not be resolved" );
+		return false;
+	}
 	Magic->Register( myScript, spellNumber, isEnabled );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -815,19 +834,19 @@ JSBool SE_RegisterSpell( JSContext *cx, uintN argc, jsval *vp )
 //|					script is added under the SKILLUSE_SCRIPTS section of JSE_FILEASSOCIATIONS.SCP
 //|					and this function is called from a SkillRegistration() function
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_RegisterSkill( JSContext *cx, uintN argc, jsval *vp )
+bool SE_RegisterSkill( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
 		ScriptError( cx, "RegisterSkill: Invalid number of arguments (takes 2)" );
-		return JS_FALSE;
+		return false;
 	}
-	SI32 skillNumber	= JSVAL_TO_INT( argv[0] );
-	bool isEnabled		= ( JSVAL_TO_BOOLEAN( argv[1] ) == JS_TRUE );
-	UI16 scriptId		= JSMapping->GetScriptId( scriptEnv );
+	SI32 skillNumber	= args.get(0).toInt32();
+	bool isEnabled		= ( args.get(1).toBoolean() == true );
+	cScript *activeScript = JSMapping->currentActive();
+	UI16 scriptId = activeScript != nullptr ? activeScript->GetScriptID() : 0xFFFF;
 	if( scriptId != 0xFFFF )
 	{
 #if defined( UOX_DEBUG_MODE )
@@ -848,17 +867,17 @@ JSBool SE_RegisterSkill( JSContext *cx, uintN argc, jsval *vp )
 		if( !isEnabled )
 		{
 			cwmWorldState->skill[skillNumber].jsScript = 0;
-			return JS_FALSE;
+			return false;
 		}
 
 		// Skillnumber above ALLSKILLS refers to STR, INT, DEX, Fame and Karma,
 		if( skillNumber < 0 || skillNumber >= ALLSKILLS )
-			return JS_TRUE;
+			return true;
 
 		// Both scriptId and skillNumber seem valid; assign scriptId to this skill
 		cwmWorldState->skill[skillNumber].jsScript = scriptId;
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -869,18 +888,18 @@ JSBool SE_RegisterSkill( JSContext *cx, uintN argc, jsval *vp )
 //|					if script is added under the PACKET_SCRIPTS section of JSE_FILEASSOCIATIONS.SCP
 //|					and this function is called from a PacketRegistration() function
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_RegisterPacket( JSContext *cx, uintN argc, jsval *vp )
+bool SE_RegisterPacket( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  scriptEnv = getThis( cx, args );
 
 	if( argc != 2 )
 	{
 		ScriptError( cx, "RegisterPacket: Invalid number of arguments (takes 2)" );
-		return JS_FALSE;
+		return false;
 	}
-	UI08 packet			= static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
-	UI08 subCmd			= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+	UI08 packet			= static_cast<UI08>( args.get(0).toInt32());
+	UI08 subCmd			= static_cast<UI08>( args.get(1).toInt32());
 	UI16 scriptId		= JSMapping->GetScriptId( scriptEnv );
 	if( scriptId != 0xFFFF )
 	{
@@ -889,7 +908,7 @@ JSBool SE_RegisterPacket( JSContext *cx, uintN argc, jsval *vp )
 #endif
 		Network->RegisterPacket( packet, subCmd, scriptId );
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -900,29 +919,32 @@ JSBool SE_RegisterPacket( JSContext *cx, uintN argc, jsval *vp )
 //|					is added under the CONSOLE_SCRIPTS section of JSE_FILEASSOCIATIONS.SCP
 //|					and this function is called from a ConsoleRegistration() function
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_RegisterKey( JSContext *cx, uintN argc, jsval *vp )
+bool SE_RegisterKey( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
 		ScriptError( cx, "RegisterKey: Invalid number of arguments (takes 2)" );
-		return JS_FALSE;
+		return false;
 	}
-	JSEncapsulate encaps( cx, &( argv[0] ));
-	std::string toRegister	= JS_GetStringBytes( cx, argv[1]);
-	UI16 scriptId			= JSMapping->GetScriptId( scriptEnv );
+	std::string toRegister	= JS_GetStringBytes( cx, args.get(1));
+	UI16 scriptId = 0xFFFF;
+	cScript *activeScript = JSMapping->currentActive( false );
+	if( activeScript != nullptr )
+	{
+		scriptId = activeScript->GetScriptID();
+	}
 
 	if( scriptId == 0xFFFF )
 	{
 		ScriptError( cx, "RegisterKey: JS Script has an Invalid ScriptID" );
-		return JS_FALSE;
+		return false;
 	}
 	SI32 toPass = 0;
-	if( encaps.isType( JSOT_STRING ))
+	if( args.get( 0 ).isString() )
 	{
-		std::string enStr = encaps.toString();
+		std::string enStr = JS_GetStringBytes( cx, args.get( 0 ));
 		if( enStr.length() != 0 )
 		{
 			toPass  = enStr[0];
@@ -930,15 +952,16 @@ JSBool SE_RegisterKey( JSContext *cx, uintN argc, jsval *vp )
 		else
 		{
 			ScriptError( cx, "RegisterKey: JS Script passed an invalid key to register" );
-			return JS_FALSE;
+			return false;
 		}
 	}
 	else
 	{
-		toPass = encaps.toInt();
+		if( !JS::ToInt32( cx, args.get( 0 ), &toPass ))
+			return false;
 	}
 	Console.RegisterKey( toPass, toRegister, scriptId );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -946,28 +969,28 @@ JSBool SE_RegisterKey( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	???
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_RegisterConsoleFunc( JSContext *cx, uintN argc, jsval *vp )
+bool SE_RegisterConsoleFunc( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
-	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  scriptEnv = getThis( cx, args );	
 
 	if( argc != 2 )
 	{
 		ScriptError( cx, "RegisterConsoleFunc: Invalid number of arguments (takes 2)" );
-		return JS_FALSE;
+		return false;
 	}
-	std::string funcToRegister	= JS_GetStringBytes( cx, argv[0]);
-	std::string toRegister		= JS_GetStringBytes( cx, argv[1]);
+	std::string funcToRegister	= JS_GetStringBytes( cx, args.get(0));
+	std::string toRegister		= JS_GetStringBytes( cx, args.get(1));
 	UI16 scriptId				= JSMapping->GetScriptId( scriptEnv );
 
 	if( scriptId == 0xFFFF )
 	{
 		ScriptError( cx, "RegisterConsoleFunc: JS Script has an Invalid ScriptID" );
-		return JS_FALSE;
+		return false;
 	}
 
 	Console.RegisterFunc( funcToRegister, toRegister, scriptId );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -975,18 +998,18 @@ JSBool SE_RegisterConsoleFunc( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Disables a specified command on the server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DisableCommand( JSContext *cx, uintN argc, jsval *vp )
+bool SE_DisableCommand( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "DisableCommand: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
-	std::string toDisable = JS_GetStringBytes( cx, argv[0]);
+	std::string toDisable = JS_GetStringBytes( cx, args.get(0));
 	Commands->SetCommandStatus( toDisable, false );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -994,18 +1017,18 @@ JSBool SE_DisableCommand( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Disables specified key in console
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DisableKey( JSContext *cx, uintN argc, jsval *vp )
+bool SE_DisableKey( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "DisableKey: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
-	SI32 toDisable = JSVAL_TO_INT( argv[0] );
+	SI32 toDisable = args.get(0).toInt32();
 	Console.SetKeyStatus( toDisable, false );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1013,18 +1036,18 @@ JSBool SE_DisableKey( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	???
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DisableConsoleFunc( JSContext *cx, uintN argc, jsval *vp )
+bool SE_DisableConsoleFunc( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "DisableConsoleFunc: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
-	std::string toDisable = JS_GetStringBytes( cx, argv[0]);
+	std::string toDisable = JS_GetStringBytes( cx, args.get(0));
 	Console.SetFuncStatus( toDisable, false );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1032,18 +1055,18 @@ JSBool SE_DisableConsoleFunc( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Disables specified spell on server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DisableSpell( JSContext *cx, uintN argc, jsval *vp )
+bool SE_DisableSpell( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "DisableSpell: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
-	SI32 spellNumber = JSVAL_TO_INT( argv[0] );
+	SI32 spellNumber = args.get(0).toInt32();
 	Magic->SetSpellStatus( spellNumber, false );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1051,18 +1074,18 @@ JSBool SE_DisableSpell( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Enables specified command on server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_EnableCommand( JSContext *cx, uintN argc, jsval *vp )
+bool SE_EnableCommand( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "EnableCommand: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
-	std::string toEnable = JS_GetStringBytes( cx, argv[0]);
+	std::string toEnable = JS_GetStringBytes( cx, args.get(0));
 	Commands->SetCommandStatus( toEnable, true );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1070,18 +1093,18 @@ JSBool SE_EnableCommand( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Enables specified spell on server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_EnableSpell( JSContext *cx, uintN argc, jsval *vp )
+bool SE_EnableSpell( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "EnableSpell: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
-	SI32 spellNumber = JSVAL_TO_INT( argv[0] );
+	SI32 spellNumber = args.get(0).toInt32();
 	Magic->SetSpellStatus( spellNumber, true );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1089,18 +1112,18 @@ JSBool SE_EnableSpell( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Enables specified key in console
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_EnableKey( JSContext *cx, uintN argc, jsval *vp )
+bool SE_EnableKey( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "EnableKey: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
-	SI32 toEnable = JSVAL_TO_INT( argv[0] );
+	SI32 toEnable = args.get(0).toInt32();
 	Console.SetKeyStatus( toEnable, true );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1108,18 +1131,18 @@ JSBool SE_EnableKey( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	???
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_EnableConsoleFunc( JSContext *cx, uintN argc, jsval *vp )
+bool SE_EnableConsoleFunc( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "EnableConsoleFunc: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
-	std::string toEnable	= JS_GetStringBytes( cx, argv[0]);
+	std::string toEnable	= JS_GetStringBytes( cx, args.get(0));
 	Console.SetFuncStatus( toEnable, false );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1127,19 +1150,20 @@ JSBool SE_EnableConsoleFunc( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the hour of the current UO day
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetHour( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetHour( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
+	auto args = JS::CallArgsFromVp(argc, vp);
 	bool ampm = cwmWorldState->ServerData()->ServerTimeAMPM();
 	UI08 hour = cwmWorldState->ServerData()->ServerTimeHours();
 	if( ampm )
 	{
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI64>( hour ) + 12 ) );
+		args.rval().setInt32(  static_cast<UI64>( hour ) + 12  );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( hour ) );
+		args.rval().setInt32(  hour  );
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1147,11 +1171,12 @@ JSBool SE_GetHour( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the minute of the current UO day
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetMinute( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetMinute( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
+	auto args = JS::CallArgsFromVp(argc, vp);
 	UI08 minute = cwmWorldState->ServerData()->ServerTimeMinutes();
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( minute ) );
-	return JS_TRUE;
+	args.rval().setInt32(  minute  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1159,11 +1184,12 @@ JSBool SE_GetMinute( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the day number of the server (UO days since server start)
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetDay( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetDay( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
+	auto args = JS::CallArgsFromVp(argc, vp);
 	SI16 day = cwmWorldState->ServerData()->ServerTimeDay();
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( day ) );
-	return JS_TRUE;
+	args.rval().setInt32(  day  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1171,22 +1197,22 @@ JSBool SE_GetDay( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets and sets the amonut of real life seconds associated with minute in the game
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_SecondsPerUOMinute( JSContext *cx, uintN argc, jsval *vp )
+bool SE_SecondsPerUOMinute( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc > 1 )
 	{
 		ScriptError( cx, "SecondsPerUOMinute: Invalid number of arguments (takes 0 or 1)" );
-		return JS_FALSE;
+		return false;
 	}
 	else if( argc == 1 )
 	{
-		UI16 secondsPerUOMinute = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+		UI16 secondsPerUOMinute = static_cast<UI16>( args.get(0).toInt32());
 		cwmWorldState->ServerData()->ServerSecondsPerUOMinute( secondsPerUOMinute );
 	}
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( cwmWorldState->ServerData()->ServerSecondsPerUOMinute() ) );
-	return JS_TRUE;
+	args.rval().setInt32(  cwmWorldState->ServerData()->ServerSecondsPerUOMinute()  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1194,12 +1220,12 @@ JSBool SE_SecondsPerUOMinute( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets timestamp for current server clock
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetCurrentClock( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetCurrentClock( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* rval = &JS_RVAL(cx, vp);
-	JS_NewNumberValue( cx, cwmWorldState->GetUICurrentTime(), rval );
+	auto args = JS::CallArgsFromVp( argc, vp );
+	args.rval().setNumber( cwmWorldState->GetUICurrentTime() );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1207,12 +1233,12 @@ JSBool SE_GetCurrentClock( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets timestamp for server startup time
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetStartTime( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetStartTime( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* rval = &JS_RVAL(cx, vp);
-	JS_NewNumberValue( cx, cwmWorldState->GetStartTime(), rval );
+	auto args = JS::CallArgsFromVp( argc, vp );
+	args.rval().setNumber( cwmWorldState->GetStartTime() );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1220,27 +1246,27 @@ JSBool SE_GetStartTime( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets a random SOS area from list of such areas loaded from [SOSAREAS] section of regions.dfn
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetRandomSOSArea( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetRandomSOSArea( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
 		ScriptError( cx, "GetRandomSOSArea: Invalid number of arguments (takes 2)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	UI08 worldNum	= 0;
 	UI16 instanceId	= 0;
-	if( JSVAL_IS_INT( argv[0] ) && JSVAL_IS_INT( argv[1] ))
+	if( args.get(0).isInt32() && args.get(1).isInt32() )
 	{
-		worldNum	= static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
-		instanceId	= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+		worldNum	= static_cast<UI08>( args.get(0).toInt32());
+		instanceId	= static_cast<UI16>( args.get(1).toInt32());
 	}
 	else
 	{
 		ScriptError( cx, "GetRandomSOSArea: Invalid values passed in for worldNum and instanceId - must be integers!" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Fetch vector of SOS locations
@@ -1248,7 +1274,7 @@ JSBool SE_GetRandomSOSArea( JSContext *cx, uintN argc, jsval *vp )
 	if( sosLocs.size() == 0 )
 	{
 		ScriptError( cx, "GetRandomSOSArea: No valid SOS areas found. Is the [SOSAREAS] section of regions.dfn setup correctly?" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Prepare a vector to hold the areas with correct worldNum and instanceId
@@ -1267,26 +1293,26 @@ JSBool SE_GetRandomSOSArea( JSContext *cx, uintN argc, jsval *vp )
 	auto rndSosLoc = validSOSLocs[RandomNum( static_cast<size_t>( 0 ), validSOSLocs.size() - 1 )];
 
 	// Convert properties of chosen SOS area to jsvals, so we can pass them to a JSObject
-	jsval jsX1			= INT_TO_JSVAL( rndSosLoc.x1 );
-	jsval jsY1			= INT_TO_JSVAL( rndSosLoc.y1 );
-	jsval jsX2			= INT_TO_JSVAL( rndSosLoc.x2 );
-	jsval jsY2			= INT_TO_JSVAL( rndSosLoc.y2 );
-	jsval jsWorldNum	= INT_TO_JSVAL( rndSosLoc.worldNum );
-	jsval jsInstanceId	= INT_TO_JSVAL( rndSosLoc.instanceId );
+	JS::RootedValue jsX1( cx, JS::Int32Value( rndSosLoc.x1 ));
+	JS::RootedValue jsY1( cx, JS::Int32Value( rndSosLoc.y1 ));
+	JS::RootedValue jsX2( cx, JS::Int32Value( rndSosLoc.x2 ));
+	JS::RootedValue jsY2( cx, JS::Int32Value( rndSosLoc.y2 ));
+	JS::RootedValue jsWorldNum( cx, JS::Int32Value( rndSosLoc.worldNum ));
+	JS::RootedValue jsInstanceId( cx, JS::Int32Value( rndSosLoc.instanceId ));
 
 	// Construct a JS Object with the properties of the chosen SOS area
-	JSObject *rndSosLocObj = JS_NewArrayObject( cx, 0, nullptr );
-	JS_SetElement( cx, rndSosLocObj, 0, &jsX1 );
-	JS_SetElement( cx, rndSosLocObj, 1, &jsY1 );
-	JS_SetElement( cx, rndSosLocObj, 2, &jsX2 );
-	JS_SetElement( cx, rndSosLocObj, 3, &jsY2 );
-	JS_SetElement( cx, rndSosLocObj, 4, &jsWorldNum );
-	JS_SetElement( cx, rndSosLocObj, 5, &jsInstanceId );
+	JS::RootedObject rndSosLocObj( cx, JS::NewArrayObject( cx, 0 ));
+	JS_SetElement( cx, rndSosLocObj, 0, jsX1 );
+	JS_SetElement( cx, rndSosLocObj, 1, jsY1 );
+	JS_SetElement( cx, rndSosLocObj, 2, jsX2 );
+	JS_SetElement( cx, rndSosLocObj, 3, jsY2 );
+	JS_SetElement( cx, rndSosLocObj, 4, jsWorldNum );
+	JS_SetElement( cx, rndSosLocObj, 5, jsInstanceId );
 
 	// Pass the JS object to script
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( rndSosLocObj ) );
+	args.rval().setObjectOrNull( rndSosLocObj );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1294,43 +1320,37 @@ JSBool SE_GetRandomSOSArea( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Spawns NPC based on definition in NPC DFNs (or an NPCLIST)
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_SpawnNPC( JSContext *cx, uintN argc, jsval *vp )
+bool SE_SpawnNPC( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
-	jsval* rval = &JS_RVAL(cx, vp);
-	JSObject* obj = JS_THIS_OBJECT(cx, vp);
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 
 	if( argc < 5 || argc > 7 )
 	{
 		ScriptError( cx, "SpawnNPC: Invalid number of arguments (takes 5, 6 or 7)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *cMade		= nullptr;
-	std::string nnpcNum	= JS_GetStringBytes( cx, argv[0] );
-	UI16 x				= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 y				= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-	SI08 z				= static_cast<SI08>( JSVAL_TO_INT( argv[3] ));
-	UI08 world			= static_cast<UI08>( JSVAL_TO_INT( argv[4] ));
-	UI16 instanceId = ( argc == 6 ? static_cast<SI16>( JSVAL_TO_INT( argv[5] )) : 0 );
-	bool useNpcList = ( argc == 7 ? ( JSVAL_TO_BOOLEAN( argv[6] ) == JS_TRUE ) : false );
-
-	// Store original script context and object, in case NPC spawned has some event that triggers on spawn and grabs context
-	auto origContext = cx;
-	auto origObject = obj;
+	std::string nnpcNum	= JS_GetStringBytes( cx, args.get(0) );
+	UI16 x				= static_cast<UI16>( args.get(1).toInt32());
+	UI16 y				= static_cast<UI16>( args.get(2).toInt32());
+	SI08 z				= static_cast<SI08>( args.get(3).toInt32());
+	UI08 world			= static_cast<UI08>( args.get(4).toInt32());
+	UI16 instanceId = ( argc == 6 ? static_cast<SI16>( args.get(5).toInt32()) : 0 );
+	bool useNpcList = ( argc == 7 ? ( args.get(6).toBoolean() == true ) : false );
 
 	cMade = Npcs->CreateNPCxyz( nnpcNum, x, y, z, world, instanceId, useNpcList );
 	if( cMade != nullptr )
 	{
-		JSObject *myobj		= JSEngine->AcquireObject( IUE_CHAR, cMade, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		*rval				= OBJECT_TO_JSVAL( myobj );
+		JS::RootedObject myobj( cx, JSEngine->AcquireObject( IUE_CHAR, cMade, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+		args.rval().setObjectOrNull( myobj );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 	}
-
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1338,32 +1358,30 @@ JSBool SE_SpawnNPC( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates item based on definition in item DFNs
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CreateDFNItem( JSContext *cx, uintN argc, jsval *vp )
+bool SE_CreateDFNItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 
 	if( argc < 3 )
 	{
 		ScriptError( cx, "CreateDFNItem: Invalid number of arguments (takes at least 3, max 8)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CSocket *mySock = nullptr;
-	if( argv[0] != JSVAL_NULL )
+	if( args.get(0) != JS::NullValue() )
 	{
-		JSObject *mSock			= JSVAL_TO_OBJECT( argv[0] );
-		mySock					= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
+		mySock = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 	}
 
 	CChar *myChar = nullptr;
-	if( argv[1] != JSVAL_NULL )
+	if( args.get(1) != JS::NullValue() )
 	{
-		JSObject *mChar			= JSVAL_TO_OBJECT( argv[1] );
-		myChar					= static_cast<CChar *>( JS_GetPrivate( cx, mChar ));
+		myChar = GetWrappedObject<CChar>( args.get( 1 ), &UOXChar_class );
 	}
 
-	std::string bpSectNumber	= JS_GetStringBytes( cx, argv[2]);
+	std::string bpSectNumber	= JS_GetStringBytes( cx, args.get(2));
 	bool bInPack				= true;
 	UI16 iAmount				= 1;
 	ObjectType itemType			= OT_ITEM;
@@ -1373,28 +1391,28 @@ JSBool SE_CreateDFNItem( JSContext *cx, uintN argc, jsval *vp )
 
 	if( argc > 3 )
 	{
-		iAmount	= static_cast<UI16> (JSVAL_TO_INT( argv[3] ));
+		iAmount	= static_cast<UI16> (args.get(3).toInt32());
 	}
 	if( argc > 4 )
 	{
-		std::string objType	= JS_GetStringBytes( cx, argv[4]);
+		std::string objType	= JS_GetStringBytes( cx, args.get(4));
 		itemType			= FindObjTypeFromString( objType );
 	}
 	if( argc > 5 )
 	{
-		bInPack	= ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
+		bInPack	= ( args.get(5).toBoolean() == true );
 	}
 	if( argc > 6 )
 	{
-		iColor = static_cast<UI16>( JSVAL_TO_INT( argv[6] ));
+		iColor = static_cast<UI16>( args.get(6).toInt32());
 	}
 	if( argc > 7 )
 	{
-		worldNumber	= static_cast<UI08>( JSVAL_TO_INT( argv[7] ));
+		worldNumber	= static_cast<UI08>( args.get(7).toInt32());
 	}
 	if( argc > 8 )
 	{
-		instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[8] ));
+		instanceId = static_cast<UI16>( args.get(8).toInt32());
 	}
 
 	// Store original script context and object, in case Item spawned has some event that triggers on spawn and grabs context
@@ -1413,15 +1431,15 @@ JSBool SE_CreateDFNItem( JSContext *cx, uintN argc, jsval *vp )
 
 	if( newItem != nullptr )
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, newItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, newItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+		args.rval().setObjectOrNull( myObj );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1430,38 +1448,36 @@ JSBool SE_CreateDFNItem( JSContext *cx, uintN argc, jsval *vp )
 //|	Purpose		-	Creates a "blank" item with default values from client's tiledata
 //|	Notes		-	Default values can be overridden through harditems.dfn
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CreateBlankItem( JSContext *cx, uintN argc, jsval *vp )
+bool SE_CreateBlankItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 
 	if( argc != 8 )
 	{
 		ScriptError( cx, "CreateBlankItem: Invalid number of arguments (takes 7)" );
-		return JS_FALSE;
+		return false;
 	}
 	CItem *newItem			= nullptr;
 	CSocket *mySock			= nullptr;
-	if( argv[0] != JSVAL_NULL )
+	if( args.get(0) != JS::NullValue() )
 	{
-		JSObject *mSock		= JSVAL_TO_OBJECT( argv[0] );
-		mySock				= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
+		mySock = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 	}
 
 	CChar *myChar = nullptr;
-	if( argv[1] != JSVAL_NULL )
+	if( args.get(1) != JS::NullValue() )
 	{
-		JSObject *mChar			= JSVAL_TO_OBJECT( argv[1] );
-		myChar					= static_cast<CChar *>( JS_GetPrivate( cx, mChar ));
+		myChar = GetWrappedObject<CChar>( args.get( 1 ), &UOXChar_class );
 	}
 
-	SI32 amount				= static_cast<SI32>( JSVAL_TO_INT( argv[2] ));
-	std::string itemName	= JS_GetStringBytes( cx, argv[3]);
-	UI16 itemId				= static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
-	UI16 colour				= static_cast<UI16>( JSVAL_TO_INT( argv[5] ));
-	std::string objType		= JS_GetStringBytes( cx, argv[6]);
+	SI32 amount				= static_cast<SI32>( args.get(2).toInt32());
+	std::string itemName	= JS_GetStringBytes( cx, args.get(3));
+	UI16 itemId				= static_cast<UI16>( args.get(4).toInt32());
+	UI16 colour				= static_cast<UI16>( args.get(5).toInt32());
+	std::string objType		= JS_GetStringBytes( cx, args.get(6));
 	ObjectType itemType		= FindObjTypeFromString( objType );
-	bool inPack				= ( JSVAL_TO_BOOLEAN( argv[7] ) == JS_TRUE );
+	bool inPack				= ( args.get(7).toBoolean() == true );
 
 	// Store original script context and object, in case NPC spawned has some event that triggers on spawn and grabs context
 	auto origContext = cx;
@@ -1474,15 +1490,15 @@ JSBool SE_CreateBlankItem( JSContext *cx, uintN argc, jsval *vp )
 		{
 			newItem->SetName( itemName );
 		}
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, newItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, newItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+		args.rval().setObjectOrNull( myObj );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 CMultiObj * BuildHouse( CSocket *s, UI16 houseEntry, bool checkLocation = true, SI16 xLoc = -1, SI16 yLoc = -1, SI08 zLoc = -1, UI08 worldNumber = 0, UI16 instanceId = 0 );
@@ -1491,21 +1507,21 @@ CMultiObj * BuildHouse( CSocket *s, UI16 houseEntry, bool checkLocation = true, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates multi based on definition in house DFNs
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CreateHouse( JSContext *cx, uintN argc, jsval *vp )
+bool SE_CreateHouse( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 
 	if( argc < 4 )
 	{
 		ScriptError( cx, "CreateHouse: Invalid number of arguments (takes at least 4, max 8)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	UI16 houseId				= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 xLoc					= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI16 yLoc					= static_cast<SI16>( JSVAL_TO_INT( argv[2] ));
-	SI08 zLoc					= static_cast<SI08>( JSVAL_TO_INT( argv[3] ));
+	UI16 houseId				= static_cast<UI16>( args.get(0).toInt32());
+	SI16 xLoc					= static_cast<SI16>( args.get(1).toInt32());
+	SI16 yLoc					= static_cast<SI16>( args.get(2).toInt32());
+	SI08 zLoc					= static_cast<SI08>( args.get(3).toInt32());
 	UI16 iColor					= 0xFFFF;
 	UI08 worldNumber			= 0;
 	UI16 instanceId				= 0;
@@ -1513,19 +1529,19 @@ JSBool SE_CreateHouse( JSContext *cx, uintN argc, jsval *vp )
 
 	if( argc > 4 )
 	{
-		worldNumber	= static_cast<UI08>( JSVAL_TO_INT( argv[4] ));
+		worldNumber	= static_cast<UI08>( args.get(4).toInt32());
 	}
 	if( argc > 5 )
 	{
-		instanceId	= static_cast<UI16>( JSVAL_TO_INT( argv[5] ));
+		instanceId	= static_cast<UI16>( args.get(5).toInt32());
 	}
 	if( argc > 6 )
 	{
-		iColor		= static_cast<UI16>( JSVAL_TO_INT( argv[6] ));
+		iColor		= static_cast<UI16>( args.get(6).toInt32());
 	}
 	if( argc > 7 )
 	{
-		checkLocation = ( JSVAL_TO_BOOLEAN( argv[7] ) == JS_TRUE );
+		checkLocation = ( args.get(7).toBoolean() == true );
 	}
 
 	// Store original script context and object, in case Item spawned has some event that triggers on spawn and grabs context
@@ -1541,15 +1557,15 @@ JSBool SE_CreateHouse( JSContext *cx, uintN argc, jsval *vp )
 			newMulti->SetColour( iColor );
 		}
 
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, newMulti, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, newMulti, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+		args.rval().setObjectOrNull( myObj );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 CMultiObj * BuildBaseMulti( UI16 multiId, SI16 xLoc = -1, SI16 yLoc = -1, SI08 zLoc = 127, UI08 worldNumber = 0, UI16 instanceId = 0 );
@@ -1558,21 +1574,21 @@ CMultiObj * BuildBaseMulti( UI16 multiId, SI16 xLoc = -1, SI16 yLoc = -1, SI08 z
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates base multi based on ID from multi file
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CreateBaseMulti( JSContext *cx, uintN argc, jsval *vp )
+bool SE_CreateBaseMulti( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 
 	if( argc < 4 )
 	{
 		ScriptError( cx, "CreateBaseMulti: Invalid number of arguments (takes at least 4, max 8)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	UI16 multiId				= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 xLoc					= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI16 yLoc					= static_cast<SI16>( JSVAL_TO_INT( argv[2] ));
-	SI08 zLoc					= static_cast<SI08>( JSVAL_TO_INT( argv[3] ));
+	UI16 multiId				= static_cast<UI16>( args.get(0).toInt32());
+	SI16 xLoc					= static_cast<SI16>( args.get(1).toInt32());
+	SI16 yLoc					= static_cast<SI16>( args.get(2).toInt32());
+	SI08 zLoc					= static_cast<SI08>( args.get(3).toInt32());
 	UI16 iColor					= 0xFFFF;
 	UI08 worldNumber			= 0;
 	UI16 instanceId				= 0;
@@ -1581,19 +1597,19 @@ JSBool SE_CreateBaseMulti( JSContext *cx, uintN argc, jsval *vp )
 
 	if( argc > 4 )
 	{
-		worldNumber				= static_cast<UI08>( JSVAL_TO_INT( argv[4] ));
+		worldNumber				= static_cast<UI08>( args.get(4).toInt32());
 	}
 	if( argc > 5 )
 	{
-		instanceId				= static_cast<UI16>( JSVAL_TO_INT( argv[5] ));
+		instanceId				= static_cast<UI16>( args.get(5).toInt32());
 	}
 	if( argc > 6 )
 	{
-		iColor					= static_cast<UI16>( JSVAL_TO_INT( argv[6] ));
+		iColor					= static_cast<UI16>( args.get(6).toInt32());
 	}
 	if( argc > 7 )
 	{
-		checkLocation = ( JSVAL_TO_BOOLEAN( argv[7] ) == JS_TRUE );
+		checkLocation = ( args.get(7).toBoolean() == true );
 	}
 
 	// Store original script context and object, in case Item spawned has some event that triggers on spawn and grabs context
@@ -1609,15 +1625,15 @@ JSBool SE_CreateBaseMulti( JSContext *cx, uintN argc, jsval *vp )
 			newMulti->SetColour( iColor );
 		}
 
-		JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, newMulti, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, newMulti, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+		args.rval().setObjectOrNull( myObj );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1625,10 +1641,11 @@ JSBool SE_CreateBaseMulti( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the max amount of kills allowed before a player turns red
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetMurderThreshold( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetMurderThreshold( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( cwmWorldState->ServerData()->RepMaxKills() ) );
-	return JS_TRUE;
+	auto args = JS::CallArgsFromVp(argc, vp);
+	args.rval().setInt32(  cwmWorldState->ServerData()->RepMaxKills()  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1636,23 +1653,23 @@ JSBool SE_GetMurderThreshold( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Rolls a die with specified number of sides, and adds a fixed value
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_RollDice( JSContext *cx, uintN argc, jsval *vp )
+bool SE_RollDice( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc < 3 )
 	{
 		ScriptError( cx, "RollDice: Invalid number of arguments (takes 3)" );
-		return JS_FALSE;
+		return false;
 	}
-	UI32 numDice = JSVAL_TO_INT( argv[0] );
-	UI32 numFace = JSVAL_TO_INT( argv[1] );
-	UI32 numAdd  = JSVAL_TO_INT( argv[2] );
+	UI32 numDice = args.get(0).toInt32();
+	UI32 numFace = args.get(1).toInt32();
+	UI32 numAdd  = args.get(2).toInt32();
 
 	cDice toRoll( numDice, numFace, numAdd );
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( toRoll.RollDice() ) );
-	return JS_TRUE;
+	args.rval().setInt32(  toRoll.RollDice()  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1663,19 +1680,19 @@ JSBool SE_RollDice( JSContext *cx, uintN argc, jsval *vp )
 //|					1 to 100 - allies
 //|					-1 to -100 - enemies
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_RaceCompareByRace( JSContext *cx, uintN argc, jsval *vp )
+bool SE_RaceCompareByRace( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
-		return JS_FALSE;
+		return false;
 	}
-	RACEID r0 = static_cast<RACEID>( JSVAL_TO_INT( argv[0] ));
-	RACEID r1 = static_cast<RACEID>( JSVAL_TO_INT( argv[1] ));
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( Races->CompareByRace( r0, r1 )) );
+	RACEID r0 = static_cast<RACEID>( args.get(0).toInt32());
+	RACEID r1 = static_cast<RACEID>( args.get(1).toInt32());
+	args.rval().setInt32(  Races->CompareByRace( r0, r1 ) );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1683,14 +1700,14 @@ JSBool SE_RaceCompareByRace( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns multi at given coordinates, world and instanceId
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_FindMulti( JSContext *cx, uintN argc, jsval *vp )
+bool SE_FindMulti( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 && argc != 4 && argc != 5 )
 	{
 		ScriptError( cx, "FindMulti: Invalid number of parameters (1, 4 or 5)" );
-		return JS_FALSE;
+		return false;
 	}
 	SI16 xLoc = 0, yLoc = 0;
 	SI08 zLoc = 0;
@@ -1698,8 +1715,7 @@ JSBool SE_FindMulti( JSContext *cx, uintN argc, jsval *vp )
 	UI16 instanceId = 0;
 	if( argc == 1 )
 	{
-		JSObject *myitemptr = JSVAL_TO_OBJECT( argv[0] );
-		CBaseObject *myItemPtr = static_cast<CBaseObject *>( JS_GetPrivate( cx, myitemptr ));
+		CBaseObject *myItemPtr = GetBaseObject( args.get( 0 ));
 		if( ValidateObject( myItemPtr ))
 		{
 			xLoc		= myItemPtr->GetX();
@@ -1711,31 +1727,31 @@ JSBool SE_FindMulti( JSContext *cx, uintN argc, jsval *vp )
 		else
 		{
 			ScriptError( cx, "FindMulti: Invalid object type" );
-			return JS_FALSE;
+			return false;
 		}
 	}
 	else
 	{
-		xLoc		= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-		yLoc		= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-		zLoc		= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-		worldNumber = static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
+		xLoc		= static_cast<SI16>( args.get(0).toInt32());
+		yLoc		= static_cast<SI16>( args.get(1).toInt32());
+		zLoc		= static_cast<SI08>( args.get(2).toInt32());
+		worldNumber = static_cast<UI08>( args.get(3).toInt32());
 		if( argc == 5 )
 		{
-			instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
+			instanceId = static_cast<UI16>( args.get(4).toInt32());
 		}
 	}
 	CMultiObj *multi = FindMulti( xLoc, yLoc, zLoc, worldNumber, instanceId );
 	if( ValidateObject( multi ))
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, multi, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, multi, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+		args.rval().setObjectOrNull( myObj );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1744,40 +1760,40 @@ JSBool SE_FindMulti( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns item closest to specified coordinates
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetItem( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 4 && argc != 5 )
 	{
 		ScriptError( cx, "GetItem: Invalid number of parameters (4 or 5)" );
-		return JS_FALSE;
+		return false;
 	}
 	SI16 xLoc = 0, yLoc = 0;
 	SI08 zLoc = 0;
 	UI08 worldNumber = 0;
 	UI16 instanceId = 0;
 
-	xLoc		= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	yLoc		= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	zLoc		= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-	worldNumber = static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
+	xLoc		= static_cast<SI16>( args.get(0).toInt32());
+	yLoc		= static_cast<SI16>( args.get(1).toInt32());
+	zLoc		= static_cast<SI08>( args.get(2).toInt32());
+	worldNumber = static_cast<UI08>( args.get(3).toInt32());
 	if( argc == 5 )
 	{
-		instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
+		instanceId = static_cast<UI16>( args.get(4).toInt32());
 	}
 
 	CItem *item = GetItemAtXYZ( xLoc, yLoc, zLoc, worldNumber, instanceId );
 	if( ValidateObject( item ))
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, item, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, item, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+		args.rval().setObjectOrNull( myObj );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1786,14 +1802,14 @@ JSBool SE_GetItem( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns item of given ID that is closest to specified coordinates
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_FindItem( JSContext *cx, uintN argc, jsval *vp )
+bool SE_FindItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 5 && argc != 6 )
 	{
 		ScriptError( cx, "FindItem: Invalid number of parameters (5 or 6)" );
-		return JS_FALSE;
+		return false;
 	}
 	SI16 xLoc = 0, yLoc = 0;
 	SI08 zLoc = 0;
@@ -1801,27 +1817,27 @@ JSBool SE_FindItem( JSContext *cx, uintN argc, jsval *vp )
 	UI16 id = 0;
 	UI16 instanceId = 0;
 
-	xLoc		= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	yLoc		= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	zLoc		= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-	worldNumber = static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
-	id			= static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
+	xLoc		= static_cast<SI16>( args.get(0).toInt32());
+	yLoc		= static_cast<SI16>( args.get(1).toInt32());
+	zLoc		= static_cast<SI08>( args.get(2).toInt32());
+	worldNumber = static_cast<UI08>( args.get(3).toInt32());
+	id			= static_cast<UI16>( args.get(4).toInt32());
 	if( argc == 6 )
 	{
-		instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[5] ));
+		instanceId = static_cast<UI16>( args.get(5).toInt32());
 	}
 
 	CItem *item = FindNearestItemNearXYZ( xLoc, yLoc, zLoc, worldNumber, id, instanceId );
 	if( ValidateObject( item ))
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, item, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, item, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+		args.rval().setObjectOrNull( myObj );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1829,14 +1845,14 @@ JSBool SE_FindItem( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns item of given sectionID that is closest to specified coordinates
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_FindItemBySection( JSContext *cx, uintN argc, jsval *vp )
+bool SE_FindItemBySection( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 5 && argc != 6 )
 	{
 		ScriptError( cx, "SE_FindItemBySection: Invalid number of parameters (5 or 6)" );
-		return JS_FALSE;
+		return false;
 	}
 	SI16 xLoc = 0, yLoc = 0;
 	SI08 zLoc = 0;
@@ -1844,27 +1860,27 @@ JSBool SE_FindItemBySection( JSContext *cx, uintN argc, jsval *vp )
 	std::string sectionId = "";
 	UI16 instanceId = 0;
 
-	xLoc		= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	yLoc		= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	zLoc		= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-	worldNumber = static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
-	sectionId	= JS_GetStringBytes( cx, argv[4]);
+	xLoc		= static_cast<SI16>( args.get(0).toInt32());
+	yLoc		= static_cast<SI16>( args.get(1).toInt32());
+	zLoc		= static_cast<SI08>( args.get(2).toInt32());
+	worldNumber = static_cast<UI08>( args.get(3).toInt32());
+	sectionId	= JS_GetStringBytes( cx, args.get(4));
 	if( argc == 6 )
 	{
-		instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[5] ));
+		instanceId = static_cast<UI16>( args.get(5).toInt32());
 	}
 
 	CItem *item = FindNearestItemBySectionNearXYZ( xLoc, yLoc, zLoc, worldNumber, sectionId, instanceId );
 	if( ValidateObject( item ))
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, item, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, item, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+		args.rval().setObjectOrNull( myObj );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1878,18 +1894,18 @@ JSBool SE_FindItemBySection( JSContext *cx, uintN argc, jsval *vp )
 //|					4 - Same
 //|					5 - Count
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CompareGuildByGuild( JSContext *cx, uintN argc, jsval *vp )
+bool SE_CompareGuildByGuild( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
-		return JS_FALSE;
+		return false;
 	}
-	GUILDID toCheck		= static_cast<GUILDID>( JSVAL_TO_INT( argv[0] ));
-	GUILDID toCheck2	= static_cast<GUILDID>( JSVAL_TO_INT( argv[1] ));
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( GuildSys->Compare( toCheck, toCheck2 )) );
-	return JS_TRUE;
+	GUILDID toCheck		= static_cast<GUILDID>( args.get(0).toInt32());
+	GUILDID toCheck2	= static_cast<GUILDID>( args.get(1).toInt32());
+	args.rval().setInt32(  GuildSys->Compare( toCheck, toCheck2 ) );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1898,26 +1914,27 @@ JSBool SE_CompareGuildByGuild( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a new guild, assigns it to the calling character, and returns the guild object
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CreateNewGuild( JSContext* cx, uintN argc, jsval* vp )
+bool SE_CreateNewGuild( JSContext* cx, unsigned int argc, JS::Value* vp )
 {
-	JSObject* jsThis = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  jsThis = getThis( cx, args );
 	if( jsThis == nullptr )
-		return JS_FALSE;
+		return false;
 
 	GUILDID tempGuildId = GuildSys->NewGuild();
 	CGuild* newGuild = GuildSys->Guild( tempGuildId );
 
 	if( newGuild != nullptr )
 	{
-		JSObject* jsGuildObj = JSEngine->AcquireObject( IUE_GUILD, newGuild, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( jsGuildObj ));
+		JS::RootedObject jsGuildObj( cx, JSEngine->AcquireObject( IUE_GUILD, newGuild, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+		args.rval().setObjectOrNull( jsGuildObj );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1925,18 +1942,18 @@ JSBool SE_CreateNewGuild( JSContext* cx, uintN argc, jsval* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Source town takes control over target town
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_PossessTown( JSContext *cx, uintN argc, jsval *vp )
+bool SE_PossessTown( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
-		return JS_FALSE;
+		return false;
 	}
-	UI16 town	= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	UI16 sTown	= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	UI16 town	= static_cast<UI16>( args.get(0).toInt32());
+	UI16 sTown	= static_cast<UI16>( args.get(1).toInt32());
 	cwmWorldState->townRegions[town]->Possess( cwmWorldState->townRegions[sTown] );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1944,23 +1961,23 @@ JSBool SE_PossessTown( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if character's race is affected by given type of weather
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_IsRaceWeakToWeather( JSContext *cx, uintN argc, jsval *vp )
+bool SE_IsRaceWeakToWeather( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
-		return JS_FALSE;
+		return false;
 	}
-	RACEID race		= static_cast<RACEID>( JSVAL_TO_INT( argv[0] ));
-	WEATHID toCheck = static_cast<WEATHID>( JSVAL_TO_INT( argv[1] ));
+	RACEID race		= static_cast<RACEID>( args.get(0).toInt32());
+	WEATHID toCheck = static_cast<WEATHID>( args.get(1).toInt32());
 	CRace *tRace	= Races->Race( race );
 	if( tRace == nullptr || toCheck >= WEATHNUM )
 	{
-		return JS_FALSE;
+		return false;
 	}
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( tRace->AffectedBy( static_cast<WeatherType>( toCheck ))) );
-	return JS_TRUE;
+	args.rval().setBoolean(  tRace->AffectedBy( static_cast<WeatherType>( toCheck )) );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1968,18 +1985,18 @@ JSBool SE_IsRaceWeakToWeather( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns damage modifier for specified skill based on race
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetRaceSkillAdjustment( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetRaceSkillAdjustment( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
-		return JS_FALSE;
+		return false;
 	}
-	RACEID race = static_cast<RACEID>( JSVAL_TO_INT( argv[0] ));
-	SI32 skill = JSVAL_TO_INT( argv[1] );
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( Races->DamageFromSkill( skill, race )) );
-	return JS_TRUE;
+	RACEID race = static_cast<RACEID>( args.get(0).toInt32());
+	SI32 skill = args.get(1).toInt32();
+	args.rval().setInt32(  Races->DamageFromSkill( skill, race ) );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1987,57 +2004,49 @@ JSBool SE_GetRaceSkillAdjustment( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Uses specified item
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_UseItem( JSContext *cx, uintN argc, jsval *vp )
+bool SE_UseItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 
 	if( argc != 2 )
 	{
 		ScriptError( cx, "UseItem: Invalid number of arguments (takes 2 - socket/char, and item used)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *mChar = nullptr;
 	CSocket *mySocket = nullptr;
 
-	JSEncapsulate myClass( cx, &( argv[0] ));
-	if( myClass.ClassName() == "UOXChar" )
+	mChar = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
+	if( mChar != nullptr )
 	{
-		if( myClass.isType( JSOT_OBJECT ))
+		if( !ValidateObject( mChar ))
 		{
-			mChar = static_cast<CChar *>( myClass.toObject() );
-			if( !ValidateObject( mChar ))
-			{
-				mChar = nullptr;
-			}
+			mChar = nullptr;
 		}
 	}
-	else if( myClass.ClassName() == "UOXSocket" )
+	else
 	{
-		if( myClass.isType( JSOT_OBJECT ))
+		mySocket = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
+		if( mySocket != nullptr )
 		{
-			mySocket = static_cast<CSocket *>( myClass.toObject() );
-			if( mySocket != nullptr )
-			{
-				mChar = mySocket->CurrcharObj();
-			}
+			mChar = mySocket->CurrcharObj();
 		}
 	}
 
-	JSObject *mItem	= JSVAL_TO_OBJECT( argv[1] );
-	CItem *myItem	= static_cast<CItem *>( JS_GetPrivate( cx, mItem ));
+	CItem *myItem = GetWrappedObject<CItem>( args.get( 1 ), &UOXItem_class );
 
 	if( !ValidateObject( myItem ))
 	{
 		ScriptError( cx, "UseItem: Invalid item" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "UseItem: Invalid character" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Store original script context and object, in case NPC spawned has some event that triggers on spawn and grabs context
@@ -2109,7 +2118,7 @@ JSBool SE_UseItem( JSContext *cx, uintN argc, jsval *vp )
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2117,57 +2126,49 @@ JSBool SE_UseItem( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Uses specified item
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_TriggerTrap( JSContext *cx, uintN argc, jsval *vp )
+bool SE_TriggerTrap( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 
 	if( argc != 2 )
 	{
 		ScriptError( cx, "UseItem: Invalid number of arguments (takes 2 - socket/char, and item (trap) triggered)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *mChar = nullptr;
 	CSocket *mySocket = nullptr;
 
-	JSEncapsulate myClass( cx, &( argv[0] ));
-	if( myClass.ClassName() == "UOXChar" )
+	mChar = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
+	if( mChar != nullptr )
 	{
-		if( myClass.isType( JSOT_OBJECT ))
+		if( !ValidateObject( mChar ))
 		{
-			mChar = static_cast<CChar *>( myClass.toObject() );
-			if( !ValidateObject( mChar ))
-			{
-				mChar = nullptr;
-			}
+			mChar = nullptr;
 		}
 	}
-	else if( myClass.ClassName() == "UOXSocket" )
+	else
 	{
-		if( myClass.isType( JSOT_OBJECT ))
+		mySocket = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
+		if( mySocket != nullptr )
 		{
-			mySocket = static_cast<CSocket *>( myClass.toObject() );
-			if( mySocket != nullptr )
-			{
-				mChar = mySocket->CurrcharObj();
-			}
+			mChar = mySocket->CurrcharObj();
 		}
 	}
 
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "TriggerTrap: Invalid character" );
-		return JS_FALSE;
+		return false;
 	}
 
-	JSObject *mItem = JSVAL_TO_OBJECT( argv[1] );
-	CItem *myItem = static_cast<CItem *>( JS_GetPrivate( cx, mItem ));
+	CItem *myItem = GetWrappedObject<CItem>( args.get( 1 ), &UOXItem_class );
 
 	if( !ValidateObject( myItem ))
 	{
 		ScriptError( cx, "TriggerTrap: Invalid item" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Store original script context and object, in case NPC spawned has some event that triggers on spawn and grabs context
@@ -2179,7 +2180,7 @@ JSBool SE_TriggerTrap( JSContext *cx, uintN argc, jsval *vp )
 		Magic->MagicTrap( mChar, myItem );
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2189,25 +2190,25 @@ JSBool SE_TriggerTrap( JSContext *cx, uintN argc, jsval *vp )
 //|	Notes		-	Takes at least 2 parameters, which is the script number to trigger and the
 //|					function name to call. Any extra parameters are extra parameters to the JS event
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_TriggerEvent( JSContext *cx, uintN argc, jsval *vp )
+bool SE_TriggerEvent( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval *argv = JS_ARGV( cx, vp );
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	jsval *rval = &JS_RVAL( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto obj = getThis( cx, args );
 
 	if( argc < 2 )
 	{
-		return JS_FALSE;
+		return false;
 	}
 
-	UI16 scriptNumberToFire = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	std::string eventToFire		= JS_GetStringBytes( cx, argv[1]);
+	UI16 scriptNumberToFire = static_cast<UI16>( args.get(0).toInt32());
+	std::string eventToFire		= JS_GetStringBytes( cx, args.get(1));
 	cScript *toExecute		= JSMapping->GetScript( scriptNumberToFire );
 
 	if( toExecute == nullptr || eventToFire == "" )
-		return JS_FALSE;
+		return false;
 
-	JSBool retVal = toExecute->CallParticularEvent( eventToFire.c_str(), &argv[2], argc - 2, rval);
+	auto rval = &args.rval().get();
+	bool retVal = toExecute->CallParticularEvent( eventToFire.c_str(), &args.get(2).get(), argc - 2, rval);
 	return retVal;
 }
 
@@ -2218,30 +2219,30 @@ JSBool SE_TriggerEvent( JSContext *cx, uintN argc, jsval *vp )
 //|	Notes		-	Takes 2 parameters, which is the script number to check and the
 //|					event name to check for
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DoesEventExist( JSContext *cx, uintN argc, jsval *vp )
+bool SE_DoesEventExist( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
-		return JS_FALSE;
+		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) );
-	UI16 scriptNumberToCheck = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	std::string eventToCheck		= JS_GetStringBytes( cx, argv[1]);
+	args.rval().setInt32(  1  );
+	UI16 scriptNumberToCheck = static_cast<UI16>( args.get(0).toInt32());
+	std::string eventToCheck		= JS_GetStringBytes( cx, args.get(1));
 	cScript *toExecute		= JSMapping->GetScript( scriptNumberToCheck );
 
 	if( toExecute == nullptr || eventToCheck == "" )
-		return JS_FALSE;
+		return false;
 
 	bool retVal = toExecute->DoesEventExist( eventToCheck.c_str() );
 	if( !retVal )
 	{
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) );
+		args.rval().setInt32(  0  );
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2249,40 +2250,39 @@ JSBool SE_DoesEventExist( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns owner of container item is contained in (if any)
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetPackOwner( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetPackOwner( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
 		ScriptError( cx, "GetPackOwner: Invalid number of arguments (takes 2)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	UI08 mType		= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+	UI08 mType		= static_cast<UI08>( args.get(1).toInt32());
 	CChar *pOwner	= nullptr;
 
 	if( mType == 0 )	// item
 	{
-		JSObject *mItem	= JSVAL_TO_OBJECT( argv[0] );
-		CItem *myItem	= static_cast<CItem *>( JS_GetPrivate( cx, mItem ));
+		CItem *myItem = GetWrappedObject<CItem>( args.get( 0 ), &UOXItem_class );
 		pOwner			= FindItemOwner( myItem );
 	}
 	else				// serial
 	{
-		SI32 mSerItem	= JSVAL_TO_INT( argv[0] );
+		SI32 mSerItem	= args.get(0).toInt32();
 		pOwner			= FindItemOwner( CalcItemObjFromSer( mSerItem ));
 	}
 	if( ValidateObject( pOwner ))
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_CHAR, pOwner, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_CHAR, pOwner, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+		args.rval().setObjectOrNull( myObj );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2290,40 +2290,39 @@ JSBool SE_GetPackOwner( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns root container an item is contained in (if any)
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_FindRootContainer( JSContext *cx, uintN argc, jsval *vp )
+bool SE_FindRootContainer( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
 		ScriptError( cx, "FindRootContainer: Invalid number of arguments (takes 2)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	UI08 mType		= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+	UI08 mType		= static_cast<UI08>( args.get(1).toInt32());
 	CItem *iRoot	= nullptr;
 
 	if( mType == 0 )	// item
 	{
-		JSObject *mItem	= JSVAL_TO_OBJECT( argv[0] );
-		CItem *myItem	= static_cast<CItem *>( JS_GetPrivate( cx, mItem ));
+		CItem *myItem = GetWrappedObject<CItem>( args.get( 0 ), &UOXItem_class );
 		iRoot			= FindRootContainer( myItem );
 	}
 	else				// serial
 	{
-		SI32 mSerItem	= JSVAL_TO_INT( argv[0] );
+		SI32 mSerItem	= args.get(0).toInt32();
 		iRoot			= FindRootContainer( CalcItemObjFromSer( mSerItem ));
 	}
 	if( ValidateObject( iRoot ))
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, iRoot, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, iRoot, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+		args.rval().setObjectOrNull( myObj );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2331,35 +2330,34 @@ JSBool SE_FindRootContainer( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns targeted item stored on socket
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CalcTargetedItem( JSContext *cx, uintN argc, jsval *vp )
+bool SE_CalcTargetedItem( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "CalcTargetedItem: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	JSObject *mysockptr = JSVAL_TO_OBJECT( argv[0] );
-	CSocket *sChar		= static_cast<CSocket *>( JS_GetPrivate( cx, mysockptr ));
+	CSocket *sChar = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 	if( sChar == nullptr )
 	{
 		ScriptError( cx, "CalcTargetedItem: Invalid socket" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CItem *calcedItem = CalcItemObjFromSer( sChar->GetDWord( 7 ));
 	if( !ValidateObject( calcedItem ))
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 	}
 	else
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, calcedItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_ITEM, calcedItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+		args.rval().setObjectOrNull( myObj );
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2367,35 +2365,34 @@ JSBool SE_CalcTargetedItem( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns targeted character stored on socket
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CalcTargetedChar( JSContext *cx, uintN argc, jsval *vp )
+bool SE_CalcTargetedChar( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "CalcTargetedChar: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	JSObject *mysockptr = JSVAL_TO_OBJECT( argv[0] );
-	CSocket *sChar		= static_cast<CSocket *>( JS_GetPrivate( cx, mysockptr ));
+	CSocket *sChar = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 	if( sChar == nullptr )
 	{
 		ScriptError( cx, "CalcTargetedChar: Invalid socket" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *calcedChar = CalcCharObjFromSer( sChar->GetDWord( 7 ));
 	if( !ValidateObject( calcedChar ))
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 	}
 	else
 	{
-		JSObject *myObj	= JSEngine->AcquireObject( IUE_CHAR, calcedChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_CHAR, calcedChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+		args.rval().setObjectOrNull( myObj );
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2403,29 +2400,28 @@ JSBool SE_CalcTargetedChar( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the map tile ID at given coordinates
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetTileIdAtMapCoord( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetTileIdAtMapCoord( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
-	jsval* rval = &JS_RVAL(cx, vp);
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc != 3 )
 	{
 		ScriptError( cx, "GetTileIDAtMapCoord: Invalid number of arguments (takes 3)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	UI16 xLoc		= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	UI16 yLoc		= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
-	UI08 wrldNumber	= static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+	UI16 xLoc		= static_cast<UI16>( args.get(0).toInt32());
+	UI16 yLoc		= static_cast<UI16>( args.get(1).toInt32());
+	UI08 wrldNumber	= static_cast<UI08>( args.get(2).toInt32());
 	auto mMap		= Map->SeekMap( xLoc, yLoc, wrldNumber );
 	if( mMap.terrainInfo != nullptr )
 	{
-		*rval = INT_TO_JSVAL( mMap.tileId );
+		args.rval().setInt32( mMap.tileId );
 	}
 	else
 	{
-		*rval = JSVAL_NULL;
+		args.rval().setNull();
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2434,21 +2430,21 @@ JSBool SE_GetTileIdAtMapCoord( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks for static within specified range of given location
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_StaticInRange( JSContext *cx, uintN argc, jsval *vp )
+bool SE_StaticInRange( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 5 )
 	{
 		ScriptError( cx, "StaticInRange: Invalid number of arguments (takes 5, x, y, world, radius, tile)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	UI16 xLoc		= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	UI16 yLoc		= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
-	UI08 wrldNumber = static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
-	UI16 radius		= static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
-	UI16 tileId		= static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
+	UI16 xLoc		= static_cast<UI16>( args.get(0).toInt32());
+	UI16 yLoc		= static_cast<UI16>( args.get(1).toInt32());
+	UI08 wrldNumber = static_cast<UI08>( args.get(2).toInt32());
+	UI16 radius		= static_cast<UI16>( args.get(3).toInt32());
+	UI16 tileId		= static_cast<UI16>( args.get(4).toInt32());
 	bool tileFound	= false;
 
 	for( SI32 i = xLoc - radius; i <= ( xLoc + radius ); ++i )
@@ -2472,8 +2468,8 @@ JSBool SE_StaticInRange( JSContext *cx, uintN argc, jsval *vp )
 		}
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( tileFound ) );
-	return JS_TRUE;
+	args.rval().setBoolean(  tileFound  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2483,24 +2479,24 @@ JSBool SE_StaticInRange( JSContext *cx, uintN argc, jsval *vp )
 //|	Purpose		-	Checks for static at specified location
 //|	Notes		-	tile argument is optional; if not specified, will match ANY static found at location
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_StaticAt( JSContext *cx, uintN argc, jsval *vp )
+bool SE_StaticAt( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 4 && argc != 3 )
 	{
 		ScriptError( cx, "StaticAt: Invalid number of arguments (takes 4, x, y, world, tile)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	UI16 xLoc		= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	UI16 yLoc		= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
-	UI08 wrldNumber = static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+	UI16 xLoc		= static_cast<UI16>( args.get(0).toInt32());
+	UI16 yLoc		= static_cast<UI16>( args.get(1).toInt32());
+	UI08 wrldNumber = static_cast<UI08>( args.get(2).toInt32());
 	UI16 tileId		= 0xFFFF;
 	[[maybe_unused]] bool tileMatch	= false;
 	if( argc == 4 )
 	{
-		tileId = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+		tileId = static_cast<UI16>( args.get(3).toInt32());
 		tileMatch = true;
 	}
 	bool tileFound = false;
@@ -2511,8 +2507,8 @@ JSBool SE_StaticAt( JSContext *cx, uintN argc, jsval *vp )
 		return tile.tileId == tileId;
 	});
 	tileFound = iter != artwork.end();
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( tileFound ) );
-	return JS_TRUE;
+	args.rval().setBoolean(  tileFound  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2521,20 +2517,20 @@ JSBool SE_StaticAt( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Converts string to number
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_StringToNum( JSContext *cx, uintN argc, jsval *vp )
+bool SE_StringToNum( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "StringToNum: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	std::string str = JS_GetStringBytes( cx, argv[0]);
+	std::string str = JS_GetStringBytes( cx, args.get(0));
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( std::stoi( str, nullptr, 0 )) );
-	return JS_TRUE;
+	args.rval().setInt32(  std::stoi( str, nullptr, 0 ) );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2543,20 +2539,20 @@ JSBool SE_StringToNum( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Converts number to string
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_NumToString( JSContext *cx, uintN argc, jsval *vp )
+bool SE_NumToString( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "NumToString: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	SI32 num = JSVAL_TO_INT( argv[0] );
+	SI32 num = args.get(0).toInt32();
 	auto str = oldstrutil::number( num );
-	JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( JS_NewStringCopyZ( cx, str.c_str() )) );
-	return JS_TRUE;
+	args.rval().setString( JS_NewStringCopyZ( cx, str.c_str() ));
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2565,21 +2561,21 @@ JSBool SE_NumToString( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Converts number to hex string
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_NumToHexString( JSContext *cx, uintN argc, jsval *vp )
+bool SE_NumToHexString( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "NumToHexString: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	SI32 num = JSVAL_TO_INT( argv[0] );
+	SI32 num = args.get(0).toInt32();
 	auto str = oldstrutil::number( num, 16 );
 
-	JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( JS_NewStringCopyZ( cx, str.c_str() )) );
-	return JS_TRUE;
+	args.rval().setString( JS_NewStringCopyZ( cx, str.c_str() ));
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2588,15 +2584,16 @@ JSBool SE_NumToHexString( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the total number of races found in the server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetRaceCount( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetRaceCount( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "GetRaceCount: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( Races->Count() ) );
-	return JS_TRUE;
+	auto args = JS::CallArgsFromVp(argc, vp);
+	args.rval().setInt32(  Races->Count()  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2605,46 +2602,48 @@ JSBool SE_GetRaceCount( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Using a passed in function name, executes a JS function on an area of characters
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_AreaCharacterFunction( JSContext *cx, uintN argc, jsval *vp )
+bool SE_AreaCharacterFunction( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  scriptEnv = getThis( cx, args );
 
 	if( argc != 3 && argc != 4 )
 	{
 		// function name, source character, range
 		ScriptError( cx, "AreaCharacterFunction: Invalid number of arguments (takes 3/4, function name, source character, range, optional socket)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Do parameter validation here
-	JSObject *srcSocketObj	= nullptr;
 	CSocket *srcSocket		= nullptr;
-	std::string trgFunc			= JS_GetStringBytes( cx, argv[0]);
+	std::string trgFunc			= JS_GetStringBytes( cx, args.get(0));
 	if( trgFunc.empty() )
 	{
 		ScriptError( cx, "AreaCharacterFunction: Argument 0 not a valid string" );
-		return JS_FALSE;
+		return false;
 	}
 
-	JSObject *srcBaseObj = JSVAL_TO_OBJECT( argv[1] );
-	CBaseObject *srcObject = static_cast<CBaseObject *>( JS_GetPrivate( cx, srcBaseObj ));
+	CBaseObject *srcObject = GetBaseObject( args.get( 1 ));
 
 	if( !ValidateObject( srcObject ))
 	{
 		ScriptError( cx, "AreaCharacterFunction: Argument 1 not a valid object" );
-		return JS_FALSE;
+		return false;
 	}
-	R32 distance = static_cast<R32>( JSVAL_TO_INT( argv[2] ));
-	if( argc == 4 && argv[3] != JSVAL_NULL )
+	R32 distance = static_cast<R32>( args.get(2).toInt32());
+	if( argc == 4 && args.get(3) != JS::NullValue() )
 	{
-		srcSocketObj = JSVAL_TO_OBJECT( argv[3] );
-		srcSocket = static_cast<CSocket *>( JS_GetPrivate( cx, srcSocketObj ));
+		srcSocket = GetWrappedObject<CSocket>( args.get( 3 ), &UOXSocket_class );
 	}
 
 	std::vector<CChar *> charsFound;
 	UI16 retCounter	= 0;
-	cScript *myScript = JSMapping->GetScript( scriptEnv );
+	cScript *myScript = JSMapping->currentActive();
+	if( myScript == nullptr )
+	{
+		ScriptError( cx, "AreaCharacterFunction: Unable to determine active script" );
+		return false;
+	}
 	for( auto &MapArea : MapRegion->PopulateList( srcObject ))
 	{
 		if( MapArea )
@@ -2680,8 +2679,8 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, uintN argc, jsval *vp )
 		ScriptError( cx, oldstrutil::format( "Critical error encountered in AreaObjFunc!", e.what() ).c_str() );
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( retCounter ) );
-	return JS_TRUE;
+	args.rval().setInt32(  retCounter  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2690,49 +2689,48 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Using a passed in function name, executes a JS function on an area of items
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_AreaItemFunction( JSContext *cx, uintN argc, jsval *vp )
+bool SE_AreaItemFunction( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  scriptEnv = getThis( cx, args );
 
 	if( argc != 3 && argc != 4 )
 	{
 		// function name, source character, range
 		ScriptError( cx, "AreaItemFunction: Invalid number of arguments (takes 3/4, function name, source object, range, optional socket)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Do parameter validation here
-	JSObject *srcSocketObj	= nullptr;
 	CSocket *srcSocket		= nullptr;
-	std::string trgFunc			= JS_GetStringBytes( cx, argv[0]);
+	std::string trgFunc			= JS_GetStringBytes( cx, args.get(0));
 	if( trgFunc.empty() )
 	{
 		ScriptError( cx, "AreaItemFunction: Argument 0 not a valid string" );
-		return JS_FALSE;
+		return false;
 	}
 
-	JSObject *srcBaseObj = JSVAL_TO_OBJECT( argv[1] );
-	CBaseObject *srcObject = static_cast<CBaseObject *>( JS_GetPrivate( cx, srcBaseObj ));
+	CBaseObject *srcObject = GetBaseObject( args.get( 1 ));
 
 	if( !ValidateObject( srcObject ))
 	{
 		ScriptError( cx, "AreaItemFunction: Argument 1 not a valid object" );
-		return JS_FALSE;
+		return false;
 	}
-	R32 distance = static_cast<R32>( JSVAL_TO_INT( argv[2] ));
-	if( argc == 4 && argv[3] != JSVAL_NULL )
+	R32 distance = static_cast<R32>( args.get(2).toInt32());
+	if( argc == 4 && args.get(3) != JS::NullValue() )
 	{
-		srcSocketObj = JSVAL_TO_OBJECT( argv[3] );
-		if( srcSocketObj != nullptr )
-		{
-			srcSocket	= static_cast<CSocket *>( JS_GetPrivate( cx, srcSocketObj ));
-		}
+		srcSocket = GetWrappedObject<CSocket>( args.get( 3 ), &UOXSocket_class );
 	}
 
 	std::vector<CItem *> itemsFound;
 	UI16 retCounter	= 0;
-	cScript *myScript = JSMapping->GetScript( scriptEnv );
+	cScript *myScript = JSMapping->currentActive();
+	if( myScript == nullptr )
+	{
+		ScriptError( cx, "AreaItemFunction: Unable to determine active script" );
+		return false;
+	}
 	for( auto &MapArea : MapRegion->PopulateList( srcObject ))
 	{
 		if( MapArea )
@@ -2761,8 +2759,8 @@ JSBool SE_AreaItemFunction( JSContext *cx, uintN argc, jsval *vp )
 		}
 	});
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( retCounter ) );
-	return JS_TRUE;
+	args.rval().setInt32(  retCounter  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2771,29 +2769,28 @@ JSBool SE_AreaItemFunction( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Allows the JSScripts to pull entries from the dictionaries and convert them to a string.
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetDictionaryEntry( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetDictionaryEntry( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc < 1 )
 	{
 		ScriptError( cx, "GetDictionaryEntry: Invalid number of arguments (takes at least 1)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	SI32 dictEntry = static_cast<SI32>( JSVAL_TO_INT( argv[0] ));
+	SI32 dictEntry = static_cast<SI32>( args.get(0).toInt32());
 	UnicodeTypes language = ZERO;
 	if( argc == 2 )
 	{
-		language = static_cast<UnicodeTypes>( JSVAL_TO_INT( argv[1] ));
+		language = static_cast<UnicodeTypes>( args.get(1).toInt32());
 	}
 	std::string txt = Dictionary->GetEntry( dictEntry, language );
 	txt = oldstrutil::stringToWstringToString( txt );
 
-	JSString *strTxt = nullptr;
-	strTxt = JS_NewStringCopyZ( cx, txt.c_str() );
-	JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( strTxt ) );
-	return JS_TRUE;
+	JS::RootedString strTxt( cx, JS_NewStringCopyZ( cx, txt.c_str() ));
+	args.rval().setString( strTxt );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2802,21 +2799,25 @@ JSBool SE_GetDictionaryEntry( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Globally yell a message from JS (Based on Commandlevel)
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_Yell( JSContext *cx, uintN argc, jsval *vp )
+bool SE_Yell( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc < 3 )
 	{
 		ScriptError( cx, "Yell: Invalid number of arguments (takes 3)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	JSObject *mSock			= JSVAL_TO_OBJECT( argv[0] );
-	CSocket *mySock			= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
+	CSocket *mySock = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
+	if( mySock == nullptr )
+	{
+		ScriptError( cx, "Yell: Invalid socket" );
+		return false;
+	}
 	CChar *myChar			= mySock->CurrcharObj();
-	std::string textToYell	= JS_GetStringBytes( cx, argv[1]);
-	UI08 commandLevel		= static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+	std::string textToYell	= JS_GetStringBytes( cx, args.get(1));
+	UI08 commandLevel		= static_cast<UI08>( args.get(2).toInt32());
 
 	std::string yellTo = "";
 	switch( static_cast<CommandLevels>( commandLevel ))
@@ -2880,7 +2881,7 @@ JSBool SE_Yell( JSContext *cx, uintN argc, jsval *vp )
 		toAdd.CmdLevel( commandLevel );
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2889,17 +2890,17 @@ JSBool SE_Yell( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reloads certain server subsystems
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_Reload( JSContext *cx, uintN argc, jsval *vp )
+bool SE_Reload( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Reload: needs 1 argument!" );
-		return JS_FALSE;
+		return false;
 	}
 
-	SI32 toLoad = JSVAL_TO_INT( argv[0] );
+	SI32 toLoad = args.get(0).toInt32();
 
 	switch( toLoad )
 	{
@@ -2969,7 +2970,7 @@ JSBool SE_Reload( JSContext *cx, uintN argc, jsval *vp )
 		default:
 			break;
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2978,26 +2979,25 @@ JSBool SE_Reload( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Builds an info gump for specified static or map tile
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_SendStaticStats( JSContext *cx, uintN argc, jsval *vp )
+bool SE_SendStaticStats( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "SendStaticStats: needs 1 argument!" );
-		return JS_FALSE;
+		return false;
 	}
 
-	JSObject *mSock			= JSVAL_TO_OBJECT( argv[0] );
-	CSocket *mySock			= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
+	CSocket *mySock = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "SendStaticStats: passed an invalid socket!" );
-		return JS_FALSE;
+		return false;
 	}
 	CChar *myChar			= mySock->CurrcharObj();
 	if( !ValidateObject( myChar ))
-		return JS_TRUE;
+		return true;
 
 	if( mySock->GetDWord( 7 ) == 0 )
 	{
@@ -3033,7 +3033,7 @@ JSBool SE_SendStaticStats( JSContext *cx, uintN argc, jsval *vp )
 			mapStat.Send( 4, false, INVALIDSERIAL );
 		}
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3041,19 +3041,19 @@ JSBool SE_SendStaticStats( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the tile height of a specified tile (item)
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetTileHeight( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetTileHeight( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetTileHeight: needs 1 argument!" );
-		return JS_FALSE;
+		return false;
 	}
 
-	UI16 tileNum = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( Map->TileHeight( tileNum )) );
-	return JS_TRUE;
+	UI16 tileNum = static_cast<UI16>( args.get(0).toInt32());
+	args.rval().setInt32(  Map->TileHeight( tileNum ) );
+	return true;
 }
 
 struct IterateExtraData
@@ -3079,24 +3079,24 @@ bool SE_IterateFunctor( CBaseObject *a, UI32 &b, void *extraData )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loops through all world objects
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_IterateOver( JSContext *cx, uintN argc, jsval *vp )
+bool SE_IterateOver( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  scriptEnv = getThis( cx, args );
 	if( argc < 1 || argc > 2 )
 	{
 		ScriptError( cx, "IterateOver: needs 1 or 2 arguments!" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Parse the object type to iterate over
-	std::string objType = JS_GetStringBytes( cx, argv[0]);
+	std::string objType = JS_GetStringBytes( cx, args.get(0));
 	ObjectType toCheck	= FindObjTypeFromString( objType );
 	cScript *myScript	= JSMapping->GetScript( scriptEnv );
 	if( myScript == nullptr )
 	{
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) );
-		return JS_TRUE;
+		args.rval().setInt32(  0  );
+		return true;
 	}
 
 	// Prepare our struct
@@ -3105,15 +3105,12 @@ JSBool SE_IterateOver( JSContext *cx, uintN argc, jsval *vp )
 	iterData->socket = nullptr; // default if no 2nd arg
 
 								// If there's a 2nd argument, see if it's a Socket
-	if( argc == 2 && JSVAL_IS_OBJECT( argv[1] ) )
+	if( argc == 2 && args.get(1).isObject() )
 	{
-		JSObject* sockObj = JSVAL_TO_OBJECT( argv[1] );
-		if( sockObj )
+		CSocket *pSock = GetWrappedObject<CSocket>( args.get( 1 ), &UOXSocket_class );
+		if( pSock != nullptr )
 		{
-			// Our CSocket pointer is stored in the JS private data for that object
-			CSocket* pSock = static_cast<CSocket*>( JS_GetPrivate( cx, sockObj ) );
-			if( pSock )
-				iterData->socket = pSock;
+			iterData->socket = pSock;
 		}
 	}
 
@@ -3129,8 +3126,8 @@ JSBool SE_IterateOver( JSContext *cx, uintN argc, jsval *vp )
 
 	JS_MaybeGC( cx );
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( b ) );
-	return JS_TRUE;
+	args.rval().setInt32(  b  );
+	return true;
 }
 
 bool SE_IterateSpawnRegionsFunctor( CSpawnRegion *a, UI32 &b, void *extraData )
@@ -3148,10 +3145,10 @@ bool SE_IterateSpawnRegionsFunctor( CSpawnRegion *a, UI32 &b, void *extraData )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loops over all spawn regions in the world
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_IterateOverSpawnRegions( JSContext *cx, uintN argc, jsval *vp )
+bool SE_IterateOverSpawnRegions( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  scriptEnv = getThis( cx, args );
 	cScript *myScript = JSMapping->GetScript( scriptEnv );
 
 	auto* iterData = new IterateExtraData;
@@ -3159,16 +3156,12 @@ JSBool SE_IterateOverSpawnRegions( JSContext *cx, uintN argc, jsval *vp )
 	iterData->socket = nullptr;
 
 	// Check if a socket was passed as an argument in JS
-	if( argc >= 1 && JSVAL_IS_OBJECT( argv[0] ) )
+	if( argc >= 1 && args.get(0).isObject() )
 	{
-		JSObject* sockObj = JSVAL_TO_OBJECT( argv[0] );
-		if( sockObj )
+		CSocket *pSock = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
+		if( pSock != nullptr )
 		{
-			CSocket* pSock = static_cast<CSocket*>( JS_GetPrivate( cx, sockObj ) );
-			if( pSock )
-			{
-				iterData->socket = pSock;
-			}
+			iterData->socket = pSock;
 		}
 	}
 
@@ -3187,8 +3180,8 @@ JSBool SE_IterateOverSpawnRegions( JSContext *cx, uintN argc, jsval *vp )
 
 	JS_MaybeGC( cx );
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( b ) );
-	return JS_TRUE;
+	args.rval().setInt32(  b  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3197,22 +3190,22 @@ JSBool SE_IterateOverSpawnRegions( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets and sets world bright level - brightest part of the regular day/night cycle
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_WorldBrightLevel( JSContext *cx, uintN argc, jsval *vp )
+bool SE_WorldBrightLevel( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc > 1 )
 	{
 		ScriptError( cx, oldstrutil::format( "WorldBrightLevel: Unknown Count of Arguments: %d", argc ).c_str() );
-		return JS_FALSE;
+		return false;
 	}
 	else if( argc == 1 )
 	{
-		LIGHTLEVEL brightLevel = static_cast<LIGHTLEVEL>( JSVAL_TO_INT( argv[0] ));
+		LIGHTLEVEL brightLevel = static_cast<LIGHTLEVEL>( args.get(0).toInt32());
 		cwmWorldState->ServerData()->WorldLightBrightLevel( brightLevel );
 	}
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( cwmWorldState->ServerData()->WorldLightBrightLevel() ) );
-	return JS_TRUE;
+	args.rval().setInt32(  cwmWorldState->ServerData()->WorldLightBrightLevel()  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3221,22 +3214,22 @@ JSBool SE_WorldBrightLevel( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets and sets world dark level - darkest part of the regular day/night cycle
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_WorldDarkLevel( JSContext *cx, uintN argc, jsval *vp )
+bool SE_WorldDarkLevel( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc > 1 )
 	{
 		ScriptError( cx, oldstrutil::format( "WorldDarkLevel: Unknown Count of Arguments: %d", argc ).c_str() );
-		return JS_FALSE;
+		return false;
 	}
 	else if( argc == 1 )
 	{
-		LIGHTLEVEL darkLevel = static_cast<LIGHTLEVEL>( JSVAL_TO_INT( argv[0] ));
+		LIGHTLEVEL darkLevel = static_cast<LIGHTLEVEL>( args.get(0).toInt32());
 		cwmWorldState->ServerData()->WorldLightDarkLevel( darkLevel );
 	}
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( cwmWorldState->ServerData()->WorldLightDarkLevel() ) );
-	return JS_TRUE;
+	args.rval().setInt32(  cwmWorldState->ServerData()->WorldLightDarkLevel()  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3245,22 +3238,22 @@ JSBool SE_WorldDarkLevel( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets and sets default light level in dungeons
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_WorldDungeonLevel( JSContext *cx, uintN argc, jsval *vp )
+bool SE_WorldDungeonLevel( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc > 1 )
 	{
 		ScriptError( cx, oldstrutil::format( "WorldDungeonLevel: Unknown Count of Arguments: %d", argc ).c_str() );
-		return JS_FALSE;
+		return false;
 	}
 	else if( argc == 1 )
 	{
-		LIGHTLEVEL dungeonLevel = static_cast<LIGHTLEVEL>( JSVAL_TO_INT( argv[0] ));
+		LIGHTLEVEL dungeonLevel = static_cast<LIGHTLEVEL>( args.get(0).toInt32());
 		cwmWorldState->ServerData()->DungeonLightLevel( dungeonLevel );
 	}
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( cwmWorldState->ServerData()->DungeonLightLevel() ) );
-	return JS_TRUE;
+	args.rval().setInt32(  cwmWorldState->ServerData()->DungeonLightLevel()  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3268,29 +3261,29 @@ JSBool SE_WorldDungeonLevel( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets enabled state of given spawn region
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetSpawnRegionFacetStatus( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetSpawnRegionFacetStatus( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc > 1 )
 	{
 		ScriptError( cx, oldstrutil::format( "GetSpawnRegionFacetStatus: Unknown Count of Arguments: %d", argc ).c_str() );
-		return JS_FALSE;
+		return false;
 	}
 	else if( argc == 1 )
 	{
-		UI32 spawnRegionFacet = static_cast<UI32>( JSVAL_TO_INT( argv[0] ));
+		UI32 spawnRegionFacet = static_cast<UI32>( args.get(0).toInt32());
 		bool spawnRegionFacetStatus = cwmWorldState->ServerData()->GetSpawnRegionsFacetStatus( spawnRegionFacet );
 		if( spawnRegionFacetStatus )
 		{
-			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) );
+			args.rval().setInt32(  1  );
 		}
 		else
 		{
-			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) );
+			args.rval().setInt32(  0  );
 		}
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3298,27 +3291,27 @@ JSBool SE_GetSpawnRegionFacetStatus( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets enabled state of spawn regions
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_SetSpawnRegionFacetStatus( JSContext *cx, uintN argc, jsval *vp )
+bool SE_SetSpawnRegionFacetStatus( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc > 2 )
 	{
 		ScriptError( cx, oldstrutil::format( "SetSpawnRegionFacetStatus: Unknown Count of Arguments: %d", argc ).c_str() );
-		return JS_FALSE;
+		return false;
 	}
 	else if( argc == 1 )
 	{
-		UI32 spawnRegionFacetVal = static_cast<UI32>( JSVAL_TO_INT( argv[0] ));
+		UI32 spawnRegionFacetVal = static_cast<UI32>( args.get(0).toInt32());
 		cwmWorldState->ServerData()->SetSpawnRegionsFacetStatus( spawnRegionFacetVal );
 	}
 	else if( argc == 2 )
 	{
-		UI32 spawnRegionFacet = static_cast<UI32>( JSVAL_TO_INT( argv[0] ));
-		bool spawnRegionFacetStatus = ( JSVAL_TO_BOOLEAN( argv[1] ) == JS_TRUE );
+		UI32 spawnRegionFacet = static_cast<UI32>( args.get(0).toInt32());
+		bool spawnRegionFacetStatus = ( args.get(1).toBoolean() == true );
 		cwmWorldState->ServerData()->SetSpawnRegionsFacetStatus( spawnRegionFacet, spawnRegionFacetStatus );
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3326,29 +3319,29 @@ JSBool SE_SetSpawnRegionFacetStatus( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets enabled state of given moongates
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetMoongateFacetStatus( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetMoongateFacetStatus( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, oldstrutil::format( "GetShowMoongateFacetStatus: Unknown Count of Arguments: %d", argc ).c_str() );
-		return JS_FALSE;
+		return false;
 	}
 	else if( argc == 1 )
 	{
-		UI32 moongateFacets = static_cast<UI32>( JSVAL_TO_INT( argv[0] ));
+		UI32 moongateFacets = static_cast<UI32>( args.get(0).toInt32());
 		bool MoongateFacetStatus = cwmWorldState->ServerData()->GetMoongateFacetStatus( moongateFacets );
 		if( MoongateFacetStatus )
 		{
-			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) );
+			args.rval().setInt32(  1  );
 		}
 		else
 		{
-			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) );
+			args.rval().setInt32(  0  );
 		}
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3356,27 +3349,27 @@ JSBool SE_GetMoongateFacetStatus( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets enabled state of moongates
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_SetMoongateFacetStatus( JSContext *cx, uintN argc, jsval *vp )
+bool SE_SetMoongateFacetStatus( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
 		ScriptError( cx, oldstrutil::format( "SetMoongateFacetStatus: Unknown Count of Arguments: %d", argc ).c_str() );
-		return JS_FALSE;
+		return false;
 	}
 	else if( argc == 1 )
 	{
-		UI32 MoongateFacetVal = static_cast<UI32>( JSVAL_TO_INT( argv[0] ));
+		UI32 MoongateFacetVal = static_cast<UI32>( args.get(0).toInt32());
 		cwmWorldState->ServerData()->SetMoongateFacetStatus( MoongateFacetVal );
 	}
 	else if( argc == 2 )
 	{
-		UI32 MoongateFacet = static_cast<UI32>( JSVAL_TO_INT( argv[0] ));
-		bool MoongateStatus = ( JSVAL_TO_BOOLEAN( argv[1] ) == JS_TRUE );
+		UI32 MoongateFacet = static_cast<UI32>( args.get(0).toInt32());
+		bool MoongateStatus = ( args.get(1).toBoolean() == true );
 		cwmWorldState->ServerData()->SetMoongateFacetStatus( MoongateFacet, MoongateStatus );
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3385,16 +3378,16 @@ JSBool SE_SetMoongateFacetStatus( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns socket based on provided index, from list of connected clients
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetSocketFromIndex( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetSocketFromIndex( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetSocketFromIndex: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
-	UOXSOCKET index = static_cast<UOXSOCKET>( JSVAL_TO_INT( argv[0] ));
+	UOXSOCKET index = static_cast<UOXSOCKET>( args.get(0).toInt32());
 
 	CSocket *mSock = Network->GetSockPtr( index );
 	CChar *mChar = nullptr;
@@ -3405,13 +3398,13 @@ JSBool SE_GetSocketFromIndex( JSContext *cx, uintN argc, jsval *vp )
 
 	if( !ValidateObject( mChar ))
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
-		return JS_FALSE;
+		args.rval().setNull();
+		return false;
 	}
 
-	JSObject *myObj = JSEngine->AcquireObject( IUE_CHAR, mChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
-	return JS_TRUE;
+	JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_CHAR, mChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+	args.rval().setObjectOrNull( myObj );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3420,26 +3413,26 @@ JSBool SE_GetSocketFromIndex( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reload specified JS file by scriptId
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_ReloadJSFile( JSContext *cx, uintN argc, jsval *vp )
+bool SE_ReloadJSFile( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  scriptEnv = getThis( cx, args );
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "ReloadJSFile: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 scriptId = static_cast<UI16>( args.get(0).toInt32());
 	if( scriptId == JSMapping->GetScriptId( scriptEnv ) )
 	{
 		ScriptError( cx, oldstrutil::format( "ReloadJSFile: JS Script attempted to reload itself, crash avoided (ScriptID %u)", scriptId ).c_str() );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSMapping->Reload( scriptId );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3448,22 +3441,22 @@ JSBool SE_ReloadJSFile( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets amount of resource areas to split the world into
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_ResourceArea( JSContext *cx, uintN argc, jsval *vp )
+bool SE_ResourceArea( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 0 )
 	{
 		ScriptError( cx, oldstrutil::format( "ResourceArea: Invalid Count of Arguments: %d", argc ).c_str() );
-		return JS_FALSE;
+		return false;
 	}
 
-	auto resType = std::string( JS_GetStringBytes( cx, argv[0]));
+	auto resType = std::string( JS_GetStringBytes( cx, args.get(0)));
 	resType = oldstrutil::upper( oldstrutil::trim( oldstrutil::removeTrailing( resType, "//" )));
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( cwmWorldState->ServerData()->ResourceAreaSize() ) );
+	args.rval().setInt32(  cwmWorldState->ServerData()->ResourceAreaSize()  );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3472,21 +3465,21 @@ JSBool SE_ResourceArea( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets amount of resources (logs/ore/fish) in each resource area on the server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_ResourceAmount( JSContext *cx, uintN argc, jsval *vp )
+bool SE_ResourceAmount( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc > 2 || argc == 0 )
 	{
 		ScriptError( cx, oldstrutil::format( "ResourceAmount: Invalid Count of Arguments: %d", argc ).c_str() );
-		return JS_FALSE;
+		return false;
 	}
-	auto resType = std::string( JS_GetStringBytes( cx, argv[0]));
+	auto resType = std::string( JS_GetStringBytes( cx, args.get(0)));
 	resType = oldstrutil::upper( oldstrutil::trim( oldstrutil::removeTrailing( resType, "//" )));
 
 	if( argc == 2 )
 	{
-		SI16 newVal = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+		SI16 newVal = static_cast<SI16>( args.get(1).toInt32());
 		if( resType == "LOGS" )
 		{
 			cwmWorldState->ServerData()->ResLogs( newVal );
@@ -3503,18 +3496,18 @@ JSBool SE_ResourceAmount( JSContext *cx, uintN argc, jsval *vp )
 
 	if( resType == "LOGS" )
 	{
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( cwmWorldState->ServerData()->ResLogs() ) );
+		args.rval().setInt32(  cwmWorldState->ServerData()->ResLogs()  );
 	}
 	else if( resType == "ORE" )
 	{
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( cwmWorldState->ServerData()->ResOre() ) );
+		args.rval().setInt32(  cwmWorldState->ServerData()->ResOre()  );
 	}
 	else if( resType == "FISH" )
 	{
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( cwmWorldState->ServerData()->ResFish() ) );
+		args.rval().setInt32(  cwmWorldState->ServerData()->ResFish()  );
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3523,21 +3516,21 @@ JSBool SE_ResourceAmount( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets respawn timers for ore/log resources on server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_ResourceTime( JSContext *cx, uintN argc, jsval *vp )
+bool SE_ResourceTime( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc > 2 || argc == 0 )
 	{
 		ScriptError( cx, oldstrutil::format( "ResourceTime: Invalid Count of Arguments: %d", argc ).c_str() );
-		return JS_FALSE;
+		return false;
 	}
 
-	auto resType = std::string( JS_GetStringBytes( cx, argv[0]));
+	auto resType = std::string( JS_GetStringBytes( cx, args.get(0)));
 	resType = oldstrutil::upper( oldstrutil::trim( oldstrutil::removeTrailing( resType, "//" )));
 	if( argc == 2 )
 	{
-		UI16 newVal = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+		UI16 newVal = static_cast<UI16>( args.get(1).toInt32());
 		if( resType == "LOGS" )
 		{
 			cwmWorldState->ServerData()->ResLogTime( newVal );
@@ -3554,18 +3547,18 @@ JSBool SE_ResourceTime( JSContext *cx, uintN argc, jsval *vp )
 
 	if( resType == "LOGS" )
 	{
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( cwmWorldState->ServerData()->ResLogTime() ) );
+		args.rval().setInt32(  cwmWorldState->ServerData()->ResLogTime()  );
 	}
 	else if( resType == "ORE" )
 	{
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( cwmWorldState->ServerData()->ResOreTime() ) );
+		args.rval().setInt32(  cwmWorldState->ServerData()->ResOreTime()  );
 	}
 	else if( resType == "FISH" )
 	{
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( cwmWorldState->ServerData()->ResFishTime() ) );
+		args.rval().setInt32(  cwmWorldState->ServerData()->ResFishTime()  );
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3574,33 +3567,37 @@ JSBool SE_ResourceTime( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a resource object allowing JS to modify resource data.
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_ResourceRegion( JSContext *cx, uintN argc, jsval *vp )
+bool SE_ResourceRegion( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	auto  obj = getThis( cx, args );
 
 	if( argc != 3 )
 	{
 		ScriptError( cx, "ResourceRegion: Invalid number of arguments (takes 3)" );
-		return JS_FALSE;
+		return false;
 	}
-	SI16 x			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 y			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI08 worldNum	= static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+	SI16 x			= static_cast<SI16>( args.get(0).toInt32());
+	SI16 y			= static_cast<SI16>( args.get(1).toInt32());
+	UI08 worldNum	= static_cast<UI08>( args.get(2).toInt32());
 	MapResource_st *mRes = MapRegion->GetResource( x, y, worldNum );
 	if( mRes == nullptr )
 	{
 		ScriptError( cx, "ResourceRegion: Invalid Resource Region" );
-		return JS_FALSE;
+		return false;
 	}
 
-	JSObject *jsResource = JS_NewObject( cx, &UOXResource_class, nullptr, obj );
+	JS::RootedObject jsResource( cx, JS_NewObject( cx, &UOXResource_class ));
+	if( jsResource != nullptr )
+	{
+		JS::SetReservedSlot( jsResource, 1, JS::ObjectValue( *obj ) );
+	}
 	JS_DefineProperties( cx, jsResource, CResourceProperties );
-	JS_SetPrivate( cx, jsResource, mRes );
+	JS::SetReservedSlot( jsResource, 0, JS::PrivateValue( mRes ) );
 
-	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( jsResource ) );
+	args.rval().setObjectOrNull( jsResource );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3609,29 +3606,24 @@ JSBool SE_ResourceRegion( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if object is a valid and not nullptr or marked for deletion
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_ValidateObject( JSContext *cx, uintN argc, jsval *vp )
+bool SE_ValidateObject( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "ValidateObject: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	JSEncapsulate myClass( cx, &( argv[0] ));
-
-	if( myClass.ClassName() == "UOXChar" || myClass.ClassName() == "UOXItem" )
+	CBaseObject *myObj = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
+	if( myObj == nullptr )
 	{
-		CBaseObject *myObj = static_cast<CBaseObject *>( myClass.toObject() );
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ValidateObject( myObj )) );
+		myObj = GetWrappedObject<CItem>( args.get( 0 ), &UOXItem_class );
 	}
-	else
-	{
-		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
-	}
+	args.rval().setBoolean( ValidateObject( myObj ));
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3640,73 +3632,60 @@ JSBool SE_ValidateObject( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns damage bonuses based on race/weather weakness and character skills
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_ApplyDamageBonuses( JSContext *cx, uintN argc, jsval *vp )
+bool SE_ApplyDamageBonuses( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 6 )
 	{
 		ScriptError( cx, "ApplyDamageBonuses: Invalid number of arguments (takes 6)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *attacker	= nullptr, *defender = nullptr;
 	SI16 damage = 0;
 
-	JSEncapsulate damageType( cx, &( argv[0] ));
-	JSEncapsulate getFightSkill( cx, &( argv[3] ));
-	JSEncapsulate hitLoc( cx, &( argv[4] ));
-	JSEncapsulate baseDamage( cx, &(argv [5] ));
+	int32_t damageType = 0;
+	int32_t fightSkill = 0;
+	int32_t hitLocation = 0;
+	int32_t baseDamage = 0;
+	if( !JS::ToInt32( cx, args.get( 0 ), &damageType ) ||
+		!JS::ToInt32( cx, args.get( 3 ), &fightSkill ) ||
+		!JS::ToInt32( cx, args.get( 4 ), &hitLocation ) ||
+		!JS::ToInt32( cx, args.get( 5 ), &baseDamage ))
+		return false;
 
-	JSEncapsulate attackerClass( cx, &( argv[1] ));
-	if( attackerClass.ClassName() != "UOXChar" )	// It must be a character!
+	if( !HasWrapperClass( args.get( 1 ), &UOXChar_class ))
 	{
 		ScriptError( cx, "ApplyDamageBonuses: Passed an invalid Character" );
-		return JS_FALSE;
+		return false;
 	}
 
-	if( attackerClass.isType( JSOT_VOID ) || attackerClass.isType( JSOT_NULL ))
+	attacker = GetWrappedObject<CChar>( args.get( 1 ), &UOXChar_class );
+	if( !ValidateObject( attacker ))
 	{
 		ScriptError( cx, "ApplyDamageBonuses: Passed an invalid Character" );
-		return JS_TRUE;
-	}
-	else
-	{
-		attacker = static_cast<CChar *>( attackerClass.toObject() );
-		if( !ValidateObject( attacker )  )
-		{
-			ScriptError( cx, "ApplyDamageBonuses: Passed an invalid Character" );
-			return JS_TRUE;
-		}
+		return true;
 	}
 
-	JSEncapsulate defenderClass( cx, &( argv[2] ));
-	if( defenderClass.ClassName() != "UOXChar" ) // It must be a character!
+	if( !HasWrapperClass( args.get( 2 ), &UOXChar_class ))
 	{
 		ScriptError( cx, "ApplyDamageBonuses: Passed an invalid Character" );
-		return JS_FALSE;
+		return false;
 	}
 
-	if( defenderClass.isType( JSOT_VOID ) || defenderClass.isType( JSOT_NULL ))
+	defender = GetWrappedObject<CChar>( args.get( 2 ), &UOXChar_class );
+	if( !ValidateObject( defender ))
 	{
 		ScriptError( cx, "ApplyDamageBonuses: Passed an invalid Character" );
-		return JS_TRUE;
-	}
-	else
-	{
-		defender = static_cast<CChar *>( defenderClass.toObject() );
-		if( !ValidateObject( defender ))
-		{
-			ScriptError( cx, "ApplyDamageBonuses: Passed an invalid Character" );
-			return JS_TRUE;
-		}
+		return true;
 	}
 
-	damage = Combat->ApplyDamageBonuses( static_cast<WeatherType>( damageType.toInt() ), attacker, 
-				defender, static_cast<UI08>( getFightSkill.toInt() ), static_cast<UI08>( hitLoc.toInt() ), static_cast<SI16>( baseDamage.toInt() ));
+	damage = Combat->ApplyDamageBonuses( static_cast<WeatherType>( damageType ), attacker,
+				defender, static_cast<UI08>( fightSkill ), static_cast<UI08>( hitLocation ), static_cast<SI16>( baseDamage ));
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( damage ) );
-	return JS_TRUE;
+	args.rval().setInt32(  damage  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3715,70 +3694,62 @@ JSBool SE_ApplyDamageBonuses( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns defense modifiers based on shields/parrying, armor values and elemental damage
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_ApplyDefenseModifiers( JSContext *cx, uintN argc, jsval *vp )
+bool SE_ApplyDefenseModifiers( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 7 )
 	{
 		ScriptError( cx, "ApplyDefenseModifiers: Invalid number of arguments (takes 7)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *attacker	= nullptr, *defender = nullptr;
 	SI16 damage = 0;
 
-	JSEncapsulate damageType( cx, &( argv[0] ));
-	JSEncapsulate getFightSkill( cx, &( argv[3] ));
-	JSEncapsulate hitLoc( cx, &( argv[4] ));
-	JSEncapsulate baseDamage( cx, &( argv[5] ));
-	JSEncapsulate doArmorDamage(cx, &( argv[6] ));
+	int32_t damageType = 0;
+	int32_t fightSkill = 0;
+	int32_t hitLocation = 0;
+	int32_t baseDamage = 0;
+	if( !JS::ToInt32( cx, args.get( 0 ), &damageType ) ||
+		!JS::ToInt32( cx, args.get( 3 ), &fightSkill ) ||
+		!JS::ToInt32( cx, args.get( 4 ), &hitLocation ) ||
+		!JS::ToInt32( cx, args.get( 5 ), &baseDamage ))
+		return false;
 
-	JSEncapsulate attackerClass( cx, &( argv[1] ));
-	if( attackerClass.ClassName() == "UOXChar" )
+	bool doArmorDamage = false;
+	if( args.get( 6 ).isString() )
 	{
-		if( attackerClass.isType( JSOT_VOID ) || attackerClass.isType( JSOT_NULL ))
-		{
-			attacker = nullptr;
-		}
-		else
-		{
-			attacker = static_cast<CChar *>( attackerClass.toObject() );
-			if( !ValidateObject( attacker ))
-			{
-				attacker = nullptr;
-			}
-		}
-	}
-
-	JSEncapsulate defenderClass( cx, &( argv[2] ));
-	if( defenderClass.ClassName() != "UOXChar" )	// It must be a character!
-	{
-		ScriptError( cx, "ApplyDefenseModifiers: Passed an invalid Character" );
-		return JS_FALSE;
-	}
-
-	if( defenderClass.isType( JSOT_VOID ) || defenderClass.isType( JSOT_NULL ))
-	{
-		ScriptError( cx, "ApplyDefenseModifiers: Passed an invalid Character" );
-		return JS_TRUE;
+		doArmorDamage = oldstrutil::upper( JS_GetStringBytes( cx, args.get( 6 ))) == "TRUE";
 	}
 	else
 	{
-		defender = static_cast<CChar *>( defenderClass.toObject() );
-		if( !ValidateObject( defender ))
-		{
-			ScriptError( cx, "ApplyDefenseModifiers: Passed an invalid Character" );
-			return JS_TRUE;
-		}
+		doArmorDamage = JS::ToBoolean( args.get( 6 ));
 	}
 
-	damage = Combat->ApplyDefenseModifiers( static_cast<WeatherType>( damageType.toInt() ), attacker,
-			defender, static_cast<UI08>( getFightSkill.toInt() ), static_cast<UI08>( hitLoc.toInt() ),
-			static_cast<SI16>( baseDamage.toInt() ), doArmorDamage.toBool() );
+	attacker = GetWrappedObject<CChar>( args.get( 1 ), &UOXChar_class );
+	if( !ValidateObject( attacker ))
+		attacker = nullptr;
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( damage ) );
-	return JS_TRUE;
+	if( !HasWrapperClass( args.get( 2 ), &UOXChar_class ))
+	{
+		ScriptError( cx, "ApplyDefenseModifiers: Passed an invalid Character" );
+		return false;
+	}
+
+	defender = GetWrappedObject<CChar>( args.get( 2 ), &UOXChar_class );
+	if( !ValidateObject( defender ))
+	{
+		ScriptError( cx, "ApplyDefenseModifiers: Passed an invalid Character" );
+		return true;
+	}
+
+	damage = Combat->ApplyDefenseModifiers( static_cast<WeatherType>( damageType ), attacker,
+			defender, static_cast<UI08>( fightSkill ), static_cast<UI08>( hitLocation ),
+			static_cast<SI16>( baseDamage ), doArmorDamage );
+
+	args.rval().setInt32(  damage  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3786,27 +3757,24 @@ JSBool SE_ApplyDefenseModifiers( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if hostile action done by one character versus another will result in criminal flag
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_WillResultInCriminal( JSContext *cx, uintN argc, jsval *vp )
+bool SE_WillResultInCriminal( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
 		ScriptError( cx, "WillResultInCriminal: Invalid number of arguments (takes 2: srcChar and trgChar)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	bool result = false;
 	CChar *srcChar = nullptr;
 	CChar *trgChar = nullptr;
 
-	if( argv[0] != JSVAL_NULL && argv[1] != JSVAL_NULL )
+	if( args.get(0) != JS::NullValue() && args.get(1) != JS::NullValue() )
 	{
-		JSObject *srcCharObj = JSVAL_TO_OBJECT( argv[0] );
-		srcChar = static_cast<CChar *>( JS_GetPrivate( cx, srcCharObj ));
-
-		JSObject *trgCharObj = JSVAL_TO_OBJECT( argv[1] );
-		trgChar = static_cast<CChar *>( JS_GetPrivate( cx, trgCharObj ));
+		srcChar = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
+		trgChar = GetWrappedObject<CChar>( args.get( 1 ), &UOXChar_class );
 
 		if( ValidateObject( srcChar ) && ValidateObject( trgChar ))
 		{
@@ -3816,11 +3784,11 @@ JSBool SE_WillResultInCriminal( JSContext *cx, uintN argc, jsval *vp )
 	else
 	{
 		ScriptError( cx, "WillResultInCriminal: Invalid objects passed - characters required)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( result ) );
-	return JS_TRUE;
+	args.rval().setBoolean(  result  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3829,50 +3797,42 @@ JSBool SE_WillResultInCriminal( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Create a party with specified character as the party leader
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CreateParty( JSContext *cx, uintN argc, jsval *vp )
+bool SE_CreateParty( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
-	jsval* rval = &JS_RVAL(cx, vp);
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc != 1 )
 	{
 		ScriptError( cx, "CreateParty: Invalid number of arguments (takes 1, the leader)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	JSEncapsulate myClass( cx, &( argv[0] ));
+	CChar *leader = GetWrappedObject<CChar>( args.get( 0 ), &UOXChar_class );
+	if( leader == nullptr )
+	{
+		CSocket *leaderSock = GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class );
+		if( leaderSock != nullptr )
+			leader = leaderSock->CurrcharObj();
+	}
 
-	if( myClass.ClassName() == "UOXChar" || myClass.ClassName() == "UOXSocket" )
+	if( ValidateObject( leader ))
 	{	// it's a character or socket, fantastic
-		CChar *leader		= nullptr;
-		CSocket *leaderSock	= nullptr;
-		if( myClass.ClassName() == "UOXChar" )
-		{
-			leader		= static_cast<CChar *>( myClass.toObject() );
-			leaderSock	= leader->GetSocket();
-		}
-		else
-		{
-			leaderSock	= static_cast<CSocket *>( myClass.toObject() );
-			leader		= leaderSock->CurrcharObj();
-		}
-
 		if( PartyFactory::GetSingleton().Get( leader ) != nullptr )
 		{
-			JS_SET_RVAL( cx, vp, JSVAL_NULL );
+			args.rval().setNull();
 		}
 		else
 		{
 			Party *tParty	= PartyFactory::GetSingleton().Create( leader );
-			JSObject *myObj	= JSEngine->AcquireObject( IUE_PARTY, tParty, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-			*rval			= OBJECT_TO_JSVAL( myObj );
+			JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_PARTY, tParty, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+			args.rval().setObjectOrNull( myObj );
 		}
 	}
 	else	// anything else isn't a valid leader people
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3881,26 +3841,26 @@ JSBool SE_CreateParty( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets or sets Moon phases on server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_Moon( JSContext *cx, uintN argc, jsval *vp )
+bool SE_Moon( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc > 2 || argc == 0 )
 	{
 		ScriptError( cx, oldstrutil::format( "Moon: Invalid Count of Arguments: %d", argc ).c_str() );
-		return JS_FALSE;
+		return false;
 	}
 
-	SI16 slot = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
+	SI16 slot = static_cast<SI16>( args.get(0).toInt32());
 	if( argc == 2 )
 	{
-		SI16 newVal = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+		SI16 newVal = static_cast<SI16>( args.get(1).toInt32());
 		cwmWorldState->ServerData()->ServerMoon( slot, newVal );
 	}
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( cwmWorldState->ServerData()->ServerMoon( slot )) );
+	args.rval().setInt32(  cwmWorldState->ServerData()->ServerMoon( slot ) );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3908,35 +3868,35 @@ JSBool SE_Moon( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a specified region object
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetTownRegion( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetTownRegion( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetTownRegion: Invalid number of parameters (1)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	UI16 regNum = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 regNum = static_cast<UI16>( args.get(0).toInt32());
 	if( cwmWorldState->townRegions.find( regNum ) != cwmWorldState->townRegions.end() )
 	{
 		CTownRegion *townReg = cwmWorldState->townRegions[regNum];
 		if( townReg != nullptr )
 		{
-			JSObject *myObj = JSEngine->AcquireObject( IUE_REGION, townReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-			JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+			JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_REGION, townReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+			args.rval().setObjectOrNull( myObj );
 		}
 		else
 		{
-			JS_SET_RVAL( cx, vp, JSVAL_NULL );
+			args.rval().setNull();
 		}
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3944,33 +3904,33 @@ JSBool SE_GetTownRegion( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns region object associated with a specific location 
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetTownRegionFromXY( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetTownRegionFromXY( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 4 )
 	{
 		ScriptError( cx, "GetTownRegion: Invalid number of parameters (4)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	SI16 locX = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 locY = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI08 locWorldNumber = static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
-	UI16 locInstanceId = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+	SI16 locX = static_cast<SI16>( args.get(0).toInt32());
+	SI16 locY = static_cast<SI16>( args.get(1).toInt32());
+	UI08 locWorldNumber = static_cast<UI08>( args.get(2).toInt32());
+	UI16 locInstanceId = static_cast<UI16>( args.get(3).toInt32());
 
 	auto townReg = CalcRegionFromXY( locX, locY, locWorldNumber, locInstanceId, nullptr );
 	if( townReg != nullptr )
 	{
-		JSObject *myObj = JSEngine->AcquireObject( IUE_REGION, townReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+		JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_REGION, townReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+		args.rval().setObjectOrNull( myObj );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3998,40 +3958,39 @@ static auto FindSpawnRegionsAt( UI16 x, UI16 y, UI08 worldNum, UI16 instanceID )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a specified spawn region object
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetSpawnRegion( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetSpawnRegion( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
-	jsval* rval = &JS_RVAL(cx, vp);
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc != 1 && argc != 4 )
 	{
 		ScriptError( cx, "GetSpawnRegion: Invalid number of parameters (1 - spawnRegionID, or 4 - x, y, world and instanceID)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( argc == 1 )
 	{
 		// Assume spawn region number was provided
-		UI16 spawnRegNum = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+		UI16 spawnRegNum = static_cast<UI16>( args.get(0).toInt32());
 		if( cwmWorldState->spawnRegions.find( spawnRegNum ) != cwmWorldState->spawnRegions.end() )
 		{
 			CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
 			if( spawnReg != nullptr )
 			{
-				JSObject *myObj = JSEngine->AcquireObject( IUE_SPAWNREGION, spawnReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-				JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
+				JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_SPAWNREGION, spawnReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+				args.rval().setObjectOrNull( myObj );
 			}
 			else
 			{
-				JS_SET_RVAL( cx, vp, JSVAL_NULL );
+				args.rval().setNull();
 			}
 		}
 		else
 		{
-			JS_SET_RVAL( cx, vp, JSVAL_NULL );
+			args.rval().setNull();
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4040,45 +3999,45 @@ JSBool SE_GetSpawnRegion( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns all spawn region objects at specified coordinates in an array
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetSpawnRegions( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetSpawnRegions( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc != 4 )
 	{
 		ScriptError( cx, "GetSpawnRegions: Invalid number of parameters (4 required - x, y, world and instanceID)" );
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
-		return JS_FALSE;
+		args.rval().setNull();
+		return false;
 	}
 
 	// Assume coordinates were provided
-	UI16 x = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	UI16 y = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
-	UI08 worldNum = static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
-	UI16 instanceID = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+	UI16 x = static_cast<UI16>( args.get(0).toInt32());
+	UI16 y = static_cast<UI16>( args.get(1).toInt32());
+	UI08 worldNum = static_cast<UI08>( args.get(2).toInt32());
+	UI16 instanceID = static_cast<UI16>( args.get(3).toInt32());
 
 	auto regions = FindSpawnRegionsAt( x, y, worldNum, instanceID );
 	if( !regions.empty() )
 	{
 		// Create a new JS array to store spawn regions
-		JSObject *spawnRegs = JS_NewArrayObject( cx, 0, nullptr );
+		JS::RootedObject spawnRegs( cx, JS::NewArrayObject( cx, 0 ));
 		int regionCount = 0;
 
 		// Iterate over each spawn region to find all matching regions
 		for( auto const& spawnReg : regions )
 		{
-			JSObject *myObj = JSEngine->AcquireObject( IUE_SPAWNREGION, spawnReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-			jsval spawnRegVal = OBJECT_TO_JSVAL( myObj );
-			JS_SetElement( cx, spawnRegs, regionCount, &spawnRegVal );
+			JS::RootedObject myObj( cx, JSEngine->AcquireObject( IUE_SPAWNREGION, spawnReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ))));
+			JS::RootedValue spawnRegVal( cx, JS::ObjectOrNullValue( myObj ));
+			JS_SetElement( cx, spawnRegs, regionCount, spawnRegVal );
 			++regionCount;
 		}
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( spawnRegs ) );
+		args.rval().setObjectOrNull( spawnRegs );
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		args.rval().setNull();
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4087,17 +4046,17 @@ JSBool SE_GetSpawnRegions( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the total number of spawn regions found in the server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetSpawnRegionCount( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetSpawnRegionCount( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 0 )
 	{
 		ScriptError( cx, "GetSpawnRegionCount: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( cwmWorldState->spawnRegions.size() ) );
-	return JS_TRUE;
+	args.rval().setInt32(  cwmWorldState->spawnRegions.size()  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4105,22 +4064,22 @@ JSBool SE_GetSpawnRegionCount( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns map elevation at given coordinates
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetMapElevation( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetMapElevation( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 3 )
 	{
 		ScriptError( cx, "GetMapElevation: Invalid number of arguments (takes 3: X, Y and WorldNumber)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	SI16 x			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 y			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI08 worldNum	= static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+	SI16 x			= static_cast<SI16>( args.get(0).toInt32());
+	SI16 y			= static_cast<SI16>( args.get(1).toInt32());
+	UI08 worldNum	= static_cast<UI08>( args.get(2).toInt32());
 	SI08 mapElevation = Map->MapElevation( x, y, worldNum );
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( mapElevation ) );
-	return JS_TRUE;
+	args.rval().setInt32(  mapElevation  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4130,22 +4089,22 @@ JSBool SE_GetMapElevation( JSContext *cx, uintN argc, jsval *vp )
 //| Notes		-	First checks if player is in a static building. If false, checks if there's a multi
 //|					at the same location as the player, and assumes they are in the building if true
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_IsInBuilding( JSContext *cx, uintN argc, jsval *vp )
+bool SE_IsInBuilding( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 6 )
 	{
 		ScriptError( cx, "IsInBuilding: Invalid number of arguments (takes 6: X, Y, Z, WorldNumber and instanceId)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	SI16 x			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 y			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI08 z			= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-	UI08 worldNum	= static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
-	UI16 instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
-	bool checkHeight = ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
+	SI16 x			= static_cast<SI16>( args.get(0).toInt32());
+	SI16 y			= static_cast<SI16>( args.get(1).toInt32());
+	SI08 z			= static_cast<SI08>( args.get(2).toInt32());
+	UI08 worldNum	= static_cast<UI08>( args.get(3).toInt32());
+	UI16 instanceId = static_cast<UI16>( args.get(4).toInt32());
+	bool checkHeight = ( args.get(5).toBoolean() == true );
 	bool isInBuilding = Map->InBuilding( x, y, z, worldNum, instanceId );
 	if( !isInBuilding )
 	{
@@ -4168,8 +4127,8 @@ JSBool SE_IsInBuilding( JSContext *cx, uintN argc, jsval *vp )
 			}
 		}
 	}
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( isInBuilding ) );
-	return JS_TRUE;
+	args.rval().setBoolean(  isInBuilding  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4177,25 +4136,25 @@ JSBool SE_IsInBuilding( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks to see whether any statics at given coordinates has a specific flag
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CheckStaticFlag( JSContext *cx, uintN argc, jsval *vp )
+bool SE_CheckStaticFlag( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 5 )
 	{
 		ScriptError( cx, "CheckStaticFlag: Invalid number of arguments (takes 5: X, Y, Z, WorldNumber and TileFlagID)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	SI16 x			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 y			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI08 z			= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-	UI08 worldNum	= static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
-	TileFlags toCheck	= static_cast<TileFlags>( JSVAL_TO_INT( argv[4] ));
+	SI16 x			= static_cast<SI16>( args.get(0).toInt32());
+	SI16 y			= static_cast<SI16>( args.get(1).toInt32());
+	SI08 z			= static_cast<SI08>( args.get(2).toInt32());
+	UI08 worldNum	= static_cast<UI08>( args.get(3).toInt32());
+	TileFlags toCheck	= static_cast<TileFlags>( args.get(4).toInt32());
 	[[maybe_unused]] UI16 ignoreMe = 0;
 	bool hasStaticFlag = Map->CheckStaticFlag( x, y, z, worldNum, toCheck, ignoreMe, false );
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( hasStaticFlag ) );
-	return JS_TRUE;
+	args.rval().setBoolean(  hasStaticFlag  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4203,26 +4162,26 @@ JSBool SE_CheckStaticFlag( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks to see whether any dynamics at given coordinates has a specific flag
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CheckDynamicFlag( JSContext *cx, uintN argc, jsval *vp )
+bool SE_CheckDynamicFlag( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 6 )
 	{
 		ScriptError( cx, "CheckDynamicFlag: Invalid number of arguments (takes 6: X, Y, Z, WorldNumber, instanceId and TileFlagID)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	SI16 x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI08 z = static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-	UI08 worldNum = static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
-	UI08 instanceId = static_cast<UI08>( JSVAL_TO_INT( argv[4] ));
-	TileFlags toCheck = static_cast<TileFlags>( JSVAL_TO_INT( argv[5] ));
+	SI16 x = static_cast<SI16>( args.get(0).toInt32());
+	SI16 y = static_cast<SI16>( args.get(1).toInt32());
+	SI08 z = static_cast<SI08>( args.get(2).toInt32());
+	UI08 worldNum = static_cast<UI08>( args.get(3).toInt32());
+	UI08 instanceId = static_cast<UI08>( args.get(4).toInt32());
+	TileFlags toCheck = static_cast<TileFlags>( args.get(5).toInt32());
 	[[maybe_unused]] UI16 ignoreMe = 0;
 	bool hasDynamicFlag = Map->CheckDynamicFlag( x, y, z, worldNum, instanceId, toCheck, ignoreMe );
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( hasDynamicFlag ) );
-	return JS_TRUE;
+	args.rval().setBoolean(  hasDynamicFlag  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4230,22 +4189,22 @@ JSBool SE_CheckDynamicFlag( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks to see whether tile with given ID has a specific flag
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CheckTileFlag( JSContext *cx, uintN argc, jsval *vp )
+bool SE_CheckTileFlag( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 2 )
 	{
 		ScriptError( cx, "CheckTileFlag: Invalid number of arguments (takes 2: itemId and tileFlagID)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	UI16 itemId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	TileFlags flagToCheck	= static_cast<TileFlags>( JSVAL_TO_INT( argv[1] ));
+	UI16 itemId = static_cast<UI16>( args.get(0).toInt32());
+	TileFlags flagToCheck	= static_cast<TileFlags>( args.get(1).toInt32());
 
 	bool tileHasFlag = Map->CheckTileFlag( itemId, flagToCheck );
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( tileHasFlag ) );
-	return JS_TRUE;
+	args.rval().setBoolean(  tileHasFlag  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4253,24 +4212,24 @@ JSBool SE_CheckTileFlag( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if statics at/above given coordinates blocks movement, etc
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DoesStaticBlock( JSContext *cx, uintN argc, jsval *vp )
+bool SE_DoesStaticBlock( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 5 )
 	{
 		ScriptError( cx, "DoesStaticBlock: Invalid number of arguments (takes 5: X, Y, Z, WorldNumber and checkWater)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	SI16 x			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 y			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI08 z			= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-	UI08 worldNum	= static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
-	bool checkWater = ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );
+	SI16 x			= static_cast<SI16>( args.get(0).toInt32());
+	SI16 y			= static_cast<SI16>( args.get(1).toInt32());
+	SI08 z			= static_cast<SI08>( args.get(2).toInt32());
+	UI08 worldNum	= static_cast<UI08>( args.get(3).toInt32());
+	bool checkWater = ( args.get(4).toBoolean() == true );
 	bool staticBlocks = Map->DoesStaticBlock( x, y, z, worldNum, checkWater );
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( staticBlocks ) );
-	return JS_TRUE;
+	args.rval().setBoolean(  staticBlocks  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4278,28 +4237,28 @@ JSBool SE_DoesStaticBlock( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if dynamics at/above given coordinates blocks movement, etc
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DoesDynamicBlock( JSContext *cx, uintN argc, jsval *vp )
+bool SE_DoesDynamicBlock( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 9 )
 	{
 		ScriptError( cx, "DoesDynamicBlock: Invalid number of arguments (takes 9: X, Y, Z, WorldNumber, instanceId, checkWater, waterWalk, checkOnlyMultis and checkOnlyNonMultis)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	SI16 x			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 y			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI08 z			= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-	UI08 worldNum	= static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
-	UI08 instanceId	= static_cast<UI08>( JSVAL_TO_INT( argv[4] ));
-	bool checkWater = ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
-	bool waterWalk = ( JSVAL_TO_BOOLEAN( argv[6] ) == JS_TRUE );
-	bool checkOnlyMultis = ( JSVAL_TO_BOOLEAN( argv[7] ) == JS_TRUE );
-	bool checkOnlyNonMultis = ( JSVAL_TO_BOOLEAN( argv[8] ) == JS_TRUE );
+	SI16 x			= static_cast<SI16>( args.get(0).toInt32());
+	SI16 y			= static_cast<SI16>( args.get(1).toInt32());
+	SI08 z			= static_cast<SI08>( args.get(2).toInt32());
+	UI08 worldNum	= static_cast<UI08>( args.get(3).toInt32());
+	UI08 instanceId	= static_cast<UI08>( args.get(4).toInt32());
+	bool checkWater = ( args.get(5).toBoolean() == true );
+	bool waterWalk = ( args.get(6).toBoolean() == true );
+	bool checkOnlyMultis = ( args.get(7).toBoolean() == true );
+	bool checkOnlyNonMultis = ( args.get(8).toBoolean() == true );
 	bool dynamicBlocks = Map->DoesDynamicBlock( x, y, z, worldNum, instanceId, checkWater, waterWalk, checkOnlyMultis, checkOnlyNonMultis );
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( dynamicBlocks ) );
-	return JS_TRUE;
+	args.rval().setBoolean(  dynamicBlocks  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4307,27 +4266,27 @@ JSBool SE_DoesDynamicBlock( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if map tile at/above given coordinates blocks movement, etc
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DoesMapBlock( JSContext *cx, uintN argc, jsval *vp )
+bool SE_DoesMapBlock( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 8 )
 	{
 		ScriptError( cx, "DoesMapBlock: Invalid number of arguments (takes 8: X, Y, Z, WorldNumber, checkWater, waterWalk, checkMultiPlacement and checkForRoad)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	SI16 x			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 y			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI08 z			= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-	UI08 worldNum	= static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
-	bool checkWater = ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );
-	bool waterWalk = ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
-	bool checkMultiPlacement = ( JSVAL_TO_BOOLEAN( argv[6] ) == JS_TRUE );
-	bool checkForRoad = ( JSVAL_TO_BOOLEAN( argv[7] ) == JS_TRUE );
+	SI16 x			= static_cast<SI16>( args.get(0).toInt32());
+	SI16 y			= static_cast<SI16>( args.get(1).toInt32());
+	SI08 z			= static_cast<SI08>( args.get(2).toInt32());
+	UI08 worldNum	= static_cast<UI08>( args.get(3).toInt32());
+	bool checkWater = ( args.get(4).toBoolean() == true );
+	bool waterWalk = ( args.get(5).toBoolean() == true );
+	bool checkMultiPlacement = ( args.get(6).toBoolean() == true );
+	bool checkForRoad = ( args.get(7).toBoolean() == true );
 	bool mapBlocks = Map->DoesMapBlock( x, y, z, worldNum, checkWater, waterWalk, checkMultiPlacement, checkForRoad );
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mapBlocks ) );
-	return JS_TRUE;
+	args.rval().setBoolean(  mapBlocks  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4335,24 +4294,24 @@ JSBool SE_DoesMapBlock( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if characters at/above given coordinates blocks movement, etc
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DoesCharacterBlock( JSContext *cx, uintN argc, jsval *vp )
+bool SE_DoesCharacterBlock( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 5 )
 	{
 		ScriptError( cx, "DoesCharacterBlock: Invalid number of arguments (takes 5: X, Y, z, WorldNumber, instanceId)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	SI16 x			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 y			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI08 z			= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-	UI08 worldNum	= static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
-	UI08 instanceId	= static_cast<UI08>( JSVAL_TO_INT( argv[4] ));
+	SI16 x			= static_cast<SI16>( args.get(0).toInt32());
+	SI16 y			= static_cast<SI16>( args.get(1).toInt32());
+	SI08 z			= static_cast<SI08>( args.get(2).toInt32());
+	UI08 worldNum	= static_cast<UI08>( args.get(3).toInt32());
+	UI08 instanceId	= static_cast<UI08>( args.get(4).toInt32());
 	bool characterBlocks = Map->DoesCharacterBlock( x, y, z, worldNum, instanceId );
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( characterBlocks ) );
-	return JS_TRUE;
+	args.rval().setBoolean(  characterBlocks  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4360,32 +4319,32 @@ JSBool SE_DoesCharacterBlock( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes a file from the server's harddrive...
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DeleteFile( JSContext *cx, uintN argc, jsval *vp )
+bool SE_DeleteFile( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc < 1 || argc > 3 )
 	{
 		ScriptError( cx, "DeleteFile: Invalid number of arguments (takes 1 to 3 - fileName and (optionally) subFolderName and useScriptDataDir bool)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	std::string fileName = JS_GetStringBytes( cx, argv[0]);
+	std::string fileName = JS_GetStringBytes( cx, args.get(0));
 	std::string subFolderName;
 	if( argc >= 2 )
 	{
-		subFolderName = JS_GetStringBytes( cx, argv[1]);
+		subFolderName = JS_GetStringBytes( cx, args.get(1));
 	}
 	bool useScriptDataDir = false;
 	if( argc >= 3 )
 	{
-		useScriptDataDir = ( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE );
+		useScriptDataDir = ( args.get(2).toBoolean() == true );
 	}
 
 	if( fileName.find( ".." ) != std::string::npos || fileName.find( "\\" ) != std::string::npos || fileName.find( "/" ) != std::string::npos )
 	{
 		ScriptError( cx, "DeleteFile: file names may not contain \".\", \"..\", \"\\\", or \"/\"." );
-		return JS_FALSE;
+		return false;
 	}
 
 	std::string pathString	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED );
@@ -4397,7 +4356,7 @@ JSBool SE_DeleteFile( JSContext *cx, uintN argc, jsval *vp )
 		if( subFolderName.find( ".." ) != std::string::npos || subFolderName.find( "\\" ) != std::string::npos || subFolderName.find( "/") != std::string::npos )
 		{
 			ScriptError( cx, "DeleteFile: folder names may not contain \".\", \"..\", \"\\\", or \"/\"." );
-			return JS_FALSE;
+			return false;
 		}
 
 		// If script wants to look in script-data folder instead of shared folder, let it
@@ -4411,9 +4370,9 @@ JSBool SE_DeleteFile( JSContext *cx, uintN argc, jsval *vp )
 
 		if( !std::filesystem::exists( pathString ))
 		{
-			// Return JS_TRUE to allow script to continue running even if file was not found for deletion, but set return value to false
-			JS_SET_RVAL( cx, vp, false );
-			return JS_TRUE;
+			// Return true to allow script to continue running even if file was not found for deletion, but set return value to false
+			args.rval().setBoolean( false );
+			return true;
 		}
 
 		pathString += std::filesystem::path::preferred_separator;
@@ -4422,8 +4381,8 @@ JSBool SE_DeleteFile( JSContext *cx, uintN argc, jsval *vp )
 	pathString.append( fileName );
 
 	std::filesystem::path filePath = pathString;
-	JS_SET_RVAL( cx, vp, std::filesystem::remove( filePath ) );
-	return JS_TRUE;
+	args.rval().setBoolean(  std::filesystem::remove( filePath ) );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4431,37 +4390,37 @@ JSBool SE_DeleteFile( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Converts an UO era string to an int value for easier comparison in JavaScripts
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_EraStringToNum( JSContext *cx, uintN argc, jsval *vp )
+bool SE_EraStringToNum( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS_SET_RVAL( cx, vp, JSVAL_NULL );
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	args.rval().setNull();
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "EraStringToNum: Invalid number of arguments (takes 1 - era string)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	std::string eraString = oldstrutil::upper( JS_GetStringBytes( cx, argv[0]));
+	std::string eraString = oldstrutil::upper( JS_GetStringBytes( cx, args.get(0)));
 	if( !eraString.empty() )
 	{
 		UI08 eraNum = static_cast<UI08>( cwmWorldState->ServerData()->EraStringToEnum( eraString, false, false ));
 		if( eraNum != 0 )
 		{
-			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( eraNum ) );
+			args.rval().setInt32(  eraNum  );
 		}
 		else
 		{
 			ScriptError( cx, "EraStringToNum: Provided argument not valid era string (uo, t2a, uor, td, lbr, aos, se, ml, sa, hs or tol)" );
-			return JS_FALSE;
+			return false;
 		}
 	}
 	else
 	{
 		ScriptError( cx, "EraStringToNum: Provided argument contained no valid string data" );
-		return JS_FALSE;
+		return false;
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4469,52 +4428,52 @@ JSBool SE_EraStringToNum( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Converts an UO era string to an int value for easier comparison in JavaScripts
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetCommandLevelVal( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetCommandLevelVal( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS_SET_RVAL( cx, vp, JSVAL_NULL );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	args.rval().setNull();
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetCommandLevelVal: Invalid number of arguments (takes 1 - commandlevel ID ('PLAYER'/'CNS'/'GM'/'ADMIN'))" );
-		return JS_FALSE;
+		return false;
 	}
 
-	jsval* argv = JS_ARGV( cx, vp );
-	std::string cmdLvlString = oldstrutil::upper( JS_GetStringBytes( cx, argv[0] ) );
+	std::string cmdLvlString = oldstrutil::upper( JS_GetStringBytes( cx, args.get(0) ) );
 	if( !cmdLvlString.empty() )
 	{
 		if( cmdLvlString == "PLAYER" )
 		{
-			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( CL_PLAYER ) );
+			args.rval().setInt32(  CL_PLAYER  );
 		}
 		else if( cmdLvlString == "CNS" )
 		{
-			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( CL_CNS ) );
+			args.rval().setInt32(  CL_CNS  );
 		}
 		else if( cmdLvlString == "SEER" )
 		{
-			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( CL_SEER ) );
+			args.rval().setInt32(  CL_SEER  );
 		}
 		else if( cmdLvlString == "GM" )
 		{
-			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( CL_GM ) );
+			args.rval().setInt32(  CL_GM  );
 		}
 		else if( cmdLvlString == "ADMIN" )
 		{
-			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( CL_ADMIN ) );
+			args.rval().setInt32(  CL_ADMIN  );
 		}
 		else
 		{
 			ScriptError( cx, "GetCommandLevelVal: Provided argument not valid commandlevel ID ('PLAYER'/'CNS'/'GM'/'ADMIN')" );
-			return JS_FALSE;
+			return false;
 		}
 	}
 	else
 	{
 		ScriptError( cx, "GetCommandLevelVal: Provided argument contained no valid string data" );
-		return JS_FALSE;
+		return false;
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4522,19 +4481,19 @@ JSBool SE_GetCommandLevelVal( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets value of specified server setting
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetServerSetting( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS_SET_RVAL( cx, vp, reinterpret_cast<long>(nullptr) );
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
+	args.rval().setNull();
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetServerSetting: Invalid number of arguments (takes 1 - serverSettingName)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	JSString *tString;
-	std::string settingName = oldstrutil::upper( JS_GetStringBytes( cx, argv[0]));
+	JS::RootedString tString( cx );
+	std::string settingName = oldstrutil::upper( JS_GetStringBytes( cx, args.get(0)));
 	if( !settingName.empty() )
 	{
 		auto settingId = cwmWorldState->ServerData()->LookupINIValue( settingName );
@@ -4544,1078 +4503,1078 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 			{
 				std::string tempString = { cwmWorldState->ServerData()->ServerName() };
 				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			}
 			case 2:	 // CONSOLELOG
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerConsoleLog() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ServerConsoleLog()  );
 				break;
 			case 3:	 // COMMANDPREFIX
 			{
 				std::string tempString = { cwmWorldState->ServerData()->ServerCommandPrefix() };
 				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			}
 			case 4:	 // ANNOUNCEWORLDSAVES
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerAnnounceSavesStatus() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ServerAnnounceSavesStatus()  );
 				break;
 			case 26: // JOINPARTMSGS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerJoinPartAnnouncementsStatus() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ServerJoinPartAnnouncementsStatus()  );
 				break;
 			case 5:	 // BACKUPSENABLED
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerBackupStatus() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ServerBackupStatus()  );
 				break;
 			case 6:	 // SAVESTIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->ServerSavesTimerStatus() )) );
+				args.rval().setInt32(  static_cast<UI32>( cwmWorldState->ServerData()->ServerSavesTimerStatus() ) );
 				break;
 			case 7:	 // SKILLCAP
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->ServerSkillTotalCapStatus() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->ServerSkillTotalCapStatus() ) );
 				break;
 			case 8:	 // SKILLDELAY
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->ServerSkillDelayStatus() )) );
+				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->ServerSkillDelayStatus() ) );
 				break;
 			case 9:	 // STATCAP
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->ServerStatCapStatus() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->ServerStatCapStatus() ) );
 				break;
 			case 10:	 // MAXSTEALTHMOVEMENTS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->MaxStealthMovement() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->MaxStealthMovement() ) );
 				break;
 			case 11:	 // MAXSTAMINAMOVEMENTS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->MaxStaminaMovement() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->MaxStaminaMovement() ) );
 				break;
 			case 12:	 // ARMORAFFECTMANAREGEN
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ArmorAffectManaRegen() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ArmorAffectManaRegen()  );
 				break;
 			case 13:	 // CORPSEDECAYTIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_CORPSEDECAY ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_CORPSEDECAY )) );
 				break;
 			case 14:	 // WEATHERTIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_WEATHER ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_WEATHER )) );
 				break;
 			case 15:	 // SHOPSPAWNTIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_SHOPSPAWN ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_SHOPSPAWN )) );
 				break;
 			case 16:	 // DECAYTIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_DECAY ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_DECAY )) );
 				break;
 			case 17:	 // INVISIBILITYTIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_INVISIBILITY ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_INVISIBILITY )) );
 				break;
 			case 18:	 // OBJECTUSETIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_OBJECTUSAGE ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_OBJECTUSAGE )) );
 				break;
 			case 19:	 // GATETIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_GATE ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_GATE )) );
 				break;
 			case 20:	 // POISONTIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_POISON ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_POISON )) );
 				break;
 			case 21:	 // LOGINTIMEOUT
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_LOGINTIMEOUT ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_LOGINTIMEOUT )) );
 				break;
 			case 22:	 // HITPOINTREGENTIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_HITPOINTREGEN ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_HITPOINTREGEN )) );
 				break;
 			case 23:	 // STAMINAREGENTIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_STAMINAREGEN ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_STAMINAREGEN )) );
 				break;
 			case 37:	 // MANAREGENTIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN )) );
 				break;
 			case 24:	 // BASEFISHINGTIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_FISHINGBASE ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_FISHINGBASE )) );
 				break;
 			case 34:	// MAXPETOWNERS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->MaxPetOwners() )) );
+				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->MaxPetOwners() ) );
 				break;
 			case 35:	// MAXFOLLOWERS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->MaxFollowers() )) );
+				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->MaxFollowers() ) );
 				break;
 			case 36:	// MAXCONTROLSLOTS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->MaxControlSlots() )) );
+				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->MaxControlSlots() ) );
 				break;
 			case 38:	 // RANDOMFISHINGTIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_FISHINGRANDOM ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_FISHINGRANDOM )) );
 				break;
 			case 39:	 // SPIRITSPEAKTIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_SPIRITSPEAK ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_SPIRITSPEAK )) );
 				break;
 			case 40:	 // DIRECTORY
 			{
-				JSString *tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_ROOT ).c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				JS::RootedString tString( cx, JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_ROOT ).c_str() ));
+				args.rval().setString( tString );
 				break;
 			}
 			case 41:	 // DATADIRECTORY
 			{
 				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_DATA ).c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			}
 			case 42:	 // DEFSDIRECTORY
 			{
 				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_DEFS ).c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			}
 			case 43:	 // ACTSDIRECTORY
 			{
 				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_ACCOUNTS ).c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			}
 			case 25:	 // SCRIPTSDIRECTORY
 			{
 				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS ).c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			}
 			case 44:	 // BACKUPDIRECTORY
 			{
 				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_BACKUP ).c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			}
 			case 45:	 // MSGBOARDDIRECTORY
 			{
 				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD ).c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			}
 			case 46:	 // SHAREDDIRECTORY
 			{
 				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_SHARED ).c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			}
 			case 47:	 // LOOTDECAYSWITHPLAYERCORPSE
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->PlayerCorpseLootDecay() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->PlayerCorpseLootDecay()  );
 				break;
 			case 49:	 // GUARDSACTIVE
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GuardsStatus() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GuardsStatus()  );
 				break;
 			case 27:	 // DEATHANIMATION
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->DeathAnimationStatus() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->DeathAnimationStatus()  );
 				break;
 			case 50:	 // AMBIENTSOUNDS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->WorldAmbientSounds() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->WorldAmbientSounds() ) );
 				break;
 			case 51:	 // AMBIENTFOOTSTEPS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->AmbientFootsteps() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->AmbientFootsteps()  );
 				break;
 			case 52:	 // INTERNALACCOUNTCREATION
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->InternalAccountStatus() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->InternalAccountStatus()  );
 				break;
 			case 53:	 // SHOWOFFLINEPCS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ShowOfflinePCs() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ShowOfflinePCs()  );
 				break;
 			case 54:	 // ROGUESENABLED
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->RogueStatus() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->RogueStatus()  );
 				break;
 			case 55:	 // PLAYERPERSECUTION
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->PlayerPersecutionStatus() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->PlayerPersecutionStatus()  );
 				break;
 			case 56:	 // ACCOUNTFLUSH
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<R64>( cwmWorldState->ServerData()->AccountFlushTimer() )) );
+				args.rval().setInt32(  static_cast<R64>( cwmWorldState->ServerData()->AccountFlushTimer() ) );
 				break;
 			case 57:	 // HTMLSTATUSENABLED
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->HtmlStatsStatus() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->HtmlStatsStatus() ) );
 				break;
 			case 58:	 // SELLBYNAME
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->SellByNameStatus() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->SellByNameStatus()  );
 				break;
 			case 59:	 // SELLMAXITEMS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->SellMaxItemsStatus() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->SellMaxItemsStatus() ) );
 				break;
 			case 60:	 // TRADESYSTEM
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->TradeSystemStatus() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->TradeSystemStatus()  );
 				break;
 			case 61:	 // RANKSYSTEM
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->RankSystemStatus() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->RankSystemStatus()  );
 				break;
 			case 62:	 // CUTSCROLLREQUIREMENTS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CutScrollRequirementStatus() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->CutScrollRequirementStatus()  );
 				break;
 			case 63:	 // CHECKITEMS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<R64>( cwmWorldState->ServerData()->CheckItemsSpeed() )) );
+				args.rval().setInt32(  static_cast<R64>( cwmWorldState->ServerData()->CheckItemsSpeed() ) );
 				break;
 			case 64:	 // CHECKBOATS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<R64>( cwmWorldState->ServerData()->CheckBoatSpeed() )) );
+				args.rval().setInt32(  static_cast<R64>( cwmWorldState->ServerData()->CheckBoatSpeed() ) );
 				break;
 			case 65:	 // CHECKNPCAI
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<R64>( cwmWorldState->ServerData()->CheckNpcAISpeed() )) );
+				args.rval().setInt32(  static_cast<R64>( cwmWorldState->ServerData()->CheckNpcAISpeed() ) );
 				break;
 			case 66:	 // CHECKSPAWNREGIONS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<R64>( cwmWorldState->ServerData()->CheckSpawnRegionSpeed() )) );
+				args.rval().setInt32(  static_cast<R64>( cwmWorldState->ServerData()->CheckSpawnRegionSpeed() ) );
 				break;
 			case 67:	 // POSTINGLEVEL
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->MsgBoardPostingLevel() )) );
+				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->MsgBoardPostingLevel() ) );
 				break;
 			case 68:	 // REMOVALLEVEL
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->MsgBoardPostRemovalLevel() )) );
+				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->MsgBoardPostRemovalLevel() ) );
 				break;
 			case 69:	 // ESCORTENABLED
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->EscortsEnabled() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->EscortsEnabled()  );
 				break;
 			case 70:	 // ESCORTINITEXPIRE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_ESCORTWAIT ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_ESCORTWAIT )) );
 				break;
 			case 71:	 // ESCORTACTIVEEXPIRE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_ESCORTACTIVE ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_ESCORTACTIVE )) );
 				break;
 			case 72:	 // MOON1
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ServerMoon( 0 ))) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->ServerMoon( 0 )) );
 				break;
 			case 73:	 // MOON2
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ServerMoon( 1 ))) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->ServerMoon( 1 )) );
 				break;
 			case 74:	 // DUNGEONLEVEL
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<LIGHTLEVEL>( cwmWorldState->ServerData()->DungeonLightLevel() )) );
+				args.rval().setInt32(  static_cast<LIGHTLEVEL>( cwmWorldState->ServerData()->DungeonLightLevel() ) );
 				break;
 			case 75:	 // CURRENTLEVEL
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<LIGHTLEVEL>( cwmWorldState->ServerData()->WorldLightCurrentLevel() )) );
+				args.rval().setInt32(  static_cast<LIGHTLEVEL>( cwmWorldState->ServerData()->WorldLightCurrentLevel() ) );
 				break;
 			case 76:	 // BRIGHTLEVEL
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<LIGHTLEVEL>( cwmWorldState->ServerData()->WorldLightBrightLevel() )) );
+				args.rval().setInt32(  static_cast<LIGHTLEVEL>( cwmWorldState->ServerData()->WorldLightBrightLevel() ) );
 				break;
 			case 77:	 // BASERANGE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->TrackingBaseRange() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->TrackingBaseRange() ) );
 				break;
 			case 78:	 // BASETIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->TrackingBaseTimer() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->TrackingBaseTimer() ) );
 				break;
 			case 79:	 // MAXTARGETS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->TrackingMaxTargets() )) );
+				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->TrackingMaxTargets() ) );
 				break;
 			case 80:	 // MSGREDISPLAYTIME
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->TrackingRedisplayTime() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->TrackingRedisplayTime() ) );
 				break;
 			case 81:	 // MURDERDECAYTIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_MURDERDECAY ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_MURDERDECAY )) );
 				break;
 			case 82:	 // MAXKILLS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->RepMaxKills() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->RepMaxKills() ) );
 				break;
 			case 83:	 // CRIMINALTIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_CRIMINAL ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_CRIMINAL )) );
 				break;
 			case 84:	 // MINECHECK
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->MineCheck() )) );
+				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->MineCheck() ) );
 				break;
 			case 85:	 // OREPERAREA
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ResOre() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->ResOre() ) );
 				break;
 			case 86:	 // ORERESPAWNTIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->ResOreTime() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->ResOreTime() ) );
 				break;
 			case 87:	 // RESOURCEAREASIZE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->ResourceAreaSize() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->ResourceAreaSize() ) );
 				break;
 			case 88:	 // LOGSPERAREA
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ResLogs() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->ResLogs() ) );
 				break;
 			case 89:	 // LOGSRESPAWNTIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->ResLogTime() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->ResLogTime() ) );
 				break;
 			case 90:	 // STATSAFFECTSKILLCHECKS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->StatsAffectSkillChecks() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->StatsAffectSkillChecks()  );
 				break;
 			case 91:	 // HUNGERRATE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE )) );
 				break;
 			case 92:	 // HUNGERDMGVAL
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->HungerDamage() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->HungerDamage() ) );
 				break;
 			case 93:	 // MAXRANGE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->CombatMaxRange() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->CombatMaxRange() ) );
 				break;
 			case 94:	 // SPELLMAXRANGE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->CombatMaxSpellRange() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->CombatMaxSpellRange() ) );
 				break;
 			case 95:	 // DISPLAYHITMSG
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CombatDisplayHitMessage() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->CombatDisplayHitMessage()  );
 				break;
 			case 96:	 // MONSTERSVSANIMALS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CombatMonstersVsAnimals() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->CombatMonstersVsAnimals()  );
 				break;
 			case 97:	 // ANIMALATTACKCHANCE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->CombatAnimalsAttackChance() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->CombatAnimalsAttackChance() ) );
 				break;
 			case 98:	 // ANIMALSGUARDED
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CombatAnimalsGuarded() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->CombatAnimalsGuarded()  );
 				break;
 			case 99:	 // NPCDAMAGERATE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->CombatNpcDamageRate() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->CombatNpcDamageRate() ) );
 				break;
 			case 100:	 // NPCBASEFLEEAT
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->CombatNPCBaseFleeAt() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->CombatNPCBaseFleeAt() ) );
 				break;
 			case 101:	 // NPCBASEREATTACKAT
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->CombatNPCBaseReattackAt() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->CombatNPCBaseReattackAt() ) );
 				break;
 			case 102:	 // ATTACKSTAMINA
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->CombatAttackStamina() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->CombatAttackStamina() ) );
 				break;
 			//case 103:	 // LOCATION
 				//break;
 			case 104:	 // STARTGOLD
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ServerStartGold() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->ServerStartGold() ) );
 				break;
 			case 105:	 // STARTPRIVS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->ServerStartPrivs() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->ServerStartPrivs() ) );
 				break;
 			case 106:	 // ESCORTDONEEXPIRE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_ESCORTDONE ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_ESCORTDONE )) );
 				break;
 			case 107:	 // DARKLEVEL
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<LIGHTLEVEL>( cwmWorldState->ServerData()->WorldLightDarkLevel() )) );
+				args.rval().setInt32(  static_cast<LIGHTLEVEL>( cwmWorldState->ServerData()->WorldLightDarkLevel() ) );
 				break;
 			case 108:	 // TITLECOLOUR
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->TitleColour() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->TitleColour() ) );
 				break;
 			case 109:	 // LEFTTEXTCOLOUR
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->LeftTextColour() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->LeftTextColour() ) );
 				break;
 			case 110:	 // RIGHTTEXTCOLOUR
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->RightTextColour() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->RightTextColour() ) );
 				break;
 			case 111:	 // BUTTONCANCEL
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->ButtonCancel() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->ButtonCancel() ) );
 				break;
 			case 112:	 // BUTTONLEFT
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->ButtonLeft() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->ButtonLeft() ) );
 				break;
 			case 113:	 // BUTTONRIGHT
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->ButtonRight() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->ButtonRight() ) );
 				break;
 			case 114:	 // BACKGROUNDPIC
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->BackgroundPic() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->BackgroundPic() ) );
 				break;
 			case 115:	 // POLLTIME
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->TownNumSecsPollOpen() )) );
+				args.rval().setInt32(  static_cast<UI32>( cwmWorldState->ServerData()->TownNumSecsPollOpen() ) );
 				break;
 			case 116:	 // MAYORTIME
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->TownNumSecsAsMayor() )) );
+				args.rval().setInt32(  static_cast<UI32>( cwmWorldState->ServerData()->TownNumSecsAsMayor() ) );
 				break;
 			case 117:	 // TAXPERIOD
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->TownTaxPeriod() )) );
+				args.rval().setInt32(  static_cast<UI32>( cwmWorldState->ServerData()->TownTaxPeriod() ) );
 				break;
 			case 118:	 // GUARDSPAID
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->TownGuardPayment() )) );
+				args.rval().setInt32(  static_cast<UI32>( cwmWorldState->ServerData()->TownGuardPayment() ) );
 				break;
 			case 119:	 // DAY
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ServerTimeDay() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->ServerTimeDay() ) );
 				break;
 			case 120:	 // HOURS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->ServerTimeHours() )) );
+				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->ServerTimeHours() ) );
 				break;
 			case 121:	 // MINUTES
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->ServerTimeMinutes() )) );
+				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->ServerTimeMinutes() ) );
 				break;
 			case 122:	 // SECONDS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->ServerTimeSeconds() )) );
+				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->ServerTimeSeconds() ) );
 				break;
 			case 123:	 // AMPM
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerTimeAMPM() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ServerTimeAMPM()  );
 				break;
 			case 124:	 // SKILLLEVEL
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->SkillLevel() )) );
+				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->SkillLevel() ) );
 				break;
 			case 125:	 // SNOOPISCRIME
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->SnoopIsCrime() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->SnoopIsCrime()  );
 				break;
 			case 126:	 // BOOKSDIRECTORY
 				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ).c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			case 127:	 // SKILLCAPSINGLE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->ServerSkillCapStatus() ) ) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->ServerSkillCapStatus() )  );
 				break;
 			case 128:	 // PORT
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->ServerPort() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->ServerPort() ) );
 				break;
 			case 129:	 // ACCESSDIRECTORY
 				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_ACCESS ).c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			case 130:	 // LOGSDIRECTORY
 				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_LOGS ).c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			case 132:	 // HTMLDIRECTORY
 				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_HTML ).c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			case 133:	 // SHOOTONANIMALBACK
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ShootOnAnimalBack() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ShootOnAnimalBack()  );
 				break;
 			case 134:	 // NPCTRAININGENABLED
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->NPCTrainingStatus() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->NPCTrainingStatus()  );
 				break;
 			case 135:	 // DICTIONARYDIRECTORY
 				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_DICTIONARIES ).c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			case 136:	 // BACKUPSAVERATIO
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->BackupRatio() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->BackupRatio() ) );
 				break;
 			case 137:	 // HIDEWHILEMOUNTED
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CharHideWhileMounted() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->CharHideWhileMounted()  );
 				break;
 			case 138:	 // SECONDSPERUOMINUTE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->ServerSecondsPerUOMinute() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->ServerSecondsPerUOMinute() ) );
 				break;
 			case 139:	 // WEIGHTPERSTR
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<R32>( cwmWorldState->ServerData()->WeightPerStr() )) );
+				args.rval().setInt32(  static_cast<R32>( cwmWorldState->ServerData()->WeightPerStr() ) );
 				break;
 			case 140:	 // POLYDURATION
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_POLYMORPH ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_POLYMORPH )) );
 				break;
 			case 141:	 // UOGENABLED
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerUOGEnabled() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ServerUOGEnabled()  );
 				break;
 			case 142:	 // NETRCVTIMEOUT
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->ServerNetRcvTimeout() )) );
+				args.rval().setInt32(  static_cast<UI32>( cwmWorldState->ServerData()->ServerNetRcvTimeout() ) );
 				break;
 			case 143:	 // NETSNDTIMEOUT
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->ServerNetSndTimeout() )) );
+				args.rval().setInt32(  static_cast<UI32>( cwmWorldState->ServerData()->ServerNetSndTimeout() ) );
 				break;
 			case 144:	 // NETRETRYCOUNT
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->ServerNetRetryCount() )) );
+				args.rval().setInt32(  static_cast<UI32>( cwmWorldState->ServerData()->ServerNetRetryCount() ) );
 				break;
 			case 145:	 // CLIENTFEATURES
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->GetClientFeatures() )) );
+				args.rval().setInt32(  static_cast<UI32>( cwmWorldState->ServerData()->GetClientFeatures() ) );
 				break;
 			case 146:	 // PACKETOVERLOADS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerOverloadPackets() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ServerOverloadPackets()  );
 				break;
 			case 147:	 // NPCMOVEMENTSPEED
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<R64>( cwmWorldState->ServerData()->NPCWalkingSpeed() ) ) );
+				args.rval().setInt32(  static_cast<R64>( cwmWorldState->ServerData()->NPCWalkingSpeed() )  );
 				break;
 			case 148:	 // PETHUNGEROFFLINE
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->PetHungerOffline() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->PetHungerOffline()  );
 				break;
 			case 149:	 // PETOFFLINETIMEOUT
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->PetOfflineTimeout() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->PetOfflineTimeout() ) );
 				break;
 			case 150:	 // PETOFFLINECHECKTIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( static_cast<cSD_TID>( tSERVER_PETOFFLINECHECK )))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( static_cast<cSD_TID>( tSERVER_PETOFFLINECHECK ))) );
 				break;
 			case 152:	 // ADVANCEDPATHFINDING
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->AdvancedPathfinding() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->AdvancedPathfinding()  );
 				break;
 			case 153:	 // SERVERFEATURES
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<size_t>( cwmWorldState->ServerData()->GetServerFeatures() )) );
+				args.rval().setInt32(  static_cast<size_t>( cwmWorldState->ServerData()->GetServerFeatures() ) );
 				break;
 			case 154:	 // LOOTINGISCRIME
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->LootingIsCrime() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->LootingIsCrime()  );
 				break;
 			case 155:	 // NPCRUNNINGSPEED
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<R64>( cwmWorldState->ServerData()->NPCRunningSpeed() ) ) );
+				args.rval().setInt32(  static_cast<R64>( cwmWorldState->ServerData()->NPCRunningSpeed() )  );
 				break;
 			case 156:	 // NPCFLEEINGSPEED
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<R64>( cwmWorldState->ServerData()->NPCFleeingSpeed() ) ) );
+				args.rval().setInt32(  static_cast<R64>( cwmWorldState->ServerData()->NPCFleeingSpeed() )  );
 				break;
 			case 157:	 // BASICTOOLTIPSONLY
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->BasicTooltipsOnly() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->BasicTooltipsOnly()  );
 				break;
 			case 158:	 // GLOBALITEMDECAY
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GlobalItemDecay() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GlobalItemDecay()  );
 				break;
 			case 159:	 // SCRIPTITEMSDECAYABLE
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ScriptItemsDecayable() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ScriptItemsDecayable()  );
 				break;
 			case 160:	 // BASEITEMSDECAYABLE
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->BaseItemsDecayable() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->BaseItemsDecayable()  );
 				break;
 			case 161:	 // ITEMDECAYINHOUSES
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ItemDecayInHouses() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ItemDecayInHouses()  );
 				break;
 			case 162:	 // SPAWNREGIONSFACETS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->GetSpawnRegionsFacetStatus() )) );
+				args.rval().setInt32(  static_cast<UI32>( cwmWorldState->ServerData()->GetSpawnRegionsFacetStatus() ) );
 				break;
 			case 163:	// PAPERDOLLGUILDBUTTON
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->PaperdollGuildButton() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->PaperdollGuildButton()  );
 				break;
 			case 164:	// ATTACKSPEEDFROMSTAMINA
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CombatAttackSpeedFromStamina() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->CombatAttackSpeedFromStamina()  );
 				break;
 			case 169:	 // DISPLAYDAMAGENUMBERS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CombatDisplayDamageNumbers() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->CombatDisplayDamageNumbers()  );
 				break;
 			case 170:	 // CLIENTSUPPORT4000
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClientSupport4000() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ClientSupport4000()  );
 				break;
 			case 171:	 // CLIENTSUPPORT5000
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClientSupport5000() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ClientSupport5000()  );
 				break;
 			case 172:	 // CLIENTSUPPORT6000
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClientSupport6000() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ClientSupport6000()  );
 				break;
 			case 173:	 // CLIENTSUPPORT6050
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClientSupport6050() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ClientSupport6050()  );
 				break;
 			case 174:	 // CLIENTSUPPORT7000
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClientSupport7000() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ClientSupport7000()  );
 				break;
 			case 175:	 // CLIENTSUPPORT7090
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClientSupport7090() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ClientSupport7090()  );
 				break;
 			case 176:	 // CLIENTSUPPORT70160
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClientSupport70160() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ClientSupport70160()  );
 				break;
 			case 177:	// CLIENTSUPPORT70240
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClientSupport70240() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ClientSupport70240()  );
 				break;
 			case 178:	// CLIENTSUPPORT70300
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClientSupport70300() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ClientSupport70300()  );
 				break;
 			case 179:	// CLIENTSUPPORT70331
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClientSupport70331() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ClientSupport70331()  );
 				break;
 			case 180:	// CLIENTSUPPORT704565
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClientSupport704565() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ClientSupport704565()  );
 				break;
 			case 181:	// CLIENTSUPPORT70610
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClientSupport70610() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ClientSupport70610()  );
 				break;
 			case 182:	// EXTENDEDSTARTINGSTATS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ExtendedStartingStats() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ExtendedStartingStats()  );
 				break;
 			case 183:	// EXTENDEDSTARTINGSKILLS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ExtendedStartingSkills() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ExtendedStartingSkills()  );
 				break;
 			case 184:	// WEAPONDAMAGECHANCE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->CombatWeaponDamageChance() )) );
+				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->CombatWeaponDamageChance() ) );
 				break;
 			case 185:	// ARMORDAMAGECHANCE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->CombatArmorDamageChance() )) );
+				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->CombatArmorDamageChance() ) );
 				break;
 			case 186:	// WEAPONDAMAGEMIN
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->CombatWeaponDamageMin() )) );
+				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->CombatWeaponDamageMin() ) );
 				break;
 			case 187:	// WEAPONDAMAGEMAX
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->CombatWeaponDamageMax() )) );
+				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->CombatWeaponDamageMax() ) );
 				break;
 			case 188:	// ARMORDAMAGEMIN
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->CombatArmorDamageMin() )) );
+				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->CombatArmorDamageMin() ) );
 				break;
 			case 189:	// ARMORDAMAGEMAX
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->CombatArmorDamageMax() )) );
+				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->CombatArmorDamageMax() ) );
 				break;
 			case 190:	// GLOBALATTACKSPEED
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<R64>( cwmWorldState->ServerData()->GlobalAttackSpeed() ) ) );
+				args.rval().setInt32(  static_cast<R64>( cwmWorldState->ServerData()->GlobalAttackSpeed() )  );
 				break;
 			case 191:	// NPCSPELLCASTSPEED
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<R64>( cwmWorldState->ServerData()->NPCSpellCastSpeed() ) ) );
+				args.rval().setInt32(  static_cast<R64>( cwmWorldState->ServerData()->NPCSpellCastSpeed() )  );
 				break;
 			case 192:	// FISHINGSTAMINALOSS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->FishingStaminaLoss() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->FishingStaminaLoss() ) );
 				break;
 			case 193:	// RANDOMSTARTINGLOCATION
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerRandomStartingLocation() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ServerRandomStartingLocation()  );
 				break;
 			case 194:	// ASSISTANTNEGOTIATION
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetAssistantNegotiation() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetAssistantNegotiation()  );
 				break;
 			case 195:	// KICKONASSISTANTSILENCE
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->KickOnAssistantSilence() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->KickOnAssistantSilence()  );
 				break;
 			case 196:	// AF_FILTERWEATHER
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_FILTERWEATHER )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_FILTERWEATHER ) );
 				break;
 			case 197:	// AF_FILTERLIGHT
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_FILTERLIGHT )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_FILTERLIGHT ) );
 				break;
 			case 198:	// AF_SMARTTARGET
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_SMARTTARGET )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_SMARTTARGET ) );
 				break;
 			case 199:	// AF_RANGEDTARGET
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_RANGEDTARGET )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_RANGEDTARGET ) );
 				break;
 			case 200:	// AF_AUTOOPENDOORS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_AUTOOPENDOORS )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_AUTOOPENDOORS ) );
 				break;
 			case 201:	// AF_DEQUIPONCAST
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_DEQUIPONCAST )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_DEQUIPONCAST ) );
 				break;
 			case 202:	// AF_AUTOPOTIONEQUIP
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_AUTOPOTIONEQUIP )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_AUTOPOTIONEQUIP ) );
 				break;
 			case 203:	// AF_POISONEDCHECKS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_POISONEDCHECKS )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_POISONEDCHECKS ) );
 				break;
 			case 204:	// AF_LOOPEDMACROS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_LOOPEDMACROS )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_LOOPEDMACROS ) );
 				break;
 			case 205:	// AF_USEONCEAGENT
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_USEONCEAGENT )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_USEONCEAGENT ) );
 				break;
 			case 206:	// AF_RESTOCKAGENT
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_RESTOCKAGENT )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_RESTOCKAGENT ) );
 				break;
 			case 207:	// AF_SELLAGENT
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_SELLAGENT )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_SELLAGENT ) );
 				break;
 			case 208:	// AF_BUYAGENT
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_BUYAGENT )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_BUYAGENT ) );
 				break;
 			case 209:	// AF_POTIONHOTKEYS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_POTIONHOTKEYS )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_POTIONHOTKEYS ) );
 				break;
 			case 210:	// AF_RANDOMTARGETS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_RANDOMTARGETS )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_RANDOMTARGETS ) );
 				break;
 			case 211:	// AF_CLOSESTTARGETS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_CLOSESTTARGETS )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_CLOSESTTARGETS ) );
 				break;
 			case 212:	// AF_OVERHEADHEALTH
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_OVERHEADHEALTH )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_OVERHEADHEALTH ) );
 				break;
 			case 213:	// AF_AUTOLOOTAGENT
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_AUTOLOOTAGENT )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_AUTOLOOTAGENT ) );
 				break;
 			case 214:	// AF_BONECUTTERAGENT
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_BONECUTTERAGENT )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_BONECUTTERAGENT ) );
 				break;
 			case 215:	// AF_JSCRIPTMACROS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_JSCRIPTMACROS )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_JSCRIPTMACROS ) );
 				break;
 			case 216:	// AF_AUTOREMOUNT
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_AUTOREMOUNT )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_AUTOREMOUNT ) );
 				break;
 			case 217:	// AF_ALL
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_ALL )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_ALL ) );
 				break;
 			case 218:	// CLASSICUOMAPTRACKER
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetClassicUOMapTracker() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetClassicUOMapTracker()  );
 				break;
 			case 219:	// DECAYTIMERINHOUSE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( static_cast<cSD_TID>( tSERVER_DECAYINHOUSE )))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( static_cast<cSD_TID>( tSERVER_DECAYINHOUSE ))) );
 				break;
 			case 220:	// PROTECTPRIVATEHOUSES
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ProtectPrivateHouses() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ProtectPrivateHouses()  );
 				break;
 			case 221:	// TRACKHOUSESPERACCOUNT
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->TrackHousesPerAccount() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->TrackHousesPerAccount()  );
 				break;
 			case 222:	// MAXHOUSESOWNABLE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->MaxHousesOwnable() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->MaxHousesOwnable() ) );
 				break;
 			case 223:	// MAXHOUSESCOOWNABLE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->MaxHousesCoOwnable() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->MaxHousesCoOwnable() ) );
 				break;
 			case 224:	// CANOWNANDCOOWNHOUSES
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CanOwnAndCoOwnHouses() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->CanOwnAndCoOwnHouses()  );
 				break;
 			case 225:	// COOWNHOUSESONSAMEACCOUNT
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CoOwnHousesOnSameAccount() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->CoOwnHousesOnSameAccount()  );
 				break;
 			case 226:	// ITEMSDETECTSPEECH
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ItemsDetectSpeech() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ItemsDetectSpeech()  );
 				break;
 			case 227:	// MAXPLAYERPACKITEMS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->MaxPlayerPackItems() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->MaxPlayerPackItems() ) );
 				break;
 			case 228:	// MAXPLAYERBANKITEMS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->MaxPlayerBankItems() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->MaxPlayerBankItems() ) );
 				break;
 			case 229:	// FORCENEWANIMATIONPACKET
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ForceNewAnimationPacket() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ForceNewAnimationPacket()  );
 				break;
 			case 230:	// MAPDIFFSENABLED
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->MapDiffsEnabled() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->MapDiffsEnabled()  );
 				break;
 			case 231:	// CORESHARDERA
 			{
 				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionCoreShardEra() ), true ) };
 				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			}
 			case 232:	// ARMORCALCULATION
 			{
 				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionArmorCalculation() )) };
 				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			}
 			case 233:	// STRENGTHDAMAGEBONUS
 			{
 				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionStrengthDamageBonus() )) };
 				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			}
 			case 234:	// TACTICSDAMAGEBONUS
 			{
 				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionTacticsDamageBonus() )) };
 				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			}
 			case 235:	// ANATOMYDAMAGEBONUS
 			{
 				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionAnatomyDamageBonus() )) };
 				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			}
 			case 236:	// LUMBERJACKDAMAGEBONUS
 			{
 				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionLumberjackDamageBonus() )) };
 				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			}
 			case 237:	// RACIALDAMAGEBONUS
 			{
 				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionRacialDamageBonus() )) };
 				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			}
 			case 238:	// DAMAGEBONUSCAP
 			{
 				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionDamageBonusCap() )) };
 				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			}
 			case 239:	// SHIELDPARRY
 			{
 				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionShieldParry() )) };
 				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			}
 			case 240:	// PARRYDAMAGECHANCE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->CombatParryDamageChance() )) );
+				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->CombatParryDamageChance() ) );
 				break;
 			case 241:	// PARRYDAMAGEMIN
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->CombatParryDamageMin() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->CombatParryDamageMin() ) );
 				break;
 			case 242:	// PARRYDAMAGEMAX
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->CombatParryDamageMax() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->CombatParryDamageMax() ) );
 				break;
 			case 243:	// ARMORCLASSDAMAGEBONUS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CombatArmorClassDamageBonus() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->CombatArmorClassDamageBonus()  );
 				break;
 			case 244:	// FREESHARDSERVERPOLL
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->FreeshardServerPoll() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->FreeshardServerPoll()  );
 				break;
 			case 245:	// ALCHEMYBONUSENABLED
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->AlchemyDamageBonusEnabled() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->AlchemyDamageBonusEnabled()  );
 				break;
 			case 246:	// ALCHEMYBONUSMODIFIER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->AlchemyDamageBonusModifier() )) );
+				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->AlchemyDamageBonusModifier() ) );
 				break;
 			case 247:	 // NPCFLAGUPDATETIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( static_cast<cSD_TID>( tSERVER_NPCFLAGUPDATETIMER )))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( static_cast<cSD_TID>( tSERVER_NPCFLAGUPDATETIMER ))) );
 				break;
 			case 248:	 // JSENGINESIZE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->GetJSEngineSize() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->GetJSEngineSize() ) );
 				break;
 			case 249:	 // USEUNICODEMESSAGES
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->UseUnicodeMessages() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->UseUnicodeMessages() ) );
 				break;
 			case 250:	 // SCRIPTDATADIRECTORY
 			{
 				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTDATA ).c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			}
 			case 251:	 // THIRSTRATE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( static_cast<cSD_TID>( tSERVER_THIRSTRATE )))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( static_cast<cSD_TID>( tSERVER_THIRSTRATE ))) );
 				break;
 			case 252:	 // THIRSTDRAINVAL
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ThirstDrain() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->ThirstDrain() ) );
 				break;
 			case 253:	 // PETTHIRSTOFFLINE
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->PetThirstOffline() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->PetThirstOffline()  );
 				break;
 			case 255:	 // BLOODDECAYTIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_BLOODDECAY ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_BLOODDECAY )) );
 				break;
 			case 256:	 // BLOODDECAYCORPSETIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_BLOODDECAYCORPSE ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_BLOODDECAYCORPSE )) );
 				break;
 			case 257:	// BLOODEFFECTCHANCE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->CombatBloodEffectChance() )) );
+				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->CombatBloodEffectChance() ) );
 				break;
 			case 258:	 // NPCCORPSEDECAYTIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_NPCCORPSEDECAY ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_NPCCORPSEDECAY )) );
 				break;
 			case 259:	 // HUNGERENABLED
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HungerSystemEnabled() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->HungerSystemEnabled()  );
 				break;
 			case 260:	 // THIRSTENABLED
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ThirstSystemEnabled() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ThirstSystemEnabled()  );
 				break;
 			case 261:	 // TRAVELSPELLSFROMBOATKEYS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->TravelSpellsFromBoatKeys() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->TravelSpellsFromBoatKeys()  );
 				break;
 			case 262:	 // TRAVELSPELLSWHILEOVERWEIGHT
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->TravelSpellsWhileOverweight() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->TravelSpellsWhileOverweight()  );
 				break;
 			case 263:	 // MARKRUNESINMULTIS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->MarkRunesInMultis() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->MarkRunesInMultis()  );
 				break;
 			case 264:	 // TRAVELSPELLSBETWEENWORLDS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->TravelSpellsBetweenWorlds()  );
 				break;
 			case 265:	 // TRAVELSPELLSWHILEAGGRESSOR
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->TravelSpellsWhileAggressor() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->TravelSpellsWhileAggressor()  );
 				break;
 			case 266:	 // BANKBUYTHRESHOLD
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->BuyThreshold() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->BuyThreshold() ) );
 				break;
 			case 267:	 // NETWORKLOG
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerNetworkLog() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ServerNetworkLog()  );
 				break;
 			case 268:	 // SPEECHLOG
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerSpeechLog() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ServerSpeechLog()  );
 				break;
 			case 269:	 // NPCMOUNTEDWALKINGSPEED
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<R64>( cwmWorldState->ServerData()->NPCMountedWalkingSpeed() ) ) );
+				args.rval().setInt32(  static_cast<R64>( cwmWorldState->ServerData()->NPCMountedWalkingSpeed() )  );
 				break;
 			case 270:	 // NPCMOUNTEDRUNNINGSPEED
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<R64>( cwmWorldState->ServerData()->NPCMountedRunningSpeed() ) ) );
+				args.rval().setInt32(  static_cast<R64>( cwmWorldState->ServerData()->NPCMountedRunningSpeed() )  );
 				break;
 			case 271:	 // NPCMOUNTEDFLEEINGSPEED
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<R64>( cwmWorldState->ServerData()->NPCMountedFleeingSpeed() ) ) );
+				args.rval().setInt32(  static_cast<R64>( cwmWorldState->ServerData()->NPCMountedFleeingSpeed() )  );
 				break;
 			case 272:	 // CONTEXTMENUS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerContextMenus() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ServerContextMenus()  );
 				break;
 			case 273:	// SERVERLANGUAGE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->ServerLanguage() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->ServerLanguage() ) );
 				break;
 			case 274:	// CHECKPETCONTROLDIFFICULTY
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CheckPetControlDifficulty() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->CheckPetControlDifficulty()  );
 				break;
 			case 275:	// PETLOYALTYGAINONSUCCESS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->GetPetLoyaltyGainOnSuccess() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->GetPetLoyaltyGainOnSuccess() ) );
 				break;
 			case 276:	// PETLOYALTYLOSSONFAILURE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->GetPetLoyaltyLossOnFailure() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->GetPetLoyaltyLossOnFailure() ) );
 				break;
 			case 277:	// PETLOYALTYRATE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_LOYALTYRATE ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_LOYALTYRATE )) );
 				break;
 			case 278:	// SHOWNPCTITLESINTOOLTIPS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ShowNpcTitlesInTooltips() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ShowNpcTitlesInTooltips()  );
 				break;
 			case 279:	// FISHPERAREA
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ResFish() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->ResFish() ) );
 				break;
 			case 280:	// FISHRESPAWNTIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->ResFishTime() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->ResFishTime() ) );
 				break;
 			case 281:	 // ARCHERYHITBONUS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->CombatArcheryHitBonus() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->CombatArcheryHitBonus() ) );
 				break;
 			case 282:	// ITEMSINTERRUPTCASTING
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ItemsInterruptCasting() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ItemsInterruptCasting()  );
 				break;
 			case 283:	// SYSMESSAGECOLOUR
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SysMsgColour() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SysMsgColour() ) );
 				break;
 			case 284:	// AF_AUTOBANDAGE
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_AUTOBANDAGE )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_AUTOBANDAGE ) );
 				break;
 			case 285:	// AF_ENEMYTARGETSHARE
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_ENEMYTARGETSHARE )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_ENEMYTARGETSHARE ) );
 				break;
 			case 286:	// AF_FILTERSEASON
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_FILTERSEASON )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_FILTERSEASON ) );
 				break;
 			case 287:	// AF_SPELLTARGETSHARE
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_SPELLTARGETSHARE )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_SPELLTARGETSHARE ) );
 				break;
 			case 288:	// AF_HUMANOIDHEALTHCHECKS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_HUMANOIDHEALTHCHECKS )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_HUMANOIDHEALTHCHECKS ) );
 				break;
 			case 289:	// AF_SPEECHJOURNALCHECKS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_SPEECHJOURNALCHECKS )) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_SPEECHJOURNALCHECKS ) );
 				break;
 			case 290:	// ARCHERYSHOOTDELAY
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<R64>( cwmWorldState->ServerData()->CombatArcheryShootDelay() ) ) );
+				args.rval().setInt32(  static_cast<R64>( cwmWorldState->ServerData()->CombatArcheryShootDelay() )  );
 				break;
 			case 291:	 // MAXCLIENTBYTESIN
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->MaxClientBytesIn() )) );
+				args.rval().setInt32(  static_cast<UI32>( cwmWorldState->ServerData()->MaxClientBytesIn() ) );
 				break;
 			case 292:	 // MAXCLIENTBYTESOUT
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->MaxClientBytesOut() )) );
+				args.rval().setInt32(  static_cast<UI32>( cwmWorldState->ServerData()->MaxClientBytesOut() ) );
 				break;
 			case 293:	 // NETTRAFFICTIMEBAN
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->NetTrafficTimeban() )) );
+				args.rval().setInt32(  static_cast<UI32>( cwmWorldState->ServerData()->NetTrafficTimeban() ) );
 				break;
 			case 294:	 // TOOLUSELIMIT
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ToolUseLimit() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ToolUseLimit()  );
 				break;
 			case 295:	 // TOOLUSEBREAK
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ToolUseBreak() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ToolUseBreak()  );
 				break;
 			case 296:	 // ITEMREPAIRDURABILITYLOSS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ItemRepairDurabilityLoss() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ItemRepairDurabilityLoss()  );
 				break;
 			case 297:	 // HIDESTATSFORUNKNOWNMAGICITEMS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HideStatsForUnknownMagicItems() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->HideStatsForUnknownMagicItems()  );
 				break;
 			case 298:	 // CRAFTCOLOUREDWEAPONS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CraftColouredWeapons() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->CraftColouredWeapons()  );
 				break;
 			case 299:	// MAXSAFETELEPORTSPERDAY
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->MaxSafeTeleportsPerDay() )) );
+				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->MaxSafeTeleportsPerDay() ) );
 				break;
 			case 300:	 // TELEPORTONEARESTSAFELOCATION
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->TeleportToNearestSafeLocation() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->TeleportToNearestSafeLocation()  );
 				break;
 			case 301:	 // ALLOWAWAKENPCS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->AllowAwakeNPCs() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->AllowAwakeNPCs()  );
 				break;
 			case 302:	 // DISPLAYMAKERSMARK
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->DisplayMakersMark() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->DisplayMakersMark()  );
 				break;
 			case 303:	// SHOWNPCTITLESOVERHEAD
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ShowNpcTitlesOverhead() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ShowNpcTitlesOverhead()  );
 				break;
 			case 304:	// SHOWINVULNERABLETAGOVERHEAD
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ShowInvulnerableTagOverhead() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ShowInvulnerableTagOverhead()  );
 				break;
 			case 305:	// PETCOMBATTRAINING
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->PetCombatTraining() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->PetCombatTraining()  );
 				break;
 			case 306:	// HIRELINGCOMBATTRAINING
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HirelingCombatTraining() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->HirelingCombatTraining()  );
 				break;
 			case 307:	// NPCCOMBATTRAINING
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->NpcCombatTraining() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->NpcCombatTraining()  );
 				break;
 			case 308:	// GLOBALRESTOCKMULTIPLIER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<R32>( cwmWorldState->ServerData()->GlobalRestockMultiplier() )) );
+				args.rval().setInt32(  static_cast<R32>( cwmWorldState->ServerData()->GlobalRestockMultiplier() ) );
 				break;
 			case 309:	// SHOWITEMRESISTSTATS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ShowItemResistStats() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ShowItemResistStats()  );
 				break;
 			case 310:	// SHOWWEAPONDAMAGETYPES
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ShowWeaponDamageTypes() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ShowWeaponDamageTypes()  );
 				break;
 			case 311:	// SHOWRACEWITHNAME
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ShowRaceWithName() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ShowRaceWithName()  );
 				break;
 			case 312:	// SHOWRACEINPAPERDOLL
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ShowRaceInPaperdoll() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ShowRaceInPaperdoll()  );
 				break;
 			case 313:	// WEAPONPARRY
 			{
 				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionWeaponParry() )) };
 				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			}
 			case 314:	// WRESTLINGPARRY
 			{
 				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionWrestlingParry() )) };
 				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			}
 			case 315:	// COMBATHITCHANCE
 			{
 				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionCombatHitChance() )) };
 				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			}
 			case 316:	// CASTSPELLSWHILEMOVING
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CastSpellsWhileMoving() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->CastSpellsWhileMoving()  );
 				break;
 			case 317:	// SHOWREPUTATIONTITLEINTOOLTIP
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ShowReputationTitleInTooltip() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ShowReputationTitleInTooltip()  );
 				break;
 			case 318:	// SHOWGUILDINFOINTOOLTIP
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ShowGuildInfoInTooltip() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ShowGuildInfoInTooltip()  );
 				break;
 			case 319:	// MAXPLAYERPACKWEIGHT
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI32>( cwmWorldState->ServerData()->MaxPlayerPackWeight() )) );
+				args.rval().setInt32(  static_cast<SI32>( cwmWorldState->ServerData()->MaxPlayerPackWeight() ) );
 				break;
 			case 320:	// MAXPLAYERBANKWEIGHT
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI32>( cwmWorldState->ServerData()->MaxPlayerBankWeight() )) );
+				args.rval().setInt32(  static_cast<SI32>( cwmWorldState->ServerData()->MaxPlayerBankWeight() ) );
 				break;
 			case 321:	// SAFECOOWNERLOGOUT
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->SafeCoOwnerLogout() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->SafeCoOwnerLogout()  );
 				break;
 			case 322:	// SAFEFRIENDLOGOUT
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->SafeFriendLogout() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->SafeFriendLogout()  );
 				break;
 			case 323:	// SAFEGUESTLOGOUT
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->SafeGuestLogout() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->SafeGuestLogout()  );
 				break;
 			case 324:	// KEYLESSOWNERACCESS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->KeylessOwnerAccess() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->KeylessOwnerAccess()  );
 				break;
 			case 325:	// KEYLESSCOOWNERACCESS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->KeylessCoOwnerAccess() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->KeylessCoOwnerAccess()  );
 				break;
 			case 326:	// KEYLESSFRIENDACCESS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->KeylessFriendAccess() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->KeylessFriendAccess()  );
 				break;
 			case 327:	// KEYLESSGUESTACCESS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->KeylessGuestAccess() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->KeylessGuestAccess()  );
 				break;
 			case 328:	// WEAPONDAMAGEBONUSTYPE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->WeaponDamageBonusType() )) );
+				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->WeaponDamageBonusType() ) );
 				break;
 			case 329:	// OFFERBODSFROMITEMSALES
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->OfferBODsFromItemSales() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->OfferBODsFromItemSales()  );
 				break;
 			case 330:	// OFFERBODSFROMCONTEXTMENU
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->OfferBODsFromContextMenu() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->OfferBODsFromContextMenu()  );
 				break;
 			case 331:	// BODSFROMCRAFTEDITEMSONLY
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->BODsFromCraftedItemsOnly() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->BODsFromCraftedItemsOnly()  );
 				break;
 			case 332:	// BODGOLDREWARDMULTIPLIER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<R32>( cwmWorldState->ServerData()->BODGoldRewardMultiplier() )) );
+				args.rval().setInt32(  static_cast<R32>( cwmWorldState->ServerData()->BODGoldRewardMultiplier() ) );
 				break;
 			case 333:	// BODFAMEREWARDMULTIPLIER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<R32>( cwmWorldState->ServerData()->BODFameRewardMultiplier() )) );
+				args.rval().setInt32(  static_cast<R32>( cwmWorldState->ServerData()->BODFameRewardMultiplier() ) );
 				break;
 			case 334:	// ENABLENPCGUILDDISCOUNTS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->EnableNPCGuildDiscounts() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->EnableNPCGuildDiscounts()  );
 				break;
 			case 335:	// ENABLENPCGUILDPREMIUMS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->EnableNPCGuildPremiums() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->EnableNPCGuildPremiums()  );
 				break;
 			case 336:	 // AGGRESSORFLAGTIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_AGGRESSORFLAG ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_AGGRESSORFLAG )) );
 				break;
 			case 337:	 // PERMAGREYFLAGTIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_PERMAGREYFLAG ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_PERMAGREYFLAG )) );
 				break;
 			case 338:	 // STEALINGFLAGTIMER
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_STEALINGFLAG ))) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_STEALINGFLAG )) );
 				break;
 			case 339:	 // SNOOPAWARENESS
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->SnoopAwareness() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->SnoopAwareness()  );
 				break;
 			case 340:	 // APSPERFTHRESHOLD
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->APSPerfThreshold() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->APSPerfThreshold() ) );
 				break;
 			case 341:	 // APSINTERVAL
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->APSPerfThreshold() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->APSPerfThreshold() ) );
 				break;
 			case 342:	 // APSDELAYSTEP
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->APSDelayStep() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->APSDelayStep() ) );
 				break;
 			case 343:	 // APSDELAYMAXCAP
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->APSDelayMaxCap() )) );
+				args.rval().setInt32(  static_cast<UI16>( cwmWorldState->ServerData()->APSDelayMaxCap() ) );
 				break;
 			case 344:	 // YOUNGPLAYERSYSTEM
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->YoungPlayerSystem() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->YoungPlayerSystem()  );
 				break;
 			//case 345:	 // YOUNGLOCATION
 				//break;
@@ -5623,188 +5582,188 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 			{
 				std::string tempString = { cwmWorldState->ServerData()->SecretShardKey() };
 				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
+				args.rval().setString( tString );
 				break;
 			}
 			case 347:	 // MOONGATESFACETS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->GetMoongateFacetStatus() )) );
+				args.rval().setInt32(  static_cast<UI32>( cwmWorldState->ServerData()->GetMoongateFacetStatus() ) );
 				break;
 			case 348:	 // AUTOUNEQUIPPEDCASTING
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->AutoUnequippedCasting() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->AutoUnequippedCasting()  );
 				break;
 			case 349:	 // LOOTDECAYSWITHPLAYERCORPSE
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->NpcCorpseLootDecay() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->NpcCorpseLootDecay()  );
 				break;
 			case 350:	// HEALTHREGENCAP
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->HealthRegenCap() ) ) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->HealthRegenCap() )  );
 				break;
 			case 351:	// STAMINAREGENCAP
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->StaminaRegenCap() ) ) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->StaminaRegenCap() )  );
 				break;
 			case 352:	// MANAREGENCAP
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ManaRegenCap() ) ) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->ManaRegenCap() )  );
 				break;
 			case 353:	// SWINGSPEEDINCREASECAP
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->SwingSpeedIncreaseCap() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->SwingSpeedIncreaseCap() ) );
 				break;
 			case 354:	 // KARMALOCKING
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->KarmaLocking() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->KarmaLocking()  );
 				break;
 			case 355:	// PHYSICALRESISTCAP
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->PhysicalResistCap() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->PhysicalResistCap() ) );
 				break;
 			case 356:	// FIRERESISTCAP
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->FireResistCap() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->FireResistCap() ) );
 				break;
 			case 357:	// COLDRESISTCAP
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ColdResistCap() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->ColdResistCap() ) );
 				break;
 			case 358:	// POISONRESISTCAP
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->PoisonResistCap() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->PoisonResistCap() ) );
 				break;
 			case 359:	// ENGERYRESISTCAP
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->EnergyResistCap() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->EnergyResistCap() ) );
 				break;
 			case 360:	// DEFENSECHANCEINCREASECAP
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->DefenseChanceIncreaseCap() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->DefenseChanceIncreaseCap() ) );
 				break;
 			case 361:	// DAMAGEINCREASECAP
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->DamageIncreaseCap() )) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->DamageIncreaseCap() ) );
 				break;
 			case 362:	// HEALINGAFFECTHEALTHREGEN
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HealingAffectHealthRegen() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->HealingAffectHealthRegen()  );
 				break;
 			case 363:	// HEALTHREGENMODE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->HealthRegenMode() ) ) );
+				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->HealthRegenMode() )  );
 				break;
 			case 364:	// STAMINAREGENMODE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->StaminaRegenMode() ) ) );
+				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->StaminaRegenMode() )  );
 				break;
 			case 365:	// MANAREGENMODE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->ManaRegenMode() ) ) );
+				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->ManaRegenMode() )  );
 				break;
 			case 366:	// HUNGERAFFECTHEALTHREGEN
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HungerAffectHealthRegen() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->HungerAffectHealthRegen()  );
 				break;
 			case 367:	// THIRSTAFFECTSTAMINAREGEN
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ThirstAffectStaminaRegen() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->ThirstAffectStaminaRegen()  );
 				break;
 			case 368:	// HUMANHEALTHREGENBONUS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->HumanHealthRegenBonus() ) ) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->HumanHealthRegenBonus() )  );
 				break;
 			case 369:	// HUMANSTAMINAREGENBONUS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->HumanStaminaRegenBonus() ) ) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->HumanStaminaRegenBonus() )  );
 				break;
 			case 370:	// HUMANMANAREGENBONUS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->HumanManaRegenBonus() ) ) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->HumanManaRegenBonus() )  );
 				break;
 			case 371:	// ELFHEALTHREGENBONUS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ElfHealthRegenBonus() ) ) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->ElfHealthRegenBonus() )  );
 				break;
 			case 372:	// ELFSTAMINAREGENBONUS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ElfStaminaRegenBonus() ) ) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->ElfStaminaRegenBonus() )  );
 				break;
 			case 373:	// ELFMANAREGENBONUS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ElfManaRegenBonus() ) ) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->ElfManaRegenBonus() )  );
 				break;
 			case 374:	// GARGOYLEHEALTHREGENBONUS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->GargoyleHealthRegenBonus() ) ) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->GargoyleHealthRegenBonus() )  );
 				break;
 			case 375:	// GARGOYLESTAMINAREGENBONUS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->GargoyleStaminaRegenBonus() ) ) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->GargoyleStaminaRegenBonus() )  );
 				break;
 			case 376:	// GARGOYLEMANAREGENBONUS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->GargoyleManaRegenBonus() ) ) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->GargoyleManaRegenBonus() )  );
 				break;
 			case 377:	// HUMANMAXWEIGHTBONUS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->HumanMaxWeightBonus() ) ) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->HumanMaxWeightBonus() )  );
 				break;
 			case 378:	// ELFMAXWEIGHTBONUS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ElfMaxWeightBonus() ) ) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->ElfMaxWeightBonus() )  );
 				break;
 			case 379:	// GARGOYLEMAXWEIGHTBONUS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->GargoyleMaxWeightBonus() ) ) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->GargoyleMaxWeightBonus() )  );
 				break;
 			case 380:	// MAXNPCAGGRORANGE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->CombatMaxNpcAggroRange() ) ) );
+				args.rval().setInt32(  static_cast<SI16>( cwmWorldState->ServerData()->CombatMaxNpcAggroRange() )  );
 				break;
 			case 381:	// POISONCORROSIONSYSTEM
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->PoisonCorrosionSystem() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->PoisonCorrosionSystem()  );
 				break;
 			case 382:	// PETBONDINGENABLED
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->PetBondingEnabled() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->PetBondingEnabled()  );
 				break;
 			case 383:	// HOUSEITEMSDELETEONDECAY
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HouseItemsDeleteOnDecay() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->HouseItemsDeleteOnDecay()  );
 				break;
 			case 384:	// HOUSEGRANDFATHEREDSYSTEM
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HouseGrandFatheredSystem() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->HouseGrandFatheredSystem()  );
 				break;
 			case 385:	// DECAYSTAGELIKENEWMINS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->DecayStageLikeNewMins() ) ) );
+				args.rval().setInt32(  static_cast<UI32>( cwmWorldState->ServerData()->DecayStageLikeNewMins() )  );
 				break;
 			case 386:	// DECAYSTAGELOWHRS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->DecayStageLowHrs() ) ) );
+				args.rval().setInt32(  static_cast<UI32>( cwmWorldState->ServerData()->DecayStageLowHrs() )  );
 				break;
 			case 387:	// DECAYSTAGEHIHRS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->DecayStageHiHrs() ) ) );
+				args.rval().setInt32(  static_cast<UI32>( cwmWorldState->ServerData()->DecayStageHiHrs() )  );
 				break;
 			case 388:	// DECAYSTAGEDANGERHRS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->DecayStageDangerHrs() ) ) );
+				args.rval().setInt32(  static_cast<UI32>( cwmWorldState->ServerData()->DecayStageDangerHrs() )  );
 				break;
 			case 389:	// HOUSEDECAY
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HouseDecay() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->HouseDecay()  );
 				break;
 			case 395:	// QUESTSYSTEMENABLED
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->QuestSystemEnabled() ) );
+				args.rval().setBoolean(  cwmWorldState->ServerData()->QuestSystemEnabled()  );
 				break;
 			case 400:	// SPEEDHACKDETECTTION
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->SpeedHackDetection() ));
+				args.rval().setBoolean(  cwmWorldState->ServerData()->SpeedHackDetection()  );
 				break;
 			case 401:	 // SPEEDHACKMAXDEBT
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SpeedHackMaxDebt() )));
+				args.rval().setInt32( static_cast<UI16>( cwmWorldState->ServerData()->SpeedHackMaxDebt() ) );
 				break;
 			case 402:	 // SPEEDHACKMAXDEBTAVG
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<R64>( cwmWorldState->ServerData()->SpeedHackMaxDebtAvg() )));
+				args.rval().setInt32( static_cast<R64>( cwmWorldState->ServerData()->SpeedHackMaxDebtAvg() ) );
 				break;
 			case 403:	// SpeedHackMaxCredit
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->SpeedHackMaxCredit() )));
+				args.rval().setInt32(static_cast<SI16>( cwmWorldState->ServerData()->SpeedHackMaxCredit() ) );
 				break;
 			case 404:	 // SPEEDHACKGRACETHRESHOLD
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SpeedHackGraceThreshold() )));
+				args.rval().setInt32(static_cast<UI16>( cwmWorldState->ServerData()->SpeedHackGraceThreshold() ) );
 				break;
 			case 405:	 // SPEEDHACKTHROTTLEPENALTY
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SpeedHackThrottlePenalty() )));
+				args.rval().setInt32(static_cast<UI16>( cwmWorldState->ServerData()->SpeedHackThrottlePenalty() ) );
 				break;
 			case 406:	// EVENTMANAGERSYSTEM
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->EventManagerSystem() ));
+				args.rval().setBoolean(  cwmWorldState->ServerData()->EventManagerSystem()  );
 				break;
 			case 407:	// LOGINQUESTENABLED
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->LoginQuestEnabled() ));
+				args.rval().setBoolean(  cwmWorldState->ServerData()->LoginQuestEnabled()  );
 				break;
 			case 408:	// VENDORCHARGESENABLED
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->VendorChargesEnabled() ));
+				args.rval().setBoolean(  cwmWorldState->ServerData()->VendorChargesEnabled()  );
 				break;
 			case 409:	// VENDORBASECHARGE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->VendorBaseCharge() )));
+				args.rval().setInt32( static_cast<SI16>( cwmWorldState->ServerData()->VendorBaseCharge() ) );
 				break;
 			case 410:	// VENDORCHARGEHOURS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->VendorChargeHours() )));
+				args.rval().setInt32( static_cast<SI16>( cwmWorldState->ServerData()->VendorChargeHours() ) );
 				break;
 			case 411:	// VENDORUSEITEMFEESENABLED
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->VendorUseItemFeesEnabled() ));
+				args.rval().setBoolean(  cwmWorldState->ServerData()->VendorUseItemFeesEnabled()  );
 				break;
 			case 412:	// VENDORITEMFEEDIVISOR
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->VendorItemFeeDivisor() )));
+				args.rval().setInt32( static_cast<SI16>( cwmWorldState->ServerData()->VendorItemFeeDivisor() ) );
 				break;
 			case 413:	// VENDORITEMFEEAMOUNT
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->VendorItemFeeAmount() )));
+				args.rval().setInt32( static_cast<SI16>( cwmWorldState->ServerData()->VendorItemFeeAmount() ) );
 				break;
 			case 414:	// ONLYRETURNTOBANK
-				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->OnlyReturnToBank() ));
+				args.rval().setBoolean(  cwmWorldState->ServerData()->OnlyReturnToBank()  );
 				break;
 			case 415:	// VENDORMAXFUNDS
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->VendorMaxFunds() )));
+				args.rval().setInt32( static_cast<UI32>( cwmWorldState->ServerData()->VendorMaxFunds() ) );
 				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );
@@ -5814,9 +5773,9 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 	else
 	{
 		ScriptError( cx, "GetServerSetting: Provided argument contained no valid string data" );
-		return JS_FALSE;
+		return false;
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5824,19 +5783,19 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if a specific client feature is enabled on server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetClientFeature( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetClientFeature( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetClientFeature: Invalid number of arguments (takes 1 - feature ID)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	ClientFeatures clientFeature = static_cast<ClientFeatures>( JSVAL_TO_INT( argv[0] ));
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetClientFeature( clientFeature )) );
-	return JS_TRUE;
+	ClientFeatures clientFeature = static_cast<ClientFeatures>( args.get(0).toInt32());
+	args.rval().setBoolean(  cwmWorldState->ServerData()->GetClientFeature( clientFeature ) );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5844,19 +5803,19 @@ JSBool SE_GetClientFeature( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if a specific Server feature is enabled on server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetServerFeature( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetServerFeature( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
+	auto args = JS::CallArgsFromVp(argc, vp);
 
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetServerFeature: Invalid number of arguments (takes 1 - feature ID)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	ServerFeatures serverFeature = static_cast<ServerFeatures>( JSVAL_TO_INT( argv[0] ));
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetServerFeature( serverFeature )) );
-	return JS_TRUE;
+	ServerFeatures serverFeature = static_cast<ServerFeatures>( args.get(0).toInt32());
+	args.rval().setBoolean(  cwmWorldState->ServerData()->GetServerFeature( serverFeature ) );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5864,10 +5823,11 @@ JSBool SE_GetServerFeature( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets number of accounts on server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetAccountCount( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetAccountCount( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( Accounts->size() ) );
-	return JS_TRUE;
+	auto args = JS::CallArgsFromVp(argc, vp);
+	args.rval().setInt32(  Accounts->size()  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5875,10 +5835,11 @@ JSBool SE_GetAccountCount( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets number of players online on server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetPlayerCount( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetPlayerCount( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( cwmWorldState->GetPlayersOnline() ) );
-	return JS_TRUE;
+	auto args = JS::CallArgsFromVp(argc, vp);
+	args.rval().setInt32(  cwmWorldState->GetPlayersOnline()  );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5886,10 +5847,11 @@ JSBool SE_GetPlayerCount( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets number of items on server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetItemCount( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetItemCount( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( ObjectFactory::GetSingleton().CountOfObjects( OT_ITEM )) );
-	return JS_TRUE;
+	auto args = JS::CallArgsFromVp(argc, vp);
+	args.rval().setInt32(  ObjectFactory::GetSingleton().CountOfObjects( OT_ITEM ) );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5897,10 +5859,11 @@ JSBool SE_GetItemCount( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets number of multis on server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetMultiCount( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetMultiCount( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( ObjectFactory::GetSingleton().CountOfObjects( OT_MULTI )) );
-	return JS_TRUE;
+	auto args = JS::CallArgsFromVp(argc, vp);
+	args.rval().setInt32(  ObjectFactory::GetSingleton().CountOfObjects( OT_MULTI ) );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5908,10 +5871,11 @@ JSBool SE_GetMultiCount( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets number of characters on server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetCharacterCount( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetCharacterCount( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( ObjectFactory::GetSingleton().CountOfObjects( OT_CHAR )) );
-	return JS_TRUE;
+	auto args = JS::CallArgsFromVp(argc, vp);
+	args.rval().setInt32(  ObjectFactory::GetSingleton().CountOfObjects( OT_CHAR ) );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5919,12 +5883,13 @@ JSBool SE_GetCharacterCount( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets server version as a string
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetServerVersionString( JSContext *cx, uintN argc, jsval *vp )
+bool SE_GetServerVersionString( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	std::string versionString = CVersionClass::GetVersion() + "." + CVersionClass::GetBuild() + " [" + OS_STR + "]";
-	JSString *tString = JS_NewStringCopyZ( cx, versionString.c_str() );
-	JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
-	return JS_TRUE;
+	JS::RootedString tString( cx, JS_NewStringCopyZ( cx, versionString.c_str() ));
+	auto args = JS::CallArgsFromVp(argc, vp);
+	args.rval().setString( tString );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5932,65 +5897,67 @@ JSBool SE_GetServerVersionString( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the distance between two locations, or two objects - or a combination of both
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DistanceBetween( JSContext *cx, uintN argc, jsval *vp )
+bool SE_DistanceBetween( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
-	jsval* rval = &JS_RVAL(cx, vp);
+	auto args = JS::CallArgsFromVp(argc, vp);
 	if( argc != 2 && argc != 3 && argc != 4 && argc != 6 )
 	{
 		ScriptError( cx, "DistanceBetween: needs 2, 3, 4 or 6 arguments - object a, object b - or object a, object b, (bool)checkZ - or x1, y1 and x2, y2 - or x1, y1, z1 and x2, y2, z2!" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( argc <= 3 )
 	{
 		// 2 or 3 arguments - find dinstance between two objects in 2D or 3D
-		JSObject *srcObj = JSVAL_TO_OBJECT( argv[0] );
-		JSObject *trgObj = JSVAL_TO_OBJECT( argv[1] );
-		bool checkZ = argc == 3 ? ( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE ) : false;
-		CBaseObject *srcBaseObj = static_cast<CBaseObject *>( JS_GetPrivate( cx, srcObj ));
-		CBaseObject *trgBaseObj = static_cast<CBaseObject *>( JS_GetPrivate( cx, trgObj ));
+		if( !args.get( 0 ).isObject() || !args.get( 1 ).isObject() )
+		{
+			ScriptError( cx, "DistanceBetween: Invalid source or target object" );
+			return false;
+		}
+		bool checkZ = argc == 3 ? ( args.get(2).toBoolean() == true ) : false;
+		CBaseObject *srcBaseObj = GetBaseObject( args.get( 0 ));
+		CBaseObject *trgBaseObj = GetBaseObject( args.get( 1 ));
 		if( !ValidateObject( srcBaseObj ) || !ValidateObject( trgBaseObj ))
 		{
 			ScriptError( cx, "DistanceBetween: Invalid source or target object" );
-			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( -1 ) );
-			return JS_FALSE;
+			args.rval().setInt32(  -1  );
+			return false;
 		}
 
 		if( checkZ )
 		{
-			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( GetDist3D( srcBaseObj, trgBaseObj )) );
+			args.rval().setInt32(  GetDist3D( srcBaseObj, trgBaseObj ) );
 		}
 		else
 		{
-			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( GetDist( srcBaseObj, trgBaseObj )) );
+			args.rval().setInt32(  GetDist( srcBaseObj, trgBaseObj ) );
 		}
 	}
 	else
 	{
-		UI16 x1 = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-		UI16 y1 = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+		UI16 x1 = static_cast<UI16>( args.get(0).toInt32());
+		UI16 y1 = static_cast<UI16>( args.get(1).toInt32());
 		UI16 x2 = 0;
 		UI16 y2 = 0;
 		if( argc == 4 )
 		{
 			// 4 arguments - find distance in 2D
-			x2		= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-			y2		= static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
-			*rval	= INT_TO_JSVAL( GetDist( Point3_st( x1, y1, 0 ), Point3_st( x2, y2, 0 )));
+			x2		= static_cast<UI16>( args.get(2).toInt32());
+			y2		= static_cast<UI16>( args.get(3).toInt32());
+			args.rval().setInt32( GetDist( Point3_st( x1, y1, 0 ), Point3_st( x2, y2, 0 )));
 		}
 		else
 		{
 			// 6 arguments - find distance in 3D
-			SI08 z1 = static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-			x2		= static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
-			y2		= static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
-			SI08 z2 = static_cast<SI08>( JSVAL_TO_INT( argv[5] ));
-			*rval	= INT_TO_JSVAL( GetDist3D( Point3_st( x1, y1, z1 ), Point3_st( x2, y2, z2 )));
+			SI08 z1 = static_cast<SI08>( args.get(2).toInt32());
+			x2		= static_cast<UI16>( args.get(3).toInt32());
+			y2		= static_cast<UI16>( args.get(4).toInt32());
+			SI08 z2 = static_cast<SI08>( args.get(5).toInt32());
+			args.rval().setInt32( GetDist3D( Point3_st( x1, y1, z1 ), Point3_st( x2, y2, z2 )));
 		}
 	}
 	
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5998,10 +5965,11 @@ JSBool SE_DistanceBetween( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the value of the BASEITEMSERIAL constant
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_BASEITEMSERIAL( JSContext *cx, uintN argc, jsval *vp )
+bool SE_BASEITEMSERIAL( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS_NewNumberValue( cx, BASEITEMSERIAL, &JS_RVAL( cx, vp ));
-	return JS_TRUE;
+	auto args = JS::CallArgsFromVp( argc, vp );
+	args.rval().setNumber( BASEITEMSERIAL );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6009,10 +5977,11 @@ JSBool SE_BASEITEMSERIAL( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the value of the INVALIDSERIAL constant
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_INVALIDSERIAL( JSContext *cx, uintN argc, jsval *vp )
+bool SE_INVALIDSERIAL( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS_NewNumberValue( cx, INVALIDSERIAL, &JS_RVAL( cx, vp ));
-	return JS_TRUE;
+	auto args = JS::CallArgsFromVp( argc, vp );
+	args.rval().setNumber( INVALIDSERIAL );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6020,10 +5989,11 @@ JSBool SE_INVALIDSERIAL( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the value of the INVALIDID constant
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_INVALIDID( JSContext *cx, uintN argc, jsval *vp )
+bool SE_INVALIDID( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS_NewNumberValue( cx, INVALIDID, &JS_RVAL( cx, vp ));
-	return JS_TRUE;
+	auto args = JS::CallArgsFromVp( argc, vp );
+	args.rval().setNumber( INVALIDID );
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6031,8 +6001,9 @@ JSBool SE_INVALIDID( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the value of the INVALIDCOLOUR constant
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_INVALIDCOLOUR( JSContext *cx, uintN argc, jsval *vp )
+bool SE_INVALIDCOLOUR( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	JS_NewNumberValue( cx, INVALIDCOLOUR, &JS_RVAL( cx, vp ));
-	return JS_TRUE;
+	auto args = JS::CallArgsFromVp( argc, vp );
+	args.rval().setNumber( INVALIDCOLOUR );
+	return true;
 }

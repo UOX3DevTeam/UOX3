@@ -1469,7 +1469,6 @@ void CSkills::Load( void )
 			ourScript->ScriptRegistration( "Skill" );
 		}
 	}
-
 	Console.PrintSectionBegin();
 }
 

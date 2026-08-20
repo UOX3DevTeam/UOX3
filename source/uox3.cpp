@@ -681,12 +681,6 @@ auto StartInitialize( CServerData &serverdata ) -> void
 
 	Console.Log( "-=Server Startup=-\n=======================================================================", "server.log" );
 
-	Console << "Creating and Initializing Console Thread      ";
-
-	cons = std::thread( &CheckConsoleKeyThread );
-
-	Console.PrintDone();
-
 	// Shows information about IPs and ports being listened on
 	Console.TurnYellow();
 
@@ -781,6 +775,11 @@ auto StartInitialize( CServerData &serverdata ) -> void
 			}
 		}
 	}
+
+	Console << "Creating and Initializing Console Thread      ";
+	Console.Registration();
+	cons = std::thread( &CheckConsoleKeyThread );
+	Console.PrintDone();
 
 	// Get a second timestamp for startup time
 	auto startupEndTime = std::chrono::high_resolution_clock::now();
@@ -942,6 +941,9 @@ auto DoMessageLoop() -> void
 				g_bPerformRestart = true;
 				cwmWorldState->SetKeepRun( false ); // This triggers the main loop to exit
 				break;
+			case MSG_CONSOLEJS:
+				Console.ExecuteJSCommand( oldstrutil::value<SI32>( tVal.data ));
+				break;
 			case MSG_COUNT: 	break;
 			case MSG_WORLDSAVE: cwmWorldState->SetOldTime( 0 ); break;
 			case MSG_PRINT: 	Console << tVal.data << myendl; break;
@@ -1036,7 +1038,6 @@ auto NetworkPollConnectionThread() -> void
 auto CheckConsoleKeyThread() -> void
 {
 	messageLoop << "Thread: CheckConsoleThread has started";
-	Console.Registration();
 	conThreadCloseOk = false;
 	while( !conThreadCloseOk )
 	{
@@ -3398,6 +3399,15 @@ auto Shutdown( SI32 retCode ) -> void
 	if( !retCode )
 	{
 		cons.join();
+	}
+
+	if( JSMapping != nullptr )
+	{
+		JSMapping->Shutdown();
+	}
+	if( JSEngine != nullptr )
+	{
+		JSEngine->Shutdown();
 	}
 
 	// don't leave file pointers open, could lead to file corruption

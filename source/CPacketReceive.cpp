@@ -2884,7 +2884,7 @@ bool CPIProfileRequest::Handle( void )
 			// to be replicated in script
 
 			try { // Add a try block for potential utfcpp exceptions
-				UI08 tempBuffer[1024];
+				UI08 tempBuffer[4096];
 				size_t mj = 0; // Current write position / running total size
 
 				 // It's generally safer to get the request buffer pointer once if needed
@@ -3009,27 +3009,56 @@ bool CPIProfileRequest::Handle( void )
 		auto msgLen = tSock->GetWord( 10 ); // length of profile text string
 		
 		size_t bytesToCopy = static_cast<size_t>( msgLen ) * 2;
-		char rawProfileBytes[512];
-		const size_t maxProfileBytes = sizeof( rawProfileBytes ) - 2; // reserve 2 bytes for null terminator
-		if( bytesToCopy >= maxProfileBytes )
+		if( bytesToCopy == 0 )
 		{
-			return false;
+			// Handle empty profile update
+			cScript *toExecute = JSMapping->GetScript( static_cast<UI16>( 0 ));
+			if( toExecute != nullptr )
+			{
+				toExecute->OnProfileUpdate( tSock, "" );
+			}
+			return true;
 		}
 
-		memcpy( rawProfileBytes, &(tSock->Buffer())[12], bytesToCopy );
+		// Cap maximum profile size to 1536 UTF-16 characters (3072 bytes)
+		constexpr size_t maxAllowedBytes = 3072;
+		if( bytesToCopy > maxAllowedBytes )
+		{
+			bytesToCopy = maxAllowedBytes; // Truncate rather than dropping packet entirely
+		}
+
+		// Ensure we don't read past the received network packet buffer
+		auto packetSize = static_cast<size_t>( tSock->GetWord( 1 ));
+		if( 12 + bytesToCopy > packetSize )
+		{
+			if( packetSize > 12 )
+			{
+				bytesToCopy = packetSize - 12;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		// Ensure bytesToCopy is an even number for UTF-16
+		bytesToCopy &= ~1;
+
+		std::vector<char> rawProfileBytes( bytesToCopy );
+		memcpy( rawProfileBytes.data(), &(tSock->Buffer())[12], bytesToCopy );
 
 		// Byte-swap the UTF-16 data (big-endian) to little-endian
 		for( size_t i = 0; i < bytesToCopy; i += 2 )
 		{
-			std::uint16_t* word_ptr = reinterpret_cast<uint16_t*>( rawProfileBytes + i );
+			std::uint16_t* word_ptr = reinterpret_cast<uint16_t*>( rawProfileBytes.data() + i );
 			*word_ptr = byte_swap_u16( *word_ptr );
 		}
 
 		// Convert Native UTF-16 from buffer to UTF-8
 		std::string utf8ProfileText;
 		try {
-			const char16_t* utf16_start = reinterpret_cast<const char16_t*>( rawProfileBytes );
-			const char16_t* utf16_end = reinterpret_cast<const char16_t*>( rawProfileBytes + bytesToCopy );
+			const char16_t* utf16_start = reinterpret_cast<const char16_t*>( rawProfileBytes.data() );
+			const char16_t* utf16_end = reinterpret_cast<const char16_t*>( rawProfileBytes.data() + bytesToCopy );
 
 			// Use std::back_inserter to append UTF-8 bytes directly to the string
 			utf8::utf16to8( utf16_start, utf16_end, std::back_inserter( utf8ProfileText ));
