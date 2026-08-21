@@ -348,7 +348,7 @@ bool CPIFirstLogin::Handle( void )
 	if( tSock->AcctNo() != AB_INVALID_ID )
 	{
 		actbTemp->dwLastIP = CalcSerial( tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1() );
-		auto temp = oldstrutil::format( "Client [%i.%i.%i.%i] connected using Account '%s'.", tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1(), username.c_str() );
+		auto temp = oldstrutil::format( "Account '%s' authenticated successfully with Login Server from [%i.%i.%i.%i].", username.c_str(), tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1() );
 		Console.Log( temp , "server.log" );
 		messageLoop << temp;
 
@@ -617,6 +617,10 @@ bool CPISecondLogin::Handle( void )
 	}
 	else
 	{
+		auto temp = oldstrutil::format( "Account '%s' connected successfully to Game Server from [%i.%i.%i.%i].", Name().c_str(), tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1() );
+		Console.Log( temp , "server.log" );
+		messageLoop << temp;
+
 		// If first login timestamp has not been set, set it here
 		if( actbTemp.wFirstLogin == 0 )
 		{
@@ -720,9 +724,9 @@ void CPINewClientVersion::Receive( void )
 		tSock->ClientVersion( majorVersion, minorVersion, clientRevision, clientPrototype );
 
 		std::string verString = oldstrutil::number( majorVersion ) + std::string( "." ) + 
-			oldstrutil::number( minorVersion ) + std::string( ". ") + oldstrutil::number( clientRevision ) +
+			oldstrutil::number( minorVersion ) + std::string( ".") + oldstrutil::number( clientRevision ) +
 			std::string( "." ) + oldstrutil::number( clientPrototype );
-		Console << verString << myendl;
+		messageLoop << oldstrutil::format( "Connection request (Socket %lu) from [%i.%i.%i.%i] using client v%s", cwmWorldState->GetPlayersOnline(), tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1(), verString.c_str() );
 
 		// Set client-version based on information received so far. We need this to be able to send the correct info during login
 		// Needs to be refined in second client-version pass (CPIClientVersion)
@@ -960,7 +964,7 @@ bool CPIClientVersion::Handle( void )
 		}
 
 		tSock->ClientVersion( major, minor, sub, letter );
-		Console << verString << myendl;
+		messageLoop << oldstrutil::format( "Connection request (Socket %lu) from [%i.%i.%i.%i] using client v%s", cwmWorldState->GetPlayersOnline(), tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1(), verString );
 	}
 
 	if( strstr( verString, "Dawn" ))

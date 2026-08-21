@@ -34,6 +34,7 @@
 #include "cThreadQueue.h"
 
 extern CThreadQueue messageLoop;
+extern bool forceTimeUpdate;
 
 void CollectGarbage( void );
 void EndMessage( SI32 x );
@@ -504,24 +505,19 @@ void Command_Dye( CSocket *s )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	(d d) Sets the current UO time in hours and minutes.
 //o------------------------------------------------------------------------------------------------o
-void Command_SetTime( void )
+void Command_SetTime( CSocket *s )
 {
 	if( Commands->NumArguments() == 3 )
 	{
 		UI08 newhours	= static_cast<UI08>( Commands->Argument( 1 ));
 		UI08 newminutes	= static_cast<UI08>( Commands->Argument( 2 ));
-		if(( newhours < 25 ) && ( newhours > 0 ) && ( newminutes < 60 ))
+		if( newhours < 24 && newminutes < 60 ) // 0 to 23
 		{
-			cwmWorldState->ServerData()->ServerTimeAMPM(( newhours > 12 ));
-			if( newhours > 12 )
-			{
-				cwmWorldState->ServerData()->ServerTimeHours( static_cast<UI08>( newhours - 12 ));
-			}
-			else
-			{
-				cwmWorldState->ServerData()->ServerTimeHours( newhours );
-			}
+			cwmWorldState->ServerData()->ServerTimeHours( newhours );
 			cwmWorldState->ServerData()->ServerTimeMinutes( newminutes );
+
+			// Force time update packet on next server loop
+			forceTimeUpdate = true;
 		}
 	}
 }
@@ -1535,7 +1531,7 @@ void CCommands::CommandReset()
 	CommandMap["SETPOST"]			= CommandMapEntry_st( CL_CNS,		CMD_SOCKFUNC,	(CMD_DEFINE)&Command_SetPost);
 	CommandMap["SPAWNKILL"]			= CommandMapEntry_st( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&Command_SpawnKill);
 	CommandMap["SETSHOPRESTOCKRATE"]= CommandMapEntry_st( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&Command_SetShopRestockRate);
-	CommandMap["SETTIME"]			= CommandMapEntry_st( CL_GM,		CMD_FUNC,		(CMD_DEFINE)&Command_SetTime);
+	CommandMap["SETTIME"]			= CommandMapEntry_st( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&Command_SetTime);
 	CommandMap["SHUTDOWN"]			= CommandMapEntry_st( CL_GM,		CMD_FUNC,		(CMD_DEFINE)&Command_Shutdown);
 	CommandMap["SAVE"]				= CommandMapEntry_st( CL_GM,		CMD_FUNC,		(CMD_DEFINE)&Command_Save);
 	CommandMap["STATUS"]			= CommandMapEntry_st( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&Command_Status);

@@ -2200,7 +2200,12 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 							SI08 zVal = 9;
 							if( csecs.size() >= 6 )
 							{
-								zVal = static_cast<SI08>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 5 ], "//" )), nullptr, 0 ));
+								std::string zString = oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 5 ], "//" ) );
+								// Safeguard against legacy saves where GetPackZ was written as whitespace (e.g., ASCII 9 / Tab)
+								if( !zString.empty() )
+								{
+									zVal = static_cast<SI08>( std::stoi( zString, nullptr, 0 ) );
+								}
 							}
 
 							SetPackBounds( xMin, xMax, yMin, yMax, zVal );
