@@ -92,6 +92,7 @@ public:
 	auto SetKeyStatus( std::int32_t key, bool isEnabled ) -> void;
 	auto SetFuncStatus( const std::string &key, bool isEnabled ) -> void;
 	auto Registration() -> void;
+	auto ExecuteJSCommand( std::int32_t key ) -> void;
 
 private:
 	auto Reset() -> void;

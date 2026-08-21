@@ -127,6 +127,7 @@ jobs:
     name: Build and Package for ${{ matrix.os }}
     needs: prepare_release
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
@@ -134,8 +135,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Configure CMake
+    - name: Configure CMake (Linux/macOS)
+      if: runner.os != 'Windows'
       run: cmake make/cmake -B ${{ github.workspace }}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+
+    - name: Configure CMake (Windows ClangCL)
+      if: runner.os == 'Windows'
+      run: cmake make/cmake -B ${{ github.workspace }}/build -T ClangCL
 
     - name: Build Binary
       run: cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }}
@@ -167,9 +173,35 @@ jobs:
           *.tar.gz
           *.zip
 
+  build_and_package_freebsd:
+    name: Build and Package for FreeBSD
+    needs: prepare_release
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build and Package UOX3 on FreeBSD
+        uses: vmactions/freebsd-vm@v1
+        with:
+          usesh: true
+          prepare: |
+            pkg install -y cmake curl gmake
+          run: |
+            cmake make/cmake -B build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+            cmake --build build --config ${{ env.BUILD_TYPE }}
+            cmake --install build --prefix release_package
+            tar -czvf uox3-${{ github.ref_name }}-FreeBSD.tar.gz -C release_package .
+
+      - name: Upload Release Asset
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-assets-FreeBSD
+          path: uox3-${{ github.ref_name }}-FreeBSD.tar.gz
+
   create_release:
     name: Create GitHub Release
-    needs: build_and_package
+    needs: [build_and_package, build_and_package_freebsd]
     runs-on: ubuntu-latest
     permissions:
       contents: write

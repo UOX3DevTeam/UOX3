@@ -549,7 +549,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 {
 	totalCheckBoxes = 36;
 	numCheckedBoxes = 0;
-	tempGumpData = gumpData;
+	selectedButtons = [];
 
 	switch( pButton )
 	{
@@ -561,6 +561,10 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case 2:
 			SaveSeenWelcomeGump( pSocket );
 			numCheckedBoxes = gumpData.buttons;
+			for( var i = 0; i < numCheckedBoxes; i++ )
+			{
+				selectedButtons.push( gumpData.getButton( i ));
+			}
 			if( numCheckedBoxes == 0 )
 			{
 				pSocket.SysMessage( "No boxes checked! Nothing will spawn. Note that you can return to the previous menu using the 'welcome command!" );
@@ -624,7 +628,7 @@ function onTimer( timerObj, timerID )
 
 			for( var i = 0; i < numCheckedBoxes; i++ )
 			{
-				buttonID = tempGumpData.getButton( i );
+				buttonID = selectedButtons[i];
 				if( buttonID >= 0 && buttonID <= 19 )
 				{
 					facetName = "felucca";

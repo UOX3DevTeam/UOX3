@@ -263,9 +263,6 @@
     <ClCompile Include="..\..\source\cScript.cpp">
       <Filter>Source Files\JS Engine</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\JSEncapsulate.cpp">
-      <Filter>Source Files\JS Engine</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\SEFunctions.cpp">
       <Filter>Source Files\JS Engine</Filter>
     </ClCompile>
@@ -273,6 +270,9 @@
       <Filter>Source Files\JS Engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\UOXJSPropertyFuncs.cpp">
+      <Filter>Source Files\JS Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\UOXJSUtilities.cpp">
       <Filter>Source Files\JS Engine</Filter>
     </ClCompile>
     <!-- Network group -->
@@ -492,9 +492,6 @@
     <ClInclude Include="..\..\source\cScript.h">
       <Filter>Header Files\JS Engine</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\JSEncapsulate.h">
-      <Filter>Header Files\JS Engine</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\SEFunctions.h">
       <Filter>Header Files\JS Engine</Filter>
     </ClInclude>
@@ -511,6 +508,9 @@
       <Filter>Header Files\JS Engine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\UOXJSPropertySpecs.h">
+      <Filter>Header Files\JS Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\UOXJSUtilities.h">
       <Filter>Header Files\JS Engine</Filter>
     </ClInclude>
     <!-- Network group -->

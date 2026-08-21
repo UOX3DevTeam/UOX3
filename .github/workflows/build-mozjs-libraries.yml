@@ -1,0 +1,216 @@
+name: Build SpiderMonkey libraries
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  MOZJS_ARCHIVE: https://github.com/servo/mozjs/releases/download
+
+jobs:
+  build-windows:
+    name: Windows x64
+    runs-on: windows-2022
+
+    defaults:
+      run:
+        working-directory: spidermonkey/uox3-mozjs-bridge
+
+    steps:
+      - name: Check out UOX3
+        uses: actions/checkout@v4
+
+      - name: Build UOX3 SpiderMonkey library
+        run: cargo build --locked --release
+
+      - name: Remove redundant bundled zlib objects
+        shell: pwsh
+        run: |
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $vsPath = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          $libTool = Get-ChildItem "$vsPath\VC\Tools\MSVC\*\bin\Hostx64\x64\lib.exe" |
+            Sort-Object FullName |
+            Select-Object -Last 1 -ExpandProperty FullName
+          $bridge = Resolve-Path "target\release\uox3_mozjs_bridge.lib"
+          $members = & $libTool /LIST $bridge | Where-Object { $_ -match 'libz-sys.*\.(o|obj)$' }
+          if ($members.Count -eq 0) {
+            throw "No bundled libz-sys objects were found in $bridge"
+          }
+          foreach ($member in $members) {
+            & $libTool "/REMOVE:$member" $bridge
+            if ($LASTEXITCODE -ne 0) {
+              throw "Failed to remove $member"
+            }
+          }
+
+      - name: Package library
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force package | Out-Null
+          Copy-Item target\release\uox3_mozjs_bridge.lib package\mozjs-115.13-windows-x64-clangcl.lib
+          Compress-Archive -Path package\mozjs-115.13-windows-x64-clangcl.lib -DestinationPath mozjs-115.13-windows-x64-clangcl.zip -Force
+
+      - name: Upload library
+        uses: actions/upload-artifact@v4
+        with:
+          name: mozjs-115.13-windows-x64-clangcl
+          path: spidermonkey/uox3-mozjs-bridge/mozjs-115.13-windows-x64-clangcl.zip
+          if-no-files-found: error
+
+  build-linux:
+    name: Linux x64
+    runs-on: ubuntu-24.04
+    container: registry.access.redhat.com/ubi8/ubi:latest
+
+    steps:
+      - name: Install build tools
+        run: yum -y install gcc gcc-c++ git curl gzip tar zlib-devel
+
+      - name: Check out UOX3
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+
+      - name: Build UOX3 SpiderMonkey library
+        run: cargo build --locked --release
+        working-directory: spidermonkey/uox3-mozjs-bridge
+
+      - name: Package library
+        run: |
+          mkdir -p package
+          cp target/release/libuox3_mozjs_bridge.a package/uox3-mozjs-115.13-linux-x64.a
+          strip -g package/uox3-mozjs-115.13-linux-x64.a || true
+          tar -czf uox3-mozjs-115.13-linux-x64.tar.gz -C package uox3-mozjs-115.13-linux-x64.a
+        working-directory: spidermonkey/uox3-mozjs-bridge
+
+      - name: Upload library
+        uses: actions/upload-artifact@v4
+        with:
+          name: uox3-mozjs-115.13-linux-x64
+          path: spidermonkey/uox3-mozjs-bridge/uox3-mozjs-115.13-linux-x64.tar.gz
+          if-no-files-found: error
+
+  build-macos:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macOS Intel
+            runner: macos-15-intel
+            target: x86_64-apple-darwin
+            package: uox3-mozjs-115.13-macos-x64
+          - name: macOS Apple Silicon
+            runner: macos-15
+            target: aarch64-apple-darwin
+            package: uox3-mozjs-115.13-macos-arm64
+
+    defaults:
+      run:
+        working-directory: spidermonkey/uox3-mozjs-bridge
+
+    steps:
+      - name: Check out UOX3
+        uses: actions/checkout@v4
+
+      - name: Install Rust target
+        run: rustup target add "${{ matrix.target }}"
+
+      - name: Build UOX3 SpiderMonkey library
+        run: cargo build --locked --release --target "${{ matrix.target }}"
+
+      - name: Package library
+        run: |
+          mkdir -p package
+          cp "target/${{ matrix.target }}/release/libuox3_mozjs_bridge.a" "package/${{ matrix.package }}.a"
+          strip -S "package/${{ matrix.package }}.a" || true
+          tar -czf "${{ matrix.package }}.tar.gz" -C package "${{ matrix.package }}.a"
+
+      - name: Upload library
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.package }}
+          path: spidermonkey/uox3-mozjs-bridge/${{ matrix.package }}.tar.gz
+          if-no-files-found: error
+
+  build-freebsd:
+    name: FreeBSD x64
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Check out UOX3
+        uses: actions/checkout@v4
+
+      - name: Build UOX3 SpiderMonkey library on FreeBSD
+        uses: vmactions/freebsd-vm@v1
+        with:
+          usesh: true
+          prepare: |
+            pkg install -y curl git gmake llvm18 python311 rust bash pkgconf
+          run: |
+            cd spidermonkey/uox3-mozjs-bridge
+            export MAKE=gmake
+            export PYTHON3=python3.11
+            export CC=clang18
+            export CXX=clang++18
+            cargo fetch
+            python3.11 fix_freebsd.py
+            cargo build --locked --release
+            mkdir -p package
+            cp target/release/libuox3_mozjs_bridge.a package/uox3-mozjs-115.13-freebsd-x64.a
+            strip -g package/uox3-mozjs-115.13-freebsd-x64.a || true
+            tar -czf uox3-mozjs-115.13-freebsd-x64.tar.gz -C package uox3-mozjs-115.13-freebsd-x64.a
+
+      - name: Upload library
+        uses: actions/upload-artifact@v4
+        with:
+          name: uox3-mozjs-115.13-freebsd-x64
+          path: spidermonkey/uox3-mozjs-bridge/uox3-mozjs-115.13-freebsd-x64.tar.gz
+          if-no-files-found: error
+
+  test-container:
+    name: Docker image
+    needs: build-linux
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Check out UOX3
+        uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build --tag uox3:test .
+
+  publish:
+    name: Add libraries to branch
+    needs: [build-windows, build-linux, build-macos, build-freebsd]
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Check out UOX3
+        uses: actions/checkout@v4
+
+      - name: Download libraries
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "*mozjs-115.13-*"
+          path: artifacts
+          merge-multiple: true
+
+      - name: Add libraries to branch
+        run: |
+          cp artifacts/*.tar.gz spidermonkey/
+          cp artifacts/*.zip spidermonkey/
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add spidermonkey/uox3-mozjs-115.13-*.tar.gz
+          git add spidermonkey/mozjs-115.13-windows-x64-clangcl.zip
+          if ! git diff --cached --quiet; then
+            git commit -m "Add precompiled SpiderMonkey libraries"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
