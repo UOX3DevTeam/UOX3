@@ -388,7 +388,6 @@ private:
 	UI08		hours;							//	Number of hours the world has been running (persistent)
 	SI16		days;							//	Number of days the world has been running (persistent)
 	SI16		moon[2];						//	Moon current state
-	bool		ampm;							//	Whether our current time is in the morning or afternoon
 
 	// Tracking
 	UI08		trackingMaxTargets;				//	Maximum number of targets that can be tracked
@@ -1424,13 +1423,11 @@ public:
 	UI08		ServerTimeHours() const;
 	UI08		ServerTimeMinutes() const;
 	UI08		ServerTimeSeconds() const;
-	auto		ServerTimeAMPM() const -> bool;
 
 	auto		ServerTimeDay( SI16 nValue ) -> void;
 	auto		ServerTimeHours( UI08 nValue ) -> void;
 	auto		ServerTimeMinutes( UI08 nValue ) -> void;
 	auto		ServerTimeSeconds( UI08 nValue ) -> void;
-	auto		ServerTimeAMPM( bool nValue ) -> void;
 
 	auto		SaveTime() -> void;
 	auto		LoadTime() -> void;

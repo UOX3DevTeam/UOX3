@@ -123,7 +123,10 @@ function onDefense( pAttacker, pDefender )
 	{
 		DoMovingEffect( pDefender, pAttacker, 0x36D4, 0x10, 0x00, false );
 		pAttacker.SetPoisoned( 4, 10000 );
-		pAttacker.SysMessage( pDefender.name + " spits a poisonous substance at you!" );
+		if( pAttacker.socket )
+		{
+			pAttacker.socket.SysMessage( pDefender.name + " spits a poisonous substance at you!" );
+		}
 		pDefender.SetTempTag( "poisonDelayed", iTime );
 	}
 

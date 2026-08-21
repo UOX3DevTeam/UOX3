@@ -69,7 +69,11 @@ function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 					pAttacker.health += pDefender.health;
 				}
 				pDefender.Damage( drainAmount, 1 );
-				pAttacker.TextMessage( GetDictionaryEntry( 9069 ), false, 0, 5, pDefender.serial ); // I can grant life, and I can sap it as easily.
+
+				if( ValidateObject( pDefender ) && !pDefender.npc && pDefender.socket && pDefender.online )
+				{
+					pAttacker.TextMessage( GetDictionaryEntry( 9069 ), false, 0, 5, pDefender.serial ); // I can grant life, and I can sap it as easily.
+				}
 				break;
 			case 2: // Stamina
 				if( pDefender.stamina >= drainAmount )
@@ -81,7 +85,10 @@ function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 					pAttacker.stamina += pDefender.stamina;
 				}
 				pDefender.stamina -= drainAmount;
-				pAttacker.TextMessage( GetDictionaryEntry( 9070 ), false, 0, 5, pDefender.serial ); // You'll go nowhere, unless I deem it should be so.
+				if( !pDefender.npc && pDefender.socket && pDefender.online )
+				{
+					pAttacker.TextMessage( GetDictionaryEntry( 9070 ), false, 0, 5, pDefender.serial ); // You'll go nowhere, unless I deem it should be so.
+				}
 				break;
 			case 3: // Mana
 				if( pDefender.mana >= drainAmount )
@@ -93,7 +100,10 @@ function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 					pAttacker.mana += pDefender.mana;
 				}
 				pDefender.mana -= drainAmount;
-				pAttacker.TextMessage( GetDictionaryEntry( 9071 ), false, 0, 5, pDefender.serial ); // Your power is mine to use as I will.
+				if( !pDefender.npc && pDefender.socket && pDefender.online )
+				{
+					pAttacker.TextMessage( GetDictionaryEntry( 9071 ), false, 0, 5, pDefender.serial ); // Your power is mine to use as I will.
+				}
 				break;
 			default:
 				break;
