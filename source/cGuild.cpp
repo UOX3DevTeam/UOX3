@@ -1103,7 +1103,7 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 	if( trgGuild >= static_cast<SI32>( NumGuilds() ))
 		return;
 
-	CPSendGumpMenu toSend;
+	CGumpPacket toSend( s );
 	toSend.GumpId( menu );
 	toSend.UserId( INVALIDSERIAL );
 
@@ -1422,8 +1422,7 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			}
 		}
 	}
-	toSend.Finalize();
-	s->Send( &toSend );
+	toSend.Send();
 }
 void CGuildCollection::GumpInput( CPIGumpInput *gi )
 {

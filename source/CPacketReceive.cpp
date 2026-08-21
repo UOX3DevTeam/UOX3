@@ -4648,7 +4648,7 @@ bool CPITrackingArrow::Handle( void )
 		{
 			CPTrackingArrow tSend = ( *trackingTarg );
 			tSend.Active( 0 );
-			if( tSock->ClientVersion() >= CV_HS2D )
+			if( tSock->ClientType() >= CV_HS2D )
 			{
 				tSend.AddSerial( trackingTarg->GetSerial() );
 			}
@@ -4658,7 +4658,7 @@ bool CPITrackingArrow::Handle( void )
 		{
 			CPTrackingArrow tSend;
 			tSend.Active( 0 );
-			if( tSock->ClientVersion() >= CV_HS2D )
+			if( tSock->ClientType() >= CV_HS2D )
 			{
 				tSend.AddSerial( mChar->GetTrackingTargetSerial() );
 			}
