@@ -8237,6 +8237,9 @@ auto CServerData::LoadTime() -> void
 auto CServerData::LoadTimeTags( std::istream &input ) -> void
 {
 	std::string UTag, tag, data;
+	UI16 loadedHour = 0;
+	SI16 loadedAMPM = -1; // -1 = no AMPM tag present, already using 24H format
+
 	while( tag != "o---o" )
 	{
 		ReadWorldTagData( input, tag, data );
@@ -8244,7 +8247,12 @@ auto CServerData::LoadTimeTags( std::istream &input ) -> void
 		{
 			UTag = oldstrutil::upper( tag );
 			
-			if( UTag == "CURRENTLIGHT" )
+			if( UTag == "AMPM" )
+			{
+				// For backwards compatibility with world data saved in 12H format. 0 = AM, 1 = PM
+				loadedAMPM = static_cast<UI16>( std::stoi( data, nullptr, 0 ));
+			}
+			else if( UTag == "CURRENTLIGHT" )
 			{
 				WorldLightCurrentLevel( static_cast<UI16>( std::stoul( data, nullptr, 0 )));
 			}
@@ -8254,7 +8262,7 @@ auto CServerData::LoadTimeTags( std::istream &input ) -> void
 			}
 			else if( UTag == "HOUR" )
 			{
-				ServerTimeHours( static_cast<UI16>( std::stoul( data, nullptr, 0 )));
+				loadedHour = static_cast<UI16>( std::stoi( data, nullptr, 0 ));
 			}
 			else if( UTag == "MINUTE" )
 			{
@@ -8272,6 +8280,13 @@ auto CServerData::LoadTimeTags( std::istream &input ) -> void
 		}
 	}
 	tag = "";
+
+	// Apply loaded hour and convert from 12H to 24H format if legacy AMPM tag was found
+	if( loadedAMPM == 1 && loadedHour < 12 )
+	{
+		loadedHour += 12; // Convert PM to 24H format
+	}
+	ServerTimeHours( static_cast<UI08>( loadedHour ));
 }
 
 //==============================================================================================
