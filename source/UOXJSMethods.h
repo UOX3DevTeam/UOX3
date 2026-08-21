@@ -184,6 +184,7 @@ bool CBase_DistanceTo( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CBase_GetSerial( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CBase_UpdateStats( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CBase_Resist( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CBase_DamageType( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CBase_IsBoat( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CBase_CanSee( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CBase_ResourceCount( JSContext *cx, unsigned argc, JS::Value *vp );

@@ -5760,7 +5760,7 @@ bool SE_GetServerSetting( JSContext *cx, unsigned int argc, JS::Value *vp )
 			{
 				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionElementalDamage() )) };
 				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
-				JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ));
+				args.rval().setString( tString );
 				break;
 			}
 			default:

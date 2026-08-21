@@ -11665,48 +11665,50 @@ bool CBase_Resist( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets or sets an item/NPC melee damage percentage for a WeatherType channel
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_DamageType( JSContext *cx, uintN argc, jsval *vp )
+bool CBase_DamageType( JSContext *cx, unsigned argc, JS::Value *vp )
 {
-	jsval *argv = JS_ARGV( cx, vp );
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	auto args = JS::CallArgsFromVp( argc, vp );
+	auto obj = getThis( cx, args );
 	if( argc != 1 && argc != 2 )
 	{
 		ScriptError( cx, "DamageType: Invalid number of arguments (takes damage type, and optionally a percentage)" );
-		return JS_FALSE;
+		return false;
 	}
 
-	JSEncapsulate myClass( cx, obj );
 	CBaseObject *baseObj = nullptr;
-	if( myClass.ClassName() == "UOXItem" )
-		baseObj = static_cast<CItem *>( myClass.toObject() );
-	else if( myClass.ClassName() == "UOXChar" )
-		baseObj = static_cast<CChar *>( myClass.toObject() );
+	if( HasWrapperClass( obj, &UOXItem_class ))
+		baseObj = GetWrappedObject<CItem>( obj, &UOXItem_class );
+	else if( HasWrapperClass( obj, &UOXChar_class ))
+		baseObj = GetWrappedObject<CChar>( obj, &UOXChar_class );
 
 	if( !ValidateObject( baseObj ))
 	{
 		ScriptError( cx, "DamageType: Operating on an invalid Item or Character" );
-		return JS_FALSE;
+		return false;
 	}
 
-	JSEncapsulate damageType( cx, &( argv[0] ));
-	SI32 type = damageType.toInt();
+	int32_t type = 0;
+	if( !JS::ToInt32( cx, args.get( 0 ), &type ))
+		return false;
 	if( type < PHYSICAL || type >= WEATHNUM )
 	{
 		ScriptError( cx, "DamageType: Invalid damage type %d", type );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( argc == 1 )
 	{
-		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( baseObj->GetDamageType( static_cast<WeatherType>( type ))));
+		args.rval().setInt32( baseObj->GetDamageType( static_cast<WeatherType>( type )));
 	}
 	else
 	{
-		JSEncapsulate value( cx, &( argv[1] ));
-		baseObj->SetDamageType( static_cast<UI08>( std::clamp( value.toInt(), 0, 100 )), static_cast<WeatherType>( type ));
-		JS_SET_RVAL( cx, vp, JS_TRUE );
+		int32_t value = 0;
+		if( !JS::ToInt32( cx, args.get( 1 ), &value ))
+			return false;
+		baseObj->SetDamageType( static_cast<UI08>( std::clamp( value, 0, 100 )), static_cast<WeatherType>( type ));
+		args.rval().setBoolean( true );
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
