@@ -48,6 +48,4 @@
 
 #endif
 
-#include "jsapi.h"
-
 #endif

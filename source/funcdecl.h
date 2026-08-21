@@ -81,6 +81,7 @@ inline UI32 CalcSerial( UI08 a1, UI08 a2, UI08 a3, UI08 a4 )
 // Socket stuff
 //o------------------------------------------------------------------------------------------------o
 auto 	SendVecsAsGump( CSocket *sock, std::vector<std::string>& one, std::vector<std::string>& two, UI32 type, SERIAL serial ) -> void;
+auto 	SendVecsAsCompressedGump( CSocket *sock, std::vector<std::string>& one, std::vector<std::string>& two, UI32 type, SERIAL serial ) -> void;
 void	SendMapChange( UI08 worldNumber, CSocket *sock, bool initialLogin = false );
 bool	IsOnline( CChar& mChar );
 

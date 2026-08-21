@@ -106,6 +106,7 @@ bool conThreadCloseOk	= false;
 bool netpollthreadclose	= false;
 auto saveOnShutdown = false;
 std::atomic<bool> g_bPerformRestart = false;
+bool forceTimeUpdate = false;
 
 //o------------------------------------------------------------------------------------------------o
 // Classes we will use
@@ -383,12 +384,12 @@ auto main( SI32 argc, char *argv[] ) ->int
 					// ... and dropping, or stable at low performance! DO SOMETHING...
 					apsDelay = apsDelay + apsDelayStep;
 #if defined( UOX_DEBUG_MODE )
-					Console << "Performance below threshold! Increasing adaptive performance timer: " << apsDelay.count() << "ms" << "\n";
+					Console << "Performance below threshold! Increasing adaptive performance timer: " << apsDelay.count() << "ms" << myendl;
 #else
 					if( !isApsActive )
 					{
 						isApsActive = true;
-						Console << "Performance below threshold. Adaptive Performance System enabled.\n";
+						Console << "Performance below threshold. Adaptive Performance System enabled." << myendl;
 					}
 #endif
 				}
@@ -402,11 +403,11 @@ auto main( SI32 argc, char *argv[] ) ->int
 					// ... reduce timer for snappier NPC AI/movement/etc.
 					apsDelay = apsDelay - apsDelayStep;
 #if defined( UOX_DEBUG_MODE )
-					Console << "Performance exceeds threshold. Decreasing adaptive performance timer: " << apsDelay.count() << "ms" << "\n";
+					Console << "Performance exceeds threshold. Decreasing adaptive performance timer: " << apsDelay.count() << "ms" << myendl;
 #else
 					if( apsDelay.count() == 0 )
 					{
-						Console << "Performance above threshold. Adaptive Performance System disabled.\n";
+						Console << "Performance above threshold. Adaptive Performance System disabled." << myendl;
 						isApsActive = false;
 					}
 #endif
@@ -681,12 +682,6 @@ auto StartInitialize( CServerData &serverdata ) -> void
 
 	Console.Log( "-=Server Startup=-\n=======================================================================", "server.log" );
 
-	Console << "Creating and Initializing Console Thread      ";
-
-	cons = std::thread( &CheckConsoleKeyThread );
-
-	Console.PrintDone();
-
 	// Shows information about IPs and ports being listened on
 	Console.TurnYellow();
 
@@ -781,6 +776,11 @@ auto StartInitialize( CServerData &serverdata ) -> void
 			}
 		}
 	}
+
+	Console << "Creating and Initializing Console Thread      ";
+	Console.Registration();
+	cons = std::thread( &CheckConsoleKeyThread );
+	Console.PrintDone();
 
 	// Get a second timestamp for startup time
 	auto startupEndTime = std::chrono::high_resolution_clock::now();
@@ -942,6 +942,9 @@ auto DoMessageLoop() -> void
 				g_bPerformRestart = true;
 				cwmWorldState->SetKeepRun( false ); // This triggers the main loop to exit
 				break;
+			case MSG_CONSOLEJS:
+				Console.ExecuteJSCommand( oldstrutil::value<SI32>( tVal.data ));
+				break;
 			case MSG_COUNT: 	break;
 			case MSG_WORLDSAVE: cwmWorldState->SetOldTime( 0 ); break;
 			case MSG_PRINT: 	Console << tVal.data << myendl; break;
@@ -1036,7 +1039,6 @@ auto NetworkPollConnectionThread() -> void
 auto CheckConsoleKeyThread() -> void
 {
 	messageLoop << "Thread: CheckConsoleThread has started";
-	Console.Registration();
 	conThreadCloseOk = false;
 	while( !conThreadCloseOk )
 	{
@@ -1766,7 +1768,7 @@ auto PassiveManaRegen( CSocket *mSock, CChar &mChar, UI16 maxMana ) -> SI32
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check characters status.  Returns true if character was killed
 //o------------------------------------------------------------------------------------------------o
-auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool doWeather ) -> bool
+auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool doWeather, bool doTimeUpdate ) -> bool
 {
 	if( !mChar.IsDead() )
 	{
@@ -2043,6 +2045,16 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 			{
 				DoLight( mSock, toShow );
 			}
+		}
+
+		if( doTimeUpdate )
+		{
+			// Send time update to client, can be used to control lighting/weather effects clientside
+			UI08 currentHour = cwmWorldState->ServerData()->ServerTimeHours();
+			UI08 currentMins = cwmWorldState->ServerData()->ServerTimeMinutes();
+			UI08 currentSecs = cwmWorldState->ServerData()->ServerTimeSeconds();
+
+			CPTime tmPckt( currentHour, currentMins, currentSecs );	mSock->Send( &tmPckt );
 		}
 
 		Weather->DoLightEffect( mSock, mChar );
@@ -2644,7 +2656,9 @@ auto CWorldMain::CheckAutoTimers() -> void
 	static TIMERVAL nextDecayItemsInHouses	= 0;
 	static TIMERVAL nextSetNPCFlagTime		= 0;
 	static TIMERVAL accountFlush			= 0;
+	static UI08 lastTimeUpdateMinute		= 255;
 	bool doWeather						= false;
+	bool doTimeUpdate					= false;
 	bool doPetOfflineCheck				= false;
 	CServerData *serverData				= ServerData();
 
@@ -2947,6 +2961,14 @@ auto CWorldMain::CheckAutoTimers() -> void
 		SetUOTickCount( BuildTimeValue( static_cast<R64>( serverData->ServerSecondsPerUOMinute() )));
 	}
 
+	// Send time-update to client every 15 minutes of in-game time
+	if( forceTimeUpdate || ( serverData->ServerTimeMinutes() % 15 == 0 && serverData->ServerTimeMinutes() != lastTimeUpdateMinute ))
+	{
+		doTimeUpdate = true;
+		lastTimeUpdateMinute = serverData->ServerTimeMinutes();
+		forceTimeUpdate = false;
+	}
+
 	if( GetTimer( tWORLD_LIGHTTIME ) <= GetUICurrentTime() )
 	{
 		DoWorldLight();  //Changes lighting, if it is currently time to.
@@ -2981,7 +3003,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 				UI08 worldNumber = mChar->WorldNumber();
 				if( mChar->GetAccount().wAccountIndex == iSock->AcctNo() && mChar->GetAccount().dwInGame == mChar->GetSerial() )
 				{
-					GenericCheck( iSock, (*mChar), checkFieldEffects, doWeather );
+					GenericCheck( iSock, (*mChar), checkFieldEffects, doWeather, doTimeUpdate );
 					CheckPC( iSock, ( *mChar ));
 					
 					SI16 xOffset = MapRegion->GetGridX( mChar->GetX() );
@@ -3061,7 +3083,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 					if( !charCheck->IsAwake() || !allowAwakeNPCs )
 					{
 						// Only perform these checks on NPCs that are not permanently awake
-						if( !GenericCheck( nullptr, ( *charCheck ), checkFieldEffects, doWeather ))
+						if( !GenericCheck( nullptr, ( *charCheck ), checkFieldEffects, doWeather, false ))
 						{
 							if( setNPCFlags )
 							{
@@ -3118,7 +3140,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 		{
 			if( ValidateObject( charCheck ) && !charCheck->IsFree() && charCheck->IsNpc() )
 			{
-				if( !GenericCheck( nullptr, ( *charCheck ), checkFieldEffects, doWeather ))
+				if( !GenericCheck( nullptr, ( *charCheck ), checkFieldEffects, doWeather, false ))
 				{
 					if( setNPCFlags )
 					{
@@ -3400,6 +3422,15 @@ auto Shutdown( SI32 retCode ) -> void
 	if( !retCode )
 	{
 		cons.join();
+	}
+
+	if( JSMapping != nullptr )
+	{
+		JSMapping->Shutdown();
+	}
+	if( JSEngine != nullptr )
+	{
+		JSEngine->Shutdown();
 	}
 
 	// don't leave file pointers open, could lead to file corruption

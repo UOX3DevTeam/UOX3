@@ -33,10 +33,11 @@
                 "type": "shell",
                 "command": "cmake",
                 "args": [
-                    "make/cmake",
-                    "-B", "${workspaceFolder}/build",
-                    "-DCMAKE_BUILD_TYPE=Release"
+                    "--preset", "vs2022-clang"
                 ],
+                "options": {
+                    "cwd": "${workspaceFolder}/make/cmake"
+                },
                 "group": "build"
             },
             {
@@ -44,10 +45,11 @@
                 "type": "shell",
                 "command": "cmake",
                 "args": [
-                    "make/cmake",
-                    "-B", "${workspaceFolder}/build",
-                    "-DCMAKE_BUILD_TYPE=Debug"
+                    "--preset", "vs2022-clang"
                 ],
+                "options": {
+                    "cwd": "${workspaceFolder}/make/cmake"
+                },
                 "group": "build"
             },
 
@@ -60,9 +62,11 @@
                 "type": "shell",
                 "command": "cmake",
                 "args": [
-                    "--build", "${workspaceFolder}/build",
-                    "--config", "Release"
+                    "--build", "--preset", "vs2022-release"
                 ],
+                "options": {
+                    "cwd": "${workspaceFolder}/make/cmake"
+                },
                 "group": {
                     "kind": "build",
                     "isDefault": true
@@ -76,9 +80,11 @@
                 "type": "shell",
                 "command": "cmake",
                 "args": [
-                    "--build", "${workspaceFolder}/build",
-                    "--config", "Debug"
+                    "--build", "--preset", "vs2022-debug"
                 ],
+                "options": {
+                    "cwd": "${workspaceFolder}/make/cmake"
+                },
                 "group": "build",
                 "problemMatcher": "$msCompile",
                 "dependsOn": "CMake: Configure (Debug)"
@@ -93,7 +99,7 @@
                 "type": "cppvsdbg",
                 "request": "launch",
                 // CMake on Windows places the binary in build/Release/
-                "program": "${workspaceFolder}/build/Release/uox3.exe",
+                "program": "${workspaceFolder}/make/cmake/build/vs2022/RelWithDebInfo/uox3.exe",
                 "args": [],
                 "stopAtEntry": false,
                 "cwd": "${workspaceFolder}/data",
@@ -106,7 +112,7 @@
                 "name": "Launch UOX3 (Debug)",
                 "type": "cppvsdbg",
                 "request": "launch",
-                "program": "${workspaceFolder}/build/Debug/uox3.exe",
+                "program": "${workspaceFolder}/make/cmake/build/vs2022/Debug/uox3.exe",
                 "args": [],
                 "stopAtEntry": false,
                 "cwd": "${workspaceFolder}/data",

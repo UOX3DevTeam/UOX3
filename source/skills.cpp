@@ -1469,7 +1469,6 @@ void CSkills::Load( void )
 			ourScript->ScriptRegistration( "Skill" );
 		}
 	}
-
 	Console.PrintSectionBegin();
 }
 
@@ -2041,7 +2040,7 @@ void CSkills::NewMakeMenu( CSocket *s, SI32 menu, [[maybe_unused]] UI08 skill )
 	[[maybe_unused]] UI16 btnLeft	= cwmWorldState->ServerData()->ButtonLeft();
 	UI16 btnRight	= cwmWorldState->ServerData()->ButtonRight();
 
-	CPSendGumpMenu toSend;
+	CGumpPacket toSend( s );
 	toSend.UserId( INVALIDSERIAL );
 	toSend.GumpId( 12 );
 
@@ -2185,8 +2184,7 @@ void CSkills::NewMakeMenu( CSocket *s, SI32 menu, [[maybe_unused]] UI08 skill )
 			++actualItems;
 		}
 	}
-	toSend.Finalize();
-	s->Send( &toSend );
+	toSend.Send();
 }
 
 //o------------------------------------------------------------------------------------------------o

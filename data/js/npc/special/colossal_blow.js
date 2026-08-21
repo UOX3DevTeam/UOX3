@@ -40,26 +40,31 @@ function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 			pDefender.Damage( stunDmg, 1, pAttacker );
 		}
 
-		// Freeze pDefender in place, and start a timer for when they can move again
-		pDefender.frozen = true;
-		pDefender.StartTimer( 5000, 1, true );
+		if( ValidateObject( pDefender ))
+		{
+			// Freeze pDefender in place, and start a timer for when they can move again
+			pDefender.frozen = true;
+			pDefender.StartTimer( 5000, 1, true );
 
-		// Play hitFX for pDefender, if applicable
-		DoMovingEffect( pDefender, pDefender, stunProps.hitFX, 0, stunProps.fxLength, stunProps.explode, stunProps.fxHue, stunProps.fxRender );
-		pDefender.SoundEffect( stunProps.sfx, true );
+			// Play hitFX for pDefender, if applicable
+			DoMovingEffect( pDefender, pDefender, stunProps.hitFX, 0, stunProps.fxLength, stunProps.explode, stunProps.fxHue, stunProps.fxRender );
+			pDefender.SoundEffect( stunProps.sfx, true );
 
-		// Play fall-over animation for pDefender
-		pDefender.DoAction( 21 );
+			// Play fall-over animation for pDefender
+			pDefender.DoAction( 21 );
 
-		// Remove target
-		pDefender.target = null;
+			// Remove target
+			pDefender.target = null;
 
-		// Apply peacemaking effect to pDefender for X seconds
-		pDefender.setPeace = stunProps.stunTime;
+			// Apply peacemaking effect to pDefender for X seconds
+			pDefender.setPeace = stunProps.stunTime;
 
-		// Display stunned message over affected character's head, if they're a player
-		if( pDefender.socket != null )
-			pDefender.TextMessage( GetDictionaryEntry( stunProps.dictID, pDefender.socket.language ), false, 0x3b2, 0, pDefender.serial ); // You have been stunned by a colossal blow!
+			// Display stunned message over affected character's head, if they're a player
+			if( pDefender.socket != null )
+			{
+				pDefender.TextMessage( GetDictionaryEntry( stunProps.dictID, pDefender.socket.language ), false, 0x3b2, 0, pDefender.serial ); // You have been stunned by a colossal blow!
+			}
+		}
 	}
 }
 

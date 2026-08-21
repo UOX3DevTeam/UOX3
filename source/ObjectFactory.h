@@ -86,7 +86,7 @@ public:
 	auto ValidObject( CBaseObject *object, ObjectType type = ObjectType::OT_CBO ) -> bool;
 
 	//o--------------------------------------------------------------------------------------------o
-	// Probably should be a size_t return, but uo can only handle a uint32
+	// Probably should be a size_t return, but uo can only handle a uint32_t
 	//o--------------------------------------------------------------------------------------------o
 	auto CountOfObjects( ObjectType type ) const -> UI32;
 	

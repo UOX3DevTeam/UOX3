@@ -129,7 +129,7 @@ bool CWeather::PeriodicUpdate( void )
 
 	UI08 hour	= cwmWorldState->ServerData()->ServerTimeHours();
 	UI08 minute = cwmWorldState->ServerData()->ServerTimeMinutes();
-	bool ampm	= cwmWorldState->ServerData()->ServerTimeAMPM();
+	bool isAfterNoon = ( hour >= 12 ); // Is time after noon and before midnight?
 
 	if( StormDelay() && StormBrewing() )
 	{
@@ -144,8 +144,8 @@ bool CWeather::PeriodicUpdate( void )
 	{
 		R32 hourIncrement = static_cast<R32>( fabs(( LightMax() - LightMin() ) / 12.0f ));	// we want the amount to subtract from LightMax in the morning / add to LightMin in evening
 		R32 minuteIncrement = hourIncrement / 60.0f;
-		R32 tempLight = hourIncrement * static_cast<R32>( hour ) + minuteIncrement * static_cast<R32>( minute );
-		if( ampm )
+		R32 tempLight = hourIncrement * static_cast<R32>( hour % 12 ) + minuteIncrement * static_cast<R32>( minute );
+		if( isAfterNoon )
 		{
 			CurrentLight( LightMin() + tempLight );
 		}
@@ -160,9 +160,9 @@ bool CWeather::PeriodicUpdate( void )
 	R32	tempHourIncrement	= static_cast<R32>( fabs(( effTempMax - effTempMin ) / 12.0f ));
 	R32	tempMinuteIncrement = tempHourIncrement / 60.0f;
 
-	R32	tempLightChange		= tempHourIncrement * static_cast<R32>( hour ) + tempMinuteIncrement * static_cast<R32>( minute );
+	R32	tempLightChange		= tempHourIncrement * static_cast<R32>( hour % 12 ) + tempMinuteIncrement * static_cast<R32>( minute );
 
-	if( ampm )
+	if( isAfterNoon )
 	{
 		currTemp = effTempMax - tempLightChange;	// maximum temperature minus time
 	}
@@ -1702,6 +1702,14 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 	if( !ValidateObject( p ) || p->IsNpc() )
 		return true;
 
+	// Send time update to client, can be used to control lighting/weather effects clientside
+	UI08 currentHour = cwmWorldState->ServerData()->ServerTimeHours();
+	UI08 currentMins = cwmWorldState->ServerData()->ServerTimeMinutes();
+	UI08 currentSecs = cwmWorldState->ServerData()->ServerTimeSeconds();
+
+	CPTime tmPckt( currentHour, currentMins, currentSecs );	s->Send( &tmPckt );
+
+	// Deal with weather damage
 	SI08 defaultTemp = 20;
 	WEATHID currVal = p->GetRegion()->GetEffectiveWeather();
 	if( weather.empty() || currVal >= weather.size() || p->InBuilding() )
@@ -2192,7 +2200,7 @@ bool cWeatherAb::DoLightEffect( CSocket *mSock, CChar& mChar )
 		R32 lightMin			= 255;
 		R32 lightMax			= 255;
 		SI32 message			= 0;
-		bool ampm				= cwmWorldState->ServerData()->ServerTimeAMPM();
+		bool isAfterNoon		= ( cwmWorldState->ServerData()->ServerTimeHours() >= 12 ); // after noon and before midnight?
 
 		WEATHID weatherSys = mChar.GetRegion()->GetWeather();
 		if( !weather.empty() && weatherSys < weather.size() )
@@ -2247,7 +2255,7 @@ bool cWeatherAb::DoLightEffect( CSocket *mSock, CChar& mChar )
 			}
 			else if( lightLevel == currentLight )
 			{
-				if( ampm )
+				if( isAfterNoon )
 				{
 					message = 1218; // The sun will set soon!
 				}
@@ -2283,7 +2291,7 @@ bool cWeatherAb::DoLightEffect( CSocket *mSock, CChar& mChar )
 			}
 			else if( lightLevel == currentLight )
 			{
-				if( ampm )
+				if( isAfterNoon )
 				{
 					message = 1218; // The sun will set soon!
 				}

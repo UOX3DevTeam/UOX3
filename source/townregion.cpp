@@ -1190,7 +1190,7 @@ bool CTownRegion::IsMemberOfTown( CChar *player ) const
 //o------------------------------------------------------------------------------------------------o
 void CTownRegion::SendEnemyGump( CSocket *sock )
 {
-	CPSendGumpMenu toSend;
+	CGumpPacket toSend( sock );
 	toSend.UserId( INVALIDSERIAL );
 	toSend.GumpId( 3 );
 
@@ -1214,8 +1214,7 @@ void CTownRegion::SendEnemyGump( CSocket *sock )
 	toSend.addText( "Seize Townstone" );
 	toSend.addText( "Attack Townstone" );
 
-	toSend.Finalize();
-	sock->Send( &toSend );
+	toSend.Send();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1238,7 +1237,7 @@ void CTownRegion::SendBasicInfo( CSocket *sock )
 void CTownRegion::SendPotentialMember( CSocket *sock )
 {
 	UnicodeTypes sLang	= sock->Language();
-	CPSendGumpMenu toSend;
+	CGumpPacket toSend( sock );
 	toSend.UserId( INVALIDSERIAL );
 	toSend.GumpId( 3 );
 
@@ -1264,8 +1263,7 @@ void CTownRegion::SendPotentialMember( CSocket *sock )
 	toSend.addText( Dictionary->GetEntry( 1128, sLang ));
 	toSend.addText( Dictionary->GetEntry( 1129, sLang ));
 
-	toSend.Finalize();
-	sock->Send( &toSend );
+	toSend.Send();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1276,7 +1274,7 @@ void CTownRegion::SendPotentialMember( CSocket *sock )
 void CTownRegion::SendMayorGump( CSocket *sock )
 {
 	UnicodeTypes sLang	= sock->Language();
-	CPSendGumpMenu toSend;
+	CGumpPacket toSend( sock );
 	toSend.UserId( INVALIDSERIAL );
 	toSend.GumpId( 3 );
 
@@ -1320,8 +1318,7 @@ void CTownRegion::SendMayorGump( CSocket *sock )
 	toSend.addText( oldstrutil::format( Dictionary->GetEntry( 1137, sLang ), goldReserved ));
 	toSend.addText( Dictionary->GetEntry( 1138, sLang ));
 
-	toSend.Finalize();
-	sock->Send( &toSend );
+	toSend.Send();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1331,7 +1328,7 @@ void CTownRegion::SendMayorGump( CSocket *sock )
 //o------------------------------------------------------------------------------------------------o
 void CTownRegion::SendDefaultGump( CSocket *sock )
 {
-	CPSendGumpMenu toSend;
+	CGumpPacket toSend( sock );
 	toSend.UserId( INVALIDSERIAL );
 	toSend.GumpId( 3 );
 
@@ -1383,8 +1380,7 @@ void CTownRegion::SendDefaultGump( CSocket *sock )
 		toSend.addCommand( oldstrutil::format( "text 55 281 %u 11", cwmWorldState->ServerData()->LeftTextColour() ));
 		toSend.addText( Dictionary->GetEntry( 1148, sLang ));
 	}
-	toSend.Finalize();
-	sock->Send( &toSend );
+	toSend.Send();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1710,7 +1706,7 @@ void CTownRegion::SetAppearance( WorldType worldType )
 //o------------------------------------------------------------------------------------------------o
 void CTownRegion::ViewTaxes( CSocket *sock )
 {
-	CPSendGumpMenu toSend;
+	CGumpPacket toSend( sock );
 	toSend.UserId( INVALIDSERIAL );
 	toSend.GumpId( 3 );
 
@@ -1731,8 +1727,7 @@ void CTownRegion::ViewTaxes( CSocket *sock )
 	toSend.addText( oldstrutil::format( "Population %i", GetPopulation() ));
 	CTile& tile = Map->SeekTile( GetResourceId() );
 	toSend.addText( oldstrutil::format( "%i %ss", taxedAmount, tile.Name().c_str() ));
-	toSend.Finalize();
-	sock->Send( &toSend );
+	toSend.Send();
 }
 
 //o------------------------------------------------------------------------------------------------o

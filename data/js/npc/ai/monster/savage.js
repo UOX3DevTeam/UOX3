@@ -63,13 +63,17 @@ function onDamage( savageNpc, pAttacker, damageValue, damageType )
 		// Deal damage to attacker
 		pOwner.Damage( 50, 5 );
 
-		// Reset attacker's body to its original ID and hue
-		pOwner.id = pOwner.orgID;
-		pOwner.colour = pOwner.orgSkin;
-
-		if( pOwner.socket )
+		// Validate pOwner again in case they died from the applied damage
+		if( ValidateObject( pOwner ))
 		{
-			pOwner.socket.SysMessage( GetDictionaryEntry( 1675, pOwner.socket.language )); // Your skin is scorched as the tribal paint burns away!
+			// Reset attacker's body to its original ID and hue
+			pOwner.id = pOwner.orgID;
+			pOwner.colour = pOwner.orgSkin;
+
+			if( pOwner.socket )
+			{
+				pOwner.socket.SysMessage( GetDictionaryEntry( 1675, pOwner.socket.language )); // Your skin is scorched as the tribal paint burns away!
+			}
 		}
 	}
 	return true;

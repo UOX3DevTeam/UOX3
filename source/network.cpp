@@ -298,7 +298,7 @@ void CNetworkStuff::Disconnect( UOXSOCKET s )
 {
 	SetLastOn( connClients[s] );
 	CChar *currChar = connClients[s]->CurrcharObj();
-	Console << "Client " << static_cast<UI32>( s ) << " disconnected. [Total:" << static_cast<SI32>( cwmWorldState->GetPlayersOnline() - 1 ) << "]" << myendl;
+	Console << "Client (Socket " << static_cast<UI32>( s ) << ") disconnected. [Total clients online: " << static_cast<SI32>( cwmWorldState->GetPlayersOnline() - 1 ) << "]" << myendl;
 
 	if( connClients[s]->AcctNo() != AB_INVALID_ID )
 	{
@@ -625,7 +625,9 @@ void CNetworkStuff::CheckConn( void )
 		}
 		//Firewall-messages are really only needed when firewall blocks, not when it lets someone through. Leads to information overload in console. Commenting out.
 
-		messageLoop << oldstrutil::format( "Client %zu [%i.%i.%i.%i] connected [Total:%lu]", cwmWorldState->GetPlayersOnline(), part[0], part[1], part[2], part[3], cwmWorldState->GetPlayersOnline() + 1 );
+#if defined( UOX_DEBUG_MODE )
+		messageLoop << oldstrutil::format( "TCP Handshake from [%i.%i.%i.%i]", part[0], part[1], part[2], part[3] );
+#endif
 		loggedInClients.push_back( toMake );
 		toMake->ClientIP( client_addr.sin_addr.s_addr );
 		return;
@@ -730,15 +732,15 @@ void CNetworkStuff::CheckMessage( void )
 				catch( socket_error& blah )
 				{
 #if PLATFORM != WINDOWS
-					Console << "Client disconnected" << myendl;
+					Console << "Client (Socket " << static_cast<UI32>( i ) << ") disconnected [Total clients online: " << static_cast<UI32>( cwmWorldState->GetPlayersOnline() - 1 ) << "]" << myendl;
 #else
 					if( blah.ErrorNumber() == WSAECONNRESET )
 					{
-						Console << "Client disconnected" << myendl;
+						Console << "Client (Socket " << static_cast<UI32>( i ) << ") disconnected [Total clients online: " << static_cast<UI32>( cwmWorldState->GetPlayersOnline() - 1 ) << "]" << myendl;
 					}
 					else if( blah.ErrorNumber() != -1 )
 					{
-						Console << "Socket error: " << static_cast<SI32>( blah.ErrorNumber() ) << myendl;
+						Console << "Socket error " << static_cast<SI32>( blah.ErrorNumber() ) << " on Client (Socket " << static_cast<UI32>( i ) << ")" << myendl;
 					}
 #endif
 					Disconnect( static_cast<UOXSOCKET>( i ));	// abnormal error
@@ -1232,15 +1234,15 @@ void CNetworkStuff::CheckLoginMessage( void )
 				catch( socket_error& blah )
 				{
 #if PLATFORM != WINDOWS
-					messageLoop << "Client disconnected";
+					messageLoop << oldstrutil::format( "Client (Socket %zu) disconnected [Total clients online: %zu]", i, cwmWorldState->GetPlayersOnline() - 1 );
 #else
 					if( blah.ErrorNumber() == WSAECONNRESET )
 					{
-						messageLoop << "Client disconnected";
+						messageLoop << oldstrutil::format( "Client (Socket %zu) disconnected [Total clients online: %zu]", i, cwmWorldState->GetPlayersOnline() - 1 );
 					}
 					else if( blah.ErrorNumber() != -1 )
 					{
-						messageLoop << oldstrutil::format( "Socket error: %i", blah.ErrorNumber() );
+						messageLoop << oldstrutil::format( "Socket error %i on Client (Socket %zu)", blah.ErrorNumber(), i );
 					}
 #endif
 					LoginDisconnect( static_cast<UOXSOCKET>( i ));	// abnormal error
@@ -1267,7 +1269,16 @@ void CNetworkStuff::CheckLoginMessage( void )
 //o------------------------------------------------------------------------------------------------o
 void CNetworkStuff::LoginDisconnect( UOXSOCKET s )
 {
-	messageLoop << oldstrutil::format( "LoginClient %u disconnected.", s );
+#if defined( UOX_DEBUG_MODE )
+	if( loggedInClients[s]->BytesReceived() > 0 )
+	{
+		messageLoop << oldstrutil::format( "LoginClient (Socket %u) disconnected.", s );
+	}
+	else
+	{
+		messageLoop << oldstrutil::format( "DEBUG: LoginClient (Socket %u) disconnected (No bytes received - Ping/Scanner).", s );
+	}
+#endif
 	loggedInClients[s]->FlushBuffer();
 	loggedInClients[s]->CloseSocket();
 
@@ -1347,6 +1358,14 @@ void CNetworkStuff::GetLoginMsg( UOXSOCKET s )
 	{
 		[[maybe_unused]] SI32 count;
 		count = mSock->Receive( 4 );
+		// Only announce the connection publicly if they actually sent data
+		if( count > 0 )
+		{
+#if defined( UOX_DEBUG_MODE )
+			messageLoop << oldstrutil::format( "Incoming connection from [%i.%i.%i.%i] (Socket %u)", mSock->ClientIP4(), mSock->ClientIP3(), mSock->ClientIP2(), mSock->ClientIP1(), s );
+#endif
+		}
+
 		auto packetId = mSock->Buffer()[0];
 
 		if( cwmWorldState->ServerData()->ServerOverloadPackets() )
