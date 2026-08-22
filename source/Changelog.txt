@@ -1,3 +1,7 @@
+22/08/2026 - DragonSlayer62 (#558)
+    [ADD] Added All the New Spell Books to misc_magic.dfn
+    [ADD] Added All the new spells to spells.dfn, ENABLED set to 0 until the javascripts are created.
+
 21/08/2026 - Xoduz (#588)
     [ADD] Added CPSendCompressedGumpMenu packet class for compressed gump (0xDD) packet, with support for multi-byte UTF-8 Unicode characters
     [ADD] Added SendVecsAsCompressedGump() helper for preparing and sending compressed gumps with fallback to uncompressed gumps for client versions older than v4.0.11c
