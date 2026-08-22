@@ -1,6 +1,6 @@
 22/08/2026 - DragonSlayer62 (#558)
-    [ADD] Added All the New Spell Books to misc_magic.dfn
-    [ADD] Added All the new spells to spells.dfn, ENABLED set to 0 until the javascripts are created.
+    [ADD] Added spell book item definitions for Chivalry, Necromancy, Bushido, Ninjitsu, Spellweaving, Mysticism and Masteries to dfndata/items/magic/misc_magic.dfn
+    [ADD] Added spell definitions for Chivalry (10), Necromancy (17), Bushido (6), Ninjitsu (8), Spellweaving (16), Mysticism (16) and Masteries (45) to dfndata/spells/spells.dfn
 
 21/08/2026 - Xoduz (#588)
     [ADD] Added CPSendCompressedGumpMenu packet class for compressed gump (0xDD) packet, with support for multi-byte UTF-8 Unicode characters
