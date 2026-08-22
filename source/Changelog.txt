@@ -1,3 +1,19 @@
+21/08/2026 - Xoduz (#588)
+    [ADD] Added CPSendCompressedGumpMenu packet class for compressed gump (0xDD) packet, with support for multi-byte UTF-8 Unicode characters
+    [ADD] Added SendVecsAsCompressedGump() helper for preparing and sending compressed gumps with fallback to uncompressed gumps for client versions older than v4.0.11c
+    [UPD] Updated all hardcoded sending of gumps to send compressed/uncompressed gump based on client version
+    [FIX] Fixed an issue with quest/tracking arrow packet (0x07) where tSock->ClientVersion() was incorrectly used to compare to CV_HS2D when it should be using tSock->ClientType()
+
+21/08/2026 - Xoduz (#587)
+    [FIX] Fixed object and socket validation issues that could lead to script/server crashes in various scripts: repeatingcmds.js, ethereal_warrior.js, exodus_clockwork.js, kappa.js, lord_oaks.js, plaguebeast.js, rikktor.js, savage.js, savage_shaman.js, semidar.js, yamandon.js, colossal_blow.js, life_drain_aura.js
+    [UPD] NPCs no longer perform line-of-sight checks to offline player characters before dismissing them as invalid targets in IsValidAttackTarget() in ai.cpp
+    [FIX] Fixed issue where gumptype item property was not always loaded correctly from worldfiles
+    [UPD] In-game time is now tracked server side in 24h format, and the non-functional AMPM tracking has been removed
+    [ADD] UOX3 now resends the Time packet (0x5B) on next server loop after 'settime GM command is used
+    [ADD] Added 'storm GM command to temporarily override weather in current region and force a storm in next weather update
+    [FIX] Fixed incorrect coordinates for [REGIONSPAWN 5728] (Yew Catacombs NE Basement - Undeads)
+    [UPD] Revamped connectivity information in UOX3 console to be less spammy when clients connect and transition from login to game server, etc.
+
 20/08/2026 - strattond (#584)
     [UPD] Upgraded the UOX3 JavaScript engine to SpiderMonkey 115.13
     [UPD] Updated utf8cpp to v4.1.1

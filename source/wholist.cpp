@@ -71,11 +71,11 @@ void CWhoList::SendSocket( CSocket *toSendTo )
 
 	if( online )
 	{
-		SendVecsAsGump( toSendTo, one, two, 4, INVALIDSERIAL );
+		SendVecsAsCompressedGump( toSendTo, one, two, 4 , INVALIDSERIAL );
 	}
 	else
 	{
-		SendVecsAsGump( toSendTo, one, two, 11, INVALIDSERIAL );
+		SendVecsAsCompressedGump( toSendTo, one, two, 11 , INVALIDSERIAL );
 	}
 }
 
@@ -331,7 +331,7 @@ void CWhoList::Command( CSocket *toSendTo, UI08 type, UI16 buttonPressed )
 		return;
 	}
 
-	CPSendGumpMenu toSend;
+	CGumpPacket toSend( toSendTo );
 	toSend.UserId( INVALIDSERIAL );
 	toSend.GumpId( type );
 
@@ -377,8 +377,7 @@ void CWhoList::Command( CSocket *toSendTo, UI08 type, UI16 buttonPressed )
 	toSend.addText( Dictionary->GetEntry( 1407, sLang ));
 	toSend.addText( oldstrutil::format( "Serial#[%x %x %x %x]", targetChar->GetSerial( 1 ), targetChar->GetSerial( 2 ), targetChar->GetSerial( 3 ), targetChar->GetSerial( 4 )));
 
-	toSend.Finalize();
-	toSendTo->Send( &toSend );
+	toSend.Send();
 }
 
 void CWhoList::ZeroWho( void )

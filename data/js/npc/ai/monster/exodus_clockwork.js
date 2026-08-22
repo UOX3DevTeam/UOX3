@@ -119,10 +119,14 @@ function onDamage( exodusNPC, attacker, damageValue, damageType )
 					attacker.Damage( eBoltSpell.baseDmg, 6, exodusNPC );
 				}
 
-				var socket = attacker.socket;
-				if( socket != null )
+				// Validate attacker again in case they died and ceased to exist after taking damage
+				if( ValidateObject( attacker ))
 				{
-					socket.SysMessage( GetDictionaryEntry( 9056, socket.language )); // That target is immune to magic!
+					var socket = attacker.socket;
+					if( socket != null )
+					{
+						socket.SysMessage( GetDictionaryEntry( 9056, socket.language )); // That target is immune to magic!
+					}
 				}
 			}
 			return false;

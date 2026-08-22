@@ -69,8 +69,11 @@ function DealAreaDamage( srcObj, trgChar )
 		// Apply damage to target
 		trgChar.Damage( hpDrain, 1 );
 
-		if( trgChar.socket != null )
+		// Validate trgChar again in case they died from the damage applied
+		if( ValidateObject( trgChar ) && trgChar.socket != null )
+		{
 			trgChar.socket.SysMessage( GetDictionaryEntry( 9068, trgChar.socket.language )); // You feel your life force being stolen away!
+		}
 		return true;
 	}
 

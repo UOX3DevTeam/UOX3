@@ -1152,17 +1152,9 @@ bool SE_EnableConsoleFunc( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetHour( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	auto args = JS::CallArgsFromVp(argc, vp);
-	bool ampm = cwmWorldState->ServerData()->ServerTimeAMPM();
+	auto args = JS::CallArgsFromVp( argc, vp );
 	UI08 hour = cwmWorldState->ServerData()->ServerTimeHours();
-	if( ampm )
-	{
-		args.rval().setInt32(  static_cast<UI64>( hour ) + 12  );
-	}
-	else
-	{
-		args.rval().setInt32(  hour  );
-	}
+	args.rval().setInt32( hour );
 	return true;
 }
 
@@ -1173,9 +1165,9 @@ bool SE_GetHour( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetMinute( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	auto args = JS::CallArgsFromVp(argc, vp);
+	auto args = JS::CallArgsFromVp( argc, vp );
 	UI08 minute = cwmWorldState->ServerData()->ServerTimeMinutes();
-	args.rval().setInt32(  minute  );
+	args.rval().setInt32( minute );
 	return true;
 }
 
@@ -1186,9 +1178,9 @@ bool SE_GetMinute( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_GetDay( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	auto args = JS::CallArgsFromVp(argc, vp);
+	auto args = JS::CallArgsFromVp( argc, vp );
 	SI16 day = cwmWorldState->ServerData()->ServerTimeDay();
-	args.rval().setInt32(  day  );
+	args.rval().setInt32( day );
 	return true;
 }
 
@@ -1199,7 +1191,7 @@ bool SE_GetDay( JSContext *cx, unsigned int argc, JS::Value *vp )
 //o------------------------------------------------------------------------------------------------o
 bool SE_SecondsPerUOMinute( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
-	auto args = JS::CallArgsFromVp(argc, vp);
+	auto args = JS::CallArgsFromVp( argc, vp );
 
 	if( argc > 1 )
 	{
@@ -1211,7 +1203,7 @@ bool SE_SecondsPerUOMinute( JSContext *cx, unsigned int argc, JS::Value *vp )
 		UI16 secondsPerUOMinute = static_cast<UI16>( args.get(0).toInt32());
 		cwmWorldState->ServerData()->ServerSecondsPerUOMinute( secondsPerUOMinute );
 	}
-	args.rval().setInt32(  cwmWorldState->ServerData()->ServerSecondsPerUOMinute()  );
+	args.rval().setInt32(  cwmWorldState->ServerData()->ServerSecondsPerUOMinute() );
 	return true;
 }
 
@@ -4875,8 +4867,7 @@ bool SE_GetServerSetting( JSContext *cx, unsigned int argc, JS::Value *vp )
 			case 122:	 // SECONDS
 				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->ServerTimeSeconds() ) );
 				break;
-			case 123:	 // AMPM
-				args.rval().setBoolean(  cwmWorldState->ServerData()->ServerTimeAMPM()  );
+			case 123:	 // UNUSED
 				break;
 			case 124:	 // SKILLLEVEL
 				args.rval().setInt32(  static_cast<UI08>( cwmWorldState->ServerData()->SkillLevel() ) );

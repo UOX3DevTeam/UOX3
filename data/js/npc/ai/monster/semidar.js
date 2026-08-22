@@ -48,11 +48,12 @@ function ReflectSpellToCaster( pCaster, pTarget, spellID )
 		finalDmg = baseDmg;
 
 	// Reflect damage to caster
+	DoMovingEffect( pTarget, pCaster, 0x374A, 0x10, 0x15, false, 0x496, 0 );
+    pTarget.SoundEffect( 0x231, true );
+
 	pCaster.Damage( finalDmg, 6, pCaster, false ); // 6 = energy
 	let hpGain = Math.min( pTarget.health + finalDmg, pTarget.maxhp );
 	pTarget.health = hpGain;
-	DoMovingEffect( pTarget, pCaster, 0x374A, 0x10, 0x15, false, 0x496, 0 );
-    pTarget.SoundEffect( 0x231, true );
 	return 0;
 }
 
@@ -82,12 +83,12 @@ function onDamage( damaged, attacker, damageValue, damageType )
 
 		var reflectDmg = damageValue * 2;
 
+		DoMovingEffect(damaged, attacker, 0x374A, 0x10, 0x15, false, 0x496, 0);
+		damaged.SoundEffect(0x231, true);
+
 		attacker.Damage( reflectDmg, 1, damaged );
 		let hpGain = Math.min( damaged.health + reflectDmg, damaged.maxhp );
 		damaged.health = hpGain;
-		DoMovingEffect(damaged, attacker, 0x374A, 0x10, 0x15, false, 0x496, 0);
-
-		damaged.SoundEffect(0x231, true);
 
 		return true;
 
