@@ -259,9 +259,9 @@ function ChangePasswordGump( pSock )
 	changePassGump.AddText( 147, 228, 2727, newPasswordText ); // New Password:
 	changePassGump.AddText( 149, 256, 2727, confirmNewPasswordText ); // Confirm New Password:
 	changePassGump.AddBackground( 335, 229, 200, 20, 9200);
-	changePassGump.AddTextEntry( 335, 229, 200, 20, 1175, 1, 40, " " );
+	changePassGump.AddTextEntryLimited( 335, 229, 200, 20, 1175, 1, 40, " ", 17 );
 	changePassGump.AddBackground( 334, 255, 200, 20, 9200 );
-	changePassGump.AddTextEntry( 334, 255, 200, 20, 1175, 1, 41, " " );
+	changePassGump.AddTextEntryLimited( 334, 255, 200, 20, 1175, 1, 41, " ", 17 );
 	changePassGump.AddButton( 144, 291, 247, 248, 1, 0, 20 ); // Okay Button
 
 	changePassGump.Send( pSock );
@@ -318,6 +318,8 @@ function BugReportGump( pSock )
 function onGumpPress( pSock, pButton, gumpData )
 {
 	var pUser = pSock.currentChar;
+	if( !ValidateObject( pUser ) || pUser.account == null )
+		return;
 
 	// Password rules
 	const passwordRule1 = GetDictionaryEntry( 17023, pSock.language ); // Passwords may only consist of letters (a-z, A-Z) and digits (0-9).
@@ -359,35 +361,32 @@ function onGumpPress( pSock, pButton, gumpData )
 		case 20: // Change account password
 		{
 			var userAccount = pUser.account;
-			var password = gumpData.getEdit( 0 );
-			var confirmpassword = gumpData.getEdit( 1 );
+			var password = gumpData.getEdit( 0 ).trim();
+			var confirmPassword = gumpData.getEdit( 1 ).trim();
 			var letterNumber = /^[0-9a-zA-Z]+$/;
-			var passwordmatch = password.match( letterNumber );
 
-			if( !passwordmatch )
-			{
-				pUser.SysMessage( passwordRule1 ) // Passwords may only consist of letters (a-z, A-Z) and digits (0-9).
-				DisplayHelpMenu( pUser )
-				break;
-			}
 			if( password.length < 5 || password.length > 17 )
 			{
 				pUser.SysMessage( passwordRule2 ); // Your password must be 5 (min) to 17 (max) characters long.
-				DisplayHelpMenu( pUser )
+				ChangePasswordGump( pSock );
 				break;
 			}
-			if( password != confirmpassword )
+			if( !letterNumber.test( password ))
+			{
+				pUser.SysMessage( passwordRule1 ); // Passwords may only consist of letters (a-z, A-Z) and digits (0-9).
+				ChangePasswordGump( pSock );
+				break;
+			}
+			if( password != confirmPassword )
 			{
 				pUser.SysMessage( passwordRule3 ); // 'Confirm New Password' does not match 'New Password'! Note that passwords are cAsE sEnSiTiVe.
-				DisplayHelpMenu( pUser )
+				ChangePasswordGump( pSock );
 				break;
 			}
-			if( password == confirmpassword )
-			{
-				pUser.SysMessage( passwordStatus ); // The new password has been saved to your account.
-				userAccount.password = password;
-				break;
-			}
+
+			// The native account setter applies the configured password-storage policy.
+			userAccount.password = password;
+			pUser.SysMessage( passwordStatus ); // The new password has been saved to your account.
 			break;
 		}
 		case 30: // Teleport to random safe location

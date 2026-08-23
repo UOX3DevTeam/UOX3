@@ -15,11 +15,25 @@
 #include <filesystem>
 #include "StringUtility.hpp"
 #include "osunique.hpp"
+#include "cPasswordHasher.h"
 #if PLATFORM != WINDOWS
 #include <arpa/inet.h>
 #endif
 
 cAccountClass *Accounts;
+
+// Login packets reserve 30 bytes for the account name. Keep newly-created
+// account names portable because they are also used as directory/file names.
+static bool IsSafeNewAccountName( const std::string &username )
+{
+	return username.length() >= 4
+		&& username.length() <= 30
+		&& username.find_first_not_of(
+			"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+			"abcdefghijklmnopqrstuvwxyz"
+			"0123456789_-"
+		) == std::string::npos;
+}
 
 const UI08 CHARACTERCOUNT = 7;
 
@@ -760,10 +774,11 @@ void cAccountClass::WriteAccountSection( CAccountBlock_st& actbTemp, std::fstrea
 UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, const std::string &sContact, UI16 wAttributes )
 {
 	// First were going to make sure that the needed fields are sent in with at least data
-	if( sUsername.length() < 4 || sPassword.length() < 5 )
+	if( !IsSafeNewAccountName( sUsername ) || sPassword.length() < 5 )
 	{
-		// Username and password must be 4 and 5 characters or more in length, respectively
-		Console.Log( oldstrutil::format( "ERROR: Unable to create account for username '%s' with password of '%s'. Username/Password to short", sUsername.c_str(), sPassword.c_str() ), "accounts.log" );
+		// Existing accounts are deliberately grandfathered when loaded. This policy
+		// applies only to new accounts so shard upgrades do not rename or move data.
+		Console.Log( oldstrutil::format( "ERROR: Unable to create account for username '%s'. Usernames must be 4-30 ASCII letters, digits, underscores, or hyphens, and passwords must be at least 5 characters.", sUsername.c_str() ), "accounts.log" );
 		return 0x0000;
 	}
 	// Next thing were going to do is make sure there isn't a duplicate username.
@@ -778,7 +793,18 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 
 	// Build as much of the account block that we can right now.
 	actbTemp.sUsername	= sUsername;
-	actbTemp.sPassword	= sPassword;
+	if( cwmWorldState->ServerData()->PasswordHashingEnabled() )
+	{
+		if( !cPasswordHasher::HashPassword( sPassword, actbTemp.sPassword ))
+		{
+			Console.Error( oldstrutil::format( "AddAccount(): Unable to securely store password for username '%s'", sUsername.c_str() ));
+			return 0x0000;
+		}
+	}
+	else
+	{
+		actbTemp.sPassword = sPassword;
+	}
 	actbTemp.sContact	= sContact;
 	actbTemp.wFlags		= wAttributes;
 	actbTemp.wTimeBan	= 0;
@@ -796,24 +822,17 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 		actbTemp.wFlags.set( AB_FLAGS_YOUNG, 1 );
 	}
 	// Ok we have everything except the path to the account dir, so make that now
-	std::string sTempPath( m_sAccountsDirectory );
-	if( sTempPath[sTempPath.length() - 1] == '\\' || sTempPath[sTempPath.length() - 1] == '/' )
+	const auto configuredAccountsRoot = std::filesystem::path( m_sAccountsDirectory );
+	const auto accountDirectory = configuredAccountsRoot / sUsername;
+	const auto checkedAccountsRoot = std::filesystem::absolute( configuredAccountsRoot ).lexically_normal();
+	const auto checkedAccountDirectory = std::filesystem::absolute( accountDirectory ).lexically_normal();
+	if( checkedAccountDirectory.parent_path() != checkedAccountsRoot )
 	{
-		auto szTempBuff	=    sUsername; // oldstrutil::lower( sUsername );
-		sTempPath			+= szTempBuff;
-		sTempPath			+= "/";
-		sTempPath = oldstrutil::replaceSlash( sTempPath );
-		actbTemp.sPath		= sTempPath;
+		Console.Error( oldstrutil::format( "AddAccount(): Refusing account path outside the accounts directory for username '%s'", sUsername.c_str() ));
+		return 0x0000;
 	}
-	else
-	{
-		auto szTempBuff	= sUsername; //oldstrutil::lower( sUsername );
-		sTempPath			+= "/";
-		sTempPath			+= szTempBuff;
-		sTempPath			+= "/";
-		sTempPath = oldstrutil::replaceSlash( sTempPath );
-		actbTemp.sPath = sTempPath;
-	}
+	auto accountPath = accountDirectory.string() + "/";
+	actbTemp.sPath = oldstrutil::replaceSlash( accountPath );
 	// Ok now that we got here we need to make the directory, and create the username.uad file
 	if( !std::filesystem::exists( std::filesystem::path( actbTemp.sPath )))
 	{
@@ -920,6 +939,59 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 	m_wHighestAccount = actbTemp.wAccountIndex;
 	// Return to the calling function
 	return static_cast<UI16>( m_mapUsernameIdMap.size() );
+}
+
+bool cAccountClass::VerifyPassword( CAccountBlock_st& account, const std::string &password )
+{
+	if( !cPasswordHasher::VerifyPassword( account.sPassword, password ))
+	{
+		return false;
+	}
+
+	if( cwmWorldState->ServerData()->PasswordHashingEnabled() && !cPasswordHasher::IsPasswordHash( account.sPassword ))
+	{
+		// A successful login is the safest time to migrate a legacy plaintext credential.
+		// Hashing failure must not lock an existing player out, so login still succeeds.
+		SetPassword( account, password );
+	}
+	return true;
+}
+
+bool cAccountClass::SetPassword( CAccountBlock_st& account, const std::string &password )
+{
+	if( account.wAccountIndex == AB_INVALID_ID || password.length() < 5 || password.length() > 30 )
+	{
+		return false;
+	}
+
+	std::string storedPassword = password;
+	if( cwmWorldState->ServerData()->PasswordHashingEnabled()
+		&& !cPasswordHasher::HashPassword( password, storedPassword ))
+	{
+		return false;
+	}
+
+	account.sPassword = std::move( storedPassword );
+	account.bChanged = true;
+	return true;
+}
+
+bool cAccountClass::ResetPassword( const std::string &username, std::string &temporaryPassword )
+{
+	CAccountBlock_st& account = GetAccountByName( username );
+	if( account.wAccountIndex == AB_INVALID_ID || !cPasswordHasher::GenerateTemporaryPassword( temporaryPassword ))
+	{
+		return false;
+	}
+
+	const std::string previousPassword = account.sPassword;
+	if( !SetPassword( account, temporaryPassword ) || Save() == 0 )
+	{
+		account.sPassword = previousPassword;
+		temporaryPassword.clear();
+		return false;
+	}
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1836,7 +1908,7 @@ CAccountBlock_st& cAccountClass::GetAccountByName( std::string sUsername )
 		{
 			CAccountBlock_st& actbId = J->second;
 			// Check to see that these both are equal where it counts.
-			if( actbId.sUsername == actbName.sUsername || actbId.sPassword == actbName.sPassword )
+			if( actbId.sUsername == actbName.sUsername && actbId.sPassword == actbName.sPassword )
 			{
 				return actbName;
 			}
@@ -1864,7 +1936,7 @@ CAccountBlock_st& cAccountClass::GetAccountById( UI16 wAccountId )
 		{
 			CAccountBlock_st& actbName = ( *J->second );
 			// Check to see that these both are equal where it counts.
-			if( actbId.sUsername == actbName.sUsername || actbId.sPassword == actbName.sPassword )
+			if( actbId.sUsername == actbName.sUsername && actbId.sPassword == actbName.sPassword )
 				return actbId;
 		}
 	}

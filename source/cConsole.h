@@ -104,6 +104,7 @@ private:
 	auto PrintStartOfLine() -> void;
 	auto StartOfLineCheck() -> void;
 	auto cl_getch() -> std::int32_t;
+	std::string ReadConsoleLine( const std::string &prompt );
 	auto Process( std::int32_t c ) -> void;
 	auto DisplaySettings() -> void;
 

@@ -426,6 +426,14 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"VENDORITEMFEEAMOUNT", 413},
 	{"ONLYRETURNTOBANK", 414},
 	{"VENDORMAXFUNDS", 415},
+	{"LOGINTHROTTLEENABLED", 416},
+	{"LOGINTHROTTLEMAXATTEMPTS", 417},
+	{"LOGINTHROTTLEWINDOW", 418},
+	{"LOGINTHROTTLEINITIALDELAY", 419},
+	{"LOGINTHROTTLEMULTIPLIER", 420},
+	{"LOGINTHROTTLEMAXDELAY", 421},
+	{"LOGINTHROTTLEENTRYTTL", 422},
+	{"PASSWORDHASHINGENABLED", 423},
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -678,6 +686,14 @@ auto CServerData::ResetDefaults() -> void
 	MaxClientBytesIn( 50000 );
 	MaxClientBytesOut( 200000 );
 	NetTrafficTimeban( 30 );
+	LoginThrottleEnabled( true );
+	LoginThrottleMaxAttempts( 5 );
+	LoginThrottleWindow( 60 );
+	LoginThrottleInitialDelay( 2 );
+	LoginThrottleMultiplier( 2 );
+	LoginThrottleMaxDelay( 300 );
+	LoginThrottleEntryTtl( 3600 );
+	PasswordHashingEnabled( false );
 
 	// Adaptive Performance System
 	APSPerfThreshold( 50 ); // Default to 50 simulation cycles as performance threshold
@@ -5892,6 +5908,19 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "GARGOYLEMAXWEIGHTBONUS=" << GargoyleMaxWeightBonus() << '\n';
 		ofsOutput << "}" << '\n';
 
+		ofsOutput << '\n' << "[accounts]" << '\n' << "{" << '\n';
+		ofsOutput << "INTERNALACCOUNTCREATION=" << ( InternalAccountStatus() ? 1 : 0 ) << '\n';
+		ofsOutput << "PASSWORDHASHINGENABLED=" << ( PasswordHashingEnabled() ? 1 : 0 ) << '\n';
+		ofsOutput << "LOGINTHROTTLEENABLED=" << ( LoginThrottleEnabled() ? 1 : 0 ) << '\n';
+		ofsOutput << "LOGINTHROTTLEMAXATTEMPTS=" << LoginThrottleMaxAttempts() << '\n';
+		ofsOutput << "LOGINTHROTTLEWINDOW=" << LoginThrottleWindow() << '\n';
+		ofsOutput << "LOGINTHROTTLEINITIALDELAY=" << LoginThrottleInitialDelay() << '\n';
+		ofsOutput << "LOGINTHROTTLEMULTIPLIER=" << LoginThrottleMultiplier() << '\n';
+		ofsOutput << "LOGINTHROTTLEMAXDELAY=" << LoginThrottleMaxDelay() << '\n';
+		ofsOutput << "LOGINTHROTTLEENTRYTTL=" << LoginThrottleEntryTtl() << '\n';
+		ofsOutput << "ACCOUNTFLUSH=" << AccountFlushTimer() << '\n';
+		ofsOutput << "}" << '\n';
+
 		ofsOutput << '\n' << "[settings]" << '\n' << "{" << '\n';
 		ofsOutput << "LOOTDECAYSWITHPLAYERCORPSE=" << ( PlayerCorpseLootDecay() ? 1 : 0 ) << '\n';
 		ofsOutput << "LOOTDECAYSWITHNPCCORPSE=" << ( NpcCorpseLootDecay() ? 1 : 0 ) << '\n';
@@ -5899,11 +5928,9 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "DEATHANIMATION=" << ( DeathAnimationStatus() ? 1 : 0 ) << '\n';
 		ofsOutput << "AMBIENTSOUNDS=" << WorldAmbientSounds() << '\n';
 		ofsOutput << "AMBIENTFOOTSTEPS=" << ( AmbientFootsteps() ? 1 : 0 ) << '\n';
-		ofsOutput << "INTERNALACCOUNTCREATION=" << ( InternalAccountStatus() ? 1 : 0 ) << '\n';
 		ofsOutput << "SHOWOFFLINEPCS=" << ( ShowOfflinePCs() ? 1 : 0 ) << '\n';
 		ofsOutput << "ROGUESENABLED=" << ( RogueStatus() ? 1 : 0 ) << '\n';
 		ofsOutput << "PLAYERPERSECUTION=" << ( PlayerPersecutionStatus() ? 1 : 0 ) << '\n';
-		ofsOutput << "ACCOUNTFLUSH=" << AccountFlushTimer() << '\n';
 		ofsOutput << "HTMLSTATUSENABLED=" << HtmlStatsStatus() << '\n';
 		ofsOutput << "SELLBYNAME=" << ( SellByNameStatus() ? 1 : 0 ) << '\n';
 		ofsOutput << "SELLMAXITEMS=" << SellMaxItemsStatus() << '\n';
@@ -7752,6 +7779,30 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 415: // VENDORMAXFUNDS
 			VendorMaxFunds( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 416: // LOGINTHROTTLEENABLED
+			LoginThrottleEnabled( std::stoul( value, nullptr, 0 ) >= 1 );
+			break;
+		case 417: // LOGINTHROTTLEMAXATTEMPTS
+			LoginThrottleMaxAttempts( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 418: // LOGINTHROTTLEWINDOW
+			LoginThrottleWindow( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 419: // LOGINTHROTTLEINITIALDELAY
+			LoginThrottleInitialDelay( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 420: // LOGINTHROTTLEMULTIPLIER
+			LoginThrottleMultiplier( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 421: // LOGINTHROTTLEMAXDELAY
+			LoginThrottleMaxDelay( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 422: // LOGINTHROTTLEENTRYTTL
+			LoginThrottleEntryTtl( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 423: // PASSWORDHASHINGENABLED
+			PasswordHashingEnabled( std::stoul( value, nullptr, 0 ) >= 1 );
 			break;
 		default:
 			rValue = false;

@@ -155,6 +155,10 @@ add_executable(uox3
    ../../source/books.cpp
    ../../source/books.h
    ../../source/cAccountClass.cpp
+	../../source/cLoginThrottler.cpp
+	../../source/cLoginThrottler.h
+	../../source/cPasswordHasher.cpp
+	../../source/cPasswordHasher.h
    ../../source/cAccountClass.h
    ../../source/cEffects.h
    ../../source/CGump.cpp
@@ -373,6 +377,7 @@ target_link_libraries(uox3 PRIVATE
 	$<$<PLATFORM_ID:Windows>:legacy_stdio_definitions>
 	$<$<PLATFORM_ID:Windows>:ntdll>
 	$<$<PLATFORM_ID:Windows>:userenv>
+	$<$<PLATFORM_ID:Windows>:bcrypt>
 	${CMAKE_DL_LIBS}
 	$<$<PLATFORM_ID:Linux>:pthread>
    $<$<PLATFORM_ID:FreeBSD>:pthread>
