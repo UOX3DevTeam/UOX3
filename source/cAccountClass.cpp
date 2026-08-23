@@ -824,7 +824,14 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 	// Ok we have everything except the path to the account dir, so make that now
 	const auto configuredAccountsRoot = std::filesystem::path( m_sAccountsDirectory );
 	const auto accountDirectory = configuredAccountsRoot / sUsername;
-	const auto checkedAccountsRoot = std::filesystem::absolute( configuredAccountsRoot ).lexically_normal();
+	auto checkedAccountsRoot = std::filesystem::absolute( configuredAccountsRoot ).lexically_normal();
+	// On some standard-library implementations a normalized directory ending in a
+	// separator retains an empty final component, making an otherwise equal parent
+	// path compare unequal. Remove only that empty component before containment check.
+	if( !checkedAccountsRoot.has_filename() )
+	{
+		checkedAccountsRoot = checkedAccountsRoot.parent_path();
+	}
 	const auto checkedAccountDirectory = std::filesystem::absolute( accountDirectory ).lexically_normal();
 	if( checkedAccountDirectory.parent_path() != checkedAccountsRoot )
 	{
