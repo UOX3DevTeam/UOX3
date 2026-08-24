@@ -774,11 +774,11 @@ void cAccountClass::WriteAccountSection( CAccountBlock_st& actbTemp, std::fstrea
 UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, const std::string &sContact, UI16 wAttributes )
 {
 	// First were going to make sure that the needed fields are sent in with at least data
-	if( !IsSafeNewAccountName( sUsername ) || sPassword.length() < 5 )
+	if( !IsSafeNewAccountName( sUsername ) || sPassword.length() < 5 || sPassword.length() > 17 )
 	{
 		// Existing accounts are deliberately grandfathered when loaded. This policy
 		// applies only to new accounts so shard upgrades do not rename or move data.
-		Console.Log( oldstrutil::format( "ERROR: Unable to create account for username '%s'. Usernames must be 4-30 ASCII letters, digits, underscores, or hyphens, and passwords must be at least 5 characters.", sUsername.c_str() ), "accounts.log" );
+		Console.Log( oldstrutil::format( "ERROR: Unable to create account for username '%s'. Usernames must be 4-30 ASCII letters, digits, underscores, or hyphens, and passwords must be 5-17 characters long.", sUsername.c_str() ), "accounts.log" );
 		return 0x0000;
 	}
 	// Next thing were going to do is make sure there isn't a duplicate username.
@@ -966,7 +966,7 @@ bool cAccountClass::VerifyPassword( CAccountBlock_st& account, const std::string
 
 bool cAccountClass::SetPassword( CAccountBlock_st& account, const std::string &password )
 {
-	if( account.wAccountIndex == AB_INVALID_ID || password.length() < 5 || password.length() > 30 )
+	if( account.wAccountIndex == AB_INVALID_ID || password.length() < 5 || password.length() > 17 )
 	{
 		return false;
 	}

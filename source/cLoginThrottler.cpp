@@ -8,10 +8,7 @@ cLoginThrottler LoginThrottler;
 
 UI32 cLoginThrottler::AddressKey( CSocket *socket ) const
 {
-	return ( static_cast<UI32>( socket->ClientIP1() ) << 24 )
-		| ( static_cast<UI32>( socket->ClientIP2() ) << 16 )
-		| ( static_cast<UI32>( socket->ClientIP3() ) << 8 )
-		| static_cast<UI32>( socket->ClientIP4() );
+	return CalcSerial( socket->ClientIP1(), socket->ClientIP2(), socket->ClientIP3(), socket->ClientIP4() );
 }
 
 bool cLoginThrottler::IsBlocked( CSocket *socket, const std::string &username, UI32 &retryAfterSeconds )
@@ -97,7 +94,7 @@ void cLoginThrottler::RecordAttempt( CSocket *socket, const std::string &oneTime
 
 		if( ++operationsSinceCleanup >= 256 )
 		{
-			Cleanup( now, entryTtl );
+			CleanupLocked( now, entryTtl );
 			operationsSinceCleanup = 0;
 		}
 	}
@@ -108,8 +105,9 @@ void cLoginThrottler::RecordAttempt( CSocket *socket, const std::string &oneTime
 	}
 }
 
-void cLoginThrottler::Cleanup( const std::chrono::steady_clock::time_point &now, UI32 entryTtl )
+void cLoginThrottler::CleanupLocked( const std::chrono::steady_clock::time_point &now, UI32 entryTtl )
 {
+	// Caller must hold entriesMutex while entries and operationsSinceCleanup are accessed.
 	for( auto entry = entries.begin(); entry != entries.end(); )
 	{
 		if( entry->second.blockedUntil <= now && now - entry->second.lastAccess >= std::chrono::seconds( entryTtl ))

@@ -27,7 +27,7 @@ public:
 private:
 	UI32 AddressKey( CSocket *socket ) const;
 	void RecordAttempt( CSocket *socket, const std::string &oneTimeBypassUsername );
-	void Cleanup( const std::chrono::steady_clock::time_point &now, UI32 entryTtl );
+	void CleanupLocked( const std::chrono::steady_clock::time_point &now, UI32 entryTtl );
 
 	std::unordered_map<UI32, LoginThrottleEntry> entries;
 	std::mutex entriesMutex;
