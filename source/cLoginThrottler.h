@@ -21,12 +21,12 @@ class cLoginThrottler
 {
 public:
 	bool IsBlocked( CSocket *socket, const std::string &username, UI32 &retryAfterSeconds );
-	void RecordFailure( CSocket *socket );
+	void RecordFailure( CSocket *socket, const std::string &username );
 	void RecordAccountCreation( CSocket *socket, const std::string &username );
 
 private:
 	UI32 AddressKey( CSocket *socket ) const;
-	void RecordAttempt( CSocket *socket, const std::string &oneTimeBypassUsername );
+	void RecordAttempt( CSocket *socket, const std::string &username, const std::string &oneTimeBypassUsername );
 	void CleanupLocked( const std::chrono::steady_clock::time_point &now, UI32 entryTtl );
 
 	std::unordered_map<UI32, LoginThrottleEntry> entries;

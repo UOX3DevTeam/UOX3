@@ -1396,6 +1396,59 @@ UI16 cAccountClass::Load( void )
 	// We need to see if there are any new accounts to come.
 	[[maybe_unused]] UI16 wImportCount = 0x0000;
 	wImportCount = ImportAccounts();
+
+	if( cwmWorldState->ServerData()->PasswordHashingEnabled() )
+	{
+		std::size_t plaintextCount = 0;
+		for( const auto &accountEntry : m_mapUsernameIdMap )
+		{
+			if( !accountEntry.second.sPassword.empty() && !cPasswordHasher::IsPasswordHash( accountEntry.second.sPassword ))
+			{
+				++plaintextCount;
+			}
+		}
+
+		if( plaintextCount > 0 )
+		{
+			Console << "Migrating " << plaintextCount << " plaintext account password(s) to PBKDF2. This may take a moment..." << myendl;
+			std::size_t migratedCount = 0;
+			std::size_t failedCount = 0;
+			for( auto &accountEntry : m_mapUsernameIdMap )
+			{
+				CAccountBlock_st &account = accountEntry.second;
+				if( account.sPassword.empty() || cPasswordHasher::IsPasswordHash( account.sPassword ))
+				{
+					continue;
+				}
+
+				std::string passwordHash;
+				if( cPasswordHasher::HashPassword( account.sPassword, passwordHash ))
+				{
+					account.sPassword = std::move( passwordHash );
+					account.bChanged = true;
+					++migratedCount;
+					if( migratedCount % 25 == 0 || migratedCount == plaintextCount )
+					{
+						Console << "  Password migration progress: " << migratedCount << "/" << plaintextCount << myendl;
+					}
+				}
+				else
+				{
+					++failedCount;
+				}
+			}
+
+			if( migratedCount > 0 )
+			{
+				const UI16 saveResult = Save();
+				if( saveResult == 0 || saveResult == 0xFFFF )
+				{
+					Console.Error( "Unable to save accounts after password migration." );
+				}
+			}
+			Console << "Password migration complete: " << migratedCount << " migrated, " << failedCount << " failed." << myendl;
+		}
+	}
 	// Return the number of accounts loaded
 	return static_cast<UI16>( m_mapUsernameMap.size() );
 }

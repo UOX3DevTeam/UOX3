@@ -352,7 +352,7 @@ bool CPIFirstLogin::Handle( void )
 	{
 		if( !throttleAttemptRecorded && ( t == LDR_BADPASSWORD || t == LDR_UNKNOWNUSER ))
 		{
-			LoginThrottler.RecordFailure( tSock );
+			LoginThrottler.RecordFailure( tSock, username );
 		}
 		CPLoginDeny pckDeny( t );
 		tSock->Send( &pckDeny );
@@ -633,7 +633,7 @@ bool CPISecondLogin::Handle( void )
 	{
 		if( t == LDR_BADPASSWORD || t == LDR_UNKNOWNUSER )
 		{
-			LoginThrottler.RecordFailure( tSock );
+			LoginThrottler.RecordFailure( tSock, Name() );
 		}
 		tSock->AcctNo( AB_INVALID_ID );
 		CPLoginDeny pckDeny( t );

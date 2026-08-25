@@ -5828,6 +5828,19 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "DICTIONARYDIRECTORY=" << Directory( CSDDP_DICTIONARIES ) << '\n';
 		ofsOutput << "}" << '\n';
 
+		ofsOutput << '\n' << "[accounts]" << '\n' << "{" << '\n';
+		ofsOutput << "INTERNALACCOUNTCREATION=" << ( InternalAccountStatus() ? 1 : 0 ) << '\n';
+		ofsOutput << "PASSWORDHASHINGENABLED=" << ( PasswordHashingEnabled() ? 1 : 0 ) << '\n';
+		ofsOutput << "LOGINTHROTTLEENABLED=" << ( LoginThrottleEnabled() ? 1 : 0 ) << '\n';
+		ofsOutput << "LOGINTHROTTLEMAXATTEMPTS=" << LoginThrottleMaxAttempts() << '\n';
+		ofsOutput << "LOGINTHROTTLEWINDOW=" << LoginThrottleWindow() << '\n';
+		ofsOutput << "LOGINTHROTTLEINITIALDELAY=" << LoginThrottleInitialDelay() << '\n';
+		ofsOutput << "LOGINTHROTTLEMULTIPLIER=" << LoginThrottleMultiplier() << '\n';
+		ofsOutput << "LOGINTHROTTLEMAXDELAY=" << LoginThrottleMaxDelay() << '\n';
+		ofsOutput << "LOGINTHROTTLEENTRYTTL=" << LoginThrottleEntryTtl() << '\n';
+		ofsOutput << "ACCOUNTFLUSH=" << AccountFlushTimer() << '\n';
+		ofsOutput << "}" << '\n';
+
 		ofsOutput << '\n' << "[skill & stats]" << '\n' << "{" << '\n';
 		ofsOutput << "SKILLLEVEL=" << static_cast<UI16>( SkillLevel() ) << '\n';
 		ofsOutput << "SKILLCAP=" << ServerSkillTotalCapStatus() << '\n';
@@ -5906,19 +5919,6 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "GARGOYLESTAMINAREGENBONUS=" << GargoyleStaminaRegenBonus() << '\n';
 		ofsOutput << "GARGOYLEMANAREGENBONUS=" << GargoyleManaRegenBonus() << '\n';
 		ofsOutput << "GARGOYLEMAXWEIGHTBONUS=" << GargoyleMaxWeightBonus() << '\n';
-		ofsOutput << "}" << '\n';
-
-		ofsOutput << '\n' << "[accounts]" << '\n' << "{" << '\n';
-		ofsOutput << "INTERNALACCOUNTCREATION=" << ( InternalAccountStatus() ? 1 : 0 ) << '\n';
-		ofsOutput << "PASSWORDHASHINGENABLED=" << ( PasswordHashingEnabled() ? 1 : 0 ) << '\n';
-		ofsOutput << "LOGINTHROTTLEENABLED=" << ( LoginThrottleEnabled() ? 1 : 0 ) << '\n';
-		ofsOutput << "LOGINTHROTTLEMAXATTEMPTS=" << LoginThrottleMaxAttempts() << '\n';
-		ofsOutput << "LOGINTHROTTLEWINDOW=" << LoginThrottleWindow() << '\n';
-		ofsOutput << "LOGINTHROTTLEINITIALDELAY=" << LoginThrottleInitialDelay() << '\n';
-		ofsOutput << "LOGINTHROTTLEMULTIPLIER=" << LoginThrottleMultiplier() << '\n';
-		ofsOutput << "LOGINTHROTTLEMAXDELAY=" << LoginThrottleMaxDelay() << '\n';
-		ofsOutput << "LOGINTHROTTLEENTRYTTL=" << LoginThrottleEntryTtl() << '\n';
-		ofsOutput << "ACCOUNTFLUSH=" << AccountFlushTimer() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[settings]" << '\n' << "{" << '\n';

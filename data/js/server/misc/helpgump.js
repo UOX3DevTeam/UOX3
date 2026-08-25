@@ -363,7 +363,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			var userAccount = pUser.account;
 			var password = gumpData.getEdit( 0 ).trim();
 			var confirmPassword = gumpData.getEdit( 1 ).trim();
-			var letterNumber = /^[0-9a-zA-Z]+$/;
+			var letterNumber = /^[0-9a-zA-Z]{5,17}$/;
 
 			if( password.length < 5 || password.length > 17 )
 			{

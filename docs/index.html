@@ -697,7 +697,7 @@ packitem=0x0f8d,30
 					</div>
 					<p>This is account #0 on your shard, also known as the administrator account. Any character created on this account will <strong>automatically be granted all GM and Admin powers</strong>. As such, it would be a good idea to <span class="hl">change the username and password</span> from the default ADMIN/ADMIN to something more original, creative and most importantly - <strong>secure</strong>! Note that it can be a good idea to create a second, non-admin account to use for testing purposes, as GM/Admin characters are often not subject to the same gameplay rules as regular players.</p>
 					<p><span class="hl">Important Note:</span> The <strong>maximum</strong> password length accepted by the UO client's password-entry field is <strong>17</strong> characters, and the minimum password length accepted by UOX3 is <strong>5</strong> characters - so your password <span class="hl">should be between 5 to 17 characters long</span>.</p>
-					<p>For stronger protection if <strong>accounts.adm</strong> is copied or exposed, enable <span class="hl">PASSWORDHASHINGENABLED=1</span> in the <strong>[accounts]</strong> section of UOX.INI. Existing plaintext accounts continue to work and are automatically replaced with a salted PBKDF2-HMAC-SHA256 hash after a successful login. Newly created accounts and password changes are stored as hashes while the option is enabled.</p>
+					<p>For stronger protection if <strong>accounts.adm</strong> is copied or exposed, enable <span class="hl">PASSWORDHASHINGENABLED=1</span> in the <strong>[accounts]</strong> section of UOX.INI. Existing plaintext passwords are automatically replaced with salted PBKDF2-HMAC-SHA256 hashes when accounts are loaded, then saved once after migration. Newly created accounts and password changes are stored as hashes while the option is enabled.</p>
 					<p>If an administrator or player forgets a password, unlock the local server console and press <span class="hl">E</span>. Enter the account username when prompted; UOX3 generates a temporary password, saves the account immediately and displays the password only in the local console. Give that temporary password to the account owner, who can log in and change it using the Help gump. This recovery method also works for the administrator's own account.</p>
 					<p>Additional accounts can be created by <strong>copying an existing SECTION ACCOUNT #</strong> (like the default guest account) and pasting it at the bottom of the file, followed by <strong>manually incrementing the account number</strong> of the new account to the next available number (1 higher than the previous one), <strong>changing the username/password/contact info</strong> and ensuring all the character references are set to <strong>0xffffffff [UNKNOWN]</strong>.</p>
 					<p>If you make changes to this file while UOX3 is already running, you will have to reload the accounts from UOX3's console menu.</p>
@@ -1288,6 +1288,51 @@ packitem=0x0f8d,30
 						</div>
 					</div>
 
+					<input type="checkbox" id="spoiler_ini_accounts">
+					<label for="spoiler_ini_accounts">[accounts] <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<div class="settingsDiv">
+							<p><span class="hl">INTERNALACCOUNTCREATION</span><strong>=1</strong><br>
+							If enabled, an unknown but valid username is automatically registered using the supplied password. New usernames must be 4 to 30 characters long and contain only letters, numbers, underscores and hyphens.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">PASSWORDHASHINGENABLED</span><strong>=0</strong><br>
+							If enabled, new and changed passwords are stored using PBKDF2-HMAC-SHA256 with a random salt and 600,000 iterations. Existing plaintext accounts migrate when accounts are loaded and are saved once after the migration completes. Passwords already stored as hashes continue to verify if this setting is later disabled; they cannot be converted back to plaintext automatically.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">LOGINTHROTTLEENABLED</span><strong>=1</strong><br>
+							Enables per-IP throttling for failed login attempts. Connections attempted during an active delay are rejected immediately rather than being held open.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">LOGINTHROTTLEMAXATTEMPTS</span><strong>=5</strong><br>
+							Number of failed login attempts allowed within LOGINTHROTTLEWINDOW before delays begin.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">LOGINTHROTTLEWINDOW</span><strong>=60</strong><br>
+							Time in seconds over which failed login attempts are counted.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">LOGINTHROTTLEINITIALDELAY</span><strong>=2</strong><br>
+							Initial delay in seconds applied after the failed-attempt limit is reached.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">LOGINTHROTTLEMULTIPLIER</span><strong>=2</strong><br>
+							Multiplier applied to the delay after each additional failed login attempt.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">LOGINTHROTTLEMAXDELAY</span><strong>=300</strong><br>
+							Maximum delay in seconds imposed by the login throttle.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">LOGINTHROTTLEENTRYTTL</span><strong>=3600</strong><br>
+							Time in seconds that an inactive per-IP throttle record is retained before cleanup.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">ACCOUNTFLUSH</span><strong>=5</strong><br>
+							How often, in minutes, online accounts are checked to confirm that they are still online.</p>
+						</div>
+					</div>
+
 					<input type="checkbox" id="spoiler_ini_skillsandstats">
 					<label for="spoiler_ini_skillsandstats">[skill & stats] <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -1618,51 +1663,6 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="hl">GARGOYLEMAXWEIGHTBONUS</span><strong>=0</strong><br>
 							Defines the default max weight bonus for the gargoyle race (race 2 in races.dfn).</p>
-						</div>
-					</div>
-
-					<input type="checkbox" id="spoiler_ini_accounts">
-					<label for="spoiler_ini_accounts">[accounts] <i class="fas fa-angle-down"></i></label>
-					<div class="spoiler">
-						<div class="settingsDiv">
-							<p><span class="hl">INTERNALACCOUNTCREATION</span><strong>=1</strong><br>
-							If enabled, an unknown but valid username is automatically registered using the supplied password. New usernames must be 4 to 30 characters long and contain only letters, numbers, underscores and hyphens.</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">PASSWORDHASHINGENABLED</span><strong>=0</strong><br>
-							If enabled, new and changed passwords are stored using PBKDF2-HMAC-SHA256 with a random salt and 600,000 iterations. Existing plaintext accounts remain usable and migrate after their next successful login. Passwords already stored as hashes continue to verify if this setting is later disabled; they cannot be converted back to plaintext automatically.</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">LOGINTHROTTLEENABLED</span><strong>=1</strong><br>
-							Enables per-IP throttling for failed login attempts. Connections attempted during an active delay are rejected immediately rather than being held open.</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">LOGINTHROTTLEMAXATTEMPTS</span><strong>=5</strong><br>
-							Number of failed login attempts allowed within LOGINTHROTTLEWINDOW before delays begin.</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">LOGINTHROTTLEWINDOW</span><strong>=60</strong><br>
-							Time in seconds over which failed login attempts are counted.</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">LOGINTHROTTLEINITIALDELAY</span><strong>=2</strong><br>
-							Initial delay in seconds applied after the failed-attempt limit is reached.</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">LOGINTHROTTLEMULTIPLIER</span><strong>=2</strong><br>
-							Multiplier applied to the delay after each additional failed login attempt.</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">LOGINTHROTTLEMAXDELAY</span><strong>=300</strong><br>
-							Maximum delay in seconds imposed by the login throttle.</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">LOGINTHROTTLEENTRYTTL</span><strong>=3600</strong><br>
-							Time in seconds that an inactive per-IP throttle record is retained before cleanup.</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">ACCOUNTFLUSH</span><strong>=5</strong><br>
-							How often, in minutes, online accounts are checked to confirm that they are still online.</p>
 						</div>
 					</div>
 

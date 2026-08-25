@@ -6,6 +6,31 @@
 
 cLoginThrottler LoginThrottler;
 
+static std::string SafeLoginNameForLog( const std::string &username )
+{
+	std::string safeName;
+	safeName.reserve( std::min<std::size_t>( username.length(), 30 ));
+	for( const unsigned char character : username )
+	{
+		if( safeName.length() == 30 )
+		{
+			break;
+		}
+		if(( character >= 'a' && character <= 'z' )
+			|| ( character >= 'A' && character <= 'Z' )
+			|| ( character >= '0' && character <= '9' )
+			|| character == '_' || character == '-' )
+		{
+			safeName.push_back( static_cast<char>( character ));
+		}
+		else
+		{
+			safeName.push_back( '?' );
+		}
+	}
+	return safeName.empty() ? "[empty]" : safeName;
+}
+
 UI32 cLoginThrottler::AddressKey( CSocket *socket ) const
 {
 	return CalcSerial( socket->ClientIP1(), socket->ClientIP2(), socket->ClientIP3(), socket->ClientIP4() );
@@ -37,18 +62,17 @@ bool cLoginThrottler::IsBlocked( CSocket *socket, const std::string &username, U
 	return true;
 }
 
-void cLoginThrottler::RecordFailure( CSocket *socket )
-
+void cLoginThrottler::RecordFailure( CSocket *socket, const std::string &username )
 {
-	RecordAttempt( socket, "" );
+	RecordAttempt( socket, username, "" );
 }
 
 void cLoginThrottler::RecordAccountCreation( CSocket *socket, const std::string &username )
 {
-	RecordAttempt( socket, username );
+	RecordAttempt( socket, username, username );
 }
 
-void cLoginThrottler::RecordAttempt( CSocket *socket, const std::string &oneTimeBypassUsername )
+void cLoginThrottler::RecordAttempt( CSocket *socket, const std::string &username, const std::string &oneTimeBypassUsername )
 {
 	CServerData *serverData = cwmWorldState->ServerData();
 	if( socket == nullptr || !serverData->LoginThrottleEnabled() )
@@ -101,7 +125,9 @@ void cLoginThrottler::RecordAttempt( CSocket *socket, const std::string &oneTime
 
 	if( delaySeconds > 0 )
 	{
-		Console.Log( oldstrutil::format( "Login throttle activated for [%i.%i.%i.%i] for %u seconds.", socket->ClientIP4(), socket->ClientIP3(), socket->ClientIP2(), socket->ClientIP1(), delaySeconds ), "accounts.log" );
+		const std::string throttleMessage = oldstrutil::format( "Login throttle activated for account '%s' from [%i.%i.%i.%i] for %u seconds.", SafeLoginNameForLog( username ).c_str(), socket->ClientIP4(), socket->ClientIP3(), socket->ClientIP2(), socket->ClientIP1(), delaySeconds );
+		Console.Log( throttleMessage, "accounts.log" );
+		Console << throttleMessage << myendl;
 	}
 }
 
