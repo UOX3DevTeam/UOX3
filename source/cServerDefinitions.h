@@ -56,9 +56,11 @@ private:
 	std::map<std::string, SI16>	 priorityMap;
 	SI16	 defaultPriority;
 	
+	std::vector<std::unordered_map<std::string, CScriptSection*>> unifiedEntries; // Unified O(1) hash map per definition category for fast lookup
 
 	auto LoadDFNCategory( DEFINITIONCATEGORIES toLoad ) -> void;
 	auto ReloadScriptObjects() -> void;
+	auto RebuildUnifiedMap( DEFINITIONCATEGORIES category ) -> void;
 	auto BuildPriorityMap( DEFINITIONCATEGORIES category, UI08 &wasPrioritized ) -> void;
 	auto CleanPriorityMap() -> void;
 

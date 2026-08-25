@@ -4233,9 +4233,9 @@ bool SE_DoesDynamicBlock( JSContext *cx, unsigned int argc, JS::Value *vp )
 {
 	auto args = JS::CallArgsFromVp(argc, vp);
 
-	if( argc != 9 )
+	if( argc < 9 || argc > 10 )
 	{
-		ScriptError( cx, "DoesDynamicBlock: Invalid number of arguments (takes 9: X, Y, Z, WorldNumber, instanceId, checkWater, waterWalk, checkOnlyMultis and checkOnlyNonMultis)" );
+		ScriptError( cx, "DoesDynamicBlock: Invalid number of arguments (takes 9 or 10: X, Y, Z, WorldNumber, instanceId, checkWater, waterWalk, checkOnlyMultis, checkOnlyNonMultis, [checkMultiPlacement])" );
 		return false;
 	}
 
@@ -4248,7 +4248,9 @@ bool SE_DoesDynamicBlock( JSContext *cx, unsigned int argc, JS::Value *vp )
 	bool waterWalk = ( args.get(6).toBoolean() == true );
 	bool checkOnlyMultis = ( args.get(7).toBoolean() == true );
 	bool checkOnlyNonMultis = ( args.get(8).toBoolean() == true );
-	bool dynamicBlocks = Map->DoesDynamicBlock( x, y, z, worldNum, instanceId, checkWater, waterWalk, checkOnlyMultis, checkOnlyNonMultis );
+	bool checkMultiPlacement = ( argc == 10 ? ( args.get(9).toBoolean() == true ) : false );
+
+	bool dynamicBlocks = Map->DoesDynamicBlock( x, y, z, worldNum, instanceId, checkWater, waterWalk, checkOnlyMultis, checkOnlyNonMultis, checkMultiPlacement );
 	args.rval().setBoolean(  dynamicBlocks  );
 	return true;
 }

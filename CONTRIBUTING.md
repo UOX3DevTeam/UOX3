@@ -25,6 +25,15 @@ If you want to submit multiple changes in one PR, please ensure that the changes
 
 For more information on forking GitHub projects and submitting Pull Requests, check [this GitHub Guide](https://guides.github.com/activities/forking/).
 
+### PR Changelog Format
+
+When submitting a Pull Request, please format your PR description using our standardized changelog tags (`- [TAG]`). When a PR is merged, GitHub Actions automatically extracts these entries and prepends them to `source/Changelog.txt`.
+
+* **Category Tags**: `- [ADD]` (new features), `- [UPD]` (updates/enhancements), `- [FIX]` (bug fixes), `- [MISC]` (general maintenance).
+* **Conciseness**: Strive for concise, single-line entries per logical change where the main point suffices.
+* **Sub-Points**: Use indented sub-bullets (`  - `) when needed for syntax overloads, DFN tags, or INI settings.
+* **Full Documentation**: See the [Style Guide (PR & Changelog Guide)](docs/styleguide.html#prchangelog) for detailed rules and examples.
+
 ## UOX3 Coding Conventions
 
 In general, these coding conventions apply to both the UOX3 *source code* (c++) and to *associated script files* (JavaScript). The best way to pick up on these conventions is to read existing code (and scripts), but here's a short list of things to be aware of up front:

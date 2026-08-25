@@ -1374,6 +1374,11 @@ bool BuyShop( CSocket *s, CChar *c )
 		}
 	}
 
+	if( !c->IsShopStockLoaded() )
+	{
+		c->PopulateShopStock();
+	}
+
 	CItem *sellPack		= c->GetItemAtLayer( IL_SELLCONTAINER );
 	CItem *boughtPack	= c->GetItemAtLayer( IL_BOUGHTCONTAINER );
 
