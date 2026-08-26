@@ -1410,7 +1410,7 @@ UI16 cAccountClass::Load( void )
 
 		if( plaintextCount > 0 )
 		{
-			Console.Print( oldstrutil::format( "Migrating %llu plaintext account password(s) to PBKDF2. This may take a moment...\n", static_cast<unsigned long long>( plaintextCount )));
+			Console.Print( oldstrutil::format( "Migrating %llu plaintext account password(s) to PBKDF2. This may take a moment...\n", static_cast<UI64>( plaintextCount )));
 			std::size_t migratedCount = 0;
 			std::size_t failedCount = 0;
 			for( auto &accountEntry : m_mapUsernameIdMap )
@@ -1429,7 +1429,7 @@ UI16 cAccountClass::Load( void )
 					++migratedCount;
 					if( migratedCount % 25 == 0 || migratedCount == plaintextCount )
 					{
-						Console.Print( oldstrutil::format( "  Password migration progress: %llu/%llu\n", static_cast<unsigned long long>( migratedCount ), static_cast<unsigned long long>( plaintextCount )));
+						Console.Print( oldstrutil::format( "  Password migration progress: %llu/%llu\n", static_cast<UI64>( migratedCount ), static_cast<UI64>( plaintextCount )));
 					}
 				}
 				else
@@ -1446,7 +1446,7 @@ UI16 cAccountClass::Load( void )
 					Console.Error( "Unable to save accounts after password migration." );
 				}
 			}
-			Console.Print( oldstrutil::format( "Password migration complete: %llu migrated, %llu failed.\n", static_cast<unsigned long long>( migratedCount ), static_cast<unsigned long long>( failedCount )));
+			Console.Print( oldstrutil::format( "Password migration complete: %llu migrated, %llu failed.\n", static_cast<UI64>( migratedCount ), static_cast<UI64>( failedCount )));
 		}
 	}
 	// Return the number of accounts loaded
