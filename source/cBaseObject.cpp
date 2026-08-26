@@ -901,9 +901,9 @@ bool CBaseObject::DumpBody( std::ostream &outStream ) const
 	outStream << "Damageable=" << ( IsDamageable() ? "1" : "0" ) << newLine;
 
 	outStream << "Defense=";
-	for( UI08 resist = 1; resist < CHAOS; ++resist )
+	for( UI08 resist = PHYSICAL; resist < WEATHNUM; ++resist )
 	{
-		outStream << GetResist( static_cast<WeatherType>( resist )) << ",";
+		outStream << ( resist == CHAOS ? 0 : GetResist( static_cast<WeatherType>( resist ))) << ",";
 	}
 	outStream << "[END]" << newLine;
 
@@ -2373,7 +2373,8 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 								break;
 							}
 							auto value = static_cast<SI16>( std::stoi( temp, nullptr, 0 ));
-							SetResist( value, static_cast<WeatherType>( count ));
+							if( count != CHAOS && count < WEATHNUM )
+								SetResist( value, static_cast<WeatherType>( count ));
 							count++;
 						}
 					}
