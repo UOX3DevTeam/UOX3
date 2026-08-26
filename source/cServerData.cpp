@@ -3962,6 +3962,12 @@ auto CServerData::HouseGrandFatheredSystem( bool newVal ) -> void
 	boolVals.set( BIT_HOUSEGRANDFATHERED, newVal );
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Functions	-	CServerData High Seas boat settings
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets and sets boat decay, movement, anchoring, speech-control, paint and
+//|				cannon-targeting configuration loaded from the [boats] INI section.
+//o------------------------------------------------------------------------------------------------o
 auto CServerData::BoatDecay() const -> bool
 {
 	return boolVals.test( BIT_BOATDECAY );

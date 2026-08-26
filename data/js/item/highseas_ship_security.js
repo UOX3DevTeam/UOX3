@@ -1,6 +1,8 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
 
+// Provides ship access-level, party/guild, ownership and tillerman controls.
+
 /** @type { ( wheel: Item ) => any } */
 function ResolveSecurityBoat( wheel )
 {
@@ -12,43 +14,39 @@ function ResolveSecurityBoat( wheel )
 }
 
 /** @type { ( boat: Multi, user: Character ) => any } */
-function IsCaptain( boat, user )
-{
-	return ValidateObject( boat ) && ValidateObject( user ) && boat.GetSecurityLevel( user ) >= 5;
-}
+function IsCaptain( boat, user ) { return ValidateObject( boat ) && ValidateObject( user ) && boat.GetSecurityLevel( user ) >= 5; }
 
 /** @type { ( boat: Multi ) => any } */
 function IsRowBoat( boat )
 {
-	if( !ValidateObject( boat ))
+	if( !ValidateObject( boat ) )
 	{
 		return false;
 	}
-	var multiID = parseInt( boat.id ) - 0x4000;
-	return ( multiID >= 0x3C && multiID <= 0x3F ) ||
-		( multiID >= 0x50 && multiID <= 0x53 );
+	let multiID = parseInt( boat.id ) - 0x4000;
+	return ( multiID >= 0x3C && multiID <= 0x3F ) || ( multiID >= 0x50 && multiID <= 0x53 );
 }
 
 /** @type { ( socket: Socket, wheel: Item ) => any } */
 function onContextMenuRequest( socket, wheel )
 {
-	var user = socket.currentChar;
-	var boat = ResolveSecurityBoat( wheel );
-	if( !ValidateObject( boat ) || !ValidateObject( user ))
+	let user = socket.currentChar;
+	let boat = ResolveSecurityBoat( wheel );
+	if( !ValidateObject( boat ) || !ValidateObject( user ) )
 	{
 		return true;
 	}
-	var entries = [];
-	var aboard = user.multi == boat;
-	var level = parseInt( boat.GetSecurityLevel( user ));
+	let entries = [];
+	let aboard = user.multi == boat;
+	let level = parseInt( boat.GetSecurityLevel( user ) );
 	// Rowboats have no hull damage, repair, manifest, rename, or movable-pilot
 	// controls. Their tiller menu contains only Dry Dock, and only while the
 	// owner is standing off the boat.
-	if( IsRowBoat( boat ))
+	if( IsRowBoat( boat ) )
 	{
 		if( !aboard && level >= 5 )
 		{
-			entries.push({ id: 37, text: 1116520, flags: 0x0000, hue: 0x03E0 });
+			entries.push( { id : 37, text : 1116520, flags : 0x0000, hue : 0x03E0 } );
 		}
 		else
 		{
@@ -61,20 +59,20 @@ function onContextMenuRequest( socket, wheel )
 	{
 		if( level >= 3 )
 		{
-			entries.push({ id: 31, text: 1116589, flags: 0x0000, hue: 0x03E0 });
-			entries.push({ id: 32, text: 1116590, flags: 0x0000, hue: 0x03E0 });
+			entries.push( { id : 31, text : 1116589, flags : 0x0000, hue : 0x03E0 } );
+			entries.push( { id : 32, text : 1116590, flags : 0x0000, hue : 0x03E0 } );
 		}
 		if( level >= 5 )
 		{
-			entries.push({ id: 33, text: 1111680, flags: 0x0000, hue: 0x03E0 });
-			entries.push({ id: 34, text: 1116729, flags: 0x0000, hue: 0x03E0 });
-			entries.push({ id: 30, text: 1149786, flags: 0x0000, hue: 0x03E0 });
-			entries.push({ id: 36, text: 1060700, flags: 0x0000, hue: 0x03E0 });
+			entries.push( { id : 33, text : 1111680, flags : 0x0000, hue : 0x03E0 } );
+			entries.push( { id : 34, text : 1116729, flags : 0x0000, hue : 0x03E0 } );
+			entries.push( { id : 30, text : 1149786, flags : 0x0000, hue : 0x03E0 } );
+			entries.push( { id : 36, text : 1060700, flags : 0x0000, hue : 0x03E0 } );
 		}
 	}
 	else if( level >= 5 )
 	{
-		entries.push({ id: 37, text: 1116520, flags: 0x0000, hue: 0x03E0 });
+		entries.push( { id : 37, text : 1116520, flags : 0x0000, hue : 0x03E0 } );
 	}
 	if( entries.length == 0 )
 	{
@@ -88,15 +86,15 @@ function onContextMenuRequest( socket, wheel )
 /** @type { ( socket: Socket, wheel: Item, popupEntry: number ) => any } */
 function onContextMenuSelect( socket, wheel, popupEntry )
 {
-	var boat = ResolveSecurityBoat( wheel );
-	var user = socket.currentChar;
-	if( !ValidateObject( boat ) || !ValidateObject( user ))
+	let boat = ResolveSecurityBoat( wheel );
+	let user = socket.currentChar;
+	if( !ValidateObject( boat ) || !ValidateObject( user ) )
 	{
 		return false;
 	}
-	var aboard = user.multi == boat;
-	var level = parseInt( boat.GetSecurityLevel( user ));
-	if( IsRowBoat( boat ))
+	let aboard = user.multi == boat;
+	let level = parseInt( boat.GetSecurityLevel( user ) );
+	if( IsRowBoat( boat ) )
 	{
 		if( popupEntry == 37 && !aboard && level >= 5 )
 		{
@@ -142,7 +140,7 @@ function onContextMenuSelect( socket, wheel, popupEntry )
 function ShowResetSecurityGump( user, boat )
 {
 	user.SetTempTag( "hsResetSecurityBoat", boat.serial );
-	var g = new Gump;
+	let g = new Gump;
 	g.AddPage( 0 );
 	g.AddBackground( 0, 0, 390, 180, 0x0A28 );
 	g.AddHTMLGump( 25, 25, 340, 65, false, false,
@@ -234,16 +232,10 @@ function LevelHue( level )
 }
 
 /** @type { ( g: Gump, x: number, y: number, width: number, cliloc: number, hue: number ) => any } */
-function AddLocalized( g, x, y, width, cliloc, hue )
-{
-	g.AddXMFHTMLGumpColor( x, y, width, 18, cliloc, false, false, hue );
-}
+function AddLocalized( g, x, y, width, cliloc, hue ) { g.AddXMFHTMLGumpColor( x, y, width, 18, cliloc, false, false, hue ); }
 
 /** @type { ( g: Gump, x: number, y: number, width: number, level: number, selected: boolean ) => any } */
-function AddLevel( g, x, y, width, level, selected )
-{
-	AddLocalized( g, x, y, width, LevelCliloc( level ), selected ? LevelHue( level ) : 0x7FFF );
-}
+function AddLevel( g, x, y, width, level, selected ) { AddLocalized( g, x, y, width, LevelCliloc( level ), selected ? LevelHue( level ) : 0x7FFF ); }
 
 /** @type { ( g: Gump, x: number, y: number, selected: boolean, button: number ) => any } */
 function AddSelectedButton( g, x, y, selected, button )
@@ -264,8 +256,8 @@ function AddAccessPanel( g, page, x, titleCliloc, current, buttonBase )
 	g.AddPage( page );
 	g.AddBackground( x, 215, 190, 130, 0x0A3C );
 	AddLocalized( g, x + 50, 220, 100, titleCliloc, 0x7FFF );
-	var levels = [0, 2, 3, 4, 1];
-	for( var i = 0; i < levels.length; ++i )
+	let levels = [ 0, 2, 3, 4, 1 ];
+	for( let i = 0; i < levels.length; ++i )
 	{
 		AddSelectedButton( g, x + 10, 243 + i * 18, current == levels[i], buttonBase + levels[i] );
 		AddLevel( g, x + 45, 245 + i * 18, 140, levels[i], current == levels[i] );
@@ -275,12 +267,12 @@ function AddAccessPanel( g, page, x, titleCliloc, current, buttonBase )
 /** @type { ( user: Character, boat: Multi ) => any } */
 function ShowSecurityGump( user, boat )
 {
-	if( !IsCaptain( boat, user ))
+	if( !IsCaptain( boat, user ) )
 	{
 		return;
 	}
 	user.SetTempTag( "hsSecurityBoat", boat.serial );
-	var g = new Gump;
+	let g = new Gump;
 	g.AddPage( 0 );
 	g.AddBackground( 0, 0, 320, 385, 0x0A3C );
 	AddLocalized( g, 10, 10, 300, 1149724, 0x7FEF );
@@ -289,16 +281,16 @@ function ShowSecurityGump( user, boat )
 	AddLocalized( g, 10, 56, 75, 1149762, 0x7FFF );
 	g.AddText( 80, 56, 0x53, ValidateObject( boat.owner ) ? boat.owner.name : "Unknown" );
 	AddLocalized( g, 10, 79, 300, 1149743, 0x7FFF );
-	var partyMode = parseInt( boat.GetShipAccessSetting( 3 ));
+	let partyMode = parseInt( boat.GetShipAccessSetting( 3 ) );
 	AddSelectedButton( g, 55, 97, partyMode == 0, 1001 );
 	AddLocalized( g, 90, 99, 210, 1149778, 0x7FFF );
 	AddSelectedButton( g, 55, 115, partyMode == 1, 1002 );
 	AddLocalized( g, 90, 117, 210, 1149744, 0x7FFF );
 	AddSelectedButton( g, 55, 133, partyMode == 2, 1003 );
 	AddLocalized( g, 90, 135, 210, 1149745, 0x7FFF );
-	var publicLevel = parseInt( boat.GetShipAccessSetting( 0 ));
-	var partyLevel = parseInt( boat.GetShipAccessSetting( 1 ));
-	var guildLevel = parseInt( boat.GetShipAccessSetting( 2 ));
+	let publicLevel = parseInt( boat.GetShipAccessSetting( 0 ) );
+	let partyLevel = parseInt( boat.GetShipAccessSetting( 1 ) );
+	let guildLevel = parseInt( boat.GetShipAccessSetting( 2 ) );
 	AddLocalized( g, 10, 158, 125, 1149731, 0x7FFF );
 	g.AddButton( 140, 156, 0x0FA5, 0x0FA7, 0, 2, 0 );
 	AddLevel( g, 175, 158, 125, publicLevel, true );
@@ -308,12 +300,11 @@ function ShowSecurityGump( user, boat )
 	AddLocalized( g, 10, 193, 150, 1149733, 0x7FFF );
 	g.AddButton( 140, 191, 0x0FA5, 0x0FA7, 0, 4, 0 );
 	AddLevel( g, 175, 193, 125, guildLevel, true );
-	if( GetServerSetting( "HIGHSEASSHIPANCHORS" ))
+	if( GetServerSetting( "HIGHSEASSHIPANCHORS" ) )
 	{
 		g.AddText( 10, 220, 0x7FFF, "Anchor" );
 		g.AddButton( 140, 218, 0x0FA5, 0x0FA7, 1, 0, 1400 );
-		g.AddText( 175, 220, boat.moveType == -1 ? 0x44 : 0x53,
-			boat.moveType == -1 ? "Lowered" : "Raised" );
+		g.AddText( 175, 220, boat.moveType == -1 ? 0x44 : 0x53, boat.moveType == -1 ? "Lowered" : "Raised" );
 	}
 	g.AddButton( 160, 355, 0x0FA5, 0x0FA7, 1, 0, 2000 );
 	AddLocalized( g, 195, 357, 100, 1149734, 0x7FFF );
@@ -327,10 +318,10 @@ function ShowSecurityGump( user, boat )
 /** @type { ( socket: Socket, button: number, gumpData: GumpData ) => any } */
 function onGumpPress( socket, button, gumpData )
 {
-	var user = socket.currentChar;
+	let user = socket.currentChar;
 	if( button == 3001 || button == 3002 )
 	{
-		var resetBoat = CalcItemFromSer( parseInt( user.GetTempTag( "hsResetSecurityBoat" )));
+		let resetBoat = CalcItemFromSer( parseInt( user.GetTempTag( "hsResetSecurityBoat" ) ) );
 		user.SetTempTag( "hsResetSecurityBoat", null );
 		if( button == 3001 && IsCaptain( resetBoat, user ) && user.multi == resetBoat )
 		{
@@ -339,8 +330,8 @@ function onGumpPress( socket, button, gumpData )
 		}
 		return;
 	}
-	var boat = CalcItemFromSer( parseInt( user.GetTempTag( "hsSecurityBoat" )));
-	if( !IsCaptain( boat, user ))
+	let boat = CalcItemFromSer( parseInt( user.GetTempTag( "hsSecurityBoat" ) ) );
+	if( !IsCaptain( boat, user ) )
 	{
 		return;
 	}
@@ -364,7 +355,7 @@ function onGumpPress( socket, button, gumpData )
 		boat.SetShipAccessSetting( 2, button - 1300 );
 		ShowSecurityGump( user, boat );
 	}
-	else if( button == 1400 && GetServerSetting( "HIGHSEASSHIPANCHORS" ))
+	else if( button == 1400 && GetServerSetting( "HIGHSEASSHIPANCHORS" ) )
 	{
 		if( user.multi != boat )
 		{
@@ -389,12 +380,12 @@ function onGumpPress( socket, button, gumpData )
 	}
 	else if( button >= 2100 && button <= 2105 )
 	{
-		var target = CalcCharFromSer( parseInt( user.GetTempTag( "hsSecurityTarget" )));
-		if( ValidateObject( target ))
+		let target = CalcCharFromSer( parseInt( user.GetTempTag( "hsSecurityTarget" ) ) );
+		if( ValidateObject( target ) )
 		{
 			boat.SetSecurityLevel( target, button - 2100 );
-			socket.SysMessage( button == 2100 ? "The player's explicit ship access entry was removed." :
-				"The player's ship access is now " + LevelName( button - 2100 ) + "." );
+			socket.SysMessage( button == 2100 ? "The player's explicit ship access entry was removed."
+											  : "The player's ship access is now " + LevelName( button - 2100 ) + "." );
 		}
 		ShowSecurityGump( user, boat );
 	}
@@ -408,16 +399,16 @@ function onGumpPress( socket, button, gumpData )
 function ShowGrantAccessGump( user, boat, target )
 {
 	user.SetTempTag( "hsSecurityTarget", target.serial );
-	var current = parseInt( boat.GetSecurityLevel( target ));
-	var publicLevel = parseInt( boat.GetShipAccessSetting( 0 ));
-	var partyLevel = parseInt( boat.GetShipAccessSetting( 1 ));
-	var guildLevel = parseInt( boat.GetShipAccessSetting( 2 ));
-	var partyMode = parseInt( boat.GetShipAccessSetting( 3 ));
-	var owner = boat.owner;
-	var isPublic = publicLevel != 1;
-	var inParty = ValidateObject( owner ) && partyMode != 0 && owner.party != null && target.party == owner.party;
-	var inGuild = ValidateObject( owner ) && owner.guild != null && target.guild == owner.guild;
-	var g = new Gump;
+	let current = parseInt( boat.GetSecurityLevel( target ) );
+	let publicLevel = parseInt( boat.GetShipAccessSetting( 0 ) );
+	let partyLevel = parseInt( boat.GetShipAccessSetting( 1 ) );
+	let guildLevel = parseInt( boat.GetShipAccessSetting( 2 ) );
+	let partyMode = parseInt( boat.GetShipAccessSetting( 3 ) );
+	let owner = boat.owner;
+	let isPublic = publicLevel != 1;
+	let inParty = ValidateObject( owner ) && partyMode != 0 && owner.party != null && target.party == owner.party;
+	let inGuild = ValidateObject( owner ) && owner.guild != null && target.guild == owner.guild;
+	let g = new Gump;
 	g.AddPage( 0 );
 	g.AddBackground( 0, 0, 320, 385, 0x0A3C );
 	AddLocalized( g, 10, 10, 300, 1149724, 0x7FEF );
@@ -448,8 +439,8 @@ function ShowGrantAccessGump( user, boat, target )
 		AddLevel( g, 200, 156, 100, guildLevel, true );
 	}
 	AddLocalized( g, 10, 179, 300, 1149747, 0x7FFF );
-	var levels = [0, 1, 2, 3, 4, 5];
-	for( var i = 0; i < levels.length; ++i )
+	let levels = [ 0, 1, 2, 3, 4, 5 ];
+	for( let i = 0; i < levels.length; ++i )
 	{
 		AddSelectedButton( g, 65, 197 + i * 18, i > 0 && current == levels[i], 2100 + levels[i] );
 		if( i == 0 )
@@ -470,19 +461,19 @@ function ShowGrantAccessGump( user, boat, target )
 /** @type { ( socket: Socket, target: Character | Item | null ) => any } */
 function onCallback0( socket, target )
 {
-	var user = socket.currentChar;
-	var boat = CalcItemFromSer( parseInt( user.GetTempTag( "hsSecurityBoat" )));
+	let user = socket.currentChar;
+	let boat = CalcItemFromSer( parseInt( user.GetTempTag( "hsSecurityBoat" ) ) );
 	if( !IsCaptain( boat, user ) || !ValidateObject( target ) || !target.isChar || target.npc )
 	{
 		socket.SysMessage( "You must target a player character." );
 		return;
 	}
-	if( boat.IsOwner( target ) || ( ValidateObject( boat.owner ) && boat.owner.accountNum == target.accountNum ))
+	if( boat.IsOwner( target ) || ( ValidateObject( boat.owner ) && boat.owner.accountNum == target.accountNum ) )
 	{
 		socket.SysMessage( "The ship owner always has Captain access." );
 		return;
 	}
-	var level = parseInt( user.GetTempTag( "hsSecurityGrant" ));
+	let level = parseInt( user.GetTempTag( "hsSecurityGrant" ) );
 	if( level == -1 )
 	{
 		ShowGrantAccessGump( user, boat, target );
@@ -493,25 +484,24 @@ function onCallback0( socket, target )
 		return;
 	}
 	boat.SetSecurityLevel( target, level );
-	socket.SysMessage( level == 0 ? "The player's explicit ship access entry was removed." :
-		"The player's ship access is now " + LevelName( level ) + "." );
+	socket.SysMessage( level == 0 ? "The player's explicit ship access entry was removed." : "The player's ship access is now " + LevelName( level ) + "." );
 	ShowSecurityGump( user, boat );
 }
 
 /** @type { ( socket: Socket, target: Character | Item | null ) => any } */
 function onCallback1( socket, target )
 {
-	var user = socket.currentChar;
-	var boat = CalcItemFromSer( parseInt( user.GetTempTag( "hsMoveTillermanBoat" )));
+	let user = socket.currentChar;
+	let boat = CalcItemFromSer( parseInt( user.GetTempTag( "hsMoveTillermanBoat" ) ) );
 	user.SetTempTag( "hsMoveTillermanBoat", null );
 	if( !IsCaptain( boat, user ) || user.multi != boat )
 	{
 		return;
 	}
-	var x = socket.GetWord( 11 );
-	var y = socket.GetWord( 13 );
-	var z = socket.GetSByte( 16 );
-	if( boat.RelocateTillerman( x, y, z ))
+	let x = socket.GetWord( 11 );
+	let y = socket.GetWord( 13 );
+	let z = socket.GetSByte( 16 );
+	if( boat.RelocateTillerman( x, y, z ) )
 	{
 		socket.SysMessage( "The ship wheel has been moved." );
 	}
@@ -528,7 +518,7 @@ function onSpeechInput( user, wheel, speech, speechID )
 	{
 		return;
 	}
-	var boat = CalcItemFromSer( parseInt( user.GetTempTag( "hsRenameBoat" )));
+	let boat = CalcItemFromSer( parseInt( user.GetTempTag( "hsRenameBoat" ) ) );
 	user.SetTempTag( "hsRenameBoat", null );
 	if( !IsCaptain( boat, user ) || user.multi != boat )
 	{
@@ -538,7 +528,7 @@ function onSpeechInput( user, wheel, speech, speechID )
 	{
 		return;
 	}
-	var newName = speech.replace( /^\s+|\s+$/g, "" );
+	let newName = speech.replace( /^\s+|\s+$/g, "" );
 	if( newName.length == 0 )
 	{
 		boat.name = "#";

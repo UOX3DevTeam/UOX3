@@ -5998,80 +5998,211 @@ static CBoatObj *GetJSBoat( JSContext *cx, JS::CallArgs &args )
 
 static CChar *GetJSCharacterArgument( JS::HandleValue value )
 {
-	if( !value.isObject() ) return nullptr;
+	if( !value.isObject() )
+	{
+		return nullptr;
+	}
 	auto *character = JS::GetMaybePtrFromReservedSlot<CChar>( &value.toObject(), 0 );
 	return ValidateObject( character ) && character->CanBeObjType( OT_CHAR ) ? character : nullptr;
 }
 
 #define BOAT_METHOD_BEGIN auto args = JS::CallArgsFromVp( argc, vp ); auto *boat = GetJSBoat( cx, args )
 
-bool CBoat_DamageHull( JSContext *cx, unsigned argc, JS::Value *vp ) { BOAT_METHOD_BEGIN; int32_t amount = 0; bool ok = argc == 1 && boat != nullptr && JS::ToInt32( cx, args.get( 0 ), &amount ) && amount > 0; if( ok ) DamageBoatHull( boat, amount ); args.rval().setBoolean( ok ); return true; }
-bool CBoat_RepairHull( JSContext *cx, unsigned argc, JS::Value *vp ) { BOAT_METHOD_BEGIN; int32_t amount = 0; args.rval().setInt32( argc == 1 && boat != nullptr && JS::ToInt32( cx, args.get( 0 ), &amount ) && amount > 0 ? RepairBoatHull( boat, amount ) : 0 ); return true; }
-bool CBoat_IsNearLandOrDocks( JSContext *cx, unsigned argc, JS::Value *vp ) { BOAT_METHOD_BEGIN; args.rval().setBoolean( boat != nullptr && IsBoatNearLandOrDocks( boat )); return true; }
-bool CBoat_GetHullHits( JSContext *cx, unsigned argc, JS::Value *vp ) { BOAT_METHOD_BEGIN; args.rval().setInt32( boat != nullptr ? boat->GetHullHits() : 0 ); return true; }
-bool CBoat_GetHullMaxHits( JSContext *cx, unsigned argc, JS::Value *vp ) { BOAT_METHOD_BEGIN; args.rval().setInt32( boat != nullptr ? boat->GetHullMaxHits() : 0 ); return true; }
-bool CBoat_StartEmergencyRepairs( JSContext *cx, unsigned argc, JS::Value *vp ) { BOAT_METHOD_BEGIN; int32_t seconds = 0; bool ok = argc == 1 && boat != nullptr && JS::ToInt32( cx, args.get( 0 ), &seconds ) && seconds > 0; if( ok ) boat->StartEmergencyRepairs( static_cast<UI32>( seconds )); args.rval().setBoolean( ok ); return true; }
-bool CBoat_IsUnderEmergencyRepairs( JSContext *cx, unsigned argc, JS::Value *vp ) { BOAT_METHOD_BEGIN; args.rval().setBoolean( boat != nullptr && boat->IsUnderEmergencyRepairs() ); return true; }
-bool CBoat_CheckDryDock( JSContext *cx, unsigned argc, JS::Value *vp ) { BOAT_METHOD_BEGIN; args.rval().setInt32( boat != nullptr ? CheckHighSeasDryDock( boat ) : 7 ); return true; }
-bool CBoat_DeleteForDryDock( JSContext *cx, unsigned argc, JS::Value *vp ) { BOAT_METHOD_BEGIN; CItem *deed = argc == 1 ? GetWrappedObject<CItem>( args.get( 0 ), &UOXItem_class ) : nullptr; args.rval().setBoolean( boat != nullptr && ValidateObject( deed ) && DeleteHighSeasBoatForDryDock( boat, deed )); return true; }
-bool CBoat_PaintShip( JSContext *cx, unsigned argc, JS::Value *vp ) { BOAT_METHOD_BEGIN; int32_t hue = 0; if( argc != 2 || boat == nullptr || !JS::ToInt32( cx, args.get( 0 ), &hue ) || hue <= 0 || hue > 0xFFFF ) { args.rval().setInt32( 0 ); return true; } args.rval().setInt32( PaintHighSeasBoat( boat, static_cast<UI16>( hue ), JS::ToBoolean( args.get( 1 )))); return true; }
-bool CBoat_RemoveShipPaint( JSContext *cx, unsigned argc, JS::Value *vp ) { BOAT_METHOD_BEGIN; args.rval().setBoolean( boat != nullptr && RemoveHighSeasBoatPaint( boat )); return true; }
+//o------------------------------------------------------------------------------------------------o
+//| Functions	-	CBoat hull, dry-dock, paint and security JavaScript methods
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Expose validated High Seas ship operations to JavaScript without allowing
+//|				ordinary multi objects to enter boat-only native code paths.
+//o------------------------------------------------------------------------------------------------o
+bool CBoat_DamageHull( JSContext *cx, unsigned argc, JS::Value *vp )
+{
+	BOAT_METHOD_BEGIN;
+	int32_t amount = 0;
+	bool ok = argc == 1 && boat != nullptr && JS::ToInt32( cx, args.get( 0 ), &amount ) && amount > 0;
+	if( ok )
+	{
+		DamageBoatHull( boat, amount );
+	}
+	args.rval().setBoolean( ok );
+	return true;
+}
+bool CBoat_RepairHull( JSContext *cx, unsigned argc, JS::Value *vp )
+{
+	BOAT_METHOD_BEGIN;
+	int32_t amount = 0;
+	args.rval().setInt32(
+		argc == 1 && boat != nullptr && JS::ToInt32( cx, args.get( 0 ), &amount ) && amount > 0 ? RepairBoatHull( boat, amount ) : 0 );
+	return true;
+}
+bool CBoat_IsNearLandOrDocks( JSContext *cx, unsigned argc, JS::Value *vp )
+{
+	BOAT_METHOD_BEGIN;
+	args.rval().setBoolean( boat != nullptr && IsBoatNearLandOrDocks( boat ) );
+	return true;
+}
+bool CBoat_GetHullHits( JSContext *cx, unsigned argc, JS::Value *vp )
+{
+	BOAT_METHOD_BEGIN;
+	args.rval().setInt32( boat != nullptr ? boat->GetHullHits() : 0 );
+	return true;
+}
+bool CBoat_GetHullMaxHits( JSContext *cx, unsigned argc, JS::Value *vp )
+{
+	BOAT_METHOD_BEGIN;
+	args.rval().setInt32( boat != nullptr ? boat->GetHullMaxHits() : 0 );
+	return true;
+}
+bool CBoat_StartEmergencyRepairs( JSContext *cx, unsigned argc, JS::Value *vp )
+{
+	BOAT_METHOD_BEGIN;
+	int32_t seconds = 0;
+	bool ok = argc == 1 && boat != nullptr && JS::ToInt32( cx, args.get( 0 ), &seconds ) && seconds > 0;
+	if( ok )
+	{
+		boat->StartEmergencyRepairs( static_cast<UI32>( seconds ) );
+	}
+	args.rval().setBoolean( ok );
+	return true;
+}
+bool CBoat_IsUnderEmergencyRepairs( JSContext *cx, unsigned argc, JS::Value *vp )
+{
+	BOAT_METHOD_BEGIN;
+	args.rval().setBoolean( boat != nullptr && boat->IsUnderEmergencyRepairs() );
+	return true;
+}
+bool CBoat_CheckDryDock( JSContext *cx, unsigned argc, JS::Value *vp )
+{
+	BOAT_METHOD_BEGIN;
+	args.rval().setInt32( boat != nullptr ? CheckHighSeasDryDock( boat ) : 7 );
+	return true;
+}
+bool CBoat_DeleteForDryDock( JSContext *cx, unsigned argc, JS::Value *vp )
+{
+	BOAT_METHOD_BEGIN;
+	CItem *deed = argc == 1 ? GetWrappedObject<CItem>( args.get( 0 ), &UOXItem_class ) : nullptr;
+	args.rval().setBoolean( boat != nullptr && ValidateObject( deed ) && DeleteHighSeasBoatForDryDock( boat, deed ) );
+	return true;
+}
+bool CBoat_PaintShip( JSContext *cx, unsigned argc, JS::Value *vp )
+{
+	BOAT_METHOD_BEGIN;
+	int32_t hue = 0;
+	if( argc != 2 || boat == nullptr || !JS::ToInt32( cx, args.get( 0 ), &hue ) || hue <= 0 || hue > 0xFFFF )
+	{
+		args.rval().setInt32( 0 );
+		return true;
+	}
+	args.rval().setInt32( PaintHighSeasBoat( boat, static_cast<UI16>( hue ), JS::ToBoolean( args.get( 1 ) ) ) );
+	return true;
+}
+bool CBoat_RemoveShipPaint( JSContext *cx, unsigned argc, JS::Value *vp )
+{
+	BOAT_METHOD_BEGIN;
+	args.rval().setBoolean( boat != nullptr && RemoveHighSeasBoatPaint( boat ) );
+	return true;
+}
 
 bool CBoat_GetSecurityLevel( JSContext *cx, unsigned argc, JS::Value *vp )
 {
-	BOAT_METHOD_BEGIN; auto *character = argc == 1 ? GetJSCharacterArgument( args.get( 0 )) : nullptr; args.rval().setInt32( boat != nullptr && character != nullptr ? static_cast<UI08>( boat->GetSecurityLevel( character )) : static_cast<UI08>( BoatSecurityLevel::Denied )); return true;
+	BOAT_METHOD_BEGIN;
+	auto *character = argc == 1 ? GetJSCharacterArgument( args.get( 0 ) ) : nullptr;
+	args.rval().setInt32( boat != nullptr && character != nullptr ? static_cast<UI08>( boat->GetSecurityLevel( character ) )
+																  : static_cast<UI08>( BoatSecurityLevel::Denied ) );
+	return true;
 }
 
 bool CBoat_HasAccess( JSContext *cx, unsigned argc, JS::Value *vp )
 {
-	BOAT_METHOD_BEGIN; auto *character = argc == 1 ? GetJSCharacterArgument( args.get( 0 )) : nullptr; args.rval().setBoolean( boat != nullptr && character != nullptr && boat->HasAccess( character )); return true;
+	BOAT_METHOD_BEGIN;
+	auto *character = argc == 1 ? GetJSCharacterArgument( args.get( 0 ) ) : nullptr;
+	args.rval().setBoolean( boat != nullptr && character != nullptr && boat->HasAccess( character ) );
+	return true;
 }
 
 bool CBoat_CanCommand( JSContext *cx, unsigned argc, JS::Value *vp )
 {
-	BOAT_METHOD_BEGIN; auto *character = argc == 1 ? GetJSCharacterArgument( args.get( 0 )) : nullptr; args.rval().setBoolean( boat != nullptr && character != nullptr && boat->CanCommand( character )); return true;
+	BOAT_METHOD_BEGIN;
+	auto *character = argc == 1 ? GetJSCharacterArgument( args.get( 0 ) ) : nullptr;
+	args.rval().setBoolean( boat != nullptr && character != nullptr && boat->CanCommand( character ) );
+	return true;
 }
 
 bool CBoat_SetSecurityLevel( JSContext *cx, unsigned argc, JS::Value *vp )
 {
-	BOAT_METHOD_BEGIN; auto *character = argc == 2 ? GetJSCharacterArgument( args.get( 0 )) : nullptr; int32_t level = 0; bool ok = boat != nullptr && character != nullptr && JS::ToInt32( cx, args.get( 1 ), &level ) && level >= 0 && level <= 5; if( ok ) boat->SetSecurityLevel( character, static_cast<BoatSecurityLevel>( level )); args.rval().setBoolean( ok ); return true;
+	BOAT_METHOD_BEGIN;
+	auto *character = argc == 2 ? GetJSCharacterArgument( args.get( 0 ) ) : nullptr;
+	int32_t level = 0;
+	bool ok = boat != nullptr && character != nullptr && JS::ToInt32( cx, args.get( 1 ), &level ) && level >= 0 && level <= 5;
+	if( ok )
+		boat->SetSecurityLevel( character, static_cast<BoatSecurityLevel>( level ) );
+	args.rval().setBoolean( ok );
+	return true;
 }
 
 bool CBoat_GetAccessSetting( JSContext *cx, unsigned argc, JS::Value *vp )
 {
-	BOAT_METHOD_BEGIN; int32_t setting = -1;
-	if( boat == nullptr || argc != 1 || !JS::ToInt32( cx, args.get( 0 ), &setting )) { args.rval().setInt32( 0 ); return true; }
+	BOAT_METHOD_BEGIN;
+	int32_t setting = -1;
+	if( boat == nullptr || argc != 1 || !JS::ToInt32( cx, args.get( 0 ), &setting ) )
+	{
+		args.rval().setInt32( 0 );
+		return true;
+	}
 	UI08 value = 0;
-	if( setting == 0 ) value = static_cast<UI08>( boat->GetDefaultPublicAccess() );
-	else if( setting == 1 ) value = static_cast<UI08>( boat->GetDefaultPartyAccess() );
-	else if( setting == 2 ) value = static_cast<UI08>( boat->GetDefaultGuildAccess() );
-	else if( setting == 3 ) value = static_cast<UI08>( boat->GetPartyAccess() );
-	args.rval().setInt32( value ); return true;
+	if( setting == 0 )
+		value = static_cast<UI08>( boat->GetDefaultPublicAccess() );
+	else if( setting == 1 )
+		value = static_cast<UI08>( boat->GetDefaultPartyAccess() );
+	else if( setting == 2 )
+		value = static_cast<UI08>( boat->GetDefaultGuildAccess() );
+	else if( setting == 3 )
+		value = static_cast<UI08>( boat->GetPartyAccess() );
+	args.rval().setInt32( value );
+	return true;
 }
 
 bool CBoat_SetAccessSetting( JSContext *cx, unsigned argc, JS::Value *vp )
 {
-	BOAT_METHOD_BEGIN; int32_t setting = -1, value = -1;
-	if( boat == nullptr || argc != 2 || !JS::ToInt32( cx, args.get( 0 ), &setting ) || !JS::ToInt32( cx, args.get( 1 ), &value )) { args.rval().setBoolean( false ); return true; }
+	BOAT_METHOD_BEGIN;
+	int32_t setting = -1, value = -1;
+	if( boat == nullptr || argc != 2 || !JS::ToInt32( cx, args.get( 0 ), &setting ) || !JS::ToInt32( cx, args.get( 1 ), &value ) )
+	{
+		args.rval().setBoolean( false );
+		return true;
+	}
 	bool valid = value >= 0 && value <= 5;
-	if( setting == 0 && valid ) boat->SetDefaultPublicAccess( static_cast<BoatSecurityLevel>( value ));
-	else if( setting == 1 && valid ) boat->SetDefaultPartyAccess( static_cast<BoatSecurityLevel>( value ));
-	else if( setting == 2 && valid ) boat->SetDefaultGuildAccess( static_cast<BoatSecurityLevel>( value ));
-	else if( setting == 3 && value >= 0 && value <= 2 ) boat->SetPartyAccess( static_cast<BoatPartyAccess>( value ));
-	else valid = false;
-	args.rval().setBoolean( valid ); return true;
+	if( setting == 0 && valid )
+		boat->SetDefaultPublicAccess( static_cast<BoatSecurityLevel>( value ) );
+	else if( setting == 1 && valid )
+		boat->SetDefaultPartyAccess( static_cast<BoatSecurityLevel>( value ) );
+	else if( setting == 2 && valid )
+		boat->SetDefaultGuildAccess( static_cast<BoatSecurityLevel>( value ) );
+	else if( setting == 3 && value >= 0 && value <= 2 )
+		boat->SetPartyAccess( static_cast<BoatPartyAccess>( value ) );
+	else
+		valid = false;
+	args.rval().setBoolean( valid );
+	return true;
 }
 
 bool CBoat_ResetSecurity( JSContext *cx, unsigned argc, JS::Value *vp )
 {
-	BOAT_METHOD_BEGIN; if( boat != nullptr ) boat->ResetSecurity(); args.rval().setBoolean( boat != nullptr ); return true;
+	BOAT_METHOD_BEGIN;
+	if( boat != nullptr )
+		boat->ResetSecurity();
+	args.rval().setBoolean( boat != nullptr );
+	return true;
 }
 
 bool CBoat_RelocateTillerman( JSContext *cx, unsigned argc, JS::Value *vp )
 {
-	BOAT_METHOD_BEGIN; int32_t x = 0, y = 0, z = 0;
-	bool ok = boat != nullptr && argc == 3 && JS::ToInt32( cx, args.get( 0 ), &x ) && JS::ToInt32( cx, args.get( 1 ), &y ) && JS::ToInt32( cx, args.get( 2 ), &z );
-	args.rval().setBoolean( ok && RelocateHighSeasTillerman( boat, static_cast<SI16>( x ), static_cast<SI16>( y ), static_cast<SI08>( z ))); return true;
+	BOAT_METHOD_BEGIN;
+	int32_t x = 0, y = 0, z = 0;
+	bool ok = boat != nullptr && argc == 3 && JS::ToInt32( cx, args.get( 0 ), &x ) && JS::ToInt32( cx, args.get( 1 ), &y )
+		&& JS::ToInt32( cx, args.get( 2 ), &z );
+	args.rval().setBoolean(
+		ok && RelocateHighSeasTillerman( boat, static_cast<SI16>( x ), static_cast<SI16>( y ), static_cast<SI08>( z ) ) );
+	return true;
 }
 
 #undef BOAT_METHOD_BEGIN

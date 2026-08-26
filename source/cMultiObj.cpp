@@ -1871,6 +1871,12 @@ BoatSecurityLevel CBoatObj::GetSecurityLevel( CChar *toCheck ) const
 	return effective;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Functions	-	CBoatObj ship-security access helpers
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Resolves effective access and command permissions from explicit character,
+//|				owner, party, guild and public ship-security settings.
+//o------------------------------------------------------------------------------------------------o
 bool CBoatObj::HasAccess( CChar *toCheck ) const
 {
 	auto *shipOwner = GetOwnerObj();

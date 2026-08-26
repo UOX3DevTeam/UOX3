@@ -599,6 +599,12 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 
 // Resolve High Seas interactive fixtures from the placeholder components in
 // the active client multi instead of using classic-boat offsets.
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	ConfigureHighSeasFixtures()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Associates a High Seas hull with its tillerman, planks, hold and weapon pads,
+//|				including fixture restoration when loading an existing vessel.
+//o------------------------------------------------------------------------------------------------o
 static bool ConfigureHighSeasFixtures( CBoatObj *boat, CItem *tiller, CItem *portPlank, CItem *starboardPlank, CItem *hold, bool fromConstruct )
 {
 	if( !ValidateObject( boat ) || !ValidateObject( tiller ) || !ValidateObject( portPlank ) ||
@@ -794,6 +800,11 @@ static bool ConfigureHighSeasFixtures( CBoatObj *boat, CItem *tiller, CItem *por
 	return foundHold && foundWheel;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	RestoreHighSeasBoatFixtures()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Rebuilds and reconnects the fixtures required by a persisted High Seas ship.
+//o------------------------------------------------------------------------------------------------o
 bool RestoreHighSeasBoatFixtures( CBoatObj *boat )
 {
 	if( !ValidateObject( boat ))

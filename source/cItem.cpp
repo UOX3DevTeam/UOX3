@@ -1483,6 +1483,12 @@ auto CItem::SetCannonDirectionArt( UI08 directionIndex, UI16 newValue ) -> void
 	SetTempVar( storage, ( GetTempVar( storage ) & ~mask ) | ( static_cast<UI32>( newValue ) << shift ));
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Functions	-	CItem docked-cannon persistence helpers
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Stores cannon position, durability and power while a ship is dry-docked so
+//|				its mounted weapons can be recreated when the vessel is launched again.
+//o------------------------------------------------------------------------------------------------o
 void CItem::AddDockedCannon( SI16 localX, SI16 localY, SI16 localZ, SI16 hits, UI08 power )
 {
 	if( !dockedCannons )

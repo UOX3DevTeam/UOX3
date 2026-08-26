@@ -1,23 +1,26 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
 
+// Validates and performs High Seas ship dry-docking while preserving the ship
+// deed and any supported mounted-cannon state.
+
 /** @type { ( socket: Socket, boat: Multi ) => any } */
 function BeginHighSeasDryDock( socket, boat )
 {
-	var user = socket.currentChar;
-	if( !ValidateDryDockOwnerAndRange( socket, user, boat ))
+	let user = socket.currentChar;
+	if( !ValidateDryDockOwnerAndRange( socket, user, boat ) )
 	{
 		return;
 	}
 
-	var result = boat.CheckDryDock();
-	if( !ReportDryDockResult( socket, result ))
+	let result = boat.CheckDryDock();
+	if( !ReportDryDockResult( socket, result ) )
 	{
 		return;
 	}
 
 	user.SetTempTag( "hsDryDockBoat", boat.serial );
-	var g = new Gump;
+	let g = new Gump;
 	g.AddPage( 0 );
 	g.AddBackground( 0, 0, 390, 190, 0x0A28 );
 	g.AddHTMLGump( 25, 25, 340, 65, false, false,
@@ -38,33 +41,33 @@ function onGumpPress( socket, button, gumpData )
 		return;
 	}
 
-	var user = socket.currentChar;
-	var boat = CalcItemFromSer( parseInt( user.GetTempTag( "hsDryDockBoat" )));
-	if( !ValidateDryDockOwnerAndRange( socket, user, boat ))
+	let user = socket.currentChar;
+	let boat = CalcItemFromSer( parseInt( user.GetTempTag( "hsDryDockBoat" ) ) );
+	if( !ValidateDryDockOwnerAndRange( socket, user, boat ) )
 	{
 		return;
 	}
 
-	var result = boat.CheckDryDock();
-	if( !ReportDryDockResult( socket, result ))
+	let result = boat.CheckDryDock();
+	if( !ReportDryDockResult( socket, result ) )
 	{
 		return;
 	}
 
-	var deedSection = DryDockDeedSection( boat );
+	let deedSection = DryDockDeedSection( boat );
 	if( deedSection == "" )
 	{
 		socket.SysMessage( "That vessel cannot be converted into a High Seas deed." );
 		return;
 	}
 
-	var deed = CreateDFNItem( socket, user, deedSection, 1, "ITEM", true );
-	if( !ValidateObject( deed ))
+	let deed = CreateDFNItem( socket, user, deedSection, 1, "ITEM", true );
+	if( !ValidateObject( deed ) )
 	{
 		return;
 	}
 
-	if( !boat.DeleteForDryDock( deed ))
+	if( !boat.DeleteForDryDock( deed ) )
 	{
 		deed.Delete();
 		socket.SysMessage( "The vessel changed before dry docking could finish." );
@@ -84,8 +87,7 @@ function ValidateDryDockOwnerAndRange( socket, user, boat )
 		return false;
 	}
 
-	var isOwner = user.isGM || boat.IsOwner( user ) ||
-		( ValidateObject( boat.owner ) && boat.owner.accountNum == user.accountNum );
+	let isOwner = user.isGM || boat.IsOwner( user ) || ( ValidateObject( boat.owner ) && boat.owner.accountNum == user.accountNum );
 	if( !isOwner )
 	{
 		socket.SysMessage( "Only the ship's owner may dry dock it." );
@@ -101,7 +103,7 @@ function ValidateDryDockOwnerAndRange( socket, user, boat )
 		socket.SysMessage( "You must disembark before dry docking the vessel." );
 		return false;
 	}
-	if( !boat.InRange( user, 12 ))
+	if( !boat.InRange( user, 12 ) )
 	{
 		socket.SysMessage( "You are too far away from the vessel." );
 		return false;
@@ -147,7 +149,7 @@ function ReportDryDockResult( socket, result )
 /** @type { ( boat: Multi ) => any } */
 function DryDockDeedSection( boat )
 {
-	var multiID = parseInt( boat.id ) - 0x4000;
+	let multiID = parseInt( boat.id ) - 0x4000;
 	if( multiID >= 0x18 && multiID <= 0x1B )
 	{
 		return "orcishgalleondeed";

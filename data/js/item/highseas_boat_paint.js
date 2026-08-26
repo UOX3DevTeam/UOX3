@@ -4,7 +4,7 @@
 /** @type { ( user: Character, used: Item ) => any } */
 function onUseChecked( user, used )
 {
-	if( !ValidateObject( user ) || !ValidateObject( used ) || !IsInPack( used, user.pack ))
+	if( !ValidateObject( user ) || !ValidateObject( used ) || !IsInPack( used, user.pack ) )
 	{
 		if( ValidateObject( user ) && user.socket )
 		{
@@ -13,24 +13,22 @@ function onUseChecked( user, used )
 		return false;
 	}
 	user.socket.tempObj = used;
-	user.socket.CustomTarget( 0, used.morex == 3 ?
-		"Select the ship whose paint you wish to remove." :
-		"Select the main mast of the ship you wish to paint." );
+	user.socket.CustomTarget( 0, used.morex == 3 ? "Select the ship whose paint you wish to remove." : "Select the main mast of the ship you wish to paint." );
 	return false;
 }
 
 /** @type { ( socket: Socket, target: Character | Item | null ) => any } */
 function onCallback0( socket, target )
 {
-	var paint = socket.tempObj;
+	let paint = socket.tempObj;
 	socket.tempObj = null;
-	var user = socket.currentChar;
-	if( !ValidateObject( user ) || !ValidateObject( paint ) || !IsInPack( paint, user.pack ))
+	let user = socket.currentChar;
+	if( !ValidateObject( user ) || !ValidateObject( paint ) || !IsInPack( paint, user.pack ) )
 	{
 		return;
 	}
 
-	var boat = ResolveBoat( target );
+	let boat = ResolveBoat( target );
 	if( !ValidateObject( boat ) || !boat.IsBoat() || user.multi != boat )
 	{
 		socket.SysMessage( "You must be aboard the ship you wish to paint." );
@@ -41,13 +39,13 @@ function onCallback0( socket, target )
 		socket.SysMessage( "You must be the captain to paint this ship!" );
 		return;
 	}
-	if( !ValidateObject( target ) || !target.InRange( user, 5 ) || ( target != boat && target.multi != boat ))
+	if( !ValidateObject( target ) || !target.InRange( user, 5 ) || ( target != boat && target.multi != boat ) )
 	{
 		socket.SysMessage( "You must target the main mast of the ship you wish to paint." );
 		return;
 	}
 
-	var mode = paint.morex;
+	let mode = paint.morex;
 	if( mode == 3 )
 	{
 		if( boat.RemoveShipPaint() )
@@ -62,7 +60,7 @@ function onCallback0( socket, target )
 		return;
 	}
 
-	var result = boat.PaintShip( paint.color, mode == 2 );
+	let result = boat.PaintShip( paint.color, mode == 2 );
 	if( result == 1 )
 	{
 		socket.SysMessage( "You apply a coat of paint to the ship." );
@@ -90,7 +88,7 @@ function onCallback0( socket, target )
 /** @type { ( target: Character | Item | null ) => any } */
 function ResolveBoat( target )
 {
-	if( !ValidateObject( target ))
+	if( !ValidateObject( target ) )
 	{
 		return null;
 	}
@@ -104,8 +102,8 @@ function ResolveBoat( target )
 /** @type { ( item: Item, pack: BaseObject ) => any } */
 function IsInPack( item, pack )
 {
-	var parent = item.container;
-	while( ValidateObject( parent ))
+	let parent = item.container;
+	while( ValidateObject( parent ) )
 	{
 		if( parent == pack )
 		{
