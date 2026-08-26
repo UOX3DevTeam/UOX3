@@ -435,6 +435,11 @@ bool CPISellItem::Handle( void )
 		if( !ValidateObject( n ) || !ValidateObject( mChar ))
 			return true;
 
+		if( !n->IsShopStockLoaded() )
+		{
+			n->PopulateShopStock();
+		}
+
 		CItem *buyPack		= n->GetItemAtLayer( IL_BUYCONTAINER );
 		CItem *boughtPack	= n->GetItemAtLayer( IL_BOUGHTCONTAINER );
 		CItem *sellPack		= n->GetItemAtLayer( IL_SELLCONTAINER );
@@ -687,8 +692,8 @@ bool CPISellItem::Handle( void )
 //o------------------------------------------------------------------------------------------------o
 void RestockNPC( CChar& i, bool stockAll )
 {
-	if( !i.IsShop() )
-		return;	// if we aren't a shopkeeper, why bother?
+	if( !i.IsShop() || !i.IsShopStockLoaded() )
+		return;	// if we aren't a shopkeeper or stock hasn't been loaded yet, skip!
 
 	CItem *ci = i.GetItemAtLayer( IL_SELLCONTAINER );
 	if( ValidateObject( ci ))

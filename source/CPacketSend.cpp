@@ -8707,6 +8707,10 @@ void CPSellList::InternalReset( void )
 }
 auto CPSellList::CopyData( CChar& mChar, CChar& vendorId ) -> void
 {
+	if( !vendorId.IsShopStockLoaded() )
+	{
+		vendorId.PopulateShopStock();
+	}
 	auto buyPack = vendorId.GetItemAtLayer( IL_BUYCONTAINER );
 	auto ourPack	= mChar.GetPackItem();
 
@@ -9769,6 +9773,10 @@ void CPPopupMenu::CopyData( CBaseObject& toCopy, CSocket &tSock )
 	// Shopkeeper
 	if( toCopyChar->IsShop() )
 	{
+		if( !toCopyChar->IsShopStockLoaded() )
+		{
+			toCopyChar->PopulateShopStock();
+		}
 		// Shopkeeper - Buy
 		CItem *sellContainer = toCopyChar->GetItemAtLayer( IL_SELLCONTAINER );
 		if( ValidateObject( sellContainer ) && sellContainer->GetContainsList()->Num() > 0 )
