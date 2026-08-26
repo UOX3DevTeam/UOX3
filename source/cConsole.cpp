@@ -1062,7 +1062,7 @@ auto CConsole::Process(std::int32_t c) -> void
 				}
 
 				std::cout << "Temporary password for account '" << username << "': " << temporaryPassword << std::endl;
-				messageLoop << "CMD: Account password reset successfully. The temporary password was printed only to the local console.";
+				messageLoop << "CMD: Account password reset successfully.";
 				break;
 			}
 			case 'R':
