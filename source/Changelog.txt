@@ -1,3 +1,6 @@
+26/08/2026 - Xoduz (#594)
+    [FIX] Offline player characters are now flagged to ignore mobile collisions, allowing staff to walk through them without stamina restrictions
+
 26/08/2026 - DragonSlayer62 (#592)
     [ADD] Added optional PBKDF2-HMAC-SHA256 password hashing for UOX3 accounts
         PASSWORDHASHINGENABLED=0 // Enables hashing for newly created and changed passwords
