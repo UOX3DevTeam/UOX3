@@ -18,6 +18,7 @@
 #include <deque>
 #include <queue>
 #include <bitset>
+#include <array>
 
 // STL algorithms & functions
 #include <algorithm>
