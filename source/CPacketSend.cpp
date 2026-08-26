@@ -488,7 +488,7 @@ void CPExtMove::SetFlags( CChar &toCopy )
 		flag.set( BIT__FEMALE, ( toCopy.GetId() == 0x0191 || toCopy.GetId() == 0x025E || toCopy.GetId() == 0x029B || toCopy.GetId() == 0xb8 || toCopy.GetId() == 0xba ));
 		flag.set( BIT__FLYING, ( toCopy.IsFlying() ));
 		flag.set( BIT__GOLDEN, ( toCopy.IsInvulnerable() ));
-		flag.set( BIT__IGNOREMOBILES, toCopy.NoCharCollide() );
+		flag.set( BIT__IGNOREMOBILES, toCopy.NoCharCollide() || ( !toCopy.IsNpc() && !IsOnline( toCopy )));
 	}
 	else
 	{
@@ -503,7 +503,7 @@ void CPExtMove::SetFlags( CChar &toCopy )
 		flag.set( BIT__DEAD, toCopy.IsDead() );
 		flag.set( BIT__POISON, ( toCopy.GetPoisoned() != 0 ));
 		flag.set( BIT__GOLDEN, ( toCopy.IsInvulnerable() ));
-		flag.set( BIT__IGNOREMOBILES, toCopy.NoCharCollide() );
+		flag.set( BIT__IGNOREMOBILES, toCopy.NoCharCollide() || ( !toCopy.IsNpc() && !IsOnline( toCopy )));
 	}
 
 	const UI08 BIT__ATWAR = 6;	// 0x40
@@ -1197,7 +1197,7 @@ void CPDrawGamePlayer::CopyData( CChar &toCopy )
 		flag.set( BIT__FEMALE, ( toCopy.GetId() == 0x0191 || toCopy.GetId() == 0x025E || toCopy.GetId() == 0x029B || toCopy.GetId() == 0xb8 || toCopy.GetId() == 0xba ));
 		flag.set( BIT__FLYING, toCopy.IsFlying() );
 		flag.set( BIT__GOLDEN, toCopy.IsInvulnerable() );
-		flag.set( BIT__IGNOREMOBILES, toCopy.NoCharCollide() );
+		flag.set( BIT__IGNOREMOBILES, toCopy.NoCharCollide() || ( !toCopy.IsNpc() && !IsOnline( toCopy )));
 	}
 	else
 	{
@@ -1212,7 +1212,7 @@ void CPDrawGamePlayer::CopyData( CChar &toCopy )
 		flag.set( BIT__DEAD, toCopy.IsDead() );
 		flag.set( BIT__POISON, ( toCopy.GetPoisoned() != 0 ));
 		flag.set( BIT__GOLDEN, toCopy.IsInvulnerable() );
-		flag.set( BIT__IGNOREMOBILES, toCopy.NoCharCollide() );
+		flag.set( BIT__IGNOREMOBILES, toCopy.NoCharCollide() || ( !toCopy.IsNpc() && !IsOnline( toCopy )));
 	}
 
 	const UI08 BIT__ATWAR	= 6;	//	0x40
@@ -5776,7 +5776,7 @@ void CPDrawObject::CopyData( CChar& mChar )
 		flag.set( BIT__FEMALE, ( mChar.GetId() == 0x0191 || mChar.GetId() == 0x025E ));
 		flag.set( BIT__FLYING, mChar.IsFlying() );
 		flag.set( BIT__GOLDEN, mChar.IsInvulnerable() );
-		flag.set( BIT__IGNOREMOBILES, mChar.NoCharCollide() );
+		flag.set( BIT__IGNOREMOBILES, mChar.NoCharCollide() || ( !mChar.IsNpc() && !IsOnline( mChar )));
 	}
 	else
 	{
@@ -5791,7 +5791,7 @@ void CPDrawObject::CopyData( CChar& mChar )
 		flag.set( BIT__DEAD, mChar.IsDead() );
 		flag.set( BIT__POISON, ( mChar.GetPoisoned() != 0 ));
 		flag.set( BIT__GOLDEN, mChar.IsInvulnerable() );
-		flag.set( BIT__IGNOREMOBILES, mChar.NoCharCollide() );
+		flag.set( BIT__IGNOREMOBILES, mChar.NoCharCollide() || ( !mChar.IsNpc() && !IsOnline( mChar )));
 	}
 
 	const UI08 BIT__ATWAR = 6;	//	0x40
@@ -8753,6 +8753,10 @@ void CPSellList::InternalReset( void )
 }
 auto CPSellList::CopyData( CChar& mChar, CChar& vendorId ) -> void
 {
+	if( !vendorId.IsShopStockLoaded() )
+	{
+		vendorId.PopulateShopStock();
+	}
 	auto buyPack = vendorId.GetItemAtLayer( IL_BUYCONTAINER );
 	auto ourPack	= mChar.GetPackItem();
 
@@ -9815,6 +9819,10 @@ void CPPopupMenu::CopyData( CBaseObject& toCopy, CSocket &tSock )
 	// Shopkeeper
 	if( toCopyChar->IsShop() )
 	{
+		if( !toCopyChar->IsShopStockLoaded() )
+		{
+			toCopyChar->PopulateShopStock();
+		}
 		// Shopkeeper - Buy
 		CItem *sellContainer = toCopyChar->GetItemAtLayer( IL_SELLCONTAINER );
 		if( ValidateObject( sellContainer ) && sellContainer->GetContainsList()->Num() > 0 )

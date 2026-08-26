@@ -78,18 +78,22 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			continue;
 		}
 
-		auto ssecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), " " );
 		switch( tag )
 		{
 			case DFNTAG_ARTIFACTRARITY:	applyTo->SetArtifactRarity( static_cast<SI16>( ndata ));	break;
 			case DFNTAG_AMMO:
+			{
+				auto ssecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), " " );
 				applyTo->SetAmmoId( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
 				if( ssecs.size() > 1 )
 				{
 					applyTo->SetAmmoHue( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 )));
 				}
 				break;
+			}
 			case DFNTAG_AMMOFX:
+			{
+				auto ssecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), " " );
 				applyTo->SetAmmoFX( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
 				if( ssecs.size() > 1 )
 				{
@@ -100,6 +104,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					}
 				}
 				break;
+			}
 			case DFNTAG_AMOUNT:
 				if( ndata > 0 )
 				{
@@ -198,6 +203,8 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			case DFNTAG_CORPSE:			applyTo->SetCorpse( ndata != 0 )		;				break;
 			case DFNTAG_COLD:			applyTo->SetWeatherDamage( COLD, ndata != 0 );			break;
 			case DFNTAG_ELEMENTRESIST:
+			{
+				auto ssecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), " " );
 				if( ssecs.size() >= 4 )
 				{
 					const WeatherType resistTypes[] = { HEAT, COLD, LIGHTNING, POISON, LIGHT, RAIN, SNOW, STORM, STORMBREW, ACID, NECROTIC };
@@ -207,6 +214,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					}
 				}
 				break;
+			}
 			case DFNTAG_ELEMENTDAMAGE:
 				{
 					auto values = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), "," );
@@ -234,6 +242,8 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				}
 				break;
 			case DFNTAG_ERBONUS:
+			{
+				auto ssecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), " " );
 				if( ssecs.size() >= 4 )
 				{
 					const WeatherType resistTypes[] = { HEAT, COLD, LIGHTNING, POISON, LIGHT, RAIN, SNOW, STORM, STORMBREW, ACID, NECROTIC };
@@ -245,6 +255,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					}
 				}
 				break;
+			}
 			case DFNTAG_EVENT:			applyTo->SetEvent( cdata );				break;
 			case DFNTAG_DAMAGEABLE:		applyTo->SetDamageable(ndata != 0 );	break;
 			case DFNTAG_DEF:
@@ -320,6 +331,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			case DFNTAG_GET:
 			{
 				std::string scriptEntry = "";
+				auto ssecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), " " );
 				if( ssecs.size() == 1 )
 				{
 					scriptEntry = cdata;
@@ -380,6 +392,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				if( getParent )
 				{
 					std::string scriptEntry = "";
+					auto ssecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), " " );
 					if( ssecs.size() == 1 )
 					{
 						scriptEntry = cdata;
@@ -465,6 +478,8 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			case DFNTAG_HITCHANCE:	applyTo->SetHitChance( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_HEAT:			applyTo->SetWeatherDamage( HEAT, ndata != 0 );			break;
 			case DFNTAG_ID:				// applyTo->SetId( static_cast<UI16>( ndata ));				break;
+			{
+				auto ssecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), " " );
 				if( ssecs.size() == 1 )
 				{
 					applyTo->SetId( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
@@ -475,6 +490,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					applyTo->SetId( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[rndEntry], "//" )), nullptr, 0 )));
 				}
 				break;
+			}
 			case DFNTAG_INTELLIGENCE:	applyTo->SetIntelligence( static_cast<SI16>( ndata ));	break;
 			case DFNTAG_INTADD:			applyTo->SetIntelligence2( static_cast<SI16>( ndata ));	break;
 			case DFNTAG_LODAMAGE:		applyTo->SetLoDamage( static_cast<SI16>( ndata ));		break;
@@ -489,6 +505,8 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			case DFNTAG_MAXUSES:		applyTo->SetMaxUses( static_cast<UI16>( ndata ));		break;
 			case DFNTAG_MOVABLE:		applyTo->SetMovable( static_cast<SI08>( ndata ));		break;
 			case DFNTAG_MORE:
+			{
+				auto ssecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), " " );
 				if( ssecs.size() >= 4 )
 				{
 					applyTo->SetTempVar( CITV_MORE, 1, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
@@ -501,7 +519,10 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					applyTo->SetTempVar( CITV_MORE, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
 				}
 				break;
+			}
 			case DFNTAG_MORE0:
+			{
+				auto ssecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), " " );
 				if( ssecs.size() >= 4 )
 				{
 					applyTo->SetTempVar( CITV_MORE0, 1, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
@@ -514,7 +535,10 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					applyTo->SetTempVar( CITV_MORE0, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
 				}
 				break;
+			}
 			case DFNTAG_MORE1:
+			{
+				auto ssecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), " " );
 				if( ssecs.size() >= 4 )
 				{
 					applyTo->SetTempVar( CITV_MORE1, 1, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
@@ -527,7 +551,10 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					applyTo->SetTempVar( CITV_MORE1, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
 				}
 				break;
+			}
 			case DFNTAG_MORE2:
+			{
+				auto ssecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), " " );
 				if( ssecs.size() >= 4 )
 				{
 					applyTo->SetTempVar( CITV_MORE2, 1, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
@@ -540,7 +567,10 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					applyTo->SetTempVar( CITV_MORE2, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
 				}
 				break;
+			}
 			case DFNTAG_MOREX:
+			{
+				auto ssecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), " " );
 				if( ssecs.size() >= 4 )
 				{
 					applyTo->SetTempVar( CITV_MOREX, 1, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
@@ -553,7 +583,10 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					applyTo->SetTempVar( CITV_MOREX, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
 				}
 				break;
+			}
 			case DFNTAG_MOREY:
+			{
+				auto ssecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), " " );
 				if( ssecs.size() >= 4 )
 				{
 					applyTo->SetTempVar( CITV_MOREY, 1, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
@@ -566,7 +599,10 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					applyTo->SetTempVar( CITV_MOREY, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
 				}
 				break;
+			}
 			case DFNTAG_MOREZ:
+			{
+				auto ssecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), " " );
 				if( ssecs.size() >= 4 )
 				{
 					applyTo->SetTempVar( CITV_MOREZ, 1, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
@@ -579,6 +615,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					applyTo->SetTempVar( CITV_MOREZ, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
 				}
 				break;
+			}
 			case DFNTAG_NAME:			applyTo->SetName( cdata );								break;
 			case DFNTAG_NAME2:			applyTo->SetName2( cdata );								break;
 			case DFNTAG_NAMELIST:		SetRandomName( applyTo, cdata );						break;
@@ -723,6 +760,8 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				break;
 			}
 			case DFNTAG_SPELLS:
+			{
+				auto ssecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), " " );
 				if( ssecs.size() == 3 )
 				{
 					applyTo->SetSpell( 0, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
@@ -734,6 +773,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					Console.Warning( oldstrutil::format( "Invalid data found in SPELLS tag inside Item script [%s]", sectionId.c_str() ));
 				}
 				break;
+			}
 			case DFNTAG_TYPE:
 				ItemTypes iType;
 				iType = FindItemTypeFromTag( cdata );
@@ -782,6 +822,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			{
 				auto count = 0;
 				std::string result;
+				auto ssecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), " " );
 				for( auto &sec : ssecs )
 				{
 					if( count > 0 )
@@ -818,6 +859,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			{
 				auto count = 0;
 				std::string result;
+				auto ssecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), " " );
 				for( auto &sec : ssecs )
 				{
 					if( count > 0 )
@@ -982,8 +1024,7 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 itemId, cons
 		iCreated->SetAmount( iAmount );
 	}
 
-	std::vector<UI16> scriptTriggers = iCreated->GetScriptTriggers();
-	for( auto scriptTrig : scriptTriggers )
+	for( auto scriptTrig : iCreated->GetScriptTriggers() )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
 		if( toExecute != nullptr )
@@ -1160,45 +1201,25 @@ auto cItem::CreateRandomItem( CItem *mCont, const std::string& sItemList, const 
 			}
 
 			// Choose a random number between 0 and the total sum of all weights
-			int rndChoice = RandomNum( 0, sum_of_weight - 1 );
-			int itemWeight = 0;
-
-			// Prepare a vector to hold multiple entries, if more than one qualifies based on weighting
-			std::vector<int> matchingEntries;
-
-			// Loop through the items in the itemlist/lootlist
-			int weightOfChosenItem = 0;
-			for( auto j = 0; j < static_cast<int>( itemListSize ); j++ )
+			if( sum_of_weight > 0 )
 			{
-				auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( ItemList->MoveTo( j ), "//" )), "|" );
-				if( csecs.size() == 2 )
+				int rndChoice = RandomNum( 0, sum_of_weight - 1 );
+				for( size_t j = 0; j < itemListSize; ++j )
 				{
-					// Ok, item entry has a weight, let's compare that weight to our chosen random number
-					itemWeight = static_cast<int>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ));
+					int itemWeight = 1;
+					auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( ItemList->MoveTo( j ), "//" )), "|" );
+					if( csecs.size() == 2 )
+					{
+						itemWeight = static_cast<int>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ));
+					}
 					if( rndChoice < itemWeight )
 					{
-						// If we find another entry with same weight as the first one found, or if none have been found yet, add to list
-						if( weightOfChosenItem == 0 || weightOfChosenItem == itemWeight )
-						{
-							itemEntryToSpawn = j;
-							weightOfChosenItem = itemWeight;
-
-							// Add the entry index to a temporary vector of all entries with same weight, then continue looking for more!
-							matchingEntries.push_back( j );
-							continue;
-						}
+						itemEntryToSpawn = static_cast<int>( j );
+						break;
 					}
 					rndChoice -= itemWeight;
 				}
 			}
-
-			// Did we find more than one entry that matched our random weight criteria?
-			if( matchingEntries.size() > 0 )
-			{
-				// Choose a random one of these!
-				itemEntryToSpawn = matchingEntries[static_cast<int>( RandomNum( static_cast<size_t>( 0 ), matchingEntries.size() - 1 ))];
-			}
-			matchingEntries.clear();
 
 			std::string k = "";
 			std::vector<std::string> csecs;
@@ -1404,8 +1425,7 @@ CItem * cItem::CreateBaseScriptItem( CItem *mCont, std::string ourItem, const UI
 		}
 
 		// Check for (and run) onCreateDFN() event for newly created item
-		std::vector<UI16> scriptTriggers = iCreated->GetScriptTriggers();
-		for( auto scriptTrig : scriptTriggers )
+		for( auto scriptTrig : iCreated->GetScriptTriggers() )
 		{
 			cScript *toExecute = JSMapping->GetScript( scriptTrig );
 			if( toExecute != nullptr )

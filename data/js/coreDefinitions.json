@@ -1067,7 +1067,8 @@
           { "name": "checkWater", "type": "boolean", "required": true },
           { "name": "waterWalk", "type": "boolean", "required": true },
           { "name": "checkOnlyMultis", "type": "boolean", "required": true },
-          { "name": "checkOnlyNonMultis", "type": "boolean", "required": true }
+          { "name": "checkOnlyNonMultis", "type": "boolean", "required": true },
+          { "name": "checkMultiPlacement", "type": "boolean", "required": false }
         ]
       },
       "returns": "boolean"

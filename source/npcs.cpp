@@ -147,8 +147,7 @@ CChar *CCharStuff::CreateBaseNPC( std::string ourNPC, bool shouldSave )
 			Console.Error( "Trying to apply an npc section failed" );
 		}
 
-		std::vector<UI16> scriptTriggers = cCreated->GetScriptTriggers();
-		for( auto scriptTrig : scriptTriggers )
+		for( auto scriptTrig : cCreated->GetScriptTriggers() )
 		{
 			cScript *toExecute = JSMapping->GetScript( scriptTrig );
 			if( toExecute != nullptr )
@@ -165,64 +164,36 @@ CChar *CCharStuff::CreateBaseNPC( std::string ourNPC, bool shouldSave )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Selects a random weighted entry from a vector with key-value pair (section and weight)
 //o------------------------------------------------------------------------------------------------o
-auto CCharStuff::ChooseNpcToCreate( const std::vector<std::pair<std::string, UI16>> npcListVector ) -> std::string
+auto CCharStuff::ChooseNpcToCreate( const std::vector<std::pair<std::string, UI16>>& npcListVector ) -> std::string
 {
-	auto npcListSize = npcListVector.size();
-	if( npcListSize <= 0 )
+	const size_t npcListSize = npcListVector.size();
+	if( npcListSize == 0 )
 		return "";
+	if( npcListSize == 1 )
+		return npcListVector[0].first;
 
+	// Calculate total cumulative weight
 	int sum_of_weight = 0;
 	for( const auto& it : npcListVector )
 	{
-		//const std::string& sectionName = it.first;
-		const UI16 &sectionWeight = it.second;
-		sum_of_weight += sectionWeight;
+		sum_of_weight += it.second;
 	}
 
+	if( sum_of_weight <= 0 )
+		return npcListVector[RandomNum( static_cast<size_t>( 0 ), npcListSize - 1 )].first;
+
+	// Perform standard cumulative distribution random selection
 	int rndChoice = RandomNum( 0, sum_of_weight - 1 );
-	[[maybe_unused]] int npcWeight = 0;
-
-	std::vector<int> matchingEntries;
-
-	int weightOfChosenNpc = 0;
-	for( size_t i = 0; i < npcListVector.size(); ++i )
+	for( const auto& it : npcListVector )
 	{
-		//const std::string &sectionName = npcList[i].first;
-		const UI16 &sectionWeight = npcListVector[i].second;
-
-		// Ok, section has a weight, let's compare that weight to our chosen random number
-		if( rndChoice < sectionWeight )
+		if( rndChoice < it.second )
 		{
-			// If we find another entry with same weight as the first one found, or if none have been found yet, add to list
-			if( weightOfChosenNpc == 0 || weightOfChosenNpc == sectionWeight )
-			{
-				weightOfChosenNpc = sectionWeight;
-
-				// Add the entry index to a temporary vector of all entries with shared weight, the continue looking for more!
-				matchingEntries.push_back( static_cast<int>(i) );
-				continue;
-			}
+			return it.first;
 		}
-		rndChoice -= sectionWeight;
+		rndChoice -= it.second;
 	}
 
-	// Did we find one or more entry that matched our random weight criteria?
-	int npcEntryToSpawn = ( matchingEntries.size() > 0 ? matchingEntries[static_cast<int>( RandomNum( static_cast<size_t>( 0 ), matchingEntries.size() - 1 ))] : -1 );
-	matchingEntries.clear();
-
-	std::string chosenNpcSection = "";
-	if( npcEntryToSpawn != -1 )
-	{
-		// If entry was selected based on weights, use that
-		chosenNpcSection = npcListVector[npcEntryToSpawn].first;
-	}
-	else
-	{
-		// else, use a random entry from the list
-		chosenNpcSection = npcListVector[RandomNum( static_cast<size_t>( 0 ), npcListSize - 1 )].first;
-	}
-
-	return chosenNpcSection;
+	return npcListVector.back().first;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -880,8 +851,6 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 		ndata = sec->ndata;
 		odata = sec->odata;
 		cdata = oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" ));
-		auto ssects = oldstrutil::sections( cdata, " " );
-		auto csects = oldstrutil::sections( cdata, "," );
 		switch( tag )
 		{
 			case DFNTAG_ALCHEMY:			skillToSet = ALCHEMY;				break;
@@ -1183,6 +1152,8 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 				}
 				break;
 			case DFNTAG_ELEMENTRESIST:
+			{
+				auto ssects = oldstrutil::sections( cdata, " " );
 				if( ssects.size() >= 4 )
 				{
 					const WeatherType resistTypes[] = { HEAT, COLD, LIGHTNING, POISON, LIGHT, RAIN, SNOW, STORM, STORMBREW, ACID, NECROTIC };
@@ -1192,7 +1163,10 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 					}
 				}
 				break;
+			}
 			case DFNTAG_ERBONUS:
+			{
+				auto ssects = oldstrutil::sections( cdata, " " );
 				if( ssects.size() >= 4 )
 				{
 					const WeatherType resistTypes[] = { HEAT, COLD, LIGHTNING, POISON, LIGHT, RAIN, SNOW, STORM, STORMBREW, ACID, NECROTIC };
@@ -1204,6 +1178,7 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 					}
 				}
 				break;
+			}
 			case DFNTAG_EMOTECOLOUR:
 				if( !isGate )
 				{
@@ -1311,6 +1286,7 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 			case DFNTAG_GET:
 			{
 				std::string scriptEntry = "";
+				auto ssects = oldstrutil::sections( cdata, " " );
 				if( ssects.size() == 1 )
 				{
 					scriptEntry = cdata;
@@ -1371,6 +1347,7 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 				if( getParent )
 				{
 					std::string scriptEntry = "";
+					auto ssects = oldstrutil::sections( cdata, " " );
 					if( ssects.size() == 1 )
 					{
 						scriptEntry = cdata;
@@ -1485,10 +1462,12 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 				}
 				break;
 			case DFNTAG_ID:
+			{
 				/*applyTo->SetId( static_cast<UI16>( ndata ));
 				applyTo->SetOrgId( static_cast<UI16>( ndata ));
 				break;*/
 
+				auto ssects = oldstrutil::sections( cdata, " " );
 				if( ssects.size() == 1 )
 				{
 					applyTo->SetId( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssects[0], "//" )), nullptr, 0 )));
@@ -1501,6 +1480,7 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 					applyTo->SetOrgId( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssects[rndEntry], "//" )), nullptr, 0 )));
 				}
 				break;
+			}
 			case DFNTAG_IMBUING:			skillToSet = IMBUING;					break;
 			case DFNTAG_INSCRIPTION:		skillToSet = INSCRIPTION;				break;
 			case DFNTAG_INTELLIGENCE:
@@ -1838,7 +1818,7 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 			case DFNTAG_SHOPLIST:
 				if( !isGate )
 				{
-					LoadShopList( cdata, applyTo );
+					applyTo->AddPendingShopList( cdata );
 				}
 				break;
 			case DFNTAG_SELLITEM:
@@ -2061,6 +2041,7 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 			{
 				auto count = 0;
 				std::string result;
+				auto ssects = oldstrutil::sections( cdata, " " );
 				for( auto &sec : ssects )
 				{
 					if( count > 0 )
@@ -2097,6 +2078,7 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 			{
 				auto count = 0;
 				std::string result;
+				auto ssects = oldstrutil::sections( cdata, " " );
 				for( auto &sec : ssects )
 				{
 					if( count > 0 )
@@ -2436,7 +2418,7 @@ void MonsterGate( CChar *s, const std::string& scriptEntry )
 	}
 
 	Npcs->ApplyNpcSection( s, Monster, scriptEntry, true );
-	//Now find real 'skill' based on 'baseskill' (stat modifiers)
+	// Now find real 'skill' based on 'baseskill' (stat modifiers)
 	for( UI08 j = 0; j < ALLSKILLS; ++j )
 	{
 		Skills->UpdateSkillLevel( s, j );

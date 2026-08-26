@@ -7247,11 +7247,11 @@ var doesTileBlock = CheckTileFlag( iUsed.id, 6 );</code></pre>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>bool DoesDynamicBlock( x, y, z, world, instance, checkWater, waterWalk, checkOnlyMultis, checkOnlyNonMultis );</em></p>
+									<p><em>bool DoesDynamicBlock( x, y, z, world, instance, checkWater, waterWalk, checkOnlyMultis, checkOnlyNonMultis [, checkMultiPlacement] );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Checks if dynamics at/above given location blocks character movement.</p>
+									<p>Checks if dynamics at/above given location blocks character movement or multi/house placement.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
@@ -7259,11 +7259,12 @@ var doesTileBlock = CheckTileFlag( iUsed.id, 6 );</code></pre>
 									checkWater = true if water should block, false if not (for creatures that can swim, for instance)<br>
 									waterWalk = true if creature can move on water surfaces, false if not<br>
 									checkOnlyMultis = only multis will be checked, other dynamic items are ignored<br>
-									checkOnlyNonMultis = multis are ignored, all other dynamic items are checked</p>
+									checkOnlyNonMultis = multis are ignored, all other dynamic items are checked<br>
+									checkMultiPlacement = (optional, default false) if true, all visible dynamic items locked down by GMs are included in check (originally for multi/house placement)</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">var doesDynamicBlock = DoesDynamicBlock( pUser.x + 1, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID, false, false, false, false );</code></pre>
+									<pre><code class="language-javascript">var doesDynamicBlock = DoesDynamicBlock( pUser.x + 1, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID, false, false, false, false, true );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -19044,9 +19045,23 @@ if( myObject.isGM )
 								<li>Setup an association between an <span class="hl">object's ID</span> and a scriptID in <strong>UOX3/js/jse_objectassociations.scp</strong></li>
 								<li>Setup an association between an <span class="hl">object's type</span> property and a scriptID in <strong>UOX3/js/jse_typeassociations.scp</strong></li>
 							</ul>
-							<p>Example of a script attached to objects via DFN files:</p>
-							<p>Example of a script attached to objects via object ID:</p>
-							<p>Example of a script attached to objects via object type:</p>
+							<p>Example of a script attached to objects via DFN files (e.g. <code>UOX3/dfndata/items/weapons.dfn</code>):</p>
+<pre><code class="language-c">[item_0x0F49]
+{
+NAME=axe
+ID=0x0F49
+SCRIPT=20000
+}</code></pre>
+							<p>Example of a script attached to objects via object ID in <code>UOX3/js/jse_objectassociations.scp</code>:</p>
+<pre><code class="language-c">[ENVOKE]
+{
+0x0F49=20000 // Map Item ID 0x0F49 (axe) to Script ID 20000
+}</code></pre>
+							<p>Example of a script attached to objects via object type in <code>UOX3/js/jse_typeassociations.scp</code>:</p>
+<pre><code class="language-c">[ENVOKE]
+{
+13=4500 // Map Item Type 13 (Locked Door) to Script ID 4500 (item/doors.js)
+}</code></pre>
 						</div>
 
 						<input type="checkbox" id="spoiler_js_fundamentals_first_script"/>
@@ -19068,7 +19083,7 @@ if( myObject.isGM )
 							<h4>Save the Script, and Reload the JS Engine</h4>
 							<p>Before we do anything else with our script, let's <strong>save it</strong> so UOX3 can read it, and <strong>assign it a unique scriptID</strong> - so we can assign the script to an object in-game! First, save the document in the <span class="hl">UOX3/js/custom/</span> folder with a name of your choosing, but with a <strong>.js file extension</strong> (suggestion: <span class="hl">myFirstScript.js</span>).</p>
 							<p>Next, open <span class="hl">UOX3/js/jse_fileassociations.scp</span> in your text-editor, and add a new line somewhere <strong>inside the curly brackets under the [SCRIPT_LIST]</strong> section, saying: <span class="hl">20000=custom/myFirstScript.js</span> (or whatever you named your script). <strong>Save the file!</strong></p>
-							<p>Now, to get UOX3 <strong>to load</strong> your newly added script, <strong>go to the UOX3 console</strong> and hit the '<span class="hl">*</span>' key to unlock the console, followed by '<span class="hl">8</span>' - which will reload all JS scripts (including your new script). This will take a few moments.</p>
+							<p>Now, to get UOX3 <strong>to load</strong> your newly added script, you can run the in-game GM command <span class="hl">'reloadalljs</span>, or <strong>go to the UOX3 console</strong> and hit the '<span class="hl">*</span>' key to unlock the console, followed by '<span class="hl">8</span>' - which will reload all JS scripts (including your new script). This will take a few moments.</p>
 							<h4>Assign the Script</h4>
 							<p>To test out the script as it stands so far, login with your admin/GM character and use the command <span class="hl">'addscptrig 20000</span>, before <span class="hl">targeting an item in your inventory</span> (or on your character's paperdoll). Now double-click said item and observe some text appearing over the head of your character!</p>
 							<p>Once this is confirmed to be working, let's extend our script and change it up a little:</p>
@@ -19077,10 +19092,10 @@ if( myObject.isGM )
 {
 	var diceResult1 = RandomNumber( 1, 6 );
 	var diceResult2 = RandomNumber( 1, 6 );
-
+ 
 	return false;
 }</code></pre>
-							<p>Above, we removed the dummy TextMessage line, and replaced it with some new lines that generate two random numbers between 1 yo 6, simulating the throw of two regular six-sided dices, and store the results in a couple of variables we call diceResult1 and diceResult2, which we will make use of soon!</p>
+							<p>Above, we removed the dummy TextMessage line, and replaced it with some new lines that generate two random numbers between 1 and 6, simulating the throw of two regular six-sided dice, and store the results in a couple of variables we call diceResult1 and diceResult2, which we will make use of soon!</p>
 							<p>At the bottom of the function, we threw in a line saying "return false;", which for the onUseChecked() event tells UOX3 to disregard any hard-coded functionality for double-clicking the item; we're handling it in our script. Next up, let's fetch the name of the character that's doing the virtual dice-rolling:</p>
 							<h4>Fetch Name of Player</h4>
 							<pre><code class="language-javascript">function onUseChecked( pUser, iUsed )
@@ -19138,7 +19153,7 @@ if( myObject.isGM )
 						<p>Example 1:</p>
 <pre><code class="language-javascript">if( mySpeech.match( /hello/i ) )</code></pre>
 						<p>Example 2:</p>
-<pre><code class="language-javascript">var matchResultArray = mySpeech.match( /follow/i/g );
+<pre><code class="language-javascript">var matchResultArray = mySpeech.match( /follow/gi );
 Console.Print( "Matches found: " + matchResultArray.length + "\n" );</code></pre>
 					</div>
 
@@ -19154,7 +19169,7 @@ Console.Print( "Matches found: " + matchResultArray.length + "\n" );</code></pre
 					<input type="checkbox" id="spoiler_qr_pausemove"/>
 					<label for="spoiler_qr_pausemove">Pausing a wandering NPC in his tracks for X seconds <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p><a href="#" title="UOX3 JS Reference - SetTimer Method">UOX3 JS Reference - SetTimer</a></p>
+						<p><a href="#methodsCharacter" title="UOX3 JS Reference - Character Methods">UOX3 JS Reference - SetTimer</a></p>
 						<p>Using the JS Character Method SetTimer, you can pause an NPC in their tracks for a specific amount of seconds. After this they will return to their previous wandering.</p>
 <pre><code class="language-javascript">myNPC.SetTimer( Timer.MOVETIME, 10000 ); // 10000 = 10 seconds</code></pre>
 					</div>
@@ -19183,23 +19198,155 @@ Console.Print( "Matches found: " + matchResultArray.length + "\n" );</code></pre
 					<div class="spoiler">
 						<p>To equip an item on a character (after first checking for conflicting items on the layer in question), you set the character as the new container for the item, then set the layer to match the layer the item should be equipped on:</p>
 <pre><code class="language-javascript">myItem.container = myChar;
-myItem.layer = [layerID];)</code></pre>
+myItem.layer = layerID;</code></pre>
+					</div>
+
+					<input type="checkbox" id="spoiler_qr_tags"/>
+					<label for="spoiler_qr_tags">Storing persistent or temporary custom data on objects (Tags) <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>UOX3 allows attaching arbitrary custom properties (strings, numbers, booleans) to characters and items:</p>
+						<ul>
+							<li><span class="hl">SetTag( "tagName", value ) / GetTag( "tagName" )</span>: <strong>Persistent tags</strong> that are saved into the world files and persist across server restarts.</li>
+							<li><span class="hl">SetTempTag( "tagName", value ) / GetTempTag( "tagName" )</span>: <strong>Temporary tags</strong> stored only in memory for the current session (discarded on server restart or object destruction).</li>
+							<li><span class="hl">Deleting tags</span>: To delete any persistent or temporary tag, set its value to <code>null</code>: <code>myObj.SetTag( "myTag", null );</code></li>
+						</ul>
+<pre><code class="language-javascript">// Store persistent quest state on player
+pUser.SetTag( "questCompleted", 1 );
+
+// Check persistent tag
+if( pUser.GetTag( "questCompleted" ) == 1 )
+{
+	pSock.SysMessage( "You have already completed this quest." );
+}
+
+// Store temporary session data on an item
+iUsed.SetTempTag( "lastUsedBy", pUser.serial );
+
+// Delete a tag by setting its value to null
+pUser.SetTag( "questCompleted", null );</code></pre>
+					</div>
+
+					<input type="checkbox" id="spoiler_qr_customtarget"/>
+					<label for="spoiler_qr_customtarget">Requesting a targeting cursor from a player <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>To prompt a player to select a target in-game, call <code>CustomTarget()</code> on their socket, specifying a callback ID and prompt text. When the player clicks a target, UOX3 invokes the corresponding <code>onCallback#</code> event hook in the script:</p>
+<pre><code class="language-javascript">function onUseChecked( pUser, iUsed )
+{
+	const pSock = pUser.socket;
+	if( pSock )
+	{
+		pSock.CustomTarget( 1, "Select an item to enchant:" );
+	}
+	return false;
+}
+
+function onCallback1( pSock, pTarget )
+{
+	if( !pTarget || !pTarget.isItem )
+	{
+		pSock.SysMessage( "You must select a valid item." );
+		return;
+	}
+
+	pSock.SysMessage( "Enchanting " + pTarget.name + "!" );
+	pTarget.color = 0x0482;
+}</code></pre>
+					</div>
+
+					<input type="checkbox" id="spoiler_qr_starttimer"/>
+					<label for="spoiler_qr_starttimer">Running delayed script actions with timers (StartTimer / onTimer) <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>To execute a delayed script action on an object after a set duration, use <code>StartTimer( delayMs, timerID, isChar )</code> and define an <code>onTimer()</code> function in the script attached to the object:</p>
+<pre><code class="language-javascript">function onUseChecked( pUser, iUsed )
+{
+	pUser.TextMessage( "A magical energy begins to build up..." );
+	// Trigger timer ID 1 on pUser after 5000 milliseconds (5 seconds)
+	pUser.StartTimer( 5000, 1, true );
+	return false;
+}
+
+function onTimer( tObject, timerID )
+{
+	if( timerID == 1 && tObject && tObject.isChar )
+	{
+		tObject.TextMessage( "The magic bursts into flames!" );
+		tObject.BoltEffect();
+		tObject.Damage( 25, 2 ); // Deal 25 points of fire damage
+	}
+}</code></pre>
+					</div>
+
+					<input type="checkbox" id="spoiler_qr_gumps"/>
+					<label for="spoiler_qr_gumps">Constructing and sending custom Gump menus <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>You can create custom UI dialogs (gumps) and send them to players using the <code>Gump</code> object. Button clicks are returned to the <code>onGumpPress()</code> event handler:</p>
+<pre><code class="language-javascript">function onUseChecked( pUser, iUsed )
+{
+	const pSock = pUser.socket;
+	if( pSock )
+	{
+		const myGump = new Gump();
+		myGump.AddBackground( 0, 0, 300, 200, 0x0A28 );
+		myGump.AddText( 40, 30, 0, "Welcome to the Shard Portal!" );
+		myGump.AddButton( 40, 80, 0x0FA5, 0x0FA7, 1, 0, 1 ); // Button ID 1
+		myGump.AddText( 80, 82, 0, "Teleport to Britain" );
+		myGump.Send( pSock );
+	}
+	return false;
+}
+
+function onGumpPress( pSock, pButton, gumpData )
+{
+	if( pButton == 1 )
+	{
+		const pUser = pSock.currentChar;
+		pUser.Teleport( 1430, 1696, 0, 0 );
+		pSock.SysMessage( "You have been teleported to Britain." );
+	}
+}</code></pre>
 					</div>
 
 					<input type="checkbox" id="spoiler_qr_tempObj"/>
-					<label for="spoiler_qr_tempObj">Storing objects or values temporarily on player sockets <i class="fas fa-angle-down"></i></label>
+					<label for="spoiler_qr_tempObj">Storing objects or values temporarily across functions <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p>If you need to bring an object reference from one function to another, and it's not possible to include the object in the function call, you can temporarily store the object reference in a player's socket's .tempObj (primarily used by code) or .tempObj2 (primarily used by scripts) property:</p>
-<pre><code class="language-javascript">mySocket.tempObj = myObject;
+						<h3>Option 1: Dynamic Custom Properties on Objects</h3>
+						<p>Since JavaScript objects are dynamic, you can attach custom properties directly to any existing object reference (like a character, item, socket, or gump) in memory, pass that object to another function, and access the property from it again:</p>
+<pre><code class="language-javascript">// Attach custom properties to an object in memory
+myChar.customQuestStep = 2;
+myChar.cachedTarget = targetItem;
+
+// Later in another function receiving myChar:
+if( myChar.customQuestStep === 2 )
+{
+	DoSomethingWith( myChar.cachedTarget );
+	delete myChar.customQuestStep; // Clean up property when finished
+}</code></pre>
+						<p><strong>Persistence Across Events, Callbacks &amp; Timers:</strong></p>
+						<p>In UOX3, the JavaScript engine maintains persistent internal wrappers for active game entities (characters, items, sockets). Because the engine returns the same underlying JavaScript object wrapper across script executions, custom properties will persist across:</p>
+						<ul>
+							<li><strong>Target Callbacks:</strong> Properties attached before calling <code>pSock.CustomTarget()</code> can be retrieved in <code>onCallback#()</code>.</li>
+							<li><strong>Timer Hooks:</strong> Properties attached to an entity before <code>pObject.StartTimer()</code> will still be present when <code>onTimer()</code> fires.</li>
+							<li><strong>Sequential Script Events:</strong> Properties set during <code>onUse()</code> can be checked in subsequent events like <code>onAttack()</code> or <code>onSpeech()</code>.</li>
+						</ul>
+						<p><strong>When Custom Properties are Cleared:</strong></p>
+						<ul>
+							<li>When the underlying game entity is deleted (via <code>thing-&gt;Delete()</code> or player socket disconnect).</li>
+							<li>When all JavaScript scripts are reloaded (via <code>'reloadalljs</code> or console <code>*</code> + <code>8</code>).</li>
+							<li>When the server shuts down or restarts (custom JS properties are not saved to worldfiles; use <a href="#spoiler_qr_tags">SetTag()</a> for persistent data).</li>
+						</ul>
+
+						<h3>Option 2: Temporary Properties on Player Sockets</h3>
+						<p>If you need to pass an object reference across socket events or targeting callbacks, you can store it on the player's socket via <code>.tempObj</code> (primarily used by engine code) or <code>.tempObj2</code> (for custom scripts):</p>
+<pre><code class="language-javascript">mySocket.tempObj2 = myObject;
 // or
-myChar.socket.tempObj = myObject;</code></pre>
-						<p>Other temporary storage variables available on sockets:</p>
-<pre><code class="language-javascript">mySocket.tempInt // Temporary variable to store larger numbers (supports negatives).
-mySocket.tempInt2 // Temporary variable to store larger numbers (supports negatives).
-mySocket.xText // Temporary variable to store strings of text.
-mySocket.clickX // Temporary variable to store small numbers (supports negatives).
-mySocket.clickY // Temporary variable to store small numbers (supports negatives).
-mySocket.clickZ // Temporary variables to store very small numbers (-128 to 128).</code></pre>
+myChar.socket.tempObj2 = myObject;</code></pre>
+						<p>Other temporary storage properties available on sockets:</p>
+<pre><code class="language-javascript">mySocket.tempInt   // Temporary integer storage (supports negative numbers).
+mySocket.tempInt2  // Temporary integer storage (supports negative numbers).
+mySocket.xText     // Temporary string storage.
+mySocket.clickX    // Temporary coordinate storage (supports negative numbers).
+mySocket.clickY    // Temporary coordinate storage (supports negative numbers).
+mySocket.clickZ    // Temporary coordinate storage (-128 to 128).</code></pre>
 					</div>
 
 					<input type="checkbox" id="spoiler_qr_findObjects"/>
@@ -19238,7 +19385,7 @@ function findNearbyItems( pUser, trgItem, pSock )
 	<div class="cd-faq__overlay" aria-hidden="true"></div>
 </section> <!-- cd-faq -->
 <div style="text-align: center; margin-top: 0; margin-bottom: 20px">
-	<p><small>UOX3 JSE Docs by Xuri @ Copyright 2022-2025</small></p>
+	<p><small>UOX3 JSE Docs by Xuri @ Copyright 2022-2026</small></p>
 	<p><small>Built upon <a href="https://codyhouse.co/demo/faq-template" rel="noopener" target="_blank" title="FAQ Template framework by CodyHouse">FAQ Template framwork provided by CodyHouse</a>.</small></p>
 </div>
 <script defer>

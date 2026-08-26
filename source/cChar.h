@@ -129,6 +129,8 @@ private:
 		UI16				orneriness;			// Difficulty to control pet
 
 		std::string			foodList;
+		std::vector<std::string> pendingShopLists;
+		bool				shopStockLoaded;
 
 		R64					mountedWalkingSpeed;
 		R64					mountedRunningSpeed;
@@ -393,6 +395,11 @@ public:
 	bool		IsAwake( void ) const;
 	bool		IsEvading( void ) const;
 	bool		IsShop( void ) const;
+	bool		IsShopStockLoaded( void ) const;
+	bool		HasPendingShopLists( void ) const;
+	void		SetShopStockLoaded( bool value );
+	void		AddPendingShopList( const std::string &listName );
+	void		PopulateShopStock( void );
 	bool		IsDead( void ) const;
 	bool		GetCanAttack( void ) const;
 	bool		GetKarmaLock( void ) const;

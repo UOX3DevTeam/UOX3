@@ -74,6 +74,7 @@ auto CServerDefinitions::Startup() -> void
 	Console << "   o Clearing AddMenuMap entries(" << static_cast<UI64>( g_mmapAddMenuMap.size() ) << ")" << myendl;
 	g_mmapAddMenuMap.clear();
 	ScriptListings.resize( NUM_DEFS );
+	unifiedEntries.resize( NUM_DEFS );
 	ReloadScriptObjects();
 	Console.PrintSectionBegin();
 }
@@ -108,12 +109,18 @@ auto CServerDefinitions::Reload( DEFINITIONCATEGORIES toReload ) -> bool
 {
 	Dispose( toReload );
 	LoadDFNCategory( toReload );
+	RebuildUnifiedMap( toReload );
 	return true;
 }
 
 //==================================================================================================
 auto CServerDefinitions::Cleanup() -> void
 {
+	for( auto &map : unifiedEntries )
+	{
+		map.clear();                                                                                                                                                   
+	}
+
 	std::vector<VECSCRIPTLIST>::iterator slIter;
 	for( slIter = ScriptListings.begin(); slIter != ScriptListings.end(); ++slIter )
 	{
@@ -141,6 +148,8 @@ auto CServerDefinitions::Dispose( DEFINITIONCATEGORIES toDispose ) -> bool
 	bool retVal = false;
 	if( toDispose != NUM_DEFS )
 	{
+		unifiedEntries[toDispose].clear();
+
 		VECSCRIPTLIST& toDel = ScriptListings[toDispose];
 		for( VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter )
 		{
@@ -157,30 +166,23 @@ auto CServerDefinitions::Dispose( DEFINITIONCATEGORIES toDispose ) -> bool
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerDefinitions::FindEntry
+//|	Function	-	CServerDefinitions::FindEntry()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Find a specific CScriptSection from the DFNs in memory
+//|	Purpose		-	Find a specific CScriptSection from the DFNs in memory using the unified
+//|					O(1) hash map for the given definition category
 //o------------------------------------------------------------------------------------------------o
-auto CServerDefinitions::FindEntry( const std::string &toFind, DEFINITIONCATEGORIES typeToFind ) ->CScriptSection *
+auto CServerDefinitions::FindEntry( const std::string &toFind, DEFINITIONCATEGORIES typeToFind ) -> CScriptSection *
 {
 	CScriptSection *rValue = nullptr;
 
-	if( !toFind.empty() && typeToFind != NUM_DEFS )
+	if( !toFind.empty() && typeToFind < NUM_DEFS )
 	{
 		auto tUFind = oldstrutil::upper( toFind );
-
-		VECSCRIPTLIST& toDel = ScriptListings[typeToFind];
-		for( VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter )
+		const auto &unified = unifiedEntries[typeToFind];
+		auto it = unified.find( tUFind );
+		if( it != unified.end() )
 		{
-			Script *toCheck = ( *dIter );
-			if( toCheck )
-			{
-				rValue = toCheck->FindEntry( tUFind );
-				if( rValue )
-				{
-					break;
-				}
-			}
+			rValue = it->second;
 		}
 	}
 	return rValue;
@@ -311,8 +313,35 @@ auto CServerDefinitions::ReloadScriptObjects() -> void
 	for( SI32 sCtr = 0; sCtr < NUM_DEFS; ++sCtr )
 	{
 		LoadDFNCategory( static_cast<DEFINITIONCATEGORIES>( sCtr ));
+		RebuildUnifiedMap( static_cast<DEFINITIONCATEGORIES>( sCtr ));
 	}
 	CleanPriorityMap();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerDefinitions::RebuildUnifiedMap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Rebuilds the unified O(1) hash map for a specific DFN category by aggregating
+//|					all sections from ScriptListings. Uses try_emplace so earlier/prioritized
+//|					files take precedence.
+//o------------------------------------------------------------------------------------------------o
+auto CServerDefinitions::RebuildUnifiedMap( DEFINITIONCATEGORIES category ) -> void
+{
+	if( category >= NUM_DEFS )
+		return;
+
+	unifiedEntries[category].clear();
+	const auto &scripts = ScriptListings[category];
+	for( const auto *script : scripts )
+	{
+		if( script != nullptr )
+		{
+			for( const auto &[key, section] : script->collection() )
+			{
+				unifiedEntries[category].try_emplace( key, section );
+			}
+		}
+	}
 }
 
 //==================================================================================================
