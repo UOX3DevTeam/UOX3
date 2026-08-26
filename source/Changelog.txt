@@ -1,3 +1,19 @@
+26/08/2026 - Xoduz (#593)
+    [ADD] Added on-demand loading (and full restocking + application of Advanced Trade System rules) of shopkeeper buy/sell packs, deferring item creation until a vendor is first interacted with to significantly speed up world spawns and restock cycles
+    [UPD] Optimized spawn region performance by pre-parsing NPC and item spawn lists at load time and streamlining entity registration
+    [UPD] Refactored weighted random selection for NPC and item lists to use cumulative distribution, resolving positional bias toward the bottom of lists
+    [UPD] Optimized skill level calculations by replacing floating-point conversions with integer arithmetic
+    [UPD] Extended DoesDynamicBlock JS function to support an optional parameter to check for immovable dynamic items blocking multi placement. Updated syntax:
+        DoesDynamicBlock( x, y, z, world, instance, checkWater, waterWalk, checkOnlyMultis, checkOnlyNonMultis, [checkMultiPlacement] )
+    [FIX] CMulHandler::DoesStaticBlock() and CMulHandler::DoesDynamicBlock() functions now correctly account for "floating" obstacles, and DoesDynamicBlock now iterates through ALL dynamic items at given coordinates rather than stopping at the first it finds
+    [FIX] CheckDynamicFlag() function will now correctly assess an item for a given tile flag if any part of its vertical height matches the target Z
+    [FIX] Fixed an issue in spawn location validation where invisible items and corpses could incorrectly block valid spawn locations
+    [ADD] Added dedicated JavaScript (JSE) Style Guide section (docs/styleguide.html) covering script formatting, ES6+ syntax, object prefixes, defensive guards, and TypeScript IDE type checking
+    [ADD] Added PR & Changelog Guidelines section of UOX3 Style Guide (docs/styleguide.html) detailing automated changelog workflow, category tags, formatting rules, and templates
+    [UPD] Reorganized Advanced section of UOX3 Style Guide (docs/styleguide.html) with alphabetically sorted subsections and new sections for language features, memory safety, string utilities (oldstrutil), and console logging
+    [UPD] Updated Contributing to UOX3 section in main documentation (docs/index.html) with style guide references
+    [UPD] Revised Tips & Tutorials and Quick Reference in JavaScript documentation (docs/jsdocs.html)
+
 26/08/2026 - Xoduz (#594)
     [FIX] Offline player characters are now flagged to ignore mobile collisions, allowing staff to walk through them without stamina restrictions
 
