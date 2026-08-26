@@ -413,10 +413,12 @@ void CPIFirstLogin::Receive( void )
 	char temp[31]{};
 	// Grab our username
 	memcpy( temp, &tSock->Buffer()[1], 30 );
+	temp[30] = '\0'; // Ensure the fixed-width packet field is null-terminated.
 	userId = oldstrutil::trim( temp );
 
 	// Grab our password
 	memcpy( temp, &tSock->Buffer()[31], 30 );
+	temp[30] = '\0'; // Ensure the fixed-width packet field is null-terminated.
 	password = temp;
 
 	unknown = tSock->GetByte( 61 );
@@ -562,10 +564,12 @@ void CPISecondLogin::Receive( void )
 
 	// Grab our username
 	memcpy( temp, &tSock->Buffer()[5], 30 );
+	temp[30] = '\0'; // Ensure the fixed-width packet field is null-terminated.
 	sid = oldstrutil::trim( temp );
 
 	// Grab our password
 	memcpy( temp, &tSock->Buffer()[35], 30 );
+	temp[30] = '\0'; // Ensure the fixed-width packet field is null-terminated.
 	password = temp;
 
 	// Done with our buffer, we can clear it out now
