@@ -5756,6 +5756,30 @@ bool SE_GetServerSetting( JSContext *cx, unsigned int argc, JS::Value *vp )
 			case 415:	// VENDORMAXFUNDS
 				args.rval().setInt32( static_cast<UI32>( cwmWorldState->ServerData()->VendorMaxFunds() ) );
 				break;
+			case 416:	// LOGINTHROTTLEENABLED
+				args.rval().setBoolean( cwmWorldState->ServerData()->LoginThrottleEnabled() );
+				break;
+			case 417:	// LOGINTHROTTLEMAXATTEMPTS
+				args.rval().setInt32( static_cast<UI32>( cwmWorldState->ServerData()->LoginThrottleMaxAttempts() ) );
+				break;
+			case 418:	// LOGINTHROTTLEWINDOW
+				args.rval().setInt32( static_cast<UI32>( cwmWorldState->ServerData()->LoginThrottleWindow() ) );
+				break;
+			case 419:	// LOGINTHROTTLEINITIALDELAY
+				args.rval().setInt32( static_cast<UI32>( cwmWorldState->ServerData()->LoginThrottleInitialDelay() ) );
+				break;
+			case 420:	// LOGINTHROTTLEMULTIPLIER
+				args.rval().setInt32( static_cast<UI32>( cwmWorldState->ServerData()->LoginThrottleMultiplier() ) );
+				break;
+			case 421:	// LOGINTHROTTLEMAXDELAY
+				args.rval().setInt32( static_cast<UI32>( cwmWorldState->ServerData()->LoginThrottleMaxDelay() ) );
+				break;
+			case 422:	// LOGINTHROTTLEENTRYTTL
+				args.rval().setInt32( static_cast<UI32>( cwmWorldState->ServerData()->LoginThrottleEntryTtl() ) );
+				break;
+			case 423:	// PASSWORDHASHINGENABLED
+				args.rval().setBoolean( cwmWorldState->ServerData()->PasswordHashingEnabled() );
+				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );
 				return false;

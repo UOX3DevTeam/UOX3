@@ -1,3 +1,32 @@
+26/08/2026 - DragonSlayer62 (#592)
+    [ADD] Added optional PBKDF2-HMAC-SHA256 password hashing for UOX3 accounts
+        PASSWORDHASHINGENABLED=0 // Enables hashing for newly created and changed passwords
+        Uses a random 16-byte salt, 600,000 iterations and a 32-byte derived password digest
+        Existing plaintext passwords are automatically migrated on next server startup
+        Existing hashed passwords continue working if hashing is later disabled
+    [ADD] Added configurable per-IP login throttling for invalid credentials and repeated automatic account creation
+        LOGINTHROTTLEENABLED=1 // Enables or disables login throttling
+        LOGINTHROTTLEMAXATTEMPTS=5 // Failed attempts allowed before throttling begins
+        LOGINTHROTTLEWINDOW=60 // Failed-attempt tracking window in seconds
+        LOGINTHROTTLEINITIALDELAY=2 // Initial throttle delay in seconds
+        LOGINTHROTTLEMULTIPLIER=2 // Multiplier applied after additional failures
+        LOGINTHROTTLEMAXDELAY=300 // Maximum throttle delay in seconds
+        LOGINTHROTTLEENTRYTTL=3600 // Inactive throttle-entry lifetime in seconds
+        Connections attempted during an active delay are immediately rejected
+    [ADD] Added local console command (E) for resetting account passwords
+        Generates a random 12-character temporary password and saves the account immediately
+        The temporary password is displayed only in the local server console and is not saved to logs
+        Players can log in with the temporary password and change it through the Help gump
+    [UPD] Added dedicated [accounts] section to UOX.INI so account-management and security settings are grouped together, and moved INTERNALACCOUNTCREATION and ACCOUNTFLUSH settings into this new section
+    [UPD] Centralized account password creation and changes so console resets, automatic accounts, imported accounts, in-game account creation and Help-gump changes respect the password hashing setting
+    [UPD] Added the new password hasher and login throttler files to the Visual Studio 2022 and CMake build configurations
+    [UPD] Updated the UOX3 documentation with password migration, password recovery, login throttling, username restrictions and the new [accounts] settings
+    [FIX] Restricted newly created account usernames to 4–30 letters, numbers, underscores or hyphens
+        Prevents path separators, .. traversal sequences and other invalid characters from escaping the account directory
+    [FIX] Removed plaintext passwords from login, character-creation and account-creation logs and raw packet dumps
+    [FIX] Corrected account-map validation so both the username and password must match the same account record
+    [FIX] Corrected Help menu password change gump to enforce 17-character client limit and reject invalid input
+
 22/08/2026 - DragonSlayer62 (#558)
     [ADD] Added spell book item definitions for Chivalry, Necromancy, Bushido, Ninjitsu, Spellweaving, Mysticism and Masteries to dfndata/items/magic/misc_magic.dfn
     [ADD] Added spell definitions for Chivalry (10), Necromancy (17), Bushido (6), Ninjitsu (8), Spellweaving (16), Mysticism (16) and Masteries (45) to dfndata/spells/spells.dfn
