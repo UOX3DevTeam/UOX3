@@ -1410,7 +1410,7 @@ UI16 cAccountClass::Load( void )
 
 		if( plaintextCount > 0 )
 		{
-			Console.Print( oldstrutil::format( "Migrating %llu plaintext account password(s) to PBKDF2. This may take a moment...\n", static_cast<UI64>( plaintextCount )));
+			Console.Print( oldstrutil::format( "\nMigrating %llu plaintext account password(s) to PBKDF2. This may take a moment...\n", static_cast<UI64>( plaintextCount )));
 			std::size_t migratedCount = 0;
 			std::size_t failedCount = 0;
 			for( auto &accountEntry : m_mapUsernameIdMap )
