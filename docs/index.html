@@ -27,7 +27,7 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 13. August, 2026</small></p>
+	<p style="margin:0"><small>Last Updated: 23. August, 2026</small></p>
 	<p style="margin:0"><small>Written for UOX3 Version: v0.99.7e</small></p>
 </div>
 
@@ -60,6 +60,11 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>August 23rd, 2026</h4>
+						<ul>
+							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> with the new [accounts] section, optional password hashing and login-throttle settings.</li>
+							<li>Updated account setup and console documentation with legacy-account migration details and the local account-password reset command.</li>
+						</ul>
 						<h4>August 12th, 2026</h4>
 						<ul>
 							<li>Updated <a href="#compilingUOX3">Compiling UOX3 Source</a> instructions for 64-bit FreeBSD support, including SpiderMonkey 115 source compilation steps.</li>
@@ -692,6 +697,8 @@ packitem=0x0f8d,30
 					</div>
 					<p>This is account #0 on your shard, also known as the administrator account. Any character created on this account will <strong>automatically be granted all GM and Admin powers</strong>. As such, it would be a good idea to <span class="hl">change the username and password</span> from the default ADMIN/ADMIN to something more original, creative and most importantly - <strong>secure</strong>! Note that it can be a good idea to create a second, non-admin account to use for testing purposes, as GM/Admin characters are often not subject to the same gameplay rules as regular players.</p>
 					<p><span class="hl">Important Note:</span> The <strong>maximum</strong> password length accepted by the UO client's password-entry field is <strong>17</strong> characters, and the minimum password length accepted by UOX3 is <strong>5</strong> characters - so your password <span class="hl">should be between 5 to 17 characters long</span>.</p>
+					<p>For stronger protection if <strong>accounts.adm</strong> is copied or exposed, enable <span class="hl">PASSWORDHASHINGENABLED=1</span> in the <strong>[accounts]</strong> section of UOX.INI. Existing plaintext passwords are automatically replaced with salted PBKDF2-HMAC-SHA256 hashes when accounts are loaded, then saved once after migration. Newly created accounts and password changes are stored as hashes while the option is enabled.</p>
+					<p>If an administrator or player forgets a password, unlock the local server console and press <span class="hl">E</span>. Enter the account username when prompted; UOX3 generates a temporary password, saves the account immediately and displays the password only in the local console. Give that temporary password to the account owner, who can log in and change it using the Help gump. This recovery method also works for the administrator's own account.</p>
 					<p>Additional accounts can be created by <strong>copying an existing SECTION ACCOUNT #</strong> (like the default guest account) and pasting it at the bottom of the file, followed by <strong>manually incrementing the account number</strong> of the new account to the next available number (1 higher than the previous one), <strong>changing the username/password/contact info</strong> and ensuring all the character references are set to <strong>0xffffffff [UNKNOWN]</strong>.</p>
 					<p>If you make changes to this file while UOX3 is already running, you will have to reload the accounts from UOX3's console menu.</p>
 					<input type="checkbox" id="spoiler_acctCreationBonus"/>
@@ -705,7 +712,7 @@ packitem=0x0f8d,30
 						<p style="margin-left: 20px"><span class="hl">USER=[username],[password],[flags],[email]</span></p>
 						<p>Note that additions to newaccounts.adm only go into effect when the server is restarted.</p>
 						<p><strong>Tip #3 - Enable auto-creation of accounts</strong></p>
-						<p>Finally, you can enable <strong>auto-creation of accounts on login</strong> by setting the UOX.INI setting <span class="hl">INTERNALACCOUNTCREATION</span> from 0 to 1 and restarting your UOX3 shard (or reloading the INI from the UOX3 console menu). This will automatically create a new account for anyone who attempts to login to your shard with an unrecognized account-name. Beware that this could make it easier for someone to cause trouble for your shard, as even if you ban a problem user's account, they can just create a new account straight away. To solve this issue, you might need to ban them by IP via banlist.ini instead!</p>
+						<p>Finally, you can enable <strong>auto-creation of accounts on login</strong> by setting <span class="hl">INTERNALACCOUNTCREATION=1</span> in the UOX.INI <strong>[accounts]</strong> section and restarting your UOX3 shard (or reloading the INI from the UOX3 console menu). This automatically creates an account when someone logs in with an unknown, valid username. The login throttle limits repeated attempts from one IP address, but shard owners should still use banlist.ini when an address must be blocked completely.</p>
 					</div>
 					<input type="checkbox" id="spoiler_dirStructure"/>
 					<label for="spoiler_dirStructure">Bonus Tips - UOX3 Directory Structure Overview <i class="fas fa-angle-down"></i></label>
@@ -1281,6 +1288,51 @@ packitem=0x0f8d,30
 						</div>
 					</div>
 
+					<input type="checkbox" id="spoiler_ini_accounts">
+					<label for="spoiler_ini_accounts">[accounts] <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<div class="settingsDiv">
+							<p><span class="hl">INTERNALACCOUNTCREATION</span><strong>=1</strong><br>
+							If enabled, an unknown but valid username is automatically registered using the supplied password. New usernames must be 4 to 30 characters long and contain only letters, numbers, underscores and hyphens.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">PASSWORDHASHINGENABLED</span><strong>=0</strong><br>
+							If enabled, new and changed passwords are stored using PBKDF2-HMAC-SHA256 with a random salt and 600,000 iterations. Existing plaintext accounts migrate when accounts are loaded and are saved once after the migration completes. Passwords already stored as hashes continue to verify if this setting is later disabled; they cannot be converted back to plaintext automatically.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">LOGINTHROTTLEENABLED</span><strong>=1</strong><br>
+							Enables per-IP throttling for failed login attempts. Connections attempted during an active delay are rejected immediately rather than being held open.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">LOGINTHROTTLEMAXATTEMPTS</span><strong>=5</strong><br>
+							Number of failed login attempts allowed within LOGINTHROTTLEWINDOW before delays begin.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">LOGINTHROTTLEWINDOW</span><strong>=60</strong><br>
+							Time in seconds over which failed login attempts are counted.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">LOGINTHROTTLEINITIALDELAY</span><strong>=2</strong><br>
+							Initial delay in seconds applied after the failed-attempt limit is reached.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">LOGINTHROTTLEMULTIPLIER</span><strong>=2</strong><br>
+							Multiplier applied to the delay after each additional failed login attempt.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">LOGINTHROTTLEMAXDELAY</span><strong>=300</strong><br>
+							Maximum delay in seconds imposed by the login throttle.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">LOGINTHROTTLEENTRYTTL</span><strong>=3600</strong><br>
+							Time in seconds that an inactive per-IP throttle record is retained before cleanup.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">ACCOUNTFLUSH</span><strong>=5</strong><br>
+							How often, in minutes, online accounts are checked to confirm that they are still online.</p>
+						</div>
+					</div>
+
 					<input type="checkbox" id="spoiler_ini_skillsandstats">
 					<label for="spoiler_ini_skillsandstats">[skill & stats] <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -1642,10 +1694,6 @@ packitem=0x0f8d,30
 							Determines if the footstep-sounds hardcoded in UOX3 are used or not (sounds based on tile types).</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">INTERNALACCOUNTCREATION</span><strong>=0</strong><br>
-							If enabled, new accounts are created automatically when someone logs in with an unknown username.</p>
-						</div>
-						<div class="settingsDiv">
 							<p><span class="hl">SHOWOFFLINEPCS</span><strong>=1</strong><br>
 							If enabled, offline PCs can be seen by GMs.</p>
 						</div>
@@ -1656,10 +1704,6 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="hl">PLAYERPERSECUTION</span><strong>=1</strong><br>
 							If enabled, dead players can attack living ones, and thus drain their mana.</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">ACCOUNTFLUSH</span><strong>=5</strong><br>
-							How often (in minutes) online accounts are checked to see if they really ARE online.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">HTMLSTATUSENABLED</span><strong>=-1</strong><br>
@@ -4541,6 +4585,7 @@ packitem=0x0f8d,30
 					<label for="spoiler_console_cmd_maintenance">Server Maintenance <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<p><span class="hl">P</span> - Display performance dump with details about server performance.</p>
+						<p><span class="hl">E</span> - Reset an account password to a randomly generated temporary password and save the account immediately.</p>
 						<p><span class="hl">W</span> - Display list of players currently online.</p>
 						<p><span class="hl">M</span> - Display information about UOX3's memory usage.</p>
 						<p><span class="hl">T</span> - Schedule a server shutdown in 10 minutes, with in-game announcement.</p>

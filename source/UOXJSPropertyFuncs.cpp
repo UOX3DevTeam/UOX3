@@ -2326,10 +2326,7 @@ FDCLS( CAccount, password )
 	if( passwordValue == nullptr )
 		return false;
 	const std::string password = JSStringToString( cx, passwordValue );
-	if( password.length() <= 3 )
-		return false;
-	account->sPassword = password;
-	return true;
+	return Accounts->SetPassword( *account, password );
 }
 
 FDCLS( CAccount, timeban )

@@ -334,7 +334,7 @@ void HandleAccountModButton( CPIGumpMenuSelect *packet )
 		s->SysMessage( 555 ); // An account by that name already exists!
 		return;
 	}
-	Console.Print( oldstrutil::format( "Attempting to add username %s with password %s at emailaddy %s", username.c_str(), password.c_str(), emailAddy.c_str() ));
+	Console.Print( oldstrutil::format( "Attempting to add username %s at emailaddy %s", username.c_str(), emailAddy.c_str() ));
 }
 
 //o------------------------------------------------------------------------------------------------o
