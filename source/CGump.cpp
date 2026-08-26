@@ -47,7 +47,7 @@ void CGump::Send( CSocket *target )
 	if( target == nullptr )
 		return;
 
-	CPSendGumpMenu toSend;
+	CGumpPacket toSend( target );
 	toSend.GumpId( Type );
 	toSend.UserId( Serial );
 
@@ -61,8 +61,7 @@ void CGump::Send( CSocket *target )
 		toSend.addText( entry );
 	});
 
-	toSend.Finalize();
-	target->Send( &toSend );
+	toSend.Send();
 }
 
 //o------------------------------------------------------------------------------------------------o

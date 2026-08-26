@@ -298,7 +298,7 @@ void CNetworkStuff::Disconnect( UOXSOCKET s )
 {
 	SetLastOn( connClients[s] );
 	CChar *currChar = connClients[s]->CurrcharObj();
-	Console << "Client " << static_cast<UI32>( s ) << " disconnected. [Total:" << static_cast<SI32>( cwmWorldState->GetPlayersOnline() - 1 ) << "]" << myendl;
+	Console << "Client (Socket " << static_cast<UI32>( s ) << ") disconnected. [Total clients online: " << static_cast<SI32>( cwmWorldState->GetPlayersOnline() - 1 ) << "]" << myendl;
 
 	if( connClients[s]->AcctNo() != AB_INVALID_ID )
 	{
@@ -359,7 +359,6 @@ void CNetworkStuff::Disconnect( UOXSOCKET s )
 	WhoList->FlagUpdate();
 	OffList->FlagUpdate();
 }
-
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CNetworkStuff::LogOut()
@@ -626,7 +625,9 @@ void CNetworkStuff::CheckConn( void )
 		}
 		//Firewall-messages are really only needed when firewall blocks, not when it lets someone through. Leads to information overload in console. Commenting out.
 
-		messageLoop << oldstrutil::format( "Client %zu [%i.%i.%i.%i] connected [Total:%lu]", cwmWorldState->GetPlayersOnline(), part[0], part[1], part[2], part[3], cwmWorldState->GetPlayersOnline() + 1 );
+#if defined( UOX_DEBUG_MODE )
+		messageLoop << oldstrutil::format( "TCP Handshake from [%i.%i.%i.%i]", part[0], part[1], part[2], part[3] );
+#endif
 		loggedInClients.push_back( toMake );
 		toMake->ClientIP( client_addr.sin_addr.s_addr );
 		return;
@@ -731,15 +732,15 @@ void CNetworkStuff::CheckMessage( void )
 				catch( socket_error& blah )
 				{
 #if PLATFORM != WINDOWS
-					Console << "Client disconnected" << myendl;
+					Console << "Client (Socket " << static_cast<UI32>( i ) << ") disconnected [Total clients online: " << static_cast<UI32>( cwmWorldState->GetPlayersOnline() - 1 ) << "]" << myendl;
 #else
 					if( blah.ErrorNumber() == WSAECONNRESET )
 					{
-						Console << "Client disconnected" << myendl;
+						Console << "Client (Socket " << static_cast<UI32>( i ) << ") disconnected [Total clients online: " << static_cast<UI32>( cwmWorldState->GetPlayersOnline() - 1 ) << "]" << myendl;
 					}
 					else if( blah.ErrorNumber() != -1 )
 					{
-						Console << "Socket error: " << static_cast<SI32>( blah.ErrorNumber() ) << myendl;
+						Console << "Socket error " << static_cast<SI32>( blah.ErrorNumber() ) << " on Client (Socket " << static_cast<UI32>( i ) << ")" << myendl;
 					}
 #endif
 					Disconnect( static_cast<UOXSOCKET>( i ));	// abnormal error
@@ -820,7 +821,6 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 		UI08 *buffer = mSock->Buffer();
 		if( mSock->Receive( 1, false ) > 0 )
 		{
-			SI32 book;
 			UI08 packetId = buffer[0];
 			if( mSock->FirstPacket() && packetId != 0x80 && packetId != 0x91 )
 			{
@@ -998,66 +998,51 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 							Skills->SkillUse( mSock, static_cast<UI08>( std::stoul( std::string(( char* )&buffer[4] ))));
 							break;
 						}
-						else if( buffer[3] == 0x27 || buffer[3] == 0x56 )  // Spell
+						else if( buffer[3] == 0x27 || buffer[3] == 0x56 ) // Casting a spell
 						{
-							// This'll find our spellbook for us
-							CItem *sBook	= FindItemOfType( ourChar, IT_SPELLBOOK );
-							CItem *p		= ourChar->GetPackItem();
-							if( ValidateObject( sBook ))
-							{
-								bool validLoc = false;
-								if( sBook->GetCont() == ourChar )
-								{
-									validLoc = true;
-								}
-								else if( ValidateObject( p ) && sBook->GetCont() == p )
-								{
-									validLoc = true;
-								}
+							// Determine the spell number from the buffer
+							const SI32 spellNumber = static_cast<SI32>( std::stol( std::string(( char* )&buffer[4] )));
 
-								if( validLoc )
+							CItem *activeBook = Magic->FindSpellBook( ourChar, spellNumber );
+
+							if( !ValidateObject( activeBook )) // No valid book found
+							{
+								mSock->SysMessage( 765 ); // "To cast spells, your spellbook must be in your hands or in the first layer of your pack."
+								break;
+							}
+#if defined( UOX_DEBUG_MODE )
+							Console.Print( oldstrutil::format( "DEBUG: Spellbook type: %d selected for spell: %d.", activeBook->GetType(), spellNumber ));
+#endif
+
+							// Check if the spell exists in the active book
+							if( Magic->HasSpell( activeBook, spellNumber ))
+							{
+								if( ourChar->IsFrozen() )
 								{
-									book = buffer[4] - 0x30;
-									if( buffer[5] > 0x20 )
+									if( ourChar->IsCasting() )
 									{
-										book = ( book * 10 ) + ( buffer[5] - 0x30 );
-									}
-									if( Magic->CheckBook((( book - 1 ) / 8 ) + 1, ( book - 1 ) % 8, sBook ))
-									{
-										if( ourChar->IsFrozen() )
-										{
-											if( ourChar->IsCasting() )
-											{
-												mSock->SysMessage( 762 ); // You are already casting a spell.
-											}
-											else
-											{
-												mSock->SysMessage( 763 ); // You cannot cast spells while frozen.
-											}
-										}
-										else
-										{
-											mSock->CurrentSpellType( 0 );
-											Magic->SelectSpell( mSock, book );
-										}
+										mSock->SysMessage( 762 ); // "You are already casting a spell."
 									}
 									else
 									{
-										mSock->SysMessage( 764 ); // You do not have that spell.
+										mSock->SysMessage( 763 ); // "You cannot cast spells while frozen."
 									}
 								}
 								else
 								{
-									mSock->SysMessage( 765 ); // To cast spells, your spellbook must be in your hands or in the first layer of your pack.
+									mSock->CurrentSpellType( 0 );
+									Magic->SelectSpell( mSock, spellNumber );
 								}
 							}
-						}
-						else
-						{
-							if( buffer[2] == 0x05 && buffer[3] == 0x43 )  // Open spell book
+							else
 							{
-								Magic->SpellBook( mSock );
+								mSock->SysMessage( 764 ); // "You do not have that spell."
 							}
+							break;
+						}
+						else if( buffer[2] == 0x05 && buffer[3] == 0x43 ) // Open spellbook
+						{
+							Magic->SpellBook( mSock );
 							break;
 						}
 						break;
@@ -1249,15 +1234,15 @@ void CNetworkStuff::CheckLoginMessage( void )
 				catch( socket_error& blah )
 				{
 #if PLATFORM != WINDOWS
-					messageLoop << "Client disconnected";
+					messageLoop << oldstrutil::format( "Client (Socket %zu) disconnected [Total clients online: %zu]", i, cwmWorldState->GetPlayersOnline() - 1 );
 #else
 					if( blah.ErrorNumber() == WSAECONNRESET )
 					{
-						messageLoop << "Client disconnected";
+						messageLoop << oldstrutil::format( "Client (Socket %zu) disconnected [Total clients online: %zu]", i, cwmWorldState->GetPlayersOnline() - 1 );
 					}
 					else if( blah.ErrorNumber() != -1 )
 					{
-						messageLoop << oldstrutil::format( "Socket error: %i", blah.ErrorNumber() );
+						messageLoop << oldstrutil::format( "Socket error %i on Client (Socket %zu)", blah.ErrorNumber(), i );
 					}
 #endif
 					LoginDisconnect( static_cast<UOXSOCKET>( i ));	// abnormal error
@@ -1284,7 +1269,16 @@ void CNetworkStuff::CheckLoginMessage( void )
 //o------------------------------------------------------------------------------------------------o
 void CNetworkStuff::LoginDisconnect( UOXSOCKET s )
 {
-	messageLoop << oldstrutil::format( "LoginClient %u disconnected.", s );
+#if defined( UOX_DEBUG_MODE )
+	if( loggedInClients[s]->BytesReceived() > 0 )
+	{
+		messageLoop << oldstrutil::format( "LoginClient (Socket %u) disconnected.", s );
+	}
+	else
+	{
+		messageLoop << oldstrutil::format( "DEBUG: LoginClient (Socket %u) disconnected (No bytes received - Ping/Scanner).", s );
+	}
+#endif
 	loggedInClients[s]->FlushBuffer();
 	loggedInClients[s]->CloseSocket();
 
@@ -1364,6 +1358,14 @@ void CNetworkStuff::GetLoginMsg( UOXSOCKET s )
 	{
 		[[maybe_unused]] SI32 count;
 		count = mSock->Receive( 4 );
+		// Only announce the connection publicly if they actually sent data
+		if( count > 0 )
+		{
+#if defined( UOX_DEBUG_MODE )
+			messageLoop << oldstrutil::format( "Incoming connection from [%i.%i.%i.%i] (Socket %u)", mSock->ClientIP4(), mSock->ClientIP3(), mSock->ClientIP2(), mSock->ClientIP1(), s );
+#endif
+		}
+
 		auto packetId = mSock->Buffer()[0];
 
 		if( cwmWorldState->ServerData()->ServerOverloadPackets() )

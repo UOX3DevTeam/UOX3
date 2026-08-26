@@ -52,7 +52,6 @@
 		64A90143293E3DD4009B54DA /* IP4Address.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900C6293E3DD4009B54DA /* IP4Address.cpp */; };
 		64A90144293E3DD4009B54DA /* items.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900C8293E3DD4009B54DA /* items.cpp */; };
 		64A90145293E3DD4009B54DA /* jail.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900C9293E3DD4009B54DA /* jail.cpp */; };
-		64A90146293E3DD4009B54DA /* JSEncapsulate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900CB293E3DD4009B54DA /* JSEncapsulate.cpp */; };
 		64A90147293E3DD4009B54DA /* lineofsight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900CD293E3DD4009B54DA /* lineofsight.cpp */; };
 		64A90148293E3DD4009B54DA /* magic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900CE293E3DD4009B54DA /* magic.cpp */; };
 		64A9014A293E3DD4009B54DA /* mapstuff.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900D2293E3DD4009B54DA /* mapstuff.cpp */; };
@@ -125,9 +124,6 @@
 		56C9E3D82A9C9022004D9F38 /* uox3.sln */ = {isa = PBXFileReference; lastKnownFileType = text; name = uox3.sln; path = ../VS2022/uox3.sln; sourceTree = "<group>"; };
 		56C9E3D92A9C9022004D9F38 /* uox3.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = uox3.vcxproj; path = ../VS2022/uox3.vcxproj; sourceTree = "<group>"; };
 		56C9E3DA2A9C9022004D9F38 /* uox3.vcxproj.filters */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = uox3.vcxproj.filters; path = ../VS2022/uox3.vcxproj.filters; sourceTree = "<group>"; };
-		56C9E3DB2A9C9035004D9F38 /* uox3.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = uox3.vcxproj; path = ../VS2017/uox3.vcxproj; sourceTree = "<group>"; };
-		56C9E3DC2A9C9035004D9F38 /* uox3.vcxproj.filters */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = uox3.vcxproj.filters; path = ../VS2017/uox3.vcxproj.filters; sourceTree = "<group>"; };
-		56C9E3DD2A9C9035004D9F38 /* uox3.sln */ = {isa = PBXFileReference; lastKnownFileType = text; name = uox3.sln; path = ../VS2017/uox3.sln; sourceTree = "<group>"; };
 		648153C929466EF400784170 /* libjscript.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libjscript.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A9006A293E3DA3009B54DA /* uox3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = uox3; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A90075293E3DD4009B54DA /* ai.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ai.cpp; sourceTree = "<group>"; };
@@ -215,8 +211,6 @@
 		64A900C8293E3DD4009B54DA /* items.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = items.cpp; sourceTree = "<group>"; };
 		64A900C9293E3DD4009B54DA /* jail.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jail.cpp; sourceTree = "<group>"; };
 		64A900CA293E3DD4009B54DA /* jail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jail.h; sourceTree = "<group>"; };
-		64A900CB293E3DD4009B54DA /* JSEncapsulate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEncapsulate.cpp; sourceTree = "<group>"; };
-		64A900CC293E3DD4009B54DA /* JSEncapsulate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEncapsulate.h; sourceTree = "<group>"; };
 		64A900CD293E3DD4009B54DA /* lineofsight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lineofsight.cpp; sourceTree = "<group>"; };
 		64A900CE293E3DD4009B54DA /* magic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = magic.cpp; sourceTree = "<group>"; };
 		64A900CF293E3DD4009B54DA /* magic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = magic.h; sourceTree = "<group>"; };
@@ -316,7 +310,6 @@
 			isa = PBXGroup;
 			children = (
 				56C9E3D52A9C8FF0004D9F38 /* CMakeLists.txt */,
-				56C9E3D72A9C9004004D9F38 /* vs2017 */,
 				56C9E3D62A9C8FF7004D9F38 /* vs2022 */,
 			);
 			name = makestuff;
@@ -330,16 +323,6 @@
 				56C9E3DA2A9C9022004D9F38 /* uox3.vcxproj.filters */,
 			);
 			name = vs2022;
-			sourceTree = "<group>";
-		};
-		56C9E3D72A9C9004004D9F38 /* vs2017 */ = {
-			isa = PBXGroup;
-			children = (
-				56C9E3DD2A9C9035004D9F38 /* uox3.sln */,
-				56C9E3DB2A9C9035004D9F38 /* uox3.vcxproj */,
-				56C9E3DC2A9C9035004D9F38 /* uox3.vcxproj.filters */,
-			);
-			name = vs2017;
 			sourceTree = "<group>";
 		};
 		64A90061293E3DA3009B54DA = {
@@ -525,8 +508,6 @@
 				64A90091293E3DD4009B54DA /* CJSMapping.h */,
 				64A900A7293E3DD4009B54DA /* cScript.cpp */,
 				64A900A8293E3DD4009B54DA /* cScript.h */,
-				64A900CB293E3DD4009B54DA /* JSEncapsulate.cpp */,
-				64A900CC293E3DD4009B54DA /* JSEncapsulate.h */,
 				64A900EE293E3DD4009B54DA /* SEFunctions.cpp */,
 				64A900EF293E3DD4009B54DA /* SEFunctions.h */,
 				64A9010A293E3DD4009B54DA /* UOXJSClasses.h */,
@@ -741,7 +722,6 @@
 				64A9015A293E3DD4009B54DA /* sound.cpp in Sources */,
 				64A90167293E3DD4009B54DA /* weight.cpp in Sources */,
 				64A90133293E3DD4009B54DA /* cScript.cpp in Sources */,
-				64A90146293E3DD4009B54DA /* JSEncapsulate.cpp in Sources */,
 				64A9013F293E3DD4009B54DA /* fileio.cpp in Sources */,
 				64A90141293E3DD4009B54DA /* gumps.cpp in Sources */,
 				64A90142293E3DD4009B54DA /* house.cpp in Sources */,

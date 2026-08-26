@@ -643,7 +643,7 @@ CItem * CHandleCombat::GetWeapon( CChar *i )
 	CItem *j = i->GetItemAtLayer( IL_RIGHTHAND );
 	if( ValidateObject( j ))
 	{
-		if( j->GetType() == IT_SPELLBOOK )	// spell books aren't weapons
+		if( j->IsSpellBook() )
 			return nullptr;
 
 		return j;
@@ -3356,7 +3356,7 @@ inline void QuickSwitch( CChar *mChar, CChar *ourTarg, SI08 spellNum )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles spellcasting during combat
 //o------------------------------------------------------------------------------------------------o
-bool CHandleCombat::CastSpell( CChar *mChar, CChar *ourTarg, SI08 spellNum )
+bool CHandleCombat::CastSpell( CChar *mChar, CChar *ourTarg, SI32 spellNum )
 {
 	if( !ValidateObject( mChar ) || !ValidateObject( ourTarg ) || mChar == ourTarg )
 		return false;

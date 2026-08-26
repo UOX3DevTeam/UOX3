@@ -1353,16 +1353,69 @@ public:
 	virtual void	Log( std::ostream &outStream, bool fullHeader ) override;
 };
 
+class CPSendCompressedGumpMenu : public CPUOXBuffer
+{
+protected:
+	std::vector<std::string>		commands, text;
+
+private:
+	// Internal helpers for Packet 0xDD compression handling
+	std::vector<UI08>	Compress( const std::vector<UI08> &source );
+	void                WriteCompressedData( const std::vector<UI08>& rawData, UI32 &offset );
+
+public:
+	virtual			~CPSendCompressedGumpMenu()
+	{
+	}
+	CPSendCompressedGumpMenu();
+	void			UserId( SERIAL value );
+	void			GumpId( SERIAL value );
+	void			X( UI32 value );
+	void			Y( UI32 value );
+
+	void			addCommand( const std::string& msg );
+	void			addText( const std::string& msg );
+
+	bool			Finalize( void );
+	virtual void	Log( std::ostream &outStream, bool fullHeader ) override;
+};
+
+class CGumpPacket
+{
+private:
+	CSocket *sock;
+	UI32 gumpId;
+	SERIAL userId;
+	std::vector<std::string> commands;
+	std::vector<std::string> text;
+
+public:
+	CGumpPacket( CSocket *s ) : sock( s ), gumpId( 0 ), userId( INVALIDSERIAL ) {}
+
+	void GumpId( UI32 id )                     { gumpId = id; }
+	void UserId( SERIAL id )                   { userId = id; }
+	void addCommand( const std::string &cmd )  { commands.push_back( cmd ); }
+	void addText( const std::string &txt )     { text.push_back( txt ); }
+
+	// SendVecsAsCompressedGump chooses 0xDD Compressed or 0xB0 Uncompressed based on client version
+	void Send()
+	{
+		if( sock != nullptr )
+		{
+			SendVecsAsCompressedGump( sock, commands, text, gumpId, userId );
+		}
+	}
+};
+
 class CPNewSpellBook : public CPUOXBuffer
 {
 protected:
-	virtual void	InternalReset( void ) override;
+	virtual void	InternalReset( CItem &obj );
 	virtual void	CopyData( CItem& obj );
 public:
 	virtual			~CPNewSpellBook()
 	{
 	}
-	CPNewSpellBook();
 	CPNewSpellBook( CItem& obj );
 	virtual bool	ClientCanReceive( CSocket *mSock ) override;
 };

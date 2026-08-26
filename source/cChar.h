@@ -129,6 +129,8 @@ private:
 		UI16				orneriness;			// Difficulty to control pet
 
 		std::string			foodList;
+		std::vector<std::string> pendingShopLists;
+		bool				shopStockLoaded;
 
 		R64					mountedWalkingSpeed;
 		R64					mountedRunningSpeed;
@@ -223,7 +225,7 @@ protected:
   	SI16    	guildNumber;	// Number of guild player is in (0=no guild)     (DasRaetsel)
 
   	UI08    	flag;			// 1=red 2=grey 4=Blue 8=green 10=Orange // should it not be 0x10??? sounds like we're trying to do
-  	SI08    	spellCast;
+	SI32    	spellCast;
   	UI08    	nextAct;		// time to next spell action..
   	SI08    	stealth;		// stealth ( steps already done, -1=not using )
   	UI08    	running;		// Stamina Loose while running
@@ -393,6 +395,11 @@ public:
 	bool		IsAwake( void ) const;
 	bool		IsEvading( void ) const;
 	bool		IsShop( void ) const;
+	bool		IsShopStockLoaded( void ) const;
+	bool		HasPendingShopLists( void ) const;
+	void		SetShopStockLoaded( bool value );
+	void		AddPendingShopList( const std::string &listName );
+	void		PopulateShopStock( void );
 	bool		IsDead( void ) const;
 	bool		GetCanAttack( void ) const;
 	bool		GetKarmaLock( void ) const;
@@ -514,8 +521,8 @@ public:
 	void		SetAdvObj( UI16 newValue );
 	void		SetRaceGate( RACEID newValue );
 
-	SI08		GetSpellCast( void ) const;
-	void		SetSpellCast( SI08 newValue );
+	SI32		GetSpellCast( void ) const;
+	void		SetSpellCast( SI32 newValue );
 
 	UI32		GetPriv( void ) const;
 	SI08		GetTownPriv( void ) const;

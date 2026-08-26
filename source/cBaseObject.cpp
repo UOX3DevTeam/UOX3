@@ -209,7 +209,7 @@ TAGMAPOBJECT CBaseObject::GetTag( std::string tagname ) const
 //|	Purpose		-	Store custom string/int tag in an object's tag map
 //o------------------------------------------------------------------------------------------------o
 //| Changes		-	Updated the function to use the internal tagmap object instead of using some
-//|					stored jsval in a context that may or may not change when reloaded.
+//|					stored JS::Value in a context that may or may not change when reloaded.
 //o------------------------------------------------------------------------------------------------o
 void CBaseObject::SetTag( std::string tagname, TAGMAPOBJECT tagval )
 {

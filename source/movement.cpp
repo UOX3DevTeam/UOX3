@@ -2100,11 +2100,11 @@ void CMovement::BoundingBoxTeleport( CChar *nChar, UI16 fx2Actual, UI16 fy2Actua
 		bool amphibWalk = cwmWorldState->creatures[nChar->GetId()].IsAmphibian();
 
 		// Attempt original spawn location first
-		if(( !waterWalk || amphibWalk ) && Map->ValidSpawnLocation( nChar->GetSpawnX(), nChar->GetSpawnY(), nChar->GetSpawnZ(), worldNumber, false ))
+		if(( !waterWalk || amphibWalk ) && Map->ValidSpawnLocation( nChar->GetSpawnX(), nChar->GetSpawnY(), nChar->GetSpawnZ(), worldNumber, nChar->GetInstanceId(), false ))
 		{
 			boundingBoxTeleport = true;
 		}
-		else if( waterWalk && Map->ValidSpawnLocation( nChar->GetSpawnX(), nChar->GetSpawnY(), nChar->GetSpawnZ(), worldNumber, true ))
+		else if( waterWalk && Map->ValidSpawnLocation( nChar->GetSpawnX(), nChar->GetSpawnY(), nChar->GetSpawnZ(), worldNumber, nChar->GetInstanceId(), true ))
 		{
 			boundingBoxTeleport = true;
 		}

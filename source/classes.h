@@ -89,13 +89,13 @@ class CCharStuff
 {
 private:
 	void		FindSpotForNPC( CChar *c, const SI16 originX, const SI16 originY, const SI16 xAway, const SI16 yAway, const SI08 z, const UI08 worldNumber, const UI16 instanceId );
-	void		LoadShopList( const std::string& list, CChar *c );
 	CItem *		AddRandomLoot( CItem *s, const std::string& lootlist, bool shouldSave = true );
 
 public:
+	void		LoadShopList( const std::string& list, CChar *c );
 	CChar *		CreateBaseNPC( std::string ourNPC, bool shouldSave = true );
 	auto		CreateRandomNPC( const std::string &npcList ) -> CChar *;
-	auto		ChooseNpcToCreate( const std::vector<std::pair<std::string, UI16>> npcListVector ) -> std::string;
+	auto		ChooseNpcToCreate( const std::vector<std::pair<std::string, UI16>>& npcListVector ) -> std::string;
 	auto		NpcListLookup( const std::string &npclist ) -> std::string;
 
 	CChar *		CreateNPC( CSpawnItem *iSpawner, const std::string &npc );

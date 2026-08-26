@@ -25,8 +25,6 @@
 #include "osunique.hpp"
 CMagic *Magic = nullptr;
 
-#define SPELL_MAX 68 // use define for now; can make autocount later
-
 // Look up spell-names from dictionary-files
 const MagicTable_st magic_table[] = {
 	{ 593, (MAGIC_DEFN)&splClumsy },
@@ -2863,6 +2861,69 @@ CMagic::~CMagic()
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function    - CMagic::GetSpellBookConfig()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Returns the spell and scroll ranges represented by a spellbook.
+//| Notes       - Book ranges can be configured with SPELLBOOKDATA in item DFNs.
+//o------------------------------------------------------------------------------------------------o
+SpellBookConfig CMagic::GetSpellBookConfig( const CItem *book ) const
+{
+	SpellBookConfig config = { 0, 0, 0, false };
+	if( !ValidateObject( book ))
+		return config;
+
+	if( book->GetSpellBookFirstSpell() > 0 && book->GetSpellBookSpellCount() > 0 && book->GetSpellBookSpellCount() <= 96 )
+	{
+		config.firstSpell = book->GetSpellBookFirstSpell();
+		config.spellCount = book->GetSpellBookSpellCount();
+		config.firstScroll = book->GetSpellBookFirstScroll();
+		config.valid = true;
+		return config;
+	}
+
+	switch( book->GetType() )
+	{
+		case IT_SPELLBOOK:
+			return { 1, 64, 0x1F2D, true };
+		default:
+			return config;
+	}
+}
+
+CItem *CMagic::FindSpellBook( CChar *character, SI32 spellNum ) const
+{
+	if( !ValidateObject( character ))
+		return nullptr;
+
+	auto matchesSpell = [this, spellNum]( CItem *book )
+	{
+		auto bookConfig = GetSpellBookConfig( book );
+		return bookConfig.valid && ( spellNum < 0 ||
+			( spellNum >= bookConfig.firstSpell && spellNum < bookConfig.firstSpell + bookConfig.spellCount ));
+	};
+
+	CItem *rightHand = character->GetItemAtLayer( IL_RIGHTHAND );
+	if( ValidateObject( rightHand ) && matchesSpell( rightHand ))
+		return rightHand;
+
+	CItem *leftHand = character->GetItemAtLayer( IL_LEFTHAND );
+	if( ValidateObject( leftHand ) && matchesSpell( leftHand ))
+		return leftHand;
+
+	CItem *backpack = character->GetPackItem();
+	if( !ValidateObject( backpack ))
+		return nullptr;
+
+	for( const auto &packItem : backpack->GetContainsList()->collection() )
+	{
+		if( ValidateObject( packItem ) && matchesSpell( packItem ))
+			return packItem;
+	}
+
+	return nullptr;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMagic::HasSpell()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if given spellbook contains specific spell
@@ -2872,15 +2933,30 @@ bool CMagic::HasSpell( CItem *book, SI32 spellNum )
 	if( !ValidateObject( book ))
 		return false;
 
-	UI32 wordNum	= spellNum / 32;
-	UI32 bitNum		= ( spellNum % 32 );
-	UI32 flagToCheck = power( 2, bitNum );
-	UI32 sourceAmount = 0;
-	if( wordNum < 3 )
+	auto bookConfig = GetSpellBookConfig( book );
+	if( !bookConfig.valid || spellNum < bookConfig.firstSpell || spellNum >= bookConfig.firstSpell + bookConfig.spellCount )
 	{
-		sourceAmount = book->GetSpell( static_cast<UI08>( wordNum ));
+#if defined( UOX_DEBUG_MODE )
+		Console.Print( oldstrutil::format( "ERROR: HasSpell: SpellNum=%d is out of range for BookType=%d", spellNum, book->GetType() ));
+#endif
+		return false;
 	}
-	return (( sourceAmount & flagToCheck ) == flagToCheck);
+
+	spellNum -= bookConfig.firstSpell - 1;
+
+	// Determine which word and bit to check
+	UI32 wordNum = ( spellNum - 1 ) / 32;  // Adjust for 0-based indexing
+	UI32 bitNum = ( spellNum - 1 ) % 32;  // Calculate the bit index within the word
+
+	if( wordNum >= 3 )  // you only have up to 3 32-bit words for spells
+	{
+		return false;
+	}
+
+	UI32 sourceAmount = book->GetSpell( static_cast<UI08>( wordNum ));
+	UI32 flagToCheck = 1 << bitNum;
+
+	return (( sourceAmount & flagToCheck ) == flagToCheck );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2890,6 +2966,7 @@ bool CMagic::HasSpell( CItem *book, SI32 spellNum )
 //o------------------------------------------------------------------------------------------------o
 void CMagic::AddSpell( CItem *book, SI32 spellNum )
 {
+	// Check for script triggers
 	std::vector<UI16> scriptTriggers = book->GetScriptTriggers();
 	for( auto scriptTrig : scriptTriggers )
 	{
@@ -2907,14 +2984,31 @@ void CMagic::AddSpell( CItem *book, SI32 spellNum )
 	if( !ValidateObject( book ))
 		return;
 
-	UI32 wordNum = spellNum / 32;
-	if( wordNum < 3 )
+	auto bookConfig = GetSpellBookConfig( book );
+	if( !bookConfig.valid || spellNum < bookConfig.firstSpell || spellNum >= bookConfig.firstSpell + bookConfig.spellCount )
 	{
-		UI32 bitNum = ( spellNum % 32 );
-		UI32 flagToSet = power( 2, bitNum );
-		UI32 targAmount;
-		targAmount = ( book->GetSpell( static_cast<UI08>( wordNum )) | flagToSet );
+#if defined( UOX_DEBUG_MODE )
+		Console.Print( oldstrutil::format( "ERROR: AddSpell: SpellNum=%d is out of range for BookType=%d", spellNum, book->GetType() ));
+#endif
+		return;
+	}
+
+	spellNum -= bookConfig.firstSpell - 1;
+
+	// Calculate word and bit position
+	UI32 wordNum = ( spellNum - 1 ) / 32;  // Adjust for 0-based indexing
+	UI32 bitNum = ( spellNum - 1 ) % 32;  // Calculate the bit index within the word
+
+	if( wordNum < 3 ) // Ensure valid word index
+	{
+		UI32 flagToSet = 1 << bitNum;
+
+		// Retrieve current spells and update
+		UI32 targAmount = book->GetSpell( static_cast<UI08>( wordNum )) | flagToSet;
 		book->SetSpell( static_cast<UI08>( wordNum ), targAmount );
+#if defined( UOX_DEBUG_MODE )
+		Console.Print( oldstrutil::format( "DEBUG: AddSpell: Successfully added SpellNum=%d to BookType=%d", spellNum, book->GetType() ));
+#endif
 	}
 }
 
@@ -2942,11 +3036,16 @@ void CMagic::RemoveSpell( CItem *book, SI32 spellNum )
 	if( !ValidateObject( book ))
 		return;
 
-	UI32 wordNum = spellNum / 32;
+	auto bookConfig = GetSpellBookConfig( book );
+	if( !bookConfig.valid || spellNum < bookConfig.firstSpell || spellNum >= bookConfig.firstSpell + bookConfig.spellCount )
+		return;
+
+	spellNum -= bookConfig.firstSpell - 1;
+	UI32 wordNum = ( spellNum - 1 ) / 32;
 	if( wordNum < 3 )
 	{
-		UI32 bitNum		= ( spellNum % 32 );
-		UI32 flagToSet	= power( 2, bitNum );
+		UI32 bitNum		= ( spellNum - 1 ) % 32;
+		UI32 flagToSet	= 1 << bitNum;
 		UI32 flagMask	= 0xFFFFFFFF;
 		UI32 targAmount;
 		flagMask ^= flagToSet;
@@ -2962,33 +3061,52 @@ void CMagic::RemoveSpell( CItem *book, SI32 spellNum )
 //o------------------------------------------------------------------------------------------------o
 void CMagic::SpellBook( CSocket *mSock )
 {
-	UI08 spellsList[70];
-
 	SERIAL serial		= ( mSock->GetDWord( 1 ) & 0x7FFFFFFF );
 	CChar *mChar		= mSock->CurrcharObj();
 	CItem *spellBook	= CalcItemObjFromSer( serial );
 
-	// Here's the kicker. We NEVER needed to search through our pack for our spellbook!!! Why, you might ask???
-	// Because we are able to calculate the serial of the spellbook, because it's targetted for us!!!!
-	// Hence, we can remove all searches from here, and just use it directly
-	// The only time we need to search is when they use the macro, and that's easily done (item == -1)
-
-	if( !ValidateObject( spellBook ))	// used a macro!!!
+	// A direct open supplies the spellbook serial, so use that exact book. Macros do not
+	// identify a book, so find the first equipped or top-level backpack spellbook instead.
+	if( !ValidateObject( spellBook ))
 	{
-		spellBook = FindItemOfType( mChar, IT_SPELLBOOK );
+		spellBook = FindSpellBook( mChar );
 	}
-	if( !ValidateObject( spellBook ))	// we STILL have no spellbook!!!
+
+	if( !ValidateObject( spellBook )) // Still no book found
 	{
 		mSock->SysMessage( 692 ); // You have no spellbook upon you!
 		return;
 	}
-	CItem *x = mChar->GetPackItem();
-	if( spellBook->GetCont() != mChar && spellBook->GetCont() != x )
+
+	CItem *pack = mChar->GetPackItem();
+	if( spellBook->GetCont() != mChar && spellBook->GetCont() != pack )
 	{
 		mSock->SysMessage( 403 ); // If you wish to open a spellbook, it must be equipped or in your main backpack.
 		return;
 	}
-	CPDrawContainer sbStart(( *spellBook ));
+
+	auto bookConfig = GetSpellBookConfig( spellBook );
+	if( !bookConfig.valid )
+	{
+		mSock->SysMessage( 692 ); // You have no spellbook upon you!
+		return;
+	}
+	SI32 startSpell = bookConfig.firstSpell;
+	SI32 endSpell = startSpell + bookConfig.spellCount - 1;
+
+	std::vector<UI08> spellsList( bookConfig.spellCount, 0 );
+
+	// Populate spellsList with proper indexing
+	for( int spellID = startSpell; spellID <= endSpell; ++spellID )
+	{
+		if( HasSpell( spellBook, spellID ))
+		{
+			spellsList[spellID - startSpell] = 1;
+		}
+	}
+
+	// Send the spellbook to the client
+	CPDrawContainer sbStart( *spellBook );
 	sbStart.Model( 0xFFFF );
 	if( mSock->ClientType() >= CV_HS2D && mSock->ClientVerShort() >= CVS_7090 )
 	{
@@ -2997,70 +3115,44 @@ void CMagic::SpellBook( CSocket *mSock )
 	mSock->Send( &sbStart );
 
 	// Support for new Client Spellbook
-	CPNewSpellBook ourBook(( *spellBook ));
+	CPNewSpellBook ourBook( *spellBook );
 	if( ourBook.ClientCanReceive( mSock ))
 	{
 		mSock->Send( &ourBook );
 		return;
 	}
-	else
+
+	// Fallback logic for older clients
+	UI16 spellsInBook = 0;
+	for( int i = 0; i < ( endSpell - startSpell + 1 ); ++i )
 	{
-		memset( spellsList, 0, sizeof( UI08 ) * 70 );
-		for( UI08 j = 0; j < 65; ++j )
+		if( spellsList[i] )
 		{
-			if( HasSpell( spellBook, j ))
-			{
-				spellsList[j] = 1;
-			}
+			++spellsInBook;
 		}
-		UI08 i;
-		i = spellsList[0];
-		spellsList[0] = spellsList[1];
-		spellsList[1] = spellsList[2];
-		spellsList[2] = spellsList[3];
-		spellsList[3] = spellsList[4];
-		spellsList[4] = spellsList[5];
-		spellsList[5] = spellsList[6];
-		spellsList[6] = i;
+	}
 
-		if( spellsList[64] )
+	if( spellsInBook > 0 )
+	{
+		CPItemsInContainer mItems;
+		if( mSock->ClientVerShort() >= CVS_6017 )
 		{
-			for( i = 0; i < 65; ++i )
-			{
-				spellsList[i] = 1;
-			}
-			spellsList[64] = 0;
+			mItems.UOKRFlag( true );
 		}
-		spellsList[64] = spellsList[65];
-		spellsList[65] = 0;
+		mItems.NumberOfItems( spellsInBook );
+		UI16 runningCounter = 0;
+		const SERIAL containerSerial = spellBook->GetSerial();
 
-		UI08 scount = 0;
-		for( i = 0; i < 65; ++i )
+		for( int i = 0; i < ( endSpell - startSpell + 1 ); ++i )
 		{
 			if( spellsList[i] )
 			{
-				++scount;
+				const SI32 spellNumber = startSpell + i;
+				// Legacy clients expect a zero-based pseudo-item serial and the actual spell ID as its amount.
+				mItems.Add( runningCounter++, 0x41000000 + i, containerSerial, static_cast<UI08>( spellNumber ));
 			}
 		}
-		if( scount > 0 )
-		{
-			CPItemsInContainer mItems;
-			if( mSock->ClientVerShort() >= CVS_6017 )
-			{
-				mItems.UOKRFlag( true );
-			}
-			mItems.NumberOfItems( scount );
-			UI16 runningCounter		= 0;
-			const SERIAL CONTSER	= spellBook->GetSerial();
-			for( i = 0; i < 65; ++i )
-			{
-				if( spellsList[i] )
-				{
-					mItems.Add( runningCounter++, 0x41000000 + i, CONTSER, i + 1 );
-				}
-			}
-			mSock->Send( &mItems );
-		}
+		mSock->Send( &mItems );
 	}
 }
 
@@ -3350,11 +3442,29 @@ void CMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if the spell is memorized into the spellbook.
 //o------------------------------------------------------------------------------------------------o
-
-bool CMagic::CheckBook( SI32 circle, SI32 spell, CItem *i )
+bool CMagic::CheckBook( int circle, int spellOffset, CItem* book )
 {
-	SI32 spellnum = spell + ( circle - 1 ) * 8;
-	return HasSpell( i, spellnum );
+	if( !ValidateObject( book ))
+	{
+	   // Console.Error("CheckBook: Invalid book object provided.");
+		return false;
+	}
+
+	auto bookConfig = GetSpellBookConfig( book );
+	if( !bookConfig.valid )
+		return false;
+
+	SI32 spellNum = (( circle - 1 ) * 8 ) + spellOffset + bookConfig.firstSpell;
+	if( spellNum < bookConfig.firstSpell || spellNum >= bookConfig.firstSpell + bookConfig.spellCount )
+	{
+#if defined( UOX_DEBUG_MODE )
+		Console.Error( oldstrutil::format( "ERROR: CheckBook: SpellNum=%d is out of range for BookType=%d", spellNum, book->GetType() ));
+#endif
+		return false;
+	}
+
+	bool result = HasSpell( book, spellNum );
+	return result;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4001,161 +4111,31 @@ auto CMagic::MagicTrap( CChar *s, CItem *i ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check for required reagents in player's backpack.
 //o------------------------------------------------------------------------------------------------o
-bool CMagic::CheckReagents( CChar *s, const Reag_st *reagents )
+bool CMagic::CheckReagents( CChar *s, const CSpellInfo& spell )
 {
-	Reag_st failmsg;
 	if( s->NoNeedReags() )
 		return true;
 
-	if( reagents->ash != 0 && GetItemAmount( s, 0x0F8C ) < reagents->ash )
+	for( const auto& reagent : spell.Reagents() )
 	{
-		failmsg.ash = 1;
-	}
-	if( reagents->drake!=0 && GetItemAmount( s, 0x0F86 ) < reagents->drake )
-	{
-		failmsg.drake = 1;
-	}
-	if( reagents->garlic != 0 && GetItemAmount( s, 0x0F84 ) < reagents->garlic )
-	{
-		failmsg.garlic = 1;
-	}
-	if( reagents->ginseng != 0 && GetItemAmount( s, 0x0F85 ) < reagents->ginseng )
-	{
-		failmsg.ginseng = 1;
-	}
-	if( reagents->moss != 0 && GetItemAmount( s, 0x0F7B ) < reagents->moss )
-	{
-		failmsg.moss = 1;
-	}
-	if( reagents->pearl != 0 && GetItemAmount( s, 0x0F7A ) < reagents->pearl )
-	{
-		failmsg.pearl = 1;
-	}
-	if( reagents->shade != 0 && GetItemAmount( s, 0x0F88 ) < reagents->shade )
-	{
-		failmsg.shade = 1;
-	}
-	if( reagents->silk != 0 && GetItemAmount( s, 0x0F8D ) < reagents->silk )
-	{
-		failmsg.silk = 1;
-	}
-	if( reagents->batwing != 0 && GetItemAmount( s, 0x0F78 ) < reagents->batwing )
-	{
-		failmsg.batwing = 1;
-	}
-	if( reagents->daemonblood != 0 && GetItemAmount( s, 0x0F7D ) < reagents->daemonblood )
-	{
-		failmsg.daemonblood = 1;
-	}
-	if( reagents->gravedust != 0 && GetItemAmount( s, 0x0F8F ) < reagents->gravedust )
-	{
-		failmsg.gravedust = 1;
-	}
-	if( reagents->noxcrystal != 0 && GetItemAmount( s, 0x0F8E ) < reagents->noxcrystal )
-	{
-		failmsg.noxcrystal = 1;
-	}
-	if( reagents->pigiron != 0 && GetItemAmount( s, 0x0F8A ) < reagents->pigiron  )
-	{
-		failmsg.pigiron = 1;
-	}
-	return RegMsg( s, failmsg );
-}
-
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	CMagic::RegMsg()
-//|	Changes		-	display missing reagents types
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Display an error message if character has not enough regs
-//o------------------------------------------------------------------------------------------------o
-bool CMagic::RegMsg( CChar *s, Reag_st failmsg )
-{
-	if( !ValidateObject( s ))
-		return true;
-
-	bool display = false;
-	char message[100] = { 0, };
-
-	// Copy dictionary message into char array
-	strcopy( message, 100, Dictionary->GetEntry( 702 ).c_str() ); // You do not have enough reagents to cast that spell.
-
-	// Create temporary string to hold info on our missing reagents
-	std::string tempString;
-	tempString = " [";
-
-	if( failmsg.ash )
-	{
-		display = true; tempString += "Sa, ";
-	}
-	if( failmsg.drake )
-	{
-		display = true; tempString += "Mr, ";
-	}
-	if( failmsg.garlic )
-	{
-		display = true; tempString += "Ga, ";
-	}
-	if( failmsg.ginseng )
-	{
-		display = true; tempString += "Gi, ";
-	}
-	if( failmsg.moss )
-	{
-		display = true; tempString += "Bm, ";
-	}
-	if( failmsg.pearl )
-	{
-		display = true; tempString += "Bp, ";
-	}
-	if( failmsg.shade )
-	{
-		display = true; tempString += "Ns, ";
-	}
-	if( failmsg.silk )
-	{
-		display = true; tempString += "Ss, ";
-	}
-	if( failmsg.batwing )
-	{
-		display = true; tempString += "Ba, ";
-	}
-	if( failmsg.daemonblood )
-	{
-		display = true; tempString += "Db, ";
-	}
-	if( failmsg.gravedust )
-	{
-		display = true; tempString += "Gd, ";
-	}
-	if( failmsg.noxcrystal )
-	{
-		display = true; tempString += "Nc, ";
-	}
-	if( failmsg.pigiron )
-	{
-		display = true; tempString += "Pi, ";
-	}
-
-	// Append our temporary string to the end of the char array and add an end-bracket
-	mstrcat( message, 100, tempString.c_str() );
-	message[strlen( message ) - 2] = ']';
-
-	if( display )
-	{
-		CSocket *i = s->GetSocket();
-		if( i != nullptr )
+		UI32 reagentCount = GetItemAmount( s, INVALIDID, reagent.colour, 0, reagent.colourCheck, false, reagent.sectionId );
+		if( reagentCount < reagent.amount )
 		{
-			i->SysMessage( message );
+			CSocket *socket = s->GetSocket();
+			if( socket != nullptr )
+			{
+				socket->SysMessage( 702 ); // You do not have enough reagents to cast that spell.
+			}
+			return false;
 		}
-		return false;
 	}
 	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CMagic::SpellFail()
+//|    Function    -    CMagic::SpellFail()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Do visual and sound effects when a player fails to cast a spell.
+//|    Purpose        -    Do visual and sound effects when a player fails to cast a spell.
 //o------------------------------------------------------------------------------------------------o
 void CMagic::SpellFail( CSocket *s )
 {
@@ -4185,7 +4165,7 @@ void CMagic::SpellFail( CSocket *s )
 //o------------------------------------------------------------------------------------------------o
 bool CMagic::SelectSpell( CSocket *mSock, SI32 num )
 {
-	if( num < 1 )
+	if( num < 1 || static_cast<size_t>( num ) >= spells.size() )
 	{
 		Console.Error( "Invalid spell ID passed to CMagic::SelectSpell() - aborting spellcast attempt!" );
 		return false;
@@ -4268,7 +4248,7 @@ bool CMagic::SelectSpell( CSocket *mSock, SI32 num )
 		}
 	}
 
-	mChar->SetSpellCast( static_cast<SI08>( num ));
+	mChar->SetSpellCast( static_cast<SI32>( num ));
 	if( num > 63 && num <= static_cast<SI32>( spellCount ) && spellCount <= 70 )
 	{
 		LogSpell( Dictionary->GetEntry( magic_table[num].spell_name ), mChar, nullptr, "(Attempted)");
@@ -4322,7 +4302,7 @@ bool CMagic::SelectSpell( CSocket *mSock, SI32 num )
 
 	// The following loop checks to see if any item is currently equipped (if not a GM)
 	if( !mChar->IsGM() && type != 2 )
-    {
+	{
        bool autoUnequipEnabled = cwmWorldState->ServerData()->AutoUnequippedCasting();
 
 		CItem *itemRHand = mChar->GetItemAtLayer( IL_RIGHTHAND );
@@ -4330,7 +4310,7 @@ bool CMagic::SelectSpell( CSocket *mSock, SI32 num )
 		auto mCharPack = mChar->GetPackItem();
 
 		// Function to check and possibly unequip an item if it blocks spell casting
-        auto handleItem = [&]( CItem* item, auto itemCheck, bool& blockFlag )
+		auto handleItem = [&]( CItem* item, auto itemCheck, bool& blockFlag )
 		{
 			if( item && itemCheck( item ))
 			{
@@ -4356,7 +4336,7 @@ bool CMagic::SelectSpell( CSocket *mSock, SI32 num )
 
 		// Evaluate blocking for left and right hand items
 		handleItem( itemLHand, []( CItem* item ) { return item->GetType() != IT_SPELLCHANNELING; }, lHandBlocks );
-		handleItem( itemRHand, []( CItem* item ) { return item->GetType() != IT_SPELLBOOK && item->GetType() != IT_SPELLCHANNELING; }, rHandBlocks );
+		handleItem( itemRHand, []( CItem* item ) { return !item->IsSpellBook() && item->GetType() != IT_SPELLCHANNELING; }, rHandBlocks );
 
 		if( lHandBlocks || rHandBlocks )
 		{
@@ -4565,7 +4545,7 @@ void CMagic::ConsumeSpellResources( CSocket *s, CChar *caster, SI08 curSpell )
 	// Consume reagents for the spellcast attempt
 	if( validSocket && s->CurrentSpellType() == 0 && !caster->IsNpc() )
 	{
-		DelReagents( caster, spells[curSpell].Reagants() );
+		DelReagents( caster, spells[curSpell] );
 	}
 }
 
@@ -4707,7 +4687,7 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 
 	//Check for enough reagents
 	// type == 0 -> SpellBook
-	if( validSocket && s->CurrentSpellType() == 0 && !CheckReagents( caster, spells[curSpell].ReagantsPtr() ))
+	if( validSocket && s->CurrentSpellType() == 0 && !CheckReagents( caster, spells[curSpell] ))
 	{
 		caster->StopSpell();
 		return;
@@ -5349,15 +5329,40 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 //o------------------------------------------------------------------------------------------------o
 void CMagic::LoadScript( void )
 {
-	spells.resize( 0 );
+	spells.clear();
+	spellCount = 0;
 
-	// for some strange reason, spells go from index 1 to SPELL_MAX and
-	// apparently index 0 is left unused
-	spells.resize( SPELL_MAX + 1 );
+	// Spell IDs are data-driven. Determine the largest configured ID before loading
+	// the spell data so new scripted spells do not require a matching core change.
+	SI32 maxSpellId = 0;
+	for( auto &spellScp : FileLookup->ScriptListings[spells_def] )
+	{
+		if( spellScp == nullptr )
+			continue;
+
+		for( const auto &[spEntry, spellLoad] : spellScp->collection() )
+		{
+			if( spellLoad == nullptr )
+				continue;
+
+			auto spellSections = oldstrutil::sections( spEntry, " " );
+			if( spellSections.size() > 1 && spellSections[0] == "SPELL" )
+			{
+				SI32 spellId = static_cast<SI32>( std::stol( oldstrutil::trim( oldstrutil::removeTrailing( spellSections[1], "//" )), nullptr, 0 ));
+				if( spellId > maxSpellId )
+				{
+					maxSpellId = spellId;
+				}
+			}
+		}
+	}
+
+	// Spell IDs start at one; index zero remains unused for compatibility.
+	spells.resize( static_cast<size_t>( maxSpellId ) + 1 );
 
 	std::string spEntry;
 	std::string tag, data, UTag;
-	UI08 i = 0;
+	SI32 i = 0;
 	for( auto &spellScp : FileLookup->ScriptListings[spells_def] )
 	{
 		if( spellScp == nullptr )
@@ -5371,12 +5376,11 @@ void CMagic::LoadScript( void )
 			auto ssecs = oldstrutil::sections( spEntry, " " );
 			if( ssecs[0] == "SPELL" )
 			{
-				i = static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ));
-				if( i <= SPELL_MAX )
+				i = static_cast<SI32>( std::stol( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ));
+				if( i > 0 && static_cast<size_t>( i ) < spells.size() )
 				{
 					++spellCount;
 					spells[i].Enabled( false );
-					Reag_st *mRegs = spells[i].ReagantsPtr();
 
 					//Console.Log( "Spell number: %i", "spell.log", i ); // Disabled for performance reasons
 					for( const auto &sec : SpellLoad->collection() )
@@ -5393,19 +5397,11 @@ void CMagic::LoadScript( void )
 								{
 									spells[i].Action( static_cast<UI16>( std::stoul( data, nullptr, 0 )));
 								}
-								else if( UTag == "ASH" )
-								{
-									mRegs->ash =static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-								}
 								break;
 							case 'B':
 								if( UTag == "BASEDMG" )
 								{
 									spells[i].BaseDmg( static_cast<SI16>( std::stoi( data, nullptr, 0 )));
-								}
-								else if( UTag == "BATWING" )
-								{
-									mRegs->batwing =static_cast<UI08>( std::stoul( data, nullptr, 0 ));
 								}
 								break;
 							case 'C':
@@ -5422,14 +5418,6 @@ void CMagic::LoadScript( void )
 								else if( UTag == "DELAY" )
 								{
 									spells[i].Delay( static_cast<R64>( std::stod( data )));
-								}
-								else if( UTag == "DAEMONBLOOD" )
-								{
-									mRegs->daemonblood =static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-								}
-								else if( UTag == "DRAKE" )
-								{
-									mRegs->drake = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
 								}
 								break;
 							case 'E':
@@ -5455,18 +5443,6 @@ void CMagic::LoadScript( void )
 								}
 								break;
 							case 'G':
-								if( UTag == "GARLIC" )
-								{
-									mRegs->garlic  = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-								}
-								else if( UTag == "GINSENG" )
-								{
-									mRegs->ginseng = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-								}
-								else if( UTag == "GRAVEDUST" )
-								{
-									mRegs->gravedust =static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-								}
 								break;
 							case 'H':
 								if( UTag == "HISKILL" )
@@ -5493,10 +5469,6 @@ void CMagic::LoadScript( void )
 								{
 									spells[i].Mantra( data );
 								}
-								else if( UTag == "MOSS" )
-								{
-									mRegs->moss = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-								}
 								else if( UTag == "MOVEFX" )
 								{
 									auto ssecs = oldstrutil::sections( data, " " );
@@ -5511,48 +5483,51 @@ void CMagic::LoadScript( void )
 								}
 								break;
 							case 'N':
-								if( UTag == "NOXCRYSTAL" )
-								{
-									mRegs->noxcrystal =static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-								}
 								break;
 							case 'P':
-								if( UTag == "PEARL" )
-								{
-									mRegs->pearl = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-								}
-								else if( UTag == "PIGIRON" )
-								{
-									mRegs->pigiron = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-								}
 								break;
 							case 'R':
 								if( UTag == "RECOVERYDELAY" )
 								{
-									spells[i].RecoveryDelay( static_cast<R64>( std::stod( data )));
+									spells[i].RecoveryDelay( static_cast< R64 >( std::stod( data )));
+								}
+								else if( UTag == "REAGENT" )
+								{
+									auto reagentData = oldstrutil::sections( data, "," );
+									if( reagentData.size() < 2 || reagentData.size() > 3 )
+									{
+										Console.Warning( oldstrutil::format( "Invalid REAGENT tag in spell %i: expected section,amount[,colour]", i ));
+										break;
+									}
+
+									std::string sectionId = oldstrutil::trim( reagentData[ 0 ] );
+									if( sectionId.empty() )
+									{
+										break;
+									}
+
+									UI16 amount = static_cast< UI16 >( std::stoul( oldstrutil::trim( reagentData[1] ), nullptr, 0 ));
+									if( amount == 0 )
+										break;
+
+									bool colourCheck = reagentData.size() == 3;
+									UI16 colour = colourCheck ? static_cast< UI16 >( std::stoul( oldstrutil::trim( reagentData[2] ), nullptr, 0 )) : 0;
+									spells[i].AddReagent( SpellReagent( sectionId, amount, colour, colourCheck ));
 								}
 								break;
 							case 'S':
-								if( UTag == "SHADE" )
-								{
-									mRegs->shade = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-								}
-								else if( UTag == "SILK" )
-								{
-									mRegs->silk = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-								}
-								else if( UTag == "SOUNDFX" )
+								if( UTag == "SOUNDFX" )
 								{
 									auto ssecs = oldstrutil::sections( data, " " );
 									if( ssecs.size() > 1 )
 									{
 										// This is used to load sounds from old-style spells.dfn, where soundfx are written as SOUNDFX=## ## instead of SOUNDFX=0x####
-										spells[i].Effect(((static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16 )) << 8 ) |
-													 static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 16 ))));
+										spells[i].Effect((( static_cast< UI08 >( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16 ) ) << 8 ) |
+											static_cast< UI08 >( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 16 ))));
 									}
 									else
 									{
-										spells[i].Effect( static_cast<UI16>( std::stoul( data, nullptr, 0 )));
+										spells[i].Effect( static_cast< UI16 >( std::stoul( data, nullptr, 0 )));
 									}
 								}
 								else if( UTag == "STATFX" )
@@ -5560,24 +5535,24 @@ void CMagic::LoadScript( void )
 									auto ssecs = oldstrutil::sections( data, " " );
 									if( ssecs.size() > 1 )
 									{
-										CMagicStat *stat = spells[i].StaticEffectPtr();
+										CMagicStat* stat = spells[i].StaticEffectPtr();
 
-										stat->Effect( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16 )), static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 16 )));
-										stat->Speed( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 16 )));
-										stat->Loop( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 16 )));
+										stat->Effect( static_cast< UI08 >( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16 )), static_cast< UI08 >( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[ 1 ], "//" ) ), nullptr, 16 )));
+										stat->Speed( static_cast< UI08 >( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 16 )));
+										stat->Loop( static_cast< UI08 >( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 16 )));
 									}
 								}
 								else if( UTag == "SCLO" )
 								{
-									spells[i].ScrollLow( static_cast<SI16>( std::stoi( data, nullptr, 0 )));
+									spells[i].ScrollLow( static_cast< SI16 >( std::stoi( data, nullptr, 0 )));
 								}
 								else if( UTag == "SCHI" )
 								{
-									spells[i].ScrollHigh(  static_cast<SI16>( std::stoi( data, nullptr, 0 )));
+									spells[i].ScrollHigh( static_cast< SI16 >( std::stoi( data, nullptr, 0 )));
 								}
 								else if( UTag == "STAMINA" )
 								{
-									spells[i].Stamina(  static_cast<SI16>( std::stoi( data, nullptr, 0 )));
+									spells[i].Stamina( static_cast< SI16 >( std::stoi( data, nullptr, 0 )));
 								}
 								break;
 							case 'T':
@@ -5587,7 +5562,7 @@ void CMagic::LoadScript( void )
 								}
 								else if( UTag == "TITHING" )
 								{
-									spells[i].Tithing(  static_cast<SI32>( std::stoi( data, nullptr, 0 )));
+									spells[i].Tithing( static_cast< SI32 >( std::stoi( data, nullptr, 0 )));
 								}
 								break;
 						}
@@ -5616,25 +5591,15 @@ void CMagic::LoadScript( void )
 //|	Function	-	CMagic::DelReagents()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes the specified amount of reagents when a spell is cast
-//o------------------------------------------------------------------------------------------------o
-void CMagic::DelReagents( CChar *s, Reag_st reags )
+void CMagic::DelReagents( CChar *s, const CSpellInfo& spell )
 {
 	if( s->NoNeedReags() )
 		return;
 
-	DeleteItemAmount( s, reags.pearl, 0x0F7A );
-	DeleteItemAmount( s, reags.moss, 0x0F7B );
-	DeleteItemAmount( s, reags.garlic, 0x0F84 );
-	DeleteItemAmount( s, reags.ginseng, 0x0F85 );
-	DeleteItemAmount( s, reags.drake, 0x0F86 );
-	DeleteItemAmount( s, reags.shade, 0x0F88 );
-	DeleteItemAmount( s, reags.ash, 0x0F8C  );
-	DeleteItemAmount( s, reags.silk, 0x0F8D );
-	DeleteItemAmount( s, reags.batwing, 0x0F78 );
-	DeleteItemAmount( s, reags.daemonblood, 0x0F7D );
-	DeleteItemAmount( s, reags.gravedust, 0x0F8F );
-	DeleteItemAmount( s, reags.noxcrystal, 0x0F8E );
-	DeleteItemAmount( s, reags.pigiron, 0x0F8A );
+	for( const auto& reagent : spell.Reagents() )
+	{
+		DeleteItemAmount( s, reagent.amount, INVALIDID, reagent.colour, 0, reagent.colourCheck, false, reagent.sectionId );
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o

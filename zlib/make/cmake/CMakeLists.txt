@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.18)
-project(zlib VERSION 1 LANGUAGES C)
+project(zlib VERSION 1.3.2 LANGUAGES C)
 
 add_library(zlib STATIC
 	../../adler32.c
@@ -29,6 +29,12 @@ add_library(zlib STATIC
 	../../zlib.h
 	../../zutil.h
 )
+
+# SpiderMonkey's Windows static library exports a few unprefixed zlib symbols.
+# Prefix UOX3's bundled zlib API on Windows so both libraries can coexist.
+if(WIN32)
+	target_compile_definitions(zlib PUBLIC Z_PREFIX)
+endif()
 
 if (WIN32)
 

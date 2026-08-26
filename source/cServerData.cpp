@@ -147,7 +147,6 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"HOURS"s, 120},
 	{"MINUTES"s, 121},
 	{"SECONDS"s, 122},
-	{"AMPM"s, 123},
 	{"SKILLLEVEL"s, 124},
 	{"SNOOPISCRIME"s, 125},
 	{"BOOKSDIRECTORY"s, 126},
@@ -427,18 +426,26 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"VENDORITEMFEEAMOUNT", 413},
 	{"ONLYRETURNTOBANK", 414},
 	{"VENDORMAXFUNDS", 415},
-	{"BOATDECAY", 416},
-	{"BOATDECAYSECS", 417},
-	{"BOATPAINTDECAYSECS", 418},
-	{"BOATFASTMOVEINTERVAL", 419},
-	{"BOATSLOWMOVEINTERVAL", 420},
-	{"BOATNPCMOVEINTERVAL", 421},
-	{"CLASSICBOATMOUSECONTROL", 422},
-	{"HIGHSEASSHIPANCHORS", 423},
-	{"BOATDRIFT", 424},
-	{"BOATDRIFTINTERVAL", 425},
-	{"HIGHSEASSHIPSPEECHCONTROL", 426},
-	{"CANNONCHARACTERTARGETING", 427},
+	{"LOGINTHROTTLEENABLED", 416},
+	{"LOGINTHROTTLEMAXATTEMPTS", 417},
+	{"LOGINTHROTTLEWINDOW", 418},
+	{"LOGINTHROTTLEINITIALDELAY", 419},
+	{"LOGINTHROTTLEMULTIPLIER", 420},
+	{"LOGINTHROTTLEMAXDELAY", 421},
+	{"LOGINTHROTTLEENTRYTTL", 422},
+	{"PASSWORDHASHINGENABLED", 423},
+	{"BOATDECAY", 424},
+	{"BOATDECAYSECS", 425},
+	{"BOATPAINTDECAYSECS", 426},
+	{"BOATFASTMOVEINTERVAL", 427},
+	{"BOATSLOWMOVEINTERVAL", 428},
+	{"BOATNPCMOVEINTERVAL", 429},
+	{"CLASSICBOATMOUSECONTROL", 430},
+	{"HIGHSEASSHIPANCHORS", 431},
+	{"BOATDRIFT", 432},
+	{"BOATDRIFTINTERVAL", 433},
+	{"HIGHSEASSHIPSPEECHCONTROL", 434},
+	{"CANNONCHARACTERTARGETING", 435},
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -697,6 +704,14 @@ auto CServerData::ResetDefaults() -> void
 	MaxClientBytesIn( 50000 );
 	MaxClientBytesOut( 200000 );
 	NetTrafficTimeban( 30 );
+	LoginThrottleEnabled( true );
+	LoginThrottleMaxAttempts( 5 );
+	LoginThrottleWindow( 60 );
+	LoginThrottleInitialDelay( 2 );
+	LoginThrottleMultiplier( 2 );
+	LoginThrottleMaxDelay( 300 );
+	LoginThrottleEntryTtl( 3600 );
+	PasswordHashingEnabled( false );
 
 	// Adaptive Performance System
 	APSPerfThreshold( 50 ); // Default to 50 simulation cycles as performance threshold
@@ -709,7 +724,6 @@ auto CServerData::ResetDefaults() -> void
 	ServerTimeHours( 0 );
 	ServerTimeMinutes( 0 );
 	ServerTimeSeconds( 0 );
-	ServerTimeAMPM( 0 );
 
 	// Event Manager
 	EventManagerSystem( true );
@@ -5954,6 +5968,19 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "DICTIONARYDIRECTORY=" << Directory( CSDDP_DICTIONARIES ) << '\n';
 		ofsOutput << "}" << '\n';
 
+		ofsOutput << '\n' << "[accounts]" << '\n' << "{" << '\n';
+		ofsOutput << "INTERNALACCOUNTCREATION=" << ( InternalAccountStatus() ? 1 : 0 ) << '\n';
+		ofsOutput << "PASSWORDHASHINGENABLED=" << ( PasswordHashingEnabled() ? 1 : 0 ) << '\n';
+		ofsOutput << "LOGINTHROTTLEENABLED=" << ( LoginThrottleEnabled() ? 1 : 0 ) << '\n';
+		ofsOutput << "LOGINTHROTTLEMAXATTEMPTS=" << LoginThrottleMaxAttempts() << '\n';
+		ofsOutput << "LOGINTHROTTLEWINDOW=" << LoginThrottleWindow() << '\n';
+		ofsOutput << "LOGINTHROTTLEINITIALDELAY=" << LoginThrottleInitialDelay() << '\n';
+		ofsOutput << "LOGINTHROTTLEMULTIPLIER=" << LoginThrottleMultiplier() << '\n';
+		ofsOutput << "LOGINTHROTTLEMAXDELAY=" << LoginThrottleMaxDelay() << '\n';
+		ofsOutput << "LOGINTHROTTLEENTRYTTL=" << LoginThrottleEntryTtl() << '\n';
+		ofsOutput << "ACCOUNTFLUSH=" << AccountFlushTimer() << '\n';
+		ofsOutput << "}" << '\n';
+
 		ofsOutput << '\n' << "[skill & stats]" << '\n' << "{" << '\n';
 		ofsOutput << "SKILLLEVEL=" << static_cast<UI16>( SkillLevel() ) << '\n';
 		ofsOutput << "SKILLCAP=" << ServerSkillTotalCapStatus() << '\n';
@@ -6041,11 +6068,9 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "DEATHANIMATION=" << ( DeathAnimationStatus() ? 1 : 0 ) << '\n';
 		ofsOutput << "AMBIENTSOUNDS=" << WorldAmbientSounds() << '\n';
 		ofsOutput << "AMBIENTFOOTSTEPS=" << ( AmbientFootsteps() ? 1 : 0 ) << '\n';
-		ofsOutput << "INTERNALACCOUNTCREATION=" << ( InternalAccountStatus() ? 1 : 0 ) << '\n';
 		ofsOutput << "SHOWOFFLINEPCS=" << ( ShowOfflinePCs() ? 1 : 0 ) << '\n';
 		ofsOutput << "ROGUESENABLED=" << ( RogueStatus() ? 1 : 0 ) << '\n';
 		ofsOutput << "PLAYERPERSECUTION=" << ( PlayerPersecutionStatus() ? 1 : 0 ) << '\n';
-		ofsOutput << "ACCOUNTFLUSH=" << AccountFlushTimer() << '\n';
 		ofsOutput << "HTMLSTATUSENABLED=" << HtmlStatsStatus() << '\n';
 		ofsOutput << "SELLBYNAME=" << ( SellByNameStatus() ? 1 : 0 ) << '\n';
 		ofsOutput << "SELLMAXITEMS=" << SellMaxItemsStatus() << '\n';
@@ -7096,8 +7121,7 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 122:	 // SECONDS
 			ServerTimeSeconds( static_cast<UI08>( std::stoul( value, nullptr, 0 )));
 			break;
-		case 123:	 // AMPM
-			ServerTimeAMPM( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+		case 123:	 // UNUSED
 			break;
 		case 124:	 // SKILLLEVEL
 			SkillLevel( static_cast<UI08>( std::stoul( value, nullptr, 0 )));
@@ -7911,40 +7935,64 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 415: // VENDORMAXFUNDS
 			VendorMaxFunds( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
 			break;
-		case 416: // BOATDECAY
+		case 416: // LOGINTHROTTLEENABLED
+			LoginThrottleEnabled( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+			break;
+		case 417: // LOGINTHROTTLEMAXATTEMPTS
+			LoginThrottleMaxAttempts( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 418: // LOGINTHROTTLEWINDOW
+			LoginThrottleWindow( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 419: // LOGINTHROTTLEINITIALDELAY
+			LoginThrottleInitialDelay( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 420: // LOGINTHROTTLEMULTIPLIER
+			LoginThrottleMultiplier( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 421: // LOGINTHROTTLEMAXDELAY
+			LoginThrottleMaxDelay( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 422: // LOGINTHROTTLEENTRYTTL
+			LoginThrottleEntryTtl( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 423: // PASSWORDHASHINGENABLED
+			PasswordHashingEnabled( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+			break;
+		case 424: // BOATDECAY
 			BoatDecay( std::stoul( value, nullptr, 0 ) != 0 );
 			break;
-		case 417: // BOATDECAYSECS
+		case 425: // BOATDECAYSECS
 			BoatDecaySeconds( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
 			break;
-		case 418: // BOATPAINTDECAYSECS
+		case 426: // BOATPAINTDECAYSECS
 			BoatPaintDecaySeconds( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
 			break;
-		case 419: // BOATFASTMOVEINTERVAL
+		case 427: // BOATFASTMOVEINTERVAL
 			BoatFastMoveInterval( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
 			break;
-		case 420: // BOATSLOWMOVEINTERVAL
+		case 428: // BOATSLOWMOVEINTERVAL
 			BoatSlowMoveInterval( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
 			break;
-		case 421: // BOATNPCMOVEINTERVAL
+		case 429: // BOATNPCMOVEINTERVAL
 			BoatNpcMoveInterval( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
 			break;
-		case 422: // CLASSICBOATMOUSECONTROL
+		case 430: // CLASSICBOATMOUSECONTROL
 			ClassicBoatMouseControl( std::stoul( value, nullptr, 0 ) != 0 );
 			break;
-		case 423: // HIGHSEASSHIPANCHORS
+		case 431: // HIGHSEASSHIPANCHORS
 			HighSeasShipAnchors( std::stoul( value, nullptr, 0 ) != 0 );
 			break;
-		case 424: // BOATDRIFT
+		case 432: // BOATDRIFT
 			BoatDrift( std::stoul( value, nullptr, 0 ) != 0 );
 			break;
-		case 425: // BOATDRIFTINTERVAL
+		case 433: // BOATDRIFTINTERVAL
 			BoatDriftInterval( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
 			break;
-		case 426: // HIGHSEASSHIPSPEECHCONTROL
+		case 434: // HIGHSEASSHIPSPEECHCONTROL
 			HighSeasShipSpeechControl( std::stoul( value, nullptr, 0 ) != 0 );
 			break;
-		case 427: // CANNONCHARACTERTARGETING
+		case 435: // CANNONCHARACTERTARGETING
 			CannonCharacterTargeting( std::stoul( value, nullptr, 0 ) != 0 );
 			break;
 		default:
@@ -8385,7 +8433,6 @@ auto CServerData::SaveTime() -> void
 	timeDestination << "DAY=" << ServerTimeDay() << '\n';
 	timeDestination << "HOUR=" << static_cast<UI16>( ServerTimeHours() ) << '\n';
 	timeDestination << "MINUTE=" << static_cast<UI16>( ServerTimeMinutes() ) << '\n';
-	timeDestination << "AMPM=" << ( ServerTimeAMPM() ? 1 : 0 ) << '\n';
 	timeDestination << "MOON=" << ServerMoon( 0 ) << "," << ServerMoon( 1 ) << '\n';
 	timeDestination << "}" << '\n' << '\n';
 
@@ -8432,6 +8479,9 @@ auto CServerData::LoadTime() -> void
 auto CServerData::LoadTimeTags( std::istream &input ) -> void
 {
 	std::string UTag, tag, data;
+	UI16 loadedHour = 0;
+	SI16 loadedAMPM = -1; // -1 = no AMPM tag present, already using 24H format
+
 	while( tag != "o---o" )
 	{
 		ReadWorldTagData( input, tag, data );
@@ -8441,7 +8491,8 @@ auto CServerData::LoadTimeTags( std::istream &input ) -> void
 			
 			if( UTag == "AMPM" )
 			{
-				ServerTimeAMPM(( std::stoi( data, nullptr, 0 ) == 1 ));
+				// For backwards compatibility with world data saved in 12H format. 0 = AM, 1 = PM
+				loadedAMPM = static_cast<UI16>( std::stoi( data, nullptr, 0 ));
 			}
 			else if( UTag == "CURRENTLIGHT" )
 			{
@@ -8453,7 +8504,7 @@ auto CServerData::LoadTimeTags( std::istream &input ) -> void
 			}
 			else if( UTag == "HOUR" )
 			{
-				ServerTimeHours( static_cast<UI16>( std::stoul( data, nullptr, 0 )));
+				loadedHour = static_cast<UI16>( std::stoi( data, nullptr, 0 ));
 			}
 			else if( UTag == "MINUTE" )
 			{
@@ -8471,6 +8522,13 @@ auto CServerData::LoadTimeTags( std::istream &input ) -> void
 		}
 	}
 	tag = "";
+
+	// Apply loaded hour and convert from 12H to 24H format if legacy AMPM tag was found
+	if( loadedAMPM == 1 && loadedHour < 12 )
+	{
+		loadedHour += 12; // Convert PM to 24H format
+	}
+	ServerTimeHours( static_cast<UI08>( loadedHour ));
 }
 
 //==============================================================================================
@@ -8513,16 +8571,6 @@ auto CServerData::ServerTimeSeconds() const -> UI08
 auto CServerData::ServerTimeSeconds( UI08 nValue) -> void
 {
 	seconds = nValue;
-}
-//==============================================================================================
-auto CServerData::ServerTimeAMPM() const -> bool
-{
-	return ampm;
-}
-//==============================================================================================
-auto CServerData::ServerTimeAMPM( bool nValue ) -> void
-{
-	ampm = nValue;
 }
 
 //==============================================================================================
@@ -8571,14 +8619,10 @@ auto CServerData::IncHour() -> bool
 {
 	++hours;
 	bool retVal = false;
-	if( hours == 12 )
+	if( hours >= 24 )
 	{
-		if( ampm )
-		{
-			retVal = IncDay();
-		}
 		hours	= 0;
-		ampm	= !ampm;
+		retVal = IncDay();
 	}
 	return retVal;
 }

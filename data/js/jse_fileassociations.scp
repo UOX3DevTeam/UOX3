@@ -520,6 +520,7 @@
 1069=commands/em.js
 1070=commands/champion_spawn_cmd.js
 1071=commands/addpirateship.js
+1072=commands/testjsbindings.js
 }
 
 //-------------------------------------------
