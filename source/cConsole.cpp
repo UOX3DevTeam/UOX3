@@ -954,6 +954,47 @@ auto CConsole::Poll() -> void
 	}
 }
 
+std::string CConsole::ReadConsoleLine( const std::string &prompt )
+{
+	std::string value;
+	std::cout << prompt;
+	std::cout.flush();
+	while( true )
+	{
+		const SI32 key = cl_getch();
+		if( key == -1 || key == 0 )
+		{
+			continue;
+		}
+		if( key == 0x1B )
+		{
+			std::cout << std::endl;
+			return "";
+		}
+		if( key == 0x0A || key == 0x0D )
+		{
+			std::cout << std::endl;
+			return value;
+		}
+		if( key == 0x08 || key == 0x7F )
+		{
+			if( !value.empty() )
+			{
+				value.pop_back();
+				std::cout << "\b \b";
+				std::cout.flush();
+			}
+			continue;
+		}
+		if( std::isprint( key ) && value.length() < 30 )
+		{
+			value.push_back( static_cast<char>( key ));
+			std::cout << static_cast<char>( key );
+			std::cout.flush();
+		}
+	}
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CConsole::Process()
 //o------------------------------------------------------------------------------------------------o
@@ -1002,8 +1043,28 @@ auto CConsole::Process(std::int32_t c) -> void
 		SI32 indexcount	= 0;
 		bool kill		= false;
 		SI32 j = 0;
-		switch( c )
-		{
+			switch( c )
+			{
+			case 'E':
+			{
+				const std::string username = ReadConsoleLine( "Account username to reset (Esc cancels): " );
+				if( username.empty() )
+				{
+					messageLoop << "CMD: Account password reset canceled.";
+					break;
+				}
+
+				std::string temporaryPassword;
+				if( !Accounts->ResetPassword( username, temporaryPassword ))
+				{
+					messageLoop << oldstrutil::format( "ERROR: Unable to reset password for account '%s'.", username.c_str() );
+					break;
+				}
+
+				std::cout << "Temporary password for account '" << username << "': " << temporaryPassword << std::endl;
+				messageLoop << "CMD: Account password reset successfully.";
+				break;
+			}
 			case 'R':
 				// Force server to restart
 				messageLoop << "CMD: Restarting server...";
@@ -1270,6 +1331,7 @@ auto CConsole::Process(std::int32_t c) -> void
 				messageLoop << " ShardOP:";
 				messageLoop << "    * - Lock/Unlock Console ? - Commands list(this)";
 				messageLoop << "    C - Configuration       Y - Console Broadcast";
+				messageLoop << "    E - Reset Account Password";
 				messageLoop << "    Q - Quit/Exit           R - Restart Server";
 				messageLoop << " Load Commands:";
 				messageLoop << "    1 - Ini                 2 - Accounts";

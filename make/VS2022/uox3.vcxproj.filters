@@ -66,6 +66,9 @@
     <ClCompile Include="..\..\source\uox3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\cPasswordHasher.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
     <!-- Script group -->
     <ClCompile Include="..\..\source\cServerData.cpp">
       <Filter>Source Files\Script</Filter>
@@ -123,6 +126,9 @@
     <ClCompile Include="..\..\source\cAccountClass.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
+	<ClCompile Include="..\..\source\cLoginThrottler.cpp">
+	  <Filter>Source Files\Network</Filter>
+	</ClCompile>
     <ClCompile Include="..\..\source\CGump.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
@@ -310,6 +316,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\source\cPasswordHasher.h">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\source\uox3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -376,6 +385,9 @@
     <ClInclude Include="..\..\source\cAccountClass.h">
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
+	<ClInclude Include="..\..\source\cLoginThrottler.h">
+	  <Filter>Header Files\Network</Filter>
+	</ClInclude>
     <ClInclude Include="..\..\source\cEffects.h">
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
