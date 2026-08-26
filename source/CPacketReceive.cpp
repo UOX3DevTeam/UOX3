@@ -410,7 +410,7 @@ void CPIFirstLogin::Receive( void )
 	tSock->Receive( 62, false );
 
 	// Copy data over into internal variables
-	char temp[30];
+	char temp[31]{};
 	// Grab our username
 	memcpy( temp, &tSock->Buffer()[1], 30 );
 	userId = oldstrutil::trim( temp );
@@ -557,7 +557,7 @@ void CPISecondLogin::Receive( void )
 	tSock->CryptClient( true );
 
 	// Copy data over into internal variables
-	char temp[30];
+	char temp[31]{};
 	keyUsed = tSock->GetDWord( 1 );
 
 	// Grab our username
