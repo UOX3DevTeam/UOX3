@@ -6,6 +6,11 @@
 
 cLoginThrottler LoginThrottler;
 
+//o------------------------------------------------------------------------------------------------o
+//| Function	- SafeLoginNameForLog()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose	- Sanitizes an account name before writing untrusted login data to logs or console
+//o------------------------------------------------------------------------------------------------o
 static std::string SafeLoginNameForLog( const std::string &username )
 {
 	std::string safeName;
@@ -31,11 +36,21 @@ static std::string SafeLoginNameForLog( const std::string &username )
 	return safeName.empty() ? "[empty]" : safeName;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Function	- cLoginThrottler::AddressKey()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose	- Converts the socket's client IPv4 address into a key for the throttle table
+//o------------------------------------------------------------------------------------------------o
 UI32 cLoginThrottler::AddressKey( CSocket *socket ) const
 {
 	return CalcSerial( socket->ClientIP1(), socket->ClientIP2(), socket->ClientIP3(), socket->ClientIP4() );
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Function	- cLoginThrottler::IsBlocked()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose	- Checks whether the socket's IP is currently delayed by the login throttle
+//o------------------------------------------------------------------------------------------------o
 bool cLoginThrottler::IsBlocked( CSocket *socket, const std::string &username, UI32 &retryAfterSeconds )
 {
 	retryAfterSeconds = 0;
@@ -62,16 +77,31 @@ bool cLoginThrottler::IsBlocked( CSocket *socket, const std::string &username, U
 	return true;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Function	- cLoginThrottler::RecordFailure()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose	- Records a failed login attempt for an account and client IP
+//o------------------------------------------------------------------------------------------------o
 void cLoginThrottler::RecordFailure( CSocket *socket, const std::string &username )
 {
 	RecordAttempt( socket, username, "" );
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Function	- cLoginThrottler::RecordAccountCreation()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose	- Records an automatic account creation while allowing its immediate follow-up login
+//o------------------------------------------------------------------------------------------------o
 void cLoginThrottler::RecordAccountCreation( CSocket *socket, const std::string &username )
 {
 	RecordAttempt( socket, username, username );
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Function	- cLoginThrottler::RecordAttempt()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose	- Updates per-IP failure state and applies the configured progressive delay
+//o------------------------------------------------------------------------------------------------o
 void cLoginThrottler::RecordAttempt( CSocket *socket, const std::string &username, const std::string &oneTimeBypassUsername )
 {
 	CServerData *serverData = cwmWorldState->ServerData();
@@ -131,6 +161,11 @@ void cLoginThrottler::RecordAttempt( CSocket *socket, const std::string &usernam
 	}
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Function	- cLoginThrottler::CleanupLocked()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose	- Removes expired inactive entries while the throttle table mutex is held
+//o------------------------------------------------------------------------------------------------o
 void cLoginThrottler::CleanupLocked( const std::chrono::steady_clock::time_point &now, UI32 entryTtl )
 {
 	// Caller must hold entriesMutex while entries and operationsSinceCleanup are accessed.

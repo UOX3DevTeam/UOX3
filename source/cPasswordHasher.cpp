@@ -35,6 +35,11 @@ static constexpr std::array<UI32, 64> SHA256_CONSTANTS = {
 	0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 };
 
+//o------------------------------------------------------------------------------------------------o
+//| Function	- RotateRight()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose	- Performs the 32-bit rotation operation required by SHA-256
+//o------------------------------------------------------------------------------------------------o
 static UI32 RotateRight( UI32 value, UI32 count )
 {
 	return ( value >> count ) | ( value << ( 32 - count ));
@@ -43,11 +48,21 @@ static UI32 RotateRight( UI32 value, UI32 count )
 class SHA256Context
 {
 public:
+	//o--------------------------------------------------------------------------------------------o
+	//| Function	- SHA256Context::SHA256Context()
+	//o--------------------------------------------------------------------------------------------o
+	//| Purpose	- Initializes a SHA-256 context with the standard initial state
+	//o--------------------------------------------------------------------------------------------o
 	SHA256Context() : state{ 0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
 		0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19 }, buffer{}, bufferLength( 0 ), totalLength( 0 )
 	{
 	}
 
+	//o--------------------------------------------------------------------------------------------o
+	//| Function	- SHA256Context::Update()
+	//o--------------------------------------------------------------------------------------------o
+	//| Purpose	- Adds input bytes to the SHA-256 calculation
+	//o--------------------------------------------------------------------------------------------o
 	void Update( const unsigned char *data, size_t length )
 	{
 		totalLength += length;
@@ -66,6 +81,11 @@ public:
 		}
 	}
 
+	//o--------------------------------------------------------------------------------------------o
+	//| Function	- SHA256Context::Final()
+	//o--------------------------------------------------------------------------------------------o
+	//| Purpose	- Finalizes the SHA-256 calculation and returns its digest
+	//o--------------------------------------------------------------------------------------------o
 	std::array<unsigned char, 32> Final()
 	{
 		const UI64 bitLength = static_cast<UI64>( totalLength ) * 8;
@@ -95,6 +115,11 @@ public:
 	}
 
 private:
+	//o--------------------------------------------------------------------------------------------o
+	//| Function	- SHA256Context::Transform()
+	//o--------------------------------------------------------------------------------------------o
+	//| Purpose	- Processes one 512-bit SHA-256 message block
+	//o--------------------------------------------------------------------------------------------o
 	void Transform( const unsigned char *block )
 	{
 		std::array<UI32, 64> words{};
@@ -138,6 +163,11 @@ private:
 class HMACSHA256
 {
 public:
+	//o--------------------------------------------------------------------------------------------o
+	//| Function	- HMACSHA256::HMACSHA256()
+	//o--------------------------------------------------------------------------------------------o
+	//| Purpose	- Prepares the reusable inner and outer SHA-256 states for an HMAC key
+	//o--------------------------------------------------------------------------------------------o
 	explicit HMACSHA256( const std::string &password ) : innerBase(), outerBase()
 	{
 		std::array<unsigned char, 64> key{};
@@ -163,6 +193,11 @@ public:
 		outerBase.Update( outerPad.data(), outerPad.size() );
 	}
 
+	//o--------------------------------------------------------------------------------------------o
+	//| Function	- HMACSHA256::Calculate()
+	//o--------------------------------------------------------------------------------------------o
+	//| Purpose	- Calculates an HMAC-SHA256 value using the prepared key state
+	//o--------------------------------------------------------------------------------------------o
 	std::array<unsigned char, 32> Calculate( const unsigned char *data, size_t length ) const
 	{
 		SHA256Context inner = innerBase;
@@ -178,6 +213,11 @@ private:
 	SHA256Context outerBase;
 };
 
+//o------------------------------------------------------------------------------------------------o
+//| Function	- DerivePassword()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose	- Derives a PBKDF2-HMAC-SHA256 password value using the supplied salt and work factor
+//o------------------------------------------------------------------------------------------------o
 static std::array<unsigned char, PBKDF2_HASH_LENGTH> DerivePassword(
 	const std::string &password, const unsigned char *salt, size_t saltLength, UI32 iterations )
 {
@@ -197,6 +237,11 @@ static std::array<unsigned char, PBKDF2_HASH_LENGTH> DerivePassword(
 	return derived;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Function	- EncodeHex()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose	- Encodes binary salt or hash data as lowercase hexadecimal text
+//o------------------------------------------------------------------------------------------------o
 static std::string EncodeHex( const unsigned char *data, size_t length )
 {
 	static constexpr char HEX[] = "0123456789abcdef";
@@ -209,6 +254,11 @@ static std::string EncodeHex( const unsigned char *data, size_t length )
 	return encoded;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Function	- DecodeHex()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose	- Decodes hexadecimal text into binary data while rejecting malformed input
+//o------------------------------------------------------------------------------------------------o
 static bool DecodeHex( std::string_view encoded, std::vector<unsigned char> &decoded )
 {
 	if( encoded.empty() || encoded.size() % 2 != 0 )
@@ -230,6 +280,11 @@ static bool DecodeHex( std::string_view encoded, std::vector<unsigned char> &dec
 	return true;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Function	- ParsePasswordHash()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose	- Parses and validates a stored PBKDF2 password record
+//o------------------------------------------------------------------------------------------------o
 static bool ParsePasswordHash( const std::string &storedPassword, UI32 &iterations,
 	std::vector<unsigned char> &salt, std::vector<unsigned char> &passwordHash )
 {
@@ -256,11 +311,21 @@ static bool ParsePasswordHash( const std::string &storedPassword, UI32 &iteratio
 		salt.size() == PBKDF2_SALT_LENGTH && passwordHash.size() == PBKDF2_HASH_LENGTH;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Function	- cPasswordHasher::IsPasswordHash()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose	- Checks whether a stored password uses the PBKDF2 record prefix
+//o------------------------------------------------------------------------------------------------o
 bool cPasswordHasher::IsPasswordHash( const std::string &storedPassword )
 {
 	return storedPassword.rfind( PBKDF2_PREFIX, 0 ) == 0;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Function	- cPasswordHasher::HashPassword()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose	- Creates a salted PBKDF2-HMAC-SHA256 record from a plaintext password
+//o------------------------------------------------------------------------------------------------o
 bool cPasswordHasher::HashPassword( const std::string &password, std::string &passwordHash )
 {
 	std::array<unsigned char, PBKDF2_SALT_LENGTH> salt{};
@@ -274,6 +339,11 @@ bool cPasswordHasher::HashPassword( const std::string &password, std::string &pa
 	return true;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Function	- cPasswordHasher::VerifyPassword()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose	- Verifies either a PBKDF2 record or a legacy plaintext password
+//o------------------------------------------------------------------------------------------------o
 bool cPasswordHasher::VerifyPassword( const std::string &storedPassword, const std::string &password )
 {
 	if( IsPasswordHash( storedPassword ))
@@ -293,6 +363,11 @@ bool cPasswordHasher::VerifyPassword( const std::string &storedPassword, const s
 		storedPassword.size(), password.size() );
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Function	- cPasswordHasher::GenerateTemporaryPassword()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose	- Generates a random temporary password suitable for account recovery
+//o------------------------------------------------------------------------------------------------o
 bool cPasswordHasher::GenerateTemporaryPassword( std::string &temporaryPassword )
 {
 	static constexpr char alphabet[] = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
@@ -310,6 +385,11 @@ bool cPasswordHasher::GenerateTemporaryPassword( std::string &temporaryPassword 
 	return true;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Function	- cPasswordHasher::FillRandom()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose	- Fills a buffer using the operating system's cryptographically secure random source
+//o------------------------------------------------------------------------------------------------o
 bool cPasswordHasher::FillRandom( unsigned char *buffer, size_t length )
 {
 #if PLATFORM == WINDOWS
@@ -340,6 +420,11 @@ bool cPasswordHasher::FillRandom( unsigned char *buffer, size_t length )
 #endif
 }
 
+//o------------------------------------------------------------------------------------------------o
+//| Function	- cPasswordHasher::ConstantTimeEquals()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose	- Compares credential data without returning early on the first differing byte
+//o------------------------------------------------------------------------------------------------o
 bool cPasswordHasher::ConstantTimeEquals( const unsigned char *left, const unsigned char *right, size_t comparisonLength,
 	size_t leftLength, size_t rightLength )
 {

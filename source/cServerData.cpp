@@ -7781,7 +7781,7 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			VendorMaxFunds( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
 			break;
 		case 416: // LOGINTHROTTLEENABLED
-			LoginThrottleEnabled( std::stoul( value, nullptr, 0 ) >= 1 );
+			LoginThrottleEnabled( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
 			break;
 		case 417: // LOGINTHROTTLEMAXATTEMPTS
 			LoginThrottleMaxAttempts( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
@@ -7802,7 +7802,7 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			LoginThrottleEntryTtl( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
 			break;
 		case 423: // PASSWORDHASHINGENABLED
-			PasswordHashingEnabled( std::stoul( value, nullptr, 0 ) >= 1 );
+			PasswordHashingEnabled( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
 			break;
 		default:
 			rValue = false;
