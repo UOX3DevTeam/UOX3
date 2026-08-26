@@ -74,7 +74,8 @@ CChar *		CalcCharObjFromSer( SERIAL targSerial );
 CMultiObj *	CalcMultiFromSer( SERIAL targSerial );
 inline UI32 CalcSerial( UI08 a1, UI08 a2, UI08 a3, UI08 a4 )
 {
-	return (( a1 << 24 ) + ( a2 << 16 ) + ( a3 << 8 ) + a4 );
+	return (( static_cast<UI32>( a1 ) << 24 ) + ( static_cast<UI32>( a2 ) << 16 )
+		+ ( static_cast<UI32>( a3 ) << 8 ) + static_cast<UI32>( a4 ));
 }
 
 //o------------------------------------------------------------------------------------------------o

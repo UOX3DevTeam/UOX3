@@ -69,7 +69,7 @@
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(MozjsLibrary);ws2_32.lib;Kernel32.lib;winmm.lib;psapi.lib;user32.lib;dbghelp.lib;legacy_stdio_definitions.lib;ntdll.lib;userenv.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(MozjsLibrary);ws2_32.lib;Kernel32.lib;winmm.lib;psapi.lib;user32.lib;dbghelp.lib;legacy_stdio_definitions.lib;ntdll.lib;userenv.lib;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
@@ -93,7 +93,7 @@
       <WarningLevel>Level3</WarningLevel>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(MozjsLibrary);ws2_32.lib;Kernel32.lib;winmm.lib;psapi.lib;user32.lib;dbghelp.lib;legacy_stdio_definitions.lib;ntdll.lib;userenv.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(MozjsLibrary);ws2_32.lib;Kernel32.lib;winmm.lib;psapi.lib;user32.lib;dbghelp.lib;legacy_stdio_definitions.lib;ntdll.lib;userenv.lib;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/OPT:REF /OPT:ICF %(AdditionalOptions)</AdditionalOptions>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -124,6 +124,8 @@
     <!-- Subsystem group -->
     <ClCompile Include="..\..\source\books.cpp" />
     <ClCompile Include="..\..\source\cAccountClass.cpp" />
+	<ClCompile Include="..\..\source\cLoginThrottler.cpp" />
+	<ClCompile Include="..\..\source\cPasswordHasher.cpp" />
     <ClCompile Include="..\..\source\CGump.cpp" />
     <ClCompile Include="..\..\source\cHTMLSystem.cpp" />
     <ClCompile Include="..\..\source\combat.cpp" />
@@ -215,6 +217,8 @@
     <!-- Subsystem group -->
     <ClInclude Include="..\..\source\books.h" />
     <ClInclude Include="..\..\source\cAccountClass.h" />
+	<ClInclude Include="..\..\source\cLoginThrottler.h" />
+	<ClInclude Include="..\..\source\cPasswordHasher.h" />
     <ClInclude Include="..\..\source\cEffects.h" />
     <ClInclude Include="..\..\source\CGump.h" />
     <ClInclude Include="..\..\source\cHTMLSystem.h" />

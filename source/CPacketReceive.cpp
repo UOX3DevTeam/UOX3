@@ -18,6 +18,7 @@
 #include "CResponse.h"
 #include "StringUtility.hpp"
 #include "cRaces.h"
+#include "cLoginThrottler.h"
 #include <chrono>
 #include "IP4Address.hpp"
 #include "utf8.h"
@@ -189,10 +190,9 @@ void CPIFirstLogin::Log( std::ostream &outStream, bool fullHeader )
 		outStream << "[RECV]Packet   : CPIFirstLogin 0x80 --> Length: 62" << TimeStamp() << std::endl;
 	}
 	outStream << "UserId         : " << Name() << std::endl;
-	outStream << "Password       : " << Pass() << std::endl;
+	outStream << "Password       : [REDACTED]" << std::endl;
 	outStream << "Unknown        : " << static_cast<SI16>( Unknown() ) << std::endl;
-	outStream << "  Raw dump     :" << std::endl;
-	CPInputBuffer::Log( outStream, false );
+	outStream << "  Raw dump     : [REDACTED - CONTAINS ACCOUNT CREDENTIALS]" << std::endl;
 }
 
 bool CPIFirstLogin::Handle( void )
@@ -201,6 +201,15 @@ bool CPIFirstLogin::Handle( void )
 	LoginDenyReason t = LDR_NODENY;
 
 	std::string username = Name();
+	UI32 retryAfterSeconds = 0;
+	if( LoginThrottler.IsBlocked( tSock, username, retryAfterSeconds ))
+	{
+		CPLoginDeny pckDeny( LDR_COMMSFAILURE );
+		tSock->Send( &pckDeny );
+		Network->LoginDisconnect( tSock );
+		return true;
+	}
+	bool throttleAttemptRecorded = false;
 
 	CAccountBlock_st * actbTemp = &Accounts->GetAccountByName( username );
 	if( actbTemp->wAccountIndex != AB_INVALID_ID )
@@ -221,6 +230,8 @@ bool CPIFirstLogin::Handle( void )
 			actbTemp = &Accounts->GetAccountByName( username );
 			if( actbTemp->wAccountIndex != AB_INVALID_ID )	// grab our account number
 			{
+				LoginThrottler.RecordAccountCreation( tSock, username );
+				throttleAttemptRecorded = true;
 				tSock->SetAccount(( *actbTemp ));
 			}
 		}
@@ -234,7 +245,7 @@ bool CPIFirstLogin::Handle( void )
 		{
 			t = LDR_ACCOUNTDISABLED;
 		}
-		else if( actbTemp->sPassword != pass1 )
+		else if( !Accounts->VerifyPassword( *actbTemp, pass1 ))
 		{
 			t = LDR_BADPASSWORD;
 		}
@@ -339,6 +350,10 @@ bool CPIFirstLogin::Handle( void )
 	}
 	if( t != LDR_NODENY )
 	{
+		if( !throttleAttemptRecorded && ( t == LDR_BADPASSWORD || t == LDR_UNKNOWNUSER ))
+		{
+			LoginThrottler.RecordFailure( tSock, username );
+		}
 		CPLoginDeny pckDeny( t );
 		tSock->Send( &pckDeny );
 		tSock->AcctNo( AB_INVALID_ID );
@@ -395,13 +410,15 @@ void CPIFirstLogin::Receive( void )
 	tSock->Receive( 62, false );
 
 	// Copy data over into internal variables
-	char temp[30];
+	char temp[31]{};
 	// Grab our username
 	memcpy( temp, &tSock->Buffer()[1], 30 );
+	temp[30] = '\0'; // Ensure the fixed-width packet field is null-terminated.
 	userId = oldstrutil::trim( temp );
 
 	// Grab our password
 	memcpy( temp, &tSock->Buffer()[31], 30 );
+	temp[30] = '\0'; // Ensure the fixed-width packet field is null-terminated.
 	password = temp;
 
 	unknown = tSock->GetByte( 61 );
@@ -517,9 +534,8 @@ void CPISecondLogin::Log( std::ostream &outStream, bool fullHeader )
 
 	outStream << "Key Used       : " << Account() << std::endl;
 	outStream << "SID            : " << Name() << std::endl;
-	outStream << "Password       : " << Pass() << std::endl;
-	outStream << "  Raw dump     :" << std::endl;
-	CPInputBuffer::Log( outStream, false );
+	outStream << "Password       : [REDACTED]" << std::endl;
+	outStream << "  Raw dump     : [REDACTED - CONTAINS ACCOUNT CREDENTIALS]" << std::endl;
 }
 void CPISecondLogin::InternalReset( void )
 {
@@ -543,15 +559,17 @@ void CPISecondLogin::Receive( void )
 	tSock->CryptClient( true );
 
 	// Copy data over into internal variables
-	char temp[30];
+	char temp[31]{};
 	keyUsed = tSock->GetDWord( 1 );
 
 	// Grab our username
 	memcpy( temp, &tSock->Buffer()[5], 30 );
+	temp[30] = '\0'; // Ensure the fixed-width packet field is null-terminated.
 	sid = oldstrutil::trim( temp );
 
 	// Grab our password
 	memcpy( temp, &tSock->Buffer()[35], 30 );
+	temp[30] = '\0'; // Ensure the fixed-width packet field is null-terminated.
 	password = temp;
 
 	// Done with our buffer, we can clear it out now
@@ -573,6 +591,14 @@ bool CPISecondLogin::Handle( void )
 {
 	LoginDenyReason t = LDR_NODENY;
 	tSock->AcctNo( AB_INVALID_ID );
+	UI32 retryAfterSeconds = 0;
+	if( LoginThrottler.IsBlocked( tSock, Name(), retryAfterSeconds ))
+	{
+		CPLoginDeny pckDeny( LDR_COMMSFAILURE );
+		tSock->Send( &pckDeny );
+		Network->LoginDisconnect( tSock );
+		return true;
+	}
 	CAccountBlock_st& actbTemp = Accounts->GetAccountByName( Name() );
 	if( actbTemp.wAccountIndex != AB_INVALID_ID )
 	{
@@ -597,7 +623,7 @@ bool CPISecondLogin::Handle( void )
 		{
 			t = LDR_ACCOUNTDISABLED;
 		}
-		else if( pass1 != actbTemp.sPassword )
+		else if( !Accounts->VerifyPassword( actbTemp, pass1 ))
 		{
 			t = LDR_BADPASSWORD;
 		}
@@ -609,6 +635,10 @@ bool CPISecondLogin::Handle( void )
 
 	if( t != LDR_NODENY )
 	{
+		if( t == LDR_BADPASSWORD || t == LDR_UNKNOWNUSER )
+		{
+			LoginThrottler.RecordFailure( tSock, Name() );
+		}
 		tSock->AcctNo( AB_INVALID_ID );
 		CPLoginDeny pckDeny( t );
 		tSock->Send( &pckDeny );
@@ -3486,7 +3516,7 @@ void CPICreateCharacter::Log( std::ostream &outStream, bool fullHeader )
 		outStream << "Pattern1       : " << pattern1 << std::endl;
 		outStream << "Slot           : " << static_cast<SI32>( slot ) << std::endl;
 		outStream << "Character Name : " << charName << std::endl;
-		outStream << "Password       : " << password << std::endl;
+		outStream << "Password       : [REDACTED]" << std::endl;
 		outStream << "Profession     : " << static_cast<SI32>( profession ) << std::endl;
 		outStream << "Client Flags   : " << static_cast<SI32>( clientFlags ) << std::endl;
 		outStream << "Sex            : " << static_cast<SI32>( sex ) << std::endl;
@@ -3518,8 +3548,7 @@ void CPICreateCharacter::Log( std::ostream &outStream, bool fullHeader )
 		outStream << "Unknown9       : " << static_cast<SI32>( unknown9 ) << std::endl;
 		outStream << "Facial Hair    : " << std::hex << facialHair << std::dec << std::endl;
 		outStream << "Facial Hair Colour: " << std::hex << facialHairColour << std::dec << std::endl;
-		outStream << "  Raw dump     :" << std::endl;
-		CPInputBuffer::Log( outStream, false );
+		outStream << "  Raw dump     : [REDACTED - MAY CONTAIN CREDENTIALS]" << std::endl;
 	}
 	else
 	{
@@ -3538,7 +3567,7 @@ void CPICreateCharacter::Log( std::ostream &outStream, bool fullHeader )
 		outStream << "Pattern2       : " << pattern2 << std::endl;
 		outStream << "Pattern3       : " << static_cast<SI32>( pattern3 ) << std::endl;
 		outStream << "Character Name : " << charName << std::endl;
-		outStream << "Password       : " << password << std::endl;
+		outStream << "Password       : [REDACTED]" << std::endl;
 		outStream << "Sex            : " << static_cast<SI32>( sex ) << std::endl;
 		outStream << "Strength       : " << static_cast<SI32>( str ) << std::endl;
 		outStream << "Dexterity      : " << static_cast<SI32>( dex ) << std::endl;
@@ -3556,8 +3585,7 @@ void CPICreateCharacter::Log( std::ostream &outStream, bool fullHeader )
 		outStream << "IP Address     : " << ipAddress << std::endl;
 		outStream << "Shirt Colour   : " << std::hex << shirtColour << std::dec << std::endl;
 		outStream << "Pants Colour   : " << std::hex << pantsColour << std::dec << std::endl;
-		outStream << "  Raw dump     :" << std::endl;
-		CPInputBuffer::Log( outStream, false );
+		outStream << "  Raw dump     : [REDACTED - MAY CONTAIN CREDENTIALS]" << std::endl;
 	}
 }
 
