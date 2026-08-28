@@ -45,8 +45,6 @@ function getRandomPumpkinName( objMade )
 }
 
 // 2006 Pumpkins
-// Missing: The Shadow Colored Jack O' Lanterns, both big and small, are also useable. When used and targeted anywhere, they explode in a large 5x5 tile field of flames.
-// Missing: The Shadow Colored Jack O' Lanterns, both big and small, are also useable.When used and targeted anywhere, they explode in a large 5x5 tile field of flames.
 // Using explosion potion effect.
 // Missing: colors as well for the pumpkins
 
@@ -177,6 +175,8 @@ function onTimer( timerObj, timerID )
 			timerObj.SoundEffect(0x0207, true);
 
 			var explosionCounter = AreaCharacterFunction( "ApplyExplosionDamage", timerObj, 4 );
+
+			SpawnJackOFlameField( timerObj );
 		}
 		else
 		{
@@ -211,6 +211,8 @@ function onTimer( timerObj, timerID )
 			}
 		}
 	}
+	if( timerID == 20 )
+		timerObj.Delete();
 }
 
 function ApplyExplosionDamage( timerObj, targetChar )
@@ -327,5 +329,27 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 			return true;
 		default:
 			return false;
+	}
+}
+
+function SpawnJackOFlameField( centerObj, sourceChar )
+{
+	for( var dx = -2; dx <= 2; dx++ )
+	{
+		for( var dy = -2; dy <= 2; dy++ )
+		{
+			var x = centerObj.x + dx;
+			var y = centerObj.y + dy;
+			var z = centerObj.z;
+
+			var ff = CreateBlankItem( null, null, 10, "explosion", 0x3709, 0x0, "ITEM", false );
+			if( ff )
+			{
+				ff.Teleport( x, y, z );
+				ff.amount = 0;
+				ff.movable = 2;
+				ff.StartTimer( 3000, 20, true );
+			}
+		}
 	}
 }
