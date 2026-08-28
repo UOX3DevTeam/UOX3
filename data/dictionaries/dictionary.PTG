@@ -5307,6 +5307,16 @@
 17273=Terá de esperar alguns segundos enquanto eu inspecciono a última encomenda.
 17274=A encomenda a granel foi colocada na sua mochila.
 17275=Não tem espaço suficiente na sua mochila para a recompensa do pedido por grosso.
+17276=Combine esta escritura com outra escritura.
+17277=Este não é um pedido em lote.
+17278=Ambos os pedidos devem ser de qualidade excepcional.
+17279=Ambos os pedidos devem utilizar o mesmo tipo de recurso.
+17280=Os dois pedidos têm quantidades solicitadas diferentes e não podem ser combinados.
+17281=O pedido a combinar não foi concluído.
+17282=Este não é um pedido em lote para este grande pedido.
+17283=A quantidade máxima de artigos encomendados já foi combinada a esta escritura.
+17284=Os pedidos foram combinados.
+17285=Um grande pedido em lote.
 // [17500-17529] Nomes de Guildas NPC
 17500=Eu sou o %s de %d
 17501=A Guilda das Artes Arcanas

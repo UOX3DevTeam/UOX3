@@ -5307,6 +5307,16 @@
 17273=Sie müssen ein paar Sekunden warten, während ich die letzte Bestellung prüfe.
 17274=Die Großbestellungsurkunde wurde in deinen Rucksack gelegt.
 17275=Du hast nicht genug Platz in deinem Rucksack für die Belohnung der Großbestellung.
+17276=Diese Urkunde mit einer anderen Urkunde kombinieren.
+17277=Dies ist keine Sammelbestellung.
+17278=Beide Bestellungen müssen von außergewöhnlicher Qualität sein.
+17279=Beide Bestellungen müssen denselben Ressourcentyp verwenden.
+17280=Die beiden Bestellungen haben unterschiedliche Mengen und können nicht kombiniert werden.
+17281=Die zu kombinierende Bestellung ist nicht abgeschlossen.
+17282=Dies ist keine Sammelbestellung für diese große Anfrage.
+17283=Die maximale Menge der angeforderten Artikel wurde bereits in dieser Urkunde kombiniert.
+17284=Die Bestellungen wurden kombiniert.
+17285=Eine große Sammelbestellung.
 // [17500-17529] Namen von NPC-Gilden
 17500=Ich bin der %s von %d
 17501=Die Gilde der arkanen Künste
