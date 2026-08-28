@@ -86,3 +86,16 @@ name=a solen hive entrance deed
 id=0x14F0
 morex=209
 }
+
+[mannequindeed]
+{
+get=base_item
+NAME=Mannequin Deed
+ID=0x14F0
+WEIGHT=100
+VALUE=1500 700
+RESTOCK=5
+GOOD=9
+SCRIPT=15008
+ORIGIN=hs
+}
