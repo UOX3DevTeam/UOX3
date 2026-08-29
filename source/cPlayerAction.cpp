@@ -2939,13 +2939,9 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 					mSock->SysMessage( "Unable to create townstone. Check the [townstone] item definition." );
 				}
 			}
-			else	// Display Townstone gump
+			else
 			{
-				CTownRegion *useRegion = iUsed->GetRegion();
-				if( useRegion != nullptr )
-				{
-					useRegion->DisplayTownMenu( iUsed, mSock );
-				}
+				mSock->SysMessage( "This townstone does not have a townstone script assigned." );
 			}
 			return true;
 		case IT_RECALLRUNE: // Recall Rune

@@ -13,6 +13,7 @@ TYPE=35
 WEIGHT=255
 MOVABLE=2
 DECAY=0
+SCRIPT=6
 }
 
 [guildstonedeed]

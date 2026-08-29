@@ -1045,6 +1045,9 @@ inline JSPropertySpec CRegionProperties[] =
   UX_PSG(  CRegion, music,             JSPROP_ENUMANDPERM ),
   UX_PSG(  CRegion, weather,           JSPROP_ENUMANDPERM ),
   UX_PSG(  CRegion, owner,             JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, guardsPurchased,   JSPROP_ENUMPERMRO  ),
+  UX_PSG(  CRegion, alliedTowns,       JSPROP_ENUMPERMRO  ),
+  UX_PSG(  CRegion, enemyTowns,        JSPROP_ENUMPERMRO  ),
   JS_PS_END
 };
 // clang-format on

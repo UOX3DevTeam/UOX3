@@ -1822,6 +1822,9 @@ IMPL_GET(  CRegion, music,             CTownRegion, setInt32,   GetMusicList() )
 IMPL_GET(  CRegion, weather,           CTownRegion, setInt32,   GetWeather() )
 IMPL_GETS( CRegion, owner,             CTownRegion, setString,  GetOwner().c_str() )
 IMPL_SETS( CRegion, owner,             CTownRegion, toString,   SetOwner )
+IMPL_GET(  CRegion, guardsPurchased,   CTownRegion, setInt32,   GetGuardsPurchased() )
+IMPL_GETS( CRegion, alliedTowns,       CTownRegion, setString,  GetAlliedTownIds().c_str() )
+IMPL_GETS( CRegion, enemyTowns,        CTownRegion, setString,  GetEnemyTownIds().c_str() )
 
 FDCLG( CRegion, mayor )
 {

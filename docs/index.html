@@ -62,6 +62,7 @@
 					<div class="spoiler">
 						<h4>August 29th, 2026</h4>
 						<ul>
+							<li>Moved the legacy civic townstone interface, including all buttons and secondary views, from C++ to <span class="hl">js/server/townstone.js</span>.</li>
 							<li>Added complete <a href="#uox3Factions">Factions</a> feature documentation and clarified that faction townstones do not replace UOX3's legacy civic townstones.</li>
 							<li>Documented every shard-tunable option in the new <a href="#uoxINISettings">[factions] UOX.INI section</a>.</li>
 						</ul>
@@ -9468,6 +9469,7 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 				<div class="cd-faq__content">
 				  <div class="text-component">
 					<p>UOX3 comes with a system for <span class="hl">Townstones</span> that allows players to setup their own <span class="hl">player-run governments</span> in different regions of the world.</p>
+					<div class="note"><p>This legacy civic system is independent of Factions. Its complete player interface is implemented in <span class="hl">js/server/townstone.js</span>, so shards may customize civic townstone layouts and buttons without modifying or rebuilding the server. C++ retains protected town membership, election, treasury, alliance, stealing and damage operations.</p></div>
 					<h4>Townstone Basics</h4>
 						<ul>
 							<li>Player gets hold of a <strong>Townstone Deed</strong> (from a vendor, or by a GM using <span class="hl">'add item townstonedeed</span>), and uses it while in a given region of the world to found a new Town.</li>

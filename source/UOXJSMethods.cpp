@@ -12169,6 +12169,60 @@ bool CRegion_GetOreChance( JSContext *cx, unsigned argc, JS::Value* vp )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CRegion_TownstoneAction()
+//|	Prototype	-	bool TownstoneAction( socket, buttonId, itemSerial )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Executes an authoritative civic townstone action requested by JavaScript
+//o------------------------------------------------------------------------------------------------o
+bool CRegion_TownstoneAction( JSContext *cx, unsigned argc, JS::Value *vp )
+{
+	auto args = JS::CallArgsFromVp( argc, vp );
+	auto obj = getThis( cx, args );
+	if( argc != 3 )
+	{
+		ScriptError( cx, "TownstoneAction: Invalid number of arguments (takes 3)" );
+		return false;
+	}
+
+	CTownRegion *region = JS::GetMaybePtrFromReservedSlot<CTownRegion>( obj, 0 );
+	CSocket *sock = HasWrapperClass( args.get( 0 ), &UOXSocket_class ) ? GetWrappedObject<CSocket>( args.get( 0 ), &UOXSocket_class ) : nullptr;
+	if( region == nullptr || sock == nullptr || !args.get( 1 ).isInt32() || !args.get( 2 ).isInt32() )
+	{
+		ScriptError( cx, "TownstoneAction: Invalid region, socket, button ID or item serial" );
+		return false;
+	}
+
+	CChar *character = sock->CurrcharObj();
+	CItem *townstone = CalcItemObjFromSer( static_cast<SERIAL>( args.get( 2 ).toInt32() ));
+	if( !ValidateObject( character ) || !ValidateObject( townstone ) || townstone->GetType() != IT_TOWNSTONE || townstone->GetRegion() != region || CalcRegionFromXY( character->GetX(), character->GetY(), character->WorldNumber(), character->GetInstanceId() ) != region )
+	{
+		sock->SysMessage( "You must be in the town controlled by this townstone." );
+		args.rval().setBoolean( false );
+		return true;
+	}
+
+	const SERIAL buttonId = static_cast<SERIAL>( args.get( 1 ).toInt32() );
+	const bool isMember = region->IsMemberOfTown( character );
+	const bool isMayor = isMember && ( character->GetTownPriv() == 2 || character->IsGM() );
+	const bool isEnemy = !isMember && character->GetTown() != 255 && Races->CompareByRace( character->GetRace(), region->GetRace() ) <= RACE_ENEMY;
+	const bool memberAction = buttonId == 2 || buttonId == 4 || buttonId == 5 || buttonId == 6;
+	const bool mayorAction = buttonId == 21 || ( buttonId >= 23 && buttonId <= 26 );
+	const bool canJoin = !isMember && Races->CompareByRace( character->GetRace(), region->GetRace() ) > RACE_ENEMY && ( character->GetTown() == 255 || character->GetTown() == region->GetRegionNum() || character->GetTown() == 0 );
+	const bool joinAction = buttonId == 41 && canJoin;
+	const bool enemyAction = ( buttonId == 61 || buttonId == 62 ) && isEnemy;
+	if(( memberAction && !isMember ) || ( mayorAction && !isMayor ) || ( !memberAction && !mayorAction && !joinAction && !enemyAction ))
+	{
+		ScriptError( cx, "TownstoneAction: Character is not authorized for the requested action" );
+		args.rval().setBoolean( false );
+		return true;
+	}
+
+	HandleTownstoneAction( sock, buttonId, townstone->GetSerial() );
+	args.rval().setBoolean( true );
+	return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar_AddFriend()
 //|	Prototype	-	bool Add( playerToAdd )
 //o------------------------------------------------------------------------------------------------o

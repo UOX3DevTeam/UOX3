@@ -41,6 +41,7 @@
 2=server/misc/helpgump.js
 3=server/timer/long_term_timers.js
 5=server/event_manager.js
+6=server/townstone.js
 
 // turn furniture start[50-54]
 50=server/misc/furniture_smartturn.js
