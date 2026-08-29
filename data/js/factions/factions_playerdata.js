@@ -18,6 +18,7 @@ var FactionPlayerDataMirrorTags = [
 	"faction_commander",
 	"faction_role",
 	"faction_role_faction",
+	"faction_role_town",
 	"faction_role_set_at",
 	"faction_kp_decay_time"
 ];
@@ -49,6 +50,7 @@ function FactionDataDefault()
 		commander: false,
 		role: "",
 		roleFaction: "",
+		roleTown: "",
 		roleSetAt: 0,
 		kpDecayTime: 0,
 		votes: { TB: false, COM: false, MIN: false, SL: false },
@@ -179,6 +181,7 @@ function FactionDataNormalize( pChar, factionData )
 	normalized.commander = normalized.commander ? true : false;
 	normalized.role = String( normalized.role || "" );
 	normalized.roleFaction = FactionDataIsValidFaction( normalized.roleFaction ) ? normalized.roleFaction : "";
+	normalized.roleTown = String( normalized.roleTown || "" );
 	if( !normalized.votes || typeof normalized.votes != "object" )
 		normalized.votes = { TB: false, COM: false, MIN: false, SL: false };
 	normalized.votes.TB = normalized.votes.TB ? true : false;
@@ -222,6 +225,7 @@ function FactionDataFromTags( pChar )
 	data.role = String( pChar.GetTag( "faction_role" ) || "" );
 	var roleFaction = pChar.GetTag( "faction_role_faction" );
 	data.roleFaction = FactionDataIsValidFaction( roleFaction ) ? roleFaction : "";
+	data.roleTown = String( pChar.GetTag( "faction_role_town" ) || "" );
 	data.roleSetAt = FactionDataParseNumber( pChar.GetTag( "faction_role_set_at" ), 0 );
 	data.kpDecayTime = FactionDataParseNumber( pChar.GetTag( "faction_kp_decay_time" ), 0 );
 	data.votes = {
@@ -278,6 +282,7 @@ function SyncFactionMirrorTags( pChar, factionData )
 	pChar.SetTag( "faction_commander", factionData.commander ? "1" : "0" );
 	pChar.SetTag( "faction_role", factionData.role );
 	pChar.SetTag( "faction_role_faction", factionData.roleFaction );
+	pChar.SetTag( "faction_role_town", factionData.roleTown );
 	pChar.SetTag( "faction_role_set_at", factionData.roleSetAt );
 	pChar.SetTag( "faction_kp_decay_time", factionData.kpDecayTime );
 	pChar.SetTag( "elec_voted_TB", factionData.votes.TB ? "1" : "" );

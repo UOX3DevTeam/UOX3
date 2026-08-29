@@ -8,6 +8,7 @@ var TownstoneTownScriptId = 8509;
 var TownstonePlayerDataScriptId = 8513;
 var TownstoneGuardCost = 250;
 var TownstoneVendorCost = 500;
+var TownstoneTaxOffsets = [ -30, -25, -20, -15, -10, -5, 0, 50, 100, 150, 200, 250, 300 ];
 
 var TownstoneVendorTypes = [
 	[ 201, "REAGENT", "Reagent Vendor" ],
@@ -44,7 +45,7 @@ function TownstoneIsStaff( pUser )
 	return ( pUser.isGM || pUser.commandlevel >= 5 );
 }
 
-function TownstoneHasRole( pUser, roleName, factionKey )
+function TownstoneHasRole( pUser, roleName, factionKey, townName )
 {
 	if( !ValidateObject( pUser ) || !TownstoneIsFactionValid( factionKey ) )
 		return false;
@@ -55,12 +56,15 @@ function TownstoneHasRole( pUser, roleName, factionKey )
 	if( factionData.role !== roleName )
 		return false;
 
-	return factionData.roleFaction === factionKey;
+	if( factionData.roleFaction !== factionKey )
+		return false;
+
+	return ( roleName === "commander" || factionData.roleTown === townName );
 }
 
-function TownstoneCanUseRole( pUser, roleName, factionKey )
+function TownstoneCanUseRole( pUser, roleName, factionKey, townName )
 {
-	return ( TownstoneIsStaff( pUser ) || TownstoneHasRole( pUser, roleName, factionKey ) );
+	return ( TownstoneIsStaff( pUser ) || TownstoneHasRole( pUser, roleName, factionKey, townName ) );
 }
 
 function TownstoneSetContext( pUser, townName, townRegionId )
@@ -181,8 +185,8 @@ function OpenFactionTownstone( pSock, pUser, townRegionId )
 	var npcLimitSummary = TriggerEvent( TownstoneTownScriptId, "TownNpcLimitSummary", townName, ownerFaction );
 	var treasury = TriggerEvent( TownstoneTownScriptId, "TownGetTreasury", townName );
 	var taxRate = TriggerEvent( TownstoneTownScriptId, "TownGetTaxRate", townName );
-	var canPlaceGuard = TownstoneCanUseRole( pUser, "sheriff", ownerFaction );
-	var canPlaceVendor = TownstoneCanUseRole( pUser, "finance", ownerFaction );
+	var canPlaceGuard = TownstoneCanUseRole( pUser, "sheriff", ownerFaction, townName );
+	var canPlaceVendor = TownstoneCanUseRole( pUser, "finance", ownerFaction, townName );
 	var isStaff = TownstoneIsStaff( pUser );
 	var y = 0;
 
@@ -211,6 +215,9 @@ function OpenFactionTownstone( pSock, pUser, townRegionId )
 
 	if( canPlaceVendor )
 	{
+		myGump.AddButton( 25, y, 0xFA5, 1, 0, 102 );
+		myGump.AddHTMLGump( 65, y, 320, 20, 0, 0, "Set Town Tax Rate" );
+		y += 25;
 		for( var vendorIndex = 0; vendorIndex < TownstoneVendorTypes.length; vendorIndex++ )
 		{
 			myGump.AddButton( 25, y, 0xFA5, 1, 0, TownstoneVendorTypes[vendorIndex][0] );
@@ -230,6 +237,34 @@ function OpenFactionTownstone( pSock, pUser, townRegionId )
 	myGump.Send( pSock );
 	myGump.Free();
 	return true;
+}
+
+function OpenTownTaxGump( pSock, pUser, townName, townRegionId )
+{
+	var currentTax = TriggerEvent( TownstoneTownScriptId, "TownGetTaxRate", townName );
+	var remaining = TriggerEvent( TownstoneTownScriptId, "TownTaxChangeRemaining", townName );
+	var myGump = new Gump();
+	myGump.AddPage( 0 );
+	myGump.AddBackground( 0, 0, 390, 430, 9200 );
+	myGump.AddHTMLGump( 15, 15, 360, 25, 0, 0, "<CENTER><b>" + townName + " Tax Rate</b></CENTER>" );
+	myGump.AddHTMLGump( 25, 50, 340, 20, 0, 0, "Current tax offset: " + currentTax + "%" );
+	if( remaining > 0 )
+		myGump.AddHTMLGump( 25, 75, 340, 40, 0, 0, "Another change is available in " + Math.ceil( remaining / 3600000 ) + " hour(s)." );
+	else
+		myGump.AddHTMLGump( 25, 75, 340, 40, 0, 0, "Choose the town's daily income tax offset." );
+
+	var y = 120;
+	for( var taxIndex = 0; taxIndex < TownstoneTaxOffsets.length; taxIndex++ )
+	{
+		var taxOffset = TownstoneTaxOffsets[taxIndex];
+		myGump.AddButton( 25, y, 0xFA5, 1, 0, 300 + taxIndex );
+		myGump.AddHTMLGump( 65, y, 250, 20, 0, 0, ( taxOffset > 0 ? "+" : "" ) + taxOffset + "%" );
+		y += 22;
+	}
+	myGump.AddButton( 25, 405, 0xFA5, 1, 0, 0 );
+	myGump.AddHTMLGump( 65, 405, 100, 20, 0, 0, "Cancel" );
+	myGump.Send( pSock );
+	myGump.Free();
 }
 
 function onGumpPress( pSock, pButton, gumpData )
@@ -273,7 +308,7 @@ function onGumpPress( pSock, pButton, gumpData )
 
 	if( pButton == 101 )
 	{
-		if( !TownstoneCanUseRole( pUser, "sheriff", ownerFaction ) )
+		if( !TownstoneCanUseRole( pUser, "sheriff", ownerFaction, townName ) )
 		{
 			pSock.SysMessage( "Only this faction's Sheriff may place guards." );
 			return;
@@ -285,11 +320,38 @@ function onGumpPress( pSock, pButton, gumpData )
 		return;
 	}
 
+	if( pButton == 102 )
+	{
+		if( !TownstoneCanUseRole( pUser, "finance", ownerFaction, townName ) )
+		{
+			pSock.SysMessage( "Only this town's Finance Minister may set its tax rate." );
+			return;
+		}
+		OpenTownTaxGump( pSock, pUser, townName, townRegionId );
+		return;
+	}
+
+	if( pButton >= 300 && pButton < 300 + TownstoneTaxOffsets.length )
+	{
+		if( !TownstoneCanUseRole( pUser, "finance", ownerFaction, townName ) )
+		{
+			pSock.SysMessage( "Only this town's Finance Minister may set its tax rate." );
+			return;
+		}
+		var taxOffset = TownstoneTaxOffsets[pButton - 300];
+		if( TriggerEvent( TownstoneTownScriptId, "TownSetTaxRate", townName, taxOffset, TownstoneIsStaff( pUser ) ) )
+			pSock.SysMessage( townName + " tax rate changed to " + ( taxOffset > 0 ? "+" : "" ) + taxOffset + "%." );
+		else
+			pSock.SysMessage( TriggerEvent( TownstoneTownScriptId, "TownLastError" ) );
+		OpenFactionTownstone( pSock, pUser, townRegionId );
+		return;
+	}
+
 	for( var vendorIndex = 0; vendorIndex < TownstoneVendorTypes.length; vendorIndex++ )
 	{
 		if( pButton == TownstoneVendorTypes[vendorIndex][0] )
 		{
-			if( !TownstoneCanUseRole( pUser, "finance", ownerFaction ) )
+			if( !TownstoneCanUseRole( pUser, "finance", ownerFaction, townName ) )
 			{
 				pSock.SysMessage( "Only this faction's Finance Minister may place vendors." );
 				return;

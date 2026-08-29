@@ -60,9 +60,12 @@ var FactionTownIterateTown = "";
 var FactionTownIterateFaction = "";
 var FactionTownIterateSocket = null;
 var FactionTownTreasuryGrant = 1000;
-var FactionTownDefaultTaxRate = 100;
+var FactionTownDefaultTaxRate = 0;
 var FactionTownTaxTimerId = 2;
-var FactionTownDefaultTaxInterval = 3600000;
+var FactionTownDefaultTaxInterval = 86400000;
+var FactionTownTaxChangePeriod = 43200000;
+var FactionTownDailyIncome = 10000;
+var FactionTownTaxOffsets = [ -30, -25, -20, -15, -10, -5, 0, 50, 100, 150, 200, 250, 300 ];
 var FactionTownGuardLimit = 10;
 var FactionTownVendorLimit = 10;
 var FactionTownCountType = "";
@@ -96,7 +99,7 @@ function TownDefaultTaxIntervalMs()
 
 function TownDefaultTaxRate()
 {
-	return TownIniNumber( "FACTIONTOWNDEFAULTTAXRATE", FactionTownDefaultTaxRate, 0 );
+	return TownIniNumber( "FACTIONTOWNDEFAULTTAXRATE", FactionTownDefaultTaxRate );
 }
 
 function TownTreasuryGrantAmount()
@@ -745,6 +748,42 @@ function TownTaxRateTag( townName )
 	return "faction_town_" + TownNormalizeName( townName ) + "_taxrate";
 }
 
+function TownTaxRateSetTag( townName )
+{
+	return "faction_town_" + TownNormalizeName( townName ) + "_taxrateset";
+}
+
+function TownLastTaxChangeTag( townName )
+{
+	return "faction_town_" + TownNormalizeName( townName ) + "_lasttaxchange";
+}
+
+function TownTaxRateIsValid( amount )
+{
+	amount = TownParseNumber( amount, 9999 );
+	for( var taxIndex = 0; taxIndex < FactionTownTaxOffsets.length; taxIndex++ )
+	{
+		if( FactionTownTaxOffsets[taxIndex] == amount )
+			return true;
+	}
+
+	return false;
+}
+
+function TownTaxChangeRemaining( townName )
+{
+	var ctrl = TownGetController();
+	if( !ValidateObject( ctrl ) )
+		return -1;
+
+	var lastChange = TownParseNumber( ctrl.GetTag( TownLastTaxChangeTag( townName ) ), 0 );
+	if( lastChange <= 0 )
+		return 0;
+
+	var remaining = ( lastChange + FactionTownTaxChangePeriod ) - GetCurrentClock();
+	return remaining > 0 ? remaining : 0;
+}
+
 function TownGetTreasury( townName )
 {
 	townName = TownNormalizeName( townName );
@@ -811,13 +850,13 @@ function TownGetTaxRate( townName )
 		return -1;
 
 	var taxRate = ctrl.GetTag( TownTaxRateTag( townName ) );
-	if( taxRate === "" || taxRate == 0 )
+	if( ctrl.GetTag( TownTaxRateSetTag( townName ) ) != 1 )
 		return TownDefaultTaxRate();
 
 	return TownParseNumber( taxRate, TownDefaultTaxRate() );
 }
 
-function TownSetTaxRate( townName, amount )
+function TownSetTaxRate( townName, amount, forceChange )
 {
 	townName = TownNormalizeName( townName );
 	if( TownGetDefault( townName ) == null )
@@ -828,10 +867,14 @@ function TownSetTaxRate( townName, amount )
 		return false;
 
 	amount = TownParseNumber( amount, TownDefaultTaxRate() );
-	if( amount < 0 )
-		amount = 0;
+	if( !TownTaxRateIsValid( amount ) )
+		return TownSetLastError( "Tax must be one of: -30, -25, -20, -15, -10, -5, 0, 50, 100, 150, 200, 250, or 300." );
+	if( !forceChange && TownTaxChangeRemaining( townName ) > 0 )
+		return TownSetLastError( "This town's tax rate may only be changed once every 12 hours." );
 
 	ctrl.SetTag( TownTaxRateTag( townName ), amount );
+	ctrl.SetTag( TownTaxRateSetTag( townName ), 1 );
+	ctrl.SetTag( TownLastTaxChangeTag( townName ), GetCurrentClock() );
 	return true;
 }
 
@@ -849,11 +892,12 @@ function RunTownTaxCycle()
 			continue;
 
 		var taxRate = TownGetTaxRate( townName );
-		if( taxRate <= 0 )
-			continue;
+		var income = Math.floor( FactionTownDailyIncome * ( 100 + taxRate ) / 100 );
+		if( income < 0 )
+			income = 0;
 
-		if( TownAddTreasury( townName, taxRate ) )
-			totalIncome += taxRate;
+		if( TownAddTreasury( townName, income ) )
+			totalIncome += income;
 	}
 
 	ctrl.SetTag( "faction_town_last_tax_cycle", GetCurrentClock() );

@@ -485,7 +485,7 @@ private:
 	UI32		taxPeriod;					//	Time (in seconds) between periods of taxes for PCs
 	UI32		guardPayment;				//	Time (in seconds) between payments for guards
 	UI32		factionTownTaxInterval;		//	Time (in minutes) between faction town tax cycles
-	SI32		factionTownDefaultTaxRate;	//	Default silver added per faction town tax cycle
+	SI32		factionTownDefaultTaxRate;	//	Default percentage offset from faction town base income
 	SI32		factionTownTreasuryGrant;	//	Default silver grant amount for faction towns
 	SI16		factionTownGuardLimit;		//	Default managed faction guard limit per town
 	SI16		factionTownVendorLimit;		//	Default managed faction vendor limit per town

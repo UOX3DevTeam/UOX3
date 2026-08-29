@@ -1083,8 +1083,8 @@ auto CServerData::ResetDefaults() -> void
 	TownNumSecsAsMayor( 36000 );	// 10 hours as mayor
 	TownTaxPeriod( 1800 );			// taxed every 30 minutes
 	TownGuardPayment( 3600 );		// guards paid every hour
-	FactionTownTaxInterval( 60 );	// faction towns tax every hour
-	FactionTownDefaultTaxRate( 100 );
+	FactionTownTaxInterval( 1440 );	// faction town income is processed daily
+	FactionTownDefaultTaxRate( 0 );	// percentage offset from base daily income
 	FactionTownTreasuryGrant( 1000 );
 	FactionTownGuardLimit( 10 );
 	FactionTownVendorLimit( 10 );

@@ -82,6 +82,7 @@ var CommandRoleListSocket = null;
 var CommandClearRoleName = "";
 var CommandClearRoleFaction = "";
 var CommandClearRoleExcept = 0;
+var CommandClearRoleTown = "";
 var CommandBroadcastFaction = "";
 var CommandBroadcastMessage = "";
 var CommandBroadcastCount = 0;
@@ -403,18 +404,22 @@ function CommandFindNpc( npcText )
 	return foundNpc;
 }
 
-function CommandSetFactionRole( pChar, roleName, factionKey )
+function CommandSetFactionRole( pChar, roleName, factionKey, townName )
 {
 	if( !ValidateObject( pChar ) || !CommandIsRoleValid( roleName ) || !CommandIsFactionValid( factionKey ) )
 		return false;
 
-	CommandClearFactionRoleHolders( roleName, factionKey, pChar.serial );
+	townName = roleName === "commander" ? "" : TriggerEvent( CommandFactionTownScriptId, "TownNormalizeName", townName );
+	if( roleName !== "commander" && TriggerEvent( CommandFactionTownScriptId, "TownGetDefault", townName ) == null )
+		return false;
+
+	CommandClearFactionRoleHolders( roleName, factionKey, pChar.serial, townName );
 	var factionData = TriggerEvent( CommandFactionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
 	factionData.role = roleName;
 	factionData.roleFaction = factionKey;
+	factionData.roleTown = townName;
 	factionData.roleSetAt = GetCurrentClock();
-	if( roleName === "commander" )
-		factionData.commander = true;
+	factionData.commander = ( roleName === "commander" );
 	TriggerEvent( CommandFactionPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
 
 	return true;
@@ -428,13 +433,14 @@ function CommandClearFactionRole( pChar )
 	var factionData = TriggerEvent( CommandFactionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
 	factionData.role = "";
 	factionData.roleFaction = "";
+	factionData.roleTown = "";
 	factionData.roleSetAt = 0;
 	factionData.commander = false;
 	TriggerEvent( CommandFactionPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
 	return true;
 }
 
-function CommandClearFactionRoleHolders( roleName, factionKey, exceptSerial )
+function CommandClearFactionRoleHolders( roleName, factionKey, exceptSerial, townName )
 {
 	if( !CommandIsRoleValid( roleName ) || !CommandIsFactionValid( factionKey ) )
 		return 0;
@@ -442,10 +448,12 @@ function CommandClearFactionRoleHolders( roleName, factionKey, exceptSerial )
 	CommandClearRoleName = roleName;
 	CommandClearRoleFaction = factionKey;
 	CommandClearRoleExcept = exceptSerial;
+	CommandClearRoleTown = String( townName || "" );
 	var clearCount = IterateOver( "CHARACTER" );
 	CommandClearRoleName = "";
 	CommandClearRoleFaction = "";
 	CommandClearRoleExcept = 0;
+	CommandClearRoleTown = "";
 	return clearCount;
 }
 
@@ -514,7 +522,8 @@ function onIterate( toCheck )
 			var roleFaction = roleData.roleFaction;
 			if( CommandIsRoleValid( roleName ) && CommandIsFactionValid( roleFaction ) )
 			{
-				CommandRoleListSocket.SysMessage( toCheck.name + ": " + CommandFactionUsageName( roleFaction ) + " " + CommandRoleDisplayName( roleName ) );
+				var townText = roleData.roleTown !== "" ? " of " + roleData.roleTown : "";
+				CommandRoleListSocket.SysMessage( toCheck.name + ": " + CommandFactionUsageName( roleFaction ) + " " + CommandRoleDisplayName( roleName ) + townText );
 				return true;
 			}
 		}
@@ -527,7 +536,8 @@ function onIterate( toCheck )
 		if( ValidateObject( toCheck ) && toCheck.isChar && !toCheck.npc && toCheck.serial != CommandClearRoleExcept )
 		{
 			var clearRoleData = TriggerEvent( CommandFactionPlayerDataScriptId, "ReadFactionPlayerData", toCheck );
-			if( clearRoleData.role === CommandClearRoleName && clearRoleData.roleFaction === CommandClearRoleFaction )
+			if( clearRoleData.role === CommandClearRoleName && clearRoleData.roleFaction === CommandClearRoleFaction &&
+				( CommandClearRoleName === "commander" || clearRoleData.roleTown === CommandClearRoleTown ) )
 			{
 				CommandClearFactionRole( toCheck );
 				return true;
@@ -1506,6 +1516,7 @@ function CommandClearFactionPlayerTags( pChar )
 		"faction_commander",
 		"faction_role",
 		"faction_role_faction",
+		"faction_role_town",
 		"faction_role_set_at",
 		"faction_kp_decay_time",
 		"elec_voted_TB",
@@ -2610,7 +2621,7 @@ function command_FACTIONTAXRATE( pSock, cmdString )
 
 	parts.pop();
 	var townName = parts.join( " " );
-	if( TriggerEvent( CommandFactionTownScriptId, "TownSetTaxRate", townName, amount ) )
+	if( TriggerEvent( CommandFactionTownScriptId, "TownSetTaxRate", townName, amount, true ) )
 		pSock.SysMessage( "Faction town tax rate set." );
 	else
 		pSock.SysMessage( "Unable to set that faction town tax rate." );
@@ -2656,19 +2667,32 @@ function command_FACTIONROLE( pSock, cmdString )
 	var parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
 	if( parts.length < 3 )
 	{
-		pSock.SysMessage( "Usage: 'factionrole <player> <sheriff|finance|commander> <TB|COM|MIN|SL>" );
+		pSock.SysMessage( "Usage: 'factionrole <player> <sheriff|finance|commander> <TB|COM|MIN|SL> [town]" );
 		return;
 	}
 
-	var factionKey = parts[parts.length - 1].toUpperCase();
-	var roleName = parts[parts.length - 2].toLowerCase();
+	var factionIndex = parts.length - 1;
+	var factionKey = parts[factionIndex].toUpperCase();
+	var townName = "";
+	if( !CommandIsFactionValid( factionKey ) && parts.length >= 4 )
+	{
+		townName = parts[parts.length - 1];
+		factionIndex--;
+		factionKey = parts[factionIndex].toUpperCase();
+	}
+	var roleName = parts[factionIndex - 1].toLowerCase();
 	var playerParts = [];
-	for( var partIndex = 0; partIndex < parts.length - 2; partIndex++ )
+	for( var partIndex = 0; partIndex < factionIndex - 1; partIndex++ )
 		playerParts.push( parts[partIndex] );
 
 	if( !CommandIsRoleValid( roleName ) || !CommandIsFactionValid( factionKey ) )
 	{
-		pSock.SysMessage( "Usage: 'factionrole <player> <sheriff|finance|commander> <TB|COM|MIN|SL>" );
+		pSock.SysMessage( "Usage: 'factionrole <player> <sheriff|finance|commander> <TB|COM|MIN|SL> [town]" );
+		return;
+	}
+	if( roleName !== "commander" && townName === "" )
+	{
+		pSock.SysMessage( "Sheriff and finance appointments require a faction town." );
 		return;
 	}
 
@@ -2685,8 +2709,12 @@ function command_FACTIONROLE( pSock, cmdString )
 		return;
 	}
 
-	CommandSetFactionRole( targetChar, roleName, factionKey );
-	pSock.SysMessage( targetChar.name + " is now " + CommandFactionUsageName( factionKey ) + " " + CommandRoleDisplayName( roleName ) + "." );
+	if( !CommandSetFactionRole( targetChar, roleName, factionKey, townName ) )
+	{
+		pSock.SysMessage( "Unable to assign that faction role or town." );
+		return;
+	}
+	pSock.SysMessage( targetChar.name + " is now " + CommandFactionUsageName( factionKey ) + " " + CommandRoleDisplayName( roleName ) + ( townName !== "" ? " of " + townName : "" ) + "." );
 	if( targetChar.socket != null )
 		targetChar.SysMessage( "You are now " + CommandFactionUsageName( factionKey ) + " " + CommandRoleDisplayName( roleName ) + "." );
 }
@@ -2726,16 +2754,17 @@ function command_FACTIONAPPOINT( pSock, cmdString )
 	var parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
 	if( parts.length < 2 )
 	{
-		pSock.SysMessage( "Usage: 'factionappoint <player> <sheriff|finance> [TB|COM|MIN|SL]" );
+		pSock.SysMessage( "Usage: 'factionappoint <player> <sheriff|finance> [town]" );
 		return;
 	}
 
-	var factionKey = "";
+	var factionKey = pUser.GetTag( "faction" );
 	var roleIndex = parts.length - 1;
-	var maybeFaction = parts[parts.length - 1].toUpperCase();
-	if( CommandIsFactionValid( maybeFaction ) )
+	var townName = TriggerEvent( CommandFactionTownScriptId, "TownNameForObject", pUser );
+	var maybeTown = TriggerEvent( CommandFactionTownScriptId, "TownNormalizeName", parts[parts.length - 1] );
+	if( TriggerEvent( CommandFactionTownScriptId, "TownGetDefault", maybeTown ) != null )
 	{
-		factionKey = maybeFaction;
+		townName = maybeTown;
 		roleIndex = parts.length - 2;
 	}
 
@@ -2746,12 +2775,9 @@ function command_FACTIONAPPOINT( pSock, cmdString )
 
 	if( roleName !== "sheriff" && roleName !== "finance" )
 	{
-		pSock.SysMessage( "Usage: 'factionappoint <player> <sheriff|finance> [TB|COM|MIN|SL]" );
+		pSock.SysMessage( "Usage: 'factionappoint <player> <sheriff|finance> [town]" );
 		return;
 	}
-
-	if( factionKey === "" )
-		factionKey = pUser.GetTag( "faction" );
 
 	if( !CommandIsFactionValid( factionKey ) && !CommandIsStaff( pUser ) )
 	{
@@ -2780,17 +2806,31 @@ function command_FACTIONAPPOINT( pSock, cmdString )
 		pSock.SysMessage( "Only your faction Commander may appoint that role." );
 		return;
 	}
+	if( townName === "" || TriggerEvent( CommandFactionTownScriptId, "TownGetOwner", townName ) !== factionKey )
+	{
+		pSock.SysMessage( "Appointments must be made for a town controlled by your faction." );
+		return;
+	}
 
 	if( targetChar.GetTag( "faction" ) !== factionKey )
 	{
 		pSock.SysMessage( targetChar.name + " must be a member of your faction." );
 		return;
 	}
+	if( targetChar.GetTag( "faction_commander" ) == 1 )
+	{
+		pSock.SysMessage( "The faction Commander cannot also hold a town office." );
+		return;
+	}
 
-	CommandSetFactionRole( targetChar, roleName, factionKey );
-	pSock.SysMessage( targetChar.name + " is now " + CommandFactionUsageName( factionKey ) + " " + CommandRoleDisplayName( roleName ) + "." );
+	if( !CommandSetFactionRole( targetChar, roleName, factionKey, townName ) )
+	{
+		pSock.SysMessage( "Unable to assign that town office." );
+		return;
+	}
+	pSock.SysMessage( targetChar.name + " is now " + CommandFactionUsageName( factionKey ) + " " + CommandRoleDisplayName( roleName ) + " of " + townName + "." );
 	if( targetChar.socket != null )
-		targetChar.SysMessage( "You are now " + CommandFactionUsageName( factionKey ) + " " + CommandRoleDisplayName( roleName ) + "." );
+		targetChar.SysMessage( "You are now " + CommandFactionUsageName( factionKey ) + " " + CommandRoleDisplayName( roleName ) + " of " + townName + "." );
 }
 
 function command_FACTIONGUARD( pSock, cmdString )

@@ -357,6 +357,7 @@ function ConcludeElection( fkey )
 		winnerData.commander = true;
 		winnerData.role = "commander";
 		winnerData.roleFaction = fkey;
+		winnerData.roleTown = "";
 		winnerData.roleSetAt = GetCurrentClock();
 		TriggerEvent( FactionElectionPlayerDataScriptId, "WriteFactionPlayerData", winner, winnerData );
 		if( ctrl ) ctrl.SetTag( "cmd_" + fkey, winnerSerial );
@@ -389,6 +390,7 @@ function _ClearCommanderRole( fkey, ctrl )
 			{
 				oldData.role = "";
 				oldData.roleFaction = "";
+				oldData.roleTown = "";
 				oldData.roleSetAt = 0;
 			}
 			TriggerEvent( FactionElectionPlayerDataScriptId, "WriteFactionPlayerData", oldCmd, oldData );

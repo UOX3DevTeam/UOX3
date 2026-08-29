@@ -233,6 +233,7 @@ function JoinFaction( pChar, factionKey )
 	factionData.commander = false;
 	factionData.role = "";
 	factionData.roleFaction = "";
+	factionData.roleTown = "";
 	factionData.roleSetAt = 0;
 	factionData.recentKills = {};
 	TriggerEvent( FactionPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
@@ -292,6 +293,7 @@ function FinalizeFactionLeave( pChar, factionData )
 	factionData.commander = false;
 	factionData.role = "";
 	factionData.roleFaction = "";
+	factionData.roleTown = "";
 	factionData.roleSetAt = 0;
 	factionData.leaveTime = 0;
 	factionData.recentKills = {};
